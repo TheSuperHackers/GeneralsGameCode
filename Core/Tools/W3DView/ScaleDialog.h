@@ -23,7 +23,6 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-
 #include "resource.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -33,28 +32,29 @@
 /////////////////////////////////////////////////////////////////////////////
 class ScaleDialogClass : public CDialog
 {
-// Construction
+	// Construction
 public:
-	ScaleDialogClass (float scale, CWnd* pParent=NULL, const char *prompt_string="");
+	ScaleDialogClass(float scale, CWnd *pParent = NULL, const char *prompt_string = "");
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(ScaleDialogClass)
-	enum { IDD = IDD_SCALE_KEY };
-	CSpinButtonCtrl	m_ScaleSpin;
+	enum
+	{
+		IDD = IDD_SCALE_KEY
+	};
+	CSpinButtonCtrl m_ScaleSpin;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ScaleDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(ScaleDialogClass)
 	virtual BOOL OnInitDialog();
@@ -63,20 +63,17 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-
 	/////////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////////
-	float					Get_Scale (void) const { return m_Scale; }
+	float Get_Scale(void) const { return m_Scale; }
 
 private:
-
 	/////////////////////////////////////////////////////////////
 	//	Private member data
 	/////////////////////////////////////////////////////////////
-	float					m_Scale;
-	CString				m_Prompt;
-
+	float m_Scale;
+	CString m_Prompt;
 };
 
 //{{AFX_INSERT_LOCATION}}

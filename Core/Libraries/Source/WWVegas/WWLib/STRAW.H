@@ -49,28 +49,26 @@
 */
 class Straw
 {
-	public:
-		Straw(void) : ChainTo(0), ChainFrom(0) {}
-		virtual ~Straw(void);
+public:
+	Straw(void) : ChainTo(0), ChainFrom(0) {}
+	virtual ~Straw(void);
 
-		virtual void Get_From(Straw * pipe);
-		void Get_From(Straw & pipe) {Get_From(&pipe);}
-		virtual int Get(void * buffer, int slen);
+	virtual void Get_From(Straw *pipe);
+	void Get_From(Straw &pipe) { Get_From(&pipe); }
+	virtual int Get(void *buffer, int slen);
 
-		/*
-		**	Pointer to the next pipe segment in the chain.
-		*/
-		Straw * ChainTo;
-		Straw * ChainFrom;
+	/*
+	**	Pointer to the next pipe segment in the chain.
+	*/
+	Straw *ChainTo;
+	Straw *ChainFrom;
 
-	private:
-
-		/*
-		**	Disable the copy constructor and assignment operator.
-		*/
-		Straw(Straw & rvalue);
-		Straw & operator = (Straw const & pipe);
+private:
+	/*
+	**	Disable the copy constructor and assignment operator.
+	*/
+	Straw(Straw &rvalue);
+	Straw &operator=(Straw const &pipe);
 };
-
 
 #endif

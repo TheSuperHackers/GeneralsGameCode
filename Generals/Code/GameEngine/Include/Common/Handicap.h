@@ -69,7 +69,6 @@ class ThingTemplate;
 class Handicap
 {
 public:
-
 	// NOTE: if you ever add/remove/change the enums in HandicapType,
 	// you must also modify initFromDict()!
 	enum HandicapType
@@ -91,7 +90,7 @@ public:
 		if you want to ensure all fields are something reasonable, you should call init()
 		prior to calling this.
 	*/
-	void readFromDict(const Dict* d);
+	void readFromDict(const Dict *d);
 
 	/**
 		return the multiplier for the given Handicap type on the given Object.
@@ -102,12 +101,11 @@ public:
 
 protected:
 private:
-
 	// NOTE: if you ever add/remove/change the enums in ThingType,
 	// you must also modify initFromDict()!
 	enum ThingType
 	{
-		GENERIC,		// if a thing is nothing else, it's generic.
+		GENERIC, // if a thing is nothing else, it's generic.
 		BUILDINGS,
 
 		THING_TYPE_COUNT

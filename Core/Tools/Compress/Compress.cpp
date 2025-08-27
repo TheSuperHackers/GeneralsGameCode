@@ -22,9 +22,8 @@
 #include "Lib/BaseTypeCore.h"
 #include "Compression.h"
 
-
 // TheSuperHackers @todo Streamline and simplify the logging approach for tools
-static void DebugLog(const char* format, ...)
+static void DebugLog(const char *format, ...)
 {
 	char buffer[1024];
 	buffer[0] = 0;
@@ -36,7 +35,6 @@ static void DebugLog(const char* format, ...)
 }
 #define DEBUG_LOG(x) DebugLog x
 
-
 void dumpHelp(const char *exe)
 {
 	DEBUG_LOG(("Usage:"));
@@ -44,7 +42,7 @@ void dumpHelp(const char *exe)
 	DEBUG_LOG(("  To compress a file: %s -in infile -out outfile <-type compressionmode>", exe));
 	DEBUG_LOG((""));
 	DEBUG_LOG(("Compression modes:"));
-	for (int i=COMPRESSION_MIN; i<=COMPRESSION_MAX; ++i)
+	for (int i = COMPRESSION_MIN; i <= COMPRESSION_MAX; ++i)
 	{
 		DEBUG_LOG(("   %s", CompressionManager::getCompressionNameByType((CompressionType)i)));
 	}
@@ -56,40 +54,40 @@ int main(int argc, char **argv)
 	std::string outFile = "";
 	CompressionType compressType = CompressionManager::getPreferredCompression();
 
-	for (int i=1; i<argc; ++i)
+	for (int i = 1; i < argc; ++i)
 	{
-		if ( !stricmp(argv[i], "-help") )
+		if (!stricmp(argv[i], "-help"))
 		{
 			dumpHelp(argv[0]);
 			return EXIT_SUCCESS;
 		}
 
-		if ( !strcmp(argv[i], "-in") )
+		if (!strcmp(argv[i], "-in"))
 		{
 			++i;
-			if (i<argc)
+			if (i < argc)
 			{
 				inFile = argv[i];
 			}
 		}
 
-		if ( !strcmp(argv[i], "-out") )
+		if (!strcmp(argv[i], "-out"))
 		{
 			++i;
-			if (i<argc)
+			if (i < argc)
 			{
 				outFile = argv[i];
 			}
 		}
 
-		if ( !strcmp(argv[i], "-type") )
+		if (!strcmp(argv[i], "-type"))
 		{
 			++i;
-			if (i<argc)
+			if (i < argc)
 			{
-				for (int j=COMPRESSION_MIN; j<=COMPRESSION_MAX; ++j)
+				for (int j = COMPRESSION_MIN; j <= COMPRESSION_MAX; ++j)
 				{
-					if ( !stricmp(CompressionManager::getCompressionNameByType((CompressionType)j), argv[i]) )
+					if (!stricmp(CompressionManager::getCompressionNameByType((CompressionType)j), argv[i]))
 					{
 						compressType = (CompressionType)j;
 						break;
@@ -105,8 +103,11 @@ int main(int argc, char **argv)
 		return EXIT_SUCCESS;
 	}
 
-	DEBUG_LOG(("IN:'%s' OUT:'%s' Compression:'%s'",
-		inFile.c_str(), outFile.c_str(), CompressionManager::getCompressionNameByType(compressType)));
+	DEBUG_LOG(
+			("IN:'%s' OUT:'%s' Compression:'%s'",
+			 inFile.c_str(),
+			 outFile.c_str(),
+			 CompressionManager::getCompressionNameByType(compressType)));
 
 	// just check compression on the input file if we have no output specified
 	if (outFile.empty())
@@ -140,9 +141,13 @@ int main(int argc, char **argv)
 
 		int uncompressedSize = CompressionManager::getUncompressedSize(data, 8);
 
-		DEBUG_LOG(("'%s' is compressed using %s, from %d to %d bytes, %g%% of its original size",
-			inFile.c_str(), CompressionManager::getCompressionNameByType(usedType),
-			uncompressedSize, size, size/(double)(uncompressedSize+0.1)*100.0));
+		DEBUG_LOG(
+				("'%s' is compressed using %s, from %d to %d bytes, %g%% of its original size",
+				 inFile.c_str(),
+				 CompressionManager::getCompressionNameByType(usedType),
+				 uncompressedSize,
+				 size,
+				 size / (double)(uncompressedSize + 0.1) * 100.0));
 
 		return EXIT_SUCCESS;
 	}
@@ -180,7 +185,6 @@ int main(int argc, char **argv)
 		delete[] inputData;
 		return EXIT_FAILURE;
 	}
-
 
 	if (compressType == COMPRESSION_NONE)
 	{

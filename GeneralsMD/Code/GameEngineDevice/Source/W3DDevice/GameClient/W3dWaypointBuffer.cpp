@@ -82,12 +82,7 @@
 #include "WW3D2/meshmdl.h"
 #include "WW3D2/segline.h"
 
-
 #define MAX_DISPLAY_NODES 512
-
-
-
-
 
 //=============================================================================
 // W3DWaypointBuffer::W3DWaypointBuffer
@@ -97,13 +92,12 @@ for the bibs. */
 //=============================================================================
 W3DWaypointBuffer::W3DWaypointBuffer(void)
 {
-	m_waypointNodeRobj = WW3DAssetManager::Get_Instance()->Create_Render_Obj( "SCMNode" );
+	m_waypointNodeRobj = WW3DAssetManager::Get_Instance()->Create_Render_Obj("SCMNode");
 	m_line = new SegmentedLineClass;
 
-	m_texture = WW3DAssetManager::Get_Instance()->Get_Texture( "EXLaser.tga" );
+	m_texture = WW3DAssetManager::Get_Instance()->Get_Texture("EXLaser.tga");
 
-
-  setDefaultLineStyle();
+	setDefaultLineStyle();
 }
 
 //=============================================================================
@@ -113,9 +107,9 @@ W3DWaypointBuffer::W3DWaypointBuffer(void)
 //=============================================================================
 W3DWaypointBuffer::~W3DWaypointBuffer(void)
 {
-	REF_PTR_RELEASE( m_waypointNodeRobj );
-	REF_PTR_RELEASE( m_texture );
-	REF_PTR_RELEASE( m_line );
+	REF_PTR_RELEASE(m_waypointNodeRobj);
+	REF_PTR_RELEASE(m_texture);
+	REF_PTR_RELEASE(m_line);
 }
 
 //=============================================================================
@@ -127,21 +121,19 @@ void W3DWaypointBuffer::freeWaypointBuffers()
 {
 }
 
-
-void W3DWaypointBuffer::setDefaultLineStyle( void )
+void W3DWaypointBuffer::setDefaultLineStyle(void)
 {
-	if( m_texture )
+	if (m_texture)
 	{
-		m_line->Set_Texture( m_texture );
+		m_line->Set_Texture(m_texture);
 	}
-	ShaderClass lineShader=ShaderClass::_PresetAdditiveShader;
+	ShaderClass lineShader = ShaderClass::_PresetAdditiveShader;
 	lineShader.Set_Depth_Compare(ShaderClass::PASS_ALWAYS);
-	m_line->Set_Shader( lineShader );	//pick the alpha blending mode you want - see shader.h for others.
-	m_line->Set_Width( 1.5f );
-	m_line->Set_Color( Vector3( 0.25f, 0.5f, 1.0f ) );
-	m_line->Set_Texture_Mapping_Mode( SegLineRendererClass::TILED_TEXTURE_MAP );	//this tiles the texture across the line
+	m_line->Set_Shader(lineShader); // pick the alpha blending mode you want - see shader.h for others.
+	m_line->Set_Width(1.5f);
+	m_line->Set_Color(Vector3(0.25f, 0.5f, 1.0f));
+	m_line->Set_Texture_Mapping_Mode(SegLineRendererClass::TILED_TEXTURE_MAP); // this tiles the texture across the line
 }
-
 
 //=============================================================================
 // W3DWaypointBuffer::drawWaypoints
@@ -150,256 +142,235 @@ void W3DWaypointBuffer::setDefaultLineStyle( void )
 //=============================================================================
 void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 {
+	if (!TheInGameUI)
+		return;
 
-  if ( ! TheInGameUI )
-    return;
+	setDefaultLineStyle();
 
-
-  setDefaultLineStyle();
-
-
-
-	if( TheInGameUI->isInWaypointMode() )
+	if (TheInGameUI->isInWaypointMode())
 	{
-		//Create a default light environment with no lights and only full ambient.
+		// Create a default light environment with no lights and only full ambient.
 		//@todo: Fix later by copying default scene light environement from W3DScene.cpp.
 		LightEnvironmentClass lightEnv;
-		lightEnv.Reset(Vector3(0,0,0), Vector3(1.0f,1.0f,1.0f));
+		lightEnv.Reset(Vector3(0, 0, 0), Vector3(1.0f, 1.0f, 1.0f));
 		lightEnv.Pre_Render_Update(rinfo.Camera.Get_Transform());
 		RenderInfoClass localRinfo(rinfo.Camera);
-		localRinfo.light_environment=&lightEnv;
-		Vector3 points[ MAX_DISPLAY_NODES + 1 ]; //Lines have nodes + 1 points.
+		localRinfo.light_environment = &lightEnv;
+		Vector3 points[MAX_DISPLAY_NODES + 1]; // Lines have nodes + 1 points.
 
 		const DrawableList *selected = TheInGameUI->getAllSelectedDrawables();
 		Drawable *draw;
-		for( DrawableListCIt it = selected->begin(); it != selected->end(); ++it )
+		for (DrawableListCIt it = selected->begin(); it != selected->end(); ++it)
 		{
 			draw = *it;
 			Object *obj = draw->getObject();
 			Int numPoints = 1;
-			if( obj && ! obj->isKindOf( KINDOF_IGNORED_IN_GUI ))//so mobs and stuff sont make a gazillion lines
+			if (obj && !obj->isKindOf(KINDOF_IGNORED_IN_GUI)) // so mobs and stuff sont make a gazillion lines
 			{
 				AIUpdateInterface *ai = obj->getAI();
 				Int goalSize = ai ? ai->friend_getWaypointGoalPathSize() : 0;
 				Int gpIdx = ai ? ai->friend_getCurrentGoalPathIndex() : 0;
-				if( ai && gpIdx >= 0 && gpIdx < goalSize )
+				if (ai && gpIdx >= 0 && gpIdx < goalSize)
 				{
 					const Coord3D *pos = obj->getPosition();
-					points[ 0 ].Set( Vector3( pos->x, pos->y, pos->z ) );
+					points[0].Set(Vector3(pos->x, pos->y, pos->z));
 
-					for( int i = gpIdx; i < goalSize; i++ )
+					for (int i = gpIdx; i < goalSize; i++)
 					{
-						const Coord3D *waypoint = ai->friend_getGoalPathPosition( i );
-						if( waypoint )
+						const Coord3D *waypoint = ai->friend_getGoalPathPosition(i);
+						if (waypoint)
 						{
-							//Render line from previous point to current node.
+							// Render line from previous point to current node.
 
-							if( numPoints < MAX_DISPLAY_NODES + 1 )
+							if (numPoints < MAX_DISPLAY_NODES + 1)
 							{
-								points[ numPoints ].Set( Vector3( waypoint->x, waypoint->y, waypoint->z ) );
+								points[numPoints].Set(Vector3(waypoint->x, waypoint->y, waypoint->z));
 								numPoints++;
 							}
 
-							m_waypointNodeRobj->Set_Position(Vector3(waypoint->x,waypoint->y,waypoint->z));
-							WW3D::Render(*m_waypointNodeRobj,localRinfo);
+							m_waypointNodeRobj->Set_Position(Vector3(waypoint->x, waypoint->y, waypoint->z));
+							WW3D::Render(*m_waypointNodeRobj, localRinfo);
 						}
 					}
-					//Now render the lines in one pass!
-					m_line->Set_Points( numPoints, points );
-					m_line->Render( localRinfo );
+					// Now render the lines in one pass!
+					m_line->Set_Points(numPoints, points);
+					m_line->Render(localRinfo);
 				}
 			}
 		}
 	}
 	else // maybe we want to draw rally points, then?
 	{
-		//Create a default light environment with no lights and only full ambient.
+		// Create a default light environment with no lights and only full ambient.
 		//@todo: Fix later by copying default scene light environement from W3DScene.cpp.
 		LightEnvironmentClass lightEnv;
-		lightEnv.Reset(Vector3(0,0,0), Vector3(1.0f,1.0f,1.0f));
+		lightEnv.Reset(Vector3(0, 0, 0), Vector3(1.0f, 1.0f, 1.0f));
 		lightEnv.Pre_Render_Update(rinfo.Camera.Get_Transform());
 		RenderInfoClass localRinfo(rinfo.Camera);
-		localRinfo.light_environment=&lightEnv;
-		Vector3 points[ MAX_DISPLAY_NODES + 1 ]; //Lines have nodes + 1 points.
+		localRinfo.light_environment = &lightEnv;
+		Vector3 points[MAX_DISPLAY_NODES + 1]; // Lines have nodes + 1 points.
 
 		const DrawableList *selected = TheInGameUI->getAllSelectedDrawables();
 		Drawable *draw;
-		for( DrawableListCIt it = selected->begin(); it != selected->end(); ++it )
+		for (DrawableListCIt it = selected->begin(); it != selected->end(); ++it)
 		{
 			draw = *it;
 			Object *obj = draw->getObject();
 
 			Int numPoints = 0;
-			if( obj )
+			if (obj)
 			{
-				if ( obj->getControllingPlayer() != TheControlBar->getCurrentlyViewedPlayer())
+				if (obj->getControllingPlayer() != TheControlBar->getCurrentlyViewedPlayer())
 					continue;
 
+				// WAIT! before we go browsing the drawable list for buildings that want to draw their rally points
+				// lets test for that very special case of having a listeningoutpost selected, and some enemy drawable moused-over
+				if (obj->isKindOf(KINDOF_REVEALS_ENEMY_PATHS))
+				{
+					DrawableID enemyID = TheInGameUI->getMousedOverDrawableID();
+					Drawable *enemyDraw = TheGameClient->findDrawableByID(enemyID);
+					if (enemyDraw)
+					{
+						Object *enemy = enemyDraw->getObject();
+						if (enemy)
+						{
+							if (enemy->getRelationship(obj) == ENEMIES)
+							{
+								Coord3D delta = *obj->getPosition();
+								delta.sub(enemy->getPosition());
+								if (delta.length() <= obj->getVisionRange()) // is listening outpost close enough to do this?
+								{
+									//////////////////////////////////////////////////////////////////////
+									AIUpdateInterface *ai = enemy->getAI();
+									Int goalSize = ai ? ai->friend_getWaypointGoalPathSize() : 0;
+									Int gpIdx = ai ? ai->friend_getCurrentGoalPathIndex() : 0;
+									if (ai)
+									{
+										Bool lineExists = FALSE;
 
+										const Coord3D *pos = enemy->getPosition();
+										points[numPoints++].Set(Vector3(pos->x, pos->y, pos->z));
 
-        // WAIT! before we go browsing the drawable list for buildings that want to draw their rally points
-        // lets test for that very special case of having a listeningoutpost selected, and some enemy drawable moused-over
-        if ( obj->isKindOf( KINDOF_REVEALS_ENEMY_PATHS ) )
-        {
+										if (gpIdx >= 0 && gpIdx < goalSize) // Ooh, the enemy is in waypoint mode
+										{
+											for (int i = gpIdx; i < goalSize; i++)
+											{
+												const Coord3D *waypoint = ai->friend_getGoalPathPosition(i);
+												if (waypoint)
+												{
+													// Render line from previous point to current node.
 
-          DrawableID enemyID = TheInGameUI->getMousedOverDrawableID();
-          Drawable *enemyDraw = TheGameClient->findDrawableByID( enemyID );
-          if ( enemyDraw )
-          {
-            Object *enemy = enemyDraw->getObject();
-            if ( enemy )
-            {
-              if ( enemy->getRelationship( obj ) == ENEMIES )
-              {
+													if (numPoints < MAX_DISPLAY_NODES + 1)
+													{
+														points[numPoints++].Set(Vector3(waypoint->x, waypoint->y, waypoint->z));
+													}
 
-                Coord3D delta = *obj->getPosition();
-                delta.sub( enemy->getPosition() );
-                if ( delta.length() <= obj->getVisionRange() ) // is listening outpost close enough to do this?
-                {
+													m_waypointNodeRobj->Set_Position(Vector3(waypoint->x, waypoint->y, waypoint->z));
+													WW3D::Render(*m_waypointNodeRobj, localRinfo);
+													lineExists = TRUE;
+												}
+											}
+										}
+										else // then enemy may be moving to a goal position
+										{
+											const Coord3D *destinationPoint = ai->getGoalPosition();
+											if (destinationPoint->length() > 1.0f)
+											{
+												points[numPoints++].Set(Vector3(destinationPoint->x, destinationPoint->y, destinationPoint->z));
+												m_waypointNodeRobj->Set_Position(
+														Vector3(destinationPoint->x, destinationPoint->y, destinationPoint->z));
+												WW3D::Render(*m_waypointNodeRobj, localRinfo);
+												lineExists = TRUE;
+											}
+										}
 
+										if (lineExists)
+										{
+											// Now render the lines in one pass!
 
-                  //////////////////////////////////////////////////////////////////////
-                  AIUpdateInterface *ai = enemy->getAI();
-				          Int goalSize = ai ? ai->friend_getWaypointGoalPathSize() : 0;
-				          Int gpIdx = ai ? ai->friend_getCurrentGoalPathIndex() : 0;
-                  if( ai )
-                  {
-                    Bool lineExists = FALSE;
+											m_line->Set_Color(Vector3(0.95f, 0.5f, 0.0f));
+											m_line->Set_Width(3.0f);
 
-					          const Coord3D *pos = enemy->getPosition();
-					          points[ numPoints++ ].Set( Vector3( pos->x, pos->y, pos->z ) );
+											m_line->Set_Points(numPoints, points);
+											m_line->Render(localRinfo);
+										}
+									}
+									//////////////////////////////////////////////////////////////////////
+								}
+							}
+						}
+					}
 
-                    if ( gpIdx >= 0 && gpIdx < goalSize )// Ooh, the enemy is in waypoint mode
-				            {
-
-					            for( int i = gpIdx; i < goalSize; i++ )
-					            {
-						            const Coord3D *waypoint = ai->friend_getGoalPathPosition( i );
-						            if( waypoint )
-						            {
-							            //Render line from previous point to current node.
-
-							            if( numPoints < MAX_DISPLAY_NODES + 1 )
-							            {
-								            points[ numPoints++ ].Set( Vector3( waypoint->x, waypoint->y, waypoint->z ) );
-							            }
-
-							            m_waypointNodeRobj->Set_Position(Vector3(waypoint->x,waypoint->y,waypoint->z));
-							            WW3D::Render(*m_waypointNodeRobj,localRinfo);
-                          lineExists = TRUE;
-						            }
-					            }
-                    }
-                    else // then enemy may be moving to a goal position
-                    {
-                      const Coord3D *destinationPoint = ai->getGoalPosition();
-                      if ( destinationPoint->length() > 1.0f )
-                      {
-								        points[ numPoints++ ].Set( Vector3( destinationPoint->x, destinationPoint->y, destinationPoint->z ) );
-							          m_waypointNodeRobj->Set_Position(Vector3(destinationPoint->x,destinationPoint->y,destinationPoint->z));
-							          WW3D::Render(*m_waypointNodeRobj,localRinfo);
-                        lineExists = TRUE;
-                      }
-                    }
-
-                    if ( lineExists )
-                    {
-					            //Now render the lines in one pass!
-
-                      m_line->Set_Color( Vector3( 0.95f, 0.5f, 0.0f ) );
-                      m_line->Set_Width( 3.0f );
-
-					            m_line->Set_Points( numPoints, points );
-					            m_line->Render( localRinfo );
-                    }
-                  }
-                  //////////////////////////////////////////////////////////////////////
-
-
-
-
-                }
-              }
-            }
-          }
-
-          break;// dont even bother with the rest, since this one listening outpost satisfies the single path-line limit
-        }
-
-
-
+					break; // dont even bother with the rest, since this one listening outpost satisfies the single path-line limit
+				}
 
 				ExitInterface *exitInterface = obj->getObjectExitInterface();
-				if( exitInterface )
+				if (exitInterface)
 				{
-
 					Coord3D exitPoint;
-					if ( ! exitInterface->getExitPosition(exitPoint))
+					if (!exitInterface->getExitPosition(exitPoint))
 						exitPoint = *obj->getPosition();
 
-					points[ numPoints ].Set( Vector3( exitPoint.x, exitPoint.y, exitPoint.z ) );
+					points[numPoints].Set(Vector3(exitPoint.x, exitPoint.y, exitPoint.z));
 					numPoints++;
 
 					Bool boxWrap = TRUE;
 					Coord3D naturalRallyPoint;
-					if (exitInterface->getNaturalRallyPoint(naturalRallyPoint, FALSE))//FALSE means "without the extra offset"
+					if (exitInterface->getNaturalRallyPoint(naturalRallyPoint, FALSE)) // FALSE means "without the extra offset"
 					{
-						if( !naturalRallyPoint.equals( exitPoint ) )
+						if (!naturalRallyPoint.equals(exitPoint))
 						{
-							points[ numPoints ].Set( Vector3( naturalRallyPoint.x, naturalRallyPoint.y, naturalRallyPoint.z ) );
+							points[numPoints].Set(Vector3(naturalRallyPoint.x, naturalRallyPoint.y, naturalRallyPoint.z));
 							numPoints++;
 						}
 						else
 						{
-							//Helipad rally point -- so don't use box wrapping.
+							// Helipad rally point -- so don't use box wrapping.
 							boxWrap = FALSE;
 						}
 					}
 					else
-						continue; //next drawable
+						continue; // next drawable
 
 					const Coord3D *rallyPoint = exitInterface->getRallyPoint();
-					if( rallyPoint )
+					if (rallyPoint)
 					{
-						if( boxWrap )
+						if (boxWrap)
 						{
-
-							//test to se whether the rally point flanks the side of the natural rally point
-							//to do this we find the two corners of the geometry extents that are nearest the natural rally point
-							// these define the natural rally point edge
-							// an intermediate point should be inserted at the corner nearest the rally point
-							const GeometryInfo& geom = obj->getGeometryInfo();
+							// test to se whether the rally point flanks the side of the natural rally point
+							// to do this we find the two corners of the geometry extents that are nearest the natural rally point
+							//  these define the natural rally point edge
+							//  an intermediate point should be inserted at the corner nearest the rally point
+							const GeometryInfo &geom = obj->getGeometryInfo();
 							const Coord3D *ctr = obj->getPosition();
 							Coord3D NRPDelta;
 							NRPDelta.x = naturalRallyPoint.x - exitPoint.x;
 							NRPDelta.y = naturalRallyPoint.y - exitPoint.y;
 							NRPDelta.z = 0.0f;
 
-
-							//This is a quick idiot test to se whether the rally line needs to wrap the box at all
+							// This is a quick idiot test to se whether the rally line needs to wrap the box at all
 							Coord3D wayOutPoint = NRPDelta;
 							wayOutPoint.normalize();
-							wayOutPoint.scale( 99999.9f );
+							wayOutPoint.scale(99999.9f);
 							Real wayOutLength = wayOutPoint.length();
 							wayOutPoint.add(&naturalRallyPoint);
 
-
-							//if the rallypoint is closer to the wayoutpoint than it is to the natural rally point then we definitely do not wrap
+							// if the rallypoint is closer to the wayoutpoint than it is to the natural rally point then we definitely do
+							// not wrap
 							Coord3D rallyToWayOutDelta = wayOutPoint;
 							rallyToWayOutDelta.sub(rallyPoint);
-							if ( (100.0f + rallyToWayOutDelta.length()) > wayOutLength)
+							if ((100.0f + rallyToWayOutDelta.length()) > wayOutLength)
 							{
-
-								//if we passed the above idiot test, now lets be sure by testing the dotproduct of the rp against the wayoutpoint
-								wayOutPoint.normalize();// a normal shooting straight out the door
-								//next comes the delta between the NRP and the RP
+								// if we passed the above idiot test, now lets be sure by testing the dotproduct of the rp against the
+								// wayoutpoint
+								wayOutPoint.normalize(); // a normal shooting straight out the door
+								// next comes the delta between the NRP and the RP
 								Coord3D NRPToRPDelta = naturalRallyPoint;
 								NRPToRPDelta.sub(rallyPoint);
 								NRPToRPDelta.normalize();
 								Real dot = NRPToRPDelta.x * wayOutPoint.x + NRPToRPDelta.y * wayOutPoint.y;
 								if (dot > 0)
 								{
-
 									Real angle = obj->getOrientation();
 									Real c = (Real)cos(angle);
 									Real s = (Real)sin(angle);
@@ -414,7 +385,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 									Real exs = geom.getMajorRadius() * s;
 									Real eys = geom.getMinorRadius() * s;
 
-									Coord2D corners[ 4 ];
+									Coord2D corners[4];
 
 									corners[0].x = ctr->x - exc - eys;
 									corners[0].y = ctr->y + eyc - exs;
@@ -425,8 +396,8 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 									corners[3].x = ctr->x - exc + eys;
 									corners[3].y = ctr->y - eyc - exs;
 
-									Coord2D *pNearElbow = NULL;//find the closest corner to the rallyPoint same end as door
-									Coord2D *pFarElbow = NULL; //find the closest corner to the rallypoint away from door
+									Coord2D *pNearElbow = NULL; // find the closest corner to the rallyPoint same end as door
+									Coord2D *pFarElbow = NULL; // find the closest corner to the rallypoint away from door
 									Coord2D *nearCandidate = NULL;
 									Coord3D cornerToRPDelta, cornerToExitDelta;
 									cornerToRPDelta.z = 0.0f;
@@ -434,15 +405,15 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 									Real elbowDistanceNear = 99999.9f;
 									Real elbowDistanceFar = 99999.9f;
 
-									for (UnsignedInt cornerIndex = 0; cornerIndex < 4; ++ cornerIndex)
+									for (UnsignedInt cornerIndex = 0; cornerIndex < 4; ++cornerIndex)
 									{
-										nearCandidate = &corners[cornerIndex];//for quicker array access
+										nearCandidate = &corners[cornerIndex]; // for quicker array access
 										cornerToExitDelta.x = exitPoint.x - nearCandidate->x;
 										cornerToExitDelta.y = exitPoint.y - nearCandidate->y;
 										cornerToExitDelta.normalize();
 
 										dot = cornerToExitDelta.x * wayOutPoint.x + cornerToExitDelta.y * wayOutPoint.y;
-										if ( dot < 0.0f )
+										if (dot < 0.0f)
 										{
 											cornerToRPDelta.x = rallyPoint->x - nearCandidate->x;
 											cornerToRPDelta.y = rallyPoint->y - nearCandidate->y;
@@ -462,24 +433,20 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 												pFarElbow = nearCandidate;
 											}
 										}
-
-
-
 									}
 
-									if (pNearElbow)//did we find a nearest corner?
+									if (pNearElbow) // did we find a nearest corner?
 									{
-										m_waypointNodeRobj->Set_Position(Vector3(pNearElbow->x,pNearElbow->y,ctr->z));
-										WW3D::Render(*m_waypointNodeRobj,localRinfo); //The little hockey puck
-										points[ numPoints ].Set( Vector3( pNearElbow->x, pNearElbow->y, ctr->z ) );
+										m_waypointNodeRobj->Set_Position(Vector3(pNearElbow->x, pNearElbow->y, ctr->z));
+										WW3D::Render(*m_waypointNodeRobj, localRinfo); // The little hockey puck
+										points[numPoints].Set(Vector3(pNearElbow->x, pNearElbow->y, ctr->z));
 										numPoints++;
 
-
-										//and for that matter did we find a far side coner?
-										if (pFarElbow)//did we find a nearest corner?
+										// and for that matter did we find a far side coner?
+										if (pFarElbow) // did we find a nearest corner?
 										{
 											// but let's test the dot of the first elbow against the rally point to find out
-											//whethet the rally point wraps around this one, too
+											// whethet the rally point wraps around this one, too
 											Coord3D firstElbowDelta;
 											firstElbowDelta.x = naturalRallyPoint.x - pNearElbow->x;
 											firstElbowDelta.y = naturalRallyPoint.y - pNearElbow->y;
@@ -493,43 +460,34 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 											firstToRPDelta.normalize();
 
 											dot = firstToRPDelta.x * firstElbowDelta.x + firstToRPDelta.y * firstElbowDelta.y;
-											if (dot < 0)// we have a second elbow
+											if (dot < 0) // we have a second elbow
 											{
-												m_waypointNodeRobj->Set_Position(Vector3(pFarElbow->x,pFarElbow->y,ctr->z));
-												WW3D::Render(*m_waypointNodeRobj,localRinfo); //The little hockey puck
-												points[ numPoints ].Set( Vector3( pFarElbow->x, pFarElbow->y, ctr->z ) );
+												m_waypointNodeRobj->Set_Position(Vector3(pFarElbow->x, pFarElbow->y, ctr->z));
+												WW3D::Render(*m_waypointNodeRobj, localRinfo); // The little hockey puck
+												points[numPoints].Set(Vector3(pFarElbow->x, pFarElbow->y, ctr->z));
 												numPoints++;
 											}
 										}
-
 									}
-
 								}
-
 							}
 						}
 
 						// Finally draw the line out to the RallyPoint
-						points[ numPoints ].Set( Vector3( rallyPoint->x, rallyPoint->y, rallyPoint->z ) );
+						points[numPoints].Set(Vector3(rallyPoint->x, rallyPoint->y, rallyPoint->z));
 						numPoints++;
-
 					}
 					else
 						continue;
 
-					m_waypointNodeRobj->Set_Position(Vector3(naturalRallyPoint.x,naturalRallyPoint.y,naturalRallyPoint.z));
-					WW3D::Render(*m_waypointNodeRobj,localRinfo); //The little hockey puck
+					m_waypointNodeRobj->Set_Position(Vector3(naturalRallyPoint.x, naturalRallyPoint.y, naturalRallyPoint.z));
+					WW3D::Render(*m_waypointNodeRobj, localRinfo); // The little hockey puck
 
+					m_line->Set_Points(numPoints, points);
+					m_line->Render(localRinfo);
 
-					m_line->Set_Points( numPoints, points );
-					m_line->Render( localRinfo );
-
-				}// end if exit interface
-
+				} // end if exit interface
 			}
 		}
-
 	}
 }
-
-

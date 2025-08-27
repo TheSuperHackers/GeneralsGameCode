@@ -16,7 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include "StdAfx.h"
 #include "SplashScreen.h"
 
@@ -29,7 +28,6 @@ SplashScreen::SplashScreen()
 	m_rect.bottom = 0;
 
 	m_loadString = "Cock & Beer";
-
 
 	LOGFONT lf;
 	lf.lfHeight = 12;
@@ -51,7 +49,7 @@ SplashScreen::SplashScreen()
 }
 
 //-------------------------------------------------------------------------------------------------
-void SplashScreen::setTextOutputLocation(const CRect& rect)
+void SplashScreen::setTextOutputLocation(const CRect &rect)
 {
 	m_rect = rect;
 }
@@ -60,7 +58,8 @@ void SplashScreen::setTextOutputLocation(const CRect& rect)
 void SplashScreen::outputText(UINT nIDString)
 {
 	CString str;
-	if (!str.LoadString(nIDString)) {
+	if (!str.LoadString(nIDString))
+	{
 		return;
 	}
 
@@ -75,14 +74,13 @@ void SplashScreen::OnPaint()
 	// we're extending the default behavior
 	CDialog::OnPaint();
 
-
 	CDC *dc = GetDC();
 
 	// Save off the old font
 	CFont *oldFont = dc->SelectObject(&m_font);
 	COLORREF oldRef = dc->SetTextColor(0x00000000);
 
-//	dc->DrawText(m_loadString, m_rect, DT_VCENTER | DT_LEFT);
+	//	dc->DrawText(m_loadString, m_rect, DT_VCENTER | DT_LEFT);
 
 	// restore the old font
 	dc->SelectObject(oldFont);
@@ -90,5 +88,5 @@ void SplashScreen::OnPaint()
 }
 
 BEGIN_MESSAGE_MAP(SplashScreen, CDialog)
-	ON_WM_PAINT()
+ON_WM_PAINT()
 END_MESSAGE_MAP()

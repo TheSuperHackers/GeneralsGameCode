@@ -69,13 +69,14 @@ class MeshClass;
 class W3DTerrainLogic;
 class W3DAssetManager;
 class SimpleSceneClass;
-enum BodyDamageType CPP_11(: Int);
+enum BodyDamageType CPP_11( : Int);
 
 //-----------------------------------------------------------------------------
 //           Type Defines
 //-----------------------------------------------------------------------------
 
-typedef enum {
+typedef enum
+{
 	FIXED_BRIDGE = 0,
 	SECTIONAL_BRIDGE = 1
 } TBridgeType;
@@ -85,61 +86,78 @@ class BridgeInfo;
 class W3DBridge
 {
 protected:
-	Vector3 m_start;						///< Drawing location
-	Vector3 m_end;							///< Drawing location
-	Real		m_scale;						///< Width scale.
-	Real		m_length;
-	TBridgeType	m_bridgeType;		///< Type of bridge.  Currently only 2 supported.
-	SphereClass m_bounds;				///< Bounding sphere for culling to set the visible flag.
+	Vector3 m_start; ///< Drawing location
+	Vector3 m_end; ///< Drawing location
+	Real m_scale; ///< Width scale.
+	Real m_length;
+	TBridgeType m_bridgeType; ///< Type of bridge.  Currently only 2 supported.
+	SphereClass m_bounds; ///< Bounding sphere for culling to set the visible flag.
 	TextureClass *m_bridgeTexture;
-	MeshClass *m_leftMesh;			///< W3D mesh models for the bridges.
-	Matrix3D	m_leftMtx;				///< Transform for the left mesh.
-	Real			m_minY;						///< min y vertex.
-	Real			m_maxY;						///< max y vertex.
-	Real			m_leftMinX;				///< m_leftMesh min x vertex.
-	Real			m_leftMaxX;				///< m_leftMesh max x vertex.
-	MeshClass *m_sectionMesh;		///< W3D mesh models for the bridges.
-	Matrix3D	m_sectionMtx;			///< Transform for the section mesh.
-	Real			m_sectionMinX;		///< m_sectionMesh min x vertex.
-	Real			m_sectionMaxX;		///< m_sectionMesh max x vertex.
-	MeshClass *m_rightMesh;			///< W3D mesh models for the bridges.
-	Matrix3D	m_rightMtx;				///< Transform for the right mesh.
-	Real			m_rightMinX;			///< m_rightMesh min x vertex.
-	Real			m_rightMaxX;			///< m_rightMesh max x vertex.
-	Int				m_firstIndex;			///< Starting index buffer.
-	Int				m_numVertex;			///< Number of vertex used.
-	Int				m_firstVertex;		///< First vertex.
-	Int				m_numPolygons;		///< Number of polygons to draw.
-	Bool			m_visible;
-	AsciiString m_templateName;					///< Name of the bridge type.
+	MeshClass *m_leftMesh; ///< W3D mesh models for the bridges.
+	Matrix3D m_leftMtx; ///< Transform for the left mesh.
+	Real m_minY; ///< min y vertex.
+	Real m_maxY; ///< max y vertex.
+	Real m_leftMinX; ///< m_leftMesh min x vertex.
+	Real m_leftMaxX; ///< m_leftMesh max x vertex.
+	MeshClass *m_sectionMesh; ///< W3D mesh models for the bridges.
+	Matrix3D m_sectionMtx; ///< Transform for the section mesh.
+	Real m_sectionMinX; ///< m_sectionMesh min x vertex.
+	Real m_sectionMaxX; ///< m_sectionMesh max x vertex.
+	MeshClass *m_rightMesh; ///< W3D mesh models for the bridges.
+	Matrix3D m_rightMtx; ///< Transform for the right mesh.
+	Real m_rightMinX; ///< m_rightMesh min x vertex.
+	Real m_rightMaxX; ///< m_rightMesh max x vertex.
+	Int m_firstIndex; ///< Starting index buffer.
+	Int m_numVertex; ///< Number of vertex used.
+	Int m_firstVertex; ///< First vertex.
+	Int m_numPolygons; ///< Number of polygons to draw.
+	Bool m_visible;
+	AsciiString m_templateName; ///< Name of the bridge type.
 	BodyDamageType m_curDamageState;
-	Bool			m_enabled;
+	Bool m_enabled;
 
 protected:
-	Int getModelVerticesFixed(VertexFormatXYZNDUV1 *destination_vb, Int curVertex, const Matrix3D &mtx, MeshClass *pMesh, RefRenderObjListIterator *pLightsIterator);
+	Int getModelVerticesFixed(
+			VertexFormatXYZNDUV1 *destination_vb,
+			Int curVertex,
+			const Matrix3D &mtx,
+			MeshClass *pMesh,
+			RefRenderObjListIterator *pLightsIterator);
 	Int getModelIndices(UnsignedShort *destination_ib, Int curIndex, Int vertexOffset, MeshClass *pMesh);
-	Int getModelVertices(VertexFormatXYZNDUV1 *destination_vb, Int curVertex,  Real xOffset,
-																Vector3 &vec, Vector3 &vecNormal, Vector3 &vecZ, Vector3 &offset,
-																const Matrix3D &mtx,
-																MeshClass *pMesh, RefRenderObjListIterator *pLightsIterator);
+	Int getModelVertices(
+			VertexFormatXYZNDUV1 *destination_vb,
+			Int curVertex,
+			Real xOffset,
+			Vector3 &vec,
+			Vector3 &vecNormal,
+			Vector3 &vecZ,
+			Vector3 &offset,
+			const Matrix3D &mtx,
+			MeshClass *pMesh,
+			RefRenderObjListIterator *pLightsIterator);
 
 public:
 	W3DBridge(void);
 	~W3DBridge(void);
 
 	void init(Vector3 fromLoc, Vector3 toLoc, AsciiString name);
-	AsciiString getTemplateName(void) {return m_templateName;}
-	const Vector3* getStart(void) const {return &m_start;}
-	const Vector3* getEnd(void) const { return &m_end;}
+	AsciiString getTemplateName(void) { return m_templateName; }
+	const Vector3 *getStart(void) const { return &m_start; }
+	const Vector3 *getEnd(void) const { return &m_end; }
 	Bool load(BodyDamageType curDamageState);
-	BodyDamageType getDamageState(void) {return m_curDamageState;};
-	void setDamageState(BodyDamageType state) { m_curDamageState = state;};
-	void getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatXYZNDUV1 *destination_vb, Int *curIndexP, Int *curVertexP, RefRenderObjListIterator *pLightsIterator);
-	Bool cullBridge(CameraClass * camera);						 ///< Culls the bridges.  Returns true if visibility changed.
-	void clearBridge(void);		///< Frees all objects associated with a bridge.
-	Bool isVisible(void) {return m_visible;};
-	Bool isEnabled(void) {return m_enabled;};
-	void setEnabled(Bool enable) {m_enabled = enable;};
+	BodyDamageType getDamageState(void) { return m_curDamageState; };
+	void setDamageState(BodyDamageType state) { m_curDamageState = state; };
+	void getIndicesNVertices(
+			UnsignedShort *destination_ib,
+			VertexFormatXYZNDUV1 *destination_vb,
+			Int *curIndexP,
+			Int *curVertexP,
+			RefRenderObjListIterator *pLightsIterator);
+	Bool cullBridge(CameraClass *camera); ///< Culls the bridges.  Returns true if visibility changed.
+	void clearBridge(void); ///< Frees all objects associated with a bridge.
+	Bool isVisible(void) { return m_visible; };
+	Bool isEnabled(void) { return m_enabled; };
+	void setEnabled(Bool enable) { m_enabled = enable; };
 	void renderBridge(Bool wireframe);
 	void getBridgeInfo(BridgeInfo *pInfo);
 };
@@ -150,42 +168,49 @@ public:
 //
 class W3DBridgeBuffer
 {
-friend class HeightMapRenderObjClass;
-public:
+	friend class HeightMapRenderObjClass;
 
+public:
 	W3DBridgeBuffer(void);
 	~W3DBridgeBuffer(void);
 	/// Empties the bridge buffer.
 	void clearAllBridges(void);
 	/// Draws the bridges.  Uses camera for culling.
-	void drawBridges(CameraClass * camera, Bool wireframe, TextureClass *cloudTexture);
+	void drawBridges(CameraClass *camera, Bool wireframe, TextureClass *cloudTexture);
 	/// Called when the view changes, and sort key needs to be recalculated.
 	/// Normally sortKey gets calculated when a bridge becomes visible.
-	void doFullUpdate(void) {m_updateVis = true;};
+	void doFullUpdate(void) { m_updateVis = true; };
 	void loadBridges(W3DTerrainLogic *pTerrainLogic, Bool saveGame); ///< Loads the bridges from the map objects list.
-	void worldBuilderUpdateBridgeTowers( W3DAssetManager *assetManager, SimpleSceneClass *scene );			///< for the editor and showing visual bridge towers
+	void worldBuilderUpdateBridgeTowers(W3DAssetManager *assetManager, SimpleSceneClass *scene); ///< for the editor and
+																																															 ///< showing visual bridge
+																																															 ///< towers
 	void updateCenter(CameraClass *camera, RefRenderObjListIterator *pLightsIterator);
-	enum { MAX_BRIDGE_VERTEX=8000,
-					MAX_BRIDGE_INDEX=2*8000,
-					MAX_BRIDGES=200};
+	enum
+	{
+		MAX_BRIDGE_VERTEX = 8000,
+		MAX_BRIDGE_INDEX = 2 * 8000,
+		MAX_BRIDGES = 200
+	};
+
 protected:
-	DX8VertexBufferClass	*m_vertexBridge;	///<Bridge vertex buffer.
-	DX8IndexBufferClass			*m_indexBridge;	///<indices defining a triangles for the bridge drawing.
+	DX8VertexBufferClass *m_vertexBridge; ///< Bridge vertex buffer.
+	DX8IndexBufferClass *m_indexBridge; ///< indices defining a triangles for the bridge drawing.
 	VertexMaterialClass *m_vertexMaterial;
-	TextureClass *m_bridgeTexture;	///<Bridges texture
-	Int			m_curNumBridgeVertices; ///<Number of vertices used in m_vertexBridge.
-	Int			m_curNumBridgeIndices;	///<Number of indices used in b_indexBridge;
-	W3DBridge	m_bridges[MAX_BRIDGES];			///< The bridge buffer.  All bridges are stored here.
-	Int			m_numBridges;						///< Number of bridges in m_bridges.
-	Bool		m_initialized;		///< True if the subsystem initialized.
-	Bool		m_updateVis;			///< True if the camera moved, and we need to recalculate visibility.
-	Bool		m_anythingChanged;	///< Set to true if visibility changed.
+	TextureClass *m_bridgeTexture; ///< Bridges texture
+	Int m_curNumBridgeVertices; ///< Number of vertices used in m_vertexBridge.
+	Int m_curNumBridgeIndices; ///< Number of indices used in b_indexBridge;
+	W3DBridge m_bridges[MAX_BRIDGES]; ///< The bridge buffer.  All bridges are stored here.
+	Int m_numBridges; ///< Number of bridges in m_bridges.
+	Bool m_initialized; ///< True if the subsystem initialized.
+	Bool m_updateVis; ///< True if the camera moved, and we need to recalculate visibility.
+	Bool m_anythingChanged; ///< Set to true if visibility changed.
 	/// Add a bridge at location.  Name is the gdf item name.
 	void addBridge(Vector3 fromLoc, Vector3 toLoc, AsciiString name, W3DTerrainLogic *pTerrainLogic, Dict *props);
-	void loadBridgesInVertexAndIndexBuffers(RefRenderObjListIterator *pLightsIterator); ///< Fills the index and vertex buffers for drawing.
-	void allocateBridgeBuffers(void);							 ///< Allocates the buffers.
-	void cull(CameraClass * camera);						 ///< Culls the bridges.
-	void freeBridgeBuffers(void);									 ///< Frees the index and vertex buffers.
+	void loadBridgesInVertexAndIndexBuffers(RefRenderObjListIterator *pLightsIterator); ///< Fills the index and vertex buffers
+																																											///< for drawing.
+	void allocateBridgeBuffers(void); ///< Allocates the buffers.
+	void cull(CameraClass *camera); ///< Culls the bridges.
+	void freeBridgeBuffers(void); ///< Frees the index and vertex buffers.
 };
 
-#endif  // end __W3DBRIDGE_BUFFER_H_
+#endif // end __W3DBRIDGE_BUFFER_H_

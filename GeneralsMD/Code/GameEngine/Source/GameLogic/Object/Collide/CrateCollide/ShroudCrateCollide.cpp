@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/AudioEventRTS.h"
 #include "Common/MiscAudio.h"
 #include "Common/Player.h"
@@ -38,27 +38,25 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ShroudCrateCollide::ShroudCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
+ShroudCrateCollide::ShroudCrateCollide(Thing *thing, const ModuleData *moduleData) : CrateCollide(thing, moduleData)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ShroudCrateCollide::~ShroudCrateCollide( void )
+ShroudCrateCollide::~ShroudCrateCollide(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ShroudCrateCollide::executeCrateBehavior( Object *other )
+Bool ShroudCrateCollide::executeCrateBehavior(Object *other)
 {
-	Player* cratePlayer = other->getControllingPlayer();
-	ThePartitionManager->revealMapForPlayer( cratePlayer->getPlayerIndex() );
+	Player *cratePlayer = other->getControllingPlayer();
+	ThePartitionManager->revealMapForPlayer(cratePlayer->getPlayerIndex());
 
-	//Play a crate pickup sound.
+	// Play a crate pickup sound.
 	AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateShroud;
-	soundToPlay.setObjectID( other->getID() );
+	soundToPlay.setObjectID(other->getID());
 	TheAudio->addAudioEvent(&soundToPlay);
 
 	return TRUE;
@@ -67,39 +65,36 @@ Bool ShroudCrateCollide::executeCrateBehavior( Object *other )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ShroudCrateCollide::crc( Xfer *xfer )
+void ShroudCrateCollide::crc(Xfer *xfer)
 {
-
 	// extend base class
-	CrateCollide::crc( xfer );
+	CrateCollide::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ShroudCrateCollide::xfer( Xfer *xfer )
+void ShroudCrateCollide::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CrateCollide::xfer( xfer );
+	CrateCollide::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ShroudCrateCollide::loadPostProcess( void )
+void ShroudCrateCollide::loadPostProcess(void)
 {
-
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

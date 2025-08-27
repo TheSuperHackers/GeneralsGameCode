@@ -80,30 +80,26 @@ static NameKeyType closeButtonID = NAMEKEY_INVALID;
 // MOTDSystem =================================================================
 /** Message of the day */
 //=============================================================================
-WindowMsgHandledType MOTDSystem( GameWindow *window, UnsignedInt msg,
-								 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType MOTDSystem(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-	switch( msg )
+	switch (msg)
 	{
-
 		// ------------------------------------------------------------------------
 		case GWM_CREATE:
 		{
-
 			// load id's needed
-			closeButtonID = TheNameKeyGenerator->nameToKey( "MOTD.wnd:CloseMOTD" );
+			closeButtonID = TheNameKeyGenerator->nameToKey("MOTD.wnd:CloseMOTD");
 
 			break;
 
-		}  // end create
+		} // end create
 
 		// ------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
-
 			break;
 
-		}  // end case
+		} // end case
 
 		// ------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -111,19 +107,17 @@ WindowMsgHandledType MOTDSystem( GameWindow *window, UnsignedInt msg,
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 
-			if( controlID == closeButtonID )
-				window->winHide( !window->winIsHidden() );
+			if (controlID == closeButtonID)
+				window->winHide(!window->winIsHidden());
 
 			break;
 
-		}  // end selected
+		} // end selected
 
 		default:
 			return MSG_IGNORED;
-	}  // end switch
+	} // end switch
 
 	return MSG_HANDLED;
 
-}  // end MOTDSystem
-
-
+} // end MOTDSystem

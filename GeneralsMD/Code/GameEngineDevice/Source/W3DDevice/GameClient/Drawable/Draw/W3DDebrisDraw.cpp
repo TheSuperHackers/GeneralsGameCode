@@ -29,7 +29,7 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 
-#include "Common/FileSystem.h"	// this is only here to pull in LOAD_TEST_ASSETS
+#include "Common/FileSystem.h" // this is only here to pull in LOAD_TEST_ASSETS
 #include "Common/GlobalData.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
@@ -50,9 +50,9 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DDebrisDraw::W3DDebrisDraw(Thing *thing, const ModuleData* moduleData) : DrawModule(thing, moduleData)
+W3DDebrisDraw::W3DDebrisDraw(Thing *thing, const ModuleData *moduleData) : DrawModule(thing, moduleData)
 {
-  m_renderObject = NULL;
+	m_renderObject = NULL;
 	for (int i = 0; i < STATECOUNT; ++i)
 		m_anims[i] = NULL;
 	m_fxFinal = NULL;
@@ -75,8 +75,8 @@ W3DDebrisDraw::~W3DDebrisDraw(void)
 	{
 		if (W3DDisplay::m_3DScene != NULL)
 			W3DDisplay::m_3DScene->Remove_Render_Object(m_renderObject);
-  	REF_PTR_RELEASE(m_renderObject);
- 		m_renderObject = NULL;
+		REF_PTR_RELEASE(m_renderObject);
+		m_renderObject = NULL;
 	}
 	for (int i = 0; i < STATECOUNT; ++i)
 	{
@@ -103,13 +103,13 @@ void W3DDebrisDraw::setFullyObscuredByShroud(Bool fullyObscured)
 //-------------------------------------------------------------------------------------------------
 void W3DDebrisDraw::setModelName(AsciiString name, Color color, ShadowType t)
 {
-  if (m_renderObject == NULL && !name.isEmpty())
+	if (m_renderObject == NULL && !name.isEmpty())
 	{
 		Int hexColor = 0;
 		if (color != 0)
 			hexColor = color | 0xFF000000;
 		m_renderObject = W3DDisplay::m_assetManager->Create_Render_Obj(name.str(), getDrawable()->getScale(), hexColor);
-		DEBUG_ASSERTCRASH(m_renderObject, ("Debris model %s not found!",name.str()));
+		DEBUG_ASSERTCRASH(m_renderObject, ("Debris model %s not found!", name.str()));
 		if (m_renderObject)
 		{
 			if (W3DDisplay::m_3DScene != NULL)
@@ -120,8 +120,8 @@ void W3DDebrisDraw::setModelName(AsciiString name, Color color, ShadowType t)
 			Matrix3D transform;
 			///@todo: Change back to identity once we figure out why objects show up at 0,0,0
 			/// OBJECT_PILE
-//			transform.Set(Vector3(0,0,9999));
-			transform.Set(Vector3(0,0,0));
+			//			transform.Set(Vector3(0,0,9999));
+			transform.Set(Vector3(0, 0, 0));
 			m_renderObject->Set_Transform(transform);
 		}
 
@@ -129,9 +129,9 @@ void W3DDebrisDraw::setModelName(AsciiString name, Color color, ShadowType t)
 		{
 			Shadow::ShadowTypeInfo shadowInfo;
 			shadowInfo.m_type = t;
-			shadowInfo.m_sizeX=0;
-			shadowInfo.m_sizeY=0;
-  		m_shadow = TheW3DShadowManager->addShadow(m_renderObject, &shadowInfo);
+			shadowInfo.m_sizeX = 0;
+			shadowInfo.m_sizeY = 0;
+			m_shadow = TheW3DShadowManager->addShadow(m_renderObject, &shadowInfo);
 		}
 		else
 		{
@@ -145,12 +145,11 @@ void W3DDebrisDraw::setModelName(AsciiString name, Color color, ShadowType t)
 		// save the model name and color
 		m_modelName = name;
 		m_modelColor = color;
-
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DDebrisDraw::setAnimNames(AsciiString initial, AsciiString flying, AsciiString final, const FXList* finalFX)
+void W3DDebrisDraw::setAnimNames(AsciiString initial, AsciiString flying, AsciiString final, const FXList *finalFX)
 {
 	int i;
 	for (i = 0; i < STATECOUNT; ++i)
@@ -178,15 +177,14 @@ void W3DDebrisDraw::setAnimNames(AsciiString initial, AsciiString flying, AsciiS
 	m_animInitial = initial;
 	m_animFlying = flying;
 	m_animFinal = final;
-
 }
 
 //-------------------------------------------------------------------------------------------------
-static Bool isAnimationComplete(RenderObjClass* r)
+static Bool isAnimationComplete(RenderObjClass *r)
 {
 	if (r->Class_ID() == RenderObjClass::CLASSID_HLOD)
 	{
-		HLodClass *hlod = (HLodClass*)r;
+		HLodClass *hlod = (HLodClass *)r;
 		return hlod->Is_Animation_Complete();
 	}
 
@@ -194,48 +192,40 @@ static Bool isAnimationComplete(RenderObjClass* r)
 }
 
 //-------------------------------------------------------------------------------------------------
-static Bool isNearlyZero(const Coord3D* vel)
+static Bool isNearlyZero(const Coord3D *vel)
 {
 	const Real TINY = 0.01f;
 	return fabs(vel->x) < TINY && fabs(vel->y) < TINY && fabs(vel->z) < TINY;
 }
 
 // ------------------------------------------------------------------------------------------------
-void W3DDebrisDraw::reactToTransformChange( const Matrix3D *oldMtx,
-																						const Coord3D *oldPos,
-																						Real oldAngle )
+void W3DDebrisDraw::reactToTransformChange(const Matrix3D *oldMtx, const Coord3D *oldPos, Real oldAngle)
 {
-
-	if( m_renderObject )
-		m_renderObject->Set_Transform( *getDrawable()->getTransformMatrix() );
-
+	if (m_renderObject)
+		m_renderObject->Set_Transform(*getDrawable()->getTransformMatrix());
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DDebrisDraw::doDrawModule(const Matrix3D* transformMtx)
+void W3DDebrisDraw::doDrawModule(const Matrix3D *transformMtx)
 {
 	if (m_renderObject)
 	{
-
 		Matrix3D scaledTransform;
 		if (getDrawable()->getInstanceScale() != 1.0f)
-		{	//do custom scaling of the W3D model.
-			scaledTransform=*transformMtx;
+		{ // do custom scaling of the W3D model.
+			scaledTransform = *transformMtx;
 			scaledTransform.Scale(getDrawable()->getInstanceScale());
 			transformMtx = &scaledTransform;
 			m_renderObject->Set_ObjectScale(getDrawable()->getInstanceScale());
 		}
 		m_renderObject->Set_Transform(*transformMtx);
 
-		static const RenderObjClass::AnimMode TheAnimModes[STATECOUNT] =
-		{
-			RenderObjClass::ANIM_MODE_ONCE,
-			RenderObjClass::ANIM_MODE_LOOP,
-			RenderObjClass::ANIM_MODE_ONCE
-		};
+		static const RenderObjClass::AnimMode TheAnimModes[STATECOUNT] = { RenderObjClass::ANIM_MODE_ONCE,
+																																			 RenderObjClass::ANIM_MODE_LOOP,
+																																			 RenderObjClass::ANIM_MODE_ONCE };
 
 		Int oldState = m_state;
-		Object* obj = getDrawable()->getObject();
+		Object *obj = getDrawable()->getObject();
 		const Int MIN_FINAL_FRAMES = 3;
 		if (m_state != FINAL && obj != NULL && !obj->isAboveTerrain() && m_frames > MIN_FINAL_FRAMES)
 		{
@@ -245,7 +235,7 @@ void W3DDebrisDraw::doDrawModule(const Matrix3D* transformMtx)
 		{
 			++m_state;
 		}
-		HAnimClass* hanim = m_anims[m_state];
+		HAnimClass *hanim = m_anims[m_state];
 		if (hanim != NULL && (hanim != m_renderObject->Peek_Animation() || oldState != m_state))
 		{
 			RenderObjClass::AnimMode m = TheAnimModes[m_state];
@@ -264,71 +254,68 @@ void W3DDebrisDraw::doDrawModule(const Matrix3D* transformMtx)
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void W3DDebrisDraw::crc( Xfer *xfer )
+void W3DDebrisDraw::crc(Xfer *xfer)
 {
-
 	// extend base class
-	DrawModule::crc( xfer );
+	DrawModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void W3DDebrisDraw::xfer( Xfer *xfer )
+void W3DDebrisDraw::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DrawModule::xfer( xfer );
+	DrawModule::xfer(xfer);
 
 	// model name
-	xfer->xferAsciiString( &m_modelName );
+	xfer->xferAsciiString(&m_modelName);
 
 	// model color
-	xfer->xferColor( &m_modelColor );
+	xfer->xferColor(&m_modelColor);
 
 	// set the model and color
-	if( xfer->getXferMode() == XFER_LOAD )
-		setModelName( m_modelName, m_modelColor, SHADOW_NONE );
+	if (xfer->getXferMode() == XFER_LOAD)
+		setModelName(m_modelName, m_modelColor, SHADOW_NONE);
 
 	// animation initial
-	xfer->xferAsciiString( &m_animInitial );
+	xfer->xferAsciiString(&m_animInitial);
 
 	// anim flying
-	xfer->xferAsciiString( &m_animFlying );
+	xfer->xferAsciiString(&m_animFlying);
 
 	// anim final
-	xfer->xferAsciiString( &m_animFinal );
+	xfer->xferAsciiString(&m_animFinal);
 
 	// when loading, set the animations
-	if( xfer->getXferMode() == XFER_LOAD )
-		setAnimNames( m_animInitial, m_animFlying, m_animFinal, NULL );
+	if (xfer->getXferMode() == XFER_LOAD)
+		setAnimNames(m_animInitial, m_animFlying, m_animFinal, NULL);
 
 	// state
-	xfer->xferInt( &m_state );
+	xfer->xferInt(&m_state);
 
 	// frames
-	xfer->xferInt( &m_frames );
+	xfer->xferInt(&m_frames);
 
 	// final stop
-	xfer->xferBool( &m_finalStop );
+	xfer->xferBool(&m_finalStop);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DDebrisDraw::loadPostProcess( void )
+void W3DDebrisDraw::loadPostProcess(void)
 {
-
 	// extend base class
 	DrawModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

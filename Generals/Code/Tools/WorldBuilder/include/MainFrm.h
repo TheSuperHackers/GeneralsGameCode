@@ -56,32 +56,29 @@
 
 class LayersList;
 
-
 class CMainFrame : public CFrameWnd
 {
-  DECLARE_DYNAMIC(CMainFrame)
+	DECLARE_DYNAMIC(CMainFrame)
 
 public:
 	CMainFrame();
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CMainFrame)
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+	virtual BOOL PreCreateWindow(CREATESTRUCT &cs);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CMainFrame();
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	virtual void Dump(CDumpContext &dc) const;
 #endif
 
 	static CMainFrame *GetMainFrame() { return TheMainFrame; }
@@ -90,60 +87,59 @@ public:
 	void OnEditGloballightoptions();
 	void ResetWindowPositions(void);
 	void adjustWindowSize(void);
-	Bool isAutoSaving(void) {return m_autoSaving;};
+	Bool isAutoSaving(void) { return m_autoSaving; };
 	void handleCameraChange(void);
 
-protected:  // control bar embedded members
-	CStatusBar					m_wndStatusBar;
-	CToolBar						m_wndToolBar;
-	CToolBar						m_floatingToolBar;
-	BrushOptions				m_brushOptions;
-	TerrainMaterial			m_terrainMaterial;
-	BlendMaterial				m_blendMaterial;
-	ObjectOptions				m_objectOptions;
-	FenceOptions				m_fenceOptions;
-	MapObjectProps			m_mapObjectProps;
-	MoundOptions				m_moundOptions;
-	RoadOptions					m_roadOptions;
-	FeatherOptions			m_featherOptions;
-	MeshMoldOptions			m_meshMoldOptions;
-	WaypointOptions			m_waypointOptions;
-	WaterOptions				m_waterOptions;
-	LightOptions				m_lightOptions;
-	BuildList						m_buildListOptions;
-	GroveOptions				m_groveOptions;
-	RampOptions					m_rampOptions;
-	ScorchOptions				m_scorchOptions;
-	COptionsPanel				m_noOptions;
-	GlobalLightOptions	m_globalLightOptions;
-	CameraOptions				m_cameraOptions;
-	LayersList*					m_layersList;
+protected: // control bar embedded members
+	CStatusBar m_wndStatusBar;
+	CToolBar m_wndToolBar;
+	CToolBar m_floatingToolBar;
+	BrushOptions m_brushOptions;
+	TerrainMaterial m_terrainMaterial;
+	BlendMaterial m_blendMaterial;
+	ObjectOptions m_objectOptions;
+	FenceOptions m_fenceOptions;
+	MapObjectProps m_mapObjectProps;
+	MoundOptions m_moundOptions;
+	RoadOptions m_roadOptions;
+	FeatherOptions m_featherOptions;
+	MeshMoldOptions m_meshMoldOptions;
+	WaypointOptions m_waypointOptions;
+	WaterOptions m_waterOptions;
+	LightOptions m_lightOptions;
+	BuildList m_buildListOptions;
+	GroveOptions m_groveOptions;
+	RampOptions m_rampOptions;
+	ScorchOptions m_scorchOptions;
+	COptionsPanel m_noOptions;
+	GlobalLightOptions m_globalLightOptions;
+	CameraOptions m_cameraOptions;
+	LayersList *m_layersList;
 
+	CWnd *m_curOptions;
+	Int m_curOptionsX;
+	Int m_curOptionsY;
+	Int m_optionsPanelWidth;
+	Int m_optionsPanelHeight;
+	Int m_globalLightOptionsWidth;
+	Int m_globalLightOptionsHeight;
 
-	CWnd							*m_curOptions;
-	Int								m_curOptionsX;
-	Int								m_curOptionsY;
-	Int								m_optionsPanelWidth;
-	Int								m_optionsPanelHeight;
-	Int								m_globalLightOptionsWidth;
-	Int								m_globalLightOptionsHeight;
+	Int m_3dViewWidth;
 
-	Int								m_3dViewWidth;
-
-	Bool							m_autoSaving;  ///< True if we are autosaving.
-	UINT							m_hAutoSaveTimer;  ///< Timer that triggers for autosave.
-	Bool							m_autoSave;    ///< If true, then do autosaves.
-	Int								m_autoSaveInterval;  ///< Time between autosaves in seconds.
+	Bool m_autoSaving; ///< True if we are autosaving.
+	UINT m_hAutoSaveTimer; ///< Timer that triggers for autosave.
+	Bool m_autoSave; ///< If true, then do autosaves.
+	Int m_autoSaveInterval; ///< Time between autosaves in seconds.
 
 	static CMainFrame *TheMainFrame;
 
-// Generated message map functions
+	// Generated message map functions
 protected:
 	//{{AFX_MSG(CMainFrame)
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnMove(int x, int y);
 	afx_msg void OnViewBrushfeedback();
-	afx_msg void OnUpdateViewBrushfeedback(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateViewBrushfeedback(CCmdUI *pCmdUI);
 	afx_msg void OnDestroy();
 	afx_msg void OnTimer(UINT nIDEvent);
 	afx_msg void OnEditCameraoptions();

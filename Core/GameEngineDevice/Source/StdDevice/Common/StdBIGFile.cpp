@@ -40,7 +40,6 @@
 
 StdBIGFile::StdBIGFile()
 {
-
 }
 
 //============================================================================
@@ -49,36 +48,38 @@ StdBIGFile::StdBIGFile()
 
 StdBIGFile::~StdBIGFile()
 {
-
 }
 
 //============================================================================
 // StdBIGFile::openFile
 //============================================================================
 
-File* StdBIGFile::openFile( const Char *filename, Int access )
+File *StdBIGFile::openFile(const Char *filename, Int access)
 {
 	const ArchivedFileInfo *fileInfo = getArchivedFileInfo(AsciiString(filename));
 
-	if (fileInfo == NULL) {
+	if (fileInfo == NULL)
+	{
 		return NULL;
 	}
 
 	RAMFile *ramFile = NULL;
 
 	if (BitIsSet(access, File::STREAMING))
-		ramFile = newInstance( StreamingArchiveFile );
+		ramFile = newInstance(StreamingArchiveFile);
 	else
-		ramFile = newInstance( RAMFile );
+		ramFile = newInstance(RAMFile);
 
 	ramFile->deleteOnClose();
-	if (ramFile->openFromArchive(m_file, fileInfo->m_filename, fileInfo->m_offset, fileInfo->m_size) == FALSE) {
+	if (ramFile->openFromArchive(m_file, fileInfo->m_filename, fileInfo->m_offset, fileInfo->m_size) == FALSE)
+	{
 		ramFile->close();
 		ramFile = NULL;
 		return NULL;
 	}
 
-	if ((access & File::WRITE) == 0) {
+	if ((access & File::WRITE) == 0)
+	{
 		// requesting read only access. Just return the RAM file.
 		return ramFile;
 	}
@@ -88,7 +89,8 @@ File* StdBIGFile::openFile( const Char *filename, Int access )
 
 	CONSTEXPR size_t bufferSize = 0;
 	File *localFile = TheLocalFileSystem->openFile(filename, access, bufferSize);
-	if (localFile != NULL) {
+	if (localFile != NULL)
+	{
 		ramFile->copyDataToFile(localFile);
 	}
 
@@ -102,16 +104,15 @@ File* StdBIGFile::openFile( const Char *filename, Int access )
 // StdBIGFile::closeAllFiles
 //============================================================================
 
-void StdBIGFile::closeAllFiles( void )
+void StdBIGFile::closeAllFiles(void)
 {
-
 }
 
 //============================================================================
 // StdBIGFile::getName
 //============================================================================
 
-AsciiString StdBIGFile::getName( void )
+AsciiString StdBIGFile::getName(void)
 {
 	return m_name;
 }
@@ -120,7 +121,7 @@ AsciiString StdBIGFile::getName( void )
 // StdBIGFile::getPath
 //============================================================================
 
-AsciiString StdBIGFile::getPath( void )
+AsciiString StdBIGFile::getPath(void)
 {
 	return m_path;
 }
@@ -129,29 +130,28 @@ AsciiString StdBIGFile::getPath( void )
 // StdBIGFile::setSearchPriority
 //============================================================================
 
-void StdBIGFile::setSearchPriority( Int new_priority )
+void StdBIGFile::setSearchPriority(Int new_priority)
 {
-
 }
 
 //============================================================================
 // StdBIGFile::close
 //============================================================================
 
-void StdBIGFile::close( void )
+void StdBIGFile::close(void)
 {
-
 }
 
 //============================================================================
 // StdBIGFile::getFileInfo
 //============================================================================
 
-Bool StdBIGFile::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const
+Bool StdBIGFile::getFileInfo(const AsciiString &filename, FileInfo *fileInfo) const
 {
 	const ArchivedFileInfo *tempFileInfo = getArchivedFileInfo(filename);
 
-	if (tempFileInfo == NULL) {
+	if (tempFileInfo == NULL)
+	{
 		return FALSE;
 	}
 
@@ -163,4 +163,3 @@ Bool StdBIGFile::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) co
 
 	return TRUE;
 }
-

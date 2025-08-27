@@ -26,12 +26,11 @@
 // Simple interface for storing/retreiving registry values
 // Author: Matthew D. Campbell, December 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Registry.h"
 
-
-Bool  getStringFromRegistry(HKEY root, AsciiString path, AsciiString key, AsciiString& val)
+Bool getStringFromRegistry(HKEY root, AsciiString path, AsciiString key, AsciiString &val)
 {
 	HKEY handle;
 	unsigned char buffer[256];
@@ -39,10 +38,10 @@ Bool  getStringFromRegistry(HKEY root, AsciiString path, AsciiString key, AsciiS
 	unsigned long type;
 	int returnValue;
 
-	if ((returnValue = RegOpenKeyEx( root, path.str(), 0, KEY_READ, &handle )) == ERROR_SUCCESS)
+	if ((returnValue = RegOpenKeyEx(root, path.str(), 0, KEY_READ, &handle)) == ERROR_SUCCESS)
 	{
-		returnValue = RegQueryValueEx(handle, key.str(), NULL, &type, (unsigned char *) &buffer, &size);
-		RegCloseKey( handle );
+		returnValue = RegQueryValueEx(handle, key.str(), NULL, &type, (unsigned char *)&buffer, &size);
+		RegCloseKey(handle);
 	}
 
 	if (returnValue == ERROR_SUCCESS)
@@ -54,7 +53,7 @@ Bool  getStringFromRegistry(HKEY root, AsciiString path, AsciiString key, AsciiS
 	return FALSE;
 }
 
-Bool getUnsignedIntFromRegistry(HKEY root, AsciiString path, AsciiString key, UnsignedInt& val)
+Bool getUnsignedIntFromRegistry(HKEY root, AsciiString path, AsciiString key, UnsignedInt &val)
 {
 	HKEY handle;
 	unsigned char buffer[4];
@@ -62,10 +61,10 @@ Bool getUnsignedIntFromRegistry(HKEY root, AsciiString path, AsciiString key, Un
 	unsigned long type;
 	int returnValue;
 
-	if ((returnValue = RegOpenKeyEx( root, path.str(), 0, KEY_READ, &handle )) == ERROR_SUCCESS)
+	if ((returnValue = RegOpenKeyEx(root, path.str(), 0, KEY_READ, &handle)) == ERROR_SUCCESS)
 	{
-		returnValue = RegQueryValueEx(handle, key.str(), NULL, &type, (unsigned char *) &buffer, &size);
-		RegCloseKey( handle );
+		returnValue = RegQueryValueEx(handle, key.str(), NULL, &type, (unsigned char *)&buffer, &size);
+		RegCloseKey(handle);
 	}
 
 	if (returnValue == ERROR_SUCCESS)
@@ -77,7 +76,7 @@ Bool getUnsignedIntFromRegistry(HKEY root, AsciiString path, AsciiString key, Un
 	return FALSE;
 }
 
-Bool setStringInRegistry( HKEY root, AsciiString path, AsciiString key, AsciiString val)
+Bool setStringInRegistry(HKEY root, AsciiString path, AsciiString key, AsciiString val)
 {
 	HKEY handle;
 	unsigned long type;
@@ -85,18 +84,19 @@ Bool setStringInRegistry( HKEY root, AsciiString path, AsciiString key, AsciiStr
 	int size;
 	char lpClass[] = "REG_NONE";
 
-	if ((returnValue = RegCreateKeyEx( root, path.str(), 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &handle, NULL )) == ERROR_SUCCESS)
+	if ((returnValue = RegCreateKeyEx(root, path.str(), 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &handle, NULL))
+			== ERROR_SUCCESS)
 	{
 		type = REG_SZ;
-		size = val.getLength()+1;
+		size = val.getLength() + 1;
 		returnValue = RegSetValueEx(handle, key.str(), 0, type, (unsigned char *)val.str(), size);
-		RegCloseKey( handle );
+		RegCloseKey(handle);
 	}
 
 	return (returnValue == ERROR_SUCCESS);
 }
 
-Bool setUnsignedIntInRegistry( HKEY root, AsciiString path, AsciiString key, UnsignedInt val)
+Bool setUnsignedIntInRegistry(HKEY root, AsciiString path, AsciiString key, UnsignedInt val)
 {
 	HKEY handle;
 	unsigned long type;
@@ -104,18 +104,19 @@ Bool setUnsignedIntInRegistry( HKEY root, AsciiString path, AsciiString key, Uns
 	int size;
 	char lpClass[] = "REG_NONE";
 
-	if ((returnValue = RegCreateKeyEx( root, path.str(), 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &handle, NULL )) == ERROR_SUCCESS)
+	if ((returnValue = RegCreateKeyEx(root, path.str(), 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &handle, NULL))
+			== ERROR_SUCCESS)
 	{
 		type = REG_DWORD;
 		size = 4;
 		returnValue = RegSetValueEx(handle, key.str(), 0, type, (unsigned char *)&val, size);
-		RegCloseKey( handle );
+		RegCloseKey(handle);
 	}
 
 	return (returnValue == ERROR_SUCCESS);
 }
 
-Bool GetStringFromGeneralsRegistry(AsciiString path, AsciiString key, AsciiString& val)
+Bool GetStringFromGeneralsRegistry(AsciiString path, AsciiString key, AsciiString &val)
 {
 	AsciiString fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Generals";
 
@@ -129,7 +130,7 @@ Bool GetStringFromGeneralsRegistry(AsciiString path, AsciiString key, AsciiStrin
 	return getStringFromRegistry(HKEY_CURRENT_USER, fullPath.str(), key.str(), val);
 }
 
-Bool GetStringFromRegistry(AsciiString path, AsciiString key, AsciiString& val)
+Bool GetStringFromRegistry(AsciiString path, AsciiString key, AsciiString &val)
 {
 	AsciiString fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour";
 
@@ -143,7 +144,7 @@ Bool GetStringFromRegistry(AsciiString path, AsciiString key, AsciiString& val)
 	return getStringFromRegistry(HKEY_CURRENT_USER, fullPath.str(), key.str(), val);
 }
 
-Bool GetUnsignedIntFromRegistry(AsciiString path, AsciiString key, UnsignedInt& val)
+Bool GetUnsignedIntFromRegistry(AsciiString path, AsciiString key, UnsignedInt &val)
 {
 	AsciiString fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour";
 
@@ -162,9 +163,12 @@ AsciiString GetRegistryLanguage(void)
 	static Bool cached = FALSE;
 	// NOTE: static causes a memory leak, but we have to keep it because the value is cached.
 	static AsciiString val = "english";
-	if (cached) {
+	if (cached)
+	{
 		return val;
-	} else {
+	}
+	else
+	{
 		cached = TRUE;
 	}
 

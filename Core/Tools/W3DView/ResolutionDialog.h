@@ -25,7 +25,6 @@
 
 #include "resource.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // ResolutionDialogClass
@@ -33,52 +32,53 @@
 /////////////////////////////////////////////////////////////////////////////
 class ResolutionDialogClass : public CDialog
 {
-// Construction
+	// Construction
 public:
-	ResolutionDialogClass(CWnd* pParent = NULL);   // standard constructor
+	ResolutionDialogClass(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(ResolutionDialogClass)
-	enum { IDD = IDD_RESOLUTION };
-	CListCtrl	m_ListCtrl;
+	enum
+	{
+		IDD = IDD_RESOLUTION
+	};
+	CListCtrl m_ListCtrl;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ResolutionDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(ResolutionDialogClass)
 	virtual BOOL OnInitDialog();
 	virtual void OnOK();
-	afx_msg void OnDblclkResolutionListCtrl(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDblclkResolutionListCtrl(NMHDR *pNMHDR, LRESULT *pResult);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-/*public:
+	/*public:
 
-	///////////////////////////////////////////////////////////////////
-	//	Public methods
-	///////////////////////////////////////////////////////////////////
-	int		Get_Width (void);
-	int		Get_Height (void);
-	int		Get_BPP (void);
+		///////////////////////////////////////////////////////////////////
+		//	Public methods
+		///////////////////////////////////////////////////////////////////
+		int		Get_Width (void);
+		int		Get_Height (void);
+		int		Get_BPP (void);
 
-private:
+	private:
 
-	///////////////////////////////////////////////////////////////////
-	//	Private member data
-	///////////////////////////////////////////////////////////////////
-	int m_Width;
-	int m_Height;
-	int m_BPP;*/
+		///////////////////////////////////////////////////////////////////
+		//	Private member data
+		///////////////////////////////////////////////////////////////////
+		int m_Width;
+		int m_Height;
+		int m_BPP;*/
 };
 
 //{{AFX_INSERT_LOCATION}}

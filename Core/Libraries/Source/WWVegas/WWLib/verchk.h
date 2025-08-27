@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -45,10 +44,10 @@
 #include <windows.h>
 
 // Obtain version information from the specified file.
-bool GetVersionInfo(char* filename, VS_FIXEDFILEINFO* fileInfo);
+bool GetVersionInfo(char *filename, VS_FIXEDFILEINFO *fileInfo);
 
 // Retreive creation time of specified file.
-bool GetFileCreationTime(char* filename, FILETIME* createTime);
+bool GetFileCreationTime(char *filename, FILETIME *createTime);
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -62,8 +61,6 @@ bool GetFileCreationTime(char* filename, FILETIME* createTime);
 // older, 0 if they are the same, and +1 if the current process is newer.
 //
 ////////////////////////////////////////////////////////////////////////
-int Compare_EXE_Version (int app_instance, const char *filename);
-
+int Compare_EXE_Version(int app_instance, const char *filename);
 
 #endif //__VERCHK_H
-

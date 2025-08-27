@@ -27,19 +27,19 @@ namespace patchget
 
 class Process
 {
- public:
-           Process();
+public:
+	Process();
 
-  char     directory[256];
-  char     command[256];
-  char     args[256];
-  HANDLE   hProcess;
-  HANDLE   hThread;
+	char directory[256];
+	char command[256];
+	char args[256];
+	HANDLE hProcess;
+	HANDLE hThread;
 };
 
-//bit8 Read_Process_Info(ConfigFile &config,OUT Process &info);
+// bit8 Read_Process_Info(ConfigFile &config,OUT Process &info);
 bit8 Create_Process(Process &process);
-bit8 Wait_Process(Process &process, DWORD *exit_code=NULL);
+bit8 Wait_Process(Process &process, DWORD *exit_code = NULL);
 
 } // namespace patchget
 

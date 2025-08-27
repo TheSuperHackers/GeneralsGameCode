@@ -35,14 +35,12 @@
  *  wwSceneSetup  -- Allows the user to select how many LOD and damage models to create.       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 /*
 ** SceneSetup.cpp - Implements the "wwSceneSetup" MAXScript function to
 ** present a nice dialog to the user for getting a number of parameters
 ** that will governs the number, placement, and type of LOD and Damage
 ** models created in the scene.
 */
-
 
 #include "SceneSetupDlg.h"
 
@@ -52,12 +50,10 @@
 #include <arrays.h>
 #include <definsfn.h>
 
-
 /*
 ** Let MAXScript know we're implementing new built-in functions.
 */
 def_visible_primitive(scene_setup, "wwSceneSetup");
-
 
 /***********************************************************************************************
  * scene_setup_cf - MAXScript function wwSceneSetup                                            *
@@ -82,17 +78,17 @@ def_visible_primitive(scene_setup, "wwSceneSetup");
  * HISTORY:                                                                                    *
  *   9/27/1999  AJA : Created.                                                                 *
  *=============================================================================================*/
-Value * scene_setup_cf (Value **arg_list, int count)
+Value *scene_setup_cf(Value **arg_list, int count)
 {
 	// We don't want any arguments for this function.
 	check_arg_count("wwSceneSetup", 1, count);
 	type_check(arg_list[0], Array, "Parameter array");
 
-	SceneSetupDlg	dlg(MAXScript_interface);
-	one_typed_value_local(Array* result);
+	SceneSetupDlg dlg(MAXScript_interface);
+	one_typed_value_local(Array * result);
 
 	// Read the initial values out of the array.
-	Array *args = (Array*)(arg_list[0]);
+	Array *args = (Array *)(arg_list[0]);
 	dlg.m_LodCount = (args->get(1))->to_int();
 	dlg.m_LodOffset = (args->get(2))->to_float();
 	dlg.m_LodProc = (args->get(3))->to_int();
@@ -119,5 +115,3 @@ Value * scene_setup_cf (Value **arg_list, int count)
 	// Return the array of new values.
 	return_value(vl.result);
 }
-
-

@@ -63,13 +63,11 @@ class Object;
 */
 class Energy : public Snapshot
 {
-
 public:
-
 	Energy();
 
 	// reset energy information to base values.
-	void init( Player *owner)
+	void init(Player *owner)
 	{
 		m_energyProduction = 0;
 		m_energyConsumption = 0;
@@ -89,16 +87,16 @@ public:
 	void adjustPower(Int powerDelta, Bool adding);
 
 	/// new 'obj' will now add/subtract from this energy construct
-	void objectEnteringInfluence( Object *obj );
+	void objectEnteringInfluence(Object *obj);
 
 	/// 'obj' will now no longer add/subtrack from this energy construct
-	void objectLeavingInfluence( Object *obj );
+	void objectLeavingInfluence(Object *obj);
 
 	/** Adds an energy bonus to the player's pool if the power bonus status bit is set */
-	void addPowerBonus( Object *obj );
-	void removePowerBonus( Object *obj );
+	void addPowerBonus(Object *obj);
+	void removePowerBonus(Object *obj);
 
-	void setPowerSabotagedTillFrame( UnsignedInt frame ) { m_powerSabotagedTillFrame = frame; }
+	void setPowerSabotagedTillFrame(UnsignedInt frame) { m_powerSabotagedTillFrame = frame; }
 	UnsignedInt getPowerSabotagedTillFrame() const { return m_powerSabotagedTillFrame; }
 
 	/**
@@ -107,22 +105,19 @@ public:
 	Real getEnergySupplyRatio() const;
 
 protected:
-
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
+	virtual void loadPostProcess(void);
 
 	void addProduction(Int amt);
 	void addConsumption(Int amt);
 
 private:
-
-	Int		m_energyProduction;		///< level of energy production, in kw
-	Int		m_energyConsumption;	///< level of energy consumption, in kw
+	Int m_energyProduction; ///< level of energy production, in kw
+	Int m_energyConsumption; ///< level of energy consumption, in kw
 	UnsignedInt m_powerSabotagedTillFrame; ///< If power is sabotaged, the frame will be greater than now.
-	Player *m_owner;						///< Tight pointer to the Player I am intrinsic to.
+	Player *m_owner; ///< Tight pointer to the Player I am intrinsic to.
 };
 
 #endif // _ENERGY_H_
-

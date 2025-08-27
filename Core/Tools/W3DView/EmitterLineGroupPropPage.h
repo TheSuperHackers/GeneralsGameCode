@@ -32,7 +32,6 @@
 class EmitterInstanceListClass;
 class ColorBarClass;
 
-
 /////////////////////////////////////////////////////////////////////////////
 // EmitterLineGroupPropPageClass dialog
 
@@ -40,28 +39,30 @@ class EmitterLineGroupPropPageClass : public CPropertyPage
 {
 	DECLARE_DYNCREATE(EmitterLineGroupPropPageClass)
 
-// Construction
+	// Construction
 public:
 	EmitterLineGroupPropPageClass();
 	~EmitterLineGroupPropPageClass();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(EmitterLineGroupPropPageClass)
-	enum { IDD = IDD_PROP_PAGE_EMITTER_LINEGROUP };
-	CSpinButtonCtrl	m_BlurTimeRandomSpin;
+	enum
+	{
+		IDD = IDD_PROP_PAGE_EMITTER_LINEGROUP
+	};
+	CSpinButtonCtrl m_BlurTimeRandomSpin;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(EmitterLineGroupPropPageClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(EmitterLineGroupPropPageClass)
@@ -70,7 +71,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-
 	/////////////////////////////////////////////////////////
 	//
 	//	Public methods
@@ -79,35 +79,37 @@ public:
 	//
 	//	Inline accessors
 	//
-	EmitterInstanceListClass *	Get_Emitter (void) const { return m_pEmitterList; }
-	void								Set_Emitter (EmitterInstanceListClass *pemitter_list) { m_pEmitterList = pemitter_list; Initialize (); }
-	bool								Is_Data_Valid (void) const { return m_bValid; }
+	EmitterInstanceListClass *Get_Emitter(void) const { return m_pEmitterList; }
+	void Set_Emitter(EmitterInstanceListClass *pemitter_list)
+	{
+		m_pEmitterList = pemitter_list;
+		Initialize();
+	}
+	bool Is_Data_Valid(void) const { return m_bValid; }
 
-	void								Get_Blur_Time_Keyframes (ParticlePropertyStruct<float> &blurtimes)	{ blurtimes = m_BlurTimes; }
-	void								On_Lifetime_Changed (float lifetime);
+	void Get_Blur_Time_Keyframes(ParticlePropertyStruct<float> &blurtimes) { blurtimes = m_BlurTimes; }
+	void On_Lifetime_Changed(float lifetime);
 
-	void								Initialize (void);
-	void								Update_Blur_Times (void);
+	void Initialize(void);
+	void Update_Blur_Times(void);
 
 private:
-
-	float								Normalize_Blur_Time(float blur);
-	float								Normalize_Blur_Time(float blur,float min,float max);
-	float								Denormalize_Blur_Time(float normalized_val);
+	float Normalize_Blur_Time(float blur);
+	float Normalize_Blur_Time(float blur, float min, float max);
+	float Denormalize_Blur_Time(float normalized_val);
 
 	/////////////////////////////////////////////////////////
 	//
 	//	Private member data
 	//
-	EmitterInstanceListClass *			m_pEmitterList;
-	bool										m_bValid;
+	EmitterInstanceListClass *m_pEmitterList;
+	bool m_bValid;
 
-	ColorBarClass *						m_BlurTimeBar;
-	ParticlePropertyStruct<float>		m_BlurTimes;
-	float										m_Lifetime;
-	float										m_MinBlurTime;
-	float										m_MaxBlurTime;
-
+	ColorBarClass *m_BlurTimeBar;
+	ParticlePropertyStruct<float> m_BlurTimes;
+	float m_Lifetime;
+	float m_MinBlurTime;
+	float m_MaxBlurTime;
 };
 
 //{{AFX_INSERT_LOCATION}}

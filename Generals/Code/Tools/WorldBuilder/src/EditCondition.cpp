@@ -28,60 +28,56 @@
 /////////////////////////////////////////////////////////////////////////////
 // EditCondition dialog
 
-
-EditCondition::EditCondition(CWnd* pParent /*=NULL*/)
-	: CDialog(EditCondition::IDD, pParent)
+EditCondition::EditCondition(CWnd *pParent /*=NULL*/) : CDialog(EditCondition::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(EditCondition)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void EditCondition::DoDataExchange(CDataExchange* pDX)
+void EditCondition::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(EditCondition)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(EditCondition, CDialog)
-	//{{AFX_MSG_MAP(EditCondition)
-	ON_CBN_SELCHANGE(IDC_CONDITION_TYPE, OnSelchangeConditionType)
-	ON_WM_TIMER()
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(EditCondition)
+ON_CBN_SELCHANGE(IDC_CONDITION_TYPE, OnSelchangeConditionType)
+ON_WM_TIMER()
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // EditCondition message handlers
 
-
 BOOL EditCondition::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-
-//	CDC *pDc =GetDC();
+	//	CDC *pDc =GetDC();
 
 	CWnd *pWnd = GetDlgItem(IDC_RICH_EDIT_HERE);
 	CRect rect;
 	pWnd->GetWindowRect(&rect);
 
 	ScreenToClient(&rect);
-	rect.DeflateRect(2,2,2,2);
-	m_myEditCtrl.Create(WS_CHILD | ES_MULTILINE, rect, this, IDC_RICH_EDIT_HERE+1);
+	rect.DeflateRect(2, 2, 2, 2);
+	m_myEditCtrl.Create(WS_CHILD | ES_MULTILINE, rect, this, IDC_RICH_EDIT_HERE + 1);
 	m_myEditCtrl.ShowWindow(SW_SHOW);
 	m_myEditCtrl.SetEventMask(m_myEditCtrl.GetEventMask() | ENM_LINK | ENM_SELCHANGE);
 
 	CComboBox *pCmbo = (CComboBox *)GetDlgItem(IDC_CONDITION_TYPE);
 	pCmbo->ResetContent();
 	Int i;
-	for (i=0; i<Condition::NUM_ITEMS; i++) {
+	for (i = 0; i < Condition::NUM_ITEMS; i++)
+	{
 		const ConditionTemplate *pTemplate = TheScriptEngine->getConditionTemplate(i);
 		Int ndx = pCmbo->AddString(pTemplate->getName().str());
-		if (i == m_condition->getConditionType()) {
+		if (i == m_condition->getConditionType())
+		{
 			pCmbo->SetCurSel(ndx);
 		}
 	}
@@ -90,19 +86,19 @@ BOOL EditCondition::OnInitDialog()
 	m_myEditCtrl.SetSel(-1, -1);
 	formatConditionText(-1);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+							 // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-
-void EditCondition::formatConditionText(Int parameterNdx) {
+void EditCondition::formatConditionText(Int parameterNdx)
+{
 	CHARFORMAT2 cf;
 	m_updating = true;
 	long startSel, endSel;
 	m_myEditCtrl.GetSel(startSel, endSel);
 	memset(&cf, 0, sizeof(cf));
 	cf.cbSize = sizeof(cf);
-	cf.dwMask = CFM_FACE | CFM_SIZE |CFM_CHARSET | CFM_BOLD | CFM_LINK;
+	cf.dwMask = CFM_FACE | CFM_SIZE | CFM_CHARSET | CFM_BOLD | CFM_LINK;
 	cf.bCharSet = DEFAULT_CHARSET;
 	cf.yHeight = 14;
 	cf.bPitchAndFamily = FF_DONTCARE;
@@ -112,12 +108,12 @@ void EditCondition::formatConditionText(Int parameterNdx) {
 
 	m_myEditCtrl.SetSel(0, 1000);
 	m_myEditCtrl.SetSelectionCharFormat(cf);
- 	m_myEditCtrl.SetReadOnly();
+	m_myEditCtrl.SetReadOnly();
 	// Set up the links.
-	cf.dwMask =  CFE_UNDERLINE | CFM_LINK | CFM_COLOR;
+	cf.dwMask = CFE_UNDERLINE | CFM_LINK | CFM_COLOR;
 
 	cf.dwEffects = CFE_LINK | CFE_UNDERLINE;
-	cf.crTextColor = RGB(0,0,255);
+	cf.crTextColor = RGB(0, 0, 255);
 
 	AsciiString strings[MAX_PARMS];
 	Int curChar = 0;
@@ -125,21 +121,28 @@ void EditCondition::formatConditionText(Int parameterNdx) {
 	Int numStrings = m_condition->getUiStrings(strings);
 	Int i;
 	AsciiString warningText;
-	for (i=0; i<MAX_PARMS; i++) {
-		if (i<numStrings) {
+	for (i = 0; i < MAX_PARMS; i++)
+	{
+		if (i < numStrings)
+		{
 			curChar += strings[i].getLength();
 		}
-		if (i<m_condition->getNumParameters()) {
+		if (i < m_condition->getNumParameters())
+		{
 			numChars = m_condition->getParameter(i)->getUiText().getLength();
 			warningText.concat(EditParameter::getWarningText(m_condition->getParameter(i)));
-			m_myEditCtrl.SetSel(curChar, curChar+numChars);
-			if (numChars==0) continue;
-			if (i==parameterNdx) {
+			m_myEditCtrl.SetSel(curChar, curChar + numChars);
+			if (numChars == 0)
+				continue;
+			if (i == parameterNdx)
+			{
 				startSel = curChar;
-				endSel = curChar+numChars;
-				cf.crTextColor = RGB(0,0,0); //black
-			}	else {
-				cf.crTextColor = RGB(0,0,255); //blue
+				endSel = curChar + numChars;
+				cf.crTextColor = RGB(0, 0, 0); // black
+			}
+			else
+			{
+				cf.crTextColor = RGB(0, 0, 255); // blue
 			}
 			m_myEditCtrl.SetSelectionCharFormat(cf);
 			curChar += numChars;
@@ -147,14 +150,19 @@ void EditCondition::formatConditionText(Int parameterNdx) {
 	}
 
 	CString cstr;
-	if (warningText.isEmpty()) {
-		if (cstr.LoadString(IDS_SCRIPT_NOWARNINGS)) {
+	if (warningText.isEmpty())
+	{
+		if (cstr.LoadString(IDS_SCRIPT_NOWARNINGS))
+		{
 			GetDlgItem(IDC_WARNINGS_CAPTION)->SetWindowText(cstr);
 		}
 		GetDlgItem(IDC_WARNINGS_CAPTION)->EnableWindow(false);
 		GetDlgItem(IDC_WARNINGS)->SetWindowText("");
-	} else {
-		if (cstr.LoadString(IDS_SCRIPT_WARNINGS)) {
+	}
+	else
+	{
+		if (cstr.LoadString(IDS_SCRIPT_WARNINGS))
+		{
 			GetDlgItem(IDC_WARNINGS_CAPTION)->SetWindowText(cstr);
 		}
 		GetDlgItem(IDC_WARNINGS_CAPTION)->EnableWindow(true);
@@ -166,30 +174,36 @@ void EditCondition::formatConditionText(Int parameterNdx) {
 	m_updating = false;
 }
 
-
-
-BOOL EditCondition::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
+BOOL EditCondition::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult)
 {
-	if (LOWORD(wParam) == IDC_RICH_EDIT_HERE+1) {
+	if (LOWORD(wParam) == IDC_RICH_EDIT_HERE + 1)
+	{
 		NMHDR *pHdr = (NMHDR *)lParam;
-		if (pHdr->hwndFrom == m_myEditCtrl.m_hWnd && pHdr->code == EN_LINK) {
+		if (pHdr->hwndFrom == m_myEditCtrl.m_hWnd && pHdr->code == EN_LINK)
+		{
 			ENLINK *pLink = (ENLINK *)pHdr;
 			CHARRANGE chrg = pLink->chrg;
-			if (pLink->msg == WM_LBUTTONDOWN) {
+			if (pLink->msg == WM_LBUTTONDOWN)
+			{
 				// Determine which parameter.
 				Int numChars = 0;
 				Int curChar = 0;
 				AsciiString strings[MAX_PARMS];
 				Int numStrings = m_condition->getUiStrings(strings);
 				Int i;
-				for (i=0; i<MAX_PARMS; i++) {
-					if (i<numStrings) {
+				for (i = 0; i < MAX_PARMS; i++)
+				{
+					if (i < numStrings)
+					{
 						curChar += strings[i].getLength();
 					}
-					if (i<m_condition->getNumParameters()) {
+					if (i < m_condition->getNumParameters())
+					{
 						numChars = m_condition->getParameter(i)->getUiText().getLength();
-						if (curChar == chrg.cpMin && curChar+numChars == chrg.cpMax) {
-							if (IDOK==EditParameter::edit(m_condition->getParameter(i))) {
+						if (curChar == chrg.cpMin && curChar + numChars == chrg.cpMax)
+						{
+							if (IDOK == EditParameter::edit(m_condition->getParameter(i)))
+							{
 								m_myEditCtrl.SetWindowText(m_condition->getUiText().str());
 								m_curEditParameter = i;
 								this->PostMessage(WM_TIMER, 0, 0);
@@ -202,10 +216,12 @@ BOOL EditCondition::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			}
 			CHARRANGE curChrg;
 			m_myEditCtrl.GetSel(curChrg);
-			if (curChrg.cpMin == chrg.cpMin && curChrg.cpMax == chrg.cpMax) {
+			if (curChrg.cpMin == chrg.cpMin && curChrg.cpMax == chrg.cpMax)
+			{
 				return true;
 			}
-			if (m_modifiedTextColor) {
+			if (m_modifiedTextColor)
+			{
 				formatConditionText(-1);
 			}
 			m_curLinkChrg = chrg;
@@ -214,20 +230,25 @@ BOOL EditCondition::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			memset(&cf, 0, sizeof(cf));
 			cf.cbSize = sizeof(cf);
 			cf.dwMask = CFM_COLOR;
-			cf.crTextColor = RGB(0,0,0);
+			cf.crTextColor = RGB(0, 0, 0);
 			m_myEditCtrl.SetSelectionCharFormat(cf);
 			m_modifiedTextColor = true;
 			return true;
-		}	else 	if (pHdr->hwndFrom == m_myEditCtrl.m_hWnd && pHdr->code == EN_SELCHANGE) {
-			if (m_updating) {
+		}
+		else if (pHdr->hwndFrom == m_myEditCtrl.m_hWnd && pHdr->code == EN_SELCHANGE)
+		{
+			if (m_updating)
+			{
 				return true;
 			}
 			CHARRANGE curChrg;
 			m_myEditCtrl.GetSel(curChrg);
-			if (curChrg.cpMin == m_curLinkChrg.cpMin && curChrg.cpMax == m_curLinkChrg.cpMax) {
+			if (curChrg.cpMin == m_curLinkChrg.cpMin && curChrg.cpMax == m_curLinkChrg.cpMax)
+			{
 				return true;
 			}
-			if (m_modifiedTextColor) {
+			if (m_modifiedTextColor)
+			{
 				formatConditionText(-1);
 			}
 		}
@@ -242,9 +263,11 @@ void EditCondition::OnSelchangeConditionType()
 	CString str;
 	pCmbo->GetWindowText(str);
 	Int i;
-	for (i=0; i<ScriptAction::NUM_ITEMS; i++) {
+	for (i = 0; i < ScriptAction::NUM_ITEMS; i++)
+	{
 		const ConditionTemplate *pTemplate = TheScriptEngine->getConditionTemplate(i);
-		if (str == pTemplate->getName().str()) {
+		if (str == pTemplate->getName().str())
+		{
 			index = i;
 			break;
 		}

@@ -37,14 +37,12 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
 
 #ifndef RINFO_H
 #define RINFO_H
-
 
 #include "always.h"
 #include "bittype.h"
@@ -55,15 +53,14 @@
 #include "matrix3d.h"
 #include "matrix4.h"
 
-
 class MaterialPassClass;
 class LightEnvironmentClass;
 class VisRasterizerClass;
 class BWRenderClass;
 class TexProjectClass;
 
-const unsigned MAX_ADDITIONAL_MATERIAL_PASSES=32;
-const unsigned MAX_OVERRIDE_FLAG_LEVEL=32;
+const unsigned MAX_ADDITIONAL_MATERIAL_PASSES = 32;
+const unsigned MAX_OVERRIDE_FLAG_LEVEL = 32;
 
 /**
 ** RenderInfoClass
@@ -76,49 +73,48 @@ const unsigned MAX_OVERRIDE_FLAG_LEVEL=32;
 class RenderInfoClass
 {
 public:
-	RenderInfoClass(CameraClass & cam);
+	RenderInfoClass(CameraClass &cam);
 	~RenderInfoClass(void);
 
-	enum RINFO_OVERRIDE_FLAGS {
-		RINFO_OVERRIDE_DEFAULT						= 0x0000,	// No overrides
-		RINFO_OVERRIDE_FORCE_TWO_SIDED			= 0x0001,	// Override mesh settings to force no backface culling
-		RINFO_OVERRIDE_FORCE_SORTING				= 0x0002,	// Override mesh settings to force sorting
-		RINFO_OVERRIDE_ADDITIONAL_PASSES_ONLY	= 0x0004,	// Do not render base passes (only additional passes)
-		RINFO_OVERRIDE_SHADOW_RENDERING			= 0x0008		// Hint: we are rendering a shadow
+	enum RINFO_OVERRIDE_FLAGS
+	{
+		RINFO_OVERRIDE_DEFAULT = 0x0000, // No overrides
+		RINFO_OVERRIDE_FORCE_TWO_SIDED = 0x0001, // Override mesh settings to force no backface culling
+		RINFO_OVERRIDE_FORCE_SORTING = 0x0002, // Override mesh settings to force sorting
+		RINFO_OVERRIDE_ADDITIONAL_PASSES_ONLY = 0x0004, // Do not render base passes (only additional passes)
+		RINFO_OVERRIDE_SHADOW_RENDERING = 0x0008 // Hint: we are rendering a shadow
 	};
 
-	void								Push_Material_Pass(MaterialPassClass * matpass);
-	void								Pop_Material_Pass(void);
+	void Push_Material_Pass(MaterialPassClass *matpass);
+	void Pop_Material_Pass(void);
 
-	int								Additional_Pass_Count(void);
-	MaterialPassClass *			Peek_Additional_Pass(int i);
+	int Additional_Pass_Count(void);
+	MaterialPassClass *Peek_Additional_Pass(int i);
 
-	void								Push_Override_Flags(RINFO_OVERRIDE_FLAGS flg);	// Saves current override flags on stack and installs a new one
-	void								Pop_Override_Flags(void);								// Restores previous override flags from stack
-	RINFO_OVERRIDE_FLAGS &		Current_Override_Flags(void);							// Access to current override flags
+	void Push_Override_Flags(RINFO_OVERRIDE_FLAGS flg); // Saves current override flags on stack and installs a new one
+	void Pop_Override_Flags(void); // Restores previous override flags from stack
+	RINFO_OVERRIDE_FLAGS &Current_Override_Flags(void); // Access to current override flags
 
-	CameraClass &					Camera;
+	CameraClass &Camera;
 
-	float								fog_scale;
-	float								fog_start;
-	float								fog_end;
-	float								alphaOverride;	//added for 'Generals' to allow variable alpha -MW
-	float								materialPassAlphaOverride;	////added for 'Generals' to allow variable alpha on additional render passes.-MW
-	float								materialPassEmissiveOverride;	////added for 'Generals' to allow variable emissive on additional render passes.-MW
+	float fog_scale;
+	float fog_start;
+	float fog_end;
+	float alphaOverride; // added for 'Generals' to allow variable alpha -MW
+	float materialPassAlphaOverride; ////added for 'Generals' to allow variable alpha on additional render passes.-MW
+	float materialPassEmissiveOverride; ////added for 'Generals' to allow variable emissive on additional render passes.-MW
 
-	LightEnvironmentClass*		light_environment;
+	LightEnvironmentClass *light_environment;
 
-	TexProjectClass*				Texture_Projector;
+	TexProjectClass *Texture_Projector;
 
 protected:
-	MaterialPassClass*			AdditionalMaterialPassArray[MAX_ADDITIONAL_MATERIAL_PASSES];
-	unsigned							AdditionalMaterialPassCount;
-	unsigned							RejectedMaterialPasses;
-	RINFO_OVERRIDE_FLAGS			OverrideFlag[MAX_OVERRIDE_FLAG_LEVEL];
-	unsigned							OverrideFlagLevel;
-
+	MaterialPassClass *AdditionalMaterialPassArray[MAX_ADDITIONAL_MATERIAL_PASSES];
+	unsigned AdditionalMaterialPassCount;
+	unsigned RejectedMaterialPasses;
+	RINFO_OVERRIDE_FLAGS OverrideFlag[MAX_OVERRIDE_FLAG_LEVEL];
+	unsigned OverrideFlagLevel;
 };
-
 
 /**
 ** SpecialRenderInfoClass
@@ -135,9 +131,8 @@ protected:
 */
 class SpecialRenderInfoClass : public RenderInfoClass
 {
-
 public:
-	SpecialRenderInfoClass(CameraClass & cam,int render_type);
+	SpecialRenderInfoClass(CameraClass &cam, int render_type);
 	~SpecialRenderInfoClass(void);
 
 	// The following fields are only used by the Special_Render function.
@@ -147,23 +142,19 @@ public:
 		RENDER_VIS,
 		RENDER_SHADOW
 	};
-	int								RenderType;
+	int RenderType;
 
 	// RENDER_VIS variables and methods:
-	VisRasterizerClass *			VisRasterizer;
+	VisRasterizerClass *VisRasterizer;
 
 	// RENDER_SHADOW variables and methods:
 	// NOTE: this is somewhat obsolete now that we have hardware render-to-texture.
-	BWRenderClass *				BWRenderer;					// Black & white non-textured renderer
+	BWRenderClass *BWRenderer; // Black & white non-textured renderer
 
 private:
-
 	// Not implemented...
 	SpecialRenderInfoClass(const RenderInfoClass &);
-	SpecialRenderInfoClass & operator = (const RenderInfoClass &);
-
+	SpecialRenderInfoClass &operator=(const RenderInfoClass &);
 };
-
-
 
 #endif

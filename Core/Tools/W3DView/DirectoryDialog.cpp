@@ -34,70 +34,59 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "StdAfx.h"
 #include "DirectoryDialog.h"
 #include "Utils.h"
-
 
 ////////////////////////////////////////////////////////////////////////////
 //
 //	Browse_For_Folder_Hook_Proc
 //
 ////////////////////////////////////////////////////////////////////////////
-UINT CALLBACK Browse_For_Folder_Hook_Proc
-(
-	HWND		hdlg,
-	UINT		message,
-	WPARAM	wparam,
-	LPARAM	lparam
-)
+UINT CALLBACK Browse_For_Folder_Hook_Proc(HWND hdlg, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	//
 	//	If the user clicked OK, then stuff a dummy filename
 	// into the control so the dialog will close...
 	//
-	if (	message == WM_COMMAND &&
-			LOWORD (wparam) == IDOK &&
-			HIWORD (wparam) == BN_CLICKED)
+	if (message == WM_COMMAND && LOWORD(wparam) == IDOK && HIWORD(wparam) == BN_CLICKED)
 	{
-		::SetDlgItemText (hdlg, 1152, "xxx.xxx");
+		::SetDlgItemText(hdlg, 1152, "xxx.xxx");
 	}
 
 	return FALSE;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 //
 //	Browse_For_Folder
 //
 ////////////////////////////////////////////////////////////////////////////
-bool
-Browse_For_Folder (HWND parent_wnd, LPCTSTR initial_path, CString &path)
+bool Browse_For_Folder(HWND parent_wnd, LPCTSTR initial_path, CString &path)
 {
 	bool retval = false;
 
-	OPENFILENAME openfilename	= { sizeof (OPENFILENAME), 0 };
-	TCHAR filename[MAX_PATH]	= { 0 };
+	OPENFILENAME openfilename = { sizeof(OPENFILENAME), 0 };
+	TCHAR filename[MAX_PATH] = { 0 };
 
-	openfilename.lpstrInitialDir	= initial_path;
-	openfilename.hwndOwner			= parent_wnd;
-	openfilename.hInstance			= ::AfxGetResourceHandle ();
-	openfilename.lpstrFilter		= _T("\0\0");
-	openfilename.lpstrFile			= filename;
-	openfilename.nMaxFile			= sizeof (filename);
-	openfilename.lpstrTitle			= _T("Choose Directory");
-	openfilename.lpfnHook			= Browse_For_Folder_Hook_Proc;
-	openfilename.lpTemplateName	= MAKEINTRESOURCE (1536);
-	openfilename.Flags				= OFN_HIDEREADONLY | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK | OFN_LONGNAMES;
+	openfilename.lpstrInitialDir = initial_path;
+	openfilename.hwndOwner = parent_wnd;
+	openfilename.hInstance = ::AfxGetResourceHandle();
+	openfilename.lpstrFilter = _T("\0\0");
+	openfilename.lpstrFile = filename;
+	openfilename.nMaxFile = sizeof(filename);
+	openfilename.lpstrTitle = _T("Choose Directory");
+	openfilename.lpfnHook = Browse_For_Folder_Hook_Proc;
+	openfilename.lpTemplateName = MAKEINTRESOURCE(1536);
+	openfilename.Flags = OFN_HIDEREADONLY | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK | OFN_LONGNAMES;
 
 	//
 	//	Display the modified 'file-open' dialog.
 	//
-	if (::GetOpenFileName (&openfilename) == IDOK) {
-		path		= ::Strip_Filename_From_Path (filename);
-		retval	= true;
+	if (::GetOpenFileName(&openfilename) == IDOK)
+	{
+		path = ::Strip_Filename_From_Path(filename);
+		retval = true;
 	}
 
 	return retval;

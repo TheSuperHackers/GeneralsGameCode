@@ -25,7 +25,7 @@
 ////// NetCommandWrapperList.cpp ////////////////////////////////
 // Bryan Cleveland
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameNetwork/NetCommandWrapperList.h"
 #include "GameNetwork/NetPacket.h"
@@ -36,72 +36,81 @@
 
 NetCommandWrapperListNode::NetCommandWrapperListNode(NetWrapperCommandMsg *msg)
 {
-	//Added By Sadullah Nader
-	//Initializations inserted
+	// Added By Sadullah Nader
+	// Initializations inserted
 	m_next = NULL;
 
 	//
 
 	m_numChunks = msg->getNumChunks();
-	m_chunksPresent = NEW Bool[m_numChunks];	// pool[]ify
+	m_chunksPresent = NEW Bool[m_numChunks]; // pool[]ify
 	m_numChunksPresent = 0;
 
-	for (UnsignedInt i = 0; i < m_numChunks; ++i) {
+	for (UnsignedInt i = 0; i < m_numChunks; ++i)
+	{
 		m_chunksPresent[i] = FALSE;
 	}
 
 	m_dataLength = msg->getTotalDataLength();
-	m_data = NEW UnsignedByte[m_dataLength];	// pool[]ify
+	m_data = NEW UnsignedByte[m_dataLength]; // pool[]ify
 
 	m_commandID = msg->getWrappedCommandID();
 }
 
-NetCommandWrapperListNode::~NetCommandWrapperListNode() {
-	if (m_chunksPresent != NULL) {
+NetCommandWrapperListNode::~NetCommandWrapperListNode()
+{
+	if (m_chunksPresent != NULL)
+	{
 		delete[] m_chunksPresent;
 		m_chunksPresent = NULL;
 	}
 
-	if (m_data != NULL) {
+	if (m_data != NULL)
+	{
 		delete[] m_data;
 		m_data = NULL;
 	}
 }
 
-Bool NetCommandWrapperListNode::isComplete() {
+Bool NetCommandWrapperListNode::isComplete()
+{
 	return m_numChunksPresent == m_numChunks;
 }
 
-Int NetCommandWrapperListNode::getPercentComplete(void) {
+Int NetCommandWrapperListNode::getPercentComplete(void)
+{
 	if (isComplete())
 		return 100;
 	else
-		return min(99, REAL_TO_INT( ((Real)m_numChunksPresent)/((Real)m_numChunks)*100.0f ));
+		return min(99, REAL_TO_INT(((Real)m_numChunksPresent) / ((Real)m_numChunks) * 100.0f));
 }
 
-UnsignedShort NetCommandWrapperListNode::getCommandID() {
+UnsignedShort NetCommandWrapperListNode::getCommandID()
+{
 	return m_commandID;
 }
 
-UnsignedInt NetCommandWrapperListNode::getRawDataLength() {
+UnsignedInt NetCommandWrapperListNode::getRawDataLength()
+{
 	return m_dataLength;
 }
 
-void NetCommandWrapperListNode::copyChunkData(NetWrapperCommandMsg *msg) {
-	if (msg == NULL) {
+void NetCommandWrapperListNode::copyChunkData(NetWrapperCommandMsg *msg)
+{
+	if (msg == NULL)
+	{
 		DEBUG_CRASH(("Trying to copy data from a non-existent wrapper command message"));
 		return;
 	}
 
-	DEBUG_ASSERTCRASH(msg->getChunkNumber() < m_numChunks, ("MunkeeChunk %d of %d",
-		msg->getChunkNumber(), m_numChunks));
+	DEBUG_ASSERTCRASH(msg->getChunkNumber() < m_numChunks, ("MunkeeChunk %d of %d", msg->getChunkNumber(), m_numChunks));
 	if (msg->getChunkNumber() >= m_numChunks)
 		return;
 
-	DEBUG_LOG(("NetCommandWrapperListNode::copyChunkData() - copying chunk %d",
-		msg->getChunkNumber()));
+	DEBUG_LOG(("NetCommandWrapperListNode::copyChunkData() - copying chunk %d", msg->getChunkNumber()));
 
-	if (m_chunksPresent[msg->getChunkNumber()] == TRUE) {
+	if (m_chunksPresent[msg->getChunkNumber()] == TRUE)
+	{
 		// we already received this chunk, no need to recopy it.
 		return;
 	}
@@ -112,7 +121,8 @@ void NetCommandWrapperListNode::copyChunkData(NetWrapperCommandMsg *msg) {
 	++m_numChunksPresent;
 }
 
-UnsignedByte * NetCommandWrapperListNode::getRawData() {
+UnsignedByte *NetCommandWrapperListNode::getRawData()
+{
 	return m_data;
 }
 
@@ -120,26 +130,32 @@ UnsignedByte * NetCommandWrapperListNode::getRawData() {
 ////// NetCommandWrapperList ///////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-NetCommandWrapperList::NetCommandWrapperList() {
+NetCommandWrapperList::NetCommandWrapperList()
+{
 	m_list = NULL;
 }
 
-NetCommandWrapperList::~NetCommandWrapperList() {
+NetCommandWrapperList::~NetCommandWrapperList()
+{
 	NetCommandWrapperListNode *temp;
-	while (m_list != NULL) {
+	while (m_list != NULL)
+	{
 		temp = m_list->m_next;
 		deleteInstance(m_list);
 		m_list = temp;
 	}
 }
 
-void NetCommandWrapperList::init() {
+void NetCommandWrapperList::init()
+{
 	m_list = NULL;
 }
 
-void NetCommandWrapperList::reset() {
+void NetCommandWrapperList::reset()
+{
 	NetCommandWrapperListNode *temp;
-	while (m_list != NULL) {
+	while (m_list != NULL)
+	{
 		temp = m_list->m_next;
 		deleteInstance(m_list);
 		m_list = temp;
@@ -150,7 +166,8 @@ Int NetCommandWrapperList::getPercentComplete(UnsignedShort wrappedCommandID)
 {
 	NetCommandWrapperListNode *temp = m_list;
 
-	while ((temp != NULL) && (temp->getCommandID() != wrappedCommandID)) {
+	while ((temp != NULL) && (temp->getCommandID() != wrappedCommandID))
+	{
 		temp = temp->m_next;
 	}
 
@@ -160,15 +177,18 @@ Int NetCommandWrapperList::getPercentComplete(UnsignedShort wrappedCommandID)
 	return temp->getPercentComplete();
 }
 
-void NetCommandWrapperList::processWrapper(NetCommandRef *ref) {
+void NetCommandWrapperList::processWrapper(NetCommandRef *ref)
+{
 	NetCommandWrapperListNode *temp = m_list;
 	NetWrapperCommandMsg *msg = (NetWrapperCommandMsg *)(ref->getCommand());
 
-	while ((temp != NULL) && (temp->getCommandID() != msg->getWrappedCommandID())) {
+	while ((temp != NULL) && (temp->getCommandID() != msg->getWrappedCommandID()))
+	{
 		temp = temp->m_next;
 	}
 
-	if (temp == NULL) {
+	if (temp == NULL)
+	{
 		temp = newInstance(NetCommandWrapperListNode)(msg);
 		temp->m_next = m_list;
 		m_list = temp;
@@ -177,7 +197,7 @@ void NetCommandWrapperList::processWrapper(NetCommandRef *ref) {
 	temp->copyChunkData(msg);
 }
 
-NetCommandList * NetCommandWrapperList::getReadyCommands()
+NetCommandList *NetCommandWrapperList::getReadyCommands()
 {
 	NetCommandList *retlist = newInstance(NetCommandList);
 	retlist->init();
@@ -185,9 +205,11 @@ NetCommandList * NetCommandWrapperList::getReadyCommands()
 	NetCommandWrapperListNode *temp = m_list;
 	NetCommandWrapperListNode *next = NULL;
 
-	while (temp != NULL) {
+	while (temp != NULL)
+	{
 		next = temp->m_next;
-		if (temp->isComplete()) {
+		if (temp->isComplete())
+		{
 			NetCommandRef *msg = NetPacket::ConstructNetCommandMsgFromRawData(temp->getRawData(), temp->getRawDataLength());
 			NetCommandRef *ret = retlist->addMessage(msg->getCommand());
 			ret->setRelay(msg->getRelay());
@@ -204,28 +226,35 @@ NetCommandList * NetCommandWrapperList::getReadyCommands()
 	return retlist;
 }
 
-void NetCommandWrapperList::removeFromList(NetCommandWrapperListNode *node) {
-	if (node == NULL) {
+void NetCommandWrapperList::removeFromList(NetCommandWrapperListNode *node)
+{
+	if (node == NULL)
+	{
 		return;
 	}
 
 	NetCommandWrapperListNode *temp = m_list;
 	NetCommandWrapperListNode *prev = NULL;
 
-	while ((temp != NULL) && (temp->getCommandID() != node->getCommandID())) {
+	while ((temp != NULL) && (temp->getCommandID() != node->getCommandID()))
+	{
 		prev = temp;
 		temp = temp->m_next;
 	}
 
-	if (temp == NULL) {
+	if (temp == NULL)
+	{
 		return;
 	}
 
-	if (prev == NULL) {
+	if (prev == NULL)
+	{
 		m_list = temp->m_next;
 		deleteInstance(temp);
 		temp = NULL;
-	} else {
+	}
+	else
+	{
 		prev->m_next = temp->m_next;
 		deleteInstance(temp);
 		temp = NULL;

@@ -68,10 +68,7 @@
 // pushButtonPropertiesCallback ===============================================
 /** Dialog callback for properties */
 //=============================================================================
-static LRESULT CALLBACK pushButtonPropertiesCallback( HWND hWndDialog,
-																											UINT message,
-																											WPARAM wParam,
-																											LPARAM lParam )
+static LRESULT CALLBACK pushButtonPropertiesCallback(HWND hWndDialog, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	Int returnCode;
 
@@ -80,115 +77,110 @@ static LRESULT CALLBACK pushButtonPropertiesCallback( HWND hWndDialog,
 	// are designed to have controls doing the same functionality
 	// and names
 	//
-	if( HandleCommonDialogMessages( hWndDialog, message,
-																	wParam, lParam, &returnCode ) == TRUE )
+	if (HandleCommonDialogMessages(hWndDialog, message, wParam, lParam, &returnCode) == TRUE)
 		return returnCode;
 
-	switch( message )
+	switch (message)
 	{
-
 		// ------------------------------------------------------------------------
-    case WM_COMMAND:
-    {
-//			Int notifyCode = HIWORD( wParam );  // notification code
-			Int controlID = LOWORD( wParam );  // control ID
-//			HWND hWndControl = (HWND)lParam;  // control window handle
+		case WM_COMMAND:
+		{
+			//			Int notifyCode = HIWORD( wParam );  // notification code
+			Int controlID = LOWORD(wParam); // control ID
+			//			HWND hWndControl = (HWND)lParam;  // control window handle
 
-      switch( controlID )
-      {
-
+			switch (controlID)
+			{
 				// --------------------------------------------------------------------
-        case IDOK:
+				case IDOK:
 				{
 					GameWindow *window = TheEditor->getPropertyTarget();
 
 					// sanity
-					if( window )
+					if (window)
 					{
 						ImageAndColorInfo *info;
 
 						// save the common properties
-						if( SaveCommonDialogProperties( hWndDialog, window ) == FALSE )
+						if (SaveCommonDialogProperties(hWndDialog, window) == FALSE)
 							break;
 
 						// save the image and color data
 						// ----------------------------------------------------------------
-						info = GetStateInfo( BUTTON_ENABLED );
-						GadgetButtonSetEnabledImage( window, info->image );
-						GadgetButtonSetEnabledColor( window, info->color );
-						GadgetButtonSetEnabledBorderColor( window, info->borderColor );
+						info = GetStateInfo(BUTTON_ENABLED);
+						GadgetButtonSetEnabledImage(window, info->image);
+						GadgetButtonSetEnabledColor(window, info->color);
+						GadgetButtonSetEnabledBorderColor(window, info->borderColor);
 
-						info = GetStateInfo( BUTTON_ENABLED_PUSHED );
-						GadgetButtonSetEnabledSelectedImage( window, info->image );
-						GadgetButtonSetEnabledSelectedColor( window, info->color );
-						GadgetButtonSetEnabledSelectedBorderColor( window, info->borderColor );
-
-						// ----------------------------------------------------------------
-						info = GetStateInfo( BUTTON_DISABLED );
-						GadgetButtonSetDisabledImage( window, info->image );
-						GadgetButtonSetDisabledColor( window, info->color );
-						GadgetButtonSetDisabledBorderColor( window, info->borderColor );
-
-						info = GetStateInfo( BUTTON_DISABLED_PUSHED );
-						GadgetButtonSetDisabledSelectedImage( window, info->image );
-						GadgetButtonSetDisabledSelectedColor( window, info->color );
-						GadgetButtonSetDisabledSelectedBorderColor( window, info->borderColor );
+						info = GetStateInfo(BUTTON_ENABLED_PUSHED);
+						GadgetButtonSetEnabledSelectedImage(window, info->image);
+						GadgetButtonSetEnabledSelectedColor(window, info->color);
+						GadgetButtonSetEnabledSelectedBorderColor(window, info->borderColor);
 
 						// ----------------------------------------------------------------
-						info = GetStateInfo( BUTTON_HILITE );
-						GadgetButtonSetHiliteImage( window, info->image );
-						GadgetButtonSetHiliteColor( window, info->color );
-						GadgetButtonSetHiliteBorderColor( window, info->borderColor );
+						info = GetStateInfo(BUTTON_DISABLED);
+						GadgetButtonSetDisabledImage(window, info->image);
+						GadgetButtonSetDisabledColor(window, info->color);
+						GadgetButtonSetDisabledBorderColor(window, info->borderColor);
 
-						info = GetStateInfo( BUTTON_HILITE_PUSHED );
-						GadgetButtonSetHiliteSelectedImage( window, info->image );
-						GadgetButtonSetHiliteSelectedColor( window, info->color );
-						GadgetButtonSetHiliteSelectedBorderColor( window, info->borderColor );
+						info = GetStateInfo(BUTTON_DISABLED_PUSHED);
+						GadgetButtonSetDisabledSelectedImage(window, info->image);
+						GadgetButtonSetDisabledSelectedColor(window, info->color);
+						GadgetButtonSetDisabledSelectedBorderColor(window, info->borderColor);
+
+						// ----------------------------------------------------------------
+						info = GetStateInfo(BUTTON_HILITE);
+						GadgetButtonSetHiliteImage(window, info->image);
+						GadgetButtonSetHiliteColor(window, info->color);
+						GadgetButtonSetHiliteBorderColor(window, info->borderColor);
+
+						info = GetStateInfo(BUTTON_HILITE_PUSHED);
+						GadgetButtonSetHiliteSelectedImage(window, info->image);
+						GadgetButtonSetHiliteSelectedColor(window, info->color);
+						GadgetButtonSetHiliteSelectedBorderColor(window, info->borderColor);
 
 						UnsignedInt bit;
 						bit = WIN_STATUS_RIGHT_CLICK;
-						window->winClearStatus( bit );
-						if( IsDlgButtonChecked( hWndDialog, CHECK_RIGHT_CLICK ) )
-							window->winSetStatus( bit );
+						window->winClearStatus(bit);
+						if (IsDlgButtonChecked(hWndDialog, CHECK_RIGHT_CLICK))
+							window->winSetStatus(bit);
 
-					}  // end if
+					} // end if
 
-          DestroyWindow( hWndDialog );
-          break;
+					DestroyWindow(hWndDialog);
+					break;
 
-				}  // end OK
+				} // end OK
 
 				// --------------------------------------------------------------------
-        case IDCANCEL:
+				case IDCANCEL:
 				{
+					DestroyWindow(hWndDialog);
+					break;
 
-          DestroyWindow( hWndDialog );
-          break;
+				} // end cancel
 
-				}  // end cancel
+			} // end switch( LOWORD( wParam ) )
 
-      }  // end switch( LOWORD( wParam ) )
+			return 0;
 
-      return 0;
-
-    } // end of WM_COMMAND
+		} // end of WM_COMMAND
 
 		// ------------------------------------------------------------------------
-    case WM_CLOSE:
+		case WM_CLOSE:
 		{
+			DestroyWindow(hWndDialog);
+			return 0;
 
-      DestroyWindow( hWndDialog );
-      return 0;
-
-		}  // end close
+		} // end close
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+	} // end of switch
 
-}  // end pushButtonPropertiesCallback
+} // end pushButtonPropertiesCallback
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -197,20 +189,21 @@ static LRESULT CALLBACK pushButtonPropertiesCallback( HWND hWndDialog,
 // InitPushButtonPropertiesDialog =============================================
 /** Bring up the push button properties dialog */
 //=============================================================================
-HWND InitPushButtonPropertiesDialog( GameWindow *window )
+HWND InitPushButtonPropertiesDialog(GameWindow *window)
 {
 	HWND dialog;
 
 	// create the dialog box
-	dialog = CreateDialog( TheEditor->getInstance(),
-												 (LPCTSTR)PUSH_BUTTON_PROPERTIES_DIALOG,
-												 TheEditor->getWindowHandle(),
-												 (DLGPROC)pushButtonPropertiesCallback );
-	if( dialog == NULL )
+	dialog = CreateDialog(
+			TheEditor->getInstance(),
+			(LPCTSTR)PUSH_BUTTON_PROPERTIES_DIALOG,
+			TheEditor->getWindowHandle(),
+			(DLGPROC)pushButtonPropertiesCallback);
+	if (dialog == NULL)
 		return NULL;
 
 	// do the common initialization
-	CommonDialogInitialize( window, dialog );
+	CommonDialogInitialize(window, dialog);
 
 	//
 	// store in the image and color table the values for this putton
@@ -218,49 +211,46 @@ HWND InitPushButtonPropertiesDialog( GameWindow *window )
 	const Image *image;
 	Color color, borderColor;
 
-	image = GadgetButtonGetEnabledImage( window );
-	color = GadgetButtonGetEnabledColor( window );
-	borderColor = GadgetButtonGetEnabledBorderColor( window );
-	StoreImageAndColor( BUTTON_ENABLED, image, color, borderColor );
+	image = GadgetButtonGetEnabledImage(window);
+	color = GadgetButtonGetEnabledColor(window);
+	borderColor = GadgetButtonGetEnabledBorderColor(window);
+	StoreImageAndColor(BUTTON_ENABLED, image, color, borderColor);
 
-	image = GadgetButtonGetEnabledSelectedImage( window );
-	color = GadgetButtonGetEnabledSelectedColor( window );
-	borderColor = GadgetButtonGetEnabledSelectedBorderColor( window );
-	StoreImageAndColor( BUTTON_ENABLED_PUSHED, image, color, borderColor );
+	image = GadgetButtonGetEnabledSelectedImage(window);
+	color = GadgetButtonGetEnabledSelectedColor(window);
+	borderColor = GadgetButtonGetEnabledSelectedBorderColor(window);
+	StoreImageAndColor(BUTTON_ENABLED_PUSHED, image, color, borderColor);
 
-	image = GadgetButtonGetDisabledImage( window );
-	color = GadgetButtonGetDisabledColor( window );
-	borderColor = GadgetButtonGetDisabledBorderColor( window );
-	StoreImageAndColor( BUTTON_DISABLED, image, color, borderColor );
+	image = GadgetButtonGetDisabledImage(window);
+	color = GadgetButtonGetDisabledColor(window);
+	borderColor = GadgetButtonGetDisabledBorderColor(window);
+	StoreImageAndColor(BUTTON_DISABLED, image, color, borderColor);
 
-	image = GadgetButtonGetDisabledSelectedImage( window );
-	color = GadgetButtonGetDisabledSelectedColor( window );
-	borderColor = GadgetButtonGetDisabledSelectedBorderColor( window );
-	StoreImageAndColor( BUTTON_DISABLED_PUSHED, image, color, borderColor );
+	image = GadgetButtonGetDisabledSelectedImage(window);
+	color = GadgetButtonGetDisabledSelectedColor(window);
+	borderColor = GadgetButtonGetDisabledSelectedBorderColor(window);
+	StoreImageAndColor(BUTTON_DISABLED_PUSHED, image, color, borderColor);
 
-	image = GadgetButtonGetHiliteImage( window );
-	color = GadgetButtonGetHiliteColor( window );
-	borderColor = GadgetButtonGetHiliteBorderColor( window );
-	StoreImageAndColor( BUTTON_HILITE, image, color, borderColor );
+	image = GadgetButtonGetHiliteImage(window);
+	color = GadgetButtonGetHiliteColor(window);
+	borderColor = GadgetButtonGetHiliteBorderColor(window);
+	StoreImageAndColor(BUTTON_HILITE, image, color, borderColor);
 
-	image = GadgetButtonGetHiliteSelectedImage( window );
-	color = GadgetButtonGetHiliteSelectedColor( window );
-	borderColor = GadgetButtonGetHiliteSelectedBorderColor( window );
-	StoreImageAndColor( BUTTON_HILITE_PUSHED, image, color, borderColor );
+	image = GadgetButtonGetHiliteSelectedImage(window);
+	color = GadgetButtonGetHiliteSelectedColor(window);
+	borderColor = GadgetButtonGetHiliteSelectedBorderColor(window);
+	StoreImageAndColor(BUTTON_HILITE_PUSHED, image, color, borderColor);
 
 	// select the button enabled state for display
-	SwitchToState( BUTTON_ENABLED, dialog );
+	SwitchToState(BUTTON_ENABLED, dialog);
 
 	//
 	// initialize the dialog with values from the window
 	//
 
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_RIGHT_CLICK ) )
-		CheckDlgButton( dialog, CHECK_RIGHT_CLICK, BST_CHECKED );
+	if (BitIsSet(window->winGetStatus(), WIN_STATUS_RIGHT_CLICK))
+		CheckDlgButton(dialog, CHECK_RIGHT_CLICK, BST_CHECKED);
 
 	return dialog;
 
-}  // end InitPushButtonPropertiesDialog
-
-
-
+} // end InitPushButtonPropertiesDialog

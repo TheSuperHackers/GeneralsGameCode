@@ -40,30 +40,33 @@ class EmitterSizePropPageClass : public CPropertyPage
 {
 	DECLARE_DYNCREATE(EmitterSizePropPageClass)
 
-// Construction
+	// Construction
 public:
 	EmitterSizePropPageClass(EmitterInstanceListClass *pemitter = NULL);
 	~EmitterSizePropPageClass();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(EmitterSizePropPageClass)
-	enum { IDD = IDD_PROP_PAGE_EMITTER_SIZE };
-	CSpinButtonCtrl	m_SizeRandomSpin;
+	enum
+	{
+		IDD = IDD_PROP_PAGE_EMITTER_SIZE
+	};
+	CSpinButtonCtrl m_SizeRandomSpin;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(EmitterSizePropPageClass)
-	public:
+public:
 	virtual BOOL OnApply();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(EmitterSizePropPageClass)
@@ -71,46 +74,47 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	public:
+public:
+	/////////////////////////////////////////////////////////
+	//
+	//	Public methods
+	//
 
-		/////////////////////////////////////////////////////////
-		//
-		//	Public methods
-		//
+	//
+	//	Inline accessors
+	//
+	EmitterInstanceListClass *Get_Emitter(void) const { return m_pEmitterList; }
+	void Set_Emitter(EmitterInstanceListClass *pemitter_list)
+	{
+		m_pEmitterList = pemitter_list;
+		Initialize();
+	}
+	bool Is_Data_Valid(void) const { return m_bValid; }
 
-		//
-		//	Inline accessors
-		//
-		EmitterInstanceListClass *	Get_Emitter (void) const { return m_pEmitterList; }
-		void								Set_Emitter (EmitterInstanceListClass *pemitter_list) { m_pEmitterList = pemitter_list; Initialize (); }
-		bool								Is_Data_Valid (void) const { return m_bValid; }
+	void Get_Size_Keyframes(ParticlePropertyStruct<float> &sizes) { sizes = m_CurrentSizes; }
 
-		void								Get_Size_Keyframes (ParticlePropertyStruct<float> &sizes)		{ sizes = m_CurrentSizes; }
+	void On_Lifetime_Changed(float lifetime);
 
-		void								On_Lifetime_Changed (float lifetime);
+protected:
+	/////////////////////////////////////////////////////////
+	//
+	//	Protected methods
+	//
+	void Initialize(void);
+	void Update_Sizes(void);
 
-	protected:
-
-		/////////////////////////////////////////////////////////
-		//
-		//	Protected methods
-		//
-		void				Initialize (void);
-		void				Update_Sizes (void);
-
-	private:
-
-		/////////////////////////////////////////////////////////
-		//
-		//	Private member data
-		//
-		EmitterInstanceListClass *	m_pEmitterList;
-		bool								m_bValid;
-		ColorBarClass *				m_SizeBar;
-		ParticlePropertyStruct<float>		m_OrigSizes;
-		ParticlePropertyStruct<float>		m_CurrentSizes;
-		float								m_Lifetime;
-		float								m_MaxSize;
+private:
+	/////////////////////////////////////////////////////////
+	//
+	//	Private member data
+	//
+	EmitterInstanceListClass *m_pEmitterList;
+	bool m_bValid;
+	ColorBarClass *m_SizeBar;
+	ParticlePropertyStruct<float> m_OrigSizes;
+	ParticlePropertyStruct<float> m_CurrentSizes;
+	float m_Lifetime;
+	float m_MaxSize;
 };
 
 //{{AFX_INSERT_LOCATION}}

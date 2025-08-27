@@ -47,18 +47,17 @@ WaterTool::WaterTool(void)
 	m_cursorID = IDC_WATER;
 
 	m_currentZ = 0;
-
 }
-
-
 
 /// Destructor
 WaterTool::~WaterTool(void)
 {
-	if (m_poly_plusCursor) {
+	if (m_poly_plusCursor)
+	{
 		::DestroyCursor(m_poly_plusCursor);
 	}
-	if (m_poly_moveCursor) {
+	if (m_poly_moveCursor)
+	{
 		::DestroyCursor(m_poly_moveCursor);
 	}
 }
@@ -87,15 +86,16 @@ void WaterTool::activate()
 	doIt = true;
 }
 
-
 #define WATER_FILL
 #define INTENSE_DEBUG
 
 /// Perform the tool behavior on mouse down.
-void WaterTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void WaterTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
-	if (m != TRACK_L) return;
-	if (WaterOptions::getCreatingWaterAreas()) {
+	if (m != TRACK_L)
+		return;
+	if (WaterOptions::getCreatingWaterAreas())
+	{
 		fillTheArea(m, viewPt, pView, pDoc);
 		return;
 	}
@@ -103,84 +103,97 @@ void WaterTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 	pView->viewToDocCoords(viewPt, &docPt);
 	m_poly_unsnappedMouseDownPt = docPt;
 	poly_pickOnMouseDown(viewPt, pView);
-	if (!poly_snapToPoly(&docPt)) {
+	if (!poly_snapToPoly(&docPt))
+	{
 		pView->snapPoint(&docPt);
 	}
 	docPt.z = m_currentZ;
 	m_poly_mouseDownPt = docPt;
-	if (m_poly_curSelectedPolygon) {
+	if (m_poly_curSelectedPolygon)
+	{
 		DEBUG_ASSERTCRASH(m_poly_curSelectedPolygon->isWaterArea(), ("Should be water."));
 		m_currentZ = m_poly_curSelectedPolygon->getPoint(0)->z;
 		m_poly_mouseDownPt.z = m_currentZ;
 	}
 	startMouseDown(m, viewPt, pView, pDoc);
 	m_poly_curSelectedPolygon->setWaterArea(true);
-
 }
-
-
 
 /** Set the cursor. */
 void WaterTool::setCursor(void)
 {
-	if (m_poly_mouseUpPlus || (m_poly_isAdding && m_poly_curSelectedPolygon)) {
-		if (m_poly_plusCursor == NULL) {
+	if (m_poly_mouseUpPlus || (m_poly_isAdding && m_poly_curSelectedPolygon))
+	{
+		if (m_poly_plusCursor == NULL)
+		{
 			m_poly_plusCursor = AfxGetApp()->LoadCursor(MAKEINTRESOURCE(IDC_WATER_PLUS));
 		}
 		::SetCursor(m_poly_plusCursor);
-	} else 	if (m_poly_mouseUpMove) {
-		if (m_poly_moveCursor == NULL) {
+	}
+	else if (m_poly_mouseUpMove)
+	{
+		if (m_poly_moveCursor == NULL)
+		{
 			m_poly_moveCursor = AfxGetApp()->LoadCursor(MAKEINTRESOURCE(IDC_WATER_MOVE));
 		}
 		::SetCursor(m_poly_moveCursor);
-	} else {
+	}
+	else
+	{
 		Tool::setCursor();
 	}
 }
 
-
-
 /// Left button move code.
-void WaterTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void WaterTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
 	Coord3D docPt;
 	pView->viewToDocCoords(viewPt, &docPt);
-	if (m == TRACK_NONE) {
+	if (m == TRACK_NONE)
+	{
 		PolygonTrigger *pCur = m_poly_curSelectedPolygon;
 		Int curPt = m_poly_dragPointNdx;
 		m_poly_unsnappedMouseDownPt = docPt;
 		poly_pickOnMouseDown(viewPt, pView);
 		m_poly_mouseUpPlus = false;
 		m_poly_mouseUpMove = false;
-		if (m_poly_curSelectedPolygon) {
-			if (poly_pickPoint(m_poly_curSelectedPolygon, viewPt, pView) >= 0) {
+		if (m_poly_curSelectedPolygon)
+		{
+			if (poly_pickPoint(m_poly_curSelectedPolygon, viewPt, pView) >= 0)
+			{
 				m_poly_mouseUpMove = true;
-			} else {
+			}
+			else
+			{
 				m_poly_mouseUpPlus = true;
 			}
 		}
 		m_poly_curSelectedPolygon = pCur;
 		m_poly_dragPointNdx = curPt;
-		return;	// setCursor will use the value of m_mouseUpRotate.  jba.
+		return; // setCursor will use the value of m_mouseUpRotate.  jba.
 	}
 
-	if (m != TRACK_L) return;
-	if (!poly_snapToPoly(&docPt)) {
+	if (m != TRACK_L)
+		return;
+	if (!poly_snapToPoly(&docPt))
+	{
 		pView->snapPoint(&docPt);
 	}
-	if (m_poly_moveUndoable) {
+	if (m_poly_moveUndoable)
+	{
 		ICoord3D iDocPt;
-		iDocPt.x = floor(docPt.x+0.5f-m_poly_mouseDownPt.x);
-		iDocPt.y = floor(docPt.y+0.5f-m_poly_mouseDownPt.y);
+		iDocPt.x = floor(docPt.x + 0.5f - m_poly_mouseDownPt.x);
+		iDocPt.y = floor(docPt.y + 0.5f - m_poly_mouseDownPt.y);
 		iDocPt.z = 0;
 		m_poly_moveUndoable->SetOffset(iDocPt);
 		pView->Invalidate();
 		return;
 	}
-	if (m_poly_dragPointNdx >= 0 && m_poly_curSelectedPolygon) {
+	if (m_poly_dragPointNdx >= 0 && m_poly_curSelectedPolygon)
+	{
 		ICoord3D iDocPt;
-		iDocPt.x = floor(docPt.x+0.5f);
-		iDocPt.y = floor(docPt.y+0.5f);
+		iDocPt.x = floor(docPt.x + 0.5f);
+		iDocPt.y = floor(docPt.y + 0.5f);
 		iDocPt.z = m_currentZ;
 		m_poly_curSelectedPolygon->setPoint(iDocPt, m_poly_dragPointNdx);
 		pView->Invalidate();
@@ -188,18 +201,20 @@ void WaterTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 }
 
 /** Mouse up - not much. */
-void WaterTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void WaterTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
-	if (m != TRACK_L) return;
+	if (m != TRACK_L)
+		return;
 	REF_PTR_RELEASE(m_poly_moveUndoable); // belongs to pDoc now.
 }
 
-inline static Real mapZtoHeight(UnsignedByte mapZ) {
-	return (mapZ * MAP_HEIGHT_SCALE)+0.01f;
+inline static Real mapZtoHeight(UnsignedByte mapZ)
+{
+	return (mapZ * MAP_HEIGHT_SCALE) + 0.01f;
 }
 
 /// Perform the fill water area on mouse down.
-void WaterTool::fillTheArea(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void WaterTool::fillTheArea(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
 	Int waterHeight = m_currentZ;
 
@@ -221,27 +236,32 @@ void WaterTool::fillTheArea(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 	j = ndx.y;
 
 	WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
-	if (i<0 || i>=pMap->getXExtent()-1) return;
-	if (j<0 || j>=pMap->getYExtent()-1) return;
+	if (i < 0 || i >= pMap->getXExtent() - 1)
+		return;
+	if (j < 0 || j >= pMap->getYExtent() - 1)
+		return;
 
 	Int intMapHeight = pMap->getHeight(i, j);
-	if (waterHeight<mapZtoHeight(intMapHeight)) {
+	if (waterHeight < mapZtoHeight(intMapHeight))
+	{
 		return;
 	}
 
 	// Move left till we find an edge.
-	while (i>0) {
+	while (i > 0)
+	{
 		i--;
 		intMapHeight = pMap->getHeight(i, j);
-		if (waterHeight<mapZtoHeight(intMapHeight)) {
+		if (waterHeight < mapZtoHeight(intMapHeight))
+		{
 			break;
 		}
 	}
 
-	Bool bottom = true;	 // bottom left is dry, bottom right wet.
-	Bool right = false;	 // right top is wet, right bottom dry.
-	Bool left = false;	 // left bottom wet, left top dry.
-	Bool top = false;		 // top left wet, top right dry.
+	Bool bottom = true; // bottom left is dry, bottom right wet.
+	Bool right = false; // right top is wet, right bottom dry.
+	Bool left = false; // left bottom wet, left top dry.
+	Bool top = false; // top left wet, top right dry.
 
 	Int startI = -1;
 	Int startJ = -1;
@@ -251,227 +271,319 @@ void WaterTool::fillTheArea(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 	ICoord3D pt;
 	ICoord3D tmpPt;
 	Int curPoint = 0;
-	while (pointLimit>0) {
-		if (curPoint>2 && i==startI && j==startJ) break;
+	while (pointLimit > 0)
+	{
+		if (curPoint > 2 && i == startI && j == startJ)
+			break;
 		pointLimit--;
-		pt.x = i*MAP_XY_FACTOR;
-		pt.y = j*MAP_XY_FACTOR;
+		pt.x = i * MAP_XY_FACTOR;
+		pt.y = j * MAP_XY_FACTOR;
 		pt.z = waterHeight;
 		intMapHeight = pMap->getHeight(i, j);
 #ifdef INTENSE_DEBUG
-		if (bottom) {
+		if (bottom)
+		{
 			DEBUG_LOG(("Bottom %d,%d", i, j));
-		} else if (left) {
+		}
+		else if (left)
+		{
 			DEBUG_LOG(("Left %d,%d", i, j));
-		} else if (right) {
+		}
+		else if (right)
+		{
 			DEBUG_LOG(("Right %d,%d", i, j));
-		} else if (top) {
+		}
+		else if (top)
+		{
 			DEBUG_LOG(("Top %d,%d", i, j));
 		}
 #endif
-		if (bottom) {
+		if (bottom)
+		{
 			bottom = false;
-			if (waterHeight<mapZtoHeight(intMapHeight)) {
-				DEBUG_ASSERTCRASH(waterHeight>mapZtoHeight(pMap->getHeight(i+1, j)), ("Logic error. jba."));
-				Real dx = (mapZtoHeight(pMap->getHeight(i,j))-waterHeight) / (mapZtoHeight(pMap->getHeight(i,j)-pMap->getHeight(i+1,j)));
-				pt.x += dx*MAP_XY_FACTOR;
-				Bool topLeftDry = (waterHeight<mapZtoHeight(pMap->getHeight(i, j+1)));
-				Bool topRightDry = (waterHeight<mapZtoHeight(pMap->getHeight(i+1, j+1)));
-				if (topRightDry) {
+			if (waterHeight < mapZtoHeight(intMapHeight))
+			{
+				DEBUG_ASSERTCRASH(waterHeight > mapZtoHeight(pMap->getHeight(i + 1, j)), ("Logic error. jba."));
+				Real dx = (mapZtoHeight(pMap->getHeight(i, j)) - waterHeight)
+						/ (mapZtoHeight(pMap->getHeight(i, j) - pMap->getHeight(i + 1, j)));
+				pt.x += dx * MAP_XY_FACTOR;
+				Bool topLeftDry = (waterHeight < mapZtoHeight(pMap->getHeight(i, j + 1)));
+				Bool topRightDry = (waterHeight < mapZtoHeight(pMap->getHeight(i + 1, j + 1)));
+				if (topRightDry)
+				{
 					i++;
 					left = true;
-				}	else if (topLeftDry) {
-					if (j<pMap->getYExtent()-2) {
+				}
+				else if (topLeftDry)
+				{
+					if (j < pMap->getYExtent() - 2)
+					{
 						j++;
 						bottom = true;
-					}	else {
+					}
+					else
+					{
 						tmpPt = pt;
 						pt.y += MAP_XY_FACTOR;
-						tmpPt.x -= pMap->getBorderSize()*MAP_XY_FACTOR;
-						tmpPt.y -= pMap->getBorderSize()*MAP_XY_FACTOR;
+						tmpPt.x -= pMap->getBorderSize() * MAP_XY_FACTOR;
+						tmpPt.y -= pMap->getBorderSize() * MAP_XY_FACTOR;
 						pNew->addPoint(tmpPt);
 						left = true;
 						i++;
 					}
-				}	else {
-					if (i>0) {
+				}
+				else
+				{
+					if (i > 0)
+					{
 						i--;
 						right = true;
-					} else {
+					}
+					else
+					{
 						j++;
 						bottom = true;
 					}
 				}
-			} else {
-				DEBUG_ASSERTCRASH(i==0, ("Logic error. jba."));
+			}
+			else
+			{
+				DEBUG_ASSERTCRASH(i == 0, ("Logic error. jba."));
 				left = true;
-				while (j<pMap->getYExtent()-2 && waterHeight>mapZtoHeight(pMap->getHeight(i, j+1))) {
+				while (j < pMap->getYExtent() - 2 && waterHeight > mapZtoHeight(pMap->getHeight(i, j + 1)))
+				{
 					j++;
 				}
 				pt.y = (j)*MAP_XY_FACTOR;
-				if (waterHeight>mapZtoHeight(pMap->getHeight(i, j+1))) {
-					pt.y = (j+1)*MAP_XY_FACTOR;
-				}	else {
+				if (waterHeight > mapZtoHeight(pMap->getHeight(i, j + 1)))
+				{
+					pt.y = (j + 1) * MAP_XY_FACTOR;
+				}
+				else
+				{
 					continue;
 				}
-
 			}
-		} else if (left) {
+		}
+		else if (left)
+		{
 			left = false;
-			if (waterHeight<mapZtoHeight(pMap->getHeight(i, j+1))) {
-				DEBUG_ASSERTCRASH(waterHeight>mapZtoHeight(intMapHeight), ("Logic error. jba."));
-				Real dy = (waterHeight-mapZtoHeight(pMap->getHeight(i,j))) / (mapZtoHeight(pMap->getHeight(i,j+1)-pMap->getHeight(i,j)));
-				pt.y += dy*MAP_XY_FACTOR;
-				Bool bottomRightDry = (waterHeight<mapZtoHeight(pMap->getHeight(i+1, j)));
-				Bool topRightDry = (waterHeight<mapZtoHeight(pMap->getHeight(i+1, j+1)));
-				if (bottomRightDry) {
+			if (waterHeight < mapZtoHeight(pMap->getHeight(i, j + 1)))
+			{
+				DEBUG_ASSERTCRASH(waterHeight > mapZtoHeight(intMapHeight), ("Logic error. jba."));
+				Real dy = (waterHeight - mapZtoHeight(pMap->getHeight(i, j)))
+						/ (mapZtoHeight(pMap->getHeight(i, j + 1) - pMap->getHeight(i, j)));
+				pt.y += dy * MAP_XY_FACTOR;
+				Bool bottomRightDry = (waterHeight < mapZtoHeight(pMap->getHeight(i + 1, j)));
+				Bool topRightDry = (waterHeight < mapZtoHeight(pMap->getHeight(i + 1, j + 1)));
+				if (bottomRightDry)
+				{
 					j--;
 					top = true;
-				}	else if (topRightDry) {
-					if (i<pMap->getXExtent()-2) {
+				}
+				else if (topRightDry)
+				{
+					if (i < pMap->getXExtent() - 2)
+					{
 						i++;
 						left = true;
-					} else {
+					}
+					else
+					{
 						tmpPt = pt;
 						pt.x += MAP_XY_FACTOR;
-						tmpPt.x -= pMap->getBorderSize()*MAP_XY_FACTOR;
-						tmpPt.y -= pMap->getBorderSize()*MAP_XY_FACTOR;
+						tmpPt.x -= pMap->getBorderSize() * MAP_XY_FACTOR;
+						tmpPt.y -= pMap->getBorderSize() * MAP_XY_FACTOR;
 						pNew->addPoint(tmpPt);
 						top = true;
 						j--;
 					}
-				}	else {
-					if (j<pMap->getYExtent()-1) {
+				}
+				else
+				{
+					if (j < pMap->getYExtent() - 1)
+					{
 						j++;
 						bottom = true;
-					} else {
+					}
+					else
+					{
 						i++;
 						left = true;
 					}
 				}
-			} else {
-				pt.y = (j+1)*MAP_XY_FACTOR;
-				DEBUG_ASSERTCRASH(j==pMap->getYExtent()-2, ("Logic error. jba."));
-				while (i<pMap->getXExtent()-2 && waterHeight>mapZtoHeight(pMap->getHeight(i+1, j+1))) {
+			}
+			else
+			{
+				pt.y = (j + 1) * MAP_XY_FACTOR;
+				DEBUG_ASSERTCRASH(j == pMap->getYExtent() - 2, ("Logic error. jba."));
+				while (i < pMap->getXExtent() - 2 && waterHeight > mapZtoHeight(pMap->getHeight(i + 1, j + 1)))
+				{
 					i++;
 				}
 				top = true;
-				pt.x = i*MAP_XY_FACTOR;
-				if (waterHeight>mapZtoHeight(pMap->getHeight(i+1, j+1))) {
-					pt.x = (i+1)*MAP_XY_FACTOR;
-				} else {
+				pt.x = i * MAP_XY_FACTOR;
+				if (waterHeight > mapZtoHeight(pMap->getHeight(i + 1, j + 1)))
+				{
+					pt.x = (i + 1) * MAP_XY_FACTOR;
+				}
+				else
+				{
 					continue;
 				}
 			}
-		} else if (right) {
+		}
+		else if (right)
+		{
 			right = false;
-			pt.x = (i+1)*MAP_XY_FACTOR;
-			if (waterHeight<mapZtoHeight(pMap->getHeight(i+1, j))) {
-				DEBUG_ASSERTCRASH(waterHeight>mapZtoHeight(pMap->getHeight(i+1,j+1)), ("Logic error. jba."));
-				Real dy = (mapZtoHeight(pMap->getHeight(i+1,j))-waterHeight) / (mapZtoHeight(pMap->getHeight(i+1,j)-pMap->getHeight(i+1,j+1)));
-				pt.y += dy*MAP_XY_FACTOR;
-				Bool bottomLeftDry = (waterHeight<mapZtoHeight(pMap->getHeight(i, j)));
-				Bool topLeftDry = (waterHeight<mapZtoHeight(pMap->getHeight(i, j+1)));
-				if (topLeftDry) {
+			pt.x = (i + 1) * MAP_XY_FACTOR;
+			if (waterHeight < mapZtoHeight(pMap->getHeight(i + 1, j)))
+			{
+				DEBUG_ASSERTCRASH(waterHeight > mapZtoHeight(pMap->getHeight(i + 1, j + 1)), ("Logic error. jba."));
+				Real dy = (mapZtoHeight(pMap->getHeight(i + 1, j)) - waterHeight)
+						/ (mapZtoHeight(pMap->getHeight(i + 1, j) - pMap->getHeight(i + 1, j + 1)));
+				pt.y += dy * MAP_XY_FACTOR;
+				Bool bottomLeftDry = (waterHeight < mapZtoHeight(pMap->getHeight(i, j)));
+				Bool topLeftDry = (waterHeight < mapZtoHeight(pMap->getHeight(i, j + 1)));
+				if (topLeftDry)
+				{
 					j++;
 					bottom = true;
-				}	else if (bottomLeftDry) {
-					if (i>0) {
+				}
+				else if (bottomLeftDry)
+				{
+					if (i > 0)
+					{
 						i--;
 						right = true;
-					}	else {
+					}
+					else
+					{
 						tmpPt = pt;
 						pt.x -= MAP_XY_FACTOR;
-						tmpPt.x -= pMap->getBorderSize()*MAP_XY_FACTOR;
-						tmpPt.y -= pMap->getBorderSize()*MAP_XY_FACTOR;
+						tmpPt.x -= pMap->getBorderSize() * MAP_XY_FACTOR;
+						tmpPt.y -= pMap->getBorderSize() * MAP_XY_FACTOR;
 						pNew->addPoint(tmpPt);
 						bottom = true;
 						j++;
 					}
-				}	else {
-					if (j>0) {
+				}
+				else
+				{
+					if (j > 0)
+					{
 						j--;
 						top = true;
-					} else {
+					}
+					else
+					{
 						i--;
 						right = true;
 					}
 				}
-			} else {
-				DEBUG_ASSERTCRASH(j==0, ("Logic error. jba."));
-				while (i>0 && waterHeight>mapZtoHeight(pMap->getHeight(i, j))) {
+			}
+			else
+			{
+				DEBUG_ASSERTCRASH(j == 0, ("Logic error. jba."));
+				while (i > 0 && waterHeight > mapZtoHeight(pMap->getHeight(i, j)))
+				{
 					i--;
 				}
 				bottom = true;
 				pt.x = (i)*MAP_XY_FACTOR;
-				if (waterHeight<mapZtoHeight(pMap->getHeight(i, j)))	{
+				if (waterHeight < mapZtoHeight(pMap->getHeight(i, j)))
+				{
 					continue;
 				}
 			}
-		} else if (top) {
+		}
+		else if (top)
+		{
 			top = false;
-			pt.y = (j+1)*MAP_XY_FACTOR;
-			if (waterHeight<mapZtoHeight(pMap->getHeight(i+1, j+1))) {
-				DEBUG_ASSERTCRASH(waterHeight>mapZtoHeight(pMap->getHeight(i, j+1)), ("Logic error. jba."));
-				Real dx = (waterHeight-mapZtoHeight(pMap->getHeight(i,j+1))) / (mapZtoHeight(pMap->getHeight(i+1,j+1)-pMap->getHeight(i,j+1)));
-				pt.x += dx*MAP_XY_FACTOR;
-				Bool bottomLeftDry = (waterHeight<mapZtoHeight(pMap->getHeight(i, j)));
-				Bool bottomRightDry = (waterHeight<mapZtoHeight(pMap->getHeight(i+1, j)));
-				if (bottomLeftDry) {
+			pt.y = (j + 1) * MAP_XY_FACTOR;
+			if (waterHeight < mapZtoHeight(pMap->getHeight(i + 1, j + 1)))
+			{
+				DEBUG_ASSERTCRASH(waterHeight > mapZtoHeight(pMap->getHeight(i, j + 1)), ("Logic error. jba."));
+				Real dx = (waterHeight - mapZtoHeight(pMap->getHeight(i, j + 1)))
+						/ (mapZtoHeight(pMap->getHeight(i + 1, j + 1) - pMap->getHeight(i, j + 1)));
+				pt.x += dx * MAP_XY_FACTOR;
+				Bool bottomLeftDry = (waterHeight < mapZtoHeight(pMap->getHeight(i, j)));
+				Bool bottomRightDry = (waterHeight < mapZtoHeight(pMap->getHeight(i + 1, j)));
+				if (bottomLeftDry)
+				{
 					i--;
 					right = true;
-				}	else if (bottomRightDry) {
-					if (j>0) {
+				}
+				else if (bottomRightDry)
+				{
+					if (j > 0)
+					{
 						j--;
 						top = true;
-					}	else {
+					}
+					else
+					{
 						tmpPt = pt;
 						pt.y -= MAP_XY_FACTOR;
-						tmpPt.x -= pMap->getBorderSize()*MAP_XY_FACTOR;
-						tmpPt.y -= pMap->getBorderSize()*MAP_XY_FACTOR;
+						tmpPt.x -= pMap->getBorderSize() * MAP_XY_FACTOR;
+						tmpPt.y -= pMap->getBorderSize() * MAP_XY_FACTOR;
 						pNew->addPoint(tmpPt);
 						i--;
 						right = true;
 					}
-				}	else {
-					if (i<pMap->getXExtent()-2) {
+				}
+				else
+				{
+					if (i < pMap->getXExtent() - 2)
+					{
 						i++;
 						left = true;
-					} else {
+					}
+					else
+					{
 						j--;
 						top = true;
 					}
 				}
-			} else {
-				DEBUG_ASSERTCRASH(i==pMap->getXExtent()-2, ("Logic error. jba."));
-				while (j>0 && waterHeight>mapZtoHeight(pMap->getHeight(i+1, j))) {
+			}
+			else
+			{
+				DEBUG_ASSERTCRASH(i == pMap->getXExtent() - 2, ("Logic error. jba."));
+				while (j > 0 && waterHeight > mapZtoHeight(pMap->getHeight(i + 1, j)))
+				{
 					j--;
 				}
 				right = true;
-				pt.y = (j+1)*MAP_XY_FACTOR;
-				if (waterHeight>mapZtoHeight(pMap->getHeight(i, j))) {
+				pt.y = (j + 1) * MAP_XY_FACTOR;
+				if (waterHeight > mapZtoHeight(pMap->getHeight(i, j)))
+				{
 					pt.y = (j)*MAP_XY_FACTOR;
-				} else {
+				}
+				else
+				{
 					continue;
 				}
-				pt.x = (i+1)*MAP_XY_FACTOR;
+				pt.x = (i + 1) * MAP_XY_FACTOR;
 			}
-		} else {
+		}
+		else
+		{
 			DEBUG_CRASH(("Logic error. jba.")); // shouldn't get here.
 		}
-		pt.x -= pMap->getBorderSize()*MAP_XY_FACTOR;
-		pt.y -= pMap->getBorderSize()*MAP_XY_FACTOR;
+		pt.x -= pMap->getBorderSize() * MAP_XY_FACTOR;
+		pt.y -= pMap->getBorderSize() * MAP_XY_FACTOR;
 		pNew->addPoint(pt);
 		curPoint++;
-		if (firstTime) {
+		if (firstTime)
+		{
 			startI = i;
 			startJ = j;
 			firstTime = false;
 		}
-
 	}
 
-	if (pNew->getNumPoints()>2) {
+	if (pNew->getNumPoints() > 2)
+	{
 		PolygonTrigger *pBetter = adjustSpacing(pNew, WaterOptions::getSpacing());
 		deleteInstance(pNew);
 		pNew = pBetter;
@@ -482,51 +594,62 @@ void WaterTool::fillTheArea(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 		m_poly_curSelectedPolygon = pNew;
 		m_poly_dragPointNdx = -1;
 		WaterOptions::update();
-	}	else {
+	}
+	else
+	{
 		deleteInstance(pNew);
 	}
-
 }
 
 /// Adjust the spacing.
-PolygonTrigger * WaterTool::adjustSpacing(PolygonTrigger *trigger, Real spacing)
+PolygonTrigger *WaterTool::adjustSpacing(PolygonTrigger *trigger, Real spacing)
 {
 	PolygonTrigger *pNew = newInstance(PolygonTrigger)(trigger->getNumPoints());
-//	Real endLen=0;
+	//	Real endLen=0;
 	Int i;
 	Real curSpacingLen = spacing;
 	ICoord3D pt = *trigger->getPoint(0);
 	pNew->addPoint(pt);
 	Bool didCurPoint = true;
-	for (i=0; i<trigger->getNumPoints()-1; i++) {
+	for (i = 0; i < trigger->getNumPoints() - 1; i++)
+	{
 		ICoord3D curPt = *trigger->getPoint(i);
-		ICoord3D nextPt = *trigger->getPoint(i+1);
-		Real dx = nextPt.x-curPt.x;
-		Real dy = nextPt.y-curPt.y;
-		Real curLen = sqrt(dx*dx+dy*dy);
-		if (curLen > 4*MAP_XY_FACTOR && curLen>2*spacing) {
-			if (!didCurPoint) pNew->addPoint(curPt);
-			else pNew->setPoint(curPt, pNew->getNumPoints()-1);
+		ICoord3D nextPt = *trigger->getPoint(i + 1);
+		Real dx = nextPt.x - curPt.x;
+		Real dy = nextPt.y - curPt.y;
+		Real curLen = sqrt(dx * dx + dy * dy);
+		if (curLen > 4 * MAP_XY_FACTOR && curLen > 2 * spacing)
+		{
+			if (!didCurPoint)
+				pNew->addPoint(curPt);
+			else
+				pNew->setPoint(curPt, pNew->getNumPoints() - 1);
 			pNew->addPoint(nextPt);
 			didCurPoint = true;
 			curSpacingLen = spacing;
-		} else if (curSpacingLen>curLen) {
+		}
+		else if (curSpacingLen > curLen)
+		{
 			curSpacingLen -= curLen;
-		} else {
-			while (curLen >= curSpacingLen) {
+		}
+		else
+		{
+			while (curLen >= curSpacingLen)
+			{
 				// cur len > curSpacingLen.
-				Real factor = curSpacingLen/curLen;
-				curPt.x += dx*factor;
-				curPt.y += dy*factor;
+				Real factor = curSpacingLen / curLen;
+				curPt.x += dx * factor;
+				curPt.y += dy * factor;
 				pNew->addPoint(curPt);
 				didCurPoint = false;
-				dx = nextPt.x-curPt.x;
-				dy = nextPt.y-curPt.y;
+				dx = nextPt.x - curPt.x;
+				dy = nextPt.y - curPt.y;
 				curLen -= curSpacingLen;
 				curSpacingLen = spacing;
 			}
 			curSpacingLen -= curLen;
- 			if ((curLen)<MAP_XY_FACTOR/2) {
+			if ((curLen) < MAP_XY_FACTOR / 2)
+			{
 				didCurPoint = true;
 			}
 		}

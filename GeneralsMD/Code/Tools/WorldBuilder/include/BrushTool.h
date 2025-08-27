@@ -48,22 +48,20 @@ public:
 	~BrushTool(void);
 
 public:
-	static Int getWidth(void) {return m_brushWidth;};  ///<Returns width.
-	static Int getFeather(void) {return m_brushFeather;}; ///<Returns feather.
-	static Int getHeight(void) {return m_brushHeight;}; ///<Returns height.
+	static Int getWidth(void) { return m_brushWidth; }; ///< Returns width.
+	static Int getFeather(void) { return m_brushFeather; }; ///< Returns feather.
+	static Int getHeight(void) { return m_brushHeight; }; ///< Returns height.
 	static void setWidth(Int width);
 	static void setFeather(Int feather);
 	static void setHeight(Int height);
 
 public:
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual WorldHeightMapEdit *getHeightMap(void) {return m_htMapEditCopy;};
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+	virtual WorldHeightMapEdit *getHeightMap(void) { return m_htMapEditCopy; };
 	virtual void activate(); ///< Become the current tool.
-	virtual Bool followsTerrain(void) {return false;};
-
+	virtual Bool followsTerrain(void) { return false; };
 };
 
-
-#endif //BRUSHTOOL_H
+#endif // BRUSHTOOL_H

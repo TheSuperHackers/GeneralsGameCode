@@ -40,10 +40,8 @@
  *   GameMtlFormClass::SetTime -- set the current time                                         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "GameMtlForm.h"
 #include "gamemtl.h"
-
 
 /***********************************************************************************************
  * GameMtlFormClass::GameMtlFormClass -- constructor                                           *
@@ -57,18 +55,12 @@
  * HISTORY:                                                                                    *
  *   11/23/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-GameMtlFormClass::GameMtlFormClass
-(
-	IMtlParams *	imtl_params,
-	GameMtl *		mtl,
-	int				pass
-)
+GameMtlFormClass::GameMtlFormClass(IMtlParams *imtl_params, GameMtl *mtl, int pass)
 {
 	IParams = imtl_params;
 	TheMtl = mtl;
 	PassIndex = pass;
 }
-
 
 /***********************************************************************************************
  * GameMtlFormClass::SetThing -- Set the material being edited by this form                    *
@@ -82,14 +74,13 @@ GameMtlFormClass::GameMtlFormClass
  * HISTORY:                                                                                    *
  *   11/23/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-void GameMtlFormClass::SetThing(ReferenceTarget * target)
+void GameMtlFormClass::SetThing(ReferenceTarget *target)
 {
-	assert (target->SuperClassID()==MATERIAL_CLASS_ID);
-	assert (target->ClassID()==GameMaterialClassID);
+	assert(target->SuperClassID() == MATERIAL_CLASS_ID);
+	assert(target->ClassID() == GameMaterialClassID);
 
 	TheMtl = (GameMtl *)target;
 }
-
 
 /***********************************************************************************************
  * GameMtlFormClass::GetThing -- get the material being edited by this form                    *
@@ -103,11 +94,10 @@ void GameMtlFormClass::SetThing(ReferenceTarget * target)
  * HISTORY:                                                                                    *
  *   11/23/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-ReferenceTarget * GameMtlFormClass::GetThing(void)
+ReferenceTarget *GameMtlFormClass::GetThing(void)
 {
-	return (ReferenceTarget*)TheMtl;
+	return (ReferenceTarget *)TheMtl;
 }
-
 
 /***********************************************************************************************
  * GameMtlFormClass::DeleteThis -- delete myself                                               *
@@ -126,7 +116,6 @@ void GameMtlFormClass::DeleteThis(void)
 	delete this;
 }
 
-
 /***********************************************************************************************
  * GameMtlFormClass::ClassID -- returns the classID of the object being edited                 *
  *                                                                                             *
@@ -139,11 +128,10 @@ void GameMtlFormClass::DeleteThis(void)
  * HISTORY:                                                                                    *
  *   11/23/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-Class_ID	GameMtlFormClass::ClassID()
+Class_ID GameMtlFormClass::ClassID()
 {
 	return GameMaterialClassID;
 }
-
 
 /***********************************************************************************************
  * GameMtlFormClass::SetTime -- set the current time                                           *

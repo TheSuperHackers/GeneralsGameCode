@@ -33,7 +33,7 @@
 #include "GameClient/GameText.h"
 #include "Common/UnicodeString.h"
 
-static const char* NEUTRAL_NAME_STR = "(neutral)";
+static const char *NEUTRAL_NAME_STR = "(neutral)";
 
 static Int thePrevCurPlyr = 0;
 
@@ -43,7 +43,7 @@ static Bool islegalplayernamechar(char c)
 	return ::isalnum(c) || c == '_';
 }
 
-static void fixDefaultTeamName(SidesList& sides, AsciiString oldpname, AsciiString newpname)
+static void fixDefaultTeamName(SidesList &sides, AsciiString oldpname, AsciiString newpname)
 {
 	AsciiString tname;
 	tname.set("team");
@@ -53,7 +53,7 @@ static void fixDefaultTeamName(SidesList& sides, AsciiString oldpname, AsciiStri
 	{
 		tname.set("team");
 		tname.concat(newpname);
-		DEBUG_LOG(("rename team %s -> %s",ti->getDict()->getAsciiString(TheKey_teamName).str(),tname.str()));
+		DEBUG_LOG(("rename team %s -> %s", ti->getDict()->getAsciiString(TheKey_teamName).str(), tname.str()));
 		ti->getDict()->setAsciiString(TheKey_teamName, tname);
 		ti->getDict()->setAsciiString(TheKey_teamOwner, newpname);
 	}
@@ -63,38 +63,39 @@ static void fixDefaultTeamName(SidesList& sides, AsciiString oldpname, AsciiStri
 	}
 }
 
-static void updateAllTeams(SidesList& sides, AsciiString oldpname, AsciiString newpname)
+static void updateAllTeams(SidesList &sides, AsciiString oldpname, AsciiString newpname)
 {
 	Int numTeams = sides.getNumTeams();
-	for (Int i = 0; i < numTeams; ++i) {
+	for (Int i = 0; i < numTeams; ++i)
+	{
 		TeamsInfo *teamInfo = sides.getTeamInfo(i);
-		if (teamInfo) {
+		if (teamInfo)
+		{
 			Bool exists;
 			Dict *dict = teamInfo->getDict();
 
 			AsciiString teamOwner = dict->getAsciiString(TheKey_teamOwner, &exists);
 
-			if (exists && teamOwner.compare(oldpname) == 0) {
+			if (exists && teamOwner.compare(oldpname) == 0)
+			{
 				dict->setAsciiString(TheKey_teamOwner, newpname);
 			}
 		}
 	}
 }
 
-
-
 static void ensureValidPlayerName(Dict *d)
 {
 	// ensure there are no illegal chars in it. (in particular, no spaces!)
 	char buf[1024];
 	strcpy(buf, d->getAsciiString(TheKey_playerName).str());
-	for (char* p = buf; *p; ++p)
+	for (char *p = buf; *p; ++p)
 		if (!islegalplayernamechar(*p))
 			*p = '_';
 	d->setAsciiString(TheKey_playerName, AsciiString(buf));
 }
 
-static AsciiString playerNameForUI(SidesList& sides, int i)
+static AsciiString playerNameForUI(SidesList &sides, int i)
 {
 	AsciiString b = sides.getSideInfo(i)->getDict()->getAsciiString(TheKey_playerName);
 	if (b.isEmpty())
@@ -102,7 +103,7 @@ static AsciiString playerNameForUI(SidesList& sides, int i)
 	return b;
 }
 
-static AsciiString UIToInternal(SidesList& sides, const AsciiString& n)
+static AsciiString UIToInternal(SidesList &sides, const AsciiString &n)
 {
 	Int i;
 	for (i = 0; i < sides.getNumSides(); i++)
@@ -115,7 +116,7 @@ static AsciiString UIToInternal(SidesList& sides, const AsciiString& n)
 	return AsciiString::TheEmptyString;
 }
 
-static Bool containsToken(const AsciiString& cur_allies, const AsciiString& tokenIn)
+static Bool containsToken(const AsciiString &cur_allies, const AsciiString &tokenIn)
 {
 	AsciiString name, token;
 
@@ -128,7 +129,7 @@ static Bool containsToken(const AsciiString& cur_allies, const AsciiString& toke
 	return false;
 }
 
-static AsciiString removeDupsFromEnemies(const AsciiString& cur_allies, const AsciiString& cur_enemies)
+static AsciiString removeDupsFromEnemies(const AsciiString &cur_allies, const AsciiString &cur_enemies)
 {
 	AsciiString new_enemies, tmp, token;
 
@@ -144,7 +145,7 @@ static AsciiString removeDupsFromEnemies(const AsciiString& cur_allies, const As
 	return new_enemies;
 }
 
-static AsciiString extractFromAlliesList(CListBox *alliesList, SidesList& sides)
+static AsciiString extractFromAlliesList(CListBox *alliesList, SidesList &sides)
 {
 	char buffer[1024];
 	AsciiString allies;
@@ -159,11 +160,11 @@ static AsciiString extractFromAlliesList(CListBox *alliesList, SidesList& sides)
 			allies.concat(UIToInternal(sides, nm));
 		}
 	}
-//DEBUG_LOG(("a/e is (%s)",allies.str()));
+	// DEBUG_LOG(("a/e is (%s)",allies.str()));
 	return allies;
 }
 
-static void buildAlliesList(CListBox *alliesList, SidesList& sides,	const AsciiString& omitPlayer)
+static void buildAlliesList(CListBox *alliesList, SidesList &sides, const AsciiString &omitPlayer)
 {
 	Int i;
 	AsciiString name, token, oname;
@@ -179,7 +180,7 @@ static void buildAlliesList(CListBox *alliesList, SidesList& sides,	const AsciiS
 	}
 }
 
-static void selectAlliesList(CListBox *alliesList, SidesList& sides, const AsciiString& cur_allies)
+static void selectAlliesList(CListBox *alliesList, SidesList &sides, const AsciiString &cur_allies)
 {
 	Int oindex_in_list;
 	AsciiString name, token, oname;
@@ -195,7 +196,7 @@ static void selectAlliesList(CListBox *alliesList, SidesList& sides, const Ascii
 		SidesInfo *si = sides.findSideInfo(token, &i);
 		if (!si)
 		{
-			DEBUG_CRASH(("player %s not found",token.str()));
+			DEBUG_CRASH(("player %s not found", token.str()));
 			continue;
 		}
 		// must re-find, since list is sorted
@@ -210,16 +211,15 @@ static void selectAlliesList(CListBox *alliesList, SidesList& sides, const Ascii
 }
 
 // returns a str describing how t1 considers t2. (implies nothing about how t2 considers t1)
-static const char* calcRelationStr(SidesList& sides, int t1, int t2)
+static const char *calcRelationStr(SidesList &sides, int t1, int t2)
 {
-	const char* allied = "Ally";
-	const char* enemies = "Enemy";
-	const char* neutral = "Neutral";
+	const char *allied = "Ally";
+	const char *enemies = "Enemy";
+	const char *neutral = "Neutral";
 
-	SidesInfo* ti1;
-	SidesInfo* ti2;
+	SidesInfo *ti1;
+	SidesInfo *ti2;
 	AsciiString t2name;
-
 
 	//	we use the relationship between our player's default teams.
 	ti1 = sides.getSideInfo(t1);
@@ -237,52 +237,49 @@ static const char* calcRelationStr(SidesList& sides, int t1, int t2)
 /////////////////////////////////////////////////////////////////////////////
 // PlayerListDlg dialog
 
-
-PlayerListDlg::PlayerListDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(PlayerListDlg::IDD, pParent), m_updating(0)
+PlayerListDlg::PlayerListDlg(CWnd *pParent /*=NULL*/) : CDialog(PlayerListDlg::IDD, pParent), m_updating(0)
 {
 	//{{AFX_DATA_INIT(PlayerListDlg)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void PlayerListDlg::DoDataExchange(CDataExchange* pDX)
+void PlayerListDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(PlayerListDlg)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(PlayerListDlg, CDialog)
-	//{{AFX_MSG_MAP(PlayerListDlg)
-	ON_BN_CLICKED(IDC_NEWPLAYER, OnNewplayer)
-	ON_BN_CLICKED(IDC_EDITPLAYER, OnEditplayer)
-	ON_BN_CLICKED(IDC_REMOVEPLAYER, OnRemoveplayer)
-	ON_LBN_SELCHANGE(IDC_PLAYERS, OnSelchangePlayers)
-	ON_LBN_DBLCLK(IDC_PLAYERS, OnDblclkPlayers)
-	ON_LBN_SELCHANGE(IDC_ALLIESLIST, OnSelchangeAllieslist)
-	ON_LBN_SELCHANGE(IDC_ENEMIESLIST, OnSelchangeEnemieslist)
-	ON_BN_CLICKED(IDC_PLAYERISCOMPUTER, OnPlayeriscomputer)
-	ON_CBN_SELENDOK(IDC_PLAYERFACTION, OnEditchangePlayerfaction)
-	ON_BN_CLICKED(IDC_CHANGE_NAME, OnChangePlayername)
-	ON_EN_CHANGE(IDC_PLAYERDISPLAYNAME, OnChangePlayerdisplayname)
-	ON_BN_CLICKED(IDC_PlayerColor, OnColorPress)
-	ON_CBN_SELENDOK(IDC_PlayerColorCombo, OnSelectPlayerColor)
-	ON_BN_CLICKED(IDC_ADDSKIRMISHPLAYERS, OnAddskirmishplayers)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(PlayerListDlg)
+ON_BN_CLICKED(IDC_NEWPLAYER, OnNewplayer)
+ON_BN_CLICKED(IDC_EDITPLAYER, OnEditplayer)
+ON_BN_CLICKED(IDC_REMOVEPLAYER, OnRemoveplayer)
+ON_LBN_SELCHANGE(IDC_PLAYERS, OnSelchangePlayers)
+ON_LBN_DBLCLK(IDC_PLAYERS, OnDblclkPlayers)
+ON_LBN_SELCHANGE(IDC_ALLIESLIST, OnSelchangeAllieslist)
+ON_LBN_SELCHANGE(IDC_ENEMIESLIST, OnSelchangeEnemieslist)
+ON_BN_CLICKED(IDC_PLAYERISCOMPUTER, OnPlayeriscomputer)
+ON_CBN_SELENDOK(IDC_PLAYERFACTION, OnEditchangePlayerfaction)
+ON_BN_CLICKED(IDC_CHANGE_NAME, OnChangePlayername)
+ON_EN_CHANGE(IDC_PLAYERDISPLAYNAME, OnChangePlayerdisplayname)
+ON_BN_CLICKED(IDC_PlayerColor, OnColorPress)
+ON_CBN_SELENDOK(IDC_PlayerColorCombo, OnSelectPlayerColor)
+ON_BN_CLICKED(IDC_ADDSKIRMISHPLAYERS, OnAddskirmishplayers)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-	//ON_EN_CHANGE(IDC_PLAYERNAME, OnChangePlayername)
+// ON_EN_CHANGE(IDC_PLAYERNAME, OnChangePlayername)
 
 /////////////////////////////////////////////////////////////////////////////
 // PlayerListDlg message handlers
 
 void PlayerListDlg::OnNewplayer()
 {
-	if (m_sides.getNumSides() >= MAX_PLAYER_COUNT - 1) ///Added -1 so we can always have an observer even for Single player games.
+	if (m_sides.getNumSides() >= MAX_PLAYER_COUNT - 1) /// Added -1 so we can always have an observer even for Single player
+																										 /// games.
 		return;
 
 	AddPlayerDialog addPlyr("");
@@ -294,9 +291,10 @@ void PlayerListDlg::OnNewplayer()
 	AsciiString pname;
 	UnicodeString pnameu;
 	Int num = 1;
-	do {
-		pname.format("player%04d",num);
-		pnameu.format(L"Player %04d's Display Name",num);
+	do
+	{
+		pname.format("player%04d", num);
+		pnameu.format(L"Player %04d's Display Name", num);
 		num++;
 	} while (m_sides.findSideInfo(pname));
 
@@ -325,8 +323,8 @@ void PlayerListDlg::OnNewplayer()
 
 			Bool modified = m_sides.validateSides();
 			(void)modified;
-			DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::OnNewplayer"));
-			m_curPlayerIdx = m_sides.getNumSides()-1;
+			DEBUG_ASSERTLOG(!modified, ("had to clean up sides in PlayerListDlg::OnNewplayer"));
+			m_curPlayerIdx = m_sides.getNumSides() - 1;
 			updateTheUI();
 		}
 	}
@@ -373,7 +371,7 @@ void PlayerListDlg::OnEditplayer()
 
 		Bool modified = m_sides.validateSides();
 		(void)modified;
-		DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::OnEditplayer"));
+		DEBUG_ASSERTLOG(!modified, ("had to clean up sides in PlayerListDlg::OnEditplayer"));
 
 		updateTheUI();
 	}
@@ -423,13 +421,13 @@ try_again:
 
 	Bool modified = m_sides.validateSides();
 	(void)modified;
-	DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::OnRemoveplayer"));
+	DEBUG_ASSERTLOG(!modified, ("had to clean up sides in PlayerListDlg::OnRemoveplayer"));
 	updateTheUI();
 }
 
 void PlayerListDlg::OnSelchangePlayers()
 {
-	CListBox *list = (CListBox*)GetDlgItem(IDC_PLAYERS);
+	CListBox *list = (CListBox *)GetDlgItem(IDC_PLAYERS);
 	m_curPlayerIdx = list->GetCurSel();
 	updateTheUI();
 }
@@ -446,14 +444,15 @@ void PlayerListDlg::updateTheUI(void)
 	// make sure everything is canonical.
 	Bool modified = m_sides.validateSides();
 	(void)modified;
-	DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::updateTheUI! (caller should do this)"));
+	DEBUG_ASSERTLOG(!modified, ("had to clean up sides in PlayerListDlg::updateTheUI! (caller should do this)"));
 
-	if (m_curPlayerIdx < 0) m_curPlayerIdx = 0;
+	if (m_curPlayerIdx < 0)
+		m_curPlayerIdx = 0;
 	if (m_curPlayerIdx >= m_sides.getNumSides())
-		m_curPlayerIdx = m_sides.getNumSides()-1;
+		m_curPlayerIdx = m_sides.getNumSides() - 1;
 
 	// update player list
-	CListBox *list = (CListBox*)GetDlgItem(IDC_PLAYERS);
+	CListBox *list = (CListBox *)GetDlgItem(IDC_PLAYERS);
 	list->ResetContent();
 
 	Int len = m_sides.getNumSides();
@@ -467,7 +466,7 @@ void PlayerListDlg::updateTheUI(void)
 		if (name.isEmpty())
 			fmt = NEUTRAL_NAME_STR;
 		else
-			fmt.format("%s=\"%ls\"",name.str(),uni.str());
+			fmt.format("%s=\"%ls\"", name.str(), uni.str());
 		list->AddString(fmt.str());
 	}
 
@@ -479,8 +478,8 @@ void PlayerListDlg::updateTheUI(void)
 	// update player name
 	{
 		CWnd *playername = GetDlgItem(IDC_PLAYERNAME);
-		playername->EnableWindow(!isNeutral);	// neutral names are not editable
-		playername->GetWindowText(buffer, sizeof(buffer)-2);
+		playername->EnableWindow(!isNeutral); // neutral names are not editable
+		playername->GetWindowText(buffer, sizeof(buffer) - 2);
 		if (strcmp(cur_pname.str(), buffer) != 0)
 			playername->SetWindowText(cur_pname.str());
 	}
@@ -488,8 +487,8 @@ void PlayerListDlg::updateTheUI(void)
 	// update display name
 	{
 		CWnd *playerdname = GetDlgItem(IDC_PLAYERDISPLAYNAME);
-		playerdname->EnableWindow(!isNeutral);	// neutral names are not editable
-		playerdname->GetWindowText(buffer, sizeof(buffer)-2);
+		playerdname->EnableWindow(!isNeutral); // neutral names are not editable
+		playerdname->GetWindowText(buffer, sizeof(buffer) - 2);
 		AsciiString cur_pdnamea;
 		cur_pdnamea.translate(cur_pdname);
 		if (strcmp(cur_pdnamea.str(), buffer) != 0)
@@ -501,31 +500,34 @@ void PlayerListDlg::updateTheUI(void)
 		RGBColor rgb;
 		Bool hasColor = false;
 		Int color = pdict->getInt(TheKey_playerColor, &hasColor);
-		if (hasColor) {
+		if (hasColor)
+		{
 			rgb.setFromInt(color);
-		} else {
+		}
+		else
+		{
 			AsciiString tmplname = pdict->getAsciiString(TheKey_playerFaction);
-			const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
-			if (pt) {
+			const PlayerTemplate *pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
+			if (pt)
+			{
 				rgb = *pt->getPreferredColor();
 			}
 		}
 		m_colorButton.setColor(rgb);
 		SelectColor(rgb);
-
 	}
 
 	// update control button
 	{
 		Bool isHuman = pdict->getBool(TheKey_playerIsHuman);
-		CButton *controller = (CButton*)GetDlgItem(IDC_PLAYERISCOMPUTER);
+		CButton *controller = (CButton *)GetDlgItem(IDC_PLAYERISCOMPUTER);
 		controller->SetCheck(isHuman ? 0 : 1);
 		controller->EnableWindow(!isNeutral);
 	}
 
 	// update factions popup
 	{
-		CComboBox *factions = (CComboBox*)GetDlgItem(IDC_PLAYERFACTION);
+		CComboBox *factions = (CComboBox *)GetDlgItem(IDC_PLAYERFACTION);
 		factions->ResetContent();
 		if (ThePlayerTemplateStore)
 		{
@@ -540,10 +542,10 @@ void PlayerListDlg::updateTheUI(void)
 	}
 
 	// update allies & enemies
-	CListBox *allieslist = (CListBox*)GetDlgItem(IDC_ALLIESLIST);
-	CListBox *enemieslist = (CListBox*)GetDlgItem(IDC_ENEMIESLIST);
-	CListBox *regardOthers = (CListBox*)GetDlgItem(IDC_PLAYER_ATTITUDE_OUT);
-	CListBox *regardMe = (CListBox*)GetDlgItem(IDC_PLAYER_ATTITUDE_IN);
+	CListBox *allieslist = (CListBox *)GetDlgItem(IDC_ALLIESLIST);
+	CListBox *enemieslist = (CListBox *)GetDlgItem(IDC_ENEMIESLIST);
+	CListBox *regardOthers = (CListBox *)GetDlgItem(IDC_PLAYER_ATTITUDE_OUT);
+	CListBox *regardMe = (CListBox *)GetDlgItem(IDC_PLAYER_ATTITUDE_IN);
 
 	AsciiString cur_allies = m_sides.getSideInfo(m_curPlayerIdx)->getDict()->getAsciiString(TheKey_playerAllies);
 	buildAlliesList(allieslist, m_sides, cur_pname);
@@ -557,21 +559,21 @@ void PlayerListDlg::updateTheUI(void)
 
 	regardOthers->ResetContent();
 	regardMe->ResetContent();
-	const char* rstr;
+	const char *rstr;
 	AsciiString pname;
 	for (i = 0; i < m_sides.getNumSides(); i++)
 	{
 		pname = m_sides.getSideInfo(i)->getDict()->getAsciiString(TheKey_playerName);
 		if (pname.isEmpty() || pname == cur_pname)
-			continue;	// skip neutral and self
+			continue; // skip neutral and self
 		pname = playerNameForUI(m_sides, i);
 
 		rstr = calcRelationStr(m_sides, m_curPlayerIdx, i);
-		sprintf(buffer, "%s: %s",pname.str(),rstr);
+		sprintf(buffer, "%s: %s", pname.str(), rstr);
 		regardOthers->AddString(buffer);
 
 		rstr = calcRelationStr(m_sides, i, m_curPlayerIdx);
-		sprintf(buffer, "%s: %s",pname.str(),rstr);
+		sprintf(buffer, "%s: %s", pname.str(), rstr);
 		regardMe->AddString(buffer);
 	}
 
@@ -582,11 +584,11 @@ void PlayerListDlg::updateTheUI(void)
 	CWnd *rmvbtn = GetDlgItem(IDC_REMOVEPLAYER);
 	Dict *playerDict = m_sides.getSideInfo(m_curPlayerIdx)->getDict();
 	Bool isneutral = playerDict->getAsciiString(TheKey_playerName).isEmpty();
-	if( newbtn )
+	if (newbtn)
 		newbtn->EnableWindow(m_sides.getNumSides() < MAX_PLAYER_COUNT);
-	if( editbtn )
+	if (editbtn)
 		editbtn->EnableWindow(!isneutral);
-	if( rmvbtn )
+	if (rmvbtn)
 		rmvbtn->EnableWindow(m_sides.getNumSides() > 1 && !isneutral);
 
 	Invalidate();
@@ -594,7 +596,6 @@ void PlayerListDlg::updateTheUI(void)
 
 	--m_updating;
 }
-
 
 BOOL PlayerListDlg::OnInitDialog()
 {
@@ -606,7 +607,8 @@ BOOL PlayerListDlg::OnInitDialog()
 
 	CRect rect;
 	CWnd *item = GetDlgItem(IDC_PlayerColor);
-	if (item) {
+	if (item)
+	{
 		item->GetWindowRect(&rect);
 		ScreenToClient(&rect);
 		DWORD style = item->GetStyle();
@@ -617,8 +619,8 @@ BOOL PlayerListDlg::OnInitDialog()
 	updateTheUI();
 	PopulateColorComboBox();
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+							 // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void PlayerListDlg::OnDblclkPlayers()
@@ -630,7 +632,8 @@ void PlayerListDlg::OnColorPress()
 {
 	Dict *playerDict = m_sides.getSideInfo(m_curPlayerIdx)->getDict();
 	CColorDialog dlg;
-	if (dlg.DoModal() == IDOK) {
+	if (dlg.DoModal() == IDOK)
+	{
 		m_colorButton.setColor(CButtonShowColor::BGRtoRGB(dlg.GetColor()));
 		RGBColor color = m_colorButton.getColor();
 		playerDict->setInt(TheKey_playerColor, color.getAsInt());
@@ -643,9 +646,10 @@ void PlayerListDlg::PopulateColorComboBox()
 	Int numColors = TheMultiplayerSettings->getNumColors();
 	AsciiString colorName;
 
-	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_PlayerColorCombo);
-	if (pCombo) {
-		for (Int c=0; c<numColors; ++c)
+	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_PlayerColorCombo);
+	if (pCombo)
+	{
+		for (Int c = 0; c < numColors; ++c)
 		{
 			MultiplayerColorDefinition *def = TheMultiplayerSettings->getColor(c);
 			if (!def)
@@ -664,20 +668,23 @@ void PlayerListDlg::SelectColor(RGBColor rgb)
 	AsciiString colorName;
 	Bool selected = false;
 
-	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_PlayerColorCombo);
-	if (pCombo) {
-		for (Int c=0; c<numColors; ++c)
+	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_PlayerColorCombo);
+	if (pCombo)
+	{
+		for (Int c = 0; c < numColors; ++c)
 		{
 			MultiplayerColorDefinition *def = TheMultiplayerSettings->getColor(c);
 			if (!def)
 				continue;
-			if (rgb.getAsInt() == def->getRGBValue().getAsInt()) {
+			if (rgb.getAsInt() == def->getRGBValue().getAsInt())
+			{
 				pCombo->SetCurSel(c);
 				selected = true;
 				break;
 			}
 		}
-		if (!selected) {
+		if (!selected)
+		{
 			pCombo->SetCurSel(-1);
 		}
 	}
@@ -687,13 +694,14 @@ void PlayerListDlg::OnSelectPlayerColor()
 {
 	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_PlayerColorCombo);
 	Dict *playerDict = m_sides.getSideInfo(m_curPlayerIdx)->getDict();
-	if (pCombo && playerDict) {
+	if (pCombo && playerDict)
+	{
 		CString str;
 		pCombo->GetWindowText(str);
 		Int index = -1;
 		Int numColors = TheMultiplayerSettings->getNumColors();
-		Int c=0;
-		for (; c<numColors; ++c)
+		Int c = 0;
+		for (; c < numColors; ++c)
 		{
 			MultiplayerColorDefinition *def = TheMultiplayerSettings->getColor(c);
 			if (!def)
@@ -702,12 +710,14 @@ void PlayerListDlg::OnSelectPlayerColor()
 			AsciiString asciiColor;
 			asciiColor.translate(colorName);
 
-			if (str == asciiColor.str()) {
+			if (str == asciiColor.str())
+			{
 				index = c;
 				break;
 			}
 		}
-		if (index >= 0) {
+		if (index >= 0)
+		{
 			Int color = TheMultiplayerSettings->getColor(c)->getColor();
 			playerDict->setInt(TheKey_playerColor, color);
 		}
@@ -723,10 +733,10 @@ void PlayerListDlg::OnSelchangeAllieslist()
 	if (isneutral)
 		return;
 
-	CListBox *allieslist = (CListBox*)GetDlgItem(IDC_ALLIESLIST);
+	CListBox *allieslist = (CListBox *)GetDlgItem(IDC_ALLIESLIST);
 	AsciiString allies = extractFromAlliesList(allieslist, m_sides);
 
-	CListBox *enemieslist = (CListBox*)GetDlgItem(IDC_ENEMIESLIST);
+	CListBox *enemieslist = (CListBox *)GetDlgItem(IDC_ENEMIESLIST);
 	AsciiString enemies = extractFromAlliesList(enemieslist, m_sides);
 
 	enemies = removeDupsFromEnemies(allies, enemies);
@@ -746,9 +756,9 @@ void PlayerListDlg::OnOK()
 {
 	Bool modified = m_sides.validateSides();
 	(void)modified;
-	DEBUG_ASSERTLOG(!modified,("had to clean up sides in CTeamsDialog::OnOK"));
+	DEBUG_ASSERTLOG(!modified, ("had to clean up sides in CTeamsDialog::OnOK"));
 
-	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
+	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
 	SidesListUndoable *pUndo = new SidesListUndoable(m_sides, pDoc);
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
@@ -765,7 +775,7 @@ void PlayerListDlg::OnCancel()
 
 void PlayerListDlg::OnPlayeriscomputer()
 {
-	CButton *b = (CButton*)GetDlgItem(IDC_PLAYERISCOMPUTER);
+	CButton *b = (CButton *)GetDlgItem(IDC_PLAYERISCOMPUTER);
 	m_sides.getSideInfo(m_curPlayerIdx)->getDict()->setBool(TheKey_playerIsHuman, b->GetCheck() == 0);
 
 	updateTheUI();
@@ -773,15 +783,19 @@ void PlayerListDlg::OnPlayeriscomputer()
 
 void PlayerListDlg::OnEditchangePlayerfaction()
 {
-	CComboBox *faction = (CComboBox*)GetDlgItem(IDC_PLAYERFACTION);
+	CComboBox *faction = (CComboBox *)GetDlgItem(IDC_PLAYERFACTION);
 
-	if (faction) {
+	if (faction)
+	{
 		// get the text out of the combo. If it is user-typed, sel will be -1, otherwise it will be >=0
 		CString theText;
 		Int sel = faction->GetCurSel();
-		if (sel >= 0) {
+		if (sel >= 0)
+		{
 			faction->GetLBText(sel, theText);
-		} else {
+		}
+		else
+		{
 			faction->GetWindowText(theText);
 		}
 		AsciiString name((LPCTSTR)theText);
@@ -797,14 +811,14 @@ void PlayerListDlg::OnChangePlayername()
 {
 	CWnd *playername = GetDlgItem(IDC_PLAYERNAME);
 	char buf[1024];
-	playername->GetWindowText(buf, sizeof(buf)-2);
+	playername->GetWindowText(buf, sizeof(buf) - 2);
 
 	Dict *pdict = m_sides.getSideInfo(m_curPlayerIdx)->getDict();
 	AsciiString pnamenew(buf);
 	AsciiString pnameold = pdict->getAsciiString(TheKey_playerName);
 
 	if (pnameold == pnamenew)
-		return;	// hmm, no change, so just punt.
+		return; // hmm, no change, so just punt.
 
 	if (m_sides.findSideInfo(pnamenew))
 	{
@@ -826,7 +840,7 @@ void PlayerListDlg::OnChangePlayerdisplayname()
 {
 	CWnd *playername = GetDlgItem(IDC_PLAYERDISPLAYNAME);
 	char buf[1024];
-	playername->GetWindowText(buf, sizeof(buf)-2);
+	playername->GetWindowText(buf, sizeof(buf) - 2);
 
 	Dict *pdict = m_sides.getSideInfo(m_curPlayerIdx)->getDict();
 
@@ -836,7 +850,7 @@ void PlayerListDlg::OnChangePlayerdisplayname()
 	UnicodeString pnameold = pdict->getUnicodeString(TheKey_playerDisplayName);
 
 	if (pnameold == pnamenew)
-		return;	// hmm, no change, so just punt.
+		return; // hmm, no change, so just punt.
 
 	pdict->setUnicodeString(TheKey_playerDisplayName, pnamenew);
 
@@ -852,8 +866,8 @@ void PlayerListDlg::OnAddskirmishplayers()
 	UnicodeString pnameu;
 	pnameu = L"PlyrCivilian";
 
-	if (!m_sides.findSideInfo(pname)) {
-
+	if (!m_sides.findSideInfo(pname))
+	{
 		Dict newPlayerDict;
 		newPlayerDict.setAsciiString(TheKey_playerName, pname);
 		newPlayerDict.setBool(TheKey_playerIsHuman, false);
@@ -867,15 +881,15 @@ void PlayerListDlg::OnAddskirmishplayers()
 
 		Bool modified = m_sides.validateSides();
 		(void)modified;
-		DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::OnNewplayer"));
+		DEBUG_ASSERTLOG(!modified, ("had to clean up sides in PlayerListDlg::OnNewplayer"));
 	}
 
 	addedPTName = "FactionAmerica";
 	pname = "SkirmishAmerica";
 	pnameu = L"SkirmishAmerica";
 
-	if (!m_sides.findSideInfo(pname)) {
-
+	if (!m_sides.findSideInfo(pname))
+	{
 		Dict newPlayerDict;
 		newPlayerDict.setAsciiString(TheKey_playerName, pname);
 		newPlayerDict.setBool(TheKey_playerIsHuman, false);
@@ -889,15 +903,15 @@ void PlayerListDlg::OnAddskirmishplayers()
 
 		Bool modified = m_sides.validateSides();
 		(void)modified;
-		DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::OnNewplayer"));
+		DEBUG_ASSERTLOG(!modified, ("had to clean up sides in PlayerListDlg::OnNewplayer"));
 	}
 
 	addedPTName = "FactionChina";
 	pname = "SkirmishChina";
 	pnameu = L"SkirmishChina";
 
-	if (!m_sides.findSideInfo(pname)) {
-
+	if (!m_sides.findSideInfo(pname))
+	{
 		Dict newPlayerDict;
 		newPlayerDict.setAsciiString(TheKey_playerName, pname);
 		newPlayerDict.setBool(TheKey_playerIsHuman, false);
@@ -911,15 +925,15 @@ void PlayerListDlg::OnAddskirmishplayers()
 
 		Bool modified = m_sides.validateSides();
 		(void)modified;
-		DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::OnNewplayer"));
+		DEBUG_ASSERTLOG(!modified, ("had to clean up sides in PlayerListDlg::OnNewplayer"));
 	}
 
 	addedPTName = "FactionGLA";
 	pname = "SkirmishGLA";
 	pnameu = L"SkirmishGLA";
 
-	if (!m_sides.findSideInfo(pname)) {
-
+	if (!m_sides.findSideInfo(pname))
+	{
 		Dict newPlayerDict;
 		newPlayerDict.setAsciiString(TheKey_playerName, pname);
 		newPlayerDict.setBool(TheKey_playerIsHuman, false);
@@ -933,7 +947,7 @@ void PlayerListDlg::OnAddskirmishplayers()
 
 		Bool modified = m_sides.validateSides();
 		(void)modified;
-		DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::OnNewplayer"));
+		DEBUG_ASSERTLOG(!modified, ("had to clean up sides in PlayerListDlg::OnNewplayer"));
 	}
 	updateTheUI();
 }

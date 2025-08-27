@@ -57,29 +57,43 @@ public:
 	virtual ~DownloadManager();
 
 public:
-	void init( void );
-	HRESULT update( void );
-	void reset( void );
+	void init(void);
+	HRESULT update(void);
+	void reset(void);
 
-	virtual HRESULT OnError( Int error );
+	virtual HRESULT OnError(Int error);
 	virtual HRESULT OnEnd();
 	virtual HRESULT OnQueryResume();
-	virtual HRESULT OnProgressUpdate( Int bytesread, Int totalsize, Int timetaken, Int timeleft );
-	virtual HRESULT OnStatusUpdate( Int status );
+	virtual HRESULT OnProgressUpdate(Int bytesread, Int totalsize, Int timetaken, Int timeleft);
+	virtual HRESULT OnStatusUpdate(Int status);
 
-	virtual HRESULT downloadFile( AsciiString server, AsciiString username, AsciiString password, AsciiString file, AsciiString localfile, AsciiString regkey, Bool tryResume );
-	AsciiString getLastLocalFile( void );
+	virtual HRESULT downloadFile(
+			AsciiString server,
+			AsciiString username,
+			AsciiString password,
+			AsciiString file,
+			AsciiString localfile,
+			AsciiString regkey,
+			Bool tryResume);
+	AsciiString getLastLocalFile(void);
 
-	Bool isDone( void ) { return m_sawEnd || m_wasError; }
-	Bool isOk( void ) { return m_sawEnd; }
-	Bool wasError( void ) { return m_wasError; }
+	Bool isDone(void) { return m_sawEnd || m_wasError; }
+	Bool isOk(void) { return m_sawEnd; }
+	Bool wasError(void) { return m_wasError; }
 
-	UnicodeString getStatusString( void ) { return m_statusString; }
-	UnicodeString getErrorString( void ) { return m_errorString; }
+	UnicodeString getStatusString(void) { return m_statusString; }
+	UnicodeString getErrorString(void) { return m_errorString; }
 
-	void queueFileForDownload( AsciiString server, AsciiString username, AsciiString password, AsciiString file, AsciiString localfile, AsciiString regkey, Bool tryResume );
-	Bool isFileQueuedForDownload( void ) { return !m_queuedDownloads.empty(); }
-	HRESULT downloadNextQueuedFile( void );
+	void queueFileForDownload(
+			AsciiString server,
+			AsciiString username,
+			AsciiString password,
+			AsciiString file,
+			AsciiString localfile,
+			AsciiString regkey,
+			Bool tryResume);
+	Bool isFileQueuedForDownload(void) { return !m_queuedDownloads.empty(); }
+	HRESULT downloadNextQueuedFile(void);
 
 private:
 	Bool m_winsockInit;

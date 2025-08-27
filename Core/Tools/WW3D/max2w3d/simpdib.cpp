@@ -36,21 +36,14 @@
 
 #include "simpdib.h"
 
-
-SimpleDIBClass::SimpleDIBClass(HWND hwnd,int width,int height,PaletteClass & pal):
-	IsZombie(false),
-	Info(NULL),
-	Handle(0),
-	Pixels(NULL),
-	Width(width),
-	Height(height),
-	PixelBase(NULL),
-	Pitch(NULL)
+SimpleDIBClass::SimpleDIBClass(HWND hwnd, int width, int height, PaletteClass &pal) :
+		IsZombie(false), Info(NULL), Handle(0), Pixels(NULL), Width(width), Height(height), PixelBase(NULL), Pitch(NULL)
 {
 	// Allocate a BITMAPINFO structure
-	Info = (BITMAPINFO *) new char [sizeof(BITMAPINFO) + 256*sizeof(RGBQUAD)];
+	Info = (BITMAPINFO *)new char[sizeof(BITMAPINFO) + 256 * sizeof(RGBQUAD)];
 
-	if (Info == NULL) {
+	if (Info == NULL)
+	{
 		IsZombie = true;
 		return;
 	}
@@ -58,7 +51,7 @@ SimpleDIBClass::SimpleDIBClass(HWND hwnd,int width,int height,PaletteClass & pal
 	// Describe the type of DIB we want.
 	Info->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 	Info->bmiHeader.biWidth = width;
-	Info->bmiHeader.biHeight = -height;		//ask for a top-down dib.
+	Info->bmiHeader.biHeight = -height; // ask for a top-down dib.
 	Info->bmiHeader.biPlanes = 1;
 	Info->bmiHeader.biBitCount = 8;
 	Info->bmiHeader.biCompression = BI_RGB;
@@ -69,22 +62,24 @@ SimpleDIBClass::SimpleDIBClass(HWND hwnd,int width,int height,PaletteClass & pal
 	Info->bmiHeader.biClrImportant = 256;
 
 	// Fill in the DIB's palette.
-	for (int i=0; i<256; i++) {
-		Info->bmiColors[i].rgbBlue =		(unsigned char)pal[i].Get_Blue();
-		Info->bmiColors[i].rgbGreen =		(unsigned char)pal[i].Get_Green();
-		Info->bmiColors[i].rgbRed =		(unsigned char)pal[i].Get_Red();
-		Info->bmiColors[i].rgbReserved =	0;
+	for (int i = 0; i < 256; i++)
+	{
+		Info->bmiColors[i].rgbBlue = (unsigned char)pal[i].Get_Blue();
+		Info->bmiColors[i].rgbGreen = (unsigned char)pal[i].Get_Green();
+		Info->bmiColors[i].rgbRed = (unsigned char)pal[i].Get_Red();
+		Info->bmiColors[i].rgbReserved = 0;
 	}
 
 	// Create the DIB.
 	HDC hdc = GetDC(hwnd);
-	Handle = CreateDIBSection(hdc, Info, DIB_RGB_COLORS,(void**)&Pixels, NULL, 0);
+	Handle = CreateDIBSection(hdc, Info, DIB_RGB_COLORS, (void **)&Pixels, NULL, 0);
 	ReleaseDC(hwnd, hdc);
 
-	if (!Handle) {
+	if (!Handle)
+	{
 		IsZombie = true;
 		return;
-    }
+	}
 
 	Width = Info->bmiHeader.biWidth;
 	Height = abs(Info->bmiHeader.biHeight);
@@ -92,39 +87,42 @@ SimpleDIBClass::SimpleDIBClass(HWND hwnd,int width,int height,PaletteClass & pal
 
 	// Check if the DIB is bottom-up or top-down.
 	// (it better be top-down, thats what I'm asking for!!!)
-	if (Info->bmiHeader.biHeight > 0) {
-
+	if (Info->bmiHeader.biHeight > 0)
+	{
 		// bottom-up DIB
-        PixelBase = (Pixels + (Height - 1) * Width);
-        Pitch = -Pitch;
-
-    } else {
-
+		PixelBase = (Pixels + (Height - 1) * Width);
+		Pitch = -Pitch;
+	}
+	else
+	{
 		// top-down DIB
-        PixelBase = Pixels;
-        Pitch = Pitch;
-    }
+		PixelBase = Pixels;
+		Pitch = Pitch;
+	}
 }
 
 SimpleDIBClass::~SimpleDIBClass(void)
 {
-	if (Info) delete [] Info;
-	if (Handle) DeleteObject(Handle);
+	if (Info)
+		delete[] Info;
+	if (Handle)
+		DeleteObject(Handle);
 }
-
 
 void SimpleDIBClass::Clear(unsigned char color)
 {
-	if (Pixels) {
-		memset(Pixels, color, abs(Pitch)*Height);
+	if (Pixels)
+	{
+		memset(Pixels, color, abs(Pitch) * Height);
 	}
 }
 
-void SimpleDIBClass::Set_Pixel(int i,int j,unsigned char color)
+void SimpleDIBClass::Set_Pixel(int i, int j, unsigned char color)
 {
-	if ((i < 0) || (j < 0) || (i >= Width) || (j >= Height)) {
+	if ((i < 0) || (j < 0) || (i >= Width) || (j >= Height))
+	{
 		return;
 	}
 
-	*(PixelBase + j*Pitch + i) = color;
+	*(PixelBase + j * Pitch + i) = color;
 }

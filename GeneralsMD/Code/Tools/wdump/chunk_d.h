@@ -28,24 +28,32 @@
 #endif // _MSC_VER >= 1000
 class ChunkItem;
 
-class ChunkType {
+class ChunkType
+{
 public:
-	ChunkType(const char *name, void (*callback)(ChunkItem *item, CListCtrl *List), bool wrapper = false) {Name = name;Callback = callback;	Wrapper = wrapper;};
+	ChunkType(const char *name, void (*callback)(ChunkItem *item, CListCtrl *List), bool wrapper = false)
+	{
+		Name = name;
+		Callback = callback;
+		Wrapper = wrapper;
+	};
 	const char *Name;
 	bool Wrapper;
 	void (*Callback)(ChunkItem *, CListCtrl *list);
 };
 
-class ChunkTableClass {
+class ChunkTableClass
+{
 public:
 	ChunkTableClass();
 	~ChunkTableClass();
 	ChunkType *Lookup(int ID);
 	void NewType(int ID, const char *name, void (*callback)(ChunkItem *item, CListCtrl *list) = 0, bool wrapper = false);
+
 protected:
 	CMapPtrToPtr Types;
 
-	static void AddItem(CListCtrl *List, int &Counter, const char *Name, const char *Value, const char *Type="string");
+	static void AddItem(CListCtrl *List, int &Counter, const char *Name, const char *Value, const char *Type = "string");
 	static void AddItem(CListCtrl *List, int &Counter, const char *Name, uint32 Value);
 	static void AddItem(CListCtrl *List, int &Counter, const char *Name, uint16 Value);
 	static void AddItem(CListCtrl *List, int &Counter, const char *Name, uint8 Value);
@@ -62,11 +70,10 @@ protected:
 	static void AddItem(CListCtrl *List, int &Counter, const char *Name, W3dTexCoordStruct *Value, int Count);
 	static void AddItem(CListCtrl *List, int &Counter, const char *Name, W3dTexCoordStruct *Value);
 	static void AddItem(CListCtrl *List, int &Counter, const char *Name, Vector3i *Value);
-	static void AddItem(CListCtrl *List, int &Counter, const char *name, W3dShaderStruct * shader);
-	static void AddItem(CListCtrl *List, int &Counter, const char *name, W3dPS2ShaderStruct * shader);
+	static void AddItem(CListCtrl *List, int &Counter, const char *name, W3dShaderStruct *shader);
+	static void AddItem(CListCtrl *List, int &Counter, const char *name, W3dPS2ShaderStruct *shader);
 
-	static void AddItemVersion(CListCtrl *List,int &Counter,uint32 version);
-
+	static void AddItemVersion(CListCtrl *List, int &Counter, uint32 version);
 
 	static void List_Subitems(ChunkItem *Item, CListCtrl *List);
 
@@ -105,51 +112,51 @@ protected:
 	static void List_W3D_CHUNK_MATERIAL3_SI_MAP(ChunkItem *Item, CListCtrl *List);
 
 	static void List_W3D_CHUNK_MESH_HEADER3(ChunkItem *Item, CListCtrl *List);
-	static void List_W3D_CHUNK_TRIANGLES(ChunkItem * Item, CListCtrl *List);
-	static void List_W3D_CHUNK_PER_TRI_MATERIALS(ChunkItem * Item,CListCtrl *List);
+	static void List_W3D_CHUNK_TRIANGLES(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_PER_TRI_MATERIALS(ChunkItem *Item, CListCtrl *List);
 
-	static void List_W3D_CHUNK_VERTEX_SHADE_INDICES(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_MATERIAL_INFO(ChunkItem * Item,CListCtrl *List);
+	static void List_W3D_CHUNK_VERTEX_SHADE_INDICES(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_MATERIAL_INFO(ChunkItem *Item, CListCtrl *List);
 
 	static void List_W3D_CHUNK_VERTEX_TANGENTS(ChunkItem *Item, CListCtrl *List);
 	static void List_W3D_CHUNK_VERTEX_BINORMALS(ChunkItem *Item, CListCtrl *List);
 
-	static void List_W3D_CHUNK_SHADERS(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_PS2_SHADERS(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_FX_SHADERS(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_FX_SHADER(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_FX_SHADER_INFO(ChunkItem* Item, CListCtrl* List);
-	static void List_W3D_CHUNK_FX_SHADER_CONSTANT(ChunkItem* Item, CListCtrl* List);
+	static void List_W3D_CHUNK_SHADERS(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_PS2_SHADERS(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_FX_SHADERS(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_FX_SHADER(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_FX_SHADER_INFO(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_FX_SHADER_CONSTANT(ChunkItem *Item, CListCtrl *List);
 
-	static void List_W3D_CHUNK_VERTEX_MATERIALS(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_VERTEX_MATERIAL(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_VERTEX_MATERIAL_NAME(ChunkItem *Item,CListCtrl *List);
-	static void List_W3D_CHUNK_VERTEX_MATERIAL_INFO(ChunkItem *Item,CListCtrl *List);
-	static void List_W3D_CHUNK_VERTEX_MAPPER_ARGS0(ChunkItem *Item,CListCtrl *List);
-	static void List_W3D_CHUNK_VERTEX_MAPPER_ARGS1(ChunkItem *Item,CListCtrl *List);
+	static void List_W3D_CHUNK_VERTEX_MATERIALS(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_VERTEX_MATERIAL(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_VERTEX_MATERIAL_NAME(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_VERTEX_MATERIAL_INFO(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_VERTEX_MAPPER_ARGS0(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_VERTEX_MAPPER_ARGS1(ChunkItem *Item, CListCtrl *List);
 
-	static void List_W3D_CHUNK_TEXTURES(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_TEXTURE(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_TEXTURE_NAME(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_TEXTURE_INFO(ChunkItem * Item,CListCtrl *List);
+	static void List_W3D_CHUNK_TEXTURES(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_TEXTURE(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_TEXTURE_NAME(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_TEXTURE_INFO(ChunkItem *Item, CListCtrl *List);
 
-	static void List_W3D_CHUNK_MATERIAL_PASS(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_VERTEX_MATERIAL_IDS(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_SHADER_IDS(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_DCG(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_DIG(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_SCG(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_FXSHADER_IDS(ChunkItem* Item, CListCtrl* List);
+	static void List_W3D_CHUNK_MATERIAL_PASS(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_VERTEX_MATERIAL_IDS(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_SHADER_IDS(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_DCG(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_DIG(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_SCG(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_FXSHADER_IDS(ChunkItem *Item, CListCtrl *List);
 
-	static void List_W3D_CHUNK_TEXTURE_STAGE(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_TEXTURE_IDS(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_STAGE_TEXCOORDS(ChunkItem * Item,CListCtrl *List);
-	static void	List_W3D_CHUNK_PER_FACE_TEXCOORD_IDS(ChunkItem * Item,CListCtrl *List);
+	static void List_W3D_CHUNK_TEXTURE_STAGE(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_TEXTURE_IDS(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_STAGE_TEXCOORDS(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_PER_FACE_TEXCOORD_IDS(ChunkItem *Item, CListCtrl *List);
 
-	static void List_W3D_CHUNK_AABTREE(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_AABTREE_HEADER(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_AABTREE_POLYINDICES(ChunkItem * Item,CListCtrl *List);
-	static void List_W3D_CHUNK_AABTREE_NODES(ChunkItem * Item,CListCtrl *List);
+	static void List_W3D_CHUNK_AABTREE(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_AABTREE_HEADER(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_AABTREE_POLYINDICES(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_AABTREE_NODES(ChunkItem *Item, CListCtrl *List);
 
 	static void List_W3D_CHUNK_HIERARCHY(ChunkItem *Item, CListCtrl *List);
 	static void List_W3D_CHUNK_HIERARCHY_HEADER(ChunkItem *Item, CListCtrl *List);
@@ -171,50 +178,50 @@ protected:
 
 	static void List_W3D_CHUNK_LODMODEL(ChunkItem *Item, CListCtrl *List);
 	static void List_W3D_CHUNK_LODMODEL_HEADER(ChunkItem *Item, CListCtrl *List);
-	static void List_W3D_CHUNK_LOD(ChunkItem * Item,CListCtrl * List);
+	static void List_W3D_CHUNK_LOD(ChunkItem *Item, CListCtrl *List);
 
-	static void List_W3D_CHUNK_COLLECTION(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_COLLECTION_HEADER(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_COLLECTION_OBJ_NAME(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_PLACEHOLDER(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_TRANSFORM_NODE(ChunkItem * Item,CListCtrl * List);
+	static void List_W3D_CHUNK_COLLECTION(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_COLLECTION_HEADER(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_COLLECTION_OBJ_NAME(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_PLACEHOLDER(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_TRANSFORM_NODE(ChunkItem *Item, CListCtrl *List);
 
-	static void List_W3D_CHUNK_POINTS(ChunkItem * Item,CListCtrl * List);
+	static void List_W3D_CHUNK_POINTS(ChunkItem *Item, CListCtrl *List);
 
-	static void List_W3D_CHUNK_LIGHT(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_LIGHT_INFO(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_SPOT_LIGHT_INFO(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_NEAR_ATTENUATION(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_FAR_ATTENUATION(ChunkItem * Item,CListCtrl * List);
+	static void List_W3D_CHUNK_LIGHT(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_LIGHT_INFO(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_SPOT_LIGHT_INFO(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_NEAR_ATTENUATION(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_FAR_ATTENUATION(ChunkItem *Item, CListCtrl *List);
 
-	static void List_W3D_CHUNK_EMITTER(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_EMITTER_HEADER(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_EMITTER_USER_DATA(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_EMITTER_INFO(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_EMITTER_INFOV2(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_EMITTER_PROPS(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_EMITTER_COLOR_KEYFRAME(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_EMITTER_OPACITY_KEYFRAME(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_EMITTER_SIZE_KEYFRAME(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_EMITTER_ROTATION_KEYFRAMES(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_EMITTER_FRAME_KEYFRAMES(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_EMITTER_BLUR_TIME_KEYFRAMES(ChunkItem * Item,CListCtrl * List);
+	static void List_W3D_CHUNK_EMITTER(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_EMITTER_HEADER(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_EMITTER_USER_DATA(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_EMITTER_INFO(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_EMITTER_INFOV2(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_EMITTER_PROPS(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_EMITTER_COLOR_KEYFRAME(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_EMITTER_OPACITY_KEYFRAME(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_EMITTER_SIZE_KEYFRAME(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_EMITTER_ROTATION_KEYFRAMES(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_EMITTER_FRAME_KEYFRAMES(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_EMITTER_BLUR_TIME_KEYFRAMES(ChunkItem *Item, CListCtrl *List);
 
-	static void List_W3D_CHUNK_AGGREGATE(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_AGGREGATE_HEADER(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_AGGREGATE_INFO(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_TEXTURE_REPLACER_INFO(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_AGGREGATE_CLASS_INFO(ChunkItem * Item,CListCtrl * List);
+	static void List_W3D_CHUNK_AGGREGATE(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_AGGREGATE_HEADER(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_AGGREGATE_INFO(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_TEXTURE_REPLACER_INFO(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_AGGREGATE_CLASS_INFO(ChunkItem *Item, CListCtrl *List);
 
-	static void List_W3D_CHUNK_HLOD(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_HLOD_HEADER(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_HLOD_LOD_ARRAY(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_HLOD_LOD_ARRAY_HEADER(ChunkItem * Item,CListCtrl * List);
-	static void List_W3D_CHUNK_HLOD_SUB_OBJECT(ChunkItem * Item,CListCtrl * List);
+	static void List_W3D_CHUNK_HLOD(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_HLOD_HEADER(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_HLOD_LOD_ARRAY(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_HLOD_LOD_ARRAY_HEADER(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_HLOD_SUB_OBJECT(ChunkItem *Item, CListCtrl *List);
 
-	static void List_W3D_CHUNK_BOX(ChunkItem * Item,CListCtrl * List);
+	static void List_W3D_CHUNK_BOX(ChunkItem *Item, CListCtrl *List);
 
-	static void List_W3D_CHUNK_NULL_OBJECT(ChunkItem * Item,CListCtrl * List);
+	static void List_W3D_CHUNK_NULL_OBJECT(ChunkItem *Item, CListCtrl *List);
 
 	static void List_W3D_CHUNK_PRELIT_UNLIT(ChunkItem *Item, CListCtrl *List);
 	static void List_W3D_CHUNK_PRELIT_VERTEX(ChunkItem *Item, CListCtrl *List);
@@ -227,10 +234,10 @@ protected:
 	static void List_W3D_CHUNK_DAZZLE(ChunkItem *Item, CListCtrl *List);
 	static void List_W3D_CHUNK_DAZZLE_NAME(ChunkItem *Item, CListCtrl *List);
 	static void List_W3D_CHUNK_DAZZLE_TYPENAME(ChunkItem *Item, CListCtrl *List);
-
 };
 
-class ChunkItem {
+class ChunkItem
+{
 public:
 	ChunkItem(ChunkLoadClass &cload); // constructor copies header and data into buffer
 	~ChunkItem();
@@ -242,7 +249,6 @@ public:
 protected:
 	static ChunkTableClass ChunkTable;
 };
-
 
 class ChunkData
 {

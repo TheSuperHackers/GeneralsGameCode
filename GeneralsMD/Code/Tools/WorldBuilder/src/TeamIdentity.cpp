@@ -30,55 +30,51 @@
 #include "Common/ThingSort.h"
 #include "GameLogic/SidesList.h"
 
-static const char* NEUTRAL_NAME_STR = "(neutral)";
+static const char *NEUTRAL_NAME_STR = "(neutral)";
 
 /////////////////////////////////////////////////////////////////////////////
 // TeamIdentity dialog
 
-
-TeamIdentity::TeamIdentity()
-	: CPropertyPage(TeamIdentity::IDD)
+TeamIdentity::TeamIdentity() : CPropertyPage(TeamIdentity::IDD)
 {
 	//{{AFX_DATA_INIT(TeamIdentity)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void TeamIdentity::DoDataExchange(CDataExchange* pDX)
+void TeamIdentity::DoDataExchange(CDataExchange *pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(TeamIdentity)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(TeamIdentity, CPropertyPage)
-	//{{AFX_MSG_MAP(TeamIdentity)
-	ON_BN_CLICKED(IDC_AI_RECRUITABLE, OnAiRecruitable)
-	ON_BN_CLICKED(IDC_AUTO_REINFORCE, OnAutoReinforce)
-	ON_EN_CHANGE(IDC_DESCRIPTION, OnChangeDescription)
-	ON_EN_CHANGE(IDC_MAX, OnChangeMax)
-	ON_EN_CHANGE(IDC_PRIORITY_DECREASE, OnChangePriorityDecrease)
-	ON_EN_CHANGE(IDC_PRIORITY_INCREASE, OnChangePriorityIncrease)
-	ON_CBN_SELCHANGE(IDC_PRODUCTION_CONDITION, OnSelchangeProductionCondition)
-	ON_EN_CHANGE(IDC_PRODUCTION_PRIORITY, OnChangeProductionPriority)
-	ON_CBN_SELCHANGE(IDC_HOME_WAYPOINT, OnSelchangeHomeWaypoint)
-	ON_BN_CLICKED(IDC_UNIT_TYPE1_BUTTON, OnUnitType1Button)
-	ON_BN_CLICKED(IDC_UNIT_TYPE2_BUTTON, OnUnitType2Button)
-	ON_BN_CLICKED(IDC_UNIT_TYPE3_BUTTON, OnUnitType3Button)
-	ON_BN_CLICKED(IDC_UNIT_TYPE4_BUTTON, OnUnitType4Button)
-	ON_BN_CLICKED(IDC_UNIT_TYPE5_BUTTON, OnUnitType5Button)
-	ON_BN_CLICKED(IDC_UNIT_TYPE6_BUTTON, OnUnitType6Button)
-	ON_BN_CLICKED(IDC_UNIT_TYPE7_BUTTON, OnUnitType7Button)
-	ON_BN_CLICKED(IDC_PRODUCTION_EXECUTEACTIONS, OnExecuteActions)
-	ON_EN_CHANGE(IDC_TEAM_NAME, OnChangeTeamName)
-	ON_BN_CLICKED(IDC_TEAM_SINGLETON, OnTeamSingleton)
-	ON_EN_KILLFOCUS(IDC_TEAM_NAME, OnKillfocusTeamName)
-	ON_CBN_SELENDOK(IDC_TEAMOWNER, OnSelendokTeamowner)
-	ON_EN_CHANGE(IDC_TEAM_BUILD_FRAMES, OnChangeTeamBuildFrames)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(TeamIdentity)
+ON_BN_CLICKED(IDC_AI_RECRUITABLE, OnAiRecruitable)
+ON_BN_CLICKED(IDC_AUTO_REINFORCE, OnAutoReinforce)
+ON_EN_CHANGE(IDC_DESCRIPTION, OnChangeDescription)
+ON_EN_CHANGE(IDC_MAX, OnChangeMax)
+ON_EN_CHANGE(IDC_PRIORITY_DECREASE, OnChangePriorityDecrease)
+ON_EN_CHANGE(IDC_PRIORITY_INCREASE, OnChangePriorityIncrease)
+ON_CBN_SELCHANGE(IDC_PRODUCTION_CONDITION, OnSelchangeProductionCondition)
+ON_EN_CHANGE(IDC_PRODUCTION_PRIORITY, OnChangeProductionPriority)
+ON_CBN_SELCHANGE(IDC_HOME_WAYPOINT, OnSelchangeHomeWaypoint)
+ON_BN_CLICKED(IDC_UNIT_TYPE1_BUTTON, OnUnitType1Button)
+ON_BN_CLICKED(IDC_UNIT_TYPE2_BUTTON, OnUnitType2Button)
+ON_BN_CLICKED(IDC_UNIT_TYPE3_BUTTON, OnUnitType3Button)
+ON_BN_CLICKED(IDC_UNIT_TYPE4_BUTTON, OnUnitType4Button)
+ON_BN_CLICKED(IDC_UNIT_TYPE5_BUTTON, OnUnitType5Button)
+ON_BN_CLICKED(IDC_UNIT_TYPE6_BUTTON, OnUnitType6Button)
+ON_BN_CLICKED(IDC_UNIT_TYPE7_BUTTON, OnUnitType7Button)
+ON_BN_CLICKED(IDC_PRODUCTION_EXECUTEACTIONS, OnExecuteActions)
+ON_EN_CHANGE(IDC_TEAM_NAME, OnChangeTeamName)
+ON_BN_CLICKED(IDC_TEAM_SINGLETON, OnTeamSingleton)
+ON_EN_KILLFOCUS(IDC_TEAM_NAME, OnKillfocusTeamName)
+ON_CBN_SELENDOK(IDC_TEAMOWNER, OnSelendokTeamowner)
+ON_EN_CHANGE(IDC_TEAM_BUILD_FRAMES, OnChangeTeamBuildFrames)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -88,48 +84,78 @@ BOOL TeamIdentity::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	loadUnitsInfo(IDC_MIN_UNIT1, TheKey_teamUnitMinCount1,
-								IDC_MAX_UNIT1, TheKey_teamUnitMaxCount1,
-								IDC_UNIT_TYPE1, TheKey_teamUnitType1);
+	loadUnitsInfo(
+			IDC_MIN_UNIT1,
+			TheKey_teamUnitMinCount1,
+			IDC_MAX_UNIT1,
+			TheKey_teamUnitMaxCount1,
+			IDC_UNIT_TYPE1,
+			TheKey_teamUnitType1);
 
-	loadUnitsInfo(IDC_MIN_UNIT2, TheKey_teamUnitMinCount2,
-								IDC_MAX_UNIT2, TheKey_teamUnitMaxCount2,
-								IDC_UNIT_TYPE2, TheKey_teamUnitType2);
+	loadUnitsInfo(
+			IDC_MIN_UNIT2,
+			TheKey_teamUnitMinCount2,
+			IDC_MAX_UNIT2,
+			TheKey_teamUnitMaxCount2,
+			IDC_UNIT_TYPE2,
+			TheKey_teamUnitType2);
 
-	loadUnitsInfo(IDC_MIN_UNIT3, TheKey_teamUnitMinCount3,
-								IDC_MAX_UNIT3, TheKey_teamUnitMaxCount3,
-								IDC_UNIT_TYPE3, TheKey_teamUnitType3);
+	loadUnitsInfo(
+			IDC_MIN_UNIT3,
+			TheKey_teamUnitMinCount3,
+			IDC_MAX_UNIT3,
+			TheKey_teamUnitMaxCount3,
+			IDC_UNIT_TYPE3,
+			TheKey_teamUnitType3);
 
-	loadUnitsInfo(IDC_MIN_UNIT4, TheKey_teamUnitMinCount4,
-								IDC_MAX_UNIT4, TheKey_teamUnitMaxCount4,
-								IDC_UNIT_TYPE4, TheKey_teamUnitType4);
+	loadUnitsInfo(
+			IDC_MIN_UNIT4,
+			TheKey_teamUnitMinCount4,
+			IDC_MAX_UNIT4,
+			TheKey_teamUnitMaxCount4,
+			IDC_UNIT_TYPE4,
+			TheKey_teamUnitType4);
 
-	loadUnitsInfo(IDC_MIN_UNIT5, TheKey_teamUnitMinCount5,
-								IDC_MAX_UNIT5, TheKey_teamUnitMaxCount5,
-								IDC_UNIT_TYPE5, TheKey_teamUnitType5);
+	loadUnitsInfo(
+			IDC_MIN_UNIT5,
+			TheKey_teamUnitMinCount5,
+			IDC_MAX_UNIT5,
+			TheKey_teamUnitMaxCount5,
+			IDC_UNIT_TYPE5,
+			TheKey_teamUnitType5);
 
-	loadUnitsInfo(IDC_MIN_UNIT6, TheKey_teamUnitMinCount6,
-								IDC_MAX_UNIT6, TheKey_teamUnitMaxCount6,
-								IDC_UNIT_TYPE6, TheKey_teamUnitType6);
+	loadUnitsInfo(
+			IDC_MIN_UNIT6,
+			TheKey_teamUnitMinCount6,
+			IDC_MAX_UNIT6,
+			TheKey_teamUnitMaxCount6,
+			IDC_UNIT_TYPE6,
+			TheKey_teamUnitType6);
 
-	loadUnitsInfo(IDC_MIN_UNIT7, TheKey_teamUnitMinCount7,
-								IDC_MAX_UNIT7, TheKey_teamUnitMaxCount7,
-								IDC_UNIT_TYPE7, TheKey_teamUnitType7);
+	loadUnitsInfo(
+			IDC_MIN_UNIT7,
+			TheKey_teamUnitMinCount7,
+			IDC_MAX_UNIT7,
+			TheKey_teamUnitMaxCount7,
+			IDC_UNIT_TYPE7,
+			TheKey_teamUnitType7);
 
 	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_HOME_WAYPOINT);
 	Bool exists;
 	EditParameter::loadWaypoints(pCombo);
 	AsciiString homeWaypoint = m_teamDict->getAsciiString(TheKey_teamHome, &exists);
 	Int stringNdx = pCombo->AddString(NONE_STRING);
-	if (exists) {
+	if (exists)
+	{
 		Int ndx = pCombo->FindStringExact(-1, homeWaypoint.str());
-		if (ndx != CB_ERR) {
+		if (ndx != CB_ERR)
+		{
 			stringNdx = ndx;
 		}
 	}
 	pCombo->SetCurSel(stringNdx);
 
-	CComboBox *owner = (CComboBox*)GetDlgItem(IDC_TEAMOWNER);
+	CComboBox *owner = (CComboBox *)GetDlgItem(IDC_TEAMOWNER);
 	owner->ResetContent();
 	for (Int i = 0; i < TheSidesList->getNumSides(); i++)
 	{
@@ -148,18 +174,18 @@ BOOL TeamIdentity::OnInitDialog()
 	DEBUG_ASSERTCRASH(oindex_in_list >= 0, ("hmm"));
 	owner->SetCurSel(oindex_in_list);
 
-	CButton *pCheck = (CButton *) GetDlgItem(IDC_AUTO_REINFORCE);
+	CButton *pCheck = (CButton *)GetDlgItem(IDC_AUTO_REINFORCE);
 	Bool autoReinf = m_teamDict->getBool(TheKey_teamAutoReinforce, &exists);
-	pCheck->SetCheck(autoReinf?1:0);
+	pCheck->SetCheck(autoReinf ? 1 : 0);
 
-	pCheck = (CButton*)GetDlgItem(IDC_TEAM_SINGLETON);
+	pCheck = (CButton *)GetDlgItem(IDC_TEAM_SINGLETON);
 	Bool singleton = m_teamDict->getBool(TheKey_teamIsSingleton, &exists);
-	pCheck->SetCheck(singleton?1:0);
+	pCheck->SetCheck(singleton ? 1 : 0);
 
-	pCheck = (CButton *) GetDlgItem(IDC_AI_RECRUITABLE);
+	pCheck = (CButton *)GetDlgItem(IDC_AI_RECRUITABLE);
 
 	Bool aiRecruit = m_teamDict->getBool(TheKey_teamIsAIRecruitable, &exists);
-	pCheck->SetCheck(aiRecruit?1:0);
+	pCheck->SetCheck(aiRecruit ? 1 : 0);
 
 	CWnd *pWnd = GetDlgItem(IDC_DESCRIPTION);
 	AsciiString description = m_teamDict->getAsciiString(TheKey_teamDescription, &exists);
@@ -171,7 +197,8 @@ BOOL TeamIdentity::OnInitDialog()
 
 	pWnd = GetDlgItem(IDC_MAX);
 	Int maxInstances = m_teamDict->getInt(TheKey_teamMaxInstances, &exists);
-	if (!exists) maxInstances = 1;
+	if (!exists)
+		maxInstances = 1;
 	description.format("%d", maxInstances);
 	pWnd->SetWindowText(description.str());
 
@@ -195,37 +222,45 @@ BOOL TeamIdentity::OnInitDialog()
 	description.format("%d", idleFrames);
 	pWnd->SetWindowText(description.str());
 
-	pCombo = (CComboBox*)GetDlgItem(IDC_PRODUCTION_CONDITION);
+	pCombo = (CComboBox *)GetDlgItem(IDC_PRODUCTION_CONDITION);
 	// Load the subroutine scripts into the combo box.
 	EditParameter::loadScripts(pCombo, true);
 	stringNdx = pCombo->AddString(NONE_STRING);
 	pCombo->SetFocus();
 	AsciiString script = m_teamDict->getAsciiString(TheKey_teamProductionCondition, &exists);
-	if (exists) {
+	if (exists)
+	{
 		Int ndx = pCombo->FindStringExact(-1, script.str());
-		if (ndx != CB_ERR) {
+		if (ndx != CB_ERR)
+		{
 			stringNdx = ndx;
 		}
 	}
 	pCombo->SetCurSel(stringNdx);
 
-	CButton *pButton = (CButton*) GetDlgItem(IDC_PRODUCTION_EXECUTEACTIONS);
-	if (pButton) {
+	CButton *pButton = (CButton *)GetDlgItem(IDC_PRODUCTION_EXECUTEACTIONS);
+	if (pButton)
+	{
 		Bool executeActions = m_teamDict->getBool(TheKey_teamExecutesActionsOnCreate, &exists);
-		if (!exists) {
+		if (!exists)
+		{
 			m_teamDict->setBool(TheKey_teamExecutesActionsOnCreate, false);
 			executeActions = false;
 		}
 		pButton->SetCheck(executeActions ? 1 : 0);
 	}
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+							 // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void TeamIdentity::loadUnitsInfo(int idcMinUnit, NameKeyType keyMinUnit,
-								int idcMaxUnit, NameKeyType keyMaxUnit,
-								int idcUnitType, NameKeyType keyUnitType)
+void TeamIdentity::loadUnitsInfo(
+		int idcMinUnit,
+		NameKeyType keyMinUnit,
+		int idcMaxUnit,
+		NameKeyType keyMaxUnit,
+		int idcUnitType,
+		NameKeyType keyUnitType)
 {
 	CEdit *pEdit = (CEdit *)GetDlgItem(idcMinUnit);
 	CString text;
@@ -238,7 +273,8 @@ void TeamIdentity::loadUnitsInfo(int idcMinUnit, NameKeyType keyMinUnit,
 	pEdit->SetWindowText(text);
 
 	AsciiString type = m_teamDict->getAsciiString(keyUnitType, &exists);
-	if (type.isEmpty()) type = NONE_STRING;
+	if (type.isEmpty())
+		type = NONE_STRING;
 
 	CComboBox *pCombo = (CComboBox *)GetDlgItem(idcUnitType);
 	pCombo->ResetContent();
@@ -247,87 +283,137 @@ void TeamIdentity::loadUnitsInfo(int idcMinUnit, NameKeyType keyMinUnit,
 
 	// add entries from the thing factory as the available UNITS to use
 	const ThingTemplate *tTemplate;
-	for( tTemplate = TheThingFactory->firstTemplate();
-			 tTemplate;
-			 tTemplate = tTemplate->friend_getNextTemplate() ) {
-
+	for (tTemplate = TheThingFactory->firstTemplate(); tTemplate; tTemplate = tTemplate->friend_getNextTemplate())
+	{
 		// next tier uses the editor sorting bits that design can specify in the INI
 		EditorSortingType sort = tTemplate->getEditorSorting();
 		// TheSuperHackers @tweak DayV 20/07/2025 Allow structures in teams.
-		if (sort != ES_VEHICLE && sort != ES_INFANTRY && sort != ES_STRUCTURE) {
+		if (sort != ES_VEHICLE && sort != ES_INFANTRY && sort != ES_STRUCTURE)
+		{
 			continue;
 		}
 
 		Int ndx = pCombo->AddString(tTemplate->getName().str());
-		if (type == tTemplate->getName()) {
+		if (type == tTemplate->getName())
+		{
 			found = true;
 			pCombo->SetCurSel(ndx);
 		}
 	}
 
 	Int ndx = pCombo->AddString(NONE_STRING);
-	if (!found) {
+	if (!found)
+	{
 		pCombo->SetCurSel(ndx);
 	}
-
 }
-
 
 BOOL TeamIdentity::OnCommand(WPARAM wParam, LPARAM lParam)
 {
-
 	Int wNotifyCode = HIWORD(wParam); // notification code
-	Int wID = LOWORD(wParam);         // item, control, or accelerator identifier
+	Int wID = LOWORD(wParam); // item, control, or accelerator identifier
 	NameKeyType key;
-	if (wNotifyCode == EN_CHANGE) {
+	if (wNotifyCode == EN_CHANGE)
+	{
 		Int editCtrl = wID;
-		switch (editCtrl) {
-			default: editCtrl = 0;
-			case IDC_MIN_UNIT1: key = TheKey_teamUnitMinCount1; break;
-			case IDC_MAX_UNIT1: key = TheKey_teamUnitMaxCount1; break;
+		switch (editCtrl)
+		{
+			default:
+				editCtrl = 0;
+			case IDC_MIN_UNIT1:
+				key = TheKey_teamUnitMinCount1;
+				break;
+			case IDC_MAX_UNIT1:
+				key = TheKey_teamUnitMaxCount1;
+				break;
 
-			case IDC_MIN_UNIT2: key = TheKey_teamUnitMinCount2; break;
-			case IDC_MAX_UNIT2: key = TheKey_teamUnitMaxCount2; break;
+			case IDC_MIN_UNIT2:
+				key = TheKey_teamUnitMinCount2;
+				break;
+			case IDC_MAX_UNIT2:
+				key = TheKey_teamUnitMaxCount2;
+				break;
 
-			case IDC_MIN_UNIT3: key = TheKey_teamUnitMinCount3; break;
-			case IDC_MAX_UNIT3: key = TheKey_teamUnitMaxCount3; break;
+			case IDC_MIN_UNIT3:
+				key = TheKey_teamUnitMinCount3;
+				break;
+			case IDC_MAX_UNIT3:
+				key = TheKey_teamUnitMaxCount3;
+				break;
 
-			case IDC_MIN_UNIT4: key = TheKey_teamUnitMinCount4; break;
-			case IDC_MAX_UNIT4: key = TheKey_teamUnitMaxCount4; break;
+			case IDC_MIN_UNIT4:
+				key = TheKey_teamUnitMinCount4;
+				break;
+			case IDC_MAX_UNIT4:
+				key = TheKey_teamUnitMaxCount4;
+				break;
 
-			case IDC_MIN_UNIT5: key = TheKey_teamUnitMinCount5; break;
-			case IDC_MAX_UNIT5: key = TheKey_teamUnitMaxCount5; break;
+			case IDC_MIN_UNIT5:
+				key = TheKey_teamUnitMinCount5;
+				break;
+			case IDC_MAX_UNIT5:
+				key = TheKey_teamUnitMaxCount5;
+				break;
 
-			case IDC_MIN_UNIT6: key = TheKey_teamUnitMinCount6; break;
-			case IDC_MAX_UNIT6: key = TheKey_teamUnitMaxCount6; break;
+			case IDC_MIN_UNIT6:
+				key = TheKey_teamUnitMinCount6;
+				break;
+			case IDC_MAX_UNIT6:
+				key = TheKey_teamUnitMaxCount6;
+				break;
 
-			case IDC_MIN_UNIT7: key = TheKey_teamUnitMinCount7; break;
-			case IDC_MAX_UNIT7: key = TheKey_teamUnitMaxCount7; break;
+			case IDC_MIN_UNIT7:
+				key = TheKey_teamUnitMinCount7;
+				break;
+			case IDC_MAX_UNIT7:
+				key = TheKey_teamUnitMaxCount7;
+				break;
 		}
-		if (editCtrl != 0) {
+		if (editCtrl != 0)
+		{
 			CEdit *pEdit = (CEdit *)GetDlgItem(editCtrl);
 			CString txt;
 			pEdit->GetWindowText(txt);
 			Int theInt;
-			if (1==sscanf(txt, "%d", &theInt)) {
+			if (1 == sscanf(txt, "%d", &theInt))
+			{
 				m_teamDict->setInt(key, theInt);
 			}
 			return true;
 		}
-	}	else if (wNotifyCode == CBN_SELCHANGE) {
+	}
+	else if (wNotifyCode == CBN_SELCHANGE)
+	{
 		Int cmboCtrl = wID;
-		switch (cmboCtrl) {
-			case IDC_UNIT_TYPE1: key = TheKey_teamUnitType1; break;
-			case IDC_UNIT_TYPE2: key = TheKey_teamUnitType2; break;
-			case IDC_UNIT_TYPE3: key = TheKey_teamUnitType3; break;
-			case IDC_UNIT_TYPE4: key = TheKey_teamUnitType4; break;
-			case IDC_UNIT_TYPE5: key = TheKey_teamUnitType5; break;
-			case IDC_UNIT_TYPE6: key = TheKey_teamUnitType6; break;
-			case IDC_UNIT_TYPE7: key = TheKey_teamUnitType7; break;
-			default: cmboCtrl = 0;
+		switch (cmboCtrl)
+		{
+			case IDC_UNIT_TYPE1:
+				key = TheKey_teamUnitType1;
+				break;
+			case IDC_UNIT_TYPE2:
+				key = TheKey_teamUnitType2;
+				break;
+			case IDC_UNIT_TYPE3:
+				key = TheKey_teamUnitType3;
+				break;
+			case IDC_UNIT_TYPE4:
+				key = TheKey_teamUnitType4;
+				break;
+			case IDC_UNIT_TYPE5:
+				key = TheKey_teamUnitType5;
+				break;
+			case IDC_UNIT_TYPE6:
+				key = TheKey_teamUnitType6;
+				break;
+			case IDC_UNIT_TYPE7:
+				key = TheKey_teamUnitType7;
+				break;
+			default:
+				cmboCtrl = 0;
 		}
-		if (cmboCtrl != 0) {
-			CComboBox *pCombo = (CComboBox*)GetDlgItem(cmboCtrl);
+		if (cmboCtrl != 0)
+		{
+			CComboBox *pCombo = (CComboBox *)GetDlgItem(cmboCtrl);
 			CString txt;
 			pCombo->GetWindowText(txt);
 			AsciiString comboText = AsciiString(txt);
@@ -341,23 +427,23 @@ BOOL TeamIdentity::OnCommand(WPARAM wParam, LPARAM lParam)
 
 void TeamIdentity::OnAiRecruitable()
 {
-	CButton *pCheck = (CButton *) GetDlgItem(IDC_AI_RECRUITABLE);
-	Bool checked = 	pCheck->GetCheck()==1;
+	CButton *pCheck = (CButton *)GetDlgItem(IDC_AI_RECRUITABLE);
+	Bool checked = pCheck->GetCheck() == 1;
 	m_teamDict->setBool(TheKey_teamIsAIRecruitable, checked);
 }
 
 void TeamIdentity::OnAutoReinforce()
 {
-	CButton *pCheck = (CButton *) GetDlgItem(IDC_AUTO_REINFORCE);
-	Bool checked = 	pCheck->GetCheck()==1;
+	CButton *pCheck = (CButton *)GetDlgItem(IDC_AUTO_REINFORCE);
+	Bool checked = pCheck->GetCheck() == 1;
 	m_teamDict->setBool(TheKey_teamAutoReinforce, checked);
 }
-
 
 void TeamIdentity::OnChangeDescription()
 {
 	CWnd *pWnd = GetDlgItem(IDC_DESCRIPTION);
-	if (pWnd) {
+	if (pWnd)
+	{
 		CString val;
 		pWnd->GetWindowText(val);
 		AsciiString des = static_cast<LPCSTR>(val);
@@ -368,7 +454,8 @@ void TeamIdentity::OnChangeDescription()
 void TeamIdentity::OnChangeMax()
 {
 	CWnd *pWnd = GetDlgItem(IDC_MAX);
-	if (pWnd) {
+	if (pWnd)
+	{
 		CString val;
 		pWnd->GetWindowText(val);
 		Int maxInstances = atoi(val);
@@ -379,7 +466,8 @@ void TeamIdentity::OnChangeMax()
 void TeamIdentity::OnChangePriorityDecrease()
 {
 	CWnd *pWnd = GetDlgItem(IDC_PRIORITY_DECREASE);
-	if (pWnd) {
+	if (pWnd)
+	{
 		CString val;
 		pWnd->GetWindowText(val);
 		Int decrease = atoi(val);
@@ -390,7 +478,8 @@ void TeamIdentity::OnChangePriorityDecrease()
 void TeamIdentity::OnChangePriorityIncrease()
 {
 	CWnd *pWnd = GetDlgItem(IDC_PRIORITY_INCREASE);
-	if (pWnd) {
+	if (pWnd)
+	{
 		CString val;
 		pWnd->GetWindowText(val);
 		Int increase = atoi(val);
@@ -400,12 +489,13 @@ void TeamIdentity::OnChangePriorityIncrease()
 
 void TeamIdentity::OnSelchangeProductionCondition()
 {
-	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_PRODUCTION_CONDITION);
+	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_PRODUCTION_CONDITION);
 	CString txt;
 	Int curSel = pCombo->GetCurSel();
 	pCombo->GetLBText(curSel, txt);
 	AsciiString comboText = AsciiString(txt);
-	if (comboText == NONE_STRING) {
+	if (comboText == NONE_STRING)
+	{
 		comboText.clear();
 	}
 	m_teamDict->setAsciiString(TheKey_teamProductionCondition, comboText);
@@ -414,7 +504,8 @@ void TeamIdentity::OnSelchangeProductionCondition()
 void TeamIdentity::OnChangeProductionPriority()
 {
 	CWnd *pWnd = GetDlgItem(IDC_PRODUCTION_PRIORITY);
-	if (pWnd) {
+	if (pWnd)
+	{
 		CString val;
 		pWnd->GetWindowText(val);
 		Int priority = atoi(val);
@@ -429,7 +520,8 @@ void TeamIdentity::OnSelchangeHomeWaypoint()
 	Int curSel = pCombo->GetCurSel();
 	pCombo->GetLBText(curSel, txt);
 	AsciiString comboText = AsciiString(txt);
-	if (comboText == NONE_STRING) {
+	if (comboText == NONE_STRING)
+	{
 		comboText.clear();
 	}
 	m_teamDict->setAsciiString(TheKey_teamHome, comboText);
@@ -442,7 +534,8 @@ void TeamIdentity::OnUnitTypeButton(Int idcUnitType)
 	dlg.SetAllowableType(ES_INFANTRY);
 	// TheSuperHackers @tweak DayV 20/07/2025 Allow structures in teams.
 	dlg.SetAllowableType(ES_STRUCTURE);
-	if (dlg.DoModal() == IDOK) {
+	if (dlg.DoModal() == IDOK)
+	{
 		AsciiString unit = dlg.getPickedUnit();
 		NameKeyType keyUnitType;
 
@@ -474,7 +567,6 @@ void TeamIdentity::OnUnitTypeButton(Int idcUnitType)
 		CComboBox *pCombo = (CComboBox *)GetDlgItem(idcUnitType);
 		pCombo->SelectString(-1, unit.str());
 	}
-
 }
 
 void TeamIdentity::OnUnitType1Button()
@@ -514,8 +606,9 @@ void TeamIdentity::OnUnitType7Button()
 
 void TeamIdentity::OnExecuteActions()
 {
-	CButton *pButton = (CButton*) GetDlgItem(IDC_PRODUCTION_EXECUTEACTIONS);
-	if (!pButton) {
+	CButton *pButton = (CButton *)GetDlgItem(IDC_PRODUCTION_EXECUTEACTIONS);
+	if (!pButton)
+	{
 		return;
 	}
 
@@ -524,25 +617,26 @@ void TeamIdentity::OnExecuteActions()
 
 void TeamIdentity::OnChangeTeamName()
 {
-
 }
 
 void TeamIdentity::OnTeamSingleton()
 {
-	CButton *singleton = (CButton*)GetDlgItem(IDC_TEAM_SINGLETON);
+	CButton *singleton = (CButton *)GetDlgItem(IDC_TEAM_SINGLETON);
 	m_teamDict->setBool(TheKey_teamIsSingleton, singleton->GetCheck() != 0);
 }
 
 void TeamIdentity::OnKillfocusTeamName()
 {
 	CWnd *pWnd = GetDlgItem(IDC_TEAM_NAME);
-	if (pWnd) {
+	if (pWnd)
+	{
 		CString val;
 		pWnd->GetWindowText(val);
 		AsciiString tnamenew = static_cast<LPCSTR>(val);
 		AsciiString tnamecur = m_teamDict->getAsciiString(TheKey_teamName);
 		Bool set = true;
-		if (tnamecur != tnamenew) {
+		if (tnamecur != tnamenew)
+		{
 			if (m_sides->findTeamInfo(tnamenew) || m_sides->findSideInfo(tnamenew))
 			{
 				::AfxMessageBox(IDS_NAME_IN_USE);
@@ -561,9 +655,12 @@ void TeamIdentity::OnKillfocusTeamName()
 				}
 			}
 		}
-		if (set) {
+		if (set)
+		{
 			m_teamDict->setAsciiString(TheKey_teamName, tnamenew);
-		} else {
+		}
+		else
+		{
 			Bool exists;
 			AsciiString description = m_teamDict->getAsciiString(TheKey_teamName, &exists);
 			pWnd->SetWindowText(description.str());
@@ -574,7 +671,8 @@ void TeamIdentity::OnKillfocusTeamName()
 void TeamIdentity::OnSelendokTeamowner()
 {
 	CWnd *pWnd = GetDlgItem(IDC_TEAMOWNER);
-	if (pWnd) {
+	if (pWnd)
+	{
 		CString val;
 		pWnd->GetWindowText(val);
 		AsciiString des = static_cast<LPCSTR>(val);
@@ -585,11 +683,11 @@ void TeamIdentity::OnSelendokTeamowner()
 void TeamIdentity::OnChangeTeamBuildFrames()
 {
 	CWnd *pWnd = GetDlgItem(IDC_TEAM_BUILD_FRAMES);
-	if (pWnd) {
+	if (pWnd)
+	{
 		CString val;
 		pWnd->GetWindowText(val);
 		Int idleFrames = atoi(val);
 		m_teamDict->setInt(TheKey_teamInitialIdleFrames, idleFrames);
 	}
-
 }

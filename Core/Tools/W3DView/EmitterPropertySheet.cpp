@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : W3DView                                                      *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/W3DView/EmitterPropertySheet.cpp                                                                                                                                                                                                                                                                                                                                         $Modtime::                                                             $*
+ *                     $Archive:: /VSS_Sync/W3DView/EmitterPropertySheet.cpp $Modtime:: $*
  *                                                                                             *
  *                    $Revision:: 12                                                          $*
  *                                                                                             *
@@ -54,77 +54,61 @@ static char THIS_FILE[] = __FILE__;
 
 IMPLEMENT_DYNAMIC(EmitterPropertySheetClass, CPropertySheet)
 
-
 /////////////////////////////////////////////////////////////
 //
 //  EmitterPropertySheetClass
 //
-EmitterPropertySheetClass::EmitterPropertySheetClass
-(
-	EmitterInstanceListClass *emitter_list,
-	UINT nIDCaption,
-	CWnd *pParentWnd
-)
-	:  m_pEmitterList (NULL),
-	   CPropertySheet (nIDCaption, pParentWnd, 0)
+EmitterPropertySheetClass::EmitterPropertySheetClass(
+		EmitterInstanceListClass *emitter_list,
+		UINT nIDCaption,
+		CWnd *pParentWnd) :
+		m_pEmitterList(NULL), CPropertySheet(nIDCaption, pParentWnd, 0)
 {
 	m_pEmitterList = emitter_list;
-	Initialize ();
-	return ;
+	Initialize();
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  EmitterPropertySheetClass
 //
-EmitterPropertySheetClass::EmitterPropertySheetClass
-(
-	EmitterInstanceListClass *emitter_list,
-	LPCTSTR pszCaption,
-	CWnd *pParentWnd
-)
-	:  m_pEmitterList (NULL),
-	   CPropertySheet (pszCaption, pParentWnd, 0)
+EmitterPropertySheetClass::EmitterPropertySheetClass(
+		EmitterInstanceListClass *emitter_list,
+		LPCTSTR pszCaption,
+		CWnd *pParentWnd) :
+		m_pEmitterList(NULL), CPropertySheet(pszCaption, pParentWnd, 0)
 {
 	m_pEmitterList = emitter_list;
-	Initialize ();
-	return ;
+	Initialize();
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  EmitterPropertySheetClass
 //
-EmitterPropertySheetClass::~EmitterPropertySheetClass (void)
+EmitterPropertySheetClass::~EmitterPropertySheetClass(void)
 {
-	SAFE_DELETE (m_pEmitterList);
-	return ;
+	SAFE_DELETE(m_pEmitterList);
+	return;
 }
-
 
 BEGIN_MESSAGE_MAP(EmitterPropertySheetClass, CPropertySheet)
-	//{{AFX_MSG_MAP(EmitterPropertySheetClass)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(EmitterPropertySheetClass)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // EmitterPropertySheetClass message handlers
-
 
 /////////////////////////////////////////////////////////////
 //
 //  EmitterPropertySheetClass
 //
 LRESULT
-EmitterPropertySheetClass::WindowProc
-(
-	UINT message,
-	WPARAM wParam,
-	LPARAM lParam
-)
+EmitterPropertySheetClass::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{
@@ -132,41 +116,37 @@ EmitterPropertySheetClass::WindowProc
 		case WM_COMMAND:
 		{
 			// What control sent the notification?
-			switch (LOWORD (wParam))
+			switch (LOWORD(wParam))
 			{
 				case IDCANCEL:
 				{
-					::GetCurrentDocument ()->Reload_Displayed_Object ();
+					::GetCurrentDocument()->Reload_Displayed_Object();
 				}
 				break;
 
 				case IDOK:
 				{
 					// If the apply button isn't enabled, then don't do the apply operation.
-					if (::IsWindowEnabled (::GetDlgItem (m_hWnd, ID_APPLY_NOW)) == FALSE) {
+					if (::IsWindowEnabled(::GetDlgItem(m_hWnd, ID_APPLY_NOW)) == FALSE)
+					{
 						break;
 					}
 				}
 				case ID_APPLY_NOW:
 				{
 					// Did the user click the button?
-					if (HIWORD (wParam) == BN_CLICKED) {
-						LRESULT lresult = CPropertySheet::WindowProc (message, wParam, lParam);
+					if (HIWORD(wParam) == BN_CLICKED)
+					{
+						LRESULT lresult = CPropertySheet::WindowProc(message, wParam, lParam);
 
 						// If all the pages contain valid data, then update the emitter
-						if (m_GeneralPage.Is_Data_Valid () &&
-							 m_ParticlePage.Is_Data_Valid () &&
-							 m_PhysicsPage.Is_Data_Valid () &&
-							 m_ColorPage.Is_Data_Valid () &&
-							 m_UserPage.Is_Data_Valid () &&
-							 m_SizePage.Is_Data_Valid () &&
-							 m_LinePage.Is_Data_Valid () &&
-							 m_RotationPage.Is_Data_Valid () &&
-							 m_FramePage.Is_Data_Valid () &&
-							 m_LineGroupPage.Is_Data_Valid () )
+						if (m_GeneralPage.Is_Data_Valid() && m_ParticlePage.Is_Data_Valid() && m_PhysicsPage.Is_Data_Valid()
+								&& m_ColorPage.Is_Data_Valid() && m_UserPage.Is_Data_Valid() && m_SizePage.Is_Data_Valid()
+								&& m_LinePage.Is_Data_Valid() && m_RotationPage.Is_Data_Valid() && m_FramePage.Is_Data_Valid()
+								&& m_LineGroupPage.Is_Data_Valid())
 						{
 							// Update the current emitter to match the data
-							Update_Emitter ();
+							Update_Emitter();
 						}
 
 						return lresult;
@@ -180,39 +160,38 @@ EmitterPropertySheetClass::WindowProc
 	}
 
 	// Allow the base class to process this message
-	return CPropertySheet::WindowProc (message, wParam, lParam);
+	return CPropertySheet::WindowProc(message, wParam, lParam);
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  Add_Emitter_To_Viewer
 //
-void
-EmitterPropertySheetClass::Add_Emitter_To_Viewer (void)
+void EmitterPropertySheetClass::Add_Emitter_To_Viewer(void)
 {
-	CW3DViewDoc *pdoc = ::GetCurrentDocument ();
-	if ((pdoc != NULL) && (m_pEmitterList != NULL)) {
-
+	CW3DViewDoc *pdoc = ::GetCurrentDocument();
+	if ((pdoc != NULL) && (m_pEmitterList != NULL))
+	{
 		//
 		// Create a new prototype for this emitter and add it to the asset manager
 		//
-		ParticleEmitterDefClass *pdefinition		= new ParticleEmitterDefClass (*m_pEmitterList);
-		ParticleEmitterPrototypeClass *pprototype	= new ParticleEmitterPrototypeClass (pdefinition);
+		ParticleEmitterDefClass *pdefinition = new ParticleEmitterDefClass(*m_pEmitterList);
+		ParticleEmitterPrototypeClass *pprototype = new ParticleEmitterPrototypeClass(pdefinition);
 
 		//
 		// Update the asset manager with the new prototype
 		//
-		if (m_LastSavedName.GetLength () > 0) {
-			WW3DAssetManager::Get_Instance()->Remove_Prototype (m_LastSavedName);
+		if (m_LastSavedName.GetLength() > 0)
+		{
+			WW3DAssetManager::Get_Instance()->Remove_Prototype(m_LastSavedName);
 		}
-		WW3DAssetManager::Get_Instance()->Add_Prototype (pprototype);
+		WW3DAssetManager::Get_Instance()->Add_Prototype(pprototype);
 
 		//
 		// Add this emitter to the data tree
 		//
-		CDataTreeView *pdata_tree = pdoc->GetDataTreeView ();
-		pdata_tree->Refresh_Asset (m_pEmitterList->Get_Name (), m_LastSavedName, TypeEmitter);
+		CDataTreeView *pdata_tree = pdoc->GetDataTreeView();
+		pdata_tree->Refresh_Asset(m_pEmitterList->Get_Name(), m_LastSavedName, TypeEmitter);
 		/*if (m_LastSavedName.GetLength () > 0) {
 			pdata_tree->Refresh_Asset (m_pEmitterList->Get_Name (), m_LastSavedName, TypeEmitter);
 		} else {
@@ -222,39 +201,37 @@ EmitterPropertySheetClass::Add_Emitter_To_Viewer (void)
 		//
 		// Display the emitter
 		//
-		pdoc->Reload_Displayed_Object ();
-		m_LastSavedName = m_pEmitterList->Get_Name ();
+		pdoc->Reload_Displayed_Object();
+		m_LastSavedName = m_pEmitterList->Get_Name();
 
 		//
 		// Regenerate the emitter pointer list
 		//
-		m_pEmitterList->Free_List ();
-		pdoc->Build_Emitter_List (m_pEmitterList, m_pEmitterList->Get_Name ());
+		m_pEmitterList->Free_List();
+		pdoc->Build_Emitter_List(m_pEmitterList, m_pEmitterList->Get_Name());
 	}
 
-	return ;
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  Update_Emitter
 //
-void
-EmitterPropertySheetClass::Update_Emitter (void)
+void EmitterPropertySheetClass::Update_Emitter(void)
 {
 	//
 	//	Update those pages that are dependant on the particle's
 	// lifetime.
 	//
-	float lifetime = m_GeneralPage.Get_Lifetime ();
-	m_ColorPage.On_Lifetime_Changed (lifetime);
-	m_SizePage.On_Lifetime_Changed (lifetime);
-	m_RotationPage.On_Lifetime_Changed (lifetime);
-	m_FramePage.On_Lifetime_Changed (lifetime);
-	m_LineGroupPage.On_Lifetime_Changed (lifetime);
+	float lifetime = m_GeneralPage.Get_Lifetime();
+	m_ColorPage.On_Lifetime_Changed(lifetime);
+	m_SizePage.On_Lifetime_Changed(lifetime);
+	m_RotationPage.On_Lifetime_Changed(lifetime);
+	m_FramePage.On_Lifetime_Changed(lifetime);
+	m_LineGroupPage.On_Lifetime_Changed(lifetime);
 
-	Add_Emitter_To_Viewer ();
+	Add_Emitter_To_Viewer();
 
 	//
 	// Create a new emitter
@@ -275,34 +252,35 @@ EmitterPropertySheetClass::Update_Emitter (void)
 	m_ColorPage.Set_Emitter (m_pEmitterList);
 	m_UserPage.Set_Emitter (m_pEmitterList);
 	m_SizePage.Set_Emitter (m_pEmitterList);*/
-	return ;
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  Initialize
 //
-void
-EmitterPropertySheetClass::Initialize (void)
+void EmitterPropertySheetClass::Initialize(void)
 {
-	if (m_pEmitterList == NULL) {
-		Create_New_Emitter ();
-	} else {
-		m_LastSavedName = m_pEmitterList->Get_Name ();
+	if (m_pEmitterList == NULL)
+	{
+		Create_New_Emitter();
+	}
+	else
+	{
+		m_LastSavedName = m_pEmitterList->Get_Name();
 	}
 
 	// Pass the emitter along to the pages
-	m_GeneralPage.Set_Emitter (m_pEmitterList);
-	m_ParticlePage.Set_Emitter (m_pEmitterList);
-	m_PhysicsPage.Set_Emitter (m_pEmitterList);
-	m_ColorPage.Set_Emitter (m_pEmitterList);
-	m_UserPage.Set_Emitter (m_pEmitterList);
-	m_SizePage.Set_Emitter (m_pEmitterList);
-	m_LinePage.Set_Emitter (m_pEmitterList);
-	m_RotationPage.Set_Emitter (m_pEmitterList);
-	m_FramePage.Set_Emitter (m_pEmitterList);
-	m_LineGroupPage.Set_Emitter (m_pEmitterList);
+	m_GeneralPage.Set_Emitter(m_pEmitterList);
+	m_ParticlePage.Set_Emitter(m_pEmitterList);
+	m_PhysicsPage.Set_Emitter(m_pEmitterList);
+	m_ColorPage.Set_Emitter(m_pEmitterList);
+	m_UserPage.Set_Emitter(m_pEmitterList);
+	m_SizePage.Set_Emitter(m_pEmitterList);
+	m_LinePage.Set_Emitter(m_pEmitterList);
+	m_RotationPage.Set_Emitter(m_pEmitterList);
+	m_FramePage.Set_Emitter(m_pEmitterList);
+	m_LineGroupPage.Set_Emitter(m_pEmitterList);
 
 	// Initialize the user page with data from the prototype
 	/*if (m_pEmitter != NULL) {
@@ -316,22 +294,21 @@ EmitterPropertySheetClass::Initialize (void)
 	}*/
 
 	// Add the pages to the sheet
-	AddPage (&m_GeneralPage);
-	AddPage (&m_ParticlePage);
-	AddPage (&m_PhysicsPage);
-	AddPage (&m_ColorPage);
-	AddPage (&m_SizePage);
-	AddPage (&m_UserPage);
-	AddPage (&m_LinePage);
-	AddPage (&m_RotationPage);
-	AddPage (&m_FramePage);
-	AddPage (&m_LineGroupPage);
+	AddPage(&m_GeneralPage);
+	AddPage(&m_ParticlePage);
+	AddPage(&m_PhysicsPage);
+	AddPage(&m_ColorPage);
+	AddPage(&m_SizePage);
+	AddPage(&m_UserPage);
+	AddPage(&m_LinePage);
+	AddPage(&m_RotationPage);
+	AddPage(&m_FramePage);
+	AddPage(&m_LineGroupPage);
 
 	m_GeneralPage.Set_Parent(this);
 
-	return ;
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
@@ -416,17 +393,15 @@ EmitterPropertySheetClass::Create_Emitter (void)
 	return pemitter;
 }*/
 
-
 /////////////////////////////////////////////////////////////
 //
 //  Create_New_Emitter
 //
-void
-EmitterPropertySheetClass::Create_New_Emitter (void)
+void EmitterPropertySheetClass::Create_New_Emitter(void)
 {
 	ParticlePropertyStruct<Vector3> color;
-	color.Start = Vector3 (1, 1, 1);
-	color.Rand.Set (0,0,0);
+	color.Start = Vector3(1, 1, 1);
+	color.Rand.Set(0, 0, 0);
 	color.NumKeyFrames = 0;
 	color.KeyTimes = NULL;
 	color.Values = NULL;
@@ -470,38 +445,39 @@ EmitterPropertySheetClass::Create_New_Emitter (void)
 	//	Create the new emitter
 	//
 	ParticleEmitterClass *emitter = NULL;
-	emitter = new ParticleEmitterClass (10,
-													1,
-													new Vector3SolidBoxRandomizer(Vector3(0.1F, 0.1F, 0.1F)),
-													Vector3 (0, 0, 1),
-													new Vector3SolidBoxRandomizer(Vector3(0, 0, 0.1F)),
-													0,
-													0,
-													color,
-													opacity,
-													size,
-													rotation,
-													0.0f,
-													frames,
-													blurtimes,
-													Vector3 (0, 0, 0),
-													1.0F,
-													0.0F,
-													NULL,
-													ShaderClass::_PresetAdditiveSpriteShader,
-													0);
+	emitter = new ParticleEmitterClass(
+			10,
+			1,
+			new Vector3SolidBoxRandomizer(Vector3(0.1F, 0.1F, 0.1F)),
+			Vector3(0, 0, 1),
+			new Vector3SolidBoxRandomizer(Vector3(0, 0, 0.1F)),
+			0,
+			0,
+			color,
+			opacity,
+			size,
+			rotation,
+			0.0f,
+			frames,
+			blurtimes,
+			Vector3(0, 0, 0),
+			1.0F,
+			0.0F,
+			NULL,
+			ShaderClass::_PresetAdditiveSpriteShader,
+			0);
 
 	//
 	//	Create the new emitter list
 	//
 	m_pEmitterList = new EmitterInstanceListClass;
-	m_pEmitterList->Add_Emitter (emitter);
+	m_pEmitterList->Add_Emitter(emitter);
 
 	//
 	//	Display the new emitter
 	//
-	::GetCurrentDocument ()->Display_Emitter (emitter);
-	MEMBER_RELEASE (emitter);
+	::GetCurrentDocument()->Display_Emitter(emitter);
+	MEMBER_RELEASE(emitter);
 
 	/*SAFE_DELETE_ARRAY (color.Values);
 	SAFE_DELETE_ARRAY (color.KeyTimes);
@@ -509,14 +485,11 @@ EmitterPropertySheetClass::Create_New_Emitter (void)
 	SAFE_DELETE_ARRAY (opacity.KeyTimes);
 	SAFE_DELETE_ARRAY (size.Values);
 	SAFE_DELETE_ARRAY (size.KeyTimes);*/
-	return ;
+	return;
 }
 
-
-void
-EmitterPropertySheetClass::Notify_Render_Mode_Changed(int new_mode)
+void EmitterPropertySheetClass::Notify_Render_Mode_Changed(int new_mode)
 {
 	bool enable_line_page = (new_mode == W3D_EMITTER_RENDER_MODE_LINE);
-	::Enable_Dialog_Controls(m_LinePage,enable_line_page);
+	::Enable_Dialog_Controls(m_LinePage, enable_line_page);
 }
-

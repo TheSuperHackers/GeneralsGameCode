@@ -30,28 +30,29 @@
 
 class ParticleBlurTimeKeyDialogClass : public CDialog
 {
-// Construction
+	// Construction
 public:
-	ParticleBlurTimeKeyDialogClass(float blur_time, CWnd* pParent = NULL);   // standard constructor
+	ParticleBlurTimeKeyDialogClass(float blur_time, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(ParticleBlurTimeKeyDialogClass)
-	enum { IDD = IDD_PARTICLE_BLUR_TIME_KEY };
-	CSpinButtonCtrl	m_BlurTimeSpin;
+	enum
+	{
+		IDD = IDD_PARTICLE_BLUR_TIME_KEY
+	};
+	CSpinButtonCtrl m_BlurTimeSpin;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ParticleBlurTimeKeyDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(ParticleBlurTimeKeyDialogClass)
 	virtual BOOL OnInitDialog();
@@ -60,18 +61,16 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-
 	/////////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////////
-	float					Get_Blur_Time (void) const { return m_BlurTime; }
+	float Get_Blur_Time(void) const { return m_BlurTime; }
 
 private:
-
 	/////////////////////////////////////////////////////////////
 	//	Private member data
 	/////////////////////////////////////////////////////////////
-	float					m_BlurTime;
+	float m_BlurTime;
 };
 
 //{{AFX_INSERT_LOCATION}}

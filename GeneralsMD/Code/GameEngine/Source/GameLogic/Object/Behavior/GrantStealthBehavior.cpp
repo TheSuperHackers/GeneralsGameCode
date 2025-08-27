@@ -26,9 +26,8 @@
 // Author: Lorenzen
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/Thing.h"
 #include "Common/ThingTemplate.h"
 #include "Common/INI.h"
@@ -45,8 +44,6 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
 
-
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 struct GrantStealthPlayerScanHelper
@@ -56,30 +53,30 @@ struct GrantStealthPlayerScanHelper
 	ObjectPointerList *m_objectList;
 };
 
-static void checkForGrantStealth( Object *testObj, void *userData )
+static void checkForGrantStealth(Object *testObj, void *userData)
 {
-	GrantStealthPlayerScanHelper *helper = (GrantStealthPlayerScanHelper*)userData;
+	GrantStealthPlayerScanHelper *helper = (GrantStealthPlayerScanHelper *)userData;
 	ObjectPointerList *listToAddTo = helper->m_objectList;
 
-	if( testObj->isEffectivelyDead() )
+	if (testObj->isEffectivelyDead())
 		return;
 
-	if( testObj->getControllingPlayer() != helper->m_theGrantor->getControllingPlayer() )
+	if (testObj->getControllingPlayer() != helper->m_theGrantor->getControllingPlayer())
 		return;
 
-	if( testObj->isOffMap() )
+	if (testObj->isOffMap())
 		return;
 
-	if( !testObj->isAnyKindOf(helper->m_kindOfToTest) )
+	if (!testObj->isAnyKindOf(helper->m_kindOfToTest))
 		return;
 
 	listToAddTo->push_back(testObj);
 
-	if( testObj->getContain() )
+	if (testObj->getContain())
 	{
 		// have to tag visible riders too, or they will float around and look silly.
-		Object *rider = (Object*)testObj->getContain()->friend_getRider();
-		if( rider )
+		Object *rider = (Object *)testObj->getContain()->friend_getRider();
+		if (rider)
 		{
 			listToAddTo->push_back(rider);
 		}
@@ -88,163 +85,146 @@ static void checkForGrantStealth( Object *testObj, void *userData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GrantStealthBehavior::GrantStealthBehavior( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+GrantStealthBehavior::GrantStealthBehavior(Thing *thing, const ModuleData *moduleData) : UpdateModule(thing, moduleData)
 {
 	const GrantStealthBehaviorModuleData *d = getGrantStealthBehaviorModuleData();
 
 	m_radiusParticleSystemID = INVALID_PARTICLE_SYSTEM_ID;
 
-  m_currentScanRadius = d->m_startRadius;
+	m_currentScanRadius = d->m_startRadius;
 
-
-  Object *obj = getObject();
+	Object *obj = getObject();
 
 	{
-		if( d->m_radiusParticleSystemTmpl )
+		if (d->m_radiusParticleSystemTmpl)
 		{
 			ParticleSystem *particleSystem;
 
-			particleSystem = TheParticleSystemManager->createParticleSystem( d->m_radiusParticleSystemTmpl );
-			if( particleSystem )
+			particleSystem = TheParticleSystemManager->createParticleSystem(d->m_radiusParticleSystemTmpl);
+			if (particleSystem)
 			{
-				particleSystem->setPosition( obj->getPosition() );
+				particleSystem->setPosition(obj->getPosition());
 				m_radiusParticleSystemID = particleSystem->getSystemID();
 			}
 		}
 	}
 
-		setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
+	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GrantStealthBehavior::~GrantStealthBehavior( void )
+GrantStealthBehavior::~GrantStealthBehavior(void)
 {
-
-	if( m_radiusParticleSystemID != INVALID_PARTICLE_SYSTEM_ID )
-		TheParticleSystemManager->destroyParticleSystemByID( m_radiusParticleSystemID );
-
+	if (m_radiusParticleSystemID != INVALID_PARTICLE_SYSTEM_ID)
+		TheParticleSystemManager->destroyParticleSystemByID(m_radiusParticleSystemID);
 }
-
-
 
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime GrantStealthBehavior::update( void )
+UpdateSleepTime GrantStealthBehavior::update(void)
 {
-
 	Object *self = getObject();
 
-	if ( self->isEffectivelyDead())
+	if (self->isEffectivelyDead())
 		return UPDATE_SLEEP_FOREVER;
 
 	const GrantStealthBehaviorModuleData *d = getGrantStealthBehaviorModuleData();
 	// setup scan filters
-	PartitionFilterRelationship relationship( self, PartitionFilterRelationship::ALLOW_ALLIES );
-	PartitionFilterSameMapStatus filterMapStatus( self );
+	PartitionFilterRelationship relationship(self, PartitionFilterRelationship::ALLOW_ALLIES);
+	PartitionFilterSameMapStatus filterMapStatus(self);
 	PartitionFilterAlive filterAlive;
 	PartitionFilter *filters[] = { &relationship, &filterAlive, &filterMapStatus, NULL };
 
+	m_currentScanRadius += d->m_radiusGrowRate;
 
-  m_currentScanRadius += d->m_radiusGrowRate;
-
-  Bool thisIsFinalScan = FALSE;
-  if ( m_currentScanRadius >=  d->m_finalRadius )
-  {
-    m_currentScanRadius = d->m_finalRadius;
-    thisIsFinalScan = TRUE;
-  }
+	Bool thisIsFinalScan = FALSE;
+	if (m_currentScanRadius >= d->m_finalRadius)
+	{
+		m_currentScanRadius = d->m_finalRadius;
+		thisIsFinalScan = TRUE;
+	}
 
 	// scan objects in our region
-	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( self->getPosition(), m_currentScanRadius, FROM_CENTER_2D, filters );
-	MemoryPoolObjectHolder hold( iter );
+	ObjectIterator *iter =
+			ThePartitionManager->iterateObjectsInRange(self->getPosition(), m_currentScanRadius, FROM_CENTER_2D, filters);
+	MemoryPoolObjectHolder hold(iter);
 	// GRANT STEALTH TO FRIENDLIES IN RADIUS
-	for( Object *obj = iter->first(); obj; obj = iter->next() )
-    grantStealthToObject( obj );
+	for (Object *obj = iter->first(); obj; obj = iter->next())
+		grantStealthToObject(obj);
 
-  if ( thisIsFinalScan )
-  {
+	if (thisIsFinalScan)
+	{
+		TheGameLogic->destroyObject(self);
+		return UPDATE_SLEEP_FOREVER;
+	}
 
-    TheGameLogic->destroyObject( self );
-    return UPDATE_SLEEP_FOREVER;
-  }
-
-  return UPDATE_SLEEP_NONE;
+	return UPDATE_SLEEP_NONE;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void GrantStealthBehavior::grantStealthToObject( Object *obj )
+void GrantStealthBehavior::grantStealthToObject(Object *obj)
 {
-
-  if ( obj == getObject() )
-    return;
-
+	if (obj == getObject())
+		return;
 
 	const GrantStealthBehaviorModuleData *d = getGrantStealthBehaviorModuleData();
-  if ( ! obj->isAnyKindOf( d->m_kindOf ) )
-    return;
+	if (!obj->isAnyKindOf(d->m_kindOf))
+		return;
 
-  StealthUpdate* stealth = obj->getStealth();
-	if( stealth )
+	StealthUpdate *stealth = obj->getStealth();
+	if (stealth)
 	{
 		stealth->receiveGrant();
-    Drawable *draw = obj->getDrawable();
-    if ( draw )
-    {
-      draw->flashAsSelected();
-    }
+		Drawable *draw = obj->getDrawable();
+		if (draw)
+		{
+			draw->flashAsSelected();
+		}
 	}
-
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void GrantStealthBehavior::crc( Xfer *xfer )
+void GrantStealthBehavior::crc(Xfer *xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
+	UpdateModule::crc(xfer);
 
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void GrantStealthBehavior::xfer( Xfer *xfer )
+void GrantStealthBehavior::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
-
+	UpdateModule::xfer(xfer);
 
 	// particle system id
-	xfer->xferUser( &m_radiusParticleSystemID, sizeof( ParticleSystemID ) );
+	xfer->xferUser(&m_radiusParticleSystemID, sizeof(ParticleSystemID));
 
 	// Timer safety
-	xfer->xferReal( &m_currentScanRadius );
+	xfer->xferReal(&m_currentScanRadius);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void GrantStealthBehavior::loadPostProcess( void )
+void GrantStealthBehavior::loadPostProcess(void)
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-
-}  // end loadPostProcess
+} // end loadPostProcess

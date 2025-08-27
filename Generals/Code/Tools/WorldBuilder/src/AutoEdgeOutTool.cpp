@@ -33,8 +33,7 @@
 // AutoEdgeOutTool class.
 //
 /// Constructor
-AutoEdgeOutTool::AutoEdgeOutTool(void) :
-	Tool(ID_AUTO_EDGE_OUT_TOOL, IDC_AUTO_EDGE_OUT)
+AutoEdgeOutTool::AutoEdgeOutTool(void) : Tool(ID_AUTO_EDGE_OUT_TOOL, IDC_AUTO_EDGE_OUT)
 {
 }
 
@@ -50,29 +49,29 @@ void AutoEdgeOutTool::activate()
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_BLEND_MATERIAL);
 }
 
-
 /** Execute the tool on mouse down - Create a copy of the height map
-* to edit, blend the edges, and give the undoable command to the doc. */
-void AutoEdgeOutTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+ * to edit, blend the edges, and give the undoable command to the doc. */
+void AutoEdgeOutTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
-	if (m != TRACK_L) return;
+	if (m != TRACK_L)
+		return;
 
 	Coord3D cpt;
 	pView->viewToDocCoords(viewPt, &cpt);
 
 	CPoint ndx;
-	if (!pDoc->getCellIndexFromCoord(cpt, &ndx)) {
+	if (!pDoc->getCellIndexFromCoord(cpt, &ndx))
+	{
 		return;
 	}
 
-//	WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
+	//	WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
 	WorldHeightMapEdit *htMapEditCopy = pDoc->GetHeightMap()->duplicate();
 	htMapEditCopy->autoBlendOut(ndx.x, ndx.y, BlendMaterial::getBlendTexClass());
-	IRegion2D partialRange = {0,0,0,0};
+	IRegion2D partialRange = { 0, 0, 0, 0 };
 	pDoc->updateHeightMap(htMapEditCopy, false, partialRange);
 	WBDocUndoable *pUndo = new WBDocUndoable(pDoc, htMapEditCopy);
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	REF_PTR_RELEASE(htMapEditCopy);
 }
-

@@ -41,35 +41,30 @@
 // ------------------------------------------------------------------------------------------------
 class ObjectWeaponStatusHelperModuleData : public ModuleData
 {
-
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class ObjectWeaponStatusHelper : public ObjectHelper
 {
-
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ObjectWeaponStatusHelper, ObjectWeaponStatusHelperModuleData )
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectWeaponStatusHelper, "ObjectWeaponStatusHelperPool" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(ObjectWeaponStatusHelper, ObjectWeaponStatusHelperModuleData)
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectWeaponStatusHelper, "ObjectWeaponStatusHelperPool")
 
 protected:
-
 	/*
 		The ObjectWeaponStatusHelper needs to have its update run after all "normal"
 		user update modules, so it redefines this. Please don't redefine this
 		for other modules without very careful deliberation. (srj)
 	*/
-	virtual SleepyUpdatePhase getUpdatePhase() const
-	{
-		return PHASE_FINAL;
-	}
-public:
+	virtual SleepyUpdatePhase getUpdatePhase() const { return PHASE_FINAL; }
 
-	ObjectWeaponStatusHelper( Thing *thing, const ModuleData *modData ) :
-		ObjectHelper( thing, modData )
+public:
+	ObjectWeaponStatusHelper(Thing *thing, const ModuleData *modData) : ObjectHelper(thing, modData)
 	{
 		// unlike other helpers, this one needs to start active.
-		DEBUG_ASSERTCRASH(getObject()->getTemplate()->canPossiblyHaveAnyWeapon(), ("should not be instantiated if we have no weapon"));
+		DEBUG_ASSERTCRASH(
+				getObject()->getTemplate()->canPossiblyHaveAnyWeapon(),
+				("should not be instantiated if we have no weapon"));
 		setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 	}
 	// virtual destructor prototype provided by memory pool object
@@ -82,4 +77,4 @@ public:
 	}
 };
 
-#endif  // end __OBJECT_DEFECTION_HELPER_H_
+#endif // end __OBJECT_DEFECTION_HELPER_H_

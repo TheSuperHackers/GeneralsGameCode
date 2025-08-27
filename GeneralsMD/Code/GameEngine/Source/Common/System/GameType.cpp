@@ -24,23 +24,13 @@
 
 // GameType.cpp ///////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
-const char *TimeOfDayNames[] =
-{
-	"NONE",
-	"MORNING",
-	"AFTERNOON",
-	"EVENING",
-	"NIGHT",
+const char *TimeOfDayNames[] = { "NONE", "MORNING", "AFTERNOON", "EVENING", "NIGHT",
 
-	NULL
-};
+																 NULL };
 
-const char *WeatherNames[] =
-{
-	"NORMAL",
-	"SNOWY",
+const char *WeatherNames[] = { "NORMAL",
+															 "SNOWY",
 
-	NULL
-};
+															 NULL };

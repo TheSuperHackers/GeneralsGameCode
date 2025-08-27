@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -42,14 +41,11 @@
 #ifndef __DIRECTORY_DIALOG_H
 #define __DIRECTORY_DIALOG_H
 
-
 /////////////////////////////////////////////////////////////////////////
 //
 //	Prototypes
 //
 /////////////////////////////////////////////////////////////////////////
-bool Browse_For_Folder (HWND parent_wnd, LPCTSTR initial_path, CString &path);
-
+bool Browse_For_Folder(HWND parent_wnd, LPCTSTR initial_path, CString &path);
 
 #endif //__DIRECTORY_DIALOG_H
-

@@ -28,7 +28,7 @@
 //					This instance simply spits the guy out at a point.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/RandomValue.h"
 #include "Common/ThingTemplate.h"
@@ -39,10 +39,11 @@
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/DefaultProductionExitUpdate.h"
 #include "GameLogic/Object.h"
-//#include "GameLogic/PartitionManager.h"
+// #include "GameLogic/PartitionManager.h"
 
 //-------------------------------------------------------------------------------------------------
-DefaultProductionExitUpdate::DefaultProductionExitUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+DefaultProductionExitUpdate::DefaultProductionExitUpdate(Thing *thing, const ModuleData *moduleData) :
+		UpdateModule(thing, moduleData)
 {
 	// no rally point has been set
 	m_rallyPointExists = false;
@@ -62,14 +63,14 @@ DefaultProductionExitUpdate::~DefaultProductionExitUpdate()
 }
 
 //-------------------------------------------------------------------------------------------------
-void DefaultProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor )
+void DefaultProductionExitUpdate::exitObjectViaDoor(Object *newObj, ExitDoorType exitDoor)
 {
 	DEBUG_ASSERTCRASH(exitDoor == DOOR_1, ("multiple exit doors not supported here"));
 
 	Object *creationObject = getObject();
 	if (creationObject)
 	{
-		const DefaultProductionExitUpdateModuleData* md = getDefaultProductionExitUpdateModuleData();
+		const DefaultProductionExitUpdateModuleData *md = getDefaultProductionExitUpdateModuleData();
 
 		Real exitAngle = creationObject->getOrientation();
 		const Matrix3D *transform = creationObject->getTransformMatrix();
@@ -81,31 +82,31 @@ void DefaultProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDoorTyp
 		// in INI which is in model space, rotate it to match the building angle
 		// and translate for building location via a transform call
 		//
-		loc.Set( md->m_unitCreatePoint.x, md->m_unitCreatePoint.y, md->m_unitCreatePoint.z );
-		transform->Transform_Vector( *transform, loc, &loc );
+		loc.Set(md->m_unitCreatePoint.x, md->m_unitCreatePoint.y, md->m_unitCreatePoint.z);
+		transform->Transform_Vector(*transform, loc, &loc);
 
 		// make sure the point is on the terrain
-		loc.Z = TheTerrainLogic ? TheTerrainLogic->getLayerHeight( loc.X, loc.Y, creationObject->getLayer() ) : 0.0f;
+		loc.Z = TheTerrainLogic ? TheTerrainLogic->getLayerHeight(loc.X, loc.Y, creationObject->getLayer()) : 0.0f;
 
 		// we need it in Coord3D form
 		createPoint.x = loc.X;
 		createPoint.y = loc.Y;
 		createPoint.z = loc.Z;
 
-		newObj->setPosition( &createPoint );
-		newObj->setOrientation( exitAngle );
-		newObj->setLayer( creationObject->getLayer() );
+		newObj->setPosition(&createPoint);
+		newObj->setOrientation(exitAngle);
+		newObj->setLayer(creationObject->getLayer());
 
 		/** @todo This really should be automatically wrapped up in an actication sequence
 		for objects in general */
 		// tell the AI about it
-		TheAI->pathfinder()->addObjectToPathfindMap( newObj );
+		TheAI->pathfinder()->addObjectToPathfindMap(newObj);
 		Coord3D tmp;
 		getNaturalRallyPoint(tmp);
 		std::vector<Coord3D> exitPath;
 		exitPath.push_back(tmp);
 
-		AIUpdateInterface  *ai = newObj->getAIUpdateInterface();
+		AIUpdateInterface *ai = newObj->getAIUpdateInterface();
 		if (m_rallyPointExists)
 		{
 			tmp = m_rallyPoint;
@@ -113,19 +114,16 @@ void DefaultProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDoorTyp
 			{
 				if (TheAI->pathfinder()->adjustDestination(newObj, ai->getLocomotorSet(), &tmp))
 					exitPath.push_back(tmp);
-
 			}
 		}
-		if (ai) {
-			ai->aiFollowExitProductionPath( &exitPath, creationObject, CMD_FROM_AI );
+		if (ai)
+		{
+			ai->aiFollowExitProductionPath(&exitPath, creationObject, CMD_FROM_AI);
 		}
 	}
-
 }
 
-
-
-Bool DefaultProductionExitUpdate::getExitPosition( Coord3D& exitPosition ) const
+Bool DefaultProductionExitUpdate::getExitPosition(Coord3D &exitPosition) const
 {
 	const Object *obj = getObject();
 	if (!obj)
@@ -136,19 +134,18 @@ Bool DefaultProductionExitUpdate::getExitPosition( Coord3D& exitPosition ) const
 	const DefaultProductionExitUpdateModuleData *md = getDefaultProductionExitUpdateModuleData();
 
 	Vector3 loc;
-	loc.Set( md->m_unitCreatePoint.x, md->m_unitCreatePoint.y, md->m_unitCreatePoint.z );
-	transform->Transform_Vector( *transform, loc, &loc );
+	loc.Set(md->m_unitCreatePoint.x, md->m_unitCreatePoint.y, md->m_unitCreatePoint.z);
+	transform->Transform_Vector(*transform, loc, &loc);
 
 	exitPosition.x = loc.X;
 	exitPosition.y = loc.Y;
 	exitPosition.z = loc.Z;
 
 	return TRUE;
-
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool DefaultProductionExitUpdate::getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset ) const
+Bool DefaultProductionExitUpdate::getNaturalRallyPoint(Coord3D &rallyPoint, Bool offset) const
 {
 	const DefaultProductionExitUpdateModuleData *data = getDefaultProductionExitUpdateModuleData();
 	Vector3 p;
@@ -161,64 +158,63 @@ Bool DefaultProductionExitUpdate::getNaturalRallyPoint( Coord3D& rallyPoint, Boo
 	p.Y = data->m_naturalRallyPoint.y;
 	p.Z = data->m_naturalRallyPoint.z;
 
-	if ( offset )
+	if (offset)
 	{
 		Vector3 offset = p;
 		offset.Normalize();
-		offset *= (2*PATHFIND_CELL_SIZE_F);
-		p+=offset;
+		offset *= (2 * PATHFIND_CELL_SIZE_F);
+		p += offset;
 	}
 
 	// transform the point into world space
 	const Matrix3D *transform = getObject()->getTransformMatrix();
-	transform->Transform_Vector( *transform, p, &p );
+	transform->Transform_Vector(*transform, p, &p);
 
-	rallyPoint.x = p.X; rallyPoint.y = p.Y; rallyPoint.z = p.Z;
+	rallyPoint.x = p.X;
+	rallyPoint.y = p.Y;
+	rallyPoint.z = p.Z;
 	return TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void DefaultProductionExitUpdate::crc( Xfer *xfer )
+void DefaultProductionExitUpdate::crc(Xfer *xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
+	UpdateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void DefaultProductionExitUpdate::xfer( Xfer *xfer )
+void DefaultProductionExitUpdate::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// rally point
-	xfer->xferCoord3D( &m_rallyPoint );
+	xfer->xferCoord3D(&m_rallyPoint);
 
 	// rally point exists
-	xfer->xferBool( &m_rallyPointExists );
+	xfer->xferBool(&m_rallyPointExists);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DefaultProductionExitUpdate::loadPostProcess( void )
+void DefaultProductionExitUpdate::loadPostProcess(void)
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

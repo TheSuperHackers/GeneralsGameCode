@@ -36,9 +36,8 @@
  *   CRCStraw::Result -- Returns with the CRC of all data passed through the straw.            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
-#include	"crcstraw.h"
-
+#include "always.h"
+#include "crcstraw.h"
 
 /***********************************************************************************************
  * CRCStraw::Get -- Fetch the data requested and calculate CRC on it.                          *
@@ -60,17 +59,17 @@
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int CRCStraw::Get(void * source, int slen)
+int CRCStraw::Get(void *source, int slen)
 {
-	if (source == NULL || slen < 1) {
-		return(0);
+	if (source == NULL || slen < 1)
+	{
+		return (0);
 	}
 
 	int counter = Straw::Get(source, slen);
 	CRC(source, counter);
-	return(counter);
+	return (counter);
 }
-
 
 /***********************************************************************************************
  * CRCStraw::Result -- Returns with the CRC of all data passed through the straw.              *
@@ -89,5 +88,5 @@ int CRCStraw::Get(void * source, int slen)
  *=============================================================================================*/
 long CRCStraw::Result(void) const
 {
-	return(CRC());
+	return (CRC());
 }

@@ -33,30 +33,30 @@ unsigned divByNull;
 
 void main(void)
 {
-  // switch to debug group
-  Debug::Command("debug.");
+	// switch to debug group
+	Debug::Command("debug.");
 
-  Debug::Command("alwaysflush +");
+	Debug::Command("alwaysflush +");
 
-  // we want our files copied
-  Debug::Command("io flat copy ..\\");
+	// we want our files copied
+	Debug::Command("io flat copy ..\\");
 
-  // split 'split_me' log group to separate file (with size limit)
-  Debug::Command("io flat splitadd l split_me splitted 1");
+	// split 'split_me' log group to separate file (with size limit)
+	Debug::Command("io flat splitadd l split_me splitted 1");
 
-  // turn all logs on
-  Debug::Command("add l + *");
+	// turn all logs on
+	Debug::Command("add l + *");
 
-  // disable no_log log
-  Debug::Command("add l - no_log");
+	// disable no_log log
+	Debug::Command("add l - no_log");
 
-  // now log something...
-  DLOG("This should be visible.\n");
-  DLOG_GROUP(no_log,"This should *NOT* be visible.\n");
-  for (int k=0;k<200;k++)
-    DLOG_GROUP(split_me,"Log line " << k << "\n");
-  DLOG_GROUP(split_me,"Final line in separate log file.\n");
+	// now log something...
+	DLOG("This should be visible.\n");
+	DLOG_GROUP(no_log, "This should *NOT* be visible.\n");
+	for (int k = 0; k < 200; k++)
+		DLOG_GROUP(split_me, "Log line " << k << "\n");
+	DLOG_GROUP(split_me, "Final line in separate log file.\n");
 
-  // and now let's crash!
-  divByNull/=divByNull;
+	// and now let's crash!
+	divByNull /= divByNull;
 }

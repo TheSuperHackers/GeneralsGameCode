@@ -52,17 +52,23 @@
 //=============================================================================
 //           Forward References
 //=============================================================================
-extern void W3DLogicalScreenToPixelScreen( Real logX, Real logY,
-																					 Int *screenX, Int *screenY,
-																					 Int screenWidth, Int screenHeight );
-extern void PixelScreenToW3DLogicalScreen( Int screenX, Int screenY,
-																					 Real *logX, Real *logY,
-																					 Int screenWidth, Int screenHeight );
+extern void W3DLogicalScreenToPixelScreen(
+		Real logX,
+		Real logY,
+		Int *screenX,
+		Int *screenY,
+		Int screenWidth,
+		Int screenHeight);
+extern void PixelScreenToW3DLogicalScreen(
+		Int screenX,
+		Int screenY,
+		Real *logX,
+		Real *logY,
+		Int screenWidth,
+		Int screenHeight);
 
 //=============================================================================
 //           Type Defines
 //=============================================================================
 
-
 #endif // _W3DCONVERT_H_
-

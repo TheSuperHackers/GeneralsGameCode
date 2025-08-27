@@ -72,72 +72,61 @@
 // W3DGadgetVerticalSliderDraw ================================================
 /** Draw colored vertical slider using standard graphics */
 //=============================================================================
-void W3DGadgetVerticalSliderDraw( GameWindow *window,
-																	WinInstanceData *instData )
+void W3DGadgetVerticalSliderDraw(GameWindow *window, WinInstanceData *instData)
 {
 	Color backBorder, backColor;
 	ICoord2D origin, size, start, end;
 
 	// get screen position and size
-	window->winGetScreenPosition( &origin.x, &origin.y );
-	window->winGetSize( &size.x, &size.y );
+	window->winGetScreenPosition(&origin.x, &origin.y);
+	window->winGetSize(&size.x, &size.y);
 
 	// get the right colors
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if (BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED) == FALSE)
 	{
+		backBorder = GadgetSliderGetDisabledBorderColor(window);
+		backColor = GadgetSliderGetDisabledColor(window);
 
-		backBorder		= GadgetSliderGetDisabledBorderColor( window );
-		backColor			= GadgetSliderGetDisabledColor( window );
-
-	}  // end if, disabled
-	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
+	} // end if, disabled
+	else if (BitIsSet(instData->getState(), WIN_STATE_HILITED))
 	{
+		backBorder = GadgetSliderGetHiliteBorderColor(window);
+		backColor = GadgetSliderGetHiliteColor(window);
 
-		backBorder		= GadgetSliderGetHiliteBorderColor( window );
-		backColor			= GadgetSliderGetHiliteColor( window );
-
-	}  // end else if, hilited
+	} // end else if, hilited
 	else
 	{
+		backBorder = GadgetSliderGetEnabledBorderColor(window);
+		backColor = GadgetSliderGetEnabledColor(window);
 
-		backBorder		= GadgetSliderGetEnabledBorderColor( window );
-		backColor			= GadgetSliderGetEnabledColor( window );
-
-	}  // end else, enabled
+	} // end else, enabled
 
 	// draw background border and rect over whole control
-	if( backBorder != WIN_COLOR_UNDEFINED )
+	if (backBorder != WIN_COLOR_UNDEFINED)
 	{
-
 		start.x = origin.x;
 		start.y = origin.y;
 		end.x = start.x + size.x;
 		end.y = start.y + size.y;
-		TheWindowManager->winOpenRect( backBorder, WIN_DRAW_LINE_WIDTH,
-																	 start.x, start.y, end.x, end.y );
+		TheWindowManager->winOpenRect(backBorder, WIN_DRAW_LINE_WIDTH, start.x, start.y, end.x, end.y);
 
-	}  // end if
-	if( backColor != WIN_COLOR_UNDEFINED )
+	} // end if
+	if (backColor != WIN_COLOR_UNDEFINED)
 	{
-
 		start.x = origin.x + 1;
 		start.y = origin.y + 1;
 		end.x = start.x + size.x - 2;
 		end.y = start.y + size.y - 2;
-		TheWindowManager->winFillRect( backColor, WIN_DRAW_LINE_WIDTH,
-																	 start.x, start.y, end.x, end.y );
+		TheWindowManager->winFillRect(backColor, WIN_DRAW_LINE_WIDTH, start.x, start.y, end.x, end.y);
 
-	}  // end if
+	} // end if
 
-
-
-}  // end W3DGadgetVerticalSliderDraw
+} // end W3DGadgetVerticalSliderDraw
 
 // W3DGadgetVerticalSliderImageDraw ===========================================
 /** Draw vertical slider with user supplied images */
 //=============================================================================
-void W3DGadgetVerticalSliderImageDraw( GameWindow *window,
-																			 WinInstanceData *instData )
+void W3DGadgetVerticalSliderImageDraw(GameWindow *window, WinInstanceData *instData)
 {
 	const Image *topImage, *bottomImage, *centerImage, *smallCenterImage;
 	ICoord2D origin, size, start, end;
@@ -145,45 +134,41 @@ void W3DGadgetVerticalSliderImageDraw( GameWindow *window,
 	Int i;
 
 	// get screen position and size
-	window->winGetScreenPosition( &origin.x, &origin.y );
-	window->winGetSize( &size.x, &size.y );
+	window->winGetScreenPosition(&origin.x, &origin.y);
+	window->winGetSize(&size.x, &size.y);
 
 	// get image offset
 	xOffset = instData->m_imageOffset.x;
 	yOffset = instData->m_imageOffset.y;
 
 	// get the right images
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if (BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED) == FALSE)
 	{
+		topImage = GadgetSliderGetDisabledImageTop(window);
+		bottomImage = GadgetSliderGetDisabledImageBottom(window);
+		centerImage = GadgetSliderGetDisabledImageCenter(window);
+		smallCenterImage = GadgetSliderGetDisabledImageSmallCenter(window);
 
-		topImage					= GadgetSliderGetDisabledImageTop( window );
-		bottomImage				= GadgetSliderGetDisabledImageBottom( window );
-		centerImage				= GadgetSliderGetDisabledImageCenter( window );
-		smallCenterImage	= GadgetSliderGetDisabledImageSmallCenter( window );
-
-	}  // end if, disabled
-	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
+	} // end if, disabled
+	else if (BitIsSet(instData->getState(), WIN_STATE_HILITED))
 	{
+		topImage = GadgetSliderGetHiliteImageTop(window);
+		bottomImage = GadgetSliderGetHiliteImageBottom(window);
+		centerImage = GadgetSliderGetHiliteImageCenter(window);
+		smallCenterImage = GadgetSliderGetHiliteImageSmallCenter(window);
 
-		topImage					= GadgetSliderGetHiliteImageTop( window );
-		bottomImage				= GadgetSliderGetHiliteImageBottom( window );
-		centerImage				= GadgetSliderGetHiliteImageCenter( window );
-		smallCenterImage	= GadgetSliderGetHiliteImageSmallCenter( window );
-
-	}  // end else if, hilited
+	} // end else if, hilited
 	else
 	{
+		topImage = GadgetSliderGetEnabledImageTop(window);
+		bottomImage = GadgetSliderGetEnabledImageBottom(window);
+		centerImage = GadgetSliderGetEnabledImageCenter(window);
+		smallCenterImage = GadgetSliderGetEnabledImageSmallCenter(window);
 
-		topImage					= GadgetSliderGetEnabledImageTop( window );
-		bottomImage				= GadgetSliderGetEnabledImageBottom( window );
-		centerImage				= GadgetSliderGetEnabledImageCenter( window );
-		smallCenterImage	= GadgetSliderGetEnabledImageSmallCenter( window );
-
-	}  // end else, enabled
+	} // end else, enabled
 
 	// sanity, we need to have these images to make it look right
-	if( topImage == NULL || bottomImage == NULL ||
-			centerImage == NULL || smallCenterImage == NULL )
+	if (topImage == NULL || bottomImage == NULL || centerImage == NULL || smallCenterImage == NULL)
 		return;
 
 	// get image sizes for the ends
@@ -193,24 +178,23 @@ void W3DGadgetVerticalSliderImageDraw( GameWindow *window,
 	bottomSize.x = bottomImage->getImageWidth();
 	bottomSize.y = bottomImage->getImageHeight();
 
-	if(topSize.y + bottomSize.y >= size.y)
+	if (topSize.y + bottomSize.y >= size.y)
 	{
 		// draw top end
 		start.x = origin.x + xOffset;
 		start.y = origin.y + yOffset;
 		end.x = origin.x + xOffset + topSize.x;
-		end.y = origin.y + size.y /2;
+		end.y = origin.y + size.y / 2;
 		TheWindowManager->winDrawImage(topImage, start.x, start.y, end.x, end.y);
 
 		// draw bottom end
-		start.y = origin.y + size.y /2;
+		start.y = origin.y + size.y / 2;
 		end.x = origin.x + xOffset + bottomSize.x;
 		end.y = origin.y + yOffset + size.y;
 		TheWindowManager->winDrawImage(bottomImage, start.x, start.y, end.x, end.y);
 	}
 	else
 	{
-
 		// get two key points used in the end drawing
 		ICoord2D topEnd, bottomStart;
 		topEnd.x = origin.x + topSize.x + xOffset;
@@ -232,16 +216,13 @@ void W3DGadgetVerticalSliderImageDraw( GameWindow *window,
 		start.y = topEnd.y;
 		end.x = start.x + centerImage->getImageWidth();
 		end.y = start.y + centerImage->getImageHeight();
-		for( i = 0; i < pieces; i++ )
+		for (i = 0; i < pieces; i++)
 		{
-
-			TheWindowManager->winDrawImage( centerImage,
-																			start.x, start.y,
-																			end.x, end.y );
+			TheWindowManager->winDrawImage(centerImage, start.x, start.y, end.x, end.y);
 			start.y += centerImage->getImageHeight();
 			end.y += centerImage->getImageHeight();
 
-		}  // end for i
+		} // end for i
 
 		//
 		// how many small repeating pieces will fit in the gap from where the
@@ -251,16 +232,13 @@ void W3DGadgetVerticalSliderImageDraw( GameWindow *window,
 		centerHeight = bottomStart.y - start.y;
 		pieces = centerHeight / smallCenterImage->getImageHeight() + 1;
 		end.y = start.y + smallCenterImage->getImageHeight();
-		for( i = 0; i < pieces; i++ )
+		for (i = 0; i < pieces; i++)
 		{
-
-			TheWindowManager->winDrawImage( smallCenterImage,
-																			start.x, start.y,
-																			end.x, end.y );
+			TheWindowManager->winDrawImage(smallCenterImage, start.x, start.y, end.x, end.y);
 			start.y += smallCenterImage->getImageHeight();
 			end.y += smallCenterImage->getImageHeight();
 
-		}  // end for i
+		} // end for i
 
 		// draw top end
 		start.x = origin.x + xOffset;
@@ -275,7 +253,4 @@ void W3DGadgetVerticalSliderImageDraw( GameWindow *window,
 		TheWindowManager->winDrawImage(bottomImage, start.x, start.y, end.x, end.y);
 	}
 
-
-}  // end W3DGadgetVerticalSliderImageDraw
-
-
+} // end W3DGadgetVerticalSliderImageDraw

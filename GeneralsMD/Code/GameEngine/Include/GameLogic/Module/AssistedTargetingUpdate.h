@@ -42,46 +42,41 @@ public:
 	Int m_clipSize;
 	WeaponSlotType m_weaponSlot;
 
-  AsciiString m_laserFromAssistedName;
-  AsciiString m_laserToTargetName;
+	AsciiString m_laserFromAssistedName;
+	AsciiString m_laserToTargetName;
 
 	AssistedTargetingUpdateModuleData()
 	{
 		m_clipSize = 1;
 		m_weaponSlot = PRIMARY_WEAPON;
-    m_laserFromAssistedName.clear();
-    m_laserToTargetName.clear();
+		m_laserFromAssistedName.clear();
+		m_laserToTargetName.clear();
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p);
+	static void buildFieldParse(MultiIniFieldParse &p);
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class AssistedTargetingUpdate : public UpdateModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AssistedTargetingUpdate, "AssistedTargetingUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( AssistedTargetingUpdate, AssistedTargetingUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AssistedTargetingUpdate, "AssistedTargetingUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(AssistedTargetingUpdate, AssistedTargetingUpdateModuleData)
 
 public:
-
-	AssistedTargetingUpdate( Thing *thing, const ModuleData* moduleData );
+	AssistedTargetingUpdate(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual UpdateSleepTime update( void );
+	virtual UpdateSleepTime update(void);
 
 	Bool isFreeToAssist() const;
-	void assistAttack( const Object *requestingObject, Object *victimObject );
+	void assistAttack(const Object *requestingObject, Object *victimObject);
 
 private:
-	void makeFeedbackLaser( const ThingTemplate *laserTemplate, const Object *from, const Object *to );
+	void makeFeedbackLaser(const ThingTemplate *laserTemplate, const Object *from, const Object *to);
 
 	const ThingTemplate *m_laserFromAssisted;
 	const ThingTemplate *m_laserToTarget;
-
-
 };
 
 #endif
-

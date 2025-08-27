@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
 
 #ifndef __LANGUAGEFILTER_H
@@ -36,18 +35,12 @@ class File;
 
 struct AsciiStringLessThan
 {
-	Bool operator()(AsciiString a, AsciiString b) const
-	{
-		return (a.compareNoCase(b) < 0);
-	}
+	Bool operator()(AsciiString a, AsciiString b) const { return (a.compareNoCase(b) < 0); }
 };
 
 struct UnicodeStringLessThan
 {
-	Bool operator()(UnicodeString a, UnicodeString b) const
-	{
-		return (a.compareNoCase(b) < 0);
-	}
+	Bool operator()(UnicodeString a, UnicodeString b) const { return (a.compareNoCase(b) < 0); }
 };
 
 struct UnicodeStringsEqual
@@ -66,7 +59,8 @@ typedef std::map<UnicodeString, Bool, UnicodeStringLessThan>::iterator LangMapIt
 static const int LANGUAGE_XOR_KEY = 0x5555;
 static const char BadWordFileName[] = "langdata.dat";
 
-class LanguageFilter : public SubsystemInterface {
+class LanguageFilter : public SubsystemInterface
+{
 public:
 	LanguageFilter();
 	~LanguageFilter();
@@ -84,6 +78,6 @@ protected:
 };
 
 extern LanguageFilter *TheLanguageFilter;
-LanguageFilter * createLanguageFilter();
+LanguageFilter *createLanguageFilter();
 
-#endif //#define __LANGUAGEFILTER_H
+#endif // #define __LANGUAGEFILTER_H

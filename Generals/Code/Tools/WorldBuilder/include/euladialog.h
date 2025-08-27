@@ -30,27 +30,28 @@
 
 class EulaDialog : public CDialog
 {
-// Construction
+	// Construction
 public:
-	EulaDialog(CWnd* pParent = NULL);   // standard constructor
+	EulaDialog(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(EulaDialog)
-	enum { IDD = IDD_EULA_AGREEMENT };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_EULA_AGREEMENT
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(EulaDialog)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(EulaDialog)
 	virtual BOOL OnInitDialog();

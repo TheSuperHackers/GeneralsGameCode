@@ -39,7 +39,6 @@
 #pragma once
 #endif
 
-
 #ifndef ARGV_H
 #define ARGV_H
 
@@ -59,104 +58,111 @@
 // is not the case with this.
 class ArgvClass
 {
-	public:
-		// As passed into WinMain.
-		// Should be called before any objects are created.
-		// This can be called multible times.
-		static int Init(char *lpCmdLine, const char *fileprefix = "@");
-		static bool Load_File(const char *fname);
-		static void Free();
+public:
+	// As passed into WinMain.
+	// Should be called before any objects are created.
+	// This can be called multible times.
+	static int Init(char *lpCmdLine, const char *fileprefix = "@");
+	static bool Load_File(const char *fname);
+	static void Free();
 
-		// Create an object that can search the args.
-		ArgvClass(bool case_sensitive = false, bool exact_size = false);
-		~ArgvClass() {}
+	// Create an object that can search the args.
+	ArgvClass(bool case_sensitive = false, bool exact_size = false);
+	~ArgvClass() {}
 
-		// Functions to find a value.
-		const char *Find(const char *arg)  {
-			CurrentPos = -1;
-			return(Find_Again(arg));
+	// Functions to find a value.
+	const char *Find(const char *arg)
+	{
+		CurrentPos = -1;
+		return (Find_Again(arg));
+	}
+	// If NULL passed, original string will be used.
+	const char *Find_Again(const char *arg = 0L);
+
+	// Return pointer to data after 'arg'.
+	// White space is skipped.
+	// So give a line '-Pdata' or '-P data' and arg==-P, 'data' would be returned in
+	// both cases.
+	const char *Find_Value(const char *arg);
+
+	// Similar to Find_Value, only gets value of current arg.  User needs to pass
+	// in the strlen of the prefix (2 for -P example above) to skip.
+	// Val_in_next is set if the value was extracted from the next Argv,
+	// this way the programmer can know if he needs to call an extra Next().
+	const char *Get_Cur_Value(unsigned prefixlen, bool *val_in_next = 0);
+
+	// Update an existing attrib to use this new value
+	void Update_Value(const char *attrib, const char *value);
+
+	// Add a new attrib value pair (or just an option)
+	void Add_Value(const char *attrib, const char *value = NULL);
+
+	// Remove an option (and its value)
+	bool Remove_Value(const char *attrib);
+
+	// First parameter.
+	const char *First()
+	{
+		CurrentPos = 0;
+		return (Argv[0]);
+	}
+
+	// Next works after a Find() call also.
+	const char *Next()
+	{
+		CurrentPos++;
+		if (CurrentPos < Argc)
+		{
+			return (Argv[CurrentPos]);
 		}
-		// If NULL passed, original string will be used.
-		const char *Find_Again(const char *arg = 0L);
+		return (0L);
+	}
+	// Can be called so Next() will return First()...
+	void Reset() { CurrentPos = -1; }
 
-		// Return pointer to data after 'arg'.
-		// White space is skipped.
-		// So give a line '-Pdata' or '-P data' and arg==-P, 'data' would be returned in
-		// both cases.
-		const char *Find_Value(const char *arg);
-
-		// Similar to Find_Value, only gets value of current arg.  User needs to pass
-		// in the strlen of the prefix (2 for -P example above) to skip.
-		// Val_in_next is set if the value was extracted from the next Argv,
-		// this way the programmer can know if he needs to call an extra Next().
-		const char *Get_Cur_Value(unsigned prefixlen, bool * val_in_next = 0);
-
-		// Update an existing attrib to use this new value
-		void Update_Value(const char *attrib, const char *value);
-
-		// Add a new attrib value pair (or just an option)
-		void Add_Value(const char *attrib, const char *value=NULL);
-
-		// Remove an option (and its value)
-		bool Remove_Value(const char *attrib);
-
-
-		// First parameter.
-		const char *First()  {
-			CurrentPos = 0;
-			return(Argv[0]);
+	const char *Cur()
+	{
+		if (CurrentPos < Argc)
+		{
+			return (Argv[CurrentPos]);
 		}
+		return (0L);
+	}
 
-		// Next works after a Find() call also.
-		const char *Next()  {
-			CurrentPos++;
-			if (CurrentPos < Argc) {
-				return(Argv[CurrentPos]);
-			}
-			return(0L);
-		}
-		// Can be called so Next() will return First()...
-		void Reset()  {
-			CurrentPos = -1;
-		}
+	// Allow user to change states.
+	void Case_Sensitive(bool on) { Flag.CaseSensitive = on; }
+	bool Is_Case_Sensitive() { return (Flag.CaseSensitive); }
 
-		const char *Cur()  {
-			if (CurrentPos < Argc) {
-				return(Argv[CurrentPos]);
-			}
-			return(0L);
-		}
+	// Allow user to change states.
+	void Exact_Size(bool on) { Flag.ExactSize = on; }
+	bool Is_Exact_Size() { return (Flag.ExactSize); }
 
-		// Allow user to change states.
-		void Case_Sensitive(bool on) {Flag.CaseSensitive = on;}
-		bool Is_Case_Sensitive() {return (Flag.CaseSensitive);}
+protected:
+	// Current position to be used when Next or Find_Again are called.
+	int CurrentPos;
 
-		// Allow user to change states.
-		void Exact_Size(bool on) {Flag.ExactSize = on;}
-		bool Is_Exact_Size() {return (Flag.ExactSize);}
+	// Last arg that we are searching for.
+	const char *LastArg;
 
-	protected:
-		// Current position to be used when Next or Find_Again are called.
-		int			CurrentPos;
+	union
+	{
+		unsigned Flags;
+		struct
+		{
+			unsigned CaseSensitive : 1;
+			unsigned ExactSize : 1;
+		} Flag;
+	};
 
-		// Last arg that we are searching for.
-		const char	*LastArg;
+	// Number of args.
+	static int Argc;
 
-		union {
-			unsigned Flags;
-			struct {
-				unsigned CaseSensitive:1;
-				unsigned ExactSize:1;
-			} Flag;
-		};
-
-		// Number of args.
-		static int   Argc;
-
-		// The actual data.
-		enum {MAX_ARGC = 256};
-		static char  *Argv[MAX_ARGC];
+	// The actual data.
+	enum
+	{
+		MAX_ARGC = 256
+	};
+	static char *Argv[MAX_ARGC];
 };
-
 
 #endif

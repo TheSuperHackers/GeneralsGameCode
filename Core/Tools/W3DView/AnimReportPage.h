@@ -35,32 +35,35 @@ class CAnimReportPage : public CPropertyPage
 {
 	DECLARE_DYNCREATE(CAnimReportPage)
 
-// Construction
+	// Construction
 public:
 	CAnimReportPage(CAdvancedAnimSheet *sheet = NULL);
 	~CAnimReportPage();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CAnimReportPage)
-	enum { IDD = IDD_PROP_PAGE_ADVANIM_REPORT };
-	CListCtrl	m_AnimReport;
+	enum
+	{
+		IDD = IDD_PROP_PAGE_ADVANIM_REPORT
+	};
+	CListCtrl m_AnimReport;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CAnimReportPage)
-	public:
+public:
 	virtual BOOL OnSetActive();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-	void		FillListControl (void);
-	int		FindItem (const char *item_name);
-	void		MakeChannelStr (int bone_idx, HAnimClass *hanim, char *channels);
+	void FillListControl(void);
+	int FindItem(const char *item_name);
+	void MakeChannelStr(int bone_idx, HAnimClass *hanim, char *channels);
 
 	CAdvancedAnimSheet *m_Sheet;
 
@@ -69,7 +72,6 @@ protected:
 	virtual BOOL OnInitDialog();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-
 };
 
 //{{AFX_INSERT_LOCATION}}

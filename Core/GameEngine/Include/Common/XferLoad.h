@@ -43,31 +43,26 @@ class Snapshot;
 //-------------------------------------------------------------------------------------------------
 class XferLoad : public Xfer
 {
-
 public:
+	XferLoad(void);
+	virtual ~XferLoad(void);
 
-	XferLoad( void );
-	virtual ~XferLoad( void );
+	virtual void open(AsciiString identifier); ///< open file for writing
+	virtual void close(void); ///< close file
+	virtual Int beginBlock(void); ///< read placeholder block size
+	virtual void endBlock(void); ///< reading an end block is a no-op
+	virtual void skip(Int dataSize); ///< skip forward dataSize bytes in file
 
-	virtual void open( AsciiString identifier );				///< open file for writing
-	virtual void close( void );													///< close file
-	virtual Int beginBlock( void );														///< read placeholder block size
-	virtual void endBlock( void );											///< reading an end block is a no-op
-	virtual void skip( Int dataSize );									///< skip forward dataSize bytes in file
-
-	virtual void xferSnapshot( Snapshot *snapshot );		///< entry point for xfering a snapshot
+	virtual void xferSnapshot(Snapshot *snapshot); ///< entry point for xfering a snapshot
 
 	// xfer methods
-	virtual void xferAsciiString( AsciiString *asciiStringData );  ///< xfer ascii string (need our own)
-	virtual void xferUnicodeString( UnicodeString *unicodeStringData );	///< xfer unicode string (need our own);
+	virtual void xferAsciiString(AsciiString *asciiStringData); ///< xfer ascii string (need our own)
+	virtual void xferUnicodeString(UnicodeString *unicodeStringData); ///< xfer unicode string (need our own);
 
 protected:
+	virtual void xferImplementation(void *data, Int dataSize); ///< the xfer implementation
 
-	virtual void xferImplementation( void *data, Int dataSize );		///< the xfer implementation
-
-	FILE * m_fileFP;																					///< pointer to file
-
+	FILE *m_fileFP; ///< pointer to file
 };
 
 #endif // __XFER_LOAD_H_
-

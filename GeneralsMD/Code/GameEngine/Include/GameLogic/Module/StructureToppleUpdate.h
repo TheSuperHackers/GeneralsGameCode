@@ -43,13 +43,13 @@
 class FXList;
 class ObjectCreationList;
 
-typedef std::vector<const ObjectCreationList*> OCLVec;
+typedef std::vector<const ObjectCreationList *> OCLVec;
 
 //-------------------------------------------------------------------------------------------------
 struct FXBoneInfo
 {
 	AsciiString boneName;
-	const ParticleSystemTemplate* particleSystemTemplate;
+	const ParticleSystemTemplate *particleSystemTemplate;
 };
 
 typedef std::vector<FXBoneInfo> FXBoneInfoVector;
@@ -64,23 +64,19 @@ struct AngleFXInfo
 typedef std::vector<AngleFXInfo> AngleFXInfoVector;
 
 //-------------------------------------------------------------------------------------------------
-enum StructureTopplePhaseType CPP_11(: Int)
-{
+enum StructureTopplePhaseType CPP_11( : Int){
 	STPHASE_INITIAL = 0,
 	STPHASE_DELAY,
 	STPHASE_FINAL,
 
-	ST_PHASE_COUNT	// keep last
+	ST_PHASE_COUNT // keep last
 };
 
-static const char *TheStructureTopplePhaseNames[] =
-{
-	"INITIAL",
-	"DELAY",
-	"FINAL",
+static const char *TheStructureTopplePhaseNames[] = { "INITIAL",
+																											"DELAY",
+																											"FINAL",
 
-	NULL
-};
+																											NULL };
 
 //-------------------------------------------------------------------------------------------------
 class StructureToppleUpdateModuleData : public UpdateModuleData
@@ -91,20 +87,19 @@ public:
 	Int m_maxToppleDelay;
 	Real m_structuralIntegrity;
 	Real m_structuralDecay;
-	DamageTypeFlags m_damageFXTypes;		///< flags used to play or not play the effects
+	DamageTypeFlags m_damageFXTypes; ///< flags used to play or not play the effects
 	FXList *m_toppleStartFXList;
 	FXList *m_toppleDelayFXList;
 	FXList *m_toppleFXList;
 	FXList *m_toppleDoneFXList;
 	FXList *m_crushingFXList;
-	AsciiString	m_crushingWeaponName;
+	AsciiString m_crushingWeaponName;
 	Int m_minToppleBurstDelay;
 	Int m_maxToppleBurstDelay;
 	OCLVec m_ocls[ST_PHASE_COUNT];
 	UnsignedInt m_oclCount[ST_PHASE_COUNT];
-	FXBoneInfoVector fxbones;			///< Bone names and attached particle systems.
+	FXBoneInfoVector fxbones; ///< Bone names and attached particle systems.
 	AngleFXInfoVector angleFX;
-
 
 	StructureToppleUpdateModuleData()
 	{
@@ -132,42 +127,36 @@ public:
 		angleFX.clear();
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p);
-
+	static void buildFieldParse(MultiIniFieldParse &p);
 };
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class StructureToppleUpdate : public UpdateModule,
-															public DieModuleInterface
+class StructureToppleUpdate : public UpdateModule, public DieModuleInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( StructureToppleUpdate, "StructureToppleUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( StructureToppleUpdate, StructureToppleUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(StructureToppleUpdate, "StructureToppleUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(StructureToppleUpdate, StructureToppleUpdateModuleData)
 
 public:
-
-	StructureToppleUpdate( Thing *thing, const ModuleData* moduleData );
+	StructureToppleUpdate(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
 	// BehaviorModule
-	virtual DieModuleInterface* getDie() { return this; }
+	virtual DieModuleInterface *getDie() { return this; }
 
 	// UpdateModuleInterface
 	virtual UpdateSleepTime update();
 
 	// DieModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual void onDie(const DamageInfo *damageInfo);
 
 protected:
-
-	void beginStructureTopple( const DamageInfo *damageInfo );
+	void beginStructureTopple(const DamageInfo *damageInfo);
 
 	void applyCrushingDamage(Real theta);
-	void doDamageLine(Object *building, const WeaponTemplate* wt, Real jcos, Real jsin, Real facingWidth, Real toppleAngle);
+	void doDamageLine(Object *building, const WeaponTemplate *wt, Real jcos, Real jsin, Real facingWidth, Real toppleAngle);
 	void doToppleStartFX(Object *building, const DamageInfo *damageInfo);
 	void doToppleDelayBurstFX();
 
@@ -176,7 +165,8 @@ protected:
 
 	void doPhaseStuff(StructureTopplePhaseType stphase, const Coord3D *target);
 
-	enum StructureToppleStateType {
+	enum StructureToppleStateType
+	{
 		TOPPLESTATE_STANDING,
 		TOPPLESTATE_WAITINGFORTOPPLESTART,
 		TOPPLESTATE_TOPPLING,
@@ -194,8 +184,6 @@ protected:
 	Int m_nextBurstFrame;
 	Coord3D m_delayBurstLocation;
 	Real m_buildingHeight;
-
 };
 
 #endif // __StructureToppleUpdate_H_
-

@@ -44,7 +44,6 @@
 #include "wwstring.h"
 #include "matrix3d.h"
 
-
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	ProxyClass
@@ -53,20 +52,17 @@
 class ProxyClass
 {
 public:
-
 	///////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////
-	ProxyClass (void) { }
-	ProxyClass (const char *name, const Matrix3D &tm) :
-		Name (name),
-		Transform (tm) { }
+	ProxyClass(void) {}
+	ProxyClass(const char *name, const Matrix3D &tm) : Name(name), Transform(tm) {}
 
 	///////////////////////////////////////////////////////////
 	//	Public operators
 	///////////////////////////////////////////////////////////
-	bool operator== (const ProxyClass &src);
-	bool operator!= (const ProxyClass &src);
+	bool operator==(const ProxyClass &src);
+	bool operator!=(const ProxyClass &src);
 
 	///////////////////////////////////////////////////////////
 	//	Public methods
@@ -75,41 +71,34 @@ public:
 	//
 	//	Accessors
 	//
-	const char *			Get_Name (void) const					{ return Name; }
-	void						Set_Name (const char *name)			{ Name = name; }
+	const char *Get_Name(void) const { return Name; }
+	void Set_Name(const char *name) { Name = name; }
 
-	const Matrix3D &		Get_Transform (void) const				{ return Transform; }
-	void						Set_Transform (const Matrix3D &tm)	{ Transform = tm; }
+	const Matrix3D &Get_Transform(void) const { return Transform; }
+	void Set_Transform(const Matrix3D &tm) { Transform = tm; }
 
 private:
-
 	///////////////////////////////////////////////////////////
 	//	Private member data
 	///////////////////////////////////////////////////////////
-	StringClass				Name;
-	Matrix3D					Transform;
+	StringClass Name;
+	Matrix3D Transform;
 };
-
 
 ///////////////////////////////////////////////////////////
 //	operator==
 ///////////////////////////////////////////////////////////
-inline bool
-ProxyClass::operator== (const ProxyClass &src)
+inline bool ProxyClass::operator==(const ProxyClass &src)
 {
 	return ((Name == src.Name) && (Transform == src.Transform));
 }
 
-
 ///////////////////////////////////////////////////////////
 //	operator!=
 ///////////////////////////////////////////////////////////
-inline bool
-ProxyClass::operator!= (const ProxyClass &src)
+inline bool ProxyClass::operator!=(const ProxyClass &src)
 {
 	return ((Name != src.Name) || (Transform != src.Transform));
 }
 
-
 #endif //__PROXY_H
-

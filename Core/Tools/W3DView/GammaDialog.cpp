@@ -33,17 +33,14 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // GammaDialogClass dialog
 
-
-GammaDialogClass::GammaDialogClass(CWnd* pParent /*=NULL*/)
-	: CDialog(GammaDialogClass::IDD, pParent)
+GammaDialogClass::GammaDialogClass(CWnd *pParent /*=NULL*/) : CDialog(GammaDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(GammaDialogClass)
 	m_gamma = 0;
 	//}}AFX_DATA_INIT
 }
 
-
-void GammaDialogClass::DoDataExchange(CDataExchange* pDX)
+void GammaDialogClass::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(GammaDialogClass)
@@ -52,11 +49,10 @@ void GammaDialogClass::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(GammaDialogClass, CDialog)
-	//{{AFX_MSG_MAP(GammaDialogClass)
-	ON_NOTIFY(NM_RELEASEDCAPTURE, IDC_GAMMA_SLIDER, OnReleasedcaptureGammaSlider)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(GammaDialogClass)
+ON_NOTIFY(NM_RELEASEDCAPTURE, IDC_GAMMA_SLIDER, OnReleasedcaptureGammaSlider)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -67,46 +63,50 @@ BOOL GammaDialogClass::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// TODO: Add extra initialization here
-	m_gamma=AfxGetApp()->GetProfileInt("Config","Gamma",10);
-	if (m_gamma<10) m_gamma=10;
-	if (m_gamma>30) m_gamma=30;
-	m_gammaslider.SetRange(10,30);
+	m_gamma = AfxGetApp()->GetProfileInt("Config", "Gamma", 10);
+	if (m_gamma < 10)
+		m_gamma = 10;
+	if (m_gamma > 30)
+		m_gamma = 30;
+	m_gammaslider.SetRange(10, 30);
 	m_gammaslider.SetPos(m_gamma);
 	CString string;
-	string.Format("%3.2f",m_gamma/10.0f);
-	SetDlgItemText(IDC_GAMMA_DISPLAY,string);
+	string.Format("%3.2f", m_gamma / 10.0f);
+	SetDlgItemText(IDC_GAMMA_DISPLAY, string);
 	string.Format("Calibration instructions\n");
-	string+="A. Set Gamma to 1.0 and Monitor Contrast and Brightness to maximum\n";
-	string+="B. Adjust Monitor Brightness down so Bar 3 is barely visible\n";
-	string+="C. Adjust Monitor Contrast as preferred but Bars 1,2,3,4 must be distinguishable from each other\n";
-	string+="D. Set the Gamma using the Slider below so the gray box on the left matches it's checkered surroundings\n";
-	string+="E. Press OK to save settings";
-	SetDlgItemText(IDC_INSTRUCTIONS,string);
+	string += "A. Set Gamma to 1.0 and Monitor Contrast and Brightness to maximum\n";
+	string += "B. Adjust Monitor Brightness down so Bar 3 is barely visible\n";
+	string += "C. Adjust Monitor Contrast as preferred but Bars 1,2,3,4 must be distinguishable from each other\n";
+	string += "D. Set the Gamma using the Slider below so the gray box on the left matches it's checkered surroundings\n";
+	string += "E. Press OK to save settings";
+	SetDlgItemText(IDC_INSTRUCTIONS, string);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+							 // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void GammaDialogClass::OnOK()
 {
 	// TODO: Add extra validation here
-	m_gamma=m_gammaslider.GetPos();
-	if (m_gamma<10) m_gamma=10;
-	if (m_gamma>30) m_gamma=30;
-	::AfxGetApp()->WriteProfileInt("Config","Gamma",m_gamma);
-	DX8Wrapper::Set_Gamma(m_gamma/10.0f,0.0f,1.0f);
+	m_gamma = m_gammaslider.GetPos();
+	if (m_gamma < 10)
+		m_gamma = 10;
+	if (m_gamma > 30)
+		m_gamma = 30;
+	::AfxGetApp()->WriteProfileInt("Config", "Gamma", m_gamma);
+	DX8Wrapper::Set_Gamma(m_gamma / 10.0f, 0.0f, 1.0f);
 
 	CDialog::OnOK();
 }
 
-void GammaDialogClass::OnReleasedcaptureGammaSlider(NMHDR* pNMHDR, LRESULT* pResult)
+void GammaDialogClass::OnReleasedcaptureGammaSlider(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	// TODO: Add your control notification handler code here
-	m_gamma=m_gammaslider.GetPos();
-	DX8Wrapper::Set_Gamma(m_gamma/10.0f,0.0f,1.0f);
+	m_gamma = m_gammaslider.GetPos();
+	DX8Wrapper::Set_Gamma(m_gamma / 10.0f, 0.0f, 1.0f);
 	CString string;
-	string.Format("%3.2f",m_gamma/10.0f);
-	SetDlgItemText(IDC_GAMMA_DISPLAY,string);
+	string.Format("%3.2f", m_gamma / 10.0f);
+	SetDlgItemText(IDC_GAMMA_DISPLAY, string);
 
 	*pResult = 0;
 }

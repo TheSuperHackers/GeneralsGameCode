@@ -25,7 +25,7 @@
 // FILE: PlaceEventTranslator.cpp ///////////////////////////////////////////////////////////
 // Author: Steven Johnson, Dec 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/GameAudio.h"
 #include "Common/Player.h"
@@ -58,85 +58,82 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 {
 	GameMessageDisposition disp = KEEP_MESSAGE;
 
-	switch(msg->getType())
+	switch (msg->getType())
 	{
-
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_DOWN:
 		{
 			// if we're in a building placement mode, do the place and send to all players
 			const ThingTemplate *build = TheInGameUI->getPendingPlaceType();
-			if( build && TheInGameUI->isPlacementAnchored() == FALSE )
+			if (build && TheInGameUI->isPlacementAnchored() == FALSE)
 			{
 				ICoord2D mouse = msg->getArgument(0)->pixel;
 				Coord3D world;
 
 				// translate mouse position to world position
-				TheTacticalView->screenToTerrain( &mouse, &world );
+				TheTacticalView->screenToTerrain(&mouse, &world);
 
 				//
 				// placing things causes a dozer to go over and build it ... get the dozer in question
 				// from the in game UI
 				//
-				Object *builderObject = TheGameLogic->findObjectByID( TheInGameUI->getPendingPlaceSourceObjectID() );
+				Object *builderObject = TheGameLogic->findObjectByID(TheInGameUI->getPendingPlaceSourceObjectID());
 
 				// if our source object is gone cancel this whole placement process
-				if( builderObject == NULL )
+				if (builderObject == NULL)
 				{
-
-					TheInGameUI->placeBuildAvailable( NULL, NULL );
+					TheInGameUI->placeBuildAvailable(NULL, NULL);
 					break;
 
-				}  // end if
+				} // end if
 
 				// set this location as the placement anchor
-				TheInGameUI->setPlacementStart( &mouse );
+				TheInGameUI->setPlacementStart(&mouse);
 
-/*
-//
-// This block of code checks for valid placement on a down mouse click, but since we can
-// rotate a building into a valid location, this check prevents us from placing things
-// down in some legal locations
-//
-				// get the type of thing we want to build
-				const ThingTemplate *whatToBuild = TheInGameUI->getPendingPlaceType();
-
+				/*
 				//
-				// if the spot at which they choose to place this thing is illegal we won't start
-				// the placement anchor, instead we play a "can't do that" sound
+				// This block of code checks for valid placement on a down mouse click, but since we can
+				// rotate a building into a valid location, this check prevents us from placing things
+				// down in some legal locations
 				//
-				LegalBuildCode lbc;
-				lbc = TheBuildAssistant->isLocationLegalToBuild( &world,
-																												 whatToBuild,
-																												 TheInGameUI->getPlacementAngle(),
-																												 BuildAssistant::USE_QUICK_PATHFIND |
-																												 BuildAssistant::TERRAIN_RESTRICTIONS |
-																												 BuildAssistant::CLEAR_PATH |
-																												 BuildAssistant::NO_OBJECT_OVERLAP,
-																												 builderObject );
-				if( lbc != LBC_OK )
-				{
-					static const Sound *noCanDoSound = TheAudio->Sounds->getSound( "NoCanDoSound" );
+								// get the type of thing we want to build
+								const ThingTemplate *whatToBuild = TheInGameUI->getPendingPlaceType();
 
-					// play a can't do that sound
-					TheAudio->Sounds->playSound( noCanDoSound );
+								//
+								// if the spot at which they choose to place this thing is illegal we won't start
+								// the placement anchor, instead we play a "can't do that" sound
+								//
+								LegalBuildCode lbc;
+								lbc = TheBuildAssistant->isLocationLegalToBuild( &world,
+																																 whatToBuild,
+																																 TheInGameUI->getPlacementAngle(),
+																																 BuildAssistant::USE_QUICK_PATHFIND |
+																																 BuildAssistant::TERRAIN_RESTRICTIONS |
+																																 BuildAssistant::CLEAR_PATH |
+																																 BuildAssistant::NO_OBJECT_OVERLAP,
+																																 builderObject );
+								if( lbc != LBC_OK )
+								{
+									static const Sound *noCanDoSound = TheAudio->Sounds->getSound( "NoCanDoSound" );
 
-					// display a message to the user as to why you can't build there
-					TheInGameUI->displayCantBuildMessage( lbc );
+									// play a can't do that sound
+									TheAudio->Sounds->playSound( noCanDoSound );
 
-				}  // end if
-				else
-				{
+									// display a message to the user as to why you can't build there
+									TheInGameUI->displayCantBuildMessage( lbc );
 
-					// start placement anchor
-					TheInGameUI->setPlacementStart(&mouse);
+								}  // end if
+								else
+								{
 
-				}  // end else
-*/
+									// start placement anchor
+									TheInGameUI->setPlacementStart(&mouse);
+
+								}  // end else
+				*/
 
 				// used the input
 				disp = DESTROY_MESSAGE;
-
 			}
 			break;
 		}
@@ -155,53 +152,53 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 			if (build && TheInGameUI->isPlacementAnchored())
 			{
 				GameMessage *placeMsg;
-//				Player *player = ThePlayerList->getLocalPlayer();
+				//				Player *player = ThePlayerList->getLocalPlayer();
 				Coord3D world;
 				Real angle;
 				ICoord2D anchorStart, anchorEnd;
-				Bool isLineBuild = TheBuildAssistant->isLineBuildTemplate( build );
+				Bool isLineBuild = TheBuildAssistant->isLineBuildTemplate(build);
 
 				// get the angle of the drawable at the cursor to use as the initial angle
 				angle = TheInGameUI->getPlacementAngle();
 
 				// get start point from the anchor arrow used to place and select angles
-				TheInGameUI->getPlacementPoints( &anchorStart, &anchorEnd );
+				TheInGameUI->getPlacementPoints(&anchorStart, &anchorEnd);
 
 				// translate the screen position of start to world target location
-				TheTacticalView->screenToTerrain( &anchorStart, &world );
+				TheTacticalView->screenToTerrain(&anchorStart, &world);
 
-				Object *builderObj = TheGameLogic->findObjectByID( TheInGameUI->getPendingPlaceSourceObjectID() );
+				Object *builderObj = TheGameLogic->findObjectByID(TheInGameUI->getPendingPlaceSourceObjectID());
 
-				//Kris: September 27, 2002
-				//Make sure we have enough CASH to build it! It's possible that between the
-				//time we initiated it and the time we confirm it, a hacker has stolen some of
-				//our cash!
-				CanMakeType cmt = TheBuildAssistant->canMakeUnit( builderObj, build );
-				if( cmt != CANMAKE_OK )
+				// Kris: September 27, 2002
+				// Make sure we have enough CASH to build it! It's possible that between the
+				// time we initiated it and the time we confirm it, a hacker has stolen some of
+				// our cash!
+				CanMakeType cmt = TheBuildAssistant->canMakeUnit(builderObj, build);
+				if (cmt != CANMAKE_OK)
 				{
 					if (cmt == CANMAKE_NO_MONEY)
 					{
 						TheEva->setShouldPlay(EVA_InsufficientFunds);
-						TheInGameUI->message( "GUI:NotEnoughMoneyToBuild" );
+						TheInGameUI->message("GUI:NotEnoughMoneyToBuild");
 						break;
 					}
 					else if (cmt == CANMAKE_QUEUE_FULL)
 					{
-						TheInGameUI->message( "GUI:ProductionQueueFull" );
+						TheInGameUI->message("GUI:ProductionQueueFull");
 						break;
 					}
 					else if (cmt == CANMAKE_PARKING_PLACES_FULL)
 					{
-						TheInGameUI->message( "GUI:ParkingPlacesFull" );
+						TheInGameUI->message("GUI:ParkingPlacesFull");
 						break;
 					}
-					else if( cmt == CANMAKE_MAXED_OUT_FOR_PLAYER )
+					else if (cmt == CANMAKE_MAXED_OUT_FOR_PLAYER)
 					{
-						TheInGameUI->message( "GUI:UnitMaxedOut" );
+						TheInGameUI->message("GUI:UnitMaxedOut");
 						break;
 					}
 					// get out of pending placement mode, this will also clear the arrow anchor status
-					TheInGameUI->placeBuildAvailable( NULL, NULL );
+					TheInGameUI->placeBuildAvailable(NULL, NULL);
 					break;
 				}
 
@@ -209,75 +206,71 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 
 				// check to see if this is a legal location to build something at
 				LegalBuildCode lbc;
-				lbc = TheBuildAssistant->isLocationLegalToBuild( &world,
-																												 build,
-																												 angle,
-																												 BuildAssistant::USE_QUICK_PATHFIND |
-																												 BuildAssistant::TERRAIN_RESTRICTIONS |
-																												 BuildAssistant::CLEAR_PATH |
-																												 BuildAssistant::NO_OBJECT_OVERLAP |
-																												 BuildAssistant::SHROUD_REVEALED,
-																												 builderObj, NULL );
-				if( lbc == LBC_OK )
+				lbc = TheBuildAssistant->isLocationLegalToBuild(
+						&world,
+						build,
+						angle,
+						BuildAssistant::USE_QUICK_PATHFIND | BuildAssistant::TERRAIN_RESTRICTIONS | BuildAssistant::CLEAR_PATH
+								| BuildAssistant::NO_OBJECT_OVERLAP | BuildAssistant::SHROUD_REVEALED,
+						builderObj,
+						NULL);
+				if (lbc == LBC_OK)
 				{
-
 					/** @todo Do not send local player id as argument once we have player ids
 					tied into all messages automatically */
 
 					// create the right kind of message
-					if( isLineBuild )
-						placeMsg = TheMessageStream->appendMessage( GameMessage::MSG_DOZER_CONSTRUCT_LINE );
+					if (isLineBuild)
+						placeMsg = TheMessageStream->appendMessage(GameMessage::MSG_DOZER_CONSTRUCT_LINE);
 					else
-						placeMsg = TheMessageStream->appendMessage( GameMessage::MSG_DOZER_CONSTRUCT );
+						placeMsg = TheMessageStream->appendMessage(GameMessage::MSG_DOZER_CONSTRUCT);
 
 					placeMsg->appendIntegerArgument(build->getTemplateID());
 					placeMsg->appendLocationArgument(world);
 					placeMsg->appendRealArgument(angle);
-					if( isLineBuild )
+					if (isLineBuild)
 					{
 						Coord3D worldEnd;
 
-						TheTacticalView->screenToTerrain( &anchorEnd, &worldEnd );
-						placeMsg->appendLocationArgument( worldEnd );
+						TheTacticalView->screenToTerrain(&anchorEnd, &worldEnd);
+						placeMsg->appendLocationArgument(worldEnd);
 
-					}  // end if
+					} // end if
 
-					pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), placeMsg->getType() );
+					pickAndPlayUnitVoiceResponse(TheInGameUI->getAllSelectedDrawables(), placeMsg->getType());
 
 					// get out of pending placement mode, this will also clear the arrow anchor status
-					TheInGameUI->placeBuildAvailable( NULL, NULL );
+					TheInGameUI->placeBuildAvailable(NULL, NULL);
 
-				}  // end if, location legal to build at
+				} // end if, location legal to build at
 				else
 				{
 					// can't place, display why
-					TheInGameUI->displayCantBuildMessage( lbc );
+					TheInGameUI->displayCantBuildMessage(lbc);
 
-					//Cannot build here -- play the voice sound from the dozer
-					AudioEventRTS sound = *builderObj->getTemplate()->getPerUnitSound( "VoiceNoBuild" );
-					sound.setObjectID( builderObj->getID() );
-					TheAudio->addAudioEvent( &sound );
+					// Cannot build here -- play the voice sound from the dozer
+					AudioEventRTS sound = *builderObj->getTemplate()->getPerUnitSound("VoiceNoBuild");
+					sound.setObjectID(builderObj->getID());
+					TheAudio->addAudioEvent(&sound);
 
 					// play a can't do that sound (UI beep type sound)
-					static AudioEventRTS noCanDoSound( "NoCanDoSound" );
-					TheAudio->addAudioEvent( &noCanDoSound );
+					static AudioEventRTS noCanDoSound("NoCanDoSound");
+					TheAudio->addAudioEvent(&noCanDoSound);
 
 					// unhook the anchor so they can try again
-					TheInGameUI->setPlacementStart( NULL );
+					TheInGameUI->setPlacementStart(NULL);
 
-				}  // end else
+				} // end else
 
 				// used the input
 				disp = DESTROY_MESSAGE;
 				m_frameOfUpButton = TheGameLogic->getFrame();
-
 			}
 
 			if (disp == DESTROY_MESSAGE)
 				TheInGameUI->clearAttackMoveToMode();
 
 			break;
-
 		}
 
 		//---------------------------------------------------------------------------------------------
@@ -286,7 +279,7 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 			// if a building placement is in progress update the destination position
 			if (TheInGameUI->isPlacementAnchored())
 			{
-				const Int PLACEMENT_DRAG_THRESHOLD_DIST = 5;  // in pixels away from anchor point
+				const Int PLACEMENT_DRAG_THRESHOLD_DIST = 5; // in pixels away from anchor point
 				ICoord2D mouse = msg->getArgument(0)->pixel;
 
 				//
@@ -294,19 +287,17 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 				// if we have moved far enough away from the start point
 				//
 				ICoord2D start;
-				TheInGameUI->getPlacementPoints( &start, NULL );
+				TheInGameUI->getPlacementPoints(&start, NULL);
 
 				Int x, y;
 				x = mouse.x - start.x;
 				y = mouse.y - start.y;
-				if( sqrt( (x * x) + (y * y) ) >= PLACEMENT_DRAG_THRESHOLD_DIST )
+				if (sqrt((x * x) + (y * y)) >= PLACEMENT_DRAG_THRESHOLD_DIST)
 				{
-
 					TheInGameUI->setPlacementEnd(&mouse);
 					disp = DESTROY_MESSAGE;
 
-				}  // end if
-
+				} // end if
 			}
 			break;
 		}
@@ -314,5 +305,3 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 
 	return disp;
 }
-
-

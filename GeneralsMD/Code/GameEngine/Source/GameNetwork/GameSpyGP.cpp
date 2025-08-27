@@ -26,7 +26,7 @@
 // GameSpy GP callbacks, utils, etc
 // Author: Matthew D. Campbell, February 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameClient/GameText.h"
 #include "GameNetwork/GameSpy.h"
@@ -38,41 +38,47 @@ GPConnection *TheGPConnection = &TheGPConnectionObj;
 GPProfile GameSpyLocalProfile = 0;
 char GameSpyProfilePassword[64];
 
-void GPRecvBuddyMessageCallback(GPConnection * pconnection, GPRecvBuddyMessageArg * arg, void * param)
+void GPRecvBuddyMessageCallback(GPConnection *pconnection, GPRecvBuddyMessageArg *arg, void *param)
 {
 	DEBUG_LOG(("GPRecvBuddyMessageCallback: message from %d is %s", arg->profile, arg->message));
 
-	//gpGetInfo(pconn, arg->profile, GP_DONT_CHECK_CACHE, GP_BLOCKING, (GPCallback)Whois, NULL);
-	//printf("MESSAGE (%d): %s: %s\n", msgCount,whois, arg->message);
+	// gpGetInfo(pconn, arg->profile, GP_DONT_CHECK_CACHE, GP_BLOCKING, (GPCallback)Whois, NULL);
+	// printf("MESSAGE (%d): %s: %s\n", msgCount,whois, arg->message);
 }
 
-static void buddyTryReconnect( void )
+static void buddyTryReconnect(void)
 {
 	TheGameSpyChat->reconnectProfile();
 }
 
-void GPErrorCallback(GPConnection * pconnection, GPErrorArg * arg, void * param)
+void GPErrorCallback(GPConnection *pconnection, GPErrorArg *arg, void *param)
 {
 	DEBUG_LOG(("GPErrorCallback"));
 
 	AsciiString errorCodeString;
 	AsciiString resultString;
 
-	#define RESULT(x) case x: resultString = #x; break;
-	switch(arg->result)
+#define RESULT(x) \
+	case x: \
+		resultString = #x; \
+		break;
+	switch (arg->result)
 	{
 		RESULT(GP_NO_ERROR)
 		RESULT(GP_MEMORY_ERROR)
 		RESULT(GP_PARAMETER_ERROR)
 		RESULT(GP_NETWORK_ERROR)
 		RESULT(GP_SERVER_ERROR)
-	default:
-		resultString = "Unknown result!";
+		default:
+			resultString = "Unknown result!";
 	}
-	#undef RESULT
+#undef RESULT
 
-	#define ERRORCODE(x) case x: errorCodeString = #x; break;
-	switch(arg->errorCode)
+#define ERRORCODE(x) \
+	case x: \
+		errorCodeString = #x; \
+		break;
+	switch (arg->errorCode)
 	{
 		ERRORCODE(GP_GENERAL)
 		ERRORCODE(GP_PARSE)
@@ -119,44 +125,48 @@ void GPErrorCallback(GPConnection * pconnection, GPErrorArg * arg, void * param)
 		ERRORCODE(GP_DELPROFILE_LAST_PROFILE)
 		ERRORCODE(GP_SEARCH)
 		ERRORCODE(GP_SEARCH_CONNECTION_FAILED)
-	default:
-		errorCodeString = "Unknown error code!";
+		default:
+			errorCodeString = "Unknown error code!";
 	}
-	#undef ERRORCODE
+#undef ERRORCODE
 
-	if(arg->fatal)
+	if (arg->fatal)
 	{
-		DEBUG_LOG(( "-----------"));
-		DEBUG_LOG(( "GP FATAL ERROR"));
-		DEBUG_LOG(( "-----------"));
+		DEBUG_LOG(("-----------"));
+		DEBUG_LOG(("GP FATAL ERROR"));
+		DEBUG_LOG(("-----------"));
 
 		// if we're still connected to the chat server, tell the user.  He can always hit the buddy
 		// button to try reconnecting.  Oh yes, also hide the buddy popup.
 		GameSpyCloseOverlay(GSOVERLAY_BUDDY);
 		if (TheGameSpyChat->isConnected())
 		{
-			GSMessageBoxYesNo(TheGameText->fetch("GUI:GPErrorTitle"), TheGameText->fetch("GUI:GPDisconnected"), buddyTryReconnect, NULL);
+			GSMessageBoxYesNo(
+					TheGameText->fetch("GUI:GPErrorTitle"),
+					TheGameText->fetch("GUI:GPDisconnected"),
+					buddyTryReconnect,
+					NULL);
 		}
 	}
 	else
 	{
-		DEBUG_LOG(( "-----"));
-		DEBUG_LOG(( "GP ERROR"));
-		DEBUG_LOG(( "-----"));
+		DEBUG_LOG(("-----"));
+		DEBUG_LOG(("GP ERROR"));
+		DEBUG_LOG(("-----"));
 	}
-	DEBUG_LOG(( "RESULT: %s (%d)", resultString.str(), arg->result));
-	DEBUG_LOG(( "ERROR CODE: %s (0x%X)", errorCodeString.str(), arg->errorCode));
-	DEBUG_LOG(( "ERROR STRING: %s", arg->errorString));
+	DEBUG_LOG(("RESULT: %s (%d)", resultString.str(), arg->result));
+	DEBUG_LOG(("ERROR CODE: %s (0x%X)", errorCodeString.str(), arg->errorCode));
+	DEBUG_LOG(("ERROR STRING: %s", arg->errorString));
 }
 
-void GPRecvBuddyStatusCallback(GPConnection * connection, GPRecvBuddyStatusArg * arg, void * param)
+void GPRecvBuddyStatusCallback(GPConnection *connection, GPRecvBuddyStatusArg *arg, void *param)
 {
 	DEBUG_LOG(("GPRecvBuddyStatusCallback: info on %d is in %d", arg->profile, arg->index));
 
-	//GameSpyUpdateBuddyOverlay();
+	// GameSpyUpdateBuddyOverlay();
 }
 
-void GPRecvBuddyRequestCallback(GPConnection * connection, GPRecvBuddyRequestArg * arg, void * param)
+void GPRecvBuddyRequestCallback(GPConnection *connection, GPRecvBuddyRequestArg *arg, void *param)
 {
 	DEBUG_LOG(("GPRecvBuddyRequestCallback: %d wants to be our buddy because '%s'", arg->profile, arg->reason));
 }

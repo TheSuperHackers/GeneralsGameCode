@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/INI.h"
 #include "Common/Xfer.h"
@@ -61,18 +61,14 @@
 //-----------------------------------------------------------------------------
 CampaignManager *TheCampaignManager = NULL;
 
+const FieldParse CampaignManager::m_campaignFieldParseTable[] = {
 
+	{ "Mission", CampaignManager::parseMissionPart, NULL, NULL },
+	{ "FirstMission", INI::parseAsciiString, NULL, offsetof(Campaign, m_firstMission) },
+	{ "CampaignNameLabel", INI::parseAsciiString, NULL, offsetof(Campaign, m_campaignNameLabel) },
+	{ "FinalVictoryMovie", INI::parseAsciiString, NULL, offsetof(Campaign, m_finalMovieName) },
 
-
-const FieldParse CampaignManager::m_campaignFieldParseTable[] =
-{
-
-	{ "Mission",						CampaignManager::parseMissionPart,	NULL, NULL },
-	{ "FirstMission",				INI::parseAsciiString,							NULL,	offsetof( Campaign, m_firstMission )  },
-	{ "CampaignNameLabel",	INI::parseAsciiString,							NULL, offsetof( Campaign, m_campaignNameLabel ) },
-	{ "FinalVictoryMovie",	INI::parseAsciiString,							NULL, offsetof( Campaign, m_finalMovieName ) },
-
-	{ NULL,										NULL,													NULL, 0 }  // keep this last
+	{ NULL, NULL, NULL, 0 } // keep this last
 
 };
 
@@ -81,33 +77,33 @@ const FieldParse CampaignManager::m_campaignFieldParseTable[] =
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void INI::parseCampaignDefinition( INI *ini )
+void INI::parseCampaignDefinition(INI *ini)
 {
 	AsciiString name;
 	Campaign *campaign;
 
 	// read the name
-	const char* c = ini->getNextToken();
-	name.set( c );
+	const char *c = ini->getNextToken();
+	name.set(c);
 
 	// find existing item if present
-	DEBUG_ASSERTCRASH( TheCampaignManager, ("parseCampaignDefinition: Unable to Get TheCampaignManager") );
-	if( !TheCampaignManager )
+	DEBUG_ASSERTCRASH(TheCampaignManager, ("parseCampaignDefinition: Unable to Get TheCampaignManager"));
+	if (!TheCampaignManager)
 		return;
 
 	// If we have a previously allocated Campaign
-	campaign = TheCampaignManager->newCampaign( name );
+	campaign = TheCampaignManager->newCampaign(name);
 
 	// sanity
-	DEBUG_ASSERTCRASH( campaign, ("parseCampaignDefinition: Unable to allocate campaign '%s'", name.str()) );
+	DEBUG_ASSERTCRASH(campaign, ("parseCampaignDefinition: Unable to allocate campaign '%s'", name.str()));
 
 	// parse the ini definition
-	ini->initFromINI( campaign, TheCampaignManager->getFieldParse() );
+	ini->initFromINI(campaign, TheCampaignManager->getFieldParse());
 
-}  // end parseCampaignDefinition
+} // end parseCampaignDefinition
 
 //-----------------------------------------------------------------------------
-Campaign::Campaign( void )
+Campaign::Campaign(void)
 {
 	m_missions.clear();
 	m_firstMission.clear();
@@ -116,35 +112,35 @@ Campaign::Campaign( void )
 }
 
 //-----------------------------------------------------------------------------
-Campaign::~Campaign( void )
+Campaign::~Campaign(void)
 {
 	MissionListIt it = m_missions.begin();
-	while(it != m_missions.end())
+	while (it != m_missions.end())
 	{
 		Mission *mission = *it;
-		it = m_missions.erase( it );
-		if(mission)
+		it = m_missions.erase(it);
+		if (mission)
 			deleteInstance(mission);
 	}
 }
 
-AsciiString Campaign::getFinalVictoryMovie( void )
+AsciiString Campaign::getFinalVictoryMovie(void)
 {
 	return m_finalMovieName;
 }
 
 //-----------------------------------------------------------------------------
-Mission *Campaign::newMission( AsciiString name )
+Mission *Campaign::newMission(AsciiString name)
 {
 	MissionListIt it;
 	it = m_missions.begin();
 	name.toLower();
-	while(it != m_missions.end())
+	while (it != m_missions.end())
 	{
 		Mission *mission = *it;
-		if(mission->m_name.compare(name) == 0)
+		if (mission->m_name.compare(name) == 0)
 		{
-			m_missions.erase( it );
+			m_missions.erase(it);
 			deleteInstance(mission);
 			break;
 		}
@@ -158,17 +154,17 @@ Mission *Campaign::newMission( AsciiString name )
 }
 
 //-----------------------------------------------------------------------------
-Mission *Campaign::getMission( AsciiString missionName )
+Mission *Campaign::getMission(AsciiString missionName)
 {
-	if(missionName.isEmpty())
+	if (missionName.isEmpty())
 		return NULL;
 	MissionListIt it;
 	it = m_missions.begin();
 	// we've reached the end of the campaign
-	while(it != m_missions.end())
+	while (it != m_missions.end())
 	{
 		Mission *mission = *it;
-		if(mission->m_name.compare(missionName) == 0)
+		if (mission->m_name.compare(missionName) == 0)
 			return mission;
 		++it;
 	}
@@ -177,11 +173,11 @@ Mission *Campaign::getMission( AsciiString missionName )
 }
 
 //-----------------------------------------------------------------------------
-Mission *Campaign::getNextMission( Mission *current)
+Mission *Campaign::getNextMission(Mission *current)
 {
 	AsciiString name;
-	//if passed a Null pointer, load the first mission
-	if(!current)
+	// if passed a Null pointer, load the first mission
+	if (!current)
 	{
 		name = m_firstMission;
 	}
@@ -191,22 +187,21 @@ Mission *Campaign::getNextMission( Mission *current)
 	MissionListIt it;
 	it = m_missions.begin();
 	// we've reached the end of the campaign
-	if(name.isEmpty())
+	if (name.isEmpty())
 		return NULL;
-	while(it != m_missions.end())
+	while (it != m_missions.end())
 	{
 		Mission *mission = *it;
-		if(mission->m_name.compare(name) == 0)
+		if (mission->m_name.compare(name) == 0)
 			return mission;
 		++it;
 	}
-//	DEBUG_ASSERTCRASH(FALSE, ("GetNextMission couldn't find %s", current->m_nextMission.str()));
+	//	DEBUG_ASSERTCRASH(FALSE, ("GetNextMission couldn't find %s", current->m_nextMission.str()));
 	return NULL;
 }
 
-
 //-----------------------------------------------------------------------------
-CampaignManager::CampaignManager( void )
+CampaignManager::CampaignManager(void)
 {
 	m_campaignList.clear();
 	m_currentCampaign = NULL;
@@ -217,56 +212,55 @@ CampaignManager::CampaignManager( void )
 }
 
 //-----------------------------------------------------------------------------
-CampaignManager::~CampaignManager( void )
+CampaignManager::~CampaignManager(void)
 {
 	m_currentCampaign = NULL;
 	m_currentMission = NULL;
 
 	CampaignListIt it = m_campaignList.begin();
 
-	while(it != m_campaignList.end())
+	while (it != m_campaignList.end())
 	{
 		Campaign *campaign = *it;
-		it = m_campaignList.erase( it );
-		if(campaign)
+		it = m_campaignList.erase(it);
+		if (campaign)
 			deleteInstance(campaign);
 	}
 }
 
 //-----------------------------------------------------------------------------
-void CampaignManager::init( void )
+void CampaignManager::init(void)
 {
 	INI ini;
 	// Read from INI all the CampaignManager
-	ini.load( AsciiString( "Data\\INI\\Campaign.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.load(AsciiString("Data\\INI\\Campaign.ini"), INI_LOAD_OVERWRITE, NULL);
 }
 
 //-----------------------------------------------------------------------------
-Campaign *CampaignManager::getCurrentCampaign( void )
+Campaign *CampaignManager::getCurrentCampaign(void)
 {
 	return m_currentCampaign;
 }
 
 //-----------------------------------------------------------------------------
-Mission *CampaignManager::getCurrentMission( void )
+Mission *CampaignManager::getCurrentMission(void)
 {
 	return m_currentMission;
 }
 
 //-----------------------------------------------------------------------------
-Mission *CampaignManager::gotoNextMission( void )
+Mission *CampaignManager::gotoNextMission(void)
 {
 	if (!m_currentCampaign || !m_currentMission)
 		return NULL;
 	m_currentMission = m_currentCampaign->getNextMission(m_currentMission);
 	return m_currentMission;
-
 }
 
 //-----------------------------------------------------------------------------
-void CampaignManager::setCampaignAndMission( AsciiString campaign, AsciiString mission )
+void CampaignManager::setCampaignAndMission(AsciiString campaign, AsciiString mission)
 {
-	if(mission.isEmpty())
+	if (mission.isEmpty())
 	{
 		setCampaign(campaign);
 		return;
@@ -274,13 +268,13 @@ void CampaignManager::setCampaignAndMission( AsciiString campaign, AsciiString m
 	CampaignListIt it;
 	it = m_campaignList.begin();
 	campaign.toLower();
-	while	( it != m_campaignList.end())
+	while (it != m_campaignList.end())
 	{
 		Campaign *camp = *it;
-		if(camp->m_name.compare(campaign) == 0)
+		if (camp->m_name.compare(campaign) == 0)
 		{
 			m_currentCampaign = camp;
-			m_currentMission = camp->getMission( mission );
+			m_currentMission = camp->getMission(mission);
 			return;
 		}
 		++it;
@@ -288,18 +282,18 @@ void CampaignManager::setCampaignAndMission( AsciiString campaign, AsciiString m
 }
 
 //-----------------------------------------------------------------------------
-void CampaignManager::setCampaign( AsciiString campaign )
+void CampaignManager::setCampaign(AsciiString campaign)
 {
 	CampaignListIt it;
 	it = m_campaignList.begin();
 	campaign.toLower();
-	while	( it != m_campaignList.end())
+	while (it != m_campaignList.end())
 	{
 		Campaign *camp = *it;
-		if(camp->m_name.compare(campaign) == 0)
+		if (camp->m_name.compare(campaign) == 0)
 		{
 			m_currentCampaign = camp;
-			m_currentMission = camp->getNextMission( NULL );
+			m_currentMission = camp->getNextMission(NULL);
 			return;
 		}
 		++it;
@@ -312,9 +306,9 @@ void CampaignManager::setCampaign( AsciiString campaign )
 }
 
 //-----------------------------------------------------------------------------
-AsciiString CampaignManager::getCurrentMap( void )
+AsciiString CampaignManager::getCurrentMap(void)
 {
-	if(!m_currentMission)
+	if (!m_currentMission)
 		return AsciiString::TheEmptyString;
 
 	return m_currentMission->m_mapName;
@@ -323,61 +317,53 @@ AsciiString CampaignManager::getCurrentMap( void )
 // ------------------------------------------------------------------------------------------------
 /** Return the 0 based mission number */
 // ------------------------------------------------------------------------------------------------
-Int CampaignManager::getCurrentMissionNumber( void )
+Int CampaignManager::getCurrentMissionNumber(void)
 {
 	Int number = INVALID_MISSION_NUMBER;
 
-	if( m_currentCampaign )
+	if (m_currentCampaign)
 	{
 		Campaign::MissionListIt it;
 
-		for( it = m_currentCampaign->m_missions.begin();
-				 it != m_currentCampaign->m_missions.end();
-				 ++it )
+		for (it = m_currentCampaign->m_missions.begin(); it != m_currentCampaign->m_missions.end(); ++it)
 		{
-
 			number++;
-			if( *it == m_currentMission )
+			if (*it == m_currentMission)
 				return number;
 		}
-
 	}
 
 	return number;
-
 }
 
 //-----------------------------------------------------------------------------
-void CampaignManager::parseMissionPart( INI* ini, void *instance, void *store, const void *userData )
+void CampaignManager::parseMissionPart(INI *ini, void *instance, void *store, const void *userData)
 {
-	static const FieldParse myFieldParse[] =
-		{
-			{ "Map",							INI::parseAsciiString,				NULL, offsetof( Mission, m_mapName ) },
-			{ "NextMission",			INI::parseAsciiString,				NULL, offsetof( Mission, m_nextMission ) },
-			{ "IntroMovie",				INI::parseAsciiString,				NULL, offsetof( Mission, m_movieLabel ) },
-			{ "ObjectiveLine0",		INI::parseAsciiString,				NULL, offsetof( Mission, m_missionObjectivesLabel[0] ) },
-      { "ObjectiveLine1",		INI::parseAsciiString,				NULL, offsetof( Mission, m_missionObjectivesLabel[1] ) },
-			{ "ObjectiveLine2",		INI::parseAsciiString,				NULL, offsetof( Mission, m_missionObjectivesLabel[2] ) },
-			{ "ObjectiveLine3",		INI::parseAsciiString,				NULL, offsetof( Mission, m_missionObjectivesLabel[3] ) },
-			{ "ObjectiveLine4",		INI::parseAsciiString,				NULL, offsetof( Mission, m_missionObjectivesLabel[4] ) },
-			{ "BriefingVoice",		INI::parseAudioEventRTS,			NULL, offsetof( Mission, m_briefingVoice ) },
-			{ "UnitNames0",				INI::parseAsciiString,				NULL, offsetof( Mission, m_unitNames[0] ) },
-			{ "UnitNames1",				INI::parseAsciiString,				NULL, offsetof( Mission, m_unitNames[1] ) },
-			{ "UnitNames2",				INI::parseAsciiString,				NULL, offsetof( Mission, m_unitNames[2] ) },
-			{ "LocationNameLabel",INI::parseAsciiString,				NULL, offsetof( Mission, m_locationNameLabel ) },
-			{ "VoiceLength",			INI::parseInt ,								NULL, offsetof( Mission, m_voiceLength ) },
+	static const FieldParse myFieldParse[] = {
+		{ "Map", INI::parseAsciiString, NULL, offsetof(Mission, m_mapName) },
+		{ "NextMission", INI::parseAsciiString, NULL, offsetof(Mission, m_nextMission) },
+		{ "IntroMovie", INI::parseAsciiString, NULL, offsetof(Mission, m_movieLabel) },
+		{ "ObjectiveLine0", INI::parseAsciiString, NULL, offsetof(Mission, m_missionObjectivesLabel[0]) },
+		{ "ObjectiveLine1", INI::parseAsciiString, NULL, offsetof(Mission, m_missionObjectivesLabel[1]) },
+		{ "ObjectiveLine2", INI::parseAsciiString, NULL, offsetof(Mission, m_missionObjectivesLabel[2]) },
+		{ "ObjectiveLine3", INI::parseAsciiString, NULL, offsetof(Mission, m_missionObjectivesLabel[3]) },
+		{ "ObjectiveLine4", INI::parseAsciiString, NULL, offsetof(Mission, m_missionObjectivesLabel[4]) },
+		{ "BriefingVoice", INI::parseAudioEventRTS, NULL, offsetof(Mission, m_briefingVoice) },
+		{ "UnitNames0", INI::parseAsciiString, NULL, offsetof(Mission, m_unitNames[0]) },
+		{ "UnitNames1", INI::parseAsciiString, NULL, offsetof(Mission, m_unitNames[1]) },
+		{ "UnitNames2", INI::parseAsciiString, NULL, offsetof(Mission, m_unitNames[2]) },
+		{ "LocationNameLabel", INI::parseAsciiString, NULL, offsetof(Mission, m_locationNameLabel) },
+		{ "VoiceLength", INI::parseInt, NULL, offsetof(Mission, m_voiceLength) },
 
-
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
-		};
+		{ NULL, NULL, NULL, 0 } // keep this last
+	};
 	AsciiString name;
-	const char* c = ini->getNextToken();
-	name.set( c );
+	const char *c = ini->getNextToken();
+	name.set(c);
 
-	Mission *mission = ((Campaign*)instance)->newMission(name );
+	Mission *mission = ((Campaign *)instance)->newMission(name);
 	ini->initFromINI(mission, myFieldParse);
 }
-
 
 //-----------------------------------------------------------------------------
 Campaign *CampaignManager::newCampaign(AsciiString name)
@@ -385,12 +371,12 @@ Campaign *CampaignManager::newCampaign(AsciiString name)
 	CampaignListIt it;
 	it = m_campaignList.begin();
 	name.toLower();
-	while(it != m_campaignList.end())
+	while (it != m_campaignList.end())
 	{
 		Campaign *campaign = *it;
-		if(campaign->m_name.compare(name) == 0)
+		if (campaign->m_name.compare(name) == 0)
 		{
-			m_campaignList.erase( it );
+			m_campaignList.erase(it);
 			deleteInstance(campaign);
 			break;
 		}
@@ -405,58 +391,53 @@ Campaign *CampaignManager::newCampaign(AsciiString name)
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info
-	* 1: Initial version
-	* 2: Added RankPoints Saving*/
+ * Version Info
+ * 1: Initial version
+ * 2: Added RankPoints Saving*/
 // ------------------------------------------------------------------------------------------------
-void CampaignManager::xfer( Xfer *xfer )
+void CampaignManager::xfer(Xfer *xfer)
 {
-
 	// version
 	const XferVersion currentVersion = 3;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// current campaign
 	AsciiString currentCampaign;
-	if( m_currentCampaign )
+	if (m_currentCampaign)
 		currentCampaign = m_currentCampaign->m_name;
-	xfer->xferAsciiString( &currentCampaign );
+	xfer->xferAsciiString(&currentCampaign);
 
 	// current mission
 	AsciiString currentMission;
-	if( m_currentMission )
+	if (m_currentMission)
 		currentMission = m_currentMission->m_name;
-	xfer->xferAsciiString( &currentMission );
+	xfer->xferAsciiString(&currentMission);
 
 	// version 2 and above has rank points!
-	if(version >= 2)
-		xfer->xferInt( &m_currentRankPoints );
+	if (version >= 2)
+		xfer->xferInt(&m_currentRankPoints);
 
-	if(version >= 3)
-		xfer->xferUser( &m_difficulty, sizeof(m_difficulty) );
+	if (version >= 3)
+		xfer->xferUser(&m_difficulty, sizeof(m_difficulty));
 
 	// when loading, need to set the current campaign and mission
-	if( xfer->getXferMode() == XFER_LOAD )
-		setCampaignAndMission( currentCampaign, currentMission );
+	if (xfer->getXferMode() == XFER_LOAD)
+		setCampaignAndMission(currentCampaign, currentMission);
 
-}  // end xfer
+} // end xfer
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-
-
 //-----------------------------------------------------------------------------
-Mission::Mission( void )
+Mission::Mission(void)
 {
 	m_voiceLength = 0;
 }
 
 //-----------------------------------------------------------------------------
-Mission::~Mission( void )
+Mission::~Mission(void)
 {
-
 }
-

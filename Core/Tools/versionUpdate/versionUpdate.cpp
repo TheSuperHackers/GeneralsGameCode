@@ -21,7 +21,7 @@
 // Author: Matthew D. Campbell, November 2001
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#define WIN32_LEAN_AND_MEAN  // only bare bones windows stuff wanted
+#define WIN32_LEAN_AND_MEAN // only bare bones windows stuff wanted
 #include <windows.h>
 #include <lmcons.h>
 #include <stdlib.h>
@@ -85,23 +85,20 @@ static void usage(char *progname)
 {
 	if (progname)
 	{
-		printf ("Usage: %s versionfile.h", progname);
+		printf("Usage: %s versionfile.h", progname);
 	}
 }
 
-int APIENTRY WinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     LPSTR     lpCmdLine,
-                     int       nCmdShow)
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	/*
 	** Convert WinMain arguments to simple main argc and argv
 	*/
 	int argc = 1;
-	char * argv[20];
+	char *argv[20];
 	argv[0] = NULL;
 
-	char * token = strtok(lpCmdLine, " ");
+	char *token = strtok(lpCmdLine, " ");
 	while (argc < 20 && token != NULL)
 	{
 		argv[argc++] = strtrim(token);
@@ -116,10 +113,11 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	}
 	else
 	{
-		char *target = argv[argc-1];
+		char *target = argv[argc - 1];
 		FILE *filePtr;
 
-		if (target) {
+		if (target)
+		{
 			filePtr = fopen(target, "r+");
 			if (filePtr)
 			{
@@ -134,8 +132,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 						char *ptr;
 
 						// Looking for '#define VERSION "x.y.z"'
-						ptr = strtok(stringPtr, " ");	// The VERSION
-						ptr = strtok(NULL, "\n");			// The remainder
+						ptr = strtok(stringPtr, " "); // The VERSION
+						ptr = strtok(NULL, "\n"); // The remainder
 
 						if (*ptr == '\"')
 						{
@@ -145,12 +143,13 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
 							build++;
 
-							printf ("Local build is %d\n", build);
+							printf("Local build is %d\n", build);
 							writeVersion(target, build);
 							break;
-						} else
+						}
+						else
 						{
-							printf ("Local build is 0. Oops, didn't find a string of the format: '#define VERSION \"x.y.z\"'");
+							printf("Local build is 0. Oops, didn't find a string of the format: '#define VERSION \"x.y.z\"'");
 						}
 					} // End if if (strstr
 				} // End of while
@@ -158,7 +157,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 			else
 			{
 				// Didn't find the file, write a new one
-				printf ("Local build is %d\n", build);
+				printf("Local build is %d\n", build);
 				writeVersion(target, build);
 			}
 		}

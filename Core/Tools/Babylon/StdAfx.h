@@ -28,19 +28,18 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
+#define VC_EXTRALEAN // Exclude rarely-used stuff from Windows headers
 
 // TheSuperHackers @build xezon 24/03/2025 Prevent afxwin.h from loading d3d9types.h, colliding with our own DirectX library.
 #define _d3d9TYPES_H_
 
-#include <afxwin.h>         // MFC core and standard components
-#include <afxext.h>         // MFC extensions
-#include <afxdisp.h>        // MFC Automation classes
-#include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
+#include <afxwin.h> // MFC core and standard components
+#include <afxext.h> // MFC extensions
+#include <afxdisp.h> // MFC Automation classes
+#include <afxdtctl.h> // MFC support for Internet Explorer 4 Common Controls
 #ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>			// MFC support for Windows Common Controls
+#include <afxcmn.h> // MFC support for Windows Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
-
 
 // This macro is the same as IMPLEMENT_OLECREATE, except it passes TRUE
 //  for the bMultiInstance parameter to the COleObjectFactory constructor.
@@ -48,10 +47,8 @@
 //  each automation proxy object requested by automation controllers.
 #ifndef IMPLEMENT_OLECREATE2
 #define IMPLEMENT_OLECREATE2(class_name, external_name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
-	AFX_DATADEF COleObjectFactory class_name::factory(class_name::guid, \
-		RUNTIME_CLASS(class_name), TRUE, _T(external_name)); \
-	const AFX_DATADEF GUID class_name::guid = \
-		{ l, w1, w2, { b1, b2, b3, b4, b5, b6, b7, b8 } };
+	AFX_DATADEF COleObjectFactory class_name::factory(class_name::guid, RUNTIME_CLASS(class_name), TRUE, _T(external_name)); \
+	const AFX_DATADEF GUID class_name::guid = { l, w1, w2, { b1, b2, b3, b4, b5, b6, b7, b8 } };
 #endif // IMPLEMENT_OLECREATE2
 
 #include "excel8.h"

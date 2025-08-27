@@ -34,28 +34,28 @@
 class GameSpyPlayerInfoInterface : public SubsystemInterface
 {
 public:
-	virtual ~GameSpyPlayerInfoInterface() { };
+	virtual ~GameSpyPlayerInfoInterface() {};
 
-	virtual void init( void ) = 0;
-	virtual void reset( void ) = 0;
-	virtual void update( void ) = 0;
+	virtual void init(void) = 0;
+	virtual void reset(void) = 0;
+	virtual void update(void) = 0;
 
-	virtual void setLocale( AsciiString locale, Bool setOnServer = true ) = 0;
-	virtual AsciiString getLocale( void ) = 0;
-	virtual void setWins( Int wins, Bool setOnServer = true ) = 0;
-	virtual Int getWins( void ) = 0;
-	virtual void setLosses( Int losses, Bool setOnServer = true ) = 0;
-	virtual Int getLosses( void ) = 0;
+	virtual void setLocale(AsciiString locale, Bool setOnServer = true) = 0;
+	virtual AsciiString getLocale(void) = 0;
+	virtual void setWins(Int wins, Bool setOnServer = true) = 0;
+	virtual Int getWins(void) = 0;
+	virtual void setLosses(Int losses, Bool setOnServer = true) = 0;
+	virtual Int getLosses(void) = 0;
 
-	virtual void readFromServer( void ) = 0;
+	virtual void readFromServer(void) = 0;
 
-	virtual void threadReadFromServer( void ) = 0;
-	virtual void threadSetLocale( AsciiString val ) = 0;
-	virtual void threadSetWins  ( AsciiString val ) = 0;
-	virtual void threadSetLosses( AsciiString val ) = 0;
+	virtual void threadReadFromServer(void) = 0;
+	virtual void threadSetLocale(AsciiString val) = 0;
+	virtual void threadSetWins(AsciiString val) = 0;
+	virtual void threadSetLosses(AsciiString val) = 0;
 };
 
-GameSpyPlayerInfoInterface *createGameSpyPlayerInfo( void );
+GameSpyPlayerInfoInterface *createGameSpyPlayerInfo(void);
 
 extern GameSpyPlayerInfoInterface *TheGameSpyPlayerInfo;
 

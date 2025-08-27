@@ -39,14 +39,12 @@
  *   MeshConnectionsClass::Get_Proxy_Data -- name and transform for the specified proxy object *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "meshcon.h"
 #include "util.h"
 #include "SnapPoints.h"
 #include "w3dappdata.h"
 #include "geometryexporttask.h"
 #include "geometryexportcontext.h"
-
 
 /***********************************************************************************************
  * MeshConnectionsClass::MeshConnectionsClass -- Constructor                                   *
@@ -60,13 +58,10 @@
  * HISTORY:                                                                                    *
  *   10/19/2000 gth : New version which uses the GeometryExportTasks                           *
  *=============================================================================================*/
-MeshConnectionsClass::MeshConnectionsClass
-(
-	DynamicVectorClass<GeometryExportTaskClass *> sub_object_list,
-	GeometryExportContextClass & context
-) :
-	CurTime(context.CurTime),
-	Origin(context.Origin)
+MeshConnectionsClass::MeshConnectionsClass(
+		DynamicVectorClass<GeometryExportTaskClass *> sub_object_list,
+		GeometryExportContextClass &context) :
+		CurTime(context.CurTime), Origin(context.Origin)
 {
 	unsigned int i;
 	assert(Origin != NULL);
@@ -74,29 +69,33 @@ MeshConnectionsClass::MeshConnectionsClass
 	/*
 	** Set the name, count the sub-objects and aggregates
 	*/
-	Set_W3D_Name(Name,context.ModelName);
+	Set_W3D_Name(Name, context.ModelName);
 
 	/*
 	** For each sub-object, record the bone it is attached to and its name
 	*/
 	int count = sub_object_list.Count();
-	for (i=0; i<count; i++) {
-
+	for (i = 0; i < count; i++)
+	{
 		ConnectionStruct con;
-		sub_object_list[i]->Get_Full_Name(con.ObjectName,sizeof(con.ObjectName));
+		sub_object_list[i]->Get_Full_Name(con.ObjectName, sizeof(con.ObjectName));
 		con.BoneIndex = sub_object_list[i]->Get_Bone_Index();
 		con.MeshINode = sub_object_list[i]->Get_Object_Node();
 
-		if (sub_object_list[i]->Is_Aggregate()) {
+		if (sub_object_list[i]->Is_Aggregate())
+		{
 			Aggregates.Add(con);
-		} else if (sub_object_list[i]->Is_Proxy()) {
+		}
+		else if (sub_object_list[i]->Is_Proxy())
+		{
 			ProxyObjects.Add(con);
-		} else {
+		}
+		else
+		{
 			SubObjects.Add(con);
 		}
 	}
 }
-
 
 /***********************************************************************************************
  * MeshConnectionsClass::~MeshConnectionsClass -- Destructor                                   *
@@ -114,7 +113,6 @@ MeshConnectionsClass::~MeshConnectionsClass(void)
 {
 }
 
-
 /***********************************************************************************************
  * MeshConnectionsClass::Get_Sub_Object_Data -- Returns the name and bone index for a given obj*
  *                                                                                             *
@@ -127,10 +125,10 @@ MeshConnectionsClass::~MeshConnectionsClass(void)
  * HISTORY:                                                                                    *
  *   9/14/1999  AJA : Created.                                                                 *
  *=============================================================================================*/
-bool MeshConnectionsClass::Get_Sub_Object_Data (int mesh_idx, char **out_name, int *out_boneindex,
-														INode **out_inode)
+bool MeshConnectionsClass::Get_Sub_Object_Data(int mesh_idx, char **out_name, int *out_boneindex, INode **out_inode)
 {
-	if (mesh_idx >= SubObjects.Count()) return false;
+	if (mesh_idx >= SubObjects.Count())
+		return false;
 
 	if (out_name)
 		*out_name = SubObjects[mesh_idx].ObjectName;
@@ -141,7 +139,6 @@ bool MeshConnectionsClass::Get_Sub_Object_Data (int mesh_idx, char **out_name, i
 
 	return true;
 }
-
 
 /***********************************************************************************************
  * MeshConnectionsClass::Get_Aggregate_Data -- name and bone for the given aggregate           *
@@ -155,10 +152,10 @@ bool MeshConnectionsClass::Get_Sub_Object_Data (int mesh_idx, char **out_name, i
  * HISTORY:                                                                                    *
  *   10/25/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-bool MeshConnectionsClass::Get_Aggregate_Data(int mesh_idx, char **out_name, int *out_boneindex,
-														INode **out_inode)
+bool MeshConnectionsClass::Get_Aggregate_Data(int mesh_idx, char **out_name, int *out_boneindex, INode **out_inode)
 {
-	if (mesh_idx >= Aggregates.Count()) return false;
+	if (mesh_idx >= Aggregates.Count())
+		return false;
 
 	if (out_name)
 		*out_name = Aggregates[mesh_idx].ObjectName;
@@ -169,7 +166,6 @@ bool MeshConnectionsClass::Get_Aggregate_Data(int mesh_idx, char **out_name, int
 
 	return true;
 }
-
 
 /***********************************************************************************************
  * MeshConnectionsClass::Get_Proxy_Data -- name and transform for the specified proxy object   *
@@ -183,10 +179,10 @@ bool MeshConnectionsClass::Get_Aggregate_Data(int mesh_idx, char **out_name, int
  * HISTORY:                                                                                    *
  *   10/26/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-bool MeshConnectionsClass::Get_Proxy_Data(int index, char **out_name, int *out_boneindex,
-														INode **out_inode)
+bool MeshConnectionsClass::Get_Proxy_Data(int index, char **out_name, int *out_boneindex, INode **out_inode)
 {
-	if (index >= ProxyObjects.Count()) return false;
+	if (index >= ProxyObjects.Count())
+		return false;
 
 	if (out_name)
 		*out_name = ProxyObjects[index].ObjectName;

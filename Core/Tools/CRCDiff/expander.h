@@ -34,21 +34,18 @@ typedef std::map<std::string, std::string> ExpansionMap;
 
 class Expander
 {
-	public:
-		Expander( const std::string& leftMarker, const std::string& rightMarker );
+public:
+	Expander(const std::string &leftMarker, const std::string &rightMarker);
 
-		void addExpansion( const std::string& key, const std::string val );
-		void clear( void );
+	void addExpansion(const std::string &key, const std::string val);
+	void clear(void);
 
-		void expand( const std::string& input,
-				std::string& output,
-				bool stripUnknown = false );
+	void expand(const std::string &input, std::string &output, bool stripUnknown = false);
 
-	protected:
-		ExpansionMap m_expansions;
-		std::string m_left;
-		std::string m_right;
+protected:
+	ExpansionMap m_expansions;
+	std::string m_left;
+	std::string m_right;
 };
 
 #endif // __EXPANDER_H__
-

@@ -44,9 +44,7 @@
 //-------------------------------------------------------------------------------------------------
 class FunctionLexicon : public SubsystemInterface
 {
-
 public:
-
 	struct TableEntry
 	{
 		NameKeyType key;
@@ -56,7 +54,7 @@ public:
 
 	enum TableIndex
 	{
-		TABLE_ANY = -1,					///< use this when searching to search any table
+		TABLE_ANY = -1, ///< use this when searching to search any table
 
 		TABLE_GAME_WIN_SYSTEM = 0,
 		TABLE_GAME_WIN_INPUT,
@@ -68,23 +66,22 @@ public:
 		TABLE_WIN_LAYOUT_UPDATE,
 		TABLE_WIN_LAYOUT_SHUTDOWN,
 
-		MAX_FUNCTION_TABLES			// keep this last
+		MAX_FUNCTION_TABLES // keep this last
 	};
 
 public:
+	FunctionLexicon(void);
+	virtual ~FunctionLexicon(void);
 
-	FunctionLexicon( void );
-	virtual ~FunctionLexicon( void );
-
-	virtual void init( void );
-	virtual void reset( void );
-	virtual void update( void );
+	virtual void init(void);
+	virtual void reset(void);
+	virtual void update(void);
 
 	/// validate the tables and make sure all entries are unique
-	Bool validate( void );
+	Bool validate(void);
 
 	/// get internal function table
-	TableEntry *getTable( TableIndex index );
+	TableEntry *getTable(TableIndex index);
 
 	//
 	// !NOTE! We do NOT have a functionToName() method becuase we assume
@@ -99,56 +96,66 @@ public:
 	// char *functionToName( void *func );
 
 	// Game window functions ------------------------------------------------------------------------
-	GameWinSystemFunc		gameWinSystemFunc( NameKeyType key, TableIndex = TABLE_GAME_WIN_SYSTEM );
-	GameWinInputFunc		gameWinInputFunc( NameKeyType key, TableIndex = TABLE_GAME_WIN_INPUT  );
-	GameWinTooltipFunc  gameWinTooltipFunc( NameKeyType key, TableIndex = TABLE_GAME_WIN_TOOLTIP );
-	GameWinDrawFunc			gameWinDrawFunc( NameKeyType key, TableIndex = TABLE_ANY  );
+	GameWinSystemFunc gameWinSystemFunc(NameKeyType key, TableIndex = TABLE_GAME_WIN_SYSTEM);
+	GameWinInputFunc gameWinInputFunc(NameKeyType key, TableIndex = TABLE_GAME_WIN_INPUT);
+	GameWinTooltipFunc gameWinTooltipFunc(NameKeyType key, TableIndex = TABLE_GAME_WIN_TOOLTIP);
+	GameWinDrawFunc gameWinDrawFunc(NameKeyType key, TableIndex = TABLE_ANY);
 
 	// Window layout functions ----------------------------------------------------------------------
-	WindowLayoutInitFunc			winLayoutInitFunc( NameKeyType key, TableIndex = TABLE_ANY );
-	WindowLayoutUpdateFunc		winLayoutUpdateFunc( NameKeyType key, TableIndex = TABLE_WIN_LAYOUT_UPDATE );
-	WindowLayoutShutdownFunc	winLayoutShutdownFunc( NameKeyType key, TableIndex = TABLE_WIN_LAYOUT_SHUTDOWN );
+	WindowLayoutInitFunc winLayoutInitFunc(NameKeyType key, TableIndex = TABLE_ANY);
+	WindowLayoutUpdateFunc winLayoutUpdateFunc(NameKeyType key, TableIndex = TABLE_WIN_LAYOUT_UPDATE);
+	WindowLayoutShutdownFunc winLayoutShutdownFunc(NameKeyType key, TableIndex = TABLE_WIN_LAYOUT_SHUTDOWN);
 
 protected:
-
 	/// load a lookup table with run time values needed and save in table list
-	void loadTable( TableEntry *table, TableIndex tableIndex );
+	void loadTable(TableEntry *table, TableIndex tableIndex);
 
 	/** given a key find the function, the index parameter can limit the search
 	to a single table or to ANY of the tables */
-	void *findFunction( NameKeyType key, TableIndex index );
+	void *findFunction(NameKeyType key, TableIndex index);
 
 #ifdef NOT_IN_USE
-	const char *funcToName( void *func, TableEntry *table );  ///< internal searching
+	const char *funcToName(void *func, TableEntry *table); ///< internal searching
 #endif
-	void *keyToFunc( NameKeyType key, TableEntry *table );  ///< internal searching
+	void *keyToFunc(NameKeyType key, TableEntry *table); ///< internal searching
 
-	TableEntry *m_tables[ MAX_FUNCTION_TABLES ];  ///< the lookup tables
+	TableEntry *m_tables[MAX_FUNCTION_TABLES]; ///< the lookup tables
 
-};  // end class FunctionLexicon
+}; // end class FunctionLexicon
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // INLINING
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-inline FunctionLexicon::TableEntry *FunctionLexicon::getTable( TableIndex index )
-	{ return m_tables[ index ]; }
+inline FunctionLexicon::TableEntry *FunctionLexicon::getTable(TableIndex index)
+{
+	return m_tables[index];
+}
 
-inline GameWinSystemFunc FunctionLexicon::gameWinSystemFunc( NameKeyType key, TableIndex index )
-	{ return (GameWinSystemFunc)findFunction( key, index ); }
-inline GameWinInputFunc FunctionLexicon::gameWinInputFunc( NameKeyType key, TableIndex index )
-	{ return (GameWinInputFunc)findFunction( key, index ); }
-inline GameWinTooltipFunc FunctionLexicon::gameWinTooltipFunc( NameKeyType key, TableIndex index )
-	{ return (GameWinTooltipFunc)findFunction( key, index ); }
+inline GameWinSystemFunc FunctionLexicon::gameWinSystemFunc(NameKeyType key, TableIndex index)
+{
+	return (GameWinSystemFunc)findFunction(key, index);
+}
+inline GameWinInputFunc FunctionLexicon::gameWinInputFunc(NameKeyType key, TableIndex index)
+{
+	return (GameWinInputFunc)findFunction(key, index);
+}
+inline GameWinTooltipFunc FunctionLexicon::gameWinTooltipFunc(NameKeyType key, TableIndex index)
+{
+	return (GameWinTooltipFunc)findFunction(key, index);
+}
 
-inline WindowLayoutUpdateFunc FunctionLexicon::winLayoutUpdateFunc( NameKeyType key, TableIndex index )
-	{ return (WindowLayoutUpdateFunc)findFunction( key, index ); }
-inline WindowLayoutShutdownFunc FunctionLexicon::winLayoutShutdownFunc( NameKeyType key, TableIndex index )
-	{ return (WindowLayoutShutdownFunc)findFunction( key, index ); }
+inline WindowLayoutUpdateFunc FunctionLexicon::winLayoutUpdateFunc(NameKeyType key, TableIndex index)
+{
+	return (WindowLayoutUpdateFunc)findFunction(key, index);
+}
+inline WindowLayoutShutdownFunc FunctionLexicon::winLayoutShutdownFunc(NameKeyType key, TableIndex index)
+{
+	return (WindowLayoutShutdownFunc)findFunction(key, index);
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // EXTERNALS
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-extern FunctionLexicon *TheFunctionLexicon;  ///< function dictionary external
+extern FunctionLexicon *TheFunctionLexicon; ///< function dictionary external
 
 #endif // end __FUNCTIONLEXICON_H_
-

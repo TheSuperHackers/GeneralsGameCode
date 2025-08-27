@@ -29,28 +29,24 @@
 /////////////////////////////////////////////////////////////////////////////
 // SelectMacrotexture dialog
 
-
-SelectMacrotexture::SelectMacrotexture(CWnd* pParent /*=NULL*/)
-	: CDialog(SelectMacrotexture::IDD, pParent)
+SelectMacrotexture::SelectMacrotexture(CWnd *pParent /*=NULL*/) : CDialog(SelectMacrotexture::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SelectMacrotexture)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void SelectMacrotexture::DoDataExchange(CDataExchange* pDX)
+void SelectMacrotexture::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SelectMacrotexture)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(SelectMacrotexture, CDialog)
-	//{{AFX_MSG_MAP(SelectMacrotexture)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(SelectMacrotexture)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 #define DEFAULT "***Default"
@@ -67,20 +63,24 @@ BOOL SelectMacrotexture::OnInitDialog()
 	pWnd->GetWindowRect(&rect);
 
 	ScreenToClient(&rect);
-	rect.DeflateRect(2,2,2,2);
-	m_textureTreeView.Create(TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS|
-		TVS_SHOWSELALWAYS|TVS_DISABLEDRAGDROP, rect, this, IDC_TERRAIN_TREEVIEW);
+	rect.DeflateRect(2, 2, 2, 2);
+	m_textureTreeView.Create(
+			TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS | TVS_SHOWSELALWAYS | TVS_DISABLEDRAGDROP,
+			rect,
+			this,
+			IDC_TERRAIN_TREEVIEW);
 	m_textureTreeView.ShowWindow(SW_SHOW);
 
 	{
-		char				dirBuf[_MAX_PATH];
-		char				findBuf[_MAX_PATH];
-		char				fileBuf[_MAX_PATH];
+		char dirBuf[_MAX_PATH];
+		char findBuf[_MAX_PATH];
+		char fileBuf[_MAX_PATH];
 
 		strcpy(dirBuf, "..\\TestArt");
 		int len = strlen(dirBuf);
 
-		if (len > 0 && dirBuf[len - 1] != '\\') {
+		if (len > 0 && dirBuf[len - 1] != '\\')
+		{
 			dirBuf[len++] = '\\';
 			dirBuf[len] = 0;
 		}
@@ -89,61 +89,67 @@ BOOL SelectMacrotexture::OnInitDialog()
 		FilenameList filenameList;
 		TheFileSystem->getFileListInDirectory(AsciiString(findBuf), AsciiString("*.tga"), filenameList, FALSE);
 
-		if (filenameList.size() > 0) {
+		if (filenameList.size() > 0)
+		{
 			TVINSERTSTRUCT ins;
 			HTREEITEM child = NULL;
 			FilenameList::iterator it = filenameList.begin();
-			do {
+			do
+			{
 				AsciiString filename = *it;
 				len = filename.getLength();
-				if (len<5) continue;
+				if (len < 5)
+					continue;
 				strcpy(fileBuf, filename.str());
-					::memset(&ins, 0, sizeof(ins));
-					ins.hParent = TVI_ROOT;
-					ins.hInsertAfter = TVI_SORT;
-					ins.item.mask = TVIF_PARAM|TVIF_TEXT;
-					ins.item.lParam = -1;
-					ins.item.pszText = fileBuf;
-					ins.item.cchTextMax = strlen(fileBuf);
-					child = m_textureTreeView.InsertItem(&ins);
+				::memset(&ins, 0, sizeof(ins));
+				ins.hParent = TVI_ROOT;
+				ins.hInsertAfter = TVI_SORT;
+				ins.item.mask = TVIF_PARAM | TVIF_TEXT;
+				ins.item.lParam = -1;
+				ins.item.pszText = fileBuf;
+				ins.item.cchTextMax = strlen(fileBuf);
+				child = m_textureTreeView.InsertItem(&ins);
 				++it;
 			} while (it != filenameList.end());
 
 			::memset(&ins, 0, sizeof(ins));
 			ins.hParent = TVI_ROOT;
 			ins.hInsertAfter = TVI_SORT;
-			ins.item.mask = TVIF_PARAM|TVIF_TEXT;
+			ins.item.mask = TVIF_PARAM | TVIF_TEXT;
 			ins.item.lParam = -1;
 			char defaultText[] = DEFAULT;
 			ins.item.pszText = defaultText;
 			ins.item.cchTextMax = strlen(defaultText);
 			child = m_textureTreeView.InsertItem(&ins);
-
- 		}
+		}
 	}
 
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+							 // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-BOOL SelectMacrotexture::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
+BOOL SelectMacrotexture::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult)
 {
 	NMTREEVIEW *pHdr = (NMTREEVIEW *)lParam;
-	if (pHdr->hdr.hwndFrom == m_textureTreeView.m_hWnd) {
-		if (pHdr->hdr.code == TVN_SELCHANGED) {
+	if (pHdr->hdr.hwndFrom == m_textureTreeView.m_hWnd)
+	{
+		if (pHdr->hdr.code == TVN_SELCHANGED)
+		{
 			char buffer[_MAX_PATH];
 			HTREEITEM hItem = m_textureTreeView.GetSelectedItem();
 			TVITEM item;
 			::memset(&item, 0, sizeof(item));
-			item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
+			item.mask = TVIF_HANDLE | TVIF_PARAM | TVIF_TEXT | TVIF_STATE;
 			item.hItem = hItem;
 			item.pszText = buffer;
-			item.cchTextMax = sizeof(buffer)-2;
+			item.cchTextMax = sizeof(buffer) - 2;
 			m_textureTreeView.GetItem(&item);
-			if (0==strcmp(buffer, DEFAULT)) {
+			if (0 == strcmp(buffer, DEFAULT))
+			{
 				TheTerrainRenderObject->updateMacroTexture(AsciiString(""));
-			} else {
+			}
+			else
+			{
 				TheTerrainRenderObject->updateMacroTexture(AsciiString(buffer));
 			}
 			TheWritableGlobalData->m_useLightMap = true;

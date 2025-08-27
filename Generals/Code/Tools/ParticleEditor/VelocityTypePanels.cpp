@@ -38,21 +38,20 @@
 #define ARBITRARY_BUFF_SIZE 128
 
 // VelocityPanelOrtho //////////////////////////////////////////////////////////
-VelocityPanelOrtho::VelocityPanelOrtho(UINT nIDTemplate, CWnd* pParentWnd) : ISwapablePanel(nIDTemplate, pParentWnd)
+VelocityPanelOrtho::VelocityPanelOrtho(UINT nIDTemplate, CWnd *pParentWnd) : ISwapablePanel(nIDTemplate, pParentWnd)
 {
-
 }
 
-void VelocityPanelOrtho::InitPanel( void )
+void VelocityPanelOrtho::InitPanel(void)
 {
-
 }
 
-void VelocityPanelOrtho::performUpdate( IN Bool toUI )
+void VelocityPanelOrtho::performUpdate(IN Bool toUI)
 {
 	static char buff[ARBITRARY_BUFF_SIZE];
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog *pParent = (DebugWindowDialog *)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
@@ -62,13 +61,17 @@ void VelocityPanelOrtho::performUpdate( IN Bool toUI )
 
 		// first Xmin
 		pWnd = GetDlgItem(IDC_PSEd_OrthoXMin);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getVelOrthoFromSystem(0, ortho);
 
 				sprintf(buff, FORMAT_STRING, ortho);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				ortho = atof(buff);
 				pParent->updateVelOrthoToSystem(0, ortho);
@@ -77,13 +80,17 @@ void VelocityPanelOrtho::performUpdate( IN Bool toUI )
 
 		// now the Ymin
 		pWnd = GetDlgItem(IDC_PSEd_OrthoYMin);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getVelOrthoFromSystem(1, ortho);
 
 				sprintf(buff, FORMAT_STRING, ortho);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				ortho = atof(buff);
 				pParent->updateVelOrthoToSystem(1, ortho);
@@ -92,13 +99,17 @@ void VelocityPanelOrtho::performUpdate( IN Bool toUI )
 
 		// now the Zmin
 		pWnd = GetDlgItem(IDC_PSEd_OrthoZMin);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getVelOrthoFromSystem(2, ortho);
 
 				sprintf(buff, FORMAT_STRING, ortho);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				ortho = atof(buff);
 				pParent->updateVelOrthoToSystem(2, ortho);
@@ -107,13 +118,17 @@ void VelocityPanelOrtho::performUpdate( IN Bool toUI )
 
 		// first the Xmax
 		pWnd = GetDlgItem(IDC_PSEd_OrthoXMax);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getVelOrthoFromSystem(3, ortho);
 
 				sprintf(buff, FORMAT_STRING, ortho);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				ortho = atof(buff);
 				pParent->updateVelOrthoToSystem(3, ortho);
@@ -122,13 +137,17 @@ void VelocityPanelOrtho::performUpdate( IN Bool toUI )
 
 		// now the Ymax
 		pWnd = GetDlgItem(IDC_PSEd_OrthoYMax);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getVelOrthoFromSystem(4, ortho);
 
 				sprintf(buff, FORMAT_STRING, ortho);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				ortho = atof(buff);
 				pParent->updateVelOrthoToSystem(4, ortho);
@@ -137,13 +156,17 @@ void VelocityPanelOrtho::performUpdate( IN Bool toUI )
 
 		// the Zmax
 		pWnd = GetDlgItem(IDC_PSEd_OrthoZMax);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getVelOrthoFromSystem(5, ortho);
 
 				sprintf(buff, FORMAT_STRING, ortho);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				ortho = atof(buff);
 				pParent->updateVelOrthoToSystem(5, ortho);
@@ -154,8 +177,9 @@ void VelocityPanelOrtho::performUpdate( IN Bool toUI )
 
 void VelocityPanelOrtho::OnParticleSystemEdit()
 {
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog *pParent = (DebugWindowDialog *)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
@@ -163,30 +187,29 @@ void VelocityPanelOrtho::OnParticleSystemEdit()
 }
 
 BEGIN_MESSAGE_MAP(VelocityPanelOrtho, ISwapablePanel)
-	ON_EN_KILLFOCUS(IDC_PSEd_OrthoXMin, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_OrthoYMin, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_OrthoZMin, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_OrthoXMax, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_OrthoYMax, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_OrthoZMax, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_OrthoXMin, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_OrthoYMin, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_OrthoZMin, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_OrthoXMax, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_OrthoYMax, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_OrthoZMax, OnParticleSystemEdit)
 END_MESSAGE_MAP()
 
 // VelocityPanelSphere ////////////////////////////////////////////////////////
-VelocityPanelSphere::VelocityPanelSphere(UINT nIDTemplate, CWnd* pParentWnd) : ISwapablePanel(nIDTemplate, pParentWnd)
+VelocityPanelSphere::VelocityPanelSphere(UINT nIDTemplate, CWnd *pParentWnd) : ISwapablePanel(nIDTemplate, pParentWnd)
 {
-
 }
 
-void VelocityPanelSphere::InitPanel( void )
+void VelocityPanelSphere::InitPanel(void)
 {
-
 }
 
-void VelocityPanelSphere::performUpdate( IN Bool toUI )
+void VelocityPanelSphere::performUpdate(IN Bool toUI)
 {
 	static char buff[ARBITRARY_BUFF_SIZE];
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog *pParent = (DebugWindowDialog *)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
@@ -196,13 +219,17 @@ void VelocityPanelSphere::performUpdate( IN Bool toUI )
 
 		// radial min
 		pWnd = GetDlgItem(IDC_PSEd_SphereRadialMin);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getVelSphereFromSystem(0, radial);
 
 				sprintf(buff, FORMAT_STRING, radial);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				radial = atof(buff);
 				pParent->updateVelSphereToSystem(0, radial);
@@ -211,13 +238,17 @@ void VelocityPanelSphere::performUpdate( IN Bool toUI )
 
 		// radial max
 		pWnd = GetDlgItem(IDC_PSEd_SphereRadialMax);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getVelSphereFromSystem(1, radial);
 
 				sprintf(buff, FORMAT_STRING, radial);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				radial = atof(buff);
 				pParent->updateVelSphereToSystem(1, radial);
@@ -228,8 +259,9 @@ void VelocityPanelSphere::performUpdate( IN Bool toUI )
 
 void VelocityPanelSphere::OnParticleSystemEdit()
 {
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog *pParent = (DebugWindowDialog *)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
@@ -237,27 +269,26 @@ void VelocityPanelSphere::OnParticleSystemEdit()
 }
 
 BEGIN_MESSAGE_MAP(VelocityPanelSphere, ISwapablePanel)
-	ON_EN_KILLFOCUS(IDC_PSEd_SphereRadialMin, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_SphereRadialMax, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_SphereRadialMin, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_SphereRadialMax, OnParticleSystemEdit)
 END_MESSAGE_MAP()
 
-
 // VelocityPanelHemisphere //////////////////////////////////////////////////////////
-VelocityPanelHemisphere::VelocityPanelHemisphere(UINT nIDTemplate, CWnd* pParentWnd) : ISwapablePanel(nIDTemplate, pParentWnd)
+VelocityPanelHemisphere::VelocityPanelHemisphere(UINT nIDTemplate, CWnd *pParentWnd) :
+		ISwapablePanel(nIDTemplate, pParentWnd)
 {
-
 }
 
-void VelocityPanelHemisphere::InitPanel( void )
+void VelocityPanelHemisphere::InitPanel(void)
 {
-
 }
 
-void VelocityPanelHemisphere::performUpdate( IN Bool toUI )
+void VelocityPanelHemisphere::performUpdate(IN Bool toUI)
 {
 	static char buff[ARBITRARY_BUFF_SIZE];
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog *pParent = (DebugWindowDialog *)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
@@ -267,13 +298,17 @@ void VelocityPanelHemisphere::performUpdate( IN Bool toUI )
 
 		// radial min
 		pWnd = GetDlgItem(IDC_PSEd_HemisphereRadialMin);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getVelHemisphereFromSystem(0, radial);
 
 				sprintf(buff, FORMAT_STRING, radial);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				radial = atof(buff);
 				pParent->updateVelHemisphereToSystem(0, radial);
@@ -282,13 +317,17 @@ void VelocityPanelHemisphere::performUpdate( IN Bool toUI )
 
 		// radial max
 		pWnd = GetDlgItem(IDC_PSEd_HemisphereRadialMax);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getVelHemisphereFromSystem(1, radial);
 
 				sprintf(buff, FORMAT_STRING, radial);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				radial = atof(buff);
 				pParent->updateVelHemisphereToSystem(1, radial);
@@ -299,8 +338,9 @@ void VelocityPanelHemisphere::performUpdate( IN Bool toUI )
 
 void VelocityPanelHemisphere::OnParticleSystemEdit()
 {
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog *pParent = (DebugWindowDialog *)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
@@ -308,26 +348,25 @@ void VelocityPanelHemisphere::OnParticleSystemEdit()
 }
 
 BEGIN_MESSAGE_MAP(VelocityPanelHemisphere, ISwapablePanel)
-	ON_EN_KILLFOCUS(IDC_PSEd_HemisphereRadialMin, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_HemisphereRadialMax, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_HemisphereRadialMin, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_HemisphereRadialMax, OnParticleSystemEdit)
 END_MESSAGE_MAP()
 
 // VelocityPanelCylinder //////////////////////////////////////////////////////
-VelocityPanelCylinder::VelocityPanelCylinder(UINT nIDTemplate, CWnd* pParentWnd) : ISwapablePanel(nIDTemplate, pParentWnd)
+VelocityPanelCylinder::VelocityPanelCylinder(UINT nIDTemplate, CWnd *pParentWnd) : ISwapablePanel(nIDTemplate, pParentWnd)
 {
-
 }
 
-void VelocityPanelCylinder::InitPanel( void )
+void VelocityPanelCylinder::InitPanel(void)
 {
-
 }
 
-void VelocityPanelCylinder::performUpdate( IN Bool toUI )
+void VelocityPanelCylinder::performUpdate(IN Bool toUI)
 {
 	static char buff[ARBITRARY_BUFF_SIZE];
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog *pParent = (DebugWindowDialog *)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
@@ -337,13 +376,17 @@ void VelocityPanelCylinder::performUpdate( IN Bool toUI )
 
 		// first radial min
 		pWnd = GetDlgItem(IDC_PSEd_CylinderRadialMin);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getVelCylinderFromSystem(0, cylinder);
 
 				sprintf(buff, FORMAT_STRING, cylinder);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				cylinder = atof(buff);
 				pParent->updateVelCylinderToSystem(0, cylinder);
@@ -352,13 +395,17 @@ void VelocityPanelCylinder::performUpdate( IN Bool toUI )
 
 		// now the normal min
 		pWnd = GetDlgItem(IDC_PSEd_CylinderNormalMin);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getVelCylinderFromSystem(1, cylinder);
 
 				sprintf(buff, FORMAT_STRING, cylinder);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				cylinder = atof(buff);
 				pParent->updateVelCylinderToSystem(1, cylinder);
@@ -367,13 +414,17 @@ void VelocityPanelCylinder::performUpdate( IN Bool toUI )
 
 		// now the radial max
 		pWnd = GetDlgItem(IDC_PSEd_CylinderRadialMax);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getVelCylinderFromSystem(2, cylinder);
 
 				sprintf(buff, FORMAT_STRING, cylinder);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				cylinder = atof(buff);
 				pParent->updateVelCylinderToSystem(2, cylinder);
@@ -382,13 +433,17 @@ void VelocityPanelCylinder::performUpdate( IN Bool toUI )
 
 		// now normal max
 		pWnd = GetDlgItem(IDC_PSEd_CylinderNormalMax);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getVelCylinderFromSystem(3, cylinder);
 
 				sprintf(buff, FORMAT_STRING, cylinder);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				cylinder = atof(buff);
 				pParent->updateVelCylinderToSystem(3, cylinder);
@@ -399,8 +454,9 @@ void VelocityPanelCylinder::performUpdate( IN Bool toUI )
 
 void VelocityPanelCylinder::OnParticleSystemEdit()
 {
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog *pParent = (DebugWindowDialog *)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
@@ -408,28 +464,27 @@ void VelocityPanelCylinder::OnParticleSystemEdit()
 }
 
 BEGIN_MESSAGE_MAP(VelocityPanelCylinder, ISwapablePanel)
-	ON_EN_KILLFOCUS(IDC_PSEd_CylinderRadialMin, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_CylinderNormalMin, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_CylinderRadialMax, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_CylinderNormalMax, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_CylinderRadialMin, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_CylinderNormalMin, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_CylinderRadialMax, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_CylinderNormalMax, OnParticleSystemEdit)
 END_MESSAGE_MAP()
 
 // VelocityPanelOutward ///////////////////////////////////////////////////////////
-VelocityPanelOutward::VelocityPanelOutward(UINT nIDTemplate, CWnd* pParentWnd) : ISwapablePanel(nIDTemplate, pParentWnd)
+VelocityPanelOutward::VelocityPanelOutward(UINT nIDTemplate, CWnd *pParentWnd) : ISwapablePanel(nIDTemplate, pParentWnd)
 {
-
 }
 
-void VelocityPanelOutward::InitPanel( void )
+void VelocityPanelOutward::InitPanel(void)
 {
-
 }
 
-void VelocityPanelOutward::performUpdate( IN Bool toUI )
+void VelocityPanelOutward::performUpdate(IN Bool toUI)
 {
 	static char buff[ARBITRARY_BUFF_SIZE];
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog *pParent = (DebugWindowDialog *)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
@@ -439,13 +494,17 @@ void VelocityPanelOutward::performUpdate( IN Bool toUI )
 
 		// first radial min
 		pWnd = GetDlgItem(IDC_PSEd_OutwardSpeedMin);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getVelOutwardFromSystem(0, outward);
 
 				sprintf(buff, FORMAT_STRING, outward);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				outward = atof(buff);
 				pParent->updateVelOutwardToSystem(0, outward);
@@ -454,13 +513,17 @@ void VelocityPanelOutward::performUpdate( IN Bool toUI )
 
 		// now the normal min
 		pWnd = GetDlgItem(IDC_PSEd_OutwardOtherMin);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getVelOutwardFromSystem(1, outward);
 
 				sprintf(buff, FORMAT_STRING, outward);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				outward = atof(buff);
 				pParent->updateVelOutwardToSystem(1, outward);
@@ -469,13 +532,17 @@ void VelocityPanelOutward::performUpdate( IN Bool toUI )
 
 		// now the radial max
 		pWnd = GetDlgItem(IDC_PSEd_OutwardSpeedMax);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getVelOutwardFromSystem(2, outward);
 
 				sprintf(buff, FORMAT_STRING, outward);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				outward = atof(buff);
 				pParent->updateVelOutwardToSystem(2, outward);
@@ -484,13 +551,17 @@ void VelocityPanelOutward::performUpdate( IN Bool toUI )
 
 		// first the normal max
 		pWnd = GetDlgItem(IDC_PSEd_OutwardOtherMax);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getVelOutwardFromSystem(3, outward);
 
 				sprintf(buff, FORMAT_STRING, outward);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				outward = atof(buff);
 				pParent->updateVelOutwardToSystem(3, outward);
@@ -501,8 +572,9 @@ void VelocityPanelOutward::performUpdate( IN Bool toUI )
 
 void VelocityPanelOutward::OnParticleSystemEdit()
 {
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog *pParent = (DebugWindowDialog *)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
@@ -510,8 +582,8 @@ void VelocityPanelOutward::OnParticleSystemEdit()
 }
 
 BEGIN_MESSAGE_MAP(VelocityPanelOutward, ISwapablePanel)
-	ON_EN_KILLFOCUS(IDC_PSEd_OutwardSpeedMin, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_OutwardOtherMin, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_OutwardSpeedMax, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_OutwardOtherMax, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_OutwardSpeedMin, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_OutwardOtherMin, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_OutwardSpeedMax, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_OutwardOtherMax, OnParticleSystemEdit)
 END_MESSAGE_MAP()

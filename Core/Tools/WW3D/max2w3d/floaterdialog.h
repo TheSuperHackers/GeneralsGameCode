@@ -36,7 +36,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #ifndef FLOATERDIALOG_H
 #define FLOATERDIALOG_H
 
@@ -53,23 +52,17 @@ class Interface;
 class FloaterDialogClass
 {
 public:
-
 	FloaterDialogClass(void);
 	~FloaterDialogClass();
 
-	bool	Is_Created(void);
-	void	Create(Interface * ip, int child_dialog_id, DLGPROC child_dlg_proc);
-	bool	Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM);
+	bool Is_Created(void);
+	void Create(Interface *ip, int child_dialog_id, DLGPROC child_dlg_proc);
+	bool Dialog_Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM);
 
 private:
-
-	HWND		Hwnd;
-	int		ChildDialogTemplateID;
-	DLGPROC	ChildDialogProc;
-
+	HWND Hwnd;
+	int ChildDialogTemplateID;
+	DLGPROC ChildDialogProc;
 };
 
-
-
-#endif //FLOATERDIALOG_H
-
+#endif // FLOATERDIALOG_H

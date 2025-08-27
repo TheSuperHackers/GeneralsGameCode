@@ -70,9 +70,7 @@ class TextFileClass;
 
 class HMorphAnimClass : public HAnimClass
 {
-
 public:
-
 	enum
 	{
 		OK,
@@ -82,58 +80,55 @@ public:
 	HMorphAnimClass(void);
 	~HMorphAnimClass(void);
 
-	void							Free_Morph(void);
-	int							Create_New_Morph(const int channels, HAnimClass *anim[]);
-	int							Load_W3D(ChunkLoadClass & cload);
-	int							Save_W3D(ChunkSaveClass & csave);
+	void Free_Morph(void);
+	int Create_New_Morph(const int channels, HAnimClass *anim[]);
+	int Load_W3D(ChunkLoadClass &cload);
+	int Save_W3D(ChunkSaveClass &csave);
 
-	const char *				Get_Name(void) const								{ return Name; }
-	const char *				Get_HName(void) const							{ return HierarchyName; }
+	const char *Get_Name(void) const { return Name; }
+	const char *Get_HName(void) const { return HierarchyName; }
 
-	int							Get_Num_Frames(void)								{ return FrameCount; }
-	float							Get_Frame_Rate()									{ return FrameRate; }
-	float							Get_Total_Time()									{ return (float)FrameCount / FrameRate; }
+	int Get_Num_Frames(void) { return FrameCount; }
+	float Get_Frame_Rate() { return FrameRate; }
+	float Get_Total_Time() { return (float)FrameCount / FrameRate; }
 
-//	Vector3						Get_Translation(int pividx,float frame);
-//	Quaternion					Get_Orientation(int pividx,float frame);
-	void							Get_Translation(Vector3& translation, int pividx,float frame) const;
-	void							Get_Orientation(Quaternion& orientation, int pividx,float frame) const;
-	void							Get_Transform(Matrix3D& transform, int pividx,float frame) const;
-	bool							Get_Visibility(int pividx,float frame)		{ return true; }
+	//	Vector3						Get_Translation(int pividx,float frame);
+	//	Quaternion					Get_Orientation(int pividx,float frame);
+	void Get_Translation(Vector3 &translation, int pividx, float frame) const;
+	void Get_Orientation(Quaternion &orientation, int pividx, float frame) const;
+	void Get_Transform(Matrix3D &transform, int pividx, float frame) const;
+	bool Get_Visibility(int pividx, float frame) { return true; }
 
-	void							Insert_Morph_Key (const int channel, uint32 morph_frame, uint32 pose_frame);
-	void							Release_Keys (void);
+	void Insert_Morph_Key(const int channel, uint32 morph_frame, uint32 pose_frame);
+	void Release_Keys(void);
 
-	bool							Is_Node_Motion_Present(int pividx)			{ return true; }
-	int							Get_Num_Pivots(void)	const						{ return NumNodes; }
+	bool Is_Node_Motion_Present(int pividx) { return true; }
+	int Get_Num_Pivots(void) const { return NumNodes; }
 
-	void							Set_Name(const char * name);
-	void							Set_HName(const char * hname);
+	void Set_Name(const char *name);
+	void Set_HName(const char *hname);
 
-	bool							Import(const char *hierarchy_name, TextFileClass &text_desc);
+	bool Import(const char *hierarchy_name, TextFileClass &text_desc);
 
 protected:
+	void Free(void);
+	void read_channel(ChunkLoadClass &cload, int channel);
+	void write_channel(ChunkSaveClass &csave, int channel);
+	void Resolve_Pivot_Channels(void);
 
-	void							Free(void);
-	void							read_channel(ChunkLoadClass & cload,int channel);
-	void							write_channel(ChunkSaveClass & csave,int channel);
-	void							Resolve_Pivot_Channels(void);
+	char Name[2 * W3D_NAME_LEN];
+	char AnimName[W3D_NAME_LEN];
+	char HierarchyName[W3D_NAME_LEN];
 
-	char							Name[2*W3D_NAME_LEN];
-	char							AnimName[W3D_NAME_LEN];
-	char							HierarchyName[W3D_NAME_LEN];
+	int FrameCount; // number of frames in the animation
+	float FrameRate; // framerate for playback
+	int ChannelCount; // number of independent morphing channels
+	int NumNodes;
 
-	int							FrameCount;								// number of frames in the animation
-	float							FrameRate;								// framerate for playback
-	int							ChannelCount;							// number of independent morphing channels
-	int							NumNodes;
-
-	HAnimClass **					PoseData;		// pointer to pose for each morph channel
-	TimeCodedMorphKeysClass *	MorphKeyData;	// morph keys for each channel
-	uint32 *							PivotChannel;	// controlling channel for each pivot/bone
-
+	HAnimClass **PoseData; // pointer to pose for each morph channel
+	TimeCodedMorphKeysClass *MorphKeyData; // morph keys for each channel
+	uint32 *PivotChannel; // controlling channel for each pivot/bone
 };
-
 
 /*********************************************************************************************
 **
@@ -148,45 +143,35 @@ protected:
 class TimeCodedMorphKeysClass
 {
 public:
-
 	TimeCodedMorphKeysClass(void);
 	~TimeCodedMorphKeysClass(void);
 
-	bool					Load_W3D(ChunkLoadClass & cload);
-	bool					Save_W3D(ChunkSaveClass & csave);
-	void					Get_Morph_Info(float morph_frame,int * pose_frame0,int * pose_frame1,float * fraction);
+	bool Load_W3D(ChunkLoadClass &cload);
+	bool Save_W3D(ChunkSaveClass &csave);
+	void Get_Morph_Info(float morph_frame, int *pose_frame0, int *pose_frame1, float *fraction);
 
-	void					Add_Key (uint32 morph_frame, uint32 pose_frame);
+	void Add_Key(uint32 morph_frame, uint32 pose_frame);
 
 private:
-
 	struct MorphKeyStruct
 	{
-		MorphKeyStruct (void)
-			:	MorphFrame (0),
-				PoseFrame (0)			{}
+		MorphKeyStruct(void) : MorphFrame(0), PoseFrame(0) {}
 
-		MorphKeyStruct (uint32 _morph, uint32 _pose)
-			:	MorphFrame (_morph),
-				PoseFrame (_pose)		{}
+		MorphKeyStruct(uint32 _morph, uint32 _pose) : MorphFrame(_morph), PoseFrame(_pose) {}
 
-		uint32	MorphFrame;				// morph animation frame index
-		uint32	PoseFrame;				// which pose frame to use at this time
+		uint32 MorphFrame; // morph animation frame index
+		uint32 PoseFrame; // which pose frame to use at this time
 	};
 
-	SimpleDynVecClass<MorphKeyStruct>	Keys;	// morph key data
-	uint32				CachedIdx;					// last accessed index
+	SimpleDynVecClass<MorphKeyStruct> Keys; // morph key data
+	uint32 CachedIdx; // last accessed index
 
-	void 					Free(void);
+	void Free(void);
 
-	uint32				get_index(float time);
-	uint32				binary_search_index(float time);
+	uint32 get_index(float time);
+	uint32 binary_search_index(float time);
 
 	friend class HMorphAnimClass;
 };
 
-
-
 #endif
-
-

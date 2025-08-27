@@ -48,15 +48,13 @@
 #include "w3d_file.h"
 #include <max.h>
 
-static BOOL CALLBACK _gen_mtl_names_dialog_proc(HWND Hwnd,UINT message,WPARAM wParam,LPARAM lParam);
-
+static BOOL CALLBACK _gen_mtl_names_dialog_proc(HWND Hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 /**********************************************************************************************
 **
 ** GenMtlNamesDialogClass Implementation
 **
 **********************************************************************************************/
-
 
 /***********************************************************************************************
  * GenMtlNamesDialogClass::GenMtlNamesDialogClass -- Constructor                               *
@@ -69,14 +67,10 @@ static BOOL CALLBACK _gen_mtl_names_dialog_proc(HWND Hwnd,UINT message,WPARAM wP
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-GenMtlNamesDialogClass::GenMtlNamesDialogClass(Interface * maxinterface) :
-	Hwnd(NULL),
-	Options(NULL),
-	MaxInterface(maxinterface),
-	NameIndexSpin(NULL)
+GenMtlNamesDialogClass::GenMtlNamesDialogClass(Interface *maxinterface) :
+		Hwnd(NULL), Options(NULL), MaxInterface(maxinterface), NameIndexSpin(NULL)
 {
 }
-
 
 /***********************************************************************************************
  * GenMtlNamesDialogClass::~GenMtlNamesDialogClass -- Destructor                               *
@@ -95,7 +89,6 @@ GenMtlNamesDialogClass::~GenMtlNamesDialogClass(void)
 	ReleaseISpinner(NameIndexSpin);
 }
 
-
 /***********************************************************************************************
  * GenMtlNamesDialogClass::Get_Options -- present the dialog, get user input                   *
  *                                                                                             *
@@ -110,27 +103,27 @@ GenMtlNamesDialogClass::~GenMtlNamesDialogClass(void)
  * HISTORY:                                                                                    *
  *   10/10/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-bool GenMtlNamesDialogClass::Get_Options(OptionsStruct * options)
+bool GenMtlNamesDialogClass::Get_Options(OptionsStruct *options)
 {
 	Options = options;
 
 	// Put up the options dialog box.
-	BOOL result = DialogBoxParam
-						(
-							AppInstance,
-							MAKEINTRESOURCE (IDD_GENERATE_MTL_NAMES_DIALOG),
-							MaxInterface->GetMAXHWnd(),
-							(DLGPROC) _gen_mtl_names_dialog_proc,
-							(LPARAM) this
-						);
+	BOOL result = DialogBoxParam(
+			AppInstance,
+			MAKEINTRESOURCE(IDD_GENERATE_MTL_NAMES_DIALOG),
+			MaxInterface->GetMAXHWnd(),
+			(DLGPROC)_gen_mtl_names_dialog_proc,
+			(LPARAM)this);
 
-	if (result == TRUE) {
+	if (result == TRUE)
+	{
 		return true;
-	} else {
+	}
+	else
+	{
 		return false;
 	}
 }
-
 
 /***********************************************************************************************
  * GenMtlNamesDialogClass::Ok_To_Exit -- verify that the input is valid                        *
@@ -148,18 +141,20 @@ bool GenMtlNamesDialogClass::Ok_To_Exit(void)
 {
 	// just check that the user entered a name
 	char buf[W3D_NAME_LEN];
-	GetWindowText(GetDlgItem(Hwnd,IDC_BASE_NAME_EDIT),buf,sizeof(buf));
+	GetWindowText(GetDlgItem(Hwnd, IDC_BASE_NAME_EDIT), buf, sizeof(buf));
 
-	if (strlen(buf) == 0) {
-		MessageBox(Hwnd,"Please enter a root name to use.\n","Error",MB_OK);
+	if (strlen(buf) == 0)
+	{
+		MessageBox(Hwnd, "Please enter a root name to use.\n", "Error", MB_OK);
 		return false;
-	} else {
+	}
+	else
+	{
 		return true;
 	}
 
 	return true;
 }
-
 
 /***********************************************************************************************
  * GenMtlNamesDialogClass::Dialog_Proc -- windows message handling                             *
@@ -173,32 +168,32 @@ bool GenMtlNamesDialogClass::Ok_To_Exit(void)
  * HISTORY:                                                                                    *
  *   10/10/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-bool GenMtlNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM)
+bool GenMtlNamesDialogClass::Dialog_Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM)
 {
-	switch (message )	{
-
+	switch (message)
+	{
 		case WM_INITDIALOG:
 
-			NameIndexSpin = SetupIntSpinner
-			(
-				Hwnd,
-				IDC_NAME_INDEX_SPIN,
-				IDC_NAME_INDEX_EDIT,
-				MIN_NAME_INDEX,MAX_NAME_INDEX,INITIAL_NAME_INDEX
-			);
+			NameIndexSpin = SetupIntSpinner(
+					Hwnd,
+					IDC_NAME_INDEX_SPIN,
+					IDC_NAME_INDEX_EDIT,
+					MIN_NAME_INDEX,
+					MAX_NAME_INDEX,
+					INITIAL_NAME_INDEX);
 
 			// limit the edit box characters
-			SendDlgItemMessage(Hwnd,IDC_BASE_NAME_EDIT,EM_LIMITTEXT,MAX_ROOT_NAME_LEN,0);
+			SendDlgItemMessage(Hwnd, IDC_BASE_NAME_EDIT, EM_LIMITTEXT, MAX_ROOT_NAME_LEN, 0);
 
 			// set initial name to root of the filename
 			char buf[_MAX_FNAME];
-			_splitpath(MaxInterface->GetCurFileName(),NULL,NULL,buf,NULL);
-			buf[MAX_ROOT_NAME_LEN+1] = 0;
-			SetWindowText(GetDlgItem(Hwnd,IDC_BASE_NAME_EDIT),buf);
+			_splitpath(MaxInterface->GetCurFileName(), NULL, NULL, buf, NULL);
+			buf[MAX_ROOT_NAME_LEN + 1] = 0;
+			SetWindowText(GetDlgItem(Hwnd, IDC_BASE_NAME_EDIT), buf);
 
 			// init radio buttons
-			CheckDlgButton(Hwnd,IDC_AFFECT_ALL_RADIO,BST_UNCHECKED);
-			CheckDlgButton(Hwnd,IDC_AFFECT_SELECTED_RADIO,BST_CHECKED);
+			CheckDlgButton(Hwnd, IDC_AFFECT_ALL_RADIO, BST_UNCHECKED);
+			CheckDlgButton(Hwnd, IDC_AFFECT_SELECTED_RADIO, BST_CHECKED);
 
 			return 1;
 
@@ -207,13 +202,14 @@ bool GenMtlNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LP
 			switch (LOWORD(wParam))
 			{
 				case IDOK:
-					if (Ok_To_Exit()) {
+					if (Ok_To_Exit())
+					{
 						// general options
-						Options->OnlyAffectSelected = (IsDlgButtonChecked(Hwnd,IDC_AFFECT_SELECTED_RADIO) == BST_CHECKED);
+						Options->OnlyAffectSelected = (IsDlgButtonChecked(Hwnd, IDC_AFFECT_SELECTED_RADIO) == BST_CHECKED);
 
 						// naming options
 						Options->NameIndex = NameIndexSpin->GetIVal();
-						GetWindowText(GetDlgItem(Hwnd,IDC_BASE_NAME_EDIT),Options->RootName,sizeof(Options->RootName));
+						GetWindowText(GetDlgItem(Hwnd, IDC_BASE_NAME_EDIT), Options->RootName, sizeof(Options->RootName));
 
 						EndDialog(Hwnd, 1);
 					}
@@ -222,13 +218,11 @@ bool GenMtlNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LP
 				case IDCANCEL:
 					EndDialog(Hwnd, 0);
 					break;
-
 			}
 			return 1;
 	}
 	return 0;
 }
-
 
 /***********************************************************************************************
  * _gen_mtl_names_dialog_proc -- windows dialog proc for GenMtlNamesDialog                     *
@@ -242,19 +236,22 @@ bool GenMtlNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LP
  * HISTORY:                                                                                    *
  *   10/10/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-static BOOL CALLBACK _gen_mtl_names_dialog_proc(HWND hwnd,UINT message,WPARAM wparam,LPARAM lparam)
+static BOOL CALLBACK _gen_mtl_names_dialog_proc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
-	static GenMtlNamesDialogClass * dialog = NULL;
+	static GenMtlNamesDialogClass *dialog = NULL;
 
-	if (message == WM_INITDIALOG) {
+	if (message == WM_INITDIALOG)
+	{
 		dialog = (GenMtlNamesDialogClass *)lparam;
 		dialog->Hwnd = hwnd;
 	}
 
-	if (dialog) {
+	if (dialog)
+	{
 		return dialog->Dialog_Proc(hwnd, message, wparam, lparam);
-	} else {
+	}
+	else
+	{
 		return FALSE;
 	}
 }
-

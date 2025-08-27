@@ -44,15 +44,12 @@ class ObjectCreationList;
 //-------------------------------------------------------------------------------------------------
 class ObjectCreationUpgradeModuleData : public UpgradeModuleData
 {
-
 public:
+	ObjectCreationUpgradeModuleData(void);
 
-	ObjectCreationUpgradeModuleData( void );
+	static void buildFieldParse(MultiIniFieldParse &p);
 
-	static void buildFieldParse(MultiIniFieldParse& p);
-
-	const ObjectCreationList *m_ocl;			///< the object creation list to make
-
+	const ObjectCreationList *m_ocl; ///< the object creation list to make
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -60,23 +57,18 @@ public:
 //-------------------------------------------------------------------------------------------------
 class ObjectCreationUpgrade : public UpgradeModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ObjectCreationUpgrade, "ObjectCreationUpgrade" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ObjectCreationUpgrade, ObjectCreationUpgradeModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectCreationUpgrade, "ObjectCreationUpgrade")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(ObjectCreationUpgrade, ObjectCreationUpgradeModuleData);
 
 public:
-
-	ObjectCreationUpgrade( Thing *thing, const ModuleData* moduleData );
+	ObjectCreationUpgrade(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype defined by MemoryPoolObject
 
-	void onDelete( void );																///< we have some work to do when this module goes away
+	void onDelete(void); ///< we have some work to do when this module goes away
 
 protected:
-
-	virtual void upgradeImplementation( void ); ///< Here's the actual work of Upgrading
+	virtual void upgradeImplementation(void); ///< Here's the actual work of Upgrading
 	virtual Bool isSubObjectsUpgrade() { return false; }
-
 };
 
 #endif // __OBJECTCREATIONUPGRADE_H_
-

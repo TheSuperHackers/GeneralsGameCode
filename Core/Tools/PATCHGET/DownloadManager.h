@@ -57,29 +57,43 @@ public:
 	virtual ~DownloadManager();
 
 public:
-	void init( void );
-	HRESULT update( void );
-	void reset( void );
+	void init(void);
+	HRESULT update(void);
+	void reset(void);
 
-	virtual HRESULT OnError( int error );
+	virtual HRESULT OnError(int error);
 	virtual HRESULT OnEnd();
 	virtual HRESULT OnQueryResume();
-	virtual HRESULT OnProgressUpdate( int bytesread, int totalsize, int timetaken, int timeleft );
-	virtual HRESULT OnStatusUpdate( int status );
+	virtual HRESULT OnProgressUpdate(int bytesread, int totalsize, int timetaken, int timeleft);
+	virtual HRESULT OnStatusUpdate(int status);
 
-	virtual HRESULT downloadFile( std::string server, std::string username, std::string password, std::string file, std::string localfile, std::string regkey, bool tryResume );
-	std::string getLastLocalFile( void );
+	virtual HRESULT downloadFile(
+			std::string server,
+			std::string username,
+			std::string password,
+			std::string file,
+			std::string localfile,
+			std::string regkey,
+			bool tryResume);
+	std::string getLastLocalFile(void);
 
-	bool isDone( void ) { return m_sawEnd || m_wasError; }
-	bool isOk( void ) { return m_sawEnd; }
-	bool wasError( void ) { return m_wasError; }
+	bool isDone(void) { return m_sawEnd || m_wasError; }
+	bool isOk(void) { return m_sawEnd; }
+	bool wasError(void) { return m_wasError; }
 
-	std::string getStatusString( void ) { return m_statusString; }
-	std::string getErrorString( void ) { return m_errorString; }
+	std::string getStatusString(void) { return m_statusString; }
+	std::string getErrorString(void) { return m_errorString; }
 
-	void queueFileForDownload( std::string server, std::string username, std::string password, std::string file, std::string localfile, std::string regkey, bool tryResume );
-	bool isFileQueuedForDownload( void ) { return !m_queuedDownloads.empty(); }
-	HRESULT downloadNextQueuedFile( void );
+	void queueFileForDownload(
+			std::string server,
+			std::string username,
+			std::string password,
+			std::string file,
+			std::string localfile,
+			std::string regkey,
+			bool tryResume);
+	bool isFileQueuedForDownload(void) { return !m_queuedDownloads.empty(); }
+	HRESULT downloadNextQueuedFile(void);
 
 private:
 	bool m_winsockInit;

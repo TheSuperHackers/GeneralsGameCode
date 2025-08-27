@@ -92,27 +92,41 @@
 #include "Common/PerfTimer.h"
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
 
-
 FlatHeightMapRenderObjClass *TheFlatHeightMap = NULL;
 
 //-----------------------------------------------------------------------------
 //         Private Data
 //-----------------------------------------------------------------------------
-#define SC_DETAIL_BLEND ( SHADE_CNST(ShaderClass::PASS_LEQUAL, ShaderClass::DEPTH_WRITE_ENABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_ONE, \
-	ShaderClass::DSTBLEND_ZERO, ShaderClass::FOG_DISABLE, ShaderClass::GRADIENT_MODULATE, ShaderClass::SECONDARY_GRADIENT_DISABLE, ShaderClass::TEXTURING_ENABLE, \
-	ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_ENABLE, ShaderClass::DETAILCOLOR_SCALE, ShaderClass::DETAILALPHA_DISABLE) )
+#define SC_DETAIL_BLEND \
+	(SHADE_CNST( \
+			ShaderClass::PASS_LEQUAL, \
+			ShaderClass::DEPTH_WRITE_ENABLE, \
+			ShaderClass::COLOR_WRITE_ENABLE, \
+			ShaderClass::SRCBLEND_ONE, \
+			ShaderClass::DSTBLEND_ZERO, \
+			ShaderClass::FOG_DISABLE, \
+			ShaderClass::GRADIENT_MODULATE, \
+			ShaderClass::SECONDARY_GRADIENT_DISABLE, \
+			ShaderClass::TEXTURING_ENABLE, \
+			ShaderClass::ALPHATEST_DISABLE, \
+			ShaderClass::CULL_MODE_ENABLE, \
+			ShaderClass::DETAILCOLOR_SCALE, \
+			ShaderClass::DETAILALPHA_DISABLE))
 
 static ShaderClass detailOpaqueShader(SC_DETAIL_BLEND);
 
+#define DEFAULT_MAX_BATCH_SHORELINE_TILES 512 // maximum number of terrain tiles rendered per call (must fit in one VB)
+#define DEFAULT_MAX_MAP_SHORELINE_TILES 4096 // default size of array allocated to hold all map shoreline tiles.
 
-#define DEFAULT_MAX_BATCH_SHORELINE_TILES		512	//maximum number of terrain tiles rendered per call (must fit in one VB)
-#define DEFAULT_MAX_MAP_SHORELINE_TILES		4096	//default size of array allocated to hold all map shoreline tiles.
-
-#define ADJUST_FROM_INDEX_TO_REAL(k) ((k-m_map->getBorderSizeInline())*MAP_XY_FACTOR)
-inline Int IABS(Int x) {	if (x>=0) return x; return -x;};
+#define ADJUST_FROM_INDEX_TO_REAL(k) ((k - m_map->getBorderSizeInline()) * MAP_XY_FACTOR)
+inline Int IABS(Int x)
+{
+	if (x >= 0)
+		return x;
+	return -x;
+};
 
 const Int CELLS_PER_TILE = 16; // In order to be efficient in texture, needs to be a power of 2. [3/24/2003]
-
 
 //-----------------------------------------------------------------------------
 //         Private Functions
@@ -129,9 +143,6 @@ Int FlatHeightMapRenderObjClass::freeMapResources(void)
 
 	return 0;
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 //         Public Functions
@@ -153,16 +164,11 @@ FlatHeightMapRenderObjClass::~FlatHeightMapRenderObjClass(void)
 //=============================================================================
 /** Constructor. Mostly nulls out the member variables. */
 //=============================================================================
-FlatHeightMapRenderObjClass::FlatHeightMapRenderObjClass(void):
-m_tiles(NULL),
-m_tilesWidth(0),
-m_tilesHeight(0),
-m_numTiles(0),
-m_updateState(STATE_IDLE)
+FlatHeightMapRenderObjClass::FlatHeightMapRenderObjClass(void) :
+		m_tiles(NULL), m_tilesWidth(0), m_tilesHeight(0), m_numTiles(0), m_updateState(STATE_IDLE)
 {
 	TheFlatHeightMap = this;
 }
-
 
 //=============================================================================
 // FlatHeightMapRenderObjClass::adjustTerrainLOD
@@ -192,19 +198,22 @@ void FlatHeightMapRenderObjClass::ReleaseResources(void)
 //=============================================================================
 void FlatHeightMapRenderObjClass::ReAcquireResources(void)
 {
-	if (m_map) {
-		Int width = (m_map->getXExtent()+CELLS_PER_TILE-2)/CELLS_PER_TILE;
-		Int height = (m_map->getYExtent()+CELLS_PER_TILE-2)/CELLS_PER_TILE;
+	if (m_map)
+	{
+		Int width = (m_map->getXExtent() + CELLS_PER_TILE - 2) / CELLS_PER_TILE;
+		Int height = (m_map->getYExtent() + CELLS_PER_TILE - 2) / CELLS_PER_TILE;
 		Int i, j;
-		Int numTiles = width*height;
+		Int numTiles = width * height;
 		m_tiles = new W3DTerrainBackground[numTiles];
 		m_numTiles = numTiles;
 		m_tilesWidth = width;
 		m_tilesHeight = height;
-		for	(i=0; i<m_tilesWidth; i++) {
-			for (j=0; j<m_tilesHeight; j++) {
-				W3DTerrainBackground *tile = m_tiles+j*m_tilesWidth+i;
-				tile->allocateTerrainBuffers(m_map, i*CELLS_PER_TILE, j*CELLS_PER_TILE, CELLS_PER_TILE);
+		for (i = 0; i < m_tilesWidth; i++)
+		{
+			for (j = 0; j < m_tilesHeight; j++)
+			{
+				W3DTerrainBackground *tile = m_tiles + j * m_tilesWidth + i;
+				tile->allocateTerrainBuffers(m_map, i * CELLS_PER_TILE, j * CELLS_PER_TILE, CELLS_PER_TILE);
 				tile->setFlip(m_map);
 			}
 		}
@@ -213,17 +222,17 @@ void FlatHeightMapRenderObjClass::ReAcquireResources(void)
 		range.lo.y = 0;
 		range.hi.x = m_map->getXExtent();
 		range.hi.y = m_map->getYExtent();
-		for	(i=0; i<m_tilesWidth; i++) {
-			for (j=0; j<m_tilesHeight; j++) {
-				W3DTerrainBackground *tile = m_tiles+j*m_tilesWidth+i;
+		for (i = 0; i < m_tilesWidth; i++)
+		{
+			for (j = 0; j < m_tilesHeight; j++)
+			{
+				W3DTerrainBackground *tile = m_tiles + j * m_tilesWidth + i;
 				tile->doPartialUpdate(range, m_map, true);
 			}
 		}
 	}
 	BaseHeightMapRenderObjClass::ReAcquireResources();
-
 }
-
 
 //=============================================================================
 // FlatHeightMapRenderObjClass::reset
@@ -245,8 +254,6 @@ void FlatHeightMapRenderObjClass::oversizeTerrain(Int tilesToOversize)
 	// Not needed with flat version. [3/20/2003]
 }
 
-
-
 //=============================================================================
 // HeightMapRenderObjClass::doPartialUpdate
 //=============================================================================
@@ -254,15 +261,21 @@ void FlatHeightMapRenderObjClass::oversizeTerrain(Int tilesToOversize)
 The coordinates in partialRange are map cell coordinates, relative to the entire map.
 The vertex coordinates and texture coordinates, as well as static lighting are updated.
 */
-void FlatHeightMapRenderObjClass::doPartialUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, RefRenderObjListIterator *pLightsIterator)
+void FlatHeightMapRenderObjClass::doPartialUpdate(
+		const IRegion2D &partialRange,
+		WorldHeightMap *htMap,
+		RefRenderObjListIterator *pLightsIterator)
 {
-	if (htMap) {
+	if (htMap)
+	{
 		REF_PTR_SET(m_map, htMap);
 	}
 	Int i, j;
-	for	(i=0; i<m_tilesWidth; i++) {
-		for (j=0; j<m_tilesHeight; j++) {
-			W3DTerrainBackground *tile = m_tiles+j*m_tilesWidth+i;
+	for (i = 0; i < m_tilesWidth; i++)
+	{
+		for (j = 0; j < m_tilesHeight; j++)
+		{
+			W3DTerrainBackground *tile = m_tiles + j * m_tilesWidth + i;
 			tile->doPartialUpdate(partialRange, htMap, true);
 		}
 	}
@@ -275,15 +288,15 @@ void FlatHeightMapRenderObjClass::doPartialUpdate(const IRegion2D &partialRange,
 //=============================================================================
 void FlatHeightMapRenderObjClass::releaseTiles(void)
 {
-	if (m_tiles) {
-		delete [] m_tiles;
+	if (m_tiles)
+	{
+		delete[] m_tiles;
 		m_tiles = NULL;
 	}
 	m_tilesWidth = 0;
 	m_tilesHeight = 0;
 	m_numTiles = 0;
 }
-
 
 //=============================================================================
 // FlatHeightMapRenderObjClass::initHeightData
@@ -292,36 +305,47 @@ void FlatHeightMapRenderObjClass::releaseTiles(void)
 Also allocates all rendering resources such as vertex buffers, index buffers,
 shaders, and materials.*/
 //=============================================================================
-Int FlatHeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator, Bool updateExtraPassTiles)
+Int FlatHeightMapRenderObjClass::initHeightData(
+		Int x,
+		Int y,
+		WorldHeightMap *pMap,
+		RefRenderObjListIterator *pLightsIterator,
+		Bool updateExtraPassTiles)
 {
-
 	BaseHeightMapRenderObjClass::initHeightData(x, y, pMap, pLightsIterator);
 
-	Int width = (pMap->getXExtent()+CELLS_PER_TILE-2)/CELLS_PER_TILE;
-	Int height = (pMap->getYExtent()+CELLS_PER_TILE-2)/CELLS_PER_TILE;
+	Int width = (pMap->getXExtent() + CELLS_PER_TILE - 2) / CELLS_PER_TILE;
+	Int height = (pMap->getYExtent() + CELLS_PER_TILE - 2) / CELLS_PER_TILE;
 
-	Int numTiles = width*height;
+	Int numTiles = width * height;
 
 	Int i, j;
 	pMap->clearFlipStates();
-	if (m_tiles && m_tilesWidth==width && m_tilesHeight==height) {
+	if (m_tiles && m_tilesWidth == width && m_tilesHeight == height)
+	{
 		// current allocation matches. Just redo vertex & index buffers. [3/21/2003]
-		for	(i=0; i<m_tilesWidth; i++) {
-			for (j=0; j<m_tilesHeight; j++) {
-				W3DTerrainBackground *tile = m_tiles+j*m_tilesWidth+i;
+		for (i = 0; i < m_tilesWidth; i++)
+		{
+			for (j = 0; j < m_tilesHeight; j++)
+			{
+				W3DTerrainBackground *tile = m_tiles + j * m_tilesWidth + i;
 				tile->setFlip(pMap);
 			}
 		}
-	}	else {
+	}
+	else
+	{
 		releaseTiles();
 		m_tiles = new W3DTerrainBackground[numTiles];
 		m_numTiles = numTiles;
 		m_tilesWidth = width;
 		m_tilesHeight = height;
-		for	(i=0; i<m_tilesWidth; i++) {
-			for (j=0; j<m_tilesHeight; j++) {
-				W3DTerrainBackground *tile = m_tiles+j*m_tilesWidth+i;
-				tile->allocateTerrainBuffers(pMap, i*CELLS_PER_TILE, j*CELLS_PER_TILE, CELLS_PER_TILE);
+		for (i = 0; i < m_tilesWidth; i++)
+		{
+			for (j = 0; j < m_tilesHeight; j++)
+			{
+				W3DTerrainBackground *tile = m_tiles + j * m_tilesWidth + i;
+				tile->allocateTerrainBuffers(pMap, i * CELLS_PER_TILE, j * CELLS_PER_TILE, CELLS_PER_TILE);
 				tile->setFlip(pMap);
 			}
 		}
@@ -331,16 +355,16 @@ Int FlatHeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pM
 	range.lo.y = 0;
 	range.hi.x = pMap->getXExtent();
 	range.hi.y = pMap->getYExtent();
-	for	(i=0; i<m_tilesWidth; i++) {
-		for (j=0; j<m_tilesHeight; j++) {
-			W3DTerrainBackground *tile = m_tiles+j*m_tilesWidth+i;
+	for (i = 0; i < m_tilesWidth; i++)
+	{
+		for (j = 0; j < m_tilesHeight; j++)
+		{
+			W3DTerrainBackground *tile = m_tiles + j * m_tilesWidth + i;
 			tile->doPartialUpdate(range, pMap, true);
 		}
 	}
 	return 0;
 }
-
-
 
 //=============================================================================
 // FlatHeightMapRenderObjClass::On_Frame_Update
@@ -356,21 +380,27 @@ void FlatHeightMapRenderObjClass::On_Frame_Update(void)
 
 	BaseHeightMapRenderObjClass::On_Frame_Update();
 
-	switch(m_updateState) {
-		case STATE_IDLE: return;
-		case STATE_MOVING : m_updateState = STATE_MOVING2; return;
-		case STATE_MOVING2: {
+	switch (m_updateState)
+	{
+		case STATE_IDLE:
+			return;
+		case STATE_MOVING:
+			m_updateState = STATE_MOVING2;
+			return;
+		case STATE_MOVING2:
+		{
 			Int i, j;
-			for	(i=0; i<m_tilesWidth; i++) {
-				for (j=0; j<m_tilesHeight; j++) {
-					W3DTerrainBackground *tile = m_tiles+j*m_tilesWidth+i;
+			for (i = 0; i < m_tilesWidth; i++)
+			{
+				for (j = 0; j < m_tilesHeight; j++)
+				{
+					W3DTerrainBackground *tile = m_tiles + j * m_tilesWidth + i;
 					tile->updateTexture();
 				}
 			}
 			m_updateState = STATE_IDLE;
 		}
 	}
-
 }
 
 //=============================================================================
@@ -378,26 +408,28 @@ void FlatHeightMapRenderObjClass::On_Frame_Update(void)
 //=============================================================================
 /** Notification that all lighting needs to be recalculated. */
 //=============================================================================
-void FlatHeightMapRenderObjClass::staticLightingChanged( void )
+void FlatHeightMapRenderObjClass::staticLightingChanged(void)
 {
 	BaseHeightMapRenderObjClass::staticLightingChanged();
-	if (m_map==NULL) {
+	if (m_map == NULL)
+	{
 		return;
 	}
 	Int i, j;
 	IRegion2D bounds;
 	bounds.lo.x = 0;
 	bounds.lo.y = 0;
-	bounds.hi.x = m_tilesWidth*CELLS_PER_TILE;
-	bounds.hi.y = m_tilesHeight*CELLS_PER_TILE;
-	for	(i=0; i<m_tilesWidth; i++) {
-		for (j=0; j<m_tilesHeight; j++) {
-			W3DTerrainBackground *tile = m_tiles+j*m_tilesWidth+i;
+	bounds.hi.x = m_tilesWidth * CELLS_PER_TILE;
+	bounds.hi.y = m_tilesHeight * CELLS_PER_TILE;
+	for (i = 0; i < m_tilesWidth; i++)
+	{
+		for (j = 0; j < m_tilesHeight; j++)
+		{
+			W3DTerrainBackground *tile = m_tiles + j * m_tilesWidth + i;
 			tile->doPartialUpdate(bounds, m_map, true);
 		}
 	}
 }
-
 
 //=============================================================================
 // FlatHeightMapRenderObjClass::updateCenter
@@ -408,7 +440,7 @@ rendered portion of the terrain.  Only a 96x96 section is rendered at any time,
 even though maps can be up to 1024x1024.  This function determines which subset
 is rendered. */
 //=============================================================================
-void FlatHeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjListIterator *pLightsIterator)
+void FlatHeightMapRenderObjClass::updateCenter(CameraClass *camera, RefRenderObjListIterator *pLightsIterator)
 {
 #ifdef DO_UNIT_TIMINGS
 #pragma MESSAGE("*** WARNING *** DOING DO_UNIT_TIMINGS!!!!")
@@ -423,22 +455,29 @@ void FlatHeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderOb
 	static Int prevT2X = 0;
 	Int t4X = 0;
 	static Int prevT4X = 0;
-	for	(i=0; i<m_tilesWidth; i++) {
-		for (j=0; j<m_tilesHeight; j++) {
-			W3DTerrainBackground *tile = m_tiles+j*m_tilesWidth+i;
+	for (i = 0; i < m_tilesWidth; i++)
+	{
+		for (j = 0; j < m_tilesHeight; j++)
+		{
+			W3DTerrainBackground *tile = m_tiles + j * m_tilesWidth + i;
 			tile->updateCenter(camera);
-			if (tile->isCulled()) {
+			if (tile->isCulled())
+			{
 				culled++;
 			}
 			Int tx = tile->getTexMultiplier();
-			if (tx==4) {
+			if (tx == 4)
+			{
 				t4X++;
-			} else if (tx==2) {
+			}
+			else if (tx == 2)
+			{
 				t2X++;
 			}
 		}
 	}
-	if (culled!=prevCulled || t4X!=prevT4X || t2X!=prevT2X) {
+	if (culled != prevCulled || t4X != prevT4X || t2X != prevT2X)
+	{
 		DEBUG_LOG(("%d of %d culled, %d 4X, %d 2X.", culled, m_numTiles, t4X, t2X));
 		prevCulled = culled;
 		prevT2X = t2X;
@@ -452,11 +491,11 @@ void FlatHeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderOb
 //=============================================================================
 /** Renders (draws) the terrain. */
 //=============================================================================
-//DECLARE_PERF_TIMER(Terrain_Render)
+// DECLARE_PERF_TIMER(Terrain_Render)
 
-void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
+void FlatHeightMapRenderObjClass::Render(RenderInfoClass &rinfo)
 {
-	//USE_PERF_TIMER(Terrain_Render)
+	// USE_PERF_TIMER(Terrain_Render)
 
 	Int devicePasses;
 	W3DShaderManager::ShaderTypes st;
@@ -464,10 +503,10 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 
 	Matrix3D tm(Transform);
 	// If there are trees, tell them to draw at the transparent time to draw.
-	if (m_treeBuffer) {
+	if (m_treeBuffer)
+	{
 		m_treeBuffer->setIsTerrain();
 	}
-
 
 #ifdef DO_UNIT_TIMINGS
 #pragma MESSAGE("*** WARNING *** DOING DO_UNIT_TIMINGS!!!!")
@@ -475,7 +514,8 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 #endif
 
 #ifdef EXTENDED_STATS
-	if (DX8Wrapper::stats.m_disableTerrain) {
+	if (DX8Wrapper::stats.m_disableTerrain)
+	{
 		return;
 	}
 #endif
@@ -484,59 +524,59 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 
 	// Force shaders to update.
 	m_stageTwoTexture->restore();
-	DX8Wrapper::Set_Texture(0,NULL);
-	DX8Wrapper::Set_Texture(1,NULL);
+	DX8Wrapper::Set_Texture(0, NULL);
+	DX8Wrapper::Set_Texture(1, NULL);
 	ShaderClass::Invalidate();
 
 	//	tm.Scale(ObjSpaceExtent);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
-
+	DX8Wrapper::Set_Transform(D3DTS_WORLD, tm);
 
 	DX8Wrapper::Set_Material(m_vertexMaterialClass);
 	DX8Wrapper::Set_Shader(m_shaderClass);
 
-	if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT) {
+	if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
+	{
 		doCloud = false;
 	}
 
- 	st=W3DShaderManager::ST_FLAT_TERRAIN_BASE; //set default shader
+	st = W3DShaderManager::ST_FLAT_TERRAIN_BASE; // set default shader
 
- 	//set correct shader based on current settings
- 	if (TheGlobalData->m_useLightMap && doCloud)
- 	{	st=W3DShaderManager::ST_FLAT_TERRAIN_BASE_NOISE12;
- 	}
- 	else
- 	if (TheGlobalData->m_useLightMap)
- 	{	//lightmap only
- 		st=W3DShaderManager::ST_FLAT_TERRAIN_BASE_NOISE2;
- 	}
- 	else
- 	if (doCloud)
- 	{	//cloudmap only
- 		st=W3DShaderManager::ST_FLAT_TERRAIN_BASE_NOISE1;
- 	}
-
-
-
-	//Find number of passes required to render current shader
- 	devicePasses=W3DShaderManager::getShaderPasses(st);
-
- 	if (m_disableTextures)
- 		devicePasses=1;	//force to 1 lighting-only pass
-
- 	//Specify all textures that this shader may need.
- 	W3DShaderManager::setTexture(0,m_stageZeroTexture);
-	if (m_shroud && rinfo.Additional_Pass_Count() && !m_disableTextures)
+	// set correct shader based on current settings
+	if (TheGlobalData->m_useLightMap && doCloud)
 	{
-		W3DShaderManager::setTexture(0,TheTerrainRenderObject->getShroud()->getShroudTexture());
+		st = W3DShaderManager::ST_FLAT_TERRAIN_BASE_NOISE12;
+	}
+	else if (TheGlobalData->m_useLightMap)
+	{ // lightmap only
+		st = W3DShaderManager::ST_FLAT_TERRAIN_BASE_NOISE2;
+	}
+	else if (doCloud)
+	{ // cloudmap only
+		st = W3DShaderManager::ST_FLAT_TERRAIN_BASE_NOISE1;
 	}
 
- 	W3DShaderManager::setTexture(1,NULL);	// Set by the tile later. [3/31/2003]
- 	W3DShaderManager::setTexture(2,m_stageTwoTexture);	//cloud
- 	W3DShaderManager::setTexture(3,m_stageThreeTexture);//noise
-	//Disable writes to destination alpha channel (if there is one)
-	if (DX8Wrapper::getBackBufferFormat() == WW3D_FORMAT_A8R8G8B8) {
-		DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_BLUE|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_RED);
+	// Find number of passes required to render current shader
+	devicePasses = W3DShaderManager::getShaderPasses(st);
+
+	if (m_disableTextures)
+		devicePasses = 1; // force to 1 lighting-only pass
+
+	// Specify all textures that this shader may need.
+	W3DShaderManager::setTexture(0, m_stageZeroTexture);
+	if (m_shroud && rinfo.Additional_Pass_Count() && !m_disableTextures)
+	{
+		W3DShaderManager::setTexture(0, TheTerrainRenderObject->getShroud()->getShroudTexture());
+	}
+
+	W3DShaderManager::setTexture(1, NULL); // Set by the tile later. [3/31/2003]
+	W3DShaderManager::setTexture(2, m_stageTwoTexture); // cloud
+	W3DShaderManager::setTexture(3, m_stageThreeTexture); // noise
+	// Disable writes to destination alpha channel (if there is one)
+	if (DX8Wrapper::getBackBufferFormat() == WW3D_FORMAT_A8R8G8B8)
+	{
+		DX8Wrapper::Set_DX8_Render_State(
+				D3DRS_COLORWRITEENABLE,
+				D3DCOLORWRITEENABLE_BLUE | D3DCOLORWRITEENABLE_GREEN | D3DCOLORWRITEENABLE_RED);
 	}
 
 	Int pass;
@@ -544,77 +584,100 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	Int yCoordMin = m_map->getXExtent();
 	Int xCoordMax = 0;
 	Int xCoordMin = m_map->getYExtent();
- 	for (pass=0; pass<devicePasses; pass++) {
+	for (pass = 0; pass < devicePasses; pass++)
+	{
 		Bool disableTex = m_disableTextures;
-		if (m_disableTextures ) {
+		if (m_disableTextures)
+		{
 			DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaque2DShader);
-			DX8Wrapper::Set_Texture(0,NULL);
-		} else {
+			DX8Wrapper::Set_Texture(0, NULL);
+		}
+		else
+		{
 			W3DShaderManager::setShader(st, pass);
 		}
 
 		Int i, j;
-		for	(i=0; i<m_tilesWidth; i++) {
-			for (j=0; j<m_tilesHeight; j++) {
-				W3DTerrainBackground *tile = m_tiles+j*m_tilesWidth+i;
-				if (pass>0) {
+		for (i = 0; i < m_tilesWidth; i++)
+		{
+			for (j = 0; j < m_tilesHeight; j++)
+			{
+				W3DTerrainBackground *tile = m_tiles + j * m_tilesWidth + i;
+				if (pass > 0)
+				{
 					disableTex = TRUE; // doing cloud/noise
 				}
-				if (!tile->isCulled()) {
+				if (!tile->isCulled())
+				{
 					tile->drawVisiblePolys(rinfo, disableTex);
-					if (i*CELLS_PER_TILE<xCoordMin) {
-						xCoordMin = i*CELLS_PER_TILE;
+					if (i * CELLS_PER_TILE < xCoordMin)
+					{
+						xCoordMin = i * CELLS_PER_TILE;
 					}
-					if (j*CELLS_PER_TILE<yCoordMin) {
-						yCoordMin = j*CELLS_PER_TILE;
+					if (j * CELLS_PER_TILE < yCoordMin)
+					{
+						yCoordMin = j * CELLS_PER_TILE;
 					}
-					if ((i+1)*CELLS_PER_TILE>xCoordMax) {
-						xCoordMax = (i+1)*CELLS_PER_TILE;
+					if ((i + 1) * CELLS_PER_TILE > xCoordMax)
+					{
+						xCoordMax = (i + 1) * CELLS_PER_TILE;
 					}
-					if ((j+1)*CELLS_PER_TILE>yCoordMax) {
-						yCoordMax = (j+1)*CELLS_PER_TILE;
+					if ((j + 1) * CELLS_PER_TILE > yCoordMax)
+					{
+						yCoordMax = (j + 1) * CELLS_PER_TILE;
 					}
 				}
 			}
 		}
 	}
 
-	if (pass)	//shader was applied at least once?
- 		W3DShaderManager::resetShader(st);
+	if (pass) // shader was applied at least once?
+		W3DShaderManager::resetShader(st);
 #if 1
 
-	//Draw feathered shorelines
+	// Draw feathered shorelines
 	renderShoreLines(&rinfo.Camera);
 
 #ifdef DO_ROADS
-	DX8Wrapper::Set_Texture(0,NULL);
-	DX8Wrapper::Set_Texture(1,NULL);
+	DX8Wrapper::Set_Texture(0, NULL);
+	DX8Wrapper::Set_Texture(1, NULL);
 	m_stageTwoTexture->restore();
 
 	ShaderClass::Invalidate();
-	if (!ShaderClass::Is_Backface_Culling_Inverted()) {
+	if (!ShaderClass::Is_Backface_Culling_Inverted())
+	{
 		DX8Wrapper::Set_Material(m_vertexMaterialClass);
-		if (Scene) {
+		if (Scene)
+		{
 			RTS3DScene *pMyScene = (RTS3DScene *)Scene;
 			RefRenderObjListIterator pDynamicLightsIterator(pMyScene->getDynamicLights());
-			m_roadBuffer->drawRoads(&rinfo.Camera, doCloud?m_stageTwoTexture:NULL, TheGlobalData->m_useLightMap?m_stageThreeTexture:NULL,
-				m_disableTextures,xCoordMin-m_map->getBorderSizeInline(), xCoordMax-m_map->getBorderSizeInline(), yCoordMin-m_map->getBorderSizeInline(), yCoordMax-m_map->getBorderSizeInline(), &pDynamicLightsIterator);
+			m_roadBuffer->drawRoads(
+					&rinfo.Camera,
+					doCloud ? m_stageTwoTexture : NULL,
+					TheGlobalData->m_useLightMap ? m_stageThreeTexture : NULL,
+					m_disableTextures,
+					xCoordMin - m_map->getBorderSizeInline(),
+					xCoordMax - m_map->getBorderSizeInline(),
+					yCoordMin - m_map->getBorderSizeInline(),
+					yCoordMax - m_map->getBorderSizeInline(),
+					&pDynamicLightsIterator);
 		}
 	}
 #endif
 
 #ifdef DO_SCORCH
-	DX8Wrapper::Set_Texture(0,NULL);
-	DX8Wrapper::Set_Texture(1,NULL);
+	DX8Wrapper::Set_Texture(0, NULL);
+	DX8Wrapper::Set_Texture(1, NULL);
 	m_stageTwoTexture->restore();
 
 	ShaderClass::Invalidate();
-	if (!ShaderClass::Is_Backface_Culling_Inverted()) {
+	if (!ShaderClass::Is_Backface_Culling_Inverted())
+	{
 		drawScorches();
 	}
 #endif
-	DX8Wrapper::Set_Texture(0,NULL);
-	DX8Wrapper::Set_Texture(1,NULL);
+	DX8Wrapper::Set_Texture(0, NULL);
+	DX8Wrapper::Set_Texture(1, NULL);
 	m_stageTwoTexture->restore();
 	ShaderClass::Invalidate();
 	DX8Wrapper::Apply_Render_State_Changes();
@@ -632,11 +695,9 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	m_bibBuffer->renderBibs();
 #endif
 	// We do some custom blending, so tell the shader class to reset everything.
-	DX8Wrapper::Set_Texture(0,NULL);
-	DX8Wrapper::Set_Texture(1,NULL);
+	DX8Wrapper::Set_Texture(0, NULL);
+	DX8Wrapper::Set_Texture(1, NULL);
 	m_stageTwoTexture->restore();
 	ShaderClass::Invalidate();
 	DX8Wrapper::Set_Material(NULL);
-
 }
-

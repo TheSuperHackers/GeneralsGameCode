@@ -28,99 +28,87 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameLogic/Module/InternetHackContain.h"
 
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/AIUpdate.h"
 
-
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 InternetHackContainModuleData::InternetHackContainModuleData()
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void InternetHackContainModuleData::buildFieldParse(MultiIniFieldParse& p)
+void InternetHackContainModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-  TransportContainModuleData::buildFieldParse(p);
+	TransportContainModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ 0, 0, 0, 0 }
-	};
-  p.add(dataFieldParse);
+	static const FieldParse dataFieldParse[] = { { 0, 0, 0, 0 } };
+	p.add(dataFieldParse);
 }
-
-
 
 // PRIVATE ////////////////////////////////////////////////////////////////////////////////////////
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-InternetHackContain::InternetHackContain( Thing *thing, const ModuleData *moduleData ) :
-								 TransportContain( thing, moduleData )
+InternetHackContain::InternetHackContain(Thing *thing, const ModuleData *moduleData) : TransportContain(thing, moduleData)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-InternetHackContain::~InternetHackContain( void )
+InternetHackContain::~InternetHackContain(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void InternetHackContain::onContaining( Object *rider, Bool wasSelected )
+void InternetHackContain::onContaining(Object *rider, Bool wasSelected)
 {
-	TransportContain::onContaining( rider, wasSelected );
+	TransportContain::onContaining(rider, wasSelected);
 
-	if( rider->getAI() )
+	if (rider->getAI())
 		rider->getAI()->aiHackInternet(CMD_FROM_AI);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void InternetHackContain::crc( Xfer *xfer )
+void InternetHackContain::crc(Xfer *xfer)
 {
-
 	// extend base class
-	TransportContain::crc( xfer );
+	TransportContain::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void InternetHackContain::xfer( Xfer *xfer )
+void InternetHackContain::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	TransportContain::xfer( xfer );
+	TransportContain::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void InternetHackContain::loadPostProcess( void )
+void InternetHackContain::loadPostProcess(void)
 {
-
 	// extend base class
 	TransportContain::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

@@ -39,20 +39,16 @@
 // ------------------------------------------------------------------------------------------------
 class ObjectHelper : public UpdateModule
 {
-
-	MEMORY_POOL_GLUE_ABC( ObjectHelper )
+	MEMORY_POOL_GLUE_ABC(ObjectHelper)
 
 protected:
-
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
+	virtual void loadPostProcess(void);
 
 public:
-
-	ObjectHelper( Thing *thing, const ModuleData *modData ) :
-		UpdateModule( thing, modData )
+	ObjectHelper(Thing *thing, const ModuleData *modData) : UpdateModule(thing, modData)
 	{
 		setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 	}
@@ -62,7 +58,6 @@ public:
 
 	// custom to this class.
 	void sleepUntil(UnsignedInt when);
-
 };
 
-#endif  // end __OBJECT_HELPER_H_
+#endif // end __OBJECT_HELPER_H_

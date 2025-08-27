@@ -43,21 +43,16 @@ class Thing;
 //-------------------------------------------------------------------------------------------------
 class StealthUpgrade : public UpgradeModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( StealthUpgrade, "StealthUpgrade" )
-	MAKE_STANDARD_MODULE_MACRO( StealthUpgrade );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(StealthUpgrade, "StealthUpgrade")
+	MAKE_STANDARD_MODULE_MACRO(StealthUpgrade);
 
 public:
-
-	StealthUpgrade( Thing *thing, const ModuleData* moduleData );
+	StealthUpgrade(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype defined by MemoryPoolObject
 
 protected:
-	virtual void upgradeImplementation( ); ///< Here's the actual work of Upgrading
+	virtual void upgradeImplementation(); ///< Here's the actual work of Upgrading
 	virtual Bool isSubObjectsUpgrade() { return false; }
-
 };
 
-
 #endif
-

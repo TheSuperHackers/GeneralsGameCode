@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Lib/BaseType.h"
 #include "Common/GameEngine.h"
@@ -42,10 +42,8 @@
 #include "GameClient/GadgetListBox.h"
 #include "GameClient/GadgetTextEntry.h"
 #include "Common/GlobalData.h"
-//#include "GameNetwork/WOL.h"
-//#include "GameNetwork/WOLmenus.h"
-
-
+// #include "GameNetwork/WOL.h"
+// #include "GameNetwork/WOLmenus.h"
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 // window ids ------------------------------------------------------------------------------
@@ -61,14 +59,15 @@ static GameWindow *buttonLobby = NULL;
 //-------------------------------------------------------------------------------------------------
 /** Initialize the WOL Status Menu */
 //-------------------------------------------------------------------------------------------------
-void WOLCustomScoreScreenInit( WindowLayout *layout, void *userData )
+void WOLCustomScoreScreenInit(WindowLayout *layout, void *userData)
 {
-	parentWOLCustomScoreID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLCustomScoreScreen.wnd:WOLCustomScoreScreenParent" ) );
-	buttonDisconnectID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLCustomScoreScreen.wnd:ButtonDisconnect" ) );
-	buttonLobbyID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLCustomScoreScreen.wnd:ButtonLobby" ) );
-	parentWOLCustomScore = TheWindowManager->winGetWindowFromId( NULL, parentWOLCustomScoreID );
-	buttonDisconnect = TheWindowManager->winGetWindowFromId( NULL,  buttonDisconnectID);
-	buttonLobby = TheWindowManager->winGetWindowFromId( NULL,  buttonLobbyID);
+	parentWOLCustomScoreID =
+			TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomScoreScreen.wnd:WOLCustomScoreScreenParent"));
+	buttonDisconnectID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomScoreScreen.wnd:ButtonDisconnect"));
+	buttonLobbyID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomScoreScreen.wnd:ButtonLobby"));
+	parentWOLCustomScore = TheWindowManager->winGetWindowFromId(NULL, parentWOLCustomScoreID);
+	buttonDisconnect = TheWindowManager->winGetWindowFromId(NULL, buttonDisconnectID);
+	buttonLobby = TheWindowManager->winGetWindowFromId(NULL, buttonLobbyID);
 
 	/*
 	if (WOL::TheWOL->getState() == WOL::WOLAPI_FATAL_ERROR)
@@ -80,153 +79,152 @@ void WOLCustomScoreScreenInit( WindowLayout *layout, void *userData )
 	*/
 
 	// Show Menu
-	layout->hide( FALSE );
+	layout->hide(FALSE);
 
 	// Set Keyboard to Main Parent
-	TheWindowManager->winSetFocus( parentWOLCustomScore );
+	TheWindowManager->winSetFocus(parentWOLCustomScore);
 } // WOLCustomScoreScreenInit
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu shutdown method */
 //-------------------------------------------------------------------------------------------------
-void WOLCustomScoreScreenShutdown( WindowLayout *layout, void *userData )
+void WOLCustomScoreScreenShutdown(WindowLayout *layout, void *userData)
 {
 	// hide menu
-	layout->hide( TRUE );
+	layout->hide(TRUE);
 
 	// our shutdown is complete
-	TheShell->shutdownComplete( layout );
-}  // WOLCustomScoreScreenShutdown
-
+	TheShell->shutdownComplete(layout);
+} // WOLCustomScoreScreenShutdown
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu update method */
 //-------------------------------------------------------------------------------------------------
-void WOLCustomScoreScreenUpdate( WindowLayout * layout, void *userData)
+void WOLCustomScoreScreenUpdate(WindowLayout *layout, void *userData)
 {
 	/*
 	if (WOL::TheWOL)
 		WOL::TheWOL->update();
 	*/
-}// WOLCustomScoreScreenUpdate
+} // WOLCustomScoreScreenUpdate
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu input callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLCustomScoreScreenInput( GameWindow *window, UnsignedInt msg,
-																			 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType WOLCustomScoreScreenInput(
+		GameWindow *window,
+		UnsignedInt msg,
+		WindowMsgData mData1,
+		WindowMsgData mData2)
 {
-	switch( msg )
+	switch (msg)
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case GWM_CHAR:
 		{
 			UnsignedByte key = mData1;
 			UnsignedByte state = mData2;
 
-			switch( key )
+			switch (key)
 			{
-
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitIsSet( state, KEY_STATE_UP ) )
+					if (BitIsSet(state, KEY_STATE_UP))
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
-																							(WindowMsgData)buttonDisconnect, buttonDisconnectID );
+						TheWindowManager->winSendSystemMsg(window, GBM_SELECTED, (WindowMsgData)buttonDisconnect, buttonDisconnectID);
 
-					}  // end if
+					} // end if
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				} // end escape
 
-			}  // end switch( key )
+			} // end switch( key )
 
-		}  // end char
+		} // end char
 
-	}  // end switch( msg )
+	} // end switch( msg )
 
 	return MSG_IGNORED;
-}// WOLCustomScoreScreenInput
+} // WOLCustomScoreScreenInput
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLCustomScoreScreenSystem( GameWindow *window, UnsignedInt msg,
-														 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType WOLCustomScoreScreenSystem(
+		GameWindow *window,
+		UnsignedInt msg,
+		WindowMsgData mData1,
+		WindowMsgData mData2)
 {
 	UnicodeString txtInput;
 
-	switch( msg )
+	switch (msg)
 	{
-
 		case GWM_CREATE:
-			{
-
-				break;
-			} // case GWM_DESTROY:
+		{
+			break;
+		} // case GWM_DESTROY:
 
 		case GWM_DESTROY:
-			{
-				break;
-			} // case GWM_DESTROY:
+		{
+			break;
+		} // case GWM_DESTROY:
 
 		case GWM_INPUT_FOCUS:
-			{
-				// if we're given the opportunity to take the keyboard focus we must say we want it
-				if( mData1 == TRUE )
-					*(Bool *)mData2 = TRUE;
+		{
+			// if we're given the opportunity to take the keyboard focus we must say we want it
+			if (mData1 == TRUE)
+				*(Bool *)mData2 = TRUE;
 
-				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			return MSG_HANDLED;
+		} // case GWM_INPUT_FOCUS:
 
 		case GBM_SELECTED:
+		{
+			/*
+			GameWindow *control = (GameWindow *)mData1;
+			Int controlID = control->winGetWindowId();
+
+			if ( controlID == buttonDisconnectID )
 			{
-				/*
-				GameWindow *control = (GameWindow *)mData1;
-				Int controlID = control->winGetWindowId();
-
-				if ( controlID == buttonDisconnectID )
+				if (WOL::TheWOL->setState( WOL::WOLAPI_FATAL_ERROR ))
 				{
-					if (WOL::TheWOL->setState( WOL::WOLAPI_FATAL_ERROR ))
-					{
-						WOL::TheWOL->addCommand( WOL::WOLCOMMAND_RESET );  // don't display an error, log out, or anything
-					}
+					WOL::TheWOL->addCommand( WOL::WOLCOMMAND_RESET );  // don't display an error, log out, or anything
+				}
 
-				} //if ( controlID == buttonDisconnect )
-				else if ( controlID == buttonLobbyID )
+			} //if ( controlID == buttonDisconnect )
+			else if ( controlID == buttonLobbyID )
+			{
+				if (WOL::TheWOL->getState() != WOL::WOLAPI_FATAL_ERROR)
 				{
-					if (WOL::TheWOL->getState() != WOL::WOLAPI_FATAL_ERROR)
-					{
-						WOL::TheWOL->setScreen(WOL::WOLAPI_MENU_CUSTOMLOBBY);
-						WOL::TheWOL->setGameMode(WOL::WOLTYPE_CUSTOM);
-						WOL::TheWOL->setState( WOL::WOLAPI_LOBBY );
-						WOL::TheWOL->addCommand( WOL::WOLCOMMAND_REFRESH_CHANNELS );
-					}
-					else
-					{
-					}
-				} //if ( controlID == buttonDisconnect )
-				*/
-				break;
-			}// case GBM_SELECTED:
+					WOL::TheWOL->setScreen(WOL::WOLAPI_MENU_CUSTOMLOBBY);
+					WOL::TheWOL->setGameMode(WOL::WOLTYPE_CUSTOM);
+					WOL::TheWOL->setState( WOL::WOLAPI_LOBBY );
+					WOL::TheWOL->addCommand( WOL::WOLCOMMAND_REFRESH_CHANNELS );
+				}
+				else
+				{
+				}
+			} //if ( controlID == buttonDisconnect )
+			*/
+			break;
+		} // case GBM_SELECTED:
 
 		case GEM_EDIT_DONE:
-			{
-				break;
-			}
+		{
+			break;
+		}
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	} // Switch
 
 	return MSG_HANDLED;
-}// WOLCustomScoreScreenSystem
+} // WOLCustomScoreScreenSystem

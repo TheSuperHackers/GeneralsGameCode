@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/INI.h"
 #include "GameClient/ControlBar.h"
@@ -70,32 +70,30 @@
 //-------------------------------------------------------------------------------------------------
 /** Parse a ControlBarScheme button */
 //-------------------------------------------------------------------------------------------------
-void INI::parseControlBarSchemeDefinition( INI *ini )
+void INI::parseControlBarSchemeDefinition(INI *ini)
 {
 	AsciiString name;
 	ControlBarSchemeManager *CBSchemeManager;
 	ControlBarScheme *CBScheme;
 
 	// read the name
-	const char* c = ini->getNextToken();
-	name.set( c );
+	const char *c = ini->getNextToken();
+	name.set(c);
 
 	// find existing item if present
 	CBSchemeManager = TheControlBar->getControlBarSchemeManager();
-	DEBUG_ASSERTCRASH( CBSchemeManager, ("parseControlBarSchemeDefinition: Unable to Get CBSchemeManager") );
-	if( !CBSchemeManager )
+	DEBUG_ASSERTCRASH(CBSchemeManager, ("parseControlBarSchemeDefinition: Unable to Get CBSchemeManager"));
+	if (!CBSchemeManager)
 		return;
 
 	// If we have a previously allocated control bar, this will return a cleared out pointer to it so we
 	// can overwrite it
-	CBScheme = CBSchemeManager->newControlBarScheme( name );
+	CBScheme = CBSchemeManager->newControlBarScheme(name);
 
 	// sanity
-	DEBUG_ASSERTCRASH( CBScheme, ("parseControlBarSchemeDefinition: Unable to allocate Scheme '%s'", name.str()) );
+	DEBUG_ASSERTCRASH(CBScheme, ("parseControlBarSchemeDefinition: Unable to allocate Scheme '%s'", name.str()));
 
 	// parse the ini definition
-	ini->initFromINI( CBScheme, CBSchemeManager->getFieldParse() );
+	ini->initFromINI(CBScheme, CBSchemeManager->getFieldParse());
 
-}  // end parseCommandButtonDefinition
-
-
+} // end parseCommandButtonDefinition

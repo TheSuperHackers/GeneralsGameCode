@@ -28,17 +28,14 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/INI.h"
 #include "Common/SpecialPower.h"
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void INI::parseSpecialPowerDefinition( INI *ini )
+void INI::parseSpecialPowerDefinition(INI *ini)
 {
 	SpecialPowerStore::parseSpecialPowerDefinition(ini);
 }
-
-
-

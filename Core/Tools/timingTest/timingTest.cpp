@@ -32,17 +32,17 @@ double s_ticksPerMSec = 0.0f;
 char buffer[1024];
 
 //-------------------------------------------------------------------------------------------------
-void GetPrecisionTimer(INT64* t)
+void GetPrecisionTimer(INT64 *t)
 {
 #if defined(_MSC_VER) && _MSC_VER < 1300
 	// CPUID is needed to force serialization of any previous instructions.
 	__asm
-	{
+			{
 		RDTSC
 		MOV ECX,[t]
 		MOV [ECX], EAX
 		MOV [ECX+4], EDX
-	}
+			}
 #else
 	*t = _rdtsc();
 #endif
@@ -52,21 +52,21 @@ void GetPrecisionTimer(INT64* t)
 void InitPrecisionTimer()
 {
 	__int64 totalTime = 0;
-	INT64	TotalTicks = 0;
+	INT64 TotalTicks = 0;
 	static int TESTS = 10;
 
 	cout << "Starting tests..." << flush;
 
 	for (int i = 0; i < TESTS; ++i)
 	{
-		int            TimeStart;
-		int            TimeStop;
-		INT64		   StartTicks;
-		INT64		   EndTicks;
+		int TimeStart;
+		int TimeStop;
+		INT64 StartTicks;
+		INT64 EndTicks;
 
 		TimeStart = timeGetTime();
 		GetPrecisionTimer(&StartTicks);
-		for(;;)
+		for (;;)
 		{
 			TimeStop = timeGetTime();
 			if ((TimeStop - TimeStart) > 1000)
@@ -91,7 +91,7 @@ void InitPrecisionTimer()
 	cout << buffer;
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	INT64 startTime, endTime, totalTime = 0;
 	InitPrecisionTimer();
@@ -100,8 +100,10 @@ int main(int argc, char* argv[])
 
 	const int TESTCOUNT = 60;
 
-	while (1) {
-		for (int i = 0; i < TESTCOUNT; ++i) {
+	while (1)
+	{
+		for (int i = 0; i < TESTCOUNT; ++i)
+		{
 			GetPrecisionTimer(&startTime);
 			Sleep(5);
 			GetPrecisionTimer(&endTime);
@@ -110,7 +112,7 @@ int main(int argc, char* argv[])
 
 		double avgPerFrame = 1.0 * totalTime / TESTCOUNT;
 
-		sprintf(buffer, "%.8f,\t", avgPerFrame / s_ticksPerMSec );
+		sprintf(buffer, "%.8f,\t", avgPerFrame / s_ticksPerMSec);
 		fwrite(buffer, strlen(buffer), 1, out);
 		fflush(out);
 		cout << buffer << endl;
@@ -120,4 +122,3 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
-

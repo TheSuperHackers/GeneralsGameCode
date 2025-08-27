@@ -41,15 +41,11 @@
 //-------------------------------------------------------------------------------------------------
 class GUICommandTranslator : public GameMessageTranslator
 {
-
 public:
+	GUICommandTranslator(void);
+	~GUICommandTranslator(void);
 
-	GUICommandTranslator( void );
-	~GUICommandTranslator( void );
-
-	virtual GameMessageDisposition translateGameMessage( const GameMessage *msg );
+	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
 };
 
-#endif  // end __GUICOMMANDTRANSLATOR_H_
-
-
+#endif // end __GUICOMMANDTRANSLATOR_H_

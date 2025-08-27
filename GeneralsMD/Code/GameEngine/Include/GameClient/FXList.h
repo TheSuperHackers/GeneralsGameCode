@@ -74,24 +74,27 @@ class FXNugget : public MemoryPoolObject
 {
 	MEMORY_POOL_GLUE_ABC(FXNugget)
 public:
-
-	FXNugget() { }
-	//virtual ~FXNugget() { }
+	FXNugget() {}
+	// virtual ~FXNugget() { }
 
 	/**
 		The main guts of the system: actually perform the sound and/or video effects
 		needed. Note that primary and/or secondary can be null, so you must check for this.
 	*/
-	virtual void doFXPos(const Coord3D *primary, const Matrix3D* primaryMtx = NULL, const Real primarySpeed = 0.0f, const Coord3D *secondary = NULL, const Real overrideRadius = 0.0f) const = 0;
+	virtual void doFXPos(
+			const Coord3D *primary,
+			const Matrix3D *primaryMtx = NULL,
+			const Real primarySpeed = 0.0f,
+			const Coord3D *secondary = NULL,
+			const Real overrideRadius = 0.0f) const = 0;
 
 	/**
 		the object-based version... by default, just call the location-based implementation.
 		Note that primary and/or secondary can be null, so you must check for this.
 	*/
-	virtual void doFXObj(const Object* primary, const Object* secondary = NULL) const;
+	virtual void doFXObj(const Object *primary, const Object *secondary = NULL) const;
 
 private:
-
 };
 EMPTY_DTOR(FXNugget)
 
@@ -122,9 +125,7 @@ EMPTY_DTOR(FXNugget)
 */
 class FXList
 {
-
 public:
-
 	FXList();
 	virtual ~FXList();
 
@@ -136,53 +137,54 @@ public:
 	/**
 		add a nugget to the list. It belongs to the FXList, who is responsible for freeing it.
 	*/
-	void addFXNugget(FXNugget *fxn)
+	void addFXNugget(FXNugget *fxn) { m_nuggets.push_back(fxn); }
+
+	/// inline convenience method to avoid having to check for null.
+	inline static void doFXPos(
+			const FXList *fx,
+			const Coord3D *primary,
+			const Matrix3D *primaryMtx = NULL,
+			const Real primarySpeed = 0.0f,
+			const Coord3D *secondary = NULL,
+			const Real overrideRadius = 0.0f)
 	{
-		m_nuggets.push_back(fxn);
+		if (fx)
+			fx->doFXPos(primary, primaryMtx, primarySpeed, secondary, overrideRadius);
 	}
 
 	/// inline convenience method to avoid having to check for null.
-	inline static void doFXPos(const FXList* fx, const Coord3D *primary, const Matrix3D* primaryMtx = NULL, const Real primarySpeed = 0.0f, const Coord3D *secondary = NULL, const Real overrideRadius = 0.0f)
-	{
-		if (fx) fx->doFXPos(primary, primaryMtx, primarySpeed, secondary, overrideRadius);
-	}
-
-	/// inline convenience method to avoid having to check for null.
-	inline static void doFXObj(const FXList* fx, const Object* primary, const Object* secondary = NULL)
+	inline static void doFXObj(const FXList *fx, const Object *primary, const Object *secondary = NULL)
 	{
 		if (fx)
 		{
 			fx->doFXObj(primary, secondary);
 
-			//if (fx->)				// here we need to cal doFXRicochet, if fx calls for it
-
+			// if (fx->)				// here we need to cal doFXRicochet, if fx calls for it
 		}
-
 	}
 
-
-
 protected:
-
-
 	/**
 		The main guts of the system: actually perform the sound and/or video effects
 		needed. Note that primary and/or secondary can be null, so you must check for this.
 	*/
-	void doFXPos(const Coord3D *primary, const Matrix3D* primaryMtx = NULL, const Real primarySpeed = 0.0f, const Coord3D *secondary = NULL, const Real overrideRadius = 0.0f) const;
+	void doFXPos(
+			const Coord3D *primary,
+			const Matrix3D *primaryMtx = NULL,
+			const Real primarySpeed = 0.0f,
+			const Coord3D *secondary = NULL,
+			const Real overrideRadius = 0.0f) const;
 
 	/**
 		the object-based version... by default, just call the location-based implementation.
 		Note that primary and/or secondary can be null, so you must check for this.
 	*/
-	void doFXObj(const Object* primary, const Object* secondary = NULL) const;
+	void doFXObj(const Object *primary, const Object *secondary = NULL) const;
 
 private:
-
-	typedef std::list< FXNugget* > FXNuggetList;
+	typedef std::list<FXNugget *> FXNuggetList;
 
 	FXNuggetList m_nuggets;
-
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -191,35 +193,30 @@ private:
 */
 class FXListStore : public SubsystemInterface
 {
-
 public:
-
 	FXListStore();
 	~FXListStore();
 
-	void init() { }
-	void reset() { }
-	void update() { }
+	void init() {}
+	void reset() {}
+	void update() {}
 
 	/**
 		return the FXList with the given namekey.
 		return NULL if no such FXList exists.
 	*/
-	const FXList *findFXList( const char* name ) const;
+	const FXList *findFXList(const char *name) const;
 
-	static void parseFXListDefinition(INI* ini);
+	static void parseFXListDefinition(INI *ini);
 
 private:
-
 	// use the hashing function for Ints.
-	typedef std::hash_map< NameKeyType, FXList, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> > FXListMap;
+	typedef std::hash_map<NameKeyType, FXList, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> > FXListMap;
 
 	FXListMap m_fxmap;
-
 };
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern FXListStore *TheFXListStore;
 
 #endif // _FXList_H_
-

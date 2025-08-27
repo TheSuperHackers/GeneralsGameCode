@@ -29,28 +29,24 @@
 /////////////////////////////////////////////////////////////////////////////
 // EditCoordParameter dialog
 
-
-EditCoordParameter::EditCoordParameter(CWnd* pParent /*=NULL*/)
-	: CDialog(EditCoordParameter::IDD, pParent)
+EditCoordParameter::EditCoordParameter(CWnd *pParent /*=NULL*/) : CDialog(EditCoordParameter::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(EditCoordParameter)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void EditCoordParameter::DoDataExchange(CDataExchange* pDX)
+void EditCoordParameter::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(EditCoordParameter)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(EditCoordParameter, CDialog)
-	//{{AFX_MSG_MAP(EditCoordParameter)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(EditCoordParameter)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -73,8 +69,8 @@ BOOL EditCoordParameter::OnInitDialog()
 	string.Format("%.2f", m_coord.z);
 	pEditZ->SetWindowText(string);
 
-	return FALSE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return FALSE; // return TRUE unless you set the focus to a control
+								// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void EditCoordParameter::OnOK()
@@ -86,25 +82,34 @@ void EditCoordParameter::OnOK()
 
 	pEditX->GetWindowText(txt);
 	Real theReal;
-	if (1==sscanf(txt, "%f", &theReal)) {
+	if (1 == sscanf(txt, "%f", &theReal))
+	{
 		m_coord.x = theReal;
-	} else {
+	}
+	else
+	{
 		pEditX->SetFocus();
 		::MessageBeep(MB_ICONEXCLAMATION);
 		return;
 	}
 	pEditY->GetWindowText(txt);
-	if (1==sscanf(txt, "%f", &theReal)) {
+	if (1 == sscanf(txt, "%f", &theReal))
+	{
 		m_coord.y = theReal;
-	} else {
+	}
+	else
+	{
 		pEditX->SetFocus();
 		::MessageBeep(MB_ICONEXCLAMATION);
 		return;
 	}
 	pEditZ->GetWindowText(txt);
-	if (1==sscanf(txt, "%f", &theReal)) {
+	if (1 == sscanf(txt, "%f", &theReal))
+	{
 		m_coord.z = theReal;
-	} else {
+	}
+	else
+	{
 		pEditX->SetFocus();
 		::MessageBeep(MB_ICONEXCLAMATION);
 		return;
@@ -115,6 +120,5 @@ void EditCoordParameter::OnOK()
 
 void EditCoordParameter::OnCancel()
 {
-
 	CDialog::OnCancel();
 }

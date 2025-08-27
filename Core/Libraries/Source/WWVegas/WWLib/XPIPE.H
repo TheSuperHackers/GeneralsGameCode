@@ -40,9 +40,9 @@
 #ifndef XPIPE_H
 #define XPIPE_H
 
-#include	"BUFF.H"
-#include	"PIPE.H"
-#include	"WWFILE.H"
+#include "BUFF.H"
+#include "PIPE.H"
+#include "WWFILE.H"
 
 /*
 **	This is a simple store-into-buffer pipe terminator. Use it as the final link in a pipe process
@@ -51,20 +51,19 @@
 */
 class BufferPipe : public Pipe
 {
-	public:
-		BufferPipe(Buffer const & buffer) : BufferPtr(buffer), Index(0) {}
-		BufferPipe(void * buffer, int length) : BufferPtr(buffer, length), Index(0) {}
-		virtual int Put(void const * source, int slen);
+public:
+	BufferPipe(Buffer const &buffer) : BufferPtr(buffer), Index(0) {}
+	BufferPipe(void *buffer, int length) : BufferPtr(buffer, length), Index(0) {}
+	virtual int Put(void const *source, int slen);
 
-	private:
-		Buffer BufferPtr;
-		int Index;
+private:
+	Buffer BufferPtr;
+	int Index;
 
-		bool Is_Valid(void) {return(BufferPtr.Is_Valid());}
-		BufferPipe(BufferPipe & rvalue);
-		BufferPipe & operator = (BufferPipe const & pipe);
+	bool Is_Valid(void) { return (BufferPtr.Is_Valid()); }
+	BufferPipe(BufferPipe &rvalue);
+	BufferPipe &operator=(BufferPipe const &pipe);
 };
-
 
 /*
 **	This is a store-to-file pipe terminator. Use it as the final link in a pipe process that
@@ -73,22 +72,21 @@ class BufferPipe : public Pipe
 */
 class FilePipe : public Pipe
 {
-	public:
-		FilePipe(FileClass * file) : File(file), HasOpened(false) {}
-		FilePipe(FileClass & file) : File(&file), HasOpened(false) {}
-		virtual ~FilePipe(void);
+public:
+	FilePipe(FileClass *file) : File(file), HasOpened(false) {}
+	FilePipe(FileClass &file) : File(&file), HasOpened(false) {}
+	virtual ~FilePipe(void);
 
-		virtual int Put(void const * source, int slen);
-		virtual int End(void);
+	virtual int Put(void const *source, int slen);
+	virtual int End(void);
 
-	private:
-		FileClass * File;
-		bool HasOpened;
+private:
+	FileClass *File;
+	bool HasOpened;
 
-		bool Valid_File(void) {return(File != NULL);}
-		FilePipe(FilePipe & rvalue);
-		FilePipe & operator = (FilePipe const & pipe);
-
+	bool Valid_File(void) { return (File != NULL); }
+	FilePipe(FilePipe &rvalue);
+	FilePipe &operator=(FilePipe const &pipe);
 };
 
 #endif

@@ -38,7 +38,10 @@ class ModifyObjectUndoable;
 class PointerTool : public PolygonTool
 {
 protected:
-	enum {HYSTERESIS = 3};
+	enum
+	{
+		HYSTERESIS = 3
+	};
 	CPoint m_downPt2d;
 	Coord3D m_downPt3d;
 	MapObject *m_curObject;
@@ -49,11 +52,11 @@ protected:
 
 	Bool m_doPolyTool; ///< True if we are using the polygon tool to modify a polygon triggter.
 
-	ModifyObjectUndoable *m_modifyUndoable;	 ///< The modify undoable that is in progress while we track the mouse.
+	ModifyObjectUndoable *m_modifyUndoable; ///< The modify undoable that is in progress while we track the mouse.
 
-	Bool m_mouseUpRotate;///< True if we are over the "rotate" hotspot.
+	Bool m_mouseUpRotate; ///< True if we are over the "rotate" hotspot.
 	HCURSOR m_rotateCursor;
-	Bool m_mouseUpMove;///< True if we are over the "move" hotspot.
+	Bool m_mouseUpMove; ///< True if we are over the "move" hotspot.
 	HCURSOR m_moveCursor;
 
 protected:
@@ -69,14 +72,13 @@ public:
 	virtual void deactivate();
 
 	virtual void setCursor(void);
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
 
 public:
 	static void clearSelection(void); ///< Clears the selected objects selected flags.
-	static Bool allowPick(MapObject* pMapObj, WbView* pView);
+	static Bool allowPick(MapObject *pMapObj, WbView *pView);
 };
 
-
-#endif //POINTER_TOOL_H
+#endif // POINTER_TOOL_H

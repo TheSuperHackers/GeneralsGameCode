@@ -31,22 +31,20 @@
 
 class TerrainSwatches : public CWnd
 {
-// Construction
+	// Construction
 public:
 	TerrainSwatches();
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(TerrainSwatches)
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~TerrainSwatches();
 
@@ -59,7 +57,6 @@ protected:
 
 protected:
 	void DrawMyTexture(CDC *pDc, int top, int left, Int width, UnsignedByte *rgbData);
-
 };
 
 /////////////////////////////////////////////////////////////////////////////

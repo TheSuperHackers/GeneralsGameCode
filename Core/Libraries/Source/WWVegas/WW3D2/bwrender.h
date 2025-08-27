@@ -43,7 +43,6 @@
 #ifndef BWRENDER_H
 #define BWRENDER_H
 
-
 #include "always.h"
 #include "vector2.h"
 #include "vector3.h"
@@ -64,12 +63,13 @@ class BWRenderClass
 	// The buffer is not allocated or freed by this class.
 	class Buffer
 	{
-		unsigned char* buffer;
+		unsigned char *buffer;
 		int scale;
 		int minv;
 		int maxv;
+
 	public:
-		Buffer(unsigned char* buffer, int scale);
+		Buffer(unsigned char *buffer, int scale);
 		~Buffer();
 
 		void Set_H_Line(int start_x, int end_x, int y);
@@ -77,20 +77,18 @@ class BWRenderClass
 		inline int Scale() const { return scale; }
 	} pixel_buffer;
 
-	Vector2* vertices;
+	Vector2 *vertices;
 
-	void Render_Preprocessed_Triangle(Vector3& xcf,Vector3i& yci);
+	void Render_Preprocessed_Triangle(Vector3 &xcf, Vector3i &yci);
 
 public:
-	BWRenderClass(unsigned char* buffer, int scale);
+	BWRenderClass(unsigned char *buffer, int scale);
 	~BWRenderClass();
 
 	void Fill(unsigned char c);
-	void Set_Vertex_Locations(Vector2* vertices,int count); // Warning! Contents are modified!
-	void Render_Triangles(const unsigned long* indices,int index_count);
-	void Render_Triangle_Strip(const unsigned long* indices,int index_count);
+	void Set_Vertex_Locations(Vector2 *vertices, int count); // Warning! Contents are modified!
+	void Render_Triangles(const unsigned long *indices, int index_count);
+	void Render_Triangle_Strip(const unsigned long *indices, int index_count);
 };
 
-
-#endif //BWRENDER_H
-
+#endif // BWRENDER_H

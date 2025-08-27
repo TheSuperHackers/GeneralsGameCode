@@ -37,31 +37,34 @@ class EmitterFramePropPageClass : public CPropertyPage
 {
 	DECLARE_DYNCREATE(EmitterFramePropPageClass)
 
-// Construction
+	// Construction
 public:
 	EmitterFramePropPageClass();
 	~EmitterFramePropPageClass();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(EmitterFramePropPageClass)
-	enum { IDD = IDD_PROP_PAGE_EMITTER_FRAME };
-	CComboBox	m_FrameLayoutCombo;
-	CSpinButtonCtrl	m_FrameRandomSpin;
+	enum
+	{
+		IDD = IDD_PROP_PAGE_EMITTER_FRAME
+	};
+	CComboBox m_FrameLayoutCombo;
+	CSpinButtonCtrl m_FrameRandomSpin;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(EmitterFramePropPageClass)
-	public:
+public:
 	virtual BOOL OnApply();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(EmitterFramePropPageClass)
@@ -69,9 +72,7 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-
 public:
-
 	/////////////////////////////////////////////////////////
 	//
 	//	Public methods
@@ -80,45 +81,45 @@ public:
 	//
 	//	Inline accessors
 	//
-	EmitterInstanceListClass *	Get_Emitter (void) const { return m_pEmitterList; }
-	void								Set_Emitter (EmitterInstanceListClass *pemitter_list) { m_pEmitterList = pemitter_list; Initialize (); }
-	bool								Is_Data_Valid (void) const { return m_bValid; }
+	EmitterInstanceListClass *Get_Emitter(void) const { return m_pEmitterList; }
+	void Set_Emitter(EmitterInstanceListClass *pemitter_list)
+	{
+		m_pEmitterList = pemitter_list;
+		Initialize();
+	}
+	bool Is_Data_Valid(void) const { return m_bValid; }
 
-	void								Get_Frame_Keyframes (ParticlePropertyStruct<float> &frames)	{ frames = m_Frames; }
-	void								On_Lifetime_Changed (float lifetime);
+	void Get_Frame_Keyframes(ParticlePropertyStruct<float> &frames) { frames = m_Frames; }
+	void On_Lifetime_Changed(float lifetime);
 
-	void								Initialize (void);
-	void								Update_Frames (void);
+	void Initialize(void);
+	void Update_Frames(void);
 
 private:
-
-
-	float								Normalize_Frame(float frame);
-	float								Normalize_Frame(float frame,float min,float max);
-	float								Denormalize_Frame(float normalized_val);
+	float Normalize_Frame(float frame);
+	float Normalize_Frame(float frame, float min, float max);
+	float Denormalize_Frame(float normalized_val);
 
 	/////////////////////////////////////////////////////////
 	//
 	//	Private member data
 	//
-	EmitterInstanceListClass *			m_pEmitterList;
-	bool										m_bValid;
+	EmitterInstanceListClass *m_pEmitterList;
+	bool m_bValid;
 
-	ColorBarClass *						m_FrameBar;
-	ParticlePropertyStruct<float>		m_Frames;
-	float										m_Lifetime;
-	float										m_MinFrame;
-	float										m_MaxFrame;
-
+	ColorBarClass *m_FrameBar;
+	ParticlePropertyStruct<float> m_Frames;
+	float m_Lifetime;
+	float m_MinFrame;
+	float m_MaxFrame;
 };
-
 
 inline float EmitterFramePropPageClass::Normalize_Frame(float frame)
 {
 	return (frame - m_MinFrame) / (m_MaxFrame - m_MinFrame);
 }
 
-inline float EmitterFramePropPageClass::Normalize_Frame(float frame,float min,float max)
+inline float EmitterFramePropPageClass::Normalize_Frame(float frame, float min, float max)
 {
 	return (frame - min) / (max - min);
 }

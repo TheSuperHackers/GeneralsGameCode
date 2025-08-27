@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -46,8 +45,8 @@
 #include "always.h"
 #endif
 
-#if defined (_MSC_VER)
-#pragma warning (push, 3)	// (gth) system headers complain at warning level 4...
+#if defined(_MSC_VER)
+#pragma warning(push, 3) // (gth) system headers complain at warning level 4...
 #endif
 
 #ifndef _WINDOWS_
@@ -62,8 +61,8 @@
 #include "vfw.h"
 #endif
 
-#if defined (_MSC_VER)
-#pragma warning (pop)
+#if defined(_MSC_VER)
+#pragma warning(pop)
 #endif
 
 // FramGrab.h: interface for the FrameGrabClass class.
@@ -73,25 +72,26 @@
 class FrameGrabClass
 {
 public:
-	enum MODE {
+	enum MODE
+	{
 		RAW,
 		AVI
 	};
 
 	// depending on which mode you select, it will produce either frames or an AVI.
-	FrameGrabClass(const char *filename, MODE mode, int width, int height, int bitdepth, float framerate );
+	FrameGrabClass(const char *filename, MODE mode, int width, int height, int bitdepth, float framerate);
 
 	virtual ~FrameGrabClass();
 
 	void ConvertGrab(void *BitmapPointer);
 	void Grab(void *BitmapPointer);
 
-	long * GetBuffer()			{ return Bitmap; }
-	float	GetFrameRate()			{ return FrameRate; }
+	long *GetBuffer() { return Bitmap; }
+	float GetFrameRate() { return FrameRate; }
 
 protected:
 	const char *Filename;
-	float			FrameRate;
+	float FrameRate;
 
 	MODE Mode;
 	long Counter; // used for incrementing filename cunter, etc.
@@ -100,18 +100,17 @@ protected:
 	void GrabRawFrame(void *BitmapPointer);
 
 	// avi settings
-	PAVIFILE				AVIFile;
-	long					*Bitmap;
-	PAVISTREAM			Stream;
-	AVISTREAMINFO		AVIStreamInfo;
-	BITMAPINFOHEADER	BitmapInfoHeader;
+	PAVIFILE AVIFile;
+	long *Bitmap;
+	PAVISTREAM Stream;
+	AVISTREAMINFO AVIStreamInfo;
+	BITMAPINFOHEADER BitmapInfoHeader;
 
 	// general purpose cleanup routine
 	void CleanupAVI();
 
 	// convert the SR image into AVI byte ordering
 	void ConvertFrame(void *BitmapPointer);
-
 };
 
 #endif

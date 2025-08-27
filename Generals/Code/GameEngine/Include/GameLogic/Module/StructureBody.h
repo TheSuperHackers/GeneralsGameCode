@@ -43,17 +43,13 @@ class Object;
 class StructureBodyModuleData : public ActiveBodyModuleData
 {
 public:
+	StructureBodyModuleData() {}
 
-	StructureBodyModuleData(){}
-
-	static void buildFieldParse(MultiIniFieldParse& p)
+	static void buildFieldParse(MultiIniFieldParse &p)
 	{
-    ActiveBodyModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] =
-		{
-			{ 0, 0, 0, 0 }
-		};
-    p.add(dataFieldParse);
+		ActiveBodyModuleData::buildFieldParse(p);
+		static const FieldParse dataFieldParse[] = { { 0, 0, 0, 0 } };
+		p.add(dataFieldParse);
 	}
 };
 
@@ -62,23 +58,18 @@ public:
 //-------------------------------------------------------------------------------------------------
 class StructureBody : public ActiveBody
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( StructureBody, "StructureBody" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( StructureBody, StructureBodyModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(StructureBody, "StructureBody")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(StructureBody, StructureBodyModuleData)
 
 public:
-
-	StructureBody( Thing *thing, const ModuleData* moduleData );
+	StructureBody(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	void setConstructorObject( Object *obj );
-	ObjectID getConstructorObjectID( void ) { return m_constructorObjectID; }
+	void setConstructorObject(Object *obj);
+	ObjectID getConstructorObjectID(void) { return m_constructorObjectID; }
 
 protected:
-
-	ObjectID m_constructorObjectID;					///< object that built this structure
-
+	ObjectID m_constructorObjectID; ///< object that built this structure
 };
 
 #endif // __STRUCTUREBODY_H_
-

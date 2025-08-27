@@ -30,34 +30,38 @@
 
 class TeamBehavior : public CPropertyPage
 {
-// Construction
+	// Construction
 public:
-	TeamBehavior();   // standard constructor
+	TeamBehavior(); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(TeamBehavior)
-	enum { IDD = IDD_TeamBehavior };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_TeamBehavior
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(TeamBehavior)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	Dict *m_teamDict;
+
 protected:
 	void setupScript(NameKeyType keyScript, int idcScript);
 	void updateScript(NameKeyType keyScript, int idcScript);
-public:
-	void setTeamDict(Dict *pDict) {m_teamDict = pDict;};
-protected:
 
+public:
+	void setTeamDict(Dict *pDict) { m_teamDict = pDict; };
+
+protected:
 	// Generated message map functions
 	//{{AFX_MSG(TeamBehavior)
 	afx_msg void OnSelchangeOnCreateScript();

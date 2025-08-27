@@ -37,7 +37,7 @@
 /*		4/2/2002 : Initial creation                                            */
 /*---------------------------------------------------------------------------*/
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameClient/Statistics.h"
 
@@ -45,8 +45,7 @@
 Real MuLaw(Real valueToRun, Real maxValueForVal, Real mu)
 {
 	Real testVal = (valueToRun - maxValueForVal / 2) / (maxValueForVal / 2);
-	return (sign(testVal) * log(1 + mu * fabs(testVal)) /
-														 log(1 + mu));
+	return (sign(testVal) * log(1 + mu * fabs(testVal)) / log(1 + mu));
 }
 
 // from my head. jkmcd

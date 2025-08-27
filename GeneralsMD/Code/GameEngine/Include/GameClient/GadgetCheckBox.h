@@ -77,69 +77,230 @@
 // INLINING ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-extern void GadgetCheckBoxSetText( GameWindow *g, UnicodeString text );
-extern Bool GadgetCheckBoxIsChecked( GameWindow *g );
-extern void GadgetCheckBoxSetChecked( GameWindow *g, Bool isChecked);
-extern void GadgetCheckBoxToggle( GameWindow *g);
+extern void GadgetCheckBoxSetText(GameWindow *g, UnicodeString text);
+extern Bool GadgetCheckBoxIsChecked(GameWindow *g);
+extern void GadgetCheckBoxSetChecked(GameWindow *g, Bool isChecked);
+extern void GadgetCheckBoxToggle(GameWindow *g);
 
-inline void GadgetCheckBoxSetEnabledImage( GameWindow *g, const Image *image )						{ g->winSetEnabledImage( 0, image ); }
-inline void GadgetCheckBoxSetEnabledColor( GameWindow *g, Color color )								{ g->winSetEnabledColor( 0, color ); }
-inline void GadgetCheckBoxSetEnabledBorderColor( GameWindow *g, Color color )					{ g->winSetEnabledBorderColor( 0, color ); }
-inline void GadgetCheckBoxSetEnabledUncheckedBoxImage( GameWindow *g, const Image *image )		{ g->winSetEnabledImage( 1, image ); }
-inline void GadgetCheckBoxSetEnabledUncheckedBoxColor( GameWindow *g, Color color )				{ g->winSetEnabledColor( 1, color ); }
-inline void GadgetCheckBoxSetEnabledUncheckedBoxBorderColor( GameWindow *g, Color color )	{ g->winSetEnabledBorderColor( 1, color ); }
-inline void GadgetCheckBoxSetEnabledCheckedBoxImage( GameWindow *g, const Image *image )			{ g->winSetEnabledImage( 2, image ); }
-inline void GadgetCheckBoxSetEnabledCheckedBoxColor( GameWindow *g, Color color )					{ g->winSetEnabledColor( 2, color ); }
-inline void GadgetCheckBoxSetEnabledCheckedBoxBorderColor( GameWindow *g, Color color )		{ g->winSetEnabledBorderColor( 2, color ); }
-inline const Image *GadgetCheckBoxGetEnabledImage( GameWindow *g )									{ return g->winGetEnabledImage( 0 ); }
-inline Color		 GadgetCheckBoxGetEnabledColor( GameWindow *g )									{ return g->winGetEnabledColor( 0 ); }
-inline Color		 GadgetCheckBoxGetEnabledBorderColor( GameWindow *g )						{ return g->winGetEnabledBorderColor( 0 ); }
-inline const Image *GadgetCheckBoxGetEnabledUncheckedBoxImage( GameWindow *g )					{ return g->winGetEnabledImage( 1 ); }
-inline Color		 GadgetCheckBoxGetEnabledUncheckedBoxColor( GameWindow *g )					{ return g->winGetEnabledColor( 1 ); }
-inline Color		 GadgetCheckBoxGetEnabledUncheckedBoxBorderColor( GameWindow *g )		{ return g->winGetEnabledBorderColor( 1 ); }
-inline const Image *GadgetCheckBoxGetEnabledCheckedBoxImage( GameWindow *g )						{ return g->winGetEnabledImage( 2 ); }
-inline Color		 GadgetCheckBoxGetEnabledCheckedBoxColor( GameWindow *g )						{ return g->winGetEnabledColor( 2 ); }
-inline Color		 GadgetCheckBoxGetEnabledCheckedBoxBorderColor( GameWindow *g )			{ return g->winGetEnabledBorderColor( 2 ); }
+inline void GadgetCheckBoxSetEnabledImage(GameWindow *g, const Image *image)
+{
+	g->winSetEnabledImage(0, image);
+}
+inline void GadgetCheckBoxSetEnabledColor(GameWindow *g, Color color)
+{
+	g->winSetEnabledColor(0, color);
+}
+inline void GadgetCheckBoxSetEnabledBorderColor(GameWindow *g, Color color)
+{
+	g->winSetEnabledBorderColor(0, color);
+}
+inline void GadgetCheckBoxSetEnabledUncheckedBoxImage(GameWindow *g, const Image *image)
+{
+	g->winSetEnabledImage(1, image);
+}
+inline void GadgetCheckBoxSetEnabledUncheckedBoxColor(GameWindow *g, Color color)
+{
+	g->winSetEnabledColor(1, color);
+}
+inline void GadgetCheckBoxSetEnabledUncheckedBoxBorderColor(GameWindow *g, Color color)
+{
+	g->winSetEnabledBorderColor(1, color);
+}
+inline void GadgetCheckBoxSetEnabledCheckedBoxImage(GameWindow *g, const Image *image)
+{
+	g->winSetEnabledImage(2, image);
+}
+inline void GadgetCheckBoxSetEnabledCheckedBoxColor(GameWindow *g, Color color)
+{
+	g->winSetEnabledColor(2, color);
+}
+inline void GadgetCheckBoxSetEnabledCheckedBoxBorderColor(GameWindow *g, Color color)
+{
+	g->winSetEnabledBorderColor(2, color);
+}
+inline const Image *GadgetCheckBoxGetEnabledImage(GameWindow *g)
+{
+	return g->winGetEnabledImage(0);
+}
+inline Color GadgetCheckBoxGetEnabledColor(GameWindow *g)
+{
+	return g->winGetEnabledColor(0);
+}
+inline Color GadgetCheckBoxGetEnabledBorderColor(GameWindow *g)
+{
+	return g->winGetEnabledBorderColor(0);
+}
+inline const Image *GadgetCheckBoxGetEnabledUncheckedBoxImage(GameWindow *g)
+{
+	return g->winGetEnabledImage(1);
+}
+inline Color GadgetCheckBoxGetEnabledUncheckedBoxColor(GameWindow *g)
+{
+	return g->winGetEnabledColor(1);
+}
+inline Color GadgetCheckBoxGetEnabledUncheckedBoxBorderColor(GameWindow *g)
+{
+	return g->winGetEnabledBorderColor(1);
+}
+inline const Image *GadgetCheckBoxGetEnabledCheckedBoxImage(GameWindow *g)
+{
+	return g->winGetEnabledImage(2);
+}
+inline Color GadgetCheckBoxGetEnabledCheckedBoxColor(GameWindow *g)
+{
+	return g->winGetEnabledColor(2);
+}
+inline Color GadgetCheckBoxGetEnabledCheckedBoxBorderColor(GameWindow *g)
+{
+	return g->winGetEnabledBorderColor(2);
+}
 
-inline void GadgetCheckBoxSetDisabledImage( GameWindow *g, const Image *image )						{ g->winSetDisabledImage( 0, image ); }
-inline void GadgetCheckBoxSetDisabledColor( GameWindow *g, Color color )								{ g->winSetDisabledColor( 0, color ); }
-inline void GadgetCheckBoxSetDisabledBorderColor( GameWindow *g, Color color )					{ g->winSetDisabledBorderColor( 0, color ); }
-inline void GadgetCheckBoxSetDisabledUncheckedBoxImage( GameWindow *g, const Image *image )		{ g->winSetDisabledImage( 1, image ); }
-inline void GadgetCheckBoxSetDisabledUncheckedBoxColor( GameWindow *g, Color color )				{ g->winSetDisabledColor( 1, color ); }
-inline void GadgetCheckBoxSetDisabledUncheckedBoxBorderColor( GameWindow *g, Color color )	{ g->winSetDisabledBorderColor( 1, color ); }
-inline void GadgetCheckBoxSetDisabledCheckedBoxImage( GameWindow *g, const Image *image )			{ g->winSetDisabledImage( 2, image ); }
-inline void GadgetCheckBoxSetDisabledCheckedBoxColor( GameWindow *g, Color color )					{ g->winSetDisabledColor( 2, color ); }
-inline void GadgetCheckBoxSetDisabledCheckedBoxBorderColor( GameWindow *g, Color color )		{ g->winSetDisabledBorderColor( 2, color ); }
-inline const Image *GadgetCheckBoxGetDisabledImage( GameWindow *g )									{ return g->winGetDisabledImage( 0 ); }
-inline Color		 GadgetCheckBoxGetDisabledColor( GameWindow *g )									{ return g->winGetDisabledColor( 0 ); }
-inline Color		 GadgetCheckBoxGetDisabledBorderColor( GameWindow *g )						{ return g->winGetDisabledBorderColor( 0 ); }
-inline const Image *GadgetCheckBoxGetDisabledUncheckedBoxImage( GameWindow *g )					{ return g->winGetDisabledImage( 1 ); }
-inline Color		 GadgetCheckBoxGetDisabledUncheckedBoxColor( GameWindow *g )					{ return g->winGetDisabledColor( 1 ); }
-inline Color		 GadgetCheckBoxGetDisabledUncheckedBoxBorderColor( GameWindow *g )		{ return g->winGetDisabledBorderColor( 1 ); }
-inline const Image *GadgetCheckBoxGetDisabledCheckedBoxImage( GameWindow *g )						{ return g->winGetDisabledImage( 2 ); }
-inline Color		 GadgetCheckBoxGetDisabledCheckedBoxColor( GameWindow *g )						{ return g->winGetDisabledColor( 2 ); }
-inline Color		 GadgetCheckBoxGetDisabledCheckedBoxBorderColor( GameWindow *g )			{ return g->winGetDisabledBorderColor( 2 ); }
+inline void GadgetCheckBoxSetDisabledImage(GameWindow *g, const Image *image)
+{
+	g->winSetDisabledImage(0, image);
+}
+inline void GadgetCheckBoxSetDisabledColor(GameWindow *g, Color color)
+{
+	g->winSetDisabledColor(0, color);
+}
+inline void GadgetCheckBoxSetDisabledBorderColor(GameWindow *g, Color color)
+{
+	g->winSetDisabledBorderColor(0, color);
+}
+inline void GadgetCheckBoxSetDisabledUncheckedBoxImage(GameWindow *g, const Image *image)
+{
+	g->winSetDisabledImage(1, image);
+}
+inline void GadgetCheckBoxSetDisabledUncheckedBoxColor(GameWindow *g, Color color)
+{
+	g->winSetDisabledColor(1, color);
+}
+inline void GadgetCheckBoxSetDisabledUncheckedBoxBorderColor(GameWindow *g, Color color)
+{
+	g->winSetDisabledBorderColor(1, color);
+}
+inline void GadgetCheckBoxSetDisabledCheckedBoxImage(GameWindow *g, const Image *image)
+{
+	g->winSetDisabledImage(2, image);
+}
+inline void GadgetCheckBoxSetDisabledCheckedBoxColor(GameWindow *g, Color color)
+{
+	g->winSetDisabledColor(2, color);
+}
+inline void GadgetCheckBoxSetDisabledCheckedBoxBorderColor(GameWindow *g, Color color)
+{
+	g->winSetDisabledBorderColor(2, color);
+}
+inline const Image *GadgetCheckBoxGetDisabledImage(GameWindow *g)
+{
+	return g->winGetDisabledImage(0);
+}
+inline Color GadgetCheckBoxGetDisabledColor(GameWindow *g)
+{
+	return g->winGetDisabledColor(0);
+}
+inline Color GadgetCheckBoxGetDisabledBorderColor(GameWindow *g)
+{
+	return g->winGetDisabledBorderColor(0);
+}
+inline const Image *GadgetCheckBoxGetDisabledUncheckedBoxImage(GameWindow *g)
+{
+	return g->winGetDisabledImage(1);
+}
+inline Color GadgetCheckBoxGetDisabledUncheckedBoxColor(GameWindow *g)
+{
+	return g->winGetDisabledColor(1);
+}
+inline Color GadgetCheckBoxGetDisabledUncheckedBoxBorderColor(GameWindow *g)
+{
+	return g->winGetDisabledBorderColor(1);
+}
+inline const Image *GadgetCheckBoxGetDisabledCheckedBoxImage(GameWindow *g)
+{
+	return g->winGetDisabledImage(2);
+}
+inline Color GadgetCheckBoxGetDisabledCheckedBoxColor(GameWindow *g)
+{
+	return g->winGetDisabledColor(2);
+}
+inline Color GadgetCheckBoxGetDisabledCheckedBoxBorderColor(GameWindow *g)
+{
+	return g->winGetDisabledBorderColor(2);
+}
 
-inline void GadgetCheckBoxSetHiliteImage( GameWindow *g, const Image *image )						{ g->winSetHiliteImage( 0, image ); }
-inline void GadgetCheckBoxSetHiliteColor( GameWindow *g, Color color )								{ g->winSetHiliteColor( 0, color ); }
-inline void GadgetCheckBoxSetHiliteBorderColor( GameWindow *g, Color color )					{ g->winSetHiliteBorderColor( 0, color ); }
-inline void GadgetCheckBoxSetHiliteUncheckedBoxImage( GameWindow *g, const Image *image )		{ g->winSetHiliteImage( 1, image ); }
-inline void GadgetCheckBoxSetHiliteUncheckedBoxColor( GameWindow *g, Color color )				{ g->winSetHiliteColor( 1, color ); }
-inline void GadgetCheckBoxSetHiliteUncheckedBoxBorderColor( GameWindow *g, Color color )	{ g->winSetHiliteBorderColor( 1, color ); }
-inline void GadgetCheckBoxSetHiliteCheckedBoxImage( GameWindow *g, const Image *image )			{ g->winSetHiliteImage( 2, image ); }
-inline void GadgetCheckBoxSetHiliteCheckedBoxColor( GameWindow *g, Color color )					{ g->winSetHiliteColor( 2, color ); }
-inline void GadgetCheckBoxSetHiliteCheckedBoxBorderColor( GameWindow *g, Color color )		{ g->winSetHiliteBorderColor( 2, color ); }
-inline const Image *GadgetCheckBoxGetHiliteImage( GameWindow *g )									{ return g->winGetHiliteImage( 0 ); }
-inline Color		 GadgetCheckBoxGetHiliteColor( GameWindow *g )									{ return g->winGetHiliteColor( 0 ); }
-inline Color		 GadgetCheckBoxGetHiliteBorderColor( GameWindow *g )						{ return g->winGetHiliteBorderColor( 0 ); }
-inline const Image *GadgetCheckBoxGetHiliteUncheckedBoxImage( GameWindow *g )					{ return g->winGetHiliteImage( 1 ); }
-inline Color		 GadgetCheckBoxGetHiliteUncheckedBoxColor( GameWindow *g )					{ return g->winGetHiliteColor( 1 ); }
-inline Color		 GadgetCheckBoxGetHiliteUncheckedBoxBorderColor( GameWindow *g )		{ return g->winGetHiliteBorderColor( 1 ); }
-inline const Image *GadgetCheckBoxGetHiliteCheckedBoxImage( GameWindow *g )						{ return g->winGetHiliteImage( 2 ); }
-inline Color		 GadgetCheckBoxGetHiliteCheckedBoxColor( GameWindow *g )						{ return g->winGetHiliteColor( 2 ); }
-inline Color		 GadgetCheckBoxGetHiliteCheckedBoxBorderColor( GameWindow *g )			{ return g->winGetHiliteBorderColor( 2 ); }
+inline void GadgetCheckBoxSetHiliteImage(GameWindow *g, const Image *image)
+{
+	g->winSetHiliteImage(0, image);
+}
+inline void GadgetCheckBoxSetHiliteColor(GameWindow *g, Color color)
+{
+	g->winSetHiliteColor(0, color);
+}
+inline void GadgetCheckBoxSetHiliteBorderColor(GameWindow *g, Color color)
+{
+	g->winSetHiliteBorderColor(0, color);
+}
+inline void GadgetCheckBoxSetHiliteUncheckedBoxImage(GameWindow *g, const Image *image)
+{
+	g->winSetHiliteImage(1, image);
+}
+inline void GadgetCheckBoxSetHiliteUncheckedBoxColor(GameWindow *g, Color color)
+{
+	g->winSetHiliteColor(1, color);
+}
+inline void GadgetCheckBoxSetHiliteUncheckedBoxBorderColor(GameWindow *g, Color color)
+{
+	g->winSetHiliteBorderColor(1, color);
+}
+inline void GadgetCheckBoxSetHiliteCheckedBoxImage(GameWindow *g, const Image *image)
+{
+	g->winSetHiliteImage(2, image);
+}
+inline void GadgetCheckBoxSetHiliteCheckedBoxColor(GameWindow *g, Color color)
+{
+	g->winSetHiliteColor(2, color);
+}
+inline void GadgetCheckBoxSetHiliteCheckedBoxBorderColor(GameWindow *g, Color color)
+{
+	g->winSetHiliteBorderColor(2, color);
+}
+inline const Image *GadgetCheckBoxGetHiliteImage(GameWindow *g)
+{
+	return g->winGetHiliteImage(0);
+}
+inline Color GadgetCheckBoxGetHiliteColor(GameWindow *g)
+{
+	return g->winGetHiliteColor(0);
+}
+inline Color GadgetCheckBoxGetHiliteBorderColor(GameWindow *g)
+{
+	return g->winGetHiliteBorderColor(0);
+}
+inline const Image *GadgetCheckBoxGetHiliteUncheckedBoxImage(GameWindow *g)
+{
+	return g->winGetHiliteImage(1);
+}
+inline Color GadgetCheckBoxGetHiliteUncheckedBoxColor(GameWindow *g)
+{
+	return g->winGetHiliteColor(1);
+}
+inline Color GadgetCheckBoxGetHiliteUncheckedBoxBorderColor(GameWindow *g)
+{
+	return g->winGetHiliteBorderColor(1);
+}
+inline const Image *GadgetCheckBoxGetHiliteCheckedBoxImage(GameWindow *g)
+{
+	return g->winGetHiliteImage(2);
+}
+inline Color GadgetCheckBoxGetHiliteCheckedBoxColor(GameWindow *g)
+{
+	return g->winGetHiliteColor(2);
+}
+inline Color GadgetCheckBoxGetHiliteCheckedBoxBorderColor(GameWindow *g)
+{
+	return g->winGetHiliteBorderColor(2);
+}
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
 
 #endif // __GADGETCHECKBOX_H_
-

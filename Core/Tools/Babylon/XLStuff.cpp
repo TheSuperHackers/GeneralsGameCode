@@ -37,53 +37,51 @@ static _Application *xl = NULL;
 static Workbooks *wbs = NULL;
 static Range *range = NULL;
 static _Worksheet *ws = NULL;
-static OLECHAR buffer[100*1024];
+static OLECHAR buffer[100 * 1024];
 
 static VARIANT no, yes, dummy, dummy0, nullstring, empty;
 static VARIANT continuous, automatic, medium, thin, none;
 static VARIANT yellow, solid;
 
-static VARIANT GetCell ( int row, int column )
+static VARIANT GetCell(int row, int column)
 {
 	VARIANT cell;
 	VARIANT result;
 	LPDISPATCH dispatch;
 	OLECHAR cellname[20];
 
-	V_VT ( &cell ) = VT_EMPTY;
+	V_VT(&cell) = VT_EMPTY;
 
-	assert ( column > 0 );
-	swprintf ( cellname, L"%c%d", 'A'+column -1 , row );
- 	V_VT ( &cell ) = VT_BSTR;
- 	V_BSTR ( &cell ) = SysAllocString (cellname);
+	assert(column > 0);
+	swprintf(cellname, L"%c%d", 'A' + column - 1, row);
+	V_VT(&cell) = VT_BSTR;
+	V_BSTR(&cell) = SysAllocString(cellname);
 
-	V_VT ( &result ) = VT_BOOL;
-	V_BOOL ( &result ) = FALSE;
+	V_VT(&result) = VT_BOOL;
+	V_BOOL(&result) = FALSE;
 
-	if ( !ws )
+	if (!ws)
 	{
 		goto error;
 	}
 
-  if ( ! (dispatch = ws->GetRange (cell, cell )))
+	if (!(dispatch = ws->GetRange(cell, cell)))
 	{
 		goto error;
 	}
 
-
-	range->AttachDispatch ( dispatch );
-	result = range->GetValue ();
-	range->ReleaseDispatch ( );
+	range->AttachDispatch(dispatch);
+	result = range->GetValue();
+	range->ReleaseDispatch();
 
 error:
 
-	VariantClear ( &cell );
+	VariantClear(&cell);
 
 	return result;
 }
 
-
-int PutCell ( int row, int column, const OLECHAR *string, int val )
+int PutCell(int row, int column, const OLECHAR *string, int val)
 {
 	VARIANT cell;
 	VARIANT newValue;
@@ -91,158 +89,151 @@ int PutCell ( int row, int column, const OLECHAR *string, int val )
 	LPDISPATCH dispatch;
 	OLECHAR cellname[20];
 
+	V_VT(&newValue) = VT_EMPTY;
+	V_VT(&cell) = VT_EMPTY;
 
-	V_VT ( &newValue ) = VT_EMPTY;
-	V_VT ( &cell ) = VT_EMPTY;
+	assert(column > 0);
+	swprintf(cellname, L"%c%d", 'A' + column - 1, row);
+	V_VT(&cell) = VT_BSTR;
+	V_BSTR(&cell) = SysAllocString(cellname);
 
-	assert ( column > 0 );
-	swprintf ( cellname, L"%c%d", 'A'+column-1, row );
- 	V_VT ( &cell ) = VT_BSTR;
- 	V_BSTR ( &cell ) = SysAllocString (cellname);
-
-	if ( !ws )
+	if (!ws)
 	{
 		goto error;
 	}
 
-  if ( ! (dispatch = ws->GetRange (cell, cell )))
+	if (!(dispatch = ws->GetRange(cell, cell)))
 	{
 		goto error;
 	}
 
-	range->AttachDispatch ( dispatch );
+	range->AttachDispatch(dispatch);
 
-	if ( string )
+	if (string)
 	{
-		V_VT ( &newValue ) = VT_BSTR;
+		V_VT(&newValue) = VT_BSTR;
 
-		if ( string[0] == '\'')
+		if (string[0] == '\'')
 		{
 			buffer[0] = '\\';
-			wcscpy ( &buffer[1], string );
-			V_BSTR ( &newValue ) = SysAllocString ( buffer );
+			wcscpy(&buffer[1], string);
+			V_BSTR(&newValue) = SysAllocString(buffer);
 		}
 		else
 		{
-			V_BSTR ( &newValue ) = SysAllocString ( string );
+			V_BSTR(&newValue) = SysAllocString(string);
 		}
-
 	}
 	else
 	{
-		V_VT ( &newValue ) = VT_I4;
-		V_I4 ( &newValue ) = val;
+		V_VT(&newValue) = VT_I4;
+		V_I4(&newValue) = val;
 	}
 
-	range->SetValue ( newValue );
-	range->ReleaseDispatch ( );
+	range->SetValue(newValue);
+	range->ReleaseDispatch();
 	ok = TRUE;
 
 error:
 
-
-	VariantClear ( &cell );
-	VariantClear ( &newValue );
+	VariantClear(&cell);
+	VariantClear(&newValue);
 
 	return ok;
 }
 
-int PutSeparator ( int row )
+int PutSeparator(int row)
 {
-//    Rows(row).Select
-//    Selection.Borders(xlDiagonalDown).LineStyle = xlNone
-//    Selection.Borders(xlDiagonalUp).LineStyle = xlNone
-//    Selection.Borders(xlEdgeLeft).LineStyle = xlNone
-//    Selection.Borders(xlEdgeTop).LineStyle = xlNone
-//    With Selection.Borders(xlEdgeBottom)
-//        .LineStyle = xlContinuous
-//        .Weight = xlMedium
-//        .ColorIndex = xlAutomatic
-//    End With
-//    With Selection.Borders(xlEdgeRight)
-//        .LineStyle = xlContinuous
-//        .Weight = xlThin
-//        .ColorIndex = xlAutomatic
-//    End With
+	//    Rows(row).Select
+	//    Selection.Borders(xlDiagonalDown).LineStyle = xlNone
+	//    Selection.Borders(xlDiagonalUp).LineStyle = xlNone
+	//    Selection.Borders(xlEdgeLeft).LineStyle = xlNone
+	//    Selection.Borders(xlEdgeTop).LineStyle = xlNone
+	//    With Selection.Borders(xlEdgeBottom)
+	//        .LineStyle = xlContinuous
+	//        .Weight = xlMedium
+	//        .ColorIndex = xlAutomatic
+	//    End With
+	//    With Selection.Borders(xlEdgeRight)
+	//        .LineStyle = xlContinuous
+	//        .Weight = xlThin
+	//        .ColorIndex = xlAutomatic
+	//    End With
 	int ok = FALSE;
 	Border *border = NULL;
 	Borders *borders = NULL;
 	LPDISPATCH dispatch;
 	OLECHAR cellname1[20];
 	OLECHAR cellname2[20];
-	VARIANT cell1,cell2;
+	VARIANT cell1, cell2;
 
-  if ( !ws )
-  {
- 		goto error;
-  }
-
-	assert ( row > 0 );
-	swprintf ( cellname1, L"A%d", row );
-	swprintf ( cellname2, L"%c%d", 'A'+CELL_LAST-1-1, row );
- 	V_VT ( &cell1 ) = VT_BSTR;
- 	V_BSTR ( &cell1 ) = SysAllocString (cellname1);
-
- 	V_VT ( &cell2 ) = VT_BSTR;
- 	V_BSTR ( &cell2 ) = SysAllocString (cellname2);
-
-
-  if ( ! (dispatch = ws->GetRange (cell1, cell2 )))
+	if (!ws)
 	{
 		goto error;
 	}
 
-	range->AttachDispatch ( dispatch );
+	assert(row > 0);
+	swprintf(cellname1, L"A%d", row);
+	swprintf(cellname2, L"%c%d", 'A' + CELL_LAST - 1 - 1, row);
+	V_VT(&cell1) = VT_BSTR;
+	V_BSTR(&cell1) = SysAllocString(cellname1);
 
-	dispatch = range->GetBorders ();
+	V_VT(&cell2) = VT_BSTR;
+	V_BSTR(&cell2) = SysAllocString(cellname2);
 
-
-	borders = new Borders ( dispatch );
-
-	if ( !borders )
+	if (!(dispatch = ws->GetRange(cell1, cell2)))
 	{
 		goto error;
 	}
 
-	dispatch = borders->GetItem ( xlEdgeBottom );
+	range->AttachDispatch(dispatch);
 
-	border = new Border ( dispatch );
+	dispatch = range->GetBorders();
 
-	if ( !border )
+	borders = new Borders(dispatch);
+
+	if (!borders)
 	{
 		goto error;
 	}
 
-	border->SetLineStyle ( continuous );
-	border->SetColorIndex ( automatic );
-	border->SetWeight ( thin );
+	dispatch = borders->GetItem(xlEdgeBottom);
+
+	border = new Border(dispatch);
+
+	if (!border)
+	{
+		goto error;
+	}
+
+	border->SetLineStyle(continuous);
+	border->SetColorIndex(automatic);
+	border->SetWeight(thin);
 
 	ok = TRUE;
 
 error:
 
-	range->ReleaseDispatch ( );
+	range->ReleaseDispatch();
 
-	if ( borders )
+	if (borders)
 	{
-		delete borders ;
+		delete borders;
 	}
 
-	if ( border )
+	if (border)
 	{
-		delete border ;
+		delete border;
 	}
 
-	VariantClear ( &cell1 );
-	VariantClear ( &cell2 );
+	VariantClear(&cell1);
+	VariantClear(&cell2);
 
 	return ok;
 }
 
-
-int PutSection ( int row, OLECHAR *title )
+int PutSection(int row, OLECHAR *title)
 {
-
 	int ok = FALSE;
 	Range *range = NULL;
 	Border *border = NULL;
@@ -251,141 +242,138 @@ int PutSection ( int row, OLECHAR *title )
 	LPDISPATCH dispatch;
 	OLECHAR cellname1[20];
 	OLECHAR cellname2[20];
-	VARIANT cell1,cell2;
+	VARIANT cell1, cell2;
 	_Worksheet *ws = NULL;
 
-  if ( !ws )
-  {
- 		goto error;
-  }
-
-	assert ( row > 0 );
-	swprintf ( cellname1, L"A%d", row );
-	swprintf ( cellname2, L"%c%d", 'A'+CELL_LAST-1-1, row );
- 	V_VT ( &cell1 ) = VT_BSTR;
- 	V_BSTR ( &cell1 ) = SysAllocString (cellname1);
-
- 	V_VT ( &cell2 ) = VT_BSTR;
- 	V_BSTR ( &cell2 ) = SysAllocString (cellname2);
-
-
-  if ( ! (dispatch = ws->GetRange (cell1, cell2 )))
+	if (!ws)
 	{
 		goto error;
 	}
 
-	range->AttachDispatch ( dispatch );
+	assert(row > 0);
+	swprintf(cellname1, L"A%d", row);
+	swprintf(cellname2, L"%c%d", 'A' + CELL_LAST - 1 - 1, row);
+	V_VT(&cell1) = VT_BSTR;
+	V_BSTR(&cell1) = SysAllocString(cellname1);
 
-	dispatch = range->GetBorders ();
+	V_VT(&cell2) = VT_BSTR;
+	V_BSTR(&cell2) = SysAllocString(cellname2);
 
-
-	borders = new Borders ( dispatch );
-
-	if ( !borders )
+	if (!(dispatch = ws->GetRange(cell1, cell2)))
 	{
 		goto error;
 	}
 
-	dispatch = borders->GetItem ( xlEdgeBottom );
+	range->AttachDispatch(dispatch);
 
-	border = new Border ( dispatch );
+	dispatch = range->GetBorders();
 
-	if ( !border )
+	borders = new Borders(dispatch);
+
+	if (!borders)
 	{
 		goto error;
 	}
 
-	border->SetLineStyle ( continuous );
-	border->SetColorIndex ( automatic );
-	border->SetWeight ( thin );
+	dispatch = borders->GetItem(xlEdgeBottom);
+
+	border = new Border(dispatch);
+
+	if (!border)
+	{
+		goto error;
+	}
+
+	border->SetLineStyle(continuous);
+	border->SetColorIndex(automatic);
+	border->SetWeight(thin);
 
 	delete border;
 	border = NULL;
 
-	dispatch = borders->GetItem ( xlEdgeTop );
+	dispatch = borders->GetItem(xlEdgeTop);
 
-	border = new Border ( dispatch );
+	border = new Border(dispatch);
 
-	if ( !border )
+	if (!border)
 	{
 		goto error;
 	}
 
-	border->SetLineStyle ( continuous );
-	border->SetColorIndex ( automatic );
-	border->SetWeight ( medium );
+	border->SetLineStyle(continuous);
+	border->SetColorIndex(automatic);
+	border->SetWeight(medium);
 
 	delete border;
 	border = NULL;
 
-	dispatch = borders->GetItem ( xlEdgeRight );
+	dispatch = borders->GetItem(xlEdgeRight);
 
-	border = new Border ( dispatch );
+	border = new Border(dispatch);
 
-	if ( !border )
+	if (!border)
 	{
 		goto error;
 	}
 
-	border->SetLineStyle ( none );
+	border->SetLineStyle(none);
 
 	delete border;
 	border = NULL;
 
-	dispatch = borders->GetItem ( xlEdgeLeft );
+	dispatch = borders->GetItem(xlEdgeLeft);
 
-	border = new Border ( dispatch );
+	border = new Border(dispatch);
 
-	if ( !border )
+	if (!border)
 	{
 		goto error;
 	}
 
-	border->SetLineStyle ( none );
+	border->SetLineStyle(none);
 
-	dispatch = range->GetInterior ( );
+	dispatch = range->GetInterior();
 
-	interior = new Interior ( dispatch );
+	interior = new Interior(dispatch);
 
-	if ( !interior )
+	if (!interior)
 	{
 		goto error;
 	}
 
-	interior->SetColorIndex ( yellow );
-	interior->SetPattern ( solid );
+	interior->SetColorIndex(yellow);
+	interior->SetPattern(solid);
 
-	PutCell ( row, 1, L"Section", 0 );
-	PutCell ( row, 2, title, 0 );
+	PutCell(row, 1, L"Section", 0);
+	PutCell(row, 2, title, 0);
 
 	ok = TRUE;
 
 error:
 
-	range->ReleaseDispatch ( );
+	range->ReleaseDispatch();
 
-	if ( borders )
+	if (borders)
 	{
-		delete borders ;
+		delete borders;
 	}
 
-	if ( border )
+	if (border)
 	{
-		delete border ;
+		delete border;
 	}
 
-	VariantClear ( &cell1 );
-	VariantClear ( &cell2 );
+	VariantClear(&cell1);
+	VariantClear(&cell2);
 
 	return ok;
-
 }
 
-int OpenExcel ( void )
+int OpenExcel(void)
 {
 	LPDISPATCH dispatch;
 
-	if ( xl )
+	if (xl)
 	{
 		return TRUE;
 	}
@@ -401,133 +389,129 @@ int OpenExcel ( void )
 
 	xl = new _Application();
 
-	if ( !xl )
+	if (!xl)
 	{
 		return FALSE;
 	}
 
-	if ( !xl->CreateDispatch ("Excel.Application"))
+	if (!xl->CreateDispatch("Excel.Application"))
 	{
 		goto error_access;
 	}
 
-	dispatch = xl->GetWorkbooks ( );
+	dispatch = xl->GetWorkbooks();
 
-	if ( dispatch )
+	if (dispatch)
 	{
-		wbs = new Workbooks( dispatch );
+		wbs = new Workbooks(dispatch);
 	}
 
-	if ( !wbs )
-	{
-		return FALSE;
-	}
-
-	if ( ! (ws = new _Worksheet ()))
+	if (!wbs)
 	{
 		return FALSE;
 	}
 
-	if ( ! (range = new Range ()))
+	if (!(ws = new _Worksheet()))
 	{
 		return FALSE;
 	}
 
+	if (!(range = new Range()))
+	{
+		return FALSE;
+	}
 
-	V_VT ( &no ) = VT_BOOL;
-	V_VT ( &yes ) = VT_BOOL;
-	V_VT ( &dummy ) = VT_I4;
-	V_VT ( &dummy0 ) = VT_I4;
-	V_VT ( &nullstring ) = VT_BSTR ;
-	V_VT ( &empty ) = VT_EMPTY;
-	V_VT ( &continuous ) = VT_I4;
-	V_VT ( &automatic ) = VT_I4;
-	V_VT ( &medium ) = VT_I4;
-	V_VT ( &thin ) = VT_I4;
-	V_VT ( &none ) = VT_I4;
-	V_VT ( &solid ) = VT_I4;
-	V_VT ( &yellow ) = VT_I4;
+	V_VT(&no) = VT_BOOL;
+	V_VT(&yes) = VT_BOOL;
+	V_VT(&dummy) = VT_I4;
+	V_VT(&dummy0) = VT_I4;
+	V_VT(&nullstring) = VT_BSTR;
+	V_VT(&empty) = VT_EMPTY;
+	V_VT(&continuous) = VT_I4;
+	V_VT(&automatic) = VT_I4;
+	V_VT(&medium) = VT_I4;
+	V_VT(&thin) = VT_I4;
+	V_VT(&none) = VT_I4;
+	V_VT(&solid) = VT_I4;
+	V_VT(&yellow) = VT_I4;
 
-	V_BOOL ( &no ) = FALSE;
-	V_BOOL ( &yes ) = TRUE;
-	V_I4 ( &dummy ) = 1;
-	V_I4 ( &dummy0 ) = 0;
-	V_BSTR ( &nullstring ) = SysAllocString ( OLESTR ("") );
+	V_BOOL(&no) = FALSE;
+	V_BOOL(&yes) = TRUE;
+	V_I4(&dummy) = 1;
+	V_I4(&dummy0) = 0;
+	V_BSTR(&nullstring) = SysAllocString(OLESTR(""));
 
-	V_I4 ( &continuous ) = xlContinuous;
-	V_I4 ( &automatic ) = xlAutomatic;
-	V_I4 ( &medium ) = xlMedium;
-	V_I4 ( &thin ) = xlThin;
-	V_I4 ( &none ) = xlThin;
-	V_I4 ( &solid ) = xlSolid;
-	V_I4 ( &yellow ) = 6;
-
+	V_I4(&continuous) = xlContinuous;
+	V_I4(&automatic) = xlAutomatic;
+	V_I4(&medium) = xlMedium;
+	V_I4(&thin) = xlThin;
+	V_I4(&none) = xlThin;
+	V_I4(&solid) = xlSolid;
+	V_I4(&yellow) = 6;
 
 	return TRUE;
 
 error_access:
-		AfxMessageBox ("Could not access Excel!\n\nMake sure Excel is installed on this system.");
-		return FALSE;
+	AfxMessageBox("Could not access Excel!\n\nMake sure Excel is installed on this system.");
+	return FALSE;
 }
 
-
-void CloseExcel ( void )
+void CloseExcel(void)
 {
-	CloseWorkBook ();
+	CloseWorkBook();
 
-	if ( range )
+	if (range)
 	{
 		delete range;
 		range = NULL;
 	}
 
-	if ( ws )
+	if (ws)
 	{
 		delete ws;
 		ws = NULL;
 	}
 
-	if ( wbs )
+	if (wbs)
 	{
 		wbs->Close();
 		delete wbs;
 		wbs = NULL;
 	}
 
-	if ( xl )
+	if (xl)
 	{
 		xl->Quit();
-		xl->ReleaseDispatch ();
+		xl->ReleaseDispatch();
 		delete xl;
 		xl = NULL;
 	}
 
-	VariantClear ( &nullstring );
-
+	VariantClear(&nullstring);
 }
 
-int OpenWorkBook ( const char *filename )
+int OpenWorkBook(const char *filename)
 {
 	LPDISPATCH dispatch;
 
-	dispatch = wbs->Open ((LPCTSTR) filename, dummy0, yes, dummy, nullstring, nullstring, yes, dummy, dummy, no, no, dummy, no );
+	dispatch = wbs->Open((LPCTSTR)filename, dummy0, yes, dummy, nullstring, nullstring, yes, dummy, dummy, no, no, dummy, no);
 
-	if ( dispatch )
+	if (dispatch)
 	{
-		workbook = new _Workbook ( dispatch );
+		workbook = new _Workbook(dispatch);
 	}
 
-	if ( !workbook )
+	if (!workbook)
 	{
 		return FALSE;
 	}
 
-	SelectActiveSheet ( );
+	SelectActiveSheet();
 
 	return TRUE;
 }
 
-int NewWorkBook ( const char *path )
+int NewWorkBook(const char *path)
 {
 	LPDISPATCH dispatch;
 	VARIANT temp;
@@ -536,138 +520,130 @@ int NewWorkBook ( const char *path )
 	WIN32_FIND_DATA finfo;
 	HANDLE handle;
 
-	V_VT ( &temp ) = VT_I4;
-	V_I4 ( &temp ) = xlWBATWorksheet;
+	V_VT(&temp) = VT_I4;
+	V_I4(&temp) = xlWBATWorksheet;
 
-	if ( path )
+	if (path)
 	{
-		strcpy ( tfile, path );
-		if ( (p = strchr ( tfile, '.' )))
+		strcpy(tfile, path);
+		if ((p = strchr(tfile, '.')))
 		{
 			*p = 0;
 		}
 
-		strcpy ( p, ".xlt" );
+		strcpy(p, ".xlt");
 
-		if ( (handle = FindFirstFile ( tfile, &finfo)) != INVALID_HANDLE_VALUE )
+		if ((handle = FindFirstFile(tfile, &finfo)) != INVALID_HANDLE_VALUE)
 		{
-			if ( !(finfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
+			if (!(finfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 			{
-				swprintf ( buffer, L"%S", tfile );
-				V_VT ( &temp ) = VT_BSTR;
-				V_BSTR ( &temp ) = SysAllocString ( buffer );
+				swprintf(buffer, L"%S", tfile);
+				V_VT(&temp) = VT_BSTR;
+				V_BSTR(&temp) = SysAllocString(buffer);
 			}
 
-			FindClose ( handle );
+			FindClose(handle);
 		}
 	}
 
-	dispatch = wbs->Add ( temp );
+	dispatch = wbs->Add(temp);
 
-	VariantClear ( &temp );
+	VariantClear(&temp);
 
-	if ( dispatch )
+	if (dispatch)
 	{
-		workbook = new _Workbook ( dispatch );
+		workbook = new _Workbook(dispatch);
 	}
 
-	if ( !workbook )
+	if (!workbook)
 	{
 		return FALSE;
 	}
-	SelectActiveSheet ( );
+	SelectActiveSheet();
 	return TRUE;
 }
 
-int SaveWorkBook ( const char *filename, int protect )
+int SaveWorkBook(const char *filename, int protect)
 {
 	VARIANT name, fileformat, rc;
 
-	V_VT ( &name ) = VT_BSTR;
-	swprintf ( buffer, L"%S", filename );
-	V_BSTR ( &name ) = SysAllocString ( buffer );
+	V_VT(&name) = VT_BSTR;
+	swprintf(buffer, L"%S", filename);
+	V_BSTR(&name) = SysAllocString(buffer);
 
-	V_VT ( &fileformat ) = VT_I4;
-	V_I4 ( &fileformat ) = xlWorkbookNormal;
+	V_VT(&fileformat) = VT_I4;
+	V_I4(&fileformat) = xlWorkbookNormal;
 
+	V_VT(&rc) = VT_I4;
+	V_I4(&rc) = xlLocalSessionChanges;
 
-	V_VT ( &rc ) = VT_I4;
-	V_I4 ( &rc ) = xlLocalSessionChanges;
-
-	if ( protect )
+	if (protect)
 	{
 		VARIANT password;
-		V_VT ( &password ) = VT_BSTR;
-		V_BSTR ( &password ) = SysAllocString ( L"" );
+		V_VT(&password) = VT_BSTR;
+		V_BSTR(&password) = SysAllocString(L"");
 
-		ws->Protect ( password, yes, yes, yes, no );
-		VariantClear ( &password );
+		ws->Protect(password, yes, yes, yes, no);
+		VariantClear(&password);
 	}
-	workbook->SaveAs ( name, fileformat, nullstring, nullstring, no, no,
-					xlNoChange, rc, no, empty, empty );
+	workbook->SaveAs(name, fileformat, nullstring, nullstring, no, no, xlNoChange, rc, no, empty, empty);
 
-	VariantClear ( &name );
+	VariantClear(&name);
 
 	return TRUE;
-
 }
 
-void CloseWorkBook ( void )
+void CloseWorkBook(void)
 {
-	if ( workbook )
+	if (workbook)
 	{
-		workbook->SetSaved ( TRUE );
-		workbook->Close ( no, nullstring, no );
+		workbook->SetSaved(TRUE);
+		workbook->Close(no, nullstring, no);
 		delete workbook;
 		workbook = NULL;
 	}
-
 }
 
-void SelectActiveSheet ( void )
+void SelectActiveSheet(void)
 {
 	LPDISPATCH dispatch;
 
-  if ( ! (dispatch = xl->GetActiveSheet ()))
+	if (!(dispatch = xl->GetActiveSheet()))
 	{
 		return;
 	}
 
-	ws->ReleaseDispatch ( );
-	ws->AttachDispatch ( dispatch );
+	ws->ReleaseDispatch();
+	ws->AttachDispatch(dispatch);
 }
 
-int GetInt ( int row, int cell )
+int GetInt(int row, int cell)
 {
 	long value;
 	VARIANT var;
 	_variant_t v;
 
-	var = GetCell ( row, cell );
+	var = GetCell(row, cell);
 
-	v.Attach ( var );
+	v.Attach(var);
 
 	value = v;
 
-	return (int) value;
-
+	return (int)value;
 }
 
-int GetString ( int row, int cell, OLECHAR *string )
+int GetString(int row, int cell, OLECHAR *string)
 {
 	VARIANT var;
 
-	string[0] =0;
-	var = GetCell ( row, cell );
+	string[0] = 0;
+	var = GetCell(row, cell);
 
-	if ( V_VT ( &var ) == VT_BSTR )
+	if (V_VT(&var) == VT_BSTR)
 	{
-		wcscpy ( string, V_BSTR ( &var ));
-
+		wcscpy(string, V_BSTR(&var));
 	}
-	VariantClear ( &var );
+	VariantClear(&var);
 
 	return 1;
-
 }
-

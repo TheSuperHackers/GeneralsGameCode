@@ -48,22 +48,21 @@ typedef ModuleData ClientUpdateModuleData;
 //-------------------------------------------------------------------------------------------------
 class ClientUpdateModule : public DrawableModule
 {
-
-	MEMORY_POOL_GLUE_ABC( ClientUpdateModule )
+	MEMORY_POOL_GLUE_ABC(ClientUpdateModule)
 
 public:
-
-	ClientUpdateModule( Thing *thing, const ModuleData* moduleData );
+	ClientUpdateModule(Thing *thing, const ModuleData *moduleData);
 	static ModuleType getModuleType() { return MODULETYPE_CLIENT_UPDATE; }
 	static Int getInterfaceMask() { return MODULEINTERFACE_CLIENT_UPDATE; }
 
 	virtual void clientUpdate() = 0;
-
 };
-inline ClientUpdateModule::ClientUpdateModule( Thing *thing, const ModuleData* moduleData ) : DrawableModule( thing, moduleData ) { }
-inline ClientUpdateModule::~ClientUpdateModule() { }
+inline ClientUpdateModule::ClientUpdateModule(Thing *thing, const ModuleData *moduleData) : DrawableModule(thing, moduleData)
+{
+}
+inline ClientUpdateModule::~ClientUpdateModule()
+{
+}
 //-------------------------------------------------------------------------------------------------
 
-
 #endif // __ClientUpdateModule_H_
-

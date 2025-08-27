@@ -46,7 +46,7 @@ public:
 	static UnsignedInt getInstanceId();
 
 	// Returns the instance name of the first game client.
-	static const char* getFirstInstanceName();
+	static const char *getFirstInstanceName();
 
 private:
 	static HANDLE s_mutexHandle;

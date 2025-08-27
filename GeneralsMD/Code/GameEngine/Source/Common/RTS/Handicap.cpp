@@ -42,7 +42,7 @@
 //
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Handicap.h"
 #include "Common/Player.h"
@@ -64,30 +64,28 @@ void Handicap::init()
 }
 
 //-----------------------------------------------------------------------------
-void Handicap::readFromDict(const Dict* d)
+void Handicap::readFromDict(const Dict *d)
 {
 	// this isn't very efficient, but is only called at load times,
 	// so it probably doesn't really matter.
 
-	const char* htNames[HANDICAP_TYPE_COUNT] =
-	{
+	const char *htNames[HANDICAP_TYPE_COUNT] = {
 		"BUILDCOST",
 		"BUILDTIME",
-//		"FIREPOWER",
-//		"ARMOR",
-//		"GROUNDSPEED",
-//		"AIRSPEED",
-//		"INCOME"
+		//		"FIREPOWER",
+		//		"ARMOR",
+		//		"GROUNDSPEED",
+		//		"AIRSPEED",
+		//		"INCOME"
 	};
 
-	const char* ttNames[THING_TYPE_COUNT] =
-	{
+	const char *ttNames[THING_TYPE_COUNT] = {
 		"GENERIC",
 		"BUILDINGS",
 	};
 
-// no, you should NOT call init() here.
-//init();
+	// no, you should NOT call init() here.
+	// init();
 
 	AsciiString c;
 	for (Int i = 0; i < HANDICAP_TYPE_COUNT; ++i)

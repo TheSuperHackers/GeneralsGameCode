@@ -46,7 +46,7 @@
 ///////////////////////////////////////////////////////////////////////////
 typedef enum
 {
-	DEFORM_CHUNK_INFO					= 0x000000001,
+	DEFORM_CHUNK_INFO = 0x000000001,
 	DEFORM_CHUNK_SET_INFO,
 	DEFORM_CHUNK_KEYFRAME_INFO,
 	DEFORM_CHUNK_POSITION_DATA,
@@ -67,8 +67,8 @@ typedef enum
 //
 struct DeformChunk
 {
-	uint32					SetCount;
-	uint32					reserved[4];
+	uint32 SetCount;
+	uint32 reserved[4];
 };
 
 //
@@ -77,14 +77,14 @@ struct DeformChunk
 //
 struct DeformChunkSetInfo
 {
-	uint32					KeyframeCount;
-	uint32					flags;
-	uint32					NumVerticies;
-	uint32					NumVertexColors;
-	uint32					reserved[2];
+	uint32 KeyframeCount;
+	uint32 flags;
+	uint32 NumVerticies;
+	uint32 NumVertexColors;
+	uint32 reserved[2];
 };
 
-#define DEFORM_SET_MANUAL_DEFORM	0x00000001	// set is isn't applied during sphere or point tests.
+#define DEFORM_SET_MANUAL_DEFORM 0x00000001 // set is isn't applied during sphere or point tests.
 
 //
 // Deform keyframe information.  Each keyframe is made up of
@@ -92,10 +92,10 @@ struct DeformChunkSetInfo
 //
 struct DeformChunkKeyframeInfo
 {
-	float32					DeformPercent;
-	uint32					VertexCount;
-	uint32					ColorCount;
-	uint32					reserved[2];
+	float32 DeformPercent;
+	uint32 VertexCount;
+	uint32 ColorCount;
+	uint32 reserved[2];
 };
 
 //
@@ -104,11 +104,10 @@ struct DeformChunkKeyframeInfo
 //
 struct DeformDataChunk
 {
-	uint32					VertexIndex;
-	uint32					ColorIndex;
-	Point3					Value;
-	uint32					reserved[2];
+	uint32 VertexIndex;
+	uint32 ColorIndex;
+	Point3 Value;
+	uint32 reserved[2];
 };
-
 
 #endif //__MESH_DEFORM_SAVE_DEFS_H

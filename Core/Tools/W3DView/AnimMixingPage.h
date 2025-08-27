@@ -34,32 +34,34 @@ class CAnimMixingPage : public CPropertyPage
 {
 	DECLARE_DYNCREATE(CAnimMixingPage)
 
-// Construction
+	// Construction
 public:
 	CAnimMixingPage(CAdvancedAnimSheet *sheet = NULL);
 	~CAnimMixingPage();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CAnimMixingPage)
-	enum { IDD = IDD_PROP_PAGE_ADVANIM_MIXING };
-	CListCtrl	m_AnimList;
+	enum
+	{
+		IDD = IDD_PROP_PAGE_ADVANIM_MIXING
+	};
+	CListCtrl m_AnimList;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CAnimMixingPage)
-	public:
+public:
 	virtual void OnOK();
 	virtual BOOL OnKillActive();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
-	void FillListCtrl (void);
+	void FillListCtrl(void);
 
 	CAdvancedAnimSheet *m_Sheet;
 
@@ -68,7 +70,6 @@ protected:
 	virtual BOOL OnInitDialog();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-
 };
 
 //{{AFX_INSERT_LOCATION}}

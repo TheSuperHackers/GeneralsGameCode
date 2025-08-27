@@ -58,29 +58,27 @@ class LODHeapNode;
 ** PredictiveLODOptimizerClass: Class which performs the predictive LOD
 ** optimization. All the members of this class are static.
 */
-class PredictiveLODOptimizerClass {
+class PredictiveLODOptimizerClass
+{
+public:
+	static void Clear(void);
+	static void Add_Object(RenderObjClass *robj);
+	static void Add_Cost(float cost) { TotalCost += cost; }
+	static void Optimize_LODs(float max_cost);
+	static float Get_Total_Cost(void) { return TotalCost; }
+	static void Free(void); // frees all memory
 
-	public:
+private:
+	static void AllocVisibleObjArrays(int num_objects);
 
-		static void		Clear(void);
-		static void		Add_Object(RenderObjClass *robj);
-		static void		Add_Cost(float cost)								{ TotalCost += cost; }
-		static void		Optimize_LODs(float max_cost);
-		static float	Get_Total_Cost(void)								{ return TotalCost; }
-		static void		Free(void);	// frees all memory
+	static RenderObjClass **ObjectArray;
+	static int ArraySize;
+	static int NumObjects;
+	static float TotalCost;
 
-	private:
-		static void		AllocVisibleObjArrays(int num_objects);
-
-		static RenderObjClass **	ObjectArray;
-		static int						ArraySize;
-		static int						NumObjects;
-		static float					TotalCost;
-
-		static LODHeapNode *VisibleObjArray1;
-		static LODHeapNode *VisibleObjArray2;
-		static int VisibleObjArraySize;
-
+	static LODHeapNode *VisibleObjArray1;
+	static LODHeapNode *VisibleObjArray2;
+	static int VisibleObjArraySize;
 };
 
 #endif

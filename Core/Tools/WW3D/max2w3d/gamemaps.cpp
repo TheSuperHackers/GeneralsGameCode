@@ -41,65 +41,63 @@
  *   GameMapsClass::Load -- Loads GameMapsClass data from a MAX file                           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "gamemaps.h"
 
+/*****************************************************************
+ *
+ *		Chunk ID's for saving data in the MAX file.
+ *
+ *****************************************************************/
+#define GAMEMAPS_ONOFF_CHUNK 0x0000
+#define GAMEMAPS_AMT0_CHUNK 0x0001
+#define GAMEMAPS_AMT1_CHUNK 0x0002
+#define GAMEMAPS_AMT2_CHUNK 0x0003
+#define GAMEMAPS_AMT3_CHUNK 0x0004
+#define GAMEMAPS_AMT4_CHUNK 0x0005
+#define GAMEMAPS_AMT5_CHUNK 0x0006
+#define GAMEMAPS_AMT6_CHUNK 0x0007
+#define GAMEMAPS_AMT7_CHUNK 0x0008
+#define GAMEMAPS_AMT8_CHUNK 0x0009
+#define GAMEMAPS_AMT9_CHUNK 0x000A
+#define GAMEMAPS_AMTA_CHUNK 0x000B
 
 /*****************************************************************
-*
-*		Chunk ID's for saving data in the MAX file.
-*
-*****************************************************************/
-#define GAMEMAPS_ONOFF_CHUNK	0x0000
-#define GAMEMAPS_AMT0_CHUNK	0x0001
-#define GAMEMAPS_AMT1_CHUNK	0x0002
-#define GAMEMAPS_AMT2_CHUNK	0x0003
-#define GAMEMAPS_AMT3_CHUNK	0x0004
-#define GAMEMAPS_AMT4_CHUNK	0x0005
-#define GAMEMAPS_AMT5_CHUNK	0x0006
-#define GAMEMAPS_AMT6_CHUNK	0x0007
-#define GAMEMAPS_AMT7_CHUNK	0x0008
-#define GAMEMAPS_AMT8_CHUNK	0x0009
-#define GAMEMAPS_AMT9_CHUNK	0x000A
-#define GAMEMAPS_AMTA_CHUNK	0x000B
-
-
-/*****************************************************************
-*
-*		A PostLoadCallback which does nothing...
-*
-*****************************************************************/
+ *
+ *		A PostLoadCallback which does nothing...
+ *
+ *****************************************************************/
 class GameMapsPostLoad : public PostLoadCallback
 {
 public:
 	GameMapsClass *tm;
-	GameMapsPostLoad(GameMapsClass *b) {tm=b;}
+	GameMapsPostLoad(GameMapsClass *b) { tm = b; }
 	void proc(ILoad *iload) { delete this; }
 };
 
-
 /*****************************************************************
-*
-*		GameMapsClass Class Desriptor
-*
-*****************************************************************/
+ *
+ *		GameMapsClass Class Desriptor
+ *
+ *****************************************************************/
 static Class_ID _GameMapsClassID(0x36d23f7b, 0x79ce63e1);
 
 class GameMapsClassDesc : public ClassDesc
 {
-	public:
-	int 				IsPublic()			  		{ return 0; }
-	void *			Create(BOOL loading)		{ return new GameMapsClass(NULL); }
-	const TCHAR *	ClassName()					{ return _T("GameMaps"); }
-	SClass_ID		SuperClassID()				{ return REF_MAKER_CLASS_ID; }
-	Class_ID 		ClassID()			  		{ return _GameMapsClassID; }
-	const TCHAR* 	Category()					{ return _T(""); }
+public:
+	int IsPublic() { return 0; }
+	void *Create(BOOL loading) { return new GameMapsClass(NULL); }
+	const TCHAR *ClassName() { return _T("GameMaps"); }
+	SClass_ID SuperClassID() { return REF_MAKER_CLASS_ID; }
+	Class_ID ClassID() { return _GameMapsClassID; }
+	const TCHAR *Category() { return _T(""); }
 };
 
 static GameMapsClassDesc _GameMapsCD;
 
-ClassDesc * Get_Game_Maps_Desc() { return &_GameMapsCD; }
-
+ClassDesc *Get_Game_Maps_Desc()
+{
+	return &_GameMapsCD;
+}
 
 /***********************************************************************************************
  * GameMapsClass::ClassID -- Returns the ClassID for GameMapsClass                             *
@@ -130,9 +128,9 @@ Class_ID GameMapsClass::ClassID()
  * HISTORY:                                                                                    *
  *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-BOOL GameMapsClass::AssignController(Animatable *control,int subAnim)
+BOOL GameMapsClass::AssignController(Animatable *control, int subAnim)
 {
-	ReplaceReference(SubNumToRefNum(subAnim),(ReferenceTarget *)control);
+	ReplaceReference(SubNumToRefNum(subAnim), (ReferenceTarget *)control);
 	return TRUE;
 }
 
@@ -148,25 +146,22 @@ BOOL GameMapsClass::AssignController(Animatable *control,int subAnim)
  * HISTORY:                                                                                    *
  *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-RefResult GameMapsClass::NotifyRefChanged
-(
-	Interval				changeInt,
-	RefTargetHandle	hTarget,
-	PartID &				partID,
-	RefMessage			message
-)
+RefResult GameMapsClass::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID &partID, RefMessage message)
 {
-	switch (message) {
-		case REFMSG_GET_PARAM_DIM: {
-			GetParamDim *gpd = (GetParamDim*)partID;
+	switch (message)
+	{
+		case REFMSG_GET_PARAM_DIM:
+		{
+			GetParamDim *gpd = (GetParamDim *)partID;
 			break;
 		}
-		case REFMSG_GET_PARAM_NAME: {
-			GetParamName *gpn = (GetParamName*)partID;
+		case REFMSG_GET_PARAM_NAME:
+		{
+			GetParamName *gpn = (GetParamName *)partID;
 			return REF_STOP;
 		}
 	}
-	return(REF_SUCCEED);
+	return (REF_SUCCEED);
 }
 
 /***********************************************************************************************
@@ -185,18 +180,19 @@ RefTargetHandle GameMapsClass::Clone(RemapDir &remap)
 {
 	GameMapsClass *tm = new GameMapsClass(NULL);
 
-	for (int i=0; i<NTEXMAPS; i++) {
+	for (int i = 0; i < NTEXMAPS; i++)
+	{
 		tm->TextureSlot[i].MapOn = TextureSlot[i].MapOn;
 		tm->TextureSlot[i].Map = NULL;
 
-		if (TextureSlot[i].Map) {
-			tm->ReplaceReference(i,remap.CloneRef(TextureSlot[i].Map));
+		if (TextureSlot[i].Map)
+		{
+			tm->ReplaceReference(i, remap.CloneRef(TextureSlot[i].Map));
 		}
 	}
 
 	return tm;
 }
-
 
 /***********************************************************************************************
  * GameMapsClass::Save -- Saves the GameMapsClass data into a MAX file                         *
@@ -210,27 +206,30 @@ RefTargetHandle GameMapsClass::Clone(RemapDir &remap)
  * HISTORY:                                                                                    *
  *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-IOResult GameMapsClass::Save(ISave * isave)
+IOResult GameMapsClass::Save(ISave *isave)
 {
-	ULONG nb,f=0;
+	ULONG nb, f = 0;
 
 	isave->BeginChunk(GAMEMAPS_ONOFF_CHUNK);
-	for (int i=0; i<NTEXMAPS; i++) {
-		if (TextureSlot[i].MapOn) f|= (1<<i);
+	for (int i = 0; i < NTEXMAPS; i++)
+	{
+		if (TextureSlot[i].MapOn)
+			f |= (1 << i);
 	}
-	isave->Write(&f,sizeof(f),&nb);
+	isave->Write(&f, sizeof(f), &nb);
 	isave->EndChunk();
 
-	for (i=0; i<NTEXMAPS; i++) {
-		if (TextureSlot[i].Amount != 1.0f) {
+	for (i = 0; i < NTEXMAPS; i++)
+	{
+		if (TextureSlot[i].Amount != 1.0f)
+		{
 			isave->BeginChunk(GAMEMAPS_AMT0_CHUNK + i);
-			isave->Write(&(TextureSlot[i].Amount),sizeof(float),&nb);
+			isave->Write(&(TextureSlot[i].Amount), sizeof(float), &nb);
 			isave->EndChunk();
 		}
 	}
 	return IO_OK;
 }
-
 
 /***********************************************************************************************
  * GameMapsClass::Load -- Loads GameMapsClass data from a MAX file                             *
@@ -244,23 +243,24 @@ IOResult GameMapsClass::Save(ISave * isave)
  * HISTORY:                                                                                    *
  *   06/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-IOResult GameMapsClass::Load(ILoad * iload)
+IOResult GameMapsClass::Load(ILoad *iload)
 {
 	ULONG nb;
 	int id;
 	IOResult res;
 
-	while (IO_OK==(res=iload->OpenChunk())) {
-
-		switch (id = iload->CurChunkID())  {
+	while (IO_OK == (res = iload->OpenChunk()))
+	{
+		switch (id = iload->CurChunkID())
+		{
 			case GAMEMAPS_ONOFF_CHUNK:
-				{
-					ULONG f;
-					res = iload->Read(&f,sizeof(f), &nb);
-					for (int i=0; i<NTEXMAPS; i++)
-						 (*this)[i].MapOn = (f&(1<<i))?1:0;
-				}
-				break;
+			{
+				ULONG f;
+				res = iload->Read(&f, sizeof(f), &nb);
+				for (int i = 0; i < NTEXMAPS; i++)
+					(*this)[i].MapOn = (f & (1 << i)) ? 1 : 0;
+			}
+			break;
 
 			case GAMEMAPS_AMT0_CHUNK:
 			case GAMEMAPS_AMT1_CHUNK:
@@ -273,15 +273,15 @@ IOResult GameMapsClass::Load(ILoad * iload)
 			case GAMEMAPS_AMT9_CHUNK:
 			case GAMEMAPS_AMTA_CHUNK:
 				int index = id - GAMEMAPS_AMT0_CHUNK;
-				res = iload->Read(&(TextureSlot[index].Amount),sizeof(float),&nb);
+				res = iload->Read(&(TextureSlot[index].Amount), sizeof(float), &nb);
 				break;
 		}
 
 		iload->CloseChunk();
-		if (res!=IO_OK) {
+		if (res != IO_OK)
+		{
 			return res;
 		}
 	}
 	return IO_OK;
 }
-

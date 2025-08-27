@@ -40,45 +40,38 @@
 // ------------------------------------------------------------------------------------------------
 class TechBuildingBehaviorModuleData : public UpdateModuleData
 {
-
 public:
+	TechBuildingBehaviorModuleData(void);
 
-	TechBuildingBehaviorModuleData( void );
+	static void buildFieldParse(MultiIniFieldParse &p);
 
-	static void buildFieldParse( MultiIniFieldParse &p );
-
-	const FXList*		m_pulseFX;										///< FXList to play when bldg is owned is updated
-	UnsignedInt			m_pulseFXRate;								///< how frequently to play it
-
+	const FXList *m_pulseFX; ///< FXList to play when bldg is owned is updated
+	UnsignedInt m_pulseFXRate; ///< how frequently to play it
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-class TechBuildingBehavior : public UpdateModule,
-														 public DieModuleInterface
+class TechBuildingBehavior : public UpdateModule, public DieModuleInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( TechBuildingBehavior, "TechBuildingBehavior" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( TechBuildingBehavior, TechBuildingBehaviorModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TechBuildingBehavior, "TechBuildingBehavior")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(TechBuildingBehavior, TechBuildingBehaviorModuleData)
 
 public:
-
-	TechBuildingBehavior( Thing *thing, const ModuleData *modData );
+	TechBuildingBehavior(Thing *thing, const ModuleData *modData);
 	// virtual destructor prototype provided by memory pool object
 
 	// module methods
-	virtual void onCapture( Player *oldOwner, Player *newOwner );
+	virtual void onCapture(Player *oldOwner, Player *newOwner);
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
 	// update methods
-	virtual UpdateSleepTime update( void );
+	virtual UpdateSleepTime update(void);
 
 	// die methods
-	virtual DieModuleInterface *getDie( void ) { return this; }
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual DieModuleInterface *getDie(void) { return this; }
+	virtual void onDie(const DamageInfo *damageInfo);
 
 protected:
-
 };
 
-#endif  // end __TECH_BUILDING_BEHAVIOR_H_
+#endif // end __TECH_BUILDING_BEHAVIOR_H_

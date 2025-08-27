@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "StdAfx.h"
 
 #include "ViewerAssetMgr.h"
@@ -42,77 +41,70 @@
 #include "ww3d.h"
 #include "Utils.h"
 
-
 ////////////////////////////////////////////////////////////////////////
 //
 //	Load_3D_Assets
 //
 ////////////////////////////////////////////////////////////////////////
-bool
-ViewerAssetMgrClass::Load_3D_Assets (FileClass &w3dfile)
+bool ViewerAssetMgrClass::Load_3D_Assets(FileClass &w3dfile)
 {
 	//
 	//	Allow the base class to process
 	//
-	bool retval = WW3DAssetManager::Load_3D_Assets (w3dfile);
-	if (retval) {
-
+	bool retval = WW3DAssetManager::Load_3D_Assets(w3dfile);
+	if (retval)
+	{
 	}
 
 	return retval;
 }
-
 
 ////////////////////////////////////////////////////////////////////////
 //
 //	Get_Texture
 //
 ////////////////////////////////////////////////////////////////////////
-TextureClass *
-ViewerAssetMgrClass::Get_Texture (const char * tga_filename, MipCountType mip_level_count)
+TextureClass *ViewerAssetMgrClass::Get_Texture(const char *tga_filename, MipCountType mip_level_count)
 {
 	//
 	// See if the texture has already been loaded.
 	//
 
-	StringClass lower_case_name(tga_filename,true);
+	StringClass lower_case_name(tga_filename, true);
 	_strlwr(lower_case_name.Peek_Buffer());
-	TextureClass* tex = TextureHash.Get(lower_case_name);
+	TextureClass *tex = TextureHash.Get(lower_case_name);
 
 	//
 	//	Check to see if this texture is "missing"
 	//
-	if (!tex) {
-		Find_Missing_Textures  (m_MissingTextureList, tga_filename);
+	if (!tex)
+	{
+		Find_Missing_Textures(m_MissingTextureList, tga_filename);
 	}
 
 	//
 	//	Create the texture
 	//
-	TextureClass * texture = WW3DAssetManager::Get_Texture(tga_filename, mip_level_count);
+	TextureClass *texture = WW3DAssetManager::Get_Texture(tga_filename, mip_level_count);
 	return texture;
 }
-
 
 ////////////////////////////////////////////////////////////////////////
 //
 //	Open_Texture_File_Cache
 //
 ////////////////////////////////////////////////////////////////////////
-void
-ViewerAssetMgrClass::Open_Texture_File_Cache (const char * /*prefix*/)
+void ViewerAssetMgrClass::Open_Texture_File_Cache(const char * /*prefix*/)
 {
-	return ;
+	return;
 }
-
 
 ////////////////////////////////////////////////////////////////////////
 //
 //	Close_Texture_File_Cache
 //
 ////////////////////////////////////////////////////////////////////////
-void
-ViewerAssetMgrClass::Close_Texture_File_Cache (void)
+void ViewerAssetMgrClass::Close_Texture_File_Cache(void)
 {
-	return ;
+	return;
 }

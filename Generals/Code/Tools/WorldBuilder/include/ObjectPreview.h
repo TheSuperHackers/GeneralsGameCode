@@ -33,22 +33,20 @@ class ThingTemplate;
 
 class ObjectPreview : public CWnd
 {
-// Construction
+	// Construction
 public:
 	ObjectPreview();
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ObjectPreview)
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~ObjectPreview();
 
@@ -65,7 +63,6 @@ protected:
 	void DrawMyTexture(CDC *pDc, int top, int left, Int width, Int height, UnsignedByte *rgbData);
 
 	const ThingTemplate *m_tTempl;
-
 };
 
 /////////////////////////////////////////////////////////////////////////////

@@ -30,13 +30,13 @@
 
 void main(void)
 {
-  for (int i=0;i<30;i++)
-    DCHECK_MSG(i>100,"run#" << i);
-  Debug::Command("list c");
-  for (int k=0;k<3;k++)
-  {
-    DASSERT(k>4);
-    DASSERT_MSG(k<1,"k must be less than 1...");
-    Debug::Command("list a");
-  }
+	for (int i = 0; i < 30; i++)
+		DCHECK_MSG(i > 100, "run#" << i);
+	Debug::Command("list c");
+	for (int k = 0; k < 3; k++)
+	{
+		DASSERT(k > 4);
+		DASSERT_MSG(k < 1, "k must be less than 1...");
+		Debug::Command("list a");
+	}
 }

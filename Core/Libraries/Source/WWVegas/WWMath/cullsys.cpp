@@ -38,17 +38,14 @@
 #include "wwdebug.h"
 #include "wwprofile.h"
 
-
 /*************************************************************************
 **
 ** CullableClass Implementation
 **
 *************************************************************************/
-CullableClass::CullableClass(void) :
-	CullLink(NULL),
-	NextCollected(NULL)
+CullableClass::CullableClass(void) : CullLink(NULL), NextCollected(NULL)
 {
-	CullBox.Init(Vector3(0,0,0),Vector3(1,1,1));
+	CullBox.Init(Vector3(0, 0, 0), Vector3(1, 1, 1));
 }
 
 CullableClass::~CullableClass(void)
@@ -59,7 +56,7 @@ CullableClass::~CullableClass(void)
 	WWASSERT(CullLink == NULL);
 }
 
-void CullableClass::Set_Cull_Box(const AABoxClass & box,bool just_loaded)
+void CullableClass::Set_Cull_Box(const AABoxClass &box, bool just_loaded)
 {
 	CullBox = box;
 
@@ -68,29 +65,32 @@ void CullableClass::Set_Cull_Box(const AABoxClass & box,bool just_loaded)
 	// Just_loaded flag allows us to update the box without notifying the
 	// culling system.  Use this when you've saved and loaded the linkage
 	// so you know you're in the right node of the culling system...
-	if (!just_loaded) {
-		CullSystemClass * sys = Get_Culling_System();
-		if (sys != NULL) {
+	if (!just_loaded)
+	{
+		CullSystemClass *sys = Get_Culling_System();
+		if (sys != NULL)
+		{
 			sys->Update_Culling(this);
 		}
 	}
 }
 
-void CullableClass::Set_Culling_System(CullSystemClass * sys)
+void CullableClass::Set_Culling_System(CullSystemClass *sys)
 {
-	if (CullLink) {
+	if (CullLink)
+	{
 		CullLink->Set_Culling_System(sys);
 	}
 }
 
-CullSystemClass * CullableClass::Get_Culling_System(void) const
+CullSystemClass *CullableClass::Get_Culling_System(void) const
 {
-	if (CullLink) {
+	if (CullLink)
+	{
 		return CullLink->Get_Culling_System();
 	}
 	return NULL;
 }
-
 
 /*************************************************************************
 **
@@ -100,8 +100,7 @@ CullSystemClass * CullableClass::Get_Culling_System(void) const
 ** current collection list and iterating through it.
 **
 *************************************************************************/
-CullSystemClass::CullSystemClass(void) :
-	CollectionHead(NULL)
+CullSystemClass::CullSystemClass(void) : CollectionHead(NULL)
 {
 }
 
@@ -111,27 +110,29 @@ CullSystemClass::~CullSystemClass(void)
 
 // NOTE: THE Get_() functions currently are the same as the Peek_() functions (e.g., they do not
 // add a Ref). This is wrong and will be fixed.
-CullableClass * CullSystemClass::Get_First_Collected_Object_Internal(void)
+CullableClass *CullSystemClass::Get_First_Collected_Object_Internal(void)
 {
 	return CollectionHead;
 }
 
-CullableClass * CullSystemClass::Get_Next_Collected_Object_Internal(CullableClass * obj)
+CullableClass *CullSystemClass::Get_Next_Collected_Object_Internal(CullableClass *obj)
 {
-	if (obj != NULL) {
+	if (obj != NULL)
+	{
 		return obj->NextCollected;
 	}
 	return NULL;
 }
 
-CullableClass * CullSystemClass::Peek_First_Collected_Object_Internal(void)
+CullableClass *CullSystemClass::Peek_First_Collected_Object_Internal(void)
 {
 	return CollectionHead;
 }
 
-CullableClass * CullSystemClass::Peek_Next_Collected_Object_Internal(CullableClass * obj)
+CullableClass *CullSystemClass::Peek_Next_Collected_Object_Internal(CullableClass *obj)
 {
-	if (obj != NULL) {
+	if (obj != NULL)
+	{
 		return obj->NextCollected;
 	}
 	return NULL;
@@ -142,13 +143,9 @@ void CullSystemClass::Reset_Collection(void)
 	CollectionHead = NULL;
 }
 
-void CullSystemClass::Add_To_Collection(CullableClass * obj)
+void CullSystemClass::Add_To_Collection(CullableClass *obj)
 {
 	WWASSERT(obj != NULL);
 	obj->NextCollected = CollectionHead;
 	CollectionHead = obj;
 }
-
-
-
-

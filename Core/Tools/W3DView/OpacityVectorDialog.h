@@ -37,66 +37,64 @@ class RenderObjClass;
 /////////////////////////////////////////////////////////////////////////////
 class OpacityVectorDialogClass : public CDialog
 {
-// Construction
+	// Construction
 public:
-	OpacityVectorDialogClass(CWnd* pParent = NULL);   // standard constructor
+	OpacityVectorDialogClass(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(OpacityVectorDialogClass)
-	enum { IDD = IDD_OPACITY_VECTOR };
-	CSliderCtrl	m_SliderZ;
-	CSliderCtrl	m_SliderY;
+	enum
+	{
+		IDD = IDD_OPACITY_VECTOR
+	};
+	CSliderCtrl m_SliderZ;
+	CSliderCtrl m_SliderY;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(OpacityVectorDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(OpacityVectorDialogClass)
 	virtual BOOL OnInitDialog();
 	virtual void OnOK();
 	virtual void OnCancel();
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 public:
-
 	////////////////////////////////////////////////////////////////
 	//	Public methods
 	////////////////////////////////////////////////////////////////
-	void								Set_Render_Obj (RenderObjClass *render_obj)			{ m_RenderObj = render_obj; }
-	void								Set_Vector (const AlphaVectorStruct &def_vector)	{ m_Value = def_vector; }
-	const AlphaVectorStruct &	Get_Vector (void) const										{ return m_Value; }
-	void								Set_Key_Index (int index)									{ m_KeyIndex = index; }
+	void Set_Render_Obj(RenderObjClass *render_obj) { m_RenderObj = render_obj; }
+	void Set_Vector(const AlphaVectorStruct &def_vector) { m_Value = def_vector; }
+	const AlphaVectorStruct &Get_Vector(void) const { return m_Value; }
+	void Set_Key_Index(int index) { m_KeyIndex = index; }
 
 private:
-
 	////////////////////////////////////////////////////////////////
 	//	Protected methods
 	////////////////////////////////////////////////////////////////
-	void						Update_Object (const AlphaVectorStruct &value);
-	void						Update_Object (void);
-	AlphaVectorStruct		Update_Value (void);
+	void Update_Object(const AlphaVectorStruct &value);
+	void Update_Object(void);
+	AlphaVectorStruct Update_Value(void);
 
 private:
-
 	////////////////////////////////////////////////////////////////
 	//	Private member data
 	////////////////////////////////////////////////////////////////
-	ColorBarClass *		m_OpacityBar;
-	RenderObjClass *		m_RenderObj;
-	AlphaVectorStruct		m_Value;
-	int						m_KeyIndex;
+	ColorBarClass *m_OpacityBar;
+	RenderObjClass *m_RenderObj;
+	AlphaVectorStruct m_Value;
+	int m_KeyIndex;
 };
 
 //{{AFX_INSERT_LOCATION}}

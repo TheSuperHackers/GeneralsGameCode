@@ -38,31 +38,34 @@ class RingGeneralPropPageClass : public CPropertyPage
 {
 	DECLARE_DYNCREATE(RingGeneralPropPageClass)
 
-// Construction
+	// Construction
 public:
-	RingGeneralPropPageClass (RingRenderObjClass *ring = NULL);
-	~RingGeneralPropPageClass ();
+	RingGeneralPropPageClass(RingRenderObjClass *ring = NULL);
+	~RingGeneralPropPageClass();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(RingGeneralPropPageClass)
-	enum { IDD = IDD_PROP_PAGE_RING_GEN };
-	CSpinButtonCtrl	m_TextureTileSpin;
-	CSpinButtonCtrl	m_LifetimeSpin;
+	enum
+	{
+		IDD = IDD_PROP_PAGE_RING_GEN
+	};
+	CSpinButtonCtrl m_TextureTileSpin;
+	CSpinButtonCtrl m_LifetimeSpin;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(RingGeneralPropPageClass)
-	public:
+public:
 	virtual BOOL OnApply();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(RingGeneralPropPageClass)
@@ -76,9 +79,7 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-
 public:
-
 	/////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////
@@ -86,34 +87,36 @@ public:
 	//
 	//	Inline accessors
 	//
-	RingRenderObjClass *	Get_Ring (void) const					{ return m_RenderObj; }
-	void						Set_Ring (RingRenderObjClass *ring)	{ m_RenderObj = ring; Initialize (); }
-	bool						Is_Data_Valid (void) const				{ return m_bValid; }
+	RingRenderObjClass *Get_Ring(void) const { return m_RenderObj; }
+	void Set_Ring(RingRenderObjClass *ring)
+	{
+		m_RenderObj = ring;
+		Initialize();
+	}
+	bool Is_Data_Valid(void) const { return m_bValid; }
 
-	const CString &		Get_Name (void) const					{ return m_Name; }
-	const CString &		Get_Texture_Filename (void) const	{ return m_TextureFilename; }
-	float						Get_Lifetime (void) const				{ return m_Lifetime; }
-	const ShaderClass &	Get_Shader (void) const					{ return m_Shader; }
+	const CString &Get_Name(void) const { return m_Name; }
+	const CString &Get_Texture_Filename(void) const { return m_TextureFilename; }
+	float Get_Lifetime(void) const { return m_Lifetime; }
+	const ShaderClass &Get_Shader(void) const { return m_Shader; }
 
 protected:
-
 	/////////////////////////////////////////////////////////
 	//	Protected methods
 	/////////////////////////////////////////////////////////
-	void						Initialize (void);
-	void						Add_Shader_To_Combo (ShaderClass &shader, LPCTSTR name);
+	void Initialize(void);
+	void Add_Shader_To_Combo(ShaderClass &shader, LPCTSTR name);
 
 private:
-
 	/////////////////////////////////////////////////////////
 	//	Private member data
 	/////////////////////////////////////////////////////////
-	RingRenderObjClass *		m_RenderObj;
-	CString						m_Name;
-	CString						m_TextureFilename;
-	ShaderClass					m_Shader;
-	float							m_Lifetime;
-	bool							m_bValid;
+	RingRenderObjClass *m_RenderObj;
+	CString m_Name;
+	CString m_TextureFilename;
+	ShaderClass m_Shader;
+	float m_Lifetime;
+	bool m_bValid;
 };
 
 //{{AFX_INSERT_LOCATION}}

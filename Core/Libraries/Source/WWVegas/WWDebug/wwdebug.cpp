@@ -41,9 +41,8 @@
  *   WWDebug_Check_Trigger -- calls the user-installed debug trigger handler                   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "wwdebug.h"
-//#include "win.h" can use this if allowed to see wwlib
+// #include "win.h" can use this if allowed to see wwlib
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -58,26 +57,19 @@
 #include <errno.h>
 #endif
 
-static PrintFunc			_CurMessageHandler = NULL;
-static AssertPrintFunc	_CurAssertHandler = NULL;
-static TriggerFunc		_CurTriggerHandler = NULL;
-static ProfileFunc		_CurProfileStartHandler = NULL;
-static ProfileFunc		_CurProfileStopHandler = NULL;
+static PrintFunc _CurMessageHandler = NULL;
+static AssertPrintFunc _CurAssertHandler = NULL;
+static TriggerFunc _CurTriggerHandler = NULL;
+static ProfileFunc _CurProfileStartHandler = NULL;
+static ProfileFunc _CurProfileStopHandler = NULL;
 
 // Convert the latest system error into a string and return a pointer to
 // a static buffer containing the error string.
 
-void Convert_System_Error_To_String(int id, char* buffer, int buf_len)
+void Convert_System_Error_To_String(int id, char *buffer, int buf_len)
 {
 #ifndef _UNIX
-	FormatMessage(
-		FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL,
-		id,
-		0,
-		buffer,
-		buf_len,
-		NULL);
+	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, id, 0, buffer, buf_len, NULL);
 #endif
 }
 
@@ -109,7 +101,6 @@ PrintFunc WWDebug_Install_Message_Handler(PrintFunc func)
 	return tmp;
 }
 
-
 /***********************************************************************************************
  * WWDebug_Install_Assert_Handler -- Install a function for handling the assert messages       *
  *                                                                                             *
@@ -129,7 +120,6 @@ AssertPrintFunc WWDebug_Install_Assert_Handler(AssertPrintFunc func)
 	return tmp;
 }
 
-
 /***********************************************************************************************
  * WWDebug_Install_Trigger_Handler -- install a trigger handler function                       *
  *                                                                                             *
@@ -142,13 +132,12 @@ AssertPrintFunc WWDebug_Install_Assert_Handler(AssertPrintFunc func)
  * HISTORY:                                                                                    *
  *   2/24/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-TriggerFunc	WWDebug_Install_Trigger_Handler(TriggerFunc func)
+TriggerFunc WWDebug_Install_Trigger_Handler(TriggerFunc func)
 {
 	TriggerFunc tmp = _CurTriggerHandler;
 	_CurTriggerHandler = func;
 	return tmp;
 }
-
 
 /***********************************************************************************************
  * WWDebug_Install_Profile_Start_Handler -- install a profile handler function                 *
@@ -162,13 +151,12 @@ TriggerFunc	WWDebug_Install_Trigger_Handler(TriggerFunc func)
  * HISTORY:                                                                                    *
  *   2/24/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-ProfileFunc	WWDebug_Install_Profile_Start_Handler(ProfileFunc func)
+ProfileFunc WWDebug_Install_Profile_Start_Handler(ProfileFunc func)
 {
 	ProfileFunc tmp = _CurProfileStartHandler;
 	_CurProfileStartHandler = func;
 	return tmp;
 }
-
 
 /***********************************************************************************************
  * WWDebug_Install_Profile_Stop_Handler -- install a profile handler function                  *
@@ -182,13 +170,12 @@ ProfileFunc	WWDebug_Install_Profile_Start_Handler(ProfileFunc func)
  * HISTORY:                                                                                    *
  *   2/24/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-ProfileFunc	WWDebug_Install_Profile_Stop_Handler(ProfileFunc func)
+ProfileFunc WWDebug_Install_Profile_Stop_Handler(ProfileFunc func)
 {
 	ProfileFunc tmp = _CurProfileStopHandler;
 	_CurProfileStopHandler = func;
 	return tmp;
 }
-
 
 /***********************************************************************************************
  * WWDebug_Printf -- Internal function for passing messages to installed handler               *
@@ -203,11 +190,11 @@ ProfileFunc	WWDebug_Install_Profile_Stop_Handler(ProfileFunc func)
  *   2/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
 
-void WWDebug_Printf(const char * format,...)
+void WWDebug_Printf(const char *format, ...)
 {
-	if (_CurMessageHandler != NULL) {
-
-		va_list	va;
+	if (_CurMessageHandler != NULL)
+	{
+		va_list va;
 		char buffer[4096];
 
 		va_start(va, format);
@@ -216,7 +203,6 @@ void WWDebug_Printf(const char * format,...)
 
 		_CurMessageHandler(WWDEBUG_TYPE_INFORMATION, buffer);
 		va_end(va);
-
 	}
 }
 
@@ -233,11 +219,11 @@ void WWDebug_Printf(const char * format,...)
  *   2/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
 
-void WWDebug_Printf_Warning(const char * format,...)
+void WWDebug_Printf_Warning(const char *format, ...)
 {
-	if (_CurMessageHandler != NULL) {
-
-		va_list	va;
+	if (_CurMessageHandler != NULL)
+	{
+		va_list va;
 		char buffer[4096];
 
 		va_start(va, format);
@@ -246,7 +232,6 @@ void WWDebug_Printf_Warning(const char * format,...)
 
 		_CurMessageHandler(WWDEBUG_TYPE_WARNING, buffer);
 		va_end(va);
-
 	}
 }
 
@@ -263,11 +248,11 @@ void WWDebug_Printf_Warning(const char * format,...)
  *   2/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
 
-void WWDebug_Printf_Error(const char * format,...)
+void WWDebug_Printf_Error(const char *format, ...)
 {
-	if (_CurMessageHandler != NULL) {
-
-		va_list	va;
+	if (_CurMessageHandler != NULL)
+	{
+		va_list va;
 		char buffer[4096];
 
 		va_start(va, format);
@@ -276,7 +261,6 @@ void WWDebug_Printf_Error(const char * format,...)
 
 		_CurMessageHandler(WWDEBUG_TYPE_ERROR, buffer);
 		va_end(va);
-
 	}
 }
 
@@ -293,43 +277,47 @@ void WWDebug_Printf_Error(const char * format,...)
  *   2/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
 #ifdef WWDEBUG
-void WWDebug_Assert_Fail(const char * expr,const char * file, int line)
+void WWDebug_Assert_Fail(const char *expr, const char *file, int line)
 {
-	if (_CurAssertHandler != NULL) {
-
+	if (_CurAssertHandler != NULL)
+	{
 		char buffer[4096];
-		sprintf(buffer,"%s (%d) Assert: %s\n",file,line,expr);
+		sprintf(buffer, "%s (%d) Assert: %s\n", file, line, expr);
 		_CurAssertHandler(buffer);
-
-	} else {
-
+	}
+	else
+	{
 		/*
 		// If the exception handler is try to quit the game then don't show an assert.
 		*/
-		if (Is_Trying_To_Exit()) {
+		if (Is_Trying_To_Exit())
+		{
 			ExitProcess(0);
 		}
 
-      char assertbuf[4096];
+		char assertbuf[4096];
 		sprintf(assertbuf, "Assert failed\n\n. File %s Line %d", file, line);
 
-      int code = MessageBoxA(NULL, assertbuf, "WWDebug_Assert_Fail", MB_ABORTRETRYIGNORE|MB_ICONHAND|MB_SETFOREGROUND|MB_TASKMODAL);
+		int code = MessageBoxA(
+				NULL,
+				assertbuf,
+				"WWDebug_Assert_Fail",
+				MB_ABORTRETRYIGNORE | MB_ICONHAND | MB_SETFOREGROUND | MB_TASKMODAL);
 
-      if (code == IDABORT) {
-      	raise(SIGABRT);
-      	_exit(3);
-      }
-
-		if (code == IDRETRY) {
-			WWDEBUG_BREAK
-      	return;
+		if (code == IDABORT)
+		{
+			raise(SIGABRT);
+			_exit(3);
 		}
-   }
+
+		if (code == IDRETRY)
+		{
+			WWDEBUG_BREAK
+			return;
+		}
+	}
 }
 #endif
-
-
-
 
 /***********************************************************************************************
  * _assert -- Catch all asserts by overriding lib function                                     *
@@ -353,12 +341,10 @@ void __cdecl _assert(void *expr, void *filename, unsigned lineno)
 {
 	WWDebug_Assert_Fail((const char*)expr, (const char*)filename, lineno);
 }
-#endif //WWDEBUG
+#endif // WWDEBUG
 #endif
 
 #endif
-
-
 
 /***********************************************************************************************
  * WWDebug_Assert_Fail_Print -- Internal function, passes assert message to handler            *
@@ -373,22 +359,20 @@ void __cdecl _assert(void *expr, void *filename, unsigned lineno)
  *   2/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
 #ifdef WWDEBUG
-void WWDebug_Assert_Fail_Print(const char * expr,const char * file, int line,const char * string)
+void WWDebug_Assert_Fail_Print(const char *expr, const char *file, int line, const char *string)
 {
-	if (_CurAssertHandler != NULL) {
-
+	if (_CurAssertHandler != NULL)
+	{
 		char buffer[4096];
-		sprintf(buffer,"%s (%d) Assert: %s %s\n",file,line,expr, string);
+		sprintf(buffer, "%s (%d) Assert: %s %s\n", file, line, expr, string);
 		_CurAssertHandler(buffer);
-
-	} else {
-
+	}
+	else
+	{
 		assert(0);
-
 	}
 }
 #endif
-
 
 /***********************************************************************************************
  * WWDebug_Check_Trigger -- calls the user-installed debug trigger handler                     *
@@ -404,13 +388,15 @@ void WWDebug_Assert_Fail_Print(const char * expr,const char * file, int line,con
  *=============================================================================================*/
 bool WWDebug_Check_Trigger(int trigger_num)
 {
-	if (_CurTriggerHandler != NULL) {
+	if (_CurTriggerHandler != NULL)
+	{
 		return _CurTriggerHandler(trigger_num);
-	} else {
+	}
+	else
+	{
 		return false;
 	}
 }
-
 
 /***********************************************************************************************
  * WWDebug_Profile_Start -- calls the user-installed profile start handler                     *
@@ -424,13 +410,13 @@ bool WWDebug_Check_Trigger(int trigger_num)
  * HISTORY:                                                                                    *
  *   2/24/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void WWDebug_Profile_Start( const char * title)
+void WWDebug_Profile_Start(const char *title)
 {
-	if (_CurProfileStartHandler != NULL) {
-		_CurProfileStartHandler( title );
+	if (_CurProfileStartHandler != NULL)
+	{
+		_CurProfileStartHandler(title);
 	}
 }
-
 
 /***********************************************************************************************
  * WWDebug_Profile_Stop -- calls the user-installed profile start handler                      *
@@ -444,14 +430,13 @@ void WWDebug_Profile_Start( const char * title)
  * HISTORY:                                                                                    *
  *   2/24/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void WWDebug_Profile_Stop( const char * title)
+void WWDebug_Profile_Stop(const char *title)
 {
-	if (_CurProfileStopHandler != NULL) {
-		_CurProfileStopHandler( title );
+	if (_CurProfileStopHandler != NULL)
+	{
+		_CurProfileStopHandler(title);
 	}
 }
-
-
 
 #ifdef WWDEBUG
 /***********************************************************************************************
@@ -466,64 +451,63 @@ void WWDebug_Profile_Stop( const char * title)
  * HISTORY:                                                                                    *
  *   10/30/98    BMG : Created.                                                                *
  *=============================================================================================*/
-void WWDebug_DBWin32_Message_Handler( const char * str )
+void WWDebug_DBWin32_Message_Handler(const char *str)
 {
+	HANDLE heventDBWIN; /* DBWIN32 synchronization object */
+	HANDLE heventData; /* data passing synch object */
+	HANDLE hSharedFile; /* memory mapped file shared data */
+	LPSTR lpszSharedMem;
 
-    HANDLE heventDBWIN;  /* DBWIN32 synchronization object */
-    HANDLE heventData;   /* data passing synch object */
-    HANDLE hSharedFile;  /* memory mapped file shared data */
-    LPSTR lpszSharedMem;
+	/* make sure DBWIN is open and waiting */
+	heventDBWIN = OpenEvent(EVENT_MODIFY_STATE, FALSE, "DBWIN_BUFFER_READY");
+	if (!heventDBWIN)
+	{
+		// MessageBox(NULL, "DBWIN_BUFFER_READY nonexistent", NULL, MB_OK);
+		return;
+	}
 
-    /* make sure DBWIN is open and waiting */
-    heventDBWIN = OpenEvent(EVENT_MODIFY_STATE, FALSE, "DBWIN_BUFFER_READY");
-    if ( !heventDBWIN )
-    {
-        //MessageBox(NULL, "DBWIN_BUFFER_READY nonexistent", NULL, MB_OK);
-        return;
-    }
+	/* get a handle to the data synch object */
+	heventData = OpenEvent(EVENT_MODIFY_STATE, FALSE, "DBWIN_DATA_READY");
+	if (!heventData)
+	{
+		// MessageBox(NULL, "DBWIN_DATA_READY nonexistent", NULL, MB_OK);
+		CloseHandle(heventDBWIN);
+		return;
+	}
 
-    /* get a handle to the data synch object */
-    heventData = OpenEvent(EVENT_MODIFY_STATE, FALSE, "DBWIN_DATA_READY");
-    if ( !heventData )
-    {
-        // MessageBox(NULL, "DBWIN_DATA_READY nonexistent", NULL, MB_OK);
-        CloseHandle(heventDBWIN);
-        return;
-    }
+	hSharedFile = CreateFileMapping((HANDLE)-1, NULL, PAGE_READWRITE, 0, 4096, "DBWIN_BUFFER");
+	if (!hSharedFile)
+	{
+		// MessageBox(NULL, "DebugTrace: Unable to create file mapping object DBWIN_BUFFER", "Error", MB_OK);
+		CloseHandle(heventDBWIN);
+		CloseHandle(heventData);
+		return;
+	}
 
-    hSharedFile = CreateFileMapping((HANDLE)-1, NULL, PAGE_READWRITE, 0, 4096, "DBWIN_BUFFER");
-    if (!hSharedFile)
-    {
-        //MessageBox(NULL, "DebugTrace: Unable to create file mapping object DBWIN_BUFFER", "Error", MB_OK);
-        CloseHandle(heventDBWIN);
-        CloseHandle(heventData);
-        return;
-    }
+	lpszSharedMem = (LPSTR)MapViewOfFile(hSharedFile, FILE_MAP_WRITE, 0, 0, 512);
+	if (!lpszSharedMem)
+	{
+		// MessageBox(NULL, "DebugTrace: Unable to map shared memory", "Error", MB_OK);
+		CloseHandle(heventDBWIN);
+		CloseHandle(heventData);
+		return;
+	}
 
-    lpszSharedMem = (LPSTR)MapViewOfFile(hSharedFile, FILE_MAP_WRITE, 0, 0, 512);
-    if (!lpszSharedMem)
-    {
-        //MessageBox(NULL, "DebugTrace: Unable to map shared memory", "Error", MB_OK);
-        CloseHandle(heventDBWIN);
-        CloseHandle(heventData);
-        return;
-    }
+	/* wait for buffer event */
+	WaitForSingleObject(heventDBWIN, INFINITE);
 
-    /* wait for buffer event */
-    WaitForSingleObject(heventDBWIN, INFINITE);
+	/* write it to the shared memory */
+	*((LPDWORD)lpszSharedMem) = 0;
+	wsprintf(lpszSharedMem + sizeof(DWORD), "%s", str);
 
-    /* write it to the shared memory */
-    *((LPDWORD)lpszSharedMem) = 0;
-    wsprintf(lpszSharedMem + sizeof(DWORD), "%s", str);
+	/* signal data ready event */
+	SetEvent(heventData);
 
-    /* signal data ready event */
-    SetEvent(heventData);
+	/* clean up handles */
+	CloseHandle(hSharedFile);
+	CloseHandle(heventData);
+	CloseHandle(heventDBWIN);
 
-    /* clean up handles */
-    CloseHandle(hSharedFile);
-    CloseHandle(heventData);
-    CloseHandle(heventDBWIN);
-
-    return;
+	return;
 }
 #endif // WWDEBUG

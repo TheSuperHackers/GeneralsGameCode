@@ -31,38 +31,49 @@
 /////////////////////////////////////////////////////////////////////////////
 /// GlobalLightOptions modeless (floating) dialog - allows entry and display of brush width and feather.
 
-#define  GLOBALLIGHT_OPTIONS_PANEL_SECTION "LightOptionsWindow"
+#define GLOBALLIGHT_OPTIONS_PANEL_SECTION "LightOptionsWindow"
 
-class GlobalLightOptions : public CDialog	, public PopupSliderOwner
+class GlobalLightOptions : public CDialog, public PopupSliderOwner
 {
-// Construction
+	// Construction
 public:
-	enum {K_TERRAIN=1, K_OBJECTS=2, K_BOTH=3};
-	enum {K_SUN=0, K_ACCENT1=1, K_ACCENT2=2};
-	int kUIRedIDs[3];// = {IDC_RD_EDIT, IDC_RD_EDIT1, IDC_RD_EDIT2};
-	int kUIGreenIDs[3];// = {IDC_GD_EDIT, IDC_GD_EDIT1, IDC_GD_EDIT2};
-	int kUIBlueIDs[3];// = {IDC_BD_EDIT, IDC_BD_EDIT1, IDC_BD_EDIT2};
+	enum
+	{
+		K_TERRAIN = 1,
+		K_OBJECTS = 2,
+		K_BOTH = 3
+	};
+	enum
+	{
+		K_SUN = 0,
+		K_ACCENT1 = 1,
+		K_ACCENT2 = 2
+	};
+	int kUIRedIDs[3]; // = {IDC_RD_EDIT, IDC_RD_EDIT1, IDC_RD_EDIT2};
+	int kUIGreenIDs[3]; // = {IDC_GD_EDIT, IDC_GD_EDIT1, IDC_GD_EDIT2};
+	int kUIBlueIDs[3]; // = {IDC_BD_EDIT, IDC_BD_EDIT1, IDC_BD_EDIT2};
 	CButtonShowColor m_colorButton;
 
-	GlobalLightOptions(CWnd* pParent = NULL);   // standard constructor
+	GlobalLightOptions(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(GlobalLightOptions)
-	enum { IDD = IDD_GLOBAL_LIGHT_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_GLOBAL_LIGHT_OPTIONS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(GlobalLightOptions)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(GlobalLightOptions)
 	virtual BOOL OnInitDialog();
@@ -77,64 +88,66 @@ protected:
 	afx_msg void OnColorPress();
 	afx_msg void OnResetLights();
 	afx_msg void OnClose();
-	virtual void OnOK(){return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel(){return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
+	virtual void OnOK() { return; }; //!< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() { return; }; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 private:
-	Real	ComponentToPercent(Int component)
+	Real ComponentToPercent(Int component)
 	{
-			Real percent;
-			if (component >= 255) {
-				return 1.0;
-			}
-			if (component <= 0) {
-				return 0.0;
-			}
-			percent = (Real)component/255.0;
-			return percent;
+		Real percent;
+		if (component >= 255)
+		{
+			return 1.0;
+		}
+		if (component <= 0)
+		{
+			return 0.0;
+		}
+		percent = (Real)component / 255.0;
+		return percent;
 	}
-	Int		PercentToComponent(Real percent)
+	Int PercentToComponent(Real percent)
 	{
-			Int component;
-			if (percent >= 1.0) {
-				return 255;
-			}
-			if (percent <= 0.0) {
-				return 0;
-			}
-			component = (percent * 255.0);
-			return component;
+		Int component;
+		if (percent >= 1.0)
+		{
+			return 255;
+		}
+		if (percent <= 0.0)
+		{
+			return 0;
+		}
+		component = (percent * 255.0);
+		return component;
 	};
-	BOOL	GetInt(Int ctrlID, Int *rVal);
-	void	PutInt(Int ctrlID, Int val);
+	BOOL GetInt(Int ctrlID, Int *rVal);
+	void PutInt(Int ctrlID, Int val);
 
 protected:
-
-	Bool		m_updating; ///<true if the ui is updating itself.
+	Bool m_updating; ///< true if the ui is updating itself.
 	WBPopupSliderButton m_frontBackPopup;
 	WBPopupSliderButton m_leftRightPopup;
 	WBPopupSliderButton m_frontBackPopupAccent1;
 	WBPopupSliderButton m_leftRightPopupAccent1;
 	WBPopupSliderButton m_frontBackPopupAccent2;
 	WBPopupSliderButton m_leftRightPopupAccent2;
-	Int			m_angleAzimuth[3];
-	Int			m_angleElevation[3];
-	Int			m_lighting;
+	Int m_angleAzimuth[3];
+	Int m_angleElevation[3];
+	Int m_lighting;
 
 protected:
-	void applyAngle(Int lightIndex=0);
-	void showLightFeedback(Int lightIndex=0);
-	void applyColor(Int lightIndex=0);
+	void applyAngle(Int lightIndex = 0);
+	void showLightFeedback(Int lightIndex = 0);
+	void applyColor(Int lightIndex = 0);
 	void updateEditFields(void);
 	void stuffValuesIntoFields(Int lightIndex = 0);
-public:
 
+public:
 	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial);
 	virtual void PopSliderChanged(const long sliderID, long theVal);
 	virtual void PopSliderFinished(const long sliderID, long theVal);
-
 };
 
 //{{AFX_INSERT_LOCATION}}

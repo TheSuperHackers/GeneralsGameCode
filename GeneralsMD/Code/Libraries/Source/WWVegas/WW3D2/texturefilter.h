@@ -41,13 +41,13 @@
 #define TEXTUREFILTER_H
 
 #ifndef DX8_WRAPPER_H
-//#include "dx8wrapper.h"
+// #include "dx8wrapper.h"
 #endif
 
 enum MipCountType
 {
-	MIP_LEVELS_ALL=0,		// generate all mipmap levels down to 1x1 size
-	MIP_LEVELS_1,			// no mipmapping at all (just one mip level)
+	MIP_LEVELS_ALL = 0, // generate all mipmap levels down to 1x1 size
+	MIP_LEVELS_1, // no mipmapping at all (just one mip level)
 	MIP_LEVELS_2,
 	MIP_LEVELS_3,
 	MIP_LEVELS_4,
@@ -58,9 +58,8 @@ enum MipCountType
 	MIP_LEVELS_10,
 	MIP_LEVELS_11,
 	MIP_LEVELS_12,
-	MIP_LEVELS_MAX			// This isn't to be used (use MIP_LEVELS_ALL instead), it is just an enum for creating static tables etc.
+	MIP_LEVELS_MAX // This isn't to be used (use MIP_LEVELS_ALL instead), it is just an enum for creating static tables etc.
 };
-
 
 // NOTE: Since "texture wrapping" (NOT TEXTURE WRAP MODE - THIS IS
 // SOMETHING ELSE) is a global state that affects all texture stages,
@@ -73,7 +72,6 @@ enum MipCountType
 class TextureFilterClass
 {
 public:
-
 	enum FilterType
 	{
 		FILTER_TYPE_NONE,
@@ -92,11 +90,11 @@ public:
 
 	enum TxtAddrMode
 	{
-		TEXTURE_ADDRESS_REPEAT=0,
+		TEXTURE_ADDRESS_REPEAT = 0,
 		TEXTURE_ADDRESS_CLAMP
 	};
 
-	TextureFilterClass(MipCountType mip_level_count=MIP_LEVELS_1);
+	TextureFilterClass(MipCountType mip_level_count = MIP_LEVELS_1);
 
 	void Apply(unsigned int stage);
 
@@ -104,15 +102,15 @@ public:
 	FilterType Get_Min_Filter(void) const { return TextureMinFilter; }
 	FilterType Get_Mag_Filter(void) const { return TextureMagFilter; }
 	FilterType Get_Mip_Mapping(void) const { return MipMapFilter; }
-	void Set_Min_Filter(FilterType filter) { TextureMinFilter=filter; }
-	void Set_Mag_Filter(FilterType filter) { TextureMagFilter=filter; }
+	void Set_Min_Filter(FilterType filter) { TextureMinFilter = filter; }
+	void Set_Mag_Filter(FilterType filter) { TextureMagFilter = filter; }
 	void Set_Mip_Mapping(FilterType mipmap);
 
 	// Texture address mode
 	TxtAddrMode Get_U_Addr_Mode(void) const { return UAddressMode; }
 	TxtAddrMode Get_V_Addr_Mode(void) const { return VAddressMode; }
-	void Set_U_Addr_Mode(TxtAddrMode mode) { UAddressMode=mode; }
-	void Set_V_Addr_Mode(TxtAddrMode mode) { VAddressMode=mode; }
+	void Set_U_Addr_Mode(TxtAddrMode mode) { UAddressMode = mode; }
+	void Set_V_Addr_Mode(TxtAddrMode mode) { VAddressMode = mode; }
 
 	// This needs to be called after device has been created
 	static void _Init_Filters(TextureFilterMode texture_filter);

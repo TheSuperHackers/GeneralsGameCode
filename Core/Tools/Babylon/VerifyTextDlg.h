@@ -30,29 +30,31 @@
 
 class CVerifyTextDlg : public CDialog
 {
-// Construction
+	// Construction
 	char *m_trans;
 	char *m_orig;
-public:
-	CVerifyTextDlg(char *trans, char *orig, CWnd* pParent = NULL);   // standard constructor
 
-// Dialog Data
+public:
+	CVerifyTextDlg(char *trans, char *orig, CWnd *pParent = NULL); // standard constructor
+
+	// Dialog Data
 	//{{AFX_DATA(CVerifyTextDlg)
-	enum { IDD = IDD_VERIFYTEXT };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_VERIFYTEXT
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CVerifyTextDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CVerifyTextDlg)
 	afx_msg void OnNomatch();

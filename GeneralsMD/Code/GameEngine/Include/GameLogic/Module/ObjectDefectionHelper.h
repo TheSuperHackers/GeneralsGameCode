@@ -42,30 +42,26 @@
 // ------------------------------------------------------------------------------------------------
 class ObjectDefectionHelperModuleData : public ModuleData
 {
-
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class ObjectDefectionHelper : public ObjectHelper
 {
-
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ObjectDefectionHelper, ObjectDefectionHelperModuleData )
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectDefectionHelper, "ObjectDefectionHelperPool" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(ObjectDefectionHelper, ObjectDefectionHelperModuleData)
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectDefectionHelper, "ObjectDefectionHelperPool")
 
 private:
-
-	UnsignedInt   m_defectionDetectionStart;				///< this is the timer, mentioned above (absolute frame, NOT counter)
-	UnsignedInt   m_defectionDetectionEnd;					///< this is the timer, mentioned above (absolute frame, NOT counter)
-	Real          m_defectionDetectionFlashPhase;   ///< keeps track of the flashing rate logarithmic curve
-	Bool					m_doDefectorFX;	///<AmericaInfPilot uses defect to become temporarily "invulnerable"
+	UnsignedInt m_defectionDetectionStart; ///< this is the timer, mentioned above (absolute frame, NOT counter)
+	UnsignedInt m_defectionDetectionEnd; ///< this is the timer, mentioned above (absolute frame, NOT counter)
+	Real m_defectionDetectionFlashPhase; ///< keeps track of the flashing rate logarithmic curve
+	Bool m_doDefectorFX; ///< AmericaInfPilot uses defect to become temporarily "invulnerable"
 
 public:
-
-	ObjectDefectionHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData )
+	ObjectDefectionHelper(Thing *thing, const ModuleData *modData) : ObjectHelper(thing, modData)
 	{
-		//Added By Sadullah Nader
-		//Initializations inserted
+		// Added By Sadullah Nader
+		// Initializations inserted
 		m_defectionDetectionEnd = 0;
 		m_defectionDetectionFlashPhase = FALSE;
 		m_defectionDetectionStart = 0;
@@ -81,8 +77,6 @@ public:
 
 	// specific to this class.
 	void startDefectionTimer(UnsignedInt numFrames, Bool withDefectorFX = TRUE);
-
 };
 
-
-#endif  // end __OBJECT_DEFECTION_HELPER_H_
+#endif // end __OBJECT_DEFECTION_HELPER_H_

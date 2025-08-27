@@ -84,42 +84,39 @@ class AsciiString;
 class UnicodeString
 {
 private:
-
 	// Note, this is a Plain Old Data Structure... don't
 	// add a ctor/dtor, 'cuz they won't ever be called.
 	struct UnicodeStringData
 	{
 #if defined(RTS_DEBUG)
-		const WideChar* m_debugptr;	// just makes it easier to read in the debugger
+		const WideChar *m_debugptr; // just makes it easier to read in the debugger
 #endif
-		unsigned short	m_refCount;						// reference count
-		unsigned short	m_numCharsAllocated;  // length of data allocated
+		unsigned short m_refCount; // reference count
+		unsigned short m_numCharsAllocated; // length of data allocated
 		// WideChar m_stringdata[];
 
-		inline WideChar* peek() { return (WideChar*)(this+1); }
+		inline WideChar *peek() { return (WideChar *)(this + 1); }
 	};
 
-	#ifdef RTS_DEBUG
+#ifdef RTS_DEBUG
 	void validate() const;
-	#else
-	inline void validate() const { }
-	#endif
+#else
+	inline void validate() const {}
+#endif
 
 protected:
-	UnicodeStringData* m_data;   // pointer to ref counted string data
+	UnicodeStringData *m_data; // pointer to ref counted string data
 
-	WideChar* peek() const;
+	WideChar *peek() const;
 	void releaseBuffer();
-	void ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData, const WideChar* strToCpy, const WideChar* strToCat);
+	void ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData, const WideChar *strToCpy, const WideChar *strToCat);
 
 public:
-
 	enum
 	{
-		MAX_FORMAT_BUF_LEN = 2048,		///< max total len of string created by format/format_va
-		MAX_LEN = 32767							///< max total len of any UnicodeString, in chars
+		MAX_FORMAT_BUF_LEN = 2048, ///< max total len of string created by format/format_va
+		MAX_LEN = 32767 ///< max total len of any UnicodeString, in chars
 	};
-
 
 	/**
 		This is a convenient global used to indicate the empty
@@ -138,7 +135,7 @@ public:
 		they will simply share the same string and increment the
 		refcount.)
 	*/
-	UnicodeString(const UnicodeString& stringSrc);
+	UnicodeString(const UnicodeString &stringSrc);
 	/**
 		Constructor -- from a literal string. Constructs an UnicodeString
 		with the given string. Note that a copy of the string is made;
@@ -146,7 +143,7 @@ public:
 		Note that this is no longer explicit, as the conversion is almost
 		always wanted, anyhow.
 	*/
-	UnicodeString(const WideChar* s);
+	UnicodeString(const WideChar *s);
 
 	/**
 		Destructor. Not too exciting... clean up the works and such.
@@ -183,7 +180,7 @@ public:
 		impossible (or at least, really difficuly) for someone to change our
 		private data, since it might be shared amongst other UnicodeStrings.
 	*/
-	const WideChar* str() const;
+	const WideChar *str() const;
 
 	/**
 		Makes sure there is room for a string of len+1 characters, and
@@ -191,7 +188,7 @@ public:
 		string buffer is NOT shared.  This is intended for the file reader,
 		that is reading new strings in from a file. jba.
 	*/
-	WideChar* getBufferForRead(Int len);
+	WideChar *getBufferForRead(Int len);
 
 	/**
 		Replace the contents of self with the given string.
@@ -199,12 +196,12 @@ public:
 		they will simply share the same string and increment the
 		refcount.)
 	*/
-	void set(const UnicodeString& stringSrc);
+	void set(const UnicodeString &stringSrc);
 	/**
 		Replace the contents of self with the given string.
 		Note that a copy of the string is made; the input ptr is not saved.
 	*/
-	void set(const WideChar* s);
+	void set(const WideChar *s);
 
 	/**
 		replace contents of self with the given string. Note the
@@ -213,33 +210,33 @@ public:
 		UnicodeStrings, so some data manipulation may be necessary,
 		and the resulting strings may not be equivalent.
 	*/
-	void translate(const AsciiString& stringSrc);
+	void translate(const AsciiString &stringSrc);
 
 	/**
 		Concatenate the given string onto self.
 	*/
-	void concat(const UnicodeString& stringSrc);
+	void concat(const UnicodeString &stringSrc);
 	/**
 		Concatenate the given string onto self.
 	*/
-	void concat(const WideChar* s);
+	void concat(const WideChar *s);
 	/**
 		Concatenate the given character onto self.
 	*/
 	void concat(const WideChar c);
 
 	/**
-	  Remove leading and trailing whitespace from the string.
+		Remove leading and trailing whitespace from the string.
 	*/
-	void trim( void );
+	void trim(void);
 
 	/**
-	  Remove trailing whitespace from the string.
+		Remove trailing whitespace from the string.
 	*/
 	void trimEnd(void);
 
 	/**
-	  Remove all consecutive occurances of c from the end of the string.
+		Remove all consecutive occurances of c from the end of the string.
 	*/
 	void trimEnd(const WideChar c);
 
@@ -268,30 +265,30 @@ public:
 		and stores the result in self.
 	*/
 	void format(UnicodeString format, ...);
-	void format(const WideChar* format, ...);
+	void format(const WideChar *format, ...);
 	/**
 		Identical to format(), but takes a va_list rather than
 		a variable argument list. (i.e., analogous to vsprintf.)
 	*/
-	void format_va(const UnicodeString& format, va_list args);
-	void format_va(const WideChar* format, va_list args);
+	void format_va(const UnicodeString &format, va_list args);
+	void format_va(const WideChar *format, va_list args);
 
 	/**
 		Conceptually identical to wsccmp().
 	*/
-	int compare(const UnicodeString& stringSrc) const;
+	int compare(const UnicodeString &stringSrc) const;
 	/**
 		Conceptually identical to wsccmp().
 	*/
-	int compare(const WideChar* s) const;
+	int compare(const WideChar *s) const;
 	/**
 		Conceptually identical to _wcsicmp().
 	*/
-	int compareNoCase(const UnicodeString& stringSrc) const;
+	int compareNoCase(const UnicodeString &stringSrc) const;
 	/**
 		Conceptually identical to _wcsicmp().
 	*/
-	int compareNoCase(const WideChar* s) const;
+	int compareNoCase(const WideChar *s) const;
 
 	/**
 		conceptually similar to strtok():
@@ -301,25 +298,24 @@ public:
 		token was found. (note that this modifies 'this' as well, stripping
 		the token off!)
 	*/
-	Bool nextToken(UnicodeString* token, UnicodeString delimiters = UnicodeString::TheEmptyString);
+	Bool nextToken(UnicodeString *token, UnicodeString delimiters = UnicodeString::TheEmptyString);
 
-//
-// You might think it would be a good idea to overload the * operator
-// to allow for an implicit conversion to an WideChar*. This is
-// in theory a good idea, but in practice, there's lots of code
-// that assumes it should check text fields for null, which
-// is meaningless for us, since we never return a null ptr.
-//
-//	operator const WideChar*() const { return str(); }
-//
+	//
+	// You might think it would be a good idea to overload the * operator
+	// to allow for an implicit conversion to an WideChar*. This is
+	// in theory a good idea, but in practice, there's lots of code
+	// that assumes it should check text fields for null, which
+	// is meaningless for us, since we never return a null ptr.
+	//
+	//	operator const WideChar*() const { return str(); }
+	//
 
-	UnicodeString& operator=(const UnicodeString& stringSrc);	///< the same as set()
-	UnicodeString& operator=(const WideChar* s);				///< the same as set()
+	UnicodeString &operator=(const UnicodeString &stringSrc); ///< the same as set()
+	UnicodeString &operator=(const WideChar *s); ///< the same as set()
 };
 
-
 // -----------------------------------------------------
-inline WideChar* UnicodeString::peek() const
+inline WideChar *UnicodeString::peek() const
 {
 	DEBUG_ASSERTCRASH(m_data, ("null string ptr"));
 	validate();
@@ -377,7 +373,7 @@ inline WideChar UnicodeString::getCharAt(int index) const
 }
 
 // -----------------------------------------------------
-inline const WideChar* UnicodeString::str() const
+inline const WideChar *UnicodeString::str() const
 {
 	validate();
 	static const WideChar TheNullChr = 0;
@@ -385,7 +381,7 @@ inline const WideChar* UnicodeString::str() const
 }
 
 // -----------------------------------------------------
-inline UnicodeString& UnicodeString::operator=(const UnicodeString& stringSrc)
+inline UnicodeString &UnicodeString::operator=(const UnicodeString &stringSrc)
 {
 	validate();
 	set(stringSrc);
@@ -394,7 +390,7 @@ inline UnicodeString& UnicodeString::operator=(const UnicodeString& stringSrc)
 }
 
 // -----------------------------------------------------
-inline UnicodeString& UnicodeString::operator=(const WideChar* s)
+inline UnicodeString &UnicodeString::operator=(const WideChar *s)
 {
 	validate();
 	set(s);
@@ -403,7 +399,7 @@ inline UnicodeString& UnicodeString::operator=(const WideChar* s)
 }
 
 // -----------------------------------------------------
-inline void UnicodeString::concat(const UnicodeString& stringSrc)
+inline void UnicodeString::concat(const UnicodeString &stringSrc)
 {
 	validate();
 	concat(stringSrc.str());
@@ -421,65 +417,65 @@ inline void UnicodeString::concat(const WideChar c)
 }
 
 // -----------------------------------------------------
-inline int UnicodeString::compare(const UnicodeString& stringSrc) const
+inline int UnicodeString::compare(const UnicodeString &stringSrc) const
 {
 	validate();
 	return wcscmp(this->str(), stringSrc.str());
 }
 
 // -----------------------------------------------------
-inline int UnicodeString::compare(const WideChar* s) const
+inline int UnicodeString::compare(const WideChar *s) const
 {
 	validate();
 	return wcscmp(this->str(), s);
 }
 
 // -----------------------------------------------------
-inline int UnicodeString::compareNoCase(const UnicodeString& stringSrc) const
+inline int UnicodeString::compareNoCase(const UnicodeString &stringSrc) const
 {
 	validate();
 	return _wcsicmp(this->str(), stringSrc.str());
 }
 
 // -----------------------------------------------------
-inline int UnicodeString::compareNoCase(const WideChar* s) const
+inline int UnicodeString::compareNoCase(const WideChar *s) const
 {
 	validate();
 	return _wcsicmp(this->str(), s);
 }
 
 // -----------------------------------------------------
-inline Bool operator==(const UnicodeString& s1, const UnicodeString& s2)
+inline Bool operator==(const UnicodeString &s1, const UnicodeString &s2)
 {
 	return wcscmp(s1.str(), s2.str()) == 0;
 }
 
 // -----------------------------------------------------
-inline Bool operator!=(const UnicodeString& s1, const UnicodeString& s2)
+inline Bool operator!=(const UnicodeString &s1, const UnicodeString &s2)
 {
 	return wcscmp(s1.str(), s2.str()) != 0;
 }
 
 // -----------------------------------------------------
-inline Bool operator<(const UnicodeString& s1, const UnicodeString& s2)
+inline Bool operator<(const UnicodeString &s1, const UnicodeString &s2)
 {
 	return wcscmp(s1.str(), s2.str()) < 0;
 }
 
 // -----------------------------------------------------
-inline Bool operator<=(const UnicodeString& s1, const UnicodeString& s2)
+inline Bool operator<=(const UnicodeString &s1, const UnicodeString &s2)
 {
 	return wcscmp(s1.str(), s2.str()) <= 0;
 }
 
 // -----------------------------------------------------
-inline Bool operator>(const UnicodeString& s1, const UnicodeString& s2)
+inline Bool operator>(const UnicodeString &s1, const UnicodeString &s2)
 {
 	return wcscmp(s1.str(), s2.str()) > 0;
 }
 
 // -----------------------------------------------------
-inline Bool operator>=(const UnicodeString& s1, const UnicodeString& s2)
+inline Bool operator>=(const UnicodeString &s1, const UnicodeString &s2)
 {
 	return wcscmp(s1.str(), s2.str()) >= 0;
 }

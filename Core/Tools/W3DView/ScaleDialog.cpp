@@ -29,60 +29,51 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // ScaleDialogClass
 //
 /////////////////////////////////////////////////////////////////////////////
-ScaleDialogClass::ScaleDialogClass (float scale, CWnd* pParent,
-												const char *prompt_string)
-	:	m_Scale (scale),
-		m_Prompt(prompt_string),
-		CDialog(ScaleDialogClass::IDD, pParent)
+ScaleDialogClass::ScaleDialogClass(float scale, CWnd *pParent, const char *prompt_string) :
+		m_Scale(scale), m_Prompt(prompt_string), CDialog(ScaleDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(ScaleDialogClass)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // DoDataExchange
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ScaleDialogClass::DoDataExchange (CDataExchange* pDX)
+void ScaleDialogClass::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(ScaleDialogClass)
 	DDX_Control(pDX, IDC_SIZE_SPIN, m_ScaleSpin);
 	//}}AFX_DATA_MAP
-	return ;
+	return;
 }
 
-
 BEGIN_MESSAGE_MAP(ScaleDialogClass, CDialog)
-	//{{AFX_MSG_MAP(ScaleDialogClass)
-		// NOTE: the ClassWizard will add message map macros here
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(ScaleDialogClass)
+// NOTE: the ClassWizard will add message map macros here
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnInitDialog
 //
 /////////////////////////////////////////////////////////////////////////////
-BOOL
-ScaleDialogClass::OnInitDialog (void)
+BOOL ScaleDialogClass::OnInitDialog(void)
 {
 	CDialog::OnInitDialog();
 
-	m_ScaleSpin.SetRange (1, 10000);
-	m_ScaleSpin.SetPos (int(m_Scale * 100.0F));
+	m_ScaleSpin.SetRange(1, 10000);
+	m_ScaleSpin.SetPos(int(m_Scale * 100.0F));
 
 	// If we were given a different prompt upon creation, apply it now.
 	if (!m_Prompt.IsEmpty())
@@ -91,55 +82,50 @@ ScaleDialogClass::OnInitDialog (void)
 	return TRUE;
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnOK
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ScaleDialogClass::OnOK (void)
+void ScaleDialogClass::OnOK(void)
 {
 	int pos = m_ScaleSpin.GetPos();
-	if (pos & 0xffff0000) {
+	if (pos & 0xffff0000)
+	{
 		// Error condition. Most likely the value is out of range.
-		MessageBox("Invalid scale value. Please enter a number between 1 and 10,000",
-			"Invalid Scale", MB_OK | MB_ICONINFORMATION);
+		MessageBox(
+				"Invalid scale value. Please enter a number between 1 and 10,000",
+				"Invalid Scale",
+				MB_OK | MB_ICONINFORMATION);
 		return;
 	}
 	m_Scale = ((float)pos) / 100.0F;
 
 	// We cannot accept this value if it is less than or equal to zero.
-	if (m_Scale <= 0.0f) {
-		MessageBox("Scale must be a value greater than zero!", "Invalid Scale",
-			MB_OK | MB_ICONINFORMATION);
+	if (m_Scale <= 0.0f)
+	{
+		MessageBox("Scale must be a value greater than zero!", "Invalid Scale", MB_OK | MB_ICONINFORMATION);
 		return;
 	}
 
-	CDialog::OnOK ();
-	return ;
+	CDialog::OnOK();
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnNotify
 //
 /////////////////////////////////////////////////////////////////////////////
-BOOL
-ScaleDialogClass::OnNotify
-(
-	WPARAM wParam,
-	LPARAM lParam,
-	LRESULT *pResult
-)
+BOOL ScaleDialogClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult)
 {
 	//
 	//	Update the spinner control if necessary
 	//
 	NMHDR *header = (NMHDR *)lParam;
-	if ((header != NULL) && (header->code == UDN_DELTAPOS)) {
-		//LPNMUPDOWN updown = (LPNMUPDOWN)lParam;
+	if ((header != NULL) && (header->code == UDN_DELTAPOS))
+	{
+		// LPNMUPDOWN updown = (LPNMUPDOWN)lParam;
 		//::Update_Spinner_Buddy (header->hwndFrom, updown->iDelta);
 	}
 

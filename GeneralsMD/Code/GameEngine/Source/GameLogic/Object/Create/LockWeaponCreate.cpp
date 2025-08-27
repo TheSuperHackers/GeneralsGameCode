@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 #include "Common/Xfer.h"
@@ -45,17 +45,17 @@ LockWeaponCreateModuleData::LockWeaponCreateModuleData()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void LockWeaponCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
+void LockWeaponCreateModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-  CreateModuleData::buildFieldParse(p);
+	CreateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "SlotToLock",	INI::parseLookupList,	TheWeaponSlotTypeNamesLookupList, offsetof( LockWeaponCreateModuleData, m_slotToLock ) },
-		{ 0, 0, 0, 0 }
-	};
+	static const FieldParse dataFieldParse[] = { { "SlotToLock",
+																								 INI::parseLookupList,
+																								 TheWeaponSlotTypeNamesLookupList,
+																								 offsetof(LockWeaponCreateModuleData, m_slotToLock) },
+																							 { 0, 0, 0, 0 } };
 
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,71 +64,67 @@ void LockWeaponCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-LockWeaponCreate::LockWeaponCreate( Thing *thing, const ModuleData* moduleData ) : CreateModule( thing, moduleData )
+LockWeaponCreate::LockWeaponCreate(Thing *thing, const ModuleData *moduleData) : CreateModule(thing, moduleData)
 {
-}  // end GrantUpgradeCreate
+} // end GrantUpgradeCreate
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-LockWeaponCreate::~LockWeaponCreate( void )
+LockWeaponCreate::~LockWeaponCreate(void)
 {
-
-}  // end ~GrantUpgradeCreate
+} // end ~GrantUpgradeCreate
 
 //-------------------------------------------------------------------------------------------------
 /** The create callback. */
 //-------------------------------------------------------------------------------------------------
-void LockWeaponCreate::onCreate( void )
+void LockWeaponCreate::onCreate(void)
 {
-}  // end onCreate
+} // end onCreate
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void LockWeaponCreate::onBuildComplete( void )
+void LockWeaponCreate::onBuildComplete(void)
 {
 	CreateModule::onBuildComplete(); // extend
 
 	Object *me = getObject();
 	WeaponSlotType slot = getLockWeaponCreateModuleData()->m_slotToLock;
-	me->setWeaponLock( slot, LOCKED_PERMANENTLY );
-}  // end onBuildComplete
+	me->setWeaponLock(slot, LOCKED_PERMANENTLY);
+} // end onBuildComplete
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void LockWeaponCreate::crc( Xfer *xfer )
+void LockWeaponCreate::crc(Xfer *xfer)
 {
-
 	// extend base class
-	CreateModule::crc( xfer );
+	CreateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void LockWeaponCreate::xfer( Xfer *xfer )
+void LockWeaponCreate::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CreateModule::xfer( xfer );
+	CreateModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void LockWeaponCreate::loadPostProcess( void )
+void LockWeaponCreate::loadPostProcess(void)
 {
-
 	// extend base class
 	CreateModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

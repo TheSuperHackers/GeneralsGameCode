@@ -24,14 +24,14 @@
 #include <windowsx.h>
 #include <stdlib.h>
 
-#include"wstypes.h"
+#include "wstypes.h"
 
-  extern HINSTANCE Global_instance;
-  extern LPSTR     Global_commandline;
-  extern int       Global_commandshow;
+extern HINSTANCE Global_instance;
+extern LPSTR Global_commandline;
+extern int Global_commandshow;
 
-  extern int       main(int argc, char *argv[]);
+extern int main(int argc, char *argv[]);
 
-  int              Print_WM(UINT wm,char *out);
+int Print_WM(UINT wm, char *out);
 
 #endif

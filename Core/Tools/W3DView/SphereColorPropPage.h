@@ -38,31 +38,34 @@ class SphereColorPropPageClass : public CPropertyPage
 {
 	DECLARE_DYNCREATE(SphereColorPropPageClass)
 
-// Construction
+	// Construction
 public:
-	SphereColorPropPageClass (SphereRenderObjClass *sphere = NULL);
-	~SphereColorPropPageClass ();
+	SphereColorPropPageClass(SphereRenderObjClass *sphere = NULL);
+	~SphereColorPropPageClass();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(SphereColorPropPageClass)
-	enum { IDD = IDD_PROP_PAGE_SPHERE_COLOR };
-		// NOTE - ClassWizard will add data members here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
+	enum
+	{
+		IDD = IDD_PROP_PAGE_SPHERE_COLOR
+	};
+	// NOTE - ClassWizard will add data members here.
+	//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SphereColorPropPageClass)
-	public:
+public:
 	virtual BOOL OnApply();
 	virtual void OnCancel();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(SphereColorPropPageClass)
@@ -73,9 +76,7 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-
 public:
-
 	/////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////
@@ -84,44 +85,45 @@ public:
 	//	Inline accessors
 	//
 
-	SphereRenderObjClass *		Get_Sphere (void) const							{ return m_RenderObj; }
-	void								Set_Sphere (SphereRenderObjClass *sphere)	{ m_RenderObj = sphere; Initialize (); }
-	bool								Is_Data_Valid (void) const						{ return m_bValid; }
+	SphereRenderObjClass *Get_Sphere(void) const { return m_RenderObj; }
+	void Set_Sphere(SphereRenderObjClass *sphere)
+	{
+		m_RenderObj = sphere;
+		Initialize();
+	}
+	bool Is_Data_Valid(void) const { return m_bValid; }
 
 protected:
-
 	/////////////////////////////////////////////////////////
 	//	Protected methods
 	/////////////////////////////////////////////////////////
-	void				Initialize (void);
-	void				Update_Colors (void);
-	void				Update_Opacities (void);
-	void				Update_Vectors (void);
-	void				Update_Vector_Bar_Enabled_Status (void);
+	void Initialize(void);
+	void Update_Colors(void);
+	void Update_Opacities(void);
+	void Update_Vectors(void);
+	void Update_Vector_Bar_Enabled_Status(void);
 
 private:
-
 	/////////////////////////////////////////////////////////
 	//	Private member data
 	/////////////////////////////////////////////////////////
-	SphereRenderObjClass *		m_RenderObj;
-	bool								m_bValid;
-	ColorBarClass *				m_ColorBar;
-	ColorBarClass *				m_OpacityBar;
-	ColorBarClass *				m_VectorBar;
-	bool								m_EnableOpactiyVector;
-	bool								m_InvertVector;
+	SphereRenderObjClass *m_RenderObj;
+	bool m_bValid;
+	ColorBarClass *m_ColorBar;
+	ColorBarClass *m_OpacityBar;
+	ColorBarClass *m_VectorBar;
+	bool m_EnableOpactiyVector;
+	bool m_InvertVector;
 
-	SphereColorChannelClass		m_ColorChannel;
-	SphereColorChannelClass		m_OrigColorChannel;
-	SphereAlphaChannelClass		m_AlphaChannel;
-	SphereAlphaChannelClass		m_OrigAlphaChannel;
-	SphereVectorChannelClass	m_VectorChannel;
-	SphereVectorChannelClass	m_OrigVectorChannel;
+	SphereColorChannelClass m_ColorChannel;
+	SphereColorChannelClass m_OrigColorChannel;
+	SphereAlphaChannelClass m_AlphaChannel;
+	SphereAlphaChannelClass m_OrigAlphaChannel;
+	SphereVectorChannelClass m_VectorChannel;
+	SphereVectorChannelClass m_OrigVectorChannel;
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
 #endif // !defined(AFX_SPHERECOLORPROPPAGE_H__E86BBE86_F527_11D3_A08F_00104B791122__INCLUDED_)
-

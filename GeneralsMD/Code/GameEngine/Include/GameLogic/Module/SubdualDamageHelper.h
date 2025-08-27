@@ -39,30 +39,26 @@
 // ------------------------------------------------------------------------------------------------
 class SubdualDamageHelperModuleData : public ModuleData
 {
-
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class SubdualDamageHelper : public ObjectHelper
 {
-
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( SubdualDamageHelper, SubdualDamageHelperModuleData )
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SubdualDamageHelper, "SubdualDamageHelper" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(SubdualDamageHelper, SubdualDamageHelperModuleData)
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SubdualDamageHelper, "SubdualDamageHelper")
 
 public:
-
-	SubdualDamageHelper( Thing *thing, const ModuleData *modData );
+	SubdualDamageHelper(Thing *thing, const ModuleData *modData);
 	// virtual destructor prototype provided by memory pool object
 
 	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
 	virtual UpdateSleepTime update();
 
-	void notifySubdualDamage( Real amount );
+	void notifySubdualDamage(Real amount);
 
 protected:
 	UnsignedInt m_healingStepCountdown;
 };
 
-
-#endif  // end __SubdualDamageHelper_H_
+#endif // end __SubdualDamageHelper_H_

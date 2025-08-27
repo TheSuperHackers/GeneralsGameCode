@@ -42,21 +42,18 @@
 #include "w3dappdata.h"
 #include "errclass.h"
 
-
-LightGlareSaveClass::LightGlareSaveClass
-(
-	char * mesh_name,
-	char * container_name,
-	INode * inode,
-	Matrix3 & exportspace,
-	TimeValue curtime,
-	Progress_Meter_Class & meter
-)
+LightGlareSaveClass::LightGlareSaveClass(
+		char *mesh_name,
+		char *container_name,
+		INode *inode,
+		Matrix3 &exportspace,
+		TimeValue curtime,
+		Progress_Meter_Class &meter)
 {
 	//////////////////////////////////////////////////////////////////////
 	// Init the glare info
 	//////////////////////////////////////////////////////////////////////
-	memset(&GlareData,0,sizeof(GlareData));
+	memset(&GlareData, 0, sizeof(GlareData));
 
 	//////////////////////////////////////////////////////////////////////
 	// Get the position of the pivot point relative to the given
@@ -72,17 +69,12 @@ LightGlareSaveClass::LightGlareSaveClass
 	GlareData.Position.Z = offset_matrix.GetTrans().z;
 }
 
-
-
-int LightGlareSaveClass::Write_To_File(ChunkSaveClass & csave)
+int LightGlareSaveClass::Write_To_File(ChunkSaveClass &csave)
 {
 	csave.Begin_Chunk(W3D_CHUNK_LIGHTGLARE);
 	csave.Begin_Chunk(W3D_CHUNK_LIGHTGLARE_INFO);
-	csave.Write(&GlareData,sizeof(GlareData));
+	csave.Write(&GlareData, sizeof(GlareData));
 	csave.End_Chunk();
 	csave.End_Chunk();
 	return 0;
 }
-
-
-

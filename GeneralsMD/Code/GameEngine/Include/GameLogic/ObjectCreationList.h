@@ -75,28 +75,37 @@ class ObjectCreationNugget : public MemoryPoolObject
 	MEMORY_POOL_GLUE_ABC(ObjectCreationNugget)
 
 public:
-
-	ObjectCreationNugget() { }
-	//virtual ~ObjectCreationNugget() { }
+	ObjectCreationNugget() {}
+	// virtual ~ObjectCreationNugget() { }
 
 	/**
 		The main guts of the system: actually perform the sound and/or video effects
 		needed. Note that primary can be null, so you must check for this.
 		Bool useOwner determines whether we are creating the the master object or not (for deliverpayload)
 	*/
-	virtual Object* create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Real angle, UnsignedInt lifetimeFrames = 0 ) const = 0;
+	virtual Object *create(
+			const Object *primaryObj,
+			const Coord3D *primary,
+			const Coord3D *secondary,
+			Real angle,
+			UnsignedInt lifetimeFrames = 0) const = 0;
 
 	/**
 		the object-based version... by default, just call the location-based implementation.
 		Note that primary can be null, so you must check for this.
 	*/
-	virtual Object* create( const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const;
+	virtual Object *create(const Object *primary, const Object *secondary, UnsignedInt lifetimeFrames = 0) const;
 
 	/**
 		A variation used by DeliverPayload -- the createOwner Bool specifies whether we are creating the transport
 		object, or using the existing one.
 	*/
-	virtual Object* create( const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 ) const;
+	virtual Object *create(
+			const Object *primaryObj,
+			const Coord3D *primary,
+			const Coord3D *secondary,
+			Bool createOwner,
+			UnsignedInt lifetimeFrames = 0) const;
 };
 EMPTY_DTOR(ObjectCreationNugget)
 
@@ -109,9 +118,9 @@ EMPTY_DTOR(ObjectCreationNugget)
 	-- an ObjectCreationList is specified solely by name, and the only parameters it receives when performing
 	its AV effects are a primary (and optional secondary) object position.
 
-	-- There is no inheritance or overriding of ObjectCreationLists; if you need an ObjectCreationList that is nearly-but-not-quite
-	identical to an existing one, you must simply make an entirely new ObjectCreationList. Realistically, this shouldn't
-	be a problem, since they are pretty simple to specify, and don't consume a lot of memory.
+	-- There is no inheritance or overriding of ObjectCreationLists; if you need an ObjectCreationList that is
+	nearly-but-not-quite identical to an existing one, you must simply make an entirely new ObjectCreationList. Realistically,
+	this shouldn't be a problem, since they are pretty simple to specify, and don't consume a lot of memory.
 
 	-- an ObjectCreationList is shared between multiple units. To help
 	enforce this, all it's methods are declared 'const'. If you can't implement the stuff you
@@ -125,59 +134,80 @@ EMPTY_DTOR(ObjectCreationNugget)
 */
 class ObjectCreationList
 {
-
 public:
-
 	/**
 		Toss the contents.
 	*/
 	void clear();
 
-	void addObjectCreationNugget(ObjectCreationNugget* nugget);
+	void addObjectCreationNugget(ObjectCreationNugget *nugget);
 
 	// Kris: August 23, 2003
 	// All OCLs return the first object that is created (or NULL if not applicable).
-	inline static Object* create( const ObjectCreationList* ocl, const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 )
+	inline static Object *create(
+			const ObjectCreationList *ocl,
+			const Object *primaryObj,
+			const Coord3D *primary,
+			const Coord3D *secondary,
+			Bool createOwner,
+			UnsignedInt lifetimeFrames = 0)
 	{
-		if( ocl )
-			return ocl->createInternal( primaryObj, primary, secondary, createOwner, lifetimeFrames );
+		if (ocl)
+			return ocl->createInternal(primaryObj, primary, secondary, createOwner, lifetimeFrames);
 		return NULL;
 	}
 
 	// Kris: August 23, 2003
 	// All OCLs return the first object that is created (or NULL if not applicable).
 	/// inline convenience method to avoid having to check for null.
-	inline static Object* create(const ObjectCreationList* ocl, const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Real angle, UnsignedInt lifetimeFrames = 0 )
+	inline static Object *create(
+			const ObjectCreationList *ocl,
+			const Object *primaryObj,
+			const Coord3D *primary,
+			const Coord3D *secondary,
+			Real angle,
+			UnsignedInt lifetimeFrames = 0)
 	{
 		if (ocl)
-			return ocl->createInternal( primaryObj, primary, secondary, angle, lifetimeFrames );
+			return ocl->createInternal(primaryObj, primary, secondary, angle, lifetimeFrames);
 		return NULL;
 	}
 
 	// Kris: August 23, 2003
 	// All OCLs return the first object that is created (or NULL if not applicable).
 	/// inline convenience method to avoid having to check for null.
-	inline static Object* create( const ObjectCreationList* ocl, const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 )
+	inline static Object *create(
+			const ObjectCreationList *ocl,
+			const Object *primary,
+			const Object *secondary,
+			UnsignedInt lifetimeFrames = 0)
 	{
 		if (ocl)
-			return ocl->createInternal( primary, secondary, lifetimeFrames );
+			return ocl->createInternal(primary, secondary, lifetimeFrames);
 		return NULL;
 	}
 
 protected:
-
 private:
-
 	// Kris: August 23, 2003
 	// All OCLs return the first object that is created (or NULL if not applicable).
-	Object* createInternal(const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 ) const;
-	Object* createInternal(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Real angle, UnsignedInt lifetimeFrames = 0 ) const;
-	Object* createInternal(const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const;
+	Object *createInternal(
+			const Object *primaryObj,
+			const Coord3D *primary,
+			const Coord3D *secondary,
+			Bool createOwner,
+			UnsignedInt lifetimeFrames = 0) const;
+	Object *createInternal(
+			const Object *primaryObj,
+			const Coord3D *primary,
+			const Coord3D *secondary,
+			Real angle,
+			UnsignedInt lifetimeFrames = 0) const;
+	Object *createInternal(const Object *primary, const Object *secondary, UnsignedInt lifetimeFrames = 0) const;
 
 	// note, this list doesn't own the nuggets; all nuggets are owned by the Store.
-	typedef std::vector<ObjectCreationNugget*> ObjectCreationNuggetVector;
+	typedef std::vector<ObjectCreationNugget *> ObjectCreationNuggetVector;
 	ObjectCreationNuggetVector m_nuggets;
-
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -186,39 +216,34 @@ private:
 */
 class ObjectCreationListStore : public SubsystemInterface
 {
-
 public:
-
 	ObjectCreationListStore();
 	~ObjectCreationListStore();
 
-	void init() { }
-	void reset() { }
-	void update() { }
+	void init() {}
+	void reset() {}
+	void update() {}
 
 	/**
 		return the ObjectCreationList with the given namekey.
 		return NULL if no such ObjectCreationList exists.
 	*/
-	const ObjectCreationList *findObjectCreationList(const char* name) const;
+	const ObjectCreationList *findObjectCreationList(const char *name) const;
 
-	static void parseObjectCreationListDefinition(INI* ini);
+	static void parseObjectCreationListDefinition(INI *ini);
 
-	void addObjectCreationNugget(ObjectCreationNugget* nugget);
+	void addObjectCreationNugget(ObjectCreationNugget *nugget);
 
 private:
-
-	typedef std::map< NameKeyType, ObjectCreationList, std::less<NameKeyType> > ObjectCreationListMap;
+	typedef std::map<NameKeyType, ObjectCreationList, std::less<NameKeyType> > ObjectCreationListMap;
 	ObjectCreationListMap m_ocls;
 
 	// note, this list doesn't own the nuggets; all nuggets are owned by the Store.
-	typedef std::vector<ObjectCreationNugget*> ObjectCreationNuggetVector;
+	typedef std::vector<ObjectCreationNugget *> ObjectCreationNuggetVector;
 	ObjectCreationNuggetVector m_nuggets;
-
 };
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern ObjectCreationListStore *TheObjectCreationListStore;
 
 #endif // _ObjectCreationList_H_
-

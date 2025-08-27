@@ -49,5 +49,3 @@
 #include "colmathplane.h"
 
 #endif
-
-

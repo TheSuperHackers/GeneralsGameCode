@@ -42,7 +42,7 @@
 
 #include <wchar.h>
 
-char * strtrim(char * buffer);
-wchar_t * wcstrim(wchar_t * buffer);
+char *strtrim(char *buffer);
+wchar_t *wcstrim(wchar_t *buffer);
 
 #endif

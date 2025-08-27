@@ -26,26 +26,30 @@
 #endif
 
 #ifndef RETAIL_COMPATIBLE_XFER_SAVE
-#define RETAIL_COMPATIBLE_XFER_SAVE (1) // Game is expected to be Xfer Save compatible with retail Generals 1.08, Zero Hour 1.04
+#define RETAIL_COMPATIBLE_XFER_SAVE \
+	(1) // Game is expected to be Xfer Save compatible with retail Generals 1.08, Zero Hour 1.04
 #endif
 
-// This is essentially synonymous for RETAIL_COMPATIBLE_CRC. There is a lot wrong with AIGroup, such as use-after-free, double-free, leaks,
-// but we cannot touch it much without breaking retail compatibility. Do not shy away from using massive hacks when fixing issues with AIGroup,
-// but put them behind this macro.
+// This is essentially synonymous for RETAIL_COMPATIBLE_CRC. There is a lot wrong with AIGroup, such as use-after-free,
+// double-free, leaks, but we cannot touch it much without breaking retail compatibility. Do not shy away from using massive
+// hacks when fixing issues with AIGroup, but put them behind this macro.
 
 #ifndef RETAIL_COMPATIBLE_AIGROUP
-#define RETAIL_COMPATIBLE_AIGROUP (1) // AIGroup logic is expected to be CRC compatible with retail Generals 1.08, Zero Hour 1.04
+#define RETAIL_COMPATIBLE_AIGROUP \
+	(1) // AIGroup logic is expected to be CRC compatible with retail Generals 1.08, Zero Hour 1.04
 #endif
 
 #ifndef ENABLE_GAMETEXT_SUBSTITUTES
-#define ENABLE_GAMETEXT_SUBSTITUTES (1) // The code can provide substitute texts when labels and strings are missing in the STR or CSF translation file
+#define ENABLE_GAMETEXT_SUBSTITUTES \
+	(1) // The code can provide substitute texts when labels and strings are missing in the STR or CSF translation file
 #endif
 
 // Previously the configurable shroud sat behind #if defined(RTS_DEBUG)
 // Enable the configurable shroud to properly draw the terrain in World Builder without RTS_DEBUG compiled in.
 // Disable the configurable shroud to make shroud hacking a bit less accessible in Release game builds.
 #ifndef ENABLE_CONFIGURABLE_SHROUD
-#define ENABLE_CONFIGURABLE_SHROUD (1) // When enabled, the GlobalData contains a field to turn on/off the shroud, otherwise shroud is always enabled
+#define ENABLE_CONFIGURABLE_SHROUD \
+	(1) // When enabled, the GlobalData contains a field to turn on/off the shroud, otherwise shroud is always enabled
 #endif
 
 // Enable buffered IO in File System. Was disabled in retail game.
@@ -68,7 +72,7 @@
 #endif
 #endif
 
-#define MIN_DISPLAY_BIT_DEPTH       16
-#define DEFAULT_DISPLAY_BIT_DEPTH   32
-#define DEFAULT_DISPLAY_WIDTH      800 // The standard resolution this game was designed for
-#define DEFAULT_DISPLAY_HEIGHT     600 // The standard resolution this game was designed for
+#define MIN_DISPLAY_BIT_DEPTH 16
+#define DEFAULT_DISPLAY_BIT_DEPTH 32
+#define DEFAULT_DISPLAY_WIDTH 800 // The standard resolution this game was designed for
+#define DEFAULT_DISPLAY_HEIGHT 600 // The standard resolution this game was designed for

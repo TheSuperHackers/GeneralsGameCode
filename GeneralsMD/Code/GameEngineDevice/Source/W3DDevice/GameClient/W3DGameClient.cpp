@@ -57,76 +57,69 @@
 #include "WW3D2/part_emt.h"
 #include "WW3D2/hanim.h"
 #include "WW3D2/htree.h"
-#include "WW3D2/animobj.h"  ///< @todo superhack for demo, remove!
+#include "WW3D2/animobj.h" ///< @todo superhack for demo, remove!
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 W3DGameClient::W3DGameClient()
 {
-
-}  // end W3DGameClient
+} // end W3DGameClient
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 W3DGameClient::~W3DGameClient()
 {
-
-}  // end ~W3DGameClient
+} // end ~W3DGameClient
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize resources for the w3d game client */
 //-------------------------------------------------------------------------------------------------
-void W3DGameClient::init( void )
+void W3DGameClient::init(void)
 {
-
 	// extending initialization routine
 	GameClient::init();
 
-}  // end init
+} // end init
 
 //-------------------------------------------------------------------------------------------------
 /** Per frame udpate, note we are extending functionality */
 //-------------------------------------------------------------------------------------------------
-void W3DGameClient::update( void )
+void W3DGameClient::update(void)
 {
-
 	// call base
 	GameClient::update();
 
-}  // end update
+} // end update
 
 //-------------------------------------------------------------------------------------------------
 /** Reset this device client system.  Note we are extending reset functionality from
-	* the device independent client */
+ * the device independent client */
 //-------------------------------------------------------------------------------------------------
-void W3DGameClient::reset( void )
+void W3DGameClient::reset(void)
 {
-
 	// call base class
 	GameClient::reset();
 
-}  // end reset
+} // end reset
 
 //-------------------------------------------------------------------------------------------------
 /** allocate a new drawable using the thing template for initialization.
-	* if we want to have the thing manager actually contain the pools of
-	* object and drawable storage it seems OK to have it be friends with the
-	* GameLogic/Client for those purposes, or we could put the allocation pools
-	* in the GameLogic and GameClient themselves */
+ * if we want to have the thing manager actually contain the pools of
+ * object and drawable storage it seems OK to have it be friends with the
+ * GameLogic/Client for those purposes, or we could put the allocation pools
+ * in the GameLogic and GameClient themselves */
 //-------------------------------------------------------------------------------------------------
-Drawable *W3DGameClient::friend_createDrawable( const ThingTemplate *tmplate,
-																								DrawableStatus statusBits )
+Drawable *W3DGameClient::friend_createDrawable(const ThingTemplate *tmplate, DrawableStatus statusBits)
 {
 	Drawable *draw = NULL;
 
 	// sanity
-	if( tmplate == NULL )
+	if (tmplate == NULL)
 		return NULL;
 
-	draw = newInstance(Drawable)( tmplate, statusBits );
+	draw = newInstance(Drawable)(tmplate, statusBits);
 
 	return draw;
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -143,13 +136,11 @@ void W3DGameClient::addScorch(const Coord3D *pos, Real radius, Scorches type)
 //-------------------------------------------------------------------------------------------------
 /** create an effect that requires a start and end location */
 //-------------------------------------------------------------------------------------------------
-void W3DGameClient::createRayEffectByTemplate( const Coord3D *start,
-																		 const Coord3D *end,
-																		 const ThingTemplate* tmpl )
+void W3DGameClient::createRayEffectByTemplate(const Coord3D *start, const Coord3D *end, const ThingTemplate *tmpl)
 {
 	Drawable *draw = TheThingFactory->newDrawable(tmpl);
 
-	if( draw )
+	if (draw)
 	{
 		Coord3D pos;
 
@@ -157,48 +148,45 @@ void W3DGameClient::createRayEffectByTemplate( const Coord3D *start,
 		pos.x = (end->x - start->x) * 0.5f + start->x;
 		pos.y = (end->y - start->y) * 0.5f + start->y;
 		pos.z = (end->z - start->z) * 0.5f + start->z;
-		draw->setPosition( &pos );
+		draw->setPosition(&pos);
 
 		// add this ray effect to the list of ray effects
-		TheRayEffects->addRayEffect( draw, start, end );
+		TheRayEffects->addRayEffect(draw, start, end);
 
-	}  // end if
+	} // end if
 
-}  // end createRayEffectByTemplate
+} // end createRayEffectByTemplate
 
 //-------------------------------------------------------------------------------------------------
 /**  Tell all the drawables what time of day it is now */
 //-------------------------------------------------------------------------------------------------
-void W3DGameClient::setTimeOfDay( TimeOfDay tod )
+void W3DGameClient::setTimeOfDay(TimeOfDay tod)
 {
-
 	GameClient::setTimeOfDay(tod);
 
-	//tell cloud/water plane to update its lighting/texture
+	// tell cloud/water plane to update its lighting/texture
 	if (TheWaterRenderObj)
 		TheWaterRenderObj->setTimeOfDay(tod);
 	if (TheW3DShadowManager)
 		TheW3DShadowManager->setTimeOfDay(tod);
 
-	//tell the display to update its lighting
-	TheDisplay->setTimeOfDay( tod );
+	// tell the display to update its lighting
+	TheDisplay->setTimeOfDay(tod);
 
-}  // end setTimeOfDay
-
+} // end setTimeOfDay
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void W3DGameClient::setTeamColor(Int red, Int green, Int blue)
 {
-
 	W3DStatusCircle::setColor(red, green, blue);
 
-}  // end setTeamColor
+} // end setTeamColor
 
 //-------------------------------------------------------------------------------------------------
 /** temporary entry point for adjusting LOD for development testing. */
 //-------------------------------------------------------------------------------------------------
-void W3DGameClient::adjustLOD( Int adj )
+void W3DGameClient::adjustLOD(Int adj)
 {
 	if (TheGlobalData == NULL)
 		return;
@@ -206,18 +194,19 @@ void W3DGameClient::adjustLOD( Int adj )
 	TheWritableGlobalData->m_textureReductionFactor += adj;
 
 	if (TheWritableGlobalData->m_textureReductionFactor > 4)
-		TheWritableGlobalData->m_textureReductionFactor = 4;	//16x less resolution is probably enough.
+		TheWritableGlobalData->m_textureReductionFactor = 4; // 16x less resolution is probably enough.
 	if (TheWritableGlobalData->m_textureReductionFactor < 0)
 		TheWritableGlobalData->m_textureReductionFactor = 0;
 
 	if (WW3D::Get_Texture_Reduction() != TheWritableGlobalData->m_textureReductionFactor)
-	{	WW3D::Set_Texture_Reduction(TheWritableGlobalData->m_textureReductionFactor,32);
+	{
+		WW3D::Set_Texture_Reduction(TheWritableGlobalData->m_textureReductionFactor, 32);
 		TheGameLODManager->setCurrentTextureReduction(TheWritableGlobalData->m_textureReductionFactor);
-		if( TheTerrainRenderObject )
-  			TheTerrainRenderObject->setTextureLOD( TheWritableGlobalData->m_textureReductionFactor );
+		if (TheTerrainRenderObject)
+			TheTerrainRenderObject->setTextureLOD(TheWritableGlobalData->m_textureReductionFactor);
 	}
 
-}  // end adjustLOD
+} // end adjustLOD
 
 //-------------------------------------------------------------------------------------------------
 /**  Tell the terrain that an object moved, so it can knock down trees or crush grass
@@ -225,10 +214,9 @@ void W3DGameClient::adjustLOD( Int adj )
 //-------------------------------------------------------------------------------------------------
 void W3DGameClient::notifyTerrainObjectMoved(Object *obj)
 {
-	if (TheTerrainRenderObject) {
+	if (TheTerrainRenderObject)
+	{
 		TheTerrainRenderObject->unitMoved(obj);
 	}
 
-}  // end setTimeOfDay
-
-
+} // end setTimeOfDay

@@ -43,20 +43,16 @@ class Object;
 //-------------------------------------------------------------------------------------------------
 class ImmortalBody : public ActiveBody
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ImmortalBody, "ImmortalBody" )
-	MAKE_STANDARD_MODULE_MACRO( ImmortalBody )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ImmortalBody, "ImmortalBody")
+	MAKE_STANDARD_MODULE_MACRO(ImmortalBody)
 
 public:
-
-	ImmortalBody( Thing *thing, const ModuleData* moduleData );
+	ImmortalBody(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void internalChangeHealth( Real delta );								///< change health
+	virtual void internalChangeHealth(Real delta); ///< change health
 
 protected:
-
 };
 
 #endif // __STRUCTUREBODY_H_
-

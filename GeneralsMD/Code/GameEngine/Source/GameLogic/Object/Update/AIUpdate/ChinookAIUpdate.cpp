@@ -24,9 +24,9 @@
 
 // ChinookAIUpdate.cpp //////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
-#define DEFINE_VETERANCY_NAMES				// for TheVeterancyNames[]
+#define DEFINE_VETERANCY_NAMES // for TheVeterancyNames[]
 
 #include "Common/ActionManager.h"
 #include "Common/DrawModule.h"
@@ -51,53 +51,49 @@
 
 const Real BIGNUM = 99999.0f;
 
-
 //-------------------------------------------------------------------------------------------------
-enum ChinookAIStateType CPP_11(: Int)
-{
-	// note that these must be distinct (numerically) from AIStateType. ick.
-	ChinookAIStateType_FIRST = 1000,
+enum ChinookAIStateType CPP_11( : Int){ // note that these must be distinct (numerically) from AIStateType. ick.
+																				ChinookAIStateType_FIRST = 1000,
 
-	TAKING_OFF,
-	LANDING,
+																				TAKING_OFF,
+																				LANDING,
 
-	MOVE_TO_AND_LAND,
+																				MOVE_TO_AND_LAND,
 
-	MOVE_TO_AND_EVAC,
-	LAND_AND_EVAC,
-	EVAC_AND_TAKEOFF,
+																				MOVE_TO_AND_EVAC,
+																				LAND_AND_EVAC,
+																				EVAC_AND_TAKEOFF,
 
-	MOVE_TO_AND_EVAC_AND_EXIT,
-	LAND_AND_EVAC_AND_EXIT,
-	EVAC_AND_EXIT,
-	TAKEOFF_AND_EXIT,
-	HEAD_OFF_MAP,
+																				MOVE_TO_AND_EVAC_AND_EXIT,
+																				LAND_AND_EVAC_AND_EXIT,
+																				EVAC_AND_EXIT,
+																				TAKEOFF_AND_EXIT,
+																				HEAD_OFF_MAP,
 
-	MOVE_TO_COMBAT_DROP,
-	DO_COMBAT_DROP,
-	MOVE_TO_AND_EVAC_AND_EXIT_INIT
+																				MOVE_TO_COMBAT_DROP,
+																				DO_COMBAT_DROP,
+																				MOVE_TO_AND_EVAC_AND_EXIT_INIT
 };
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-static Real calcDistSqr(const Coord3D& a, const Coord3D& b)
+static Real calcDistSqr(const Coord3D &a, const Coord3D &b)
 {
-	return sqr(a.x-b.x) + sqr(a.y-b.y) + sqr(a.z-b.z);
+	return sqr(a.x - b.x) + sqr(a.y - b.y) + sqr(a.z - b.z);
 }
 
 //-------------------------------------------------------------------------------------------------
-static Object* getPotentialRappeller(Object* obj)
+static Object *getPotentialRappeller(Object *obj)
 {
-	const ContainedItemsList* items = obj->getContain() ? obj->getContain()->getContainedItemsList() : NULL;
+	const ContainedItemsList *items = obj->getContain() ? obj->getContain()->getContainedItemsList() : NULL;
 	if (items)
 	{
-		for (ContainedItemsList::const_iterator it = items->begin(); it != items->end(); ++it )
+		for (ContainedItemsList::const_iterator it = items->begin(); it != items->end(); ++it)
 		{
-			Object* rider = *it;
+			Object *rider = *it;
 			if (rider->isKindOf(KINDOF_CAN_RAPPEL))
 			{
 				return rider;
@@ -113,50 +109,49 @@ class ChinookEvacuateState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ChinookEvacuateState, "ChinookEvacuateState")
 protected:
 	// snapshot interface	STUBBED - no member vars to save. jba.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){};
-	virtual void loadPostProcess(){};
+	virtual void crc(Xfer *xfer) {};
+	virtual void xfer(Xfer *xfer) {};
+	virtual void loadPostProcess() {};
+
 public:
-	ChinookEvacuateState( StateMachine *machine ) : State( machine, "ChinookEvacuateState" ) { }
+	ChinookEvacuateState(StateMachine *machine) : State(machine, "ChinookEvacuateState") {}
 
 	StateReturnType onEnter()
 	{
-		Object* obj = getMachineOwner();
-		if( obj->getContain() )
+		Object *obj = getMachineOwner();
+		if (obj->getContain())
 		{
 			obj->getContain()->removeAllContained(FALSE);
 		}
-		obj->getTeam()->setActive();	// why? I don't know.
+		obj->getTeam()->setActive(); // why? I don't know.
 		return STATE_SUCCESS;
 	}
 
-	virtual StateReturnType update()
-	{
-		return STATE_SUCCESS;
-	}
+	virtual StateReturnType update() { return STATE_SUCCESS; }
 };
 EMPTY_DTOR(ChinookEvacuateState)
 
 //-------------------------------------------------------------------------------------------------
-class ChinookHeadOffMapState :  public State
+class ChinookHeadOffMapState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ChinookHeadOffMapState, "ChinookHeadOffMapState")
-	//I'm outta here
+	// I'm outta here
 protected:
 	// snapshot interface	STUBBED - no member vars to save. jba.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){};
-	virtual void loadPostProcess(){};
+	virtual void crc(Xfer *xfer) {};
+	virtual void xfer(Xfer *xfer) {};
+	virtual void loadPostProcess() {};
+
 public:
-	ChinookHeadOffMapState( StateMachine *machine ) : State( machine, "ChinookHeadOffMapState" ) {}
+	ChinookHeadOffMapState(StateMachine *machine) : State(machine, "ChinookHeadOffMapState") {}
 
 	StateReturnType onEnter() // Give move order out of town
 	{
 		Object *owner = getMachineOwner();
-		ChinookAIUpdate* ai = (ChinookAIUpdate*)owner->getAIUpdateInterface();
+		ChinookAIUpdate *ai = (ChinookAIUpdate *)owner->getAIUpdateInterface();
 
-		owner->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_RIDER8 ) );
-		ai->aiMoveToPosition( ai->getOriginalPosition(), CMD_FROM_AI );
+		owner->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_RIDER8));
+		ai->aiMoveToPosition(ai->getOriginalPosition(), CMD_FROM_AI);
 		ai->getCurLocomotor()->setAllowInvalidPosition(true);
 
 		return STATE_CONTINUE;
@@ -167,8 +162,8 @@ public:
 		Object *owner = getMachineOwner();
 
 		Region3D mapRegion;
-		TheTerrainLogic->getExtentIncludingBorder( &mapRegion );
-		if( !mapRegion.isInRegionNoZ( owner->getPosition() ) )
+		TheTerrainLogic->getExtentIncludingBorder(&mapRegion);
+		if (!mapRegion.isInRegionNoZ(owner->getPosition()))
 		{
 			TheGameLogic->destroyObject(owner);
 			return STATE_SUCCESS;
@@ -180,7 +175,7 @@ public:
 	void onExit()
 	{
 		Object *owner = getMachineOwner();
-		owner->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_RIDER8 ) );
+		owner->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_RIDER8));
 	}
 };
 EMPTY_DTOR(ChinookHeadOffMapState)
@@ -190,22 +185,22 @@ class ChinookTakeoffOrLandingState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ChinookTakeoffOrLandingState, "ChinookTakeoffOrLandingState")
 private:
-	Coord3D		m_destLoc;
-	Bool			m_landing;
+	Coord3D m_destLoc;
+	Bool m_landing;
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer )
+	virtual void crc(Xfer *xfer)
 	{
 		// empty
 	}
 
-	virtual void xfer( Xfer *xfer )
+	virtual void xfer(Xfer *xfer)
 	{
 		// version
 		XferVersion currentVersion = 1;
 		XferVersion version = currentVersion;
-		xfer->xferVersion( &version, currentVersion );
+		xfer->xferVersion(&version, currentVersion);
 
 		xfer->xferCoord3D(&m_destLoc);
 		xfer->xferBool(&m_landing);
@@ -217,34 +212,36 @@ protected:
 	}
 
 public:
-	ChinookTakeoffOrLandingState( StateMachine *machine, Bool landing ) : m_landing(landing), State( machine, "ChinookTakeoffOrLandingState" )
+	ChinookTakeoffOrLandingState(StateMachine *machine, Bool landing) :
+			m_landing(landing), State(machine, "ChinookTakeoffOrLandingState")
 	{
 		m_destLoc.zero();
 	}
 
 	virtual StateReturnType onEnter()
 	{
-		Object* obj = getMachineOwner();
-		ChinookAIUpdate* ai = (ChinookAIUpdate*)obj->getAIUpdateInterface();
+		Object *obj = getMachineOwner();
+		ChinookAIUpdate *ai = (ChinookAIUpdate *)obj->getAIUpdateInterface();
 
 		ai->friend_setFlightStatus(m_landing ? CHINOOK_LANDING : CHINOOK_TAKING_OFF);
 
-		if( m_landing )
+		if (m_landing)
 		{
 			// A chinook given transport duty loses his supplies.
-			while( ai->loseOneBox() );
+			while (ai->loseOneBox())
+				;
 		}
 
 		// kill any drift...
 		obj->getPhysics()->scrubVelocity2D(0);
 
 		ai->chooseLocomotorSet(LOCOMOTORSET_NORMAL);
-		Locomotor* loco = ai->getCurLocomotor();
+		Locomotor *loco = ai->getCurLocomotor();
 		loco->setUsePreciseZPos(true);
 		loco->setUltraAccurate(true);
 
 		m_destLoc = *obj->getPosition();
-		const Bool onlyHealthyBridges = true;	// ignore dead bridges.
+		const Bool onlyHealthyBridges = true; // ignore dead bridges.
 		PathfindLayerEnum layerAtDest = TheTerrainLogic->getHighestLayerForDestination(&m_destLoc, onlyHealthyBridges);
 		m_destLoc.z = TheTerrainLogic->getLayerHeight(m_destLoc.x, m_destLoc.y, layerAtDest);
 		if (m_landing)
@@ -281,33 +278,33 @@ public:
 
 	virtual StateReturnType update()
 	{
-		Object* obj = getMachineOwner();
+		Object *obj = getMachineOwner();
 		if (obj->isEffectivelyDead())
 			return STATE_FAILURE;
 
-		ChinookAIUpdate* ai = (ChinookAIUpdate*)obj->getAIUpdateInterface();
+		ChinookAIUpdate *ai = (ChinookAIUpdate *)obj->getAIUpdateInterface();
 
 		ai->setLocomotorGoalPositionExplicit(m_destLoc);
 
 		const Real THRESH = 3.0f;
-		const Real THRESH_SQR = THRESH*THRESH;
+		const Real THRESH_SQR = THRESH * THRESH;
 		if (calcDistSqr(*obj->getPosition(), m_destLoc) <= THRESH_SQR)
 			return STATE_SUCCESS;
 
 		return STATE_CONTINUE;
 	}
 
-	virtual void onExit( StateExitType status )
+	virtual void onExit(StateExitType status)
 	{
-		Object* obj = getMachineOwner();
-		ChinookAIUpdate* ai = (ChinookAIUpdate*)obj->getAIUpdateInterface();
+		Object *obj = getMachineOwner();
+		ChinookAIUpdate *ai = (ChinookAIUpdate *)obj->getAIUpdateInterface();
 
 		ai->friend_setFlightStatus(m_landing ? CHINOOK_LANDED : CHINOOK_FLYING);
 
 		// Paranoia checks - sometimes onExit is called when we are
 		// shutting down, and not all pieces are valid.  CurLocomotor
 		// is definitely null in some cases. jba.
-		Locomotor* loco = ai->getCurLocomotor();
+		Locomotor *loco = ai->getCurLocomotor();
 		if (loco)
 		{
 			loco->setUsePreciseZPos(false);
@@ -327,10 +324,7 @@ public:
 			// some bridge layer.
 			obj->setLayer(LAYER_GROUND);
 		}
-
-
 	}
-
 };
 EMPTY_DTOR(ChinookTakeoffOrLandingState)
 
@@ -340,27 +334,26 @@ class ChinookCombatDropState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ChinookCombatDropState, "ChinookCombatDropState")
 
 private:
-
 	struct RopeInfo
 	{
-		Drawable*								ropeDrawable;
-		DrawableID							ropeID;	// used only during save-load process
-		Matrix3D								dropStartMtx;
-		Real										ropeSpeed;
-		Real										ropeLen;
-		Real										ropeLenMax;
-		UnsignedInt							nextDropTime;
-		std::list<ObjectID>			rappellerIDs;
+		Drawable *ropeDrawable;
+		DrawableID ropeID; // used only during save-load process
+		Matrix3D dropStartMtx;
+		Real ropeSpeed;
+		Real ropeLen;
+		Real ropeLenMax;
+		UnsignedInt nextDropTime;
+		std::list<ObjectID> rappellerIDs;
 	};
-	std::vector<RopeInfo>			m_ropes;
+	std::vector<RopeInfo> m_ropes;
 
 	void removeDoneRappellers()
 	{
 		for (std::vector<RopeInfo>::iterator it = m_ropes.begin(); it != m_ropes.end(); ++it)
 		{
-			for (std::list<ObjectID>::iterator oit = it->rappellerIDs.begin(); oit != it->rappellerIDs.end(); )
+			for (std::list<ObjectID>::iterator oit = it->rappellerIDs.begin(); oit != it->rappellerIDs.end();)
 			{
-				Object* rappeller = TheGameLogic->findObjectByID(*oit);
+				Object *rappeller = TheGameLogic->findObjectByID(*oit);
 				if (rappeller == NULL || rappeller->isEffectivelyDead() || !rappeller->isAboveTerrain())
 				{
 					oit = it->rappellerIDs.erase(oit);
@@ -373,10 +366,17 @@ private:
 		}
 	}
 
-	static void initRopeParms(Drawable* rope, Real length, Real width, const RGBColor& color, Real wobbleLen, Real wobbleAmp, Real wobbleRate)
+	static void initRopeParms(
+			Drawable *rope,
+			Real length,
+			Real width,
+			const RGBColor &color,
+			Real wobbleLen,
+			Real wobbleAmp,
+			Real wobbleRate)
 	{
-		RopeDrawInterface* tdi = NULL;
-		for (DrawModule** d = rope->getDrawModules(); *d; ++d)
+		RopeDrawInterface *tdi = NULL;
+		for (DrawModule **d = rope->getDrawModules(); *d; ++d)
 		{
 			if ((tdi = (*d)->getRopeDrawInterface()) != NULL)
 			{
@@ -385,10 +385,10 @@ private:
 		}
 	}
 
-	static void setRopeCurLen(Drawable* rope, Real length)
+	static void setRopeCurLen(Drawable *rope, Real length)
 	{
-		RopeDrawInterface* tdi = NULL;
-		for (DrawModule** d = rope->getDrawModules(); *d; ++d)
+		RopeDrawInterface *tdi = NULL;
+		for (DrawModule **d = rope->getDrawModules(); *d; ++d)
 		{
 			if ((tdi = (*d)->getRopeDrawInterface()) != NULL)
 			{
@@ -397,10 +397,10 @@ private:
 		}
 	}
 
-	static void setRopeSpeed(Drawable* rope, Real curSpeed, Real maxSpeed, Real accel)
+	static void setRopeSpeed(Drawable *rope, Real curSpeed, Real maxSpeed, Real accel)
 	{
-		RopeDrawInterface* tdi = NULL;
-		for (DrawModule** d = rope->getDrawModules(); *d; ++d)
+		RopeDrawInterface *tdi = NULL;
+		for (DrawModule **d = rope->getDrawModules(); *d; ++d)
 		{
 			if ((tdi = (*d)->getRopeDrawInterface()) != NULL)
 			{
@@ -411,17 +411,17 @@ private:
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer )
+	virtual void crc(Xfer *xfer)
 	{
 		// empty
 	}
 
-	virtual void xfer( Xfer *xfer )
+	virtual void xfer(Xfer *xfer)
 	{
 		// version
 		const XferVersion currentVersion = 2;
 		XferVersion version = currentVersion;
-		xfer->xferVersion( &version, currentVersion );
+		xfer->xferVersion(&version, currentVersion);
 
 		Int numRopes = m_ropes.size();
 		xfer->xferInt(&numRopes);
@@ -432,7 +432,7 @@ protected:
 			{
 				if (!m_ropes.empty())
 				{
-					DEBUG_CRASH(( "ChinookCombatDropState - ropes should be empty" ));
+					DEBUG_CRASH(("ChinookCombatDropState - ropes should be empty"));
 					throw SC_INVALID_DATA;
 				}
 				m_ropes.resize(numRopes);
@@ -456,7 +456,7 @@ protected:
 				xfer->xferSTLObjectIDList(&info.rappellerIDs);
 				if (xfer->getXferMode() == XFER_LOAD)
 				{
-					info.ropeDrawable = NULL;	// filled in via loadPostProcess
+					info.ropeDrawable = NULL; // filled in via loadPostProcess
 					m_ropes[i] = info;
 				}
 			}
@@ -474,39 +474,42 @@ protected:
 	}
 
 public:
-	ChinookCombatDropState( StateMachine *machine ): State( machine, "ChinookCombatDropState" ) { }
+	ChinookCombatDropState(StateMachine *machine) : State(machine, "ChinookCombatDropState") {}
 
 	// --------------
 	virtual StateReturnType onEnter()
 	{
-		Object* obj = getMachineOwner();
-		Drawable* draw = obj->getDrawable();
+		Object *obj = getMachineOwner();
+		Drawable *draw = obj->getDrawable();
 		if (draw == NULL)
 			return STATE_FAILURE;
 
-		ChinookAIUpdate* ai = (ChinookAIUpdate*)obj->getAIUpdateInterface();
-		const ChinookAIUpdateModuleData* d = ai->friend_getData();
+		ChinookAIUpdate *ai = (ChinookAIUpdate *)obj->getAIUpdateInterface();
+		const ChinookAIUpdateModuleData *d = ai->friend_getData();
 
-		obj->setDisabled( DISABLED_HELD );
+		obj->setDisabled(DISABLED_HELD);
 		ai->friend_setFlightStatus(CHINOOK_DOING_COMBAT_DROP);
 
 		// A chinook given combat drop duty also loses his supplies.
-		while( ai->loseOneBox() );
+		while (ai->loseOneBox())
+			;
 
 		UnsignedInt now = TheGameLogic->getFrame();
 
-		const ThingTemplate* ropeTmpl = TheThingFactory->findTemplate(d->m_ropeName);
+		const ThingTemplate *ropeTmpl = TheThingFactory->findTemplate(d->m_ropeName);
 
 		const Int MAX_BONES = 32;
-    Coord3D ropePos[MAX_BONES];
-    Matrix3D dropMtx[MAX_BONES];
+		Coord3D ropePos[MAX_BONES];
+		Matrix3D dropMtx[MAX_BONES];
 
 		Int ropeCount = draw->getPristineBonePositions("RopeStart", 1, ropePos, NULL, MAX_BONES);
 		Int dropCount = draw->getPristineBonePositions("RopeEnd", 1, NULL, dropMtx, MAX_BONES);
 
 		Int numRopes = d->m_numRopes;
-		if (numRopes > ropeCount) numRopes = ropeCount;
-		if (numRopes > dropCount) numRopes = dropCount;
+		if (numRopes > ropeCount)
+			numRopes = ropeCount;
+		if (numRopes > dropCount)
+			numRopes = dropCount;
 		if (numRopes <= 0)
 			return STATE_FAILURE;
 
@@ -515,22 +518,30 @@ public:
 		{
 			RopeInfo info;
 
-			obj->convertBonePosToWorldPos( NULL, &dropMtx[i], NULL, &info.dropStartMtx );
+			obj->convertBonePosToWorldPos(NULL, &dropMtx[i], NULL, &info.dropStartMtx);
 
 			info.ropeDrawable = ropeTmpl ? TheThingFactory->newDrawable(ropeTmpl) : NULL;
 			if (info.ropeDrawable)
 			{
-				obj->convertBonePosToWorldPos( &ropePos[i], NULL, &ropePos[i], NULL );
+				obj->convertBonePosToWorldPos(&ropePos[i], NULL, &ropePos[i], NULL);
 				info.ropeDrawable->setPosition(&ropePos[i]);
 				info.ropeSpeed = 0.0f;
 				info.ropeLen = 1.0f;
 
-				const Bool onlyHealthyBridges = true;	// ignore dead bridges.
+				const Bool onlyHealthyBridges = true; // ignore dead bridges.
 				PathfindLayerEnum layerAtDest = TheTerrainLogic->getHighestLayerForDestination(&ropePos[i], onlyHealthyBridges);
 
-				info.ropeLenMax = ropePos[i].z - TheTerrainLogic->getLayerHeight(ropePos[i].x, ropePos[i].y, layerAtDest) - d->m_ropeFinalHeight;
+				info.ropeLenMax =
+						ropePos[i].z - TheTerrainLogic->getLayerHeight(ropePos[i].x, ropePos[i].y, layerAtDest) - d->m_ropeFinalHeight;
 
-				initRopeParms(info.ropeDrawable, info.ropeLenMax, d->m_ropeWidth, d->m_ropeColor, d->m_ropeWobbleLen, d->m_ropeWobbleAmp, d->m_ropeWobbleRate);
+				initRopeParms(
+						info.ropeDrawable,
+						info.ropeLenMax,
+						d->m_ropeWidth,
+						d->m_ropeColor,
+						d->m_ropeWobbleLen,
+						d->m_ropeWobbleAmp,
+						d->m_ropeWobbleRate);
 			}
 
 			info.nextDropTime = now + GameLogicRandomValue(d->m_perRopeDelayMin, d->m_perRopeDelayMax) - d->m_perRopeDelayMin;
@@ -545,9 +556,9 @@ public:
 	// --------------
 	virtual StateReturnType update()
 	{
-		Object* obj = getMachineOwner();
-		ChinookAIUpdate* ai = (ChinookAIUpdate*)obj->getAIUpdateInterface();
-		const ChinookAIUpdateModuleData* d = ai->friend_getData();
+		Object *obj = getMachineOwner();
+		ChinookAIUpdate *ai = (ChinookAIUpdate *)obj->getAIUpdateInterface();
+		const ChinookAIUpdateModuleData *d = ai->friend_getData();
 
 		if (obj->isEffectivelyDead())
 		{
@@ -580,12 +591,13 @@ public:
 
 			if (now >= it->nextDropTime)
 			{
-				Object* rappeller = getPotentialRappeller(obj);
+				Object *rappeller = getPotentialRappeller(obj);
 				if (rappeller != NULL)
 				{
 					ExitInterface *exitInterface = obj->getObjectExitInterface();
-					ExitDoorType exitDoor = exitInterface ? exitInterface->reserveDoorForExit(rappeller->getTemplate(), rappeller) : DOOR_NONE_AVAILABLE;
-					if(exitDoor != DOOR_NONE_AVAILABLE)
+					ExitDoorType exitDoor =
+							exitInterface ? exitInterface->reserveDoorForExit(rappeller->getTemplate(), rappeller) : DOOR_NONE_AVAILABLE;
+					if (exitDoor != DOOR_NONE_AVAILABLE)
 					{
 						exitInterface->exitObjectViaDoor(rappeller, exitDoor);
 					}
@@ -596,7 +608,7 @@ public:
 
 					rappeller->setTransformMatrix(&it->dropStartMtx);
 
-					AIUpdateInterface* rappellerAI = rappeller ? rappeller->getAIUpdateInterface() : NULL;
+					AIUpdateInterface *rappellerAI = rappeller ? rappeller->getAIUpdateInterface() : NULL;
 					if (rappellerAI)
 					{
 						rappellerAI->setDesiredSpeed(d->m_rappelSpeed);
@@ -625,13 +637,13 @@ public:
 	}
 
 	// --------------
-	virtual void onExit( StateExitType status )
+	virtual void onExit(StateExitType status)
 	{
-		Object* obj = getMachineOwner();
-		ChinookAIUpdate* ai = (ChinookAIUpdate*)obj->getAIUpdateInterface();
-		const ChinookAIUpdateModuleData* d = ai->friend_getData();
+		Object *obj = getMachineOwner();
+		ChinookAIUpdate *ai = (ChinookAIUpdate *)obj->getAIUpdateInterface();
+		const ChinookAIUpdateModuleData *d = ai->friend_getData();
 
-		obj->clearDisabled( DISABLED_HELD );
+		obj->clearDisabled(DISABLED_HELD);
 		ai->friend_setFlightStatus(CHINOOK_FLYING);
 
 		if (obj->isEffectivelyDead())
@@ -641,8 +653,8 @@ public:
 			{
 				for (std::list<ObjectID>::iterator oit = it->rappellerIDs.begin(); oit != it->rappellerIDs.end(); ++oit)
 				{
-					Object* rappeller = TheGameLogic->findObjectByID(*oit);
-					AIUpdateInterface* rappellerAI = rappeller ? rappeller->getAIUpdateInterface() : NULL;
+					Object *rappeller = TheGameLogic->findObjectByID(*oit);
+					AIUpdateInterface *rappellerAI = rappeller ? rappeller->getAIUpdateInterface() : NULL;
 					if (rappellerAI != NULL)
 					{
 						rappellerAI->aiIdle(CMD_FROM_AI);
@@ -657,7 +669,7 @@ public:
 			if (m_ropes[i].ropeDrawable)
 			{
 				const UnsignedInt ROPE_EXPIRATION_TIME = LOGICFRAMES_PER_SECOND * 5;
-				const Real initialSpeed = TheGlobalData->m_gravity * 30;	// give it a little kick
+				const Real initialSpeed = TheGlobalData->m_gravity * 30; // give it a little kick
 				setRopeSpeed(m_ropes[i].ropeDrawable, initialSpeed, d->m_ropeDropSpeed, TheGlobalData->m_gravity);
 				m_ropes[i].ropeDrawable->setExpirationDate(now + ROPE_EXPIRATION_TIME);
 				m_ropes[i].ropeDrawable = NULL; // we're done with it, so null it so we won't save it
@@ -666,7 +678,6 @@ public:
 
 		m_ropes.clear();
 	}
-
 };
 EMPTY_DTOR(ChinookCombatDropState)
 
@@ -681,19 +692,20 @@ private:
 	Real m_oldPreferredHeight;
 	Real m_newPreferredHeight;
 	Real m_destZ;
+
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer )
+	virtual void crc(Xfer *xfer)
 	{
 		// empty
 	}
 
-	virtual void xfer( Xfer *xfer )
+	virtual void xfer(Xfer *xfer)
 	{
 		// version
 		XferVersion currentVersion = 1;
 		XferVersion version = currentVersion;
-		xfer->xferVersion( &version, currentVersion );
+		xfer->xferVersion(&version, currentVersion);
 
 		xfer->xferReal(&m_oldPreferredHeight);
 		xfer->xferReal(&m_newPreferredHeight);
@@ -706,20 +718,20 @@ protected:
 	}
 
 public:
-	ChinookMoveToBldgState( StateMachine *machine ): AIMoveToState( machine ) { }
+	ChinookMoveToBldgState(StateMachine *machine) : AIMoveToState(machine) {}
 
 	virtual StateReturnType onEnter()
 	{
-		Object* obj = getMachineOwner();
-		ChinookAIUpdate* ai = (ChinookAIUpdate*)obj->getAIUpdateInterface();
-		const ChinookAIUpdateModuleData* d = ai->friend_getData();
-		Locomotor* loco = ai->getCurLocomotor();
+		Object *obj = getMachineOwner();
+		ChinookAIUpdate *ai = (ChinookAIUpdate *)obj->getAIUpdateInterface();
+		const ChinookAIUpdateModuleData *d = ai->friend_getData();
+		Locomotor *loco = ai->getCurLocomotor();
 		loco->setUltraAccurate(true);
 		m_oldPreferredHeight = loco->getPreferredHeight();
 		m_newPreferredHeight = m_oldPreferredHeight;
 
-		const Coord3D* destPos;
-		Object* bldg = getMachineGoalObject();
+		const Coord3D *destPos;
+		Object *bldg = getMachineGoalObject();
 		if (bldg != NULL && !bldg->isEffectivelyDead() && bldg->isKindOf(KINDOF_STRUCTURE))
 		{
 			destPos = bldg->getPosition();
@@ -741,7 +753,7 @@ public:
 
 	virtual StateReturnType update()
 	{
-		Object* obj = getMachineOwner();
+		Object *obj = getMachineOwner();
 
 		// the normal moveto state will bail when 2d pos matches; we need z, too
 		StateReturnType status = AIMoveToState::update();
@@ -753,16 +765,15 @@ public:
 		return status;
 	}
 
-	virtual void onExit( StateExitType status )
+	virtual void onExit(StateExitType status)
 	{
-		Object* obj = getMachineOwner();
-		ChinookAIUpdate* ai = (ChinookAIUpdate*)obj->getAIUpdateInterface();
-		Locomotor* loco = ai->getCurLocomotor();
+		Object *obj = getMachineOwner();
+		ChinookAIUpdate *ai = (ChinookAIUpdate *)obj->getAIUpdateInterface();
+		Locomotor *loco = ai->getCurLocomotor();
 		loco->setPreferredHeight(m_oldPreferredHeight);
 		loco->setUltraAccurate(false);
 		AIMoveToState::onExit(status);
 	}
-
 };
 EMPTY_DTOR(ChinookMoveToBldgState)
 
@@ -775,17 +786,17 @@ class ChinookRecordCreationState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ChinookRecordCreationState, "ChinookRecordCreationState")
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer )
+	virtual void crc(Xfer *xfer)
 	{
 		// empty
 	}
 
-	virtual void xfer( Xfer *xfer )
+	virtual void xfer(Xfer *xfer)
 	{
 		// version
 		XferVersion currentVersion = 1;
 		XferVersion version = currentVersion;
-		xfer->xferVersion( &version, currentVersion );
+		xfer->xferVersion(&version, currentVersion);
 	}
 
 	virtual void loadPostProcess()
@@ -794,27 +805,22 @@ protected:
 	}
 
 public:
-	ChinookRecordCreationState( StateMachine *machine ): State( machine, "ChinookRecordCreationState" ) { }
+	ChinookRecordCreationState(StateMachine *machine) : State(machine, "ChinookRecordCreationState") {}
 
 	virtual StateReturnType onEnter()
 	{
-		Object* obj = getMachineOwner();
-		ChinookAIUpdate* ai = (ChinookAIUpdate*)obj->getAIUpdateInterface();
-		if( ai )
+		Object *obj = getMachineOwner();
+		ChinookAIUpdate *ai = (ChinookAIUpdate *)obj->getAIUpdateInterface();
+		if (ai)
 		{
-			ai->recordOriginalPosition( *obj->getPosition() );
+			ai->recordOriginalPosition(*obj->getPosition());
 		}
 		return STATE_SUCCESS;
 	}
 
-	virtual StateReturnType update()
-	{
-		return STATE_SUCCESS;
-	}
-
+	virtual StateReturnType update() { return STATE_SUCCESS; }
 };
 EMPTY_DTOR(ChinookRecordCreationState)
-
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -823,33 +829,36 @@ EMPTY_DTOR(ChinookRecordCreationState)
 //-------------------------------------------------------------------------------------------------
 class ChinookAIStateMachine : public AIStateMachine
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ChinookAIStateMachine, "ChinookAIStateMachine" );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ChinookAIStateMachine, "ChinookAIStateMachine");
 
 public:
-	ChinookAIStateMachine( Object *owner, AsciiString name );
-
+	ChinookAIStateMachine(Object *owner, AsciiString name);
 };
 
 //-------------------------------------------------------------------------------------------------
 ChinookAIStateMachine::ChinookAIStateMachine(Object *owner, AsciiString name) : AIStateMachine(owner, name)
 {
-	defineState( TAKING_OFF, newInstance(ChinookTakeoffOrLandingState)( this, false ), AI_IDLE, AI_IDLE );
-	defineState( LANDING, newInstance(ChinookTakeoffOrLandingState)( this, true ), AI_IDLE, AI_IDLE );
-	defineState( MOVE_TO_COMBAT_DROP, newInstance(ChinookMoveToBldgState)( this ), DO_COMBAT_DROP, AI_IDLE );
-	defineState( DO_COMBAT_DROP, newInstance(ChinookCombatDropState)( this ), AI_IDLE, AI_IDLE );
+	defineState(TAKING_OFF, newInstance(ChinookTakeoffOrLandingState)(this, false), AI_IDLE, AI_IDLE);
+	defineState(LANDING, newInstance(ChinookTakeoffOrLandingState)(this, true), AI_IDLE, AI_IDLE);
+	defineState(MOVE_TO_COMBAT_DROP, newInstance(ChinookMoveToBldgState)(this), DO_COMBAT_DROP, AI_IDLE);
+	defineState(DO_COMBAT_DROP, newInstance(ChinookCombatDropState)(this), AI_IDLE, AI_IDLE);
 
-	defineState( MOVE_TO_AND_LAND, newInstance(AIMoveToState)( this ), LANDING, AI_IDLE );
+	defineState(MOVE_TO_AND_LAND, newInstance(AIMoveToState)(this), LANDING, AI_IDLE);
 
-	defineState( MOVE_TO_AND_EVAC, newInstance(AIMoveToState)( this ), LAND_AND_EVAC, AI_IDLE );
-	defineState( LAND_AND_EVAC, newInstance(ChinookTakeoffOrLandingState)( this, true ), EVAC_AND_TAKEOFF, AI_IDLE );
-	defineState( EVAC_AND_TAKEOFF, newInstance(ChinookEvacuateState)( this ), TAKING_OFF, AI_IDLE );
+	defineState(MOVE_TO_AND_EVAC, newInstance(AIMoveToState)(this), LAND_AND_EVAC, AI_IDLE);
+	defineState(LAND_AND_EVAC, newInstance(ChinookTakeoffOrLandingState)(this, true), EVAC_AND_TAKEOFF, AI_IDLE);
+	defineState(EVAC_AND_TAKEOFF, newInstance(ChinookEvacuateState)(this), TAKING_OFF, AI_IDLE);
 
-	defineState( MOVE_TO_AND_EVAC_AND_EXIT_INIT, newInstance(ChinookRecordCreationState)( this ), MOVE_TO_AND_EVAC_AND_EXIT, AI_IDLE );
-	defineState( MOVE_TO_AND_EVAC_AND_EXIT, newInstance(AIMoveToState)( this ), LAND_AND_EVAC_AND_EXIT, AI_IDLE );
-	defineState( LAND_AND_EVAC_AND_EXIT, newInstance(ChinookTakeoffOrLandingState)( this, true ), EVAC_AND_EXIT, AI_IDLE );
-	defineState( EVAC_AND_EXIT, newInstance(ChinookEvacuateState)( this ), TAKEOFF_AND_EXIT, AI_IDLE );
-	defineState( TAKEOFF_AND_EXIT, newInstance(ChinookTakeoffOrLandingState)( this, false ), HEAD_OFF_MAP, AI_IDLE );
-	defineState( HEAD_OFF_MAP, newInstance(ChinookHeadOffMapState)( this ), AI_IDLE, AI_IDLE );
+	defineState(
+			MOVE_TO_AND_EVAC_AND_EXIT_INIT,
+			newInstance(ChinookRecordCreationState)(this),
+			MOVE_TO_AND_EVAC_AND_EXIT,
+			AI_IDLE);
+	defineState(MOVE_TO_AND_EVAC_AND_EXIT, newInstance(AIMoveToState)(this), LAND_AND_EVAC_AND_EXIT, AI_IDLE);
+	defineState(LAND_AND_EVAC_AND_EXIT, newInstance(ChinookTakeoffOrLandingState)(this, true), EVAC_AND_EXIT, AI_IDLE);
+	defineState(EVAC_AND_EXIT, newInstance(ChinookEvacuateState)(this), TAKEOFF_AND_EXIT, AI_IDLE);
+	defineState(TAKEOFF_AND_EXIT, newInstance(ChinookTakeoffOrLandingState)(this, false), HEAD_OFF_MAP, AI_IDLE);
+	defineState(HEAD_OFF_MAP, newInstance(ChinookHeadOffMapState)(this), AI_IDLE, AI_IDLE);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -875,22 +884,21 @@ ChinookAIUpdateModuleData::ChinookAIUpdateModuleData()
 	m_waitForRopesToDrop = true;
 	m_minDropHeight = 30.0f;
 	m_ropeFinalHeight = 0.0f;
-	m_ropeDropSpeed = 1e10f;		// um, fast.
+	m_ropeDropSpeed = 1e10f; // um, fast.
 	m_rappelSpeed = fabs(TheGlobalData->m_gravity) * LOGICFRAMES_PER_SECOND * 0.5f;
 	m_ropeWobbleLen = 10.0f;
 	m_ropeWobbleAmp = 1.0f;
 	m_ropeWobbleRate = 0.1f;
-  m_rotorWashParticleSystem.clear();
+	m_rotorWashParticleSystem.clear();
 	m_upgradedSupplyBoost = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void ChinookAIUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
+/*static*/ void ChinookAIUpdateModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-  SupplyTruckAIUpdateModuleData::buildFieldParse(p);
+	SupplyTruckAIUpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
+	static const FieldParse dataFieldParse[] = {
 		{ "RappelSpeed", INI::parseVelocityReal, 0, offsetof(ChinookAIUpdateModuleData, m_rappelSpeed) },
 		{ "RopeDropSpeed", INI::parseVelocityReal, 0, offsetof(ChinookAIUpdateModuleData, m_ropeDropSpeed) },
 		{ "RopeName", INI::parseAsciiString, 0, offsetof(ChinookAIUpdateModuleData, m_ropeName) },
@@ -905,12 +913,15 @@ ChinookAIUpdateModuleData::ChinookAIUpdateModuleData()
 		{ "PerRopeDelayMax", INI::parseDurationUnsignedInt, 0, offsetof(ChinookAIUpdateModuleData, m_perRopeDelayMax) },
 		{ "MinDropHeight", INI::parseReal, 0, offsetof(ChinookAIUpdateModuleData, m_minDropHeight) },
 		{ "WaitForRopesToDrop", INI::parseBool, 0, offsetof(ChinookAIUpdateModuleData, m_waitForRopesToDrop) },
-		{ "RotorWashParticleSystem", INI::parseAsciiString,	NULL, offsetof( ChinookAIUpdateModuleData, m_rotorWashParticleSystem ) },
-		{ "UpgradedSupplyBoost", INI::parseInt, NULL, offsetof( ChinookAIUpdateModuleData, m_upgradedSupplyBoost) },
+		{ "RotorWashParticleSystem",
+			INI::parseAsciiString,
+			NULL,
+			offsetof(ChinookAIUpdateModuleData, m_rotorWashParticleSystem) },
+		{ "UpgradedSupplyBoost", INI::parseInt, NULL, offsetof(ChinookAIUpdateModuleData, m_upgradedSupplyBoost) },
 
 		{ 0, 0, 0, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -918,16 +929,16 @@ ChinookAIUpdateModuleData::ChinookAIUpdateModuleData()
 //-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-AIStateMachine* ChinookAIUpdate::makeStateMachine()
+AIStateMachine *ChinookAIUpdate::makeStateMachine()
 {
-	return newInstance(ChinookAIStateMachine)( getObject(), "ChinookAIStateMachine");
+	return newInstance(ChinookAIStateMachine)(getObject(), "ChinookAIStateMachine");
 }
 
 //-------------------------------------------------------------------------------------------------
-ChinookAIUpdate::ChinookAIUpdate( Thing *thing, const ModuleData* moduleData ) : SupplyTruckAIUpdate( thing, moduleData )
+ChinookAIUpdate::ChinookAIUpdate(Thing *thing, const ModuleData *moduleData) : SupplyTruckAIUpdate(thing, moduleData)
 {
 	m_hasPendingCommand = false;
-	m_flightStatus = CHINOOK_FLYING;	// yep, that's right, even if we start "on ground"
+	m_flightStatus = CHINOOK_FLYING; // yep, that's right, even if we start "on ground"
 	m_airfieldForHealing = INVALID_ID;
 	m_originalPos.zero();
 }
@@ -935,18 +946,17 @@ ChinookAIUpdate::ChinookAIUpdate( Thing *thing, const ModuleData* moduleData ) :
 //-------------------------------------------------------------------------------------------------
 ChinookAIUpdate::~ChinookAIUpdate()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
-static ParkingPlaceBehaviorInterface* getPP(ObjectID id)
+static ParkingPlaceBehaviorInterface *getPP(ObjectID id)
 {
-	Object* airfield = TheGameLogic->findObjectByID( id );
+	Object *airfield = TheGameLogic->findObjectByID(id);
 	if (airfield == NULL || airfield->isEffectivelyDead() || !airfield->isKindOf(KINDOF_FS_AIRFIELD))
 		return NULL;
 
-	ParkingPlaceBehaviorInterface* pp = NULL;
-	for (BehaviorModule** i = airfield->getBehaviorModules(); *i; ++i)
+	ParkingPlaceBehaviorInterface *pp = NULL;
+	for (BehaviorModule **i = airfield->getBehaviorModules(); *i; ++i)
 	{
 		if ((pp = (*i)->getParkingPlaceBehaviorInterface()) != NULL)
 			break;
@@ -961,7 +971,7 @@ void ChinookAIUpdate::setAirfieldForHealing(ObjectID id)
 	// make sure we de-register with current one, if any
 	if (m_airfieldForHealing != INVALID_ID && m_airfieldForHealing != id)
 	{
-		ParkingPlaceBehaviorInterface* pp = getPP(m_airfieldForHealing);
+		ParkingPlaceBehaviorInterface *pp = getPP(m_airfieldForHealing);
 		if (pp != NULL)
 		{
 			pp->setHealee(getObject(), false);
@@ -983,7 +993,7 @@ Bool ChinookAIUpdate::isIdle() const
 	if (result && m_flightStatus == CHINOOK_LANDED)
 	{
 		// ditto: if we are waiting to disgorge some folks, we aren't 'idle'
-		ContainModuleInterface* contain = getObject()->getContain();
+		ContainModuleInterface *contain = getObject()->getContain();
 		if (contain && contain->hasObjectsWantingToEnterOrExit())
 			result = false;
 	}
@@ -1003,8 +1013,9 @@ Bool ChinookAIUpdate::isAvailableForSupplying() const
 	if (!SupplyTruckAIUpdate::isAvailableForSupplying())
 		return false;
 
-	ContainModuleInterface* contain = getObject()->getContain();
-	if( !contain || contain->hasObjectsWantingToEnterOrExit() || contain->getContainCount() || contain->isSpecialOverlordStyleContainer())
+	ContainModuleInterface *contain = getObject()->getContain();
+	if (!contain || contain->hasObjectsWantingToEnterOrExit() || contain->getContainCount()
+			|| contain->isSpecialOverlordStyleContainer())
 		return false;
 
 	return true;
@@ -1016,7 +1027,7 @@ Bool ChinookAIUpdate::isAllowedToAdjustDestination() const
 	if (m_flightStatus == CHINOOK_LANDED)
 		return false;
 
-	if( getCurLocomotor()->isInvalidPositionAllowed() )
+	if (getCurLocomotor()->isInvalidPositionAllowed())
 	{
 		return FALSE;
 	}
@@ -1029,7 +1040,7 @@ ObjectID ChinookAIUpdate::getBuildingToNotPathAround() const
 {
 	if (getAIStateType() == MOVE_TO_COMBAT_DROP || getAIStateType() == DO_COMBAT_DROP)
 	{
-		const Object* goalObj = getStateMachine()->getGoalObject();
+		const Object *goalObj = getStateMachine()->getGoalObject();
 		if (goalObj)
 			return goalObj->getID();
 	}
@@ -1038,10 +1049,10 @@ ObjectID ChinookAIUpdate::getBuildingToNotPathAround() const
 }
 
 //-------------------------------------------------------------------------------------------------
-AIFreeToExitType ChinookAIUpdate::getAiFreeToExit(const Object* exiter) const
+AIFreeToExitType ChinookAIUpdate::getAiFreeToExit(const Object *exiter) const
 {
-	 if (m_flightStatus == CHINOOK_LANDED
-				|| (m_flightStatus == CHINOOK_DOING_COMBAT_DROP && exiter->isKindOf(KINDOF_CAN_RAPPEL)))
+	if (m_flightStatus == CHINOOK_LANDED
+			|| (m_flightStatus == CHINOOK_DOING_COMBAT_DROP && exiter->isKindOf(KINDOF_CAN_RAPPEL)))
 		return FREE_TO_EXIT;
 
 	return WAIT_TO_EXIT;
@@ -1058,12 +1069,11 @@ Bool ChinookAIUpdate::chooseLocomotorSet(LocomotorSetType wst)
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime ChinookAIUpdate::update()
 {
-	ParkingPlaceBehaviorInterface* pp = getPP(m_airfieldForHealing);
+	ParkingPlaceBehaviorInterface *pp = getPP(m_airfieldForHealing);
 	if (pp != NULL)
 	{
-		if (m_flightStatus == CHINOOK_LANDED &&
-				!m_hasPendingCommand &&
-				getObject()->getBodyModule()->getHealth() == getObject()->getBodyModule()->getMaxHealth())
+		if (m_flightStatus == CHINOOK_LANDED && !m_hasPendingCommand
+				&& getObject()->getBodyModule()->getHealth() == getObject()->getBodyModule()->getMaxHealth())
 		{
 			// we're completely healed, so take off again
 			pp->setHealee(getObject(), false);
@@ -1079,19 +1089,17 @@ UpdateSleepTime ChinookAIUpdate::update()
 		setAirfieldForHealing(INVALID_ID);
 	}
 
-
-
 	// have to call our parent's isIdle, because we override it to never return true
 	// when we have a pending command...
-	ContainModuleInterface* contain = getObject()->getContain();
-	if( contain )
+	ContainModuleInterface *contain = getObject()->getContain();
+	if (contain)
 	{
-	  if (SupplyTruckAIUpdate::isIdle())
+		if (SupplyTruckAIUpdate::isIdle())
 		{
 			Bool waitingToEnterOrExit = contain->hasObjectsWantingToEnterOrExit();
 			if (m_hasPendingCommand)
 			{
-				AICommandParms parms(AICMD_MOVE_TO_POSITION, CMD_FROM_AI);	// values don't matter, will be wiped by next line
+				AICommandParms parms(AICMD_MOVE_TO_POSITION, CMD_FROM_AI); // values don't matter, will be wiped by next line
 				m_pendingCommand.reconstitute(parms);
 				m_hasPendingCommand = false;
 				aiDoCommand(&parms);
@@ -1106,101 +1114,89 @@ UpdateSleepTime ChinookAIUpdate::update()
 			}
 		}
 
+		if (TheGameLogic->getFrame() % 10 == 1)
+		{
+			Object *victim = getCurrentVictim();
+			if (victim)
+			{
+				// privateAttackObject( victim, 9999, CMD_FROM_AI );
 
-    if ( TheGameLogic->getFrame()%10 == 1 )
-    {
-	    Object *victim = getCurrentVictim();
-      if ( victim )
-      {
-       // privateAttackObject( victim, 9999, CMD_FROM_AI );
+				// If we are attacking something, lets make sure our passengers follow suit
+				if (contain->isPassengerAllowedToFire())
+				{
+					const ContainedItemsList *passengerList = contain->getContainedItemsList();
+					ContainedItemsList::const_iterator passengerIterator;
+					passengerIterator = passengerList->begin();
 
-        //If we are attacking something, lets make sure our passengers follow suit
-        if ( contain->isPassengerAllowedToFire() )
-        {
-			    const ContainedItemsList *passengerList = contain->getContainedItemsList();
-			    ContainedItemsList::const_iterator passengerIterator;
-			    passengerIterator = passengerList->begin();
+					while (passengerIterator != passengerList->end())
+					{
+						Object *passenger = *passengerIterator;
+						// Advance to the next iterator
+						passengerIterator++;
 
-			    while( passengerIterator != passengerList->end() )
-			    {
-				    Object *passenger = *passengerIterator;
-				    //Advance to the next iterator
-				    passengerIterator++;
-
-				    AIUpdateInterface *passengerAI = passenger->getAIUpdateInterface();
-				    if( passengerAI && (passengerAI->getCurrentVictim() == NULL) )
-				    {
-					    passengerAI->aiAttackObject( victim, 999, CMD_FROM_AI );
-				    }
-			    }
-        }
-
-      }
-    }
-
-
-
-
+						AIUpdateInterface *passengerAI = passenger->getAIUpdateInterface();
+						if (passengerAI && (passengerAI->getCurrentVictim() == NULL))
+						{
+							passengerAI->aiAttackObject(victim, 999, CMD_FROM_AI);
+						}
+					}
+				}
+			}
+		}
 	}
 
+	// Just a handy spot to handle that groovy client effect of the rotor wash
+	if (getObject()->getShroudedStatus(ThePlayerList->getLocalPlayer()->getPlayerIndex()) == OBJECTSHROUD_CLEAR)
+	{
+		if (m_flightStatus == CHINOOK_LANDING || m_flightStatus == CHINOOK_TAKING_OFF || m_flightStatus == CHINOOK_LANDED)
+		{
+			Coord3D pos = *getObject()->getPosition();
+			Real chopperElevation = pos.z;
+			pos.z = TheTerrainLogic->getGroundHeight(pos.x, pos.y) + 3.0f;
+			chopperElevation -= pos.z;
 
-
-
-  // Just a handy spot to handle that groovy client effect of the rotor wash
-  if ( getObject()->getShroudedStatus( ThePlayerList->getLocalPlayer()->getPlayerIndex()) == OBJECTSHROUD_CLEAR )
-  {
-    if ( m_flightStatus == CHINOOK_LANDING || m_flightStatus == CHINOOK_TAKING_OFF || m_flightStatus == CHINOOK_LANDED )
-    {
-      Coord3D pos = *getObject()->getPosition();
-      Real chopperElevation = pos.z;
-      pos.z = TheTerrainLogic->getGroundHeight( pos.x, pos.y ) + 3.0f;
-      chopperElevation -= pos.z;
-
-      if ( GameClientRandomValueReal( 0.0f, chopperElevation ) < 5.0f )
-      {
-	      const ParticleSystemTemplate *tmp = TheParticleSystemManager->findTemplate( getChinookAIUpdateModuleData()->m_rotorWashParticleSystem );
-	      ParticleSystem *system;
-	      if( tmp )
-	      {
-		      system = TheParticleSystemManager->createParticleSystem( tmp );
-		      if( system )
-		      {
-			      system->setPosition( &pos );
-		      }
-	      }
-      }
-
-    }
-  }
-
-
-
+			if (GameClientRandomValueReal(0.0f, chopperElevation) < 5.0f)
+			{
+				const ParticleSystemTemplate *tmp =
+						TheParticleSystemManager->findTemplate(getChinookAIUpdateModuleData()->m_rotorWashParticleSystem);
+				ParticleSystem *system;
+				if (tmp)
+				{
+					system = TheParticleSystemManager->createParticleSystem(tmp);
+					if (system)
+					{
+						system->setPosition(&pos);
+					}
+				}
+			}
+		}
+	}
 
 	return SupplyTruckAIUpdate::update();
 }
 
 //-------------------------------------------------------------------------------------------------
-void ChinookAIUpdate::setMyState( StateID cmd, Object* target, const Coord3D* pos, CommandSourceType cmdSource )
+void ChinookAIUpdate::setMyState(StateID cmd, Object *target, const Coord3D *pos, CommandSourceType cmdSource)
 {
 	getStateMachine()->clear();
-	getStateMachine()->setGoalObject( target );
+	getStateMachine()->setGoalObject(target);
 	setGoalPositionClipped(pos, cmdSource); // yeah, null is ok here.
-	setLastCommandSource( cmdSource );
-	getStateMachine()->setState( cmd );
+	setLastCommandSource(cmdSource);
+	getStateMachine()->setState(cmd);
 }
 
 //----------------------------------------------------------------------------------------
 /**
  * Get repaired at the repair depot
  */
-void ChinookAIUpdate::privateGetRepaired( Object *repairDepot, CommandSourceType cmdSource )
+void ChinookAIUpdate::privateGetRepaired(Object *repairDepot, CommandSourceType cmdSource)
 {
 	// we are already landing. just ignore it.
 	if (m_flightStatus == CHINOOK_LANDING || m_flightStatus == CHINOOK_LANDED)
 		return;
 
 	// sanity, if we can't get repaired from here get out of here
-	if( TheActionManager->canGetRepairedAt( getObject(), repairDepot, cmdSource ) == FALSE )
+	if (TheActionManager->canGetRepairedAt(getObject(), repairDepot, cmdSource) == FALSE)
 		return;
 
 	setAirfieldForHealing(repairDepot->getID());
@@ -1213,19 +1209,17 @@ void ChinookAIUpdate::privateGetRepaired( Object *repairDepot, CommandSourceType
 		pos = tmp;
 
 	setMyState(MOVE_TO_AND_LAND, NULL, &pos, cmdSource);
-
 }
 
 //-------------------------------------------------------------------------------------------------
-void ChinookAIUpdate::privateCombatDrop( Object* target, const Coord3D& pos, CommandSourceType cmdSource )
+void ChinookAIUpdate::privateCombatDrop(Object *target, const Coord3D &pos, CommandSourceType cmdSource)
 {
-
 	//
 	// when there is a target present, we must verify that we can logically do the action when
 	// we get commands from players (we'll assume AI knows what its doing)
 	//
-	if( target != NULL && cmdSource == CMD_FROM_PLAYER &&
-			TheActionManager->canEnterObject( getObject(), target, cmdSource, COMBATDROP_INTO ) == FALSE )
+	if (target != NULL && cmdSource == CMD_FROM_PLAYER
+			&& TheActionManager->canEnterObject(getObject(), target, cmdSource, COMBATDROP_INTO) == FALSE)
 		return;
 
 	Coord3D localPos = pos;
@@ -1245,11 +1239,10 @@ void ChinookAIUpdate::privateCombatDrop( Object* target, const Coord3D& pos, Com
 
 	// start the combat drop process
 	setMyState(MOVE_TO_COMBAT_DROP, target, &localPos, cmdSource);
-
 }
 
 //-------------------------------------------------------------------------------------------------
-void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
+void ChinookAIUpdate::aiDoCommand(const AICommandParms *parms)
 {
 	// this gets reset every time a command is issued.
 	setAirfieldForHealing(INVALID_ID);
@@ -1257,9 +1250,8 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 	if (!isAllowedToRespondToAiCommands(parms))
 		return;
 
-	if (m_flightStatus == CHINOOK_TAKING_OFF ||
-				m_flightStatus == CHINOOK_LANDING ||
-				m_flightStatus == CHINOOK_DOING_COMBAT_DROP)
+	if (m_flightStatus == CHINOOK_TAKING_OFF || m_flightStatus == CHINOOK_LANDING
+			|| m_flightStatus == CHINOOK_DOING_COMBAT_DROP)
 	{
 		// have to wait for takeoff or landing (or rappel) to complete, just store the sucker.
 		m_pendingCommand.store(*parms);
@@ -1283,9 +1275,8 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 		case AICMD_MOVE_TO_POSITION_AND_EVACUATE_AND_EXIT:
 		{
 			const Real THRESH = 3.0f;
-			const Real THRESH_SQR = THRESH*THRESH;
-			if (calcDistSqr(*getObject()->getPosition(), parms->m_pos) > THRESH_SQR &&
-					m_flightStatus == CHINOOK_LANDED)
+			const Real THRESH_SQR = THRESH * THRESH;
+			if (calcDistSqr(*getObject()->getPosition(), parms->m_pos) > THRESH_SQR && m_flightStatus == CHINOOK_LANDED)
 			{
 				// gotta take off first!
 				m_pendingCommand.store(*parms);
@@ -1298,8 +1289,10 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 			{
 				// do this INSTEAD of the standard stuff
 				setMyState(
-					(parms->m_cmd == AICMD_MOVE_TO_POSITION_AND_EVACUATE) ? MOVE_TO_AND_EVAC : MOVE_TO_AND_EVAC_AND_EXIT_INIT,
-					NULL, &parms->m_pos, CMD_FROM_AI);
+						(parms->m_cmd == AICMD_MOVE_TO_POSITION_AND_EVACUATE) ? MOVE_TO_AND_EVAC : MOVE_TO_AND_EVAC_AND_EXIT_INIT,
+						NULL,
+						&parms->m_pos,
+						CMD_FROM_AI);
 				passItThru = false;
 			}
 		}
@@ -1345,51 +1338,47 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ChinookAIUpdate::crc( Xfer *xfer )
+void ChinookAIUpdate::crc(Xfer *xfer)
 {
 	SupplyTruckAIUpdate::crc(xfer);
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ChinookAIUpdate::xfer( Xfer *xfer )
+void ChinookAIUpdate::xfer(Xfer *xfer)
 {
-
-  // version
-  XferVersion currentVersion = 2;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 2;
+	XferVersion version = currentVersion;
+	xfer->xferVersion(&version, currentVersion);
 	// extend base class
 	SupplyTruckAIUpdate::xfer(xfer);
 
 	xfer->xferBool(&m_hasPendingCommand);
-	if (m_hasPendingCommand) {
+	if (m_hasPendingCommand)
+	{
 		m_pendingCommand.doXfer(xfer);
 	}
 	xfer->xferUser(&m_flightStatus, sizeof(m_flightStatus));
 	xfer->xferObjectID(&m_airfieldForHealing);
 
-	if( version >= 2 )
+	if (version >= 2)
 	{
-		xfer->xferCoord3D( &m_originalPos );
+		xfer->xferCoord3D(&m_originalPos);
 	}
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ChinookAIUpdate::loadPostProcess( void )
+void ChinookAIUpdate::loadPostProcess(void)
 {
 	SupplyTruckAIUpdate::loadPostProcess();
-}  // end loadPostProcess
-
-
-
-
+} // end loadPostProcess
 
 //----------------------------------------------------------------------------------------
 /**
@@ -1397,273 +1386,244 @@ void ChinookAIUpdate::loadPostProcess( void )
  */
 void ChinookAIUpdate::privateIdle(CommandSourceType cmdSource)
 {
-
-  // Just an extra step, here, before extending idle to parent classes.
-  // Living in you own privateIdle-ho.
-  ContainModuleInterface* contain = getObject()->getContain();
-	if( contain != NULL )
+	// Just an extra step, here, before extending idle to parent classes.
+	// Living in you own privateIdle-ho.
+	ContainModuleInterface *contain = getObject()->getContain();
+	if (contain != NULL)
 	{
-    Object *rider = (Object*)contain->friend_getRider();
-    if ( rider )
-    {
-			AIUpdateInterface *riderAI = rider->getAIUpdateInterface();
-			if( riderAI )
-				riderAI->aiIdle( cmdSource );
-		}
-  }
-
-  SupplyTruckAIUpdate::privateIdle( cmdSource );
-
-}
-
-
-//-------------------------------------------------------------------------------------------------
-/**
- * Attack given object
- */
-void ChinookAIUpdate::privateAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource )
-{
-
-  if ( ! getObject()->isKindOf( KINDOF_CAN_ATTACK ) )
-    return;
-
-  ContainModuleInterface* contain = getObject()->getContain();
-	if( contain != NULL )
-	{
-		// As an extension of the normal attack, I may want to tell my passengers to attack
-		// too, but only if this is a direct command.  (As opposed to a passive aquire)
-		if( (cmdSource == CMD_FROM_PLAYER  ||  cmdSource == CMD_FROM_SCRIPT) )
+		Object *rider = (Object *)contain->friend_getRider();
+		if (rider)
 		{
-      //if ( contain->isPassengerAllowedToFire() )//moved to below
-      {
-			  const ContainedItemsList *passengerList = contain->getContainedItemsList();
-			  ContainedItemsList::const_iterator passengerIterator;
-			  passengerIterator = passengerList->begin();
-
-			  while( passengerIterator != passengerList->end() )
-			  {
-				  Object *passenger = *passengerIterator;
-				  //Advance to the next iterator
-				  passengerIterator++;
-
-
-          if ( ! contain->isPassengerAllowedToFire( passenger->getID() ) )
-            continue;
-
-          if ( ! passenger->isKindOf( KINDOF_INFANTRY ))
-            continue;
-
-				  // If I am an overlord with a gattling upgrade, I do not tell it to fire if it is disabled
-				  if ( passenger->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
-				  {
-					  if( passenger->isDisabledByType( DISABLED_HACKED )
-						  || passenger->isDisabledByType( DISABLED_EMP )
-						  || passenger->isDisabledByType( DISABLED_SUBDUED )
-						  || passenger->isDisabledByType( DISABLED_PARALYZED) )
-						  continue;
-				  }
-
-				  AIUpdateInterface *passengerAI = passenger->getAIUpdateInterface();
-				  if( passengerAI )
-				  {
-					  passengerAI->aiAttackObject( victim, maxShotsToFire, cmdSource );
-				  }
-			  }
-
-      }
-
-      private___TellPortableStructureToAttackWithMe( victim, maxShotsToFire, cmdSource );
-
+			AIUpdateInterface *riderAI = rider->getAIUpdateInterface();
+			if (riderAI)
+				riderAI->aiIdle(cmdSource);
 		}
 	}
 
-	AIUpdateInterface::privateAttackObject( victim, maxShotsToFire, cmdSource );
+	SupplyTruckAIUpdate::privateIdle(cmdSource);
 }
-
-
-
-void ChinookAIUpdate::private___TellPortableStructureToAttackWithMe( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource )
-{
-  ContainModuleInterface* contain = getObject()->getContain();
-	if( contain != NULL )
-	{
-    //--------- THE GATTLING UPGRADE OR THE GUYS IN THE BUNKER_NOT_A_BUNKER-------------
-    Object *rider = (Object*)contain->friend_getRider();
-		if ( rider
-      && rider->isKindOf( KINDOF_PORTABLE_STRUCTURE )
-      && !rider->isDisabledByType( DISABLED_HACKED )
-			&& !rider->isDisabledByType( DISABLED_EMP )
-			&& !rider->isDisabledByType( DISABLED_SUBDUED )
-			&& !rider->isDisabledByType( DISABLED_PARALYZED) )
-    {
-			AIUpdateInterface *riderAI = rider->getAIUpdateInterface();
-			if( riderAI )
-			{
-				riderAI->aiAttackObject( victim, maxShotsToFire, cmdSource );
-			}
-		}
-  }
-}
-
 
 //-------------------------------------------------------------------------------------------------
 /**
  * Attack given object
  */
-void ChinookAIUpdate::privateForceAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource )
+void ChinookAIUpdate::privateAttackObject(Object *victim, Int maxShotsToFire, CommandSourceType cmdSource)
 {
+	if (!getObject()->isKindOf(KINDOF_CAN_ATTACK))
+		return;
 
-  if ( ! getObject()->isKindOf( KINDOF_CAN_ATTACK ) )
-    return;
-
-  ContainModuleInterface* contain = getObject()->getContain();
-	if( contain != NULL )
+	ContainModuleInterface *contain = getObject()->getContain();
+	if (contain != NULL)
 	{
 		// As an extension of the normal attack, I may want to tell my passengers to attack
 		// too, but only if this is a direct command.  (As opposed to a passive aquire)
-		if( (cmdSource == CMD_FROM_PLAYER  ||  cmdSource == CMD_FROM_SCRIPT) )
+		if ((cmdSource == CMD_FROM_PLAYER || cmdSource == CMD_FROM_SCRIPT))
 		{
-//      if ( contain->isPassengerAllowedToFire() )
-      {
-			  const ContainedItemsList *passengerList = contain->getContainedItemsList();
-			  ContainedItemsList::const_iterator passengerIterator;
-			  passengerIterator = passengerList->begin();
+			// if ( contain->isPassengerAllowedToFire() )//moved to below
+			{
+				const ContainedItemsList *passengerList = contain->getContainedItemsList();
+				ContainedItemsList::const_iterator passengerIterator;
+				passengerIterator = passengerList->begin();
 
-			  while( passengerIterator != passengerList->end() )
-			  {
-				  Object *passenger = *passengerIterator;
-				  //Advance to the next iterator
-				  passengerIterator++;
-
-          if ( ! contain->isPassengerAllowedToFire( passenger->getID() ) )
-            continue;
-
-          if ( ! passenger->isKindOf( KINDOF_INFANTRY ))
-            continue;
-
-				  // If I am an overlord with a gattling upgrade, I do not tell it to fire if it is disabled
-				  if ( passenger->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
-				  {
-					  if( passenger->isDisabledByType( DISABLED_HACKED )
-						  || passenger->isDisabledByType( DISABLED_EMP )
-						  || passenger->isDisabledByType( DISABLED_SUBDUED )
-						  || passenger->isDisabledByType( DISABLED_PARALYZED) )
-						  continue;
-				  }
-
-				  AIUpdateInterface *passengerAI = passenger->getAIUpdateInterface();
-				  if( passengerAI )
-				  {
-					  passengerAI->aiForceAttackObject( victim, maxShotsToFire, cmdSource );
-				  }
-
-			  }
-      }
-
-
-      //--------- THE GATTLING UPGRADE OR THE GUYS IN THE BUNKER_NOT_A_BUNKER-------------
-      Object *rider = (Object*)contain->friend_getRider();
-			if ( rider
-        && rider->isKindOf( KINDOF_PORTABLE_STRUCTURE )
-        && !rider->isDisabledByType( DISABLED_HACKED )
-				&& !rider->isDisabledByType( DISABLED_EMP )
-				&& !rider->isDisabledByType( DISABLED_SUBDUED )
-				&& !rider->isDisabledByType( DISABLED_PARALYZED) )
-      {
-				AIUpdateInterface *riderAI = rider->getAIUpdateInterface();
-				if( riderAI )
+				while (passengerIterator != passengerList->end())
 				{
-					riderAI->aiForceAttackObject( victim, maxShotsToFire, cmdSource );
+					Object *passenger = *passengerIterator;
+					// Advance to the next iterator
+					passengerIterator++;
+
+					if (!contain->isPassengerAllowedToFire(passenger->getID()))
+						continue;
+
+					if (!passenger->isKindOf(KINDOF_INFANTRY))
+						continue;
+
+					// If I am an overlord with a gattling upgrade, I do not tell it to fire if it is disabled
+					if (passenger->isKindOf(KINDOF_PORTABLE_STRUCTURE))
+					{
+						if (passenger->isDisabledByType(DISABLED_HACKED) || passenger->isDisabledByType(DISABLED_EMP)
+								|| passenger->isDisabledByType(DISABLED_SUBDUED) || passenger->isDisabledByType(DISABLED_PARALYZED))
+							continue;
+					}
+
+					AIUpdateInterface *passengerAI = passenger->getAIUpdateInterface();
+					if (passengerAI)
+					{
+						passengerAI->aiAttackObject(victim, maxShotsToFire, cmdSource);
+					}
 				}
 			}
 
+			private___TellPortableStructureToAttackWithMe(victim, maxShotsToFire, cmdSource);
 		}
 	}
 
-	AIUpdateInterface::privateForceAttackObject( victim, maxShotsToFire, cmdSource );
+	AIUpdateInterface::privateAttackObject(victim, maxShotsToFire, cmdSource);
+}
+
+void ChinookAIUpdate::private___TellPortableStructureToAttackWithMe(
+		Object *victim,
+		Int maxShotsToFire,
+		CommandSourceType cmdSource)
+{
+	ContainModuleInterface *contain = getObject()->getContain();
+	if (contain != NULL)
+	{
+		//--------- THE GATTLING UPGRADE OR THE GUYS IN THE BUNKER_NOT_A_BUNKER-------------
+		Object *rider = (Object *)contain->friend_getRider();
+		if (rider && rider->isKindOf(KINDOF_PORTABLE_STRUCTURE) && !rider->isDisabledByType(DISABLED_HACKED)
+				&& !rider->isDisabledByType(DISABLED_EMP) && !rider->isDisabledByType(DISABLED_SUBDUED)
+				&& !rider->isDisabledByType(DISABLED_PARALYZED))
+		{
+			AIUpdateInterface *riderAI = rider->getAIUpdateInterface();
+			if (riderAI)
+			{
+				riderAI->aiAttackObject(victim, maxShotsToFire, cmdSource);
+			}
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+/**
+ * Attack given object
+ */
+void ChinookAIUpdate::privateForceAttackObject(Object *victim, Int maxShotsToFire, CommandSourceType cmdSource)
+{
+	if (!getObject()->isKindOf(KINDOF_CAN_ATTACK))
+		return;
+
+	ContainModuleInterface *contain = getObject()->getContain();
+	if (contain != NULL)
+	{
+		// As an extension of the normal attack, I may want to tell my passengers to attack
+		// too, but only if this is a direct command.  (As opposed to a passive aquire)
+		if ((cmdSource == CMD_FROM_PLAYER || cmdSource == CMD_FROM_SCRIPT))
+		{
+			//      if ( contain->isPassengerAllowedToFire() )
+			{
+				const ContainedItemsList *passengerList = contain->getContainedItemsList();
+				ContainedItemsList::const_iterator passengerIterator;
+				passengerIterator = passengerList->begin();
+
+				while (passengerIterator != passengerList->end())
+				{
+					Object *passenger = *passengerIterator;
+					// Advance to the next iterator
+					passengerIterator++;
+
+					if (!contain->isPassengerAllowedToFire(passenger->getID()))
+						continue;
+
+					if (!passenger->isKindOf(KINDOF_INFANTRY))
+						continue;
+
+					// If I am an overlord with a gattling upgrade, I do not tell it to fire if it is disabled
+					if (passenger->isKindOf(KINDOF_PORTABLE_STRUCTURE))
+					{
+						if (passenger->isDisabledByType(DISABLED_HACKED) || passenger->isDisabledByType(DISABLED_EMP)
+								|| passenger->isDisabledByType(DISABLED_SUBDUED) || passenger->isDisabledByType(DISABLED_PARALYZED))
+							continue;
+					}
+
+					AIUpdateInterface *passengerAI = passenger->getAIUpdateInterface();
+					if (passengerAI)
+					{
+						passengerAI->aiForceAttackObject(victim, maxShotsToFire, cmdSource);
+					}
+				}
+			}
+
+			//--------- THE GATTLING UPGRADE OR THE GUYS IN THE BUNKER_NOT_A_BUNKER-------------
+			Object *rider = (Object *)contain->friend_getRider();
+			if (rider && rider->isKindOf(KINDOF_PORTABLE_STRUCTURE) && !rider->isDisabledByType(DISABLED_HACKED)
+					&& !rider->isDisabledByType(DISABLED_EMP) && !rider->isDisabledByType(DISABLED_SUBDUED)
+					&& !rider->isDisabledByType(DISABLED_PARALYZED))
+			{
+				AIUpdateInterface *riderAI = rider->getAIUpdateInterface();
+				if (riderAI)
+				{
+					riderAI->aiForceAttackObject(victim, maxShotsToFire, cmdSource);
+				}
+			}
+		}
+	}
+
+	AIUpdateInterface::privateForceAttackObject(victim, maxShotsToFire, cmdSource);
 }
 
 //-------------------------------------------------------------------------------------------------
 /**
  * Attack given position
  */
-void ChinookAIUpdate::privateAttackPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource )
+void ChinookAIUpdate::privateAttackPosition(const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource)
 {
+	if (!getObject()->isKindOf(KINDOF_CAN_ATTACK))
+		return;
 
-  if ( ! getObject()->isKindOf( KINDOF_CAN_ATTACK ) )
-    return;
-
-	ContainModuleInterface* contain = getObject()->getContain();
-	if( contain != NULL )
+	ContainModuleInterface *contain = getObject()->getContain();
+	if (contain != NULL)
 	{
 		// As an extension of the normal attack, I may want to tell my passengers to attack
 		// too, but only if this is a direct command.  (As opposed to a passive aquire)
-		if( (cmdSource == CMD_FROM_PLAYER  ||  cmdSource == CMD_FROM_SCRIPT) )
+		if ((cmdSource == CMD_FROM_PLAYER || cmdSource == CMD_FROM_SCRIPT))
 		{
+			// if ( contain->isPassengerAllowedToFire() )
+			{
+				const ContainedItemsList *passengerList = contain->getContainedItemsList();
+				ContainedItemsList::const_iterator passengerIterator;
+				passengerIterator = passengerList->begin();
 
-      //if ( contain->isPassengerAllowedToFire() )
-      {
-			  const ContainedItemsList *passengerList = contain->getContainedItemsList();
-			  ContainedItemsList::const_iterator passengerIterator;
-			  passengerIterator = passengerList->begin();
-
-			  while( passengerIterator != passengerList->end() )
-			  {
-				  Object *passenger = *passengerIterator;
-				  //Advance to the next iterator
-				  passengerIterator++;
-
-          if ( ! contain->isPassengerAllowedToFire( passenger->getID() ) )
-            continue;
-
-          if ( ! passenger->isKindOf( KINDOF_INFANTRY ))
-            continue;
-
-          // If I am an overlord with a gattling upgrade, I do not tell it ti fire if it is disabled
-				  if ( passenger->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
-				  {
-					  if( passenger->isDisabledByType( DISABLED_HACKED )
-						  || passenger->isDisabledByType( DISABLED_EMP)
-						  || passenger->isDisabledByType( DISABLED_SUBDUED)
-						  || passenger->isDisabledByType( DISABLED_PARALYZED) )
-						  continue;
-				  }
-
-				  AIUpdateInterface *passengerAI = passenger->getAIUpdateInterface();
-				  if( passengerAI )
-				  {
-					  passengerAI->aiAttackPosition( pos, maxShotsToFire, cmdSource );
-				  }
-
-			  }
-      }
-
-      //--------- THE GATTLING UPGRADE OR THE GUYS IN THE BUNKER_NOT_A_BUNKER-------------
-      Object *rider = (Object*)contain->friend_getRider();
-			if ( rider
-        && rider->isKindOf( KINDOF_PORTABLE_STRUCTURE )
-        && !rider->isDisabledByType( DISABLED_HACKED )
-				&& !rider->isDisabledByType( DISABLED_EMP )
-				&& !rider->isDisabledByType( DISABLED_SUBDUED )
-				&& !rider->isDisabledByType( DISABLED_PARALYZED) )
-      {
-				AIUpdateInterface *riderAI = rider->getAIUpdateInterface();
-				if( riderAI )
+				while (passengerIterator != passengerList->end())
 				{
-					riderAI->aiAttackPosition( pos, maxShotsToFire, cmdSource );
+					Object *passenger = *passengerIterator;
+					// Advance to the next iterator
+					passengerIterator++;
+
+					if (!contain->isPassengerAllowedToFire(passenger->getID()))
+						continue;
+
+					if (!passenger->isKindOf(KINDOF_INFANTRY))
+						continue;
+
+					// If I am an overlord with a gattling upgrade, I do not tell it ti fire if it is disabled
+					if (passenger->isKindOf(KINDOF_PORTABLE_STRUCTURE))
+					{
+						if (passenger->isDisabledByType(DISABLED_HACKED) || passenger->isDisabledByType(DISABLED_EMP)
+								|| passenger->isDisabledByType(DISABLED_SUBDUED) || passenger->isDisabledByType(DISABLED_PARALYZED))
+							continue;
+					}
+
+					AIUpdateInterface *passengerAI = passenger->getAIUpdateInterface();
+					if (passengerAI)
+					{
+						passengerAI->aiAttackPosition(pos, maxShotsToFire, cmdSource);
+					}
+				}
+			}
+
+			//--------- THE GATTLING UPGRADE OR THE GUYS IN THE BUNKER_NOT_A_BUNKER-------------
+			Object *rider = (Object *)contain->friend_getRider();
+			if (rider && rider->isKindOf(KINDOF_PORTABLE_STRUCTURE) && !rider->isDisabledByType(DISABLED_HACKED)
+					&& !rider->isDisabledByType(DISABLED_EMP) && !rider->isDisabledByType(DISABLED_SUBDUED)
+					&& !rider->isDisabledByType(DISABLED_PARALYZED))
+			{
+				AIUpdateInterface *riderAI = rider->getAIUpdateInterface();
+				if (riderAI)
+				{
+					riderAI->aiAttackPosition(pos, maxShotsToFire, cmdSource);
 				}
 			}
 		}
 	}
 
-	AIUpdateInterface::privateAttackPosition( pos, maxShotsToFire, cmdSource );
+	AIUpdateInterface::privateAttackPosition(pos, maxShotsToFire, cmdSource);
 }
 
 //------------------------------------------------------------------------------------------------
 Int ChinookAIUpdate::getUpgradedSupplyBoost() const
 {
 	Player *player = getObject()->getControllingPlayer();
-	static const UpgradeTemplate *supplyLinesTemplate = TheUpgradeCenter->findUpgrade( "Upgrade_AmericaSupplyLines" );
+	static const UpgradeTemplate *supplyLinesTemplate = TheUpgradeCenter->findUpgrade("Upgrade_AmericaSupplyLines");
 
 	if (player && supplyLinesTemplate && player->hasUpgradeComplete(supplyLinesTemplate))
 		return getChinookAIUpdateModuleData()->m_upgradedSupplyBoost;

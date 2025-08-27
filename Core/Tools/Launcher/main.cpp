@@ -17,7 +17,7 @@
 */
 
 /*****************************************************************************\
-          C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S
+					C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S
 *******************************************************************************
  File:       main.cpp
  Programmer: Neal Kettler
@@ -64,7 +64,7 @@
 
 #include <Debug/DebugPrint.h>
 
-#define UPDATE_RETVAL 123456789  // if a program returns this it means it wants to check for patches
+#define UPDATE_RETVAL 123456789 // if a program returns this it means it wants to check for patches
 
 void CreatePrimaryWin(const char *prefix);
 void myChdir(char *path);
@@ -75,7 +75,7 @@ void RunGame(char *thePath, ConfigFile &config, Process &proc)
 	bool launchgame = true;
 
 	// MDC 8/23/2001 Wait 3 seconds for the installer to release the mutex
-	///Sleep(3000);
+	/// Sleep(3000);
 
 	while (true)
 	{
@@ -105,17 +105,16 @@ void RunGame(char *thePath, ConfigFile &config, Process &proc)
 
 				// Start patchgrabber
 				Process patchgrab;
-				strcpy(patchgrab.directory,proc.directory);  // same dir as game
-				strcpy(patchgrab.command,"patchget.dat");  // the program that grabs game patches
-				strcpy(patchgrab.args,"");
+				strcpy(patchgrab.directory, proc.directory); // same dir as game
+				strcpy(patchgrab.command, "patchget.dat"); // the program that grabs game patches
+				strcpy(patchgrab.args, "");
 				Create_Process(patchgrab);
-				Wait_Process(patchgrab);  // wait for completion
+				Wait_Process(patchgrab); // wait for completion
 			}
-
 		}
 		else
 		{
-			Delete_Patches(config);  // delete all patches
+			Delete_Patches(config); // delete all patches
 			break;
 		}
 	}
@@ -135,7 +134,7 @@ int main(int argc, char *argv[])
 {
 	char patchFile[MAX_PATH];
 
-	char cwd[MAX_PATH];  // save current directory before game start
+	char cwd[MAX_PATH]; // save current directory before game start
 	_getcwd(cwd, MAX_PATH);
 
 	// Goto the folder where launcher is installed
@@ -145,8 +144,8 @@ int main(int argc, char *argv[])
 	//   .lcf (Launcher ConFig).  This is the name of our config file.
 	char configName[MAX_PATH + 3];
 	strcpy(configName, argv[0]);
-	char* extension = configName;
-	char* tempptr;
+	char *extension = configName;
+	char *tempptr;
 
 	while ((tempptr = strchr(extension + 1, '.')))
 	{
@@ -159,7 +158,7 @@ int main(int argc, char *argv[])
 	}
 
 #ifdef DEBUG
-	///MonoD outputDevice;
+	/// MonoD outputDevice;
 	char debugFile[MAX_PATH + 3];
 	strcpy(debugFile, configName);
 	strcat(debugFile, ".txt");
@@ -176,15 +175,14 @@ int main(int argc, char *argv[])
 
 	strcat(configName, ".lcf");
 
-	DBGMSG("Config Name: "<<configName);
+	DBGMSG("Config Name: " << configName);
 
 	ConfigFile config;
-	FILE* in = fopen(configName, "r");
+	FILE *in = fopen(configName, "r");
 
 	if (in == NULL)
 	{
-		MessageBox(NULL,"You must run the game from its install directory.",
-			"Launcher config file missing",MB_OK);
+		MessageBox(NULL, "You must run the game from its install directory.", "Launcher config file missing", MB_OK);
 		exit(-1);
 	}
 
@@ -193,17 +191,17 @@ int main(int argc, char *argv[])
 
 	if (ok == FALSE)
 	{
-		MessageBox(NULL,"File 'launcher.cfg' is corrupt","Error",MB_OK);
+		MessageBox(NULL, "File 'launcher.cfg' is corrupt", "Error", MB_OK);
 		exit(-1);
 	}
 
 	// Load process info
 	Process proc;
-	Read_Process_Info(config,proc);
+	Read_Process_Info(config, proc);
 
 	// Possible 2nd EXE
 	Process proc2;
-	int hasSecondEXE = Read_Process_Info(config,proc2,"RUN2");
+	int hasSecondEXE = Read_Process_Info(config, proc2, "RUN2");
 
 	DBGMSG("Read process info");
 
@@ -219,7 +217,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	DBGMSG("ARGS: "<<proc.args);
+	DBGMSG("ARGS: " << proc.args);
 
 	// Just spawn the patchgrabber & apply any patches it downloads
 	if ((argc >= 2) && (strcmp(argv[1], "GrabPatches") == 0))
@@ -256,7 +254,7 @@ int main(int argc, char *argv[])
 	if (hasSecondEXE)
 	{
 		Wstring timeStr;
-		if (config.getString("FLAG", timeStr)!=FALSE)
+		if (config.getString("FLAG", timeStr) != FALSE)
 		{
 			cutoffTime = atoi(timeStr.get());
 		}
@@ -265,7 +263,7 @@ int main(int argc, char *argv[])
 		{
 			// We didn't have the FLAG parameter; somebody's been hacking.  No game for you!  Bad hacker!
 			DBGMSG("Saw cutoffTime of 0; real time is " << time(NULL));
-			MessageBox(NULL,"File 'launcher.cfg' is corrupt","Error",MB_OK);
+			MessageBox(NULL, "File 'launcher.cfg' is corrupt", "Error", MB_OK);
 			exit(-1);
 		}
 
@@ -294,7 +292,6 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-
 //
 // Create a primary window
 //
@@ -303,7 +300,7 @@ void CreatePrimaryWin(const char *prefix)
 	char name[256];
 	sprintf(name, "launcher_%s", prefix);
 
-	DBGMSG("CreatePrimary: "<<name);
+	DBGMSG("CreatePrimary: " << name);
 
 	/*
 	** set up and register window class
@@ -311,11 +308,11 @@ void CreatePrimaryWin(const char *prefix)
 	WNDCLASS wc;
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = DefWindowProc;
-	wc.cbClsExtra = 0;            // Don't need any extra class data
-	wc.cbWndExtra = 0;            // No extra win data
+	wc.cbClsExtra = 0; // Don't need any extra class data
+	wc.cbWndExtra = 0; // No extra win data
 	wc.hInstance = Global_instance;
-	wc.hIcon=LoadIcon(Global_instance, MAKEINTRESOURCE(IDI_GENERALS));
-	wc.hCursor = NULL;  /////////LoadCursor( NULL, IDC_ARROW );
+	wc.hIcon = LoadIcon(Global_instance, MAKEINTRESOURCE(IDI_GENERALS));
+	wc.hCursor = NULL; /////////LoadCursor( NULL, IDC_ARROW );
 	wc.hbrBackground = NULL;
 	wc.lpszMenuName = name;
 	wc.lpszClassName = name;
@@ -324,11 +321,21 @@ void CreatePrimaryWin(const char *prefix)
 	/*
 	** create a window
 	*/
-	HWND hwnd = CreateWindowEx(WS_EX_TOPMOST, name, name, WS_POPUP, 0, 0,
-		GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
-		NULL, NULL, Global_instance, NULL);
+	HWND hwnd = CreateWindowEx(
+			WS_EX_TOPMOST,
+			name,
+			name,
+			WS_POPUP,
+			0,
+			0,
+			GetSystemMetrics(SM_CXSCREEN),
+			GetSystemMetrics(SM_CYSCREEN),
+			NULL,
+			NULL,
+			Global_instance,
+			NULL);
 
-	if(!hwnd)
+	if (!hwnd)
 	{
 		DBGMSG("Couldn't make window!");
 	}
@@ -338,14 +345,11 @@ void CreatePrimaryWin(const char *prefix)
 	}
 }
 
-
-//void DestroyPrimaryWin(void)
+// void DestroyPrimaryWin(void)
 //{
-//  DestroyWindow(PrimaryWin);
-//  UnregisterClass(classname);
-//}
-
-
+//   DestroyWindow(PrimaryWin);
+//   UnregisterClass(classname);
+// }
 
 //
 // If given a file, it'll goto it's directory.  If on a diff drive,
@@ -358,27 +362,19 @@ void myChdir(char *path)
 	char file[255];
 	char ext[64];
 	char filepath[513];
-	int  abc;
+	int abc;
 
-	_splitpath( path, drive, dir, file, ext );
-	_makepath ( filepath,   drive, dir, NULL, NULL );
+	_splitpath(path, drive, dir, file, ext);
+	_makepath(filepath, drive, dir, NULL, NULL);
 
-	if ( filepath[ strlen( filepath ) - 1 ] == '\\' )
+	if (filepath[strlen(filepath) - 1] == '\\')
 	{
-		filepath[ strlen( filepath ) - 1 ] = '\0';
+		filepath[strlen(filepath) - 1] = '\0';
 	}
-	abc = (unsigned)( toupper( filepath[0] ) - 'A' + 1 );
-	if ( !_chdrive( abc ))
+	abc = (unsigned)(toupper(filepath[0]) - 'A' + 1);
+	if (!_chdrive(abc))
 	{
-		abc = chdir( filepath );  // Will fail with ending '\\'
+		abc = chdir(filepath); // Will fail with ending '\\'
 	}
 	// should be in proper folder now....
 }
-
-
-
-
-
-
-
-

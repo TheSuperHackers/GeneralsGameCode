@@ -36,13 +36,13 @@
  *   WindowsVersionInfo::WindowsVersionInfo -- Windows Version Info constructor.               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#define  STRICT
+#define STRICT
 #include <windows.h>
 #include <windowsx.h>
-#pragma   hdrstop
+#pragma hdrstop
 
-//#include <commctrl.h>
-//#include <winuser.h>
+// #include <commctrl.h>
+// #include <winuser.h>
 #include <assert.h>
 #include <stdio.h>
 #include "WinFix.H"
@@ -52,8 +52,6 @@
 ** Windows Version Info global object.
 */
 WindowsVersionInfo WinVersion;
-
-
 
 /***********************************************************************************************
  * WindowsVersionInfo::WindowsVersionInfo -- Windows Version Info constructor.                 *
@@ -72,17 +70,17 @@ WindowsVersionInfo WinVersion;
  *  04/09/98 jdl : Created.                                                                    *
  *=============================================================================================*/
 WindowsVersionInfo::WindowsVersionInfo(void) :
-	WindowsVersion(0),
-	MajorVersionNumber(0),
-	MinorVersionNumber(0),
-	RunningOSR2(0),
-	BuildNumber(0),
-	IsWin9x(false),
-	IsWin95(false),
-	IsWin98(false),
-	IsWin2000(false),
-	IsWinNT(false),
-	IsWinXP(false)
+		WindowsVersion(0),
+		MajorVersionNumber(0),
+		MinorVersionNumber(0),
+		RunningOSR2(0),
+		BuildNumber(0),
+		IsWin9x(false),
+		IsWin95(false),
+		IsWin98(false),
+		IsWin2000(false),
+		IsWinNT(false),
+		IsWinXP(false)
 {
 	OSVERSIONINFO version_info;
 
@@ -93,9 +91,9 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
 	// Start recording messages.
 	//--------------------------------------------------------------------------
 	Delete_Msg_File();
-	Msg( __LINE__, __FILE__, "----------------------------------------------", NULL );
-	Msg( __LINE__, __FILE__, "------------------ Setup -----------------", NULL );
-	Msg( __LINE__, __FILE__, "----------------------------------------------", NULL );
+	Msg(__LINE__, __FILE__, "----------------------------------------------", NULL);
+	Msg(__LINE__, __FILE__, "------------------ Setup -----------------", NULL);
+	Msg(__LINE__, __FILE__, "----------------------------------------------", NULL);
 
 	//--------------------------------------------------------------------------
 	// Get the version info from the OS.
@@ -123,18 +121,18 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
 	//		BYTE	wReserved;
 	//	} OSVERSIONINFOEX, *POSVERSIONINFOEX, *LPOSVERSIONINFOEX;
 	//--------------------------------------------------------------------------
-	ZeroMemory( &version_info, sizeof( version_info ));
-	version_info.dwOSVersionInfoSize = sizeof( version_info );
+	ZeroMemory(&version_info, sizeof(version_info));
+	version_info.dwOSVersionInfoSize = sizeof(version_info);
 
-	int result = GetVersionEx( &version_info );
-	assert( result != 0 );
+	int result = GetVersionEx(&version_info);
+	assert(result != 0);
 
 	//--------------------------------------------------------------------------
 	// Save the major/minor version numbers
 	//--------------------------------------------------------------------------
 	MajorVersionNumber = (int)version_info.dwMajorVersion;
 	MinorVersionNumber = (int)version_info.dwMinorVersion;
-	WindowsVersion     = ( MajorVersionNumber * 100 ) + MinorVersionNumber;
+	WindowsVersion = (MajorVersionNumber * 100) + MinorVersionNumber;
 
 	//--------------------------------------------------------------------------
 	// Save the build number
@@ -144,18 +142,21 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
 	//--------------------------------------------------------------------------
 	// Check for Win9x
 	//--------------------------------------------------------------------------
-	if ( version_info.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS ) {
-
+	if (version_info.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
+	{
 		IsWin9x = true;
 
-		if ( MajorVersionNumber == 4 && MinorVersionNumber == 0 ) {
+		if (MajorVersionNumber == 4 && MinorVersionNumber == 0)
+		{
 			IsWin95 = true;
 		}
-		if (( MajorVersionNumber > 4 ) || (( MajorVersionNumber == 4 ) && ( MinorVersionNumber > 0 ))) {
+		if ((MajorVersionNumber > 4) || ((MajorVersionNumber == 4) && (MinorVersionNumber > 0)))
+		{
 			IsWin98 = true;
 		}
 
-		if ( LOWORD( version_info.dwPlatformId ) > 1000 ) {
+		if (LOWORD(version_info.dwPlatformId) > 1000)
+		{
 			RunningOSR2 = TRUE;
 		}
 	}
@@ -163,43 +164,46 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
 	//--------------------------------------------------------------------------
 	// Check for WinNT
 	//--------------------------------------------------------------------------
-	if ( version_info.dwPlatformId == VER_PLATFORM_WIN32_NT ) {
-
+	if (version_info.dwPlatformId == VER_PLATFORM_WIN32_NT)
+	{
 		IsWinNT = true;
 
-		if (( MajorVersionNumber >= 5 ) && ( MinorVersionNumber >= 1 )) {
+		if ((MajorVersionNumber >= 5) && (MinorVersionNumber >= 1))
+		{
 			IsWinXP = true;
-//			if ( version_info.wSuiteMask == VER_SUITE_PERSONAL ) {
-//			}
-		} else if (( MajorVersionNumber == 5 ) && ( MinorVersionNumber == 0 )) {
+			//			if ( version_info.wSuiteMask == VER_SUITE_PERSONAL ) {
+			//			}
+		}
+		else if ((MajorVersionNumber == 5) && (MinorVersionNumber == 0))
+		{
 			IsWin2000 = true;
 		}
 
-//         if( bOsVersionInfoEx )
-//         {
-//            if ( osvi.wProductType == VER_NT_WORKSTATION )
-//               printf ( "Professional " );
-//
-//            if ( osvi.wProductType == VER_NT_SERVER )
-//               printf ( "Server " );
+		//         if( bOsVersionInfoEx )
+		//         {
+		//            if ( osvi.wProductType == VER_NT_WORKSTATION )
+		//               printf ( "Professional " );
+		//
+		//            if ( osvi.wProductType == VER_NT_SERVER )
+		//               printf ( "Server " );
 
-//         } else {
+		//         } else {
 
-		#if( RTS_DEBUG )
-            HKEY hKey;
-            char szProductType[80];
-            DWORD dwBufLen;
+#if (RTS_DEBUG)
+		HKEY hKey;
+		char szProductType[80];
+		DWORD dwBufLen;
 
-            RegOpenKeyEx( HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\ProductOptions", 0, KEY_QUERY_VALUE, &hKey );
-            RegQueryValueEx( hKey, "ProductType", NULL, NULL, (LPBYTE) szProductType, &dwBufLen);
-            RegCloseKey( hKey );
+		RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\ProductOptions", 0, KEY_QUERY_VALUE, &hKey);
+		RegQueryValueEx(hKey, "ProductType", NULL, NULL, (LPBYTE)szProductType, &dwBufLen);
+		RegCloseKey(hKey);
 
-            if ( lstrcmpi( "WINNT", szProductType) == 0 )
-				Msg( __LINE__, __FILE__, "WinNT Workstation." );
-            if ( lstrcmpi( "SERVERNT", szProductType) == 0 )
-				Msg( __LINE__, __FILE__, "WinNT Server." );
-		#endif
-//         }
+		if (lstrcmpi("WINNT", szProductType) == 0)
+			Msg(__LINE__, __FILE__, "WinNT Workstation.");
+		if (lstrcmpi("SERVERNT", szProductType) == 0)
+			Msg(__LINE__, __FILE__, "WinNT Server.");
+#endif
+		//         }
 	}
 
 #ifdef DEV_VERSION
@@ -207,7 +211,7 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
 	//--------------------------------------------------------------------------
 	// For developmental versions, just use the major & minor version #'s
 	//--------------------------------------------------------------------------
-	sprintf( VersionName, "%x.%x", MajorVersionNumber, MinorVersionNumber );
+	sprintf(VersionName, "%x.%x", MajorVersionNumber, MinorVersionNumber);
 
 #else
 
@@ -218,13 +222,15 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
 	int i;
 
 	adjusted_minor = MinorVersionNumber;
-	for (i = 0; i < 4; i++) {
-		if ((adjusted_minor & 0x000f) != 0) {
+	for (i = 0; i < 4; i++)
+	{
+		if ((adjusted_minor & 0x000f) != 0)
+		{
 			break;
 		}
 		adjusted_minor >>= 4;
 	}
-	sprintf( VersionName, "%x.%x", MajorVersionNumber, adjusted_minor );
+	sprintf(VersionName, "%x.%x", MajorVersionNumber, adjusted_minor);
 
 #endif
 
@@ -233,25 +239,25 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
 	// (used to indicated additional info or patch level, i.e. for NT 4.0 SP3
 	// it would contain the string 'Service Pack 3')
 	//--------------------------------------------------------------------------
-	strncpy( AdditionalInfo, version_info.szCSDVersion, sizeof(AdditionalInfo) - 1 );
+	strncpy(AdditionalInfo, version_info.szCSDVersion, sizeof(AdditionalInfo) - 1);
 	AdditionalInfo[sizeof(AdditionalInfo) - 1] = '\x0';
 
 	//--------------------------------------------------------------------------
 	// Send all info found to the debug output file.
 	//--------------------------------------------------------------------------
-#if ( RTS_DEBUG )
-	Msg( __LINE__, __FILE__, "MajorVersionNumber	= %d", MajorVersionNumber );
-	Msg( __LINE__, __FILE__, "MinorVersionNumber	= %d", MinorVersionNumber );
-	Msg( __LINE__, __FILE__, "WindowsVersion	= %d", WindowsVersion );
-	Msg( __LINE__, __FILE__, "BuildNumber	= %d", BuildNumber );
-	Msg( __LINE__, __FILE__, "IsWin9x		= %d", IsWin9x );
-	Msg( __LINE__, __FILE__, "IsWin95		= %d", IsWin95 );
-	Msg( __LINE__, __FILE__, "IsWin98		= %d", IsWin98 );
-	Msg( __LINE__, __FILE__, "IsWin2000		= %d", IsWin2000 );
-	Msg( __LINE__, __FILE__, "RunningOSR2	= %d", RunningOSR2 );
-	Msg( __LINE__, __FILE__, "IsWinNT		= %d", IsWinNT );
-	Msg( __LINE__, __FILE__, "AdditionalInfo	= %s", AdditionalInfo );
-	Msg( __LINE__, __FILE__, "VersionName	= %s", VersionName );
+#if (RTS_DEBUG)
+	Msg(__LINE__, __FILE__, "MajorVersionNumber	= %d", MajorVersionNumber);
+	Msg(__LINE__, __FILE__, "MinorVersionNumber	= %d", MinorVersionNumber);
+	Msg(__LINE__, __FILE__, "WindowsVersion	= %d", WindowsVersion);
+	Msg(__LINE__, __FILE__, "BuildNumber	= %d", BuildNumber);
+	Msg(__LINE__, __FILE__, "IsWin9x		= %d", IsWin9x);
+	Msg(__LINE__, __FILE__, "IsWin95		= %d", IsWin95);
+	Msg(__LINE__, __FILE__, "IsWin98		= %d", IsWin98);
+	Msg(__LINE__, __FILE__, "IsWin2000		= %d", IsWin2000);
+	Msg(__LINE__, __FILE__, "RunningOSR2	= %d", RunningOSR2);
+	Msg(__LINE__, __FILE__, "IsWinNT		= %d", IsWinNT);
+	Msg(__LINE__, __FILE__, "AdditionalInfo	= %s", AdditionalInfo);
+	Msg(__LINE__, __FILE__, "VersionName	= %s", VersionName);
 #endif
 }
 
@@ -269,36 +275,41 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
  *=============================================================================================*/
 char *WindowsVersionInfo::Version_String(void)
 {
-	static char _ver95[]   	= {"Windows 95 "};
-	static char _ver98[]   	= {"Windows 98 "};
-	static char _verNT4[]	= {"Windows NT 4 "};
-	static char _verNT5[]	= {"Windows 2000 "};
-	static char _verXP[]	= {"Windows XP "};
-	static char _unknown[]	= {"Unknown "};
+	static char _ver95[] = { "Windows 95 " };
+	static char _ver98[] = { "Windows 98 " };
+	static char _verNT4[] = { "Windows NT 4 " };
+	static char _verNT5[] = { "Windows 2000 " };
+	static char _verXP[] = { "Windows XP " };
+	static char _unknown[] = { "Unknown " };
 
 	static char version[256];
 
-	if (Is_Win95()) {
-		strcpy (version, _ver95);
+	if (Is_Win95())
+	{
+		strcpy(version, _ver95);
 	}
 
-	if (Is_Win98()) {
-		strcpy (version, _ver98);
+	if (Is_Win98())
+	{
+		strcpy(version, _ver98);
 	}
 
-	if (Is_WinNT()) {
-		strcpy (version, _verNT4);
+	if (Is_WinNT())
+	{
+		strcpy(version, _verNT4);
 	}
 
-	if (Is_WinNT5() || Is_Win_2000()) {
-		strcpy (version, _verNT5);
+	if (Is_WinNT5() || Is_Win_2000())
+	{
+		strcpy(version, _verNT5);
 	}
 
-	if (Is_Win_XP()) {
-		strcpy (version, _verXP);
+	if (Is_Win_XP())
+	{
+		strcpy(version, _verXP);
 	}
 
-	strcat (version, AdditionalInfo);
+	strcat(version, AdditionalInfo);
 
 	return (version);
 }
@@ -319,9 +330,9 @@ char *WindowsVersionInfo::Version_String(void)
  *   10/30/1995 BRR : Created.															*
  *=========================================================================*/
 
-char * WindowsVersionInfo::Version_Name(void)
+char *WindowsVersionInfo::Version_Name(void)
 {
-	return ( VersionName );
+	return (VersionName);
 }
 
 /****************************************************************************
@@ -340,11 +351,8 @@ char * WindowsVersionInfo::Version_Name(void)
  *   10/30/1995 BRR : Created.												*
  *==========================================================================*/
 
-bool WindowsVersionInfo::Meets_Minimum_Version_Requirements	( void )
+bool WindowsVersionInfo::Meets_Minimum_Version_Requirements(void)
 {
-//	return(( !IsWin95 && ( Version() >= 400 ))? true : false );
-	return(( Version() >= 400 )? true : false );
+	//	return(( !IsWin95 && ( Version() >= 400 ))? true : false );
+	return ((Version() >= 400) ? true : false);
 }
-
-
-

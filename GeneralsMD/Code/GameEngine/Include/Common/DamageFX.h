@@ -44,7 +44,7 @@ class FXList;
 class INI;
 
 //-------------------------------------------------------------------------------------------------
-typedef const FXList* ConstFXListPtr;
+typedef const FXList *ConstFXListPtr;
 
 //-------------------------------------------------------------------------------------------------
 /**
@@ -74,7 +74,6 @@ typedef const FXList* ConstFXListPtr;
 class DamageFX
 {
 public:
-
 	DamageFX();
 
 	void clear();
@@ -84,20 +83,19 @@ public:
 		a/v fx used for a specific damage type, call this method. (It is OK for source and/or
 		victim to be null, but you should pass them when available.)
 	*/
-	void doDamageFX(DamageType t, Real damageAmount, const Object* source, const Object* victim) const;
+	void doDamageFX(DamageType t, Real damageAmount, const Object *source, const Object *victim) const;
 
-	UnsignedInt getDamageFXThrottleTime(DamageType t, const Object* source) const;
+	UnsignedInt getDamageFXThrottleTime(DamageType t, const Object *source) const;
 
-	const FieldParse* getFieldParse() const;
+	const FieldParse *getFieldParse() const;
 
 private:
+	ConstFXListPtr getDamageFXList(DamageType t, Real damageAmount, const Object *source) const;
 
-	ConstFXListPtr getDamageFXList(DamageType t, Real damageAmount, const Object* source) const;
-
-	static void parseAmount( INI* ini, void *instance, void*, const void* );
-	static void parseMajorFXList( INI* ini, void *instance, void*, const void* );
-	static void parseMinorFXList( INI* ini, void *instance, void*, const void* );
-	static void parseTime( INI* ini, void *instance, void*, const void* );
+	static void parseAmount(INI *ini, void *instance, void *, const void *);
+	static void parseMajorFXList(INI *ini, void *instance, void *, const void *);
+	static void parseMinorFXList(INI *ini, void *instance, void *, const void *);
+	static void parseTime(INI *ini, void *instance, void *, const void *);
 
 	/*
 		this isn't terribly efficient since this is pretty sparsely populated
@@ -106,15 +104,12 @@ private:
 	*/
 	struct DFX
 	{
-		Real									m_amountForMajorFX;				///< if damage done is >= this, use major fx
-		ConstFXListPtr				m_majorDamageFXList;			///< fx to make
-		ConstFXListPtr				m_minorDamageFXList;			///< fx to make
-		UnsignedInt						m_damageFXThrottleTime;
+		Real m_amountForMajorFX; ///< if damage done is >= this, use major fx
+		ConstFXListPtr m_majorDamageFXList; ///< fx to make
+		ConstFXListPtr m_minorDamageFXList; ///< fx to make
+		UnsignedInt m_damageFXThrottleTime;
 
-		DFX()
-		{
-			clear();
-		}
+		DFX() { clear(); }
 
 		void clear()
 		{
@@ -137,9 +132,7 @@ private:
 //-------------------------------------------------------------------------------------------------
 class DamageFXStore : public SubsystemInterface
 {
-
 public:
-
 	DamageFXStore();
 	~DamageFXStore();
 
@@ -150,20 +143,16 @@ public:
 	/**
 		Find the DamageFX with the given name. If no such DamageFX exists, return null.
 	*/
-	const DamageFX *findDamageFX( AsciiString name ) const;
+	const DamageFX *findDamageFX(AsciiString name) const;
 
-	static void parseDamageFXDefinition(INI* ini);
-
+	static void parseDamageFXDefinition(INI *ini);
 
 private:
-
-	typedef std::hash_map< NameKeyType, DamageFX, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> > DamageFXMap;
+	typedef std::hash_map<NameKeyType, DamageFX, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> > DamageFXMap;
 	DamageFXMap m_dfxmap;
-
 };
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern DamageFXStore *TheDamageFXStore;
 
 #endif // _DamageFX_H_
-

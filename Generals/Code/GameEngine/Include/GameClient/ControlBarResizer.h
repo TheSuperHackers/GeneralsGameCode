@@ -66,7 +66,7 @@
 class ResizerWindow
 {
 public:
-ResizerWindow( void );
+	ResizerWindow(void);
 	AsciiString m_name;
 	ICoord2D m_defaultSize;
 	ICoord2D m_defaultPos;
@@ -77,24 +77,23 @@ ResizerWindow( void );
 class ControlBarResizer
 {
 public:
-	ControlBarResizer( void );
-	~ControlBarResizer( void );
+	ControlBarResizer(void);
+	~ControlBarResizer(void);
 
-	void init( void );
+	void init(void);
 
 	// parse Functions for the INI file
-	const FieldParse *getFieldParse() const { return m_controlBarResizerParseTable; }								///< returns the parsing fields
-	static const FieldParse m_controlBarResizerParseTable[];																				///< the parse table
+	const FieldParse *getFieldParse() const { return m_controlBarResizerParseTable; } ///< returns the parsing fields
+	static const FieldParse m_controlBarResizerParseTable[]; ///< the parse table
 
-	ResizerWindow *findResizerWindow( AsciiString name ); ///< attempt to find the control bar scheme by it's name
-	ResizerWindow *newResizerWindow( AsciiString name );	///< create a new control bar scheme and return it.
+	ResizerWindow *findResizerWindow(AsciiString name); ///< attempt to find the control bar scheme by it's name
+	ResizerWindow *newResizerWindow(AsciiString name); ///< create a new control bar scheme and return it.
 
-	void sizeWindowsDefault( void );
-	void sizeWindowsAlt( void );
+	void sizeWindowsDefault(void);
+	void sizeWindowsAlt(void);
 
-	typedef std::list< ResizerWindow *> ResizerWindowList;
+	typedef std::list<ResizerWindow *> ResizerWindowList;
 	ResizerWindowList m_resizerWindowsList;
-
 };
 //-----------------------------------------------------------------------------
 // INLINING ///////////////////////////////////////////////////////////////////

@@ -69,9 +69,9 @@
 static const char *szWindowClass = "GUIEdit";
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
-HINSTANCE ApplicationHInstance;				///< main application instance
-HWND ApplicationHWnd;							///< main application HWnd
-Win32Mouse *TheWin32Mouse = NULL;	///< for Win32 mouse
+HINSTANCE ApplicationHInstance; ///< main application instance
+HWND ApplicationHWnd; ///< main application HWnd
+Win32Mouse *TheWin32Mouse = NULL; ///< for Win32 mouse
 const char *gAppPrefix = "ge_"; /// So GuiEdit can have a different debug log file name if we need it
 
 const Char *g_strFile = "data\\Generals.str";
@@ -99,36 +99,36 @@ LRESULT CALLBACK AboutCallback(HWND, UINT, WPARAM, LPARAM);
 //    create and display the main program window.
 //
 //=============================================================================
-static BOOL initInstance( HINSTANCE hInstance, int nCmdShow )
+static BOOL initInstance(HINSTANCE hInstance, int nCmdShow)
 {
-
 	// store application instance
 	ApplicationHInstance = hInstance;
 
 	// create app window and keep handle
-	ApplicationHWnd = CreateWindowEx( 0,											// extended style
-																		szWindowClass,					// window class name
-																		"GUIEdit",							// window name
-																		WS_OVERLAPPEDWINDOW,		// window styles
-																		0,											// x position
-																		0,											// y position
-																		GetSystemMetrics( SM_CXSCREEN ), // width
-																		GetSystemMetrics( SM_CYSCREEN ),  // height
-																		NULL,										// parent
-																		NULL,										// menu
-																		ApplicationHInstance,		// instance
-																		NULL );									// creation data
+	ApplicationHWnd = CreateWindowEx(
+			0, // extended style
+			szWindowClass, // window class name
+			"GUIEdit", // window name
+			WS_OVERLAPPEDWINDOW, // window styles
+			0, // x position
+			0, // y position
+			GetSystemMetrics(SM_CXSCREEN), // width
+			GetSystemMetrics(SM_CYSCREEN), // height
+			NULL, // parent
+			NULL, // menu
+			ApplicationHInstance, // instance
+			NULL); // creation data
 
-	if( ApplicationHWnd == NULL )
+	if (ApplicationHWnd == NULL)
 		return FALSE;
 
 	// display the window
-	ShowWindow( ApplicationHWnd, SW_MAXIMIZE );
-	UpdateWindow( ApplicationHWnd );
+	ShowWindow(ApplicationHWnd, SW_MAXIMIZE);
+	UpdateWindow(ApplicationHWnd);
 
 	return TRUE;
 
-}  // end initInstance
+} // end initInstance
 
 // registerClass ==============================================================
 //
@@ -149,23 +149,23 @@ static ATOM registerClass(HINSTANCE hInstance)
 {
 	WNDCLASSEX wcex;
 
-	wcex.cbSize = sizeof( WNDCLASSEX );
+	wcex.cbSize = sizeof(WNDCLASSEX);
 
-	wcex.style					= CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc		= (WNDPROC)WndProc;
-	wcex.cbClsExtra			= 0;
-	wcex.cbWndExtra			= 0;
-	wcex.hInstance			= hInstance;
-	wcex.hIcon					= LoadIcon(hInstance, (LPCTSTR)GUIEDIT_LARGE_ICON);
-	wcex.hCursor				= LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground	= (HBRUSH)GetStockObject( BLACK_BRUSH );
-	wcex.lpszMenuName		=	(LPCSTR)GUIEDIT_MENU;
-	wcex.lpszClassName	= szWindowClass;
-	wcex.hIconSm				= LoadIcon(wcex.hInstance, (LPCTSTR)GUIEDIT_SMALL_ICON);
+	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc = (WNDPROC)WndProc;
+	wcex.cbClsExtra = 0;
+	wcex.cbWndExtra = 0;
+	wcex.hInstance = hInstance;
+	wcex.hIcon = LoadIcon(hInstance, (LPCTSTR)GUIEDIT_LARGE_ICON);
+	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wcex.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wcex.lpszMenuName = (LPCSTR)GUIEDIT_MENU;
+	wcex.lpszClassName = szWindowClass;
+	wcex.hIconSm = LoadIcon(wcex.hInstance, (LPCTSTR)GUIEDIT_SMALL_ICON);
 
-	return RegisterClassEx( &wcex );
+	return RegisterClassEx(&wcex);
 
-}  // registerClass
+} // registerClass
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -174,10 +174,7 @@ static ATOM registerClass(HINSTANCE hInstance)
 // WinMain ====================================================================
 /** Entry point for application */
 //=============================================================================
-Int APIENTRY WinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     LPSTR     lpCmdLine,
-                     int       nCmdShow)
+Int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	MSG msg;
 	Int returnValue;
@@ -185,12 +182,12 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 	Bool quit = FALSE;
 
 	/// @todo remove this force set of working directory later
-	Char buffer[ _MAX_PATH ];
-	GetModuleFileName( NULL, buffer, sizeof( buffer ) );
-	Char *pEnd = buffer + strlen( buffer );
-	while( pEnd != buffer )
+	Char buffer[_MAX_PATH];
+	GetModuleFileName(NULL, buffer, sizeof(buffer));
+	Char *pEnd = buffer + strlen(buffer);
+	while (pEnd != buffer)
 	{
-		if( *pEnd == '\\' )
+		if (*pEnd == '\\')
 		{
 			*pEnd = 0;
 			break;
@@ -203,24 +200,24 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 	initMemoryManager();
 
 	// register a class for our window with the OS
-	registerClass( hInstance );
+	registerClass(hInstance);
 
 	// Perform application initialization:
-	if( !initInstance( hInstance, nCmdShow ) )
+	if (!initInstance(hInstance, nCmdShow))
 		return FALSE;
 
 	// load accellerator table
-	hAccelTable = LoadAccelerators( hInstance, (LPCTSTR)GUIEDIT_ACCELERATORS );
+	hAccelTable = LoadAccelerators(hInstance, (LPCTSTR)GUIEDIT_ACCELERATORS);
 
 	// initialize the common controls
 	INITCOMMONCONTROLSEX controls;
-	controls.dwSize = sizeof( controls );
+	controls.dwSize = sizeof(controls);
 	controls.dwICC = ICC_BAR_CLASSES;
-	InitCommonControlsEx( &controls );
+	InitCommonControlsEx(&controls);
 
 	// initialize GUIEdit data
 	TheEditor = new GUIEdit;
-	if( TheEditor == NULL )
+	if (TheEditor == NULL)
 		return FALSE;
 	TheEditor->init();
 
@@ -228,47 +225,42 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 	// see if we have any messages to process, a NULL window handle tells the
 	// OS to look at the main window associated with the calling thread, us!
 	//
-	while( quit == FALSE )
+	while (quit == FALSE)
 	{
-
 		// is there is message ready for us?
-		if( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
+		if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
 		{
-
 			// process ALL messages waiting
-			while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
+			while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
 			{
-
 				// get the message
-				returnValue = GetMessage( &msg, NULL, 0, 0 );
+				returnValue = GetMessage(&msg, NULL, 0, 0);
 
 				// check for quitting
-				if( returnValue == 0 )
+				if (returnValue == 0)
 					quit = TRUE;
 
 				// translate accelerator messages
-				if( !TranslateAccelerator( msg.hwnd, hAccelTable, &msg ) )
+				if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
 				{
-
 					// translate and dispatch the message
-					TranslateMessage( &msg );
-					DispatchMessage( &msg );
+					TranslateMessage(&msg);
+					DispatchMessage(&msg);
 
-				}  // end if
+				} // end if
 
-			}  // end while
+			} // end while
 
-		}  // end if
+		} // end if
 		else
 		{
-
 			// udpate our universe
 			TheEditor->update();
 			Sleep(1);
 
-		}  // end else
+		} // end else
 
-	}  // end while
+	} // end while
 
 	// shutdown GUIEdit data
 	delete TheEditor;
@@ -278,7 +270,7 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 
 	return msg.wParam;
 
-}  // end WinMain
+} // end WinMain
 
 // WndProc ====================================================================
 //
@@ -291,34 +283,29 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 //  WM_DESTROY	- post a quit message and return
 //
 //=============================================================================
-LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
-													WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-
-	switch( message )
+	switch (message)
 	{
-
 		// ------------------------------------------------------------------------
 		case WM_MOUSEMOVE:
 		{
-
 			// keep focus in our app
-			if( GetFocus() != hWnd )
-				SetFocus( hWnd );
+			if (GetFocus() != hWnd)
+				SetFocus(hWnd);
 			return 0;
 
-		}  // end move mouse
+		} // end move mouse
 
 		// ------------------------------------------------------------------------
 		case WM_COMMAND:
 		{
-			Int controlID = LOWORD( wParam );
-//			Int nofifyCode = HIWORD( wParam );
-//			HWND hWndControl = (HWND)lParam;
+			Int controlID = LOWORD(wParam);
+			//			Int nofifyCode = HIWORD( wParam );
+			//			HWND hWndControl = (HWND)lParam;
 
-			switch( controlID )
+			switch (controlID)
 			{
-
 				// --------------------------------------------------------------------
 				case MENU_EXIT:
 					TheEditor->menuExit();
@@ -361,167 +348,163 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 
 				// --------------------------------------------------------------------
 				case MENU_CALLBACKS:
-					DialogBox( TheEditor->getInstance(), (LPCTSTR)CALLBACK_EDITOR_DIALOG,
-										 TheEditor->getWindowHandle(), CallbackEditorDialogProc );
+					DialogBox(
+							TheEditor->getInstance(),
+							(LPCTSTR)CALLBACK_EDITOR_DIALOG,
+							TheEditor->getWindowHandle(),
+							CallbackEditorDialogProc);
 					break;
 
 				// --------------------------------------------------------------------
 				case MENU_GRID_SETTINGS:
-					DialogBox( TheEditor->getInstance(), (LPCTSTR)GRID_SETTINGS_DIALOG,
-										 TheEditor->getWindowHandle(), GridSettingsDialogProc );
+					DialogBox(
+							TheEditor->getInstance(),
+							(LPCTSTR)GRID_SETTINGS_DIALOG,
+							TheEditor->getWindowHandle(),
+							GridSettingsDialogProc);
 					break;
 
 				// --------------------------------------------------------------------
 				case MENU_SHOW_HIDDEN_OUTLINES:
-					TheEditor->setShowHiddenOutlines( !TheEditor->getShowHiddenOutlines() );
+					TheEditor->setShowHiddenOutlines(!TheEditor->getShowHiddenOutlines());
 					break;
 
 				// --------------------------------------------------------------------
 				case MENU_SHOW_SEE_THRU_OUTLINES:
-					TheEditor->setShowSeeThruOutlines( !TheEditor->getShowSeeThruOutlines() );
+					TheEditor->setShowSeeThruOutlines(!TheEditor->getShowSeeThruOutlines());
 					break;
 
 				// --------------------------------------------------------------------
 				case MENU_TEST_MODE:
 
 					// switch to test mode or edit mode
-					if( TheEditor)
+					if (TheEditor)
 					{
 						EditMode mode = TheEditor->getMode();
 
-						if( mode != MODE_TEST_RUN )
-							TheEditor->setMode( MODE_TEST_RUN );
+						if (mode != MODE_TEST_RUN)
+							TheEditor->setMode(MODE_TEST_RUN);
 						else
-							TheEditor->setMode( MODE_EDIT );
+							TheEditor->setMode(MODE_EDIT);
 
-					}  // end if
+					} // end if
 					break;
 
 				// --------------------------------------------------------------------
 				case MENU_BACKGROUND_COLOR:
 
-					if( TheEditWindow )
+					if (TheEditWindow)
 					{
 						RGBColorReal color = TheEditWindow->getBackgroundColor();
 						RGBColorInt *newColor;
 						POINT mouse;
 
 						// get mouse point
-						GetCursorPos( &mouse );
+						GetCursorPos(&mouse);
 
 						// select a new color
-						newColor = SelectColor( (Int)(255.0f * color.red),
-																		(Int)(255.0f * color.green),
-																		(Int)(255.0f * color.blue),
-																		(Int)(255.0f * color.alpha),
-																		mouse.x, mouse.y );
-						if( newColor )
+						newColor = SelectColor(
+								(Int)(255.0f * color.red),
+								(Int)(255.0f * color.green),
+								(Int)(255.0f * color.blue),
+								(Int)(255.0f * color.alpha),
+								mouse.x,
+								mouse.y);
+						if (newColor)
 						{
-
-							color.red   = (Real)newColor->red / 255.0f;
+							color.red = (Real)newColor->red / 255.0f;
 							color.green = (Real)newColor->green / 255.0f;
-							color.blue  = (Real)newColor->blue / 255.0f;
+							color.blue = (Real)newColor->blue / 255.0f;
 							color.alpha = (Real)newColor->alpha / 255.0f;
-							TheEditWindow->setBackgroundColor( color );
+							TheEditWindow->setBackgroundColor(color);
 
-						}  // end if
+						} // end if
 
-					}  //  end if
+					} //  end if
 
 					break;
 
 				// --------------------------------------------------------------------
 				case MENU_SCHEME:
 				{
-
 					// open the default scheme information
-					if( TheDefaultScheme )
+					if (TheDefaultScheme)
 						TheDefaultScheme->openDialog();
 					break;
 
-				}  // end scheme
+				} // end scheme
 
 				// --------------------------------------------------------------------
 				case MENU_ABOUT:
 				{
-
-					DialogBox( ApplicationHInstance, (LPCTSTR)ABOUT_DIALOG,
-										 hWnd, (DLGPROC)AboutCallback );
+					DialogBox(ApplicationHInstance, (LPCTSTR)ABOUT_DIALOG, hWnd, (DLGPROC)AboutCallback);
 					break;
 
-				}  // end about
-
+				} // end about
 
 				// --------------------------------------------------------------------
 				default:
 				{
+					return DefWindowProc(hWnd, message, wParam, lParam);
 
-					return DefWindowProc( hWnd, message, wParam, lParam );
+				} // end default
 
-				}  // end default
-
-			}  // end switch( controlID )
+			} // end switch( controlID )
 
 			return 0;
 
-		}  // end command
+		} // end command
 
 		// ------------------------------------------------------------------------
 		case WM_CLOSE:
 		{
-
 			// close gets initiated from the 'x' in the top right of the window
 			TheEditor->menuExit();
 			return 0;
 
-		}  // end close
+		} // end close
 
 		// ------------------------------------------------------------------------
 		case WM_KEYDOWN:
 		{
 			Int virtualKey = wParam;
-//			Int keyData = lParam;
-			Bool controlDown = BitIsSet( GetKeyState( VK_CONTROL ), 0x1000 );
+			//			Int keyData = lParam;
+			Bool controlDown = BitIsSet(GetKeyState(VK_CONTROL), 0x1000);
 
-			switch( virtualKey )
+			switch (virtualKey)
 			{
-
 				// --------------------------------------------------------------------
 				case VK_ESCAPE:
 				{
-
 					// unselect all windows
-					if( TheEditor )
-						if(TheEditor->getMode() == MODE_KEYBOARD_MOVE)
-							TheEditor->setMode( MODE_EDIT );
+					if (TheEditor)
+						if (TheEditor->getMode() == MODE_KEYBOARD_MOVE)
+							TheEditor->setMode(MODE_EDIT);
 						else
 							TheEditor->clearSelections();
 					break;
 
-				}  // end escape
+				} // end escape
 
 				// --------------------------------------------------------------------
 				case VK_DELETE:
 				{
-
 					// delete all selected windows
-					if( TheEditor )
+					if (TheEditor)
 						TheEditor->deleteSelected();
 					break;
 
-				}  // end delete
+				} // end delete
 
 				// --------------------------------------------------------------------
 				case VK_LEFT:
 				{
-
 					// delete all selected windows
-					if( TheEditor && TheEditWindow)
+					if (TheEditor && TheEditWindow)
 					{
-						if(TheEditor->getMode() == MODE_EDIT)
+						if (TheEditor->getMode() == MODE_EDIT)
 						{
-
-							if(TheEditor->selectionCount() <= 0 )
+							if (TheEditor->selectionCount() <= 0)
 								break;
 							ICoord2D zero;
 							zero.x = zero.y = 0;
@@ -530,15 +513,15 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 
 							TheEditor->setMode(MODE_KEYBOARD_MOVE);
 						}
-						if(TheEditor->getMode() == MODE_KEYBOARD_MOVE)
+						if (TheEditor->getMode() == MODE_KEYBOARD_MOVE)
 						{
 							ICoord2D temp;
 
 							temp = TheEditWindow->getDragMoveDest();
-							if(!controlDown && TheEditor->isGridSnapOn())
+							if (!controlDown && TheEditor->isGridSnapOn())
 							{
 								temp.x -= TheEditor->getGridResolution();
-								TheEditor->gridSnapLocation(&temp,&temp);
+								TheEditor->gridSnapLocation(&temp, &temp);
 							}
 							else
 							{
@@ -546,22 +529,19 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 							}
 							TheEditWindow->setDragMoveDest(&temp);
 						}
-
 					}
 					break;
 
-				}  // end Left
+				} // end Left
 				// --------------------------------------------------------------------
 				case VK_RIGHT:
 				{
-
 					// delete all selected windows
-					if( TheEditor && TheEditWindow)
+					if (TheEditor && TheEditWindow)
 					{
-						if(TheEditor->getMode() == MODE_EDIT)
+						if (TheEditor->getMode() == MODE_EDIT)
 						{
-
-							if(TheEditor->selectionCount() <= 0 )
+							if (TheEditor->selectionCount() <= 0)
 								break;
 							ICoord2D zero;
 							zero.x = zero.y = 0;
@@ -570,15 +550,15 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 
 							TheEditor->setMode(MODE_KEYBOARD_MOVE);
 						}
-						if(TheEditor->getMode() == MODE_KEYBOARD_MOVE)
+						if (TheEditor->getMode() == MODE_KEYBOARD_MOVE)
 						{
 							ICoord2D temp;
 
 							temp = TheEditWindow->getDragMoveDest();
-							if(!controlDown && TheEditor->isGridSnapOn())
+							if (!controlDown && TheEditor->isGridSnapOn())
 							{
 								temp.x += TheEditor->getGridResolution();
-								TheEditor->gridSnapLocation(&temp,&temp);
+								TheEditor->gridSnapLocation(&temp, &temp);
 							}
 							else
 							{
@@ -586,22 +566,19 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 							}
 							TheEditWindow->setDragMoveDest(&temp);
 						}
-
 					}
 					break;
 
-				}  // end RIGHT
+				} // end RIGHT
 				// --------------------------------------------------------------------
 				case VK_UP:
 				{
-
 					// delete all selected windows
-					if( TheEditor && TheEditWindow)
+					if (TheEditor && TheEditWindow)
 					{
-						if(TheEditor->getMode() == MODE_EDIT)
+						if (TheEditor->getMode() == MODE_EDIT)
 						{
-
-							if(TheEditor->selectionCount() <= 0 )
+							if (TheEditor->selectionCount() <= 0)
 								break;
 							ICoord2D zero;
 							zero.x = zero.y = 0;
@@ -610,16 +587,16 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 
 							TheEditor->setMode(MODE_KEYBOARD_MOVE);
 						}
-						if(TheEditor->getMode() == MODE_KEYBOARD_MOVE)
+						if (TheEditor->getMode() == MODE_KEYBOARD_MOVE)
 						{
 							ICoord2D temp;
 
 							temp = TheEditWindow->getDragMoveDest();
 
-							if(!controlDown && TheEditor->isGridSnapOn())
+							if (!controlDown && TheEditor->isGridSnapOn())
 							{
 								temp.y -= TheEditor->getGridResolution();
-								TheEditor->gridSnapLocation(&temp,&temp);
+								TheEditor->gridSnapLocation(&temp, &temp);
 							}
 							else
 							{
@@ -627,22 +604,19 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 							}
 							TheEditWindow->setDragMoveDest(&temp);
 						}
-
 					}
 					break;
 
-				}  // end Up
+				} // end Up
 				// --------------------------------------------------------------------
 				case VK_DOWN:
 				{
-
 					// delete all selected windows
-					if( TheEditor && TheEditWindow)
+					if (TheEditor && TheEditWindow)
 					{
-						if(TheEditor->getMode() == MODE_EDIT)
+						if (TheEditor->getMode() == MODE_EDIT)
 						{
-
-							if(TheEditor->selectionCount() <= 0 )
+							if (TheEditor->selectionCount() <= 0)
 								break;
 							ICoord2D zero;
 							zero.x = zero.y = 0;
@@ -651,15 +625,15 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 
 							TheEditor->setMode(MODE_KEYBOARD_MOVE);
 						}
-						if(TheEditor->getMode() == MODE_KEYBOARD_MOVE)
+						if (TheEditor->getMode() == MODE_KEYBOARD_MOVE)
 						{
 							ICoord2D temp;
 
 							temp = TheEditWindow->getDragMoveDest();
-							if(!controlDown && TheEditor->isGridSnapOn())
+							if (!controlDown && TheEditor->isGridSnapOn())
 							{
 								temp.y += TheEditor->getGridResolution();
-								TheEditor->gridSnapLocation(&temp,&temp);
+								TheEditor->gridSnapLocation(&temp, &temp);
 							}
 							else
 							{
@@ -667,69 +641,68 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 							}
 							TheEditWindow->setDragMoveDest(&temp);
 						}
-
 					}
 					break;
 
-				}  // end Down
+				} // end Down
 
 				// --------------------------------------------------------------------
 				case VK_RETURN:
 				{
-					if( TheEditor && TheEditWindow && TheEditor->getMode() == MODE_KEYBOARD_MOVE )
+					if (TheEditor && TheEditWindow && TheEditor->getMode() == MODE_KEYBOARD_MOVE)
 					{
 						ICoord2D tempOrigin, tempDest;
 						tempDest = TheEditWindow->getDragMoveDest();
 						tempOrigin = TheEditWindow->getDragMoveOrigin();
 
 						// move the windows
-						TheEditor->dragMoveSelectedWindows( &tempOrigin, &tempDest );
+						TheEditor->dragMoveSelectedWindows(&tempOrigin, &tempDest);
 
 						// go back to normal mode
-						TheEditor->setMode( MODE_EDIT );
+						TheEditor->setMode(MODE_EDIT);
 					}
 					break;
-				}// end Enter
+				} // end Enter
 
-			}  // end switch( virtualKey )
+			} // end switch( virtualKey )
 
 			return 0;
 
-		}  // end key down
+		} // end key down
 
 		// ------------------------------------------------------------------------
 		case WM_SIZE:
 		{
-			Int width  = LOWORD( lParam );
-			Int height = HIWORD( lParam );
+			Int width = LOWORD(lParam);
+			Int height = HIWORD(lParam);
 
 			// resize status bar
-			if( TheEditor )
+			if (TheEditor)
 			{
 				HWND statusBar = TheEditor->getStatusBarWindowHandle();
 
-				if( statusBar )
+				if (statusBar)
 				{
 					RECT rect;
 					Int barX, barY;
 					Int barWidth, barHeight;
 
 					// keep status window height the same
-					GetWindowRect( statusBar, &rect );
+					GetWindowRect(statusBar, &rect);
 					barWidth = width;
 					barHeight = rect.bottom - rect.top;
 
 					barX = 0;
 					barY = height - barHeight;
-					MoveWindow( statusBar, barX, barY, barWidth, barHeight, TRUE );
+					MoveWindow(statusBar, barX, barY, barWidth, barHeight, TRUE);
 
-				}  // end if
+				} // end if
 
-			}  // end if
+			} // end if
 
 			return 0;
 
-		}  // end size
+		} // end size
 
 		// ------------------------------------------------------------------------
 		case WM_PAINT:
@@ -741,42 +714,38 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 			EndPaint(hWnd, &ps);
 			break;
 
-		}  // end paint
+		} // end paint
 
 		// ------------------------------------------------------------------------
 		case WM_DESTROY:
 		{
-
 			PostQuitMessage(0);
 			break;
 
-		}  // end destroy
+		} // end destroy
 
 		// ------------------------------------------------------------------------
 		default:
 		{
-
 			return DefWindowProc(hWnd, message, wParam, lParam);
 
-		}  // end default
+		} // end default
 
-	}  // end switch( message )
+	} // end switch( message )
 
-	return DefWindowProc( hWnd, message, wParam, lParam );
+	return DefWindowProc(hWnd, message, wParam, lParam);
 
-}  // end WndProc
+} // end WndProc
 
 // AboutCallback ==============================================================
 /** Mesage handler for about box. */
 //=============================================================================
-LRESULT CALLBACK AboutCallback( HWND hDlg, UINT message,
-																WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK AboutCallback(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-
 	switch (message)
 	{
 		case WM_INITDIALOG:
-				return TRUE;
+			return TRUE;
 
 		case WM_COMMAND:
 			if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
@@ -786,7 +755,6 @@ LRESULT CALLBACK AboutCallback( HWND hDlg, UINT message,
 			}
 			break;
 	}
-    return FALSE;
+	return FALSE;
 
-}  // end AboutCallback
-
+} // end AboutCallback

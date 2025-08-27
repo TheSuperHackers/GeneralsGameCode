@@ -48,56 +48,93 @@ static unsigned Get_FVF_Vertex_Size(unsigned FVF)
 	return D3DXGetFVFVertexSize(FVF);
 }
 
-FVFInfoClass::FVFInfoClass(unsigned FVF_, unsigned vertex_size)
-	:
-	FVF(FVF_),
-	fvf_size(FVF!=0 ? Get_FVF_Vertex_Size(FVF) : vertex_size)
+FVFInfoClass::FVFInfoClass(unsigned FVF_, unsigned vertex_size) :
+		FVF(FVF_), fvf_size(FVF != 0 ? Get_FVF_Vertex_Size(FVF) : vertex_size)
 {
-	location_offset=0;
-	blend_offset=location_offset;
+	location_offset = 0;
+	blend_offset = location_offset;
 
-	if ((FVF&D3DFVF_XYZ)==D3DFVF_XYZ) blend_offset+=3*sizeof(float);
-	normal_offset=blend_offset;
+	if ((FVF & D3DFVF_XYZ) == D3DFVF_XYZ)
+		blend_offset += 3 * sizeof(float);
+	normal_offset = blend_offset;
 
-	if ( ((FVF&D3DFVF_XYZB4)==D3DFVF_XYZB4) &&
-		  ((FVF&D3DFVF_LASTBETA_UBYTE4)==D3DFVF_LASTBETA_UBYTE4) ) normal_offset+=3*sizeof(float)+sizeof(DWORD);
-	diffuse_offset=normal_offset;
+	if (((FVF & D3DFVF_XYZB4) == D3DFVF_XYZB4) && ((FVF & D3DFVF_LASTBETA_UBYTE4) == D3DFVF_LASTBETA_UBYTE4))
+		normal_offset += 3 * sizeof(float) + sizeof(DWORD);
+	diffuse_offset = normal_offset;
 
-	if ((FVF&D3DFVF_NORMAL)==D3DFVF_NORMAL) diffuse_offset+=3*sizeof(float);
-	specular_offset=diffuse_offset;
+	if ((FVF & D3DFVF_NORMAL) == D3DFVF_NORMAL)
+		diffuse_offset += 3 * sizeof(float);
+	specular_offset = diffuse_offset;
 
-	if ((FVF&D3DFVF_DIFFUSE)==D3DFVF_DIFFUSE) specular_offset+=sizeof(DWORD);
-	texcoord_offset[0]=specular_offset;
+	if ((FVF & D3DFVF_DIFFUSE) == D3DFVF_DIFFUSE)
+		specular_offset += sizeof(DWORD);
+	texcoord_offset[0] = specular_offset;
 
-	if ((FVF&D3DFVF_SPECULAR)==D3DFVF_SPECULAR) texcoord_offset[0]+=sizeof(DWORD);
+	if ((FVF & D3DFVF_SPECULAR) == D3DFVF_SPECULAR)
+		texcoord_offset[0] += sizeof(DWORD);
 
-	for (unsigned int i=1; i<D3DDP_MAXTEXCOORD; i++)
+	for (unsigned int i = 1; i < D3DDP_MAXTEXCOORD; i++)
 	{
-		texcoord_offset[i]=texcoord_offset[i-1];
+		texcoord_offset[i] = texcoord_offset[i - 1];
 
-		if ((int(FVF)&D3DFVF_TEXCOORDSIZE1(i-1))==D3DFVF_TEXCOORDSIZE1(i-1)) texcoord_offset[i]+=sizeof(float);
-		else if ((int(FVF)&D3DFVF_TEXCOORDSIZE2(i-1))==D3DFVF_TEXCOORDSIZE2(i-1)) texcoord_offset[i]+=2*sizeof(float);
-		else if ((int(FVF)&D3DFVF_TEXCOORDSIZE3(i-1))==D3DFVF_TEXCOORDSIZE3(i-1)) texcoord_offset[i]+=3*sizeof(float);
-		else if ((int(FVF)&D3DFVF_TEXCOORDSIZE4(i-1))==D3DFVF_TEXCOORDSIZE4(i-1)) texcoord_offset[i]+=4*sizeof(float);
+		if ((int(FVF) & D3DFVF_TEXCOORDSIZE1(i - 1)) == D3DFVF_TEXCOORDSIZE1(i - 1))
+			texcoord_offset[i] += sizeof(float);
+		else if ((int(FVF) & D3DFVF_TEXCOORDSIZE2(i - 1)) == D3DFVF_TEXCOORDSIZE2(i - 1))
+			texcoord_offset[i] += 2 * sizeof(float);
+		else if ((int(FVF) & D3DFVF_TEXCOORDSIZE3(i - 1)) == D3DFVF_TEXCOORDSIZE3(i - 1))
+			texcoord_offset[i] += 3 * sizeof(float);
+		else if ((int(FVF) & D3DFVF_TEXCOORDSIZE4(i - 1)) == D3DFVF_TEXCOORDSIZE4(i - 1))
+			texcoord_offset[i] += 4 * sizeof(float);
 	}
 }
 
-void FVFInfoClass::Get_FVF_Name(StringClass& fvfname) const
+void FVFInfoClass::Get_FVF_Name(StringClass &fvfname) const
 {
-	switch (Get_FVF()) {
-	case DX8_FVF_XYZ: fvfname="D3DFVF_XYZ"; break;
-	case DX8_FVF_XYZN: fvfname="D3DFVF_XYZ|D3DFVF_NORMAL"; break;
-	case DX8_FVF_XYZNUV1: fvfname="D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1"; break;
-	case DX8_FVF_XYZNUV2: fvfname="D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX2"; break;
-	case DX8_FVF_XYZNDUV1: fvfname="D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1|D3DFVF_DIFFUSE"; break;
-	case DX8_FVF_XYZNDUV2: fvfname="D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX2|D3DFVF_DIFFUSE"; break;
-	case DX8_FVF_XYZDUV1: fvfname="D3DFVF_XYZ|D3DFVF_TEX1|D3DFVF_DIFFUSE"; break;
-	case DX8_FVF_XYZDUV2: fvfname="D3DFVF_XYZ|D3DFVF_TEX2|D3DFVF_DIFFUSE"; break;
-	case DX8_FVF_XYZUV1: fvfname="D3DFVF_XYZ|D3DFVF_TEX1"; break;
-	case DX8_FVF_XYZUV2: fvfname="D3DFVF_XYZ|D3DFVF_TEX2"; break;
-	case DX8_FVF_XYZNDUV1TG3 : fvfname="(D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX4|D3DFVF_TEXCOORDSIZE2(0)|D3DFVF_TEXCOORDSIZE3(1)|D3DFVF_TEXCOORDSIZE3(2)|D3DFVF_TEXCOORDSIZE3(3))"; break;
-	case DX8_FVF_XYZNUV2DMAP :	fvfname="(D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX3|D3DFVF_TEXCOORDSIZE1(0)|D3DFVF_TEXCOORDSIZE4(1)|D3DFVF_TEXCOORDSIZE2(2))"; break;
-	case DX8_FVF_XYZNDCUBEMAP : fvfname="(D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX1|D3DFVFTEXCOORDSIZE3(0)"; break;
-	default: fvfname="Unknown!";
+	switch (Get_FVF())
+	{
+		case DX8_FVF_XYZ:
+			fvfname = "D3DFVF_XYZ";
+			break;
+		case DX8_FVF_XYZN:
+			fvfname = "D3DFVF_XYZ|D3DFVF_NORMAL";
+			break;
+		case DX8_FVF_XYZNUV1:
+			fvfname = "D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1";
+			break;
+		case DX8_FVF_XYZNUV2:
+			fvfname = "D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX2";
+			break;
+		case DX8_FVF_XYZNDUV1:
+			fvfname = "D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1|D3DFVF_DIFFUSE";
+			break;
+		case DX8_FVF_XYZNDUV2:
+			fvfname = "D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX2|D3DFVF_DIFFUSE";
+			break;
+		case DX8_FVF_XYZDUV1:
+			fvfname = "D3DFVF_XYZ|D3DFVF_TEX1|D3DFVF_DIFFUSE";
+			break;
+		case DX8_FVF_XYZDUV2:
+			fvfname = "D3DFVF_XYZ|D3DFVF_TEX2|D3DFVF_DIFFUSE";
+			break;
+		case DX8_FVF_XYZUV1:
+			fvfname = "D3DFVF_XYZ|D3DFVF_TEX1";
+			break;
+		case DX8_FVF_XYZUV2:
+			fvfname = "D3DFVF_XYZ|D3DFVF_TEX2";
+			break;
+		case DX8_FVF_XYZNDUV1TG3:
+			fvfname =
+					"(D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX4|D3DFVF_TEXCOORDSIZE2(0)|D3DFVF_TEXCOORDSIZE3(1)|D3DFVF_"
+					"TEXCOORDSIZE3(2)|D3DFVF_TEXCOORDSIZE3(3))";
+			break;
+		case DX8_FVF_XYZNUV2DMAP:
+			fvfname =
+					"(D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX3|D3DFVF_TEXCOORDSIZE1(0)|D3DFVF_TEXCOORDSIZE4(1)|D3DFVF_TEXCOORDSIZE2(2))";
+			break;
+		case DX8_FVF_XYZNDCUBEMAP:
+			fvfname = "(D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX1|D3DFVFTEXCOORDSIZE3(0)";
+			break;
+		default:
+			fvfname = "Unknown!";
 	}
 }

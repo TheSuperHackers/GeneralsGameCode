@@ -69,15 +69,15 @@ public:
 	LadderList();
 	~LadderList();
 
-	const LadderInfo* findLadder( const AsciiString& addr, UnsignedShort port );
-	const LadderInfo* findLadderByIndex( Int index );	// doesn't look in local ladders
-	const LadderInfoList* getLocalLadders( void );
-	const LadderInfoList* getSpecialLadders( void );
-	const LadderInfoList* getStandardLadders( void );
+	const LadderInfo *findLadder(const AsciiString &addr, UnsignedShort port);
+	const LadderInfo *findLadderByIndex(Int index); // doesn't look in local ladders
+	const LadderInfoList *getLocalLadders(void);
+	const LadderInfoList *getSpecialLadders(void);
+	const LadderInfoList *getStandardLadders(void);
 
 private:
-	void loadLocalLadders( void );
-	void checkLadder( AsciiString fname, Int index );
+	void loadLocalLadders(void);
+	void checkLadder(AsciiString fname, Int index);
 	LadderInfoList m_localLadders;
 	LadderInfoList m_specialLadders;
 	LadderInfoList m_standardLadders;

@@ -30,27 +30,28 @@
 
 class AnimatedSoundOptionsDialogClass : public CDialog
 {
-// Construction
+	// Construction
 public:
-	AnimatedSoundOptionsDialogClass(CWnd* pParent = NULL);   // standard constructor
+	AnimatedSoundOptionsDialogClass(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(AnimatedSoundOptionsDialogClass)
-	enum { IDD = IDD_ANIMATED_SOUND_DIALOG };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_ANIMATED_SOUND_DIALOG
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(AnimatedSoundOptionsDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(AnimatedSoundOptionsDialogClass)
 	afx_msg void OnSoundDefinitionLibraryBrowseButton();
@@ -62,14 +63,12 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-
 	///////////////////////////////////////////////////////////////////
 	//	Public methods
 	///////////////////////////////////////////////////////////////////
-	static void			Load_Animated_Sound_Settings (void);
+	static void Load_Animated_Sound_Settings(void);
 
 private:
-
 	///////////////////////////////////////////////////////////////////
 	//	Private methods
 	///////////////////////////////////////////////////////////////////

@@ -17,22 +17,22 @@
 */
 
 /******************************************************************************
-*
-* FILE
-*     $Archive:  $
-*
-* DESCRIPTION
-*     Perform ANSI <-> Unicode string conversions
-*
-* PROGRAMMER
-*     Denzil E. Long, Jr.
-*     $Author:  $
-*
-* VERSION INFO
-*     $Modtime:  $
-*     $Revision:  $
-*
-******************************************************************************/
+ *
+ * FILE
+ *     $Archive:  $
+ *
+ * DESCRIPTION
+ *     Perform ANSI <-> Unicode string conversions
+ *
+ * PROGRAMMER
+ *     Denzil E. Long, Jr.
+ *     $Author:  $
+ *
+ * VERSION INFO
+ *     $Modtime:  $
+ *     $Revision:  $
+ *
+ ******************************************************************************/
 
 #include "StringConvert.h"
 #include "UString.h"
@@ -41,67 +41,65 @@
 #include <assert.h>
 
 /******************************************************************************
-*
-* NAME
-*     UStringToANSI
-*
-* DESCRIPTION
-*     Convert UString to an ANSI string
-*
-* INPUTS
-*     String - String to convert
-*     Buffer - Pointer to buffer to receive conversion.
-*     BufferLength - Length of buffer
-*
-* RESULT
-*     ANSI - Pointer to ANSI string
-*
-******************************************************************************/
+ *
+ * NAME
+ *     UStringToANSI
+ *
+ * DESCRIPTION
+ *     Convert UString to an ANSI string
+ *
+ * INPUTS
+ *     String - String to convert
+ *     Buffer - Pointer to buffer to receive conversion.
+ *     BufferLength - Length of buffer
+ *
+ * RESULT
+ *     ANSI - Pointer to ANSI string
+ *
+ ******************************************************************************/
 
-Char* UStringToANSI(const UString& string, Char* buffer, UInt bufferLength)
-	{
+Char *UStringToANSI(const UString &string, Char *buffer, UInt bufferLength)
+{
 	return UnicodeToANSI(string.Get(), buffer, bufferLength);
-	}
-
+}
 
 /******************************************************************************
-*
-* NAME
-*     UnicodeToANSI
-*
-* DESCRIPTION
-*     Convert Unicode string to an ANSI string
-*
-* INPUTS
-*     String - Unicode string to convert
-*     Buffer - Pointer to buffer to receive conversion.
-*     BufferLength - Length of buffer
-*
-* RESULT
-*     ANSI - Pointer to ANSI string
-*
-******************************************************************************/
+ *
+ * NAME
+ *     UnicodeToANSI
+ *
+ * DESCRIPTION
+ *     Convert Unicode string to an ANSI string
+ *
+ * INPUTS
+ *     String - Unicode string to convert
+ *     Buffer - Pointer to buffer to receive conversion.
+ *     BufferLength - Length of buffer
+ *
+ * RESULT
+ *     ANSI - Pointer to ANSI string
+ *
+ ******************************************************************************/
 
-Char* UnicodeToANSI(const WChar* string, Char* buffer, UInt bufferLength)
-	{
+Char *UnicodeToANSI(const WChar *string, Char *buffer, UInt bufferLength)
+{
 	if ((string == NULL) || (buffer == NULL))
-		{
+	{
 		return NULL;
-		}
+	}
 
-	#ifdef RTS_DEBUG
+#ifdef RTS_DEBUG
 	int result =
-	#endif
-		WideCharToMultiByte(CP_ACP, 0, string, -1, buffer, bufferLength,
-			NULL, NULL);
+#endif
+			WideCharToMultiByte(CP_ACP, 0, string, -1, buffer, bufferLength, NULL, NULL);
 
-	#ifdef RTS_DEBUG
+#ifdef RTS_DEBUG
 	if (result == 0)
-		{
+	{
 		PrintWin32Error("ConvertToANSI() Failed");
 		assert(false);
-		}
-	#endif
+	}
+#endif
 
 	return buffer;
-	}
+}

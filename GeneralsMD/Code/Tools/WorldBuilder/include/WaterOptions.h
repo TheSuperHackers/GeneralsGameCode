@@ -36,30 +36,30 @@ class MovePolygonUndoable;
 
 class WaterOptions : public COptionsPanel, public PopupSliderOwner
 {
-
-// Construction
+	// Construction
 public:
-	WaterOptions(CWnd* pParent = NULL);   // standard constructor
+	WaterOptions(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(WaterOptions)
-	enum { IDD = IDD_WATER_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_WATER_OPTIONS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(WaterOptions)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnOK(){return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel(){return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	virtual void OnOK() { return; }; //!< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() { return; }; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(WaterOptions)
 	virtual BOOL OnInitDialog();
@@ -72,14 +72,15 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	static WaterOptions *m_staticThis;  ///< Reference to the floating panel so SetWidth and SetFeather can be static.
-	Bool		m_updating; ///<true if the ui is updating itself.
+	static WaterOptions *m_staticThis; ///< Reference to the floating panel so SetWidth and SetFeather can be static.
+	Bool m_updating; ///< true if the ui is updating itself.
 	static Int m_waterHeight;
 	WBPopupSliderButton m_waterHeightPopup;
 	MovePolygonUndoable *m_moveUndoable;
-	Int									 m_originalHeight;
-	static Int					 m_waterPointSpacing;
-	static Bool m_creatingWaterAreas; ///< True if we are creating flood fill water polygons, rather than dropping single points.
+	Int m_originalHeight;
+	static Int m_waterPointSpacing;
+	static Bool m_creatingWaterAreas; ///< True if we are creating flood fill water polygons, rather than dropping single
+																		///< points.
 protected:
 	void updateTheUI(void);
 	void startUpdateHeight(void);
@@ -90,16 +91,14 @@ protected:
 public:
 	static void update(void);
 	static void setHeight(Int height);
-	static Int getHeight(void) { return m_waterHeight;};
-	static Int getSpacing(void) { return m_waterPointSpacing;};
-	static Bool getCreatingWaterAreas(void) {return m_creatingWaterAreas;}
+	static Int getHeight(void) { return m_waterHeight; };
+	static Int getSpacing(void) { return m_waterPointSpacing; };
+	static Bool getCreatingWaterAreas(void) { return m_creatingWaterAreas; }
 
 public:
-
 	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial);
 	virtual void PopSliderChanged(const long sliderID, long theVal);
 	virtual void PopSliderFinished(const long sliderID, long theVal);
-
 };
 
 //{{AFX_INSERT_LOCATION}}

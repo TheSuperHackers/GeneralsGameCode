@@ -40,20 +40,18 @@
 class ThingTemplate;
 class WeaponTemplate;
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class CommandButtonHuntUpdateModuleData : public ModuleData
 {
 public:
-	UnsignedInt			m_scanFrames;
-	Real						m_scanRange;
+	UnsignedInt m_scanFrames;
+	Real m_scanRange;
 
 	CommandButtonHuntUpdateModuleData();
-	static void buildFieldParse(MultiIniFieldParse& p);
+	static void buildFieldParse(MultiIniFieldParse &p);
 
 private:
-
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -61,32 +59,27 @@ private:
 //-------------------------------------------------------------------------------------------------
 class CommandButtonHuntUpdate : public UpdateModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( CommandButtonHuntUpdate, "CommandButtonHuntUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( CommandButtonHuntUpdate, CommandButtonHuntUpdateModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(CommandButtonHuntUpdate, "CommandButtonHuntUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(CommandButtonHuntUpdate, CommandButtonHuntUpdateModuleData);
 
 public:
-
-	CommandButtonHuntUpdate( Thing *thing, const ModuleData* moduleData );
+	CommandButtonHuntUpdate(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual void onObjectCreated();
 	virtual UpdateSleepTime update();
 
-	void setCommandButton(const AsciiString& buttonName);
+	void setCommandButton(const AsciiString &buttonName);
 
 protected:
-	Object* scanClosestTarget(void);
+	Object *scanClosestTarget(void);
 	UpdateSleepTime huntSpecialPower(AIUpdateInterface *ai);
 	UpdateSleepTime huntWeapon(AIUpdateInterface *ai);
-	UpdateSleepTime huntEnter( AIUpdateInterface *ai );
-
+	UpdateSleepTime huntEnter(AIUpdateInterface *ai);
 
 protected:
-	AsciiString		m_commandButtonName;
+	AsciiString m_commandButtonName;
 	const CommandButton *m_commandButton;
 };
 
-
 #endif
-

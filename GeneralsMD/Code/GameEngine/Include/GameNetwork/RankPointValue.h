@@ -82,7 +82,7 @@ enum
 
 struct RankPoints
 {
-RankPoints(void );
+	RankPoints(void);
 	Int m_ranks[MAX_RANKS];
 	Real m_winMultiplier;
 	Real m_lostMultiplier;
@@ -97,9 +97,9 @@ RankPoints(void );
 //-----------------------------------------------------------------------------
 // EXTERNALS //////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-Int CalculateRank( const PSPlayerStats& stats );
-Int GetFavoriteSide( const PSPlayerStats& stats );
-const Image* LookupSmallRankImage(Int side, Int rankPoints);
+Int CalculateRank(const PSPlayerStats &stats);
+Int GetFavoriteSide(const PSPlayerStats &stats);
+const Image *LookupSmallRankImage(Int side, Int rankPoints);
 extern RankPoints *TheRankPointValues;
 
 #endif // __RANK_POINT_VALUE_H_

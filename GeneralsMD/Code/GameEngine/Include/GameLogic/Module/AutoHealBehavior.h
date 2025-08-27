@@ -51,19 +51,21 @@ class ParticleSystemTemplate;
 class AutoHealBehaviorModuleData : public UpdateModuleData
 {
 public:
-	UpgradeMuxData				m_upgradeMuxData;
-	Bool									m_initiallyActive;
-	Bool									m_singleBurst;
-	Int										m_healingAmount;
-	UnsignedInt						m_healingDelay;
-	UnsignedInt						m_startHealingDelay;	///< how long since our last damage till autoheal starts.
-	Real									m_radius; //If non-zero, then it becomes a area effect.
-	Bool									m_affectsWholePlayer; ///< I have more than a range, I try to affect everything the player owns
-	Bool									m_skipSelfForHealing; ///< Don't heal myself.
-	KindOfMaskType				m_kindOf;	//Only these types can heal -- defaults to everything.
-	KindOfMaskType				m_forbiddenKindOf;	//Only these types can heal -- defaults to everything.
-	const ParticleSystemTemplate*				m_radiusParticleSystemTmpl;					//Optional particle system meant to apply to entire effect for entire duration.
-	const ParticleSystemTemplate*				m_unitHealPulseParticleSystemTmpl;	//Optional particle system applying to each object getting healed each heal pulse.
+	UpgradeMuxData m_upgradeMuxData;
+	Bool m_initiallyActive;
+	Bool m_singleBurst;
+	Int m_healingAmount;
+	UnsignedInt m_healingDelay;
+	UnsignedInt m_startHealingDelay; ///< how long since our last damage till autoheal starts.
+	Real m_radius; // If non-zero, then it becomes a area effect.
+	Bool m_affectsWholePlayer; ///< I have more than a range, I try to affect everything the player owns
+	Bool m_skipSelfForHealing; ///< Don't heal myself.
+	KindOfMaskType m_kindOf; // Only these types can heal -- defaults to everything.
+	KindOfMaskType m_forbiddenKindOf; // Only these types can heal -- defaults to everything.
+	const ParticleSystemTemplate *m_radiusParticleSystemTmpl; // Optional particle system meant to apply to entire effect for
+																														// entire duration.
+	const ParticleSystemTemplate *m_unitHealPulseParticleSystemTmpl; // Optional particle system applying to each object
+																																	 // getting healed each heal pulse.
 
 	AutoHealBehaviorModuleData()
 	{
@@ -77,86 +79,85 @@ public:
 		m_unitHealPulseParticleSystemTmpl = NULL;
 		m_affectsWholePlayer = FALSE;
 		m_skipSelfForHealing = FALSE;
-		SET_ALL_KINDOFMASK_BITS( m_kindOf );
+		SET_ALL_KINDOFMASK_BITS(m_kindOf);
 		m_forbiddenKindOf.clear();
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p)
+	static void buildFieldParse(MultiIniFieldParse &p)
 	{
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "StartsActive",	INI::parseBool, NULL, offsetof( AutoHealBehaviorModuleData, m_initiallyActive ) },
-			{ "SingleBurst",	INI::parseBool, NULL, offsetof( AutoHealBehaviorModuleData, m_singleBurst ) },
-			{ "HealingAmount",		INI::parseInt,												NULL, offsetof( AutoHealBehaviorModuleData, m_healingAmount ) },
-			{ "HealingDelay",			INI::parseDurationUnsignedInt,				NULL, offsetof( AutoHealBehaviorModuleData, m_healingDelay ) },
-			{ "Radius",						INI::parseReal,												NULL, offsetof( AutoHealBehaviorModuleData, m_radius ) },
-			{ "KindOf",						KindOfMaskType::parseFromINI,											NULL, offsetof( AutoHealBehaviorModuleData, m_kindOf ) },
-			{ "ForbiddenKindOf",	KindOfMaskType::parseFromINI,											NULL, offsetof( AutoHealBehaviorModuleData, m_forbiddenKindOf ) },
-			{ "RadiusParticleSystemName",					INI::parseParticleSystemTemplate,	NULL, offsetof( AutoHealBehaviorModuleData, m_radiusParticleSystemTmpl ) },
-			{ "UnitHealPulseParticleSystemName",	INI::parseParticleSystemTemplate,	NULL, offsetof( AutoHealBehaviorModuleData, m_unitHealPulseParticleSystemTmpl ) },
-			{ "StartHealingDelay",			INI::parseDurationUnsignedInt,				NULL, offsetof( AutoHealBehaviorModuleData, m_startHealingDelay ) },
-			{ "AffectsWholePlayer",			INI::parseBool,												NULL, offsetof( AutoHealBehaviorModuleData, m_affectsWholePlayer ) },
-			{ "SkipSelfForHealing",			INI::parseBool,												NULL, offsetof( AutoHealBehaviorModuleData, m_skipSelfForHealing ) },
+		static const FieldParse dataFieldParse[] = {
+			{ "StartsActive", INI::parseBool, NULL, offsetof(AutoHealBehaviorModuleData, m_initiallyActive) },
+			{ "SingleBurst", INI::parseBool, NULL, offsetof(AutoHealBehaviorModuleData, m_singleBurst) },
+			{ "HealingAmount", INI::parseInt, NULL, offsetof(AutoHealBehaviorModuleData, m_healingAmount) },
+			{ "HealingDelay", INI::parseDurationUnsignedInt, NULL, offsetof(AutoHealBehaviorModuleData, m_healingDelay) },
+			{ "Radius", INI::parseReal, NULL, offsetof(AutoHealBehaviorModuleData, m_radius) },
+			{ "KindOf", KindOfMaskType::parseFromINI, NULL, offsetof(AutoHealBehaviorModuleData, m_kindOf) },
+			{ "ForbiddenKindOf", KindOfMaskType::parseFromINI, NULL, offsetof(AutoHealBehaviorModuleData, m_forbiddenKindOf) },
+			{ "RadiusParticleSystemName",
+				INI::parseParticleSystemTemplate,
+				NULL,
+				offsetof(AutoHealBehaviorModuleData, m_radiusParticleSystemTmpl) },
+			{ "UnitHealPulseParticleSystemName",
+				INI::parseParticleSystemTemplate,
+				NULL,
+				offsetof(AutoHealBehaviorModuleData, m_unitHealPulseParticleSystemTmpl) },
+			{ "StartHealingDelay",
+				INI::parseDurationUnsignedInt,
+				NULL,
+				offsetof(AutoHealBehaviorModuleData, m_startHealingDelay) },
+			{ "AffectsWholePlayer", INI::parseBool, NULL, offsetof(AutoHealBehaviorModuleData, m_affectsWholePlayer) },
+			{ "SkipSelfForHealing", INI::parseBool, NULL, offsetof(AutoHealBehaviorModuleData, m_skipSelfForHealing) },
 			{ 0, 0, 0, 0 }
 		};
 
 		UpdateModuleData::buildFieldParse(p);
 		p.add(dataFieldParse);
-		p.add(UpgradeMuxData::getFieldParse(), offsetof( AutoHealBehaviorModuleData, m_upgradeMuxData ));
+		p.add(UpgradeMuxData::getFieldParse(), offsetof(AutoHealBehaviorModuleData, m_upgradeMuxData));
 	}
-
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class AutoHealBehavior : public UpdateModule,
-												 public UpgradeMux,
-												 public DamageModuleInterface
+class AutoHealBehavior : public UpdateModule, public UpgradeMux, public DamageModuleInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AutoHealBehavior, "AutoHealBehavior" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( AutoHealBehavior, AutoHealBehaviorModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AutoHealBehavior, "AutoHealBehavior")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(AutoHealBehavior, AutoHealBehaviorModuleData)
 
 public:
-
-	AutoHealBehavior( Thing *thing, const ModuleData* moduleData );
+	AutoHealBehavior(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	// module methods
-	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | MODULEINTERFACE_UPGRADE | MODULEINTERFACE_DAMAGE; }
+	static Int getInterfaceMask()
+	{
+		return UpdateModule::getInterfaceMask() | MODULEINTERFACE_UPGRADE | MODULEINTERFACE_DAMAGE;
+	}
 
 	// BehaviorModule
-	virtual UpgradeModuleInterface* getUpgrade() { return this; }
-	virtual DamageModuleInterface* getDamage() { return this; }
+	virtual UpgradeModuleInterface *getUpgrade() { return this; }
+	virtual DamageModuleInterface *getDamage() { return this; }
 
 	// DamageModuleInterface
-	virtual void onDamage( DamageInfo *damageInfo );
-	virtual void onHealing( DamageInfo *damageInfo ) { }
-	virtual void onBodyDamageStateChange(const DamageInfo* damageInfo, BodyDamageType oldState, BodyDamageType newState) { }
+	virtual void onDamage(DamageInfo *damageInfo);
+	virtual void onHealing(DamageInfo *damageInfo) {}
+	virtual void onBodyDamageStateChange(const DamageInfo *damageInfo, BodyDamageType oldState, BodyDamageType newState) {}
 
 	// UpdateModuleInterface
 	virtual UpdateSleepTime update();
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return MAKE_DISABLED_MASK( DISABLED_HELD ); }
+	virtual DisabledMaskType getDisabledTypesToProcess() const { return MAKE_DISABLED_MASK(DISABLED_HELD); }
 
 	void stopHealing();
-	void undoUpgrade(); ///<pretend like we have not been activated yet, so we can be reactivated later
+	void undoUpgrade(); ///< pretend like we have not been activated yet, so we can be reactivated later
 
 protected:
+	virtual void upgradeImplementation() { setWakeFrame(getObject(), UPDATE_SLEEP_NONE); }
 
-	virtual void upgradeImplementation()
-	{
-		setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
-	}
-
-	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const
+	virtual void getUpgradeActivationMasks(UpgradeMaskType &activation, UpgradeMaskType &conflicting) const
 	{
 		getAutoHealBehaviorModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
 	}
 
-	virtual void performUpgradeFX()
-	{
-		getAutoHealBehaviorModuleData()->m_upgradeMuxData.performUpgradeFX(getObject());
-	}
+	virtual void performUpgradeFX() { getAutoHealBehaviorModuleData()->m_upgradeMuxData.performUpgradeFX(getObject()); }
 
 	virtual void processUpgradeRemoval()
 	{
@@ -173,22 +174,18 @@ protected:
 
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
-
 private:
-
-	void pulseHealObject( Object *obj );
+	void pulseHealObject(Object *obj);
 
 	ParticleSystemID m_radiusParticleSystemID;
 
-	UnsignedInt m_soonestHealFrame;/** I need to record this, because with multiple wake up sources,
-																		I can't rely solely on my sleeping.  So this will guard onDamage's wake up.
-																		I could guard the act of healing, but that would defeat the gain of being
-																		a sleepy module.  I never want to run update unless I am going to heal.
-																 */
+	UnsignedInt m_soonestHealFrame; /** I need to record this, because with multiple wake up sources,
+																		 I can't rely solely on my sleeping.  So this will guard onDamage's wake up.
+																		 I could guard the act of healing, but that would defeat the gain of being
+																		 a sleepy module.  I never want to run update unless I am going to heal.
+																	*/
 
 	Bool m_stopped;
-
 };
 
 #endif // __AutoHealBehavior_H_
-

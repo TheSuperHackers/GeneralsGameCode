@@ -43,7 +43,6 @@
 
 #include "assetmgr.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // ViewerAssetMgrClass
@@ -52,12 +51,11 @@
 class ViewerAssetMgrClass : public WW3DAssetManager
 {
 public:
-
 	///////////////////////////////////////////////////
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////
-	ViewerAssetMgrClass (void) {}
-	virtual ~ViewerAssetMgrClass (void) {}
+	ViewerAssetMgrClass(void) {}
+	virtual ~ViewerAssetMgrClass(void) {}
 
 	///////////////////////////////////////////////////
 	//	Public methods
@@ -66,29 +64,26 @@ public:
 	//
 	// Base class overrides
 	//
-	virtual bool						Load_3D_Assets (FileClass &w3dfile);
-	virtual TextureClass *			Get_Texture(const char * filename, MipCountType mip_level_count=MIP_LEVELS_ALL);
+	virtual bool Load_3D_Assets(FileClass &w3dfile);
+	virtual TextureClass *Get_Texture(const char *filename, MipCountType mip_level_count = MIP_LEVELS_ALL);
 
 	//
 	//	Missing texture methods
 	//
-	void									Start_Tracking_Textures (void)	{ m_MissingTextureList.Delete_All (); }
-	DynamicVectorClass<CString> &	Get_Missing_Texture_List (void)	{ return m_MissingTextureList; }
+	void Start_Tracking_Textures(void) { m_MissingTextureList.Delete_All(); }
+	DynamicVectorClass<CString> &Get_Missing_Texture_List(void) { return m_MissingTextureList; }
 
 	//
 	//	Texture caching overrides
 	//
-	virtual void						Open_Texture_File_Cache(const char * /*prefix*/);
-	virtual void						Close_Texture_File_Cache();
-
+	virtual void Open_Texture_File_Cache(const char * /*prefix*/);
+	virtual void Close_Texture_File_Cache();
 
 private:
-
 	///////////////////////////////////////////////////
 	//	Private member data
 	///////////////////////////////////////////////////
-	DynamicVectorClass<CString>	m_MissingTextureList;
+	DynamicVectorClass<CString> m_MissingTextureList;
 };
-
 
 #endif //__VIEWER_ASSETMGR_H

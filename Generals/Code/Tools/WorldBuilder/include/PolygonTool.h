@@ -44,47 +44,45 @@ public:
 protected:
 	Coord3D m_poly_mouseDownPt;
 	Coord3D m_poly_unsnappedMouseDownPt;
-	Bool		m_poly_isDraggingPoint;
-	Bool		m_poly_justPicked;
+	Bool m_poly_isDraggingPoint;
+	Bool m_poly_justPicked;
 
-	Bool m_poly_mouseUpPlus;///< True if we are over the "Add point" hotspot.
+	Bool m_poly_mouseUpPlus; ///< True if we are over the "Add point" hotspot.
 	HCURSOR m_poly_plusCursor;
-	Bool m_poly_mouseUpMove;///< True if we are over the "move" hotspot.
+	Bool m_poly_mouseUpMove; ///< True if we are over the "move" hotspot.
 	HCURSOR m_poly_moveCursor;
 
 	MovePolygonUndoable *m_poly_moveUndoable;
 
-	static Bool		m_poly_isAdding;
-	static Int		m_poly_dragPointNdx;
-	static Bool		m_poly_isActive;
+	static Bool m_poly_isAdding;
+	static Int m_poly_dragPointNdx;
+	static Bool m_poly_isActive;
 	static PolygonTrigger *m_poly_curSelectedPolygon;
 
 protected:
-	static Int poly_pickPoint(PolygonTrigger *pTrig, CPoint viewPt, WbView* pView);
+	static Int poly_pickPoint(PolygonTrigger *pTrig, CPoint viewPt, WbView *pView);
 	static Int poly_getInsertIndex(PolygonTrigger *pTrig, Coord3D loc);
 	Bool poly_snapToPoly(Coord3D *pLoc);
 	static Bool poly_pickPoly(PolygonTrigger *pTrig, Coord3D pLoc, Int tolerance);
-	void poly_pickOnMouseDown(CPoint viewPt, WbView* pView);
-	void startMouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
+	void poly_pickOnMouseDown(CPoint viewPt, WbView *pView);
+	void startMouseDown(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
 
 public:
-	static Bool isActive(void) {return m_poly_isActive;};
+	static Bool isActive(void) { return m_poly_isActive; };
 	static Bool deleteSelectedPolygon(void);
-	static Bool isSelected(PolygonTrigger *pTrig) {return (pTrig && (pTrig==m_poly_curSelectedPolygon));};
-	static Int getSelectedPointNdx(void) {return m_poly_dragPointNdx;};
-	static PolygonTrigger *pickPolygon(Coord3D loc, CPoint viewPt, WbView* pView);
-	static Bool isSelectedOpen(void) {return m_poly_isAdding;};
+	static Bool isSelected(PolygonTrigger *pTrig) { return (pTrig && (pTrig == m_poly_curSelectedPolygon)); };
+	static Int getSelectedPointNdx(void) { return m_poly_dragPointNdx; };
+	static PolygonTrigger *pickPolygon(Coord3D loc, CPoint viewPt, WbView *pView);
+	static Bool isSelectedOpen(void) { return m_poly_isAdding; };
 
 public:
 	/// Perform tool on mouse down.
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
 	virtual void setCursor(void);
 	virtual void activate(); ///< Become the current tool.
 	virtual void deactivate(); ///< Become not the current tool.
 };
 
-
-#endif //POLYGONTOOL_H
-
+#endif // POLYGONTOOL_H

@@ -39,7 +39,6 @@
 #ifndef POSTLOADABLE_H
 #define POSTLOADABLE_H
 
-
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	PostLoadableClass
@@ -52,20 +51,16 @@
 class PostLoadableClass
 {
 public:
-	PostLoadableClass(void) : IsPostLoadRegistered(false)						{ }
-	virtual ~PostLoadableClass(void)													{ }
+	PostLoadableClass(void) : IsPostLoadRegistered(false) {}
+	virtual ~PostLoadableClass(void) {}
 
-	virtual void						On_Post_Load (void)							{ }
+	virtual void On_Post_Load(void) {}
 
-	bool									Is_Post_Load_Registered(void)				{ return IsPostLoadRegistered; }
-	void									Set_Post_Load_Registered(bool onoff)	{ IsPostLoadRegistered = onoff; }
+	bool Is_Post_Load_Registered(void) { return IsPostLoadRegistered; }
+	void Set_Post_Load_Registered(bool onoff) { IsPostLoadRegistered = onoff; }
 
 private:
-
-	bool									IsPostLoadRegistered;
+	bool IsPostLoadRegistered;
 };
 
-
-
 #endif
-

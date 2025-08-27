@@ -58,42 +58,29 @@
 #include "Common/StreamingArchiveFile.h"
 #include "Common/PerfTimer.h"
 
-
 //----------------------------------------------------------------------------
 //         Externals
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Public Data
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Prototypes
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Functions
@@ -103,20 +90,13 @@
 // StreamingArchiveFile::StreamingArchiveFile
 //=================================================================
 
-StreamingArchiveFile::StreamingArchiveFile()
-: m_file(NULL),
-	m_startingPos(0),
-	m_size(0),
-	m_curPos(0)
+StreamingArchiveFile::StreamingArchiveFile() : m_file(NULL), m_startingPos(0), m_size(0), m_curPos(0)
 {
-
 }
-
 
 //----------------------------------------------------------------------------
 //         Public Functions
 //----------------------------------------------------------------------------
-
 
 //=================================================================
 // StreamingArchiveFile::~StreamingArchiveFile
@@ -130,31 +110,31 @@ StreamingArchiveFile::~StreamingArchiveFile()
 // StreamingArchiveFile::open
 //=================================================================
 /**
-	* This function opens a file using the file system. Access flags
-	* are mapped to the appropriate open flags. Returns true if file
-	* was opened successfully.
-	*/
+ * This function opens a file using the file system. Access flags
+ * are mapped to the appropriate open flags. Returns true if file
+ * was opened successfully.
+ */
 //=================================================================
 
-//DECLARE_PERF_TIMER(StreamingArchiveFile)
-Bool StreamingArchiveFile::open( const Char *filename, Int access, size_t bufferSize )
+// DECLARE_PERF_TIMER(StreamingArchiveFile)
+Bool StreamingArchiveFile::open(const Char *filename, Int access, size_t bufferSize)
 {
-	//USE_PERF_TIMER(StreamingArchiveFile)
-	File *file = TheFileSystem->openFile( filename, access, bufferSize );
+	// USE_PERF_TIMER(StreamingArchiveFile)
+	File *file = TheFileSystem->openFile(filename, access, bufferSize);
 
-	if ( file == NULL )
+	if (file == NULL)
 	{
 		return FALSE;
 	}
 
-	return (open( file ) != NULL);
+	return (open(file) != NULL);
 }
 
 //============================================================================
 // StreamingArchiveFile::open
 //============================================================================
 
-Bool StreamingArchiveFile::open( File *file )
+Bool StreamingArchiveFile::open(File *file)
 {
 	return TRUE;
 }
@@ -162,14 +142,16 @@ Bool StreamingArchiveFile::open( File *file )
 //============================================================================
 // StreamingArchiveFile::openFromArchive
 //============================================================================
-Bool StreamingArchiveFile::openFromArchive(File *archiveFile, const AsciiString& filename, Int offset, Int size)
+Bool StreamingArchiveFile::openFromArchive(File *archiveFile, const AsciiString &filename, Int offset, Int size)
 {
-	//USE_PERF_TIMER(StreamingArchiveFile)
-	if (archiveFile == NULL) {
+	// USE_PERF_TIMER(StreamingArchiveFile)
+	if (archiveFile == NULL)
+	{
 		return FALSE;
 	}
 
-	if (File::open(filename.str(), File::READ | File::BINARY | File::STREAMING) == FALSE) {
+	if (File::open(filename.str(), File::READ | File::BINARY | File::STREAMING) == FALSE)
+	{
 		return FALSE;
 	}
 
@@ -178,11 +160,13 @@ Bool StreamingArchiveFile::openFromArchive(File *archiveFile, const AsciiString&
 	m_size = size;
 	m_curPos = 0;
 
-	if (m_file->seek(offset, File::START) != offset) {
+	if (m_file->seek(offset, File::START) != offset)
+	{
 		return FALSE;
 	}
 
-	if (m_file->seek(size) != m_startingPos + size) {
+	if (m_file->seek(size) != m_startingPos + size)
+	{
 		return FALSE;
 	}
 
@@ -198,12 +182,12 @@ Bool StreamingArchiveFile::openFromArchive(File *archiveFile, const AsciiString&
 // StreamingArchiveFile::close
 //=================================================================
 /**
-	* Closes the current file if it is open.
-  * Must call StreamingArchiveFile::close() for each successful StreamingArchiveFile::open() call.
-	*/
+ * Closes the current file if it is open.
+ * Must call StreamingArchiveFile::close() for each successful StreamingArchiveFile::open() call.
+ */
 //=================================================================
 
-void StreamingArchiveFile::close( void )
+void StreamingArchiveFile::close(void)
 {
 	File::close();
 }
@@ -212,9 +196,10 @@ void StreamingArchiveFile::close( void )
 // StreamingArchiveFile::read
 //=================================================================
 // if buffer is null, just advance the current position by 'bytes'
-Int StreamingArchiveFile::read( void *buffer, Int bytes )
+Int StreamingArchiveFile::read(void *buffer, Int bytes)
 {
-	if (!m_file) {
+	if (!m_file)
+	{
 		return 0;
 	}
 
@@ -236,7 +221,7 @@ Int StreamingArchiveFile::read( void *buffer, Int bytes )
 // StreamingArchiveFile::write
 //=================================================================
 
-Int StreamingArchiveFile::write( const void *buffer, Int bytes )
+Int StreamingArchiveFile::write(const void *buffer, Int bytes)
 {
 	DEBUG_CRASH(("Cannot write to streaming files."));
 	return -1;
@@ -246,11 +231,11 @@ Int StreamingArchiveFile::write( const void *buffer, Int bytes )
 // StreamingArchiveFile::seek
 //=================================================================
 
-Int StreamingArchiveFile::seek( Int pos, seekMode mode)
+Int StreamingArchiveFile::seek(Int pos, seekMode mode)
 {
 	Int newPos;
 
-	switch( mode )
+	switch (mode)
 	{
 		case START:
 			newPos = pos;
@@ -259,7 +244,9 @@ Int StreamingArchiveFile::seek( Int pos, seekMode mode)
 			newPos = m_curPos + pos;
 			break;
 		case END:
-			DEBUG_ASSERTCRASH(pos <= 0, ("StreamingArchiveFile::seek - position should be <= 0 for a seek starting from the end."));
+			DEBUG_ASSERTCRASH(
+					pos <= 0,
+					("StreamingArchiveFile::seek - position should be <= 0 for a seek starting from the end."));
 			newPos = m_size + pos;
 			break;
 		default:
@@ -267,11 +254,11 @@ Int StreamingArchiveFile::seek( Int pos, seekMode mode)
 			return -1;
 	}
 
-	if ( newPos < 0 )
+	if (newPos < 0)
 	{
 		newPos = 0;
 	}
-	else if ( newPos > m_size )
+	else if (newPos > m_size)
 	{
 		newPos = m_size;
 	}
@@ -279,6 +266,4 @@ Int StreamingArchiveFile::seek( Int pos, seekMode mode)
 	m_curPos = newPos;
 
 	return m_curPos;
-
 }
-

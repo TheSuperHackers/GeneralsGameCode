@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #ifdef ALLOW_DEMORALIZE
 
@@ -43,9 +43,8 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DemoralizeSpecialPowerModuleData::DemoralizeSpecialPowerModuleData( void )
+DemoralizeSpecialPowerModuleData::DemoralizeSpecialPowerModuleData(void)
 {
-
 	m_baseRange = 0.0f;
 	m_bonusRangePerCaptured = 0.0f;
 	m_maxRange = 0.0f;
@@ -54,28 +53,36 @@ DemoralizeSpecialPowerModuleData::DemoralizeSpecialPowerModuleData( void )
 	m_maxDurationInFrames = 0;
 	m_fxList = NULL;
 
-}  // end DemoralizeSpecialPowerModuleData
+} // end DemoralizeSpecialPowerModuleData
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void DemoralizeSpecialPowerModuleData::buildFieldParse( MultiIniFieldParse &p )
+void DemoralizeSpecialPowerModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-	SpecialPowerModuleData::buildFieldParse( p );
+	SpecialPowerModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "BaseRange",									INI::parseReal,			NULL,			offsetof( DemoralizeSpecialPowerModuleData, m_baseRange ) },
-		{ "BonusRangePerCaptured",			INI::parseReal,			NULL,			offsetof( DemoralizeSpecialPowerModuleData, m_bonusRangePerCaptured ) },
-		{ "MaxRange",										INI::parseReal,			NULL,			offsetof( DemoralizeSpecialPowerModuleData, m_maxRange ) },
-		{ "BaseDuration",								INI::parseDurationUnsignedInt,	NULL,   offsetof( DemoralizeSpecialPowerModuleData, m_baseDurationInFrames ) },
-		{ "BonusDurationPerCaptured",		INI::parseDurationUnsignedInt,	NULL,   offsetof( DemoralizeSpecialPowerModuleData, m_bonusDurationPerCapturedInFrames ) },
-		{ "MaxDuration",								INI::parseDurationUnsignedInt,	NULL,   offsetof( DemoralizeSpecialPowerModuleData, m_maxDurationInFrames ) },
-		{ "FXList",											INI::parseFXList,								NULL,		offsetof( DemoralizeSpecialPowerModuleData, m_fxList ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "BaseRange", INI::parseReal, NULL, offsetof(DemoralizeSpecialPowerModuleData, m_baseRange) },
+		{ "BonusRangePerCaptured", INI::parseReal, NULL, offsetof(DemoralizeSpecialPowerModuleData, m_bonusRangePerCaptured) },
+		{ "MaxRange", INI::parseReal, NULL, offsetof(DemoralizeSpecialPowerModuleData, m_maxRange) },
+		{ "BaseDuration",
+			INI::parseDurationUnsignedInt,
+			NULL,
+			offsetof(DemoralizeSpecialPowerModuleData, m_baseDurationInFrames) },
+		{ "BonusDurationPerCaptured",
+			INI::parseDurationUnsignedInt,
+			NULL,
+			offsetof(DemoralizeSpecialPowerModuleData, m_bonusDurationPerCapturedInFrames) },
+		{ "MaxDuration",
+			INI::parseDurationUnsignedInt,
+			NULL,
+			offsetof(DemoralizeSpecialPowerModuleData, m_maxDurationInFrames) },
+		{ "FXList", INI::parseFXList, NULL, offsetof(DemoralizeSpecialPowerModuleData, m_fxList) },
 		{ 0, 0, 0, 0 }
 	};
-	p.add( dataFieldParse );
+	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+} // end buildFieldParse
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,32 +90,30 @@ void DemoralizeSpecialPowerModuleData::buildFieldParse( MultiIniFieldParse &p )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DemoralizeSpecialPower::DemoralizeSpecialPower( Thing *thing, const ModuleData *moduleData )
-												: SpecialPowerModule( thing, moduleData )
+DemoralizeSpecialPower::DemoralizeSpecialPower(Thing *thing, const ModuleData *moduleData) :
+		SpecialPowerModule(thing, moduleData)
 {
-
-}  // end DemoralizeSpecialPower
+} // end DemoralizeSpecialPower
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DemoralizeSpecialPower::~DemoralizeSpecialPower( void )
+DemoralizeSpecialPower::~DemoralizeSpecialPower(void)
 {
-
-}  // end ~DemoralizeSpecialPower
+} // end ~DemoralizeSpecialPower
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void DemoralizeSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
+void DemoralizeSpecialPower::doSpecialPowerAtLocation(const Coord3D *loc, Real angle, UnsignedInt commandOptions)
 {
 	if (getObject()->isDisabled())
 		return;
 
 	// sanity
-	if( loc == NULL )
+	if (loc == NULL)
 		return;
 
 	// call the base class action cause we are *EXTENDING* functionality
-	SpecialPowerModule::doSpecialPowerAtLocation( loc, angle, commandOptions );
+	SpecialPowerModule::doSpecialPowerAtLocation(loc, angle, commandOptions);
 
 	// the source of my fiendish power
 	Object *source = getObject();
@@ -123,111 +128,101 @@ void DemoralizeSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real 
 	UnsignedInt duration = modData->m_baseDurationInFrames;
 	Real range = modData->m_baseRange;
 	ContainModuleInterface *contain = source->getContain();
-	if( contain )
+	if (contain)
 	{
-
 		// for every captured unit we get a bonus
 		duration += contain->getContainCount() * modData->m_bonusDurationPerCapturedInFrames;
 
 		// cap at the max
-		if( duration > modData->m_maxDurationInFrames )
+		if (duration > modData->m_maxDurationInFrames)
 			duration = modData->m_maxDurationInFrames;
 
 		// increase the range for every prisoner we got
 		range += contain->getContainCount() * modData->m_bonusRangePerCaptured;
 
 		// cap at the max
-		if( range > modData->m_maxRange )
+		if (range > modData->m_maxRange)
 			range = modData->m_maxRange;
 
-	}  // end if
+	} // end if
 
 	// scan the objects in the area range and demoralize them
-	PartitionFilterRelationship filter1( source, PartitionFilterRelationship::ALLOW_ENEMIES |
-																							PartitionFilterRelationship::ALLOW_NEUTRAL );
-	PartitionFilterAcceptByKindOf filter2( MAKE_KINDOF_MASK( KINDOF_INFANTRY ),
-																				 KINDOFMASK_NONE );
+	PartitionFilterRelationship filter1(
+			source,
+			PartitionFilterRelationship::ALLOW_ENEMIES | PartitionFilterRelationship::ALLOW_NEUTRAL);
+	PartitionFilterAcceptByKindOf filter2(MAKE_KINDOF_MASK(KINDOF_INFANTRY), KINDOFMASK_NONE);
 	PartitionFilterSameMapStatus filterMapStatus(source);
 	PartitionFilter *filters[] = { &filter1, &filter2, &filterMapStatus, NULL };
-	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( loc,
-																																		 range,
-																																		 FROM_CENTER_2D,
-																																		 filters );
+	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange(loc, range, FROM_CENTER_2D, filters);
 
-	MemoryPoolObjectHolder hold( iter );
+	MemoryPoolObjectHolder hold(iter);
 	AIUpdateInterface *ai;
-	for( Object *obj = iter->first(); obj; obj = iter->next() )
+	for (Object *obj = iter->first(); obj; obj = iter->next())
 	{
-
 		// demoralize only affects with ai of course
 		ai = obj->getAIUpdateInterface();
-		if( ai )
-			ai->setDemoralized( duration );
+		if (ai)
+			ai->setDemoralized(duration);
 
-	}  // end for obj
+	} // end for obj
 
 	// play an effect at the destination location
-	if( modData->m_fxList )
+	if (modData->m_fxList)
 	{
-
 		// execute FX
-		FXList::doFXPos( modData->m_fxList, loc );
+		FXList::doFXPos(modData->m_fxList, loc);
 
-	}  // end if
+	} // end if
 
-}    // end doSpecialPowerAtLocation
+} // end doSpecialPowerAtLocation
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void DemoralizeSpecialPower::doSpecialPowerAtObject( const Object *obj, Real angle, UnsignedInt commandOptions )
+void DemoralizeSpecialPower::doSpecialPowerAtObject(const Object *obj, Real angle, UnsignedInt commandOptions)
 {
 	if (getObject()->isDisabled())
 		return;
 
-	if( obj )
-		doSpecialPowerAtLocation( obj->getPosition(), angle, commandOptions );
+	if (obj)
+		doSpecialPowerAtLocation(obj->getPosition(), angle, commandOptions);
 
-}  // end doSpecialPowerAtObject
+} // end doSpecialPowerAtObject
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void DemoralizeSpecialPower::crc( Xfer *xfer )
+void DemoralizeSpecialPower::crc(Xfer *xfer)
 {
-
 	// extend base class
-	SpecialPowerModule::crc( xfer );
+	SpecialPowerModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void DemoralizeSpecialPower::xfer( Xfer *xfer )
+void DemoralizeSpecialPower::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	SpecialPowerModule::xfer( xfer );
+	SpecialPowerModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DemoralizeSpecialPower::loadPostProcess( void )
+void DemoralizeSpecialPower::loadPostProcess(void)
 {
-
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess
 
-#endif	// #ifdef ALLOW_DEMORALIZE
-
+#endif // #ifdef ALLOW_DEMORALIZE

@@ -40,10 +40,8 @@
 
 Bool WaypointTool::m_isActive = false;
 
-
 /// Constructor
-WaypointTool::WaypointTool(void) :
-	Tool(ID_WAYPOINT_TOOL, IDC_WAYPOINT)
+WaypointTool::WaypointTool(void) : Tool(ID_WAYPOINT_TOOL, IDC_WAYPOINT)
 {
 }
 
@@ -68,11 +66,14 @@ void WaypointTool::activate()
 }
 
 // Pick a waypoint.
-MapObject *WaypointTool::pickWaypoint(Coord3D loc){
+MapObject *WaypointTool::pickWaypoint(Coord3D loc)
+{
 	// Tight check first.
 	MapObject *pObj;
-	for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext()) {
-		if (!pObj->isWaypoint()) {
+	for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext())
+	{
+		if (!pObj->isWaypoint())
+		{
 			continue;
 		}
 		Coord3D cloc = *pObj->getLocation();
@@ -81,13 +82,16 @@ MapObject *WaypointTool::pickWaypoint(Coord3D loc){
 		cpt.x -= cloc.x;
 		cpt.y -= cloc.y;
 		cpt.z = 0;
-		if (cpt.length() < 0.5f*MAP_XY_FACTOR) {
+		if (cpt.length() < 0.5f * MAP_XY_FACTOR)
+		{
 			return pObj;
 		}
 	}
 	// Loose check
-	for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext()) {
-		if (!pObj->isWaypoint()) {
+	for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext())
+	{
+		if (!pObj->isWaypoint())
+		{
 			continue;
 		}
 		Coord3D cloc = *pObj->getLocation();
@@ -96,30 +100,34 @@ MapObject *WaypointTool::pickWaypoint(Coord3D loc){
 		cpt.x -= cloc.x;
 		cpt.y -= cloc.y;
 		cpt.z = 0;
-		if (cpt.length() < 1.5f*MAP_XY_FACTOR) {
+		if (cpt.length() < 1.5f * MAP_XY_FACTOR)
+		{
 			return pObj;
 		}
 	}
 	return NULL;
 }
 
-
 /// Perform the tool behavior on mouse down.
-void WaypointTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void WaypointTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
-	if (m != TRACK_L) return;
+	if (m != TRACK_L)
+		return;
 	m_downWaypointID = 0;
 	Coord3D docPt;
 	pView->viewToDocCoords(viewPt, &docPt);
 	MapObject *pObj = pickWaypoint(docPt);
-	if (pObj) {
+	if (pObj)
+	{
 		pObj->setSelected(true);
 		m_downWaypointID = pObj->getWaypointID();
 		docPt = *pObj->getLocation();
 		WaypointOptions::update();
-	}	else {
+	}
+	else
+	{
 		pView->snapPoint(&docPt);
-		MapObject *pNew = newInstance( MapObject)(docPt, AsciiString("*Waypoints/Waypoint"), 0, 0, NULL, NULL );
+		MapObject *pNew = newInstance(MapObject)(docPt, AsciiString("*Waypoints/Waypoint"), 0, 0, NULL, NULL);
 		Int id = pDoc->getNextWaypointID();
 		AsciiString name = WaypointOptions::GenerateUniqueName(id);
 		pNew->setSelected(true);
@@ -138,15 +146,19 @@ void WaypointTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 }
 
 /// Left button move code.
-void WaypointTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void WaypointTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
-	if (m != TRACK_L) return;
+	if (m != TRACK_L)
+		return;
 	Coord3D docPt;
 	pView->viewToDocCoords(viewPt, &docPt);
 	MapObject *pObj = pickWaypoint(docPt);
-	if (pObj) {
+	if (pObj)
+	{
 		docPt = *pObj->getLocation();
-	} else {
+	}
+	else
+	{
 		pView->snapPoint(&docPt);
 	}
 	DrawObject::setWaypointDragFeedback(m_mouseDownPt, docPt);
@@ -154,19 +166,21 @@ void WaypointTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWo
 }
 
 /** Execute the tool on mouse up - Place an object. */
-void WaypointTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void WaypointTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
 	DrawObject::stopWaypointDragFeedback();
-	if (m != TRACK_L) return;
+	if (m != TRACK_L)
+		return;
 
 	Coord3D docPt;
 	pView->viewToDocCoords(viewPt, &docPt);
 	MapObject *pObj;
 	PointerTool::clearSelection();
 	pObj = pickWaypoint(docPt);
-	if (pObj == NULL) {
+	if (pObj == NULL)
+	{
 		pView->snapPoint(&docPt);
-		MapObject *pNew = newInstance( MapObject)(docPt, AsciiString("*Waypoints/Waypoint"), 0, 0, NULL, NULL );
+		MapObject *pNew = newInstance(MapObject)(docPt, AsciiString("*Waypoints/Waypoint"), 0, 0, NULL, NULL);
 		Int id = pDoc->getNextWaypointID();
 		AsciiString name;
 		name.format("Waypoint %d", id);
@@ -197,12 +211,11 @@ void WaypointTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 				pDoc->addWaypointLink(m_downWaypointID, waypointID);
 			}
 			MapObject *pDown = pDoc->getWaypointByID(m_downWaypointID);
-			if (pDown) {
+			if (pDown)
+			{
 				pDoc->updateLinkedWaypointLabels(pDown);
 			}
 		}
 		WaypointOptions::update();
 	}
-
 }
-

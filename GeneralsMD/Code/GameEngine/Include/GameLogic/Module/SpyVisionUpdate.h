@@ -44,13 +44,13 @@ class Player;
 class SpyVisionUpdateModuleData : public UpdateModuleData
 {
 public:
-	UpgradeMuxData	m_upgradeMuxData;
+	UpgradeMuxData m_upgradeMuxData;
 
-	Bool						m_needsUpgrade;
-	Bool						m_selfPowered;
-	UnsignedInt			m_selfPoweredDuration;
-	UnsignedInt			m_selfPoweredInterval;
-	KindOfMaskType	m_spyOnKindof;
+	Bool m_needsUpgrade;
+	Bool m_selfPowered;
+	UnsignedInt m_selfPoweredDuration;
+	UnsignedInt m_selfPoweredInterval;
+	KindOfMaskType m_spyOnKindof;
 
 	SpyVisionUpdateModuleData()
 	{
@@ -62,21 +62,26 @@ public:
 		m_spyOnKindof.flip();
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p)
+	static void buildFieldParse(MultiIniFieldParse &p)
 	{
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "NeedsUpgrade",					INI::parseBool,									NULL, offsetof( SpyVisionUpdateModuleData, m_needsUpgrade ) },
-			{ "SelfPowered",					INI::parseBool,									NULL, offsetof( SpyVisionUpdateModuleData, m_selfPowered ) },
-			{ "SelfPoweredDuration",	INI::parseDurationUnsignedInt,	NULL, offsetof( SpyVisionUpdateModuleData, m_selfPoweredDuration ) },
-			{ "SelfPoweredInterval",	INI::parseDurationUnsignedInt,	NULL, offsetof( SpyVisionUpdateModuleData, m_selfPoweredInterval ) },
-			{ "SpyOnKindof",					KindOfMaskType::parseFromINI,		NULL, offsetof( SpyVisionUpdateModuleData, m_spyOnKindof ) },
+		static const FieldParse dataFieldParse[] = {
+			{ "NeedsUpgrade", INI::parseBool, NULL, offsetof(SpyVisionUpdateModuleData, m_needsUpgrade) },
+			{ "SelfPowered", INI::parseBool, NULL, offsetof(SpyVisionUpdateModuleData, m_selfPowered) },
+			{ "SelfPoweredDuration",
+				INI::parseDurationUnsignedInt,
+				NULL,
+				offsetof(SpyVisionUpdateModuleData, m_selfPoweredDuration) },
+			{ "SelfPoweredInterval",
+				INI::parseDurationUnsignedInt,
+				NULL,
+				offsetof(SpyVisionUpdateModuleData, m_selfPoweredInterval) },
+			{ "SpyOnKindof", KindOfMaskType::parseFromINI, NULL, offsetof(SpyVisionUpdateModuleData, m_spyOnKindof) },
 			{ 0, 0, 0, 0 }
 		};
 
 		UpdateModuleData::buildFieldParse(p);
 		p.add(dataFieldParse);
-		p.add(UpgradeMuxData::getFieldParse(), offsetof( SpyVisionUpdateModuleData, m_upgradeMuxData ));
+		p.add(UpgradeMuxData::getFieldParse(), offsetof(SpyVisionUpdateModuleData, m_upgradeMuxData));
 	}
 };
 
@@ -84,46 +89,40 @@ public:
 //-------------------------------------------------------------------------------------------------
 class SpyVisionUpdate : public UpdateModule, public UpgradeMux
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SpyVisionUpdate, "SpyVisionUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( SpyVisionUpdate, SpyVisionUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SpyVisionUpdate, "SpyVisionUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(SpyVisionUpdate, SpyVisionUpdateModuleData)
 
 public:
-
-	SpyVisionUpdate( Thing *thing, const ModuleData* moduleData );
+	SpyVisionUpdate(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual SpyVisionUpdate* getSpyVisionUpdate() { return this; }
+	virtual SpyVisionUpdate *getSpyVisionUpdate() { return this; }
 
 	// module methods
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | MODULEINTERFACE_UPGRADE; }
-	virtual void onDelete( void );
-	virtual void onCapture( Player *oldOwner, Player *newOwner );
-	virtual void onDisabledEdge( Bool nowDisabled );
+	virtual void onDelete(void);
+	virtual void onCapture(Player *oldOwner, Player *newOwner);
+	virtual void onDisabledEdge(Bool nowDisabled);
 
 	// BehaviorModule
-	virtual UpgradeModuleInterface* getUpgrade() { return this; }
+	virtual UpgradeModuleInterface *getUpgrade() { return this; }
 
-	//Update module
-	virtual UpdateSleepTime update( void );
+	// Update module
+	virtual UpdateSleepTime update(void);
 
-	void activateSpyVision( UnsignedInt duration );
+	void activateSpyVision(UnsignedInt duration);
 
-	void setDisabledUntilFrame( UnsignedInt frame );
+	void setDisabledUntilFrame(UnsignedInt frame);
 	UnsignedInt getDisabledUntilFrame() const { return m_disabledUntilFrame; }
 
 protected:
-
 	// UpgradeMux functions.  Mux standing, of course, for Majorly Ugly Xhitcode
 	virtual void upgradeImplementation();
-	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const
+	virtual void getUpgradeActivationMasks(UpgradeMaskType &activation, UpgradeMaskType &conflicting) const
 	{
 		getSpyVisionUpdateModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
 	}
-	virtual void performUpgradeFX()
-	{
-		getSpyVisionUpdateModuleData()->m_upgradeMuxData.performUpgradeFX(getObject());
-	}
+	virtual void performUpgradeFX() { getSpyVisionUpdateModuleData()->m_upgradeMuxData.performUpgradeFX(getObject()); }
 	virtual void processUpgradeRemoval()
 	{
 		// I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritence is CRAP.
@@ -138,14 +137,12 @@ protected:
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 private:
-
-	void doActivationWork( Player *playerToSetFor, Bool setting );
+	void doActivationWork(Player *playerToSetFor, Bool setting);
 
 	UnsignedInt m_deactivateFrame;
-	UnsignedInt m_disabledUntilFrame; //sabotaged, emp'd, etc.
+	UnsignedInt m_disabledUntilFrame; // sabotaged, emp'd, etc.
 	Bool m_currentlyActive;
 	Bool m_resetTimersNextUpdate;
 };
 
 #endif
-

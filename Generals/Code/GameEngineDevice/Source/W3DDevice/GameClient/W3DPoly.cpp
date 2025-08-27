@@ -36,7 +36,7 @@ void ClipPolyClass::Reset(void)
 //-------------------------------------------------------------------------------------------------
 /** Add a new vertex to polygon */
 //-------------------------------------------------------------------------------------------------
-void ClipPolyClass::Add_Vertex(const Vector3 & point)
+void ClipPolyClass::Add_Vertex(const Vector3 &point)
 {
 	Verts.Add(point);
 }
@@ -44,7 +44,7 @@ void ClipPolyClass::Add_Vertex(const Vector3 & point)
 //-------------------------------------------------------------------------------------------------
 /** Clip polygon to given plane, returning new polygon in dest. */
 //-------------------------------------------------------------------------------------------------
-void ClipPolyClass::Clip(const PlaneClass & plane,ClipPolyClass & dest) const
+void ClipPolyClass::Clip(const PlaneClass &plane, ClipPolyClass &dest) const
 {
 	dest.Reset();
 
@@ -57,52 +57,52 @@ void ClipPolyClass::Clip(const PlaneClass & plane,ClipPolyClass & dest) const
 	Real alpha;
 	Vector3 int_point;
 
-	if (vcount <= 2) return;
+	if (vcount <= 2)
+		return;
 
 	// perform clipping
-	prev_point_in_front = !plane.In_Front(Verts[iprev]);		// Note, plane normal is outward so we invert this test
-	for (Int j=0; j<vcount; j++) {
-
-		cur_point_in_front = !plane.In_Front(Verts[i]);			// Note, plane nomral is out so we invert this test
-		if (prev_point_in_front) {
-
-			if (cur_point_in_front) {
-
+	prev_point_in_front = !plane.In_Front(Verts[iprev]); // Note, plane normal is outward so we invert this test
+	for (Int j = 0; j < vcount; j++)
+	{
+		cur_point_in_front = !plane.In_Front(Verts[i]); // Note, plane nomral is out so we invert this test
+		if (prev_point_in_front)
+		{
+			if (cur_point_in_front)
+			{
 				// Previous vertex was in front of plane and this vertex is in
 				// front of the plane so we emit this vertex.
 				dest.Add_Vertex(Verts[i]);
-
-			} else {
-
+			}
+			else
+			{
 				// Previous vert was in front, this vert is behind, compute
 				// the intersection and emit the point.
-				plane.Compute_Intersection(Verts[iprev],Verts[i],&alpha);
-				Vector3::Lerp(Verts[iprev],Verts[i],alpha,&int_point);
+				plane.Compute_Intersection(Verts[iprev], Verts[i], &alpha);
+				Vector3::Lerp(Verts[iprev], Verts[i], alpha, &int_point);
 				dest.Add_Vertex(int_point);
-
 			}
-
-		} else {
-
-			if (cur_point_in_front) {
-
+		}
+		else
+		{
+			if (cur_point_in_front)
+			{
 				// segment is going from the back halfspace to the front halfspace
 				// compute the intersection and emit it, then continue
 				// the edge into the front halfspace and emit the end point.
-				plane.Compute_Intersection(Verts[iprev],Verts[i],&alpha);
-				Vector3::Lerp(Verts[iprev],Verts[i],alpha,&int_point);
+				plane.Compute_Intersection(Verts[iprev], Verts[i], &alpha);
+				Vector3::Lerp(Verts[iprev], Verts[i], alpha, &int_point);
 				dest.Add_Vertex(int_point);
 				dest.Add_Vertex(Verts[i]);
-
 			}
 		}
 
 		prev_point_in_front = cur_point_in_front;
 		iprev = i;
 
-		//i = (i+1)%(Verts.Count());
+		// i = (i+1)%(Verts.Count());
 		i++;
-		if (i>=vcount) {
+		if (i >= vcount)
+		{
 			i = 0;
 		}
 	}

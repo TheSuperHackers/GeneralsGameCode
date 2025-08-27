@@ -35,12 +35,12 @@
 #include "Lib/BaseType.h"
 
 // do NOT use these functions directly, rather use the macros below
-extern Int GetGameLogicRandomValue( int lo, int hi, const char *file, int line );
-extern Real GetGameLogicRandomValueReal( Real lo, Real hi, const char *file, int line );
+extern Int GetGameLogicRandomValue(int lo, int hi, const char *file, int line);
+extern Real GetGameLogicRandomValueReal(Real lo, Real hi, const char *file, int line);
 
 // use these macros to access the random value functions
-#define GameLogicRandomValue( lo, hi ) GetGameLogicRandomValue( lo, hi, __FILE__, __LINE__ )
-#define GameLogicRandomValueReal( lo, hi ) GetGameLogicRandomValueReal( lo, hi, __FILE__, __LINE__ )
+#define GameLogicRandomValue(lo, hi) GetGameLogicRandomValue(lo, hi, __FILE__, __LINE__)
+#define GameLogicRandomValueReal(lo, hi) GetGameLogicRandomValueReal(lo, hi, __FILE__, __LINE__)
 
 //--------------------------------------------------------------------------------------------------------------
 class CColorAlphaDialog;
@@ -68,26 +68,31 @@ public:
 	 */
 	enum DistributionType
 	{
-		CONSTANT, UNIFORM, GAUSSIAN, TRIANGULAR, LOW_BIAS, HIGH_BIAS
+		CONSTANT,
+		UNIFORM,
+		GAUSSIAN,
+		TRIANGULAR,
+		LOW_BIAS,
+		HIGH_BIAS
 	};
 
 	static const char *DistributionTypeNames[];
 
 	/// define the range of random values, and the distribution of values
-	void setRange( Real low, Real high, DistributionType type = UNIFORM );
+	void setRange(Real low, Real high, DistributionType type = UNIFORM);
 
-	Real getValue( void ) const;														///< return a value from the random distribution
-	inline Real getMinimumValue( void ) const { return m_low; }
-	inline Real getMaximumValue( void ) const { return m_high; }
-	inline DistributionType getDistributionType( void ) const { return m_type; }
+	Real getValue(void) const; ///< return a value from the random distribution
+	inline Real getMinimumValue(void) const { return m_low; }
+	inline Real getMaximumValue(void) const { return m_high; }
+	inline DistributionType getDistributionType(void) const { return m_type; }
+
 protected:
-	DistributionType m_type;																		///< the kind of random distribution
-	Real m_low, m_high;																					///< the range of random values
+	DistributionType m_type; ///< the kind of random distribution
+	Real m_low, m_high; ///< the range of random values
 
 	// These two friends are for particle editing.
 	friend CColorAlphaDialog;
 	friend DebugWindowDialog;
-
 };
 
 //--------------------------------------------------------------------------------------------------------------

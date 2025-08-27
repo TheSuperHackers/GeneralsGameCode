@@ -29,39 +29,25 @@
 #include "ParticleTypePanels.h"
 #include "VelocityTypePanels.h"
 
-#define		ARBITRARY_BUFF_SIZE		128
+#define ARBITRARY_BUFF_SIZE 128
 
-static const UINT colorControls[][2] =
-{
-	{IDC_PSEd_Color1,	IDC_PSEd_CF1_Frame},
-	{IDC_PSEd_Color2,	IDC_PSEd_CF2_Frame},
-	{IDC_PSEd_Color3,	IDC_PSEd_CF3_Frame},
-	{IDC_PSEd_Color4,	IDC_PSEd_CF4_Frame},
-	{IDC_PSEd_Color5,	IDC_PSEd_CF5_Frame},
-	{IDC_PSEd_Color6,	IDC_PSEd_CF6_Frame},
-	{IDC_PSEd_Color7,	IDC_PSEd_CF7_Frame},
-	{IDC_PSEd_Color8,	IDC_PSEd_CF8_Frame}
+static const UINT colorControls[][2] = { { IDC_PSEd_Color1, IDC_PSEd_CF1_Frame }, { IDC_PSEd_Color2, IDC_PSEd_CF2_Frame },
+																				 { IDC_PSEd_Color3, IDC_PSEd_CF3_Frame }, { IDC_PSEd_Color4, IDC_PSEd_CF4_Frame },
+																				 { IDC_PSEd_Color5, IDC_PSEd_CF5_Frame }, { IDC_PSEd_Color6, IDC_PSEd_CF6_Frame },
+																				 { IDC_PSEd_Color7, IDC_PSEd_CF7_Frame }, { IDC_PSEd_Color8, IDC_PSEd_CF8_Frame } };
+
+static const UINT alphaControls[][3] = {
+	{ IDC_PSEd_AF1_Min, IDC_PSEd_AF1_Max, IDC_PSEd_AF1_Frame }, { IDC_PSEd_AF2_Min, IDC_PSEd_AF2_Max, IDC_PSEd_AF2_Frame },
+	{ IDC_PSEd_AF3_Min, IDC_PSEd_AF3_Max, IDC_PSEd_AF3_Frame }, { IDC_PSEd_AF4_Min, IDC_PSEd_AF4_Max, IDC_PSEd_AF4_Frame },
+	{ IDC_PSEd_AF5_Min, IDC_PSEd_AF5_Max, IDC_PSEd_AF5_Frame }, { IDC_PSEd_AF6_Min, IDC_PSEd_AF6_Max, IDC_PSEd_AF6_Frame },
+	{ IDC_PSEd_AF7_Min, IDC_PSEd_AF7_Max, IDC_PSEd_AF7_Frame }, { IDC_PSEd_AF8_Min, IDC_PSEd_AF8_Max, IDC_PSEd_AF8_Frame }
 };
 
-static const UINT alphaControls[][3] =
+CColorAlphaDialog::CColorAlphaDialog(UINT nIDTemplate, CWnd *pParentWnd) : CDialog(nIDTemplate, pParentWnd)
 {
-	{IDC_PSEd_AF1_Min, IDC_PSEd_AF1_Max, IDC_PSEd_AF1_Frame},
-	{IDC_PSEd_AF2_Min, IDC_PSEd_AF2_Max, IDC_PSEd_AF2_Frame},
-	{IDC_PSEd_AF3_Min, IDC_PSEd_AF3_Max, IDC_PSEd_AF3_Frame},
-	{IDC_PSEd_AF4_Min, IDC_PSEd_AF4_Max, IDC_PSEd_AF4_Frame},
-	{IDC_PSEd_AF5_Min, IDC_PSEd_AF5_Max, IDC_PSEd_AF5_Frame},
-	{IDC_PSEd_AF6_Min, IDC_PSEd_AF6_Max, IDC_PSEd_AF6_Frame},
-	{IDC_PSEd_AF7_Min, IDC_PSEd_AF7_Max, IDC_PSEd_AF7_Frame},
-	{IDC_PSEd_AF8_Min, IDC_PSEd_AF8_Max, IDC_PSEd_AF8_Frame}
-};
+}
 
-
-
-CColorAlphaDialog::CColorAlphaDialog(UINT nIDTemplate, CWnd* pParentWnd) :
-										CDialog(nIDTemplate, pParentWnd)
-{}
-
-void CColorAlphaDialog::InitPanel( void )
+void CColorAlphaDialog::InitPanel(void)
 {
 	CString custColor;
 	custColor = AfxGetApp()->GetProfileString("Custom Colors", "Color1", "0");
@@ -101,20 +87,24 @@ void CColorAlphaDialog::InitPanel( void )
 void CColorAlphaDialog::performUpdate(IN Bool toUI)
 {
 	static char buff[ARBITRARY_BUFF_SIZE];
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog *pParent = (DebugWindowDialog *)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
-	{	// update the colors
-		for (int i = 0; i < MAX_KEYFRAMES; ++i) {
+	{ // update the colors
+		for (int i = 0; i < MAX_KEYFRAMES; ++i)
+		{
 			// update the color swatch
-			CButtonShowColor *pSwatch = (CButtonShowColor*) GetDlgItem(colorControls[i][0]);
+			CButtonShowColor *pSwatch = (CButtonShowColor *)GetDlgItem(colorControls[i][0]);
 			CWnd *pFrame = GetDlgItem(colorControls[i][1]);
 			RGBColorKeyframe colorFrame;
 
-			if (pSwatch && pFrame) {
-				if (toUI) {
+			if (pSwatch && pFrame)
+			{
+				if (toUI)
+				{
 					pParent->getColorValueFromSystem(i, colorFrame);
 
 					pSwatch->setColor(colorFrame.color);
@@ -122,7 +112,9 @@ void CColorAlphaDialog::performUpdate(IN Bool toUI)
 
 					sprintf(buff, "%u", colorFrame.frame);
 					pFrame->SetWindowText(buff);
-				} else {
+				}
+				else
+				{
 					colorFrame.color = pSwatch->getColor();
 
 					pFrame->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
@@ -134,31 +126,40 @@ void CColorAlphaDialog::performUpdate(IN Bool toUI)
 	}
 
 	{ // update the values
-		for (int i = 0; i < MAX_KEYFRAMES; ++i) {
+		for (int i = 0; i < MAX_KEYFRAMES; ++i)
+		{
 			ParticleSystemInfo::RandomKeyframe keyFrame;
 
 			pParent->getAlphaRangeFromSystem(i, keyFrame);
 
-			{	// Minimum first
+			{ // Minimum first
 				CWnd *pMin = GetDlgItem(alphaControls[i][0]);
-				if (pMin) {
-					if (toUI) {
+				if (pMin)
+				{
+					if (toUI)
+					{
 						sprintf(buff, FORMAT_STRING, keyFrame.var.getMinimumValue());
 						pMin->SetWindowText(buff);
-					} else {
+					}
+					else
+					{
 						pMin->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 						keyFrame.var.m_low = atof(buff);
 					}
 				}
 			}
 
-			{	// then maximum
+			{ // then maximum
 				CWnd *pMax = GetDlgItem(alphaControls[i][1]);
-				if (pMax) {
-					if (toUI) {
+				if (pMax)
+				{
+					if (toUI)
+					{
 						sprintf(buff, FORMAT_STRING, keyFrame.var.getMaximumValue());
 						pMax->SetWindowText(buff);
-					} else {
+					}
+					else
+					{
 						pMax->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 						keyFrame.var.m_high = atof(buff);
 					}
@@ -167,21 +168,28 @@ void CColorAlphaDialog::performUpdate(IN Bool toUI)
 
 			{ // then the frame
 				CWnd *pFrame = GetDlgItem(alphaControls[i][2]);
-				if (pFrame) {
-					if (toUI) {
+				if (pFrame)
+				{
+					if (toUI)
+					{
 						// Unsigned int
 						sprintf(buff, "%u", keyFrame.frame);
 						pFrame->SetWindowText(buff);
-					} else {
+					}
+					else
+					{
 						pFrame->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
-						keyFrame.frame = (unsigned) atoi(buff);
+						keyFrame.frame = (unsigned)atoi(buff);
 					}
 				}
 			}
 
-			if (toUI) {
+			if (toUI)
+			{
 				// We're all done.
-			} else {
+			}
+			else
+			{
 				pParent->updateAlphaRangeToSystem(i, keyFrame);
 			}
 		}
@@ -190,8 +198,9 @@ void CColorAlphaDialog::performUpdate(IN Bool toUI)
 
 void CColorAlphaDialog::OnParticleSystemEdit()
 {
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog *pParent = (DebugWindowDialog *)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
@@ -201,10 +210,12 @@ void CColorAlphaDialog::OnParticleSystemEdit()
 BOOL CColorAlphaDialog::OnInitDialog()
 {
 	// replace all the buttons with our buttons.
-	for (int i = 0; i < MAX_KEYFRAMES; ++i) {
+	for (int i = 0; i < MAX_KEYFRAMES; ++i)
+	{
 		CRect rect;
 		CWnd *item = GetDlgItem(colorControls[i][0]);
-		if (!item) {
+		if (!item)
+		{
 			continue;
 		}
 
@@ -219,7 +230,11 @@ BOOL CColorAlphaDialog::OnInitDialog()
 	return CDialog::OnInitDialog();
 }
 
-#define ONCOLORDLG(x) void CColorAlphaDialog::OnColor##x() { onColorPress( x ); }
+#define ONCOLORDLG(x) \
+	void CColorAlphaDialog::OnColor##x() \
+	{ \
+		onColorPress(x); \
+	}
 ONCOLORDLG(1)
 ONCOLORDLG(2)
 ONCOLORDLG(3)
@@ -235,8 +250,8 @@ void CColorAlphaDialog::onColorPress(Int colorPressed)
 	CColorDialog dlg(CButtonShowColor::RGBtoBGR(m_colorButton[colorPressed - 1].getColor().getAsInt()));
 	dlg.m_cc.Flags |= (CC_FULLOPEN | CC_ANYCOLOR);
 	dlg.m_cc.lpCustColors = m_customColors;
-	if (dlg.DoModal() == IDOK) {
-
+	if (dlg.DoModal() == IDOK)
+	{
 		m_colorButton[colorPressed - 1].setColor(CButtonShowColor::BGRtoRGB(dlg.GetColor()));
 		static char buff[ARBITRARY_BUFF_SIZE];
 
@@ -273,55 +288,53 @@ void CColorAlphaDialog::onColorPress(Int colorPressed)
 		ltoa(m_customColors[15], buff, 10);
 		AfxGetApp()->WriteProfileString("Custom Colors", "Color16", buff);
 
-
-
 		OnParticleSystemEdit();
 	}
 }
 
 BEGIN_MESSAGE_MAP(CColorAlphaDialog, CDialog)
-	ON_BN_CLICKED(IDC_PSEd_Color1, OnColor1)
-	ON_BN_CLICKED(IDC_PSEd_Color2, OnColor2)
-	ON_BN_CLICKED(IDC_PSEd_Color3, OnColor3)
-	ON_BN_CLICKED(IDC_PSEd_Color4, OnColor4)
-	ON_BN_CLICKED(IDC_PSEd_Color5, OnColor5)
-	ON_BN_CLICKED(IDC_PSEd_Color6, OnColor6)
-	ON_BN_CLICKED(IDC_PSEd_Color7, OnColor7)
-	ON_BN_CLICKED(IDC_PSEd_Color8, OnColor8)
+ON_BN_CLICKED(IDC_PSEd_Color1, OnColor1)
+ON_BN_CLICKED(IDC_PSEd_Color2, OnColor2)
+ON_BN_CLICKED(IDC_PSEd_Color3, OnColor3)
+ON_BN_CLICKED(IDC_PSEd_Color4, OnColor4)
+ON_BN_CLICKED(IDC_PSEd_Color5, OnColor5)
+ON_BN_CLICKED(IDC_PSEd_Color6, OnColor6)
+ON_BN_CLICKED(IDC_PSEd_Color7, OnColor7)
+ON_BN_CLICKED(IDC_PSEd_Color8, OnColor8)
 
-	ON_EN_KILLFOCUS(IDC_PSEd_CF1_Frame, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_CF2_Frame, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_CF3_Frame, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_CF4_Frame, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_CF5_Frame, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_CF6_Frame, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_CF7_Frame, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_CF8_Frame, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_CF1_Frame, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_CF2_Frame, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_CF3_Frame, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_CF4_Frame, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_CF5_Frame, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_CF6_Frame, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_CF7_Frame, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_CF8_Frame, OnParticleSystemEdit)
 
-	ON_EN_KILLFOCUS(IDC_PSEd_AF1_Min, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF2_Min, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF3_Min, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF4_Min, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF5_Min, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF6_Min, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF7_Min, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF8_Min, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF1_Min, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF2_Min, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF3_Min, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF4_Min, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF5_Min, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF6_Min, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF7_Min, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF8_Min, OnParticleSystemEdit)
 
-	ON_EN_KILLFOCUS(IDC_PSEd_AF1_Max, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF2_Max, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF3_Max, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF4_Max, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF5_Max, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF6_Max, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF7_Max, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF8_Max, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF1_Max, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF2_Max, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF3_Max, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF4_Max, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF5_Max, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF6_Max, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF7_Max, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF8_Max, OnParticleSystemEdit)
 
-	ON_EN_KILLFOCUS(IDC_PSEd_AF1_Frame, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF2_Frame, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF3_Frame, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF4_Frame, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF5_Frame, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF6_Frame, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF7_Frame, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_AF8_Frame, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF1_Frame, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF2_Frame, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF3_Frame, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF4_Frame, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF5_Frame, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF6_Frame, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF7_Frame, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_AF8_Frame, OnParticleSystemEdit)
 END_MESSAGE_MAP()

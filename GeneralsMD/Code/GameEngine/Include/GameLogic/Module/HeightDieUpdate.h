@@ -37,47 +37,39 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class HeightDieUpdateModuleData: public UpdateModuleData
+class HeightDieUpdateModuleData : public UpdateModuleData
 {
-
 public:
+	HeightDieUpdateModuleData(void);
 
-	HeightDieUpdateModuleData( void );
+	static void buildFieldParse(MultiIniFieldParse &p);
 
-	static void buildFieldParse(MultiIniFieldParse& p);
-
-	Real m_targetHeightAboveTerrain;				///< die at this height above terrain
-	Bool m_targetHeightIncludesStructures;	///< target height considers terrain AND structure height underneath us
-	Bool m_onlyWhenMovingDown;							///< don't detonate unless moving in downward z dir
-	Real m_destroyAttachedParticlesAtHeight;  ///< HACK, destroy any attached particle system of object when below this height
-	Bool m_snapToGroundOnDeath;							///< snap to the ground when killed
-	UnsignedInt m_initialDelay;							///< Don't explode before this time
-
+	Real m_targetHeightAboveTerrain; ///< die at this height above terrain
+	Bool m_targetHeightIncludesStructures; ///< target height considers terrain AND structure height underneath us
+	Bool m_onlyWhenMovingDown; ///< don't detonate unless moving in downward z dir
+	Real m_destroyAttachedParticlesAtHeight; ///< HACK, destroy any attached particle system of object when below this height
+	Bool m_snapToGroundOnDeath; ///< snap to the ground when killed
+	UnsignedInt m_initialDelay; ///< Don't explode before this time
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class HeightDieUpdate : public UpdateModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( HeightDieUpdate, "HeightDieUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( HeightDieUpdate, HeightDieUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HeightDieUpdate, "HeightDieUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(HeightDieUpdate, HeightDieUpdateModuleData)
 
 public:
-
-	HeightDieUpdate( Thing *thing, const ModuleData* moduleData );
+	HeightDieUpdate(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual UpdateSleepTime update();
 
 protected:
-
-
-	Bool m_hasDied;							///< TRUE once we have triggered death
-	Bool m_particlesDestroyed;	///< TRUE once we destroy attached systems (so we do it only once)
-	Coord3D m_lastPosition;			///< we record our last position for logic that needs to know our direction of travel
+	Bool m_hasDied; ///< TRUE once we have triggered death
+	Bool m_particlesDestroyed; ///< TRUE once we destroy attached systems (so we do it only once)
+	Coord3D m_lastPosition; ///< we record our last position for logic that needs to know our direction of travel
 	UnsignedInt m_earliestDeathFrame; ///< Earliest we are allowed to think about dying
-
 };
 
-#endif  // end __HEIGHTDIEUPDATE_H_
+#endif // end __HEIGHTDIEUPDATE_H_

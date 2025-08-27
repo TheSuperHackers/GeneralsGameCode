@@ -30,27 +30,28 @@
 
 class TexturePathDialogClass : public CDialog
 {
-// Construction
+	// Construction
 public:
-	TexturePathDialogClass(CWnd* pParent = NULL);   // standard constructor
+	TexturePathDialogClass(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(TexturePathDialogClass)
-	enum { IDD = IDD_TEXTURE_PATHS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_TEXTURE_PATHS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(TexturePathDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(TexturePathDialogClass)
 	virtual BOOL OnInitDialog();

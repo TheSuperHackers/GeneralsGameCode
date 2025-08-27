@@ -31,39 +31,39 @@ class SidesList;
 
 class EditObjectParameter : public CDialog
 {
-friend class EditParameter;
-// Construction
+	friend class EditParameter;
+	// Construction
 public:
-	EditObjectParameter(CWnd* pParent = NULL);   // standard constructor
+	EditObjectParameter(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(EditObjectParameter)
-	enum { IDD = IDD_EDIT_OBJECT_PARAMETER };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_EDIT_OBJECT_PARAMETER
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(EditObjectParameter)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
-
+	// Implementation
 
 protected:
 	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
-	void addObject( const ThingTemplate *thingTemplate  );
-	void addObjectLists( );
+	void addObject(const ThingTemplate *thingTemplate);
+	void addObjectLists();
 
 protected:
-	Parameter		*m_parameter;
-	CTreeCtrl					m_objectTreeView;
+	Parameter *m_parameter;
+	CTreeCtrl m_objectTreeView;
 
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(EditObjectParameter)
 	virtual BOOL OnInitDialog();

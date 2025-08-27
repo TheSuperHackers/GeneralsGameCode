@@ -27,7 +27,7 @@
 // Desc:   Create an object upon this object's death
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #define DEFINE_OBJECT_STATUS_NAMES
 #include "GameLogic/Module/AIUpdate.h"
@@ -39,31 +39,26 @@
 #include "GameLogic/ObjectCreationList.h"
 #include "GameLogic/Module/BodyModule.h"
 
-
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 CreateObjectDieModuleData::CreateObjectDieModuleData()
 {
-
 	m_ocl = NULL;
 	m_transferPreviousHealth = FALSE;
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void CreateObjectDieModuleData::buildFieldParse(MultiIniFieldParse& p)
+/*static*/ void CreateObjectDieModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
 	DieModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "CreationList",	INI::parseObjectCreationList,		NULL,											offsetof( CreateObjectDieModuleData, m_ocl ) },
-		{ "TransferPreviousHealth", INI::parseBool, NULL	,offsetof( CreateObjectDieModuleData, m_transferPreviousHealth ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "CreationList", INI::parseObjectCreationList, NULL, offsetof(CreateObjectDieModuleData, m_ocl) },
+		{ "TransferPreviousHealth", INI::parseBool, NULL, offsetof(CreateObjectDieModuleData, m_transferPreviousHealth) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,113 +67,107 @@ CreateObjectDieModuleData::CreateObjectDieModuleData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CreateObjectDie::CreateObjectDie( Thing *thing, const ModuleData* moduleData ) : DieModule( thing, moduleData )
+CreateObjectDie::CreateObjectDie(Thing *thing, const ModuleData *moduleData) : DieModule(thing, moduleData)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CreateObjectDie::~CreateObjectDie( void )
+CreateObjectDie::~CreateObjectDie(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** The die callback. */
 //-------------------------------------------------------------------------------------------------
-void CreateObjectDie::onDie( const DamageInfo * damageInfo )
+void CreateObjectDie::onDie(const DamageInfo *damageInfo)
 {
 	const CreateObjectDieModuleData *data = getCreateObjectDieModuleData();
 	if (!isDieApplicable(damageInfo))
 		return;
 
-	Object *damageDealer = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
+	Object *damageDealer = TheGameLogic->findObjectByID(damageInfo->in.m_sourceID);
 
-	Object *newObject = ObjectCreationList::create( data->m_ocl, getObject(), damageDealer );
+	Object *newObject = ObjectCreationList::create(data->m_ocl, getObject(), damageDealer);
 
-	//If we're transferring previous health, we're transfering the last known
-	//health before we died. In the case of the sneak attack tunnel network, it
-	//is killed after the lifetime update expires.
-	if( newObject && data->m_transferPreviousHealth )
+	// If we're transferring previous health, we're transfering the last known
+	// health before we died. In the case of the sneak attack tunnel network, it
+	// is killed after the lifetime update expires.
+	if (newObject && data->m_transferPreviousHealth)
 	{
-		//Convert old health to new health.
+		// Convert old health to new health.
 		Object *oldObject = getObject();
 		BodyModuleInterface *oldBody = oldObject->getBodyModule();
 		BodyModuleInterface *newBody = newObject->getBodyModule();
-		if( oldBody && newBody )
+		if (oldBody && newBody)
 		{
-			//First transfer subdual damage
+			// First transfer subdual damage
 			DamageInfo damInfo;
 			Real subdualDamageAmount = oldBody->getCurrentSubdualDamageAmount();
-			if( subdualDamageAmount > 0.0f )
+			if (subdualDamageAmount > 0.0f)
 			{
 				damInfo.in.m_amount = subdualDamageAmount;
 				damInfo.in.m_damageType = DAMAGE_SUBDUAL_UNRESISTABLE;
 				damInfo.in.m_sourceID = INVALID_ID;
-				newBody->attemptDamage( &damInfo );
+				newBody->attemptDamage(&damInfo);
 			}
 
-			//Now transfer the previous health from the old object to the new.
+			// Now transfer the previous health from the old object to the new.
 			damInfo.in.m_amount = oldBody->getMaxHealth() - oldBody->getPreviousHealth();
 			damInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
 			damInfo.in.m_sourceID = oldBody->getLastDamageInfo()->in.m_sourceID;
-			if( damInfo.in.m_amount > 0.0f )
+			if (damInfo.in.m_amount > 0.0f)
 			{
-				newBody->attemptDamage( &damInfo );
+				newBody->attemptDamage(&damInfo);
 			}
-
 		}
 
-		//Transfer attackers.
-		for( Object *obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject() )
+		// Transfer attackers.
+		for (Object *obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject())
 		{
-			AIUpdateInterface* ai = obj->getAI();
+			AIUpdateInterface *ai = obj->getAI();
 			if (!ai)
 				continue;
 
-			ai->transferAttack( oldObject->getID(), newObject->getID() );
+			ai->transferAttack(oldObject->getID(), newObject->getID());
 		}
 	}
 
-
-}  // end onDie
+} // end onDie
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void CreateObjectDie::crc( Xfer *xfer )
+void CreateObjectDie::crc(Xfer *xfer)
 {
-
 	// extend base class
-	DieModule::crc( xfer );
+	DieModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void CreateObjectDie::xfer( Xfer *xfer )
+void CreateObjectDie::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DieModule::xfer( xfer );
+	DieModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CreateObjectDie::loadPostProcess( void )
+void CreateObjectDie::loadPostProcess(void)
 {
-
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

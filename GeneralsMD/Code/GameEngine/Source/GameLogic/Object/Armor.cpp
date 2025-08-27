@@ -28,8 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
-
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/INI.h"
 #include "Common/ThingFactory.h"
@@ -39,7 +38,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-ArmorStore* TheArmorStore = NULL;					///< the ArmorTemplate store definition
+ArmorStore *TheArmorStore = NULL; ///< the ArmorTemplate store definition
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -80,11 +79,11 @@ Real ArmorTemplate::adjustDamage(DamageType t, Real damage) const
 }
 
 //-------------------------------------------------------------------------------------------Static
-/*static*/ void ArmorTemplate::parseArmorCoefficients( INI* ini, void *instance, void* /* store */, const void* userData )
+/*static*/ void ArmorTemplate::parseArmorCoefficients(INI *ini, void *instance, void * /* store */, const void *userData)
 {
-	ArmorTemplate* self = (ArmorTemplate*) instance;
+	ArmorTemplate *self = (ArmorTemplate *)instance;
 
-	const char* damageName = ini->getNextToken();
+	const char *damageName = ini->getNextToken();
 	Real pct = INI::scanPercentToReal(ini->getNextToken());
 
 	if (stricmp(damageName, "Default") == 0)
@@ -116,11 +115,11 @@ ArmorStore::~ArmorStore()
 }
 
 //-------------------------------------------------------------------------------------------------
-const ArmorTemplate* ArmorStore::findArmorTemplate(AsciiString name) const
+const ArmorTemplate *ArmorStore::findArmorTemplate(AsciiString name) const
 {
 	NameKeyType namekey = TheNameKeyGenerator->nameToKey(name);
-  ArmorTemplateMap::const_iterator it = m_armorTemplates.find(namekey);
-  if (it == m_armorTemplates.end())
+	ArmorTemplateMap::const_iterator it = m_armorTemplates.find(namekey);
+	if (it == m_armorTemplates.end())
 	{
 		return NULL;
 	}
@@ -133,14 +132,11 @@ const ArmorTemplate* ArmorStore::findArmorTemplate(AsciiString name) const
 //-------------------------------------------------------------------------------------------------
 /*static */ void ArmorStore::parseArmorDefinition(INI *ini)
 {
-	static const FieldParse myFieldParse[] =
-	{
-		{ "Armor", ArmorTemplate::parseArmorCoefficients, NULL, 0 }
-	};
+	static const FieldParse myFieldParse[] = { { "Armor", ArmorTemplate::parseArmorCoefficients, NULL, 0 } };
 
 	const char *c = ini->getNextToken();
 	NameKeyType key = TheNameKeyGenerator->nameToKey(c);
-	ArmorTemplate& armorTmpl = TheArmorStore->m_armorTemplates[key];
+	ArmorTemplate &armorTmpl = TheArmorStore->m_armorTemplates[key];
 	armorTmpl.clear();
 	ini->initFromINI(&armorTmpl, myFieldParse);
 }
@@ -150,4 +146,3 @@ const ArmorTemplate* ArmorStore::findArmorTemplate(AsciiString name) const
 {
 	ArmorStore::parseArmorDefinition(ini);
 }
-

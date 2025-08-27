@@ -122,6 +122,4 @@ Object *	HashTableClass<Object,Key>::Find(Key * key) const
 
 #endif
 
-
 #endif
-

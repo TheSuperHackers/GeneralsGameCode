@@ -46,19 +46,15 @@
 #ifndef _WIN32DEVICE_COMMON_WIN32CDMANAGER_H_
 #define _WIN32DEVICE_COMMON_WIN32CDMANAGER_H_
 
-
 //----------------------------------------------------------------------------
 //           Includes
 //----------------------------------------------------------------------------
 
 #include "Common/CDManager.h"
 
-
 //----------------------------------------------------------------------------
 //           Forward References
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //           Type Defines
@@ -70,13 +66,11 @@
 
 class Win32CDDrive : public CDDrive
 {
-	public:
-
+public:
 	Win32CDDrive();
 	virtual ~Win32CDDrive();
 
-	virtual void refreshInfo( void );					///< Update drive with least
-
+	virtual void refreshInfo(void); ///< Update drive with least
 };
 
 //===============================
@@ -85,25 +79,22 @@ class Win32CDDrive : public CDDrive
 
 class Win32CDManager : public CDManager
 {
-	public:
+public:
+	Win32CDManager();
+	virtual ~Win32CDManager();
 
-		Win32CDManager();
-		virtual ~Win32CDManager();
+	// sub system operations
+	virtual void init(void);
+	virtual void update(void);
+	virtual void reset(void);
+	virtual void refreshDrives(void); ///< Refresh drive info
 
-		// sub system operations
-		virtual void init( void );
-		virtual void update( void );
-		virtual void reset( void );
-		virtual void refreshDrives( void );				///< Refresh drive info
-
-	protected:
-
-		virtual CDDriveInterface* createDrive( void );
+protected:
+	virtual CDDriveInterface *createDrive(void);
 };
 
 //----------------------------------------------------------------------------
 //           Inlining
 //----------------------------------------------------------------------------
-
 
 #endif // _WIN32DEVICE_COMMON_WIN32CDMANAGER_H_

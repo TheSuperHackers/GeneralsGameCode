@@ -31,7 +31,6 @@
 #ifndef __VIDEODEVICE_FFMPEGDEVICE_H_
 #define __VIDEODEVICE_FFMPEGDEVICE_H_
 
-
 //----------------------------------------------------------------------------
 //           Includes
 //----------------------------------------------------------------------------
@@ -58,80 +57,72 @@ class FFmpegVideoStream : public VideoStream
 {
 	friend class FFmpegVideoPlayer;
 
-	protected:
-		Bool 			m_good = true;			///< Is the stream valid
-		Bool 			m_gotFrame = false;		///< Is the frame ready to be displayed
-		AVFrame 		*m_frame = nullptr;		///< Current frame
-		SwsContext 		*m_swsContext = nullptr;///< SWSContext for scaling
-		FFmpegFile		*m_ffmpegFile;			///< The AVUI abstraction											///< Bink streaming handle;
-		Char			*m_memFile;				///< Pointer to memory resident file
-		UnsignedInt64	m_startTime = 0;		///< Time the stream started
-		UnsignedByte *	m_audioBuffer = nullptr;///< Audio buffer for the stream
+protected:
+	Bool m_good = true; ///< Is the stream valid
+	Bool m_gotFrame = false; ///< Is the frame ready to be displayed
+	AVFrame *m_frame = nullptr; ///< Current frame
+	SwsContext *m_swsContext = nullptr; ///< SWSContext for scaling
+	FFmpegFile *m_ffmpegFile; ///< The AVUI abstraction											///< Bink streaming handle;
+	Char *m_memFile; ///< Pointer to memory resident file
+	UnsignedInt64 m_startTime = 0; ///< Time the stream started
+	UnsignedByte *m_audioBuffer = nullptr; ///< Audio buffer for the stream
 
-		FFmpegVideoStream(FFmpegFile* file);																///< only BinkVideoPlayer can create these
-		virtual ~FFmpegVideoStream();
+	FFmpegVideoStream(FFmpegFile *file); ///< only BinkVideoPlayer can create these
+	virtual ~FFmpegVideoStream();
 
-		static void onFrame(AVFrame *frame, int stream_idx, int stream_type, void *user_data);
-	public:
+	static void onFrame(AVFrame *frame, int stream_idx, int stream_type, void *user_data);
 
-		virtual void update( void );											///< Update bink stream
+public:
+	virtual void update(void); ///< Update bink stream
 
-		virtual Bool	isFrameReady( void );								///< Is the frame ready to be displayed
-		virtual void	frameDecompress( void );						///< Render current frame in to buffer
-		virtual void	frameRender( VideoBuffer *buffer ); ///< Render current frame in to buffer
-		virtual void	frameNext( void );									///< Advance to next frame
-		virtual Int		frameIndex( void );									///< Returns zero based index of current frame
-		virtual Int		frameCount( void );									///< Returns the total number of frames in the stream
-		virtual void	frameGoto( Int index );							///< Go to the spcified frame index
-		virtual Int		height( void );											///< Return the height of the video
-		virtual Int		width( void );											///< Return the width of the video
-
-
+	virtual Bool isFrameReady(void); ///< Is the frame ready to be displayed
+	virtual void frameDecompress(void); ///< Render current frame in to buffer
+	virtual void frameRender(VideoBuffer *buffer); ///< Render current frame in to buffer
+	virtual void frameNext(void); ///< Advance to next frame
+	virtual Int frameIndex(void); ///< Returns zero based index of current frame
+	virtual Int frameCount(void); ///< Returns the total number of frames in the stream
+	virtual void frameGoto(Int index); ///< Go to the spcified frame index
+	virtual Int height(void); ///< Return the height of the video
+	virtual Int width(void); ///< Return the width of the video
 };
 
 //===============================
 // FFmpegVideoPlayer
 //===============================
 /**
-  *	FFmpeg video playback code.
-	*/
+ *	FFmpeg video playback code.
+ */
 //===============================
 
 class FFmpegVideoPlayer : public VideoPlayer
 {
+protected:
+	VideoStreamInterface *createStream(File *file);
 
-	protected:
+public:
+	// subsytem requirements
+	virtual void init(void); ///< Initialize video playback code
+	virtual void reset(void); ///< Reset video playback
+	virtual void update(void); ///< Services all audio tasks. Should be called frequently
 
-		VideoStreamInterface* createStream( File* file );
+	virtual void deinit(void); ///< Close down player
 
-	public:
+	FFmpegVideoPlayer();
+	~FFmpegVideoPlayer();
 
-		// subsytem requirements
-		virtual void	init( void );														///< Initialize video playback code
-		virtual void	reset( void );													///< Reset video playback
-		virtual void	update( void );													///< Services all audio tasks. Should be called frequently
+	// service
+	virtual void loseFocus(void); ///< Should be called when application loses focus
+	virtual void regainFocus(void); ///< Should be called when application regains focus
 
-		virtual void	deinit( void );													///< Close down player
+	virtual VideoStreamInterface *open(AsciiString movieTitle); ///< Open video file for playback
+	virtual VideoStreamInterface *load(AsciiString movieTitle); ///< Load video file in to memory for playback
 
-
-		FFmpegVideoPlayer();
-		~FFmpegVideoPlayer();
-
-		// service
-		virtual void	loseFocus( void );											///< Should be called when application loses focus
-		virtual void	regainFocus( void );										///< Should be called when application regains focus
-
-		virtual VideoStreamInterface*	open( AsciiString movieTitle );	///< Open video file for playback
-		virtual VideoStreamInterface*	load( AsciiString movieTitle );	///< Load video file in to memory for playback
-
-		virtual void notifyVideoPlayerOfNewProvider( Bool nowHasValid );
-		virtual void initializeBinkWithMiles( void );
+	virtual void notifyVideoPlayerOfNewProvider(Bool nowHasValid);
+	virtual void initializeBinkWithMiles(void);
 };
-
 
 //----------------------------------------------------------------------------
 //           Inlining
 //----------------------------------------------------------------------------
-
 
 #endif // __VIDEODEVICE_FFMPEGDEVICE_H_

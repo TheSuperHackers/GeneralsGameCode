@@ -28,19 +28,13 @@
 
 class ScopedMutex
 {
-	private:
-		HANDLE m_mutex;
+private:
+	HANDLE m_mutex;
 
-	public:
-		ScopedMutex(HANDLE mutex) : m_mutex(mutex)
-		{
-			WaitForSingleObject(m_mutex, INFINITE);
-		}
+public:
+	ScopedMutex(HANDLE mutex) : m_mutex(mutex) { WaitForSingleObject(m_mutex, INFINITE); }
 
-		~ScopedMutex()
-		{
-			ReleaseMutex(m_mutex);
-		}
+	~ScopedMutex() { ReleaseMutex(m_mutex); }
 };
 
 #endif /* __SCOPEDMUTEX_H__ */

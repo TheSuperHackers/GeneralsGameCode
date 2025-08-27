@@ -45,11 +45,11 @@ class Thing;
 class SalvageCrateCollideModuleData : public CrateCollideModuleData
 {
 public:
-	Real m_weaponChance;	///< Chance to get a weapon upgrade, if possible
-	Real m_levelChance;		///< Chance to get a level, if weaponChance fails
-	Real m_moneyChance;		///< Chance to get money, if weaponChance fails
-	Int m_minimumMoney;		///< How much, if we get money
-	Int m_maximumMoney;		///< How much, if we get money
+	Real m_weaponChance; ///< Chance to get a weapon upgrade, if possible
+	Real m_levelChance; ///< Chance to get a level, if weaponChance fails
+	Real m_moneyChance; ///< Chance to get money, if weaponChance fails
+	Int m_minimumMoney; ///< How much, if we get money
+	Int m_maximumMoney; ///< How much, if we get money
 
 	SalvageCrateCollideModuleData()
 	{
@@ -60,56 +60,50 @@ public:
 		m_maximumMoney = 75;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p)
+	static void buildFieldParse(MultiIniFieldParse &p)
 	{
-    CrateCollideModuleData::buildFieldParse(p);
+		CrateCollideModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "WeaponChance",	INI::parsePercentToReal,	NULL, offsetof( SalvageCrateCollideModuleData, m_weaponChance ) },
-			{ "LevelChance",	INI::parsePercentToReal,	NULL, offsetof( SalvageCrateCollideModuleData, m_levelChance ) },
-			{ "MoneyChance",	INI::parsePercentToReal,	NULL, offsetof( SalvageCrateCollideModuleData, m_moneyChance ) },
-			{ "MinMoney",			INI::parseInt,						NULL, offsetof( SalvageCrateCollideModuleData, m_minimumMoney ) },
-			{ "MaxMoney",			INI::parseInt,						NULL, offsetof( SalvageCrateCollideModuleData, m_maximumMoney ) },
+		static const FieldParse dataFieldParse[] = {
+			{ "WeaponChance", INI::parsePercentToReal, NULL, offsetof(SalvageCrateCollideModuleData, m_weaponChance) },
+			{ "LevelChance", INI::parsePercentToReal, NULL, offsetof(SalvageCrateCollideModuleData, m_levelChance) },
+			{ "MoneyChance", INI::parsePercentToReal, NULL, offsetof(SalvageCrateCollideModuleData, m_moneyChance) },
+			{ "MinMoney", INI::parseInt, NULL, offsetof(SalvageCrateCollideModuleData, m_minimumMoney) },
+			{ "MaxMoney", INI::parseInt, NULL, offsetof(SalvageCrateCollideModuleData, m_maximumMoney) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
-
+		p.add(dataFieldParse);
 	}
 };
 
 //-------------------------------------------------------------------------------------------------
 class SalvageCrateCollide : public CrateCollide
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SalvageCrateCollide, "SalvageCrateCollide" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( SalvageCrateCollide, SalvageCrateCollideModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SalvageCrateCollide, "SalvageCrateCollide")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(SalvageCrateCollide, SalvageCrateCollideModuleData);
 
 public:
-
-	SalvageCrateCollide( Thing *thing, const ModuleData* moduleData );
+	SalvageCrateCollide(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual Bool isSalvageCrateCollide() const { return true; }
 
 protected:
-
 	/// This allows specific vetoes to certain types of crates and their data
-	virtual Bool isValidToExecute( const Object *other ) const;
+	virtual Bool isValidToExecute(const Object *other) const;
 
 	/// This is the game logic execution function that all real CrateCollides will implement
-	virtual Bool executeCrateBehavior( Object *other );
+	virtual Bool executeCrateBehavior(Object *other);
 
 private:
-	Bool eligibleForWeaponSet( Object *other );
-	Bool eligibleForLevel( Object *other );
+	Bool eligibleForWeaponSet(Object *other);
+	Bool eligibleForLevel(Object *other);
 	Bool testWeaponChance();
 	Bool testLevelChance();
 
-	void doWeaponSet( Object *other );
-	void doLevelGain( Object *other );
-	void doMoney( Object *other );
-
+	void doWeaponSet(Object *other);
+	void doLevelGain(Object *other);
+	void doMoney(Object *other);
 };
 
 #endif

@@ -33,26 +33,21 @@
 
 class GameWindow;
 
-GameWindow *GetGameListBox( void );
-GameWindow *GetGameInfoListBox( void );
-NameKeyType GetGameListBoxID( void );
-NameKeyType GetGameInfoListBoxID( void );
-void GrabWindowInfo( void );
-void ReleaseWindowInfo( void );
-void RefreshGameInfoListBox( GameWindow *mainWin, GameWindow *win );
-void RefreshGameListBoxes( void );
-void ToggleGameListType( void );
+GameWindow *GetGameListBox(void);
+GameWindow *GetGameInfoListBox(void);
+NameKeyType GetGameListBoxID(void);
+NameKeyType GetGameInfoListBoxID(void);
+void GrabWindowInfo(void);
+void ReleaseWindowInfo(void);
+void RefreshGameInfoListBox(GameWindow *mainWin, GameWindow *win);
+void RefreshGameListBoxes(void);
+void ToggleGameListType(void);
 
-enum GameSortType CPP_11(: Int)
-{
-	GAMESORT_ALPHA_ASCENDING = 0,
-	GAMESORT_ALPHA_DESCENDING,
-	GAMESORT_PING_ASCENDING,
-	GAMESORT_PING_DESCENDING,
-	GAMESORT_MAX,
+enum GameSortType CPP_11( : Int){
+	GAMESORT_ALPHA_ASCENDING = 0, GAMESORT_ALPHA_DESCENDING, GAMESORT_PING_ASCENDING, GAMESORT_PING_DESCENDING, GAMESORT_MAX,
 };
 
-Bool HandleSortButton( NameKeyType sortButton );
+Bool HandleSortButton(NameKeyType sortButton);
 void PopulateLobbyPlayerListbox(void);
 
 #endif // __LOBBYUTILS_H__

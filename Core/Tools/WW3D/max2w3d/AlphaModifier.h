@@ -34,10 +34,8 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #ifndef ALPHA_MODIFIER_H
 #define ALPHA_MODIFIER_H
-
 
 #include <max.h>
 #include "iparamm2.h"
@@ -48,86 +46,76 @@
 #include "resource.h"
 #include "dllmain.h"
 
+#define ALPHA_MODIFIER_CLASSID Class_ID(0x518970b3, 0x37d73373)
 
-#define	ALPHA_MODIFIER_CLASSID		Class_ID(0x518970b3, 0x37d73373)
-
-
-extern ClassDesc* Get_Alpha_Desc();
+extern ClassDesc *Get_Alpha_Desc();
 
 #define ALPHA_VERTEX_CHANNEL 10
 
 class AlphaModifierClass : public Modifier
 {
-	public:
+public:
+	// Global parameter block
+	IParamBlock2 *pblock;
 
-		// Global parameter block
-		IParamBlock2	*pblock;
+	// Constructor/Destructor
+	AlphaModifierClass();
+	~AlphaModifierClass() {}
+	void DeleteThis() { delete this; }
 
+	// Plugin identification
+	void GetClassName(TSTR &s) { s = TSTR(Get_String(IDS_ALPHA_MODIFIER_CLASS)); }
+	virtual Class_ID ClassID() { return ALPHA_MODIFIER_CLASSID; }
+	TCHAR *GetObjectName() { return Get_String(IDS_ALPHA_MODIFIER_CLASS); }
 
-		//Constructor/Destructor
-		AlphaModifierClass();
-		~AlphaModifierClass() {}
-		void DeleteThis() { delete this;}
+	// Defines the behavior for this modifier
+	// This is currently setup to be basic geometry
+	// modification of deformable objects
+	ChannelMask ChannelsUsed() { return PART_GEOM | PART_TOPO | PART_SELECT | PART_SUBSEL_TYPE; }
+	ChannelMask ChannelsChanged() { return PART_GEOM | PART_TOPO | PART_SELECT | PART_SUBSEL_TYPE; }
+	Class_ID InputType() { return triObjectClassID; }
+	BOOL ChangeTopology() { return FALSE; }
 
+	// Calculate the local validity from the parameters
+	Interval LocalValidity(TimeValue t);
+	Interval GetValidity(TimeValue t);
 
-		// Plugin identification
-		void GetClassName(TSTR& s) { s= TSTR(Get_String(IDS_ALPHA_MODIFIER_CLASS));}
-		virtual Class_ID ClassID() { return ALPHA_MODIFIER_CLASSID;}
-		TCHAR *GetObjectName() { return Get_String(IDS_ALPHA_MODIFIER_CLASS);}
+	// Object modification and notification of change
+	void ModifyObject(TimeValue t, ModContext &mc, ObjectState *os, INode *node);
+	void NotifyInputChanged(Interval changeInt, PartID partID, RefMessage message, ModContext *mc);
 
+	// Reference support
+	int NumRefs() { return 1; }
+	RefTargetHandle GetReference(int i);
+	void SetReference(int i, RefTargetHandle rtarg);
+	RefTargetHandle Clone(RemapDir &remap = NoRemap());
+	RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID &partID, RefMessage message);
 
-		// Defines the behavior for this modifier
-		// This is currently setup to be basic geometry
-		// modification of deformable objects
-		ChannelMask ChannelsUsed()  {return PART_GEOM|PART_TOPO|PART_SELECT|PART_SUBSEL_TYPE;}
-		ChannelMask ChannelsChanged() {return PART_GEOM|PART_TOPO|PART_SELECT|PART_SUBSEL_TYPE;}
-		Class_ID InputType() { return triObjectClassID;}
-		BOOL ChangeTopology() {return FALSE;}
+	// SubAnim support
+	int NumSubs() { return 0; }
+	Animatable *SubAnim(int i);
+	TSTR SubAnimName(int i);
 
+	// Direct paramblock access
+	int NumParamBlocks() { return 1; }
+	IParamBlock2 *GetParamBlock(int i) { return pblock; }
+	IParamBlock2 *GetParamBlockByID(BlockID id) { return (pblock->ID() == id) ? pblock : NULL; }
+	int GetParamBlockIndex(int id) { return id; }
 
-		// Calculate the local validity from the parameters
-		Interval LocalValidity(TimeValue t);
-		Interval GetValidity(TimeValue t);
+	// Does not use createmouse callbacks
+	CreateMouseCallBack *GetCreateMouseCallBack() { return NULL; }
 
+	// Load and unload our UI
+	void BeginEditParams(IObjParam *ip, ULONG flags, Animatable *prev);
+	void EndEditParams(IObjParam *ip, ULONG flags, Animatable *next);
+	void InvalidateUI();
 
-		// Object modification and notification of change
-		void ModifyObject(TimeValue t, ModContext &mc, ObjectState *os, INode *node);
-		void NotifyInputChanged(Interval changeInt, PartID partID, RefMessage message, ModContext *mc);
+	// Message saved from window messages.
+	int Message;
 
-
-		// Reference support
-		int NumRefs() { return 1;}
-		RefTargetHandle GetReference(int i);
-		void SetReference(int i, RefTargetHandle rtarg);
-		RefTargetHandle Clone(RemapDir& remap = NoRemap());
-		RefResult NotifyRefChanged( Interval changeInt,RefTargetHandle hTarget, PartID& partID, RefMessage message);
-
-		// SubAnim support
-		int NumSubs() { return 0;}
-		Animatable* SubAnim(int i);
-		TSTR SubAnimName(int i);
-
-		// Direct paramblock access
-		int	NumParamBlocks() {return 1;}
-		IParamBlock2* GetParamBlock(int i) { return pblock;}
-		IParamBlock2* GetParamBlockByID(BlockID id) {return (pblock->ID() == id) ? pblock : NULL;}
-		int GetParamBlockIndex(int id) {return id;}
-
-		// Does not use createmouse callbacks
-		CreateMouseCallBack* GetCreateMouseCallBack() {return NULL;}
-
-		// Load and unload our UI
-		void BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev);
-		void EndEditParams(IObjParam *ip, ULONG flags,Animatable *next);
-		void InvalidateUI();
-
-		// Message saved from window messages.
-		int			Message;
-
-		// Selected vertices.
-		BitArray	SelectedVertices;
+	// Selected vertices.
+	BitArray SelectedVertices;
 };
-
 
 /*===========================================================================*\
  |	Dialog Processor
@@ -135,20 +123,16 @@ class AlphaModifierClass : public Modifier
 
 class AlphaModDlgProc : public ParamMap2UserDlgProc
 {
-	public:
-		AlphaModifierClass *AlphaModifier;
+public:
+	AlphaModifierClass *AlphaModifier;
 
-		AlphaModDlgProc() {}
-		AlphaModDlgProc(AlphaModifierClass *alpha_m) {AlphaModifier = alpha_m;}
+	AlphaModDlgProc() {}
+	AlphaModDlgProc(AlphaModifierClass *alpha_m) { AlphaModifier = alpha_m; }
 
-		BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-		void DeleteThis() {}
+	BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	void DeleteThis() {}
 
-		void SetThing(ReferenceTarget *m) {AlphaModifier = (AlphaModifierClass*)m;}
+	void SetThing(ReferenceTarget *m) { AlphaModifier = (AlphaModifierClass *)m; }
 };
 
-
-#endif //ALPHA_MODIFIER_H
-
-
-
+#endif // ALPHA_MODIFIER_H

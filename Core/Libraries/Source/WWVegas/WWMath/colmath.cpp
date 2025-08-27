@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "colmath.h"
 
 const float CollisionMath::COINCIDENCE_EPSILON = 0.000001f;
@@ -65,4 +64,3 @@ void CollisionMath::ColmathStatsStruct::Reset(void)
 	CollisionOBBoxOBBoxCount = 0;
 	CollisionOBBoxOBBoxHitCount = 0;
 }
-

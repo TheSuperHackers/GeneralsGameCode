@@ -60,37 +60,32 @@ class Team;
 class TeamFactory;
 
 //-------------------------------------------------------------------------------------------------
-enum AllowPlayerRelationship CPP_11(: Int)
-{
-	ALLOW_SAME_PLAYER			= 0x01,		///< allow only objects of the same player as m_obj
-	ALLOW_ALLIES					= 0x02,		///< allow objects that m_obj considers allies
-	ALLOW_ENEMIES					= 0x04,		///< allow objects that m_obj considers enemy
-	ALLOW_NEUTRAL					= 0x08		///< allow objects that m_obj considers neutral
+enum AllowPlayerRelationship CPP_11( : Int){
+	ALLOW_SAME_PLAYER = 0x01, ///< allow only objects of the same player as m_obj
+	ALLOW_ALLIES = 0x02, ///< allow objects that m_obj considers allies
+	ALLOW_ENEMIES = 0x04, ///< allow objects that m_obj considers enemy
+	ALLOW_NEUTRAL = 0x08 ///< allow objects that m_obj considers neutral
 };
-
 
 //-------------------------------------------------------------------------------------------------
 /**
 	This is a singleton class that maintains the list of Players.
 */
-class PlayerList : public SubsystemInterface,
-									 public Snapshot
+class PlayerList : public SubsystemInterface, public Snapshot
 {
-
 public:
-
 	PlayerList();
 	~PlayerList();
 
 	// subsystem methods
-	virtual void init( void );
-	virtual void reset( void );
-	virtual void update( void );
+	virtual void init(void);
+	virtual void reset(void);
+	virtual void update(void);
 
-	virtual void newGame( void ); // called during GameLogic::startNewGame()
-	virtual void newMap( void );	 // Called after a new map is loaded.
+	virtual void newGame(void); // called during GameLogic::startNewGame()
+	virtual void newMap(void); // Called after a new map is loaded.
 
-	void teamAboutToBeDeleted(Team* team);
+	void teamAboutToBeDeleted(Team *team);
 
 	/**
 		return the total number of players (including the neutral player).
@@ -109,7 +104,11 @@ public:
 		all other players (this is so that everything can be associated with a nonnull
 		Player, to simplify the universe). This will never return null.
 	*/
-	Player *getNeutralPlayer() { DEBUG_ASSERTCRASH(m_players[0] != NULL, ("null neutral")); return m_players[0]; }
+	Player *getNeutralPlayer()
+	{
+		DEBUG_ASSERTCRASH(m_players[0] != NULL, ("null neutral"));
+		return m_players[0];
+	}
 
 	/**
 		return the Player with the given internal name, or null if none found.
@@ -120,7 +119,11 @@ public:
 		Return the "local" player (ie, the human playing the game).
 		This will never return null.
 	*/
-	inline Player *getLocalPlayer() { DEBUG_ASSERTCRASH(m_local != NULL, ("null m_local")); return m_local; }
+	inline Player *getLocalPlayer()
+	{
+		DEBUG_ASSERTCRASH(m_local != NULL, ("null m_local"));
+		return m_local;
+	}
 
 	/**
 		Set the local player. You cannot set it to null; if you pass null, you'll
@@ -131,15 +134,15 @@ public:
 	/**
 		Return the player matching the player mask
 	*/
-	Player *getPlayerFromMask( PlayerMaskType mask );
+	Player *getPlayerFromMask(PlayerMaskType mask);
 
 	/**
 		Get each player in numerical order that this mask represents.
 		Note that maskToAdjust will be adjusted by removing the associated player's mask from it.
 	*/
-	Player *getEachPlayerFromMask( PlayerMaskType& maskToAdjust );
+	Player *getEachPlayerFromMask(PlayerMaskType &maskToAdjust);
 
-	Team *validateTeam( AsciiString owner );
+	Team *validateTeam(AsciiString owner);
 
 	/**
 		a convenience routine to quickly clear the entered/exited flags on all teams.
@@ -151,25 +154,21 @@ public:
 		relationships specified in allowedRelationships. Note that allowedRelationships should be
 		a bitwise OR of AllowPlayerRelationship flags.
 	*/
-	PlayerMaskType getPlayersWithRelationship( Int srcPlayerIndex, UnsignedInt allowedRelationships );
+	PlayerMaskType getPlayersWithRelationship(Int srcPlayerIndex, UnsignedInt allowedRelationships);
 
 protected:
-
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
+	virtual void loadPostProcess(void);
 
 private:
-
-	Player				*m_local;
-	Int						m_playerCount;
-	Player				*m_players[MAX_PLAYER_COUNT];
-
+	Player *m_local;
+	Int m_playerCount;
+	Player *m_players[MAX_PLAYER_COUNT];
 };
 
-
 // ----------------------------------------------------------------------------------------------
-extern PlayerList *ThePlayerList;	///< singleton instance of PlayerList
+extern PlayerList *ThePlayerList; ///< singleton instance of PlayerList
 
 #endif // _PLAYERLIST_H_

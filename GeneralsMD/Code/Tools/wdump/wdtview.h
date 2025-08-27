@@ -31,46 +31,44 @@ class ChunkItem;
 class CWDumpTreeView : public CTreeView
 {
 protected:
-	CWDumpTreeView();           // protected constructor used by dynamic creation
+	CWDumpTreeView(); // protected constructor used by dynamic creation
 	DECLARE_DYNCREATE(CWDumpTreeView)
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWDumpTreeView)
-	protected:
-	virtual void OnDraw(CDC* pDC);      // overridden to draw this view
-	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
+protected:
+	virtual void OnDraw(CDC *pDC); // overridden to draw this view
+	virtual void OnUpdate(CView *pSender, LPARAM lHint, CObject *pHint);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	virtual ~CWDumpTreeView();
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	virtual void Dump(CDumpContext &dc) const;
 #endif
 
 	// Generated message map functions
 protected:
-
-	enum SearchStateEnum {
+	enum SearchStateEnum
+	{
 		FIND_SELECTED_ITEM,
 		FIND_STRING,
 		SEARCH_WRAPPED
 	};
 
-	void		  InsertItem(ChunkItem *item, HTREEITEM Parent = TVI_ROOT);
-	ChunkItem *FindChunkItem (ChunkItem *selectedchunkitem, ChunkItem *chunkitem, SearchStateEnum &searchstate);
-	void		  SelectTreeItem (HTREEITEM treeitem, ChunkItem *chunkitem);
+	void InsertItem(ChunkItem *item, HTREEITEM Parent = TVI_ROOT);
+	ChunkItem *FindChunkItem(ChunkItem *selectedchunkitem, ChunkItem *chunkitem, SearchStateEnum &searchstate);
+	void SelectTreeItem(HTREEITEM treeitem, ChunkItem *chunkitem);
 
 	//{{AFX_MSG(CWDumpTreeView)
-	afx_msg void OnSelchanged(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnSelchanged(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnToolsFind();
 	afx_msg void OnToolsFindNext();
 	//}}AFX_MSG

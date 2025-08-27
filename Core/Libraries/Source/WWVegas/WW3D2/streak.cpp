@@ -50,20 +50,16 @@
 
 static SegLineRendererClass _LineRenderer;
 
-
 /*
 ** StreakLineClass implementation:
 */
 
-StreakLineClass::StreakLineClass(void) :
-		MaxSubdivisionLevels(0),
-		NormalizedScreenArea(0.0f)
+StreakLineClass::StreakLineClass(void) : MaxSubdivisionLevels(0), NormalizedScreenArea(0.0f)
 {
-		Personalities = NULL;
-
+	Personalities = NULL;
 }
 
-StreakLineClass::StreakLineClass(const StreakLineClass & src) :
+StreakLineClass::StreakLineClass(const StreakLineClass &src) :
 		MaxSubdivisionLevels(src.MaxSubdivisionLevels),
 		NormalizedScreenArea(src.NormalizedScreenArea),
 		PointLocations(src.PointLocations),
@@ -75,12 +71,12 @@ StreakLineClass::StreakLineClass(const StreakLineClass & src) :
 {
 }
 
-StreakLineClass & StreakLineClass::operator = (const StreakLineClass &that)
+StreakLineClass &StreakLineClass::operator=(const StreakLineClass &that)
 {
-	RenderObjClass::operator = (that);
+	RenderObjClass::operator=(that);
 
-	if (this != &that) {
-
+	if (this != &that)
+	{
 		MaxSubdivisionLevels = that.MaxSubdivisionLevels;
 		NormalizedScreenArea = that.NormalizedScreenArea;
 		PointLocations = that.PointLocations;
@@ -91,16 +87,12 @@ StreakLineClass & StreakLineClass::operator = (const StreakLineClass &that)
 		Personalities = that.Personalities;
 	}
 
-	return * this;
+	return *this;
 }
 
-//StreakLineClass::~StreakLineClass(void)
+// StreakLineClass::~StreakLineClass(void)
 //{
-//}
-
-
-
-
+// }
 
 void StreakLineClass::Reset_Line(void)
 {
@@ -108,106 +100,95 @@ void StreakLineClass::Reset_Line(void)
 	StreakRenderer.Reset_Line();
 }
 
-
-
-
-
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 // These are segment points, and include the start and end point of the
 // entire line. Therefore there must be at least two.
-void StreakLineClass::Set_Locs( unsigned int num_points, Vector3 *locs )
+void StreakLineClass::Set_Locs(unsigned int num_points, Vector3 *locs)
 {
-	if (num_points < 2 || !locs) {
+	if (num_points < 2 || !locs)
+	{
 		WWASSERT(0);
 		return;
 	}
 
 	PointLocations.Delete_All();
-	for (unsigned int i=0; i<num_points; i++) {
-		PointLocations.Add(locs[i],num_points);
+	for (unsigned int i = 0; i < num_points; i++)
+	{
+		PointLocations.Add(locs[i], num_points);
 	}
 
 	Invalidate_Cached_Bounding_Volumes();
 }
 
-void StreakLineClass::Set_Widths( unsigned int num_points, float *widths )
+void StreakLineClass::Set_Widths(unsigned int num_points, float *widths)
 {
-	if (num_points < 2 || !widths) {
+	if (num_points < 2 || !widths)
+	{
 		WWASSERT(0);
 		return;
 	}
 
 	PointWidths.Delete_All();
-	for (unsigned int i=0; i<num_points; i++) {
-		PointWidths.Add(widths[i],num_points);
+	for (unsigned int i = 0; i < num_points; i++)
+	{
+		PointWidths.Add(widths[i], num_points);
 	}
-
 }
 
-void StreakLineClass::Set_Colors( unsigned int num_points, Vector4 *colors )
+void StreakLineClass::Set_Colors(unsigned int num_points, Vector4 *colors)
 {
-	if (num_points < 2 || !colors) {
+	if (num_points < 2 || !colors)
+	{
 		WWASSERT(0);
 		return;
 	}
 
 	PointColors.Delete_All();
-	for (unsigned int i=0; i<num_points; i++) {
-		PointColors.Add(colors[i],num_points);
+	for (unsigned int i = 0; i < num_points; i++)
+	{
+		PointColors.Add(colors[i], num_points);
 	}
-
 }
 
-void StreakLineClass::Set_LocsWidthsColors( unsigned int num_points,
-																					 Vector3 *locs,
-																					 float *widths,
-																					 Vector4 *colors,
-																					 unsigned int *personalities)
+void StreakLineClass::Set_LocsWidthsColors(
+		unsigned int num_points,
+		Vector3 *locs,
+		float *widths,
+		Vector4 *colors,
+		unsigned int *personalities)
 {
-
 	Personalities = personalities;
 
-	Set_Locs( num_points, locs );
+	Set_Locs(num_points, locs);
 
 	if (widths)
 	{
-		Set_Widths( num_points, widths );
+		Set_Widths(num_points, widths);
 
-		//sanity check
+		// sanity check
 		int locCount = PointLocations.Count();
 		int widCount = PointWidths.Count();
 		WWASSERT(locCount == widCount);
-
 	}
 
 	if (colors)
 	{
-		Set_Colors( num_points, colors );
+		Set_Colors(num_points, colors);
 
-		//sanity check
+		// sanity check
 		int locCount = PointLocations.Count();
 		int colCount = PointColors.Count();
 		WWASSERT(locCount == colCount);
-
 	}
-
 
 	Invalidate_Cached_Bounding_Volumes();
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
 
 // These are segment points, and include the start and end point of the
 // entire line. Therefore there must be at least two.
@@ -221,7 +202,8 @@ int StreakLineClass::Get_Num_Points(void)
 // NOTE: If given position beyond end of point list, do nothing.
 void StreakLineClass::Set_Point_Location(unsigned int point_idx, const Vector3 &location)
 {
-	if (point_idx < (unsigned int)PointLocations.Count()) {
+	if (point_idx < (unsigned int)PointLocations.Count())
+	{
 		PointLocations[point_idx] = location;
 	}
 	Invalidate_Cached_Bounding_Volumes();
@@ -231,27 +213,30 @@ void StreakLineClass::Set_Point_Location(unsigned int point_idx, const Vector3 &
 // point list, will return 0,0,0).
 void StreakLineClass::Get_Point_Location(unsigned int point_idx, Vector3 &loc)
 {
-	if (point_idx < (unsigned int)PointLocations.Count()) {
+	if (point_idx < (unsigned int)PointLocations.Count())
+	{
 		loc.Set(PointLocations[point_idx]);
-	} else {
+	}
+	else
+	{
 		loc.Set(0, 0, 0);
 	}
 }
 
-void StreakLineClass::Add_Point(const Vector3 & location)
+void StreakLineClass::Add_Point(const Vector3 &location)
 {
 	PointLocations.Add(location);
 }
 
 void StreakLineClass::Delete_Point(unsigned int point_idx)
 {
-	if (point_idx < (unsigned int)PointLocations.Count()) {
+	if (point_idx < (unsigned int)PointLocations.Count())
+	{
 		PointLocations.Delete(point_idx);
 	}
 }
 
-
-TextureClass * StreakLineClass::Get_Texture(void)
+TextureClass *StreakLineClass::Get_Texture(void)
 {
 	return LineRenderer.Get_Texture();
 }
@@ -404,7 +389,6 @@ void StreakLineClass::Set_Freeze_Random(int onoff)
 	LineRenderer.Set_Freeze_Random(onoff);
 }
 
-
 void StreakLineClass::Set_Disable_Sorting(int onoff)
 {
 	LineRenderer.Set_Disable_Sorting(onoff);
@@ -419,9 +403,9 @@ void StreakLineClass::Set_End_Caps(int onoff)
 ** RenderObjClass interface:
 */
 
-RenderObjClass * StreakLineClass::Clone(void) const
+RenderObjClass *StreakLineClass::Clone(void) const
 {
-	return NEW_REF( StreakLineClass, (*this));
+	return NEW_REF(StreakLineClass, (*this));
 }
 
 int StreakLineClass::Get_Num_Polys(void) const
@@ -430,28 +414,28 @@ int StreakLineClass::Get_Num_Polys(void) const
 	return 2 * (PointLocations.Count() - 1) * subdivision_factor;
 }
 
-void StreakLineClass::Render(RenderInfoClass & rinfo)
+void StreakLineClass::Render(RenderInfoClass &rinfo)
 {
-	if (Is_Not_Hidden_At_All() == false) {
-		return ;
+	if (Is_Not_Hidden_At_All() == false)
+	{
+		return;
 	}
 
 	// Process texture reductions:
-//	if (LineRenderer.Peek_Texture()) LineRenderer.Peek_Texture()->Process_Reduction();
+	//	if (LineRenderer.Peek_Texture()) LineRenderer.Peek_Texture()->Process_Reduction();
 
 	unsigned int sort_level = SORT_LEVEL_NONE;
 
 	if (!WW3D::Is_Sorting_Enabled())
-		sort_level=Get_Shader().Guess_Sort_Level();
+		sort_level = Get_Shader().Guess_Sort_Level();
 
-	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level!=SORT_LEVEL_NONE) {
-
+	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level != SORT_LEVEL_NONE)
+	{
 		WW3D::Add_To_Static_Sort_List(this, sort_level);
-
 	}
 	else
 	{
-		if ( !PointColors.Count() || !PointWidths.Count() )
+		if (!PointColors.Count() || !PointWidths.Count())
 		{
 			Render_Seg_Line(rinfo);
 		}
@@ -462,7 +446,7 @@ void StreakLineClass::Render(RenderInfoClass & rinfo)
 	}
 }
 
-void StreakLineClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
+void StreakLineClass::Get_Obj_Space_Bounding_Sphere(SphereClass &sphere) const
 {
 	// Get object-space bounding box and create bounding sphere from it
 	AABoxClass box;
@@ -473,14 +457,14 @@ void StreakLineClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 	sphere.Radius = box.Extent.Length();
 }
 
-void StreakLineClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
+void StreakLineClass::Get_Obj_Space_Bounding_Box(AABoxClass &box) const
 {
 	unsigned int num_points = PointLocations.Count();
 
 	// Line must have at least two points to be valid
 
-	if (num_points >= 2) {
-
+	if (num_points >= 2)
+	{
 		// Find object-space axis-aligned bounding box
 		Vector3 max_coords;
 		Vector3 min_coords;
@@ -493,7 +477,8 @@ void StreakLineClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 		// First bounding box:
 		max_coords = PointLocations[0];
 		min_coords = PointLocations[0];
-		for (i = 1; i < num_points; i++) {
+		for (i = 1; i < num_points; i++)
+		{
 			max_coords.Update_Max(PointLocations[i]);
 			min_coords.Update_Min(PointLocations[i]);
 		}
@@ -504,14 +489,16 @@ void StreakLineClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 		max_coords += enlarge_offset;
 		min_coords -= enlarge_offset;
 
-		if (MaxSubdivisionLevels > 0) {
+		if (MaxSubdivisionLevels > 0)
+		{
 			// Second bounding box:
 			Vector3 max_coords2;
 			Vector3 min_coords2;
 			Vector3 midpoint = (PointLocations[0] + PointLocations[1]) * 0.5f;
 			max_coords2 = midpoint;
 			min_coords2 = midpoint;
-			for (i = 1; i < num_points - 1; i++) {
+			for (i = 1; i < num_points - 1; i++)
+			{
 				midpoint = (PointLocations[i] + PointLocations[i + 1]) * 0.5f;
 				max_coords2.Update_Max(midpoint);
 				min_coords2.Update_Min(midpoint);
@@ -531,10 +518,11 @@ void StreakLineClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 		}
 
 		box.Init_Min_Max(min_coords, max_coords);
-
-	} else {
+	}
+	else
+	{
 		// Invalid line - return something
-		box.Init(Vector3(0,0,0),Vector3(1,1,1));
+		box.Init(Vector3(0, 0, 0), Vector3(1, 1, 1));
 	}
 }
 
@@ -543,8 +531,8 @@ void StreakLineClass::Prepare_LOD(CameraClass &camera)
 	// Find the maximum screen dimension of the object in pixels
 	NormalizedScreenArea = Get_Screen_Size(camera);
 
-//	// Find and set texture reduction factor
-//   Set_Texture_Reduction_Factor(Calculate_Texture_Reduction_Factor(NormalizedScreenArea));
+	//	// Find and set texture reduction factor
+	//   Set_Texture_Reduction_Factor(Calculate_Texture_Reduction_Factor(NormalizedScreenArea));
 
 	// Ensure subdivision level is legal
 	unsigned int lvl = LineRenderer.Get_Current_Subdivision_Level();
@@ -552,10 +540,13 @@ void StreakLineClass::Prepare_LOD(CameraClass &camera)
 	LineRenderer.Set_Current_Subdivision_Level(lvl);
 
 	// Prepare LOD processing if the line has subdivision enabled:
-	if (MaxSubdivisionLevels > 0) {
+	if (MaxSubdivisionLevels > 0)
+	{
 		// Add myself to the LOD optimizer:
 		PredictiveLODOptimizerClass::Add_Object(this);
-	} else {
+	}
+	else
+	{
 		// Not added to optimizer, need to add cost
 		PredictiveLODOptimizerClass::Add_Cost(Get_Cost());
 	}
@@ -565,7 +556,7 @@ void StreakLineClass::Increment_LOD(void)
 {
 	unsigned int lvl = LineRenderer.Get_Current_Subdivision_Level();
 
-	lvl = MIN(lvl+1,MaxSubdivisionLevels);
+	lvl = MIN(lvl + 1, MaxSubdivisionLevels);
 
 	LineRenderer.Set_Current_Subdivision_Level(lvl);
 }
@@ -573,8 +564,9 @@ void StreakLineClass::Increment_LOD(void)
 void StreakLineClass::Decrement_LOD(void)
 {
 	int lvl = LineRenderer.Get_Current_Subdivision_Level();
-	if (lvl == 0) return;
-	LineRenderer.Set_Current_Subdivision_Level(lvl-1);
+	if (lvl == 0)
+		return;
+	LineRenderer.Set_Current_Subdivision_Level(lvl - 1);
 }
 
 float StreakLineClass::Get_Cost(void) const
@@ -585,9 +577,12 @@ float StreakLineClass::Get_Cost(void) const
 float StreakLineClass::Get_Value(void) const
 {
 	// If we are at the minimum LOD, we must return AT_MIN_LOD.
-	if (LineRenderer.Get_Current_Subdivision_Level() == 0) {
+	if (LineRenderer.Get_Current_Subdivision_Level() == 0)
+	{
 		return AT_MIN_LOD;
-	} else {
+	}
+	else
+	{
 		float polycount = (float)Get_Num_Polys();
 		float benefit_factor = 1.0f - (0.5f / (polycount * polycount));
 		return (benefit_factor * NormalizedScreenArea) / Get_Cost();
@@ -597,9 +592,12 @@ float StreakLineClass::Get_Value(void) const
 float StreakLineClass::Get_Post_Increment_Value(void) const
 {
 	// If we are at the maximum LOD, we must return AT_MIN_LOD.
-	if (LineRenderer.Get_Current_Subdivision_Level() == MaxSubdivisionLevels) {
+	if (LineRenderer.Get_Current_Subdivision_Level() == MaxSubdivisionLevels)
+	{
 		return AT_MAX_LOD;
-	} else {
+	}
+	else
+	{
 		// Assumption: each subdivision level doubles polycount
 		float polycount = 2.0f * (float)Get_Num_Polys();
 		float benefit_factor = 1.0f - (0.5f / (polycount * polycount));
@@ -618,7 +616,7 @@ void StreakLineClass::Set_LOD_Level(int lod)
 
 int StreakLineClass::Get_LOD_Level(void) const
 {
-	return (int) LineRenderer.Get_Current_Subdivision_Level();
+	return (int)LineRenderer.Get_Current_Subdivision_Level();
 }
 
 int StreakLineClass::Get_LOD_Count(void) const
@@ -631,69 +629,63 @@ void StreakLineClass::Set_Texture_Reduction_Factor(float trf)
 	if (LineRenderer.Peek_Texture()) LineRenderer.Peek_Texture()->Set_Reduction_Factor(trf);
 }*/
 
-
-
-void StreakLineClass::Render_Seg_Line(RenderInfoClass & rinfo)
+void StreakLineClass::Render_Seg_Line(RenderInfoClass &rinfo)
 {
 	// Line must have at least two points to be valid
-	if (PointLocations.Count() < 2) return;
+	if (PointLocations.Count() < 2)
+		return;
 
 	SphereClass bounding_sphere;
 	Get_Obj_Space_Bounding_Sphere(bounding_sphere);
 
-//	LineRenderer.Set_Width(rand()%3);
+	//	LineRenderer.Set_Width(rand()%3);
 
-	LineRenderer.Render(
-		rinfo,
-		Transform,
-		PointLocations.Count(),
-		&(PointLocations[0]),
-		bounding_sphere
-		);
+	LineRenderer.Render(rinfo, Transform, PointLocations.Count(), &(PointLocations[0]), bounding_sphere);
 }
 
-
-void StreakLineClass::Render_Streak_Line(RenderInfoClass & rinfo)
+void StreakLineClass::Render_Streak_Line(RenderInfoClass &rinfo)
 {
-
 	WWASSERT(PointLocations.Count() == PointColors.Count());
 	WWASSERT(PointLocations.Count() == PointWidths.Count());
 
 	// Line must have at least two points to be valid
-	if (PointLocations.Count() < 2) return;
-	if (PointColors.Count() < 2) return;
-	if (PointWidths.Count() < 2) return;
+	if (PointLocations.Count() < 2)
+		return;
+	if (PointColors.Count() < 2)
+		return;
+	if (PointWidths.Count() < 2)
+		return;
 
-	if(PointLocations.Count() != PointColors.Count()) return;
-	if(PointLocations.Count() != PointWidths.Count()) return;
+	if (PointLocations.Count() != PointColors.Count())
+		return;
+	if (PointLocations.Count() != PointWidths.Count())
+		return;
 
 	SphereClass bounding_sphere;
 	Get_Obj_Space_Bounding_Sphere(bounding_sphere);
 
-
-//	StreakRenderer.Render(
-//		rinfo,
-//		Transform,
-//		PointLocations.Count(),
-//		&(PointLocations[0]),
-//		bounding_sphere
-//		);
+	//	StreakRenderer.Render(
+	//		rinfo,
+	//		Transform,
+	//		PointLocations.Count(),
+	//		&(PointLocations[0]),
+	//		bounding_sphere
+	//		);
 	StreakRenderer.RenderStreak(
-		rinfo,
-		Transform,
-		PointLocations.Count(),
-		&(PointLocations[0]),
-		&(PointColors[0]),
-		&(PointWidths[0]),
-		bounding_sphere,
-		Personalities
-		);
+			rinfo,
+			Transform,
+			PointLocations.Count(),
+			&(PointLocations[0]),
+			&(PointColors[0]),
+			&(PointWidths[0]),
+			bounding_sphere,
+			Personalities);
 }
 
-
-bool StreakLineClass::Cast_Ray(RayCollisionTestClass & raytest)
+bool StreakLineClass::Cast_Ray(RayCollisionTestClass &raytest)
 {
-	if ((Get_Collision_Type() & raytest.CollisionType) == 0) return false;
+	if ((Get_Collision_Type() & raytest.CollisionType) == 0)
+		return false;
 
 	bool retval = false;
 
@@ -701,29 +693,30 @@ bool StreakLineClass::Cast_Ray(RayCollisionTestClass & raytest)
 	//	Check each line segment against the ray
 	//
 	float fraction = 1.0F;
-	for (uint32 index = 1; index < (unsigned int)PointLocations.Count(); index ++)
+	for (uint32 index = 1; index < (unsigned int)PointLocations.Count(); index++)
 	{
 #ifdef ALLOW_TEMPORARIES
-		Vector3 curr_start	= Transform * PointLocations[index-1];
-		Vector3 curr_end		= Transform * PointLocations[index];
-		LineSegClass line_seg (curr_start, curr_end);
+		Vector3 curr_start = Transform * PointLocations[index - 1];
+		Vector3 curr_end = Transform * PointLocations[index];
+		LineSegClass line_seg(curr_start, curr_end);
 #else
 		Vector3 curr[2];
-		Transform.mulVector3Array(&PointLocations[index-1], curr, 2);
+		Transform.mulVector3Array(&PointLocations[index - 1], curr, 2);
 		LineSegClass line_seg(curr[0], curr[1]);
 #endif
 
 		Vector3 p0;
 		Vector3 p1;
-		if (raytest.Ray.Find_Intersection (line_seg, &p0, &fraction, &p1, NULL)) {
-
+		if (raytest.Ray.Find_Intersection(line_seg, &p0, &fraction, &p1, NULL))
+		{
 			//
 			//	Determine if the ray was close enough to this line to be
 			// considered intersecting
 			//
-			float dist = (p0 - p1).Length ();
-			if (dist <= LineRenderer.Get_Width() && fraction >= 0 && fraction < raytest.Result->Fraction) {
-			//if (dist <= Width && fraction < raytest.Result->Fraction) {
+			float dist = (p0 - p1).Length();
+			if (dist <= LineRenderer.Get_Width() && fraction >= 0 && fraction < raytest.Result->Fraction)
+			{
+				// if (dist <= Width && fraction < raytest.Result->Fraction) {
 				retval = true;
 				break;
 			}
@@ -733,13 +726,12 @@ bool StreakLineClass::Cast_Ray(RayCollisionTestClass & raytest)
 	//
 	//	Fill in the raytest structure if we were successfull
 	//
-	if (retval) {
-		raytest.Result->Fraction		= fraction;
-		raytest.Result->SurfaceType	= SURFACE_TYPE_DEFAULT;
-		raytest.CollidedRenderObj		= this;
+	if (retval)
+	{
+		raytest.Result->Fraction = fraction;
+		raytest.Result->SurfaceType = SURFACE_TYPE_DEFAULT;
+		raytest.CollidedRenderObj = this;
 	}
 
 	return retval;
 }
-
-

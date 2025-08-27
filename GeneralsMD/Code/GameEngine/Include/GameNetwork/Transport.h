@@ -42,36 +42,40 @@
 // it to be a MemoryPoolObject (srj)
 class Transport //: public MemoryPoolObject
 {
-	//MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Transport, "Transport")
+	// MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Transport, "Transport")
 public:
-
 	Transport();
 	~Transport();
 
-	Bool init( AsciiString ip, UnsignedShort port );
-	Bool init( UnsignedInt ip, UnsignedShort port );
-	void reset( void );
-	Bool update( void );									///< Call this once a GameEngine tick, regardless of whether the frame advances.
+	Bool init(AsciiString ip, UnsignedShort port);
+	Bool init(UnsignedInt ip, UnsignedShort port);
+	void reset(void);
+	Bool update(void); ///< Call this once a GameEngine tick, regardless of whether the frame advances.
 
-	Bool doRecv( void );		///< call this to service the receive packets
-	Bool doSend( void );		///< call this to service the send queue.
+	Bool doRecv(void); ///< call this to service the receive packets
+	Bool doSend(void); ///< call this to service the send queue.
 
 	Bool queueSend(UnsignedInt addr, UnsignedShort port, const UnsignedByte *buf, Int len /*,
 		NetMessageFlags flags, Int id */);				///< Queue a packet for sending to the specified address and port.  This will be sent on the next update() call.
 
-	inline Bool allowBroadcasts(Bool val) { if (!m_udpsock) return false; return (m_udpsock->AllowBroadcasts(val))?true:false; }
+	inline Bool allowBroadcasts(Bool val)
+	{
+		if (!m_udpsock)
+			return false;
+		return (m_udpsock->AllowBroadcasts(val)) ? true : false;
+	}
 
 	// Latency insertion and packet loss
-	void setLatency( Bool val ) { m_useLatency = val; }
-	void setPacketLoss( Bool val ) { m_usePacketLoss = val; }
+	void setLatency(Bool val) { m_useLatency = val; }
+	void setPacketLoss(Bool val) { m_usePacketLoss = val; }
 
 	// Bandwidth metrics
-	Real getIncomingBytesPerSecond( void );
-	Real getIncomingPacketsPerSecond( void );
-	Real getOutgoingBytesPerSecond( void );
-	Real getOutgoingPacketsPerSecond( void );
-	Real getUnknownBytesPerSecond( void );
-	Real getUnknownPacketsPerSecond( void );
+	Real getIncomingBytesPerSecond(void);
+	Real getIncomingPacketsPerSecond(void);
+	Real getOutgoingBytesPerSecond(void);
+	Real getOutgoingPacketsPerSecond(void);
+	Real getUnknownBytesPerSecond(void);
+	Real getUnknownPacketsPerSecond(void);
 
 	TransportMessage m_outBuffer[MAX_MESSAGES];
 	TransportMessage m_inBuffer[MAX_MESSAGES];
@@ -81,6 +85,7 @@ public:
 #endif
 
 	UnsignedShort m_port;
+
 private:
 	Bool m_winsockInit;
 	UDP *m_udpsock;
@@ -99,7 +104,7 @@ private:
 	Int m_statisticsSlot;
 	UnsignedInt m_lastSecond;
 
-	Bool isGeneralsPacket( TransportMessage *msg );
+	Bool isGeneralsPacket(TransportMessage *msg);
 };
 
 #endif // _TRANSPORT_H_

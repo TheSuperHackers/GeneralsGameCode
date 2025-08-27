@@ -44,41 +44,34 @@ class UpgradeTemplate;
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
-enum HordeActionType CPP_11(: Int)
-{
-	HORDEACTION_HORDE = 0,
+enum HordeActionType CPP_11( : Int){ HORDEACTION_HORDE = 0,
 
-	HORDEACTION_COUNT
-};
+																		 HORDEACTION_COUNT };
 
 #ifdef DEFINE_HORDEACTION_NAMES
-static const char *TheHordeActionTypeNames[] =
-{
-	"HORDE",
-	NULL
-};
+static const char *TheHordeActionTypeNames[] = { "HORDE", NULL };
 #endif
 
 //-------------------------------------------------------------------------------------------------
 class HordeUpdateModuleData : public ModuleData
 {
 public:
-  UnsignedInt								m_updateRate;   ///< how often to recheck our horde status
-	KindOfMaskType						m_kindof;				///< the kind(s) of units that count towards horde-ness
-	Int												m_minCount;		  ///< min count to get "horde" status
-  Real											m_minDist;      ///< min dist to contribute to horde-ness
-	Bool											m_alliesOnly;		///< if true, only allied units count towards hordeness
-	Bool											m_exactMatch;		///< if true, only exact same type of units count towards hordeness
-	Real											m_rubOffRadius;///< If I am this close to another guy who is a true hordesman, it'll rub off on me
-	HordeActionType						m_action;				///< what to do if we get horde-ness
-	Bool											m_allowedNationalism; ///< Nationalism is hard ocded.  Yeah!  Add to the goodness with this flag instead of rewriting after Alpha.
-	std::vector<AsciiString>	m_flagSubObjNames;		///< name(s) of the flag subobj
+	UnsignedInt m_updateRate; ///< how often to recheck our horde status
+	KindOfMaskType m_kindof; ///< the kind(s) of units that count towards horde-ness
+	Int m_minCount; ///< min count to get "horde" status
+	Real m_minDist; ///< min dist to contribute to horde-ness
+	Bool m_alliesOnly; ///< if true, only allied units count towards hordeness
+	Bool m_exactMatch; ///< if true, only exact same type of units count towards hordeness
+	Real m_rubOffRadius; ///< If I am this close to another guy who is a true hordesman, it'll rub off on me
+	HordeActionType m_action; ///< what to do if we get horde-ness
+	Bool m_allowedNationalism; ///< Nationalism is hard ocded.  Yeah!  Add to the goodness with this flag instead of rewriting
+														 ///< after Alpha.
+	std::vector<AsciiString> m_flagSubObjNames; ///< name(s) of the flag subobj
 
 	HordeUpdateModuleData();
-	static void buildFieldParse(MultiIniFieldParse& p);
+	static void buildFieldParse(MultiIniFieldParse &p);
 
 private:
-
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -89,18 +82,16 @@ public:
 	virtual Bool hasFlag() const = 0;
 	virtual Bool isTrueHordeMember() const = 0;
 	virtual Bool isAllowedNationalism() const = 0;
-
 };
 
 //-------------------------------------------------------------------------------------------------
 class HordeUpdate : public UpdateModule, public HordeUpdateInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( HordeUpdate, "HordeUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( HordeUpdate, HordeUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HordeUpdate, "HordeUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(HordeUpdate, HordeUpdateModuleData)
 
 public:
-	HordeUpdate( Thing *thing, const ModuleData* moduleData );
+	HordeUpdate(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	HordeUpdateInterface *getHordeUpdateInterface() { return this; }
@@ -110,20 +101,17 @@ public:
 	virtual Bool isTrueHordeMember() const { return m_trueHordeMember && m_inHorde; }
 	virtual Bool isAllowedNationalism() const;
 	virtual Bool hasFlag() const { return m_hasFlag; }
-	virtual UpdateSleepTime update();	///< update this object's AI
+	virtual UpdateSleepTime update(); ///< update this object's AI
 
 protected:
-
 	void showHideFlag(Bool show);
 	void joinOrLeaveHorde(SimpleObjectIterator *iter, Bool join);
 
 private:
-	UnsignedInt m_lastHordeRefreshFrame; //Just like it sounds
-	Bool				m_inHorde;				 //I amy be a trueMember, or I may merely inherit hordehood from a neighbor who is
-	Bool				m_trueHordeMember; //meaning, I have enough hordesman near me to qualify
-	Bool				m_hasFlag;
-
+	UnsignedInt m_lastHordeRefreshFrame; // Just like it sounds
+	Bool m_inHorde; // I amy be a trueMember, or I may merely inherit hordehood from a neighbor who is
+	Bool m_trueHordeMember; // meaning, I have enough hordesman near me to qualify
+	Bool m_hasFlag;
 };
 
 #endif // __HordeUpdate_H_
-

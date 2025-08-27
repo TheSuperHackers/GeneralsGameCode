@@ -24,7 +24,6 @@
  *                                                                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "streakRender.h"
 #include "ww3d.h"
 #include "rinfo.h"
@@ -34,7 +33,6 @@
 #include "Vector3i.h"
 #include "RANDOM.H"
 #include "v3_rnd.h"
-
 
 /* We have chunking logic which handles N segments at a time. To simplify the subdivision logic,
 ** we will ensure that N is a power of two and that N >= 2^MAX_STREAK_SUBDIV_LEVELS, so that the
@@ -51,14 +49,11 @@
 // This macro depends on the assumption that each line segment is two polys.
 #define MAX_STREAK_POLY_BUFFER_SIZE (STREAK_CHUNK_SIZE * 2)
 
-
-
-
 StreakRendererClass::StreakRendererClass(void) :
 		Texture(NULL),
 		Shader(ShaderClass::_PresetAdditiveSpriteShader),
 		Width(0.0f),
-		Color(Vector3(1,1,1)),
+		Color(Vector3(1, 1, 1)),
 		Opacity(1.0f),
 		SubdivisionLevel(0),
 		NoiseAmplitude(0.0f),
@@ -71,14 +66,14 @@ StreakRendererClass::StreakRendererClass(void) :
 		m_vertexBufferSize(0),
 		m_vertexBuffer(NULL)
 {
-  // EMPTY
+	// EMPTY
 }
 
-StreakRendererClass::StreakRendererClass(const StreakRendererClass & that) :
+StreakRendererClass::StreakRendererClass(const StreakRendererClass &that) :
 		Texture(NULL),
 		Shader(ShaderClass::_PresetAdditiveSpriteShader),
 		Width(0.0f),
-		Color(Vector3(1,1,1)),
+		Color(Vector3(1, 1, 1)),
 		Opacity(1.0f),
 		SubdivisionLevel(0),
 		NoiseAmplitude(0.0f),
@@ -94,10 +89,11 @@ StreakRendererClass::StreakRendererClass(const StreakRendererClass & that) :
 	*this = that;
 }
 
-StreakRendererClass & StreakRendererClass::operator = (const StreakRendererClass & that)
+StreakRendererClass &StreakRendererClass::operator=(const StreakRendererClass &that)
 {
-	if (this != &that) {
-		REF_PTR_SET(Texture,that.Texture);
+	if (this != &that)
+	{
+		REF_PTR_SET(Texture, that.Texture);
 		Shader = that.Shader;
 		Width = that.Width;
 		Color = that.Color;
@@ -118,10 +114,10 @@ StreakRendererClass & StreakRendererClass::operator = (const StreakRendererClass
 StreakRendererClass::~StreakRendererClass(void)
 {
 	REF_PTR_RELEASE(Texture);
-	delete [] m_vertexBuffer;
+	delete[] m_vertexBuffer;
 }
 
-void StreakRendererClass::Init(const W3dEmitterLinePropertiesStruct & props)
+void StreakRendererClass::Init(const W3dEmitterLinePropertiesStruct &props)
 {
 	// translate the flags
 	Set_Merge_Intersections(props.Flags & W3D_ELINE_MERGE_INTERSECTIONS);
@@ -132,15 +128,15 @@ void StreakRendererClass::Init(const W3dEmitterLinePropertiesStruct & props)
 	int texture_mode = ((props.Flags & W3D_ELINE_TEXTURE_MAP_MODE_MASK) >> W3D_ELINE_TEXTURE_MAP_MODE_OFFSET);
 	switch (texture_mode)
 	{
-	case W3D_ELINE_UNIFORM_WIDTH_TEXTURE_MAP:
-		Set_Texture_Mapping_Mode(UNIFORM_WIDTH_TEXTURE_MAP);
-		break;
-	case W3D_ELINE_UNIFORM_LENGTH_TEXTURE_MAP:
-		Set_Texture_Mapping_Mode(UNIFORM_LENGTH_TEXTURE_MAP);
-		break;
-	case W3D_ELINE_TILED_TEXTURE_MAP:
-		Set_Texture_Mapping_Mode(TILED_TEXTURE_MAP);
-		break;
+		case W3D_ELINE_UNIFORM_WIDTH_TEXTURE_MAP:
+			Set_Texture_Mapping_Mode(UNIFORM_WIDTH_TEXTURE_MAP);
+			break;
+		case W3D_ELINE_UNIFORM_LENGTH_TEXTURE_MAP:
+			Set_Texture_Mapping_Mode(UNIFORM_LENGTH_TEXTURE_MAP);
+			break;
+		case W3D_ELINE_TILED_TEXTURE_MAP:
+			Set_Texture_Mapping_Mode(TILED_TEXTURE_MAP);
+			break;
 	};
 
 	// install all other settings
@@ -151,15 +147,15 @@ void StreakRendererClass::Init(const W3dEmitterLinePropertiesStruct & props)
 	// Set_UV_Offset_Rate(Vector2(props.UPerSec,props.VPerSec));
 }
 
-
 void StreakRendererClass::Set_Texture(TextureClass *texture)
 {
-	REF_PTR_SET(Texture,texture);
+	REF_PTR_SET(Texture, texture);
 }
 
-TextureClass * StreakRendererClass::Get_Texture(void) const
+TextureClass *StreakRendererClass::Get_Texture(void) const
 {
-	if (Texture != NULL) {
+	if (Texture != NULL)
+	{
 		Texture->Add_Ref();
 	}
 	return Texture;
@@ -183,22 +179,20 @@ TextureClass * StreakRendererClass::Get_Texture(void) const
 
 // void StreakRendererClass::Reset_Line(void)
 // {
-	// LastUsedSyncTime = WW3D::Get_Sync_Time();
-	// CurrentUVOffset.Set(0.0f,0.0f);
+// LastUsedSyncTime = WW3D::Get_Sync_Time();
+// CurrentUVOffset.Set(0.0f,0.0f);
 // }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
-void StreakRendererClass::Render
-(
-	RenderInfoClass & rinfo,
-	const Matrix3D & transform,
-	unsigned int num_points,
-	Vector3 * points,
-	const SphereClass & obj_sphere
-)
+void StreakRendererClass::Render(
+		RenderInfoClass &rinfo,
+		const Matrix3D &transform,
+		unsigned int num_points,
+		Vector3 *points,
+		const SphereClass &obj_sphere)
 {
-	//NOTHING!
+	// NOTHING!
 	return;
 }
 
@@ -207,36 +201,38 @@ void StreakRendererClass::Render
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-
-void StreakRendererClass::subdivision_util(unsigned int point_cnt, const Vector3 *xformed_pts,
-	const float *base_tex_v, unsigned int *p_sub_point_cnt, Vector3 *xformed_subdiv_pts,
-	float *subdiv_tex_v)
+void StreakRendererClass::subdivision_util(
+		unsigned int point_cnt,
+		const Vector3 *xformed_pts,
+		const float *base_tex_v,
+		unsigned int *p_sub_point_cnt,
+		Vector3 *xformed_subdiv_pts,
+		float *subdiv_tex_v)
 {
 	// CAUTION: freezing the random offsets will make it more readily apparent that the offsets
 	// are in camera space rather than worldspace.
 	int freeze_random = Is_Freeze_Random();
 	Random3Class randomize;
 	const float oo_int_max = 1.0f / (float)INT_MAX;
-	Vector3SolidBoxRandomizer randomizer(Vector3(1,1,1));
-	Vector3 randvec(0,0,0);
+	Vector3SolidBoxRandomizer randomizer(Vector3(1, 1, 1));
+	Vector3 randvec(0, 0, 0);
 	unsigned int sub_pointIndex = 0;
 
-	struct StreakSubdivision {
-		Vector3			StartPos;
-		Vector3			EndPos;
-		float				StartTexV;	// V texture coordinate of start point
-		float				EndTexV;		// V texture coordinate of end point
-		float				Rand;
-		unsigned int	Level;		// Subdivision level
+	struct StreakSubdivision
+	{
+		Vector3 StartPos;
+		Vector3 EndPos;
+		float StartTexV; // V texture coordinate of start point
+		float EndTexV; // V texture coordinate of end point
+		float Rand;
+		unsigned int Level; // Subdivision level
 	};
 
-	StreakSubdivision stack[2 * MAX_STREAK_SUBDIV_LEVELS];	// Maximum number needed
+	StreakSubdivision stack[2 * MAX_STREAK_SUBDIV_LEVELS]; // Maximum number needed
 	int tos = 0;
 
-	for (unsigned int pointIndex = 0; pointIndex < point_cnt - 1; pointIndex++) {
-
+	for (unsigned int pointIndex = 0; pointIndex < point_cnt - 1; pointIndex++)
+	{
 		// Subdivide the (pointIndex, pointIndex + 1) segment. Produce pointIndex and all subdivided points up to
 		// (not including) pointIndex + 1.
 		tos = 0;
@@ -247,19 +243,26 @@ void StreakRendererClass::subdivision_util(unsigned int point_cnt, const Vector3
 		stack[0].Rand = NoiseAmplitude;
 		stack[0].Level = 0;
 
-		for (; tos >= 0;) {
-			if (stack[tos].Level == SubdivisionLevel) {
+		for (; tos >= 0;)
+		{
+			if (stack[tos].Level == SubdivisionLevel)
+			{
 				// Generate point location and texture V coordinate
 				xformed_subdiv_pts[sub_pointIndex] = stack[tos].StartPos;
 				subdiv_tex_v[sub_pointIndex++] = stack[tos].StartTexV;
 
 				// Pop
 				tos--;
-			} else {
+			}
+			else
+			{
 				// Recurse down: pop existing entry and push two subdivided ones.
-				if (freeze_random) {
+				if (freeze_random)
+				{
 					randvec.Set(randomize * oo_int_max, randomize * oo_int_max, randomize * oo_int_max);
-				} else {
+				}
+				else
+				{
 					randomizer.Get_Vector(randvec);
 				}
 				stack[tos + 1].StartPos = stack[tos].StartPos;
@@ -286,7 +289,6 @@ void StreakRendererClass::subdivision_util(unsigned int point_cnt, const Vector3
 	*p_sub_point_cnt = sub_pointIndex;
 }
 
-
 ///////     ///////     ///////     ///////     ///////     ///////     ///////     ///////
 ///////     ///////     ///////     ///////     ///////     ///////     ///////     ///////
 ///////     ///////     ///////     ///////     ///////     ///////     ///////     ///////
@@ -297,40 +299,37 @@ void StreakRendererClass::subdivision_util(unsigned int point_cnt, const Vector3
 ///////     ///////     ///////     ///////     ///////     ///////     ///////     ///////
 ///////     ///////     ///////     ///////     ///////     ///////     ///////     ///////
 
-
-
-void StreakRendererClass::RenderStreak
-(
-	RenderInfoClass & rinfo,
-	const Matrix3D & transform,
-	unsigned int num_points,
-	Vector3 * points,
-	Vector4 * colors,								/////////////// DIFFERENT FROM RENDER( )
-	float * widths,									/////////////// DIFFERENT FROM RENDER( )
-	const SphereClass & obj_sphere,
-	unsigned int *personalities			/////////////// DIFFERENT FROM RENDER( )
+void StreakRendererClass::RenderStreak(
+		RenderInfoClass &rinfo,
+		const Matrix3D &transform,
+		unsigned int num_points,
+		Vector3 *points,
+		Vector4 *colors, /////////////// DIFFERENT FROM RENDER( )
+		float *widths, /////////////// DIFFERENT FROM RENDER( )
+		const SphereClass &obj_sphere,
+		unsigned int *personalities /////////////// DIFFERENT FROM RENDER( )
 )
 {
 	Matrix4x4 view;
-	DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
+	DX8Wrapper::Get_Transform(D3DTS_VIEW, view);
 
 	Matrix4x4 identity(true);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);
-	DX8Wrapper::Set_Transform(D3DTS_VIEW,identity);
+	DX8Wrapper::Set_Transform(D3DTS_WORLD, identity);
+	DX8Wrapper::Set_Transform(D3DTS_VIEW, identity);
 
 	/*
 	** Handle texture UV offset animation (done once for entire line).
 	*/
 	// unsigned int delta = WW3D::Get_Sync_Time() - LastUsedSyncTime;
 	// float del = (float)delta;
-	//Vector2 uv_offset = CurrentUVOffset + UVOffsetDeltaPerMS * del;
+	// Vector2 uv_offset = CurrentUVOffset + UVOffsetDeltaPerMS * del;
 
 	// ensure offsets are in [0, 1] range:
-	//uv_offset.X = uv_offset.X - floorf(uv_offset.X);
-	//uv_offset.Y = uv_offset.Y - floorf(uv_offset.Y);
+	// uv_offset.X = uv_offset.X - floorf(uv_offset.X);
+	// uv_offset.Y = uv_offset.Y - floorf(uv_offset.Y);
 
 	// Update state
-	//CurrentUVOffset = uv_offset;
+	// CurrentUVOffset = uv_offset;
 	// LastUsedSyncTime = WW3D::Get_Sync_Time();
 
 	// Used later
@@ -348,7 +347,8 @@ void StreakRendererClass::RenderStreak
 	// the chunk size below 2, since the chunk size must be at least two to the power of the
 	// maximum allowable number of subdivisions. The plus 1 is because #points = #segments + 1.
 	unsigned int chunk_size = (STREAK_CHUNK_SIZE >> SubdivisionLevel) + 1;
-	if (chunk_size > num_points) chunk_size = num_points;
+	if (chunk_size > num_points)
+		chunk_size = num_points;
 
 	// Chunk through the points (we increment by chunk_size - 1 because the last point of this
 	// chunk must be reused as the first point of the next chunk. This is also the reason we stop
@@ -360,10 +360,9 @@ void StreakRendererClass::RenderStreak
 		point_cnt = MIN(point_cnt, chunk_size);
 
 		// We use these different loop indices (which loop INSIDE a chunk) to improve readability:
-		unsigned int pointIndex;	// Point index
-		unsigned int segmentIndex;	// Segment index
-		unsigned int intersectionIndex;	// Intersection index
-
+		unsigned int pointIndex; // Point index
+		unsigned int segmentIndex; // Segment index
+		unsigned int intersectionIndex; // Intersection index
 
 		/*
 		** Transform points in chunk from objectspace to eyespace:
@@ -371,20 +370,28 @@ void StreakRendererClass::RenderStreak
 
 		Vector3 xformed_pts[MAX_STREAK_POINT_BUFFER_SIZE];
 
-		Matrix3D view2(	view[0].X,view[0].Y,view[0].Z,view[0].W,
-								view[1].X,view[1].Y,view[1].Z,view[1].W,
-								view[2].X,view[2].Y,view[2].Z,view[2].W);
+		Matrix3D view2(
+				view[0].X,
+				view[0].Y,
+				view[0].Z,
+				view[0].W,
+				view[1].X,
+				view[1].Y,
+				view[1].Z,
+				view[1].W,
+				view[2].X,
+				view[2].Y,
+				view[2].Z,
+				view[2].W);
 
 #ifdef ALLOW_TEMPORARIES
-		Matrix3D modelview=view2*transform;
+		Matrix3D modelview = view2 * transform;
 #else
 		Matrix3D modelview;
 		modelview.mul(view2, transform);
 #endif
 
-		VectorProcessorClass::Transform(&xformed_pts[0],
-			&points[chunkIndex], modelview, point_cnt);
-
+		VectorProcessorClass::Transform(&xformed_pts[0], &points[chunkIndex], modelview, point_cnt);
 
 		/*
 		** Prepare v parameter per point - used for texture mapping (esp. tiled mapping mode)
@@ -392,7 +399,6 @@ void StreakRendererClass::RenderStreak
 
 		float base_tex_v[MAX_STREAK_POINT_BUFFER_SIZE];
 		float u_values[2];
-
 
 		// I HAVE HARD CODED IT TO USE UNIFORM WIDTH AND LENGTH
 		for (pointIndex = 0; pointIndex < point_cnt; pointIndex++)
@@ -403,42 +409,36 @@ void StreakRendererClass::RenderStreak
 		u_values[0] = 0.0f;
 		u_values[1] = 1.0f;
 
-
-
-
-
-
-//		switch (map_mode)
-//		{
-//			case UNIFORM_WIDTH_TEXTURE_MAP:// only non-dead case
-//				for (pointIndex = 0; pointIndex < point_cnt; pointIndex++)
-//				{
-//					// All 0
-//					base_tex_v[pointIndex] = 0.0f;
-//				}
-//				u_values[0] = 0.0f;
-//				u_values[1] = 1.0f;
-//				break;
-//			case UNIFORM_LENGTH_TEXTURE_MAP:
-//				for (pointIndex = 0; pointIndex < point_cnt; pointIndex++)
-//				{
-//					// Increasing V
-//					base_tex_v[pointIndex] = (float)(pointIndex + chunkIndex) * TextureTileFactor;
-//				}
-//				u_values[0] = 0.0f;
-//				u_values[1] = 0.0f;
-//				break;
-//			case TILED_TEXTURE_MAP:
-//				for (pointIndex = 0; pointIndex < point_cnt; pointIndex++)
-//				{
-//					// Increasing V
-//					base_tex_v[pointIndex] = (float)(pointIndex + chunkIndex) * TextureTileFactor;
-//				}
-//				u_values[0] = 0.0f;
-//				u_values[1] = 1.0f;
-//				break;
-//		}
-
+		//		switch (map_mode)
+		//		{
+		//			case UNIFORM_WIDTH_TEXTURE_MAP:// only non-dead case
+		//				for (pointIndex = 0; pointIndex < point_cnt; pointIndex++)
+		//				{
+		//					// All 0
+		//					base_tex_v[pointIndex] = 0.0f;
+		//				}
+		//				u_values[0] = 0.0f;
+		//				u_values[1] = 1.0f;
+		//				break;
+		//			case UNIFORM_LENGTH_TEXTURE_MAP:
+		//				for (pointIndex = 0; pointIndex < point_cnt; pointIndex++)
+		//				{
+		//					// Increasing V
+		//					base_tex_v[pointIndex] = (float)(pointIndex + chunkIndex) * TextureTileFactor;
+		//				}
+		//				u_values[0] = 0.0f;
+		//				u_values[1] = 0.0f;
+		//				break;
+		//			case TILED_TEXTURE_MAP:
+		//				for (pointIndex = 0; pointIndex < point_cnt; pointIndex++)
+		//				{
+		//					// Increasing V
+		//					base_tex_v[pointIndex] = (float)(pointIndex + chunkIndex) * TextureTileFactor;
+		//				}
+		//				u_values[0] = 0.0f;
+		//				u_values[1] = 1.0f;
+		//				break;
+		//		}
 
 		/*
 		** Fractal noise recursive subdivision:
@@ -458,7 +458,6 @@ void StreakRendererClass::RenderStreak
 		float *tex_v = subdiv_tex_v;
 		point_cnt = sub_point_cnt;
 
-
 		/*
 		** Calculate line segment edge planes:
 		*/
@@ -476,11 +475,11 @@ void StreakRendererClass::RenderStreak
 		// up/down and remains consistent throughout the segmented line.
 		enum SegmentEdge
 		{
-			FIRST_EDGE     = 0,	// For loop conditions
-			TOP_EDGE			= 0,	// Top Edge
-			BOTTOM_EDGE		= 1,	// Bottom Edge
-			MAX_EDGE			= 1,	// For loop conditions
-			NUM_EDGES		= 2	// For array allocations
+			FIRST_EDGE = 0, // For loop conditions
+			TOP_EDGE = 0, // Top Edge
+			BOTTOM_EDGE = 1, // Bottom Edge
+			MAX_EDGE = 1, // For loop conditions
+			NUM_EDGES = 2 // For array allocations
 		};
 
 		bool switch_edges = false;
@@ -492,8 +491,8 @@ void StreakRendererClass::RenderStreak
 
 		struct LineSegment
 		{
-			Vector3	StartPlane;
-			Vector3	EdgePlane[NUM_EDGES];
+			Vector3 StartPlane;
+			Vector3 EdgePlane[NUM_EDGES];
 		};
 
 		// # segments = numpoints + 1 (numpoints - 1, plus two dummy segments)
@@ -502,18 +501,17 @@ void StreakRendererClass::RenderStreak
 		// Intersections. This has data for two edges (top or bottom) intersecting.
 		struct LineSegmentIntersection
 		{
-			unsigned int	PointCount;			// How many points does this intersection represent
-			unsigned int	NextSegmentID;		// ID of segment after this intersection
-			Vector3			Direction;			// Calculated intersection direction line
-			Vector3			Point;				// Averaged 3D point on the line which this represents
-			float				TexV;					// Averaged texture V coordinate of points
-			bool				Fold;					// Does the line fold over at this intersection?
-			bool				Parallel;			// Edges at this intersection are parallel (or almost-)
+			unsigned int PointCount; // How many points does this intersection represent
+			unsigned int NextSegmentID; // ID of segment after this intersection
+			Vector3 Direction; // Calculated intersection direction line
+			Vector3 Point; // Averaged 3D point on the line which this represents
+			float TexV; // Averaged texture V coordinate of points
+			bool Fold; // Does the line fold over at this intersection?
+			bool Parallel; // Edges at this intersection are parallel (or almost-)
 		};
 
 		// Used to calculate the edge planes
 		float radius = Width * 0.5f;
-
 
 		// The number of intersections is the number of points minus 2. However, we store
 		// intersection records for the first and last point, even though they are not really
@@ -524,11 +522,8 @@ void StreakRendererClass::RenderStreak
 		// segment.
 		LineSegmentIntersection intersection[MAX_STREAK_POINT_BUFFER_SIZE + 1][NUM_EDGES];
 
-
-
-
 		for (segmentIndex = 1; segmentIndex < point_cnt; segmentIndex++)
-		{	// #segments = #points - 1 (+ 2 dummy segments)
+		{ // #segments = #points - 1 (+ 2 dummy segments)
 
 			radius = widths[segmentIndex]; /// NEW ///// // TODO: Does not work correctly when subdivision are not 0
 
@@ -573,7 +568,6 @@ void StreakRendererClass::RenderStreak
 			// mark the intersection as having a fold
 			if (segmentIndex > 1)
 			{
-
 				Vector3 prev_plane;
 				Vector3::Cross_Product(points[segmentIndex - 2], curr_point, &prev_plane);
 				prev_plane.Normalize();
@@ -601,22 +595,16 @@ void StreakRendererClass::RenderStreak
 				segment[segmentIndex].EdgePlane[TOP_EDGE] = -bottom_normal;
 				segment[segmentIndex].EdgePlane[BOTTOM_EDGE] = -top_normal;
 			}
-
 		}
-
-
-
-
 
 		// The two dummy segments for the clipping edges of the first and last real segments will be
 		// defined later, with the first and last intersections.
-
 
 		/*
 		** Calculate segment edge intersections:
 		*/
 
-		unsigned int numsegs = point_cnt - 1;	// Doesn't include the two dummy segments
+		unsigned int numsegs = point_cnt - 1; // Doesn't include the two dummy segments
 		unsigned int num_intersections[NUM_EDGES];
 
 		// These include the 1st, last point "intersections", not the pre-first dummy intersection
@@ -624,20 +612,20 @@ void StreakRendererClass::RenderStreak
 		num_intersections[BOTTOM_EDGE] = point_cnt;
 
 		// Initialize pre-first point dummy intersection record (only NextSegmentID will be used).
-		intersection[0][TOP_EDGE].PointCount = 0;				// Should never be used
-		intersection[0][TOP_EDGE].NextSegmentID = 0;			// Points to first dummy segment
-		intersection[0][TOP_EDGE].Direction.Set(1,0,0);		// Should never be used
-		intersection[0][TOP_EDGE].Point.Set(0,0,0);			// Should never be used
-		intersection[0][TOP_EDGE].TexV = 0.0f;					// Should never be used
-		intersection[0][TOP_EDGE].Fold = true;					// Should never be used
-		intersection[0][TOP_EDGE].Parallel = false;			// Should never be used
-		intersection[0][BOTTOM_EDGE].PointCount = 0;			// Should never be used
-		intersection[0][BOTTOM_EDGE].NextSegmentID = 0;		// Points to first dummy segment
-		intersection[0][BOTTOM_EDGE].Point.Set(0,0,0);		// Should never be used
-		intersection[0][BOTTOM_EDGE].TexV = 0.0f;				// Should never be used
-		intersection[0][BOTTOM_EDGE].Direction.Set(1,0,0);	// Should never be used
-		intersection[0][BOTTOM_EDGE].Fold = true;				// Should never be used
-		intersection[0][BOTTOM_EDGE].Parallel = false;		// Should never be used
+		intersection[0][TOP_EDGE].PointCount = 0; // Should never be used
+		intersection[0][TOP_EDGE].NextSegmentID = 0; // Points to first dummy segment
+		intersection[0][TOP_EDGE].Direction.Set(1, 0, 0); // Should never be used
+		intersection[0][TOP_EDGE].Point.Set(0, 0, 0); // Should never be used
+		intersection[0][TOP_EDGE].TexV = 0.0f; // Should never be used
+		intersection[0][TOP_EDGE].Fold = true; // Should never be used
+		intersection[0][TOP_EDGE].Parallel = false; // Should never be used
+		intersection[0][BOTTOM_EDGE].PointCount = 0; // Should never be used
+		intersection[0][BOTTOM_EDGE].NextSegmentID = 0; // Points to first dummy segment
+		intersection[0][BOTTOM_EDGE].Point.Set(0, 0, 0); // Should never be used
+		intersection[0][BOTTOM_EDGE].TexV = 0.0f; // Should never be used
+		intersection[0][BOTTOM_EDGE].Direction.Set(1, 0, 0); // Should never be used
+		intersection[0][BOTTOM_EDGE].Fold = true; // Should never be used
+		intersection[0][BOTTOM_EDGE].Parallel = false; // Should never be used
 
 		// Initialize first point "intersection" record.
 		intersection[1][TOP_EDGE].PointCount = 1;
@@ -669,7 +657,7 @@ void StreakRendererClass::RenderStreak
 		intersection[1][BOTTOM_EDGE].Direction = bottom;
 
 		Vector3 segdir = points[1] - points[0];
-		segdir.Normalize();	// Is this needed? Probably not - remove later when all works
+		segdir.Normalize(); // Is this needed? Probably not - remove later when all works
 		Vector3 start_pl;
 		Vector3::Cross_Product(top, bottom, &start_pl);
 		start_pl.Normalize();
@@ -696,7 +684,7 @@ void StreakRendererClass::RenderStreak
 		intersection[last_isec][TOP_EDGE].Fold = true;
 		intersection[last_isec][TOP_EDGE].Parallel = false;
 		intersection[last_isec][BOTTOM_EDGE].PointCount = 1;
-		intersection[last_isec][BOTTOM_EDGE].NextSegmentID = numsegs + 1;// Last dummy segment
+		intersection[last_isec][BOTTOM_EDGE].NextSegmentID = numsegs + 1; // Last dummy segment
 		intersection[last_isec][BOTTOM_EDGE].Point = points[point_cnt - 1];
 		intersection[last_isec][BOTTOM_EDGE].TexV = tex_v[point_cnt - 1];
 		intersection[last_isec][BOTTOM_EDGE].Fold = true;
@@ -715,19 +703,19 @@ void StreakRendererClass::RenderStreak
 		intersection[last_isec][BOTTOM_EDGE].Direction = bottom;
 
 		segdir = points[point_cnt - 1] - points[point_cnt - 2];
-		segdir.Normalize();	// Is this needed? Probably not - remove later when all works
+		segdir.Normalize(); // Is this needed? Probably not - remove later when all works
 		Vector3::Cross_Product(top, bottom, &start_pl);
 		start_pl.Normalize();
 		dp = Vector3::Dot_Product(segdir, start_pl);
 		if (dp > 0.0f)
 		{
 			segment[numsegs + 1].StartPlane = segment[numsegs + 1].EdgePlane[TOP_EDGE] =
-				segment[numsegs + 1].EdgePlane[BOTTOM_EDGE] = start_pl;
+					segment[numsegs + 1].EdgePlane[BOTTOM_EDGE] = start_pl;
 		}
 		else
 		{
 			segment[numsegs + 1].StartPlane = segment[numsegs + 1].EdgePlane[TOP_EDGE] =
-				segment[numsegs + 1].EdgePlane[BOTTOM_EDGE] = -start_pl;
+					segment[numsegs + 1].EdgePlane[BOTTOM_EDGE] = -start_pl;
 		}
 
 		// Calculate midpoint segment intersections. There are 2 segment intersections for each
@@ -743,7 +731,6 @@ void StreakRendererClass::RenderStreak
 
 		for (intersectionIndex = 2; intersectionIndex < num_intersections[TOP_EDGE]; intersectionIndex++)
 		{
-
 			// Relevant midpoint:
 			Vector3 &midpoint = points[intersectionIndex - 1];
 			float mid_tex_v = tex_v[intersectionIndex - 1];
@@ -753,15 +740,15 @@ void StreakRendererClass::RenderStreak
 			intersection[intersectionIndex][TOP_EDGE].NextSegmentID = intersectionIndex;
 			intersection[intersectionIndex][TOP_EDGE].Point = midpoint;
 
-//			intersection[intersectionIndex][TOP_EDGE].TexV = mid_tex_v;
-			intersection[intersectionIndex][TOP_EDGE].TexV = personalities[intersectionIndex]&1;//LORENZEN LORENZEN
+			//			intersection[intersectionIndex][TOP_EDGE].TexV = mid_tex_v;
+			intersection[intersectionIndex][TOP_EDGE].TexV = personalities[intersectionIndex] & 1; // LORENZEN LORENZEN
 
 			intersection[intersectionIndex][BOTTOM_EDGE].PointCount = 1;
 			intersection[intersectionIndex][BOTTOM_EDGE].NextSegmentID = intersectionIndex;
 			intersection[intersectionIndex][BOTTOM_EDGE].Point = midpoint;
 
-//			intersection[intersectionIndex][BOTTOM_EDGE].TexV = mid_tex_v;
-			intersection[intersectionIndex][BOTTOM_EDGE].TexV = personalities[intersectionIndex]&1;//LORENZEN LORENZEN
+			//			intersection[intersectionIndex][BOTTOM_EDGE].TexV = mid_tex_v;
+			intersection[intersectionIndex][BOTTOM_EDGE].TexV = personalities[intersectionIndex] & 1; // LORENZEN LORENZEN
 
 			// Intersection calculation: if the top/bottom planes of both adjoining segments are not
 			// very close to being parallel, intersect them to get top/bottom intersection lines. If
@@ -769,14 +756,17 @@ void StreakRendererClass::RenderStreak
 			// midpoint, and convert that point to a line direction vector.
 
 			// Top:
-			vdp = Vector3::Dot_Product(segment[intersectionIndex - 1].EdgePlane[TOP_EDGE], segment[intersectionIndex].EdgePlane[TOP_EDGE]);
+			vdp = Vector3::Dot_Product(
+					segment[intersectionIndex - 1].EdgePlane[TOP_EDGE],
+					segment[intersectionIndex].EdgePlane[TOP_EDGE]);
 			if (fabs(vdp) < parallel_factor)
 			{
-
 				// Not parallel - intersect planes to get line (get vector, normalize it, ensure it is
 				// pointing towards the midpoint)
-				Vector3::Cross_Product(segment[intersectionIndex - 1].EdgePlane[TOP_EDGE], segment[intersectionIndex].EdgePlane[TOP_EDGE],
-					&(intersection[intersectionIndex][TOP_EDGE].Direction));
+				Vector3::Cross_Product(
+						segment[intersectionIndex - 1].EdgePlane[TOP_EDGE],
+						segment[intersectionIndex].EdgePlane[TOP_EDGE],
+						&(intersection[intersectionIndex][TOP_EDGE].Direction));
 				intersection[intersectionIndex][TOP_EDGE].Direction.Normalize();
 				if (Vector3::Dot_Product(intersection[intersectionIndex][TOP_EDGE].Direction, midpoint) < 0.0f)
 				{
@@ -784,11 +774,9 @@ void StreakRendererClass::RenderStreak
 				}
 
 				intersection[intersectionIndex][TOP_EDGE].Parallel = false;
-
 			}
 			else
 			{
-
 				// Parallel (or almost): find point on av. plane closest to midpoint, convert to line
 
 				// Ensure average calculation is numerically stable:
@@ -810,14 +798,17 @@ void StreakRendererClass::RenderStreak
 			}
 
 			// Bottom:
-			vdp = Vector3::Dot_Product(segment[intersectionIndex - 1].EdgePlane[BOTTOM_EDGE], segment[intersectionIndex].EdgePlane[BOTTOM_EDGE]);
+			vdp = Vector3::Dot_Product(
+					segment[intersectionIndex - 1].EdgePlane[BOTTOM_EDGE],
+					segment[intersectionIndex].EdgePlane[BOTTOM_EDGE]);
 			if (fabs(vdp) < parallel_factor)
 			{
-
 				// Not parallel - intersect planes to get line (get vector, normalize it, ensure it is
 				// pointing towards the midpoint)
-				Vector3::Cross_Product(segment[intersectionIndex - 1].EdgePlane[BOTTOM_EDGE], segment[intersectionIndex].EdgePlane[BOTTOM_EDGE],
-					&(intersection[intersectionIndex][BOTTOM_EDGE].Direction));
+				Vector3::Cross_Product(
+						segment[intersectionIndex - 1].EdgePlane[BOTTOM_EDGE],
+						segment[intersectionIndex].EdgePlane[BOTTOM_EDGE],
+						&(intersection[intersectionIndex][BOTTOM_EDGE].Direction));
 				intersection[intersectionIndex][BOTTOM_EDGE].Direction.Normalize();
 				if (Vector3::Dot_Product(intersection[intersectionIndex][BOTTOM_EDGE].Direction, midpoint) < 0.0f)
 				{
@@ -825,11 +816,9 @@ void StreakRendererClass::RenderStreak
 				}
 
 				intersection[intersectionIndex][BOTTOM_EDGE].Parallel = false;
-
 			}
 			else
 			{
-
 				// Parallel (or almost): find point on av. plane closest to midpoint, convert to line
 
 				// Ensure average calculation is numerically stable:
@@ -851,7 +840,10 @@ void StreakRendererClass::RenderStreak
 			}
 
 			// Find StartPlane:
-			Vector3::Cross_Product(intersection[intersectionIndex][TOP_EDGE].Direction, intersection[intersectionIndex][BOTTOM_EDGE].Direction, &start_pl);
+			Vector3::Cross_Product(
+					intersection[intersectionIndex][TOP_EDGE].Direction,
+					intersection[intersectionIndex][BOTTOM_EDGE].Direction,
+					&start_pl);
 			start_pl.Normalize();
 			dp = Vector3::Dot_Product(segment[intersectionIndex].StartPlane, start_pl);
 			if (dp > 0.0f)
@@ -863,8 +855,7 @@ void StreakRendererClass::RenderStreak
 				segment[intersectionIndex].StartPlane = -start_pl;
 			}
 
-		}	// for intersectionIndex
-
+		} // for intersectionIndex
 
 		/*
 		** Intersection merging: when an intersection is inside an adjacent segment and certain
@@ -874,7 +865,6 @@ void StreakRendererClass::RenderStreak
 
 		if (Is_Merge_Intersections())
 		{
-
 			// Since we are merging the intersections in-place, we have two index variables, a "read
 			// index" and a "write index".
 			unsigned int intersectionIndex_r;
@@ -886,7 +876,6 @@ void StreakRendererClass::RenderStreak
 
 			while (merged)
 			{
-
 				merged = false;
 
 				SegmentEdge edge;
@@ -897,9 +886,10 @@ void StreakRendererClass::RenderStreak
 					// if it needs to be merged with the next one (which is why the loop doesn't go all
 					// the way to the last intersection). We start at 1 because 0 is the dummy
 					// "pre-first-point" intersection.
-					unsigned int num_isects = num_intersections[edge];	// Capture here because will change inside loop
-					for (intersectionIndex_r = 1, intersectionIndex_w = 1; intersectionIndex_r < num_isects; intersectionIndex_r++, intersectionIndex_w++) {
-
+					unsigned int num_isects = num_intersections[edge]; // Capture here because will change inside loop
+					for (intersectionIndex_r = 1, intersectionIndex_w = 1; intersectionIndex_r < num_isects;
+							 intersectionIndex_r++, intersectionIndex_w++)
+					{
 						// Check for either of two possible reasons to merge this intersection with the
 						// next: either the segment on the far side of the next intersection overlaps
 						// this intersection, or the previous segment overlaps the next intersection.
@@ -923,14 +913,11 @@ void StreakRendererClass::RenderStreak
 						// plane of the segment after the next intersection, merge this edge
 						// intersection and the next. We repeat merging until no longer needed.
 						// NOTE - we do not merge across a fold.
-						while	(	(!next_int->Fold &&
-										(Vector3::Dot_Product(curr_int->Direction, next_seg->StartPlane) > 0.0f) &&
-										(Vector3::Dot_Product(curr_int->Direction, next_seg->EdgePlane[edge]) > 0.0f )) ||
-									(!curr_int->Fold &&
-										(Vector3::Dot_Product(next_int->Direction, -curr_seg->StartPlane) > 0.0f) &&
-										(Vector3::Dot_Product(next_int->Direction, prev_seg->EdgePlane[edge]) > 0.0f )) )
+						while ((!next_int->Fold && (Vector3::Dot_Product(curr_int->Direction, next_seg->StartPlane) > 0.0f)
+										&& (Vector3::Dot_Product(curr_int->Direction, next_seg->EdgePlane[edge]) > 0.0f))
+									 || (!curr_int->Fold && (Vector3::Dot_Product(next_int->Direction, -curr_seg->StartPlane) > 0.0f)
+											 && (Vector3::Dot_Product(next_int->Direction, prev_seg->EdgePlane[edge]) > 0.0f)))
 						{
-
 							// First calculate location of merged intersection - this is so we can abort
 							// the merge if it yields funky results.
 
@@ -948,7 +935,6 @@ void StreakRendererClass::RenderStreak
 							vdp = Vector3::Dot_Product(prev_seg->EdgePlane[edge], next_seg->EdgePlane[edge]);
 							if (fabs(vdp) < parallel_factor)
 							{
-
 								// Not parallel - intersect planes to get line (get vector, normalize it,
 								// ensure it is pointing towards the current point)
 								Vector3::Cross_Product(prev_seg->EdgePlane[edge], next_seg->EdgePlane[edge], &new_direction);
@@ -959,11 +945,9 @@ void StreakRendererClass::RenderStreak
 								}
 
 								new_parallel = false;
-
 							}
 							else
 							{
-
 								// Parallel (or almost). If the current intersection is not parallel, take
 								// the average plane and intersect it with the skipped plane. If the
 								// current intersection is parallel, find the average plane, and find the
@@ -1003,12 +987,12 @@ void StreakRendererClass::RenderStreak
 							{
 								float abort_dist = radius * MergeAbortFactor;
 								float abort_dist2 = abort_dist * abort_dist;
-								Vector3 diff_curr = curr_int->Point -
-									new_direction * Vector3::Dot_Product(curr_int->Point, new_direction);
-								if (diff_curr.Length2() > abort_dist2) break;
-								Vector3 next_curr = next_int->Point -
-									new_direction * Vector3::Dot_Product(next_int->Point, new_direction);
-								if (next_curr.Length2() > abort_dist2) break;
+								Vector3 diff_curr = curr_int->Point - new_direction * Vector3::Dot_Product(curr_int->Point, new_direction);
+								if (diff_curr.Length2() > abort_dist2)
+									break;
+								Vector3 next_curr = next_int->Point - new_direction * Vector3::Dot_Product(next_int->Point, new_direction);
+								if (next_curr.Length2() > abort_dist2)
+									break;
 							}
 
 							// Merge edge intersections (curr_int and next_int) into curr_int
@@ -1038,17 +1022,17 @@ void StreakRendererClass::RenderStreak
 							next_int = &(intersection[intersectionIndex_r + 1][edge]);
 							next_seg = &(segment[next_int->NextSegmentID]);
 
-						}	// while <merging needed>
+						} // while <merging needed>
 
 						// Copy from "read index" to "write index"
-						write_int->PointCount		= curr_int->PointCount;
-						write_int->NextSegmentID	= curr_int->NextSegmentID;
-						write_int->Point				= curr_int->Point;
-						write_int->TexV				= curr_int->TexV;
-						write_int->Direction			= curr_int->Direction;
-						write_int->Fold				= curr_int->Fold;
+						write_int->PointCount = curr_int->PointCount;
+						write_int->NextSegmentID = curr_int->NextSegmentID;
+						write_int->Point = curr_int->Point;
+						write_int->TexV = curr_int->TexV;
+						write_int->Direction = curr_int->Direction;
+						write_int->Fold = curr_int->Fold;
 
-					}	// for intersectionIndex
+					} // for intersectionIndex
 
 					// If intersectionIndex_r is exactly equal to num_isects (rather than being larger by one) at this
 					// point, this means that the last intersection was not merged with the previous one. In
@@ -1057,12 +1041,12 @@ void StreakRendererClass::RenderStreak
 					{
 						LineSegmentIntersection *write_int = &(intersection[intersectionIndex_w][edge]);
 						LineSegmentIntersection *curr_int = &(intersection[intersectionIndex_r][edge]);
-						write_int->PointCount		= curr_int->PointCount;
-						write_int->NextSegmentID	= curr_int->NextSegmentID;
-						write_int->Point				= curr_int->Point;
-						write_int->TexV				= curr_int->TexV;
-						write_int->Direction			= curr_int->Direction;
-						write_int->Fold				= curr_int->Fold;
+						write_int->PointCount = curr_int->PointCount;
+						write_int->NextSegmentID = curr_int->NextSegmentID;
+						write_int->Point = curr_int->Point;
+						write_int->TexV = curr_int->TexV;
+						write_int->Direction = curr_int->Direction;
+						write_int->Fold = curr_int->Fold;
 					}
 
 #ifdef ENABLE_WWDEBUGGING
@@ -1075,9 +1059,9 @@ void StreakRendererClass::RenderStreak
 					assert(total_cnt == point_cnt);
 #endif
 
-				}	// for edge
-			}	// while (merged)
-		}	// if (Is_Merge_Intersections())
+				} // for edge
+			} // while (merged)
+		} // if (Is_Merge_Intersections())
 
 		/*
 		** Find vertex positions, generate vertices and triangles:
@@ -1095,19 +1079,8 @@ void StreakRendererClass::RenderStreak
 		unsigned int vertexIndex = 0;
 		unsigned int triangleIndex = 0;
 
-
-
-
-
-
-
-
-
-
-
-
-
-// GENERALIZE FOR WHEN NO TEXTURE (DO NOT SET UV IN THESE CASES? NEED TO GENERALIZE FOR DIFFERENT TEXTURING MODES ANYWAY).
+		// GENERALIZE FOR WHEN NO TEXTURE (DO NOT SET UV IN THESE CASES? NEED TO GENERALIZE FOR DIFFERENT TEXTURING MODES
+		// ANYWAY).
 
 		// "Prime the pump" with two vertices (pick nearest point on each direction line):
 		Vector3 &top_dir = intersection[1][TOP_EDGE].Direction;
@@ -1117,22 +1090,22 @@ void StreakRendererClass::RenderStreak
 		vertexArray[vertexIndex].x = top.X;
 		vertexArray[vertexIndex].y = top.Y;
 		vertexArray[vertexIndex].z = top.Z;
-		vertexArray[vertexIndex].u1 = u_values[0] ;
-		vertexArray[vertexIndex].v1 = intersection[1][TOP_EDGE].TexV ;
+		vertexArray[vertexIndex].u1 = u_values[0];
+		vertexArray[vertexIndex].v1 = intersection[1][TOP_EDGE].TexV;
 		vertexIndex++;
 		vertexArray[vertexIndex].x = bottom.X;
 		vertexArray[vertexIndex].y = bottom.Y;
 		vertexArray[vertexIndex].z = bottom.Z;
-		vertexArray[vertexIndex].u1 = u_values[1] ;
-		vertexArray[vertexIndex].v1 = intersection[1][BOTTOM_EDGE].TexV ;
+		vertexArray[vertexIndex].u1 = u_values[1];
+		vertexArray[vertexIndex].v1 = intersection[1][BOTTOM_EDGE].TexV;
 		vertexIndex++;
 
 		unsigned int last_top_vertexIndex = 0;
 		unsigned int last_bottom_vertexIndex = 1;
 
 		// Loop over intersections, create new vertices and triangles.
-		unsigned int top_int_idx = 1;		// Skip "pre-first-point" dummy intersection
-		unsigned int bottom_int_idx = 1;	// Skip "pre-first-point" dummy intersection
+		unsigned int top_int_idx = 1; // Skip "pre-first-point" dummy intersection
+		unsigned int bottom_int_idx = 1; // Skip "pre-first-point" dummy intersection
 		pointIndex = 0;
 		unsigned int residual_top_points = intersection[1][TOP_EDGE].PointCount;
 		unsigned int residual_bottom_points = intersection[1][BOTTOM_EDGE].PointCount;
@@ -1143,9 +1116,8 @@ void StreakRendererClass::RenderStreak
 		residual_bottom_points -= delta;
 		pointIndex += delta;
 
-		for (; ; )
+		for (;;)
 		{
-
 			if (residual_top_points == 1 && residual_bottom_points == 1)
 			{
 				// Advance both intersections, creating a tristrip segment
@@ -1178,14 +1150,14 @@ void StreakRendererClass::RenderStreak
 				vertexArray[vertexIndex].x = top.X;
 				vertexArray[vertexIndex].y = top.Y;
 				vertexArray[vertexIndex].z = top.Z;
-				vertexArray[vertexIndex].u1 = u_values[0] ;
-				vertexArray[vertexIndex].v1 = intersection[top_int_idx][TOP_EDGE].TexV ;
+				vertexArray[vertexIndex].u1 = u_values[0];
+				vertexArray[vertexIndex].v1 = intersection[top_int_idx][TOP_EDGE].TexV;
 				vertexIndex++;
 				vertexArray[vertexIndex].x = bottom.X;
 				vertexArray[vertexIndex].y = bottom.Y;
 				vertexArray[vertexIndex].z = bottom.Z;
-				vertexArray[vertexIndex].u1 = u_values[1] ;
-				vertexArray[vertexIndex].v1 = intersection[bottom_int_idx][BOTTOM_EDGE].TexV ;
+				vertexArray[vertexIndex].u1 = u_values[1];
+				vertexArray[vertexIndex].v1 = intersection[bottom_int_idx][BOTTOM_EDGE].TexV;
 				vertexIndex++;
 			}
 			else
@@ -1215,13 +1187,12 @@ void StreakRendererClass::RenderStreak
 					vertexArray[vertexIndex].x = bottom.X;
 					vertexArray[vertexIndex].y = bottom.Y;
 					vertexArray[vertexIndex].z = bottom.Z;
-					vertexArray[vertexIndex].u1 = u_values[1] ;
-					vertexArray[vertexIndex].v1 = intersection[bottom_int_idx][BOTTOM_EDGE].TexV ;
+					vertexArray[vertexIndex].u1 = u_values[1];
+					vertexArray[vertexIndex].v1 = intersection[bottom_int_idx][BOTTOM_EDGE].TexV;
 					vertexIndex++;
 				}
 				else
 				{
-
 					// residual_bottom_points > 1
 
 					// Draw one triangle (fan segment)
@@ -1245,8 +1216,8 @@ void StreakRendererClass::RenderStreak
 					vertexArray[vertexIndex].x = top.X;
 					vertexArray[vertexIndex].y = top.Y;
 					vertexArray[vertexIndex].z = top.Z;
-					vertexArray[vertexIndex].u1 = u_values[0] ;
-					vertexArray[vertexIndex].v1 = intersection[top_int_idx][TOP_EDGE].TexV ;
+					vertexArray[vertexIndex].u1 = u_values[0];
+					vertexArray[vertexIndex].v1 = intersection[top_int_idx][TOP_EDGE].TexV;
 					vertexIndex++;
 				}
 			}
@@ -1257,8 +1228,8 @@ void StreakRendererClass::RenderStreak
 			residual_bottom_points -= delta;
 			pointIndex += delta;
 			// Exit conditions
-			if (	(top_int_idx >= num_intersections[TOP_EDGE] && residual_top_points == 1) ||
-					(bottom_int_idx >= num_intersections[BOTTOM_EDGE] && residual_bottom_points == 1))
+			if ((top_int_idx >= num_intersections[TOP_EDGE] && residual_top_points == 1)
+					|| (bottom_int_idx >= num_intersections[BOTTOM_EDGE] && residual_bottom_points == 1))
 			{
 				// Debugging check - if either intersection index is before end, both of them should be
 				// and the points should be before the end.
@@ -1269,41 +1240,37 @@ void StreakRendererClass::RenderStreak
 			}
 		}
 
-
-
-
 		/*
 		** Set color, opacity, vertex flags:
 		*/
 
 		// If color is not white or opacity not 100%, enable gradient in shader and in renderer - otherwise disable.
-		//unsigned int rgba;
-		//rgba=DX8Wrapper::Convert_Color(Color,Opacity);
-		//bool rgba_all=(rgba==0xFFFFFFFF);
+		// unsigned int rgba;
+		// rgba=DX8Wrapper::Convert_Color(Color,Opacity);
+		// bool rgba_all=(rgba==0xFFFFFFFF);
 
-//		int colorIndex = 0;
-//		for (vertexIndex = 0; vertexIndex < vnum; vertexIndex++)
-//		{
-//			//vertexArray[vertexIndex].diffuse = rgba;/// OLD WAY COLORS THEM ALL TO THE COLOR,OPACITY MEMBERS /////////////////
-//			unsigned int perPointARGB;
-//			colorIndex = MIN(vertexIndex / 2, point_cnt);
-//			perPointARGB = DX8Wrapper::Convert_Color( colors[colorIndex] );// twice as many verts as points? or so?
-//			vertexArray[vertexIndex].diffuse = perPointARGB;
-//			vertexArray[vertexIndex].u1 = (float)((vertexIndex&2) == 2);
-//			vertexArray[vertexIndex].v1 = (float)((vertexIndex&1) == 1);
-//		}
-
-
+		//		int colorIndex = 0;
+		//		for (vertexIndex = 0; vertexIndex < vnum; vertexIndex++)
+		//		{
+		//			//vertexArray[vertexIndex].diffuse = rgba;/// OLD WAY COLORS THEM ALL TO THE COLOR,OPACITY MEMBERS
+		/////////////////// 			unsigned int perPointARGB; 			colorIndex = MIN(vertexIndex / 2, point_cnt); perPointARGB =
+		// DX8Wrapper::Convert_Color( colors[colorIndex] );// twice as many verts as points? or so?
+		//			vertexArray[vertexIndex].diffuse = perPointARGB;
+		//			vertexArray[vertexIndex].u1 = (float)((vertexIndex&2) == 2);
+		//			vertexArray[vertexIndex].v1 = (float)((vertexIndex&1) == 1);
+		//		}
 
 		// Enable sorting if sorting has not been disabled and line is translucent and alpha testing is not enabled.
-		bool sorting = (!Is_Sorting_Disabled()) && (Shader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO && Shader.Get_Alpha_Test() == ShaderClass::ALPHATEST_DISABLE);
+		bool sorting = (!Is_Sorting_Disabled())
+				&& (Shader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO
+						&& Shader.Get_Alpha_Test() == ShaderClass::ALPHATEST_DISABLE);
 		///////////////////////////////////////////////////////////////////////////////////////
 		ShaderClass shader = Shader;
 		shader.Set_Cull_Mode(ShaderClass::CULL_MODE_DISABLE);
 		shader.Set_Primary_Gradient(ShaderClass::GRADIENT_MODULATE);
 
 		VertexMaterialClass *mat;
-		mat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
+		mat = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 		DX8Wrapper::Set_Material(mat);
 		REF_PTR_RELEASE(mat);
 
@@ -1318,39 +1285,47 @@ void StreakRendererClass::RenderStreak
 		}
 		///////////////////////////////////////////////////////////////////////////////////////////
 
-
 		/*
 		** Render
 		*/
 
-		DynamicVBAccessClass Verts((sorting?BUFFER_TYPE_DYNAMIC_SORTING:BUFFER_TYPE_DYNAMIC_DX8),dynamic_fvf_type,vnum);
+		DynamicVBAccessClass Verts((sorting ? BUFFER_TYPE_DYNAMIC_SORTING : BUFFER_TYPE_DYNAMIC_DX8), dynamic_fvf_type, vnum);
 		// Copy in the data to the  VB
 		{
 			DynamicVBAccessClass::WriteLockClass Lock(&Verts);
 			unsigned int i;
-			unsigned char *vb=(unsigned char*)Lock.Get_Formatted_Vertex_Array();
-			const FVFInfoClass& fvfinfo=Verts.FVF_Info();
+			unsigned char *vb = (unsigned char *)Lock.Get_Formatted_Vertex_Array();
+			const FVFInfoClass &fvfinfo = Verts.FVF_Info();
 			int segIdx = 0;
 			unsigned int argb = 0x00000000;
 
 			unsigned int oddEven = 0;
 
-			//oddEven = ( personalities[0] & 1 );
+			// oddEven = ( personalities[0] & 1 );
 
 			const unsigned verticesOffset = fvfinfo.Get_Location_Offset();
 			const unsigned diffuseOffset = fvfinfo.Get_Diffuse_Offset();
 			const unsigned textureOffset = fvfinfo.Get_Tex_Offset(0);
 			const unsigned vbSize = fvfinfo.Get_FVF_Size();
 
-			for (i=0; i<vnum; i++)
+			for (i = 0; i < vnum; i++)
 			{
-				DEBUG_ASSERTCRASH(vertexArray[i].x != (float)0xdeadbeef && vertexArray[i].y != (float)0xdeadbeef && vertexArray[i].z != (float)0xdeadbeef && vertexArray[i].u1 != (float)0xdeadbeeef && vertexArray[i].v1 != (float)0xdeadbeef, ("Uninitialized vertexArray[%d]", i));
-				DEBUG_ASSERTCRASH((! _isnan(vertexArray[i].x) && _finite(vertexArray[i].x) && ! _isnan(vertexArray[i].y) && _finite(vertexArray[i].y) && ! _isnan(vertexArray[i].z) && _finite(vertexArray[i].z)) , ("Bad vertexArray[%d]", i));
+				DEBUG_ASSERTCRASH(
+						vertexArray[i].x != (float)0xdeadbeef && vertexArray[i].y != (float)0xdeadbeef
+								&& vertexArray[i].z != (float)0xdeadbeef && vertexArray[i].u1 != (float)0xdeadbeeef
+								&& vertexArray[i].v1 != (float)0xdeadbeef,
+						("Uninitialized vertexArray[%d]", i));
+				DEBUG_ASSERTCRASH(
+						(!_isnan(vertexArray[i].x) && _finite(vertexArray[i].x) && !_isnan(vertexArray[i].y) && _finite(vertexArray[i].y)
+						 && !_isnan(vertexArray[i].z) && _finite(vertexArray[i].z)),
+						("Bad vertexArray[%d]", i));
 				Vector3 *vertex = reinterpret_cast<Vector3 *>(vb + verticesOffset);
 				vertex->X = vertexArray[i].x;
 				vertex->Y = vertexArray[i].y;
 				vertex->Z = vertexArray[i].z;
-				*reinterpret_cast<unsigned int *>(vb + diffuseOffset) = DX8Wrapper::Convert_Color_Clamp(colors[MIN((i/2), point_cnt)]); // TODO: Does not work correctly when subdivision are not 0
+				*reinterpret_cast<unsigned int *>(vb + diffuseOffset) =
+						DX8Wrapper::Convert_Color_Clamp(colors[MIN((i / 2), point_cnt)]); // TODO: Does not work correctly when
+																																							// subdivision are not 0
 				Vector2 *texture = reinterpret_cast<Vector2 *>(vb + textureOffset);
 				texture->U = vertexArray[i].u1;
 				texture->V = vertexArray[i].v1;
@@ -1358,39 +1333,37 @@ void StreakRendererClass::RenderStreak
 			}
 		} // copy
 
-		DynamicIBAccessClass ib_access((sorting?BUFFER_TYPE_DYNAMIC_SORTING:BUFFER_TYPE_DYNAMIC_DX8),triangleIndex*3);
+		DynamicIBAccessClass ib_access((sorting ? BUFFER_TYPE_DYNAMIC_SORTING : BUFFER_TYPE_DYNAMIC_DX8), triangleIndex * 3);
 		{
 			unsigned int i;
 			DynamicIBAccessClass::WriteLockClass lock(&ib_access);
-			unsigned short* inds=lock.Get_Index_Array();
+			unsigned short *inds = lock.Get_Index_Array();
 
-			for (i=0; i<triangleIndex; i++)
+			for (i = 0; i < triangleIndex; i++)
 			{
-				*inds++=v_index_array[i].I;
-				*inds++=v_index_array[i].J;
-				*inds++=v_index_array[i].K;
+				*inds++ = v_index_array[i].I;
+				*inds++ = v_index_array[i].J;
+				*inds++ = v_index_array[i].K;
 			}
 		}
 
-
-		DX8Wrapper::Set_Index_Buffer(ib_access,0);
+		DX8Wrapper::Set_Index_Buffer(ib_access, 0);
 		DX8Wrapper::Set_Vertex_Buffer(Verts);
-		DX8Wrapper::Set_Texture(0,Texture);
+		DX8Wrapper::Set_Texture(0, Texture);
 		DX8Wrapper::Set_Shader(shader);
 
 		if (sorting)
 		{
-			SortingRendererClass::Insert_Triangles(obj_sphere,0,triangleIndex,0,vnum);
+			SortingRendererClass::Insert_Triangles(obj_sphere, 0, triangleIndex, 0, vnum);
 		}
 		else
 		{
-			DX8Wrapper::Draw_Triangles(0,triangleIndex,0,vnum);
+			DX8Wrapper::Draw_Triangles(0, triangleIndex, 0, vnum);
 		}
 
-	}	// Chunking loop
+	} // Chunking loop
 
-	DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
-
+	DX8Wrapper::Set_Transform(D3DTS_VIEW, view);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1404,7 +1377,7 @@ VertexFormatXYZUV1 *StreakRendererClass::getVertexBuffer(unsigned int number)
 	if (number > m_vertexBufferSize)
 	{
 		unsigned int numberToAlloc = number + (number >> 1);
-	  delete [] m_vertexBuffer;
+		delete[] m_vertexBuffer;
 		m_vertexBuffer = W3DNEWARRAY VertexFormatXYZUV1[numberToAlloc];
 		m_vertexBufferSize = numberToAlloc;
 	}
@@ -1412,7 +1385,8 @@ VertexFormatXYZUV1 *StreakRendererClass::getVertexBuffer(unsigned int number)
 #ifdef RTS_DEBUG
 	for (unsigned i = 0; i < number; ++i)
 	{
-	  m_vertexBuffer[i].x = m_vertexBuffer[i].y = m_vertexBuffer[i].z = m_vertexBuffer[i].u1 = m_vertexBuffer[i].v1 = (float)0xdeadbeef;
+		m_vertexBuffer[i].x = m_vertexBuffer[i].y = m_vertexBuffer[i].z = m_vertexBuffer[i].u1 = m_vertexBuffer[i].v1 =
+				(float)0xdeadbeef;
 	}
 #endif
 

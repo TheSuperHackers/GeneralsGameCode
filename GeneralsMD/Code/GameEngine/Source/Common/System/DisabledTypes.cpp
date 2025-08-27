@@ -31,31 +31,28 @@
 #include "Common/BitFlagsIO.h"
 
 template<>
-const char* DisabledMaskType::s_bitNameList[] =
-{
-	"DEFAULT",
-	"DISABLED_HACKED",
-	"DISABLED_EMP",
-	"DISABLED_HELD",
-	"DISABLED_PARALYZED",
-	"DISABLED_UNMANNED",
-	"DISABLED_UNDERPOWERED",
-	"DISABLED_FREEFALL",
+const char *DisabledMaskType::s_bitNameList[] = { "DEFAULT",
+																									"DISABLED_HACKED",
+																									"DISABLED_EMP",
+																									"DISABLED_HELD",
+																									"DISABLED_PARALYZED",
+																									"DISABLED_UNMANNED",
+																									"DISABLED_UNDERPOWERED",
+																									"DISABLED_FREEFALL",
 
-  "DISABLED_AWESTRUCK",
-  "DISABLED_BRAINWASHED",
-	"DISABLED_SUBDUED",
+																									"DISABLED_AWESTRUCK",
+																									"DISABLED_BRAINWASHED",
+																									"DISABLED_SUBDUED",
 
-	"DISABLED_SCRIPT_DISABLED",
-	"DISABLED_SCRIPT_UNDERPOWERED",
+																									"DISABLED_SCRIPT_DISABLED",
+																									"DISABLED_SCRIPT_UNDERPOWERED",
 
-	NULL
-};
+																									NULL };
 
-DisabledMaskType DISABLEDMASK_NONE;	// inits to all zeroes
+DisabledMaskType DISABLEDMASK_NONE; // inits to all zeroes
 DisabledMaskType DISABLEDMASK_ALL;
 
 void initDisabledMasks()
 {
-	SET_ALL_DISABLEDMASK_BITS( DISABLEDMASK_ALL );
+	SET_ALL_DISABLEDMASK_BITS(DISABLEDMASK_ALL);
 }

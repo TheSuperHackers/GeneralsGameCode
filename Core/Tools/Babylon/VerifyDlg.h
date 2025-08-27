@@ -26,7 +26,7 @@
 //
 
 #include "TransDB.h"
-#define IDSKIP		100
+#define IDSKIP 100
 
 /////////////////////////////////////////////////////////////////////////////
 // VerifyDlg dialog
@@ -36,35 +36,36 @@ class VerifyDlg : public CDialog
 	CBitmapButton stop;
 	CBitmapButton play;
 	CBitmapButton pause;
-	CWnd					*wave;
-	CStatic				*text;
-	BabylonText				*babylon_text;
-	LANGINFO			*linfo;
-	UINT					timer;
-	char					wavefile[1024];
+	CWnd *wave;
+	CStatic *text;
+	BabylonText *babylon_text;
+	LANGINFO *linfo;
+	UINT timer;
+	char wavefile[1024];
 	CSliderCtrl *slider;
-// Construction
+	// Construction
 public:
-	VerifyDlg(BabylonText *ntext, LangID langid, const char *path, CWnd* pParent = NULL);   // standard constructor
-	void CloseAudio ( void );
+	VerifyDlg(BabylonText *ntext, LangID langid, const char *path, CWnd *pParent = NULL); // standard constructor
+	void CloseAudio(void);
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(VerifyDlg)
-	enum { IDD = IDD_MATCHDIALOG };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_MATCHDIALOG
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(VerifyDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(VerifyDlg)
 	virtual BOOL OnInitDialog();

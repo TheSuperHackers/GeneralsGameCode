@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 // FILE: AIGuardRetaliate.h
 /*---------------------------------------------------------------------------*/
 /* Electronic Arts Los Angeles                                               */
@@ -36,7 +35,7 @@
 /* Desc:       // Define Guard Retaliation states for AI                     */
 /*---------------------------------------------------------------------------*/
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/PerfTimer.h"
 #include "Common/Team.h"
@@ -54,17 +53,18 @@
 
 const Real CLOSE_ENOUGH = (25.0f);
 
-
-static Bool hasAttackedMeAndICanReturnFire( State *thisState, void* /*userData*/ )
+static Bool hasAttackedMeAndICanReturnFire(State *thisState, void * /*userData*/)
 {
 	Object *obj = thisState->getMachineOwner();
 	BodyModuleInterface *bmi = obj ? obj->getBodyModule() : NULL;
 
-	if (!(obj && bmi)) {
+	if (!(obj && bmi))
+	{
 		return FALSE;
 	}
 
-	if (bmi->getClearableLastAttacker() == INVALID_ID) {
+	if (bmi->getClearableLastAttacker() == INVALID_ID)
+	{
 		return FALSE;
 	}
 
@@ -76,30 +76,33 @@ static Bool hasAttackedMeAndICanReturnFire( State *thisState, void* /*userData*/
 	// stops attacking us, then we want our timer to kick us off of him and make us go attack
 	// other units instead.
 
-
-	if (!target) {
+	if (!target)
+	{
 		return FALSE;
 	}
 
-	if (obj->getRelationship(target) != ENEMIES) {
+	if (obj->getRelationship(target) != ENEMIES)
+	{
 		return FALSE;
 	}
 
 	// This is a quick test on the target. It will be duplicated in getAbleToAttackSpecificObject,
 	// but the payoff is worth the duplication.
-	if (target->isEffectivelyDead()) {
+	if (target->isEffectivelyDead())
+	{
 		return FALSE;
 	}
 
 	//@todo: Get this out of here. Move it into the declaration of calling this function, or figure
 	// out some way to call it less often.
 
-	if (!obj->isAbleToAttack()) {
+	if (!obj->isAbleToAttack())
+	{
 		return FALSE;
 	}
 
 	CanAttackResult result = obj->getAbleToAttackSpecificObject(ATTACK_NEW_TARGET, target, CMD_FROM_AI);
-	if( result == ATTACKRESULT_POSSIBLE || result == ATTACKRESULT_POSSIBLE_AFTER_MOVING )
+	if (result == ATTACKRESULT_POSSIBLE || result == ATTACKRESULT_POSSIBLE_AFTER_MOVING)
 	{
 		return TRUE;
 	}
@@ -110,7 +113,7 @@ static Bool hasAttackedMeAndICanReturnFire( State *thisState, void* /*userData*/
 /**
  * This returns true if the conditions specified have been met, false otherwise.
  */
-Bool GuardRetaliateExitConditions::shouldExit(const StateMachine* machine) const
+Bool GuardRetaliateExitConditions::shouldExit(const StateMachine *machine) const
 {
 	if (!machine->getGoalObject())
 	{
@@ -145,19 +148,19 @@ Bool GuardRetaliateExitConditions::shouldExit(const StateMachine* machine) const
 													// then it would look for a new target, get the same one, and proceed in an infinite recursive
 													// loop that eventually blew the stack.
 
-		Real guardRangeSqr = sqr( AIGuardRetaliateMachine::getStdGuardRange( machine->getOwner() ) );
+		Real guardRangeSqr = sqr(AIGuardRetaliateMachine::getStdGuardRange(machine->getOwner()));
 		myRange.x = myPos.x - m_center.x;
 		myRange.y = myPos.y - m_center.y;
 		myRange.z = 0;
 
-		if( deltaAggressor.lengthSqr() > m_radiusSqr )
+		if (deltaAggressor.lengthSqr() > m_radiusSqr)
 		{
-			//The aggressor is too far away now... give up retaliation.
+			// The aggressor is too far away now... give up retaliation.
 			return TRUE;
 		}
-		if( myRange.lengthSqr() > guardRangeSqr )
+		if (myRange.lengthSqr() > guardRangeSqr)
 		{
-			//Never go beyond standard guard radius.
+			// Never go beyond standard guard radius.
 			return TRUE;
 		}
 	}
@@ -165,30 +168,53 @@ Bool GuardRetaliateExitConditions::shouldExit(const StateMachine* machine) const
 	return FALSE;
 }
 
-
 //-- AIGuardRetaliateMachine -------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------
-AIGuardRetaliateMachine::AIGuardRetaliateMachine( Object *owner ) :
-	StateMachine(owner, "AIGuardRetaliateMachine"),
-	m_nemesisToAttack(INVALID_ID)
+AIGuardRetaliateMachine::AIGuardRetaliateMachine(Object *owner) :
+		StateMachine(owner, "AIGuardRetaliateMachine"), m_nemesisToAttack(INVALID_ID)
 {
 	m_positionToGuard.zero();
 
-	static const StateConditionInfo attackAggressors[] =
-	{
+	static const StateConditionInfo attackAggressors[] = {
 		StateConditionInfo(hasAttackedMeAndICanReturnFire, AI_GUARD_RETALIATE_ATTACK_AGGRESSOR, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL) // keep last
 	};
 
 	// order matters: first state is the default state.
-// srj sez: I made "return" the start state, so that if ordered to guard a position
-// that isn't the unit's current position, it moves to that position first.
-	defineState( AI_GUARD_RETALIATE_ATTACK_AGGRESSOR, newInstance(AIGuardRetaliateAttackAggressorState)( this ), AI_GUARD_RETALIATE_RETURN, AI_GUARD_RETALIATE_RETURN );
-	defineState( AI_GUARD_RETALIATE_RETURN,						newInstance(AIGuardRetaliateReturnState)( this ), AI_GUARD_RETALIATE_IDLE, AI_GUARD_RETALIATE_INNER, attackAggressors );
-	defineState( AI_GUARD_RETALIATE_IDLE,							newInstance(AIGuardRetaliateIdleState)( this ), AI_GUARD_RETALIATE_INNER, EXIT_MACHINE_WITH_SUCCESS, attackAggressors );
-	defineState( AI_GUARD_RETALIATE_INNER,						newInstance(AIGuardRetaliateInnerState)( this ), AI_GUARD_RETALIATE_OUTER, AI_GUARD_RETALIATE_OUTER );
-	defineState( AI_GUARD_RETALIATE_OUTER,						newInstance(AIGuardRetaliateOuterState)( this ), AI_GUARD_RETALIATE_GET_CRATE, AI_GUARD_RETALIATE_GET_CRATE );
-	defineState( AI_GUARD_RETALIATE_GET_CRATE,				newInstance(AIGuardRetaliatePickUpCrateState)( this ), AI_GUARD_RETALIATE_RETURN, AI_GUARD_RETALIATE_RETURN );
+	// srj sez: I made "return" the start state, so that if ordered to guard a position
+	// that isn't the unit's current position, it moves to that position first.
+	defineState(
+			AI_GUARD_RETALIATE_ATTACK_AGGRESSOR,
+			newInstance(AIGuardRetaliateAttackAggressorState)(this),
+			AI_GUARD_RETALIATE_RETURN,
+			AI_GUARD_RETALIATE_RETURN);
+	defineState(
+			AI_GUARD_RETALIATE_RETURN,
+			newInstance(AIGuardRetaliateReturnState)(this),
+			AI_GUARD_RETALIATE_IDLE,
+			AI_GUARD_RETALIATE_INNER,
+			attackAggressors);
+	defineState(
+			AI_GUARD_RETALIATE_IDLE,
+			newInstance(AIGuardRetaliateIdleState)(this),
+			AI_GUARD_RETALIATE_INNER,
+			EXIT_MACHINE_WITH_SUCCESS,
+			attackAggressors);
+	defineState(
+			AI_GUARD_RETALIATE_INNER,
+			newInstance(AIGuardRetaliateInnerState)(this),
+			AI_GUARD_RETALIATE_OUTER,
+			AI_GUARD_RETALIATE_OUTER);
+	defineState(
+			AI_GUARD_RETALIATE_OUTER,
+			newInstance(AIGuardRetaliateOuterState)(this),
+			AI_GUARD_RETALIATE_GET_CRATE,
+			AI_GUARD_RETALIATE_GET_CRATE);
+	defineState(
+			AI_GUARD_RETALIATE_GET_CRATE,
+			newInstance(AIGuardRetaliatePickUpCrateState)(this),
+			AI_GUARD_RETALIATE_RETURN,
+			AI_GUARD_RETALIATE_RETURN);
 }
 
 //--------------------------------------------------------------------------------------
@@ -198,7 +224,7 @@ AIGuardRetaliateMachine::~AIGuardRetaliateMachine()
 
 Bool AIGuardRetaliateMachine::isIdle() const
 {
-	if( getCurrentStateID() == AI_IDLE )
+	if (getCurrentStateID() == AI_IDLE)
 	{
 		return TRUE;
 	}
@@ -206,10 +232,11 @@ Bool AIGuardRetaliateMachine::isIdle() const
 }
 
 //--------------------------------------------------------------------------------------
-/*static*/ Real AIGuardRetaliateMachine::getStdGuardRange(const Object* obj)
+/*static*/ Real AIGuardRetaliateMachine::getStdGuardRange(const Object *obj)
 {
-	Real visionRange = TheAI->getAdjustedVisionRangeForObject(obj,
-		AI_VISIONFACTOR_OWNERTYPE | AI_VISIONFACTOR_MOOD | AI_VISIONFACTOR_GUARDINNER);
+	Real visionRange = TheAI->getAdjustedVisionRangeForObject(
+			obj,
+			AI_VISIONFACTOR_OWNERTYPE | AI_VISIONFACTOR_MOOD | AI_VISIONFACTOR_GUARDINNER);
 
 	return visionRange;
 }
@@ -217,10 +244,10 @@ Bool AIGuardRetaliateMachine::isIdle() const
 //--------------------------------------------------------------------------------------
 Bool AIGuardRetaliateMachine::lookForInnerTarget(void)
 {
-	Object* owner = getOwner();
+	Object *owner = getOwner();
 	if (!owner->isAbleToAttack())
 	{
-		return false;	// my, that was easy
+		return false; // my, that was easy
 	}
 
 	// Check if team auto targets same victim.
@@ -231,17 +258,17 @@ Bool AIGuardRetaliateMachine::lookForInnerTarget(void)
 		if (teamVictim)
 		{
 			setNemesisID(teamVictim->getID());
-			return true;	// Transitions to AIGuardRetaliateInnerState.
+			return true; // Transitions to AIGuardRetaliateInnerState.
 		}
 	}
 
-	PartitionFilterRelationship					f1(owner, PartitionFilterRelationship::ALLOW_ENEMIES);
-	PartitionFilterPossibleToAttack			f2(ATTACK_NEW_TARGET, owner, CMD_FROM_AI);
-	PartitionFilterSameMapStatus				filterMapStatus(owner);
-	PartitionFilterRelationship					f5(owner, PartitionFilterRelationship::ALLOW_NEUTRAL);
-	PartitionFilterPossibleToEnter			f6(owner, CMD_FROM_AI);
-	PartitionFilterPossibleToHijack			f7(owner, CMD_FROM_AI);
-	PartitionFilterRejectBuildings			f8( owner );
+	PartitionFilterRelationship f1(owner, PartitionFilterRelationship::ALLOW_ENEMIES);
+	PartitionFilterPossibleToAttack f2(ATTACK_NEW_TARGET, owner, CMD_FROM_AI);
+	PartitionFilterSameMapStatus filterMapStatus(owner);
+	PartitionFilterRelationship f5(owner, PartitionFilterRelationship::ALLOW_NEUTRAL);
+	PartitionFilterPossibleToEnter f6(owner, CMD_FROM_AI);
+	PartitionFilterPossibleToHijack f7(owner, CMD_FROM_AI);
+	PartitionFilterRejectBuildings f8(owner);
 
 	PartitionFilter *filters[16];
 	Int count = 0;
@@ -267,7 +294,7 @@ Bool AIGuardRetaliateMachine::lookForInnerTarget(void)
 	{
 		filters[count++] = &f1;
 		filters[count++] = &f2;
-		filters[count++] = &f8; //Different than guard... we won't allow acquiring of structures (unless base defenses)
+		filters[count++] = &f8; // Different than guard... we won't allow acquiring of structures (unless base defenses)
 	}
 
 	filters[count++] = &filterMapStatus;
@@ -276,21 +303,21 @@ Bool AIGuardRetaliateMachine::lookForInnerTarget(void)
 
 	filters[count++] = NULL;
 
-//	SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(
-//					&pos, visionRange, FROM_CENTER_2D, filters, ITER_SORTED_NEAR_TO_FAR);
-//	MemoryPoolObjectHolder hold(iter);
-//	Object* target = iter->first();
-//
-// srj sez: the above code is stupid and slow. since we only want the closest object,
-// just ask for that; the above has to find ALL objects in range, but we ignore all
-// but the first (closest).
-//
+	//	SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(
+	//					&pos, visionRange, FROM_CENTER_2D, filters, ITER_SORTED_NEAR_TO_FAR);
+	//	MemoryPoolObjectHolder hold(iter);
+	//	Object* target = iter->first();
+	//
+	// srj sez: the above code is stupid and slow. since we only want the closest object,
+	// just ask for that; the above has to find ALL objects in range, but we ignore all
+	// but the first (closest).
+	//
 	const Coord3D *pos = getPositionToGuard();
-	Object* target = ThePartitionManager->getClosestObject(pos, visionRange, FROM_CENTER_2D, filters);
+	Object *target = ThePartitionManager->getClosestObject(pos, visionRange, FROM_CENTER_2D, filters);
 	if (target)
 	{
 		setNemesisID(target->getID());
-		return true;	// Transitions to AIGuardRetaliateInnerState.
+		return true; // Transitions to AIGuardRetaliateInnerState.
 	}
 	else
 	{
@@ -301,63 +328,64 @@ Bool AIGuardRetaliateMachine::lookForInnerTarget(void)
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateMachine::crc( Xfer *xfer )
+void AIGuardRetaliateMachine::crc(Xfer *xfer)
 {
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateMachine::xfer( Xfer *xfer )
+void AIGuardRetaliateMachine::xfer(Xfer *xfer)
 {
-  // version
-  XferVersion currentVersion = 2;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 2;
+	XferVersion version = currentVersion;
+	xfer->xferVersion(&version, currentVersion);
 
-	if (version>=2) {
-		StateMachine::xfer(xfer);	// Forgot this in initial implementation.  jba.
+	if (version >= 2)
+	{
+		StateMachine::xfer(xfer); // Forgot this in initial implementation.  jba.
 	}
 
 	xfer->xferObjectID(&m_nemesisToAttack);
 	xfer->xferCoord3D(&m_positionToGuard);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateMachine::loadPostProcess( void )
+void AIGuardRetaliateMachine::loadPostProcess(void)
 {
-}  // end loadPostProcess
+} // end loadPostProcess
 
 //-- AIGuardRetaliateInnerState ----------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateInnerState::crc( Xfer *xfer )
+void AIGuardRetaliateInnerState::crc(Xfer *xfer)
 {
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateInnerState::xfer( Xfer *xfer )
+void AIGuardRetaliateInnerState::xfer(Xfer *xfer)
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion(&version, currentVersion);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateInnerState::loadPostProcess( void )
+void AIGuardRetaliateInnerState::loadPostProcess(void)
 {
 	onEnter();
-}  // end loadPostProcess
+} // end loadPostProcess
 
 // ------------------------------------------------------------------------------------------------
 AIGuardRetaliateInnerState::~AIGuardRetaliateInnerState(void)
@@ -367,12 +395,12 @@ AIGuardRetaliateInnerState::~AIGuardRetaliateInnerState(void)
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateInnerState::onEnter( void )
+StateReturnType AIGuardRetaliateInnerState::onEnter(void)
 {
 	// See if we try to enter the target
 	if (getMachineOwner()->getTemplate()->isEnterGuard())
 	{
-		Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
+		Object *nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID());
 		if (nemesis == NULL)
 		{
 			DEBUG_LOG(("Unexpected NULL nemesis in AIGuardRetaliateInnerState."));
@@ -383,7 +411,8 @@ StateReturnType AIGuardRetaliateInnerState::onEnter( void )
 		m_enterState->getMachine()->setGoalObject(nemesis);
 
 		StateReturnType returnVal = m_enterState->onEnter();
-		if (returnVal == STATE_CONTINUE) {
+		if (returnVal == STATE_CONTINUE)
+		{
 			return STATE_CONTINUE;
 		}
 	}
@@ -391,23 +420,24 @@ StateReturnType AIGuardRetaliateInnerState::onEnter( void )
 	else
 	{
 		Coord3D pos = *getGuardMachine()->getPositionToGuard();
-		Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
+		Object *nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID());
 		if (nemesis == NULL)
 		{
 			DEBUG_LOG(("Unexpected NULL nemesis in AIGuardRetaliateInnerState."));
 			return STATE_SUCCESS;
 		}
 		m_exitConditions.m_center = pos;
-		m_exitConditions.m_radiusSqr = sqr( 1.5f * AIGuardRetaliateMachine::getStdGuardRange( getMachineOwner() ) );
-		m_exitConditions.m_conditionsToConsider = (GuardRetaliateExitConditions::ATTACK_ExitIfOutsideRadius |
-																								GuardRetaliateExitConditions::ATTACK_ExitIfNoUnitFound);
+		m_exitConditions.m_radiusSqr = sqr(1.5f * AIGuardRetaliateMachine::getStdGuardRange(getMachineOwner()));
+		m_exitConditions.m_conditionsToConsider =
+				(GuardRetaliateExitConditions::ATTACK_ExitIfOutsideRadius | GuardRetaliateExitConditions::ATTACK_ExitIfNoUnitFound);
 
 		m_attackState = newInstance(AIAttackState)(getMachine(), false, true, false, &m_exitConditions);
 
 		m_attackState->getMachine()->setGoalObject(nemesis);
 
 		StateReturnType returnVal = m_attackState->onEnter();
-		if (returnVal == STATE_CONTINUE) {
+		if (returnVal == STATE_CONTINUE)
+		{
 			return STATE_CONTINUE;
 		}
 	}
@@ -417,7 +447,7 @@ StateReturnType AIGuardRetaliateInnerState::onEnter( void )
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateInnerState::update( void )
+StateReturnType AIGuardRetaliateInnerState::update(void)
 {
 	if (m_attackState)
 	{
@@ -432,7 +462,7 @@ StateReturnType AIGuardRetaliateInnerState::update( void )
 }
 
 //--------------------------------------------------------------------------------------
-void AIGuardRetaliateInnerState::onExit( StateExitType status )
+void AIGuardRetaliateInnerState::onExit(StateExitType status)
 {
 	Object *obj = getMachineOwner();
 	if (m_attackState)
@@ -458,29 +488,29 @@ void AIGuardRetaliateInnerState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateOuterState::crc( Xfer *xfer )
+void AIGuardRetaliateOuterState::crc(Xfer *xfer)
 {
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateOuterState::xfer( Xfer *xfer )
+void AIGuardRetaliateOuterState::xfer(Xfer *xfer)
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion(&version, currentVersion);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateOuterState::loadPostProcess( void )
-{						 AIGuardRetaliateOuterState
-	onEnter();
-}  // end loadPostProcess
+void AIGuardRetaliateOuterState::loadPostProcess(void)
+{
+	AIGuardRetaliateOuterState onEnter();
+} // end loadPostProcess
 
 // ------------------------------------------------------------------------------------------------
 AIGuardRetaliateOuterState::~AIGuardRetaliateOuterState(void)
@@ -489,17 +519,17 @@ AIGuardRetaliateOuterState::~AIGuardRetaliateOuterState(void)
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateOuterState::onEnter( void )
+StateReturnType AIGuardRetaliateOuterState::onEnter(void)
 {
-	//if (getGuardMachine()->getGuardMode() == GUARDMODE_GUARD_WITHOUT_PURSUIT)
+	// if (getGuardMachine()->getGuardMode() == GUARDMODE_GUARD_WITHOUT_PURSUIT)
 	//{
 	//	// "patrol" mode does not follow targets outside the guard area.
 	//	return STATE_SUCCESS;
-	//}
+	// }
 
 	Coord3D pos = *getGuardMachine()->getPositionToGuard();
 
-	Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
+	Object *nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID());
 	if (nemesis == NULL)
 	{
 		DEBUG_LOG(("Unexpected NULL nemesis in AIGuardRetaliateOuterState."));
@@ -510,17 +540,18 @@ StateReturnType AIGuardRetaliateOuterState::onEnter( void )
 	Real range = TheAI->getAdjustedVisionRangeForObject(obj, AI_VISIONFACTOR_OWNERTYPE | AI_VISIONFACTOR_MOOD);
 
 	m_exitConditions.m_center = pos;
-	m_exitConditions.m_radiusSqr = sqr( 0.67f * (range + AIGuardRetaliateMachine::getStdGuardRange( getMachineOwner() )) );
+	m_exitConditions.m_radiusSqr = sqr(0.67f * (range + AIGuardRetaliateMachine::getStdGuardRange(getMachineOwner())));
 	m_exitConditions.m_attackGiveUpFrame = TheGameLogic->getFrame() + TheAI->getAiData()->m_guardChaseUnitFrames;
-	m_exitConditions.m_conditionsToConsider = (GuardRetaliateExitConditions::ATTACK_ExitIfExpiredDuration |
-																								GuardRetaliateExitConditions::ATTACK_ExitIfOutsideRadius |
-																								GuardRetaliateExitConditions::ATTACK_ExitIfNoUnitFound);
+	m_exitConditions.m_conditionsToConsider =
+			(GuardRetaliateExitConditions::ATTACK_ExitIfExpiredDuration | GuardRetaliateExitConditions::ATTACK_ExitIfOutsideRadius
+			 | GuardRetaliateExitConditions::ATTACK_ExitIfNoUnitFound);
 
 	m_attackState = newInstance(AIAttackState)(getMachine(), false, true, false, &m_exitConditions);
 	m_attackState->getMachine()->setGoalObject(nemesis);
 
 	StateReturnType returnVal = m_attackState->onEnter();
-	if (returnVal == STATE_CONTINUE) {
+	if (returnVal == STATE_CONTINUE)
+	{
 		return STATE_CONTINUE;
 	}
 
@@ -529,11 +560,12 @@ StateReturnType AIGuardRetaliateOuterState::onEnter( void )
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateOuterState::update( void )
+StateReturnType AIGuardRetaliateOuterState::update(void)
 {
-	if (m_attackState==NULL) return STATE_SUCCESS;
+	if (m_attackState == NULL)
+		return STATE_SUCCESS;
 
-	Object* goalObj = m_attackState->getMachineGoalObject();
+	Object *goalObj = m_attackState->getMachineGoalObject();
 	if (goalObj)
 	{
 		Coord3D deltaAggr;
@@ -552,7 +584,7 @@ StateReturnType AIGuardRetaliateOuterState::update( void )
 }
 
 //--------------------------------------------------------------------------------------
-void AIGuardRetaliateOuterState::onExit( StateExitType status )
+void AIGuardRetaliateOuterState::onExit(StateExitType status)
 {
 	if (m_attackState)
 	{
@@ -566,39 +598,39 @@ void AIGuardRetaliateOuterState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateReturnState::crc( Xfer *xfer )
+void AIGuardRetaliateReturnState::crc(Xfer *xfer)
 {
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateReturnState::xfer( Xfer *xfer )
+void AIGuardRetaliateReturnState::xfer(Xfer *xfer)
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion(&version, currentVersion);
 
 	xfer->xferUnsignedInt(&m_nextReturnScanTime);
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateReturnState::loadPostProcess( void )
+void AIGuardRetaliateReturnState::loadPostProcess(void)
 {
-}  // end loadPostProcess
+} // end loadPostProcess
 
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateReturnState::onEnter( void )
+StateReturnType AIGuardRetaliateReturnState::onEnter(void)
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 	m_nextReturnScanTime = now + GameLogicRandomValue(0, TheAI->getAiData()->m_guardEnemyReturnScanRate);
 
-// no, no, no, don't do this in onEnter, unless you like really slow maps. (srj)
-//	if (getGuardMachine()->lookForInnerTarget())
-//		return STATE_FAILURE; // early termination because we found a target.
+	// no, no, no, don't do this in onEnter, unless you like really slow maps. (srj)
+	//	if (getGuardMachine()->lookForInnerTarget())
+	//		return STATE_FAILURE; // early termination because we found a target.
 
 	m_goalPosition = *getGuardMachine()->getPositionToGuard();
 
@@ -612,7 +644,7 @@ StateReturnType AIGuardRetaliateReturnState::onEnter( void )
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateReturnState::update( void )
+StateReturnType AIGuardRetaliateReturnState::update(void)
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 	if (now >= m_nextReturnScanTime)
@@ -627,41 +659,41 @@ StateReturnType AIGuardRetaliateReturnState::update( void )
 }
 
 //--------------------------------------------------------------------------------------
-void AIGuardRetaliateReturnState::onExit( StateExitType status )
+void AIGuardRetaliateReturnState::onExit(StateExitType status)
 {
-	AIInternalMoveToState::onExit( status );
+	AIInternalMoveToState::onExit(status);
 }
 
 //-- AIGuardRetaliateIdleState ----------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateIdleState::crc( Xfer *xfer )
+void AIGuardRetaliateIdleState::crc(Xfer *xfer)
 {
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateIdleState::xfer( Xfer *xfer )
+void AIGuardRetaliateIdleState::xfer(Xfer *xfer)
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion(&version, currentVersion);
 
 	xfer->xferUnsignedInt(&m_nextEnemyScanTime);
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AIGuardRetaliateIdleState::loadPostProcess( void )
+void AIGuardRetaliateIdleState::loadPostProcess(void)
 {
-}  // end loadPostProcess
+} // end loadPostProcess
 
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateIdleState::onEnter( void )
+StateReturnType AIGuardRetaliateIdleState::onEnter(void)
 {
 	// first time thru, use a random amount so that everyone doesn't scan on the same frame,
 	// to avoid "spikes".
@@ -672,9 +704,9 @@ StateReturnType AIGuardRetaliateIdleState::onEnter( void )
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateIdleState::update( void )
+StateReturnType AIGuardRetaliateIdleState::update(void)
 {
-	//DEBUG_LOG(("AIGuardRetaliateIdleState frame %d: %08lx",TheGameLogic->getFrame(),getMachineOwner()));
+	// DEBUG_LOG(("AIGuardRetaliateIdleState frame %d: %08lx",TheGameLogic->getFrame(),getMachineOwner()));
 
 	UnsignedInt now = TheGameLogic->getFrame();
 	if (now < m_nextEnemyScanTime)
@@ -683,7 +715,7 @@ StateReturnType AIGuardRetaliateIdleState::update( void )
 	m_nextEnemyScanTime = now + TheAI->getAiData()->m_guardEnemyScanRate;
 
 #ifdef STATE_MACHINE_DEBUG
-	//getMachine()->setDebugOutput(true);
+	// getMachine()->setDebugOutput(true);
 #endif
 	Object *owner = getMachineOwner();
 	AIUpdateInterface *ai = owner->getAIUpdateInterface();
@@ -697,7 +729,7 @@ StateReturnType AIGuardRetaliateIdleState::update( void )
 	// if anyone is in the inner area, return success.
 	if (getGuardMachine()->lookForInnerTarget())
 	{
-		return STATE_SUCCESS;	// Transitions to AIGuardRetaliateInnerState.
+		return STATE_SUCCESS; // Transitions to AIGuardRetaliateInnerState.
 	}
 	else
 	{
@@ -708,27 +740,26 @@ StateReturnType AIGuardRetaliateIdleState::update( void )
 }
 
 //--------------------------------------------------------------------------------------
-void AIGuardRetaliateIdleState::onExit( StateExitType status )
+void AIGuardRetaliateIdleState::onExit(StateExitType status)
 {
-
 }
 
 //-- AIGuardRetaliatePickUpCrateState ----------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AIGuardRetaliatePickUpCrateState::AIGuardRetaliatePickUpCrateState( StateMachine *machine )	: AIPickUpCrateState(machine)
+AIGuardRetaliatePickUpCrateState::AIGuardRetaliatePickUpCrateState(StateMachine *machine) : AIPickUpCrateState(machine)
 {
 #ifdef STATE_MACHINE_DEBUG
-		setName("AIGuardRetaliatePickUpCrateState");
+	setName("AIGuardRetaliatePickUpCrateState");
 #endif
 }
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliatePickUpCrateState::onEnter( void )
+StateReturnType AIGuardRetaliatePickUpCrateState::onEnter(void)
 {
 	Object *owner = getMachineOwner();
 	AIUpdateInterface *ai = owner->getAIUpdateInterface();
 
 	// Check to see if we have created a crate we need to pick up.
-	Object* crate = ai->checkForCrateToPickup();
+	Object *crate = ai->checkForCrateToPickup();
 	if (crate)
 	{
 		getMachine()->setGoalObject(crate);
@@ -739,32 +770,33 @@ StateReturnType AIGuardRetaliatePickUpCrateState::onEnter( void )
 }
 
 //--------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliatePickUpCrateState::update( void )
+StateReturnType AIGuardRetaliatePickUpCrateState::update(void)
 {
 	return AIPickUpCrateState::update();
 }
 
 //--------------------------------------------------------------------------------------
-void AIGuardRetaliatePickUpCrateState::onExit( StateExitType status )
+void AIGuardRetaliatePickUpCrateState::onExit(StateExitType status)
 {
-
 }
 
 //-- AIGuardRetaliateAttackAggressorState ------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AIGuardRetaliateAttackAggressorState::AIGuardRetaliateAttackAggressorState( StateMachine *machine ) :
-	State( machine, "AIGuardRetaliateAttackAggressorState" )
+AIGuardRetaliateAttackAggressorState::AIGuardRetaliateAttackAggressorState(StateMachine *machine) :
+		State(machine, "AIGuardRetaliateAttackAggressorState")
 {
 	m_attackState = NULL;
 }
 #ifdef STATE_MACHINE_DEBUG
 //----------------------------------------------------------------------------------------------------------
-AsciiString AIGuardRetaliateAttackAggressorState::getName(  ) const
+AsciiString AIGuardRetaliateAttackAggressorState::getName() const
 {
 	AsciiString name = m_name;
 	name.concat("/ ");
-	if (m_attackState) name.concat(m_attackState->getName());
-	else name.concat("*NULL m_attackState");
+	if (m_attackState)
+		name.concat(m_attackState->getName());
+	else
+		name.concat("*NULL m_attackState");
 	return name;
 }
 #endif
@@ -776,27 +808,28 @@ AIGuardRetaliateAttackAggressorState::~AIGuardRetaliateAttackAggressorState(void
 }
 
 //-------------------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateAttackAggressorState::onEnter( void )
+StateReturnType AIGuardRetaliateAttackAggressorState::onEnter(void)
 {
 	Object *obj = getMachineOwner();
 	ObjectID nemID = INVALID_ID;
 
-	//Get the specified nemesis. If he doesn't exist... look at the object that damaged
-	//us last.
-	Object *nemesis = TheGameLogic->findObjectByID( getGuardMachine()->getNemesisID() );
+	// Get the specified nemesis. If he doesn't exist... look at the object that damaged
+	// us last.
+	Object *nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID());
 
 	BodyModuleInterface *body = obj->getBodyModule();
-	if( !nemesis && body && body->getLastDamageInfo()->in.m_sourceID && body->getLastDamageInfo()->in.m_damageType != DAMAGE_HEALING )
+	if (!nemesis && body && body->getLastDamageInfo()->in.m_sourceID
+			&& body->getLastDamageInfo()->in.m_damageType != DAMAGE_HEALING)
 	{
 		nemID = obj->getBodyModule()->getLastDamageInfo()->in.m_sourceID;
-		nemesis = TheGameLogic->findObjectByID( nemID );
-		if( nemesis && obj->getRelationship( nemesis ) == ENEMIES )
+		nemesis = TheGameLogic->findObjectByID(nemID);
+		if (nemesis && obj->getRelationship(nemesis) == ENEMIES)
 		{
 			getGuardMachine()->setNemesisID(nemID);
 		}
 	}
 
-	if( !nemesis )
+	if (!nemesis)
 	{
 		DEBUG_LOG(("Unexpected NULL nemesis in AIGuardRetaliateAttackAggressorState."));
 		return STATE_SUCCESS;
@@ -808,16 +841,17 @@ StateReturnType AIGuardRetaliateAttackAggressorState::onEnter( void )
 
 	m_exitConditions.m_center = pos;
 	m_exitConditions.m_attackGiveUpFrame = TheGameLogic->getFrame() + TheAI->getAiData()->m_guardChaseUnitFrames;
-	m_exitConditions.m_radiusSqr = sqr( range + AIGuardRetaliateMachine::getStdGuardRange( obj ) );
-	m_exitConditions.m_conditionsToConsider = ( GuardRetaliateExitConditions::ATTACK_ExitIfExpiredDuration |
-																						  GuardRetaliateExitConditions::ATTACK_ExitIfOutsideRadius |
-																						  GuardRetaliateExitConditions::ATTACK_ExitIfNoUnitFound );
+	m_exitConditions.m_radiusSqr = sqr(range + AIGuardRetaliateMachine::getStdGuardRange(obj));
+	m_exitConditions.m_conditionsToConsider =
+			(GuardRetaliateExitConditions::ATTACK_ExitIfExpiredDuration | GuardRetaliateExitConditions::ATTACK_ExitIfOutsideRadius
+			 | GuardRetaliateExitConditions::ATTACK_ExitIfNoUnitFound);
 
 	m_attackState = newInstance(AIAttackState)(getMachine(), false, true, false, &m_exitConditions);
 	m_attackState->getMachine()->setGoalObject(nemesis);
 
 	StateReturnType returnVal = m_attackState->onEnter();
-	if (returnVal == STATE_CONTINUE) {
+	if (returnVal == STATE_CONTINUE)
+	{
 		return STATE_CONTINUE;
 	}
 
@@ -826,15 +860,16 @@ StateReturnType AIGuardRetaliateAttackAggressorState::onEnter( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-StateReturnType AIGuardRetaliateAttackAggressorState::update( void )
+StateReturnType AIGuardRetaliateAttackAggressorState::update(void)
 {
-	if (m_attackState==NULL) return STATE_SUCCESS;
+	if (m_attackState == NULL)
+		return STATE_SUCCESS;
 
 	return m_attackState->update();
 }
 
 //-------------------------------------------------------------------------------------------------
-void AIGuardRetaliateAttackAggressorState::onExit( StateExitType status )
+void AIGuardRetaliateAttackAggressorState::onExit(StateExitType status)
 {
 	Object *obj = getMachineOwner();
 	if (m_attackState)
@@ -851,19 +886,17 @@ void AIGuardRetaliateAttackAggressorState::onExit( StateExitType status )
 }
 
 //-------------------------------------------------------------------------------------------------
-void AIGuardRetaliateAttackAggressorState::crc( Xfer *xfer )
+void AIGuardRetaliateAttackAggressorState::crc(Xfer *xfer)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
-void AIGuardRetaliateAttackAggressorState::xfer( Xfer *xfer )
+void AIGuardRetaliateAttackAggressorState::xfer(Xfer *xfer)
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
-
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion(&version, currentVersion);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -871,4 +904,3 @@ void AIGuardRetaliateAttackAggressorState::loadPostProcess()
 {
 	onEnter();
 }
-

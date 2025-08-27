@@ -27,9 +27,8 @@
 // Desc:   Minefield behavior
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #define DEFINE_RELATIONSHIP_NAMES
 #include "Common/GameState.h"
 #include "Common/RandomValue.h"
@@ -44,7 +43,6 @@
 #include "GameLogic/Module/MinefieldBehavior.h"
 #include "GameLogic/Module/AutoHealBehavior.h"
 #include "GameLogic/Weapon.h"
-
 
 // detonation never puts our health below this, since we probably auto-regen
 const Real MIN_HEALTH = 0.1f;
@@ -68,29 +66,38 @@ MinefieldBehaviorModuleData::MinefieldBehaviorModuleData()
 
 //-------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void MinefieldBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
+/*static*/ void MinefieldBehaviorModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
+	UpdateModuleData::buildFieldParse(p);
 
-  UpdateModuleData::buildFieldParse( p );
-
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "DetonationWeapon", INI::parseWeaponTemplate,	NULL, offsetof( MinefieldBehaviorModuleData, m_detonationWeapon ) },
-		{ "DetonatedBy", INI::parseBitString32, TheRelationshipNames, offsetof( MinefieldBehaviorModuleData, m_detonatedBy ) },
-		{ "StopsRegenAfterCreatorDies", INI::parseBool, NULL, offsetof( MinefieldBehaviorModuleData, m_stopsRegenAfterCreatorDies ) },
-		{ "Regenerates", INI::parseBool, NULL, offsetof( MinefieldBehaviorModuleData, m_regenerates ) },
-		{ "WorkersDetonate", INI::parseBool, NULL, offsetof( MinefieldBehaviorModuleData, m_workersDetonate ) },
-		{ "CreatorDeathCheckRate", INI::parseDurationUnsignedInt, NULL, offsetof( MinefieldBehaviorModuleData, m_creatorDeathCheckRate ) },
-		{ "ScootFromStartingPointTime", INI::parseDurationUnsignedInt, NULL, offsetof( MinefieldBehaviorModuleData, m_scootFromStartingPointTime ) },
-		{ "NumVirtualMines", INI::parseUnsignedInt, NULL, offsetof( MinefieldBehaviorModuleData, m_numVirtualMines ) },
-		{ "RepeatDetonateMoveThresh", INI::parseReal, NULL, offsetof( MinefieldBehaviorModuleData, m_repeatDetonateMoveThresh ) },
-		{ "DegenPercentPerSecondAfterCreatorDies", INI::parsePercentToReal,	NULL, offsetof( MinefieldBehaviorModuleData, m_healthPercentToDrainPerSecond ) },
-		{ "CreationList",	INI::parseObjectCreationList,	NULL,	offsetof( MinefieldBehaviorModuleData, m_ocl ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "DetonationWeapon", INI::parseWeaponTemplate, NULL, offsetof(MinefieldBehaviorModuleData, m_detonationWeapon) },
+		{ "DetonatedBy", INI::parseBitString32, TheRelationshipNames, offsetof(MinefieldBehaviorModuleData, m_detonatedBy) },
+		{ "StopsRegenAfterCreatorDies",
+			INI::parseBool,
+			NULL,
+			offsetof(MinefieldBehaviorModuleData, m_stopsRegenAfterCreatorDies) },
+		{ "Regenerates", INI::parseBool, NULL, offsetof(MinefieldBehaviorModuleData, m_regenerates) },
+		{ "WorkersDetonate", INI::parseBool, NULL, offsetof(MinefieldBehaviorModuleData, m_workersDetonate) },
+		{ "CreatorDeathCheckRate",
+			INI::parseDurationUnsignedInt,
+			NULL,
+			offsetof(MinefieldBehaviorModuleData, m_creatorDeathCheckRate) },
+		{ "ScootFromStartingPointTime",
+			INI::parseDurationUnsignedInt,
+			NULL,
+			offsetof(MinefieldBehaviorModuleData, m_scootFromStartingPointTime) },
+		{ "NumVirtualMines", INI::parseUnsignedInt, NULL, offsetof(MinefieldBehaviorModuleData, m_numVirtualMines) },
+		{ "RepeatDetonateMoveThresh", INI::parseReal, NULL, offsetof(MinefieldBehaviorModuleData, m_repeatDetonateMoveThresh) },
+		{ "DegenPercentPerSecondAfterCreatorDies",
+			INI::parsePercentToReal,
+			NULL,
+			offsetof(MinefieldBehaviorModuleData, m_healthPercentToDrainPerSecond) },
+		{ "CreationList", INI::parseObjectCreationList, NULL, offsetof(MinefieldBehaviorModuleData, m_ocl) },
 		{ 0, 0, 0, 0 }
 	};
 
-  p.add( dataFieldParse );
-
+	p.add(dataFieldParse);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,10 +106,9 @@ MinefieldBehaviorModuleData::MinefieldBehaviorModuleData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-MinefieldBehavior::MinefieldBehavior( Thing *thing, const ModuleData* moduleData )
-								 : UpdateModule( thing, moduleData )
+MinefieldBehavior::MinefieldBehavior(Thing *thing, const ModuleData *moduleData) : UpdateModule(thing, moduleData)
 {
-	const MinefieldBehaviorModuleData* d = getMinefieldBehaviorModuleData();
+	const MinefieldBehaviorModuleData *d = getMinefieldBehaviorModuleData();
 	m_nextDeathCheckFrame = 0;
 	m_scootFramesLeft = 0;
 	m_scootVel.zero();
@@ -119,10 +125,10 @@ MinefieldBehavior::MinefieldBehavior( Thing *thing, const ModuleData* moduleData
 	}
 
 	// start off awake, and we will calcSleepTime from here on
-	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
+	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 
 	// mines aren't auto-acquirable
-	getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_NO_ATTACK_FROM_AI ) );
+	getObject()->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_NO_ATTACK_FROM_AI));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -135,19 +141,19 @@ MinefieldBehavior::~MinefieldBehavior()
 // ------------------------------------------------------------------------------------------------
 UpdateSleepTime MinefieldBehavior::calcSleepTime()
 {
-	const MinefieldBehaviorModuleData* d = getMinefieldBehaviorModuleData();
+	const MinefieldBehaviorModuleData *d = getMinefieldBehaviorModuleData();
 
 	// if we're draining we have to update every frame
 	if (m_draining)
 		return UPDATE_SLEEP_NONE;
 
 	// if we're scooting we need to update every frame
-	if( m_scootFramesLeft > 0 )
+	if (m_scootFramesLeft > 0)
 		return UPDATE_SLEEP_NONE;
 
 	// if there is anybody in our immulity monitoring we need to update every frame
-	for( Int i = 0; i < MAX_IMMUNITY; ++i )
-		if( m_immunes[ i ].id != INVALID_ID )
+	for (Int i = 0; i < MAX_IMMUNITY; ++i)
+		if (m_immunes[i].id != INVALID_ID)
 			return UPDATE_SLEEP_NONE;
 
 	UnsignedInt sleepTime = FOREVER;
@@ -157,23 +163,22 @@ UpdateSleepTime MinefieldBehavior::calcSleepTime()
 	// about it (that is, when our creator dies)
 	//
 	if (m_regenerates && d->m_stopsRegenAfterCreatorDies)
-		sleepTime = min( sleepTime, m_nextDeathCheckFrame - now );
+		sleepTime = min(sleepTime, m_nextDeathCheckFrame - now);
 
 	// if we don't want to sleep forever, prevent 0 frame sleeps
-	if( sleepTime == 0 )
+	if (sleepTime == 0)
 		sleepTime = 1;
 
 	// sleep forever
-	return UPDATE_SLEEP( sleepTime );
-
+	return UPDATE_SLEEP(sleepTime);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime MinefieldBehavior::update()
 {
-	Object* obj = getObject();
-	const MinefieldBehaviorModuleData* d = getMinefieldBehaviorModuleData();
+	Object *obj = getObject();
+	const MinefieldBehaviorModuleData *d = getMinefieldBehaviorModuleData();
 	UnsignedInt now = TheGameLogic->getFrame();
 
 	if (m_scootFramesLeft > 0)
@@ -194,7 +199,7 @@ UpdateSleepTime MinefieldBehavior::update()
 		PathfindLayerEnum newLayer = TheTerrainLogic->getHighestLayerForDestination(&tmp);
 		obj->setLayer(newLayer);
 
-		Real ground = TheTerrainLogic->getLayerHeight( pt.x, pt.y, newLayer );
+		Real ground = TheTerrainLogic->getLayerHeight(pt.x, pt.y, newLayer);
 
 		if (newLayer != LAYER_GROUND)
 		{
@@ -217,18 +222,16 @@ UpdateSleepTime MinefieldBehavior::update()
 		if (m_immunes[i].id == INVALID_ID)
 			continue;
 
-		if (TheGameLogic->findObjectByID(m_immunes[i].id) == NULL ||
-				now > m_immunes[i].collideTime + 2)
+		if (TheGameLogic->findObjectByID(m_immunes[i].id) == NULL || now > m_immunes[i].collideTime + 2)
 		{
-			//DEBUG_LOG(("expiring an immunity %d",m_immunes[i].id));
-			m_immunes[i].id = INVALID_ID;	// he's dead, jim.
+			// DEBUG_LOG(("expiring an immunity %d",m_immunes[i].id));
+			m_immunes[i].id = INVALID_ID; // he's dead, jim.
 			m_immunes[i].collideTime = 0;
 		}
 	}
 
 	if (now >= m_nextDeathCheckFrame)
 	{
-
 		// check to see if there is an enemy building on me... since enemy buildings can be build on top of me
 
 		// check to see if the building that made me is gone, and whether therefore, I should go
@@ -238,13 +241,13 @@ UpdateSleepTime MinefieldBehavior::update()
 			ObjectID producerID = getObject()->getProducerID();
 			if (producerID != INVALID_ID)
 			{
-				Object* producer = TheGameLogic->findObjectByID(producerID);
+				Object *producer = TheGameLogic->findObjectByID(producerID);
 				if (producer == NULL || producer->isEffectivelyDead())
 				{
 					m_regenerates = false;
 					m_draining = true;
 					static const NameKeyType key_AutoHealBehavior = NAMEKEY("AutoHealBehavior");
-					AutoHealBehavior* ahb = (AutoHealBehavior*)obj->findUpdateModule( key_AutoHealBehavior );
+					AutoHealBehavior *ahb = (AutoHealBehavior *)obj->findUpdateModule(key_AutoHealBehavior);
 					if (ahb)
 						ahb->stopHealing();
 				}
@@ -255,11 +258,12 @@ UpdateSleepTime MinefieldBehavior::update()
 	if (m_draining)
 	{
 		DamageInfo damageInfo;
-		damageInfo.in.m_amount = (obj->getBodyModule()->getMaxHealth() * d->m_healthPercentToDrainPerSecond) / LOGICFRAMES_PER_SECOND;
+		damageInfo.in.m_amount =
+				(obj->getBodyModule()->getMaxHealth() * d->m_healthPercentToDrainPerSecond) / LOGICFRAMES_PER_SECOND;
 		damageInfo.in.m_sourceID = obj->getID();
 		damageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
 		damageInfo.in.m_deathType = DEATH_NORMAL;
-		obj->attemptDamage( &damageInfo );
+		obj->attemptDamage(&damageInfo);
 	}
 
 	return calcSleepTime();
@@ -267,13 +271,13 @@ UpdateSleepTime MinefieldBehavior::update()
 
 // ------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void MinefieldBehavior::detonateOnce(const Coord3D& position)
+void MinefieldBehavior::detonateOnce(const Coord3D &position)
 {
-	const MinefieldBehaviorModuleData* d = getMinefieldBehaviorModuleData();
+	const MinefieldBehaviorModuleData *d = getMinefieldBehaviorModuleData();
 	if (d->m_detonationWeapon)
 	{
-		Object* obj = getObject();
-	  TheWeaponStore->createAndFireTempWeapon(d->m_detonationWeapon, obj, &position);
+		Object *obj = getObject();
+		TheWeaponStore->createAndFireTempWeapon(d->m_detonationWeapon, obj, &position);
 	}
 
 	if (m_virtualMinesRemaining > 0)
@@ -286,7 +290,7 @@ void MinefieldBehavior::detonateOnce(const Coord3D& position)
 	else
 	{
 		Real percent = (Real)m_virtualMinesRemaining / (Real)d->m_numVirtualMines;
-		BodyModuleInterface* body = getObject()->getBodyModule();
+		BodyModuleInterface *body = getObject()->getBodyModule();
 		Real health = body->getHealth();
 		Real desired = percent * body->getMaxHealth();
 		if (desired < MIN_HEALTH)
@@ -297,8 +301,8 @@ void MinefieldBehavior::detonateOnce(const Coord3D& position)
 		{
 			m_ignoreDamage = true;
 
-			//body->internalChangeHealth(desired - health);
-			//can't use this, AutoHeal won't work unless we go thru normal damage stuff
+			// body->internalChangeHealth(desired - health);
+			// can't use this, AutoHeal won't work unless we go thru normal damage stuff
 
 			DamageInfo extraDamageInfo;
 			extraDamageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
@@ -314,14 +318,13 @@ void MinefieldBehavior::detonateOnce(const Coord3D& position)
 	if (m_virtualMinesRemaining == 0)
 	{
 		getObject()->setModelConditionState(MODELCONDITION_RUBBLE);
-		getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ) );
+		getObject()->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_MASKED));
 	}
 	else
 	{
 		getObject()->clearModelConditionState(MODELCONDITION_RUBBLE);
-		getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ) );
+		getObject()->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_MASKED));
 	}
-
 
 	if (d->m_ocl)
 	{
@@ -330,14 +333,14 @@ void MinefieldBehavior::detonateOnce(const Coord3D& position)
 }
 
 //-----------------------------------------------------------------------------
-static Real calcDistSquared(const Coord3D& a, const Coord3D& b)
+static Real calcDistSquared(const Coord3D &a, const Coord3D &b)
 {
 	return sqr(a.x - b.x) + sqr(a.y - b.y) + sqr(a.z - b.z);
 }
 
 // ------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void MinefieldBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3D *normal )
+void MinefieldBehavior::onCollide(Object *other, const Coord3D *loc, const Coord3D *normal)
 {
 	if (other == NULL || other->isEffectivelyDead())
 		return;
@@ -345,8 +348,8 @@ void MinefieldBehavior::onCollide( Object *other, const Coord3D *loc, const Coor
 	if (m_virtualMinesRemaining == 0)
 		return;
 
-	Object* obj = getObject();
-	const MinefieldBehaviorModuleData* d = getMinefieldBehaviorModuleData();
+	Object *obj = getObject();
+	const MinefieldBehaviorModuleData *d = getMinefieldBehaviorModuleData();
 	UnsignedInt now = TheGameLogic->getFrame();
 
 	// is this guy in our immune list?
@@ -355,7 +358,7 @@ void MinefieldBehavior::onCollide( Object *other, const Coord3D *loc, const Coor
 	{
 		if (m_immunes[i].id == other->getID())
 		{
-			//DEBUG_LOG(("ignoring due to immunity %d",m_immunes[i].id));
+			// DEBUG_LOG(("ignoring due to immunity %d",m_immunes[i].id));
 			m_immunes[i].collideTime = now;
 			return;
 		}
@@ -370,9 +373,12 @@ void MinefieldBehavior::onCollide( Object *other, const Coord3D *loc, const Coor
 
 	Int requiredMask = 0;
 	Relationship r = obj->getRelationship(other);
-	if (r == ALLIES) requiredMask = (1 << ALLIES);
-	else if (r == ENEMIES) requiredMask = (1 << ENEMIES);
-	else if (r == NEUTRAL) requiredMask = (1 << NEUTRAL);
+	if (r == ALLIES)
+		requiredMask = (1 << ALLIES);
+	else if (r == ENEMIES)
+		requiredMask = (1 << ENEMIES);
+	else if (r == NEUTRAL)
+		requiredMask = (1 << NEUTRAL);
 	if ((d->m_detonatedBy & requiredMask) == 0)
 		return;
 
@@ -384,7 +390,7 @@ void MinefieldBehavior::onCollide( Object *other, const Coord3D *loc, const Coor
 	// even if we aren't the specific mine they are trying to clear. (however, they must
 	// have a real mine they area trying to clear... it's possible they could be trying to
 	// clear a position where there is no mine, in which case we grant them no immunity, muwahahaha)
-	AIUpdateInterface* otherAI = other->getAI();
+	AIUpdateInterface *otherAI = other->getAI();
 	if (otherAI && otherAI->isClearingMines() && otherAI->getGoalObject() != NULL)
 	{
 		// mine-clearers are granted immunity to us for as long as they continuously
@@ -395,12 +401,12 @@ void MinefieldBehavior::onCollide( Object *other, const Coord3D *loc, const Coor
 		{
 			if (m_immunes[i].id == INVALID_ID || m_immunes[i].id == other->getID())
 			{
-				//DEBUG_LOG(("add/update immunity %d",m_immunes[i].id));
+				// DEBUG_LOG(("add/update immunity %d",m_immunes[i].id));
 				m_immunes[i].id = other->getID();
 				m_immunes[i].collideTime = now;
 
 				// wake up
-				setWakeFrame( obj, calcSleepTime() );
+				setWakeFrame(obj, calcSleepTime());
 
 				break;
 			}
@@ -445,23 +451,21 @@ void MinefieldBehavior::onCollide( Object *other, const Coord3D *loc, const Coor
 
 // ------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void MinefieldBehavior::onDamage( DamageInfo *damageInfo )
+void MinefieldBehavior::onDamage(DamageInfo *damageInfo)
 {
 	if (m_ignoreDamage)
 		return;
 
-	const MinefieldBehaviorModuleData* d = getMinefieldBehaviorModuleData();
+	const MinefieldBehaviorModuleData *d = getMinefieldBehaviorModuleData();
 
 	// detonate as many times as neccessary for our virtual mine count to match our health
-	BodyModuleInterface* body = getObject()->getBodyModule();
+	BodyModuleInterface *body = getObject()->getBodyModule();
 
 	for (;;)
 	{
 		Real virtualMinesExpectedF = ((Real)d->m_numVirtualMines * body->getHealth() / body->getMaxHealth());
-		Int virtualMinesExpected =
-			damageInfo->in.m_damageType == DAMAGE_HEALING ?
-			REAL_TO_INT_FLOOR(virtualMinesExpectedF) :
-			REAL_TO_INT_CEIL(virtualMinesExpectedF);
+		Int virtualMinesExpected = damageInfo->in.m_damageType == DAMAGE_HEALING ? REAL_TO_INT_FLOOR(virtualMinesExpectedF) :
+																																							 REAL_TO_INT_CEIL(virtualMinesExpectedF);
 		if (virtualMinesExpected > d->m_numVirtualMines)
 			virtualMinesExpected = d->m_numVirtualMines;
 		if (m_virtualMinesRemaining < virtualMinesExpected)
@@ -470,9 +474,8 @@ void MinefieldBehavior::onDamage( DamageInfo *damageInfo )
 		}
 		else if (m_virtualMinesRemaining > virtualMinesExpected)
 		{
-			if (m_draining &&
-						damageInfo->in.m_sourceID == getObject()->getID() &&
-						damageInfo->in.m_damageType == DAMAGE_UNRESISTABLE)
+			if (m_draining && damageInfo->in.m_sourceID == getObject()->getID()
+					&& damageInfo->in.m_damageType == DAMAGE_UNRESISTABLE)
 			{
 				// don't detonate.... just ditch a mine
 				--m_virtualMinesRemaining;
@@ -498,25 +501,25 @@ void MinefieldBehavior::onDamage( DamageInfo *damageInfo )
 		}
 
 		getObject()->setModelConditionState(MODELCONDITION_RUBBLE);
-		getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ) );
+		getObject()->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_MASKED));
 	}
 	else
 	{
 		getObject()->clearModelConditionState(MODELCONDITION_RUBBLE);
-		getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ) );
+		getObject()->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_MASKED));
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void MinefieldBehavior::onHealing( DamageInfo *damageInfo )
+void MinefieldBehavior::onHealing(DamageInfo *damageInfo)
 {
 	onDamage(damageInfo);
 }
 
 // ------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void MinefieldBehavior::onDie( const DamageInfo *damageInfo )
+void MinefieldBehavior::onDie(const DamageInfo *damageInfo)
 {
 	TheGameLogic->destroyObject(getObject());
 }
@@ -534,14 +537,14 @@ void MinefieldBehavior::disarm()
 	// detonation never puts our health below this, since we probably auto-regen
 	const Real MIN_HEALTH = 0.1f;
 
-	BodyModuleInterface* body = getObject()->getBodyModule();
+	BodyModuleInterface *body = getObject()->getBodyModule();
 	Real desired = MIN_HEALTH;
 	Real amount = body->getHealth() - desired;
 
 	m_ignoreDamage = true;
 
-	//body->internalChangeHealth(desired - health);
-	//can't use this, AutoHeal won't work unless we go thru normal damage stuff
+	// body->internalChangeHealth(desired - health);
+	// can't use this, AutoHeal won't work unless we go thru normal damage stuff
 
 	DamageInfo extraDamageInfo;
 	extraDamageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
@@ -554,19 +557,19 @@ void MinefieldBehavior::disarm()
 
 	m_virtualMinesRemaining = 0;
 	getObject()->setModelConditionState(MODELCONDITION_RUBBLE);
-	getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ) );
+	getObject()->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_MASKED));
 }
 
 // ------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void MinefieldBehavior::setScootParms(const Coord3D& start, const Coord3D& end)
+void MinefieldBehavior::setScootParms(const Coord3D &start, const Coord3D &end)
 {
-	Object* obj = getObject();
-	const MinefieldBehaviorModuleData* d = getMinefieldBehaviorModuleData();
+	Object *obj = getObject();
+	const MinefieldBehaviorModuleData *d = getMinefieldBehaviorModuleData();
 	UnsignedInt scootFromStartingPointTime = d->m_scootFromStartingPointTime;
 
 	Coord3D endOnGround = end;
-	endOnGround.z = TheTerrainLogic->getGroundHeight( endOnGround.x, endOnGround.y );
+	endOnGround.z = TheTerrainLogic->getGroundHeight(endOnGround.x, endOnGround.y);
 	if (start.z > endOnGround.z)
 	{
 		// figure out how long it will take to fall, and replace scoot time with that
@@ -598,7 +601,7 @@ void MinefieldBehavior::setScootParms(const Coord3D& start, const Coord3D& end)
 		{
 			Real t = (Real)scootFromStartingPointTime;
 			Real scootFromStartingPointSpeed = dist / t;
-			Real accelMag = fabs(2.0f * (dist - scootFromStartingPointSpeed*t)/sqr(t));
+			Real accelMag = fabs(2.0f * (dist - scootFromStartingPointSpeed * t) / sqr(t));
 			Real dxNorm = (dist <= 0.1f) ? 0.0f : (dx / dist);
 			Real dyNorm = (dist <= 0.1f) ? 0.0f : (dy / dist);
 			m_scootVel.x = dxNorm * scootFromStartingPointSpeed;
@@ -610,93 +613,88 @@ void MinefieldBehavior::setScootParms(const Coord3D& start, const Coord3D& end)
 			m_scootFramesLeft = scootFromStartingPointTime;
 
 			// we need to wake ourselves up because we could be lying here sleeping forever
-			setWakeFrame( obj, calcSleepTime() );
-
+			setWakeFrame(obj, calcSleepTime());
 		}
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void MinefieldBehavior::crc( Xfer *xfer )
+void MinefieldBehavior::crc(Xfer *xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
+	UpdateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void MinefieldBehavior::xfer( Xfer *xfer )
+void MinefieldBehavior::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// mines remaining
 	/// @todo srj -- ensure health, appearance, etc are correct for save/reload! post-MP!
-	xfer->xferUnsignedInt( &m_virtualMinesRemaining );
+	xfer->xferUnsignedInt(&m_virtualMinesRemaining);
 
 	// next death check frame
-	xfer->xferUnsignedInt( &m_nextDeathCheckFrame );
+	xfer->xferUnsignedInt(&m_nextDeathCheckFrame);
 
 	// scoot frames left
-	xfer->xferUnsignedInt( &m_scootFramesLeft );
+	xfer->xferUnsignedInt(&m_scootFramesLeft);
 
 	// scoot velocity
-	xfer->xferCoord3D( &m_scootVel );
+	xfer->xferCoord3D(&m_scootVel);
 
 	// scoot acceleration
-	xfer->xferCoord3D( &m_scootAccel );
+	xfer->xferCoord3D(&m_scootAccel);
 
-	xfer->xferBool( &m_ignoreDamage );
-	xfer->xferBool( &m_regenerates );
-	xfer->xferBool( &m_draining );
+	xfer->xferBool(&m_ignoreDamage);
+	xfer->xferBool(&m_regenerates);
+	xfer->xferBool(&m_draining);
 
 	// immunities
 	UnsignedByte maxImmunity = MAX_IMMUNITY;
-	xfer->xferUnsignedByte( &maxImmunity );
-	if( maxImmunity != MAX_IMMUNITY )
+	xfer->xferUnsignedByte(&maxImmunity);
+	if (maxImmunity != MAX_IMMUNITY)
 	{
-
-		DEBUG_CRASH(( "MinefieldBehavior::xfer - MAX_IMMUNITY has changed size, you must version this code and then you can remove this error message" ));
+		DEBUG_CRASH(
+				("MinefieldBehavior::xfer - MAX_IMMUNITY has changed size, you must version this code and then you can remove this "
+				 "error message"));
 		throw SC_INVALID_DATA;
 
-	}  // end if
-	for( UnsignedByte i = 0; i < maxImmunity; ++i )
+	} // end if
+	for (UnsignedByte i = 0; i < maxImmunity; ++i)
 	{
-
 		// object id
-		xfer->xferObjectID( &m_immunes[ i ].id );
+		xfer->xferObjectID(&m_immunes[i].id);
 
 		// collide time
-		xfer->xferUnsignedInt( &m_immunes[ i ].collideTime );
+		xfer->xferUnsignedInt(&m_immunes[i].collideTime);
 
-	}  // end for, i
+	} // end for, i
 
-	if( xfer->getXferMode() == XFER_LOAD )
+	if (xfer->getXferMode() == XFER_LOAD)
 		m_detonators.clear();
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void MinefieldBehavior::loadPostProcess( void )
+void MinefieldBehavior::loadPostProcess(void)
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

@@ -39,15 +39,13 @@ class Object;
 
 //-------------------------------------------------------------------------------------------
 /** */
-enum IterOrderType CPP_11(: Int)
-{
-	ITER_FASTEST,										///< iterate in arbitrary order
-	ITER_SORTED_NEAR_TO_FAR,				///< iterate in nearest-to-farthest order (may be slower)
-	ITER_SORTED_FAR_TO_NEAR,				///< iterate in farthest-to-nearest order (may be slower)
-	ITER_SORTED_CHEAP_TO_EXPENSIVE,	///< iterate in cheapest-to-most-expensive order (slower)
-	ITER_SORTED_EXPENSIVE_TO_CHEAP	///< iterate in most-expensive-to-cheapest order (slower)
+enum IterOrderType CPP_11( : Int){
+	ITER_FASTEST, ///< iterate in arbitrary order
+	ITER_SORTED_NEAR_TO_FAR, ///< iterate in nearest-to-farthest order (may be slower)
+	ITER_SORTED_FAR_TO_NEAR, ///< iterate in farthest-to-nearest order (may be slower)
+	ITER_SORTED_CHEAP_TO_EXPENSIVE, ///< iterate in cheapest-to-most-expensive order (slower)
+	ITER_SORTED_EXPENSIVE_TO_CHEAP ///< iterate in most-expensive-to-cheapest order (slower)
 };
-
 
 //-------------------------------------------------------------------------------------------
 /**
@@ -76,12 +74,13 @@ class ObjectIterator : public MemoryPoolObject
 {
 	MEMORY_POOL_GLUE_ABC(ObjectIterator)
 public:
-	virtual Object *first() = 0;		///< reset iterator and return first item (or null if iter is empty)
-	virtual Object *next() = 0;			///< advance and return next item (or null if no more to iterate)
+	virtual Object *first() = 0; ///< reset iterator and return first item (or null if iter is empty)
+	virtual Object *next() = 0; ///< advance and return next item (or null if no more to iterate)
 };
 
-inline ObjectIterator::~ObjectIterator() { }
-
+inline ObjectIterator::~ObjectIterator()
+{
+}
 
 //-------------------------------------------------------------------------------------------
 /**
@@ -90,20 +89,18 @@ inline ObjectIterator::~ObjectIterator() { }
 */
 class SimpleObjectIterator : public ObjectIterator
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SimpleObjectIterator, "SimpleObjectIteratorPool" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SimpleObjectIterator, "SimpleObjectIteratorPool")
 private:
-
 	class Clump : public MemoryPoolObject
 	{
-		MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Clump, "SimpleObjectIteratorClumpPool" )
+		MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Clump, "SimpleObjectIteratorClumpPool")
 	public:
-
-		Clump			*m_nextClump;
-		Object		*m_obj;
-		Real			m_numeric;	// typically, dist-squared
+		Clump *m_nextClump;
+		Object *m_obj;
+		Real m_numeric; // typically, dist-squared
 
 		Clump();
-	//~Clump();
+		//~Clump();
 	};
 
 	typedef Real (*ClumpCompareProc)(Clump *a, Clump *b);
@@ -114,20 +111,23 @@ private:
 	static Real sortCheapToExpensive(Clump *a, Clump *b);
 	static Real sortExpensiveToCheap(Clump *a, Clump *b);
 
-
-	Clump				*m_firstClump;
-	Clump				*m_curClump;
-	Int					m_clumpCount;
+	Clump *m_firstClump;
+	Clump *m_curClump;
+	Int m_clumpCount;
 
 	void reset();
 
 public:
 	SimpleObjectIterator();
-//~SimpleObjectIterator();	// provided by MPO
+	//~SimpleObjectIterator();	// provided by MPO
 	Object *first() { return firstWithNumeric(NULL); }
 	Object *next() { return nextWithNumeric(NULL); }
 
-	Object *firstWithNumeric(Real *num = NULL) { reset(); return nextWithNumeric(num); }
+	Object *firstWithNumeric(Real *num = NULL)
+	{
+		reset();
+		return nextWithNumeric(num);
+	}
 	Object *nextWithNumeric(Real *num = NULL);
 
 	// methods that are not inherited from ObjectIterator:
@@ -156,6 +156,4 @@ public:
 	Int getCount() { return m_clumpCount; }
 };
 
-
 #endif // _OBJECT_ITER_H_
-

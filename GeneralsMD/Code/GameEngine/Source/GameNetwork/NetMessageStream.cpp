@@ -22,8 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
-
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 // NetMessageStream.cpp
 // Holds misc functions to encapsulate GameMessages into Command Packets to send
@@ -66,7 +65,8 @@ static CommandMsg *CommandTail[MAX_SLOTS] = {
 /**
  * AddToNetCommandList adds a CommandMsg to a list of commands.
  *
-static Bool AddToNetCommandList(GameMessage *msg, UnsignedInt timestamp, CommandMsg *& CommandHead, CommandMsg *& CommandTail)
+static Bool AddToNetCommandList(GameMessage *msg, UnsignedInt timestamp, CommandMsg *& CommandHead, CommandMsg *&
+CommandTail)
 {
 	CommandMsg *cmdMsg = NEW CommandMsg(timestamp, msg);
 	if (!cmdMsg)
@@ -179,7 +179,8 @@ Bool AddCommandToPacket(const GameMessage *msg)
 	if (bytesUsed && (bytesUsed + sizeof(CommandPacketHeader) + messageSize >= MAX_MESSAGE_LEN))
 	{
 		commandBuf[0] = MSGTYPE_PARTIALCOMMAND;
-		if (!TheNetwork->queueSend(BROADCAST_CON, commandBuf, bytesUsed + sizeof(CommandPacketHeader) + 1, MSG_NEEDACK | MSG_SEQUENCED))
+		if (!TheNetwork->queueSend(BROADCAST_CON, commandBuf, bytesUsed + sizeof(CommandPacketHeader) + 1, MSG_NEEDACK |
+MSG_SEQUENCED))
 		{
 			//DEBUG_ASSERTCRASH(false, ("Too many commands in one frame!  Some will be dropped."));
 			DEBUG_LOG(("Too many commands in one frame!  Some will be dropped."));
@@ -208,7 +209,8 @@ Bool AddCommandToPacket(const GameMessage *msg)
 		bytesUsed += sizeofMessageArg;
 	}
 
-	//DEBUG_ASSERTCRASH(bytesUsed + sizeof(CommandPacketHeader) < MAX_MESSAGE_LEN, ("Memory overwrite constructing command packet!"));
+	//DEBUG_ASSERTCRASH(bytesUsed + sizeof(CommandPacketHeader) < MAX_MESSAGE_LEN, ("Memory overwrite constructing command
+packet!"));
 	//DEBUG_LOG(("Memory overwrite constructing command packet!"));
 	return true;
 }

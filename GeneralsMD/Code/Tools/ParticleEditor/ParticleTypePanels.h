@@ -47,56 +47,68 @@
 // ParticlePanelParticle //////////////////////////////////////////////////////////
 class ParticlePanelParticle : public ISwapablePanel
 {
-	public:
-		enum {IDD = IDD_PSEd_ParticlePanelParticle};
-		virtual DWORD GetIDD( void ) { return IDD; }
-		ParticlePanelParticle(UINT nIDTemplate = ParticlePanelParticle::IDD, CWnd* pParentWnd = NULL);
+public:
+	enum
+	{
+		IDD = IDD_PSEd_ParticlePanelParticle
+	};
+	virtual DWORD GetIDD(void) { return IDD; }
+	ParticlePanelParticle(UINT nIDTemplate = ParticlePanelParticle::IDD, CWnd *pParentWnd = NULL);
 
-		void InitPanel( void );
+	void InitPanel(void);
 
-		// if true, updates the UI from the Particle System.
-		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );
-	protected:
-		afx_msg void OnParticleSystemEdit();
-		DECLARE_MESSAGE_MAP()
+	// if true, updates the UI from the Particle System.
+	// if false, updates the Particle System from the UI
+	void performUpdate(IN Bool toUI);
+
+protected:
+	afx_msg void OnParticleSystemEdit();
+	DECLARE_MESSAGE_MAP()
 };
 
 // ParticlePanelDrawable //////////////////////////////////////////////////////////
 class ParticlePanelDrawable : public ISwapablePanel
 {
-	public:
-		enum {IDD = IDD_PSEd_ParticlePanelDrawable};
-		virtual DWORD GetIDD( void ) { return IDD; }
-		ParticlePanelDrawable(UINT nIDTemplate = ParticlePanelDrawable::IDD, CWnd* pParentWnd = NULL);
+public:
+	enum
+	{
+		IDD = IDD_PSEd_ParticlePanelDrawable
+	};
+	virtual DWORD GetIDD(void) { return IDD; }
+	ParticlePanelDrawable(UINT nIDTemplate = ParticlePanelDrawable::IDD, CWnd *pParentWnd = NULL);
 
-		void InitPanel( void );
-		void clearAllThingTemplates( void );
+	void InitPanel(void);
+	void clearAllThingTemplates(void);
 
-		// if true, updates the UI from the Particle System.
-		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );
-	protected:
-		afx_msg void OnParticleSystemEdit();
-		DECLARE_MESSAGE_MAP()
+	// if true, updates the UI from the Particle System.
+	// if false, updates the Particle System from the UI
+	void performUpdate(IN Bool toUI);
+
+protected:
+	afx_msg void OnParticleSystemEdit();
+	DECLARE_MESSAGE_MAP()
 };
 
 // ParticlePanelStreak //////////////////////////////////////////////////////////
 class ParticlePanelStreak : public ParticlePanelParticle
 {
-	public:
-		enum {IDD = IDD_PSEd_ParticlePanelStreak};
-		virtual DWORD GetIDD( void ) { return IDD; }
-		ParticlePanelStreak(UINT nIDTemplate = ParticlePanelStreak::IDD, CWnd* pParentWnd = NULL);
+public:
+	enum
+	{
+		IDD = IDD_PSEd_ParticlePanelStreak
+	};
+	virtual DWORD GetIDD(void) { return IDD; }
+	ParticlePanelStreak(UINT nIDTemplate = ParticlePanelStreak::IDD, CWnd *pParentWnd = NULL);
 
-		void InitPanel( void );
+	void InitPanel(void);
 
-		// if true, updates the UI from the Particle System.
-		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );
-	protected:
-		afx_msg void OnParticleSystemEdit();
-		DECLARE_MESSAGE_MAP()
+	// if true, updates the UI from the Particle System.
+	// if false, updates the Particle System from the UI
+	void performUpdate(IN Bool toUI);
+
+protected:
+	afx_msg void OnParticleSystemEdit();
+	DECLARE_MESSAGE_MAP()
 };
 
 #endif /* _H_PARTICLETYPEPANELS_ */

@@ -27,76 +27,75 @@
 // Internal result functions
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef INTERNAL_RESULT_H // Include guard
 #define INTERNAL_RESULT_H
 
 /// \brief Simple CSV format flat file result function, for all threads.
-class ProfileResultFileCSV: public ProfileResultInterface
+class ProfileResultFileCSV : public ProfileResultInterface
 {
-  ProfileResultFileCSV(void) {}
+	ProfileResultFileCSV(void) {}
 
-  void WriteThread(ProfileFuncLevel::Thread &thread);
+	void WriteThread(ProfileFuncLevel::Thread &thread);
 
 public:
-  static ProfileResultInterface *Create(int argn, const char * const *);
-  virtual const char *GetName(void) const { return "file_csv"; }
-  virtual void WriteResults(void);
-  virtual void Delete(void);
+	static ProfileResultInterface *Create(int argn, const char *const *);
+	virtual const char *GetName(void) const { return "file_csv"; }
+	virtual void WriteResults(void);
+	virtual void Delete(void);
 };
 
 /**
-  \brief Write out DOT file for calling hierarchy.
+	\brief Write out DOT file for calling hierarchy.
 
-  The frame name and the file name must be specified when creating an
-  instance of this result function. The result function will always pick
-  the thread with the highest function count (which is usually the
-  main thread).
+	The frame name and the file name must be specified when creating an
+	instance of this result function. The result function will always pick
+	the thread with the highest function count (which is usually the
+	main thread).
 
-  \note A DOT file is used with the DOT tool from the GraphViz package
-  for generating directed graphs, e.g. by issuing dot -Tgif -ograph.gif profile.dot
+	\note A DOT file is used with the DOT tool from the GraphViz package
+	for generating directed graphs, e.g. by issuing dot -Tgif -ograph.gif profile.dot
 */
-class ProfileResultFileDOT: public ProfileResultInterface
+class ProfileResultFileDOT : public ProfileResultInterface
 {
 public:
-  enum
-  {
-    MAX_FUNCTIONS_PER_FILE = 200
-  };
+	enum
+	{
+		MAX_FUNCTIONS_PER_FILE = 200
+	};
 
-  /**
-    \brief Creates a class instance.
+	/**
+		\brief Creates a class instance.
 
-    \param fileName name of DOT file to generate (defaults to profile.dot)
-    \param frameName name of frame to use (NULL for global)
-    \param foldThreshold if the number of functions exceeds the given threshold
-                         then all functions belonging to the same source file
-                         will be folded into a single entry
-    \return new instance
-  */
-  static ProfileResultInterface *Create(int argn, const char * const *);
+		\param fileName name of DOT file to generate (defaults to profile.dot)
+		\param frameName name of frame to use (NULL for global)
+		\param foldThreshold if the number of functions exceeds the given threshold
+												 then all functions belonging to the same source file
+												 will be folded into a single entry
+		\return new instance
+	*/
+	static ProfileResultInterface *Create(int argn, const char *const *);
 
-  virtual const char *GetName(void) const { return "file_dot"; }
-  virtual void WriteResults(void);
-  virtual void Delete(void);
+	virtual const char *GetName(void) const { return "file_dot"; }
+	virtual void WriteResults(void);
+	virtual void Delete(void);
 
 private:
+	ProfileResultFileDOT(const char *fileName, const char *frameName, int foldThreshold);
 
-  ProfileResultFileDOT(const char *fileName, const char *frameName, int foldThreshold);
+	struct FoldHelper
+	{
+		FoldHelper *next;
+		const char *source;
+		ProfileFuncLevel::Id id[MAX_FUNCTIONS_PER_FILE];
+		unsigned numId;
+		bool mark;
+	};
 
-  struct FoldHelper
-  {
-    FoldHelper *next;
-    const char *source;
-    ProfileFuncLevel::Id id[MAX_FUNCTIONS_PER_FILE];
-    unsigned numId;
-    bool mark;
-  };
-
-  char *m_fileName;
-  char *m_frameName;
-  int m_foldThreshold;
+	char *m_fileName;
+	char *m_frameName;
+	int m_foldThreshold;
 };
 
 #endif // INTERNAL_RESULT_H

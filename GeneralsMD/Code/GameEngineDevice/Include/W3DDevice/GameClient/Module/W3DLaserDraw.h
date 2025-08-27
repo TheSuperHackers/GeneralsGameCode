@@ -34,7 +34,7 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DrawModule.h"
-//#include "WW3D2/Line3D.h"
+// #include "WW3D2/Line3D.h"
 #include "GameClient/Color.h"
 
 class SegmentedLineClass;
@@ -43,16 +43,15 @@ class TextureClass;
 class W3DLaserDrawModuleData : public ModuleData
 {
 public:
-
-  Color m_innerColor;
-  Color m_outerColor;
+	Color m_innerColor;
+	Color m_outerColor;
 	Real m_innerBeamWidth;
 	Real m_outerBeamWidth;
 	Real m_scrollRate;
 	Bool m_tile;
-  UnsignedInt m_numBeams;
-  UnsignedInt m_maxIntensityFrames;
-  UnsignedInt m_fadeFrames;
+	UnsignedInt m_numBeams;
+	UnsignedInt m_maxIntensityFrames;
+	UnsignedInt m_fadeFrames;
 	AsciiString m_textureName;
 	UnsignedInt m_segments;
 	Real m_arcHeight;
@@ -61,7 +60,7 @@ public:
 
 	W3DLaserDrawModuleData();
 	~W3DLaserDrawModuleData();
-	static void buildFieldParse(MultiIniFieldParse& p);
+	static void buildFieldParse(MultiIniFieldParse &p);
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -69,36 +68,31 @@ public:
 //-------------------------------------------------------------------------------------------------
 class W3DLaserDraw : public DrawModule, public LaserDrawInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DLaserDraw, "W3DLaserDraw" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DLaserDraw, W3DLaserDrawModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(W3DLaserDraw, "W3DLaserDraw")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(W3DLaserDraw, W3DLaserDrawModuleData)
 
 public:
-
-	W3DLaserDraw( Thing *thing, const ModuleData* moduleData );
+	W3DLaserDraw(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void doDrawModule(const Matrix3D* transformMtx);
-	virtual void releaseShadows(void) {};	///< we don't care about preserving temporary shadows.
-	virtual void allocateShadows(void) {};	///< we don't care about preserving temporary shadows.
-	virtual void setShadowsEnabled(Bool enable) { }
-	virtual void setFullyObscuredByShroud(Bool fullyObscured) { };
-	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) { }
-	virtual void reactToGeometryChange() { }
+	virtual void doDrawModule(const Matrix3D *transformMtx);
+	virtual void releaseShadows(void) {}; ///< we don't care about preserving temporary shadows.
+	virtual void allocateShadows(void) {}; ///< we don't care about preserving temporary shadows.
+	virtual void setShadowsEnabled(Bool enable) {}
+	virtual void setFullyObscuredByShroud(Bool fullyObscured) {};
+	virtual void reactToTransformChange(const Matrix3D *oldMtx, const Coord3D *oldPos, Real oldAngle) {}
+	virtual void reactToGeometryChange() {}
 	virtual Bool isLaser() const { return true; }
 	Real getLaserTemplateWidth() const;
 
-	virtual LaserDrawInterface* getLaserDrawInterface() { return this; }
-	virtual const LaserDrawInterface* getLaserDrawInterface() const { return this; }
+	virtual LaserDrawInterface *getLaserDrawInterface() { return this; }
+	virtual const LaserDrawInterface *getLaserDrawInterface() const { return this; }
 
 protected:
-
-	SegmentedLineClass **m_line3D;  ///< line 3D for effect
+	SegmentedLineClass **m_line3D; ///< line 3D for effect
 	TextureClass *m_texture;
-	Real m_textureAspectRatio;			///< aspect ratio of texture
-	Bool m_selfDirty;								// not saved
-
+	Real m_textureAspectRatio; ///< aspect ratio of texture
+	Bool m_selfDirty; // not saved
 };
 
 #endif // __W3DLASERDRAW_H_
-

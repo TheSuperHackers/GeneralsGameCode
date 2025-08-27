@@ -35,7 +35,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "MeshDeform.h"
 #include "MeshDeformData.h"
 #include "MeshDeformPanel.h"
@@ -44,7 +43,7 @@
 #include "resource.h"
 #include "util.h"
 
-#if defined W3D_MAX4		//defined as in the project (.dsp)
+#if defined W3D_MAX4 // defined as in the project (.dsp)
 static GenSubObjType _SubObjectTypeVertex(1);
 #endif
 
@@ -55,7 +54,6 @@ static GenSubObjType _SubObjectTypeVertex(1);
 ///////////////////////////////////////////////////////////////////////////
 Class_ID _MeshDeformClassID(0x51981f5b, 0x1db2bf3);
 
-
 ///////////////////////////////////////////////////////////////////////////
 //
 //	MeshDeformClassDesc
@@ -63,15 +61,14 @@ Class_ID _MeshDeformClassID(0x51981f5b, 0x1db2bf3);
 ///////////////////////////////////////////////////////////////////////////
 class MeshDeformClassDesc : public ClassDesc
 {
-	public:
-	int 				IsPublic (void)			{ return 1; }
-	void *			Create (BOOL loading)	{ return new MeshDeformClass (); }
-	const TCHAR *	ClassName ()				{ return _T("WWDeform"); }
-	SClass_ID		SuperClassID ()			{ return OSM_CLASS_ID; }
-	Class_ID 		ClassID ()			  		{ return _MeshDeformClassID; }
-	const TCHAR* 	Category ()					{ return _T("Westwood Modifiers"); }
+public:
+	int IsPublic(void) { return 1; }
+	void *Create(BOOL loading) { return new MeshDeformClass(); }
+	const TCHAR *ClassName() { return _T("WWDeform"); }
+	SClass_ID SuperClassID() { return OSM_CLASS_ID; }
+	Class_ID ClassID() { return _MeshDeformClassID; }
+	const TCHAR *Category() { return _T("Westwood Modifiers"); }
 };
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -82,244 +79,213 @@ class MeshDeformClassDesc : public ClassDesc
 static MeshDeformClassDesc _MeshDeformCD;
 ClassDesc * Get_Mesh_Deform_Desc (void) { return &_MeshDeformCD; }
 #else
-ClassDesc * Get_Mesh_Deform_Desc (void) { return NULL; }
+ClassDesc *Get_Mesh_Deform_Desc(void)
+{
+	return NULL;
+}
 #endif
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	ChannelsUsed
 //
 ///////////////////////////////////////////////////////////////////////////
-ChannelMask
-MeshDeformClass::ChannelsUsed (void)
+ChannelMask MeshDeformClass::ChannelsUsed(void)
 {
 	return GEOM_CHANNEL | SELECT_CHANNEL | SUBSEL_TYPE_CHANNEL | VERTCOLOR_CHANNEL;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	ChannelsChanged
 //
 ///////////////////////////////////////////////////////////////////////////
-ChannelMask
-MeshDeformClass::ChannelsChanged (void)
+ChannelMask MeshDeformClass::ChannelsChanged(void)
 {
 	return GEOM_CHANNEL | SELECT_CHANNEL | SUBSEL_TYPE_CHANNEL | VERTCOLOR_CHANNEL;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	ModifyObject
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::ModifyObject
-(
-	TimeValue		time,
-	ModContext &	mod_context,
-	ObjectState *	object_state,
-	INode *			/*node*/
+void MeshDeformClass::ModifyObject(
+		TimeValue time,
+		ModContext &mod_context,
+		ObjectState *object_state,
+		INode * /*node*/
 )
 {
 	assert(object_state->obj->IsSubClassOf(triObjectClassID));
 
-
 	MeshDeformModData *mod_data = NULL;
-	if (mod_context.localData == NULL) {
+	if (mod_context.localData == NULL)
+	{
 		mod_data = new MeshDeformModData;
 		mod_context.localData = mod_data;
-	} else {
-		mod_data = static_cast <MeshDeformModData *> (mod_context.localData);
+	}
+	else
+	{
+		mod_data = static_cast<MeshDeformModData *>(mod_context.localData);
 	}
 
 	// Display the verts
 	TriObject *tri_obj = (TriObject *)object_state->obj;
-	tri_obj->mesh.SetDispFlag (DISP_SELVERTS | DISP_VERTTICKS);
+	tri_obj->mesh.SetDispFlag(DISP_SELVERTS | DISP_VERTTICKS);
 
 	// Record the initial state of the mesh
 	bool lock_sets = false;
-	if (m_pPanel != NULL) {
-		lock_sets = (m_pPanel->Are_Sets_Tied () == TRUE);
+	if (m_pPanel != NULL)
+	{
+		lock_sets = (m_pPanel->Are_Sets_Tied() == TRUE);
 	}
-	mod_data->Record_Mesh_State (*tri_obj, m_DeformState, lock_sets);
+	mod_data->Record_Mesh_State(*tri_obj, m_DeformState, lock_sets);
 
 	tri_obj->PointsWereChanged();
 
 	// Kind of a waste when there's no animation...
-	tri_obj->UpdateValidity (GEOM_CHAN_NUM, Interval (time, time + 1));
-	tri_obj->UpdateValidity (SELECT_CHAN_NUM, Interval (time, time + 1));
-	tri_obj->UpdateValidity (SUBSEL_TYPE_CHAN_NUM, Interval (time, time + 1));
-	return ;
+	tri_obj->UpdateValidity(GEOM_CHAN_NUM, Interval(time, time + 1));
+	tri_obj->UpdateValidity(SELECT_CHAN_NUM, Interval(time, time + 1));
+	tri_obj->UpdateValidity(SUBSEL_TYPE_CHAN_NUM, Interval(time, time + 1));
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	InputType
 //
 ///////////////////////////////////////////////////////////////////////////
-Class_ID
-MeshDeformClass::InputType (void)
+Class_ID MeshDeformClass::InputType(void)
 {
 	return triObjectClassID;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	NotifyRefChanged
 //
 ///////////////////////////////////////////////////////////////////////////
-RefResult
-MeshDeformClass::NotifyRefChanged
-(
-	Interval time,
-	RefTargetHandle htarget,
-	PartID &part_id,
-	RefMessage mesage
-)
+RefResult MeshDeformClass::NotifyRefChanged(Interval time, RefTargetHandle htarget, PartID &part_id, RefMessage mesage)
 {
 	return REF_SUCCEED;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	GetCreateMouseCallBack
 //
 ///////////////////////////////////////////////////////////////////////////
-CreateMouseCallBack *
-MeshDeformClass::GetCreateMouseCallBack (void)
+CreateMouseCallBack *MeshDeformClass::GetCreateMouseCallBack(void)
 {
 	return NULL;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	BeginEditParams
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::BeginEditParams
-(
-	IObjParam *max_interface,
-	ULONG flags,
-	Animatable *prev
-)
+void MeshDeformClass::BeginEditParams(IObjParam *max_interface, ULONG flags, Animatable *prev)
 {
 	m_MaxInterface = max_interface;
-	Update_Set_Count ();
-	Set_Max_Deform_Sets (m_MaxSets);
+	Update_Set_Count();
+	Set_Max_Deform_Sets(m_MaxSets);
 
 	// Add our rollup to the command panel
-	m_hRollupWnd = m_MaxInterface->AddRollupPage (AppInstance,
-																MAKEINTRESOURCE (IDD_MESH_DEFORM_PANEL),
-																MeshDeformPanelClass::Message_Proc,
-																"Westwood Mesh Deform",
-																0,
-																0);
+	m_hRollupWnd = m_MaxInterface->AddRollupPage(
+			AppInstance,
+			MAKEINTRESOURCE(IDD_MESH_DEFORM_PANEL),
+			MeshDeformPanelClass::Message_Proc,
+			"Westwood Mesh Deform",
+			0,
+			0);
 
 	//
 	//	Update the UI
 	//
-	m_pPanel = MeshDeformPanelClass::Get_Object (m_hRollupWnd);
-	m_pPanel->Set_Deformer (this);
-	m_pPanel->Set_Max_Sets (m_MaxSets);
-	m_pPanel->Set_Current_Set (m_CurrentSet);
-	Set_Current_Set (m_CurrentSet, false);
+	m_pPanel = MeshDeformPanelClass::Get_Object(m_hRollupWnd);
+	m_pPanel->Set_Deformer(this);
+	m_pPanel->Set_Max_Sets(m_MaxSets);
+	m_pPanel->Set_Current_Set(m_CurrentSet);
+	Set_Current_Set(m_CurrentSet, false);
 
 	//
 	// Register the desired sub-object selection types.
 	//
-	const TCHAR * ptype[] = { "Vertices" };
-#if defined W3D_MAX4		//defined as in the project (.dsp)
- 	max_interface->SetSubObjectLevel(1);
+	const TCHAR *ptype[] = { "Vertices" };
+#if defined W3D_MAX4 // defined as in the project (.dsp)
+	max_interface->SetSubObjectLevel(1);
 #else
 	//---This call is obsolete from max4.
-	max_interface->RegisterSubObjectTypes( ptype, 1);
+	max_interface->RegisterSubObjectTypes(ptype, 1);
 #endif
 
 	//
 	//	Create the mode handlers
 	//
-	m_ModeSelect	= new SelectModBoxCMode (this, max_interface);
-	m_ModeMove		= new MoveModBoxCMode (this, max_interface);
-	m_ModeRotate	= new RotateModBoxCMode (this, max_interface);
-	m_ModeUScale	= new UScaleModBoxCMode (this, max_interface);
-	m_ModeNUScale	= new NUScaleModBoxCMode (this, max_interface);
-	m_ModeSquash	= new SquashModBoxCMode (this, max_interface);
+	m_ModeSelect = new SelectModBoxCMode(this, max_interface);
+	m_ModeMove = new MoveModBoxCMode(this, max_interface);
+	m_ModeRotate = new RotateModBoxCMode(this, max_interface);
+	m_ModeUScale = new UScaleModBoxCMode(this, max_interface);
+	m_ModeNUScale = new NUScaleModBoxCMode(this, max_interface);
+	m_ModeSquash = new SquashModBoxCMode(this, max_interface);
 
 	//
 	// Restore the selection level.
 	///
-	max_interface->SetSubObjectLevel (1);
-	return ;
+	max_interface->SetSubObjectLevel(1);
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	EndEditParams
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::EndEditParams
-(
-	IObjParam *max_interface,
-	ULONG flags,
-	Animatable *next
-)
+void MeshDeformClass::EndEditParams(IObjParam *max_interface, ULONG flags, Animatable *next)
 {
 	// Remove our deform rollup
-	if (m_hRollupWnd != NULL) {
-		max_interface->DeleteRollupPage (m_hRollupWnd);
+	if (m_hRollupWnd != NULL)
+	{
+		max_interface->DeleteRollupPage(m_hRollupWnd);
 		m_hRollupWnd = NULL;
 	}
 
 	//
 	// Free the mode handlers
 	//
-	max_interface->DeleteMode (m_ModeMove);
-	max_interface->DeleteMode (m_ModeSelect);
-	max_interface->DeleteMode (m_ModeRotate);
-	max_interface->DeleteMode (m_ModeNUScale);
-	max_interface->DeleteMode (m_ModeUScale);
-	max_interface->DeleteMode (m_ModeSquash);
-	SAFE_DELETE (m_ModeMove);
-	SAFE_DELETE (m_ModeSelect);
-	SAFE_DELETE (m_ModeRotate);
-	SAFE_DELETE (m_ModeNUScale);
-	SAFE_DELETE (m_ModeUScale);
-	SAFE_DELETE (m_ModeSquash);
+	max_interface->DeleteMode(m_ModeMove);
+	max_interface->DeleteMode(m_ModeSelect);
+	max_interface->DeleteMode(m_ModeRotate);
+	max_interface->DeleteMode(m_ModeNUScale);
+	max_interface->DeleteMode(m_ModeUScale);
+	max_interface->DeleteMode(m_ModeSquash);
+	SAFE_DELETE(m_ModeMove);
+	SAFE_DELETE(m_ModeSelect);
+	SAFE_DELETE(m_ModeRotate);
+	SAFE_DELETE(m_ModeNUScale);
+	SAFE_DELETE(m_ModeUScale);
+	SAFE_DELETE(m_ModeSquash);
 
 	// Release our hold on the max interface pointer
 	m_MaxInterface = NULL;
 	m_pPanel = NULL;
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	ActivateSubobjSel
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::ActivateSubobjSel
-(
-	int level,
-	XFormModes &modes
-)
+void MeshDeformClass::ActivateSubobjSel(int level, XFormModes &modes)
 {
 	switch (level)
 	{
 		// Vertex manipulation
 		case 1:
-			modes = XFormModes (m_ModeMove, m_ModeRotate, m_ModeNUScale, m_ModeUScale, m_ModeSquash, m_ModeSelect);
+			modes = XFormModes(m_ModeMove, m_ModeRotate, m_ModeNUScale, m_ModeUScale, m_ModeSquash, m_ModeSelect);
 			break;
 	}
 
@@ -327,7 +293,7 @@ MeshDeformClass::ActivateSubobjSel
 	** Notify our dependents that the subselection type,
 	** and the display have changed
 	*/
-	NotifyDependents(FOREVER, PART_SUBSEL_TYPE|PART_DISPLAY, REFMSG_CHANGE);
+	NotifyDependents(FOREVER, PART_SUBSEL_TYPE | PART_DISPLAY, REFMSG_CHANGE);
 
 	/*
 	** Notify the pipeline that the selection level has changed.
@@ -338,73 +304,63 @@ MeshDeformClass::ActivateSubobjSel
 	** Notify our dependents that the selection channel,
 	** display attributes, and subselection type channels have changed
 	*/
-	NotifyDependents(FOREVER, VERTCOLOR_CHANNEL|SELECT_CHANNEL|DISP_ATTRIB_CHANNEL|SUBSEL_TYPE_CHANNEL, REFMSG_CHANGE);
-	return ;
+	NotifyDependents(FOREVER, VERTCOLOR_CHANNEL | SELECT_CHANNEL | DISP_ATTRIB_CHANNEL | SUBSEL_TYPE_CHANNEL, REFMSG_CHANGE);
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	HitTest
 //
 ///////////////////////////////////////////////////////////////////////////
-int
-MeshDeformClass::HitTest
-(
-	TimeValue		time_value,
-	INode *			node,
-	int				type,
-	int				crossing,
-	int				flags,
-	IPoint2 *		point,
-	ViewExp *		viewport,
-	ModContext *	mod_context
-)
+int MeshDeformClass::HitTest(
+		TimeValue time_value,
+		INode *node,
+		int type,
+		int crossing,
+		int flags,
+		IPoint2 *point,
+		ViewExp *viewport,
+		ModContext *mod_context)
 {
 	// Initialize the HitRegion
 	HitRegion hit_rgn;
-	MakeHitRegion (hit_rgn, type, crossing, 4, point);
+	MakeHitRegion(hit_rgn, type, crossing, 4, point);
 
-	Matrix3 transform = node->GetObjectTM (time_value);
-	Object *       obj = node->EvalWorldState(time_value).obj;
-	TriObject *    tri = (TriObject *)obj->ConvertToType(time_value, triObjectClassID);
+	Matrix3 transform = node->GetObjectTM(time_value);
+	Object *obj = node->EvalWorldState(time_value).obj;
+	TriObject *tri = (TriObject *)obj->ConvertToType(time_value, triObjectClassID);
 
 	//
 	//	Set up the graphics window to do the hit-test
 	//
-	GraphicsWindow *graphics_wnd = viewport->getGW ();
-	graphics_wnd->setHitRegion (&hit_rgn);
-	graphics_wnd->setTransform (transform);
+	GraphicsWindow *graphics_wnd = viewport->getGW();
+	graphics_wnd->setHitRegion(&hit_rgn);
+	graphics_wnd->setTransform(transform);
 
-	int saved_limits = graphics_wnd->getRndLimits ();
-	graphics_wnd->setRndLimits ((saved_limits | GW_PICK) & ~(GW_ILLUM | GW_BACKCULL));
-	graphics_wnd->clearHitCode ();
+	int saved_limits = graphics_wnd->getRndLimits();
+	graphics_wnd->setRndLimits((saved_limits | GW_PICK) & ~(GW_ILLUM | GW_BACKCULL));
+	graphics_wnd->clearHitCode();
 
 	//
 	// Perform the hit test
 	//
 	SubObjHitList hitlist;
-	MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context->localData);
-	Mesh &mesh = tri->mesh;//mod_data->Peek_Mesh ();
-	int result = mesh.SubObjectHitTest (graphics_wnd,
-													 graphics_wnd->getMaterial (),
-													 &hit_rgn,
-													 flags | SUBHIT_VERTS,
-													 hitlist);
+	MeshDeformModData *mod_data = static_cast<MeshDeformModData *>(mod_context->localData);
+	Mesh &mesh = tri->mesh; // mod_data->Peek_Mesh ();
+	int result = mesh.SubObjectHitTest(graphics_wnd, graphics_wnd->getMaterial(), &hit_rgn, flags | SUBHIT_VERTS, hitlist);
 
 	//
 	// Record all of the hits
 	//
-	for (MeshSubHitRec *hit_record = hitlist.First ();
-		  hit_record != NULL;
-		  hit_record = hit_record->Next ()) {
-
+	for (MeshSubHitRec *hit_record = hitlist.First(); hit_record != NULL; hit_record = hit_record->Next())
+	{
 		// rec->index is the index of vertex which was hit!
-		viewport->LogHit (node, mod_context, hit_record->dist, hit_record->index, NULL);
+		viewport->LogHit(node, mod_context, hit_record->dist, hit_record->index, NULL);
 	}
 
 	// Cleanup
-	graphics_wnd->setRndLimits (saved_limits);
+	graphics_wnd->setRndLimits(saved_limits);
 
 	// Return the integer result code
 	return result;
@@ -415,136 +371,124 @@ MeshDeformClass::HitTest
 //	HitTest
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::SelectSubComponent
-(
-	HitRecord *	hit_record,
-	BOOL			selected,
-	BOOL			all,
-	BOOL			invert
-)
+void MeshDeformClass::SelectSubComponent(HitRecord *hit_record, BOOL selected, BOOL all, BOOL invert)
 {
 	// Loop through all the hit records
-	for (; hit_record != NULL; hit_record = hit_record->Next ()) {
-
+	for (; hit_record != NULL; hit_record = hit_record->Next())
+	{
 		// Peek at the vertex selection array for this hit record
-		MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (hit_record->modContext->localData);
-		Mesh *mesh = mod_data->Peek_Mesh ();
+		MeshDeformModData *mod_data = static_cast<MeshDeformModData *>(hit_record->modContext->localData);
+		Mesh *mesh = mod_data->Peek_Mesh();
 		BitArray &array = (mesh->vertSel);
 
-		if (all & invert) {
-
+		if (all & invert)
+		{
 			/*
 			** hitRec->hitInfo is the MeshSubHitRec::index that was stored in the
 			** HitTest method through LogHit
 			*/
-			if (array[hit_record->hitInfo]) {
-				array.Clear (hit_record->hitInfo);
-			} else {
-				array.Set (hit_record->hitInfo, selected);
+			if (array[hit_record->hitInfo])
+			{
+				array.Clear(hit_record->hitInfo);
 			}
-		} else {
-			array.Set (hit_record->hitInfo, selected);
+			else
+			{
+				array.Set(hit_record->hitInfo, selected);
+			}
+		}
+		else
+		{
+			array.Set(hit_record->hitInfo, selected);
 		}
 
-		if (!all) break;
+		if (!all)
+			break;
 	}
 
-	m_pPanel->Update_Vertex_Color ();
-	NotifyDependents (FOREVER, PART_SELECT, REFMSG_CHANGE);
+	m_pPanel->Update_Vertex_Color();
+	NotifyDependents(FOREVER, PART_SELECT, REFMSG_CHANGE);
 	m_bSetDirty = true;
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	GetSubObjectTMs
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::GetSubObjectTMs
-(
-	SubObjAxisCallback *cb,
-	TimeValue t,
-	INode *node,
-	ModContext *mc
-)
+void MeshDeformClass::GetSubObjectTMs(SubObjAxisCallback *cb, TimeValue t, INode *node, ModContext *mc)
 {
 	int test = 0;
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	HitTest
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::GetSubObjectCenters
-(
-	SubObjAxisCallback *	callback,
-	TimeValue				time_val,
-	INode *					node,
-	ModContext *			mod_context
-)
+void MeshDeformClass::GetSubObjectCenters(
+		SubObjAxisCallback *callback,
+		TimeValue time_val,
+		INode *node,
+		ModContext *mod_context)
 {
 	// Peek at the vertex selection array for this hit record
-	MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context->localData);
-	const Point3 *vertex_array = mod_data->Peek_Orig_Vertex_Array ();
-	Mesh *mesh = mod_data->Peek_Mesh ();
+	MeshDeformModData *mod_data = static_cast<MeshDeformModData *>(mod_context->localData);
+	const Point3 *vertex_array = mod_data->Peek_Orig_Vertex_Array();
+	Mesh *mesh = mod_data->Peek_Mesh();
 
 	BitArray sel_array = mesh->vertSel;
-	Matrix3 transform = node->GetObjectTM (time_val);
+	Matrix3 transform = node->GetObjectTM(time_val);
 	Box3 box;
 
 	// Loop through all the selected verticies and create a bounding
 	// box which we can use to determine the selection center.
-	for (int index = 0; index < mesh->getNumVerts (); index++ ) {
-		if (sel_array[index]) {
-			box += mesh->getVert (index) * transform;
+	for (int index = 0; index < mesh->getNumVerts(); index++)
+	{
+		if (sel_array[index])
+		{
+			box += mesh->getVert(index) * transform;
 		}
 	}
 
 	// Pass the 'selection' center onto MAX
-	callback->Center (box.Center (), 0);
-	return ;
+	callback->Center(box.Center(), 0);
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	ClearSelection
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::ClearSelection (int selLevel)
+void MeshDeformClass::ClearSelection(int selLevel)
 {
 	ModContextList mod_context_list;
 	INodeTab nodes;
-	m_MaxInterface->GetModContexts (mod_context_list, nodes);
+	m_MaxInterface->GetModContexts(mod_context_list, nodes);
 
-	for (int i = 0; i < mod_context_list.Count (); i++) {
+	for (int i = 0; i < mod_context_list.Count(); i++)
+	{
+		MeshDeformModData *mod_data = static_cast<MeshDeformModData *>(mod_context_list[i]->localData);
 
-		MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context_list[i]->localData);
-
-		if (mod_data != NULL) {
-			mod_data->Peek_Mesh ()->vertSel.ClearAll ();
+		if (mod_data != NULL)
+		{
+			mod_data->Peek_Mesh()->vertSel.ClearAll();
 		}
 	}
 
 	/*
 	** Get rid of the temporary copies of the INodes.
 	*/
-	nodes.DisposeTemporary ();
+	nodes.DisposeTemporary();
 
 	/*
 	** Tell our dependents that the selection set has changed
 	*/
-	NotifyDependents (FOREVER, PART_SELECT, REFMSG_CHANGE);
+	NotifyDependents(FOREVER, PART_SELECT, REFMSG_CHANGE);
 	m_bSetDirty = true;
-	return ;
+	return;
 }
 
 static Point3 last_delta;
@@ -556,54 +500,48 @@ static Matrix3 last_rot;
 //	Move
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::Move
-(
-	TimeValue	time_val,
-	Matrix3 &	parent_tm,
-	Matrix3 &	tm_axis,
-	Point3 &		displacement,
-	BOOL			local_origin
-)
+void MeshDeformClass::Move(TimeValue time_val, Matrix3 &parent_tm, Matrix3 &tm_axis, Point3 &displacement, BOOL local_origin)
 {
-	if (m_pPanel->Is_Edit_Mode ()) {
-
+	if (m_pPanel->Is_Edit_Mode())
+	{
 		INodeTab nodes;
 		ModContextList mod_context_list;
-		m_MaxInterface->GetModContexts (mod_context_list, nodes);
+		m_MaxInterface->GetModContexts(mod_context_list, nodes);
 
 		// Loop through all the modifier contexts
-		for (int index = 0; index < mod_context_list.Count (); index ++) {
-
+		for (int index = 0; index < mod_context_list.Count(); index++)
+		{
 			// Get the data we've cached for this modifier context
-			MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context_list[index]->localData);
-			if (mod_data != NULL) {
-				Mesh *mesh = mod_data->Peek_Mesh ();
-				const Point3 *vertex_array = mod_data->Peek_Orig_Vertex_Array ();
-				Point3 *opstart_array = mod_data->Peek_Vertex_OPStart_Array ();
+			MeshDeformModData *mod_data = static_cast<MeshDeformModData *>(mod_context_list[index]->localData);
+			if (mod_data != NULL)
+			{
+				Mesh *mesh = mod_data->Peek_Mesh();
+				const Point3 *vertex_array = mod_data->Peek_Orig_Vertex_Array();
+				Point3 *opstart_array = mod_data->Peek_Vertex_OPStart_Array();
 
 				// Loop through all the selected verts
-				for (int vert = 0; vert < mesh->numVerts; vert ++) {
-					if (mesh->vertSel[vert]) {
-
+				for (int vert = 0; vert < mesh->numVerts; vert++)
+				{
+					if (mesh->vertSel[vert])
+					{
 						// Do the 'displacment' in axis-space
 						Point3 vert_ws = parent_tm * mesh->verts[vert];
-						Point3 vert_as = Inverse (tm_axis) * vert_ws;
+						Point3 vert_as = Inverse(tm_axis) * vert_ws;
 						vert_as += displacement - last_delta;
 
 						// Convert back to obj-space
 						vert_ws = tm_axis * vert_as;
-						mesh->verts[vert] = Inverse (parent_tm) * vert_ws;
+						mesh->verts[vert] = Inverse(parent_tm) * vert_ws;
 
 						// Record the delta
-						//delta_array[vert] = mesh->verts[vert] - vertex_array[vert];
+						// delta_array[vert] = mesh->verts[vert] - vertex_array[vert];
 					}
 				}
 
 				//
 				//	Record these changes in the current set
 				//
-				mod_data->Update_Set (m_CurrentSet, VERT_POSITION);
+				mod_data->Update_Set(m_CurrentSet, VERT_POSITION);
 			}
 		}
 
@@ -613,329 +551,318 @@ MeshDeformClass::Move
 		last_delta = displacement;
 
 		// Repaint the view
-		nodes.DisposeTemporary ();
-		NotifyDependents (FOREVER, PART_GEOM, REFMSG_CHANGE);
+		nodes.DisposeTemporary();
+		NotifyDependents(FOREVER, PART_GEOM, REFMSG_CHANGE);
 	}
 
 	m_OperationName = "Move";
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	Move
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::Scale
-(
-	TimeValue	time_val,
-	Matrix3 &	parent_tm,
-	Matrix3 &	tm_axis,
-	Point3 &		value,
-	BOOL			local_origin
-)
+void MeshDeformClass::Scale(TimeValue time_val, Matrix3 &parent_tm, Matrix3 &tm_axis, Point3 &value, BOOL local_origin)
 {
 	Point3 test = value - last_scale;
 	bool bok = (test.x != 0) && (test.y != 0) && (test.z != 0);
-	if (m_pPanel->Is_Edit_Mode () && bok) {
-
+	if (m_pPanel->Is_Edit_Mode() && bok)
+	{
 		INodeTab nodes;
 		ModContextList mod_context_list;
-		m_MaxInterface->GetModContexts (mod_context_list, nodes);
+		m_MaxInterface->GetModContexts(mod_context_list, nodes);
 
 		// Loop through all the modifier contexts
-		for (int index = 0; index < mod_context_list.Count (); index ++) {
-
+		for (int index = 0; index < mod_context_list.Count(); index++)
+		{
 			// Get the data we've cached for this modifier context
-			MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context_list[index]->localData);
-			if (mod_data != NULL) {
-				Mesh *mesh = mod_data->Peek_Mesh ();
-				const Point3 *vertex_array = mod_data->Peek_Orig_Vertex_Array ();
-				Point3 *opstart_array = mod_data->Peek_Vertex_OPStart_Array ();
+			MeshDeformModData *mod_data = static_cast<MeshDeformModData *>(mod_context_list[index]->localData);
+			if (mod_data != NULL)
+			{
+				Mesh *mesh = mod_data->Peek_Mesh();
+				const Point3 *vertex_array = mod_data->Peek_Orig_Vertex_Array();
+				Point3 *opstart_array = mod_data->Peek_Vertex_OPStart_Array();
 
 				// Loop through all the selected verts
-				for (int vert = 0; vert < mesh->numVerts; vert ++) {
-					if (mesh->vertSel[vert]) {
-
+				for (int vert = 0; vert < mesh->numVerts; vert++)
+				{
+					if (mesh->vertSel[vert])
+					{
 						// Do the 'scale' in axis-space
-						Point3 vert_ws = parent_tm * opstart_array[vert];//mesh->verts[vert];
-						Point3 vert_as = Inverse (tm_axis) * vert_ws;
-						vert_as = ScaleMatrix (value) * vert_as;
+						Point3 vert_ws = parent_tm * opstart_array[vert]; // mesh->verts[vert];
+						Point3 vert_as = Inverse(tm_axis) * vert_ws;
+						vert_as = ScaleMatrix(value) * vert_as;
 
 						// Convert back to obj-space
 						vert_ws = tm_axis * vert_as;
-						mesh->verts[vert] = Inverse (parent_tm) * vert_ws;
+						mesh->verts[vert] = Inverse(parent_tm) * vert_ws;
 
 						// Record the delta
-						//delta_array[vert] = mesh->verts[vert] - vertex_array[vert];
+						// delta_array[vert] = mesh->verts[vert] - vertex_array[vert];
 					}
 				}
 
 				//
 				//	Record these changes in the current set
 				//
-				mod_data->Update_Set (m_CurrentSet, VERT_POSITION);
+				mod_data->Update_Set(m_CurrentSet, VERT_POSITION);
 			}
 		}
 
 		// Remember what our last displacement was because we
 		// want to perform our calculations relative to the current
 		// position.
-		//last_scale = value - Point3 (1,1,1);
-		//last_delta = displacement;
+		// last_scale = value - Point3 (1,1,1);
+		// last_delta = displacement;
 
 		// Repaint the view
-		nodes.DisposeTemporary ();
-		NotifyDependents (FOREVER, PART_GEOM, REFMSG_CHANGE);
+		nodes.DisposeTemporary();
+		NotifyDependents(FOREVER, PART_GEOM, REFMSG_CHANGE);
 	}
 
 	m_OperationName = "Scale";
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	Rotate
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::Rotate
-(
-	TimeValue	time_val,
-	Matrix3 &	parent_tm,
-	Matrix3 &	tm_axis,
-	Quat &		rotation,
-	BOOL			local_origin
-)
+void MeshDeformClass::Rotate(TimeValue time_val, Matrix3 &parent_tm, Matrix3 &tm_axis, Quat &rotation, BOOL local_origin)
 {
-	if (m_pPanel->Is_Edit_Mode ()) {
+	if (m_pPanel->Is_Edit_Mode())
+	{
 		INodeTab nodes;
 		ModContextList mod_context_list;
-		m_MaxInterface->GetModContexts (mod_context_list, nodes);
+		m_MaxInterface->GetModContexts(mod_context_list, nodes);
 
 		Matrix3 matrix_rot;
-		rotation.MakeMatrix (matrix_rot);
+		rotation.MakeMatrix(matrix_rot);
 
 		Matrix3 rel_rot;
-		rel_rot = Inverse (last_rot) * matrix_rot;
+		rel_rot = Inverse(last_rot) * matrix_rot;
 
 		// Loop through all the modifier contexts
-		for (int index = 0; index < mod_context_list.Count (); index ++) {
-
+		for (int index = 0; index < mod_context_list.Count(); index++)
+		{
 			// Get the data we've cached for this modifier context
-			MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context_list[index]->localData);
-			if (mod_data != NULL) {
-				Mesh *mesh = mod_data->Peek_Mesh ();
-				const Point3 *vertex_array = mod_data->Peek_Orig_Vertex_Array ();
-				Point3 *opstart_array = mod_data->Peek_Vertex_OPStart_Array ();
+			MeshDeformModData *mod_data = static_cast<MeshDeformModData *>(mod_context_list[index]->localData);
+			if (mod_data != NULL)
+			{
+				Mesh *mesh = mod_data->Peek_Mesh();
+				const Point3 *vertex_array = mod_data->Peek_Orig_Vertex_Array();
+				Point3 *opstart_array = mod_data->Peek_Vertex_OPStart_Array();
 
 				// Loop through all the selected verts
-				for (int vert = 0; vert < mesh->numVerts; vert ++) {
-					if (mesh->vertSel[vert]) {
-
+				for (int vert = 0; vert < mesh->numVerts; vert++)
+				{
+					if (mesh->vertSel[vert])
+					{
 						// Do the 'displacment' in axis-space
 						Point3 vert_ws = parent_tm * mesh->verts[vert];
-						Point3 vert_as = Inverse (tm_axis) * vert_ws;
+						Point3 vert_as = Inverse(tm_axis) * vert_ws;
 						vert_as = (rel_rot * vert_as);
 
 						// Convert back to obj-space
 						vert_ws = tm_axis * vert_as;
-						mesh->verts[vert] = Inverse (parent_tm) * vert_ws;
+						mesh->verts[vert] = Inverse(parent_tm) * vert_ws;
 
 						// Record the delta
-						//delta_array[vert] = mesh->verts[vert] - vertex_array[vert];
+						// delta_array[vert] = mesh->verts[vert] - vertex_array[vert];
 					}
 				}
 
 				//
 				//	Record these changes in the current set
 				//
-				mod_data->Update_Set (m_CurrentSet, VERT_POSITION);
+				mod_data->Update_Set(m_CurrentSet, VERT_POSITION);
 			}
 		}
 
 		// Remember what our last displacement was because we
 		// want to perform our calculations relative to the current
 		// position.
-		//last_delta = displacement;
+		// last_delta = displacement;
 		last_rot = matrix_rot;
 
 		// Repaint the view
-		nodes.DisposeTemporary ();
-		NotifyDependents (FOREVER, PART_GEOM, REFMSG_CHANGE);
+		nodes.DisposeTemporary();
+		NotifyDependents(FOREVER, PART_GEOM, REFMSG_CHANGE);
 
 		// Make sure our current 'set' knows what verts have changed
-		//Update_Current_Set ();
+		// Update_Current_Set ();
 	}
 
 	m_OperationName = "Rotate";
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	TransformStart
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::TransformStart (TimeValue time_val)
+void MeshDeformClass::TransformStart(TimeValue time_val)
 {
-	if (m_MaxInterface != NULL) {
-		m_MaxInterface->LockAxisTripods (TRUE);
+	if (m_MaxInterface != NULL)
+	{
+		m_MaxInterface->LockAxisTripods(TRUE);
 	}
 
 	// Reset our last-delta value
 	last_delta.x = 0;
 	last_delta.y = 0;
 	last_delta.z = 0;
-	last_rot.IdentityMatrix ();
+	last_rot.IdentityMatrix();
 	last_scale.x = 0;
 	last_scale.y = 0;
 	last_scale.z = 0;
 
 	INodeTab nodes;
 	ModContextList mod_context_list;
-	m_MaxInterface->GetModContexts (mod_context_list, nodes);
+	m_MaxInterface->GetModContexts(mod_context_list, nodes);
 
 	// Begin the undo operation
-	theHold.Begin ();
+	theHold.Begin();
 
 	// Loop through all the modifier contexts
-	for (int index = 0; index < mod_context_list.Count (); index ++) {
-
+	for (int index = 0; index < mod_context_list.Count(); index++)
+	{
 		// Get the data we've cached for this modifier context
-		MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context_list[index]->localData);
-		if (mod_data != NULL) {
-			Mesh *mesh = mod_data->Peek_Mesh ();
-			Point3 *opstart_array = mod_data->Peek_Vertex_OPStart_Array ();
+		MeshDeformModData *mod_data = static_cast<MeshDeformModData *>(mod_context_list[index]->localData);
+		if (mod_data != NULL)
+		{
+			Mesh *mesh = mod_data->Peek_Mesh();
+			Point3 *opstart_array = mod_data->Peek_Vertex_OPStart_Array();
 
 			// Copy the current state of the mesh
-			for (int vert = 0; vert < mesh->numVerts; vert ++) {
+			for (int vert = 0; vert < mesh->numVerts; vert++)
+			{
 				opstart_array[vert] = mesh->verts[vert];
 			}
 
 			// Add the 'position restore' object to the undo stack
-			theHold.Put (new VertexPositionRestoreClass (mesh, this, mod_data));
+			theHold.Put(new VertexPositionRestoreClass(mesh, this, mod_data));
 		}
 	}
 
 	// Repaint the view
-	nodes.DisposeTemporary ();
-	NotifyDependents (FOREVER, PART_GEOM, REFMSG_CHANGE);
-	return ;
+	nodes.DisposeTemporary();
+	NotifyDependents(FOREVER, PART_GEOM, REFMSG_CHANGE);
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	TransformFinish
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::TransformFinish (TimeValue time_val)
+void MeshDeformClass::TransformFinish(TimeValue time_val)
 {
-	if (m_MaxInterface != NULL) {
-		m_MaxInterface->LockAxisTripods (FALSE);
+	if (m_MaxInterface != NULL)
+	{
+		m_MaxInterface->LockAxisTripods(FALSE);
 	}
 
 	// Accept the undo operation
-	theHold.Accept (m_OperationName);
-	return ;
+	theHold.Accept(m_OperationName);
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	TransformCancel
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::TransformCancel (TimeValue time_val)
+void MeshDeformClass::TransformCancel(TimeValue time_val)
 {
-	if (m_MaxInterface != NULL) {
-		m_MaxInterface->LockAxisTripods (FALSE);
+	if (m_MaxInterface != NULL)
+	{
+		m_MaxInterface->LockAxisTripods(FALSE);
 	}
 
 	// Cancel the undo operation
-	theHold.Cancel ();
-	return ;
+	theHold.Cancel();
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	Set_Deform_State
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::Set_Deform_State (float state)
+void MeshDeformClass::Set_Deform_State(float state)
 {
-	if ((m_MaxInterface != NULL) && (state != m_DeformState)) {
+	if ((m_MaxInterface != NULL) && (state != m_DeformState))
+	{
 		m_DeformState = state;
-		NotifyDependents (FOREVER, PART_GEOM | PART_VERTCOLOR, REFMSG_CHANGE);
-		m_MaxInterface->RedrawViews (m_MaxInterface->GetTime ());
-		if (m_pPanel != NULL) {
-			m_pPanel->Update_Vertex_Color ();
+		NotifyDependents(FOREVER, PART_GEOM | PART_VERTCOLOR, REFMSG_CHANGE);
+		m_MaxInterface->RedrawViews(m_MaxInterface->GetTime());
+		if (m_pPanel != NULL)
+		{
+			m_pPanel->Update_Vertex_Color();
 		}
 	}
 
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	Set_Vertex_Color
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::Set_Vertex_Color (const Point3 &color, bool button_up)
+void MeshDeformClass::Set_Vertex_Color(const Point3 &color, bool button_up)
 {
-	if (m_MaxInterface != NULL) {
-
+	if (m_MaxInterface != NULL)
+	{
 		INodeTab nodes;
 		ModContextList mod_context_list;
-		m_MaxInterface->GetModContexts (mod_context_list, nodes);
+		m_MaxInterface->GetModContexts(mod_context_list, nodes);
 
 		bool save_undo = false;
-		if ((button_up == false) && (m_VertColorChanging == false)) {
-			theHold.Begin ();
+		if ((button_up == false) && (m_VertColorChanging == false))
+		{
+			theHold.Begin();
 			m_VertColorChanging = true;
 			save_undo = true;
 		}
 
 		// Loop through all the modifier contexts
-		for (int index = 0; index < mod_context_list.Count (); index ++) {
-
+		for (int index = 0; index < mod_context_list.Count(); index++)
+		{
 			// Get the data we've cached for this modifier context
-			MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context_list[index]->localData);
-			if (mod_data != NULL) {
-				Mesh *mesh = mod_data->Peek_Mesh ();
+			MeshDeformModData *mod_data = static_cast<MeshDeformModData *>(mod_context_list[index]->localData);
+			if (mod_data != NULL)
+			{
+				Mesh *mesh = mod_data->Peek_Mesh();
 
 				//
 				//	Record the original color in the undo stack
 				//
-				if (save_undo) {
-					theHold.Put (new VertexColorRestoreClass (mesh, this, mod_data));
+				if (save_undo)
+				{
+					theHold.Put(new VertexColorRestoreClass(mesh, this, mod_data));
 				}
 
 				// Only do this if the mesh is using vertex coloring
-				if (mesh->numCVerts >= mesh->numVerts) {
-
+				if (mesh->numCVerts >= mesh->numVerts)
+				{
 					//
 					//	Loop through all the per-face verts
 					//
-					for (int face = 0; face < mesh->numFaces; face ++) {
-						for (int vert = 0; vert < 3; vert ++) {
-
+					for (int face = 0; face < mesh->numFaces; face++)
+					{
+						for (int vert = 0; vert < 3; vert++)
+						{
 							//
 							//	If the vertex is selected, then change its color
 							//
-							if (mesh->vertSel[mesh->faces[face].v[vert]]) {
+							if (mesh->vertSel[mesh->faces[face].v[vert]])
+							{
 								int color_index = mesh->vcFace[face].t[vert];
 								mesh->vertCol[color_index] = color;
 							}
@@ -946,74 +873,76 @@ MeshDeformClass::Set_Vertex_Color (const Point3 &color, bool button_up)
 				//
 				//	Record these changes in the current set
 				//
-				mod_data->Update_Set (m_CurrentSet, VERT_COLORS);
+				mod_data->Update_Set(m_CurrentSet, VERT_COLORS);
 			}
 		}
 
-		if (button_up && m_VertColorChanging) {
-			theHold.Accept ("Vertex Color");
+		if (button_up && m_VertColorChanging)
+		{
+			theHold.Accept("Vertex Color");
 		}
 
 		// Repaint the model
-		nodes.DisposeTemporary ();
-		NotifyDependents (FOREVER, PART_GEOM | PART_VERTCOLOR, REFMSG_CHANGE);
-		m_MaxInterface->RedrawViews (m_MaxInterface->GetTime ());
+		nodes.DisposeTemporary();
+		NotifyDependents(FOREVER, PART_GEOM | PART_VERTCOLOR, REFMSG_CHANGE);
+		m_MaxInterface->RedrawViews(m_MaxInterface->GetTime());
 	}
 
 	m_VertColorChanging = !button_up;
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	Get_Vertex_Color
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::Get_Vertex_Color (Point3 &color)
+void MeshDeformClass::Get_Vertex_Color(Point3 &color)
 {
 	// Assume black
 	color.x = 0;
 	color.y = 0;
 	color.z = 0;
 
-	if (m_MaxInterface != NULL) {
-
+	if (m_MaxInterface != NULL)
+	{
 		INodeTab nodes;
 		ModContextList mod_context_list;
-		m_MaxInterface->GetModContexts (mod_context_list, nodes);
+		m_MaxInterface->GetModContexts(mod_context_list, nodes);
 
 		//
 		// Loop through all the modifier contexts
 		//
 		int sel_count = 0;
-		for (int index = 0; index < mod_context_list.Count (); index ++) {
-
+		for (int index = 0; index < mod_context_list.Count(); index++)
+		{
 			//
 			// Get the data we've cached for this modifier context
 			//
-			MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context_list[index]->localData);
-			if (mod_data != NULL) {
-				Mesh *mesh = mod_data->Peek_Mesh ();
+			MeshDeformModData *mod_data = static_cast<MeshDeformModData *>(mod_context_list[index]->localData);
+			if (mod_data != NULL)
+			{
+				Mesh *mesh = mod_data->Peek_Mesh();
 
 				// Only do this if the mesh is using vertex coloring
-				if (mesh->numCVerts >= mesh->numVerts) {
-
+				if (mesh->numCVerts >= mesh->numVerts)
+				{
 					//
 					//	Loop through all the per-face verts
 					//
-					for (int face = 0; face < mesh->numFaces; face ++) {
-						for (int vert = 0; vert < 3; vert ++) {
-
+					for (int face = 0; face < mesh->numFaces; face++)
+					{
+						for (int vert = 0; vert < 3; vert++)
+						{
 							//
 							//	If this vert is selected, then add its color to the total
 							//
-							if (mesh->vertSel[mesh->faces[face].v[vert]]) {
-								int color_index	= mesh->vcFace[face].t[vert];
+							if (mesh->vertSel[mesh->faces[face].v[vert]])
+							{
+								int color_index = mesh->vcFace[face].t[vert];
 								Point3 vert_color = mesh->vertCol[color_index];
-								color	+= vert_color;
-								sel_count ++;
+								color += vert_color;
+								sel_count++;
 							}
 						}
 					}
@@ -1024,286 +953,273 @@ MeshDeformClass::Get_Vertex_Color (Point3 &color)
 		//
 		// Normalize the selected color
 		//
-		if (sel_count > 0) {
+		if (sel_count > 0)
+		{
 			color = color / sel_count;
 		}
 
-		nodes.DisposeTemporary ();
+		nodes.DisposeTemporary();
 	}
 
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	Update_UI
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::Update_UI (MeshDeformModData *mod_data)
+void MeshDeformClass::Update_UI(MeshDeformModData *mod_data)
 {
-	assert (mod_data != NULL);
+	assert(mod_data != NULL);
 
-	if (m_pPanel != NULL) {
-		Update_Set_Count ();
+	if (m_pPanel != NULL)
+	{
+		Update_Set_Count();
 
-		m_CurrentSet = mod_data->Get_Current_Set ();
-		int keyframe = mod_data->Peek_Set (m_CurrentSet).Get_Current_Key_Frame ();
-		Set_Deform_State ((float(keyframe + 1) + 0.5F) / 10.0F);
+		m_CurrentSet = mod_data->Get_Current_Set();
+		int keyframe = mod_data->Peek_Set(m_CurrentSet).Get_Current_Key_Frame();
+		Set_Deform_State((float(keyframe + 1) + 0.5F) / 10.0F);
 
-		m_pPanel->Update_Vertex_Color ();
-		m_pPanel->Set_Max_Sets (m_MaxSets);
-		m_pPanel->Set_Current_Set (m_CurrentSet);
-		m_pPanel->Set_Current_State (m_DeformState);
+		m_pPanel->Update_Vertex_Color();
+		m_pPanel->Set_Max_Sets(m_MaxSets);
+		m_pPanel->Set_Current_Set(m_CurrentSet);
+		m_pPanel->Set_Current_State(m_DeformState);
 	}
 
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	Auto_Apply
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::Auto_Apply (bool auto_apply)
+void MeshDeformClass::Auto_Apply(bool auto_apply)
 {
-	if (m_MaxInterface != NULL) {
-
+	if (m_MaxInterface != NULL)
+	{
 		// Get a list of contexts that we are part of.
 		INodeTab nodes;
 		ModContextList mod_context_list;
-		m_MaxInterface->GetModContexts (mod_context_list, nodes);
+		m_MaxInterface->GetModContexts(mod_context_list, nodes);
 
 		// Loop through all the modifier contexts
-		for (int index = 0; index < mod_context_list.Count (); index ++) {
-
+		for (int index = 0; index < mod_context_list.Count(); index++)
+		{
 			//
 			//	Let the mod context know what it's auto apply state is
 			//
-			MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context_list[index]->localData);
-			if (mod_data != NULL) {
-				mod_data->Auto_Apply (auto_apply);
+			MeshDeformModData *mod_data = static_cast<MeshDeformModData *>(mod_context_list[index]->localData);
+			if (mod_data != NULL)
+			{
+				mod_data->Auto_Apply(auto_apply);
 			}
 		}
 
 		// Cleanup
-		nodes.DisposeTemporary ();
+		nodes.DisposeTemporary();
 	}
 
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	Set_Max_Deform_Sets
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::Set_Max_Deform_Sets (int max)
+void MeshDeformClass::Set_Max_Deform_Sets(int max)
 {
 	//
 	//	Make sure the current set doesn't exceed the total sets
 	//
-	if (m_CurrentSet >= max) {
-		Set_Current_Set (max - 1, true);
+	if (m_CurrentSet >= max)
+	{
+		Set_Current_Set(max - 1, true);
 	}
 
 	m_MaxSets = max;
-	if (m_MaxInterface != NULL) {
-
+	if (m_MaxInterface != NULL)
+	{
 		// Get a list of contexts that we are part of.
 		INodeTab nodes;
 		ModContextList mod_context_list;
-		m_MaxInterface->GetModContexts (mod_context_list, nodes);
+		m_MaxInterface->GetModContexts(mod_context_list, nodes);
 
 		// Loop through all the modifier contexts
-		for (int index = 0; index < mod_context_list.Count (); index ++) {
-
+		for (int index = 0; index < mod_context_list.Count(); index++)
+		{
 			//
 			//	Let the mod context know the max sets have changed
 			//
-			MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context_list[index]->localData);
-			if (mod_data != NULL) {
-				mod_data->Set_Max_Deform_Sets (max);
+			MeshDeformModData *mod_data = static_cast<MeshDeformModData *>(mod_context_list[index]->localData);
+			if (mod_data != NULL)
+			{
+				mod_data->Set_Max_Deform_Sets(max);
 			}
 		}
 
 		// Cleanup
-		nodes.DisposeTemporary ();
-		NotifyDependents (FOREVER, PART_SELECT, REFMSG_CHANGE);
-		m_MaxInterface->RedrawViews (m_MaxInterface->GetTime ());
+		nodes.DisposeTemporary();
+		NotifyDependents(FOREVER, PART_SELECT, REFMSG_CHANGE);
+		m_MaxInterface->RedrawViews(m_MaxInterface->GetTime());
 	}
 
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	Update_Set_Count
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::Update_Set_Count (void)
+void MeshDeformClass::Update_Set_Count(void)
 {
 	m_MaxSets = 1;
-	if (m_MaxInterface != NULL) {
-
+	if (m_MaxInterface != NULL)
+	{
 		// Get a list of contexts that we are part of.
 		INodeTab nodes;
 		ModContextList mod_context_list;
-		m_MaxInterface->GetModContexts (mod_context_list, nodes);
+		m_MaxInterface->GetModContexts(mod_context_list, nodes);
 
 		// Loop through all the modifier contexts
-		for (int index = 0; index < mod_context_list.Count (); index ++) {
-
+		for (int index = 0; index < mod_context_list.Count(); index++)
+		{
 			//
 			//	Get the count of sets for this context
 			//
-			MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context_list[index]->localData);
-			if ((mod_data != NULL) && (mod_data->Get_Set_Count () > m_MaxSets)) {
-				m_MaxSets = mod_data->Get_Set_Count ();
+			MeshDeformModData *mod_data = static_cast<MeshDeformModData *>(mod_context_list[index]->localData);
+			if ((mod_data != NULL) && (mod_data->Get_Set_Count() > m_MaxSets))
+			{
+				m_MaxSets = mod_data->Get_Set_Count();
 			}
 		}
 
 		// Cleanup
-		nodes.DisposeTemporary ();
+		nodes.DisposeTemporary();
 	}
 
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	Set_Current_Set
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::Set_Current_Set
-(
-	int index,
-	bool update_selection
-)
+void MeshDeformClass::Set_Current_Set(int index, bool update_selection)
 {
 	last_delta.x = 0;
 	last_delta.y = 0;
 	last_delta.z = 0;
 
 	m_CurrentSet = index;
-	if (m_MaxInterface != NULL) {
-		if (update_selection) {
-			ClearSelection (1);
+	if (m_MaxInterface != NULL)
+	{
+		if (update_selection)
+		{
+			ClearSelection(1);
 		}
 
 		// Get a list of contexts that we are part of.
 		INodeTab nodes;
 		ModContextList mod_context_list;
-		m_MaxInterface->GetModContexts (mod_context_list, nodes);
+		m_MaxInterface->GetModContexts(mod_context_list, nodes);
 
 		// Loop through all the modifier contexts
-		for (int index = 0; index < mod_context_list.Count (); index ++) {
-
+		for (int index = 0; index < mod_context_list.Count(); index++)
+		{
 			//
 			//	Have the mod context select the verts in its set
 			//
-			MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context_list[index]->localData);
-			if (mod_data != NULL) {
-				mod_data->Set_Current_Set (m_CurrentSet);
-				if (update_selection) {
-					mod_data->Select_Set (m_CurrentSet);
+			MeshDeformModData *mod_data = static_cast<MeshDeformModData *>(mod_context_list[index]->localData);
+			if (mod_data != NULL)
+			{
+				mod_data->Set_Current_Set(m_CurrentSet);
+				if (update_selection)
+				{
+					mod_data->Select_Set(m_CurrentSet);
 				}
-				m_pPanel->Set_Auto_Apply_Check (mod_data->Is_Auto_Apply ());
+				m_pPanel->Set_Auto_Apply_Check(mod_data->Is_Auto_Apply());
 			}
 		}
 
 		// Repaint the model
-		nodes.DisposeTemporary ();
-		if (update_selection) {
-			NotifyDependents (FOREVER, PART_SELECT, REFMSG_CHANGE);
-			m_MaxInterface->RedrawViews (m_MaxInterface->GetTime ());
+		nodes.DisposeTemporary();
+		if (update_selection)
+		{
+			NotifyDependents(FOREVER, PART_SELECT, REFMSG_CHANGE);
+			m_MaxInterface->RedrawViews(m_MaxInterface->GetTime());
 		}
 
 		// Update the current 'vertex color' on the UI panel
-		m_pPanel->Update_Vertex_Color ();
+		m_pPanel->Update_Vertex_Color();
 	}
 
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	Update_Current_Set
 //
 ///////////////////////////////////////////////////////////////////////////
-void
-MeshDeformClass::Update_Current_Set (void)
+void MeshDeformClass::Update_Current_Set(void)
 {
-	if (m_MaxInterface != NULL) {
-
+	if (m_MaxInterface != NULL)
+	{
 		// Get a list of contexts that we are part of.
 		INodeTab nodes;
 		ModContextList mod_context_list;
-		m_MaxInterface->GetModContexts (mod_context_list, nodes);
+		m_MaxInterface->GetModContexts(mod_context_list, nodes);
 
 		// Loop through all the modifier contexts
-		for (int index = 0; index < mod_context_list.Count (); index ++) {
-
+		for (int index = 0; index < mod_context_list.Count(); index++)
+		{
 			//
 			//	Notify the mod context so it can update its list of verts
 			// in the current set.
 			//
-			MeshDeformModData *mod_data = static_cast <MeshDeformModData *> (mod_context_list[index]->localData);
-			if (mod_data != NULL) {
-				//mod_data->Update_Set (m_CurrentSet);
+			MeshDeformModData *mod_data = static_cast<MeshDeformModData *>(mod_context_list[index]->localData);
+			if (mod_data != NULL)
+			{
+				// mod_data->Update_Set (m_CurrentSet);
 			}
 		}
 
 		// Cleanup
-		nodes.DisposeTemporary ();
+		nodes.DisposeTemporary();
 		m_bSetDirty = false;
 	}
 
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	SaveLocalData
 //
 ///////////////////////////////////////////////////////////////////////////
-IOResult
-MeshDeformClass::SaveLocalData (ISave *save_obj, LocalModData *mod_context)
+IOResult MeshDeformClass::SaveLocalData(ISave *save_obj, LocalModData *mod_context)
 {
-	assert (mod_context != NULL);
-	return ((MeshDeformModData *)mod_context)->Save (save_obj);
+	assert(mod_context != NULL);
+	return ((MeshDeformModData *)mod_context)->Save(save_obj);
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
 //	LoadLocalData
 //
 ///////////////////////////////////////////////////////////////////////////
-IOResult
-MeshDeformClass::LoadLocalData (ILoad *load_obj, LocalModData **mod_context)
+IOResult MeshDeformClass::LoadLocalData(ILoad *load_obj, LocalModData **mod_context)
 {
-	assert (mod_context != NULL);
+	assert(mod_context != NULL);
 	MeshDeformModData *mod_data = new MeshDeformModData;
 	(*mod_context) = mod_data;
-	return mod_data->Load (load_obj);
+	return mod_data->Load(load_obj);
 }
-
-
-
-
-
 
 #if 0
 
@@ -1421,8 +1337,7 @@ void SkinModifierClass::InvertSelection(int selLevel)
 
 #endif // 0
 
-
-#if defined W3D_MAX4		//defined as in the project (.dsp)
+#if defined W3D_MAX4 // defined as in the project (.dsp)
 ////////////////////////////////////////////////////////////////////////////////////////
 int MeshDeformClass::NumSubObjTypes()
 {
@@ -1432,13 +1347,16 @@ int MeshDeformClass::NumSubObjTypes()
 ISubObjType *MeshDeformClass::GetSubObjType(int i)
 {
 	static bool _initialized = false;
-	if(!_initialized){
+	if (!_initialized)
+	{
 		_initialized = true;
 		_SubObjectTypeVertex.SetName("Vertices");
 	}
-	if(i == -1){
-		if(GetSubObjectLevel() > 0){
-			return GetSubObjType(GetSubObjectLevel()-1);
+	if (i == -1)
+	{
+		if (GetSubObjectLevel() > 0)
+		{
+			return GetSubObjType(GetSubObjectLevel() - 1);
 		}
 	}
 	return &_SubObjectTypeVertex;

@@ -38,25 +38,25 @@ class GameSpyGameSlot : public GameSlot
 {
 public:
 	GameSpyGameSlot();
-	Int getProfileID( void ) const { return m_profileID; }
-	void setProfileID( Int id ) { m_profileID = id; }
-	AsciiString getLoginName( void ) const { return m_gameSpyLogin; }
-	void setLoginName( AsciiString name ) { m_gameSpyLogin = name; }
-	AsciiString getLocale( void ) const { return m_gameSpyLocale; }
-	void setLocale( AsciiString name ) { m_gameSpyLocale = name; }
-	Int getWins( void ) const { return m_wins; }
-	Int getLosses( void ) const { return m_losses; }
-	void setWins( Int wins ) { m_wins = wins; }
-	void setLosses( Int losses ) { m_losses = losses; }
+	Int getProfileID(void) const { return m_profileID; }
+	void setProfileID(Int id) { m_profileID = id; }
+	AsciiString getLoginName(void) const { return m_gameSpyLogin; }
+	void setLoginName(AsciiString name) { m_gameSpyLogin = name; }
+	AsciiString getLocale(void) const { return m_gameSpyLocale; }
+	void setLocale(AsciiString name) { m_gameSpyLocale = name; }
+	Int getWins(void) const { return m_wins; }
+	Int getLosses(void) const { return m_losses; }
+	void setWins(Int wins) { m_wins = wins; }
+	void setLosses(Int losses) { m_losses = losses; }
 
-	Int getSlotRankPoints( void ) const { return m_rankPoints; }
-	Int getFavoriteSide( void ) const { return m_favoriteSide; }
-	void setSlotRankPoints( Int val ) { m_rankPoints = val; }
-	void setFavoriteSide( Int val ) { m_favoriteSide = val; }
+	Int getSlotRankPoints(void) const { return m_rankPoints; }
+	Int getFavoriteSide(void) const { return m_favoriteSide; }
+	void setSlotRankPoints(Int val) { m_rankPoints = val; }
+	void setFavoriteSide(Int val) { m_favoriteSide = val; }
 
-	void setPingString( AsciiString pingStr );
-	inline AsciiString getPingString( void ) const { return m_pingStr; }
-	inline Int getPingAsInt( void ) const { return m_pingInt; }
+	void setPingString(AsciiString pingStr);
+	inline AsciiString getPingString(void) const { return m_pingStr; }
+	inline Int getPingAsInt(void) const { return m_pingInt; }
 
 protected:
 	Int m_profileID;
@@ -70,13 +70,13 @@ protected:
 };
 
 /**
-  * GameSpyStagingRoom class - maintains information about the GameSpy game and
-	* the contents of its slot list throughout the game.
-	*/
+ * GameSpyStagingRoom class - maintains information about the GameSpy game and
+ * the contents of its slot list throughout the game.
+ */
 class GameSpyStagingRoom : public GameInfo
 {
 private:
-	GameSpyGameSlot m_GameSpySlot[MAX_SLOTS];											///< The GameSpy Games Slot List
+	GameSpyGameSlot m_GameSpySlot[MAX_SLOTS]; ///< The GameSpy Games Slot List
 	UnicodeString m_gameName;
 	Int m_id;
 	Transport *m_transport;
@@ -99,11 +99,11 @@ private:
 
 public:
 	GameSpyStagingRoom();
-	virtual void reset( void );
+	virtual void reset(void);
 
 	void cleanUpSlotPointers(void);
 	inline void setID(Int id) { m_id = id; }
-	inline Int getID( void ) const { return m_id; }
+	inline Int getID(void) const { return m_id; }
 
 	inline void setHasPassword(Bool val) { m_requiresPassword = val; }
 	inline Bool getHasPassword(void) const { return m_requiresPassword; }
@@ -126,34 +126,34 @@ public:
 	inline void setReportedNumObservers(Int val) { m_reportedNumObservers = val; }
 	inline Int getReportedNumObservers(void) const { return m_reportedNumObservers; }
 
-	inline void setLadderIP( AsciiString ladderIP ) { m_ladderIP = ladderIP; }
-	inline AsciiString getLadderIP( void ) const { return m_ladderIP; }
-	inline void setLadderPort( UnsignedShort ladderPort ) { m_ladderPort = ladderPort; }
-	inline UnsignedShort getLadderPort( void ) const { return m_ladderPort; }
-	void setPingString( AsciiString pingStr );
-	inline AsciiString getPingString( void ) const { return m_pingStr; }
-	inline Int getPingAsInt( void ) const { return m_pingInt; }
+	inline void setLadderIP(AsciiString ladderIP) { m_ladderIP = ladderIP; }
+	inline AsciiString getLadderIP(void) const { return m_ladderIP; }
+	inline void setLadderPort(UnsignedShort ladderPort) { m_ladderPort = ladderPort; }
+	inline UnsignedShort getLadderPort(void) const { return m_ladderPort; }
+	void setPingString(AsciiString pingStr);
+	inline AsciiString getPingString(void) const { return m_pingStr; }
+	inline Int getPingAsInt(void) const { return m_pingInt; }
 
-	virtual Bool amIHost( void ) const;															///< Convenience function - is the local player the game host?
+	virtual Bool amIHost(void) const; ///< Convenience function - is the local player the game host?
 
-	GameSpyGameSlot *getGameSpySlot( Int index );
+	GameSpyGameSlot *getGameSpySlot(Int index);
 
-	AsciiString generateGameSpyGameResultsPacket( void );
-	AsciiString generateLadderGameResultsPacket( void );
-	void markGameAsQM( void ) { m_isQM = TRUE; }
-	Bool isQMGame( void ) { return m_isQM; }
+	AsciiString generateGameSpyGameResultsPacket(void);
+	AsciiString generateLadderGameResultsPacket(void);
+	void markGameAsQM(void) { m_isQM = TRUE; }
+	Bool isQMGame(void) { return m_isQM; }
 
 	virtual void init(void);
-	virtual void resetAccepted(void);															///< Reset the accepted flag on all players
+	virtual void resetAccepted(void); ///< Reset the accepted flag on all players
 
-	virtual void startGame(Int gameID);														///< Mark our game as started and record the game ID.
-	void launchGame( void );																			///< NAT negotiation has finished - really start
-	virtual Int getLocalSlotNum( void ) const;										///< Get the local slot number, or -1 if we're not present
+	virtual void startGame(Int gameID); ///< Mark our game as started and record the game ID.
+	void launchGame(void); ///< NAT negotiation has finished - really start
+	virtual Int getLocalSlotNum(void) const; ///< Get the local slot number, or -1 if we're not present
 
-	inline void setGameName( UnicodeString name ) { m_gameName = name; }
-	inline UnicodeString getGameName( void ) const { return m_gameName; }
+	inline void setGameName(UnicodeString name) { m_gameName = name; }
+	inline UnicodeString getGameName(void) const { return m_gameName; }
 
-	inline void setLocalName( AsciiString name ) { m_localName = name; }
+	inline void setLocalName(AsciiString name) { m_localName = name; }
 };
 
 extern GameSpyStagingRoom *TheGameSpyGame;

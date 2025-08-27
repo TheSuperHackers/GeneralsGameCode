@@ -21,7 +21,6 @@
 class ReplaySimulation
 {
 public:
-
 	// TheSuperHackers @feature helmutbuhler 13/04/2025
 	// Simulate a list of replays without graphics.
 	// Returns exit code 1 if mismatch or other error occurred
@@ -35,13 +34,11 @@ public:
 	static UnsignedInt getReplayCount() { return s_replayCount; }
 
 private:
-
 	static int simulateReplaysInThisProcess(const std::vector<AsciiString> &filenames);
 	static int simulateReplaysInWorkerProcesses(const std::vector<AsciiString> &filenames, int maxProcesses);
 	static std::vector<AsciiString> resolveFilenameWildcards(const std::vector<AsciiString> &filenames);
 
 private:
-
 	static Bool s_isRunning;
 	static UnsignedInt s_replayIndex;
 	static UnsignedInt s_replayCount;

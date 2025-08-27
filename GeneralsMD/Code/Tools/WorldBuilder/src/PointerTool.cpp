@@ -41,9 +41,13 @@
 // This function spiders out and un/picks all Waypoints that have some form of indirect contact with this point
 // Has a recursive helper function as well.
 //
-static void helper_pickAllWaypointsInPath( Int sourceID, CWorldBuilderDoc *pDoc, const Int numWaypointLinks, std::vector<Int>& alreadyTouched );
+static void helper_pickAllWaypointsInPath(
+		Int sourceID,
+		CWorldBuilderDoc *pDoc,
+		const Int numWaypointLinks,
+		std::vector<Int> &alreadyTouched);
 
-static void pickAllWaypointsInPath( Int sourceID, Bool select )
+static void pickAllWaypointsInPath(Int sourceID, Bool select)
 {
 	std::vector<Int> alreadyTouched;
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
@@ -52,9 +56,12 @@ static void pickAllWaypointsInPath( Int sourceID, Bool select )
 
 	// already touched should now be filled with waypointIDs that want to be un/selected
 	MapObject *pMapObj = MapObject::getFirstMapObject();
-	while (pMapObj) {
-		if (pMapObj->isWaypoint()) {
-			if (std::find(alreadyTouched.begin(), alreadyTouched.end(), pMapObj->getWaypointID()) != alreadyTouched.end()) {
+	while (pMapObj)
+	{
+		if (pMapObj->isWaypoint())
+		{
+			if (std::find(alreadyTouched.begin(), alreadyTouched.end(), pMapObj->getWaypointID()) != alreadyTouched.end())
+			{
 				pMapObj->setSelected(select);
 			}
 		}
@@ -62,21 +69,29 @@ static void pickAllWaypointsInPath( Int sourceID, Bool select )
 	}
 }
 
-static void helper_pickAllWaypointsInPath( Int sourceID, CWorldBuilderDoc *pDoc, const Int numWaypointLinks, std::vector<Int>& alreadyTouched )
+static void helper_pickAllWaypointsInPath(
+		Int sourceID,
+		CWorldBuilderDoc *pDoc,
+		const Int numWaypointLinks,
+		std::vector<Int> &alreadyTouched)
 {
-	if (std::find(alreadyTouched.begin(), alreadyTouched.end(), sourceID) != alreadyTouched.end() ) {
+	if (std::find(alreadyTouched.begin(), alreadyTouched.end(), sourceID) != alreadyTouched.end())
+	{
 		return;
 	}
 
 	alreadyTouched.push_back(sourceID);
-	for (int i = 0; i < numWaypointLinks; ++i) {
+	for (int i = 0; i < numWaypointLinks; ++i)
+	{
 		Int way1, way2;
 		pDoc->getWaypointLink(i, &way1, &way2);
-		if (way1 == sourceID) {
+		if (way1 == sourceID)
+		{
 			helper_pickAllWaypointsInPath(way2, pDoc, numWaypointLinks, alreadyTouched);
 		}
 
-		if (way2 == sourceID) {
+		if (way2 == sourceID)
+		{
 			helper_pickAllWaypointsInPath(way1, pDoc, numWaypointLinks, alreadyTouched);
 		}
 	}
@@ -87,25 +102,22 @@ static void helper_pickAllWaypointsInPath( Int sourceID, CWorldBuilderDoc *pDoc,
 //
 
 /// Constructor
-PointerTool::PointerTool(void) :
-	m_modifyUndoable(NULL),
-	m_curObject(NULL),
-	m_rotateCursor(NULL),
-	m_moveCursor(NULL)
+PointerTool::PointerTool(void) : m_modifyUndoable(NULL), m_curObject(NULL), m_rotateCursor(NULL), m_moveCursor(NULL)
 {
 	m_toolID = ID_POINTER_TOOL;
 	m_cursorID = IDC_POINTER;
-
 }
 
 /// Destructor
 PointerTool::~PointerTool(void)
 {
 	REF_PTR_RELEASE(m_modifyUndoable); // belongs to pDoc now.
-	if (m_rotateCursor) {
+	if (m_rotateCursor)
+	{
 		::DestroyCursor(m_rotateCursor);
 	}
-	if (m_moveCursor) {
+	if (m_moveCursor)
+	{
 		::DestroyCursor(m_moveCursor);
 	}
 }
@@ -117,27 +129,40 @@ void PointerTool::checkForPropertiesPanel(void)
 	PolygonTrigger *theTrigger = WaypointOptions::getSingleSelectedPolygon();
 	MapObject *theLightObj = LightOptions::getSingleSelectedLight();
 	MapObject *theObj = MapObjectProps::getSingleSelectedMapObject();
-	if (theMapObj) {
+	if (theMapObj)
+	{
 		CMainFrame::GetMainFrame()->showOptionsDialog(IDD_WAYPOINT_OPTIONS);
 		WaypointOptions::update();
-	} else if (theTrigger) {
-		if (theTrigger->isWaterArea()) {
+	}
+	else if (theTrigger)
+	{
+		if (theTrigger->isWaterArea())
+		{
 			CMainFrame::GetMainFrame()->showOptionsDialog(IDD_WATER_OPTIONS);
 			WaterOptions::update();
-		} else {
+		}
+		else
+		{
 			CMainFrame::GetMainFrame()->showOptionsDialog(IDD_WAYPOINT_OPTIONS);
 			WaypointOptions::update();
 		}
-	} else if (theLightObj) {
+	}
+	else if (theLightObj)
+	{
 		CMainFrame::GetMainFrame()->showOptionsDialog(IDD_LIGHT_OPTIONS);
 		LightOptions::update();
-	} else if (RoadOptions::selectionIsRoadsOnly()) {
+	}
+	else if (RoadOptions::selectionIsRoadsOnly())
+	{
 		CMainFrame::GetMainFrame()->showOptionsDialog(IDD_ROAD_OPTIONS);
 		RoadOptions::updateSelection();
-	} else {
+	}
+	else
+	{
 		CMainFrame::GetMainFrame()->showOptionsDialog(IDD_MAPOBJECT_PROPS);
 		MapObjectProps::update();
-		if (theObj) {
+		if (theObj)
+		{
 			ObjectOptions::selectObject(theObj);
 		}
 	}
@@ -148,18 +173,23 @@ void PointerTool::clearSelection(void) ///< Clears the selected objects selected
 {
 	// Clear selection.
 	MapObject *pObj = MapObject::getFirstMapObject();
-	while (pObj) {
-		if (pObj->isSelected()) {
+	while (pObj)
+	{
+		if (pObj->isSelected())
+		{
 			pObj->setSelected(false);
 		}
 		pObj = pObj->getNext();
 	}
 	// Clear selected build list items.
 	Int i;
-	for (i=0; i<TheSidesList->getNumSides(); i++) {
+	for (i = 0; i < TheSidesList->getNumSides(); i++)
+	{
 		SidesInfo *pSide = TheSidesList->getSideInfo(i);
-		for (BuildListInfo *pBuild = pSide->getBuildList(); pBuild; pBuild = pBuild->getNext()) {
-			if (pBuild->isSelected()) {
+		for (BuildListInfo *pBuild = pSide->getBuildList(); pBuild; pBuild = pBuild->getNext())
+		{
+			if (pBuild->isSelected())
+			{
 				pBuild->setSelected(false);
 			}
 		}
@@ -175,7 +205,8 @@ void PointerTool::activate()
 	m_mouseUpMove = false;
 	checkForPropertiesPanel();
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
-	if (pDoc==NULL) return;
+	if (pDoc == NULL)
+		return;
 	WbView3d *p3View = pDoc->GetActive3DView();
 	p3View->setObjTracking(NULL, m_downPt3d, 0, false);
 }
@@ -190,51 +221,70 @@ void PointerTool::deactivate()
 /** Set the cursor. */
 void PointerTool::setCursor(void)
 {
-	if (m_mouseUpRotate) {
-		if (m_rotateCursor == NULL) {
+	if (m_mouseUpRotate)
+	{
+		if (m_rotateCursor == NULL)
+		{
 			m_rotateCursor = AfxGetApp()->LoadCursor(MAKEINTRESOURCE(IDC_ROTATE));
 		}
 		::SetCursor(m_rotateCursor);
-	} else 	if (m_mouseUpMove) {
-		if (m_moveCursor == NULL) {
+	}
+	else if (m_mouseUpMove)
+	{
+		if (m_moveCursor == NULL)
+		{
 			m_moveCursor = AfxGetApp()->LoadCursor(MAKEINTRESOURCE(IDC_MOVE_POINTER));
 		}
 		::SetCursor(m_moveCursor);
-	} else {
+	}
+	else
+	{
 		Tool::setCursor();
 	}
 }
 
-Bool PointerTool::allowPick(MapObject* pMapObj, WbView* pView)
+Bool PointerTool::allowPick(MapObject *pMapObj, WbView *pView)
 {
 	EditorSortingType sort = ES_NONE;
-	if (!pMapObj) {
+	if (!pMapObj)
+	{
 		return false;
 	}
 	const ThingTemplate *tt = pMapObj->getThingTemplate();
-	if (tt && tt->getEditorSorting() == ES_AUDIO) {
-		if (pView->GetPickConstraint() == ES_NONE || pView->GetPickConstraint() == ES_AUDIO) {
+	if (tt && tt->getEditorSorting() == ES_AUDIO)
+	{
+		if (pView->GetPickConstraint() == ES_NONE || pView->GetPickConstraint() == ES_AUDIO)
+		{
 			return true;
 		}
 	}
-	if ((tt && !pView->getShowModels()) || (pMapObj->getFlags() & FLAG_DONT_RENDER)) {
+	if ((tt && !pView->getShowModels()) || (pMapObj->getFlags() & FLAG_DONT_RENDER))
+	{
 		return false;
 	}
-	if (pView->GetPickConstraint() != ES_NONE) {
-		if (tt) {
-			if (!pView->getShowModels()) {
+	if (pView->GetPickConstraint() != ES_NONE)
+	{
+		if (tt)
+		{
+			if (!pView->getShowModels())
+			{
 				return false;
 			}
 			sort = tt->getEditorSorting();
-		} else {
-			if (pMapObj->isWaypoint()) {
+		}
+		else
+		{
+			if (pMapObj->isWaypoint())
+			{
 				sort = ES_WAYPOINT;
 			}
-			if (pMapObj->getFlag(FLAG_ROAD_FLAGS)) {
+			if (pMapObj->getFlag(FLAG_ROAD_FLAGS))
+			{
 				sort = ES_ROAD;
 			}
 		}
-		if (sort != ES_NONE && sort != pView->GetPickConstraint()) {
+		if (sort != ES_NONE && sort != pView->GetPickConstraint())
+		{
 			return false;
 		}
 	}
@@ -242,9 +292,10 @@ Bool PointerTool::allowPick(MapObject* pMapObj, WbView* pView)
 }
 
 /** Execute the tool on mouse down - Pick an object. */
-void PointerTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void PointerTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
-	if (m != TRACK_L) return;
+	if (m != TRACK_L)
+		return;
 
 	Coord3D cpt;
 	pView->viewToDocCoords(viewPt, &cpt);
@@ -256,18 +307,22 @@ void PointerTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 	m_moving = false;
 	m_rotating = false;
 	m_dragSelect = false;
-	Bool shiftKey = (0x8000 & ::GetAsyncKeyState(VK_SHIFT))!=0;
-	Bool ctrlKey = (0x8000 & ::GetAsyncKeyState(VK_CONTROL))!=0;
+	Bool shiftKey = (0x8000 & ::GetAsyncKeyState(VK_SHIFT)) != 0;
+	Bool ctrlKey = (0x8000 & ::GetAsyncKeyState(VK_CONTROL)) != 0;
 
 	m_doPolyTool = false;
-	if (pView->GetPickConstraint() == ES_NONE || pView->GetPickConstraint() == ES_WAYPOINT) {
+	if (pView->GetPickConstraint() == ES_NONE || pView->GetPickConstraint() == ES_WAYPOINT)
+	{
 		// If polygon triggers are visible, see if we clicked on one.
-		if (pView->isPolygonTriggerVisible()) {
+		if (pView->isPolygonTriggerVisible())
+		{
 			m_poly_unsnappedMouseDownPt = cpt;
 			poly_pickOnMouseDown(viewPt, pView);
-			if (m_poly_curSelectedPolygon) {
+			if (m_poly_curSelectedPolygon)
+			{
 				// picked on one.
-				if (!poly_snapToPoly(&cpt)) {
+				if (!poly_snapToPoly(&cpt))
+				{
 					pView->snapPoint(&cpt);
 				}
 				m_poly_mouseDownPt = cpt;
@@ -281,74 +336,93 @@ void PointerTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 		}
 	}
 
-
-
-//	WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
+	//	WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
 	m_curObject = NULL;
 	MapObject *pObj = MapObject::getFirstMapObject();
 	MapObject *p3DObj = pView->picked3dObjectInView(viewPt);
 	MapObject *pClosestPicked = NULL;
-	if (allowPick(p3DObj, pView)) {
+	if (allowPick(p3DObj, pView))
+	{
 		pClosestPicked = p3DObj;
 	}
-	Real pickDistSqr = 10000*MAP_XY_FACTOR;
+	Real pickDistSqr = 10000 * MAP_XY_FACTOR;
 	pickDistSqr *= pickDistSqr;
 
 	// Find the closest pick.
-	for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext()) {
-		if (!allowPick(pObj, pView)) {
+	for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext())
+	{
+		if (!allowPick(pObj, pView))
+		{
 			continue;
 		}
 		Bool picked = (pView->picked(pObj, cpt) != PICK_NONE);
-		if (picked) {
+		if (picked)
+		{
 			loc = *pObj->getLocation();
-			Real dx = m_downPt3d.x-loc.x;
-			Real dy = m_downPt3d.y-loc.y;
-			Real distSqr = dx*dx+dy*dy;
-			if (distSqr < pickDistSqr) {
+			Real dx = m_downPt3d.x - loc.x;
+			Real dy = m_downPt3d.y - loc.y;
+			Real distSqr = dx * dx + dy * dy;
+			if (distSqr < pickDistSqr)
+			{
 				pClosestPicked = pObj;
 				pickDistSqr = distSqr;
 			}
 		}
 	}
 
-	Bool anySelected = (pClosestPicked!=NULL);
-	if (shiftKey) {
-		if (pClosestPicked && pClosestPicked->isSelected()) {
+	Bool anySelected = (pClosestPicked != NULL);
+	if (shiftKey)
+	{
+		if (pClosestPicked && pClosestPicked->isSelected())
+		{
 			pClosestPicked->setSelected(false);
-			if (ctrlKey && pClosestPicked->isWaypoint()) {
+			if (ctrlKey && pClosestPicked->isWaypoint())
+			{
 				pickAllWaypointsInPath(pClosestPicked->getWaypointID(), false);
 			}
-		} else if (pClosestPicked) {
+		}
+		else if (pClosestPicked)
+		{
 			pClosestPicked->setSelected(true);
-			if (ctrlKey && pClosestPicked->isWaypoint()) {
+			if (ctrlKey && pClosestPicked->isWaypoint())
+			{
 				pickAllWaypointsInPath(pClosestPicked->getWaypointID(), true);
 			}
 		}
-	} else if (pClosestPicked && pClosestPicked->isSelected()) {
+	}
+	else if (pClosestPicked && pClosestPicked->isSelected())
+	{
 		// We picked a selected object
-			m_curObject = pClosestPicked;
-	} else {
+		m_curObject = pClosestPicked;
+	}
+	else
+	{
 		clearSelection();
-		if (pClosestPicked) {
+		if (pClosestPicked)
+		{
 			pClosestPicked->setSelected(true);
-			if (ctrlKey && pClosestPicked->isWaypoint()) {
+			if (ctrlKey && pClosestPicked->isWaypoint())
+			{
 				pickAllWaypointsInPath(pClosestPicked->getWaypointID(), true);
 			}
-
 		}
 	}
 
 	// Grab both ends of a road.
-	if (pView->GetPickConstraint() == ES_NONE || pView->GetPickConstraint() == ES_ROAD) {
-		if (!shiftKey && pClosestPicked && (pClosestPicked->getFlags()&FLAG_ROAD_FLAGS) ) {
-			for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext()) {
-				if (pObj->getFlags()&FLAG_ROAD_FLAGS) {
+	if (pView->GetPickConstraint() == ES_NONE || pView->GetPickConstraint() == ES_ROAD)
+	{
+		if (!shiftKey && pClosestPicked && (pClosestPicked->getFlags() & FLAG_ROAD_FLAGS))
+		{
+			for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext())
+			{
+				if (pObj->getFlags() & FLAG_ROAD_FLAGS)
+				{
 					loc = *pObj->getLocation();
 					Real dx = pClosestPicked->getLocation()->x - loc.x;
 					Real dy = pClosestPicked->getLocation()->y - loc.y;
-					Real dist = sqrt(dx*dx+dy*dy);
-					if (dist < MAP_XY_FACTOR/100) {
+					Real dist = sqrt(dx * dx + dy * dy);
+					if (dist < MAP_XY_FACTOR / 100)
+					{
 						pObj->setSelected(true);
 					}
 				}
@@ -356,81 +430,103 @@ void PointerTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 		}
 	}
 
-	if (anySelected) {
-		if (m_curObject) {
+	if (anySelected)
+	{
+		if (m_curObject)
+		{
 			// See if we are picking on the arrow.
-			if (pView->picked(m_curObject, cpt) == PICK_ARROW) {
+			if (pView->picked(m_curObject, cpt) == PICK_ARROW)
+			{
 				m_rotating = true;
 			}
-		}	else {
+		}
+		else
+		{
 			pObj = MapObject::getFirstMapObject();
-			while (pObj) {
-				if (pObj->isSelected()) {
+			while (pObj)
+			{
+				if (pObj->isSelected())
+				{
 					m_curObject = pObj;
 					break;
 				}
 				pObj = pObj->getNext();
 			}
 		}
-		if (m_curObject) {
+		if (m_curObject)
+		{
 			// adjust the starting point so if we are snapping, the object snaps as well.
 			loc = *m_curObject->getLocation();
 			Coord3D snapLoc = loc;
 			pView->snapPoint(&snapLoc);
-			m_downPt3d.x += (loc.x-snapLoc.x);
-			m_downPt3d.y += (loc.y-snapLoc.y);
+			m_downPt3d.x += (loc.x - snapLoc.x);
+			m_downPt3d.y += (loc.y - snapLoc.y);
 		}
-	}	else {
+	}
+	else
+	{
 		m_dragSelect = true;
 	}
 }
 
 /// Left button move code.
-void PointerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void PointerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
 	Coord3D cpt;
 	pView->viewToDocCoords(viewPt, &cpt, false);
-	if (m == TRACK_NONE) {
+	if (m == TRACK_NONE)
+	{
 		// See if the cursor is over an object.
 		MapObject *pObj = MapObject::getFirstMapObject();
 		m_mouseUpRotate = false;
 		m_mouseUpMove = false;
-		while (pObj) {
-			if (allowPick(pObj, pView)) {
+		while (pObj)
+		{
+			if (allowPick(pObj, pView))
+			{
 				TPickedStatus stat = pView->picked(pObj, cpt);
-				if (stat==PICK_ARROW) {
+				if (stat == PICK_ARROW)
+				{
 					m_mouseUpRotate = true;
 					break;
 				}
-				if (stat==PICK_CENTER) {
+				if (stat == PICK_CENTER)
+				{
 					m_mouseUpMove = true;
 					break;
 				}
 			}
 			pObj = pObj->getNext();
 		}
-		if (!m_mouseUpRotate) {
+		if (!m_mouseUpRotate)
+		{
 			pObj = pView->picked3dObjectInView(viewPt);
-			if (allowPick(pObj, pView)) {
+			if (allowPick(pObj, pView))
+			{
 				m_mouseUpMove = true;
 			}
 		}
-		if (pView->isPolygonTriggerVisible() && pickPolygon(cpt, viewPt, pView)) {
-			if (pView->GetPickConstraint() == ES_NONE || pView->GetPickConstraint() == ES_WAYPOINT) {
+		if (pView->isPolygonTriggerVisible() && pickPolygon(cpt, viewPt, pView))
+		{
+			if (pView->GetPickConstraint() == ES_NONE || pView->GetPickConstraint() == ES_WAYPOINT)
+			{
 				m_mouseUpMove = true;
 				m_mouseUpRotate = false;
 			}
 		}
-		return;	// setCursor will use the value of m_mouseUpRotate.  jba.
+		return; // setCursor will use the value of m_mouseUpRotate.  jba.
 	}
 
-	if (m != TRACK_L) return;
-	if (m_doPolyTool) {
+	if (m != TRACK_L)
+		return;
+	if (m_doPolyTool)
+	{
 		PolygonTool::mouseMoved(m, viewPt, pView, pDoc);
 		return;
 	}
 
-	if (m_dragSelect) {
+	if (m_dragSelect)
+	{
 		CRect box;
 		box.left = viewPt.x;
 		box.bottom = viewPt.y;
@@ -442,61 +538,72 @@ void PointerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 		return;
 	}
 
-	if (m_curObject == NULL) {
+	if (m_curObject == NULL)
+	{
 		return;
 	}
 	pView->viewToDocCoords(viewPt, &cpt, !m_rotating);
-	if (!m_moving) {
+	if (!m_moving)
+	{
 		// always use view coords (not doc coords) for hysteresis
-		Int dx = viewPt.x-m_downPt2d.x;
-		Int dy = viewPt.y-m_downPt2d.y;
-		if (abs(dx)>HYSTERESIS || abs(dy)>HYSTERESIS) {
+		Int dx = viewPt.x - m_downPt2d.x;
+		Int dy = viewPt.y - m_downPt2d.y;
+		if (abs(dx) > HYSTERESIS || abs(dy) > HYSTERESIS)
+		{
 			m_moving = true;
 			m_modifyUndoable = new ModifyObjectUndoable(pDoc);
 		}
 	}
-	if (!m_moving || !m_modifyUndoable) return;
+	if (!m_moving || !m_modifyUndoable)
+		return;
 
 	MapObject *curMapObj = MapObject::getFirstMapObject();
-	while (curMapObj) {
-		if (curMapObj->isSelected()) {
-			//pDoc->invalObject(curMapObj);			// invaling in all views can be too slow.
+	while (curMapObj)
+	{
+		if (curMapObj->isSelected())
+		{
+			// pDoc->invalObject(curMapObj);			// invaling in all views can be too slow.
 			pView->invalObjectInView(curMapObj);
 		}
 		curMapObj = curMapObj->getNext();
 	}
 
-	if (m_rotating) {
+	if (m_rotating)
+	{
 		Coord3D center = *m_curObject->getLocation();
 		m_modifyUndoable->RotateTo(ObjectTool::calcAngle(center, cpt, pView));
-	} else {
+	}
+	else
+	{
 		pView->snapPoint(&cpt);
-		Real xOffset = (cpt.x-m_downPt3d.x);
-		Real yOffset = (cpt.y-m_downPt3d.y);
+		Real xOffset = (cpt.x - m_downPt3d.x);
+		Real yOffset = (cpt.y - m_downPt3d.y);
 		m_modifyUndoable->SetOffset(xOffset, yOffset);
 	}
 
 	curMapObj = MapObject::getFirstMapObject();
-	while (curMapObj) {
-		if (curMapObj->isSelected()) {
-			//pDoc->invalObject(curMapObj);			// invaling in all views can be too slow.
+	while (curMapObj)
+	{
+		if (curMapObj->isSelected())
+		{
+			// pDoc->invalObject(curMapObj);			// invaling in all views can be too slow.
 			pView->invalObjectInView(curMapObj);
 		}
 		curMapObj = curMapObj->getNext();
 	}
 
 	pDoc->updateAllViews();
-
 }
-
 
 /** Execute the tool on mouse up - if modifying, do the modify,
 else update the selection. */
-void PointerTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void PointerTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
-	if (m != TRACK_L) return;
+	if (m != TRACK_L)
+		return;
 
-	if (m_doPolyTool) {
+	if (m_doPolyTool)
+	{
 		m_doPolyTool = false;
 		PolygonTool::mouseUp(m, viewPt, pView, pDoc);
 		checkForPropertiesPanel();
@@ -506,10 +613,13 @@ void PointerTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 	Coord3D cpt;
 	pView->viewToDocCoords(viewPt, &cpt);
 
-	if (m_curObject && m_moving) {
+	if (m_curObject && m_moving)
+	{
 		pDoc->AddAndDoUndoable(m_modifyUndoable);
 		REF_PTR_RELEASE(m_modifyUndoable); // belongs to pDoc now.
-	}	else if (m_dragSelect) {
+	}
+	else if (m_dragSelect)
+	{
 		CRect box;
 		box.left = viewPt.x;
 		box.top = viewPt.y;
@@ -520,31 +630,37 @@ void PointerTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 		pView->Invalidate();
 
 		MapObject *pObj;
-		for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext()) {
+		for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext())
+		{
 			// Don't pick on invisible waypoints
-			if (pObj->isWaypoint() && !pView->isWaypointVisible()) {
+			if (pObj->isWaypoint() && !pView->isWaypointVisible())
+			{
 				continue;
 			}
-			if (!allowPick(pObj, pView)) {
+			if (!allowPick(pObj, pView))
+			{
 				continue;
 			}
 			Bool picked;
 			Coord3D loc = *pObj->getLocation();
 			CPoint viewPt;
-			if (pView->docToViewCoords(loc, &viewPt)){
-				picked = (viewPt.x>=box.left && viewPt.x<=box.right && viewPt.y>=box.top && viewPt.y<=box.bottom) ;
-				if (picked) {
-					if ((0x8000 && ::GetAsyncKeyState(VK_SHIFT))) {
+			if (pView->docToViewCoords(loc, &viewPt))
+			{
+				picked = (viewPt.x >= box.left && viewPt.x <= box.right && viewPt.y >= box.top && viewPt.y <= box.bottom);
+				if (picked)
+				{
+					if ((0x8000 && ::GetAsyncKeyState(VK_SHIFT)))
+					{
 						pObj->setSelected(!pObj->isSelected());
-					}	else {
+					}
+					else
+					{
 						pObj->setSelected(true);
 					}
 					pDoc->invalObject(pObj);
 				}
 			}
 		}
-
 	}
 	checkForPropertiesPanel();
 }
-

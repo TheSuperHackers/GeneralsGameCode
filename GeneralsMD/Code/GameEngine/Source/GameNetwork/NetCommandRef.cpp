@@ -22,8 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameNetwork/NetCommandRef.h"
 
@@ -61,11 +60,10 @@ NetCommandRef::~NetCommandRef()
 	{
 		m_msg->detach();
 	}
- 	DEBUG_ASSERTCRASH(m_next == NULL, ("NetCommandRef::~NetCommandRef - m_next != NULL"));
+	DEBUG_ASSERTCRASH(m_next == NULL, ("NetCommandRef::~NetCommandRef - m_next != NULL"));
 	DEBUG_ASSERTCRASH(m_prev == NULL, ("NetCommandRef::~NetCommandRef - m_prev != NULL"));
 
 #ifdef DEBUG_NETCOMMANDREF
 	DEBUG_LOG(("NetCommandRef %d deleted", m_id));
 #endif
 }
-

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/Player.h"
 #include "Common/ThingTemplate.h"
 #include "Common/ThingFactory.h"
@@ -48,7 +48,6 @@
 // ------------------------------------------------------------------------------------------------
 MobNexusContainModuleData::MobNexusContainModuleData()
 {
-
 	m_slotCapacity = 0;
 	m_scatterNearbyOnExit = true;
 	m_orientLikeContainerOnExit = false;
@@ -61,17 +60,16 @@ MobNexusContainModuleData::MobNexusContainModuleData()
 	// by default we say that MobNexae can have infantry inside them, this will be totally
 	// overwritten by any data provided from the INI entry tho
 	//
-	m_allowInsideKindOf = MAKE_KINDOF_MASK( KINDOF_INFANTRY );
-
+	m_allowInsideKindOf = MAKE_KINDOF_MASK(KINDOF_INFANTRY);
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void MobNexusContainModuleData::parseInitialPayload( INI* ini, void *instance, void *store, const void* /*userData*/ )
+void MobNexusContainModuleData::parseInitialPayload(INI *ini, void *instance, void *store, const void * /*userData*/)
 {
-	MobNexusContainModuleData* self = (MobNexusContainModuleData*)instance;
-	const char* name = ini->getNextToken();
-	const char* countStr = ini->getNextTokenOrNull();
+	MobNexusContainModuleData *self = (MobNexusContainModuleData *)instance;
+	const char *name = ini->getNextToken();
+	const char *countStr = ini->getNextTokenOrNull();
 	Int count = countStr ? INI::scanInt(countStr) : 1;
 
 	self->m_initialPayload.name.set(name);
@@ -80,32 +78,32 @@ void MobNexusContainModuleData::parseInitialPayload( INI* ini, void *instance, v
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void MobNexusContainModuleData::buildFieldParse(MultiIniFieldParse& p)
+void MobNexusContainModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-  OpenContainModuleData::buildFieldParse(p);
+	OpenContainModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "Slots",	INI::parseInt,		NULL, offsetof( MobNexusContainModuleData, m_slotCapacity ) },
-		{ "ScatterNearbyOnExit",	INI::parseBool,		NULL, offsetof( MobNexusContainModuleData, m_scatterNearbyOnExit ) },
-		{ "OrientLikeContainerOnExit",	INI::parseBool,		NULL, offsetof( MobNexusContainModuleData, m_orientLikeContainerOnExit ) },
-		{ "KeepContainerVelocityOnExit",	INI::parseBool,		NULL, offsetof( MobNexusContainModuleData, m_keepContainerVelocityOnExit ) },
-		{ "ExitBone",	INI::parseAsciiString,		NULL, offsetof( MobNexusContainModuleData, m_exitBone ) },
-		{ "ExitPitchRate",	INI::parseAngularVelocityReal,		NULL, offsetof( MobNexusContainModuleData, m_exitPitchRate ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "Slots", INI::parseInt, NULL, offsetof(MobNexusContainModuleData, m_slotCapacity) },
+		{ "ScatterNearbyOnExit", INI::parseBool, NULL, offsetof(MobNexusContainModuleData, m_scatterNearbyOnExit) },
+		{ "OrientLikeContainerOnExit", INI::parseBool, NULL, offsetof(MobNexusContainModuleData, m_orientLikeContainerOnExit) },
+		{ "KeepContainerVelocityOnExit",
+			INI::parseBool,
+			NULL,
+			offsetof(MobNexusContainModuleData, m_keepContainerVelocityOnExit) },
+		{ "ExitBone", INI::parseAsciiString, NULL, offsetof(MobNexusContainModuleData, m_exitBone) },
+		{ "ExitPitchRate", INI::parseAngularVelocityReal, NULL, offsetof(MobNexusContainModuleData, m_exitPitchRate) },
 		{ "InitialPayload", parseInitialPayload, NULL, 0 },
-		{ "HealthRegen%PerSec", INI::parseReal, NULL, offsetof( MobNexusContainModuleData, m_healthRegen ) },
+		{ "HealthRegen%PerSec", INI::parseReal, NULL, offsetof(MobNexusContainModuleData, m_healthRegen) },
 		{ 0, 0, 0, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
-
-
 
 // PRIVATE ////////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Int MobNexusContain::getContainMax( void ) const
+Int MobNexusContain::getContainMax(void) const
 {
 	if (getMobNexusContainModuleData())
 		return getMobNexusContainModuleData()->m_slotCapacity;
@@ -116,17 +114,15 @@ Int MobNexusContain::getContainMax( void ) const
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-MobNexusContain::MobNexusContain( Thing *thing, const ModuleData *moduleData ) :
-								 OpenContain( thing, moduleData )
+MobNexusContain::MobNexusContain(Thing *thing, const ModuleData *moduleData) : OpenContain(thing, moduleData)
 {
 	m_extraSlotsInUse = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-MobNexusContain::~MobNexusContain( void )
+MobNexusContain::~MobNexusContain(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -135,43 +131,41 @@ MobNexusContain::~MobNexusContain( void )
 	can this container contain this kind of object?
 	and, if checkCapacity is TRUE, does this container have enough space left to hold the given unit?
 */
-Bool MobNexusContain::isValidContainerFor(const Object* rider, Bool checkCapacity) const
+Bool MobNexusContain::isValidContainerFor(const Object *rider, Bool checkCapacity) const
 {
-
 	// sanity
 	if (!rider)
 		return false;
 
-	//The point of this new code is to determine when something has a negative 1 contain max, to
-	//look at the object inside of it to use that as the valid check. There is a case, when a
-	//paratrooper (an infantry contained in a parachute). In this case, when we pass this object
-	//to contain in a --- plane, we want to check the infantry, not the parachute.
-//	const MobNexusContainModuleData *modData = getMobNexusContainModuleData();
+	// The point of this new code is to determine when something has a negative 1 contain max, to
+	// look at the object inside of it to use that as the valid check. There is a case, when a
+	// paratrooper (an infantry contained in a parachute). In this case, when we pass this object
+	// to contain in a --- plane, we want to check the infantry, not the parachute.
+	//	const MobNexusContainModuleData *modData = getMobNexusContainModuleData();
 
-	//Check if we are a fake container, and if so, get an object inside it to see what kind this object *is*.
-	if( rider->getContain() && rider->getContain()->isSpecialZeroSlotContainer() )
+	// Check if we are a fake container, and if so, get an object inside it to see what kind this object *is*.
+	if (rider->getContain() && rider->getContain()->isSpecialZeroSlotContainer())
 	{
-		//Report the first thing inside it!
+		// Report the first thing inside it!
 		const ContainedItemsList *items = rider->getContain()->getContainedItemsList();
-		if( items )
+		if (items)
 		{
 			ContainedItemsList::const_iterator it;
 			it = items->begin();
-			if( *it )
+			if (*it)
 			{
-				//Replace the object we are checking with the *first* object contained within it.
+				// Replace the object we are checking with the *first* object contained within it.
 				rider = *it;
 			}
 		}
 	}
 	else
 	{
-		//blech! This case may or may not occur... in which case, just use the supplied object.
+		// blech! This case may or may not occur... in which case, just use the supplied object.
 	}
 
-
 	// extend functionality
-	if( OpenContain::isValidContainerFor( rider, checkCapacity ) == false )
+	if (OpenContain::isValidContainerFor(rider, checkCapacity) == false)
 		return false;
 
 	// only allied objects can be MobNexused.
@@ -197,48 +191,49 @@ Bool MobNexusContain::isValidContainerFor(const Object* rider, Bool checkCapacit
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void MobNexusContain::onContaining( Object *rider, Bool wasSelected )
+void MobNexusContain::onContaining(Object *rider, Bool wasSelected)
 {
-	OpenContain::onContaining( rider, wasSelected );
+	OpenContain::onContaining(rider, wasSelected);
 
 	// objects inside a MobNexus are held
-	rider->setDisabled( DISABLED_HELD );
+	rider->setDisabled(DISABLED_HELD);
 
 	Int mobNexusSlotCount = rider->getTransportSlotCount();
 
 	DEBUG_ASSERTCRASH(mobNexusSlotCount > 0, ("Hmm, this object isnt MobNexusable"));
 	m_extraSlotsInUse += mobNexusSlotCount - 1;
-	DEBUG_ASSERTCRASH(m_extraSlotsInUse >= 0 && m_extraSlotsInUse + getContainCount() <= getContainMax(), ("Hmm, bad slot count"));
+	DEBUG_ASSERTCRASH(
+			m_extraSlotsInUse >= 0 && m_extraSlotsInUse + getContainCount() <= getContainMax(),
+			("Hmm, bad slot count"));
 
 	//
 	// when we go from holding nothing to holding something we have a model condition
 	// to visually show the change
 	//
-	if( getContainCount() == 1 )
+	if (getContainCount() == 1)
 	{
 		Drawable *draw = getObject()->getDrawable();
 
-		if( draw )
-			draw->setModelConditionState( MODELCONDITION_LOADED );
+		if (draw)
+			draw->setModelConditionState(MODELCONDITION_LOADED);
 
-	}  // end if
-
+	} // end if
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void MobNexusContain::onRemoving( Object *rider )
+void MobNexusContain::onRemoving(Object *rider)
 {
 	OpenContain::onRemoving(rider);
 
 	// object is no longer held inside a MobNexus
-	rider->clearDisabled( DISABLED_HELD );
+	rider->clearDisabled(DISABLED_HELD);
 
-	const MobNexusContainModuleData* d = getMobNexusContainModuleData();
+	const MobNexusContainModuleData *d = getMobNexusContainModuleData();
 
 	if (!d->m_exitBone.isEmpty())
 	{
-		Drawable* draw = getObject()->getDrawable();
+		Drawable *draw = getObject()->getDrawable();
 		if (draw)
 		{
 			Coord3D bonePos, worldPos;
@@ -257,8 +252,8 @@ void MobNexusContain::onRemoving( Object *rider )
 
 	if (d->m_keepContainerVelocityOnExit)
 	{
-		PhysicsBehavior* parent = getObject()->getPhysics();
-		PhysicsBehavior* child = rider->getPhysics();
+		PhysicsBehavior *parent = getObject()->getPhysics();
+		PhysicsBehavior *child = rider->getPhysics();
 		if (parent && child)
 		{
 			Coord3D startingForce = *parent->getVelocity();
@@ -266,10 +261,10 @@ void MobNexusContain::onRemoving( Object *rider )
 			startingForce.x *= mass;
 			startingForce.y *= mass;
 			startingForce.z *= mass;
-			child->applyMotiveForce( &startingForce );
+			child->applyMotiveForce(&startingForce);
 
 			Real pitchRate = child->getCenterOfMassOffset() * d->m_exitPitchRate;
-			child->setPitchRate( pitchRate );
+			child->setPitchRate(pitchRate);
 		}
 	}
 
@@ -279,154 +274,157 @@ void MobNexusContain::onRemoving( Object *rider )
 	Int mobNexusSlotCount = rider->getTransportSlotCount();
 	DEBUG_ASSERTCRASH(mobNexusSlotCount > 0, ("This object isnt MobNexusable"));
 	m_extraSlotsInUse -= mobNexusSlotCount - 1;
-	DEBUG_ASSERTCRASH(m_extraSlotsInUse >= 0 && m_extraSlotsInUse + getContainCount() <= getContainMax(), ("Bad slot count, MobNexus"));
+	DEBUG_ASSERTCRASH(
+			m_extraSlotsInUse >= 0 && m_extraSlotsInUse + getContainCount() <= getContainMax(),
+			("Bad slot count, MobNexus"));
 
 	// when we are empty again, clear the model condition for loaded
-	if( getContainCount() == 0 )
+	if (getContainCount() == 0)
 	{
 		Drawable *draw = getObject()->getDrawable();
 
-		if( draw )
-			draw->clearModelConditionState( MODELCONDITION_LOADED );
+		if (draw)
+			draw->clearModelConditionState(MODELCONDITION_LOADED);
 
-	}  // end if
+	} // end if
 
 	if (getObject()->isAboveTerrain())
 	{
 		// temporarily mark the guy as being allowed to fall
 		// (overriding his locomotor's stick-to-ground attribute).
 		// this will be reset (by PhysicsBehavior) when he touches the ground.
-		PhysicsBehavior* physics = rider->getPhysics();
+		PhysicsBehavior *physics = rider->getPhysics();
 		if (physics)
 			physics->setAllowToFall(true);
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void MobNexusContain::onObjectCreated()
 {
-	MobNexusContainModuleData* self = (MobNexusContainModuleData*)getMobNexusContainModuleData();
+	MobNexusContainModuleData *self = (MobNexusContainModuleData *)getMobNexusContainModuleData();
 
 	Int count = self->m_initialPayload.count;
-	const ThingTemplate* payloadTemplate = TheThingFactory->findTemplate( self->m_initialPayload.name );
-	Object* object = getObject();
+	const ThingTemplate *payloadTemplate = TheThingFactory->findTemplate(self->m_initialPayload.name);
+	Object *object = getObject();
 
-	for( int i = 0; i < count; i++ )
+	for (int i = 0; i < count; i++)
 	{
-		//We are creating a MobNexus that comes with a initial payload, so add it now!
+		// We are creating a MobNexus that comes with a initial payload, so add it now!
 
-		Object* payload = TheThingFactory->newObject( payloadTemplate, object->getControllingPlayer()->getDefaultTeam() );
-		if( object->getContain() && object->getContain()->isValidContainerFor( payload, true ) )
+		Object *payload = TheThingFactory->newObject(payloadTemplate, object->getControllingPlayer()->getDefaultTeam());
+		if (object->getContain() && object->getContain()->isValidContainerFor(payload, true))
 		{
-			object->getContain()->addToContain( payload );
+			object->getContain()->addToContain(payload);
 		}
 		else
 		{
-			DEBUG_CRASH( ( "DeliverPayload: PutInContainer %s is full, or not valid for the payload %s!", object->getName().str(), self->m_initialPayload.name.str() ) );
+			DEBUG_CRASH(
+					("DeliverPayload: PutInContainer %s is full, or not valid for the payload %s!",
+					 object->getName().str(),
+					 self->m_initialPayload.name.str()));
 		}
 	}
 }
-
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 UpdateSleepTime MobNexusContain::update()
 {
-	MobNexusContainModuleData *moduleData = (MobNexusContainModuleData*)getModuleData();
+	MobNexusContainModuleData *moduleData = (MobNexusContainModuleData *)getModuleData();
 
-	if( moduleData && moduleData->m_healthRegen )
+	if (moduleData && moduleData->m_healthRegen)
 	{
 		ContainModuleInterface *contain = getObject()->getContain();
-		if( contain )
+		if (contain)
 		{
-			//This MobNexus has a health regeneration value, so go through and heal all inside.
-			const ContainedItemsList* items = contain->getContainedItemsList();
-			if( items )
+			// This MobNexus has a health regeneration value, so go through and heal all inside.
+			const ContainedItemsList *items = contain->getContainedItemsList();
+			if (items)
 			{
 				ContainedItemsList::const_iterator it;
 				it = items->begin();
 
-				while( it != items->end() )
+				while (it != items->end())
 				{
 					Object *object = *it;
 
-					//Advance to the next iterator
+					// Advance to the next iterator
 					it++;
 
-					//Determine if we need healing or not.
+					// Determine if we need healing or not.
 					BodyModuleInterface *body = object->getBodyModule();
-					if( body->getHealth() < body->getMaxHealth() )
+					if (body->getHealth() < body->getMaxHealth())
 					{
-						//Calculate the health to be regenerated on each unit.
+						// Calculate the health to be regenerated on each unit.
 						Real regen = body->getMaxHealth() * moduleData->m_healthRegen / 100.0f * SECONDS_PER_LOGICFRAME_REAL;
 
-						//Perform the actual healing for this frame.
-//						DamageInfo damageInfo;
-//						damageInfo.in.m_damageType = DAMAGE_HEALING;
-//						damageInfo.in.m_deathType = DEATH_NONE;
-//						damageInfo.in.m_sourceID = getObject()->getID();
-//						damageInfo.in.m_amount = regen;
-//						object->attemptDamage( &damageInfo );
-						object->attemptHealing( regen, getObject() );
+						// Perform the actual healing for this frame.
+						//						DamageInfo damageInfo;
+						//						damageInfo.in.m_damageType = DAMAGE_HEALING;
+						//						damageInfo.in.m_deathType = DEATH_NONE;
+						//						damageInfo.in.m_sourceID = getObject()->getID();
+						//						damageInfo.in.m_amount = regen;
+						//						object->attemptDamage( &damageInfo );
+						object->attemptHealing(regen, getObject());
 					}
 				}
 			}
 		}
 	}
 
-	return OpenContain::update(); //extend
+	return OpenContain::update(); // extend
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ExitDoorType MobNexusContain::reserveDoorForExit( const ThingTemplate* objType, Object *specificObject )
+ExitDoorType MobNexusContain::reserveDoorForExit(const ThingTemplate *objType, Object *specificObject)
 {
-	if( specificObject == NULL )
-		return DOOR_1;// I can, in general, exit people.
+	if (specificObject == NULL)
+		return DOOR_1; // I can, in general, exit people.
 
 	// This is an override, not an extend.  I will check for game legality for
 	// okaying the call to exitObjectViaDoor.
-  Object *me = getObject();
+	Object *me = getObject();
 
 	// this is present solely for some MobNexuss to override, so that they can land before
 	// allowing people to exit...
-	AIUpdateInterface* ai = me->getAIUpdateInterface();
+	AIUpdateInterface *ai = me->getAIUpdateInterface();
 	if (ai && ai->getAiFreeToExit(me) != FREE_TO_EXIT)
 		return DOOR_NONE_AVAILABLE;
 
-  // I can always kick people out if I am in the air, I know what I'm doing
-  if( me->isUsingAirborneLocomotor() )
-   	return DOOR_1;
+	// I can always kick people out if I am in the air, I know what I'm doing
+	if (me->isUsingAirborneLocomotor())
+		return DOOR_1;
 
-  const Coord3D *myPosition = me->getPosition();
- 	if( !specificObject->getAIUpdateInterface() )
+	const Coord3D *myPosition = me->getPosition();
+	if (!specificObject->getAIUpdateInterface())
 	{
 		return DOOR_NONE_AVAILABLE;
 	}
 	const Locomotor *hisLocomotor = specificObject->getAIUpdateInterface()->getCurLocomotor();
-  // He can't get to this spot naturally, so I can't force him there.  (amphib MobNexus)
-  if( ! TheAI->pathfinder()->validMovementTerrain(me->getLayer(), hisLocomotor, myPosition ) )
-   	return DOOR_NONE_AVAILABLE;
+	// He can't get to this spot naturally, so I can't force him there.  (amphib MobNexus)
+	if (!TheAI->pathfinder()->validMovementTerrain(me->getLayer(), hisLocomotor, myPosition))
+		return DOOR_NONE_AVAILABLE;
 
-  return DOOR_1;
+	return DOOR_1;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void MobNexusContain::unreserveDoorForExit( ExitDoorType exitDoor )
+void MobNexusContain::unreserveDoorForExit(ExitDoorType exitDoor)
 {
 	/* nothing */
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool MobNexusContain::tryToEvacuate( Bool exposeStealthedUnits )
+Bool MobNexusContain::tryToEvacuate(Bool exposeStealthedUnits)
 {
 	Bool exitedAnyone = false;
 	ContainedItemsList::const_iterator it = getContainList().begin();
-	while( it != getContainList().end() )
+	while (it != getContainList().end())
 	{
 		// get the object
 		Object *obj = *it;
@@ -435,15 +433,15 @@ Bool MobNexusContain::tryToEvacuate( Bool exposeStealthedUnits )
 		++it;
 
 		ExitDoorType exitDoor = reserveDoorForExit(obj->getTemplate(), obj);
-		if(exitDoor != DOOR_NONE_AVAILABLE)
+		if (exitDoor != DOOR_NONE_AVAILABLE)
 		{
-			exitObjectViaDoor( obj, exitDoor );
+			exitObjectViaDoor(obj, exitDoor);
 			exitedAnyone = true;
 
-			if( obj->isKindOf( KINDOF_STEALTH_GARRISON ) && exposeStealthedUnits )
+			if (obj->isKindOf(KINDOF_STEALTH_GARRISON) && exposeStealthedUnits)
 			{
-				StealthUpdate* stealth = obj->getStealth();
-				if( stealth )
+				StealthUpdate *stealth = obj->getStealth();
+				if (stealth)
 				{
 					stealth->markAsDetected();
 				}
@@ -456,42 +454,39 @@ Bool MobNexusContain::tryToEvacuate( Bool exposeStealthedUnits )
 // ------------------------------------------------------------------------------------------------
 /** CRC - I like the word nexus */
 // ------------------------------------------------------------------------------------------------
-void MobNexusContain::crc( Xfer *xfer )
+void MobNexusContain::crc(Xfer *xfer)
 {
-
 	// extend base class
-	OpenContain::crc( xfer );
+	OpenContain::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void MobNexusContain::xfer( Xfer *xfer )
+void MobNexusContain::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	OpenContain::xfer( xfer );
+	OpenContain::xfer(xfer);
 
 	// extra slots in use
-	xfer->xferInt( &m_extraSlotsInUse );
+	xfer->xferInt(&m_extraSlotsInUse);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void MobNexusContain::loadPostProcess( void )
+void MobNexusContain::loadPostProcess(void)
 {
-
 	// extend base class
 	OpenContain::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

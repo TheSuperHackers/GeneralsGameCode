@@ -39,7 +39,7 @@
 #include "Common/STLTypedefs.h"
 
 class Money;
-enum CursorCaptureMode CPP_11(: Int);
+enum CursorCaptureMode CPP_11( : Int);
 
 //-----------------------------------------------------------------------------
 // PUBLIC TYPES ///////////////////////////////////////////////////////////////
@@ -80,41 +80,41 @@ protected:
 class OptionPreferences : public UserPreferences
 {
 public:
-	OptionPreferences(  );
+	OptionPreferences();
 	virtual ~OptionPreferences();
 
 	Bool loadFromIniFile();
 
-	UnsignedInt getLANIPAddress(void);				// convenience function
-	UnsignedInt getOnlineIPAddress(void);			// convenience function
-	void setLANIPAddress(AsciiString IP);			// convenience function
-	void setOnlineIPAddress(AsciiString IP);	// convenience function
-	void setLANIPAddress(UnsignedInt IP);			// convenience function
-	void setOnlineIPAddress(UnsignedInt IP);	// convenience function
-	Bool getAlternateMouseModeEnabled(void);	// convenience function
-	Bool getRetaliationModeEnabled();					// convenience function
-	Bool getDoubleClickAttackMoveEnabled(void);	// convenience function
-	Real getScrollFactor(void);								// convenience function
+	UnsignedInt getLANIPAddress(void); // convenience function
+	UnsignedInt getOnlineIPAddress(void); // convenience function
+	void setLANIPAddress(AsciiString IP); // convenience function
+	void setOnlineIPAddress(AsciiString IP); // convenience function
+	void setLANIPAddress(UnsignedInt IP); // convenience function
+	void setOnlineIPAddress(UnsignedInt IP); // convenience function
+	Bool getAlternateMouseModeEnabled(void); // convenience function
+	Bool getRetaliationModeEnabled(); // convenience function
+	Bool getDoubleClickAttackMoveEnabled(void); // convenience function
+	Real getScrollFactor(void); // convenience function
 	CursorCaptureMode getCursorCaptureMode() const;
-	Bool getSendDelay(void);									// convenience function
-	Int getFirewallBehavior(void);						// convenience function
-	Short getFirewallPortAllocationDelta(void);	// convenience function
+	Bool getSendDelay(void); // convenience function
+	Int getFirewallBehavior(void); // convenience function
+	Short getFirewallPortAllocationDelta(void); // convenience function
 	UnsignedShort getFirewallPortOverride(void); // convenience function
-	Bool getFirewallNeedToRefresh(void);			// convenience function
-	Bool usesSystemMapDir(void);							// convenience function
-	AsciiString getPreferred3DProvider(void);	// convenience function
-	AsciiString getSpeakerType(void);					// convenience function
-	Real getSoundVolume(void);								// convenience function
-	Real get3DSoundVolume(void);							// convenience function
-	Real getSpeechVolume(void);								// convenience function
-	Real getMusicVolume(void);								// convenience function
+	Bool getFirewallNeedToRefresh(void); // convenience function
+	Bool usesSystemMapDir(void); // convenience function
+	AsciiString getPreferred3DProvider(void); // convenience function
+	AsciiString getSpeakerType(void); // convenience function
+	Real getSoundVolume(void); // convenience function
+	Real get3DSoundVolume(void); // convenience function
+	Real getSpeechVolume(void); // convenience function
+	Real getMusicVolume(void); // convenience function
 	Real getMoneyTransactionVolume(void) const;
 	Bool saveCameraInReplays(void);
 	Bool useCameraInReplays(void);
-	Int	 getStaticGameDetail(void);	// detail level selected by the user.
-	Int	 getIdealStaticGameDetail(void);	// detail level detected for user.
- 	Real getGammaValue(void);
-	Int	 getTextureReduction(void);
+	Int getStaticGameDetail(void); // detail level selected by the user.
+	Int getIdealStaticGameDetail(void); // detail level detected for user.
+	Real getGammaValue(void);
+	Int getTextureReduction(void);
 	void getResolution(Int *xres, Int *yres);
 	Bool get3DShadowsEnabled(void);
 	Bool get2DShadowsEnabled(void);
@@ -130,8 +130,8 @@ public:
 	Bool getBuildingOcclusionEnabled(void);
 	Int getParticleCap(void);
 
-	Int	 getCampaignDifficulty(void);
-	void setCampaignDifficulty( Int diff );
+	Int getCampaignDifficulty(void);
+	void setCampaignDifficulty(Int diff);
 
 	Int getSystemTimeFontSize(void);
 	Int getGameTimeFontSize(void);
@@ -148,18 +148,18 @@ public:
 
 	Bool loadFromIniFile();
 
-	UnicodeString getUserName(void);		// convenience function
-	Int getPreferredFaction(void);			// convenience function
-	Int getPreferredColor(void);				// convenience function
-	AsciiString getPreferredMap(void);	// convenience function
-	Bool usesSystemMapDir(void);		// convenience function
-	Int getNumRemoteIPs(void);					// convenience function
-	UnicodeString getRemoteIPEntry(Int i);	// convenience function
+	UnicodeString getUserName(void); // convenience function
+	Int getPreferredFaction(void); // convenience function
+	Int getPreferredColor(void); // convenience function
+	AsciiString getPreferredMap(void); // convenience function
+	Bool usesSystemMapDir(void); // convenience function
+	Int getNumRemoteIPs(void); // convenience function
+	UnicodeString getRemoteIPEntry(Int i); // convenience function
 
-  Bool getSuperweaponRestricted(void) const;
-  Money getStartingCash(void) const;
-  void setSuperweaponRestricted( Bool superweaponRestricted);
-  void setStartingCash( const Money & startingCash );
+	Bool getSuperweaponRestricted(void) const;
+	Money getStartingCash(void) const;
+	void setSuperweaponRestricted(Bool superweaponRestricted);
+	void setStartingCash(const Money &startingCash);
 };
 
 #endif // __USERPREFERENCES_H__

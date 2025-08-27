@@ -32,40 +32,46 @@ class SidesList;
 
 class TeamIdentity : public CPropertyPage
 {
-// Construction
+	// Construction
 public:
-	TeamIdentity();   // standard constructor
+	TeamIdentity(); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(TeamIdentity)
-	enum { IDD = IDD_TeamIdentity };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_TeamIdentity
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(TeamIdentity)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
 protected:
-	Dict		*m_teamDict;
-	SidesList	*m_sides;
+	Dict *m_teamDict;
+	SidesList *m_sides;
+
 protected:
-	void loadUnitsInfo(int idcMinUnit, NameKeyType keyMinUnit,
-								int idcMaxUnit, NameKeyType keyMaxUnit,
-								int idcUnitType, NameKeyType keyUnitType);
+	void loadUnitsInfo(
+			int idcMinUnit,
+			NameKeyType keyMinUnit,
+			int idcMaxUnit,
+			NameKeyType keyMaxUnit,
+			int idcUnitType,
+			NameKeyType keyUnitType);
 	void OnUnitTypeButton(Int idcUnitType);
 
 public:
-	void setTeamDict(Dict *pDict) {m_teamDict = pDict;};
-	void setSidesList(SidesList *pSides) {m_sides = pSides;};
-// Implementation
+	void setTeamDict(Dict *pDict) { m_teamDict = pDict; };
+	void setSidesList(SidesList *pSides) { m_sides = pSides; };
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(TeamIdentity)
 	virtual BOOL OnInitDialog();

@@ -60,59 +60,116 @@
 */
 class Vector4
 {
-
 public:
-
 	float X;
 	float Y;
 	float Z;
 	float W;
 
-
 	// Constructors
 	Vector4(void) {};
-	Vector4(const Vector4 & v) { X = v.X; Y = v.Y; Z = v.Z; W = v.W; }
-	Vector4(float x, float y, float z, float w) { X = x; Y = y; Z = z; W = w; }
-	Vector4(const float vector[4]) { X = vector[0]; Y = vector[1]; Z = vector[2]; W = vector[3]; }
+	Vector4(const Vector4 &v)
+	{
+		X = v.X;
+		Y = v.Y;
+		Z = v.Z;
+		W = v.W;
+	}
+	Vector4(float x, float y, float z, float w)
+	{
+		X = x;
+		Y = y;
+		Z = z;
+		W = w;
+	}
+	Vector4(const float vector[4])
+	{
+		X = vector[0];
+		Y = vector[1];
+		Z = vector[2];
+		W = vector[3];
+	}
 
 	// Assignment
-	Vector4 & operator = (const Vector4 & v) { X = v.X; Y = v.Y; Z = v.Z; W = v.W; return *this; }
-	void	Set(float x, float y, float z, float w) { X = x; Y = y; Z = z; W = w; }
+	Vector4 &operator=(const Vector4 &v)
+	{
+		X = v.X;
+		Y = v.Y;
+		Z = v.Z;
+		W = v.W;
+		return *this;
+	}
+	void Set(float x, float y, float z, float w)
+	{
+		X = x;
+		Y = y;
+		Z = z;
+		W = w;
+	}
 
 	// Array access
-	float &	operator [](int i) { return (&X)[i]; }
-	const float &  operator [](int i) const { return (&X)[i]; }
+	float &operator[](int i) { return (&X)[i]; }
+	const float &operator[](int i) const { return (&X)[i]; }
 
 	// normalize, compute length
-	void	Normalize(void);
-	float	Length(void) const;
+	void Normalize(void);
+	float Length(void) const;
 	float Length2(void) const;
 
 	// unary operators
-	Vector4 operator-() const { return(Vector4(-X,-Y,-Z,-W)); }
+	Vector4 operator-() const { return (Vector4(-X, -Y, -Z, -W)); }
 	Vector4 operator+() const { return *this; }
 
-	Vector4 & operator += (const Vector4 & v) { X += v.X; Y += v.Y; Z += v.Z; W += v.W; return *this; }
-	Vector4 & operator -= (const Vector4 & v) { X -= v.X; Y -= v.Y; Z -= v.Z; W += v.W; return *this; }
-	Vector4 & operator *= (float k) { X = X*k; Y=Y*k; Z=Z*k; W=W*k; return *this; }
-	Vector4 & operator /= (float k) { k=1.0f/k; X = X*k; Y=Y*k; Z=Z*k; W=W*k; return *this; }
+	Vector4 &operator+=(const Vector4 &v)
+	{
+		X += v.X;
+		Y += v.Y;
+		Z += v.Z;
+		W += v.W;
+		return *this;
+	}
+	Vector4 &operator-=(const Vector4 &v)
+	{
+		X -= v.X;
+		Y -= v.Y;
+		Z -= v.Z;
+		W += v.W;
+		return *this;
+	}
+	Vector4 &operator*=(float k)
+	{
+		X = X * k;
+		Y = Y * k;
+		Z = Z * k;
+		W = W * k;
+		return *this;
+	}
+	Vector4 &operator/=(float k)
+	{
+		k = 1.0f / k;
+		X = X * k;
+		Y = Y * k;
+		Z = Z * k;
+		W = W * k;
+		return *this;
+	}
 
 	// scalar multiplication, division
-	friend Vector4 operator * (const Vector4 &a,float k);
-	friend Vector4 operator * (float k,const Vector4 &a);
-	friend Vector4 operator / (const Vector4 &a,float k);
+	friend Vector4 operator*(const Vector4 &a, float k);
+	friend Vector4 operator*(float k, const Vector4 &a);
+	friend Vector4 operator/(const Vector4 &a, float k);
 
 	// vector addition,subtraction
-	friend Vector4 operator + (const Vector4 &a,const Vector4 &b);
-	friend Vector4 operator - (const Vector4 &a,const Vector4 &b);
+	friend Vector4 operator+(const Vector4 &a, const Vector4 &b);
+	friend Vector4 operator-(const Vector4 &a, const Vector4 &b);
 
 	// dot product / inner product
-	friend float operator * (const Vector4 &a,const Vector4 &b);
-	static float Dot_Product(const Vector4 &a,const Vector4 &b);
+	friend float operator*(const Vector4 &a, const Vector4 &b);
+	static float Dot_Product(const Vector4 &a, const Vector4 &b);
 
 	// Equality operators
-	friend bool operator == (const Vector4 &a,const Vector4 &b);
-	friend bool operator != (const Vector4 &a,const Vector4 &b);
+	friend bool operator==(const Vector4 &a, const Vector4 &b);
+	friend bool operator!=(const Vector4 &a, const Vector4 &b);
 
 	// verify that none of the members of this vector are invalid floats
 	bool Is_Valid(void) const;
@@ -130,14 +187,14 @@ public:
  * HISTORY:                                                               *
  *   02/24/1997 GH  : Created.                                            *
  *========================================================================*/
-inline Vector4 operator * (const Vector4 &a,float k)
+inline Vector4 operator*(const Vector4 &a, float k)
 {
-	return Vector4((a.X * k),(a.Y * k),(a.Z * k),(a.W * k));
+	return Vector4((a.X * k), (a.Y * k), (a.Z * k), (a.W * k));
 }
 
-inline Vector4 operator * (float k, const Vector4 &a)
+inline Vector4 operator*(float k, const Vector4 &a)
 {
-	return a*k;
+	return a * k;
 }
 
 /**************************************************************************
@@ -151,10 +208,10 @@ inline Vector4 operator * (float k, const Vector4 &a)
  *                                                                        *
  * HISTORY:                                                               *
  *========================================================================*/
-inline Vector4 operator / (const Vector4 &a,float k)
+inline Vector4 operator/(const Vector4 &a, float k)
 {
-	float ook=1.0f/k;
-	return Vector4((a[0] * ook),(a[1] * ook),(a[2] * ook),(a[3] * ook));
+	float ook = 1.0f / k;
+	return Vector4((a[0] * ook), (a[1] * ook), (a[2] * ook), (a[3] * ook));
 }
 
 /**************************************************************************
@@ -169,14 +226,9 @@ inline Vector4 operator / (const Vector4 &a,float k)
  * HISTORY:                                                               *
  *   02/24/1997 GH  : Created.                                            *
  *========================================================================*/
-inline Vector4 operator + (const Vector4 &a,const Vector4 &b)
+inline Vector4 operator+(const Vector4 &a, const Vector4 &b)
 {
-	return Vector4(
-							a[0]+b[0],
-							a[1]+b[1],
-							a[2]+b[2],
-							a[3]+b[3]
-						);
+	return Vector4(a[0] + b[0], a[1] + b[1], a[2] + b[2], a[3] + b[3]);
 }
 
 /**************************************************************************
@@ -191,14 +243,9 @@ inline Vector4 operator + (const Vector4 &a,const Vector4 &b)
  * HISTORY:                                                               *
  *   02/24/1997 GH  : Created.                                            *
  *========================================================================*/
-inline Vector4 operator - (const Vector4 &a,const Vector4 &b)
+inline Vector4 operator-(const Vector4 &a, const Vector4 &b)
 {
-	return Vector4(
-							a[0]-b[0],
-							a[1]-b[1],
-							a[2]-b[2],
-							a[3]-b[3]
-						);
+	return Vector4(a[0] - b[0], a[1] - b[1], a[2] - b[2], a[3] - b[3]);
 }
 
 /**************************************************************************
@@ -212,19 +259,15 @@ inline Vector4 operator - (const Vector4 &a,const Vector4 &b)
  *                                                                        *
  * HISTORY:                                                               *
  *========================================================================*/
-inline float operator * (const Vector4 &a,const Vector4 &b)
+inline float operator*(const Vector4 &a, const Vector4 &b)
 {
-	return	a[0]*b[0] +
-				a[1]*b[1] +
-				a[2]*b[2] +
-				a[3]*b[3];
+	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
 }
 
-inline float Vector4::Dot_Product(const Vector4 &a,const Vector4 &b)
+inline float Vector4::Dot_Product(const Vector4 &a, const Vector4 &b)
 {
-	return a*b;
+	return a * b;
 }
-
 
 /**************************************************************************
  * Vector Equality Operator -- Detemine if two vectors are identical      *
@@ -237,9 +280,9 @@ inline float Vector4::Dot_Product(const Vector4 &a,const Vector4 &b)
  *                                                                        *
  * HISTORY:                                                               *
  *========================================================================*/
-inline bool operator == (const Vector4 &a,const Vector4 &b)
+inline bool operator==(const Vector4 &a, const Vector4 &b)
 {
-	return ( (a[0] == b[0]) && (a[1] == b[1]) && (a[2] == b[2]) && (a[3] == b[3]));
+	return ((a[0] == b[0]) && (a[1] == b[1]) && (a[2] == b[2]) && (a[3] == b[3]));
 }
 
 /**************************************************************************
@@ -253,9 +296,9 @@ inline bool operator == (const Vector4 &a,const Vector4 &b)
  *                                                                        *
  * HISTORY:                                                               *
  *========================================================================*/
-inline bool operator != (const Vector4 &a,const Vector4 &b)
+inline bool operator!=(const Vector4 &a, const Vector4 &b)
 {
-	return ( (a[0] != b[0]) || (a[1] != b[1]) || (a[2] != b[2]) || (a[3] != b[3]));
+	return ((a[0] != b[0]) || (a[1] != b[1]) || (a[2] != b[2]) || (a[3] != b[3]));
 }
 
 /**************************************************************************
@@ -272,7 +315,8 @@ inline bool operator != (const Vector4 &a,const Vector4 &b)
 inline void Vector4::Normalize()
 {
 	float len2 = Length2();
-	if (len2 != 0.0f) {
+	if (len2 != 0.0f)
+	{
 		float oolen = WWMath::Inv_Sqrt(len2);
 		X *= oolen;
 		Y *= oolen;
@@ -281,10 +325,11 @@ inline void Vector4::Normalize()
 	}
 }
 
-inline Vector4 Normalize(const Vector4 & vec)
+inline Vector4 Normalize(const Vector4 &vec)
 {
 	float len2 = vec.Length2();
-	if (len2 != 0.0f) {
+	if (len2 != 0.0f)
+	{
 		float oolen = WWMath::Inv_Sqrt(len2);
 		return vec * oolen;
 	}
@@ -319,9 +364,8 @@ inline float Vector4::Length() const
  *========================================================================*/
 inline float Vector4::Length2() const
 {
-	return X*X + Y*Y + Z*Z + W*W;
+	return X * X + Y * Y + Z * Z + W * W;
 }
-
 
 /***********************************************************************************************
  * Swap -- swap two Vector4's                                                                  *
@@ -335,7 +379,7 @@ inline float Vector4::Length2() const
  * HISTORY:                                                                                    *
  *   06/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-inline void Swap(Vector4 & a,Vector4 & b)
+inline void Swap(Vector4 &a, Vector4 &b)
 {
 	Vector4 tmp(a);
 	a = b;
@@ -354,16 +398,14 @@ inline void Swap(Vector4 & a,Vector4 & b)
  * HISTORY:                                                                                    *
  *   01/14/1999 NH  : Created.                                                                 *
  *=============================================================================================*/
-inline Vector4 Lerp(const Vector4 & a, const Vector4 & b, float alpha)
+inline Vector4 Lerp(const Vector4 &a, const Vector4 &b, float alpha)
 {
-   return Vector4(
-      (a.X + (b.X - a.X)*alpha),
-      (a.Y + (b.Y - a.Y)*alpha),
-      (a.Z + (b.Z - a.Z)*alpha),
-      (a.W + (b.W - a.W)*alpha)
-   );
+	return Vector4(
+			(a.X + (b.X - a.X) * alpha),
+			(a.Y + (b.Y - a.Y) * alpha),
+			(a.Z + (b.Z - a.Z) * alpha),
+			(a.W + (b.W - a.W) * alpha));
 }
-
 
 /***********************************************************************************************
  * Vector4::Is_Valid -- Vector4::Is_Valid                                                      *
@@ -385,6 +427,4 @@ inline bool Vector4::Is_Valid(void) const
 	return (WWMath::Is_Valid_Float(X) && WWMath::Is_Valid_Float(Y) && WWMath::Is_Valid_Float(Z) && WWMath::Is_Valid_Float(W));
 }
 
-
 #endif /* VECTOR4_H */
-

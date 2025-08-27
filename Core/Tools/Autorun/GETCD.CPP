@@ -30,49 +30,47 @@
  *		CD_Volume_Verification	--	Check label of the CDRom.				*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-#include	<windows.h>
-#include	<string.h>
-//#include	"always.h"
-#include	"GetCD.h"
-//#include	"timer.h"
-#include	"Wnd_File.h"
-//#include	"missiondisk.h"
-#include	"WinFix.H"
+#include <windows.h>
+#include <string.h>
+// #include	"always.h"
+#include "GetCD.h"
+// #include	"timer.h"
+#include "Wnd_File.h"
+// #include	"missiondisk.h"
+#include "WinFix.H"
 
 #ifndef ROR_NOT_READY
-#define ROR_NOT_READY		21
+#define ROR_NOT_READY 21
 #endif
 
 /**********************************************************************
 **	This macro serves as a general way to determine the number of elements
 **	within an array.
 */
-#define	ARRAY_SIZE(x)		int(sizeof(x)/sizeof(x[0]))
-#define	size_of(typ,id)		sizeof(((typ*)0)->id)
+#define ARRAY_SIZE(x) int(sizeof(x) / sizeof(x[0]))
+#define size_of(typ, id) sizeof(((typ *)0)->id)
 
 //-----------------------------------------------------------------------------
 // Global Variables
 //-----------------------------------------------------------------------------
-#if ( MISSION_DISK )
+#if (MISSION_DISK)
 
-static const char * _CD_Volume_Label[] = {
-	"Renegade Mission",		// Yuri's Revenge (mission disk)
+static const char *_CD_Volume_Label[] = {
+	"Renegade Mission", // Yuri's Revenge (mission disk)
 };
 
 #else
 
-static const char * _CD_Volume_Label[] = {
-	"Renegade Game",		// Red Alert 2
-	"Renegade Data",		// Red Alert 2
+static const char *_CD_Volume_Label[] = {
+	"Renegade Game", // Red Alert 2
+	"Renegade Data", // Red Alert 2
 };
 
 #endif
 
+static int _Num_Volumes = ARRAY_SIZE(_CD_Volume_Label);
 
-static int _Num_Volumes = ARRAY_SIZE( _CD_Volume_Label );
-
-GetCDClass	CDList;
-
+GetCDClass CDList;
 
 /****************************************************************************
  * GetCDClass -- default constructor										*
@@ -87,45 +85,51 @@ GetCDClass	CDList;
  *   05/26/1994 SW	:	Created.											*
  *   12/04/1995 ST	:	fixed for Win95										*
  *==========================================================================*/
-GetCDClass::GetCDClass( void )
+GetCDClass::GetCDClass(void)
 {
-	char path[]={ "a:\\" };
+	char path[] = { "a:\\" };
 
 	CDCount = 0;
 	CDIndex = 0;
 
-	Msg( __LINE__, __FILE__, "GetCDClass constructor\n" );
+	Msg(__LINE__, __FILE__, "GetCDClass constructor\n");
 
 	/*--------------------------------------------------------------------------
 	** Set all CD drive placeholders to empty
 	*/
-	for( int j = 0; j < MAX_CD_DRIVES; j++ ) {
+	for (int j = 0; j < MAX_CD_DRIVES; j++)
+	{
 		CDDrives[j] = NO_CD_DRIVE;
 	}
 
-	for( char i = 'c'; i <= 'z'; i++ ) {
-
+	for (char i = 'c'; i <= 'z'; i++)
+	{
 		path[0] = i;
 
-		if ( GetDriveType( path ) == DRIVE_CDROM ) {
-			CDDrives[ CDCount++ ] = (int)( i-'a' );
-			Msg( __LINE__, __FILE__, "CD drive found - %c:\n", i +'A'-'a' );
+		if (GetDriveType(path) == DRIVE_CDROM)
+		{
+			CDDrives[CDCount++] = (int)(i - 'a');
+			Msg(__LINE__, __FILE__, "CD drive found - %c:\n", i + 'A' - 'a');
 		}
 	}
 
 	/*--------------------------------------------------------------------------
 	**	Catch the case when there are NO CD-ROM drives available
 	*/
-	if ( CDCount == 0 ) {
-		for ( char i = 'a'; i <= 'b'; i++ ) {
+	if (CDCount == 0)
+	{
+		for (char i = 'a'; i <= 'b'; i++)
+		{
 			path[0] = i;
-			if ( GetDriveType( path ) == DRIVE_CDROM ) {
-				CDDrives[ CDCount++ ] = (int)( i-'a' );
+			if (GetDriveType(path) == DRIVE_CDROM)
+			{
+				CDDrives[CDCount++] = (int)(i - 'a');
 			}
 		}
 	}
-	if ( CDCount == 0 ) {
-		Msg( __LINE__, __FILE__, "No CD drives found\n");
+	if (CDCount == 0)
+	{
+		Msg(__LINE__, __FILE__, "No CD drives found\n");
 	}
 }
 
@@ -144,8 +148,8 @@ GetCDClass::GetCDClass( void )
  *==============================================================================*/
 GetCDClass::~GetCDClass(void)
 {
-//	if(cdDrive_addrp.seg)
-//		DPMI_real_free(cdDrive_addrp);		// free up those conventional buffers
+	//	if(cdDrive_addrp.seg)
+	//		DPMI_real_free(cdDrive_addrp);		// free up those conventional buffers
 }
 
 /********************************************************************************
@@ -161,71 +165,69 @@ GetCDClass::~GetCDClass(void)
  *   10/18/2000 MML: Created.													*
  *==============================================================================*/
 
-int	GetCDClass::Get_CD_Drive_For_This_Volume ( const char *volume_label )
+int GetCDClass::Get_CD_Drive_For_This_Volume(const char *volume_label)
 {
-	char		volume_name[128] = "";
-	int			count = 0;
-	char		buffer[128];
-	unsigned	misc_dword;
-	unsigned	filename_length;
-	int			cd_drive;
+	char volume_name[128] = "";
+	int count = 0;
+	char buffer[128];
+	unsigned misc_dword;
+	unsigned filename_length;
+	int cd_drive;
 
 	CDIndex = 0;
 
-	while( CDIndex < CDCount ) {
-
+	while (CDIndex < CDCount)
+	{
 		//---------------------------------------------------------------------
 		// NOTE: A=0, B=1, C=2, D=3, etc...
 		//---------------------------------------------------------------------
-		cd_drive = CDDrives[ CDIndex++ ];
-		wsprintf( buffer, "%c:\\", 'A' + cd_drive );
+		cd_drive = CDDrives[CDIndex++];
+		wsprintf(buffer, "%c:\\", 'A' + cd_drive);
 
-		if ( GetVolumeInformation(
-				(char const *)buffer,
-				&volume_name[0],
-				(unsigned long)sizeof(volume_name)-1,
-				(unsigned long *)NULL,
-				(unsigned long *)&filename_length,
-				(unsigned long *)&misc_dword,
-				(char *)NULL,
-				(unsigned long)0 )) {
-
+		if (GetVolumeInformation(
+						(char const *)buffer,
+						&volume_name[0],
+						(unsigned long)sizeof(volume_name) - 1,
+						(unsigned long *)NULL,
+						(unsigned long *)&filename_length,
+						(unsigned long *)&misc_dword,
+						(char *)NULL,
+						(unsigned long)0))
+		{
 			//---------------------------------------------------------------------
 			// Windows '95 appears to have a volume name limit of 11 characters.
 			// I cannot find a Win32 call that will return the maximum volume name
 			// length so the value '11' is hard-coded here and the assumption made
 			// that all OS's have this length or better.
 			//---------------------------------------------------------------------
-			if( WinVersion.Is_Win95()) {
+			if (WinVersion.Is_Win95())
+			{
 				volume_name[11] = '\0';
 			}
 
-			if ( !_stricmp( volume_label, volume_name )) {
-				return( cd_drive );
+			if (!_stricmp(volume_label, volume_name))
+			{
+				return (cd_drive);
 			}
-
-		} else {
-
+		}
+		else
+		{
 #if RTS_DEBUG
 			LPVOID lpMsgBuf;
 			FormatMessage(
-				FORMAT_MESSAGE_ALLOCATE_BUFFER |
-				FORMAT_MESSAGE_FROM_SYSTEM |
-				FORMAT_MESSAGE_IGNORE_INSERTS,
-				NULL,
-				GetLastError(),
-				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-				(LPTSTR) &lpMsgBuf,
-				0,
-				NULL
-			);
-			Msg( __LINE__, __FILE__, (LPTSTR)lpMsgBuf );
-			LocalFree( lpMsgBuf );
+					FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+					NULL,
+					GetLastError(),
+					MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+					(LPTSTR)&lpMsgBuf,
+					0,
+					NULL);
+			Msg(__LINE__, __FILE__, (LPTSTR)lpMsgBuf);
+			LocalFree(lpMsgBuf);
 #endif
-
 		}
 	}
-	return( Get_First_CD_Drive());
+	return (Get_First_CD_Drive());
 }
 
 /********************************************************************************
@@ -241,12 +243,13 @@ int	GetCDClass::Get_CD_Drive_For_This_Volume ( const char *volume_label )
  *   10/31/2000 MML: Created.	* Happy Halloween! *							*
  *==============================================================================*/
 
-const char * GetCDClass::Get_Volume_Label	( int index )
+const char *GetCDClass::Get_Volume_Label(int index)
 {
-	if( index >= 0 && index < _Num_Volumes ) {
-		return( _CD_Volume_Label[ index ]);
+	if (index >= 0 && index < _Num_Volumes)
+	{
+		return (_CD_Volume_Label[index]);
 	}
-	return( _CD_Volume_Label[0]);
+	return (_CD_Volume_Label[0]);
 }
 
 /********************************************************************************
@@ -263,50 +266,48 @@ const char * GetCDClass::Get_Volume_Label	( int index )
  *   10/31/2000 MML: Created.	* Happy Halloween! *							*
  *==============================================================================*/
 
-const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *volume_name )
+const char *GetCDClass::Get_Volume_For_This_CD_Drive(const char *path, char *volume_name)
 {
-	char			buffer[128];
-	unsigned		misc_dword;
-	unsigned		filename_length;
-	static char		volume_label[ MAX_PATH ] = "";	// [OYO] add static
+	char buffer[128];
+	unsigned misc_dword;
+	unsigned filename_length;
+	static char volume_label[MAX_PATH] = ""; // [OYO] add static
 
-	if ( path == NULL || volume_name == NULL ) {
-		return( NULL );
+	if (path == NULL || volume_name == NULL)
+	{
+		return (NULL);
 	}
 
-	memset( volume_name, '\0', sizeof( volume_name ));
-	wsprintf( buffer, "%c:\\", path[0] );
+	memset(volume_name, '\0', sizeof(volume_name));
+	wsprintf(buffer, "%c:\\", path[0]);
 
-	if ( GetVolumeInformation(
-			(char const *)buffer,
-			&volume_label[0],
-			(unsigned long)sizeof(volume_label)-1,
-			(unsigned long *)NULL,
-			(unsigned long *)&filename_length,
-			(unsigned long *)&misc_dword,
-			(char *)NULL,
-			(unsigned long)0 )) {
-
-		strcpy( volume_name, volume_label );
-
-	} else {
-
+	if (GetVolumeInformation(
+					(char const *)buffer,
+					&volume_label[0],
+					(unsigned long)sizeof(volume_label) - 1,
+					(unsigned long *)NULL,
+					(unsigned long *)&filename_length,
+					(unsigned long *)&misc_dword,
+					(char *)NULL,
+					(unsigned long)0))
+	{
+		strcpy(volume_name, volume_label);
+	}
+	else
+	{
 		LPVOID lpMsgBuf;
 		FormatMessage(
-		    FORMAT_MESSAGE_ALLOCATE_BUFFER |
-		    FORMAT_MESSAGE_FROM_SYSTEM |
-		    FORMAT_MESSAGE_IGNORE_INSERTS,
-		    NULL,
-		    GetLastError(),
-		    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-		    (LPTSTR) &lpMsgBuf,
-		    0,
-		    NULL
-		);
-		Msg( __LINE__, __FILE__, (LPTSTR)lpMsgBuf );
-		LocalFree( lpMsgBuf );
+				FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+				NULL,
+				GetLastError(),
+				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+				(LPTSTR)&lpMsgBuf,
+				0,
+				NULL);
+		Msg(__LINE__, __FILE__, (LPTSTR)lpMsgBuf);
+		LocalFree(lpMsgBuf);
 
-		strcpy( volume_name, _CD_Volume_Label[0] );
+		strcpy(volume_name, _CD_Volume_Label[0]);
 	}
 
 	//-------------------------------------------------------------------------
@@ -317,11 +318,12 @@ const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *v
 	//-------------------------------------------------------------------------
 	bool winversion = WinVersion.Is_Win95();
 
-	if( winversion ) {
+	if (winversion)
+	{
 		volume_name[11] = '\0';
 	}
 
-	return( volume_name );
+	return (volume_name);
 }
 
 /********************************************************************************
@@ -338,35 +340,35 @@ const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *v
  *    01/11/99 4:20PM MML : Created												*
  *==============================================================================*/
 
-bool CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_find )
+bool CD_Volume_Verification(int cd_drive, char *volume_label, char *volume_to_find)
 {
-	char		volume_name[128] = "";
-	int			count = 0;
-	char		buffer[128];
-	unsigned	misc_dword;
-	unsigned	filename_length;
+	char volume_name[128] = "";
+	int count = 0;
+	char buffer[128];
+	unsigned misc_dword;
+	unsigned filename_length;
 
 	/***************************************************************************
 	** Get the volume label. If we get a 'not ready' error then retry for the
 	** timeout period.
 	*/
-	for (;;) {
-
+	for (;;)
+	{
 		//---------------------------------------------------------------------
 		// NOTE: A=0, B=1, C=2, D=3, etc...
 		//---------------------------------------------------------------------
-		wsprintf( buffer, "%c:\\", 'A' + cd_drive );
+		wsprintf(buffer, "%c:\\", 'A' + cd_drive);
 
-		if ( GetVolumeInformation(
-				(char const *)buffer,
-				&volume_name[0],
-				(unsigned long)sizeof(volume_name)-1,
-				(unsigned long *)NULL,
-				(unsigned long *)&filename_length,
-				(unsigned long *)&misc_dword,
-				(char *)NULL,
-				(unsigned long)0 )) {
-
+		if (GetVolumeInformation(
+						(char const *)buffer,
+						&volume_name[0],
+						(unsigned long)sizeof(volume_name) - 1,
+						(unsigned long *)NULL,
+						(unsigned long *)&filename_length,
+						(unsigned long *)&misc_dword,
+						(char *)NULL,
+						(unsigned long)0))
+		{
 			/******************************************************************
 			** Match the volume label to the list of known volume labels.
 			*/
@@ -377,26 +379,32 @@ bool CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_
 			// length so the value '11' is hard-coded here and the assumption made
 			// that all OS's have this length or better.
 			//---------------------------------------------------------------------
-			if( WinVersion.Is_Win95()) {
+			if (WinVersion.Is_Win95())
+			{
 				volume_name[11] = '\0';
 			}
 
-			if ( volume_label != NULL ) {
-				strncpy( volume_label, volume_name, 128 );
+			if (volume_label != NULL)
+			{
+				strncpy(volume_label, volume_name, 128);
 			}
 
-			if ( !_stricmp( volume_to_find, volume_name )) {
+			if (!_stricmp(volume_to_find, volume_name))
+			{
 				return TRUE;
 			}
 
-			if ( !count ) {
+			if (!count)
+			{
 				count++;
-			} else {
+			}
+			else
+			{
 				return FALSE;
 			}
-
-		} else {
-
+		}
+		else
+		{
 			/*********************************************************************
 			** Failed to get the volume label on a known CD drive.  If this is a
 			** CD changer it may require time to swap the disks so don't return
@@ -407,8 +415,4 @@ bool CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_
 	}
 }
 
-
-
-
 /* ==================================================================== */
-

@@ -87,11 +87,11 @@ private:
 	static Int readPacket(void *opaque, UnsignedByte *buf, Int buf_size);
 	const FFmpegStream *findMatch(int type) const;
 
-	FFmpegFrameCallback 		m_frameCallback = nullptr; ///< Callback for frame processing
-	AVFormatContext 			*m_fmtCtx = nullptr; ///< Format context for AVFormat
-	AVIOContext 				*m_avioCtx = nullptr; ///< IO context for AVFormat
-	AVPacket 					*m_packet = nullptr; ///< Current packet
-	std::vector<FFmpegStream> 	m_streams; ///< List of streams in the file
-	File 						*m_file = nullptr;	///< File handle for the file
-	void 						*m_userData = nullptr; ///< User data for the callback
+	FFmpegFrameCallback m_frameCallback = nullptr; ///< Callback for frame processing
+	AVFormatContext *m_fmtCtx = nullptr; ///< Format context for AVFormat
+	AVIOContext *m_avioCtx = nullptr; ///< IO context for AVFormat
+	AVPacket *m_packet = nullptr; ///< Current packet
+	std::vector<FFmpegStream> m_streams; ///< List of streams in the file
+	File *m_file = nullptr; ///< File handle for the file
+	void *m_userData = nullptr; ///< User data for the callback
 };

@@ -20,7 +20,7 @@
 wdebug                        Neal Kettler
 
 MT-LEVEL
-    MT-Safe
+		MT-Safe
 
 The debugging module is pretty good for debugging and it has some message
 printing stuff as well.  The basic idea is that you write a class that
@@ -41,9 +41,9 @@ Note that since these are defines you really don't need to put a semicolon
 at the end, and it can be bad in situations like this:
 
 if (x)
-  DBGMSG("Stuff is broken");
+	DBGMSG("Stuff is broken");
 else
-  DBGMSG("Stuff is NOT broken");
+	DBGMSG("Stuff is NOT broken");
 
 This won't compile, read the code until you figure it out.  Only then
 will you be ready to leave grasshopper.
@@ -90,31 +90,30 @@ extern CritSec MyDebugLibSemaphore;
 #endif
 
 // Print an information message
-#define PARANOIDMSG(X)\
-{\
-char     timebuf[40]; \
-Xtime now; \
-now -= TimezoneOffset(); \
-now.FormatTime(timebuf, "mm/dd/yy hh:mm:ss"); \
-MYDEBUGLOCK; \
-if (MyMsgManager::paranoidStream()) \
-(*(MyMsgManager::paranoidStream())) << "HACK " << timebuf << " [" << \
-__FILE__ <<  " " << __LINE__ << "] " << X << endl; \
-MYDEBUGUNLOCK; \
-}
+#define PARANOIDMSG(X) \
+	{ \
+		char timebuf[40]; \
+		Xtime now; \
+		now -= TimezoneOffset(); \
+		now.FormatTime(timebuf, "mm/dd/yy hh:mm:ss"); \
+		MYDEBUGLOCK; \
+		if (MyMsgManager::paranoidStream()) \
+			(*(MyMsgManager::paranoidStream())) << "HACK " << timebuf << " [" << __FILE__ << " " << __LINE__ << "] " << X \
+																					<< endl; \
+		MYDEBUGUNLOCK; \
+	}
 
 // Just get a stream to the information device, no extra junk
-#define PARANOIDSTREAM(X)\
-{\
-MYDEBUGLOCK; \
-if (MyMsgManager::paranoidStream()) \
-(*(MyMsgManager::paranoidStream())) << X;\
-MYDEBUGUNLOCK; \
-}
+#define PARANOIDSTREAM(X) \
+	{ \
+		MYDEBUGLOCK; \
+		if (MyMsgManager::paranoidStream()) \
+			(*(MyMsgManager::paranoidStream())) << X; \
+		MYDEBUGUNLOCK; \
+	}
 
-
-//#undef MYDEBUGLOCK
-//#undef MYDEBUGUNLOCK
+// #undef MYDEBUGLOCK
+// #undef MYDEBUGUNLOCK
 
 class MyMsgManager
 {
@@ -122,13 +121,13 @@ protected:
 	MyMsgManager();
 
 public:
-	static int                 setAllStreams(OutputDevice *device);
-	static int                 setParanoidStream(OutputDevice *device);
-	static int                 ReplaceAllStreams(FileD *output_device, const char *device_filename, const char *copy_filename);
+	static int setAllStreams(OutputDevice *device);
+	static int setParanoidStream(OutputDevice *device);
+	static int ReplaceAllStreams(FileD *output_device, const char *device_filename, const char *copy_filename);
 
-	static void                enableParanoid(int flag);
+	static void enableParanoid(int flag);
 
-	static ostream            *paranoidStream(void);
+	static ostream *paranoidStream(void);
 };
 
 #endif

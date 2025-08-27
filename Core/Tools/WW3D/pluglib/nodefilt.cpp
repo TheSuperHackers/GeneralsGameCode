@@ -43,16 +43,13 @@
  *   VisibleSelectedINodeFilter::Accept_Node -- Accepts Visible and selected inodes            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "nodefilt.h"
 #include <istdplug.h>
-
 
 /*
 **	The default node filter:
 */
 VisibleMeshINodeFilter DefaultINodeFilter;
-
 
 /***********************************************************************************************
  * HelperINodeFilter::Accept_Node -- Accepts all helper inodes (including hidden)              *
@@ -66,19 +63,17 @@ VisibleMeshINodeFilter DefaultINodeFilter;
  * HISTORY:                                                                                    *
  *   07/10/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-BOOL HelperINodeFilter::Accept_Node(INode * node,TimeValue time)
+BOOL HelperINodeFilter::Accept_Node(INode *node, TimeValue time)
 {
-	Object * obj = node->EvalWorldState(time).obj;
+	Object *obj = node->EvalWorldState(time).obj;
 
-	if (obj && obj->SuperClassID() == HELPER_CLASS_ID) {
-
+	if (obj && obj->SuperClassID() == HELPER_CLASS_ID)
+	{
 		return TRUE;
-
 	}
 
 	return FALSE;
 }
-
 
 /***********************************************************************************************
  * MeshINodeFilter::Accept_Node -- Accepts all mesh inodes (including hidden)                  *
@@ -92,24 +87,19 @@ BOOL HelperINodeFilter::Accept_Node(INode * node,TimeValue time)
  * HISTORY:                                                                                    *
  *   07/10/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-BOOL MeshINodeFilter::Accept_Node(INode * node,TimeValue time)
+BOOL MeshINodeFilter::Accept_Node(INode *node, TimeValue time)
 {
-	Object * obj = node->EvalWorldState(time).obj;
+	Object *obj = node->EvalWorldState(time).obj;
 
-	if (obj &&
-		obj->CanConvertToType(triObjectClassID) &&
-		obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
+	if (obj && obj->CanConvertToType(triObjectClassID) && obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
 	{
-
 		return TRUE;
-
-	} else {
-
+	}
+	else
+	{
 		return FALSE;
-
 	}
 }
-
 
 /***********************************************************************************************
  * VisibleMeshINodeFilter::Accept_Node -- Accepts visible meshes                               *
@@ -128,26 +118,19 @@ BOOL MeshINodeFilter::Accept_Node(INode * node,TimeValue time)
  * HISTORY:                                                                                    *
  *   06/09/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-BOOL VisibleMeshINodeFilter::Accept_Node(INode * node, TimeValue time)
+BOOL VisibleMeshINodeFilter::Accept_Node(INode *node, TimeValue time)
 {
-	Object * obj = node->EvalWorldState(time).obj;
+	Object *obj = node->EvalWorldState(time).obj;
 
-	if
-	(
-		obj
-		&& !node->IsHidden ()
-		&& obj->CanConvertToType(triObjectClassID)
-		&& obj->SuperClassID() == GEOMOBJECT_CLASS_ID
-//		&& node->GetVisibility (time) > 0.0f
+	if (obj && !node->IsHidden() && obj->CanConvertToType(triObjectClassID) && obj->SuperClassID() == GEOMOBJECT_CLASS_ID
+			//		&& node->GetVisibility (time) > 0.0f
 	)
 	{
-
 		return TRUE;
-
-	} else {
-
+	}
+	else
+	{
 		return FALSE;
-
 	}
 }
 
@@ -163,25 +146,22 @@ BOOL VisibleMeshINodeFilter::Accept_Node(INode * node, TimeValue time)
  * HISTORY:                                                                                    *
  *   07/03/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-BOOL VisibleHelperINodeFilter::Accept_Node(INode * node, TimeValue time)
+BOOL VisibleHelperINodeFilter::Accept_Node(INode *node, TimeValue time)
 {
-	Object * obj = node->EvalWorldState(time).obj;
+	Object *obj = node->EvalWorldState(time).obj;
 
-	if ((!obj) || (node->IsHidden()) /*|| (node->GetVisibility(time) <= 0.0f)*/) {
-
+	if ((!obj) || (node->IsHidden()) /*|| (node->GetVisibility(time) <= 0.0f)*/)
+	{
 		return FALSE;
-
 	}
 
-	if (obj->SuperClassID() == HELPER_CLASS_ID) {
-
+	if (obj->SuperClassID() == HELPER_CLASS_ID)
+	{
 		return TRUE;
-
 	}
 
 	return FALSE;
 }
-
 
 /***********************************************************************************************
  * VisibleMeshOrHelperINodeFilter::Accept_Node -- Accepts visible helper or mesh objects       *
@@ -195,26 +175,23 @@ BOOL VisibleHelperINodeFilter::Accept_Node(INode * node, TimeValue time)
  * HISTORY:                                                                                    *
  *   07/03/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-BOOL VisibleMeshOrHelperINodeFilter::Accept_Node(INode * node, TimeValue time)
+BOOL VisibleMeshOrHelperINodeFilter::Accept_Node(INode *node, TimeValue time)
 {
-	Object * obj = node->EvalWorldState(time).obj;
+	Object *obj = node->EvalWorldState(time).obj;
 
-	if ((!obj) || (node->IsHidden()) /*|| (node->GetVisibility(time) <= 0.0f)*/) {
-
+	if ((!obj) || (node->IsHidden()) /*|| (node->GetVisibility(time) <= 0.0f)*/)
+	{
 		return FALSE;
-
 	}
 
-	if (obj->CanConvertToType(triObjectClassID) && obj->SuperClassID() == GEOMOBJECT_CLASS_ID) {
-
+	if (obj->CanConvertToType(triObjectClassID) && obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
+	{
 		return TRUE;
-
 	}
 
-	if (obj->SuperClassID() == HELPER_CLASS_ID) {
-
+	if (obj->SuperClassID() == HELPER_CLASS_ID)
+	{
 		return TRUE;
-
 	}
 
 	return FALSE;
@@ -238,30 +215,34 @@ BOOL VisibleMeshOrHelperINodeFilter::Accept_Node(INode * node, TimeValue time)
  * HISTORY:                                                                                    *
  *   06/09/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-BOOL AnimatedINodeFilter::Accept_Node(INode * node, TimeValue time)
+BOOL AnimatedINodeFilter::Accept_Node(INode *node, TimeValue time)
 {
-	Object			* obj = node->EvalWorldState(time).obj;
-	Control			* poscon = node->GetTMController()->GetPositionController();
-	Control			* rotcon = node->GetTMController()->GetRotationController();
+	Object *obj = node->EvalWorldState(time).obj;
+	Control *poscon = node->GetTMController()->GetPositionController();
+	Control *rotcon = node->GetTMController()->GetRotationController();
 
 	int numkeys = 0;
-	if (poscon != NULL) {
-		IKeyControl	* poskeys = GetKeyControlInterface(poscon);
-		if (poskeys != NULL) numkeys += poskeys->GetNumKeys();
+	if (poscon != NULL)
+	{
+		IKeyControl *poskeys = GetKeyControlInterface(poscon);
+		if (poskeys != NULL)
+			numkeys += poskeys->GetNumKeys();
 	}
 
-	if (rotcon != NULL) {
-		IKeyControl	* rotkeys = GetKeyControlInterface(rotcon);
-		if (rotkeys != NULL) numkeys += rotkeys->GetNumKeys();
+	if (rotcon != NULL)
+	{
+		IKeyControl *rotkeys = GetKeyControlInterface(rotcon);
+		if (rotkeys != NULL)
+			numkeys += rotkeys->GetNumKeys();
 	}
 
-	if (obj && !node->IsHidden() && numkeys > 0) {
+	if (obj && !node->IsHidden() && numkeys > 0)
+	{
 		return TRUE;
 	}
 
 	return FALSE;
 }
-
 
 /***********************************************************************************************
  * VisibleSelectedINodeFilter::Accept_Node -- Accepts Visible and selected inodes              *
@@ -275,12 +256,14 @@ BOOL AnimatedINodeFilter::Accept_Node(INode * node, TimeValue time)
  * HISTORY:                                                                                    *
  *   1/13/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-BOOL VisibleSelectedINodeFilter::Accept_Node(INode * node, TimeValue time)
+BOOL VisibleSelectedINodeFilter::Accept_Node(INode *node, TimeValue time)
 {
-	if (!node->IsHidden() && node->Selected()) {
+	if (!node->IsHidden() && node->Selected())
+	{
 		return TRUE;
-	} else {
+	}
+	else
+	{
 		return FALSE;
 	}
 }
-

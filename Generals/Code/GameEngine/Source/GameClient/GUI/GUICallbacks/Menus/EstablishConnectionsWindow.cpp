@@ -23,8 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///// EstablishConnectionsWindow.cpp /////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
-
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameClient/GameWindowManager.h"
 #include "Common/NameKeyGenerator.h"
@@ -70,8 +69,7 @@ static GameWindow *staticPlayer7Status = NULL;
 
 static const char *layoutFilename = "GameSpyGameOptionsMenu.wnd";
 static const char *parentName = "GameSpyGameOptionsMenuParent";
-static const char *gadgetsToHide[] =
-{
+static const char *gadgetsToHide[] = {
 	"MapWindow",
 	"StaticTextGameName",
 	"StaticTextTeam",
@@ -84,8 +82,7 @@ static const char *gadgetsToHide[] =
 	"StaticTextMapPreview",
 	NULL // keep this last
 };
-static const char *perPlayerGadgetsToHide[] =
-{
+static const char *perPlayerGadgetsToHide[] = {
 	"ComboBoxTeam",
 	"ComboBoxColor",
 	"ComboBoxPlayerTemplate",
@@ -98,8 +95,7 @@ static const char *perPlayerGadgetsToHide[] =
 
 static const char *qmlayoutFilename = "WOLQuickMatchMenu.wnd";
 static const char *qmparentName = "WOLQuickMatchMenuParent";
-static const char *qmgadgetsToHide[] =
-{
+static const char *qmgadgetsToHide[] = {
 	"StaticTextTitle",
 	"ButtonBack",
 	"ButtonOptions",
@@ -109,30 +105,31 @@ static const char *qmgadgetsToHide[] =
 	"ButtonStart",
 	NULL // keep this last
 };
-static const char *qmperPlayerGadgetsToHide[] =
-{
+static const char *qmperPlayerGadgetsToHide[] = {
 	//"ButtonStartPosition",
 	NULL // keep this last
 };
 
-static void showGameSpyGameOptionsUnderlyingGUIElements( Bool show )
+static void showGameSpyGameOptionsUnderlyingGUIElements(Bool show)
 {
-	ShowUnderlyingGUIElements( show, layoutFilename, parentName, gadgetsToHide, perPlayerGadgetsToHide );
-
+	ShowUnderlyingGUIElements(show, layoutFilename, parentName, gadgetsToHide, perPlayerGadgetsToHide);
 }
-static void showGameSpyQMUnderlyingGUIElements( Bool show )
+static void showGameSpyQMUnderlyingGUIElements(Bool show)
 {
-	ShowUnderlyingGUIElements( show, qmlayoutFilename, qmparentName, qmgadgetsToHide, qmperPlayerGadgetsToHide );
+	ShowUnderlyingGUIElements(show, qmlayoutFilename, qmparentName, qmgadgetsToHide, qmperPlayerGadgetsToHide);
 }
 
-static void InitEstablishConnectionsDialog( void ) {
-	buttonQuitID = TheNameKeyGenerator->nameToKey( AsciiString("EstablishConnectionsScreen.wnd:ButtonQuit") );
+static void InitEstablishConnectionsDialog(void)
+{
+	buttonQuitID = TheNameKeyGenerator->nameToKey(AsciiString("EstablishConnectionsScreen.wnd:ButtonQuit"));
 	buttonQuitWindow = TheWindowManager->winGetWindowFromId(NULL, buttonQuitID);
 }
 
-void ShowEstablishConnectionsWindow( void ) {
-	if (establishConnectionsLayout == NULL) {
-		establishConnectionsLayout = TheWindowManager->winCreateLayout( "Menus/EstablishConnectionsScreen.wnd" );
+void ShowEstablishConnectionsWindow(void)
+{
+	if (establishConnectionsLayout == NULL)
+	{
+		establishConnectionsLayout = TheWindowManager->winCreateLayout("Menus/EstablishConnectionsScreen.wnd");
 		InitEstablishConnectionsDialog();
 	}
 	establishConnectionsLayout->hide(FALSE);
@@ -147,15 +144,17 @@ void ShowEstablishConnectionsWindow( void ) {
 	}
 }
 
-void HideEstablishConnectionsWindow( void ) {
-	if (establishConnectionsLayout == NULL) {
-//		establishConnectionsLayout = TheWindowManager->winCreateLayout( "Menus/EstablishConnectionsScreen.wnd" );
-//		InitEstablishConnectionsDialog();
+void HideEstablishConnectionsWindow(void)
+{
+	if (establishConnectionsLayout == NULL)
+	{
+		//		establishConnectionsLayout = TheWindowManager->winCreateLayout( "Menus/EstablishConnectionsScreen.wnd" );
+		//		InitEstablishConnectionsDialog();
 		return;
 	}
-//	establishConnectionsLayout->hide(TRUE);
-//	establishConnectionsLayout->hide(TRUE);
-//	TheWindowManager->winDestroy(establishConnectionsLayout);
+	//	establishConnectionsLayout->hide(TRUE);
+	//	establishConnectionsLayout->hide(TRUE);
+	//	TheWindowManager->winDestroy(establishConnectionsLayout);
 	establishConnectionsLayout->destroyWindows();
 	deleteInstance(establishConnectionsLayout);
 	establishConnectionsLayout = NULL;
@@ -169,26 +168,34 @@ void HideEstablishConnectionsWindow( void ) {
 	}
 }
 
-WindowMsgHandledType EstablishConnectionsControlInput(GameWindow *window, UnsignedInt msg,
-																											WindowMsgData mData1, WindowMsgData mData2) {
-
+WindowMsgHandledType EstablishConnectionsControlInput(
+		GameWindow *window,
+		UnsignedInt msg,
+		WindowMsgData mData1,
+		WindowMsgData mData2)
+{
 	return MSG_IGNORED;
 }
 
-WindowMsgHandledType EstablishConnectionsControlSystem(GameWindow *window, UnsignedInt msg,
-																											 WindowMsgData mData1, WindowMsgData mData2) {
-
-	switch (msg) {
+WindowMsgHandledType EstablishConnectionsControlSystem(
+		GameWindow *window,
+		UnsignedInt msg,
+		WindowMsgData mData1,
+		WindowMsgData mData2)
+{
+	switch (msg)
+	{
 		case GBM_SELECTED:
-			{
-				GameWindow *control = (GameWindow *)mData1;
-				Int controlID = control->winGetWindowId();
+		{
+			GameWindow *control = (GameWindow *)mData1;
+			Int controlID = control->winGetWindowId();
 
-				if (controlID == buttonQuitID) {
-					TheEstablishConnectionsMenu->abortGame();
-				}
-				break;
+			if (controlID == buttonQuitID)
+			{
+				TheEstablishConnectionsMenu->abortGame();
 			}
+			break;
+		}
 	} // end switch
 	return MSG_HANDLED;
 }

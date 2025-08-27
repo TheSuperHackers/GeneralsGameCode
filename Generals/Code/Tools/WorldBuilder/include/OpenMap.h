@@ -27,9 +27,10 @@
 
 #define MAP_OPENSAVE_PANEL_SECTION "MapOpenSavePanel"
 
-typedef struct {
+typedef struct
+{
 	CString filename;
-	Bool		browse;
+	Bool browse;
 } TOpenMapInfo;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -37,31 +38,33 @@ typedef struct {
 
 class OpenMap : public CDialog
 {
-// Construction
+	// Construction
 public:
-	OpenMap(TOpenMapInfo *pInfo, CWnd* pParent = NULL);   // standard constructor
+	OpenMap(TOpenMapInfo *pInfo, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(OpenMap)
-	enum { IDD = IDD_OPEN_MAP };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_OPEN_MAP
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(OpenMap)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	TOpenMapInfo *m_pInfo;
-	void populateMapListbox( Bool systemMaps );
+	void populateMapListbox(Bool systemMaps);
 	Bool m_usingSystemDir;
-protected:
 
+protected:
 	// Generated message map functions
 	//{{AFX_MSG(OpenMap)
 	afx_msg void OnBrowse();

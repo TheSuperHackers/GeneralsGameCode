@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/RandomValue.h"
 #include "Common/Xfer.h"
@@ -49,24 +49,23 @@ OCLUpdateModuleData::OCLUpdateModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void OCLUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
+/*static*/ void OCLUpdateModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "OCL",					INI::parseObjectCreationList,		NULL, offsetof( OCLUpdateModuleData, m_ocl ) },
-		{ "MinDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( OCLUpdateModuleData, m_minDelay ) },
-		{ "MaxDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( OCLUpdateModuleData, m_maxDelay ) },
-		{ "CreateAtEdge",	INI::parseBool,									NULL, offsetof( OCLUpdateModuleData, m_isCreateAtEdge ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "OCL", INI::parseObjectCreationList, NULL, offsetof(OCLUpdateModuleData, m_ocl) },
+		{ "MinDelay", INI::parseDurationUnsignedInt, NULL, offsetof(OCLUpdateModuleData, m_minDelay) },
+		{ "MaxDelay", INI::parseDurationUnsignedInt, NULL, offsetof(OCLUpdateModuleData, m_maxDelay) },
+		{ "CreateAtEdge", INI::parseBool, NULL, offsetof(OCLUpdateModuleData, m_isCreateAtEdge) },
 		{ 0, 0, 0, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OCLUpdate::OCLUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+OCLUpdate::OCLUpdate(Thing *thing, const ModuleData *moduleData) : UpdateModule(thing, moduleData)
 {
 	m_nextCreationFrame = 0;
 	m_timerStartedFrame = 0;
@@ -74,18 +73,19 @@ OCLUpdate::OCLUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModul
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OCLUpdate::~OCLUpdate( void )
+OCLUpdate::~OCLUpdate(void)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime OCLUpdate::update( void )
+UpdateSleepTime OCLUpdate::update(void)
 {
 #if !RETAIL_COMPATIBLE_CRC
-	// TheSuperHackers @bugfix dizzyj/Caball009/Mauller 14/07/2025 prevent triggering supply drop when subdued while under construction
-	// When the construction is finished, we allow the timer to be initialized and then start shifting the timer while subdued
-	if ( m_timerStartedFrame > 0 && getObject()->isDisabled() )
+	// TheSuperHackers @bugfix dizzyj/Caball009/Mauller 14/07/2025 prevent triggering supply drop when subdued while under
+	// construction When the construction is finished, we allow the timer to be initialized and then start shifting the timer
+	// while subdued
+	if (m_timerStartedFrame > 0 && getObject()->isDisabled())
 	{
 		m_nextCreationFrame++;
 		m_timerStartedFrame++;
@@ -93,10 +93,10 @@ UpdateSleepTime OCLUpdate::update( void )
 	}
 #endif
 
-/// @todo srj use SLEEPY_UPDATE here
-	if( shouldCreate() )
+	/// @todo srj use SLEEPY_UPDATE here
+	if (shouldCreate())
 	{
-		if( m_nextCreationFrame == 0 )
+		if (m_nextCreationFrame == 0)
 		{
 			// You don't get to actually spread the first try, you start on a timer, then go
 			setNextCreationFrame();
@@ -106,12 +106,12 @@ UpdateSleepTime OCLUpdate::update( void )
 		setNextCreationFrame();
 
 		Coord3D creationCoord;
-		if( getOCLUpdateModuleData()->m_isCreateAtEdge )
-			creationCoord = TheTerrainLogic->findClosestEdgePoint( getObject()->getPosition() );
+		if (getOCLUpdateModuleData()->m_isCreateAtEdge)
+			creationCoord = TheTerrainLogic->findClosestEdgePoint(getObject()->getPosition());
 		else
 			creationCoord = *getObject()->getPosition();
 
-		ObjectCreationList::create( getOCLUpdateModuleData()->m_ocl, getObject(), &creationCoord, getObject()->getPosition() );
+		ObjectCreationList::create(getOCLUpdateModuleData()->m_ocl, getObject(), &creationCoord, getObject()->getPosition());
 	}
 	return UPDATE_SLEEP_NONE;
 }
@@ -120,11 +120,11 @@ UpdateSleepTime OCLUpdate::update( void )
 // ------------------------------------------------------------------------------------------------
 Bool OCLUpdate::shouldCreate()
 {
-	if( TheGameLogic->getFrame() < m_nextCreationFrame )
-		return FALSE;//too soon
+	if (TheGameLogic->getFrame() < m_nextCreationFrame)
+		return FALSE; // too soon
 
-	if( getObject()->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
-		return FALSE;// not built yet
+	if (getObject()->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
+		return FALSE; // not built yet
 
 	return TRUE;
 }
@@ -133,11 +133,9 @@ Bool OCLUpdate::shouldCreate()
 // ------------------------------------------------------------------------------------------------
 void OCLUpdate::setNextCreationFrame()
 {
-	UnsignedInt delay = GameLogicRandomValue( getOCLUpdateModuleData()->m_minDelay,
-																						getOCLUpdateModuleData()->m_maxDelay );
+	UnsignedInt delay = GameLogicRandomValue(getOCLUpdateModuleData()->m_minDelay, getOCLUpdateModuleData()->m_maxDelay);
 	m_timerStartedFrame = TheGameLogic->getFrame();
 	m_nextCreationFrame = m_timerStartedFrame + delay;
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -146,7 +144,7 @@ Real OCLUpdate::getCountdownPercent() const
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 
-	return 1.0f - (( m_nextCreationFrame - now ) / (float)( m_nextCreationFrame - m_timerStartedFrame ));
+	return 1.0f - ((m_nextCreationFrame - now) / (float)(m_nextCreationFrame - m_timerStartedFrame));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -155,51 +153,48 @@ UnsignedInt OCLUpdate::getRemainingFrames() const
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 
-	return ( m_nextCreationFrame - now );
+	return (m_nextCreationFrame - now);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void OCLUpdate::crc( Xfer *xfer )
+void OCLUpdate::crc(Xfer *xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
+	UpdateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void OCLUpdate::xfer( Xfer *xfer )
+void OCLUpdate::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// next creation frame
-	xfer->xferUnsignedInt( &m_nextCreationFrame );
+	xfer->xferUnsignedInt(&m_nextCreationFrame);
 
 	// timer stated frame
-	xfer->xferUnsignedInt( &m_timerStartedFrame );
+	xfer->xferUnsignedInt(&m_timerStartedFrame);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void OCLUpdate::loadPostProcess( void )
+void OCLUpdate::loadPostProcess(void)
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

@@ -34,44 +34,45 @@ class ModifyObjectUndoable;
 
 /////////////////////////////////////////////////////////////////////////////
 // External Defines
-extern const char* NEUTRAL_TEAM_UI_STR;
-extern const char* NEUTRAL_TEAM_INTERNAL_STR;
-
+extern const char *NEUTRAL_TEAM_UI_STR;
+extern const char *NEUTRAL_TEAM_INTERNAL_STR;
 
 /////////////////////////////////////////////////////////////////////////////
 // MapObjectProps dialog
 
 class MapObjectProps : public COptionsPanel, public PopupSliderOwner
 {
-// Construction
+	// Construction
 public:
-	MapObjectProps(Dict* dictToEdit = NULL, const char* title = NULL, CWnd* pParent = NULL);   // standard constructor
+	MapObjectProps(Dict *dictToEdit = NULL, const char *title = NULL, CWnd *pParent = NULL); // standard constructor
 	~MapObjectProps();
 	void makeMain();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(MapObjectProps)
-	enum { IDD = IDD_MAPOBJECT_PROPS };
+	enum
+	{
+		IDD = IDD_MAPOBJECT_PROPS
+	};
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(MapObjectProps)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	void getAllSelectedDicts(void);
-	Dict** getAllSelectedDictsData();
+	Dict **getAllSelectedDictsData();
 
 	static MapObjectProps *TheMapObjectProps;
 
-	Dict* m_dictToEdit;
-	std::vector<Dict*> m_allSelectedDicts;
-	const char* m_title;
+	Dict *m_dictToEdit;
+	std::vector<Dict *> m_allSelectedDicts;
+	const char *m_title;
 	MapObject *m_selectedObject;
 
 	void updateTheUI(void);
@@ -138,8 +139,8 @@ protected:
 	void _DictToSelectable(void);
 	void _DictToWeather(void);
 	void _DictToTime(void);
-	void ShowZOffset(MapObject* pMapObj);
-	void ShowAngle(MapObject* pMapObj);
+	void ShowZOffset(MapObject *pMapObj);
+	void ShowAngle(MapObject *pMapObj);
 	void _DictToStoppingDistance(void);
 	void _DictToPrebuiltUpgrades(void);
 
@@ -150,7 +151,6 @@ public:
 
 	static MapObject *getSingleSelectedMapObject(void);
 	static void update(void);
-
 };
 
 //{{AFX_INSERT_LOCATION}}

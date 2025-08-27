@@ -29,13 +29,12 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/GameState.h"
 #include "GameClient/MapUtil.h"
 #include "GameNetwork/GameSpy/GSConfig.h"
 #include "GameNetwork/RankPointValue.h"
-
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -44,30 +43,30 @@ GameSpyConfigInterface *TheGameSpyConfig = NULL;
 class GameSpyConfig : public GameSpyConfigInterface
 {
 public:
-	GameSpyConfig( AsciiString config );
+	GameSpyConfig(AsciiString config);
 	~GameSpyConfig() {}
 
 	// Pings
-	std::list<AsciiString> getPingServers(void)	{ return m_pingServers; }
-	Int getNumPingRepetitions(void)							{ return m_pingReps; }
-	Int getPingTimeoutInMs(void)								{ return m_pingTimeout; }
-	virtual Int getPingCutoffGood( void )				{	return m_pingCutoffGood; }
-	virtual Int getPingCutoffBad( void )				{ return m_pingCutoffBad;	}
+	std::list<AsciiString> getPingServers(void) { return m_pingServers; }
+	Int getNumPingRepetitions(void) { return m_pingReps; }
+	Int getPingTimeoutInMs(void) { return m_pingTimeout; }
+	virtual Int getPingCutoffGood(void) { return m_pingCutoffGood; }
+	virtual Int getPingCutoffBad(void) { return m_pingCutoffBad; }
 
 	// QM
-	std::list<AsciiString> getQMMaps(void)			{ return m_qmMaps; }
-	Int getQMBotID(void)												{ return m_qmBotID; }
-	Int getQMChannel(void)											{ return m_qmChannel; }
-	void setQMChannel(Int channel)							{ m_qmChannel = channel; }
+	std::list<AsciiString> getQMMaps(void) { return m_qmMaps; }
+	Int getQMBotID(void) { return m_qmBotID; }
+	Int getQMChannel(void) { return m_qmChannel; }
+	void setQMChannel(Int channel) { m_qmChannel = channel; }
 
 	// Player Info
 	Int getPointsForRank(Int rank);
 	virtual Bool isPlayerVIP(Int id);
 
-	virtual Bool getManglerLocation(Int index, AsciiString& host, UnsignedShort& port);
+	virtual Bool getManglerLocation(Int index, AsciiString &host, UnsignedShort &port);
 
 	// Ladder / Any other external parsing
-	AsciiString getLeftoverConfig(void)					{ return m_leftoverConfig; }
+	AsciiString getLeftoverConfig(void) { return m_leftoverConfig; }
 
 	// NAT Timeouts
 	virtual Int getTimeBetweenRetries() { return m_natRetryInterval; }
@@ -112,7 +111,7 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-GameSpyConfigInterface* GameSpyConfigInterface::create(AsciiString config)
+GameSpyConfigInterface *GameSpyConfigInterface::create(AsciiString config)
 {
 	return NEW GameSpyConfig(config);
 }
@@ -125,10 +124,12 @@ public:
 	typedef std::list<const Bool *> SectionList;
 	void addVar(const Bool *var) { m_bools.push_back(var); }
 	Bool isInSection();
+
 protected:
-	 SectionList m_bools;
+	SectionList m_bools;
 };
-Bool SectionChecker::isInSection() {
+Bool SectionChecker::isInSection()
+{
 	Bool ret = FALSE;
 	for (SectionList::const_iterator it = m_bools.begin(); it != m_bools.end(); ++it)
 	{
@@ -139,20 +140,20 @@ Bool SectionChecker::isInSection() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-GameSpyConfig::GameSpyConfig( AsciiString config ) :
-m_natRetryInterval(1000),
-m_natMaxManglerRetries(25),
-m_natManglerRetryInterval(300),
-m_natKeepaliveInterval(15000),
-m_natPortTimeout(10000),
-m_natRoundTimeout(10000),
-m_pingReps(1),
-m_pingTimeout(1000),
-m_pingCutoffGood(300),
-m_pingCutoffBad(600),
-m_restrictGamesToLobby(FALSE),
-m_qmBotID(0),
-m_qmChannel(0)
+GameSpyConfig::GameSpyConfig(AsciiString config) :
+		m_natRetryInterval(1000),
+		m_natMaxManglerRetries(25),
+		m_natManglerRetryInterval(300),
+		m_natKeepaliveInterval(15000),
+		m_natPortTimeout(10000),
+		m_natRoundTimeout(10000),
+		m_pingReps(1),
+		m_pingTimeout(1000),
+		m_pingCutoffGood(300),
+		m_pingCutoffBad(600),
+		m_restrictGamesToLobby(FALSE),
+		m_qmBotID(0),
+		m_qmChannel(0)
 {
 	m_rankPoints[0] = 0;
 	m_rankPoints[1] = 5;
@@ -187,8 +188,8 @@ m_qmChannel(0)
 
 	while (config.nextToken(&line, "\n"))
 	{
-		if (line.getCharAt(line.getLength()-1) == '\r')
-			line.removeLastChar();	// there is a trailing '\r'
+		if (line.getCharAt(line.getLength() - 1) == '\r')
+			line.removeLastChar(); // there is a trailing '\r'
 
 		line.trim();
 
@@ -437,21 +438,22 @@ m_qmChannel(0)
 			m_leftoverConfig.concat('\n');
 		}
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 Int GameSpyConfig::getPointsForRank(Int rank)
 {
-	if (rank >= MAX_RANKS) rank = MAX_RANKS-1;
-	if (rank < 0) rank = 0;
+	if (rank >= MAX_RANKS)
+		rank = MAX_RANKS - 1;
+	if (rank < 0)
+		rank = 0;
 	return m_rankPoints[rank];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-Bool GameSpyConfig::getManglerLocation(Int index, AsciiString& host, UnsignedShort& port)
+Bool GameSpyConfig::getManglerLocation(Int index, AsciiString &host, UnsignedShort &port)
 {
 	if (index < 0 || index >= m_manglerHosts.size())
 	{

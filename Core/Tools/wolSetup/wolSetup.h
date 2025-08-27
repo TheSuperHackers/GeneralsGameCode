@@ -27,8 +27,8 @@
 #endif
 #include <windows.h>
 
-void checkInstalledWolapiVersion( void );
-void setupGenerals( const char *genPath, const char *genSerial );
+void checkInstalledWolapiVersion(void);
+void setupGenerals(const char *genPath, const char *genSerial);
 
 extern HINSTANCE g_hInst;
 extern unsigned long g_wolapiRegistryVersion;
@@ -40,7 +40,13 @@ extern char g_generalsFilename[MAX_PATH];
 extern char g_generalsSerial[];
 
 // TheSuperHackers @todo Check if this should be returning unsigned long.
-static int MAJOR(unsigned long x) { return (((x) & 0xffff0000) >> 16); }
-static int MINOR(unsigned long x) { return ((x) & 0xffff); }
+static int MAJOR(unsigned long x)
+{
+	return (((x) & 0xffff0000) >> 16);
+}
+static int MINOR(unsigned long x)
+{
+	return ((x) & 0xffff);
+}
 
 #endif // __WOLSETUP_H__

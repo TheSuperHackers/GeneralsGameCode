@@ -30,28 +30,29 @@
 
 class AggregateNameDialogClass : public CDialog
 {
-// Construction
+	// Construction
 public:
-	AggregateNameDialogClass(CWnd* pParent = NULL);
-	AggregateNameDialogClass(UINT resource_id, const CString &def_name, CWnd* pParent = NULL);
+	AggregateNameDialogClass(CWnd *pParent = NULL);
+	AggregateNameDialogClass(UINT resource_id, const CString &def_name, CWnd *pParent = NULL);
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(AggregateNameDialogClass)
-	enum { IDD = IDD_MAKE_AGGREGATE };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_MAKE_AGGREGATE
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(AggregateNameDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(AggregateNameDialogClass)
 	virtual void OnOK();
@@ -59,22 +60,20 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	public:
+public:
+	////////////////////////////////////////////////////////////////
+	//
+	//	Public methods
+	//
+	const CString &Get_Name(void) const { return m_Name; }
+	void Set_Name(const CString &name) { m_Name = name; }
 
-		////////////////////////////////////////////////////////////////
-		//
-		//	Public methods
-		//
-		const CString &			Get_Name (void) const				{ return m_Name; }
-		void							Set_Name (const CString &name)	{ m_Name = name; }
-
-	private:
-
-		////////////////////////////////////////////////////////////////
-		//
-		//	Private member data
-		//
-		CString						m_Name;
+private:
+	////////////////////////////////////////////////////////////////
+	//
+	//	Private member data
+	//
+	CString m_Name;
 };
 
 //{{AFX_INSERT_LOCATION}}

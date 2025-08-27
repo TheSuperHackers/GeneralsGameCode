@@ -32,38 +32,36 @@ class CAssetPropertySheet : public CPropertySheet
 {
 	DECLARE_DYNAMIC(CAssetPropertySheet)
 
-// Construction
+	// Construction
 public:
-    CAssetPropertySheet (int iCaptionID, CPropertyPage *pCPropertyPage, CWnd *pCParentWnd = NULL);
+	CAssetPropertySheet(int iCaptionID, CPropertyPage *pCPropertyPage, CWnd *pCParentWnd = NULL);
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CAssetPropertySheet)
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CAssetPropertySheet();
 
 	// Generated message map functions
 protected:
 	//{{AFX_MSG(CAssetPropertySheet)
-		// NOTE - the ClassWizard will add and remove member functions here.
+	// NOTE - the ClassWizard will add and remove member functions here.
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-    private:
-        // Private constructors (shouldn't be called)
-	    CAssetPropertySheet(UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0) {}
-	    CAssetPropertySheet(LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0) {}
+private:
+	// Private constructors (shouldn't be called)
+	CAssetPropertySheet(UINT nIDCaption, CWnd *pParentWnd = NULL, UINT iSelectPage = 0) {}
+	CAssetPropertySheet(LPCTSTR pszCaption, CWnd *pParentWnd = NULL, UINT iSelectPage = 0) {}
 
-        CPropertyPage *m_pCPropertyPage;
+	CPropertyPage *m_pCPropertyPage;
 };
 
 /////////////////////////////////////////////////////////////////////////////

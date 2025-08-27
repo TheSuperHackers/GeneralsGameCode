@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/INI.h"
 #include "GameLogic/Weapon.h"
@@ -40,9 +40,7 @@
 //-------------------------------------------------------------------------------------------------
 /** Parse Weapon entry */
 //-------------------------------------------------------------------------------------------------
-void INI::parseWeaponTemplateDefinition( INI* ini )
+void INI::parseWeaponTemplateDefinition(INI *ini)
 {
 	WeaponStore::parseWeaponTemplateDefinition(ini);
 }
-
-

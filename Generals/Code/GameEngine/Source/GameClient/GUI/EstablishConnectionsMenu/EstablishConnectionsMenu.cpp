@@ -24,7 +24,7 @@
 
 //// EstablishConnectionsMenu.cpp /////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameClient/GUICallbacks.h"
 #include "GameClient/EstablishConnectionsMenu.h"
@@ -37,60 +37,53 @@
 EstablishConnectionsMenu *TheEstablishConnectionsMenu = NULL;
 
 const char *EstablishConnectionsMenu::m_playerReadyControlNames[] = {
-	"EstablishConnectionsScreen.wnd:ButtonAccept1",
-	"EstablishConnectionsScreen.wnd:ButtonAccept2",
-	"EstablishConnectionsScreen.wnd:ButtonAccept3",
-	"EstablishConnectionsScreen.wnd:ButtonAccept4",
-	"EstablishConnectionsScreen.wnd:ButtonAccept5",
-	"EstablishConnectionsScreen.wnd:ButtonAccept6",
-	"EstablishConnectionsScreen.wnd:ButtonAccept7",
-	NULL};
+	"EstablishConnectionsScreen.wnd:ButtonAccept1", "EstablishConnectionsScreen.wnd:ButtonAccept2",
+	"EstablishConnectionsScreen.wnd:ButtonAccept3", "EstablishConnectionsScreen.wnd:ButtonAccept4",
+	"EstablishConnectionsScreen.wnd:ButtonAccept5", "EstablishConnectionsScreen.wnd:ButtonAccept6",
+	"EstablishConnectionsScreen.wnd:ButtonAccept7", NULL
+};
 
 const char *EstablishConnectionsMenu::m_playerNameControlNames[] = {
-	"EstablishConnectionsScreen.wnd:StaticPlayer1Name",
-	"EstablishConnectionsScreen.wnd:StaticPlayer2Name",
-	"EstablishConnectionsScreen.wnd:StaticPlayer3Name",
-	"EstablishConnectionsScreen.wnd:StaticPlayer4Name",
-	"EstablishConnectionsScreen.wnd:StaticPlayer5Name",
-	"EstablishConnectionsScreen.wnd:StaticPlayer6Name",
-	"EstablishConnectionsScreen.wnd:StaticPlayer7Name",
-	NULL
+	"EstablishConnectionsScreen.wnd:StaticPlayer1Name", "EstablishConnectionsScreen.wnd:StaticPlayer2Name",
+	"EstablishConnectionsScreen.wnd:StaticPlayer3Name", "EstablishConnectionsScreen.wnd:StaticPlayer4Name",
+	"EstablishConnectionsScreen.wnd:StaticPlayer5Name", "EstablishConnectionsScreen.wnd:StaticPlayer6Name",
+	"EstablishConnectionsScreen.wnd:StaticPlayer7Name", NULL
 };
 
 const char *EstablishConnectionsMenu::m_playerStatusControlNames[] = {
-	"EstablishConnectionsScreen.wnd:StaticPlayer1Status",
-	"EstablishConnectionsScreen.wnd:StaticPlayer2Status",
-	"EstablishConnectionsScreen.wnd:StaticPlayer3Status",
-	"EstablishConnectionsScreen.wnd:StaticPlayer4Status",
-	"EstablishConnectionsScreen.wnd:StaticPlayer5Status",
-	"EstablishConnectionsScreen.wnd:StaticPlayer6Status",
-	"EstablishConnectionsScreen.wnd:StaticPlayer7Status",
-	NULL
+	"EstablishConnectionsScreen.wnd:StaticPlayer1Status", "EstablishConnectionsScreen.wnd:StaticPlayer2Status",
+	"EstablishConnectionsScreen.wnd:StaticPlayer3Status", "EstablishConnectionsScreen.wnd:StaticPlayer4Status",
+	"EstablishConnectionsScreen.wnd:StaticPlayer5Status", "EstablishConnectionsScreen.wnd:StaticPlayer6Status",
+	"EstablishConnectionsScreen.wnd:StaticPlayer7Status", NULL
 };
 
 /**
  Constructor
  */
-EstablishConnectionsMenu::EstablishConnectionsMenu() {
+EstablishConnectionsMenu::EstablishConnectionsMenu()
+{
 }
 
 /**
  Destructor
  */
-EstablishConnectionsMenu::~EstablishConnectionsMenu() {
+EstablishConnectionsMenu::~EstablishConnectionsMenu()
+{
 }
 
 /**
  Initialize the menu
  */
-void EstablishConnectionsMenu::initMenu() {
+void EstablishConnectionsMenu::initMenu()
+{
 	ShowEstablishConnectionsWindow();
 }
 
 /**
  Close down the menu
  */
-void EstablishConnectionsMenu::endMenu() {
+void EstablishConnectionsMenu::endMenu()
+{
 	HideEstablishConnectionsWindow();
 }
 
@@ -101,44 +94,62 @@ void EstablishConnectionsMenu::endMenu() {
  considering how difficult it is to even get a game going in the first
  place, especially one with more than two players.
  */
-void EstablishConnectionsMenu::abortGame() {
+void EstablishConnectionsMenu::abortGame()
+{
 }
 
 // the slot number passed in is the index we are to use for the menu.
-void EstablishConnectionsMenu::setPlayerName(Int slot, UnicodeString name) {
+void EstablishConnectionsMenu::setPlayerName(Int slot, UnicodeString name)
+{
 	NameKeyType controlID = TheNameKeyGenerator->nameToKey(m_playerNameControlNames[slot]);
 	GameWindow *control = TheWindowManager->winGetWindowFromId(NULL, controlID);
 
-	if (control == NULL) {
+	if (control == NULL)
+	{
 		DEBUG_ASSERTCRASH(control != NULL, ("player name control for slot %d is NULL", slot));
 		return;
 	}
 	GadgetStaticTextSetText(control, name);
 }
 
-void EstablishConnectionsMenu::setPlayerStatus(Int slot, NATConnectionState state) {
+void EstablishConnectionsMenu::setPlayerStatus(Int slot, NATConnectionState state)
+{
 	NameKeyType controlID = TheNameKeyGenerator->nameToKey(m_playerStatusControlNames[slot]);
 	GameWindow *control = TheWindowManager->winGetWindowFromId(NULL, controlID);
 
-	if (control == NULL) {
+	if (control == NULL)
+	{
 		DEBUG_ASSERTCRASH(control != NULL, ("player status control for slot %d is NULL", slot));
 		return;
 	}
-//	if (state == NATCONNECTIONSTATE_NETGEARDELAY) {
-//		GadgetStaticTextSetText(control, TheGameText->fetch("GUI:NetgearDelay"));
-	if (state == NATCONNECTIONSTATE_WAITINGFORMANGLERRESPONSE) {
+	//	if (state == NATCONNECTIONSTATE_NETGEARDELAY) {
+	//		GadgetStaticTextSetText(control, TheGameText->fetch("GUI:NetgearDelay"));
+	if (state == NATCONNECTIONSTATE_WAITINGFORMANGLERRESPONSE)
+	{
 		GadgetStaticTextSetText(control, TheGameText->fetch("GUI:WaitingForManglerResponse"));
-	} else if (state == NATCONNECTIONSTATE_WAITINGFORMANGLEDPORT) {
+	}
+	else if (state == NATCONNECTIONSTATE_WAITINGFORMANGLEDPORT)
+	{
 		GadgetStaticTextSetText(control, TheGameText->fetch("GUI:WaitingForMangledPort"));
-	} else if (state == NATCONNECTIONSTATE_WAITINGFORRESPONSE) {
+	}
+	else if (state == NATCONNECTIONSTATE_WAITINGFORRESPONSE)
+	{
 		GadgetStaticTextSetText(control, TheGameText->fetch("GUI:WaitingForResponse"));
-	} else if (state == NATCONNECTIONSTATE_DONE) {
+	}
+	else if (state == NATCONNECTIONSTATE_DONE)
+	{
 		GadgetStaticTextSetText(control, TheGameText->fetch("GUI:ConnectionDone"));
-	} else if (state == NATCONNECTIONSTATE_FAILED) {
+	}
+	else if (state == NATCONNECTIONSTATE_FAILED)
+	{
 		GadgetStaticTextSetText(control, TheGameText->fetch("GUI:ConnectionFailed"));
-	} else if (state == NATCONNECTIONSTATE_WAITINGTOBEGIN) {
+	}
+	else if (state == NATCONNECTIONSTATE_WAITINGTOBEGIN)
+	{
 		GadgetStaticTextSetText(control, TheGameText->fetch("GUI:WaitingToBeginConnection"));
-	} else {
+	}
+	else
+	{
 		GadgetStaticTextSetText(control, TheGameText->fetch("GUI:UnknownConnectionState"));
 	}
 }

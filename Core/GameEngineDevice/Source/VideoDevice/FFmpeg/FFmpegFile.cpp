@@ -34,8 +34,9 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 
-
-FFmpegFile::FFmpegFile() {}
+FFmpegFile::FFmpegFile()
+{
+}
 
 FFmpegFile::FFmpegFile(File *file)
 {
@@ -64,7 +65,8 @@ Bool FFmpegFile::open(File *file)
 
 	// FFmpeg setup
 	m_fmtCtx = avformat_alloc_context();
-	if (!m_fmtCtx) {
+	if (!m_fmtCtx)
+	{
 		DEBUG_LOG(("Failed to alloc AVFormatContext"));
 		close();
 		return false;
@@ -72,14 +74,16 @@ Bool FFmpegFile::open(File *file)
 
 	constexpr size_t avio_ctx_buffer_size = 0x10000;
 	uint8_t *buffer = static_cast<uint8_t *>(av_malloc(avio_ctx_buffer_size));
-	if (buffer == nullptr) {
+	if (buffer == nullptr)
+	{
 		DEBUG_LOG(("Failed to alloc AVIOContextBuffer"));
 		close();
 		return false;
 	}
 
 	m_avioCtx = avio_alloc_context(buffer, avio_ctx_buffer_size, 0, file, &readPacket, nullptr, nullptr);
-	if (m_avioCtx == nullptr) {
+	if (m_avioCtx == nullptr)
+	{
 		DEBUG_LOG(("Failed to alloc AVIOContext"));
 		close();
 		return false;
@@ -89,7 +93,8 @@ Bool FFmpegFile::open(File *file)
 	m_fmtCtx->flags |= AVFMT_FLAG_CUSTOM_IO;
 
 	int result = avformat_open_input(&m_fmtCtx, nullptr, nullptr, nullptr);
-	if (result < 0) {
+	if (result < 0)
+	{
 		char error_buffer[1024];
 		av_strerror(result, error_buffer, sizeof(error_buffer));
 		DEBUG_LOG(("Failed 'avformat_open_input': %s", error_buffer));
@@ -98,7 +103,8 @@ Bool FFmpegFile::open(File *file)
 	}
 
 	result = avformat_find_stream_info(m_fmtCtx, nullptr);
-	if (result < 0) {
+	if (result < 0)
+	{
 		char error_buffer[1024];
 		av_strerror(result, error_buffer, sizeof(error_buffer));
 		DEBUG_LOG(("Failed 'avformat_find_stream_info': %s", error_buffer));
@@ -107,24 +113,28 @@ Bool FFmpegFile::open(File *file)
 	}
 
 	m_streams.resize(m_fmtCtx->nb_streams);
-	for (unsigned int stream_idx = 0; stream_idx < m_fmtCtx->nb_streams; stream_idx++) {
+	for (unsigned int stream_idx = 0; stream_idx < m_fmtCtx->nb_streams; stream_idx++)
+	{
 		AVStream *av_stream = m_fmtCtx->streams[stream_idx];
 		const AVCodec *input_codec = avcodec_find_decoder(av_stream->codecpar->codec_id);
-		if (input_codec == nullptr) {
+		if (input_codec == nullptr)
+		{
 			DEBUG_LOG(("Codec not supported: '%s'", avcodec_get_name(av_stream->codecpar->codec_id)));
 			close();
 			return false;
 		}
 
 		AVCodecContext *codec_ctx = avcodec_alloc_context3(input_codec);
-		if (codec_ctx == nullptr) {
+		if (codec_ctx == nullptr)
+		{
 			DEBUG_LOG(("Could not allocate codec context"));
 			close();
 			return false;
 		}
 
 		result = avcodec_parameters_to_context(codec_ctx, av_stream->codecpar);
-		if (result < 0) {
+		if (result < 0)
+		{
 			char error_buffer[1024];
 			av_strerror(result, error_buffer, sizeof(error_buffer));
 			DEBUG_LOG(("Failed 'avcodec_parameters_to_context': %s", error_buffer));
@@ -133,7 +143,8 @@ Bool FFmpegFile::open(File *file)
 		}
 
 		result = avcodec_open2(codec_ctx, input_codec, nullptr);
-		if (result < 0) {
+		if (result < 0)
+		{
 			char error_buffer[1024];
 			av_strerror(result, error_buffer, sizeof(error_buffer));
 			DEBUG_LOG(("Failed 'avcodec_open2': %s", error_buffer));
@@ -174,28 +185,34 @@ int FFmpegFile::readPacket(void *opaque, uint8_t *buf, int buf_size)
  */
 void FFmpegFile::close()
 {
-	if (m_fmtCtx != nullptr) {
+	if (m_fmtCtx != nullptr)
+	{
 		avformat_close_input(&m_fmtCtx);
 	}
 
-	for (auto &stream : m_streams) {
-		if (stream.codec_ctx != nullptr) {
+	for (auto &stream : m_streams)
+	{
+		if (stream.codec_ctx != nullptr)
+		{
 			avcodec_free_context(&stream.codec_ctx);
 			av_frame_free(&stream.frame);
 		}
 	}
 	m_streams.clear();
 
-	if (m_avioCtx != nullptr) {
+	if (m_avioCtx != nullptr)
+	{
 		av_freep(&m_avioCtx->buffer);
 		avio_context_free(&m_avioCtx);
 	}
 
-	if (m_packet != nullptr) {
+	if (m_packet != nullptr)
+	{
 		av_packet_free(&m_packet);
 	}
 
-	if (m_file != nullptr) {
+	if (m_file != nullptr)
+	{
 		m_file->close();
 		m_file = nullptr;
 	}
@@ -221,7 +238,8 @@ Bool FFmpegFile::decodePacket()
 		return true;
 
 	// Handle any other errors
-	if (result < 0) {
+	if (result < 0)
+	{
 		char error_buffer[1024];
 		av_strerror(result, error_buffer, sizeof(error_buffer));
 		DEBUG_LOG(("Failed 'avcodec_send_packet': %s", error_buffer));
@@ -230,7 +248,8 @@ Bool FFmpegFile::decodePacket()
 	av_packet_unref(m_packet);
 
 	// Get all frames in this packet
-	while (result >= 0) {
+	while (result >= 0)
+	{
 		result = avcodec_receive_frame(codec_ctx, stream.frame);
 
 		// Check if we need more data
@@ -238,14 +257,16 @@ Bool FFmpegFile::decodePacket()
 			return true;
 
 		// Handle any other errors
-		if (result < 0) {
+		if (result < 0)
+		{
 			char error_buffer[1024];
 			av_strerror(result, error_buffer, sizeof(error_buffer));
 			DEBUG_LOG(("Failed 'avcodec_receive_frame': %s", error_buffer));
 			return false;
 		}
 
-		if (m_frameCallback != nullptr) {
+		if (m_frameCallback != nullptr)
+		{
 			m_frameCallback(stream.frame, stream_idx, stream.stream_type, m_userData);
 		}
 	}
@@ -256,11 +277,13 @@ Bool FFmpegFile::decodePacket()
 void FFmpegFile::seekFrame(int frame_idx)
 {
 	// Note: not tested, since not used ingame
-	for (const auto &stream : m_streams) {
+	for (const auto &stream : m_streams)
+	{
 		Int64 timestamp = av_q2d(m_fmtCtx->streams[stream.stream_idx]->time_base) * frame_idx
-			* av_q2d(m_fmtCtx->streams[stream.stream_idx]->avg_frame_rate);
+				* av_q2d(m_fmtCtx->streams[stream.stream_idx]->avg_frame_rate);
 		int result = av_seek_frame(m_fmtCtx, stream.stream_idx, timestamp, AVSEEK_FLAG_ANY);
-		if (result < 0) {
+		if (result < 0)
+		{
 			char error_buffer[1024];
 			av_strerror(result, error_buffer, sizeof(error_buffer));
 			DEBUG_LOG(("Failed 'av_seek_frame': %s", error_buffer));
@@ -276,7 +299,8 @@ Bool FFmpegFile::hasAudio() const
 
 const FFmpegFile::FFmpegStream *FFmpegFile::findMatch(Int type) const
 {
-	for (auto &stream : m_streams) {
+	for (auto &stream : m_streams)
+	{
 		if (stream.stream_type == type)
 			return &stream;
 	}
@@ -317,7 +341,12 @@ Int FFmpegFile::getSizeForSamples(Int numSamples) const
 	if (stream == nullptr)
 		return 0;
 
-	return av_samples_get_buffer_size(nullptr, stream->codec_ctx->ch_layout.nb_channels, numSamples, stream->codec_ctx->sample_fmt, 1);
+	return av_samples_get_buffer_size(
+			nullptr,
+			stream->codec_ctx->ch_layout.nb_channels,
+			numSamples,
+			stream->codec_ctx->sample_fmt,
+			1);
 }
 
 Int FFmpegFile::getHeight() const

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameClient/Drawable.h"
 #include "GameClient/Module/SwayClientUpdate.h"
@@ -43,31 +43,27 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/GameLogic.h"
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SwayClientUpdate::SwayClientUpdate( Thing *thing, const ModuleData* moduleData ) :
-	ClientUpdateModule( thing, moduleData ),
-	m_curDelta(0),
-	m_curValue(0),
-	m_curAngle(0),
-	m_curAngleLimit(0),
-	m_leanAngle(0),
-	m_swaying(true),
-	m_unused(false),
-	m_curVersion(-1)	// so that we never match the first time
+SwayClientUpdate::SwayClientUpdate(Thing *thing, const ModuleData *moduleData) :
+		ClientUpdateModule(thing, moduleData),
+		m_curDelta(0),
+		m_curValue(0),
+		m_curAngle(0),
+		m_curAngleLimit(0),
+		m_leanAngle(0),
+		m_swaying(true),
+		m_unused(false),
+		m_curVersion(-1) // so that we never match the first time
 {
-
 	// don't do updateSway here; wait till the first time we go thru our update loop.
-	//updateSway();
-
+	// updateSway();
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SwayClientUpdate::~SwayClientUpdate( void )
+SwayClientUpdate::~SwayClientUpdate(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -75,16 +71,16 @@ SwayClientUpdate::~SwayClientUpdate( void )
 //-------------------------------------------------------------------------------------------------
 void SwayClientUpdate::updateSway()
 {
-	const BreezeInfo& info = TheScriptEngine->getBreezeInfo();
+	const BreezeInfo &info = TheScriptEngine->getBreezeInfo();
 	if (info.m_randomness == 0.0f)
 	{
 		m_curValue = 0;
 	}
-	Real delta				= info.m_randomness * 0.5f;
-	m_curAngleLimit		= info.m_intensity * GameClientRandomValueReal(1.0f-delta, 1.0f+delta);
-	m_curDelta				= 2*PI/info.m_breezePeriod * GameClientRandomValueReal(1.0f-delta, 1.0f+delta);
-	m_leanAngle				= info.m_lean * GameClientRandomValueReal(1.0f-delta, 1.0f+delta);
-	m_curVersion			= info.m_breezeVersion;
+	Real delta = info.m_randomness * 0.5f;
+	m_curAngleLimit = info.m_intensity * GameClientRandomValueReal(1.0f - delta, 1.0f + delta);
+	m_curDelta = 2 * PI / info.m_breezePeriod * GameClientRandomValueReal(1.0f - delta, 1.0f + delta);
+	m_leanAngle = info.m_lean * GameClientRandomValueReal(1.0f - delta, 1.0f + delta);
+	m_curVersion = info.m_breezeVersion;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -93,16 +89,16 @@ void SwayClientUpdate::updateSway()
 //-------------------------------------------------------------------------------------------------
 /** The client update callback. */
 //-------------------------------------------------------------------------------------------------
-void SwayClientUpdate::clientUpdate( void )
+void SwayClientUpdate::clientUpdate(void)
 {
-	if( !m_swaying )
+	if (!m_swaying)
 		return;
 
 	Drawable *draw = getDrawable();
 
 	// if breeze changes, always process the full update, even if not visible,
 	// so that things offscreen won't 'pop' when first viewed
-	const BreezeInfo& info = TheScriptEngine->getBreezeInfo();
+	const BreezeInfo &info = TheScriptEngine->getBreezeInfo();
 	if (info.m_breezeVersion != m_curVersion)
 	{
 		updateSway();
@@ -115,8 +111,8 @@ void SwayClientUpdate::clientUpdate( void )
 	}
 
 	m_curValue += m_curDelta;
-	if (m_curValue > 2*PI)
-		m_curValue -= 2*PI;
+	if (m_curValue > 2 * PI)
+		m_curValue -= 2 * PI;
 	Real cosine = Cos(m_curValue);
 
 	Real targetAngle = cosine * m_curAngleLimit + m_leanAngle;
@@ -130,71 +126,67 @@ void SwayClientUpdate::clientUpdate( void )
 	m_curAngle = targetAngle;
 
 	// burned things don't sway.
-	Object* obj = draw->getObject();
-	if( obj && obj->getStatusBits().test( OBJECT_STATUS_BURNED ) )
+	Object *obj = draw->getObject();
+	if (obj && obj->getStatusBits().test(OBJECT_STATUS_BURNED))
 		stopSway();
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SwayClientUpdate::crc( Xfer *xfer )
+void SwayClientUpdate::crc(Xfer *xfer)
 {
-
 	// extend base class
-	ClientUpdateModule::crc( xfer );
+	ClientUpdateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SwayClientUpdate::xfer( Xfer *xfer )
+void SwayClientUpdate::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	ClientUpdateModule::xfer( xfer );
+	ClientUpdateModule::xfer(xfer);
 
 	// cur value
-	xfer->xferReal( &m_curValue );
+	xfer->xferReal(&m_curValue);
 
 	// cur angle
-	xfer->xferReal( &m_curAngle );
+	xfer->xferReal(&m_curAngle);
 
 	// cur delta
-	xfer->xferReal( &m_curDelta );
+	xfer->xferReal(&m_curDelta);
 
 	// cur angle limit
-	xfer->xferReal( &m_curAngleLimit );
+	xfer->xferReal(&m_curAngleLimit);
 
 	// lean angle
-	xfer->xferReal( &m_leanAngle );
+	xfer->xferReal(&m_leanAngle);
 
 	// cur version
-	xfer->xferShort( &m_curVersion );
+	xfer->xferShort(&m_curVersion);
 
 	// swaying
-	xfer->xferBool( &m_swaying );
+	xfer->xferBool(&m_swaying);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SwayClientUpdate::loadPostProcess( void )
+void SwayClientUpdate::loadPostProcess(void)
 {
-
 	// extend base class
 	ClientUpdateModule::loadPostProcess();
 
 	updateSway();
 
-}  // end loadPostProcess
+} // end loadPostProcess

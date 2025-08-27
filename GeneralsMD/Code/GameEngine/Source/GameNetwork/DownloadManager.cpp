@@ -26,7 +26,7 @@
 // Generals download manager code
 // Author: Matthew D. Campbell, July 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameClient/GameText.h"
 #include "GameNetwork/DownloadManager.h"
@@ -38,8 +38,8 @@ DownloadManager::DownloadManager()
 	m_download = NEW CDownload(this);
 	m_wasError = m_sawEnd = false;
 
-	//Added By Sadullah Nader
-	//Initializations missing and needed
+	// Added By Sadullah Nader
+	// Initializations missing and needed
 
 	m_queuedDownloads.clear();
 
@@ -59,13 +59,12 @@ DownloadManager::DownloadManager()
 	}
 	else
 	{
-		if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) !=2))
+		if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) != 2))
 		{
 			WSACleanup();
 			m_winsockInit = false;
 		}
 	}
-
 }
 
 DownloadManager::~DownloadManager()
@@ -78,25 +77,40 @@ DownloadManager::~DownloadManager()
 	}
 }
 
-void DownloadManager::init( void )
+void DownloadManager::init(void)
 {
 }
 
-void DownloadManager::reset( void )
+void DownloadManager::reset(void)
 {
 }
 
-HRESULT DownloadManager::update( void )
+HRESULT DownloadManager::update(void)
 {
 	return m_download->PumpMessages();
 }
 
-HRESULT DownloadManager::downloadFile( AsciiString server, AsciiString username, AsciiString password, AsciiString file, AsciiString localfile, AsciiString regkey, Bool tryResume )
+HRESULT DownloadManager::downloadFile(
+		AsciiString server,
+		AsciiString username,
+		AsciiString password,
+		AsciiString file,
+		AsciiString localfile,
+		AsciiString regkey,
+		Bool tryResume)
 {
-	return m_download->DownloadFile( server.str(), username.str(), password.str(), file.str(), localfile.str(), regkey.str(), tryResume );
+	return m_download
+			->DownloadFile(server.str(), username.str(), password.str(), file.str(), localfile.str(), regkey.str(), tryResume);
 }
 
-void DownloadManager::queueFileForDownload( AsciiString server, AsciiString username, AsciiString password, AsciiString file, AsciiString localfile, AsciiString regkey, Bool tryResume )
+void DownloadManager::queueFileForDownload(
+		AsciiString server,
+		AsciiString username,
+		AsciiString password,
+		AsciiString file,
+		AsciiString localfile,
+		AsciiString regkey,
+		Bool tryResume)
 {
 	QueuedDownload q;
 	q.file = file;
@@ -110,7 +124,7 @@ void DownloadManager::queueFileForDownload( AsciiString server, AsciiString user
 	m_queuedDownloads.push_back(q);
 }
 
-HRESULT DownloadManager::downloadNextQueuedFile( void )
+HRESULT DownloadManager::downloadNextQueuedFile(void)
 {
 	QueuedDownload q;
 	std::list<QueuedDownload>::iterator it = m_queuedDownloads.begin();
@@ -119,7 +133,7 @@ HRESULT DownloadManager::downloadNextQueuedFile( void )
 		q = *it;
 		m_queuedDownloads.pop_front();
 		m_wasError = m_sawEnd = false;
-		return downloadFile( q.server, q.userName, q.password, q.file, q.localFile, q.regKey, q.tryResume );
+		return downloadFile(q.server, q.userName, q.password, q.file, q.localFile, q.regKey, q.tryResume);
 	}
 	else
 	{
@@ -128,14 +142,14 @@ HRESULT DownloadManager::downloadNextQueuedFile( void )
 	}
 }
 
-AsciiString DownloadManager::getLastLocalFile( void )
+AsciiString DownloadManager::getLastLocalFile(void)
 {
 	char buf[256] = "";
 	m_download->GetLastLocalFile(buf, 256);
 	return buf;
 }
 
-HRESULT DownloadManager::OnError( Int error )
+HRESULT DownloadManager::OnError(Int error)
 {
 	m_wasError = true;
 	AsciiString s = "FTP:UnknownError";
@@ -178,17 +192,17 @@ HRESULT DownloadManager::OnEnd()
 HRESULT DownloadManager::OnQueryResume()
 {
 	DEBUG_LOG(("DownloadManager::OnQueryResume()"));
-	//return DOWNLOADEVENT_DONOTRESUME;
+	// return DOWNLOADEVENT_DONOTRESUME;
 	return DOWNLOADEVENT_RESUME;
 }
 
-HRESULT DownloadManager::OnProgressUpdate( Int bytesread, Int totalsize, Int timetaken, Int timeleft )
+HRESULT DownloadManager::OnProgressUpdate(Int bytesread, Int totalsize, Int timetaken, Int timeleft)
 {
 	DEBUG_LOG(("DownloadManager::OnProgressUpdate(): %d/%d %d/%d", bytesread, totalsize, timetaken, timeleft));
 	return S_OK;
 }
 
-HRESULT DownloadManager::OnStatusUpdate( Int status )
+HRESULT DownloadManager::OnStatusUpdate(Int status)
 {
 	AsciiString s = "FTP:StatusNone";
 	switch (status)

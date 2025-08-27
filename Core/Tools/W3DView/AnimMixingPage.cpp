@@ -42,12 +42,10 @@ static char THIS_FILE[] = __FILE__;
 
 IMPLEMENT_DYNCREATE(CAnimMixingPage, CPropertyPage)
 
-CAnimMixingPage::CAnimMixingPage(CAdvancedAnimSheet *sheet)
-:	CPropertyPage(CAnimMixingPage::IDD),
-	m_Sheet(sheet)
+CAnimMixingPage::CAnimMixingPage(CAdvancedAnimSheet *sheet) : CPropertyPage(CAnimMixingPage::IDD), m_Sheet(sheet)
 {
 	//{{AFX_DATA_INIT(CAnimMixingPage)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
@@ -55,7 +53,7 @@ CAnimMixingPage::~CAnimMixingPage()
 {
 }
 
-void CAnimMixingPage::DoDataExchange(CDataExchange* pDX)
+void CAnimMixingPage::DoDataExchange(CDataExchange *pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CAnimMixingPage)
@@ -63,10 +61,9 @@ void CAnimMixingPage::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CAnimMixingPage, CPropertyPage)
-	//{{AFX_MSG_MAP(CAnimMixingPage)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CAnimMixingPage)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -79,12 +76,11 @@ BOOL CAnimMixingPage::OnInitDialog()
 	ASSERT(m_Sheet != NULL);
 	FillListCtrl();
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+							 // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-
-void CAnimMixingPage::FillListCtrl (void)
+void CAnimMixingPage::FillListCtrl(void)
 {
 	// Get the current render object and it's HTree. If it doesn't have
 	// an HTree, then it's not animating and we're not interested.
@@ -150,7 +146,7 @@ BOOL CAnimMixingPage::OnKillActive()
 	m_Sheet->m_SelectedAnims.Clear();
 	m_Sheet->m_SelectedAnims.Resize(m_AnimList.GetSelectedCount());
 
-	int selected_idx, i=0;
+	int selected_idx, i = 0;
 	POSITION pos = m_AnimList.GetFirstSelectedItemPosition();
 	while (pos)
 	{
@@ -158,8 +154,11 @@ BOOL CAnimMixingPage::OnKillActive()
 		if (!m_Sheet->m_SelectedAnims.Add(selected_idx))
 		{
 			char buf[128];
-			sprintf(buf, "Failed to insert item %d! Talk to Andre if "\
-				"you see this message.", i);
+			sprintf(
+					buf,
+					"Failed to insert item %d! Talk to Andre if "
+					"you see this message.",
+					i);
 			MessageBox(buf);
 		}
 		i++;

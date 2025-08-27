@@ -45,64 +45,63 @@ public:
 		Int count;
 	};
 
-	Int								m_slotCapacity;								///< max units that can be inside us
-	Real							m_exitPitchRate;
-	Bool							m_scatterNearbyOnExit;
-	Bool							m_orientLikeContainerOnExit;
-	Bool							m_keepContainerVelocityOnExit;
-	AsciiString				m_exitBone;
-	InitialPayload		m_initialPayload;
-	Real							m_healthRegen;
+	Int m_slotCapacity; ///< max units that can be inside us
+	Real m_exitPitchRate;
+	Bool m_scatterNearbyOnExit;
+	Bool m_orientLikeContainerOnExit;
+	Bool m_keepContainerVelocityOnExit;
+	AsciiString m_exitBone;
+	InitialPayload m_initialPayload;
+	Real m_healthRegen;
 
 	MobNexusContainModuleData();
 
-	static void buildFieldParse(MultiIniFieldParse& p);
-	static void parseInitialPayload( INI* ini, void *instance, void *store, const void* /*userData*/ );
-
+	static void buildFieldParse(MultiIniFieldParse &p);
+	static void parseInitialPayload(INI *ini, void *instance, void *store, const void * /*userData*/);
 };
 
 //-------------------------------------------------------------------------------------------------
 class MobNexusContain : public OpenContain,
 												public TransportPassengerInterface // lorenzen add a MobMemberInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( MobNexusContain, "MobNexusContain" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( MobNexusContain, MobNexusContainModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(MobNexusContain, "MobNexusContain")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(MobNexusContain, MobNexusContainModuleData)
 
 public:
-
-	MobNexusContain( Thing *thing, const ModuleData* moduleData );
+	MobNexusContain(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
-																																								// lorenzen add a MobMemberInterface
-																																								// lorenzen add a MobMemberInterface
-																																								// lorenzen add a MobMemberInterface
-	virtual TransportPassengerInterface* getTransportPassengerInterface() { return this; }// lorenzen add a MobMemberInterface
-																																								// lorenzen add a MobMemberInterface
-																																								// lorenzen add a MobMemberInterface
-																																								// lorenzen add a MobMemberInterface
-	virtual Bool isValidContainerFor( const Object* obj, Bool checkCapacity) const;
+	// lorenzen add a MobMemberInterface
+	// lorenzen add a MobMemberInterface
+	// lorenzen add a MobMemberInterface
+	virtual TransportPassengerInterface *getTransportPassengerInterface() { return this; } // lorenzen add a MobMemberInterface
+	// lorenzen add a MobMemberInterface
+	// lorenzen add a MobMemberInterface
+	// lorenzen add a MobMemberInterface
+	virtual Bool isValidContainerFor(const Object *obj, Bool checkCapacity) const;
 
-	virtual void onContaining( Object *obj );		///< object now contains 'obj'
-	virtual void onRemoving( Object *obj );			///< object no longer contains 'obj'
-	virtual UpdateSleepTime update();							///< called once per frame
+	virtual void onContaining(Object *obj); ///< object now contains 'obj'
+	virtual void onRemoving(Object *obj); ///< object no longer contains 'obj'
+	virtual UpdateSleepTime update(); ///< called once per frame
 
-	virtual Int getContainMax( void ) const;
+	virtual Int getContainMax(void) const;
 
 	virtual void onObjectCreated();
-	virtual Int getExtraSlotsInUse( void ) { return m_extraSlotsInUse; }
+	virtual Int getExtraSlotsInUse(void) { return m_extraSlotsInUse; }
 
-	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject );					///< All types can answer if they are free to exit or not, and you can ask about a specific guy or just exit anything in general
-	virtual void unreserveDoorForExit( ExitDoorType exitDoor );
+	virtual ExitDoorType reserveDoorForExit(const ThingTemplate *objType, Object *specificObject); ///< All types can answer if
+																																																 ///< they are free to exit
+																																																 ///< or not, and you can ask
+																																																 ///< about a specific guy or
+																																																 ///< just exit anything in
+																																																 ///< general
+	virtual void unreserveDoorForExit(ExitDoorType exitDoor);
 
-	virtual Bool tryToEvacuate( Bool exposeStealthedUnits ); ///< Will try to kick everybody out with game checks, and will return whether anyone made it
+	virtual Bool tryToEvacuate(Bool exposeStealthedUnits); ///< Will try to kick everybody out with game checks, and will
+																												 ///< return whether anyone made it
 
 protected:
-
 private:
-
 	Int m_extraSlotsInUse;
-
 };
 
 #endif // __MOBNEXUSCONTAIN_H_
-

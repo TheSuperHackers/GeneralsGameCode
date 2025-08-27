@@ -37,8 +37,8 @@
 #ifndef CRCSTRAW_H
 #define CRCSTRAW_H
 
-#include	"CRC.H"
-#include	"STRAW.H"
+#include "CRC.H"
+#include "STRAW.H"
 
 /*
 **	This class will build a CRC value from the data stream that is drawn through this class.
@@ -46,20 +46,19 @@
 */
 class CRCStraw : public Straw
 {
-	public:
-		CRCStraw(void) {}
-		virtual int Get(void * source, int slen);
+public:
+	CRCStraw(void) {}
+	virtual int Get(void *source, int slen);
 
-		// Calculate and return the CRC value.
-		long Result(void) const;
+	// Calculate and return the CRC value.
+	long Result(void) const;
 
-	protected:
-		CRCEngine CRC;
+protected:
+	CRCEngine CRC;
 
-	private:
-		CRCStraw(CRCStraw & rvalue);
-		CRCStraw & operator = (CRCStraw const & pipe);
+private:
+	CRCStraw(CRCStraw &rvalue);
+	CRCStraw &operator=(CRCStraw const &pipe);
 };
-
 
 #endif

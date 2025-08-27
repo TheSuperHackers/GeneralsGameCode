@@ -51,7 +51,6 @@ class PrototypeClass;
 class HTreeClass;
 class HAnimClass;
 
-
 /**
 ** W3DExclusionListClass
 ** This class ecapsulates an "exclusion list" which the asset manager and related classes use
@@ -63,22 +62,18 @@ class HAnimClass;
 class W3DExclusionListClass
 {
 public:
-	W3DExclusionListClass(const DynamicVectorClass<StringClass> & names);
+	W3DExclusionListClass(const DynamicVectorClass<StringClass> &names);
 	~W3DExclusionListClass(void);
 
-	bool	Is_Excluded(PrototypeClass * proto) const;
-	bool	Is_Excluded(HTreeClass * htree) const;
-	bool	Is_Excluded(HAnimClass * hanim) const;
+	bool Is_Excluded(PrototypeClass *proto) const;
+	bool Is_Excluded(HTreeClass *htree) const;
+	bool Is_Excluded(HAnimClass *hanim) const;
 
-	bool	Is_Excluded(const char * root_name) const;
+	bool Is_Excluded(const char *root_name) const;
 
 protected:
-
-
-	const DynamicVectorClass<StringClass> &	Names;
-	HashTemplateClass<StringClass,int>			NameHash;
+	const DynamicVectorClass<StringClass> &Names;
+	HashTemplateClass<StringClass, int> NameHash;
 };
 
-
-
-#endif //EXCLUSIONLIST_H
+#endif // EXCLUSIONLIST_H

@@ -37,7 +37,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -71,7 +70,9 @@ class TextureClass;
 class VertexMaterialClass;
 class CameraClass;
 
-#define RECORD_RENDER(I,P) render_stats[I].count++; render_stats[I].polys+=P;
+#define RECORD_RENDER(I, P) \
+	render_stats[I].count++; \
+	render_stats[I].polys += P;
 
 /**
 ** DX8TextureCategoryClass
@@ -82,50 +83,52 @@ class CameraClass;
 */
 class DX8TextureCategoryClass : public MultiListObjectClass
 {
-	int												pass;
-	TextureClass *									textures[MeshMatDescClass::MAX_TEX_STAGES];
-	ShaderClass										shader;
-	VertexMaterialClass *						material;
-	DX8PolygonRendererList						PolygonRendererList;
-	DX8FVFCategoryContainer*					container;
+	int pass;
+	TextureClass *textures[MeshMatDescClass::MAX_TEX_STAGES];
+	ShaderClass shader;
+	VertexMaterialClass *material;
+	DX8PolygonRendererList PolygonRendererList;
+	DX8FVFCategoryContainer *container;
 
-	PolyRenderTaskClass *						render_task_head;			// polygon renderers queued for rendering
-	static bool											m_gForceMultiply;  // Forces opaque materials to use the multiply blend - pseudo transparent effect.  jba.
+	PolyRenderTaskClass *render_task_head; // polygon renderers queued for rendering
+	static bool m_gForceMultiply; // Forces opaque materials to use the multiply blend - pseudo transparent effect.  jba.
 
 public:
-
-	DX8TextureCategoryClass(DX8FVFCategoryContainer* container,TextureClass** textures, ShaderClass shd, VertexMaterialClass* mat,int pass);
+	DX8TextureCategoryClass(
+			DX8FVFCategoryContainer *container,
+			TextureClass **textures,
+			ShaderClass shd,
+			VertexMaterialClass *mat,
+			int pass);
 	~DX8TextureCategoryClass();
 
-	void									Add_Render_Task(DX8PolygonRendererClass * p_renderer,MeshClass * p_mesh);
+	void Add_Render_Task(DX8PolygonRendererClass *p_renderer, MeshClass *p_mesh);
 
-	void									Render(void);
-	bool									Anything_To_Render() { return (render_task_head != NULL); }
-	void									Clear_Render_List();
+	void Render(void);
+	bool Anything_To_Render() { return (render_task_head != NULL); }
+	void Clear_Render_List();
 
-	TextureClass *						Peek_Texture(int stage)	{ return textures[stage]; }
-	const VertexMaterialClass *	Peek_Material() { return material; }
-	ShaderClass							Get_Shader() { return shader; }
+	TextureClass *Peek_Texture(int stage) { return textures[stage]; }
+	const VertexMaterialClass *Peek_Material() { return material; }
+	ShaderClass Get_Shader() { return shader; }
 
-	DX8PolygonRendererList&			Get_Polygon_Renderer_List() { return PolygonRendererList; }
+	DX8PolygonRendererList &Get_Polygon_Renderer_List() { return PolygonRendererList; }
 
 	unsigned Add_Mesh(
-		Vertex_Split_Table& split_buffer,
-		unsigned vertex_offset,
-		unsigned index_offset,
-		IndexBufferClass* index_buffer,
-		unsigned pass);
+			Vertex_Split_Table &split_buffer,
+			unsigned vertex_offset,
+			unsigned index_offset,
+			IndexBufferClass *index_buffer,
+			unsigned pass);
 	void Log(bool only_visible);
 
-	void Remove_Polygon_Renderer(DX8PolygonRendererClass* p_renderer);
-	void Add_Polygon_Renderer(DX8PolygonRendererClass* p_renderer,DX8PolygonRendererClass* add_after_this=NULL);
+	void Remove_Polygon_Renderer(DX8PolygonRendererClass *p_renderer);
+	void Add_Polygon_Renderer(DX8PolygonRendererClass *p_renderer, DX8PolygonRendererClass *add_after_this = NULL);
 
-
-	DX8FVFCategoryContainer * Get_Container(void) { return container; }
+	DX8FVFCategoryContainer *Get_Container(void) { return container; }
 
 	// Force multiply blend on all objects inserted from now on. (Doesn't affect the objects that are already in the lists)
-	static void						SetForceMultiply(bool multiply) { m_gForceMultiply=multiply; }
-
+	static void SetForceMultiply(bool multiply) { m_gForceMultiply = multiply; }
 };
 
 // ----------------------------------------------------------------------------
@@ -137,88 +140,88 @@ public:
 class DX8FVFCategoryContainer : public MultiListObjectClass
 {
 public:
-	enum {
-		MAX_PASSES=4
+	enum
+	{
+		MAX_PASSES = 4
 	};
+
 protected:
+	TextureCategoryList texture_category_list[MAX_PASSES];
+	TextureCategoryList visible_texture_category_list[MAX_PASSES];
 
-	TextureCategoryList									texture_category_list[MAX_PASSES];
-	TextureCategoryList									visible_texture_category_list[MAX_PASSES];
+	MatPassTaskClass *visible_matpass_head;
+	MatPassTaskClass *visible_matpass_tail;
 
-	MatPassTaskClass *									visible_matpass_head;
-	MatPassTaskClass *									visible_matpass_tail;
+	IndexBufferClass *index_buffer;
+	int used_indices;
+	unsigned FVF;
+	unsigned passes;
+	unsigned uv_coordinate_channels;
+	bool sorting;
+	bool AnythingToRender;
+	bool AnyDelayedPassesToRender;
 
-	IndexBufferClass *									index_buffer;
-	int														used_indices;
-	unsigned													FVF;
-	unsigned													passes;
-	unsigned													uv_coordinate_channels;
-	bool														sorting;
-	bool														AnythingToRender;
-	bool														AnyDelayedPassesToRender;
-
-	void Generate_Texture_Categories(Vertex_Split_Table& split_table,unsigned vertex_offset);
+	void Generate_Texture_Categories(Vertex_Split_Table &split_table, unsigned vertex_offset);
 	void Insert_To_Texture_Category(
-		Vertex_Split_Table& split_table,
-		TextureClass** textures,
-		VertexMaterialClass* mat,
-		ShaderClass shader,
-		int pass,
-		unsigned vertex_offset);
+			Vertex_Split_Table &split_table,
+			TextureClass **textures,
+			VertexMaterialClass *mat,
+			ShaderClass shader,
+			int pass,
+			unsigned vertex_offset);
 
-	inline bool Anything_To_Render()					{ return AnythingToRender; }
-	inline bool Any_Delayed_Passes_To_Render()	{ return AnyDelayedPassesToRender; }
+	inline bool Anything_To_Render() { return AnythingToRender; }
+	inline bool Any_Delayed_Passes_To_Render() { return AnyDelayedPassesToRender; }
 
 	void Render_Procedural_Material_Passes(void);
 
-	DX8TextureCategoryClass* Find_Matching_Texture_Category(
-		TextureClass* texture,
-		unsigned pass,
-		unsigned stage,
-		DX8TextureCategoryClass* ref_category);
+	DX8TextureCategoryClass *Find_Matching_Texture_Category(
+			TextureClass *texture,
+			unsigned pass,
+			unsigned stage,
+			DX8TextureCategoryClass *ref_category);
 
-	DX8TextureCategoryClass* Find_Matching_Texture_Category(
-		VertexMaterialClass* vmat,
-		unsigned pass,
-		DX8TextureCategoryClass* ref_category);
+	DX8TextureCategoryClass *Find_Matching_Texture_Category(
+			VertexMaterialClass *vmat,
+			unsigned pass,
+			DX8TextureCategoryClass *ref_category);
 
 public:
-
-	DX8FVFCategoryContainer(unsigned FVF,bool sorting);
+	DX8FVFCategoryContainer(unsigned FVF, bool sorting);
 	virtual ~DX8FVFCategoryContainer();
 
-	static unsigned Define_FVF(MeshModelClass* mmc,bool enable_lighting);
+	static unsigned Define_FVF(MeshModelClass *mmc, bool enable_lighting);
 	bool Is_Sorting() const { return sorting; }
 
 	void Change_Polygon_Renderer_Texture(
-		DX8PolygonRendererList& polygon_renderer_list,
-		TextureClass* texture,
-		TextureClass* new_texture,
-		unsigned pass,
-		unsigned stage);
+			DX8PolygonRendererList &polygon_renderer_list,
+			TextureClass *texture,
+			TextureClass *new_texture,
+			unsigned pass,
+			unsigned stage);
 
 	void Change_Polygon_Renderer_Material(
-		DX8PolygonRendererList& polygon_renderer_list,
-		VertexMaterialClass* vmat,
-		VertexMaterialClass* new_vmat,
-		unsigned pass);
+			DX8PolygonRendererList &polygon_renderer_list,
+			VertexMaterialClass *vmat,
+			VertexMaterialClass *new_vmat,
+			unsigned pass);
 
-	void Remove_Texture_Category(DX8TextureCategoryClass* tex_category);
+	void Remove_Texture_Category(DX8TextureCategoryClass *tex_category);
 
-	virtual void Render(void)=0;
-	virtual void Add_Mesh(MeshModelClass* mmc)=0;
-	virtual void Log(bool only_visible)=0;
-	virtual bool Check_If_Mesh_Fits(MeshModelClass* mmc)=0;
+	virtual void Render(void) = 0;
+	virtual void Add_Mesh(MeshModelClass *mmc) = 0;
+	virtual void Log(bool only_visible) = 0;
+	virtual bool Check_If_Mesh_Fits(MeshModelClass *mmc) = 0;
 
 	inline unsigned Get_FVF() const { return FVF; }
 
-	inline void Add_Visible_Texture_Category(DX8TextureCategoryClass * tex_category,int pass)
+	inline void Add_Visible_Texture_Category(DX8TextureCategoryClass *tex_category, int pass)
 	{
-		WWASSERT(pass<MAX_PASSES);
+		WWASSERT(pass < MAX_PASSES);
 		WWASSERT(tex_category != NULL);
 		WWASSERT(texture_category_list[pass].Contains(tex_category));
 		visible_texture_category_list[pass].Add(tex_category);
-		AnythingToRender=true;
+		AnythingToRender = true;
 	}
 
 	/*
@@ -228,11 +231,10 @@ public:
 	** be rendering errors unless these procedural passes are rendered after all of the meshes in
 	** the scene.  The virtual method Add_Delayed_Material_Pass is used in this case.
 	*/
-	void Add_Visible_Material_Pass(MaterialPassClass * pass,MeshClass * mesh);
-	virtual void Add_Delayed_Visible_Material_Pass(MaterialPassClass * pass, MeshClass * mesh) = 0;
+	void Add_Visible_Material_Pass(MaterialPassClass *pass, MeshClass *mesh);
+	virtual void Add_Delayed_Visible_Material_Pass(MaterialPassClass *pass, MeshClass *mesh) = 0;
 	virtual void Render_Delayed_Procedural_Material_Passes(void) = 0;
 };
-
 
 /**
 ** DX8RigidFVFCategoryContainer
@@ -241,70 +243,65 @@ public:
 class DX8RigidFVFCategoryContainer : public DX8FVFCategoryContainer
 {
 public:
-	DX8RigidFVFCategoryContainer(unsigned FVF,bool sorting);
+	DX8RigidFVFCategoryContainer(unsigned FVF, bool sorting);
 	~DX8RigidFVFCategoryContainer();
 
-	void Add_Mesh(MeshModelClass* mmc);
+	void Add_Mesh(MeshModelClass *mmc);
 	void Log(bool only_visible);
-	bool Check_If_Mesh_Fits(MeshModelClass* mmc);
+	bool Check_If_Mesh_Fits(MeshModelClass *mmc);
 
-	void Render(void);	// Generic render function
+	void Render(void); // Generic render function
 
 	/*
 	** This method adds a material pass which must be rendered after all of the other rendering is complete.
 	** This is needed whenever a mesh turns off its base passes and renders a translucent pass on its geometry.
 	*/
-	virtual void Add_Delayed_Visible_Material_Pass(MaterialPassClass * pass, MeshClass * mesh);
+	virtual void Add_Delayed_Visible_Material_Pass(MaterialPassClass *pass, MeshClass *mesh);
 	virtual void Render_Delayed_Procedural_Material_Passes(void);
 
 protected:
+	VertexBufferClass *vertex_buffer;
+	int used_vertices;
 
-
-	VertexBufferClass *	vertex_buffer;
-	int						used_vertices;
-
-	MatPassTaskClass *	delayed_matpass_head;
-	MatPassTaskClass *	delayed_matpass_tail;
-
+	MatPassTaskClass *delayed_matpass_head;
+	MatPassTaskClass *delayed_matpass_tail;
 };
-
 
 /**
 ** DX8SkinFVFCategoryContainer
 ** This is an FVFCategoryContainer for skin meshes
 */
-class DX8SkinFVFCategoryContainer: public DX8FVFCategoryContainer
+class DX8SkinFVFCategoryContainer : public DX8FVFCategoryContainer
 {
 public:
 	DX8SkinFVFCategoryContainer(bool sorting);
 	~DX8SkinFVFCategoryContainer();
 
 	void Render(void);
-	void Add_Mesh(MeshModelClass* mmc);
+	void Add_Mesh(MeshModelClass *mmc);
 	void Log(bool only_visible);
-	bool Check_If_Mesh_Fits(MeshModelClass* mmc);
+	bool Check_If_Mesh_Fits(MeshModelClass *mmc);
 
-	void Add_Visible_Skin(MeshClass * mesh);
+	void Add_Visible_Skin(MeshClass *mesh);
 
 	/*
 	** Since skins are already rendered after the rigid meshes, the Add_Delayed_Material_Pass function simply
 	** routes into the Add_Visible_Material_Pass method and no extra overhead is added.
 	*/
-	virtual void Add_Delayed_Visible_Material_Pass(MaterialPassClass * pass, MeshClass * mesh) { Add_Visible_Material_Pass(pass,mesh); }
-	virtual void Render_Delayed_Procedural_Material_Passes(void) { }
+	virtual void Add_Delayed_Visible_Material_Pass(MaterialPassClass *pass, MeshClass *mesh)
+	{
+		Add_Visible_Material_Pass(pass, mesh);
+	}
+	virtual void Render_Delayed_Procedural_Material_Passes(void) {}
 
 private:
-
 	void Reset();
 	void clearVisibleSkinList();
 
-	unsigned int								VisibleVertexCount;
-	MeshClass *									VisibleSkinHead;
-	MeshClass *									VisibleSkinTail;
-
+	unsigned int VisibleVertexCount;
+	MeshClass *VisibleSkinHead;
+	MeshClass *VisibleSkinTail;
 };
-
-
 
 /**
 ** DX8MeshRendererClass
@@ -319,40 +316,38 @@ public:
 	DX8MeshRendererClass();
 	~DX8MeshRendererClass();
 
-	void						Init();
-	void						Shutdown();
+	void Init();
+	void Shutdown();
 
-	void						Flush();
-	void						Clear_Pending_Delete_Lists();
+	void Flush();
+	void Clear_Pending_Delete_Lists();
 
-	void						Log_Statistics_String(bool only_visible);
-	static void				Request_Log_Statistics();
+	void Log_Statistics_String(bool only_visible);
+	static void Request_Log_Statistics();
 
-	void						Register_Mesh_Type(MeshModelClass* mmc);
-	void						Unregister_Mesh_Type(MeshModelClass* mmc);
-	void						Set_Camera(CameraClass* cam) { camera=cam; }
-	CameraClass *			Peek_Camera(void)	{ return camera; }
-	void						Add_To_Render_List(DecalMeshClass * decalmesh);
+	void Register_Mesh_Type(MeshModelClass *mmc);
+	void Unregister_Mesh_Type(MeshModelClass *mmc);
+	void Set_Camera(CameraClass *cam) { camera = cam; }
+	CameraClass *Peek_Camera(void) { return camera; }
+	void Add_To_Render_List(DecalMeshClass *decalmesh);
 
-	// Enable or disable lighting on all objects inserted from now on. (Doesn't affect the objects that are already in the lists)
-	void						Enable_Lighting(bool enable) { enable_lighting=enable; }
+	// Enable or disable lighting on all objects inserted from now on. (Doesn't affect the objects that are already in the
+	// lists)
+	void Enable_Lighting(bool enable) { enable_lighting = enable; }
 
 	// This should be called at the beginning of a game or menu or after a major modifications to the scene...
-	void						Invalidate(bool shutdown=false);	// Added flag so it doesn't allocate more mem when shutting down. -MW
+	void Invalidate(bool shutdown = false); // Added flag so it doesn't allocate more mem when shutting down. -MW
 
 protected:
-
 	void Render_Decal_Meshes(void);
 
-	bool													enable_lighting;
-	CameraClass *										camera;
+	bool enable_lighting;
+	CameraClass *camera;
 
-	SimpleDynVecClass<FVFCategoryList *>		texture_category_container_lists_rigid;
-	FVFCategoryList *									texture_category_container_list_skin;
+	SimpleDynVecClass<FVFCategoryList *> texture_category_container_lists_rigid;
+	FVFCategoryList *texture_category_container_list_skin;
 
-	DecalMeshClass *									visible_decal_meshes;
-
-
+	DecalMeshClass *visible_decal_meshes;
 };
 
 extern DX8MeshRendererClass TheDX8MeshRenderer;

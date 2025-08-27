@@ -53,37 +53,31 @@
 class Object;
 class SpecialPowerTemplate;
 struct FieldParse;
-enum ScienceType CPP_11(: Int);
+enum ScienceType CPP_11( : Int);
 
 class BaikonurLaunchPowerModuleData : public SpecialPowerModuleData
 {
-
 public:
+	BaikonurLaunchPowerModuleData(void);
 
-	BaikonurLaunchPowerModuleData( void );
-
-	static void buildFieldParse( MultiIniFieldParse& p );
+	static void buildFieldParse(MultiIniFieldParse &p);
 
 	AsciiString m_detonationObject;
 };
 
-
 //-------------------------------------------------------------------------------------------------
 class BaikonurLaunchPower : public SpecialPowerModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( BaikonurLaunchPower, "BaikonurLaunchPower" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( BaikonurLaunchPower, BaikonurLaunchPowerModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BaikonurLaunchPower, "BaikonurLaunchPower")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(BaikonurLaunchPower, BaikonurLaunchPowerModuleData)
 
 public:
+	BaikonurLaunchPower(Thing *thing, const ModuleData *moduleData);
 
-	BaikonurLaunchPower( Thing *thing, const ModuleData *moduleData );
-
-	virtual void doSpecialPower( UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions );
+	virtual void doSpecialPower(UnsignedInt commandOptions);
+	virtual void doSpecialPowerAtLocation(const Coord3D *loc, Real angle, UnsignedInt commandOptions);
 
 protected:
-
 };
 
 #endif // __BAIKONUR_LAUNCH_POWER_H_

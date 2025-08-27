@@ -34,10 +34,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "StdAfx.h"
 #include "AssetInfo.h"
-//#include "HModel.H"
+// #include "HModel.H"
 #include "assetmgr.h"
 #include "htree.h"
 
@@ -45,37 +44,35 @@
 //
 //	Initialize
 //
-void
-AssetInfoClass::Initialize (void)
+void AssetInfoClass::Initialize(void)
 {
 	// If this isn't a material, then try to get its hierarchy name (if there is one)
-	if (m_AssetType != TypeMaterial) {
-
+	if (m_AssetType != TypeMaterial)
+	{
 		// Assume we are wrapping an instance as apposed to an asset 'name'.
 		RenderObjClass *prender_obj = m_pRenderObj;
-		SAFE_ADD_REF (prender_obj);
+		SAFE_ADD_REF(prender_obj);
 
 		// If we are wrapping an asset name, then create an instance of it.
-		if (prender_obj == NULL) {
-			prender_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj (m_Name);
+		if (prender_obj == NULL)
+		{
+			prender_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj(m_Name);
 		}
 
-		if (prender_obj != NULL) {
-
+		if (prender_obj != NULL)
+		{
 			// Get the hierarchy tree for this object (if one exists)
-			const HTreeClass *phtree = prender_obj->Get_HTree ();
-			if (phtree) {
-
+			const HTreeClass *phtree = prender_obj->Get_HTree();
+			if (phtree)
+			{
 				// Get the name of the hierarchy tree
-				m_HierarchyName = phtree->Get_Name ();
+				m_HierarchyName = phtree->Get_Name();
 			}
 		}
 
 		// Release our hold on the temporary object
-		MEMBER_RELEASE (prender_obj);
+		MEMBER_RELEASE(prender_obj);
 	}
 
-	return ;
+	return;
 }
-
-

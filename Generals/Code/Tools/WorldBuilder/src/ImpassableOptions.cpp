@@ -28,10 +28,8 @@
 #include "WorldBuilderDoc.h"
 
 //-------------------------------------------------------------------------------------------------
-ImpassableOptions::ImpassableOptions(CWnd* pParent, Real defaultSlope) :
-	CDialog(ImpassableOptions::IDD, pParent),
-	m_slopeToShow(defaultSlope),
-	m_defaultSlopeToShow(defaultSlope)
+ImpassableOptions::ImpassableOptions(CWnd *pParent, Real defaultSlope) :
+		CDialog(ImpassableOptions::IDD, pParent), m_slopeToShow(defaultSlope), m_defaultSlopeToShow(defaultSlope)
 {
 	// nada to do
 	m_showImpassableAreas = TheTerrainRenderObject->getShowImpassableAreas();
@@ -47,12 +45,14 @@ ImpassableOptions::~ImpassableOptions()
 //-------------------------------------------------------------------------------------------------
 Bool ImpassableOptions::ValidateSlope()
 {
-	if (m_slopeToShow < 0.0f) {
+	if (m_slopeToShow < 0.0f)
+	{
 		m_slopeToShow = 0.0f;
 		return FALSE;
 	}
 
-	if (m_slopeToShow >= 90.0f) {
+	if (m_slopeToShow >= 90.0f)
+	{
 		m_slopeToShow = 89.9f;
 		return FALSE;
 	}
@@ -63,8 +63,9 @@ Bool ImpassableOptions::ValidateSlope()
 //-------------------------------------------------------------------------------------------------
 BOOL ImpassableOptions::OnInitDialog()
 {
-	CWnd* pWnd = GetDlgItem(IDC_ANGLE);
-	if (!pWnd) {
+	CWnd *pWnd = GetDlgItem(IDC_ANGLE);
+	if (!pWnd)
+	{
 		return FALSE;
 	}
 
@@ -78,18 +79,20 @@ BOOL ImpassableOptions::OnInitDialog()
 //-------------------------------------------------------------------------------------------------
 void ImpassableOptions::OnAngleChange()
 {
-	CWnd* pWnd = GetDlgItem(IDC_ANGLE);
-	if (!pWnd) {
+	CWnd *pWnd = GetDlgItem(IDC_ANGLE);
+	if (!pWnd)
+	{
 		return;
 	}
 
 	CString cstr;
 	pWnd->GetWindowText(cstr);
-	char* buff = cstr.GetBuffer(0);
+	char *buff = cstr.GetBuffer(0);
 
 	m_slopeToShow = (Real)atof(buff);
 
-	if (!ValidateSlope()) {
+	if (!ValidateSlope())
+	{
 		AsciiString astr;
 		astr.format("%.2f", m_slopeToShow);
 		pWnd->SetWindowText(astr.str());
@@ -100,12 +103,12 @@ void ImpassableOptions::OnAngleChange()
 void ImpassableOptions::OnPreview()
 {
 	// update it.
-	IRegion2D range = {0,0,0,0};
+	IRegion2D range = { 0, 0, 0, 0 };
 	WbView3d *pView = CWorldBuilderDoc::GetActive3DView();
 	pView->updateHeightMapInView(TheTerrainRenderObject->getMap(), false, range);
 }
 
 BEGIN_MESSAGE_MAP(ImpassableOptions, CDialog)
-	ON_EN_UPDATE(IDC_ANGLE, OnAngleChange)
-	ON_BN_CLICKED(IDC_PREVIEW, OnPreview)
+ON_EN_UPDATE(IDC_ANGLE, OnAngleChange)
+ON_BN_CLICKED(IDC_PREVIEW, OnPreview)
 END_MESSAGE_MAP()

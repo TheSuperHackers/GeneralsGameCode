@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Damage.h"
@@ -39,70 +39,63 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StructureBody::StructureBody( Thing *thing, const ModuleData* moduleData )
-							: ActiveBody( thing, moduleData )
+StructureBody::StructureBody(Thing *thing, const ModuleData *moduleData) : ActiveBody(thing, moduleData)
 {
-
 	m_constructorObjectID = INVALID_ID;
 
-}  // end StructureBody
+} // end StructureBody
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StructureBody::~StructureBody( void )
+StructureBody::~StructureBody(void)
 {
-
-}  // end ~StructureBody
+} // end ~StructureBody
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void StructureBody::setConstructorObject( Object *obj )
+void StructureBody::setConstructorObject(Object *obj)
 {
-
-	if( obj )
+	if (obj)
 		m_constructorObjectID = obj->getID();
 
-}  // end setConstructorObject
+} // end setConstructorObject
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void StructureBody::crc( Xfer *xfer )
+void StructureBody::crc(Xfer *xfer)
 {
-
 	// extend base class
-	ActiveBody::crc( xfer );
+	ActiveBody::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void StructureBody::xfer( Xfer *xfer )
+void StructureBody::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// base class
-	ActiveBody::xfer( xfer );
+	ActiveBody::xfer(xfer);
 
 	// constructor object id
-	xfer->xferObjectID( &m_constructorObjectID );
+	xfer->xferObjectID(&m_constructorObjectID);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void StructureBody::loadPostProcess( void )
+void StructureBody::loadPostProcess(void)
 {
-
 	// extend base class
 	ActiveBody::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

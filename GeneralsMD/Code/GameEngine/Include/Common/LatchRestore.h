@@ -92,26 +92,21 @@
 
 */
 
-template <typename T>
+template<typename T>
 class LatchRestore
 {
-	protected:
-		T valueToRestore;
-		T& whereToRestore;
+protected:
+	T valueToRestore;
+	T &whereToRestore;
 
-	public:
-		LatchRestore(T& dest, const T& src) : whereToRestore(dest)
-		{
-			valueToRestore = dest;
-			dest = src;
-		}
+public:
+	LatchRestore(T &dest, const T &src) : whereToRestore(dest)
+	{
+		valueToRestore = dest;
+		dest = src;
+	}
 
-		virtual ~LatchRestore()
-		{
-			whereToRestore = valueToRestore;
-		}
+	virtual ~LatchRestore() { whereToRestore = valueToRestore; }
 };
 
-
 #endif /* __LATCHRESTORE_H__ */
-

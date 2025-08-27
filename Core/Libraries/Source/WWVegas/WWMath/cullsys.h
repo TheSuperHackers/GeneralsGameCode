@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -61,16 +60,19 @@ class FrustumClass;
 class CullLinkClass
 {
 public:
-	WWINLINE CullLinkClass(CullSystemClass * system)								{ System = system; WWASSERT(System); }
-	virtual ~CullLinkClass(void)												{ WWASSERT(System == NULL); }
+	WWINLINE CullLinkClass(CullSystemClass *system)
+	{
+		System = system;
+		WWASSERT(System);
+	}
+	virtual ~CullLinkClass(void) { WWASSERT(System == NULL); }
 
-	WWINLINE void					Set_Culling_System(CullSystemClass * sys)		{ System = sys; }
-	WWINLINE CullSystemClass * Get_Culling_System(void)							{ return System; }
+	WWINLINE void Set_Culling_System(CullSystemClass *sys) { System = sys; }
+	WWINLINE CullSystemClass *Get_Culling_System(void) { return System; }
 
 protected:
-	CullSystemClass * System;
+	CullSystemClass *System;
 };
-
 
 /*
 ** CullableClass
@@ -81,7 +83,6 @@ protected:
 class CullableClass : public RefCountClass
 {
 public:
-
 	CullableClass(void);
 	virtual ~CullableClass(void);
 
@@ -91,22 +92,21 @@ public:
 	** object will automatically be updated in whatever culling system it is currently
 	** contained in (if any)
 	*/
-	WWINLINE const AABoxClass & Get_Cull_Box(void) const							{ return CullBox; }
-	void								Set_Cull_Box(const AABoxClass & box,bool just_loaded = false);
+	WWINLINE const AABoxClass &Get_Cull_Box(void) const { return CullBox; }
+	void Set_Cull_Box(const AABoxClass &box, bool just_loaded = false);
 
 	/*
 	** These functions are used by various culling systems to manage the linkage
 	** pointers.  *The average user should NEVER call these*
 	*/
-	void								Set_Culling_System(CullSystemClass * sys);
-	CullSystemClass *				Get_Culling_System(void) const;
-	WWINLINE void					Set_Cull_Link(CullLinkClass * c)					{ CullLink = c; }
-	WWINLINE CullLinkClass *	Get_Cull_Link(void) const							{ return CullLink; }
+	void Set_Culling_System(CullSystemClass *sys);
+	CullSystemClass *Get_Culling_System(void) const;
+	WWINLINE void Set_Cull_Link(CullLinkClass *c) { CullLink = c; }
+	WWINLINE CullLinkClass *Get_Cull_Link(void) const { return CullLink; }
 
 private:
-
-	WWINLINE void					Set_Next_Collected(CullableClass * c)			{ NextCollected = c; }
-	WWINLINE CullableClass *	Get_Next_Collected(void)							{ return NextCollected; }
+	WWINLINE void Set_Next_Collected(CullableClass *c) { NextCollected = c; }
+	WWINLINE CullableClass *Get_Next_Collected(void) { return NextCollected; }
 
 	/*
 	** Culling Data
@@ -116,7 +116,7 @@ private:
 	** will point to one of the culling link objects and NULL
 	** if its not in any system.
 	*/
-	CullLinkClass *				CullLink;
+	CullLinkClass *CullLink;
 
 	/*
 	** Bounding Box
@@ -124,24 +124,21 @@ private:
 	** whenever the object moves or changes size.  In order to do this,
 	** call Set_Cull_Box...
 	*/
-	AABoxClass						CullBox;
+	AABoxClass CullBox;
 
 	/*
 	** NextCollected
 	** This pointer is used by the culling system to keep a singly linked
 	** list of cullable object that have been "collected".
 	*/
-	CullableClass *				NextCollected;
+	CullableClass *NextCollected;
 
 	// Not Implemented:
-	CullableClass(const CullableClass & src);
-	CullableClass & operator = (const CullableClass & src);
+	CullableClass(const CullableClass &src);
+	CullableClass &operator=(const CullableClass &src);
 
 	friend class CullSystemClass;
 };
-
-
-
 
 /*
 ** CullSystemClass
@@ -151,7 +148,6 @@ private:
 class CullSystemClass
 {
 public:
-
 	CullSystemClass(void);
 	virtual ~CullSystemClass(void);
 
@@ -163,39 +159,37 @@ public:
 	** WARNING: Always call Reset_Collection if you want to start a
 	** fresh collection!
 	*/
-	void					Reset_Collection(void);
-	virtual void		Collect_Objects(const Vector3 & point)					= 0;
-	virtual void		Collect_Objects(const AABoxClass & box)				= 0;
-	virtual void		Collect_Objects(const OBBoxClass & box)				= 0;
-	virtual void		Collect_Objects(const FrustumClass & frustum)		= 0;
+	void Reset_Collection(void);
+	virtual void Collect_Objects(const Vector3 &point) = 0;
+	virtual void Collect_Objects(const AABoxClass &box) = 0;
+	virtual void Collect_Objects(const OBBoxClass &box) = 0;
+	virtual void Collect_Objects(const FrustumClass &frustum) = 0;
 
 	/*
 	** This object has moved or changed size, update it
 	*/
-	virtual void		Update_Culling(CullableClass * obj)						= 0;
+	virtual void Update_Culling(CullableClass *obj) = 0;
 
 protected:
-
 	/*
 	** Iterate through the collected objects
 	*/
-	CullableClass *	Get_First_Collected_Object_Internal(void);
-	CullableClass *	Get_Next_Collected_Object_Internal(CullableClass * obj);
-	CullableClass *	Peek_First_Collected_Object_Internal(void);
-	CullableClass *	Peek_Next_Collected_Object_Internal(CullableClass * obj);
+	CullableClass *Get_First_Collected_Object_Internal(void);
+	CullableClass *Get_Next_Collected_Object_Internal(CullableClass *obj);
+	CullableClass *Peek_First_Collected_Object_Internal(void);
+	CullableClass *Peek_Next_Collected_Object_Internal(CullableClass *obj);
 
 	/*
 	** Build the list of collected objects
 	*/
-	void					Add_To_Collection(CullableClass * obj);
+	void Add_To_Collection(CullableClass *obj);
 
 	/*
 	** Pointer to the head of the current collection of objects
 	*/
-	CullableClass *	CollectionHead;
+	CullableClass *CollectionHead;
 
 	friend class CullableClass;
 };
-
 
 #endif

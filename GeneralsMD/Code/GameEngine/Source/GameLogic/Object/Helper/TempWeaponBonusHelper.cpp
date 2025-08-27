@@ -40,7 +40,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TempWeaponBonusHelper::TempWeaponBonusHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData )
+TempWeaponBonusHelper::TempWeaponBonusHelper(Thing *thing, const ModuleData *modData) : ObjectHelper(thing, modData)
 {
 	m_currentBonus = WEAPONBONUSCONDITION_INVALID;
 	m_frameToRemove = 0;
@@ -50,16 +50,15 @@ TempWeaponBonusHelper::TempWeaponBonusHelper( Thing *thing, const ModuleData *mo
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TempWeaponBonusHelper::~TempWeaponBonusHelper( void )
+TempWeaponBonusHelper::~TempWeaponBonusHelper(void)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 UpdateSleepTime TempWeaponBonusHelper::update()
 {
-	DEBUG_ASSERTCRASH(m_frameToRemove <= TheGameLogic->getFrame(), ("TempWeaponBonusHelper woke up too soon.") );
+	DEBUG_ASSERTCRASH(m_frameToRemove <= TheGameLogic->getFrame(), ("TempWeaponBonusHelper woke up too soon."));
 
 	clearTempWeaponBonus(); // We are sleep driven, so seeing an update means our timer is ready implicitly
 	return UPDATE_SLEEP_FOREVER;
@@ -69,83 +68,79 @@ UpdateSleepTime TempWeaponBonusHelper::update()
 // ------------------------------------------------------------------------------------------------
 void TempWeaponBonusHelper::clearTempWeaponBonus()
 {
-	if( m_currentBonus != WEAPONBONUSCONDITION_INVALID )
+	if (m_currentBonus != WEAPONBONUSCONDITION_INVALID)
 	{
 		getObject()->clearWeaponBonusCondition(m_currentBonus);
 		m_currentBonus = WEAPONBONUSCONDITION_INVALID;
 		m_frameToRemove = 0;
 
-		if( getObject()->getDrawable() )
-    {
+		if (getObject()->getDrawable())
+		{
 			getObject()->getDrawable()->clearTintStatus(TINT_STATUS_FRENZY);
-//      if (getObject()->isKindOf(KINDOF_INFANTRY))
-//        getObject()->getDrawable()->setSecondMaterialPassOpacity( 0.0f );
-    }
+			//      if (getObject()->isKindOf(KINDOF_INFANTRY))
+			//        getObject()->getDrawable()->setSecondMaterialPassOpacity( 0.0f );
+		}
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void TempWeaponBonusHelper::doTempWeaponBonus( WeaponBonusConditionType status, UnsignedInt duration )
+void TempWeaponBonusHelper::doTempWeaponBonus(WeaponBonusConditionType status, UnsignedInt duration)
 {
 	// Clear any different status we may have.  Re-getting the same status will just reset the timer
-	if( m_currentBonus != status )
+	if (m_currentBonus != status)
 		clearTempWeaponBonus();
 
 	getObject()->setWeaponBonusCondition(status);
 	m_currentBonus = status;
 	m_frameToRemove = TheGameLogic->getFrame() + duration;
 
-	if( getObject()->getDrawable() )
-  {
+	if (getObject()->getDrawable())
+	{
 		getObject()->getDrawable()->setTintStatus(TINT_STATUS_FRENZY);
-//    if (getObject()->isKindOf(KINDOF_INFANTRY))
-//      getObject()->getDrawable()->setSecondMaterialPassOpacity( 1.0f );
-  }
+		//    if (getObject()->isKindOf(KINDOF_INFANTRY))
+		//      getObject()->getDrawable()->setSecondMaterialPassOpacity( 1.0f );
+	}
 
-	setWakeFrame( getObject(), UPDATE_SLEEP(duration) );
+	setWakeFrame(getObject(), UPDATE_SLEEP(duration));
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void TempWeaponBonusHelper::crc( Xfer *xfer )
+void TempWeaponBonusHelper::crc(Xfer *xfer)
 {
-
 	// object helper crc
-	ObjectHelper::crc( xfer );
+	ObjectHelper::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info;
-	* 1: Initial version */
+ * Version Info;
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void TempWeaponBonusHelper::xfer( Xfer *xfer )
+void TempWeaponBonusHelper::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// object helper base class
-	ObjectHelper::xfer( xfer );
+	ObjectHelper::xfer(xfer);
 
-	xfer->xferUser( &m_currentBonus, sizeof(WeaponBonusConditionType) );// an enum
-	xfer->xferUnsignedInt( &m_frameToRemove );
+	xfer->xferUser(&m_currentBonus, sizeof(WeaponBonusConditionType)); // an enum
+	xfer->xferUnsignedInt(&m_frameToRemove);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TempWeaponBonusHelper::loadPostProcess( void )
+void TempWeaponBonusHelper::loadPostProcess(void)
 {
-
 	// object helper base class
 	ObjectHelper::loadPostProcess();
 
-}  // end loadPostProcess
-
+} // end loadPostProcess

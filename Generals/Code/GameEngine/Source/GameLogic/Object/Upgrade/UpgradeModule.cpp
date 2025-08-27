@@ -32,59 +32,54 @@
 #include "Common/Xfer.h"
 #include "GameLogic/Module/UpgradeModule.h"
 
-
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void UpgradeModule::crc( Xfer *xfer )
+void UpgradeModule::crc(Xfer *xfer)
 {
-
 	// extend base class
-	BehaviorModule::crc( xfer );
+	BehaviorModule::crc(xfer);
 
 	// extned base class
-	UpgradeMux::upgradeMuxCRC( xfer );
+	UpgradeMux::upgradeMuxCRC(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
-void UpgradeModule::xfer( Xfer *xfer )
+void UpgradeModule::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// call base class
-	BehaviorModule::xfer( xfer );
+	BehaviorModule::xfer(xfer);
 
 	// extend base class
-	UpgradeMux::upgradeMuxXfer( xfer );
+	UpgradeMux::upgradeMuxXfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void UpgradeModule::loadPostProcess( void )
+void UpgradeModule::loadPostProcess(void)
 {
-
 	// call base class
 	BehaviorModule::loadPostProcess();
 
 	// extend base class
 	UpgradeMux::upgradeMuxLoadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 UpgradeMux::UpgradeMux() : m_upgradeExecuted(false)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -99,16 +94,16 @@ Bool UpgradeMux::isAlreadyUpgraded() const
 // ------------------------------------------------------------------------------------------------
 void UpgradeMux::forceRefreshUpgrade()
 {
-	if( m_upgradeExecuted )
+	if (m_upgradeExecuted)
 	{
-		//Only do this if we've already made the upgrade!
+		// Only do this if we've already made the upgrade!
 		upgradeImplementation();
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool UpgradeMux::attemptUpgrade( UpgradeMaskType keyMask )
+Bool UpgradeMux::attemptUpgrade(UpgradeMaskType keyMask)
 {
 	if (wouldUpgrade(keyMask))
 	{
@@ -121,65 +116,65 @@ Bool UpgradeMux::attemptUpgrade( UpgradeMaskType keyMask )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool UpgradeMux::wouldUpgrade( UpgradeMaskType keyMask ) const
+Bool UpgradeMux::wouldUpgrade(UpgradeMaskType keyMask) const
 {
 	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks(activation, conflicting);
 
-	//Make sure we have activation conditions and we haven't performed the upgrade already.
-	if( activation.any() && keyMask.any() && !m_upgradeExecuted )
+	// Make sure we have activation conditions and we haven't performed the upgrade already.
+	if (activation.any() && keyMask.any() && !m_upgradeExecuted)
 	{
-		//Okay, make sure we don't have any conflicting upgrades
-		if( !keyMask.testForAny( conflicting) )
+		// Okay, make sure we don't have any conflicting upgrades
+		if (!keyMask.testForAny(conflicting))
 		{
-			//Finally check to see if our upgrade conditions match.
-			if( requiresAllActivationUpgrades() )
+			// Finally check to see if our upgrade conditions match.
+			if (requiresAllActivationUpgrades())
 			{
-				//Make sure ALL triggers requirements are upgraded
-				if( keyMask.testForAll( activation ) )
+				// Make sure ALL triggers requirements are upgraded
+				if (keyMask.testForAll(activation))
 				{
 					return TRUE;
 				}
 			}
 			else
 			{
-				//Check if ANY trigger requirements are met.
-				if( keyMask.testForAny( activation ) )
+				// Check if ANY trigger requirements are met.
+				if (keyMask.testForAny(activation))
 				{
 					return TRUE;
 				}
 			}
 		}
 	}
-	//We can't upgrade!
+	// We can't upgrade!
 	return FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool UpgradeMux::testUpgradeConditions( UpgradeMaskType keyMask ) const
+Bool UpgradeMux::testUpgradeConditions(UpgradeMaskType keyMask) const
 {
 	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks(activation, conflicting);
 
-	//Okay, make sure we don't have any conflicting upgrades
-	if( !keyMask.any() || !keyMask.testForAny( conflicting ) )
+	// Okay, make sure we don't have any conflicting upgrades
+	if (!keyMask.any() || !keyMask.testForAny(conflicting))
 	{
-		//Make sure we have activation conditions
-		if( activation.any() )
+		// Make sure we have activation conditions
+		if (activation.any())
 		{
-			//Finally check to see if our upgrade conditions match.
-			if( requiresAllActivationUpgrades() )
+			// Finally check to see if our upgrade conditions match.
+			if (requiresAllActivationUpgrades())
 			{
-				//Make sure ALL triggers requirements are upgraded
-				if( keyMask.testForAll( activation ) )
+				// Make sure ALL triggers requirements are upgraded
+				if (keyMask.testForAll(activation))
 				{
 					return TRUE;
 				}
 			}
 			else
 			{
-				//Check if ANY trigger requirements are met.
-				if( keyMask.testForAny( activation ) )
+				// Check if ANY trigger requirements are met.
+				if (keyMask.testForAny(activation))
 				{
 					return TRUE;
 				}
@@ -187,21 +182,21 @@ Bool UpgradeMux::testUpgradeConditions( UpgradeMaskType keyMask ) const
 		}
 		else
 		{
-			//This *upgrade* is relying only on not having conflicts.
+			// This *upgrade* is relying only on not having conflicts.
 			return true;
 		}
 	}
-	//We can't upgrade!
+	// We can't upgrade!
 	return false;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool UpgradeMux::resetUpgrade( UpgradeMaskType keyMask )
+Bool UpgradeMux::resetUpgrade(UpgradeMaskType keyMask)
 {
 	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks(activation, conflicting);
-	if( keyMask.testForAny( activation ) && m_upgradeExecuted )
+	if (keyMask.testForAny(activation) && m_upgradeExecuted)
 	{
 		m_upgradeExecuted = false;
 		return true;
@@ -211,34 +206,29 @@ Bool UpgradeMux::resetUpgrade( UpgradeMaskType keyMask )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void UpgradeMux::upgradeMuxCRC( Xfer *xfer )
+void UpgradeMux::upgradeMuxCRC(Xfer *xfer)
 {
-
 	// just call the regular xfer, it's simple
-	upgradeMuxXfer( xfer );
-
+	upgradeMuxXfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer
-	* Version Info
-	* 1: Initial version */
+ * Version Info
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void UpgradeMux::upgradeMuxXfer( Xfer *xfer )
+void UpgradeMux::upgradeMuxXfer(Xfer *xfer)
 {
-
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// upgrade executed
-	xfer->xferBool( &m_upgradeExecuted );
-
+	xfer->xferBool(&m_upgradeExecuted);
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void UpgradeMux::upgradeMuxLoadPostProcess( void )
+void UpgradeMux::upgradeMuxLoadPostProcess(void)
 {
-
 }

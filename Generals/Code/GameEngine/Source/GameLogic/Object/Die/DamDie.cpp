@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/RandomValue.h"
 #include "Common/Xfer.h"
@@ -45,26 +45,24 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DamDieModuleData::DamDieModuleData( void )
+DamDieModuleData::DamDieModuleData(void)
 {
-
-}  // end DamDieModuleData
+} // end DamDieModuleData
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void DamDieModuleData::buildFieldParse(MultiIniFieldParse& p)
+/*static*/ void DamDieModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
+	DieModuleData::buildFieldParse(p);
 
-  DieModuleData::buildFieldParse( p );
+	//	static const FieldParse dataFieldParse[] =
+	//	{
+	//		{ 0, 0, 0, 0 }
+	//	};
+	//
+	//  p.add(dataFieldParse);
 
-//	static const FieldParse dataFieldParse[] =
-//	{
-//		{ 0, 0, 0, 0 }
-//	};
-//
-//  p.add(dataFieldParse);
-
-}  // end buildFieldParse
+} // end buildFieldParse
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,78 +70,71 @@ DamDieModuleData::DamDieModuleData( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DamDie::DamDie( Thing *thing, const ModuleData *moduleData )
-			 :DieModule( thing, moduleData )
+DamDie::DamDie(Thing *thing, const ModuleData *moduleData) : DieModule(thing, moduleData)
 {
-
-}  // end DamDie
+} // end DamDie
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DamDie::~DamDie( void )
+DamDie::~DamDie(void)
 {
-
-}  // end ~DamDie
+} // end ~DamDie
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void DamDie::onDie( const DamageInfo *damageInfo )
+void DamDie::onDie(const DamageInfo *damageInfo)
 {
 	if (!isDieApplicable(damageInfo))
 		return;
 
 	// enable all the water wave objects on the map
 	Object *obj;
-	for( obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject() )
+	for (obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject())
 	{
-
 		// only care aboue water waves
-		if( obj->isKindOf( KINDOF_WAVEGUIDE ) == FALSE )
+		if (obj->isKindOf(KINDOF_WAVEGUIDE) == FALSE)
 			continue;
 
 		// clear any disabled status of the water wave
-		obj->clearDisabled( DISABLED_DEFAULT );
+		obj->clearDisabled(DISABLED_DEFAULT);
 
-	}  // end for, obj
+	} // end for, obj
 
-}  // end onDie
+} // end onDie
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void DamDie::crc( Xfer *xfer )
+void DamDie::crc(Xfer *xfer)
 {
-
 	// extend base class
-	DieModule::crc( xfer );
+	DieModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void DamDie::xfer( Xfer *xfer )
+void DamDie::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DieModule::xfer( xfer );
+	DieModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DamDie::loadPostProcess( void )
+void DamDie::loadPostProcess(void)
 {
-
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

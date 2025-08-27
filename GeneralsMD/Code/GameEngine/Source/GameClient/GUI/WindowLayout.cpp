@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Shell.h"
@@ -37,7 +37,7 @@
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WindowLayout::WindowLayout( void )
+WindowLayout::WindowLayout(void)
 {
 	m_filenameString.set("EmptyLayout");
 
@@ -51,146 +51,139 @@ WindowLayout::WindowLayout( void )
 	m_update = NULL;
 	m_shutdown = NULL;
 
-}  // end WindowLayout
+} // end WindowLayout
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WindowLayout::~WindowLayout( void )
+WindowLayout::~WindowLayout(void)
 {
-
 	//
 	// it is the users responsability to remove windows from the layout beforing destroying the
 	// layout itself.  This allows for maximum flexibility of the window layouts and you can
 	// use them in any you see fit, as long as they are clean when they go away
 	//
-	DEBUG_ASSERTCRASH( m_windowList == NULL, ("Window layout being destroyed still has window references") );
-	DEBUG_ASSERTCRASH( m_windowTail == NULL, ("Window layout being destroyed still has window references") );
+	DEBUG_ASSERTCRASH(m_windowList == NULL, ("Window layout being destroyed still has window references"));
+	DEBUG_ASSERTCRASH(m_windowTail == NULL, ("Window layout being destroyed still has window references"));
 
-}  // end ~WindowLayout
+} // end ~WindowLayout
 
 //-------------------------------------------------------------------------------------------------
 /** Set the hidden/visible status of all the windows in this layout */
 //-------------------------------------------------------------------------------------------------
-void WindowLayout::hide( Bool hide )
+void WindowLayout::hide(Bool hide)
 {
 	GameWindow *window;
 
 	// hide or unhide all windows in this layout
-	for( window = m_windowList; window; window = window->winGetNextInLayout() )
+	for (window = m_windowList; window; window = window->winGetNextInLayout())
 	{
+		window->winHide(hide);
 
-		window->winHide( hide );
-
-	}  // end for window
+	} // end for window
 
 	// save the new visible state of the system
 	m_hidden = hide;
 
-}  // end hide
+} // end hide
 
 //-------------------------------------------------------------------------------------------------
 /** Add window to this layout */
 //-------------------------------------------------------------------------------------------------
-void WindowLayout::addWindow( GameWindow *window )
+void WindowLayout::addWindow(GameWindow *window)
 {
-	GameWindow *win = findWindow( window );
+	GameWindow *win = findWindow(window);
 
 	// only add window if window is not in this layout already
-	if( win == NULL )
+	if (win == NULL)
 	{
+		DEBUG_ASSERTCRASH(window->winGetNextInLayout() == NULL, ("NextInLayout should be NULL before adding"));
+		DEBUG_ASSERTCRASH(window->winGetPrevInLayout() == NULL, ("PrevInLayout should be NULL before adding"));
 
-		DEBUG_ASSERTCRASH( window->winGetNextInLayout() == NULL,
-											 ("NextInLayout should be NULL before adding") );
-		DEBUG_ASSERTCRASH( window->winGetPrevInLayout() == NULL,
-											 ("PrevInLayout should be NULL before adding") );
-
-		window->winSetPrevInLayout( NULL );
-		window->winSetNextInLayout( m_windowList );
-		if( m_windowList )
-			m_windowList->winSetPrevInLayout( window );
+		window->winSetPrevInLayout(NULL);
+		window->winSetNextInLayout(m_windowList);
+		if (m_windowList)
+			m_windowList->winSetPrevInLayout(window);
 		m_windowList = window;
 
 		// set layout into window
-		window->winSetLayout( this );
+		window->winSetLayout(this);
 
 		// if no tail pointer, this is it
-		if( m_windowTail == NULL )
+		if (m_windowTail == NULL)
 			m_windowTail = window;
 
 		// we gots another window now
 		m_windowCount++;
 
-	}  // end if
+	} // end if
 
-}  // end addWindow
+} // end addWindow
 
 //-------------------------------------------------------------------------------------------------
 /** Remove window from this layout */
 //-------------------------------------------------------------------------------------------------
-void WindowLayout::removeWindow( GameWindow *window )
+void WindowLayout::removeWindow(GameWindow *window)
 {
-	GameWindow *win = findWindow( window );
+	GameWindow *win = findWindow(window);
 
 	// can't remove window unless it's really part of this layout
-	if( win )
+	if (win)
 	{
 		GameWindow *prev, *next;
 
 		prev = win->winGetPrevInLayout();
 		next = win->winGetNextInLayout();
 
-		if( next )
-			next->winSetPrevInLayout( prev );
-		if( prev )
-			prev->winSetNextInLayout( next );
+		if (next)
+			next->winSetPrevInLayout(prev);
+		if (prev)
+			prev->winSetNextInLayout(next);
 		else
 			m_windowList = next;
 
 		// set window as having no layout info
-		win->winSetLayout( NULL );
-		win->winSetNextInLayout( NULL );
-		win->winSetPrevInLayout( NULL );
+		win->winSetLayout(NULL);
+		win->winSetNextInLayout(NULL);
+		win->winSetPrevInLayout(NULL);
 
 		// if we removed the tail, set the new tail
-		if( m_windowTail == win )
+		if (m_windowTail == win)
 			m_windowTail = prev;
 
 		// we lost one sir!
 		m_windowCount--;
 
-	}  // end if
+	} // end if
 
-}  // end removeWindow
+} // end removeWindow
 
 //-------------------------------------------------------------------------------------------------
 /** Destroy all the windows in a layout */
 //-------------------------------------------------------------------------------------------------
-void WindowLayout::destroyWindows( void )
+void WindowLayout::destroyWindows(void)
 {
 	GameWindow *window;
 
-	while( (window = getFirstWindow()) != 0 )
+	while ((window = getFirstWindow()) != 0)
 	{
-
 		// remove window from this layout
-		removeWindow( window );
+		removeWindow(window);
 
 		// destroy window in window system
-		TheWindowManager->winDestroy( window );
+		TheWindowManager->winDestroy(window);
 
-	}  // end while
+	} // end while
 
-}  // end destroyWindows
+} // end destroyWindows
 
 //-------------------------------------------------------------------------------------------------
 /** Create the windows using the .wnd file script and load all windows into
-	* this layout */
+ * this layout */
 //-------------------------------------------------------------------------------------------------
-Bool WindowLayout::load( AsciiString filename )
+Bool WindowLayout::load(AsciiString filename)
 {
-
 	// sanity
-	if( filename.isEmpty() )
+	if (filename.isEmpty())
 		return FALSE;
 
 	//
@@ -203,15 +196,14 @@ Bool WindowLayout::load( AsciiString filename )
 	GameWindow *target;
 	WindowLayoutInfo info;
 
-	target = TheWindowManager->winCreateFromScript( filename, &info );
-	if( target == NULL )
+	target = TheWindowManager->winCreateFromScript(filename, &info);
+	if (target == NULL)
 	{
-
-		DEBUG_ASSERTCRASH( target, ("WindowLayout::load - Failed to load layout") );
-		DEBUG_LOG(( "WindowLayout::load - Unable to load layout file '%s'", filename.str() ));
+		DEBUG_ASSERTCRASH(target, ("WindowLayout::load - Failed to load layout"));
+		DEBUG_LOG(("WindowLayout::load - Unable to load layout file '%s'", filename.str()));
 		return FALSE;
 
-	}  // end if
+	} // end if
 
 	//
 	// add windows loaded from .wnd file to the layout, via info.windows.
@@ -220,7 +212,7 @@ Bool WindowLayout::load( AsciiString filename )
 	for (it = info.windows.begin(); it != info.windows.end(); ++it)
 	{
 		// add window to this layout
-		addWindow( *it );
+		addWindow(*it);
 	}
 
 	/* MDC - can't do this, as modal windows will be at the head...
@@ -243,20 +235,19 @@ Bool WindowLayout::load( AsciiString filename )
 	m_filenameString = filename;
 
 	// assign script info to the layout
-	setInit( info.init );
-	setUpdate( info.update );
-	setShutdown( info.shutdown );
+	setInit(info.init);
+	setUpdate(info.update);
+	setShutdown(info.shutdown);
 
-	return TRUE;  // success
+	return TRUE; // success
 
-}  // end load
+} // end load
 
 //-------------------------------------------------------------------------------------------------
 /** Bring all windows in this layout forward */
 //-------------------------------------------------------------------------------------------------
-void WindowLayout::bringForward( void )
+void WindowLayout::bringForward(void)
 {
-
 	//
 	// loop through all our windows and bring each of them to the top of
 	// the window stack, note that we are getting a prev pointer because the
@@ -268,31 +259,29 @@ void WindowLayout::bringForward( void )
 	GameWindow *window, *prev;
 	Int countLeft = m_windowCount;
 
-	for( window = m_windowTail; countLeft; window = prev )
+	for (window = m_windowTail; countLeft; window = prev)
 	{
-
-		DEBUG_ASSERTCRASH( window, ("Must have window: m_windowCount is off") );
+		DEBUG_ASSERTCRASH(window, ("Must have window: m_windowCount is off"));
 		prev = window->winGetPrevInLayout();
 		window->winBringToTop();
 		countLeft--;
 
-	}  // end for window
+	} // end for window
 
-}  // end bringForward
-
+} // end bringForward
 
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
 /** Find window within this layout */
 //-------------------------------------------------------------------------------------------------
-GameWindow *WindowLayout::findWindow( GameWindow *window )
+GameWindow *WindowLayout::findWindow(GameWindow *window)
 {
 	GameWindow *win;
 
-	for( win = m_windowList; win; win = win->winGetNextInLayout() )
-		if( win == window )
+	for (win = m_windowList; win; win = win->winGetNextInLayout())
+		if (win == window)
 			return win;
 
-	return NULL;  // window not found
+	return NULL; // window not found
 
-}  // end findWindow
+} // end findWindow

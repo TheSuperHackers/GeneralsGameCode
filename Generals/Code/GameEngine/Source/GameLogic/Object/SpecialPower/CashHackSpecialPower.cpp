@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Player.h"
 #include "Common/Team.h"
@@ -41,7 +41,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-CashHackSpecialPowerModuleData::CashHackSpecialPowerModuleData( void )
+CashHackSpecialPowerModuleData::CashHackSpecialPowerModuleData(void)
 {
 	m_upgrades.clear();
 	m_defaultAmountToSteal = 0;
@@ -49,32 +49,31 @@ CashHackSpecialPowerModuleData::CashHackSpecialPowerModuleData( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-static void parseCashHackUpgradePair( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ )
+static void parseCashHackUpgradePair(INI *ini, void * /*instance*/, void *store, const void * /*userData*/)
 {
 	CashHackSpecialPowerModuleData::Upgrades up;
 
 	INI::parseScience(ini, NULL, &up.m_science, NULL);
 	INI::parseInt(ini, NULL, &up.m_amountToSteal, NULL);
 
-	std::vector<CashHackSpecialPowerModuleData::Upgrades>* s = (std::vector<CashHackSpecialPowerModuleData::Upgrades>*)store;
+	std::vector<CashHackSpecialPowerModuleData::Upgrades> *s = (std::vector<CashHackSpecialPowerModuleData::Upgrades> *)store;
 	s->push_back(up);
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void CashHackSpecialPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
+/*static*/ void CashHackSpecialPowerModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-	SpecialPowerModuleData::buildFieldParse( p );
+	SpecialPowerModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "UpgradeMoneyAmount", parseCashHackUpgradePair, NULL, offsetof( CashHackSpecialPowerModuleData, m_upgrades ) },
-		{ "MoneyAmount", INI::parseInt, NULL, offsetof( CashHackSpecialPowerModuleData, m_defaultAmountToSteal ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "UpgradeMoneyAmount", parseCashHackUpgradePair, NULL, offsetof(CashHackSpecialPowerModuleData, m_upgrades) },
+		{ "MoneyAmount", INI::parseInt, NULL, offsetof(CashHackSpecialPowerModuleData, m_defaultAmountToSteal) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+} // end buildFieldParse
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -82,22 +81,20 @@ static void parseCashHackUpgradePair( INI* ini, void * /*instance*/, void *store
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-CashHackSpecialPower::CashHackSpecialPower( Thing *thing, const ModuleData *moduleData )
-												: SpecialPowerModule( thing, moduleData )
+CashHackSpecialPower::CashHackSpecialPower(Thing *thing, const ModuleData *moduleData) :
+		SpecialPowerModule(thing, moduleData)
 {
-
-}  // end CashHackSpecialPower
+} // end CashHackSpecialPower
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-CashHackSpecialPower::~CashHackSpecialPower( void )
+CashHackSpecialPower::~CashHackSpecialPower(void)
 {
-
-}  // end ~CashHackSpecialPower
+} // end ~CashHackSpecialPower
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void CashHackSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
+void CashHackSpecialPower::doSpecialPowerAtLocation(const Coord3D *loc, Real angle, UnsignedInt commandOptions)
 {
 	if (getObject()->isDisabled())
 		return;
@@ -110,13 +107,13 @@ void CashHackSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real an
 //-------------------------------------------------------------------------------------------------
 Int CashHackSpecialPower::findAmountToSteal() const
 {
-	const CashHackSpecialPowerModuleData* d = getCashHackSpecialPowerModuleData();
-	const Player* controller = getObject()->getControllingPlayer();
+	const CashHackSpecialPowerModuleData *d = getCashHackSpecialPowerModuleData();
+	const Player *controller = getObject()->getControllingPlayer();
 	if (controller != NULL)
 	{
 		for (std::vector<CashHackSpecialPowerModuleData::Upgrades>::const_iterator it = d->m_upgrades.begin();
-					it != d->m_upgrades.end();
-					++it)
+				 it != d->m_upgrades.end();
+				 ++it)
 		{
 			if (controller->hasScience(it->m_science))
 				return it->m_amountToSteal;
@@ -127,7 +124,7 @@ Int CashHackSpecialPower::findAmountToSteal() const
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void CashHackSpecialPower::doSpecialPowerAtObject( Object *victim, UnsignedInt commandOptions )
+void CashHackSpecialPower::doSpecialPowerAtObject(Object *victim, UnsignedInt commandOptions)
 {
 	if (getObject()->isDisabled())
 		return;
@@ -137,83 +134,79 @@ void CashHackSpecialPower::doSpecialPowerAtObject( Object *victim, UnsignedInt c
 		return;
 
 	// call the base class action cause we are *EXTENDING* functionality
-  SpecialPowerModule::doSpecialPowerAtObject( victim, commandOptions );
+	SpecialPowerModule::doSpecialPowerAtObject(victim, commandOptions);
 
 	// get our module data
 	Object *self = getObject();
 
-	//Steal a thousand cash from the other team!
+	// Steal a thousand cash from the other team!
 	Money *targetMoney = victim->getControllingPlayer()->getMoney();
 	Money *selfMoney = self->getControllingPlayer()->getMoney();
-	if( targetMoney && selfMoney )
+	if (targetMoney && selfMoney)
 	{
 		UnsignedInt cash = targetMoney->countMoney();
 		UnsignedInt desiredAmount = findAmountToSteal();
-		//Check to see if they have 1000 cash, otherwise, take the remainder!
-		cash = min( desiredAmount, cash );
-		if( cash > 0 )
+		// Check to see if they have 1000 cash, otherwise, take the remainder!
+		cash = min(desiredAmount, cash);
+		if (cash > 0)
 		{
-			//Steal the cash
-			targetMoney->withdraw( cash );
-			selfMoney->deposit( cash );
-			self->getControllingPlayer()->getScoreKeeper()->addMoneyEarned( cash );
+			// Steal the cash
+			targetMoney->withdraw(cash);
+			selfMoney->deposit(cash);
+			self->getControllingPlayer()->getScoreKeeper()->addMoneyEarned(cash);
 
-			//Display cash income floating over the blacklotus
+			// Display cash income floating over the blacklotus
 			UnicodeString moneyString;
-			moneyString.format( TheGameText->fetch( "GUI:AddCash" ), cash );
+			moneyString.format(TheGameText->fetch("GUI:AddCash"), cash);
 			Coord3D pos;
 			pos.zero();
-			pos.add( self->getPosition() );
-			pos.z += 20.0f; //add a little z to make it show up above the unit.
-			TheInGameUI->addFloatingText( moneyString, &pos, GameMakeColor( 0, 255, 0, 255 ) );
+			pos.add(self->getPosition());
+			pos.z += 20.0f; // add a little z to make it show up above the unit.
+			TheInGameUI->addFloatingText(moneyString, &pos, GameMakeColor(0, 255, 0, 255));
 
-			//Display cash lost floating over the target
-			moneyString.format( TheGameText->fetch( "GUI:LoseCash" ), cash );
+			// Display cash lost floating over the target
+			moneyString.format(TheGameText->fetch("GUI:LoseCash"), cash);
 			pos.zero();
-			pos.add( victim->getPosition() );
-			pos.z += 30.0f; //add a little z to make it show up above the unit.
-			TheInGameUI->addFloatingText( moneyString, &pos, GameMakeColor( 255, 0, 0, 255 ) );
+			pos.add(victim->getPosition());
+			pos.z += 30.0f; // add a little z to make it show up above the unit.
+			TheInGameUI->addFloatingText(moneyString, &pos, GameMakeColor(255, 0, 0, 255));
 		}
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void CashHackSpecialPower::crc( Xfer *xfer )
+void CashHackSpecialPower::crc(Xfer *xfer)
 {
-
 	// extend base class
-	SpecialPowerModule::crc( xfer );
+	SpecialPowerModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void CashHackSpecialPower::xfer( Xfer *xfer )
+void CashHackSpecialPower::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	SpecialPowerModule::xfer( xfer );
+	SpecialPowerModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CashHackSpecialPower::loadPostProcess( void )
+void CashHackSpecialPower::loadPostProcess(void)
 {
-
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

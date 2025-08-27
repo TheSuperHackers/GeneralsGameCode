@@ -40,17 +40,14 @@
 #ifndef LISTNODE_H
 #define LISTNODE_H
 
-
 /*
 ** Includes
 */
-#include	"assert.h"
-
+#include "assert.h"
 
 #ifdef __BORLANDC__
-#pragma warn -inl
+#pragma warn - inl
 #endif
-
 
 /*
 **	This is a doubly linked list node. Typical use of this node is to derive
@@ -58,120 +55,126 @@
 **	added convenience.
 */
 class GenericList;
-class GenericNode {
-	public:
-		GenericNode(void) : NextNode(0), PrevNode(0) {}
-		virtual ~GenericNode(void) {Unlink();}
-		GenericNode(GenericNode & node) {node.Link(this);}
-		GenericNode & operator = (GenericNode & node) {
-			if (&node != this) {
-				node.Link(this);
-			}
-			return(*this);
+class GenericNode
+{
+public:
+	GenericNode(void) : NextNode(0), PrevNode(0) {}
+	virtual ~GenericNode(void) { Unlink(); }
+	GenericNode(GenericNode &node) { node.Link(this); }
+	GenericNode &operator=(GenericNode &node)
+	{
+		if (&node != this)
+		{
+			node.Link(this);
 		}
+		return (*this);
+	}
 
-		void Unlink(void) {
-			// note that this means that the special generic node at the head
-			// and tail of the list can not be unlinked.  This is done because
-			// the user should never unlink them -- it will destroy the list in
-			// an evil way.
-			if (Is_Valid()) {
-				PrevNode->NextNode = NextNode;
-				NextNode->PrevNode = PrevNode;
-				PrevNode = 0;
-				NextNode = 0;
-			}
+	void Unlink(void)
+	{
+		// note that this means that the special generic node at the head
+		// and tail of the list can not be unlinked.  This is done because
+		// the user should never unlink them -- it will destroy the list in
+		// an evil way.
+		if (Is_Valid())
+		{
+			PrevNode->NextNode = NextNode;
+			NextNode->PrevNode = PrevNode;
+			PrevNode = 0;
+			NextNode = 0;
 		}
+	}
 
-		GenericList * Main_List(void) const {
-			GenericNode const * node = this;
-			while (node->PrevNode) {
-				node = PrevNode;
-			}
-			return((GenericList *)this);
+	GenericList *Main_List(void) const
+	{
+		GenericNode const *node = this;
+		while (node->PrevNode)
+		{
+			node = PrevNode;
 		}
-		void Link(GenericNode * node) {
-			assert(node != (GenericNode *)0);
-			node->Unlink();
-			node->NextNode = NextNode;
-			node->PrevNode = this;
-			if (NextNode) NextNode->PrevNode = node;
-			NextNode = node;
-		}
+		return ((GenericList *)this);
+	}
+	void Link(GenericNode *node)
+	{
+		assert(node != (GenericNode *)0);
+		node->Unlink();
+		node->NextNode = NextNode;
+		node->PrevNode = this;
+		if (NextNode)
+			NextNode->PrevNode = node;
+		NextNode = node;
+	}
 
-		GenericNode * Next(void) const {return(NextNode);}
-		GenericNode * Next_Valid(void) const {
-			return ((NextNode && NextNode->NextNode) ? NextNode : (GenericNode *)0);
-		}
-		GenericNode * Prev(void) const {return(PrevNode);}
-		GenericNode * Prev_Valid(void) const {
-			return ((PrevNode && PrevNode->PrevNode) ? PrevNode : (GenericNode *)0);
-		}
-		bool Is_Valid(void) const {return(this != (GenericNode *)0 && NextNode != (GenericNode *)0 && PrevNode != (GenericNode *)0);}
+	GenericNode *Next(void) const { return (NextNode); }
+	GenericNode *Next_Valid(void) const { return ((NextNode && NextNode->NextNode) ? NextNode : (GenericNode *)0); }
+	GenericNode *Prev(void) const { return (PrevNode); }
+	GenericNode *Prev_Valid(void) const { return ((PrevNode && PrevNode->PrevNode) ? PrevNode : (GenericNode *)0); }
+	bool Is_Valid(void) const
+	{
+		return (this != (GenericNode *)0 && NextNode != (GenericNode *)0 && PrevNode != (GenericNode *)0);
+	}
 
-	protected:
-		GenericNode * NextNode;
-		GenericNode * PrevNode;
+protected:
+	GenericNode *NextNode;
+	GenericNode *PrevNode;
 };
-
 
 /*
 **	This is a generic list handler. It manages N generic nodes. Use the interface class
 **	to the generic list for added convenience.
 */
-class GenericList {
-	public:
-		GenericList(void) {
-			FirstNode.Link(&LastNode);
-		}
+class GenericList
+{
+public:
+	GenericList(void) { FirstNode.Link(&LastNode); }
 
-
-		virtual ~GenericList(void) {
-			while (FirstNode.Next()->Is_Valid()) {
-				FirstNode.Next()->Unlink();
-			}
-		}
-
-		GenericNode * First(void) const {return(FirstNode.Next());}
-		GenericNode * First_Valid(void) const
+	virtual ~GenericList(void)
+	{
+		while (FirstNode.Next()->Is_Valid())
 		{
-			GenericNode *node = FirstNode.Next();
-			return (node->Next() ? node : (GenericNode *)0);
+			FirstNode.Next()->Unlink();
 		}
+	}
 
-		GenericNode * Last(void) const {return(LastNode.Prev());}
-		GenericNode * Last_Valid(void) const
+	GenericNode *First(void) const { return (FirstNode.Next()); }
+	GenericNode *First_Valid(void) const
+	{
+		GenericNode *node = FirstNode.Next();
+		return (node->Next() ? node : (GenericNode *)0);
+	}
+
+	GenericNode *Last(void) const { return (LastNode.Prev()); }
+	GenericNode *Last_Valid(void) const
+	{
+		GenericNode *node = LastNode.Prev();
+		return (node->Prev() ? node : (GenericNode *)0);
+	}
+
+	bool Is_Empty(void) const { return (!FirstNode.Next()->Is_Valid()); }
+	void Add_Head(GenericNode *node) { FirstNode.Link(node); }
+	void Add_Tail(GenericNode *node) { LastNode.Prev()->Link(node); }
+	//		void Delete(void) {while (FirstNode.Next()->Is_Valid()) delete FirstNode.Next();}
+
+	int Get_Valid_Count(void) const
+	{
+		GenericNode *node = First_Valid();
+		int counter = 0;
+		while (node)
 		{
-			GenericNode *node = LastNode.Prev();
-			return (node->Prev() ? node : (GenericNode *)0);
+			counter++;
+			node = node->Next_Valid();
 		}
+		return counter;
+	}
 
-		bool Is_Empty(void) const {return(!FirstNode.Next()->Is_Valid());}
-		void Add_Head(GenericNode * node) {FirstNode.Link(node);}
-		void Add_Tail(GenericNode * node) {LastNode.Prev()->Link(node);}
-//		void Delete(void) {while (FirstNode.Next()->Is_Valid()) delete FirstNode.Next();}
+protected:
+	GenericNode FirstNode;
+	GenericNode LastNode;
 
-		int Get_Valid_Count(void) const
-		{
-			GenericNode * node = First_Valid();
-			int counter = 0;
-			while(node) {
-				counter++;
-				node = node->Next_Valid();
-			}
-			return counter;
-		}
-
-	protected:
-		GenericNode FirstNode;
-		GenericNode LastNode;
-
-	private:
-		GenericList(GenericList & list);
-		GenericList & operator = (GenericList const &);
+private:
+	GenericList(GenericList &list);
+	GenericList &operator=(GenericList const &);
 };
-
-
 
 /*
 **	This node class serves only as an "interface class" for the normal node
@@ -181,63 +184,68 @@ class GenericList {
 **	interface class will work. You can usually ensure this by deriving the
 **	class T object from this node.
 */
-template<class T> class List;
 template<class T>
-class Node : public GenericNode {
-	public:
-		List<T> * Main_List(void) const {return((List<T> *)GenericNode::Main_List());}
-		T Next(void) const {return((T)GenericNode::Next());}
-		T Next_Valid(void) const {return((T)GenericNode::Next_Valid());}
-		T Prev(void) const {return((T)GenericNode::Prev());}
-		T Prev_Valid(void) const {return((T)GenericNode::Prev_Valid());}
-		bool Is_Valid(void) const {return(GenericNode::Is_Valid());}
+class List;
+template<class T>
+class Node : public GenericNode
+{
+public:
+	List<T> *Main_List(void) const { return ((List<T> *)GenericNode::Main_List()); }
+	T Next(void) const { return ((T)GenericNode::Next()); }
+	T Next_Valid(void) const { return ((T)GenericNode::Next_Valid()); }
+	T Prev(void) const { return ((T)GenericNode::Prev()); }
+	T Prev_Valid(void) const { return ((T)GenericNode::Prev_Valid()); }
+	bool Is_Valid(void) const { return (GenericNode::Is_Valid()); }
 };
-
 
 /*
 **	This is an "interface class" for a list of nodes. The rules for the class T object
 **	are the same as the requirements required of the node class.
 */
 template<class T>
-class List : public GenericList {
-	public:
-		List(void) {};
+class List : public GenericList
+{
+public:
+	List(void) {};
 
-		T First(void) const {return((T)GenericList::First());}
-		T First_Valid(void) const {return((T)GenericList::First_Valid());}
-		T Last(void) const {return((T)GenericList::Last());}
-		T Last_Valid(void) const {return((T)GenericList::Last_Valid());}
-		void Delete(void) {while (First()->Is_Valid()) delete First();}
+	T First(void) const { return ((T)GenericList::First()); }
+	T First_Valid(void) const { return ((T)GenericList::First_Valid()); }
+	T Last(void) const { return ((T)GenericList::Last()); }
+	T Last_Valid(void) const { return ((T)GenericList::Last_Valid()); }
+	void Delete(void)
+	{
+		while (First()->Is_Valid())
+			delete First();
+	}
 
-	private:
-		List(List<T> const & rvalue);
-		List<T> operator = (List<T> const & rvalue);
+private:
+	List(List<T> const &rvalue);
+	List<T> operator=(List<T> const &rvalue);
 };
-
 
 /*
 
-  The DataNode template class allows you to have a node with a peice of data associated with it.
-  Commonly used to maintain a list of objects which are not derived from GenericNode.
+	The DataNode template class allows you to have a node with a peice of data associated with it.
+	Commonly used to maintain a list of objects which are not derived from GenericNode.
 		- EHC
 */
 
 template<class T>
-class DataNode : public GenericNode {
+class DataNode : public GenericNode
+{
 	T Value;
+
 public:
 	DataNode() {};
 	DataNode(T value) { Set(value); };
 	void Set(T value) { Value = value; };
 	T Get() const { return Value; };
 
-	DataNode<T> * Next(void) const { return (DataNode<T> *)GenericNode::Next(); }
-	DataNode<T> * Next_Valid(void) const { return (DataNode<T> *)GenericNode::Next_Valid(); }
-	DataNode<T> * Prev(void) const { return (DataNode<T> *)GenericNode::Prev(); }
-	DataNode<T> * Prev_Valid(void) const { return (DataNode<T> *)GenericNode::Prev_Valid(); }
+	DataNode<T> *Next(void) const { return (DataNode<T> *)GenericNode::Next(); }
+	DataNode<T> *Next_Valid(void) const { return (DataNode<T> *)GenericNode::Next_Valid(); }
+	DataNode<T> *Prev(void) const { return (DataNode<T> *)GenericNode::Prev(); }
+	DataNode<T> *Prev_Valid(void) const { return (DataNode<T> *)GenericNode::Prev_Valid(); }
 };
-
-
 
 /*
 
@@ -246,15 +254,20 @@ public:
 		- EHC
 */
 template<class C, class D>
-class ContextDataNode : public DataNode<D> {
+class ContextDataNode : public DataNode<D>
+{
 	C Context;
+
 public:
 	ContextDataNode() {};
-	ContextDataNode(C context, D data) { Set_Context(context); Set(data); }
+	ContextDataNode(C context, D data)
+	{
+		Set_Context(context);
+		Set(data);
+	}
 	void Set_Context(C context) { Context = context; };
 	C Get_Context() { return Context; };
 };
-
 
 /*
 **	A SafeContextDataNode requires the user to supply context and
@@ -262,10 +275,11 @@ public:
 ** uninitialized ContextDataNodes. -DRM
 */
 template<class C, class D>
-class SafeContextDataNode : public ContextDataNode<C,D>
+class SafeContextDataNode : public ContextDataNode<C, D>
 {
 public:
-	SafeContextDataNode(C context, D data) : ContextDataNode<C,D>(context, data) { }
+	SafeContextDataNode(C context, D data) : ContextDataNode<C, D>(context, data) {}
+
 private:
 	// if the compiler complains that it can't access this constructor,
 	// you are trying to construct a SafeContextDataNode without providing
@@ -276,7 +290,6 @@ private:
 	// the purpose of the SafeContextDataNode. -DRM
 	SafeContextDataNode();
 };
-
 
 /*
 	The DoubleNode class has double everything a DataNode has!
@@ -302,8 +315,13 @@ private:
 	Planet mode.
 */
 template<class PRIMARY, class SECONDARY>
-class DoubleNode {
-	void Initialize() { Primary.Set(this); Secondary.Set(this); };
+class DoubleNode
+{
+	void Initialize()
+	{
+		Primary.Set(this);
+		Secondary.Set(this);
+	};
 	PRIMARY PrimaryValue;
 	SECONDARY SecondaryValue;
 
@@ -314,13 +332,21 @@ public:
 	DataNode<Type *> Secondary;
 
 	DoubleNode() { Initialize(); };
-	DoubleNode(PRIMARY primary, SECONDARY secondary) { Initialize(); Set_Primary(primary); Set_Secondary(secondary); };
+	DoubleNode(PRIMARY primary, SECONDARY secondary)
+	{
+		Initialize();
+		Set_Primary(primary);
+		Set_Secondary(secondary);
+	};
 	void Set_Primary(PRIMARY value) { PrimaryValue = value; };
 	void Set_Secondary(SECONDARY value) { SecondaryValue = value; };
 	PRIMARY Get_Primary() { return PrimaryValue; };
 	SECONDARY Get_Secondary() { return SecondaryValue; };
-	void Unlink() { Primary.Unlink(); Secondary.Unlink(); };
+	void Unlink()
+	{
+		Primary.Unlink();
+		Secondary.Unlink();
+	};
 };
-
 
 #endif

@@ -37,9 +37,10 @@ public:
 	const Int m_x, m_y;
 	Real m_len; ///< Length of texture coord on this node.
 	CProcessNode *m_next;
+
 public:
-	CProcessNode(Int x, Int y):m_x(x),m_y(y),m_next(NULL),m_len(0) {};
-	~CProcessNode(void) { };
+	CProcessNode(Int x, Int y) : m_x(x), m_y(y), m_next(NULL), m_len(0) {};
+	~CProcessNode(void) {};
 };
 
 #define MAX_TILES_PER_CLASS 100
@@ -59,14 +60,13 @@ typedef struct
 	TerrainType *terrainType;
 } TGlobalTextureClass;
 
-
 #define NUM_ALPHA_TILES 8
 
 class WorldHeightMapEdit : public WorldHeightMap
 {
 protected:
-	Bool m_warnTooManyTex;  ///< warning message flag.
-	Bool m_warnTooManyBlend;  ///< warning message flag.
+	Bool m_warnTooManyTex; ///< warning message flag.
+	Bool m_warnTooManyBlend; ///< warning message flag.
 
 	// Texture classes.  There is one texture class for each bitmap read in.
 	// A class may have more than one tile.  For example, if the grass bitmap is
@@ -77,31 +77,36 @@ protected:
 protected:
 	static void loadBitmap(char *path, const char *uiName);
 	static void loadDirectoryOfImages(const char *path);
-	static void loadImagesFromTerrainType( TerrainType *terrain );
+	static void loadImagesFromTerrainType(TerrainType *terrain);
 	static void loadBaseImages(void);
 	Int allocateTiles(Int textureClass);
 	Int allocateEdgeTiles(Int textureClass);
 	void blendToThisClass(Int xIndex, Int yIndex, Int textureClass, Int edgeClass);
-	void blendSpecificTiles(Int xIndex, Int yIndex, Int srcXIndex, Int srcYIndex,
-									Int curTileNdx, Int blendTileNdx, Bool longDiagonal, Int edgeClass);
+	void blendSpecificTiles(
+			Int xIndex,
+			Int yIndex,
+			Int srcXIndex,
+			Int srcYIndex,
+			Int curTileNdx,
+			Int blendTileNdx,
+			Bool longDiagonal,
+			Int edgeClass);
 	Int findOrCreateBlendTile(TBlendTileInfo *pBlendInfo);
 	Int addCliffInfo(TCliffInfo *pCliffInfo);
-	Int getTileIndexFromTerrainType( TerrainType *terrain );
+	Int getTileIndexFromTerrainType(TerrainType *terrain);
 	Int getTileNdxForClass(Int xIndex, Int yIndex, Int textureClass);
 	Int getBlendTileNdxForClass(Int xIndex, Int yIndex, Int textureClass);
 	Int getTextureClassFromNdx(Int tileNdx);
 	void getTexClassNeighbors(Int xIndex, Int yIndex, Int textureClass, Int *pSideCount, Int *pTotalCount);
-	void updateForAdjacentCliffs(Int xIndex, Int yIndex,
-								UnsignedByte *pProcessed, TCliffInfo &cliffInfo);
+	void updateForAdjacentCliffs(Int xIndex, Int yIndex, UnsignedByte *pProcessed, TCliffInfo &cliffInfo);
 	Bool adjustForTiling(TCliffInfo &cliffInfo, Real textureWidth);
-	void updateFlatCellForAdjacentCliffs(Int xIndex, Int yIndex,
-								Int curTileClass, UnsignedByte *pProcessed=NULL);
+	void updateFlatCellForAdjacentCliffs(Int xIndex, Int yIndex, Int curTileClass, UnsignedByte *pProcessed = NULL);
 
 public: // construction
 	WorldHeightMapEdit(Int xExtent, Int yExtent, UnsignedByte initialHeight, Int border); ///< create.
-	WorldHeightMapEdit(WorldHeightMapEdit *pThis);								///< duplicate.
-	WorldHeightMapEdit(ChunkInputStream *pStrm);											///< read from file.
-	~WorldHeightMapEdit(void);													    ///< destroy.
+	WorldHeightMapEdit(WorldHeightMapEdit *pThis); ///< duplicate.
+	WorldHeightMapEdit(ChunkInputStream *pStrm); ///< read from file.
+	~WorldHeightMapEdit(void); ///< destroy.
 
 	void saveToFile(DataChunkOutput &chunkWriter);
 	WorldHeightMapEdit *duplicate(void);
@@ -110,29 +115,33 @@ public: // construction
 	static void shutdown(void);
 
 public: /// Status methods.
-	void clearStatus(void) {m_warnTooManyTex = false;m_warnTooManyBlend = false;};
-	Bool tooManyTextures(void) {return m_warnTooManyTex;};
-	Bool tooManyBlends(void) {return m_warnTooManyBlend;};
-	Bool canFitTexture(Int textureClass);  ///< Returns true if we can fit this texture.
+	void clearStatus(void)
+	{
+		m_warnTooManyTex = false;
+		m_warnTooManyBlend = false;
+	};
+	Bool tooManyTextures(void) { return m_warnTooManyTex; };
+	Bool tooManyBlends(void) { return m_warnTooManyBlend; };
+	Bool canFitTexture(Int textureClass); ///< Returns true if we can fit this texture.
 
 public: // Editing methods.
 	static UnsignedByte *getPointerToClassTileData(Int texClass);
 
 	void blendTile(Int xIndex, Int yIndex, Int srcXIndex, Int srcYIndex, Int srcClass, Int edgeClass);
 	void autoBlendOut(Int xIndex, Int yIndex, Int edgeIndex = -1);
-	Int getTextureClass(Int xIndex, Int yIndex, Bool baseClass=false);
+	Int getTextureClass(Int xIndex, Int yIndex, Bool baseClass = false);
 	void setHeight(Int xIndex, Int yIndex, UnsignedByte height);
-	void setCliff(Int xIndex, Int yIndex, Bool impassable) {setCliffState(xIndex, yIndex, impassable);}
+	void setCliff(Int xIndex, Int yIndex, Bool impassable) { setCliffState(xIndex, yIndex, impassable); }
 	Bool setTileNdx(Int xIndex, Int yIndex, Int textureClass, Bool singleTile);
 	Bool floodFill(Int xIndex, Int yIndex, Int textureClass, Bool doReplace);
-	static Int getNumTexClasses(void) {return m_numGlobalTextureClasses;};
-	static AsciiString getTexClassName(int ndx) {return m_globalTextureClasses[ndx].name;}
-	static AsciiString getTexClassUiName(int ndx) ;
-	static Int getTexClassNumTiles(int ndx) {return m_globalTextureClasses[ndx].numTiles;}
-	static Int getTexClassIsBlendEdge(int ndx) {return m_globalTextureClasses[ndx].isBlendEdgeTile;}
+	static Int getNumTexClasses(void) { return m_numGlobalTextureClasses; };
+	static AsciiString getTexClassName(int ndx) { return m_globalTextureClasses[ndx].name; }
+	static AsciiString getTexClassUiName(int ndx);
+	static Int getTexClassNumTiles(int ndx) { return m_globalTextureClasses[ndx].numTiles; }
+	static Int getTexClassIsBlendEdge(int ndx) { return m_globalTextureClasses[ndx].isBlendEdgeTile; }
 
-	void addObject(MapObject *pMapObj);  ///< Adds a map object to the front of the list.
-	void removeFirstObject(void);	 ///< Removes the first map object from the list.
+	void addObject(MapObject *pMapObj); ///< Adds a map object to the front of the list.
+	void removeFirstObject(void); ///< Removes the first map object from the list.
 
 	Bool isTexClassUsed(Int textureClass);
 	Int getFirstTile(Int textureClass);
@@ -141,13 +150,20 @@ public: // Editing methods.
 
 	void showTileStatusInfo(void); ///< pops up a dialog box with tile mem usage.
 
-
 	Bool selectDuplicates(void); ///< Selects any dupicate map objects.
 	Bool selectSimilar(void); ///< Selects any dupicate map objects.
 	Bool selectInvalidTeam(void); ///< Selects any objects with invalid teams.
 
-	Bool resize(Int newXSize, Int newYSize, Int newHeight, Int newBorder, Bool anchorTop, Bool anchorBottom,
-							Bool anchorLeft, Bool anchorRight, Coord3D *pObjOffset);
+	Bool resize(
+			Int newXSize,
+			Int newYSize,
+			Int newHeight,
+			Int newBorder,
+			Bool anchorTop,
+			Bool anchorBottom,
+			Bool anchorLeft,
+			Bool anchorRight,
+			Coord3D *pObjOffset);
 	Bool remapTextures(void); ///< returns true if the operation had an effect.
 	void reloadTextures(void); ///< Reloads textures from disk.
 	void resetResources(void); ///< Releases textures in preparation for device reset.
@@ -158,9 +174,9 @@ public: // Editing methods.
 	Bool doCliffAdjustment(Int xIndex, Int yIndex);
 	Bool removeCliffMapping(void);
 
-	Int getNumBoundaries(void) const ;
-	void getBoundary(Int ndx, ICoord2D* border) const;
-	void addBoundary(ICoord2D* boundaryToAdd);
+	Int getNumBoundaries(void) const;
+	void getBoundary(Int ndx, ICoord2D *border) const;
+	void addBoundary(ICoord2D *boundaryToAdd);
 	void changeBoundary(Int ndx, ICoord2D *border);
 	void removeLastBoundary(void);
 

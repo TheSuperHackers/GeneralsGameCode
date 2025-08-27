@@ -30,7 +30,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-void DebugLog( const char *fmt, ... );
+void DebugLog(const char *fmt, ...);
 #ifdef __cplusplus
 }
 #endif
@@ -38,9 +38,10 @@ void DebugLog( const char *fmt, ... );
 
 #else // DEBUG
 
-#define DEBUG_LOG(x) {}
+#define DEBUG_LOG(x) \
+	{ \
+	}
 
 #endif // DEBUG
 
 #endif // __DEBUG_H__
-

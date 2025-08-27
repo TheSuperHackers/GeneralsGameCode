@@ -31,12 +31,10 @@
 
 IMPLEMENT_DYNCREATE(ScriptActionsTrue, CPropertyPage)
 
-ScriptActionsTrue::ScriptActionsTrue() : CPropertyPage(ScriptActionsTrue::IDD),
-m_action(NULL),
-m_index(0)
+ScriptActionsTrue::ScriptActionsTrue() : CPropertyPage(ScriptActionsTrue::IDD), m_action(NULL), m_index(0)
 {
 	//{{AFX_DATA_INIT(ScriptActionsTrue)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
@@ -44,27 +42,26 @@ ScriptActionsTrue::~ScriptActionsTrue()
 {
 }
 
-void ScriptActionsTrue::DoDataExchange(CDataExchange* pDX)
+void ScriptActionsTrue::DoDataExchange(CDataExchange *pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(ScriptActionsTrue)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(ScriptActionsTrue, CPropertyPage)
-	//{{AFX_MSG_MAP(ScriptActionsTrue)
-	ON_BN_CLICKED(IDC_EDIT, OnEditAction)
-	ON_LBN_SELCHANGE(IDC_ACTION_LIST, OnSelchangeActionList)
-	ON_LBN_DBLCLK(IDC_ACTION_LIST, OnDblclkActionList)
-	ON_BN_CLICKED(IDC_NEW, OnNew)
-	ON_BN_CLICKED(IDC_DELETE, OnDelete)
-	ON_BN_CLICKED(IDC_COPY, OnCopy)
-	ON_BN_CLICKED(IDC_MOVE_DOWN, OnMoveDown)
-	ON_BN_CLICKED(IDC_MOVE_UP, OnMoveUp)
-	ON_EN_CHANGE(IDC_EDIT_COMMENT, OnChangeEditComment)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(ScriptActionsTrue)
+ON_BN_CLICKED(IDC_EDIT, OnEditAction)
+ON_LBN_SELCHANGE(IDC_ACTION_LIST, OnSelchangeActionList)
+ON_LBN_DBLCLK(IDC_ACTION_LIST, OnDblclkActionList)
+ON_BN_CLICKED(IDC_NEW, OnNew)
+ON_BN_CLICKED(IDC_DELETE, OnDelete)
+ON_BN_CLICKED(IDC_COPY, OnCopy)
+ON_BN_CLICKED(IDC_MOVE_DOWN, OnMoveDown)
+ON_BN_CLICKED(IDC_MOVE_UP, OnMoveUp)
+ON_EN_CHANGE(IDC_EDIT_COMMENT, OnChangeEditComment)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -76,8 +73,8 @@ BOOL ScriptActionsTrue::OnInitDialog()
 	CWnd *pWnd = GetDlgItem(IDC_EDIT_COMMENT);
 	pWnd->SetWindowText(m_script->getActionComment().str());
 	loadList();
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+							 // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void ScriptActionsTrue::loadList(void)
@@ -86,12 +83,15 @@ void ScriptActionsTrue::loadList(void)
 	ScriptDialog::updateScriptWarning(m_script);
 	CListBox *pList = (CListBox *)GetDlgItem(IDC_ACTION_LIST);
 	Int count = 0;
-	if (pList) {
+	if (pList)
+	{
 		pList->ResetContent();
 		ScriptAction *pAction = m_script->getAction();
-		while (pAction) {
+		while (pAction)
+		{
 			AsciiString astr = pAction->getUiText();
-			if (astr.isEmpty()) {
+			if (astr.isEmpty())
+			{
 				astr = "Invalid Action";
 			}
 
@@ -99,19 +99,20 @@ void ScriptActionsTrue::loadList(void)
 			pAction = pAction->getNext();
 			count++;
 		}
-		if (count>0 && count<=m_index) {
-			m_index = count-1;
+		if (count > 0 && count <= m_index)
+		{
+			m_index = count - 1;
 		}
 		pList->SetCurSel(m_index);
 		OnSelchangeActionList();
 	}
 }
 
-
 void ScriptActionsTrue::OnEditAction()
 {
 	CListBox *pList = (CListBox *)GetDlgItem(IDC_ACTION_LIST);
-	if (m_action == NULL) {
+	if (m_action == NULL)
+	{
 		return;
 	}
 	EditAction cDlg;
@@ -126,38 +127,41 @@ void ScriptActionsTrue::OnEditAction()
 void ScriptActionsTrue::enableUI()
 {
 	CWnd *pWnd = GetDlgItem(IDC_EDIT);
-	pWnd->EnableWindow(m_action!=NULL);
+	pWnd->EnableWindow(m_action != NULL);
 
 	pWnd = GetDlgItem(IDC_COPY);
-	pWnd->EnableWindow(m_action!=NULL);
+	pWnd->EnableWindow(m_action != NULL);
 
 	pWnd = GetDlgItem(IDC_DELETE);
-	pWnd->EnableWindow(m_action!=NULL);
+	pWnd->EnableWindow(m_action != NULL);
 
 	pWnd = GetDlgItem(IDC_MOVE_DOWN);
 	pWnd->EnableWindow(m_action && m_action->getNext());
 
 	pWnd = GetDlgItem(IDC_MOVE_UP);
-	pWnd->EnableWindow(m_action && m_index>0);
-
+	pWnd->EnableWindow(m_action && m_index > 0);
 }
 
 void ScriptActionsTrue::OnSelchangeActionList()
 {
 	m_action = NULL;
 	CListBox *pList = (CListBox *)GetDlgItem(IDC_ACTION_LIST);
-	if (pList) {
+	if (pList)
+	{
 		Int count = pList->GetCurSel();
 		m_index = count;
-		if (count<0) {
+		if (count < 0)
+		{
 			enableUI();
 			return;
 		}
 		count++;
 		m_action = m_script->getAction();
-		while (m_action) {
+		while (m_action)
+		{
 			count--;
-			if (count==0) {
+			if (count == 0)
+			{
 				enableUI(); // Enable buttons based on selection.
 				return;
 			}
@@ -172,31 +176,36 @@ void ScriptActionsTrue::OnDblclkActionList()
 	OnEditAction();
 }
 
-
-
 void ScriptActionsTrue::OnNew()
 {
-	ScriptAction *pAct = newInstance( ScriptAction)(ScriptAction::DEBUG_MESSAGE_BOX);
+	ScriptAction *pAct = newInstance(ScriptAction)(ScriptAction::DEBUG_MESSAGE_BOX);
 	EditAction aDlg;
 	aDlg.setAction(pAct);
-	if (IDOK==aDlg.DoModal()) {
-		if (m_action) {
+	if (IDOK == aDlg.DoModal())
+	{
+		if (m_action)
+		{
 			pAct->setNextAction(m_action->getNext());
 			m_action->setNextAction(pAct);
-		} else {
+		}
+		else
+		{
 			pAct->setNextAction(m_script->getAction());
 			m_script->setAction(pAct);
 		}
 		m_index++;
 		loadList();
-	} else {
+	}
+	else
+	{
 		deleteInstance(pAct);
 	}
 }
 
 void ScriptActionsTrue::OnDelete()
 {
-	if (m_action) {
+	if (m_action)
+	{
 		m_script->deleteAction(m_action);
 		loadList();
 	}
@@ -204,7 +213,8 @@ void ScriptActionsTrue::OnDelete()
 
 void ScriptActionsTrue::OnCopy()
 {
-	if (m_action) {
+	if (m_action)
+	{
 		ScriptAction *pCopy = m_action->duplicate();
 		pCopy->setNextAction(m_action->getNext());
 		m_action->setNextAction(pCopy);
@@ -215,21 +225,27 @@ void ScriptActionsTrue::OnCopy()
 
 Bool ScriptActionsTrue::doMoveDown()
 {
-	if (m_action && m_action->getNext()) {
+	if (m_action && m_action->getNext())
+	{
 		ScriptAction *pNext = m_action->getNext();
 		ScriptAction *pCur = m_script->getAction();
 		ScriptAction *pPrev = NULL;
-		while (pCur != m_action) {
+		while (pCur != m_action)
+		{
 			pPrev = pCur;
 			pCur = pCur->getNext();
 		}
 		DEBUG_ASSERTCRASH(pCur, ("Didn't find action in list."));
-		if (!pCur) return false;
-		if (pPrev) {
+		if (!pCur)
+			return false;
+		if (pPrev)
+		{
 			pPrev->setNextAction(pNext);
 			pCur->setNextAction(pNext->getNext());
 			pNext->setNextAction(pCur);
-		} else {
+		}
+		else
+		{
 			DEBUG_ASSERTCRASH(m_action == m_script->getAction(), ("Logic error."));
 			pCur->setNextAction(pNext->getNext());
 			pNext->setNextAction(pCur);
@@ -242,7 +258,8 @@ Bool ScriptActionsTrue::doMoveDown()
 
 void ScriptActionsTrue::OnMoveDown()
 {
-	if (doMoveDown()) {
+	if (doMoveDown())
+	{
 		m_index++;
 		loadList();
 	}
@@ -250,16 +267,20 @@ void ScriptActionsTrue::OnMoveDown()
 
 void ScriptActionsTrue::OnMoveUp()
 {
-	if (m_action && m_index>0) {
-//		ScriptAction *pNext = m_action;
+	if (m_action && m_index > 0)
+	{
+		//		ScriptAction *pNext = m_action;
 		ScriptAction *pPrev = m_script->getAction();
-		while (pPrev->getNext() != m_action) {
+		while (pPrev->getNext() != m_action)
+		{
 			pPrev = pPrev->getNext();
 		}
-		if (pPrev) {
+		if (pPrev)
+		{
 			m_action = pPrev;
 			m_index--;
-			if (doMoveDown()) {
+			if (doMoveDown())
+			{
 				loadList();
 			}
 		}

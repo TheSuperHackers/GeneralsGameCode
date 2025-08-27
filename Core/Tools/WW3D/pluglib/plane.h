@@ -51,49 +51,55 @@
 class PlaneClass
 {
 public:
+	Vector3 N;
+	float D;
 
-	Vector3	N;
-	float		D;
-
-	PlaneClass(void) : N(0.0f,0.0f,1.0f), D(0.0f) { }
-	PlaneClass(float a,float b,float c,float d) : N(a,b,c),D(d) { }
-	PlaneClass(const Vector3 & normal,float dist) : N(normal), D(dist) { }
+	PlaneClass(void) : N(0.0f, 0.0f, 1.0f), D(0.0f) {}
+	PlaneClass(float a, float b, float c, float d) : N(a, b, c), D(d) {}
+	PlaneClass(const Vector3 &normal, float dist) : N(normal), D(dist) {}
 
 	// Create a plane given the normal and a point on the plane
-	PlaneClass(const Vector3 & normal,const Vector3 & point);
+	PlaneClass(const Vector3 &normal, const Vector3 &point);
 
 	// Create a plane out of three points, ordered according to a right-hand convention.
-	PlaneClass(const Vector3 & point1, const Vector3 & point2, const Vector3 & point3);
+	PlaneClass(const Vector3 &point1, const Vector3 &point2, const Vector3 &point3);
 
-	void Set(float a,float b,float c,float d) { N[0] = a; N[1] = b; N[2] = c; D = d; }
+	void Set(float a, float b, float c, float d)
+	{
+		N[0] = a;
+		N[1] = b;
+		N[2] = c;
+		D = d;
+	}
 };
 
-inline PlaneClass::PlaneClass(const Vector3 & normal,const Vector3 & point)
+inline PlaneClass::PlaneClass(const Vector3 &normal, const Vector3 &point)
 {
 	N = normal;
-	D = Vector3::Dot_Product(normal , point);
+	D = Vector3::Dot_Product(normal, point);
 }
 
-inline PlaneClass::PlaneClass(const Vector3 & point1, const Vector3 & point2, const Vector3 & point3)
+inline PlaneClass::PlaneClass(const Vector3 &point1, const Vector3 &point2, const Vector3 &point3)
 {
 	N = Vector3::Cross_Product((point2 - point1), (point3 - point1));
-	if (N != Vector3(0.0f, 0.0f, 0.0f)) {
+	if (N != Vector3(0.0f, 0.0f, 0.0f))
+	{
 		// Points are not colinear. Normalize N and calculate D.
 		N.Normalize();
 		D = N * point1;
-	} else {
+	}
+	else
+	{
 		// They are colinear - return default plane (constructors can't fail).
 		N = Vector3(0.0f, 0.0f, 1.0f);
 		D = 0.0f;
 	}
 }
 
-inline bool In_Front(const Vector3 & point,const PlaneClass & plane)
+inline bool In_Front(const Vector3 &point, const PlaneClass &plane)
 {
 	double dist = point * plane.N;
 	return (dist > plane.D);
 }
-
-
 
 #endif /*PLANE_H*/

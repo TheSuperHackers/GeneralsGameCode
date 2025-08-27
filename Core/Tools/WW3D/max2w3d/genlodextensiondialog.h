@@ -52,43 +52,35 @@ class ISpinnerControl;
 class GenLodExtensionDialogClass
 {
 public:
-
-	GenLodExtensionDialogClass(Interface * maxinterface);
+	GenLodExtensionDialogClass(Interface *maxinterface);
 	~GenLodExtensionDialogClass();
 
 	struct OptionsStruct
 	{
-		OptionsStruct(void) : LodIndex(0)
-		{
-		}
+		OptionsStruct(void) : LodIndex(0) {}
 
 		// name options
-		int		LodIndex;
+		int LodIndex;
 	};
 
-	bool Get_Options(OptionsStruct * options);
-	bool Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM);
+	bool Get_Options(OptionsStruct *options);
+	bool Dialog_Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM);
 
 private:
-
 	enum
 	{
-		MIN_LOD_INDEX				= 0,
-		MAX_LOD_INDEX				= 99,
-		INITIAL_LOD_INDEX			= 0,
+		MIN_LOD_INDEX = 0,
+		MAX_LOD_INDEX = 99,
+		INITIAL_LOD_INDEX = 0,
 	};
 
-	HWND								Hwnd;
+	HWND Hwnd;
 
-	OptionsStruct *				Options;
-	Interface *						MaxInterface;
-	ISpinnerControl *				LodIndexSpin;
+	OptionsStruct *Options;
+	Interface *MaxInterface;
+	ISpinnerControl *LodIndexSpin;
 
-	friend BOOL CALLBACK			_gen_lod_ext_dialog_proc(HWND Hwnd,UINT message,WPARAM wParam,LPARAM lParam);
-
+	friend BOOL CALLBACK _gen_lod_ext_dialog_proc(HWND Hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
 
-
-
-
-#endif //GENLODEXTENSIONDIALOG_H
+#endif // GENLODEXTENSIONDIALOG_H

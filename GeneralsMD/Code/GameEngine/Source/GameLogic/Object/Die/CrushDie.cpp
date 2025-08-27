@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -46,15 +46,15 @@
 // Figure out which crush point was hit so the correct crushed object can be swapped in
 
 // Figure out which crush point was hit so the correct crushed object can be swapped in
-static CrushEnum crushLocationCheck( Object* crusherObject, Object* victimObject )
+static CrushEnum crushLocationCheck(Object *crusherObject, Object *victimObject)
 {
-	if( (crusherObject == NULL)  ||  (victimObject == NULL) )
+	if ((crusherObject == NULL) || (victimObject == NULL))
 		return NO_CRUSH;
 
 	Bool frontCrushed = victimObject->getBodyModule()->getFrontCrushed();
 	Bool backCrushed = victimObject->getBodyModule()->getBackCrushed();
 
-//	const Coord3D *dir = crusherObject->getUnitDirectionVector2D();
+	//	const Coord3D *dir = crusherObject->getUnitDirectionVector2D();
 	const Coord3D *otherDir = victimObject->getUnitDirectionVector2D();
 	const Coord3D *pos = crusherObject->getPosition();
 	const Coord3D *otherPos = victimObject->getPosition();
@@ -75,21 +75,21 @@ static CrushEnum crushLocationCheck( Object* crusherObject, Object* victimObject
 	// PhysicsCollide has already done the logic of which point to smoosh and waited until we crossed that point
 	// so at this point we just need to know which crush point is closest.
 
-	if( !frontCrushed && !backCrushed )
+	if (!frontCrushed && !backCrushed)
 	{
 		// Check the middle crush point
-		comparisonCoord = *otherPos;//copy so can move to each crush point
+		comparisonCoord = *otherPos; // copy so can move to each crush point
 
 		dx = comparisonCoord.x - pos->x;
 		dy = comparisonCoord.y - pos->y;
-		Real dist = (Real)( dx*dx + dy*dy );
+		Real dist = (Real)(dx * dx + dy * dy);
 
-		//otherwise we want to make sure we get the closest valid crush point
+		// otherwise we want to make sure we get the closest valid crush point
 		retval = TOTAL_CRUSH;
 		bestDist = dist;
 	}
 
-	if( !frontCrushed )
+	if (!frontCrushed)
 	{
 		// Check the front point.
 		comparisonCoord = *otherPos;
@@ -98,11 +98,11 @@ static CrushEnum crushLocationCheck( Object* crusherObject, Object* victimObject
 
 		dx = comparisonCoord.x - pos->x;
 		dy = comparisonCoord.y - pos->y;
-		Real dist = (Real)( dx*dx + dy*dy );
+		Real dist = (Real)(dx * dx + dy * dy);
 
-		if( dist < bestDist )//closer
+		if (dist < bestDist) // closer
 		{
-			if( backCrushed )
+			if (backCrushed)
 			{
 				retval = TOTAL_CRUSH;
 				bestDist = dist;
@@ -115,7 +115,7 @@ static CrushEnum crushLocationCheck( Object* crusherObject, Object* victimObject
 		}
 	}
 
-	if( !backCrushed )
+	if (!backCrushed)
 	{
 		// Check back point
 		comparisonCoord = *otherPos;
@@ -124,11 +124,11 @@ static CrushEnum crushLocationCheck( Object* crusherObject, Object* victimObject
 
 		dx = comparisonCoord.x - pos->x;
 		dy = comparisonCoord.y - pos->y;
-		Real dist = (Real)( dx*dx + dy*dy );
+		Real dist = (Real)(dx * dx + dy * dy);
 
-		if( dist < bestDist )//closer
+		if (dist < bestDist) // closer
 		{
-			if( frontCrushed )
+			if (frontCrushed)
 			{
 				retval = TOTAL_CRUSH;
 				bestDist = dist;
@@ -146,21 +146,20 @@ static CrushEnum crushLocationCheck( Object* crusherObject, Object* victimObject
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CrushDie::CrushDie( Thing *thing, const ModuleData* moduleData ) : DieModule( thing, moduleData )
+CrushDie::CrushDie(Thing *thing, const ModuleData *moduleData) : DieModule(thing, moduleData)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CrushDie::~CrushDie( void )
+CrushDie::~CrushDie(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** The die callback. */
 //-------------------------------------------------------------------------------------------------
-void CrushDie::onDie( const DamageInfo * damageInfo )
+void CrushDie::onDie(const DamageInfo *damageInfo)
 {
 	if (!isDieApplicable(damageInfo))
 		return;
@@ -169,8 +168,8 @@ void CrushDie::onDie( const DamageInfo * damageInfo )
 	if (damageInfo->in.m_damageType != DAMAGE_CRUSH)
 		return;
 
-	Object *damageDealer = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
-	DEBUG_ASSERTCRASH(damageDealer,("You must have a damageDealer source for this effect"));
+	Object *damageDealer = TheGameLogic->findObjectByID(damageInfo->in.m_sourceID);
+	DEBUG_ASSERTCRASH(damageDealer, ("You must have a damageDealer source for this effect"));
 
 	CrushEnum crushType = damageDealer ? crushLocationCheck(damageDealer, getObject()) : TOTAL_CRUSH;
 
@@ -179,7 +178,8 @@ void CrushDie::onDie( const DamageInfo * damageInfo )
 		if (getCrushDieModuleData()->m_crushSounds[crushType].getEventName().isEmpty() == false)
 		{
 			// be sure that 0==never, 100==always
-			// MDC: moving to GameLogicRandomValue.  This does not need to be synced, but having it so makes searches *so* much nicer.
+			// MDC: moving to GameLogicRandomValue.  This does not need to be synced, but having it so makes searches *so* much
+			// nicer.
 			if (GameLogicRandomValue(0, 99) < getCrushDieModuleData()->m_crushSoundPercent[crushType])
 			{
 				AudioEventRTS crushSound(getCrushDieModuleData()->m_crushSounds[crushType]);
@@ -200,8 +200,8 @@ void CrushDie::onDie( const DamageInfo * damageInfo )
 				newCrushed.set(MODELCONDITION_BACKCRUSHED, crushType == TOTAL_CRUSH || crushType == BACK_END_CRUSH);
 
 				me->getDrawable()->clearAndSetModelConditionFlags(
-					MAKE_MODELCONDITION_MASK2(MODELCONDITION_BACKCRUSHED, MODELCONDITION_FRONTCRUSHED),
-					newCrushed);
+						MAKE_MODELCONDITION_MASK2(MODELCONDITION_BACKCRUSHED, MODELCONDITION_FRONTCRUSHED),
+						newCrushed);
 			}
 		}
 	}
@@ -210,39 +210,36 @@ void CrushDie::onDie( const DamageInfo * damageInfo )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void CrushDie::crc( Xfer *xfer )
+void CrushDie::crc(Xfer *xfer)
 {
-
 	// extend base class
-	DieModule::crc( xfer );
+	DieModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void CrushDie::xfer( Xfer *xfer )
+void CrushDie::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DieModule::xfer( xfer );
+	DieModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CrushDie::loadPostProcess( void )
+void CrushDie::loadPostProcess(void)
 {
-
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

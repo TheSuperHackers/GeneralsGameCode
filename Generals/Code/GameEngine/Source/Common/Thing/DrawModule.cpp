@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 // FILE: DrawModule.cpp ///////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, September 2002
 // Desc:   Draw module base class
@@ -36,40 +35,36 @@
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void DrawModule::crc( Xfer *xfer )
+void DrawModule::crc(Xfer *xfer)
 {
-
 	// extend base class
-	DrawableModule::crc( xfer );
+	DrawableModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info;
-	* 1: Initial version */
+ * Version Info;
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void DrawModule::xfer( Xfer *xfer )
+void DrawModule::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DrawableModule::xfer( xfer );
+	DrawableModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DrawModule::loadPostProcess( void )
+void DrawModule::loadPostProcess(void)
 {
-
 	// extend base class
 	DrawableModule::loadPostProcess();
 
-}  // end loadPostProcess
-
+} // end loadPostProcess

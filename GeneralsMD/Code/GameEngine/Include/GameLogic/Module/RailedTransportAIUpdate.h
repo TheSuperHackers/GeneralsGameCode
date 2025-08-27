@@ -42,61 +42,55 @@ class Waypoint;
 // ------------------------------------------------------------------------------------------------
 class RailedTransportAIUpdateModuleData : public AIUpdateModuleData
 {
-
 public:
+	RailedTransportAIUpdateModuleData(void);
 
-	RailedTransportAIUpdateModuleData( void );
+	static void buildFieldParse(MultiIniFieldParse &p);
 
-	static void buildFieldParse( MultiIniFieldParse &p );
-
-	AsciiString m_pathPrefixName;		///< prefix to use for waypont start and end points we'll look for
-
+	AsciiString m_pathPrefixName; ///< prefix to use for waypont start and end points we'll look for
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class RailedTransportAIUpdate : public AIUpdateInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( RailedTransportAIUpdate, "RailedTransportAIUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( RailedTransportAIUpdate, RailedTransportAIUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RailedTransportAIUpdate, "RailedTransportAIUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(RailedTransportAIUpdate, RailedTransportAIUpdateModuleData)
 
 public:
-
-	RailedTransportAIUpdate( Thing *thing, const ModuleData *moduleData );
+	RailedTransportAIUpdate(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	// AIUpdate interface methods
-	virtual void aiDoCommand( const AICommandParms *parms );
-	virtual UpdateSleepTime update( void );
+	virtual void aiDoCommand(const AICommandParms *parms);
+	virtual UpdateSleepTime update(void);
 
 protected:
-
 	// ai module methods
-	virtual void privateExecuteRailedTransport( CommandSourceType cmdSource );
-	virtual void privateEvacuate( Int exposeStealthUnits, CommandSourceType cmdSource );
+	virtual void privateExecuteRailedTransport(CommandSourceType cmdSource);
+	virtual void privateEvacuate(Int exposeStealthUnits, CommandSourceType cmdSource);
 
 	// our methods
-	void setInTransit( Bool inTransit );
-	void loadWaypointData( void );
-	void pickAndMoveToInitialLocation( void );
+	void setInTransit(Bool inTransit);
+	void loadWaypointData(void);
+	void pickAndMoveToInitialLocation(void);
 
 	// our data
-	Bool m_inTransit;								///< in transit
+	Bool m_inTransit; ///< in transit
 	struct WaypointPathInfo
 	{
 		UnsignedInt startWaypointID;
 		UnsignedInt endWaypointID;
 	};
-	enum { MAX_WAYPOINT_PATHS = 32 };
-	WaypointPathInfo m_path[ MAX_WAYPOINT_PATHS ];		///< transit paths we can use
-	Int m_numPaths;								///< how many waypoint paths are in m_path
-	Int m_currentPath;						///< index into m_path for our current path
+	enum
+	{
+		MAX_WAYPOINT_PATHS = 32
+	};
+	WaypointPathInfo m_path[MAX_WAYPOINT_PATHS]; ///< transit paths we can use
+	Int m_numPaths; ///< how many waypoint paths are in m_path
+	Int m_currentPath; ///< index into m_path for our current path
 
-	Bool m_waypointDataLoaded;		///< TRUE once we've searched the map to load m_path
-
+	Bool m_waypointDataLoaded; ///< TRUE once we've searched the map to load m_path
 };
 
-
-#endif  // end __RAILED_TRANSPORT_AI_UPDATE_H_
-
+#endif // end __RAILED_TRANSPORT_AI_UPDATE_H_

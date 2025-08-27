@@ -42,44 +42,44 @@ void operator delete[](void *p)
 	free(p);
 }
 
-void* operator new(size_t size, const char * fname, int)
+void *operator new(size_t size, const char *fname, int)
 {
 	return malloc(size);
 }
 
-void operator delete(void * p, const char *, int)
+void operator delete(void *p, const char *, int)
 {
 	free(p);
 }
 
-void* operator new[](size_t size, const char * fname, int)
+void *operator new[](size_t size, const char *fname, int)
 {
 	return malloc(size);
 }
 
-void operator delete[](void * p, const char *, int)
+void operator delete[](void *p, const char *, int)
 {
 	free(p);
 }
 
 #endif
 
-void* createW3DMemPool(const char *poolName, int allocationSize)
+void *createW3DMemPool(const char *poolName, int allocationSize)
 {
 	return NULL;
 }
 
-void* allocateFromW3DMemPool(void* pool, int allocationSize)
+void *allocateFromW3DMemPool(void *pool, int allocationSize)
 {
 	return malloc(allocationSize);
 }
 
-void* allocateFromW3DMemPool(void* pool, int allocationSize, const char* msg, int unused)
+void *allocateFromW3DMemPool(void *pool, int allocationSize, const char *msg, int unused)
 {
 	return malloc(allocationSize);
 }
 
-void freeFromW3DMemPool(void* pool, void* p)
+void freeFromW3DMemPool(void *pool, void *p)
 {
 	free(p);
 }

@@ -30,10 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/GameAudio.h"
 #include "Common/MiscAudio.h"
@@ -45,7 +43,7 @@
 
 #include "GameClient/Drawable.h"
 #include "GameClient/Eva.h"
-#include "GameClient/InGameUI.h"  // useful for printing quick debug strings when we need to
+#include "GameClient/InGameUI.h" // useful for printing quick debug strings when we need to
 
 #include "GameLogic/ExperienceTracker.h"
 #include "GameLogic/Module/AIUpdate.h"
@@ -57,38 +55,38 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/Module/DozerAIUpdate.h"
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SabotageFakeBuildingCrateCollide::SabotageFakeBuildingCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
+SabotageFakeBuildingCrateCollide::SabotageFakeBuildingCrateCollide(Thing *thing, const ModuleData *moduleData) :
+		CrateCollide(thing, moduleData)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SabotageFakeBuildingCrateCollide::~SabotageFakeBuildingCrateCollide( void )
+SabotageFakeBuildingCrateCollide::~SabotageFakeBuildingCrateCollide(void)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool SabotageFakeBuildingCrateCollide::isValidToExecute( const Object *other ) const
+Bool SabotageFakeBuildingCrateCollide::isValidToExecute(const Object *other) const
 {
-	if( !CrateCollide::isValidToExecute(other) )
+	if (!CrateCollide::isValidToExecute(other))
 	{
-		//Extend functionality.
+		// Extend functionality.
 		return FALSE;
 	}
 
-	if( other->isEffectivelyDead() )
+	if (other->isEffectivelyDead())
 	{
-		//Can't sabotage dead structures
+		// Can't sabotage dead structures
 		return FALSE;
 	}
 
-	if( !other->isKindOf( KINDOF_FS_FAKE ) )
+	if (!other->isKindOf(KINDOF_FS_FAKE))
 	{
-		//We can only sabotage fake structures.
+		// We can only sabotage fake structures.
 		return FALSE;
 	}
 
@@ -98,10 +96,10 @@ Bool SabotageFakeBuildingCrateCollide::isValidToExecute( const Object *other ) c
 		return FALSE;
 	}
 
-	Relationship r = getObject()->getRelationship( other );
-	if( r != ENEMIES )
+	Relationship r = getObject()->getRelationship(other);
+	if (r != ENEMIES)
 	{
-		//Can only sabotage enemy buildings.
+		// Can only sabotage enemy buildings.
 		return FALSE;
 	}
 
@@ -110,39 +108,39 @@ Bool SabotageFakeBuildingCrateCollide::isValidToExecute( const Object *other ) c
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool SabotageFakeBuildingCrateCollide::executeCrateBehavior( Object *other )
+Bool SabotageFakeBuildingCrateCollide::executeCrateBehavior(Object *other)
 {
-	//Check to make sure that the other object is also the goal object in the AIUpdateInterface
-	//in order to prevent an unintentional conversion simply by having the terrorist walk too close
-	//to it.
-	//Assume ai is valid because CrateCollide::isValidToExecute(other) checks it.
+	// Check to make sure that the other object is also the goal object in the AIUpdateInterface
+	// in order to prevent an unintentional conversion simply by having the terrorist walk too close
+	// to it.
+	// Assume ai is valid because CrateCollide::isValidToExecute(other) checks it.
 	Object *obj = getObject();
-	AIUpdateInterface* ai = obj->getAIUpdateInterface();
+	AIUpdateInterface *ai = obj->getAIUpdateInterface();
 	if (ai && ai->getGoalObject() != other)
 	{
 		return false;
 	}
 
-	TheRadar->tryInfiltrationEvent( other );
+	TheRadar->tryInfiltrationEvent(other);
 
-  doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_FAKE_BUILDING );
+	doSabotageFeedbackFX(other, CrateCollide::SAB_VICTIM_FAKE_BUILDING);
 
-	//When the sabotage occurs, play the appropriate EVA
-	//event if the local player is the victim!
-	if( other->isLocallyControlled() )
+	// When the sabotage occurs, play the appropriate EVA
+	// event if the local player is the victim!
+	if (other->isLocallyControlled())
 	{
-		TheEva->setShouldPlay( EVA_BuildingSabotaged );
+		TheEva->setShouldPlay(EVA_BuildingSabotaged);
 	}
 
 	Player *player = other->getControllingPlayer();
-	if( player )
+	if (player)
 	{
 		DamageInfo damageInfo;
 		damageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
 		damageInfo.in.m_deathType = DEATH_DETONATED;
 		damageInfo.in.m_sourceID = obj->getID();
 		damageInfo.in.m_amount = other->getBodyModule()->getMaxHealth();
-		other->attemptDamage( &damageInfo );
+		other->attemptDamage(&damageInfo);
 	}
 
 	return TRUE;
@@ -151,39 +149,36 @@ Bool SabotageFakeBuildingCrateCollide::executeCrateBehavior( Object *other )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SabotageFakeBuildingCrateCollide::crc( Xfer *xfer )
+void SabotageFakeBuildingCrateCollide::crc(Xfer *xfer)
 {
-
 	// extend base class
-	CrateCollide::crc( xfer );
+	CrateCollide::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SabotageFakeBuildingCrateCollide::xfer( Xfer *xfer )
+void SabotageFakeBuildingCrateCollide::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CrateCollide::xfer( xfer );
+	CrateCollide::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SabotageFakeBuildingCrateCollide::loadPostProcess( void )
+void SabotageFakeBuildingCrateCollide::loadPostProcess(void)
 {
-
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

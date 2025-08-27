@@ -34,7 +34,6 @@
 #include "EditCoordParameter.h"
 #include "EditObjectParameter.h"
 
-
 #include "Common/AudioEventInfo.h"
 #include "Common/BorderColors.h"
 #include "Common/file.h"
@@ -64,9 +63,8 @@
 #include "W3DDevice/GameClient/W3DGameFont.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 
-
 // TYPE DEFINES ///////////////////////////////////////////////////////////////////////////////////
-#define WORLDBUILDER_FONT_FILENAME		"GUIEFont.txt"
+#define WORLDBUILDER_FONT_FILENAME "GUIEFont.txt"
 
 /////////////////////////////////////////////////////////////////////////////
 // EditParameter dialog
@@ -74,38 +72,34 @@
 AsciiString EditParameter::m_selectedLocalizedString = AsciiString::TheEmptyString;
 AsciiString EditParameter::m_unitName = AsciiString::TheEmptyString;
 
-EditParameter::EditParameter(CWnd* pParent /*=NULL*/)
-	: CDialog(EditParameter::IDD, pParent),
-	m_int(0),
-	m_real(0)
+EditParameter::EditParameter(CWnd *pParent /*=NULL*/) : CDialog(EditParameter::IDD, pParent), m_int(0), m_real(0)
 {
 	//{{AFX_DATA_INIT(EditParameter)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-void EditParameter::DoDataExchange(CDataExchange* pDX)
+void EditParameter::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(EditParameter)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(EditParameter, CDialog)
-	//{{AFX_MSG_MAP(EditParameter)
-	ON_EN_CHANGE(IDC_EDIT, OnChangeEdit)
-	ON_CBN_EDITCHANGE(IDC_COMBO, OnEditchangeCombo)
-	ON_BN_CLICKED(IDC_PREVIEWSOUND, OnPreviewSound)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(EditParameter)
+ON_EN_CHANGE(IDC_EDIT, OnChangeEdit)
+ON_CBN_EDITCHANGE(IDC_COMBO, OnEditchangeCombo)
+ON_BN_CLICKED(IDC_PREVIEWSOUND, OnPreviewSound)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // EditParameter message handlers
 SidesList *EditParameter::m_sidesListP = NULL;
 
-Int EditParameter::edit( Parameter *pParm, Int keyPressed, AsciiString unitName )
+Int EditParameter::edit(Parameter *pParm, Int keyPressed, AsciiString unitName)
 {
 	if (pParm->getParameterType() == Parameter::COORD3D)
 	{
@@ -125,22 +119,22 @@ Int EditParameter::edit( Parameter *pParm, Int keyPressed, AsciiString unitName 
 	{
 		// convert from aarrggbb to 00bbggrr, with 0% alpha
 		UnsignedInt b = (pParm->getInt() & 0x000000ff);
-		UnsignedInt g = (pParm->getInt() & 0x0000ff00)>>8;
-		UnsignedInt r = (pParm->getInt() & 0x00ff0000)>>16;
+		UnsignedInt g = (pParm->getInt() & 0x0000ff00) >> 8;
+		UnsignedInt r = (pParm->getInt() & 0x00ff0000) >> 16;
 		UnsignedInt a = 0x00;
-		UnsignedInt colorref = (a<<24)|(b<<16)|(g<<8)|(r);
+		UnsignedInt colorref = (a << 24) | (b << 16) | (g << 8) | (r);
 
-		CColorDialog editColorDlg(colorref, CC_ANYCOLOR|CC_FULLOPEN|CC_RGBINIT|CC_SOLIDCOLOR);
+		CColorDialog editColorDlg(colorref, CC_ANYCOLOR | CC_FULLOPEN | CC_RGBINIT | CC_SOLIDCOLOR);
 		Int ret = editColorDlg.DoModal();
 		if (ret == IDOK)
 		{
 			colorref = editColorDlg.GetColor();
 			// convert from 00bbggrr to aarrggbb, with 100% alpha
 			r = (colorref & 0x000000ff);
-			g = (colorref & 0x0000ff00)>>8;
-			b = (colorref & 0x00ff0000)>>16;
+			g = (colorref & 0x0000ff00) >> 8;
+			b = (colorref & 0x00ff0000) >> 16;
 			a = 0xff;
-			pParm->friend_setInt((a<<24)|(r<<16)|(g<<8)|(b));
+			pParm->friend_setInt((a << 24) | (r << 16) | (g << 8) | (b));
 		}
 		return ret;
 	}
@@ -149,7 +143,7 @@ Int EditParameter::edit( Parameter *pParm, Int keyPressed, AsciiString unitName 
 		EditParameter editDlg;
 		editDlg.m_key = keyPressed;
 		editDlg.m_parameter = pParm;
-		//Set the name of the unit, because some parameters build information from the unit itself.
+		// Set the name of the unit, because some parameters build information from the unit itself.
 		editDlg.m_unitName = unitName;
 		Int ret = editDlg.DoModal();
 		return ret;
@@ -162,51 +156,63 @@ AsciiString EditParameter::getWarningText(Parameter *pParm, Bool isAction)
 	AsciiString uiString = pParm->getString();
 	if (uiString.isEmpty())
 		uiString = "???";
-	switch (pParm->getParameterType()) {
+	switch (pParm->getParameterType())
+	{
 		default:
 			DEBUG_CRASH(("Unknown parameter type."));
 			break;
 		case Parameter::SCRIPT:
-			if (!loadScripts(NULL, false, uiString)) {
+			if (!loadScripts(NULL, false, uiString))
+			{
 				warningText.format("Script '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::SCRIPT_SUBROUTINE:
-			if (!loadScripts(NULL, true, uiString)) {
-				if (!loadScripts(NULL, false, uiString)) {
+			if (!loadScripts(NULL, true, uiString))
+			{
+				if (!loadScripts(NULL, false, uiString))
+				{
 					warningText.format("Script '%s' does not exist.", uiString.str());
-				} else {
+				}
+				else
+				{
 					warningText.format("Script '%s' is not a subroutine.", uiString.str());
 				}
 			}
 			break;
 		case Parameter::ATTACK_PRIORITY_SET:
-			if (!loadAttackPrioritySets(NULL, uiString)) {
+			if (!loadAttackPrioritySets(NULL, uiString))
+			{
 				warningText.format("Attack priority set '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::WAYPOINT:
-			if (!loadWaypoints(NULL, uiString)) {
+			if (!loadWaypoints(NULL, uiString))
+			{
 				warningText.format("Waypoint '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::WAYPOINT_PATH:
-			if (!loadWaypointPaths(NULL, uiString)) {
+			if (!loadWaypointPaths(NULL, uiString))
+			{
 				warningText.format("Waypoint '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::TRIGGER_AREA:
-			if (!loadTriggerAreas(NULL, uiString)) {
+			if (!loadTriggerAreas(NULL, uiString))
+			{
 				warningText.format("Waypoint '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::COMMAND_BUTTON:
-			if (!loadCommandButtons(NULL, uiString)) {
+			if (!loadCommandButtons(NULL, uiString))
+			{
 				warningText.format("Command button '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::FONT_NAME:
-			if(!loadFontNames(NULL, uiString)) {
+			if (!loadFontNames(NULL, uiString))
+			{
 				warningText.format("Font '%s' does not exist.", uiString.str());
 			}
 			break;
@@ -215,43 +221,51 @@ AsciiString EditParameter::getWarningText(Parameter *pParm, Bool isAction)
 		case Parameter::TEXT_STRING:
 			break;
 		case Parameter::LOCALIZED_TEXT:
-			if (loadLocalizedText(NULL, uiString) == AsciiString::TheEmptyString) {
+			if (loadLocalizedText(NULL, uiString) == AsciiString::TheEmptyString)
+			{
 				warningText.format("Localized string '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::SOUND:
-			if (!loadAudioType(Parameter::SOUND, NULL, uiString)) {
+			if (!loadAudioType(Parameter::SOUND, NULL, uiString))
+			{
 				warningText.format("Sound '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::TEAM:
-			if (!loadTeams(NULL, uiString)) {
+			if (!loadTeams(NULL, uiString))
+			{
 				warningText.format("Team '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::BRIDGE:
-			if (!loadBridges(NULL, uiString)) {
+			if (!loadBridges(NULL, uiString))
+			{
 				warningText.format("Bridge '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::UNIT:
-			if (!loadUnits(NULL, uiString)) {
+			if (!loadUnits(NULL, uiString))
+			{
 				warningText.format("Unit '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::OBJECT_TYPE:
-			if (!loadObjectType(NULL, uiString)) {
+			if (!loadObjectType(NULL, uiString))
+			{
 				warningText.format("Object type '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::SIDE:
-			if (!loadSides(NULL, uiString)) {
+			if (!loadSides(NULL, uiString))
+			{
 				warningText.format("Player '%s' does not exist.", uiString.str());
 			}
 			break;
 
 		case Parameter::OBJECT_PANEL_FLAG:
-			if (!loadObjectFlags(NULL, uiString)) {
+			if (!loadObjectFlags(NULL, uiString))
+			{
 				warningText.format("Object flag '%s' is unrecognized.", uiString.str());
 			}
 			break;
@@ -260,7 +274,8 @@ AsciiString EditParameter::getWarningText(Parameter *pParm, Bool isAction)
 			// No warning is possible.
 			break;
 		case Parameter::COUNTER:
-			if (!isAction && !loadCounters(NULL, uiString)) {
+			if (!isAction && !loadCounters(NULL, uiString))
+			{
 				warningText.format("Counter/Timer '%s' does not exist.", uiString.str());
 			}
 			break;
@@ -283,7 +298,8 @@ AsciiString EditParameter::getWarningText(Parameter *pParm, Bool isAction)
 			break;
 
 		case Parameter::FLAG:
-			if (!isAction && !loadFlags(NULL, uiString)) {
+			if (!isAction && !loadFlags(NULL, uiString))
+			{
 				warningText.format("Flag '%s' is never initialized.", uiString.str());
 			}
 			break;
@@ -299,68 +315,77 @@ AsciiString EditParameter::getWarningText(Parameter *pParm, Bool isAction)
 		case Parameter::RADAR_EVENT_TYPE:
 			break;
 
-    case Parameter::LEFT_OR_RIGHT:
-      break;
+		case Parameter::LEFT_OR_RIGHT:
+			break;
 
-    case Parameter::RELATION:
+		case Parameter::RELATION:
 			break;
 
 		case Parameter::DIALOG:
-			if (!loadAudioType(Parameter::DIALOG, NULL, uiString)) {
+			if (!loadAudioType(Parameter::DIALOG, NULL, uiString))
+			{
 				warningText.format("Dialog '%s' does not exist.", uiString.str());
 			}
 			break;
 
 		case Parameter::MUSIC:
-			if (!loadAudioType(Parameter::MUSIC, NULL, uiString)) {
+			if (!loadAudioType(Parameter::MUSIC, NULL, uiString))
+			{
 				warningText.format("Track '%s' does not exist.", uiString.str());
 			}
 			break;
 
 		case Parameter::MOVIE:
-			if (!loadMovies(NULL, uiString)) {
+			if (!loadMovies(NULL, uiString))
+			{
 				AsciiString commentFromINI;
-				if (!getMovieComment(uiString, commentFromINI)) {
+				if (!getMovieComment(uiString, commentFromINI))
+				{
 					warningText.format("Movie '%s' does not exit.", uiString.str());
-				} else {
+				}
+				else
+				{
 					warningText.format("'%s': %s", uiString.str(), commentFromINI.str());
 				}
 			}
 			break;
 
 		case Parameter::SPECIAL_POWER:
-			if (!loadSpecialPowers(NULL, uiString)) {
+			if (!loadSpecialPowers(NULL, uiString))
+			{
 				warningText.format("Special Power '%s' does not exist.", uiString.str());
 			}
 			break;
 
 		case Parameter::SCIENCE:
-			if (!loadSciences(NULL, uiString)) {
+			if (!loadSciences(NULL, uiString))
+			{
 				warningText.format("Science '%s' does not exist.", uiString.str());
 			}
 			break;
 
 		case Parameter::SCIENCE_AVAILABILITY:
-			if( !loadScienceAvailabilities( NULL, uiString ) )
+			if (!loadScienceAvailabilities(NULL, uiString))
 			{
-				warningText.format( "Science availability '%s' does not exist.", uiString.str() );
+				warningText.format("Science availability '%s' does not exist.", uiString.str());
 			}
 			break;
 
 		case Parameter::UPGRADE:
-			if (!loadUpgrades(NULL, uiString)) {
+			if (!loadUpgrades(NULL, uiString))
+			{
 				warningText.format("Upgrade '%s' does not exist.", uiString.str());
 			}
 			break;
 
 		case Parameter::COMMANDBUTTON_ABILITY:
 		case Parameter::COMMANDBUTTON_ALL_ABILITIES:
-			//Not sure if I need to do anything here.
+			// Not sure if I need to do anything here.
 			break;
 
-
 		case Parameter::BOUNDARY:
-			if (TheTerrainRenderObject->getMap()->getAllBoundaries().size() <= pParm->getInt()) {
+			if (TheTerrainRenderObject->getMap()->getAllBoundaries().size() <= pParm->getInt())
+			{
 				warningText.format("Border %s does not exist.", BORDER_COLORS[pParm->getInt() % BORDER_COLORS_SIZE]);
 			}
 			break;
@@ -385,15 +410,13 @@ AsciiString EditParameter::getWarningText(Parameter *pParm, Bool isAction)
 
 		case Parameter::REVEALNAME:
 			break;
-
-
 	}
-	if (warningText.isNotEmpty()) {
+	if (warningText.isNotEmpty())
+	{
 		warningText.concat("  ");
 	}
 	return warningText;
 }
-
 
 AsciiString EditParameter::getInfoText(Parameter *pParm)
 {
@@ -455,21 +478,22 @@ AsciiString EditParameter::getInfoText(Parameter *pParm)
 		case Parameter::OBJECT_TYPE_LIST:
 		case Parameter::REVEALNAME:
 		case Parameter::OBJECT_PANEL_FLAG:
-    case Parameter::LEFT_OR_RIGHT:
+		case Parameter::LEFT_OR_RIGHT:
 
 			break;
 
 		case Parameter::LOCALIZED_TEXT:
 		{
-				AsciiString localizedString;
-				localizedString.translate(TheGameText->fetch(uiString.str()));
-				infoText.format("'%s': %s", uiString.str(), localizedString.str());
+			AsciiString localizedString;
+			localizedString.translate(TheGameText->fetch(uiString.str()));
+			infoText.format("'%s': %s", uiString.str(), localizedString.str());
 			break;
 		}
 		case Parameter::MOVIE:
 		{
 			AsciiString commentFromINI;
-			if (getMovieComment(uiString, commentFromINI)) {
+			if (getMovieComment(uiString, commentFromINI))
+			{
 				infoText.format("'%s': %s", uiString.str(), commentFromINI.str());
 			}
 			break;
@@ -478,60 +502,67 @@ AsciiString EditParameter::getInfoText(Parameter *pParm)
 	return infoText;
 }
 
-
-
 void EditParameter::OnChangeEdit()
 {
-
 }
 
 void EditParameter::OnEditchangeCombo()
 {
-
 }
-
 
 void EditParameter::loadConditionParameter(Script *pScr, Parameter::ParameterType type, CComboBox *pCombo)
 {
 	OrCondition *pOr;
-	if (pCombo==NULL) return; // null pcombo is used in syntaxing commands.  jba.
-	for (pOr= pScr->getOrCondition(); pOr; pOr = pOr->getNextOrCondition()) {
+	if (pCombo == NULL)
+		return; // null pcombo is used in syntaxing commands.  jba.
+	for (pOr = pScr->getOrCondition(); pOr; pOr = pOr->getNextOrCondition())
+	{
 		Condition *pCondition;
-		for (pCondition = pOr->getFirstAndCondition(); pCondition; pCondition = pCondition->getNext()) {
+		for (pCondition = pOr->getFirstAndCondition(); pCondition; pCondition = pCondition->getNext())
+		{
 			Int i;
-			for (i=0; i<pCondition->getNumParameters(); i++) {
-				if (type == pCondition->getParameter(i)->getParameterType()) {
-					if (CB_ERR == pCombo->FindStringExact(-1, pCondition->getParameter(i)->getString().str())) {
+			for (i = 0; i < pCondition->getNumParameters(); i++)
+			{
+				if (type == pCondition->getParameter(i)->getParameterType())
+				{
+					if (CB_ERR == pCombo->FindStringExact(-1, pCondition->getParameter(i)->getString().str()))
+					{
 						pCombo->AddString(pCondition->getParameter(i)->getString().str());
 					}
 				}
 			}
 		}
 	}
-	if(type == Parameter::FLAG)
+	if (type == Parameter::FLAG)
 	{
-		for(int i = 0; i < SHELL_SCRIPT_HOOK_TOTAL; i++)
+		for (int i = 0; i < SHELL_SCRIPT_HOOK_TOTAL; i++)
 		{
-			if(pCombo->FindStringExact(-1,TheShellHookNames[i]) < 0)
+			if (pCombo->FindStringExact(-1, TheShellHookNames[i]) < 0)
 				pCombo->AddString(TheShellHookNames[i]);
 		}
 	}
 }
 
-Bool EditParameter::loadActionParameter(Script *pScr, Parameter::ParameterType type, 	CComboBox *pCombo, AsciiString match)
+Bool EditParameter::loadActionParameter(Script *pScr, Parameter::ParameterType type, CComboBox *pCombo, AsciiString match)
 {
 	ScriptAction *pAction;
 	Bool found = false;
-	for (pAction = pScr->getAction(); pAction; pAction = pAction->getNext()) {
+	for (pAction = pScr->getAction(); pAction; pAction = pAction->getNext())
+	{
 		Int i;
-		for (i=0; i<pAction->getNumParameters(); i++) {
-			if (type == pAction->getParameter(i)->getParameterType()) {
-				if (pCombo) {
-					if (CB_ERR == pCombo->FindStringExact(-1, pAction->getParameter(i)->getString().str())) {
+		for (i = 0; i < pAction->getNumParameters(); i++)
+		{
+			if (type == pAction->getParameter(i)->getParameterType())
+			{
+				if (pCombo)
+				{
+					if (CB_ERR == pCombo->FindStringExact(-1, pAction->getParameter(i)->getString().str()))
+					{
 						pCombo->AddString(pAction->getParameter(i)->getString().str());
 					}
 				}
-				if (match == pAction->getParameter(i)->getString()) {
+				if (match == pAction->getParameter(i)->getString())
+				{
 					found = true;
 				}
 			}
@@ -544,21 +575,27 @@ Bool EditParameter::loadAttackSetParameter(Script *pScr, CComboBox *pCombo, Asci
 {
 	ScriptAction *pAction;
 	Bool found = false;
-	for (pAction = pScr->getAction(); pAction; pAction = pAction->getNext()) {
+	for (pAction = pScr->getAction(); pAction; pAction = pAction->getNext())
+	{
 		// Attack priorities are created by SET_ATTACK_PRIORITY_* actions, but
 		// referenced by *_APPLY_PRIORITY actions.  So just load from the SET_... ones.
-		if (pAction->getActionType() != ScriptAction::SET_ATTACK_PRIORITY_KIND_OF &&
-			pAction->getActionType() != ScriptAction::SET_DEFAULT_ATTACK_PRIORITY &&
-			pAction->getActionType() != ScriptAction::SET_ATTACK_PRIORITY_THING) {
+		if (pAction->getActionType() != ScriptAction::SET_ATTACK_PRIORITY_KIND_OF
+				&& pAction->getActionType() != ScriptAction::SET_DEFAULT_ATTACK_PRIORITY
+				&& pAction->getActionType() != ScriptAction::SET_ATTACK_PRIORITY_THING)
+		{
 			continue;
 		}
 		Int i;
-		for (i=0; i<pAction->getNumParameters(); i++) {
-			if (Parameter::ATTACK_PRIORITY_SET == pAction->getParameter(i)->getParameterType()) {
-				if (match==pAction->getParameter(i)->getString()) {
+		for (i = 0; i < pAction->getNumParameters(); i++)
+		{
+			if (Parameter::ATTACK_PRIORITY_SET == pAction->getParameter(i)->getParameterType())
+			{
+				if (match == pAction->getParameter(i)->getString())
+				{
 					found = true;
 				}
-				if (pCombo && CB_ERR == pCombo->FindStringExact(-1, pAction->getParameter(i)->getString().str())) {
+				if (pCombo && CB_ERR == pCombo->FindStringExact(-1, pAction->getParameter(i)->getString().str()))
+				{
 					pCombo->AddString(pAction->getParameter(i)->getString().str());
 				}
 			}
@@ -571,18 +608,24 @@ Bool EditParameter::loadCreateUnitParameter(Script *pScr, CComboBox *pCombo, Asc
 {
 	ScriptAction *pAction;
 	Bool found = false;
-	for (pAction = pScr->getAction(); pAction; pAction = pAction->getNext()) {
+	for (pAction = pScr->getAction(); pAction; pAction = pAction->getNext())
+	{
 		if (pAction->getActionType() != ScriptAction::CREATE_NAMED_ON_TEAM_AT_WAYPOINT
-				&& pAction->getActionType() != ScriptAction::UNIT_SPAWN_NAMED_LOCATION_ORIENTATION) {
+				&& pAction->getActionType() != ScriptAction::UNIT_SPAWN_NAMED_LOCATION_ORIENTATION)
+		{
 			continue;
 		}
 		Int i;
-		for (i=0; i<pAction->getNumParameters(); i++) {
-			if (Parameter::UNIT == pAction->getParameter(i)->getParameterType()) {
-				if (match==pAction->getParameter(i)->getString()) {
+		for (i = 0; i < pAction->getNumParameters(); i++)
+		{
+			if (Parameter::UNIT == pAction->getParameter(i)->getParameterType())
+			{
+				if (match == pAction->getParameter(i)->getString())
+				{
 					found = true;
 				}
-				if (pCombo && CB_ERR == pCombo->FindStringExact(-1, pAction->getParameter(i)->getString().str())) {
+				if (pCombo && CB_ERR == pCombo->FindStringExact(-1, pAction->getParameter(i)->getString().str()))
+				{
 					pCombo->AddString(pAction->getParameter(i)->getString().str());
 				}
 			}
@@ -591,23 +634,34 @@ Bool EditParameter::loadCreateUnitParameter(Script *pScr, CComboBox *pCombo, Asc
 	return found;
 }
 
-Bool EditParameter::loadCreateObjectListsParameter(Script *pScr, CComboBox *pCombo, std::vector<AsciiString> *strings, AsciiString match)
+Bool EditParameter::loadCreateObjectListsParameter(
+		Script *pScr,
+		CComboBox *pCombo,
+		std::vector<AsciiString> *strings,
+		AsciiString match)
 {
 	ScriptAction *pAction;
 	Bool found = false;
-	for (pAction = pScr->getAction(); pAction; pAction = pAction->getNext()) {
-		if (pAction->getActionType() != ScriptAction::OBJECTLIST_ADDOBJECTTYPE) {
+	for (pAction = pScr->getAction(); pAction; pAction = pAction->getNext())
+	{
+		if (pAction->getActionType() != ScriptAction::OBJECTLIST_ADDOBJECTTYPE)
+		{
 			continue;
 		}
 
-		if (Parameter::OBJECT_TYPE_LIST == pAction->getParameter(0)->getParameterType()) {
-			if (match == pAction->getParameter(0)->getString()) {
+		if (Parameter::OBJECT_TYPE_LIST == pAction->getParameter(0)->getParameterType())
+		{
+			if (match == pAction->getParameter(0)->getString())
+			{
 				found = true;
 			}
-			if (pCombo && CB_ERR == pCombo->FindStringExact(-1, pAction->getParameter(0)->getString().str())) {
+			if (pCombo && CB_ERR == pCombo->FindStringExact(-1, pAction->getParameter(0)->getString().str()))
+			{
 				pCombo->AddString(pAction->getParameter(0)->getString().str());
 			}
-			if (strings && std::find(strings->begin(), strings->end(), pAction->getParameter(0)->getString().str()) == strings->end()) {
+			if (strings
+					&& std::find(strings->begin(), strings->end(), pAction->getParameter(0)->getString().str()) == strings->end())
+			{
 				strings->push_back(pAction->getParameter(0)->getString().str());
 			}
 		}
@@ -620,10 +674,13 @@ AsciiString EditParameter::getCreatedUnitTemplateName(AsciiString unitName)
 {
 	SidesList *sidesListP = m_sidesListP;
 
-	for (int i=0; i<sidesListP->getNumSides(); i++) {
+	for (int i = 0; i < sidesListP->getNumSides(); i++)
+	{
 		BuildListInfo *bldList = sidesListP->getSideInfo(i)->getBuildList();
-		while (bldList) {
-			if (bldList->getBuildingName() == unitName) {
+		while (bldList)
+		{
+			if (bldList->getBuildingName() == unitName)
+			{
 				return bldList->getTemplateName();
 			}
 			bldList = bldList->getNext();
@@ -631,24 +688,33 @@ AsciiString EditParameter::getCreatedUnitTemplateName(AsciiString unitName)
 		ScriptList *pSL = sidesListP->getSideInfo(i)->getScriptList();
 		Script *pScr;
 		ScriptAction *pAction;
-		for (pScr = pSL->getScript(); pScr; pScr=pScr->getNext()) {
-			for (pAction = pScr->getAction(); pAction; pAction = pAction->getNext()) {
+		for (pScr = pSL->getScript(); pScr; pScr = pScr->getNext())
+		{
+			for (pAction = pScr->getAction(); pAction; pAction = pAction->getNext())
+			{
 				if (pAction->getActionType() != ScriptAction::CREATE_NAMED_ON_TEAM_AT_WAYPOINT
-						&& pAction->getActionType() != ScriptAction::UNIT_SPAWN_NAMED_LOCATION_ORIENTATION) {
+						&& pAction->getActionType() != ScriptAction::UNIT_SPAWN_NAMED_LOCATION_ORIENTATION)
+				{
 					continue;
 				}
 				Int i;
 				Bool thisOne = false;
-				for (i=0; i<pAction->getNumParameters(); i++) {
-					if (Parameter::UNIT == pAction->getParameter(i)->getParameterType()) {
-						if (unitName==pAction->getParameter(i)->getString()) {
+				for (i = 0; i < pAction->getNumParameters(); i++)
+				{
+					if (Parameter::UNIT == pAction->getParameter(i)->getParameterType())
+					{
+						if (unitName == pAction->getParameter(i)->getString())
+						{
 							thisOne = true;
 						}
 					}
 				}
-				if (thisOne) {
-					for (i=0; i<pAction->getNumParameters(); i++) {
-						if (Parameter::OBJECT_TYPE == pAction->getParameter(i)->getParameterType()) {
+				if (thisOne)
+				{
+					for (i = 0; i < pAction->getNumParameters(); i++)
+					{
+						if (Parameter::OBJECT_TYPE == pAction->getParameter(i)->getParameterType())
+						{
 							return pAction->getParameter(i)->getString();
 						}
 					}
@@ -656,25 +722,35 @@ AsciiString EditParameter::getCreatedUnitTemplateName(AsciiString unitName)
 			}
 		}
 		ScriptGroup *pGroup;
-		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup=pGroup->getNext()) {
-			for (pScr = pSL->getScript(); pScr; pScr=pScr->getNext()) {
-				for (pAction = pScr->getAction(); pAction; pAction = pAction->getNext()) {
+		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup = pGroup->getNext())
+		{
+			for (pScr = pSL->getScript(); pScr; pScr = pScr->getNext())
+			{
+				for (pAction = pScr->getAction(); pAction; pAction = pAction->getNext())
+				{
 					if (pAction->getActionType() != ScriptAction::CREATE_NAMED_ON_TEAM_AT_WAYPOINT
-							&& pAction->getActionType() != ScriptAction::UNIT_SPAWN_NAMED_LOCATION_ORIENTATION) {
+							&& pAction->getActionType() != ScriptAction::UNIT_SPAWN_NAMED_LOCATION_ORIENTATION)
+					{
 						continue;
 					}
 					Int i;
 					Bool thisOne = false;
-					for (i=0; i<pAction->getNumParameters(); i++) {
-						if (Parameter::UNIT == pAction->getParameter(i)->getParameterType()) {
-							if (unitName==pAction->getParameter(i)->getString()) {
+					for (i = 0; i < pAction->getNumParameters(); i++)
+					{
+						if (Parameter::UNIT == pAction->getParameter(i)->getParameterType())
+						{
+							if (unitName == pAction->getParameter(i)->getString())
+							{
 								thisOne = true;
 							}
 						}
 					}
-					if (thisOne) {
-						for (i=0; i<pAction->getNumParameters(); i++) {
-							if (Parameter::OBJECT_TYPE == pAction->getParameter(i)->getParameterType()) {
+					if (thisOne)
+					{
+						for (i = 0; i < pAction->getNumParameters(); i++)
+						{
+							if (Parameter::OBJECT_TYPE == pAction->getParameter(i)->getParameterType())
+							{
 								return pAction->getParameter(i)->getString();
 							}
 						}
@@ -689,24 +765,32 @@ AsciiString EditParameter::getCreatedUnitTemplateName(AsciiString unitName)
 Bool EditParameter::loadCounters(CComboBox *pCombo, AsciiString match)
 {
 	Bool found = false;
-	if (pCombo) pCombo->ResetContent();
+	if (pCombo)
+		pCombo->ResetContent();
 	Int i;
 	SidesList *sidesListP = m_sidesListP;
-	if (sidesListP==NULL) sidesListP = TheSidesList;
-	for (i=0; i<sidesListP->getNumSides(); i++) {
+	if (sidesListP == NULL)
+		sidesListP = TheSidesList;
+	for (i = 0; i < sidesListP->getNumSides(); i++)
+	{
 		ScriptList *pSL = sidesListP->getSideInfo(i)->getScriptList();
 		Script *pScr;
-		for (pScr = pSL->getScript(); pScr; pScr=pScr->getNext()) {
+		for (pScr = pSL->getScript(); pScr; pScr = pScr->getNext())
+		{
 			loadConditionParameter(pScr, Parameter::COUNTER, pCombo);
-			if (loadActionParameter(pScr, Parameter::COUNTER, pCombo, match)) {
+			if (loadActionParameter(pScr, Parameter::COUNTER, pCombo, match))
+			{
 				found = true;
 			}
 		}
 		ScriptGroup *pGroup;
-		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup=pGroup->getNext()) {
-			for (pScr = pGroup->getScript(); pScr; pScr=pScr->getNext()) {
+		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup = pGroup->getNext())
+		{
+			for (pScr = pGroup->getScript(); pScr; pScr = pScr->getNext())
+			{
 				loadConditionParameter(pScr, Parameter::COUNTER, pCombo);
-				if (loadActionParameter(pScr, Parameter::COUNTER, pCombo, match)) {
+				if (loadActionParameter(pScr, Parameter::COUNTER, pCombo, match))
+				{
 					found = true;
 				}
 			}
@@ -717,26 +801,34 @@ Bool EditParameter::loadCounters(CComboBox *pCombo, AsciiString match)
 
 Bool EditParameter::loadAttackPrioritySets(CComboBox *pCombo, AsciiString match)
 {
-	if (pCombo) pCombo->ResetContent();
+	if (pCombo)
+		pCombo->ResetContent();
 	Int i;
 	Bool found = false;
 	SidesList *sidesListP = m_sidesListP;
-	if (sidesListP==NULL) sidesListP = TheSidesList;
-	for (i=0; i<sidesListP->getNumSides(); i++) {
+	if (sidesListP == NULL)
+		sidesListP = TheSidesList;
+	for (i = 0; i < sidesListP->getNumSides(); i++)
+	{
 		ScriptList *pSL = sidesListP->getSideInfo(i)->getScriptList();
 		Script *pScr;
-		for (pScr = pSL->getScript(); pScr; pScr=pScr->getNext()) {
+		for (pScr = pSL->getScript(); pScr; pScr = pScr->getNext())
+		{
 			// Attack priority sets get created in actions.
-			if (loadAttackSetParameter(pScr, pCombo, match)) {
-				found=true;
+			if (loadAttackSetParameter(pScr, pCombo, match))
+			{
+				found = true;
 			}
 		}
 		ScriptGroup *pGroup;
-		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup=pGroup->getNext()) {
-			for (pScr = pGroup->getScript(); pScr; pScr=pScr->getNext()) {
-			// Attack priority sets get created in actions.
-				if (loadAttackSetParameter(pScr, pCombo, match)) {
-					found	= true;
+		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup = pGroup->getNext())
+		{
+			for (pScr = pGroup->getScript(); pScr; pScr = pScr->getNext())
+			{
+				// Attack priority sets get created in actions.
+				if (loadAttackSetParameter(pScr, pCombo, match))
+				{
+					found = true;
 				}
 			}
 		}
@@ -748,19 +840,23 @@ Bool EditParameter::loadSpecialPowers(CComboBox *pCombo, AsciiString match)
 {
 	Bool retVal = false;
 	Int numPowers = TheSpecialPowerStore->getNumSpecialPowers();
-	for (int i = 0; i < numPowers; ++i) {
+	for (int i = 0; i < numPowers; ++i)
+	{
 		const SpecialPowerTemplate *pPower = TheSpecialPowerStore->getSpecialPowerTemplateByIndex(i);
-		if (!pPower) {
+		if (!pPower)
+		{
 			continue;
 		}
 
 		AsciiString powerName = pPower->getName();
-		if (pCombo) {
+		if (pCombo)
+		{
 			pCombo->AddString(powerName.str());
 		}
 
-		if (match == powerName) {
-				retVal = true;
+		if (match == powerName)
+		{
+			retVal = true;
 		}
 	}
 
@@ -786,22 +882,21 @@ Bool EditParameter::loadSciences(CComboBox *pCombo, AsciiString match)
 		}
 	}
 
-
 	return retVal;
 }
 
 //=============================================================================
-Bool EditParameter::loadScienceAvailabilities( CComboBox *pCombo, AsciiString match )
+Bool EditParameter::loadScienceAvailabilities(CComboBox *pCombo, AsciiString match)
 {
 	Bool retVal = false;
-	for( Int i = 0; i < SCIENCE_AVAILABILITY_COUNT; i++ )
+	for (Int i = 0; i < SCIENCE_AVAILABILITY_COUNT; i++)
 	{
-		if( pCombo )
+		if (pCombo)
 		{
-			pCombo->AddString( ScienceAvailabilityNames[ i ] );
+			pCombo->AddString(ScienceAvailabilityNames[i]);
 		}
 
-		if( !match.compareNoCase( ScienceAvailabilityNames[ i ] ) )
+		if (!match.compareNoCase(ScienceAvailabilityNames[i]))
 		{
 			retVal = true;
 		}
@@ -817,15 +912,17 @@ Bool EditParameter::loadUpgrades(CComboBox *pCombo, AsciiString match)
 	std::vector<AsciiString> upgradeNames = TheUpgradeCenter->getUpgradeNames();
 	Int numUpgrades = upgradeNames.size();
 
-	for (int i = 0; i < numUpgrades; ++i) {
-
+	for (int i = 0; i < numUpgrades; ++i)
+	{
 		AsciiString upgradeName = upgradeNames[i];
-		if (pCombo) {
+		if (pCombo)
+		{
 			pCombo->AddString(upgradeName.str());
 		}
 
-		if (match == upgradeName) {
-				retVal = true;
+		if (match == upgradeName)
+		{
+			retVal = true;
 		}
 	}
 
@@ -833,72 +930,77 @@ Bool EditParameter::loadUpgrades(CComboBox *pCombo, AsciiString match)
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool EditParameter::loadAbilities( CComboBox *pCombo, AsciiString match )
+Bool EditParameter::loadAbilities(CComboBox *pCombo, AsciiString match)
 {
 	Bool retVal = FALSE;
 
 	MapObject *theUnit;
-	for( theUnit = MapObject::getFirstMapObject(); theUnit; theUnit = theUnit->getNext() )
+	for (theUnit = MapObject::getFirstMapObject(); theUnit; theUnit = theUnit->getNext())
 	{
 		Bool exists;
 		AsciiString objName = theUnit->getProperties()->getAsciiString(TheKey_objectName, &exists);
-		if( !exists )
+		if (!exists)
 		{
 			continue;
 		}
-		if( objName.isEmpty() )
+		if (objName.isEmpty())
 		{
 			continue;
 		}
-		if( theUnit->getFlag(FLAG_BRIDGE_FLAGS) )
+		if (theUnit->getFlag(FLAG_BRIDGE_FLAGS))
 		{
 			continue;
 		}
-		if( objName == m_unitName )
+		if (objName == m_unitName)
 		{
 			break;
 		}
 	}
 	const ThingTemplate *theTemplate = NULL;
 
-	if ( theUnit ) {
+	if (theUnit)
+	{
 		theTemplate = theUnit->getThingTemplate();
-	} else {
+	}
+	else
+	{
 		// see if the object was created via script, and therefore wasn't in the mapobject list.
 		AsciiString tmplName = getCreatedUnitTemplateName(m_unitName);
-		if (!tmplName.isEmpty()) {
+		if (!tmplName.isEmpty())
+		{
 			theTemplate = TheThingFactory->findTemplate(tmplName);
 		}
 	}
 
-	if (!theTemplate) {
+	if (!theTemplate)
+	{
 		return false;
 	}
 
-	//Find the object's commandset.
-	if( !TheControlBar )
+	// Find the object's commandset.
+	if (!TheControlBar)
 	{
 		// create the command bar
 		TheControlBar = new ControlBar;
 		TheControlBar->init();
 	}
-	const CommandSet *commandSet = TheControlBar->findCommandSet( theTemplate->friend_getCommandSetString() );
+	const CommandSet *commandSet = TheControlBar->findCommandSet(theTemplate->friend_getCommandSetString());
 
-	if( commandSet )
+	if (commandSet)
 	{
-		for( Int i = 0; i < MAX_COMMANDS_PER_SET; i++ )
+		for (Int i = 0; i < MAX_COMMANDS_PER_SET; i++)
 		{
-			//Get the command button.
+			// Get the command button.
 			const CommandButton *commandButton = commandSet->getCommandButton(i);
 
-			if( commandButton )
+			if (commandButton)
 			{
-				if( !commandButton->getName().isEmpty() )
+				if (!commandButton->getName().isEmpty())
 				{
-					if( pCombo )
+					if (pCombo)
 					{
-						pCombo->AddString( commandButton->getName().str() );
-						if( match == commandButton->getName() )
+						pCombo->AddString(commandButton->getName().str());
+						if (match == commandButton->getName())
 						{
 							retVal = TRUE;
 						}
@@ -909,34 +1011,34 @@ Bool EditParameter::loadAbilities( CComboBox *pCombo, AsciiString match )
 	}
 	else
 	{
-		//This unit doesn't have a commandset.
+		// This unit doesn't have a commandset.
 		return FALSE;
 	}
 	return retVal;
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool EditParameter::loadAllAbilities( CComboBox *pCombo, AsciiString match )
+Bool EditParameter::loadAllAbilities(CComboBox *pCombo, AsciiString match)
 {
 	Bool retVal = FALSE;
 
-	if( !TheControlBar )
+	if (!TheControlBar)
 	{
 		// create the command bar
 		TheControlBar = new ControlBar;
 		TheControlBar->init();
 	}
 
-	//Iterate through all the command button definitions
+	// Iterate through all the command button definitions
 	const CommandButton *commandButton = TheControlBar->getCommandButtons();
-	while( commandButton )
+	while (commandButton)
 	{
-		if( !commandButton->getName().isEmpty() )
+		if (!commandButton->getName().isEmpty())
 		{
-			if( pCombo )
+			if (pCombo)
 			{
-				pCombo->AddString( commandButton->getName().str() );
-				if( match == commandButton->getName() )
+				pCombo->AddString(commandButton->getName().str());
+				if (match == commandButton->getName())
 				{
 					retVal = TRUE;
 				}
@@ -948,27 +1050,27 @@ Bool EditParameter::loadAllAbilities( CComboBox *pCombo, AsciiString match )
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool EditParameter::loadEmoticons( CComboBox *pCombo, AsciiString match )
+Bool EditParameter::loadEmoticons(CComboBox *pCombo, AsciiString match)
 {
 	Bool retVal = FALSE;
 
 	Anim2DTemplate *animTemplate = TheAnim2DCollection->getTemplateHead();
-	//Iterate through all the definitions
+	// Iterate through all the definitions
 
-	while( animTemplate )
+	while (animTemplate)
 	{
-		if( animTemplate->getName().isNotEmpty() )
+		if (animTemplate->getName().isNotEmpty())
 		{
-			if( pCombo )
+			if (pCombo)
 			{
-				pCombo->AddString( animTemplate->getName().str() );
-				if( match == animTemplate->getName() )
+				pCombo->AddString(animTemplate->getName().str());
+				if (match == animTemplate->getName())
 				{
 					retVal = TRUE;
 				}
 			}
 		}
-		animTemplate = TheAnim2DCollection->getNextTemplate( animTemplate );
+		animTemplate = TheAnim2DCollection->getNextTemplate(animTemplate);
 	}
 	return retVal;
 }
@@ -977,24 +1079,32 @@ Bool EditParameter::loadEmoticons( CComboBox *pCombo, AsciiString match )
 Bool EditParameter::loadFlags(CComboBox *pCombo, AsciiString match)
 {
 	Bool found = false;
-	if (pCombo) pCombo->ResetContent();
+	if (pCombo)
+		pCombo->ResetContent();
 	Int i;
 	SidesList *sidesListP = m_sidesListP;
-	if (sidesListP==NULL) sidesListP = TheSidesList;
-	for (i=0; i<sidesListP->getNumSides(); i++) {
+	if (sidesListP == NULL)
+		sidesListP = TheSidesList;
+	for (i = 0; i < sidesListP->getNumSides(); i++)
+	{
 		ScriptList *pSL = sidesListP->getSideInfo(i)->getScriptList();
 		Script *pScr;
-		for (pScr = pSL->getScript(); pScr; pScr=pScr->getNext()) {
+		for (pScr = pSL->getScript(); pScr; pScr = pScr->getNext())
+		{
 			loadConditionParameter(pScr, Parameter::FLAG, pCombo);
-			if (loadActionParameter(pScr, Parameter::FLAG, pCombo, match)) {
+			if (loadActionParameter(pScr, Parameter::FLAG, pCombo, match))
+			{
 				found = true;
 			}
 		}
 		ScriptGroup *pGroup;
-		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup=pGroup->getNext()) {
-			for (pScr = pGroup->getScript(); pScr; pScr=pScr->getNext()) {
+		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup = pGroup->getNext())
+		{
+			for (pScr = pGroup->getScript(); pScr; pScr = pScr->getNext())
+			{
 				loadConditionParameter(pScr, Parameter::FLAG, pCombo);
-				if (loadActionParameter(pScr, Parameter::FLAG, pCombo, match)) {
+				if (loadActionParameter(pScr, Parameter::FLAG, pCombo, match))
+				{
 					found = true;
 				}
 			}
@@ -1015,14 +1125,12 @@ Bool EditParameter::loadObjectType(CComboBox *pCombo, AsciiString match)
 
 	// add entries from the thing factory as the available objects to use
 	const ThingTemplate *tTemplate;
-	for( tTemplate = TheThingFactory->firstTemplate();
-		tTemplate;
-		tTemplate = tTemplate->friend_getNextTemplate() )
+	for (tTemplate = TheThingFactory->firstTemplate(); tTemplate; tTemplate = tTemplate->friend_getNextTemplate())
 	{
 		if (pCombo)
-			pCombo->AddString( tTemplate->getName().str());
+			pCombo->AddString(tTemplate->getName().str());
 
-		if ((match==tTemplate->getName()))
+		if ((match == tTemplate->getName()))
 			didMatch = true;
 	}
 	return didMatch;
@@ -1042,21 +1150,27 @@ Bool EditParameter::loadObjectTypeList(CComboBox *pCombo, std::vector<AsciiStrin
 	SidesList *sidesListP = m_sidesListP;
 
 	// first, add any object lists that exist anywhere in the scripts
-	for (Int i=0; i<sidesListP->getNumSides(); ++i) {
+	for (Int i = 0; i < sidesListP->getNumSides(); ++i)
+	{
 		ScriptList *pSL = sidesListP->getSideInfo(i)->getScriptList();
 		Script *pScr;
-		for (pScr = pSL->getScript(); pScr; pScr=pScr->getNext()) {
+		for (pScr = pSL->getScript(); pScr; pScr = pScr->getNext())
+		{
 			// Attack priority sets get created in actions.
-			if (loadCreateObjectListsParameter(pScr, pCombo, strings, match)) {
-				didMatch=true;
+			if (loadCreateObjectListsParameter(pScr, pCombo, strings, match))
+			{
+				didMatch = true;
 			}
 		}
 		ScriptGroup *pGroup;
-		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup=pGroup->getNext()) {
-			for (pScr = pGroup->getScript(); pScr; pScr=pScr->getNext()) {
-			// Attack priority sets get created in actions.
-				if (loadCreateObjectListsParameter(pScr, pCombo, strings, match)) {
-					didMatch	= true;
+		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup = pGroup->getNext())
+		{
+			for (pScr = pGroup->getScript(); pScr; pScr = pScr->getNext())
+			{
+				// Attack priority sets get created in actions.
+				if (loadCreateObjectListsParameter(pScr, pCombo, strings, match))
+				{
+					didMatch = true;
 				}
 			}
 		}
@@ -1075,18 +1189,24 @@ Bool EditParameter::loadRevealNames(CComboBox *pCombo, AsciiString match)
 
 	SidesList *sidesListP = m_sidesListP;
 
-	for (Int i = 0; i < sidesListP->getNumSides(); ++i) {
+	for (Int i = 0; i < sidesListP->getNumSides(); ++i)
+	{
 		ScriptList *pSL = sidesListP->getSideInfo(i)->getScriptList();
 		Script *pScr;
-		for (pScr = pSL->getScript(); pScr; pScr = pScr->getNext()) {
-			if (loadRevealNamesParameter(pScr, pCombo, match)) {
+		for (pScr = pSL->getScript(); pScr; pScr = pScr->getNext())
+		{
+			if (loadRevealNamesParameter(pScr, pCombo, match))
+			{
 				didMatch = true;
 			}
 		}
 		ScriptGroup *pGroup;
-		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup=pGroup->getNext()) {
-			for (pScr = pGroup->getScript(); pScr; pScr=pScr->getNext()) {
-				if (loadRevealNamesParameter(pScr, pCombo, match)) {
+		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup = pGroup->getNext())
+		{
+			for (pScr = pGroup->getScript(); pScr; pScr = pScr->getNext())
+			{
+				if (loadRevealNamesParameter(pScr, pCombo, match))
+				{
 					didMatch = true;
 				}
 			}
@@ -1101,16 +1221,21 @@ Bool EditParameter::loadRevealNamesParameter(Script *pScr, CComboBox *pCombo, As
 {
 	ScriptAction *pAction;
 	Bool found = false;
-	for (pAction = pScr->getAction(); pAction; pAction = pAction->getNext()) {
-		if (pAction->getActionType() != ScriptAction::MAP_REVEAL_PERMANENTLY_AT_WAYPOINT) {
+	for (pAction = pScr->getAction(); pAction; pAction = pAction->getNext())
+	{
+		if (pAction->getActionType() != ScriptAction::MAP_REVEAL_PERMANENTLY_AT_WAYPOINT)
+		{
 			continue;
 		}
 
-		if (Parameter::REVEALNAME == pAction->getParameter(3)->getParameterType()) {
-			if (match == pAction->getParameter(3)->getString()) {
+		if (Parameter::REVEALNAME == pAction->getParameter(3)->getParameterType())
+		{
+			if (match == pAction->getParameter(3)->getString())
+			{
 				found = true;
 			}
-			if (pCombo && CB_ERR == pCombo->FindStringExact(-1, pAction->getParameter(3)->getString().str())) {
+			if (pCombo && CB_ERR == pCombo->FindStringExact(-1, pAction->getParameter(3)->getString().str()))
+			{
 				pCombo->AddString(pAction->getParameter(3)->getString().str());
 			}
 		}
@@ -1119,35 +1244,43 @@ Bool EditParameter::loadRevealNamesParameter(Script *pScr, CComboBox *pCombo, As
 	return found;
 }
 
-
 //-------------------------------------------------------------------------------------------------
-Bool EditParameter::loadAudioType(Parameter::ParameterType  comboType, CComboBox *pCombo, AsciiString match)
+Bool EditParameter::loadAudioType(Parameter::ParameterType comboType, CComboBox *pCombo, AsciiString match)
 {
 	Bool retVal = false;
 	AudioType type = AT_SoundEffect;
 	switch (comboType)
 	{
-		case Parameter::DIALOG: type = AT_Streaming; break;
-		case Parameter::SOUND: type = AT_SoundEffect; break;
-		case Parameter::MUSIC: type = AT_Music; break;
+		case Parameter::DIALOG:
+			type = AT_Streaming;
+			break;
+		case Parameter::SOUND:
+			type = AT_SoundEffect;
+			break;
+		case Parameter::MUSIC:
+			type = AT_Music;
+			break;
 	}
 
 	std::vector<AudioEventInfo *> eventInfos;
 	TheAudio->findAllAudioEventsOfType(type, eventInfos);
 
-	for (int i = 0; i < eventInfos.size(); ++i) {
-		if (eventInfos[i]) {
-			if (pCombo) {
+	for (int i = 0; i < eventInfos.size(); ++i)
+	{
+		if (eventInfos[i])
+		{
+			if (pCombo)
+			{
 				pCombo->AddString(eventInfos[i]->m_audioName.str());
 			}
 
-			if (match == eventInfos[i]->m_audioName) {
+			if (match == eventInfos[i]->m_audioName)
+			{
 				retVal = true;
 			}
 		}
 	}
 	return retVal;
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1155,19 +1288,23 @@ Bool EditParameter::loadMovies(CComboBox *pCombo, AsciiString match)
 {
 	Bool retVal = false;
 	Int numVideos = TheVideoPlayer->getNumVideos();
-	for (int i = 0; i < numVideos; ++i) {
+	for (int i = 0; i < numVideos; ++i)
+	{
 		const Video *pVideo = TheVideoPlayer->getVideo(i);
-		if (!pVideo) {
+		if (!pVideo)
+		{
 			continue;
 		}
 
 		AsciiString videoName = pVideo->m_internalName;
-		if (pCombo) {
+		if (pCombo)
+		{
 			pCombo->AddString(videoName.str());
 		}
 
-		if (match == videoName) {
-				retVal = true;
+		if (match == videoName)
+		{
+			retVal = true;
 		}
 	}
 
@@ -1175,18 +1312,21 @@ Bool EditParameter::loadMovies(CComboBox *pCombo, AsciiString match)
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool EditParameter::getMovieComment(AsciiString match, AsciiString& outCommentFromINI)
+Bool EditParameter::getMovieComment(AsciiString match, AsciiString &outCommentFromINI)
 {
 	Bool retVal = false;
 	Int numVideos = TheVideoPlayer->getNumVideos();
-	for (int i = 0; i < numVideos; ++i) {
+	for (int i = 0; i < numVideos; ++i)
+	{
 		const Video *pVideo = TheVideoPlayer->getVideo(i);
-		if (!pVideo) {
+		if (!pVideo)
+		{
 			continue;
 		}
 
 		AsciiString videoName = pVideo->m_internalName;
-		if (match == videoName && pVideo->m_commentForWB != AsciiString::TheEmptyString) {
+		if (match == videoName && pVideo->m_commentForWB != AsciiString::TheEmptyString)
+		{
 			outCommentFromINI = pVideo->m_commentForWB;
 			retVal = true;
 		}
@@ -1195,65 +1335,81 @@ Bool EditParameter::getMovieComment(AsciiString match, AsciiString& outCommentFr
 	return retVal;
 }
 
-
 //-------------------------------------------------------------------------------------------------
 Bool EditParameter::loadTriggerAreas(CComboBox *pCombo, AsciiString match)
 {
-	if (pCombo) pCombo->ResetContent();
+	if (pCombo)
+		pCombo->ResetContent();
 	Bool didMatch = false;
 	AsciiString trigName;
-	for (PolygonTrigger *pTrig=PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
+	for (PolygonTrigger *pTrig = PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext())
+	{
 		trigName = pTrig->getTriggerName();
-		if (pCombo) pCombo->AddString(trigName.str());
-		if ((match==trigName)) didMatch = true;
+		if (pCombo)
+			pCombo->AddString(trigName.str());
+		if ((match == trigName))
+			didMatch = true;
 	}
 	trigName = MY_INNER_PERIMETER;
-	if (pCombo) pCombo->AddString(trigName.str());
-	if ((match==trigName)) didMatch = true;
+	if (pCombo)
+		pCombo->AddString(trigName.str());
+	if ((match == trigName))
+		didMatch = true;
 	trigName = MY_OUTER_PERIMETER;
-	if (pCombo) pCombo->AddString(trigName.str());
-	if ((match==trigName)) didMatch = true;
+	if (pCombo)
+		pCombo->AddString(trigName.str());
+	if ((match == trigName))
+		didMatch = true;
 	trigName = ENEMY_OUTER_PERIMETER;
-	if (pCombo) pCombo->AddString(trigName.str());
-	if ((match==trigName)) didMatch = true;
+	if (pCombo)
+		pCombo->AddString(trigName.str());
+	if ((match == trigName))
+		didMatch = true;
 	trigName = ENEMY_INNER_PERIMETER;
-	if (pCombo) pCombo->AddString(trigName.str());
-	if ((match==trigName)) didMatch = true;
+	if (pCombo)
+		pCombo->AddString(trigName.str());
+	if ((match == trigName))
+		didMatch = true;
 	trigName = WATER_GRID;
-	if (pCombo) pCombo->AddString(trigName.str());
-	if ((match==trigName)) didMatch = true;
+	if (pCombo)
+		pCombo->AddString(trigName.str());
+	if ((match == trigName))
+		didMatch = true;
 	return didMatch;
 }
 
 //-------------------------------------------------------------------------------------------------
 Bool EditParameter::loadCommandButtons(CComboBox *pCombo, AsciiString match)
 {
-	if (pCombo) pCombo->ResetContent();
+	if (pCombo)
+		pCombo->ResetContent();
 	Bool didMatch = false;
 	// gets the list of command buttons
 	File *fp = TheFileSystem->openFile("Data\\INI\\CommandButton.ini", File::READ | File::TEXT);
-	//sanity
-	DEBUG_ASSERTCRASH( fp, ("Cannot find file CommandButton.ini"));
+	// sanity
+	DEBUG_ASSERTCRASH(fp, ("Cannot find file CommandButton.ini"));
 
 	char buf[1024];
 	char *string;
 	char *token;
-	char seps[]   = " ,\t\n";
+	char seps[] = " ,\t\n";
 
 	fp->nextLine(buf, 1024);
 	string = buf;
 	while (fp->eof() == FALSE)
 	{
 		token = strtok(string, seps);
-		if( token != NULL )
+		if (token != NULL)
 		{
-			if( strcmp( token, "CommandButton" ) == 0)
+			if (strcmp(token, "CommandButton") == 0)
 			{
 				token = strtok(NULL, seps);
-				if( token != NULL )
+				if (token != NULL)
 				{
-					if (pCombo) pCombo->AddString(token);
-					if (strcmp(match.str(), token) == 0) didMatch = true;
+					if (pCombo)
+						pCombo->AddString(token);
+					if (strcmp(match.str(), token) == 0)
+						didMatch = true;
 				}
 			}
 		}
@@ -1270,33 +1426,35 @@ Bool EditParameter::loadCommandButtons(CComboBox *pCombo, AsciiString match)
 //-------------------------------------------------------------------------------------------------
 Bool EditParameter::loadFontNames(CComboBox *pCombo, AsciiString match)
 {
-	if (pCombo) pCombo->ResetContent();
+	if (pCombo)
+		pCombo->ResetContent();
 	Bool didMatch = false;
 	GameFont *font;
 
-
 	// create the font library
 	TheFontLibrary = new W3DFontLibrary;
-	if( TheFontLibrary )
+	if (TheFontLibrary)
 		TheFontLibrary->init();
 
 	// reads the font file into TheFontLibrary
-	readFontFile( WORLDBUILDER_FONT_FILENAME );
+	readFontFile(WORLDBUILDER_FONT_FILENAME);
 
-	for( font = TheFontLibrary->firstFont(); font; font = TheFontLibrary->nextFont( font ) )
+	for (font = TheFontLibrary->firstFont(); font; font = TheFontLibrary->nextFont(font))
 	{
 		AsciiString string = font->nameString;
-		string.concat( " - Size:" );
+		string.concat(" - Size:");
 		Int size = font->pointSize;
 		char buffer[33];
-    itoa( size, buffer, 10 );
-		string.concat( buffer );
-		if( font->bold )
-			string.concat( " [Bold]" );
-		if( string != AsciiString::TheEmptyString )
+		itoa(size, buffer, 10);
+		string.concat(buffer);
+		if (font->bold)
+			string.concat(" [Bold]");
+		if (string != AsciiString::TheEmptyString)
 		{
-			if (pCombo) pCombo->AddString( string.str() );
-			if( (match==string) ) didMatch = true;
+			if (pCombo)
+				pCombo->AddString(string.str());
+			if ((match == string))
+				didMatch = true;
 		}
 	}
 
@@ -1311,17 +1469,17 @@ Bool EditParameter::loadFontNames(CComboBox *pCombo, AsciiString match)
 // EditParameter::readFontFile ======================================================
 /** Read the font file defintitions and load them */
 //=============================================================================
-void EditParameter::readFontFile( const char *filename )
+void EditParameter::readFontFile(const char *filename)
 {
 	File *fp;
 
 	// sanity
-	if( filename == NULL )
+	if (filename == NULL)
 		return;
 
 	// open the file
-	fp = TheFileSystem->openFile( filename, File::READ | File::TEXT);
-	if( fp == NULL )
+	fp = TheFileSystem->openFile(filename, File::READ | File::TEXT);
+	if (fp == NULL)
 		return;
 
 	// read how many entries follow
@@ -1329,30 +1487,28 @@ void EditParameter::readFontFile( const char *filename )
 	fp->read(NULL, sizeof("AVAILABLE_FONT_COUNT = "));
 	fp->scanInt(fontCount);
 
-	for( Int i = 0; i < fontCount; i++ )
+	for (Int i = 0; i < fontCount; i++)
 	{
-
 		// read all the font defitions
-		char fontBuffer[ 512 ];
+		char fontBuffer[512];
 		Int size, bold;
 		char c;
 		fp->read(&c, 1);
 
 		// skip past the first quote
-		while( c != '\"' )
+		while (c != '\"')
 			fp->read(&c, 1);
 		fp->read(&c, 1);
 
 		// copy the name till the next quote is read
 		Int index = 0;
-		while( c != '\"' )
+		while (c != '\"')
 		{
-
-			fontBuffer[ index++ ] = c;
+			fontBuffer[index++] = c;
 			fp->read(&c, 1);
 
-		}  // end while
-		fontBuffer[ index ] = '\0';
+		} // end while
+		fontBuffer[index] = '\0';
 		fp->read(&c, 1);
 
 		// read the size and bold data elements
@@ -1363,35 +1519,45 @@ void EditParameter::readFontFile( const char *filename )
 		fp->nextLine();
 
 		// set the font
-		GameFont *font = TheFontLibrary->getFont( AsciiString(fontBuffer), size, bold );
-		if( font == NULL )
+		GameFont *font = TheFontLibrary->getFont(AsciiString(fontBuffer), size, bold);
+		if (font == NULL)
 		{
-			char buffer[ 1024 ];
+			char buffer[1024];
 
-			sprintf( buffer, "Warning: The font '%s' Size: '%d' Bold: '%d', specified in the config file could not be loaded.  Does that font exist?",
-							 fontBuffer, size, bold );
-			//MessageBox( m_appHWnd, buffer, "Cannot Load Font", MB_OK );
+			sprintf(
+					buffer,
+					"Warning: The font '%s' Size: '%d' Bold: '%d', specified in the config file could not be loaded.  Does that font "
+					"exist?",
+					fontBuffer,
+					size,
+					bold);
+			// MessageBox( m_appHWnd, buffer, "Cannot Load Font", MB_OK );
 
-		}  // end if
+		} // end if
 
-	}  // end for i
+	} // end for i
 
 	// close the file
 	fp->close();
 	fp = NULL;
 
-}  // end readFontFile
+} // end readFontFile
 
 Bool EditParameter::loadWaypoints(CComboBox *pCombo, AsciiString match)
 {
-	if (pCombo) pCombo->ResetContent();
+	if (pCombo)
+		pCombo->ResetContent();
 	Bool didMatch = false;
 	MapObject *pMapObj;
-	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
-		if (pMapObj->isWaypoint()) {
+	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
+	{
+		if (pMapObj->isWaypoint())
+		{
 			AsciiString wayName = pMapObj->getWaypointName();
-			if (pCombo&& (CB_ERR == pCombo->FindStringExact(-1, wayName.str()))) pCombo->AddString(wayName.str());
-			if ((match==wayName)) didMatch = true;
+			if (pCombo && (CB_ERR == pCombo->FindStringExact(-1, wayName.str())))
+				pCombo->AddString(wayName.str());
+			if ((match == wayName))
+				didMatch = true;
 		}
 	}
 	return didMatch;
@@ -1399,33 +1565,45 @@ Bool EditParameter::loadWaypoints(CComboBox *pCombo, AsciiString match)
 
 Bool EditParameter::loadWaypointPaths(CComboBox *pCombo, AsciiString match)
 {
-	if (pCombo) pCombo->ResetContent();
+	if (pCombo)
+		pCombo->ResetContent();
 	Bool didMatch = false;
 	MapObject *pMapObj;
-	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
-		if (pMapObj->isWaypoint()) {
+	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
+	{
+		if (pMapObj->isWaypoint())
+		{
 			AsciiString wayName;
 			Bool exists;
-			wayName= pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel1, &exists);
-			if (!wayName.isEmpty()) {
-				if (pCombo && (CB_ERR == pCombo->FindStringExact(-1, wayName.str()))) {
+			wayName = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel1, &exists);
+			if (!wayName.isEmpty())
+			{
+				if (pCombo && (CB_ERR == pCombo->FindStringExact(-1, wayName.str())))
+				{
 					pCombo->AddString(wayName.str());
 				}
-				if ((match==wayName)) didMatch = true;
+				if ((match == wayName))
+					didMatch = true;
 			}
-			wayName= pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel2, &exists);
-			if (!wayName.isEmpty()) {
-				if (pCombo && (CB_ERR == pCombo->FindStringExact(-1, wayName.str()))) {
+			wayName = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel2, &exists);
+			if (!wayName.isEmpty())
+			{
+				if (pCombo && (CB_ERR == pCombo->FindStringExact(-1, wayName.str())))
+				{
 					pCombo->AddString(wayName.str());
 				}
-				if ((match==wayName)) didMatch = true;
+				if ((match == wayName))
+					didMatch = true;
 			}
-			wayName= pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel3, &exists);
-			if (!wayName.isEmpty()) {
-				if (pCombo && (CB_ERR == pCombo->FindStringExact(-1, wayName.str()))) {
+			wayName = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel3, &exists);
+			if (!wayName.isEmpty())
+			{
+				if (pCombo && (CB_ERR == pCombo->FindStringExact(-1, wayName.str())))
+				{
 					pCombo->AddString(wayName.str());
 				}
-				if ((match==wayName)) didMatch = true;
+				if ((match == wayName))
+					didMatch = true;
 			}
 		}
 	}
@@ -1434,15 +1612,18 @@ Bool EditParameter::loadWaypointPaths(CComboBox *pCombo, AsciiString match)
 
 Bool EditParameter::loadObjectFlags(CComboBox *pCombo, AsciiString match)
 {
-	if (pCombo) pCombo->ResetContent();
+	if (pCombo)
+		pCombo->ResetContent();
 
 	Int i;
 	Bool didMatch = false;
 
-	for (i = 0; TheObjectFlagsNames[i]; ++i) {
+	for (i = 0; TheObjectFlagsNames[i]; ++i)
+	{
 		if (pCombo)
 			pCombo->AddString(TheObjectFlagsNames[i]);
-		if (match == TheObjectFlagsNames[i]) {
+		if (match == TheObjectFlagsNames[i])
+		{
 			didMatch = true;
 		}
 	}
@@ -1452,30 +1633,46 @@ Bool EditParameter::loadObjectFlags(CComboBox *pCombo, AsciiString match)
 
 Bool EditParameter::loadScripts(CComboBox *pCombo, Bool subr, AsciiString match)
 {
-	if (pCombo) pCombo->ResetContent();
+	if (pCombo)
+		pCombo->ResetContent();
 	Int i;
 	SidesList *sidesListP = m_sidesListP;
-	if (sidesListP==NULL) sidesListP = TheSidesList;
+	if (sidesListP == NULL)
+		sidesListP = TheSidesList;
 	Bool didMatch = false;
-	for (i=0; i<sidesListP->getNumSides(); i++) {
+	for (i = 0; i < sidesListP->getNumSides(); i++)
+	{
 		ScriptList *pSL = sidesListP->getSideInfo(i)->getScriptList();
-		if (pSL == NULL) continue;
+		if (pSL == NULL)
+			continue;
 		Script *pScr;
-		for (pScr = pSL->getScript(); pScr; pScr=pScr->getNext()) {
-			if (subr && !pScr->isSubroutine()) continue;
-			if (pCombo) pCombo->AddString(pScr->getName().str());
-			if ((match==pScr->getName())) didMatch = true;
+		for (pScr = pSL->getScript(); pScr; pScr = pScr->getNext())
+		{
+			if (subr && !pScr->isSubroutine())
+				continue;
+			if (pCombo)
+				pCombo->AddString(pScr->getName().str());
+			if ((match == pScr->getName()))
+				didMatch = true;
 		}
 		ScriptGroup *pGroup;
-		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup=pGroup->getNext()) {
-			if (!subr || pGroup->isSubroutine()) {
-				if (pCombo) pCombo->AddString(pGroup->getName().str());
-				if ((match==pGroup->getName())) didMatch = true;
+		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup = pGroup->getNext())
+		{
+			if (!subr || pGroup->isSubroutine())
+			{
+				if (pCombo)
+					pCombo->AddString(pGroup->getName().str());
+				if ((match == pGroup->getName()))
+					didMatch = true;
 			}
-			for (pScr = pGroup->getScript(); pScr; pScr=pScr->getNext()) {
-				if (subr && !pScr->isSubroutine()) continue;
-				if (pCombo) pCombo->AddString(pScr->getName().str());
-				if ((match==pScr->getName())) didMatch = true;
+			for (pScr = pGroup->getScript(); pScr; pScr = pScr->getNext())
+			{
+				if (subr && !pScr->isSubroutine())
+					continue;
+				if (pCombo)
+					pCombo->AddString(pScr->getName().str());
+				if ((match == pScr->getName()))
+					didMatch = true;
 			}
 		}
 	}
@@ -1484,88 +1681,114 @@ Bool EditParameter::loadScripts(CComboBox *pCombo, Bool subr, AsciiString match)
 
 Bool EditParameter::loadSides(CComboBox *pCombo, AsciiString match)
 {
-	if (pCombo) {
+	if (pCombo)
+	{
 		pCombo->ResetContent();
 		pCombo->AddString(LOCAL_PLAYER);
 		pCombo->AddString(THIS_PLAYER);
 		pCombo->AddString(THIS_PLAYER_ENEMY);
 	}
 	Bool didMatch = false;
-	if (match == LOCAL_PLAYER) didMatch=true;
-	if (match == THIS_PLAYER) didMatch=true;
-	if (match == THIS_PLAYER_ENEMY) didMatch=true;
+	if (match == LOCAL_PLAYER)
+		didMatch = true;
+	if (match == THIS_PLAYER)
+		didMatch = true;
+	if (match == THIS_PLAYER_ENEMY)
+		didMatch = true;
 	Int i;
 	SidesList *sidesListP = m_sidesListP;
-	if (sidesListP==NULL) sidesListP = TheSidesList;
-	for (i=0; i<sidesListP->getNumSides(); i++) {
+	if (sidesListP == NULL)
+		sidesListP = TheSidesList;
+	for (i = 0; i < sidesListP->getNumSides(); i++)
+	{
 		Dict *d = sidesListP->getSideInfo(i)->getDict();
 		AsciiString name = d->getAsciiString(TheKey_playerName);
-		if (name.isEmpty()) continue;
-		if (pCombo) pCombo->AddString(name.str());
-		if ((name==match)) didMatch = true;
+		if (name.isEmpty())
+			continue;
+		if (pCombo)
+			pCombo->AddString(name.str());
+		if ((name == match))
+			didMatch = true;
 	}
 	return didMatch;
 }
 
 Bool EditParameter::loadTeams(CComboBox *pCombo, AsciiString match)
 {
-	if (pCombo) {
+	if (pCombo)
+	{
 		pCombo->ResetContent();
 		pCombo->AddString(THIS_TEAM);
-		//pCombo->AddString(ANY_TEAM);
+		// pCombo->AddString(ANY_TEAM);
 	}
 	Bool didMatch = false;
-	if (match == THIS_TEAM) didMatch=true;
-	if (match == ANY_TEAM) didMatch=true;
+	if (match == THIS_TEAM)
+		didMatch = true;
+	if (match == ANY_TEAM)
+		didMatch = true;
 	Int i;
 	SidesList *sidesListP = m_sidesListP;
-	if (sidesListP==NULL) sidesListP = TheSidesList;
+	if (sidesListP == NULL)
+		sidesListP = TheSidesList;
 	for (i = 0; i < sidesListP->getNumTeams(); i++)
 	{
 		Dict *d = sidesListP->getTeamInfo(i)->getDict();
 		AsciiString name = d->getAsciiString(TheKey_teamName);
-		DEBUG_ASSERTCRASH(!name.isEmpty(),("bad"));
+		DEBUG_ASSERTCRASH(!name.isEmpty(), ("bad"));
 
-		if (name == "team") {
+		if (name == "team")
+		{
 			// Neutral team.
 			continue;
 		}
-		if (pCombo) pCombo->AddString(name.str());
-		if ((name==match)) didMatch = true;
+		if (pCombo)
+			pCombo->AddString(name.str());
+		if ((name == match))
+			didMatch = true;
 	}
 	return didMatch;
 }
 
 Bool EditParameter::loadTeamOrUnit(CComboBox *pCombo, AsciiString match)
 {
-	if (pCombo) {
+	if (pCombo)
+	{
 		pCombo->ResetContent();
 	}
 	Bool didMatch = false;
 	Int i;
 	SidesList *sidesListP = m_sidesListP;
-	if (sidesListP==NULL) sidesListP = TheSidesList;
+	if (sidesListP == NULL)
+		sidesListP = TheSidesList;
 	for (i = 0; i < sidesListP->getNumTeams(); i++)
 	{
 		Dict *d = sidesListP->getTeamInfo(i)->getDict();
 		AsciiString name = d->getAsciiString(TheKey_teamName);
-		DEBUG_ASSERTCRASH(!name.isEmpty(),("bad"));
+		DEBUG_ASSERTCRASH(!name.isEmpty(), ("bad"));
 
-		if (name == "team") {
+		if (name == "team")
+		{
 			// Neutral team.
 			continue;
 		}
-		if (pCombo) pCombo->AddString(name.str());
-		if ((name==match)) didMatch = true;
+		if (pCombo)
+			pCombo->AddString(name.str());
+		if ((name == match))
+			didMatch = true;
 	}
 	MapObject *pMapObj;
-	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
+	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
+	{
 		Bool exists;
 		AsciiString objName = pMapObj->getProperties()->getAsciiString(TheKey_objectName, &exists);
-		if (!exists) continue;
-		if (objName.isEmpty()) continue;
-		if (pCombo) pCombo->AddString(objName.str());
-		if (objName == match) didMatch = true;
+		if (!exists)
+			continue;
+		if (objName.isEmpty())
+			continue;
+		if (pCombo)
+			pCombo->AddString(objName.str());
+		if (objName == match)
+			didMatch = true;
 	}
 	return didMatch;
 }
@@ -1576,16 +1799,16 @@ Bool EditParameter::loadUnits(CComboBox *pCombo, AsciiString match)
 	{
 		pCombo->ResetContent();
 		pCombo->AddString(THIS_OBJECT);
-		//pCombo->AddString(ANY_OBJECT);
+		// pCombo->AddString(ANY_OBJECT);
 	}
 	Bool didMatch = false;
-	if( match == THIS_OBJECT )
+	if (match == THIS_OBJECT)
 	{
 		didMatch = true;
 	}
-	if( match == ANY_OBJECT )
+	if (match == ANY_OBJECT)
 	{
-		didMatch=true;
+		didMatch = true;
 	}
 
 	MapObject *pMapObj;
@@ -1617,7 +1840,7 @@ Bool EditParameter::loadUnits(CComboBox *pCombo, AsciiString match)
 
 	SidesList *sidesListP = m_sidesListP;
 	Int i;
-	if (sidesListP==NULL)
+	if (sidesListP == NULL)
 	{
 		sidesListP = TheSidesList;
 	}
@@ -1642,21 +1865,27 @@ Bool EditParameter::loadUnits(CComboBox *pCombo, AsciiString match)
 			pBI = pBI->getNext();
 		}
 	}
-	for (i=0; i<sidesListP->getNumSides(); i++) {
+	for (i = 0; i < sidesListP->getNumSides(); i++)
+	{
 		ScriptList *pSL = sidesListP->getSideInfo(i)->getScriptList();
 		Script *pScr;
-		for (pScr = pSL->getScript(); pScr; pScr=pScr->getNext()) {
+		for (pScr = pSL->getScript(); pScr; pScr = pScr->getNext())
+		{
 			// Attack priority sets get created in actions.
-			if (loadCreateUnitParameter(pScr, pCombo, match)) {
-				didMatch=true;
+			if (loadCreateUnitParameter(pScr, pCombo, match))
+			{
+				didMatch = true;
 			}
 		}
 		ScriptGroup *pGroup;
-		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup=pGroup->getNext()) {
-			for (pScr = pGroup->getScript(); pScr; pScr=pScr->getNext()) {
-			// Attack priority sets get created in actions.
-				if (loadCreateUnitParameter(pScr, pCombo, match)) {
-					didMatch	= true;
+		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup = pGroup->getNext())
+		{
+			for (pScr = pGroup->getScript(); pScr; pScr = pScr->getNext())
+			{
+				// Attack priority sets get created in actions.
+				if (loadCreateUnitParameter(pScr, pCombo, match))
+				{
+					didMatch = true;
 				}
 			}
 		}
@@ -1667,21 +1896,22 @@ Bool EditParameter::loadUnits(CComboBox *pCombo, AsciiString match)
 
 Bool EditParameter::loadTransports(CComboBox *pCombo, AsciiString match)
 {
-	if (pCombo) {
+	if (pCombo)
+	{
 		pCombo->ResetContent();
 	}
 	Bool didMatch = false;
 
 	// add transports from the thing factory as the available objects to use
 	const ThingTemplate *tTemplate;
-	for( tTemplate = TheThingFactory->firstTemplate();
-		tTemplate;
-		tTemplate = tTemplate->friend_getNextTemplate() )
+	for (tTemplate = TheThingFactory->firstTemplate(); tTemplate; tTemplate = tTemplate->friend_getNextTemplate())
 	{
-
-		if (tTemplate->isKindOf(KINDOF_TRANSPORT)) {
-			if (pCombo) pCombo->AddString( tTemplate->getName().str());
-			if ((match==tTemplate->getName())) didMatch = true;
+		if (tTemplate->isKindOf(KINDOF_TRANSPORT))
+		{
+			if (pCombo)
+				pCombo->AddString(tTemplate->getName().str());
+			if ((match == tTemplate->getName()))
+				didMatch = true;
 		}
 	}
 	return didMatch;
@@ -1689,19 +1919,27 @@ Bool EditParameter::loadTransports(CComboBox *pCombo, AsciiString match)
 
 Bool EditParameter::loadBridges(CComboBox *pCombo, AsciiString match)
 {
-	if (pCombo) pCombo->ResetContent();
+	if (pCombo)
+		pCombo->ResetContent();
 	Bool didMatch = false;
 
 	MapObject *pMapObj;
-	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
+	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
+	{
 		Bool exists;
 		AsciiString objName = pMapObj->getProperties()->getAsciiString(TheKey_objectName, &exists);
-		if (!exists) continue;
-		if (objName.isEmpty()) continue;
-		if (pMapObj->getFlag(FLAG_BRIDGE_POINT1)) {
-			if (pMapObj->getNext() && pMapObj->getNext()->getFlag(FLAG_BRIDGE_POINT2)) {
-				if (pCombo) pCombo->AddString(objName.str());
-				if (objName == match) didMatch = true;
+		if (!exists)
+			continue;
+		if (objName.isEmpty())
+			continue;
+		if (pMapObj->getFlag(FLAG_BRIDGE_POINT1))
+		{
+			if (pMapObj->getNext() && pMapObj->getNext()->getFlag(FLAG_BRIDGE_POINT2))
+			{
+				if (pCombo)
+					pCombo->AddString(objName.str());
+				if (objName == match)
+					didMatch = true;
 			}
 		}
 	}
@@ -1713,8 +1951,8 @@ BOOL EditParameter::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	CWnd *pCaption = GetDlgItem(IDC_CAPTION);
-	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_COMBO);
-	CComboBox *pList = (CComboBox*)GetDlgItem(IDC_LIST);
+	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_COMBO);
+	CComboBox *pList = (CComboBox *)GetDlgItem(IDC_LIST);
 	CEdit *pEdit = (CEdit *)GetDlgItem(IDC_EDIT);
 
 	pCombo->ShowWindow(SW_HIDE);
@@ -1728,7 +1966,8 @@ BOOL EditParameter::OnInitDialog()
 	Bool showList = false;
 	Int i;
 
-	switch (m_parameter->getParameterType()) {
+	switch (m_parameter->getParameterType())
+	{
 		default:
 			DEBUG_CRASH(("Unknown parameter type."));
 			break;
@@ -1845,13 +2084,13 @@ BOOL EditParameter::OnInitDialog()
 
 		case Parameter::ANGLE:
 			captionText = "Angle (degrees):";
-			editText.Format("%.2f", m_parameter->getReal()*180/PI);
+			editText.Format("%.2f", m_parameter->getReal() * 180 / PI);
 			showCombo = false;
 			break;
 
 		case Parameter::PERCENT:
 			captionText = "Percent:";
-			editText.Format("%.2f", m_parameter->getReal()*100.0f);
+			editText.Format("%.2f", m_parameter->getReal() * 100.0f);
 			showCombo = false;
 			break;
 
@@ -1875,8 +2114,9 @@ BOOL EditParameter::OnInitDialog()
 		case Parameter::KIND_OF_PARAM:
 			captionText = "Kind of:";
 			showList = true;
-			for (i=KINDOF_FIRST; i<KINDOF_COUNT; i++) {
-				pList->InsertString(-1, KindOfMaskType::getBitNames()[i-KINDOF_FIRST]);
+			for (i = KINDOF_FIRST; i < KINDOF_COUNT; i++)
+			{
+				pList->InsertString(-1, KindOfMaskType::getBitNames()[i - KINDOF_FIRST]);
 			}
 			pList->SetCurSel(m_parameter->getInt());
 			break;
@@ -1905,7 +2145,7 @@ BOOL EditParameter::OnInitDialog()
 			pList->InsertString(-1, "Flank");
 			pList->InsertString(-1, "Special");
 			i = pList->FindStringExact(-1, m_parameter->getString().str());
-			if (i!=CB_ERR)
+			if (i != CB_ERR)
 				pList->SetCurSel(i);
 			else
 				pList->SetCurSel(0);
@@ -1914,24 +2154,22 @@ BOOL EditParameter::OnInitDialog()
 
 		case Parameter::RADAR_EVENT_TYPE:
 			captionText = "Radar Event Type:";
-			pList->InsertString(-1,"Construction");
-			pList->InsertString(-1,"Upgrade");
-			pList->InsertString(-1,"Under Attack");
-			pList->InsertString(-1,"Information");
+			pList->InsertString(-1, "Construction");
+			pList->InsertString(-1, "Upgrade");
+			pList->InsertString(-1, "Under Attack");
+			pList->InsertString(-1, "Information");
 			pList->SetCurSel(m_parameter->getInt() - RADAR_EVENT_CONSTRUCTION);
 			showList = true;
 			break;
 
-
-    case Parameter::LEFT_OR_RIGHT:
+		case Parameter::LEFT_OR_RIGHT:
 			captionText = "Evacuate Container Side Choices:";
-			pList->InsertString(-1,"Left");
-			pList->InsertString(-1,"Right");
-			pList->InsertString(-1,"Center (Default)");
+			pList->InsertString(-1, "Left");
+			pList->InsertString(-1, "Right");
+			pList->InsertString(-1, "Center (Default)");
 			pList->SetCurSel(m_parameter->getInt() - 1);
 			showList = true;
 			break;
-
 
 		case Parameter::RELATION:
 			captionText = "Relation:";
@@ -1947,7 +2185,8 @@ BOOL EditParameter::OnInitDialog()
 		case Parameter::MUSIC:
 			captionText = "Music :";
 		case Parameter::SOUND:
-			if (m_parameter->getParameterType() == Parameter::SOUND) {
+			if (m_parameter->getParameterType() == Parameter::SOUND)
+			{
 				captionText = "Sound :";
 			}
 			captionText = "Locate the Audio name:";
@@ -1979,7 +2218,7 @@ BOOL EditParameter::OnInitDialog()
 		case Parameter::SCIENCE_AVAILABILITY:
 			captionText = "Science Availability:";
 			showCombo = true;
-			loadScienceAvailabilities( pCombo );
+			loadScienceAvailabilities(pCombo);
 			break;
 
 		case Parameter::UPGRADE:
@@ -1991,13 +2230,13 @@ BOOL EditParameter::OnInitDialog()
 		case Parameter::COMMANDBUTTON_ABILITY:
 			captionText = "Ability:";
 			showCombo = true;
-			loadAbilities( pCombo );
+			loadAbilities(pCombo);
 			break;
 
 		case Parameter::COMMANDBUTTON_ALL_ABILITIES:
 			captionText = "Ability:";
 			showCombo = true;
-			loadAllAbilities( pCombo );
+			loadAllAbilities(pCombo);
 			break;
 
 		case Parameter::BOUNDARY:
@@ -2005,7 +2244,8 @@ BOOL EditParameter::OnInitDialog()
 			captionText = "Boundary:";
 			showCombo = true;
 			int numBoundaries = TheTerrainRenderObject->getMap()->getAllBoundaries().size();
-			for (int i = 0; i < numBoundaries; ++i) {
+			for (int i = 0; i < numBoundaries; ++i)
+			{
 				pCombo->InsertString(-1, BORDER_COLORS[i % BORDER_COLORS_SIZE].m_colorName);
 			}
 			break;
@@ -2015,7 +2255,8 @@ BOOL EditParameter::OnInitDialog()
 			captionText = "Buidable:";
 			showList = true;
 
-			for (i = BSTATUS_YES; i < BSTATUS_NUM_TYPES; ++i) {
+			for (i = BSTATUS_YES; i < BSTATUS_NUM_TYPES; ++i)
+			{
 				pList->InsertString(-1, BuildableStatusNames[i - BSTATUS_YES]);
 			}
 			pList->SetCurSel(m_parameter->getInt());
@@ -2026,12 +2267,14 @@ BOOL EditParameter::OnInitDialog()
 			captionText = "Surfaces allowed: ";
 			showList = true;
 
-			for (i = 0; i < 3; ++i) {
+			for (i = 0; i < 3; ++i)
+			{
 				pList->InsertString(-1, Surfaces[i]);
 			}
 
 			// 0 is invalid for surfaces, so change this to a 3 (which means AIR and GROUND)
-			if (m_parameter->getInt() == 0) {
+			if (m_parameter->getInt() == 0)
+			{
 				m_parameter->friend_setInt(3);
 			}
 
@@ -2043,7 +2286,8 @@ BOOL EditParameter::OnInitDialog()
 		{
 			captionText = "Shake Intensity: ";
 			showList = true;
-			for (i = 0; i < View::SHAKE_COUNT; ++i) {
+			for (i = 0; i < View::SHAKE_COUNT; ++i)
+			{
 				pList->InsertString(-1, ShakeIntensities[i]);
 			}
 
@@ -2055,11 +2299,11 @@ BOOL EditParameter::OnInitDialog()
 		{
 			captionText = "Object status:";
 			showList = true;
-			for( i = 0; i < OBJECT_STATUS_COUNT; i++ )
+			for (i = 0; i < OBJECT_STATUS_COUNT; i++)
 			{
-				pList->InsertString( -1, ObjectStatusMaskType::getBitNames()[i] );
+				pList->InsertString(-1, ObjectStatusMaskType::getBitNames()[i]);
 			}
-			pList->SelectString( -1, m_parameter->getString().str() );
+			pList->SelectString(-1, m_parameter->getString().str());
 			break;
 		}
 
@@ -2071,7 +2315,8 @@ BOOL EditParameter::OnInitDialog()
 			AsciiStringList sideList;
 			ThePlayerTemplateStore->getAllSideStrings(&sideList);
 
-			for (AsciiStringListIterator it = sideList.begin(); it != sideList.end(); ++it) {
+			for (AsciiStringListIterator it = sideList.begin(); it != sideList.end(); ++it)
+			{
 				pList->InsertString(-1, it->str());
 			}
 
@@ -2083,7 +2328,7 @@ BOOL EditParameter::OnInitDialog()
 		{
 			captionText = "Emoticons:";
 			showCombo = true;
-			loadEmoticons( pCombo );
+			loadEmoticons(pCombo);
 			break;
 		}
 		case Parameter::OBJECT_TYPE_LIST:
@@ -2100,37 +2345,45 @@ BOOL EditParameter::OnInitDialog()
 			loadRevealNames(pCombo);
 			break;
 		}
-
-
 	}
-	if (showCombo) {
+	if (showCombo)
+	{
 		pCombo->ShowWindow(SW_SHOW);
 		pCombo->SetWindowText(m_parameter->getString().str());
-		if (m_parameter->getString().isEmpty()) {
+		if (m_parameter->getString().isEmpty())
+		{
 			pCombo->SetCurSel(0);
 		}
 		pCombo->SetFocus();
-		if (m_key && m_key != VK_SPACE) pCombo->PostMessage(WM_CHAR, m_key, 0);
-	}	else if (showList) {
+		if (m_key && m_key != VK_SPACE)
+			pCombo->PostMessage(WM_CHAR, m_key, 0);
+	}
+	else if (showList)
+	{
 		pList->ShowWindow(SW_SHOW);
 		pList->SetFocus();
-		if (m_key && m_key != VK_SPACE) pList->PostMessage(WM_CHAR, m_key, 0);
-	}	else {
+		if (m_key && m_key != VK_SPACE)
+			pList->PostMessage(WM_CHAR, m_key, 0);
+	}
+	else
+	{
 		pEdit->ShowWindow(SW_SHOW);
 		pEdit->SetWindowText(editText);
 		pEdit->SetSel(0, 999);
 		pEdit->SetFocus();
-		if (m_key && m_key != VK_SPACE) pEdit->PostMessage(WM_CHAR, m_key, 0);
+		if (m_key && m_key != VK_SPACE)
+			pEdit->PostMessage(WM_CHAR, m_key, 0);
 	}
 	pCaption->SetWindowText(captionText);
 
-	CButton *previewSound = (CButton*)GetDlgItem(IDPREVIEWSOUND);
-	if (previewSound) {
+	CButton *previewSound = (CButton *)GetDlgItem(IDPREVIEWSOUND);
+	if (previewSound)
+	{
 		previewSound->ShowWindow(showAudioButton ? SW_SHOW : SW_HIDE);
 	}
 
-	return FALSE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return FALSE; // return TRUE unless you set the focus to a control
+								// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 Bool EditParameter::scanReal(CEdit *pEdit, Real scale)
@@ -2139,10 +2392,13 @@ Bool EditParameter::scanReal(CEdit *pEdit, Real scale)
 	Real theReal;
 
 	pEdit->GetWindowText(txt);
-	if (1==sscanf(txt, "%f", &theReal)) {
-		m_parameter->friend_setReal(theReal*scale);
+	if (1 == sscanf(txt, "%f", &theReal))
+	{
+		m_parameter->friend_setReal(theReal * scale);
 		return TRUE;
-	} else {
+	}
+	else
+	{
 		pEdit->SetFocus();
 		::MessageBeep(MB_ICONEXCLAMATION);
 		return FALSE;
@@ -2151,12 +2407,13 @@ Bool EditParameter::scanReal(CEdit *pEdit, Real scale)
 
 void EditParameter::OnOK()
 {
-	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_COMBO);
+	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_COMBO);
 	CEdit *pEdit = (CEdit *)GetDlgItem(IDC_EDIT);
-	CComboBox *pList = (CComboBox*)GetDlgItem(IDC_LIST);
+	CComboBox *pList = (CComboBox *)GetDlgItem(IDC_LIST);
 	CString txt;
 	AsciiString comboText;
-	switch (m_parameter->getParameterType()) {
+	switch (m_parameter->getParameterType())
+	{
 		default:
 			DEBUG_CRASH(("Unknown parameter type."));
 			break;
@@ -2201,9 +2458,12 @@ void EditParameter::OnOK()
 		case Parameter::INT:
 			pEdit->GetWindowText(txt);
 			Int theInt;
-			if (1==sscanf(txt, "%d", &theInt)) {
+			if (1 == sscanf(txt, "%d", &theInt))
+			{
 				m_parameter->friend_setInt(theInt);
-			} else {
+			}
+			else
+			{
 				pEdit->SetFocus();
 				::MessageBeep(MB_ICONEXCLAMATION);
 				return;
@@ -2213,9 +2473,12 @@ void EditParameter::OnOK()
 		case Parameter::COLOR:
 			DEBUG_CRASH(("should never get here for this data type"));
 			pEdit->GetWindowText(txt);
-			if (1==sscanf(txt, "%08lx", &theInt)) {
+			if (1 == sscanf(txt, "%08lx", &theInt))
+			{
 				m_parameter->friend_setInt(theInt);
-			} else {
+			}
+			else
+			{
 				pEdit->SetFocus();
 				::MessageBeep(MB_ICONEXCLAMATION);
 				return;
@@ -2223,19 +2486,22 @@ void EditParameter::OnOK()
 			break;
 
 		case Parameter::REAL:
-			if (! scanReal(pEdit, 1.0f)) {
+			if (!scanReal(pEdit, 1.0f))
+			{
 				return;
 			}
 			break;
 
 		case Parameter::ANGLE:
-			if (! scanReal(pEdit, PI/180.0f)) {
+			if (!scanReal(pEdit, PI / 180.0f))
+			{
 				return;
 			}
 			break;
 
 		case Parameter::PERCENT:
-			if (! scanReal(pEdit, 1.0f/100.0f)) {
+			if (!scanReal(pEdit, 1.0f / 100.0f))
+			{
 				return;
 			}
 			break;
@@ -2245,7 +2511,7 @@ void EditParameter::OnOK()
 			m_parameter->friend_setInt(pList->GetCurSel());
 			break;
 		case Parameter::KIND_OF_PARAM:
-			m_parameter->friend_setInt(pList->GetCurSel()+KINDOF_FIRST);
+			m_parameter->friend_setInt(pList->GetCurSel() + KINDOF_FIRST);
 			break;
 
 		case Parameter::RELATION:
@@ -2254,7 +2520,8 @@ void EditParameter::OnOK()
 		case Parameter::AI_MOOD:
 			m_parameter->friend_setInt(pList->GetCurSel() + ATTITUDE_SLEEP);
 			break;
-		case Parameter::SKIRMISH_WAYPOINT_PATH:	{
+		case Parameter::SKIRMISH_WAYPOINT_PATH:
+		{
 			CString cstr;
 			pList->GetLBText(pList->GetCurSel(), cstr);
 			m_parameter->friend_setString((LPCTSTR)cstr);
@@ -2264,11 +2531,9 @@ void EditParameter::OnOK()
 			m_parameter->friend_setInt(pList->GetCurSel() + RADAR_EVENT_CONSTRUCTION);
 			break;
 
-
-    case Parameter::LEFT_OR_RIGHT:
-      m_parameter->friend_setInt(pList->GetCurSel() + 1);
-      break;
-
+		case Parameter::LEFT_OR_RIGHT:
+			m_parameter->friend_setInt(pList->GetCurSel() + 1);
+			break;
 
 		case Parameter::LOCALIZED_TEXT:
 			pCombo->GetWindowText(txt);
@@ -2278,14 +2543,15 @@ void EditParameter::OnOK()
 		case Parameter::BOUNDARY:
 		{
 			Int curSel = pCombo->GetCurSel();
-			if (curSel >= 0) {
+			if (curSel >= 0)
+			{
 				m_parameter->friend_setInt(curSel);
 			}
 			break;
 		}
 
 		case Parameter::BUILDABLE:
-			m_parameter->friend_setInt(pList->GetCurSel()+BSTATUS_YES);
+			m_parameter->friend_setInt(pList->GetCurSel() + BSTATUS_YES);
 			break;
 
 		case Parameter::SURFACES_ALLOWED:
@@ -2299,13 +2565,13 @@ void EditParameter::OnOK()
 		case Parameter::OBJECT_STATUS:
 		{
 			Int curSel = pList->GetCurSel();
-			if( curSel >= 0 )
+			if (curSel >= 0)
 			{
-				m_parameter->friend_setString( ObjectStatusMaskType::getBitNames()[curSel] );
+				m_parameter->friend_setString(ObjectStatusMaskType::getBitNames()[curSel]);
 			}
 			else
 			{
-				m_parameter->friend_setString( AsciiString::TheEmptyString );
+				m_parameter->friend_setString(AsciiString::TheEmptyString);
 			}
 			break;
 		}
@@ -2313,7 +2579,8 @@ void EditParameter::OnOK()
 		case Parameter::FACTION_NAME:
 		{
 			Int curSel = pList->GetCurSel();
-			if (curSel >= 0) {
+			if (curSel >= 0)
+			{
 				CString str;
 				pList->GetWindowText(str);
 				m_parameter->friend_setString(str.GetBuffer(0));
@@ -2334,32 +2601,32 @@ void EditParameter::OnOK()
 
 void EditParameter::OnCancel()
 {
-
 	CDialog::OnCancel();
 }
 
 /* This function handles a left click on
-   the "preview sound" button */
+	 the "preview sound" button */
 void EditParameter::OnPreviewSound()
 {
 	CString txt;
 	AsciiString comboText;
 
-	//only execute if the script in the combo box deals with sound
-	if (m_parameter->getParameterType() == Parameter::SOUND ||
-		  m_parameter->getParameterType() == Parameter::DIALOG ||
-		  m_parameter->getParameterType() == Parameter::MUSIC) {
-		CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_COMBO);
+	// only execute if the script in the combo box deals with sound
+	if (m_parameter->getParameterType() == Parameter::SOUND || m_parameter->getParameterType() == Parameter::DIALOG
+			|| m_parameter->getParameterType() == Parameter::MUSIC)
+	{
+		CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_COMBO);
 		pCombo->GetWindowText(txt);
 		comboText = AsciiString(txt);
 
-		//acquire and play song based on the string in the combo box
+		// acquire and play song based on the string in the combo box
 		AudioEventRTS event;
 		event.setEventName(comboText);
 		event.setAudioEventInfo(TheAudio->findAudioEventInfo(comboText));
 		event.generateFilename();
 
-		if (!event.getFilename().isEmpty()) {
+		if (!event.getFilename().isEmpty())
+		{
 			PlaySound(event.getFilename().str(), NULL, SND_ASYNC | SND_FILENAME | SND_PURGE);
 		}
 	}
@@ -2369,16 +2636,21 @@ AsciiString EditParameter::loadLocalizedText(CComboBox *pCombo, AsciiString isSt
 {
 	static const AsciiString theScriptPrefix = "SCRIPT";
 	AsciiStringVec vec = TheGameText->getStringsWithLabelPrefix(theScriptPrefix);
-	if (pCombo) {
+	if (pCombo)
+	{
 		pCombo->Clear();
-		for (int i = 0; i < vec.size(); ++i) {
+		for (int i = 0; i < vec.size(); ++i)
+		{
 			pCombo->AddString(vec[i].str());
 		}
 	}
 
-	if (isStringInTable != AsciiString::TheEmptyString) {
-		for (int i = 0; i < vec.size(); ++i) {
-			if (isStringInTable.compare(vec[i].str()) == 0) {
+	if (isStringInTable != AsciiString::TheEmptyString)
+	{
+		for (int i = 0; i < vec.size(); ++i)
+		{
+			if (isStringInTable.compare(vec[i].str()) == 0)
+			{
 				return vec[i];
 			}
 		}

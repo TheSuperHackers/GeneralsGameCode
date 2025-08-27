@@ -40,11 +40,8 @@ Int BrushTool::m_brushFeather;
 Bool BrushTool::m_brushSquare;
 Int BrushTool::m_brushHeight;
 
-
-
 /// Constructor
-BrushTool::BrushTool(void) :
-	Tool(ID_BRUSH_TOOL, IDC_BRUSH_CROSS)
+BrushTool::BrushTool(void) : Tool(ID_BRUSH_TOOL, IDC_BRUSH_CROSS)
 {
 	m_htMapEditCopy = NULL;
 	m_htMapFeatherCopy = NULL;
@@ -65,7 +62,8 @@ BrushTool::~BrushTool(void)
 /// Set the brush height and notify the height options panel of the change.
 void BrushTool::setHeight(Int height)
 {
-	if (m_brushHeight != height) {
+	if (m_brushHeight != height)
+	{
 		m_brushHeight = height;
 		// notify height palette options panel
 		BrushOptions::setHeight(height);
@@ -75,7 +73,8 @@ void BrushTool::setHeight(Int height)
 /// Set the brush width and notify the height options panel of the change.
 void BrushTool::setWidth(Int width)
 {
-	if (m_brushWidth != width) {
+	if (m_brushWidth != width)
+	{
 		m_brushWidth = width;
 		// notify brush palette options panel
 		BrushOptions::setWidth(width);
@@ -86,7 +85,8 @@ void BrushTool::setWidth(Int width)
 /// Set the brush feather and notify the height options panel of the change.
 void BrushTool::setFeather(Int feather)
 {
-	if (m_brushFeather != feather) {
+	if (m_brushFeather != feather)
+	{
 		m_brushFeather = feather;
 		// notify height palette options panel
 		BrushOptions::setFeather(feather);
@@ -105,11 +105,12 @@ void BrushTool::activate()
 /// Start tool.
 /** Setup the tool to start brushing - make a copy of the height map
 to edit, another copy because we need it :), and call mouseMovedDown. */
-void BrushTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void BrushTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
-	if (m != TRACK_L) return;
+	if (m != TRACK_L)
+		return;
 
-//	WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
+	//	WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
 	// just in case, release it.
 	REF_PTR_RELEASE(m_htMapEditCopy);
 	m_htMapEditCopy = pDoc->GetHeightMap()->duplicate();
@@ -123,9 +124,10 @@ void BrushTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 /// End tool.
 /** Finish the tool operation - create a command, pass it to the
 doc to execute, and cleanup ref'd objects. */
-void BrushTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void BrushTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
-	if (m != TRACK_L) return;
+	if (m != TRACK_L)
+		return;
 
 	WBDocUndoable *pUndo = new WBDocUndoable(pDoc, m_htMapEditCopy);
 	pDoc->AddAndDoUndoable(pUndo);
@@ -136,58 +138,73 @@ void BrushTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBui
 
 /// Execute the tool.
 /** Apply the height brush at the current point. */
-void BrushTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void BrushTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
 	Coord3D cpt;
 	pView->viewToDocCoords(viewPt, &cpt);
 	DrawObject::setFeedbackPos(cpt);
 
-	if (m != TRACK_L) return;
+	if (m != TRACK_L)
+		return;
 
 	pView->viewToDocCoords(viewPt, &cpt);
 
 	int brushWidth = m_brushWidth;
-	if (m_brushFeather>0) {
-		brushWidth += 2*m_brushFeather;
+	if (m_brushFeather > 0)
+	{
+		brushWidth += 2 * m_brushFeather;
 	}
 	brushWidth += 2;
 
 	CPoint ndx;
 	getCenterIndex(&cpt, m_brushWidth, &ndx, pDoc);
 
-	if (m_prevXIndex == ndx.x && m_prevYIndex == ndx.y) return;
+	if (m_prevXIndex == ndx.x && m_prevYIndex == ndx.y)
+		return;
 
 	m_prevXIndex = ndx.x;
 	m_prevYIndex = ndx.y;
 
-	int sub = brushWidth/2;
-	int add = brushWidth-sub;
+	int sub = brushWidth / 2;
+	int add = brushWidth - sub;
 
 	Int i, j;
-	for (i=ndx.x-sub; i<ndx.x+add; i++) {
-		if (i<0 || i>=m_htMapEditCopy->getXExtent()) {
+	for (i = ndx.x - sub; i < ndx.x + add; i++)
+	{
+		if (i < 0 || i >= m_htMapEditCopy->getXExtent())
+		{
 			continue;
 		}
-		for (j=ndx.y-sub; j<ndx.y+add; j++) {
-			if (j<0 || j>=m_htMapEditCopy->getYExtent()) {
+		for (j = ndx.y - sub; j < ndx.y + add; j++)
+		{
+			if (j < 0 || j >= m_htMapEditCopy->getYExtent())
+			{
 				continue;
 			}
 			Real blendFactor;
-			if (m_brushSquare) {
+			if (m_brushSquare)
+			{
 				blendFactor = calcSquareBlendFactor(ndx, i, j, m_brushWidth, m_brushFeather);
-			} else {
+			}
+			else
+			{
 				blendFactor = calcRoundBlendFactor(ndx, i, j, m_brushWidth, m_brushFeather);
 			}
-			Int curHeight = m_htMapFeatherCopy->getHeight(i,j);
-			float fNewHeight = blendFactor*m_brushHeight+((1.0f-blendFactor)*curHeight) ;
-			Int newHeight = floor(fNewHeight+0.5);
-			if (m_brushHeight > curHeight) {
-				if (m_htMapEditCopy->getHeight(i,j)>newHeight) {
-					newHeight = m_htMapEditCopy->getHeight(i,j);
+			Int curHeight = m_htMapFeatherCopy->getHeight(i, j);
+			float fNewHeight = blendFactor * m_brushHeight + ((1.0f - blendFactor) * curHeight);
+			Int newHeight = floor(fNewHeight + 0.5);
+			if (m_brushHeight > curHeight)
+			{
+				if (m_htMapEditCopy->getHeight(i, j) > newHeight)
+				{
+					newHeight = m_htMapEditCopy->getHeight(i, j);
 				}
-			} else {
-				if (m_htMapEditCopy->getHeight(i,j)<newHeight) {
-					newHeight = m_htMapEditCopy->getHeight(i,j);
+			}
+			else
+			{
+				if (m_htMapEditCopy->getHeight(i, j) < newHeight)
+				{
+					newHeight = m_htMapEditCopy->getHeight(i, j);
 				}
 			}
 			m_htMapEditCopy->setHeight(i, j, newHeight);

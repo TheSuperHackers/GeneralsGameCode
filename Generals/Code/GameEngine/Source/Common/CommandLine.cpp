@@ -22,8 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ArchiveFileSystem.h"
 #include "Common/CommandLine.h"
@@ -36,9 +35,6 @@
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "trim.h"
-
-
-
 
 Bool TheDebugIgnoreSyncErrors = FALSE;
 extern Int DX8Wrapper_PreserveFPU;
@@ -61,7 +57,7 @@ extern Bool g_useStringFile;
 #endif
 
 // Retval is number of cmd-line args eaten
-typedef Int (*FuncPtr)( char *args[], int num );
+typedef Int (*FuncPtr)(char *args[], int num);
 
 static const UnsignedByte F_NOCASE = 1; // Case-insensitive
 
@@ -130,7 +126,6 @@ Int parseNoMusic(char *args[], int)
 
 	return 1;
 }
-
 
 //=============================================================================
 //=============================================================================
@@ -246,7 +241,7 @@ Int parseKeepCRCSave(char *args[], int argc)
 
 //=============================================================================
 //=============================================================================
-Int parseSaveDebugCRCPerFrame(char* args[], int argc)
+Int parseSaveDebugCRCPerFrame(char *args[], int argc)
 {
 #ifdef DEBUG_CRC
 	if (argc > 1)
@@ -402,7 +397,7 @@ Int parseMapName(char *args[], int num)
 {
 	if (num == 2)
 	{
-		TheWritableGlobalData->m_mapName.set( args[ 1 ] );
+		TheWritableGlobalData->m_mapName.set(args[1]);
 		ConvertShortMapPathToLongMapPath(TheWritableGlobalData->m_mapName);
 	}
 	return 1;
@@ -647,7 +642,6 @@ Int parseParticleEdit(char *args[], int)
 	return 1;
 }
 
-
 Int parseBuildMapCache(char *args[], int)
 {
 	TheWritableGlobalData->m_buildMapCache = true;
@@ -655,16 +649,14 @@ Int parseBuildMapCache(char *args[], int)
 	return 1;
 }
 
-
 #if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
-Int parsePreload( char *args[], int num )
+Int parsePreload(char *args[], int num)
 {
 	TheWritableGlobalData->m_preloadAssets = TRUE;
 
 	return 1;
 }
 #endif
-
 
 #if defined(RTS_DEBUG)
 Int parseDisplayDebug(char *args[], int)
@@ -684,8 +676,7 @@ Int parseFile(char *args[], int num)
 	return 2;
 }
 
-
-Int parsePreloadEverything( char *args[], int num )
+Int parsePreloadEverything(char *args[], int num)
 {
 	TheWritableGlobalData->m_preloadAssets = TRUE;
 	TheWritableGlobalData->m_preloadEverything = TRUE;
@@ -693,10 +684,10 @@ Int parsePreloadEverything( char *args[], int num )
 	return 1;
 }
 
-Int parseLogAssets( char *args[], int num )
+Int parseLogAssets(char *args[], int num)
 {
-	FILE *logfile=fopen("PreloadedAssets.txt","w");
-	if (logfile)	//clear the file
+	FILE *logfile = fopen("PreloadedAssets.txt", "w");
+	if (logfile) // clear the file
 		fclose(logfile);
 	TheWritableGlobalData->m_preloadReport = TRUE;
 
@@ -704,7 +695,7 @@ Int parseLogAssets( char *args[], int num )
 }
 
 /// begin stuff for VTUNE
-Int parseVTune ( char *args[], int num )
+Int parseVTune(char *args[], int num)
 {
 	TheWritableGlobalData->m_vTune = TRUE;
 
@@ -775,7 +766,7 @@ Int parseNoShellMap(char *args[], int)
 
 Int parseNoShaders(char *args[], int)
 {
-	TheWritableGlobalData->m_chipSetType = 1;	//force to a voodoo card which uses least amount of features.
+	TheWritableGlobalData->m_chipSetType = 1; // force to a voodoo card which uses least amount of features.
 
 	return 1;
 }
@@ -791,7 +782,7 @@ Int parseNoLogo(char *args[], int)
 }
 #endif
 
-Int parseNoSizzle( char *args[], int )
+Int parseNoSizzle(char *args[], int)
 {
 	TheWritableGlobalData->m_playSizzle = FALSE;
 
@@ -821,21 +812,21 @@ Int parseWinCursors(char *args[], int num)
 	return 1;
 }
 
-Int parseQuickStart( char *args[], int num )
+Int parseQuickStart(char *args[], int num)
 {
 #if defined(RTS_DEBUG)
-  parseNoLogo( args, num );
+	parseNoLogo(args, num);
 #else
-	//Kris: Patch 1.01 -- Allow release builds to skip the sizzle video, but still force the EA logo to show up.
-	//This is for legal reasons.
-	parseNoSizzle( args, num );
+	// Kris: Patch 1.01 -- Allow release builds to skip the sizzle video, but still force the EA logo to show up.
+	// This is for legal reasons.
+	parseNoSizzle(args, num);
 #endif
-	parseNoShellMap( args, num );
-	parseNoWindowAnimation( args, num );
+	parseNoShellMap(args, num);
+	parseNoWindowAnimation(args, num);
 	return 1;
 }
 
-Int parseConstantDebug( char *args[], int num )
+Int parseConstantDebug(char *args[], int num)
 {
 	TheWritableGlobalData->m_constantDebugUpdate = TRUE;
 
@@ -843,7 +834,7 @@ Int parseConstantDebug( char *args[], int num )
 }
 
 #if defined(RTS_DEBUG)
-Int parseExtraLogging( char *args[], int num )
+Int parseExtraLogging(char *args[], int num)
 {
 	TheWritableGlobalData->m_extraLogging = TRUE;
 
@@ -861,34 +852,32 @@ Int parseAllAdvice( char *args[], int num )
 }
 */
 
-Int parseShowTeamDot( char *args[], int num )
+Int parseShowTeamDot(char *args[], int num)
 {
 	TheWritableGlobalData->m_showTeamDot = TRUE;
 
 	return 1;
 }
 
-
 #if defined(RTS_DEBUG)
-Int parseSelectAll( char *args[], int num )
+Int parseSelectAll(char *args[], int num)
 {
 	TheWritableGlobalData->m_allowUnselectableSelection = TRUE;
 
 	return 1;
 }
 
-Int parseRunAhead( char *args[], Int num )
+Int parseRunAhead(char *args[], Int num)
 {
 	if (num > 2)
 	{
 		MIN_RUNAHEAD = atoi(args[1]);
 		MAX_FRAMES_AHEAD = atoi(args[2]);
-		FRAME_DATA_LENGTH = (MAX_FRAMES_AHEAD + 1)*2;
+		FRAME_DATA_LENGTH = (MAX_FRAMES_AHEAD + 1) * 2;
 	}
 	return 3;
 }
 #endif
-
 
 Int parseSeed(char *args[], int num)
 {
@@ -919,7 +908,7 @@ Int parsePlayStats(char *args[], int num)
 {
 	if (num > 1)
 	{
-		TheWritableGlobalData->m_playStats  = atoi(args[1]);
+		TheWritableGlobalData->m_playStats = atoi(args[1]);
 	}
 	return 2;
 }
@@ -983,7 +972,7 @@ Int parseBenchmark(char *args[], int num)
 	if (num > 1)
 	{
 		TheWritableGlobalData->m_benchmarkTimer = atoi(args[1]);
-		TheWritableGlobalData->m_playStats  = atoi(args[1]);
+		TheWritableGlobalData->m_playStats = atoi(args[1]);
 	}
 	return 2;
 }
@@ -996,7 +985,7 @@ Int parseStats(char *args[], int num)
 	if (num > 1)
 	{
 		TheWritableGlobalData->m_dumpStatsAtInterval = TRUE;
-		TheWritableGlobalData->m_statsInterval  = atoi(args[1]);
+		TheWritableGlobalData->m_statsInterval = atoi(args[1]);
 	}
 	return 2;
 }
@@ -1111,11 +1100,11 @@ Int parseSetDebugLevel(char *args[], int num)
 	if (num > 1)
 	{
 		AsciiString val = args[1];
-		for (Int i=0; i<DEBUG_LEVEL_MAX; ++i)
+		for (Int i = 0; i < DEBUG_LEVEL_MAX; ++i)
 		{
 			if (val == TheDebugLevels[i])
 			{
-				DebugLevelMask |= 1<<i;
+				DebugLevelMask |= 1 << i;
 				break;
 			}
 		}
@@ -1128,11 +1117,11 @@ Int parseClearDebugLevel(char *args[], int num)
 	if (num > 1)
 	{
 		AsciiString val = args[1];
-		for (Int i=0; i<DEBUG_LEVEL_MAX; ++i)
+		for (Int i = 0; i < DEBUG_LEVEL_MAX; ++i)
 		{
 			if (val == TheDebugLevels[i])
 			{
-				DebugLevelMask &= ~(1<<i);
+				DebugLevelMask &= ~(1 << i);
 				break;
 			}
 		}
@@ -1143,8 +1132,7 @@ Int parseClearDebugLevel(char *args[], int num)
 
 // Initial Params are parsed before Windows Creation.
 // Note that except for TheGlobalData, no other global objects exist yet when these are parsed.
-static CommandLineParam paramsForStartup[] =
-{
+static CommandLineParam paramsForStartup[] = {
 	{ "-win", parseWin },
 	{ "-fullscreen", parseNoWin },
 
@@ -1166,8 +1154,7 @@ static CommandLineParam paramsForStartup[] =
 };
 
 // These Params are parsed during Engine Init before INI data is loaded
-static CommandLineParam paramsForEngineInit[] =
-{
+static CommandLineParam paramsForEngineInit[] = {
 	{ "-noshellmap", parseNoShellMap },
 	{ "-xres", parseXRes },
 	{ "-yres", parseYRes },
@@ -1208,8 +1195,8 @@ static CommandLineParam paramsForEngineInit[] =
 	// occur almost immediately.
 	// Try this if you want to play the game and have useful debug information in case mismatch occurs:
 	// -ignoreAsserts -DebugCRCFromFrame 0 -VerifyClientCRC -LogObjectCRCs -NetCRCInterval 1
-	// After mismatch occurs, you can examine the logfile and also reproduce the crc from the replay with this (and diff that with the log):
-	// -ignoreAsserts -DebugCRCFromFrame xxx -LogObjectCRCs -SaveDebugCRCPerFrame crc
+	// After mismatch occurs, you can examine the logfile and also reproduce the crc from the replay with this (and diff that
+	// with the log): -ignoreAsserts -DebugCRCFromFrame xxx -LogObjectCRCs -SaveDebugCRCPerFrame crc
 
 	// After which frame to log crc logging. Call with 0 to log all frames and with -1 to log none (default).
 	{ "-DebugCRCFromFrame", parseDebugCRCFromFrame },
@@ -1275,7 +1262,7 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-displayDebug", parseDisplayDebug },
 	{ "-file", parseFile },
 
-//	{ "-preload", parsePreload },
+	//	{ "-preload", parsePreload },
 
 	{ "-preloadEverything", parsePreloadEverything },
 	{ "-logAssets", parseLogAssets },
@@ -1323,13 +1310,12 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-ignoreStackTrace", parseIgnoreStackTrace },
 #endif
 
-	//-allAdvice feature
-	//{ "-allAdvice", parseAllAdvice },
+//-allAdvice feature
+//{ "-allAdvice", parseAllAdvice },
 
 #if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	{ "-preload", parsePreload },
 #endif
-
 
 };
 
@@ -1346,16 +1332,17 @@ char *nextParam(char *newSource, const char *seps)
 	}
 
 	// find first separator
-	char *first = source;//strpbrk(source, seps);
+	char *first = source; // strpbrk(source, seps);
 	if (first)
 	{
 		// go past separator
 		char *firstSep = strpbrk(first, seps);
-		char firstChar[2] = {0,0};
+		char firstChar[2] = { 0, 0 };
 		if (firstSep == first)
 		{
 			firstChar[0] = *first;
-			while (*first == firstChar[0]) first++;
+			while (*first == firstChar[0])
+				first++;
 		}
 
 		// find end
@@ -1368,7 +1355,7 @@ char *nextParam(char *newSource, const char *seps)
 		// trim string & save next start pos
 		if (end)
 		{
-			source = end+1;
+			source = end + 1;
 			*end = 0;
 
 			if (!*source)
@@ -1386,9 +1373,9 @@ char *nextParam(char *newSource, const char *seps)
 	return first;
 }
 
-static void parseCommandLine(const CommandLineParam* params, int numParams)
+static void parseCommandLine(const CommandLineParam *params, int numParams)
 {
-	std::vector<char*> argv;
+	std::vector<char *> argv;
 
 	std::string cmdLine = GetCommandLineA();
 	char *token = nextParam(&cmdLine[0], "\" ");
@@ -1405,7 +1392,7 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 	DEBUG_LOG(("Command-line args:"));
 	int debugFlags = DebugGetFlags();
 	DebugSetFlags(debugFlags & ~DEBUG_FLAG_PREPEND_TIME); // turn off timestamps
-	for (arg=1; arg<argc; arg++)
+	for (arg = 1; arg < argc; arg++)
 	{
 		DEBUG_LOG((" %s", argv[arg]));
 	}
@@ -1419,11 +1406,11 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 	// can check the entire string (for testing the presence of a flag) or check
 	// just the start (for a key=val argument).  The handling function can also
 	// look at the next argument(s), to accomodate multi-arg parameters, e.g. "-p 1234".
-	while (arg<argc)
+	while (arg < argc)
 	{
 		// Look at arg #i
 		Bool found = false;
-		for (int param=0; !found && param<numParams; ++param)
+		for (int param = 0; !found && param < numParams; ++param)
 		{
 			int len = strlen(params[param].name);
 			int len2 = strlen(argv[arg]);
@@ -1431,7 +1418,7 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 				continue;
 			if (strnicmp(argv[arg], params[param].name, len) == 0)
 			{
-				arg += params[param].func(&argv[0]+arg, argc-arg);
+				arg += params[param].func(&argv[0] + arg, argc - arg);
 				found = true;
 				break;
 			}
@@ -1466,10 +1453,12 @@ void CommandLine::parseCommandLineForEngineInit()
 {
 	createGlobalData();
 
-	DEBUG_ASSERTCRASH(TheGlobalData->m_commandLineData.m_hasParsedCommandLineForStartup,
-		("parseCommandLineForStartup is expected to be called before parseCommandLineForEngineInit\n"));
-	DEBUG_ASSERTCRASH(!TheGlobalData->m_commandLineData.m_hasParsedCommandLineForEngineInit,
-		("parseCommandLineForEngineInit is expected to be called once only\n"));
+	DEBUG_ASSERTCRASH(
+			TheGlobalData->m_commandLineData.m_hasParsedCommandLineForStartup,
+			("parseCommandLineForStartup is expected to be called before parseCommandLineForEngineInit\n"));
+	DEBUG_ASSERTCRASH(
+			!TheGlobalData->m_commandLineData.m_hasParsedCommandLineForEngineInit,
+			("parseCommandLineForEngineInit is expected to be called once only\n"));
 	TheWritableGlobalData->m_commandLineData.m_hasParsedCommandLineForEngineInit = true;
 
 	parseCommandLine(paramsForEngineInit, ARRAY_SIZE(paramsForEngineInit));

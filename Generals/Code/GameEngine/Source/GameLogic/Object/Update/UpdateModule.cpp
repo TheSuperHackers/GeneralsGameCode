@@ -33,20 +33,23 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/UpdateModule.h"
 
-
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 UpdateSleepTime UpdateModule::frameToSleepTime(
-	UnsignedInt frame1,
-	UnsignedInt frame2,
-	UnsignedInt frame3,
-	UnsignedInt frame4
-)
+		UnsignedInt frame1,
+		UnsignedInt frame2,
+		UnsignedInt frame3,
+		UnsignedInt frame4)
 {
-	DEBUG_ASSERTCRASH(frame1 != 0 && frame2 != 0 && frame3 != 0 && frame4 != 0, ("probably should not pass zero to frameToSleepTime."));
-	if (frame1 > frame2) frame1 = frame2;
-	if (frame1 > frame3) frame1 = frame3;
-	if (frame1 > frame4) frame1 = frame4;
+	DEBUG_ASSERTCRASH(
+			frame1 != 0 && frame2 != 0 && frame3 != 0 && frame4 != 0,
+			("probably should not pass zero to frameToSleepTime."));
+	if (frame1 > frame2)
+		frame1 = frame2;
+	if (frame1 > frame3)
+		frame1 = frame3;
+	if (frame1 > frame4)
+		frame1 = frame4;
 	UnsignedInt now = TheGameLogic->getFrame();
 	if (frame1 > now)
 	{
@@ -77,7 +80,7 @@ UpdateSleepTime UpdateModule::getWakeFrame() const
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void UpdateModule::setWakeFrame(Object* obj, UpdateSleepTime wakeDelay)
+void UpdateModule::setWakeFrame(Object *obj, UpdateSleepTime wakeDelay)
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 	TheGameLogic->friend_awakenUpdateModule(obj, this, now + (UnsignedInt)wakeDelay);
@@ -86,57 +89,55 @@ void UpdateModule::setWakeFrame(Object* obj, UpdateSleepTime wakeDelay)
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void UpdateModule::crc( Xfer *xfer )
+void UpdateModule::crc(Xfer *xfer)
 {
-
 	// extend base class
-	BehaviorModule::crc( xfer );
+	BehaviorModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info;
-	* 1: Initial version
-	*/
+ * Version Info;
+ * 1: Initial version
+ */
 // ------------------------------------------------------------------------------------------------
-void UpdateModule::xfer( Xfer *xfer )
+void UpdateModule::xfer(Xfer *xfer)
 {
-
 	// version
 	const XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	BehaviorModule::xfer( xfer );
+	BehaviorModule::xfer(xfer);
 
 #if defined(RTS_DEBUG)
-	/*
-		this is a fix for the following scenario:
+/*
+	this is a fix for the following scenario:
 
-		save a game that has an object that uses module "FOO"
-		now change the code for module "FOO" from being nonsleepy to being sleepy
-		now reload that saved game
-		as soon as "FOO" attempts to wake itself up, you're dead.
+	save a game that has an object that uses module "FOO"
+	now change the code for module "FOO" from being nonsleepy to being sleepy
+	now reload that saved game
+	as soon as "FOO" attempts to wake itself up, you're dead.
 
-		this fix simply looks to see if the module in question is now sleepy in code,
-		but was saved in sleepy form, and if so, quietly nudges a reasonable
-		value into m_nextCallFrameAndPhase.
-	*/
-	#define FIX_OLD_SAVES
+	this fix simply looks to see if the module in question is now sleepy in code,
+	but was saved in sleepy form, and if so, quietly nudges a reasonable
+	value into m_nextCallFrameAndPhase.
+*/
+#define FIX_OLD_SAVES
 #endif
 
 #ifdef FIX_OLD_SAVES
-	#ifdef ALLOW_NONSLEEPY_UPDATES
-		Bool thisModuleIsNowSleepy = (m_nextCallFrameAndPhase != 0);
-	#else
-		const Bool thisModuleIsNowSleepy = true;
-	#endif
+#ifdef ALLOW_NONSLEEPY_UPDATES
+	Bool thisModuleIsNowSleepy = (m_nextCallFrameAndPhase != 0);
+#else
+	const Bool thisModuleIsNowSleepy = true;
+#endif
 #endif
 
 	// next call frame and phase
-	xfer->xferUnsignedInt( &m_nextCallFrameAndPhase );
+	xfer->xferUnsignedInt(&m_nextCallFrameAndPhase);
 
 	if (xfer->getXferMode() == XFER_LOAD)
 	{
@@ -159,39 +160,31 @@ void UpdateModule::xfer( Xfer *xfer )
 	}
 
 #ifdef FIX_OLD_SAVES
-	if (xfer->getXferMode() == XFER_LOAD
-			&& thisModuleIsNowSleepy
-			&& m_nextCallFrameAndPhase == 0)
+	if (xfer->getXferMode() == XFER_LOAD && thisModuleIsNowSleepy && m_nextCallFrameAndPhase == 0)
 	{
-	#ifdef ALLOW_NONSLEEPY_UPDATES
+#ifdef ALLOW_NONSLEEPY_UPDATES
 		// when the file was saved, this module was nonsleepy, but now it is sleepy.
-	#else
+#else
 		// note that 'm_nextCallFrameAndPhase' should only be zero for legacy save files.
-	#endif
+#endif
 		friend_setNextCallFrame(TheGameLogic->getFrame());
 	}
 #endif
 
 	// m_indexInLogic is not saved -- it's restored in gamelogic::postprocess.
-	if( xfer->getXferMode() == XFER_LOAD )
+	if (xfer->getXferMode() == XFER_LOAD)
 	{
 		m_indexInLogic = -1;
 	}
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void UpdateModule::loadPostProcess( void )
+void UpdateModule::loadPostProcess(void)
 {
-
 	// extned base class
 	BehaviorModule::loadPostProcess();
 
-}  // end loadPostProcess
-
-
-
-
-
+} // end loadPostProcess

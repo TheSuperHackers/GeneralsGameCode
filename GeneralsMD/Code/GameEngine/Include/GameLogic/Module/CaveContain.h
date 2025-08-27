@@ -49,83 +49,86 @@ public:
 
 	CaveContainModuleData()
 	{
-		m_caveIndexData = 0;// By default, all Caves will be grouped together as number 0
+		m_caveIndexData = 0; // By default, all Caves will be grouped together as number 0
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p)
+	static void buildFieldParse(MultiIniFieldParse &p)
 	{
-    OpenContainModuleData::buildFieldParse(p);
+		OpenContainModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "CaveIndex", INI::parseInt, NULL, offsetof( CaveContainModuleData, m_caveIndexData ) },
+		static const FieldParse dataFieldParse[] = {
+			{ "CaveIndex", INI::parseInt, NULL, offsetof(CaveContainModuleData, m_caveIndexData) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 
 //-------------------------------------------------------------------------------------------------
 class CaveContain : public OpenContain, public CreateModuleInterface, public CaveInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( CaveContain, "CaveContain" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( CaveContain, CaveContainModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(CaveContain, "CaveContain")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(CaveContain, CaveContainModuleData)
 
 public:
-
-	CaveContain( Thing *thing, const ModuleData* moduleData );
+	CaveContain(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual CreateModuleInterface* getCreate() { return this; }
-	virtual CaveInterface* getCaveInterface() { return this; }
+	virtual CreateModuleInterface *getCreate() { return this; }
+	virtual CaveInterface *getCaveInterface() { return this; }
 	static Int getInterfaceMask() { return OpenContain::getInterfaceMask() | (MODULEINTERFACE_CREATE); }
 
-	virtual OpenContain *asOpenContain() { return this; }  ///< treat as open container
-	virtual Bool isGarrisonable() const { return false; }	///< can this unit be Garrisoned? (ick)
-	virtual Bool isBustable() const { return TRUE; }	///< can this container get busted by a bunkerbuster
-	virtual Bool isHealContain() const { return false; } ///< true when container only contains units while healing (not a transport!)
+	virtual OpenContain *asOpenContain() { return this; } ///< treat as open container
+	virtual Bool isGarrisonable() const { return false; } ///< can this unit be Garrisoned? (ick)
+	virtual Bool isBustable() const { return TRUE; } ///< can this container get busted by a bunkerbuster
+	virtual Bool isHealContain() const
+	{
+		return false;
+	} ///< true when container only contains units while healing (not a transport!)
 
-	virtual void onContaining( Object *obj, Bool wasSelected );		///< object now contains 'obj'
-	virtual void onRemoving( Object *obj );			///< object no longer contains 'obj'
+	virtual void onContaining(Object *obj, Bool wasSelected); ///< object now contains 'obj'
+	virtual void onRemoving(Object *obj); ///< object no longer contains 'obj'
 
-	virtual Bool isValidContainerFor(const Object* obj, Bool checkCapacity) const;
-	virtual void addToContainList( Object *obj );		///< The part of AddToContain that inheritors can override (Can't do whole thing because of all the private stuff involved)
-	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE );	///< remove 'obj' from contain list
-	virtual void removeAllContained( Bool exposeStealthUnits = FALSE );				///< remove all objects on contain list
+	virtual Bool isValidContainerFor(const Object *obj, Bool checkCapacity) const;
+	virtual void addToContainList(Object *obj); ///< The part of AddToContain that inheritors can override (Can't do whole
+																							///< thing because of all the private stuff involved)
+	virtual void removeFromContain(Object *obj, Bool exposeStealthUnits = FALSE); ///< remove 'obj' from contain list
+	virtual void removeAllContained(Bool exposeStealthUnits = FALSE); ///< remove all objects on contain list
 
 	/**
 		return the player that *appears* to control this unit. if null, use getObject()->getControllingPlayer() instead.
 	*/
-	virtual void recalcApparentControllingPlayer( void );
+	virtual void recalcApparentControllingPlayer(void);
 
 	// contain list access
-	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse );
+	virtual void iterateContained(ContainIterateFunc func, void *userData, Bool reverse);
 	virtual UnsignedInt getContainCount() const;
-	virtual Int getContainMax( void ) const;
-	virtual const ContainedItemsList* getContainedItemsList() const;
-	virtual Bool isKickOutOnCapture(){ return FALSE; }///< Caves and Tunnels don't kick out on capture.
+	virtual Int getContainMax(void) const;
+	virtual const ContainedItemsList *getContainedItemsList() const;
+	virtual Bool isKickOutOnCapture() { return FALSE; } ///< Caves and Tunnels don't kick out on capture.
 
 	// override the onDie we inherit from OpenContain
-	virtual void onDie( const DamageInfo *damageInfo );  ///< the die callback
+	virtual void onDie(const DamageInfo *damageInfo); ///< the die callback
 
-	virtual void onCreate( void );
-	virtual void onBuildComplete();	///< This is called when you are a finished game object
+	virtual void onCreate(void);
+	virtual void onBuildComplete(); ///< This is called when you are a finished game object
 	virtual Bool shouldDoOnBuildComplete() const { return m_needToRunOnBuildComplete; }
 
 	// Unique to Cave Contain
-	virtual void tryToSetCaveIndex( Int newIndex );	///< Called by script as an alternative to instancing separate objects.  'Try', because can fail.
-	virtual void setOriginalTeam( Team *oldTeam );	///< This is a distributed Garrison in terms of capturing, so when one node triggers the change, he needs to tell everyone, so anyone can do the un-change.
+	virtual void tryToSetCaveIndex(Int newIndex); ///< Called by script as an alternative to instancing separate objects.
+																								///< 'Try', because can fail.
+	virtual void setOriginalTeam(Team *oldTeam); ///< This is a distributed Garrison in terms of capturing, so when one node
+																							 ///< triggers the change, he needs to tell everyone, so anyone can do the
+																							 ///< un-change.
 
 protected:
-
-	void changeTeamOnAllConnectedCaves( Team *newTeam, Bool setOriginalTeams );	///< When one gets captured, all connected ones get captured.  DistributedGarrison.
+	void changeTeamOnAllConnectedCaves(Team *newTeam, Bool setOriginalTeams); ///< When one gets captured, all connected ones
+																																						///< get captured.  DistributedGarrison.
 
 	Bool m_needToRunOnBuildComplete;
 	Int m_caveIndex;
 
-	Team *m_originalTeam;												///< our original team before we were garrisoned
-
+	Team *m_originalTeam; ///< our original team before we were garrisoned
 };
 
-#endif  // end __CAVE_CONTAIN_H_
+#endif // end __CAVE_CONTAIN_H_

@@ -28,7 +28,7 @@
 // Description: LAN callback handlers
 ///////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/crc.h"
 #include "Common/GameState.h"
@@ -40,12 +40,12 @@
 #include "GameNetwork/LANAPICallbacks.h"
 #include "GameClient/MapUtil.h"
 
-void LANAPI::handleRequestLocations( LANMessage *msg, UnsignedInt senderIP )
+void LANAPI::handleRequestLocations(LANMessage *msg, UnsignedInt senderIP)
 {
 	if (m_inLobby)
 	{
 		LANMessage reply;
-		fillInLANMessage( &reply );
+		fillInLANMessage(&reply);
 		reply.LANMessageType = LANMessage::MSG_LOBBY_ANNOUNCE;
 
 		sendMessage(&reply);
@@ -59,10 +59,10 @@ void LANAPI::handleRequestLocations( LANMessage *msg, UnsignedInt senderIP )
 			if (m_currentGame->getIP(0) == m_localIP)
 			{
 				LANMessage reply;
-				fillInLANMessage( &reply );
+				fillInLANMessage(&reply);
 				reply.LANMessageType = LANMessage::MSG_GAME_ANNOUNCE;
 				AsciiString gameOpts = GenerateGameOptionsString();
-				strncpy(reply.GameInfo.options,gameOpts.str(),m_lanMaxOptionsLength);
+				strncpy(reply.GameInfo.options, gameOpts.str(), m_lanMaxOptionsLength);
 				wcsncpy(reply.GameInfo.gameName, m_currentGame->getName().str(), g_lanGameNameLength);
 				reply.GameInfo.gameName[g_lanGameNameLength] = 0;
 				reply.GameInfo.inProgress = m_currentGame->isGameInProgress();
@@ -96,7 +96,7 @@ void LANAPI::handleRequestLocations( LANMessage *msg, UnsignedInt senderIP )
 	OnNameChange(player->getIP(), player->getName());
 }
 
-void LANAPI::handleGameAnnounce( LANMessage *msg, UnsignedInt senderIP )
+void LANAPI::handleGameAnnounce(LANMessage *msg, UnsignedInt senderIP)
 {
 	if (senderIP == m_localIP)
 	{
@@ -108,7 +108,6 @@ void LANAPI::handleGameAnnounce( LANMessage *msg, UnsignedInt senderIP )
 	}
 	else if (senderIP == m_directConnectRemoteIP)
 	{
-
 		if (m_currentGame == NULL)
 		{
 			LANGameInfo *game = LookupGame(UnicodeString(msg->GameInfo.gameName));
@@ -118,7 +117,7 @@ void LANAPI::handleGameAnnounce( LANMessage *msg, UnsignedInt senderIP )
 				game->setName(UnicodeString(msg->GameInfo.gameName));
 				addGame(game);
 			}
-			Bool success = ParseGameOptionsString(game,AsciiString(msg->GameInfo.options));
+			Bool success = ParseGameOptionsString(game, AsciiString(msg->GameInfo.options));
 			game->setGameInProgress(msg->GameInfo.inProgress);
 			game->setIsDirectConnect(msg->GameInfo.isDirectConnect);
 			game->setLastHeard(timeGetTime());
@@ -142,7 +141,7 @@ void LANAPI::handleGameAnnounce( LANMessage *msg, UnsignedInt senderIP )
 			game->setName(UnicodeString(msg->GameInfo.gameName));
 			addGame(game);
 		}
-		Bool success = ParseGameOptionsString(game,AsciiString(msg->GameInfo.options));
+		Bool success = ParseGameOptionsString(game, AsciiString(msg->GameInfo.options));
 		game->setGameInProgress(msg->GameInfo.inProgress);
 		game->setIsDirectConnect(msg->GameInfo.isDirectConnect);
 		game->setLastHeard(timeGetTime());
@@ -154,13 +153,13 @@ void LANAPI::handleGameAnnounce( LANMessage *msg, UnsignedInt senderIP )
 			game = NULL;
 		}
 
-		OnGameList( m_games );
-	//	if (game == m_currentGame && !m_inLobby)
-	//		OnSlotList(RET_OK, game);
+		OnGameList(m_games);
+		//	if (game == m_currentGame && !m_inLobby)
+		//		OnSlotList(RET_OK, game);
 	}
 }
 
-void LANAPI::handleLobbyAnnounce( LANMessage *msg, UnsignedInt senderIP )
+void LANAPI::handleLobbyAnnounce(LANMessage *msg, UnsignedInt senderIP)
 {
 	LANPlayer *player = LookupPlayer(senderIP);
 	if (!player)
@@ -182,19 +181,22 @@ void LANAPI::handleLobbyAnnounce( LANMessage *msg, UnsignedInt senderIP )
 	OnNameChange(player->getIP(), player->getName());
 }
 
-void LANAPI::handleRequestGameInfo( LANMessage *msg, UnsignedInt senderIP )
+void LANAPI::handleRequestGameInfo(LANMessage *msg, UnsignedInt senderIP)
 {
 	// In game - are we a game host?
 	if (m_currentGame)
 	{
-		if (m_currentGame->getIP(0) == m_localIP || (m_currentGame->isGameInProgress() && TheNetwork && TheNetwork->isPacketRouter())) // if we're in game we should reply if we're the packet router
+		if (m_currentGame->getIP(0) == m_localIP
+				|| (m_currentGame->isGameInProgress() && TheNetwork && TheNetwork->isPacketRouter())) // if we're in game we should
+																																															// reply if we're the packet
+																																															// router
 		{
 			LANMessage reply;
-			fillInLANMessage( &reply );
+			fillInLANMessage(&reply);
 			reply.LANMessageType = LANMessage::MSG_GAME_ANNOUNCE;
 
 			AsciiString gameOpts = GameInfoToAsciiString(m_currentGame);
-			strncpy(reply.GameInfo.options,gameOpts.str(),m_lanMaxOptionsLength);
+			strncpy(reply.GameInfo.options, gameOpts.str(), m_lanMaxOptionsLength);
 			wcsncpy(reply.GameInfo.gameName, m_currentGame->getName().str(), g_lanGameNameLength);
 			reply.GameInfo.gameName[g_lanGameNameLength] = 0;
 			reply.GameInfo.inProgress = m_currentGame->isGameInProgress();
@@ -205,17 +207,17 @@ void LANAPI::handleRequestGameInfo( LANMessage *msg, UnsignedInt senderIP )
 	}
 }
 
-void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
+void LANAPI::handleRequestJoin(LANMessage *msg, UnsignedInt senderIP)
 {
-	UnsignedInt responseIP = senderIP;	// need this cause the player may or may not be
-																			// in the player list at the sendMessage.
+	UnsignedInt responseIP = senderIP; // need this cause the player may or may not be
+																		 // in the player list at the sendMessage.
 
 	if (msg->GameToJoin.gameIP != m_localIP)
 	{
 		return; // Not us.  Ignore it.
 	}
 	LANMessage reply;
-	fillInLANMessage( &reply );
+	fillInLANMessage(&reply);
 	if (!m_inLobby && m_currentGame && m_currentGame->getIP(0) == m_localIP)
 	{
 		if (m_currentGame->isGameInProgress())
@@ -233,7 +235,8 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 
 			// see if the CRCs match
 #if defined(RTS_DEBUG)
-			if (TheGlobalData->m_netMinPlayers > 0) {
+			if (TheGlobalData->m_netMinPlayers > 0)
+			{
 #endif
 /*			if (msg->GameToJoin.iniCRC != TheGlobalData->m_iniCRC ||
 					msg->GameToJoin.exeCRC != TheGlobalData->m_exeCRC)
@@ -292,7 +295,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 #endif
 
 			// We're the host, so see if he has a duplicate name
-			for (player = 0; canJoin && player<MAX_SLOTS; ++player)
+			for (player = 0; canJoin && player < MAX_SLOTS; ++player)
 			{
 				LANGameSlot *slot = m_currentGame->getLANSlot(player);
 				if (slot->isHuman() && slot->getName().compare(msg->name) == 0)
@@ -315,7 +318,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 			for (player = 0; player < MAX_SLOTS; ++player)
 			{
 				if (m_currentGame->getLANSlot(player)->isOccupied()
-					&& !(m_currentGame->getLANSlot(player)->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER))
+						&& !(m_currentGame->getLANSlot(player)->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER))
 				{
 					++numPlayers;
 				}
@@ -329,8 +332,9 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 				numStartingSpots = md->m_numPlayers;
 			}
 
-			if (numPlayers < numStartingSpots) {
-				for (player = 0; canJoin && player<MAX_SLOTS; ++player)
+			if (numPlayers < numStartingSpots)
+			{
+				for (player = 0; canJoin && player < MAX_SLOTS; ++player)
 				{
 					if (m_currentGame->getLANSlot(player)->isOpen())
 					{
@@ -348,7 +352,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 						newSlot.setPort(NETWORK_BASE_PORT_NUMBER);
 						newSlot.setLastHeard(timeGetTime());
 						newSlot.setSerial(msg->GameToJoin.serial);
-						m_currentGame->setSlot(player,newSlot);
+						m_currentGame->setSlot(player, newSlot);
 						DEBUG_LOG(("LANAPI::handleRequestJoin - added player %ls at ip 0x%08x to the game", msg->name, senderIP));
 
 						OnPlayerJoin(player, UnicodeString(msg->name));
@@ -381,7 +385,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 	RequestGameOptions(GenerateGameOptionsString(), true);
 }
 
-void LANAPI::handleJoinAccept( LANMessage *msg, UnsignedInt senderIP )
+void LANAPI::handleJoinAccept(LANMessage *msg, UnsignedInt senderIP)
 {
 	if (msg->GameJoined.playerIP == m_localIP) // Is it for us?
 	{
@@ -417,12 +421,15 @@ void LANAPI::handleJoinAccept( LANMessage *msg, UnsignedInt senderIP )
 
 				LANPreferences prefs;
 				AsciiString entry;
-				entry.format("%d.%d.%d.%d:%s", PRINTF_IP_AS_4_INTS(senderIP), UnicodeStringToQuotedPrintable(m_currentGame->getSlot(0)->getName()).str());
+				entry.format(
+						"%d.%d.%d.%d:%s",
+						PRINTF_IP_AS_4_INTS(senderIP),
+						UnicodeStringToQuotedPrintable(m_currentGame->getSlot(0)->getName()).str());
 				prefs["RemoteIP0"] = entry;
 				prefs.write();
 
 				OnGameJoin(RET_OK, m_currentGame);
-				//DEBUG_ASSERTCRASH(false, ("setting host to %ls@%ls", m_currentGame->getLANSlot(0)->getUser()->getLogin().str(),
+				// DEBUG_ASSERTCRASH(false, ("setting host to %ls@%ls", m_currentGame->getLANSlot(0)->getUser()->getLogin().str(),
 				//	m_currentGame->getLANSlot(0)->getUser()->getHost().str()));
 			}
 			m_pendingAction = ACT_NONE;
@@ -431,7 +438,7 @@ void LANAPI::handleJoinAccept( LANMessage *msg, UnsignedInt senderIP )
 	}
 }
 
-void LANAPI::handleJoinDeny( LANMessage *msg, UnsignedInt senderIP )
+void LANAPI::handleJoinDeny(LANMessage *msg, UnsignedInt senderIP)
 {
 	if (msg->GameJoined.playerIP == m_localIP) // Is it for us?
 	{
@@ -444,7 +451,7 @@ void LANAPI::handleJoinDeny( LANMessage *msg, UnsignedInt senderIP )
 	}
 }
 
-void LANAPI::handleRequestGameLeave( LANMessage *msg, UnsignedInt senderIP )
+void LANAPI::handleRequestGameLeave(LANMessage *msg, UnsignedInt senderIP)
 {
 	if (!m_inLobby && m_currentGame && !m_currentGame->isGameInProgress())
 	{
@@ -460,7 +467,8 @@ void LANAPI::handleRequestGameLeave( LANMessage *msg, UnsignedInt senderIP )
 					delete m_currentGame;
 					m_currentGame = NULL;
 
-					/// @todo re-add myself to lobby?  Or just keep me there all the time?  If we send a LOBBY_ANNOUNCE things'll work out...
+					/// @todo re-add myself to lobby?  Or just keep me there all the time?  If we send a LOBBY_ANNOUNCE things'll work
+					/// out...
 					LANPlayer *lanPlayer = LookupPlayer(m_localIP);
 					if (!lanPlayer)
 					{
@@ -476,7 +484,6 @@ void LANAPI::handleRequestGameLeave( LANMessage *msg, UnsignedInt senderIP )
 					lanPlayer->setLogin(m_userName);
 					lanPlayer->setLastHeard(timeGetTime());
 					addPlayer(lanPlayer);
-
 				}
 				else
 				{
@@ -485,13 +492,13 @@ void LANAPI::handleRequestGameLeave( LANMessage *msg, UnsignedInt senderIP )
 						// remove the deadbeat
 						LANGameSlot slot;
 						slot.setState(SLOT_OPEN);
-						m_currentGame->setSlot( player, slot );
+						m_currentGame->setSlot(player, slot);
 					}
 					OnPlayerLeave(UnicodeString(msg->name));
 					m_currentGame->getLANSlot(player)->setState(SLOT_OPEN);
 					m_currentGame->resetAccepted();
 					RequestGameOptions(GenerateGameOptionsString(), false, senderIP);
-					//m_currentGame->endGame();
+					// m_currentGame->endGame();
 				}
 				break;
 			}
@@ -516,7 +523,7 @@ void LANAPI::handleRequestGameLeave( LANMessage *msg, UnsignedInt senderIP )
 	}
 }
 
-void LANAPI::handleRequestLobbyLeave( LANMessage *msg, UnsignedInt senderIP )
+void LANAPI::handleRequestLobbyLeave(LANMessage *msg, UnsignedInt senderIP)
 {
 	if (m_inLobby)
 	{
@@ -534,7 +541,7 @@ void LANAPI::handleRequestLobbyLeave( LANMessage *msg, UnsignedInt senderIP )
 	}
 }
 
-void LANAPI::handleSetAccept( LANMessage *msg, UnsignedInt senderIP )
+void LANAPI::handleSetAccept(LANMessage *msg, UnsignedInt senderIP)
 {
 	if (!m_inLobby && m_currentGame && !m_currentGame->isGameInProgress())
 	{
@@ -550,12 +557,12 @@ void LANAPI::handleSetAccept( LANMessage *msg, UnsignedInt senderIP )
 	}
 }
 
-void LANAPI::handleHasMap( LANMessage *msg, UnsignedInt senderIP )
+void LANAPI::handleHasMap(LANMessage *msg, UnsignedInt senderIP)
 {
 	if (!m_inLobby && m_currentGame)
 	{
 		CRC mapNameCRC;
-//	mapNameCRC.computeCRC(m_currentGame->getMap().str(), m_currentGame->getMap().getLength());
+		//	mapNameCRC.computeCRC(m_currentGame->getMap().str(), m_currentGame->getMap().getLength());
 		AsciiString portableMapName = TheGameState->realMapPathToPortableMapPath(m_currentGame->getMap());
 		mapNameCRC.computeCRC(portableMapName.str(), portableMapName.getLength());
 		if (mapNameCRC.get() != msg->MapStatus.mapCRC)
@@ -575,12 +582,12 @@ void LANAPI::handleHasMap( LANMessage *msg, UnsignedInt senderIP )
 	}
 }
 
-void LANAPI::handleChat( LANMessage *msg, UnsignedInt senderIP )
+void LANAPI::handleChat(LANMessage *msg, UnsignedInt senderIP)
 {
 	if (m_inLobby)
 	{
 		LANPlayer *player;
-		if((player=LookupPlayer(senderIP)) != 0)
+		if ((player = LookupPlayer(senderIP)) != 0)
 		{
 			OnChat(UnicodeString(player->getName()), player->getIP(), UnicodeString(msg->Chat.message), msg->Chat.chatType);
 			player->setLastHeard(timeGetTime());
@@ -610,7 +617,7 @@ void LANAPI::handleChat( LANMessage *msg, UnsignedInt senderIP )
 	}
 }
 
-void LANAPI::handleGameStart( LANMessage *msg, UnsignedInt senderIP )
+void LANAPI::handleGameStart(LANMessage *msg, UnsignedInt senderIP)
 {
 	if (!m_inLobby && m_currentGame && m_currentGame->getIP(0) == senderIP && !m_currentGame->isGameInProgress())
 	{
@@ -618,7 +625,7 @@ void LANAPI::handleGameStart( LANMessage *msg, UnsignedInt senderIP )
 	}
 }
 
-void LANAPI::handleGameStartTimer( LANMessage *msg, UnsignedInt senderIP )
+void LANAPI::handleGameStartTimer(LANMessage *msg, UnsignedInt senderIP)
 {
 	if (!m_inLobby && m_currentGame && m_currentGame->getIP(0) == senderIP && !m_currentGame->isGameInProgress())
 	{
@@ -626,7 +633,7 @@ void LANAPI::handleGameStartTimer( LANMessage *msg, UnsignedInt senderIP )
 	}
 }
 
-void LANAPI::handleGameOptions( LANMessage *msg, UnsignedInt senderIP )
+void LANAPI::handleGameOptions(LANMessage *msg, UnsignedInt senderIP)
 {
 	if (!m_inLobby && m_currentGame && !m_currentGame->isGameInProgress())
 	{
@@ -642,13 +649,16 @@ void LANAPI::handleGameOptions( LANMessage *msg, UnsignedInt senderIP )
 	}
 }
 
-void LANAPI::handleInActive(LANMessage *msg, UnsignedInt senderIP) {
-	if (m_inLobby || (m_currentGame == NULL) || (m_currentGame->isGameInProgress())) {
+void LANAPI::handleInActive(LANMessage *msg, UnsignedInt senderIP)
+{
+	if (m_inLobby || (m_currentGame == NULL) || (m_currentGame->isGameInProgress()))
+	{
 		return;
 	}
 
 	// check to see if we are the host of this game.
-	if (m_currentGame->amIHost() == FALSE) {
+	if (m_currentGame->amIHost() == FALSE)
+	{
 		return;
 	}
 
@@ -659,21 +669,25 @@ void LANAPI::handleInActive(LANMessage *msg, UnsignedInt senderIP) {
 	if (slotNum < 0)
 		return;
 	GameSlot *slot = m_currentGame->getSlot(slotNum);
-	if (slot == NULL) {
+	if (slot == NULL)
+	{
 		return;
 	}
 
-	if (senderIP != slot->getIP()) {
+	if (senderIP != slot->getIP())
+	{
 		return;
 	}
 
 	// don't want to unaccept the host, that's silly.  They can't hit start alt-tabbed anyways.
-	if (senderIP == TheLAN->GetLocalIP()) {
+	if (senderIP == TheLAN->GetLocalIP())
+	{
 		return;
 	}
 
 	// only unaccept if the timer hasn't started yet.
-	if (m_gameStartTime != 0) {
+	if (m_gameStartTime != 0)
+	{
 		return;
 	}
 

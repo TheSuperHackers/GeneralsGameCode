@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/RailedTransportContain.h"
@@ -36,123 +36,116 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-static RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface( Object *obj )
+static RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface(Object *obj)
 {
-
 	// sanity
-	if( obj == NULL )
+	if (obj == NULL)
 		return NULL;
 
 	// find us our dock interface
 	RailedTransportDockUpdateInterface *rtdui = NULL;
-	for( BehaviorModule **u = obj->getBehaviorModules(); *u; ++u )
-		if( (rtdui = (*u)->getRailedTransportDockUpdateInterface()) != NULL )
+	for (BehaviorModule **u = obj->getBehaviorModules(); *u; ++u)
+		if ((rtdui = (*u)->getRailedTransportDockUpdateInterface()) != NULL)
 			break;
 
 	return rtdui;
 
-}  // end getRailedTransportDockUpdateInterface
+} // end getRailedTransportDockUpdateInterface
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-RailedTransportContain::RailedTransportContain( Thing *thing, const ModuleData *moduleData )
-											: TransportContain( thing, moduleData )
+RailedTransportContain::RailedTransportContain(Thing *thing, const ModuleData *moduleData) :
+		TransportContain(thing, moduleData)
 {
-
-}  // end RailedTransportContain
+} // end RailedTransportContain
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-RailedTransportContain::~RailedTransportContain( void )
+RailedTransportContain::~RailedTransportContain(void)
 {
-
-}  // end ~RailedTransportContain
+} // end ~RailedTransportContain
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void RailedTransportContain::onRemoving( Object *obj )
+void RailedTransportContain::onRemoving(Object *obj)
 {
-
 	// extend functionality
-	TransportContain::onRemoving( obj );
+	TransportContain::onRemoving(obj);
 
 	// once we have removed all our contents we are "open" for docking again for more transportation
-	if( getContainCount() == 0 )
+	if (getContainCount() == 0)
 	{
 		DockUpdateInterface *dui = getObject()->getDockUpdateInterface();
-		if( dui )
-			dui->setDockOpen( TRUE );
+		if (dui)
+			dui->setDockOpen(TRUE);
 
-	}  // end if
+	} // end if
 
-}  // end onRemoving
+} // end onRemoving
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool RailedTransportContain::isSpecificRiderFreeToExit( Object *obj )
+Bool RailedTransportContain::isSpecificRiderFreeToExit(Object *obj)
 {
 	Object *us = getObject();
 
 	// if we are in transit we cannot exit, when we're in transit, the dock is closed
 	DockUpdateInterface *dui = us->getDockUpdateInterface();
-	if( dui && dui->isDockOpen() == FALSE )
+	if (dui && dui->isDockOpen() == FALSE)
 		return FALSE;
 
 	// we can now exit, note we're not extending the base class cause *we* handle it all
 	return TRUE;
 
-}  // end isSpecificRiderFreeToExit
+} // end isSpecificRiderFreeToExit
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void RailedTransportContain::exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor )
+void RailedTransportContain::exitObjectViaDoor(Object *newObj, ExitDoorType exitDoor)
 {
 	RailedTransportDockUpdateInterface *rtdui = getRailedTransportDockUpdateInterface();
 
-	if( rtdui == NULL )
+	if (rtdui == NULL)
 		return;
 
 	// tell the railed dock to exit ONE object, this one
-	rtdui->unloadSingleObject( newObj );
+	rtdui->unloadSingleObject(newObj);
 
-}  // end exitObjectViaDoor
+} // end exitObjectViaDoor
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void RailedTransportContain::crc( Xfer *xfer )
+void RailedTransportContain::crc(Xfer *xfer)
 {
-
 	// extend base class
-	TransportContain::crc( xfer );
+	TransportContain::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void RailedTransportContain::xfer( Xfer *xfer )
+void RailedTransportContain::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	TransportContain::xfer( xfer );
+	TransportContain::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RailedTransportContain::loadPostProcess( void )
+void RailedTransportContain::loadPostProcess(void)
 {
-
 	// extend base class
 	TransportContain::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

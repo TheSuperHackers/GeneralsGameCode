@@ -26,8 +26,8 @@ namespace stl
 {
 
 // Finds first matching element in vector-like container and erases it.
-template <typename Container>
-bool find_and_erase(Container& container, const typename Container::value_type& value)
+template<typename Container>
+bool find_and_erase(Container &container, const typename Container::value_type &value)
 {
 	typename Container::const_iterator it = container.begin();
 	for (; it != container.end(); ++it)
@@ -43,8 +43,8 @@ bool find_and_erase(Container& container, const typename Container::value_type& 
 
 // Finds first matching element in vector-like container and removes it by swapping it with the last element.
 // This is generally faster than erasing from a vector, but will change the element sorting.
-template <typename Container>
-bool find_and_erase_unordered(Container& container, const typename Container::value_type& value)
+template<typename Container>
+bool find_and_erase_unordered(Container &container, const typename Container::value_type &value)
 {
 	typename Container::iterator it = container.begin();
 	for (; it != container.end(); ++it)
@@ -60,8 +60,8 @@ bool find_and_erase_unordered(Container& container, const typename Container::va
 }
 
 // Push back value into vector-like container if it does not yet contain that value.
-template <typename Container>
-bool push_back_unique(Container& container, const typename Container::value_type& value)
+template<typename Container>
+bool push_back_unique(Container &container, const typename Container::value_type &value)
 {
 	typename Container::iterator it = std::find(container.begin(), container.end(), value);
 	if (it == container.end())

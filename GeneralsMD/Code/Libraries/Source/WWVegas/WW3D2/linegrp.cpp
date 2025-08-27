@@ -57,23 +57,23 @@
 // the V coordinate is always 0 at the flat end of the tetrahedron
 // and 1 at the apex
 LineGroupClass::LineGroupClass(void) :
-	StartLineLoc(NULL),
-	EndLineLoc(NULL),
-	LineDiffuse(NULL),
-	TailDiffuse(NULL),
-	ALT(NULL),
-	LineSize(NULL),
-	LineUCoord(NULL),
-	LineCount(0),
-	Texture(NULL),
-	Flags(0),
-	Shader(ShaderClass::_PresetAdditiveSpriteShader),
-	DefaultLineSize(0.0f),
-	DefaultLineColor(1.0f, 1.0f, 1.0f),
-	DefaultLineAlpha(1.0f),
-	DefaultLineUCoord(0.0f),
-	DefaultTailDiffuse(0.0f, 0.0f, 0.0f, 0.0f),
-	LineMode(TETRAHEDRON)
+		StartLineLoc(NULL),
+		EndLineLoc(NULL),
+		LineDiffuse(NULL),
+		TailDiffuse(NULL),
+		ALT(NULL),
+		LineSize(NULL),
+		LineUCoord(NULL),
+		LineCount(0),
+		Texture(NULL),
+		Flags(0),
+		Shader(ShaderClass::_PresetAdditiveSpriteShader),
+		DefaultLineSize(0.0f),
+		DefaultLineColor(1.0f, 1.0f, 1.0f),
+		DefaultLineAlpha(1.0f),
+		DefaultLineUCoord(0.0f),
+		DefaultTailDiffuse(0.0f, 0.0f, 0.0f, 0.0f),
+		LineMode(TETRAHEDRON)
 {
 }
 
@@ -90,15 +90,14 @@ LineGroupClass::~LineGroupClass(void)
 }
 
 void LineGroupClass::Set_Arrays(
-	ShareBufferClass<Vector3> *startlocs,
-	ShareBufferClass<Vector3> *endlocs,
-	ShareBufferClass<Vector4> *diffuse,
-	ShareBufferClass<Vector4> *taildiffuse,
-	ShareBufferClass<unsigned int> *alt,
-	ShareBufferClass<float> *sizes,
-	ShareBufferClass<float> *ucoords,
-	int active_line_count
-	)
+		ShareBufferClass<Vector3> *startlocs,
+		ShareBufferClass<Vector3> *endlocs,
+		ShareBufferClass<Vector4> *diffuse,
+		ShareBufferClass<Vector4> *taildiffuse,
+		ShareBufferClass<unsigned int> *alt,
+		ShareBufferClass<float> *sizes,
+		ShareBufferClass<float> *ucoords,
+		int active_line_count)
 {
 	// The Line locations arrays are NOT optional!
 	WWASSERT(startlocs);
@@ -112,20 +111,22 @@ void LineGroupClass::Set_Arrays(
 	WWASSERT(!ucoords || startlocs->Get_Count() == ucoords->Get_Count());
 	WWASSERT(!taildiffuse || startlocs->Get_Count() == taildiffuse->Get_Count());
 
-	REF_PTR_SET(StartLineLoc,startlocs);
-	REF_PTR_SET(EndLineLoc,endlocs);
-	REF_PTR_SET(LineDiffuse,diffuse);
-	REF_PTR_SET(TailDiffuse,taildiffuse);
-	REF_PTR_SET(ALT,alt);
-	REF_PTR_SET(LineSize,sizes);
-	REF_PTR_SET(LineUCoord,ucoords);
+	REF_PTR_SET(StartLineLoc, startlocs);
+	REF_PTR_SET(EndLineLoc, endlocs);
+	REF_PTR_SET(LineDiffuse, diffuse);
+	REF_PTR_SET(TailDiffuse, taildiffuse);
+	REF_PTR_SET(ALT, alt);
+	REF_PTR_SET(LineSize, sizes);
+	REF_PTR_SET(LineUCoord, ucoords);
 
-	if (ALT) {
+	if (ALT)
+	{
 		LineCount = active_line_count;
-	} else {
+	}
+	else
+	{
 		LineCount = (active_line_count >= 0) ? active_line_count : StartLineLoc->Get_Count();
 	}
-
 }
 
 void LineGroupClass::Set_Line_Size(float size)
@@ -180,7 +181,8 @@ float LineGroupClass::Get_Line_UCoord(void)
 
 void LineGroupClass::Set_Flag(FlagsType flag, bool on)
 {
-	if (on) Flags |= 1 << flag;
+	if (on)
+		Flags |= 1 << flag;
 	else
 		Flags &= ~(1 << flag);
 }
@@ -190,18 +192,19 @@ int LineGroupClass::Get_Flag(FlagsType flag)
 	return (Flags >> flag) & 0x1;
 }
 
-void LineGroupClass::Set_Texture(TextureClass* texture)
+void LineGroupClass::Set_Texture(TextureClass *texture)
 {
-	REF_PTR_SET(Texture,texture);
+	REF_PTR_SET(Texture, texture);
 }
 
-TextureClass * LineGroupClass::Get_Texture(void)
+TextureClass *LineGroupClass::Get_Texture(void)
 {
-	if (Texture) Texture->Add_Ref();
+	if (Texture)
+		Texture->Add_Ref();
 	return Texture;
 }
 
-TextureClass * LineGroupClass::Peek_Texture(void)
+TextureClass *LineGroupClass::Peek_Texture(void)
 {
 	return Texture;
 }
@@ -226,37 +229,43 @@ LineGroupClass::LineModeType LineGroupClass::Get_Line_Mode(void)
 	return LineMode;
 }
 
-void	LineGroupClass::Render(RenderInfoClass &rinfo)
+void LineGroupClass::Render(RenderInfoClass &rinfo)
 {
 	int i;
 
 	// If no lines, do nothing:
-	if (LineCount == 0) return;
+	if (LineCount == 0)
+		return;
 
 	// Shader handling
 	Shader.Set_Cull_Mode(ShaderClass::CULL_MODE_ENABLE);
 
 	// If there is a color or alpha array enable gradient in shader - otherwise disable.
-   float value_255 = 0.9961f;	//254 / 255
-	bool default_white_opaque = (	DefaultLineColor.X > value_255 &&
-											DefaultLineColor.Y > value_255 &&
-											DefaultLineColor.Z > value_255 &&
-											DefaultLineAlpha > value_255);
+	float value_255 = 0.9961f; // 254 / 255
+	bool default_white_opaque =
+			(DefaultLineColor.X > value_255 && DefaultLineColor.Y > value_255 && DefaultLineColor.Z > value_255
+			 && DefaultLineAlpha > value_255);
 
-	if (LineDiffuse || !default_white_opaque || !Texture) {
+	if (LineDiffuse || !default_white_opaque || !Texture)
+	{
 		Shader.Set_Primary_Gradient(ShaderClass::GRADIENT_MODULATE);
-	} else {
+	}
+	else
+	{
 		Shader.Set_Primary_Gradient(ShaderClass::GRADIENT_DISABLE);
 	}
 
 	// If Texture is non-NULL enable texturing in shader - otherwise disable.
-	if (Texture) {
+	if (Texture)
+	{
 		Shader.Set_Texturing(ShaderClass::TEXTURING_ENABLE);
-	} else {
+	}
+	else
+	{
 		Shader.Set_Texturing(ShaderClass::TEXTURING_DISABLE);
 	}
 
-	VertexMaterialClass * linemat = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
+	VertexMaterialClass *linemat = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 	DX8Wrapper::Set_Material(linemat);
 	DX8Wrapper::Set_Shader(Shader);
 	DX8Wrapper::Set_Texture(0, Texture);
@@ -266,12 +275,13 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 	WWASSERT(EndLineLoc && EndLineLoc->Get_Array());
 
 	// Enable sorting if the primitives are translucent and alpha testing is not enabled.
-	const bool sort = (Shader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO) && (Shader.Get_Alpha_Test() == ShaderClass::ALPHATEST_DISABLE) && (WW3D::Is_Sorting_Enabled());
+	const bool sort = (Shader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO)
+			&& (Shader.Get_Alpha_Test() == ShaderClass::ALPHATEST_DISABLE) && (WW3D::Is_Sorting_Enabled());
 
 	// the 3 offsets in view space
-	const static Vector3 offset_a = Vector3(WWMath::Cos(WWMATH_PI / 2),			WWMath::Sin(WWMATH_PI /2 ), 0);
-	const static Vector3 offset_b = Vector3(WWMath::Cos(7 * WWMATH_PI / 6),		WWMath::Sin(7 * WWMATH_PI / 6), 0);
-	const static Vector3 offset_c = Vector3(WWMath::Cos(11 * WWMATH_PI / 6),	WWMath::Sin(11 * WWMATH_PI / 6), 0);
+	const static Vector3 offset_a = Vector3(WWMath::Cos(WWMATH_PI / 2), WWMath::Sin(WWMATH_PI / 2), 0);
+	const static Vector3 offset_b = Vector3(WWMath::Cos(7 * WWMATH_PI / 6), WWMath::Sin(7 * WWMATH_PI / 6), 0);
+	const static Vector3 offset_c = Vector3(WWMath::Cos(11 * WWMATH_PI / 6), WWMath::Sin(11 * WWMATH_PI / 6), 0);
 
 	static Vector3 offset[3];
 
@@ -287,68 +297,76 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 	DX8Wrapper::Set_Transform(D3DTS_WORLD, identity);
 
 	// if the points are in world space, transform the offsets
-	if (Get_Flag(TRANSFORM)) {
+	if (Get_Flag(TRANSFORM))
+	{
 		Matrix3D xform_mat;
 		xform_mat = rinfo.Camera.Get_Transform();
 		xform_mat.Set_Translation(Vector3(0, 0, 0));
 		xform_mat.Get_Orthogonal_Inverse(xform_mat);
-		for (i = 0; i < 3; i++) {
+		for (i = 0; i < 3; i++)
+		{
 			Matrix3D::Transform_Vector(xform_mat, offset[i], &offset[i]);
 		}
-	} else {
+	}
+	else
+	{
 		DX8Wrapper::Set_Transform(D3DTS_VIEW, identity);
 	}
 
-	int num_tris=0;
-	int num_indices=0;
-	int num_vertices=0;
+	int num_tris = 0;
+	int num_indices = 0;
+	int num_vertices = 0;
 
-	switch (LineMode)	{
+	switch (LineMode)
+	{
 		case TETRAHEDRON:
-			num_tris			=4 * LineCount;
-			num_indices		=3 * num_tris;
-			num_vertices	=4 * LineCount;
+			num_tris = 4 * LineCount;
+			num_indices = 3 * num_tris;
+			num_vertices = 4 * LineCount;
 			break;
 		case PRISM:
-			num_tris			=8 * LineCount;
-			num_indices		=3 * num_tris;
-			num_vertices	=6 * LineCount;
+			num_tris = 8 * LineCount;
+			num_indices = 3 * num_tris;
+			num_vertices = 6 * LineCount;
 			break;
 	}
 
 	// construct the tetrahedra in the index buffers
 	// assume first vertex is the apex, followed by offset[0-3]
 
-	DynamicIBAccessClass iba(sort?BUFFER_TYPE_DYNAMIC_SORTING:BUFFER_TYPE_DYNAMIC_DX8,num_indices);
+	DynamicIBAccessClass iba(sort ? BUFFER_TYPE_DYNAMIC_SORTING : BUFFER_TYPE_DYNAMIC_DX8, num_indices);
 
 	{
 		DynamicIBAccessClass::WriteLockClass lock(&iba);
 		unsigned short *ibptr = lock.Get_Index_Array();
 		unsigned short j, idx;
-		switch (LineMode)	{
+		switch (LineMode)
+		{
 			case TETRAHEDRON:
-				for (j=0; j<LineCount; j++) {
+				for (j = 0; j < LineCount; j++)
+				{
 					idx = 4 * j;
 					// apex, offset[1], offset[0]
-					*ibptr++	= idx + 0;
-					*ibptr++	= idx + 2;
-					*ibptr++	= idx + 1;
+					*ibptr++ = idx + 0;
+					*ibptr++ = idx + 2;
+					*ibptr++ = idx + 1;
 					// apex, offset[2], offset[1]
-					*ibptr++	= idx + 0;
-					*ibptr++	= idx + 3;
-					*ibptr++	= idx + 2;
+					*ibptr++ = idx + 0;
+					*ibptr++ = idx + 3;
+					*ibptr++ = idx + 2;
 					// apex, offset[0], offset[2]
-					*ibptr++	= idx + 0;
-					*ibptr++	= idx + 1;
-					*ibptr++	= idx + 3;
+					*ibptr++ = idx + 0;
+					*ibptr++ = idx + 1;
+					*ibptr++ = idx + 3;
 					// offset[0-3]
-					*ibptr++	= idx + 1;
-					*ibptr++	= idx + 2;
-					*ibptr++	= idx + 3;
+					*ibptr++ = idx + 1;
+					*ibptr++ = idx + 2;
+					*ibptr++ = idx + 3;
 				}
 				break;
 			case PRISM:
-				for (j=0; j<LineCount; j++) {
+				for (j = 0; j < LineCount; j++)
+				{
 					idx = 6 * j;
 					// starting cap 0,1,2
 					*ibptr++ = idx + 0;
@@ -382,11 +400,11 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 				}
 				break;
 		}
-	}	// writing to ib
+	} // writing to ib
 
 	// make the vertex buffers
 
-	DynamicVBAccessClass vba(sort ? BUFFER_TYPE_DYNAMIC_SORTING : BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,num_vertices);
+	DynamicVBAccessClass vba(sort ? BUFFER_TYPE_DYNAMIC_SORTING : BUFFER_TYPE_DYNAMIC_DX8, dynamic_fvf_type, num_vertices);
 
 	{
 		DynamicVBAccessClass::WriteLockClass lock(&vba);
@@ -403,74 +421,84 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 		for (i = 0; i < LineCount; i++)
 		{
 			point = (ALT) ? ALT->Get_Element(i) : i;
-			if (LineSize)		size			= LineSize->Get_Element(point);
-			if (LineDiffuse)	diffuse		= LineDiffuse->Get_Element(point);
-			if (LineUCoord)	ucoord		= LineUCoord->Get_Element(point);
-			if (TailDiffuse)	taildiffuse	= TailDiffuse->Get_Element(point);
+			if (LineSize)
+				size = LineSize->Get_Element(point);
+			if (LineDiffuse)
+				diffuse = LineDiffuse->Get_Element(point);
+			if (LineUCoord)
+				ucoord = LineUCoord->Get_Element(point);
+			if (TailDiffuse)
+				taildiffuse = TailDiffuse->Get_Element(point);
 
 			end.Set(EndLineLoc->Get_Element(point));
 			start.Set(StartLineLoc->Get_Element(point));
 
-			switch (LineMode) {
+			switch (LineMode)
+			{
 				case TETRAHEDRON:
 					// apex
-					vb->x			= end.X;
-					vb->y			= end.Y;
-					vb->z			= end.Z;
-					vb->diffuse	= DX8Wrapper::Convert_Color(taildiffuse);
-					vb->u1		= ucoord;
-					vb->v1		= 1.0f;
+					vb->x = end.X;
+					vb->y = end.Y;
+					vb->z = end.Z;
+					vb->diffuse = DX8Wrapper::Convert_Color(taildiffuse);
+					vb->u1 = ucoord;
+					vb->v1 = 1.0f;
 					vb++;
 
-					for (j=0; j<3; j++) {
+					for (j = 0; j < 3; j++)
+					{
 						loc.Set(start + size * offset[j]);
-						vb->x			= loc.X;
-						vb->y			= loc.Y;
-						vb->z			= loc.Z;
-						vb->diffuse	= DX8Wrapper::Convert_Color(diffuse);
-						vb->u1		= ucoord;
-						vb->v1		= 0.0f;
+						vb->x = loc.X;
+						vb->y = loc.Y;
+						vb->z = loc.Z;
+						vb->diffuse = DX8Wrapper::Convert_Color(diffuse);
+						vb->u1 = ucoord;
+						vb->v1 = 0.0f;
 						vb++;
 					}
 					break;
-			case PRISM:
+				case PRISM:
 					// start cap
-					for (j = 0; j < 3; j++) {
+					for (j = 0; j < 3; j++)
+					{
 						loc.Set(start + size * offset[j]);
-						vb->x			= loc.X;
-						vb->y			= loc.Y;
-						vb->z			= loc.Z;
-						vb->diffuse	= DX8Wrapper::Convert_Color(diffuse);
-						vb->u1		= ucoord;
-						vb->v1		= 0.0f;
+						vb->x = loc.X;
+						vb->y = loc.Y;
+						vb->z = loc.Z;
+						vb->diffuse = DX8Wrapper::Convert_Color(diffuse);
+						vb->u1 = ucoord;
+						vb->v1 = 0.0f;
 						vb++;
 					}
 					// Do not merge loops. The vb has to be written in a specific order
 					// (This is to optimize AGP memory write)
 
 					// end cap
-					for (j=0; j<3; j++) {
+					for (j = 0; j < 3; j++)
+					{
 						loc.Set(end + size * offset[j]);
-						vb->x			= loc.X;
-						vb->y			= loc.Y;
-						vb->z			= loc.Z;
-						vb->diffuse	= DX8Wrapper::Convert_Color(taildiffuse);
-						vb->u1		= ucoord;
-						vb->v1		= 1.0f;
+						vb->x = loc.X;
+						vb->y = loc.Y;
+						vb->z = loc.Z;
+						vb->diffuse = DX8Wrapper::Convert_Color(taildiffuse);
+						vb->u1 = ucoord;
+						vb->v1 = 1.0f;
 						vb++;
 					}
 					break;
 			}
-
 		}
 	} // writing to vb
 
 	DX8Wrapper::Set_Index_Buffer(iba, 0);
 	DX8Wrapper::Set_Vertex_Buffer(vba);
 
-	if (sort) {
+	if (sort)
+	{
 		SortingRendererClass::Insert_Triangles(0, num_tris, 0, num_vertices);
-	} else {
+	}
+	else
+	{
 		DX8Wrapper::Draw_Triangles(0, num_tris, 0, num_vertices);
 	}
 
@@ -480,7 +508,8 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 
 int LineGroupClass::Get_Polygon_Count(void)
 {
-	switch (LineMode) {
+	switch (LineMode)
+	{
 		case TETRAHEDRON:
 			return LineCount * 4;
 			break;

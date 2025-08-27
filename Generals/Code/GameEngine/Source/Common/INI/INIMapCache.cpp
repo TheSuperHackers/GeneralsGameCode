@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Lib/BaseType.h"
 #include "Common/INI.h"
@@ -37,7 +37,6 @@
 #include "Common/NameKeyGenerator.h"
 #include "Common/WellKnownKeys.h"
 #include "Common/QuotedPrintable.h"
-
 
 class MapMetaDataReader
 {
@@ -56,62 +55,58 @@ public:
 	Coord3D m_initialCameraPosition;
 	Coord3DList m_supplyPositions;
 	Coord3DList m_techPositions;
-	static const FieldParse m_mapFieldParseTable[];		///< the parse table for INI definition
-	const FieldParse *getFieldParse( void ) const { return m_mapFieldParseTable; }
+	static const FieldParse m_mapFieldParseTable[]; ///< the parse table for INI definition
+	const FieldParse *getFieldParse(void) const { return m_mapFieldParseTable; }
 };
 
-
-void parseSupplyPositionCoord3D( INI* ini, void * instance, void * /*store*/, const void* /*userData*/ )
+void parseSupplyPositionCoord3D(INI *ini, void *instance, void * /*store*/, const void * /*userData*/)
 {
 	MapMetaDataReader *mmdr = (MapMetaDataReader *)instance;
 	Coord3D coord3d;
-	INI::parseCoord3D(ini, NULL, &coord3d,NULL );
+	INI::parseCoord3D(ini, NULL, &coord3d, NULL);
 	mmdr->m_supplyPositions.push_front(coord3d);
-
 }
 
-void parseTechPositionsCoord3D( INI* ini, void * instance, void * /*store*/, const void* /*userData*/ )
+void parseTechPositionsCoord3D(INI *ini, void *instance, void * /*store*/, const void * /*userData*/)
 {
 	MapMetaDataReader *mmdr = (MapMetaDataReader *)instance;
 	Coord3D coord3d;
-	INI::parseCoord3D(ini, NULL, &coord3d,NULL );
+	INI::parseCoord3D(ini, NULL, &coord3d, NULL);
 	mmdr->m_techPositions.push_front(coord3d);
-
 }
 
-const FieldParse MapMetaDataReader::m_mapFieldParseTable[] =
-{
+const FieldParse MapMetaDataReader::m_mapFieldParseTable[] = {
 
-	{ "isOfficial",							INI::parseBool,			NULL,	offsetof( MapMetaDataReader, m_isOfficial ) },
-	{ "isMultiplayer",					INI::parseBool,			NULL,	offsetof( MapMetaDataReader, m_isMultiplayer ) },
-	{ "extentMin",							INI::parseCoord3D,	NULL, offsetof( MapMetaDataReader, m_extent.lo ) },
-	{ "extentMax",							INI::parseCoord3D,	NULL, offsetof( MapMetaDataReader, m_extent.hi ) },
-	{ "numPlayers",							INI::parseInt,			NULL,	offsetof( MapMetaDataReader, m_numPlayers ) },
-	{ "fileSize",								INI::parseUnsignedInt,	NULL,	offsetof( MapMetaDataReader, m_filesize ) },
-	{ "fileCRC",								INI::parseUnsignedInt,	NULL,	offsetof( MapMetaDataReader, m_CRC ) },
-	{ "timestampLo",						INI::parseInt,			NULL,	offsetof( MapMetaDataReader, m_timestamp.m_lowTimeStamp ) },
-	{ "timestampHi",						INI::parseInt,			NULL,	offsetof( MapMetaDataReader, m_timestamp.m_highTimeStamp ) },
-	{ "displayName",						INI::parseAsciiString,	NULL,	offsetof( MapMetaDataReader, m_asciiDisplayName ) },
+	{ "isOfficial", INI::parseBool, NULL, offsetof(MapMetaDataReader, m_isOfficial) },
+	{ "isMultiplayer", INI::parseBool, NULL, offsetof(MapMetaDataReader, m_isMultiplayer) },
+	{ "extentMin", INI::parseCoord3D, NULL, offsetof(MapMetaDataReader, m_extent.lo) },
+	{ "extentMax", INI::parseCoord3D, NULL, offsetof(MapMetaDataReader, m_extent.hi) },
+	{ "numPlayers", INI::parseInt, NULL, offsetof(MapMetaDataReader, m_numPlayers) },
+	{ "fileSize", INI::parseUnsignedInt, NULL, offsetof(MapMetaDataReader, m_filesize) },
+	{ "fileCRC", INI::parseUnsignedInt, NULL, offsetof(MapMetaDataReader, m_CRC) },
+	{ "timestampLo", INI::parseInt, NULL, offsetof(MapMetaDataReader, m_timestamp.m_lowTimeStamp) },
+	{ "timestampHi", INI::parseInt, NULL, offsetof(MapMetaDataReader, m_timestamp.m_highTimeStamp) },
+	{ "displayName", INI::parseAsciiString, NULL, offsetof(MapMetaDataReader, m_asciiDisplayName) },
 
-	{ "supplyPosition",					parseSupplyPositionCoord3D,	NULL, NULL },
-	{ "techPosition",						parseTechPositionsCoord3D,	NULL, NULL },
+	{ "supplyPosition", parseSupplyPositionCoord3D, NULL, NULL },
+	{ "techPosition", parseTechPositionsCoord3D, NULL, NULL },
 
-	{ "Player_1_Start",					INI::parseCoord3D,	NULL,	offsetof( MapMetaDataReader, m_waypoints ) },
-	{ "Player_2_Start",					INI::parseCoord3D,	NULL,	offsetof( MapMetaDataReader, m_waypoints ) + sizeof(Coord3D) * 1 },
-	{ "Player_3_Start",					INI::parseCoord3D,	NULL,	offsetof( MapMetaDataReader, m_waypoints ) + sizeof(Coord3D) * 2 },
-	{ "Player_4_Start",					INI::parseCoord3D,	NULL,	offsetof( MapMetaDataReader, m_waypoints ) + sizeof(Coord3D) * 3 },
-	{ "Player_5_Start",					INI::parseCoord3D,	NULL,	offsetof( MapMetaDataReader, m_waypoints ) + sizeof(Coord3D) * 4 },
-	{ "Player_6_Start",					INI::parseCoord3D,	NULL,	offsetof( MapMetaDataReader, m_waypoints ) + sizeof(Coord3D) * 5 },
-	{ "Player_7_Start",					INI::parseCoord3D,	NULL,	offsetof( MapMetaDataReader, m_waypoints ) + sizeof(Coord3D) * 6 },
-	{ "Player_8_Start",					INI::parseCoord3D,	NULL,	offsetof( MapMetaDataReader, m_waypoints ) + sizeof(Coord3D) * 7 },
+	{ "Player_1_Start", INI::parseCoord3D, NULL, offsetof(MapMetaDataReader, m_waypoints) },
+	{ "Player_2_Start", INI::parseCoord3D, NULL, offsetof(MapMetaDataReader, m_waypoints) + sizeof(Coord3D) * 1 },
+	{ "Player_3_Start", INI::parseCoord3D, NULL, offsetof(MapMetaDataReader, m_waypoints) + sizeof(Coord3D) * 2 },
+	{ "Player_4_Start", INI::parseCoord3D, NULL, offsetof(MapMetaDataReader, m_waypoints) + sizeof(Coord3D) * 3 },
+	{ "Player_5_Start", INI::parseCoord3D, NULL, offsetof(MapMetaDataReader, m_waypoints) + sizeof(Coord3D) * 4 },
+	{ "Player_6_Start", INI::parseCoord3D, NULL, offsetof(MapMetaDataReader, m_waypoints) + sizeof(Coord3D) * 5 },
+	{ "Player_7_Start", INI::parseCoord3D, NULL, offsetof(MapMetaDataReader, m_waypoints) + sizeof(Coord3D) * 6 },
+	{ "Player_8_Start", INI::parseCoord3D, NULL, offsetof(MapMetaDataReader, m_waypoints) + sizeof(Coord3D) * 7 },
 
-	{ "InitialCameraPosition",	INI::parseCoord3D,	NULL,	offsetof( MapMetaDataReader, m_initialCameraPosition ) },
+	{ "InitialCameraPosition", INI::parseCoord3D, NULL, offsetof(MapMetaDataReader, m_initialCameraPosition) },
 
-	{ NULL,					NULL,						NULL,						0 }  // keep this last
+	{ NULL, NULL, NULL, 0 } // keep this last
 
 };
 
-void INI::parseMapCacheDefinition( INI* ini )
+void INI::parseMapCacheDefinition(INI *ini)
 {
 	const char *c;
 	AsciiString name;
@@ -120,11 +115,11 @@ void INI::parseMapCacheDefinition( INI* ini )
 
 	// read the name
 	c = ini->getNextToken(" \n\r\t");
-	name.set( c );
+	name.set(c);
 	name = QuotedPrintableToAsciiString(name);
 	md.m_waypoints.clear();
 
-	ini->initFromINI( &mdr, mdr.getFieldParse() );
+	ini->initFromINI(&mdr, mdr.getFieldParse());
 
 	md.m_extent = mdr.m_extent;
 	md.m_isOfficial = mdr.m_isOfficial != 0;
@@ -139,33 +134,32 @@ void INI::parseMapCacheDefinition( INI* ini )
 	md.m_displayName = QuotedPrintableToUnicodeString(mdr.m_asciiDisplayName);
 
 	AsciiString startingCamName;
-	for (Int i=0; i<md.m_numPlayers; ++i)
+	for (Int i = 0; i < md.m_numPlayers; ++i)
 	{
-		startingCamName.format("Player_%d_Start", i+1); // start pos waypoints are 1-based
+		startingCamName.format("Player_%d_Start", i + 1); // start pos waypoints are 1-based
 		md.m_waypoints[startingCamName] = mdr.m_waypoints[i];
 	}
 
 	Coord3DList::iterator it = mdr.m_supplyPositions.begin();
-	while( it != mdr.m_supplyPositions.end())
+	while (it != mdr.m_supplyPositions.end())
 	{
 		md.m_supplyPositions.push_front(*it);
 		it++;
 	}
 
 	it = mdr.m_techPositions.begin();
-	while( it != mdr.m_techPositions.end())
+	while (it != mdr.m_techPositions.end())
 	{
 		md.m_techPositions.push_front(*it);
 		it++;
 	}
 
-	if(TheMapCache && !md.m_displayName.isEmpty())
+	if (TheMapCache && !md.m_displayName.isEmpty())
 	{
 		AsciiString lowerName = name;
 		lowerName.toLower();
 		md.m_fileName = lowerName;
-//		DEBUG_LOG(("INI::parseMapCacheDefinition - adding %s to map cache", lowerName.str()));
+		//		DEBUG_LOG(("INI::parseMapCacheDefinition - adding %s to map cache", lowerName.str()));
 		(*TheMapCache)[lowerName] = md;
 	}
 }
-

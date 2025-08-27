@@ -51,7 +51,7 @@
 #include "Common/GameMemory.h"
 #include "Common/GameCommon.h"
 #include "Common/Science.h"
-//#include "GameClient/ControlBar.h"
+// #include "GameClient/ControlBar.h"
 
 //-----------------------------------------------------------------------------
 class ThingTemplate;
@@ -61,19 +61,18 @@ class Player;
 class ProductionPrerequisite
 {
 public:
-
 	ProductionPrerequisite();
 	~ProductionPrerequisite();
 
 	/// init to safe default values.
 	void init();
 
-	void resetSciences( void ) { m_prereqSciences.clear(); }
-	void addSciencePrereq( ScienceType science ) { m_prereqSciences.push_back(science); }
+	void resetSciences(void) { m_prereqSciences.clear(); }
+	void addSciencePrereq(ScienceType science) { m_prereqSciences.push_back(science); }
 
-	void resetUnits( void ) { m_prereqUnits.clear(); }
-	void addUnitPrereq( AsciiString units, Bool orUnitWithPrevious );
-	void addUnitPrereq( const std::vector<AsciiString>& units );
+	void resetUnits(void) { m_prereqUnits.clear(); }
+	void addUnitPrereq(AsciiString units, Bool orUnitWithPrevious);
+	void addUnitPrereq(const std::vector<AsciiString> &units);
 
 	/// called after all ThingTemplates have been loaded.
 	void resolveNames();
@@ -95,29 +94,31 @@ public:
 
 		you may not pass 'null' for player.
 	*/
-	const ThingTemplate *getExistingBuildFacilityTemplate( const Player *player ) const;
+	const ThingTemplate *getExistingBuildFacilityTemplate(const Player *player) const;
 
-	Int getAllPossibleBuildFacilityTemplates(const ThingTemplate* tmpls[], Int maxtmpls) const;
+	Int getAllPossibleBuildFacilityTemplates(const ThingTemplate *tmpls[], Int maxtmpls) const;
 
 private:
-
 	enum
 	{
-		UNIT_OR_WITH_PREV = 0x01	// if set, unit is "or-ed" with prev unit, so that either one's presence satisfies
+		UNIT_OR_WITH_PREV = 0x01 // if set, unit is "or-ed" with prev unit, so that either one's presence satisfies
 	};
 
 	struct PrereqUnitRec
 	{
-		const ThingTemplate*	unit;
-		Int										flags;
-		AsciiString						name;
+		const ThingTemplate *unit;
+		Int flags;
+		AsciiString name;
 	};
 
-	enum { MAX_PREREQ = 32 };
+	enum
+	{
+		MAX_PREREQ = 32
+	};
 	Int calcNumPrereqUnitsOwned(const Player *player, Int counts[MAX_PREREQ]) const;
 
-	std::vector<PrereqUnitRec>	m_prereqUnits;
-	ScienceVec									m_prereqSciences;
+	std::vector<PrereqUnitRec> m_prereqUnits;
+	ScienceVec m_prereqSciences;
 };
 
 //-----------------------------------------------------------------------------

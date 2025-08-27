@@ -30,18 +30,16 @@ private:
 	LARGE_INTEGER m_start;
 };
 
-
 enum FpsValueChange
 {
 	FpsValueChange_Increase,
 	FpsValueChange_Decrease,
 };
 
-
 class RenderFpsPreset
 {
 public:
-	enum CPP_11(: UnsignedInt)
+	enum CPP_11( : UnsignedInt)
 	{
 		UncappedFpsValue = 1000000,
 	};
@@ -54,11 +52,10 @@ private:
 	static const UnsignedInt s_fpsValues[];
 };
 
-
 class LogicTimeScaleFpsPreset
 {
 public:
-	enum CPP_11(: UnsignedInt)
+	enum CPP_11( : UnsignedInt)
 	{
 		StepFpsValue = 5,
 	};
@@ -67,4 +64,3 @@ public:
 	static UnsignedInt getPrevFpsValue(UnsignedInt value);
 	static UnsignedInt changeFpsValue(UnsignedInt value, FpsValueChange change);
 };
-

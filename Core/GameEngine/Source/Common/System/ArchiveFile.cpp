@@ -33,48 +33,60 @@
 #include "Common/file.h"
 #include "Common/PerfTimer.h"
 
-
 // checks to see if str matches searchString.  Search string is done in the
 // using * and ? as wildcards. * is used to denote any number of characters,
 // and ? is used to denote a single wildcard character.
 static Bool SearchStringMatches(AsciiString str, AsciiString searchString)
 {
-	if (str.getLength() == 0) {
-		if (searchString.getLength() == 0) {
+	if (str.getLength() == 0)
+	{
+		if (searchString.getLength() == 0)
+		{
 			return TRUE;
 		}
 		return FALSE;
 	}
-	if (searchString.getLength() == 0) {
+	if (searchString.getLength() == 0)
+	{
 		return FALSE;
 	}
 
 	const char *c1 = str.str();
 	const char *c2 = searchString.str();
 
-	while ((*c1 == *c2) || (*c2 == '?') || (*c2 == '*')) {
-		if ((*c1 == *c2) || (*c2 == '?')) {
+	while ((*c1 == *c2) || (*c2 == '?') || (*c2 == '*'))
+	{
+		if ((*c1 == *c2) || (*c2 == '?'))
+		{
 			++c1;
 			++c2;
-		} else if (*c2 == '*') {
+		}
+		else if (*c2 == '*')
+		{
 			++c2;
-			if (*c2 == 0) {
+			if (*c2 == 0)
+			{
 				return TRUE;
 			}
-			while (*c1 != 0) {
-				if (SearchStringMatches(AsciiString(c1), AsciiString(c2))) {
+			while (*c1 != 0)
+			{
+				if (SearchStringMatches(AsciiString(c1), AsciiString(c2)))
+				{
 					return TRUE;
 				}
 				++c1;
 			}
 		}
-		if (*c1 == 0) {
-			if (*c2 == 0) {
+		if (*c1 == 0)
+		{
+			if (*c2 == 0)
+			{
 				return TRUE;
 			}
 			return FALSE;
 		}
-		if (*c2 == 0) {
+		if (*c2 == 0)
+		{
 			return FALSE;
 		}
 	}
@@ -83,7 +95,8 @@ static Bool SearchStringMatches(AsciiString str, AsciiString searchString)
 
 ArchiveFile::~ArchiveFile()
 {
-	if (m_file != NULL) {
+	if (m_file != NULL)
+	{
 		m_file->close();
 		m_file = NULL;
 	}
@@ -94,7 +107,7 @@ ArchiveFile::ArchiveFile()
 	m_rootDirectory.clear();
 }
 
-void ArchiveFile::addFile(const AsciiString& path, const ArchivedFileInfo *fileInfo)
+void ArchiveFile::addFile(const AsciiString &path, const ArchivedFileInfo *fileInfo)
 {
 	AsciiString temp;
 	temp = path;
@@ -106,7 +119,8 @@ void ArchiveFile::addFile(const AsciiString& path, const ArchivedFileInfo *fileI
 
 	temp.nextToken(&token, "\\/");
 
-	while (token.getLength() > 0) {
+	while (token.getLength() > 0)
+	{
 		if (dirInfo->m_directories.find(token) == dirInfo->m_directories.end())
 		{
 			dirInfo->m_directories[token].clear();
@@ -120,12 +134,16 @@ void ArchiveFile::addFile(const AsciiString& path, const ArchivedFileInfo *fileI
 	}
 
 	dirInfo->m_files[fileInfo->m_filename] = *fileInfo;
-	//path.concat(fileInfo->m_filename);
+	// path.concat(fileInfo->m_filename);
 }
 
-void ArchiveFile::getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const
+void ArchiveFile::getFileListInDirectory(
+		const AsciiString &currentDirectory,
+		const AsciiString &originalDirectory,
+		const AsciiString &searchName,
+		FilenameList &filenameList,
+		Bool searchSubdirectories) const
 {
-
 	AsciiString searchDir;
 	const DetailedArchivedDirectoryInfo *dirInfo = &m_rootDirectory;
 
@@ -135,8 +153,8 @@ void ArchiveFile::getFileListInDirectory(const AsciiString& currentDirectory, co
 
 	searchDir.nextToken(&token, "\\/");
 
-	while (token.getLength() > 0) {
-
+	while (token.getLength() > 0)
+	{
 		DetailedArchivedDirectoryInfoMap::const_iterator it = dirInfo->m_directories.find(token);
 		if (it != dirInfo->m_directories.end())
 		{
@@ -154,14 +172,21 @@ void ArchiveFile::getFileListInDirectory(const AsciiString& currentDirectory, co
 	getFileListInDirectory(dirInfo, originalDirectory, searchName, filenameList, searchSubdirectories);
 }
 
-void ArchiveFile::getFileListInDirectory(const DetailedArchivedDirectoryInfo *dirInfo, const AsciiString& currentDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const
+void ArchiveFile::getFileListInDirectory(
+		const DetailedArchivedDirectoryInfo *dirInfo,
+		const AsciiString &currentDirectory,
+		const AsciiString &searchName,
+		FilenameList &filenameList,
+		Bool searchSubdirectories) const
 {
 	DetailedArchivedDirectoryInfoMap::const_iterator diriter = dirInfo->m_directories.begin();
-	while (diriter != dirInfo->m_directories.end()) {
+	while (diriter != dirInfo->m_directories.end())
+	{
 		const DetailedArchivedDirectoryInfo *tempDirInfo = &(diriter->second);
 		AsciiString tempdirname;
 		tempdirname = currentDirectory;
-		if ((tempdirname.getLength() > 0) && (!tempdirname.endsWith("\\"))) {
+		if ((tempdirname.getLength() > 0) && (!tempdirname.endsWith("\\")))
+		{
 			tempdirname.concat('\\');
 		}
 		tempdirname.concat(tempDirInfo->m_directoryName);
@@ -170,15 +195,19 @@ void ArchiveFile::getFileListInDirectory(const DetailedArchivedDirectoryInfo *di
 	}
 
 	ArchivedFileInfoMap::const_iterator fileiter = dirInfo->m_files.begin();
-	while (fileiter != dirInfo->m_files.end()) {
-		if (SearchStringMatches(fileiter->second.m_filename, searchName)) {
+	while (fileiter != dirInfo->m_files.end())
+	{
+		if (SearchStringMatches(fileiter->second.m_filename, searchName))
+		{
 			AsciiString tempfilename;
 			tempfilename = currentDirectory;
-			if ((tempfilename.getLength() > 0) && (!tempfilename.endsWith("\\"))) {
+			if ((tempfilename.getLength() > 0) && (!tempfilename.endsWith("\\")))
+			{
 				tempfilename.concat('\\');
 			}
 			tempfilename.concat(fileiter->second.m_filename);
-			if (filenameList.find(tempfilename) == filenameList.end()) {
+			if (filenameList.find(tempfilename) == filenameList.end())
+			{
 				// only insert into the list if its not already in there.
 				filenameList.insert(tempfilename);
 			}
@@ -189,14 +218,15 @@ void ArchiveFile::getFileListInDirectory(const DetailedArchivedDirectoryInfo *di
 
 void ArchiveFile::attachFile(File *file)
 {
-	if (m_file != NULL) {
+	if (m_file != NULL)
+	{
 		m_file->close();
 		m_file = NULL;
 	}
 	m_file = file;
 }
 
-const ArchivedFileInfo * ArchiveFile::getArchivedFileInfo(const AsciiString& filename) const
+const ArchivedFileInfo *ArchiveFile::getArchivedFileInfo(const AsciiString &filename) const
 {
 	AsciiString path;
 	path = filename;
@@ -207,8 +237,8 @@ const ArchivedFileInfo * ArchiveFile::getArchivedFileInfo(const AsciiString& fil
 
 	path.nextToken(&token, "\\/");
 
-	while ((token.find('.') == NULL) || (path.find('.') != NULL)) {
-
+	while ((token.find('.') == NULL) || (path.find('.') != NULL))
+	{
 		DetailedArchivedDirectoryInfoMap::const_iterator it = dirInfo->m_directories.find(token);
 		if (it != dirInfo->m_directories.end())
 		{
@@ -231,5 +261,4 @@ const ArchivedFileInfo * ArchiveFile::getArchivedFileInfo(const AsciiString& fil
 	{
 		return NULL;
 	}
-
 }

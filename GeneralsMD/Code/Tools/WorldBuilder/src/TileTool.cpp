@@ -35,10 +35,8 @@
 // TileTool class.
 //
 
-
 /// Constructor
-TileTool::TileTool(void) :
-	Tool(ID_TILE_TOOL, IDC_TILE_CURSOR)
+TileTool::TileTool(void) : Tool(ID_TILE_TOOL, IDC_TILE_CURSOR)
 {
 	m_htMapEditCopy = NULL;
 }
@@ -58,9 +56,8 @@ void TileTool::activate()
 	DrawObject::setBrushFeedbackParms(true, 1, 0);
 }
 
-
 /// Common mouse down code for left and right clicks.
-void TileTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void TileTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
 	if (m == TRACK_L)
 		m_textureClassToDraw = TerrainMaterial::getFgTexClass();
@@ -69,7 +66,7 @@ void TileTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 	else
 		return;
 
-//	WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
+	//	WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
 	// just in case, release it.
 	REF_PTR_RELEASE(m_htMapEditCopy);
 	m_htMapEditCopy = pDoc->GetHeightMap()->duplicate();
@@ -80,13 +77,14 @@ void TileTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 }
 
 /// Common mouse up code for left and right clicks.
-void TileTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void TileTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
-	if (m != TRACK_L && m != TRACK_R) return;
+	if (m != TRACK_L && m != TRACK_R)
+		return;
 #define DONT_DO_FULL_UPDATE
 #ifdef DO_FULL_UPDATE
 	m_htMapEditCopy->optimizeTiles(); // force to optimize tileset
-	IRegion2D partialRange = {0,0,0,0};
+	IRegion2D partialRange = { 0, 0, 0, 0 };
 	pDoc->updateHeightMap(m_htMapEditCopy, false, partialRange);
 #endif
 	WBDocUndoable *pUndo = new WBDocUndoable(pDoc, m_htMapEditCopy);
@@ -96,7 +94,7 @@ void TileTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuil
 }
 
 /// Common mouse moved code for left and right clicks.
-void TileTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void TileTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
 	Bool didAnything = false;
 	Bool fullUpdate = false;
@@ -104,10 +102,11 @@ void TileTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 
 	pView->viewToDocCoords(viewPt, &cpt);
 	DrawObject::setFeedbackPos(cpt);
-	if (m != TRACK_L && m != TRACK_R) return;
+	if (m != TRACK_L && m != TRACK_R)
+		return;
 	Int dx = m_prevViewPt.x - viewPt.x;
 	Int dy = m_prevViewPt.y - viewPt.y;
-	Int count = sqrt(dx*dx + dy*dy);
+	Int count = sqrt(dx * dx + dy * dy);
 	Int k;
 
 	Int totalMinX = m_htMapEditCopy->getXExtent();
@@ -116,17 +115,21 @@ void TileTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 	Int totalMaxY = 0;
 
 	count /= 2;
-	if (count<1) count = 1;
-	for (k=0; k<=count; k++) {
+	if (count < 1)
+		count = 1;
+	for (k = 0; k <= count; k++)
+	{
 		CPoint curViewPt;
-		curViewPt.x = viewPt.x + ((count-k)*dx)/count;
-		curViewPt.y = viewPt.y + ((count-k)*dy)/count;
+		curViewPt.x = viewPt.x + ((count - k) * dx) / count;
+		curViewPt.y = viewPt.y + ((count - k) * dy) / count;
 
-		if (k==0) {
+		if (k == 0)
+		{
 			DEBUG_ASSERTCRASH(curViewPt.x == m_prevViewPt.x, ("Bad x"));
 			DEBUG_ASSERTCRASH(curViewPt.y == m_prevViewPt.y, ("Bad y"));
 		}
-		if (k==count) {
+		if (k == count)
+		{
 			DEBUG_ASSERTCRASH(curViewPt.x == viewPt.x, ("Bad x"));
 			DEBUG_ASSERTCRASH(curViewPt.y == viewPt.y, ("Bad y"));
 		}
@@ -134,40 +137,55 @@ void TileTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 		Int width = getWidth();
 		pView->viewToDocCoords(curViewPt, &cpt);
 		getCenterIndex(&cpt, width, &ndx, pDoc);
-		if (m_prevXIndex == ndx.x && m_prevYIndex == ndx.y) continue;
+		if (m_prevXIndex == ndx.x && m_prevYIndex == ndx.y)
+			continue;
 
 		m_prevXIndex = ndx.x;
 		m_prevYIndex = ndx.y;
 
 		Int i, j;
-		Int minX = ndx.x - (width)/2;
-		Int minY = ndx.y - (width)/2;
-		for (i=minX; i<minX+width; i++) {
-			if (i<0 || i>=m_htMapEditCopy->getXExtent()) continue;
-			for (j=minY; j<minY+width; j++) {
-				if (j<0 || j>=m_htMapEditCopy->getYExtent()) continue;
-				if (TerrainMaterial::isPaintingPathingInfo()) {
+		Int minX = ndx.x - (width) / 2;
+		Int minY = ndx.y - (width) / 2;
+		for (i = minX; i < minX + width; i++)
+		{
+			if (i < 0 || i >= m_htMapEditCopy->getXExtent())
+				continue;
+			for (j = minY; j < minY + width; j++)
+			{
+				if (j < 0 || j >= m_htMapEditCopy->getYExtent())
+					continue;
+				if (TerrainMaterial::isPaintingPathingInfo())
+				{
 					m_htMapEditCopy->setCliff(i, j, !TerrainMaterial::isPaintingPassable());
-				} else {
-					if (m_htMapEditCopy->setTileNdx(i, j, m_textureClassToDraw, width==1)) {
+				}
+				else
+				{
+					if (m_htMapEditCopy->setTileNdx(i, j, m_textureClassToDraw, width == 1))
+					{
 						fullUpdate = true;
 					}
 				}
 				didAnything = true;
-				if (totalMinX>i) totalMinX = i;
-				if (totalMinY>j) totalMinY = j;
-				if (totalMaxX<i) totalMaxX = i;
-				if (totalMaxY<j) totalMaxY = j;
+				if (totalMinX > i)
+					totalMinX = i;
+				if (totalMinY > j)
+					totalMinY = j;
+				if (totalMaxX < i)
+					totalMaxX = i;
+				if (totalMaxY < j)
+					totalMaxY = j;
 			}
 		}
 	}
-	if (didAnything) {
+	if (didAnything)
+	{
 		IRegion2D partialRange;
 		partialRange.lo.x = totalMinX;
-		partialRange.hi.x = totalMaxX+1;
+		partialRange.hi.x = totalMaxX + 1;
 		partialRange.lo.y = totalMinY;
-		partialRange.hi.y = totalMaxY+1;
-		if (fullUpdate) {
+		partialRange.hi.y = totalMaxY + 1;
+		if (fullUpdate)
+		{
 			m_htMapEditCopy->optimizeTiles(); // force to optimize tileset
 		}
 		pDoc->updateHeightMap(m_htMapEditCopy, !fullUpdate, partialRange);

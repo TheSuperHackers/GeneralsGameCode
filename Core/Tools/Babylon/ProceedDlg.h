@@ -24,35 +24,37 @@
 #endif // _MSC_VER > 1000
 // ProceedDlg.h : header file
 //
-#define IDALWAYS		101
+#define IDALWAYS 101
 
 /////////////////////////////////////////////////////////////////////////////
 // ProceedDlg dialog
 
 class ProceedDlg : public CDialog
 {
-// Construction
+	// Construction
 	const char *message;
-public:
-	ProceedDlg(const char *message, CWnd* pParent = NULL);   // standard constructor
 
-// Dialog Data
+public:
+	ProceedDlg(const char *message, CWnd *pParent = NULL); // standard constructor
+
+	// Dialog Data
 	//{{AFX_DATA(ProceedDlg)
-	enum { IDD = IDD_PROCEED };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_PROCEED
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ProceedDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(ProceedDlg)
 	afx_msg void OnYes();

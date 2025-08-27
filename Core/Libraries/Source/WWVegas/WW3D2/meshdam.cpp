@@ -34,9 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if 0
-
 
 #include "meshdam.h"
 #include "w3d_file.h"
@@ -262,5 +260,4 @@ WW3DErrorType DamageClass::read_colors(ChunkLoadClass & cload,MeshModelClass * b
 	return WW3D_ERROR_OK;
 }
 
-
-#endif //0
+#endif // 0

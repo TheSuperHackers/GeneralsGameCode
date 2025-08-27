@@ -40,9 +40,9 @@ class User : public MemoryPoolObject
 public:
 	User() {}
 	User(UnicodeString name, UnsignedInt addr, UnsignedInt port);
-	User &operator= (const User *other);
-	Bool operator== (const User *other);
-	Bool operator!= (const User *other);
+	User &operator=(const User *other);
+	Bool operator==(const User *other);
+	Bool operator!=(const User *other);
 
 	inline UnicodeString GetName() { return m_name; }
 	void setName(UnicodeString name);
@@ -50,7 +50,6 @@ public:
 	inline UnsignedInt GetIPAddr() { return m_ipaddr; }
 	inline void SetPort(UnsignedShort port) { m_port = port; }
 	inline void SetIPAddr(UnsignedInt ipaddr) { m_ipaddr = ipaddr; }
-
 
 private:
 	UnicodeString m_name;

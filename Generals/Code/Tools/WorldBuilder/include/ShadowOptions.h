@@ -30,25 +30,27 @@
 
 class ShadowOptions : public CDialog
 {
-// Construction
+	// Construction
 public:
-	ShadowOptions(CWnd* pParent = NULL);   // standard constructor
+	ShadowOptions(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(ShadowOptions)
-	enum { IDD = IDD_SHADOW_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_SHADOW_OPTIONS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ShadowOptions)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	Real m_red;
 	Real m_green;

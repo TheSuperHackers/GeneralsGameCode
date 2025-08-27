@@ -47,9 +47,9 @@ public:
 	CustomMatchPreferences();
 	virtual ~CustomMatchPreferences();
 
-	void setLastLadder(const AsciiString& addr, UnsignedShort port);
-	AsciiString getLastLadderAddr( void );
-	UnsignedShort getLastLadderPort( void );
+	void setLastLadder(const AsciiString &addr, UnsignedShort port);
+	AsciiString getLastLadderAddr(void);
+	UnsignedShort getLastLadderPort(void);
 
 	Int getPreferredFaction(void);
 	void setPreferredFaction(Int val);
@@ -72,23 +72,24 @@ public:
 	Bool allowsObservers(void);
 	void setAllowsObserver(Bool val);
 
-	Bool getDisallowAsianText( void );
+	Bool getDisallowAsianText(void);
 	void setDisallowAsianText(Bool val);
 
-	Bool getDisallowNonAsianText( void );
-	void setDisallowNonAsianText( Bool val );
+	Bool getDisallowNonAsianText(void);
+	void setDisallowNonAsianText(Bool val);
 
-  Bool getSuperweaponRestricted(void) const;
-  void setSuperweaponRestricted( Bool superweaponRestricted);
+	Bool getSuperweaponRestricted(void) const;
+	void setSuperweaponRestricted(Bool superweaponRestricted);
 
-  Money getStartingCash(void) const;
-  void setStartingCash( const Money &startingCash );
+	Money getStartingCash(void) const;
+	void setStartingCash(const Money &startingCash);
 
-  Bool getFactionsLimited(void) const; // Prefers to only use the original 3 sides, not USA Air Force General, GLA Toxin General, et al
-  void setFactionsLimited( Bool factionsLimited );
+	Bool getFactionsLimited(void) const; // Prefers to only use the original 3 sides, not USA Air Force General, GLA Toxin
+																			 // General, et al
+	void setFactionsLimited(Bool factionsLimited);
 
-  Bool getUseStats( void ) const;
-  void setUseStats( Bool useStats );
+	Bool getUseStats(void) const;
+	void setUseStats(Bool useStats);
 };
 
 #endif // __CUSTOMMATCHPREFERENCES_H__

@@ -39,62 +39,49 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class ObjectCreationList;
 
-enum OCLCreateLocType CPP_11(: Int)
-{
-	CREATE_AT_EDGE_NEAR_SOURCE,
-	CREATE_AT_EDGE_NEAR_TARGET,
-	CREATE_AT_LOCATION,
-	USE_OWNER_OBJECT,
-	CREATE_ABOVE_LOCATION,
-	CREATE_AT_EDGE_FARTHEST_FROM_TARGET,
+enum OCLCreateLocType CPP_11( : Int){
+	CREATE_AT_EDGE_NEAR_SOURCE, CREATE_AT_EDGE_NEAR_TARGET, CREATE_AT_LOCATION,
+	USE_OWNER_OBJECT,						CREATE_ABOVE_LOCATION,			CREATE_AT_EDGE_FARTHEST_FROM_TARGET,
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class OCLSpecialPowerModuleData : public SpecialPowerModuleData
 {
-
 public:
-
 	struct Upgrades
 	{
-		ScienceType									m_science;
-		const ObjectCreationList*		m_ocl;
+		ScienceType m_science;
+		const ObjectCreationList *m_ocl;
 
-		Upgrades() : m_science(SCIENCE_INVALID), m_ocl(NULL)
-		{
-		}
+		Upgrades() : m_science(SCIENCE_INVALID), m_ocl(NULL) {}
 	};
 
-	std::vector<Upgrades>			m_upgradeOCL;
-	const ObjectCreationList*	m_defaultOCL;
-	OCLCreateLocType					m_createLoc;
+	std::vector<Upgrades> m_upgradeOCL;
+	const ObjectCreationList *m_defaultOCL;
+	OCLCreateLocType m_createLoc;
 
-	OCLSpecialPowerModuleData( void );
-	static void buildFieldParse(MultiIniFieldParse& p);
-
+	OCLSpecialPowerModuleData(void);
+	static void buildFieldParse(MultiIniFieldParse &p);
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class OCLSpecialPower : public SpecialPowerModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( OCLSpecialPower, "OCLSpecialPower" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( OCLSpecialPower, OCLSpecialPowerModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(OCLSpecialPower, "OCLSpecialPower")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(OCLSpecialPower, OCLSpecialPowerModuleData)
 
 public:
-
-	OCLSpecialPower( Thing *thing, const ModuleData* moduleData );
+	OCLSpecialPower(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool object
 
-	virtual void doSpecialPower( UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions );
+	virtual void doSpecialPower(UnsignedInt commandOptions);
+	virtual void doSpecialPowerAtObject(Object *obj, UnsignedInt commandOptions);
+	virtual void doSpecialPowerAtLocation(const Coord3D *loc, Real angle, UnsignedInt commandOptions);
 
 protected:
-
-	const ObjectCreationList* findOCL() const;
+	const ObjectCreationList *findOCL() const;
 };
 
-#endif  // end __OCLSPECIALPOWER_H_
+#endif // end __OCLSPECIALPOWER_H_

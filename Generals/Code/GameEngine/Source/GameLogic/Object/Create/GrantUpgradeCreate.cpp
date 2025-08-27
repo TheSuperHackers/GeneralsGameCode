@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #define DEFINE_OBJECT_STATUS_NAMES
 #include "Common/Player.h"
@@ -46,18 +46,17 @@ GrantUpgradeCreateModuleData::GrantUpgradeCreateModuleData()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GrantUpgradeCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
+void GrantUpgradeCreateModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-  CreateModuleData::buildFieldParse(p);
+	CreateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "UpgradeToGrant",	INI::parseAsciiString,		NULL, offsetof( GrantUpgradeCreateModuleData, m_upgradeName ) },
-		{ "ExemptStatus",	ObjectStatusMaskType::parseFromINI, NULL, offsetof( GrantUpgradeCreateModuleData, m_exemptStatus ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "UpgradeToGrant", INI::parseAsciiString, NULL, offsetof(GrantUpgradeCreateModuleData, m_upgradeName) },
+		{ "ExemptStatus", ObjectStatusMaskType::parseFromINI, NULL, offsetof(GrantUpgradeCreateModuleData, m_exemptStatus) },
 		{ 0, 0, 0, 0 }
 	};
 
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,115 +65,119 @@ void GrantUpgradeCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GrantUpgradeCreate::GrantUpgradeCreate( Thing *thing, const ModuleData* moduleData ) : CreateModule( thing, moduleData )
+GrantUpgradeCreate::GrantUpgradeCreate(Thing *thing, const ModuleData *moduleData) : CreateModule(thing, moduleData)
 {
-}  // end GrantUpgradeCreate
+} // end GrantUpgradeCreate
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GrantUpgradeCreate::~GrantUpgradeCreate( void )
+GrantUpgradeCreate::~GrantUpgradeCreate(void)
 {
-
-}  // end ~GrantUpgradeCreate
+} // end ~GrantUpgradeCreate
 
 //-------------------------------------------------------------------------------------------------
 /** The create callback. */
 //-------------------------------------------------------------------------------------------------
-void GrantUpgradeCreate::onCreate( void )
+void GrantUpgradeCreate::onCreate(void)
 {
-
 	ObjectStatusMaskType exemptStatus = getGrantUpgradeCreateModuleData()->m_exemptStatus;
 	ObjectStatusMaskType currentStatus = getObject()->getStatusBits();
-	if( exemptStatus.test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	if (exemptStatus.test(OBJECT_STATUS_UNDER_CONSTRUCTION))
 	{
-		if(	!currentStatus.test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+		if (!currentStatus.test(OBJECT_STATUS_UNDER_CONSTRUCTION))
 		{
-			const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( getGrantUpgradeCreateModuleData()->m_upgradeName );
-			if( !upgradeTemplate )
+			const UpgradeTemplate *upgradeTemplate =
+					TheUpgradeCenter->findUpgrade(getGrantUpgradeCreateModuleData()->m_upgradeName);
+			if (!upgradeTemplate)
 			{
-				DEBUG_ASSERTCRASH( 0, ("GrantUpdateCreate for %s can't find upgrade template %s.", getObject()->getName().str(), getGrantUpgradeCreateModuleData()->m_upgradeName.str() ) );
+				DEBUG_ASSERTCRASH(
+						0,
+						("GrantUpdateCreate for %s can't find upgrade template %s.",
+						 getObject()->getName().str(),
+						 getGrantUpgradeCreateModuleData()->m_upgradeName.str()));
 				return;
 			}
 
-			if( upgradeTemplate->getUpgradeType() == UPGRADE_TYPE_PLAYER )
+			if (upgradeTemplate->getUpgradeType() == UPGRADE_TYPE_PLAYER)
 			{
 				// get the player
 				Player *player = getObject()->getControllingPlayer();
-				player->addUpgrade( upgradeTemplate, UPGRADE_STATUS_COMPLETE );
+				player->addUpgrade(upgradeTemplate, UPGRADE_STATUS_COMPLETE);
 			}
 			else
 			{
-				getObject()->giveUpgrade( upgradeTemplate );
+				getObject()->giveUpgrade(upgradeTemplate);
 			}
 		}
 	}
 
-}  // end onCreate
+} // end onCreate
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void GrantUpgradeCreate::onBuildComplete( void )
+void GrantUpgradeCreate::onBuildComplete(void)
 {
-	if( ! shouldDoOnBuildComplete() )
+	if (!shouldDoOnBuildComplete())
 		return;
 
 	CreateModule::onBuildComplete(); // extend
 
-	const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( getGrantUpgradeCreateModuleData()->m_upgradeName );
-	if( !upgradeTemplate )
+	const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade(getGrantUpgradeCreateModuleData()->m_upgradeName);
+	if (!upgradeTemplate)
 	{
-		DEBUG_ASSERTCRASH( 0, ("GrantUpdateCreate for %s can't find upgrade template %s.", getObject()->getName().str(), getGrantUpgradeCreateModuleData()->m_upgradeName.str() ) );
+		DEBUG_ASSERTCRASH(
+				0,
+				("GrantUpdateCreate for %s can't find upgrade template %s.",
+				 getObject()->getName().str(),
+				 getGrantUpgradeCreateModuleData()->m_upgradeName.str()));
 		return;
 	}
 
-	if( upgradeTemplate->getUpgradeType() == UPGRADE_TYPE_PLAYER )
+	if (upgradeTemplate->getUpgradeType() == UPGRADE_TYPE_PLAYER)
 	{
 		// get the player
 		Player *player = getObject()->getControllingPlayer();
-		player->addUpgrade( upgradeTemplate, UPGRADE_STATUS_COMPLETE );
+		player->addUpgrade(upgradeTemplate, UPGRADE_STATUS_COMPLETE);
 	}
 	else
 	{
-		getObject()->giveUpgrade( upgradeTemplate );
+		getObject()->giveUpgrade(upgradeTemplate);
 	}
-}  // end onBuildComplete
+} // end onBuildComplete
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void GrantUpgradeCreate::crc( Xfer *xfer )
+void GrantUpgradeCreate::crc(Xfer *xfer)
 {
-
 	// extend base class
-	CreateModule::crc( xfer );
+	CreateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void GrantUpgradeCreate::xfer( Xfer *xfer )
+void GrantUpgradeCreate::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CreateModule::xfer( xfer );
+	CreateModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void GrantUpgradeCreate::loadPostProcess( void )
+void GrantUpgradeCreate::loadPostProcess(void)
 {
-
 	// extend base class
 	CreateModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

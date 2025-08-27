@@ -40,8 +40,6 @@
 #ifndef __WSYS_RAMFILE_H
 #define __WSYS_RAMFILE_H
 
-
-
 //----------------------------------------------------------------------------
 //           Includes
 //----------------------------------------------------------------------------
@@ -52,8 +50,6 @@
 //           Forward References
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //           Type Defines
 //----------------------------------------------------------------------------
@@ -62,39 +58,32 @@
 // RAMFile
 //===============================
 /**
-  *	File abstraction for standard C file operators: open, close, lseek, read, write
-	*/
+ *	File abstraction for standard C file operators: open, close, lseek, read, write
+ */
 //===============================
 
 class RAMFile : public File
 {
-	protected:
+protected:
+	Char *m_data; ///< File data in memory
+	Int m_pos; ///< current read position
+	Int m_size; ///< size of file in memory
 
-		Char				*m_data;											///< File data in memory
-		Int					m_pos;												///< current read position
-		Int					m_size;												///< size of file in memory
+public:
+	RAMFile();
+	virtual ~RAMFile();
 
-	public:
+	virtual Bool open(const Char *filename, Int access = 0); ///< Open a file for access
+	virtual void close(void); ///< Close the file
+	virtual Int read(void *buffer, Int bytes); ///< Read the specified number of bytes in to buffer: See File::read
+	virtual Int write(void *buffer, Int bytes); ///< Write the specified number of bytes from the buffer: See File::write
+	virtual Int seek(Int new_pos, seekMode mode = CURRENT); ///< Set file position: See File::seek
 
-		RAMFile();
-		virtual				~RAMFile();
-
-
-		virtual Bool	open( const Char *filename, Int access = 0 );				///< Open a file for access
-		virtual void	close( void );																			///< Close the file
-		virtual Int		read( void *buffer, Int bytes );										///< Read the specified number of bytes in to buffer: See File::read
-		virtual Int		write( void *buffer, Int bytes );										///< Write the specified number of bytes from the buffer: See File::write
-		virtual Int		seek( Int new_pos, seekMode mode = CURRENT );				///< Set file position: See File::seek
-
-		Bool					open( File *file );																	///< Open file for fast RAM access
+	Bool open(File *file); ///< Open file for fast RAM access
 };
-
-
-
 
 //----------------------------------------------------------------------------
 //           Inlining
 //----------------------------------------------------------------------------
-
 
 #endif // __WSYS_RAMFILE_H

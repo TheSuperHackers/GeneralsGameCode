@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/PlayerTemplate.h"
 #include "Common/BattleHonors.h"
@@ -60,14 +60,13 @@
 
 #include "WWDownload/Registry.h"
 
-
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 // window ids ------------------------------------------------------------------------------
 static NameKeyType parentID = NAMEKEY_INVALID;
 static NameKeyType listboxInfoID = NAMEKEY_INVALID;
 static NameKeyType buttonCloseID = NAMEKEY_INVALID;
 static NameKeyType buttonBuddiesID = NAMEKEY_INVALID;
-//static NameKeyType buttonOptionsID = NAMEKEY_INVALID;
+// static NameKeyType buttonOptionsID = NAMEKEY_INVALID;
 static NameKeyType buttonSetLocaleID = NAMEKEY_INVALID;
 static NameKeyType buttonDeleteAccountID = NAMEKEY_INVALID;
 static NameKeyType checkBoxAsianFontID = NAMEKEY_INVALID;
@@ -78,7 +77,7 @@ static GameWindow *parent = NULL;
 static GameWindow *listboxInfo = NULL;
 static GameWindow *buttonClose = NULL;
 static GameWindow *buttonBuddies = NULL;
-//static GameWindow *buttonbuttonOptions = NULL;
+// static GameWindow *buttonbuttonOptions = NULL;
 static GameWindow *buttonSetLocale = NULL;
 static GameWindow *buttonDeleteAccount = NULL;
 static GameWindow *checkBoxAsianFont = NULL;
@@ -89,21 +88,11 @@ static Bool raiseMessageBox = false;
 static Int lookAtPlayerID = 0;
 static std::string lookAtPlayerName;
 
-
 static const char *rankNames[] = {
-	"Private",
-	"Corporal",
-	"Sergeant",
-	"Lieutenant",
-	"Captain",
-	"Major",
-	"Colonel",
-	"General",
-	"Brigadier",
-	"Commander",
+	"Private", "Corporal", "Sergeant", "Lieutenant", "Captain", "Major", "Colonel", "General", "Brigadier", "Commander",
 };
 
-static const Image* lookupRankImage(AsciiString side, Int rank)
+static const Image *lookupRankImage(AsciiString side, Int rank)
 {
 	if (side.isEmpty())
 		return TheMappedImageCollection->findImageByName("NewPlayer");
@@ -123,8 +112,8 @@ static const Image* lookupRankImage(AsciiString side, Int rank)
 
 	AsciiString fullImageName;
 	fullImageName.format("Rank_%s%s", rankNames[rank], side.str());
-	if(strcmp(fullImageName.str(),"Rank_PrivateElite") == 0)
-		fullImageName = "Rank";//_Private_Elite";
+	if (strcmp(fullImageName.str(), "Rank_PrivateElite") == 0)
+		fullImageName = "Rank"; //_Private_Elite";
 	const Image *img = TheMappedImageCollection->findImageByName(fullImageName);
 	if (img)
 	{
@@ -152,22 +141,28 @@ static Int getTotalDisconnectsFromFile(Int playerID)
 	pref.load(userPrefFilename);
 
 	// if there is a file override, use that data instead.
-	if (pref.find("0") != pref.end()) {
+	if (pref.find("0") != pref.end())
+	{
 		retval = atoi(pref.find("0")->second.str());
 	}
-	if (pref.find("1") != pref.end()) {
+	if (pref.find("1") != pref.end())
+	{
 		retval += atoi(pref.find("1")->second.str());
 	}
-	if (pref.find("2") != pref.end()) {
+	if (pref.find("2") != pref.end())
+	{
 		retval += atoi(pref.find("2")->second.str());
 	}
-	if (pref.find("3") != pref.end()) {
+	if (pref.find("3") != pref.end())
+	{
 		retval += atoi(pref.find("3")->second.str());
 	}
-	if (pref.find("4") != pref.end()) {
+	if (pref.find("4") != pref.end())
+	{
 		retval += atoi(pref.find("4")->second.str());
 	}
-	if (pref.find("5") != pref.end()) {
+	if (pref.find("5") != pref.end())
+	{
 		retval += atoi(pref.find("5")->second.str());
 	}
 
@@ -178,7 +173,8 @@ Int GetAdditionalDisconnectsFromUserFile(Int playerID)
 {
 	Int retval = getTotalDisconnectsFromFile(playerID);
 
-	if (playerID == 0) {
+	if (playerID == 0)
+	{
 		return 0;
 	}
 
@@ -198,7 +194,8 @@ Int GetAdditionalDisconnectsFromUserFile(Int playerID)
 
 void GetAdditionalDisconnectsFromUserFile(PSPlayerStats *stats)
 {
-	if (!stats || stats->id == 0) {
+	if (!stats || stats->id == 0)
+	{
 		return;
 	}
 
@@ -220,22 +217,28 @@ void GetAdditionalDisconnectsFromUserFile(PSPlayerStats *stats)
 	pref.load(userPrefFilename);
 
 	// if there is a file override, use that data instead.
-	if (pref.find("0") != pref.end()) {
+	if (pref.find("0") != pref.end())
+	{
 		stats->desyncs[2] += abs(atoi(pref.find("0")->second.str()));
 	}
-	if (pref.find("1") != pref.end()) {
+	if (pref.find("1") != pref.end())
+	{
 		stats->desyncs[3] += abs(atoi(pref.find("1")->second.str()));
 	}
-	if (pref.find("2") != pref.end()) {
+	if (pref.find("2") != pref.end())
+	{
 		stats->desyncs[4] += abs(atoi(pref.find("2")->second.str()));
 	}
-	if (pref.find("3") != pref.end()) {
+	if (pref.find("3") != pref.end())
+	{
 		stats->discons[2] += abs(atoi(pref.find("3")->second.str()));
 	}
-	if (pref.find("4") != pref.end()) {
+	if (pref.find("4") != pref.end())
+	{
 		stats->discons[3] += abs(atoi(pref.find("4")->second.str()));
 	}
-	if (pref.find("5") != pref.end()) {
+	if (pref.find("5") != pref.end())
+	{
 		stats->discons[4] += abs(atoi(pref.find("5")->second.str()));
 	}
 }
@@ -243,16 +246,16 @@ void GetAdditionalDisconnectsFromUserFile(PSPlayerStats *stats)
 // default values
 RankPoints::RankPoints(void)
 {
-	m_ranks[RANK_PRIVATE]							= 0;
-	m_ranks[RANK_CORPORAL]						= TheGameSpyConfig->getPointsForRank(RANK_CORPORAL); // 5
-	m_ranks[RANK_SERGEANT]						= TheGameSpyConfig->getPointsForRank(RANK_SERGEANT); // 10
-	m_ranks[RANK_LIEUTENANT]					= TheGameSpyConfig->getPointsForRank(RANK_LIEUTENANT); // 20
-	m_ranks[RANK_CAPTAIN]							= TheGameSpyConfig->getPointsForRank(RANK_CAPTAIN); // 50
-	m_ranks[RANK_MAJOR]								= TheGameSpyConfig->getPointsForRank(RANK_MAJOR); // 100
-	m_ranks[RANK_COLONEL]							= TheGameSpyConfig->getPointsForRank(RANK_COLONEL); // 200
-	m_ranks[RANK_BRIGADIER_GENERAL]		= TheGameSpyConfig->getPointsForRank(RANK_BRIGADIER_GENERAL); // 500
-	m_ranks[RANK_GENERAL]							= TheGameSpyConfig->getPointsForRank(RANK_GENERAL); // 1000
-	m_ranks[RANK_COMMANDER_IN_CHIEF]	= TheGameSpyConfig->getPointsForRank(RANK_COMMANDER_IN_CHIEF); // 2000
+	m_ranks[RANK_PRIVATE] = 0;
+	m_ranks[RANK_CORPORAL] = TheGameSpyConfig->getPointsForRank(RANK_CORPORAL); // 5
+	m_ranks[RANK_SERGEANT] = TheGameSpyConfig->getPointsForRank(RANK_SERGEANT); // 10
+	m_ranks[RANK_LIEUTENANT] = TheGameSpyConfig->getPointsForRank(RANK_LIEUTENANT); // 20
+	m_ranks[RANK_CAPTAIN] = TheGameSpyConfig->getPointsForRank(RANK_CAPTAIN); // 50
+	m_ranks[RANK_MAJOR] = TheGameSpyConfig->getPointsForRank(RANK_MAJOR); // 100
+	m_ranks[RANK_COLONEL] = TheGameSpyConfig->getPointsForRank(RANK_COLONEL); // 200
+	m_ranks[RANK_BRIGADIER_GENERAL] = TheGameSpyConfig->getPointsForRank(RANK_BRIGADIER_GENERAL); // 500
+	m_ranks[RANK_GENERAL] = TheGameSpyConfig->getPointsForRank(RANK_GENERAL); // 1000
+	m_ranks[RANK_COMMANDER_IN_CHIEF] = TheGameSpyConfig->getPointsForRank(RANK_COMMANDER_IN_CHIEF); // 2000
 
 	m_winMultiplier = 3.0f;
 	m_lostMultiplier = 0.0f;
@@ -265,17 +268,17 @@ RankPoints::RankPoints(void)
 	ThePlayerTemplateStore->getAllSideStrings(&sidesList);
 	for (AsciiStringList::iterator sit = sidesList.begin(); sit != sidesList.end(); ++sit)
 	{
-		for (Int i=0; i<MAX_RANKS; ++i)
+		for (Int i = 0; i < MAX_RANKS; ++i)
 			lookupRankImage(*sit, i);
 	}
-	for (Int i=0; i<MAX_RANKS; ++i)
+	for (Int i = 0; i < MAX_RANKS; ++i)
 		lookupRankImage("Random", i);
 #endif
 }
 
 RankPoints *TheRankPointValues = NULL;
 
-void SetLookAtPlayer( Int id, AsciiString nick)
+void SetLookAtPlayer(Int id, AsciiString nick)
 {
 	lookAtPlayerID = id;
 	lookAtPlayerName = nick.str();
@@ -308,9 +311,7 @@ void SetLookAtPlayer( Int id, AsciiString nick)
 //	BATTLE_HONOR_SOLO_GLA_S			= 0x0800000,
 //	BATTLE_HONOR_SOLO_GLA_G			= 0x1000000,
 
-void BattleHonorTooltip(GameWindow *window,
-												WinInstanceData *instData,
-												UnsignedInt mouse)
+void BattleHonorTooltip(GameWindow *window, WinInstanceData *instData, UnsignedInt mouse)
 {
 	Int x, y, row, col;
 	x = LOLONGTOSHORT(mouse);
@@ -320,46 +321,46 @@ void BattleHonorTooltip(GameWindow *window,
 
 	if (row == -1 || col == -1)
 	{
-		TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonors") );
+		TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonors"));
 		return;
 	}
 
-	Int battleHonor = (Int)GadgetListBoxGetItemData( window, row, col );
+	Int battleHonor = (Int)GadgetListBoxGetItemData(window, row, col);
 	if (battleHonor == 0)
 	{
-		//DEBUG_CRASH(("No Battle Honor in listbox row %d, col %d!", row, col));
-		TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonors") );
+		// DEBUG_CRASH(("No Battle Honor in listbox row %d, col %d!", row, col));
+		TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonors"));
 		return;
 	}
 	Real tooltipWidth = 1.5f;
 	if (BitIsSet(battleHonor, BATTLE_HONOR_NOT_GAINED))
 	{
-		if(BitIsSet(battleHonor, BATTLE_HONOR_STREAK_3))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorStreak3Disabled"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_LOYALTY_USA))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorLoyaltyUSADisabled"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_LOYALTY_CHINA))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorLoyaltyChinaDisabled"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_LOYALTY_GLA))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorLoyaltyGLADisabled"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_BATTLE_TANK))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorBattleTankDisabled"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_AIR_WING))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorAirWingDisabled"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_ENDURANCE))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorEnduranceDisabled"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_CAMPAIGN_USA))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorCampaignUSADisabled"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_CAMPAIGN_CHINA))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorCampaignChinaDisabled"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_CAMPAIGN_GLA))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorCampaignGLADisabled"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_BLITZ10))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorBlitz10Disabled"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_FAIR_PLAY))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorFairPlayDisabled"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_APOCALYPSE))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorApocalypseDisabled"), -1, NULL, tooltipWidth );
+		if (BitIsSet(battleHonor, BATTLE_HONOR_STREAK_3))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorStreak3Disabled"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_LOYALTY_USA))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorLoyaltyUSADisabled"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_LOYALTY_CHINA))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorLoyaltyChinaDisabled"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_LOYALTY_GLA))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorLoyaltyGLADisabled"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_BATTLE_TANK))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorBattleTankDisabled"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_AIR_WING))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorAirWingDisabled"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_ENDURANCE))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorEnduranceDisabled"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_CAMPAIGN_USA))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorCampaignUSADisabled"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_CAMPAIGN_CHINA))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorCampaignChinaDisabled"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_CAMPAIGN_GLA))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorCampaignGLADisabled"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_BLITZ10))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorBlitz10Disabled"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_FAIR_PLAY))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorFairPlayDisabled"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_APOCALYPSE))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorApocalypseDisabled"), -1, NULL, tooltipWidth);
 		/*
 		else if(BitIsSet(battleHonor, BATTLE_HONOR_SOLO_USA_B))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorSoloUSABDisabled"), -1, NULL, tooltipWidth );
@@ -380,49 +381,49 @@ void BattleHonorTooltip(GameWindow *window,
 		else if(BitIsSet(battleHonor, BATTLE_HONOR_SOLO_GLA_G))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorSoloGLAGDisabled"), -1, NULL, tooltipWidth );
 			*/
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_CHALLENGE))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorChallengeDisabled"), -1, NULL, tooltipWidth );
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_CHALLENGE))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorChallengeDisabled"), -1, NULL, tooltipWidth);
 	}
 	else
 	{
-		if(BitIsSet(battleHonor, BATTLE_HONOR_LADDER_CHAMP))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorLadderChamp"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_STREAK_3))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorStreak3"), -1, NULL, tooltipWidth );
-		//else if(BitIsSet(battleHonor, BATTLE_HONOR_STREAK_5))
-			//TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorStreak5"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_STREAK_10))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorStreak10"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_STREAK_25))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorStreak25"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_LOYALTY_USA))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorLoyaltyUSA"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_LOYALTY_CHINA))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorLoyaltyChina"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_LOYALTY_GLA))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorLoyaltyGLA"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_BATTLE_TANK))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorBattleTank"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_AIR_WING))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorAirWing"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_ENDURANCE))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorEndurance"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_CAMPAIGN_USA))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorCampaignUSA"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_CAMPAIGN_CHINA))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorCampaignChina"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_CAMPAIGN_GLA))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorCampaignGLA"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_BLITZ5))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorBlitz5"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_BLITZ10))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorBlitz10"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_FAIR_PLAY))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorFairPlay"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_APOCALYPSE))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorApocalypse"), -1, NULL, tooltipWidth );
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_OFFICERSCLUB))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorOfficersClub"), -1, NULL, tooltipWidth );
+		if (BitIsSet(battleHonor, BATTLE_HONOR_LADDER_CHAMP))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorLadderChamp"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_STREAK_3))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorStreak3"), -1, NULL, tooltipWidth);
+		// else if(BitIsSet(battleHonor, BATTLE_HONOR_STREAK_5))
+		// TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorStreak5"), -1, NULL, tooltipWidth );
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_STREAK_10))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorStreak10"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_STREAK_25))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorStreak25"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_LOYALTY_USA))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorLoyaltyUSA"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_LOYALTY_CHINA))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorLoyaltyChina"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_LOYALTY_GLA))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorLoyaltyGLA"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_BATTLE_TANK))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorBattleTank"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_AIR_WING))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorAirWing"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_ENDURANCE))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorEndurance"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_CAMPAIGN_USA))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorCampaignUSA"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_CAMPAIGN_CHINA))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorCampaignChina"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_CAMPAIGN_GLA))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorCampaignGLA"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_BLITZ5))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorBlitz5"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_BLITZ10))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorBlitz10"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_FAIR_PLAY))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorFairPlay"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_APOCALYPSE))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorApocalypse"), -1, NULL, tooltipWidth);
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_OFFICERSCLUB))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorOfficersClub"), -1, NULL, tooltipWidth);
 		/*
 		else if(BitIsSet(battleHonor, BATTLE_HONOR_SOLO_USA_B))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorSoloUSAB"), -1, NULL, tooltipWidth );
@@ -443,10 +444,9 @@ void BattleHonorTooltip(GameWindow *window,
 		else if(BitIsSet(battleHonor, BATTLE_HONOR_SOLO_GLA_G))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorSoloGLAG"), -1, NULL, tooltipWidth );
 			*/
-		else if(BitIsSet(battleHonor, BATTLE_HONOR_CHALLENGE))
-			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorChallenge"), -1, NULL, tooltipWidth );
+		else if (BitIsSet(battleHonor, BATTLE_HONOR_CHALLENGE))
+			TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:BattleHonorChallenge"), -1, NULL, tooltipWidth);
 	}
-
 }
 
 static Int rowsToSkip = 0;
@@ -454,7 +454,14 @@ void ResetBattleHonorInsertion(void)
 {
 	rowsToSkip = 0;
 }
-void InsertBattleHonor(GameWindow *list, const Image *image, Bool enabled, Int itemData, Int& row, Int& column, UnicodeString text = UnicodeString::TheEmptyString)
+void InsertBattleHonor(
+		GameWindow *list,
+		const Image *image,
+		Bool enabled,
+		Int itemData,
+		Int &row,
+		Int &column,
+		UnicodeString text = UnicodeString::TheEmptyString)
 {
 	Int width = MAX_BATTLE_HONOR_IMAGE_WIDTH * (TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH);
 	Int height = MAX_BATTLE_HONOR_IMAGE_HEIGHT * (TheDisplay->getHeight() / (Real)DEFAULT_DISPLAY_HEIGHT);
@@ -471,7 +478,7 @@ void InsertBattleHonor(GameWindow *list, const Image *image, Bool enabled, Int i
 		itemData |= BATTLE_HONOR_NOT_GAINED;
 
 	GadgetListBoxAddEntryImage(list, image, row, column, height, width, TRUE, color);
-	GadgetListBoxSetItemData(list, (void *)itemData, row, column );
+	GadgetListBoxSetItemData(list, (void *)itemData, row, column);
 
 	/*
 	** removing text, since every place that adds text has alternate displays of the same thing
@@ -483,21 +490,27 @@ void InsertBattleHonor(GameWindow *list, const Image *image, Bool enabled, Int i
 	}
 	*/
 
-	if(++column >= GadgetListBoxGetNumColumns(list))
+	if (++column >= GadgetListBoxGetNumColumns(list))
 	{
 		column = 0;
 		row = row + 1 + rowsToSkip;
-		rowsToSkip = max(rowsToSkip-1, 0);
+		rowsToSkip = max(rowsToSkip - 1, 0);
 	}
 }
 
-static void populateBattleHonors(const PSPlayerStats& stats, Int battleHonors, Int gamesInRow, Int lastGen, Int challenge, GameWindow *list)
+static void populateBattleHonors(
+		const PSPlayerStats &stats,
+		Int battleHonors,
+		Int gamesInRow,
+		Int lastGen,
+		Int challenge,
+		GameWindow *list)
 {
-	if( !list )
+	if (!list)
 		return;
 
 	list->winSetTooltipFunc(BattleHonorTooltip);
-	GadgetListBoxReset( list );
+	GadgetListBoxReset(list);
 	Int column = 0;
 	Int row = 0;
 
@@ -505,15 +518,15 @@ static void populateBattleHonors(const PSPlayerStats& stats, Int battleHonors, I
 	Int numGames = 0;
 	Int numDiscons = 0;
 	PerGeneralMap::const_iterator it;
-	for(it = stats.games.begin(); it != stats.games.end(); ++it)
+	for (it = stats.games.begin(); it != stats.games.end(); ++it)
 	{
 		numGames += it->second;
 	}
-	for(it = stats.discons.begin(); it != stats.discons.end(); ++it)
+	for (it = stats.discons.begin(); it != stats.discons.end(); ++it)
 	{
 		numDiscons += it->second;
 	}
-	for(it = stats.desyncs.begin(); it != stats.desyncs.end(); ++it)
+	for (it = stats.desyncs.begin(); it != stats.desyncs.end(); ++it)
 	{
 		numDiscons += it->second;
 	}
@@ -523,84 +536,140 @@ static void populateBattleHonors(const PSPlayerStats& stats, Int battleHonors, I
 	}
 
 	ResetBattleHonorInsertion();
-	GadgetListBoxAddEntryImage(list, NULL, 0, 0, 10, 10, TRUE, GameMakeColor(255,255,255,255));
+	GadgetListBoxAddEntryImage(list, NULL, 0, 0, 10, 10, TRUE, GameMakeColor(255, 255, 255, 255));
 	row = 1;
 
-	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("FairPlay"), isFairPlayer,
-		BATTLE_HONOR_FAIR_PLAY, row, column);
+	InsertBattleHonor(
+			list,
+			TheMappedImageCollection->findImageByName("FairPlay"),
+			isFairPlayer,
+			BATTLE_HONOR_FAIR_PLAY,
+			row,
+			column);
 
-	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorAirWing"), BitIsSet(battleHonors, BATTLE_HONOR_AIR_WING),
-		BATTLE_HONOR_AIR_WING, row, column);
-	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorBattleTank"), BitIsSet(battleHonors, BATTLE_HONOR_BATTLE_TANK),
-		BATTLE_HONOR_BATTLE_TANK, row, column);
-	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Apocalypse"), BitIsSet(battleHonors, BATTLE_HONOR_APOCALYPSE),
-		BATTLE_HONOR_APOCALYPSE, row, column);
+	InsertBattleHonor(
+			list,
+			TheMappedImageCollection->findImageByName("HonorAirWing"),
+			BitIsSet(battleHonors, BATTLE_HONOR_AIR_WING),
+			BATTLE_HONOR_AIR_WING,
+			row,
+			column);
+	InsertBattleHonor(
+			list,
+			TheMappedImageCollection->findImageByName("HonorBattleTank"),
+			BitIsSet(battleHonors, BATTLE_HONOR_BATTLE_TANK),
+			BATTLE_HONOR_BATTLE_TANK,
+			row,
+			column);
+	InsertBattleHonor(
+			list,
+			TheMappedImageCollection->findImageByName("Apocalypse"),
+			BitIsSet(battleHonors, BATTLE_HONOR_APOCALYPSE),
+			BATTLE_HONOR_APOCALYPSE,
+			row,
+			column);
 
 	if (BitIsSet(battleHonors, BATTLE_HONOR_BLITZ5))
 	{
-		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorBlitz5"), TRUE,
-			BATTLE_HONOR_BLITZ5, row, column);
+		InsertBattleHonor(
+				list,
+				TheMappedImageCollection->findImageByName("HonorBlitz5"),
+				TRUE,
+				BATTLE_HONOR_BLITZ5,
+				row,
+				column);
 	}
 	else if (BitIsSet(battleHonors, BATTLE_HONOR_BLITZ10))
 	{
-		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorBlitz10"), TRUE,
-			BATTLE_HONOR_BLITZ10, row, column);
+		InsertBattleHonor(
+				list,
+				TheMappedImageCollection->findImageByName("HonorBlitz10"),
+				TRUE,
+				BATTLE_HONOR_BLITZ10,
+				row,
+				column);
 	}
 	else
 	{
-		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorBlitz10"), FALSE,
-			BATTLE_HONOR_BLITZ10, row, column);
+		InsertBattleHonor(
+				list,
+				TheMappedImageCollection->findImageByName("HonorBlitz10"),
+				FALSE,
+				BATTLE_HONOR_BLITZ10,
+				row,
+				column);
 	}
-	GadgetListBoxAddEntryImage(list, NULL, 2, 0, 10, 10, TRUE, GameMakeColor(255,255,255,255));
+	GadgetListBoxAddEntryImage(list, NULL, 2, 0, 10, 10, TRUE, GameMakeColor(255, 255, 255, 255));
 	row = 3;
 
 	UnicodeString uStr;
 	uStr.format(L"%10d", stats.maxWinsInARow);
-	if(BitIsSet(battleHonors, BATTLE_HONOR_STREAK_25))
+	if (BitIsSet(battleHonors, BATTLE_HONOR_STREAK_25))
 	{
-		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorStreak_G"), TRUE,
-			BATTLE_HONOR_STREAK_25, row, column, uStr);
+		InsertBattleHonor(
+				list,
+				TheMappedImageCollection->findImageByName("HonorStreak_G"),
+				TRUE,
+				BATTLE_HONOR_STREAK_25,
+				row,
+				column,
+				uStr);
 	}
-	else if(BitIsSet(battleHonors, BATTLE_HONOR_STREAK_10))
+	else if (BitIsSet(battleHonors, BATTLE_HONOR_STREAK_10))
 	{
-		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorStreak_S"), TRUE,
-			BATTLE_HONOR_STREAK_10, row, column, uStr);
+		InsertBattleHonor(
+				list,
+				TheMappedImageCollection->findImageByName("HonorStreak_S"),
+				TRUE,
+				BATTLE_HONOR_STREAK_10,
+				row,
+				column,
+				uStr);
 	}
-	else if(BitIsSet(battleHonors, BATTLE_HONOR_STREAK_3))
+	else if (BitIsSet(battleHonors, BATTLE_HONOR_STREAK_3))
 	{
-		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorStreak_B"), TRUE,
-			BATTLE_HONOR_STREAK_3, row, column, uStr);
+		InsertBattleHonor(
+				list,
+				TheMappedImageCollection->findImageByName("HonorStreak_B"),
+				TRUE,
+				BATTLE_HONOR_STREAK_3,
+				row,
+				column,
+				uStr);
 	}
 	else
 	{
-		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorStreak_B"), FALSE,
-			BATTLE_HONOR_STREAK_3, row, column);
+		InsertBattleHonor(
+				list,
+				TheMappedImageCollection->findImageByName("HonorStreak_B"),
+				FALSE,
+				BATTLE_HONOR_STREAK_3,
+				row,
+				column);
 	}
 
 	/*
 	Bool isLoyal;
-	isLoyal = ThePlayerTemplateStore->getNthPlayerTemplate(lastGen)->getSide().compareNoCase( "america") == 0 && gamesInRow >= 20;
-	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Loyalty_USA"), isLoyal,
-		BATTLE_HONOR_LOYALTY_USA, row, column);
-	isLoyal = ThePlayerTemplateStore->getNthPlayerTemplate(lastGen)->getSide().compareNoCase( "china") == 0 && gamesInRow >= 20;
-	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Loyalty_China"), isLoyal,
+	isLoyal = ThePlayerTemplateStore->getNthPlayerTemplate(lastGen)->getSide().compareNoCase( "america") == 0 && gamesInRow >=
+	20; InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Loyalty_USA"), isLoyal, BATTLE_HONOR_LOYALTY_USA,
+	row, column); isLoyal = ThePlayerTemplateStore->getNthPlayerTemplate(lastGen)->getSide().compareNoCase( "china") == 0 &&
+	gamesInRow >= 20; InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Loyalty_China"), isLoyal,
 		BATTLE_HONOR_LOYALTY_CHINA, row, column);
 	isLoyal = ThePlayerTemplateStore->getNthPlayerTemplate(lastGen)->getSide().compareNoCase( "gla") == 0 && gamesInRow >= 20;
 	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Loyalty_GLA"), isLoyal,
 		BATTLE_HONOR_LOYALTY_GLA, row, column);
 		*/
 
-
-	//insertBattleHonor(list, TheMappedImageCollection->findImageByName("Endurance"), BitIsSet(battleHonors, BATTLE_HONOR_ENDURANCE),
-		//BATTLE_HONOR_ENDURANCE, row, column);
+	// insertBattleHonor(list, TheMappedImageCollection->findImageByName("Endurance"), BitIsSet(battleHonors,
+	// BATTLE_HONOR_ENDURANCE), BATTLE_HONOR_ENDURANCE, row, column);
 
 	/*
-	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Campaign_USA"), BitIsSet(battleHonors, BATTLE_HONOR_CAMPAIGN_USA),
-		BATTLE_HONOR_CAMPAIGN_USA, row, column);
-	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Campaign_China"), BitIsSet(battleHonors, BATTLE_HONOR_CAMPAIGN_CHINA),
+	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Campaign_USA"), BitIsSet(battleHonors,
+	BATTLE_HONOR_CAMPAIGN_USA), BATTLE_HONOR_CAMPAIGN_USA, row, column); InsertBattleHonor(list,
+	TheMappedImageCollection->findImageByName("Campaign_China"), BitIsSet(battleHonors, BATTLE_HONOR_CAMPAIGN_CHINA),
 		BATTLE_HONOR_CAMPAIGN_CHINA, row, column);
-	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Campaign_GLA"), BitIsSet(battleHonors, BATTLE_HONOR_CAMPAIGN_GLA),
-		BATTLE_HONOR_CAMPAIGN_GLA, row, column);
+	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Campaign_GLA"), BitIsSet(battleHonors,
+	BATTLE_HONOR_CAMPAIGN_GLA), BATTLE_HONOR_CAMPAIGN_GLA, row, column);
 	*/
 
 	/*
@@ -648,72 +717,77 @@ static void populateBattleHonors(const PSPlayerStats& stats, Int battleHonors, I
 
 	if (TheGameSpyInfo->didPlayerPreorder(stats.id))
 	{
-		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("OfficersClub"), TRUE,
-			BATTLE_HONOR_OFFICERSCLUB, row, column);
+		InsertBattleHonor(
+				list,
+				TheMappedImageCollection->findImageByName("OfficersClub"),
+				TRUE,
+				BATTLE_HONOR_OFFICERSCLUB,
+				row,
+				column);
 	}
 }
 
-Int GetFavoriteSide( const PSPlayerStats& stats )
+Int GetFavoriteSide(const PSPlayerStats &stats)
 {
 	PerGeneralMap::const_iterator it;
 	Int numGames = 0;
 	Int favorite = 0;
-	for(it =stats.games.begin(); it != stats.games.end(); ++it)
+	for (it = stats.games.begin(); it != stats.games.end(); ++it)
 	{
-		if(it->second >= numGames)
+		if (it->second >= numGames)
 		{
 			numGames = it->second;
 			favorite = it->first;
 		}
 	}
-	if(numGames == 0)
+	if (numGames == 0)
 		return -1;
-	else if( stats.gamesAsRandom >= numGames )
+	else if (stats.gamesAsRandom >= numGames)
 		return 0;
 
 	return favorite;
 }
 
-Int CalculateRank( const PSPlayerStats& stats )
+Int CalculateRank(const PSPlayerStats &stats)
 {
-	if(stats.id == 0 || !TheRankPointValues)
+	if (stats.id == 0 || !TheRankPointValues)
 		return 0;
 	PerGeneralMap::const_iterator it;
 	Int rankPoints = 0;
 	Int numGames = 0;
 
-	for(it =stats.wins.begin(); it != stats.wins.end(); ++it)
+	for (it = stats.wins.begin(); it != stats.wins.end(); ++it)
 	{
 		numGames += it->second;
 	}
 	rankPoints += (numGames * TheRankPointValues->m_winMultiplier);
 
 	numGames = 0;
-	for(it =stats.losses.begin(); it != stats.losses.end(); ++it)
+	for (it = stats.losses.begin(); it != stats.losses.end(); ++it)
 	{
 		numGames += it->second;
 	}
 	rankPoints += (numGames * TheRankPointValues->m_lostMultiplier);
 
 	numGames = 0;
-	for(it =stats.duration.begin(); it != stats.duration.end(); ++it)
+	for (it = stats.duration.begin(); it != stats.duration.end(); ++it)
 	{
 		numGames += it->second;
 	}
 	rankPoints += (numGames / 60) * TheRankPointValues->m_hourSpentOnlineMultiplier;
 
 	numGames = 0;
-	for(it =stats.discons.begin(); it != stats.discons.end(); ++it)
+	for (it = stats.discons.begin(); it != stats.discons.end(); ++it)
 	{
 		numGames += it->second;
 	}
-	for(it =stats.desyncs.begin(); it != stats.desyncs.end(); ++it)
+	for (it = stats.desyncs.begin(); it != stats.desyncs.end(); ++it)
 	{
 		numGames += it->second;
 	}
 	rankPoints += numGames * TheRankPointValues->m_disconnectMultiplier;
 
-	if(BitIsSet(stats.battleHonors, BATTLE_HONOR_CAMPAIGN_USA | BATTLE_HONOR_CAMPAIGN_CHINA |BATTLE_HONOR_CAMPAIGN_GLA))
+	if (BitIsSet(stats.battleHonors, BATTLE_HONOR_CAMPAIGN_USA | BATTLE_HONOR_CAMPAIGN_CHINA | BATTLE_HONOR_CAMPAIGN_GLA))
 	{
 		rankPoints += 1 * TheRankPointValues->m_completedSoloCampaigns;
 	}
@@ -721,11 +795,9 @@ Int CalculateRank( const PSPlayerStats& stats )
 	rankPoints = max(0, rankPoints); // clip off negative values, since discons can push us below 0.
 
 	return rankPoints;
-
-
 }
 
-static GameWindow* findWindow(GameWindow *parent, AsciiString baseWindow, AsciiString gadgetName)
+static GameWindow *findWindow(GameWindow *parent, AsciiString baseWindow, AsciiString gadgetName)
 {
 	AsciiString fullPath;
 	fullPath.format("%s:%s", baseWindow.str(), gadgetName.str());
@@ -734,10 +806,10 @@ static GameWindow* findWindow(GameWindow *parent, AsciiString baseWindow, AsciiS
 	return res;
 }
 
-void PopulatePlayerInfoWindows( AsciiString parentWindowName )
+void PopulatePlayerInfoWindows(AsciiString parentWindowName)
 {
 	Int lookupID = TheGameSpyInfo->getLocalProfileID();
-	if(parentWindowName == "PopupPlayerInfo.wnd")
+	if (parentWindowName == "PopupPlayerInfo.wnd")
 	{
 		lookupID = lookAtPlayerID;
 		if (lookAtPlayerID <= 0 || !parent)
@@ -749,7 +821,7 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 	Bool weHaveStats = (stats.id != 0);
 
 	// if we don't have the stats from the server, see if we have cached stats
-	if( !weHaveStats && lookupID == TheGameSpyInfo->getLocalProfileID() )
+	if (!weHaveStats && lookupID == TheGameSpyInfo->getLocalProfileID())
 	{
 		stats = TheGameSpyInfo->getCachedLocalPlayerStats();
 
@@ -759,7 +831,7 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 	Int currentRank = 0;
 	Int rankPoints = CalculateRank(stats);
 	Int i = 0;
-	while( rankPoints >= TheRankPointValues->m_ranks[i + 1])
+	while (rankPoints >= TheRankPointValues->m_ranks[i + 1])
 		++i;
 	currentRank = i;
 
@@ -768,19 +840,19 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 	Int numLosses = 0;
 	Int numDiscons = 0;
 	Int numGames = 0;
-	for(it =stats.wins.begin(); it != stats.wins.end(); ++it)
+	for (it = stats.wins.begin(); it != stats.wins.end(); ++it)
 	{
 		numWins += it->second;
 	}
-	for(it =stats.losses.begin(); it != stats.losses.end(); ++it)
+	for (it = stats.losses.begin(); it != stats.losses.end(); ++it)
 	{
 		numLosses += it->second;
 	}
-	for(it =stats.discons.begin(); it != stats.discons.end(); ++it)
+	for (it = stats.discons.begin(); it != stats.discons.end(); ++it)
 	{
 		numDiscons += it->second;
 	}
-	for(it =stats.desyncs.begin(); it != stats.desyncs.end(); ++it)
+	for (it = stats.desyncs.begin(); it != stats.desyncs.end(); ++it)
 	{
 		numDiscons += it->second;
 	}
@@ -792,7 +864,7 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 	GameWindow *win = NULL;
 	UnicodeString uStr;
 	win = findWindow(NULL, parentWindowName, "StaticTextPlayerStatisticsLabel");
-	if(win)
+	if (win)
 	{
 		AsciiString localeID = "WOL:Locale00";
 		if (stats.locale >= LOC_MIN && stats.locale <= LOC_MAX)
@@ -801,25 +873,25 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 		GadgetStaticTextSetText(win, uStr);
 	}
 	win = findWindow(NULL, parentWindowName, "StaticTextGamesPlayedValue");
-	if(win)
+	if (win)
 	{
 		uStr.format(L"%d", numGames);
 		GadgetStaticTextSetText(win, uStr);
 	}
 	win = findWindow(NULL, parentWindowName, "StaticTextWinsValue");
-	if(win)
+	if (win)
 	{
 		uStr.format(L"%d", numWins);
 		GadgetStaticTextSetText(win, uStr);
 	}
 	win = findWindow(NULL, parentWindowName, "StaticTextLossesValue");
-	if(win)
+	if (win)
 	{
 		uStr.format(L"%d", numLosses);
 		GadgetStaticTextSetText(win, uStr);
 	}
 	win = findWindow(NULL, parentWindowName, "StaticTextDisconnectsValue");
-	if(win)
+	if (win)
 	{
 		uStr.format(L"%d", numDiscons);
 		GadgetStaticTextSetText(win, uStr);
@@ -845,7 +917,7 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 		}
 	}
 	win = findWindow(NULL, parentWindowName, "StaticTextStreakValue");
-	if(win)
+	if (win)
 	{
 		Int streak = max(stats.lossesInARow, stats.winsInARow);
 		uStr.format(L"%d", streak);
@@ -857,17 +929,17 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 	{
 		Int numGames = 0;
 		Int favorite = 0;
-		for(it =stats.games.begin(); it != stats.games.end(); ++it)
+		for (it = stats.games.begin(); it != stats.games.end(); ++it)
 		{
-			if(it->second >= numGames)
+			if (it->second >= numGames)
 			{
 				numGames = it->second;
 				favorite = it->first;
 			}
 		}
-		if(numGames == 0)
+		if (numGames == 0)
 			GadgetStaticTextSetText(win, TheGameText->fetch("GUI:None"));
-		else if( stats.gamesAsRandom >= numGames )
+		else if (stats.gamesAsRandom >= numGames)
 			GadgetStaticTextSetText(win, TheGameText->fetch("GUI:Random"));
 		else
 		{
@@ -885,10 +957,10 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 	}
 
 	win = findWindow(NULL, parentWindowName, "StaticTextTotalKillsValue");
-	if(win)
+	if (win)
 	{
 		Int numGames = 0;
-		for(it =stats.unitsKilled.begin(); it != stats.unitsKilled.end(); ++it)
+		for (it = stats.unitsKilled.begin(); it != stats.unitsKilled.end(); ++it)
 		{
 			numGames += it->second;
 		}
@@ -896,10 +968,10 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 		GadgetStaticTextSetText(win, uStr);
 	}
 	win = findWindow(NULL, parentWindowName, "StaticTextTotalDeathsValue");
-	if(win)
+	if (win)
 	{
 		Int numGames = 0;
-		for(it =stats.unitsLost.begin(); it != stats.unitsLost.end(); ++it)
+		for (it = stats.unitsLost.begin(); it != stats.unitsLost.end(); ++it)
 		{
 			numGames += it->second;
 		}
@@ -907,10 +979,10 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 		GadgetStaticTextSetText(win, uStr);
 	}
 	win = findWindow(NULL, parentWindowName, "StaticTextTotalBuiltValue");
-	if(win)
+	if (win)
 	{
 		Int numGames = 0;
-		for(it =stats.unitsBuilt.begin(); it != stats.unitsBuilt.end(); ++it)
+		for (it = stats.unitsBuilt.begin(); it != stats.unitsBuilt.end(); ++it)
 		{
 			numGames += it->second;
 		}
@@ -918,10 +990,10 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 		GadgetStaticTextSetText(win, uStr);
 	}
 	win = findWindow(NULL, parentWindowName, "StaticTextBuildingsKilledValue");
-	if(win)
+	if (win)
 	{
 		Int numGames = 0;
-		for(it =stats.buildingsKilled.begin(); it != stats.buildingsKilled.end(); ++it)
+		for (it = stats.buildingsKilled.begin(); it != stats.buildingsKilled.end(); ++it)
 		{
 			numGames += it->second;
 		}
@@ -929,10 +1001,10 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 		GadgetStaticTextSetText(win, uStr);
 	}
 	win = findWindow(NULL, parentWindowName, "StaticTextBuildingsLostValue");
-	if(win)
+	if (win)
 	{
 		Int numGames = 0;
-		for(it =stats.buildingsLost.begin(); it != stats.buildingsLost.end(); ++it)
+		for (it = stats.buildingsLost.begin(); it != stats.buildingsLost.end(); ++it)
 		{
 			numGames += it->second;
 		}
@@ -940,10 +1012,10 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 		GadgetStaticTextSetText(win, uStr);
 	}
 	win = findWindow(NULL, parentWindowName, "StaticTextBuildingsBuiltValue");
-	if(win)
+	if (win)
 	{
 		Int numGames = 0;
-		for(it =stats.buildingsBuilt.begin(); it != stats.buildingsBuilt.end(); ++it)
+		for (it = stats.buildingsBuilt.begin(); it != stats.buildingsBuilt.end(); ++it)
 		{
 			numGames += it->second;
 		}
@@ -952,27 +1024,30 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 	}
 
 	win = findWindow(NULL, parentWindowName, "StaticTextWinPercentValue");
-	if(win)
+	if (win)
 	{
-		uStr.format(TheGameText->fetch("GUI:WinPercent"), REAL_TO_INT(numWins/(Real)numGames*100.0f));
+		uStr.format(TheGameText->fetch("GUI:WinPercent"), REAL_TO_INT(numWins / (Real)numGames * 100.0f));
 		GadgetStaticTextSetText(win, uStr);
 	}
 
 	win = findWindow(NULL, parentWindowName, "ProgressBarRank");
-	if(win && TheRankPointValues)
+	if (win && TheRankPointValues)
 	{
-		if( currentRank == MAX_RANKS - 1)
+		if (currentRank == MAX_RANKS - 1)
 		{
 			// we've reached the max rank
 			win->winHide(TRUE);
 		}
 		else
 		{
-			GadgetProgressBarSetProgress(win, 100 * INT_TO_REAL(rankPoints - TheRankPointValues->m_ranks[currentRank])/( TheRankPointValues->m_ranks[currentRank + 1] - TheRankPointValues->m_ranks[currentRank]));
+			GadgetProgressBarSetProgress(
+					win,
+					100 * INT_TO_REAL(rankPoints - TheRankPointValues->m_ranks[currentRank])
+							/ (TheRankPointValues->m_ranks[currentRank + 1] - TheRankPointValues->m_ranks[currentRank]));
 		}
 	}
 	win = findWindow(NULL, parentWindowName, "WinRank");
-	if(win && TheRankPointValues)
+	if (win && TheRankPointValues)
 	{
 		if (rankPoints == 0)
 			win->winSetEnabledImage(0, lookupRankImage(AsciiString::TheEmptyString, 0));
@@ -980,7 +1055,7 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 			win->winSetEnabledImage(0, lookupRankImage(favoriteSide, currentRank));
 	}
 	win = findWindow(NULL, parentWindowName, "StaticTextRank");
-	if(win)
+	if (win)
 	{
 		AsciiString rankStr;
 		rankStr.format("GUI:GSRank%d", currentRank);
@@ -1002,36 +1077,40 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 	}
 
 	win = findWindow(NULL, parentWindowName, "ListboxInfo");
-	if(win)
+	if (win)
 	{
-		populateBattleHonors(stats, stats.battleHonors,stats.gamesInRowWithLastGeneral,stats.lastGeneral,stats.challengeMedals, win);
+		populateBattleHonors(
+				stats,
+				stats.battleHonors,
+				stats.gamesInRowWithLastGeneral,
+				stats.lastGeneral,
+				stats.challengeMedals,
+				win);
 	}
 }
 
-
-
-void HandlePersistentStorageResponses( void )
+void HandlePersistentStorageResponses(void)
 {
 	if (TheGameSpyPSMessageQueue)
 	{
 		PSResponse resp;
-		if (TheGameSpyPSMessageQueue->getResponse( resp ))
+		if (TheGameSpyPSMessageQueue->getResponse(resp))
 		{
 			switch (resp.responseType)
 			{
-			case PSResponse::PSRESPONSE_COULDNOTCONNECT:
+				case PSResponse::PSRESPONSE_COULDNOTCONNECT:
 				{
 					// message box & hide the window
 					GSMessageBoxOk(TheGameText->fetch("GUI:Error"), TheGameText->fetch("GUI:PSCannotConnect"), NULL);
 					GameSpyCloseOverlay(GSOVERLAY_PLAYERINFO);
 				}
 				break;
-			case PSResponse::PSRESPONSE_PREORDER:
+				case PSResponse::PSRESPONSE_PREORDER:
 				{
 					if (resp.preorder)
 					{
 						SetUnsignedIntInRegistry("", "Preorder", 1);
-						TheGameSpyInfo->markPlayerAsPreorder( TheGameSpyInfo->getLocalProfileID() );
+						TheGameSpyInfo->markPlayerAsPreorder(TheGameSpyInfo->getLocalProfileID());
 
 						// force an update of our shtuff
 						PSResponse newResp;
@@ -1041,9 +1120,13 @@ void HandlePersistentStorageResponses( void )
 					}
 				}
 				break;
-			case PSResponse::PSRESPONSE_PLAYERSTATS:
+				case PSResponse::PSRESPONSE_PLAYERSTATS:
 				{
-					DEBUG_LOG(("LocalProfileID %d, resp.player.id %d, resp.player.locale %d", TheGameSpyInfo->getLocalProfileID(), resp.player.id, resp.player.locale));
+					DEBUG_LOG(
+							("LocalProfileID %d, resp.player.id %d, resp.player.locale %d",
+							 TheGameSpyInfo->getLocalProfileID(),
+							 resp.player.id,
+							 resp.player.locale));
 					/*
 					if(resp.player.id == TheGameSpyInfo->getLocalProfileID() && resp.player.locale < LOC_MIN)
 					{
@@ -1070,30 +1153,36 @@ void HandlePersistentStorageResponses( void )
 						}
 						req.statsToPush.wins = wins;
 						req.statsToPush.losses = losses;
-						req.statsToPush.rankPoints = CalculateRank( resp.player );
+						req.statsToPush.rankPoints = CalculateRank(resp.player);
 
 						Int numGames = 0;
 						Int favorite = 0;
-						for(it =resp.player.games.begin(); it != resp.player.games.end(); ++it)
+						for (it = resp.player.games.begin(); it != resp.player.games.end(); ++it)
 						{
-							if(it->second >= numGames)
+							if (it->second >= numGames)
 							{
 								numGames = it->second;
 								favorite = it->first;
 							}
 						}
-						if(numGames == 0)
+						if (numGames == 0)
 							req.statsToPush.side = 0;
-						else if( resp.player.gamesAsRandom >= numGames )
+						else if (resp.player.gamesAsRandom >= numGames)
 							req.statsToPush.side = 0;
 						else
 							req.statsToPush.side = favorite;
 
-						Bool isPreorder = TheGameSpyInfo->didPlayerPreorder( TheGameSpyInfo->getLocalProfileID() );
+						Bool isPreorder = TheGameSpyInfo->didPlayerPreorder(TheGameSpyInfo->getLocalProfileID());
 						req.statsToPush.preorder = isPreorder;
 
-						DEBUG_LOG(("PEERREQUEST_PUSHSTATS: stats will be %d,%d,%d,%d,%d,%d",
-							req.statsToPush.locale, req.statsToPush.wins, req.statsToPush.losses, req.statsToPush.rankPoints, req.statsToPush.side, req.statsToPush.preorder));
+						DEBUG_LOG(
+								("PEERREQUEST_PUSHSTATS: stats will be %d,%d,%d,%d,%d,%d",
+								 req.statsToPush.locale,
+								 req.statsToPush.wins,
+								 req.statsToPush.losses,
+								 req.statsToPush.rankPoints,
+								 req.statsToPush.side,
+								 req.statsToPush.preorder));
 						TheGameSpyPeerMessageQueue->addRequest(req);
 					}
 					TheGameSpyPSMessageQueue->trackPlayerStats(resp.player);
@@ -1103,7 +1192,7 @@ void HandlePersistentStorageResponses( void )
 					}
 					DEBUG_LOG(("PopulatePlayerInfoWindows() - lookAtPlayerID is %d, got %d", lookAtPlayerID, resp.player.id));
 					PopulatePlayerInfoWindows("PopupPlayerInfo.wnd");
-					//GadgetListBoxAddEntryText(listboxInfo, UnicodeString(L"Got info!"), GameSpyColor[GSCOLOR_DEFAULT], -1);
+					// GadgetListBoxAddEntryText(listboxInfo, UnicodeString(L"Got info!"), GameSpyColor[GSCOLOR_DEFAULT], -1);
 
 					// also update info for player list in lobby
 					PlayerInfoMap::iterator it = TheGameSpyInfo->getPlayerInfoMap()->begin();
@@ -1125,20 +1214,20 @@ void HandlePersistentStorageResponses( void )
 							}
 							info->m_wins = wins;
 							info->m_losses = losses;
-							info->m_rankPoints = CalculateRank( resp.player );
+							info->m_rankPoints = CalculateRank(resp.player);
 							Int numGames = 0;
 							Int favorite = 0;
-							for(it = resp.player.games.begin(); it != resp.player.games.end(); ++it)
+							for (it = resp.player.games.begin(); it != resp.player.games.end(); ++it)
 							{
-								if(it->second >= numGames)
+								if (it->second >= numGames)
 								{
 									numGames = it->second;
 									favorite = it->first;
 								}
 							}
-							if(numGames == 0)
+							if (numGames == 0)
 								info->m_side = 0;
-							else if( resp.player.gamesAsRandom >= numGames )
+							else if (resp.player.gamesAsRandom >= numGames)
 								info->m_side = 0;
 							else
 								info->m_side = favorite;
@@ -1159,7 +1248,6 @@ void HandlePersistentStorageResponses( void )
 						}
 						++it;
 					}
-
 				}
 				break;
 			}
@@ -1170,46 +1258,46 @@ void HandlePersistentStorageResponses( void )
 //-------------------------------------------------------------------------------------------------
 /** Initialize the Overlay */
 //-------------------------------------------------------------------------------------------------
-void GameSpyPlayerInfoOverlayInit( WindowLayout *layout, void *userData )
+void GameSpyPlayerInfoOverlayInit(WindowLayout *layout, void *userData)
 {
-	parentID = TheNameKeyGenerator->nameToKey( "PopupPlayerInfo.wnd:PopupParent" );
-	buttonCloseID = TheNameKeyGenerator->nameToKey( "PopupPlayerInfo.wnd:ButtonClose" );
-	buttonBuddiesID = TheNameKeyGenerator->nameToKey( "PopupPlayerInfo.wnd:ButtonCommunicator" );
-	listboxInfoID = TheNameKeyGenerator->nameToKey( "PopupPlayerInfo.wnd:ListboxInfo" );
-	//buttonOptionsID = TheNameKeyGenerator->nameToKey( "PopupPlayerInfo.wnd:ButtonOptions" );
-	buttonSetLocaleID = TheNameKeyGenerator->nameToKey( "PopupPlayerInfo.wnd:ButtonSetLocale" );
-	buttonDeleteAccountID = TheNameKeyGenerator->nameToKey( "PopupPlayerInfo.wnd:ButtonDeleteAccount" );
-	checkBoxAsianFontID = TheNameKeyGenerator->nameToKey( "PopupPlayerInfo.wnd:CheckBoxAsianText" );
-	checkBoxNonAsianFontID = TheNameKeyGenerator->nameToKey( "PopupPlayerInfo.wnd:CheckBoxNonAsianText" );
+	parentID = TheNameKeyGenerator->nameToKey("PopupPlayerInfo.wnd:PopupParent");
+	buttonCloseID = TheNameKeyGenerator->nameToKey("PopupPlayerInfo.wnd:ButtonClose");
+	buttonBuddiesID = TheNameKeyGenerator->nameToKey("PopupPlayerInfo.wnd:ButtonCommunicator");
+	listboxInfoID = TheNameKeyGenerator->nameToKey("PopupPlayerInfo.wnd:ListboxInfo");
+	// buttonOptionsID = TheNameKeyGenerator->nameToKey( "PopupPlayerInfo.wnd:ButtonOptions" );
+	buttonSetLocaleID = TheNameKeyGenerator->nameToKey("PopupPlayerInfo.wnd:ButtonSetLocale");
+	buttonDeleteAccountID = TheNameKeyGenerator->nameToKey("PopupPlayerInfo.wnd:ButtonDeleteAccount");
+	checkBoxAsianFontID = TheNameKeyGenerator->nameToKey("PopupPlayerInfo.wnd:CheckBoxAsianText");
+	checkBoxNonAsianFontID = TheNameKeyGenerator->nameToKey("PopupPlayerInfo.wnd:CheckBoxNonAsianText");
 
-	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
-	buttonClose = TheWindowManager->winGetWindowFromId( parent,  buttonCloseID);
-	buttonBuddies = TheWindowManager->winGetWindowFromId( parent,  buttonBuddiesID);
-	listboxInfo = TheWindowManager->winGetWindowFromId( parent,  listboxInfoID);
-	//buttonbuttonOptions = TheWindowManager->winGetWindowFromId( parent,  buttonOptionsID);
-	buttonSetLocale = TheWindowManager->winGetWindowFromId( parent,  buttonSetLocaleID);
-	buttonDeleteAccount = TheWindowManager->winGetWindowFromId( parent,  buttonDeleteAccountID);
-	checkBoxAsianFont = TheWindowManager->winGetWindowFromId( parent,  checkBoxAsianFontID);
-	checkBoxNonAsianFont = TheWindowManager->winGetWindowFromId( parent,  checkBoxNonAsianFontID);
+	parent = TheWindowManager->winGetWindowFromId(NULL, parentID);
+	buttonClose = TheWindowManager->winGetWindowFromId(parent, buttonCloseID);
+	buttonBuddies = TheWindowManager->winGetWindowFromId(parent, buttonBuddiesID);
+	listboxInfo = TheWindowManager->winGetWindowFromId(parent, listboxInfoID);
+	// buttonbuttonOptions = TheWindowManager->winGetWindowFromId( parent,  buttonOptionsID);
+	buttonSetLocale = TheWindowManager->winGetWindowFromId(parent, buttonSetLocaleID);
+	buttonDeleteAccount = TheWindowManager->winGetWindowFromId(parent, buttonDeleteAccountID);
+	checkBoxAsianFont = TheWindowManager->winGetWindowFromId(parent, checkBoxAsianFontID);
+	checkBoxNonAsianFont = TheWindowManager->winGetWindowFromId(parent, checkBoxNonAsianFontID);
 
 	// Show Menu
-	layout->hide( FALSE );
+	layout->hide(FALSE);
 
 	// Set Keyboard to Main Parent
-	TheWindowManager->winSetFocus( parent );
+	TheWindowManager->winSetFocus(parent);
 
 	isOverlayActive = true;
 
-	//GadgetListBoxAddEntryText(listboxInfo, UnicodeString(L"Working"), GameSpyColor[GSCOLOR_DEFAULT], -1);
+	// GadgetListBoxAddEntryText(listboxInfo, UnicodeString(L"Working"), GameSpyColor[GSCOLOR_DEFAULT], -1);
 
 	GameSpyCloseOverlay(GSOVERLAY_BUDDY);
 	raiseMessageBox = true;
 	PopulatePlayerInfoWindows("PopupPlayerInfo.wnd");
 
 	// we're on the myinfo screen
-	if(lookAtPlayerID == TheGameSpyInfo->getLocalProfileID())
+	if (lookAtPlayerID == TheGameSpyInfo->getLocalProfileID())
 	{
-		//buttonbuttonOptions->winHide(FALSE);
+		// buttonbuttonOptions->winHide(FALSE);
 		buttonSetLocale->winHide(FALSE);
 		buttonDeleteAccount->winHide(TRUE); // set back to false when we have this worked out.
 		checkBoxAsianFont->winHide(FALSE);
@@ -1217,7 +1305,7 @@ void GameSpyPlayerInfoOverlayInit( WindowLayout *layout, void *userData )
 	}
 	else
 	{
-		//buttonbuttonOptions->winHide(TRUE);
+		// buttonbuttonOptions->winHide(TRUE);
 		buttonSetLocale->winHide(TRUE);
 		buttonDeleteAccount->winHide(TRUE);
 		checkBoxAsianFont->winHide(TRUE);
@@ -1226,13 +1314,13 @@ void GameSpyPlayerInfoOverlayInit( WindowLayout *layout, void *userData )
 
 	// set the asian check boxes
 	CustomMatchPreferences pref;
-	GadgetCheckBoxSetChecked(checkBoxAsianFont,!pref.getDisallowAsianText());
-	GadgetCheckBoxSetChecked(checkBoxNonAsianFont,!pref.getDisallowNonAsianText());
+	GadgetCheckBoxSetChecked(checkBoxAsianFont, !pref.getDisallowAsianText());
+	GadgetCheckBoxSetChecked(checkBoxNonAsianFont, !pref.getDisallowNonAsianText());
 
-	OSVERSIONINFO	osvi;
-	osvi.dwOSVersionInfoSize=sizeof(OSVERSIONINFO);
+	OSVERSIONINFO osvi;
+	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 	if (GetVersionEx(&osvi))
-	{	//check if we're running Win9x variant since they may need different fonts
+	{ // check if we're running Win9x variant since they may need different fonts
 		if (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
 		{
 			if (checkBoxAsianFont)
@@ -1242,202 +1330,202 @@ void GameSpyPlayerInfoOverlayInit( WindowLayout *layout, void *userData )
 		}
 	}
 
-	//TheWindowManager->winSetModal(parent);
+	// TheWindowManager->winSetModal(parent);
 } // GameSpyPlayerInfoOverlayInit
 
 //-------------------------------------------------------------------------------------------------
 /** Overlay shutdown method */
 //-------------------------------------------------------------------------------------------------
-void GameSpyPlayerInfoOverlayShutdown( WindowLayout *layout, void *userData )
+void GameSpyPlayerInfoOverlayShutdown(WindowLayout *layout, void *userData)
 {
 	// hide menu
-	layout->hide( TRUE );
+	layout->hide(TRUE);
 
 	parent = NULL;
 
 	// our shutdown is complete
 	isOverlayActive = false;
-}  // GameSpyPlayerInfoOverlayShutdown
-
+} // GameSpyPlayerInfoOverlayShutdown
 
 //-------------------------------------------------------------------------------------------------
 /** Overlay update method */
 //-------------------------------------------------------------------------------------------------
-void GameSpyPlayerInfoOverlayUpdate( WindowLayout * layout, void *userData)
+void GameSpyPlayerInfoOverlayUpdate(WindowLayout *layout, void *userData)
 {
 	if (raiseMessageBox)
 		RaiseGSMessageBox();
 	raiseMessageBox = false;
-}// GameSpyPlayerInfoOverlayUpdate
+} // GameSpyPlayerInfoOverlayUpdate
 
 //-------------------------------------------------------------------------------------------------
 /** Overlay input callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType GameSpyPlayerInfoOverlayInput( GameWindow *window, UnsignedInt msg,
-																			 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GameSpyPlayerInfoOverlayInput(
+		GameWindow *window,
+		UnsignedInt msg,
+		WindowMsgData mData1,
+		WindowMsgData mData2)
 {
-	switch( msg )
+	switch (msg)
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case GWM_CHAR:
 		{
 			UnsignedByte key = mData1;
 			UnsignedByte state = mData2;
 
-			switch( key )
+			switch (key)
 			{
-
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitIsSet( state, KEY_STATE_UP ) )
+					if (BitIsSet(state, KEY_STATE_UP))
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
-																							(WindowMsgData)buttonClose, buttonCloseID );
+						TheWindowManager->winSendSystemMsg(window, GBM_SELECTED, (WindowMsgData)buttonClose, buttonCloseID);
 
-					}  // end if
+					} // end if
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				} // end escape
 
-			}  // end switch( key )
+			} // end switch( key )
 
-		}  // end char
+		} // end char
 
-	}  // end switch( msg )
+	} // end switch( msg )
 
 	return MSG_IGNORED;
-}// GameSpyPlayerInfoOverlayInput
-void messageBoxYes( void );
+} // GameSpyPlayerInfoOverlayInput
+void messageBoxYes(void);
 //-------------------------------------------------------------------------------------------------
 /** Overlay window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType GameSpyPlayerInfoOverlaySystem( GameWindow *window, UnsignedInt msg,
-														 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GameSpyPlayerInfoOverlaySystem(
+		GameWindow *window,
+		UnsignedInt msg,
+		WindowMsgData mData1,
+		WindowMsgData mData2)
 {
 	UnicodeString txtInput;
 
-	switch( msg )
+	switch (msg)
 	{
-
-
 		case GWM_CREATE:
-			{
-
-				break;
-			} // case GWM_DESTROY:
+		{
+			break;
+		} // case GWM_DESTROY:
 
 		case GWM_DESTROY:
-			{
-				break;
-			} // case GWM_DESTROY:
+		{
+			break;
+		} // case GWM_DESTROY:
 
 		case GWM_INPUT_FOCUS:
-			{
-				// if we're givin the opportunity to take the keyboard focus we must say we want it
-				if( mData1 == TRUE )
-					*(Bool *)mData2 = TRUE;
+		{
+			// if we're givin the opportunity to take the keyboard focus we must say we want it
+			if (mData1 == TRUE)
+				*(Bool *)mData2 = TRUE;
 
-				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			return MSG_HANDLED;
+		} // case GWM_INPUT_FOCUS:
 		case GBM_SELECTED:
+		{
+			GameWindow *control = (GameWindow *)mData1;
+			Int controlID = control->winGetWindowId();
+
+			if (controlID == buttonCloseID)
 			{
-				GameWindow *control = (GameWindow *)mData1;
-				Int controlID = control->winGetWindowId();
-
-				if (controlID == buttonCloseID)
+				RefreshGameListBoxes();
+				GameSpyCloseOverlay(GSOVERLAY_PLAYERINFO);
+			}
+			else if (controlID == buttonBuddiesID)
+			{
+				RefreshGameListBoxes();
+				// GameSpyCloseOverlay( GSOVERLAY_PLAYERINFO );
+				GameSpyOpenOverlay(GSOVERLAY_BUDDY);
+			}
+			//				else if (controlID == buttonOptionsID)
+			//				{
+			//					RefreshGameListBoxes();
+			//					GameSpyCloseOverlay( GSOVERLAY_PLAYERINFO );
+			//					GameSpyOpenOverlay( GSOVERLAY_OPTIONS );
+			//				}
+			else if (controlID == buttonSetLocaleID)
+			{
+				RefreshGameListBoxes();
+				GameSpyCloseOverlay(GSOVERLAY_PLAYERINFO);
+				if (!GameSpyIsOverlayOpen(GSOVERLAY_LOCALESELECT))
+					GameSpyOpenOverlay(GSOVERLAY_LOCALESELECT);
+				ReOpenPlayerInfo();
+			}
+			else if (controlID == buttonDeleteAccountID)
+			{
+				RefreshGameListBoxes();
+				GameSpyCloseOverlay(GSOVERLAY_PLAYERINFO);
+				MessageBoxYesNo(
+						TheGameText->fetch("GUI:DeleteAccount"),
+						TheGameText->fetch("GUI:AreYouSureDeleteAccount"),
+						messageBoxYes,
+						NULL);
+			}
+			else if (controlID == checkBoxAsianFontID)
+			{
+				Bool isChecked = !GadgetCheckBoxIsChecked(control);
+				CustomMatchPreferences pref;
+				pref.setDisallowAsianText(isChecked);
+				pref.write();
+				if (TheGameSpyInfo)
+					TheGameSpyInfo->setDisallowAsianText(isChecked);
+				if (isChecked && !GadgetCheckBoxIsChecked(checkBoxNonAsianFont))
 				{
-					RefreshGameListBoxes();
-					GameSpyCloseOverlay( GSOVERLAY_PLAYERINFO );
-				}
-				else if (controlID == buttonBuddiesID)
-				{
-					RefreshGameListBoxes();
-					//GameSpyCloseOverlay( GSOVERLAY_PLAYERINFO );
-					GameSpyOpenOverlay( GSOVERLAY_BUDDY );
-				}
-//				else if (controlID == buttonOptionsID)
-//				{
-//					RefreshGameListBoxes();
-//					GameSpyCloseOverlay( GSOVERLAY_PLAYERINFO );
-//					GameSpyOpenOverlay( GSOVERLAY_OPTIONS );
-//				}
-				else if (controlID == buttonSetLocaleID)
-				{
-					RefreshGameListBoxes();
-					GameSpyCloseOverlay( GSOVERLAY_PLAYERINFO );
-					if (!GameSpyIsOverlayOpen(GSOVERLAY_LOCALESELECT))
-						GameSpyOpenOverlay( GSOVERLAY_LOCALESELECT );
-					ReOpenPlayerInfo();
-				}
-				else if (controlID == buttonDeleteAccountID)
-				{
-					RefreshGameListBoxes();
-					GameSpyCloseOverlay( GSOVERLAY_PLAYERINFO );
-					MessageBoxYesNo(TheGameText->fetch("GUI:DeleteAccount"), TheGameText->fetch("GUI:AreYouSureDeleteAccount"),messageBoxYes, NULL);
-				}
-				else if (controlID == checkBoxAsianFontID)
-				{
-					Bool isChecked = !GadgetCheckBoxIsChecked(control);
+					GadgetCheckBoxSetChecked(checkBoxNonAsianFont, TRUE);
 					CustomMatchPreferences pref;
-					pref.setDisallowAsianText(isChecked);
+					pref.setDisallowNonAsianText(FALSE);
 					pref.write();
-					if(TheGameSpyInfo)
-						TheGameSpyInfo->setDisallowAsianText(isChecked);
-					if(isChecked && !GadgetCheckBoxIsChecked(checkBoxNonAsianFont))
-					{
-						GadgetCheckBoxSetChecked(checkBoxNonAsianFont, TRUE);
-						CustomMatchPreferences pref;
-						pref.setDisallowNonAsianText(FALSE);
-						pref.write();
-						if(TheGameSpyInfo)
-							TheGameSpyInfo->setDisallowNonAsianText(FALSE);
-					}
-
+					if (TheGameSpyInfo)
+						TheGameSpyInfo->setDisallowNonAsianText(FALSE);
 				}
-				else if (controlID == checkBoxNonAsianFontID)
+			}
+			else if (controlID == checkBoxNonAsianFontID)
+			{
+				Bool isChecked = !GadgetCheckBoxIsChecked(control);
+				CustomMatchPreferences pref;
+				pref.setDisallowNonAsianText(isChecked);
+				pref.write();
+				if (TheGameSpyInfo)
+					TheGameSpyInfo->setDisallowNonAsianText(isChecked);
+				if (isChecked && !GadgetCheckBoxIsChecked(checkBoxAsianFont))
 				{
-					Bool isChecked = !GadgetCheckBoxIsChecked(control);
+					GadgetCheckBoxSetChecked(checkBoxAsianFont, TRUE);
 					CustomMatchPreferences pref;
-					pref.setDisallowNonAsianText(isChecked);
+					pref.setDisallowAsianText(FALSE);
 					pref.write();
-					if(TheGameSpyInfo)
-						TheGameSpyInfo->setDisallowNonAsianText(isChecked);
-					if(isChecked && !GadgetCheckBoxIsChecked(checkBoxAsianFont))
-					{
-						GadgetCheckBoxSetChecked(checkBoxAsianFont, TRUE);
-						CustomMatchPreferences pref;
-						pref.setDisallowAsianText(FALSE);
-						pref.write();
-						if(TheGameSpyInfo)
-							TheGameSpyInfo->setDisallowAsianText(FALSE);
-					}
+					if (TheGameSpyInfo)
+						TheGameSpyInfo->setDisallowAsianText(FALSE);
 				}
+			}
 
-				break;
-			}// case GBM_SELECTED:
+			break;
+		} // case GBM_SELECTED:
 
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	} // Switch
 
 	return MSG_HANDLED;
-}// GameSpyPlayerInfoOverlaySystem
+} // GameSpyPlayerInfoOverlaySystem
 
-static void messageBoxYes( void )
+static void messageBoxYes(void)
 {
 	BuddyRequest breq;
 	breq.buddyRequestType = BuddyRequest::BUDDYREQUEST_DELETEACCT;
-	TheGameSpyBuddyMessageQueue->addRequest( breq );
+	TheGameSpyBuddyMessageQueue->addRequest(breq);
 	TheGameSpyInfo->setLocalProfileID(0);
-
 }

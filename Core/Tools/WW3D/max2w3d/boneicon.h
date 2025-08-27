@@ -35,18 +35,17 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #ifndef BONEICON_H
 #define BONEICON_H
 
 struct VertexStruct
 {
-	float X,Y,Z;
+	float X, Y, Z;
 };
 
 struct FaceStruct
 {
-	int V0,V1,V2;
+	int V0, V1, V2;
 };
 
 extern const int NumBoneIconVerts;

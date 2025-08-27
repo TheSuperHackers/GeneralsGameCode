@@ -27,7 +27,6 @@
 #include <rendobj.h>
 #include <assetmgr.h>
 
-
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -37,18 +36,15 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CAddToLineupDialog dialog
 
-
-CAddToLineupDialog::CAddToLineupDialog(ViewerSceneClass *scene, CWnd* pParent /*=NULL*/)
-:	CDialog(CAddToLineupDialog::IDD, pParent),
-	m_pCScene(scene)
+CAddToLineupDialog::CAddToLineupDialog(ViewerSceneClass *scene, CWnd *pParent /*=NULL*/) :
+		CDialog(CAddToLineupDialog::IDD, pParent), m_pCScene(scene)
 {
 	//{{AFX_DATA_INIT(CAddToLineupDialog)
 	m_Object = _T("");
 	//}}AFX_DATA_INIT
 }
 
-
-void CAddToLineupDialog::DoDataExchange(CDataExchange* pDX)
+void CAddToLineupDialog::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CAddToLineupDialog)
@@ -57,10 +53,9 @@ void CAddToLineupDialog::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CAddToLineupDialog, CDialog)
-	//{{AFX_MSG_MAP(CAddToLineupDialog)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CAddToLineupDialog)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -73,7 +68,7 @@ BOOL CAddToLineupDialog::OnInitDialog()
 	if (m_pCScene)
 	{
 		// Get a pointer to the combo box control.
-		CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_OBJECT);
+		CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_OBJECT);
 		ASSERT_VALID(pCombo);
 
 		// Populate the combo box with the names of the objects that
@@ -90,14 +85,14 @@ BOOL CAddToLineupDialog::OnInitDialog()
 		assets->Release_Render_Obj_Iterator(it);
 	}
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+							 // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void CAddToLineupDialog::OnOK()
 {
 	// Make sure the user actually chose a name.
-	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_OBJECT);
+	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_OBJECT);
 	ASSERT_VALID(pCombo);
 	CString text;
 	pCombo->GetWindowText(text);

@@ -46,7 +46,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -74,10 +74,10 @@ static char statsDir[255] = "Stats\\";
 
 // init all
 //=============================================================================
-StatsCollector::StatsCollector( void )
+StatsCollector::StatsCollector(void)
 {
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
+	// Added By Sadullah Nader
+	// Initialization(s) inserted
 	m_isScrolling = FALSE;
 	m_scrollBeginTime = 0;
 	m_scrollTime = 0;
@@ -93,20 +93,17 @@ StatsCollector::StatsCollector( void )
 
 	m_lastUpdate = 0;
 	m_startFrame = TheGameLogic->getFrame();
-
 }
-//Destructor
+// Destructor
 //=============================================================================
-StatsCollector::~StatsCollector( void )
+StatsCollector::~StatsCollector(void)
 {
-
 }
 
 // Reset and create the file header
 //=============================================================================
-void StatsCollector::reset( void )
+void StatsCollector::reset(void)
 {
-
 	// make sure we have a stats Dir.
 #if defined(RTS_DEBUG)
 	if (TheGlobalData->m_saveStats)
@@ -134,10 +131,10 @@ void StatsCollector::reset( void )
 
 // Msgs pass through here so we can track whichever ones we want
 //=============================================================================
-void StatsCollector::collectMsgStats( const GameMessage *msg )
+void StatsCollector::collectMsgStats(const GameMessage *msg)
 {
 	// We only care about our own messages.
-	if(ThePlayerList->getLocalPlayer()->getPlayerIndex() != msg->getPlayerIndex())
+	if (ThePlayerList->getLocalPlayer()->getPlayerIndex() != msg->getPlayerIndex())
 		return;
 
 	switch (msg->getType())
@@ -145,26 +142,24 @@ void StatsCollector::collectMsgStats( const GameMessage *msg )
 		case GameMessage::MSG_QUEUE_UNIT_CREATE:
 		case GameMessage::MSG_DOZER_CONSTRUCT:
 		case GameMessage::MSG_DOZER_CONSTRUCT_LINE:
-			{
-				++m_buildCommands;
-				break;
-			}
+		{
+			++m_buildCommands;
+			break;
+		}
 	}
-
 }
 
-//Loop through all objects and count up the ones we want. (Very Slow!!!)
+// Loop through all objects and count up the ones we want. (Very Slow!!!)
 //=============================================================================
-void StatsCollector::collectUnitCountStats( void )
+void StatsCollector::collectUnitCountStats(void)
 {
-
-	for(Object *obj =	TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject())
+	for (Object *obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject())
 	{
-
-		if((!(obj->isKindOf(KINDOF_INFANTRY) || obj->isKindOf(KINDOF_VEHICLE))) || ( obj->isNeutralControlled()) ||(obj->getControllingPlayer()->getSide().compare("Civilian") == 0))
+		if ((!(obj->isKindOf(KINDOF_INFANTRY) || obj->isKindOf(KINDOF_VEHICLE))) || (obj->isNeutralControlled())
+				|| (obj->getControllingPlayer()->getSide().compare("Civilian") == 0))
 			continue;
 
-		if(obj->getControllingPlayer()->isLocalPlayer())
+		if (obj->getControllingPlayer()->isLocalPlayer())
 		{
 			++m_playerUnits;
 		}
@@ -173,19 +168,18 @@ void StatsCollector::collectUnitCountStats( void )
 			++m_AIUnits;
 		}
 	}
-
 }
 
 // call every frame and only do stuff when our time is up
 //=============================================================================
-void StatsCollector::update( void )
+void StatsCollector::update(void)
 {
-	if(m_lastUpdate + (TheGlobalData->m_playStats * LOGICFRAMES_PER_SECOND) > TheGameLogic->getFrame())
+	if (m_lastUpdate + (TheGlobalData->m_playStats * LOGICFRAMES_PER_SECOND) > TheGameLogic->getFrame())
 		return;
 
 	collectUnitCountStats();
 
-	if(m_isScrolling)
+	if (m_isScrolling)
 	{
 		m_scrollTime += TheGameLogic->getFrame() - m_scrollBeginTime;
 		m_scrollBeginTime = TheGameLogic->getFrame();
@@ -196,34 +190,33 @@ void StatsCollector::update( void )
 
 	zeroOutStats();
 
-	m_lastUpdate = TheGameLogic->getFrame(); //timeGetTime();
-
+	m_lastUpdate = TheGameLogic->getFrame(); // timeGetTime();
 }
 
-void StatsCollector::incrementScrollMoveCount( void )
+void StatsCollector::incrementScrollMoveCount(void)
 {
 	++m_scrollMapCommands;
 }
 
-void StatsCollector::incrementAttackCount( void )
+void StatsCollector::incrementAttackCount(void)
 {
 	++m_attackCommands;
 }
 
-void StatsCollector::incrementBuildCount( void )
+void StatsCollector::incrementBuildCount(void)
 {
 	++m_buildCommands;
 }
-void StatsCollector::incrementMoveCount( void )
+void StatsCollector::incrementMoveCount(void)
 {
 	++m_moveCommands;
 }
 
-void StatsCollector::writeFileEnd( void )
+void StatsCollector::writeFileEnd(void)
 {
-	//open the file
+	// open the file
 	FILE *f = fopen(m_statsFileName.str(), "a");
-	if(!f)
+	if (!f)
 	{
 		DEBUG_ASSERTCRASH(f, ("Unable to open file %s to write", m_statsFileName.str()));
 		return;
@@ -233,12 +226,12 @@ void StatsCollector::writeFileEnd( void )
 	writeStatInfo();
 	fprintf(f, "---------------------------------------------------\n");
 
-		// Time
+	// Time
 	struct tm *newTime;
 	time_t aclock;
-  time( &aclock );
-  newTime = localtime( &aclock );
-	fprintf(f, "End Time:\t%s\n",asctime(newTime) );
+	time(&aclock);
+	newTime = localtime(&aclock);
+	fprintf(f, "End Time:\t%s\n", asctime(newTime));
 
 	fprintf(f, "=KEY===============================================\n");
 	fprintf(f, "Time* = The Time Interval\n");
@@ -252,32 +245,37 @@ void StatsCollector::writeFileEnd( void )
 	fprintf(f, "#PU = # of Player's Units\n");
 	fprintf(f, "#AIU = # of AI's Units\n");
 	fprintf(f, "===================================================\n");
-	fprintf(f, "* Times are in Game Seconds which are based off of frames. Current fps is set to %d\n", LOGICFRAMES_PER_SECOND);
+	fprintf(
+			f,
+			"* Times are in Game Seconds which are based off of frames. Current fps is set to %d\n",
+			LOGICFRAMES_PER_SECOND);
 
 #if defined(RTS_DEBUG)
 	if (TheGlobalData->m_benchmarkTimer > 0)
 	{
 		fprintf(f, "\n*** BENCHMARK MODE STATS ***\n");
-		fprintf(f, " Frames = %d\n", TheGameLogic->getFrame()-m_startFrame);
+		fprintf(f, " Frames = %d\n", TheGameLogic->getFrame() - m_startFrame);
 		fprintf(f, "Seconds = %d\n", TheGlobalData->m_benchmarkTimer);
-		fprintf(f, "    FPS = %.2f\n", ((Real)TheGameLogic->getFrame()-(Real)m_startFrame)/(Real)TheGlobalData->m_benchmarkTimer);
+		fprintf(
+				f,
+				"    FPS = %.2f\n",
+				((Real)TheGameLogic->getFrame() - (Real)m_startFrame) / (Real)TheGlobalData->m_benchmarkTimer);
 	}
 #endif
 
 	fclose(f);
-
 }
 
-void StatsCollector::startScrollTime( void )
+void StatsCollector::startScrollTime(void)
 {
 	m_isScrolling = TRUE;
 	m_scrollBeginTime = TheGameLogic->getFrame();
 	++m_scrollMapCommands;
 }
 
-void StatsCollector::endScrollTime( void )
+void StatsCollector::endScrollTime(void)
 {
-	if(!m_isScrolling)
+	if (!m_isScrolling)
 		return;
 
 	m_isScrolling = FALSE;
@@ -289,7 +287,7 @@ void StatsCollector::endScrollTime( void )
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-void StatsCollector::zeroOutStats( void )
+void StatsCollector::zeroOutStats(void)
 {
 	m_buildCommands = 0;
 	m_moveCommands = 0;
@@ -302,7 +300,7 @@ void StatsCollector::zeroOutStats( void )
 
 // create the filename based off of map time and date
 //=============================================================================
-void StatsCollector::createFileName( void )
+void StatsCollector::createFileName(void)
 {
 	m_statsFileName.clear();
 	// Date and Time
@@ -312,11 +310,11 @@ void StatsCollector::createFileName( void )
 	time(&longTime);
 	curtime = localtime(&longTime);
 	strftime(datestr, 256, "_%b%d_%I%M%p", curtime);
-//	const MapMetaData *m =  TheMapCache->findMap(TheGlobalData->m_mapName);
+	//	const MapMetaData *m =  TheMapCache->findMap(TheGlobalData->m_mapName);
 	AsciiString name = TheGlobalData->m_mapName;
 	const char *fname = name.reverseFind('\\');
 	if (fname)
-		name = fname+1;
+		name = fname + 1;
 	name.truncateBy(4); // ".map"
 	m_statsFileName.clear();
 #if defined(RTS_DEBUG)
@@ -333,7 +331,7 @@ void StatsCollector::createFileName( void )
 				AsciiString players;
 				AsciiString full;
 				AsciiString fullPlusNum;
-				for (Int i=0; i<MAX_SLOTS; ++i)
+				for (Int i = 0; i < MAX_SLOTS; ++i)
 				{
 					GameSlot *slot = game->getSlot(i);
 					if (slot && slot->isHuman())
@@ -351,13 +349,13 @@ void StatsCollector::createFileName( void )
 		}
 		else
 		{
-			m_statsFileName.format("%s%s%s.txt",statsDir, name.str(),datestr);
+			m_statsFileName.format("%s%s%s.txt", statsDir, name.str(), datestr);
 		}
 	}
 	else
 #endif
 	{
-		m_statsFileName.format("%s%s%s.txt",statsDir, name.str(),datestr);
+		m_statsFileName.format("%s%s%s.txt", statsDir, name.str(), datestr);
 	}
 }
 
@@ -365,9 +363,9 @@ void StatsCollector::createFileName( void )
 //=============================================================================
 void StatsCollector::writeInitialFileInfo()
 {
-	//open the file
+	// open the file
 	FILE *f = fopen(m_statsFileName.str(), "w");
-	if(!f)
+	if (!f)
 	{
 		DEBUG_ASSERTCRASH(f, ("Unable to open file %s to write", m_statsFileName.str()));
 		return;
@@ -377,9 +375,9 @@ void StatsCollector::writeInitialFileInfo()
 	// Time
 	struct tm *newTime;
 	time_t aclock;
-  time( &aclock );
-  newTime = localtime( &aclock );
-	fprintf(f, "Date:\t%s",asctime(newTime) );
+	time(&aclock);
+	newTime = localtime(&aclock);
+	fprintf(f, "Date:\t%s", asctime(newTime));
 
 	// Map
 	fprintf(f, "Map:\t%s\n", TheGlobalData->m_mapName.str());
@@ -391,9 +389,19 @@ void StatsCollector::writeInitialFileInfo()
 	fprintf(f, "Time*\tBC\tMC\tAC\tSMC\tST*\tOC\t$$$\t#PU\t#AIU\n");
 	collectUnitCountStats();
 	Money *m = ThePlayerList->getLocalPlayer()->getMoney();
-	fprintf(f, "%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", 0, m_buildCommands, m_moveCommands, m_attackCommands,
-					m_scrollMapCommands, 0 ,/*other commands*/0, m->countMoney(),
-					m_playerUnits, m_AIUnits );
+	fprintf(
+			f,
+			"%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
+			0,
+			m_buildCommands,
+			m_moveCommands,
+			m_attackCommands,
+			m_scrollMapCommands,
+			0,
+			/*other commands*/ 0,
+			m->countMoney(),
+			m_playerUnits,
+			m_AIUnits);
 	// initial stats
 	// we don't want a file pointer open for seconds on end... we'll open it each time.
 	fclose(f);
@@ -403,20 +411,28 @@ void StatsCollector::writeInitialFileInfo()
 //=============================================================================
 void StatsCollector::writeStatInfo()
 {
-	//open the file
+	// open the file
 	FILE *f = fopen(m_statsFileName.str(), "a");
-	if(!f)
+	if (!f)
 	{
 		DEBUG_ASSERTCRASH(f, ("Unable to open file %s to write", m_statsFileName.str()));
 		return;
 	}
 	Money *m = ThePlayerList->getLocalPlayer()->getMoney();
 
-	fprintf(f, "%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", m_timeCount, m_buildCommands, m_moveCommands, m_attackCommands,
-					m_scrollMapCommands, m_scrollTime / LOGICFRAMES_PER_SECOND, /*other commands*/0,m->countMoney() ,
-					m_playerUnits, m_AIUnits  );
-
+	fprintf(
+			f,
+			"%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
+			m_timeCount,
+			m_buildCommands,
+			m_moveCommands,
+			m_attackCommands,
+			m_scrollMapCommands,
+			m_scrollTime / LOGICFRAMES_PER_SECOND,
+			/*other commands*/ 0,
+			m->countMoney(),
+			m_playerUnits,
+			m_AIUnits);
 
 	fclose(f);
-
 }

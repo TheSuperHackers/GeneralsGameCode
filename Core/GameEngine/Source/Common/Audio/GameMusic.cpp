@@ -43,7 +43,7 @@
 //         Includes
 //----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/GameMusic.h"
 
@@ -52,18 +52,14 @@
 #include "Common/GameAudio.h"
 #include "Common/INI.h"
 
-
 //----------------------------------------------------------------------------
 //         Externals
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
-#define MUSIC_PATH "Data\\Audio\\Tracks"  // directory path to the music files
-
+#define MUSIC_PATH "Data\\Audio\\Tracks" // directory path to the music files
 
 //----------------------------------------------------------------------------
 //         Private Types
@@ -72,55 +68,50 @@
 //-------------------------------------------------------------------------------------------------
 /** The INI data fields for music tracks */
 //-------------------------------------------------------------------------------------------------
-const FieldParse MusicTrack::m_musicTrackFieldParseTable[] =
-{
+const FieldParse MusicTrack::m_musicTrackFieldParseTable[] = {
 
-	{ "Filename",								INI::parseAsciiString,							NULL, offsetof( MusicTrack, filename ) },
-	{ "Volume",									INI::parsePercentToReal,						NULL, offsetof( MusicTrack, volume ) },
-	{ "Ambient",								INI::parseBool,											NULL, offsetof( MusicTrack, ambient ) },
-	{ NULL,											NULL,																NULL, 0 },
+	{ "Filename", INI::parseAsciiString, NULL, offsetof(MusicTrack, filename) },
+	{ "Volume", INI::parsePercentToReal, NULL, offsetof(MusicTrack, volume) },
+	{ "Ambient", INI::parseBool, NULL, offsetof(MusicTrack, ambient) },
+	{ NULL, NULL, NULL, 0 },
 };
-
 
 //-------------------------------------------------------------------------------------------------
 MusicManager::MusicManager()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 MusicManager::~MusicManager()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
-void MusicManager::playTrack( AudioEventRTS *eventToUse )
+void MusicManager::playTrack(AudioEventRTS *eventToUse)
 {
-	AudioRequest *audioRequest = TheAudio->allocateAudioRequest( true );
+	AudioRequest *audioRequest = TheAudio->allocateAudioRequest(true);
 	audioRequest->m_pendingEvent = eventToUse;
 	audioRequest->m_request = AR_Play;
-	TheAudio->appendAudioRequest( audioRequest );
+	TheAudio->appendAudioRequest(audioRequest);
 }
 
 //-------------------------------------------------------------------------------------------------
-void MusicManager::stopTrack( AudioHandle eventToRemove )
+void MusicManager::stopTrack(AudioHandle eventToRemove)
 {
-	AudioRequest *audioRequest = TheAudio->allocateAudioRequest( false );
+	AudioRequest *audioRequest = TheAudio->allocateAudioRequest(false);
 	audioRequest->m_handleToInteractOn = eventToRemove;
 	audioRequest->m_request = AR_Stop;
-	TheAudio->appendAudioRequest( audioRequest );
+	TheAudio->appendAudioRequest(audioRequest);
 }
 
 //-------------------------------------------------------------------------------------------------
-void MusicManager::addAudioEvent( AudioEventRTS *eventToAdd )
+void MusicManager::addAudioEvent(AudioEventRTS *eventToAdd)
 {
-	playTrack( eventToAdd );
+	playTrack(eventToAdd);
 }
 
 //-------------------------------------------------------------------------------------------------
-void MusicManager::removeAudioEvent( AudioHandle eventToRemove )
+void MusicManager::removeAudioEvent(AudioHandle eventToRemove)
 {
-	stopTrack( eventToRemove );
+	stopTrack(eventToRemove);
 }
-

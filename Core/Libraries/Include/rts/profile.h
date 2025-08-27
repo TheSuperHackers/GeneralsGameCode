@@ -27,7 +27,7 @@
 // Proxy header for profile module
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef PROXY_PROFILE_H // Include guard
 #define PROXY_PROFILE_H

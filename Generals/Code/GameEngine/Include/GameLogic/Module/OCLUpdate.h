@@ -48,23 +48,20 @@ public:
 
 	OCLUpdateModuleData();
 
-	static void buildFieldParse(MultiIniFieldParse& p);
+	static void buildFieldParse(MultiIniFieldParse &p);
 
 private:
-
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class OCLUpdate : public UpdateModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( OCLUpdate, "OCLUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( OCLUpdate, OCLUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(OCLUpdate, "OCLUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(OCLUpdate, OCLUpdateModuleData)
 
 public:
-
-	OCLUpdate( Thing *thing, const ModuleData* moduleData );
+	OCLUpdate(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual UpdateSleepTime update();
@@ -73,14 +70,11 @@ public:
 	UnsignedInt getRemainingFrames() const; ///< For feedback display
 
 protected:
-
 	UnsignedInt m_nextCreationFrame;
 	UnsignedInt m_timerStartedFrame;
 
 	Bool shouldCreate();
 	void setNextCreationFrame();
-
 };
 
 #endif
-

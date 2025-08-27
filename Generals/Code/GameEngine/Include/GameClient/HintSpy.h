@@ -37,7 +37,7 @@ class HintSpyTranslator : public GameMessageTranslator
 {
 public:
 	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
-	virtual ~HintSpyTranslator() { }
+	virtual ~HintSpyTranslator() {}
 };
 
 #endif

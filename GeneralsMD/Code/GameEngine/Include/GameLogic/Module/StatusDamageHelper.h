@@ -39,26 +39,23 @@
 // ------------------------------------------------------------------------------------------------
 class StatusDamageHelperModuleData : public ModuleData
 {
-
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class StatusDamageHelper : public ObjectHelper
 {
-
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( StatusDamageHelper, StatusDamageHelperModuleData )
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(StatusDamageHelper, "StatusDamageHelper" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(StatusDamageHelper, StatusDamageHelperModuleData)
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(StatusDamageHelper, "StatusDamageHelper")
 
 public:
-
-	StatusDamageHelper( Thing *thing, const ModuleData *modData );
+	StatusDamageHelper(Thing *thing, const ModuleData *modData);
 	// virtual destructor prototype provided by memory pool object
 
 	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
 	virtual UpdateSleepTime update();
 
-	void doStatusDamage( ObjectStatusTypes status, Real duration );
+	void doStatusDamage(ObjectStatusTypes status, Real duration);
 
 protected:
 	ObjectStatusTypes m_statusToHeal;
@@ -66,5 +63,4 @@ protected:
 	void clearStatusCondition();
 };
 
-
-#endif  // end __StatusDamageHelper_H_
+#endif // end __StatusDamageHelper_H_

@@ -42,7 +42,7 @@ public:
 	ConfigFile config;
 	bool ReadFile(const char *fname);
 
-	bool GetString(const Wstring& key, Wstring& val);
+	bool GetString(const Wstring &key, Wstring &val);
 
 	RandClass rnd;
 };
@@ -54,4 +54,3 @@ void rotateOutput(void);
 void rotateParanoid(void);
 
 #endif
-

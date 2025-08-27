@@ -31,36 +31,35 @@ class SidesList;
 
 class EditCoordParameter : public CDialog
 {
-friend class EditParameter;
-// Construction
+	friend class EditParameter;
+	// Construction
 public:
-	EditCoordParameter(CWnd* pParent = NULL);   // standard constructor
+	EditCoordParameter(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(EditCoordParameter)
-	enum { IDD = IDD_EDIT_COORD_PARAMETER };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_EDIT_COORD_PARAMETER
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(EditCoordParameter)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
-
-
-protected:
+	// Implementation
 
 protected:
-	Parameter		*m_parameter;
-	Coord3D			 m_coord;
+protected:
+	Parameter *m_parameter;
+	Coord3D m_coord;
 
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(EditCoordParameter)
 	virtual BOOL OnInitDialog();

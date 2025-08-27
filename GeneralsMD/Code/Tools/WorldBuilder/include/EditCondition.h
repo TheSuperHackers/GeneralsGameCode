@@ -25,14 +25,13 @@
 // EditCondition.h : header file
 //
 
-
 class Condition;
 class SidesList;
 
 class CMyTreeCtrl : public CTreeCtrl
 {
 public:
-	virtual LRESULT WindowProc( UINT message, WPARAM wParam, LPARAM lParam );
+	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -40,42 +39,44 @@ public:
 
 class EditCondition : public CDialog
 {
-// Construction
+	// Construction
 public:
-	EditCondition(CWnd* pParent = NULL);   // standard constructor
+	EditCondition(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(EditCondition)
-	enum { IDD = IDD_ScriptCondition };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_ScriptCondition
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(EditCondition)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
-	void setCondition(Condition *pCond) {m_condition = pCond;}
+	void setCondition(Condition *pCond) { m_condition = pCond; }
 
 protected:
 	void formatConditionText(Int parmNdx);
+
 protected:
 	Condition *m_condition;
-	Bool			m_updating;
-	Bool			m_modifiedTextColor;
+	Bool m_updating;
+	Bool m_modifiedTextColor;
 	CRichEditCtrl m_myEditCtrl;
 	CHARRANGE m_curLinkChrg;
-	Int				m_curEditParameter;
-	CTreeCtrl	m_conditionTreeView;
+	Int m_curEditParameter;
+	CTreeCtrl m_conditionTreeView;
 
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(EditCondition)
 	virtual BOOL OnInitDialog();

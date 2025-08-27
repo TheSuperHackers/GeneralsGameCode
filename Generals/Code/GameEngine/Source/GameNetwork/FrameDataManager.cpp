@@ -22,8 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameNetwork/FrameDataManager.h"
 #include "GameNetwork/networkutil.h"
@@ -31,7 +30,8 @@
 /**
  * Constructor.  isLocal tells it whether its the frame data manager for the local player or not.
  */
-FrameDataManager::FrameDataManager(Bool isLocal) {
+FrameDataManager::FrameDataManager(Bool isLocal)
+{
 	m_isLocal = isLocal;
 
 	m_frameData = NEW FrameData[FRAME_DATA_LENGTH];
@@ -43,8 +43,10 @@ FrameDataManager::FrameDataManager(Bool isLocal) {
 /**
  * destructor.
  */
-FrameDataManager::~FrameDataManager() {
-	for (Int i = 0; i < FRAME_DATA_LENGTH; ++i) {
+FrameDataManager::~FrameDataManager()
+{
+	for (Int i = 0; i < FRAME_DATA_LENGTH; ++i)
+	{
 		m_frameData[i].reset();
 	}
 
@@ -58,10 +60,13 @@ FrameDataManager::~FrameDataManager() {
 /**
  * Initialize all of the frame datas associated with this manager.
  */
-void FrameDataManager::init() {
-	for (Int i = 0; i < FRAME_DATA_LENGTH; ++i) {
+void FrameDataManager::init()
+{
+	for (Int i = 0; i < FRAME_DATA_LENGTH; ++i)
+	{
 		m_frameData[i].init();
-		if (m_isLocal) {
+		if (m_isLocal)
+		{
 			// If this is the local connection, adjust the frame command count.
 			m_frameData[i].setFrameCommandCount(m_frameData[i].getCommandCount());
 		}
@@ -74,26 +79,35 @@ void FrameDataManager::init() {
 /**
  * Reset the state of all the frames.
  */
-void FrameDataManager::reset() {
+void FrameDataManager::reset()
+{
 	init();
 }
 
 /**
  * update function. Does nothing at this time.
  */
-void FrameDataManager::update() {
+void FrameDataManager::update()
+{
 }
 
 /**
  * Add a network command to the appropriate frame.
  */
-void FrameDataManager::addNetCommandMsg(NetCommandMsg *msg) {
+void FrameDataManager::addNetCommandMsg(NetCommandMsg *msg)
+{
 	UnsignedInt frame = msg->getExecutionFrame();
 	UnsignedInt frameindex = frame % FRAME_DATA_LENGTH;
-	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("FrameDataManager::addNetCommandMsg - about to add a command of type %s for frame %d, frame index %d", GetNetCommandTypeAsString(msg->getNetCommandType()), frame, frameindex));
+	DEBUG_LOG_LEVEL(
+			DEBUG_LEVEL_NET,
+			("FrameDataManager::addNetCommandMsg - about to add a command of type %s for frame %d, frame index %d",
+			 GetNetCommandTypeAsString(msg->getNetCommandType()),
+			 frame,
+			 frameindex));
 	m_frameData[frameindex].addCommand(msg);
 
-	if (m_isLocal) {
+	if (m_isLocal)
+	{
 		// If this is the local connection, adjust the frame command count.
 		m_frameData[frameindex].setFrameCommandCount(m_frameData[frameindex].getCommandCount());
 	}
@@ -102,16 +116,18 @@ void FrameDataManager::addNetCommandMsg(NetCommandMsg *msg) {
 /**
  * Returns true if all the commands for the given frame are ready.
  */
-FrameDataReturnType FrameDataManager::allCommandsReady(UnsignedInt frame, Bool debugSpewage) {
+FrameDataReturnType FrameDataManager::allCommandsReady(UnsignedInt frame, Bool debugSpewage)
+{
 	UnsignedInt frameindex = frame % FRAME_DATA_LENGTH;
-	//DEBUG_ASSERTCRASH(m_frameData[frameindex].getFrame() == frame || frame == 256, ("Looking at old commands!"));
+	// DEBUG_ASSERTCRASH(m_frameData[frameindex].getFrame() == frame || frame == 256, ("Looking at old commands!"));
 	return m_frameData[frameindex].allCommandsReady(debugSpewage);
 }
 
 /**
  * Returns the command list for the given frame.
  */
-NetCommandList * FrameDataManager::getFrameCommandList(UnsignedInt frame) {
+NetCommandList *FrameDataManager::getFrameCommandList(UnsignedInt frame)
+{
 	UnsignedInt frameindex = frame % FRAME_DATA_LENGTH;
 	return m_frameData[frameindex].getCommandList();
 }
@@ -119,26 +135,32 @@ NetCommandList * FrameDataManager::getFrameCommandList(UnsignedInt frame) {
 /**
  * Reset the contents of the given frame.
  */
-void FrameDataManager::resetFrame(UnsignedInt frame, Bool isAdvancing) {
+void FrameDataManager::resetFrame(UnsignedInt frame, Bool isAdvancing)
+{
 	UnsignedInt frameindex = frame % FRAME_DATA_LENGTH;
 
 	m_frameData[frameindex].reset();
 
-	if (isAdvancing) {
+	if (isAdvancing)
+	{
 		m_frameData[frameindex].setFrame(frame + MAX_FRAMES_AHEAD);
 	}
 
-	if (m_isLocal) {
+	if (m_isLocal)
+	{
 		m_frameData[frameindex].setFrameCommandCount(m_frameData[frameindex].getCommandCount());
 	}
 
-	DEBUG_ASSERTCRASH(m_frameData[frameindex].getCommandCount() == 0, ("we just reset the frame data and the command count is not zero, huh?"));
+	DEBUG_ASSERTCRASH(
+			m_frameData[frameindex].getCommandCount() == 0,
+			("we just reset the frame data and the command count is not zero, huh?"));
 }
 
 /**
  * Returns the command count for the given frame.
  */
-UnsignedInt FrameDataManager::getCommandCount(UnsignedInt frame) {
+UnsignedInt FrameDataManager::getCommandCount(UnsignedInt frame)
+{
 	UnsignedInt frameindex = frame % FRAME_DATA_LENGTH;
 
 	return m_frameData[frameindex].getCommandCount();
@@ -147,7 +169,8 @@ UnsignedInt FrameDataManager::getCommandCount(UnsignedInt frame) {
 /**
  * Set the frame command count for the given frame.
  */
-void FrameDataManager::setFrameCommandCount(UnsignedInt frame, UnsignedInt commandCount) {
+void FrameDataManager::setFrameCommandCount(UnsignedInt frame, UnsignedInt commandCount)
+{
 	UnsignedInt frameindex = frame % FRAME_DATA_LENGTH;
 
 	m_frameData[frameindex].setFrameCommandCount(commandCount);
@@ -156,7 +179,8 @@ void FrameDataManager::setFrameCommandCount(UnsignedInt frame, UnsignedInt comma
 /**
  *
  */
-UnsignedInt FrameDataManager::getFrameCommandCount(UnsignedInt frame) {
+UnsignedInt FrameDataManager::getFrameCommandCount(UnsignedInt frame)
+{
 	UnsignedInt frameindex = frame % FRAME_DATA_LENGTH;
 
 	return m_frameData[frameindex].getFrameCommandCount();
@@ -165,10 +189,12 @@ UnsignedInt FrameDataManager::getFrameCommandCount(UnsignedInt frame) {
 /**
  * Set both the command count and the frame command count to 0 for the given frames.
  */
-void FrameDataManager::zeroFrames(UnsignedInt startingFrame, UnsignedInt numFrames) {
+void FrameDataManager::zeroFrames(UnsignedInt startingFrame, UnsignedInt numFrames)
+{
 	UnsignedInt frameIndex = startingFrame % FRAME_DATA_LENGTH;
-	for (UnsignedInt i = 0; i < numFrames; ++i) {
-		//DEBUG_LOG(("Calling zeroFrame for frame index %d", frameIndex));
+	for (UnsignedInt i = 0; i < numFrames; ++i)
+	{
+		// DEBUG_LOG(("Calling zeroFrame for frame index %d", frameIndex));
 		m_frameData[frameIndex].zeroFrame();
 		++frameIndex;
 		frameIndex = frameIndex % FRAME_DATA_LENGTH;
@@ -178,8 +204,10 @@ void FrameDataManager::zeroFrames(UnsignedInt startingFrame, UnsignedInt numFram
 /**
  * Destroy all the commands held by this object.
  */
-void FrameDataManager::destroyGameMessages() {
-	for (Int i = 0; i < FRAME_DATA_LENGTH; ++i) {
+void FrameDataManager::destroyGameMessages()
+{
+	for (Int i = 0; i < FRAME_DATA_LENGTH; ++i)
+	{
 		m_frameData[i].destroyGameMessages();
 	}
 }
@@ -187,7 +215,8 @@ void FrameDataManager::destroyGameMessages() {
 /**
  * Sets the quit frame, also sets the isQuitting flag.
  */
-void FrameDataManager::setQuitFrame(UnsignedInt frame) {
+void FrameDataManager::setQuitFrame(UnsignedInt frame)
+{
 	m_isQuitting = TRUE;
 	m_quitFrame = frame;
 }
@@ -195,13 +224,15 @@ void FrameDataManager::setQuitFrame(UnsignedInt frame) {
 /**
  * returns the quit frame.
  */
-UnsignedInt FrameDataManager::getQuitFrame() {
+UnsignedInt FrameDataManager::getQuitFrame()
+{
 	return m_quitFrame;
 }
 
 /**
  * returns true if this frame data manager is quitting.
  */
-Bool FrameDataManager::getIsQuitting() {
+Bool FrameDataManager::getIsQuitting()
+{
 	return m_isQuitting;
 }

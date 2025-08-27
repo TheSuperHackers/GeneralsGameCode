@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Thing.h"
 #include "Common/ThingTemplate.h"
@@ -47,21 +47,13 @@
 #include "Common/KindOf.h"
 #include "GameClient/ParticleSys.h"
 
-
-
-
-
-
-
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////
 //	Static member initialization
 ///////////////////////////////////////////////////////////////////////////////////////////
-//Bool	EMPUpdate::s_lastInstanceSpunPositive	= FALSE;
+// Bool	EMPUpdate::s_lastInstanceSpunPositive	= FALSE;
 
 //-------------------------------------------------------------------------------------------------
-static void saturateRGB(RGBColor& color, Real factor)
+static void saturateRGB(RGBColor &color, Real factor)
 {
 	color.red *= factor;
 	color.green *= factor;
@@ -72,63 +64,61 @@ static void saturateRGB(RGBColor& color, Real factor)
 	color.red -= halfFactor;
 	color.green -= halfFactor;
 	color.blue -= halfFactor;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-EMPUpdate::EMPUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+EMPUpdate::EMPUpdate(Thing *thing, const ModuleData *moduleData) : UpdateModule(thing, moduleData)
 {
-
-	//s_lastInstanceSpunPositive = !s_lastInstanceSpunPositive; //TOGGLES STATIC BOOL
+	// s_lastInstanceSpunPositive = !s_lastInstanceSpunPositive; //TOGGLES STATIC BOOL
 
 	const EMPUpdateModuleData *data = getEMPUpdateModuleData();
-	if ( data )
+	if (data)
 	{
-		//SANITY
-		DEBUG_ASSERTCRASH( TheGameLogic, ("EMPUpdate::EMPUpdate - TheGameLogic is NULL" ) );
+		// SANITY
+		DEBUG_ASSERTCRASH(TheGameLogic, ("EMPUpdate::EMPUpdate - TheGameLogic is NULL"));
 		UnsignedInt now = TheGameLogic->getFrame();
 
 		m_currentScale = data->m_startScale;
-		m_dieFrame = REAL_TO_UNSIGNEDINT( now + data->m_lifeFrames );
-		m_tintEnvPlayFrame = REAL_TO_UNSIGNEDINT( now + data->m_startFadeFrame );
+		m_dieFrame = REAL_TO_UNSIGNEDINT(now + data->m_lifeFrames);
+		m_tintEnvPlayFrame = REAL_TO_UNSIGNEDINT(now + data->m_startFadeFrame);
 		m_tintEnvFadeFrames = m_dieFrame - m_tintEnvPlayFrame;
-		//m_spinRate = GameLogicRandomValueReal(data->m_spinRateMax * 0.5f, data->m_spinRateMax);
+		// m_spinRate = GameLogicRandomValueReal(data->m_spinRateMax * 0.5f, data->m_spinRateMax);
 		m_targetScale = GameLogicRandomValueReal(data->m_targetScaleMin, data->m_targetScaleMax);
-		//if (s_lastInstanceSpunPositive)
+		// if (s_lastInstanceSpunPositive)
 		//{
 		//	m_spinRate *= -1.0f;
-		//}
+		// }
 
-		getObject()->setOrientation(GameLogicRandomValueReal(-PI,PI));
+		getObject()->setOrientation(GameLogicRandomValueReal(-PI, PI));
 
-		DEBUG_ASSERTCRASH( m_tintEnvPlayFrame < m_dieFrame, ("EMPUpdate::EMPUpdate - you cant play fade after death" ) );
+		DEBUG_ASSERTCRASH(m_tintEnvPlayFrame < m_dieFrame, ("EMPUpdate::EMPUpdate - you cant play fade after death"));
 
 		return;
 	}
 
-	//SANITY
-	DEBUG_ASSERTCRASH( data, ("EMPUpdate::EMPUpdate - getEMPUpdateModuleData is NULL" ) );
+	// SANITY
+	DEBUG_ASSERTCRASH(data, ("EMPUpdate::EMPUpdate - getEMPUpdateModuleData is NULL"));
 	m_currentScale = 1.0f;
 	m_dieFrame = 0;
 	m_tintEnvFadeFrames = 0;
-	m_tintEnvPlayFrame  = 0;
-	//m_spinRate = 0;
+	m_tintEnvPlayFrame = 0;
+	// m_spinRate = 0;
 	m_targetScale = 1;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-EMPUpdate::~EMPUpdate( void )
+EMPUpdate::~EMPUpdate(void)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
-UpdateSleepTime EMPUpdate::update( void )
+UpdateSleepTime EMPUpdate::update(void)
 {
-/// @todo srj use SLEEPY_UPDATE here
+	/// @todo srj use SLEEPY_UPDATE here
 
 	Object *obj = getObject();
 
@@ -136,29 +126,29 @@ UpdateSleepTime EMPUpdate::update( void )
 	Drawable *dr = obj->getDrawable();
 	UnsignedInt now = TheGameLogic->getFrame();
 
-	m_currentScale += ( m_targetScale - m_currentScale ) * 0.05f;
-	dr->setInstanceScale( m_currentScale );
+	m_currentScale += (m_targetScale - m_currentScale) * 0.05f;
+	dr->setInstanceScale(m_currentScale);
 
-	if ( now < m_tintEnvPlayFrame)
+	if (now < m_tintEnvPlayFrame)
 	{
 		RGBColor start = data->m_startColor;
-		saturateRGB( start, 2 );
-		dr->colorTint( &start );
+		saturateRGB(start, 2);
+		dr->colorTint(&start);
 	}
-	if ( now == m_tintEnvPlayFrame)
+	if (now == m_tintEnvPlayFrame)
 	{
 		RGBColor end = data->m_endColor;
-		saturateRGB( end, 5 );
-		dr->colorFlash( &end, 9999, m_tintEnvFadeFrames, TRUE );
+		saturateRGB(end, 5);
+		dr->colorFlash(&end, 9999, m_tintEnvFadeFrames, TRUE);
 		doDisableAttack();
 	}
 
-	//Real curSpin = obj->getOrientation();
-	//curSpin += m_spinRate;
-	//curSpin = normalizeAngle(curSpin);
-	//obj->setOrientation( curSpin );
+	// Real curSpin = obj->getOrientation();
+	// curSpin += m_spinRate;
+	// curSpin = normalizeAngle(curSpin);
+	// obj->setOrientation( curSpin );
 
-	if( now >= m_dieFrame )
+	if (now >= m_dieFrame)
 		obj->kill();
 
 	return UPDATE_SLEEP_NONE;
@@ -166,28 +156,28 @@ UpdateSleepTime EMPUpdate::update( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void EMPUpdate::doDisableAttack( void )
+void EMPUpdate::doDisableAttack(void)
 {
 	Object *object = getObject();
 	const EMPUpdateModuleData *data = getEMPUpdateModuleData();
-	if( !object || !data )
-		return; //sanity
+	if (!object || !data)
+		return; // sanity
 
 	Real radius = data->m_effectRadius;
 	Real curVictimDistSqr;
 	const Coord3D *pos = object->getPosition();
 
-	//Kris -- October 28, 2003 -- Patch 1.01
-	//If the EMP hits an airborne target, then don't allow the EMP
-	//blast to effect anything on the ground.
-	Object *producer = TheGameLogic->findObjectByID( object->getProducerID() );
+	// Kris -- October 28, 2003 -- Patch 1.01
+	// If the EMP hits an airborne target, then don't allow the EMP
+	// blast to effect anything on the ground.
+	Object *producer = TheGameLogic->findObjectByID(object->getProducerID());
 	Object *intendedVictim = NULL;
 	Bool onlyEffectAirborne = FALSE;
 	Bool intendedVictimProcessed = FALSE;
-	if( producer && producer->getAI() )
+	if (producer && producer->getAI())
 	{
 		intendedVictim = producer->getAI()->getCurrentVictim();
-		if( intendedVictim && intendedVictim->isAirborneTarget() )
+		if (intendedVictim && intendedVictim->isAirborneTarget())
 		{
 			onlyEffectAirborne = TRUE;
 		}
@@ -198,101 +188,89 @@ void EMPUpdate::doDisableAttack( void )
 
 	if (radius > 0.0f)
 	{
-		iter = ThePartitionManager->iterateObjectsInRange(pos,
-			radius, FROM_BOUNDINGSPHERE_3D);
+		iter = ThePartitionManager->iterateObjectsInRange(pos, radius, FROM_BOUNDINGSPHERE_3D);
 
 		curVictim = iter->firstWithNumeric(&curVictimDistSqr);
 	}
 
 	MemoryPoolObjectHolder hold(iter);
 
-	for ( ; curVictim != NULL; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : NULL)
+	for (; curVictim != NULL; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : NULL)
 	{
-		if ( curVictim != object)
+		if (curVictim != object)
 		{
-
-			//Kris -- October 28, 2003 -- Patch 1.01
-			//If the EMP hits an airborne target, then don't allow the EMP
-			//blast to effect anything on the ground.
-			if( onlyEffectAirborne && !curVictim->isAirborneTarget() )
+			// Kris -- October 28, 2003 -- Patch 1.01
+			// If the EMP hits an airborne target, then don't allow the EMP
+			// blast to effect anything on the ground.
+			if (onlyEffectAirborne && !curVictim->isAirborneTarget())
 			{
 				continue;
 			}
 
-			//Some EMP attacks don't affect our own buildings.
-			if( data->m_doesNotAffectMyOwnBuildings && curVictim->isKindOf( KINDOF_STRUCTURE ) )
+			// Some EMP attacks don't affect our own buildings.
+			if (data->m_doesNotAffectMyOwnBuildings && curVictim->isKindOf(KINDOF_STRUCTURE))
 			{
-				if( curVictim->getControllingPlayer() == object->getControllingPlayer() )
+				if (curVictim->getControllingPlayer() == object->getControllingPlayer())
 				{
 					continue;
 				}
 			}
 
+			//////////////	    // must match our kindof flags (if any)
+			//////////////	    if (data && !curVictim->isKindOfMulti(data->m_victimKindOf, data->m_victimKindOfNot))
+			//////////////		    continue;
 
-
-
-//////////////	    // must match our kindof flags (if any)
-//////////////	    if (data && !curVictim->isKindOfMulti(data->m_victimKindOf, data->m_victimKindOfNot))
-//////////////		    continue;
-
-
-
-
-
-
-
-
-      if ( !curVictim->isKindOf( KINDOF_VEHICLE ) && !curVictim->isKindOf(KINDOF_STRUCTURE) && !curVictim->isKindOf(KINDOF_SPAWNS_ARE_THE_WEAPONS) )
+			if (!curVictim->isKindOf(KINDOF_VEHICLE) && !curVictim->isKindOf(KINDOF_STRUCTURE)
+					&& !curVictim->isKindOf(KINDOF_SPAWNS_ARE_THE_WEAPONS))
 			{
-				//DONT DISABLE PEOPLE, EXCEPT FOR STINGER SOLDIERS
+				// DONT DISABLE PEOPLE, EXCEPT FOR STINGER SOLDIERS
 				continue;
 			}
-			else if ( curVictim->isKindOf( KINDOF_AIRCRAFT ) && curVictim->isAirborneTarget() )// is in the sky
-      {
-        // WITHIN THE SET OF ALL FLYING THINGS, WE WANT TO EXEMPT SUPERWEAPON TRANSPORTS
-//        if ( curVictim->isKindOf( KINDOF_TRANSPORT ) )                  // is transport kindof
-//          if ( curVictim->getContain() )                                // does carry stuff
-//            if ( curVictim->getContain()->getContainCount() > 0 )     // is carrying something
-//              if ( ! curVictim->isKindOf( KINDOF_PRODUCED_AT_HELIPAD ) )  // but not a helicopter
-//                continue;
+			else if (curVictim->isKindOf(KINDOF_AIRCRAFT) && curVictim->isAirborneTarget()) // is in the sky
+			{
+				// WITHIN THE SET OF ALL FLYING THINGS, WE WANT TO EXEMPT SUPERWEAPON TRANSPORTS
+				//        if ( curVictim->isKindOf( KINDOF_TRANSPORT ) )                  // is transport kindof
+				//          if ( curVictim->getContain() )                                // does carry stuff
+				//            if ( curVictim->getContain()->getContainCount() > 0 )     // is carrying something
+				//              if ( ! curVictim->isKindOf( KINDOF_PRODUCED_AT_HELIPAD ) )  // but not a helicopter
+				//                continue;
 
-        if ( curVictim->isKindOf( KINDOF_EMP_HARDENED ) ) // self-explanitory
-          continue;
+				if (curVictim->isKindOf(KINDOF_EMP_HARDENED)) // self-explanitory
+					continue;
 
-				curVictim->kill();// @todo this should use some sort of DEADSTICK DIE or something...
+				curVictim->kill(); // @todo this should use some sort of DEADSTICK DIE or something...
 				Drawable *drw = curVictim->getDrawable();
-				if ( drw )
+				if (drw)
 				{
-					drw->setTintStatus( TINT_STATUS_DISABLED );// paint it black
+					drw->setTintStatus(TINT_STATUS_DISABLED); // paint it black
 				}
 				continue;
 			}
-			else if ( curVictim->isKindOf( KINDOF_STRUCTURE ) )
+			else if (curVictim->isKindOf(KINDOF_STRUCTURE))
 			{
-				if ( ! curVictim->isFactionStructure() )
+				if (!curVictim->isFactionStructure())
 					continue;
 			}
 			// handle cases where we do not want allies to be hit by it's own EMP weapons
-			else if ( (data->m_rejectMask & WEAPON_AFFECTS_ALLIES) && curVictim->getRelationship( object ) == ALLIES)
+			else if ((data->m_rejectMask & WEAPON_AFFECTS_ALLIES) && curVictim->getRelationship(object) == ALLIES)
 			{
 				continue;
 			}
 
-			//Disable the target for a specified amount of time.
-			curVictim->setDisabledUntil( DISABLED_EMP, TheGameLogic->getFrame() + data->m_disabledDuration );
+			// Disable the target for a specified amount of time.
+			curVictim->setDisabledUntil(DISABLED_EMP, TheGameLogic->getFrame() + data->m_disabledDuration);
 
-			//Kris -- October 28, 2003 -- Patch 1.01
-			if( intendedVictim == curVictim )
+			// Kris -- October 28, 2003 -- Patch 1.01
+			if (intendedVictim == curVictim)
 			{
-				//We know the intended victim was in range. This will catch an edge case
-				//where the intended target is hit, but the range is off enough to not effect it.
+				// We know the intended victim was in range. This will catch an edge case
+				// where the intended target is hit, but the range is off enough to not effect it.
 				intendedVictimProcessed = TRUE;
 			}
 
 			Drawable *drw = curVictim->getDrawable();
-			if ( drw )
+			if (drw)
 			{
-
 				const ParticleSystemTemplate *tmp = data->m_disableFXParticleSystem;
 				if (tmp)
 				{
@@ -302,19 +280,18 @@ void EMPUpdate::doDisableAttack( void )
 
 					UnsignedInt emitterCount = MAX(15, REAL_TO_INT_CEIL(data->m_sparksPerCubicFoot * victimVolume));
 
-					for (UnsignedInt e = 0 ; e < emitterCount; ++e)
+					for (UnsignedInt e = 0; e < emitterCount; ++e)
 					{
-
 						ParticleSystem *sys = TheParticleSystemManager->createParticleSystem(tmp);
 
 						if (sys)
 						{
-							Coord3D offs = {0,0,0};
-							curVictim->getGeometryInfo().makeRandomOffsetWithinFootprint( offs );
+							Coord3D offs = { 0, 0, 0 };
+							curVictim->getGeometryInfo().makeRandomOffsetWithinFootprint(offs);
 							offs.z = GameLogicRandomValue(3, victimHeight);
 
-							//This puts all the sparks within a quadrahemicycloid (rectangular dome) volume
-							//The same shape as a four cornered camping dome tent, for those with less Greek
+							// This puts all the sparks within a quadrahemicycloid (rectangular dome) volume
+							// The same shape as a four cornered camping dome tent, for those with less Greek
 							if (offs.length() > victimHeight)
 							{
 								Real resoreX = offs.x;
@@ -326,34 +303,33 @@ void EMPUpdate::doDisableAttack( void )
 							}
 
 							sys->attachToObject(curVictim);
-							sys->setPosition( &offs );
+							sys->setPosition(&offs);
 							sys->setSystemLifetime(MAX(0, data->m_disabledDuration - 30));
-							sys->setInitialDelay(GameLogicRandomValue(1,100));
+							sys->setInitialDelay(GameLogicRandomValue(1, 100));
 						}
 					}
 				}
 			}
-
 		}
 	}
 
-	//Kris -- October 28, 2003 -- Patch 1.01
-	//Handle edge case when the EMP explodes, but "misses" the intended target.
-	if( intendedVictim && !intendedVictimProcessed && intendedVictim->isKindOf( KINDOF_AIRCRAFT ) )
+	// Kris -- October 28, 2003 -- Patch 1.01
+	// Handle edge case when the EMP explodes, but "misses" the intended target.
+	if (intendedVictim && !intendedVictimProcessed && intendedVictim->isKindOf(KINDOF_AIRCRAFT))
 	{
-    if( !intendedVictim->isKindOf( KINDOF_EMP_HARDENED ) )
+		if (!intendedVictim->isKindOf(KINDOF_EMP_HARDENED))
 		{
-			//Victim position
+			// Victim position
 			Coord3D coord;
-			coord.set( intendedVictim->getPosition() );
-			//Subtract this object (distance from missile to victim's previous position)
-			coord.sub( pos );
+			coord.set(intendedVictim->getPosition());
+			// Subtract this object (distance from missile to victim's previous position)
+			coord.sub(pos);
 
 			Real lengthSqr = coord.lengthSqr();
-			if( lengthSqr <= radius * 2.0f || lengthSqr <= 40.0f * 40.0f )
+			if (lengthSqr <= radius * 2.0f || lengthSqr <= 40.0f * 40.0f)
 			{
-				//Disable the target for a specified amount of time.
-				intendedVictim->setDisabledUntil( DISABLED_EMP, TheGameLogic->getFrame() + data->m_disabledDuration );
+				// Disable the target for a specified amount of time.
+				intendedVictim->setDisabledUntil(DISABLED_EMP, TheGameLogic->getFrame() + data->m_disabledDuration);
 			}
 		}
 	}
@@ -362,133 +338,123 @@ void EMPUpdate::doDisableAttack( void )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void EMPUpdate::crc( Xfer *xfer )
+void EMPUpdate::crc(Xfer *xfer)
 {
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void EMPUpdate::xfer( Xfer *xfer )
+void EMPUpdate::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void EMPUpdate::loadPostProcess( void )
+void EMPUpdate::loadPostProcess(void)
 {
+} // end loadPostProcess
 
-}  // end loadPostProcess
-
-                                                                                                                                                  ///
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////^
 //  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////^^
 //  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////^^^^^^
 //  ////////////////////////////////////////////////////////////////////////////////////////////////^^^^^^^^^^^^^^
-    /////////////////////////////////////////////////////////////////////////^^^^^^^^^^^^^
-    ///////////////////////////////////////////////////^^^^^^^^^^^^
- /////////////////////////////////////^^^^^^^^^^
+/////////////////////////////////////////////////////////////////////////^^^^^^^^^^^^^
+///////////////////////////////////////////////////^^^^^^^^^^^^
+/////////////////////////////////////^^^^^^^^^^
 //////////////////////////^^^^^
 //  ////////////////^^^
 //  /////////////^
 //  ///////////
 
-
-
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-LeafletDropBehavior::LeafletDropBehavior( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+LeafletDropBehavior::LeafletDropBehavior(Thing *thing, const ModuleData *moduleData) : UpdateModule(thing, moduleData)
 {
-
-  m_fxFired = FALSE;
-	//s_lastInstanceSpunPositive = !s_lastInstanceSpunPositive; //TOGGLES STATIC BOOL
+	m_fxFired = FALSE;
+	// s_lastInstanceSpunPositive = !s_lastInstanceSpunPositive; //TOGGLES STATIC BOOL
 
 	const LeafletDropBehaviorModuleData *data = getLeafletDropBehaviorModuleData();
-	if ( data )
+	if (data)
 	{
-		//SANITY
-		DEBUG_ASSERTCRASH( TheGameLogic, ("LeafletDropBehavior::LeafletDropBehavior - TheGameLogic is NULL" ) );
+		// SANITY
+		DEBUG_ASSERTCRASH(TheGameLogic, ("LeafletDropBehavior::LeafletDropBehavior - TheGameLogic is NULL"));
 		UnsignedInt now = TheGameLogic->getFrame();
-    m_startFrame = now + data->m_delayFrames;
+		m_startFrame = now + data->m_delayFrames;
 
 		return;
 	}
 
-	//SANITY
-	DEBUG_ASSERTCRASH( data, ("LeafletDropBehavior::LeafletDropBehavior - getLeafletDropBehaviorModuleData is NULL" ) );
+	// SANITY
+	DEBUG_ASSERTCRASH(data, ("LeafletDropBehavior::LeafletDropBehavior - getLeafletDropBehaviorModuleData is NULL"));
 	m_startFrame = TheGameLogic->getFrame() + 1;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-LeafletDropBehavior::~LeafletDropBehavior( void )
+LeafletDropBehavior::~LeafletDropBehavior(void)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
-UpdateSleepTime LeafletDropBehavior::update( void )
+UpdateSleepTime LeafletDropBehavior::update(void)
 {
+	if (!m_fxFired)
+	{
+		// start shoveling out those leaflets, boys.
+		const LeafletDropBehaviorModuleData *data = getLeafletDropBehaviorModuleData();
+		const ParticleSystemTemplate *tmp = data->m_leafletFXParticleSystem;
+		if (tmp)
+		{
+			ParticleSystem *sys = TheParticleSystemManager->createParticleSystem(tmp);
+			if (sys)
+				sys->attachToObject(getObject());
+		}
 
-  if ( ! m_fxFired )
-  {
-    // start shoveling out those leaflets, boys.
-	  const LeafletDropBehaviorModuleData *data = getLeafletDropBehaviorModuleData();
-	  const ParticleSystemTemplate *tmp = data->m_leafletFXParticleSystem;
-	  if (tmp)
-	  {
-		  ParticleSystem *sys = TheParticleSystemManager->createParticleSystem(tmp);
-		  if (sys)
-			  sys->attachToObject(getObject());
-    }
+		m_fxFired = TRUE; // hey, at least we tried.
+	}
 
-    m_fxFired = TRUE; // hey, at least we tried.
-  }
+	if (TheGameLogic->getFrame() < m_startFrame)
+	{
+		//	TheGameLogic->destroyObject( getObject() );
+		return UPDATE_SLEEP_FOREVER;
+	}
 
+	doDisableAttack();
 
-  if( TheGameLogic->getFrame() < m_startFrame )
-  {
-	//	TheGameLogic->destroyObject( getObject() );
-    return UPDATE_SLEEP_FOREVER;
-  }
-
-  doDisableAttack();
-
-  return UPDATE_SLEEP_NONE;
+	return UPDATE_SLEEP_NONE;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void LeafletDropBehavior::onDie( const DamageInfo *damageInfo )
+void LeafletDropBehavior::onDie(const DamageInfo *damageInfo)
 {
-  // the dieModule callback
+	// the dieModule callback
 
-  doDisableAttack();
-
+	doDisableAttack();
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void LeafletDropBehavior::doDisableAttack( void )
+void LeafletDropBehavior::doDisableAttack(void)
 {
 	Object *object = getObject();
 	const LeafletDropBehaviorModuleData *data = getLeafletDropBehaviorModuleData();
-	if( !object || !data )
-		return; //sanity
+	if (!object || !data)
+		return; // sanity
 
 	Real radius = data->m_radius;
 	Real curVictimDistSqr;
@@ -499,82 +465,55 @@ void LeafletDropBehavior::doDisableAttack( void )
 
 	if (radius > 0.0f)
 	{
-		iter = ThePartitionManager->iterateObjectsInRange(pos,
-			radius, FROM_BOUNDINGSPHERE_3D);
+		iter = ThePartitionManager->iterateObjectsInRange(pos, radius, FROM_BOUNDINGSPHERE_3D);
 
 		curVictim = iter->firstWithNumeric(&curVictimDistSqr);
 	}
 
 	MemoryPoolObjectHolder hold(iter);
 
-	for ( ; curVictim != NULL; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : NULL)
+	for (; curVictim != NULL; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : NULL)
 	{
-		if ( curVictim != object)
+		if (curVictim != object)
 		{
-      if ( ! (curVictim->isKindOf( KINDOF_INFANTRY) || curVictim->isKindOf( KINDOF_VEHICLE ) ) ) // both commuters and pedestrians
+			if (!(curVictim->isKindOf(KINDOF_INFANTRY) || curVictim->isKindOf(KINDOF_VEHICLE))) // both commuters and pedestrians
 				continue;
 
-      if ( curVictim->getRelationship( object ) != ENEMIES ) // only enemies
+			if (curVictim->getRelationship(object) != ENEMIES) // only enemies
 				continue;
 
-			//Disable the target for a specified amount of time.
-			curVictim->setDisabledUntil( DISABLED_EMP, TheGameLogic->getFrame() + data->m_disabledDuration );
-
+			// Disable the target for a specified amount of time.
+			curVictim->setDisabledUntil(DISABLED_EMP, TheGameLogic->getFrame() + data->m_disabledDuration);
 		}
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void LeafletDropBehavior::crc( Xfer *xfer )
+void LeafletDropBehavior::crc(Xfer *xfer)
 {
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void LeafletDropBehavior::xfer( Xfer *xfer )
+void LeafletDropBehavior::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
-  xfer->xferUnsignedInt( &m_startFrame );
+	xfer->xferUnsignedInt(&m_startFrame);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void LeafletDropBehavior::loadPostProcess( void )
+void LeafletDropBehavior::loadPostProcess(void)
 {
-
-}  // end loadPostProcess
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+} // end loadPostProcess

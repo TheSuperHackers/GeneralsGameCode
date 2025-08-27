@@ -36,7 +36,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #ifndef LOOKUPTABLE_H
 #define LOOKUPTABLE_H
 
@@ -47,12 +46,10 @@
 #include "multilist.h"
 #include "wwmath.h"
 
-
 class Vector2;
 class Curve1DClass;
 class ChunkSaveClass;
 class ChunkLoadClass;
-
 
 /**
 ** LookupTableClass
@@ -61,38 +58,38 @@ class ChunkLoadClass;
 class LookupTableClass : public RefCountClass, public MultiListObjectClass
 {
 public:
-
 	LookupTableClass(int sample_count = 256);
 	virtual ~LookupTableClass(void);
 
-	void								Init(const char * name,Curve1DClass * curve);
-	float								Get_Value(float input);
-	float								Get_Value_Quick(float input);
-	const char *					Get_Name(void)							{ return Name; }
+	void Init(const char *name, Curve1DClass *curve);
+	float Get_Value(float input);
+	float Get_Value_Quick(float input);
+	const char *Get_Name(void) { return Name; }
+
 protected:
-
-	StringClass						Name;				// name of this table, if it came from a file, this is also the filename
-	float								MinInputValue;
-	float								MaxInputValue;
-	float								OOMaxMinusMin;
-	SimpleVecClass<float>		OutputSamples;
-
+	StringClass Name; // name of this table, if it came from a file, this is also the filename
+	float MinInputValue;
+	float MaxInputValue;
+	float OOMaxMinusMin;
+	SimpleVecClass<float> OutputSamples;
 };
 
 inline float LookupTableClass::Get_Value(float input)
 {
-	if (input <= MinInputValue) {
+	if (input <= MinInputValue)
+	{
 		return OutputSamples[0];
 	}
-	if (input >= MaxInputValue) {
-		return OutputSamples[OutputSamples.Length()-1];
+	if (input >= MaxInputValue)
+	{
+		return OutputSamples[OutputSamples.Length() - 1];
 	}
 
-	float normalized_input = (float)(OutputSamples.Length()-1) * (input - MinInputValue) * OOMaxMinusMin;
+	float normalized_input = (float)(OutputSamples.Length() - 1) * (input - MinInputValue) * OOMaxMinusMin;
 	float input0 = WWMath::Floor(normalized_input);
 
 	int index0 = WWMath::Float_To_Long(input0);
-	int index1 = index0+1;
+	int index1 = index0 + 1;
 	float lerp = normalized_input - input0;
 
 	return OutputSamples[index0] + lerp * (OutputSamples[index1] - OutputSamples[index0]);
@@ -100,17 +97,18 @@ inline float LookupTableClass::Get_Value(float input)
 
 inline float LookupTableClass::Get_Value_Quick(float input)
 {
-	if (input <= MinInputValue) {
+	if (input <= MinInputValue)
+	{
 		return OutputSamples[0];
 	}
-	if (input >= MaxInputValue) {
-		return OutputSamples[OutputSamples.Length()-1];
+	if (input >= MaxInputValue)
+	{
+		return OutputSamples[OutputSamples.Length() - 1];
 	}
 
-	int index = (OutputSamples.Length()-1) * WWMath::Float_To_Long((input - MinInputValue) * OOMaxMinusMin);
+	int index = (OutputSamples.Length() - 1) * WWMath::Float_To_Long((input - MinInputValue) * OOMaxMinusMin);
 	return OutputSamples[index];
 }
-
 
 /**
 ** LookupTableMgrClass
@@ -132,30 +130,25 @@ public:
 	~LookupTableMgrClass(void);
 
 	// init and shutdown are automatically called from WWMath::Init, WWMath::Shutdown...
-	static void					Init(void);
-	static void					Shutdown(void);
+	static void Init(void);
+	static void Shutdown(void);
 
-	static bool					Add_Table(LookupTableClass * table);
-	static bool					Remove_Table(LookupTableClass * table);
-	static LookupTableClass *	Get_Table(const char * name,bool try_to_load = true);
+	static bool Add_Table(LookupTableClass *table);
+	static bool Remove_Table(LookupTableClass *table);
+	static LookupTableClass *Get_Table(const char *name, bool try_to_load = true);
 
-	static void					Save_Table_Desc(		ChunkSaveClass &	csave,
-																Curve1DClass *		curve,
-																const Vector2 &	min,
-																const Vector2 &	max			);
+	static void Save_Table_Desc(ChunkSaveClass &csave, Curve1DClass *curve, const Vector2 &min, const Vector2 &max);
 
-	static void					Load_Table_Desc(		ChunkLoadClass &	cload,
-																Curve1DClass **	curve_ptr,
-																Vector2 *			set_min = NULL,
-																Vector2 *			set_max = NULL	);
+	static void Load_Table_Desc(
+			ChunkLoadClass &cload,
+			Curve1DClass **curve_ptr,
+			Vector2 *set_min = NULL,
+			Vector2 *set_max = NULL);
 
-	static void					Reset(void);
+	static void Reset(void);
 
 protected:
-
-	static RefMultiListClass<LookupTableClass>	Tables;
-
+	static RefMultiListClass<LookupTableClass> Tables;
 };
-
 
 #endif // LOOKUPTABLE_H

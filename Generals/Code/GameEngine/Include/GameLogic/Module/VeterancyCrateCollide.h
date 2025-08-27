@@ -54,44 +54,38 @@ public:
 		m_isPilot = false;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p)
+	static void buildFieldParse(MultiIniFieldParse &p)
 	{
-    CrateCollideModuleData::buildFieldParse(p);
+		CrateCollideModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "EffectRange",	INI::parseUnsignedInt,	NULL, offsetof( VeterancyCrateCollideModuleData, m_rangeOfEffect ) },
-			{ "AddsOwnerVeterancy",	INI::parseBool,	NULL, offsetof( VeterancyCrateCollideModuleData, m_addsOwnerVeterancy ) },
-			{ "IsPilot", INI::parseBool, NULL, offsetof( VeterancyCrateCollideModuleData, m_isPilot ) },
+		static const FieldParse dataFieldParse[] = {
+			{ "EffectRange", INI::parseUnsignedInt, NULL, offsetof(VeterancyCrateCollideModuleData, m_rangeOfEffect) },
+			{ "AddsOwnerVeterancy", INI::parseBool, NULL, offsetof(VeterancyCrateCollideModuleData, m_addsOwnerVeterancy) },
+			{ "IsPilot", INI::parseBool, NULL, offsetof(VeterancyCrateCollideModuleData, m_isPilot) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
-
+		p.add(dataFieldParse);
 	}
 };
 
 //-------------------------------------------------------------------------------------------------
 class VeterancyCrateCollide : public CrateCollide
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( VeterancyCrateCollide, "VeterancyCrateCollide" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( VeterancyCrateCollide, VeterancyCrateCollideModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(VeterancyCrateCollide, "VeterancyCrateCollide")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(VeterancyCrateCollide, VeterancyCrateCollideModuleData);
 
 public:
-
-	VeterancyCrateCollide( Thing *thing, const ModuleData* moduleData );
+	VeterancyCrateCollide(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 protected:
-
 	/// This allows specific vetoes to certain types of crates and their data
-	virtual Bool isValidToExecute( const Object *other ) const;
+	virtual Bool isValidToExecute(const Object *other) const;
 
 	/// This is the game logic execution function that all real CrateCollides will implement
-	virtual Bool executeCrateBehavior( Object *other );
+	virtual Bool executeCrateBehavior(Object *other);
 
 	Int getLevelsToGain() const;
-
 };
 
 #endif

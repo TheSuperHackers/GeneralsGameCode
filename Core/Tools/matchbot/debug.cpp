@@ -33,8 +33,10 @@ extern "C" {
 #ifdef _WINDOWS
 
 #include <stdarg.h>
-void DebugCrash( const char *fmt, ... ) {}
-char* TheCurrentIgnoreCrashPtr;
+void DebugCrash(const char *fmt, ...)
+{
+}
+char *TheCurrentIgnoreCrashPtr;
 
 #else
 
@@ -44,12 +46,12 @@ void DebugLog(const char *fmt, ...)
 {
 	static char buffer[1024];
 	va_list va;
-	va_start( va, fmt );
-	vsnprintf(buffer, 1024, fmt, va );
+	va_start(va, fmt);
+	vsnprintf(buffer, 1024, fmt, va);
 	buffer[1023] = 0;
-	va_end( va );
+	va_end(va);
 
-	//printf( buffer );
+	// printf( buffer );
 	DBGMSG(buffer);
 }
 
@@ -58,4 +60,3 @@ void DebugLog(const char *fmt, ...)
 #endif
 
 #endif // DEBUG
-

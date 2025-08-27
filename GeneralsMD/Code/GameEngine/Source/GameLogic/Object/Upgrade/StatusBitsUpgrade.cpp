@@ -43,7 +43,6 @@
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
-
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -51,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #define DEFINE_OBJECT_STATUS_NAMES
 #include "Common/Xfer.h"
@@ -73,76 +72,72 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void StatusBitsUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
+void StatusBitsUpgradeModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-  UpgradeModuleData::buildFieldParse(p);
+	UpgradeModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "StatusToSet",		ObjectStatusMaskType::parseFromINI,	NULL, offsetof( StatusBitsUpgradeModuleData, m_statusToSet ) },
-		{ "StatusToClear",	ObjectStatusMaskType::parseFromINI,	NULL, offsetof( StatusBitsUpgradeModuleData, m_statusToClear ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "StatusToSet", ObjectStatusMaskType::parseFromINI, NULL, offsetof(StatusBitsUpgradeModuleData, m_statusToSet) },
+		{ "StatusToClear", ObjectStatusMaskType::parseFromINI, NULL, offsetof(StatusBitsUpgradeModuleData, m_statusToClear) },
 		{ 0, 0, 0, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StatusBitsUpgrade::StatusBitsUpgrade( Thing *thing, const ModuleData* moduleData ) : UpgradeModule( thing, moduleData )
+StatusBitsUpgrade::StatusBitsUpgrade(Thing *thing, const ModuleData *moduleData) : UpgradeModule(thing, moduleData)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StatusBitsUpgrade::~StatusBitsUpgrade( void )
+StatusBitsUpgrade::~StatusBitsUpgrade(void)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void StatusBitsUpgrade::upgradeImplementation( )
+void StatusBitsUpgrade::upgradeImplementation()
 {
 	Object *obj = getObject();
-	obj->setStatus( getStatusBitsUpgradeModuleData()->m_statusToSet );
-	obj->clearStatus( getStatusBitsUpgradeModuleData()->m_statusToClear );
+	obj->setStatus(getStatusBitsUpgradeModuleData()->m_statusToSet);
+	obj->clearStatus(getStatusBitsUpgradeModuleData()->m_statusToClear);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void StatusBitsUpgrade::crc( Xfer *xfer )
+void StatusBitsUpgrade::crc(Xfer *xfer)
 {
-
 	// extend base class
-	UpgradeModule::crc( xfer );
+	UpgradeModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void StatusBitsUpgrade::xfer( Xfer *xfer )
+void StatusBitsUpgrade::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpgradeModule::xfer( xfer );
+	UpgradeModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void StatusBitsUpgrade::loadPostProcess( void )
+void StatusBitsUpgrade::loadPostProcess(void)
 {
-
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

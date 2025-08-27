@@ -43,11 +43,8 @@
 //-------------------------------------------------------------------------------------------------
 class W3DModuleFactory : public ModuleFactory
 {
-
 public:
-
-	virtual void init( void );
-
+	virtual void init(void);
 };
 
 #endif // __W3DMODULEFACTORY_H_

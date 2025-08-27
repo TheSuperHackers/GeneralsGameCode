@@ -61,7 +61,6 @@
 // IMPORTANT: Make sure this enum is identical to the one in Noxstring tool
 typedef enum
 {
-
 	LANGUAGE_ID_US = 0,
 	LANGUAGE_ID_UK,
 	LANGUAGE_ID_GERMAN,
@@ -87,8 +86,8 @@ typedef enum
 #define GameSprintf swprintf
 #define GameVsprintf vswprintf
 /// @todo -- add a non-malloc-based string dup func #define GameStrdup wcsdup
-#define GameAtoi(S) wcstol( (S), NULL, 10)
-#define GameAtod(S) wcstod( (S), NULL )
+#define GameAtoi(S) wcstol((S), NULL, 10)
+#define GameAtod(S) wcstod((S), NULL)
 #define GameItoa _itow
 #define GameSscanf swscanf
 #define GameStrstr wcsstr
@@ -97,12 +96,11 @@ typedef enum
 #define GameIsAscii iswascii
 #define GameIsAlNum iswalnum
 #define GameIsAlpha iswalpha
-#define GameArrayEnd(array) (array)[(sizeof(array)/sizeof((array)[0]))-1] = 0
+#define GameArrayEnd(array) (array)[(sizeof(array) / sizeof((array)[0])) - 1] = 0
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-extern LanguageID OurLanguage;  ///< our current language definition
+extern LanguageID OurLanguage; ///< our current language definition
 
 #endif // __LANGUAGE_H_
-

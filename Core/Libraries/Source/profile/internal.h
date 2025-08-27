@@ -27,7 +27,7 @@
 // Internal header
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef INTERNAL_H // Include guard
 #define INTERNAL_H
@@ -46,8 +46,8 @@
 
 class ProfileFastCS
 {
-  ProfileFastCS(const ProfileFastCS&) CPP_11(= delete);
-  ProfileFastCS& operator=(const ProfileFastCS&) CPP_11(= delete);
+	ProfileFastCS(const ProfileFastCS &) CPP_11(= delete);
+	ProfileFastCS &operator=(const ProfileFastCS &) CPP_11(= delete);
 
 	static HANDLE testEvent;
 
@@ -56,44 +56,32 @@ class ProfileFastCS
 
 	void ThreadSafeSetFlag()
 	{
-		volatile unsigned& nFlag=m_Flag;
+		volatile unsigned &nFlag = m_Flag;
 
-		#define ts_lock _emit 0xF0
+#define ts_lock _emit 0xF0
 		DASSERT(((unsigned)&nFlag % 4) == 0);
 
-		__asm mov ebx, [nFlag]
-		__asm ts_lock
-		__asm bts dword ptr [ebx], 0
-		__asm jc The_Bit_Was_Previously_Set_So_Try_Again
-		return;
+		__asm mov ebx, [nFlag] __asm ts_lock __asm bts dword ptr[ebx], 0 __asm jc The_Bit_Was_Previously_Set_So_Try_Again return;
 
 	The_Bit_Was_Previously_Set_So_Try_Again:
-    // can't use SwitchToThread() here because Win9X doesn't have it!
-    if (testEvent)
-		  ::WaitForSingleObject(testEvent,1);
-		__asm mov ebx, [nFlag]
-		__asm ts_lock
-		__asm bts dword ptr [ebx], 0
-		__asm jc  The_Bit_Was_Previously_Set_So_Try_Again
+		// can't use SwitchToThread() here because Win9X doesn't have it!
+		if (testEvent)
+			::WaitForSingleObject(testEvent, 1);
+		__asm mov ebx, [nFlag] __asm ts_lock __asm bts dword ptr[ebx], 0 __asm jc The_Bit_Was_Previously_Set_So_Try_Again
 	}
 
-	void ThreadSafeClearFlag()
-	{
-		m_Flag=0;
-	}
+	void ThreadSafeClearFlag() { m_Flag = 0; }
 
 public:
-	ProfileFastCS(void):
-    m_Flag(0)
-  {
-  }
+	ProfileFastCS(void) : m_Flag(0) {}
 #else
 
 	volatile std::atomic_flag Flag{};
 
 	void ThreadSafeSetFlag()
 	{
-		while (Flag.test_and_set(std::memory_order_acq_rel)) {
+		while (Flag.test_and_set(std::memory_order_acq_rel))
+		{
 			Flag.wait(true, std::memory_order_relaxed);
 		}
 	}
@@ -111,22 +99,15 @@ public:
 
 	class Lock
 	{
-    Lock(const Lock&) CPP_11(= delete);
-	Lock& operator=(const Lock&) CPP_11(= delete);
+		Lock(const Lock &) CPP_11(= delete);
+		Lock &operator=(const Lock &) CPP_11(= delete);
 
-		ProfileFastCS& CriticalSection;
+		ProfileFastCS &CriticalSection;
 
 	public:
-		Lock(ProfileFastCS& cs):
-      CriticalSection(cs)
-		{
-			CriticalSection.ThreadSafeSetFlag();
-		}
+		Lock(ProfileFastCS &cs) : CriticalSection(cs) { CriticalSection.ThreadSafeSetFlag(); }
 
-		~Lock()
-		{
-			CriticalSection.ThreadSafeClearFlag();
-		}
+		~Lock() { CriticalSection.ThreadSafeClearFlag(); }
 	};
 
 	friend class Lock;
@@ -139,8 +120,8 @@ void ProfileFreeMemory(void *ptr);
 __forceinline void ProfileGetTime(__int64 &t)
 {
 #if defined(_MSC_VER) && _MSC_VER < 1300
-  _asm
-  {
+	_asm
+			{
     mov ecx,[t]
     push eax
     push edx
@@ -149,9 +130,10 @@ __forceinline void ProfileGetTime(__int64 &t)
     mov [ecx+4],edx
     pop edx
     pop eax
-  };
+			}
+	;
 #else
-  t = static_cast<__int64>(_rdtsc());
+	t = static_cast<__int64>(_rdtsc());
 #endif
 }
 

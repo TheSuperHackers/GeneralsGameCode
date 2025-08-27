@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : WW3DView                                                     *
  *                                                                                             *
- *                     $Archive:: /Commando/Code/Tools/W3DView/Vector3RndCombo.cpp                                                                                                                                                                                                                                                                                                                              $Modtime::                                                             $*
+ *                     $Archive:: /Commando/Code/Tools/W3DView/Vector3RndCombo.cpp $Modtime:: $*
  *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
@@ -30,66 +30,60 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "StdAfx.h"
 #include "Vector3RndCombo.H"
 #include "v3_rnd.h"
 
-const char * const RANDOMIZER_NAMES[Vector3Randomizer::CLASSID_MAXKNOWN] =
-{
+const char *const RANDOMIZER_NAMES[Vector3Randomizer::CLASSID_MAXKNOWN] = {
 	"Solid Box",
 	"Solid Sphere",
 	"Hollow Sphere",
 	"Solid Cylinder",
 };
 
-
 ////////////////////////////////////////////////////////////////////
 //
 //	Fill_Vector3_Rnd_Combo
 //
 ////////////////////////////////////////////////////////////////////
-void
-Fill_Vector3_Rnd_Combo (HWND hcombobox)
+void Fill_Vector3_Rnd_Combo(HWND hcombobox)
 {
-	ASSERT (Vector3Randomizer::CLASSID_MAXKNOWN == (sizeof (RANDOMIZER_NAMES) / sizeof (char *)));
+	ASSERT(Vector3Randomizer::CLASSID_MAXKNOWN == (sizeof(RANDOMIZER_NAMES) / sizeof(char *)));
 
 	//
 	//	Add all the strings to the combobox
 	//
-	for (int index = 0; index < Vector3Randomizer::CLASSID_MAXKNOWN; index ++) {
-		::SendMessage (hcombobox, CB_ADDSTRING, 0, (LPARAM)RANDOMIZER_NAMES[index]);
+	for (int index = 0; index < Vector3Randomizer::CLASSID_MAXKNOWN; index++)
+	{
+		::SendMessage(hcombobox, CB_ADDSTRING, 0, (LPARAM)RANDOMIZER_NAMES[index]);
 	}
 
-	return ;
+	return;
 }
-
 
 ////////////////////////////////////////////////////////////////////
 //
 //	Combo_Index_From_Vector3_Rnd
 //
 ////////////////////////////////////////////////////////////////////
-int
-Combo_Index_From_Vector3_Rnd (Vector3Randomizer *randomizer)
+int Combo_Index_From_Vector3_Rnd(Vector3Randomizer *randomizer)
 {
 	int index = 0;
-	if (randomizer != NULL) {
-		index = (int)randomizer->Class_ID ();
+	if (randomizer != NULL)
+	{
+		index = (int)randomizer->Class_ID();
 	}
 
 	// Return the index to the caller
 	return index;
 }
 
-
 ////////////////////////////////////////////////////////////////////
 //
 //	Vector3_Rnd_From_Combo_Index
 //
 ////////////////////////////////////////////////////////////////////
-Vector3Randomizer *
-Vector3_Rnd_From_Combo_Index (int index, float value1, float value2, float value3)
+Vector3Randomizer *Vector3_Rnd_From_Combo_Index(int index, float value1, float value2, float value3)
 {
 	Vector3Randomizer *randomizer = NULL;
 
@@ -99,19 +93,19 @@ Vector3_Rnd_From_Combo_Index (int index, float value1, float value2, float value
 	switch (index)
 	{
 		case Vector3Randomizer::CLASSID_SOLIDBOX:
-			randomizer = new Vector3SolidBoxRandomizer (Vector3 (value1, value2, value3));
+			randomizer = new Vector3SolidBoxRandomizer(Vector3(value1, value2, value3));
 			break;
 
 		case Vector3Randomizer::CLASSID_SOLIDSPHERE:
-			randomizer = new Vector3SolidSphereRandomizer (value1);
+			randomizer = new Vector3SolidSphereRandomizer(value1);
 			break;
 
 		case Vector3Randomizer::CLASSID_HOLLOWSPHERE:
-			randomizer = new Vector3HollowSphereRandomizer (value1);
+			randomizer = new Vector3HollowSphereRandomizer(value1);
 			break;
 
 		case Vector3Randomizer::CLASSID_SOLIDCYLINDER:
-			randomizer = new Vector3SolidCylinderRandomizer (value1, value2);
+			randomizer = new Vector3SolidCylinderRandomizer(value1, value2);
 			break;
 	}
 

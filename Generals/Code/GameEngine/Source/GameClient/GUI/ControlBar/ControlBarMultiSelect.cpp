@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/ThingTemplate.h"
 #include "GameClient/ControlBar.h"
@@ -40,38 +40,35 @@
 #include "GameClient/InGameUI.h"
 #include "GameLogic/Object.h"
 
-
-
-
 //-------------------------------------------------------------------------------------------------
 /** Reset the common command data */
 //-------------------------------------------------------------------------------------------------
-void ControlBar::resetCommonCommandData( void )
+void ControlBar::resetCommonCommandData(void)
 {
 	Int i;
 
-	for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
+	for (i = 0; i < MAX_COMMANDS_PER_SET; i++)
 	{
-		m_commonCommands[ i ] = NULL;
-		//Clear out any remnant overlays.
-		GadgetButtonDrawOverlayImage( m_commandWindows[ i ], NULL );
+		m_commonCommands[i] = NULL;
+		// Clear out any remnant overlays.
+		GadgetButtonDrawOverlayImage(m_commandWindows[i], NULL);
 	}
 
-}  // end resetCommonCommandData
+} // end resetCommonCommandData
 
 //-------------------------------------------------------------------------------------------------
 /** add the common commands of this drawable to the common command set */
 //-------------------------------------------------------------------------------------------------
-void ControlBar::addCommonCommands( Drawable *draw, Bool firstDrawable )
+void ControlBar::addCommonCommands(Drawable *draw, Bool firstDrawable)
 {
 	Int i;
 	const CommandButton *command;
 
 	// sanity
-	if( draw == NULL )
+	if (draw == NULL)
 		return;
 
-	Object* obj = draw->getObject();
+	Object *obj = draw->getObject();
 	if (!obj)
 		return;
 
@@ -79,99 +76,94 @@ void ControlBar::addCommonCommands( Drawable *draw, Bool firstDrawable )
 		return;
 
 	// get the command set of this drawable
-	const CommandSet *commandSet = findCommandSet( obj->getCommandSetString() );
-	if( commandSet == NULL )
+	const CommandSet *commandSet = findCommandSet(obj->getCommandSetString());
+	if (commandSet == NULL)
 	{
-
 		//
 		// if there is no command set for this drawable, none of the selected drawables
 		// can possibly have matching commands so we'll get rid of them all
 		//
-		for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
+		for (i = 0; i < MAX_COMMANDS_PER_SET; i++)
 		{
-
-			m_commonCommands[ i ] = NULL;
-			if (m_commandWindows[ i ])
+			m_commonCommands[i] = NULL;
+			if (m_commandWindows[i])
 			{
-				m_commandWindows[ i ]->winHide( TRUE );
+				m_commandWindows[i]->winHide(TRUE);
 			}
 			// After Every change to the m_commandWIndows, we need to show fill in the missing blanks with the images
-	// removed from multiplayer branch
-			//showCommandMarkers();
+			// removed from multiplayer branch
+			// showCommandMarkers();
 
-		}  // end for i
+		} // end for i
 
 		return;
 
-	}  // end if
-
+	} // end if
 
 	//
 	// easy case, if we're adding the first drawable we simply just add any of the commands
 	// in its set that can be multi-select commands to the common command set
 	//
-	if( firstDrawable == TRUE )
+	if (firstDrawable == TRUE)
 	{
-
 		// just add each command that is classified as a common command
-		for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
+		for (i = 0; i < MAX_COMMANDS_PER_SET; i++)
 		{
 			// our implementation doesn't necessarily make use of the max possible command buttons
-			if (! m_commandWindows[ i ]) continue;
+			if (!m_commandWindows[i])
+				continue;
 
 			// get command
 			command = commandSet->getCommandButton(i);
 
 			// add if present and can be used in a multi select
-			if( command && BitIsSet( command->getOptions(), OK_FOR_MULTI_SELECT ) == TRUE )
+			if (command && BitIsSet(command->getOptions(), OK_FOR_MULTI_SELECT) == TRUE)
 			{
-
 				// put it in the common command set
-				m_commonCommands[ i ] = command;
+				m_commonCommands[i] = command;
 
 				// show and enable this control
-				m_commandWindows[ i ]->winHide( FALSE );
-				m_commandWindows[ i ]->winEnable( TRUE );
+				m_commandWindows[i]->winHide(FALSE);
+				m_commandWindows[i]->winEnable(TRUE);
 
 				// set the command into the control
-				setControlCommand( m_commandWindows[ i ], command );
+				setControlCommand(m_commandWindows[i], command);
 
-			}  // end if
+			} // end if
 
-		}  // end for i
+		} // end for i
 
-	}  // end if
+	} // end if
 	else
 	{
-
 		// go through each command one by one
-		for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
+		for (i = 0; i < MAX_COMMANDS_PER_SET; i++)
 		{
-
 			// our implementation doesn't necessarily make use of the max possible command buttons
-			if (! m_commandWindows[ i ]) continue;
+			if (!m_commandWindows[i])
+				continue;
 
 			// get the command
 			command = commandSet->getCommandButton(i);
 
-			Bool attackMove = (command && command->getCommandType() == GUI_COMMAND_ATTACK_MOVE) ||
-												(m_commonCommands[ i ] && m_commonCommands[ i ]->getCommandType() == GUI_COMMAND_ATTACK_MOVE);
+			Bool attackMove = (command && command->getCommandType() == GUI_COMMAND_ATTACK_MOVE)
+					|| (m_commonCommands[i] && m_commonCommands[i]->getCommandType() == GUI_COMMAND_ATTACK_MOVE);
 
 			// Kris: When any units have attack move, they all get it. This is to allow
 			// combat units to be selected with the odd dozer or pilot and still retain that ability.
-			if( attackMove && !m_commonCommands[ i ] )
+			if (attackMove && !m_commonCommands[i])
 			{
 				// put it in the common command set
-				m_commonCommands[ i ] = command;
+				m_commonCommands[i] = command;
 
 				// show and enable this control
-				m_commandWindows[ i ]->winHide( FALSE );
-				m_commandWindows[ i ]->winEnable( TRUE );
+				m_commandWindows[i]->winHide(FALSE);
+				m_commandWindows[i]->winEnable(TRUE);
 
 				// set the command into the control
-				setControlCommand( m_commandWindows[ i ], command );
+				setControlCommand(m_commandWindows[i], command);
 			}
-			else if( command != m_commonCommands[ i ] && !attackMove )
+			else if (command != m_commonCommands[i] && !attackMove)
 			{
 				//
 				// if this command does not match the command that is in the common command set then
@@ -180,30 +172,30 @@ void ControlBar::addCommonCommands( Drawable *draw, Bool firstDrawable )
 				//
 
 				// remove the common command
-				m_commonCommands[ i ] = NULL;
+				m_commonCommands[i] = NULL;
 
 				//
 				// hide the window control cause it should have been made visible from a command
 				// that was placed in this common 'slot' earlier
 				//
-				m_commandWindows[ i ]->winHide( TRUE );
+				m_commandWindows[i]->winHide(TRUE);
 			}
 
-		}  // end if
+		} // end if
 
-	}  // end else
+	} // end else
 
 	// After Every change to the m_commandWIndows, we need to show fill in the missing blanks with the images
 	// removed from multiplayer branch
-	//showCommandMarkers();
+	// showCommandMarkers();
 
-}  // end addCommonCommands
+} // end addCommonCommands
 
 //-------------------------------------------------------------------------------------------------
 /** Populate the visible command bar with commands that are common to all the objects
-	* that are selected in the UI */
+ * that are selected in the UI */
 //-------------------------------------------------------------------------------------------------
-void ControlBar::populateMultiSelect( void )
+void ControlBar::populateMultiSelect(void)
 {
 	Drawable *draw;
 	Bool firstDrawable = TRUE;
@@ -215,37 +207,34 @@ void ControlBar::populateMultiSelect( void )
 	resetCommonCommandData();
 
 	// by default, hide all the controls in the command section
-	for( Int i = 0; i < MAX_COMMANDS_PER_SET; i++ )
+	for (Int i = 0; i < MAX_COMMANDS_PER_SET; i++)
 	{
-		if (m_commandWindows[ i ])
+		if (m_commandWindows[i])
 		{
-			m_commandWindows[ i ]->winHide( TRUE );
+			m_commandWindows[i]->winHide(TRUE);
 		}
 	}
 
 	// sanity
-	DEBUG_ASSERTCRASH( TheInGameUI->getSelectCount() > 1,
-										 ("populateMultiSelect: Can't populate multiselect context cause there are only '%d' things selected",
-										  TheInGameUI->getSelectCount()) );
+	DEBUG_ASSERTCRASH(
+			TheInGameUI->getSelectCount() > 1,
+			("populateMultiSelect: Can't populate multiselect context cause there are only '%d' things selected",
+			 TheInGameUI->getSelectCount()));
 
 	// get the list of drawable IDs from the in game UI
 	const DrawableList *selectedDrawables = TheInGameUI->getAllSelectedDrawables();
 
 	// sanity
-	DEBUG_ASSERTCRASH( selectedDrawables->empty() == FALSE, ("populateMultiSelect: Drawable list is empty") );
+	DEBUG_ASSERTCRASH(selectedDrawables->empty() == FALSE, ("populateMultiSelect: Drawable list is empty"));
 
 	// loop through all the selected drawables
-	for( DrawableListCIt it = selectedDrawables->begin();
-			 it != selectedDrawables->end(); ++it )
+	for (DrawableListCIt it = selectedDrawables->begin(); it != selectedDrawables->end(); ++it)
 	{
-
 		// get the drawable
 		draw = *it;
 
-
 		if (draw->getObject()->isKindOf(KINDOF_IGNORED_IN_GUI)) // ignore these guys
 			continue;
-
 
 		//
 		// add command for this drawable, note that we also sanity check to make sure the
@@ -255,12 +244,10 @@ void ControlBar::populateMultiSelect( void )
 		// NOTE that we're not considering objects that are currently in the process of
 		// being sold as those objects can't be issued anymore commands
 		//
-		if( draw && draw->getObject() &&
-				!draw->getObject()->getStatusBits().test( OBJECT_STATUS_SOLD ) )
+		if (draw && draw->getObject() && !draw->getObject()->getStatusBits().test(OBJECT_STATUS_SOLD))
 		{
-
 			// add the common commands of this drawable to the common command set
-			addCommonCommands( draw, firstDrawable );
+			addCommonCommands(draw, firstDrawable);
 
 			// not adding the first drawble anymore
 			firstDrawable = FALSE;
@@ -269,159 +256,155 @@ void ControlBar::populateMultiSelect( void )
 			// keep track of the portrait images, if all units selected have the same portrait
 			// we will display it in the right HUD, otherwise we won't
 			//
-			if( portraitSet == FALSE )
+			if (portraitSet == FALSE)
 			{
-
 				portrait = draw->getTemplate()->getSelectedPortraitImage();
 				portraitObj = draw->getObject();
 				portraitSet = TRUE;
 
-			}  // end if
-			else if( draw->getTemplate()->getSelectedPortraitImage() != portrait )
+			} // end if
+			else if (draw->getTemplate()->getSelectedPortraitImage() != portrait)
 				portrait = NULL;
 
-		}  // end if
+		} // end if
 
-	}  // end for, drawble id iterator
+	} // end for, drawble id iterator
 
 	// set the portrait image
-	setPortraitByObject( portraitObj );
+	setPortraitByObject(portraitObj);
 
-}  // end populateMultiSelect
+} // end populateMultiSelect
 
 //-------------------------------------------------------------------------------------------------
 /** Update logic for the multi select context sensitive GUI */
 //-------------------------------------------------------------------------------------------------
-void ControlBar::updateContextMultiSelect( void )
+void ControlBar::updateContextMultiSelect(void)
 {
 	Drawable *draw;
 	Object *obj;
 	const CommandButton *command;
 	GameWindow *win;
-	Int objectsThatCanDoCommand[ MAX_COMMANDS_PER_SET ];
+	Int objectsThatCanDoCommand[MAX_COMMANDS_PER_SET];
 	Int i;
 
 	// zero the array that counts how many objects can do each command
-	memset( objectsThatCanDoCommand, 0, sizeof( objectsThatCanDoCommand ) );
+	memset(objectsThatCanDoCommand, 0, sizeof(objectsThatCanDoCommand));
 
 	// santiy
-	DEBUG_ASSERTCRASH( TheInGameUI->getSelectCount() > 1,
-										 ("updateContextMultiSelect: TheInGameUI only has '%d' things selected",
-										  TheInGameUI->getSelectCount()) );
+	DEBUG_ASSERTCRASH(
+			TheInGameUI->getSelectCount() > 1,
+			("updateContextMultiSelect: TheInGameUI only has '%d' things selected", TheInGameUI->getSelectCount()));
 
 	// get the list of drawable IDs from the in game UI
 	const DrawableList *selectedDrawables = TheInGameUI->getAllSelectedDrawables();
 
 	// sanity
-	DEBUG_ASSERTCRASH( selectedDrawables->empty() == FALSE, ("populateMultiSelect: Drawable list is empty") );
+	DEBUG_ASSERTCRASH(selectedDrawables->empty() == FALSE, ("populateMultiSelect: Drawable list is empty"));
 
 	// loop through all the selected drawable IDs
-	for( DrawableListCIt it = selectedDrawables->begin();
-			 it != selectedDrawables->end(); ++it )
+	for (DrawableListCIt it = selectedDrawables->begin(); it != selectedDrawables->end(); ++it)
 	{
-
 		// get the drawable from the ID
 		draw = *it;
 
 		if (draw->getObject()->isKindOf(KINDOF_IGNORED_IN_GUI)) // ignore these guys
 			continue;
 
-
 		// get the object
 		obj = draw->getObject();
 
 		// sanity
-		if( obj == NULL )
+		if (obj == NULL)
 			continue;
 
 		// for each of the visible command windows make sure the object can execute the command
-		for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
+		for (i = 0; i < MAX_COMMANDS_PER_SET; i++)
 		{
-
 			// get the control window
-			win = m_commandWindows[ i ];
+			win = m_commandWindows[i];
 
 			// our implementation doesn't necessarily make use of the max possible command buttons
-			if (!win) continue;
+			if (!win)
+				continue;
 
 			// don't consider hidden windows
-			if( win->winIsHidden() == TRUE )
+			if (win->winIsHidden() == TRUE)
 				continue;
 
 			// get the command
 			command = (const CommandButton *)GadgetButtonGetData(win);
-			if( command == NULL )
+			if (command == NULL)
 				continue;
 
 			// can we do the command
-			CommandAvailability availability = getCommandAvailability( command, obj, win );
+			CommandAvailability availability = getCommandAvailability(command, obj, win);
 
-			win->winClearStatus( WIN_STATUS_NOT_READY );
-			win->winClearStatus( WIN_STATUS_ALWAYS_COLOR );
+			win->winClearStatus(WIN_STATUS_NOT_READY);
+			win->winClearStatus(WIN_STATUS_ALWAYS_COLOR);
 
 			// enable/disable the window control
-			switch( availability )
+			switch (availability)
 			{
 				case COMMAND_HIDDEN:
-					win->winHide( TRUE );
+					win->winHide(TRUE);
 					break;
 				case COMMAND_RESTRICTED:
-					win->winEnable( FALSE );
+					win->winEnable(FALSE);
 					break;
 				case COMMAND_NOT_READY:
-					win->winEnable( FALSE );
-					win->winSetStatus( WIN_STATUS_NOT_READY );
+					win->winEnable(FALSE);
+					win->winSetStatus(WIN_STATUS_NOT_READY);
 					break;
 				case COMMAND_CANT_AFFORD:
-					win->winEnable( FALSE );
-					win->winSetStatus( WIN_STATUS_ALWAYS_COLOR );
+					win->winEnable(FALSE);
+					win->winSetStatus(WIN_STATUS_ALWAYS_COLOR);
 					break;
 				default:
-					win->winEnable( TRUE );
+					win->winEnable(TRUE);
 					break;
 			}
 
-			//If button is a CHECK_LIKE, then update it's status now.
-			if( BitIsSet( command->getOptions(), CHECK_LIKE ) )
+			// If button is a CHECK_LIKE, then update it's status now.
+			if (BitIsSet(command->getOptions(), CHECK_LIKE))
 			{
-				GadgetCheckLikeButtonSetVisualCheck( win, availability == COMMAND_ACTIVE );
+				GadgetCheckLikeButtonSetVisualCheck(win, availability == COMMAND_ACTIVE);
 			}
 
-			if( availability == COMMAND_AVAILABLE || availability == COMMAND_ACTIVE )
-					objectsThatCanDoCommand[ i ]++;
+			if (availability == COMMAND_AVAILABLE || availability == COMMAND_ACTIVE)
+				objectsThatCanDoCommand[i]++;
 
-		}  // end for i
+		} // end for i
 
-	}  // end for, selected drawables
+	} // end for, selected drawables
 
 	//
 	// for each command, if any objects can do the command we enable the window, otherwise
 	// we disable it
 	//
-	for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
+	for (i = 0; i < MAX_COMMANDS_PER_SET; i++)
 	{
 		// our implementation doesn't necessarily make use of the max possible command buttons
-		if (! m_commandWindows[ i ]) continue;
+		if (!m_commandWindows[i])
+			continue;
 
 		// don't consider hidden commands
-		if( m_commandWindows[ i ]->winIsHidden() == TRUE )
+		if (m_commandWindows[i]->winIsHidden() == TRUE)
 			continue;
 
 		// don't consider slots that don't have commands
-		if( m_commonCommands[ i ] == NULL )
+		if (m_commonCommands[i] == NULL)
 			continue;
 
 		// check the count of objects that can do the command and enable/disable the control,
-		if( objectsThatCanDoCommand[ i ] > 0 )
-			m_commandWindows[ i ]->winEnable( TRUE );
+		if (objectsThatCanDoCommand[i] > 0)
+			m_commandWindows[i]->winEnable(TRUE);
 		else
-			m_commandWindows[ i ]->winEnable( FALSE );
+			m_commandWindows[i]->winEnable(FALSE);
 
-	}  // end for i
+	} // end for i
 
 	// After Every change to the m_commandWIndows, we need to show fill in the missing blanks with the images
 	// removed from multiplayer branch
-	//showCommandMarkers();
+	// showCommandMarkers();
 
-
-}  // end updateContextMultiSelect
+} // end updateContextMultiSelect

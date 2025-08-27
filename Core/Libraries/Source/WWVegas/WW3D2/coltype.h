@@ -37,15 +37,12 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
 
-
 #ifndef COLTYPE_H
 #define COLTYPE_H
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -72,23 +69,20 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 enum
 {
-	COLL_TYPE_ALL	= 0x01,		// perform this test against *EVERYTHING*
-	COLL_TYPE_0		= 0x02,		// perform this test against type 0 collision objects
-	COLL_TYPE_1		= 0x04,		// perform this test against type 1 collision objects
-	COLL_TYPE_2		= 0x08,
-	COLL_TYPE_3		= 0x10,
-	COLL_TYPE_4		= 0x20,
-	COLL_TYPE_5		= 0x40,
-	COLL_TYPE_6		= 0x80,
+	COLL_TYPE_ALL = 0x01, // perform this test against *EVERYTHING*
+	COLL_TYPE_0 = 0x02, // perform this test against type 0 collision objects
+	COLL_TYPE_1 = 0x04, // perform this test against type 1 collision objects
+	COLL_TYPE_2 = 0x08,
+	COLL_TYPE_3 = 0x10,
+	COLL_TYPE_4 = 0x20,
+	COLL_TYPE_5 = 0x40,
+	COLL_TYPE_6 = 0x80,
 
-	COLL_TYPE_PHYSICAL	=		COLL_TYPE_0,		// physics collisions
-	COLL_TYPE_PROJECTILE =	COLL_TYPE_1,		// projectile collisions
-	COLL_TYPE_VIS			=				COLL_TYPE_2,		// "vis node" detection
-	COLL_TYPE_CAMERA		=			COLL_TYPE_3,		// camera collision (99% should match physical setting)
-	COLL_TYPE_VEHICLE		=		COLL_TYPE_4,		// vehicles will collide with physical and this.
+	COLL_TYPE_PHYSICAL = COLL_TYPE_0, // physics collisions
+	COLL_TYPE_PROJECTILE = COLL_TYPE_1, // projectile collisions
+	COLL_TYPE_VIS = COLL_TYPE_2, // "vis node" detection
+	COLL_TYPE_CAMERA = COLL_TYPE_3, // camera collision (99% should match physical setting)
+	COLL_TYPE_VEHICLE = COLL_TYPE_4, // vehicles will collide with physical and this.
 };
 
-
-
 #endif
-

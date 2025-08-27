@@ -90,16 +90,15 @@
 // IMPORTANT NOTE: you should endeavor to set up states such that the most "normal"
 // state is defined by the bit being off. That is, the typical "normal" condition
 // has all condition flags set to zero.
-enum ModelConditionFlagType CPP_11(: Int)
-{
+enum ModelConditionFlagType CPP_11( : Int){
 	MODELCONDITION_INVALID = -1,
 
 	MODELCONDITION_FIRST = 0,
 
-//
-// Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
-// existing values!
-//
+	//
+	// Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
+	// existing values!
+	//
 	MODELCONDITION_TOPPLED = MODELCONDITION_FIRST,
 	MODELCONDITION_FRONTCRUSHED,
 	MODELCONDITION_BACKCRUSHED,
@@ -134,16 +133,17 @@ enum ModelConditionFlagType CPP_11(: Int)
 	MODELCONDITION_DOOR_4_CLOSING,
 	MODELCONDITION_DOOR_4_WAITING_OPEN,
 	MODELCONDITION_DOOR_4_WAITING_TO_CLOSE,
-	MODELCONDITION_ATTACKING,		//Simply set when a unit is fighting -- terrorist moving with a target will flail arms like a psycho.
-	MODELCONDITION_PREATTACK_A,		//Use for pre-attack animations (like aiming, pulling out a knife, or detonating explosives).
+	MODELCONDITION_ATTACKING, // Simply set when a unit is fighting -- terrorist moving with a target will flail arms like a
+														// psycho.
+	MODELCONDITION_PREATTACK_A, // Use for pre-attack animations (like aiming, pulling out a knife, or detonating explosives).
 	MODELCONDITION_FIRING_A,
 	MODELCONDITION_BETWEEN_FIRING_SHOTS_A,
 	MODELCONDITION_RELOADING_A,
-	MODELCONDITION_PREATTACK_B,		//Use for pre-attack animations (like aiming, pulling out a knife, or detonating explosives).
+	MODELCONDITION_PREATTACK_B, // Use for pre-attack animations (like aiming, pulling out a knife, or detonating explosives).
 	MODELCONDITION_FIRING_B,
 	MODELCONDITION_BETWEEN_FIRING_SHOTS_B,
 	MODELCONDITION_RELOADING_B,
-	MODELCONDITION_PREATTACK_C,		//Use for pre-attack animations (like aiming, pulling out a knife, or detonating explosives).
+	MODELCONDITION_PREATTACK_C, // Use for pre-attack animations (like aiming, pulling out a knife, or detonating explosives).
 	MODELCONDITION_FIRING_C,
 	MODELCONDITION_BETWEEN_FIRING_SHOTS_C,
 	MODELCONDITION_RELOADING_C,
@@ -160,38 +160,38 @@ enum ModelConditionFlagType CPP_11(: Int)
 	MODELCONDITION_CONSTRUCTION_COMPLETE,
 	MODELCONDITION_RADAR_EXTENDING,
 	MODELCONDITION_RADAR_UPGRADED,
-	MODELCONDITION_PANICKING,	// yes, it's spelled with a "k". look it up.
+	MODELCONDITION_PANICKING, // yes, it's spelled with a "k". look it up.
 	MODELCONDITION_AFLAME,
 	MODELCONDITION_SMOLDERING,
 	MODELCONDITION_BURNED,
-	MODELCONDITION_DOCKING,						///< This encloses the whole time you are Entering, Actioning, and Exiting a dock
-	MODELCONDITION_DOCKING_BEGINNING,	///< From Enter to Action
-	MODELCONDITION_DOCKING_ACTIVE,		///< From Action to Exit
-	MODELCONDITION_DOCKING_ENDING,		///< Exit all the way to next enter (use only animations that end with this)
+	MODELCONDITION_DOCKING, ///< This encloses the whole time you are Entering, Actioning, and Exiting a dock
+	MODELCONDITION_DOCKING_BEGINNING, ///< From Enter to Action
+	MODELCONDITION_DOCKING_ACTIVE, ///< From Action to Exit
+	MODELCONDITION_DOCKING_ENDING, ///< Exit all the way to next enter (use only animations that end with this)
 	MODELCONDITION_CARRYING,
 	MODELCONDITION_FLOODED,
-	MODELCONDITION_LOADED,				// loaded woot! ... like a transport is loaded
-	MODELCONDITION_JETAFTERBURNER,// shows "flames" for extra motive force (eg, when taking off)
-	MODELCONDITION_JETEXHAUST,		// shows "exhaust" for motive force
-	MODELCONDITION_PACKING,				// packs an object
-	MODELCONDITION_UNPACKING,			// unpacks an object
-	MODELCONDITION_DEPLOYED,			// a deployed object state
-	MODELCONDITION_OVER_WATER,		// Units that can go over water want cool effects for doing so
-	MODELCONDITION_POWER_PLANT_UPGRADED,	// to show special control rods on the cold fusion plant
-	MODELCONDITION_CLIMBING,	//For units climbing up or down cliffs.
-	MODELCONDITION_SOLD,					// object is being sold
+	MODELCONDITION_LOADED, // loaded woot! ... like a transport is loaded
+	MODELCONDITION_JETAFTERBURNER, // shows "flames" for extra motive force (eg, when taking off)
+	MODELCONDITION_JETEXHAUST, // shows "exhaust" for motive force
+	MODELCONDITION_PACKING, // packs an object
+	MODELCONDITION_UNPACKING, // unpacks an object
+	MODELCONDITION_DEPLOYED, // a deployed object state
+	MODELCONDITION_OVER_WATER, // Units that can go over water want cool effects for doing so
+	MODELCONDITION_POWER_PLANT_UPGRADED, // to show special control rods on the cold fusion plant
+	MODELCONDITION_CLIMBING, // For units climbing up or down cliffs.
+	MODELCONDITION_SOLD, // object is being sold
 #ifdef ALLOW_SURRENDER
-	MODELCONDITION_SURRENDER,			//When units surrender...
+	MODELCONDITION_SURRENDER, // When units surrender...
 #endif
 	MODELCONDITION_RAPPELLING,
-	MODELCONDITION_ARMED,					// armed like a mine or bomb is armed (not like a human is armed)
-	MODELCONDITION_POWER_PLANT_UPGRADING,	// while special control rods on the cold fusion plant are extending
+	MODELCONDITION_ARMED, // armed like a mine or bomb is armed (not like a human is armed)
+	MODELCONDITION_POWER_PLANT_UPGRADING, // while special control rods on the cold fusion plant are extending
 
-	//Special model conditions work as following:
-	//Something turns it on... but a timer in the object will turn them off after a given
-	//amount of time. If you add any more special animations, then you'll need to add the
-	//code to turn off the state.
-	MODELCONDITION_SPECIAL_CHEERING,	//When units do a victory cheer (or player initiated cheer).
+	// Special model conditions work as following:
+	// Something turns it on... but a timer in the object will turn them off after a given
+	// amount of time. If you add any more special animations, then you'll need to add the
+	// code to turn off the state.
+	MODELCONDITION_SPECIAL_CHEERING, // When units do a victory cheer (or player initiated cheer).
 
 	MODELCONDITION_CONTINUOUS_FIRE_SLOW,
 	MODELCONDITION_CONTINUOUS_FIRE_MEAN,
@@ -217,7 +217,7 @@ enum ModelConditionFlagType CPP_11(: Int)
 	MODELCONDITION_CENTER_TO_RIGHT,
 	MODELCONDITION_RIGHT_TO_CENTER,
 
-	MODELCONDITION_RIDER1,	//Added these for different riders
+	MODELCONDITION_RIDER1, // Added these for different riders
 	MODELCONDITION_RIDER2,
 	MODELCONDITION_RIDER3,
 	MODELCONDITION_RIDER4,
@@ -229,20 +229,20 @@ enum ModelConditionFlagType CPP_11(: Int)
 	MODELCONDITION_STUNNED_FLAILING, // Daniel Teh's idea, added by Lorenzen, 5/28/03
 	MODELCONDITION_STUNNED,
 	MODELCONDITION_SECOND_LIFE,
-	MODELCONDITION_JAMMED,	///< Jammed as in missile jammed by ECM
+	MODELCONDITION_JAMMED, ///< Jammed as in missile jammed by ECM
 	MODELCONDITION_ARMORSET_CRATEUPGRADE_ONE,
 	MODELCONDITION_ARMORSET_CRATEUPGRADE_TWO,
 
-	MODELCONDITION_USER_1,		///< Wildcard flag to use with upgrade modules or other random little things
+	MODELCONDITION_USER_1, ///< Wildcard flag to use with upgrade modules or other random little things
 	MODELCONDITION_USER_2,
 
 	MODELCONDITION_DISGUISED,
-//
-// Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
-// existing values!
-//
+	//
+	// Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
+	// existing values!
+	//
 
-	MODELCONDITION_COUNT	// keep last!
+	MODELCONDITION_COUNT // keep last!
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -250,11 +250,12 @@ enum ModelConditionFlagType CPP_11(: Int)
 typedef BitFlags<MODELCONDITION_COUNT> ModelConditionFlags;
 
 #define MAKE_MODELCONDITION_MASK(k) ModelConditionFlags(ModelConditionFlags::kInit, (k))
-#define MAKE_MODELCONDITION_MASK2(k,a) ModelConditionFlags(ModelConditionFlags::kInit, (k), (a))
-#define MAKE_MODELCONDITION_MASK3(k,a,b) ModelConditionFlags(ModelConditionFlags::kInit, (k), (a), (b))
-#define MAKE_MODELCONDITION_MASK4(k,a,b,c) ModelConditionFlags(ModelConditionFlags::kInit, (k), (a), (b), (c))
-#define MAKE_MODELCONDITION_MASK5(k,a,b,c,d) ModelConditionFlags(ModelConditionFlags::kInit, (k), (a), (b), (c), (d))
-#define MAKE_MODELCONDITION_MASK12(a,b,c,d,e,f,g,h,i,j,k,l) ModelConditionFlags(ModelConditionFlags::kInit, (a), (b), (c), (d), (e), (f), (g), (h), (i), (j), (k), (l))
+#define MAKE_MODELCONDITION_MASK2(k, a) ModelConditionFlags(ModelConditionFlags::kInit, (k), (a))
+#define MAKE_MODELCONDITION_MASK3(k, a, b) ModelConditionFlags(ModelConditionFlags::kInit, (k), (a), (b))
+#define MAKE_MODELCONDITION_MASK4(k, a, b, c) ModelConditionFlags(ModelConditionFlags::kInit, (k), (a), (b), (c))
+#define MAKE_MODELCONDITION_MASK5(k, a, b, c, d) ModelConditionFlags(ModelConditionFlags::kInit, (k), (a), (b), (c), (d))
+#define MAKE_MODELCONDITION_MASK12(a, b, c, d, e, f, g, h, i, j, k, l) \
+	ModelConditionFlags(ModelConditionFlags::kInit, (a), (b), (c), (d), (e), (f), (g), (h), (i), (j), (k), (l))
 
 //-------------------------------------------------------------------------------------------------
 
@@ -263,4 +264,3 @@ typedef BitFlags<MODELCONDITION_COUNT> ModelConditionFlags;
 //-------------------------------------------------------------------------------------------------
 
 #endif // _ModelState_H_
-

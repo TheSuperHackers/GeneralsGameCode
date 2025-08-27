@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -50,7 +49,6 @@ class PersistFactoryClass;
 class ChunkSaveClass;
 class ChunkLoadClass;
 
-
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	PersistClass
@@ -65,13 +63,9 @@ class ChunkLoadClass;
 class PersistClass : public PostLoadableClass
 {
 public:
-
-	virtual const PersistFactoryClass &	Get_Factory (void) const			= 0;
-	virtual bool								Save (ChunkSaveClass &csave)		{ return true; }
-	virtual bool								Load (ChunkLoadClass &cload)		{ return true; }
-
+	virtual const PersistFactoryClass &Get_Factory(void) const = 0;
+	virtual bool Save(ChunkSaveClass &csave) { return true; }
+	virtual bool Load(ChunkLoadClass &cload) { return true; }
 };
-
-
 
 #endif

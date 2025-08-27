@@ -35,53 +35,53 @@ Last Update : June 17, 1997
 
 class Wstring
 {
- public:
-           Wstring();
-           Wstring(const Wstring &other);
-           Wstring(const char *string);
-          ~Wstring();
+public:
+	Wstring();
+	Wstring(const Wstring &other);
+	Wstring(const char *string);
+	~Wstring();
 
-   void    clear(void);
+	void clear(void);
 
-   bit8    cat(const char *string);
-   bit8    cat(uint32 size,const char *string);
-   bit8    cat(const Wstring &string);
+	bit8 cat(const char *string);
+	bit8 cat(uint32 size, const char *string);
+	bit8 cat(const Wstring &string);
 
-   void    cellCopy(OUT char *dest, uint32 len);
-   char    remove(sint32 pos, sint32 count);
-   bit8    removeChar(char c);
-   void    removeSpaces(void);
-   const char *get(void) const;
-   char    get(uint32 index) const;
-   uint32  length(void) const;
-   bit8    insert(char c, uint32 pos);
-   bit8    insert(const char *instring, uint32 pos);
-   bit8    replace(const char *replaceThis,const char *withThis);
-   char    set(const char *str);
-   char    set(uint32 size,const char *str);
-   bit8    set(char c, uint32 index);
-   void    setSize(sint32 bytes);  // create an empty string
-   void    toLower(void);
-   void    toUpper(void);
-   bit8    truncate(uint32 len);
-   bit8    truncate(char c);  // trunc after char c
-   sint32  getToken(int offset,const char *delim,Wstring &out);
-   sint32  getLine(int offset, Wstring &out);
+	void cellCopy(OUT char *dest, uint32 len);
+	char remove(sint32 pos, sint32 count);
+	bit8 removeChar(char c);
+	void removeSpaces(void);
+	const char *get(void) const;
+	char get(uint32 index) const;
+	uint32 length(void) const;
+	bit8 insert(char c, uint32 pos);
+	bit8 insert(const char *instring, uint32 pos);
+	bit8 replace(const char *replaceThis, const char *withThis);
+	char set(const char *str);
+	char set(uint32 size, const char *str);
+	bit8 set(char c, uint32 index);
+	void setSize(sint32 bytes); // create an empty string
+	void toLower(void);
+	void toUpper(void);
+	bit8 truncate(uint32 len);
+	bit8 truncate(char c); // trunc after char c
+	sint32 getToken(int offset, const char *delim, Wstring &out);
+	sint32 getLine(int offset, Wstring &out);
 
-   bit8    operator==(const char *other);
-   bit8    operator==(const Wstring &other);
-   bit8    operator!=(const char *other);
-   bit8    operator!=(const Wstring &other);
+	bit8 operator==(const char *other);
+	bit8 operator==(const Wstring &other);
+	bit8 operator!=(const char *other);
+	bit8 operator!=(const Wstring &other);
 
-   Wstring  &operator=(const char *other);
-   Wstring  &operator=(const Wstring &other);
-   Wstring  &operator+=(const char *other);
-   Wstring  &operator+=(const Wstring &other);
-   Wstring   operator+(const char *other);
-   Wstring   operator+(const Wstring &other);
+	Wstring &operator=(const char *other);
+	Wstring &operator=(const Wstring &other);
+	Wstring &operator+=(const char *other);
+	Wstring &operator+=(const Wstring &other);
+	Wstring operator+(const char *other);
+	Wstring operator+(const Wstring &other);
 
- private:
-   char    *str;    // Pointer to allocated string.
+private:
+	char *str; // Pointer to allocated string.
 };
 
 #endif

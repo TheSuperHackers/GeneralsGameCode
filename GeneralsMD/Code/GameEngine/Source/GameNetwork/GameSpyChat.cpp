@@ -26,7 +26,7 @@
 // GameSpy chat handlers
 // Author: Matthew D. Campbell, February 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameClient/GameText.h"
 #include "GameClient/GadgetListBox.h"
@@ -38,20 +38,20 @@
 typedef set<AsciiString>::const_iterator AsciiSetIter;
 
 /**
-	* handleSlashCommands looks for slash ccommands and handles them,
-	* returning true if it found one, false otherwise.
-	*   /i,/ignore									list ignored players
-	*   /i,/ignore +name1 -name2		ignore name1, stop ignoring name2
-	*   /m,/me:											shorthand for an action
-	*   /o,/on:											find command to look up a user's location
-	*   /f,/find:										find command to look up a user's location
-	*   /p,/page:										page user(s)
-	*   /r,/reply:									reply to last page
-	*   /raw:												raw IRC command (only in debug & internal)
-	*   /oper:											become an IRC op (only in debug & internal)
-	*   /quit:											send the IRC quit command to exit WOL
-	*/
-static Bool handleSlashCommands( UnicodeString message, Bool isAction, GameWindow *playerListbox )
+ * handleSlashCommands looks for slash ccommands and handles them,
+ * returning true if it found one, false otherwise.
+ *   /i,/ignore									list ignored players
+ *   /i,/ignore +name1 -name2		ignore name1, stop ignoring name2
+ *   /m,/me:											shorthand for an action
+ *   /o,/on:											find command to look up a user's location
+ *   /f,/find:										find command to look up a user's location
+ *   /p,/page:										page user(s)
+ *   /r,/reply:									reply to last page
+ *   /raw:												raw IRC command (only in debug & internal)
+ *   /oper:											become an IRC op (only in debug & internal)
+ *   /quit:											send the IRC quit command to exit WOL
+ */
+static Bool handleSlashCommands(UnicodeString message, Bool isAction, GameWindow *playerListbox)
 {
 	/*
 	if (message.getCharAt(0) == L'/')
@@ -269,9 +269,9 @@ static Bool handleSlashCommands( UnicodeString message, Bool isAction, GameWindo
 	return false;
 }
 
-static handleUnicodeMessage( const char *nick, UnicodeString msg, Bool isPublic, Bool isAction );
+static handleUnicodeMessage(const char *nick, UnicodeString msg, Bool isPublic, Bool isAction);
 
-Bool GameSpySendChat( UnicodeString message, Bool isAction, GameWindow *playerListbox )
+Bool GameSpySendChat(UnicodeString message, Bool isAction, GameWindow *playerListbox)
 {
 	RoomType roomType = StagingRoom;
 	if (TheGameSpyChat->getCurrentGroupRoomID())
@@ -293,14 +293,14 @@ Bool GameSpySendChat( UnicodeString message, Bool isAction, GameWindow *playerLi
 			if (isAction)
 			{
 				peerMessageRoom(TheGameSpyChat->getPeer(), roomType, UnicodeStringToQuotedPrintable(message).str(), ActionMessage);
-				//if (roomType == StagingRoom)
-					//handleUnicodeMessage(TheGameSpyChat->getloginName().str(), message, true, true);
+				// if (roomType == StagingRoom)
+				// handleUnicodeMessage(TheGameSpyChat->getloginName().str(), message, true, true);
 			}
 			else
 			{
 				peerMessageRoom(TheGameSpyChat->getPeer(), roomType, UnicodeStringToQuotedPrintable(message).str(), NormalMessage);
-				//if (roomType == StagingRoom)
-					//handleUnicodeMessage(TheGameSpyChat->getloginName().str(), message, true, false);
+				// if (roomType == StagingRoom)
+				// handleUnicodeMessage(TheGameSpyChat->getloginName().str(), message, true, false);
 			}
 			return false;
 		}
@@ -316,14 +316,14 @@ Bool GameSpySendChat( UnicodeString message, Bool isAction, GameWindow *playerLi
 			if (isAction)
 			{
 				peerMessageRoom(TheGameSpyChat->getPeer(), roomType, UnicodeStringToQuotedPrintable(message).str(), ActionMessage);
-				//if (roomType == StagingRoom)
-					//handleUnicodeMessage(TheGameSpyChat->getloginName().str(), message, true, true);
+				// if (roomType == StagingRoom)
+				// handleUnicodeMessage(TheGameSpyChat->getloginName().str(), message, true, true);
 			}
 			else
 			{
 				peerMessageRoom(TheGameSpyChat->getPeer(), roomType, UnicodeStringToQuotedPrintable(message).str(), NormalMessage);
-				//if (roomType == StagingRoom)
-					//handleUnicodeMessage(TheGameSpyChat->getloginName().str(), message, true, false);
+				// if (roomType == StagingRoom)
+				// handleUnicodeMessage(TheGameSpyChat->getloginName().str(), message, true, false);
 			}
 			return false;
 		}
@@ -336,7 +336,7 @@ Bool GameSpySendChat( UnicodeString message, Bool isAction, GameWindow *playerLi
 			AsciiString tmp = AsciiString::TheEmptyString;
 			AsciiString aStr; // AsciiString buf for translating Unicode entries
 			names.format("%s", TheGameSpyChat->getLoginName().str());
-			for (int i=0; i<maxSel; i++)
+			for (int i = 0; i < maxSel; i++)
 			{
 				if (selections[i] != -1)
 				{
@@ -357,11 +357,19 @@ Bool GameSpySendChat( UnicodeString message, Bool isAction, GameWindow *playerLi
 			{
 				if (isAction)
 				{
-					peerMessagePlayer(TheGameSpyChat->getPeer(), names.str(), UnicodeStringToQuotedPrintable(message).str(), ActionMessage);
+					peerMessagePlayer(
+							TheGameSpyChat->getPeer(),
+							names.str(),
+							UnicodeStringToQuotedPrintable(message).str(),
+							ActionMessage);
 				}
 				else
 				{
-					peerMessagePlayer(TheGameSpyChat->getPeer(), names.str(), UnicodeStringToQuotedPrintable(message).str(), NormalMessage);
+					peerMessagePlayer(
+							TheGameSpyChat->getPeer(),
+							names.str(),
+							UnicodeStringToQuotedPrintable(message).str(),
+							NormalMessage);
 				}
 			}
 
@@ -371,23 +379,25 @@ Bool GameSpySendChat( UnicodeString message, Bool isAction, GameWindow *playerLi
 	return false;
 }
 
-void RoomMessageCallback(PEER peer, RoomType roomType,
-												 const char * nick, const char * message,
-												 MessageType messageType, void * param)
+void RoomMessageCallback(
+		PEER peer,
+		RoomType roomType,
+		const char *nick,
+		const char *message,
+		MessageType messageType,
+		void *param)
 {
 	DEBUG_LOG(("RoomMessageCallback"));
 	handleUnicodeMessage(nick, QuotedPrintableToUnicodeString(message), true, (messageType == ActionMessage));
 }
 
-void PlayerMessageCallback(PEER peer,
-												 const char * nick, const char * message,
-												 MessageType messageType, void * param)
+void PlayerMessageCallback(PEER peer, const char *nick, const char *message, MessageType messageType, void *param)
 {
 	DEBUG_LOG(("PlayerMessageCallback"));
 	handleUnicodeMessage(nick, QuotedPrintableToUnicodeString(message), false, (messageType == ActionMessage));
 }
 
-static handleUnicodeMessage( const char *nick, UnicodeString msg, Bool isPublic, Bool isAction )
+static handleUnicodeMessage(const char *nick, UnicodeString msg, Bool isPublic, Bool isAction)
 {
 	GameSpyColors style;
 
@@ -401,43 +411,43 @@ static handleUnicodeMessage( const char *nick, UnicodeString msg, Bool isPublic,
 
 	if (isPublic && isAction)
 	{
-		style = (isOwner)?GSCOLOR_CHAT_OWNER_EMOTE:GSCOLOR_CHAT_EMOTE;
+		style = (isOwner) ? GSCOLOR_CHAT_OWNER_EMOTE : GSCOLOR_CHAT_EMOTE;
 	}
 	else if (isPublic)
 	{
-		style = (isOwner)?GSCOLOR_CHAT_OWNER:GSCOLOR_CHAT_NORMAL;
+		style = (isOwner) ? GSCOLOR_CHAT_OWNER : GSCOLOR_CHAT_NORMAL;
 	}
 	else if (isAction)
 	{
-		style = (isOwner)?GSCOLOR_CHAT_PRIVATE_OWNER_EMOTE:GSCOLOR_CHAT_PRIVATE_EMOTE;
+		style = (isOwner) ? GSCOLOR_CHAT_PRIVATE_OWNER_EMOTE : GSCOLOR_CHAT_PRIVATE_EMOTE;
 	}
 	else
 	{
-		style = (isOwner)?GSCOLOR_CHAT_PRIVATE_OWNER:GSCOLOR_CHAT_PRIVATE;
+		style = (isOwner) ? GSCOLOR_CHAT_PRIVATE_OWNER : GSCOLOR_CHAT_PRIVATE;
 	}
 
 	UnicodeString name;
 	name.translate(nick);
 
 	// filters language
-//  if( TheGlobalData->m_languageFilterPref )
-//  {
-    TheLanguageFilter->filterLine(msg);
-//	}
+	//  if( TheGlobalData->m_languageFilterPref )
+	//  {
+	TheLanguageFilter->filterLine(msg);
+	//	}
 
 	UnicodeString fullMsg;
 	if (isAction)
 	{
-		fullMsg.format( L"%ls %ls", name.str(), msg.str() );
+		fullMsg.format(L"%ls %ls", name.str(), msg.str());
 	}
 	else
 	{
-		fullMsg.format( L"[%ls] %ls", name.str(), msg.str() );
+		fullMsg.format(L"[%ls] %ls", name.str(), msg.str());
 	}
 	GameSpyAddText(fullMsg, style);
 }
 
-void GameSpyAddText( UnicodeString message, GameSpyColors color )
+void GameSpyAddText(UnicodeString message, GameSpyColors color)
 {
 	GameWindow *textWindow = NULL;
 
@@ -450,6 +460,4 @@ void GameSpyAddText( UnicodeString message, GameSpyColors color )
 		return;
 
 	GadgetListBoxAddEntryText(textWindow, message, GameSpyColor[color], -1, -1);
-
 }
-

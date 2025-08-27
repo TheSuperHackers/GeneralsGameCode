@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/INI.h"
 #include "Common/Upgrade.h"
@@ -36,10 +36,7 @@
 //-------------------------------------------------------------------------------------------------
 /** Parse an upgrade definition */
 //-------------------------------------------------------------------------------------------------
-void INI::parseUpgradeDefinition( INI *ini )
+void INI::parseUpgradeDefinition(INI *ini)
 {
 	UpgradeCenter::parseUpgradeDefinition(ini);
 }
-
-
-

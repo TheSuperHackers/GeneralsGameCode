@@ -28,73 +28,69 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameClient/Drawable.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/DestroyDie.h"
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DestroyDie::DestroyDie( Thing *thing, const ModuleData* moduleData ) : DieModule( thing, moduleData )
+DestroyDie::DestroyDie(Thing *thing, const ModuleData *moduleData) : DieModule(thing, moduleData)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DestroyDie::~DestroyDie( void )
+DestroyDie::~DestroyDie(void)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 /** The die callback. */
 //-------------------------------------------------------------------------------------------------
-void DestroyDie::onDie( const DamageInfo *damageInfo )
+void DestroyDie::onDie(const DamageInfo *damageInfo)
 {
 	Object *obj = getObject();
 	if (!isDieApplicable(damageInfo))
 		return;
-	TheGameLogic->destroyObject( obj );
+	TheGameLogic->destroyObject(obj);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void DestroyDie::crc( Xfer *xfer )
+void DestroyDie::crc(Xfer *xfer)
 {
-
 	// extend base class
-	DieModule::crc( xfer );
+	DieModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void DestroyDie::xfer( Xfer *xfer )
+void DestroyDie::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DieModule::xfer( xfer );
+	DieModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DestroyDie::loadPostProcess( void )
+void DestroyDie::loadPostProcess(void)
 {
-
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

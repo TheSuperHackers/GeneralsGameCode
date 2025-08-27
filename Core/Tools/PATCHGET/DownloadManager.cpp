@@ -48,13 +48,12 @@ DownloadManager::DownloadManager()
 	}
 	else
 	{
-		if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) !=2))
+		if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) != 2))
 		{
 			WSACleanup();
 			m_winsockInit = false;
 		}
 	}
-
 }
 
 DownloadManager::~DownloadManager()
@@ -67,25 +66,46 @@ DownloadManager::~DownloadManager()
 	}
 }
 
-void DownloadManager::init( void )
+void DownloadManager::init(void)
 {
 }
 
-void DownloadManager::reset( void )
+void DownloadManager::reset(void)
 {
 }
 
-HRESULT DownloadManager::update( void )
+HRESULT DownloadManager::update(void)
 {
 	return m_download->PumpMessages();
 }
 
-HRESULT DownloadManager::downloadFile( std::string server, std::string username, std::string password, std::string file, std::string localfile, std::string regkey, bool tryResume )
+HRESULT DownloadManager::downloadFile(
+		std::string server,
+		std::string username,
+		std::string password,
+		std::string file,
+		std::string localfile,
+		std::string regkey,
+		bool tryResume)
 {
-	return m_download->DownloadFile( server.c_str(), username.c_str(), password.c_str(), file.c_str(), localfile.c_str(), regkey.c_str(), tryResume );
+	return m_download->DownloadFile(
+			server.c_str(),
+			username.c_str(),
+			password.c_str(),
+			file.c_str(),
+			localfile.c_str(),
+			regkey.c_str(),
+			tryResume);
 }
 
-void DownloadManager::queueFileForDownload( std::string server, std::string username, std::string password, std::string file, std::string localfile, std::string regkey, bool tryResume )
+void DownloadManager::queueFileForDownload(
+		std::string server,
+		std::string username,
+		std::string password,
+		std::string file,
+		std::string localfile,
+		std::string regkey,
+		bool tryResume)
 {
 	QueuedDownload q;
 	q.file = file;
@@ -99,7 +119,7 @@ void DownloadManager::queueFileForDownload( std::string server, std::string user
 	m_queuedDownloads.push_back(q);
 }
 
-HRESULT DownloadManager::downloadNextQueuedFile( void )
+HRESULT DownloadManager::downloadNextQueuedFile(void)
 {
 	QueuedDownload q;
 	std::list<QueuedDownload>::iterator it = m_queuedDownloads.begin();
@@ -108,7 +128,7 @@ HRESULT DownloadManager::downloadNextQueuedFile( void )
 		q = *it;
 		m_queuedDownloads.pop_front();
 		m_wasError = m_sawEnd = false;
-		return downloadFile( q.server, q.userName, q.password, q.file, q.localFile, q.regKey, q.tryResume );
+		return downloadFile(q.server, q.userName, q.password, q.file, q.localFile, q.regKey, q.tryResume);
 	}
 	else
 	{
@@ -117,14 +137,14 @@ HRESULT DownloadManager::downloadNextQueuedFile( void )
 	}
 }
 
-std::string DownloadManager::getLastLocalFile( void )
+std::string DownloadManager::getLastLocalFile(void)
 {
 	char buf[256] = "";
 	m_download->GetLastLocalFile(buf, 256);
 	return buf;
 }
 
-HRESULT DownloadManager::OnError( int error )
+HRESULT DownloadManager::OnError(int error)
 {
 	m_wasError = true;
 	std::string s = Fetch_String(FTP_UnknownError);
@@ -167,17 +187,17 @@ HRESULT DownloadManager::OnEnd()
 HRESULT DownloadManager::OnQueryResume()
 {
 	DEBUG_LOG(("DownloadManager::OnQueryResume()"));
-	//return DOWNLOADEVENT_DONOTRESUME;
+	// return DOWNLOADEVENT_DONOTRESUME;
 	return DOWNLOADEVENT_RESUME;
 }
 
-HRESULT DownloadManager::OnProgressUpdate( int bytesread, int totalsize, int timetaken, int timeleft )
+HRESULT DownloadManager::OnProgressUpdate(int bytesread, int totalsize, int timetaken, int timeleft)
 {
 	DEBUG_LOG(("DownloadManager::OnProgressUpdate(): %d/%d %d/%d", bytesread, totalsize, timetaken, timeleft));
 	return S_OK;
 }
 
-HRESULT DownloadManager::OnStatusUpdate( int status )
+HRESULT DownloadManager::OnStatusUpdate(int status)
 {
 	std::string s = Fetch_String(FTP_StatusNone);
 	switch (status)

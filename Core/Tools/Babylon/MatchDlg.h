@@ -26,34 +26,35 @@
 //
 
 #include "TransDB.h"
-#define IDSKIP		100
+#define IDSKIP 100
 
 /////////////////////////////////////////////////////////////////////////////
 // CMatchDlg dialog
 
 class CMatchDlg : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CMatchDlg(CWnd* pParent = NULL);   // standard constructor
+	CMatchDlg(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CMatchDlg)
-	enum { IDD = IDD_MATCH };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_MATCH
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CMatchDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CMatchDlg)
 	virtual void OnCancel();

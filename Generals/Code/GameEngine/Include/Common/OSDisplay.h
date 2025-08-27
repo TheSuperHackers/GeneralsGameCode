@@ -35,28 +35,21 @@
 
 class AsciiString;
 
-enum OSDisplayButtonType CPP_11(: UnsignedInt)
-{
-	OSDBT_OK										= 0x00000001,
-	OSDBT_CANCEL								= 0x00000002,
+enum OSDisplayButtonType CPP_11( : UnsignedInt){ OSDBT_OK = 0x00000001,
+																								 OSDBT_CANCEL = 0x00000002,
 
+																								 OSDBT_ERROR = 0x80000000 };
 
-	OSDBT_ERROR									= 0x80000000
-};
+enum OSDisplayOtherFlags CPP_11( : UnsignedInt){ OSDOF_SYSTEMMODAL = 0x00000001,
+																								 OSDOF_APPLICATIONMODAL = 0x00000002,
+																								 OSDOF_TASKMODAL = 0x00000004,
 
-enum OSDisplayOtherFlags CPP_11(: UnsignedInt)
-{
-	OSDOF_SYSTEMMODAL						= 0x00000001,
-	OSDOF_APPLICATIONMODAL			= 0x00000002,
-	OSDOF_TASKMODAL							= 0x00000004,
+																								 OSDOF_EXCLAMATIONICON = 0x00000008,
+																								 OSDOF_INFORMATIONICON = 0x00000010,
+																								 OSDOF_ERRORICON = 0x00000011,
+																								 OSDOF_STOPICON = 0x00000012,
 
-	OSDOF_EXCLAMATIONICON				= 0x00000008,
-	OSDOF_INFORMATIONICON				= 0x00000010,
-	OSDOF_ERRORICON							= 0x00000011,
-	OSDOF_STOPICON							= 0x00000012,
-
-	ODDOF_ERROR									= 0x80000000
-};
+																								 ODDOF_ERROR = 0x80000000 };
 
 // Display a warning box to the user with the specified localized prompt, message, and
 // buttons. (Feel free to add buttons as appropriate to the enum above).

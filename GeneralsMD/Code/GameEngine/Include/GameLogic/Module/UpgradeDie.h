@@ -46,20 +46,18 @@ class UpgradeDieModuleData : public DieModuleData
 public:
 	AsciiString m_upgradeName;
 
-	UpgradeDieModuleData(){}
+	UpgradeDieModuleData() {}
 
-	static void buildFieldParse(MultiIniFieldParse& p)
+	static void buildFieldParse(MultiIniFieldParse &p)
 	{
-
 		DieModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "UpgradeToRemove",					INI::parseAsciiString,		NULL, offsetof( UpgradeDieModuleData, m_upgradeName ) },
+		static const FieldParse dataFieldParse[] = {
+			{ "UpgradeToRemove", INI::parseAsciiString, NULL, offsetof(UpgradeDieModuleData, m_upgradeName) },
 			{ 0, 0, 0, 0 }
 		};
 
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 
@@ -67,17 +65,14 @@ public:
 // ------------------------------------------------------------------------------------------------
 class UpgradeDie : public DieModule
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( UpgradeDie, "UpgradeDie" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( UpgradeDie, UpgradeDieModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(UpgradeDie, "UpgradeDie")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(UpgradeDie, UpgradeDieModuleData)
 
 public:
-
-	UpgradeDie( Thing *thing, const ModuleData* moduleData );
+	UpgradeDie(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDie( const DamageInfo *damageInfo );
-
+	virtual void onDie(const DamageInfo *damageInfo);
 };
 
 #endif // __UPGRADEDIE_H
-

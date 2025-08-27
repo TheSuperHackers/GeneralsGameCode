@@ -47,14 +47,12 @@
 ////////////////////////////////////////////////////////////////////////////
 DefinitionFactoryClass *DefinitionFactoryMgrClass::_FactoryListHead = 0;
 
-
 ////////////////////////////////////////////////////////////////////////////
 //
 //	Find_Factory
 //
 ////////////////////////////////////////////////////////////////////////////
-DefinitionFactoryClass *
-DefinitionFactoryMgrClass::Find_Factory (uint32 class_id)
+DefinitionFactoryClass *DefinitionFactoryMgrClass::Find_Factory(uint32 class_id)
 {
 	DefinitionFactoryClass *factory = 0;
 
@@ -62,14 +60,14 @@ DefinitionFactoryMgrClass::Find_Factory (uint32 class_id)
 	//	Loop through all the factories and see if we can
 	// find the one who owns the corresponding class-id.
 	//
-	for (	DefinitionFactoryClass *curr_factory = _FactoryListHead;
-			(factory == 0) && (curr_factory != 0);
-			curr_factory = curr_factory->m_NextFactory) {
-
+	for (DefinitionFactoryClass *curr_factory = _FactoryListHead; (factory == 0) && (curr_factory != 0);
+			 curr_factory = curr_factory->m_NextFactory)
+	{
 		//
 		//	Is this the factory we were looking for?
 		//
-		if (curr_factory->Get_Class_ID () == class_id) {
+		if (curr_factory->Get_Class_ID() == class_id)
+		{
 			factory = curr_factory;
 		}
 	}
@@ -77,14 +75,12 @@ DefinitionFactoryMgrClass::Find_Factory (uint32 class_id)
 	return factory;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////
 //
 //	Find_Factory
 //
 ////////////////////////////////////////////////////////////////////////////
-DefinitionFactoryClass *
-DefinitionFactoryMgrClass::Find_Factory (const char *name)
+DefinitionFactoryClass *DefinitionFactoryMgrClass::Find_Factory(const char *name)
 {
 	DefinitionFactoryClass *factory = 0;
 
@@ -92,29 +88,27 @@ DefinitionFactoryMgrClass::Find_Factory (const char *name)
 	//	Loop through all the factories and see if we can
 	// find the one who owns the corresponding class-id.
 	//
-	for (	DefinitionFactoryClass *curr_factory = _FactoryListHead;
-			(factory == 0) && (curr_factory != 0);
-			curr_factory = curr_factory->m_NextFactory) {
-
+	for (DefinitionFactoryClass *curr_factory = _FactoryListHead; (factory == 0) && (curr_factory != 0);
+			 curr_factory = curr_factory->m_NextFactory)
+	{
 		//
 		//	Is this the factory we were looking for?
 		//
-		if (::stricmp (curr_factory->Get_Name (), name) == 0) {
+		if (::stricmp(curr_factory->Get_Name(), name) == 0)
+		{
 			factory = curr_factory;
 		}
 	}
 
 	return factory;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 //
 //	Get_First
 //
 ////////////////////////////////////////////////////////////////////////////
-DefinitionFactoryClass *
-DefinitionFactoryMgrClass::Get_First (uint32 superclass_id)
+DefinitionFactoryClass *DefinitionFactoryMgrClass::Get_First(uint32 superclass_id)
 {
 	DefinitionFactoryClass *factory = 0;
 
@@ -122,33 +116,27 @@ DefinitionFactoryMgrClass::Get_First (uint32 superclass_id)
 	//	Loop through all the factories and see if we can
 	// find the next one that belongs to the given superclass
 	//
-	for (	DefinitionFactoryClass *curr_factory = _FactoryListHead;
-			(factory == 0) && (curr_factory != 0);
-			curr_factory = curr_factory->m_NextFactory) {
-
+	for (DefinitionFactoryClass *curr_factory = _FactoryListHead; (factory == 0) && (curr_factory != 0);
+			 curr_factory = curr_factory->m_NextFactory)
+	{
 		//
 		//	Is this the factory we were looking for?
 		//
-		if (::SuperClassID_From_ClassID (curr_factory->Get_Class_ID ()) == superclass_id) {
+		if (::SuperClassID_From_ClassID(curr_factory->Get_Class_ID()) == superclass_id)
+		{
 			factory = curr_factory;
 		}
 	}
 
 	return factory;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 //
 //	Get_Next
 //
 ////////////////////////////////////////////////////////////////////////////
-DefinitionFactoryClass *
-DefinitionFactoryMgrClass::Get_Next
-(
-	DefinitionFactoryClass *curr_factory,
-	uint32						superclass_id
-)
+DefinitionFactoryClass *DefinitionFactoryMgrClass::Get_Next(DefinitionFactoryClass *curr_factory, uint32 superclass_id)
 {
 	DefinitionFactoryClass *factory = 0;
 
@@ -156,12 +144,13 @@ DefinitionFactoryMgrClass::Get_Next
 	//	Loop through all the factories and see if we can
 	// find the next one that belongs to the given superclass
 	//
-	while ((factory == NULL) && ((curr_factory = curr_factory->m_NextFactory) != NULL)) {
-
+	while ((factory == NULL) && ((curr_factory = curr_factory->m_NextFactory) != NULL))
+	{
 		//
 		//	Is this the factory we were looking for?
 		//
-		if (::SuperClassID_From_ClassID (curr_factory->Get_Class_ID ()) == superclass_id) {
+		if (::SuperClassID_From_ClassID(curr_factory->Get_Class_ID()) == superclass_id)
+		{
 			factory = curr_factory;
 		}
 	}
@@ -169,127 +158,115 @@ DefinitionFactoryMgrClass::Get_Next
 	return factory;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////
 //
 //	Get_First
 //
 ////////////////////////////////////////////////////////////////////////////
-DefinitionFactoryClass *
-DefinitionFactoryMgrClass::Get_First (void)
+DefinitionFactoryClass *DefinitionFactoryMgrClass::Get_First(void)
 {
 	return _FactoryListHead;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////
 //
 //	Get_Next
 //
 ////////////////////////////////////////////////////////////////////////////
-DefinitionFactoryClass *
-DefinitionFactoryMgrClass::Get_Next (DefinitionFactoryClass *curr_factory)
+DefinitionFactoryClass *DefinitionFactoryMgrClass::Get_Next(DefinitionFactoryClass *curr_factory)
 {
 	DefinitionFactoryClass *factory = 0;
 
 	//
 	//	Simply return the next factory in the chain
 	//
-	if (curr_factory != NULL) {
+	if (curr_factory != NULL)
+	{
 		factory = curr_factory->m_NextFactory;
 	}
 
 	return factory;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////
 //
 //	Register_Factory
 //
 ////////////////////////////////////////////////////////////////////////////
-void
-DefinitionFactoryMgrClass::Register_Factory (DefinitionFactoryClass *factory)
+void DefinitionFactoryMgrClass::Register_Factory(DefinitionFactoryClass *factory)
 {
-	WWASSERT (factory->m_NextFactory == 0);
-	WWASSERT (factory->m_PrevFactory == 0);
-	Link_Factory (factory);
-	return ;
+	WWASSERT(factory->m_NextFactory == 0);
+	WWASSERT(factory->m_PrevFactory == 0);
+	Link_Factory(factory);
+	return;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 //
 //	Unregister_Factory
 //
 ////////////////////////////////////////////////////////////////////////////
-void
-DefinitionFactoryMgrClass::Unregister_Factory (DefinitionFactoryClass *factory)
+void DefinitionFactoryMgrClass::Unregister_Factory(DefinitionFactoryClass *factory)
 {
-	WWASSERT (factory != 0);
-	Unlink_Factory (factory);
-	return ;
+	WWASSERT(factory != 0);
+	Unlink_Factory(factory);
+	return;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 //
 //	Link_Factory
 //
 ////////////////////////////////////////////////////////////////////////////
-void
-DefinitionFactoryMgrClass::Link_Factory (DefinitionFactoryClass *factory)
+void DefinitionFactoryMgrClass::Link_Factory(DefinitionFactoryClass *factory)
 {
-	WWASSERT (factory->m_NextFactory == 0);
-	WWASSERT (factory->m_PrevFactory == 0);
+	WWASSERT(factory->m_NextFactory == 0);
+	WWASSERT(factory->m_PrevFactory == 0);
 
 	// Adding this factory in front of the current head of the list
 	factory->m_NextFactory = _FactoryListHead;
 
 	// If the list wasn't empty, link the next factory back to this factory
-	if (factory->m_NextFactory != 0) {
+	if (factory->m_NextFactory != 0)
+	{
 		factory->m_NextFactory->m_PrevFactory = factory;
 	}
 
 	// Point the head of the list at this factory now
 	_FactoryListHead = factory;
-	return ;
+	return;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 //
 //	Unlink_Factory
 //
 ////////////////////////////////////////////////////////////////////////////
-void
-DefinitionFactoryMgrClass::Unlink_Factory (DefinitionFactoryClass *factory)
+void DefinitionFactoryMgrClass::Unlink_Factory(DefinitionFactoryClass *factory)
 {
 	WWASSERT(factory != 0);
 
 	// Handle the factory's prev pointer:
-	if (factory->m_PrevFactory == 0) {
-
+	if (factory->m_PrevFactory == 0)
+	{
 		// this factory is the head
-		WWASSERT (_FactoryListHead == factory);
+		WWASSERT(_FactoryListHead == factory);
 		_FactoryListHead = factory->m_NextFactory;
-
-	} else {
-
+	}
+	else
+	{
 		// link it's prev with it's next
 		factory->m_PrevFactory->m_NextFactory = factory->m_NextFactory;
-
 	}
 
 	// Handle the factory's next pointer if its not at the end of the list:
-	if (factory->m_NextFactory != 0) {
-
+	if (factory->m_NextFactory != 0)
+	{
 		factory->m_NextFactory->m_PrevFactory = factory->m_PrevFactory;
-
 	}
 
 	// factory is now un-linked
 	factory->m_NextFactory = 0;
 	factory->m_PrevFactory = 0;
-	return ;
+	return;
 }

@@ -48,47 +48,39 @@ class SabotageSupplyCenterCrateCollideModuleData : public CrateCollideModuleData
 public:
 	UnsignedInt m_stealCashAmount;
 
-	SabotageSupplyCenterCrateCollideModuleData()
+	SabotageSupplyCenterCrateCollideModuleData() { m_stealCashAmount = 0; }
+
+	static void buildFieldParse(MultiIniFieldParse &p)
 	{
-		m_stealCashAmount = 0;
+		CrateCollideModuleData::buildFieldParse(p);
+
+		static const FieldParse dataFieldParse[] = { { "StealCashAmount",
+																									 INI::parseUnsignedInt,
+																									 NULL,
+																									 offsetof(SabotageSupplyCenterCrateCollideModuleData, m_stealCashAmount) },
+																								 { 0, 0, 0, 0 } };
+		p.add(dataFieldParse);
 	}
-
-	static void buildFieldParse(MultiIniFieldParse& p)
-	{
-    CrateCollideModuleData::buildFieldParse(p);
-
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "StealCashAmount",	INI::parseUnsignedInt, NULL, offsetof( SabotageSupplyCenterCrateCollideModuleData, m_stealCashAmount ) },
-			{ 0, 0, 0, 0 }
-		};
-		p.add( dataFieldParse );
-	}
-
 };
 
 //-------------------------------------------------------------------------------------------------
 class SabotageSupplyCenterCrateCollide : public CrateCollide
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SabotageSupplyCenterCrateCollide, "SabotageSupplyCenterCrateCollide" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( SabotageSupplyCenterCrateCollide, SabotageSupplyCenterCrateCollideModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SabotageSupplyCenterCrateCollide, "SabotageSupplyCenterCrateCollide")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(SabotageSupplyCenterCrateCollide, SabotageSupplyCenterCrateCollideModuleData);
 
 public:
-
-	SabotageSupplyCenterCrateCollide( Thing *thing, const ModuleData* moduleData );
+	SabotageSupplyCenterCrateCollide(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 protected:
-
 	/// This allows specific vetoes to certain types of crates and their data
-	virtual Bool isValidToExecute( const Object *other ) const;
+	virtual Bool isValidToExecute(const Object *other) const;
 
 	/// This is the game logic execution function that all real CrateCollides will implement
-	virtual Bool executeCrateBehavior( Object *other );
+	virtual Bool executeCrateBehavior(Object *other);
 
 	virtual Bool isSabotageBuildingCrateCollide() const { return TRUE; }
-
 };
 
 #endif

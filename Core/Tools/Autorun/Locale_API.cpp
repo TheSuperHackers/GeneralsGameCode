@@ -17,64 +17,42 @@
 */
 
 /*****************************************************************************
-*   C O N F I D E N T I A L --- W E S T W O O D   A S S O C I A T E S		 *
-******************************************************************************
-*
-* FILE
-*     $Archive: /Renegade Setup/Autorun/Locale_API.cpp $
-*
-* DESCRIPTION
-*
-* PROGRAMMER
-*     $Author: Maria_l $
-*
-* VERSION INFO
-*     $Modtime: 1/22/02 5:41p $
-*     $Revision: 12 $
-*
-*****************************************************************************/
+ *   C O N F I D E N T I A L --- W E S T W O O D   A S S O C I A T E S		 *
+ ******************************************************************************
+ *
+ * FILE
+ *     $Archive: /Renegade Setup/Autorun/Locale_API.cpp $
+ *
+ * DESCRIPTION
+ *
+ * PROGRAMMER
+ *     $Author: Maria_l $
+ *
+ * VERSION INFO
+ *     $Modtime: 1/22/02 5:41p $
+ *     $Revision: 12 $
+ *
+ *****************************************************************************/
 
 #include "locale.h"
 #include "Locale_API.h"
 #include "Utils.h"
 #include "Wnd_File.h"
-//#include "resources.h"
+// #include "resources.h"
 
 #include "GameText.h"
 
 #define MISSING_STRING_HINTS_MAX (20)
 
-const wchar_t *localeStringsMissing[ MISSING_STRING_HINTS_MAX ] =
-{
-	{ L"0 MissingInstall"		},
-	{ L"1 MissingExplore"		},
-	{ L"2 MissingPreviews"		},
-	{ L"3 MissingCancel"		},
-	{ L"4 MissingAutoRunTitle"		},
-	{ L"5 MissingNoExplorer"		},
-	{ L"6 MissingWinVersionText"		},
-	{ L"7 MissingWinVersionTitle"		},
-	{ L"8 MissingCantFind"		},
-	{ L"9 MissingUninstall"		},
-	{ L"10 MissingWebsite"	},
-	{ L"11 MissingCheckForUpdates"	},
-	{ L"12 MissingWorldBuilder"	},
-	{ L"13 MissingPlay"	},
-	{ L"14 MissingGameTitle"	},
-	{ L"15 MissingFullGameTitle"	},
-	{ L"16 MissingRegistryKey"	},
-	{ L"17 MissingMainWindow"	},
-	{ L"18 MissingThing"	},
-	{ L"19 UNKNOWN MESSAGE"	}
+const wchar_t *localeStringsMissing[MISSING_STRING_HINTS_MAX] = {
+	{ L"0 MissingInstall" },				{ L"1 MissingExplore" },				 { L"2 MissingPreviews" },
+	{ L"3 MissingCancel" },					{ L"4 MissingAutoRunTitle" },		 { L"5 MissingNoExplorer" },
+	{ L"6 MissingWinVersionText" }, { L"7 MissingWinVersionTitle" }, { L"8 MissingCantFind" },
+	{ L"9 MissingUninstall" },			{ L"10 MissingWebsite" },				 { L"11 MissingCheckForUpdates" },
+	{ L"12 MissingWorldBuilder" },	{ L"13 MissingPlay" },					 { L"14 MissingGameTitle" },
+	{ L"15 MissingFullGameTitle" }, { L"16 MissingRegistryKey" },		 { L"17 MissingMainWindow" },
+	{ L"18 MissingThing" },					{ L"19 UNKNOWN MESSAGE" }
 };
-
-
-
-
-
-
-
-
 
 /****************************************************************************/
 /* DEFINES			                                                        */
@@ -84,203 +62,199 @@ const wchar_t *localeStringsMissing[ MISSING_STRING_HINTS_MAX ] =
 // NOTE:	if USE_MULTI_FILE_FORMAT is "true", then a .lOC file must be in
 //			the same directory as this file.
 //----------------------------------------------------------------------------
-#define		USE_MULTI_FILE_FORMAT		FALSE
+#define USE_MULTI_FILE_FORMAT FALSE
 
-#define		LANGUAGE_IS_DBCS(l)	(((l)==IDL_JAPANESE)||((l)==IDL_KOREAN)||((l)==IDL_CHINESE))		// [OYO]
-#define		CODEPAGE_IS_DBCS(C)	((C==932)||(C==949)||(C==950))										// [OYO]
-
+#define LANGUAGE_IS_DBCS(l) (((l) == IDL_JAPANESE) || ((l) == IDL_KOREAN) || ((l) == IDL_CHINESE)) // [OYO]
+#define CODEPAGE_IS_DBCS(C) ((C == 932) || (C == 949) || (C == 950)) // [OYO]
 
 /****************************************************************************/
 /* GLOBAL VARIABLES                                                         */
 /****************************************************************************/
-char		LanguageFile[ _MAX_PATH ];
-void *		LocaleFile		= NULL;
-int			CodePage		= GetACP();
-int			LanguageID		= 0;
-int			PrimaryLanguage = LANG_NEUTRAL;
-int			SubLanguage		= SUBLANG_DEFAULT;
-
+char LanguageFile[_MAX_PATH];
+void *LocaleFile = NULL;
+int CodePage = GetACP();
+int LanguageID = 0;
+int PrimaryLanguage = LANG_NEUTRAL;
+int SubLanguage = SUBLANG_DEFAULT;
 
 /****************************************************************************/
 /* LOCALE API                                                               */
 /****************************************************************************/
-wchar_t *	Remove_Quotes_Around_String ( wchar_t *old_string );
-
+wchar_t *Remove_Quotes_Around_String(wchar_t *old_string);
 
 //=============================================================================
 // These are wrapper functions around the LOCALE_ functions.  I made these to
 // make using the single vs. multi language files more transparent to the program.
 //=============================================================================
 
-bool Locale_Use_Multi_Language_Files ( void )
+bool Locale_Use_Multi_Language_Files(void)
 {
-#if( USE_MULTI_FILE_FORMAT )
+#if (USE_MULTI_FILE_FORMAT)
 	return true;
 #else
 	return false;
 #endif
 }
 
-
 /****************************************************************************/
 /* initialization															*/
 /****************************************************************************/
 
-int Locale_Init	( int language, char *file )
+int Locale_Init(int language, char *file)
 {
-	int	result = 0;
+	int result = 0;
 
 	TheGameText = CreateGameTextInterface();
 	TheGameText->init();
 
-/*
-	//-------------------------------------------------------------------------
-	// Check for valid language range.
-	//-------------------------------------------------------------------------
-	if( language < 0 || language >= LANG_NUM ) {
-		language = 0;
-	}
-
-	//-------------------------------------------------------------------------
-	// Check for a file passed in.
-	//-------------------------------------------------------------------------
-	if( file == NULL || file[0] == '/0' ) {
-		return 0;
-	}
-	strcpy( LanguageFile, file );
-	LanguageID = language;
-
-	Msg( __LINE__, __FILE__, "LanguageID = %d", LanguageID );
-	Msg( __LINE__, __FILE__, "CodePage   = %d.", CodePage );
-	Msg( __LINE__, __FILE__, "LanguageFile = %s.", LanguageFile );
-
-	//-------------------------------------------------------------------------
-	// Initialize the lx object.
-	//-------------------------------------------------------------------------
-	LOCALE_init();
-
-	#if( USE_MULTI_FILE_FORMAT )
-
-		//---------------------------------------------------------------------
-		// Set bank to use and load the appropriate table.
-		//---------------------------------------------------------------------
-		LOCALE_setbank(0);
-		result = LOCALE_loadtable( LanguageFile, LanguageID );
-
-	#else
-
-		//---------------------------------------------------------------------
-		// Create a file buffer that holds all the strings in the file.
-		//---------------------------------------------------------------------
-		long	filesize;
-		HRSRC 	hRsrc;
-		HGLOBAL hGlobal;
-
-		HMODULE module = GetModuleHandle( NULL );
+	/*
+		//-------------------------------------------------------------------------
+		// Check for valid language range.
+		//-------------------------------------------------------------------------
+		if( language < 0 || language >= LANG_NUM ) {
+			language = 0;
+		}
 
 		//-------------------------------------------------------------------------
-		// Find the string file in this program's resources.
+		// Check for a file passed in.
 		//-------------------------------------------------------------------------
-		switch( CodePage ) {
-
-			// Japanese
-			case 932:
-				PrimaryLanguage = LANG_JAPANESE;
-				SubLanguage		= SUBLANG_DEFAULT;
-				break;
-
-			// Korean
-			case 949:
-				PrimaryLanguage = LANG_KOREAN;
-				SubLanguage		= SUBLANG_DEFAULT;
-				break;
-
-			// Chinese
-			case 950:
-				PrimaryLanguage = LANG_CHINESE;
-				SubLanguage		= SUBLANG_DEFAULT;
-				break;
-
-			// English, French, and German
-			case 1252:
-
-				switch( LanguageID ) {
-
-					case LANG_GERMAN:
-						PrimaryLanguage = LANG_GERMAN;
-						SubLanguage		= SUBLANG_GERMAN;
-						break;
-
-					case LANG_FRENCH:
-						PrimaryLanguage = LANG_FRENCH;
-						SubLanguage		= SUBLANG_FRENCH;
-						break;
-
-					case LANG_ENGLISH:
-						PrimaryLanguage = LANG_ENGLISH;
-						SubLanguage		= SUBLANG_ENGLISH_US;
-						break;
-				}
-				break;
+		if( file == NULL || file[0] == '/0' ) {
+			return 0;
 		}
+		strcpy( LanguageFile, file );
+		LanguageID = language;
 
-		hRsrc = FindResourceEx( module, RT_RCDATA, "STRINGS", MAKELANGID( PrimaryLanguage, SubLanguage ));
-		if ( hRsrc == NULL ) {
-			hRsrc = FindResourceEx( module, RT_RCDATA, "STRINGS", MAKELANGID( LANG_ENGLISH, SUBLANG_ENGLISH_US ));
-		}
-		if ( hRsrc ) {
+		Msg( __LINE__, __FILE__, "LanguageID = %d", LanguageID );
+		Msg( __LINE__, __FILE__, "CodePage   = %d.", CodePage );
+		Msg( __LINE__, __FILE__, "LanguageFile = %s.", LanguageFile );
+
+		//-------------------------------------------------------------------------
+		// Initialize the lx object.
+		//-------------------------------------------------------------------------
+		LOCALE_init();
+
+		#if( USE_MULTI_FILE_FORMAT )
 
 			//---------------------------------------------------------------------
-			// Load the resource, lock the memory, grab a DC.
+			// Set bank to use and load the appropriate table.
 			//---------------------------------------------------------------------
-			hGlobal		= LoadResource( module, hRsrc );
-			filesize	= SizeofResource( module, hRsrc );
+			LOCALE_setbank(0);
+			result = LOCALE_loadtable( LanguageFile, LanguageID );
 
-			LocaleFile = (void*)malloc( filesize + 1 );
-			memset( LocaleFile, '\0', filesize + 1 );
-			memcpy( LocaleFile, (const void *)hGlobal, filesize );
+		#else
 
 			//---------------------------------------------------------------------
-			// Free DS and memory used.
+			// Create a file buffer that holds all the strings in the file.
 			//---------------------------------------------------------------------
-			UnlockResource( hGlobal );
-			FreeResource( hGlobal );
-		}
+			long	filesize;
+			HRSRC 	hRsrc;
+			HGLOBAL hGlobal;
 
-		if( LocaleFile == NULL ) {
-			LocaleFile = Load_File( LanguageFile, &filesize );
-		}
+			HMODULE module = GetModuleHandle( NULL );
 
-		if( LocaleFile != NULL ) {
-			result = 1;
-		}
+			//-------------------------------------------------------------------------
+			// Find the string file in this program's resources.
+			//-------------------------------------------------------------------------
+			switch( CodePage ) {
 
-		//---------------------------------------------------------------------
-		// Set the LanguageID because we may need this later.
-		//---------------------------------------------------------------------
-//		CHAR buffer[ _MAX_PATH ];
+				// Japanese
+				case 932:
+					PrimaryLanguage = LANG_JAPANESE;
+					SubLanguage		= SUBLANG_DEFAULT;
+					break;
 
-//		Locale_GetString( LANG_NUM, buffer );
-//		LanguageID = atoi( buffer );
+				// Korean
+				case 949:
+					PrimaryLanguage = LANG_KOREAN;
+					SubLanguage		= SUBLANG_DEFAULT;
+					break;
 
-		LanguageID = 0;
+				// Chinese
+				case 950:
+					PrimaryLanguage = LANG_CHINESE;
+					SubLanguage		= SUBLANG_DEFAULT;
+					break;
 
-#if(RTS_DEBUG)
-		switch( LanguageID ) {
-			case 6:
-				CodePage = 932;
-				break;
-			case 9:
-				CodePage = 949;
-				break;
-			case 10:
-				CodePage = 950;
-				break;
-		}
-#endif
+				// English, French, and German
+				case 1252:
 
+					switch( LanguageID ) {
+
+						case LANG_GERMAN:
+							PrimaryLanguage = LANG_GERMAN;
+							SubLanguage		= SUBLANG_GERMAN;
+							break;
+
+						case LANG_FRENCH:
+							PrimaryLanguage = LANG_FRENCH;
+							SubLanguage		= SUBLANG_FRENCH;
+							break;
+
+						case LANG_ENGLISH:
+							PrimaryLanguage = LANG_ENGLISH;
+							SubLanguage		= SUBLANG_ENGLISH_US;
+							break;
+					}
+					break;
+			}
+
+			hRsrc = FindResourceEx( module, RT_RCDATA, "STRINGS", MAKELANGID( PrimaryLanguage, SubLanguage ));
+			if ( hRsrc == NULL ) {
+				hRsrc = FindResourceEx( module, RT_RCDATA, "STRINGS", MAKELANGID( LANG_ENGLISH, SUBLANG_ENGLISH_US ));
+			}
+			if ( hRsrc ) {
+
+				//---------------------------------------------------------------------
+				// Load the resource, lock the memory, grab a DC.
+				//---------------------------------------------------------------------
+				hGlobal		= LoadResource( module, hRsrc );
+				filesize	= SizeofResource( module, hRsrc );
+
+				LocaleFile = (void*)malloc( filesize + 1 );
+				memset( LocaleFile, '\0', filesize + 1 );
+				memcpy( LocaleFile, (const void *)hGlobal, filesize );
+
+				//---------------------------------------------------------------------
+				// Free DS and memory used.
+				//---------------------------------------------------------------------
+				UnlockResource( hGlobal );
+				FreeResource( hGlobal );
+			}
+
+			if( LocaleFile == NULL ) {
+				LocaleFile = Load_File( LanguageFile, &filesize );
+			}
+
+			if( LocaleFile != NULL ) {
+				result = 1;
+			}
+
+			//---------------------------------------------------------------------
+			// Set the LanguageID because we may need this later.
+			//---------------------------------------------------------------------
+	//		CHAR buffer[ _MAX_PATH ];
+
+	//		Locale_GetString( LANG_NUM, buffer );
+	//		LanguageID = atoi( buffer );
+
+			LanguageID = 0;
+
+	#if(RTS_DEBUG)
+			switch( LanguageID ) {
+				case 6:
+					CodePage = 932;
+					break;
+				case 9:
+					CodePage = 949;
+					break;
+				case 10:
+					CodePage = 950;
+					break;
+			}
 	#endif
-*/
+
+		#endif
+	*/
 	return result;
 }
 
@@ -288,7 +262,7 @@ int Locale_Init	( int language, char *file )
 /* restore	 															*/
 /************************************************************************/
 
-void Locale_Restore ( void )
+void Locale_Restore(void)
 {
 	if (TheGameText)
 	{
@@ -296,46 +270,48 @@ void Locale_Restore ( void )
 		TheGameText = NULL;
 	}
 
-	#if( USE_MULTI_FILE_FORMAT )
-		LOCALE_freetable();
-		LOCALE_restore();
-	#else
-		if( LocaleFile ) {
-			free( LocaleFile );
-			LocaleFile = NULL;
-		}
-	#endif
+#if (USE_MULTI_FILE_FORMAT)
+	LOCALE_freetable();
+	LOCALE_restore();
+#else
+	if (LocaleFile)
+	{
+		free(LocaleFile);
+		LocaleFile = NULL;
+	}
+#endif
 }
 
 /****************************************************************************/
 /* retreiving strings												 		*/
 /****************************************************************************/
 
-const char* Locale_GetString( int StringID, char *String )
+const char *Locale_GetString(int StringID, char *String)
 {
-	static	char		buffer[ _MAX_PATH ];
-	static	wchar_t		wide_buffer[ _MAX_PATH ];
+	static char buffer[_MAX_PATH];
+	static wchar_t wide_buffer[_MAX_PATH];
 
-	memset( buffer, '\0', _MAX_PATH );
-	memset(	wide_buffer, '\0', _MAX_PATH );
+	memset(buffer, '\0', _MAX_PATH);
+	memset(wide_buffer, '\0', _MAX_PATH);
 
-	#if( USE_MULTI_FILE_FORMAT )
-		wcscpy( wide_buffer, (wchar_t *)LOCALE_getstring( StringID ));
-	#else
-		wcscpy( wide_buffer, (wchar_t *)LOCALE_getstr( LocaleFile, StringID ));
-	#endif
+#if (USE_MULTI_FILE_FORMAT)
+	wcscpy(wide_buffer, (wchar_t *)LOCALE_getstring(StringID));
+#else
+	wcscpy(wide_buffer, (wchar_t *)LOCALE_getstr(LocaleFile, StringID));
+#endif
 
-	Remove_Quotes_Around_String( wide_buffer );
-	WideCharToMultiByte( CodePage, 0, wide_buffer, _MAX_PATH, buffer, _MAX_PATH, NULL, NULL );
+	Remove_Quotes_Around_String(wide_buffer);
+	WideCharToMultiByte(CodePage, 0, wide_buffer, _MAX_PATH, buffer, _MAX_PATH, NULL, NULL);
 
-	if( String != NULL ) {
-		strncpy( String, buffer, _MAX_PATH );
+	if (String != NULL)
+	{
+		strncpy(String, buffer, _MAX_PATH);
 	}
 
 	return buffer;
 }
 
-const wchar_t* Locale_GetString( const char *id, wchar_t *buffer, int size )
+const wchar_t *Locale_GetString(const char *id, wchar_t *buffer, int size)
 {
 	if (TheGameText)
 	{
@@ -343,7 +319,7 @@ const wchar_t* Locale_GetString( const char *id, wchar_t *buffer, int size )
 		if (buffer)
 		{
 			wcsncpy(buffer, fetched, size);
-			buffer[size-1] = 0;
+			buffer[size - 1] = 0;
 		}
 		return fetched;
 	}
@@ -390,30 +366,28 @@ const wchar_t* Locale_GetString( int StringID, wchar_t *String )
 /* formating strings   														*/
 /****************************************************************************/
 
-wchar_t *Remove_Quotes_Around_String ( wchar_t *old_string )
+wchar_t *Remove_Quotes_Around_String(wchar_t *old_string)
 {
-	wchar_t	wide_buffer[ _MAX_PATH ];
+	wchar_t wide_buffer[_MAX_PATH];
 	wchar_t *letter = old_string;
-	int		length;
+	int length;
 
 	//----------------------------------------------------------------------
 	// If string is not NULL...
 	//----------------------------------------------------------------------
-	if ( *letter == '"' ) {
-
+	if (*letter == '"')
+	{
 		letter++;
-		wcscpy( wide_buffer, letter );
+		wcscpy(wide_buffer, letter);
 
-		length = wcslen( wide_buffer );
+		length = wcslen(wide_buffer);
 
-		if ( wide_buffer[ wcslen( wide_buffer )-1 ] == '"' ) {
-			wide_buffer[ wcslen( wide_buffer )-1 ] = '\0';
+		if (wide_buffer[wcslen(wide_buffer) - 1] == '"')
+		{
+			wide_buffer[wcslen(wide_buffer) - 1] = '\0';
 		}
-		wcscpy( old_string, wide_buffer );
+		wcscpy(old_string, wide_buffer);
 	}
 
-	return( old_string );
+	return (old_string);
 }
-
-
-

@@ -42,6 +42,7 @@ protected:
 	static Int m_feather;
 	static Int m_rate;
 	static Int m_radius;
+
 public:
 	FeatherTool(void);
 	~FeatherTool(void);
@@ -49,13 +50,13 @@ public:
 	static void setFeather(Int feather);
 	static void setRate(Int rate);
 	static void setRadius(Int Radius);
+
 public:
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual WorldHeightMapEdit *getHeightMap(void) {return m_htMapEditCopy;};
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+	virtual WorldHeightMapEdit *getHeightMap(void) { return m_htMapEditCopy; };
 	virtual void activate(); ///< Become the current tool.
 };
 
-
-#endif //FEATHERTOOL_H
+#endif // FEATHERTOOL_H

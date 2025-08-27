@@ -35,14 +35,12 @@
  *   HModelDefClass::HModelDefClass -- Constructor                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "hmdldef.H"
 #include <assert.h>
 #include <string.h>
 #include "w3d_file.h"
 #include "chunkio.h"
 #include "snapPts.h"
-
 
 /***********************************************************************************************
  * HModelDefClass::HModelDefClass -- Constructor                                               *
@@ -56,12 +54,8 @@
  * HISTORY:                                                                                    *
  *   12/15/97   GTH : Created.                                                                 *
  *=============================================================================================*/
-HModelDefClass::HModelDefClass(void) :
-	SubObjectCount(0),
-	SubObjects(NULL),
-	SnapPoints(NULL)
+HModelDefClass::HModelDefClass(void) : SubObjectCount(0), SubObjects(NULL), SnapPoints(NULL)
 {
-
 }
 
 /***********************************************************************************************
@@ -95,18 +89,19 @@ HModelDefClass::~HModelDefClass(void)
  *=============================================================================================*/
 void HModelDefClass::Free(void)
 {
-	if (SubObjects != NULL) {
+	if (SubObjects != NULL)
+	{
 		delete[] SubObjects;
 		SubObjects = NULL;
 	}
 	SubObjectCount = 0;
 
-	if (SnapPoints != NULL) {
+	if (SnapPoints != NULL)
+	{
 		SnapPoints->Release_Ref();
 		SnapPoints = NULL;
 	}
 }
-
 
 /***********************************************************************************************
  * HModelDefClass::Load -- load a set of mesh connections from a file                          *
@@ -120,7 +115,7 @@ void HModelDefClass::Free(void)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
+int HModelDefClass::Load_W3D(ChunkLoadClass &cload)
 {
 	bool pre30 = false;
 	int subobjcounter = 0;
@@ -130,11 +125,13 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 	/*
 	**	Read the first chunk, it should be the header
 	*/
-	if (!cload.Open_Chunk()) {
+	if (!cload.Open_Chunk())
+	{
 		return false;
 	}
 
-	if (cload.Cur_Chunk_ID() != W3D_CHUNK_HMODEL_HEADER) {
+	if (cload.Cur_Chunk_ID() != W3D_CHUNK_HMODEL_HEADER)
+	{
 		goto Error;
 	}
 
@@ -142,7 +139,8 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 	** read in the header
 	*/
 	W3dHModelHeaderStruct header;
-	if (cload.Read(&header,sizeof(W3dHModelHeaderStruct)) != sizeof(W3dHModelHeaderStruct)) {
+	if (cload.Read(&header, sizeof(W3dHModelHeaderStruct)) != sizeof(W3dHModelHeaderStruct))
+	{
 		goto Error;
 	}
 
@@ -151,18 +149,19 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 	/*
 	** process the header info
 	*/
-	strncpy(ModelName,header.Name,W3D_NAME_LEN);
+	strncpy(ModelName, header.Name, W3D_NAME_LEN);
 	ModelName[W3D_NAME_LEN - 1] = 0;
-	strncpy(BasePoseName,header.HierarchyName,W3D_NAME_LEN);
-	BasePoseName[W3D_NAME_LEN-1] = 0;
-	strcpy(Name,ModelName);
+	strncpy(BasePoseName, header.HierarchyName, W3D_NAME_LEN);
+	BasePoseName[W3D_NAME_LEN - 1] = 0;
+	strcpy(Name, ModelName);
 
 	/*
 	** Just allocate a node for the number of sub objects we're expecting
 	*/
 	SubObjectCount = header.NumConnections;
 	SubObjects = W3DNEWARRAY HmdlNodeDefStruct[SubObjectCount];
-	if (SubObjects == NULL) {
+	if (SubObjects == NULL)
+	{
 		goto Error;
 	}
 
@@ -174,7 +173,8 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 	** therefore, pre-3.0 files have to have it added and all of
 	** the indices adjusted
 	*/
-	if (header.Version < W3D_MAKE_VERSION(3,0)) {
+	if (header.Version < W3D_MAKE_VERSION(3, 0))
+	{
 		pre30 = true;
 	}
 
@@ -183,14 +183,15 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 	*/
 	subobjcounter = 0;
 
-	while (cload.Open_Chunk()) {
-
-		switch (cload.Cur_Chunk_ID()) {
-
+	while (cload.Open_Chunk())
+	{
+		switch (cload.Cur_Chunk_ID())
+		{
 			case W3D_CHUNK_NODE:
 			case W3D_CHUNK_COLLISION_NODE:
 			case W3D_CHUNK_SKIN_NODE:
-				if (!read_connection(cload,&(SubObjects[subobjcounter]),pre30)) {
+				if (!read_connection(cload, &(SubObjects[subobjcounter]), pre30))
+				{
 					goto Error;
 				}
 				subobjcounter++;
@@ -212,9 +213,7 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 Error:
 
 	return LOAD_ERROR;
-
 }
-
 
 /***********************************************************************************************
  * HModelDefClass::read_connection -- read a single connection from the file                   *
@@ -229,29 +228,34 @@ Error:
  *   08/11/1997 GH  : Created.                                                                 *
  *   10/22/97   GH  : Check for mesh connections with PivotID=-1                               *
  *=============================================================================================*/
-bool HModelDefClass::read_connection(ChunkLoadClass & cload,HmdlNodeDefStruct * node,bool pre30)
+bool HModelDefClass::read_connection(ChunkLoadClass &cload, HmdlNodeDefStruct *node, bool pre30)
 {
-
 	W3dHModelNodeStruct con;
-	if (cload.Read(&con,sizeof(W3dHModelNodeStruct)) != sizeof(W3dHModelNodeStruct)) {
+	if (cload.Read(&con, sizeof(W3dHModelNodeStruct)) != sizeof(W3dHModelNodeStruct))
+	{
 		return false;
 	}
 
-	strcpy(node->RenderObjName,ModelName);
-	strcat(node->RenderObjName,".");
-	strcat(node->RenderObjName,con.RenderObjName);
+	strcpy(node->RenderObjName, ModelName);
+	strcat(node->RenderObjName, ".");
+	strcat(node->RenderObjName, con.RenderObjName);
 
-	if (pre30) {
-		if (con.PivotIdx == 65535) {
+	if (pre30)
+	{
+		if (con.PivotIdx == 65535)
+		{
 			node->PivotID = 0;
-		} else {
+		}
+		else
+		{
 			node->PivotID = con.PivotIdx + 1;
 		}
-	} else {
+	}
+	else
+	{
 		assert(con.PivotIdx != 65535);
 		node->PivotID = con.PivotIdx;
 	}
 
 	return true;
 }
-

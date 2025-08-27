@@ -34,28 +34,25 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 /*
 ** AppData.cpp - Implementation of some Westwood
 ** extensions to the MAXScript language.
 */
 
-#include <maxscrpt.h>	// Main MAXScript header
-#include <maxobj.h>		// MAX* Wrapper objects
-#include <strings.h>		// MAX String class
-#include <definsfn.h>	// def_* functions to create static function headers
+#include <maxscrpt.h> // Main MAXScript header
+#include <maxobj.h> // MAX* Wrapper objects
+#include <strings.h> // MAX String class
+#include <definsfn.h> // def_* functions to create static function headers
 
-#include "w3dutil.h"	// W3DAppData*Struct accessor functions!
+#include "w3dutil.h" // W3DAppData*Struct accessor functions!
 #include "w3ddesc.h"
-
 
 /*
 ** Let MAXScript know we're implementing new built-in functions.
 */
-def_visible_primitive(copy_app_data,			"wwCopyAppData");
-def_visible_primitive(set_origin_app_data,	"wwSetOriginAppData");
-def_visible_primitive(get_hierarchy_file,		"wwGetHierarchyFile");
-
+def_visible_primitive(copy_app_data, "wwCopyAppData");
+def_visible_primitive(set_origin_app_data, "wwSetOriginAppData");
+def_visible_primitive(get_hierarchy_file, "wwGetHierarchyFile");
 
 /*
 **
@@ -67,7 +64,7 @@ def_visible_primitive(get_hierarchy_file,		"wwGetHierarchyFile");
 ** and Export Transform to get passed on to their
 ** instances/copies/references.
 */
-Value * copy_app_data_cf (Value **arg_list, int count)
+Value *copy_app_data_cf(Value **arg_list, int count)
 {
 	// Verify the number and type of the arguments.
 	check_arg_count("wwCopyAppData", 2, count);
@@ -82,8 +79,8 @@ Value * copy_app_data_cf (Value **arg_list, int count)
 	** Copy W3DAppData0Struct
 	*/
 	W3DAppData0Struct *app_data_0 = GetW3DAppData0(src_node);
-	if (app_data_0 != NULL) {
-
+	if (app_data_0 != NULL)
+	{
 		// App Data 0 is now obsolete, not fatal if we don't find one
 		W3DAppData0Struct *copy_data_0 = new W3DAppData0Struct;
 		if (copy_data_0 == NULL)
@@ -91,8 +88,7 @@ Value * copy_app_data_cf (Value **arg_list, int count)
 
 		// Copy the app data and give it to the target node.
 		*copy_data_0 = *app_data_0;
-		dest_node->AddAppDataChunk(W3DUtilityClassID, UTILITY_CLASS_ID, W3D_APPDATA_0,
-											sizeof(W3DAppData0Struct), copy_data_0);
+		dest_node->AddAppDataChunk(W3DUtilityClassID, UTILITY_CLASS_ID, W3D_APPDATA_0, sizeof(W3DAppData0Struct), copy_data_0);
 	}
 
 	/*
@@ -108,9 +104,7 @@ Value * copy_app_data_cf (Value **arg_list, int count)
 
 	// Copy the app data and give it to the target node.
 	*copy_data_1 = *app_data_1;
-	dest_node->AddAppDataChunk(W3DUtilityClassID, UTILITY_CLASS_ID, W3D_APPDATA_1,
-										sizeof(W3DAppData1Struct), copy_data_1);
-
+	dest_node->AddAppDataChunk(W3DUtilityClassID, UTILITY_CLASS_ID, W3D_APPDATA_1, sizeof(W3DAppData1Struct), copy_data_1);
 
 	/*
 	** Copy W3DAppData2Struct
@@ -125,30 +119,30 @@ Value * copy_app_data_cf (Value **arg_list, int count)
 
 	// Copy the app data and give it to the target node.
 	*copy_data_2 = *app_data_2;
-	dest_node->AddAppDataChunk(W3DUtilityClassID, UTILITY_CLASS_ID, W3D_APPDATA_2,
-										sizeof(W3DAppData2Struct), copy_data_2);
+	dest_node->AddAppDataChunk(W3DUtilityClassID, UTILITY_CLASS_ID, W3D_APPDATA_2, sizeof(W3DAppData2Struct), copy_data_2);
 
 	/*
 	** Copy W3DDazzleAppDataStruct if one is present.
 	*/
 	W3DDazzleAppDataStruct *dazzle_app_data = GetW3DDazzleAppData(src_node);
-	if (dazzle_app_data != NULL) {
-
+	if (dazzle_app_data != NULL)
+	{
 		W3DDazzleAppDataStruct *copy_dazzle_data = new W3DDazzleAppDataStruct;
 		if (copy_dazzle_data == NULL)
 			throw RuntimeError("Out of memory.");
 
-
 		// Copy the app data and give it to the target node.
 		*copy_dazzle_data = *dazzle_app_data;
-		dest_node->AddAppDataChunk(W3DUtilityClassID, UTILITY_CLASS_ID, W3D_DAZZLE_APPDATA,
-											sizeof(W3DDazzleAppDataStruct), copy_dazzle_data);
+		dest_node->AddAppDataChunk(
+				W3DUtilityClassID,
+				UTILITY_CLASS_ID,
+				W3D_DAZZLE_APPDATA,
+				sizeof(W3DDazzleAppDataStruct),
+				copy_dazzle_data);
 	}
 
 	return &ok;
 }
-
-
 
 /*
 **
@@ -159,7 +153,7 @@ Value * copy_app_data_cf (Value **arg_list, int count)
 ** appropriate to an origin. (ie. turn off Export Geometry and
 ** Export Transform)
 */
-Value * set_origin_app_data_cf (Value **arg_list, int count)
+Value *set_origin_app_data_cf(Value **arg_list, int count)
 {
 	// Check the arguments that were passed to this function.
 	check_arg_count("wwSetOriginAppData", 1, count);
@@ -190,16 +184,17 @@ Value * set_origin_app_data_cf (Value **arg_list, int count)
 ** will be loaded, the return value is the MAXScript undefined.
 **
 */
-Value * get_hierarchy_file_cf (Value **arg_list, int count)
+Value *get_hierarchy_file_cf(Value **arg_list, int count)
 {
 	// Check that we weren't passed any arguments.
 	check_arg_count("wwGetHierarchyFile", 0, count);
 
 	// Retrieve the export options from the scene.
 	W3dExportOptionsStruct *options = NULL;
-	AppDataChunk * appdata = MAXScript_interface->GetScenePointer()->GetAppDataChunk(W3D_EXPORTER_CLASS_ID,SCENE_EXPORT_CLASS_ID,0);
+	AppDataChunk *appdata =
+			MAXScript_interface->GetScenePointer()->GetAppDataChunk(W3D_EXPORTER_CLASS_ID, SCENE_EXPORT_CLASS_ID, 0);
 	if (appdata)
-		options = (W3dExportOptionsStruct*)(appdata->data);
+		options = (W3dExportOptionsStruct *)(appdata->data);
 
 	// If we didn't get any options, return undefined.
 	if (!options)
@@ -207,7 +202,7 @@ Value * get_hierarchy_file_cf (Value **arg_list, int count)
 
 	// Return the relative path to the htree file if it's available.
 	// Otherwise, return the absolute path.
-	one_typed_value_local(String* htree_file);
+	one_typed_value_local(String * htree_file);
 	if (options->RelativeHierarchyFilename[0] != 0)
 		vl.htree_file = new String(options->RelativeHierarchyFilename);
 	else if (options->HierarchyFilename[0] != 0)
@@ -220,7 +215,3 @@ Value * get_hierarchy_file_cf (Value **arg_list, int count)
 	}
 	return_value(vl.htree_file);
 }
-
-
-
-

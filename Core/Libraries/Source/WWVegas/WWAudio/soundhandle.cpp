@@ -37,48 +37,43 @@
 #include "soundhandle.h"
 #include "Threads.h"
 
-
 //////////////////////////////////////////////////////////////////////
 //
 //	SoundHandleClass
 //
 //////////////////////////////////////////////////////////////////////
-SoundHandleClass::SoundHandleClass (void)	:
-	Buffer (NULL)
+SoundHandleClass::SoundHandleClass(void) : Buffer(NULL)
 {
-	return ;
+	return;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 //
 //	~SoundHandleClass
 //
 //////////////////////////////////////////////////////////////////////
-SoundHandleClass::~SoundHandleClass (void)
+SoundHandleClass::~SoundHandleClass(void)
 {
 	//
 	//	Delay the release of the buffer (fixes a sync bug
 	// with Miles internals).
 	//
-	if (Buffer != NULL) {
-		WWAudioThreadsClass::Add_Delayed_Release_Object (Buffer);
+	if (Buffer != NULL)
+	{
+		WWAudioThreadsClass::Add_Delayed_Release_Object(Buffer);
 		Buffer = NULL;
 	}
 
-	return ;
+	return;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 //
 //	Initialize
 //
 //////////////////////////////////////////////////////////////////////
-void
-SoundHandleClass::Initialize (SoundBufferClass *buffer)
+void SoundHandleClass::Initialize(SoundBufferClass *buffer)
 {
-	REF_PTR_SET (Buffer, buffer);
-	return ;
+	REF_PTR_SET(Buffer, buffer);
+	return;
 }
-

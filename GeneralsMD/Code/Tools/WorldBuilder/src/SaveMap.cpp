@@ -27,35 +27,31 @@
 /////////////////////////////////////////////////////////////////////////////
 // SaveMap dialog
 
-
-SaveMap::SaveMap(TSaveMapInfo *pInfo, CWnd* pParent /*=NULL*/)
-	: CDialog(SaveMap::IDD, pParent),
-	m_pInfo(pInfo)
+SaveMap::SaveMap(TSaveMapInfo *pInfo, CWnd *pParent /*=NULL*/) : CDialog(SaveMap::IDD, pParent), m_pInfo(pInfo)
 {
-	m_pInfo->usingSystemDir = m_usingSystemDir = ::AfxGetApp()->GetProfileInt(MAP_OPENSAVE_PANEL_SECTION, "UseSystemDir", TRUE);
+	m_pInfo->usingSystemDir = m_usingSystemDir =
+			::AfxGetApp()->GetProfileInt(MAP_OPENSAVE_PANEL_SECTION, "UseSystemDir", TRUE);
 
 	//{{AFX_DATA_INIT(SaveMap)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void SaveMap::DoDataExchange(CDataExchange* pDX)
+void SaveMap::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SaveMap)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(SaveMap, CDialog)
-	//{{AFX_MSG_MAP(SaveMap)
-	ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
-	ON_BN_CLICKED(IDC_SYSTEMMAPS, OnSystemMaps)
-	ON_BN_CLICKED(IDC_USERMAPS, OnUserMaps)
-	ON_LBN_SELCHANGE(IDC_SAVE_LIST, OnSelchangeSaveList)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(SaveMap)
+ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
+ON_BN_CLICKED(IDC_SYSTEMMAPS, OnSystemMaps)
+ON_BN_CLICKED(IDC_USERMAPS, OnUserMaps)
+ON_LBN_SELCHANGE(IDC_SAVE_LIST, OnSelchangeSaveList)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -63,18 +59,19 @@ END_MESSAGE_MAP()
 
 void SaveMap::OnSystemMaps()
 {
-	populateMapListbox( TRUE );
+	populateMapListbox(TRUE);
 }
 
 void SaveMap::OnUserMaps()
 {
-	populateMapListbox( FALSE );
+	populateMapListbox(FALSE);
 }
 
 void SaveMap::OnOK()
 {
 	CWnd *pEdit = GetDlgItem(IDC_SAVE_MAP_EDIT);
-	if (pEdit == NULL) {
+	if (pEdit == NULL)
+	{
 		DEBUG_CRASH(("Bad resources."));
 		OnCancel();
 		return;
@@ -90,13 +87,15 @@ void SaveMap::OnOK()
 		testName = TheGlobalData->getPath_UserData().str();
 		testName = testName + "Maps\\";
 	}
-	testName += m_pInfo->filename + "\\" + m_pInfo->filename + ".map"	;
+	testName += m_pInfo->filename + "\\" + m_pInfo->filename + ".map";
 	CFileStatus status;
-	if (CFile::GetStatus(testName, status)) {
+	if (CFile::GetStatus(testName, status))
+	{
 		CString warn;
 		warn.Format(IDS_REPLACEFILE, LPCTSTR(testName));
 		Int ret = ::AfxMessageBox(warn, MB_YESNO);
-		if (ret == IDNO) {
+		if (ret == IDNO)
+		{
 			return;
 		}
 	}
@@ -114,16 +113,16 @@ void SaveMap::OnBrowse()
 	CDialog::OnOK();
 }
 
-void SaveMap::populateMapListbox( Bool systemMaps )
+void SaveMap::populateMapListbox(Bool systemMaps)
 {
 	m_pInfo->usingSystemDir = m_usingSystemDir = systemMaps;
 	::AfxGetApp()->WriteProfileInt(MAP_OPENSAVE_PANEL_SECTION, "UseSystemDir", m_usingSystemDir);
 
-	HANDLE			hFindFile = 0;
-	WIN32_FIND_DATA			findData;
-	char				dirBuf[_MAX_PATH];
-	char				findBuf[_MAX_PATH];
-	char				fileBuf[_MAX_PATH];
+	HANDLE hFindFile = 0;
+	WIN32_FIND_DATA findData;
+	char dirBuf[_MAX_PATH];
+	char findBuf[_MAX_PATH];
+	char fileBuf[_MAX_PATH];
 
 	if (systemMaps)
 		strcpy(dirBuf, ".\\Maps\\");
@@ -131,22 +130,27 @@ void SaveMap::populateMapListbox( Bool systemMaps )
 		sprintf(dirBuf, "%sMaps\\", TheGlobalData->getPath_UserData().str());
 	int len = strlen(dirBuf);
 
-	if (len > 0 && dirBuf[len - 1] != '\\') {
+	if (len > 0 && dirBuf[len - 1] != '\\')
+	{
 		dirBuf[len++] = '\\';
 		dirBuf[len] = 0;
 	}
 	CListBox *pList = (CListBox *)this->GetDlgItem(IDC_SAVE_LIST);
-	if (pList == NULL) return;
+	if (pList == NULL)
+		return;
 	pList->ResetContent();
 	strcpy(findBuf, dirBuf);
 	strcat(findBuf, "*.*");
 
 	hFindFile = FindFirstFile(findBuf, &findData);
-	if (hFindFile != INVALID_HANDLE_VALUE) {
-		do {
+	if (hFindFile != INVALID_HANDLE_VALUE)
+	{
+		do
+		{
 			if (strcmp(findData.cFileName, ".") == 0 || strcmp(findData.cFileName, "..") == 0)
 				continue;
-			if ((findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
+			if ((findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
+			{
 				continue;
 			}
 			strcpy(fileBuf, dirBuf);
@@ -154,29 +158,40 @@ void SaveMap::populateMapListbox( Bool systemMaps )
 			strcat(fileBuf, "\\");
 			strcat(fileBuf, findData.cFileName);
 			strcat(fileBuf, ".map");
-			try {
+			try
+			{
 				CFileStatus status;
-				if (CFile::GetStatus(fileBuf, status)) {
-					if (!(status.m_attribute & CFile::directory)) {
+				if (CFile::GetStatus(fileBuf, status))
+				{
+					if (!(status.m_attribute & CFile::directory))
+					{
 						pList->AddString(findData.cFileName);
 					};
 				}
-			} catch(...) {}
+			}
+			catch (...)
+			{
+			}
 
 		} while (FindNextFile(hFindFile, &findData));
 
-		if (hFindFile) FindClose(hFindFile);
- 	}
-	CEdit *pEdit = (CEdit*)GetDlgItem(IDC_SAVE_MAP_EDIT);
-	if (pEdit != NULL) {
+		if (hFindFile)
+			FindClose(hFindFile);
+	}
+	CEdit *pEdit = (CEdit *)GetDlgItem(IDC_SAVE_MAP_EDIT);
+	if (pEdit != NULL)
+	{
 		strcpy(fileBuf, m_pInfo->filename);
 		Int len = strlen(fileBuf);
-		if (len>4 && stricmp(".map", fileBuf+(len-4)) == 0) {
+		if (len > 4 && stricmp(".map", fileBuf + (len - 4)) == 0)
+		{
 			// strip of the .map
-			fileBuf[len-4] = 0;
+			fileBuf[len - 4] = 0;
 		}
-		while (len>0) {
-			if (fileBuf[len] == '\\') {
+		while (len > 0)
+		{
+			if (fileBuf[len] == '\\')
+			{
 				len++;
 				break;
 			}
@@ -191,17 +206,20 @@ void SaveMap::populateMapListbox( Bool systemMaps )
 void SaveMap::OnSelchangeSaveList()
 {
 	CListBox *pList = (CListBox *)this->GetDlgItem(IDC_SAVE_LIST);
-	if (pList == NULL) {
+	if (pList == NULL)
+	{
 		return;
 	}
 
 	Int sel = pList->GetCurSel();
 	CString filename;
-	if (sel != LB_ERR) {
+	if (sel != LB_ERR)
+	{
 		pList->GetText(sel, filename);
 	}
 	CWnd *pEdit = GetDlgItem(IDC_SAVE_MAP_EDIT);
-	if (pEdit == NULL) {
+	if (pEdit == NULL)
+	{
 		return;
 	}
 	pEdit->SetWindowText(filename);
@@ -213,18 +231,17 @@ BOOL SaveMap::OnInitDialog()
 
 	CButton *pSystemMaps = (CButton *)this->GetDlgItem(IDC_SYSTEMMAPS);
 	if (pSystemMaps != NULL)
-		pSystemMaps->SetCheck( m_usingSystemDir );
+		pSystemMaps->SetCheck(m_usingSystemDir);
 
 	CButton *pUserMaps = (CButton *)this->GetDlgItem(IDC_USERMAPS);
 	if (pUserMaps != NULL)
-		pUserMaps->SetCheck( !m_usingSystemDir );
+		pUserMaps->SetCheck(!m_usingSystemDir);
 
 	// TheSuperHackers @tweak Originally World Builder has hidden the System Maps tab button in Release builds,
 	// perhaps with the intention to only show User Maps to community users. However, World Builder did release
 	// as a Debug build and always had the System Maps tab, therefore this now shows it always for simplicity.
 
-	populateMapListbox( m_usingSystemDir );
+	populateMapListbox(m_usingSystemDir);
 
-	return FALSE;  // return TRUE unless you set the focus to a control
-
+	return FALSE; // return TRUE unless you set the focus to a control
 }

@@ -72,21 +72,23 @@ class GeometryInfo;
 //-----------------------------------------------------------------------------
 
 /// The individual data for a prop.
-typedef struct {
-	RenderObjClass *m_robj;			///< Render object for this kind of prop.
-	Int					id;
-	Coord3D			location;			///< Drawing location
-	Int					propType;					///< Type of prop. Index into m_propTypes
+typedef struct
+{
+	RenderObjClass *m_robj; ///< Render object for this kind of prop.
+	Int id;
+	Coord3D location; ///< Drawing location
+	Int propType; ///< Type of prop. Index into m_propTypes
 	ObjectShroudStatus ss;
-	Bool				visible;					///< Visible flag, updated each frame.
-	SphereClass bounds;				///< Bounding sphere for culling to set the visible flag.
+	Bool visible; ///< Visible flag, updated each frame.
+	SphereClass bounds; ///< Bounding sphere for culling to set the visible flag.
 } TProp;
 
 /// The individual data for a prop type.
-typedef struct {
-	RenderObjClass *m_robj;			///< Render object for this kind of prop.
-	AsciiString			m_robjName;	///< Name of the render obj.
-	SphereClass			m_bounds;		///< Bounding boxes for the base prop models.
+typedef struct
+{
+	RenderObjClass *m_robj; ///< Render object for this kind of prop.
+	AsciiString m_robjName; ///< Name of the render obj.
+	SphereClass m_bounds; ///< Bounding boxes for the base prop models.
 } TPropType;
 
 //
@@ -95,11 +97,9 @@ typedef struct {
 //
 class W3DPropBuffer : Snapshot
 {
-friend class BaseHeightMapRenderObjClass;
-
+	friend class BaseHeightMapRenderObjClass;
 
 public:
-
 	W3DPropBuffer(void);
 	~W3DPropBuffer(void);
 	/// Add a prop at location.  Name is the w3d model name.
@@ -111,11 +111,7 @@ public:
 	/// Let us know that the shroud has changed.
 	void notifyShroudChanged(void);
 
-	void removePropsForConstruction(
-		const Coord3D* pos,
-		const GeometryInfo& geom,
-		Real angle
-	);
+	void removePropsForConstruction(const Coord3D *pos, const GeometryInfo &geom, Real angle);
 
 	/// Add a type of prop.  Name is the w3d model name.
 	Int addPropType(const AsciiString &modelName);
@@ -124,30 +120,36 @@ public:
 	/// Draws the props.  Uses camera for culling.
 	void drawProps(RenderInfoClass &rinfo);
 	/// Called when the view changes, and sort key needs to be recalculated.
-	void doFullUpdate(void) {m_doCull = true;};
+	void doFullUpdate(void) { m_doCull = true; };
 
 protected:
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
+	virtual void loadPostProcess(void);
 
 protected:
-	enum { MAX_PROPS=4000};
-	enum {MAX_TYPES = 64};
+	enum
+	{
+		MAX_PROPS = 4000
+	};
+	enum
+	{
+		MAX_TYPES = 64
+	};
 
-	TProp	m_props[MAX_PROPS];			///< The prop buffer.  All props are stored here.
-	Int			m_numProps;						///< Number of props in m_props.
-	Bool		m_anythingChanged;	///< Set to true if visibility or sorting changed.
-	Bool		m_initialized;		///< True if the subsystem initialized.
-	Bool		m_doCull;
-	TPropType m_propTypes[MAX_TYPES];	///< Info about a kind of prop.
-	Int			m_numPropTypes;						///< Number of entries in m_propTypes.
-	W3DShroudMaterialPassClass	*m_propShroudMaterialPass;	///< Custom render pass which applies shrouds to objects
+	TProp m_props[MAX_PROPS]; ///< The prop buffer.  All props are stored here.
+	Int m_numProps; ///< Number of props in m_props.
+	Bool m_anythingChanged; ///< Set to true if visibility or sorting changed.
+	Bool m_initialized; ///< True if the subsystem initialized.
+	Bool m_doCull;
+	TPropType m_propTypes[MAX_TYPES]; ///< Info about a kind of prop.
+	Int m_numPropTypes; ///< Number of entries in m_propTypes.
+	W3DShroudMaterialPassClass *m_propShroudMaterialPass; ///< Custom render pass which applies shrouds to objects
 
 	LightClass *m_light;
 
-	void cull(CameraClass * camera);						 ///< Culls the props.
+	void cull(CameraClass *camera); ///< Culls the props.
 };
 
-#endif  // end __W3DPROP_BUFFER_H_
+#endif // end __W3DPROP_BUFFER_H_

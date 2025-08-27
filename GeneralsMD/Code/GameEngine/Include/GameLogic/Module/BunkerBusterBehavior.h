@@ -44,64 +44,56 @@ class UpgradeTemplate;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-class BunkerBusterBehaviorModuleData : //public UpdateModuleData
-                                       public BehaviorModuleData
+class BunkerBusterBehaviorModuleData : // public UpdateModuleData
+																			 public BehaviorModuleData
 {
-
 public:
+	BunkerBusterBehaviorModuleData(void);
 
-	BunkerBusterBehaviorModuleData( void );
+	static void buildFieldParse(MultiIniFieldParse &p);
 
-	static void buildFieldParse( MultiIniFieldParse &p );
+	AsciiString m_upgradeRequired; ///< Upgrade required to kill garrisoned units
+	const FXList *m_detonationFX; ///< FXList to play upon detonation
+	const FXList *m_crashThroughBunkerFX; ///< FXList to play as the bomb goes smashing through the bunker
+	UnsignedInt m_crashThroughBunkerFXFrequency; ///< How often to play the above FX
 
-	AsciiString m_upgradeRequired;///< Upgrade required to kill garrisoned units
-	const FXList *m_detonationFX;						///< FXList to play upon detonation
-  const FXList *m_crashThroughBunkerFX;  ///< FXList to play as the bomb goes smashing through the bunker
-  UnsignedInt m_crashThroughBunkerFXFrequency;  ///< How often to play the above FX
+	Real m_seismicEffectRadius;
+	Real m_seismicEffectMagnitude;
 
-  Real m_seismicEffectRadius;
-  Real m_seismicEffectMagnitude;
-
-  WeaponTemplate *m_shockwaveWeaponTemplate; ///< a weapon that gets fired when the buster gets busted, intended to generate a shockwave effect only
-  WeaponTemplate *m_occupantDamageWeaponTemplate; ///< a weapon to provide a damegeInfo that gets applied to each occupant of container struck as they are getting kicked out
-
-
+	WeaponTemplate *m_shockwaveWeaponTemplate; ///< a weapon that gets fired when the buster gets busted, intended to generate
+																						 ///< a shockwave effect only
+	WeaponTemplate *m_occupantDamageWeaponTemplate; ///< a weapon to provide a damegeInfo that gets applied to each occupant of
+																									///< container struck as they are getting kicked out
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-class BunkerBusterBehavior : public UpdateModule,
- 														 public DieModuleInterface
+class BunkerBusterBehavior : public UpdateModule, public DieModuleInterface
 {
-
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( BunkerBusterBehavior, BunkerBusterBehaviorModuleData );
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( BunkerBusterBehavior, "BunkerBusterBehavior" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(BunkerBusterBehavior, BunkerBusterBehaviorModuleData);
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BunkerBusterBehavior, "BunkerBusterBehavior")
 
 public:
-
-	BunkerBusterBehavior( Thing *thing, const ModuleData *modData );
+	BunkerBusterBehavior(Thing *thing, const ModuleData *modData);
 	// virtual destructor prototype provided by MemoryPoolObject
 
 	// module methods
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
 	// update module methods
-	virtual UpdateSleepTime update( void );
-  virtual void onObjectCreated( void );
+	virtual UpdateSleepTime update(void);
+	virtual void onObjectCreated(void);
 
 	// die module methods
-	virtual DieModuleInterface *getDie( void ) { return this; }
-	virtual void onDie( const DamageInfo *damageInfo );
-
-
+	virtual DieModuleInterface *getDie(void) { return this; }
+	virtual void onDie(const DamageInfo *damageInfo);
 
 protected:
-  void bustTheBunker( void );
+	void bustTheBunker(void);
 
-	const UpgradeTemplate *m_upgradeRequired;			///< Upgrade required to use the upgraded pulse FX
+	const UpgradeTemplate *m_upgradeRequired; ///< Upgrade required to use the upgraded pulse FX
 
-  ObjectID m_victimID;
+	ObjectID m_victimID;
 };
 
-#endif  // end __BUNKERBUSTER_BEHAVIOR_H_
-
+#endif // end __BUNKERBUSTER_BEHAVIOR_H_

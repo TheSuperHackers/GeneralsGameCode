@@ -45,7 +45,7 @@
 //         Includes
 //----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameClient/DebugDisplay.h"
 
@@ -53,56 +53,39 @@
 //         Externals
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Data
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Prototypes
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Functions
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Public Functions
 //----------------------------------------------------------------------------
-
 
 //============================================================================
 // DebugDisplay::DebugDisplay
 //============================================================================
 
-DebugDisplay::DebugDisplay()
-: m_width(0),
-	m_height(0)
+DebugDisplay::DebugDisplay() : m_width(0), m_height(0)
 {
 	reset();
 }
@@ -111,18 +94,18 @@ DebugDisplay::DebugDisplay()
 // DebugDisplay::reset
 //============================================================================
 
-void DebugDisplay::reset( void )
+void DebugDisplay::reset(void)
 {
-	setCursorPos( 0, 0 );
-	setTextColor( WHITE );
-	setRightMargin( 0 );
-	setLeftMargin( getWidth() );
+	setCursorPos(0, 0);
+	setTextColor(WHITE);
+	setRightMargin(0);
+	setLeftMargin(getWidth());
 }
 //============================================================================
 // DebugDisplay::setCursorPos
 //============================================================================
 
-void	DebugDisplay::setCursorPos( Int x, Int y )
+void DebugDisplay::setCursorPos(Int x, Int y)
 {
 	m_xPos = x;
 	m_yPos = y;
@@ -132,7 +115,7 @@ void	DebugDisplay::setCursorPos( Int x, Int y )
 // DebugDisplay::getCursorXPos
 //============================================================================
 
-Int		DebugDisplay::getCursorXPos( void )
+Int DebugDisplay::getCursorXPos(void)
 {
 	return m_xPos;
 }
@@ -141,7 +124,7 @@ Int		DebugDisplay::getCursorXPos( void )
 // DebugDisplay::getCursorYPos
 //============================================================================
 
-Int		DebugDisplay::getCursorYPos( void )
+Int DebugDisplay::getCursorYPos(void)
 {
 	return m_yPos;
 }
@@ -150,7 +133,7 @@ Int		DebugDisplay::getCursorYPos( void )
 // DebugDisplay::getWidth
 //============================================================================
 
-Int		DebugDisplay::getWidth( void )
+Int DebugDisplay::getWidth(void)
 {
 	return m_width;
 }
@@ -159,7 +142,7 @@ Int		DebugDisplay::getWidth( void )
 // DebugDisplay::getHeight
 //============================================================================
 
-Int		DebugDisplay::getHeight( void )
+Int DebugDisplay::getHeight(void)
 {
 	return m_height;
 }
@@ -168,7 +151,7 @@ Int		DebugDisplay::getHeight( void )
 // DebugDisplay::setTextColor
 //============================================================================
 
-void	DebugDisplay::setTextColor( Color color )
+void DebugDisplay::setTextColor(Color color)
 {
 	m_textColor = color;
 }
@@ -177,7 +160,7 @@ void	DebugDisplay::setTextColor( Color color )
 // DebugDisplay::setRightMargin
 //============================================================================
 
-void	DebugDisplay::setRightMargin( Int rightPos )
+void DebugDisplay::setRightMargin(Int rightPos)
 {
 	m_rightMargin = rightPos;
 }
@@ -186,7 +169,7 @@ void	DebugDisplay::setRightMargin( Int rightPos )
 // DebugDisplay::setLeftMargin
 //============================================================================
 
-void	DebugDisplay::setLeftMargin( Int leftPos )
+void DebugDisplay::setLeftMargin(Int leftPos)
 {
 	m_leftMargin = leftPos;
 }
@@ -195,40 +178,41 @@ void	DebugDisplay::setLeftMargin( Int leftPos )
 // DebugDisplay::printf
 //============================================================================
 
-void	DebugDisplay::printf( const Char *format, ...)
+void DebugDisplay::printf(const Char *format, ...)
 {
 	va_list args;
 	int result;
-	static char text[5*1024];
+	static char text[5 * 1024];
 
-  va_start( args, format );
-	result = vsprintf( text, format, args );
-  va_end( args );
+	va_start(args, format);
+	result = vsprintf(text, format, args);
+	va_end(args);
 
-	if ( result < 0 )
+	if (result < 0)
 	{
 		// error while printing string
 		return;
 	}
 
-	DEBUG_ASSERTCRASH( result < sizeof(text), ("text overflow in DebugDisplay::printf() - string too long"));
+	DEBUG_ASSERTCRASH(result < sizeof(text), ("text overflow in DebugDisplay::printf() - string too long"));
 
 	// find every line and print it
-	Char *ptr = text;;
+	Char *ptr = text;
+	;
 	Char *lineStart = ptr;
 	Int lineLen = 0;
 	Char ch;
 
-	while ( (ch = *ptr++) != 0 )
+	while ((ch = *ptr++) != 0)
 	{
-		switch ( ch )
+		switch (ch)
 		{
 			case '\n':
 			{
-				if ( lineLen > 0 )
+				if (lineLen > 0)
 				{
-					*(ptr -1) = 0; // replace '/n' with null
-					drawText( m_rightMargin + m_xPos, m_yPos, lineStart );
+					*(ptr - 1) = 0; // replace '/n' with null
+					drawText(m_rightMargin + m_xPos, m_yPos, lineStart);
 					lineLen = 0;
 				}
 				lineStart = ptr;
@@ -245,9 +229,9 @@ void	DebugDisplay::printf( const Char *format, ...)
 		}
 	}
 
-	if ( lineLen > 0 )
+	if (lineLen > 0)
 	{
-		drawText( m_rightMargin + m_xPos, m_yPos, lineStart );
+		drawText(m_rightMargin + m_xPos, m_yPos, lineStart);
 		m_xPos += lineLen;
 	}
 }

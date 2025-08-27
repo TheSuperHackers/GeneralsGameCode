@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/INI.h"
 #include "Common/GlobalData.h"
@@ -44,9 +44,7 @@
 //-------------------------------------------------------------------------------------------------
 /** Parse GameData entry */
 //-------------------------------------------------------------------------------------------------
-void INI::parseGameDataDefinition( INI* ini )
+void INI::parseGameDataDefinition(INI *ini)
 {
 	GlobalData::parseGameDataDefinition(ini);
 }
-
-

@@ -60,10 +60,10 @@ static char THIS_FILE[] = __FILE__;
 // CDebugWindowApp
 
 BEGIN_MESSAGE_MAP(CDebugWindowApp, CWinApp)
-	//{{AFX_MSG_MAP(CDebugWindowApp)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-		//    DO NOT EDIT what you see in these blocks of generated code!
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CDebugWindowApp)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//    DO NOT EDIT what you see in these blocks of generated code!
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -72,17 +72,16 @@ END_MESSAGE_MAP()
 CDebugWindowApp::CDebugWindowApp()
 {
 	AfxInitialize(true);
-	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	m_DialogWindow = NULL;
-
 }
 
-DebugWindowDialog* CDebugWindowApp::GetDialogWindow(void)
+DebugWindowDialog *CDebugWindowApp::GetDialogWindow(void)
 {
 	return m_DialogWindow;
 }
 
-void CDebugWindowApp::SetDialogWindow(DebugWindowDialog* pWnd)
+void CDebugWindowApp::SetDialogWindow(DebugWindowDialog *pWnd)
 {
 	m_DialogWindow = pWnd;
 }
@@ -91,7 +90,6 @@ CDebugWindowApp::~CDebugWindowApp()
 {
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 // The one and only CDebugWindowApp object
 
@@ -99,324 +97,443 @@ CDebugWindowApp theApp;
 
 void __declspec(dllexport) CreateParticleSystemDialog(void)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-		DebugWindowDialog* tmpWnd;
+		DebugWindowDialog *tmpWnd;
 		tmpWnd = new DebugWindowDialog;
 		tmpWnd->Create(DebugWindowDialog::IDD, NULL);
 
 		tmpWnd->SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 		tmpWnd->InitPanel();
 		tmpWnd->ShowWindow(SW_SHOW);
-		if (tmpWnd->GetMainWndHWND()) {
+		if (tmpWnd->GetMainWndHWND())
+		{
 			SetFocus(tmpWnd->GetMainWndHWND());
 		}
 
 		theApp.SetDialogWindow(tmpWnd);
-	} catch (...) { }
+	}
+	catch (...)
+	{
+	}
 }
 
 void __declspec(dllexport) DestroyParticleSystemDialog(void)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			tmpWnd->DestroyWindow();
 			delete tmpWnd;
 			theApp.SetDialogWindow(NULL);
 		}
-	} catch (...) { }
+	}
+	catch (...)
+	{
+	}
 }
 
 void __declspec(dllexport) RemoveAllParticleSystems(void)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			tmpWnd->clearAllParticleSystems();
 		}
-	} catch (...) { }
+	}
+	catch (...)
+	{
+	}
 }
 
-void __declspec(dllexport) AppendParticleSystem(const char* particleSystemName)
+void __declspec(dllexport) AppendParticleSystem(const char *particleSystemName)
 {
-	try{
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			tmpWnd->addParticleSystem(particleSystemName);
 		}
-	} catch (...) { }
+	}
+	catch (...)
+	{
+	}
 }
 
-void __declspec(dllexport) RemoveAllThingTemplates( void )
+void __declspec(dllexport) RemoveAllThingTemplates(void)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			tmpWnd->clearAllThingTemplates();
 		}
-	} catch (...) { }
+	}
+	catch (...)
+	{
+	}
 }
 
-
-void __declspec(dllexport) AppendThingTemplate( const char* thingTemplateName )
+void __declspec(dllexport) AppendThingTemplate(const char *thingTemplateName)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			tmpWnd->addThingTemplate(thingTemplateName);
 		}
-	} catch (...) {	}
+	}
+	catch (...)
+	{
+	}
 }
 
-
-Bool __declspec(dllexport) HasUpdatedSelectedParticleSystem( void )
+Bool __declspec(dllexport) HasUpdatedSelectedParticleSystem(void)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			return tmpWnd->hasSelectionChanged();
 		}
-	} catch (...) {	}
+	}
+	catch (...)
+	{
+	}
 
 	return false;
 }
 
-void __declspec(dllexport) GetSelectedParticleSystemName( char *bufferToCopyInto )
+void __declspec(dllexport) GetSelectedParticleSystemName(char *bufferToCopyInto)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			tmpWnd->getSelectedSystemName(bufferToCopyInto);
 		}
-	} catch (...) {	}
+	}
+	catch (...)
+	{
+	}
 }
 
-void __declspec(dllexport) UpdateCurrentParticleCap( int currentParticleCap )
+void __declspec(dllexport) UpdateCurrentParticleCap(int currentParticleCap)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			tmpWnd->updateCurrentParticleCap(currentParticleCap);
 		}
-	} catch (...) { }
+	}
+	catch (...)
+	{
+	}
 }
 
-void __declspec(dllexport) UpdateCurrentNumParticles( int currentParticleCount )
+void __declspec(dllexport) UpdateCurrentNumParticles(int currentParticleCount)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			tmpWnd->updateCurrentNumParticles(currentParticleCount);
 		}
-	} catch (...) { }
+	}
+	catch (...)
+	{
+	}
 }
 
-int __declspec(dllexport) GetNewParticleCap( void )
+int __declspec(dllexport) GetNewParticleCap(void)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			return tmpWnd->getNewParticleCap();
 		}
-	} catch (...) { }
+	}
+	catch (...)
+	{
+	}
 	return -1;
 }
 
-
-void __declspec(dllexport) GetSelectedParticleAsciiStringParm( int parmNum, char *bufferToCopyInto, ParticleSystemTemplate **whichTemplate)
+void __declspec(dllexport) GetSelectedParticleAsciiStringParm(
+		int parmNum,
+		char *bufferToCopyInto,
+		ParticleSystemTemplate **whichTemplate)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			tmpWnd->getSelectedParticleAsciiStringParm(parmNum, bufferToCopyInto);
-			if (whichTemplate) {
+			if (whichTemplate)
+			{
 				(*whichTemplate) = tmpWnd->getCurrentParticleSystem();
 			}
 		}
-	} catch (...) { }
+	}
+	catch (...)
+	{
+	}
 }
 
-void __declspec(dllexport) UpdateParticleAsciiStringParm( int parmNum, const char *bufferToCopyFrom, ParticleSystemTemplate **whichTemplate)
+void __declspec(dllexport) UpdateParticleAsciiStringParm(
+		int parmNum,
+		const char *bufferToCopyFrom,
+		ParticleSystemTemplate **whichTemplate)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			tmpWnd->updateParticleAsciiStringParm(parmNum, bufferToCopyFrom);
-			if (whichTemplate) {
+			if (whichTemplate)
+			{
 				(*whichTemplate) = tmpWnd->getCurrentParticleSystem();
 			}
 		}
-	} catch (...) { }
+	}
+	catch (...)
+	{
+	}
 }
 
-void __declspec(dllexport) UpdateCurrentParticleSystem( ParticleSystemTemplate *particleTemplate)
+void __declspec(dllexport) UpdateCurrentParticleSystem(ParticleSystemTemplate *particleTemplate)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			tmpWnd->updateCurrentParticleSystem(particleTemplate);
 		}
-	} catch (...) { }
+	}
+	catch (...)
+	{
+	}
 }
 
-void __declspec(dllexport) UpdateSystemUseParameters( ParticleSystemTemplate *particleTemplate)
+void __declspec(dllexport) UpdateSystemUseParameters(ParticleSystemTemplate *particleTemplate)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			tmpWnd->updateSystemUseParameters(particleTemplate);
 		}
-	} catch(...) { }
+	}
+	catch (...)
+	{
+	}
 }
 
-Bool __declspec(dllexport) ShouldWriteINI( void )
+Bool __declspec(dllexport) ShouldWriteINI(void)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			return tmpWnd->shouldWriteINI();
 		}
-	} catch (...) { }
+	}
+	catch (...)
+	{
+	}
 
 	return false;
 }
 
-Bool __declspec(dllexport) HasRequestedReload( void )
+Bool __declspec(dllexport) HasRequestedReload(void)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			return tmpWnd->hasRequestedReload();
 		}
-	} catch (...) { }
+	}
+	catch (...)
+	{
+	}
 
 	return false;
 }
 
-Bool __declspec(dllexport) ShouldBusyWait( void )
+Bool __declspec(dllexport) ShouldBusyWait(void)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			return tmpWnd->shouldBusyWait();
 		}
-	} catch (...) { }
+	}
+	catch (...)
+	{
+	}
 
 	return false;
 }
 
-Bool __declspec(dllexport) ShouldUpdateParticleCap( void )
+Bool __declspec(dllexport) ShouldUpdateParticleCap(void)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			return tmpWnd->shouldUpdateParticleCap();
 		}
-	} catch (...) { }
+	}
+	catch (...)
+	{
+	}
 
 	return false;
 }
 
-Bool __declspec(dllexport) ShouldReloadTextures( void )
+Bool __declspec(dllexport) ShouldReloadTextures(void)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			return tmpWnd->shouldReloadTextures();
 		}
-	} catch (...) { }
+	}
+	catch (...)
+	{
+	}
 
 	return false;
 }
 
-Bool __declspec(dllexport) HasRequestedKillAllSystems( void )
+Bool __declspec(dllexport) HasRequestedKillAllSystems(void)
 {
-	try {
-		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-		DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	try
+	{
+		AFX_MANAGE_STATE(AfxGetStaticModuleState());
+		DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-		if (tmpWnd) {
+		if (tmpWnd)
+		{
 			return tmpWnd->shouldKillAllParticleSystems();
 		}
-	} catch (...) { }
+	}
+	catch (...)
+	{
+	}
 
 	return false;
 }
 
-int __declspec(dllexport) NextParticleEditorBehavior( void )
+int __declspec(dllexport) NextParticleEditorBehavior(void)
 {
-	try {
-		if (HasUpdatedSelectedParticleSystem()) {
+	try
+	{
+		if (HasUpdatedSelectedParticleSystem())
+		{
 			return PEB_UpdateCurrentSystem;
 		}
 
-		if (ShouldWriteINI()) {
+		if (ShouldWriteINI())
+		{
 			return PEB_SaveAllSystems;
 		}
 
-		if (HasRequestedReload()) {
+		if (HasRequestedReload())
+		{
 			return PEB_ReloadCurrentSystem;
 		}
 
-		if (ShouldBusyWait()) {
+		if (ShouldBusyWait())
+		{
 			return PEB_BusyWait;
 		}
 
-		if (ShouldUpdateParticleCap()) {
+		if (ShouldUpdateParticleCap())
+		{
 			return PEB_SetParticleCap;
 		}
 
-		if (ShouldReloadTextures()) {
+		if (ShouldReloadTextures())
+		{
 			return PEB_ReloadTextures;
 		}
 
-		if (HasRequestedKillAllSystems()) {
+		if (HasRequestedKillAllSystems())
+		{
 			return PEB_KillAllSystems;
 		}
 
 		return PEB_Continue;
-	} catch (...) {	}
+	}
+	catch (...)
+	{
+	}
 	return PEB_Error;
 }
-
-

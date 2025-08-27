@@ -34,10 +34,8 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #ifndef __LODDEFS_H
 #define __LODDEFS_H
-
 
 ////////////////////////////////////////////////////////////////////////////
 //
@@ -50,23 +48,23 @@ typedef enum
 	TYPE_COUNT
 } LOD_NAMING_TYPE;
 
-
 ////////////////////////////////////////////////////////////////////////////
 //
 //	Inline functions
 //
-__inline bool Is_LOD_Name_Valid (LPCTSTR name, LOD_NAMING_TYPE &type)
+__inline bool Is_LOD_Name_Valid(LPCTSTR name, LOD_NAMING_TYPE &type)
 {
 	bool retval = false;
 
 	// Does this name fit with the format expected?
-	LPCTSTR last_2_chars = name + (::lstrlen (name)-2);
-	if (((last_2_chars[0] == 'L') || (last_2_chars[0] == 'l')) &&
-		 ((last_2_chars[1] >= '0') && (last_2_chars[1] <= '9'))) {
+	LPCTSTR last_2_chars = name + (::lstrlen(name) - 2);
+	if (((last_2_chars[0] == 'L') || (last_2_chars[0] == 'l')) && ((last_2_chars[1] >= '0') && (last_2_chars[1] <= '9')))
+	{
 		type = TYPE_COMMANDO;
 		retval = true;
-	} else if ((last_2_chars[1] >= 'a' && last_2_chars[1] <= 'z') ||
-				  (last_2_chars[1] >= 'A' && last_2_chars[1] <= 'Z')) {
+	}
+	else if ((last_2_chars[1] >= 'a' && last_2_chars[1] <= 'z') || (last_2_chars[1] >= 'A' && last_2_chars[1] <= 'Z'))
+	{
 		type = TYPE_G;
 		retval = true;
 	}
@@ -74,26 +72,29 @@ __inline bool Is_LOD_Name_Valid (LPCTSTR name, LOD_NAMING_TYPE &type)
 	return retval;
 }
 
-__inline bool Is_Model_Part_of_LOD (LPCTSTR name, LPCTSTR base, LOD_NAMING_TYPE &type)
+__inline bool Is_Model_Part_of_LOD(LPCTSTR name, LPCTSTR base, LOD_NAMING_TYPE &type)
 {
 	// Assume failure
 	bool retval = false;
 
 	// Does the name start with the base?
-	if (::strstr (name, base) == name) {
-
+	if (::strstr(name, base) == name)
+	{
 		// Get the remaining characters in the name (after the base)
-		LPCTSTR extension = name + ::lstrlen (base);
+		LPCTSTR extension = name + ::lstrlen(base);
 
 		// What naming convention are we using?
-		if (type == TYPE_COMMANDO) {
-			if (((extension[0] == 'L') || (extension[0] == 'l')) &&
-				 ((extension[1] >= '0') && (extension[1] <= '9'))) {
+		if (type == TYPE_COMMANDO)
+		{
+			if (((extension[0] == 'L') || (extension[0] == 'l')) && ((extension[1] >= '0') && (extension[1] <= '9')))
+			{
 				retval = (extension[2] == 0);
 			}
-		} else if (type == TYPE_G) {
-			if ((extension[0] >= 'a' && extension[0] <= 'z') ||
-				 (extension[0] >= 'A' && extension[0] <= 'Z')) {
+		}
+		else if (type == TYPE_G)
+		{
+			if ((extension[0] >= 'a' && extension[0] <= 'z') || (extension[0] >= 'A' && extension[0] <= 'Z'))
+			{
 				retval = (extension[1] == 0);
 			}
 		}
@@ -103,6 +104,4 @@ __inline bool Is_Model_Part_of_LOD (LPCTSTR name, LPCTSTR base, LOD_NAMING_TYPE 
 	return retval;
 }
 
-
 #endif //__LODDEFS_H
-

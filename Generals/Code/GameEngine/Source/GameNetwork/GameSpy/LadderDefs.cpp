@@ -26,7 +26,7 @@
 // Generals ladder code
 // Author: Matthew D. Campbell, August 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameNetwork/GameSpy/ThreadUtils.h"
 #include "GameNetwork/GameSpy/LadderDefs.h"
@@ -38,7 +38,6 @@
 #include "Common/PlayerTemplate.h"
 #include "GameClient/GameText.h"
 #include "GameClient/MapUtil.h"
-
 
 LadderList *TheLadderList = NULL;
 
@@ -63,8 +62,8 @@ static LadderInfo *parseLadder(AsciiString raw)
 	AsciiString line;
 	while (raw.nextToken(&line, "\n"))
 	{
-		if (line.getCharAt(line.getLength()-1) == '\r')
-			line.removeLastChar();	// there is a trailing '\r'
+		if (line.getCharAt(line.getLength() - 1) == '\r')
+			line.removeLastChar(); // there is a trailing '\r'
 
 		line.trim();
 
@@ -73,7 +72,7 @@ static LadderInfo *parseLadder(AsciiString raw)
 
 		// woohoo!  got a line!
 		line.trim();
-		if ( !lad && line.startsWith("<Ladder ") )
+		if (!lad && line.startsWith("<Ladder "))
 		{
 			// start of a ladder def
 			lad = NEW LadderInfo;
@@ -92,31 +91,31 @@ static LadderInfo *parseLadder(AsciiString raw)
 			lad->port = atoi(tokenPort.str());
 			lad->homepageURL = tokenHomepage;
 		}
-		else if ( lad && line.startsWith("Name ") )
+		else if (lad && line.startsWith("Name "))
 		{
 			lad->name = MultiByteToWideCharSingleLine(line.str() + 5).c_str();
 		}
-		else if ( lad && line.startsWith("Desc ") )
+		else if (lad && line.startsWith("Desc "))
 		{
 			lad->description = MultiByteToWideCharSingleLine(line.str() + 5).c_str();
 		}
-		else if ( lad && line.startsWith("Loc ") )
+		else if (lad && line.startsWith("Loc "))
 		{
 			lad->location = MultiByteToWideCharSingleLine(line.str() + 4).c_str();
 		}
-		else if ( lad && line.startsWith("TeamSize ") )
+		else if (lad && line.startsWith("TeamSize "))
 		{
 			lad->playersPerTeam = atoi(line.str() + 9);
 		}
-		else if ( lad && line.startsWith("RandomMaps ") )
+		else if (lad && line.startsWith("RandomMaps "))
 		{
 			lad->randomMaps = atoi(line.str() + 11);
 		}
-		else if ( lad && line.startsWith("RandomFactions ") )
+		else if (lad && line.startsWith("RandomFactions "))
 		{
 			lad->randomFactions = atoi(line.str() + 15);
 		}
-		else if ( lad && line.startsWith("Faction ") )
+		else if (lad && line.startsWith("Faction "))
 		{
 			AsciiString faction = line.str() + 8;
 			AsciiStringList outStringList;
@@ -143,25 +142,32 @@ static LadderInfo *parseLadder(AsciiString raw)
 			lad->validCustom = atoi(line.str() + 7);
 		}
 		*/
-		else if ( lad && line.startsWith("MinWins ") )
+		else if (lad && line.startsWith("MinWins "))
 		{
 			lad->minWins = atoi(line.str() + 8);
 		}
-		else if ( lad && line.startsWith("MaxWins ") )
+		else if (lad && line.startsWith("MaxWins "))
 		{
 			lad->maxWins = atoi(line.str() + 8);
 		}
-		else if ( lad && line.startsWith("CryptedPass ") )
+		else if (lad && line.startsWith("CryptedPass "))
 		{
 			lad->cryptedPassword = line.str() + 12;
 		}
-		else if ( lad && line.compare("</Ladder>") == 0 )
+		else if (lad && line.compare("</Ladder>") == 0)
 		{
-			DEBUG_LOG(("Saw a ladder: name=%ls, addr=%s:%d, players=%dv%d, pass=%s, replay=%d, homepage=%s",
-				lad->name.str(), lad->address.str(), lad->port, lad->playersPerTeam, lad->playersPerTeam, lad->cryptedPassword.str(),
-				lad->submitReplay, lad->homepageURL.str()));
+			DEBUG_LOG(
+					("Saw a ladder: name=%ls, addr=%s:%d, players=%dv%d, pass=%s, replay=%d, homepage=%s",
+					 lad->name.str(),
+					 lad->address.str(),
+					 lad->port,
+					 lad->playersPerTeam,
+					 lad->playersPerTeam,
+					 lad->cryptedPassword.str(),
+					 lad->submitReplay,
+					 lad->homepageURL.str()));
 			// end of a ladder
-			if (lad->playersPerTeam >= 1 && lad->playersPerTeam <= MAX_SLOTS/2)
+			if (lad->playersPerTeam >= 1 && lad->playersPerTeam <= MAX_SLOTS / 2)
 			{
 				if (lad->validFactions.size() == 0)
 				{
@@ -178,7 +184,11 @@ static LadderInfo *parseLadder(AsciiString raw)
 						AsciiString faction = *it;
 						AsciiString marker;
 						marker.format("INI:Faction%s", faction.str());
-						DEBUG_LOG(("Faction %s has marker %s corresponding to str %ls", faction.str(), marker.str(), TheGameText->fetch(marker).str()));
+						DEBUG_LOG(
+								("Faction %s has marker %s corresponding to str %ls",
+								 faction.str(),
+								 marker.str(),
+								 TheGameText->fetch(marker).str()));
 					}
 				}
 
@@ -192,7 +202,7 @@ static LadderInfo *parseLadder(AsciiString raw)
 
 						// check sizes on the maps before allowing them
 						const MapMetaData *md = TheMapCache->findMap(mapName);
-						if (md && md->m_numPlayers >= lad->playersPerTeam*2)
+						if (md && md->m_numPlayers >= lad->playersPerTeam * 2)
 						{
 							lad->validMaps.push_back(mapName);
 						}
@@ -208,7 +218,7 @@ static LadderInfo *parseLadder(AsciiString raw)
 				return NULL;
 			}
 		}
-		else if ( lad && line.startsWith("Map ") )
+		else if (lad && line.startsWith("Map "))
 		{
 			// valid map
 			AsciiString mapName = line.str() + 4;
@@ -223,7 +233,7 @@ static LadderInfo *parseLadder(AsciiString raw)
 				{
 					// check sizes on the maps before allowing them
 					const MapMetaData *md = TheMapCache->findMap(mapName);
-					if (md && md->m_numPlayers >= lad->playersPerTeam*2)
+					if (md && md->m_numPlayers >= lad->playersPerTeam * 2)
 						lad->validMaps.push_back(mapName);
 				}
 			}
@@ -246,7 +256,7 @@ static LadderInfo *parseLadder(AsciiString raw)
 
 LadderList::LadderList()
 {
-	//Int profile = TheGameSpyInfo->getLocalProfileID();
+	// Int profile = TheGameSpyInfo->getLocalProfileID();
 
 	AsciiString rawMotd = TheGameSpyConfig->getLeftoverConfig();
 	AsciiString line;
@@ -259,8 +269,8 @@ LadderList::LadderList()
 
 	while (rawMotd.nextToken(&line, "\n"))
 	{
-		if (line.getCharAt(line.getLength()-1) == '\r')
-			line.removeLastChar();	// there is a trailing '\r'
+		if (line.getCharAt(line.getLength() - 1) == '\r')
+			line.removeLastChar(); // there is a trailing '\r'
 
 		line.trim();
 
@@ -326,7 +336,11 @@ LadderList::LadderList()
 	// look for local ladders
 	loadLocalLadders();
 
-	DEBUG_LOG(("After looking for ladders, we have %d local, %d special && %d normal", m_localLadders.size(), m_specialLadders.size(), m_standardLadders.size()));
+	DEBUG_LOG(
+			("After looking for ladders, we have %d local, %d special && %d normal",
+			 m_localLadders.size(),
+			 m_specialLadders.size(),
+			 m_standardLadders.size()));
 }
 
 LadderList::~LadderList()
@@ -349,7 +363,7 @@ LadderList::~LadderList()
 	}
 }
 
-const LadderInfo* LadderList::findLadder( const AsciiString& addr, UnsignedShort port )
+const LadderInfo *LadderList::findLadder(const AsciiString &addr, UnsignedShort port)
 {
 	LadderInfoList::const_iterator cit;
 
@@ -383,7 +397,7 @@ const LadderInfo* LadderList::findLadder( const AsciiString& addr, UnsignedShort
 	return NULL;
 }
 
-const LadderInfo* LadderList::findLadderByIndex( Int index )
+const LadderInfo *LadderList::findLadderByIndex(Int index)
 {
 	if (index == 0)
 		return NULL;
@@ -420,22 +434,22 @@ const LadderInfo* LadderList::findLadderByIndex( Int index )
 	return NULL;
 }
 
-const LadderInfoList* LadderList::getSpecialLadders( void )
+const LadderInfoList *LadderList::getSpecialLadders(void)
 {
 	return &m_specialLadders;
 }
 
-const LadderInfoList* LadderList::getStandardLadders( void )
+const LadderInfoList *LadderList::getStandardLadders(void)
 {
 	return &m_standardLadders;
 }
 
-const LadderInfoList* LadderList::getLocalLadders( void )
+const LadderInfoList *LadderList::getLocalLadders(void)
 {
 	return &m_localLadders;
 }
 
-void LadderList::loadLocalLadders( void )
+void LadderList::loadLocalLadders(void)
 {
 	AsciiString dirname;
 	dirname.format("%sGeneralsOnline\\Ladders\\", TheGlobalData->getPath_UserData().str());
@@ -450,12 +464,12 @@ void LadderList::loadLocalLadders( void )
 		AsciiString filename = *it;
 		DEBUG_LOG(("Looking at possible ladder info file '%s'", filename.str()));
 		filename.toLower();
-		checkLadder( filename, index-- );
+		checkLadder(filename, index--);
 		++it;
 	}
 }
 
-void LadderList::checkLadder( AsciiString fname, Int index )
+void LadderList::checkLadder(AsciiString fname, Int index)
 {
 	File *fp = TheFileSystem->openFile(fname.str(), File::READ | File::TEXT);
 	char buf[1024];
@@ -512,9 +526,9 @@ void LadderList::checkLadder( AsciiString fname, Int index )
 	li->validQM = FALSE; // no local ladders in QM
 	li->validCustom = FALSE;
 
-	//for (Int i=0; i<4; ++i)
+	// for (Int i=0; i<4; ++i)
 	//	fname.removeLastChar(); // remove .lad
-	//li->name = UnicodeString(MultiByteToWideCharSingleLine(fname.reverseFind('\\')+1).c_str());
+	// li->name = UnicodeString(MultiByteToWideCharSingleLine(fname.reverseFind('\\')+1).c_str());
 
 	DEBUG_LOG(("Adding local ladder %ls", li->name.str()));
 	m_localLadders.push_back(li);

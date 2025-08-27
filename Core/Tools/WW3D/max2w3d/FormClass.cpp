@@ -38,13 +38,11 @@
  *   FormClass::ExecuteDlgInit -- Initializes the controls in the dialog template              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "FormClass.h"
 #include "dllmain.h"
 
 // hard-coded resource id which VC special cases for MFC... >:-)
-#define RT_DLGINIT  MAKEINTRESOURCE(240)
-
+#define RT_DLGINIT MAKEINTRESOURCE(240)
 
 /***********************************************************************************************
  * FormClass::Create_Form -- Loads the dialog template and initializes                         *
@@ -58,37 +56,25 @@
  * HISTORY:                                                                                    *
  *   11/6/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-HWND
-FormClass::Create_Form
-(
-	HWND parent_wnd,
-	UINT template_id
-)
+HWND FormClass::Create_Form(HWND parent_wnd, UINT template_id)
 {
 	// call PreCreateWindow to get prefered extended style
 	CREATESTRUCT cs = { 0 };
 	cs.style = WS_CHILD;
 
-	m_hWnd = ::CreateDialogParam(	AppInstance,
-											MAKEINTRESOURCE (template_id),
-											parent_wnd,
-											fnFormProc,
-											(LPARAM)this);
+	m_hWnd = ::CreateDialogParam(AppInstance, MAKEINTRESOURCE(template_id), parent_wnd, fnFormProc, (LPARAM)this);
 
 	assert(m_hWnd);
 
 	// Remove the caption from the dialog (if there was any)
-	::SetWindowLong (m_hWnd,
-						  GWL_STYLE,
-						  ::GetWindowLong (m_hWnd, GWL_STYLE) & (~WS_CAPTION));
+	::SetWindowLong(m_hWnd, GWL_STYLE, ::GetWindowLong(m_hWnd, GWL_STYLE) & (~WS_CAPTION));
 
-	::GetWindowRect (m_hWnd, &m_FormRect);
+	::GetWindowRect(m_hWnd, &m_FormRect);
 
 	ExecuteDlgInit(MAKEINTRESOURCE(template_id));
 
 	return m_hWnd;
 }
-
 
 /***********************************************************************************************
  * FormClass::fnFormProc -- windows proc which thunks into the virtual Dialog_Proc             *
@@ -102,32 +88,28 @@ FormClass::Create_Form
  * HISTORY:                                                                                    *
  *   11/6/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-BOOL WINAPI
-FormClass::fnFormProc
-(
-	HWND dlg_wnd,
-	UINT message,
-	WPARAM wparam,
-	LPARAM lparam
-)
+BOOL WINAPI FormClass::fnFormProc(HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
-	FormClass *pform = (FormClass *)::GetProp (dlg_wnd, "FORMCLASS");
+	FormClass *pform = (FormClass *)::GetProp(dlg_wnd, "FORMCLASS");
 
-	if (message == WM_INITDIALOG) {
+	if (message == WM_INITDIALOG)
+	{
 		pform = (FormClass *)lparam;
-		::SetProp (dlg_wnd, "FORMCLASS", (HANDLE)pform);
-	} else if (message == WM_DESTROY) {
-		::RemoveProp (dlg_wnd, "FORMCLASS");
+		::SetProp(dlg_wnd, "FORMCLASS", (HANDLE)pform);
+	}
+	else if (message == WM_DESTROY)
+	{
+		::RemoveProp(dlg_wnd, "FORMCLASS");
 	}
 
 	BOOL retval = FALSE;
-	if (pform) {
-		retval = pform->Dialog_Proc (dlg_wnd, message, wparam, lparam);
+	if (pform)
+	{
+		retval = pform->Dialog_Proc(dlg_wnd, message, wparam, lparam);
 	}
 
 	return retval;
 }
-
 
 /***********************************************************************************************
  * FormClass::ExecuteDlgInit -- Initializes controls in the dialog template                    *
@@ -177,7 +159,6 @@ BOOL FormClass::ExecuteDlgInit(LPCTSTR lpszResourceName)
 	return bResult;
 }
 
-
 /***********************************************************************************************
  * FormClass::ExecuteDlgInit -- Initializes the controls in the dialog template                *
  *                                                                                             *
@@ -197,18 +178,18 @@ BOOL FormClass::ExecuteDlgInit(LPVOID lpResource)
 	BOOL bSuccess = TRUE;
 	if (lpResource != NULL)
 	{
-		UNALIGNED WORD* lpnRes = (WORD*)lpResource;
+		UNALIGNED WORD *lpnRes = (WORD *)lpResource;
 		while (bSuccess && *lpnRes != 0)
 		{
 			WORD nIDC = *lpnRes++;
 			WORD nMsg = *lpnRes++;
-			DWORD dwLen = *((UNALIGNED DWORD*&)lpnRes)++;
+			DWORD dwLen = *((UNALIGNED DWORD *&)lpnRes)++;
 
-			// In Win32 the WM_ messages have changed.  They have
-			// to be translated from the 32-bit values to 16-bit
-			// values here.
-			#define WIN16_LB_ADDSTRING  0x0401
-			#define WIN16_CB_ADDSTRING  0x0403
+// In Win32 the WM_ messages have changed.  They have
+// to be translated from the 32-bit values to 16-bit
+// values here.
+#define WIN16_LB_ADDSTRING 0x0401
+#define WIN16_CB_ADDSTRING 0x0403
 
 			if (nMsg == WIN16_LB_ADDSTRING)
 				nMsg = LB_ADDSTRING;
@@ -226,7 +207,7 @@ BOOL FormClass::ExecuteDlgInit(LPVOID lpResource)
 			}
 
 			// skip past data
-			lpnRes = (WORD*)((LPBYTE)lpnRes + (UINT)dwLen);
+			lpnRes = (WORD *)((LPBYTE)lpnRes + (UINT)dwLen);
 		}
 	}
 

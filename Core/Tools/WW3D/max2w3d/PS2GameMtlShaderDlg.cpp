@@ -41,48 +41,38 @@
  *   PGMSD::CompareShaderToBlendPreset -- Determine if the settings conform to one of the prese*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "PS2GameMtlShaderDlg.h"
 #include "GameMtlDlg.h"
 #include "gamemtl.h"
 #include "resource.h"
 
-
 #define NUM_PS2_SHADER_BLEND_PRESETS 7
 
-static char * _PS2ShaderBlendSettingPresetNames[NUM_PS2_SHADER_BLEND_PRESETS + 1] =
-{
-	"Opaque",
-	"Additive",
-	"Source Subtracted",
-	"Destination Subtracted",
-	"Alpha Blend",
-	"Alpha Test",
-	"Alpha Test and Blend",
-	"------ Custom -----"
+static char *_PS2ShaderBlendSettingPresetNames[NUM_PS2_SHADER_BLEND_PRESETS + 1] = {
+	"Opaque",			 "Additive",	 "Source Subtracted",		 "Destination Subtracted",
+	"Alpha Blend", "Alpha Test", "Alpha Test and Blend", "------ Custom -----"
 };
 
 struct PS2ShaderBlendSettingPreset
 {
-	int	A;
-	int	B;
-	int	C;
-	int	D;
-	bool	DepthMask;
-	bool	AlphaTest;
+	int A;
+	int B;
+	int C;
+	int D;
+	bool DepthMask;
+	bool AlphaTest;
 };
 
 //	(A - B) * C + D
 static const PS2ShaderBlendSettingPreset PS2ShaderBlendSettingPresets[NUM_PS2_SHADER_BLEND_PRESETS] = {
-	{PSS_SRC,	PSS_ZERO,	PSS_ONE,			PSS_ZERO,	true,		false},	// Opaque
-	{PSS_SRC,	PSS_ZERO,	PSS_ONE,			PSS_DEST,	false,	false},	// Additive
-	{PSS_DEST,	PSS_SRC,		PSS_ONE,			PSS_ZERO,	false,	false},	// Src subtracted
-	{PSS_SRC,	PSS_DEST,	PSS_ONE,			PSS_ZERO,	false,	false},	// Dest subtracted
-	{PSS_SRC,	PSS_DEST,	PSS_SRC_ALPHA, PSS_DEST,	false,	false},	// Alpha blend
-	{PSS_SRC,	PSS_ZERO,	PSS_ONE,			PSS_ZERO,	true,		true},	// Alpha test
-	{PSS_SRC,	PSS_DEST,	PSS_SRC_ALPHA, PSS_DEST,	true,		true},	// Alpha test & blend
+	{ PSS_SRC, PSS_ZERO, PSS_ONE, PSS_ZERO, true, false }, // Opaque
+	{ PSS_SRC, PSS_ZERO, PSS_ONE, PSS_DEST, false, false }, // Additive
+	{ PSS_DEST, PSS_SRC, PSS_ONE, PSS_ZERO, false, false }, // Src subtracted
+	{ PSS_SRC, PSS_DEST, PSS_ONE, PSS_ZERO, false, false }, // Dest subtracted
+	{ PSS_SRC, PSS_DEST, PSS_SRC_ALPHA, PSS_DEST, false, false }, // Alpha blend
+	{ PSS_SRC, PSS_ZERO, PSS_ONE, PSS_ZERO, true, true }, // Alpha test
+	{ PSS_SRC, PSS_DEST, PSS_SRC_ALPHA, PSS_DEST, true, true }, // Alpha test & blend
 };
-
 
 /***********************************************************************************************
  * PS2GameMtlShaderDlg -- Constructor.                                                         *
@@ -93,17 +83,11 @@ static const PS2ShaderBlendSettingPreset PS2ShaderBlendSettingPresets[NUM_PS2_SH
  * HISTORY:                                                                                    *
  *   10/12/1999MLL: Created.                                                                   *
  *=============================================================================================*/
-PS2GameMtlShaderDlg::PS2GameMtlShaderDlg
-(
-	HWND				parent,
-	IMtlParams *	imp,
-	GameMtl *		mtl,
-	int				pass
-) : GameMtlFormClass(imp,mtl,pass)
+PS2GameMtlShaderDlg::PS2GameMtlShaderDlg(HWND parent, IMtlParams *imp, GameMtl *mtl, int pass) :
+		GameMtlFormClass(imp, mtl, pass)
 {
 	Create_Form(parent, IDD_GAMEMTL_PS2_SHADER);
 }
-
 
 /***********************************************************************************************
  * PGMSD::Dialog_Proc -- Respond to user selections.                                           *
@@ -114,7 +98,7 @@ PS2GameMtlShaderDlg::PS2GameMtlShaderDlg
  * HISTORY:                                                                                    *
  *   10/12/1999MLL: Created.                                                                   *
  *=============================================================================================*/
-BOOL PS2GameMtlShaderDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam)
+BOOL PS2GameMtlShaderDlg::Dialog_Proc(HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int cursel;
 	int i;
@@ -123,113 +107,119 @@ BOOL PS2GameMtlShaderDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam
 
 	switch (message)
 	{
-
 		case WM_INITDIALOG:
-			for(i = 0; i <= NUM_PS2_SHADER_BLEND_PRESETS; i++) {
-				SendDlgItemMessage(dlg_wnd,IDC_PS2_PRESET_COMBO,CB_ADDSTRING,0,(LONG)_PS2ShaderBlendSettingPresetNames[i]);
+			for (i = 0; i <= NUM_PS2_SHADER_BLEND_PRESETS; i++)
+			{
+				SendDlgItemMessage(dlg_wnd, IDC_PS2_PRESET_COMBO, CB_ADDSTRING, 0, (LONG)_PS2ShaderBlendSettingPresetNames[i]);
 			}
-			SendDlgItemMessage(dlg_wnd,IDC_PS2_PRESET_COMBO,CB_SETCURSEL,0,0);
+			SendDlgItemMessage(dlg_wnd, IDC_PS2_PRESET_COMBO, CB_SETCURSEL, 0, 0);
 			break;
 
 		case WM_LBUTTONDOWN:
 		case WM_LBUTTONUP:
 		case WM_MOUSEMOVE:
-			{
-				IParams->RollupMouseMessage(dlg_wnd,message,wparam,lparam);
-			}
+		{
+			IParams->RollupMouseMessage(dlg_wnd, message, wparam, lparam);
+		}
 			return FALSE;
 
 		case WM_COMMAND:
+		{
+			if (code == CBN_SELCHANGE)
 			{
-				if (code == CBN_SELCHANGE) {
+				switch (id)
+				{
+					// Shared by both shaders.
+					case IDC_DEPTHCOMPARE_COMBO:
+						cursel = SendDlgItemMessage(dlg_wnd, IDC_DEPTHCOMPARE_COMBO, CB_GETCURSEL, 0, 0);
+						TheMtl->Set_Depth_Compare(PassIndex, cursel);
+						break;
+					case IDC_PRIGRADIENT_COMBO:
+						cursel = SendDlgItemMessage(dlg_wnd, IDC_PRIGRADIENT_COMBO, CB_GETCURSEL, 0, 0);
+						TheMtl->Set_Pri_Gradient(PassIndex, cursel);
+						TheMtl->Notify_Changed();
+						break;
+					case IDC_SECGRADIENT_COMBO:
+						cursel = SendDlgItemMessage(dlg_wnd, IDC_SECGRADIENT_COMBO, CB_GETCURSEL, 0, 0);
+						TheMtl->Set_Sec_Gradient(PassIndex, cursel);
+						TheMtl->Notify_Changed();
+						break;
+					case IDC_DETAILCOLOR_COMBO:
+						cursel = SendDlgItemMessage(dlg_wnd, IDC_DETAILCOLOR_COMBO, CB_GETCURSEL, 0, 0);
+						TheMtl->Set_Detail_Color_Func(PassIndex, cursel);
+						TheMtl->Notify_Changed();
+						break;
+					case IDC_DETAILALPHA_COMBO:
+						cursel = SendDlgItemMessage(dlg_wnd, IDC_DETAILALPHA_COMBO, CB_GETCURSEL, 0, 0);
+						TheMtl->Set_Detail_Alpha_Func(PassIndex, cursel);
+						TheMtl->Notify_Changed();
+						break;
 
-					switch (id)
-					{
-						// Shared by both shaders.
-						case IDC_DEPTHCOMPARE_COMBO:
-							cursel = SendDlgItemMessage(dlg_wnd,IDC_DEPTHCOMPARE_COMBO,CB_GETCURSEL,0,0);
-							TheMtl->Set_Depth_Compare(PassIndex,cursel);
-							break;
-						case IDC_PRIGRADIENT_COMBO:
-							cursel = SendDlgItemMessage(dlg_wnd,IDC_PRIGRADIENT_COMBO,CB_GETCURSEL,0,0);
-							TheMtl->Set_Pri_Gradient(PassIndex,cursel);
-							TheMtl->Notify_Changed();
-							break;
-						case IDC_SECGRADIENT_COMBO:
-							cursel = SendDlgItemMessage(dlg_wnd,IDC_SECGRADIENT_COMBO,CB_GETCURSEL,0,0);
-							TheMtl->Set_Sec_Gradient(PassIndex,cursel);
-							TheMtl->Notify_Changed();
-							break;
-						case IDC_DETAILCOLOR_COMBO:
-							cursel = SendDlgItemMessage(dlg_wnd,IDC_DETAILCOLOR_COMBO,CB_GETCURSEL,0,0);
-							TheMtl->Set_Detail_Color_Func(PassIndex,cursel);
-							TheMtl->Notify_Changed();
-							break;
-						case IDC_DETAILALPHA_COMBO:
-							cursel = SendDlgItemMessage(dlg_wnd,IDC_DETAILALPHA_COMBO,CB_GETCURSEL,0,0);
-							TheMtl->Set_Detail_Alpha_Func(PassIndex,cursel);
-							TheMtl->Notify_Changed();
-							break;
-
-						// Playstation 2 specific.
-						case IDC_PS2_PRESET_COMBO:
-							cursel = SendDlgItemMessage(dlg_wnd,IDC_PS2_PRESET_COMBO,CB_GETCURSEL,0,0);
-							Apply_Preset(cursel);
-							break;
-						case IDC_A_COMBO:
-							cursel = SendDlgItemMessage(dlg_wnd,IDC_A_COMBO,CB_GETCURSEL,0,0);
-							TheMtl->Set_PS2_Shader_Param_A(PassIndex,cursel);
-							TheMtl->Notify_Changed();
-							Set_Preset();
-							break;
-						case IDC_B_COMBO:
-							cursel = SendDlgItemMessage(dlg_wnd,IDC_B_COMBO,CB_GETCURSEL,0,0);
-							TheMtl->Set_PS2_Shader_Param_B(PassIndex,cursel);
-							TheMtl->Notify_Changed();
-							Set_Preset();
-							break;
-						case IDC_C_COMBO:
-							cursel = SendDlgItemMessage(dlg_wnd,IDC_C_COMBO,CB_GETCURSEL,0,0);
-							TheMtl->Set_PS2_Shader_Param_C(PassIndex,cursel);
-							TheMtl->Notify_Changed();
-							Set_Preset();
-							break;
-						case IDC_D_COMBO:
-							cursel = SendDlgItemMessage(dlg_wnd,IDC_D_COMBO,CB_GETCURSEL,0,0);
-							TheMtl->Set_PS2_Shader_Param_D(PassIndex,cursel);
-							TheMtl->Notify_Changed();
-							Set_Preset();
-							break;
-					}
-
-				} else {
-
-					switch(id) {
-
-						case IDC_DEPTHMASK_CHECK:
-							if (SendDlgItemMessage(dlg_wnd,IDC_DEPTHMASK_CHECK,BM_GETCHECK,0,0)) {
-								TheMtl->Set_Depth_Mask(PassIndex,W3DSHADER_DEPTHMASK_WRITE_ENABLE);
-							} else {
-								TheMtl->Set_Depth_Mask(PassIndex,W3DSHADER_DEPTHMASK_WRITE_DISABLE);
-							}
-							Set_Preset();
-							break;
-
-						case IDC_ALPHATEST_CHECK:
-							if (SendDlgItemMessage(dlg_wnd,IDC_ALPHATEST_CHECK,BM_GETCHECK,0,0)) {
-								TheMtl->Set_Alpha_Test(PassIndex,W3DSHADER_ALPHATEST_ENABLE);
-							} else {
-								TheMtl->Set_Alpha_Test(PassIndex,W3DSHADER_ALPHATEST_DISABLE);
-							}
-							Set_Preset();
-							break;
-
-						case IDC_SHADER_DEFAULTS_BUTTON:
-							Set_Advanced_Defaults();
-							break;
-					}
+					// Playstation 2 specific.
+					case IDC_PS2_PRESET_COMBO:
+						cursel = SendDlgItemMessage(dlg_wnd, IDC_PS2_PRESET_COMBO, CB_GETCURSEL, 0, 0);
+						Apply_Preset(cursel);
+						break;
+					case IDC_A_COMBO:
+						cursel = SendDlgItemMessage(dlg_wnd, IDC_A_COMBO, CB_GETCURSEL, 0, 0);
+						TheMtl->Set_PS2_Shader_Param_A(PassIndex, cursel);
+						TheMtl->Notify_Changed();
+						Set_Preset();
+						break;
+					case IDC_B_COMBO:
+						cursel = SendDlgItemMessage(dlg_wnd, IDC_B_COMBO, CB_GETCURSEL, 0, 0);
+						TheMtl->Set_PS2_Shader_Param_B(PassIndex, cursel);
+						TheMtl->Notify_Changed();
+						Set_Preset();
+						break;
+					case IDC_C_COMBO:
+						cursel = SendDlgItemMessage(dlg_wnd, IDC_C_COMBO, CB_GETCURSEL, 0, 0);
+						TheMtl->Set_PS2_Shader_Param_C(PassIndex, cursel);
+						TheMtl->Notify_Changed();
+						Set_Preset();
+						break;
+					case IDC_D_COMBO:
+						cursel = SendDlgItemMessage(dlg_wnd, IDC_D_COMBO, CB_GETCURSEL, 0, 0);
+						TheMtl->Set_PS2_Shader_Param_D(PassIndex, cursel);
+						TheMtl->Notify_Changed();
+						Set_Preset();
+						break;
 				}
 			}
+			else
+			{
+				switch (id)
+				{
+					case IDC_DEPTHMASK_CHECK:
+						if (SendDlgItemMessage(dlg_wnd, IDC_DEPTHMASK_CHECK, BM_GETCHECK, 0, 0))
+						{
+							TheMtl->Set_Depth_Mask(PassIndex, W3DSHADER_DEPTHMASK_WRITE_ENABLE);
+						}
+						else
+						{
+							TheMtl->Set_Depth_Mask(PassIndex, W3DSHADER_DEPTHMASK_WRITE_DISABLE);
+						}
+						Set_Preset();
+						break;
+
+					case IDC_ALPHATEST_CHECK:
+						if (SendDlgItemMessage(dlg_wnd, IDC_ALPHATEST_CHECK, BM_GETCHECK, 0, 0))
+						{
+							TheMtl->Set_Alpha_Test(PassIndex, W3DSHADER_ALPHATEST_ENABLE);
+						}
+						else
+						{
+							TheMtl->Set_Alpha_Test(PassIndex, W3DSHADER_ALPHATEST_DISABLE);
+						}
+						Set_Preset();
+						break;
+
+					case IDC_SHADER_DEFAULTS_BUTTON:
+						Set_Advanced_Defaults();
+						break;
+				}
+			}
+		}
 	}
 
 	return FALSE;
@@ -247,11 +237,11 @@ BOOL PS2GameMtlShaderDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam
 void PS2GameMtlShaderDlg::ReloadDialog(void)
 {
 	DebugPrint("GameMtlShaderDlg::ReloadDialog\n");
-	SendDlgItemMessage(m_hWnd, IDC_PRIGRADIENT_COMBO, CB_SETCURSEL, TheMtl->Get_Pri_Gradient(PassIndex), 0 );
-	SendDlgItemMessage(m_hWnd, IDC_SECGRADIENT_COMBO, CB_SETCURSEL, TheMtl->Get_Sec_Gradient(PassIndex), 0 );
-	SendDlgItemMessage(m_hWnd, IDC_DEPTHCOMPARE_COMBO, CB_SETCURSEL, TheMtl->Get_Depth_Compare(PassIndex), 0 );
-	SendDlgItemMessage(m_hWnd, IDC_DETAILCOLOR_COMBO, CB_SETCURSEL, TheMtl->Get_Detail_Color_Func(PassIndex), 0 );
-	SendDlgItemMessage(m_hWnd, IDC_DETAILALPHA_COMBO, CB_SETCURSEL, TheMtl->Get_Detail_Alpha_Func(PassIndex), 0 );
+	SendDlgItemMessage(m_hWnd, IDC_PRIGRADIENT_COMBO, CB_SETCURSEL, TheMtl->Get_Pri_Gradient(PassIndex), 0);
+	SendDlgItemMessage(m_hWnd, IDC_SECGRADIENT_COMBO, CB_SETCURSEL, TheMtl->Get_Sec_Gradient(PassIndex), 0);
+	SendDlgItemMessage(m_hWnd, IDC_DEPTHCOMPARE_COMBO, CB_SETCURSEL, TheMtl->Get_Depth_Compare(PassIndex), 0);
+	SendDlgItemMessage(m_hWnd, IDC_DETAILCOLOR_COMBO, CB_SETCURSEL, TheMtl->Get_Detail_Color_Func(PassIndex), 0);
+	SendDlgItemMessage(m_hWnd, IDC_DETAILALPHA_COMBO, CB_SETCURSEL, TheMtl->Get_Detail_Alpha_Func(PassIndex), 0);
 	SendDlgItemMessage(m_hWnd, IDC_A_COMBO, CB_SETCURSEL, TheMtl->Get_PS2_Shader_Param_A(PassIndex), 0);
 	SendDlgItemMessage(m_hWnd, IDC_B_COMBO, CB_SETCURSEL, TheMtl->Get_PS2_Shader_Param_B(PassIndex), 0);
 	SendDlgItemMessage(m_hWnd, IDC_C_COMBO, CB_SETCURSEL, TheMtl->Get_PS2_Shader_Param_C(PassIndex), 0);
@@ -259,10 +249,9 @@ void PS2GameMtlShaderDlg::ReloadDialog(void)
 
 	Set_Preset();
 
-	SetCheckBox(m_hWnd,IDC_DEPTHMASK_CHECK, TheMtl->Get_Depth_Mask(PassIndex));
-	SetCheckBox(m_hWnd,IDC_ALPHATEST_CHECK, TheMtl->Get_Alpha_Test(PassIndex));
+	SetCheckBox(m_hWnd, IDC_DEPTHMASK_CHECK, TheMtl->Get_Depth_Mask(PassIndex));
+	SetCheckBox(m_hWnd, IDC_ALPHATEST_CHECK, TheMtl->Get_Alpha_Test(PassIndex));
 }
-
 
 /***********************************************************************************************
  * PGMSD::Apply_Preset -- Notify the material of the values for the selected setting.          *
@@ -275,7 +264,8 @@ void PS2GameMtlShaderDlg::ReloadDialog(void)
  *=============================================================================================*/
 void PS2GameMtlShaderDlg::Apply_Preset(int preset_index)
 {
-	if (preset_index < 0 || preset_index >= NUM_PS2_SHADER_BLEND_PRESETS) return;
+	if (preset_index < 0 || preset_index >= NUM_PS2_SHADER_BLEND_PRESETS)
+		return;
 
 	const PS2ShaderBlendSettingPreset &preset = PS2ShaderBlendSettingPresets[preset_index];
 
@@ -294,10 +284,9 @@ void PS2GameMtlShaderDlg::Apply_Preset(int preset_index)
 	ReloadDialog();
 
 	if (TheMtl->Compute_PC_Shader_From_PS2_Shader(PassIndex))
-		SetWindowText(GetDlgItem(m_hWnd,IDC_COMPATIBLE), "  Compatible");
+		SetWindowText(GetDlgItem(m_hWnd, IDC_COMPATIBLE), "  Compatible");
 	else
-		SetWindowText(GetDlgItem(m_hWnd,IDC_COMPATIBLE), "  NOT Compatible");
-
+		SetWindowText(GetDlgItem(m_hWnd, IDC_COMPATIBLE), "  NOT Compatible");
 }
 
 /***********************************************************************************************
@@ -311,15 +300,17 @@ void PS2GameMtlShaderDlg::Apply_Preset(int preset_index)
  *=============================================================================================*/
 void PS2GameMtlShaderDlg::Set_Preset(void)
 {
-	for (int i = 0; i < NUM_PS2_SHADER_BLEND_PRESETS; i++) {
-		if (CompareShaderToBlendPreset(PS2ShaderBlendSettingPresets[i])) break;
+	for (int i = 0; i < NUM_PS2_SHADER_BLEND_PRESETS; i++)
+	{
+		if (CompareShaderToBlendPreset(PS2ShaderBlendSettingPresets[i]))
+			break;
 	}
 	SendDlgItemMessage(m_hWnd, IDC_PS2_PRESET_COMBO, CB_SETCURSEL, i, 0);
 
 	if (TheMtl->Compute_PC_Shader_From_PS2_Shader(PassIndex))
-		SetWindowText(GetDlgItem(m_hWnd,IDC_COMPATIBLE), "  Compatible");
+		SetWindowText(GetDlgItem(m_hWnd, IDC_COMPATIBLE), "  Compatible");
 	else
-		SetWindowText(GetDlgItem(m_hWnd,IDC_COMPATIBLE), "  NOT Compatible");
+		SetWindowText(GetDlgItem(m_hWnd, IDC_COMPATIBLE), "  NOT Compatible");
 }
 
 /***********************************************************************************************
@@ -334,18 +325,23 @@ void PS2GameMtlShaderDlg::Set_Preset(void)
 bool PS2GameMtlShaderDlg::CompareShaderToBlendPreset(const PS2ShaderBlendSettingPreset &blend_preset)
 {
 	bool depthmask = TheMtl->Get_Depth_Mask(PassIndex) != W3DSHADER_DEPTHMASK_WRITE_DISABLE;
-	if (depthmask != blend_preset.DepthMask) return false;
+	if (depthmask != blend_preset.DepthMask)
+		return false;
 	bool alphatest = TheMtl->Get_Alpha_Test(PassIndex) != W3DSHADER_ALPHATEST_DISABLE;
-	if (alphatest != blend_preset.AlphaTest) return false;
+	if (alphatest != blend_preset.AlphaTest)
+		return false;
 
-	if (TheMtl->Get_PS2_Shader_Param_A(PassIndex) != blend_preset.A) return false;
-	if (TheMtl->Get_PS2_Shader_Param_B(PassIndex) != blend_preset.B) return false;
-	if (TheMtl->Get_PS2_Shader_Param_C(PassIndex) != blend_preset.C) return false;
-	if (TheMtl->Get_PS2_Shader_Param_D(PassIndex) != blend_preset.D) return false;
+	if (TheMtl->Get_PS2_Shader_Param_A(PassIndex) != blend_preset.A)
+		return false;
+	if (TheMtl->Get_PS2_Shader_Param_B(PassIndex) != blend_preset.B)
+		return false;
+	if (TheMtl->Get_PS2_Shader_Param_C(PassIndex) != blend_preset.C)
+		return false;
+	if (TheMtl->Get_PS2_Shader_Param_D(PassIndex) != blend_preset.D)
+		return false;
 
 	return true;
 }
-
 
 /***********************************************************************************************
  * GameMtlShaderDlg::Set_Advanced_Defaults -- set advanced settings to defaults                *

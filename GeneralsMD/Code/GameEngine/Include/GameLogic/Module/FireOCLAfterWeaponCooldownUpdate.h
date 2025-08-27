@@ -42,31 +42,29 @@ class UpgradeMuxData;
 class FireOCLAfterWeaponCooldownUpdateModuleData : public UpdateModuleData
 {
 public:
-	UpgradeMuxData			m_upgradeMuxData;
-	ObjectCreationList	*m_ocl;
-	WeaponSlotType			m_weaponSlot;
-	UnsignedInt					m_minShotsRequired;
-	UnsignedInt					m_oclLifetimePerSecond;
-	UnsignedInt					m_oclMaxFrames;
+	UpgradeMuxData m_upgradeMuxData;
+	ObjectCreationList *m_ocl;
+	WeaponSlotType m_weaponSlot;
+	UnsignedInt m_minShotsRequired;
+	UnsignedInt m_oclLifetimePerSecond;
+	UnsignedInt m_oclMaxFrames;
 
 	FireOCLAfterWeaponCooldownUpdateModuleData();
-	static void buildFieldParse(MultiIniFieldParse& p);
+	static void buildFieldParse(MultiIniFieldParse &p);
 };
 
 //-------------------------------------------------------------------------------------------------
 class FireOCLAfterWeaponCooldownUpdate : public UpdateModule, public UpgradeMux
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( FireOCLAfterWeaponCooldownUpdate, "FireOCLAfterWeaponCooldownUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( FireOCLAfterWeaponCooldownUpdate, FireOCLAfterWeaponCooldownUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FireOCLAfterWeaponCooldownUpdate, "FireOCLAfterWeaponCooldownUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(FireOCLAfterWeaponCooldownUpdate, FireOCLAfterWeaponCooldownUpdateModuleData)
 
 public:
-
-	FireOCLAfterWeaponCooldownUpdate( Thing *thing, const ModuleData* moduleData );
+	FireOCLAfterWeaponCooldownUpdate(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	// update methods
-	virtual UpdateSleepTime update();							///< called once per frame
+	virtual UpdateSleepTime update(); ///< called once per frame
 
 protected:
 	virtual void upgradeImplementation()
@@ -74,7 +72,7 @@ protected:
 		// nothing!
 	}
 
-	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const
+	virtual void getUpgradeActivationMasks(UpgradeMaskType &activation, UpgradeMaskType &conflicting) const
 	{
 		getFireOCLAfterWeaponCooldownUpdateModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
 	}
@@ -101,12 +99,9 @@ protected:
 	void fireOCL();
 
 private:
-
-	Bool				m_valid;
+	Bool m_valid;
 	UnsignedInt m_consecutiveShots;
 	UnsignedInt m_startFrame;
-
 };
 
 #endif // __FIRE_OCL_AFTER_WEAPON_COOLDOWN_UPDATE_H
-

@@ -24,17 +24,15 @@
 
 // GameClient/Eva.cpp /////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "GameClient/Eva.h"
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "GameLogic/GameLogic.h"
 
-
 //-------------------------------------------------------------------------------------------------
-const char *TheEvaMessageNames[] =
-{
+const char *TheEvaMessageNames[] = {
 	"LOWPOWER",
 	"INSUFFICIENTFUNDS",
 	"SUPERWEAPONDETECTED_PARTICLECANNON",
@@ -58,111 +56,83 @@ const char *TheEvaMessageNames[] =
 };
 
 //------------------------------------------------------------------------------ INI::parseEvaEvent
-void INI::parseEvaEvent( INI* ini )
+void INI::parseEvaEvent(INI *ini)
 {
 	AsciiString name;
 
 	// read the name
-	const char* c = ini->getNextToken();
-	name.set( c );
+	const char *c = ini->getNextToken();
+	name.set(c);
 
-	EvaCheckInfo *check = TheEva->newEvaCheckInfo( name );
-	if (!check) {
+	EvaCheckInfo *check = TheEva->newEvaCheckInfo(name);
+	if (!check)
+	{
 		// could be null because it already exists.
 		return;
 	}
 
 	// parse the ini definition
-	ini->initFromINI( check, check->getFieldParse() );
+	ini->initFromINI(check, check->getFieldParse());
 }
 
 //----------------------------------------------------------------------------------- EvaSideSounds
-static void parseSideSoundsList( INI *ini, void *instance, void *store, const void* userData )
+static void parseSideSoundsList(INI *ini, void *instance, void *store, const void *userData)
 {
-	std::vector<EvaSideSounds> *sounds = (std::vector<EvaSideSounds>*) store;
+	std::vector<EvaSideSounds> *sounds = (std::vector<EvaSideSounds> *)store;
 	EvaSideSounds newSounds;
 
-	ini->initFromINI( &newSounds, newSounds.getFieldParse() );
+	ini->initFromINI(&newSounds, newSounds.getFieldParse());
 
 	// This could be made more efficient, but to be honest, it shouldn't be that slow.
 	sounds->push_back(newSounds);
 }
 
 //----------------------------------------------------------------------------------- EvaSideSounds
-const FieldParse EvaSideSounds::s_evaSideSounds[] =
-{
-	{ "Side",									INI::parseAsciiString,					NULL,			offsetof( EvaSideSounds, m_side) },
-	{ "Sounds",								INI::parseSoundsList,						NULL,			offsetof( EvaSideSounds, m_soundNames) },
+const FieldParse EvaSideSounds::s_evaSideSounds[] = {
+	{ "Side", INI::parseAsciiString, NULL, offsetof(EvaSideSounds, m_side) },
+	{ "Sounds", INI::parseSoundsList, NULL, offsetof(EvaSideSounds, m_soundNames) },
 	{ 0, 0, 0, 0 },
 };
 
 //------------------------------------------------------------------------------------ EvaCheckInfo
 EvaCheckInfo::EvaCheckInfo() :
-	m_message(EVA_COUNT),
-	m_priority(0), // lowest of all priorities
-	m_framesBetweenChecks(900),	// 30 seconds at 30 fps
-	m_framesToExpire(150) // 5 seconds at 30 fps
+		m_message(EVA_COUNT),
+		m_priority(0), // lowest of all priorities
+		m_framesBetweenChecks(900), // 30 seconds at 30 fps
+		m_framesToExpire(150) // 5 seconds at 30 fps
 {
-
-
 }
 
 //-------------------------------------------------------------------------------------------------
-const FieldParse EvaCheckInfo::s_evaEventInfo[] =
-{
-	{ "Priority",							INI::parseUnsignedInt,					NULL,			offsetof( EvaCheckInfo, m_priority ) },
-	{ "TimeBetweenChecksMS",	INI::parseDurationUnsignedInt,	NULL,			offsetof( EvaCheckInfo, m_framesBetweenChecks ) },
-	{ "ExpirationTimeMS",			INI::parseDurationUnsignedInt,	NULL,			offsetof( EvaCheckInfo, m_framesToExpire) },
-	{ "SideSounds",						parseSideSoundsList,						NULL,			offsetof( EvaCheckInfo, m_evaSideSounds ) },
+const FieldParse EvaCheckInfo::s_evaEventInfo[] = {
+	{ "Priority", INI::parseUnsignedInt, NULL, offsetof(EvaCheckInfo, m_priority) },
+	{ "TimeBetweenChecksMS", INI::parseDurationUnsignedInt, NULL, offsetof(EvaCheckInfo, m_framesBetweenChecks) },
+	{ "ExpirationTimeMS", INI::parseDurationUnsignedInt, NULL, offsetof(EvaCheckInfo, m_framesToExpire) },
+	{ "SideSounds", parseSideSoundsList, NULL, offsetof(EvaCheckInfo, m_evaSideSounds) },
 	{ 0, 0, 0, 0 },
 
 };
 
-
 //-------------------------------------------------------------------------------------------------
-const ShouldPlayFunc Eva::s_shouldPlayFuncs[] =
-{
-	Eva::shouldPlayLowPower,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	NULL,
+const ShouldPlayFunc Eva::s_shouldPlayFuncs[] = {
+	Eva::shouldPlayLowPower,			 Eva::shouldPlayGenericHandler, Eva::shouldPlayGenericHandler, Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler, Eva::shouldPlayGenericHandler, Eva::shouldPlayGenericHandler, Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler, Eva::shouldPlayGenericHandler, Eva::shouldPlayGenericHandler, Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler, Eva::shouldPlayGenericHandler, Eva::shouldPlayGenericHandler, Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler, Eva::shouldPlayGenericHandler, Eva::shouldPlayGenericHandler, NULL,
 };
 
 //-------------------------------------------------------------------------------------------------
 EvaCheck::EvaCheck() :
-	m_evaInfo(NULL),
-	m_triggeredOnFrame(TRIGGEREDON_NOT),
-	m_timeForNextCheck(NEXT_CHECK_NOW),
-	m_alreadyPlayed(FALSE)
+		m_evaInfo(NULL), m_triggeredOnFrame(TRIGGEREDON_NOT), m_timeForNextCheck(NEXT_CHECK_NOW), m_alreadyPlayed(FALSE)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
-Eva::Eva() :
-	m_localPlayer(NULL),
-	m_previousBuildingCount(0),
-	m_previousUnitCount(0),
-	m_enabled(TRUE)
+Eva::Eva() : m_localPlayer(NULL), m_previousBuildingCount(0), m_previousUnitCount(0), m_enabled(TRUE)
 {
-
-	for (Int i = 0; i < EVA_COUNT; ++i) {
+	for (Int i = 0; i < EVA_COUNT; ++i)
+	{
 		m_shouldPlay[i] = FALSE;
 	}
 }
@@ -171,7 +141,8 @@ Eva::Eva() :
 Eva::~Eva()
 {
 	EvaCheckInfoPtrVecIt it;
-	for (it = m_allCheckInfos.begin(); it != m_allCheckInfos.end(); ++it) {
+	for (it = m_allCheckInfos.begin(); it != m_allCheckInfos.end(); ++it)
+	{
 		if (*it)
 			deleteInstance(*it);
 	}
@@ -182,7 +153,7 @@ void Eva::init()
 {
 	// parse the INI here, etc.
 	INI ini;
-	ini.load( AsciiString( "Data\\INI\\Eva.ini" ), INI_LOAD_OVERWRITE, NULL);
+	ini.load(AsciiString("Data\\INI\\Eva.ini"), INI_LOAD_OVERWRITE, NULL);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -193,12 +164,14 @@ void Eva::reset()
 
 	// remove all pending counters, etc, here.
 	EvaCheckVecIt it;
-	for (it = m_checks.begin(); it != m_checks.end(); /* empty */) {
+	for (it = m_checks.begin(); it != m_checks.end(); /* empty */)
+	{
 		it = m_checks.erase(it);
 	}
 
 	// remove all things flagged as "need to play"
-	for (Int i = 0; i < EVA_COUNT; ++i) {
+	for (Int i = 0; i < EVA_COUNT; ++i)
+	{
 		m_shouldPlay[i] = FALSE;
 	}
 
@@ -209,7 +182,8 @@ void Eva::reset()
 //-------------------------------------------------------------------------------------------------
 void Eva::update()
 {
-	if (!m_enabled) {
+	if (!m_enabled)
+	{
 		return;
 	}
 
@@ -218,13 +192,17 @@ void Eva::update()
 
 	// Don't update for the first few frames. This way, we don't have to deal with our initial power
 	// being 0, etc.
-	if (frame < 2) {
+	if (frame < 2)
+	{
 		return;
 	}
 
-	for (Int mesg = (Int)EVA_FIRST; mesg < (Int)EVA_COUNT; ++mesg) {
-		if (isTimeForCheck((EvaMessage)mesg, frame)) {
-			if (messageShouldPlay((EvaMessage)mesg, frame)) {
+	for (Int mesg = (Int)EVA_FIRST; mesg < (Int)EVA_COUNT; ++mesg)
+	{
+		if (isTimeForCheck((EvaMessage)mesg, frame))
+		{
+			if (messageShouldPlay((EvaMessage)mesg, frame))
+			{
 				playMessage((EvaMessage)mesg, frame);
 			}
 		}
@@ -235,17 +213,20 @@ void Eva::update()
 
 	// Reset all of the flags that have been set to true that haven't actually been probed, because
 	// they will need to trigger again to be valid messages.
-	for (Int i = EVA_FIRST; i < EVA_COUNT; ++i) {
+	for (Int i = EVA_FIRST; i < EVA_COUNT; ++i)
+	{
 		m_shouldPlay[i] = FALSE;
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-EvaMessage Eva::nameToMessage(const AsciiString& name)
+EvaMessage Eva::nameToMessage(const AsciiString &name)
 {
-	for (Int i = EVA_FIRST; i < EVA_COUNT; ++i) {
-		if (name.compareNoCase(TheEvaMessageNames[i]) == 0) {
-			return (EvaMessage) i;
+	for (Int i = EVA_FIRST; i < EVA_COUNT; ++i)
+	{
+		if (name.compareNoCase(TheEvaMessageNames[i]) == 0)
+		{
+			return (EvaMessage)i;
 		}
 	}
 
@@ -270,7 +251,8 @@ EvaCheckInfo *Eva::newEvaCheckInfo(AsciiString name)
 
 	// Only return a new one if there isn't an existing one.
 	EvaCheckInfoPtrVecIt it;
-	for (it = m_allCheckInfos.begin(); it != m_allCheckInfos.end(); ++it) {
+	for (it = m_allCheckInfos.begin(); it != m_allCheckInfos.end(); ++it)
+	{
 		if (*it && (*it)->m_message == mesg)
 			return NULL;
 	}
@@ -288,7 +270,8 @@ const EvaCheckInfo *Eva::getEvaCheckInfo(AsciiString name)
 
 	// Only return a new one if there isn't an existing one.
 	EvaCheckInfoPtrVecIt it;
-	for (it = m_allCheckInfos.begin(); it != m_allCheckInfos.end(); ++it) {
+	for (it = m_allCheckInfos.begin(); it != m_allCheckInfos.end(); ++it)
+	{
 		if (*it && (*it)->m_message == mesg)
 			return *it;
 	}
@@ -306,7 +289,8 @@ void Eva::setShouldPlay(EvaMessage messageToPlay)
 void Eva::setEvaEnabled(Bool enabled)
 {
 	// clear out any waiting messages.
-	for (Int i = EVA_FIRST; i < EVA_COUNT; ++i) {
+	for (Int i = EVA_FIRST; i < EVA_COUNT; ++i)
+	{
 		m_shouldPlay[i] = FALSE;
 	}
 	m_enabled = enabled;
@@ -316,8 +300,10 @@ void Eva::setEvaEnabled(Bool enabled)
 Bool Eva::isTimeForCheck(EvaMessage messageToTest, UnsignedInt currentFrame) const
 {
 	EvaCheckVec::const_iterator it;
-	for (it = m_checks.begin(); it != m_checks.end(); ++it) {
-		if (it->m_evaInfo->m_message == messageToTest) {
+	for (it = m_checks.begin(); it != m_checks.end(); ++it)
+	{
+		if (it->m_evaInfo->m_message == messageToTest)
+		{
 			return FALSE;
 		}
 	}
@@ -328,7 +314,8 @@ Bool Eva::isTimeForCheck(EvaMessage messageToTest, UnsignedInt currentFrame) con
 //-------------------------------------------------------------------------------------------------
 Bool Eva::messageShouldPlay(EvaMessage messageToTest, UnsignedInt currentFrame) const
 {
-	if (m_localPlayer == NULL) {
+	if (m_localPlayer == NULL)
+	{
 		return FALSE;
 	}
 
@@ -337,27 +324,26 @@ Bool Eva::messageShouldPlay(EvaMessage messageToTest, UnsignedInt currentFrame) 
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool Eva::shouldPlayLowPower( Player *localPlayer )
+Bool Eva::shouldPlayLowPower(Player *localPlayer)
 {
-
 	// @todo make eva sensitive to whether player can do anything about it...
 	// "Low power, Low power, Low power, yadda yadda yadda..."
-	//const ThingTemplate *chinaReactorTemplate = findTemplate(;
-	//const ThingTemplate *americanReactorTemplate;
-	//if ( chinaReactorTemplate && americanReactorTemplate )
+	// const ThingTemplate *chinaReactorTemplate = findTemplate(;
+	// const ThingTemplate *americanReactorTemplate;
+	// if ( chinaReactorTemplate && americanReactorTemplate )
 	//{
 	//	if ( ! (localPlayer->canBuild(chinaReactorTemplate) || localPlayer->canBuild(americanReactorTemplate)) )
 	//		return FALSE
 	//}
 
-
 	return !localPlayer->getEnergy()->hasSufficientPower();
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool Eva::shouldPlayGenericHandler( Player * )
+Bool Eva::shouldPlayGenericHandler(Player *)
 {
-	if (TheEva->m_shouldPlay[TheEva->m_messageBeingTested]) {
+	if (TheEva->m_shouldPlay[TheEva->m_messageBeingTested])
+	{
 		TheEva->m_shouldPlay[TheEva->m_messageBeingTested] = FALSE;
 		return TRUE;
 	}
@@ -369,7 +355,8 @@ void Eva::playMessage(EvaMessage messageToTest, UnsignedInt currentFrame)
 {
 	EvaCheck check;
 	check.m_evaInfo = getEvaCheckInfo(Eva::messageToName(messageToTest));
-	if (!check.m_evaInfo) {
+	if (!check.m_evaInfo)
+	{
 		return;
 	}
 
@@ -385,15 +372,18 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 {
 	// First pass, remove all the objects that can check after this frame.
 	EvaCheckVecIt it;
-	for (it = m_checks.begin(); it != m_checks.end(); /* empty */) {
+	for (it = m_checks.begin(); it != m_checks.end(); /* empty */)
+	{
 		// These are requests that will be available next frame because they've played.
-		if (it->m_timeForNextCheck <= currentFrame + 1 && it->m_alreadyPlayed) {
+		if (it->m_timeForNextCheck <= currentFrame + 1 && it->m_alreadyPlayed)
+		{
 			it = m_checks.erase(it);
 			continue;
 		}
 
 		// These are requests that never got a chance to play and have since expired.
-		if (it->m_triggeredOnFrame + it->m_evaInfo->m_framesToExpire <= currentFrame && !it->m_alreadyPlayed) {
+		if (it->m_triggeredOnFrame + it->m_evaInfo->m_framesToExpire <= currentFrame && !it->m_alreadyPlayed)
+		{
 			it = m_checks.erase(it);
 			continue;
 		}
@@ -402,12 +392,14 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 	}
 
 	// It's possible, although unlikely, that we removed everything in the list.
-	if (m_checks.begin() == m_checks.end()) {
+	if (m_checks.begin() == m_checks.end())
+	{
 		return;
 	}
 
 	// If we're currently playing some audio, we're done.
-	if (m_evaSpeech.isCurrentlyPlaying()) {
+	if (m_evaSpeech.isCurrentlyPlaying())
+	{
 		return;
 	}
 
@@ -415,15 +407,18 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 	EvaCheckVecIt storedIt = m_checks.end();
 
 	UnsignedInt highestPriority = 0;
-	for (it = m_checks.begin(); it != m_checks.end(); ++it) {
-		if (it->m_evaInfo->m_priority > highestPriority && !it->m_alreadyPlayed) {
+	for (it = m_checks.begin(); it != m_checks.end(); ++it)
+	{
+		if (it->m_evaInfo->m_priority > highestPriority && !it->m_alreadyPlayed)
+		{
 			storedIt = it;
 			highestPriority = it->m_evaInfo->m_priority;
 		}
 	}
 
 	// There wasn't anything waiting to play.
-	if (storedIt == m_checks.end()) {
+	if (storedIt == m_checks.end())
+	{
 		return;
 	}
 
@@ -431,13 +426,18 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 	AsciiString side = ThePlayerList->getLocalPlayer()->getSide();
 	Int numSides = storedIt->m_evaInfo->m_evaSideSounds.size();
 
-	for (Int i = 0; i < numSides; ++i) {
-		if (side.compareNoCase(storedIt->m_evaInfo->m_evaSideSounds[i].m_side) == 0) {
+	for (Int i = 0; i < numSides; ++i)
+	{
+		if (side.compareNoCase(storedIt->m_evaInfo->m_evaSideSounds[i].m_side) == 0)
+		{
 			// Its this one.
-			if (storedIt->m_evaInfo->m_evaSideSounds[i].m_soundNames.size() > 0) {
+			if (storedIt->m_evaInfo->m_evaSideSounds[i].m_soundNames.size() > 0)
+			{
 				Int soundToPlay = GameClientRandomValue(0, storedIt->m_evaInfo->m_evaSideSounds[i].m_soundNames.size() - 1);
 				m_evaSpeech.setEventName(storedIt->m_evaInfo->m_evaSideSounds[i].m_soundNames[soundToPlay]);
-			} else {
+			}
+			else
+			{
 				// clear it.
 				m_evaSpeech.setEventName(AsciiString::TheEmptyString);
 			}
@@ -457,4 +457,3 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 
 //-------------------------------------------------------------------------------------------------
 Eva *TheEva = NULL;
-

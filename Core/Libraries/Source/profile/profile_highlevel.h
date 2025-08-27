@@ -27,7 +27,7 @@
 // High level profiling
 //////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
-#  pragma once
+#pragma once
 #endif
 #ifndef PROFILE_HIGHLEVEL_H // Include guard
 #define PROFILE_HIGHLEVEL_H
@@ -36,206 +36,203 @@
 class ProfileId;
 
 /**
-  \brief The high level profiler.
+	\brief The high level profiler.
 */
 class ProfileHighLevel
 {
-  friend class Profile;
+	friend class Profile;
 
-  // no, no copying allowed!
-  ProfileHighLevel(const ProfileHighLevel&);
-  ProfileHighLevel& operator=(const ProfileHighLevel&);
+	// no, no copying allowed!
+	ProfileHighLevel(const ProfileHighLevel &);
+	ProfileHighLevel &operator=(const ProfileHighLevel &);
 
 public:
+	/// \brief A high level profile ID.
+	class Id
+	{
+		friend ProfileHighLevel;
 
-  /// \brief A high level profile ID.
-  class Id
-  {
-    friend ProfileHighLevel;
+	public:
+		Id(void) : m_idPtr(0) {}
 
-  public:
-    Id(void): m_idPtr(0) {}
+		/**
+			\brief Increment the internal profile value.
 
-    /**
-      \brief Increment the internal profile value.
+			\note Do not mix with SetMax.
 
-      \note Do not mix with SetMax.
+			\param add amount to add to internal profile value
+		*/
+		void Increment(double add = 1.0);
 
-      \param add amount to add to internal profile value
-    */
-    void Increment(double add=1.0);
+		/**
+			\brief Set a new maximum value.
 
-    /**
-      \brief Set a new maximum value.
+			\note Do not mix with Increment.
 
-      \note Do not mix with Increment.
+			This function sets a new maximum value (if the value
+			passed in is actually larger than the current max value).
 
-      This function sets a new maximum value (if the value
-      passed in is actually larger than the current max value).
+			\param max new maximum value (if larger than current max value,
+								 otherwise current max value is left unchanged)
+		*/
+		void SetMax(double max);
 
-      \param max new maximum value (if larger than current max value,
-                 otherwise current max value is left unchanged)
-    */
-    void SetMax(double max);
+		/**
+			\brief Returns the internal Id name.
 
-    /**
-      \brief Returns the internal Id name.
+			\return internal Id name, e.g. 'render.texture.count.512x512'
+		*/
+		const char *GetName(void) const;
 
-      \return internal Id name, e.g. 'render.texture.count.512x512'
-    */
-    const char *GetName(void) const;
+		/**
+			\brief Returns the descriptive name.
 
-    /**
-      \brief Returns the descriptive name.
+			\return descriptive name, e.g. '# of 512x512 textures'
+		*/
+		const char *GetDescr(void) const;
 
-      \return descriptive name, e.g. '# of 512x512 textures'
-    */
-    const char *GetDescr(void) const;
+		/**
+			\brief Returns the value's unit text.
 
-    /**
-      \brief Returns the value's unit text.
+			\return unit text, e.g. 'bytes'
+		*/
+		const char *GetUnit(void) const;
 
-      \return unit text, e.g. 'bytes'
-    */
-    const char *GetUnit(void) const;
+		/**
+			\brief Returns the current value.
 
-    /**
-      \brief Returns the current value.
+			'Current' means the value since the last call to this function for
+			the same Id.
 
-      'Current' means the value since the last call to this function for
-      the same Id.
+			This function is intended for displaying profile data while the
+			application is running.
 
-      This function is intended for displaying profile data while the
-      application is running.
+			\note The contents of the buffer returned may be overwritten by
+			any consecutive call to any profile module function.
 
-      \note The contents of the buffer returned may be overwritten by
-      any consecutive call to any profile module function.
+			\return current value
+		*/
+		const char *GetCurrentValue(void) const;
 
-      \return current value
-    */
-    const char *GetCurrentValue(void) const;
+		/**
+			\brief Returns the value for the given recorded frame/range.
 
-    /**
-      \brief Returns the value for the given recorded frame/range.
+			\note The contents of the buffer returned may be overwritten by
+			any consecutive call to any profile module function.
 
-      \note The contents of the buffer returned may be overwritten by
-      any consecutive call to any profile module function.
+			\param frame number of recorded frame/range
+			\return value at given frame, NULL if frame not found
+		*/
+		const char *GetValue(unsigned frame) const;
 
-      \param frame number of recorded frame/range
-      \return value at given frame, NULL if frame not found
-    */
-    const char *GetValue(unsigned frame) const;
+		/**
+			\brief Returns the total value for all frames.
 
-    /**
-      \brief Returns the total value for all frames.
+			This even includes data collected while no frames have been
+			recorded.
 
-      This even includes data collected while no frames have been
-      recorded.
+			\note A call to ProfileHighLevel::ClearTotals() resets this value.
 
-      \note A call to ProfileHighLevel::ClearTotals() resets this value.
+			\return total value
+		*/
+		const char *GetTotalValue(void) const;
 
-      \return total value
-    */
-    const char *GetTotalValue(void) const;
+	private:
+		/// internal pointer
+		ProfileId *m_idPtr;
+	};
 
-  private:
+	/// \brief Timer based function block profile
+	class Block
+	{
+		friend ProfileHighLevel;
 
-    /// internal pointer
-    ProfileId *m_idPtr;
-  };
+		// no copying
+		Block(const Block &);
+		Block &operator=(const Block &);
 
-  /// \brief Timer based function block profile
-  class Block
-  {
-    friend ProfileHighLevel;
+	public:
+		/**
+			\brief Instructs high level profiler to start a new timer
+						 based function block (or update if it already exists)
 
-    // no copying
-    Block(const Block&);
-    Block& operator=(const Block&);
+			\note These function blocks are in the same name space as
+			high level profile values registered with ProfileHighLevel::AddProfile()
 
-  public:
-    /**
-      \brief Instructs high level profiler to start a new timer
-             based function block (or update if it already exists)
+			\param name name of function block
+		*/
+		explicit Block(const char *name);
 
-      \note These function blocks are in the same name space as
-      high level profile values registered with ProfileHighLevel::AddProfile()
+		/// \brief Updates timer based function block
+		~Block();
 
-      \param name name of function block
-    */
-    explicit Block(const char *name);
+	private:
+		/// internal id (time)
+		Id m_idTime;
 
-    /// \brief Updates timer based function block
-    ~Block();
+		/// start time
+		_int64 m_start;
+	};
 
-  private:
-    /// internal id (time)
-    Id m_idTime;
+	/**
+		\brief Registers a new high level profile value.
 
-    /// start time
-    _int64 m_start;
-  };
+		If there is already a high level profile with the given name the
+		Id of that profile is returned instead.
 
-  /**
-    \brief Registers a new high level profile value.
+		High level profiles can only be added, never removed.
 
-    If there is already a high level profile with the given name the
-    Id of that profile is returned instead.
+		\note Important: This function can (and should) be used in static
+		initializers!
 
-    High level profiles can only be added, never removed.
+		\note This function may be slow so don't use it too often.
 
-    \note Important: This function can (and should) be used in static
-    initializers!
+		\param name value name, e.g. "render.texture.count.512x512"
+		\param descr descriptive name, e.g. "# of 512x512 textures"
+		\param unit unit name, e.g. "byte" or "sec"
+		\param precision number of decimal places to show
+		\param exp10 10 base exponent (used for scaleing)
+		\return internal profile ID value
+	*/
+	static Id AddProfile(const char *name, const char *descr, const char *unit, int precision, int exp10 = 0);
 
-    \note This function may be slow so don't use it too often.
+	/**
+		\brief Enumerates the list of known high level profile values.
 
-    \param name value name, e.g. "render.texture.count.512x512"
-    \param descr descriptive name, e.g. "# of 512x512 textures"
-    \param unit unit name, e.g. "byte" or "sec"
-    \param precision number of decimal places to show
-    \param exp10 10 base exponent (used for scaleing)
-    \return internal profile ID value
-  */
-  static Id AddProfile(const char *name, const char *descr, const char *unit, int precision, int exp10=0);
+		\note Profiles are always sorted ascending by profile name.
 
-  /**
-    \brief Enumerates the list of known high level profile values.
+		\param index index value, >=0
+		\param id return buffer for ID value
+		\return true if ID found at given index, false if not
+	*/
+	static bool EnumProfile(unsigned index, Id &id);
 
-    \note Profiles are always sorted ascending by profile name.
+	/**
+		\brief Searches for the given high level profile.
 
-    \param index index value, >=0
-    \param id return buffer for ID value
-    \return true if ID found at given index, false if not
-  */
-  static bool EnumProfile(unsigned index, Id &id);
+		\note Actually the ID returned belongs to the first profile
+		which has a name that is equal to or larger than the name
+		searched for.
 
-  /**
-    \brief Searches for the given high level profile.
-
-    \note Actually the ID returned belongs to the first profile
-    which has a name that is equal to or larger than the name
-    searched for.
-
-    \param name profile name to search for
-    \param id return buffer for ID value
-    \return true if ID found, false if not
-  */
-  static bool FindProfile(const char *name, Id &id);
+		\param name profile name to search for
+		\param id return buffer for ID value
+		\return true if ID found, false if not
+	*/
+	static bool FindProfile(const char *name, Id &id);
 
 private:
+	/** \internal
 
-  /** \internal
+		Undocumented default constructor. Initializes high level profiler.
+		We can make this private as well so nobody accidently tries to create
+		another instance.
+	*/
+	ProfileHighLevel(void);
 
-    Undocumented default constructor. Initializes high level profiler.
-    We can make this private as well so nobody accidently tries to create
-    another instance.
-  */
-  ProfileHighLevel(void);
-
-  /**
-    \brief The only high level profiler instance.
-  */
-  static ProfileHighLevel Instance;
+	/**
+		\brief The only high level profiler instance.
+	*/
+	static ProfileHighLevel Instance;
 };
 
 #endif // PROFILE_HIGHLEVEL_H

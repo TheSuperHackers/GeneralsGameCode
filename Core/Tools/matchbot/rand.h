@@ -25,9 +25,7 @@ class RandClass
 {
 public:
 	RandClass(int start = 0);
-	~RandClass()
-	{}
-
+	~RandClass() {}
 
 	int Int(void);
 	double Double(void);
@@ -35,11 +33,8 @@ public:
 	double Double(double low, double high);
 
 private:
-
-	unsigned int randomValue( void );
+	unsigned int randomValue(void);
 	unsigned int seed[6];
-
 };
 
 #endif /* __RAND_H__ */
-

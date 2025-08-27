@@ -25,10 +25,8 @@
 // EmitterLinePropPage.h : header file
 //
 
-
 // Forward delcarations
 class EmitterInstanceListClass;
-
 
 /////////////////////////////////////////////////////////////////////////////
 // EmitterLinePropPageClass dialog
@@ -37,36 +35,39 @@ class EmitterLinePropPageClass : public CPropertyPage
 {
 	DECLARE_DYNCREATE(EmitterLinePropPageClass)
 
-// Construction
+	// Construction
 public:
 	EmitterLinePropPageClass();
 	~EmitterLinePropPageClass();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(EmitterLinePropPageClass)
-	enum { IDD = IDD_PROP_PAGE_EMITTER_LINEPROPS };
-	CComboBox	m_MapModeCombo;
-	CSpinButtonCtrl	m_MergeAbortFactorSpin;
-	CSpinButtonCtrl	m_VPerSecSpin;
-	CSpinButtonCtrl	m_UVTilingSpin;
-	CSpinButtonCtrl	m_UPerSecSpin;
-	CSpinButtonCtrl	m_NoiseAmplitudeSpin;
-	CSpinButtonCtrl	m_SubdivisionLevelSpin;
+	enum
+	{
+		IDD = IDD_PROP_PAGE_EMITTER_LINEPROPS
+	};
+	CComboBox m_MapModeCombo;
+	CSpinButtonCtrl m_MergeAbortFactorSpin;
+	CSpinButtonCtrl m_VPerSecSpin;
+	CSpinButtonCtrl m_UVTilingSpin;
+	CSpinButtonCtrl m_UPerSecSpin;
+	CSpinButtonCtrl m_NoiseAmplitudeSpin;
+	CSpinButtonCtrl m_SubdivisionLevelSpin;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(EmitterLinePropPageClass)
-	public:
+public:
 	virtual BOOL OnApply();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(EmitterLinePropPageClass)
@@ -74,59 +75,57 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
+public:
+	/////////////////////////////////////////////////////////
+	//
+	//	Public methods
+	//
+	EmitterInstanceListClass *Get_Emitter(void) const { return m_pEmitterList; }
+	void Set_Emitter(EmitterInstanceListClass *pemitter_list)
+	{
+		m_pEmitterList = pemitter_list;
+		Initialize();
+	}
+	bool Is_Data_Valid(void) const { return m_bValid; }
 
+	int Get_Mapping_Mode(void) const { return m_MappingMode; }
+	bool Get_Merge_Intersections(void) const { return m_MergeIntersections; }
+	bool Get_End_Caps(void) const { return m_EndCaps; }
+	bool Get_Disable_Sorting(void) const { return m_DisableSorting; }
 
-	public:
+	int Get_Subdivision_Level(void) const { return m_SubdivisionLevel; }
+	float Get_Noise_Amplitude(void) const { return m_NoiseAmplitude; }
+	float Get_Merge_Abort_Factor(void) const { return m_MergeAbortFactor; }
+	float Get_Texture_Tile_Factor(void) const { return m_TextureTileFactor; }
+	float Get_U_Per_Sec(void) const { return m_UPerSec; }
+	float Get_V_Per_Sed(void) const { return m_VPerSec; }
 
-		/////////////////////////////////////////////////////////
-		//
-		//	Public methods
-		//
-		EmitterInstanceListClass *	Get_Emitter (void) const { return m_pEmitterList; }
-		void								Set_Emitter (EmitterInstanceListClass *pemitter_list) { m_pEmitterList = pemitter_list; Initialize (); }
-		bool								Is_Data_Valid (void) const { return m_bValid; }
+protected:
+	/////////////////////////////////////////////////////////
+	//
+	//	Protected methods
+	//
+	void Initialize(void);
 
-		int								Get_Mapping_Mode (void) const { return m_MappingMode; }
-		bool								Get_Merge_Intersections (void) const { return m_MergeIntersections; }
-		bool								Get_End_Caps (void) const { return m_EndCaps; }
-		bool								Get_Disable_Sorting (void) const { return m_DisableSorting; }
+private:
+	/////////////////////////////////////////////////////////
+	//
+	//	Private member data
+	//
+	EmitterInstanceListClass *m_pEmitterList;
+	bool m_bValid;
 
-		int								Get_Subdivision_Level (void) const { return m_SubdivisionLevel; }
-		float								Get_Noise_Amplitude (void) const { return m_NoiseAmplitude; }
-		float								Get_Merge_Abort_Factor (void) const { return m_MergeAbortFactor; }
-		float								Get_Texture_Tile_Factor (void) const { return m_TextureTileFactor; }
-		float								Get_U_Per_Sec(void) const { return m_UPerSec; }
-		float								Get_V_Per_Sed(void) const { return m_VPerSec; }
+	int m_MappingMode;
+	bool m_MergeIntersections;
+	bool m_EndCaps;
+	bool m_DisableSorting;
 
-	protected:
-
-		/////////////////////////////////////////////////////////
-		//
-		//	Protected methods
-		//
-		void								Initialize (void);
-
-	private:
-
-		/////////////////////////////////////////////////////////
-		//
-		//	Private member data
-		//
-		EmitterInstanceListClass *	m_pEmitterList;
-		bool								m_bValid;
-
-		int								m_MappingMode;
-		bool								m_MergeIntersections;
-		bool								m_EndCaps;
-		bool								m_DisableSorting;
-
-		int								m_SubdivisionLevel;
-		float								m_NoiseAmplitude;
-		float								m_MergeAbortFactor;
-		float								m_TextureTileFactor;
-		float								m_UPerSec;
-		float								m_VPerSec;
-
+	int m_SubdivisionLevel;
+	float m_NoiseAmplitude;
+	float m_MergeAbortFactor;
+	float m_TextureTileFactor;
+	float m_UPerSec;
+	float m_VPerSec;
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -56,24 +56,24 @@
 //-----------------------------------------------------------------------------
 class ImageDirectory
 {
-
 public:
-
 	ImageDirectory();
 	~ImageDirectory();
 
-	char *m_path;  ///< path for directory
-	UnsignedInt m_imageCount;  ///< images to consider in this directory
+	char *m_path; ///< path for directory
+	UnsignedInt m_imageCount; ///< images to consider in this directory
 	ImageDirectory *m_next;
 	ImageDirectory *m_prev;
-
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 // INLINING ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-inline ImageDirectory::~ImageDirectory( void ) { delete m_path; }
-inline ImageDirectory::ImageDirectory( void )
+inline ImageDirectory::~ImageDirectory(void)
+{
+	delete m_path;
+}
+inline ImageDirectory::ImageDirectory(void)
 {
 	m_path = NULL;
 	m_next = NULL;
@@ -84,4 +84,3 @@ inline ImageDirectory::ImageDirectory( void )
 // EXTERNALS //////////////////////////////////////////////////////////////////
 
 #endif // __IMAGEDIRECTORY_H_
-

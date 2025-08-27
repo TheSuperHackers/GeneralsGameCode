@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
@@ -48,11 +48,13 @@
 #include "GameClient/Drawable.h"
 #include "Common/INI.h"
 
-
-enum { TEMPLATE_HASH_SIZE = 12288 };
+enum
+{
+	TEMPLATE_HASH_SIZE = 12288
+};
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-ThingFactory *TheThingFactory = NULL;  ///< Thing manager singleton declaration
+ThingFactory *TheThingFactory = NULL; ///< Thing manager singleton declaration
 
 // STATIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
@@ -63,27 +65,28 @@ ThingFactory *TheThingFactory = NULL;  ///< Thing manager singleton declaration
 //-------------------------------------------------------------------------------------------------
 /** Free all data loaded into this template database */
 //-------------------------------------------------------------------------------------------------
-void ThingFactory::freeDatabase( void )
+void ThingFactory::freeDatabase(void)
 {
 	while (m_firstTemplate)
 	{
-		ThingTemplate* tmpl = m_firstTemplate;
+		ThingTemplate *tmpl = m_firstTemplate;
 		m_firstTemplate = m_firstTemplate->friend_getNextTemplate();
 		deleteInstance(tmpl);
 	}
 
 	m_templateHashMap.clear();
 
-}  // end freeDatabase
+} // end freeDatabase
 
 //-------------------------------------------------------------------------------------------------
 /** add the thing template passed in, into the databse */
 //-------------------------------------------------------------------------------------------------
-void ThingFactory::addTemplate( ThingTemplate *tmplate )
+void ThingFactory::addTemplate(ThingTemplate *tmplate)
 {
 	ThingTemplateHashMapIt tIt = m_templateHashMap.find(tmplate->getName());
 
-	if (tIt != m_templateHashMap.end()) {
+	if (tIt != m_templateHashMap.end())
+	{
 		DEBUG_CRASH(("Duplicate Thing Template name found: %s", tmplate->getName().str()));
 	}
 
@@ -93,7 +96,7 @@ void ThingFactory::addTemplate( ThingTemplate *tmplate )
 
 	// Add it to the hash table.
 	m_templateHashMap[tmplate->getName()] = tmplate;
-}  // end addTemplate
+} // end addTemplate
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC METHODS
@@ -104,29 +107,28 @@ void ThingFactory::addTemplate( ThingTemplate *tmplate )
 ThingFactory::ThingFactory()
 {
 	m_firstTemplate = NULL;
-	m_nextTemplateID = 1;	// not zero!
+	m_nextTemplateID = 1; // not zero!
 
 #ifdef USING_STLPORT
-	m_templateHashMap.resize( TEMPLATE_HASH_SIZE );
+	m_templateHashMap.resize(TEMPLATE_HASH_SIZE);
 #else
-	m_templateHashMap.reserve( TEMPLATE_HASH_SIZE );
+	m_templateHashMap.reserve(TEMPLATE_HASH_SIZE);
 #endif
-}  // end ThingFactory
+} // end ThingFactory
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ThingFactory::~ThingFactory()
 {
-
 	// free all the template data
 	freeDatabase();
 
-}  // end ~ThingFactory
+} // end ~ThingFactory
 
 //-------------------------------------------------------------------------------------------------
 /** Create a new template with name 'name' and add to our template list */
 //-------------------------------------------------------------------------------------------------
-ThingTemplate *ThingFactory::newTemplate( const AsciiString& name )
+ThingTemplate *ThingFactory::newTemplate(const AsciiString &name)
 {
 	ThingTemplate *newTemplate;
 
@@ -134,50 +136,47 @@ ThingTemplate *ThingFactory::newTemplate( const AsciiString& name )
 	newTemplate = newInstance(ThingTemplate);
 
 	// if the default template is present, get it and copy over any data to the new template
-	const ThingTemplate *defaultT = findTemplate( AsciiString( "DefaultThingTemplate" ), FALSE );
-	if( defaultT )
+	const ThingTemplate *defaultT = findTemplate(AsciiString("DefaultThingTemplate"), FALSE);
+	if (defaultT)
 	{
-
 		// copy over static data
 		*newTemplate = *defaultT;
 		newTemplate->setCopiedFromDefault();
 
-	}  // end if
+	} // end if
 
 	// give template a unique identifier
-	newTemplate->friend_setTemplateID( m_nextTemplateID++ );
-	DEBUG_ASSERTCRASH( m_nextTemplateID != 0, ("m_nextTemplateID wrapped to zero") );
+	newTemplate->friend_setTemplateID(m_nextTemplateID++);
+	DEBUG_ASSERTCRASH(m_nextTemplateID != 0, ("m_nextTemplateID wrapped to zero"));
 
 	// assign name
-	newTemplate->friend_setTemplateName( name );
+	newTemplate->friend_setTemplateName(name);
 
 	// add to list
-	addTemplate( newTemplate );
+	addTemplate(newTemplate);
 
 	// return the newly created template
 	return newTemplate;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Create newTemplate, copy data from final override of 'thingTemplate' to the newly created one,
-	* and add newTemplate as the m_override of that final override.  NOTE that newTemplate
-	* is *NOT* added to master template list, it is a hidden place to store
-	* override values for 'thingTemplate' */
+ * and add newTemplate as the m_override of that final override.  NOTE that newTemplate
+ * is *NOT* added to master template list, it is a hidden place to store
+ * override values for 'thingTemplate' */
 //-------------------------------------------------------------------------------------------------
-ThingTemplate* ThingFactory::newOverride( ThingTemplate *thingTemplate )
+ThingTemplate *ThingFactory::newOverride(ThingTemplate *thingTemplate)
 {
-
 	// sanity
-	DEBUG_ASSERTCRASH( thingTemplate, ("newOverride(): NULL 'parent' thing template") );
+	DEBUG_ASSERTCRASH(thingTemplate, ("newOverride(): NULL 'parent' thing template"));
 
 	// sanity just for debuging, the weapon must be in the master list to do overrides
-	DEBUG_ASSERTCRASH( findTemplate( thingTemplate->getName() ) != NULL,
-										 ("newOverride(): Thing template '%s' not in master list",
-										 thingTemplate->getName().str()) );
+	DEBUG_ASSERTCRASH(
+			findTemplate(thingTemplate->getName()) != NULL,
+			("newOverride(): Thing template '%s' not in master list", thingTemplate->getName().str()));
 
 	// find final override of the 'parent' template
-	ThingTemplate *child = (ThingTemplate*) thingTemplate->friend_getFinalOverride();
+	ThingTemplate *child = (ThingTemplate *)thingTemplate->friend_getFinalOverride();
 
 	// allocate new template
 	ThingTemplate *newTemplate = newInstance(ThingTemplate);
@@ -192,30 +191,30 @@ ThingTemplate* ThingFactory::newOverride( ThingTemplate *thingTemplate )
 	// return the newly created override for us to set values with etc
 	return newTemplate;
 
-}  // end newOverride
+} // end newOverride
 
 //-------------------------------------------------------------------------------------------------
 /** Init */
 //-------------------------------------------------------------------------------------------------
-void ThingFactory::init( void )
+void ThingFactory::init(void)
 {
-
-}  // end init
+} // end init
 
 //-------------------------------------------------------------------------------------------------
 /** Reset */
 //-------------------------------------------------------------------------------------------------
-void ThingFactory::reset( void )
+void ThingFactory::reset(void)
 {
 	ThingTemplate *t;
 	// go through all templates and delete any overrides
-	for( t = m_firstTemplate; t; /* empty */ )
+	for (t = m_firstTemplate; t; /* empty */)
 	{
 		Bool possibleAdjustment = FALSE;
 		// t itself can be deleted if it is something created for this map only. Therefore,
 		// we need to store what the next item is so that we don't orphan a bunch of templates.
 		ThingTemplate *nextT = t->friend_getNextTemplate();
-		if (t == m_firstTemplate) {
+		if (t == m_firstTemplate)
+		{
 			possibleAdjustment = TRUE;
 		}
 
@@ -227,106 +226,111 @@ void ThingFactory::reset( void )
 		AsciiString templateName = t->getName();
 
 		Overridable *stillValid = t->deleteOverrides();
-		if (stillValid == NULL && possibleAdjustment) {
+		if (stillValid == NULL && possibleAdjustment)
+		{
 			m_firstTemplate = nextT;
 		}
 
-		if (stillValid == NULL) {
+		if (stillValid == NULL)
+		{
 			// Also needs to be removed from the Hash map.
 			m_templateHashMap.erase(templateName);
 		}
 
 		t = nextT;
 	}
-}  // end reset
+} // end reset
 
 //-------------------------------------------------------------------------------------------------
 /** Update */
 //-------------------------------------------------------------------------------------------------
-void ThingFactory::update( void )
+void ThingFactory::update(void)
 {
-
-}  // end update
+} // end update
 
 //-------------------------------------------------------------------------------------------------
 /** Return the template with the matching database name */
 //-------------------------------------------------------------------------------------------------
-const ThingTemplate *ThingFactory::findByTemplateID( UnsignedShort id )
+const ThingTemplate *ThingFactory::findByTemplateID(UnsignedShort id)
 {
 	for (ThingTemplate *tmpl = m_firstTemplate; tmpl; tmpl = tmpl->friend_getNextTemplate())
 	{
 		if (tmpl->getTemplateID() == id)
 			return tmpl;
 	}
-	DEBUG_CRASH(("template %d not found",(Int)id));
+	DEBUG_CRASH(("template %d not found", (Int)id));
 	return NULL;
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Return the template with the matching database name */
 //-------------------------------------------------------------------------------------------------
-ThingTemplate *ThingFactory::findTemplateInternal( const AsciiString& name, Bool check )
+ThingTemplate *ThingFactory::findTemplateInternal(const AsciiString &name, Bool check)
 {
 	ThingTemplateHashMapIt tIt = m_templateHashMap.find(name);
 
-	if (tIt != m_templateHashMap.end()) {
+	if (tIt != m_templateHashMap.end())
+	{
 		return tIt->second;
 	}
 
 #ifdef LOAD_TEST_ASSETS
 	if (!strncmp(name.str(), TEST_STRING, strlen(TEST_STRING)))
 	{
-		ThingTemplate *tmplate = newTemplate( AsciiString( "Un-namedTemplate" ) );
+		ThingTemplate *tmplate = newTemplate(AsciiString("Un-namedTemplate"));
 
 		// load the values
-		tmplate->initForLTA( name );
+		tmplate->initForLTA(name);
 
 		// Kinda lame, but necessary.
 		m_templateHashMap.erase("Un-namedTemplate");
 		m_templateHashMap[name] = tmplate;
 
 		// add tmplate template to the database
-		return findTemplateInternal( name );
-
+		return findTemplateInternal(name);
 	}
 
 #endif
 
-	if( check && name.isNotEmpty() )
+	if (check && name.isNotEmpty())
 	{
-		DEBUG_CRASH( ("Failed to find thing template %s (case sensitive) This issue has a chance of crashing after you ignore it!", name.str() ) );
+		DEBUG_CRASH(
+				("Failed to find thing template %s (case sensitive) This issue has a chance of crashing after you ignore it!",
+				 name.str()));
 	}
 	return NULL;
 
-}  // end getTemplate
+} // end getTemplate
 
 //=============================================================================
-Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, ObjectStatusMaskType statusBits )
+Object *ThingFactory::newObject(const ThingTemplate *tmplate, Team *team, ObjectStatusMaskType statusBits)
 {
 	if (tmplate == NULL)
 		throw ERROR_BAD_ARG;
 
-	const std::vector<AsciiString>& asv = tmplate->getBuildVariations();
+	const std::vector<AsciiString> &asv = tmplate->getBuildVariations();
 	if (!asv.empty())
 	{
-		Int which = GameLogicRandomValue(0, asv.size()-1);
-		const ThingTemplate* tmp = findTemplate( asv[which] );
+		Int which = GameLogicRandomValue(0, asv.size() - 1);
+		const ThingTemplate *tmp = findTemplate(asv[which]);
 		if (tmp != NULL)
 			tmplate = tmp;
 	}
 
-	DEBUG_ASSERTCRASH(!tmplate->isKindOf(KINDOF_DRAWABLE_ONLY), ("You may not create Objects with the template %s, only Drawables",tmplate->getName().str()));
+	DEBUG_ASSERTCRASH(
+			!tmplate->isKindOf(KINDOF_DRAWABLE_ONLY),
+			("You may not create Objects with the template %s, only Drawables", tmplate->getName().str()));
 
 	// have the game logic create an object of the correct type.
 	// (this will throw an exception on failure.)
-	//Added ability to pass in optional statusBits. This is needed to be set prior to
-	//the onCreate() calls... in the case of constructing.
-	Object *obj = TheGameLogic->friend_createObject( tmplate, statusBits, team );
+	// Added ability to pass in optional statusBits. This is needed to be set prior to
+	// the onCreate() calls... in the case of constructing.
+	Object *obj = TheGameLogic->friend_createObject(tmplate, statusBits, team);
 
 	// run the create function for the thing
-	for (BehaviorModule** m = obj->getBehaviorModules(); *m; ++m)
+	for (BehaviorModule **m = obj->getBehaviorModules(); *m; ++m)
 	{
-		CreateModuleInterface* create = (*m)->getCreate();
+		CreateModuleInterface *create = (*m)->getCreate();
 		if (!create)
 			continue;
 
@@ -337,12 +341,11 @@ Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, Objec
 	// all objects are part of the partition manager system, add it to that
 	// system now
 	//
-	ThePartitionManager->registerObject( obj );
+	ThePartitionManager->registerObject(obj);
 
 	obj->initObject();
 
 	return obj;
-
 }
 
 //=============================================================================
@@ -351,7 +354,7 @@ Drawable *ThingFactory::newDrawable(const ThingTemplate *tmplate, DrawableStatus
 	if (tmplate == NULL)
 		throw ERROR_BAD_ARG;
 
-	Drawable *draw = TheGameClient->friend_createDrawable( tmplate, statusBits );
+	Drawable *draw = TheGameClient->friend_createDrawable(tmplate, statusBits);
 
 	/** @todo we should keep track of all the drawables we've allocated here
 	but we'll wait until we have an drawable storage to do that cause it will
@@ -359,7 +362,7 @@ Drawable *ThingFactory::newDrawable(const ThingTemplate *tmplate, DrawableStatus
 
 	return draw;
 
-}  // end newDrawableByType
+} // end newDrawableByType
 
 #if defined(RTS_DEBUG) || defined(DEBUG_CRASHING)
 AsciiString TheThingTemplateBeingParsedName;
@@ -368,63 +371,64 @@ AsciiString TheThingTemplateBeingParsedName;
 //-------------------------------------------------------------------------------------------------
 /** Parse Object entry */
 //-------------------------------------------------------------------------------------------------
-/*static*/ void ThingFactory::parseObjectDefinition( INI* ini, const AsciiString& name, const AsciiString& reskinFrom )
+/*static*/ void ThingFactory::parseObjectDefinition(INI *ini, const AsciiString &name, const AsciiString &reskinFrom)
 {
 #if defined(RTS_DEBUG) || defined(DEBUG_CRASHING)
 	TheThingTemplateBeingParsedName = name;
 #endif
 
 	// find existing item if present
-	ThingTemplate *thingTemplate = TheThingFactory->findTemplateInternal( name, FALSE );
-	if( !thingTemplate )
+	ThingTemplate *thingTemplate = TheThingFactory->findTemplateInternal(name, FALSE);
+	if (!thingTemplate)
 	{
 		// no item is present, create a new one
-		thingTemplate = TheThingFactory->newTemplate( name );
-		if ( ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES )
+		thingTemplate = TheThingFactory->newTemplate(name);
+		if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
 		{
 			// This ThingTemplate is actually an override, so we will mark it as such so that it properly
 			// gets deleted on ::reset().
 			thingTemplate->markAsOverride();
 		}
 	}
-	else if( ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES )
+	else if (ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES)
 	{
-		//Holy crap, this sucks to debug!!!
-		//If you have two different objects, the previous code would simply
-		//allow you to define multiple objects with the same name, and just
-		//nuke the old one with the new one. So, I (KM) have added this
-		//assert to notify in case of two same-name objects.
-		DEBUG_CRASH(( "[LINE: %d in '%s'] Duplicate factionunit %s found!", ini->getLineNum(), ini->getFilename().str(), name.str() ));
+		// Holy crap, this sucks to debug!!!
+		// If you have two different objects, the previous code would simply
+		// allow you to define multiple objects with the same name, and just
+		// nuke the old one with the new one. So, I (KM) have added this
+		// assert to notify in case of two same-name objects.
+		DEBUG_CRASH(
+				("[LINE: %d in '%s'] Duplicate factionunit %s found!", ini->getLineNum(), ini->getFilename().str(), name.str()));
 	}
 	else
 	{
-		thingTemplate = TheThingFactory->newOverride( thingTemplate );
+		thingTemplate = TheThingFactory->newOverride(thingTemplate);
 	}
 
 	if (reskinFrom.isNotEmpty())
 	{
-		const ThingTemplate* reskinTmpl = TheThingFactory->findTemplate(reskinFrom);
+		const ThingTemplate *reskinTmpl = TheThingFactory->findTemplate(reskinFrom);
 		if (reskinTmpl)
 		{
 			thingTemplate->copyFrom(reskinTmpl);
 			thingTemplate->setCopiedFromDefault();
 			thingTemplate->setReskinnedFrom(reskinTmpl);
-			ini->initFromINI( thingTemplate, thingTemplate->getReskinFieldParse() );
+			ini->initFromINI(thingTemplate, thingTemplate->getReskinFieldParse());
 		}
 		else
 		{
-			DEBUG_CRASH(("ObjectReskin must come after the original Object (%s, %s).",reskinFrom.str(),name.str()));
+			DEBUG_CRASH(("ObjectReskin must come after the original Object (%s, %s).", reskinFrom.str(), name.str()));
 			throw INI_INVALID_DATA;
 		}
 	}
 	else
 	{
-		ini->initFromINI( thingTemplate, thingTemplate->getFieldParse() );
+		ini->initFromINI(thingTemplate, thingTemplate->getFieldParse());
 	}
 
 	thingTemplate->validate();
 
-	if( ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES )
+	if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
 	{
 		thingTemplate->resolveNames();
 	}
@@ -434,15 +438,15 @@ AsciiString TheThingTemplateBeingParsedName;
 #endif
 }
 
-//#define CHECK_THING_NAMES
+// #define CHECK_THING_NAMES
 #ifdef CHECK_THING_NAMES
 
 #include "Common/STLTypedefs.h"
 
-const char *outFilenameINI				= "thing.txt";
-const char *outFilenameStringFile	= "thingString.txt";
+const char *outFilenameINI = "thing.txt";
+const char *outFilenameStringFile = "thingString.txt";
 
-void resetReportFile( void )
+void resetReportFile(void)
 {
 	FILE *fp = fopen(outFilenameINI, "w");
 	if (fp)
@@ -460,7 +464,7 @@ void resetReportFile( void )
 }
 
 AsciiStringList missingStrings;
-void reportMissingNameInStringFile( AsciiString templateName )
+void reportMissingNameInStringFile(AsciiString templateName)
 {
 	// see if we've seen it before
 	AsciiStringListConstIterator cit = std::find(missingStrings.begin(), missingStrings.end(), templateName);
@@ -470,14 +474,14 @@ void reportMissingNameInStringFile( AsciiString templateName )
 	missingStrings.push_back(templateName);
 }
 
-void dumpMissingStringNames( void )
+void dumpMissingStringNames(void)
 {
 	missingStrings.sort();
 	FILE *fp = fopen(outFilenameStringFile, "w");
 	if (fp)
 	{
 		fprintf(fp, "-- ThingTemplate String File Report --\n\n");
-		for (AsciiStringListConstIterator cit = missingStrings.begin(); cit!=missingStrings.end(); cit++)
+		for (AsciiStringListConstIterator cit = missingStrings.begin(); cit != missingStrings.end(); cit++)
 		{
 			fprintf(fp, "OBJECT:%s\n\"%s\"\nEND\n\n", cit->str(), cit->str());
 		}
@@ -486,7 +490,7 @@ void dumpMissingStringNames( void )
 }
 
 AsciiStringList missingNames;
-void reportMissingNameInTemplate( AsciiString templateName )
+void reportMissingNameInTemplate(AsciiString templateName)
 {
 	// see if we've seen it before
 	AsciiStringListConstIterator cit = std::find(missingNames.begin(), missingNames.end(), templateName);
@@ -502,7 +506,7 @@ void reportMissingNameInTemplate( AsciiString templateName )
 		fclose(fp);
 	}
 
-	//reportMissingNameInStringFile( templateName );
+	// reportMissingNameInStringFile( templateName );
 }
 
 #endif
@@ -513,22 +517,20 @@ void reportMissingNameInTemplate( AsciiString templateName )
 void ThingFactory::postProcessLoad()
 {
 #ifdef CHECK_THING_NAMES
-	//resetReportFile();
+	// resetReportFile();
 #endif
 
 	// go through all thing templates
-	for( ThingTemplate *thingTemplate = m_firstTemplate;
-			 thingTemplate;
-			 thingTemplate = thingTemplate->friend_getNextTemplate() )
+	for (ThingTemplate *thingTemplate = m_firstTemplate; thingTemplate;
+			 thingTemplate = thingTemplate->friend_getNextTemplate())
 	{
-
 		// resolve the prerequisite names
 		thingTemplate->resolveNames();
 
 #ifdef CHECK_THING_NAMES
 		if (thingTemplate->getDisplayName().isEmpty())
 		{
-			reportMissingNameInTemplate( thingTemplate->getName() );
+			reportMissingNameInTemplate(thingTemplate->getName());
 		}
 		else if (wcsstr(thingTemplate->getDisplayName().str(), L"MISSING:"))
 		{
@@ -536,14 +538,14 @@ void ThingFactory::postProcessLoad()
 			asciiName.translate(thingTemplate->getDisplayName());
 			asciiName.removeLastChar();
 			asciiName = asciiName.str() + 17;
-			reportMissingNameInStringFile( asciiName );
+			reportMissingNameInStringFile(asciiName);
 		}
 #endif
 
-	}  // end for
+	} // end for
 
 #ifdef CHECK_THING_NAMES
 	dumpMissingStringNames();
 	exit(0);
 #endif
-}  // end postProcess
+} // end postProcess

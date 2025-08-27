@@ -77,7 +77,7 @@ extern "C" {
 #endif
 
 #define GIMEX_VERSION 346
-#define GIMEX_PATCH   0
+#define GIMEX_PATCH 0
 
 /****************************************************************************/
 /* Data Types                                                               */
@@ -97,24 +97,24 @@ typedef unsigned char GCHANNEL;
 #define ARGB ARGB
 #if defined(_MSC_VER) || defined(__i386__)
 
-    typedef struct
-    {
-        GCHANNEL b,g,r,a;
-    } ARGB;
+typedef struct
+{
+	GCHANNEL b, g, r, a;
+} ARGB;
 
 #elif defined(__R5900) || defined(SGI) /* PS2 */
 
-    typedef struct
-    {
-        GCHANNEL r,g,b,a;
-    } ARGB;
+typedef struct
+{
+	GCHANNEL r, g, b, a;
+} ARGB;
 
 #else /* GameCube/Mac */
 
-    typedef struct
-    {
-        GCHANNEL a,r,g,b;
-    } ARGB;
+typedef struct
+{
+	GCHANNEL a, r, g, b;
+} ARGB;
 #endif
 #endif
 
@@ -130,56 +130,56 @@ typedef long long GPOS;
 
 /* Info structure describing bitmaps */
 
-#define GIMEX_FRAMENAME_SIZE    512
-#define GIMEX_COMMENT_SIZE      1024
-#define GIMEX_COLOURTBL_SIZE    256
-#define GIMEX_HOTSPOTTBL_SIZE   1024
+#define GIMEX_FRAMENAME_SIZE 512
+#define GIMEX_COMMENT_SIZE 1024
+#define GIMEX_COLOURTBL_SIZE 256
+#define GIMEX_HOTSPOTTBL_SIZE 1024
 #define GIMEX_HOTSPOTTBL_VALUES 2
 
 typedef struct
 {
-    int signature;         /* signature of gimex ie 'tga ' (optional) */
-    int size;              /* size of GINFO structure */
-    int version;           /* version number of GINFO structure (300) */
-    int framenum;          /* current frame */
-    int width;             /* width of bitmap in pixels */
-    int height;            /* height of bitmap in pixels */
-    int bpp;               /* bits per pixel (8, 16 or 32) */
-    int originalbpp;       /* bits per pixel in original image (1 to 32) */
-    int startcolour;       /* first colour in palette */
-    int numcolours;        /* number of colours in original indexed palette */
-    ARGB colourtbl[GIMEX_COLOURTBL_SIZE]; /* 8 bit palette */
-    int subtype;           /* internal format sub-type 0-default */
-    int packed;            /* type of packing on original image. 0 none, 1 run, n other */
-    int quality;           /* quality of lossy packing 0..100 */
-    int framesize;         /* size of frame in bytes */
-    int alphabits;         /* number of bits in alpha channel */
-    int redbits;           /* number of bits in red channel */
-    int greenbits;         /* number of bits in green channel */
-    int bluebits;          /* number of bits in blue channel */
-    int centerx;           /* center point relative to upper left corner */
-    int centery;
-    int defaultx;          /* default coordinate point */
-    int defaulty;
-    int numhotspots;       /* number of hot spots defined */
-    char framename[GIMEX_FRAMENAME_SIZE];   /* null terminated name of frame/image */
-    char comment[GIMEX_COMMENT_SIZE];       /* null terminated multiline user comment */
-    int hotspottbl[GIMEX_HOTSPOTTBL_SIZE][GIMEX_HOTSPOTTBL_VALUES];/* up to 256 hot spots, XY pairs relative to upperleft */
-    float dpi;             /* dots per inch ie 72.0 */
-    float fps;             /* frame per second (one over duration).  15.0 is typical */
-    int reserved[3];       /* reserved for future use - set to zero */
+	int signature; /* signature of gimex ie 'tga ' (optional) */
+	int size; /* size of GINFO structure */
+	int version; /* version number of GINFO structure (300) */
+	int framenum; /* current frame */
+	int width; /* width of bitmap in pixels */
+	int height; /* height of bitmap in pixels */
+	int bpp; /* bits per pixel (8, 16 or 32) */
+	int originalbpp; /* bits per pixel in original image (1 to 32) */
+	int startcolour; /* first colour in palette */
+	int numcolours; /* number of colours in original indexed palette */
+	ARGB colourtbl[GIMEX_COLOURTBL_SIZE]; /* 8 bit palette */
+	int subtype; /* internal format sub-type 0-default */
+	int packed; /* type of packing on original image. 0 none, 1 run, n other */
+	int quality; /* quality of lossy packing 0..100 */
+	int framesize; /* size of frame in bytes */
+	int alphabits; /* number of bits in alpha channel */
+	int redbits; /* number of bits in red channel */
+	int greenbits; /* number of bits in green channel */
+	int bluebits; /* number of bits in blue channel */
+	int centerx; /* center point relative to upper left corner */
+	int centery;
+	int defaultx; /* default coordinate point */
+	int defaulty;
+	int numhotspots; /* number of hot spots defined */
+	char framename[GIMEX_FRAMENAME_SIZE]; /* null terminated name of frame/image */
+	char comment[GIMEX_COMMENT_SIZE]; /* null terminated multiline user comment */
+	int hotspottbl[GIMEX_HOTSPOTTBL_SIZE][GIMEX_HOTSPOTTBL_VALUES]; /* up to 256 hot spots, XY pairs relative to upperleft */
+	float dpi; /* dots per inch ie 72.0 */
+	float fps; /* frame per second (one over duration).  15.0 is typical */
+	int reserved[3]; /* reserved for future use - set to zero */
 } GINFO;
 
 typedef struct GSTREAM GSTREAM; /* handle used for file functions */
 
 typedef struct
 {
-    int signature;         /* signature of gimex ie '.tga' (optional) */
-    int size;              /* size of GINSTANCE structure */
-    int frames;            /* Number of frames in file */
-    int framenum;          /* current frame (optional) */
-    GSTREAM *gstream;      /* stream pointer for file */
-    void *gref;            /* gimex reference to additional memory used by module (optional) */
+	int signature; /* signature of gimex ie '.tga' (optional) */
+	int size; /* size of GINSTANCE structure */
+	int frames; /* Number of frames in file */
+	int framenum; /* current frame (optional) */
+	GSTREAM *gstream; /* stream pointer for file */
+	void *gref; /* gimex reference to additional memory used by module (optional) */
 } GINSTANCE;
 
 /* Info structure describing bitmaps */
@@ -187,88 +187,88 @@ typedef struct
 #define MAXMACTYPES 8
 #define MAXEXTENSIONS 8
 
-#define GIMEX_EXTENSION_SIZE    8
-#define GIMEX_AUTHORSTR_SIZE    32
-#define GIMEX_VERSIONSTR_SIZE   8
+#define GIMEX_EXTENSION_SIZE 8
+#define GIMEX_AUTHORSTR_SIZE 32
+#define GIMEX_VERSIONSTR_SIZE 8
 #define GIMEX_SHORTTYPESTR_SIZE 8
-#define GIMEX_WORDTYPESTR_SIZE  16
-#define GIMEX_LONGTYPESTR_SIZE  32
+#define GIMEX_WORDTYPESTR_SIZE 16
+#define GIMEX_LONGTYPESTR_SIZE 32
 
 typedef struct
 {
-    int signature;                 /* signature of gimex ie 'tga ' (optional) */
-    int size;                      /* size of GABOUT structure */
-    int version;                   /* version number of GABOUT structure (200) */
-    unsigned int canimport     :1;  /* supports importing */
-    unsigned int canexport     :1;  /* supports exporting */
-    unsigned int importpacked  :2;  /* max import packed field 0..3 */
-    unsigned int exportpacked  :2;  /* max export packed field 0..3  */
-    unsigned int import8       :1;  /* supports importing 8 bit indexed */
-    unsigned int export8       :1;  /* supports exporting 8 bit indexed */
-    unsigned int import32      :1;  /* supports importing 32 bit direct rgb */
-    unsigned int export32      :1;  /* supports exporting 32 bit direct rgb */
-    unsigned int multiframe    :1;  /* supports multiple frames */
-    unsigned int multifile     :1;  /* format requires additional files or resource fork */
-    unsigned int multisize     :1;  /* supports different size per frame */
-    unsigned int framebuffer   :1;  /* module requires memory to buffer entire frame */
-    unsigned int external      :1;  /* uses external resources */
-	unsigned int usesfile      :1;  /* module is file based vs ads/printer/generator */
-    unsigned int globalpalette :1;  /* limited to a single palette per file */
-    unsigned int greyscale     :1;  /* use maxcolours for number of levels */
-    unsigned int startcolour   :1;  /* supports start colour */
-    unsigned int dotsubtype    :1;  /* subtype based on extension */
-    unsigned int resizable     :1;  /* read will respect ginfo width & height */
-    unsigned int reserved2     :1;  /* reserved for future use */
-    unsigned int reserved3     :1;  /* reserved for future use */
-    unsigned int importstream  :1;  /* supports open with GIMEX_NOFRAMECOUNT */
-    unsigned int exportstream  :1;  /* will ignore frame count on export */
-    unsigned int movie         :1;  /* this is a movie format (as opposed to mipmaps, fonts or multipage) */
-    unsigned int mipmap        :1;  /* mipmaps are supported and will constrain sizes */
-    unsigned int font          :1;  /* this is a font format */
-    unsigned int obsolete      :1;  /* this format is obsolete */
-    unsigned int file64        :1;  /* this format supports 64 bit file sizes */
-    unsigned int firstextension:1;  /* use first extension when assigning default name */
-	unsigned int pad           :1;  /* pad bitfield to 32 bit boundary for inter compiler compatibility */
-    int  maxcolours;                /* only use in 8 bit, 0 if module does not care */
-    int  maxframename;              /* maximum characters in ginfo framename */
-    int  defaultquality;            /* default pack quality */
-    int mactype[MAXMACTYPES];      /* mac file system types used */
-    char extensions[MAXEXTENSIONS][GIMEX_EXTENSION_SIZE]; /* null terminated extensions with '.' */
-    char authorstr[GIMEX_AUTHORSTR_SIZE];        /* name of gimex module author */
-    char versionstr[GIMEX_VERSIONSTR_SIZE];      /* version number of gimex module ie 1.00 */
-    char shorttypestr[GIMEX_SHORTTYPESTR_SIZE];  /* 3 or 4 character type string ie TGA */
-    char wordtypestr[GIMEX_WORDTYPESTR_SIZE];    /* single word type string ie Targa */
-    char longtypestr[GIMEX_LONGTYPESTR_SIZE];    /* full name of data format ie True Vision Targa */
-    unsigned int maxalphabits:8;    /* maximum supported number of bits in alpha channel */
-    unsigned int maxredbits  :8;    /* maximum supported number of bits in red channel */
-    unsigned int maxgreenbits:8;    /* maximum supported number of bits in green channel */
-    unsigned int maxbluebits :8;    /* maximum supported number of bits in blue channel */
-    unsigned int maxwidth;          /* maximum width in pixels */
-    unsigned int maxheight;         /* maximum height in pixels */
-    unsigned int alignwidth;        /* width must be multiple of this in pixels */
-    unsigned int alignheight;       /* height must be multiple of this in pixels */
-    unsigned int pad2[4];
+	int signature; /* signature of gimex ie 'tga ' (optional) */
+	int size; /* size of GABOUT structure */
+	int version; /* version number of GABOUT structure (200) */
+	unsigned int canimport : 1; /* supports importing */
+	unsigned int canexport : 1; /* supports exporting */
+	unsigned int importpacked : 2; /* max import packed field 0..3 */
+	unsigned int exportpacked : 2; /* max export packed field 0..3  */
+	unsigned int import8 : 1; /* supports importing 8 bit indexed */
+	unsigned int export8 : 1; /* supports exporting 8 bit indexed */
+	unsigned int import32 : 1; /* supports importing 32 bit direct rgb */
+	unsigned int export32 : 1; /* supports exporting 32 bit direct rgb */
+	unsigned int multiframe : 1; /* supports multiple frames */
+	unsigned int multifile : 1; /* format requires additional files or resource fork */
+	unsigned int multisize : 1; /* supports different size per frame */
+	unsigned int framebuffer : 1; /* module requires memory to buffer entire frame */
+	unsigned int external : 1; /* uses external resources */
+	unsigned int usesfile : 1; /* module is file based vs ads/printer/generator */
+	unsigned int globalpalette : 1; /* limited to a single palette per file */
+	unsigned int greyscale : 1; /* use maxcolours for number of levels */
+	unsigned int startcolour : 1; /* supports start colour */
+	unsigned int dotsubtype : 1; /* subtype based on extension */
+	unsigned int resizable : 1; /* read will respect ginfo width & height */
+	unsigned int reserved2 : 1; /* reserved for future use */
+	unsigned int reserved3 : 1; /* reserved for future use */
+	unsigned int importstream : 1; /* supports open with GIMEX_NOFRAMECOUNT */
+	unsigned int exportstream : 1; /* will ignore frame count on export */
+	unsigned int movie : 1; /* this is a movie format (as opposed to mipmaps, fonts or multipage) */
+	unsigned int mipmap : 1; /* mipmaps are supported and will constrain sizes */
+	unsigned int font : 1; /* this is a font format */
+	unsigned int obsolete : 1; /* this format is obsolete */
+	unsigned int file64 : 1; /* this format supports 64 bit file sizes */
+	unsigned int firstextension : 1; /* use first extension when assigning default name */
+	unsigned int pad : 1; /* pad bitfield to 32 bit boundary for inter compiler compatibility */
+	int maxcolours; /* only use in 8 bit, 0 if module does not care */
+	int maxframename; /* maximum characters in ginfo framename */
+	int defaultquality; /* default pack quality */
+	int mactype[MAXMACTYPES]; /* mac file system types used */
+	char extensions[MAXEXTENSIONS][GIMEX_EXTENSION_SIZE]; /* null terminated extensions with '.' */
+	char authorstr[GIMEX_AUTHORSTR_SIZE]; /* name of gimex module author */
+	char versionstr[GIMEX_VERSIONSTR_SIZE]; /* version number of gimex module ie 1.00 */
+	char shorttypestr[GIMEX_SHORTTYPESTR_SIZE]; /* 3 or 4 character type string ie TGA */
+	char wordtypestr[GIMEX_WORDTYPESTR_SIZE]; /* single word type string ie Targa */
+	char longtypestr[GIMEX_LONGTYPESTR_SIZE]; /* full name of data format ie True Vision Targa */
+	unsigned int maxalphabits : 8; /* maximum supported number of bits in alpha channel */
+	unsigned int maxredbits : 8; /* maximum supported number of bits in red channel */
+	unsigned int maxgreenbits : 8; /* maximum supported number of bits in green channel */
+	unsigned int maxbluebits : 8; /* maximum supported number of bits in blue channel */
+	unsigned int maxwidth; /* maximum width in pixels */
+	unsigned int maxheight; /* maximum height in pixels */
+	unsigned int alignwidth; /* width must be multiple of this in pixels */
+	unsigned int alignheight; /* height must be multiple of this in pixels */
+	unsigned int pad2[4];
 } GABOUT;
 
 /* Bitmap structure (optional) */
 
 typedef struct
 {
-    GINFO *ginfo;
-    void  *image;
-    int   rowbytes;
+	GINFO *ginfo;
+	void *image;
+	int rowbytes;
 } GBITMAP;
 
 #ifndef GMAKEID
-#define GMAKEID(a,b,c,d) (((int)(a)<<24)|((int)(b)<<16)|((int)(c)<<8)|(int)(d))
+#define GMAKEID(a, b, c, d) (((int)(a) << 24) | ((int)(b) << 16) | ((int)(c) << 8) | (int)(d))
 #endif
 
 #ifndef gmin
-#define gmin(a,b) ((a)<(b)?(a):(b))
+#define gmin(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
 #ifndef gmax
-#define gmax(a,b) ((a)>(b)?(a):(b))
+#define gmax(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
 #if !defined(GCALL)
@@ -279,23 +279,26 @@ typedef struct
 #endif
 #endif
 
-
 #if !defined(__cplusplus) && !defined(bool)
 #define bool bool
-typedef enum{ False=0x0, True=0x1}bool;
+typedef enum
+{
+	False = 0x0,
+	True = 0x1
+} bool;
 #endif
 
 typedef struct GFUNCTIONS
 {
-    GABOUT * (GCALL * GIMEX_about)(void);
-    int      (GCALL * GIMEX_is)(GSTREAM *g);
-    int      (GCALL * GIMEX_open)(GINSTANCE **gx, GSTREAM *g, const char *pathname,bool framecountflag);
-    GINFO *  (GCALL * GIMEX_info)(GINSTANCE *gx, int framenum);
-    int      (GCALL * GIMEX_read)(GINSTANCE *gx, GINFO *ginfo, char *dest, int rowbytes);
-    int      (GCALL * GIMEX_close)(GINSTANCE *gx);
-    int      (GCALL * GIMEX_wopen)(GINSTANCE **gx, GSTREAM *g, const char *pathname, int numframes);
-    int      (GCALL * GIMEX_write)(GINSTANCE *gx, const GINFO *ginfo, char *source, int rowbytes);
-    int      (GCALL * GIMEX_wclose)(GINSTANCE *gx);
+	GABOUT *(GCALL *GIMEX_about)(void);
+	int(GCALL *GIMEX_is)(GSTREAM *g);
+	int(GCALL *GIMEX_open)(GINSTANCE **gx, GSTREAM *g, const char *pathname, bool framecountflag);
+	GINFO *(GCALL *GIMEX_info)(GINSTANCE *gx, int framenum);
+	int(GCALL *GIMEX_read)(GINSTANCE *gx, GINFO *ginfo, char *dest, int rowbytes);
+	int(GCALL *GIMEX_close)(GINSTANCE *gx);
+	int(GCALL *GIMEX_wopen)(GINSTANCE **gx, GSTREAM *g, const char *pathname, int numframes);
+	int(GCALL *GIMEX_write)(GINSTANCE *gx, const GINFO *ginfo, char *source, int rowbytes);
+	int(GCALL *GIMEX_wclose)(GINSTANCE *gx);
 } GFUNCTIONS;
 
 extern struct GFUNCTIONS gfunctions[];
@@ -306,33 +309,33 @@ extern struct GFUNCTIONS gfunctions[];
 
 /* valid values to be passed to framecountflag parameter for the GIMEX_open function */
 #ifdef __cplusplus
-#define GIMEX_FRAMECOUNT   true
+#define GIMEX_FRAMECOUNT true
 #define GIMEX_NOFRAMECOUNT false
 #else
-#define GIMEX_FRAMECOUNT   0x1
+#define GIMEX_FRAMECOUNT 0x1
 #define GIMEX_NOFRAMECOUNT 0x0
 #endif
 /* Information Functions */
 
 GABOUT *GCALL GIMEX_about(void);
-int     GCALL GIMEX_is(GSTREAM *g);
+int GCALL GIMEX_is(GSTREAM *g);
 
 /* Import Functions */
 
 #ifdef __cplusplus
-int     GCALL GIMEX_open(GINSTANCE **gx, GSTREAM *g, const char *pathname, bool framecountflag=GIMEX_FRAMECOUNT);
+int GCALL GIMEX_open(GINSTANCE **gx, GSTREAM *g, const char *pathname, bool framecountflag = GIMEX_FRAMECOUNT);
 #else
-int     GCALL GIMEX_open(GINSTANCE **gx, GSTREAM *g, const char *pathname, bool framecountflag);
+int GCALL GIMEX_open(GINSTANCE **gx, GSTREAM *g, const char *pathname, bool framecountflag);
 #endif
-GINFO * GCALL GIMEX_info(GINSTANCE *gx, int framenum);
-bool    GCALL GIMEX_read(GINSTANCE *gx, const GINFO *ginfo, void *dest, int rowbytes);
-bool    GCALL GIMEX_close(GINSTANCE *gx);
+GINFO *GCALL GIMEX_info(GINSTANCE *gx, int framenum);
+bool GCALL GIMEX_read(GINSTANCE *gx, const GINFO *ginfo, void *dest, int rowbytes);
+bool GCALL GIMEX_close(GINSTANCE *gx);
 
 /* Example Export Functions */
 
-bool    GCALL GIMEX_wopen(GINSTANCE **gx, GSTREAM *g, const char *pathname, int numframes);
-bool    GCALL GIMEX_write(GINSTANCE *gx, const GINFO *ginfo, const void *source, int rowbytes);
-bool    GCALL GIMEX_wclose(GINSTANCE *gx);
+bool GCALL GIMEX_wopen(GINSTANCE **gx, GSTREAM *g, const char *pathname, int numframes);
+bool GCALL GIMEX_write(GINSTANCE *gx, const GINFO *ginfo, const void *source, int rowbytes);
+bool GCALL GIMEX_wclose(GINSTANCE *gx);
 
 /****************************************************************************/
 /* Application Module Prototypes                                            */
@@ -340,23 +343,23 @@ bool    GCALL GIMEX_wclose(GINSTANCE *gx);
 
 /* File Stream Functions */
 
-GSTREAM * GCALL gopen(const char *pathname);
-GSTREAM * GCALL gwopen(const char *pathname);
-bool      GCALL gclose(GSTREAM *g);
-int       GCALL gread(GSTREAM *g, void *buf, int size);
-int       GCALL gwrite(GSTREAM *g, const void *buf, int size);
-bool      GCALL gseek(GSTREAM *g, GPOS offset);
-GPOS      GCALL glen(GSTREAM *g);
-GPOS      GCALL gtell(GSTREAM *g);
+GSTREAM *GCALL gopen(const char *pathname);
+GSTREAM *GCALL gwopen(const char *pathname);
+bool GCALL gclose(GSTREAM *g);
+int GCALL gread(GSTREAM *g, void *buf, int size);
+int GCALL gwrite(GSTREAM *g, const void *buf, int size);
+bool GCALL gseek(GSTREAM *g, GPOS offset);
+GPOS GCALL glen(GSTREAM *g);
+GPOS GCALL gtell(GSTREAM *g);
 
 /* Memory Functions */
 
 #if !defined(galloc)
 #include <stdlib.h>
 #define galloc malloc
-//void *  GCALL galloc(int size);
+// void *  GCALL galloc(int size);
 #endif
-//bool   GCALL gfree(void *memptr);
+// bool   GCALL gfree(void *memptr);
 #define gfree free
 
 #ifdef __cplusplus
@@ -368,128 +371,133 @@ GPOS      GCALL gtell(GSTREAM *g);
 /****************************************************************************/
 
 #ifdef _MSC_VER
-#pragma warning(disable: 4514) // unreferenced inline function has been removed
+#pragma warning(disable : 4514) // unreferenced inline function has been removed
 #endif
 
 /* get motorola memory */
 static __inline unsigned int ggetm(const void *src, int bytes)
 {
-    if (bytes==1)
-        return (unsigned int) *(const unsigned char *) src;
+	if (bytes == 1)
+		return (unsigned int)*(const unsigned char *)src;
 #if defined(__APPLE__) || (defined(__MWERKS__) && defined(__PPCGEKKO__))
-    else if (bytes==2)
-        return (unsigned int) *(const unsigned short *) src;
-    else if (bytes==4)
-        return (unsigned int) *(const unsigned int *) src;
+	else if (bytes == 2)
+		return (unsigned int)*(const unsigned short *)src;
+	else if (bytes == 4)
+		return (unsigned int)*(const unsigned int *)src;
 #else
-    else if (bytes==2)
-        return (((unsigned int) *(const unsigned char *) src)<<8) | (((unsigned int) *((const unsigned char *) src+1)));
-    else if (bytes==4)
-        return (((unsigned int) *(const unsigned char *) src)<<24) | (((unsigned int) *((const unsigned char *) src+1))<<16) | (((unsigned int) *((const unsigned char *) src+2))<<8) | (((unsigned int) *((const unsigned char *) src+3)));
+	else if (bytes == 2)
+		return (((unsigned int)*(const unsigned char *)src) << 8) | (((unsigned int)*((const unsigned char *)src + 1)));
+	else if (bytes == 4)
+		return (((unsigned int)*(const unsigned char *)src) << 24) | (((unsigned int)*((const unsigned char *)src + 1)) << 16)
+				| (((unsigned int)*((const unsigned char *)src + 2)) << 8) | (((unsigned int)*((const unsigned char *)src + 3)));
 #endif
-    else if (bytes==3)
-        return (((unsigned int) *(const unsigned char *) src)<<16) | (((unsigned int) *((const unsigned char *) src+1))<<8) | (((unsigned int) *((const unsigned char *) src+2)));
-    return 0;
+	else if (bytes == 3)
+		return (((unsigned int)*(const unsigned char *)src) << 16) | (((unsigned int)*((const unsigned char *)src + 1)) << 8)
+				| (((unsigned int)*((const unsigned char *)src + 2)));
+	return 0;
 }
 
 /* get intel memory */
 
 static __inline unsigned int ggeti(const void *src, int bytes)
 {
-    if (bytes==1)
-        return (unsigned int) *(const unsigned char *) src;
+	if (bytes == 1)
+		return (unsigned int)*(const unsigned char *)src;
 #if defined(_MSC_VER) || defined(__i386__)
-    else if (bytes==2)
-        return (unsigned int) *(const unsigned short *) src;
-    else if (bytes==4)
-        return (unsigned int) *(const unsigned int *) src;
+	else if (bytes == 2)
+		return (unsigned int)*(const unsigned short *)src;
+	else if (bytes == 4)
+		return (unsigned int)*(const unsigned int *)src;
 #else
-    else if (bytes==2)
-        return (((unsigned int) *((const unsigned char *) src+1))<<8) | (((unsigned int) *(const unsigned char *) src+0));
-    else if (bytes==4)
-        return (((unsigned int) *((const unsigned char *) src+3))<<24) | (((unsigned int) *((const unsigned char *) src+2))<<16) | (((unsigned int) *((const unsigned char *) src+1))<<8) | (((unsigned int) *(const unsigned char *) src+0));
+	else if (bytes == 2)
+		return (((unsigned int)*((const unsigned char *)src + 1)) << 8) | (((unsigned int)*(const unsigned char *)src + 0));
+	else if (bytes == 4)
+		return (((unsigned int)*((const unsigned char *)src + 3)) << 24)
+				| (((unsigned int)*((const unsigned char *)src + 2)) << 16)
+				| (((unsigned int)*((const unsigned char *)src + 1)) << 8) | (((unsigned int)*(const unsigned char *)src + 0));
 #endif
-    else if (bytes==3)
-        return (((unsigned int) *((const unsigned char *) src+2))<<16) | (((unsigned int) *((const unsigned char *) src+1))<<8) | (((unsigned int) *(const unsigned char *) src+0));
-    return 0;
+	else if (bytes == 3)
+		return (((unsigned int)*((const unsigned char *)src + 2)) << 16)
+				| (((unsigned int)*((const unsigned char *)src + 1)) << 8) | (((unsigned int)*(const unsigned char *)src + 0));
+	return 0;
 }
 
 /* put motorolla memory */
 
 static __inline void gputm(void *dst, unsigned int data, int bytes)
 {
-    if (bytes==1)
-    {
-        ((unsigned char *) dst)[0] = (unsigned char) data;
-    }
+	if (bytes == 1)
+	{
+		((unsigned char *)dst)[0] = (unsigned char)data;
+	}
 #if defined(__APPLE__) || (defined(__MWERKS__) && defined(__PPCGEKKO__))
-    else if (bytes==2)
-    {
-        ((unsigned short *) dst)[0] = (unsigned short) data;
-    }
-    else if (bytes==4)
-    {
-        ((unsigned int *) dst)[0] = (unsigned int) data;
-    }
+	else if (bytes == 2)
+	{
+		((unsigned short *)dst)[0] = (unsigned short)data;
+	}
+	else if (bytes == 4)
+	{
+		((unsigned int *)dst)[0] = (unsigned int)data;
+	}
 #else
-    else if (bytes==2)
-    {
-        ((unsigned char *) dst)[0] = (unsigned char) (data>>8);
-        ((unsigned char *) dst)[1] = (unsigned char) data;
-    }
-    else if (bytes==4)
-    {
-        ((unsigned char *) dst)[0] = (unsigned char) (data>>24);
-        ((unsigned char *) dst)[1] = (unsigned char) (data>>16);
-        ((unsigned char *) dst)[2] = (unsigned char) (data>>8);
-        ((unsigned char *) dst)[3] = (unsigned char) data;
-    }
+	else if (bytes == 2)
+	{
+		((unsigned char *)dst)[0] = (unsigned char)(data >> 8);
+		((unsigned char *)dst)[1] = (unsigned char)data;
+	}
+	else if (bytes == 4)
+	{
+		((unsigned char *)dst)[0] = (unsigned char)(data >> 24);
+		((unsigned char *)dst)[1] = (unsigned char)(data >> 16);
+		((unsigned char *)dst)[2] = (unsigned char)(data >> 8);
+		((unsigned char *)dst)[3] = (unsigned char)data;
+	}
 #endif
-    else if (bytes==3)
-    {
-        ((unsigned char *) dst)[0] = (unsigned char) (data>>16);
-        ((unsigned char *) dst)[1] = (unsigned char) (data>>8);
-        ((unsigned char *) dst)[2] = (unsigned char) data;
-    }
+	else if (bytes == 3)
+	{
+		((unsigned char *)dst)[0] = (unsigned char)(data >> 16);
+		((unsigned char *)dst)[1] = (unsigned char)(data >> 8);
+		((unsigned char *)dst)[2] = (unsigned char)data;
+	}
 }
 
 /* put intel memory */
 
 static __inline void gputi(void *dst, unsigned int data, int bytes)
 {
-    if (bytes==1)
-    {
-        ((unsigned char *) dst)[0] = (unsigned char) data;
-    }
+	if (bytes == 1)
+	{
+		((unsigned char *)dst)[0] = (unsigned char)data;
+	}
 #if defined(_MSC_VER) || defined(__i386__)
-    else if (bytes==2)
-    {
-        ((unsigned short *) dst)[0] = (unsigned short) data;
-    }
-    else if (bytes==4)
-    {
-        ((unsigned int *) dst)[0] = (unsigned int) data;
-    }
+	else if (bytes == 2)
+	{
+		((unsigned short *)dst)[0] = (unsigned short)data;
+	}
+	else if (bytes == 4)
+	{
+		((unsigned int *)dst)[0] = (unsigned int)data;
+	}
 #else
-    else if (bytes==2)
-    {
-        ((unsigned char *) dst)[0] = (unsigned char) data;
-        ((unsigned char *) dst)[1] = (unsigned char) (data>>8);
-    }
-    else if (bytes==4)
-    {
-        ((unsigned char *) dst)[0] = (unsigned char) data;
-        ((unsigned char *) dst)[1] = (unsigned char) (data>>8);
-        ((unsigned char *) dst)[2] = (unsigned char) (data>>16);
-        ((unsigned char *) dst)[3] = (unsigned char) (data>>24);
-    }
+	else if (bytes == 2)
+	{
+		((unsigned char *)dst)[0] = (unsigned char)data;
+		((unsigned char *)dst)[1] = (unsigned char)(data >> 8);
+	}
+	else if (bytes == 4)
+	{
+		((unsigned char *)dst)[0] = (unsigned char)data;
+		((unsigned char *)dst)[1] = (unsigned char)(data >> 8);
+		((unsigned char *)dst)[2] = (unsigned char)(data >> 16);
+		((unsigned char *)dst)[3] = (unsigned char)(data >> 24);
+	}
 #endif
-    else if (bytes==3)
-    {
-        ((unsigned char *) dst)[0] = (unsigned char) data;
-        ((unsigned char *) dst)[1] = (unsigned char) (data>>8);
-        ((unsigned char *) dst)[2] = (unsigned char) (data>>16);
-    }
+	else if (bytes == 3)
+	{
+		((unsigned char *)dst)[0] = (unsigned char)data;
+		((unsigned char *)dst)[1] = (unsigned char)(data >> 8);
+		((unsigned char *)dst)[2] = (unsigned char)(data >> 16);
+	}
 }
 
 #endif /* __GIMEX_H */

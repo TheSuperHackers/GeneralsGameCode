@@ -33,10 +33,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
-//extern bool CompressQ;
-//extern int QnBytes;
-
+// extern bool CompressQ;
+// extern int QnBytes;
 
 /////////////////////////////////////////////////////////////////////////////
 // CAnimationSpeed dialog
@@ -45,199 +43,188 @@ static char THIS_FILE[] = __FILE__;
 //
 //  CAnimationSpeed
 //
-CAnimationSpeed::CAnimationSpeed (CWnd* pParent)
-	: m_iInitialPercent (0),
-      CDialog(CAnimationSpeed::IDD, pParent)
+CAnimationSpeed::CAnimationSpeed(CWnd *pParent) : m_iInitialPercent(0), CDialog(CAnimationSpeed::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CAnimationSpeed)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-    return ;
+	return;
 }
 
 //////////////////////////////////////////////////////////////
 //
 //  DoDataExchange
 //
-void
-CAnimationSpeed::DoDataExchange (CDataExchange* pDX)
+void CAnimationSpeed::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CAnimationSpeed)
 	DDX_Control(pDX, IDC_SPEED_SLIDER, m_speedSlider);
 	//}}AFX_DATA_MAP
-    return ;
+	return;
 }
-
 
 BEGIN_MESSAGE_MAP(CAnimationSpeed, CDialog)
-	//{{AFX_MSG_MAP(CAnimationSpeed)
-	ON_WM_HSCROLL()
-	ON_WM_DESTROY()
-	ON_BN_CLICKED(IDC_BLEND, OnBlend)
-	ON_BN_CLICKED(IDC_COMPRESSQ, OnCompressq)
-	ON_BN_CLICKED(IDC_16BIT, On16bit)
-	ON_BN_CLICKED(IDC_8BIT, On8bit)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CAnimationSpeed)
+ON_WM_HSCROLL()
+ON_WM_DESTROY()
+ON_BN_CLICKED(IDC_BLEND, OnBlend)
+ON_BN_CLICKED(IDC_COMPRESSQ, OnCompressq)
+ON_BN_CLICKED(IDC_16BIT, On16bit)
+ON_BN_CLICKED(IDC_8BIT, On8bit)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 //////////////////////////////////////////////////////////////
 //
 //  OnInitDialog
 //
-BOOL
-CAnimationSpeed::OnInitDialog (void)
+BOOL CAnimationSpeed::OnInitDialog(void)
 {
 	// Allow the base class to process this message
-    CDialog::OnInitDialog ();
+	CDialog::OnInitDialog();
 
-    // Center the dialog around the data tree view instead
-    // of the direct center of the screen
-    ::CenterDialogAroundTreeView (m_hWnd);
+	// Center the dialog around the data tree view instead
+	// of the direct center of the screen
+	::CenterDialogAroundTreeView(m_hWnd);
 
-    // Get a pointer to the doc so we can get at the current scene
-    // pointer.
-    CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
-    if (pCDoc)
-    {
-        SendDlgItemMessage (IDC_BLEND, BM_SETCHECK, (WPARAM)pCDoc->GetAnimationBlend ());
-		  CheckDlgButton(IDC_COMPRESSQ, pCDoc->GetChannelQCompression());
-			CheckRadioButton(IDC_16BIT, IDC_8BIT, IDC_16BIT+2);//-pCDoc->GetChannelQnBytes());
-		  if(pCDoc->GetChannelQCompression()){
-				GetDlgItem(IDC_16BIT)->EnableWindow(TRUE);
-				GetDlgItem(IDC_8BIT)->EnableWindow(TRUE);
-		  }else{
-			  GetDlgItem(IDC_16BIT)->EnableWindow(FALSE);
-			  GetDlgItem(IDC_8BIT)->EnableWindow(FALSE);
-		  }
-	 }
+	// Get a pointer to the doc so we can get at the current scene
+	// pointer.
+	CW3DViewDoc *pCDoc = ::GetCurrentDocument();
+	if (pCDoc)
+	{
+		SendDlgItemMessage(IDC_BLEND, BM_SETCHECK, (WPARAM)pCDoc->GetAnimationBlend());
+		CheckDlgButton(IDC_COMPRESSQ, pCDoc->GetChannelQCompression());
+		CheckRadioButton(IDC_16BIT, IDC_8BIT, IDC_16BIT + 2); //-pCDoc->GetChannelQnBytes());
+		if (pCDoc->GetChannelQCompression())
+		{
+			GetDlgItem(IDC_16BIT)->EnableWindow(TRUE);
+			GetDlgItem(IDC_8BIT)->EnableWindow(TRUE);
+		}
+		else
+		{
+			GetDlgItem(IDC_16BIT)->EnableWindow(FALSE);
+			GetDlgItem(IDC_8BIT)->EnableWindow(FALSE);
+		}
+	}
 
-    // Get a pointer to the main window
-    CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd ();
-    if (pCMainWnd)
-    {
-        // Get a pointer to the graphic view pane
-        CGraphicView *pCGraphicView = (CGraphicView *)pCMainWnd->GetPane (0, 1);
-        if (pCGraphicView)
-        {
-            // Determine the current display speed
-            float animationSpeed = pCGraphicView->GetAnimationSpeed ();
+	// Get a pointer to the main window
+	CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd();
+	if (pCMainWnd)
+	{
+		// Get a pointer to the graphic view pane
+		CGraphicView *pCGraphicView = (CGraphicView *)pCMainWnd->GetPane(0, 1);
+		if (pCGraphicView)
+		{
+			// Determine the current display speed
+			float animationSpeed = pCGraphicView->GetAnimationSpeed();
 
-            // Convert the current display speed to a percentage
-            m_iInitialPercent = int(animationSpeed*100.00F);
-        }
-    }
+			// Convert the current display speed to a percentage
+			m_iInitialPercent = int(animationSpeed * 100.00F);
+		}
+	}
 
-    // Set the range of the slider control
-    m_speedSlider.SetRange (1, 200);
+	// Set the range of the slider control
+	m_speedSlider.SetRange(1, 200);
 
-    // Set the initial pos of the slider control
-    m_speedSlider.SetPos (m_iInitialPercent);
-    return TRUE;
+	// Set the initial pos of the slider control
+	m_speedSlider.SetPos(m_iInitialPercent);
+	return TRUE;
 }
 
 //////////////////////////////////////////////////////////////
 //
 //  OnInitDialog
 //
-void
-CAnimationSpeed::OnHScroll
-(
-    UINT nSBCode,
-    UINT nPos,
-    CScrollBar* pScrollBar
-)
+void CAnimationSpeed::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar)
 {
 	// Get the current position of the slider control
-    m_iInitialPercent = m_speedSlider.GetPos ();
+	m_iInitialPercent = m_speedSlider.GetPos();
 
-    // Get a pointer to the main window
-    CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd ();
-    if (pCMainWnd)
-    {
-        // Get a pointer to the graphic view pane
-        CGraphicView *pCGraphicView = (CGraphicView *)pCMainWnd->GetPane (0, 1);
-        if (pCGraphicView)
-        {
-            pCGraphicView->SetAnimationSpeed (((float)m_iInitialPercent) / (100.00F));
-        }
-    }
+	// Get a pointer to the main window
+	CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd();
+	if (pCMainWnd)
+	{
+		// Get a pointer to the graphic view pane
+		CGraphicView *pCGraphicView = (CGraphicView *)pCMainWnd->GetPane(0, 1);
+		if (pCGraphicView)
+		{
+			pCGraphicView->SetAnimationSpeed(((float)m_iInitialPercent) / (100.00F));
+		}
+	}
 
 	// Allow the base class to process this message
-    CDialog::OnHScroll (nSBCode, nPos, pScrollBar);
-    return ;
+	CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
+	return;
 }
 
 //////////////////////////////////////////////////////////////
 //
 //  OnDestroy
 //
-void
-CAnimationSpeed::OnDestroy (void)
+void CAnimationSpeed::OnDestroy(void)
 {
-    m_iInitialPercent = m_speedSlider.GetPos ();
+	m_iInitialPercent = m_speedSlider.GetPos();
 	CDialog::OnDestroy();
-    return ;
+	return;
 }
 
 //////////////////////////////////////////////////////////////
 //
 //  OnBlend
 //
-void
-CAnimationSpeed::OnBlend (void)
+void CAnimationSpeed::OnBlend(void)
 {
-    // Get a pointer to the doc so we can get at the current scene
-    // pointer.
-    CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
-    if (pCDoc)
-    {
-        // Turn on/off the blending option
-        pCDoc->SetAnimationBlend (SendDlgItemMessage (IDC_BLEND, BM_GETCHECK));
-    }
-
-    return ;
-}
-
-void CAnimationSpeed::
-OnCompressq(){
-/*	CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
-	if(pCDoc){
-		bool b_was_compressed = pCDoc->GetChannelQCompression();
-		bool b_compress = IsDlgButtonChecked(IDC_COMPRESSQ) == BST_CHECKED;
-		pCDoc->SetChannelQCompression(b_compress);
-		//Enable/Disable
-		if(b_compress){
-				GetDlgItem(IDC_16BIT)->EnableWindow(TRUE);
-				GetDlgItem(IDC_8BIT)->EnableWindow(TRUE);
-		  }else{
-			  GetDlgItem(IDC_16BIT)->EnableWindow(FALSE);
-			  GetDlgItem(IDC_8BIT)->EnableWindow(FALSE);
-		  }
-		//Update
-		  if(b_compress != b_was_compressed){
-			int n_bytes = pCDoc->GetChannelQnBytes();
-			CompressQ = b_compress;
-			QnBytes = n_bytes;
-		}
+	// Get a pointer to the doc so we can get at the current scene
+	// pointer.
+	CW3DViewDoc *pCDoc = ::GetCurrentDocument();
+	if (pCDoc)
+	{
+		// Turn on/off the blending option
+		pCDoc->SetAnimationBlend(SendDlgItemMessage(IDC_BLEND, BM_GETCHECK));
 	}
-*/
+
+	return;
 }
 
-void CAnimationSpeed::
-On16bit(){
-/*
-CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
-	pCDoc->SetChannelQnBytes(2);
-	QnBytes = 2;
-*/
+void CAnimationSpeed::OnCompressq()
+{
+	/*	CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
+		if(pCDoc){
+			bool b_was_compressed = pCDoc->GetChannelQCompression();
+			bool b_compress = IsDlgButtonChecked(IDC_COMPRESSQ) == BST_CHECKED;
+			pCDoc->SetChannelQCompression(b_compress);
+			//Enable/Disable
+			if(b_compress){
+					GetDlgItem(IDC_16BIT)->EnableWindow(TRUE);
+					GetDlgItem(IDC_8BIT)->EnableWindow(TRUE);
+				}else{
+					GetDlgItem(IDC_16BIT)->EnableWindow(FALSE);
+					GetDlgItem(IDC_8BIT)->EnableWindow(FALSE);
+				}
+			//Update
+				if(b_compress != b_was_compressed){
+				int n_bytes = pCDoc->GetChannelQnBytes();
+				CompressQ = b_compress;
+				QnBytes = n_bytes;
+			}
+		}
+	*/
 }
-void CAnimationSpeed::
-On8bit(){
-/*
+
+void CAnimationSpeed::On16bit()
+{
+	/*
 	CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
-	pCDoc->SetChannelQnBytes(1);
-	QnBytes = 1;
-*/
+		pCDoc->SetChannelQnBytes(2);
+		QnBytes = 2;
+	*/
+}
+void CAnimationSpeed::On8bit()
+{
+	/*
+		CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
+		pCDoc->SetChannelQnBytes(1);
+		QnBytes = 1;
+	*/
 }

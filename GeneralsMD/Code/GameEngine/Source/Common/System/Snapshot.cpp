@@ -28,22 +28,20 @@
 //				 be considered during game saves, loads, and CRC checks.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/GameState.h"
 #include "Common/Snapshot.h"
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Snapshot::Snapshot( void )
+Snapshot::Snapshot(void)
 {
-
-}  // end Snapshot
+} // end Snapshot
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Snapshot::~Snapshot( void )
+Snapshot::~Snapshot(void)
 {
-
 	//
 	// if we're loading, there are pathological cases where we could destroy snapshots while
 	// there is an entry for them in the post processing list ... need to clean this up
@@ -51,6 +49,6 @@ Snapshot::~Snapshot( void )
 	///@ todo, this might be needed in theory in the future, but iterating the post process
 	// list in the game state is expensive because it's HUGE!
 	//
-//	TheGameState->notifySnapshotDeleted();
+	//	TheGameState->notifySnapshotDeleted();
 
-}  // end ~Snapshot
+} // end ~Snapshot

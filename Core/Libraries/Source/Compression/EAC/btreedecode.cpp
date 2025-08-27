@@ -31,90 +31,91 @@
 
 struct BTreeDecodeContext
 {
-    signed char    cluetbl[256];
-    unsigned char  left[256];
-    unsigned char  right[256];
-    unsigned char  *d;
+	signed char cluetbl[256];
+	unsigned char left[256];
+	unsigned char right[256];
+	unsigned char *d;
 };
 
 static void BTREE_chase(struct BTreeDecodeContext *DC, unsigned char node)
 {
-    if (DC->cluetbl[node])
-    {
-        BTREE_chase(DC,DC->left[node]);
-        BTREE_chase(DC,DC->right[node]);
-        return;
-    }
-    *DC->d++ = node;
+	if (DC->cluetbl[node])
+	{
+		BTREE_chase(DC, DC->left[node]);
+		BTREE_chase(DC, DC->right[node]);
+		return;
+	}
+	*DC->d++ = node;
 }
 
-static int BTREE_decompress(unsigned char *packbuf,unsigned char *unpackbuf)
+static int BTREE_decompress(unsigned char *packbuf, unsigned char *unpackbuf)
 {
-    int  node;
-    int  i;
-    int  nodes;
-    int  clue;
-    int ulen;
-    unsigned char *s;
-    signed char c;
-    unsigned int type;
-    struct BTreeDecodeContext DC;
+	int node;
+	int i;
+	int nodes;
+	int clue;
+	int ulen;
+	unsigned char *s;
+	signed char c;
+	unsigned int type;
+	struct BTreeDecodeContext DC;
 
-    s = packbuf;
-    DC.d = unpackbuf;
-    ulen = 0L;
+	s = packbuf;
+	DC.d = unpackbuf;
+	ulen = 0L;
 
-    if (s)
-    {
-        type = ggetm(s,2);
-        s += 2;
+	if (s)
+	{
+		type = ggetm(s, 2);
+		s += 2;
 
-        /* (skip nothing for 0x46fb) */
-        if (type==0x47fb)                       /* skip ulen */
-            s += 3;
+		/* (skip nothing for 0x46fb) */
+		if (type == 0x47fb) /* skip ulen */
+			s += 3;
 
-        ulen = ggetm(s,3);
-        s += 3;
+		ulen = ggetm(s, 3);
+		s += 3;
 
-        for (i=0;i<256;++i)                     /* 0 means a code is a leaf */
-            DC.cluetbl[i] = 0;
+		for (i = 0; i < 256; ++i) /* 0 means a code is a leaf */
+			DC.cluetbl[i] = 0;
 
-        clue = *s++;
-        DC.cluetbl[clue] = 1;                   /* mark clue as special */
+		clue = *s++;
+		DC.cluetbl[clue] = 1; /* mark clue as special */
 
-        nodes = *s++;
-        for (i=0;i<nodes;++i)
-        {   node = *s++;
-            DC.left[node]  = *s++;
-            DC.right[node] = *s++;
-            DC.cluetbl[node] = (signed char)-1;
-        }
+		nodes = *s++;
+		for (i = 0; i < nodes; ++i)
+		{
+			node = *s++;
+			DC.left[node] = *s++;
+			DC.right[node] = *s++;
+			DC.cluetbl[node] = (signed char)-1;
+		}
 
-        for (;;)
-        {
-            node = (int) *s++;
-            c=DC.cluetbl[node];
-            if (!c)
-            {
-                *DC.d++ = (unsigned char) node;
-                continue;
-            }
-            if (c<0)
-            {
-                BTREE_chase(&DC,DC.left[node]);
-                BTREE_chase(&DC,DC.right[node]);
-                continue;
-            }
-            node = (int) *s++;
-            if (node)
-            {
-                *DC.d++ = (char) node;
-                continue;
-            }
-            break;
-        }
-    }
-    return(ulen);
+		for (;;)
+		{
+			node = (int)*s++;
+			c = DC.cluetbl[node];
+			if (!c)
+			{
+				*DC.d++ = (unsigned char)node;
+				continue;
+			}
+			if (c < 0)
+			{
+				BTREE_chase(&DC, DC.left[node]);
+				BTREE_chase(&DC, DC.right[node]);
+				continue;
+			}
+			node = (int)*s++;
+			if (node)
+			{
+				*DC.d++ = (char)node;
+				continue;
+			}
+			break;
+		}
+	}
+	return (ulen);
 }
 
 /****************************************************************/
@@ -126,15 +127,13 @@ static int BTREE_decompress(unsigned char *packbuf,unsigned char *unpackbuf)
 
 bool GCALL BTREE_is(const void *compresseddata)
 {
-    bool ok=false;
+	bool ok = false;
 
-    if (ggetm(compresseddata,2)==0x46fb
-     || ggetm(compresseddata,2)==0x47fb)
-        ok = true;
+	if (ggetm(compresseddata, 2) == 0x46fb || ggetm(compresseddata, 2) == 0x47fb)
+		ok = true;
 
-    return(ok);
+	return (ok);
 }
-
 
 /****************************************************************/
 /*  Decode Functions                                            */
@@ -142,24 +141,23 @@ bool GCALL BTREE_is(const void *compresseddata)
 
 int GCALL BTREE_size(const void *compresseddata)
 {
-    int len=0;
+	int len = 0;
 
-    if (ggetm(compresseddata,2)==0x46fb)
-    {
-        len = ggetm((char *)compresseddata+2,3);
-    }
-    else
-    {
-        len = ggetm((char *)compresseddata+2+3,3);
-    }
+	if (ggetm(compresseddata, 2) == 0x46fb)
+	{
+		len = ggetm((char *)compresseddata + 2, 3);
+	}
+	else
+	{
+		len = ggetm((char *)compresseddata + 2 + 3, 3);
+	}
 
-    return(len);
+	return (len);
 }
 
 int GCALL BTREE_decode(void *dest, const void *compresseddata, int *compressedsize)
 {
-    return(BTREE_decompress((unsigned char *)compresseddata,(unsigned char *)dest));
+	return (BTREE_decompress((unsigned char *)compresseddata, (unsigned char *)dest));
 }
 
 #endif
-

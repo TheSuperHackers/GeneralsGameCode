@@ -32,32 +32,28 @@
 /////////////////////////////////////////////////////////////////////////////
 // MapSettings dialog
 
-
-MapSettings::MapSettings(CWnd* pParent /*=NULL*/)
-	: CDialog(MapSettings::IDD, pParent)
+MapSettings::MapSettings(CWnd *pParent /*=NULL*/) : CDialog(MapSettings::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(MapSettings)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void MapSettings::DoDataExchange(CDataExchange* pDX)
+void MapSettings::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(MapSettings)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(MapSettings, CDialog)
-	//{{AFX_MSG_MAP(MapSettings)
-	ON_CBN_SELENDOK(IDC_MAP_TIMEOFDAY, OnChangeMapTimeofday)
-	ON_CBN_SELENDOK(IDC_MAP_WEATHER, OnChangeMapWeather)
-	ON_EN_CHANGE(IDC_MAP_TITLE, OnChangeMapTitle)
-	ON_CBN_SELENDOK(IDC_MAP_COMPRESSION, OnChangeMapCompression)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(MapSettings)
+ON_CBN_SELENDOK(IDC_MAP_TIMEOFDAY, OnChangeMapTimeofday)
+ON_CBN_SELENDOK(IDC_MAP_WEATHER, OnChangeMapWeather)
+ON_EN_CHANGE(IDC_MAP_TITLE, OnChangeMapTitle)
+ON_CBN_SELENDOK(IDC_MAP_COMPRESSION, OnChangeMapCompression)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -77,16 +73,15 @@ BOOL MapSettings::OnInitDialog()
 
 	Int i;
 
-	CComboBox *timeofday = (CComboBox*)GetDlgItem(IDC_MAP_TIMEOFDAY);
+	CComboBox *timeofday = (CComboBox *)GetDlgItem(IDC_MAP_TIMEOFDAY);
 	timeofday->ResetContent();
 	for (i = TIME_OF_DAY_FIRST; i < TIME_OF_DAY_COUNT; i++)
 	{
 		timeofday->AddString(TimeOfDayNames[i]);
 	}
-	timeofday->SetCurSel(TheGlobalData->m_timeOfDay-TIME_OF_DAY_FIRST);
+	timeofday->SetCurSel(TheGlobalData->m_timeOfDay - TIME_OF_DAY_FIRST);
 
-
-	CComboBox *weather = (CComboBox*)GetDlgItem(IDC_MAP_WEATHER);
+	CComboBox *weather = (CComboBox *)GetDlgItem(IDC_MAP_WEATHER);
 	weather->ResetContent();
 	for (i = 0; i < WEATHER_COUNT; i++)
 	{
@@ -107,7 +102,7 @@ BOOL MapSettings::OnInitDialog()
 		mapTitle->SetWindowText("");
 	}
 
-	CComboBox *compressionComboBox = (CComboBox*)GetDlgItem(IDC_MAP_COMPRESSION);
+	CComboBox *compressionComboBox = (CComboBox *)GetDlgItem(IDC_MAP_COMPRESSION);
 	compressionComboBox->ResetContent();
 	for (i = COMPRESSION_MIN; i <= COMPRESSION_MAX; i++)
 	{
@@ -119,16 +114,16 @@ BOOL MapSettings::OnInitDialog()
 		index = CompressionManager::getPreferredCompression();
 	compressionComboBox->SetCurSel(index);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+							 // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void MapSettings::OnOK()
 {
-	CComboBox *timeofday = (CComboBox*)GetDlgItem(IDC_MAP_TIMEOFDAY);
-	CComboBox *weather = (CComboBox*)GetDlgItem(IDC_MAP_WEATHER);
-	TimeOfDay tod = (TimeOfDay) (timeofday->GetCurSel()+TIME_OF_DAY_FIRST);
-	Weather theWeather = (Weather) weather->GetCurSel();
+	CComboBox *timeofday = (CComboBox *)GetDlgItem(IDC_MAP_TIMEOFDAY);
+	CComboBox *weather = (CComboBox *)GetDlgItem(IDC_MAP_WEATHER);
+	TimeOfDay tod = (TimeOfDay)(timeofday->GetCurSel() + TIME_OF_DAY_FIRST);
+	Weather theWeather = (Weather)weather->GetCurSel();
 
 	TheWritableGlobalData->setTimeOfDay(tod);
 	TheWritableGlobalData->m_weather = theWeather;
@@ -141,8 +136,8 @@ void MapSettings::OnOK()
 	Dict *worldDict = MapObject::getWorldDict();
 	worldDict->setAsciiString(TheKey_mapName, mapName);
 
-	CComboBox *compressionComboBox = (CComboBox*)GetDlgItem(IDC_MAP_COMPRESSION);
-	CompressionType compType = (CompressionType) (compressionComboBox->GetCurSel()+COMPRESSION_MIN);
+	CComboBox *compressionComboBox = (CComboBox *)GetDlgItem(IDC_MAP_COMPRESSION);
+	CompressionType compType = (CompressionType)(compressionComboBox->GetCurSel() + COMPRESSION_MIN);
 	worldDict->setInt(TheKey_compression, compType);
 
 	CDialog::OnOK();
@@ -156,11 +151,9 @@ void MapSettings::OnChangeMapTitle()
 	// with the ENM_CHANGE flag ORed into the mask.
 
 	// TODO: Add your control notification handler code here
-
 }
 
 void MapSettings::OnChangeMapCompression()
 {
 	// TODO: Add your control notification handler code here
-
 }

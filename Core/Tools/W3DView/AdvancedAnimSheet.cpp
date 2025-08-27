@@ -29,39 +29,34 @@
 #include "htree.h"
 #include "Utils.h"
 
-
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
-
 // QSort comparison function for HAnimClass pointers.
 // Will compare their names.
-static int anim_name_compare (const void *arg1, const void *arg2)
+static int anim_name_compare(const void *arg1, const void *arg2)
 {
 	ASSERT(arg1 != NULL);
 	ASSERT(arg2 != NULL);
-	HAnimClass *a1 = *(HAnimClass**)arg1;
-	HAnimClass *a2 = *(HAnimClass**)arg2;
-	return _stricmp( a1->Get_Name(), a2->Get_Name() );
+	HAnimClass *a1 = *(HAnimClass **)arg1;
+	HAnimClass *a2 = *(HAnimClass **)arg2;
+	return _stricmp(a1->Get_Name(), a2->Get_Name());
 }
-
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CAdvancedAnimSheet
 
 IMPLEMENT_DYNAMIC(CAdvancedAnimSheet, CPropertySheet)
 
-CAdvancedAnimSheet::CAdvancedAnimSheet(CWnd* pParentWnd, UINT iSelectPage)
-:	CPropertySheet("Advanced Animation", pParentWnd, iSelectPage),
-	m_MixingPage(this),
-	m_ReportPage(this),
-	AnimsValid(false),
-	AnimCount(0)
+CAdvancedAnimSheet::CAdvancedAnimSheet(CWnd *pParentWnd, UINT iSelectPage) :
+		CPropertySheet("Advanced Animation", pParentWnd, iSelectPage),
+		m_MixingPage(this),
+		m_ReportPage(this),
+		AnimsValid(false),
+		AnimCount(0)
 {
 	// Blank out the array of animation pointers.
 	ZeroMemory(Anims, sizeof(Anims));
@@ -84,18 +79,16 @@ CAdvancedAnimSheet::~CAdvancedAnimSheet()
 	}
 }
 
-
 BEGIN_MESSAGE_MAP(CAdvancedAnimSheet, CPropertySheet)
-	//{{AFX_MSG_MAP(CAdvancedAnimSheet)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CAdvancedAnimSheet)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CAdvancedAnimSheet message handlers
 
-int CAdvancedAnimSheet::GetAnimCount (void)
+int CAdvancedAnimSheet::GetAnimCount(void)
 {
 	if (AnimsValid)
 		return AnimCount;
@@ -108,8 +101,7 @@ int CAdvancedAnimSheet::GetAnimCount (void)
 		return 0;
 }
 
-
-HAnimClass ** CAdvancedAnimSheet::GetAnims (void)
+HAnimClass **CAdvancedAnimSheet::GetAnims(void)
 {
 	if (AnimsValid)
 		return Anims;
@@ -121,8 +113,7 @@ HAnimClass ** CAdvancedAnimSheet::GetAnims (void)
 	return Anims;
 }
 
-
-void CAdvancedAnimSheet::LoadAnims (void)
+void CAdvancedAnimSheet::LoadAnims(void)
 {
 	// Get the current render object and it's HTree. If it doesn't have
 	// an HTree, then it's not animating and we're not interested.
@@ -168,8 +159,11 @@ void CAdvancedAnimSheet::LoadAnims (void)
 					else
 					{
 						char msg[256];
-						sprintf(msg, "Error: Only %d animations are supported in this report. "
-							" There are more than that loaded...", MAX_REPORT_ANIMS);
+						sprintf(
+								msg,
+								"Error: Only %d animations are supported in this report. "
+								" There are more than that loaded...",
+								MAX_REPORT_ANIMS);
 						MessageBox(msg, "Too Many Animations");
 						break;
 					}
@@ -188,10 +182,7 @@ void CAdvancedAnimSheet::LoadAnims (void)
 	/*
 	** Sort the array of animations in alphabetical order.
 	*/
-	qsort(Anims, AnimCount, sizeof(HAnimClass*), anim_name_compare);
-
+	qsort(Anims, AnimCount, sizeof(HAnimClass *), anim_name_compare);
 
 	AnimsValid = true;
 }
-
-

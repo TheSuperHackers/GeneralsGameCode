@@ -30,29 +30,31 @@
 
 class PropEdit : public CDialog
 {
-// Construction
+	// Construction
 public:
-	PropEdit(AsciiString* key, Dict::DataType* type, AsciiString* value, Bool valueOnly, CWnd *parent = NULL);
+	PropEdit(AsciiString *key, Dict::DataType *type, AsciiString *value, Bool valueOnly, CWnd *parent = NULL);
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(PropEdit)
-	enum { IDD = IDD_PROPEDIT };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_PROPEDIT
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(PropEdit)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-	AsciiString* m_key;
-	Dict::DataType* m_type;
-	AsciiString* m_value;
+	AsciiString *m_key;
+	Dict::DataType *m_type;
+	AsciiString *m_value;
 	Bool m_valueOnly;
 	int m_updating;
 

@@ -51,9 +51,11 @@
 #include "Common/NameKeyGenerator.h"
 
 #ifdef INSTANTIATE_WELL_KNOWN_KEYS
-	#define DEFINE_KEY(NAME) 	extern const StaticNameKey TheKey_##NAME; const StaticNameKey TheKey_##NAME(#NAME);
+#define DEFINE_KEY(NAME) \
+	extern const StaticNameKey TheKey_##NAME; \
+	const StaticNameKey TheKey_##NAME(#NAME);
 #else
-	#define DEFINE_KEY(NAME) 	extern const StaticNameKey TheKey_##NAME;
+#define DEFINE_KEY(NAME) extern const StaticNameKey TheKey_##NAME;
 #endif
 
 // ---------------------------------------------------------------------------------------
@@ -150,7 +152,6 @@ DEFINE_KEY(teamUnitMinCount3)
 	Usage: Maximum number of units of type 3 to build.
 */
 DEFINE_KEY(teamUnitMaxCount3)
-
 
 /**
 	Which: Team
@@ -443,9 +444,6 @@ DEFINE_KEY(teamExecutesActionsOnCreate)
 */
 DEFINE_KEY(teamGenericScriptHook)
 
-
-
-
 // ---------------------------------------------------------------------------------------
 // well-known keys in MapObject dicts.
 // ---------------------------------------------------------------------------------------
@@ -527,14 +525,12 @@ DEFINE_KEY(waypointPathLabel2)
 */
 DEFINE_KEY(waypointPathLabel3)
 
-
 /**
 	Which: MapObject Properties
 	Type: Bool
 	Usage: If object is a waypoint, bi-directional flag.
 */
 DEFINE_KEY(waypointPathBiDirectional)
-
 
 /**
 	Which: MapObject Properties
@@ -662,7 +658,6 @@ DEFINE_KEY(objectVeterancy)
 */
 DEFINE_KEY(objectTime)
 
-
 /**
 	Which: MapObject Properties
 	Type: Int
@@ -714,7 +709,6 @@ DEFINE_KEY(objectGrantUpgrade)
 	Usage: What is the unique ID (in the form of "templatename #") for this map object?
 */
 DEFINE_KEY(uniqueID)
-
 
 // ---------------------------------------------------------------------------------------
 // well-known keys in Player dicts.
@@ -831,7 +825,6 @@ DEFINE_KEY(weather)
 DEFINE_KEY(mapName)
 DEFINE_KEY(compression)
 
-
 // ---------------------------------------------------------------------------------------
 // well-known Waypoints.
 // ---------------------------------------------------------------------------------------
@@ -847,4 +840,4 @@ DEFINE_KEY(Player_8_Start)
 
 // ---------------------------------------------------------------------------------------
 
-#endif	// _H_WELLKNOWNKEYS
+#endif // _H_WELLKNOWNKEYS

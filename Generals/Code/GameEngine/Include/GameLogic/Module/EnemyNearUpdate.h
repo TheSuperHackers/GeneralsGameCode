@@ -43,20 +43,16 @@ class EnemyNearUpdateModuleData : public UpdateModuleData
 public:
 	UnsignedInt m_enemyScanDelayTime;
 
-	EnemyNearUpdateModuleData()
-	{
-		m_enemyScanDelayTime = LOGICFRAMES_PER_SECOND;
-	}
+	EnemyNearUpdateModuleData() { m_enemyScanDelayTime = LOGICFRAMES_PER_SECOND; }
 
-	static void buildFieldParse(MultiIniFieldParse& p)
+	static void buildFieldParse(MultiIniFieldParse &p)
 	{
-    UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "ScanDelayTime",		INI::parseDurationUnsignedInt,		NULL, offsetof( EnemyNearUpdateModuleData, m_enemyScanDelayTime ) },
+		UpdateModuleData::buildFieldParse(p);
+		static const FieldParse dataFieldParse[] = {
+			{ "ScanDelayTime", INI::parseDurationUnsignedInt, NULL, offsetof(EnemyNearUpdateModuleData, m_enemyScanDelayTime) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 
@@ -65,25 +61,20 @@ public:
 //-------------------------------------------------------------------------------------------------
 class EnemyNearUpdate : public UpdateModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( EnemyNearUpdate, "EnemyNearUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( EnemyNearUpdate, EnemyNearUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(EnemyNearUpdate, "EnemyNearUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(EnemyNearUpdate, EnemyNearUpdateModuleData)
 
 public:
-
-	EnemyNearUpdate( Thing *thing, const ModuleData* moduleData );
+	EnemyNearUpdate(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual UpdateSleepTime update();
 
 protected:
-
 	UnsignedInt m_enemyScanDelay;
 	Bool m_enemyNear;
 
-	void checkForEnemies( void );
-
+	void checkForEnemies(void);
 };
 
 #endif // end __EnemyNearUpdate_H_
-

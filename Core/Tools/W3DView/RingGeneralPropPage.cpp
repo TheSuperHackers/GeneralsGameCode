@@ -34,26 +34,21 @@ static char THIS_FILE[] = __FILE__;
 
 IMPLEMENT_DYNCREATE(RingGeneralPropPageClass, CPropertyPage)
 
-
 /////////////////////////////////////////////////////////////
 //
 //	RingGeneralPropPageClass
 //
 /////////////////////////////////////////////////////////////
-RingGeneralPropPageClass::RingGeneralPropPageClass (RingRenderObjClass *ring)
-	:	m_bValid (true),
-		m_Lifetime (1.0F),
-		m_RenderObj (ring),
-		CPropertyPage(RingGeneralPropPageClass::IDD)
+RingGeneralPropPageClass::RingGeneralPropPageClass(RingRenderObjClass *ring) :
+		m_bValid(true), m_Lifetime(1.0F), m_RenderObj(ring), CPropertyPage(RingGeneralPropPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(RingGeneralPropPageClass)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 
-	Initialize ();
-	return ;
+	Initialize();
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
@@ -62,190 +57,183 @@ RingGeneralPropPageClass::RingGeneralPropPageClass (RingRenderObjClass *ring)
 /////////////////////////////////////////////////////////////
 RingGeneralPropPageClass::~RingGeneralPropPageClass()
 {
-	return ;
+	return;
 }
 
-void
-RingGeneralPropPageClass::DoDataExchange(CDataExchange* pDX)
+void RingGeneralPropPageClass::DoDataExchange(CDataExchange *pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(RingGeneralPropPageClass)
 	DDX_Control(pDX, IDC_TEXTURE_TILE_SPIN, m_TextureTileSpin);
 	DDX_Control(pDX, IDC_LIFETIME_SPIN, m_LifetimeSpin);
 	//}}AFX_DATA_MAP
-	return ;
+	return;
 }
 
-
 BEGIN_MESSAGE_MAP(RingGeneralPropPageClass, CPropertyPage)
-	//{{AFX_MSG_MAP(RingGeneralPropPageClass)
-	ON_BN_CLICKED(IDC_BROWSE_BUTTON, OnBrowseButton)
-	ON_EN_CHANGE(IDC_FILENAME_EDIT, OnChangeFilenameEdit)
-	ON_EN_CHANGE(IDC_NAME_EDIT, OnChangeNameEdit)
-	ON_EN_CHANGE(IDC_LIFETIME_EDIT, OnChangeLifetimeEdit)
-	ON_CBN_SELCHANGE(IDC_SHADER_COMBO, OnSelchangeShaderCombo)
-	ON_EN_CHANGE(IDC_TEXTURE_TILE_EDIT, OnChangeTextureTileEdit)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(RingGeneralPropPageClass)
+ON_BN_CLICKED(IDC_BROWSE_BUTTON, OnBrowseButton)
+ON_EN_CHANGE(IDC_FILENAME_EDIT, OnChangeFilenameEdit)
+ON_EN_CHANGE(IDC_NAME_EDIT, OnChangeNameEdit)
+ON_EN_CHANGE(IDC_LIFETIME_EDIT, OnChangeLifetimeEdit)
+ON_CBN_SELCHANGE(IDC_SHADER_COMBO, OnSelchangeShaderCombo)
+ON_EN_CHANGE(IDC_TEXTURE_TILE_EDIT, OnChangeTextureTileEdit)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////
 //
 //  Initialize
 //
 /////////////////////////////////////////////////////////////
-void
-RingGeneralPropPageClass::Initialize (void)
+void RingGeneralPropPageClass::Initialize(void)
 {
-	if (m_RenderObj != NULL) {
-
+	if (m_RenderObj != NULL)
+	{
 		//
 		// Get the object's texture
 		//
-		TextureClass *texture = m_RenderObj->Peek_Texture ();
-		if (texture != NULL) {
-			m_TextureFilename = texture->Get_Texture_Name ();
+		TextureClass *texture = m_RenderObj->Peek_Texture();
+		if (texture != NULL)
+		{
+			m_TextureFilename = texture->Get_Texture_Name();
 		}
 
 		//
 		//	Get the other misc data we care about
 		//
-		m_Lifetime	= m_RenderObj->Get_Animation_Duration ();
-		m_Name		= m_RenderObj->Get_Name ();
-		m_Shader		= m_RenderObj->Get_Shader ();
+		m_Lifetime = m_RenderObj->Get_Animation_Duration();
+		m_Name = m_RenderObj->Get_Name();
+		m_Shader = m_RenderObj->Get_Shader();
 	}
 
-	return ;
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  Add_Shader_To_Combo
 //
 /////////////////////////////////////////////////////////////
-void
-RingGeneralPropPageClass::Add_Shader_To_Combo
-(
-	ShaderClass &	shader,
-	LPCTSTR			name
-)
+void RingGeneralPropPageClass::Add_Shader_To_Combo(ShaderClass &shader, LPCTSTR name)
 {
-	int index = SendDlgItemMessage (IDC_SHADER_COMBO, CB_ADDSTRING, 0, (LPARAM)name);
-	if (index != CB_ERR) {
-		SendDlgItemMessage (IDC_SHADER_COMBO, CB_SETITEMDATA, (WPARAM)index, (LPARAM)&shader);
+	int index = SendDlgItemMessage(IDC_SHADER_COMBO, CB_ADDSTRING, 0, (LPARAM)name);
+	if (index != CB_ERR)
+	{
+		SendDlgItemMessage(IDC_SHADER_COMBO, CB_SETITEMDATA, (WPARAM)index, (LPARAM)&shader);
 
 		//
 		//	Is the blend mode of this shader the same as that of the
 		//	object's shader.
 		//
-		if ((shader.Get_Alpha_Test () == m_Shader.Get_Alpha_Test ()) &&
-			 (shader.Get_Dst_Blend_Func () == m_Shader.Get_Dst_Blend_Func ()) &&
-			 (shader.Get_Src_Blend_Func () == m_Shader.Get_Src_Blend_Func ()))
+		if ((shader.Get_Alpha_Test() == m_Shader.Get_Alpha_Test())
+				&& (shader.Get_Dst_Blend_Func() == m_Shader.Get_Dst_Blend_Func())
+				&& (shader.Get_Src_Blend_Func() == m_Shader.Get_Src_Blend_Func()))
 		{
-			SendDlgItemMessage (IDC_SHADER_COMBO, CB_SETCURSEL, (WPARAM)index);
+			SendDlgItemMessage(IDC_SHADER_COMBO, CB_SETCURSEL, (WPARAM)index);
 		}
 	}
 
-	return ;
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnInitDialog
 //
 /////////////////////////////////////////////////////////////
-BOOL
-RingGeneralPropPageClass::OnInitDialog (void)
+BOOL RingGeneralPropPageClass::OnInitDialog(void)
 {
 	// Allow the base class to process this message
-	CPropertyPage::OnInitDialog ();
+	CPropertyPage::OnInitDialog();
 
 	//
 	//	Add the known shaders to the combobox
 	//
-	Add_Shader_To_Combo (ShaderClass::_PresetAdditiveShader, "Additive");
-	Add_Shader_To_Combo (ShaderClass::_PresetAlphaShader, "Alpha");
-	Add_Shader_To_Combo (ShaderClass::_PresetOpaqueShader, "Opaque");
-	Add_Shader_To_Combo (ShaderClass::_PresetMultiplicativeShader, "Multiplicative");
+	Add_Shader_To_Combo(ShaderClass::_PresetAdditiveShader, "Additive");
+	Add_Shader_To_Combo(ShaderClass::_PresetAlphaShader, "Alpha");
+	Add_Shader_To_Combo(ShaderClass::_PresetOpaqueShader, "Opaque");
+	Add_Shader_To_Combo(ShaderClass::_PresetMultiplicativeShader, "Multiplicative");
 
-	CheckDlgButton (IDC_CAMERA_ALIGNED_CHECK, (m_RenderObj->Get_Flags () & RingRenderObjClass::USE_CAMERA_ALIGN) != 0);
-	CheckDlgButton (IDC_LOOPING_CHECK, (m_RenderObj->Get_Flags () & RingRenderObjClass::USE_ANIMATION_LOOP) != 0);
+	CheckDlgButton(IDC_CAMERA_ALIGNED_CHECK, (m_RenderObj->Get_Flags() & RingRenderObjClass::USE_CAMERA_ALIGN) != 0);
+	CheckDlgButton(IDC_LOOPING_CHECK, (m_RenderObj->Get_Flags() & RingRenderObjClass::USE_ANIMATION_LOOP) != 0);
 
 	//
 	// Fill the edit controls with the default values
 	//
-	SetDlgItemText (IDC_NAME_EDIT, m_Name);
-	SetDlgItemText (IDC_FILENAME_EDIT, m_TextureFilename);
+	SetDlgItemText(IDC_NAME_EDIT, m_Name);
+	SetDlgItemText(IDC_FILENAME_EDIT, m_TextureFilename);
 
 	//
 	//	Initialize the texture tiling controls...
 	//
-	m_TextureTileSpin.SetRange (0, 8);
-	m_TextureTileSpin.SetPos (m_RenderObj->Get_Texture_Tiling ());
+	m_TextureTileSpin.SetRange(0, 8);
+	m_TextureTileSpin.SetPos(m_RenderObj->Get_Texture_Tiling());
 
 	//
 	// Initialize the lifetime control
 	//
-	::Initialize_Spinner (m_LifetimeSpin, m_Lifetime, 0, 1000);
+	::Initialize_Spinner(m_LifetimeSpin, m_Lifetime, 0, 1000);
 	return TRUE;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnApply
 //
 /////////////////////////////////////////////////////////////
-BOOL
-RingGeneralPropPageClass::OnApply (void)
+BOOL RingGeneralPropPageClass::OnApply(void)
 {
 	// Get the data from the dialog controls
-	GetDlgItemText (IDC_NAME_EDIT, m_Name);
-	GetDlgItemText (IDC_FILENAME_EDIT, m_TextureFilename);
-	m_Lifetime = ::GetDlgItemFloat (m_hWnd, IDC_LIFETIME_EDIT);
+	GetDlgItemText(IDC_NAME_EDIT, m_Name);
+	GetDlgItemText(IDC_FILENAME_EDIT, m_TextureFilename);
+	m_Lifetime = ::GetDlgItemFloat(m_hWnd, IDC_LIFETIME_EDIT);
 
 	//
 	//	Get the shader from the combobox
 	//
-	int index = SendDlgItemMessage (IDC_SHADER_COMBO, CB_GETCURSEL);
-	if (index != CB_ERR) {
-		ShaderClass *shader = (ShaderClass *)SendDlgItemMessage (IDC_SHADER_COMBO, CB_GETITEMDATA, (WPARAM)index);
-		if (shader != NULL) {
+	int index = SendDlgItemMessage(IDC_SHADER_COMBO, CB_GETCURSEL);
+	if (index != CB_ERR)
+	{
+		ShaderClass *shader = (ShaderClass *)SendDlgItemMessage(IDC_SHADER_COMBO, CB_GETITEMDATA, (WPARAM)index);
+		if (shader != NULL)
+		{
 			m_Shader = (*shader);
 		}
 	}
 
 	// Check to make sure the user entered a valid name for the object
 	BOOL retval = FALSE;
-	if (m_Name.GetLength () == 0) {
-		::MessageBox (m_hWnd, "Invalid ring name.  Please enter a new name.", "Invalid settings", MB_ICONEXCLAMATION | MB_OK);
+	if (m_Name.GetLength() == 0)
+	{
+		::MessageBox(m_hWnd, "Invalid ring name.  Please enter a new name.", "Invalid settings", MB_ICONEXCLAMATION | MB_OK);
 		m_bValid = false;
-	} else {
-
+	}
+	else
+	{
 		//
 		//	Create a texture and pass it onto the object
 		//
 		TextureClass *texture = NULL;
-		if (m_TextureFilename.GetLength () > 0) {
-			texture = WW3DAssetManager::Get_Instance ()->Get_Texture (::Get_Filename_From_Path (m_TextureFilename));
+		if (m_TextureFilename.GetLength() > 0)
+		{
+			texture = WW3DAssetManager::Get_Instance()->Get_Texture(::Get_Filename_From_Path(m_TextureFilename));
 		}
-		m_RenderObj->Set_Texture (texture);
-		REF_PTR_RELEASE (texture);
+		m_RenderObj->Set_Texture(texture);
+		REF_PTR_RELEASE(texture);
 
 		//
 		//	Apply the changes to the ring
 		//
-		m_RenderObj->Set_Name (m_Name);
-		m_RenderObj->Set_Shader (m_Shader);
-		m_RenderObj->Set_Animation_Duration (m_Lifetime);
-		m_RenderObj->Set_Flag (RingRenderObjClass::USE_CAMERA_ALIGN, IsDlgButtonChecked (IDC_CAMERA_ALIGNED_CHECK) != 0);
-		m_RenderObj->Set_Flag (RingRenderObjClass::USE_ANIMATION_LOOP, IsDlgButtonChecked (IDC_LOOPING_CHECK) != 0);
-		m_RenderObj->Set_Texture_Tiling (m_TextureTileSpin.GetPos ());
+		m_RenderObj->Set_Name(m_Name);
+		m_RenderObj->Set_Shader(m_Shader);
+		m_RenderObj->Set_Animation_Duration(m_Lifetime);
+		m_RenderObj->Set_Flag(RingRenderObjClass::USE_CAMERA_ALIGN, IsDlgButtonChecked(IDC_CAMERA_ALIGNED_CHECK) != 0);
+		m_RenderObj->Set_Flag(RingRenderObjClass::USE_ANIMATION_LOOP, IsDlgButtonChecked(IDC_LOOPING_CHECK) != 0);
+		m_RenderObj->Set_Texture_Tiling(m_TextureTileSpin.GetPos());
 
 		// Allow the base class to process this message
-		retval = CPropertyPage::OnApply ();
+		retval = CPropertyPage::OnApply();
 		m_bValid = true;
 	}
 
@@ -253,153 +241,131 @@ RingGeneralPropPageClass::OnApply (void)
 	return retval;
 }
 
-
 /////////////////////////////////////////////////////////////
 //
 //  OnBrowseButton
 //
 /////////////////////////////////////////////////////////////
-void
-RingGeneralPropPageClass::OnBrowseButton (void)
+void RingGeneralPropPageClass::OnBrowseButton(void)
 {
-	CFileDialog dialog (	TRUE,
-								".tga",
-								NULL,
-								OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_EXPLORER,
-								"Textures files (*.tga)|*.tga||",
-								::AfxGetMainWnd ());
+	CFileDialog dialog(
+			TRUE,
+			".tga",
+			NULL,
+			OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_EXPLORER,
+			"Textures files (*.tga)|*.tga||",
+			::AfxGetMainWnd());
 
 	// Ask the user what texture file they wish to load
-	if (dialog.DoModal () == IDOK) {
-		SetDlgItemText (IDC_FILENAME_EDIT, dialog.GetPathName ());
-		SetModified ();
+	if (dialog.DoModal() == IDOK)
+	{
+		SetDlgItemText(IDC_FILENAME_EDIT, dialog.GetPathName());
+		SetModified();
 	}
 
-	return ;
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnChangeFilenameEdit
 //
 /////////////////////////////////////////////////////////////
-void
-RingGeneralPropPageClass::OnChangeFilenameEdit (void)
+void RingGeneralPropPageClass::OnChangeFilenameEdit(void)
 {
-	SetModified ();
-	return ;
+	SetModified();
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnChangeNameEdit
 //
 /////////////////////////////////////////////////////////////
-void
-RingGeneralPropPageClass::OnChangeNameEdit (void)
+void RingGeneralPropPageClass::OnChangeNameEdit(void)
 {
-	SetModified ();
-	return ;
+	SetModified();
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnNotify
 //
 /////////////////////////////////////////////////////////////
-BOOL
-RingGeneralPropPageClass::OnNotify
-(
-	WPARAM		wParam,
-	LPARAM		lParam,
-	LRESULT *	pResult
-)
+BOOL RingGeneralPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult)
 {
 	//
 	//	Update the spinner control if necessary
 	//
 	NMHDR *header = (NMHDR *)lParam;
-	if ((header != NULL) && (header->code == UDN_DELTAPOS)) {
+	if ((header != NULL) && (header->code == UDN_DELTAPOS))
+	{
 		LPNMUPDOWN updown = (LPNMUPDOWN)lParam;
-		::Update_Spinner_Buddy (header->hwndFrom, updown->iDelta);
+		::Update_Spinner_Buddy(header->hwndFrom, updown->iDelta);
 	}
 
 	// Allow the base class to process this message
-	return CPropertyPage::OnNotify (wParam, lParam, pResult);
+	return CPropertyPage::OnNotify(wParam, lParam, pResult);
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnChangeLifetimeEdit
 //
 /////////////////////////////////////////////////////////////
-void
-RingGeneralPropPageClass::OnChangeLifetimeEdit (void)
+void RingGeneralPropPageClass::OnChangeLifetimeEdit(void)
 {
-	SetModified ();
-	return ;
+	SetModified();
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnSelchangeShaderCombo
 //
 /////////////////////////////////////////////////////////////
-void
-RingGeneralPropPageClass::OnSelchangeShaderCombo (void)
+void RingGeneralPropPageClass::OnSelchangeShaderCombo(void)
 {
-	SetModified ();
-	return ;
+	SetModified();
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnCommand
 //
 /////////////////////////////////////////////////////////////
-BOOL
-RingGeneralPropPageClass::OnCommand
-(
-	WPARAM wParam,
-	LPARAM lParam
-)
+BOOL RingGeneralPropPageClass::OnCommand(WPARAM wParam, LPARAM lParam)
 {
-	switch (LOWORD (wParam))
+	switch (LOWORD(wParam))
 	{
 		case IDC_FILENAME_EDIT:
 		case IDC_NAME_EDIT:
 		case IDC_LIFETIME_EDIT:
 		case IDC_TEXTURE_TILE_EDIT:
-			if (HIWORD (lParam) == EN_CHANGE) {
-				SetModified ();
+			if (HIWORD(lParam) == EN_CHANGE)
+			{
+				SetModified();
 			}
 			break;
 
 		case IDC_CAMERA_ALIGNED_CHECK:
 		case IDC_LOOPING_CHECK:
-			SetModified ();
+			SetModified();
 			break;
 	}
 
 	return CPropertyPage::OnCommand(wParam, lParam);
 }
 
-
 /////////////////////////////////////////////////////////////
 //
 //  OnChangeTextureTileEdit
 //
 /////////////////////////////////////////////////////////////
-void
-RingGeneralPropPageClass::OnChangeTextureTileEdit (void)
+void RingGeneralPropPageClass::OnChangeTextureTileEdit(void)
 {
-	SetModified ();
-	return ;
+	SetModified();
+	return;
 }
-

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/AudioEventRTS.h"
 #include "Common/MiscAudio.h"
 #include "Common/Player.h"
@@ -38,27 +38,25 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-HealCrateCollide::HealCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
+HealCrateCollide::HealCrateCollide(Thing *thing, const ModuleData *moduleData) : CrateCollide(thing, moduleData)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-HealCrateCollide::~HealCrateCollide( void )
+HealCrateCollide::~HealCrateCollide(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool HealCrateCollide::executeCrateBehavior( Object *other )
+Bool HealCrateCollide::executeCrateBehavior(Object *other)
 {
-	Player* cratePlayer = other->getControllingPlayer();
+	Player *cratePlayer = other->getControllingPlayer();
 	cratePlayer->healAllObjects();
 
-	//Play a crate pickup sound.
+	// Play a crate pickup sound.
 	AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateHeal;
-	soundToPlay.setPosition( other->getPosition() );
+	soundToPlay.setPosition(other->getPosition());
 	TheAudio->addAudioEvent(&soundToPlay);
 
 	return TRUE;
@@ -67,40 +65,36 @@ Bool HealCrateCollide::executeCrateBehavior( Object *other )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void HealCrateCollide::crc( Xfer *xfer )
+void HealCrateCollide::crc(Xfer *xfer)
 {
-
 	// extend base class
-	CrateCollide::crc( xfer );
+	CrateCollide::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void HealCrateCollide::xfer( Xfer *xfer )
+void HealCrateCollide::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CrateCollide::xfer( xfer );
+	CrateCollide::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void HealCrateCollide::loadPostProcess( void )
+void HealCrateCollide::loadPostProcess(void)
 {
-
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
-
+} // end loadPostProcess

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/Player.h"
 #include "Common/Xfer.h"
 #include "GameLogic/ExperienceTracker.h"
@@ -40,23 +40,21 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-VeterancyCrateCollide::VeterancyCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
+VeterancyCrateCollide::VeterancyCrateCollide(Thing *thing, const ModuleData *moduleData) : CrateCollide(thing, moduleData)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-VeterancyCrateCollide::~VeterancyCrateCollide( void )
+VeterancyCrateCollide::~VeterancyCrateCollide(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 Int VeterancyCrateCollide::getLevelsToGain() const
 {
-	const VeterancyCrateCollideModuleData* d = getVeterancyCrateCollideModuleData();
+	const VeterancyCrateCollideModuleData *d = getVeterancyCrateCollideModuleData();
 	if (!d || !d->m_addsOwnerVeterancy)
 		return 1;
 
@@ -66,21 +64,21 @@ Int VeterancyCrateCollide::getLevelsToGain() const
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool VeterancyCrateCollide::isValidToExecute( const Object *other ) const
+Bool VeterancyCrateCollide::isValidToExecute(const Object *other) const
 {
-	const VeterancyCrateCollideModuleData* d = getVeterancyCrateCollideModuleData();
-	if( !d )
+	const VeterancyCrateCollideModuleData *d = getVeterancyCrateCollideModuleData();
+	if (!d)
 	{
 		return false;
 	}
 
-	if(!CrateCollide::isValidToExecute(other))
+	if (!CrateCollide::isValidToExecute(other))
 		return false;
 
 	if (other->isEffectivelyDead())
 		return false;
 
-	if( other->isSignificantlyAboveTerrain() )
+	if (other->isSignificantlyAboveTerrain())
 	{
 		return false;
 	}
@@ -90,26 +88,26 @@ Bool VeterancyCrateCollide::isValidToExecute( const Object *other ) const
 		return false;
 
 	const ExperienceTracker *et = other->getExperienceTracker();
-	if( !et || !et->isTrainable() )
+	if (!et || !et->isTrainable())
 	{
-		//If the other unit can't gain experience, then we can't help promote it!
+		// If the other unit can't gain experience, then we can't help promote it!
 		return false;
 	}
 
 	if (!et || !et->canGainExpForLevel(levelsToGain))
 		return false;
 
-	if( d->m_isPilot )
+	if (d->m_isPilot)
 	{
-		if( other->getControllingPlayer() != getObject()->getControllingPlayer() )
+		if (other->getControllingPlayer() != getObject()->getControllingPlayer())
 		{
-			//This is a pilot and we are checking to make sure the pilot is entering a vehicle on
-			//the same team. If it's not, then don't allow it.. this is particularly the case for
-			//pilots attempting to enter civilian vehicles.
+			// This is a pilot and we are checking to make sure the pilot is entering a vehicle on
+			// the same team. If it's not, then don't allow it.. this is particularly the case for
+			// pilots attempting to enter civilian vehicles.
 			return false;
 		}
 
-		if( other->isUsingAirborneLocomotor() )
+		if (other->isUsingAirborneLocomotor())
 		{
 			// Can't upgrade a helicopter or plane, but we will think we can for a moment while it
 			// is on the ground from being built.
@@ -122,17 +120,17 @@ Bool VeterancyCrateCollide::isValidToExecute( const Object *other ) const
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool VeterancyCrateCollide::executeCrateBehavior( Object *other )
+Bool VeterancyCrateCollide::executeCrateBehavior(Object *other)
 {
- 	//Make sure the pilot is actually *TRYING* to enter the object
- 	//unlike other crates
- 	AIUpdateInterface *ai = (AIUpdateInterface*)getObject()->getAIUpdateInterface();
+	// Make sure the pilot is actually *TRYING* to enter the object
+	// unlike other crates
+	AIUpdateInterface *ai = (AIUpdateInterface *)getObject()->getAIUpdateInterface();
 	const VeterancyCrateCollideModuleData *md = getVeterancyCrateCollideModuleData();
 
- 	if( !ai || ai->getGoalObject() != other )
- 	{
- 		return false;
- 	}
+	if (!ai || ai->getGoalObject() != other)
+	{
+		return false;
+	}
 
 	Int levelsToGain = getLevelsToGain();
 	Real range = md->m_rangeOfEffect;
@@ -141,29 +139,29 @@ Bool VeterancyCrateCollide::executeCrateBehavior( Object *other )
 		// do just the collider
 		if (other != NULL)
 		{
-			other->getExperienceTracker()->gainExpForLevel( levelsToGain, ( ! md->m_isPilot) );
+			other->getExperienceTracker()->gainExpForLevel(levelsToGain, (!md->m_isPilot));
 		}
 	}
 	else
 	{
-		PartitionFilterSamePlayer othersPlayerFilter( other->getControllingPlayer() );
+		PartitionFilterSamePlayer othersPlayerFilter(other->getControllingPlayer());
 		PartitionFilterSameMapStatus filterMapStatus(other);
 		PartitionFilter *filters[] = { &othersPlayerFilter, &filterMapStatus, NULL };
-		ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( other, range, FROM_CENTER_2D, filters, ITER_FASTEST );
+		ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange(other, range, FROM_CENTER_2D, filters, ITER_FASTEST);
 		MemoryPoolObjectHolder hold(iter);
 
-		for( Object *potentialObject = iter->first(); potentialObject; potentialObject = iter->next() )
+		for (Object *potentialObject = iter->first(); potentialObject; potentialObject = iter->next())
 		{
 			// This function will give just enough exp for the Object to gain a level, if it can
-			potentialObject->getExperienceTracker()->gainExpForLevel( levelsToGain, ( ! md->m_isPilot) );
+			potentialObject->getExperienceTracker()->gainExpForLevel(levelsToGain, (!md->m_isPilot));
 		}
 	}
 
-	//In order to make things easier for the designers, we are going to transfer the terrorist name
-	//to the car... so the designer can control the car with their scripts.
-	if( md->m_isPilot )
+	// In order to make things easier for the designers, we are going to transfer the terrorist name
+	// to the car... so the designer can control the car with their scripts.
+	if (md->m_isPilot)
 	{
-		TheScriptEngine->transferObjectName( getObject()->getName(), other );
+		TheScriptEngine->transferObjectName(getObject()->getName(), other);
 	}
 
 	return TRUE;
@@ -172,39 +170,36 @@ Bool VeterancyCrateCollide::executeCrateBehavior( Object *other )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void VeterancyCrateCollide::crc( Xfer *xfer )
+void VeterancyCrateCollide::crc(Xfer *xfer)
 {
-
 	// extend base class
-	CrateCollide::crc( xfer );
+	CrateCollide::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void VeterancyCrateCollide::xfer( Xfer *xfer )
+void VeterancyCrateCollide::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CrateCollide::xfer( xfer );
+	CrateCollide::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void VeterancyCrateCollide::loadPostProcess( void )
+void VeterancyCrateCollide::loadPostProcess(void)
 {
-
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

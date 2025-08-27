@@ -28,18 +28,18 @@
 namespace patchget
 {
 
-char* TheCurrentIgnoreCrashPtr;
+char *TheCurrentIgnoreCrashPtr;
 
-#define LARGE_BUFFER	8192
-static char theBuffer[ LARGE_BUFFER ];	// make it big to avoid weird overflow bugs in debug mode
+#define LARGE_BUFFER 8192
+static char theBuffer[LARGE_BUFFER]; // make it big to avoid weird overflow bugs in debug mode
 
 static int doCrashBox(const char *buffer, bool logResult)
 {
 	int result;
 
-	result = ::MessageBox(NULL, buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_APPLMODAL|MB_ICONWARNING);
+	result = ::MessageBox(NULL, buffer, "Assertion Failure", MB_ABORTRETRYIGNORE | MB_APPLMODAL | MB_ICONWARNING);
 
-	switch(result)
+	switch (result)
 	{
 		case IDABORT:
 #ifdef DEBUG_LOGGING
@@ -71,14 +71,14 @@ static int doCrashBox(const char *buffer, bool logResult)
 void DebugLog(const char *fmt, ...)
 {
 	va_list va;
-	va_start( va, fmt );
-	vsnprintf(theBuffer, LARGE_BUFFER, fmt, va );
-	theBuffer[LARGE_BUFFER-1] = 0;
-	va_end( va );
+	va_start(va, fmt);
+	vsnprintf(theBuffer, LARGE_BUFFER, fmt, va);
+	theBuffer[LARGE_BUFFER - 1] = 0;
+	va_end(va);
 
 	OutputDebugString(theBuffer);
 	OutputDebugString("\n");
-	printf( "%s\n", theBuffer );
+	printf("%s\n", theBuffer);
 }
 
 #endif // defined(DEBUG) || defined(DEBUG_LOGGING)
@@ -91,16 +91,16 @@ void DebugCrash(const char *format, ...)
 	strcat(theBuffer, "ASSERTION FAILURE: ");
 
 	va_list arg;
-  va_start(arg, format);
-  vsprintf(theBuffer + strlen(theBuffer), format, arg);
-  va_end(arg);
+	va_start(arg, format);
+	vsprintf(theBuffer + strlen(theBuffer), format, arg);
+	va_end(arg);
 
 	if (strlen(theBuffer) >= sizeof(theBuffer))
-		::MessageBox(NULL, "String too long for debug buffers", "", MB_OK|MB_APPLMODAL);
+		::MessageBox(NULL, "String too long for debug buffers", "", MB_OK | MB_APPLMODAL);
 
 	OutputDebugString(theBuffer);
 	OutputDebugString("\n");
-	printf( "%s\n", theBuffer );
+	printf("%s\n", theBuffer);
 
 	strcat(theBuffer, "\n\nAbort->exception; Retry->debugger; Ignore->continue");
 
@@ -109,7 +109,7 @@ void DebugCrash(const char *format, ...)
 	if (result == IDIGNORE && TheCurrentIgnoreCrashPtr != NULL)
 	{
 		int yn;
-		yn = ::MessageBox(NULL, "Ignore this crash from now on?", "", MB_YESNO|MB_APPLMODAL);
+		yn = ::MessageBox(NULL, "Ignore this crash from now on?", "", MB_YESNO | MB_APPLMODAL);
 		if (yn == IDYES)
 			*TheCurrentIgnoreCrashPtr = 1;
 	}

@@ -70,7 +70,6 @@
  *   TexProjectClass::Needs_Render_Target -- returns wheter this projector needs a render targ *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "texproject.h"
 #include "vertmaterial.h"
 #include "shader.h"
@@ -83,15 +82,13 @@
 #include "assetmgr.h"
 #include "dx8wrapper.h"
 
-
 // DEBUG DEBUG
 #include "MPU.H"
 
-#define DEBUG_SHADOW_RENDERING					0
-#define DEFAULT_TEXTURE_SIZE						64
+#define DEBUG_SHADOW_RENDERING 0
+#define DEFAULT_TEXTURE_SIZE 64
 
-const float INTENSITY_RATE_OF_CHANGE			= 1.0f;			// change in intensity per second
-
+const float INTENSITY_RATE_OF_CHANGE = 1.0f; // change in intensity per second
 
 /*
 **
@@ -164,8 +161,6 @@ const float INTENSITY_RATE_OF_CHANGE			= 1.0f;			// change in intensity per seco
 **
 */
 
-
-
 /***********************************************************************************************
  * TexProjectClass::TexProjectClass -- Constructor                                             *
  *                                                                                             *
@@ -179,31 +174,31 @@ const float INTENSITY_RATE_OF_CHANGE			= 1.0f;			// change in intensity per seco
  *   1/4/00     gth : Created.                                                                 *
  *=============================================================================================*/
 TexProjectClass::TexProjectClass(void) :
-	Flags(DEFAULT_FLAGS),
-	DesiredIntensity(1.0f),
-	Intensity(1.0f),
-	Attenuation(1.0f),
-	MaterialPass(NULL),
-	Mapper1(NULL),
-	RenderTarget(NULL),
-	HFov(90.0f),
-	VFov(90.0f),
-	XMin(-10.0f),
-	XMax(10.0f),
-	YMin(-10.0f),
-	YMax(10.0f),
-	ZNear(1.0f),
-	ZFar(1000.0f)
+		Flags(DEFAULT_FLAGS),
+		DesiredIntensity(1.0f),
+		Intensity(1.0f),
+		Attenuation(1.0f),
+		MaterialPass(NULL),
+		Mapper1(NULL),
+		RenderTarget(NULL),
+		HFov(90.0f),
+		VFov(90.0f),
+		XMin(-10.0f),
+		XMax(10.0f),
+		YMin(-10.0f),
+		YMax(10.0f),
+		ZNear(1.0f),
+		ZFar(1000.0f)
 {
 	// set a default texture size
 	Set_Texture_Size(DEFAULT_TEXTURE_SIZE);
 
 	// create a material pass class
-	MaterialPass = NEW_REF(MaterialPassClass,());
+	MaterialPass = NEW_REF(MaterialPassClass, ());
 	MaterialPass->Set_Cull_Volume(&WorldBoundingVolume);
 
 	// create a vertex material
-	VertexMaterialClass * vmtl = NEW_REF(VertexMaterialClass,());
+	VertexMaterialClass *vmtl = NEW_REF(VertexMaterialClass, ());
 	WWASSERT(vmtl != NULL);
 
 	// Plug our parent's mapper into our vertex material
@@ -217,7 +212,6 @@ TexProjectClass::TexProjectClass(void) :
 	// by default init our material pass to be multiplicative (shadow)
 	Init_Multiplicative();
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::~TexProjectClass -- Destructor                                             *
@@ -237,7 +231,6 @@ TexProjectClass::~TexProjectClass(void)
 	REF_PTR_RELEASE(MaterialPass);
 	REF_PTR_RELEASE(RenderTarget);
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Set_Texture_Size -- Set the size of texture to use                         *
@@ -263,7 +256,6 @@ void TexProjectClass::Set_Texture_Size(int size)
 	Flags |= (size << SIZE_SHIFT);
 }
 
-
 /***********************************************************************************************
  * TexProjectClass::Get_Texture_Size -- Returns the stored texture size                        *
  *                                                                                             *
@@ -285,7 +277,6 @@ int TexProjectClass::Get_Texture_Size(void)
 	return (Flags & SIZE_MASK) >> SIZE_SHIFT;
 }
 
-
 /***********************************************************************************************
  * TexProjectClass::Set_Flag -- Turn specified flag on or off                                  *
  *                                                                                             *
@@ -300,15 +291,17 @@ int TexProjectClass::Get_Texture_Size(void)
  * HISTORY:                                                                                    *
  *   1/4/00     gth : Created.                                                                 *
  *=============================================================================================*/
-void TexProjectClass::Set_Flag(uint32 flag,bool onoff)
+void TexProjectClass::Set_Flag(uint32 flag, bool onoff)
 {
-	if (onoff) {
+	if (onoff)
+	{
 		Flags |= flag;
-	} else {
+	}
+	else
+	{
 		Flags &= ~flag;
 	}
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Get_Flag -- Get the current state of specified flag                        *
@@ -329,7 +322,6 @@ bool TexProjectClass::Get_Flag(uint32 flag) const
 	return (Flags & flag) == flag;
 }
 
-
 /***********************************************************************************************
  * TexProjectClass::Set_Intensity -- Set the intensity of this projector                       *
  *                                                                                             *
@@ -348,17 +340,17 @@ bool TexProjectClass::Get_Flag(uint32 flag) const
  * HISTORY:                                                                                    *
  *   1/4/00     gth : Created.                                                                 *
  *=============================================================================================*/
-void TexProjectClass::Set_Intensity(float intensity,bool immediate)
+void TexProjectClass::Set_Intensity(float intensity, bool immediate)
 {
 	WWASSERT(intensity <= 1.0f);
 	WWASSERT(intensity >= 0.0f);
 
 	DesiredIntensity = intensity;
-	if (immediate) {
+	if (immediate)
+	{
 		Intensity = DesiredIntensity;
 	}
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Get_Intensity -- returns the current "desired" intensity                   *
@@ -381,7 +373,6 @@ float TexProjectClass::Get_Intensity(void)
 	return DesiredIntensity;
 }
 
-
 /***********************************************************************************************
  * TexProjectClass::Is_Intensity_Zero -- check if we can eliminate this projector              *
  *                                                                                             *
@@ -400,7 +391,6 @@ bool TexProjectClass::Is_Intensity_Zero(void)
 {
 	return ((Intensity == 0.0f) && (DesiredIntensity == 0.0f));
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Set_Attenuation -- Set the attenuation factor                              *
@@ -424,7 +414,6 @@ void TexProjectClass::Set_Attenuation(float attenuation)
 	Attenuation = attenuation;
 }
 
-
 /***********************************************************************************************
  * TexProjectClass::Get_Attenuation -- Returns the attenuation value                           *
  *                                                                                             *
@@ -442,7 +431,6 @@ float TexProjectClass::Get_Attenuation(void)
 	return Attenuation;
 }
 
-
 /***********************************************************************************************
  * TexProjectClass::Enable_Attenuation -- Set the state of the ATTENUATE flag                  *
  *                                                                                             *
@@ -457,9 +445,8 @@ float TexProjectClass::Get_Attenuation(void)
  *=============================================================================================*/
 void TexProjectClass::Enable_Attenuation(bool onoff)
 {
-	Set_Flag(ATTENUATE,onoff);
+	Set_Flag(ATTENUATE, onoff);
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Is_Attenuation_Enabled -- Get the state of the ATTENUATE flag              *
@@ -478,7 +465,6 @@ bool TexProjectClass::Is_Attenuation_Enabled(void)
 	return Get_Flag(ATTENUATE);
 }
 
-
 /***********************************************************************************************
  * TexProjectClass::Enable_Depth_Gradient -- enable/disable depth gradient                     *
  *                                                                                             *
@@ -493,16 +479,18 @@ bool TexProjectClass::Is_Attenuation_Enabled(void)
  *=============================================================================================*/
 void TexProjectClass::Enable_Depth_Gradient(bool onoff)
 {
-	Set_Flag(USE_DEPTH_GRADIENT,onoff);
+	Set_Flag(USE_DEPTH_GRADIENT, onoff);
 
 	// re-setup the shader settings
-	if (Get_Flag(ADDITIVE)) {
+	if (Get_Flag(ADDITIVE))
+	{
 		Init_Additive();
-	} else {
+	}
+	else
+	{
 		Init_Multiplicative();
 	}
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Is_Depth_Gradient_Enabled -- returns whether the depth gradient is enabled *
@@ -538,32 +526,34 @@ bool TexProjectClass::Is_Depth_Gradient_Enabled(bool onoff)
  *=============================================================================================*/
 void TexProjectClass::Init_Multiplicative(void)
 {
-	Set_Flag(ADDITIVE,false);
+	Set_Flag(ADDITIVE, false);
 
 	/*
 	** Set up the shader
 	*/
-	static ShaderClass mult_shader(		SHADE_CNST(	ShaderClass::PASS_LEQUAL,						//depth_compare,
-																	ShaderClass::DEPTH_WRITE_DISABLE,			//depth_mask,
-																	ShaderClass::COLOR_WRITE_ENABLE,				//color_mask,
-																	ShaderClass::SRCBLEND_ZERO,					//src_blend,
-																	ShaderClass::DSTBLEND_SRC_COLOR,				//dst_blend,
-																	ShaderClass::FOG_DISABLE,						//fog,
-																	ShaderClass::GRADIENT_ADD,						//pri_grad,
-																	ShaderClass::SECONDARY_GRADIENT_DISABLE,	//sec_grad,
-																	ShaderClass::TEXTURING_ENABLE,				//texture,
+	static ShaderClass mult_shader(SHADE_CNST(
+			ShaderClass::PASS_LEQUAL, // depth_compare,
+			ShaderClass::DEPTH_WRITE_DISABLE, // depth_mask,
+			ShaderClass::COLOR_WRITE_ENABLE, // color_mask,
+			ShaderClass::SRCBLEND_ZERO, // src_blend,
+			ShaderClass::DSTBLEND_SRC_COLOR, // dst_blend,
+			ShaderClass::FOG_DISABLE, // fog,
+			ShaderClass::GRADIENT_ADD, // pri_grad,
+			ShaderClass::SECONDARY_GRADIENT_DISABLE, // sec_grad,
+			ShaderClass::TEXTURING_ENABLE, // texture,
 
-																	ShaderClass::ALPHATEST_DISABLE,				//alpha_test,
-																	ShaderClass::CULL_MODE_ENABLE,				//cull mode
-																	0,														//post_det_color,
-																	0) );													//post_det_alpha
+			ShaderClass::ALPHATEST_DISABLE, // alpha_test,
+			ShaderClass::CULL_MODE_ENABLE, // cull mode
+			0, // post_det_color,
+			0)); // post_det_alpha
 
-	if (WW3DAssetManager::Get_Instance()->Get_Activate_Fog_On_Load()) {
-		mult_shader.Enable_Fog ("TexProjectClass");
+	if (WW3DAssetManager::Get_Instance()->Get_Activate_Fog_On_Load())
+	{
+		mult_shader.Enable_Fog("TexProjectClass");
 	}
 
-	if (Get_Flag(USE_DEPTH_GRADIENT)) {
-
+	if (Get_Flag(USE_DEPTH_GRADIENT))
+	{
 		/*
 		** enable multi-texturing
 		*/
@@ -572,18 +562,21 @@ void TexProjectClass::Init_Multiplicative(void)
 		/*
 		** plug the gradient texture into the second stage
 		*/
-		TextureClass * grad_tex = WW3DAssetManager::Get_Instance()->Get_Texture("MultProjectorGradient.tga");
-		if (grad_tex) {
+		TextureClass *grad_tex = WW3DAssetManager::Get_Instance()->Get_Texture("MultProjectorGradient.tga");
+		if (grad_tex)
+		{
 			grad_tex->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 			grad_tex->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
-			MaterialPass->Set_Texture(grad_tex,1);
+			MaterialPass->Set_Texture(grad_tex, 1);
 			grad_tex->Release_Ref();
-		} else {
+		}
+		else
+		{
 			WWDEBUG_SAY(("Could not find texture: MultProjectorGradient.tga!"));
 		}
-
-	} else {
-
+	}
+	else
+	{
 		/*
 		** disable multi-texturing
 		*/
@@ -592,7 +585,7 @@ void TexProjectClass::Init_Multiplicative(void)
 		/*
 		** remove the texture from the second stage
 		*/
-		MaterialPass->Set_Texture(NULL,1);
+		MaterialPass->Set_Texture(NULL, 1);
 	}
 
 #if (DEBUG_SHADOW_RENDERING)
@@ -606,28 +599,31 @@ void TexProjectClass::Init_Multiplicative(void)
 	/*
 	** Set up the Vertex Material parameters
 	*/
-	VertexMaterialClass * vmtl = MaterialPass->Peek_Material();
-	vmtl->Set_Ambient(0,0,0);
-	vmtl->Set_Diffuse(0,0,0);
-	vmtl->Set_Specular(0,0,0);
-	vmtl->Set_Emissive(0.0f,0.0f,0.0f);
+	VertexMaterialClass *vmtl = MaterialPass->Peek_Material();
+	vmtl->Set_Ambient(0, 0, 0);
+	vmtl->Set_Diffuse(0, 0, 0);
+	vmtl->Set_Specular(0, 0, 0);
+	vmtl->Set_Emissive(0.0f, 0.0f, 0.0f);
 	vmtl->Set_Opacity(1.0f);
 	vmtl->Set_Lighting(true); // I need the emissive value to scale the intensity of the shadow
 
 	/*
 	** Set up some mapper settings related to depth gradient
 	*/
-	if (Get_Flag(USE_DEPTH_GRADIENT)) {
-		if (Mapper1 == NULL) {
-			Mapper1 = NEW_REF(MatrixMapperClass,(1));
+	if (Get_Flag(USE_DEPTH_GRADIENT))
+	{
+		if (Mapper1 == NULL)
+		{
+			Mapper1 = NEW_REF(MatrixMapperClass, (1));
 		}
 		Mapper1->Set_Type(MatrixMapperClass::DEPTH_GRADIENT);
-		vmtl->Set_Mapper(Mapper1,1);
-	} else {
-		vmtl->Set_Mapper(NULL,1);
+		vmtl->Set_Mapper(Mapper1, 1);
+	}
+	else
+	{
+		vmtl->Set_Mapper(NULL, 1);
 	}
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Init_Additive -- Set up the projector to be additive                       *
@@ -643,27 +639,29 @@ void TexProjectClass::Init_Multiplicative(void)
  *=============================================================================================*/
 void TexProjectClass::Init_Additive(void)
 {
-	Set_Flag(ADDITIVE,true);
+	Set_Flag(ADDITIVE, true);
 
 	/*
 	** Set up the shader
 	*/
-	static ShaderClass add_shader(		SHADE_CNST(	ShaderClass::PASS_LEQUAL,						//depth_compare,
-																	ShaderClass::DEPTH_WRITE_DISABLE,			//depth_mask,
-																	ShaderClass::COLOR_WRITE_ENABLE,				//color_mask,
-																	ShaderClass::SRCBLEND_ONE,						//src_blend,
-																	ShaderClass::DSTBLEND_ONE,						//dst_blend,
-																	ShaderClass::FOG_DISABLE,						//fog,
-																	ShaderClass::GRADIENT_MODULATE,				//pri_grad,
-																	ShaderClass::SECONDARY_GRADIENT_DISABLE,	//sec_grad,
-																	ShaderClass::TEXTURING_ENABLE,				//texture,
-																	ShaderClass::ALPHATEST_DISABLE,				//alpha_test,
-																	ShaderClass::CULL_MODE_ENABLE,				//cullmode,
-																	ShaderClass::DETAILCOLOR_DISABLE,			//post_det_color,
-																	ShaderClass::DETAILALPHA_DISABLE) );		//post_det_alpha
+	static ShaderClass add_shader(SHADE_CNST(
+			ShaderClass::PASS_LEQUAL, // depth_compare,
+			ShaderClass::DEPTH_WRITE_DISABLE, // depth_mask,
+			ShaderClass::COLOR_WRITE_ENABLE, // color_mask,
+			ShaderClass::SRCBLEND_ONE, // src_blend,
+			ShaderClass::DSTBLEND_ONE, // dst_blend,
+			ShaderClass::FOG_DISABLE, // fog,
+			ShaderClass::GRADIENT_MODULATE, // pri_grad,
+			ShaderClass::SECONDARY_GRADIENT_DISABLE, // sec_grad,
+			ShaderClass::TEXTURING_ENABLE, // texture,
+			ShaderClass::ALPHATEST_DISABLE, // alpha_test,
+			ShaderClass::CULL_MODE_ENABLE, // cullmode,
+			ShaderClass::DETAILCOLOR_DISABLE, // post_det_color,
+			ShaderClass::DETAILALPHA_DISABLE)); // post_det_alpha
 
-	if (WW3DAssetManager::Get_Instance()->Get_Activate_Fog_On_Load()) {
-		add_shader.Enable_Fog ("TexProjectClass");
+	if (WW3DAssetManager::Get_Instance()->Get_Activate_Fog_On_Load())
+	{
+		add_shader.Enable_Fog("TexProjectClass");
 	}
 
 	/*
@@ -674,13 +672,16 @@ void TexProjectClass::Init_Additive(void)
 	/*
 	** plug in the gradient texture
 	*/
-	TextureClass * grad_tex = WW3DAssetManager::Get_Instance()->Get_Texture("AddProjectorGradient.tga");
-	if (grad_tex) {
+	TextureClass *grad_tex = WW3DAssetManager::Get_Instance()->Get_Texture("AddProjectorGradient.tga");
+	if (grad_tex)
+	{
 		grad_tex->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		grad_tex->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
-		MaterialPass->Set_Texture(grad_tex,1);
+		MaterialPass->Set_Texture(grad_tex, 1);
 		grad_tex->Release_Ref();
-	} else {
+	}
+	else
+	{
 		WWDEBUG_SAY(("Could not find texture: AddProjectorGradient.tga!"));
 	}
 
@@ -695,25 +696,25 @@ void TexProjectClass::Init_Additive(void)
 	/*
 	** Set up the Vertex Material parameters
 	*/
-	VertexMaterialClass * vmtl = MaterialPass->Peek_Material();
-	vmtl->Set_Ambient(0,0,0);
-	vmtl->Set_Diffuse(0,0,0);
-	vmtl->Set_Specular(0,0,0);
-	vmtl->Set_Emissive(1,1,1);
+	VertexMaterialClass *vmtl = MaterialPass->Peek_Material();
+	vmtl->Set_Ambient(0, 0, 0);
+	vmtl->Set_Diffuse(0, 0, 0);
+	vmtl->Set_Specular(0, 0, 0);
+	vmtl->Set_Emissive(1, 1, 1);
 	vmtl->Set_Opacity(1.0f);
-	vmtl->Set_Lighting(true); //need emissive to scale the intensity of the projector
+	vmtl->Set_Lighting(true); // need emissive to scale the intensity of the projector
 
 	/*
 	** Set up some mapper settings related to depth gradient
 	** Additive texture projections always use the normal gradient
 	*/
-	if (Mapper1 == NULL) {
-		Mapper1 = NEW_REF(MatrixMapperClass,(1));
+	if (Mapper1 == NULL)
+	{
+		Mapper1 = NEW_REF(MatrixMapperClass, (1));
 	}
 	Mapper1->Set_Type(MatrixMapperClass::NORMAL_GRADIENT);
-	vmtl->Set_Mapper(Mapper1,1);
+	vmtl->Set_Mapper(Mapper1, 1);
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Set_Texture -- Set the texture to be projected                             *
@@ -727,7 +728,7 @@ void TexProjectClass::Init_Additive(void)
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void TexProjectClass::Set_Texture(TextureClass * texture)
+void TexProjectClass::Set_Texture(TextureClass *texture)
 {
 	if (texture != NULL)
 	{
@@ -736,7 +737,6 @@ void TexProjectClass::Set_Texture(TextureClass * texture)
 		MaterialPass->Set_Texture(texture);
 	}
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Get_Texture -- Returns the texture being projected                         *
@@ -751,11 +751,10 @@ void TexProjectClass::Set_Texture(TextureClass * texture)
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-TextureClass * TexProjectClass::Get_Texture(void) const
+TextureClass *TexProjectClass::Get_Texture(void) const
 {
 	return MaterialPass->Get_Texture();
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Peek_Texture -- Returns the texture being projected                        *
@@ -769,11 +768,10 @@ TextureClass * TexProjectClass::Get_Texture(void) const
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-TextureClass * TexProjectClass::Peek_Texture(void) const
+TextureClass *TexProjectClass::Peek_Texture(void) const
 {
 	return MaterialPass->Peek_Texture();
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Peek_Material_Pass -- Returns the material pass object                     *
@@ -787,11 +785,10 @@ TextureClass * TexProjectClass::Peek_Texture(void) const
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-MaterialPassClass * TexProjectClass::Peek_Material_Pass(void)
+MaterialPassClass *TexProjectClass::Peek_Material_Pass(void)
 {
 	return MaterialPass;
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Set_Perspective_Projection -- set up a perspective projection              *
@@ -805,17 +802,16 @@ MaterialPassClass * TexProjectClass::Peek_Material_Pass(void)
  * HISTORY:                                                                                    *
  *   1/27/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void TexProjectClass::Set_Perspective_Projection(float hfov,float vfov,float znear,float zfar)
+void TexProjectClass::Set_Perspective_Projection(float hfov, float vfov, float znear, float zfar)
 {
 	HFov = hfov;
 	VFov = vfov;
 	ZNear = znear;
 	ZFar = zfar;
 
-	ProjectorClass::Set_Perspective_Projection(hfov,vfov,znear,zfar);
-	Set_Flag(PERSPECTIVE,true);
+	ProjectorClass::Set_Perspective_Projection(hfov, vfov, znear, zfar);
+	Set_Flag(PERSPECTIVE, true);
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Set_Ortho_Projection -- set up an orthographic projection                  *
@@ -829,7 +825,7 @@ void TexProjectClass::Set_Perspective_Projection(float hfov,float vfov,float zne
  * HISTORY:                                                                                    *
  *   1/27/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void TexProjectClass::Set_Ortho_Projection(float xmin,float xmax,float ymin,float ymax,float znear,float zfar)
+void TexProjectClass::Set_Ortho_Projection(float xmin, float xmax, float ymin, float ymax, float znear, float zfar)
 {
 	XMin = xmin;
 	XMax = xmax;
@@ -838,8 +834,8 @@ void TexProjectClass::Set_Ortho_Projection(float xmin,float xmax,float ymin,floa
 	ZNear = znear;
 	ZFar = zfar;
 
-	ProjectorClass::Set_Ortho_Projection(xmin,xmax,ymin,ymax,znear,zfar);
-	Set_Flag(PERSPECTIVE,false);
+	ProjectorClass::Set_Ortho_Projection(xmin, xmax, ymin, ymax, znear, zfar);
+	Set_Flag(PERSPECTIVE, false);
 }
 
 /***********************************************************************************************
@@ -861,26 +857,20 @@ void TexProjectClass::Set_Ortho_Projection(float xmin,float xmax,float ymin,floa
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-bool TexProjectClass::Compute_Perspective_Projection
-(
-	RenderObjClass *	model,
-	const Vector3 &	lightpos,
-	float					znear,
-	float					zfar
-)
+bool TexProjectClass::Compute_Perspective_Projection(RenderObjClass *model, const Vector3 &lightpos, float znear, float zfar)
 {
-	if (model == NULL) {
+	if (model == NULL)
+	{
 		WWDEBUG_SAY(("Attempting to generate projection for a NULL model"));
 		return false;
 	}
 
 	AABoxClass box;
 	model->Get_Obj_Space_Bounding_Box(box);
-	const Matrix3D & tm = model->Get_Transform();
+	const Matrix3D &tm = model->Get_Transform();
 
-	return Compute_Perspective_Projection(box,tm,lightpos,znear,zfar);
+	return Compute_Perspective_Projection(box, tm, lightpos, znear, zfar);
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Compute_Perspective_Projection -- Set up a perspective projection of an ob *
@@ -902,27 +892,25 @@ bool TexProjectClass::Compute_Perspective_Projection
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-bool TexProjectClass::Compute_Perspective_Projection
-(
-	const AABoxClass & obj_box,
-	const Matrix3D & tm,
-	const Vector3 & lightpos,
-	float user_znear,
-	float user_zfar
-)
+bool TexProjectClass::Compute_Perspective_Projection(
+		const AABoxClass &obj_box,
+		const Matrix3D &tm,
+		const Vector3 &lightpos,
+		float user_znear,
+		float user_zfar)
 {
 	/*
 	** Compute the center of the box in world-space
 	*/
 	Vector3 wrld_center;
-	Matrix3D::Transform_Vector(tm,obj_box.Center,&wrld_center);
+	Matrix3D::Transform_Vector(tm, obj_box.Center, &wrld_center);
 
 	/*
 	** Create a camera transform looking at the object.
 	** Set this as our transform later in this routine.
 	*/
-	Matrix3D texture_tm,texture_tm_inv;
-	texture_tm.Look_At(lightpos,wrld_center,0.0f);
+	Matrix3D texture_tm, texture_tm_inv;
+	texture_tm.Look_At(lightpos, wrld_center, 0.0f);
 	texture_tm.Get_Orthogonal_Inverse(texture_tm_inv);
 
 	/*
@@ -931,14 +919,15 @@ bool TexProjectClass::Compute_Perspective_Projection
 	AABoxClass box = obj_box;
 	Matrix3D obj_to_world = tm;
 	Matrix3D obj_to_texture;
-	Matrix3D::Multiply(texture_tm_inv,obj_to_world,&obj_to_texture);
+	Matrix3D::Multiply(texture_tm_inv, obj_to_world, &obj_to_texture);
 	box.Transform(obj_to_texture);
 
 	/*
 	** If the box is behind the viewpoint or the viewpoint is inside the box
 	** our FOV will be > 180 degrees. Have to give up
 	*/
-	if ((box.Center.Z > 0.0f) || (box.Extent.Z > WWMath::Fabs(box.Center.Z))) {
+	if ((box.Center.Z > 0.0f) || (box.Extent.Z > WWMath::Fabs(box.Center.Z)))
+	{
 		return false;
 	}
 
@@ -949,10 +938,12 @@ bool TexProjectClass::Compute_Perspective_Projection
 	float znear = -box.Center.Z; //-(box.Center.Z + obj_box.Extent.Quick_Length());
 	float zfar = -(box.Center.Z - obj_box.Extent.Quick_Length()) * 2.0f;
 
-	if (user_znear != -1.0f) {
+	if (user_znear != -1.0f)
+	{
 		znear = box.Center.Z + user_znear;
 	}
-	if (user_zfar != -1.0f) {
+	if (user_zfar != -1.0f)
+	{
 		zfar = box.Center.Z + user_zfar;
 	}
 
@@ -964,11 +955,10 @@ bool TexProjectClass::Compute_Perspective_Projection
 	/*
 	** Plug in the results.
 	*/
-	Set_Perspective_Projection(hfov,vfov,znear,zfar);
+	Set_Perspective_Projection(hfov, vfov, znear, zfar);
 	Set_Transform(texture_tm);
 	return true;
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Compute_Ortho_Projection -- Automatic Orthographic projection              *
@@ -988,26 +978,20 @@ bool TexProjectClass::Compute_Perspective_Projection
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-bool TexProjectClass::Compute_Ortho_Projection
-(
-	RenderObjClass *	model,
-	const Vector3 &	lightdir,
-	float					znear,
-	float					zfar
-)
+bool TexProjectClass::Compute_Ortho_Projection(RenderObjClass *model, const Vector3 &lightdir, float znear, float zfar)
 {
-	if (model == NULL) {
+	if (model == NULL)
+	{
 		WWDEBUG_SAY(("Attempting to generate projection for a NULL model"));
 		return false;
 	}
 
 	AABoxClass box;
 	model->Get_Obj_Space_Bounding_Box(box);
-	const Matrix3D & tm = model->Get_Transform();
+	const Matrix3D &tm = model->Get_Transform();
 
-	return Compute_Ortho_Projection(box,tm,lightdir,znear,zfar);
+	return Compute_Ortho_Projection(box, tm, lightdir, znear, zfar);
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Compute_Ortho_Projection -- Automatic Orthographic projection              *
@@ -1028,14 +1012,12 @@ bool TexProjectClass::Compute_Ortho_Projection
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-bool TexProjectClass::Compute_Ortho_Projection
-(
-	const AABoxClass & obj_box,
-	const Matrix3D & tm,
-	const Vector3 & lightdir,
-	float user_znear,
-	float user_zfar
-)
+bool TexProjectClass::Compute_Ortho_Projection(
+		const AABoxClass &obj_box,
+		const Matrix3D &tm,
+		const Vector3 &lightdir,
+		float user_znear,
+		float user_zfar)
 {
 	/*
 	** Compute the center of the box in world-space
@@ -1050,8 +1032,8 @@ bool TexProjectClass::Compute_Ortho_Projection
 	Vector3 camera_target = wrldbox.Center;
 	Vector3 camera_position = camera_target - 2.0f * wrldbox.Extent.Length() * lightdir;
 
-	Matrix3D texture_tm,texture_tm_inv;
-	texture_tm.Look_At(camera_position,camera_target,0.0f);
+	Matrix3D texture_tm, texture_tm_inv;
+	texture_tm.Look_At(camera_position, camera_target, 0.0f);
 	texture_tm.Get_Orthogonal_Inverse(texture_tm_inv);
 
 	/*
@@ -1060,7 +1042,7 @@ bool TexProjectClass::Compute_Ortho_Projection
 	AABoxClass box = obj_box;
 	Matrix3D obj_to_world = tm;
 	Matrix3D obj_to_texture;
-	Matrix3D::Multiply(texture_tm_inv,obj_to_world,&obj_to_texture);
+	Matrix3D::Multiply(texture_tm_inv, obj_to_world, &obj_to_texture);
 	box.Transform(obj_to_texture);
 
 	/*
@@ -1075,22 +1057,25 @@ bool TexProjectClass::Compute_Ortho_Projection
 	float znear = -box.Center.Z; //-(box.Center.Z + obj_box.Extent.Quick_Length());
 	float zfar = -(box.Center.Z - obj_box.Extent.Quick_Length()) * 2.0f;
 
-	if (user_znear != -1.0f) {
+	if (user_znear != -1.0f)
+	{
 		znear = -box.Center.Z + user_znear;
 	}
-	if (user_zfar != -1.0f) {
+	if (user_zfar != -1.0f)
+	{
 		zfar = -box.Center.Z + user_zfar;
 	}
 
 	/*
 	** All done!
 	*/
-	Set_Ortho_Projection(	box.Center.X - box.Extent.X,
-									box.Center.X + box.Extent.X,
-									box.Center.Y - box.Extent.Y,
-									box.Center.Y + box.Extent.Y,
-									znear,
-									zfar	);
+	Set_Ortho_Projection(
+			box.Center.X - box.Extent.X,
+			box.Center.X + box.Extent.X,
+			box.Center.Y - box.Extent.Y,
+			box.Center.Y + box.Extent.Y,
+			znear,
+			zfar);
 	Set_Transform(texture_tm);
 	return true;
 }
@@ -1109,11 +1094,7 @@ bool TexProjectClass::Compute_Ortho_Projection
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-bool TexProjectClass::Compute_Texture
-(
-	RenderObjClass * model,
-	SpecialRenderInfoClass * context
-)
+bool TexProjectClass::Compute_Texture(RenderObjClass *model, SpecialRenderInfoClass *context)
 {
 	if ((model == NULL) || (context == NULL))
 	{
@@ -1122,11 +1103,10 @@ bool TexProjectClass::Compute_Texture
 	/*
 	** Render to texture
 	*/
-	TextureClass * rtarget = Peek_Render_Target();
+	TextureClass *rtarget = Peek_Render_Target();
 
 	if (rtarget != NULL)
 	{
-
 		/*
 		** Set the render target
 		*/
@@ -1140,17 +1120,17 @@ bool TexProjectClass::Compute_Texture
 		/*
 		** Render the object
 		*/
-		Vector3 color(0.0f,0.0f,0.0f);
-		if (Get_Flag(ADDITIVE) == false) {
-			color.Set(1.0f,1.0f,1.0f);
+		Vector3 color(0.0f, 0.0f, 0.0f);
+		if (Get_Flag(ADDITIVE) == false)
+		{
+			color.Set(1.0f, 1.0f, 1.0f);
 		}
 
-		WW3D::Begin_Render(true,true,color);
-		WW3D::Render(*model,*context);
+		WW3D::Begin_Render(true, true, color);
+		WW3D::Render(*model, *context);
 		WW3D::End_Render(false);
 
 		DX8Wrapper::Set_Render_Target((IDirect3DSurface8 *)NULL);
-
 	}
 
 #if 0
@@ -1166,7 +1146,6 @@ bool TexProjectClass::Compute_Texture
 #endif
 	return true;
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Needs_Render_Target -- returns wheter this projector needs a render target *
@@ -1185,7 +1164,6 @@ bool TexProjectClass::Needs_Render_Target(void)
 	return Get_Flag(TEXTURE_DIRTY);
 }
 
-
 /***********************************************************************************************
  * TexProjectClass::Set_Render_Target -- Install a render target for this projector to use     *
  *                                                                                             *
@@ -1198,12 +1176,9 @@ bool TexProjectClass::Needs_Render_Target(void)
  * HISTORY:                                                                                    *
  *   4/16/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-void TexProjectClass::Set_Render_Target
-(
-	TextureClass* render_target
-)
+void TexProjectClass::Set_Render_Target(TextureClass *render_target)
 {
-	REF_PTR_SET(RenderTarget,render_target);
+	REF_PTR_SET(RenderTarget, render_target);
 	Set_Texture(RenderTarget);
 }
 
@@ -1219,10 +1194,7 @@ void TexProjectClass::Set_Render_Target
  * HISTORY:                                                                                    *
  *   4/5/2001   gth : Created.                                                                 *
  *=============================================================================================*/
-TextureClass* TexProjectClass::Peek_Render_Target
-(
-	void
-)
+TextureClass *TexProjectClass::Peek_Render_Target(void)
 {
 	return RenderTarget;
 }
@@ -1239,21 +1211,22 @@ TextureClass* TexProjectClass::Peek_Render_Target
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void TexProjectClass::Configure_Camera(CameraClass & camera)
+void TexProjectClass::Configure_Camera(CameraClass &camera)
 {
 	camera.Set_Transform(Transform);
-	camera.Set_Clip_Planes(0.01f,ZFar);
+	camera.Set_Clip_Planes(0.01f, ZFar);
 
-	if (Get_Flag(PERSPECTIVE)) {
+	if (Get_Flag(PERSPECTIVE))
+	{
 		camera.Set_Projection_Type(CameraClass::PERSPECTIVE);
-		camera.Set_View_Plane(HFov,VFov);
-
-	} else {
+		camera.Set_View_Plane(HFov, VFov);
+	}
+	else
+	{
 		camera.Set_Projection_Type(CameraClass::ORTHO);
-		camera.Set_View_Plane(Vector2(XMin,YMin),Vector2(XMax,YMax));
+		camera.Set_View_Plane(Vector2(XMin, YMin), Vector2(XMax, YMax));
 	}
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Pre_Render_Update -- Prepare the projector for rendering                   *
@@ -1267,18 +1240,18 @@ void TexProjectClass::Configure_Camera(CameraClass & camera)
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void TexProjectClass::Pre_Render_Update(const Matrix3D & camera)
+void TexProjectClass::Pre_Render_Update(const Matrix3D &camera)
 {
 	/*
 	** Mview-texture = PShadow * Mwrld-texture * Mcamera-vrld
 	*/
-	Matrix3D		world_to_texture;
-	Matrix3D		tmp;
-	Matrix4x4	view_to_texture;
+	Matrix3D world_to_texture;
+	Matrix3D tmp;
+	Matrix4x4 view_to_texture;
 
 	Transform.Get_Orthogonal_Inverse(world_to_texture);
-	Matrix3D::Multiply(world_to_texture,camera,&tmp);
-	Matrix4x4::Multiply(Projection,tmp,&view_to_texture);
+	Matrix3D::Multiply(world_to_texture, camera, &tmp);
+	Matrix4x4::Multiply(Projection, tmp, &view_to_texture);
 
 	/*
 	** update the current intensity by iterating it towards the desired intensity
@@ -1287,11 +1260,16 @@ void TexProjectClass::Pre_Render_Update(const Matrix3D & camera)
 	float intensity_delta = DesiredIntensity - Intensity;
 	float max_intensity_delta = INTENSITY_RATE_OF_CHANGE * frame_time;
 
-	if (intensity_delta > max_intensity_delta) {
+	if (intensity_delta > max_intensity_delta)
+	{
 		Intensity += max_intensity_delta;
-	} else if (intensity_delta < -max_intensity_delta) {
+	}
+	else if (intensity_delta < -max_intensity_delta)
+	{
 		Intensity -= max_intensity_delta;
-	} else {
+	}
+	else
+	{
 		Intensity = DesiredIntensity;
 	}
 
@@ -1300,35 +1278,42 @@ void TexProjectClass::Pre_Render_Update(const Matrix3D & camera)
 	/*
 	** install the current intensity
 	*/
-	VertexMaterialClass * vmat = MaterialPass->Peek_Material();
-	if (Get_Flag(ADDITIVE)) {
-		vmat->Set_Emissive(actual_intensity,actual_intensity,actual_intensity);
-	} else {
-		vmat->Set_Emissive(1.0f - actual_intensity,1.0f - actual_intensity,1.0f - actual_intensity);
+	VertexMaterialClass *vmat = MaterialPass->Peek_Material();
+	if (Get_Flag(ADDITIVE))
+	{
+		vmat->Set_Emissive(actual_intensity, actual_intensity, actual_intensity);
+	}
+	else
+	{
+		vmat->Set_Emissive(1.0f - actual_intensity, 1.0f - actual_intensity, 1.0f - actual_intensity);
 	}
 
 	/*
 	** update the mappers
 	*/
-	if (Get_Flag(PERSPECTIVE)) {
+	if (Get_Flag(PERSPECTIVE))
+	{
 		Mapper->Set_Type(MatrixMapperClass::PERSPECTIVE_PROJECTION);
-	} else {
+	}
+	else
+	{
 		Mapper->Set_Type(MatrixMapperClass::ORTHO_PROJECTION);
 	}
 
-	if (Get_Texture_Size() == 0) {
-//		SurfaceClass::SurfaceDescription surface_desc;
-//		MaterialPass->Peek_Texture()->Get_Level_Description(surface_desc);
+	if (Get_Texture_Size() == 0)
+	{
+		//		SurfaceClass::SurfaceDescription surface_desc;
+		//		MaterialPass->Peek_Texture()->Get_Level_Description(surface_desc);
 		Set_Texture_Size(MaterialPass->Peek_Texture()->Get_Width());
 		WWASSERT(Get_Texture_Size() != 0);
 	}
 
-	Mapper->Set_Texture_Transform(view_to_texture,Get_Texture_Size());
-	if (Mapper1) {
-		Mapper1->Set_Texture_Transform(view_to_texture,Get_Texture_Size());
+	Mapper->Set_Texture_Transform(view_to_texture, Get_Texture_Size());
+	if (Mapper1)
+	{
+		Mapper1->Set_Texture_Transform(view_to_texture, Get_Texture_Size());
 	}
 }
-
 
 /***********************************************************************************************
  * TexProjectClass::Update_WS_Bounding_Volume -- Recalculate the world-space bounding box      *
@@ -1351,6 +1336,5 @@ void TexProjectClass::Update_WS_Bounding_Volume(void)
 	*/
 	Vector3 extent;
 	WorldBoundingVolume.Compute_Axis_Aligned_Extent(&extent);
-	Set_Cull_Box(AABoxClass(WorldBoundingVolume.Center,extent));
+	Set_Cull_Box(AABoxClass(WorldBoundingVolume.Center, extent));
 }
-

@@ -37,17 +37,14 @@
  *   FilePipe::End -- End the file pipe handler.                                               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#include	"always.h"
-#include	"XPIPE.H"
-#include	<stddef.h>
-#include	<string.h>
-
+#include "always.h"
+#include "XPIPE.H"
+#include <stddef.h>
+#include <string.h>
 
 //---------------------------------------------------------------------------------------------------------
 // BufferPipe
 //---------------------------------------------------------------------------------------------------------
-
 
 /***********************************************************************************************
  * BufferPipe::Put -- Submit data to the buffered pipe segment.                                *
@@ -67,29 +64,31 @@
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int BufferPipe::Put(void const * source, int slen)
+int BufferPipe::Put(void const *source, int slen)
 {
 	int total = 0;
 
-	if (Is_Valid() && source != NULL && slen > 0) {
+	if (Is_Valid() && source != NULL && slen > 0)
+	{
 		int len = slen;
-		if (BufferPtr.Get_Size() != 0) {
+		if (BufferPtr.Get_Size() != 0)
+		{
 			int theoretical_max = BufferPtr.Get_Size() - Index;
 			len = (slen < theoretical_max) ? slen : theoretical_max;
 		}
 
-		if (len > 0) {
+		if (len > 0)
+		{
 			memmove(((char *)BufferPtr.Get_Buffer()) + Index, source, len);
 		}
 
 		Index += len;
-//		Length -= len;
-//		Buffer = ((char *)Buffer) + len;
+		//		Length -= len;
+		//		Buffer = ((char *)Buffer) + len;
 		total += len;
 	}
-	return(total);
+	return (total);
 }
-
 
 //---------------------------------------------------------------------------------------------------------
 // FilePipe
@@ -97,13 +96,13 @@ int BufferPipe::Put(void const * source, int slen)
 
 FilePipe::~FilePipe(void)
 {
-	if (Valid_File() && HasOpened) {
+	if (Valid_File() && HasOpened)
+	{
 		HasOpened = false;
 		File->Close();
 		File = NULL;
 	}
 }
-
 
 /***********************************************************************************************
  * FilePipe::End -- End the file pipe handler.                                                 *
@@ -127,13 +126,13 @@ FilePipe::~FilePipe(void)
 int FilePipe::End(void)
 {
 	int total = Pipe::End();
-	if (Valid_File() && HasOpened) {
+	if (Valid_File() && HasOpened)
+	{
 		HasOpened = false;
 		File->Close();
 	}
-	return(total);
+	return (total);
 }
-
 
 /***********************************************************************************************
  * FilePipe::Put -- Submit a block of data to the pipe.                                        *
@@ -152,15 +151,17 @@ int FilePipe::End(void)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int FilePipe::Put(void const * source, int slen)
+int FilePipe::Put(void const *source, int slen)
 {
-	if (Valid_File() && source != NULL && slen > 0) {
-		if (!File->Is_Open()) {
+	if (Valid_File() && source != NULL && slen > 0)
+	{
+		if (!File->Is_Open())
+		{
 			HasOpened = true;
 			File->Open(FileClass::WRITE);
 		}
 
-		return(File->Write(source, slen));
+		return (File->Write(source, slen));
 	}
-	return(0);
+	return (0);
 }

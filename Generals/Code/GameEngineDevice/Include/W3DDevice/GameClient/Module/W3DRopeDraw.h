@@ -41,45 +41,48 @@
 //-------------------------------------------------------------------------------------------------
 class W3DRopeDraw : public DrawModule, public RopeDrawInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DRopeDraw, "W3DRopeDraw" )
-	MAKE_STANDARD_MODULE_MACRO( W3DRopeDraw )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(W3DRopeDraw, "W3DRopeDraw")
+	MAKE_STANDARD_MODULE_MACRO(W3DRopeDraw)
 
 public:
-
-	W3DRopeDraw( Thing *thing, const ModuleData* moduleData );
+	W3DRopeDraw(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void doDrawModule(const Matrix3D* transformMtx);
-	virtual void setShadowsEnabled(Bool enable) { }
-	virtual void releaseShadows(void) {};	///< we don't care about preserving temporary shadows.
-	virtual void allocateShadows(void) {};	///< we don't care about preserving temporary shadows.
-	virtual void setFullyObscuredByShroud(Bool fullyObscured) { }
-	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) { }
-	virtual void reactToGeometryChange() { }
+	virtual void doDrawModule(const Matrix3D *transformMtx);
+	virtual void setShadowsEnabled(Bool enable) {}
+	virtual void releaseShadows(void) {}; ///< we don't care about preserving temporary shadows.
+	virtual void allocateShadows(void) {}; ///< we don't care about preserving temporary shadows.
+	virtual void setFullyObscuredByShroud(Bool fullyObscured) {}
+	virtual void reactToTransformChange(const Matrix3D *oldMtx, const Coord3D *oldPos, Real oldAngle) {}
+	virtual void reactToGeometryChange() {}
 
-	virtual void initRopeParms(Real length, Real width, const RGBColor& color, Real wobbleLen, Real wobbleAmp, Real wobbleRate);
+	virtual void initRopeParms(
+			Real length,
+			Real width,
+			const RGBColor &color,
+			Real wobbleLen,
+			Real wobbleAmp,
+			Real wobbleRate);
 	virtual void setRopeCurLen(Real length);
 	virtual void setRopeSpeed(Real curSpeed, Real maxSpeed, Real accel);
 
-	virtual RopeDrawInterface* getRopeDrawInterface() { return this; }
-	virtual const RopeDrawInterface* getRopeDrawInterface() const { return this; }
+	virtual RopeDrawInterface *getRopeDrawInterface() { return this; }
+	virtual const RopeDrawInterface *getRopeDrawInterface() const { return this; }
 
 private:
-
 	struct SegInfo
 	{
-		Line3DClass* line;
-		Line3DClass* softLine;
+		Line3DClass *line;
+		Line3DClass *softLine;
 		Real wobbleAxisX;
 		Real wobbleAxisY;
 	};
 
-	std::vector<SegInfo> m_segments;			///< the rope render object in the W3D scene
-	Real m_curLen;								///< length of rope
-	Real m_maxLen;								///< length of rope
-	Real m_width;									///< width of rope
-	RGBColor m_color;							///< color of rope
+	std::vector<SegInfo> m_segments; ///< the rope render object in the W3D scene
+	Real m_curLen; ///< length of rope
+	Real m_maxLen; ///< length of rope
+	Real m_width; ///< width of rope
+	RGBColor m_color; ///< color of rope
 	Real m_curSpeed;
 	Real m_maxSpeed;
 	Real m_accel;
@@ -91,8 +94,6 @@ private:
 
 	void tossSegments();
 	void buildSegments();
-
 };
 
 #endif // __W3DRopeDraw_H_
-

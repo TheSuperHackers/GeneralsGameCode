@@ -38,31 +38,34 @@ class RingColorPropPageClass : public CPropertyPage
 {
 	DECLARE_DYNCREATE(RingColorPropPageClass)
 
-// Construction
+	// Construction
 public:
-	RingColorPropPageClass (RingRenderObjClass *ring = NULL);
-	~RingColorPropPageClass ();
+	RingColorPropPageClass(RingRenderObjClass *ring = NULL);
+	~RingColorPropPageClass();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(RingColorPropPageClass)
-	enum { IDD = IDD_PROP_PAGE_RING_COLOR };
-		// NOTE - ClassWizard will add data members here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
+	enum
+	{
+		IDD = IDD_PROP_PAGE_RING_COLOR
+	};
+	// NOTE - ClassWizard will add data members here.
+	//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(RingColorPropPageClass)
-	public:
+public:
 	virtual BOOL OnApply();
 	virtual void OnCancel();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(RingColorPropPageClass)
@@ -71,9 +74,7 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-
 public:
-
 	/////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////
@@ -82,37 +83,38 @@ public:
 	//	Inline accessors
 	//
 
-	RingRenderObjClass *		Get_Ring (void) const							{ return m_RenderObj; }
-	void							Set_Ring (RingRenderObjClass *ring)	{ m_RenderObj = ring; Initialize (); }
-	bool							Is_Data_Valid (void) const						{ return m_bValid; }
+	RingRenderObjClass *Get_Ring(void) const { return m_RenderObj; }
+	void Set_Ring(RingRenderObjClass *ring)
+	{
+		m_RenderObj = ring;
+		Initialize();
+	}
+	bool Is_Data_Valid(void) const { return m_bValid; }
 
 protected:
-
 	/////////////////////////////////////////////////////////
 	//	Protected methods
 	/////////////////////////////////////////////////////////
-	void				Initialize (void);
-	void				Update_Colors (void);
-	void				Update_Opacities (void);
+	void Initialize(void);
+	void Update_Colors(void);
+	void Update_Opacities(void);
 
 private:
-
 	/////////////////////////////////////////////////////////
 	//	Private member data
 	/////////////////////////////////////////////////////////
-	RingRenderObjClass *		m_RenderObj;
-	bool							m_bValid;
-	ColorBarClass *			m_ColorBar;
-	ColorBarClass *			m_OpacityBar;
+	RingRenderObjClass *m_RenderObj;
+	bool m_bValid;
+	ColorBarClass *m_ColorBar;
+	ColorBarClass *m_OpacityBar;
 
-	RingColorChannelClass	m_ColorChannel;
-	RingColorChannelClass	m_OrigColorChannel;
-	RingAlphaChannelClass	m_AlphaChannel;
-	RingAlphaChannelClass	m_OrigAlphaChannel;
+	RingColorChannelClass m_ColorChannel;
+	RingColorChannelClass m_OrigColorChannel;
+	RingAlphaChannelClass m_AlphaChannel;
+	RingAlphaChannelClass m_OrigAlphaChannel;
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
 #endif // !defined(AFX_RINGCOLORPROPPAGE_H__E86BBE86_F527_11D3_A08F_00104B791122__INCLUDED_)
-

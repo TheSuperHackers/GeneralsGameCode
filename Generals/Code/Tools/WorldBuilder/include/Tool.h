@@ -28,7 +28,8 @@
 #include "Lib/BaseType.h"
 #include "Common/STLTypedefs.h"
 
-enum TTrackingMode {
+enum TTrackingMode
+{
 	TRACK_NONE,
 	TRACK_L,
 	TRACK_M,
@@ -40,10 +41,10 @@ typedef std::vector<CPoint> VecHeightMapIndexes;
 
 #define MAGIC_GROUND_Z (0)
 
-//#define IS_MAGIC_GROUND(z) ((z)==MAGIC_GROUND_Z)
+// #define IS_MAGIC_GROUND(z) ((z)==MAGIC_GROUND_Z)
 
 // for backwards compatibility with existing maps:
-#define IS_MAGIC_GROUND(z) ((z)==0)
+#define IS_MAGIC_GROUND(z) ((z) == 0)
 
 class CWorldBuilderDoc;
 class CWorldBuilderView;
@@ -56,38 +57,45 @@ class WbView;
 class Tool
 {
 protected:
-	Int	m_toolID;  //< Tool button ui id in resource.
-	Int	m_cursorID;  //< Tool button ui id in resource.
+	Int m_toolID; //< Tool button ui id in resource.
+	Int m_cursorID; //< Tool button ui id in resource.
 	HCURSOR m_cursor;
 
 	Int m_prevXIndex;
 	Int m_prevYIndex;
+
 public:
 	Tool(Int toolID, Int cursorID);
 	virtual ~Tool(void);
 
 public:
-	Int getToolID(void) {return m_toolID;}
+	Int getToolID(void) { return m_toolID; }
 	virtual void setCursor(void);
 
 	virtual void activate(); ///< Become the current tool.
-	virtual void deactivate(){}; ///< Become not the current tool.
+	virtual void deactivate() {}; ///< Become not the current tool.
 
-	virtual Bool followsTerrain(void) {return true;};	 ///< True if the tool tracks the terrain, generally false if it modifies the terrain heights.
+	virtual Bool followsTerrain(void)
+	{
+		return true;
+	}; ///< True if the tool tracks the terrain, generally false if it modifies the terrain heights.
 
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) {}
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) {}
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) {}
-	virtual WorldHeightMapEdit *getHeightMap(void) {return NULL;}
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc) {}
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc) {}
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc) {}
+	virtual WorldHeightMapEdit *getHeightMap(void) { return NULL; }
 
 	static Real calcRoundBlendFactor(CPoint center, Int x, Int y, Int brushWidth, Int featherWidth);
 	static Real calcSquareBlendFactor(CPoint center, Int x, Int y, Int brushWidth, Int featherWidth);
 	static void getCenterIndex(Coord3D *docLocP, Int brushWidth, CPoint *center, CWorldBuilderDoc *pDoc);
-	static void getAllIndexesIn(const Coord3D *bl, const Coord3D *br,
-															const Coord3D *tl, const Coord3D *tr,
-															Int widthOutside, CWorldBuilderDoc *pDoc,
-															VecHeightMapIndexes* allIndices);
+	static void getAllIndexesIn(
+			const Coord3D *bl,
+			const Coord3D *br,
+			const Coord3D *tl,
+			const Coord3D *tr,
+			Int widthOutside,
+			CWorldBuilderDoc *pDoc,
+			VecHeightMapIndexes *allIndices);
 };
 
-
-#endif //TOOL_H
+#endif // TOOL_H

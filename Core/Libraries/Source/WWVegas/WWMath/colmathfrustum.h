@@ -66,37 +66,40 @@
  * HISTORY:                                                                                    *
  *   3/29/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-inline
-CollisionMath::OverlapType
-CollisionMath::Overlap_Test(const FrustumClass & frustum,const AABoxClass & box,int & planes_passed)
+inline CollisionMath::OverlapType CollisionMath::Overlap_Test(
+		const FrustumClass &frustum,
+		const AABoxClass &box,
+		int &planes_passed)
 {
 	int mask = 0;
 
 	// TODO: doesn't catch all cases...
-	for (int i = 0; i < 6; i++) {
-
-		int plane_bit = (1<<i);
+	for (int i = 0; i < 6; i++)
+	{
+		int plane_bit = (1 << i);
 
 		// only check this plane if we have to
-		if ((planes_passed & plane_bit) == 0) {
-
-			int result = CollisionMath::Overlap_Test(frustum.Planes[i],box);
-			if (result == OUTSIDE) {
-
+		if ((planes_passed & plane_bit) == 0)
+		{
+			int result = CollisionMath::Overlap_Test(frustum.Planes[i], box);
+			if (result == OUTSIDE)
+			{
 				return OUTSIDE;
-			} else if (result == INSIDE) {
+			}
+			else if (result == INSIDE)
+			{
 				planes_passed |= plane_bit;
 			}
 			mask |= result;
-
-		} else {
-
+		}
+		else
+		{
 			mask |= INSIDE;
-
 		}
 	}
 
-	if (mask == INSIDE) {
+	if (mask == INSIDE)
+	{
 		return INSIDE;
 	}
 	return OVERLAPPED;

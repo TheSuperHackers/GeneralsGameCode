@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 // FILE: HotKey.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 //
@@ -70,14 +69,14 @@ class HotKeyTranslator : public GameMessageTranslator
 {
 public:
 	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
-	virtual ~HotKeyTranslator() { }
+	virtual ~HotKeyTranslator() {}
 };
 
 //-----------------------------------------------------------------------------
 class HotKey
 {
 public:
-	HotKey( void );
+	HotKey(void);
 	GameWindow *m_win;
 	AsciiString m_key;
 	// we may need a checkmark system.
@@ -87,19 +86,19 @@ public:
 class HotKeyManager : public SubsystemInterface
 {
 public:
-	HotKeyManager( void );
-	~HotKeyManager( void );
+	HotKeyManager(void);
+	~HotKeyManager(void);
 	// Inherited from subsystem interface -----------------------------------------------------------
-	virtual	void init( void );															///< Initialize the Hotkey system
-	virtual void update( void ) {}														///< A No-op for us
-	virtual void reset( void );															///< Reset
+	virtual void init(void); ///< Initialize the Hotkey system
+	virtual void update(void) {} ///< A No-op for us
+	virtual void reset(void); ///< Reset
 	//-----------------------------------------------------------------------------------------------
 
-	void addHotKey( GameWindow *win, const AsciiString& key);
-	Bool executeHotKey( const AsciiString& key); // called fromt eh HotKeyTranslator
+	void addHotKey(GameWindow *win, const AsciiString &key);
+	Bool executeHotKey(const AsciiString &key); // called fromt eh HotKeyTranslator
 
-	AsciiString searchHotKey( const AsciiString& label);
-	AsciiString searchHotKey( const UnicodeString& uStr );
+	AsciiString searchHotKey(const AsciiString &label);
+	AsciiString searchHotKey(const UnicodeString &uStr);
 
 private:
 	typedef std::map<AsciiString, HotKey> HotKeyMap;
@@ -115,4 +114,3 @@ extern HotKeyManager *TheHotKeyManager;
 //-----------------------------------------------------------------------------
 
 #endif // __HOT_KEY_H_
-

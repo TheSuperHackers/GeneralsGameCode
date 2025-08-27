@@ -68,13 +68,13 @@ class Dict
 public:
 	enum
 	{
-		MAX_LEN = 32767							///< max total len of any Dict, in Pairs
+		MAX_LEN = 32767 ///< max total len of any Dict, in Pairs
 	};
 
 	enum DataType
 	{
-		DICT_NONE = -1,	// this is returned by getType and getNthType to indicate "invalid key/index"
-		DICT_BOOL = 0,	// note, we rely on the fact that this constant is zero in the code. so don't change it.
+		DICT_NONE = -1, // this is returned by getType and getNthType to indicate "invalid key/index"
+		DICT_BOOL = 0, // note, we rely on the fact that this constant is zero in the code. so don't change it.
 		DICT_INT,
 		DICT_REAL,
 		DICT_ASCIISTRING,
@@ -92,7 +92,7 @@ public:
 		they will simply share the same data and increment the
 		refcount.)
 	*/
-	Dict(const Dict& src);
+	Dict(const Dict &src);
 
 	/**
 		Destructor. Not too exciting... clean up the works and such.
@@ -100,8 +100,8 @@ public:
 	~Dict();
 
 	/**
-	*/
-	Dict& operator=(const Dict& src);
+	 */
+	Dict &operator=(const Dict &src);
 
 	/**
 		remove all pairs.
@@ -128,10 +128,7 @@ public:
 	/**
 		Return there is a pair with the given key and datatype, return true.
 	*/
-	inline Bool known(NameKeyType key, DataType d) const
-	{
-		return getType(key) == d;
-	}
+	inline Bool known(NameKeyType key, DataType d) const { return getType(key) == d; }
 
 	/**
 		Return the datatype for the nth pair (0-based index).
@@ -144,31 +141,31 @@ public:
 		if there is no pair with the given key, or the value is
 		not of the correct type, 0 is returned.
 	*/
-	Bool getBool(NameKeyType key, Bool* exists = NULL) const;
+	Bool getBool(NameKeyType key, Bool *exists = NULL) const;
 	/**
 		return the value for the pair with the given key.
 		if there is no pair with the given key, or the value is
 		not of the correct type, 0 is returned.
 	*/
-	Int getInt(NameKeyType key, Bool* exists = NULL) const;
+	Int getInt(NameKeyType key, Bool *exists = NULL) const;
 	/**
 		return the value for the pair with the given key.
 		if there is no pair with the given key, or the value is
 		not of the correct type, 0 is returned.
 	*/
-	Real getReal(NameKeyType key, Bool* exists = NULL) const;
+	Real getReal(NameKeyType key, Bool *exists = NULL) const;
 	/**
 		return the value for the pair with the given key.
 		if there is no pair with the given key, or the value is
 		not of the correct type, "" is returned.
 	*/
-	AsciiString getAsciiString(NameKeyType key, Bool* exists = NULL) const;
+	AsciiString getAsciiString(NameKeyType key, Bool *exists = NULL) const;
 	/**
 		return the value for the pair with the given key.
 		if there is no pair with the given key, or the value is
 		not of the correct type, "" is returned.
 	*/
-	UnicodeString getUnicodeString(NameKeyType key, Bool* exists = NULL) const;
+	UnicodeString getUnicodeString(NameKeyType key, Bool *exists = NULL) const;
 
 	/**
 		return the value for the pair with the given index.
@@ -232,7 +229,7 @@ public:
 		note that when replacing a pair, the new and old
 		data types need not match.
 	*/
-	void setAsciiString(NameKeyType key, const AsciiString& value);
+	void setAsciiString(NameKeyType key, const AsciiString &value);
 	/**
 		set the value for the pair with the given key.
 		if no such pair exists, it is created.
@@ -240,7 +237,7 @@ public:
 		note that when replacing a pair, the new and old
 		data types need not match.
 	*/
-	void setUnicodeString(NameKeyType key, const UnicodeString& value);
+	void setUnicodeString(NameKeyType key, const UnicodeString &value);
 
 	/**
 		remove the pair with the given key. if such a pair existed, return true.
@@ -252,18 +249,17 @@ public:
 		copy the pair with the given key from 'that', replacing any such pair in 'this'.
 		if no such pair exists in 'that', any pair with that key will be removed from 'this'.
 	*/
-	void copyPairFrom(const Dict& that, NameKeyType key);
+	void copyPairFrom(const Dict &that, NameKeyType key);
 
 private:
-
 	struct DictPair;
 	struct DictPairData;
 
-	DictPairData* m_data;   // pointer to ref counted Pair data
+	DictPairData *m_data; // pointer to ref counted Pair data
 
 	void sortPairs();
 	Dict::DictPair *setPrep(NameKeyType key, Dict::DataType type);
-	DictPair* findPairByKey(NameKeyType key) const;
+	DictPair *findPairByKey(NameKeyType key) const;
 	void releaseData();
 	DictPair *ensureUnique(int numPairsNeeded, Bool preserveData, DictPair *pairToTranslate);
 
@@ -278,58 +274,50 @@ private:
 	struct DictPair
 	{
 	private:
-		DictPairKeyType		m_key;
-		void*							m_value;
+		DictPairKeyType m_key;
+		void *m_value;
 
 		inline static DictPairKeyType createKey(NameKeyType keyVal, DataType nt)
 		{
 			return (DictPairKeyType)((((UnsignedInt)(keyVal)) << 8) | ((UnsignedInt)nt));
 		}
 
-		inline static DataType getTypeFromKey(DictPairKeyType nk)
-		{
-			return (DataType)(((UnsignedInt)nk) & 0xff);
-		}
+		inline static DataType getTypeFromKey(DictPairKeyType nk) { return (DataType)(((UnsignedInt)nk) & 0xff); }
 
-		inline static NameKeyType getNameFromKey(DictPairKeyType nk)
-		{
-			return (NameKeyType)(((UnsignedInt)nk) >> 8);
-		}
-
+		inline static NameKeyType getNameFromKey(DictPairKeyType nk) { return (NameKeyType)(((UnsignedInt)nk) >> 8); }
 
 	public:
 		void clear();
-		void copyFrom(DictPair* that);
+		void copyFrom(DictPair *that);
 		void setNameAndType(NameKeyType key, DataType type);
 		inline DataType getType() const { return getTypeFromKey(m_key); }
 		inline NameKeyType getName() const { return getNameFromKey(m_key); }
-		inline Bool* asBool() { return (Bool*)&m_value; }
-		inline Int* asInt() { return (Int*)&m_value; }
-		inline Real* asReal() { return (Real*)&m_value; }
-		inline AsciiString* asAsciiString() { return (AsciiString*)&m_value; }
-		inline UnicodeString* asUnicodeString() { return (UnicodeString*)&m_value; }
+		inline Bool *asBool() { return (Bool *)&m_value; }
+		inline Int *asInt() { return (Int *)&m_value; }
+		inline Real *asReal() { return (Real *)&m_value; }
+		inline AsciiString *asAsciiString() { return (AsciiString *)&m_value; }
+		inline UnicodeString *asUnicodeString() { return (UnicodeString *)&m_value; }
 	};
 
 	struct DictPairData
 	{
-		unsigned short	m_refCount;						// reference count
-		unsigned short	m_numPairsAllocated;  // length of data allocated
-		unsigned short	m_numPairsUsed;				// length of data allocated
-		//DictPair m_pairs[];
+		unsigned short m_refCount; // reference count
+		unsigned short m_numPairsAllocated; // length of data allocated
+		unsigned short m_numPairsUsed; // length of data allocated
+		// DictPair m_pairs[];
 
-		inline DictPair* peek() { return (DictPair*)(this+1); }
+		inline DictPair *peek() { return (DictPair *)(this + 1); }
 	};
 
-	#ifdef RTS_DEBUG
+#ifdef RTS_DEBUG
 	void validate() const;
-	#else
-	inline void validate() const { }
-	#endif
-
+#else
+	inline void validate() const {}
+#endif
 };
 
 // -----------------------------------------------------
-inline Dict::Dict(const Dict& src) : m_data(src.m_data)
+inline Dict::Dict(const Dict &src) : m_data(src.m_data)
 {
 	if (m_data)
 		++m_data->m_refCount;
@@ -364,5 +352,3 @@ inline Dict::DataType Dict::getNthType(Int n) const
 }
 
 #endif // Dict_H
-
-

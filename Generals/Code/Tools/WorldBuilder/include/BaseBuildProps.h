@@ -30,27 +30,28 @@
 
 class BaseBuildProps : public CDialog
 {
-// Construction
+	// Construction
 public:
-	BaseBuildProps(CWnd* pParent = NULL);   // standard constructor
+	BaseBuildProps(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(BaseBuildProps)
-	enum { IDD = IDD_BASE_BUILDING_PROPS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_BASE_BUILDING_PROPS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(BaseBuildProps)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(BaseBuildProps)
 	virtual BOOL OnInitDialog();
@@ -66,10 +67,10 @@ private:
 
 public:
 	void setProps(AsciiString name, AsciiString script, Int health, Bool unsellable);
-	AsciiString getName(void) {return m_name;}
-	AsciiString getScript(void) {return m_script;}
-	Int getHealth(void) {return m_health;}
-	Bool getUnsellable(void) {return m_unsellable;}
+	AsciiString getName(void) { return m_name; }
+	AsciiString getScript(void) { return m_script; }
+	Int getHealth(void) { return m_health; }
+	Bool getUnsellable(void) { return m_unsellable; }
 };
 
 //{{AFX_INSERT_LOCATION}}

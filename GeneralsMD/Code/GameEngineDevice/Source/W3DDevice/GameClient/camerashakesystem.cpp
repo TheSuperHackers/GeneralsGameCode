@@ -80,8 +80,8 @@
 #include "W3DDevice/GameClient/camerashakesystem.h"
 #include "WW3D2/camera.h"
 
-//#include "W3DDevice/GameClient/camera.h"
-//#include "W3DDevice/GameClient/wwmemlog.h"
+// #include "W3DDevice/GameClient/camera.h"
+// #include "W3DDevice/GameClient/wwmemlog.h"
 
 /*
 ** (gth) According to my "research" the artists say that there are several factors that
@@ -91,51 +91,43 @@
 ** - The camera should pitch up and down a lot more than it yaws left and right.
 */
 
-DEFINE_AUTO_POOL(CameraShakeSystemClass::CameraShakerClass,256);
+DEFINE_AUTO_POOL(CameraShakeSystemClass::CameraShakerClass, 256);
 
-const float MIN_OMEGA			= DEG_TO_RADF(12.5f*360.0f);
-const float MAX_OMEGA			= DEG_TO_RADF(15.0f*360.0f);
-const float END_OMEGA			= DEG_TO_RADF(360.0f);
-const float MIN_PHI				= DEG_TO_RADF(0.0f);
-const float MAX_PHI				= DEG_TO_RADF(360.0f);
-const Vector3 AXIS_ROTATION	= Vector3(DEG_TO_RADF(7.5f),DEG_TO_RADF(15.0f),DEG_TO_RADF(5.0f));
-
+const float MIN_OMEGA = DEG_TO_RADF(12.5f * 360.0f);
+const float MAX_OMEGA = DEG_TO_RADF(15.0f * 360.0f);
+const float END_OMEGA = DEG_TO_RADF(360.0f);
+const float MIN_PHI = DEG_TO_RADF(0.0f);
+const float MAX_PHI = DEG_TO_RADF(360.0f);
+const Vector3 AXIS_ROTATION = Vector3(DEG_TO_RADF(7.5f), DEG_TO_RADF(15.0f), DEG_TO_RADF(5.0f));
 
 /************************************************************************************************
 **
 ** CameraShakeSystemClass::CameraShakerClass Implementation
 **
 ************************************************************************************************/
-CameraShakeSystemClass::CameraShakerClass::CameraShakerClass
-(
-	const Vector3 & position,
-	float radius,
-	float duration,
-	float intensity
-) :
-	Position(position),
-	Radius(radius),
-	Duration(duration),
-	Intensity(intensity),
-	ElapsedTime(0.0f)
+CameraShakeSystemClass::CameraShakerClass::CameraShakerClass(
+		const Vector3 &position,
+		float radius,
+		float duration,
+		float intensity) :
+		Position(position), Radius(radius), Duration(duration), Intensity(intensity), ElapsedTime(0.0f)
 {
 	/*
 	** Initialize random sinusoid values
 	*/
-	Omega.X = WWMath::Random_Float(MIN_OMEGA,MAX_OMEGA);
-	Omega.Y = WWMath::Random_Float(MIN_OMEGA,MAX_OMEGA);
-	Omega.Z = WWMath::Random_Float(MIN_OMEGA,MAX_OMEGA);
-	Phi.X = WWMath::Random_Float(MIN_PHI,MAX_PHI);
-	Phi.Y = WWMath::Random_Float(MIN_PHI,MAX_PHI);
-	Phi.Z = WWMath::Random_Float(MIN_PHI,MAX_PHI);
+	Omega.X = WWMath::Random_Float(MIN_OMEGA, MAX_OMEGA);
+	Omega.Y = WWMath::Random_Float(MIN_OMEGA, MAX_OMEGA);
+	Omega.Z = WWMath::Random_Float(MIN_OMEGA, MAX_OMEGA);
+	Phi.X = WWMath::Random_Float(MIN_PHI, MAX_PHI);
+	Phi.Y = WWMath::Random_Float(MIN_PHI, MAX_PHI);
+	Phi.Z = WWMath::Random_Float(MIN_PHI, MAX_PHI);
 }
 
 CameraShakeSystemClass::CameraShakerClass::~CameraShakerClass(void)
 {
 }
 
-
-void CameraShakeSystemClass::CameraShakerClass::Compute_Rotations(const Vector3 & camera_position, Vector3 * set_angles)
+void CameraShakeSystemClass::CameraShakerClass::Compute_Rotations(const Vector3 &camera_position, Vector3 *set_angles)
 {
 	WWASSERT(set_angles != NULL);
 
@@ -150,11 +142,10 @@ void CameraShakeSystemClass::CameraShakerClass::Compute_Rotations(const Vector3 
 
 	float len2 = (camera_position - Position).Length2();
 
-
-	if (len2 > Radius*Radius) {
+	if (len2 > Radius * Radius)
+	{
 		return;
 	}
-
 
 	/*
 	** f(t) = intensity(t,pos) * sin( omega(t) * t + phi );
@@ -163,20 +154,20 @@ void CameraShakeSystemClass::CameraShakerClass::Compute_Rotations(const Vector3 
 	** phi = random(0..start_omega)
 	*/
 	float intensity = Intensity * (1.0f - WWMath::Sqrt(len2) / Radius) * (1.0f - ElapsedTime / Duration);
-	for (int i=0; i<3; i++) {
+	for (int i = 0; i < 3; i++)
+	{
 		float omega = Omega[i] + (END_OMEGA - Omega[i]) * ElapsedTime;
 		(*set_angles)[i] += AXIS_ROTATION[i] * intensity * WWMath::Sin(omega * ElapsedTime + Phi[i]);
 
-		//WST 11/14/2002. Add in additional random fudge.  There seems to be a too mathematical pattern of shake with the above
+		// WST 11/14/2002. Add in additional random fudge.  There seems to be a too mathematical pattern of shake with the above
 		Vector3 secondary_angles;
 		float minor_intensity = intensity * 0.5f;
-		secondary_angles.X = WWMath::Random_Float(-minor_intensity,minor_intensity);
-		secondary_angles.Y = WWMath::Random_Float(-minor_intensity,minor_intensity);
-		secondary_angles.Z = WWMath::Random_Float(-minor_intensity,minor_intensity);
+		secondary_angles.X = WWMath::Random_Float(-minor_intensity, minor_intensity);
+		secondary_angles.Y = WWMath::Random_Float(-minor_intensity, minor_intensity);
+		secondary_angles.Z = WWMath::Random_Float(-minor_intensity, minor_intensity);
 		(*set_angles) += secondary_angles;
 	}
 }
-
 
 /************************************************************************************************
 **
@@ -192,31 +183,26 @@ CameraShakeSystemClass::~CameraShakeSystemClass(void)
 	/*
 	** delete all of the objects out of the list
 	*/
-	while (!CameraShakerList.Is_Empty()) {
-		CameraShakerClass * obj = CameraShakerList.Remove_Head();
+	while (!CameraShakerList.Is_Empty())
+	{
+		CameraShakerClass *obj = CameraShakerList.Remove_Head();
 		CameraShakerList.Remove(obj);
 		delete obj;
 	}
 }
 
-void CameraShakeSystemClass::Add_Camera_Shake
-(
-	const Vector3 & position,
-	float radius,
-	float duration,
-	float power
-)
+void CameraShakeSystemClass::Add_Camera_Shake(const Vector3 &position, float radius, float duration, float power)
 {
-	//WWMEMLOG(MEM_PHYSICSDATA);
+	// WWMEMLOG(MEM_PHYSICSDATA);
 	/*
 	** Allocate a new camera shaker object.  Note that these are mem-pooled so the allocation
 	** is very cheap.
 	*/
 
-	//Power is in degrees of amplitude.
-	power = power * PI/180.0f;
+	// Power is in degrees of amplitude.
+	power = power * PI / 180.0f;
 
-	CameraShakerClass * shaker = new CameraShakerClass(position,radius,duration,power);
+	CameraShakerClass *shaker = new CameraShakerClass(position, radius, duration, power);
 	CameraShakerList.Add(shaker);
 }
 
@@ -226,15 +212,16 @@ bool CameraShakeSystemClass::IsCameraShaking(void)
 	** Loop through to find if there is any active camera shakers
 	*/
 	MultiListIterator<CameraShakerClass> iterator(&CameraShakerList);
-	for (iterator.First(); !iterator.Is_Done(); iterator.Next()) {
-		CameraShakerClass * obj = iterator.Peek_Obj();
-		if (obj){
+	for (iterator.First(); !iterator.Is_Done(); iterator.Next())
+	{
+		CameraShakerClass *obj = iterator.Peek_Obj();
+		if (obj)
+		{
 			return (true);
 		}
 	}
-	return(false);
+	return (false);
 }
-
 
 void CameraShakeSystemClass::Timestep(float dt)
 {
@@ -244,10 +231,12 @@ void CameraShakeSystemClass::Timestep(float dt)
 	*/
 	MultiListClass<CameraShakerClass> deletelist;
 	MultiListIterator<CameraShakerClass> iterator(&CameraShakerList);
-	for (iterator.First(); !iterator.Is_Done(); iterator.Next()) {
-		CameraShakerClass * obj = iterator.Peek_Obj();
+	for (iterator.First(); !iterator.Is_Done(); iterator.Next())
+	{
+		CameraShakerClass *obj = iterator.Peek_Obj();
 		obj->Timestep(dt);
-		if (obj->Is_Expired()) {
+		if (obj->Is_Expired())
+		{
 			deletelist.Add(obj);
 		}
 	}
@@ -255,8 +244,9 @@ void CameraShakeSystemClass::Timestep(float dt)
 	/*
 	** Remove and delete all the ones that expired
 	*/
-	while (!deletelist.Is_Empty()) {
-		CameraShakerClass * obj = deletelist.Remove_Head();
+	while (!deletelist.Is_Empty())
+	{
+		CameraShakerClass *obj = deletelist.Remove_Head();
 		CameraShakerList.Remove(obj);
 		delete obj;
 	}
@@ -266,25 +256,27 @@ void CameraShakeSystemClass::Update_Camera_Shaker(Vector3 camera_position, Vecto
 {
 	MultiListIterator<CameraShakerClass> iterator(&CameraShakerList);
 
-	Vector3 angles(0,0,0);
+	Vector3 angles(0, 0, 0);
 	Matrix3D camera_transform;
 
-	//camera_transform = camera.Get_Transform();
-	//camera_transform.Get_Translation(&camera_position);
+	// camera_transform = camera.Get_Transform();
+	// camera_transform.Get_Translation(&camera_position);
 
 	/*
 	** Accumulate the effects of any active camera shakers
 	*/
 
-	for (iterator.First(); !iterator.Is_Done(); iterator.Next()) {
-		iterator.Peek_Obj()->Compute_Rotations(camera_position,&angles);
+	for (iterator.First(); !iterator.Is_Done(); iterator.Next())
+	{
+		iterator.Peek_Obj()->Compute_Rotations(camera_position, &angles);
 	}
 
 	/*
 	** Clamp the result
 	*/
-	for (int i=0; i<3; i++) {
-		WWMath::Clamp(angles[i],-AXIS_ROTATION[i],AXIS_ROTATION[i]);
+	for (int i = 0; i < 3; i++)
+	{
+		WWMath::Clamp(angles[i], -AXIS_ROTATION[i], AXIS_ROTATION[i]);
 	}
 
 	*shaker_angle = angles;
@@ -301,5 +293,4 @@ void CameraShakeSystemClass::Update_Camera_Shaker(Vector3 camera_position, Vecto
 }
 
 // The Instance of the system
-CameraShakeSystemClass CameraShakerSystem; //WST 11/12/2002 This is the new Camera Shaker system upgrade
-
+CameraShakeSystemClass CameraShakerSystem; // WST 11/12/2002 This is the new Camera Shaker system upgrade

@@ -26,14 +26,14 @@
 // Generals version number class
 // Author: Matthew D. Campbell, November 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameClient/GameText.h"
 #include "Common/version.h"
 
 #include "gitinfo.h"
 
-Version *TheVersion = NULL;	///< The Version singleton
+Version *TheVersion = NULL; ///< The Version singleton
 
 Version::Version()
 {
@@ -56,9 +56,15 @@ Version::Version()
 #endif
 }
 
-void Version::setVersion(Int major, Int minor, Int buildNum,
-												 Int localBuildNum, AsciiString user, AsciiString location,
-												 AsciiString buildTime, AsciiString buildDate)
+void Version::setVersion(
+		Int major,
+		Int minor,
+		Int buildNum,
+		Int localBuildNum,
+		AsciiString user,
+		AsciiString location,
+		AsciiString buildTime,
+		AsciiString buildDate)
 {
 	m_major = major;
 	m_minor = minor;
@@ -92,8 +98,7 @@ AsciiString Version::getAsciiVersion() const
 			if (user.getLength() < 2)
 				user.concat("xx");
 
-			version.format("%d.%d.%d.%d%c%c", m_major, m_minor, m_buildNum, m_localBuildNum,
-				user.getCharAt(0), user.getCharAt(1));
+			version.format("%d.%d.%d.%d%c%c", m_major, m_minor, m_buildNum, m_localBuildNum, user.getCharAt(0), user.getCharAt(1));
 		}
 	}
 	else
@@ -125,8 +130,14 @@ UnicodeString Version::getUnicodeVersion() const
 			if (user.getLength() < 2)
 				user.concat(L"xx");
 
-			version.format(TheGameText->fetch("Version:Format4").str(), m_major, m_minor, m_buildNum, m_localBuildNum,
-				user.getCharAt(0), user.getCharAt(1));
+			version.format(
+					TheGameText->fetch("Version:Format4").str(),
+					m_major,
+					m_minor,
+					m_buildNum,
+					m_localBuildNum,
+					user.getCharAt(0),
+					user.getCharAt(1));
 		}
 	}
 	else
@@ -210,7 +221,7 @@ time_t Version::getGitCommitTime()
 	return GitCommitTimeStamp;
 }
 
-const char* Version::getGitCommitAuthorName()
+const char *Version::getGitCommitAuthorName()
 {
 	return GitCommitAuthorName;
 }
@@ -250,14 +261,11 @@ AsciiString Version::getAsciiGitVersion() const
 	AsciiString str;
 	if (m_showFullVersion)
 	{
-		str.format("%s %s",
-			getAsciiGitCommitCount().str(),
-			getAsciiGitTagOrHash().str());
+		str.format("%s %s", getAsciiGitCommitCount().str(), getAsciiGitTagOrHash().str());
 	}
 	else
 	{
-		str.format("%s",
-			getAsciiGitCommitCount().str());
+		str.format("%s", getAsciiGitCommitCount().str());
 	}
 	return str;
 }
@@ -267,14 +275,11 @@ UnicodeString Version::getUnicodeGitVersion() const
 	UnicodeString str;
 	if (m_showFullVersion)
 	{
-		str.format(L"%s %s",
-			getUnicodeGitCommitCount().str(),
-			getUnicodeGitTagOrHash().str());
+		str.format(L"%s %s", getUnicodeGitCommitCount().str(), getUnicodeGitTagOrHash().str());
 	}
 	else
 	{
-		str.format(L"%s",
-			getUnicodeGitCommitCount().str());
+		str.format(L"%s", getUnicodeGitCommitCount().str());
 	}
 	return str;
 }
@@ -329,7 +334,8 @@ UnicodeString Version::getUnicodeProductString() const
 
 	if (!productTitle.isEmpty())
 	{
-		UnicodeString productVersion = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductVersion", getUnicodeProductVersion().str());
+		UnicodeString productVersion =
+				TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductVersion", getUnicodeProductVersion().str());
 		UnicodeString productAuthor = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductAuthor", getUnicodeProductAuthor().str());
 
 		str.concat(productTitle);
@@ -373,27 +379,21 @@ UnicodeString Version::getUnicodeProductVersionHashString() const
 AsciiString Version::buildAsciiGitCommitCount()
 {
 	AsciiString str;
-	str.format("%s%d",
-		GitUncommittedChanges ? "~" : "",
-		GitRevision);
+	str.format("%s%d", GitUncommittedChanges ? "~" : "", GitRevision);
 	return str;
 }
 
 UnicodeString Version::buildUnicodeGitCommitCount()
 {
 	UnicodeString str;
-	str.format(L"%s%d",
-		GitUncommittedChanges ? L"~" : L"",
-		GitRevision);
+	str.format(L"%s%d", GitUncommittedChanges ? L"~" : L"", GitRevision);
 	return str;
 }
 
 AsciiString Version::buildAsciiGitTagOrHash()
 {
 	AsciiString str;
-	str.format("%s%s",
-		GitUncommittedChanges ? "~" : "",
-		GitTag[0] ? GitTag : GitShortSHA1);
+	str.format("%s%s", GitUncommittedChanges ? "~" : "", GitTag[0] ? GitTag : GitShortSHA1);
 	return str;
 }
 
@@ -408,9 +408,9 @@ AsciiString Version::buildAsciiGitCommitTime()
 {
 	const Int len = 19;
 	AsciiString str;
-	Char* buf = str.getBufferForRead(len);
-	tm* time = gmtime(&GitCommitTimeStamp);
-	strftime(buf, len+1, "%Y-%m-%d %H:%M:%S", time);
+	Char *buf = str.getBufferForRead(len);
+	tm *time = gmtime(&GitCommitTimeStamp);
+	strftime(buf, len + 1, "%Y-%m-%d %H:%M:%S", time);
 	return str;
 }
 
@@ -418,8 +418,8 @@ UnicodeString Version::buildUnicodeGitCommitTime()
 {
 	const Int len = 19;
 	UnicodeString str;
-	WideChar* buf = str.getBufferForRead(len);
-	tm* time = gmtime(&GitCommitTimeStamp);
-	wcsftime(buf, len+1, L"%Y-%m-%d %H:%M:%S", time);
+	WideChar *buf = str.getBufferForRead(len);
+	tm *time = gmtime(&GitCommitTimeStamp);
+	wcsftime(buf, len + 1, L"%Y-%m-%d %H:%M:%S", time);
 	return str;
 }

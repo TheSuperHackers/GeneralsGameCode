@@ -23,19 +23,22 @@
 // Ease in and out based on a parabolic function.
 // Author: Robert Minsk May 12, 2003
 // ============================================================================
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file in the GameEngine
 #include "GameClient/ParabolicEase.h"
 // ============================================================================
 // ============================================================================
-namespace {
-// ============================================================================
-template <typename TYPE>
-inline TYPE
-clamp(TYPE val, TYPE min = TYPE(0), TYPE max = TYPE(1))
+namespace
 {
-	if (val < min) {
+// ============================================================================
+template<typename TYPE>
+inline TYPE clamp(TYPE val, TYPE min = TYPE(0), TYPE max = TYPE(1))
+{
+	if (val < min)
+	{
 		val = min;
-	} else if (val > max) {
+	}
+	else if (val > max)
+	{
 		val = max;
 	}
 	return val;
@@ -44,32 +47,34 @@ clamp(TYPE val, TYPE min = TYPE(0), TYPE max = TYPE(1))
 // ============================================================================
 } // namespace
 // ============================================================================
-void
-ParabolicEase::setEaseTimes(Real easeInTime, Real easeOutTime)
+void ParabolicEase::setEaseTimes(Real easeInTime, Real easeOutTime)
 {
 	m_in = easeInTime;
-	if (m_in < 0.0f || m_in > 1.0f) {
+	if (m_in < 0.0f || m_in > 1.0f)
+	{
 		DEBUG_CRASH(("Ease-in out of range (in = %g)", m_in));
 		m_in = clamp(m_in);
 	}
 
 	m_out = 1.0f - easeOutTime;
-	if (m_out < 0.0f || m_out > 1.0f) {
+	if (m_out < 0.0f || m_out > 1.0f)
+	{
 		DEBUG_CRASH(("Ease-out out of range (out = %g)", m_out));
 		m_out = clamp(m_out);
 	}
 
-	if (m_in > m_out) {
+	if (m_in > m_out)
+	{
 		DEBUG_CRASH(("Ease-in and ease-out overlap (in = %g, out = %g)", m_in, m_out));
 		m_in = m_out;
 	}
 }
 
 // ----------------------------------------------------------------------------
-Real
-ParabolicEase::operator ()(Real param) const
+Real ParabolicEase::operator()(Real param) const
 {
-	if (param < 0.0f || param > 1.0f) {
+	if (param < 0.0f || param > 1.0f)
+	{
 		DEBUG_CRASH(("Ease-in/ease-out parameter out of range (param = %g)", param));
 		param = clamp(param);
 	}
@@ -87,14 +92,19 @@ ParabolicEase::operator ()(Real param) const
 	}
 #else
 	const Real v0 = 1.0f + m_out - m_in;
-	if (param < m_in) {
+	if (param < m_in)
+	{
 		// "param < in" avoids a division by zero at param = 0.0f and in = 0.0f
-		return param*param/(v0*m_in);
-	} else if (param <= m_out) {
+		return param * param / (v0 * m_in);
+	}
+	else if (param <= m_out)
+	{
 		// "param <= out" avoid a division by zero when param = 1.0f and out = 1.0f
-		return (m_in + 2.0*(param - m_in))/v0;
-	} else {
-		return (m_in + 2.0*(m_out - m_in) + (2.0*(param - m_out) + m_out*m_out - param*param)/(1.0f - m_out))/v0;
+		return (m_in + 2.0 * (param - m_in)) / v0;
+	}
+	else
+	{
+		return (m_in + 2.0 * (m_out - m_in) + (2.0 * (param - m_out) + m_out * m_out - param * param) / (1.0f - m_out)) / v0;
 	}
 #endif
 }

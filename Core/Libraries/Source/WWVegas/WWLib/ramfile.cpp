@@ -47,10 +47,9 @@
  *   RAMFileClass::~RAMFileClass -- Destructor for the RAM file class.                         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
-#include	"RAMFILE.H"
-#include	<string.h>
-
+#include "always.h"
+#include "RAMFILE.H"
+#include <string.h>
 
 /***********************************************************************************************
  * RAMFileClass::RAMFileClass -- Construct a RAM buffer based "file" object.                   *
@@ -77,21 +76,15 @@
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-RAMFileClass::RAMFileClass(void * buffer, int len) :
-	Buffer((char *)buffer),
-	MaxLength(len),
-	Length(len),
-	Offset(0),
-	Access(READ),
-	IsOpen(false),
-	IsAllocated(false)
+RAMFileClass::RAMFileClass(void *buffer, int len) :
+		Buffer((char *)buffer), MaxLength(len), Length(len), Offset(0), Access(READ), IsOpen(false), IsAllocated(false)
 {
-	if (buffer == NULL && len > 0) {
+	if (buffer == NULL && len > 0)
+	{
 		Buffer = W3DNEWARRAY char[len];
 		IsAllocated = true;
 	}
 }
-
 
 /***********************************************************************************************
  * RAMFileClass::~RAMFileClass -- Destructor for the RAM file class.                           *
@@ -110,13 +103,13 @@ RAMFileClass::RAMFileClass(void * buffer, int len) :
 RAMFileClass::~RAMFileClass(void)
 {
 	Close();
-	if (IsAllocated) {
-		delete [] Buffer;
+	if (IsAllocated)
+	{
+		delete[] Buffer;
 		Buffer = NULL;
 		IsAllocated = false;
 	}
 }
-
 
 /***********************************************************************************************
  * RAMFileClass::Create -- Effectively clears the buffer of data.                              *
@@ -135,13 +128,13 @@ RAMFileClass::~RAMFileClass(void)
  *=============================================================================================*/
 int RAMFileClass::Create(void)
 {
-	if (!Is_Open()) {
+	if (!Is_Open())
+	{
 		Length = 0;
-		return(true);
+		return (true);
 	}
-	return(false);
+	return (false);
 }
-
 
 /***********************************************************************************************
  * RAMFileClass::Delete -- Effectively clears the buffer of data.                              *
@@ -160,13 +153,13 @@ int RAMFileClass::Create(void)
  *=============================================================================================*/
 int RAMFileClass::Delete(void)
 {
-	if (!Is_Open()) {
+	if (!Is_Open())
+	{
 		Length = 0;
-		return(true);
+		return (true);
 	}
-	return(false);
+	return (false);
 }
-
 
 /***********************************************************************************************
  * RAMFileClass::Is_Available -- Determines if the "file" is available.                        *
@@ -182,11 +175,10 @@ int RAMFileClass::Delete(void)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool RAMFileClass::Is_Available(int )
+bool RAMFileClass::Is_Available(int)
 {
-	return(true);
+	return (true);
 }
-
 
 /***********************************************************************************************
  * RAMFileClass::Is_Open -- Is the file open?                                                  *
@@ -204,9 +196,8 @@ bool RAMFileClass::Is_Available(int )
  *=============================================================================================*/
 bool RAMFileClass::Is_Open(void) const
 {
-	return(IsOpen);
+	return (IsOpen);
 }
-
 
 /***********************************************************************************************
  * RAMFileClass::Open -- Opens a RAM based file for read or write.                             *
@@ -229,9 +220,8 @@ bool RAMFileClass::Is_Open(void) const
  *=============================================================================================*/
 int RAMFileClass::Open(char const *, int access)
 {
-	return(Open(access));
+	return (Open(access));
 }
-
 
 /***********************************************************************************************
  * RAMFileClass::Open -- Opens the RAM based file.                                             *
@@ -251,15 +241,17 @@ int RAMFileClass::Open(char const *, int access)
  *=============================================================================================*/
 int RAMFileClass::Open(int access)
 {
-	if (Buffer == NULL || Is_Open()) {
-		return(false);
+	if (Buffer == NULL || Is_Open())
+	{
+		return (false);
 	}
 
 	Offset = 0;
 	Access = access;
 	IsOpen = true;
 
-	switch (access) {
+	switch (access)
+	{
 		default:
 		case READ:
 			break;
@@ -268,13 +260,12 @@ int RAMFileClass::Open(int access)
 			Length = 0;
 			break;
 
-		case READ|WRITE:
+		case READ | WRITE:
 			break;
 	}
 
-	return(Is_Open());
+	return (Is_Open());
 }
-
 
 /***********************************************************************************************
  * RAMFileClass::Read -- Read data from the file.                                              *
@@ -296,33 +287,38 @@ int RAMFileClass::Open(int access)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RAMFileClass::Read(void * buffer, int size)
+int RAMFileClass::Read(void *buffer, int size)
 {
-	if (Buffer == NULL || buffer == NULL || size == 0) {
-		return(0);
+	if (Buffer == NULL || buffer == NULL || size == 0)
+	{
+		return (0);
 	}
 
 	bool hasopened = false;
-	if (!Is_Open()) {
+	if (!Is_Open())
+	{
 		Open(READ);
 		hasopened = true;
-	} else {
-		if ((Access & READ) == 0) {
-			return(0);
+	}
+	else
+	{
+		if ((Access & READ) == 0)
+		{
+			return (0);
 		}
 	}
 
-	int tocopy = (size < (Length-Offset)) ? size : (Length-Offset);
+	int tocopy = (size < (Length - Offset)) ? size : (Length - Offset);
 	memmove(buffer, &Buffer[Offset], tocopy);
 	Offset += tocopy;
 
-	if (hasopened) {
+	if (hasopened)
+	{
 		Close();
 	}
 
-	return(tocopy);
+	return (tocopy);
 }
-
 
 /***********************************************************************************************
  * RAMFileClass::Seek -- Controls the ram file virtual read position.                          *
@@ -347,16 +343,19 @@ int RAMFileClass::Read(void * buffer, int size)
  *=============================================================================================*/
 int RAMFileClass::Seek(int pos, int dir)
 {
-	if (Buffer == NULL || !Is_Open()) {
-		return(Offset);
+	if (Buffer == NULL || !Is_Open())
+	{
+		return (Offset);
 	}
 
 	int maxoffset = Length;
-	if ((Access & WRITE) != 0) {
+	if ((Access & WRITE) != 0)
+	{
 		maxoffset = MaxLength;
 	}
 
-	switch (dir) {
+	switch (dir)
+	{
 		case SEEK_CUR:
 			Offset += pos;
 			break;
@@ -370,16 +369,18 @@ int RAMFileClass::Seek(int pos, int dir)
 			break;
 	}
 
-	if (Offset < 0) Offset = 0;
-	if (Offset > maxoffset) Offset = maxoffset;
+	if (Offset < 0)
+		Offset = 0;
+	if (Offset > maxoffset)
+		Offset = maxoffset;
 
-	if (Offset > Length) {
+	if (Offset > Length)
+	{
 		Length = Offset;
 	}
 
-	return(Offset);
+	return (Offset);
 }
-
 
 /***********************************************************************************************
  * RAMFileClass::Size -- Returns with the size of the ram file.                                *
@@ -399,9 +400,8 @@ int RAMFileClass::Seek(int pos, int dir)
  *=============================================================================================*/
 int RAMFileClass::Size(void)
 {
-	return(Length);
+	return (Length);
 }
-
 
 /***********************************************************************************************
  * RAMFileClass::Write -- Copies data to the ram file.                                         *
@@ -421,19 +421,24 @@ int RAMFileClass::Size(void)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RAMFileClass::Write(void const * buffer, int size)
+int RAMFileClass::Write(void const *buffer, int size)
 {
-	if (Buffer == NULL || buffer == NULL || size == 0) {
-		return(0);
+	if (Buffer == NULL || buffer == NULL || size == 0)
+	{
+		return (0);
 	}
 
 	bool hasopened = false;
-	if (!Is_Open()) {
+	if (!Is_Open())
+	{
 		Open(WRITE);
 		hasopened = true;
-	} else {
-		if ((Access & WRITE) == 0) {
-			return(0);
+	}
+	else
+	{
+		if ((Access & WRITE) == 0)
+		{
+			return (0);
 		}
 	}
 
@@ -442,17 +447,18 @@ int RAMFileClass::Write(void const * buffer, int size)
 	memmove(&Buffer[Offset], buffer, towrite);
 	Offset += towrite;
 
-	if (Offset > Length) {
+	if (Offset > Length)
+	{
 		Length = Offset;
 	}
 
-	if (hasopened) {
+	if (hasopened)
+	{
 		Close();
 	}
 
-	return(towrite);
+	return (towrite);
 }
-
 
 /***********************************************************************************************
  * RAMFileClass::Close -- This will 'close' the ram file.                                      *
@@ -473,7 +479,6 @@ void RAMFileClass::Close(void)
 	IsOpen = false;
 }
 
-
 /***********************************************************************************************
  * RAMFileClass::Bias --																							  *
  *                                                                                             *
@@ -487,13 +492,14 @@ void RAMFileClass::Close(void)
  * HISTORY:                                                                                    *
  *   10/31/2001 IML : Created.                                                                 *
  *=============================================================================================*/
-void RAMFileClass::Bias (int start, int length)
+void RAMFileClass::Bias(int start, int length)
 {
-	Buffer	 = Buffer + start;
-	Length	 = MIN (Length, start + length) - start;
-	MaxLength =	MIN (MaxLength, start + length) - start;
+	Buffer = Buffer + start;
+	Length = MIN(Length, start + length) - start;
+	MaxLength = MIN(MaxLength, start + length) - start;
 
-	if (Is_Open()) {
-		Seek (0, SEEK_SET);
+	if (Is_Open())
+	{
+		Seek(0, SEEK_SET);
 	}
 }

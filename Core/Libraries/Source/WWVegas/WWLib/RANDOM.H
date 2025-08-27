@@ -51,32 +51,34 @@
 **	this class will return an 'int', the actual significance of the random number is
 **	limited to 15 bits (0..32767).
 */
-class RandomClass {
-	public:
-		RandomClass(unsigned seed=0);
+class RandomClass
+{
+public:
+	RandomClass(unsigned seed = 0);
 
-		operator int(void) {return(operator()());};
-		int operator() (void);
-		int operator() (int minval, int maxval);
+	operator int(void) { return (operator()()); };
+	int operator()(void);
+	int operator()(int minval, int maxval);
 
-		enum {
-			SIGNIFICANT_BITS=15				// Random number bit significance.
-		};
+	enum
+	{
+		SIGNIFICANT_BITS = 15 // Random number bit significance.
+	};
 
-	protected:
-		unsigned long Seed;
+protected:
+	unsigned long Seed;
 
-		/*
-		**	Internal working constants that are used to generate the next
-		**	random number.
-		*/
-		enum {
-			MULT_CONSTANT=0x41C64E6D,		// K multiplier value.
-			ADD_CONSTANT=0x00003039,		// K additive value.
-			THROW_AWAY_BITS=10				// Low bits to throw away.
-		};
+	/*
+	**	Internal working constants that are used to generate the next
+	**	random number.
+	*/
+	enum
+	{
+		MULT_CONSTANT = 0x41C64E6D, // K multiplier value.
+		ADD_CONSTANT = 0x00003039, // K additive value.
+		THROW_AWAY_BITS = 10 // Low bits to throw away.
+	};
 };
-
 
 /*
 **	This class functions like a 'magic' number where it returns a different value every
@@ -96,24 +98,25 @@ class RandomClass {
 // This random number generator starts breaking down in 64 dimensions
 // behaving very badly in that domain
 // HY 6/14/01
-class Random2Class {
-	public:
-		Random2Class(unsigned seed=0);
+class Random2Class
+{
+public:
+	Random2Class(unsigned seed = 0);
 
-		operator int(void) {return(operator()());};
-		int operator() (void);
-		int operator() (int minval, int maxval);
+	operator int(void) { return (operator()()); };
+	int operator()(void);
+	int operator()(int minval, int maxval);
 
-		enum {
-			SIGNIFICANT_BITS=32				// Random number bit significance.
-		};
+	enum
+	{
+		SIGNIFICANT_BITS = 32 // Random number bit significance.
+	};
 
-	protected:
-		int Index1;
-		int Index2;
-		int Table[250];
+protected:
+	int Index1;
+	int Index2;
+	int Table[250];
 };
-
 
 /*
 **	This class functions like a 'magic' number where it returns a different value every
@@ -132,23 +135,25 @@ class Random2Class {
 // This random number generator starts breaking down in 3 dimensions
 // exhibiting a strange bias
 // HY 6/14/01
-class Random3Class {
-	public:
-		Random3Class(unsigned seed1=0, unsigned seed2=0);
+class Random3Class
+{
+public:
+	Random3Class(unsigned seed1 = 0, unsigned seed2 = 0);
 
-		operator int(void) {return(operator()());};
-		int operator() (void);
-		int operator() (int minval, int maxval);
+	operator int(void) { return (operator()()); };
+	int operator()(void);
+	int operator()(int minval, int maxval);
 
-		enum {
-			SIGNIFICANT_BITS=32				// Random number bit significance.
-		};
+	enum
+	{
+		SIGNIFICANT_BITS = 32 // Random number bit significance.
+	};
 
-	protected:
-		static int Mix1[20];
-		static int Mix2[20];
-		int Seed;
-		int Index;
+protected:
+	static int Mix1[20];
+	static int Mix2[20];
+	int Seed;
+	int Index;
 };
 
 /*
@@ -172,24 +177,25 @@ class Random3Class {
 // simulation. Optimized, it's 4 times faster than rand()
 // http://www.math.keio.ac.jp/~matumoto/emt.html
 // HY 6/14/01
-class Random4Class {
-	public:
-		Random4Class(unsigned int seed=4357);
+class Random4Class
+{
+public:
+	Random4Class(unsigned int seed = 4357);
 
-		operator int(void) {return(operator()());};
-		int operator() (void);
-		int operator() (int minval, int maxval);
-		float Get_Float();
+	operator int(void) { return (operator()()); };
+	int operator()(void);
+	int operator()(int minval, int maxval);
+	float Get_Float();
 
-		enum {
-			SIGNIFICANT_BITS=32				// Random number bit significance.
-		};
+	enum
+	{
+		SIGNIFICANT_BITS = 32 // Random number bit significance.
+	};
 
-	protected:
-		unsigned int mt[624]; // state vector
-		int mti;			 // index
+protected:
+	unsigned int mt[624]; // state vector
+	int mti; // index
 };
-
 
 /***********************************************************************************************
  * Pick_Random_Number -- Picks a random number between two values (inclusive).                 *
@@ -214,19 +220,21 @@ class Random4Class {
  *   05/23/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class T>
-int Pick_Random_Number(T & generator, int minval, int maxval)
+int Pick_Random_Number(T &generator, int minval, int maxval)
 {
 	/*
 	**	Test for shortcut case where the range is null and thus
 	**	the number to return is actually implicit from the
 	**	parameters.
 	*/
-	if (minval == maxval) return(minval);
+	if (minval == maxval)
+		return (minval);
 
 	/*
 	**	Ensure that the min and max range values are in proper order.
 	*/
-	if (minval > maxval) {
+	if (minval > maxval)
+	{
 		int temp = minval;
 		minval = maxval;
 		maxval = temp;
@@ -239,8 +247,9 @@ int Pick_Random_Number(T & generator, int minval, int maxval)
 	**	random number algorithm.
 	*/
 	int magnitude = maxval - minval;
-	int highbit = T::SIGNIFICANT_BITS-1;
-	while ((magnitude & (1 << highbit)) == 0 && highbit > 0) {
+	int highbit = T::SIGNIFICANT_BITS - 1;
+	while ((magnitude & (1 << highbit)) == 0 && highbit > 0)
+	{
 		highbit--;
 	}
 
@@ -248,15 +257,16 @@ int Pick_Random_Number(T & generator, int minval, int maxval)
 	**	Create a full bit mask pattern that has all bits set that just
 	**	barely covers the magnitude of the number range desired.
 	*/
-	int mask = ~( (~0L) << (highbit+1));
+	int mask = ~((~0L) << (highbit + 1));
 
 	/*
 	**	Keep picking random numbers until it fits within the magnitude desired. With a
 	**	good random number generator, it will have to perform this loop an average
 	**	of one and a half times.
 	*/
-	int pick = magnitude+1;
-	while (pick > magnitude) {
+	int pick = magnitude + 1;
+	while (pick > magnitude)
+	{
 		pick = generator() & mask;
 	}
 
@@ -264,7 +274,7 @@ int Pick_Random_Number(T & generator, int minval, int maxval)
 	**	Finally, bias the random number pick to the start of the range
 	**	requested.
 	*/
-	return(pick + minval);
+	return (pick + minval);
 }
 
 #endif

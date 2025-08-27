@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
@@ -38,34 +38,27 @@
 
 #include "GameClient/Drawable.h"
 
-
-
-
-
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-FloatUpdateModuleData::FloatUpdateModuleData( void )
+FloatUpdateModuleData::FloatUpdateModuleData(void)
 {
-
 	m_enabled = FALSE;
 
-}  // end FloatUpdateModuleData
+} // end FloatUpdateModuleData
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void FloatUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
+/*static*/ void FloatUpdateModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
+	UpdateModuleData::buildFieldParse(p);
 
-	UpdateModuleData::buildFieldParse( p );
-
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "Enabled",	INI::parseBool,	NULL, offsetof( FloatUpdateModuleData, m_enabled ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "Enabled", INI::parseBool, NULL, offsetof(FloatUpdateModuleData, m_enabled) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+} // end buildFieldParse
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,51 +66,46 @@ FloatUpdateModuleData::FloatUpdateModuleData( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-FloatUpdate::FloatUpdate( Thing *thing, const ModuleData *moduleData )
-						:UpdateModule( thing, moduleData )
+FloatUpdate::FloatUpdate(Thing *thing, const ModuleData *moduleData) : UpdateModule(thing, moduleData)
 {
-
 	// save our initial enabled status based on INI settings
 	m_enabled = ((FloatUpdateModuleData *)moduleData)->m_enabled;
 
-}  // end FloatUpdate
+} // end FloatUpdate
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-FloatUpdate::~FloatUpdate( void )
+FloatUpdate::~FloatUpdate(void)
 {
-
-}  // end ~FloatUpdate
+} // end ~FloatUpdate
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime FloatUpdate::update( void )
+UpdateSleepTime FloatUpdate::update(void)
 {
-/// @todo srj use SLEEPY_UPDATE here
+	/// @todo srj use SLEEPY_UPDATE here
 
 	// if we're not enabled, do nothing
-	if( m_enabled == TRUE )
+	if (m_enabled == TRUE)
 	{
 		// get object position
 		const Coord3D *pos = getObject()->getPosition();
 
 		// get the height of the water here
 		Real waterZ;
-		TheTerrainLogic->isUnderwater( pos->x, pos->y, &waterZ );
+		TheTerrainLogic->isUnderwater(pos->x, pos->y, &waterZ);
 
 		// snap to the water surface
 		Coord3D newPos;
 		newPos.x = pos->x;
 		newPos.y = pos->y;
 		newPos.z = waterZ;
-		getObject()->setPosition( &newPos );
-
+		getObject()->setPosition(&newPos);
 	}
 
 	Drawable *draw = getObject()->getDrawable();
 	if (draw)
 	{
-
 		Real angle = INT_TO_REAL(TheGameLogic->getFrame());
 		Real yaw = sin(angle * 0.0291f) * 0.05f;
 		Real pitch = sin(angle * 0.0515f) * 0.05f;
@@ -134,47 +122,44 @@ UpdateSleepTime FloatUpdate::update( void )
 	}
 
 	return UPDATE_SLEEP_NONE;
-}  // end update
+} // end update
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void FloatUpdate::crc( Xfer *xfer )
+void FloatUpdate::crc(Xfer *xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
+	UpdateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void FloatUpdate::xfer( Xfer *xfer )
+void FloatUpdate::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// enabled
-	xfer->xferBool( &m_enabled );
+	xfer->xferBool(&m_enabled);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FloatUpdate::loadPostProcess( void )
+void FloatUpdate::loadPostProcess(void)
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

@@ -37,12 +37,11 @@
  *   LZOStraw::~LZOStraw -- Destructor for the LZO straw.                                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
-#include	"lzo.h"
-#include	"lzostraw.h"
-#include	<assert.h>
-#include	<string.h>
-
+#include "always.h"
+#include "lzo.h"
+#include "lzostraw.h"
+#include <assert.h>
+#include <string.h>
 
 /***********************************************************************************************
  * LZOStraw::LZOStraw -- Constructor for LZO straw object.                                     *
@@ -64,19 +63,15 @@
  *   07/04/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 LZOStraw::LZOStraw(CompControl control, int blocksize) :
-		Control(control),
-		Counter(0),
-		Buffer(NULL),
-		Buffer2(NULL),
-		BlockSize(blocksize)
+		Control(control), Counter(0), Buffer(NULL), Buffer2(NULL), BlockSize(blocksize)
 {
 	SafetyMargin = BlockSize;
-	Buffer = new char[BlockSize+SafetyMargin];
-	if (control == COMPRESS) {
-		Buffer2 = new char[BlockSize+SafetyMargin];
+	Buffer = new char[BlockSize + SafetyMargin];
+	if (control == COMPRESS)
+	{
+		Buffer2 = new char[BlockSize + SafetyMargin];
 	}
 }
-
 
 /***********************************************************************************************
  * LZOStraw::~LZOStraw -- Destructor for the LZO straw.                                        *
@@ -94,13 +89,12 @@ LZOStraw::LZOStraw(CompControl control, int blocksize) :
  *=============================================================================================*/
 LZOStraw::~LZOStraw(void)
 {
-	delete [] Buffer;
+	delete[] Buffer;
 	Buffer = NULL;
 
-	delete [] Buffer2;
+	delete[] Buffer2;
 	Buffer2 = NULL;
 }
-
 
 /***********************************************************************************************
  * LZOStraw::Get -- Fetch data through the LZO processor.                                      *
@@ -123,7 +117,7 @@ LZOStraw::~LZOStraw(void)
  * HISTORY:                                                                                    *
  *   07/04/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int LZOStraw::Get(void * destbuf, int slen)
+int LZOStraw::Get(void *destbuf, int slen)
 {
 	assert(Buffer != NULL);
 
@@ -132,53 +126,70 @@ int LZOStraw::Get(void * destbuf, int slen)
 	/*
 	**	Verify parameters for legality.
 	*/
-	if (destbuf == NULL || slen < 1) {
-		return(0);
+	if (destbuf == NULL || slen < 1)
+	{
+		return (0);
 	}
 
-	while (slen > 0) {
-
+	while (slen > 0)
+	{
 		/*
 		**	Copy as much data is requested and available into the desired
 		**	destination buffer.
 		*/
-		if (Counter) {
+		if (Counter)
+		{
 			int len = (slen < Counter) ? slen : Counter;
-			if (Control == DECOMPRESS) {
-				memmove(destbuf, &Buffer[BlockHeader.UncompCount-Counter], len);
-			} else {
-				memmove(destbuf, &Buffer2[(BlockHeader.CompCount+sizeof(BlockHeader))-Counter], len);
+			if (Control == DECOMPRESS)
+			{
+				memmove(destbuf, &Buffer[BlockHeader.UncompCount - Counter], len);
+			}
+			else
+			{
+				memmove(destbuf, &Buffer2[(BlockHeader.CompCount + sizeof(BlockHeader)) - Counter], len);
 			}
 			destbuf = ((char *)destbuf) + len;
 			slen -= len;
 			Counter -= len;
 			total += len;
 		}
-		if (slen == 0) break;
+		if (slen == 0)
+			break;
 
-		if (Control == DECOMPRESS) {
+		if (Control == DECOMPRESS)
+		{
 			int incount = Straw::Get(&BlockHeader, sizeof(BlockHeader));
-			if (incount != sizeof(BlockHeader)) break;
+			if (incount != sizeof(BlockHeader))
+				break;
 
-			char *staging_buffer = new char [BlockHeader.CompCount];
+			char *staging_buffer = new char[BlockHeader.CompCount];
 			incount = Straw::Get(staging_buffer, BlockHeader.CompCount);
-			if (incount != BlockHeader.CompCount) break;
+			if (incount != BlockHeader.CompCount)
+				break;
 			unsigned int length = sizeof(Buffer);
-			lzo1x_decompress ((unsigned char*)staging_buffer, BlockHeader.CompCount, (unsigned char*)Buffer, &length, NULL);
-			delete [] staging_buffer;
+			lzo1x_decompress((unsigned char *)staging_buffer, BlockHeader.CompCount, (unsigned char *)Buffer, &length, NULL);
+			delete[] staging_buffer;
 			Counter = BlockHeader.UncompCount;
-		} else {
+		}
+		else
+		{
 			BlockHeader.UncompCount = (unsigned short)Straw::Get(Buffer, BlockSize);
-			if (BlockHeader.UncompCount == 0) break;
-			char *dictionary = new char [64*1024];
-			unsigned int length = sizeof (Buffer2) - sizeof (BlockHeader);
-			lzo1x_1_compress ((unsigned char*)Buffer, BlockHeader.UncompCount, (unsigned char*)(&Buffer2[sizeof(BlockHeader)]), &length, dictionary);
+			if (BlockHeader.UncompCount == 0)
+				break;
+			char *dictionary = new char[64 * 1024];
+			unsigned int length = sizeof(Buffer2) - sizeof(BlockHeader);
+			lzo1x_1_compress(
+					(unsigned char *)Buffer,
+					BlockHeader.UncompCount,
+					(unsigned char *)(&Buffer2[sizeof(BlockHeader)]),
+					&length,
+					dictionary);
 			BlockHeader.CompCount = (unsigned short)length;
-			delete [] dictionary;
+			delete[] dictionary;
 			memmove(Buffer2, &BlockHeader, sizeof(BlockHeader));
-			Counter = BlockHeader.CompCount+sizeof(BlockHeader);
+			Counter = BlockHeader.CompCount + sizeof(BlockHeader);
 		}
 	}
 
-	return(total);
+	return (total);
 }

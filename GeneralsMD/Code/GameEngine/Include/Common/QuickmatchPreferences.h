@@ -47,36 +47,36 @@ public:
 	QuickMatchPreferences();
 	virtual ~QuickMatchPreferences();
 
-	void setMapSelected(const AsciiString& mapName, Bool selected);
-	Bool isMapSelected(const AsciiString& mapName);
+	void setMapSelected(const AsciiString &mapName, Bool selected);
+	Bool isMapSelected(const AsciiString &mapName);
 
-	void setLastLadder(const AsciiString& addr, UnsignedShort port);
-	AsciiString getLastLadderAddr( void );
-	UnsignedShort getLastLadderPort( void );
+	void setLastLadder(const AsciiString &addr, UnsignedShort port);
+	AsciiString getLastLadderAddr(void);
+	UnsignedShort getLastLadderPort(void);
 
 	void setMaxDisconnects(Int val);
-	Int getMaxDisconnects( void );
+	Int getMaxDisconnects(void);
 
 	void setMaxPoints(Int val);
-	Int getMaxPoints( void );
+	Int getMaxPoints(void);
 
 	void setMinPoints(Int val);
-	Int getMinPoints( void );
+	Int getMinPoints(void);
 
 	void setWaitTime(Int val);
-	Int getWaitTime( void );
+	Int getWaitTime(void);
 
 	void setNumPlayers(Int val);
-	Int getNumPlayers( void );
+	Int getNumPlayers(void);
 
 	void setMaxPing(Int val);
-	Int getMaxPing( void );
+	Int getMaxPing(void);
 
 	void setColor(Int val);
-	Int getColor( void );
+	Int getColor(void);
 
 	void setSide(Int val);
-	Int getSide( void );
+	Int getSide(void);
 };
 
 #endif // __QUICKMATCHPREFERENCES_H__

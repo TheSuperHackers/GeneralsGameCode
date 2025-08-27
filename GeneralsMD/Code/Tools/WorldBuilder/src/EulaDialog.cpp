@@ -32,28 +32,24 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // EulaDialog dialog
 
-
-EulaDialog::EulaDialog(CWnd* pParent /*=NULL*/)
-	: CDialog(EulaDialog::IDD, pParent)
+EulaDialog::EulaDialog(CWnd *pParent /*=NULL*/) : CDialog(EulaDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(EulaDialog)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void EulaDialog::DoDataExchange(CDataExchange* pDX)
+void EulaDialog::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(EulaDialog)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(EulaDialog, CDialog)
-	//{{AFX_MSG_MAP(EulaDialog)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(EulaDialog)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -64,24 +60,24 @@ BOOL EulaDialog::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	CString theText;
-	theText.LoadString( IDS_EULA_AGREEMENT1 );
+	theText.LoadString(IDS_EULA_AGREEMENT1);
 
 	CString concatText;
-	concatText.LoadString( IDS_EULA_AGREEMENT2 );
+	concatText.LoadString(IDS_EULA_AGREEMENT2);
 	theText += concatText;
-	concatText.LoadString( IDS_EULA_AGREEMENT3 );
+	concatText.LoadString(IDS_EULA_AGREEMENT3);
 	theText += concatText;
-	concatText.LoadString( IDS_EULA_AGREEMENT4 );
+	concatText.LoadString(IDS_EULA_AGREEMENT4);
 	theText += concatText;
-	concatText.LoadString( IDS_EULA_AGREEMENT5 );
+	concatText.LoadString(IDS_EULA_AGREEMENT5);
 	theText += concatText;
 
-	CWnd *theEditDialog = GetDlgItem( IDC_EDIT1 );
-	if( theEditDialog )
+	CWnd *theEditDialog = GetDlgItem(IDC_EDIT1);
+	if (theEditDialog)
 	{
-		theEditDialog->SetWindowText( theText );
+		theEditDialog->SetWindowText(theText);
 	}
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+							 // EXCEPTION: OCX Property Pages should return FALSE
 }

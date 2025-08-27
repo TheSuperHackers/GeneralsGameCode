@@ -35,12 +35,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #ifndef VXLLAYER_H
 #define VXLLAYER_H
 
 #include <max.h>
-
 
 #ifndef BITTYPE_H
 #include "BITTYPE.H"
@@ -50,56 +48,60 @@
 #include "nodelist.h"
 #endif
 
-const sint8 VOXEL_VISIBLE = 0;			// voxels that are "outside" the object
-const sint8 VOXEL_SOLID = 1;				// voxels that are part of the object
-const sint8 VOXEL_UNKNOWN = -1;			// either inside or outside, don't know yet
+const sint8 VOXEL_VISIBLE = 0; // voxels that are "outside" the object
+const sint8 VOXEL_SOLID = 1; // voxels that are part of the object
+const sint8 VOXEL_UNKNOWN = -1; // either inside or outside, don't know yet
 const int max_bitmap_width = 256;
 const int max_bitmap_height = 256;
-
 
 class VoxelLayerClass
 {
 public:
-
 	VoxelLayerClass();
 
-	VoxelLayerClass
-	(
-		INodeListClass		& objectlist,
-		TimeValue			time,
-		Matrix3				parenttm,
-		Point3				offset,
-		Point3				scale,
-		float					slicez,
-		float					sliceh,
-		int					bmwidth,
-		int					bmheight
-	);
+	VoxelLayerClass(
+			INodeListClass &objectlist,
+			TimeValue time,
+			Matrix3 parenttm,
+			Point3 offset,
+			Point3 scale,
+			float slicez,
+			float sliceh,
+			int bmwidth,
+			int bmheight);
 
 	~VoxelLayerClass() {};
 
-	BOOL Is_Visible( int x, int y )
+	BOOL Is_Visible(int x, int y)
 	{
-		if (x < 0 || x >= bitmap_width || y < 0 || y >= bitmap_height) {
+		if (x < 0 || x >= bitmap_width || y < 0 || y >= bitmap_height)
+		{
 			return TRUE;
 		}
 
-		if (Solid[x][y] == 0) {
+		if (Solid[x][y] == 0)
+		{
 			return TRUE;
-		} else {
+		}
+		else
+		{
 			return FALSE;
 		}
 	}
 
-	BOOL Is_Solid( int x, int y )
+	BOOL Is_Solid(int x, int y)
 	{
-		if (x < 0 || x >= bitmap_width || y < 0 || y >= bitmap_height) {
+		if (x < 0 || x >= bitmap_width || y < 0 || y >= bitmap_height)
+		{
 			return FALSE;
 		}
 
-		if (Solid[x][y] == VOXEL_SOLID) {
+		if (Solid[x][y] == VOXEL_SOLID)
+		{
 			return TRUE;
-		} else {
+		}
+		else
+		{
 			return FALSE;
 		}
 	}
@@ -108,42 +110,41 @@ public:
 	unsigned int Get_Height(void) { return bitmap_height; }
 
 protected:
-
-	void Set_Visible ( int x, int y )
+	void Set_Visible(int x, int y)
 	{
-		if (x >= 0 && x < bitmap_width && y >= 0 && y < bitmap_height &&	Solid[x][y] != VOXEL_SOLID )
+		if (x >= 0 && x < bitmap_width && y >= 0 && y < bitmap_height && Solid[x][y] != VOXEL_SOLID)
 		{
 			Solid[x][y] = VOXEL_VISIBLE;
 		}
 	}
 
-	void Add_Solid(int x,int y)
+	void Add_Solid(int x, int y)
 	{
 		// check if the point is outside the bitmap:
-		if (x >= 0 && x < bitmap_width && y >= 0 && y < bitmap_height) {
+		if (x >= 0 && x < bitmap_width && y >= 0 && y < bitmap_height)
+		{
 			Solid[x][y] = VOXEL_SOLID;
 		}
 	}
 
 	// draw a line of voxels into the bitmap
-	void Draw_Line(double x0,double y0,double x1,double y1);
+	void Draw_Line(double x0, double y0, double x1, double y1);
 
 	// draw the intersection between the triangle and the voxel plane
-	void Intersect_Triangle(Point3 a,Point3 b,Point3 c,float z);
+	void Intersect_Triangle(Point3 a, Point3 b, Point3 c, float z);
 
 	// scan convert the polygon fragment in this voxel slab
-	void Scan_Triangle(Point3 a,Point3 b,Point3 c);
+	void Scan_Triangle(Point3 a, Point3 b, Point3 c);
 
-	sint8		Solid[max_bitmap_width][max_bitmap_height];
+	sint8 Solid[max_bitmap_width][max_bitmap_height];
 
-	float		SliceZ;
-	float		SliceH;
-	float		SliceZ0;
-	float		SliceZ1;
+	float SliceZ;
+	float SliceH;
+	float SliceZ0;
+	float SliceZ1;
 
-	int		bitmap_width;
-	int		bitmap_height;
+	int bitmap_width;
+	int bitmap_height;
 };
-
 
 #endif /*VXLLAYER_H*/

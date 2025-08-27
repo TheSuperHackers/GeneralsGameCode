@@ -42,7 +42,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
-W3DDisplayStringManager::W3DDisplayStringManager( void )
+W3DDisplayStringManager::W3DDisplayStringManager(void)
 {
 	for (Int i = 0; i < MAX_GROUPS; ++i)
 	{
@@ -50,11 +50,10 @@ W3DDisplayStringManager::W3DDisplayStringManager( void )
 	}
 
 	m_formationLetterDisplayString = NULL;
-
 }
 
 //-------------------------------------------------------------------------------------------------
-W3DDisplayStringManager::~W3DDisplayStringManager( void )
+W3DDisplayStringManager::~W3DDisplayStringManager(void)
 {
 	for (Int i = 0; i < MAX_GROUPS; ++i)
 	{
@@ -64,20 +63,16 @@ W3DDisplayStringManager::~W3DDisplayStringManager( void )
 	}
 
 	if (m_formationLetterDisplayString)
-		freeDisplayString( m_formationLetterDisplayString );
+		freeDisplayString(m_formationLetterDisplayString);
 	m_formationLetterDisplayString = NULL;
-
-
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DDisplayStringManager::postProcessLoad( void )
+void W3DDisplayStringManager::postProcessLoad(void)
 {
 	// Get the font.
-	GameFont *font = TheFontLibrary->getFont(
-		TheDrawGroupInfo->m_fontName,
-		TheDrawGroupInfo->m_fontSize,
-		TheDrawGroupInfo->m_fontIsBold );
+	GameFont *font =
+			TheFontLibrary->getFont(TheDrawGroupInfo->m_fontName, TheDrawGroupInfo->m_fontSize, TheDrawGroupInfo->m_fontIsBold);
 
 	for (Int i = 0; i < MAX_GROUPS; ++i)
 	{
@@ -86,12 +81,12 @@ void W3DDisplayStringManager::postProcessLoad( void )
 
 #ifdef KRIS_BRUTAL_HACK_FOR_AIRCRAFT_CARRIER_DEBUGGING
 		UnicodeString displayNumber;
-		displayNumber.format( L"%d", i);
-		m_groupNumeralStrings[i]->setText( displayNumber );
+		displayNumber.format(L"%d", i);
+		m_groupNumeralStrings[i]->setText(displayNumber);
 #else
- 		AsciiString displayNumber;
- 		displayNumber.format("NUMBER:%d", i);
- 		m_groupNumeralStrings[i]->setText(TheGameText->fetch(displayNumber));
+		AsciiString displayNumber;
+		displayNumber.format("NUMBER:%d", i);
+		m_groupNumeralStrings[i]->setText(TheGameText->fetch(displayNumber));
 #endif
 	}
 
@@ -100,78 +95,75 @@ void W3DDisplayStringManager::postProcessLoad( void )
 	AsciiString displayLetter;
 	displayLetter.format("LABEL:FORMATION");
 	m_formationLetterDisplayString->setText(TheGameText->fetch(displayLetter));
-
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Allocate a new display string and tie it to the master list so we
-	* can keep track of it */
+ * can keep track of it */
 //-------------------------------------------------------------------------------------------------
-DisplayString *W3DDisplayStringManager::newDisplayString( void )
+DisplayString *W3DDisplayStringManager::newDisplayString(void)
 {
 	DisplayString *newString = newInstance(W3DDisplayString);
 
 	// sanity
-	if( newString == NULL )
+	if (newString == NULL)
 	{
-
-		DEBUG_LOG(( "newDisplayString: Could not allcoate new W3D display string" ));
-		assert( 0 );
+		DEBUG_LOG(("newDisplayString: Could not allcoate new W3D display string"));
+		assert(0);
 		return NULL;
 
-	}  // end if
+	} // end if
 
 	// assign a default font
 	if (TheGlobalLanguageData && TheGlobalLanguageData->m_defaultDisplayStringFont.name.isNotEmpty())
 	{
 		newString->setFont(TheFontLibrary->getFont(
-			TheGlobalLanguageData->m_defaultDisplayStringFont.name,
-			TheGlobalLanguageData->m_defaultDisplayStringFont.size,
-			TheGlobalLanguageData->m_defaultDisplayStringFont.bold) );
+				TheGlobalLanguageData->m_defaultDisplayStringFont.name,
+				TheGlobalLanguageData->m_defaultDisplayStringFont.size,
+				TheGlobalLanguageData->m_defaultDisplayStringFont.bold));
 	}
 	else
-		newString->setFont( TheFontLibrary->getFont( AsciiString("Times New Roman"), 12, FALSE ) );
+		newString->setFont(TheFontLibrary->getFont(AsciiString("Times New Roman"), 12, FALSE));
 
 	// link string to list
-	link( newString );
+	link(newString);
 
 	// return our new string
 	return newString;
 
-}  // end newDisplayString
+} // end newDisplayString
 
 //-------------------------------------------------------------------------------------------------
 /** Remove a display string from the master list and delete the data */
 //-------------------------------------------------------------------------------------------------
-void W3DDisplayStringManager::freeDisplayString( DisplayString *string )
+void W3DDisplayStringManager::freeDisplayString(DisplayString *string)
 {
-
 	// sanity
-	if( string == NULL )
+	if (string == NULL)
 		return;
 
 	// unlink
-	unLink( string );
+	unLink(string);
 
 	// if the string happens to fall where our current checkpoint was, set the checkpoint to null
-	if ( m_currentCheckpoint == string) {
+	if (m_currentCheckpoint == string)
+	{
 		m_currentCheckpoint = NULL;
 	}
 
 	// free data
 	deleteInstance(string);
 
-}  // end freeDisplayString
+} // end freeDisplayString
 
 //-------------------------------------------------------------------------------------------------
 /** Update method for our display string Manager ... if it's been too
-	* long since the last time a string has been rendered, we will free
-	* the rendering resources of the string, if it needs to render again
-	* the DisplayString will have to rebuild the rendering data before
-	* the draw will work */
+ * long since the last time a string has been rendered, we will free
+ * the rendering resources of the string, if it needs to render again
+ * the DisplayString will have to rebuild the rendering data before
+ * the draw will work */
 //-------------------------------------------------------------------------------------------------
-void W3DDisplayStringManager::update( void )
+void W3DDisplayStringManager::update(void)
 {
 	// call base in case we add something later
 	DisplayStringManager::update();
@@ -179,29 +171,27 @@ void W3DDisplayStringManager::update( void )
 	W3DDisplayString *string = static_cast<W3DDisplayString *>(m_stringList);
 
 	// if the m_currentCheckpoint is valid, use it for the starting point for the search
-	if (m_currentCheckpoint) {
+	if (m_currentCheckpoint)
+	{
 		string = static_cast<W3DDisplayString *>(m_currentCheckpoint);
 	}
 
 	UnsignedInt currFrame = TheGameClient->getFrame();
-	const UnsignedInt w3dCleanupTime = 60;  /** any string not rendered after
-																					this many frames will have its
-																					render resources freed */
+	const UnsignedInt w3dCleanupTime = 60; /** any string not rendered after
+																				 this many frames will have its
+																				 render resources freed */
 
 	int numStrings = 10;
 	// looping through all the strings eats up a lot of ambient time. Instead,
 	// loop through 10 (arbitrarily chosen) or till the end is hit.
-	while ( numStrings-- && string)
+	while (numStrings-- && string)
 	{
-
 		//
 		// has this string "expired" in terms of using resources, a string
 		// with a resource frame of zero isn't using any resources at all
 		//
-		if( string->m_lastResourceFrame != 0 &&
-				currFrame - string->m_lastResourceFrame > w3dCleanupTime )
+		if (string->m_lastResourceFrame != 0 && currFrame - string->m_lastResourceFrame > w3dCleanupTime)
 		{
-
 			// free the resources
 			string->m_textRenderer.Reset();
 			string->m_textRendererHotKey.Reset();
@@ -217,21 +207,21 @@ void W3DDisplayStringManager::update( void )
 			//
 			string->m_lastResourceFrame = 0;
 
-		}  // end if
+		} // end if
 
 		// move to next string
 		string = static_cast<W3DDisplayString *>(string->next());
 
-	}  // end while
+	} // end while
 
 	// reset the starting point for our next search
 	m_currentCheckpoint = string;
-}  // end update
+} // end update
 
 //-------------------------------------------------------------------------------------------------
-DisplayString *W3DDisplayStringManager::getGroupNumeralString( Int numeral )
+DisplayString *W3DDisplayStringManager::getGroupNumeralString(Int numeral)
 {
-	if (numeral < 0 || numeral > MAX_GROUPS - 1 )
+	if (numeral < 0 || numeral > MAX_GROUPS - 1)
 	{
 		DEBUG_CRASH(("Numeral '%d' out of range.", numeral));
 		return m_groupNumeralStrings[0];

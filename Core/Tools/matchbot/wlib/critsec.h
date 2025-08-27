@@ -21,11 +21,11 @@
 
 #include "wstypes.h"
 #ifdef _WIN32
- #include <windows.h>
- #include <winbase.h>
+#include <windows.h>
+#include <winbase.h>
 #elif defined(_UNIX)
-  #include <pthread.h>
-  #include <errno.h>
+#include <pthread.h>
+#include <errno.h>
 #endif
 
 // Windows headers have a tendency to redefine IN
@@ -42,21 +42,21 @@
 //
 class CritSec
 {
- public:
-                CritSec();
-               ~CritSec();
+public:
+	CritSec();
+	~CritSec();
 
-  sint32		lock(int *refcount=NULL) RO;
-  sint32		unlock(void) RO;
+	sint32 lock(int *refcount = NULL) RO;
+	sint32 unlock(void) RO;
 
- protected:
-  #ifdef _WIN32
-    mutable CRITICAL_SECTION    CritSec_;
-  #else
-    mutable pthread_mutex_t	Mutex_;         // Mutex lock
-    mutable pthread_t		ThreadId_;	// Owner of mutex
-    mutable int                 RefCount_;      // Reference count
-  #endif
+protected:
+#ifdef _WIN32
+	mutable CRITICAL_SECTION CritSec_;
+#else
+	mutable pthread_mutex_t Mutex_; // Mutex lock
+	mutable pthread_t ThreadId_; // Owner of mutex
+	mutable int RefCount_; // Reference count
+#endif
 };
 
 #endif

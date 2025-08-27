@@ -16,30 +16,29 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
- /***************************************************************************
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
- ***************************************************************************
- *                                                                         *
- *                 Project Name : G                                        *
- *                                                                         *
- *                     $Archive:: /G/wwlib/nstrdup.cpp                    $*
- *                                                                         *
- *                      $Author:: Neal_k                                  $*
- *                                                                         *
- *                     $Modtime:: 9/20/99 11:56a                          $*
- *                                                                         *
- *                    $Revision:: 6                                       $*
- *                                                                         *
- *-------------------------------------------------------------------------*
- * Functions:                                                              *
- *   nstrdup -- duplicates a string using new[]                            *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
+/***************************************************************************
+***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+***************************************************************************
+*                                                                         *
+*                 Project Name : G                                        *
+*                                                                         *
+*                     $Archive:: /G/wwlib/nstrdup.cpp                    $*
+*                                                                         *
+*                      $Author:: Neal_k                                  $*
+*                                                                         *
+*                     $Modtime:: 9/20/99 11:56a                          $*
+*                                                                         *
+*                    $Revision:: 6                                       $*
+*                                                                         *
+*-------------------------------------------------------------------------*
+* Functions:                                                              *
+*   nstrdup -- duplicates a string using new[]                            *
+* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "always.h"
 #include "string.h"
 #include "nstrdup.h"
-//#include "../app/main/gnew.h"
+// #include "../app/main/gnew.h"
 
 /**************************************************************************
  * nstrdup -- duplicates a string using new[]                             *
@@ -53,14 +52,13 @@
  * HISTORY:                                                               *
  *   02/03/1998 PWG : Created.                                            *
  *========================================================================*/
-char * nstrdup(const char *str)
+char *nstrdup(const char *str)
 {
-	if(str == 0) return 0;
+	if (str == 0)
+		return 0;
 
 	// eventually should be replaced with NEW when we go to the wwnew stuff.
-	char *retval = W3DNEWARRAY char [strlen(str) + 1];
+	char *retval = W3DNEWARRAY char[strlen(str) + 1];
 	strcpy(retval, str);
 	return retval;
 }
-
-

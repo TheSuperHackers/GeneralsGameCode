@@ -36,50 +36,51 @@ ScorchOptions *ScorchOptions::m_staticThis = NULL;
 /////////////////////////////////////////////////////////////////////////////
 // ScorchOptions dialog
 
-
-ScorchOptions::ScorchOptions(CWnd* pParent /*=NULL*/)
+ScorchOptions::ScorchOptions(CWnd *pParent /*=NULL*/)
 {
 	//{{AFX_DATA_INIT(ScorchOptions)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void ScorchOptions::DoDataExchange(CDataExchange* pDX)
+void ScorchOptions::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(ScorchOptions)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(ScorchOptions, CDialog)
-	//{{AFX_MSG_MAP(ScorchOptions)
-	ON_CBN_SELENDOK(IDC_SCORCHTYPE, OnChangeScorchtype)
-	ON_EN_CHANGE(IDC_SIZE_EDIT, OnChangeSizeEdit)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(ScorchOptions)
+ON_CBN_SELENDOK(IDC_SCORCHTYPE, OnChangeScorchtype)
+ON_EN_CHANGE(IDC_SIZE_EDIT, OnChangeSizeEdit)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 MapObject *ScorchOptions::getSingleSelectedScorch(void)
 {
 	MapObject *theMapObj = NULL;
-//	Bool found = false;
-	Int selCount=0;
+	//	Bool found = false;
+	Int selCount = 0;
 	MapObject *pMapObj;
-	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
-		if (pMapObj->isSelected()) {
-			if (pMapObj->isScorch()) {
+	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
+	{
+		if (pMapObj->isSelected())
+		{
+			if (pMapObj->isScorch())
+			{
 				theMapObj = pMapObj;
 			}
 			selCount++;
 		}
 	}
-	if (selCount==1 && theMapObj) {
+	if (selCount == 1 && theMapObj)
+	{
 		return theMapObj;
 	}
 
-	return(NULL);
+	return (NULL);
 }
 
 void ScorchOptions::updateTheUI(void)
@@ -88,14 +89,15 @@ void ScorchOptions::updateTheUI(void)
 	MapObject *theMapObj = getSingleSelectedScorch();
 	CString str;
 	CWnd *pEdit;
-	if (theMapObj) {
-		m_scorchtype = (Scorches) theMapObj->getProperties()->getInt(TheKey_scorchType);
+	if (theMapObj)
+	{
+		m_scorchtype = (Scorches)theMapObj->getProperties()->getInt(TheKey_scorchType);
 		m_scorchsize = theMapObj->getProperties()->getReal(TheKey_objectRadius);
 	}
-	CComboBox *scorch = (CComboBox*)GetDlgItem(IDC_SCORCHTYPE);
+	CComboBox *scorch = (CComboBox *)GetDlgItem(IDC_SCORCHTYPE);
 
 	scorch->SetCurSel((int)m_scorchtype);
-	str.Format("%f",m_scorchsize);
+	str.Format("%f", m_scorchsize);
 	pEdit = GetDlgItem(IDC_SIZE_EDIT);
 	if (pEdit)
 		pEdit->SetWindowText(str);
@@ -104,7 +106,8 @@ void ScorchOptions::updateTheUI(void)
 
 void ScorchOptions::update(void)
 {
-	if (m_staticThis) {
+	if (m_staticThis)
+	{
 		m_staticThis->updateTheUI();
 	}
 }
@@ -117,34 +120,33 @@ BOOL ScorchOptions::OnInitDialog()
 	CDialog::OnInitDialog();
 	m_staticThis = this;
 
-
 	m_radiusPopup.SetupPopSliderButton(this, IDC_SIZE_POPUP, this);
 
 	CString str;
-	CComboBox *scorch = (CComboBox*)GetDlgItem(IDC_SCORCHTYPE);
-/* Use the values in the .rc file.  jba.
-	scorch->ResetContent();
-	for (Int i = 0; i < SCORCH_COUNT; i++)
-	{
-		str.Format("Scorch %d", i);
-		scorch->InsertString(-1, str);
-	}
-*/
+	CComboBox *scorch = (CComboBox *)GetDlgItem(IDC_SCORCHTYPE);
+	/* Use the values in the .rc file.  jba.
+		scorch->ResetContent();
+		for (Int i = 0; i < SCORCH_COUNT; i++)
+		{
+			str.Format("Scorch %d", i);
+			scorch->InsertString(-1, str);
+		}
+	*/
 	scorch->SetCurSel(0);
 
 	update();
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+							 // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void ScorchOptions::OnChangeScorchtype()
 {
 	if (m_updating)
 		return;
-	CComboBox *scorch = (CComboBox*)GetDlgItem(IDC_SCORCHTYPE);
+	CComboBox *scorch = (CComboBox *)GetDlgItem(IDC_SCORCHTYPE);
 	int curSel = scorch->GetCurSel();
-	m_scorchtype = (Scorches) curSel;
+	m_scorchtype = (Scorches)curSel;
 	changeScorch();
 }
 
@@ -152,19 +154,20 @@ void ScorchOptions::OnChangeSizeEdit()
 {
 	if (m_updating)
 		return;
-	CWnd* edit = GetDlgItem(IDC_SIZE_EDIT);
+	CWnd *edit = GetDlgItem(IDC_SIZE_EDIT);
 	CString cstr;
 	edit->GetWindowText(cstr);
-	if (!cstr.IsEmpty()) {
+	if (!cstr.IsEmpty())
+	{
 		m_scorchsize = atof(cstr.GetBuffer(0));
 	}
 	changeSize();
 }
 
-
 void ScorchOptions::GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial)
 {
-	switch (sliderID) {
+	switch (sliderID)
+	{
 		case IDC_SIZE_POPUP:
 			*pMin = 0;
 			*pMax = 256;
@@ -176,7 +179,7 @@ void ScorchOptions::GetPopSliderInfo(const long sliderID, long *pMin, long *pMax
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	} // switch
 }
 
 void ScorchOptions::PopSliderChanged(const long sliderID, long theVal)
@@ -184,26 +187,28 @@ void ScorchOptions::PopSliderChanged(const long sliderID, long theVal)
 	CString str;
 	CWnd *pEdit;
 	m_updating = true;
-	switch (sliderID) {
+	switch (sliderID)
+	{
 		case IDC_SIZE_POPUP:
 			m_scorchsize = theVal;
-			str.Format("%f",m_scorchsize);
+			str.Format("%f", m_scorchsize);
 			pEdit = m_staticThis->GetDlgItem(IDC_SIZE_EDIT);
-			if (pEdit) pEdit->SetWindowText(str);
+			if (pEdit)
+				pEdit->SetWindowText(str);
 			break;
-
 
 		default:
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	} // switch
 	m_updating = false;
 }
 
 void ScorchOptions::PopSliderFinished(const long sliderID, long theVal)
 {
-	switch (sliderID) {
+	switch (sliderID)
+	{
 		case IDC_SIZE_POPUP:
 			changeSize();
 			break;
@@ -212,8 +217,7 @@ void ScorchOptions::PopSliderFinished(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
-
+	} // switch
 }
 
 void ScorchOptions::changeScorch(void)
@@ -222,8 +226,9 @@ void ScorchOptions::changeScorch(void)
 
 	Dict newDict;
 	newDict.setInt(TheKey_scorchType, (Int)m_scorchtype);
-	DictItemUndoable *pUndo = new DictItemUndoable(getAllSelectedDictsData(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
-	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
+	DictItemUndoable *pUndo =
+			new DictItemUndoable(getAllSelectedDictsData(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 
@@ -237,8 +242,9 @@ void ScorchOptions::changeSize(void)
 
 	Dict newDict;
 	newDict.setReal(TheKey_objectRadius, m_scorchsize);
-	DictItemUndoable *pUndo = new DictItemUndoable(getAllSelectedDictsData(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
-	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
+	DictItemUndoable *pUndo =
+			new DictItemUndoable(getAllSelectedDictsData(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 
@@ -250,15 +256,17 @@ void ScorchOptions::getAllSelectedDicts(void)
 {
 	m_allSelectedDicts.clear();
 
-	for (MapObject *pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
-		if (!pMapObj->isSelected() || !pMapObj->isScorch()) {
+	for (MapObject *pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
+	{
+		if (!pMapObj->isSelected() || !pMapObj->isScorch())
+		{
 			continue;
 		}
 		m_allSelectedDicts.push_back(pMapObj->getProperties());
 	}
 }
 
-Dict** ScorchOptions::getAllSelectedDictsData()
+Dict **ScorchOptions::getAllSelectedDictsData()
 {
 #if defined(USING_STLPORT) || __cplusplus < 201103L
 	return !m_allSelectedDicts.empty() ? &m_allSelectedDicts.front() : NULL;

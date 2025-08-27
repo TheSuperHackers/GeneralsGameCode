@@ -40,8 +40,8 @@ typedef std::map<Int, UnsignedInt> PerGeneralMap;
 class PSPlayerStats
 {
 public:
-	PSPlayerStats( void );
-	PSPlayerStats( const PSPlayerStats& other );
+	PSPlayerStats(void);
+	PSPlayerStats(const PSPlayerStats &other);
 	void reset(void);
 
 	Int id;
@@ -97,7 +97,7 @@ public:
 	Int lastLadderPort;
 	std::string lastLadderHost;
 
-	void incorporate( const PSPlayerStats& other );
+	void incorporate(const PSPlayerStats &other);
 };
 
 // this class encapsulates a request for the thread
@@ -107,11 +107,11 @@ public:
 	PSRequest();
 	enum
 	{
-		PSREQUEST_READPLAYERSTATS,			// read stats for a player
-		PSREQUEST_UPDATEPLAYERSTATS,		// update stats on the server
-		PSREQUEST_UPDATEPLAYERLOCALE,		// update locale on the server
-		PSREQUEST_READCDKEYSTATS,				// read stats for a cdkey
-		PSREQUEST_SENDGAMERESTOGAMESPY,	// report game results to GameSpy
+		PSREQUEST_READPLAYERSTATS, // read stats for a player
+		PSREQUEST_UPDATEPLAYERSTATS, // update stats on the server
+		PSREQUEST_UPDATEPLAYERLOCALE, // update locale on the server
+		PSREQUEST_READCDKEYSTATS, // read stats for a cdkey
+		PSREQUEST_SENDGAMERESTOGAMESPY, // report game results to GameSpy
 		PSREQUEST_MAX
 	} requestType;
 
@@ -161,27 +161,26 @@ class GameSpyPSMessageQueueInterface
 {
 public:
 	virtual ~GameSpyPSMessageQueueInterface() {}
-	virtual void startThread( void ) = 0;
-	virtual void endThread( void ) = 0;
-	virtual Bool isThreadRunning( void ) = 0;
+	virtual void startThread(void) = 0;
+	virtual void endThread(void) = 0;
+	virtual Bool isThreadRunning(void) = 0;
 
-	virtual void addRequest( const PSRequest& req ) = 0;
-	virtual Bool getRequest( PSRequest& req ) = 0;
+	virtual void addRequest(const PSRequest &req) = 0;
+	virtual Bool getRequest(PSRequest &req) = 0;
 
-	virtual void addResponse( const PSResponse& resp ) = 0;
-	virtual Bool getResponse( PSResponse& resp ) = 0;
+	virtual void addResponse(const PSResponse &resp) = 0;
+	virtual Bool getResponse(PSResponse &resp) = 0;
 
 	// called from the main thread
-	virtual void trackPlayerStats( PSPlayerStats stats ) = 0;
-	virtual PSPlayerStats findPlayerStatsByID( Int id ) = 0;
+	virtual void trackPlayerStats(PSPlayerStats stats) = 0;
+	virtual PSPlayerStats findPlayerStatsByID(Int id) = 0;
 
-	static GameSpyPSMessageQueueInterface* createNewMessageQueue( void );
+	static GameSpyPSMessageQueueInterface *createNewMessageQueue(void);
 
-	static std::string formatPlayerKVPairs( PSPlayerStats stats );
-	static PSPlayerStats parsePlayerKVPairs( std::string kvPairs );
+	static std::string formatPlayerKVPairs(PSPlayerStats stats);
+	static PSPlayerStats parsePlayerKVPairs(std::string kvPairs);
 };
 
 extern GameSpyPSMessageQueueInterface *TheGameSpyPSMessageQueue;
-
 
 #endif // __PERSISTENTSTORAGETHREAD_H__

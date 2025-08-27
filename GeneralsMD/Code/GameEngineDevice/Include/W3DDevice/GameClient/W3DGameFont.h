@@ -62,24 +62,20 @@
 //-----------------------------------------------------------------------------
 class W3DFontLibrary : public FontLibrary
 {
-
 public:
-
-	W3DFontLibrary( void ) { }
-	~W3DFontLibrary( void ) { }
+	W3DFontLibrary(void) {}
+	~W3DFontLibrary(void) {}
 
 protected:
-
 	/// load the font data pointer based on everything else we already have set
-	Bool loadFontData( GameFont *font );
+	Bool loadFontData(GameFont *font);
 	/// release the font data pointer
-	void releaseFontData( GameFont *font );
+	void releaseFontData(GameFont *font);
 
-};  // end W3DFontLibrary
+}; // end W3DFontLibrary
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
 
 #endif // __W3DGAMEFONT_H_
-

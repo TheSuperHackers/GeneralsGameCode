@@ -42,22 +42,19 @@
 // ------------------------------------------------------------------------------------------------
 class PrisonDockUpdate : public DockUpdate
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( PrisonDockUpdate, "PrisonDockUpdate" )
-	MAKE_STANDARD_MODULE_MACRO( PrisonDockUpdate )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PrisonDockUpdate, "PrisonDockUpdate")
+	MAKE_STANDARD_MODULE_MACRO(PrisonDockUpdate)
 
 public:
-
-	PrisonDockUpdate( Thing *thing, const ModuleData* moduleData );
+	PrisonDockUpdate(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by MemoryPoolObject base class
-	virtual DockUpdateInterface* getDockUpdateInterface() { return this; }
+	virtual DockUpdateInterface *getDockUpdateInterface() { return this; }
 
-	virtual Bool action( Object *docker, Object *drone = NULL );	///< for me this means do some Prison
+	virtual Bool action(Object *docker, Object *drone = NULL); ///< for me this means do some Prison
 
 protected:
-
 };
 
 #endif
 
-#endif  // end __PRISON_DOCK_UPDATE_H_
+#endif // end __PRISON_DOCK_UPDATE_H_

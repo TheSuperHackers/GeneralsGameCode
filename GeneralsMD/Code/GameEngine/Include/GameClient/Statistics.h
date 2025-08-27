@@ -48,7 +48,6 @@
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////
 
-
 // valueToRun is the value (between 0 and maxValueForVal) to test.
 // mu is designates the steepness of the curve.
 // The return value is a value in [-1, 1]

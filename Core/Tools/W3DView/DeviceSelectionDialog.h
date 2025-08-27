@@ -30,29 +30,31 @@
 
 class CDeviceSelectionDialog : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CDeviceSelectionDialog(BOOL bLookupCachedInfo = TRUE, CWnd* pParent = NULL);   // standard constructor
+	CDeviceSelectionDialog(BOOL bLookupCachedInfo = TRUE, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CDeviceSelectionDialog)
-	enum { IDD = IDD_RENDER_DEVICE_SELECTOR };
-	CComboBox	m_deviceListComboBox;
+	enum
+	{
+		IDD = IDD_RENDER_DEVICE_SELECTOR
+	};
+	CComboBox m_deviceListComboBox;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDeviceSelectionDialog)
-	public:
+public:
 	virtual int DoModal();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CDeviceSelectionDialog)
 	virtual BOOL OnInitDialog();
@@ -61,27 +63,23 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-    public:
+public:
+	// Return the selected device index
+	int GetDeviceIndex() const { return m_iDeviceIndex; }
 
-        // Return the selected device index
-        int GetDeviceIndex () const
-            { return m_iDeviceIndex; }
+	// Return the selected bits per pixel
+	int GetBitsPerPixel() const { return m_iBitsPerPixel; }
 
-        // Return the selected bits per pixel
-        int GetBitsPerPixel () const
-            { return m_iBitsPerPixel; }
+	const CString &GetDriverName() const { return m_DriverName; }
 
-        const CString &GetDriverName () const
-            { return m_DriverName; }
+protected:
+	void UpdateDeviceDescription(void);
 
-    protected:
-        void UpdateDeviceDescription (void);
-
-    private:
-        BOOL		m_bLookupCachedInfo;
-        int			m_iDeviceIndex;
-        int			m_iBitsPerPixel;
-		  CString	m_DriverName;
+private:
+	BOOL m_bLookupCachedInfo;
+	int m_iDeviceIndex;
+	int m_iBitsPerPixel;
+	CString m_DriverName;
 };
 
 //{{AFX_INSERT_LOCATION}}

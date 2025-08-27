@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
 
 #ifndef __NETCOMMANDLIST_H
@@ -49,26 +48,27 @@ class NetCommandList : public MemoryPoolObject
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetCommandList, "NetCommandList")
 public:
 	NetCommandList();
-	//virtual ~NetCommandList();
+	// virtual ~NetCommandList();
 
-	void init();									///< Initialize the list
-	void reset();									///< Reset the list to the initial state.
-	NetCommandRef * addMessage(NetCommandMsg *cmdMsg);	///< Add message to the list in its properly ordered place.
+	void init(); ///< Initialize the list
+	void reset(); ///< Reset the list to the initial state.
+	NetCommandRef *addMessage(NetCommandMsg *cmdMsg); ///< Add message to the list in its properly ordered place.
 	Bool isEqualCommandMsg(NetCommandMsg *msg1, NetCommandMsg *msg2);
-	NetCommandRef * getFirstMessage();				///< Get the first message on the list.
-	NetCommandRef * findMessage(NetCommandMsg *msg);	///< Find and return a reference to the given message if one exists.
-	NetCommandRef * findMessage(UnsignedShort commandID, UnsignedByte playerID);	///< Find and return a reference to the
-																								///< message given the player id and the command id.
-																								///< This will only check against messages of types that require
-																								///< a command id.
-	void removeMessage(NetCommandRef *msg);			///< Remove the given message from the list.
-	void appendList(NetCommandList *list);			///< Append the given list to the end of this list.
-	Int length();									///< Returns the number of nodes in this list.  This is inefficient and is meant to be a debug tool.
+	NetCommandRef *getFirstMessage(); ///< Get the first message on the list.
+	NetCommandRef *findMessage(NetCommandMsg *msg); ///< Find and return a reference to the given message if one exists.
+	NetCommandRef *findMessage(UnsignedShort commandID, UnsignedByte playerID); ///< Find and return a reference to the
+																																							///< message given the player id and the
+																																							///< command id. This will only check against
+																																							///< messages of types that require a command
+																																							///< id.
+	void removeMessage(NetCommandRef *msg); ///< Remove the given message from the list.
+	void appendList(NetCommandList *list); ///< Append the given list to the end of this list.
+	Int length(); ///< Returns the number of nodes in this list.  This is inefficient and is meant to be a debug tool.
 
 protected:
-	NetCommandRef *m_first;							///< Head of the list.
-	NetCommandRef *m_last;							///< Tail of the list.
-	NetCommandRef *m_lastMessageInserted;			///< The last message that was inserted to this list.
+	NetCommandRef *m_first; ///< Head of the list.
+	NetCommandRef *m_last; ///< Tail of the list.
+	NetCommandRef *m_lastMessageInserted; ///< The last message that was inserted to this list.
 };
 
 #endif

@@ -27,14 +27,15 @@
 
 #include <cstdarg>
 
-void DebugLog( const char *fmt, ... );
+void DebugLog(const char *fmt, ...);
 #define DEBUG_LOG(x) DebugLog x
 
 #else // DEBUG
 
-#define DEBUG_LOG(x) {}
+#define DEBUG_LOG(x) \
+	{ \
+	}
 
 #endif // DEBUG
 
 #endif // __DEBUG_H__
-

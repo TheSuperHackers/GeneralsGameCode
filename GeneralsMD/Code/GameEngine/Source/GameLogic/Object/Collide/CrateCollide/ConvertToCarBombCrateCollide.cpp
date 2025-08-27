@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/Player.h"
 #include "Common/Radar.h"
 #include "Common/ThingTemplate.h"
@@ -43,61 +43,60 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ConvertToCarBombCrateCollide::ConvertToCarBombCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
+ConvertToCarBombCrateCollide::ConvertToCarBombCrateCollide(Thing *thing, const ModuleData *moduleData) :
+		CrateCollide(thing, moduleData)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ConvertToCarBombCrateCollide::~ConvertToCarBombCrateCollide( void )
+ConvertToCarBombCrateCollide::~ConvertToCarBombCrateCollide(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool ConvertToCarBombCrateCollide::isValidToExecute( const Object *other ) const
+Bool ConvertToCarBombCrateCollide::isValidToExecute(const Object *other) const
 {
-	if( !CrateCollide::isValidToExecute(other) )
+	if (!CrateCollide::isValidToExecute(other))
 	{
 		return FALSE;
 	}
 
-	if( other->isEffectivelyDead() )
+	if (other->isEffectivelyDead())
 	{
 		return FALSE;
 	}
 
-	if( other->isKindOf( KINDOF_AIRCRAFT ) || other->isKindOf( KINDOF_BOAT ) )
+	if (other->isKindOf(KINDOF_AIRCRAFT) || other->isKindOf(KINDOF_BOAT))
 	{
-		//Can't make carbombs out of planes and boats!
+		// Can't make carbombs out of planes and boats!
 		return FALSE;
 	}
 
-	if( other->getStatusBits().test( OBJECT_STATUS_IS_CARBOMB ) )
+	if (other->getStatusBits().test(OBJECT_STATUS_IS_CARBOMB))
 	{
-		return FALSE;// oops, sorry, I'll convert the next one.
+		return FALSE; // oops, sorry, I'll convert the next one.
 	}
 
 	// Check to see if this other object has a carbomb weapon set that isn't in use.
 	WeaponSetFlags flags;
-	flags.set( WEAPONSET_CARBOMB );
-	const WeaponTemplateSet* set = other->getTemplate()->findWeaponTemplateSet( flags );
-	if( !set )
+	flags.set(WEAPONSET_CARBOMB);
+	const WeaponTemplateSet *set = other->getTemplate()->findWeaponTemplateSet(flags);
+	if (!set)
 	{
-		//This unit has no weapon set!
+		// This unit has no weapon set!
 		return FALSE;
 	}
-	if( !set->testWeaponSetFlag( WEAPONSET_CARBOMB ) )
+	if (!set->testWeaponSetFlag(WEAPONSET_CARBOMB))
 	{
-		//This unit has a weaponset, but the best match code above chose a different
-		//weaponset.
+		// This unit has a weaponset, but the best match code above chose a different
+		// weaponset.
 		return FALSE;
 	}
 
 	// Also make sure that the car isn't already a carbomb!
-	if( other->testWeaponSetFlag( WEAPONSET_CARBOMB ) )
+	if (other->testWeaponSetFlag(WEAPONSET_CARBOMB))
 	{
 		return FALSE;
 	}
@@ -107,40 +106,40 @@ Bool ConvertToCarBombCrateCollide::isValidToExecute( const Object *other ) const
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool ConvertToCarBombCrateCollide::executeCrateBehavior( Object *other )
+Bool ConvertToCarBombCrateCollide::executeCrateBehavior(Object *other)
 {
-	//Check to make sure that the other object is also the goal object in the AIUpdateInterface
-	//in order to prevent an unintentional conversion simply by having the terrorist walk too close
-	//to it.
-	//Assume ai is valid because CrateCollide::isValidToExecute(other) checks it.
+	// Check to make sure that the other object is also the goal object in the AIUpdateInterface
+	// in order to prevent an unintentional conversion simply by having the terrorist walk too close
+	// to it.
+	// Assume ai is valid because CrateCollide::isValidToExecute(other) checks it.
 	Object *obj = getObject();
-	AIUpdateInterface* ai = obj->getAIUpdateInterface();
+	AIUpdateInterface *ai = obj->getAIUpdateInterface();
 	if (ai && ai->getGoalObject() != other)
 		return false;
 
-	if( other && other->checkAndDetonateBoobyTrap(obj) )
+	if (other && other->checkAndDetonateBoobyTrap(obj))
 	{
 		// Whoops, it was mined.  Cancel if it or us is now dead.
-		if( other->isEffectivelyDead() || getObject()->isEffectivelyDead() )
+		if (other->isEffectivelyDead() || getObject()->isEffectivelyDead())
 		{
 			return false;
 		}
 	}
 
-	other->setWeaponSetFlag( WEAPONSET_CARBOMB );
+	other->setWeaponSetFlag(WEAPONSET_CARBOMB);
 
-	FXList::doFXObj( getConvertToCarBombCrateCollideModuleData()->m_fxList, other );
+	FXList::doFXObj(getConvertToCarBombCrateCollideModuleData()->m_fxList, other);
 
-	other->defect( getObject()->getControllingPlayer()->getDefaultTeam(), 0);
+	other->defect(getObject()->getControllingPlayer()->getDefaultTeam(), 0);
 
-	//In order to make things easier for the designers, we are going to transfer the terrorist name
-	//to the car... so the designer can control the car with their scripts.
-	TheScriptEngine->transferObjectName( getObject()->getName(), other );
+	// In order to make things easier for the designers, we are going to transfer the terrorist name
+	// to the car... so the designer can control the car with their scripts.
+	TheScriptEngine->transferObjectName(getObject()->getName(), other);
 
-	//This is kinda special... we will endow our new ride with our vision and shroud range, since we are driving
+	// This is kinda special... we will endow our new ride with our vision and shroud range, since we are driving
 	other->setVisionRange(getObject()->getVisionRange());
 	other->setShroudClearingRange(getObject()->getShroudClearingRange());
-	other->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IS_CARBOMB ) );
+	other->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_IS_CARBOMB));
 
 	ExperienceTracker *exp = other->getExperienceTracker();
 	if (exp)
@@ -148,13 +147,8 @@ Bool ConvertToCarBombCrateCollide::executeCrateBehavior( Object *other )
 		exp->setVeterancyLevel(obj->getExperienceTracker()->getVeterancyLevel());
 	}
 
-
-
-	TheRadar->removeObject( other );
-	TheRadar->addObject( other );
-
-
-
+	TheRadar->removeObject(other);
+	TheRadar->addObject(other);
 
 	return TRUE;
 }
@@ -162,39 +156,36 @@ Bool ConvertToCarBombCrateCollide::executeCrateBehavior( Object *other )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ConvertToCarBombCrateCollide::crc( Xfer *xfer )
+void ConvertToCarBombCrateCollide::crc(Xfer *xfer)
 {
-
 	// extend base class
-	CrateCollide::crc( xfer );
+	CrateCollide::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ConvertToCarBombCrateCollide::xfer( Xfer *xfer )
+void ConvertToCarBombCrateCollide::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CrateCollide::xfer( xfer );
+	CrateCollide::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ConvertToCarBombCrateCollide::loadPostProcess( void )
+void ConvertToCarBombCrateCollide::loadPostProcess(void)
 {
-
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

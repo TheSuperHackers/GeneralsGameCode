@@ -39,8 +39,7 @@
  *   First_False_Bit -- Find the first false bit in the bit array.                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
-
+#include "always.h"
 
 /***********************************************************************************************
  * Set_Bit -- Set bit in a bit array.                                                          *
@@ -61,17 +60,19 @@
  * HISTORY:                                                                                    *
  *   10/06/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-void Set_Bit(void * array, int bit, int value)
+void Set_Bit(void *array, int bit, int value)
 {
 	unsigned char mask = (unsigned char)(1 << (bit % 8));
 
-	if (value != 0) {
-		*((unsigned char *)array + (bit/8)) |= mask;
-	} else {
-		*((unsigned char *)array + (bit/8)) &= (unsigned char)~mask;
+	if (value != 0)
+	{
+		*((unsigned char *)array + (bit / 8)) |= mask;
+	}
+	else
+	{
+		*((unsigned char *)array + (bit / 8)) &= (unsigned char)~mask;
 	}
 }
-
 
 /***********************************************************************************************
  * Get_Bit -- Fetch the bit value from a bit array.                                            *
@@ -90,12 +91,11 @@ void Set_Bit(void * array, int bit, int value)
  * HISTORY:                                                                                    *
  *   10/06/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Get_Bit(void const * array, int bit)
+int Get_Bit(void const *array, int bit)
 {
 	unsigned char mask = (unsigned char)(1 << (bit % 8));
-	return((*((unsigned char *)array + (bit/8)) & mask) != 0);
+	return ((*((unsigned char *)array + (bit / 8)) & mask) != 0);
 }
-
 
 /***********************************************************************************************
  * First_True_Bit -- Return with the first true bit index.                                     *
@@ -114,20 +114,22 @@ int Get_Bit(void const * array, int bit)
  * HISTORY:                                                                                    *
  *   10/06/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-int First_True_Bit(void const * array)
+int First_True_Bit(void const *array)
 {
 	int index = 0;
-	while (*((unsigned char *)array) == 0) {
+	while (*((unsigned char *)array) == 0)
+	{
 		index++;
-		array = ((char*)array) + 1;
+		array = ((char *)array) + 1;
 	}
 	int subindex;
-	for (subindex = 0; subindex < 8; subindex++) {
-		if (Get_Bit(array, subindex)) break;
+	for (subindex = 0; subindex < 8; subindex++)
+	{
+		if (Get_Bit(array, subindex))
+			break;
 	}
-	return(index * 8 + subindex);
+	return (index * 8 + subindex);
 }
-
 
 /***********************************************************************************************
  * First_False_Bit -- Find the first false bit in the bit array.                               *
@@ -146,17 +148,19 @@ int First_True_Bit(void const * array)
  * HISTORY:                                                                                    *
  *   10/06/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-int First_False_Bit(void const * array)
+int First_False_Bit(void const *array)
 {
 	int index = 0;
-	while (*((unsigned char *)array) == 0xFF) {
+	while (*((unsigned char *)array) == 0xFF)
+	{
 		index++;
-		array = ((char*)array) + 1;
+		array = ((char *)array) + 1;
 	}
 	int subindex;
-	for (subindex = 0; subindex < 8; subindex++) {
-		if (!Get_Bit(array, subindex)) break;
+	for (subindex = 0; subindex < 8; subindex++)
+	{
+		if (!Get_Bit(array, subindex))
+			break;
 	}
-	return(index * 8 + subindex);
+	return (index * 8 + subindex);
 }
-

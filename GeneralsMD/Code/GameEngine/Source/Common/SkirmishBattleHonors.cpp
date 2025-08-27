@@ -31,7 +31,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -72,7 +72,6 @@
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 // SkirmishBattleHonors base class
@@ -248,7 +247,7 @@ void SkirmishBattleHonors::setCHINACampaignComplete(GameDifficulty difficulty)
 Bool SkirmishBattleHonors::getCHINACampaignComplete(GameDifficulty difficulty) const
 {
 	AsciiString key;
-	key.format("CHINACampaign_%d",(int)difficulty);
+	key.format("CHINACampaign_%d", (int)difficulty);
 	return (getInt(key, 0) != 0);
 }
 

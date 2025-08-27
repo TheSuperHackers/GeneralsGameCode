@@ -39,7 +39,7 @@
 #include "GameClient/ParticleSys.h"
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/Weapon.h"
-#include "GameLogic/GameLogic.h"		// for logic frame count
+#include "GameLogic/GameLogic.h" // for logic frame count
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Locomotor.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
@@ -48,7 +48,6 @@
 #include "GameLogic/ScriptEngine.h"
 #include "W3DDevice/GameClient/W3DGameClient.h"
 #include "W3DDevice/GameClient/Module/W3DTruckDraw.h"
-
 
 //-------------------------------------------------------------------------------------------------
 W3DTruckDrawModuleData::W3DTruckDrawModuleData()
@@ -61,12 +60,11 @@ W3DTruckDrawModuleData::~W3DTruckDrawModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DTruckDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
+void W3DTruckDrawModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-  W3DModelDrawModuleData::buildFieldParse(p);
+	W3DModelDrawModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
+	static const FieldParse dataFieldParse[] = {
 		{ "Dust", INI::parseAsciiString, NULL, offsetof(W3DTruckDrawModuleData, m_dustEffectName) },
 		{ "DirtSpray", INI::parseAsciiString, NULL, offsetof(W3DTruckDrawModuleData, m_dirtEffectName) },
 		{ "PowerslideSpray", INI::parseAsciiString, NULL, offsetof(W3DTruckDrawModuleData, m_powerslideEffectName) },
@@ -92,26 +90,44 @@ void W3DTruckDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 		{ 0, 0, 0, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DTruckDraw::W3DTruckDraw( Thing *thing, const ModuleData* moduleData ) : W3DModelDraw( thing, moduleData ),
-m_dirtEffect(NULL), m_dustEffect(NULL), m_powerslideEffect(NULL), m_effectsInitialized(false),
-m_wasAirborne(false), m_isPowersliding(false),
-m_frontWheelRotation(0), m_rearWheelRotation(0), m_midFrontWheelRotation(0), m_midRearWheelRotation(0),
-m_frontRightTireBone(0), m_frontLeftTireBone(0), m_rearLeftTireBone(0),m_rearRightTireBone(0),
-m_midFrontRightTireBone(0), m_midFrontLeftTireBone(0), m_midRearLeftTireBone(0),m_midRearRightTireBone(0),
-m_midMidRightTireBone(0), m_midMidLeftTireBone(0), m_prevRenderObj(NULL)
+W3DTruckDraw::W3DTruckDraw(Thing *thing, const ModuleData *moduleData) :
+		W3DModelDraw(thing, moduleData),
+		m_dirtEffect(NULL),
+		m_dustEffect(NULL),
+		m_powerslideEffect(NULL),
+		m_effectsInitialized(false),
+		m_wasAirborne(false),
+		m_isPowersliding(false),
+		m_frontWheelRotation(0),
+		m_rearWheelRotation(0),
+		m_midFrontWheelRotation(0),
+		m_midRearWheelRotation(0),
+		m_frontRightTireBone(0),
+		m_frontLeftTireBone(0),
+		m_rearLeftTireBone(0),
+		m_rearRightTireBone(0),
+		m_midFrontRightTireBone(0),
+		m_midFrontLeftTireBone(0),
+		m_midRearLeftTireBone(0),
+		m_midRearRightTireBone(0),
+		m_midMidRightTireBone(0),
+		m_midMidLeftTireBone(0),
+		m_prevRenderObj(NULL)
 {
-	const AudioEventRTS * event;
+	const AudioEventRTS *event;
 	event = thing->getTemplate()->getPerUnitSound("TruckLandingSound");
-	if (event) {
+	if (event)
+	{
 		m_landingSound = *event;
 	}
 	event = thing->getTemplate()->getPerUnitSound("TruckPowerslideSound");
-	if (event) {
+	if (event)
+	{
 		m_powerslideSound = *event;
 	}
 }
@@ -166,7 +182,7 @@ void W3DTruckDraw::setFullyObscuredByShroud(Bool fullyObscured)
 
  * Start creating debris from the tank treads
  */
-void W3DTruckDraw::createEmitters( void )
+void W3DTruckDraw::createEmitters(void)
 {
 	if (getDrawable()->isDrawableEffectivelyHidden())
 		return;
@@ -174,55 +190,70 @@ void W3DTruckDraw::createEmitters( void )
 	{
 		const ParticleSystemTemplate *sysTemplate;
 
-		if (!m_dustEffect) {
-
+		if (!m_dustEffect)
+		{
 			sysTemplate = TheParticleSystemManager->findTemplate(getW3DTruckDrawModuleData()->m_dustEffectName);
 			if (sysTemplate)
 			{
-				m_dustEffect = TheParticleSystemManager->createParticleSystem( sysTemplate );
+				m_dustEffect = TheParticleSystemManager->createParticleSystem(sysTemplate);
 				m_dustEffect->attachToObject(getDrawable()->getObject());
 				// important: mark it as do-not-save, since we'll just re-create it when we reload.
 				m_dustEffect->setSaveable(FALSE);
-			}	else {
-				if (!getW3DTruckDrawModuleData()->m_dustEffectName.isEmpty()) {
-					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'",
-						getW3DTruckDrawModuleData()->m_dustEffectName.str(), getDrawable()->getObject()->getTemplate()->getName().str()));
+			}
+			else
+			{
+				if (!getW3DTruckDrawModuleData()->m_dustEffectName.isEmpty())
+				{
+					DEBUG_LOG(
+							("*** ERROR - Missing particle system '%s' in thing '%s'",
+							 getW3DTruckDrawModuleData()->m_dustEffectName.str(),
+							 getDrawable()->getObject()->getTemplate()->getName().str()));
 				}
 			}
-
 		}
-		if (!m_dirtEffect) {
+		if (!m_dirtEffect)
+		{
 			sysTemplate = TheParticleSystemManager->findTemplate(getW3DTruckDrawModuleData()->m_dirtEffectName);
 			if (sysTemplate)
 			{
-				m_dirtEffect = TheParticleSystemManager->createParticleSystem( sysTemplate );
+				m_dirtEffect = TheParticleSystemManager->createParticleSystem(sysTemplate);
 				m_dirtEffect->attachToObject(getDrawable()->getObject());
 				// important: mark it as do-not-save, since we'll just re-create it when we reload.
 				m_dirtEffect->setSaveable(FALSE);
-			}	else {
-				if (!getW3DTruckDrawModuleData()->m_dirtEffectName.isEmpty()) {
-					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'",
-						getW3DTruckDrawModuleData()->m_dirtEffectName.str(), getDrawable()->getObject()->getTemplate()->getName().str()));
+			}
+			else
+			{
+				if (!getW3DTruckDrawModuleData()->m_dirtEffectName.isEmpty())
+				{
+					DEBUG_LOG(
+							("*** ERROR - Missing particle system '%s' in thing '%s'",
+							 getW3DTruckDrawModuleData()->m_dirtEffectName.str(),
+							 getDrawable()->getObject()->getTemplate()->getName().str()));
 				}
 			}
 		}
-		if (!m_powerslideEffect) {
+		if (!m_powerslideEffect)
+		{
 			sysTemplate = TheParticleSystemManager->findTemplate(getW3DTruckDrawModuleData()->m_powerslideEffectName);
 			if (sysTemplate)
 			{
-				m_powerslideEffect = TheParticleSystemManager->createParticleSystem( sysTemplate );
+				m_powerslideEffect = TheParticleSystemManager->createParticleSystem(sysTemplate);
 				m_powerslideEffect->attachToObject(getDrawable()->getObject());
 				// important: mark it as do-not-save, since we'll just re-create it when we reload.
 				m_powerslideEffect->setSaveable(FALSE);
-			}	else {
-				if (!getW3DTruckDrawModuleData()->m_powerslideEffectName.isEmpty()) {
-					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'",
-						getW3DTruckDrawModuleData()->m_powerslideEffectName.str(), getDrawable()->getObject()->getTemplate()->getName().str()));
+			}
+			else
+			{
+				if (!getW3DTruckDrawModuleData()->m_powerslideEffectName.isEmpty())
+				{
+					DEBUG_LOG(
+							("*** ERROR - Missing particle system '%s' in thing '%s'",
+							 getW3DTruckDrawModuleData()->m_powerslideEffectName.str(),
+							 getDrawable()->getObject()->getTemplate()->getName().str()));
 				}
 			}
 		}
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -230,14 +261,14 @@ void W3DTruckDraw::createEmitters( void )
 /**
  * Stop creating debris from the tank treads
  */
-void W3DTruckDraw::enableEmitters( Bool enable  )
+void W3DTruckDraw::enableEmitters(Bool enable)
 {
 	// don't check... if we are hidden the first time thru, then we'll never create the emitters.
 	// eg, if we are loading a game and the unit is in a tunnel, he'll never get emitteres even when he exits.
-	//if (!m_effectsInitialized)
+	// if (!m_effectsInitialized)
 	{
 		createEmitters();
-		m_effectsInitialized=true;
+		m_effectsInitialized = true;
 	}
 	if (m_dustEffect)
 	{
@@ -260,59 +291,95 @@ void W3DTruckDraw::enableEmitters( Bool enable  )
 	}
 }
 //-------------------------------------------------------------------------------------------------
-void W3DTruckDraw::updateBones( void )
+void W3DTruckDraw::updateBones(void)
 {
-	if( getW3DTruckDrawModuleData() )
+	if (getW3DTruckDrawModuleData())
 	{
-		//Front tires
-		if( !getW3DTruckDrawModuleData()->m_frontLeftTireBoneName.isEmpty() )
+		// Front tires
+		if (!getW3DTruckDrawModuleData()->m_frontLeftTireBoneName.isEmpty())
 		{
 			m_frontLeftTireBone = getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_frontLeftTireBoneName.str());
-			DEBUG_ASSERTCRASH(m_frontLeftTireBone, ("Missing front-left tire bone %s in model %s", getW3DTruckDrawModuleData()->m_frontLeftTireBoneName.str(), getRenderObject()->Get_Name()));
+			DEBUG_ASSERTCRASH(
+					m_frontLeftTireBone,
+					("Missing front-left tire bone %s in model %s",
+					 getW3DTruckDrawModuleData()->m_frontLeftTireBoneName.str(),
+					 getRenderObject()->Get_Name()));
 		}
 
-		if( !getW3DTruckDrawModuleData()->m_frontRightTireBoneName.isEmpty() )
+		if (!getW3DTruckDrawModuleData()->m_frontRightTireBoneName.isEmpty())
 		{
 			m_frontRightTireBone = getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_frontRightTireBoneName.str());
-			DEBUG_ASSERTCRASH(m_frontRightTireBone, ("Missing front-right tire bone %s in model %s", getW3DTruckDrawModuleData()->m_frontRightTireBoneName.str(), getRenderObject()->Get_Name()));
+			DEBUG_ASSERTCRASH(
+					m_frontRightTireBone,
+					("Missing front-right tire bone %s in model %s",
+					 getW3DTruckDrawModuleData()->m_frontRightTireBoneName.str(),
+					 getRenderObject()->Get_Name()));
 		}
 
-		//Rear tires
-		if( !getW3DTruckDrawModuleData()->m_rearLeftTireBoneName.isEmpty() )
+		// Rear tires
+		if (!getW3DTruckDrawModuleData()->m_rearLeftTireBoneName.isEmpty())
 		{
 			m_rearLeftTireBone = getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_rearLeftTireBoneName.str());
-			DEBUG_ASSERTCRASH(m_rearLeftTireBone, ("Missing rear-left tire bone %s in model %s", getW3DTruckDrawModuleData()->m_rearLeftTireBoneName.str(), getRenderObject()->Get_Name()));
+			DEBUG_ASSERTCRASH(
+					m_rearLeftTireBone,
+					("Missing rear-left tire bone %s in model %s",
+					 getW3DTruckDrawModuleData()->m_rearLeftTireBoneName.str(),
+					 getRenderObject()->Get_Name()));
 		}
 
-		if( !getW3DTruckDrawModuleData()->m_rearRightTireBoneName.isEmpty() )
+		if (!getW3DTruckDrawModuleData()->m_rearRightTireBoneName.isEmpty())
 		{
 			m_rearRightTireBone = getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_rearRightTireBoneName.str());
-			DEBUG_ASSERTCRASH(m_rearRightTireBone, ("Missing rear-left tire bone %s in model %s", getW3DTruckDrawModuleData()->m_rearRightTireBoneName.str(), getRenderObject()->Get_Name()));
+			DEBUG_ASSERTCRASH(
+					m_rearRightTireBone,
+					("Missing rear-left tire bone %s in model %s",
+					 getW3DTruckDrawModuleData()->m_rearRightTireBoneName.str(),
+					 getRenderObject()->Get_Name()));
 		}
 
-		//midFront tires
-		if( !getW3DTruckDrawModuleData()->m_midFrontLeftTireBoneName.isEmpty() )
+		// midFront tires
+		if (!getW3DTruckDrawModuleData()->m_midFrontLeftTireBoneName.isEmpty())
 		{
-			m_midFrontLeftTireBone = getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_midFrontLeftTireBoneName.str());
-			DEBUG_ASSERTCRASH(m_midFrontLeftTireBone, ("Missing mid-front-left tire bone %s in model %s", getW3DTruckDrawModuleData()->m_midFrontLeftTireBoneName.str(), getRenderObject()->Get_Name()));
+			m_midFrontLeftTireBone =
+					getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_midFrontLeftTireBoneName.str());
+			DEBUG_ASSERTCRASH(
+					m_midFrontLeftTireBone,
+					("Missing mid-front-left tire bone %s in model %s",
+					 getW3DTruckDrawModuleData()->m_midFrontLeftTireBoneName.str(),
+					 getRenderObject()->Get_Name()));
 
-			m_midFrontRightTireBone = getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_midFrontRightTireBoneName.str());
-			DEBUG_ASSERTCRASH(m_midFrontRightTireBone, ("Missing mid-front-right tire bone %s in model %s", getW3DTruckDrawModuleData()->m_midFrontRightTireBoneName.str(), getRenderObject()->Get_Name()));
+			m_midFrontRightTireBone =
+					getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_midFrontRightTireBoneName.str());
+			DEBUG_ASSERTCRASH(
+					m_midFrontRightTireBone,
+					("Missing mid-front-right tire bone %s in model %s",
+					 getW3DTruckDrawModuleData()->m_midFrontRightTireBoneName.str(),
+					 getRenderObject()->Get_Name()));
 
-			if (!m_midFrontRightTireBone )
+			if (!m_midFrontRightTireBone)
 			{
 				m_midFrontLeftTireBone = 0;
 			}
 		}
 
-		//midRear tires
-		if( !getW3DTruckDrawModuleData()->m_midRearLeftTireBoneName.isEmpty() )
+		// midRear tires
+		if (!getW3DTruckDrawModuleData()->m_midRearLeftTireBoneName.isEmpty())
 		{
-			m_midRearLeftTireBone = getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_midRearLeftTireBoneName.str());
-			DEBUG_ASSERTCRASH(m_midRearLeftTireBone, ("Missing mid-rear-left tire bone %s in model %s", getW3DTruckDrawModuleData()->m_midRearLeftTireBoneName.str(), getRenderObject()->Get_Name()));
+			m_midRearLeftTireBone =
+					getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_midRearLeftTireBoneName.str());
+			DEBUG_ASSERTCRASH(
+					m_midRearLeftTireBone,
+					("Missing mid-rear-left tire bone %s in model %s",
+					 getW3DTruckDrawModuleData()->m_midRearLeftTireBoneName.str(),
+					 getRenderObject()->Get_Name()));
 
-			m_midRearRightTireBone = getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_midRearRightTireBoneName.str());
-			DEBUG_ASSERTCRASH(m_midRearRightTireBone, ("Missing mid-rear-right tire bone %s in model %s", getW3DTruckDrawModuleData()->m_midRearRightTireBoneName.str(), getRenderObject()->Get_Name()));
+			m_midRearRightTireBone =
+					getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_midRearRightTireBoneName.str());
+			DEBUG_ASSERTCRASH(
+					m_midRearRightTireBone,
+					("Missing mid-rear-right tire bone %s in model %s",
+					 getW3DTruckDrawModuleData()->m_midRearRightTireBoneName.str(),
+					 getRenderObject()->Get_Name()));
 
 			if (!m_midRearRightTireBone)
 			{
@@ -320,14 +387,23 @@ void W3DTruckDraw::updateBones( void )
 			}
 		}
 
-		//midMid tires
-		if( !getW3DTruckDrawModuleData()->m_midMidLeftTireBoneName.isEmpty() )
+		// midMid tires
+		if (!getW3DTruckDrawModuleData()->m_midMidLeftTireBoneName.isEmpty())
 		{
 			m_midMidLeftTireBone = getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_midMidLeftTireBoneName.str());
-			DEBUG_ASSERTCRASH(m_midMidLeftTireBone, ("Missing mid-mid-left tire bone %s in model %s", getW3DTruckDrawModuleData()->m_midMidLeftTireBoneName.str(), getRenderObject()->Get_Name()));
+			DEBUG_ASSERTCRASH(
+					m_midMidLeftTireBone,
+					("Missing mid-mid-left tire bone %s in model %s",
+					 getW3DTruckDrawModuleData()->m_midMidLeftTireBoneName.str(),
+					 getRenderObject()->Get_Name()));
 
-			m_midMidRightTireBone = getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_midMidRightTireBoneName.str());
-			DEBUG_ASSERTCRASH(m_midMidRightTireBone, ("Missing mid-mid-right tire bone %s in model %s", getW3DTruckDrawModuleData()->m_midMidRightTireBoneName.str(), getRenderObject()->Get_Name()));
+			m_midMidRightTireBone =
+					getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_midMidRightTireBoneName.str());
+			DEBUG_ASSERTCRASH(
+					m_midMidRightTireBone,
+					("Missing mid-mid-right tire bone %s in model %s",
+					 getW3DTruckDrawModuleData()->m_midMidRightTireBoneName.str(),
+					 getRenderObject()->Get_Name()));
 
 			if (!m_midMidRightTireBone)
 			{
@@ -335,11 +411,15 @@ void W3DTruckDraw::updateBones( void )
 			}
 		}
 
-		//Cab
-		if( !getW3DTruckDrawModuleData()->m_cabBoneName.isEmpty() )
+		// Cab
+		if (!getW3DTruckDrawModuleData()->m_cabBoneName.isEmpty())
 		{
 			m_cabBone = getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_cabBoneName.str());
-			DEBUG_ASSERTCRASH(m_cabBone, ("Missing cab bone %s in model %s", getW3DTruckDrawModuleData()->m_cabBoneName.str(), getRenderObject()->Get_Name()));
+			DEBUG_ASSERTCRASH(
+					m_cabBone,
+					("Missing cab bone %s in model %s",
+					 getW3DTruckDrawModuleData()->m_cabBoneName.str(),
+					 getRenderObject()->Get_Name()));
 			m_trailerBone = getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_trailerBoneName.str());
 		}
 	}
@@ -361,7 +441,7 @@ void W3DTruckDraw::setHidden(Bool h)
 //-------------------------------------------------------------------------------------------------
 void W3DTruckDraw::onRenderObjRecreated(void)
 {
-	//DEBUG_LOG(("Old obj %x, newObj %x, new bones %d, old bones %d",
+	// DEBUG_LOG(("Old obj %x, newObj %x, new bones %d, old bones %d",
 	//	m_prevRenderObj, getRenderObject(), getRenderObject()->Get_Num_Bones(),
 	//	m_prevNumBones));
 	m_prevRenderObj = NULL;
@@ -381,18 +461,18 @@ void W3DTruckDraw::onRenderObjRecreated(void)
 //-------------------------------------------------------------------------------------------------
 /** Rotate and position wheels and other truck parts. */
 //-------------------------------------------------------------------------------------------------
-void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
+void W3DTruckDraw::doDrawModule(const Matrix3D *transformMtx)
 {
-
 	W3DModelDraw::doDrawModule(transformMtx);
 
 	if (!TheGlobalData->m_showClientPhysics)
 		return;
 	const W3DTruckDrawModuleData *moduleData = getW3DTruckDrawModuleData();
-	if (moduleData==NULL) return; // shouldn't ever happen.
+	if (moduleData == NULL)
+		return; // shouldn't ever happen.
 
- 	Bool frozen = TheTacticalView->isTimeFrozen() && !TheTacticalView->isCameraMovementFinished();
- 	frozen = frozen || TheScriptEngine->isTimeFrozenDebug() || TheScriptEngine->isTimeFrozenScript();
+	Bool frozen = TheTacticalView->isTimeFrozen() && !TheTacticalView->isCameraMovementFinished();
+	frozen = frozen || TheScriptEngine->isTimeFrozenDebug() || TheScriptEngine->isTimeFrozenScript();
 	if (frozen)
 		return;
 
@@ -403,8 +483,10 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 	if (obj == NULL)
 		return;
 
-	if (getRenderObject()==NULL) return;
-	if (getRenderObject() != m_prevRenderObj) {
+	if (getRenderObject() == NULL)
+		return;
+	if (getRenderObject() != m_prevRenderObj)
+	{
 		DEBUG_LOG(("W3DTruckDraw::doDrawModule - shouldn't update bones. jba"));
 		updateBones();
 	}
@@ -417,69 +499,81 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 	const Coord3D *vel = physics->getVelocity();
 	Real speed = physics->getVelocityMagnitude();
 
-	const TWheelInfo *wheelInfo = getDrawable()->getWheelInfo();	// note, can return null!
+	const TWheelInfo *wheelInfo = getDrawable()->getWheelInfo(); // note, can return null!
 	AIUpdateInterface *ai = obj->getAI();
-	if (m_cabBone && wheelInfo) {
+	if (m_cabBone && wheelInfo)
+	{
 		Matrix3D cabXfrm(1);
 		cabXfrm.Make_Identity();
-		Real desiredAngle = wheelInfo->m_wheelAngle*moduleData->m_cabRotationFactor;
+		Real desiredAngle = wheelInfo->m_wheelAngle * moduleData->m_cabRotationFactor;
 
 		// Check goal angle.
 		if (ai && ai->getPath())
 		{
 			Coord3D pointOnPath;
 			ai->getPath()->peekCachedPointOnPath(pointOnPath);
-			Real angleToGoal = ThePartitionManager->getRelativeAngle2D( obj, &pointOnPath );
-			//DEBUG_LOG(("To goal %f, desired %f ", 180*angleToGoal/PI, 180*desiredAngle/PI));
-			if (angleToGoal<0) {
-				if (desiredAngle<angleToGoal) desiredAngle=angleToGoal;
-				if (desiredAngle>0) desiredAngle = 0;
-			} else {
-				if (desiredAngle>angleToGoal) desiredAngle = angleToGoal;
-				if (desiredAngle<0) desiredAngle = 0;
+			Real angleToGoal = ThePartitionManager->getRelativeAngle2D(obj, &pointOnPath);
+			// DEBUG_LOG(("To goal %f, desired %f ", 180*angleToGoal/PI, 180*desiredAngle/PI));
+			if (angleToGoal < 0)
+			{
+				if (desiredAngle < angleToGoal)
+					desiredAngle = angleToGoal;
+				if (desiredAngle > 0)
+					desiredAngle = 0;
 			}
-			//DEBUG_LOG(("final desired %f ", 180*desiredAngle/PI));
+			else
+			{
+				if (desiredAngle > angleToGoal)
+					desiredAngle = angleToGoal;
+				if (desiredAngle < 0)
+					desiredAngle = 0;
+			}
+			// DEBUG_LOG(("final desired %f ", 180*desiredAngle/PI));
 		}
 
 		Real deltaAngle = desiredAngle - m_curCabRotation;
 		deltaAngle *= moduleData->m_rotationDampingFactor;
 		m_curCabRotation += deltaAngle;
 		cabXfrm.Rotate_Z(m_curCabRotation);
-		getRenderObject()->Capture_Bone( m_cabBone );
-		getRenderObject()->Control_Bone( m_cabBone, cabXfrm );
-		if (m_trailerBone && wheelInfo) {
-			desiredAngle = -wheelInfo->m_wheelAngle*moduleData->m_trailerRotationFactor;
+		getRenderObject()->Capture_Bone(m_cabBone);
+		getRenderObject()->Control_Bone(m_cabBone, cabXfrm);
+		if (m_trailerBone && wheelInfo)
+		{
+			desiredAngle = -wheelInfo->m_wheelAngle * moduleData->m_trailerRotationFactor;
 			Real deltaAngle = desiredAngle - m_curTrailerRotation;
 			deltaAngle *= moduleData->m_rotationDampingFactor;
 			m_curTrailerRotation += deltaAngle;
 			cabXfrm.Make_Identity();
 			cabXfrm.Rotate_Z(m_curTrailerRotation);
-			getRenderObject()->Capture_Bone( m_trailerBone );
-			getRenderObject()->Control_Bone( m_trailerBone, cabXfrm );
+			getRenderObject()->Capture_Bone(m_trailerBone);
+			getRenderObject()->Control_Bone(m_trailerBone, cabXfrm);
 		}
 	}
 
 	if (m_frontLeftTireBone || m_rearLeftTireBone)
 	{
 		Real powerslideRotationAddition = moduleData->m_powerslideRotationAddition;
-		if (ai) {
+		if (ai)
+		{
 			Locomotor *loco = ai->getCurLocomotor();
-			if (loco) {
-				if (loco->isMovingBackwards()) {
+			if (loco)
+			{
+				if (loco->isMovingBackwards())
+				{
 					speed = -speed; // rotate wheels backwards.  jba.
 					powerslideRotationAddition = -powerslideRotationAddition;
 				}
 			}
 		}
 		const Real rotationFactor = moduleData->m_rotationSpeedMultiplier;
-		m_frontWheelRotation += rotationFactor*speed;
+		m_frontWheelRotation += rotationFactor * speed;
 		if (m_isPowersliding)
 		{
-			m_rearWheelRotation += rotationFactor*(speed + powerslideRotationAddition);
+			m_rearWheelRotation += rotationFactor * (speed + powerslideRotationAddition);
 		}
 		else
 		{
-			m_rearWheelRotation += rotationFactor*speed;
+			m_rearWheelRotation += rotationFactor * speed;
 		}
 
 		// For now, just use the same values for mid wheels -- may want to do independent calcs later...
@@ -488,32 +582,29 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 
 		Matrix3D wheelXfrm(1);
 
-
-
 		if (m_frontLeftTireBone && wheelInfo)
 		{
 			wheelXfrm.Make_Identity();
 			wheelXfrm.Adjust_Z_Translation(wheelInfo->m_frontLeftHeightOffset);
 			wheelXfrm.Rotate_Z(wheelInfo->m_wheelAngle);
 			wheelXfrm.Rotate_Y(m_frontWheelRotation);
-			getRenderObject()->Capture_Bone( m_frontLeftTireBone );
-			getRenderObject()->Control_Bone( m_frontLeftTireBone, wheelXfrm );
-
+			getRenderObject()->Capture_Bone(m_frontLeftTireBone);
+			getRenderObject()->Control_Bone(m_frontLeftTireBone, wheelXfrm);
 
 			wheelXfrm.Make_Identity();
 			wheelXfrm.Adjust_Z_Translation(wheelInfo->m_frontRightHeightOffset);
 			wheelXfrm.Rotate_Z(wheelInfo->m_wheelAngle);
 			wheelXfrm.Rotate_Y(m_frontWheelRotation);
-			getRenderObject()->Capture_Bone( m_frontRightTireBone );
-			getRenderObject()->Control_Bone( m_frontRightTireBone, wheelXfrm );
+			getRenderObject()->Capture_Bone(m_frontRightTireBone);
+			getRenderObject()->Control_Bone(m_frontRightTireBone, wheelXfrm);
 		}
 		if (m_rearLeftTireBone && wheelInfo)
 		{
 			wheelXfrm.Make_Identity();
 			wheelXfrm.Rotate_Y(m_rearWheelRotation);
 			wheelXfrm.Adjust_Z_Translation(wheelInfo->m_rearLeftHeightOffset);
-			getRenderObject()->Capture_Bone( m_rearLeftTireBone );
-			getRenderObject()->Control_Bone( m_rearLeftTireBone, wheelXfrm );
+			getRenderObject()->Capture_Bone(m_rearLeftTireBone);
+			getRenderObject()->Control_Bone(m_rearLeftTireBone, wheelXfrm);
 
 			wheelXfrm.Make_Identity();
 			wheelXfrm.Rotate_Y(m_rearWheelRotation);
@@ -521,8 +612,8 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 
 			//@todo TROUBLE HERE, THE BONE INDICES DO NOT MATCH THE RENDEROBJECTS BONES, SOMETIMES
 
-			getRenderObject()->Capture_Bone( m_rearRightTireBone );
-			getRenderObject()->Control_Bone( m_rearRightTireBone, wheelXfrm );
+			getRenderObject()->Capture_Bone(m_rearRightTireBone);
+			getRenderObject()->Control_Bone(m_rearRightTireBone, wheelXfrm);
 		}
 		if (m_midFrontLeftTireBone && wheelInfo)
 		{
@@ -530,91 +621,108 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 			wheelXfrm.Adjust_Z_Translation(wheelInfo->m_frontLeftHeightOffset);
 			wheelXfrm.Rotate_Z(wheelInfo->m_wheelAngle);
 			wheelXfrm.Rotate_Y(m_midFrontWheelRotation);
-			getRenderObject()->Capture_Bone( m_midFrontLeftTireBone );
-			getRenderObject()->Control_Bone( m_midFrontLeftTireBone, wheelXfrm );
+			getRenderObject()->Capture_Bone(m_midFrontLeftTireBone);
+			getRenderObject()->Control_Bone(m_midFrontLeftTireBone, wheelXfrm);
 
 			wheelXfrm.Make_Identity();
 			wheelXfrm.Adjust_Z_Translation(wheelInfo->m_frontRightHeightOffset);
 			wheelXfrm.Rotate_Z(wheelInfo->m_wheelAngle);
 			wheelXfrm.Rotate_Y(m_midFrontWheelRotation);
-			getRenderObject()->Capture_Bone( m_midFrontRightTireBone );
-			getRenderObject()->Control_Bone( m_midFrontRightTireBone, wheelXfrm );
+			getRenderObject()->Capture_Bone(m_midFrontRightTireBone);
+			getRenderObject()->Control_Bone(m_midFrontRightTireBone, wheelXfrm);
 		}
 		if (m_midRearLeftTireBone && wheelInfo)
 		{
 			wheelXfrm.Make_Identity();
 			wheelXfrm.Rotate_Y(m_midRearWheelRotation);
 			wheelXfrm.Adjust_Z_Translation(wheelInfo->m_rearLeftHeightOffset);
-			getRenderObject()->Capture_Bone( m_midRearLeftTireBone );
-			getRenderObject()->Control_Bone( m_midRearLeftTireBone, wheelXfrm );
+			getRenderObject()->Capture_Bone(m_midRearLeftTireBone);
+			getRenderObject()->Control_Bone(m_midRearLeftTireBone, wheelXfrm);
 
 			wheelXfrm.Make_Identity();
 			wheelXfrm.Rotate_Y(m_midRearWheelRotation);
 			wheelXfrm.Adjust_Z_Translation(wheelInfo->m_rearRightHeightOffset);
-			getRenderObject()->Capture_Bone( m_midRearRightTireBone );
-			getRenderObject()->Control_Bone( m_midRearRightTireBone, wheelXfrm );
+			getRenderObject()->Capture_Bone(m_midRearRightTireBone);
+			getRenderObject()->Control_Bone(m_midRearRightTireBone, wheelXfrm);
 		}
 		if (m_midMidLeftTireBone && wheelInfo)
 		{
 			wheelXfrm.Make_Identity();
 			wheelXfrm.Rotate_Y(m_midRearWheelRotation);
 			wheelXfrm.Adjust_Z_Translation(wheelInfo->m_rearLeftHeightOffset);
-			getRenderObject()->Capture_Bone( m_midMidLeftTireBone );
-			getRenderObject()->Control_Bone( m_midMidLeftTireBone, wheelXfrm );
+			getRenderObject()->Capture_Bone(m_midMidLeftTireBone);
+			getRenderObject()->Control_Bone(m_midMidLeftTireBone, wheelXfrm);
 
 			wheelXfrm.Make_Identity();
 			wheelXfrm.Rotate_Y(m_midRearWheelRotation);
 			wheelXfrm.Adjust_Z_Translation(wheelInfo->m_rearRightHeightOffset);
-			getRenderObject()->Capture_Bone( m_midMidRightTireBone );
-			getRenderObject()->Control_Bone( m_midMidRightTireBone, wheelXfrm );
+			getRenderObject()->Capture_Bone(m_midMidRightTireBone);
+			getRenderObject()->Control_Bone(m_midMidRightTireBone, wheelXfrm);
 		}
 	}
 
 	Bool wasPowersliding = m_isPowersliding;
 	m_isPowersliding = false;
-	if (physics->isMotive() && !obj->isSignificantlyAboveTerrain()) {
+	if (physics->isMotive() && !obj->isSignificantlyAboveTerrain())
+	{
 		enableEmitters(true);
 		Coord3D accel = *physics->getAcceleration();
 		accel.z = 0; // ignore gravitational force.
-		Bool accelerating = accel.length()>ACCEL_THRESHOLD;
-		//DEBUG_LOG(("Accel %f, speed %f", accel.length(), speed));
-		if (accelerating)	{
-			Real dot = accel.x*vel->x + accel.y*vel->y;
-			if (dot<0) {
-				accelerating = false;  // decelerating, actually.
+		Bool accelerating = accel.length() > ACCEL_THRESHOLD;
+		// DEBUG_LOG(("Accel %f, speed %f", accel.length(), speed));
+		if (accelerating)
+		{
+			Real dot = accel.x * vel->x + accel.y * vel->y;
+			if (dot < 0)
+			{
+				accelerating = false; // decelerating, actually.
 			}
 		}
-		if (m_dustEffect) {
+		if (m_dustEffect)
+		{
 			// Need more dust the faster we go.
-			if (speed>SIZE_CAP) {
+			if (speed > SIZE_CAP)
+			{
 				speed = SIZE_CAP;
 			}
 			m_dustEffect->setSizeMultiplier(speed);
 		}
-		if (m_dirtEffect) {
-			if (wheelInfo && wheelInfo->m_framesAirborne>3) {
-				Real factor = 1 + wheelInfo->m_framesAirborne/16;
-				if (factor>2.0) factor = 2.0;
-				m_dustEffect->setSizeMultiplier(factor*SIZE_CAP);
+		if (m_dirtEffect)
+		{
+			if (wheelInfo && wheelInfo->m_framesAirborne > 3)
+			{
+				Real factor = 1 + wheelInfo->m_framesAirborne / 16;
+				if (factor > 2.0)
+					factor = 2.0;
+				m_dustEffect->setSizeMultiplier(factor * SIZE_CAP);
 				m_dustEffect->trigger();
 				m_landingSound.setObjectID(obj->getID());
 				TheAudio->addAudioEvent(&m_landingSound);
-			} else {
-				if (!accelerating || speed>2.0f) {
+			}
+			else
+			{
+				if (!accelerating || speed > 2.0f)
+				{
 					m_dirtEffect->stop();
 				}
 			}
 		}
-		if (m_powerslideEffect) {
-			if (physics->getTurning() == TURN_NONE) {
+		if (m_powerslideEffect)
+		{
+			if (physics->getTurning() == TURN_NONE)
+			{
 				m_powerslideEffect->stop();
-			}	else {
+			}
+			else
+			{
 				m_isPowersliding = true;
 				m_powerslideEffect->start();
 			}
 		}
-		if (m_dirtEffect) {
-			if (!accelerating || speed>2.0f) {
+		if (m_dirtEffect)
+		{
+			if (!accelerating || speed > 2.0f)
+			{
 				m_dirtEffect->stop();
 			}
 		}
@@ -624,57 +732,56 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 
 	m_wasAirborne = obj->isSignificantlyAboveTerrain();
 
-	if(!wasPowersliding && m_isPowersliding) {
+	if (!wasPowersliding && m_isPowersliding)
+	{
 		// start sound
 		m_powerslideSound.setObjectID(obj->getID());
 		m_powerslideSound.setPlayingHandle(TheAudio->addAudioEvent(&m_powerslideSound));
-	}	else if (wasPowersliding && !m_isPowersliding) {
+	}
+	else if (wasPowersliding && !m_isPowersliding)
+	{
 		TheAudio->removeAudioEvent(m_powerslideSound.getPlayingHandle());
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void W3DTruckDraw::crc( Xfer *xfer )
+void W3DTruckDraw::crc(Xfer *xfer)
 {
-
 	// extend base class
-	W3DModelDraw::crc( xfer );
+	W3DModelDraw::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void W3DTruckDraw::xfer( Xfer *xfer )
+void W3DTruckDraw::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	W3DModelDraw::xfer( xfer );
+	W3DModelDraw::xfer(xfer);
 
 	// John A and Mark W say there is no data to save here
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DTruckDraw::loadPostProcess( void )
+void W3DTruckDraw::loadPostProcess(void)
 {
-
 	// extend base class
 	W3DModelDraw::loadPostProcess();
 
 	// toss any existing ones (no need to re-create; we'll do that on demand)
 	tossEmitters();
 
-}  // end loadPostProcess
+} // end loadPostProcess

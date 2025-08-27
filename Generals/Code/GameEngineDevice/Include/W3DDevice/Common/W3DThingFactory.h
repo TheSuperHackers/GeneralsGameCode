@@ -41,12 +41,9 @@
 //-------------------------------------------------------------------------------------------------
 class W3DThingFactory : public ThingFactory
 {
-
 public:
-
-	W3DThingFactory( void );
-	virtual ~W3DThingFactory( void );
-};  // end W3DThingFactory
+	W3DThingFactory(void);
+	virtual ~W3DThingFactory(void);
+}; // end W3DThingFactory
 
 #endif // __W3DTHINGFACTORY_H_
-

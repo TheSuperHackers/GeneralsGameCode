@@ -62,13 +62,11 @@ class FilteredSoundClass;
 class Listener3DClass;
 class AudibleSoundClass;
 
-
 /////////////////////////////////////////////////////////////////////////////////
 //	Constants
 /////////////////////////////////////////////////////////////////////////////////
-const uint32	SOUND_OBJ_DEFAULT_ID	= 0;
-const uint32	SOUND_OBJ_START_ID	= 1000000000;
-
+const uint32 SOUND_OBJ_DEFAULT_ID = 0;
+const uint32 SOUND_OBJ_START_ID = 1000000000;
 
 /////////////////////////////////////////////////////////////////////////////////
 //
@@ -80,200 +78,186 @@ const uint32	SOUND_OBJ_START_ID	= 1000000000;
 /////////////////////////////////////////////////////////////////////////////////
 class SoundSceneObjClass : public MultiListObjectClass, public PersistClass, public RefCountClass
 {
-	public:
+public:
+	//////////////////////////////////////////////////////////////////////
+	//	Public friends
+	//////////////////////////////////////////////////////////////////////
+	friend class SoundSceneClass;
+	friend class WWAudioClass;
+	friend class HandleMgrClass;
 
-		//////////////////////////////////////////////////////////////////////
-		//	Public friends
-		//////////////////////////////////////////////////////////////////////
-		friend class SoundSceneClass;
-		friend class WWAudioClass;
-		friend class HandleMgrClass;
+	//////////////////////////////////////////////////////////////////////
+	//	Public constructors/destructors
+	//////////////////////////////////////////////////////////////////////
+	SoundSceneObjClass(void);
+	SoundSceneObjClass(const SoundSceneObjClass &src);
+	virtual ~SoundSceneObjClass(void);
 
-		//////////////////////////////////////////////////////////////////////
-		//	Public constructors/destructors
-		//////////////////////////////////////////////////////////////////////
-		SoundSceneObjClass (void);
-		SoundSceneObjClass (const SoundSceneObjClass &src);
-		virtual ~SoundSceneObjClass (void);
+	//////////////////////////////////////////////////////////////////////
+	//	Public operators
+	//////////////////////////////////////////////////////////////////////
+	const SoundSceneObjClass &operator=(const SoundSceneObjClass &src);
 
-		//////////////////////////////////////////////////////////////////////
-		//	Public operators
-		//////////////////////////////////////////////////////////////////////
-		const SoundSceneObjClass &operator= (const SoundSceneObjClass &src);
+	//////////////////////////////////////////////////////////////////////
+	//	Public methods
+	//////////////////////////////////////////////////////////////////////
 
-		//////////////////////////////////////////////////////////////////////
-		//	Public methods
-		//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	//	Conversion methods
+	//////////////////////////////////////////////////////////////////////
+	virtual Sound3DClass *As_Sound3DClass(void) { return NULL; }
+	virtual SoundPseudo3DClass *As_SoundPseudo3DClass(void) { return NULL; }
+	virtual FilteredSoundClass *As_FilteredSoundClass(void) { return NULL; }
+	virtual Listener3DClass *As_Listener3DClass(void) { return NULL; }
+	virtual AudibleSoundClass *As_AudibleSoundClass(void) { return NULL; }
 
-		//////////////////////////////////////////////////////////////////////
-		//	Conversion methods
-		//////////////////////////////////////////////////////////////////////
-		virtual Sound3DClass *			As_Sound3DClass (void) 			{ return NULL; }
-		virtual SoundPseudo3DClass *	As_SoundPseudo3DClass (void) 	{ return NULL; }
-		virtual FilteredSoundClass *	As_FilteredSoundClass (void) 	{ return NULL; }
-		virtual Listener3DClass *		As_Listener3DClass (void) 		{ return NULL; }
-		virtual AudibleSoundClass *	As_AudibleSoundClass(void) 	{ return NULL; }
+	//////////////////////////////////////////////////////////////////////
+	//	Identification methods
+	//////////////////////////////////////////////////////////////////////
+	virtual uint32 Get_ID(void) const { return m_ID; }
+	virtual void Set_ID(uint32 id);
 
-		//////////////////////////////////////////////////////////////////////
-		//	Identification methods
-		//////////////////////////////////////////////////////////////////////
-		virtual uint32			Get_ID (void) const	{ return m_ID; }
-		virtual void			Set_ID (uint32 id);
+	//////////////////////////////////////////////////////////////////////
+	//	Update methods
+	//////////////////////////////////////////////////////////////////////
+	virtual bool On_Frame_Update(unsigned int milliseconds);
 
-		//////////////////////////////////////////////////////////////////////
-		//	Update methods
-		//////////////////////////////////////////////////////////////////////
-		virtual bool			On_Frame_Update (unsigned int milliseconds);
+	//////////////////////////////////////////////////////////////////////
+	//	Event handling
+	//////////////////////////////////////////////////////////////////////
+	virtual void On_Event(AudioCallbackClass::EVENTS event, uint32 param1 = 0, uint32 param2 = 0);
+	virtual void Register_Callback(AudioCallbackClass::EVENTS events, AudioCallbackClass *callback);
 
-		//////////////////////////////////////////////////////////////////////
-		//	Event handling
-		//////////////////////////////////////////////////////////////////////
-		virtual void			On_Event (AudioCallbackClass::EVENTS event, uint32 param1 = 0, uint32 param2 = 0);
-		virtual void			Register_Callback (AudioCallbackClass::EVENTS events, AudioCallbackClass *callback);
+	//////////////////////////////////////////////////////////////////////
+	//	Position/direction methods
+	//////////////////////////////////////////////////////////////////////
+	virtual void Set_Position(const Vector3 &position) = 0;
+	virtual Vector3 Get_Position(void) const = 0;
 
-		//////////////////////////////////////////////////////////////////////
-		//	Position/direction methods
-		//////////////////////////////////////////////////////////////////////
-		virtual void			Set_Position (const Vector3 &position)	= 0;
-		virtual Vector3		Get_Position (void) const = 0;
+	virtual void Set_Listener_Transform(const Matrix3D &tm) {};
+	virtual void Set_Transform(const Matrix3D &transform) = 0;
+	virtual Matrix3D Get_Transform(void) const = 0;
 
-		virtual void			Set_Listener_Transform (const Matrix3D &tm) {};
-		virtual void			Set_Transform (const Matrix3D &transform) = 0;
-		virtual Matrix3D		Get_Transform (void) const = 0;
+	//////////////////////////////////////////////////////////////////////
+	//	Culling methods
+	//////////////////////////////////////////////////////////////////////
+	virtual void Cull_Sound(bool culled = true) = 0;
+	virtual bool Is_Sound_Culled(void) const = 0;
 
-		//////////////////////////////////////////////////////////////////////
-		//	Culling methods
-		//////////////////////////////////////////////////////////////////////
-		virtual void			Cull_Sound (bool culled = true)	= 0;
-		virtual bool			Is_Sound_Culled (void) const		= 0;
+	//////////////////////////////////////////////////////////////////////
+	//	User data methods
+	//////////////////////////////////////////////////////////////////////
+	virtual void Set_User_Data(RefCountClass *user_obj = NULL, uint32 user = 0)
+	{
+		REF_PTR_SET(m_UserObj, user_obj);
+		m_UserData = user;
+	}
+	virtual uint32 Get_User_Data(void) const { return m_UserData; }
+	virtual RefCountClass *Peek_User_Obj(void) const { return m_UserObj; }
 
-		//////////////////////////////////////////////////////////////////////
-		//	User data methods
-		//////////////////////////////////////////////////////////////////////
-		virtual void			Set_User_Data (RefCountClass *user_obj = NULL, uint32 user = 0)	{ REF_PTR_SET (m_UserObj, user_obj); m_UserData = user; }
-		virtual uint32			Get_User_Data (void) const														{ return m_UserData; }
-		virtual RefCountClass *Peek_User_Obj (void) const													{ return m_UserObj; }
+	//////////////////////////////////////////////////////////////////////
+	//	Attached object methods
+	//////////////////////////////////////////////////////////////////////
+	virtual void Attach_To_Object(RenderObjClass *render_obj, int bone_index = -1);
+	virtual void Attach_To_Object(RenderObjClass *render_obj, const char *bone_name);
+	virtual RenderObjClass *Peek_Parent_Object(void) { return m_AttachedObject; }
+	virtual int Get_Parent_Bone(void) { return m_AttachedBone; }
+	virtual void Apply_Auto_Position(void);
 
-		//////////////////////////////////////////////////////////////////////
-		//	Attached object methods
-		//////////////////////////////////////////////////////////////////////
-		virtual void				Attach_To_Object (RenderObjClass *render_obj, int bone_index = -1);
-		virtual void				Attach_To_Object (RenderObjClass *render_obj, const char *bone_name);
-		virtual RenderObjClass *Peek_Parent_Object (void)			{ return m_AttachedObject; }
-		virtual int					Get_Parent_Bone (void)				{ return m_AttachedBone; }
-		virtual void				Apply_Auto_Position (void);
+	//////////////////////////////////////////////////////////////////////
+	//	Scene integration
+	//////////////////////////////////////////////////////////////////////
+	virtual void Add_To_Scene(bool start_playing = true) = 0;
+	virtual void Remove_From_Scene(void) = 0;
+	virtual bool Is_In_Scene(void) const { return m_Scene != NULL; }
 
-		//////////////////////////////////////////////////////////////////////
-		//	Scene integration
-		//////////////////////////////////////////////////////////////////////
-		virtual void			Add_To_Scene (bool start_playing = true) = 0;
-		virtual void			Remove_From_Scene (void) = 0;
-		virtual bool			Is_In_Scene (void) const			{ return m_Scene != NULL; }
+	//////////////////////////////////////////////////////////////////////
+	//	Attenuation settings
+	//////////////////////////////////////////////////////////////////////
 
-		//////////////////////////////////////////////////////////////////////
-		//	Attenuation settings
-		//////////////////////////////////////////////////////////////////////
+	//
+	//	This is the distance where the sound can not be heard any longer.  (its vol is 0)
+	//
+	virtual void Set_DropOff_Radius(float radius = 1) = 0;
+	virtual float Get_DropOff_Radius(void) const = 0;
 
-		//
-		//	This is the distance where the sound can not be heard any longer.  (its vol is 0)
-		//
-		virtual void			Set_DropOff_Radius (float radius = 1) = 0;
-		virtual float			Get_DropOff_Radius (void) const = 0;
+	//////////////////////////////////////////////////////////////////////
+	//	From PersistClass
+	//////////////////////////////////////////////////////////////////////
+	bool Save(ChunkSaveClass &csave);
+	bool Load(ChunkLoadClass &cload);
 
-		//////////////////////////////////////////////////////////////////////
-		//	From PersistClass
-		//////////////////////////////////////////////////////////////////////
-		bool						Save (ChunkSaveClass &csave);
-		bool						Load (ChunkLoadClass &cload);
+protected:
+	//////////////////////////////////////////////////////////////////////
+	//	Handle information
+	//////////////////////////////////////////////////////////////////////
+	virtual SoundCullObjClass *Peek_Cullable_Wrapper(void) const { return m_PhysWrapper; }
+	virtual void Set_Cullable_Wrapper(SoundCullObjClass *obj) { m_PhysWrapper = obj; }
 
-	protected:
+	//////////////////////////////////////////////////////////////////////
+	//	Sound object managment
+	//////////////////////////////////////////////////////////////////////
+	static void Register_Sound_Object(SoundSceneObjClass *sound_obj);
+	static void Unregister_Sound_Object(SoundSceneObjClass *sound_obj);
+	static bool Find_Sound_Object(uint32 id_to_find, int *index);
 
-		//////////////////////////////////////////////////////////////////////
-		//	Handle information
-		//////////////////////////////////////////////////////////////////////
-		virtual SoundCullObjClass *	Peek_Cullable_Wrapper (void) const					{ return m_PhysWrapper; }
-		virtual void						Set_Cullable_Wrapper (SoundCullObjClass *obj)	{ m_PhysWrapper = obj; }
+	//////////////////////////////////////////////////////////////////////
+	//	Protected member data
+	//////////////////////////////////////////////////////////////////////
+	SoundSceneClass *m_Scene;
+	SoundCullObjClass *m_PhysWrapper;
+	AudioCallbackClass *m_pCallback;
+	AudioCallbackClass::EVENTS m_RegisteredEvents;
+	uint32 m_ID;
 
-		//////////////////////////////////////////////////////////////////////
-		//	Sound object managment
-		//////////////////////////////////////////////////////////////////////
-		static void				Register_Sound_Object (SoundSceneObjClass *sound_obj);
-		static void				Unregister_Sound_Object (SoundSceneObjClass *sound_obj);
-		static bool				Find_Sound_Object (uint32 id_to_find, int *index);
+	RenderObjClass *m_AttachedObject;
+	int m_AttachedBone;
+	uint32 m_UserData;
+	RefCountClass *m_UserObj;
 
-		//////////////////////////////////////////////////////////////////////
-		//	Protected member data
-		//////////////////////////////////////////////////////////////////////
-		SoundSceneClass *				m_Scene;
-		SoundCullObjClass *			m_PhysWrapper;
-		AudioCallbackClass *			m_pCallback;
-		AudioCallbackClass::EVENTS	m_RegisteredEvents;
-		uint32							m_ID;
-
-		RenderObjClass *				m_AttachedObject;
-		int								m_AttachedBone;
-		uint32							m_UserData;
-		RefCountClass *				m_UserObj;
-
-		static DynamicVectorClass<SoundSceneObjClass *>	m_GlobalSoundList;
-		static uint32												m_NextAvailableID;
-		static CriticalSectionClass							m_IDListMutex;
+	static DynamicVectorClass<SoundSceneObjClass *> m_GlobalSoundList;
+	static uint32 m_NextAvailableID;
+	static CriticalSectionClass m_IDListMutex;
 };
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
 //	On_Event
 //
 //////////////////////////////////////////////////////////////////////////////
-__inline void
-SoundSceneObjClass::On_Event
-(
-	AudioCallbackClass::EVENTS	event,
-	uint32							param1,
-	uint32							param2
-)
+__inline void SoundSceneObjClass::On_Event(AudioCallbackClass::EVENTS event, uint32 param1, uint32 param2)
 {
-	if ((m_pCallback != NULL) && (m_RegisteredEvents & event)) {
-
+	if ((m_pCallback != NULL) && (m_RegisteredEvents & event))
+	{
 		switch (event)
 		{
 			case AudioCallbackClass::EVENT_SOUND_STARTED:
-				m_pCallback->On_Sound_Started (this);
+				m_pCallback->On_Sound_Started(this);
 				break;
 
 			case AudioCallbackClass::EVENT_SOUND_ENDED:
-				m_pCallback->On_Sound_Ended (this);
+				m_pCallback->On_Sound_Ended(this);
 				break;
 
 			case AudioCallbackClass::EVENT_LOGICAL_HEARD:
-				m_pCallback->On_Logical_Heard ((LogicalListenerClass *)param1, (LogicalSoundClass *)param2);
+				m_pCallback->On_Logical_Heard((LogicalListenerClass *)param1, (LogicalSoundClass *)param2);
 				break;
 		}
 	}
 
-	return ;
+	return;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
 //	Register_Callback
 //
 //////////////////////////////////////////////////////////////////////////////
-__inline void
-SoundSceneObjClass::Register_Callback
-(
-	AudioCallbackClass::EVENTS	events,
-	AudioCallbackClass *			callback
-)
+__inline void SoundSceneObjClass::Register_Callback(AudioCallbackClass::EVENTS events, AudioCallbackClass *callback)
 {
 	m_RegisteredEvents = events;
 	m_pCallback = callback;
-	return ;
+	return;
 }
 
-
-
 #endif //__SOUND_SCENE_OBJ_H
-

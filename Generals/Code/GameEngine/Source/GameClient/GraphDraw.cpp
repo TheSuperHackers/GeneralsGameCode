@@ -56,7 +56,8 @@
 //-------------------------------------------------------------------------------------------------
 GraphDraw::GraphDraw()
 {
-	for (Int i = 0; i < MAX_GRAPH_VALUES; ++i) {
+	for (Int i = 0; i < MAX_GRAPH_VALUES; ++i)
+	{
 		m_displayStrings[i] = TheDisplayStringManager->newDisplayString();
 		m_displayStrings[i]->setFont(TheFontLibrary->getFont("Courier", 10, false));
 	}
@@ -65,7 +66,8 @@ GraphDraw::GraphDraw()
 //-------------------------------------------------------------------------------------------------
 GraphDraw::~GraphDraw()
 {
-	for (Int i = 0; i < MAX_GRAPH_VALUES; ++i) {
+	for (Int i = 0; i < MAX_GRAPH_VALUES; ++i)
+	{
 		TheDisplayStringManager->freeDisplayString(m_displayStrings[i]);
 	}
 }
@@ -82,7 +84,7 @@ void GraphDraw::render()
 	Int width = TheDisplay->getWidth();
 
 	// divide the width by two because we're going to use the left half of the screen for labels.
-	//width /= 2;
+	// width /= 2;
 
 	// give more to bars than labels. (srj)
 	Int start = width * 0.33f;
@@ -91,14 +93,17 @@ void GraphDraw::render()
 	Int height = TheDisplay->getHeight();
 
 	Int totalCount = m_graphEntries.size();
-	DEBUG_ASSERTCRASH(totalCount < MAX_GRAPH_VALUES, ("MAX_GRAPH_VALUES must be increased, not all labels will appear (max %d, cur %d).",MAX_GRAPH_VALUES,totalCount));
+	DEBUG_ASSERTCRASH(
+			totalCount < MAX_GRAPH_VALUES,
+			("MAX_GRAPH_VALUES must be increased, not all labels will appear (max %d, cur %d).", MAX_GRAPH_VALUES, totalCount));
 	DEBUG_ASSERTCRASH(BAR_HEIGHT * totalCount < height, ("BAR_HEIGHT must be reduced, as bars are being drawn off-screen."));
 	VecGraphEntriesIt it;
 
 	Int count = 0;
-	for (it = m_graphEntries.begin(); it != m_graphEntries.end(); ++it) {
-
-		if (count < MAX_GRAPH_VALUES) {
+	for (it = m_graphEntries.begin(); it != m_graphEntries.end(); ++it)
+	{
+		if (count < MAX_GRAPH_VALUES)
+		{
 			// draw the label.
 			UnicodeString uniStr;
 			uniStr.translate(it->first);
@@ -107,7 +112,12 @@ void GraphDraw::render()
 			m_displayStrings[count]->draw(5, count * BAR_HEIGHT, 0xFFFFFFFF, 0x00000000, 1, 1);
 		}
 
-		TheDisplay->drawFillRect(start, count * BAR_HEIGHT - (BAR_SPACE / 2), it->second / 100000.0f * width, BAR_HEIGHT - BAR_SPACE, 0x7FFFFFFF);
+		TheDisplay->drawFillRect(
+				start,
+				count * BAR_HEIGHT - (BAR_SPACE / 2),
+				it->second / 100000.0f * width,
+				BAR_HEIGHT - BAR_SPACE,
+				0x7FFFFFFF);
 
 		++count;
 	}

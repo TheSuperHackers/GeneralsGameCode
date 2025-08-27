@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/NameKeyGenerator.h"
 #include "Common/ThingTemplate.h"
@@ -41,11 +41,10 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ControlBar::populateBeacon( Object *beacon )
+void ControlBar::populateBeacon(Object *beacon)
 {
-
 	// set the portrait for the thing being constructed
-	setPortraitByObject( beacon );
+	setPortraitByObject(beacon);
 
 	static NameKeyType textID = NAMEKEY("ControlBar.wnd:EditBeaconText");
 	static NameKeyType staticTextID = NAMEKEY("ControlBar.wnd:StaticTextBeaconLabel");
@@ -60,8 +59,8 @@ void ControlBar::populateBeacon( Object *beacon )
 		if (textEntryWin)
 		{
 			textEntryWin->winHide(FALSE);
-			GadgetTextEntrySetText( textEntryWin, beacon->getDrawable()->getCaptionText() );
-			TheWindowManager->winSetFocus( textEntryWin );
+			GadgetTextEntrySetText(textEntryWin, beacon->getDrawable()->getCaptionText());
+			TheWindowManager->winSetFocus(textEntryWin);
 		}
 
 		if (staticTextWin)
@@ -81,19 +80,17 @@ void ControlBar::populateBeacon( Object *beacon )
 		if (buttonWin)
 			buttonWin->winHide(TRUE);
 	}
-}  // end populateBeacon
+} // end populateBeacon
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ControlBar::updateContextBeacon( void )
+void ControlBar::updateContextBeacon(void)
 {
-
-}  // end updateContextBeacon
+} // end updateContextBeacon
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType BeaconWindowInput( GameWindow *window, UnsignedInt msg,
-																			 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType BeaconWindowInput(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
 	if (msg == GWM_CHAR && mData1 == KEY_ESC)
 	{
@@ -103,4 +100,4 @@ WindowMsgHandledType BeaconWindowInput( GameWindow *window, UnsignedInt msg,
 
 	return MSG_IGNORED;
 
-}  // end InGameChatInput
+} // end InGameChatInput

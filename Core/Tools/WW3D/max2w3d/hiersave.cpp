@@ -68,9 +68,7 @@
 #include "errclass.h"
 #include "exportlog.h"
 
-
 bool HierarchySaveClass::TerrainModeEnabled = false;
-
 
 /***********************************************************************************************
  * HierarchySaveClass::HierarchySaveClass -- constructor                                       *
@@ -90,19 +88,14 @@ bool HierarchySaveClass::TerrainModeEnabled = false;
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HierarchySaveClass::HierarchySaveClass
-(
-	INode * root,
-	TimeValue time,
-	Progress_Meter_Class & treemeter,
-	char * hname,
-	int fixuptype,
-	HierarchySaveClass * fixuptree
-) :
-	Node(DEFAULT_NODE_ARRAY_SIZE),
-	CurNode(0),
-	FixupType(fixuptype),
-	FixupTree(fixuptree)
+HierarchySaveClass::HierarchySaveClass(
+		INode *root,
+		TimeValue time,
+		Progress_Meter_Class &treemeter,
+		char *hname,
+		int fixuptype,
+		HierarchySaveClass *fixuptree) :
+		Node(DEFAULT_NODE_ARRAY_SIZE), CurNode(0), FixupType(fixuptype), FixupTree(fixuptree)
 {
 	CurNode = 0;
 	CurTime = time;
@@ -116,12 +109,12 @@ HierarchySaveClass::HierarchySaveClass
 	/*
 	** Build our tree from the given tree of nodes
 	*/
-	int rootidx = add_node(NULL,-1);
- 	assert(rootidx == 0);
-	add_tree(root,rootidx);
+	int rootidx = add_node(NULL, -1);
+	assert(rootidx == 0);
+	add_tree(root, rootidx);
 
 	HierarchyHeader.Version = W3D_CURRENT_HTREE_VERSION;
-	Set_W3D_Name(HierarchyHeader.Name,hname);
+	Set_W3D_Name(HierarchyHeader.Name, hname);
 	HierarchyHeader.NumPivots = CurNode;
 	HierarchyHeader.Center.X = 0.0f;
 	HierarchyHeader.Center.Y = 0.0f;
@@ -148,21 +141,19 @@ HierarchySaveClass::HierarchySaveClass
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HierarchySaveClass::HierarchySaveClass
-(
-	INodeListClass * rootlist,
-	TimeValue time,
-	Progress_Meter_Class & treemeter,
-	char * hname,
-	int fixuptype,
-	HierarchySaveClass * fixuptree,
-	const Matrix3 & origin_offset
-) :
-	Node(DEFAULT_NODE_ARRAY_SIZE),
-	CurNode(0),
-	FixupType(fixuptype),
-	FixupTree(fixuptree),
-	OriginOffsetTransform(origin_offset)
+HierarchySaveClass::HierarchySaveClass(
+		INodeListClass *rootlist,
+		TimeValue time,
+		Progress_Meter_Class &treemeter,
+		char *hname,
+		int fixuptype,
+		HierarchySaveClass *fixuptree,
+		const Matrix3 &origin_offset) :
+		Node(DEFAULT_NODE_ARRAY_SIZE),
+		CurNode(0),
+		FixupType(fixuptype),
+		FixupTree(fixuptree),
+		OriginOffsetTransform(origin_offset)
 {
 	CurNode = 0;
 	CurTime = time;
@@ -170,20 +161,20 @@ HierarchySaveClass::HierarchySaveClass
 	/*
 	** Build the tree with all leaves of all of the nodes given
 	*/
-	int rootidx = add_node(NULL,-1);
- 	assert(rootidx == 0);
+	int rootidx = add_node(NULL, -1);
+	assert(rootidx == 0);
 
-	for (unsigned int i = 0; i < rootlist->Num_Nodes(); i++) {
-		add_tree((*rootlist)[i],rootidx);
+	for (unsigned int i = 0; i < rootlist->Num_Nodes(); i++)
+	{
+		add_tree((*rootlist)[i], rootidx);
 	}
 
 	HierarchyHeader.Version = W3D_CURRENT_HTREE_VERSION;
-	Set_W3D_Name(HierarchyHeader.Name,hname);
+	Set_W3D_Name(HierarchyHeader.Name, hname);
 	HierarchyHeader.NumPivots = CurNode;
 	HierarchyHeader.Center.X = 0.0f;
 	HierarchyHeader.Center.Y = 0.0f;
 	HierarchyHeader.Center.Z = 0.0f;
-
 }
 
 /***********************************************************************************************
@@ -198,10 +189,7 @@ HierarchySaveClass::HierarchySaveClass
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-HierarchySaveClass::HierarchySaveClass():
-	Node(NULL),
-	CurNode(0),
-	CurTime(0)
+HierarchySaveClass::HierarchySaveClass() : Node(NULL), CurNode(0), CurTime(0)
 {
 }
 
@@ -239,7 +227,6 @@ void HierarchySaveClass::Free(void)
 	Node.Clear();
 }
 
-
 /***********************************************************************************************
  * HierarchySaveClass::Get_Node_Transform -- returns the transformation matrix of specified no *
  *                                                                                             *
@@ -258,14 +245,14 @@ Matrix3 HierarchySaveClass::Get_Node_Transform(int nodeidx) const
 
 	int idx = nodeidx;
 
-	while (idx != -1) {
+	while (idx != -1)
+	{
 		tm = tm * get_relative_transform(idx);
 		idx = Node[idx].Pivot.ParentIdx;
 	}
 
 	return tm;
 }
-
 
 /***********************************************************************************************
  * HierarchySaveClass::get_relative_transform -- retruns tm between this node and its parent   *
@@ -284,10 +271,10 @@ Matrix3 HierarchySaveClass::get_relative_transform(int nodeidx) const
 	assert(nodeidx >= 0);
 	assert(nodeidx < CurNode);
 
-	Point3	trans;
-	Quat		rot;
-	Matrix3	tm(true);
-	Matrix3	rtm(true);
+	Point3 trans;
+	Quat rot;
+	Matrix3 tm(true);
+	Matrix3 rtm(true);
 
 	trans.x = Node[nodeidx].Pivot.Translation.X;
 	trans.y = Node[nodeidx].Pivot.Translation.Y;
@@ -308,7 +295,6 @@ Matrix3 HierarchySaveClass::get_relative_transform(int nodeidx) const
 	return tm;
 }
 
-
 /***********************************************************************************************
  * HierarchySaveClass::Get_Name -- returns the name of this hierarchy                          *
  *                                                                                             *
@@ -321,11 +307,10 @@ Matrix3 HierarchySaveClass::get_relative_transform(int nodeidx) const
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-const char * HierarchySaveClass::Get_Name(void) const
+const char *HierarchySaveClass::Get_Name(void) const
 {
 	return HierarchyHeader.Name;
 }
-
 
 /***********************************************************************************************
  * HierarchySaveClass::Get_Node -- Get the Max INode                                           *
@@ -339,7 +324,7 @@ const char * HierarchySaveClass::Get_Name(void) const
  * HISTORY:                                                                                    *
  *   1/15/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-INode * HierarchySaveClass::Get_Node(int node) const
+INode *HierarchySaveClass::Get_Node(int node) const
 {
 	assert(node >= 0);
 	assert(node < CurNode);
@@ -359,14 +344,13 @@ INode * HierarchySaveClass::Get_Node(int node) const
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-const char * HierarchySaveClass::Get_Node_Name(int node) const
+const char *HierarchySaveClass::Get_Node_Name(int node) const
 {
 	assert(node >= 0);
 	assert(node < CurNode);
 
 	return Node[node].Pivot.Name;
 }
-
 
 /***********************************************************************************************
  * HierarchySaveClass::Find_Named_Node -- returns index of a named node                        *
@@ -380,11 +364,13 @@ const char * HierarchySaveClass::Get_Node_Name(int node) const
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-int HierarchySaveClass::Find_Named_Node(const char * name) const
+int HierarchySaveClass::Find_Named_Node(const char *name) const
 {
 	int match = -1;
-	for (int index=0; index<CurNode; index++) {
-		if (strcmp(Node[index].Pivot.Name,name) == 0) {
+	for (int index = 0; index < CurNode; index++)
+	{
+		if (strcmp(Node[index].Pivot.Name, name) == 0)
+		{
 			match = index;
 		}
 	}
@@ -405,13 +391,11 @@ int HierarchySaveClass::Find_Named_Node(const char * name) const
  * HISTORY:                                                                                    *
  *   10/17/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-void HierarchySaveClass::Get_Export_Coordinate_System
-(
-	INode * node,
-	int * set_bone_index,
-	INode ** set_bone_node,
-	Matrix3 * set_transform
-)
+void HierarchySaveClass::Get_Export_Coordinate_System(
+		INode *node,
+		int *set_bone_index,
+		INode **set_bone_node,
+		Matrix3 *set_transform)
 {
 	/*
 	** find the first parent of this node which
@@ -420,34 +404,34 @@ void HierarchySaveClass::Get_Export_Coordinate_System
 	** hierarchy.  When we're exporting LOD models, there are multiple
 	** hierarchies...
 	*/
-	bool	done = false;
-	int	boneidx = -1;
-	INode * pbone = node;
+	bool done = false;
+	int boneidx = -1;
+	INode *pbone = node;
 
-	while (!done) {
-
+	while (!done)
+	{
 		char name[W3D_NAME_LEN];
-		Set_W3D_Name(name,pbone->GetName());
+		Set_W3D_Name(name, pbone->GetName());
 
 		boneidx = Find_Named_Node(name);
 
-		if (boneidx != -1) {
-
+		if (boneidx != -1)
+		{
 			/*
 			** We found the parent bone!
 			*/
 			done = true;
-
-		} else if (Is_Origin(pbone)) {
-
+		}
+		else if (Is_Origin(pbone))
+		{
 			/*
 			** Don't go up past our origin, use this as our bone.
 			*/
 			boneidx = 0;
 			done = true;
-
-		} else {
-
+		}
+		else
+		{
 			/*
 			** Nope, try the next parent
 			*/
@@ -468,13 +452,16 @@ void HierarchySaveClass::Get_Export_Coordinate_System
 		}
 	}
 
-	if (set_bone_index != NULL) {
+	if (set_bone_index != NULL)
+	{
 		*set_bone_index = boneidx;
 	}
-	if (set_bone_node != NULL) {
+	if (set_bone_node != NULL)
+	{
 		*set_bone_node = pbone;
 	}
-	if (set_transform != NULL) {
+	if (set_transform != NULL)
+	{
 		*set_transform = Get_Fixup_Transform(boneidx) * pbone->GetNodeTM(CurTime);
 	}
 }
@@ -491,38 +478,43 @@ void HierarchySaveClass::Get_Export_Coordinate_System
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool HierarchySaveClass::Save(ChunkSaveClass & csave)
+bool HierarchySaveClass::Save(ChunkSaveClass &csave)
 {
-	ExportLog::printf("\nSaving Hierarchy Tree %s.\n",HierarchyHeader.Name);
-	ExportLog::printf("Node Count: %d\n",CurNode);
+	ExportLog::printf("\nSaving Hierarchy Tree %s.\n", HierarchyHeader.Name);
+	ExportLog::printf("Node Count: %d\n", CurNode);
 	ExportLog::printf("Nodes: \n");
-	for (int inode = 0; inode < CurNode; inode++) {
-		ExportLog::printf("  %s\n",Node[inode].Pivot.Name);
+	for (int inode = 0; inode < CurNode; inode++)
+	{
+		ExportLog::printf("  %s\n", Node[inode].Pivot.Name);
 	}
 
-	if (!csave.Begin_Chunk(W3D_CHUNK_HIERARCHY)) {
+	if (!csave.Begin_Chunk(W3D_CHUNK_HIERARCHY))
+	{
 		return false;
 	}
 
-	if (!save_header(csave)) {
+	if (!save_header(csave))
+	{
 		return false;
 	}
 
-	if (!save_pivots(csave)) {
+	if (!save_pivots(csave))
+	{
 		return false;
 	}
 
-	if (!save_fixups(csave)) {
+	if (!save_fixups(csave))
+	{
 		return false;
 	}
 
-	if (!csave.End_Chunk()) {
+	if (!csave.End_Chunk())
+	{
 		return false;
 	}
 
 	return true;
 }
-
 
 /***********************************************************************************************
  * HierarchySaveClass::Load -- read the hierarchy from a W3D file                              *
@@ -536,27 +528,33 @@ bool HierarchySaveClass::Save(ChunkSaveClass & csave)
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool HierarchySaveClass::Load(ChunkLoadClass & cload)
+bool HierarchySaveClass::Load(ChunkLoadClass &cload)
 {
 	Free();
 	bool error = false;
 
-	while (cload.Open_Chunk()) {
-		switch (cload.Cur_Chunk_ID()) {
+	while (cload.Open_Chunk())
+	{
+		switch (cload.Cur_Chunk_ID())
+		{
 			case W3D_CHUNK_HIERARCHY_HEADER:
-				if (!load_header(cload)) error = true;
+				if (!load_header(cload))
+					error = true;
 				break;
 			case W3D_CHUNK_PIVOTS:
-				if (!load_pivots(cload)) error = true;
+				if (!load_pivots(cload))
+					error = true;
 				break;
 			case W3D_CHUNK_PIVOT_FIXUPS:
-				if (!load_fixups(cload)) error = true;
+				if (!load_fixups(cload))
+					error = true;
 				break;
 			default:
 				break;
 		}
 
-		if (!cload.Close_Chunk() || error) {
+		if (!cload.Close_Chunk() || error)
+		{
 			return false;
 		}
 	}
@@ -565,7 +563,6 @@ bool HierarchySaveClass::Load(ChunkLoadClass & cload)
 
 	return true;
 }
-
 
 /***********************************************************************************************
  * HierarchySaveClass::add_tree -- adds a node and all of its children                         *
@@ -579,38 +576,37 @@ bool HierarchySaveClass::Load(ChunkLoadClass & cload)
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void HierarchySaveClass::add_tree(INode * node,int pidx)
+void HierarchySaveClass::add_tree(INode *node, int pidx)
 {
 	int nextparent;
 
-	if (node->IsHidden ()) {
-
+	if (node->IsHidden())
+	{
 		// if the node is hidden, do not add it but add its children to the current parent.
 		nextparent = pidx;
-
-	} else if (TerrainModeEnabled && (Is_Normal_Mesh(node) || Is_Null_Object(node))) {
-
+	}
+	else if (TerrainModeEnabled && (Is_Normal_Mesh(node) || Is_Null_Object(node)))
+	{
 		// terrain optimization, normal meshes are not allowed to have transforms
 		nextparent = pidx;
-
-	} else if (!Is_Bone(node)) {
-
+	}
+	else if (!Is_Bone(node))
+	{
 		// This node isn't a bone, don't add it
 		nextparent = pidx;
-
-	} else {
-
+	}
+	else
+	{
 		// Add new pivot!	it will be parent of all below it.
-		nextparent = add_node(node,pidx);
-
+		nextparent = add_node(node, pidx);
 	}
 
 	// Add all of this nodes children
-	for (int i=0; i < node->NumberOfChildren(); i++) {
-		add_tree(node->GetChildNode(i),nextparent);
+	for (int i = 0; i < node->NumberOfChildren(); i++)
+	{
+		add_tree(node->GetChildNode(i), nextparent);
 	}
 }
-
 
 /***********************************************************************************************
  * HierarchySaveClass::add_node -- adds a single node to the tree                              *
@@ -624,13 +620,14 @@ void HierarchySaveClass::add_tree(INode * node,int pidx)
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-int HierarchySaveClass::add_node(INode * node,int pidx)
+int HierarchySaveClass::add_node(INode *node, int pidx)
 {
 	/*
 	** 'grow' the node array if necessary
 	*/
-	if (CurNode >= Node.Length ()) {
-		Node.Resize (Node.Length () + NODE_ARRAY_GROWTH_SIZE);
+	if (CurNode >= Node.Length())
+	{
+		Node.Resize(Node.Length() + NODE_ARRAY_GROWTH_SIZE);
 	}
 
 	/*
@@ -639,35 +636,42 @@ int HierarchySaveClass::add_node(INode * node,int pidx)
 	Node[CurNode].MaxNode = node;
 	Node[CurNode].Pivot.ParentIdx = pidx;
 
-	if (node) {
-		Set_W3D_Name(Node[CurNode].Pivot.Name,node->GetName());
-	} else {
-		Set_W3D_Name(Node[CurNode].Pivot.Name,"RootTransform");
+	if (node)
+	{
+		Set_W3D_Name(Node[CurNode].Pivot.Name, node->GetName());
+	}
+	else
+	{
+		Set_W3D_Name(Node[CurNode].Pivot.Name, "RootTransform");
 	}
 
 	/*
 	** Now, check if there is a bone with this W3D name already
 	** if there is, scold the user and bail out
 	*/
-	if (Find_Named_Node(Node[CurNode].Pivot.Name) != -1) {
+	if (Find_Named_Node(Node[CurNode].Pivot.Name) != -1)
+	{
 		char buf[128];
-		sprintf(buf,"Bones with duplicate names found!\nDuplicated Name: %s\n",Node[CurNode].Pivot.Name);
+		sprintf(buf, "Bones with duplicate names found!\nDuplicated Name: %s\n", Node[CurNode].Pivot.Name);
 		throw ErrorClass(buf);
 	}
 
 	/*
 	** Compute the transformation for this node
 	*/
-	Matrix3		maxnodeTM(1);
-	Matrix3		ournodeTM(1);
-	Matrix3		fixupTM(1);
-	Point3		trans(0,0,0);
-	Quat			rot(1);
-	Point3		scale(1,1,1);
+	Matrix3 maxnodeTM(1);
+	Matrix3 ournodeTM(1);
+	Matrix3 fixupTM(1);
+	Point3 trans(0, 0, 0);
+	Quat rot(1);
+	Point3 scale(1, 1, 1);
 
-	if (node) {
+	if (node)
+	{
 		maxnodeTM = node->GetNodeTM(CurTime) * OriginOffsetTransform;
-	} else {
+	}
+	else
+	{
 		maxnodeTM = Matrix3(1);
 	}
 
@@ -682,11 +686,13 @@ int HierarchySaveClass::add_node(INode * node,int pidx)
 	*/
 	assert(!((FixupTree != NULL) && (FixupType != MATRIX_FIXUP_NONE)));
 
-	if (FixupTree != NULL) {
+	if (FixupTree != NULL)
+	{
 		int fi = FixupTree->Find_Named_Node(Node[CurNode].Pivot.Name);
-		if (fi == -1) {
+		if (fi == -1)
+		{
 			char buf[128];
-			sprintf(buf,"Incompatible Base Pose!\nMissing Bone: %s\n",Node[CurNode].Pivot.Name);
+			sprintf(buf, "Incompatible Base Pose!\nMissing Bone: %s\n", Node[CurNode].Pivot.Name);
 			throw ErrorClass(buf);
 		}
 
@@ -694,7 +700,6 @@ int HierarchySaveClass::add_node(INode * node,int pidx)
 
 		maxnodeTM = fixup * maxnodeTM;
 	}
-
 
 	ournodeTM = fixup_matrix(maxnodeTM);
 	fixupTM = ournodeTM * Inverse(maxnodeTM);
@@ -705,22 +710,23 @@ int HierarchySaveClass::add_node(INode * node,int pidx)
 	** that it is relative to our version of the parent transform
 	** which is not necessarily the same as the MAX version...)
 	*/
-	if (pidx != -1) {
+	if (pidx != -1)
+	{
 		Matrix3 parentTM = Get_Node_Transform(pidx);
 		Matrix3 pinv = Inverse(parentTM);
 		ournodeTM = ournodeTM * pinv;
 	}
 
-
 	/*
 	** Break the matrix down into a rotation and translation.
 	*/
-	DecomposeMatrix(ournodeTM,trans,rot,scale);
+	DecomposeMatrix(ournodeTM, trans, rot, scale);
 
 	/*
 	** Save the "fixup" matrix
 	*/
-	for (int j=0;j<4;j++) {
+	for (int j = 0; j < 4; j++)
+	{
 		Point3 row = fixupTM.GetRow(j);
 		Node[CurNode].Fixup.TM[j][0] = row.x;
 		Node[CurNode].Fixup.TM[j][1] = row.y;
@@ -730,9 +736,9 @@ int HierarchySaveClass::add_node(INode * node,int pidx)
 	/*
 	** Set the translation and rotation for this pivot.
 	*/
-	Node[CurNode].Pivot.Translation.X	= trans.x;
-	Node[CurNode].Pivot.Translation.Y	= trans.y;
-	Node[CurNode].Pivot.Translation.Z	= trans.z;
+	Node[CurNode].Pivot.Translation.X = trans.x;
+	Node[CurNode].Pivot.Translation.Y = trans.y;
+	Node[CurNode].Pivot.Translation.Z = trans.z;
 
 	Node[CurNode].Pivot.Rotation.Q[0] = -rot[0];
 	Node[CurNode].Pivot.Rotation.Q[1] = -rot[1];
@@ -744,7 +750,7 @@ int HierarchySaveClass::add_node(INode * node,int pidx)
 	*/
 	Matrix3 rotmat;
 	rot.MakeMatrix(rotmat);
-	EulerAnglesClass eangs(rotmat,EulerOrderXYZr);
+	EulerAnglesClass eangs(rotmat, EulerOrderXYZr);
 
 	Node[CurNode].Pivot.EulerAngles.X = eangs.Get_Angle(0);
 	Node[CurNode].Pivot.EulerAngles.Y = eangs.Get_Angle(1);
@@ -772,8 +778,9 @@ Matrix3 HierarchySaveClass::Get_Fixup_Transform(int node) const
 
 	Matrix3 m;
 
-	for (int j=0;j<4;j++) {
-		m.SetRow(j,Point3(Node[node].Fixup.TM[j][0],Node[node].Fixup.TM[j][1],Node[node].Fixup.TM[j][2]));
+	for (int j = 0; j < 4; j++)
+	{
+		m.SetRow(j, Point3(Node[node].Fixup.TM[j][0], Node[node].Fixup.TM[j][1], Node[node].Fixup.TM[j][2]));
 	}
 
 	return m;
@@ -791,15 +798,16 @@ Matrix3 HierarchySaveClass::Get_Fixup_Transform(int node) const
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-Matrix3 HierarchySaveClass::fixup_matrix(const Matrix3 & csrc) const
+Matrix3 HierarchySaveClass::fixup_matrix(const Matrix3 &csrc) const
 {
-	Matrix3	src = csrc;	// the GetTrans function is not const correct...
-	Matrix3	newtm(1);
-	Point3	trans;
-	Quat		rot;
-	Point3	scale;
+	Matrix3 src = csrc; // the GetTrans function is not const correct...
+	Matrix3 newtm(1);
+	Point3 trans;
+	Quat rot;
+	Point3 scale;
 
-	switch (FixupType) {
+	switch (FixupType)
+	{
 		case MATRIX_FIXUP_NONE:
 			newtm = src;
 			break;
@@ -810,7 +818,7 @@ Matrix3 HierarchySaveClass::fixup_matrix(const Matrix3 & csrc) const
 			break;
 
 		case MATRIX_FIXUP_TRANS_ROT:
-			DecomposeMatrix(src,trans,rot,scale);
+			DecomposeMatrix(src, trans, rot, scale);
 			rot.MakeMatrix(newtm);
 			newtm.SetTrans(trans);
 			newtm = Cleanup_Orthogonal_Matrix(newtm);
@@ -819,7 +827,6 @@ Matrix3 HierarchySaveClass::fixup_matrix(const Matrix3 & csrc) const
 
 	return newtm;
 }
-
 
 /***********************************************************************************************
  * HierarchySaveClass::save_header -- writes the header into a W3D file                        *
@@ -833,23 +840,25 @@ Matrix3 HierarchySaveClass::fixup_matrix(const Matrix3 & csrc) const
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool HierarchySaveClass::save_header(ChunkSaveClass & csave)
+bool HierarchySaveClass::save_header(ChunkSaveClass &csave)
 {
-	if (!csave.Begin_Chunk(W3D_CHUNK_HIERARCHY_HEADER)) {
+	if (!csave.Begin_Chunk(W3D_CHUNK_HIERARCHY_HEADER))
+	{
 		return false;
 	}
 
-	if (csave.Write(&HierarchyHeader,sizeof(HierarchyHeader)) != sizeof(HierarchyHeader)) {
+	if (csave.Write(&HierarchyHeader, sizeof(HierarchyHeader)) != sizeof(HierarchyHeader))
+	{
 		return false;
 	}
 
-	if (!csave.End_Chunk()) {
+	if (!csave.End_Chunk())
+	{
 		return false;
 	}
 
 	return true;
 }
-
 
 /***********************************************************************************************
  * HierarchySaveClass::save_pivots -- writes the pivots into a W3D file                        *
@@ -863,19 +872,23 @@ bool HierarchySaveClass::save_header(ChunkSaveClass & csave)
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool HierarchySaveClass::save_pivots(ChunkSaveClass & csave)
+bool HierarchySaveClass::save_pivots(ChunkSaveClass &csave)
 {
-	if (!csave.Begin_Chunk(W3D_CHUNK_PIVOTS)) {
+	if (!csave.Begin_Chunk(W3D_CHUNK_PIVOTS))
+	{
 		return false;
 	}
 
-	for (uint32 i=0; i<HierarchyHeader.NumPivots; i++) {
-		if (csave.Write(&Node[i].Pivot,sizeof(W3dPivotStruct)) != sizeof(W3dPivotStruct)) {
+	for (uint32 i = 0; i < HierarchyHeader.NumPivots; i++)
+	{
+		if (csave.Write(&Node[i].Pivot, sizeof(W3dPivotStruct)) != sizeof(W3dPivotStruct))
+		{
 			return false;
 		}
 	}
 
-	if (!csave.End_Chunk()) {
+	if (!csave.End_Chunk())
+	{
 		return false;
 	}
 
@@ -894,25 +907,28 @@ bool HierarchySaveClass::save_pivots(ChunkSaveClass & csave)
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool HierarchySaveClass::save_fixups(ChunkSaveClass & csave)
+bool HierarchySaveClass::save_fixups(ChunkSaveClass &csave)
 {
-	if (!csave.Begin_Chunk(W3D_CHUNK_PIVOT_FIXUPS)) {
+	if (!csave.Begin_Chunk(W3D_CHUNK_PIVOT_FIXUPS))
+	{
 		return false;
 	}
 
-	for (uint32 i=0; i<HierarchyHeader.NumPivots; i++) {
-		if (csave.Write(&Node[i].Fixup,sizeof(W3dPivotFixupStruct)) != sizeof(W3dPivotFixupStruct)) {
+	for (uint32 i = 0; i < HierarchyHeader.NumPivots; i++)
+	{
+		if (csave.Write(&Node[i].Fixup, sizeof(W3dPivotFixupStruct)) != sizeof(W3dPivotFixupStruct))
+		{
 			return false;
 		}
 	}
 
-	if (!csave.End_Chunk()) {
+	if (!csave.End_Chunk())
+	{
 		return false;
 	}
 
 	return true;
 }
-
 
 /***********************************************************************************************
  * HierarchySaveClass::load_header -- reads the header from a W3D file                         *
@@ -926,12 +942,13 @@ bool HierarchySaveClass::save_fixups(ChunkSaveClass & csave)
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool HierarchySaveClass::load_header(ChunkLoadClass & cload)
+bool HierarchySaveClass::load_header(ChunkLoadClass &cload)
 {
 	/*
 	** Load the header
 	*/
-	if (cload.Read(&HierarchyHeader,sizeof(HierarchyHeader)) != sizeof(HierarchyHeader)) {
+	if (cload.Read(&HierarchyHeader, sizeof(HierarchyHeader)) != sizeof(HierarchyHeader))
+	{
 		return false;
 	}
 
@@ -945,11 +962,13 @@ bool HierarchySaveClass::load_header(ChunkLoadClass & cload)
 	** Initialize everything to a default state (particularly the
 	** fixup matrices to identity...)
 	*/
-	for (unsigned i=0; i < HierarchyHeader.NumPivots; i++) {
-		memset(&(Node[i]),0,sizeof(HierarchyNodeStruct));
+	for (unsigned i = 0; i < HierarchyHeader.NumPivots; i++)
+	{
+		memset(&(Node[i]), 0, sizeof(HierarchyNodeStruct));
 
 		Matrix3 ident(1);
-		for (int j=0; j<3; j++) {
+		for (int j = 0; j < 3; j++)
+		{
 			Point3 row = ident.GetRow(j);
 			Node[i].Fixup.TM[j][0] = row.x;
 			Node[i].Fixup.TM[j][1] = row.y;
@@ -959,7 +978,6 @@ bool HierarchySaveClass::load_header(ChunkLoadClass & cload)
 
 	return true;
 }
-
 
 /***********************************************************************************************
  * HierarchySaveClass::load_pivots -- reads the pivots from a W3D file                         *
@@ -973,11 +991,13 @@ bool HierarchySaveClass::load_header(ChunkLoadClass & cload)
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool HierarchySaveClass::load_pivots(ChunkLoadClass & cload)
+bool HierarchySaveClass::load_pivots(ChunkLoadClass &cload)
 {
-	for (uint32 i=0; i<HierarchyHeader.NumPivots; i++) {
+	for (uint32 i = 0; i < HierarchyHeader.NumPivots; i++)
+	{
 		Node[i].MaxNode = NULL;
-		if (cload.Read(&Node[i].Pivot,sizeof(W3dPivotStruct)) != sizeof(W3dPivotStruct)) {
+		if (cload.Read(&Node[i].Pivot, sizeof(W3dPivotStruct)) != sizeof(W3dPivotStruct))
+		{
 			return false;
 		}
 	}
@@ -996,14 +1016,14 @@ bool HierarchySaveClass::load_pivots(ChunkLoadClass & cload)
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool HierarchySaveClass::load_fixups(ChunkLoadClass & cload)
+bool HierarchySaveClass::load_fixups(ChunkLoadClass &cload)
 {
-	for (uint32 i=0; i<HierarchyHeader.NumPivots; i++) {
-		if (cload.Read(&Node[i].Fixup,sizeof(W3dPivotFixupStruct)) != sizeof(W3dPivotFixupStruct)) {
+	for (uint32 i = 0; i < HierarchyHeader.NumPivots; i++)
+	{
+		if (cload.Read(&Node[i].Fixup, sizeof(W3dPivotFixupStruct)) != sizeof(W3dPivotFixupStruct))
+		{
 			return false;
 		}
 	}
 	return true;
 }
-
-

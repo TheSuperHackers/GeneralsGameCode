@@ -17,23 +17,23 @@
 */
 
 /******************************************************************************
-*
-* FILE
-*     $Archive: /Commando/Code/wwlib/wwNotify.h $
-*
-* DESCRIPTION
-*     These templates provide implementation of the Subject-Observer pattern.
-*
-* PROGRAMMER
-*     Steve Clinard
-*     $Author: Denzil_l $
-*
-* VERSION INFO
-*     $Modtime: 11/13/01 10:49a $
-*     $Revision: 8 $
-*
-* 06/28/02 KM Notify name change to avoid MAX conflicts                                       *
-******************************************************************************/
+ *
+ * FILE
+ *     $Archive: /Commando/Code/wwlib/wwNotify.h $
+ *
+ * DESCRIPTION
+ *     These templates provide implementation of the Subject-Observer pattern.
+ *
+ * PROGRAMMER
+ *     Steve Clinard
+ *     $Author: Denzil_l $
+ *
+ * VERSION INFO
+ *     $Modtime: 11/13/01 10:49a $
+ *     $Revision: 8 $
+ *
+ * 06/28/02 KM Notify name change to avoid MAX conflicts                                       *
+ ******************************************************************************/
 
 #ifndef __NOTIFY_H__
 #define __NOTIFY_H__
@@ -52,134 +52,133 @@
 
 #include <assert.h>
 
-template<typename Event> class Notifier;
-template<typename Event> class Observer;
+template<typename Event>
+class Notifier;
+template<typename Event>
+class Observer;
 
-template<typename Event> class Observer
+template<typename Event>
+class Observer
+{
+public:
+	typedef std::vector<Notifier<Event> *> NotifierColl;
+
+	Observer() : mNotifiers(NULL) {}
+
+	virtual ~Observer() { StopObserving(); }
+
+	//! Handle event notification
+	virtual void HandleNotification(Event &) = 0;
+
+	//! Notifier has ended notification of this event
+	virtual void NotificationEnded(const Notifier<Event> &notifier)
 	{
-	public:
-		typedef std::vector< Notifier<Event>* > NotifierColl;
+		NotifierColl::iterator pos = std::find(mNotifiers.begin(), mNotifiers.end(), &notifier);
 
-		Observer() :
-				mNotifiers(NULL)
-			{}
+		if (pos != mNotifiers.end())
+		{
+			mNotifiers.erase(pos);
+		}
+	}
 
-		virtual ~Observer()
-			{StopObserving();}
+	//! Request notification of this event
+	virtual void NotifyMe(Notifier<Event> &notifier) { notifier.AddObserver(*this); }
 
-		//! Handle event notification
-		virtual void HandleNotification(Event&) = 0;
+	//! Stop observing event
+	void StopObserving()
+	{
+		while (mNotifiers.size() > 0)
+		{
+			Notifier<Event> *notifier = mNotifiers.back();
+			assert(notifier && "ERROR: NULL pointer in collection.");
+			notifier->RemoveObserver(*this);
+		}
+	}
 
-		//! Notifier has ended notification of this event
-		virtual void NotificationEnded(const Notifier<Event>& notifier)
-			{
-			NotifierColl::iterator pos = std::find(mNotifiers.begin(),
-				mNotifiers.end(), &notifier);
+protected:
+	Observer(const Observer<Event> &observer);
+	const Observer<Event> &operator=(const Observer<Event> &);
 
-			if (pos != mNotifiers.end())
-				{
-				mNotifiers.erase(pos);
-				}
-			}
-
-		//! Request notification of this event
-		virtual void NotifyMe(Notifier<Event>& notifier)
-			{notifier.AddObserver(*this);}
-
-		//! Stop observing event
-		void StopObserving()
-			{
-			while (mNotifiers.size() > 0)
-				{
-				Notifier<Event>* notifier = mNotifiers.back();
-				assert(notifier && "ERROR: NULL pointer in collection.");
-				notifier->RemoveObserver(*this);
-				}
-			}
-
-	protected:
-		Observer(const Observer<Event>& observer);
-		const Observer<Event>& operator=(const Observer<Event>&);
-
-	private:
-		friend class Notifier<Event>;
-		NotifierColl mNotifiers;
-	};
-
+private:
+	friend class Notifier<Event>;
+	NotifierColl mNotifiers;
+};
 
 #define DECLARE_OBSERVER(Event) \
-	virtual void NotifyMe(Notifier<Event>& observer) \
-		{Notifier<Event>::AddObserver(observer);}
+	virtual void NotifyMe(Notifier<Event> &observer) \
+	{ \
+		Notifier<Event>::AddObserver(observer); \
+	}
 
+template<typename Event>
+class Notifier
+{
+public:
+	typedef std::vector<Observer<Event> *> ObserverColl;
 
-template<typename Event> class Notifier
+	Notifier() {}
+
+	virtual ~Notifier()
 	{
-	public:
-		typedef std::vector< Observer<Event>* > ObserverColl;
+		for (int index = mObservers.size(); index--;)
+		{
+			mObservers[index]->NotificationEnded(*this);
+		}
+	}
 
-		Notifier()
-			{}
+	//! Send event notification to all observers of this event.
+	virtual void NotifyObservers(Event &event)
+	{
+		for (unsigned int index = 0; index < mObservers.size(); index++)
+		{
+			mObservers[index]->HandleNotification(event);
+		}
+	}
 
-		virtual ~Notifier()
-			{
-			for (int index = mObservers.size(); index--;)
-				{
-				mObservers[index]->NotificationEnded(*this);
-				}
-			}
+	//! Add an observer of this event
+	virtual void AddObserver(Observer<Event> &observer)
+	{
+		ObserverColl::iterator pos = std::find(mObservers.begin(), mObservers.end(), &observer);
 
-		//! Send event notification to all observers of this event.
-		virtual void NotifyObservers(Event& event)
-			{
-			for (unsigned int index = 0; index < mObservers.size(); index++)
-				{
-				mObservers[index]->HandleNotification(event);
-				}
-			}
+		if (pos == mObservers.end())
+		{
+			observer.mNotifiers.push_back(this);
+			mObservers.push_back(&observer);
+		}
+	}
 
-		//! Add an observer of this event
-		virtual void AddObserver(Observer<Event>& observer)
-			{
-			ObserverColl::iterator pos = std::find(mObservers.begin(),
-				mObservers.end(), &observer);
+	//! Remove an observer of this event
+	virtual void RemoveObserver(Observer<Event> &observer)
+	{
+		ObserverColl::iterator pos = std::find(mObservers.begin(), mObservers.end(), &observer);
 
-			if (pos == mObservers.end())
-				{
-				observer.mNotifiers.push_back(this);
-				mObservers.push_back(&observer);
-				}
-			}
+		if (pos != mObservers.end())
+		{
+			observer.NotificationEnded(*this);
+			mObservers.erase(pos);
+		}
+	}
 
-		//! Remove an observer of this event
-		virtual void RemoveObserver(Observer<Event>& observer)
-			{
-			ObserverColl::iterator pos = std::find(mObservers.begin(),
-				mObservers.end(), &observer);
+	virtual bool HasObservers(void) const { return !mObservers.empty(); }
 
-			if (pos != mObservers.end())
-				{
-				observer.NotificationEnded(*this);
-				mObservers.erase(pos);
-				}
-			}
-
-		virtual bool HasObservers(void) const
-			{return !mObservers.empty();}
-
-	private:
-		//! Observer collection
-		ObserverColl mObservers;
-	};
-
+private:
+	//! Observer collection
+	ObserverColl mObservers;
+};
 
 #define DECLARE_NOTIFIER(Event) \
-	virtual void NotifyObservers(Event& event) \
-		{Notifier<Event>::NotifyObservers(event);} \
-	virtual void AddObserver(Observer<Event>& observer) \
-		{Notifier<Event>::AddObserver(observer);} \
-	virtual void RemoveObserver(Observer<Event>& observer) \
-		{Notifier<Event>::RemoveObserver(observer);}
-
+	virtual void NotifyObservers(Event &event) \
+	{ \
+		Notifier<Event>::NotifyObservers(event); \
+	} \
+	virtual void AddObserver(Observer<Event> &observer) \
+	{ \
+		Notifier<Event>::AddObserver(observer); \
+	} \
+	virtual void RemoveObserver(Observer<Event> &observer) \
+	{ \
+		Notifier<Event>::RemoveObserver(observer); \
+	}
 
 /*-----------------------------------------------------------------------------
  * The following templates are useful for defining unique types to use as
@@ -199,78 +198,59 @@ template<typename Event> class Notifier
  */
 template<typename T, typename V>
 class TypedEvent
-	{
-	public:
-		TypedEvent(V& value) :
-				mValue(value)
-			{}
+{
+public:
+	TypedEvent(V &value) : mValue(value) {}
 
-		inline V& operator()()
-			{return mValue;}
+	inline V &operator()() { return mValue; }
 
-		inline V& Subject(void)
-			{return mValue;}
+	inline V &Subject(void) { return mValue; }
 
-	protected:
-		V& mValue;
-	};
+protected:
+	V &mValue;
+};
 
 template<typename T, typename O>
 class TypedEventPtr
-	{
-	public:
-		TypedEventPtr(O* subject) :
-				mSubject(subject)
-			{}
+{
+public:
+	TypedEventPtr(O *subject) : mSubject(subject) {}
 
-		inline O* Subject(void)
-			{return mSubject;}
+	inline O *Subject(void) { return mSubject; }
 
-		inline O* operator()()
-			{return mSubject;}
+	inline O *operator()() { return mSubject; }
 
-	protected:
-		O* mSubject;
-	};
+protected:
+	O *mSubject;
+};
 
 template<typename A, typename O>
-class TypedActionPtr :
-		public TypedEventPtr<A, O>
-	{
-	public:
-		A GetAction(void) const
-			{return mAction;}
+class TypedActionPtr : public TypedEventPtr<A, O>
+{
+public:
+	A GetAction(void) const { return mAction; }
 
-		TypedActionPtr(A action, O* data) :
-				TypedEventPtr<A, O>(data),
-				mAction(action)
-			{}
+	TypedActionPtr(A action, O *data) : TypedEventPtr<A, O>(data), mAction(action) {}
 
-		~TypedActionPtr()
-			{}
+	~TypedActionPtr() {}
 
-	protected:
-		A mAction;
-	};
+protected:
+	A mAction;
+};
 
 template<typename A, typename B>
 class TypedEventPair
-	{
-	public:
-		TypedEventPair(A itemA, B itemB) :
-				mItemA(itemA),
-				mItemB(itemB)
-			{}
+{
+public:
+	TypedEventPair(A itemA, B itemB) : mItemA(itemA), mItemB(itemB) {}
 
-		inline A GetItemA(void)
-			{return mItemA;}
+	inline A GetItemA(void) { return mItemA; }
 
-		inline B GetItemB(void)
-			{return mItemB;}
+	inline B GetItemB(void) { return mItemB; }
 
-	protected:
-		A mItemA;
-		B mItemB;
-	};
+protected:
+	A mItemA;
+	B mItemB;
+};
 
 #endif // __NOTIFY_H__

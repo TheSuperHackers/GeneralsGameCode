@@ -47,9 +47,9 @@ public:
 	CustomMatchPreferences();
 	virtual ~CustomMatchPreferences();
 
-	void setLastLadder(const AsciiString& addr, UnsignedShort port);
-	AsciiString getLastLadderAddr( void );
-	UnsignedShort getLastLadderPort( void );
+	void setLastLadder(const AsciiString &addr, UnsignedShort port);
+	AsciiString getLastLadderAddr(void);
+	UnsignedShort getLastLadderPort(void);
 
 	Int getPreferredFaction(void);
 	void setPreferredFaction(Int val);
@@ -72,12 +72,11 @@ public:
 	Bool allowsObservers(void);
 	void setAllowsObserver(Bool val);
 
-	Bool getDisallowAsianText( void );
+	Bool getDisallowAsianText(void);
 	void setDisallowAsianText(Bool val);
 
-	Bool getDisallowNonAsianText( void );
-	void setDisallowNonAsianText( Bool val );
-
+	Bool getDisallowNonAsianText(void);
+	void setDisallowNonAsianText(Bool val);
 };
 
 #endif // __CUSTOMMATCHPREFERENCES_H__

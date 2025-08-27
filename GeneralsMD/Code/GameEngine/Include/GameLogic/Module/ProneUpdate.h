@@ -44,13 +44,12 @@ class DamageInfo;
 class ProneUpdateModuleData : public ModuleData
 {
 public:
-  Real		m_damageToFramesRatio;      ///< Conversion from damage dealt to number of frames we cower
+	Real m_damageToFramesRatio; ///< Conversion from damage dealt to number of frames we cower
 
 	ProneUpdateModuleData();
-	static void buildFieldParse(MultiIniFieldParse& p);
+	static void buildFieldParse(MultiIniFieldParse &p);
 
 private:
-
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -58,27 +57,22 @@ private:
 //-------------------------------------------------------------------------------------------------
 class ProneUpdate : public UpdateModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ProneUpdate, "ProneUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ProneUpdate, ProneUpdateModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ProneUpdate, "ProneUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(ProneUpdate, ProneUpdateModuleData);
 
 public:
-
-	ProneUpdate( Thing *thing, const ModuleData* moduleData );
+	ProneUpdate(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	void goProne( const DamageInfo *damageInfo );
+	void goProne(const DamageInfo *damageInfo);
 
 	virtual UpdateSleepTime update();
 
 protected:
-
 	void startProneEffects();
 	void stopProneEffects();
 
 	Int m_proneFrames;
 };
 
-
 #endif
-

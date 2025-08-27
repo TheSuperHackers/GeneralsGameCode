@@ -36,7 +36,6 @@ typedef enum
 
 } LogFormat;
 
-
 typedef struct
 {
 	int new_strings;
@@ -53,8 +52,6 @@ typedef struct
 	int updated_listeners;
 	int updated_maxlen;
 	int changes;
-
-
 
 } UPDATEINFO;
 
@@ -75,46 +72,51 @@ class CBabylonDlg : public CDialog
 	CComboBox *combo;
 	int operate_always;
 
-
-
-// Construction
+	// Construction
 public:
-	int ValidateStrFile ( const char *filename );
-	int MatchText ( BabylonText *text, BabylonLabel *label, BabylonText **match );
-	int RetranslateText ( BabylonText *text, BabylonText *label );
-	void VerifyDialog( TransDB *db, LangID langid);
-	void VerifyTranslations( TransDB *db, LangID langid ) ;
-	int	CanProceed ( void );
-	int	CanOperate ( void );
-	int SaveMainDB ( void );
-	int UpdateLabel ( BabylonLabel *source, BabylonLabel *destination, UPDATEINFO &info, int update = TRUE, int skip = FALSE);
-	int UpdateDB ( TransDB *source, TransDB *destination, int update = TRUE);
-	void ProgressComplete ( void );
-	void SetProgress ( int pos );
-	void InitProgress ( int range );
-	int SaveLog ( void );
-	void Status ( const char *string, int log = TRUE);
-	void Log ( const char *string, LogFormat format = NEW_LINE );
-	CBabylonDlg(CWnd* pParent = NULL);	// standard constructor
+	int ValidateStrFile(const char *filename);
+	int MatchText(BabylonText *text, BabylonLabel *label, BabylonText **match);
+	int RetranslateText(BabylonText *text, BabylonText *label);
+	void VerifyDialog(TransDB *db, LangID langid);
+	void VerifyTranslations(TransDB *db, LangID langid);
+	int CanProceed(void);
+	int CanOperate(void);
+	int SaveMainDB(void);
+	int UpdateLabel(BabylonLabel *source, BabylonLabel *destination, UPDATEINFO &info, int update = TRUE, int skip = FALSE);
+	int UpdateDB(TransDB *source, TransDB *destination, int update = TRUE);
+	void ProgressComplete(void);
+	void SetProgress(int pos);
+	void InitProgress(int range);
+	int SaveLog(void);
+	void Status(const char *string, int log = TRUE);
+	void Log(const char *string, LogFormat format = NEW_LINE);
+	CBabylonDlg(CWnd *pParent = NULL); // standard constructor
 	virtual ~CBabylonDlg();
-	int LoadStrFile ( TransDB *db, const char *fileaname, void (*cb ) (void ) = NULL );
-	void Ready ( void ) { Status ( "Ready", FALSE ); ProgressComplete(); };
+	int LoadStrFile(TransDB *db, const char *fileaname, void (*cb)(void) = NULL);
+	void Ready(void)
+	{
+		Status("Ready", FALSE);
+		ProgressComplete();
+	};
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CBabylonDlg)
-	enum { IDD = IDD_BABYLON_DIALOG };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_BABYLON_DIALOG
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CBabylonDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-	CBabylonDlgAutoProxy* m_pAutoProxy;
+	CBabylonDlgAutoProxy *m_pAutoProxy;
 	HICON m_hIcon;
 
 	BOOL CanExit();

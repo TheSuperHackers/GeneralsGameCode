@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/ThingTemplate.h"
 #include "Common/ThingFactory.h"
@@ -50,7 +50,7 @@
 
 //-------------------------------------------------------------------------------------------------
 // this is our "bounce" limit -- slightly less that 90 degrees, to account for slop.
-static const Real ANGULAR_LIMIT = PI/2 - PI/64;
+static const Real ANGULAR_LIMIT = PI / 2 - PI / 64;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ ToppleUpdateModuleData::ToppleUpdateModuleData()
 {
 	const Real START_VELOCITY_PERCENT = 0.2f;
 	const Real START_ACCEL_PERCENT = 0.01f;
-	const Real VELOCITY_BOUNCE_PERCENT = 0.3f;			// multiply the velocity by this when you bounce
+	const Real VELOCITY_BOUNCE_PERCENT = 0.3f; // multiply the velocity by this when you bounce
 	m_toppleFX = NULL;
 	m_bounceFX = NULL;
 	m_stumpName.clear();
@@ -74,38 +74,36 @@ ToppleUpdateModuleData::ToppleUpdateModuleData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ToppleUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
+void ToppleUpdateModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "ToppleFX",	INI::parseFXList, NULL, offsetof( ToppleUpdateModuleData, m_toppleFX ) },
-		{ "BounceFX",	INI::parseFXList, NULL, offsetof( ToppleUpdateModuleData, m_bounceFX ) },
-		{ "StumpName",	INI::parseAsciiString, NULL, offsetof( ToppleUpdateModuleData, m_stumpName ) },
-		{ "KillWhenStartToppling",	INI::parseBool, NULL, offsetof( ToppleUpdateModuleData, m_killWhenStartToppled ) },
-		{ "KillWhenFinishedToppling",	INI::parseBool, NULL, offsetof( ToppleUpdateModuleData, m_killWhenToppled ) },
-		{ "KillStumpWhenToppled",	INI::parseBool, NULL, offsetof( ToppleUpdateModuleData, m_killStumpWhenToppled ) },
-		{ "ToppleLeftOrRightOnly",	INI::parseBool, NULL, offsetof( ToppleUpdateModuleData, m_toppleLeftOrRightOnly ) },
-		{ "ReorientToppledRubble",	INI::parseBool, NULL, offsetof( ToppleUpdateModuleData, m_reorientToppledRubble ) },
-		{ "InitialVelocityPercent",	INI::parsePercentToReal, NULL, offsetof( ToppleUpdateModuleData, m_initialVelocityPercent ) },
-		{ "InitialAccelPercent",	INI::parsePercentToReal, NULL, offsetof( ToppleUpdateModuleData, m_initialAccelPercent ) },
-		{ "BounceVelocityPercent",	INI::parsePercentToReal, NULL, offsetof( ToppleUpdateModuleData, m_bounceVelocityPercent ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "ToppleFX", INI::parseFXList, NULL, offsetof(ToppleUpdateModuleData, m_toppleFX) },
+		{ "BounceFX", INI::parseFXList, NULL, offsetof(ToppleUpdateModuleData, m_bounceFX) },
+		{ "StumpName", INI::parseAsciiString, NULL, offsetof(ToppleUpdateModuleData, m_stumpName) },
+		{ "KillWhenStartToppling", INI::parseBool, NULL, offsetof(ToppleUpdateModuleData, m_killWhenStartToppled) },
+		{ "KillWhenFinishedToppling", INI::parseBool, NULL, offsetof(ToppleUpdateModuleData, m_killWhenToppled) },
+		{ "KillStumpWhenToppled", INI::parseBool, NULL, offsetof(ToppleUpdateModuleData, m_killStumpWhenToppled) },
+		{ "ToppleLeftOrRightOnly", INI::parseBool, NULL, offsetof(ToppleUpdateModuleData, m_toppleLeftOrRightOnly) },
+		{ "ReorientToppledRubble", INI::parseBool, NULL, offsetof(ToppleUpdateModuleData, m_reorientToppledRubble) },
+		{ "InitialVelocityPercent", INI::parsePercentToReal, NULL, offsetof(ToppleUpdateModuleData, m_initialVelocityPercent) },
+		{ "InitialAccelPercent", INI::parsePercentToReal, NULL, offsetof(ToppleUpdateModuleData, m_initialAccelPercent) },
+		{ "BounceVelocityPercent", INI::parsePercentToReal, NULL, offsetof(ToppleUpdateModuleData, m_bounceVelocityPercent) },
 		{ 0, 0, 0, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ToppleUpdate::ToppleUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+ToppleUpdate::ToppleUpdate(Thing *thing, const ModuleData *moduleData) : UpdateModule(thing, moduleData)
 {
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
+	// Added By Sadullah Nader
+	// Initialization(s) inserted
 	m_angleDeltaX = 0.0f;
 	m_doBounceFX = FALSE;
 	m_numAngleDeltaX = 0;
@@ -124,7 +122,7 @@ ToppleUpdate::ToppleUpdate( Thing *thing, const ModuleData* moduleData ) : Updat
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ToppleUpdate::~ToppleUpdate( void )
+ToppleUpdate::~ToppleUpdate(void)
 {
 }
 
@@ -139,16 +137,15 @@ static Real angleClosestTo(Real a1, Real a2, Real desired)
 //-------------------------------------------------------------------------------------------------
 ///< Start the toppling process by giving a force vector
 //-------------------------------------------------------------------------------------------------
-void ToppleUpdate::applyTopplingForce( const Coord3D* toppleDirection, Real toppleSpeed,
-																			 UnsignedInt options )
+void ToppleUpdate::applyTopplingForce(const Coord3D *toppleDirection, Real toppleSpeed, UnsignedInt options)
 {
 	if (getObject()->isEffectivelyDead())
 		return;
 
-	//DEBUG_LOG(("awaking ToppleUpdate %08lx",this));
+	// DEBUG_LOG(("awaking ToppleUpdate %08lx",this));
 	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 
-	const ToppleUpdateModuleData* d = getToppleUpdateModuleData();
+	const ToppleUpdateModuleData *d = getToppleUpdateModuleData();
 
 	if (d->m_killWhenStartToppled)
 	{
@@ -167,10 +164,10 @@ void ToppleUpdate::applyTopplingForce( const Coord3D* toppleDirection, Real topp
 	m_options = options;
 
 	// tell the drawable to stop swaying
-	Drawable * draw = getObject()->getDrawable();
+	Drawable *draw = getObject()->getDrawable();
 	static NameKeyType nameKeySwayUpdate = NAMEKEY("SwayClientUpdate");
 
-	ClientUpdateModule ** clientModules = draw->getClientUpdateModules();
+	ClientUpdateModule **clientModules = draw->getClientUpdateModules();
 	if (clientModules)
 	{
 		while (*clientModules)
@@ -192,7 +189,7 @@ void ToppleUpdate::applyTopplingForce( const Coord3D* toppleDirection, Real topp
 	if (d->m_toppleLeftOrRightOnly)
 	{
 		// it's a fence or such, and can only topple left or right, so pick the closest
-		toppleAngle = angleClosestTo(curAngleX + PI/2, curAngleX - PI/2, toppleAngle);
+		toppleAngle = angleClosestTo(curAngleX + PI / 2, curAngleX - PI / 2, toppleAngle);
 		m_toppleDirection.x = Cos(toppleAngle);
 		m_toppleDirection.y = Sin(toppleAngle);
 
@@ -200,10 +197,9 @@ void ToppleUpdate::applyTopplingForce( const Coord3D* toppleDirection, Real topp
 		// finish.... since we might be in a slightly different position when toppled, which can
 		// confuse the pathfinder and not de-obstacle everything correctly
 		TheAI->pathfinder()->removeObjectFromPathfindMap(getObject());
-
 	}
 	// desired angle is toppleAngle +/- pi/2, whichever is closer to curangle
-	Real desiredAngleX = angleClosestTo(toppleAngle + PI/2, toppleAngle - PI/2, curAngleX);
+	Real desiredAngleX = angleClosestTo(toppleAngle + PI / 2, toppleAngle - PI / 2, curAngleX);
 	m_numAngleDeltaX = REAL_TO_INT_FLOOR(ANGULAR_LIMIT / (m_angularVelocity * 2));
 	if (m_numAngleDeltaX < 1)
 		m_numAngleDeltaX = 1;
@@ -215,25 +211,24 @@ void ToppleUpdate::applyTopplingForce( const Coord3D* toppleDirection, Real topp
 	// if this is a tree, create a stump
 	if (!d->m_stumpName.isEmpty())
 	{
-		const ThingTemplate* ttn = TheThingFactory->findTemplate(d->m_stumpName);
-		Object *stump = TheThingFactory->newObject( ttn, NULL );
+		const ThingTemplate *ttn = TheThingFactory->findTemplate(d->m_stumpName);
+		Object *stump = TheThingFactory->newObject(ttn, NULL);
 		if (stump)
 		{
-			stump->setPosition( getObject()->getPosition() );
-			stump->setOrientation( getObject()->getOrientation() );
+			stump->setPosition(getObject()->getPosition());
+			stump->setOrientation(getObject()->getOrientation());
 			m_stumpID = stump->getID();
 
 			// if we are "burned", then we will burn our stump
-			const Drawable* draw = getObject()->getDrawable();
-			if( draw )
+			const Drawable *draw = getObject()->getDrawable();
+			if (draw)
 			{
-				if( draw->getModelConditionFlags().test( MODELCONDITION_BURNED ) == TRUE )
+				if (draw->getModelConditionFlags().test(MODELCONDITION_BURNED) == TRUE)
 				{
-					Drawable* stumpDraw = stump->getDrawable();
+					Drawable *stumpDraw = stump->getDrawable();
 
-					if( stumpDraw )
-						stumpDraw->setModelConditionState( MODELCONDITION_BURNED );
-
+					if (stumpDraw)
+						stumpDraw->setModelConditionState(MODELCONDITION_BURNED);
 				}
 			}
 		}
@@ -249,7 +244,7 @@ Bool ToppleUpdate::isAbleToBeToppled() const
 }
 
 //-------------------------------------------------------------------------------------------------
-static void deathByToppling(Object* obj)
+static void deathByToppling(Object *obj)
 {
 	// use a special "topppling" damage type here so that
 	// toppled stuff can have different damage/die modules
@@ -267,16 +262,16 @@ static void deathByToppling(Object* obj)
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime ToppleUpdate::update()
 {
-	//DEBUG_LOG(("updating ToppleUpdate %08lx",this));
+	// DEBUG_LOG(("updating ToppleUpdate %08lx",this));
 	DEBUG_ASSERTCRASH(m_toppleState != TOPPLE_UPRIGHT, ("hmm, we should be sleeping here"));
-	if ( (m_toppleState == TOPPLE_UPRIGHT)  ||  (m_toppleState == TOPPLE_DOWN) )
+	if ((m_toppleState == TOPPLE_UPRIGHT) || (m_toppleState == TOPPLE_DOWN))
 		return UPDATE_SLEEP_FOREVER;
 
-	const ToppleUpdateModuleData* d = getToppleUpdateModuleData();
-	const Real VELOCITY_BOUNCE_LIMIT = 0.01f;				// if the velocity after a bounce will be this or lower, just stop at zero
-	const Real VELOCITY_BOUNCE_SOUND_LIMIT = 0.03f;	// and if this low, then skip the bounce sound
+	const ToppleUpdateModuleData *d = getToppleUpdateModuleData();
+	const Real VELOCITY_BOUNCE_LIMIT = 0.01f; // if the velocity after a bounce will be this or lower, just stop at zero
+	const Real VELOCITY_BOUNCE_SOUND_LIMIT = 0.03f; // and if this low, then skip the bounce sound
 
-	Object* obj = getObject();
+	Object *obj = getObject();
 	if (m_numAngleDeltaX)
 	{
 		Matrix3D xfrm = *obj->getTransformMatrix();
@@ -300,8 +295,7 @@ UpdateSleepTime ToppleUpdate::update()
 		// Hit so either bounce or stop if too little remaining velocity.
 		m_angularVelocity *= -d->m_bounceVelocityPercent;
 
-		if( BitIsSet( m_options, TOPPLE_OPTIONS_NO_BOUNCE ) == TRUE ||
-				fabs(m_angularVelocity) < VELOCITY_BOUNCE_LIMIT )
+		if (BitIsSet(m_options, TOPPLE_OPTIONS_NO_BOUNCE) == TRUE || fabs(m_angularVelocity) < VELOCITY_BOUNCE_LIMIT)
 		{
 			// too slow, just stop
 			m_angularVelocity = 0;
@@ -328,23 +322,22 @@ UpdateSleepTime ToppleUpdate::update()
 
 					// this relies on the fact that setOrientation always forces us straight up in the Z axis!
 					obj->setOrientation(obj->getOrientation());
-
 				}
 			} // if kill when toppled
 
 			if (d->m_killStumpWhenToppled)
 			{
-				Object* stump = TheGameLogic->findObjectByID(m_stumpID);
+				Object *stump = TheGameLogic->findObjectByID(m_stumpID);
 				if (stump)
 				{
 					deathByToppling(stump);
 				}
 			}
 		}
-		else if( fabs(m_angularVelocity) >= VELOCITY_BOUNCE_SOUND_LIMIT )
+		else if (fabs(m_angularVelocity) >= VELOCITY_BOUNCE_SOUND_LIMIT)
 		{
 			// fast enough bounce to warrant the bounce fx
-			if( BitIsSet( m_options, TOPPLE_OPTIONS_NO_FX ) == FALSE )
+			if (BitIsSet(m_options, TOPPLE_OPTIONS_NO_FX) == FALSE)
 				FXList::doFXObj(d->m_bounceFX, obj);
 		}
 	}
@@ -353,7 +346,7 @@ UpdateSleepTime ToppleUpdate::update()
 		m_angularVelocity += m_angularAcceleration;
 	}
 
-	Drawable *draw=obj->getDrawable();
+	Drawable *draw = obj->getDrawable();
 	if (draw)
 		draw->setShadowsEnabled(false);
 
@@ -363,7 +356,7 @@ UpdateSleepTime ToppleUpdate::update()
 //-------------------------------------------------------------------------------------------------
 /** Do the collision */
 //-------------------------------------------------------------------------------------------------
-void ToppleUpdate::onCollide( Object *other, const Coord3D *loc, const Coord3D *normal )
+void ToppleUpdate::onCollide(Object *other, const Coord3D *loc, const Coord3D *normal)
 {
 	// Note that other == null means "collide with ground"
 	//
@@ -371,11 +364,10 @@ void ToppleUpdate::onCollide( Object *other, const Coord3D *loc, const Coord3D *
 		return;
 
 	//@todo JohnA -- Should you get around to adding trees to avoidance pathfinding, then you'll
-	//want to change this code:
-	//if( other->getCrusherLevel() > getObject()->getCrushableLevel() ) //<----proper tree method
-	if( other->getCrusherLevel() > 1 )
+	// want to change this code:
+	// if( other->getCrusherLevel() > getObject()->getCrushableLevel() ) //<----proper tree method
+	if (other->getCrusherLevel() > 1)
 	{
-
 		// Give a vector with direction to thing and my speed.
 		Coord3D toppleVector = *getObject()->getPosition();
 		toppleVector.x -= other->getPosition()->x;
@@ -383,83 +375,78 @@ void ToppleUpdate::onCollide( Object *other, const Coord3D *loc, const Coord3D *
 		toppleVector.z = 0;
 
 		Coord3D vel;
-		PhysicsBehavior* phys = other->getPhysics();
+		PhysicsBehavior *phys = other->getPhysics();
 		if (phys)
 			vel = *phys->getVelocity();
 		else
 			vel.zero();
-		getObject()->topple( &toppleVector, vel.length(), TOPPLE_OPTIONS_NONE );
-
+		getObject()->topple(&toppleVector, vel.length(), TOPPLE_OPTIONS_NONE);
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ToppleUpdate::crc( Xfer *xfer )
+void ToppleUpdate::crc(Xfer *xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
+	UpdateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ToppleUpdate::xfer( Xfer *xfer )
+void ToppleUpdate::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// angular velocity
-	xfer->xferReal( &m_angularVelocity );
+	xfer->xferReal(&m_angularVelocity);
 
 	// angular acceleration
-	xfer->xferReal( &m_angularAcceleration );
+	xfer->xferReal(&m_angularAcceleration);
 
 	// topple direction
-	xfer->xferCoord3D( &m_toppleDirection );
+	xfer->xferCoord3D(&m_toppleDirection);
 
 	// topple state
-	xfer->xferUser( &m_toppleState, sizeof( ToppleState	) );
+	xfer->xferUser(&m_toppleState, sizeof(ToppleState));
 
 	// angluar accumulation
-	xfer->xferReal( &m_angularAccumulation );
+	xfer->xferReal(&m_angularAccumulation);
 
 	// angle delta X
-	xfer->xferReal( &m_angleDeltaX );
+	xfer->xferReal(&m_angleDeltaX);
 
 	// num angle delta X
-	xfer->xferInt( &m_numAngleDeltaX );
+	xfer->xferInt(&m_numAngleDeltaX);
 
 	// do bounce FX
-	xfer->xferBool( &m_doBounceFX );
+	xfer->xferBool(&m_doBounceFX);
 
 	// options
-	xfer->xferUnsignedInt( &m_options );
+	xfer->xferUnsignedInt(&m_options);
 
 	// stump id
-	xfer->xferObjectID( &m_stumpID );
+	xfer->xferObjectID(&m_stumpID);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ToppleUpdate::loadPostProcess( void )
+void ToppleUpdate::loadPostProcess(void)
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

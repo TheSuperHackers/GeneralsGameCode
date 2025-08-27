@@ -51,47 +51,39 @@
 class SphereKeysClass
 {
 public:
-
 	/////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	/////////////////////////////////////////////////////////////
-	SphereKeysClass (void)
-		:	m_Keys (NULL),
-			m_KeyCount (0),
-			m_MaxKeys (0)		{ }
+	SphereKeysClass(void) : m_Keys(NULL), m_KeyCount(0), m_MaxKeys(0) {}
 
-	virtual ~SphereKeysClass (void)	{ Free_Keys (); }
+	virtual ~SphereKeysClass(void) { Free_Keys(); }
 
 	/////////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////////
-	W3dSphereKeyFrameStruct *	Detach (void);
+	W3dSphereKeyFrameStruct *Detach(void);
 
-	int								Get_Key_Count (void) const { return m_KeyCount; }
-	W3dSphereKeyFrameStruct *	Get_Keys (void)				{ return m_Keys; }
+	int Get_Key_Count(void) const { return m_KeyCount; }
+	W3dSphereKeyFrameStruct *Get_Keys(void) { return m_Keys; }
 
-	void								Add_Keys (W3dSphereKeyFrameStruct *keys, int key_count);
-	void								Add_Key (W3dSphereKeyFrameStruct &key);
+	void Add_Keys(W3dSphereKeyFrameStruct *keys, int key_count);
+	void Add_Key(W3dSphereKeyFrameStruct &key);
 
-	void								Free_Keys (void);
+	void Free_Keys(void);
 
 protected:
-
 	/////////////////////////////////////////////////////////////
 	//	Protected methods
 	/////////////////////////////////////////////////////////////
-	void								Resize (int max_keys);
+	void Resize(int max_keys);
 
 private:
-
 	/////////////////////////////////////////////////////////////
 	//	Private member data
 	/////////////////////////////////////////////////////////////
-	W3dSphereKeyFrameStruct *	m_Keys;
-	int								m_KeyCount;
-	int								m_MaxKeys;
+	W3dSphereKeyFrameStruct *m_Keys;
+	int m_KeyCount;
+	int m_MaxKeys;
 };
 
-
 #endif //__SPHERE_UTILS
-

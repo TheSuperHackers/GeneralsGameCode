@@ -39,22 +39,22 @@ public:
 	StdBIGFileSystem();
 	virtual ~StdBIGFileSystem();
 
-	virtual void init( void );
-	virtual void update( void );
-	virtual void reset( void );
-	virtual void postProcessLoad( void );
+	virtual void init(void);
+	virtual void update(void);
+	virtual void reset(void);
+	virtual void postProcessLoad(void);
 
 	// ArchiveFile operations
-	virtual void closeAllArchiveFiles( void );											///< Close all Archivefiles currently open
+	virtual void closeAllArchiveFiles(void); ///< Close all Archivefiles currently open
 
 	// File operations
-	virtual ArchiveFile * openArchiveFile(const Char *filename);
+	virtual ArchiveFile *openArchiveFile(const Char *filename);
 	virtual void closeArchiveFile(const Char *filename);
-	virtual void closeAllFiles( void );															///< Close all files associated with ArchiveFiles
+	virtual void closeAllFiles(void); ///< Close all files associated with ArchiveFiles
 
 	virtual Bool loadBigFilesFromDirectory(AsciiString dir, AsciiString fileMask, Bool overwrite = FALSE);
-protected:
 
+protected:
 };
 
 #endif // __STDBIGFILESYSTEM_H

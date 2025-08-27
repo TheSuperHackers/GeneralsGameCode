@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/INI.h"
 
@@ -43,8 +43,6 @@
 //-------------------------------------------------------------------------------------------------
 /** Parse MapData entry */
 //-------------------------------------------------------------------------------------------------
-void INI::parseMapDataDefinition( INI* ini )
+void INI::parseMapDataDefinition(INI *ini)
 {
-}  // end parseMapData
-
-
+} // end parseMapData

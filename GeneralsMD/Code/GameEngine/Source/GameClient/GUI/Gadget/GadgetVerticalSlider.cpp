@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Language.h"
@@ -70,53 +70,43 @@
 // GadgetVerticlaSliderInput ==================================================
 /** Handle input for vertical slider */
 //=============================================================================
-WindowMsgHandledType GadgetVerticalSliderInput( GameWindow *window, UnsignedInt msg,
-																WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GadgetVerticalSliderInput(
+		GameWindow *window,
+		UnsignedInt msg,
+		WindowMsgData mData1,
+		WindowMsgData mData2)
 {
 	SliderData *s = (SliderData *)window->winGetUserData();
 	WinInstanceData *instData = window->winGetInstanceData();
 
-	switch( msg )
+	switch (msg)
 	{
-
 		// ------------------------------------------------------------------------
 		case GWM_MOUSE_ENTERING:
 
-			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
+			if (BitIsSet(instData->getStyle(), GWS_MOUSE_TRACK))
 			{
-
-				BitSet( instData->m_state, WIN_STATE_HILITED );
-				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																						GBM_MOUSE_ENTERING,
-																						(WindowMsgData)window,
-																						0 );
-				//TheWindowManager->winSetFocus( window );
-
+				BitSet(instData->m_state, WIN_STATE_HILITED);
+				TheWindowManager->winSendSystemMsg(window->winGetOwner(), GBM_MOUSE_ENTERING, (WindowMsgData)window, 0);
+				// TheWindowManager->winSetFocus( window );
 			}
 			break;
 
 		// ------------------------------------------------------------------------
 		case GWM_MOUSE_LEAVING:
 
-			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
+			if (BitIsSet(instData->getStyle(), GWS_MOUSE_TRACK))
 			{
-
-				BitClear( instData->m_state, WIN_STATE_HILITED );
-				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																						GBM_MOUSE_LEAVING,
-																						(WindowMsgData)window,
-																						0 );
+				BitClear(instData->m_state, WIN_STATE_HILITED);
+				TheWindowManager->winSendSystemMsg(window->winGetOwner(), GBM_MOUSE_LEAVING, (WindowMsgData)window, 0);
 			}
 			break;
 
 		// ------------------------------------------------------------------------
 		case GWM_LEFT_DRAG:
 
-			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
-				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																						GGM_LEFT_DRAG,
-																						(WindowMsgData)window,
-																						mData1 );
+			if (BitIsSet(instData->getStyle(), GWS_MOUSE_TRACK))
+				TheWindowManager->winSendSystemMsg(window->winGetOwner(), GGM_LEFT_DRAG, (WindowMsgData)window, mData1);
 			break;
 
 		// ------------------------------------------------------------------------
@@ -127,16 +117,16 @@ WindowMsgHandledType GadgetVerticalSliderInput( GameWindow *window, UnsignedInt 
 		case GWM_LEFT_UP:
 		{
 			Int x, y;
-//			Int mousex = mData1 & 0xFFFF;
+			//			Int mousex = mData1 & 0xFFFF;
 			Int mousey = mData1 >> 16;
 			ICoord2D size, childSize, childCenter;
 			GameWindow *child = window->winGetChild();
 			Int pageClickSize, clickPos;
 
-			window->winGetScreenPosition( &x, &y );
-			window->winGetSize( &size.x, &size.y );
-			child->winGetSize( &childSize.x, &childSize.y );
-			child->winGetPosition( &childCenter.x, &childCenter.y );
+			window->winGetScreenPosition(&x, &y);
+			window->winGetSize(&size.x, &size.y);
+			child->winGetSize(&childSize.x, &childSize.y);
+			child->winGetPosition(&childCenter.x, &childCenter.y);
 			childCenter.x += childSize.x / 2;
 			childCenter.y += childSize.y / 2;
 
@@ -147,62 +137,52 @@ WindowMsgHandledType GadgetVerticalSliderInput( GameWindow *window, UnsignedInt 
 			pageClickSize = size.y / 5;
 
 			clickPos = mousey - y;
-			if( clickPos >= childCenter.y )
+			if (clickPos >= childCenter.y)
 			{
-
 				clickPos = childCenter.y + pageClickSize;
-				if( clickPos > mousey - y )
+				if (clickPos > mousey - y)
 					clickPos = mousey - y;
 
-			}  // end if
+			} // end if
 			else
 			{
-
 				clickPos = childCenter.y - pageClickSize;
-				if( clickPos < mousey - y )
+				if (clickPos < mousey - y)
 					clickPos = mousey - y;
 
-			}  // end else
+			} // end else
 
 			// keep pos valid on window
-			if( clickPos > y + size.y - childSize.y / 2 )
+			if (clickPos > y + size.y - childSize.y / 2)
 				clickPos = y + size.y - childSize.y / 2;
-			if( clickPos < childSize.y / 2 )
+			if (clickPos < childSize.y / 2)
 				clickPos = childSize.y / 2;
 
-			child->winSetPosition( 0, clickPos - childSize.y / 2 );
-			TheWindowManager->winSendSystemMsg( window, GGM_LEFT_DRAG, 0, mData1 );
+			child->winSetPosition(0, clickPos - childSize.y / 2);
+			TheWindowManager->winSendSystemMsg(window, GGM_LEFT_DRAG, 0, mData1);
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
 		case GWM_CHAR:
 		{
-
 			switch (mData1)
 			{
-
 				// --------------------------------------------------------------------
 				case KEY_UP:
 
-					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
+					if (BitIsSet(mData2, KEY_STATE_DOWN))
 					{
-
-						if( s->position < s->maxVal - 1)
+						if (s->position < s->maxVal - 1)
 						{
 							GameWindow *child = window->winGetChild();
 
 							s->position += 2;
-							TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																									GSM_SLIDER_TRACK,
-																									(WindowMsgData)window,
-																									s->position );
+							TheWindowManager
+									->winSendSystemMsg(window->winGetOwner(), GSM_SLIDER_TRACK, (WindowMsgData)window, s->position);
 							// Translate to window coords
-							child->winSetPosition( 0, (Int)((s->maxVal - s->position) * s->numTicks) );
-
+							child->winSetPosition(0, (Int)((s->maxVal - s->position) * s->numTicks));
 						}
-
 					}
 
 					break;
@@ -210,20 +190,17 @@ WindowMsgHandledType GadgetVerticalSliderInput( GameWindow *window, UnsignedInt 
 				// --------------------------------------------------------------------
 				case KEY_DOWN:
 
-					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
+					if (BitIsSet(mData2, KEY_STATE_DOWN))
 					{
-
-						if( s->position > s->minVal + 1 )
+						if (s->position > s->minVal + 1)
 						{
 							GameWindow *child = window->winGetChild();
 
 							s->position -= 2;
-							TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																									GSM_SLIDER_TRACK,
-																									(WindowMsgData)window,
-																									s->position );
+							TheWindowManager
+									->winSendSystemMsg(window->winGetOwner(), GSM_SLIDER_TRACK, (WindowMsgData)window, s->position);
 							// Translate to window coords
-							child->winSetPosition( 0, (Int)((s->maxVal - s->position) * s->numTicks) );
+							child->winSetPosition(0, (Int)((s->maxVal - s->position) * s->numTicks));
 						}
 					}
 					break;
@@ -232,72 +209,70 @@ WindowMsgHandledType GadgetVerticalSliderInput( GameWindow *window, UnsignedInt 
 				case KEY_RIGHT:
 				case KEY_TAB:
 
-					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
+					if (BitIsSet(mData2, KEY_STATE_DOWN))
 						window->winNextTab();
 					break;
 
 				// --------------------------------------------------------------------
 				case KEY_LEFT:
 
-					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
+					if (BitIsSet(mData2, KEY_STATE_DOWN))
 						window->winPrevTab();
 					break;
 
 				default:
 					return MSG_IGNORED;
 
-			}  // end switch( mData1 )
+			} // end switch( mData1 )
 
 			break;
 
-		}  // end char
+		} // end char
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	} // end switch( msg )
 
 	return MSG_HANDLED;
 
-}  // end GadgetVerticalSliderInput
+} // end GadgetVerticalSliderInput
 
 // GadgetVerticalSliderSystem =================================================
 /** Handle system messages for vertical slider */
 //=============================================================================
-WindowMsgHandledType GadgetVerticalSliderSystem( GameWindow *window, UnsignedInt msg,
-																 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GadgetVerticalSliderSystem(
+		GameWindow *window,
+		UnsignedInt msg,
+		WindowMsgData mData1,
+		WindowMsgData mData2)
 {
 	SliderData *s = (SliderData *)window->winGetUserData();
 	WinInstanceData *instData = window->winGetInstanceData();
 
-	switch( msg )
+	switch (msg)
 	{
-
 		// ------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
 			// tell owner I've finished moving
-			TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																					GSM_SLIDER_DONE,
-																					(WindowMsgData)window,
-																					s->position );
+			TheWindowManager->winSendSystemMsg(window->winGetOwner(), GSM_SLIDER_DONE, (WindowMsgData)window, s->position);
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
 		case GGM_LEFT_DRAG:
 		{
-//			Int mousex = mData2 & 0xFFFF;
+			//			Int mousex = mData2 & 0xFFFF;
 			Int mousey = mData2 >> 16;
 			Int x, y, delta;
 			ICoord2D size, childSize, childCenter;
 			GameWindow *child = window->winGetChild();
 
-			window->winGetScreenPosition( &x, &y );
-			window->winGetSize( &size.x, &size.y );
-			child->winGetSize( &childSize.x, &childSize.y );
-			child->winGetScreenPosition( &childCenter.x, &childCenter.y );
+			window->winGetScreenPosition(&x, &y);
+			window->winGetSize(&size.x, &size.y);
+			child->winGetSize(&childSize.x, &childSize.y);
+			child->winGetScreenPosition(&childCenter.x, &childCenter.y);
 			childCenter.x += childSize.x / 2;
 			childCenter.y += childSize.y / 2;
 
@@ -305,71 +280,56 @@ WindowMsgHandledType GadgetVerticalSliderSystem( GameWindow *window, UnsignedInt
 			// ignore drag attempts when the mouse is below or above the slider totally
 			// and put the dragging thumb back at the slider pos
 			//
-			if( mousey > y + size.y )
+			if (mousey > y + size.y)
 			{
-
-				//s->position = s->minVal;
-				TheWindowManager->winSendSystemMsg( window, GSM_SET_SLIDER,
-																						s->minVal, 0 );
+				// s->position = s->minVal;
+				TheWindowManager->winSendSystemMsg(window, GSM_SET_SLIDER, s->minVal, 0);
 				// tell owner i moved
-				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																						GSM_SLIDER_TRACK,
-																						(WindowMsgData)window,
-																						s->position );
+				TheWindowManager->winSendSystemMsg(window->winGetOwner(), GSM_SLIDER_TRACK, (WindowMsgData)window, s->position);
 				break;
 
-			}  // end if
-			else if( mousey < y )
+			} // end if
+			else if (mousey < y)
 			{
-
-				//s->position = s->maxVal;
-				TheWindowManager->winSendSystemMsg( window, GSM_SET_SLIDER,
-																						s->maxVal, 0 );
+				// s->position = s->maxVal;
+				TheWindowManager->winSendSystemMsg(window, GSM_SET_SLIDER, s->maxVal, 0);
 				// tell owner i moved
-				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																						GSM_SLIDER_TRACK,
-																						(WindowMsgData)window,
-																						s->position );
+				TheWindowManager->winSendSystemMsg(window->winGetOwner(), GSM_SLIDER_TRACK, (WindowMsgData)window, s->position);
 				break;
 
-			}  // end else if
+			} // end else if
 
-			if( childCenter.y <= y + childSize.y / 2 )
+			if (childCenter.y <= y + childSize.y / 2)
 			{
-				child->winSetPosition( 0, 0 );
+				child->winSetPosition(0, 0);
 				s->position = s->maxVal;
 			}
-			else if( childCenter.y >= y + size.y - childSize.y / 2 )
+			else if (childCenter.y >= y + size.y - childSize.y / 2)
 			{
-				child->winSetPosition( 0, size.y - childSize.y );
+				child->winSetPosition(0, size.y - childSize.y);
 				s->position = s->minVal;
 			}
 			else
 			{
-				delta = childCenter.y - y - childSize.y/2;
+				delta = childCenter.y - y - childSize.y / 2;
 
 				// Calc slider position
-				s->position = (Int)(delta / s->numTicks) ;
+				s->position = (Int)(delta / s->numTicks);
 
 				/*
 				s->position += s->minVal;
 				*/
 
-				if( s->position > s->maxVal )
+				if (s->position > s->maxVal)
 					s->position = s->maxVal;
 
 				// Invert slider position so that maxval is at the top
 				s->position = s->maxVal - s->position;
-
 			}
 
 			// tell owner i moved
-			TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																					GSM_SLIDER_TRACK,
-																					(WindowMsgData)window,
-																					s->position );
+			TheWindowManager->winSendSystemMsg(window->winGetOwner(), GSM_SLIDER_TRACK, (WindowMsgData)window, s->position);
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
@@ -386,10 +346,9 @@ WindowMsgHandledType GadgetVerticalSliderSystem( GameWindow *window, UnsignedInt
 			// Translate to window coords
 			newPos = (Int)((s->maxVal - newPos) * s->numTicks);
 
-			child->winSetPosition( 0, newPos );
+			child->winSetPosition(0, newPos);
 
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
@@ -399,19 +358,18 @@ WindowMsgHandledType GadgetVerticalSliderSystem( GameWindow *window, UnsignedInt
 			ICoord2D size;
 			GameWindow *child = window->winGetChild();
 
-			window->winGetSize( &size.x, &size.y );
+			window->winGetSize(&size.x, &size.y);
 
 			s->minVal = (Int)mData1;
 			s->maxVal = (Int)mData2;
-			s->numTicks = (Real)( size.y-GADGET_SIZE)/(Real)(s->maxVal - s->minVal);
+			s->numTicks = (Real)(size.y - GADGET_SIZE) / (Real)(s->maxVal - s->minVal);
 			s->position = s->minVal;
 
 			// Translate to window coords
 			newPos = (Int)((s->maxVal - s->minVal) * s->numTicks);
 
-			child->winSetPosition( 0, newPos );
+			child->winSetPosition(0, newPos);
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
@@ -420,7 +378,7 @@ WindowMsgHandledType GadgetVerticalSliderSystem( GameWindow *window, UnsignedInt
 
 		// ------------------------------------------------------------------------
 		case GWM_DESTROY:
-			delete( (SliderData *)window->winGetUserData() );
+			delete ((SliderData *)window->winGetUserData());
 			window->winSetUserData(NULL);
 			s = NULL;
 			break;
@@ -429,41 +387,39 @@ WindowMsgHandledType GadgetVerticalSliderSystem( GameWindow *window, UnsignedInt
 		case GWM_INPUT_FOCUS:
 
 			// If we're losing focus
-			if( mData1 == FALSE )
+			if (mData1 == FALSE)
 			{
-				BitClear( instData->m_state, WIN_STATE_HILITED );
-			} else {
-				BitSet( instData->m_state, WIN_STATE_HILITED );
+				BitClear(instData->m_state, WIN_STATE_HILITED);
+			}
+			else
+			{
+				BitSet(instData->m_state, WIN_STATE_HILITED);
 			}
 
-			TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																					GGM_FOCUS_CHANGE,
-																					mData1,
-																					window->winGetWindowId() );
+			TheWindowManager->winSendSystemMsg(window->winGetOwner(), GGM_FOCUS_CHANGE, mData1, window->winGetWindowId());
 
-			*(Bool*)mData2 = TRUE;
+			*(Bool *)mData2 = TRUE;
 			break;
 
 		// ------------------------------------------------------------------------
 		case GGM_RESIZED:
 		{
 			Int width = (Int)mData1;
-//			Int height = (Int)mData2;
+			//			Int height = (Int)mData2;
 			GameWindow *thumb = window->winGetChild();
 
-			if( thumb )
-				thumb->winSetSize( width, GADGET_SIZE );
+			if (thumb)
+				thumb->winSetSize(width, GADGET_SIZE);
 
 			break;
 
-		}  // end resized
+		} // end resized
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	} // end switch( msg )
 
 	return MSG_HANDLED;
 
-}  // end GadgetVerticalSliderSystem
-
+} // end GadgetVerticalSliderSystem

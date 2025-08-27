@@ -32,8 +32,6 @@ for the data, but at least that wouldn't be repeating code, that would
 be specialized code.
 */
 
-
-
 #pragma once
 
 #ifndef __NETPACKET_H
@@ -55,7 +53,7 @@ class NetPacket : public MemoryPoolObject
 public:
 	NetPacket();
 	NetPacket(TransportMessage *msg);
-	//virtual ~NetPacket();
+	// virtual ~NetPacket();
 
 	void init();
 	void reset();
@@ -65,7 +63,7 @@ public:
 
 	NetCommandList *getCommandList();
 
-	static NetCommandRef * ConstructNetCommandMsgFromRawData(UnsignedByte *data, UnsignedShort dataLength);
+	static NetCommandRef *ConstructNetCommandMsgFromRawData(UnsignedByte *data, UnsignedShort dataLength);
 	static NetPacketList ConstructBigCommandPacketList(NetCommandRef *ref);
 
 	UnsignedByte *getData();
@@ -163,12 +161,12 @@ protected:
 	Bool isRoomForChatMessage(NetCommandRef *msg);
 	Bool addDisconnectVoteCommand(NetCommandRef *msg);
 	Bool isRoomForDisconnectVoteMessage(NetCommandRef *msg);
-	Bool addProgressMessage( NetCommandRef *msg );
-	Bool isRoomForProgressMessage( NetCommandRef *msg );
-	Bool addLoadCompleteMessage( NetCommandRef *msg );
-	Bool isRoomForLoadCompleteMessage( NetCommandRef *msg );
-	Bool addTimeOutGameStartMessage( NetCommandRef *msg );
-	Bool isRoomForTimeOutGameStartMessage( NetCommandRef *msg );
+	Bool addProgressMessage(NetCommandRef *msg);
+	Bool isRoomForProgressMessage(NetCommandRef *msg);
+	Bool addLoadCompleteMessage(NetCommandRef *msg);
+	Bool isRoomForLoadCompleteMessage(NetCommandRef *msg);
+	Bool addTimeOutGameStartMessage(NetCommandRef *msg);
+	Bool isRoomForTimeOutGameStartMessage(NetCommandRef *msg);
 	Bool addWrapperCommand(NetCommandRef *msg);
 	Bool isRoomForWrapperMessage(NetCommandRef *msg);
 	Bool addFileCommand(NetCommandRef *msg);
@@ -190,51 +188,55 @@ protected:
 	Bool isAckStage2Repeat(NetCommandRef *msg);
 	Bool isFrameRepeat(NetCommandRef *msg);
 
-	static NetCommandMsg * readGameMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readAckBothMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readAckStage1Message(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readAckStage2Message(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readFrameMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readPlayerLeaveMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readRunAheadMetricsMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readRunAheadMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readDestroyPlayerMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readKeepAliveMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readDisconnectKeepAliveMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readDisconnectPlayerMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readPacketRouterQueryMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readPacketRouterAckMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readDisconnectChatMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readDisconnectVoteMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readChatMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readProgressMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readLoadCompleteMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readTimeOutGameStartMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readWrapperMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readFileMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readFileAnnounceMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readFileProgressMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readDisconnectFrameMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readDisconnectScreenOffMessage(UnsignedByte *data, Int &i);
-	static NetCommandMsg * readFrameResendRequestMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readGameMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readAckBothMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readAckStage1Message(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readAckStage2Message(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readFrameMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readPlayerLeaveMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readRunAheadMetricsMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readRunAheadMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readDestroyPlayerMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readKeepAliveMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readDisconnectKeepAliveMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readDisconnectPlayerMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readPacketRouterQueryMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readPacketRouterAckMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readDisconnectChatMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readDisconnectVoteMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readChatMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readProgressMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readLoadCompleteMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readTimeOutGameStartMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readWrapperMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readFileMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readFileAnnounceMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readFileProgressMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readDisconnectFrameMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readDisconnectScreenOffMessage(UnsignedByte *data, Int &i);
+	static NetCommandMsg *readFrameResendRequestMessage(UnsignedByte *data, Int &i);
 
 	void writeGameMessageArgumentToPacket(GameMessageArgumentDataType type, GameMessageArgumentType arg);
-	static void readGameMessageArgumentFromPacket(GameMessageArgumentDataType type, NetGameCommandMsg *msg, UnsignedByte *data, Int &i);
+	static void readGameMessageArgumentFromPacket(
+			GameMessageArgumentDataType type,
+			NetGameCommandMsg *msg,
+			UnsignedByte *data,
+			Int &i);
 
 	void dumpPacketToLog();
 
 protected:
-	UnsignedByte		m_packet[MAX_PACKET_SIZE];
-	Int							m_packetLen;
-	UnsignedInt			m_addr;
-	Int							m_numCommands;
-	NetCommandRef*	m_lastCommand;
-	UnsignedInt			m_lastFrame;
-	UnsignedShort		m_port;
-	UnsignedShort		m_lastCommandID;
-	UnsignedByte		m_lastPlayerID;
-	UnsignedByte		m_lastCommandType;
-	UnsignedByte		m_lastRelay;
+	UnsignedByte m_packet[MAX_PACKET_SIZE];
+	Int m_packetLen;
+	UnsignedInt m_addr;
+	Int m_numCommands;
+	NetCommandRef *m_lastCommand;
+	UnsignedInt m_lastFrame;
+	UnsignedShort m_port;
+	UnsignedShort m_lastCommandID;
+	UnsignedByte m_lastPlayerID;
+	UnsignedByte m_lastCommandType;
+	UnsignedByte m_lastRelay;
 };
 
 #endif // __NETPACKET_H

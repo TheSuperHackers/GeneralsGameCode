@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #define DEFINE_TERRAIN_LOD_NAMES
 #define DEFINE_TIME_OF_DAY_NAMES
@@ -38,34 +38,32 @@
 #include "GameNetwork/GameInfo.h" // for PLAYERTEMPLATE_*
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-MultiplayerSettings *TheMultiplayerSettings = NULL;				///< The MultiplayerSettings singleton
+MultiplayerSettings *TheMultiplayerSettings = NULL; ///< The MultiplayerSettings singleton
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-const FieldParse MultiplayerColorDefinition::m_colorFieldParseTable[] =
-{
+const FieldParse MultiplayerColorDefinition::m_colorFieldParseTable[] = {
 
-	{ "TooltipName",	INI::parseAsciiString,	NULL,	offsetof( MultiplayerColorDefinition, m_tooltipName ) },
-	{ "RGBColor",			INI::parseRGBColor,			NULL,	offsetof( MultiplayerColorDefinition, m_rgbValue ) },
-	{ "RGBNightColor",			INI::parseRGBColor,		NULL,	offsetof( MultiplayerColorDefinition, m_rgbValueNight ) },
-	{ NULL,					NULL,						NULL,						0 }  // keep this last
+	{ "TooltipName", INI::parseAsciiString, NULL, offsetof(MultiplayerColorDefinition, m_tooltipName) },
+	{ "RGBColor", INI::parseRGBColor, NULL, offsetof(MultiplayerColorDefinition, m_rgbValue) },
+	{ "RGBNightColor", INI::parseRGBColor, NULL, offsetof(MultiplayerColorDefinition, m_rgbValueNight) },
+	{ NULL, NULL, NULL, 0 } // keep this last
 
 };
 
-const FieldParse MultiplayerSettings::m_multiplayerSettingsFieldParseTable[] =
-{
+const FieldParse MultiplayerSettings::m_multiplayerSettingsFieldParseTable[] = {
 
-	{ "InitialCreditsMin",				INI::parseInt,	NULL,	offsetof( MultiplayerSettings, m_initialCreditsMin ) },
-	{ "InitialCreditsMax",				INI::parseInt,	NULL,	offsetof( MultiplayerSettings, m_initialCreditsMax ) },
-	{ "StartCountdownTimer",			INI::parseInt,	NULL,	offsetof( MultiplayerSettings, m_startCountdownTimerSeconds ) },
-	{ "MaxBeaconsPerPlayer",			INI::parseInt,	NULL,	offsetof( MultiplayerSettings, m_maxBeaconsPerPlayer ) },
-	{ "UseShroud",								INI::parseBool,	NULL,	offsetof( MultiplayerSettings, m_isShroudInMultiplayer ) },
-	{ "ShowRandomPlayerTemplate",	INI::parseBool,	NULL,	offsetof( MultiplayerSettings, m_showRandomPlayerTemplate ) },
-	{ "ShowRandomStartPos",				INI::parseBool,	NULL,	offsetof( MultiplayerSettings, m_showRandomStartPos ) },
-	{ "ShowRandomColor",					INI::parseBool,	NULL,	offsetof( MultiplayerSettings, m_showRandomColor ) },
+	{ "InitialCreditsMin", INI::parseInt, NULL, offsetof(MultiplayerSettings, m_initialCreditsMin) },
+	{ "InitialCreditsMax", INI::parseInt, NULL, offsetof(MultiplayerSettings, m_initialCreditsMax) },
+	{ "StartCountdownTimer", INI::parseInt, NULL, offsetof(MultiplayerSettings, m_startCountdownTimerSeconds) },
+	{ "MaxBeaconsPerPlayer", INI::parseInt, NULL, offsetof(MultiplayerSettings, m_maxBeaconsPerPlayer) },
+	{ "UseShroud", INI::parseBool, NULL, offsetof(MultiplayerSettings, m_isShroudInMultiplayer) },
+	{ "ShowRandomPlayerTemplate", INI::parseBool, NULL, offsetof(MultiplayerSettings, m_showRandomPlayerTemplate) },
+	{ "ShowRandomStartPos", INI::parseBool, NULL, offsetof(MultiplayerSettings, m_showRandomStartPos) },
+	{ "ShowRandomColor", INI::parseBool, NULL, offsetof(MultiplayerSettings, m_showRandomColor) },
 
-	{ NULL,					NULL,						NULL,						0 }  // keep this last
+	{ NULL, NULL, NULL, 0 } // keep this last
 
 };
 
@@ -75,9 +73,9 @@ MultiplayerSettings::MultiplayerSettings()
 {
 	m_initialCreditsMin = 5000;
 
-	//Fixed And Added Code By Sadullah Nader
-	//DID U MEAN m_initialCreditsMax = 10000;?
-	//Initializations inserted
+	// Fixed And Added Code By Sadullah Nader
+	// DID U MEAN m_initialCreditsMax = 10000;?
+	// Initializations inserted
 	m_initialCreditsMax = 10000;
 	m_maxBeaconsPerPlayer = 3;
 	//
@@ -91,18 +89,18 @@ MultiplayerSettings::MultiplayerSettings()
 
 	m_observerColor;
 	m_randomColor;
-}  // end MultiplayerSettings
+} // end MultiplayerSettings
 
 MultiplayerColorDefinition::MultiplayerColorDefinition()
 {
 	m_tooltipName.clear();
 	m_rgbValue.setFromInt(0xFFFFFFFF);
-	m_rgbValueNight=m_rgbValue;
+	m_rgbValueNight = m_rgbValue;
 	m_color = 0xFFFFFFFF;
 	m_colorNight = m_color;
 }
 
-MultiplayerColorDefinition * MultiplayerSettings::getColor(Int which)
+MultiplayerColorDefinition *MultiplayerSettings::getColor(Int which)
 {
 	if (which == PLAYERTEMPLATE_RANDOM)
 	{
@@ -120,7 +118,7 @@ MultiplayerColorDefinition * MultiplayerSettings::getColor(Int which)
 	return &m_colorList[which];
 }
 
-MultiplayerColorDefinition * MultiplayerSettings::findMultiplayerColorDefinitionByName(AsciiString name)
+MultiplayerColorDefinition *MultiplayerSettings::findMultiplayerColorDefinitionByName(AsciiString name)
 {
 	MultiplayerColorIter iter = m_colorList.begin();
 
@@ -135,9 +133,9 @@ MultiplayerColorDefinition * MultiplayerSettings::findMultiplayerColorDefinition
 	return NULL;
 }
 
-MultiplayerColorDefinition * MultiplayerSettings::newMultiplayerColorDefinition(AsciiString name)
+MultiplayerColorDefinition *MultiplayerSettings::newMultiplayerColorDefinition(AsciiString name)
 {
- 	MultiplayerColorDefinition tmp;
+	MultiplayerColorDefinition tmp;
 	Int numColors = getNumColors();
 
 	m_colorList[numColors] = tmp;
@@ -146,7 +144,7 @@ MultiplayerColorDefinition * MultiplayerSettings::newMultiplayerColorDefinition(
 	return &m_colorList[numColors];
 }
 
-MultiplayerColorDefinition * MultiplayerColorDefinition::operator =(const MultiplayerColorDefinition& other)
+MultiplayerColorDefinition *MultiplayerColorDefinition::operator=(const MultiplayerColorDefinition &other)
 {
 	m_tooltipName = other.getTooltipName();
 	m_rgbValue = other.getRGBValue();
@@ -157,12 +155,12 @@ MultiplayerColorDefinition * MultiplayerColorDefinition::operator =(const Multip
 	return this;
 }
 
-void MultiplayerColorDefinition::setColor( RGBColor rgb )
+void MultiplayerColorDefinition::setColor(RGBColor rgb)
 {
 	m_color = rgb.getAsInt() | 0xFF << 24;
 }
 
-void MultiplayerColorDefinition::setNightColor( RGBColor rgb )
+void MultiplayerColorDefinition::setNightColor(RGBColor rgb)
 {
 	m_colorNight = rgb.getAsInt() | 0xFF << 24;
 }

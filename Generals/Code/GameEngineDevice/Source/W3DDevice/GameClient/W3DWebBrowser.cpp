@@ -36,12 +36,12 @@
 #include "WW3D2/dx8wrapper.h"
 #include "WW3D2/dx8webbrowser.h"
 
-W3DWebBrowser::W3DWebBrowser() : WebBrowser() {
+W3DWebBrowser::W3DWebBrowser() : WebBrowser()
+{
 }
 
 Bool W3DWebBrowser::createBrowserWindow(const char *tag, GameWindow *win)
 {
-
 	WinInstanceData *winData = win->winGetInstanceData();
 	AsciiString windowName = winData->m_decoratedNameString;
 
@@ -50,9 +50,10 @@ Bool W3DWebBrowser::createBrowserWindow(const char *tag, GameWindow *win)
 	win->winGetSize(&w, &h);
 	win->winGetScreenPosition(&x, &y);
 
-	WebBrowserURL *url = findURL( AsciiString(tag) );
+	WebBrowserURL *url = findURL(AsciiString(tag));
 
-	if (url == NULL) {
+	if (url == NULL)
+	{
 		DEBUG_LOG(("W3DWebBrowser::createBrowserWindow - couldn't find URL for page %s", tag));
 		return FALSE;
 	}
@@ -67,7 +68,16 @@ Bool W3DWebBrowser::createBrowserWindow(const char *tag, GameWindow *win)
 		return FALSE;
 	}
 
-	DX8WebBrowser::CreateBrowser(windowName.str(), url->m_url.str(), x, y, w, h, 0, BROWSEROPTION_SCROLLBARS | BROWSEROPTION_3DBORDER, (LPDISPATCH)this);
+	DX8WebBrowser::CreateBrowser(
+			windowName.str(),
+			url->m_url.str(),
+			x,
+			y,
+			w,
+			h,
+			0,
+			BROWSEROPTION_SCROLLBARS | BROWSEROPTION_3DBORDER,
+			(LPDISPATCH)this);
 
 	return TRUE;
 }

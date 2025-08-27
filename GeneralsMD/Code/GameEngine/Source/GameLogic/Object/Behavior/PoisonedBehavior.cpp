@@ -27,9 +27,8 @@
 // Desc:   Behavior that reacts to poison Damage by continuously damaging us further in an Update
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/Xfer.h"
 #include "GameClient/Drawable.h"
 #include "GameLogic/Module/PoisonedBehavior.h"
@@ -37,35 +36,35 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 
-
 // tinting is all handled in drawable, now, Graham look near the bottom of Drawable::UpdateDrawable()
-//static const RGBColor poisonedTint = {0.0f, 1.0f, 0.0f};
+// static const RGBColor poisonedTint = {0.0f, 1.0f, 0.0f};
 
 //-------------------------------------------------------------------------------------------------
 PoisonedBehaviorModuleData::PoisonedBehaviorModuleData()
 {
 	m_poisonDamageIntervalData = 0; // How often I retake poison damage dealt me
-	m_poisonDurationData = 0;				// And how long after the last poison dose I am poisoned
+	m_poisonDurationData = 0; // And how long after the last poison dose I am poisoned
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void PoisonedBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
+/*static*/ void PoisonedBehaviorModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "PoisonDamageInterval", INI::parseDurationUnsignedInt, NULL, offsetof(PoisonedBehaviorModuleData, m_poisonDamageIntervalData) },
+	static const FieldParse dataFieldParse[] = {
+		{ "PoisonDamageInterval",
+			INI::parseDurationUnsignedInt,
+			NULL,
+			offsetof(PoisonedBehaviorModuleData, m_poisonDamageIntervalData) },
 		{ "PoisonDuration", INI::parseDurationUnsignedInt, NULL, offsetof(PoisonedBehaviorModuleData, m_poisonDurationData) },
 		{ 0, 0, 0, 0 }
 	};
 
-  UpdateModuleData::buildFieldParse(p);
-  p.add(dataFieldParse);
+	UpdateModuleData::buildFieldParse(p);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PoisonedBehavior::PoisonedBehavior( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+PoisonedBehavior::PoisonedBehavior(Thing *thing, const ModuleData *moduleData) : UpdateModule(thing, moduleData)
 {
 	m_poisonDamageFrame = 0;
 	m_poisonOverallStopFrame = 0;
@@ -76,22 +75,22 @@ PoisonedBehavior::PoisonedBehavior( Thing *thing, const ModuleData* moduleData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PoisonedBehavior::~PoisonedBehavior( void )
+PoisonedBehavior::~PoisonedBehavior(void)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Damage has been dealt, this is an opportunity to react to that damage */
 //-------------------------------------------------------------------------------------------------
-void PoisonedBehavior::onDamage( DamageInfo *damageInfo )
+void PoisonedBehavior::onDamage(DamageInfo *damageInfo)
 {
-	if( damageInfo->in.m_damageType == DAMAGE_POISON )
-		startPoisonedEffects( damageInfo );
+	if (damageInfo->in.m_damageType == DAMAGE_POISON)
+		startPoisonedEffects(damageInfo);
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void PoisonedBehavior::onHealing( DamageInfo *damageInfo )
+void PoisonedBehavior::onHealing(DamageInfo *damageInfo)
 {
 	stopPoisonedEffects();
 
@@ -102,14 +101,14 @@ void PoisonedBehavior::onHealing( DamageInfo *damageInfo )
 // ------------------------------------------------------------------------------------------------
 UpdateSleepTime PoisonedBehavior::update()
 {
-	const PoisonedBehaviorModuleData* d = getPoisonedBehaviorModuleData();
+	const PoisonedBehaviorModuleData *d = getPoisonedBehaviorModuleData();
 	UnsignedInt now = TheGameLogic->getFrame();
 
-	if( m_poisonOverallStopFrame == 0 )
+	if (m_poisonOverallStopFrame == 0)
 	{
 		DEBUG_CRASH(("hmm, this should not happen"));
 		return UPDATE_SLEEP_FOREVER;
-		//we aren't poisoned, so nevermind
+		// we aren't poisoned, so nevermind
 	}
 
 	if (m_poisonDamageFrame != 0 && now >= m_poisonDamageFrame)
@@ -121,16 +120,14 @@ UpdateSleepTime PoisonedBehavior::update()
 		damage.in.m_damageType = DAMAGE_UNRESISTABLE; // Not poison, as that will infect us again
 		damage.in.m_damageFXOverride = DAMAGE_POISON; // but this will ensure that the right effect is played
 		damage.in.m_deathType = m_deathType;
-		getObject()->attemptDamage( &damage );
+		getObject()->attemptDamage(&damage);
 
 		m_poisonDamageFrame = now + d->m_poisonDamageIntervalData;
 	}
 
 	// If we are now at zero we need to turn off our special effects...
 	// unless the poison killed us, then we continue to be a pulsating toxic pus ball
-	if( m_poisonOverallStopFrame != 0 &&
-			now >= m_poisonOverallStopFrame &&
-			!getObject()->isEffectivelyDead())
+	if (m_poisonOverallStopFrame != 0 && now >= m_poisonOverallStopFrame && !getObject()->isEffectivelyDead())
 	{
 		stopPoisonedEffects();
 	}
@@ -151,9 +148,9 @@ UpdateSleepTime PoisonedBehavior::calcSleepTime()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void PoisonedBehavior::startPoisonedEffects( const DamageInfo *damageInfo )
+void PoisonedBehavior::startPoisonedEffects(const DamageInfo *damageInfo)
 {
-	const PoisonedBehaviorModuleData* d = getPoisonedBehaviorModuleData();
+	const PoisonedBehaviorModuleData *d = getPoisonedBehaviorModuleData();
 	UnsignedInt now = TheGameLogic->getFrame();
 
 	// We are going to take the damage dealt by the original poisoner every so often for a while.
@@ -162,16 +159,16 @@ void PoisonedBehavior::startPoisonedEffects( const DamageInfo *damageInfo )
 	m_poisonOverallStopFrame = now + d->m_poisonDurationData;
 
 	// If we are getting re-poisoned, don't reset the damage counter if running, but do set it if unset
-	if( m_poisonDamageFrame != 0 )
-		m_poisonDamageFrame = min( m_poisonDamageFrame, now + d->m_poisonDamageIntervalData );
+	if (m_poisonDamageFrame != 0)
+		m_poisonDamageFrame = min(m_poisonDamageFrame, now + d->m_poisonDamageIntervalData);
 	else
 		m_poisonDamageFrame = now + d->m_poisonDamageIntervalData;
 
 	m_deathType = damageInfo->in.m_deathType;
 
 	Drawable *myDrawable = getObject()->getDrawable();
-	if( myDrawable )
-		myDrawable->setTintStatus( TINT_STATUS_POISONED );// Graham, It has changed, see UpdateDrawable()
+	if (myDrawable)
+		myDrawable->setTintStatus(TINT_STATUS_POISONED); // Graham, It has changed, see UpdateDrawable()
 
 	setWakeFrame(getObject(), calcSleepTime());
 }
@@ -185,60 +182,57 @@ void PoisonedBehavior::stopPoisonedEffects()
 	m_poisonDamageAmount = 0.0f;
 
 	Drawable *myDrawable = getObject()->getDrawable();
-	if( myDrawable )
-		myDrawable->clearTintStatus( TINT_STATUS_POISONED );// Graham, It has changed, see UpdateDrawable()
+	if (myDrawable)
+		myDrawable->clearTintStatus(TINT_STATUS_POISONED); // Graham, It has changed, see UpdateDrawable()
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void PoisonedBehavior::crc( Xfer *xfer )
+void PoisonedBehavior::crc(Xfer *xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
+	UpdateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void PoisonedBehavior::xfer( Xfer *xfer )
+void PoisonedBehavior::xfer(Xfer *xfer)
 {
-
 	// version
 	const XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// poisoned damage frame
-	xfer->xferUnsignedInt( &m_poisonDamageFrame );
+	xfer->xferUnsignedInt(&m_poisonDamageFrame);
 
 	// poison overall stop frame
-	xfer->xferUnsignedInt( &m_poisonOverallStopFrame );
+	xfer->xferUnsignedInt(&m_poisonOverallStopFrame);
 
 	// poison damage amount
-	xfer->xferReal( &m_poisonDamageAmount );
+	xfer->xferReal(&m_poisonDamageAmount);
 
 	if (version >= 2)
 	{
 		xfer->xferUser(&m_deathType, sizeof(m_deathType));
 	}
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PoisonedBehavior::loadPostProcess( void )
+void PoisonedBehavior::loadPostProcess(void)
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

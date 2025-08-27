@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/BuildAssistant.h"
 #include "Common/Thing.h"
@@ -68,41 +68,41 @@
 #include "GameClient/GameText.h"
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
-void parseUpgradePair( INI *ini, void *instance, void *store, const void *userData )
+void parseUpgradePair(INI *ini, void *instance, void *store, const void *userData)
 {
 	upgradePair info;
 	info.type = "";
 	info.amount = 0;
 
-	const char *token = ini->getNextToken( ini->getSepsColon() );
+	const char *token = ini->getNextToken(ini->getSepsColon());
 
-	if ( stricmp(token, "UpgradeType") == 0 )
+	if (stricmp(token, "UpgradeType") == 0)
 	{
-		token = ini->getNextTokenOrNull( ini->getSepsColon() );
-		if (!token)	throw INI_INVALID_DATA;
+		token = ini->getNextTokenOrNull(ini->getSepsColon());
+		if (!token)
+			throw INI_INVALID_DATA;
 
 		info.type = token;
 	}
 	else
 		throw INI_INVALID_DATA;
 
-
-	token = ini->getNextTokenOrNull( ini->getSepsColon() );
-	if ( stricmp(token, "Boost") == 0 )
-		info.amount = INI::scanInt(ini->getNextToken( ini->getSepsColon() ));
+	token = ini->getNextTokenOrNull(ini->getSepsColon());
+	if (stricmp(token, "Boost") == 0)
+		info.amount = INI::scanInt(ini->getNextToken(ini->getSepsColon()));
 	else
 		throw INI_INVALID_DATA;
 
 	// Insert the info into the upgrade list
-	std::list<upgradePair> * theList = (std::list<upgradePair>*)store;
+	std::list<upgradePair> *theList = (std::list<upgradePair> *)store;
 	theList->push_back(info);
 
-}  // end parseFactionObjectCreationList
+} // end parseFactionObjectCreationList
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-AutoDepositUpdate::AutoDepositUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+AutoDepositUpdate::AutoDepositUpdate(Thing *thing, const ModuleData *moduleData) : UpdateModule(thing, moduleData)
 {
 	m_depositOnFrame = TheGameLogic->getFrame() + getAutoDepositUpdateModuleData()->m_depositFrame;
 	m_awardInitialCaptureBonus = FALSE;
@@ -110,32 +110,31 @@ AutoDepositUpdate::AutoDepositUpdate( Thing *thing, const ModuleData* moduleData
 }
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AutoDepositUpdate::~AutoDepositUpdate( void )
+AutoDepositUpdate::~AutoDepositUpdate(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void AutoDepositUpdate::awardInitialCaptureBonus( Player *player )
+void AutoDepositUpdate::awardInitialCaptureBonus(Player *player)
 {
 	m_depositOnFrame = TheGameLogic->getFrame() + getAutoDepositUpdateModuleData()->m_depositFrame;
-	if(!player || !m_awardInitialCaptureBonus || getAutoDepositUpdateModuleData()->m_initialCaptureBonus <= 0)
+	if (!player || !m_awardInitialCaptureBonus || getAutoDepositUpdateModuleData()->m_initialCaptureBonus <= 0)
 		return;
 
-	player->getMoney()->deposit( getAutoDepositUpdateModuleData()->m_initialCaptureBonus );
-	player->getScoreKeeper()->addMoneyEarned( getAutoDepositUpdateModuleData()->m_initialCaptureBonus );
+	player->getMoney()->deposit(getAutoDepositUpdateModuleData()->m_initialCaptureBonus);
+	player->getScoreKeeper()->addMoneyEarned(getAutoDepositUpdateModuleData()->m_initialCaptureBonus);
 
-	//Display cash income floating over the blacklotus
-	if(getAutoDepositUpdateModuleData()->m_initialCaptureBonus > 0)
+	// Display cash income floating over the blacklotus
+	if (getAutoDepositUpdateModuleData()->m_initialCaptureBonus > 0)
 	{
 		UnicodeString moneyString;
-		moneyString.format( TheGameText->fetch( "GUI:AddCash" ), getAutoDepositUpdateModuleData()->m_initialCaptureBonus );
+		moneyString.format(TheGameText->fetch("GUI:AddCash"), getAutoDepositUpdateModuleData()->m_initialCaptureBonus);
 		Coord3D pos;
-		pos.set( getObject()->getPosition() );
-		pos.z += 10.0f; //add a little z to make it show up above the unit.
-		Color color = player->getPlayerColor() | GameMakeColor( 0, 0, 0, 230 );
-		TheInGameUI->addFloatingText( moneyString, &pos, color );
+		pos.set(getObject()->getPosition());
+		pos.z += 10.0f; // add a little z to make it show up above the unit.
+		Color color = player->getPlayerColor() | GameMakeColor(0, 0, 0, 230);
+		TheInGameUI->addFloatingText(moneyString, &pos, color);
 	}
 
 	m_awardInitialCaptureBonus = FALSE;
@@ -143,12 +142,13 @@ void AutoDepositUpdate::awardInitialCaptureBonus( Player *player )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime AutoDepositUpdate::update( void )
+UpdateSleepTime AutoDepositUpdate::update(void)
 {
-/// @todo srj use SLEEPY_UPDATE here
-	if( TheGameLogic->getFrame() >= m_depositOnFrame)
+	/// @todo srj use SLEEPY_UPDATE here
+	if (TheGameLogic->getFrame() >= m_depositOnFrame)
 	{
-		if (!m_initialized) {
+		if (!m_initialized)
+		{
 			// Note - we have to set these in update, because during load the team is set,
 			// and we don't want to award initial bonus on load.  jba :)
 			m_awardInitialCaptureBonus = TRUE;
@@ -156,28 +156,27 @@ UpdateSleepTime AutoDepositUpdate::update( void )
 		}
 		m_depositOnFrame = TheGameLogic->getFrame() + getAutoDepositUpdateModuleData()->m_depositFrame;
 
-		if(getObject()->isNeutralControlled() || getAutoDepositUpdateModuleData()->m_depositAmount <= 0 )
+		if (getObject()->isNeutralControlled() || getAutoDepositUpdateModuleData()->m_depositAmount <= 0)
 			return UPDATE_SLEEP_NONE;
 
 		// makes sure that buildings under construction do not get a bonus CCB
-		if( getObject()->getConstructionPercent() != CONSTRUCTION_COMPLETE )
+		if (getObject()->getConstructionPercent() != CONSTRUCTION_COMPLETE)
 			return UPDATE_SLEEP_NONE;
 
-		getObject()->getControllingPlayer()->getMoney()->deposit( getAutoDepositUpdateModuleData()->m_depositAmount);
-		getObject()->getControllingPlayer()->getScoreKeeper()->addMoneyEarned( getAutoDepositUpdateModuleData()->m_depositAmount);
+		getObject()->getControllingPlayer()->getMoney()->deposit(getAutoDepositUpdateModuleData()->m_depositAmount);
+		getObject()->getControllingPlayer()->getScoreKeeper()->addMoneyEarned(getAutoDepositUpdateModuleData()->m_depositAmount);
 
-		//Display cash income floating over the blacklotus
-		if(getAutoDepositUpdateModuleData()->m_depositAmount > 0)
+		// Display cash income floating over the blacklotus
+		if (getAutoDepositUpdateModuleData()->m_depositAmount > 0)
 		{
 			UnicodeString moneyString;
-			moneyString.format( TheGameText->fetch( "GUI:AddCash" ), getAutoDepositUpdateModuleData()->m_depositAmount );
+			moneyString.format(TheGameText->fetch("GUI:AddCash"), getAutoDepositUpdateModuleData()->m_depositAmount);
 			Coord3D pos;
-			pos.set( getObject()->getPosition() );
-			pos.z += 10.0f; //add a little z to make it show up above the unit.
-			Color color = getObject()->getControllingPlayer()->getPlayerColor() | GameMakeColor( 0, 0, 0, 230 );
-			TheInGameUI->addFloatingText( moneyString, &pos, color );
+			pos.set(getObject()->getPosition());
+			pos.z += 10.0f; // add a little z to make it show up above the unit.
+			Color color = getObject()->getControllingPlayer()->getPlayerColor() | GameMakeColor(0, 0, 0, 230);
+			TheInGameUI->addFloatingText(moneyString, &pos, color);
 		}
-
 	}
 
 	return UPDATE_SLEEP_NONE;
@@ -186,48 +185,46 @@ UpdateSleepTime AutoDepositUpdate::update( void )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void AutoDepositUpdate::crc( Xfer *xfer )
+void AutoDepositUpdate::crc(Xfer *xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
+	UpdateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void AutoDepositUpdate::xfer( Xfer *xfer )
+void AutoDepositUpdate::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// deposit on frame
-	xfer->xferUnsignedInt( &m_depositOnFrame );
+	xfer->xferUnsignedInt(&m_depositOnFrame);
 
 	// award initial capture bonus
-	xfer->xferBool( &m_awardInitialCaptureBonus );
-	if (version>1) {
+	xfer->xferBool(&m_awardInitialCaptureBonus);
+	if (version > 1)
+	{
 		xfer->xferBool(&m_initialized);
 	}
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AutoDepositUpdate::loadPostProcess( void )
+void AutoDepositUpdate::loadPostProcess(void)
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

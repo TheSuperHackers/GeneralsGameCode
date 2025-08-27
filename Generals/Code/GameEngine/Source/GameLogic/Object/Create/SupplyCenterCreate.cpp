@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -38,82 +38,77 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SupplyCenterCreate::SupplyCenterCreate( Thing *thing, const ModuleData* moduleData ) : CreateModule( thing, moduleData )
-{
-
-}
-
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-SupplyCenterCreate::~SupplyCenterCreate( void )
-{
-
-}
-
-//-------------------------------------------------------------------------------------------------
-void SupplyCenterCreate::onCreate( void )
+SupplyCenterCreate::SupplyCenterCreate(Thing *thing, const ModuleData *moduleData) : CreateModule(thing, moduleData)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
-void SupplyCenterCreate::onBuildComplete( void )
+//-------------------------------------------------------------------------------------------------
+SupplyCenterCreate::~SupplyCenterCreate(void)
 {
-	if( ! shouldDoOnBuildComplete() )
+}
+
+//-------------------------------------------------------------------------------------------------
+void SupplyCenterCreate::onCreate(void)
+{
+}
+
+//-------------------------------------------------------------------------------------------------
+void SupplyCenterCreate::onBuildComplete(void)
+{
+	if (!shouldDoOnBuildComplete())
 		return;
 
 	CreateModule::onBuildComplete(); // extend
 
-	if( ThePlayerList == NULL )
+	if (ThePlayerList == NULL)
 		return;
 
-	for( Int playerIndex = ThePlayerList->getPlayerCount() - 1; playerIndex >= 0; playerIndex-- )
+	for (Int playerIndex = ThePlayerList->getPlayerCount() - 1; playerIndex >= 0; playerIndex--)
 	{
-		Player *currentPlayer = ThePlayerList->getNthPlayer( playerIndex );
-		if( currentPlayer == NULL )
+		Player *currentPlayer = ThePlayerList->getNthPlayer(playerIndex);
+		if (currentPlayer == NULL)
 			continue;
 		ResourceGatheringManager *manager = currentPlayer->getResourceGatheringManager();
-		if( manager == NULL )
+		if (manager == NULL)
 			continue;
-		manager->addSupplyCenter( getObject() );
+		manager->addSupplyCenter(getObject());
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SupplyCenterCreate::crc( Xfer *xfer )
+void SupplyCenterCreate::crc(Xfer *xfer)
 {
-
 	// extend base class
-	CreateModule::crc( xfer );
+	CreateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SupplyCenterCreate::xfer( Xfer *xfer )
+void SupplyCenterCreate::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CreateModule::xfer( xfer );
+	CreateModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SupplyCenterCreate::loadPostProcess( void )
+void SupplyCenterCreate::loadPostProcess(void)
 {
-
 	// extend base class
 	CreateModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

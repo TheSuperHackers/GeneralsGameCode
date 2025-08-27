@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -54,7 +54,7 @@ static InGameChatType inGameChatType;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void ShowInGameChat( Bool immediate )
+void ShowInGameChat(Bool immediate)
 {
 	if (TheGameLogic->isInReplayGame())
 		return;
@@ -71,30 +71,30 @@ void ShowInGameChat( Bool immediate )
 		chatWindow->winEnable(TRUE);
 		chatTextEntry->winHide(FALSE);
 		chatTextEntry->winEnable(TRUE);
-		GadgetTextEntrySetText( chatTextEntry, s_savedChat );
+		GadgetTextEntrySetText(chatTextEntry, s_savedChat);
 		s_savedChat.clear();
 	}
 	else
 	{
-		chatWindow = TheWindowManager->winCreateFromScript( AsciiString("InGameChat.wnd") );
+		chatWindow = TheWindowManager->winCreateFromScript(AsciiString("InGameChat.wnd"));
 
-		static NameKeyType textEntryChatID = TheNameKeyGenerator->nameToKey( "InGameChat.wnd:TextEntryChat" );
-		chatTextEntry = TheWindowManager->winGetWindowFromId( NULL, textEntryChatID );
-		GadgetTextEntrySetText( chatTextEntry, UnicodeString::TheEmptyString );
+		static NameKeyType textEntryChatID = TheNameKeyGenerator->nameToKey("InGameChat.wnd:TextEntryChat");
+		chatTextEntry = TheWindowManager->winGetWindowFromId(NULL, textEntryChatID);
+		GadgetTextEntrySetText(chatTextEntry, UnicodeString::TheEmptyString);
 
-		static NameKeyType chatTypeStaticTextID = TheNameKeyGenerator->nameToKey( "InGameChat.wnd:StaticTextChatType" );
-		chatTypeStaticText = TheWindowManager->winGetWindowFromId( NULL, chatTypeStaticTextID );
+		static NameKeyType chatTypeStaticTextID = TheNameKeyGenerator->nameToKey("InGameChat.wnd:StaticTextChatType");
+		chatTypeStaticText = TheWindowManager->winGetWindowFromId(NULL, chatTypeStaticTextID);
 	}
-	TheWindowManager->winSetFocus( chatTextEntry );
-	SetInGameChatType( INGAME_CHAT_EVERYONE );
+	TheWindowManager->winSetFocus(chatTextEntry);
+	SetInGameChatType(INGAME_CHAT_EVERYONE);
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void ResetInGameChat( void )
+void ResetInGameChat(void)
 {
-	if(chatWindow)
-		TheWindowManager->winDestroy( chatWindow );
+	if (chatWindow)
+		TheWindowManager->winDestroy(chatWindow);
 	chatWindow = NULL;
 	chatTextEntry = NULL;
 	chatTypeStaticText = NULL;
@@ -103,50 +103,53 @@ void ResetInGameChat( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void HideInGameChat( Bool immediate )
+void HideInGameChat(Bool immediate)
 {
 	if (chatWindow)
 	{
-		s_savedChat = GadgetTextEntryGetText( chatTextEntry );
+		s_savedChat = GadgetTextEntryGetText(chatTextEntry);
 		chatWindow->winHide(TRUE);
 		chatWindow->winEnable(FALSE);
 		chatTextEntry->winHide(TRUE);
 		chatTextEntry->winEnable(FALSE);
-		TheWindowManager->winSetFocus( NULL );
+		TheWindowManager->winSetFocus(NULL);
 	}
-	TheWindowManager->winSetFocus( NULL );
+	TheWindowManager->winSetFocus(NULL);
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void SetInGameChatType( InGameChatType chatType )
+void SetInGameChatType(InGameChatType chatType)
 {
 	inGameChatType = chatType;
 	if (chatTypeStaticText)
 	{
 		switch (inGameChatType)
 		{
-		case INGAME_CHAT_EVERYONE:
-			if (ThePlayerList->getLocalPlayer()->isPlayerActive())
-				GadgetStaticTextSetText( chatTypeStaticText, TheGameText->fetch("Chat:Everyone") );
-			else
-				GadgetStaticTextSetText( chatTypeStaticText, TheGameText->fetch("Chat:Observers") );
-			break;
-		case INGAME_CHAT_ALLIES:
-			GadgetStaticTextSetText( chatTypeStaticText, TheGameText->fetch("Chat:Allies") );
-			break;
-		case INGAME_CHAT_PLAYERS:
-			GadgetStaticTextSetText( chatTypeStaticText, TheGameText->fetch("Chat:Players") );
-			break;
+			case INGAME_CHAT_EVERYONE:
+				if (ThePlayerList->getLocalPlayer()->isPlayerActive())
+					GadgetStaticTextSetText(chatTypeStaticText, TheGameText->fetch("Chat:Everyone"));
+				else
+					GadgetStaticTextSetText(chatTypeStaticText, TheGameText->fetch("Chat:Observers"));
+				break;
+			case INGAME_CHAT_ALLIES:
+				GadgetStaticTextSetText(chatTypeStaticText, TheGameText->fetch("Chat:Allies"));
+				break;
+			case INGAME_CHAT_PLAYERS:
+				GadgetStaticTextSetText(chatTypeStaticText, TheGameText->fetch("Chat:Players"));
+				break;
 		}
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool IsInGameChatActive() {
-	if (chatWindow != NULL) {
-		if (chatWindow->winIsHidden() == FALSE) {
+Bool IsInGameChatActive()
+{
+	if (chatWindow != NULL)
+	{
+		if (chatWindow->winIsHidden() == FALSE)
+		{
 			return TRUE;
 		}
 	}
@@ -187,7 +190,7 @@ Bool handleInGameSlashCommands(UnicodeString uText)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void ToggleInGameChat( Bool immediate )
+void ToggleInGameChat(Bool immediate)
 {
 	static Bool justHid = false;
 	if (justHid)
@@ -206,13 +209,13 @@ void ToggleInGameChat( Bool immediate )
 	{
 		Bool show = chatWindow->winIsHidden();
 		if (show)
-			ShowInGameChat( immediate );
+			ShowInGameChat(immediate);
 		else
 		{
 			if (chatTextEntry)
 			{
 				// Send what is there, clear it out, and hide the window
-				UnicodeString msg = GadgetTextEntryGetText( chatTextEntry );
+				UnicodeString msg = GadgetTextEntryGetText(chatTextEntry);
 				msg.trim();
 				if (!msg.isEmpty() && !handleInGameSlashCommands(msg))
 				{
@@ -220,97 +223,91 @@ void ToggleInGameChat( Bool immediate )
 					AsciiString playerName;
 					Int playerMask = 0;
 
-					for (Int i=0; i<MAX_SLOTS; ++i)
+					for (Int i = 0; i < MAX_SLOTS; ++i)
 					{
 						playerName.format("player%d", i);
-						const Player *player = ThePlayerList->findPlayerWithNameKey( TheNameKeyGenerator->nameToKey( playerName ) );
+						const Player *player = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(playerName));
 						if (player && localPlayer)
 						{
 							switch (inGameChatType)
 							{
-							case INGAME_CHAT_EVERYONE:
-								if (!TheGameInfo->getConstSlot(i)->isMuted())
-									playerMask |= (1<<i);
-								break;
-							case INGAME_CHAT_ALLIES:
-								if ( (player->getRelationship(localPlayer->getDefaultTeam()) == ALLIES &&
-									localPlayer->getRelationship(player->getDefaultTeam()) == ALLIES) || player==localPlayer )
-									playerMask |= (1<<i);
-								break;
-							case INGAME_CHAT_PLAYERS:
-								if ( player == localPlayer )
-									playerMask |= (1<<i);
-								break;
+								case INGAME_CHAT_EVERYONE:
+									if (!TheGameInfo->getConstSlot(i)->isMuted())
+										playerMask |= (1 << i);
+									break;
+								case INGAME_CHAT_ALLIES:
+									if ((player->getRelationship(localPlayer->getDefaultTeam()) == ALLIES
+											 && localPlayer->getRelationship(player->getDefaultTeam()) == ALLIES)
+											|| player == localPlayer)
+										playerMask |= (1 << i);
+									break;
+								case INGAME_CHAT_PLAYERS:
+									if (player == localPlayer)
+										playerMask |= (1 << i);
+									break;
 							}
 						}
 					}
 					TheLanguageFilter->filterLine(msg);
 					TheNetwork->sendChat(msg, playerMask);
 				}
-				GadgetTextEntrySetText( chatTextEntry, UnicodeString::TheEmptyString );
-				HideInGameChat( immediate );
+				GadgetTextEntrySetText(chatTextEntry, UnicodeString::TheEmptyString);
+				HideInGameChat(immediate);
 				justHid = true;
 			}
 		}
 	}
 	else
 	{
-		ShowInGameChat( immediate );
+		ShowInGameChat(immediate);
 	}
 }
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType InGameChatInput( GameWindow *window, UnsignedInt msg,
-																			WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType InGameChatInput(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-
-	switch( msg )
+	switch (msg)
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case GWM_CHAR:
 		{
 			UnsignedByte key = mData1;
-//			UnsignedByte state = mData2;
+			//			UnsignedByte state = mData2;
 
-			switch( key )
+			switch (key)
 			{
-
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
 					HideInGameChat();
 					return MSG_HANDLED;
-					//return MSG_IGNORED;
-				}  // end escape
+					// return MSG_IGNORED;
+				} // end escape
 
-			}  // end switch( key )
+			} // end switch( key )
 
 			return MSG_HANDLED;
 
-		}  // end char
-
+		} // end char
 	}
 
 	return MSG_IGNORED;
 
-}  // end InGameChatInput
+} // end InGameChatInput
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType InGameChatSystem( GameWindow *window, UnsignedInt msg,
-																			 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType InGameChatSystem(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-	switch( msg )
+	switch (msg)
 	{
 		//---------------------------------------------------------------------------------------------
 		case GGM_FOCUS_CHANGE:
 		{
-//			Bool focus = (Bool) mData1;
-			//if (focus)
-				//TheWindowManager->winSetGrabWindow( chatTextEntry );
+			//			Bool focus = (Bool) mData1;
+			// if (focus)
+			// TheWindowManager->winSetGrabWindow( chatTextEntry );
 			break;
 		} // end focus change
 
@@ -318,44 +315,43 @@ WindowMsgHandledType InGameChatSystem( GameWindow *window, UnsignedInt msg,
 		case GWM_INPUT_FOCUS:
 		{
 			// if we're givin the opportunity to take the keyboard focus we must say we want it
-			if( mData1 == TRUE )
+			if (mData1 == TRUE)
 				*(Bool *)mData2 = TRUE;
 
 			return MSG_HANDLED;
-		}//case GWM_INPUT_FOCUS:
+		} // case GWM_INPUT_FOCUS:
 
 		//---------------------------------------------------------------------------------------------
 		case GEM_EDIT_DONE:
 		{
 			ToggleInGameChat();
-			//HideInGameChat();
+			// HideInGameChat();
 
 			break;
 
-		}  // end button selected
+		} // end button selected
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
 			GameWindow *control = (GameWindow *)mData1;
-			static NameKeyType buttonClearID = TheNameKeyGenerator->nameToKey( AsciiString( "InGameChat.wnd:ButtonClear" ) );
+			static NameKeyType buttonClearID = TheNameKeyGenerator->nameToKey(AsciiString("InGameChat.wnd:ButtonClear"));
 			if (control && control->winGetWindowId() == buttonClearID)
 			{
 				if (chatTextEntry)
-					GadgetTextEntrySetText( chatTextEntry, UnicodeString::TheEmptyString );
+					GadgetTextEntrySetText(chatTextEntry, UnicodeString::TheEmptyString);
 				s_savedChat.clear();
 			}
 			break;
 
-		}  // end button selected
+		} // end button selected
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	} // end switch( msg )
 
 	return MSG_HANDLED;
 
-}  // end InGameChatSystem
-
+} // end InGameChatSystem

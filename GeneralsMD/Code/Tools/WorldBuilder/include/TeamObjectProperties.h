@@ -21,7 +21,6 @@
 // January, 2003
 // (c) Electronic Arts 2003
 
-
 #ifndef TEAM_OBJECT_PROPERTIES_H
 #define TEAM_OBJECT_PROPERTIES_H
 
@@ -34,33 +33,34 @@
 // Forward declarations.
 class Dict;
 
-
 // External Defines
 
 class TeamObjectProperties : public CPropertyPage
 {
-// Construction
+	// Construction
 public:
-	TeamObjectProperties(Dict* dictToEdit = NULL);
+	TeamObjectProperties(Dict *dictToEdit = NULL);
 	~TeamObjectProperties();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(MapObjectProps)
-	enum { IDD = IDD_TeamObjectProperties };
+	enum
+	{
+		IDD = IDD_TeamObjectProperties
+	};
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(TeamObjectProperties)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-	Dict* m_dictToEdit;
+	Dict *m_dictToEdit;
 
 #if 0 // Keys not implemented yet.  jba. [3/26/2003]//
 	void updateTheUI(void);
@@ -110,4 +110,4 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-#endif //TEAM_OBJECT_PROPERTIES_H
+#endif // TEAM_OBJECT_PROPERTIES_H

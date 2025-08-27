@@ -68,19 +68,16 @@ class Thing;
 
 class ArmorUpgrade : public UpgradeModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ArmorUpgrade, "ArmorUpgrade" )
-	MAKE_STANDARD_MODULE_MACRO( ArmorUpgrade );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ArmorUpgrade, "ArmorUpgrade")
+	MAKE_STANDARD_MODULE_MACRO(ArmorUpgrade);
 
 public:
-
-	ArmorUpgrade( Thing *thing, const ModuleData* moduleData );
+	ArmorUpgrade(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype defined by MemoryPoolObject
 
 protected:
-	virtual void upgradeImplementation( ); ///< Here's the actual work of Upgrading
+	virtual void upgradeImplementation(); ///< Here's the actual work of Upgrading
 	virtual Bool isSubObjectsUpgrade() { return false; }
-
 };
 
 //-----------------------------------------------------------------------------

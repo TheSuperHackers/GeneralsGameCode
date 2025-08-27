@@ -36,7 +36,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "lightenvironment.h"
 #include "matrix3d.h"
 #include "camera.h"
@@ -47,15 +46,13 @@
 */
 const float DIFFUSE_TO_AMBIENT_FRACTION = 1.0f;
 
-
 /*
 ** Static variables
 */
 // TheSuperHackers @fix xezon 13/03/2025 Set integer type as per the original.
 // TODO: Investigate if it should be a float.
-static int _LightingLODCutoff			= 0.5f;
-static int _LightingLODCutoff2			= 0.5f * 0.5f;
-
+static int _LightingLODCutoff = 0.5f;
+static int _LightingLODCutoff2 = 0.5f * 0.5f;
 
 /************************************************************************************************
 **
@@ -63,60 +60,53 @@ static int _LightingLODCutoff2			= 0.5f * 0.5f;
 **
 ************************************************************************************************/
 
-void LightEnvironmentClass::InputLightStruct::Init
-(
-	const LightClass & light,
-	const Vector3 & object_center
-)
+void LightEnvironmentClass::InputLightStruct::Init(const LightClass &light, const Vector3 &object_center)
 {
 	m_point = false;
-	switch(light.Get_Type())
+	switch (light.Get_Type())
 	{
-	case LightClass::POINT:
-	case LightClass::SPOT:
-		Init_From_Point_Or_Spot_Light(light,object_center);
-		break;
-	case LightClass::DIRECTIONAL:
-		Init_From_Directional_Light(light,object_center);
-		break;
+		case LightClass::POINT:
+		case LightClass::SPOT:
+			Init_From_Point_Or_Spot_Light(light, object_center);
+			break;
+		case LightClass::DIRECTIONAL:
+			Init_From_Directional_Light(light, object_center);
+			break;
 	};
 }
 
-void LightEnvironmentClass::InputLightStruct::Init_From_Point_Or_Spot_Light
-(
-	const LightClass & light,
-	const Vector3 & object_center
-)
+void LightEnvironmentClass::InputLightStruct::Init_From_Point_Or_Spot_Light(
+		const LightClass &light,
+		const Vector3 &object_center)
 {
 	/*
 	** Compute the direction vector and the distance to the light
 	*/
 	Direction = light.Get_Position() - object_center;
 	float dist = Direction.Length();
-	if (dist > 0.0f) {
+	if (dist > 0.0f)
+	{
 		Direction /= dist;
 	}
 
 	/*
 	** Compute the attenuation factor
 	*/
-	double atten_start,atten_end;
-	light.Get_Far_Attenuation_Range(atten_start,atten_end);
+	double atten_start, atten_end;
+	light.Get_Far_Attenuation_Range(atten_start, atten_end);
 
 	float atten = 1.0f - (dist - atten_start) / (atten_end - atten_start);
-	atten = WWMath::Clamp(atten,0.0f,1.0f);
+	atten = WWMath::Clamp(atten, 0.0f, 1.0f);
 
-
-
-	if (light.Get_Type() == LightClass::SPOT) {
-
+	if (light.Get_Type() == LightClass::SPOT)
+	{
 		Vector3 spot_dir;
 		light.Get_Spot_Direction(spot_dir);
-		Matrix3D::Rotate_Vector(light.Get_Transform(),spot_dir,&spot_dir);
+		Matrix3D::Rotate_Vector(light.Get_Transform(), spot_dir, &spot_dir);
 
 		float spot_angle_cos = light.Get_Spot_Angle_Cos();
-		atten *= (Vector3::Dot_Product(-spot_dir,Direction) - spot_angle_cos) / (1.0f - spot_angle_cos);
-		atten = WWMath::Clamp(atten,0.0f,1.0f);
+		atten *= (Vector3::Dot_Product(-spot_dir, Direction) - spot_angle_cos) / (1.0f - spot_angle_cos);
+		atten = WWMath::Clamp(atten, 0.0f, 1.0f);
 	}
 
 	/*
@@ -134,28 +124,24 @@ void LightEnvironmentClass::InputLightStruct::Init_From_Point_Or_Spot_Light
 	m_ambient = Ambient;
 	m_diffuse = Diffuse;
 
-	if (Diffuse.Length2() > _LightingLODCutoff2) {
-
+	if (Diffuse.Length2() > _LightingLODCutoff2)
+	{
 		DiffuseRejected = false;
 		Ambient *= atten;
 		Diffuse *= atten;
-
-	} else {
-
+	}
+	else
+	{
 		DiffuseRejected = true;
 		Ambient *= atten;
 		Ambient += atten * DIFFUSE_TO_AMBIENT_FRACTION * Diffuse;
-		Diffuse.Set(0,0,0);
-
+		Diffuse.Set(0, 0, 0);
 	}
 }
 
-
-void LightEnvironmentClass::InputLightStruct::Init_From_Directional_Light
-(
-	const LightClass & light,
-	const Vector3 & object_center
-)
+void LightEnvironmentClass::InputLightStruct::Init_From_Directional_Light(
+		const LightClass &light,
+		const Vector3 &object_center)
 {
 	Direction = -light.Get_Transform().Get_Z_Vector();
 
@@ -164,12 +150,10 @@ void LightEnvironmentClass::InputLightStruct::Init_From_Directional_Light
 	light.Get_Diffuse(&Diffuse);
 }
 
-
 float LightEnvironmentClass::InputLightStruct::Contribution(void)
 {
 	return Diffuse.Length2();
 }
-
 
 /************************************************************************************************
 **
@@ -177,17 +161,11 @@ float LightEnvironmentClass::InputLightStruct::Contribution(void)
 **
 ************************************************************************************************/
 
-void LightEnvironmentClass::OutputLightStruct::Init
-(
-	const InputLightStruct & input,
-	const Matrix3D & camera_tm
-)
+void LightEnvironmentClass::OutputLightStruct::Init(const InputLightStruct &input, const Matrix3D &camera_tm)
 {
 	Diffuse = input.Diffuse;
-	Matrix3D::Inverse_Rotate_Vector(camera_tm,input.Direction,&Direction);
+	Matrix3D::Inverse_Rotate_Vector(camera_tm, input.Direction, &Direction);
 }
-
-
 
 /************************************************************************************************
 **
@@ -195,28 +173,22 @@ void LightEnvironmentClass::OutputLightStruct::Init
 **
 ************************************************************************************************/
 
-LightEnvironmentClass::LightEnvironmentClass(void) :
-	LightCount(0),
-	ObjectCenter(0,0,0),
-	OutputAmbient(0,0,0)
+LightEnvironmentClass::LightEnvironmentClass(void) : LightCount(0), ObjectCenter(0, 0, 0), OutputAmbient(0, 0, 0)
 {
 }
-
 
 LightEnvironmentClass::~LightEnvironmentClass(void)
 {
 }
 
-
-void LightEnvironmentClass::Reset(const Vector3 & object_center,const Vector3 & ambient)
+void LightEnvironmentClass::Reset(const Vector3 &object_center, const Vector3 &ambient)
 {
 	LightCount = 0;
 	ObjectCenter = object_center;
 	OutputAmbient = ambient;
 }
 
-
-void LightEnvironmentClass::Add_Light(const LightClass & light)
+void LightEnvironmentClass::Add_Light(const LightClass &light)
 {
 	/*
 	** Compute the equivalent directional + ambient light
@@ -233,13 +205,19 @@ void LightEnvironmentClass::Add_Light(const LightClass & light)
 	/*
 	** If not rejected, add the directional component to the active lights
 	*/
-	if (new_light.DiffuseRejected == false || new_light.m_point) {
-		if (LightCount < MAX_LIGHTS) {
+	if (new_light.DiffuseRejected == false || new_light.m_point)
+	{
+		if (LightCount < MAX_LIGHTS)
+		{
 			InputLights[LightCount] = new_light;
 			LightCount++;
-		} else {
-			for (int light_index=0; light_index<LightCount; light_index++) {
-				if (new_light.Contribution() > InputLights[light_index].Contribution()) {
+		}
+		else
+		{
+			for (int light_index = 0; light_index < LightCount; light_index++)
+			{
+				if (new_light.Contribution() > InputLights[light_index].Contribution())
+				{
 					InputLights[light_index] = new_light;
 					light_index = MAX_LIGHTS;
 				}
@@ -248,19 +226,20 @@ void LightEnvironmentClass::Add_Light(const LightClass & light)
 	}
 }
 
-void LightEnvironmentClass::Pre_Render_Update(const Matrix3D & camera_tm)
+void LightEnvironmentClass::Pre_Render_Update(const Matrix3D &camera_tm)
 {
 	/*
 	** Transform each light into camera space
 	** and add up the ambient effect of each light
 	*/
-	for (int light_index=0; light_index<LightCount; light_index++) {
-		OutputLights[light_index].Init(InputLights[light_index],camera_tm);
+	for (int light_index = 0; light_index < LightCount; light_index++)
+	{
+		OutputLights[light_index].Init(InputLights[light_index], camera_tm);
 	}
 	// Clamp ambient.
-	OutputAmbient.X = WWMath::Clamp(OutputAmbient.X,0.0f,1.0f);
-	OutputAmbient.Y = WWMath::Clamp(OutputAmbient.Y,0.0f,1.0f);
-	OutputAmbient.Z = WWMath::Clamp(OutputAmbient.Z,0.0f,1.0f);
+	OutputAmbient.X = WWMath::Clamp(OutputAmbient.X, 0.0f, 1.0f);
+	OutputAmbient.Y = WWMath::Clamp(OutputAmbient.Y, 0.0f, 1.0f);
+	OutputAmbient.Z = WWMath::Clamp(OutputAmbient.Z, 0.0f, 1.0f);
 }
 
 void LightEnvironmentClass::Set_Lighting_LOD_Cutoff(float inten)
@@ -273,4 +252,3 @@ float LightEnvironmentClass::Get_Lighting_LOD_Cutoff(void)
 {
 	return _LightingLODCutoff;
 }
-

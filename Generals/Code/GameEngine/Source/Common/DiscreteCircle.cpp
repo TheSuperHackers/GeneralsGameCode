@@ -50,7 +50,7 @@ DiscreteCircle::DiscreteCircle(Int xCenter, Int yCenter, Int radius)
 {
 	m_yPos = yCenter;
 	m_yPosDoubled = (yCenter << 1);
-	m_edges.reserve(radius << 1);	// largest that it should ever be.
+	m_edges.reserve(radius << 1); // largest that it should ever be.
 
 	generateEdgePairs(xCenter, yCenter, radius);
 	removeDuplicates();
@@ -59,9 +59,11 @@ DiscreteCircle::DiscreteCircle(Int xCenter, Int yCenter, Int radius)
 //-------------------------------------------------------------------------------------------------
 void DiscreteCircle::drawCircle(ScanlineDrawFunc functionToDrawWith, void *parmToPass)
 {
-	for (VecHorzLine::const_iterator it = m_edges.begin(); it != m_edges.end(); ++it) {
+	for (VecHorzLine::const_iterator it = m_edges.begin(); it != m_edges.end(); ++it)
+	{
 		(functionToDrawWith)(it->xStart, it->xEnd, it->yPos, parmToPass);
-		if (it->yPos != m_yPos) {
+		if (it->yPos != m_yPos)
+		{
 			(functionToDrawWith)(it->xStart, it->xEnd, m_yPosDoubled - it->yPos, parmToPass);
 		}
 	}
@@ -75,19 +77,22 @@ void DiscreteCircle::generateEdgePairs(Int xCenter, Int yCenter, Int radius)
 	Int y = radius;
 	Int d = (1 - radius) << 1;
 
-	while (y >= 0) {
+	while (y >= 0)
+	{
 		HorzLine hl;
 		hl.xStart = xCenter - x;
-		hl.xEnd		= xCenter + x;
-		hl.yPos		= yCenter + y;
+		hl.xEnd = xCenter + x;
+		hl.yPos = yCenter + y;
 		m_edges.push_back(hl);
 
-		if (d + y > 0) {
+		if (d + y > 0)
+		{
 			--y;
 			d -= ((y << 1) - 1);
 		}
 
-		if (x > d) {
+		if (x > d)
+		{
 			++x;
 			d += ((x << 1) + 1);
 		}
@@ -98,16 +103,21 @@ void DiscreteCircle::generateEdgePairs(Int xCenter, Int yCenter, Int radius)
 void DiscreteCircle::removeDuplicates()
 {
 	VecHorzLineIt it, nextIt;
-	for ( it = m_edges.begin(); it != m_edges.end(); /* empty */) {
+	for (it = m_edges.begin(); it != m_edges.end(); /* empty */)
+	{
 		nextIt = it;
 		++nextIt;
-		if (nextIt == m_edges.end()) {
+		if (nextIt == m_edges.end())
+		{
 			break;
 		}
 
-		if (it->yPos == nextIt->yPos) {
+		if (it->yPos == nextIt->yPos)
+		{
 			it = m_edges.erase(it);
-		} else {
+		}
+		else
+		{
 			++it;
 		}
 	}

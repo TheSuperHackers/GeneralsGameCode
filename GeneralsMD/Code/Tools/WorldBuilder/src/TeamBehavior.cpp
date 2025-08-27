@@ -29,40 +29,37 @@
 /////////////////////////////////////////////////////////////////////////////
 // TeamBehavior dialog
 
-TeamBehavior::TeamBehavior()
-	: CPropertyPage(TeamBehavior::IDD)
+TeamBehavior::TeamBehavior() : CPropertyPage(TeamBehavior::IDD)
 {
 	//{{AFX_DATA_INIT(TeamBehavior)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void TeamBehavior::DoDataExchange(CDataExchange* pDX)
+void TeamBehavior::DoDataExchange(CDataExchange *pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(TeamBehavior)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(TeamBehavior, CPropertyPage)
-	//{{AFX_MSG_MAP(TeamBehavior)
-	ON_CBN_SELCHANGE(IDC_ON_CREATE_SCRIPT, OnSelchangeOnCreateScript)
-	ON_BN_CLICKED(IDC_TRANSPORTS_RETURN, OnTransportsReturn)
-	ON_BN_CLICKED(IDC_AVOID_THREATS, OnAvoidThreats)
-	ON_CBN_SELCHANGE(IDC_ON_ENEMY_SIGHTED, OnSelchangeOnEnemySighted)
-	ON_CBN_SELCHANGE(IDC_ON_DESTROYED, OnSelchangeOnDestroyed)
-	ON_CBN_SELCHANGE(IDC_ON_UNIT_DESTROYED_SCRIPT, OnSelchangeOnUnitDestroyed)
-	ON_BN_CLICKED(IDC_PERIMETER_DEFENSE, OnPerimeterDefense)
-	ON_BN_CLICKED(IDC_BASE_DEFENSE, OnBaseDefense)
-	ON_EN_CHANGE(IDC_PERCENT_DESTROYED, OnChangePercentDestroyed)
-	ON_CBN_SELCHANGE(IDC_ENEMY_INTERACTIONS, OnSelchangeEnemyInteractions)
-	ON_CBN_SELCHANGE(IDC_ON_ALL_CLEAR, OnSelchangeOnAllClear)
-	ON_CBN_SELCHANGE(IDC_ON_IDLE_SCRIPT, OnSelchangeOnIdleScript)
-	ON_BN_CLICKED(IDC_ATTACK_COMMON_TARGET, OnAttackCommonTarget)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(TeamBehavior)
+ON_CBN_SELCHANGE(IDC_ON_CREATE_SCRIPT, OnSelchangeOnCreateScript)
+ON_BN_CLICKED(IDC_TRANSPORTS_RETURN, OnTransportsReturn)
+ON_BN_CLICKED(IDC_AVOID_THREATS, OnAvoidThreats)
+ON_CBN_SELCHANGE(IDC_ON_ENEMY_SIGHTED, OnSelchangeOnEnemySighted)
+ON_CBN_SELCHANGE(IDC_ON_DESTROYED, OnSelchangeOnDestroyed)
+ON_CBN_SELCHANGE(IDC_ON_UNIT_DESTROYED_SCRIPT, OnSelchangeOnUnitDestroyed)
+ON_BN_CLICKED(IDC_PERIMETER_DEFENSE, OnPerimeterDefense)
+ON_BN_CLICKED(IDC_BASE_DEFENSE, OnBaseDefense)
+ON_EN_CHANGE(IDC_PERCENT_DESTROYED, OnChangePercentDestroyed)
+ON_CBN_SELCHANGE(IDC_ENEMY_INTERACTIONS, OnSelchangeEnemyInteractions)
+ON_CBN_SELCHANGE(IDC_ON_ALL_CLEAR, OnSelchangeOnAllClear)
+ON_CBN_SELCHANGE(IDC_ON_IDLE_SCRIPT, OnSelchangeOnIdleScript)
+ON_BN_CLICKED(IDC_ATTACK_COMMON_TARGET, OnAttackCommonTarget)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -70,12 +67,13 @@ END_MESSAGE_MAP()
 
 void TeamBehavior::updateScript(NameKeyType keyScript, int idcScript)
 {
-	CComboBox *pCombo = (CComboBox*)GetDlgItem(idcScript);
+	CComboBox *pCombo = (CComboBox *)GetDlgItem(idcScript);
 	CString txt;
 	Int curSel = pCombo->GetCurSel();
 	pCombo->GetLBText(curSel, txt);
 	AsciiString comboText = AsciiString(txt);
-	if (comboText == NONE_STRING) {
+	if (comboText == NONE_STRING)
+	{
 		comboText.clear();
 	}
 	m_teamDict->setAsciiString(keyScript, comboText);
@@ -83,18 +81,22 @@ void TeamBehavior::updateScript(NameKeyType keyScript, int idcScript)
 
 void TeamBehavior::setupScript(NameKeyType keyScript, int idcScript)
 {
-	CComboBox *pCombo = (CComboBox*)GetDlgItem(idcScript);
+	CComboBox *pCombo = (CComboBox *)GetDlgItem(idcScript);
 	// Load the subroutine scripts into the combo box.
 	EditParameter::loadScripts(pCombo, true);
 	Int stringNdx = pCombo->AddString(NONE_STRING);
 	pCombo->SetFocus();
 	Bool exists;
 	AsciiString script = m_teamDict->getAsciiString(keyScript, &exists);
-	if (exists && !script.isEmpty()) {
+	if (exists && !script.isEmpty())
+	{
 		Int ndx = pCombo->FindStringExact(-1, script.str());
-		if (ndx != CB_ERR) {
+		if (ndx != CB_ERR)
+		{
 			stringNdx = ndx;
-		}	else {
+		}
+		else
+		{
 			AsciiString badName = "*";
 			badName.concat(script);
 			stringNdx = pCombo->AddString(badName.str());
@@ -102,7 +104,6 @@ void TeamBehavior::setupScript(NameKeyType keyScript, int idcScript)
 	}
 	pCombo->SetCurSel(stringNdx);
 }
-
 
 BOOL TeamBehavior::OnInitDialog()
 {
@@ -117,60 +118,60 @@ BOOL TeamBehavior::OnInitDialog()
 
 	Bool exists;
 
-	CButton *pCheck = (CButton *) GetDlgItem(IDC_TRANSPORTS_RETURN);
+	CButton *pCheck = (CButton *)GetDlgItem(IDC_TRANSPORTS_RETURN);
 	Bool transportsReturn = m_teamDict->getBool(TheKey_teamTransportsReturn, &exists);
-	pCheck->SetCheck(transportsReturn?1:0);
+	pCheck->SetCheck(transportsReturn ? 1 : 0);
 
-	pCheck = (CButton *) GetDlgItem(IDC_BASE_DEFENSE);
-	if( pCheck )
+	pCheck = (CButton *)GetDlgItem(IDC_BASE_DEFENSE);
+	if (pCheck)
 	{
 		Bool baseDef = m_teamDict->getBool(TheKey_teamIsBaseDefense, &exists);
-		pCheck->SetCheck(baseDef?1:0);
+		pCheck->SetCheck(baseDef ? 1 : 0);
 	}
 
-	pCheck = (CButton *) GetDlgItem(IDC_PERIMETER_DEFENSE);
-	if( pCheck )
+	pCheck = (CButton *)GetDlgItem(IDC_PERIMETER_DEFENSE);
+	if (pCheck)
 	{
 		Bool perimeter = m_teamDict->getBool(TheKey_teamIsPerimeterDefense, &exists);
-		pCheck->SetCheck(perimeter?1:0);
+		pCheck->SetCheck(perimeter ? 1 : 0);
 	}
 
-	pCheck = (CButton *) GetDlgItem(IDC_AVOID_THREATS);
+	pCheck = (CButton *)GetDlgItem(IDC_AVOID_THREATS);
 	Bool avoid = m_teamDict->getBool(TheKey_teamAvoidThreats, &exists);
-	pCheck->SetCheck(avoid?1:0);
+	pCheck->SetCheck(avoid ? 1 : 0);
 
-	pCheck = (CButton *) GetDlgItem(IDC_ATTACK_COMMON_TARGET);
+	pCheck = (CButton *)GetDlgItem(IDC_ATTACK_COMMON_TARGET);
 	Bool attack = m_teamDict->getBool(TheKey_teamAttackCommonTarget, &exists);
-	pCheck->SetCheck(attack?1:0);
+	pCheck->SetCheck(attack ? 1 : 0);
 
 	AsciiString description;
 
 	CWnd *pWnd = GetDlgItem(IDC_PERCENT_DESTROYED);
 	Real threshold = m_teamDict->getReal(TheKey_teamDestroyedThreshold, &exists);
-	if (!exists) threshold = 0.5f;
-	Int percent = floor((threshold*100)+0.5);
+	if (!exists)
+		threshold = 0.5f;
+	Int percent = floor((threshold * 100) + 0.5);
 	description.format("%d", percent);
 	pWnd->SetWindowText(description.str());
 
-	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_ENEMY_INTERACTIONS);
+	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_ENEMY_INTERACTIONS);
 	pCombo->SetCurSel(m_teamDict->getInt(TheKey_teamAggressiveness, &exists) - ATTITUDE_SLEEP);
 
-
-	return FALSE;  // return TRUE unless you set the focus to a control
+	return FALSE; // return TRUE unless you set the focus to a control
 								// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void TeamBehavior::OnTransportsReturn()
 {
-	CButton *pCheck = (CButton *) GetDlgItem(IDC_TRANSPORTS_RETURN);
-	Bool checked = 	pCheck->GetCheck()==1;
+	CButton *pCheck = (CButton *)GetDlgItem(IDC_TRANSPORTS_RETURN);
+	Bool checked = pCheck->GetCheck() == 1;
 	m_teamDict->setBool(TheKey_teamTransportsReturn, checked);
 }
 
 void TeamBehavior::OnAvoidThreats()
 {
-	CButton *pCheck = (CButton *) GetDlgItem(IDC_AVOID_THREATS);
-	Bool checked = 	pCheck->GetCheck()==1;
+	CButton *pCheck = (CButton *)GetDlgItem(IDC_AVOID_THREATS);
+	Bool checked = pCheck->GetCheck() == 1;
 	m_teamDict->setBool(TheKey_teamAvoidThreats, checked);
 }
 
@@ -196,14 +197,15 @@ void TeamBehavior::OnSelchangeOnCreateScript()
 
 void TeamBehavior::OnPerimeterDefense()
 {
-	CButton *pCheck = (CButton *) GetDlgItem(IDC_PERIMETER_DEFENSE);
-	if( pCheck )
+	CButton *pCheck = (CButton *)GetDlgItem(IDC_PERIMETER_DEFENSE);
+	if (pCheck)
 	{
-		Bool checked = 	pCheck->GetCheck()==1;
+		Bool checked = pCheck->GetCheck() == 1;
 		m_teamDict->setBool(TheKey_teamIsPerimeterDefense, checked);
-		if (checked) {	// Can't be both base & perimeter defense.
-			pCheck = (CButton *) GetDlgItem(IDC_BASE_DEFENSE);
-			if( pCheck )
+		if (checked)
+		{ // Can't be both base & perimeter defense.
+			pCheck = (CButton *)GetDlgItem(IDC_BASE_DEFENSE);
+			if (pCheck)
 			{
 				pCheck->SetCheck(0);
 				m_teamDict->setBool(TheKey_teamIsBaseDefense, false);
@@ -214,14 +216,15 @@ void TeamBehavior::OnPerimeterDefense()
 
 void TeamBehavior::OnBaseDefense()
 {
-	CButton *pCheck = (CButton *) GetDlgItem(IDC_BASE_DEFENSE);
-	if( pCheck )
+	CButton *pCheck = (CButton *)GetDlgItem(IDC_BASE_DEFENSE);
+	if (pCheck)
 	{
-		Bool checked = 	pCheck->GetCheck()==1;
+		Bool checked = pCheck->GetCheck() == 1;
 		m_teamDict->setBool(TheKey_teamIsBaseDefense, checked);
-		if (checked) {	// Can't be both base & perimeter defense.
-			pCheck = (CButton *) GetDlgItem(IDC_PERIMETER_DEFENSE);
-			if( pCheck )
+		if (checked)
+		{ // Can't be both base & perimeter defense.
+			pCheck = (CButton *)GetDlgItem(IDC_PERIMETER_DEFENSE);
+			if (pCheck)
 			{
 				pCheck->SetCheck(0);
 				m_teamDict->setBool(TheKey_teamIsPerimeterDefense, false);
@@ -233,20 +236,22 @@ void TeamBehavior::OnBaseDefense()
 void TeamBehavior::OnChangePercentDestroyed()
 {
 	CWnd *pWnd = GetDlgItem(IDC_PERCENT_DESTROYED);
-	if (pWnd) {
+	if (pWnd)
+	{
 		CString val;
 		pWnd->GetWindowText(val);
 		Int percent = atoi(val);
-		Real value = percent/100.0f;
+		Real value = percent / 100.0f;
 		m_teamDict->setReal(TheKey_teamDestroyedThreshold, value);
 	}
 }
 
 void TeamBehavior::OnSelchangeEnemyInteractions()
 {
-	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_ENEMY_INTERACTIONS);
+	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_ENEMY_INTERACTIONS);
 	Int mode = pCombo->GetCurSel();
-	if (mode >= 0) {
+	if (mode >= 0)
+	{
 		m_teamDict->setInt(TheKey_teamAggressiveness, mode + ATTITUDE_SLEEP);
 	}
 }
@@ -263,7 +268,7 @@ void TeamBehavior::OnSelchangeOnIdleScript()
 
 void TeamBehavior::OnAttackCommonTarget()
 {
-	CButton *pCheck = (CButton *) GetDlgItem(IDC_ATTACK_COMMON_TARGET);
-	Bool checked = 	pCheck->GetCheck()==1;
+	CButton *pCheck = (CButton *)GetDlgItem(IDC_ATTACK_COMMON_TARGET);
+	Bool checked = pCheck->GetCheck() == 1;
 	m_teamDict->setBool(TheKey_teamAttackCommonTarget, checked);
 }

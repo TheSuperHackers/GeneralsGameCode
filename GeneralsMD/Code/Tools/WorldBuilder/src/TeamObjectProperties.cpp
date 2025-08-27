@@ -26,16 +26,14 @@
 #include "Common/MapObject.h"
 #include "Common/WellKnownKeys.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 // TeamObjectProperties dialog
 
-TeamObjectProperties::TeamObjectProperties(Dict* dictToEdit)
-	: CPropertyPage(TeamObjectProperties::IDD),
-	m_dictToEdit(dictToEdit)
+TeamObjectProperties::TeamObjectProperties(Dict *dictToEdit) :
+		CPropertyPage(TeamObjectProperties::IDD), m_dictToEdit(dictToEdit)
 {
 	//{{AFX_DATA_INIT(TeamObjectProperties)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
@@ -43,11 +41,11 @@ TeamObjectProperties::~TeamObjectProperties()
 {
 }
 
-void TeamObjectProperties::DoDataExchange(CDataExchange* pDX)
+void TeamObjectProperties::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(TeamObjectProperties)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
@@ -682,4 +680,3 @@ BOOL TeamObjectProperties::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	return CPropertyPage::OnCommand(wParam, lParam);
 }
-

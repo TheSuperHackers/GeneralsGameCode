@@ -36,9 +36,9 @@
 #include "vertmaterial.h"
 #include "Lib/BaseType.h"
 
-#define MAX_TRACK_EDGE_COUNT	100	//maximum number of edges or divisions in track mark
-#define MAX_TRACK_OPAQUE_EDGE	25	//linear fade of edges will begin at this edge
-#define FADE_TIME_FRAMES 300000	// 300 seconds at 30 fps - time to fade out an edge and remove it from the system.
+#define MAX_TRACK_EDGE_COUNT 100 // maximum number of edges or divisions in track mark
+#define MAX_TRACK_OPAQUE_EDGE 25 // linear fade of edges will begin at this edge
+#define FADE_TIME_FRAMES 300000 // 300 seconds at 30 fps - time to fade out an edge and remove it from the system.
 
 class TerrainTracksRenderObjClassSystem;
 class Drawable;
@@ -54,53 +54,53 @@ class TerrainTracksRenderObjClass : public W3DMPO, public RenderObjClass
 	friend class TerrainTracksRenderObjClassSystem;
 
 public:
-
 	TerrainTracksRenderObjClass(void);
 	~TerrainTracksRenderObjClass(void);
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface (W3D methods)
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone(void) const;
-	virtual int						Class_ID(void) const;
-	virtual void					Render(RenderInfoClass & rinfo);
-	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
+	virtual RenderObjClass *Clone(void) const;
+	virtual int Class_ID(void) const;
+	virtual void Render(RenderInfoClass &rinfo);
+	virtual void Get_Obj_Space_Bounding_Sphere(SphereClass &sphere) const;
+	virtual void Get_Obj_Space_Bounding_Box(AABoxClass &aabox) const;
 
-	Int freeTerrainTracksResources(void);	///<free W3D assets used for this track
-	void init( Real width, Real length, const Char *texturename);	///<allocate W3D resources and set size
-	void addEdgeToTrack(Real x, Real y);	///< add a new segment to the track
-	void addCapEdgeToTrack(Real x, Real y);	///< cap the existing segment so we can resume at an unconnected position.
-	void setAirborne(void) {m_airborne = true; }	///< Starts a new section of track, generally after going airborne.
-	void setOwnerDrawable(const Drawable *owner) {m_ownerDrawable = owner;}
+	Int freeTerrainTracksResources(void); ///< free W3D assets used for this track
+	void init(Real width, Real length, const Char *texturename); ///< allocate W3D resources and set size
+	void addEdgeToTrack(Real x, Real y); ///< add a new segment to the track
+	void addCapEdgeToTrack(Real x, Real y); ///< cap the existing segment so we can resume at an unconnected position.
+	void setAirborne(void) { m_airborne = true; } ///< Starts a new section of track, generally after going airborne.
+	void setOwnerDrawable(const Drawable *owner) { m_ownerDrawable = owner; }
 
 protected:
-	TextureClass *m_stageZeroTexture;	///<primary texture
-	SphereClass	m_boundingSphere;		///<bounding sphere of TerrainTracks
-	AABoxClass	m_boundingBox;			///<bounding box of TerrainTracks
-	Int			m_activeEdgeCount;			///<number of active edges in segment list
-	Int			m_totalEdgesAdded;		///<number of edges ever added to this track
-	const Drawable	*m_ownerDrawable;	///<logical object that's laying down tread marks.
+	TextureClass *m_stageZeroTexture; ///< primary texture
+	SphereClass m_boundingSphere; ///< bounding sphere of TerrainTracks
+	AABoxClass m_boundingBox; ///< bounding box of TerrainTracks
+	Int m_activeEdgeCount; ///< number of active edges in segment list
+	Int m_totalEdgesAdded; ///< number of edges ever added to this track
+	const Drawable *m_ownerDrawable; ///< logical object that's laying down tread marks.
 
-	struct edgeInfo{
-		Vector3	endPointPos[2];			///<the 2 endpoints on the edge
-		Vector2	endPointUV[2];			///< uv coordinates at each end point
-		Int		timeAdded;				///< time when edge was created.
-		Real	alpha;					///< current alpha value for rendering
+	struct edgeInfo
+	{
+		Vector3 endPointPos[2]; ///< the 2 endpoints on the edge
+		Vector2 endPointUV[2]; ///< uv coordinates at each end point
+		Int timeAdded; ///< time when edge was created.
+		Real alpha; ///< current alpha value for rendering
 	};
 
-	edgeInfo	m_edges[MAX_TRACK_EDGE_COUNT];	///<edges at each segment break
-	Vector3		m_lastAnchor;						///<location of last edge center
-	Int			m_bottomIndex;						///<points at oldest edge on track
-	Int			m_topIndex;						///<points to newest edge on track
-	Bool		m_haveAnchor;					///<set to false until first edge is added
-	Bool		m_bound;						///<object is bound to owner and accepts new edges
-	Real		m_width;						///<track width
-	Real		m_length;						///<length of each track segment
-	Bool		m_airborne;					///< Did the vehicle bounce up into the air?
-	Bool		m_haveCap;					///< is the segment capped so we can stop and resume at new location.
-	TerrainTracksRenderObjClass	*m_nextSystem;			///<next track system
-	TerrainTracksRenderObjClass *m_prevSystem;			///<previous track system
+	edgeInfo m_edges[MAX_TRACK_EDGE_COUNT]; ///< edges at each segment break
+	Vector3 m_lastAnchor; ///< location of last edge center
+	Int m_bottomIndex; ///< points at oldest edge on track
+	Int m_topIndex; ///< points to newest edge on track
+	Bool m_haveAnchor; ///< set to false until first edge is added
+	Bool m_bound; ///< object is bound to owner and accepts new edges
+	Real m_width; ///< track width
+	Real m_length; ///< length of each track segment
+	Bool m_airborne; ///< Did the vehicle bounce up into the air?
+	Bool m_haveCap; ///< is the segment capped so we can stop and resume at new location.
+	TerrainTracksRenderObjClass *m_nextSystem; ///< next track system
+	TerrainTracksRenderObjClass *m_prevSystem; ///< previous track system
 };
 
 /// System for drawing, updating, and re-using tread mark render objects.
@@ -115,46 +115,49 @@ class TerrainTracksRenderObjClassSystem
 	friend class TerrainTracksRenderObjClass;
 
 public:
+	TerrainTracksRenderObjClassSystem(void);
+	~TerrainTracksRenderObjClassSystem(void);
 
-	TerrainTracksRenderObjClassSystem( void );
-	~TerrainTracksRenderObjClassSystem( void );
-
-	void ReleaseResources(void);	///< Release all dx8 resources so the device can be reset.
-	void ReAcquireResources(void);  ///< Reacquire all resources after device reset.
+	void ReleaseResources(void); ///< Release all dx8 resources so the device can be reset.
+	void ReAcquireResources(void); ///< Reacquire all resources after device reset.
 
 	void setDetail(void);
 
-	void flush (void);	///<draw all tracks that were requested for rendering.
-	void update(void);	///<update the state of all edges (fade alpha, remove old, etc.)
+	void flush(void); ///< draw all tracks that were requested for rendering.
+	void update(void); ///< update the state of all edges (fade alpha, remove old, etc.)
 
-	void init( SceneClass *TerrainTracksScene);	///< pre-allocate track objects
-	void shutdown( void );		///< release all pre-allocated track objects, called by destructor
-	void Reset(void);	///<empties the system, ready for a new scene.
+	void init(SceneClass *TerrainTracksScene); ///< pre-allocate track objects
+	void shutdown(void); ///< release all pre-allocated track objects, called by destructor
+	void Reset(void); ///< empties the system, ready for a new scene.
 
-	TerrainTracksRenderObjClass *bindTrack(RenderObjClass *renderObject, Real length, const Char *texturename);	///<track object to be controlled by owner
-	void unbindTrack( TerrainTracksRenderObjClass *mod );	///<releases control of track object
+	TerrainTracksRenderObjClass *bindTrack(RenderObjClass *renderObject, Real length, const Char *texturename); ///< track
+																																																							///< object to
+																																																							///< be
+																																																							///< controlled
+																																																							///< by owner
+	void unbindTrack(TerrainTracksRenderObjClass *mod); ///< releases control of track object
 
 protected:
-	DX8VertexBufferClass		*m_vertexBuffer;	///<vertex buffer used to draw all tracks
-	DX8IndexBufferClass			*m_indexBuffer;	///<indices defining triangles in maximum length track
-	VertexMaterialClass	  	  *m_vertexMaterialClass;	///< vertex lighting material
-	ShaderClass m_shaderClass; ///<shader or rendering state for heightmap
+	DX8VertexBufferClass *m_vertexBuffer; ///< vertex buffer used to draw all tracks
+	DX8IndexBufferClass *m_indexBuffer; ///< indices defining triangles in maximum length track
+	VertexMaterialClass *m_vertexMaterialClass; ///< vertex lighting material
+	ShaderClass m_shaderClass; ///< shader or rendering state for heightmap
 
-	TerrainTracksRenderObjClass *m_usedModules;	///<active objects being rendered in the scene
-	TerrainTracksRenderObjClass *m_freeModules;	//<unused modules that are free to use again
-	SceneClass	*m_TerrainTracksScene;		///<scene that will contain all the TerrainTracks
+	TerrainTracksRenderObjClass *m_usedModules; ///< active objects being rendered in the scene
+	TerrainTracksRenderObjClass *m_freeModules; //<unused modules that are free to use again
+	SceneClass *m_TerrainTracksScene; ///< scene that will contain all the TerrainTracks
 
-	Int	m_edgesToFlush;			///< number of edges to flush on next render.
+	Int m_edgesToFlush; ///< number of edges to flush on next render.
 
-	void releaseTrack( TerrainTracksRenderObjClass *mod );	///<returns track object to free store.
-	void clearTracks(void);	///<reset the amount of visible track marks of each object.
+	void releaseTrack(TerrainTracksRenderObjClass *mod); ///< returns track object to free store.
+	void clearTracks(void); ///< reset the amount of visible track marks of each object.
 
-	Int m_maxTankTrackEdges;	///<maximum length of tank track
-	Int m_maxTankTrackOpaqueEdges;	///<maximum length of tank track before it starts fading.
-	Int m_maxTankTrackFadeDelay;	///<maximum amount of time a tank track segment remains visible.
+	Int m_maxTankTrackEdges; ///< maximum length of tank track
+	Int m_maxTankTrackOpaqueEdges; ///< maximum length of tank track before it starts fading.
+	Int m_maxTankTrackFadeDelay; ///< maximum amount of time a tank track segment remains visible.
 
-};  // end class TerrainTracksRenderObjClassSystem
+}; // end class TerrainTracksRenderObjClassSystem
 
 extern TerrainTracksRenderObjClassSystem *TheTerrainTracksRenderObjClassSystem; ///< singleton for track drawing system.
 
-#endif  // end __W3DTERRAINTRACKS_H_
+#endif // end __W3DTERRAINTRACKS_H_

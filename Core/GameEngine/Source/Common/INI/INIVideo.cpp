@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/INI.h"
 #include "GameClient/VideoPlayer.h"
@@ -44,18 +44,15 @@
 //-------------------------------------------------------------------------------------------------
 /** Parse Music entry */
 //-------------------------------------------------------------------------------------------------
-void INI::parseVideoDefinition( INI* ini )
+void INI::parseVideoDefinition(INI *ini)
 {
 	// read the name
-	const char* c = ini->getNextToken();
+	const char *c = ini->getNextToken();
 
 	Video video;
-	video.m_internalName.set( c );
+	video.m_internalName.set(c);
 
-	ini->initFromINI(&video, TheVideoPlayer->getFieldParse() );
+	ini->initFromINI(&video, TheVideoPlayer->getFieldParse());
 	TheVideoPlayer->addVideo(&video);
 
-
-}  // end parseVideoDefinition
-
-
+} // end parseVideoDefinition

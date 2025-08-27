@@ -49,7 +49,7 @@ Some info about partioning problems:
 	http://odysseus.nat.uni-magdeburg.de/~mertens/npp/index.shtml
 **************************************************************************************************/
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/PartitionSolver.h"
 
@@ -58,13 +58,13 @@ static Bool greater_than(PairObjectIDAndUInt a, PairObjectIDAndUInt b)
 	return a.second > b.second;
 }
 
-PartitionSolver::PartitionSolver(const EntriesVec& elements, const SpacesVec& spaces, SolutionType solveHow)
+PartitionSolver::PartitionSolver(const EntriesVec &elements, const SpacesVec &spaces, SolutionType solveHow)
 {
 	m_data = elements;
 	m_spacesForData = spaces;
 	m_howToSolve = solveHow;
-	//Added By Sadullah Nader
-	//Initializations inserted
+	// Added By Sadullah Nader
+	// Initializations inserted
 	m_currentSolutionLeftovers = 0;
 	//
 }
@@ -80,11 +80,13 @@ void PartitionSolver::solve(void)
 	size_t i, j;
 
 	// first, determine whether there is an actual solution, or we're going to have to fudge it.
-	for (i = 0; i < m_data.size(); ++i) {
+	for (i = 0; i < m_data.size(); ++i)
+	{
 		minSizeForAllData += m_data[i].second;
 	}
 
-	for (i = 0; i < m_spacesForData.size(); ++i) {
+	for (i = 0; i < m_spacesForData.size(); ++i)
+	{
 		slotsAllotted += m_spacesForData[i].second;
 	}
 
@@ -115,12 +117,14 @@ void PartitionSolver::solve(void)
 				}
 			}
 		}
-	} else {
+	}
+	else
+	{
 		DEBUG_CRASH(("PREFER_CORRECT_SOLUTION @todo impl"));
 	}
 }
 
-const SolutionVec& PartitionSolver::getSolution( void ) const
+const SolutionVec &PartitionSolver::getSolution(void) const
 {
 	return m_bestSolution;
 }

@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -71,198 +70,203 @@ class TextureClass : public W3DMPO, public RefCountClass
 {
 	W3DMPO_GLUE(TextureClass)
 
-	friend class DX8TextureTrackerClass;  //(gth) so it can call Poke_Texture,
+	friend class DX8TextureTrackerClass; //(gth) so it can call Poke_Texture,
 
 	friend DX8Wrapper;
 	friend TextureLoader;
 	friend LoaderThreadClass;
 	friend DX8TextureManagerClass;
 
-	public:
+public:
+	enum PoolType
+	{
+		POOL_DEFAULT = 0,
+		POOL_MANAGED,
+		POOL_SYSTEMMEM
+	};
 
-		enum PoolType {
-			POOL_DEFAULT=0,
-			POOL_MANAGED,
-			POOL_SYSTEMMEM
-		};
+	enum TexAssetType
+	{
+		TEX_REGULAR,
+	};
 
-		enum TexAssetType
-		{
-			TEX_REGULAR,
-		};
-
-		// Create texture with desired height, width and format.
-		TextureClass(
+	// Create texture with desired height, width and format.
+	TextureClass(
 			unsigned width,
 			unsigned height,
 			WW3DFormat format,
-			MipCountType mip_level_count=MIP_LEVELS_ALL,
-			PoolType pool=POOL_MANAGED,
-			bool rendertarget=false);
+			MipCountType mip_level_count = MIP_LEVELS_ALL,
+			PoolType pool = POOL_MANAGED,
+			bool rendertarget = false);
 
-		// Create texture from a file. If format is specified the texture is converted to that format.
-		// Note that the format must be supported by the current device and that a texture can't exist
-		// in the system with the same name in multiple formats.
-		TextureClass(
+	// Create texture from a file. If format is specified the texture is converted to that format.
+	// Note that the format must be supported by the current device and that a texture can't exist
+	// in the system with the same name in multiple formats.
+	TextureClass(
 			const char *name,
-			const char *full_path=NULL,
-			MipCountType mip_level_count=MIP_LEVELS_ALL,
-			WW3DFormat texture_format=WW3D_FORMAT_UNKNOWN,
-			bool allow_compression=true);
+			const char *full_path = NULL,
+			MipCountType mip_level_count = MIP_LEVELS_ALL,
+			WW3DFormat texture_format = WW3D_FORMAT_UNKNOWN,
+			bool allow_compression = true);
 
-		// Create texture from a surface.
-		TextureClass(
-			SurfaceClass *surface,
-			MipCountType mip_level_count=MIP_LEVELS_ALL);
+	// Create texture from a surface.
+	TextureClass(SurfaceClass *surface, MipCountType mip_level_count = MIP_LEVELS_ALL);
 
-		TextureClass(IDirect3DTexture8* d3d_texture);
+	TextureClass(IDirect3DTexture8 *d3d_texture);
 
-		virtual TexAssetType Get_Asset_Type() const { return TEX_REGULAR; }
+	virtual TexAssetType Get_Asset_Type() const { return TEX_REGULAR; }
 
-		virtual ~TextureClass(void);
+	virtual ~TextureClass(void);
 
-		// Names
-		void	Set_Texture_Name(const char * name);
-		void	Set_Full_Path(const char * path)			{ FullPath = path; }
-		const StringClass& Get_Texture_Name(void) const		{ return Name; }
-		const StringClass& Get_Full_Path(void) const			{ if (FullPath.Is_Empty ()) return Name; return FullPath; }
+	// Names
+	void Set_Texture_Name(const char *name);
+	void Set_Full_Path(const char *path) { FullPath = path; }
+	const StringClass &Get_Texture_Name(void) const { return Name; }
+	const StringClass &Get_Full_Path(void) const
+	{
+		if (FullPath.Is_Empty())
+			return Name;
+		return FullPath;
+	}
 
-		unsigned Get_ID() const { return texture_id; }	// Each textrure has a unique id
+	unsigned Get_ID() const { return texture_id; } // Each textrure has a unique id
 
-		// The number of Mip levels in the texture
-		unsigned int Get_Mip_Level_Count(void);
+	// The number of Mip levels in the texture
+	unsigned int Get_Mip_Level_Count(void);
 
-		// Note! Width and Height may be zero and may change if texture uses mipmaps
-		int Get_Width() const
-		{
-			return Width;
-		}
-		int Get_Height() const
-		{
-			return Height;
-		}
+	// Note! Width and Height may be zero and may change if texture uses mipmaps
+	int Get_Width() const { return Width; }
+	int Get_Height() const { return Height; }
 
-		// Get surface description of a Mip level (defaults to the highest-resolution one)
-		void Get_Level_Description(SurfaceClass::SurfaceDescription &surface_desc, unsigned int level = 0);
+	// Get surface description of a Mip level (defaults to the highest-resolution one)
+	void Get_Level_Description(SurfaceClass::SurfaceDescription &surface_desc, unsigned int level = 0);
 
-		TextureFilterClass& Get_Filter() { return Filter; }
+	TextureFilterClass &Get_Filter() { return Filter; }
 
-		// Get the surface of one of the mipmap levels (defaults to highest-resolution one)
-		SurfaceClass *Get_Surface_Level(unsigned int level = 0);
+	// Get the surface of one of the mipmap levels (defaults to highest-resolution one)
+	SurfaceClass *Get_Surface_Level(unsigned int level = 0);
 
-		// Texture priority affects texture management and caching.
-		unsigned int Get_Priority(void);
-		unsigned int Set_Priority(unsigned int priority);	// Returns previous priority
+	// Texture priority affects texture management and caching.
+	unsigned int Get_Priority(void);
+	unsigned int Set_Priority(unsigned int priority); // Returns previous priority
 
-		// Debug utility functions for returning the texture memory usage
-		unsigned Get_Texture_Memory_Usage() const;
-		bool Is_Initialized() const { return Initialized; }
-		bool Is_Lightmap() const { return IsLightmap; }
-		bool Is_Procedural() const { return IsProcedural; }
+	// Debug utility functions for returning the texture memory usage
+	unsigned Get_Texture_Memory_Usage() const;
+	bool Is_Initialized() const { return Initialized; }
+	bool Is_Lightmap() const { return IsLightmap; }
+	bool Is_Procedural() const { return IsProcedural; }
 
-		static int _Get_Total_Locked_Surface_Size();
-		static int _Get_Total_Texture_Size();
-		static int _Get_Total_Lightmap_Texture_Size();
-		static int _Get_Total_Procedural_Texture_Size();
-		static int _Get_Total_Locked_Surface_Count();
-		static int _Get_Total_Texture_Count();
-		static int _Get_Total_Lightmap_Texture_Count();
-		static int _Get_Total_Procedural_Texture_Count();
+	static int _Get_Total_Locked_Surface_Size();
+	static int _Get_Total_Texture_Size();
+	static int _Get_Total_Lightmap_Texture_Size();
+	static int _Get_Total_Procedural_Texture_Size();
+	static int _Get_Total_Locked_Surface_Count();
+	static int _Get_Total_Texture_Count();
+	static int _Get_Total_Lightmap_Texture_Count();
+	static int _Get_Total_Procedural_Texture_Count();
 
-		static void _Set_Default_Min_Filter(TextureFilterClass::FilterType filter);
-		static void _Set_Default_Mag_Filter(TextureFilterClass::FilterType filter);
-		static void _Set_Default_Mip_Filter(TextureFilterClass::FilterType filter);
+	static void _Set_Default_Min_Filter(TextureFilterClass::FilterType filter);
+	static void _Set_Default_Mag_Filter(TextureFilterClass::FilterType filter);
+	static void _Set_Default_Mip_Filter(TextureFilterClass::FilterType filter);
 
-		// This utility function processes the texture reduction (used during rendering)
-		void Invalidate();
+	// This utility function processes the texture reduction (used during rendering)
+	void Invalidate();
 
-		IDirect3DTexture8 *Peek_D3D_Texture() const { return (IDirect3DTexture8 *)Peek_D3D_Base_Texture(); }
+	IDirect3DTexture8 *Peek_D3D_Texture() const { return (IDirect3DTexture8 *)Peek_D3D_Base_Texture(); }
 
-		// texture accessors (dx8)
-		IDirect3DBaseTexture8 *Peek_D3D_Base_Texture() const;
-		void Set_D3D_Base_Texture(IDirect3DBaseTexture8* tex);
+	// texture accessors (dx8)
+	IDirect3DBaseTexture8 *Peek_D3D_Base_Texture() const;
+	void Set_D3D_Base_Texture(IDirect3DBaseTexture8 *tex);
 
-		PoolType Get_Pool() const { return Pool; }
+	PoolType Get_Pool() const { return Pool; }
 
-		bool Is_Missing_Texture();
+	bool Is_Missing_Texture();
 
-		// Support for self managed textures
-		bool Is_Dirty() { WWASSERT(Pool==POOL_DEFAULT); return Dirty; };
-		void Set_Dirty() { WWASSERT(Pool==POOL_DEFAULT); Dirty=true; }
-		void Clean() { Dirty=false; };
+	// Support for self managed textures
+	bool Is_Dirty()
+	{
+		WWASSERT(Pool == POOL_DEFAULT);
+		return Dirty;
+	};
+	void Set_Dirty()
+	{
+		WWASSERT(Pool == POOL_DEFAULT);
+		Dirty = true;
+	}
+	void Clean() { Dirty = false; };
 
-		unsigned Get_Reduction() const;
-		WW3DFormat Get_Texture_Format() const { return TextureFormat; }
-		bool Is_Compression_Allowed() const { return IsCompressionAllowed; }
+	unsigned Get_Reduction() const;
+	WW3DFormat Get_Texture_Format() const { return TextureFormat; }
+	bool Is_Compression_Allowed() const { return IsCompressionAllowed; }
 
-	protected:
-		void Poke_Texture(IDirect3DBaseTexture8* tex) { D3DTexture = tex; }
+protected:
+	void Poke_Texture(IDirect3DBaseTexture8 *tex) { D3DTexture = tex; }
 
-		// Apply this texture's settings into D3D
-		virtual void Apply(unsigned int stage);
-		void Load_Locked_Surface();
+	// Apply this texture's settings into D3D
+	virtual void Apply(unsigned int stage);
+	void Load_Locked_Surface();
 
-		void Init();
+	void Init();
 
-		// Apply a Null texture's settings into D3D
-		static void Apply_Null(unsigned int stage);
+	// Apply a Null texture's settings into D3D
+	static void Apply_Null(unsigned int stage);
 
-		// State not contained in the Direct3D texture object:
-		TextureFilterClass Filter;
+	// State not contained in the Direct3D texture object:
+	TextureFilterClass Filter;
 
-		// Direct3D texture object
-		IDirect3DBaseTexture8 *D3DTexture;
-		bool Initialized;
+	// Direct3D texture object
+	IDirect3DBaseTexture8 *D3DTexture;
+	bool Initialized;
 
-		// Name
-		StringClass Name;
-		StringClass	FullPath;
+	// Name
+	StringClass Name;
+	StringClass FullPath;
 
-		// Unique id
-		unsigned texture_id;
+	// Unique id
+	unsigned texture_id;
 
-		// NOTE: Since "texture wrapping" (NOT TEXTURE WRAP MODE - THIS IS
-		// SOMETHING ELSE) is a global state that affects all texture stages,
-		// and this class only affects its own stage, we will not worry about
-		// it for now. Later (probably when we implement world-oriented
-		// environment maps) we will consider where to put it.
+	// NOTE: Since "texture wrapping" (NOT TEXTURE WRAP MODE - THIS IS
+	// SOMETHING ELSE) is a global state that affects all texture stages,
+	// and this class only affects its own stage, we will not worry about
+	// it for now. Later (probably when we implement world-oriented
+	// environment maps) we will consider where to put it.
 
-		// For debug purposes the texture sets this true if it is a lightmap texture
-		bool IsLightmap;
-		bool IsProcedural;
-		bool IsCompressionAllowed;
+	// For debug purposes the texture sets this true if it is a lightmap texture
+	bool IsLightmap;
+	bool IsProcedural;
+	bool IsCompressionAllowed;
 
-		mutable unsigned LastAccessed;
-		WW3DFormat TextureFormat;
+	mutable unsigned LastAccessed;
+	WW3DFormat TextureFormat;
 
-		int Width;
-		int Height;
+	int Width;
+	int Height;
 
-		// Support for self-managed textures
+	// Support for self-managed textures
 
-		PoolType Pool;
-		bool Dirty;
+	PoolType Pool;
+	bool Dirty;
+
 public:
-		MipCountType MipLevelCount;
-		TextureLoadTaskClass* TextureLoadTask;
-		// Background texture loader will call this when texture has been loaded
-		void Apply_New_Surface(bool initialized);	// If the parameter is true, the texture will be flagged as initialised
-
+	MipCountType MipLevelCount;
+	TextureLoadTaskClass *TextureLoadTask;
+	// Background texture loader will call this when texture has been loaded
+	void Apply_New_Surface(bool initialized); // If the parameter is true, the texture will be flagged as initialised
 };
 
 class BumpmapTextureClass : public TextureClass
 {
 public:
 	// Generate bumpmap texture procedurally from the source texture
-	BumpmapTextureClass(TextureClass* texture);
+	BumpmapTextureClass(TextureClass *texture);
 	virtual ~BumpmapTextureClass();
 };
 
 // Utility functions for loading and saving texture descriptions from/to W3D files
-TextureClass *Load_Texture(ChunkLoadClass & cload);
-void Save_Texture(TextureClass * texture, ChunkSaveClass & csave);
+TextureClass *Load_Texture(ChunkLoadClass &cload);
+void Save_Texture(TextureClass *texture, ChunkSaveClass &csave);
 
 // TheSuperHackers @todo TextureBaseClass abstraction
 typedef TextureClass TextureBaseClass;
 
-#endif //TEXTURE_H
+#endif // TEXTURE_H

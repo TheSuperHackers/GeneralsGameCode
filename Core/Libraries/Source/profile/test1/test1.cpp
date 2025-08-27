@@ -32,20 +32,20 @@
 
 const char *DebugGetDefaultCommands(void)
 {
-  return "!debug.io con add\ndebug.add l + *\nprofile.result";
+	return "!debug.io con add\ndebug.add l + *\nprofile.result";
 }
 
 extern int q;
 
 void calcThis(void)
 {
-  q++;
+	q++;
 }
 
 void calcThat(void)
 {
-  calcThis();
-  q--;
+	calcThis();
+	q--;
 }
 
 // it must be done this "complicated" because
@@ -55,40 +55,40 @@ void recursion2(int level);
 
 void recursion(int level)
 {
-  q+=level;
-  if (level<5000)
-    recursion2(level+1);
+	q += level;
+	if (level < 5000)
+		recursion2(level + 1);
 }
 
 void recursion2(int level)
 {
-  recursion(level);
+	recursion(level);
 }
 
 void recursionShell(void)
 {
-  ProfileHighLevel::Block b("Test block");
-  recursion(0);
+	ProfileHighLevel::Block b("Test block");
+	recursion(0);
 }
 
 void showResults(void)
 {
-  ProfileHighLevel::Id id;
-  for (unsigned index=0;ProfileHighLevel::EnumProfile(index,id);index++)
-    printf("%-16s%-6s %s\n",id.GetName(),id.GetTotalValue(),id.GetUnit());
+	ProfileHighLevel::Id id;
+	for (unsigned index = 0; ProfileHighLevel::EnumProfile(index, id); index++)
+		printf("%-16s%-6s %s\n", id.GetName(), id.GetTotalValue(), id.GetUnit());
 }
 
 void main(void)
 {
-  for (int k=0;k<100;k++)
-    if (k%2&&k>80)
-      calcThat();
-    else
-      calcThis();
+	for (int k = 0; k < 100; k++)
+		if (k % 2 && k > 80)
+			calcThat();
+		else
+			calcThis();
 
-  recursionShell();
+	recursionShell();
 
-  showResults();
+	showResults();
 }
 
 int q;

@@ -16,10 +16,9 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include "streamer.h"
 #ifdef _WIN32
-  #include <windows.h>
+#include <windows.h>
 #endif
 
 #if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
@@ -31,125 +30,127 @@
 Streamer::Streamer() : streambuf(), Output_Device(NULL), Buf(NULL)
 {
 #if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
-  int state=unbuffered();
-  unbuffered(0);  // 0 = buffered, 1 = unbuffered
+	int state = unbuffered();
+	unbuffered(0); // 0 = buffered, 1 = unbuffered
 #else
-  static_assert(STREAMER_UNBUFFERED==0, "std::streambuf is assumed to be buffered by default");
+	static_assert(STREAMER_UNBUFFERED == 0, "std::streambuf is assumed to be buffered by default");
 #endif
 }
 
 Streamer::~Streamer()
 {
-  ///////// calling sync seems to cause crashes here on Win32
-  //sync();
-  /////////
-  if (Buf)
-    delete[] Buf;
+	///////// calling sync seems to cause crashes here on Win32
+	// sync();
+	/////////
+	if (Buf)
+		delete[] Buf;
 }
 
 int Streamer::setOutputDevice(OutputDevice *device)
 {
-  Output_Device=device;
-  return(0);
+	Output_Device = device;
+	return (0);
 }
 
-
 // put n chars from string into buffer
-int Streamer::xsputn(const char* buf, int size) //implementation of sputn
+int Streamer::xsputn(const char *buf, int size) // implementation of sputn
 {
-  if (size<=0)  // Nothing to do
-    return(0);
+	if (size <= 0) // Nothing to do
+		return (0);
 
-  const unsigned char *ptr=(const unsigned char *)buf;
-  for (int i=0; i<size; i++, ptr++)
-  {
-    if(*ptr=='\n')
-    {
-      if (overflow(*ptr)==EOF)
-        return(i);
-    }
-    else if (sputc(*ptr)==EOF)
-      return(i);
-  }
-  return(size);
+	const unsigned char *ptr = (const unsigned char *)buf;
+	for (int i = 0; i < size; i++, ptr++)
+	{
+		if (*ptr == '\n')
+		{
+			if (overflow(*ptr) == EOF)
+				return (i);
+		}
+		else if (sputc(*ptr) == EOF)
+			return (i);
+	}
+	return (size);
 }
 
 // Flush the buffer and make more room if needed
 int Streamer::overflow(int c)
 {
-  if (c==EOF)
-    return(sync());
-  if ((pbase()==0) && (doallocate()==0))
-    return(EOF);
-  if((pptr() >= epptr()) && (sync()==EOF))
-    return(EOF);
-  else {
-    sputc(c);
-    if ((STREAMER_UNBUFFERED && c=='\n' || pptr() >= epptr())
-        && sync()==EOF) {
-      return(EOF);
-    }
-    return(c);
-  }
+	if (c == EOF)
+		return (sync());
+	if ((pbase() == 0) && (doallocate() == 0))
+		return (EOF);
+	if ((pptr() >= epptr()) && (sync() == EOF))
+		return (EOF);
+	else
+	{
+		sputc(c);
+		if ((STREAMER_UNBUFFERED && c == '\n' || pptr() >= epptr()) && sync() == EOF)
+		{
+			return (EOF);
+		}
+		return (c);
+	}
 }
 
 // This is a write only stream, this should never happen
 int Streamer::underflow(void)
 {
-  return(EOF);
+	return (EOF);
 }
 
 int Streamer::doallocate()
 {
-  if (Buf==NULL)
-  {
-    Buf=new char[(2*STREAMER_BUFSIZ)];   // deleted by destructor
-    memset(Buf,0,2*STREAMER_BUFSIZ);
+	if (Buf == NULL)
+	{
+		Buf = new char[(2 * STREAMER_BUFSIZ)]; // deleted by destructor
+		memset(Buf, 0, 2 * STREAMER_BUFSIZ);
 
-    // Buffer
+		// Buffer
 #if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
-    setb(
-       Buf,         // base pointer
-       Buf+STREAMER_BUFSIZ,  // ebuf pointer (end of buffer);
-       0);          // 0 = manual deletion of buff
+		setb(
+				Buf, // base pointer
+				Buf + STREAMER_BUFSIZ, // ebuf pointer (end of buffer);
+				0); // 0 = manual deletion of buff
 #else
-    pubsetbuf(Buf, 2*STREAMER_BUFSIZ);
+		pubsetbuf(Buf, 2 * STREAMER_BUFSIZ);
 #endif
 
-    // Get area
-    setg(
-        Buf,   // eback
-        Buf,   // gptr
-        Buf);  // egptr
+		// Get area
+		setg(
+				Buf, // eback
+				Buf, // gptr
+				Buf); // egptr
 
-    Buf+=STREAMER_BUFSIZ;
-    // Put area
-    setp(Buf,Buf+STREAMER_BUFSIZ);
-    return(1);
-  }
-  else
-    return(0);
+		Buf += STREAMER_BUFSIZ;
+		// Put area
+		setp(Buf, Buf + STREAMER_BUFSIZ);
+		return (1);
+	}
+	else
+		return (0);
 }
-
 
 int Streamer::sync()
 {
-  if (pptr()<=pbase()) {
-    return(0);
-  }
+	if (pptr() <= pbase())
+	{
+		return (0);
+	}
 
-  int wlen=pptr()-pbase();
+	int wlen = pptr() - pbase();
 
-  if (Output_Device)
-  {
-    Output_Device->print(pbase(),wlen);
-  }
+	if (Output_Device)
+	{
+		Output_Device->print(pbase(), wlen);
+	}
 
-  if (STREAMER_UNBUFFERED) {
-    setp(pbase(),pbase());
-  }
-  else {
-    setp(pbase(),pbase()+STREAMER_BUFSIZ);
-  }
-  return(0);
+	if (STREAMER_UNBUFFERED)
+	{
+		setp(pbase(), pbase());
+	}
+	else
+	{
+		setp(pbase(), pbase() + STREAMER_BUFSIZ);
+	}
+	return (0);
 }

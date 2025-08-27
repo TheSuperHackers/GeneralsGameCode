@@ -43,31 +43,26 @@ class Xfer;
 //-------------------------------------------------------------------------------------------------
 class Snapshot
 {
-
-friend class GameState;
-friend class XferLoad;
-friend class XferSave;
-friend class XferCRC;
+	friend class GameState;
+	friend class XferLoad;
+	friend class XferSave;
+	friend class XferCRC;
 
 public:
-
-	Snapshot( void );
-	~Snapshot( void );
+	Snapshot(void);
+	~Snapshot(void);
 
 protected:
-
 	/// run the "light" crc check on this data structure
-	virtual void crc( Xfer *xfer ) = 0;
+	virtual void crc(Xfer *xfer) = 0;
 
 	/** run save, load, or deep CRC check on this data structure, the type depends on the
 	setup of the Xfer pointer */
-	virtual void xfer( Xfer *xfer ) = 0;
+	virtual void xfer(Xfer *xfer) = 0;
 
 	/** post process phase for loading save games.  All save systems have their xfer
 	run using XferLoad mode, and then all systems each have their post process run */
-	virtual void loadPostProcess( void ) = 0;
-
+	virtual void loadPostProcess(void) = 0;
 };
 
 #endif // __SNAPSHOT_H_
-

@@ -40,9 +40,8 @@
  */
 class TransportAIUpdate : public AIUpdateInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( TransportAIUpdate, "TransportAIUpdate" )
-	MAKE_STANDARD_MODULE_MACRO( TransportAIUpdate )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TransportAIUpdate, "TransportAIUpdate")
+	MAKE_STANDARD_MODULE_MACRO(TransportAIUpdate)
 
 	/*
 		IMPORTANT NOTE: if you ever add module data to this, you must have it inherit from
@@ -51,20 +50,25 @@ class TransportAIUpdate : public AIUpdateInterface
 	*/
 
 public:
-
-	TransportAIUpdate( Thing *thing, const ModuleData* moduleData );
+	TransportAIUpdate(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
-	virtual AIFreeToExitType getAiFreeToExit(const Object* exiter) const;
+	virtual AIFreeToExitType getAiFreeToExit(const Object *exiter) const;
 
 protected:
-
-	virtual AIStateMachine* makeStateMachine();
+	virtual AIStateMachine *makeStateMachine();
 
 protected:
-	virtual void privateAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource );///< Extension.  Also tell occupants to attackObject
-	virtual void privateAttackPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource );///< Extension.  Also tell occupants to attackPosition
-	virtual void privateForceAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource );///< Extension.  Also tell occupants to forceAttackObject
+	virtual void privateAttackObject(Object *victim, Int maxShotsToFire, CommandSourceType cmdSource); ///< Extension.  Also
+																																																		 ///< tell occupants to
+																																																		 ///< attackObject
+	virtual void privateAttackPosition(
+			const Coord3D *pos,
+			Int maxShotsToFire,
+			CommandSourceType cmdSource); ///< Extension.  Also tell occupants to attackPosition
+	virtual void privateForceAttackObject(
+			Object *victim,
+			Int maxShotsToFire,
+			CommandSourceType cmdSource); ///< Extension.  Also tell occupants to forceAttackObject
 };
 
 #endif
-

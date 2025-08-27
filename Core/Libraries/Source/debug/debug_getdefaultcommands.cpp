@@ -32,5 +32,5 @@
 // by another program using the Debug module
 const char *DebugGetDefaultCommands(void)
 {
-  return "!debug.io flat add";
+	return "!debug.io flat add";
 }

@@ -35,9 +35,10 @@ class INIException
 public:
 	char *mFailureMessage;
 
-	INIException(const char* errorMessage) : mFailureMessage(NULL)
+	INIException(const char *errorMessage) : mFailureMessage(NULL)
 	{
-		if (errorMessage) {
+		if (errorMessage)
+		{
 			mFailureMessage = new char[strlen(errorMessage) + 1];
 			strcpy(mFailureMessage, errorMessage);
 		}
@@ -45,8 +46,9 @@ public:
 
 	~INIException()
 	{
-		if (mFailureMessage) {
-			delete [] mFailureMessage;
+		if (mFailureMessage)
+		{
+			delete[] mFailureMessage;
 		}
 	}
 };

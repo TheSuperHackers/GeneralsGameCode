@@ -84,42 +84,39 @@ class UnicodeString;
 class AsciiString
 {
 private:
-
 	// Note, this is a Plain Old Data Structure... don't
 	// add a ctor/dtor, 'cuz they won't ever be called.
 	struct AsciiStringData
 	{
 #if defined(RTS_DEBUG)
-		const char* m_debugptr;	// just makes it easier to read in the debugger
+		const char *m_debugptr; // just makes it easier to read in the debugger
 #endif
-		unsigned short	m_refCount;						// reference count
-		unsigned short	m_numCharsAllocated;  // length of data allocated
+		unsigned short m_refCount; // reference count
+		unsigned short m_numCharsAllocated; // length of data allocated
 		// char m_stringdata[];
 
-		inline char* peek() { return (char*)(this+1); }
+		inline char *peek() { return (char *)(this + 1); }
 	};
 
-	#ifdef RTS_DEBUG
+#ifdef RTS_DEBUG
 	void validate() const;
-	#else
-	inline void validate() const { }
-	#endif
+#else
+	inline void validate() const {}
+#endif
 
 protected:
-	AsciiStringData* m_data;   // pointer to ref counted string data
+	AsciiStringData *m_data; // pointer to ref counted string data
 
-	char* peek() const;
+	char *peek() const;
 	void releaseBuffer();
-	void ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData, const char* strToCpy, const char* strToCat);
+	void ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData, const char *strToCpy, const char *strToCat);
 
 public:
-
 	enum
 	{
-		MAX_FORMAT_BUF_LEN = 2048,		///< max total len of string created by format/format_va
-		MAX_LEN = 32767							///< max total len of any AsciiString, in chars
+		MAX_FORMAT_BUF_LEN = 2048, ///< max total len of string created by format/format_va
+		MAX_LEN = 32767 ///< max total len of any AsciiString, in chars
 	};
-
 
 	/**
 		This is a convenient global used to indicate the empty
@@ -138,7 +135,7 @@ public:
 		they will simply share the same string and increment the
 		refcount.)
 	*/
-	AsciiString(const AsciiString& stringSrc);
+	AsciiString(const AsciiString &stringSrc);
 	/**
 		Constructor -- from a literal string. Constructs an AsciiString
 		with the given string. Note that a copy of the string is made;
@@ -146,7 +143,7 @@ public:
 		Note that this is no longer explicit, as the conversion is almost
 		always wanted, anyhow.
 	*/
-	AsciiString(const char* s);
+	AsciiString(const char *s);
 
 	/**
 		Destructor. Not too exciting... clean up the works and such.
@@ -183,7 +180,7 @@ public:
 		impossible (or at least, really difficuly) for someone to change our
 		private data, since it might be shared amongst other AsciiStrings.
 	*/
-	const char* str() const;
+	const char *str() const;
 
 	/**
 		Makes sure there is room for a string of len+1 characters, and
@@ -191,7 +188,7 @@ public:
 		string buffer is NOT shared.  This is intended for the file reader,
 		that is reading new strings in from a file. jba.
 	*/
-	char* getBufferForRead(Int len);
+	char *getBufferForRead(Int len);
 
 	/**
 		Replace the contents of self with the given string.
@@ -199,12 +196,12 @@ public:
 		they will simply share the same string and increment the
 		refcount.)
 	*/
-	void set(const AsciiString& stringSrc);
+	void set(const AsciiString &stringSrc);
 	/**
 		Replace the contents of self with the given string.
 		Note that a copy of the string is made; the input ptr is not saved.
 	*/
-	void set(const char* s);
+	void set(const char *s);
 
 	/**
 		replace contents of self with the given string. Note the
@@ -213,40 +210,40 @@ public:
 		UnicodeStrings, so some data manipulation may be necessary,
 		and the resulting strings may not be equivalent.
 	*/
-	void translate(const UnicodeString& stringSrc);
+	void translate(const UnicodeString &stringSrc);
 
 	/**
 		Concatenate the given string onto self.
 	*/
-	void concat(const AsciiString& stringSrc);
+	void concat(const AsciiString &stringSrc);
 	/**
 		Concatenate the given string onto self.
 	*/
-	void concat(const char* s);
+	void concat(const char *s);
 	/**
 		Concatenate the given character onto self.
 	*/
 	void concat(const char c);
 
 	/**
-	  Remove leading and trailing whitespace from the string.
+		Remove leading and trailing whitespace from the string.
 	*/
-	void trim( void );
+	void trim(void);
 
 	/**
-	  Remove trailing whitespace from the string.
+		Remove trailing whitespace from the string.
 	*/
 	void trimEnd(void);
 
 	/**
-	  Remove all consecutive occurances of c from the end of the string.
+		Remove all consecutive occurances of c from the end of the string.
 	*/
 	void trimEnd(const char c);
 
 	/**
-	  Make the string lowercase
+		Make the string lowercase
 	*/
-	void toLower( void );
+	void toLower(void);
 
 	/**
 		Remove the final character in the string. If the string is empty,
@@ -273,64 +270,64 @@ public:
 		and stores the result in self.
 	*/
 	void format(AsciiString format, ...);
-	void format(const char* format, ...);
+	void format(const char *format, ...);
 	/**
 		Identical to format(), but takes a va_list rather than
 		a variable argument list. (i.e., analogous to vsprintf.)
 	*/
-	void format_va(const AsciiString& format, va_list args);
-	void format_va(const char* format, va_list args);
+	void format_va(const AsciiString &format, va_list args);
+	void format_va(const char *format, va_list args);
 
 	/**
 		Conceptually identical to strcmp().
 	*/
-	int compare(const AsciiString& stringSrc) const;
+	int compare(const AsciiString &stringSrc) const;
 	/**
 		Conceptually identical to strcmp().
 	*/
-	int compare(const char* s) const;
+	int compare(const char *s) const;
 	/**
 		Conceptually identical to _stricmp().
 	*/
-	int compareNoCase(const AsciiString& stringSrc) const;
+	int compareNoCase(const AsciiString &stringSrc) const;
 	/**
 		Conceptually identical to _stricmp().
 	*/
-	int compareNoCase(const char* s) const;
+	int compareNoCase(const char *s) const;
 
 	/**
 		Conceptually identical to strchr().
 	*/
-	const char* find(char c) const;
+	const char *find(char c) const;
 
 	/**
 		Conceptually identical to strrchr().
 	*/
-	const char* reverseFind(char c) const;
+	const char *reverseFind(char c) const;
 
 	/**
 		return true iff self starts with the given string.
 	*/
-	Bool startsWith(const char* p) const;
-	inline Bool startsWith(const AsciiString& stringSrc) const { return startsWith(stringSrc.str()); }
+	Bool startsWith(const char *p) const;
+	inline Bool startsWith(const AsciiString &stringSrc) const { return startsWith(stringSrc.str()); }
 
 	/**
 		return true iff self starts with the given string. (case insensitive)
 	*/
-	Bool startsWithNoCase(const char* p) const;
-	inline Bool startsWithNoCase(const AsciiString& stringSrc) const { return startsWithNoCase(stringSrc.str()); }
+	Bool startsWithNoCase(const char *p) const;
+	inline Bool startsWithNoCase(const AsciiString &stringSrc) const { return startsWithNoCase(stringSrc.str()); }
 
 	/**
 		return true iff self ends with the given string.
 	*/
-	Bool endsWith(const char* p) const;
-	Bool endsWith(const AsciiString& stringSrc) const { return endsWith(stringSrc.str()); }
+	Bool endsWith(const char *p) const;
+	Bool endsWith(const AsciiString &stringSrc) const { return endsWith(stringSrc.str()); }
 
 	/**
 		return true iff self ends with the given string. (case insensitive)
 	*/
-	Bool endsWithNoCase(const char* p) const;
-	Bool endsWithNoCase(const AsciiString& stringSrc) const { return endsWithNoCase(stringSrc.str()); }
+	Bool endsWithNoCase(const char *p) const;
+	Bool endsWithNoCase(const AsciiString &stringSrc) const { return endsWithNoCase(stringSrc.str()); }
 
 	/**
 		conceptually similar to strtok():
@@ -340,7 +337,7 @@ public:
 		token was found. (note that this modifies 'this' as well, stripping
 		the token off!)
 	*/
-	Bool nextToken(AsciiString* token, const char* seps = NULL);
+	Bool nextToken(AsciiString *token, const char *seps = NULL);
 
 	/**
 		return true iff the string is "NONE" (case-insensitive).
@@ -351,25 +348,24 @@ public:
 	Bool isNotEmpty() const { return !isEmpty(); }
 	Bool isNotNone() const { return !isNone(); }
 
-//
-// You might think it would be a good idea to overload the * operator
-// to allow for an implicit conversion to an char*. This is
-// (in theory) a good idea, but in practice, there's lots of code
-// that assumes it should check text fields for null, which
-// is meaningless for us, since we never return a null ptr.
-//
-//	operator const char*() const { return str(); }
-//
+	//
+	// You might think it would be a good idea to overload the * operator
+	// to allow for an implicit conversion to an char*. This is
+	// (in theory) a good idea, but in practice, there's lots of code
+	// that assumes it should check text fields for null, which
+	// is meaningless for us, since we never return a null ptr.
+	//
+	//	operator const char*() const { return str(); }
+	//
 
-	AsciiString& operator=(const AsciiString& stringSrc);	///< the same as set()
-	AsciiString& operator=(const char* s);				///< the same as set()
+	AsciiString &operator=(const AsciiString &stringSrc); ///< the same as set()
+	AsciiString &operator=(const char *s); ///< the same as set()
 
 	void debugIgnoreLeaks();
-
 };
 
 // -----------------------------------------------------
-inline char* AsciiString::peek() const
+inline char *AsciiString::peek() const
 {
 	DEBUG_ASSERTCRASH(m_data, ("null string ptr"));
 	validate();
@@ -427,7 +423,7 @@ inline char AsciiString::getCharAt(int index) const
 }
 
 // -----------------------------------------------------
-inline const char* AsciiString::str() const
+inline const char *AsciiString::str() const
 {
 	validate();
 	static const char TheNullChr = 0;
@@ -435,7 +431,7 @@ inline const char* AsciiString::str() const
 }
 
 // -----------------------------------------------------
-inline AsciiString& AsciiString::operator=(const AsciiString& stringSrc)
+inline AsciiString &AsciiString::operator=(const AsciiString &stringSrc)
 {
 	validate();
 	set(stringSrc);
@@ -444,7 +440,7 @@ inline AsciiString& AsciiString::operator=(const AsciiString& stringSrc)
 }
 
 // -----------------------------------------------------
-inline AsciiString& AsciiString::operator=(const char* s)
+inline AsciiString &AsciiString::operator=(const char *s)
 {
 	validate();
 	set(s);
@@ -453,7 +449,7 @@ inline AsciiString& AsciiString::operator=(const char* s)
 }
 
 // -----------------------------------------------------
-inline void AsciiString::concat(const AsciiString& stringSrc)
+inline void AsciiString::concat(const AsciiString &stringSrc)
 {
 	validate();
 	concat(stringSrc.str());
@@ -471,113 +467,113 @@ inline void AsciiString::concat(const char c)
 }
 
 // -----------------------------------------------------
-inline int AsciiString::compare(const AsciiString& stringSrc) const
+inline int AsciiString::compare(const AsciiString &stringSrc) const
 {
 	validate();
 	return strcmp(this->str(), stringSrc.str());
 }
 
 // -----------------------------------------------------
-inline int AsciiString::compare(const char* s) const
+inline int AsciiString::compare(const char *s) const
 {
 	validate();
 	return strcmp(this->str(), s);
 }
 
 // -----------------------------------------------------
-inline int AsciiString::compareNoCase(const AsciiString& stringSrc) const
+inline int AsciiString::compareNoCase(const AsciiString &stringSrc) const
 {
 	validate();
 	return _stricmp(this->str(), stringSrc.str());
 }
 
 // -----------------------------------------------------
-inline int AsciiString::compareNoCase(const char* s) const
+inline int AsciiString::compareNoCase(const char *s) const
 {
 	validate();
 	return _stricmp(this->str(), s);
 }
 
 // -----------------------------------------------------
-inline const char* AsciiString::find(char c) const
+inline const char *AsciiString::find(char c) const
 {
 	return strchr(this->str(), c);
 }
 
 // -----------------------------------------------------
-inline const char* AsciiString::reverseFind(char c) const
+inline const char *AsciiString::reverseFind(char c) const
 {
 	return strrchr(this->str(), c);
 }
 
 // -----------------------------------------------------
-inline Bool operator==(const AsciiString& s1, const AsciiString& s2)
+inline Bool operator==(const AsciiString &s1, const AsciiString &s2)
 {
 	return strcmp(s1.str(), s2.str()) == 0;
 }
 
 // -----------------------------------------------------
-inline Bool operator!=(const AsciiString& s1, const AsciiString& s2)
+inline Bool operator!=(const AsciiString &s1, const AsciiString &s2)
 {
 	return strcmp(s1.str(), s2.str()) != 0;
 }
 
 // -----------------------------------------------------
-inline Bool operator<(const AsciiString& s1, const AsciiString& s2)
+inline Bool operator<(const AsciiString &s1, const AsciiString &s2)
 {
 	return strcmp(s1.str(), s2.str()) < 0;
 }
 
 // -----------------------------------------------------
-inline Bool operator<=(const AsciiString& s1, const AsciiString& s2)
+inline Bool operator<=(const AsciiString &s1, const AsciiString &s2)
 {
 	return strcmp(s1.str(), s2.str()) <= 0;
 }
 
 // -----------------------------------------------------
-inline Bool operator>(const AsciiString& s1, const AsciiString& s2)
+inline Bool operator>(const AsciiString &s1, const AsciiString &s2)
 {
 	return strcmp(s1.str(), s2.str()) > 0;
 }
 
 // -----------------------------------------------------
-inline Bool operator>=(const AsciiString& s1, const AsciiString& s2)
+inline Bool operator>=(const AsciiString &s1, const AsciiString &s2)
 {
 	return strcmp(s1.str(), s2.str()) >= 0;
 }
 
 // -----------------------------------------------------
-inline Bool operator==(const AsciiString& s1, const char* s2)
+inline Bool operator==(const AsciiString &s1, const char *s2)
 {
 	return strcmp(s1.str(), s2) == 0;
 }
 
 // -----------------------------------------------------
-inline Bool operator!=(const AsciiString& s1, const char* s2)
+inline Bool operator!=(const AsciiString &s1, const char *s2)
 {
 	return strcmp(s1.str(), s2) != 0;
 }
 
 // -----------------------------------------------------
-inline Bool operator<(const AsciiString& s1, const char* s2)
+inline Bool operator<(const AsciiString &s1, const char *s2)
 {
 	return strcmp(s1.str(), s2) < 0;
 }
 
 // -----------------------------------------------------
-inline Bool operator<=(const AsciiString& s1, const char* s2)
+inline Bool operator<=(const AsciiString &s1, const char *s2)
 {
 	return strcmp(s1.str(), s2) <= 0;
 }
 
 // -----------------------------------------------------
-inline Bool operator>(const AsciiString& s1, const char* s2)
+inline Bool operator>(const AsciiString &s1, const char *s2)
 {
 	return strcmp(s1.str(), s2) > 0;
 }
 
 // -----------------------------------------------------
-inline Bool operator>=(const AsciiString& s1, const char* s2)
+inline Bool operator>=(const AsciiString &s1, const char *s2)
 {
 	return strcmp(s1.str(), s2) >= 0;
 }

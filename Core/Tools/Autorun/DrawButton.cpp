@@ -40,16 +40,13 @@
  *		DrawButton::Set_Stretched_Height									  *
  *----------------------------------------------------------------------------*/
 
-
-#define  STRICT
+#define STRICT
 #include <windows.h>
 #include <windowsx.h>
 #include "autorun.h"
 #include "DrawButton.h"
 #include "Locale_API.h"
 #include "Wnd_File.h"
-
-
 
 #include "leanAndMeanAutorun.h"
 
@@ -59,7 +56,6 @@
 #include "Common/SubsystemInterface.h"
 #include "GameClient/GameText.h"
 #endif
-
 
 //*****************************************************************************
 //  DrawButton::DrawButton -- Constructor for custom "Button" type.
@@ -84,106 +80,122 @@
 //      07/15/1996  MML : Created.
 //=============================================================================
 
-DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const char *focus, const char *pressed, const char * string, TTFontClass *fontptr )
+DrawButton::DrawButton(
+		int id,
+		RECT button_rect,
+		const char *normal,
+		const char *focus,
+		const char *pressed,
+		const char *string,
+		TTFontClass *fontptr)
 {
 	Id = id;
 
 	//--------------------------------------------------------------------------
 	// Set default rectangle settings.
 	//--------------------------------------------------------------------------
-	rect.left	 	= button_rect.left;
-	rect.top	 	= button_rect.top;
-	rect.right	 	= button_rect.left + button_rect.right;
-	rect.bottom	 	= button_rect.top  + button_rect.bottom;
+	rect.left = button_rect.left;
+	rect.top = button_rect.top;
+	rect.right = button_rect.left + button_rect.right;
+	rect.bottom = button_rect.top + button_rect.bottom;
 
-	MyRect.X	 	= button_rect.left;
-	MyRect.Y	 	= button_rect.top;
-	MyRect.Width	= rect.right  - rect.left;
-	MyRect.Height	= rect.bottom - rect.top;
+	MyRect.X = button_rect.left;
+	MyRect.Y = button_rect.top;
+	MyRect.Width = rect.right - rect.left;
+	MyRect.Height = rect.bottom - rect.top;
 
-	TextRect.X	 	= button_rect.left;
-	TextRect.Y	 	= button_rect.top;
-	TextRect.Width	= rect.right  - rect.left;
-	TextRect.Height	= rect.bottom - rect.top;
+	TextRect.X = button_rect.left;
+	TextRect.Y = button_rect.top;
+	TextRect.Width = rect.right - rect.left;
+	TextRect.Height = rect.bottom - rect.top;
 
-	StretchedWidth 	= rect.right  - rect.left;
-	StretchedHeight	= rect.bottom - rect.top;
+	StretchedWidth = rect.right - rect.left;
+	StretchedHeight = rect.bottom - rect.top;
 
 	//--------------------------------------------------------------------------
 	// Set the string variables.
 	//--------------------------------------------------------------------------
-	memset( String, '\0', MAX_PATH );
-//	if ( string != NULL ) {
-//		wcscpy( String, Locale_GetString( string_num, String ));
-
+	memset(String, '\0', MAX_PATH);
+	//	if ( string != NULL ) {
+	//		wcscpy( String, Locale_GetString( string_num, String ));
 
 #ifdef LEAN_AND_MEAN
 #else
 	UnicodeString tempString = TheGameText->fetch(string);
 	wcscpy(String, tempString.str());
 #endif
-//	}
+	//	}
 
 	//--------------------------------------------------------------------------
 	// Set the font pointer.
 	//--------------------------------------------------------------------------
 	MyFontPtr = NULL;
 
-	if ( fontptr != NULL ) {
+	if (fontptr != NULL)
+	{
 		MyFontPtr = fontptr;
 	}
 
 	//--------------------------------------------------------------------------
 	// Set Button Backgrounds.
 	//--------------------------------------------------------------------------
-	_tcscpy( NormalBitmap, normal );
-	_tcscpy( PressedBitmap, pressed );
-	_tcscpy( FocusBitmap, focus );
+	_tcscpy(NormalBitmap, normal);
+	_tcscpy(PressedBitmap, pressed);
+	_tcscpy(FocusBitmap, focus);
 
-	if( NormalBitmap[0] != '\0' ) {
-		UseBitmaps = true;							// determines how to draw button.
+	if (NormalBitmap[0] != '\0')
+	{
+		UseBitmaps = true; // determines how to draw button.
 	}
 
 	//--------------------------------------------------------------------------
 	// Start in normal mode.
 	//--------------------------------------------------------------------------
-	ButtonState	   	= NORMAL_STATE;
+	ButtonState = NORMAL_STATE;
 
-	Msg( __LINE__, TEXT(__FILE__), TEXT("	rect	= [%d,%d,%d,%d]"), rect.left, rect.top, rect.right, rect.bottom );
-	Msg( __LINE__, TEXT(__FILE__), TEXT("	MyRect	= [%d,%d,%d,%d]"), MyRect.X, MyRect.Y, MyRect.Width, MyRect.Height );
+	Msg(__LINE__, TEXT(__FILE__), TEXT("	rect	= [%d,%d,%d,%d]"), rect.left, rect.top, rect.right, rect.bottom);
+	Msg(__LINE__, TEXT(__FILE__), TEXT("	MyRect	= [%d,%d,%d,%d]"), MyRect.X, MyRect.Y, MyRect.Width, MyRect.Height);
 }
 
-DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const char *focus, const char *pressed, const wchar_t *string, TTFontClass *fontptr )
+DrawButton::DrawButton(
+		int id,
+		RECT button_rect,
+		const char *normal,
+		const char *focus,
+		const char *pressed,
+		const wchar_t *string,
+		TTFontClass *fontptr)
 {
 	Id = id;
 
 	//--------------------------------------------------------------------------
 	// Set default rectangle settings.
 	//--------------------------------------------------------------------------
-	rect.left	 	= button_rect.left;
-	rect.top	 	= button_rect.top;
-	rect.right	 	= button_rect.left + button_rect.right;
-	rect.bottom	 	= button_rect.top  + button_rect.bottom;
+	rect.left = button_rect.left;
+	rect.top = button_rect.top;
+	rect.right = button_rect.left + button_rect.right;
+	rect.bottom = button_rect.top + button_rect.bottom;
 
-	MyRect.X	 	= button_rect.left;
-	MyRect.Y	 	= button_rect.top;
-	MyRect.Width	= rect.right  - rect.left;
-	MyRect.Height	= rect.bottom - rect.top;
+	MyRect.X = button_rect.left;
+	MyRect.Y = button_rect.top;
+	MyRect.Width = rect.right - rect.left;
+	MyRect.Height = rect.bottom - rect.top;
 
-	TextRect.X	 	= button_rect.left;
-	TextRect.Y	 	= button_rect.top;
-	TextRect.Width	= rect.right  - rect.left;
-	TextRect.Height	= rect.bottom - rect.top;
+	TextRect.X = button_rect.left;
+	TextRect.Y = button_rect.top;
+	TextRect.Width = rect.right - rect.left;
+	TextRect.Height = rect.bottom - rect.top;
 
-	StretchedWidth 	= rect.right  - rect.left;
-	StretchedHeight	= rect.bottom - rect.top;
+	StretchedWidth = rect.right - rect.left;
+	StretchedHeight = rect.bottom - rect.top;
 
 	//--------------------------------------------------------------------------
 	// Set the string variables.
 	//--------------------------------------------------------------------------
-	memset( String, '\0', MAX_PATH );
-	if ( string != NULL ) {
-		wcscpy( String, string );
+	memset(String, '\0', MAX_PATH);
+	if (string != NULL)
+	{
+		wcscpy(String, string);
 	}
 
 	//--------------------------------------------------------------------------
@@ -191,28 +203,30 @@ DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const cha
 	//--------------------------------------------------------------------------
 	MyFontPtr = NULL;
 
-	if ( fontptr != NULL ) {
+	if (fontptr != NULL)
+	{
 		MyFontPtr = fontptr;
 	}
 
 	//--------------------------------------------------------------------------
 	// Set Button Backgrounds.
 	//--------------------------------------------------------------------------
-	_tcscpy( NormalBitmap, normal );
-	_tcscpy( PressedBitmap, pressed );
-	_tcscpy( FocusBitmap, focus );
+	_tcscpy(NormalBitmap, normal);
+	_tcscpy(PressedBitmap, pressed);
+	_tcscpy(FocusBitmap, focus);
 
-	if( NormalBitmap[0] != '\0' ) {
-		UseBitmaps = true;							// determines how to draw button.
+	if (NormalBitmap[0] != '\0')
+	{
+		UseBitmaps = true; // determines how to draw button.
 	}
 
 	//--------------------------------------------------------------------------
 	// Start in normal mode.
 	//--------------------------------------------------------------------------
-	ButtonState	= NORMAL_STATE;
+	ButtonState = NORMAL_STATE;
 
-	Msg( __LINE__, TEXT(__FILE__), TEXT("	rect	= [%d,%d,%d,%d]"), rect.left, rect.top, rect.right, rect.bottom );
-	Msg( __LINE__, TEXT(__FILE__), TEXT("	MyRect	= [%d,%d,%d,%d]"), MyRect.X, MyRect.Y, MyRect.Width, MyRect.Height );
+	Msg(__LINE__, TEXT(__FILE__), TEXT("	rect	= [%d,%d,%d,%d]"), rect.left, rect.top, rect.right, rect.bottom);
+	Msg(__LINE__, TEXT(__FILE__), TEXT("	MyRect	= [%d,%d,%d,%d]"), MyRect.X, MyRect.Y, MyRect.Width, MyRect.Height);
 }
 
 //*****************************************************************************
@@ -228,57 +242,39 @@ DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const cha
 //   01/18/2002  MML : Created.
 //=============================================================================
 
-void DrawButton::Draw_Text ( HDC hDC )
+void DrawButton::Draw_Text(HDC hDC)
 {
-	RECT	outline_rect;
-	Rect	rect;
+	RECT outline_rect;
+	Rect rect;
 
-	if( hDC == NULL ) {
+	if (hDC == NULL)
+	{
 		return;
 	}
 
-	Return_Area( &outline_rect );
-	Return_Text_Area( &rect );
+	Return_Area(&outline_rect);
+	Return_Text_Area(&rect);
 
 	/*
 	** This function was combining the pixel color with the background,
 	** so it never looked correct.
 	*/
-//	SetTextColor( hDC, RGB( 0, 240, 0 ));
-//	DrawFocusRect(	hDC, &dst_rect );
+	//	SetTextColor( hDC, RGB( 0, 240, 0 ));
+	//	DrawFocusRect(	hDC, &dst_rect );
 
-	if ( Get_State() == DrawButton::PRESSED_STATE ) {
-		MyFontPtr->Print(
-			hDC,
-			String,
-			rect,
-			TEXT_PRESSED_COLOR,
-			TEXT_PRESSED_SHADOW_COLOR,
-			TPF_BUTTON,
-			TPF_SHADOW );
-
-	} else if ( Get_State() == DrawButton::FOCUS_STATE ) {
-		MyFontPtr->Print(
-			hDC,
-			String,
-			rect,
-			TEXT_FOCUSED_COLOR,
-			TEXT_FOCUSED_SHADOW_COLOR,
-			TPF_BUTTON,
-			TPF_SHADOW );
-
-	} else {
-		MyFontPtr->Print(
-			hDC,
-			String,
-			rect,
-			TEXT_NORMAL_COLOR,
-			TEXT_NORMAL_SHADOW_COLOR,
-			TPF_BUTTON,
-			TPF_SHADOW );
+	if (Get_State() == DrawButton::PRESSED_STATE)
+	{
+		MyFontPtr->Print(hDC, String, rect, TEXT_PRESSED_COLOR, TEXT_PRESSED_SHADOW_COLOR, TPF_BUTTON, TPF_SHADOW);
+	}
+	else if (Get_State() == DrawButton::FOCUS_STATE)
+	{
+		MyFontPtr->Print(hDC, String, rect, TEXT_FOCUSED_COLOR, TEXT_FOCUSED_SHADOW_COLOR, TPF_BUTTON, TPF_SHADOW);
+	}
+	else
+	{
+		MyFontPtr->Print(hDC, String, rect, TEXT_NORMAL_COLOR, TEXT_NORMAL_SHADOW_COLOR, TPF_BUTTON, TPF_SHADOW);
 	}
 }
-
 
 //*****************************************************************************
 // DrawButton::Is_Mouse_In_Region -- Check if mouse values are in button area.
@@ -295,19 +291,19 @@ void DrawButton::Draw_Text ( HDC hDC )
 //   07/15/1996  MML : Created.
 //=============================================================================
 
-bool DrawButton::Is_Mouse_In_Region ( int mouse_x, int mouse_y )
+bool DrawButton::Is_Mouse_In_Region(int mouse_x, int mouse_y)
 {
-	if ( mouse_x < 0 || mouse_y < 0 ) {
-		return( false );
+	if (mouse_x < 0 || mouse_y < 0)
+	{
+		return (false);
 	}
 
-	if (( mouse_x >= rect.left )	&&
-		( mouse_y >= rect.top )		&&
-		( mouse_x <= rect.left + StretchedWidth ) &&
-		( mouse_y <= rect.top  + StretchedHeight )) {
-		return ( TRUE );
+	if ((mouse_x >= rect.left) && (mouse_y >= rect.top) && (mouse_x <= rect.left + StretchedWidth)
+			&& (mouse_y <= rect.top + StretchedHeight))
+	{
+		return (TRUE);
 	}
-	return ( FALSE );
+	return (FALSE);
 }
 
 //*****************************************************************************
@@ -325,14 +321,19 @@ bool DrawButton::Is_Mouse_In_Region ( int mouse_x, int mouse_y )
 //   07/15/1996  MML : Created.
 //=============================================================================
 
-char *DrawButton::Return_Bitmap ( void )
+char *DrawButton::Return_Bitmap(void)
 {
-	if ( ButtonState == PRESSED_STATE ) {
-		return ( PressedBitmap );
-	} else if ( ButtonState == FOCUS_STATE ) {
-		return ( FocusBitmap );
-	} else {
-		return ( NormalBitmap );
+	if (ButtonState == PRESSED_STATE)
+	{
+		return (PressedBitmap);
+	}
+	else if (ButtonState == FOCUS_STATE)
+	{
+		return (FocusBitmap);
+	}
+	else
+	{
+		return (NormalBitmap);
 	}
 }
 
@@ -349,49 +350,48 @@ char *DrawButton::Return_Bitmap ( void )
 //   07/15/1996  MML : Created.
 //=============================================================================
 
-void DrawButton::Return_Area ( RECT *area )
+void DrawButton::Return_Area(RECT *area)
 {
-	area->left		= rect.left;
-	area->top		= rect.top;
-	area->right		= rect.left +	StretchedWidth;
-	area->bottom	= rect.top  +	StretchedHeight;
+	area->left = rect.left;
+	area->top = rect.top;
+	area->right = rect.left + StretchedWidth;
+	area->bottom = rect.top + StretchedHeight;
 }
 
-void DrawButton::Return_Area ( Rect *area )
+void DrawButton::Return_Area(Rect *area)
 {
-	area->X			= MyRect.X;
-	area->Y			= MyRect.Y;
-	area->Width		= MyRect.Width;
-	area->Height	= MyRect.Height;
+	area->X = MyRect.X;
+	area->Y = MyRect.Y;
+	area->Width = MyRect.Width;
+	area->Height = MyRect.Height;
 }
 
-void DrawButton::Return_Text_Area ( Rect *area )
+void DrawButton::Return_Text_Area(Rect *area)
 {
-	area->X			= TextRect.X;
-	area->Y			= TextRect.Y;
-	area->Width		= TextRect.Width;
-	area->Height	= TextRect.Height;
+	area->X = TextRect.X;
+	area->Y = TextRect.Y;
+	area->Width = TextRect.Width;
+	area->Height = TextRect.Height;
 }
-
 
 //*****************************************************************************
 // DrawButton::Set_Stretched_Width -- Set draw width of button.
 //
 // INPUT:  		int value -- destination width size.
 //
-//OUTPUT: 		none.
+// OUTPUT: 		none.
 //
 // WARNINGS:	none.
 //
 // HISTORY:    08/12/1996  MML : Created.
 //=============================================================================
 
-int DrawButton::Set_Stretched_Width	 ( int value )
+int DrawButton::Set_Stretched_Width(int value)
 {
 	int nWidth = StretchedWidth;
 
 	StretchedWidth = value;
-	return ( nWidth );
+	return (nWidth);
 }
 
 //*****************************************************************************
@@ -406,12 +406,10 @@ int DrawButton::Set_Stretched_Width	 ( int value )
 // HISTORY:    08/12/1996  MML : Created.
 //=============================================================================
 
-int DrawButton::Set_Stretched_Height ( int value )
+int DrawButton::Set_Stretched_Height(int value)
 {
 	int nHeight = StretchedHeight;
 
 	StretchedHeight = value;
-	return( nHeight );
+	return (nHeight);
 }
-
-

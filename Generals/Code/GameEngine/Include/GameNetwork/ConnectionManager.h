@@ -53,31 +53,36 @@ public:
 	ConnectionManager();
 	~ConnectionManager();
 
-	virtual void init();				///< Initialize this instance.
-	virtual void reset();				///< Take this instance back to the initial state.
-	virtual void update(Bool isInGame);			///< Service the Connections being managed by this instance.
+	virtual void init(); ///< Initialize this instance.
+	virtual void reset(); ///< Take this instance back to the initial state.
+	virtual void update(Bool isInGame); ///< Service the Connections being managed by this instance.
 
 	// End SubsystemInterface functions
 
-	void updateRunAhead(Int oldRunAhead, Int frameRate, Bool didSelfSlug, Int nextExecutionFrame);	///< Update the run ahead value.  If we are the current packet router, issue the command.
+	void updateRunAhead(Int oldRunAhead, Int frameRate, Bool didSelfSlug, Int nextExecutionFrame); ///< Update the run ahead
+																																																 ///< value.  If we are the
+																																																 ///< current packet router,
+																																																 ///< issue the command.
 
 	void attachTransport(Transport *transport);
 
 	void parseUserList(const GameInfo *game);
 	void sendChat(UnicodeString text, Int playerMask, UnsignedInt executionFrame);
 	void sendDisconnectChat(UnicodeString text);
-	void sendLocalCommand(NetCommandMsg *msg, UnsignedByte relay = 0xff);		///< Send command to the players specified in the relay, goes through packet router.
-	void sendLocalCommandDirect(NetCommandMsg *msg, UnsignedByte relay);		///< Send command directly to the players specified, doesn't go through packet router.
+	void sendLocalCommand(NetCommandMsg *msg, UnsignedByte relay = 0xff); ///< Send command to the players specified in the
+																																				///< relay, goes through packet router.
+	void sendLocalCommandDirect(NetCommandMsg *msg, UnsignedByte relay); ///< Send command directly to the players specified,
+																																			 ///< doesn't go through packet router.
 	void sendLocalGameMessage(GameMessage *msg, UnsignedInt frame);
 	void sendCommand(NetCommandMsg *msg);
 	Bool allCommandsReady(UnsignedInt frame, Bool justTesting = FALSE);
 	void handleAllCommandsReady(void);
 	NetCommandList *getFrameCommandList(UnsignedInt frame);
-//	void AddConnection(User *user, UnsignedInt slot);
+	//	void AddConnection(User *user, UnsignedInt slot);
 	void determineRouterFallbackPlan();
 	void zeroFrames(UnsignedInt startingFrame, UnsignedInt numFrames);
 	void destroyGameMessages();
-//	void createConnections(UnsignedInt numberOfPlayers, UnsignedInt localSlot);
+	//	void createConnections(UnsignedInt numberOfPlayers, UnsignedInt localSlot);
 	void setLocalAddress(UnsignedInt ip, UnsignedInt port);
 	void initTransport();
 	void processFrameTick(UnsignedInt frame);
@@ -92,29 +97,32 @@ public:
 	UnicodeString getPlayerName(Int playerNum);
 	Int getNumPlayers();
 
-	UnsignedInt getPacketRouterFallbackSlot(Int packetRouterNumber);	///< Returns the slot of the given packet router number in the fallback plan.
-	UnsignedInt getPacketRouterSlot();																///< Returns the current packet router's slot.
-	PlayerLeaveCode disconnectPlayer(Int slot);												///< Disconnect this player immediately.  This should only be called by the disconnect manager.
-	void disconnectLocalPlayer();																			///< Does whatever is necessary to get TheNetwork to realize that it should be leaving the game now.
-	void quitGame();																									///< Disconnect from the game RIGHT NOW!!  Tell everyone else we are disconnecting.
+	UnsignedInt getPacketRouterFallbackSlot(Int packetRouterNumber); ///< Returns the slot of the given packet router number in
+																																	 ///< the fallback plan.
+	UnsignedInt getPacketRouterSlot(); ///< Returns the current packet router's slot.
+	PlayerLeaveCode disconnectPlayer(Int slot); ///< Disconnect this player immediately.  This should only be called by the
+																							///< disconnect manager.
+	void disconnectLocalPlayer(); ///< Does whatever is necessary to get TheNetwork to realize that it should be leaving the
+																///< game now.
+	void quitGame(); ///< Disconnect from the game RIGHT NOW!!  Tell everyone else we are disconnecting.
 
-	void voteForPlayerDisconnect(Int slot);														///< Register a vote for a player to be disconnected.
+	void voteForPlayerDisconnect(Int slot); ///< Register a vote for a player to be disconnected.
 
-	void resendPendingCommands();																			///< Resend the pending commands to the packet router.
+	void resendPendingCommands(); ///< Resend the pending commands to the packet router.
 
-	void setFrameGrouping(time_t frameGrouping);				///< Set the number of frames that are grouped together into packets.
+	void setFrameGrouping(time_t frameGrouping); ///< Set the number of frames that are grouped together into packets.
 
 	PlayerLeaveCode processPlayerLeave(NetPlayerLeaveCommandMsg *msg);
-	Bool canILeave();																///< Returns true if the local player is allowed to leave.
+	Bool canILeave(); ///< Returns true if the local player is allowed to leave.
 
 	// Bandwidth metrics
-	Real getIncomingBytesPerSecond( void );
-	Real getIncomingPacketsPerSecond( void );
-	Real getOutgoingBytesPerSecond( void );
-	Real getOutgoingPacketsPerSecond( void );
-	Real getUnknownBytesPerSecond( void );
-	Real getUnknownPacketsPerSecond( void );
-	UnsignedInt getPacketArrivalCushion( void );
+	Real getIncomingBytesPerSecond(void);
+	Real getIncomingPacketsPerSecond(void);
+	Real getOutgoingBytesPerSecond(void);
+	Real getOutgoingPacketsPerSecond(void);
+	Real getUnknownBytesPerSecond(void);
+	Real getUnknownPacketsPerSecond(void);
+	UnsignedInt getPacketArrivalCushion(void);
 
 	UnsignedInt getMinimumCushion();
 
@@ -122,22 +130,23 @@ public:
 
 	void processChat(NetChatCommandMsg *msg); // this actually needs to be public because it is frame-synchronized
 
-	void updateLoadProgress( Int progress );
-	void loadProgressComplete( void );
-	void sendTimeOutGameStart( void );
+	void updateLoadProgress(Int progress);
+	void loadProgressComplete(void);
+	void sendTimeOutGameStart(void);
 
-	Bool isPacketRouter( void );
+	Bool isPacketRouter(void);
 
-	Bool isPlayerConnected( Int playerID );
+	Bool isPlayerConnected(Int playerID);
 
 	void notifyOthersOfCurrentFrame(Int frame);
 	void sendFrameDataToPlayer(UnsignedInt playerID, UnsignedInt startingFrame);
 	void sendSingleFrameToPlayer(UnsignedInt playerID, UnsignedInt frame);
 	void notifyOthersOfNewFrame(UnsignedInt frame);
 
-	UnsignedInt getNextPacketRouterSlot(UnsignedInt playerID); ///< returns the packet router player that comes after the given player.
+	UnsignedInt getNextPacketRouterSlot(UnsignedInt playerID); ///< returns the packet router player that comes after the given
+																														 ///< player.
 
-	Int getAverageFPS( void );
+	Int getAverageFPS(void);
 	Int getSlotAverageFPS(Int slot);
 
 #if defined(RTS_DEBUG)
@@ -162,9 +171,9 @@ private:
 	void processFrameInfo(NetFrameCommandMsg *msg);
 	void processRunAheadMetrics(NetRunAheadMetricsCommandMsg *msg);
 	void processDisconnectChat(NetDisconnectChatCommandMsg *msg);
-	void processProgress( NetProgressCommandMsg *msg );
-	void processLoadComplete( NetCommandMsg *msg );
-	void processTimeOutGameStart( NetCommandMsg *msg );
+	void processProgress(NetProgressCommandMsg *msg);
+	void processLoadComplete(NetCommandMsg *msg);
+	void processTimeOutGameStart(NetCommandMsg *msg);
 	void processWrapper(NetCommandRef *ref);
 	void processFrameResendRequest(NetFrameResendRequestCommandMsg *msg);
 
@@ -173,10 +182,11 @@ private:
 	void processFileProgress(NetFileProgressCommandMsg *ref);
 
 	//	void doPerFrameMetrics(UnsignedInt frame);
-	void getMinimumFps(Int &minFps, Int &minFpsPlayer);			///< Returns the smallest FPS in the m_fpsAverages list.
+	void getMinimumFps(Int &minFps, Int &minFpsPlayer); ///< Returns the smallest FPS in the m_fpsAverages list.
 	Real getMaximumLatency(); ///< This actually sums the two biggest latencies in the m_latencyAverages list.
 
-	void requestFrameDataResend(Int playerID, UnsignedInt frame); ///< request of this player that he send the specified frame's data.
+	void requestFrameDataResend(Int playerID, UnsignedInt frame); ///< request of this player that he send the specified
+																																///< frame's data.
 
 	// The connections are set up like the slot list. The connection corresponding to the local
 	// player's position in the slot list will be NULL.  Connections corresponding to slots that
@@ -189,9 +199,9 @@ private:
 	UnsignedInt m_packetRouterFallback[MAX_SLOTS];
 	UnsignedInt m_localAddr;
 	UnsignedInt m_localPort;
-	User* m_localUser;
+	User *m_localUser;
 
-	DisconnectManager *m_disconnectManager;						///< Controls the disconnect dialog.
+	DisconnectManager *m_disconnectManager; ///< Controls the disconnect dialog.
 
 	FrameDataManager *m_frameData[MAX_SLOTS];
 
@@ -205,9 +215,9 @@ private:
 	// These variables are used to keep track of the other players' average fps and latency.
 	// yup.
 	Real m_latencyAverages[MAX_SLOTS];
-	Int  m_fpsAverages[MAX_SLOTS];
-	Int  m_minFpsPlayer;
-	Int  m_minFps;
+	Int m_fpsAverages[MAX_SLOTS];
+	Int m_minFpsPlayer;
+	Int m_minFps;
 	UnsignedInt m_smallestPacketArrivalCushion;
 	Bool m_didSelfSlug;
 

@@ -16,7 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include <Utility/iostream_adapter.h>
 
 #include <signal.h>
@@ -43,29 +42,29 @@ bool BigEndian = false;
 
 unsigned long ResolveIP(const char *Server)
 {
-  char serverName[100];
-  struct hostent *serverStruct;
-  struct in_addr *serverNode;
+	char serverName[100];
+	struct hostent *serverStruct;
+	struct in_addr *serverNode;
 
-  if (Server == NULL)
-  {
-	  ERRMSG("Can't resolve NULL");
-	  return 0;
-  }
+	if (Server == NULL)
+	{
+		ERRMSG("Can't resolve NULL");
+		return 0;
+	}
 
-  if (isdigit(Server[0]))
-    return ( ntohl(inet_addr(Server)) );
+	if (isdigit(Server[0]))
+		return (ntohl(inet_addr(Server)));
 
-  strcpy(serverName, Server);
+	strcpy(serverName, Server);
 
-  serverStruct = gethostbyname(Server);
-  if (serverStruct == NULL)
-  {
-	  ERRMSG("Can't resolve " << Server);
-	  return 0;
-  }
-  serverNode = (struct in_addr *) serverStruct->h_addr;
-  return ( ntohl(serverNode->s_addr) );
+	serverStruct = gethostbyname(Server);
+	if (serverStruct == NULL)
+	{
+		ERRMSG("Can't resolve " << Server);
+		return 0;
+	}
+	serverNode = (struct in_addr *)serverStruct->h_addr;
+	return (ntohl(serverNode->s_addr));
 }
 
 void DisplayHelp(const char *prog)
@@ -77,25 +76,26 @@ void DisplayHelp(const char *prog)
 int main(int argc, char **argv)
 {
 	ConfigFile config;
-	FILE*	conf;
+	FILE *conf;
 
-	if( argc <= 1 )
+	if (argc <= 1)
 	{
 		// No args - use a default config file
-		if ((conf = fopen("manglertest.cfg", "r")) == NULL) {
+		if ((conf = fopen("manglertest.cfg", "r")) == NULL)
+		{
 			cout << "Cannot open mangler.cfg for reading." << endl;
 			DisplayHelp(argv[0]);
 		}
 		config.readFile(conf);
 		fclose(conf);
 	}
-	else if( argc == 2 && (strcmp(argv[1], "help") == 0 || strcmp(argv[1], "?") == 0 ||
-		 strcmp(argv[1], "-h") == 0) )
+	else if (argc == 2 && (strcmp(argv[1], "help") == 0 || strcmp(argv[1], "?") == 0 || strcmp(argv[1], "-h") == 0))
 		DisplayHelp(argv[0]);
-	else if( argc == 2 )
+	else if (argc == 2)
 	{
 		// Use a user-supplied config file
-		if ((conf = fopen(argv[1], "r")) == NULL) {
+		if ((conf = fopen(argv[1], "r")) == NULL)
+		{
 			cout << "Cannot open " << argv[1] << " for reading." << endl;
 			DisplayHelp(argv[0]);
 		}
@@ -105,27 +105,26 @@ int main(int argc, char **argv)
 
 	// ----- LOGGING -----
 	// Setup debugging & logging output
-  	Wstring output_file("manglertest.log");
+	Wstring output_file("manglertest.log");
 	config.getString("LOGFILE", output_file);
-  	Wstring backup_file;
-  	backup_file = output_file;
+	Wstring backup_file;
+	backup_file = output_file;
 	backup_file += ".bak";
-  	rename(output_file.get(),backup_file.get());  // save the old file
-  	FileD   output_device(output_file.get());
-  	MsgManager::setAllStreams(&output_device);
+	rename(output_file.get(), backup_file.get()); // save the old file
+	FileD output_device(output_file.get());
+	MsgManager::setAllStreams(&output_device);
 	DBGMSG("DBG working...");
 	INFMSG("INF working...");
 	WRNMSG("WRN working...");
-
 
 	//
 	// See if our processor is big or little endian. Network order is big endian.
 	// ST - 2/1/01 12:11PM
 	//
-	if (htonl(0x12345678) == 0x12345678) {
+	if (htonl(0x12345678) == 0x12345678)
+	{
 		BigEndian = true;
 	}
-
 
 	// ----- Initialize Winsock -----
 #ifdef _WINDOWS
@@ -133,12 +132,14 @@ int main(int argc, char **argv)
 	WSADATA wsadata;
 
 	int err = WSAStartup(verReq, &wsadata);
-	if (err != 0) {
+	if (err != 0)
+	{
 		ERRMSG("Winsock Init failed.");
 		return 1;
 	}
 
-	if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) !=2)) {
+	if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) != 2))
+	{
 		ERRMSG("Winsock DLL is not 2.2");
 		WSACleanup();
 		ERRMSG("Winsock Init failed.");
@@ -147,17 +148,16 @@ int main(int argc, char **argv)
 	INFMSG("Winsock Init done.");
 #endif
 
-
 	// Set up a UDP listener
-	uint8  *buff=new uint8[1024];
-	int     retval;
-	UDP     udp;
-	int     port = 4321;
+	uint8 *buff = new uint8[1024];
+	int retval;
+	UDP udp;
+	int port = 4321;
 	config.getInt("MANGLERPORT", port);
 
 	int localport = 4444;
 	config.getInt("CLIENTPORT", localport);
-	retval = udp.Bind((uint32)0,(uint16)localport);
+	retval = udp.Bind((uint32)0, (uint16)localport);
 	DBGMSG("Bind returned " << retval);
 
 	//-----------------------------------------------------------------------------------------
@@ -165,7 +165,7 @@ int main(int argc, char **argv)
 	INFMSG("sizeof(packet) == " << packet_size);
 
 	unsigned char buf[packet_size];
-	memset(buf, 0x44, packet_size);  // init to something known for memory dumps :)
+	memset(buf, 0x44, packet_size); // init to something known for memory dumps :)
 	struct sockaddr_in addr;
 
 	int doBlitz = 0;
@@ -194,19 +194,21 @@ int main(int argc, char **argv)
 	packet->magic = htons((unsigned short)0xf00d);
 	Build_Packet_CRC(buf, packet_size);
 	DBGMSG("Writing to " << manglername.get() << ":" << port);
-	udp.Write(buf,packet_size,server_addr, 4321);
+	udp.Write(buf, packet_size, server_addr, 4321);
 
 	retval = udp.Wait(5, 0, fdset);
 	if (retval)
 	{
 		DBGMSG("Wait returned " << retval);
-		retval = udp.Read(buf, packet_size, &addr);        // Wait until there is something on the socket
+		retval = udp.Read(buf, packet_size, &addr); // Wait until there is something on the socket
 		if (retval > 0)
 		{
 			theAddr = (unsigned char *)&(addr.sin_addr.s_addr);
 			if (retval != packet_size)
 			{
-				WRNMSG("Recieved mis-sized packet (" << retval << " bytes) from " << theAddr[0] << "." << theAddr[1] << "." << theAddr[2] << "." << theAddr[3] << ":" << addr.sin_port);
+				WRNMSG(
+						"Recieved mis-sized packet (" << retval << " bytes) from " << theAddr[0] << "." << theAddr[1] << "."
+																					<< theAddr[2] << "." << theAddr[3] << ":" << addr.sin_port);
 			}
 			else
 			{
@@ -239,8 +241,5 @@ int main(int argc, char **argv)
 		DBGMSG("Wait timed out");
 	}
 
-
 	return 0;
 }
-
-

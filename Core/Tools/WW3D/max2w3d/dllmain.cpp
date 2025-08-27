@@ -41,7 +41,6 @@
  *   GetString -- Gets a string out of the resources                                           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include <stdio.h>
 #include <max.h>
 #include "dllmain.h"
@@ -59,16 +58,13 @@
 
 #define DLLEXPORT __declspec(dllexport)
 
-
 /*****************************************************************************
-*	Globals
-*****************************************************************************/
+ *	Globals
+ *****************************************************************************/
 
-HINSTANCE					AppInstance = NULL;
-static int					ControlsInit = FALSE;
-static W3dClassDesc		W3d_Export_Class_Descriptor;
-
-
+HINSTANCE AppInstance = NULL;
+static int ControlsInit = FALSE;
+static W3dClassDesc W3d_Export_Class_Descriptor;
 
 /***********************************************************************************************
  * DllMain -- Entry point for the dll                                                          *
@@ -82,20 +78,19 @@ static W3dClassDesc		W3d_Export_Class_Descriptor;
  * HISTORY:                                                                                    *
  *   06/09/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-BOOL WINAPI DllMain(HINSTANCE	hinstDLL,ULONG /*fdwReason*/,LPVOID /*lpvReserved*/)
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG /*fdwReason*/, LPVOID /*lpvReserved*/)
 {
 	AppInstance = hinstDLL;
 
-	if ( !ControlsInit )
+	if (!ControlsInit)
 	{
 		ControlsInit = TRUE;
 		InitCustomControls(AppInstance);
 		InitCommonControls();
 	}
 
-	return  TRUE;
+	return TRUE;
 }
-
 
 /***********************************************************************************************
  * LibDescription -- Returns description of this library                                       *
@@ -109,9 +104,9 @@ BOOL WINAPI DllMain(HINSTANCE	hinstDLL,ULONG /*fdwReason*/,LPVOID /*lpvReserved*
  * HISTORY:                                                                                    *
  *   06/09/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-DLLEXPORT const TCHAR * LibDescription()
+DLLEXPORT const TCHAR *LibDescription()
 {
-	return  Get_String(IDS_LIB_DESCRIPTION);
+	return Get_String(IDS_LIB_DESCRIPTION);
 }
 
 /***********************************************************************************************
@@ -128,9 +123,8 @@ DLLEXPORT const TCHAR * LibDescription()
  *=============================================================================================*/
 DLLEXPORT int LibNumberClasses()
 {
-	return 9; //Moumine 7/24/2001    4:38:27 PM was 10. Removed Mesh_Deformation(#6)
+	return 9; // Moumine 7/24/2001    4:38:27 PM was 10. Removed Mesh_Deformation(#6)
 }
-
 
 /***********************************************************************************************
  * LibClassDesc -- Returns a ClassDesc for the specified class                                 *
@@ -144,26 +138,45 @@ DLLEXPORT int LibNumberClasses()
  * HISTORY:                                                                                    *
  *   06/09/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-DLLEXPORT ClassDesc * LibClassDesc(int i)
+DLLEXPORT ClassDesc *LibClassDesc(int i)
 {
-	switch(i)
+	switch (i)
 	{
-		case 0:  return & W3d_Export_Class_Descriptor; break;
-		case 1:  return Get_W3D_Utility_Desc(); break;
-		case 2:	return Get_Skin_Obj_Desc(); break;
-		case 3:	return Get_Skin_Mod_Desc(); break;
-		case 4:	return Get_Game_Material_Desc(); break;
-		case 5:	return Get_Game_Maps_Desc(); break;
-		case 6:	return Get_PS2_Game_Material_Desc(); break;
-		case 7:	return Get_PS2_Material_Conversion(); break;
-		case 8:	return Get_Alpha_Desc(); break;
-		//case 6:	return Get_Mesh_Deform_Desc(); break;
-		//Moumine 7/24/2001    4:33:52 PM Removed #6 and shifted up instead of returning NULL
-		// NULL causes a crash in "File->Summary info->Plug-in ifo..."
-		default: return NULL; break;
+		case 0:
+			return &W3d_Export_Class_Descriptor;
+			break;
+		case 1:
+			return Get_W3D_Utility_Desc();
+			break;
+		case 2:
+			return Get_Skin_Obj_Desc();
+			break;
+		case 3:
+			return Get_Skin_Mod_Desc();
+			break;
+		case 4:
+			return Get_Game_Material_Desc();
+			break;
+		case 5:
+			return Get_Game_Maps_Desc();
+			break;
+		case 6:
+			return Get_PS2_Game_Material_Desc();
+			break;
+		case 7:
+			return Get_PS2_Material_Conversion();
+			break;
+		case 8:
+			return Get_Alpha_Desc();
+			break;
+		// case 6:	return Get_Mesh_Deform_Desc(); break;
+		// Moumine 7/24/2001    4:33:52 PM Removed #6 and shifted up instead of returning NULL
+		//  NULL causes a crash in "File->Summary info->Plug-in ifo..."
+		default:
+			return NULL;
+			break;
 	}
 }
-
 
 /***********************************************************************************************
  * LibVersion -- Returns the version number of this library                                    *
@@ -182,7 +195,6 @@ DLLEXPORT ULONG LibVersion()
 	return VERSION_3DSMAX;
 }
 
-
 /***********************************************************************************************
  * Get_String -- Gets a string out of the resources                                            *
  *                                                                                             *
@@ -195,12 +207,10 @@ DLLEXPORT ULONG LibVersion()
  * HISTORY:                                                                                    *
  *   06/09/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-TCHAR * Get_String( int id )
+TCHAR *Get_String(int id)
 {
 	static TCHAR buf[256];
 	if (AppInstance)
 		return LoadString(AppInstance, id, buf, sizeof(buf)) ? buf : NULL;
 	return NULL;
 }
-
-

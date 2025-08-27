@@ -43,39 +43,38 @@
 #include "GameLogic/Module/PropagandaTowerBehavior.h"
 #include "GameLogic/Module/BodyModule.h"
 
-
-
-
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
-enum ObjectID CPP_11(: Int);
+enum ObjectID CPP_11( : Int);
 
 // ------------------------------------------------------------------------------------------------
 /** This class is used to track objects as they exit our area of influence */
 // ------------------------------------------------------------------------------------------------
 class ObjectTracker : public MemoryPoolObject
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ObjectTracker, "ObjectTracker" );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectTracker, "ObjectTracker");
 
 public:
-
-	ObjectTracker( void ) { objectID = INVALID_ID; next = NULL; }
+	ObjectTracker(void)
+	{
+		objectID = INVALID_ID;
+		next = NULL;
+	}
 
 	ObjectID objectID;
 	ObjectTracker *next;
-
 };
-ObjectTracker::~ObjectTracker( void ) { }
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-// ------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------
-PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData( void )
+ObjectTracker::~ObjectTracker(void)
 {
+}
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData(void)
+{
 	m_scanRadius = 1.0f;
 	m_scanDelayInFrames = 100;
 	m_autoHealPercentPerSecond = 0.01f;
@@ -85,30 +84,38 @@ PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData( void )
 	m_upgradedPulseFX = NULL;
 	m_affectsSelf = FALSE;
 
-}  // end PropagandaTowerBehaviorModuleData
+} // end PropagandaTowerBehaviorModuleData
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void PropagandaTowerBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
+/*static*/ void PropagandaTowerBehaviorModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-  UpdateModuleData::buildFieldParse( p );
+	UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "Radius",									INI::parseReal,									NULL,	offsetof( PropagandaTowerBehaviorModuleData, m_scanRadius ) },
-		{ "DelayBetweenUpdates",		INI::parseDurationUnsignedInt,	NULL,	offsetof( PropagandaTowerBehaviorModuleData, m_scanDelayInFrames ) },
-		{ "HealPercentEachSecond",	INI::parsePercentToReal,				NULL,	offsetof( PropagandaTowerBehaviorModuleData, m_autoHealPercentPerSecond ) },
-		{ "UpgradedHealPercentEachSecond",	INI::parsePercentToReal,NULL,	offsetof( PropagandaTowerBehaviorModuleData, m_upgradedAutoHealPercentPerSecond ) },
-		{ "PulseFX",								INI::parseFXList,								NULL,	offsetof( PropagandaTowerBehaviorModuleData, m_pulseFX ) },
-		{ "UpgradeRequired",				INI::parseAsciiString,					NULL, offsetof( PropagandaTowerBehaviorModuleData, m_upgradeRequired ) },
-		{ "UpgradedPulseFX",				INI::parseFXList,								NULL, offsetof( PropagandaTowerBehaviorModuleData, m_upgradedPulseFX ) },
-		{ "AffectsSelf",						INI::parseBool,									NULL, offsetof( PropagandaTowerBehaviorModuleData, m_affectsSelf ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "Radius", INI::parseReal, NULL, offsetof(PropagandaTowerBehaviorModuleData, m_scanRadius) },
+		{ "DelayBetweenUpdates",
+			INI::parseDurationUnsignedInt,
+			NULL,
+			offsetof(PropagandaTowerBehaviorModuleData, m_scanDelayInFrames) },
+		{ "HealPercentEachSecond",
+			INI::parsePercentToReal,
+			NULL,
+			offsetof(PropagandaTowerBehaviorModuleData, m_autoHealPercentPerSecond) },
+		{ "UpgradedHealPercentEachSecond",
+			INI::parsePercentToReal,
+			NULL,
+			offsetof(PropagandaTowerBehaviorModuleData, m_upgradedAutoHealPercentPerSecond) },
+		{ "PulseFX", INI::parseFXList, NULL, offsetof(PropagandaTowerBehaviorModuleData, m_pulseFX) },
+		{ "UpgradeRequired", INI::parseAsciiString, NULL, offsetof(PropagandaTowerBehaviorModuleData, m_upgradeRequired) },
+		{ "UpgradedPulseFX", INI::parseFXList, NULL, offsetof(PropagandaTowerBehaviorModuleData, m_upgradedPulseFX) },
+		{ "AffectsSelf", INI::parseBool, NULL, offsetof(PropagandaTowerBehaviorModuleData, m_affectsSelf) },
 		{ 0, 0, 0, 0 }
 	};
 
-  p.add( dataFieldParse );
+	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+} // end buildFieldParse
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -116,98 +123,95 @@ PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-PropagandaTowerBehavior::PropagandaTowerBehavior( Thing *thing, const ModuleData *modData )
-											 : UpdateModule( thing, modData )
+PropagandaTowerBehavior::PropagandaTowerBehavior(Thing *thing, const ModuleData *modData) : UpdateModule(thing, modData)
 {
-	//Added By Sadullah Nader
-	//Initializations inserted
+	// Added By Sadullah Nader
+	// Initializations inserted
 	m_lastScanFrame = 0;
 	//
 	m_insideList = NULL;
-	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
+	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 
-}  // end PropagandaTowerBehavior
+} // end PropagandaTowerBehavior
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-PropagandaTowerBehavior::~PropagandaTowerBehavior( void )
+PropagandaTowerBehavior::~PropagandaTowerBehavior(void)
 {
-
-}  // end ~PropagandaTowerBehavior
+} // end ~PropagandaTowerBehavior
 
 // ------------------------------------------------------------------------------------------------
 /** Module is being deleted */
 // ------------------------------------------------------------------------------------------------
-void PropagandaTowerBehavior::onDelete( void )
+void PropagandaTowerBehavior::onDelete(void)
 {
-
 	// remove any benefits from anybody in our area of influence
 	removeAllInfluence();
 
-}  // end onDelete
+} // end onDelete
 
 // ------------------------------------------------------------------------------------------------
 /** Resolve */
 // ------------------------------------------------------------------------------------------------
-void PropagandaTowerBehavior::onObjectCreated( void )
+void PropagandaTowerBehavior::onObjectCreated(void)
 {
 	const PropagandaTowerBehaviorModuleData *modData = getPropagandaTowerBehaviorModuleData();
 
 	// convert module upgrade name to a pointer
-	m_upgradeRequired = TheUpgradeCenter->findUpgrade( modData->m_upgradeRequired );
+	m_upgradeRequired = TheUpgradeCenter->findUpgrade(modData->m_upgradeRequired);
 
-}  // end onObjectCreated
+} // end onObjectCreated
 
 // ------------------------------------------------------------------------------------------------
-void PropagandaTowerBehavior::onCapture( Player *oldOwner, Player *newOwner )
+void PropagandaTowerBehavior::onCapture(Player *oldOwner, Player *newOwner)
 {
 	// We don't function for the neutral player.
-	if( newOwner == ThePlayerList->getNeutralPlayer() )
+	if (newOwner == ThePlayerList->getNeutralPlayer())
 	{
 		removeAllInfluence();
-		setWakeFrame( getObject(), UPDATE_SLEEP_FOREVER );
+		setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 	}
 	else
-		setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
+		setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** The update callback */
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime PropagandaTowerBehavior::update( void )
+UpdateSleepTime PropagandaTowerBehavior::update(void)
 {
-/// @todo srj use SLEEPY_UPDATE here
+	/// @todo srj use SLEEPY_UPDATE here
 	const PropagandaTowerBehaviorModuleData *modData = getPropagandaTowerBehaviorModuleData();
 
-	//Sep 27, 2002 (Kris): Added this code to prevent the tower from working while under construction.
+	// Sep 27, 2002 (Kris): Added this code to prevent the tower from working while under construction.
 	Object *self = getObject();
-	if( self->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	if (self->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
 		return UPDATE_SLEEP_NONE;
 
-	if( self->testStatus(OBJECT_STATUS_SOLD) )
+	if (self->testStatus(OBJECT_STATUS_SOLD))
 	{
 		removeAllInfluence();
 		return UPDATE_SLEEP_FOREVER;
 	}
 
-	if( self->isEffectivelyDead() )
+	if (self->isEffectivelyDead())
 		return UPDATE_SLEEP_FOREVER;
 
-	if( self->isDisabled() )
+	if (self->isDisabled())
 	{
 		// We need to let go of everyone if we are EMPd or underpowered or yadda, but not if we are only held
 
-		DisabledMaskType allButHeld = MAKE_DISABLED_MASK( DISABLED_HELD );
+		DisabledMaskType allButHeld = MAKE_DISABLED_MASK(DISABLED_HELD);
 		FLIP_DISABLEDMASK(allButHeld);
 
-		if( TEST_DISABLEDMASK_ANY(self->getDisabledFlags(), allButHeld) )
+		if (TEST_DISABLEDMASK_ANY(self->getDisabledFlags(), allButHeld))
 		{
 			removeAllInfluence();
 			return UPDATE_SLEEP_NONE;
 		}
 	}
 
-	if( self->getContainedBy()  &&  self->getContainedBy()->getContainedBy() )
+	if (self->getContainedBy() && self->getContainedBy()->getContainedBy())
 	{
 		// If our container is contained, we turn the heck off.  Seems like a weird specific check, but all of
 		// attacking is guarded by the same check in isPassengersAllowedToFire.  We similarly work in a container,
@@ -218,68 +222,64 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 
 	// if it's not time to scan, nothing to do
 	UnsignedInt currentFrame = TheGameLogic->getFrame();
-	if( currentFrame - m_lastScanFrame >= modData->m_scanDelayInFrames )
+	if (currentFrame - m_lastScanFrame >= modData->m_scanDelayInFrames)
 	{
-
 		// do a scan
 		doScan();
 		m_lastScanFrame = currentFrame;
 
-	}  // end if
+	} // end if
 
 	// go through any objects in our area of influence and do the effect logic on them
 	Object *obj;
 	ObjectTracker *curr = NULL, *prev = NULL, *next = NULL;
-	for( curr = m_insideList; curr; curr = next )
+	for (curr = m_insideList; curr; curr = next)
 	{
-
 		// get the next link
 		next = curr->next;
 
 		// find this object
-		obj = TheGameLogic->findObjectByID( curr->objectID );
-		if ((obj) &&
-			 (obj->isKindOf(KINDOF_SCORE) || obj->isKindOf(KINDOF_SCORE_CREATE) || obj->isKindOf(KINDOF_SCORE_DESTROY) || obj->isKindOf(KINDOF_MP_COUNT_FOR_VICTORY)))
+		obj = TheGameLogic->findObjectByID(curr->objectID);
+		if ((obj)
+				&& (obj->isKindOf(KINDOF_SCORE) || obj->isKindOf(KINDOF_SCORE_CREATE) || obj->isKindOf(KINDOF_SCORE_DESTROY)
+						|| obj->isKindOf(KINDOF_MP_COUNT_FOR_VICTORY)))
 		{
-
 			// give any bonus to this object
-			effectLogic( obj, TRUE, getPropagandaTowerBehaviorModuleData() );
+			effectLogic(obj, TRUE, getPropagandaTowerBehaviorModuleData());
 
 			// record this element as the previous one found in the list
 			prev = curr;
 
-		}  // end if
+		} // end if
 		else
 		{
-
 			//
 			// actual object wasn't found, remove this entry from our inside list so we don't
 			// have to search through it again
 			//
-			if( prev )
+			if (prev)
 				prev->next = curr->next;
 			else
 				m_insideList = curr->next;
 			deleteInstance(curr);
 
-		}  // end else
+		} // end else
 
-	}  // end for, curr
+	} // end for, curr
 
 	return UPDATE_SLEEP_NONE;
 
-}  // end update
+} // end update
 
 // ------------------------------------------------------------------------------------------------
 /** The death callback */
 // ------------------------------------------------------------------------------------------------
-void PropagandaTowerBehavior::onDie( const DamageInfo *damageInfo )
+void PropagandaTowerBehavior::onDie(const DamageInfo *damageInfo)
 {
-
 	// remove any benefits from anybody in our area of influence
 	removeAllInfluence();
 
-}  // end onDie
+} // end onDie
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -288,97 +288,91 @@ void PropagandaTowerBehavior::onDie( const DamageInfo *damageInfo )
 // ------------------------------------------------------------------------------------------------
 /** Grant or remove effect to this object */
 // ------------------------------------------------------------------------------------------------
-void PropagandaTowerBehavior::effectLogic( Object *obj, Bool giving,
-																					 const PropagandaTowerBehaviorModuleData *modData )
+void PropagandaTowerBehavior::effectLogic(Object *obj, Bool giving, const PropagandaTowerBehaviorModuleData *modData)
 {
-	Bool effectUpgraded = getObject()->getControllingPlayer()->hasUpgradeComplete( m_upgradeRequired );
+	Bool effectUpgraded = getObject()->getControllingPlayer()->hasUpgradeComplete(m_upgradeRequired);
 
 	// if giving the effect
-	if( giving )
+	if (giving)
 	{
-		if ( obj->hasAnyDamageWeapon() == TRUE )
+		if (obj->hasAnyDamageWeapon() == TRUE)
 		{
-			if( obj->testWeaponBonusCondition( WEAPONBONUSCONDITION_ENTHUSIASTIC ) == FALSE )
-				obj->setWeaponBonusCondition( WEAPONBONUSCONDITION_ENTHUSIASTIC );
-
+			if (obj->testWeaponBonusCondition(WEAPONBONUSCONDITION_ENTHUSIASTIC) == FALSE)
+				obj->setWeaponBonusCondition(WEAPONBONUSCONDITION_ENTHUSIASTIC);
 
 			if (effectUpgraded)
 			{
-				if (obj->testWeaponBonusCondition( WEAPONBONUSCONDITION_SUBLIMINAL ) == FALSE)
-					obj->setWeaponBonusCondition( WEAPONBONUSCONDITION_SUBLIMINAL );
+				if (obj->testWeaponBonusCondition(WEAPONBONUSCONDITION_SUBLIMINAL) == FALSE)
+					obj->setWeaponBonusCondition(WEAPONBONUSCONDITION_SUBLIMINAL);
 			}
 
 		} // hasdamageweapon
 
-
 		// grant health to this object as well
 		BodyModuleInterface *body = obj->getBodyModule();
-		if( body )
+		if (body)
 		{
 			Real healthPercent;
-			if(effectUpgraded)
+			if (effectUpgraded)
 				healthPercent = modData->m_upgradedAutoHealPercentPerSecond;
 			else
 				healthPercent = modData->m_autoHealPercentPerSecond;
 
 			Real amount = healthPercent / LOGICFRAMES_PER_SECOND * body->getMaxHealth();
 
-	// Dustin wants the healing effect not to stack from multiple propaganda towers...
-	// To accomplish this, I'll give every object a single healing-sender (ID)
-	// Any given healing recipient (object) can only receive healing from one particular healing sender
-	// and cannot change healing senders until the previous one expires (its scandelay)
+			// Dustin wants the healing effect not to stack from multiple propaganda towers...
+			// To accomplish this, I'll give every object a single healing-sender (ID)
+			// Any given healing recipient (object) can only receive healing from one particular healing sender
+			// and cannot change healing senders until the previous one expires (its scandelay)
 
-//		obj->attemptHealing(amount, getObject()); // the regular way to give healing...
-			obj->attemptHealingFromSoleBenefactor( amount, getObject(), modData->m_scanDelayInFrames );//the non-stacking way
+			//		obj->attemptHealing(amount, getObject()); // the regular way to give healing...
+			obj->attemptHealingFromSoleBenefactor(amount, getObject(), modData->m_scanDelayInFrames); // the non-stacking way
 
-		}  // end if
+		} // end if
 
-	}  // end if
+	} // end if
 	else
 	{
-
 		// taking effect away
-		obj->clearWeaponBonusCondition( WEAPONBONUSCONDITION_ENTHUSIASTIC );
-		obj->clearWeaponBonusCondition( WEAPONBONUSCONDITION_SUBLIMINAL );
+		obj->clearWeaponBonusCondition(WEAPONBONUSCONDITION_ENTHUSIASTIC);
+		obj->clearWeaponBonusCondition(WEAPONBONUSCONDITION_SUBLIMINAL);
 
-	}	  // end else
+	} // end else
 
-}  // end effectLogic
+} // end effectLogic
 
 // ------------------------------------------------------------------------------------------------
 /** Remove all influence from objects we've given bonuses to */
 // ------------------------------------------------------------------------------------------------
-void PropagandaTowerBehavior::removeAllInfluence( void )
+void PropagandaTowerBehavior::removeAllInfluence(void)
 {
 	ObjectTracker *o;
 
 	// go through all objects we've given bonuses to and remove them
 	Object *obj;
-	for( o = m_insideList; o; o = o->next )
+	for (o = m_insideList; o; o = o->next)
 	{
+		obj = TheGameLogic->findObjectByID(o->objectID);
+		if (obj)
+			effectLogic(obj, FALSE, getPropagandaTowerBehaviorModuleData());
 
-		obj = TheGameLogic->findObjectByID( o->objectID );
-		if( obj )
-			effectLogic( obj, FALSE, getPropagandaTowerBehaviorModuleData() );
-
-	}  // end for
+	} // end for
 
 	// delete the list of objects under our influence
-	while( m_insideList )
+	while (m_insideList)
 	{
-
 		o = m_insideList->next;
 		deleteInstance(m_insideList);
 		m_insideList = o;
 
-	}  // end while
+	} // end while
 
-}  // end removeAllInfluence
+} // end removeAllInfluence
 
 // ------------------------------------------------------------------------------------------------
 /** Do a scan */
 // ------------------------------------------------------------------------------------------------
-void PropagandaTowerBehavior::doScan( void )
+void PropagandaTowerBehavior::doScan(void)
 {
 	const PropagandaTowerBehaviorModuleData *modData = getPropagandaTowerBehaviorModuleData();
 	Object *us = getObject();
@@ -386,120 +380,105 @@ void PropagandaTowerBehavior::doScan( void )
 
 	// The act of scanning is when we play our effect
 	Bool upgradePresent = FALSE;
-	if( m_upgradeRequired )
+	if (m_upgradeRequired)
 	{
-
 		// see if we have the upgrade
-		switch( m_upgradeRequired->getUpgradeType() )
+		switch (m_upgradeRequired->getUpgradeType())
 		{
-
 			// ------------------------------------------------------------------------------------------
 			case UPGRADE_TYPE_PLAYER:
 			{
 				Player *player = us->getControllingPlayer();
 
-				upgradePresent = player->hasUpgradeComplete( m_upgradeRequired );
+				upgradePresent = player->hasUpgradeComplete(m_upgradeRequired);
 				break;
 
-			}  // end player upgrade
+			} // end player upgrade
 
 			// ------------------------------------------------------------------------------------------
 			case UPGRADE_TYPE_OBJECT:
 			{
-
-				upgradePresent = us->hasUpgrade( m_upgradeRequired );
+				upgradePresent = us->hasUpgrade(m_upgradeRequired);
 				break;
 
-			}  // end object upgrade
+			} // end object upgrade
 
 			// ------------------------------------------------------------------------------------------
 			default:
 			{
-
-				DEBUG_CRASH(( "PropagandaTowerBehavior::doScan - Unknown upgrade type '%d'",
-											m_upgradeRequired->getUpgradeType() ));
+				DEBUG_CRASH(("PropagandaTowerBehavior::doScan - Unknown upgrade type '%d'", m_upgradeRequired->getUpgradeType()));
 				break;
 
-			}  // end default
+			} // end default
 
-		}  // end switch
+		} // end switch
 
-	}  // end if
+	} // end if
 
-
-  Bool doFX = TRUE;
-    // if it is us, or if it is he and we do see him
-  Object *overlord = us->getContainedBy();
-  if ( overlord )
-  {
-	  if ( us->getControllingPlayer() != ThePlayerList->getLocalPlayer() )// daling with someone else's tower
-    {
-      if ( overlord->testStatus( OBJECT_STATUS_STEALTHED ) && !overlord->testStatus( OBJECT_STATUS_DETECTED ) )
-        doFX = FALSE;// so they don't give up their position
-
-    }
-
-    // Sorry, this is a lot of hard coded mishmash, but it must be done... ship it!
-    // Propaganda towers (proper) never get contained, so they don't care about this code
-    // The PropTowers that ride on the backs of overlord tanks want to suppress their fx if the overlord is stealthed to the local player
-    // The PropTowers that ride on the bellies of Helixes also suppress their fx when hiding stealthed (never happens?)
-    // The PropTowers must do nothing, scanning-or-FX-wise when they are inside something... there are two cases
-    //   1) When the prop tower is on an Overlord that is in a helicopter (likely a Helix II)
-    //   2) When the prop tower is the EmperorTank, which is in a helicopter (likely a Helix II).
-
-    if ( us->isKindOf( KINDOF_VEHICLE ) && !us->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )//craptacular!
-      // oh my dear Lord... I am not a propaganda tower, I am an emperorTank! that means the overlord is a helix or something!
-      return; // proptowers that are riding IN things cannot do their scan!
-
-    //okay this is wacky, but this proptower may be on an overlord thank that is riding in a helix... oy!
-    Object *helix = overlord->getContainedBy();
-    if ( helix )
-      return; // proptowers that are riding ON things that are in-turn riding IN things cannot do their scan!
-
-  }
-
-	if ( us->getControllingPlayer() != ThePlayerList->getLocalPlayer() )// daling with someone else's tower
+	Bool doFX = TRUE;
+	// if it is us, or if it is he and we do see him
+	Object *overlord = us->getContainedBy();
+	if (overlord)
 	{
-		if ( us->testStatus( OBJECT_STATUS_STEALTHED ) && !us->testStatus( OBJECT_STATUS_DETECTED ) )
+		if (us->getControllingPlayer() != ThePlayerList->getLocalPlayer()) // daling with someone else's tower
 		{
-			doFX = FALSE;// Certainly don't play if we ourselves are stelthed.
+			if (overlord->testStatus(OBJECT_STATUS_STEALTHED) && !overlord->testStatus(OBJECT_STATUS_DETECTED))
+				doFX = FALSE; // so they don't give up their position
+		}
+
+		// Sorry, this is a lot of hard coded mishmash, but it must be done... ship it!
+		// Propaganda towers (proper) never get contained, so they don't care about this code
+		// The PropTowers that ride on the backs of overlord tanks want to suppress their fx if the overlord is stealthed to the
+		// local player The PropTowers that ride on the bellies of Helixes also suppress their fx when hiding stealthed (never
+		// happens?) The PropTowers must do nothing, scanning-or-FX-wise when they are inside something... there are two cases
+		//   1) When the prop tower is on an Overlord that is in a helicopter (likely a Helix II)
+		//   2) When the prop tower is the EmperorTank, which is in a helicopter (likely a Helix II).
+
+		if (us->isKindOf(KINDOF_VEHICLE) && !us->isKindOf(KINDOF_PORTABLE_STRUCTURE)) // craptacular!
+			// oh my dear Lord... I am not a propaganda tower, I am an emperorTank! that means the overlord is a helix or
+			// something!
+			return; // proptowers that are riding IN things cannot do their scan!
+
+		// okay this is wacky, but this proptower may be on an overlord thank that is riding in a helix... oy!
+		Object *helix = overlord->getContainedBy();
+		if (helix)
+			return; // proptowers that are riding ON things that are in-turn riding IN things cannot do their scan!
+	}
+
+	if (us->getControllingPlayer() != ThePlayerList->getLocalPlayer()) // daling with someone else's tower
+	{
+		if (us->testStatus(OBJECT_STATUS_STEALTHED) && !us->testStatus(OBJECT_STATUS_DETECTED))
+		{
+			doFX = FALSE; // Certainly don't play if we ourselves are stelthed.
 		}
 	}
 
-  if ( doFX )
-  {
-    // play the right pulse
-	  if( upgradePresent == TRUE )
-		  FXList::doFXObj( modData->m_upgradedPulseFX, us );
-	  else
-		  FXList::doFXObj( modData->m_pulseFX, us );
-  }
+	if (doFX)
+	{
+		// play the right pulse
+		if (upgradePresent == TRUE)
+			FXList::doFXObj(modData->m_upgradedPulseFX, us);
+		else
+			FXList::doFXObj(modData->m_pulseFX, us);
+	}
 
 	// setup scan filters
-	PartitionFilterRelationship relationship( us, PartitionFilterRelationship::ALLOW_ALLIES );
+	PartitionFilterRelationship relationship(us, PartitionFilterRelationship::ALLOW_ALLIES);
 	PartitionFilterAlive filterAlive;
 	PartitionFilterSameMapStatus filterMapStatus(us);
 	PartitionFilterAcceptByKindOf filterOutBuildings(KINDOFMASK_NONE, MAKE_KINDOF_MASK(KINDOF_STRUCTURE));
-	PartitionFilter *filters[] = {	&relationship,
-																	&filterAlive,
-																	&filterMapStatus,
-																	&filterOutBuildings,
-																	NULL
-																};
+	PartitionFilter *filters[] = { &relationship, &filterAlive, &filterMapStatus, &filterOutBuildings, NULL };
 
 	// scan objects in our region
-	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( us->getPosition(),
-																																		 modData->m_scanRadius,
-																																		 FROM_CENTER_2D,
-																																		 filters );
-	MemoryPoolObjectHolder hold( iter );
+	ObjectIterator *iter =
+			ThePartitionManager->iterateObjectsInRange(us->getPosition(), modData->m_scanRadius, FROM_CENTER_2D, filters);
+	MemoryPoolObjectHolder hold(iter);
 	Object *obj;
 	ObjectTracker *newEntry;
-	for( obj = iter->first(); obj; obj = iter->next() )
+	for (obj = iter->first(); obj; obj = iter->next())
 	{
-
 		// ignore ourselves, unless Design wants us to affect ourselves
-		if( obj == us  &&  !modData->m_affectsSelf)
+		if (obj == us && !modData->m_affectsSelf)
 			continue;
 
 		// record this object as being in the new "in list"
@@ -508,7 +487,7 @@ void PropagandaTowerBehavior::doScan( void )
 		newEntry->next = newInsideList;
 		newInsideList = newEntry;
 
-	}  // end for obj
+	} // end for obj
 
 	//
 	// now that we have a list of objects that are in our area of influence, look through
@@ -516,129 +495,118 @@ void PropagandaTowerBehavior::doScan( void )
 	// bonus we've given them (if they are within the area of effect of another tower it's
 	// OK, they'll get the bonus back again when that tower does a scan which won't be too long
 	//
-	for( ObjectTracker *curr = m_insideList; curr; curr = curr->next )
+	for (ObjectTracker *curr = m_insideList; curr; curr = curr->next)
 	{
-
 		// find this entry in the new list
 		ObjectTracker *o = NULL;
-		for( o = newInsideList; o; o = o->next )
-			if( o->objectID == curr->objectID )
+		for (o = newInsideList; o; o = o->next)
+			if (o->objectID == curr->objectID)
 				break;
 
 		// if entry wasn't there, remove the bonus from this object
-		if( o == NULL )
+		if (o == NULL)
 		{
+			obj = TheGameLogic->findObjectByID(curr->objectID);
+			if (obj)
+				effectLogic(obj, FALSE, modData);
 
-			obj = TheGameLogic->findObjectByID( curr->objectID );
-			if( obj )
-				effectLogic( obj, FALSE, modData );
+		} // end if
 
-		}  // end if
-
-	}  // end for
+	} // end for
 
 	// delete the inside list we have recoreded
 	ObjectTracker *next;
-	while( m_insideList )
+	while (m_insideList)
 	{
-
 		next = m_insideList->next;
 		deleteInstance(m_insideList);
 		m_insideList = next;
 
-	}  // end while
+	} // end while
 
 	// set the new inside list to the one we're recording
 	m_insideList = newInsideList;
 
-}  // end doScan
+} // end doScan
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void PropagandaTowerBehavior::crc( Xfer *xfer )
+void PropagandaTowerBehavior::crc(Xfer *xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
+	UpdateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void PropagandaTowerBehavior::xfer( Xfer *xfer )
+void PropagandaTowerBehavior::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// last scan frame
-	xfer->xferUnsignedInt( &m_lastScanFrame );
+	xfer->xferUnsignedInt(&m_lastScanFrame);
 
 	// inside list tracking
 	ObjectTracker *trackerEntry;
 	UnsignedShort insideCount = 0;
-	for( trackerEntry = m_insideList; trackerEntry; trackerEntry = trackerEntry->next )
+	for (trackerEntry = m_insideList; trackerEntry; trackerEntry = trackerEntry->next)
 		insideCount++;
-	xfer->xferUnsignedShort( &insideCount );
-	if( xfer->getXferMode() == XFER_SAVE )
+	xfer->xferUnsignedShort(&insideCount);
+	if (xfer->getXferMode() == XFER_SAVE)
 	{
-
 		// write all entries
-		for( trackerEntry = m_insideList; trackerEntry; trackerEntry = trackerEntry->next )
+		for (trackerEntry = m_insideList; trackerEntry; trackerEntry = trackerEntry->next)
 		{
-
 			// object id
-			xfer->xferObjectID( &trackerEntry->objectID );
+			xfer->xferObjectID(&trackerEntry->objectID);
 
-		}  // end for
+		} // end for
 
-	}  // end if, save
+	} // end if, save
 	else
 	{
-
 		// sanity
-		if( m_insideList != NULL )
+		if (m_insideList != NULL)
 		{
-
-			DEBUG_CRASH(( "PropagandaTowerBehavior::xfer - m_insideList should be empty but is not" ));
+			DEBUG_CRASH(("PropagandaTowerBehavior::xfer - m_insideList should be empty but is not"));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		} // end if
 
 		// read all entries
-		for( UnsignedShort i = 0; i < insideCount; ++i )
+		for (UnsignedShort i = 0; i < insideCount; ++i)
 		{
-
 			// allocate new tracker entry and tie to list
 			trackerEntry = newInstance(ObjectTracker);
 			trackerEntry->next = m_insideList;
 			m_insideList = trackerEntry;
 
 			// read object id
-			xfer->xferObjectID( &trackerEntry->objectID );
+			xfer->xferObjectID(&trackerEntry->objectID);
 
-		}  // end for i
+		} // end for i
 
-	}  // end else, load
+	} // end else, load
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void PropagandaTowerBehavior::loadPostProcess( void )
+void PropagandaTowerBehavior::loadPostProcess(void)
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

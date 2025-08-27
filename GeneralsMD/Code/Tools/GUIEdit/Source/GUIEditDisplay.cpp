@@ -69,81 +69,66 @@
 // GUIEditDisplay::GUIEditDisplay =============================================
 /** */
 //=============================================================================
-GUIEditDisplay::GUIEditDisplay( void )
+GUIEditDisplay::GUIEditDisplay(void)
 {
-
-}  // end GUIEditDisplay
+} // end GUIEditDisplay
 
 // GUIEditDisplay::~GUIEditDisplay ============================================
 /** */
 //=============================================================================
-GUIEditDisplay::~GUIEditDisplay( void )
+GUIEditDisplay::~GUIEditDisplay(void)
 {
-
-}  // end ~GUIEditDisplay
+} // end ~GUIEditDisplay
 
 // GUIEditDisplay::drawLine ===================================================
 /** draw a line on the display in pixel coordinates with the specified color */
 //=============================================================================
-void GUIEditDisplay::drawLine( Int startX, Int startY,
-															 Int endX, Int endY,
-															 Real lineWidth, UnsignedInt lineColor )
+void GUIEditDisplay::drawLine(Int startX, Int startY, Int endX, Int endY, Real lineWidth, UnsignedInt lineColor)
 {
+	TheEditWindow->drawLine(startX, startY, endX, endY, lineWidth, lineColor);
 
-	TheEditWindow->drawLine( startX, startY, endX, endY, lineWidth, lineColor );
-
-}  // end drawLIne
+} // end drawLIne
 
 // GUIEditDisplay::drawOpenRect ===============================================
 /** draw a rect border on the display in pixel coordinates with the
-	* specified color */
+ * specified color */
 //=============================================================================
-void GUIEditDisplay::drawOpenRect( Int startX, Int startY,
-																	 Int width, Int height,
-																	 Real lineWidth, UnsignedInt lineColor )
+void GUIEditDisplay::drawOpenRect(Int startX, Int startY, Int width, Int height, Real lineWidth, UnsignedInt lineColor)
 {
+	TheEditWindow->drawOpenRect(startX, startY, width, height, lineWidth, lineColor);
 
-	TheEditWindow->drawOpenRect( startX, startY, width, height,
-															 lineWidth, lineColor );
-
-}  // end drawOpenRect
+} // end drawOpenRect
 
 // GUIEditDisplay::drawFillRect ===============================================
 /** draw a filled rect on the display in pixel coords with the
-	* specified color */
+ * specified color */
 //=============================================================================
-void GUIEditDisplay::drawFillRect( Int startX, Int startY,
-																	 Int width, Int height,
-																	 UnsignedInt color )
+void GUIEditDisplay::drawFillRect(Int startX, Int startY, Int width, Int height, UnsignedInt color)
 {
+	TheEditWindow->drawFillRect(startX, startY, width, height, color);
 
-	TheEditWindow->drawFillRect( startX, startY,
-															 width, height,
-															 color );
-
-}  // end drawFillRect
+} // end drawFillRect
 
 // GUIEditDisplay::drawImage ==================================================
 /** draw an image fit within the screen coordinates */
 //=============================================================================
-void GUIEditDisplay::drawImage( const Image *image,
-																Int startX, Int startY,
-																Int endX, Int endY,
-																Color color, DrawImageMode mode )
+void GUIEditDisplay::drawImage(
+		const Image *image,
+		Int startX,
+		Int startY,
+		Int endX,
+		Int endY,
+		Color color,
+		DrawImageMode mode)
 {
+	TheEditWindow->drawImage(image, startX, startY, endX, endY, color);
 
-	TheEditWindow->drawImage( image,
-														startX, startY,
-														endX, endY,
-														color );
-
-
-}  // end drawImage
+} // end drawImage
 
 // GUIEditDisplay::setClipRegion ==============================================
 /** sets clipping rectangle for 2D drawing operations */
 //=============================================================================
-void GUIEditDisplay::setClipRegion( IRegion2D *region )
+void GUIEditDisplay::setClipRegion(IRegion2D *region)
 {
 	TheEditWindow->setClipRegion(region);
 }
@@ -151,15 +136,15 @@ void GUIEditDisplay::setClipRegion( IRegion2D *region )
 // GUIEditDisplay::isClippingEnabled ==============================================
 /** returns current state of 2D image clipping */
 //=============================================================================
-Bool GUIEditDisplay::isClippingEnabled( void )
+Bool GUIEditDisplay::isClippingEnabled(void)
 {
-	return	TheEditWindow->isClippingEnabled();
+	return TheEditWindow->isClippingEnabled();
 }
 
 // GUIEditDisplay::isClippingEnabled ==============================================
 /** returns current state of 2D image clipping */
 //=============================================================================
-void GUIEditDisplay::enableClipping( Bool onoff )
+void GUIEditDisplay::enableClipping(Bool onoff)
 {
 	TheEditWindow->enableClipping(onoff);
 }

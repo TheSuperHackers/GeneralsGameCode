@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameClient/Drawable.h"
 #include "GameClient/Module/AnimatedParticleSysBoneClientUpdate.h"
@@ -45,89 +45,76 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AnimatedParticleSysBoneClientUpdate::AnimatedParticleSysBoneClientUpdate( Thing *thing, const ModuleData* moduleData ) :
-	ClientUpdateModule( thing, moduleData )
+AnimatedParticleSysBoneClientUpdate::AnimatedParticleSysBoneClientUpdate(Thing *thing, const ModuleData *moduleData) :
+		ClientUpdateModule(thing, moduleData)
 {
 	m_life = 0;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AnimatedParticleSysBoneClientUpdate::~AnimatedParticleSysBoneClientUpdate( void )
+AnimatedParticleSysBoneClientUpdate::~AnimatedParticleSysBoneClientUpdate(void)
 {
-
 }
-
 
 //-------------------------------------------------------------------------------------------------
 /** The client update callback. */
 //-------------------------------------------------------------------------------------------------
-void AnimatedParticleSysBoneClientUpdate::clientUpdate( void )
+void AnimatedParticleSysBoneClientUpdate::clientUpdate(void)
 {
-	//THIS IS HAPPENING CLIENT-SIDE
-	// I CAN DO WHAT I NEED HERE AND NOT HAVE TO BE LOGIC SYNC-SAFE
-
+	// THIS IS HAPPENING CLIENT-SIDE
+	//  I CAN DO WHAT I NEED HERE AND NOT HAVE TO BE LOGIC SYNC-SAFE
 
 	++m_life;
 
 	Drawable *draw = getDrawable();
 	if (draw)
 	{
-
-		for (DrawModule** dm = draw->getDrawModules(); *dm; ++dm)
+		for (DrawModule **dm = draw->getDrawModules(); *dm; ++dm)
 		{
-			ObjectDrawInterface* di = (*dm)->getObjectDrawInterface();
+			ObjectDrawInterface *di = (*dm)->getObjectDrawInterface();
 			if (di)
 			{
 				if (di->updateBonesForClientParticleSystems())
 					break;
 			}
 		}
-
-
 	}
-
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void AnimatedParticleSysBoneClientUpdate::crc( Xfer *xfer )
+void AnimatedParticleSysBoneClientUpdate::crc(Xfer *xfer)
 {
-
 	// extend base class
-	ClientUpdateModule::crc( xfer );
+	ClientUpdateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void AnimatedParticleSysBoneClientUpdate::xfer( Xfer *xfer )
+void AnimatedParticleSysBoneClientUpdate::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	ClientUpdateModule::xfer( xfer );
+	ClientUpdateModule::xfer(xfer);
 
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AnimatedParticleSysBoneClientUpdate::loadPostProcess( void )
+void AnimatedParticleSysBoneClientUpdate::loadPostProcess(void)
 {
-
 	// extend base class
 	ClientUpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

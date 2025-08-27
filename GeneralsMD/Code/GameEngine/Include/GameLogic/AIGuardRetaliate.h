@@ -51,57 +51,55 @@
 enum
 {
 	// prevent collisions with other states that we might use, (namely AI_IDLE)
-	AI_GUARD_RETALIATE_INNER = 5000,					///< Attack anything within this area till death
-	AI_GUARD_RETALIATE_IDLE,									///< Wait till something shows up to attack.
-	AI_GUARD_RETALIATE_OUTER,									///< Attack anything within this area that has been aggressive, until the timer expires
-	AI_GUARD_RETALIATE_RETURN,								///< Restore to a position within the inner circle
-	AI_GUARD_RETALIATE_GET_CRATE,							///< Pick up a crate from an enemy we killed.
-	AI_GUARD_RETALIATE_ATTACK_AGGRESSOR,			///< Attack something that attacked me (that I can attack)
+	AI_GUARD_RETALIATE_INNER = 5000, ///< Attack anything within this area till death
+	AI_GUARD_RETALIATE_IDLE, ///< Wait till something shows up to attack.
+	AI_GUARD_RETALIATE_OUTER, ///< Attack anything within this area that has been aggressive, until the timer expires
+	AI_GUARD_RETALIATE_RETURN, ///< Restore to a position within the inner circle
+	AI_GUARD_RETALIATE_GET_CRATE, ///< Pick up a crate from an enemy we killed.
+	AI_GUARD_RETALIATE_ATTACK_AGGRESSOR, ///< Attack something that attacked me (that I can attack)
 };
 
 //--------------------------------------------------------------------------------------
 class GuardRetaliateExitConditions : public AttackExitConditionsInterface
 {
 public:
-
 	enum ExitConditionsEnum
 	{
-		ATTACK_ExitIfOutsideRadius		= 0x01,
-		ATTACK_ExitIfExpiredDuration	= 0x02,
-		ATTACK_ExitIfNoUnitFound			= 0x04
+		ATTACK_ExitIfOutsideRadius = 0x01,
+		ATTACK_ExitIfExpiredDuration = 0x02,
+		ATTACK_ExitIfNoUnitFound = 0x04
 	};
 
-	Int							m_conditionsToConsider;
-	Coord3D					m_center;								// can be updated at any time by owner
-	Real						m_radiusSqr;						// can be updated at any time by owner
-	UnsignedInt			m_attackGiveUpFrame;		// frame at which we give up (if using)
+	Int m_conditionsToConsider;
+	Coord3D m_center; // can be updated at any time by owner
+	Real m_radiusSqr; // can be updated at any time by owner
+	UnsignedInt m_attackGiveUpFrame; // frame at which we give up (if using)
 
 	GuardRetaliateExitConditions() : m_attackGiveUpFrame(0), m_conditionsToConsider(0), m_radiusSqr(0.0f)
 	{
-		//Added By Sadullah Nader
-		// Initializations missing and needed
+		// Added By Sadullah Nader
+		//  Initializations missing and needed
 		m_center.zero();
 	}
 
-	virtual Bool shouldExit(const StateMachine* machine) const;
+	virtual Bool shouldExit(const StateMachine *machine) const;
 };
-
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////
 
 //--------------------------------------------------------------------------------------
 class AIGuardRetaliateMachine : public StateMachine
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AIGuardRetaliateMachine, "AIGuardRetaliateMachinePool" );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateMachine, "AIGuardRetaliateMachinePool");
 
 private:
-	Coord3D									m_positionToGuard;
-	ObjectID								m_nemesisToAttack;
+	Coord3D m_positionToGuard;
+	ObjectID m_nemesisToAttack;
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
 	virtual void loadPostProcess();
 
 public:
@@ -109,19 +107,19 @@ public:
 	 * The implementation of this constructor defines the states
 	 * used by this machine.
 	 */
-	AIGuardRetaliateMachine( Object *owner );
+	AIGuardRetaliateMachine(Object *owner);
 
 	virtual Bool isIdle() const;
 
-	const Coord3D *getPositionToGuard( void ) const { return &m_positionToGuard; }
-	void setTargetPositionToGuard( const Coord3D *pos) { m_positionToGuard = *pos; }
+	const Coord3D *getPositionToGuard(void) const { return &m_positionToGuard; }
+	void setTargetPositionToGuard(const Coord3D *pos) { m_positionToGuard = *pos; }
 
 	void setNemesisID(ObjectID id) { m_nemesisToAttack = id; }
 	ObjectID getNemesisID() const { return m_nemesisToAttack; }
 
 	Bool lookForInnerTarget(void);
 
-	static Real getStdGuardRange(const Object* obj);
+	static Real getStdGuardRange(const Object *obj);
 };
 
 //--------------------------------------------------------------------------------------
@@ -129,21 +127,23 @@ class AIGuardRetaliateInnerState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateInnerState, "AIGuardRetaliateInnerState")
 public:
-	AIGuardRetaliateInnerState( StateMachine *machine ) : State( machine, "AIGuardRetaliateInner" )
+	AIGuardRetaliateInnerState(StateMachine *machine) : State(machine, "AIGuardRetaliateInner")
 	{
 		m_attackState = 0;
 		m_enterState = 0;
 	}
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType onEnter(void);
+	virtual StateReturnType update(void);
+	virtual void onExit(StateExitType status);
+
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
 	virtual void loadPostProcess();
+
 private:
-	AIGuardRetaliateMachine* getGuardMachine() { return (AIGuardRetaliateMachine*)getMachine(); }
+	AIGuardRetaliateMachine *getGuardMachine() { return (AIGuardRetaliateMachine *)getMachine(); }
 
 	GuardRetaliateExitConditions m_exitConditions;
 	AIAttackState *m_attackState;
@@ -155,20 +155,22 @@ class AIGuardRetaliateIdleState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateIdleState, "AIGuardRetaliateIdleState")
 public:
-	AIGuardRetaliateIdleState( StateMachine *machine ) : State( machine, "AIGuardRetaliateIdleState" ) { }
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
-	virtual void onExit( StateExitType status );
+	AIGuardRetaliateIdleState(StateMachine *machine) : State(machine, "AIGuardRetaliateIdleState") {}
+	virtual StateReturnType onEnter(void);
+	virtual StateReturnType update(void);
+	virtual void onExit(StateExitType status);
+
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
 	virtual void loadPostProcess();
+
 private:
-	AIGuardRetaliateMachine* getGuardMachine() { return (AIGuardRetaliateMachine*)getMachine(); }
+	AIGuardRetaliateMachine *getGuardMachine() { return (AIGuardRetaliateMachine *)getMachine(); }
 
 	UnsignedInt m_nextEnemyScanTime;
-	Coord3D			m_guardeePos;						///< Where the object we are guarding was last.
+	Coord3D m_guardeePos; ///< Where the object we are guarding was last.
 };
 EMPTY_DTOR(AIGuardRetaliateIdleState)
 
@@ -177,20 +179,19 @@ class AIGuardRetaliateOuterState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateOuterState, "AIGuardRetaliateOuterState")
 public:
-	AIGuardRetaliateOuterState( StateMachine *machine ) : State( machine, "AIGuardRetaliateOuter" )
-	{
-		m_attackState = NULL;
-	}
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
-	virtual void onExit( StateExitType status );
+	AIGuardRetaliateOuterState(StateMachine *machine) : State(machine, "AIGuardRetaliateOuter") { m_attackState = NULL; }
+	virtual StateReturnType onEnter(void);
+	virtual StateReturnType update(void);
+	virtual void onExit(StateExitType status);
+
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
 	virtual void loadPostProcess();
+
 private:
-	AIGuardRetaliateMachine* getGuardMachine() { return (AIGuardRetaliateMachine*)getMachine(); }
+	AIGuardRetaliateMachine *getGuardMachine() { return (AIGuardRetaliateMachine *)getMachine(); }
 
 	GuardRetaliateExitConditions m_exitConditions;
 	AIAttackState *m_attackState;
@@ -201,35 +202,37 @@ class AIGuardRetaliateReturnState : public AIInternalMoveToState
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateReturnState, "AIGuardRetaliateReturnState")
 private:
-	AIGuardRetaliateMachine* getGuardMachine() { return (AIGuardRetaliateMachine*)getMachine(); }
+	AIGuardRetaliateMachine *getGuardMachine() { return (AIGuardRetaliateMachine *)getMachine(); }
+
 public:
-	AIGuardRetaliateReturnState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIGuardRetaliateReturn" )
+	AIGuardRetaliateReturnState(StateMachine *machine) : AIInternalMoveToState(machine, "AIGuardRetaliateReturn")
 	{
 		m_nextReturnScanTime = 0;
 	}
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType onEnter(void);
+	virtual StateReturnType update(void);
+	virtual void onExit(StateExitType status);
+
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
 	virtual void loadPostProcess();
+
 private:
 	UnsignedInt m_nextReturnScanTime;
 };
 EMPTY_DTOR(AIGuardRetaliateReturnState)
-
 
 //--------------------------------------------------------------------------------------
 class AIGuardRetaliatePickUpCrateState : public AIPickUpCrateState
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliatePickUpCrateState, "AIGuardRetaliatePickUpCrateState")
 public:
-	AIGuardRetaliatePickUpCrateState( StateMachine *machine );
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
-	virtual void onExit( StateExitType status );
+	AIGuardRetaliatePickUpCrateState(StateMachine *machine);
+	virtual StateReturnType onEnter(void);
+	virtual StateReturnType update(void);
+	virtual void onExit(StateExitType status);
 };
 EMPTY_DTOR(AIGuardRetaliatePickUpCrateState)
 
@@ -238,20 +241,21 @@ class AIGuardRetaliateAttackAggressorState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateAttackAggressorState, "AIGuardRetaliateAttackAggressorState")
 public:
-	AIGuardRetaliateAttackAggressorState( StateMachine *machine );
-	virtual StateReturnType onEnter( void );
-	virtual StateReturnType update( void );
-	virtual void onExit( StateExitType status );
+	AIGuardRetaliateAttackAggressorState(StateMachine *machine);
+	virtual StateReturnType onEnter(void);
+	virtual StateReturnType update(void);
+	virtual void onExit(StateExitType status);
 #ifdef STATE_MACHINE_DEBUG
-	virtual AsciiString getName() const ;
+	virtual AsciiString getName() const;
 #endif
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
 	virtual void loadPostProcess();
+
 private:
-	AIGuardRetaliateMachine* getGuardMachine() { return (AIGuardRetaliateMachine*)getMachine(); }
+	AIGuardRetaliateMachine *getGuardMachine() { return (AIGuardRetaliateMachine *)getMachine(); }
 	GuardRetaliateExitConditions m_exitConditions;
 	AIAttackState *m_attackState;
 };

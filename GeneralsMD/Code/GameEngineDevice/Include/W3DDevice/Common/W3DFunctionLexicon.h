@@ -39,19 +39,15 @@
 //-------------------------------------------------------------------------------------------------
 class W3DFunctionLexicon : public FunctionLexicon
 {
-
 public:
+	W3DFunctionLexicon(void);
+	virtual ~W3DFunctionLexicon(void);
 
-	W3DFunctionLexicon( void );
-	virtual ~W3DFunctionLexicon( void );
-
-	virtual void init( void );
-	virtual void reset( void );
-	virtual void update( void );
+	virtual void init(void);
+	virtual void reset(void);
+	virtual void update(void);
 
 protected:
-
 };
 
 #endif // __W3DFUNCTIONLEXICON_H_
-

@@ -28,45 +28,45 @@
 #include "resource.h"
 #include "vector3.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // ColorSelectionDialogClass dialog
 //
 class ColorSelectionDialogClass : public CDialog
 {
-// Construction
+	// Construction
 public:
-	ColorSelectionDialogClass (const Vector3 &def_color, CWnd *pParent = NULL);   // standard constructor
+	ColorSelectionDialogClass(const Vector3 &def_color, CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(ColorSelectionDialogClass)
-	enum { IDD = IDD_COLOR_SEL };
-	CSpinButtonCtrl	m_BlueSpin;
-	CSpinButtonCtrl	m_GreenSpin;
-	CSpinButtonCtrl	m_RedSpin;
-	CStatic	m_ColorWindow;
-	CSliderCtrl	m_BlueSlider;
-	CSliderCtrl	m_GreenSlider;
-	CSliderCtrl	m_RedSlider;
+	enum
+	{
+		IDD = IDD_COLOR_SEL
+	};
+	CSpinButtonCtrl m_BlueSpin;
+	CSpinButtonCtrl m_GreenSpin;
+	CSpinButtonCtrl m_RedSpin;
+	CStatic m_ColorWindow;
+	CSliderCtrl m_BlueSlider;
+	CSliderCtrl m_GreenSlider;
+	CSliderCtrl m_RedSlider;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ColorSelectionDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(ColorSelectionDialogClass)
 	virtual BOOL OnInitDialog();
 	virtual void OnOK();
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
 	afx_msg void OnPaint();
 	afx_msg void OnGrayscaleCheck();
 	afx_msg void OnChangeBlueEdit();
@@ -75,32 +75,29 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	public:
+public:
+	///////////////////////////////////////////////////////
+	//
+	//	Public methods
+	//
+	const Vector3 &Get_Color(void) const { return m_Color; }
+	void Set_Color(const Vector3 &color) { m_Color = color; }
 
-		///////////////////////////////////////////////////////
-		//
-		//	Public methods
-		//
-		const Vector3 &		Get_Color (void) const				{ return m_Color; }
-		void						Set_Color (const Vector3 &color) { m_Color = color; }
+protected:
+	///////////////////////////////////////////////////////
+	//
+	//	Inline accessors
+	//
+	void Paint_Color_Window(void);
+	void Update_Sliders(int slider_id);
 
-	protected:
-
-		///////////////////////////////////////////////////////
-		//
-		//	Inline accessors
-		//
-		void						Paint_Color_Window (void);
-		void						Update_Sliders (int slider_id);
-
-	private:
-
-		///////////////////////////////////////////////////////
-		//
-		//	Private member data
-		//
-		Vector3					m_Color;
-		Vector3					m_PaintColor;
+private:
+	///////////////////////////////////////////////////////
+	//
+	//	Private member data
+	//
+	Vector3 m_Color;
+	Vector3 m_PaintColor;
 };
 
 //{{AFX_INSERT_LOCATION}}

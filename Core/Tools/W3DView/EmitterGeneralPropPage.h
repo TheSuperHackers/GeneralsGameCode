@@ -40,31 +40,34 @@ class EmitterGeneralPropPageClass : public CPropertyPage
 {
 	DECLARE_DYNCREATE(EmitterGeneralPropPageClass)
 
-// Construction
+	// Construction
 public:
-	EmitterGeneralPropPageClass (EmitterInstanceListClass *pemitter_list = NULL);
-	~EmitterGeneralPropPageClass ();
+	EmitterGeneralPropPageClass(EmitterInstanceListClass *pemitter_list = NULL);
+	~EmitterGeneralPropPageClass();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(EmitterGeneralPropPageClass)
-	enum { IDD = IDD_PROP_PAGE_EMITTER_GEN };
-	CComboBox	m_RenderModeCombo;
-	CSpinButtonCtrl	m_LifetimeSpin;
+	enum
+	{
+		IDD = IDD_PROP_PAGE_EMITTER_GEN
+	};
+	CComboBox m_RenderModeCombo;
+	CSpinButtonCtrl m_LifetimeSpin;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(EmitterGeneralPropPageClass)
-	public:
+public:
 	virtual BOOL OnApply();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(EmitterGeneralPropPageClass)
@@ -78,54 +81,55 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	public:
+public:
+	/////////////////////////////////////////////////////////
+	//
+	//	Public methods
+	//
 
-		/////////////////////////////////////////////////////////
-		//
-		//	Public methods
-		//
+	//
+	//	Inline accessors
+	//
+	EmitterInstanceListClass *Get_Emitter(void) const { return m_pEmitterList; }
+	void Set_Emitter(EmitterInstanceListClass *pemitter_list)
+	{
+		m_pEmitterList = pemitter_list;
+		Initialize();
+	}
 
-		//
-		//	Inline accessors
-		//
-		EmitterInstanceListClass *	Get_Emitter (void) const { return m_pEmitterList; }
-		void								Set_Emitter (EmitterInstanceListClass *pemitter_list) { m_pEmitterList = pemitter_list; Initialize (); }
+	EmitterPropertySheetClass *Get_Parent(void) const { return m_Parent; }
+	void Set_Parent(EmitterPropertySheetClass *parent) { m_Parent = parent; }
 
-		EmitterPropertySheetClass *Get_Parent (void) const { return m_Parent; }
-		void								Set_Parent (EmitterPropertySheetClass * parent) { m_Parent = parent; }
+	bool Is_Data_Valid(void) const { return m_bValid; }
 
-		bool								Is_Data_Valid (void) const { return m_bValid; }
+	const CString &Get_Name(void) const { return m_EmitterName; }
+	const CString &Get_Texture_Filename(void) const { return m_TextureFilename; }
+	float Get_Lifetime(void) const { return m_Lifetime; }
+	const ShaderClass &Get_Shader(void) const { return m_Shader; }
+	// void								Get_Shader (ShaderClass &shader);
 
-		const CString &				Get_Name (void) const					{ return m_EmitterName; }
-		const CString &				Get_Texture_Filename (void) const	{ return m_TextureFilename; }
-		float								Get_Lifetime (void) const				{ return m_Lifetime; }
-		const ShaderClass &			Get_Shader (void) const					{ return m_Shader; }
-		//void								Get_Shader (ShaderClass &shader);
+protected:
+	/////////////////////////////////////////////////////////
+	//
+	//	Protected methods
+	//
+	void Initialize(void);
+	void Add_Shader_To_Combo(ShaderClass &shader, LPCTSTR name);
 
-	protected:
+private:
+	/////////////////////////////////////////////////////////
+	//
+	//	Private member data
+	//
+	EmitterInstanceListClass *m_pEmitterList;
+	EmitterPropertySheetClass *m_Parent;
 
-		/////////////////////////////////////////////////////////
-		//
-		//	Protected methods
-		//
-		void								Initialize (void);
-		void								Add_Shader_To_Combo (ShaderClass &shader, LPCTSTR name);
-
-	private:
-
-		/////////////////////////////////////////////////////////
-		//
-		//	Private member data
-		//
-		EmitterInstanceListClass *	m_pEmitterList;
-		EmitterPropertySheetClass *m_Parent;
-
-		CString							m_EmitterName;
-		CString							m_TextureFilename;
-		ShaderClass						m_Shader;
-		//int								m_ShaderType;
-		float								m_Lifetime;
-		bool								m_bValid;
+	CString m_EmitterName;
+	CString m_TextureFilename;
+	ShaderClass m_Shader;
+	// int								m_ShaderType;
+	float m_Lifetime;
+	bool m_bValid;
 };
 
 //{{AFX_INSERT_LOCATION}}

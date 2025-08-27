@@ -38,38 +38,31 @@ IMPLEMENT_DYNAMIC(CAssetPropertySheet, CPropertySheet)
 //
 //  CAssetPropertySheet
 //
-CAssetPropertySheet::CAssetPropertySheet
-(
-    int iCaptionID,
-    CPropertyPage *pCPropertyPage,
-    CWnd *pCParentWnd
-)
-	: m_pCPropertyPage (pCPropertyPage),
-      CPropertySheet (iCaptionID, pCParentWnd)
+CAssetPropertySheet::CAssetPropertySheet(int iCaptionID, CPropertyPage *pCPropertyPage, CWnd *pCParentWnd) :
+		m_pCPropertyPage(pCPropertyPage), CPropertySheet(iCaptionID, pCParentWnd)
 {
-    ASSERT (m_pCPropertyPage);
+	ASSERT(m_pCPropertyPage);
 
-    m_psh.dwFlags |= PSH_NOAPPLYNOW;
+	m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
-    // Add this page to the property sheet
-    AddPage (m_pCPropertyPage);
-    return ;
+	// Add this page to the property sheet
+	AddPage(m_pCPropertyPage);
+	return;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 //  :~CAssetPropertySheet
 //
-CAssetPropertySheet::~CAssetPropertySheet ()
+CAssetPropertySheet::~CAssetPropertySheet()
 {
-    return ;
+	return;
 }
 
-
 BEGIN_MESSAGE_MAP(CAssetPropertySheet, CPropertySheet)
-	//{{AFX_MSG_MAP(CAssetPropertySheet)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CAssetPropertySheet)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////

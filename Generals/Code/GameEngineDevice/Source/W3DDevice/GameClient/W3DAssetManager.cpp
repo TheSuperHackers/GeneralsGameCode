@@ -69,14 +69,13 @@
 #include "Common/PerfTimer.h"
 #include "Common/GlobalData.h"
 
-
 //---------------------------------------------------------------------
 // Constants
 //---------------------------------------------------------------------
 
 const float ident_scale(1.0f);
 const float scale_epsilon(0.01f);
-const Vector3 ident_HSV(0,0,0);
+const Vector3 ident_HSV(0, 0, 0);
 const float H_epsilon(1.0f);
 const float S_epsilon(0.01f);
 const float V_epsilon(0.01f);
@@ -86,8 +85,8 @@ const float V_epsilon(0.01f);
 //---------------------------------------------------------------------
 
 unsigned int PixelSize(const SurfaceClass::SurfaceDescription &sd);
-void Convert_Pixel(Vector3 &rgb, const SurfaceClass::SurfaceDescription &sd, const unsigned char * pixel);
-void Convert_Pixel(unsigned char * pixel,const SurfaceClass::SurfaceDescription &sd, const Vector3 &rgb);
+void Convert_Pixel(Vector3 &rgb, const SurfaceClass::SurfaceDescription &sd, const unsigned char *pixel);
+void Convert_Pixel(unsigned char *pixel, const SurfaceClass::SurfaceDescription &sd, const Vector3 &rgb);
 
 //---------------------------------------------------------------------
 // W3DPrototype
@@ -96,28 +95,26 @@ void Convert_Pixel(unsigned char * pixel,const SurfaceClass::SurfaceDescription 
 //---------------------------------------------------------------------
 class W3DPrototypeClass : public MemoryPoolObject, public PrototypeClass
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DPrototypeClass, "W3DPrototypeClass" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(W3DPrototypeClass, "W3DPrototypeClass")
 
 public:
-	W3DPrototypeClass(RenderObjClass * proto, const AsciiString& name);
+	W3DPrototypeClass(RenderObjClass *proto, const AsciiString &name);
 
-	virtual const char*					Get_Name(void) const			{ return Name.str(); }
-	virtual int									Get_Class_ID(void) const	{ return Proto->Class_ID(); }
-	virtual RenderObjClass *		Create(void);
-	virtual void								DeleteSelf()							{	deleteInstance(this); }
+	virtual const char *Get_Name(void) const { return Name.str(); }
+	virtual int Get_Class_ID(void) const { return Proto->Class_ID(); }
+	virtual RenderObjClass *Create(void);
+	virtual void DeleteSelf() { deleteInstance(this); }
 
 protected:
-	//virtual ~W3DPrototypeClass(void);
+	// virtual ~W3DPrototypeClass(void);
 
 private:
-	RenderObjClass *					Proto;
-	AsciiString								Name;
+	RenderObjClass *Proto;
+	AsciiString Name;
 };
 
 //---------------------------------------------------------------------
-W3DPrototypeClass::W3DPrototypeClass(RenderObjClass * proto, const AsciiString& name) :
-	Proto(proto),
-	Name(name)
+W3DPrototypeClass::W3DPrototypeClass(RenderObjClass *proto, const AsciiString &name) : Proto(proto), Name(name)
 {
 	assert(Proto);
 	Proto->Add_Ref();
@@ -126,16 +123,17 @@ W3DPrototypeClass::W3DPrototypeClass(RenderObjClass * proto, const AsciiString& 
 //---------------------------------------------------------------------
 W3DPrototypeClass::~W3DPrototypeClass(void)
 {
-	if (Proto) {
+	if (Proto)
+	{
 		Proto->Release_Ref();
 		Proto = NULL;
 	}
 }
 
 //---------------------------------------------------------------------
-RenderObjClass * W3DPrototypeClass::Create(void)
+RenderObjClass *W3DPrototypeClass::Create(void)
 {
-	return (RenderObjClass *)( SET_REF_OWNER( Proto->Clone() ) );
+	return (RenderObjClass *)(SET_REF_OWNER(Proto->Clone()));
 }
 
 //---------------------------------------------------------------------
@@ -153,45 +151,46 @@ W3DAssetManager::~W3DAssetManager(void)
 }
 
 #ifdef DUMP_PERF_STATS
-__int64 Total_Get_Texture_Time=0;
+__int64 Total_Get_Texture_Time = 0;
 #endif
 //---------------------------------------------------------------------
 TextureClass *W3DAssetManager::Get_Texture(
-	const char * filename,
-	MipCountType mip_level_count,
-	WW3DFormat texture_format,
-	bool allow_compression
-)
+		const char *filename,
+		MipCountType mip_level_count,
+		WW3DFormat texture_format,
+		bool allow_compression)
 {
-	#ifdef DUMP_PERF_STATS
-	__int64 startTime64,endTime64;
+#ifdef DUMP_PERF_STATS
+	__int64 startTime64, endTime64;
 	GetPrecisionTimer(&startTime64);
-	#endif
+#endif
 
-	WWPROFILE( "WW3DAssetManager::Get_Texture 1" );
+	WWPROFILE("WW3DAssetManager::Get_Texture 1");
 
 	/*
 	** Bail if the user isn't really asking for anything
 	*/
 	if (!filename || !*filename)
 	{
-		#ifdef DUMP_PERF_STATS
+#ifdef DUMP_PERF_STATS
 		GetPrecisionTimer(&endTime64);
-		Total_Get_Texture_Time += endTime64-startTime64;
-		#endif
+		Total_Get_Texture_Time += endTime64 - startTime64;
+#endif
 		return NULL;
 	}
 
-	StringClass lower_case_name(filename,true);
+	StringClass lower_case_name(filename, true);
 	_strlwr(lower_case_name.Peek_Buffer());
 
 	/*
 	** See if the texture has already been loaded.
 	*/
-	TextureClass* tex = TextureHash.Get(lower_case_name);
+	TextureClass *tex = TextureHash.Get(lower_case_name);
 	if (tex && texture_format != WW3D_FORMAT_UNKNOWN)
 	{
-		WWASSERT_PRINT(tex->Get_Texture_Format() == texture_format, ("Texture %s has already been loaded with different format",filename));
+		WWASSERT_PRINT(
+				tex->Get_Texture_Format() == texture_format,
+				("Texture %s has already been loaded with different format", filename));
 	}
 
 	/*
@@ -200,7 +199,7 @@ TextureClass *W3DAssetManager::Get_Texture(
 	if (!tex)
 	{
 		tex = NEW_REF(TextureClass, (lower_case_name, NULL, mip_level_count, texture_format, allow_compression));
-		TextureHash.Insert(tex->Get_Texture_Name(),tex);
+		TextureHash.Insert(tex->Get_Texture_Name(), tex);
 //		if (TheGlobalData->m_preloadAssets)
 //		{
 //			extern std::vector<std::string>	preloadTextureNamesGlobalHack;
@@ -209,11 +208,11 @@ TextureClass *W3DAssetManager::Get_Texture(
 #if defined(RTS_DEBUG)
 		if (TheGlobalData->m_preloadReport)
 		{
-			//loading a new asset and app is requesting a log of all loaded assets.
-			FILE *logfile=fopen("PreloadedAssets.txt","a+");	//append to log
+			// loading a new asset and app is requesting a log of all loaded assets.
+			FILE *logfile = fopen("PreloadedAssets.txt", "a+"); // append to log
 			if (logfile)
 			{
-				fprintf(logfile,"TX: %s\n",tex->Get_Texture_Name().str());
+				fprintf(logfile, "TX: %s\n", tex->Get_Texture_Name().str());
 				fclose(logfile);
 			}
 		}
@@ -224,21 +223,26 @@ TextureClass *W3DAssetManager::Get_Texture(
 
 #ifdef DUMP_PERF_STATS
 	GetPrecisionTimer(&endTime64);
-	Total_Get_Texture_Time += endTime64-startTime64;
+	Total_Get_Texture_Time += endTime64 - startTime64;
 #endif
 
 	return tex;
 }
 
 //---------------------------------------------------------------------
-RenderObjClass * W3DAssetManager::Create_Render_Obj(const char* name)
+RenderObjClass *W3DAssetManager::Create_Render_Obj(const char *name)
 {
 	return WW3DAssetManager::Create_Render_Obj(name);
 }
 
 //---------------------------------------------------------------------
 /** 'Generals' specific munging to encode team color and scale in model name */
-static inline void Munge_Render_Obj_Name(char *newname, const char *oldname, float scale, const int color, const char *textureName)
+static inline void Munge_Render_Obj_Name(
+		char *newname,
+		const char *oldname,
+		float scale,
+		const int color,
+		const char *textureName)
 {
 	char lower_case_name[255];
 	strcpy(lower_case_name, oldname);
@@ -247,7 +251,7 @@ static inline void Munge_Render_Obj_Name(char *newname, const char *oldname, flo
 	if (!textureName)
 		textureName = "";
 
-	sprintf(newname,"#%d!%g!%s#%s",color,scale,textureName,lower_case_name);
+	sprintf(newname, "#%d!%g!%s#%s", color, scale, textureName, lower_case_name);
 }
 
 //---------------------------------------------------------------------
@@ -256,19 +260,20 @@ static inline void Munge_Texture_Name(char *newname, const char *oldname, const 
 	char lower_case_name[255];
 	strcpy(lower_case_name, oldname);
 	_strlwr(lower_case_name);
-	sprintf(newname,"#%d#%s", color, lower_case_name);
+	sprintf(newname, "#%d#%s", color, lower_case_name);
 }
 
 //---------------------------------------------------------------------
 int W3DAssetManager::replaceAssetTexture(RenderObjClass *robj, TextureClass *oldTex, TextureClass *newTex)
 {
-	switch (robj->Class_ID())	{
-	case RenderObjClass::CLASSID_MESH:
-		return replaceMeshTexture(robj, oldTex, newTex);
-		break;
-	case RenderObjClass::CLASSID_HLOD:
-		return replaceHLODTexture(robj, oldTex, newTex);
-		break;
+	switch (robj->Class_ID())
+	{
+		case RenderObjClass::CLASSID_MESH:
+			return replaceMeshTexture(robj, oldTex, newTex);
+			break;
+		case RenderObjClass::CLASSID_HLOD:
+			return replaceHLODTexture(robj, oldTex, newTex);
+			break;
 	}
 	return 0;
 }
@@ -276,10 +281,11 @@ int W3DAssetManager::replaceAssetTexture(RenderObjClass *robj, TextureClass *old
 //---------------------------------------------------------------------
 Int W3DAssetManager::replaceHLODTexture(RenderObjClass *robj, TextureClass *oldTex, TextureClass *newTex)
 {
-	int didReplace=0;
+	int didReplace = 0;
 
 	int num_sub = robj->Get_Num_Sub_Objects();
-	for(int i = 0; i < num_sub; i++) {
+	for (int i = 0; i < num_sub; i++)
+	{
 		RenderObjClass *sub_obj = robj->Get_Sub_Object(i);
 		didReplace |= replaceAssetTexture(sub_obj, oldTex, newTex);
 		REF_PTR_RELEASE(sub_obj);
@@ -291,19 +297,19 @@ Int W3DAssetManager::replaceHLODTexture(RenderObjClass *robj, TextureClass *oldT
 Int W3DAssetManager::replaceMeshTexture(RenderObjClass *robj, TextureClass *oldTex, TextureClass *newTex)
 {
 	int i;
-	int didReplace=0;
+	int didReplace = 0;
 
-	MeshClass *mesh=(MeshClass*) robj;
-	MeshModelClass * model = mesh->Get_Model();
-	MaterialInfoClass	*material = mesh->Get_Material_Info();
+	MeshClass *mesh = (MeshClass *)robj;
+	MeshModelClass *model = mesh->Get_Model();
+	MaterialInfoClass *material = mesh->Get_Material_Info();
 
-	for (i=0; i<material->Texture_Count(); i++)
+	for (i = 0; i < material->Texture_Count(); i++)
 	{
 		if (material->Peek_Texture(i) == oldTex)
 		{
-			model->Replace_Texture(oldTex,newTex);
-			material->Replace_Texture(i,newTex);
-			didReplace=1;
+			model->Replace_Texture(oldTex, newTex);
+			material->Replace_Texture(i, newTex);
+			didReplace = 1;
 		}
 	}
 
@@ -318,13 +324,13 @@ Int W3DAssetManager::replaceMeshTexture(RenderObjClass *robj, TextureClass *oldT
 	been customized with house color will not be affected unless they are created after
 	this function is called.
 */
-int W3DAssetManager::replacePrototypeTexture(RenderObjClass *robj, const char * oldname, const char * newname)
+int W3DAssetManager::replacePrototypeTexture(RenderObjClass *robj, const char *oldname, const char *newname)
 {
-	//search model for old texture
-	TextureClass *oldTex=Get_Texture(oldname);
-	TextureClass *newTex=Get_Texture(newname);
+	// search model for old texture
+	TextureClass *oldTex = Get_Texture(oldname);
+	TextureClass *newTex = Get_Texture(newname);
 
-	int retCode=replaceAssetTexture(robj,oldTex,newTex);
+	int retCode = replaceAssetTexture(robj, oldTex, newTex);
 
 	REF_PTR_RELEASE(oldTex);
 	REF_PTR_RELEASE(newTex);
@@ -336,26 +342,28 @@ int W3DAssetManager::replacePrototypeTexture(RenderObjClass *robj, const char * 
 /** Generals specific version that looks for a texture which has been house-color tinted.
 	Don't use this unless you really need it.  For normal textures, use Get_Texture().
 */
-TextureClass * W3DAssetManager::Find_Texture(const char * name, const int color)
+TextureClass *W3DAssetManager::Find_Texture(const char *name, const int color)
 {
 	char newname[512];
 	Munge_Texture_Name(newname, name, color);
 
 	// see if we have a cached copy
 	TextureClass *newtex = TextureHash.Get(newname);
-	if (newtex) {
+	if (newtex)
+	{
 		newtex->Add_Ref();
 	}
 	return newtex;
 }
 
 //---------------------------------------------------------------------
-TextureClass * W3DAssetManager::Recolor_Texture(TextureClass *texture, const int color)
+TextureClass *W3DAssetManager::Recolor_Texture(TextureClass *texture, const int color)
 {
-	const char *name=texture->Get_Texture_Name();
+	const char *name = texture->Get_Texture_Name();
 
 	TextureClass *newtex = Find_Texture(name, color);
-	if (newtex) {
+	if (newtex)
+	{
 		return newtex;
 	}
 
@@ -364,56 +372,73 @@ TextureClass * W3DAssetManager::Recolor_Texture(TextureClass *texture, const int
 
 //---------------------------------------------------------------------
 const Int TEAM_COLOR_PALETTE_SIZE = 16;
-const UnsignedShort houseColorScale[TEAM_COLOR_PALETTE_SIZE] =
-{
-	255,239,223,211,195,174,167,151,135,123,107,91,79,63,47,35
-};
+const UnsignedShort houseColorScale[TEAM_COLOR_PALETTE_SIZE] = { 255, 239, 223, 211, 195, 174, 167, 151,
+																																 135, 123, 107, 91,	 79,	63,	 47,	35 };
 
 //---------------------------------------------------------------------
 static void remapPalette16Bit(SurfaceClass::SurfaceDescription *sd, UnsignedShort *palette, unsigned int color)
 {
 	UnsignedShort pal[TEAM_COLOR_PALETTE_SIZE];
-	Vector3 rgb,v_color((float)((color>>16)&0xff)/255.0f/255.0f,(float)((color>>8)&0xff)/255.0f/255.0f,(float)(color&0xff)/255.0f/255.0f);
+	Vector3 rgb,
+			v_color(
+					(float)((color >> 16) & 0xff) / 255.0f / 255.0f,
+					(float)((color >> 8) & 0xff) / 255.0f / 255.0f,
+					(float)(color & 0xff) / 255.0f / 255.0f);
 
-	//Generate a new color gradient palette based on reference color
-	for (Int y=0; y<TEAM_COLOR_PALETTE_SIZE; y++)
+	// Generate a new color gradient palette based on reference color
+	for (Int y = 0; y < TEAM_COLOR_PALETTE_SIZE; y++)
 	{
-		rgb.X=(Real)houseColorScale[y]*v_color.X;
-		rgb.Y=(Real)houseColorScale[y]*v_color.Y;
-		rgb.Z=(Real)houseColorScale[y]*v_color.Z;
-		pal[y]=0xffff;	//preset alpha to known value
-		Convert_Pixel((unsigned char *)&pal[y],*sd,rgb);
+		rgb.X = (Real)houseColorScale[y] * v_color.X;
+		rgb.Y = (Real)houseColorScale[y] * v_color.Y;
+		rgb.Z = (Real)houseColorScale[y] * v_color.Z;
+		pal[y] = 0xffff; // preset alpha to known value
+		Convert_Pixel((unsigned char *)&pal[y], *sd, rgb);
 	}
 
-	//check if this pixel is part of team color palette
-	for (Int p=0; p<TEAM_COLOR_PALETTE_SIZE; p++)
-	{	palette[p]=pal[p];	//replace color with house color
+	// check if this pixel is part of team color palette
+	for (Int p = 0; p < TEAM_COLOR_PALETTE_SIZE; p++)
+	{
+		palette[p] = pal[p]; // replace color with house color
 	}
 }
 
 //---------------------------------------------------------------------
-static void remapTexture16Bit(Int dx, Int dy, Int pitch, SurfaceClass::SurfaceDescription *sd, UnsignedShort *palette, UnsignedShort *data, unsigned int color)
+static void remapTexture16Bit(
+		Int dx,
+		Int dy,
+		Int pitch,
+		SurfaceClass::SurfaceDescription *sd,
+		UnsignedShort *palette,
+		UnsignedShort *data,
+		unsigned int color)
 {
 	UnsignedShort pal[TEAM_COLOR_PALETTE_SIZE];
-	Vector3 rgb,v_color((float)((color>>16)&0xff)/255.0f/255.0f,(float)((color>>8)&0xff)/255.0f/255.0f,(float)(color&0xff)/255.0f/255.0f);
+	Vector3 rgb,
+			v_color(
+					(float)((color >> 16) & 0xff) / 255.0f / 255.0f,
+					(float)((color >> 8) & 0xff) / 255.0f / 255.0f,
+					(float)(color & 0xff) / 255.0f / 255.0f);
 
-	//Generate a new color gradient palette based on reference color
-	Int y=0;
-	for (; y<TEAM_COLOR_PALETTE_SIZE; y++)
+	// Generate a new color gradient palette based on reference color
+	Int y = 0;
+	for (; y < TEAM_COLOR_PALETTE_SIZE; y++)
 	{
-		rgb.X=(Real)houseColorScale[y]*v_color.X;
-		rgb.Y=(Real)houseColorScale[y]*v_color.Y;
-		rgb.Z=(Real)houseColorScale[y]*v_color.Z;
-		pal[y]=0xffff;	//preset alpha to known value
-		Convert_Pixel((unsigned char *)&pal[y],*sd,rgb);
+		rgb.X = (Real)houseColorScale[y] * v_color.X;
+		rgb.Y = (Real)houseColorScale[y] * v_color.Y;
+		rgb.Z = (Real)houseColorScale[y] * v_color.Z;
+		pal[y] = 0xffff; // preset alpha to known value
+		Convert_Pixel((unsigned char *)&pal[y], *sd, rgb);
 	}
 
-	for (y=0; y<dy; y++)
-	{	for (Int x=0; x<dx; x++)
-		{	//check if this pixel is part of team color palette
-			for (Int p=0; p<TEAM_COLOR_PALETTE_SIZE; p++)
-			{	if (palette[p]==data[x])
-				{	data[x]=pal[p];	//replace color with house color
+	for (y = 0; y < dy; y++)
+	{
+		for (Int x = 0; x < dx; x++)
+		{ // check if this pixel is part of team color palette
+			for (Int p = 0; p < TEAM_COLOR_PALETTE_SIZE; p++)
+			{
+				if (palette[p] == data[x])
+				{
+					data[x] = pal[p]; // replace color with house color
 					break;
 				}
 			}
@@ -423,51 +448,58 @@ static void remapTexture16Bit(Int dx, Int dy, Int pitch, SurfaceClass::SurfaceDe
 	}
 }
 
-//Use hue shift instead of alpha blend to apply house color to textures
+// Use hue shift instead of alpha blend to apply house color to textures
 #define DO_HUE_SHIFT
 
 //---------------------------------------------------------------------
-//Input texture is assumed to be in ARGB 4444 format.
-static void remapAlphaTexture16Bit(Int dx, Int dy, Int pitch, SurfaceClass::SurfaceDescription *sd, UnsignedShort *data, unsigned int color)
+// Input texture is assumed to be in ARGB 4444 format.
+static void remapAlphaTexture16Bit(
+		Int dx,
+		Int dy,
+		Int pitch,
+		SurfaceClass::SurfaceDescription *sd,
+		UnsignedShort *data,
+		unsigned int color)
 {
 	UnsignedShort pixel;
 	UnsignedShort pixelAlpha;
 #ifndef DO_HUE_SHIFT
-	float fpixelAlpha,fpixelAlphaInv;
+	float fpixelAlpha, fpixelAlphaInv;
 #endif
-	Vector3 rgb,v_color((float)((color>>16)&0xff)/255.0f,(float)((color>>8)&0xff)/255.0f,(float)(color&0xff)/255.0f);
-	Int x,y;
+	Vector3 rgb,
+			v_color((float)((color >> 16) & 0xff) / 255.0f, (float)((color >> 8) & 0xff) / 255.0f, (float)(color & 0xff) / 255.0f);
+	Int x, y;
 
 #ifdef DO_HUE_SHIFT
 	Vector3 hsv;
 	Vector3 hsv_color;
-	RGB_To_HSV(hsv_color,v_color);
+	RGB_To_HSV(hsv_color, v_color);
 #endif
 
-	for (y=0; y<dy; y++)
+	for (y = 0; y < dy; y++)
 	{
-		for (x=0; x<dx; x++)
+		for (x = 0; x < dx; x++)
 		{
-			pixel=data[x];
-			pixelAlpha=15-(pixel>>12);	//get alpha for house color
+			pixel = data[x];
+			pixelAlpha = 15 - (pixel >> 12); // get alpha for house color
 			if (pixelAlpha)
-			{	//some house color needs to show through
+			{ // some house color needs to show through
 				///@todo: optimize this alpha blend to use fixed point math.
 #ifdef DO_HUE_SHIFT
-				RGB_To_HSV(hsv,Vector3(((pixel>>8)&0xf)/15.0f,((pixel>>4)&0xf)/15.0f,(pixel &0xf)/15.0f));
-				hsv.X=hsv_color.X;
-				hsv.Y*=hsv_color.Y;
-				HSV_To_RGB(rgb,hsv);
+				RGB_To_HSV(hsv, Vector3(((pixel >> 8) & 0xf) / 15.0f, ((pixel >> 4) & 0xf) / 15.0f, (pixel & 0xf) / 15.0f));
+				hsv.X = hsv_color.X;
+				hsv.Y *= hsv_color.Y;
+				HSV_To_RGB(rgb, hsv);
 #else
-				fpixelAlpha=pixelAlpha/15.0f;
-				fpixelAlphaInv=1.0f-fpixelAlpha;
-				rgb.X=fpixelAlpha * v_color.X + fpixelAlphaInv*(Real)((pixel>>8)&0xf)/15.0f;	//red
-				rgb.Y=fpixelAlpha * v_color.Y + fpixelAlphaInv*(Real)((pixel>>4)&0xf)/15.0f; //green
-				rgb.Z=fpixelAlpha * v_color.Z + fpixelAlphaInv*(Real)(pixel&0xf)/15.0f; //blue
+				fpixelAlpha = pixelAlpha / 15.0f;
+				fpixelAlphaInv = 1.0f - fpixelAlpha;
+				rgb.X = fpixelAlpha * v_color.X + fpixelAlphaInv * (Real)((pixel >> 8) & 0xf) / 15.0f; // red
+				rgb.Y = fpixelAlpha * v_color.Y + fpixelAlphaInv * (Real)((pixel >> 4) & 0xf) / 15.0f; // green
+				rgb.Z = fpixelAlpha * v_color.Z + fpixelAlphaInv * (Real)(pixel & 0xf) / 15.0f; // blue
 #endif
-				data[x] = REAL_TO_INT(rgb.X*15.0f)<<8 | REAL_TO_INT(rgb.Y*15.0f)<<4 | REAL_TO_INT(rgb.Z*15.0f);
+				data[x] = REAL_TO_INT(rgb.X * 15.0f) << 8 | REAL_TO_INT(rgb.Y * 15.0f) << 4 | REAL_TO_INT(rgb.Z * 15.0f);
 			}
-			data[x] |= 0xf000;	//force alpha to opaque.
+			data[x] |= 0xf000; // force alpha to opaque.
 		}
 		data += pitch;
 	}
@@ -477,47 +509,66 @@ static void remapAlphaTexture16Bit(Int dx, Int dy, Int pitch, SurfaceClass::Surf
 static void remapPalette32Bit(SurfaceClass::SurfaceDescription *sd, UnsignedInt *palette, unsigned int color)
 {
 	UnsignedInt pal[TEAM_COLOR_PALETTE_SIZE];
-	Vector3 rgb,v_color((float)((color>>16)&0xff)/255.0f/255.0f,(float)((color>>8)&0xff)/255.0f/255.0f,(float)(color&0xff)/255.0f/255.0f);
+	Vector3 rgb,
+			v_color(
+					(float)((color >> 16) & 0xff) / 255.0f / 255.0f,
+					(float)((color >> 8) & 0xff) / 255.0f / 255.0f,
+					(float)(color & 0xff) / 255.0f / 255.0f);
 
-	//Generate a new color gradient palette based on reference color
-	for (Int y=0; y<TEAM_COLOR_PALETTE_SIZE; y++)
+	// Generate a new color gradient palette based on reference color
+	for (Int y = 0; y < TEAM_COLOR_PALETTE_SIZE; y++)
 	{
-		rgb.X=(Real)houseColorScale[y]*v_color.X;
-		rgb.Y=(Real)houseColorScale[y]*v_color.Y;
-		rgb.Z=(Real)houseColorScale[y]*v_color.Z;
-		pal[y]=0xffffffff;	//preset alpha to known value
-		Convert_Pixel((unsigned char *)&pal[y],*sd,rgb);
+		rgb.X = (Real)houseColorScale[y] * v_color.X;
+		rgb.Y = (Real)houseColorScale[y] * v_color.Y;
+		rgb.Z = (Real)houseColorScale[y] * v_color.Z;
+		pal[y] = 0xffffffff; // preset alpha to known value
+		Convert_Pixel((unsigned char *)&pal[y], *sd, rgb);
 	}
 
-	//check if this pixel is part of team color palette
-	for (Int p=0; p<TEAM_COLOR_PALETTE_SIZE; p++)
-	{	palette[p]=pal[p];	//replace color with house color
+	// check if this pixel is part of team color palette
+	for (Int p = 0; p < TEAM_COLOR_PALETTE_SIZE; p++)
+	{
+		palette[p] = pal[p]; // replace color with house color
 	}
 }
 
 //---------------------------------------------------------------------
-static void remapTexture32Bit(Int dx, Int dy, Int pitch, SurfaceClass::SurfaceDescription *sd, UnsignedInt *palette, UnsignedInt *data, unsigned int color)
+static void remapTexture32Bit(
+		Int dx,
+		Int dy,
+		Int pitch,
+		SurfaceClass::SurfaceDescription *sd,
+		UnsignedInt *palette,
+		UnsignedInt *data,
+		unsigned int color)
 {
 	UnsignedInt pal[TEAM_COLOR_PALETTE_SIZE];
-	Vector3 rgb,v_color((float)((color>>16)&0xff)/255.0f/255.0f,(float)((color>>8)&0xff)/255.0f/255.0f,(float)(color&0xff)/255.0f/255.0f);
+	Vector3 rgb,
+			v_color(
+					(float)((color >> 16) & 0xff) / 255.0f / 255.0f,
+					(float)((color >> 8) & 0xff) / 255.0f / 255.0f,
+					(float)(color & 0xff) / 255.0f / 255.0f);
 
-	//Generate a new color gradient palette based on reference color
-	Int y=0;
-	for (; y<TEAM_COLOR_PALETTE_SIZE; y++)
+	// Generate a new color gradient palette based on reference color
+	Int y = 0;
+	for (; y < TEAM_COLOR_PALETTE_SIZE; y++)
 	{
-		rgb.X=(Real)houseColorScale[y]*v_color.X;
-		rgb.Y=(Real)houseColorScale[y]*v_color.Y;
-		rgb.Z=(Real)houseColorScale[y]*v_color.Z;
-		pal[y]=0xffffffff;	//preset alpha to known value
-		Convert_Pixel((unsigned char *)&pal[y],*sd,rgb);
+		rgb.X = (Real)houseColorScale[y] * v_color.X;
+		rgb.Y = (Real)houseColorScale[y] * v_color.Y;
+		rgb.Z = (Real)houseColorScale[y] * v_color.Z;
+		pal[y] = 0xffffffff; // preset alpha to known value
+		Convert_Pixel((unsigned char *)&pal[y], *sd, rgb);
 	}
 
-	for (y=0; y<dy; y++)
-	{	for (Int x=0; x<dx; x++)
-		{	//check if this pixel is part of team color palette
-			for (Int p=0; p<TEAM_COLOR_PALETTE_SIZE; p++)
-			{	if (palette[p]==data[x])
-				{	data[x]=pal[p];	//replace color with house color
+	for (y = 0; y < dy; y++)
+	{
+		for (Int x = 0; x < dx; x++)
+		{ // check if this pixel is part of team color palette
+			for (Int p = 0; p < TEAM_COLOR_PALETTE_SIZE; p++)
+			{
+				if (palette[p] == data[x])
+				{
+					data[x] = pal[p]; // replace color with house color
 					break;
 				}
 			}
@@ -527,44 +578,52 @@ static void remapTexture32Bit(Int dx, Int dy, Int pitch, SurfaceClass::SurfaceDe
 }
 
 //---------------------------------------------------------------------
-static void remapAlphaTexture32Bit(Int dx, Int dy, Int pitch, SurfaceClass::SurfaceDescription *sd, UnsignedInt *data, unsigned int color)
+static void remapAlphaTexture32Bit(
+		Int dx,
+		Int dy,
+		Int pitch,
+		SurfaceClass::SurfaceDescription *sd,
+		UnsignedInt *data,
+		unsigned int color)
 {
 	UnsignedInt pixel;
 	UnsignedInt pixelAlpha;
 #ifndef DO_HUE_SHIFT
-	float fpixelAlpha,fpixelAlphaInv;
+	float fpixelAlpha, fpixelAlphaInv;
 #endif
-	Vector3 rgb,v_color((float)((color>>16)&0xff)/255.0f,(float)((color>>8)&0xff)/255.0f,(float)(color&0xff)/255.0f);
-	Int x,y;
+	Vector3 rgb,
+			v_color((float)((color >> 16) & 0xff) / 255.0f, (float)((color >> 8) & 0xff) / 255.0f, (float)(color & 0xff) / 255.0f);
+	Int x, y;
 #ifdef DO_HUE_SHIFT
 	Vector3 hsv;
 	Vector3 hsv_color;
-	RGB_To_HSV(hsv_color,v_color);
+	RGB_To_HSV(hsv_color, v_color);
 #endif
 
-	for (y=0; y<dy; y++)
-	{	for (x=0; x<dx; x++)
+	for (y = 0; y < dy; y++)
+	{
+		for (x = 0; x < dx; x++)
 		{
-			pixel=data[x];
-			pixelAlpha=255-(pixel>>24);	//get alpha for house color
+			pixel = data[x];
+			pixelAlpha = 255 - (pixel >> 24); // get alpha for house color
 			if (pixelAlpha)
-			{	//some house color needs to show through
+			{ // some house color needs to show through
 #ifdef DO_HUE_SHIFT
-				RGB_To_HSV(hsv,Vector3(((pixel>>16)&0xff)/255.0f,((pixel>>8)&0xff)/255.0f,(pixel &0xff)/255.0f));
-				hsv.X=hsv_color.X;
-				hsv.Y*=hsv_color.Y;
-				HSV_To_RGB(rgb,hsv);
+				RGB_To_HSV(hsv, Vector3(((pixel >> 16) & 0xff) / 255.0f, ((pixel >> 8) & 0xff) / 255.0f, (pixel & 0xff) / 255.0f));
+				hsv.X = hsv_color.X;
+				hsv.Y *= hsv_color.Y;
+				HSV_To_RGB(rgb, hsv);
 #else
 				///@todo: optimize this alpha blend to use fixed point math.
-				fpixelAlpha=pixelAlpha/255.0f;
-				fpixelAlphaInv=1.0f-fpixelAlpha;
-				rgb.X=fpixelAlpha * v_color.X + fpixelAlphaInv*(Real)((pixel>>16)&0xff)/255.0f;	//red
-				rgb.Y=fpixelAlpha * v_color.Y + fpixelAlphaInv*(Real)((pixel>>8)&0xff)/255.0f; //green
-				rgb.Z=fpixelAlpha * v_color.Z + fpixelAlphaInv*(Real)(pixel&0xff)/255.0f; //blue
+				fpixelAlpha = pixelAlpha / 255.0f;
+				fpixelAlphaInv = 1.0f - fpixelAlpha;
+				rgb.X = fpixelAlpha * v_color.X + fpixelAlphaInv * (Real)((pixel >> 16) & 0xff) / 255.0f; // red
+				rgb.Y = fpixelAlpha * v_color.Y + fpixelAlphaInv * (Real)((pixel >> 8) & 0xff) / 255.0f; // green
+				rgb.Z = fpixelAlpha * v_color.Z + fpixelAlphaInv * (Real)(pixel & 0xff) / 255.0f; // blue
 #endif
-				data[x] = REAL_TO_INT(rgb.X*255.0f)<<16 |	REAL_TO_INT(rgb.Y*255.0f)<<8 | REAL_TO_INT(rgb.Z*255.0f);
+				data[x] = REAL_TO_INT(rgb.X * 255.0f) << 16 | REAL_TO_INT(rgb.Y * 255.0f) << 8 | REAL_TO_INT(rgb.Z * 255.0f);
 			}
-			data[x] |= 0xff000000;	//force alpha to opaque.
+			data[x] |= 0xff000000; // force alpha to opaque.
 		}
 		data += pitch;
 	}
@@ -578,40 +637,51 @@ will be remapped using a pre-defined formula.
 */
 void W3DAssetManager::Remap_Palette(SurfaceClass *surface, const int color, Bool doPaletteOnly, Bool useAlpha)
 {
-//	unsigned int x;
+	//	unsigned int x;
 	SurfaceClass::SurfaceDescription sd;
 	surface->Get_Description(sd);
-	int pitch,size;
-//	UnsignedInt newPalette[TEAM_COLOR_PALETTE_SIZE];
+	int pitch, size;
+	//	UnsignedInt newPalette[TEAM_COLOR_PALETTE_SIZE];
 
-	size=PixelSize(sd);
-	unsigned char *bits=(unsigned char*) surface->Lock(&pitch);
+	size = PixelSize(sd);
+	unsigned char *bits = (unsigned char *)surface->Lock(&pitch);
 
 	if (doPaletteOnly)
-	{	//only recolor the palette which is stored in top row.  Model only references these pixels.
+	{ // only recolor the palette which is stored in top row.  Model only references these pixels.
 		if (size == 2)
 			remapPalette16Bit(&sd, (UnsignedShort *)bits, color);
-		else
-		if (size == 4)
-			remapPalette32Bit(&sd, (UnsignedInt *)bits,color);
+		else if (size == 4)
+			remapPalette32Bit(&sd, (UnsignedInt *)bits, color);
 	}
 	else
 	{
 		if (useAlpha)
 		{
 			if (size == 2)
-				remapAlphaTexture16Bit(sd.Width, sd.Height, pitch>>1, &sd, (UnsignedShort *)bits,color);
-			else
-			if (size == 4)
-				remapAlphaTexture32Bit(sd.Width, sd.Height, pitch>>2, &sd, (UnsignedInt *)bits,color);
+				remapAlphaTexture16Bit(sd.Width, sd.Height, pitch >> 1, &sd, (UnsignedShort *)bits, color);
+			else if (size == 4)
+				remapAlphaTexture32Bit(sd.Width, sd.Height, pitch >> 2, &sd, (UnsignedInt *)bits, color);
 		}
 		else
-		{	//Recolor the image using the palette stored in top row
+		{ // Recolor the image using the palette stored in top row
 			if (size == 2)
-				remapTexture16Bit(sd.Width, sd.Height-1, pitch>>1, &sd, (UnsignedShort *)bits, (UnsignedShort *)(bits+pitch), color);
-			else
-			if (size == 4)
-				remapTexture32Bit(sd.Width, sd.Height-1, pitch>>2, &sd, (UnsignedInt *)bits, (UnsignedInt *)(bits+pitch),color);
+				remapTexture16Bit(
+						sd.Width,
+						sd.Height - 1,
+						pitch >> 1,
+						&sd,
+						(UnsignedShort *)bits,
+						(UnsignedShort *)(bits + pitch),
+						color);
+			else if (size == 4)
+				remapTexture32Bit(
+						sd.Width,
+						sd.Height - 1,
+						pitch >> 2,
+						&sd,
+						(UnsignedInt *)bits,
+						(UnsignedInt *)(bits + pitch),
+						color);
 		}
 	}
 
@@ -619,12 +689,13 @@ void W3DAssetManager::Remap_Palette(SurfaceClass *surface, const int color, Bool
 }
 
 //---------------------------------------------------------------------
-TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, const int color)
+TextureClass *W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, const int color)
 {
-	const char *name=texture->Get_Texture_Name();
+	const char *name = texture->Get_Texture_Name();
 
 	// if texture is procedural return NULL
-	if (name && name[0]=='!') return NULL;
+	if (name && name[0] == '!')
+		return NULL;
 
 	// make sure texture is loaded
 	if (!texture->Is_Initialized())
@@ -635,21 +706,20 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 	texture->Get_Level_Description(desc);
 
 	Int psize;
-	psize=PixelSize(desc);
-	DEBUG_ASSERTCRASH( psize == 2 || psize == 4, ("Can't Recolor Texture %s", name) );
+	psize = PixelSize(desc);
+	DEBUG_ASSERTCRASH(psize == 2 || psize == 4, ("Can't Recolor Texture %s", name));
 
-	oldsurf=texture->Get_Surface_Level();
+	oldsurf = texture->Get_Surface_Level();
 
-	newsurf=NEW_REF(SurfaceClass,(desc.Width,desc.Height,desc.Format));
-	newsurf->Copy(0,0,0,0,desc.Width,desc.Height,oldsurf);
+	newsurf = NEW_REF(SurfaceClass, (desc.Width, desc.Height, desc.Format));
+	newsurf->Copy(0, 0, 0, 0, desc.Width, desc.Height, oldsurf);
 
-	if (*(name+3) == 'D' || *(name+3) == 'd')
-		Remap_Palette(newsurf,color, true, false );	//texture only contains a palette stored in top row.
-	else
-	if (*(name+3) == 'A' || *(name+3) == 'a')
-		Remap_Palette(newsurf,color, false, true );	//texture only contains a palette stored in top row.
+	if (*(name + 3) == 'D' || *(name + 3) == 'd')
+		Remap_Palette(newsurf, color, true, false); // texture only contains a palette stored in top row.
+	else if (*(name + 3) == 'A' || *(name + 3) == 'a')
+		Remap_Palette(newsurf, color, false, true); // texture only contains a palette stored in top row.
 
-	TextureClass * newtex=NEW_REF(TextureClass,(newsurf,(MipCountType)texture->Get_Mip_Level_Count()));
+	TextureClass *newtex = NEW_REF(TextureClass, (newsurf, (MipCountType)texture->Get_Mip_Level_Count()));
 	newtex->Get_Filter().Set_Mag_Filter(texture->Get_Filter().Get_Mag_Filter());
 	newtex->Get_Filter().Set_Min_Filter(texture->Get_Filter().Get_Min_Filter());
 	newtex->Get_Filter().Set_Mip_Mapping(texture->Get_Filter().Get_Mip_Mapping());
@@ -670,37 +740,36 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 }
 
 #ifdef DUMP_PERF_STATS
-__int64 Total_Create_Render_Obj_Time=0;
+__int64 Total_Create_Render_Obj_Time = 0;
 #endif
 //---------------------------------------------------------------------
 /** Generals specific code to generate customized render objects for each team color
 	Scale==1.0, color==0x00000000, and oldTexure==NULL are defaults that do nothing.
 */
-RenderObjClass * W3DAssetManager::Create_Render_Obj(
-	const char * name,
-	float scale,
-	const int color,
-	const char *oldTexture,
-	const char *newTexture
-)
+RenderObjClass *W3DAssetManager::Create_Render_Obj(
+		const char *name,
+		float scale,
+		const int color,
+		const char *oldTexture,
+		const char *newTexture)
 {
-	#ifdef DUMP_PERF_STATS
-	__int64 startTime64,endTime64;
+#ifdef DUMP_PERF_STATS
+	__int64 startTime64, endTime64;
 	GetPrecisionTimer(&startTime64);
-	#endif
+#endif
 
 	Bool reallyscale = (WWMath::Fabs(scale - ident_scale) > scale_epsilon);
-	Bool reallycolor = (color & 0xFFFFFF) != 0;	//black is not a valid color and assumes no custom coloring.
+	Bool reallycolor = (color & 0xFFFFFF) != 0; // black is not a valid color and assumes no custom coloring.
 	Bool reallytexture = (oldTexture != NULL && newTexture != NULL);
 
 	// base case, no scale or color
 	if (!reallyscale && !reallycolor && !reallytexture)
 	{
-		RenderObjClass *robj=WW3DAssetManager::Create_Render_Obj(name);
-	#ifdef DUMP_PERF_STATS
+		RenderObjClass *robj = WW3DAssetManager::Create_Render_Obj(name);
+#ifdef DUMP_PERF_STATS
 		GetPrecisionTimer(&endTime64);
-		Total_Create_Render_Obj_Time += endTime64-startTime64;
-	#endif
+		Total_Create_Render_Obj_Time += endTime64 - startTime64;
+#endif
 		return robj;
 	}
 
@@ -713,49 +782,51 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	Set_WW3D_Load_On_Demand(false); // munged name will never be found in a file.
 	rendobj = WW3DAssetManager::Create_Render_Obj(newname);
 	if (rendobj)
-	{	//store the color that we used to create asset so we can read it back out
-		//when we need to save this render object to a file.  Used during saving
-		//of fog of war ghost objects.
+	{ // store the color that we used to create asset so we can read it back out
+		// when we need to save this render object to a file.  Used during saving
+		// of fog of war ghost objects.
 		rendobj->Set_ObjectColor(color);
 		Set_WW3D_Load_On_Demand(true); // Auto Load.
 
-	#ifdef DUMP_PERF_STATS
+#ifdef DUMP_PERF_STATS
 		GetPrecisionTimer(&endTime64);
-		Total_Create_Render_Obj_Time += endTime64-startTime64;
-	#endif
+		Total_Create_Render_Obj_Time += endTime64 - startTime64;
+#endif
 		return rendobj;
 	}
 
 	// create a new one based on exisiting prototype
 
-	WWPROFILE( "WW3DAssetManager::Create_Render_Obj" );
+	WWPROFILE("WW3DAssetManager::Create_Render_Obj");
 	WWMEMLOG(MEM_GEOMETRY);
 
 	// Try to find a prototype
-	PrototypeClass * proto = Find_Prototype(name);
+	PrototypeClass *proto = Find_Prototype(name);
 
 	Set_WW3D_Load_On_Demand(true); // Auto Load.
 	if (WW3D_Load_On_Demand && proto == NULL)
 	{
 		// If we didn't find one, try to load on demand
-		char filename [MAX_PATH];
-		const char *mesh_name = strchr (name, '.');
+		char filename[MAX_PATH];
+		const char *mesh_name = strchr(name, '.');
 		if (mesh_name != NULL)
 		{
 			lstrcpyn(filename, name, ((int)mesh_name) - ((int)name) + 1);
 			lstrcat(filename, ".w3d");
-		} else {
-			sprintf( filename, "%s.w3d", name);
+		}
+		else
+		{
+			sprintf(filename, "%s.w3d", name);
 		}
 
 		// If we can't find it, try the parent directory
-		if ( Load_3D_Assets( filename ) == false )
+		if (Load_3D_Assets(filename) == false)
 		{
-			StringClass	new_filename = StringClass("..\\") + filename;
-			Load_3D_Assets( new_filename );
+			StringClass new_filename = StringClass("..\\") + filename;
+			Load_3D_Assets(new_filename);
 		}
 
-		proto = Find_Prototype(name);		// try again
+		proto = Find_Prototype(name); // try again
 	}
 
 	if (proto == NULL)
@@ -763,32 +834,32 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 		static int warning_count = 0;
 		if (++warning_count <= 20)
 		{
-			WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s",name));
+			WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s", name));
 		}
-	#ifdef DUMP_PERF_STATS
+#ifdef DUMP_PERF_STATS
 		GetPrecisionTimer(&endTime64);
-		Total_Create_Render_Obj_Time += endTime64-startTime64;
-	#endif
-		return NULL;		// Failed to find a prototype
+		Total_Create_Render_Obj_Time += endTime64 - startTime64;
+#endif
+		return NULL; // Failed to find a prototype
 	}
 
 	rendobj = proto->Create();
 
 	if (!rendobj)
 	{
-	#ifdef DUMP_PERF_STATS
+#ifdef DUMP_PERF_STATS
 		GetPrecisionTimer(&endTime64);
-		Total_Create_Render_Obj_Time += endTime64-startTime64;
-	#endif
+		Total_Create_Render_Obj_Time += endTime64 - startTime64;
+#endif
 		return NULL;
 	}
 
-	Make_Unique(rendobj,reallyscale,reallycolor);
+	Make_Unique(rendobj, reallyscale, reallycolor);
 	if (reallytexture)
 	{
 		TextureClass *oldTex = Get_Texture(oldTexture);
 		TextureClass *newTex = Get_Texture(newTexture);
-		replaceAssetTexture(rendobj,oldTex,newTex);
+		replaceAssetTexture(rendobj, oldTex, newTex);
 		REF_PTR_RELEASE(newTex);
 		REF_PTR_RELEASE(oldTex);
 	}
@@ -796,7 +867,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 		rendobj->Scale(scale);
 
 	if (reallycolor)
-		Recolor_Asset(rendobj,color);
+		Recolor_Asset(rendobj, color);
 
 	W3DPrototypeClass *w3dproto = newInstance(W3DPrototypeClass)(rendobj, newname);
 	rendobj->Release_Ref();
@@ -807,7 +878,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 
 #ifdef DUMP_PERF_STATS
 	GetPrecisionTimer(&endTime64);
-	Total_Create_Render_Obj_Time += endTime64-startTime64;
+	Total_Create_Render_Obj_Time += endTime64 - startTime64;
 #endif
 
 	return rendobj;
@@ -815,61 +886,63 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 
 //---------------------------------------------------------------------
 /** Generals specific code to generate customized render objects for each team color
-*/
+ */
 int W3DAssetManager::Recolor_Asset(RenderObjClass *robj, const int color)
 {
 	if (TheGlobalData->m_headless)
 		return 0;
 
-	switch (robj->Class_ID())	{
-	case RenderObjClass::CLASSID_MESH:
-		return Recolor_Mesh(robj,color);
-		break;
-	case RenderObjClass::CLASSID_HLOD:
-		return Recolor_HLOD(robj,color);
-		break;
+	switch (robj->Class_ID())
+	{
+		case RenderObjClass::CLASSID_MESH:
+			return Recolor_Mesh(robj, color);
+			break;
+		case RenderObjClass::CLASSID_HLOD:
+			return Recolor_HLOD(robj, color);
+			break;
 	}
 	return 0;
 }
 
 //---------------------------------------------------------------------
 /** Generals specific code to generate customized render objects for each team color
-*/
+ */
 int W3DAssetManager::Recolor_Mesh(RenderObjClass *robj, const int color)
 {
 	if (TheGlobalData->m_headless)
 		return 0;
 
 	int i;
-	int didRecolor=0;
+	int didRecolor = 0;
 	const char *meshName;
 
-	MeshClass *mesh=(MeshClass*) robj;
-	MeshModelClass * model = mesh->Get_Model();
-	MaterialInfoClass	*material = mesh->Get_Material_Info();
+	MeshClass *mesh = (MeshClass *)robj;
+	MeshModelClass *model = mesh->Get_Model();
+	MaterialInfoClass *material = mesh->Get_Material_Info();
 
 	// recolor vertex material (assuming mesh is housecolor)
-	if ( (( (meshName=strchr(mesh->Get_Name(),'.') ) != 0 && *(meshName++)) || ( (meshName=mesh->Get_Name()) != NULL)) &&
-		_strnicmp(meshName,"HOUSECOLOR", 10) == 0)
-	{	for (i=0; i<material->Vertex_Material_Count(); i++)
-			Recolor_Vertex_Material(material->Peek_Vertex_Material(i),color);
-		didRecolor=1;
+	if ((((meshName = strchr(mesh->Get_Name(), '.')) != 0 && *(meshName++)) || ((meshName = mesh->Get_Name()) != NULL))
+			&& _strnicmp(meshName, "HOUSECOLOR", 10) == 0)
+	{
+		for (i = 0; i < material->Vertex_Material_Count(); i++)
+			Recolor_Vertex_Material(material->Peek_Vertex_Material(i), color);
+		didRecolor = 1;
 	}
 
 	// recolor textures
-	TextureClass *newtex,*oldtex;
-	for (i=0; i<material->Texture_Count(); i++)
+	TextureClass *newtex, *oldtex;
+	for (i = 0; i < material->Texture_Count(); i++)
 	{
-		oldtex=material->Peek_Texture(i);
-		if (_strnicmp(oldtex->Get_Texture_Name(),"ZHC", 3) == 0)
-		{	//This texture needs to be adjusted for housecolor
-			newtex=Recolor_Texture(oldtex,color);
+		oldtex = material->Peek_Texture(i);
+		if (_strnicmp(oldtex->Get_Texture_Name(), "ZHC", 3) == 0)
+		{ // This texture needs to be adjusted for housecolor
+			newtex = Recolor_Texture(oldtex, color);
 			if (newtex)
 			{
-				model->Replace_Texture(oldtex,newtex);
-				material->Replace_Texture(i,newtex);
+				model->Replace_Texture(oldtex, newtex);
+				material->Replace_Texture(i, newtex);
 				REF_PTR_RELEASE(newtex);
-				didRecolor=1;
+				didRecolor = 1;
 			}
 		}
 	}
@@ -881,19 +954,20 @@ int W3DAssetManager::Recolor_Mesh(RenderObjClass *robj, const int color)
 
 //---------------------------------------------------------------------
 /** Generals specific code to generate customized render objects for each team color
-*/
+ */
 
 int W3DAssetManager::Recolor_HLOD(RenderObjClass *robj, const int color)
 {
 	if (TheGlobalData->m_headless)
 		return 0;
 
-	int didRecolor=0;
+	int didRecolor = 0;
 
 	int num_sub = robj->Get_Num_Sub_Objects();
-	for(int i = 0; i < num_sub; i++) {
+	for (int i = 0; i < num_sub; i++)
+	{
 		RenderObjClass *sub_obj = robj->Get_Sub_Object(i);
-		didRecolor |= Recolor_Asset(sub_obj,color);
+		didRecolor |= Recolor_Asset(sub_obj, color);
 		REF_PTR_RELEASE(sub_obj);
 	}
 	return didRecolor;
@@ -901,64 +975,65 @@ int W3DAssetManager::Recolor_HLOD(RenderObjClass *robj, const int color)
 
 //---------------------------------------------------------------------
 /** Generals specific code to generate customized render objects for each team color
-*/
+ */
 void W3DAssetManager::Recolor_Vertex_Material(VertexMaterialClass *vmat, const int color)
 {
-	Vector3 rgb,rgb2;
+	Vector3 rgb, rgb2;
 
-	rgb.X = (Real)((color >> 16) & 0xff )/255.0f;
-	rgb.Y = (Real)((color >> 8) & 0xff )/255.0f;
-	rgb.Z = (Real)(color & 0xff)/255.0f;
+	rgb.X = (Real)((color >> 16) & 0xff) / 255.0f;
+	rgb.Y = (Real)((color >> 8) & 0xff) / 255.0f;
+	rgb.Z = (Real)(color & 0xff) / 255.0f;
 
-	//We ignore the existing ambinent/diffuse and assume they were 1.0.  We can change
-	//to scaling them if required.
+	// We ignore the existing ambinent/diffuse and assume they were 1.0.  We can change
+	// to scaling them if required.
 
-//	vmat->Get_Ambient(&rgb2);
-//	Recolor(rgb,hsv_shift);
-	rgb2.X = rgb.X;	//scale colors
-	rgb2.Y = rgb.Y;	//scale colors
-	rgb2.Z = rgb.Z;	//scale colors
+	//	vmat->Get_Ambient(&rgb2);
+	//	Recolor(rgb,hsv_shift);
+	rgb2.X = rgb.X; // scale colors
+	rgb2.Y = rgb.Y; // scale colors
+	rgb2.Z = rgb.Z; // scale colors
 	vmat->Set_Ambient(rgb2);
 
-//	vmat->Get_Diffuse(&rgb2);
-//	Recolor(rgb,hsv_shift);
-	rgb2.X = rgb.X;	//scale colors
-	rgb2.Y = rgb.Y;	//scale colors
-	rgb2.Z = rgb.Z;	//scale colors
+	//	vmat->Get_Diffuse(&rgb2);
+	//	Recolor(rgb,hsv_shift);
+	rgb2.X = rgb.X; // scale colors
+	rgb2.Y = rgb.Y; // scale colors
+	rgb2.Z = rgb.Z; // scale colors
 	vmat->Set_Diffuse(rgb2);
 }
 
 #ifdef DUMP_PERF_STATS
-__int64 Total_Load_3D_Assets=0;
-static Int Load_3D_Asset_Recursions=0;
+__int64 Total_Load_3D_Assets = 0;
+static Int Load_3D_Asset_Recursions = 0;
 #endif
 //---------------------------------------------------------------------
-bool W3DAssetManager::Load_3D_Assets( const char * filename )
+bool W3DAssetManager::Load_3D_Assets(const char *filename)
 {
 #ifdef DUMP_PERF_STATS
-		Load_3D_Asset_Recursions++;
+	Load_3D_Asset_Recursions++;
 
-		__int64 startTime64,endTime64;
-		GetPrecisionTimer(&startTime64);
+	__int64 startTime64, endTime64;
+	GetPrecisionTimer(&startTime64);
 #endif
 
 	// Try to find an existing prototype
 	char basename[512];
 	strcpy(basename, filename);
-	char *pext = strrchr(basename, '.');	//find file extension
+	char *pext = strrchr(basename, '.'); // find file extension
 	if (pext)
-		*pext = '\0';	//drop the extension
-	PrototypeClass * proto = Find_Prototype(basename);
+		*pext = '\0'; // drop the extension
+	PrototypeClass *proto = Find_Prototype(basename);
 	if (proto)
 	{
 #ifdef DUMP_PERF_STATS
 		if (Load_3D_Asset_Recursions == 1)
-		{	GetPrecisionTimer(&endTime64);
-			Total_Load_3D_Assets += endTime64-startTime64;
+		{
+			GetPrecisionTimer(&endTime64);
+			Total_Load_3D_Assets += endTime64 - startTime64;
 		}
 		Load_3D_Asset_Recursions--;
 #endif
-		return TRUE;	//this file has already been loaded.
+		return TRUE; // this file has already been loaded.
 	}
 
 	bool result = WW3DAssetManager::Load_3D_Assets(filename);
@@ -966,54 +1041,53 @@ bool W3DAssetManager::Load_3D_Assets( const char * filename )
 #if defined(RTS_DEBUG)
 	if (result && TheGlobalData->m_preloadReport)
 	{
-		//loading a new asset and app is requesting a log of all loaded assets.
-		FILE *logfile=fopen("PreloadedAssets.txt","a+");	//append to log
+		// loading a new asset and app is requesting a log of all loaded assets.
+		FILE *logfile = fopen("PreloadedAssets.txt", "a+"); // append to log
 		if (logfile)
 		{
-			StringClass lower_case_name(filename,true);
+			StringClass lower_case_name(filename, true);
 			_strlwr(lower_case_name.Peek_Buffer());
-			fprintf(logfile,"3D: %s\n",lower_case_name.str());
+			fprintf(logfile, "3D: %s\n", lower_case_name.str());
 			fclose(logfile);
 		}
 	}
 #endif
 #ifdef DUMP_PERF_STATS
 	if (Load_3D_Asset_Recursions == 1)
-	{	GetPrecisionTimer(&endTime64);
-		Total_Load_3D_Assets += endTime64-startTime64;
+	{
+		GetPrecisionTimer(&endTime64);
+		Total_Load_3D_Assets += endTime64 - startTime64;
 	}
 	Load_3D_Asset_Recursions--;
 #endif
 	return result;
-
 }
 
 #ifdef DUMP_PERF_STATS
-__int64 Total_Get_HAnim_Time=0;
-static Int HAnim_Recursions=0;
+__int64 Total_Get_HAnim_Time = 0;
+static Int HAnim_Recursions = 0;
 #endif
 //---------------------------------------------------------------------
-HAnimClass *	W3DAssetManager::Get_HAnim(const char * name)
+HAnimClass *W3DAssetManager::Get_HAnim(const char *name)
 {
 #ifdef DUMP_PERF_STATS
 	HAnim_Recursions++;
 
-	__int64 startTime64,endTime64;
+	__int64 startTime64, endTime64;
 	GetPrecisionTimer(&startTime64);
 #endif
-	WWPROFILE( "WW3DAssetManager::Get_HAnim" );
+	WWPROFILE("WW3DAssetManager::Get_HAnim");
 
-	HAnimClass *anim=WW3DAssetManager::Get_HAnim(name);
+	HAnimClass *anim = WW3DAssetManager::Get_HAnim(name);
 #ifdef DUMP_PERF_STATS
 	if (HAnim_Recursions == 1)
 	{
 		GetPrecisionTimer(&endTime64);
-		Total_Get_HAnim_Time += endTime64-startTime64;
+		Total_Get_HAnim_Time += endTime64 - startTime64;
 	}
 	HAnim_Recursions--;
 #endif
 	return anim;
-
 }
 
 //---------------------------------------------------------------------
@@ -1022,11 +1096,12 @@ HAnimClass *	W3DAssetManager::Get_HAnim(const char * name)
 
 //---------------------------------------------------------------------
 /** Generals specific code to generate customized render objects for each team color
-*/
+ */
 void W3DAssetManager::Make_HLOD_Unique(RenderObjClass *robj, Bool geometry, Bool colors)
 {
 	int num_sub = robj->Get_Num_Sub_Objects();
-	for(int i = 0; i < num_sub; i++) {
+	for (int i = 0; i < num_sub; i++)
+	{
 		RenderObjClass *sub_obj = robj->Get_Sub_Object(i);
 		Make_Unique(sub_obj, geometry, colors);
 		REF_PTR_RELEASE(sub_obj);
@@ -1035,16 +1110,17 @@ void W3DAssetManager::Make_HLOD_Unique(RenderObjClass *robj, Bool geometry, Bool
 
 //---------------------------------------------------------------------
 /** Generals specific code to generate customized render objects for each team color
-*/
+ */
 void W3DAssetManager::Make_Unique(RenderObjClass *robj, Bool geometry, Bool colors)
 {
-	switch (robj->Class_ID())	{
-	case RenderObjClass::CLASSID_MESH:
-		Make_Mesh_Unique(robj,geometry,colors);
-		break;
-	case RenderObjClass::CLASSID_HLOD:
-		Make_HLOD_Unique(robj,geometry,colors);
-		break;
+	switch (robj->Class_ID())
+	{
+		case RenderObjClass::CLASSID_MESH:
+			Make_Mesh_Unique(robj, geometry, colors);
+			break;
+		case RenderObjClass::CLASSID_HLOD:
+			Make_HLOD_Unique(robj, geometry, colors);
+			break;
 	}
 }
 
@@ -1055,24 +1131,26 @@ static Bool getMeshColorMethods(MeshClass *mesh, Bool &vertexColor, Bool &textur
 	vertexColor = false;
 	textureColor = false;
 
-	//Check if mesh is using custom texture containing house color
+	// Check if mesh is using custom texture containing house color
 	MaterialInfoClass *material = mesh->Get_Material_Info();
 	if (material)
-	{	for (int j=0; j<material->Texture_Count(); j++)
-			if (_strnicmp(material->Peek_Texture(j)->Get_Texture_Name(),"ZHC",3) == 0)
-			{	textureColor = true;
+	{
+		for (int j = 0; j < material->Texture_Count(); j++)
+			if (_strnicmp(material->Peek_Texture(j)->Get_Texture_Name(), "ZHC", 3) == 0)
+			{
+				textureColor = true;
 				break;
 			}
 		REF_PTR_RELEASE(material);
 	}
 
-	//Check if mesh is using a custom mesh which contains house color in material.
-	//Meshes which are part of another model have names in the form "name.name" while
-	//isolated meshes are just "name".  We check for both starting with "HOUSECOLOR".
+	// Check if mesh is using a custom mesh which contains house color in material.
+	// Meshes which are part of another model have names in the form "name.name" while
+	// isolated meshes are just "name".  We check for both starting with "HOUSECOLOR".
 	const char *meshName;
-	if ( ( (meshName=strchr(mesh->Get_Name(),'.') ) != 0 && *(meshName++)) || ( (meshName=mesh->Get_Name()) != NULL) )
-	{	//Check if this object has housecolors on mesh
-		if ( _strnicmp(meshName,"HOUSECOLOR", 10) == 0)
+	if (((meshName = strchr(mesh->Get_Name(), '.')) != 0 && *(meshName++)) || ((meshName = mesh->Get_Name()) != NULL))
+	{ // Check if this object has housecolors on mesh
+		if (_strnicmp(meshName, "HOUSECOLOR", 10) == 0)
 			vertexColor = true;
 	}
 
@@ -1081,26 +1159,26 @@ static Bool getMeshColorMethods(MeshClass *mesh, Bool &vertexColor, Bool &textur
 
 //---------------------------------------------------------------------
 /** Generals specific code to generate customized render objects for each team color
-*/
+ */
 void W3DAssetManager::Make_Mesh_Unique(RenderObjClass *robj, Bool geometry, Bool colors)
 {
 	int i;
-	MeshClass *mesh=(MeshClass*) robj;
+	MeshClass *mesh = (MeshClass *)robj;
 	Bool isVertexColor, isTextureColor;
 
-	//figure out what type of coloring this mesh requires (if any)
-	if ((colors && getMeshColorMethods(mesh,isVertexColor,isTextureColor)) || geometry)
-	{	//mesh has some house color applied so make those components unique to mesh.
+	// figure out what type of coloring this mesh requires (if any)
+	if ((colors && getMeshColorMethods(mesh, isVertexColor, isTextureColor)) || geometry)
+	{ // mesh has some house color applied so make those components unique to mesh.
 
-		//Create unique data for this mesh
+		// Create unique data for this mesh
 		mesh->Make_Unique();
 
-		MeshModelClass * model = mesh->Get_Model();
+		MeshModelClass *model = mesh->Get_Model();
 
 		if (colors && isVertexColor)
 		{
-			MaterialInfoClass	*material=mesh->Get_Material_Info();
-			for (i=0; i<material->Vertex_Material_Count(); i++)
+			MaterialInfoClass *material = mesh->Get_Material_Info();
+			for (i = 0; i < material->Vertex_Material_Count(); i++)
 				material->Peek_Vertex_Material(i)->Make_Unique();
 			REF_PTR_RELEASE(material);
 		}
@@ -1121,12 +1199,12 @@ equal to 1*/
 void W3DAssetManager::Report_Used_Prototypes(void)
 {
 	int count = Prototypes.Count();
-	while (count-- > 0) {
-
-		PrototypeClass * proto = Prototypes[count];
+	while (count-- > 0)
+	{
+		PrototypeClass *proto = Prototypes[count];
 		if (proto->Get_Class_ID() == RenderObjClass::CLASSID_HLOD || proto->Get_Class_ID() == RenderObjClass::CLASSID_MESH)
 		{
-			DEBUG_LOG(("**Unfreed Prototype On Map Reset: %s",proto->Get_Name()));
+			DEBUG_LOG(("**Unfreed Prototype On Map Reset: %s", proto->Get_Name()));
 		}
 	}
 }
@@ -1150,15 +1228,15 @@ void W3DAssetManager::Report_Used_Assets(void)
 //---------------------------------------------------------------------
 void W3DAssetManager::Report_Used_FontChars(void)
 {
-	Int count=FontCharsList.Count();
+	Int count = FontCharsList.Count();
 
 	while (count-- > 0)
 	{
 		if (FontCharsList[count]->Num_Refs() >= 1)
 		{
-			DEBUG_LOG(("**Unfreed FontChar On Map Reset: %s",FontCharsList[count]->Get_Name()));
-			//FontCharsList[count]->Release_Ref();
-			//FontCharsList.Delete(count);
+			DEBUG_LOG(("**Unfreed FontChar On Map Reset: %s", FontCharsList[count]->Get_Name()));
+			// FontCharsList[count]->Release_Ref();
+			// FontCharsList.Delete(count);
 		}
 	}
 }
@@ -1172,54 +1250,58 @@ void W3DAssetManager::Report_Used_Textures(void)
 	** refcount is one.
 	*/
 
-//	unsigned count=0;
-//	TextureClass* temp_textures[256];
+	//	unsigned count=0;
+	//	TextureClass* temp_textures[256];
 
-	HashTemplateIterator<StringClass,TextureClass*> ite(TextureHash);
-	for (ite.First();!ite.Is_Done();ite.Next()) {
-		TextureClass* tex=ite.Peek_Value();
-		if (tex->Num_Refs() <= 1) {
-	/*		temp_textures[count++]=tex;
-			if (count==256) {
-				for (unsigned i=0;i<256;++i) {
-					TextureHash.Remove(temp_textures[i]->Get_Texture_Name());
-					temp_textures[i]->Release_Ref();
-				}
-				count=0;
-				ite.First();	// iterator doesn't support modifying the hash table while iterating, so start from the
-									// beginning.
-			}*/
+	HashTemplateIterator<StringClass, TextureClass *> ite(TextureHash);
+	for (ite.First(); !ite.Is_Done(); ite.Next())
+	{
+		TextureClass *tex = ite.Peek_Value();
+		if (tex->Num_Refs() <= 1)
+		{
+			/*		temp_textures[count++]=tex;
+					if (count==256) {
+						for (unsigned i=0;i<256;++i) {
+							TextureHash.Remove(temp_textures[i]->Get_Texture_Name());
+							temp_textures[i]->Release_Ref();
+						}
+						count=0;
+						ite.First();	// iterator doesn't support modifying the hash table while iterating, so start from the
+											// beginning.
+					}*/
 		}
 		else
 		{
-			DEBUG_LOG(("**Texture \"%s\" referenced %d times on map reset",tex->Get_Texture_Name().str(),tex->Num_Refs()-1));
+			DEBUG_LOG(("**Texture \"%s\" referenced %d times on map reset", tex->Get_Texture_Name().str(), tex->Num_Refs() - 1));
 		}
 	}
-/*	for (unsigned i=0;i<count;++i) {
-		TextureHash.Remove(temp_textures[i]->Get_Texture_Name());
-		temp_textures[i]->Release_Ref();
-	}*/
+	/*	for (unsigned i=0;i<count;++i) {
+			TextureHash.Remove(temp_textures[i]->Get_Texture_Name());
+			temp_textures[i]->Release_Ref();
+		}*/
 }
 
 //---------------------------------------------------------------------
 /**Report all used fonts*/
-void W3DAssetManager::Report_Used_Font3DDatas( void )
+void W3DAssetManager::Report_Used_Font3DDatas(void)
 {
 	/*
 	** for each font data in the list, get it, check it's refcount, and and release ref it if the
 	** refcount is one.
 	*/
-	SLNode<Font3DDataClass> *node, * next;
-	for (	node = Font3DDatas.Head(); node; node = next) {
+	SLNode<Font3DDataClass> *node, *next;
+	for (node = Font3DDatas.Head(); node; node = next)
+	{
 		next = node->Next();
 		Font3DDataClass *font = node->Data();
-		if (font->Num_Refs() == 1) {
-/*			Font3DDatas.Remove(font);
-			font->Release_Ref();*/
+		if (font->Num_Refs() == 1)
+		{
+			/*			Font3DDatas.Remove(font);
+						font->Release_Ref();*/
 		}
 		else
 		{
-			DEBUG_LOG(("**Unfreed Font3DDatas On Map Reset: %s",font->Name));
+			DEBUG_LOG(("**Unfreed Font3DDatas On Map Reset: %s", font->Name));
 		}
 	}
 }
@@ -1399,7 +1481,8 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scal
 	return w3dproto->Create();
 }
 
-TextureClass * W3DAssetManager::Get_Texture_With_HSV_Shift(const char * filename, const Vector3 &hsv_shift, MipCountType mip_level_count)
+TextureClass * W3DAssetManager::Get_Texture_With_HSV_Shift(const char * filename, const Vector3 &hsv_shift, MipCountType
+mip_level_count)
 {
 	WWPROFILE( "W3DAssetManager::Get_Texture with HSV shift" );
 

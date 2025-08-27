@@ -34,11 +34,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
-
 
 #ifndef SAVELOAD_H
 #define SAVELOAD_H
@@ -55,7 +53,6 @@ class PersistClass;
 class PostLoadableClass;
 class ChunkSaveClass;
 class ChunkLoadClass;
-
 
 //////////////////////////////////////////////////////////////////////////////////
 //
@@ -132,7 +129,6 @@ class ChunkLoadClass;
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	SaveLoadSystemClass
@@ -141,62 +137,60 @@ class ChunkLoadClass;
 class SaveLoadSystemClass
 {
 public:
-
 	/*
 	** Save-Load interface.  To create a file, ask each sub-system to save itself.
 	** To load a file just open it and pass it to the load method.
 	*/
-	static bool		Save (ChunkSaveClass &csave, SaveLoadSubSystemClass & subsystem);
-	static bool		Load (ChunkLoadClass &cload,bool auto_post_load = true);
-	static bool		Post_Load_Processing (void(*network_callback)(void));
+	static bool Save(ChunkSaveClass &csave, SaveLoadSubSystemClass &subsystem);
+	static bool Load(ChunkLoadClass &cload, bool auto_post_load = true);
+	static bool Post_Load_Processing(void (*network_callback)(void));
 	/*
 	** Look up the persist factory for a given chunk id
 	*/
-	static PersistFactoryClass * Find_Persist_Factory(uint32 chunk_id);
+	static PersistFactoryClass *Find_Persist_Factory(uint32 chunk_id);
 
 	/*
 	** Post-Load interface.  An object being loaded can ask for a callback after
 	** all objects have been loaded and pointers re-mapped.
 	*/
-	static void		Register_Post_Load_Callback(PostLoadableClass * obj);
+	static void Register_Post_Load_Callback(PostLoadableClass *obj);
 
 	/*
 	** Pointer Remapping interface.  NOTE: use the macros defined below to
 	** get debug info with your pointers when doing a debug build.
 	*/
-	static void		Register_Pointer (void *old_pointer, void *new_pointer);
+	static void Register_Pointer(void *old_pointer, void *new_pointer);
 
 #ifdef WWDEBUG
-	static void		Request_Pointer_Remap (void **pointer_to_convert,const char * file = NULL,int line = 0);
-	static void		Request_Ref_Counted_Pointer_Remap (RefCountClass **pointer_to_convert,const char * file = NULL,int line = 0);
+	static void Request_Pointer_Remap(void **pointer_to_convert, const char *file = NULL, int line = 0);
+	static void Request_Ref_Counted_Pointer_Remap(RefCountClass **pointer_to_convert, const char *file = NULL, int line = 0);
 #else
-	static void		Request_Pointer_Remap (void **pointer_to_convert);
-	static void		Request_Ref_Counted_Pointer_Remap (RefCountClass **pointer_to_convert);
+	static void Request_Pointer_Remap(void **pointer_to_convert);
+	static void Request_Ref_Counted_Pointer_Remap(RefCountClass **pointer_to_convert);
 #endif
 
 protected:
-
 	/*
 	** Internal SaveLoadSystem functions
 	*/
-	static void		Register_Sub_System (SaveLoadSubSystemClass * subsys);
-	static void		Unregister_Sub_System (SaveLoadSubSystemClass * subsys);
-	static SaveLoadSubSystemClass * Find_Sub_System (uint32 chunk_id);
+	static void Register_Sub_System(SaveLoadSubSystemClass *subsys);
+	static void Unregister_Sub_System(SaveLoadSubSystemClass *subsys);
+	static SaveLoadSubSystemClass *Find_Sub_System(uint32 chunk_id);
 
-	static void		Register_Persist_Factory(PersistFactoryClass * factory);
-	static void		Unregister_Persist_Factory(PersistFactoryClass * factory);
+	static void Register_Persist_Factory(PersistFactoryClass *factory);
+	static void Unregister_Persist_Factory(PersistFactoryClass *factory);
 
-	static void		Link_Sub_System(SaveLoadSubSystemClass * subsys);
-	static void		Unlink_Sub_System(SaveLoadSubSystemClass * subsys);
-	static void		Link_Factory(PersistFactoryClass * factory);
-	static void		Unlink_Factory(PersistFactoryClass * factory);
+	static void Link_Sub_System(SaveLoadSubSystemClass *subsys);
+	static void Unlink_Sub_System(SaveLoadSubSystemClass *subsys);
+	static void Link_Factory(PersistFactoryClass *factory);
+	static void Unlink_Factory(PersistFactoryClass *factory);
 
-	static bool		Is_Post_Load_Callback_Registered(PostLoadableClass * obj);
+	static bool Is_Post_Load_Callback_Registered(PostLoadableClass *obj);
 
-	static SaveLoadSubSystemClass *		SubSystemListHead;
-	static PersistFactoryClass *			FactoryListHead;
-	static PointerRemapClass				PointerRemapper;
-	static SList<PostLoadableClass>		PostLoadList;
+	static SaveLoadSubSystemClass *SubSystemListHead;
+	static PersistFactoryClass *FactoryListHead;
+	static PointerRemapClass PointerRemapper;
+	static SList<PostLoadableClass> PostLoadList;
 
 	/*
 	** these are friends so that they can register themselves at construction time.
@@ -205,19 +199,16 @@ protected:
 	friend class PersistFactoryClass;
 };
 
-
 /*
 ** Use the following macros to automatically enable pointer-remap DEBUG code.  Remember that
 ** in all cases you submit a pointer to the pointer you want re-mapped.
 */
 #ifdef WWDEBUG
-#define REQUEST_POINTER_REMAP(pp)					SaveLoadSystemClass::Request_Pointer_Remap(pp,__FILE__,__LINE__)
-#define REQUEST_REF_COUNTED_POINTER_REMAP(pp)	SaveLoadSystemClass::Request_Ref_Counted_Pointer_Remap(pp,__FILE__,__LINE__)
+#define REQUEST_POINTER_REMAP(pp) SaveLoadSystemClass::Request_Pointer_Remap(pp, __FILE__, __LINE__)
+#define REQUEST_REF_COUNTED_POINTER_REMAP(pp) SaveLoadSystemClass::Request_Ref_Counted_Pointer_Remap(pp, __FILE__, __LINE__)
 #else
-#define REQUEST_POINTER_REMAP(pp)					SaveLoadSystemClass::Request_Pointer_Remap(pp)
-#define REQUEST_REF_COUNTED_POINTER_REMAP(pp)	SaveLoadSystemClass::Request_Ref_Counted_Pointer_Remap(pp)
+#define REQUEST_POINTER_REMAP(pp) SaveLoadSystemClass::Request_Pointer_Remap(pp)
+#define REQUEST_REF_COUNTED_POINTER_REMAP(pp) SaveLoadSystemClass::Request_Ref_Counted_Pointer_Remap(pp)
 #endif
 
-
-#endif //SAVELOAD_H
-
+#endif // SAVELOAD_H

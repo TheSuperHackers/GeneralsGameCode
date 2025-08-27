@@ -35,27 +35,24 @@
 
 #ifdef RTS_DEBUG
 
-//#include "winsock2.h" // for htonl
+// #include "winsock2.h" // for htonl
 
 class CRC
 {
 public:
 	CRC() { crc = 0; }
 
-	void computeCRC( const void *buf, Int len );		///< Compute the CRC for a buffer, added into current CRC
-	void clear( void ) { crc = 0; }									///< Clears the CRC to 0
-//	UnsignedInt get( void ) { return htonl(crc); }	///< Get the combined CRC
-	UnsignedInt get( void );
+	void computeCRC(const void *buf, Int len); ///< Compute the CRC for a buffer, added into current CRC
+	void clear(void) { crc = 0; } ///< Clears the CRC to 0
+	//	UnsignedInt get( void ) { return htonl(crc); }	///< Get the combined CRC
+	UnsignedInt get(void);
 
 #if (defined(_MSC_VER) && _MSC_VER < 1300) && RETAIL_COMPATIBLE_CRC
-  void set( UnsignedInt v )
-  {
-    crc = v;
-  }
+	void set(UnsignedInt v) { crc = v; }
 #endif
 
 private:
-	void addCRC( UnsignedByte val );									///< CRC a 4-byte block
+	void addCRC(UnsignedByte val); ///< CRC a 4-byte block
 
 	UnsignedInt crc;
 };
@@ -66,37 +63,37 @@ private:
 class CRC
 {
 public:
-	CRC(void) { crc=0; }
+	CRC(void) { crc = 0; }
 
-  /// Compute the CRC for a buffer, added into current CRC
-	__forceinline void computeCRC( const void *buf, Int len )
-  {
-    if (!buf||len<1)
-      return;
+	/// Compute the CRC for a buffer, added into current CRC
+	__forceinline void computeCRC(const void *buf, Int len)
+	{
+		if (!buf || len < 1)
+			return;
 
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
-    // C++ version left in for reference purposes
-	  for (UnsignedByte *uintPtr=(UnsignedByte *)buf;len>0;len--,uintPtr++)
-    {
-    	int hibit;
-    	if (crc & 0x80000000)
-      {
-		    hibit = 1;
-	    }
-      else
-      {
-		    hibit = 0;
-	    }
+		// C++ version left in for reference purposes
+		for (UnsignedByte *uintPtr = (UnsignedByte *)buf; len > 0; len--, uintPtr++)
+		{
+			int hibit;
+			if (crc & 0x80000000)
+			{
+				hibit = 1;
+			}
+			else
+			{
+				hibit = 0;
+			}
 
-	    crc <<= 1;
-	    crc += *uintPtr;
-	    crc += hibit;
-    }
+			crc <<= 1;
+			crc += *uintPtr;
+			crc += hibit;
+		}
 #else
-    // ASM version, verified by comparing resulting data with C++ version data
-    unsigned *crcPtr=&crc;
-    _asm
-    {
+		// ASM version, verified by comparing resulting data with C++ version data
+		unsigned *crcPtr = &crc;
+		_asm
+				{
       mov esi,[buf]
       mov ecx,[len]
       dec ecx
@@ -111,27 +108,19 @@ public:
       dec ecx
       jns lp
       mov dword ptr [edi],ebx
-    };
+				}
+		;
 #endif
-  }
+	}
 
-  /// Clears the CRC to 0
-	void clear( void )
-  {
-    crc = 0;
-  }
+	/// Clears the CRC to 0
+	void clear(void) { crc = 0; }
 
-  ///< Get the combined CRC
-	UnsignedInt get( void ) const
-  {
-    return crc;
-  }
+	///< Get the combined CRC
+	UnsignedInt get(void) const { return crc; }
 
 #if (defined(_MSC_VER) && _MSC_VER < 1300) && RETAIL_COMPATIBLE_CRC
-  void set( UnsignedInt v )
-  {
-    crc = v;
-  }
+	void set(UnsignedInt v) { crc = v; }
 #endif
 
 private:

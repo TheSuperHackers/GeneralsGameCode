@@ -27,7 +27,7 @@
 // Desc:   Die method responsible for telling TheScriptEngine that a special power has been completed
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Player.h"
 #include "Common/SpecialPower.h"
@@ -38,7 +38,8 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SpecialPowerCompletionDie::SpecialPowerCompletionDie( Thing *thing, const ModuleData* moduleData ) : DieModule( thing, moduleData )
+SpecialPowerCompletionDie::SpecialPowerCompletionDie(Thing *thing, const ModuleData *moduleData) :
+		DieModule(thing, moduleData)
 {
 	m_creatorID = INVALID_ID;
 	m_creatorSet = FALSE;
@@ -46,14 +47,13 @@ SpecialPowerCompletionDie::SpecialPowerCompletionDie( Thing *thing, const Module
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SpecialPowerCompletionDie::~SpecialPowerCompletionDie( void )
+SpecialPowerCompletionDie::~SpecialPowerCompletionDie(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerCompletionDie::onDie( const DamageInfo *damageInfo )
+void SpecialPowerCompletionDie::onDie(const DamageInfo *damageInfo)
 {
 	if (!isDieApplicable(damageInfo))
 		return;
@@ -62,20 +62,20 @@ void SpecialPowerCompletionDie::onDie( const DamageInfo *damageInfo )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerCompletionDie::notifyScriptEngine( void )
+void SpecialPowerCompletionDie::notifyScriptEngine(void)
 {
 	if (m_creatorID != INVALID_ID)
 	{
 		TheScriptEngine->notifyOfCompletedSpecialPower(
-			getObject()->getControllingPlayer()->getPlayerIndex(),
-			getSpecialPowerCompletionDieModuleData()->m_specialPowerTemplate->getName(),
-			m_creatorID);
+				getObject()->getControllingPlayer()->getPlayerIndex(),
+				getSpecialPowerCompletionDieModuleData()->m_specialPowerTemplate->getName(),
+				m_creatorID);
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerCompletionDie::setCreator( ObjectID creatorID )
+void SpecialPowerCompletionDie::setCreator(ObjectID creatorID)
 {
 	if (!m_creatorSet)
 	{
@@ -87,45 +87,42 @@ void SpecialPowerCompletionDie::setCreator( ObjectID creatorID )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SpecialPowerCompletionDie::crc( Xfer *xfer )
+void SpecialPowerCompletionDie::crc(Xfer *xfer)
 {
-
 	// extend base class
-	DieModule::crc( xfer );
+	DieModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SpecialPowerCompletionDie::xfer( Xfer *xfer )
+void SpecialPowerCompletionDie::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DieModule::xfer( xfer );
+	DieModule::xfer(xfer);
 
 	// creator id
-	xfer->xferObjectID( &m_creatorID );
+	xfer->xferObjectID(&m_creatorID);
 
 	// creator set
-	xfer->xferBool( &m_creatorSet );
+	xfer->xferBool(&m_creatorSet);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpecialPowerCompletionDie::loadPostProcess( void )
+void SpecialPowerCompletionDie::loadPostProcess(void)
 {
-
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

@@ -25,12 +25,13 @@
 #include "EditParameter.h"
 #include "GameLogic/ScriptEngine.h"
 
-
-LRESULT CMyTreeCtrl::WindowProc(	UINT message, WPARAM wParam, LPARAM lParam )
+LRESULT CMyTreeCtrl::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if (message==WM_KEYDOWN) {
-		Int nVirtKey = (int) wParam;    // virtual-key code
-		if (nVirtKey == ' ') {
+	if (message == WM_KEYDOWN)
+	{
+		Int nVirtKey = (int)wParam; // virtual-key code
+		if (nVirtKey == ' ')
+		{
 			return 0;
 		}
 	}
@@ -40,30 +41,26 @@ LRESULT CMyTreeCtrl::WindowProc(	UINT message, WPARAM wParam, LPARAM lParam )
 /////////////////////////////////////////////////////////////////////////////
 // EditCondition dialog
 
-
-EditCondition::EditCondition(CWnd* pParent /*=NULL*/)
-	: CDialog(EditCondition::IDD, pParent)
+EditCondition::EditCondition(CWnd *pParent /*=NULL*/) : CDialog(EditCondition::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(EditCondition)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void EditCondition::DoDataExchange(CDataExchange* pDX)
+void EditCondition::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(EditCondition)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(EditCondition, CDialog)
-	//{{AFX_MSG_MAP(EditCondition)
-	ON_CBN_SELCHANGE(IDC_CONDITION_TYPE, OnSelchangeConditionType)
-	ON_WM_TIMER()
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(EditCondition)
+ON_CBN_SELCHANGE(IDC_CONDITION_TYPE, OnSelchangeConditionType)
+ON_WM_TIMER()
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /** Locate the child item in tree item parent with name pLabel.  If not
@@ -74,14 +71,16 @@ static HTREEITEM findOrAdd(CTreeCtrl *tree, HTREEITEM parent, const char *pLabel
 	char buffer[_MAX_PATH];
 	::memset(&ins, 0, sizeof(ins));
 	HTREEITEM child = tree->GetChildItem(parent);
-	while (child != NULL) {
-		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
+	while (child != NULL)
+	{
+		ins.item.mask = TVIF_HANDLE | TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
-		ins.item.cchTextMax = sizeof(buffer)-2;
+		ins.item.cchTextMax = sizeof(buffer) - 2;
 		tree->GetItem(&ins.item);
-		if (strcmp(buffer, pLabel) == 0) {
-			return(child);
+		if (strcmp(buffer, pLabel) == 0)
+		{
+			return (child);
 		}
 		child = tree->GetNextSiblingItem(child);
 	}
@@ -90,32 +89,33 @@ static HTREEITEM findOrAdd(CTreeCtrl *tree, HTREEITEM parent, const char *pLabel
 	::memset(&ins, 0, sizeof(ins));
 	ins.hParent = parent;
 	ins.hInsertAfter = TVI_SORT;
-	ins.item.mask = TVIF_PARAM|TVIF_TEXT;
+	ins.item.mask = TVIF_PARAM | TVIF_TEXT;
 	ins.item.lParam = -1;
-	ins.item.pszText = (char*)pLabel;
+	ins.item.pszText = (char *)pLabel;
 	ins.item.cchTextMax = strlen(pLabel);
 	child = tree->InsertItem(&ins);
-	return(child);
+	return (child);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // EditCondition message handlers
 
-
 BOOL EditCondition::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-
-//	CDC *pDc =GetDC();
+	//	CDC *pDc =GetDC();
 	CRect rect;
 
 	CTreeCtrl *pTree = (CTreeCtrl *)GetDlgItem(IDC_CONDITION_TREE);
 	pTree->GetWindowRect(&rect);
 
 	ScreenToClient(&rect);
-	m_conditionTreeView.Create(TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS|
-		TVS_SHOWSELALWAYS|TVS_DISABLEDRAGDROP|WS_TABSTOP, rect, this, IDC_CONDITION_TREE);
+	m_conditionTreeView.Create(
+			TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS | TVS_SHOWSELALWAYS | TVS_DISABLEDRAGDROP | WS_TABSTOP,
+			rect,
+			this,
+			IDC_CONDITION_TREE);
 	m_conditionTreeView.ShowWindow(SW_SHOW);
 	pTree->DestroyWindow();
 
@@ -123,85 +123,100 @@ BOOL EditCondition::OnInitDialog()
 	pWnd->GetWindowRect(&rect);
 
 	ScreenToClient(&rect);
-	rect.DeflateRect(2,2,2,2);
-	m_myEditCtrl.Create(WS_CHILD | WS_TABSTOP | ES_MULTILINE, rect, this, IDC_RICH_EDIT_HERE+1);
+	rect.DeflateRect(2, 2, 2, 2);
+	m_myEditCtrl.Create(WS_CHILD | WS_TABSTOP | ES_MULTILINE, rect, this, IDC_RICH_EDIT_HERE + 1);
 	m_myEditCtrl.ShowWindow(SW_SHOW);
 	m_myEditCtrl.SetEventMask(m_myEditCtrl.GetEventMask() | ENM_LINK | ENM_SELCHANGE | ENM_KEYEVENTS);
 
 	Int i;
 	HTREEITEM selItem = NULL;
-	for (i=0; i<Condition::NUM_ITEMS; i++) {
+	for (i = 0; i < Condition::NUM_ITEMS; i++)
+	{
 		const ConditionTemplate *pTemplate = TheScriptEngine->getConditionTemplate(i);
 		char prefix[_MAX_PATH];
 		const char *name = pTemplate->getName().str();
 
 		Int count = 0;
 		HTREEITEM parent = TVI_ROOT;
-		do {
+		do
+		{
 			count = 0;
 			const char *nameStart = name;
-			while (*name && *name != '/') {
+			while (*name && *name != '/')
+			{
 				count++;
 				name++;
 			}
-			if (*name=='/') {
+			if (*name == '/')
+			{
 				count++;
 				name++;
-			} else {
+			}
+			else
+			{
 				name = nameStart;
 				count = 0;
 			}
-			if (count>0) {
+			if (count > 0)
+			{
 				strncpy(prefix, nameStart, count);
-				prefix[count-1] = 0;
+				prefix[count - 1] = 0;
 				parent = findOrAdd(&m_conditionTreeView, parent, prefix);
 			}
-		} while (count>0);
+		} while (count > 0);
 
 		TVINSERTSTRUCT ins;
 		::memset(&ins, 0, sizeof(ins));
 		ins.hParent = parent;
 		ins.hInsertAfter = TVI_SORT;
-		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
+		ins.item.mask = TVIF_PARAM | TVIF_TEXT;
 		ins.item.lParam = i;
-		ins.item.pszText = (char*)name;
+		ins.item.pszText = (char *)name;
 		ins.item.cchTextMax = 0;
 		HTREEITEM item = m_conditionTreeView.InsertItem(&ins);
-		if (i == m_condition->getConditionType()) {
+		if (i == m_condition->getConditionType())
+		{
 			selItem = item;
 		}
 
 		name = pTemplate->getName2().str();
 		count = 0;
-		if (pTemplate->getName2().isEmpty()) continue;
+		if (pTemplate->getName2().isEmpty())
+			continue;
 		parent = TVI_ROOT;
-		do {
+		do
+		{
 			count = 0;
 			const char *nameStart = name;
-			while (*name && *name != '/') {
+			while (*name && *name != '/')
+			{
 				count++;
 				name++;
 			}
-			if (*name=='/') {
+			if (*name == '/')
+			{
 				count++;
 				name++;
-			} else {
+			}
+			else
+			{
 				name = nameStart;
 				count = 0;
 			}
-			if (count>0) {
+			if (count > 0)
+			{
 				strncpy(prefix, nameStart, count);
-				prefix[count-1] = 0;
+				prefix[count - 1] = 0;
 				parent = findOrAdd(&m_conditionTreeView, parent, prefix);
 			}
-		} while (count>0);
+		} while (count > 0);
 
 		::memset(&ins, 0, sizeof(ins));
 		ins.hParent = parent;
 		ins.hInsertAfter = TVI_SORT;
-		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
+		ins.item.mask = TVIF_PARAM | TVIF_TEXT;
 		ins.item.lParam = i;
-		ins.item.pszText = (char*)name;
+		ins.item.pszText = (char *)name;
 		ins.item.cchTextMax = 0;
 		m_conditionTreeView.InsertItem(&ins);
 	}
@@ -213,19 +228,19 @@ BOOL EditCondition::OnInitDialog()
 	formatConditionText(0);
 	m_conditionTreeView.SetFocus();
 
-	return FALSE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return FALSE; // return TRUE unless you set the focus to a control
+								// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-
-void EditCondition::formatConditionText(Int parameterNdx) {
+void EditCondition::formatConditionText(Int parameterNdx)
+{
 	CHARFORMAT2 cf;
 	m_updating = true;
 	long startSel, endSel;
 	m_myEditCtrl.GetSel(startSel, endSel);
 	memset(&cf, 0, sizeof(cf));
 	cf.cbSize = sizeof(cf);
-	cf.dwMask = CFM_FACE | CFM_SIZE |CFM_CHARSET | CFM_BOLD | CFM_LINK;
+	cf.dwMask = CFM_FACE | CFM_SIZE | CFM_CHARSET | CFM_BOLD | CFM_LINK;
 	cf.bCharSet = DEFAULT_CHARSET;
 	cf.yHeight = 14;
 	cf.bPitchAndFamily = FF_DONTCARE;
@@ -235,12 +250,12 @@ void EditCondition::formatConditionText(Int parameterNdx) {
 
 	m_myEditCtrl.SetSel(0, 1000);
 	m_myEditCtrl.SetSelectionCharFormat(cf);
- 	//m_myEditCtrl.SetReadOnly();
-	// Set up the links.
-	cf.dwMask =  CFE_UNDERLINE | CFM_LINK | CFM_COLOR;
+	// m_myEditCtrl.SetReadOnly();
+	//  Set up the links.
+	cf.dwMask = CFE_UNDERLINE | CFM_LINK | CFM_COLOR;
 
 	cf.dwEffects = CFE_LINK | CFE_UNDERLINE;
-	cf.crTextColor = RGB(0,0,255);
+	cf.crTextColor = RGB(0, 0, 255);
 	m_curEditParameter = parameterNdx;
 
 	AsciiString strings[MAX_PARMS];
@@ -250,25 +265,32 @@ void EditCondition::formatConditionText(Int parameterNdx) {
 	AsciiString warningText;
 	AsciiString informationText;
 	Int i;
-	for (i=0; i<MAX_PARMS; i++) {
-		if (i<numStrings) {
+	for (i = 0; i < MAX_PARMS; i++)
+	{
+		if (i < numStrings)
+		{
 			curChar += strings[i].getLength();
 		}
-		if (i<m_condition->getNumParameters()) {
+		if (i < m_condition->getNumParameters())
+		{
 			warningText.concat(EditParameter::getWarningText(m_condition->getParameter(i), false));
 			informationText.concat(EditParameter::getInfoText(m_condition->getParameter(i)));
 			numChars = m_condition->getParameter(i)->getUiText().getLength();
-			if (curChar==0) {
+			if (curChar == 0)
+			{
 				curChar++;
 				numChars--;
 			}
-			m_myEditCtrl.SetSel(curChar, curChar+numChars);
-			if (i==parameterNdx) {
+			m_myEditCtrl.SetSel(curChar, curChar + numChars);
+			if (i == parameterNdx)
+			{
 				startSel = curChar;
-				endSel = curChar+numChars;
-				cf.crTextColor = RGB(0,0,0); //black
-			}	else {
-				cf.crTextColor = RGB(0,0,255); //blue
+				endSel = curChar + numChars;
+				cf.crTextColor = RGB(0, 0, 0); // black
+			}
+			else
+			{
+				cf.crTextColor = RGB(0, 0, 255); // blue
 			}
 			m_myEditCtrl.SetSelectionCharFormat(cf);
 			curChar += numChars;
@@ -276,22 +298,31 @@ void EditCondition::formatConditionText(Int parameterNdx) {
 	}
 
 	CString cstr;
-	if (warningText.isEmpty()) {
-		if (informationText.isEmpty()) {
-			if (cstr.LoadString(IDS_SCRIPT_NOWARNINGS)) {
+	if (warningText.isEmpty())
+	{
+		if (informationText.isEmpty())
+		{
+			if (cstr.LoadString(IDS_SCRIPT_NOWARNINGS))
+			{
 				GetDlgItem(IDC_WARNINGS_CAPTION)->SetWindowText(cstr);
 			}
 			GetDlgItem(IDC_WARNINGS_CAPTION)->EnableWindow(false);
 			GetDlgItem(IDC_WARNINGS)->SetWindowText("");
-		} else {
-			if (cstr.LoadString(IDS_SCRIPT_INFORMATION)) {
+		}
+		else
+		{
+			if (cstr.LoadString(IDS_SCRIPT_INFORMATION))
+			{
 				GetDlgItem(IDC_WARNINGS_CAPTION)->SetWindowText(cstr);
 			}
 			GetDlgItem(IDC_WARNINGS_CAPTION)->EnableWindow(true);
 			GetDlgItem(IDC_WARNINGS)->SetWindowText(informationText.str());
 		}
-	} else {
-		if (cstr.LoadString(IDS_SCRIPT_WARNINGS)) {
+	}
+	else
+	{
+		if (cstr.LoadString(IDS_SCRIPT_WARNINGS))
+		{
 			GetDlgItem(IDC_WARNINGS_CAPTION)->SetWindowText(cstr);
 		}
 		GetDlgItem(IDC_WARNINGS_CAPTION)->EnableWindow(true);
@@ -305,38 +336,44 @@ void EditCondition::formatConditionText(Int parameterNdx) {
 	m_updating = false;
 }
 
-
-
-BOOL EditCondition::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
+BOOL EditCondition::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult)
 {
 	NMTREEVIEW *pHdr = (NMTREEVIEW *)lParam;
 
 	// Handle events from the tree control.
-	if (pHdr->hdr.idFrom == IDC_CONDITION_TREE) {
-		if (pHdr->hdr.code == TVN_SELCHANGED) {
+	if (pHdr->hdr.idFrom == IDC_CONDITION_TREE)
+	{
+		if (pHdr->hdr.code == TVN_SELCHANGED)
+		{
 			char buffer[_MAX_PATH];
 			HTREEITEM hItem = m_conditionTreeView.GetSelectedItem();
 			TVITEM item;
 			::memset(&item, 0, sizeof(item));
-			item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
+			item.mask = TVIF_HANDLE | TVIF_PARAM | TVIF_TEXT | TVIF_STATE;
 			item.hItem = hItem;
 			item.pszText = buffer;
-			item.cchTextMax = sizeof(buffer)-2;
+			item.cchTextMax = sizeof(buffer) - 2;
 			m_conditionTreeView.GetItem(&item);
-			if (item.lParam >= 0) {
+			if (item.lParam >= 0)
+			{
 				enum Condition::ConditionType conditionType = (enum Condition::ConditionType)item.lParam;
-				if (m_condition->getConditionType() != conditionType) {
-					m_condition->setConditionType( conditionType );
+				if (m_condition->getConditionType() != conditionType)
+				{
+					m_condition->setConditionType(conditionType);
 					m_myEditCtrl.SetWindowText(m_condition->getUiText().str());
 					formatConditionText(0);
 				}
 			}
-		} else if (pHdr->hdr.code == TVN_KEYDOWN) {
-			NMTVKEYDOWN	*pKey = (NMTVKEYDOWN*)lParam;
+		}
+		else if (pHdr->hdr.code == TVN_KEYDOWN)
+		{
+			NMTVKEYDOWN *pKey = (NMTVKEYDOWN *)lParam;
 			Int key = pKey->wVKey;
-			if (key==VK_SHIFT || key==VK_SPACE) {
+			if (key == VK_SHIFT || key == VK_SPACE)
+			{
 				HTREEITEM hItem = m_conditionTreeView.GetSelectedItem();
-				if (!m_conditionTreeView.ItemHasChildren(hItem)) {
+				if (!m_conditionTreeView.ItemHasChildren(hItem))
+				{
 					hItem = m_conditionTreeView.GetParentItem(hItem);
 				}
 				m_conditionTreeView.Expand(hItem, TVE_TOGGLE);
@@ -348,10 +385,13 @@ BOOL EditCondition::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 	}
 
 	// Handle events from the rich edit control containg the condition pieces.
-	if (LOWORD(wParam) == IDC_RICH_EDIT_HERE+1) {
+	if (LOWORD(wParam) == IDC_RICH_EDIT_HERE + 1)
+	{
 		NMHDR *pHdr = (NMHDR *)lParam;
-		if (pHdr->hwndFrom == m_myEditCtrl.m_hWnd) {
-			if (pHdr->code == EN_LINK) {
+		if (pHdr->hwndFrom == m_myEditCtrl.m_hWnd)
+		{
+			if (pHdr->code == EN_LINK)
+			{
 				ENLINK *pLink = (ENLINK *)pHdr;
 				CHARRANGE chrg = pLink->chrg;
 				// Determine which parameter.
@@ -360,24 +400,30 @@ BOOL EditCondition::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 				AsciiString strings[MAX_PARMS];
 				Int numStrings = m_condition->getUiStrings(strings);
 				Int i;
- 				Bool match = false;
-				for (i=0; i<MAX_PARMS; i++) {
-					if (i<numStrings) {
+				Bool match = false;
+				for (i = 0; i < MAX_PARMS; i++)
+				{
+					if (i < numStrings)
+					{
 						curChar += strings[i].getLength();
 					}
-					if (i<m_condition->getNumParameters()) {
+					if (i < m_condition->getNumParameters())
+					{
 						numChars = m_condition->getParameter(i)->getUiText().getLength();
-						match = (curChar+numChars/2 > chrg.cpMin && curChar+numChars/2 < chrg.cpMax);
-						if (match) {
+						match = (curChar + numChars / 2 > chrg.cpMin && curChar + numChars / 2 < chrg.cpMax);
+						if (match)
+						{
 							m_curEditParameter = i;
 							break;
 						}
 						curChar += numChars;
 					}
 				}
-				if (pLink->msg == WM_LBUTTONDOWN) {
+				if (pLink->msg == WM_LBUTTONDOWN)
+				{
 					// Determine which parameter.
-					if (match) {
+					if (match)
+					{
 						EditParameter::edit(m_condition->getParameter(m_curEditParameter), 0);
 						m_myEditCtrl.SetWindowText(m_condition->getUiText().str());
 						this->PostMessage(WM_TIMER, 0, 0);
@@ -386,10 +432,12 @@ BOOL EditCondition::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 				}
 				CHARRANGE curChrg;
 				m_myEditCtrl.GetSel(curChrg);
-				if (curChrg.cpMin == chrg.cpMin && curChrg.cpMax == chrg.cpMax) {
+				if (curChrg.cpMin == chrg.cpMin && curChrg.cpMax == chrg.cpMax)
+				{
 					return true;
 				}
-				if (m_modifiedTextColor) {
+				if (m_modifiedTextColor)
+				{
 					formatConditionText(m_curEditParameter);
 				}
 				m_curLinkChrg = chrg;
@@ -399,35 +447,48 @@ BOOL EditCondition::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 				memset(&cf, 0, sizeof(cf));
 				cf.cbSize = sizeof(cf);
 				cf.dwMask = CFM_COLOR;
-				cf.crTextColor = RGB(0,0,0);
+				cf.crTextColor = RGB(0, 0, 0);
 				m_myEditCtrl.SetSelectionCharFormat(cf);
 				m_modifiedTextColor = true;
 				return true;
-			}	else 	if (pHdr->code == EN_SETFOCUS) {
+			}
+			else if (pHdr->code == EN_SETFOCUS)
+			{
 				this->PostMessage(WM_TIMER, 0, 0);
-			}	else 	if (pHdr->code == EN_SELCHANGE) {
-				if (m_updating) {
+			}
+			else if (pHdr->code == EN_SELCHANGE)
+			{
+				if (m_updating)
+				{
 					return true;
 				}
 				CHARRANGE curChrg;
 				m_myEditCtrl.GetSel(curChrg);
-				if (curChrg.cpMin == m_curLinkChrg.cpMin && curChrg.cpMax == m_curLinkChrg.cpMax) {
+				if (curChrg.cpMin == m_curLinkChrg.cpMin && curChrg.cpMax == m_curLinkChrg.cpMax)
+				{
 					return true;
 				}
 				m_myEditCtrl.SetSel(m_curLinkChrg.cpMin, m_curLinkChrg.cpMax);
-				if (m_modifiedTextColor) {
+				if (m_modifiedTextColor)
+				{
 					this->PostMessage(WM_TIMER, 0, 0);
 				}
-			} else if (pHdr->code == EN_MSGFILTER) {
+			}
+			else if (pHdr->code == EN_MSGFILTER)
+			{
 				MSGFILTER *pFilter = (MSGFILTER *)pHdr;
-				if (pFilter->msg == WM_CHAR) {
+				if (pFilter->msg == WM_CHAR)
+				{
 					Int keyPressed = pFilter->wParam;
-					if (keyPressed==VK_RETURN) {
+					if (keyPressed == VK_RETURN)
+					{
 						return 1;
 					}
-					if (keyPressed==VK_RETURN || keyPressed == VK_TAB) {
+					if (keyPressed == VK_RETURN || keyPressed == VK_TAB)
+					{
 						m_curEditParameter++;
-						if (m_curEditParameter >= m_condition->getNumParameters()) {
+						if (m_curEditParameter >= m_condition->getNumParameters())
+						{
 							m_curEditParameter = 0;
 							return 1;
 						}
@@ -436,7 +497,8 @@ BOOL EditCondition::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 					}
 					EditParameter::edit(m_condition->getParameter(m_curEditParameter), keyPressed);
 					m_curEditParameter++;
-					if (m_curEditParameter >= m_condition->getNumParameters()) {
+					if (m_curEditParameter >= m_condition->getNumParameters())
+					{
 						m_curEditParameter = 0;
 					}
 					this->PostMessage(WM_TIMER, 0, 0);
@@ -456,9 +518,11 @@ void EditCondition::OnSelchangeConditionType()
 	CString str;
 	pCmbo->GetWindowText(str);
 	Int i;
-	for (i=0; i<ScriptAction::NUM_ITEMS; i++) {
+	for (i = 0; i < ScriptAction::NUM_ITEMS; i++)
+	{
 		const ConditionTemplate *pTemplate = TheScriptEngine->getConditionTemplate(i);
-		if (str == pTemplate->getName().str()) {
+		if (str == pTemplate->getName().str())
+		{
 			index = i;
 			break;
 		}

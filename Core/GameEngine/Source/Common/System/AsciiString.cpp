@@ -42,17 +42,16 @@
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/CriticalSection.h"
-
 
 // -----------------------------------------------------
 
 /*static*/ AsciiString AsciiString::TheEmptyString;
 
 //-----------------------------------------------------------------------------
-inline char* skipSeps(char* p, const char* seps)
+inline char *skipSeps(char *p, const char *seps)
 {
 	while (*p && strchr(seps, *p) != NULL)
 		++p;
@@ -60,7 +59,7 @@ inline char* skipSeps(char* p, const char* seps)
 }
 
 //-----------------------------------------------------------------------------
-inline char* skipNonSeps(char* p, const char* seps)
+inline char *skipNonSeps(char *p, const char *seps)
 {
 	while (*p && strchr(seps, *p) == NULL)
 		++p;
@@ -68,7 +67,7 @@ inline char* skipNonSeps(char* p, const char* seps)
 }
 
 //-----------------------------------------------------------------------------
-inline char* skipWhitespace(char* p)
+inline char *skipWhitespace(char *p)
 {
 	while (*p && isspace(*p))
 		++p;
@@ -76,7 +75,7 @@ inline char* skipWhitespace(char* p)
 }
 
 //-----------------------------------------------------------------------------
-inline char* skipNonWhitespace(char* p)
+inline char *skipNonWhitespace(char *p)
 {
 	while (*p && !isspace(*p))
 		++p;
@@ -84,7 +83,7 @@ inline char* skipNonWhitespace(char* p)
 }
 
 // -----------------------------------------------------
-AsciiString::AsciiString(const AsciiString& stringSrc) : m_data(stringSrc.m_data)
+AsciiString::AsciiString(const AsciiString &stringSrc) : m_data(stringSrc.m_data)
 {
 	ScopedCriticalSection scopedCriticalSection(TheAsciiStringCriticalSection);
 	if (m_data)
@@ -96,12 +95,15 @@ AsciiString::AsciiString(const AsciiString& stringSrc) : m_data(stringSrc.m_data
 #ifdef RTS_DEBUG
 void AsciiString::validate() const
 {
-	if (!m_data) return;
+	if (!m_data)
+		return;
 	DEBUG_ASSERTCRASH(m_data->m_refCount > 0, ("m_refCount is zero"));
 	DEBUG_ASSERTCRASH(m_data->m_refCount < 32000, ("m_refCount is suspiciously large"));
 	DEBUG_ASSERTCRASH(m_data->m_numCharsAllocated > 0, ("m_numCharsAllocated is zero"));
-//	DEBUG_ASSERTCRASH(m_data->m_numCharsAllocated < 1024, ("m_numCharsAllocated suspiciously large"));
-	DEBUG_ASSERTCRASH(strlen(m_data->peek())+1 <= m_data->m_numCharsAllocated,("str is too long (%d) for storage",strlen(m_data->peek())+1));
+	//	DEBUG_ASSERTCRASH(m_data->m_numCharsAllocated < 1024, ("m_numCharsAllocated suspiciously large"));
+	DEBUG_ASSERTCRASH(
+			strlen(m_data->peek()) + 1 <= m_data->m_numCharsAllocated,
+			("str is too long (%d) for storage", strlen(m_data->peek()) + 1));
 }
 #endif
 
@@ -121,32 +123,43 @@ void AsciiString::debugIgnoreLeaks()
 }
 
 // -----------------------------------------------------
-void AsciiString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData, const char* strToCopy, const char* strToCat)
+void AsciiString::ensureUniqueBufferOfSize(
+		int numCharsNeeded,
+		Bool preserveData,
+		const char *strToCopy,
+		const char *strToCat)
 {
 	validate();
 
-	if (m_data &&
-			m_data->m_refCount == 1 &&
-			m_data->m_numCharsAllocated >= numCharsNeeded)
+	if (m_data && m_data->m_refCount == 1 && m_data->m_numCharsAllocated >= numCharsNeeded)
 	{
 		// no buffer manhandling is needed (it's already large enough, and unique to us)
 		if (strToCopy)
-			// TheSuperHackers @fix Mauller 04/04/2025 Replace strcpy with safer memmove as memory regions can overlap when part of string is copied to itself
+			// TheSuperHackers @fix Mauller 04/04/2025 Replace strcpy with safer memmove as memory regions can overlap when part of
+			// string is copied to itself
 			memmove(m_data->peek(), strToCopy, strlen(strToCopy) + 1);
 		if (strToCat)
 			strcat(m_data->peek(), strToCat);
 		return;
 	}
 
-	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("Cannot use dynamic memory allocator before its initialization. Check static initialization order."));
-	DEBUG_ASSERTCRASH(numCharsNeeded <= MAX_LEN, ("AsciiString::ensureUniqueBufferOfSize exceeds max string length %d with requested length %d", MAX_LEN, numCharsNeeded));
-	int minBytes = sizeof(AsciiStringData) + numCharsNeeded*sizeof(char);
+	DEBUG_ASSERTCRASH(
+			TheDynamicMemoryAllocator != NULL,
+			("Cannot use dynamic memory allocator before its initialization. Check static initialization order."));
+	DEBUG_ASSERTCRASH(
+			numCharsNeeded <= MAX_LEN,
+			("AsciiString::ensureUniqueBufferOfSize exceeds max string length %d with requested length %d",
+			 MAX_LEN,
+			 numCharsNeeded));
+	int minBytes = sizeof(AsciiStringData) + numCharsNeeded * sizeof(char);
 	int actualBytes = TheDynamicMemoryAllocator->getActualAllocationSize(minBytes);
-	AsciiStringData* newData = (AsciiStringData*)TheDynamicMemoryAllocator->allocateBytesDoNotZero(actualBytes, "STR_AsciiString::ensureUniqueBufferOfSize");
+	AsciiStringData *newData = (AsciiStringData *)TheDynamicMemoryAllocator->allocateBytesDoNotZero(
+			actualBytes,
+			"STR_AsciiString::ensureUniqueBufferOfSize");
 	newData->m_refCount = 1;
-	newData->m_numCharsAllocated = (actualBytes - sizeof(AsciiStringData))/sizeof(char);
+	newData->m_numCharsAllocated = (actualBytes - sizeof(AsciiStringData)) / sizeof(char);
 #if defined(RTS_DEBUG)
-	newData->m_debugptr = newData->peek();	// just makes it easier to read in the debugger
+	newData->m_debugptr = newData->peek(); // just makes it easier to read in the debugger
 #endif
 
 	if (m_data && preserveData)
@@ -167,7 +180,6 @@ void AsciiString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData
 	validate();
 }
 
-
 // -----------------------------------------------------
 void AsciiString::releaseBuffer()
 {
@@ -186,10 +198,11 @@ void AsciiString::releaseBuffer()
 }
 
 // -----------------------------------------------------
-AsciiString::AsciiString(const char* s) : m_data(0)
+AsciiString::AsciiString(const char *s) : m_data(0)
 {
-	//DEBUG_ASSERTCRASH(isMemoryManagerOfficiallyInited(), ("Initializing AsciiStrings prior to main (ie, as static vars) can cause memory leak reporting problems. Are you sure you want to do this?"));
-	int len = (s)?strlen(s):0;
+	// DEBUG_ASSERTCRASH(isMemoryManagerOfficiallyInited(), ("Initializing AsciiStrings prior to main (ie, as static vars) can
+	// cause memory leak reporting problems. Are you sure you want to do this?"));
+	int len = (s) ? strlen(s) : 0;
 	if (len)
 	{
 		ensureUniqueBufferOfSize(len + 1, false, s, NULL);
@@ -198,7 +211,7 @@ AsciiString::AsciiString(const char* s) : m_data(0)
 }
 
 // -----------------------------------------------------
-void AsciiString::set(const AsciiString& stringSrc)
+void AsciiString::set(const AsciiString &stringSrc)
 {
 	ScopedCriticalSection scopedCriticalSection(TheAsciiStringCriticalSection);
 
@@ -214,7 +227,7 @@ void AsciiString::set(const AsciiString& stringSrc)
 }
 
 // -----------------------------------------------------
-void AsciiString::set(const char* s)
+void AsciiString::set(const char *s)
 {
 	validate();
 	if (!m_data || s != peek())
@@ -233,17 +246,17 @@ void AsciiString::set(const char* s)
 }
 
 // -----------------------------------------------------
-char*  AsciiString::getBufferForRead(Int len)
+char *AsciiString::getBufferForRead(Int len)
 {
 	validate();
-	DEBUG_ASSERTCRASH(len>0, ("No need to allocate 0 len strings."));
+	DEBUG_ASSERTCRASH(len > 0, ("No need to allocate 0 len strings."));
 	ensureUniqueBufferOfSize(len + 1, false, NULL, NULL);
 	validate();
 	return peek();
 }
 
 // -----------------------------------------------------
-void AsciiString::translate(const UnicodeString& stringSrc)
+void AsciiString::translate(const UnicodeString &stringSrc)
 {
 	validate();
 	/// @todo srj put in a real translation here; this will only work for 7-bit ascii
@@ -255,12 +268,12 @@ void AsciiString::translate(const UnicodeString& stringSrc)
 }
 
 // -----------------------------------------------------
-void AsciiString::concat(const char* s)
+void AsciiString::concat(const char *s)
 {
 	validate();
 	int addlen = strlen(s);
 	if (addlen == 0)
-		return;	// my, that was easy
+		return; // my, that was easy
 
 	if (m_data)
 	{
@@ -375,7 +388,7 @@ void AsciiString::truncateBy(const Int charCount)
 		const size_t len = strlen(peek());
 		if (len > 0)
 		{
-			ensureUniqueBufferOfSize(len+1, true, NULL, NULL);
+			ensureUniqueBufferOfSize(len + 1, true, NULL, NULL);
 			size_t count = charCount;
 			if (charCount > len)
 			{
@@ -408,35 +421,35 @@ void AsciiString::format(AsciiString format, ...)
 {
 	validate();
 	va_list args;
-  va_start(args, format);
+	va_start(args, format);
 	format_va(format, args);
-  va_end(args);
+	va_end(args);
 	validate();
 }
 
 // -----------------------------------------------------
-void AsciiString::format(const char* format, ...)
+void AsciiString::format(const char *format, ...)
 {
 	validate();
 	va_list args;
-  va_start(args, format);
+	va_start(args, format);
 	format_va(format, args);
-  va_end(args);
+	va_end(args);
 	validate();
 }
 
 // -----------------------------------------------------
-void AsciiString::format_va(const AsciiString& format, va_list args)
+void AsciiString::format_va(const AsciiString &format, va_list args)
 {
 	format_va(format.str(), args);
 }
 
 // -----------------------------------------------------
-void AsciiString::format_va(const char* format, va_list args)
+void AsciiString::format_va(const char *format, va_list args)
 {
 	validate();
 	char buf[MAX_FORMAT_BUF_LEN];
-	const int result = vsnprintf(buf, sizeof(buf)/sizeof(char), format, args);
+	const int result = vsnprintf(buf, sizeof(buf) / sizeof(char), format, args);
 	if (result >= 0)
 	{
 		set(buf);
@@ -449,57 +462,57 @@ void AsciiString::format_va(const char* format, va_list args)
 }
 
 // -----------------------------------------------------
-Bool AsciiString::startsWith(const char* p) const
+Bool AsciiString::startsWith(const char *p) const
 {
 	if (*p == 0)
-		return true;	// everything starts with the empty string
+		return true; // everything starts with the empty string
 
 	int lenThis = getLength();
 	int lenThat = strlen(p);
 	if (lenThis < lenThat)
-		return false;	// that must be smaller than this
+		return false; // that must be smaller than this
 
 	return strncmp(peek(), p, lenThat) == 0;
 }
 
 // -----------------------------------------------------
-Bool AsciiString::startsWithNoCase(const char* p) const
+Bool AsciiString::startsWithNoCase(const char *p) const
 {
 	if (*p == 0)
-		return true;	// everything starts with the empty string
+		return true; // everything starts with the empty string
 
 	int lenThis = getLength();
 	int lenThat = strlen(p);
 	if (lenThis < lenThat)
-		return false;	// that must be smaller than this
+		return false; // that must be smaller than this
 
 	return strnicmp(peek(), p, lenThat) == 0;
 }
 
 // -----------------------------------------------------
-Bool AsciiString::endsWith(const char* p) const
+Bool AsciiString::endsWith(const char *p) const
 {
 	if (*p == 0)
-		return true;	// everything ends with the empty string
+		return true; // everything ends with the empty string
 
 	int lenThis = getLength();
 	int lenThat = strlen(p);
 	if (lenThis < lenThat)
-		return false;	// that must be smaller than this
+		return false; // that must be smaller than this
 
 	return strncmp(peek() + lenThis - lenThat, p, lenThat) == 0;
 }
 
 // -----------------------------------------------------
-Bool AsciiString::endsWithNoCase(const char* p) const
+Bool AsciiString::endsWithNoCase(const char *p) const
 {
 	if (*p == 0)
-		return true;	// everything ends with the empty string
+		return true; // everything ends with the empty string
 
 	int lenThis = getLength();
 	int lenThat = strlen(p);
 	if (lenThis < lenThat)
-		return false;	// that must be smaller than this
+		return false; // that must be smaller than this
 
 	return strnicmp(peek() + lenThis - lenThat, p, lenThat) == 0;
 }
@@ -511,7 +524,7 @@ Bool AsciiString::isNone() const
 }
 
 //-----------------------------------------------------------------------------
-Bool AsciiString::nextToken(AsciiString* tok, const char* seps)
+Bool AsciiString::nextToken(AsciiString *tok, const char *seps)
 {
 	if (this->isEmpty() || tok == this)
 		return false;
@@ -519,13 +532,13 @@ Bool AsciiString::nextToken(AsciiString* tok, const char* seps)
 	if (seps == NULL)
 		seps = " \n\r\t";
 
-	char* start = skipSeps(peek(), seps);
-	char* end = skipNonSeps(start, seps);
+	char *start = skipSeps(peek(), seps);
+	char *end = skipNonSeps(start, seps);
 
 	if (end > start)
 	{
 		Int len = end - start;
-		char* tmp = tok->getBufferForRead(len + 1);
+		char *tmp = tok->getBufferForRead(len + 1);
 		memcpy(tmp, start, len);
 		tmp[len] = 0;
 

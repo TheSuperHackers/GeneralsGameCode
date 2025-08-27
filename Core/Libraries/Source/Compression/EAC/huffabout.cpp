@@ -66,23 +66,22 @@
 
 CODEXABOUT *GCALL HUFF_about(void)
 {
-    CODEXABOUT *info;
+	CODEXABOUT *info;
 
-    info = (CODEXABOUT *) galloc(sizeof(CODEXABOUT));
-    if (info)
-    {
-        memset(info, 0, sizeof(CODEXABOUT));
+	info = (CODEXABOUT *)galloc(sizeof(CODEXABOUT));
+	if (info)
+	{
+		memset(info, 0, sizeof(CODEXABOUT));
 
-        info->signature       = QMAKEID('H','U','F','F');
-        info->size            = sizeof(CODEXABOUT);
-        info->version         = 200;    /* codex version number (200) */
-        info->decode          = 1;      /* supports decoding */
-        info->encode          = 1;      /* supports encoding */
-        info->size32          = 0;      /* supports 32 bit size field */
-        strcpy(info->versionstr,    "1.04");     /* version # */
-        strcpy(info->shorttypestr,  "huff");     /* type */
-        strcpy(info->longtypestr,   "Huffman");  /* longtype */
-    }
-    return(info);
+		info->signature = QMAKEID('H', 'U', 'F', 'F');
+		info->size = sizeof(CODEXABOUT);
+		info->version = 200; /* codex version number (200) */
+		info->decode = 1; /* supports decoding */
+		info->encode = 1; /* supports encoding */
+		info->size32 = 0; /* supports 32 bit size field */
+		strcpy(info->versionstr, "1.04"); /* version # */
+		strcpy(info->shorttypestr, "huff"); /* type */
+		strcpy(info->longtypestr, "Huffman"); /* longtype */
+	}
+	return (info);
 }
-

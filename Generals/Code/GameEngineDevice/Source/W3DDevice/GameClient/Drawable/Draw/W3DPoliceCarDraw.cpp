@@ -44,68 +44,64 @@
 //-------------------------------------------------------------------------------------------------
 /** Create a dynamic light for the search light */
 //-------------------------------------------------------------------------------------------------
-W3DDynamicLight *W3DPoliceCarDraw::createDynamicLight( void )
+W3DDynamicLight *W3DPoliceCarDraw::createDynamicLight(void)
 {
 	W3DDynamicLight *light = NULL;
 
 	// get me a dynamic light from the scene
 	light = W3DDisplay::m_3DScene->getADynamicLight();
-	if( light )
+	if (light)
 	{
-
-		light->setEnabled( TRUE );
-		light->Set_Ambient( Vector3( 0.0f, 0.0f, 0.0f ) );
+		light->setEnabled(TRUE);
+		light->Set_Ambient(Vector3(0.0f, 0.0f, 0.0f));
 		// Use all ambient, and no diffuse.  This produces a circle of light on
 		// even and uneven ground.  Diffuse lighting shows up ground unevenness, which looks
 		// funny on a searchlight.  So  no diffuse.  jba.
-		light->Set_Diffuse( Vector3( 0.0f, 0.0f, 0.0f ) );
-		light->Set_Position( Vector3( 0.0f, 0.0f, 0.0f ) );
-		light->Set_Far_Attenuation_Range( 5, 15 );
+		light->Set_Diffuse(Vector3(0.0f, 0.0f, 0.0f));
+		light->Set_Position(Vector3(0.0f, 0.0f, 0.0f));
+		light->Set_Far_Attenuation_Range(5, 15);
 
-	}  // end if
+	} // end if
 
 	return light;
 
-}  // end createDynamicSearchLight
+} // end createDynamicSearchLight
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DPoliceCarDraw::W3DPoliceCarDraw( Thing *thing, const ModuleData* moduleData ) : W3DTruckDraw( thing, moduleData )
+W3DPoliceCarDraw::W3DPoliceCarDraw(Thing *thing, const ModuleData *moduleData) : W3DTruckDraw(thing, moduleData)
 {
 	m_light = NULL;
-	m_curFrame = GameClientRandomValueReal(0, 10 );
-
+	m_curFrame = GameClientRandomValueReal(0, 10);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DPoliceCarDraw::~W3DPoliceCarDraw( void )
+W3DPoliceCarDraw::~W3DPoliceCarDraw(void)
 {
-
 	// disable the light ... the scene will re-use it later
-	if( m_light )
+	if (m_light)
 	{
 		// Have it fade out over 5 frames.
 		m_light->setFrameFade(0, 5);
 		m_light->setDecayRange();
 		m_light->setDecayColor();
 		m_light = NULL;
-	}  // end if
-
+	} // end if
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DPoliceCarDraw::doDrawModule(const Matrix3D* transformMtx)
+void W3DPoliceCarDraw::doDrawModule(const Matrix3D *transformMtx)
 {
 	const Real floatAmt = 8.0f;
 	const Real animAmt = 0.25;
 
 	// get pointers to our render objects that we'll need
-	RenderObjClass* policeCarRenderObj = getRenderObject();
-	if( policeCarRenderObj == NULL )
+	RenderObjClass *policeCarRenderObj = getRenderObject();
+	if (policeCarRenderObj == NULL)
 		return;
 
 	HAnimClass *anim = policeCarRenderObj->Peek_Animation();
@@ -113,7 +109,8 @@ void W3DPoliceCarDraw::doDrawModule(const Matrix3D* transformMtx)
 	{
 		Real frames = anim->Get_Num_Frames();
 		m_curFrame += animAmt;
-		if (m_curFrame > frames-1) {
+		if (m_curFrame > frames - 1)
+		{
 			m_curFrame = 0;
 		}
 		policeCarRenderObj->Set_Animation(anim, m_curFrame);
@@ -121,79 +118,87 @@ void W3DPoliceCarDraw::doDrawModule(const Matrix3D* transformMtx)
 	Real red = 0;
 	Real green = 0;
 	Real blue = 0;
-	if (m_curFrame < 3) {
-		red = 1; green = 0.5;
-	} else if (m_curFrame < 6) {
+	if (m_curFrame < 3)
+	{
 		red = 1;
-	} else if (m_curFrame < 7) {
-		red = 1; green = 0.5;
-	} else if (m_curFrame < 9) {
-		red = 0.5+(9-m_curFrame)/4;
-		blue = (m_curFrame-5)/6;
-	} else if (m_curFrame < 12) {
-		blue=1;
-	} else if (m_curFrame <= 14) {
-		green = (m_curFrame-11)/3;
-		blue = (14-m_curFrame)/2;
-		red =		(m_curFrame-11)/3;
+		green = 0.5;
+	}
+	else if (m_curFrame < 6)
+	{
+		red = 1;
+	}
+	else if (m_curFrame < 7)
+	{
+		red = 1;
+		green = 0.5;
+	}
+	else if (m_curFrame < 9)
+	{
+		red = 0.5 + (9 - m_curFrame) / 4;
+		blue = (m_curFrame - 5) / 6;
+	}
+	else if (m_curFrame < 12)
+	{
+		blue = 1;
+	}
+	else if (m_curFrame <= 14)
+	{
+		green = (m_curFrame - 11) / 3;
+		blue = (14 - m_curFrame) / 2;
+		red = (m_curFrame - 11) / 3;
 	}
 
 	// make us a light if we don't already have one
-	if( m_light == NULL )
+	if (m_light == NULL)
 		m_light = createDynamicLight();
 
-
 	// if we have a search light, position it
-	if( m_light )
+	if (m_light)
 	{
 		Coord3D pos = *getDrawable()->getPosition();
-		m_light->Set_Diffuse( Vector3( red, green, blue) );
-		m_light->Set_Ambient( Vector3( red/2, green/2, blue/2) );
-		m_light->Set_Far_Attenuation_Range( 3, 20 );
-		m_light->Set_Position( Vector3( pos.x,pos.y,pos.z+floatAmt ) );
+		m_light->Set_Diffuse(Vector3(red, green, blue));
+		m_light->Set_Ambient(Vector3(red / 2, green / 2, blue / 2));
+		m_light->Set_Far_Attenuation_Range(3, 20);
+		m_light->Set_Position(Vector3(pos.x, pos.y, pos.z + floatAmt));
 	}
 	W3DTruckDraw::doDrawModule(transformMtx);
 }
 
-
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void W3DPoliceCarDraw::crc( Xfer *xfer )
+void W3DPoliceCarDraw::crc(Xfer *xfer)
 {
-
 	// extend base class
-	W3DTruckDraw::crc( xfer );
+	W3DTruckDraw::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void W3DPoliceCarDraw::xfer( Xfer *xfer )
+void W3DPoliceCarDraw::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	W3DTruckDraw::xfer( xfer );
+	W3DTruckDraw::xfer(xfer);
 
 	// John A says there is no data for these to save
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DPoliceCarDraw::loadPostProcess( void )
+void W3DPoliceCarDraw::loadPostProcess(void)
 {
-
 	// extend base class
 	W3DTruckDraw::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

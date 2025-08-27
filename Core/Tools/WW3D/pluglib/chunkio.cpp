@@ -66,7 +66,6 @@
 #include <string.h>
 #include <assert.h>
 
-
 /***********************************************************************************************
  * ChunkSaveClass::ChunkSaveClass -- Constructor                                               *
  *                                                                                             *
@@ -80,17 +79,12 @@
  * HISTORY:                                                                                    *
  *   07/17/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-ChunkSaveClass::ChunkSaveClass(FileClass * file) :
-	File(file),
-	StackIndex(0),
-	InMicroChunk(false),
-	MicroChunkPosition(0)
+ChunkSaveClass::ChunkSaveClass(FileClass *file) : File(file), StackIndex(0), InMicroChunk(false), MicroChunkPosition(0)
 {
-	memset(PositionStack,0,sizeof(PositionStack));
-	memset(HeaderStack,0,sizeof(HeaderStack));
-	memset(&MCHeader,0,sizeof(MCHeader));
+	memset(PositionStack, 0, sizeof(PositionStack));
+	memset(HeaderStack, 0, sizeof(HeaderStack));
+	memset(&MCHeader, 0, sizeof(MCHeader));
 }
-
 
 /***********************************************************************************************
  * ChunkSaveClass::Begin_Chunk -- Begin a new chunk in the file                                *
@@ -107,12 +101,13 @@ ChunkSaveClass::ChunkSaveClass(FileClass * file) :
  *=============================================================================================*/
 bool ChunkSaveClass::Begin_Chunk(uint32 id)
 {
-	ChunkHeader	chunkh;
-	int 			filepos;
+	ChunkHeader chunkh;
+	int filepos;
 
 	// If we have a parent chunk, set its 'Contains_Chunks' flag
-	if (StackIndex > 0) {
-		HeaderStack[StackIndex-1].Set_Sub_Chunk_Flag(true);
+	if (StackIndex > 0)
+	{
+		HeaderStack[StackIndex - 1].Set_Sub_Chunk_Flag(true);
 	}
 
 	// Save the current file position and chunk header
@@ -126,12 +121,12 @@ bool ChunkSaveClass::Begin_Chunk(uint32 id)
 	StackIndex++;
 
 	// write a temporary chunk header (size = 0)
-	if (File->Write(&chunkh,sizeof(chunkh)) != sizeof(chunkh)) {
+	if (File->Write(&chunkh, sizeof(chunkh)) != sizeof(chunkh))
+	{
 		return false;
 	}
 	return true;
 }
-
 
 /***********************************************************************************************
  * ChunkSaveClass::End_Chunk -- Close a chunk, computes the size and adds to the header        *
@@ -159,22 +154,23 @@ bool ChunkSaveClass::End_Chunk(void)
 	ChunkHeader chunkh = HeaderStack[StackIndex];
 
 	// write the completed header
-	File->Seek(chunkpos,SEEK_SET);
-	if (File->Write(&chunkh,sizeof(chunkh)) != sizeof(chunkh)) {
+	File->Seek(chunkpos, SEEK_SET);
+	if (File->Write(&chunkh, sizeof(chunkh)) != sizeof(chunkh))
+	{
 		return false;
 	}
 
 	// Add the total bytes written to any encompasing chunk
-	if (StackIndex != 0) {
-		HeaderStack[StackIndex-1].Add_Size(chunkh.Get_Size() + sizeof(chunkh));
+	if (StackIndex != 0)
+	{
+		HeaderStack[StackIndex - 1].Add_Size(chunkh.Get_Size() + sizeof(chunkh));
 	}
 
 	// Go back to the end of the file
-	File->Seek(curpos,SEEK_SET);
+	File->Seek(curpos, SEEK_SET);
 
 	return true;
 }
-
 
 /***********************************************************************************************
  * ChunkSaveClass::Begin_Micro_Chunk -- begins a new "micro-chunk"                             *
@@ -209,14 +205,14 @@ bool ChunkSaveClass::Begin_Micro_Chunk(uint32 id)
 	// NOTE: I'm calling the ChunkSaveClass::Write method so that the bytes for
 	// this header are tracked in the wrapping chunk.  This is because micro-chunks
 	// are simply data inside the normal chunks...
-	if (Write(&MCHeader,sizeof(MCHeader)) != sizeof(MCHeader)) {
+	if (Write(&MCHeader, sizeof(MCHeader)) != sizeof(MCHeader))
+	{
 		return false;
 	}
 
 	InMicroChunk = true;
 	return true;
 }
-
 
 /***********************************************************************************************
  * ChunkSaveClass::End_Micro_Chunk -- close a micro-chunk                                      *
@@ -238,13 +234,14 @@ bool ChunkSaveClass::End_Micro_Chunk(void)
 	int curpos = File->Seek(0);
 
 	// Seek back and write the micro chunk header
-	File->Seek(MicroChunkPosition,SEEK_SET);
-	if (File->Write(&MCHeader,sizeof(MCHeader)) != sizeof(MCHeader)) {
+	File->Seek(MicroChunkPosition, SEEK_SET);
+	if (File->Write(&MCHeader, sizeof(MCHeader)) != sizeof(MCHeader))
+	{
 		return false;
 	}
 
 	// Go back to the end of the file
-	File->Seek(curpos,SEEK_SET);
+	File->Seek(curpos, SEEK_SET);
 	InMicroChunk = false;
 	return true;
 }
@@ -261,29 +258,30 @@ bool ChunkSaveClass::End_Micro_Chunk(void)
  * HISTORY:                                                                                    *
  *   07/17/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-uint32 ChunkSaveClass::Write(const void * buf, uint32 nbytes)
+uint32 ChunkSaveClass::Write(const void *buf, uint32 nbytes)
 {
 	// If this assert hits, you mixed data and chunks within the same chunk NO NO!
-	assert(HeaderStack[StackIndex-1].Get_Sub_Chunk_Flag() == 0);
+	assert(HeaderStack[StackIndex - 1].Get_Sub_Chunk_Flag() == 0);
 
 	// If this assert hits, you didnt open any chunks yet
 	assert(StackIndex > 0);
 
 	// write the bytes into the file
-	if (File->Write(buf,nbytes) != (int)nbytes) return 0;
+	if (File->Write(buf, nbytes) != (int)nbytes)
+		return 0;
 
 	// track them in the wrapping chunk
-	HeaderStack[StackIndex-1].Add_Size(nbytes);
+	HeaderStack[StackIndex - 1].Add_Size(nbytes);
 
 	// track them if you are using a micro-chunk too.
-	if (InMicroChunk) {
-		assert(MCHeader.Get_Size() < 255 - nbytes);	// micro chunks can only be 255 bytes
+	if (InMicroChunk)
+	{
+		assert(MCHeader.Get_Size() < 255 - nbytes); // micro chunks can only be 255 bytes
 		MCHeader.Add_Size(nbytes);
 	}
 
 	return nbytes;
 }
-
 
 /***********************************************************************************************
  * ChunkSaveClass::Write -- write an IOVector2Struct                                           *
@@ -297,11 +295,10 @@ uint32 ChunkSaveClass::Write(const void * buf, uint32 nbytes)
  * HISTORY:                                                                                    *
  *   1/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-uint32 ChunkSaveClass::Write(const IOVector2Struct & v)
+uint32 ChunkSaveClass::Write(const IOVector2Struct &v)
 {
-	return Write(&v,sizeof(v));
+	return Write(&v, sizeof(v));
 }
-
 
 /***********************************************************************************************
  * ChunkSaveClass::Write -- write an IOVector3Struct                                           *
@@ -315,11 +312,10 @@ uint32 ChunkSaveClass::Write(const IOVector2Struct & v)
  * HISTORY:                                                                                    *
  *   1/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-uint32 ChunkSaveClass::Write(const IOVector3Struct & v)
+uint32 ChunkSaveClass::Write(const IOVector3Struct &v)
 {
-	return Write(&v,sizeof(v));
+	return Write(&v, sizeof(v));
 }
-
 
 /***********************************************************************************************
  * ChunkSaveClass::Write -- write an IOVector4Struct                                           *
@@ -333,9 +329,9 @@ uint32 ChunkSaveClass::Write(const IOVector3Struct & v)
  * HISTORY:                                                                                    *
  *   1/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-uint32 ChunkSaveClass::Write(const IOVector4Struct & v)
+uint32 ChunkSaveClass::Write(const IOVector4Struct &v)
 {
-	return Write(&v,sizeof(v));
+	return Write(&v, sizeof(v));
 }
 
 /***********************************************************************************************
@@ -350,9 +346,9 @@ uint32 ChunkSaveClass::Write(const IOVector4Struct & v)
  * HISTORY:                                                                                    *
  *   1/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-uint32 ChunkSaveClass::Write(const IOQuaternionStruct & q)
+uint32 ChunkSaveClass::Write(const IOQuaternionStruct &q)
 {
-	return Write(&q,sizeof(q));
+	return Write(&q, sizeof(q));
 }
 
 /***********************************************************************************************
@@ -372,7 +368,6 @@ int ChunkSaveClass::Cur_Chunk_Depth(void)
 	return StackIndex;
 }
 
-
 /***********************************************************************************************
  * ChunkLoadClass::ChunkLoadClass -- Constructor                                               *
  *                                                                                             *
@@ -385,17 +380,12 @@ int ChunkSaveClass::Cur_Chunk_Depth(void)
  * HISTORY:                                                                                    *
  *   07/17/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-ChunkLoadClass::ChunkLoadClass(FileClass * file) :
-	File(file),
-	StackIndex(0),
-	InMicroChunk(false),
-	MicroChunkPosition(0)
+ChunkLoadClass::ChunkLoadClass(FileClass *file) : File(file), StackIndex(0), InMicroChunk(false), MicroChunkPosition(0)
 {
-	memset(PositionStack,0,sizeof(PositionStack));
-	memset(HeaderStack,0,sizeof(HeaderStack));
-	memset(&MCHeader,0,sizeof(MCHeader));
+	memset(PositionStack, 0, sizeof(PositionStack));
+	memset(HeaderStack, 0, sizeof(HeaderStack));
+	memset(&MCHeader, 0, sizeof(MCHeader));
 }
-
 
 /***********************************************************************************************
  * ChunkLoadClass::Open_Chunk -- Open a chunk in the file, reads in the chunk header           *
@@ -415,15 +405,17 @@ bool ChunkLoadClass::Open_Chunk()
 	assert(InMicroChunk == false);
 
 	// check for stack overflow
-	assert(StackIndex < MAX_STACK_DEPTH-1);
+	assert(StackIndex < MAX_STACK_DEPTH - 1);
 
 	// if the parent chunk has been completely eaten, return false
-	if ((StackIndex > 0) && (PositionStack[StackIndex-1] == HeaderStack[StackIndex-1].Get_Size())) {
+	if ((StackIndex > 0) && (PositionStack[StackIndex - 1] == HeaderStack[StackIndex - 1].Get_Size()))
+	{
 		return false;
 	}
 
 	// read the chunk header
-	if (File->Read(&HeaderStack[StackIndex],sizeof(ChunkHeader)) != sizeof(ChunkHeader)) {
+	if (File->Read(&HeaderStack[StackIndex], sizeof(ChunkHeader)) != sizeof(ChunkHeader))
+	{
 		return false;
 	}
 
@@ -431,7 +423,6 @@ bool ChunkLoadClass::Open_Chunk()
 	StackIndex++;
 	return true;
 }
-
 
 /***********************************************************************************************
  * ChunkLoadClass::Close_Chunk -- Close a chunk, seeks to the end if needed                    *
@@ -453,21 +444,22 @@ bool ChunkLoadClass::Close_Chunk()
 	// check for stack overflow
 	assert(StackIndex > 0);
 
-	int csize = HeaderStack[StackIndex-1].Get_Size();
-	int pos = PositionStack[StackIndex-1];
+	int csize = HeaderStack[StackIndex - 1].Get_Size();
+	int pos = PositionStack[StackIndex - 1];
 
-	if (pos < csize) {
-		File->Seek(csize - pos,SEEK_CUR);
+	if (pos < csize)
+	{
+		File->Seek(csize - pos, SEEK_CUR);
 	}
 
 	StackIndex--;
-	if (StackIndex > 0) {
+	if (StackIndex > 0)
+	{
 		PositionStack[StackIndex - 1] += csize + sizeof(ChunkHeader);
 	}
 
 	return true;
 }
-
 
 /***********************************************************************************************
  * ChunkLoadClass::Cur_Chunk_ID -- Returns the ID of the current chunk                         *
@@ -484,9 +476,8 @@ bool ChunkLoadClass::Close_Chunk()
 uint32 ChunkLoadClass::Cur_Chunk_ID()
 {
 	assert(StackIndex >= 1);
-	return HeaderStack[StackIndex-1].Get_Type();
+	return HeaderStack[StackIndex - 1].Get_Type();
 }
-
 
 /***********************************************************************************************
  * ChunkLoadClass::Cur_Chunk_Length -- Returns the current length of the current chunk         *
@@ -503,9 +494,8 @@ uint32 ChunkLoadClass::Cur_Chunk_ID()
 uint32 ChunkLoadClass::Cur_Chunk_Length()
 {
 	assert(StackIndex >= 1);
-	return HeaderStack[StackIndex-1].Get_Size();
+	return HeaderStack[StackIndex - 1].Get_Size();
 }
-
 
 /***********************************************************************************************
  * ChunkLoadClass::Cur_Chunk_Depth -- returns the current chunk recursion depth                *
@@ -524,7 +514,6 @@ int ChunkLoadClass::Cur_Chunk_Depth()
 	return StackIndex;
 }
 
-
 /***********************************************************************************************
  * ChunkLoadClass::Contains_Chunks -- Test whether the current chunk contains chunks (or data) *
  *                                                                                             *
@@ -539,7 +528,7 @@ int ChunkLoadClass::Cur_Chunk_Depth()
  *=============================================================================================*/
 int ChunkLoadClass::Contains_Chunks()
 {
-	return HeaderStack[StackIndex-1].Get_Sub_Chunk_Flag();
+	return HeaderStack[StackIndex - 1].Get_Sub_Chunk_Flag();
 }
 
 /***********************************************************************************************
@@ -560,7 +549,8 @@ bool ChunkLoadClass::Open_Micro_Chunk()
 
 	// read the chunk header
 	// calling the ChunkLoadClass::Read fn so that if we exhaust the chunk, the read will fail
-	if (Read(&MCHeader,sizeof(MCHeader)) != sizeof(MCHeader)) {
+	if (Read(&MCHeader, sizeof(MCHeader)) != sizeof(MCHeader))
+	{
 		return false;
 	}
 
@@ -568,7 +558,6 @@ bool ChunkLoadClass::Open_Micro_Chunk()
 	MicroChunkPosition = 0;
 	return true;
 }
-
 
 /***********************************************************************************************
  * ChunkLoadClass::Close_Micro_Chunk -- closes a micro-chunk (seeks to end)                    *
@@ -591,19 +580,19 @@ bool ChunkLoadClass::Close_Micro_Chunk()
 	int pos = MicroChunkPosition;
 
 	// seek the file past this micro chunk
-	if (pos < csize) {
-
-		File->Seek(csize - pos,SEEK_CUR);
+	if (pos < csize)
+	{
+		File->Seek(csize - pos, SEEK_CUR);
 
 		// update the tracking variables for where we are in the normal chunk.
-		if (StackIndex > 0) {
-			PositionStack[StackIndex-1] += csize - pos;
+		if (StackIndex > 0)
+		{
+			PositionStack[StackIndex - 1] += csize - pos;
 		}
 	}
 
 	return true;
 }
-
 
 /***********************************************************************************************
  * ChunkLoadClass::Cur_Micro_Chunk_ID -- returns the ID of the current micro-chunk (asserts if *
@@ -624,7 +613,6 @@ uint32 ChunkLoadClass::Cur_Micro_Chunk_ID()
 	assert(InMicroChunk);
 	return MCHeader.Get_Type();
 }
-
 
 /***********************************************************************************************
  * ChunkLoadClass::Cur_Micro_Chunk_Length -- returns the size of the current micro chunk       *
@@ -652,25 +640,29 @@ uint32 ChunkLoadClass::Seek(uint32 nbytes)
 	assert(StackIndex >= 1);
 
 	// Don't seek if we would go past the end of the current chunk
-	if (PositionStack[StackIndex-1] + nbytes > (int)HeaderStack[StackIndex-1].Get_Size()) {
+	if (PositionStack[StackIndex - 1] + nbytes > (int)HeaderStack[StackIndex - 1].Get_Size())
+	{
 		return 0;
 	}
 
 	// Don't read if we are in a micro chunk and would go past the end of it
-	if (InMicroChunk && MicroChunkPosition + nbytes > MCHeader.Get_Size()) {
+	if (InMicroChunk && MicroChunkPosition + nbytes > MCHeader.Get_Size())
+	{
 		return 0;
 	}
 
-	uint32 curpos=File->Tell();
-	if (File->Seek(nbytes,SEEK_CUR)-curpos != (int)nbytes) {
+	uint32 curpos = File->Tell();
+	if (File->Seek(nbytes, SEEK_CUR) - curpos != (int)nbytes)
+	{
 		return 0;
 	}
 
 	// Update our position in the chunk
-	PositionStack[StackIndex-1] += nbytes;
+	PositionStack[StackIndex - 1] += nbytes;
 
 	// Update our position in the micro chunk if we are in one
-	if (InMicroChunk) {
+	if (InMicroChunk)
+	{
 		MicroChunkPosition += nbytes;
 	}
 
@@ -689,35 +681,38 @@ uint32 ChunkLoadClass::Seek(uint32 nbytes)
  * HISTORY:                                                                                    *
  *   07/17/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-uint32 ChunkLoadClass::Read(void * buf,uint32 nbytes)
+uint32 ChunkLoadClass::Read(void *buf, uint32 nbytes)
 {
 	assert(StackIndex >= 1);
 
 	// Don't read if we would go past the end of the current chunk
-	if (PositionStack[StackIndex-1] + nbytes > (int)HeaderStack[StackIndex-1].Get_Size()) {
+	if (PositionStack[StackIndex - 1] + nbytes > (int)HeaderStack[StackIndex - 1].Get_Size())
+	{
 		return 0;
 	}
 
 	// Don't read if we are in a micro chunk and would go past the end of it
-	if (InMicroChunk && MicroChunkPosition + nbytes > MCHeader.Get_Size()) {
+	if (InMicroChunk && MicroChunkPosition + nbytes > MCHeader.Get_Size())
+	{
 		return 0;
 	}
 
-	if (File->Read(buf,nbytes) != (int)nbytes) {
+	if (File->Read(buf, nbytes) != (int)nbytes)
+	{
 		return 0;
 	}
 
 	// Update our position in the chunk
-	PositionStack[StackIndex-1] += nbytes;
+	PositionStack[StackIndex - 1] += nbytes;
 
 	// Update our position in the micro chunk if we are in one
-	if (InMicroChunk) {
+	if (InMicroChunk)
+	{
 		MicroChunkPosition += nbytes;
 	}
 
 	return nbytes;
 }
-
 
 /***********************************************************************************************
  * ChunkLoadClass::Read -- read an IOVector2Struct                                             *
@@ -731,12 +726,11 @@ uint32 ChunkLoadClass::Read(void * buf,uint32 nbytes)
  * HISTORY:                                                                                    *
  *   1/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-uint32 ChunkLoadClass::Read(IOVector2Struct * v)
+uint32 ChunkLoadClass::Read(IOVector2Struct *v)
 {
 	assert(v != NULL);
-	return Read(v,sizeof(v));
+	return Read(v, sizeof(v));
 }
-
 
 /***********************************************************************************************
  * ChunkLoadClass::Read -- read an IOVector3Struct                                             *
@@ -750,12 +744,11 @@ uint32 ChunkLoadClass::Read(IOVector2Struct * v)
  * HISTORY:                                                                                    *
  *   1/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-uint32 ChunkLoadClass::Read(IOVector3Struct * v)
+uint32 ChunkLoadClass::Read(IOVector3Struct *v)
 {
 	assert(v != NULL);
-	return Read(v,sizeof(v));
+	return Read(v, sizeof(v));
 }
-
 
 /***********************************************************************************************
  * ChunkLoadClass::Read -- read an IOVector4Struct                                             *
@@ -769,12 +762,11 @@ uint32 ChunkLoadClass::Read(IOVector3Struct * v)
  * HISTORY:                                                                                    *
  *   1/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-uint32 ChunkLoadClass::Read(IOVector4Struct * v)
+uint32 ChunkLoadClass::Read(IOVector4Struct *v)
 {
 	assert(v != NULL);
-	return Read(v,sizeof(v));
+	return Read(v, sizeof(v));
 }
-
 
 /***********************************************************************************************
  * ChunkLoadClass::Read -- read an IOQuaternionStruct                                          *
@@ -788,9 +780,8 @@ uint32 ChunkLoadClass::Read(IOVector4Struct * v)
  * HISTORY:                                                                                    *
  *   1/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-uint32 ChunkLoadClass::Read(IOQuaternionStruct * q)
+uint32 ChunkLoadClass::Read(IOQuaternionStruct *q)
 {
 	assert(q != NULL);
-	return Read(q,sizeof(q));
+	return Read(q, sizeof(q));
 }
-

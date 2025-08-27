@@ -46,21 +46,18 @@
 #include "textureloader.h"
 #include "ww3dformat.h"
 
-Bitmap2DObjClass::Bitmap2DObjClass
-(
-	const char *filename,
-	float screen_x,
-	float screen_y,
-	bool center,
-	bool additive,
-	bool colorizable,
-	int usable_width,
-	int usable_height,
-	bool ignore_alpha
-)
-	:	DynamicScreenMeshClass(2, 4)
+Bitmap2DObjClass::Bitmap2DObjClass(
+		const char *filename,
+		float screen_x,
+		float screen_y,
+		bool center,
+		bool additive,
+		bool colorizable,
+		int usable_width,
+		int usable_height,
+		bool ignore_alpha) :
+		DynamicScreenMeshClass(2, 4)
 {
-
 	int resw, resh, resbits;
 	bool windowed;
 
@@ -71,7 +68,6 @@ Bitmap2DObjClass::Bitmap2DObjClass
 	// Hector Yee 2/22/01
 	// Set_Aspect(resh/(float)resw);
 
-
 	// load up the surfaces file name
 	TextureClass *tex = WW3DAssetManager::Get_Instance()->Get_Texture(filename, MIP_LEVELS_1);
 	if (!tex->Is_Initialized())
@@ -79,8 +75,9 @@ Bitmap2DObjClass::Bitmap2DObjClass
 
 	SurfaceClass *surface = tex->Get_Surface_Level(0);
 
-	if (!surface) {
-		surface = NEW_REF(SurfaceClass, (32, 32, Get_Valid_Texture_Format(WW3D_FORMAT_R8G8B8,true)));
+	if (!surface)
+	{
+		surface = NEW_REF(SurfaceClass, (32, 32, Get_Valid_Texture_Format(WW3D_FORMAT_R8G8B8, true)));
 	}
 
 	SurfaceClass::SurfaceDescription sd;
@@ -93,8 +90,9 @@ Bitmap2DObjClass::Bitmap2DObjClass
 
 	// if we requested the image to be centered around a point adjust the
 	// coordinates accordingly.
-	if (center) {
-		screen_x -= ((float)usable_width  / resw) / 2;
+	if (center)
+	{
+		screen_x -= ((float)usable_width / resw) / 2;
 		screen_y -= ((float)usable_height / resh) / 2;
 	}
 
@@ -111,12 +109,12 @@ Bitmap2DObjClass::Bitmap2DObjClass
 	// now take the image in question and break it down into
 	// "piece"x"piece"-pixel polygons and calculate the number of textures
 	// based from those calculations.
-	int mw = (surf_w & (piece - 1)) ? (surf_w / piece)+1 : (surf_w /piece);
-	int mh = (surf_h & (piece - 1)) ? (surf_h / piece)+1 : (surf_h /piece);
+	int mw = (surf_w & (piece - 1)) ? (surf_w / piece) + 1 : (surf_w / piece);
+	int mh = (surf_h & (piece - 1)) ? (surf_h / piece) + 1 : (surf_h / piece);
 
 	// for every square texture it takes four vertexes to express the two
 	// polygons.
-	Resize(mw * mh *2, mw * mh * 4);
+	Resize(mw * mh * 2, mw * mh * 4);
 
 	// Set shader to additive if requested, else alpha or opaque depending on
 	// whether the texture has an alpha channel. Sorting is always set so that
@@ -124,26 +122,32 @@ Bitmap2DObjClass::Bitmap2DObjClass
 	// elements.
 	ShaderClass shader;
 
-	if (additive) {
+	if (additive)
+	{
 		shader = ShaderClass::_PresetAdditive2DShader;
-	} else {
-		if (ignore_alpha == false && Has_Alpha(sd.Format)) {
+	}
+	else
+	{
+		if (ignore_alpha == false && Has_Alpha(sd.Format))
+		{
 			shader = ShaderClass::_PresetAlpha2DShader;
-		} else {
+		}
+		else
+		{
 			shader = ShaderClass::_PresetOpaque2DShader;
 		}
 	}
 
 	Enable_Sort();
 
-
 	// If we want to be able to colorize this bitmap later (by setting
 	// emissive color for the vertex material, or via a vertex emissive color
 	// array) we need to enable the primary gradient in the shader (it is
 	// disabled in the 2D presets), and set an appropriate vertex material.
-	if (colorizable) {
+	if (colorizable)
+	{
 		shader.Set_Primary_Gradient(ShaderClass::GRADIENT_MODULATE);
-		VertexMaterialClass *vertex_material = NEW_REF( VertexMaterialClass, ());
+		VertexMaterialClass *vertex_material = NEW_REF(VertexMaterialClass, ());
 		vertex_material->Set_Ambient(0.0f, 0.0f, 0.0f);
 		vertex_material->Set_Diffuse(0.0f, 0.0f, 0.0f);
 		vertex_material->Set_Specular(0.0f, 0.0f, 0.0f);
@@ -157,18 +161,19 @@ Bitmap2DObjClass::Bitmap2DObjClass
 
 	// loop through the rows and columns of the image and make valid
 	// textures from the pieces.
-	for (int lpy = 0, tlpy=0; lpy < mh; lpy++, tlpy += piece) {
-		for (int lpx = 0, tlpx = 0; lpx < mw; lpx++, tlpx += piece) {
-
+	for (int lpy = 0, tlpy = 0; lpy < mh; lpy++, tlpy += piece)
+	{
+		for (int lpx = 0, tlpx = 0; lpx < mw; lpx++, tlpx += piece)
+		{
 			// figure the desired width and height of the texture (max "piece")
-			int iw				= MIN(piece, usable_width - (tlpx));
-			int ih				= MIN(piece, usable_height - (tlpy));
-			int pot				= MAX(Find_POT(iw), Find_POT(ih));
+			int iw = MIN(piece, usable_width - (tlpx));
+			int ih = MIN(piece, usable_height - (tlpy));
+			int pot = MAX(Find_POT(iw), Find_POT(ih));
 
 			// create the texture and turn MIP-mapping off.
-			SurfaceClass *piece_surface=NEW_REF(SurfaceClass,(pot,pot,sd.Format));
-			piece_surface->Copy(0,0,tlpx,tlpy,pot,pot,surface);
-			TextureClass *piece_texture =NEW_REF(TextureClass,(piece_surface,MIP_LEVELS_1));
+			SurfaceClass *piece_surface = NEW_REF(SurfaceClass, (pot, pot, sd.Format));
+			piece_surface->Copy(0, 0, tlpx, tlpy, pot, pot, surface);
+			TextureClass *piece_texture = NEW_REF(TextureClass, (piece_surface, MIP_LEVELS_1));
 			piece_texture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 			piece_texture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 			REF_PTR_RELEASE(piece_surface);
@@ -184,15 +189,15 @@ Bitmap2DObjClass::Bitmap2DObjClass
 			float vh = (float)ih / (float)resh;
 
 			// figure out the screen space x and y positions of the object in question.
-			float x	= screen_x + (((float)tlpx) / (float)resw);
-			float y	= screen_y + (((float)tlpy) / (float)resh);
+			float x = screen_x + (((float)tlpx) / (float)resw);
+			float y = screen_y + (((float)tlpy) / (float)resh);
 
 			Set_Texture(piece_texture);
 			Begin_Tri_Strip();
-				Vertex( x, 			y, 		0, 	0, 	0);
-				Vertex( x + vw, 	y, 		0, 	tw, 	0);
-				Vertex( x, 			y + vh, 	0, 	0, 	th);
-				Vertex( x + vw, 	y + vh, 	0, 	tw, 	th);
+			Vertex(x, y, 0, 0, 0);
+			Vertex(x + vw, y, 0, tw, 0);
+			Vertex(x, y + vh, 0, 0, th);
+			Vertex(x + vw, y + vh, 0, tw, th);
 			End_Tri_Strip();
 
 			// release our reference to the texture
@@ -205,17 +210,15 @@ Bitmap2DObjClass::Bitmap2DObjClass
 	Set_Dirty();
 }
 
-Bitmap2DObjClass::Bitmap2DObjClass
-(
-	TextureClass *texture,
-	float screen_x,
-	float screen_y,
-	bool center,
-	bool additive,
-	bool colorizable,
-	bool ignore_alpha
-)
-	:	DynamicScreenMeshClass(2, 4)
+Bitmap2DObjClass::Bitmap2DObjClass(
+		TextureClass *texture,
+		float screen_x,
+		float screen_y,
+		bool center,
+		bool additive,
+		bool colorizable,
+		bool ignore_alpha) :
+		DynamicScreenMeshClass(2, 4)
 {
 	int resw, resh, resbits;
 	bool windowed;
@@ -225,22 +228,23 @@ Bitmap2DObjClass::Bitmap2DObjClass
 	// This should be the correct way to do things
 	// but other code expects an aspect ratio of 1.0
 	// Hector Yee 2/22/01
-	//Set_Aspect(resh/(float)resw);
+	// Set_Aspect(resh/(float)resw);
 
 	// Find the dimensions of the texture:
-//	SurfaceClass::SurfaceDescription sd;
-//	texture->Get_Level_Description(sd);
+	//	SurfaceClass::SurfaceDescription sd;
+	//	texture->Get_Level_Description(sd);
 
 	if (!texture->Is_Initialized())
 		TextureLoader::Request_Foreground_Loading(texture);
 
 	// convert image width and image height to normalized values
-	float vw = (float) texture->Get_Width() / (float)resw;
-	float vh = (float) texture->Get_Height() / (float)resh;
+	float vw = (float)texture->Get_Width() / (float)resw;
+	float vh = (float)texture->Get_Height() / (float)resh;
 
 	// if we requested the image to be centered around a point adjust the
 	// coordinates accordingly.
-	if (center) {
+	if (center)
+	{
 		screen_x -= vw / 2;
 		screen_y -= vh / 2;
 	}
@@ -251,12 +255,18 @@ Bitmap2DObjClass::Bitmap2DObjClass
 	// objects yet, but it should be very simple to do).
 	ShaderClass shader;
 
-	if (additive) {
+	if (additive)
+	{
 		shader = ShaderClass::_PresetAdditive2DShader;
-	} else {
-		if (ignore_alpha == false && Has_Alpha(texture->Get_Texture_Format())) {
+	}
+	else
+	{
+		if (ignore_alpha == false && Has_Alpha(texture->Get_Texture_Format()))
+		{
 			shader = ShaderClass::_PresetAlpha2DShader;
-		} else {
+		}
+		else
+		{
 			shader = ShaderClass::_PresetOpaque2DShader;
 		}
 	}
@@ -266,9 +276,10 @@ Bitmap2DObjClass::Bitmap2DObjClass
 	// emissive color for the vertex material, or via a vertex emissive color
 	// array) we need to enable the primary gradient in the shader (it is
 	// disabled in the 2D presets), and set an appropriate vertex material.
-	if (colorizable) {
+	if (colorizable)
+	{
 		shader.Set_Primary_Gradient(ShaderClass::GRADIENT_MODULATE);
-		VertexMaterialClass *vertex_material = NEW_REF( VertexMaterialClass, ());
+		VertexMaterialClass *vertex_material = NEW_REF(VertexMaterialClass, ());
 		vertex_material->Set_Ambient(0.0f, 0.0f, 0.0f);
 		vertex_material->Set_Diffuse(0.0f, 0.0f, 0.0f);
 		vertex_material->Set_Specular(0.0f, 0.0f, 0.0f);
@@ -284,16 +295,16 @@ Bitmap2DObjClass::Bitmap2DObjClass
 	Set_Texture(texture);
 
 	Begin_Tri_Strip();
-		Vertex( screen_x,			screen_y,		0,	0,		0);
-		Vertex( screen_x + vw, 	screen_y,		0,	1.0,	0);
-		Vertex( screen_x, 		screen_y + vh,	0,	0,		1.0);
-		Vertex( screen_x + vw, 	screen_y + vh,	0,	1.0,	1.0);
+	Vertex(screen_x, screen_y, 0, 0, 0);
+	Vertex(screen_x + vw, screen_y, 0, 1.0, 0);
+	Vertex(screen_x, screen_y + vh, 0, 0, 1.0);
+	Vertex(screen_x + vw, screen_y + vh, 0, 1.0, 1.0);
 	End_Tri_Strip();
 
 	Set_Dirty();
 }
 
-RenderObjClass * Bitmap2DObjClass::Clone(void) const
+RenderObjClass *Bitmap2DObjClass::Clone(void) const
 {
-	return NEW_REF( Bitmap2DObjClass, (*this));
+	return NEW_REF(Bitmap2DObjClass, (*this));
 }

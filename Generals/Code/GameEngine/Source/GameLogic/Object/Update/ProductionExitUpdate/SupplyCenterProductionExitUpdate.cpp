@@ -28,7 +28,7 @@
 //					This instance kicks things it outputs into SupplyTruck autopilot after exiting.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/RandomValue.h"
 #include "Common/ThingTemplate.h"
@@ -40,10 +40,11 @@
 #include "GameLogic/Module/SupplyCenterProductionExitUpdate.h"
 #include "GameLogic/Module/SupplyTruckAIUpdate.h"
 #include "GameLogic/Object.h"
-//#include "GameLogic/PartitionManager.h"
+// #include "GameLogic/PartitionManager.h"
 
 //-------------------------------------------------------------------------------------------------
-SupplyCenterProductionExitUpdate::SupplyCenterProductionExitUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+SupplyCenterProductionExitUpdate::SupplyCenterProductionExitUpdate(Thing *thing, const ModuleData *moduleData) :
+		UpdateModule(thing, moduleData)
 {
 	// no rally point has been set
 	m_rallyPointExists = false;
@@ -56,14 +57,14 @@ SupplyCenterProductionExitUpdate::~SupplyCenterProductionExitUpdate()
 }
 
 //-------------------------------------------------------------------------------------------------
-void SupplyCenterProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor )
+void SupplyCenterProductionExitUpdate::exitObjectViaDoor(Object *newObj, ExitDoorType exitDoor)
 {
 	DEBUG_ASSERTCRASH(exitDoor == DOOR_1, ("multiple exit doors not supported here"));
 
 	Object *creationObject = getObject();
 	if (creationObject)
 	{
-		const SupplyCenterProductionExitUpdateModuleData* md = getSupplyCenterProductionExitUpdateModuleData();
+		const SupplyCenterProductionExitUpdateModuleData *md = getSupplyCenterProductionExitUpdateModuleData();
 
 		Real exitAngle = creationObject->getOrientation();
 		const Matrix3D *transform = creationObject->getTransformMatrix();
@@ -75,24 +76,24 @@ void SupplyCenterProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDo
 		// in INI which is in model space, rotate it to match the building angle
 		// and translate for building location via a transform call
 		//
-		loc.Set( md->m_unitCreatePoint.x, md->m_unitCreatePoint.y, md->m_unitCreatePoint.z );
-		transform->Transform_Vector( *transform, loc, &loc );
+		loc.Set(md->m_unitCreatePoint.x, md->m_unitCreatePoint.y, md->m_unitCreatePoint.z);
+		transform->Transform_Vector(*transform, loc, &loc);
 
 		// make sure the point is on the terrain
-		loc.Z = TheTerrainLogic ? TheTerrainLogic->getGroundHeight( loc.X, loc.Y ) : 0.0f;
+		loc.Z = TheTerrainLogic ? TheTerrainLogic->getGroundHeight(loc.X, loc.Y) : 0.0f;
 
 		// we need it in Coord3D form
 		createPoint.x = loc.X;
 		createPoint.y = loc.Y;
 		createPoint.z = loc.Z;
 
-		newObj->setPosition( &createPoint );
-		newObj->setOrientation( exitAngle );
+		newObj->setPosition(&createPoint);
+		newObj->setOrientation(exitAngle);
 
 		/** @todo This really should be automatically wrapped up in an actication sequence
 		for objects in general */
 		// tell the AI about it
-		TheAI->pathfinder()->addObjectToPathfindMap( newObj );
+		TheAI->pathfinder()->addObjectToPathfindMap(newObj);
 
 		Vector3 p;
 
@@ -105,11 +106,14 @@ void SupplyCenterProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDo
 		p.Z = md->m_naturalRallyPoint.z;
 
 		// transform the point into world space
-		transform->Transform_Vector( *transform, p, &p );
+		transform->Transform_Vector(*transform, p, &p);
 
 		std::vector<Coord3D> exitPath;
 
-		Coord3D tmp; tmp.x = p.X; tmp.y = p.Y; tmp.z = p.Z;
+		Coord3D tmp;
+		tmp.x = p.X;
+		tmp.y = p.Y;
+		tmp.z = p.Z;
 		exitPath.push_back(tmp);
 
 		if (m_rallyPointExists)
@@ -117,24 +121,21 @@ void SupplyCenterProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDo
 			exitPath.push_back(m_rallyPoint);
 		}
 
-		AIUpdateInterface  *ai = newObj->getAIUpdateInterface();
-		if( ai )
+		AIUpdateInterface *ai = newObj->getAIUpdateInterface();
+		if (ai)
 		{
-			ai->aiFollowExitProductionPath( &exitPath, creationObject, CMD_FROM_AI );
+			ai->aiFollowExitProductionPath(&exitPath, creationObject, CMD_FROM_AI);
 
 			// Here is the special bit for this exit style, force wanting on SupplyTruck types
-			SupplyTruckAIInterface* supplyTruckAI = ai->getSupplyTruckAIInterface();
+			SupplyTruckAIInterface *supplyTruckAI = ai->getSupplyTruckAIInterface();
 
-			if( supplyTruckAI )
+			if (supplyTruckAI)
 				supplyTruckAI->setForceWantingState(true);
 		}
-
 	}
-
 }
 
-
-Bool SupplyCenterProductionExitUpdate::getExitPosition( Coord3D& exitPosition ) const
+Bool SupplyCenterProductionExitUpdate::getExitPosition(Coord3D &exitPosition) const
 {
 	const Object *obj = getObject();
 	if (!obj)
@@ -145,20 +146,18 @@ Bool SupplyCenterProductionExitUpdate::getExitPosition( Coord3D& exitPosition ) 
 	const SupplyCenterProductionExitUpdateModuleData *md = getSupplyCenterProductionExitUpdateModuleData();
 
 	Vector3 loc;
-	loc.Set( md->m_unitCreatePoint.x, md->m_unitCreatePoint.y, md->m_unitCreatePoint.z );
-	transform->Transform_Vector( *transform, loc, &loc );
+	loc.Set(md->m_unitCreatePoint.x, md->m_unitCreatePoint.y, md->m_unitCreatePoint.z);
+	transform->Transform_Vector(*transform, loc, &loc);
 
 	exitPosition.x = loc.X;
 	exitPosition.y = loc.Y;
 	exitPosition.z = loc.Z;
 
 	return TRUE;
-
 }
 
-
 //-------------------------------------------------------------------------------------------------
-Bool SupplyCenterProductionExitUpdate::getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset ) const
+Bool SupplyCenterProductionExitUpdate::getNaturalRallyPoint(Coord3D &rallyPoint, Bool offset) const
 {
 	const SupplyCenterProductionExitUpdateModuleData *data = getSupplyCenterProductionExitUpdateModuleData();
 	Vector3 p;
@@ -171,63 +170,62 @@ Bool SupplyCenterProductionExitUpdate::getNaturalRallyPoint( Coord3D& rallyPoint
 	p.Y = data->m_naturalRallyPoint.y;
 	p.Z = data->m_naturalRallyPoint.z;
 
-	if ( offset )
+	if (offset)
 	{
 		Vector3 offset = p;
 		offset.Normalize();
-		offset *= (2*PATHFIND_CELL_SIZE_F);
-		p+=offset;
+		offset *= (2 * PATHFIND_CELL_SIZE_F);
+		p += offset;
 	}
 
 	// transform the point into world space
 	const Matrix3D *transform = getObject()->getTransformMatrix();
-	transform->Transform_Vector( *transform, p, &p );
-	rallyPoint.x = p.X; rallyPoint.y = p.Y; rallyPoint.z = p.Z;
+	transform->Transform_Vector(*transform, p, &p);
+	rallyPoint.x = p.X;
+	rallyPoint.y = p.Y;
+	rallyPoint.z = p.Z;
 	return TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SupplyCenterProductionExitUpdate::crc( Xfer *xfer )
+void SupplyCenterProductionExitUpdate::crc(Xfer *xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
+	UpdateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SupplyCenterProductionExitUpdate::xfer( Xfer *xfer )
+void SupplyCenterProductionExitUpdate::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// rally point
-	xfer->xferCoord3D( &m_rallyPoint );
+	xfer->xferCoord3D(&m_rallyPoint);
 
 	// rally point exists
-	xfer->xferBool( &m_rallyPointExists );
+	xfer->xferBool(&m_rallyPointExists);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SupplyCenterProductionExitUpdate::loadPostProcess( void )
+void SupplyCenterProductionExitUpdate::loadPostProcess(void)
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

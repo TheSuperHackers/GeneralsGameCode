@@ -40,7 +40,8 @@
 #ifndef POINT_H
 #define POINT_H
 
-template<class T> class TRect;
+template<class T>
+class TRect;
 
 /*
 **	This class describes a point in 2 dimensional space using arbitrary
@@ -50,70 +51,100 @@ template<class T> class TRect;
 **	as a logical object (e.g., pixel location).
 */
 template<class T>
-class TPoint2D {
-	public:
-		TPoint2D(void) {}		// Default constructor does nothing by design.
-		TPoint2D(T x, T y) : X(x), Y(y) {}
+class TPoint2D
+{
+public:
+	TPoint2D(void) {} // Default constructor does nothing by design.
+	TPoint2D(T x, T y) : X(x), Y(y) {}
 
-		// Equality comparison operators.
-		bool operator == (TPoint2D<T> const & rvalue) const {return(X==rvalue.X && Y==rvalue.Y);}
-		bool operator != (TPoint2D<T> const & rvalue) const {return(X!=rvalue.X || Y!=rvalue.Y);}
+	// Equality comparison operators.
+	bool operator==(TPoint2D<T> const &rvalue) const { return (X == rvalue.X && Y == rvalue.Y); }
+	bool operator!=(TPoint2D<T> const &rvalue) const { return (X != rvalue.X || Y != rvalue.Y); }
 
-		// Addition and subtraction operators.
-		TPoint2D<T> const & operator += (TPoint2D<T> const & rvalue) {X += rvalue.X;Y += rvalue.Y;return(*this);}
-		TPoint2D<T> const & operator -= (TPoint2D<T> const & rvalue) {X -= rvalue.X;Y -= rvalue.Y;return(*this);}
-		TPoint2D<T> const operator - (TPoint2D<T> const & rvalue) const {return(TPoint2D<T>(X - rvalue.X, Y - rvalue.Y));}
-		TPoint2D<T> const operator + (TPoint2D<T> const & rvalue) const {return(TPoint2D<T>(X + rvalue.X, Y + rvalue.Y));}
+	// Addition and subtraction operators.
+	TPoint2D<T> const &operator+=(TPoint2D<T> const &rvalue)
+	{
+		X += rvalue.X;
+		Y += rvalue.Y;
+		return (*this);
+	}
+	TPoint2D<T> const &operator-=(TPoint2D<T> const &rvalue)
+	{
+		X -= rvalue.X;
+		Y -= rvalue.Y;
+		return (*this);
+	}
+	TPoint2D<T> const operator-(TPoint2D<T> const &rvalue) const { return (TPoint2D<T>(X - rvalue.X, Y - rvalue.Y)); }
+	TPoint2D<T> const operator+(TPoint2D<T> const &rvalue) const { return (TPoint2D<T>(X + rvalue.X, Y + rvalue.Y)); }
 
-		// Scalar multiplication and division.
-		TPoint2D<T> const operator * (T rvalue) const {return(TPoint2D<T>(X * rvalue, Y * rvalue));}
-		TPoint2D<T> const & operator *= (T rvalue) {X *= rvalue; Y *= rvalue;return(*this);}
-		TPoint2D<T> const operator / (T rvalue) const {if (rvalue == T(0)) return(TPoint2D<T>(0,0));return(TPoint2D<T>(X / rvalue, Y / rvalue));}
-		TPoint2D<T> const & operator /= (T rvalue) {if (rvalue != T(0)) {X /= rvalue;Y /= rvalue;}return(*this);}
-
-		// Dot and cross product.
-		TPoint2D<T> const operator * (TPoint2D<T> const & rvalue) const {return(TPoint2D<T>(X * rvalue.X, Y * rvalue.Y));}
-		TPoint2D<T> const Dot_Product(TPoint2D<T> const & rvalue) const {return(TPoint2D<T>(X * rvalue.X, Y * rvalue.Y));}
-		TPoint2D<T> const Cross_Product(TPoint2D<T> const & rvalue) const {return(TPoint2D<T>(Y - rvalue.Y, rvalue.X - X));}
-
-		// Negation operator -- simple and effective
-		TPoint2D<T> const operator - (void) const {return(TPoint2D<T>(-X, -Y));}
-
-		// Vector support functions.
-		T Length(void) const {return(T(sqrt(X*X + Y*Y)));}
-		TPoint2D<T> const Normalize(void) const {
-			double len = sqrt(X*X + Y*Y);
-			if (len != 0.0) {
-				return(TPoint2D<T>((T)((double)X / len), (T)((double)Y / len)));
-			} else {
-				return(*this);
-			}
+	// Scalar multiplication and division.
+	TPoint2D<T> const operator*(T rvalue) const { return (TPoint2D<T>(X * rvalue, Y * rvalue)); }
+	TPoint2D<T> const &operator*=(T rvalue)
+	{
+		X *= rvalue;
+		Y *= rvalue;
+		return (*this);
+	}
+	TPoint2D<T> const operator/(T rvalue) const
+	{
+		if (rvalue == T(0))
+			return (TPoint2D<T>(0, 0));
+		return (TPoint2D<T>(X / rvalue, Y / rvalue));
+	}
+	TPoint2D<T> const &operator/=(T rvalue)
+	{
+		if (rvalue != T(0))
+		{
+			X /= rvalue;
+			Y /= rvalue;
 		}
+		return (*this);
+	}
 
-		//	Bias a point into a clipping rectangle.
-		TPoint2D<T> const Bias_To(TRect<T> const & rect) const;
+	// Dot and cross product.
+	TPoint2D<T> const operator*(TPoint2D<T> const &rvalue) const { return (TPoint2D<T>(X * rvalue.X, Y * rvalue.Y)); }
+	TPoint2D<T> const Dot_Product(TPoint2D<T> const &rvalue) const { return (TPoint2D<T>(X * rvalue.X, Y * rvalue.Y)); }
+	TPoint2D<T> const Cross_Product(TPoint2D<T> const &rvalue) const { return (TPoint2D<T>(Y - rvalue.Y, rvalue.X - X)); }
 
-		// Find distance between points.
-		T Distance_To(TPoint2D<T> const & point) const {return((*this - point).Length());}
+	// Negation operator -- simple and effective
+	TPoint2D<T> const operator-(void) const { return (TPoint2D<T>(-X, -Y)); }
 
-	public:
-		T X;
-		T Y;
+	// Vector support functions.
+	T Length(void) const { return (T(sqrt(X * X + Y * Y))); }
+	TPoint2D<T> const Normalize(void) const
+	{
+		double len = sqrt(X * X + Y * Y);
+		if (len != 0.0)
+		{
+			return (TPoint2D<T>((T)((double)X / len), (T)((double)Y / len)));
+		}
+		else
+		{
+			return (*this);
+		}
+	}
+
+	//	Bias a point into a clipping rectangle.
+	TPoint2D<T> const Bias_To(TRect<T> const &rect) const;
+
+	// Find distance between points.
+	T Distance_To(TPoint2D<T> const &point) const { return ((*this - point).Length()); }
+
+public:
+	T X;
+	T Y;
 };
 
 template<class T>
-TPoint2D<T> const operator * (T lvalue, TPoint2D<T> const & rvalue)
+TPoint2D<T> const operator*(T lvalue, TPoint2D<T> const &rvalue)
 {
-	return(rvalue * lvalue);
+	return (rvalue * lvalue);
 }
-
 
 /*
 **	This typedef provides an uncluttered type name for use by simple integer points.
 */
 typedef TPoint2D<int> Point2D;
-
-
 
 /*
 **	This describes a point in 3 dimensional space using arbitrary
@@ -126,81 +157,138 @@ typedef TPoint2D<int> Point2D;
 **	the next best thing.
 */
 template<class T>
-class TPoint3D : public TPoint2D<T> {
-		typedef TPoint2D<T> BASECLASS;
+class TPoint3D : public TPoint2D<T>
+{
+	typedef TPoint2D<T> BASECLASS;
 
-	public:
-		using BASECLASS::X;
-		using BASECLASS::Y;
+public:
+	using BASECLASS::X;
+	using BASECLASS::Y;
 
-	public:
-		TPoint3D(void) {}		// Default constructor does nothing by design.
-		TPoint3D(T x, T y, T z) : TPoint2D<T>(x, y), Z(z) {}
-		TPoint3D(BASECLASS const & rvalue) : TPoint2D<T>(rvalue), Z(0) {}
+public:
+	TPoint3D(void) {} // Default constructor does nothing by design.
+	TPoint3D(T x, T y, T z) : TPoint2D<T>(x, y), Z(z) {}
+	TPoint3D(BASECLASS const &rvalue) : TPoint2D<T>(rvalue), Z(0) {}
 
-		// Equality comparison operators.
-		bool operator == (TPoint3D<T> const & rvalue) const {return(X==rvalue.X && Y==rvalue.Y && Z==rvalue.Z);}
-		bool operator != (TPoint3D<T> const & rvalue) const {return(X!=rvalue.X || Y!=rvalue.Y || Z!=rvalue.Z);}
+	// Equality comparison operators.
+	bool operator==(TPoint3D<T> const &rvalue) const { return (X == rvalue.X && Y == rvalue.Y && Z == rvalue.Z); }
+	bool operator!=(TPoint3D<T> const &rvalue) const { return (X != rvalue.X || Y != rvalue.Y || Z != rvalue.Z); }
 
-		// Addition and subtraction operators.
-		TPoint3D<T> const & operator += (TPoint3D<T> const & rvalue) {X += rvalue.X;Y += rvalue.Y;Z += rvalue.Z;return(*this);}
-		TPoint2D<T> const & operator += (TPoint2D<T> const & rvalue) {BASECLASS::operator += (rvalue);return(*this);}
-		TPoint3D<T> const & operator -= (TPoint3D<T> const & rvalue) {X -= rvalue.X;Y -= rvalue.Y;Z -= rvalue.Z;return(*this);}
-		TPoint2D<T> const & operator -= (TPoint2D<T> const & rvalue) {BASECLASS::operator -= (rvalue);return(*this);}
-		TPoint3D<T> const operator - (TPoint3D<T> const & rvalue) const {return(TPoint3D<T>(X - rvalue.X, Y - rvalue.Y, Z - rvalue.Z));}
-		TPoint3D<T> const operator - (TPoint2D<T> const & rvalue) const {return(TPoint3D<T>(X - rvalue.X, Y - rvalue.Y, Z));}
-		TPoint3D<T> const operator + (TPoint3D<T> const & rvalue) const {return(TPoint3D<T>(X + rvalue.X, Y + rvalue.Y, Z + rvalue.Z));}
-		TPoint3D<T> const operator + (TPoint2D<T> const & rvalue) const {return(TPoint3D<T>(X + rvalue.X, Y + rvalue.Y, Z));}
+	// Addition and subtraction operators.
+	TPoint3D<T> const &operator+=(TPoint3D<T> const &rvalue)
+	{
+		X += rvalue.X;
+		Y += rvalue.Y;
+		Z += rvalue.Z;
+		return (*this);
+	}
+	TPoint2D<T> const &operator+=(TPoint2D<T> const &rvalue)
+	{
+		BASECLASS::operator+=(rvalue);
+		return (*this);
+	}
+	TPoint3D<T> const &operator-=(TPoint3D<T> const &rvalue)
+	{
+		X -= rvalue.X;
+		Y -= rvalue.Y;
+		Z -= rvalue.Z;
+		return (*this);
+	}
+	TPoint2D<T> const &operator-=(TPoint2D<T> const &rvalue)
+	{
+		BASECLASS::operator-=(rvalue);
+		return (*this);
+	}
+	TPoint3D<T> const operator-(TPoint3D<T> const &rvalue) const
+	{
+		return (TPoint3D<T>(X - rvalue.X, Y - rvalue.Y, Z - rvalue.Z));
+	}
+	TPoint3D<T> const operator-(TPoint2D<T> const &rvalue) const { return (TPoint3D<T>(X - rvalue.X, Y - rvalue.Y, Z)); }
+	TPoint3D<T> const operator+(TPoint3D<T> const &rvalue) const
+	{
+		return (TPoint3D<T>(X + rvalue.X, Y + rvalue.Y, Z + rvalue.Z));
+	}
+	TPoint3D<T> const operator+(TPoint2D<T> const &rvalue) const { return (TPoint3D<T>(X + rvalue.X, Y + rvalue.Y, Z)); }
 
-		// Scalar multiplication and division.
-		TPoint3D<T> const operator * (T rvalue) const {return(TPoint3D<T>(X * rvalue, Y * rvalue, Z * rvalue));}
-		TPoint3D<T> const & operator *= (T rvalue) {X *= rvalue;Y *= rvalue;Z *= rvalue;return(*this);}
-		TPoint3D<T> const operator / (T rvalue) const {if (rvalue == T(0)) return(TPoint3D<T>(0,0,0));return(TPoint3D<T>(X / rvalue, Y / rvalue, Z / rvalue));}
-		TPoint3D<T> const & operator /= (T rvalue) {if (rvalue != T(0)) {X /= rvalue;Y /= rvalue;Z /= rvalue;}return(*this);}
-
-		// Dot and cross product.
-		TPoint3D<T> const operator * (TPoint3D<T> const & rvalue) const {return(TPoint3D<T>(X * rvalue.X, Y * rvalue.Y, Z * rvalue.Z));}
-		TPoint3D<T> const Dot_Product(TPoint3D<T> const & rvalue) const {return(TPoint3D<T>(X * rvalue.X, Y * rvalue.Y, Z * rvalue.Z));}
-		TPoint3D<T> const Cross_Product(TPoint3D<T> const & rvalue) const {return TPoint3D<T>(Y * rvalue.Z - Z * rvalue.Y, Z * rvalue.X - X * rvalue.Z, X * rvalue.Y - Y * rvalue.X);}
-
-		// Negation operator -- simple and effective
-		TPoint3D<T> const operator - (void) const {return(TPoint3D<T>(-X, -Y, -Z));}
-
-		// Vector support functions.
-		T Length(void) const {return(T(sqrt(X*X + Y*Y + Z*Z)));}
-		TPoint3D<T> const Normalize(void) const {
-			double len = sqrt(X*X + Y*Y + Z*Z);
-			if (len != 0.0) {
-				return(TPoint3D<T>(X / len, Y / len, Z / len));
-			} else {
-				return(*this);
-			}
+	// Scalar multiplication and division.
+	TPoint3D<T> const operator*(T rvalue) const { return (TPoint3D<T>(X * rvalue, Y * rvalue, Z * rvalue)); }
+	TPoint3D<T> const &operator*=(T rvalue)
+	{
+		X *= rvalue;
+		Y *= rvalue;
+		Z *= rvalue;
+		return (*this);
+	}
+	TPoint3D<T> const operator/(T rvalue) const
+	{
+		if (rvalue == T(0))
+			return (TPoint3D<T>(0, 0, 0));
+		return (TPoint3D<T>(X / rvalue, Y / rvalue, Z / rvalue));
+	}
+	TPoint3D<T> const &operator/=(T rvalue)
+	{
+		if (rvalue != T(0))
+		{
+			X /= rvalue;
+			Y /= rvalue;
+			Z /= rvalue;
 		}
+		return (*this);
+	}
 
-		// Find distance between points.
-		T Distance_To(TPoint3D<T> const & point) const {return((*this - point).Length());}
-		T Distance_To(TPoint2D<T> const & point) const {return(BASECLASS::Distance_To(point));}
+	// Dot and cross product.
+	TPoint3D<T> const operator*(TPoint3D<T> const &rvalue) const
+	{
+		return (TPoint3D<T>(X * rvalue.X, Y * rvalue.Y, Z * rvalue.Z));
+	}
+	TPoint3D<T> const Dot_Product(TPoint3D<T> const &rvalue) const
+	{
+		return (TPoint3D<T>(X * rvalue.X, Y * rvalue.Y, Z * rvalue.Z));
+	}
+	TPoint3D<T> const Cross_Product(TPoint3D<T> const &rvalue) const
+	{
+		return TPoint3D<T>(Y * rvalue.Z - Z * rvalue.Y, Z * rvalue.X - X * rvalue.Z, X * rvalue.Y - Y * rvalue.X);
+	}
 
-	public:
+	// Negation operator -- simple and effective
+	TPoint3D<T> const operator-(void) const { return (TPoint3D<T>(-X, -Y, -Z)); }
 
-		/*
-		**	The Z component of this point.
-		*/
-		T Z;
+	// Vector support functions.
+	T Length(void) const { return (T(sqrt(X * X + Y * Y + Z * Z))); }
+	TPoint3D<T> const Normalize(void) const
+	{
+		double len = sqrt(X * X + Y * Y + Z * Z);
+		if (len != 0.0)
+		{
+			return (TPoint3D<T>(X / len, Y / len, Z / len));
+		}
+		else
+		{
+			return (*this);
+		}
+	}
+
+	// Find distance between points.
+	T Distance_To(TPoint3D<T> const &point) const { return ((*this - point).Length()); }
+	T Distance_To(TPoint2D<T> const &point) const { return (BASECLASS::Distance_To(point)); }
+
+public:
+	/*
+	**	The Z component of this point.
+	*/
+	T Z;
 };
 
 template<class T>
-TPoint3D<T> const operator * (T lvalue, TPoint3D<T> const & rvalue)
+TPoint3D<T> const operator*(T lvalue, TPoint3D<T> const &rvalue)
 {
-	return(rvalue * lvalue);
+	return (rvalue * lvalue);
 }
-
 
 /*
 **	This typedef provides a simple uncluttered type name for use by
 **	integer 3D points.
 */
 typedef TPoint3D<int> Point3D;
-
 
 #endif

@@ -27,7 +27,7 @@
 #include <winreg.h>
 
 #include <atlbase.h>
-extern CComModule _Module;  // Required for COM - must be between atlbase.h and atlcom.h.  Funky, no?
+extern CComModule _Module; // Required for COM - must be between atlbase.h and atlcom.h.  Funky, no?
 #include <atlcom.h>
 
 #include <stdio.h>
@@ -44,29 +44,29 @@ char g_wolapiRealFilename[MAX_PATH];
 char g_generalsFilename[MAX_PATH];
 char g_generalsSerial[1024];
 
-#define GENERALS_REG_KEY_TOP "HKEY_LOCAL_MACHINE"														///< Registry base
-#define GENERALS_REG_KEY_PATH "SOFTWARE\\Westwood\\Generals"								///< Generals registry key
-#define GENERALS_REG_KEY_BOTTOM GENERALS_REG_KEY_PATH "\\"									///< Generals registry key with trailing backslashes
-#define GENERALS_REG_KEY_VERSION "Version"																	///< Version registry key
-#define GENERALS_REG_KEY_SKU "SKU"																					///< SKU registry key
-#define GENERALS_REG_KEY_NAME "Name"																				///< Product name registry key
-#define GENERALS_REG_KEY_INSTALLPATH "InstallPath"													///< Install path registry key
-#define GENERALS_REG_KEY_SERIAL "Serial"																		///< Serial # registry key
-#define GENERALS_REG_KEY GENERALS_REG_KEY_TOP "\\" GENERALS_REG_KEY_BOTTOM	///< Full Generals registry path
+#define GENERALS_REG_KEY_TOP "HKEY_LOCAL_MACHINE" ///< Registry base
+#define GENERALS_REG_KEY_PATH "SOFTWARE\\Westwood\\Generals" ///< Generals registry key
+#define GENERALS_REG_KEY_BOTTOM GENERALS_REG_KEY_PATH "\\" ///< Generals registry key with trailing backslashes
+#define GENERALS_REG_KEY_VERSION "Version" ///< Version registry key
+#define GENERALS_REG_KEY_SKU "SKU" ///< SKU registry key
+#define GENERALS_REG_KEY_NAME "Name" ///< Product name registry key
+#define GENERALS_REG_KEY_INSTALLPATH "InstallPath" ///< Install path registry key
+#define GENERALS_REG_KEY_SERIAL "Serial" ///< Serial # registry key
+#define GENERALS_REG_KEY GENERALS_REG_KEY_TOP "\\" GENERALS_REG_KEY_BOTTOM ///< Full Generals registry path
 
-#define WOLAPI_REG_KEY_TOP "HKEY_LOCAL_MACHINE"															///< Registry base
-#define WOLAPI_REG_KEY_PATH "SOFTWARE\\Westwood\\WOLAPI"										///< WOLAPI registry key
-#define WOLAPI_REG_KEY_BOTTOM WOLAPI_REG_KEY_PATH "\\"											///< WOLAPI registry key with trailing backslashes
-#define WOLAPI_REG_KEY_VERSION "Version"																		///< Version registry key
-#define WOLAPI_REG_KEY_INSTALLPATH "InstallPath"														///< Install path registry key
-#define WOLAPI_REG_KEY WOLAPI_REG_KEY_TOP "\\" WOLAPI_REG_KEY_BOTTOM				///< Full WOLAPI registry path
+#define WOLAPI_REG_KEY_TOP "HKEY_LOCAL_MACHINE" ///< Registry base
+#define WOLAPI_REG_KEY_PATH "SOFTWARE\\Westwood\\WOLAPI" ///< WOLAPI registry key
+#define WOLAPI_REG_KEY_BOTTOM WOLAPI_REG_KEY_PATH "\\" ///< WOLAPI registry key with trailing backslashes
+#define WOLAPI_REG_KEY_VERSION "Version" ///< Version registry key
+#define WOLAPI_REG_KEY_INSTALLPATH "InstallPath" ///< Install path registry key
+#define WOLAPI_REG_KEY WOLAPI_REG_KEY_TOP "\\" WOLAPI_REG_KEY_BOTTOM ///< Full WOLAPI registry path
 
-#define DLL_REG_KEY_TOP "HKEY_CLASSES_ROOT"															///< Registry base
-#define DLL_REG_KEY_PATH "CLSID\\{18FD6763-F5EA-4fa5-B2A9-668554152FAE}\\InprocServer32"										///< WOLAPI registry key
-#define DLL_REG_KEY_BOTTOM DLL_REG_KEY_PATH "\\"											///< WOLAPI registry key with trailing backslashes
-#define DLL_REG_KEY_LOCATION ""																		///< Version registry key
+#define DLL_REG_KEY_TOP "HKEY_CLASSES_ROOT" ///< Registry base
+#define DLL_REG_KEY_PATH "CLSID\\{18FD6763-F5EA-4fa5-B2A9-668554152FAE}\\InprocServer32" ///< WOLAPI registry key
+#define DLL_REG_KEY_BOTTOM DLL_REG_KEY_PATH "\\" ///< WOLAPI registry key with trailing backslashes
+#define DLL_REG_KEY_LOCATION "" ///< Version registry key
 
-void getPathsFromRegistry( void )
+void getPathsFromRegistry(void)
 {
 	HKEY handle;
 	unsigned long type;
@@ -76,40 +76,42 @@ void getPathsFromRegistry( void )
 	size = sizeof(g_generalsFilename);
 	strcpy(g_generalsFilename, "No install path in registry");
 
-	if (RegOpenKeyEx( HKEY_LOCAL_MACHINE, GENERALS_REG_KEY_PATH, 0, KEY_ALL_ACCESS, &handle ) == ERROR_SUCCESS) {
-
-		returnValue = RegQueryValueEx(handle, GENERALS_REG_KEY_INSTALLPATH, NULL, &type, (unsigned char *) &g_generalsFilename, &size);
+	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, GENERALS_REG_KEY_PATH, 0, KEY_ALL_ACCESS, &handle) == ERROR_SUCCESS)
+	{
+		returnValue =
+				RegQueryValueEx(handle, GENERALS_REG_KEY_INSTALLPATH, NULL, &type, (unsigned char *)&g_generalsFilename, &size);
 
 		if (returnValue != ERROR_SUCCESS)
 		{
 			strcpy(g_generalsFilename, "No install path in registry");
 		}
 
-		RegCloseKey( handle );
+		RegCloseKey(handle);
 	}
 
 	size = sizeof(g_generalsSerial);
 	strcpy(g_generalsSerial, "0");
 
-	if (RegOpenKeyEx( HKEY_LOCAL_MACHINE, GENERALS_REG_KEY_PATH, 0, KEY_ALL_ACCESS, &handle ) == ERROR_SUCCESS) {
-
-		returnValue = RegQueryValueEx(handle, GENERALS_REG_KEY_SERIAL, NULL, &type, (unsigned char *) &g_generalsSerial, &size);
+	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, GENERALS_REG_KEY_PATH, 0, KEY_ALL_ACCESS, &handle) == ERROR_SUCCESS)
+	{
+		returnValue = RegQueryValueEx(handle, GENERALS_REG_KEY_SERIAL, NULL, &type, (unsigned char *)&g_generalsSerial, &size);
 
 		if (returnValue != ERROR_SUCCESS)
 		{
 			strcpy(g_generalsSerial, "0");
 		}
 
-		RegCloseKey( handle );
+		RegCloseKey(handle);
 	}
 
 	size = sizeof(g_wolapiRegFilename);
 	strcpy(g_wolapiRegFilename, "No install path in registry");
 	g_wolapiInstalled = true;
 
-	if (RegOpenKeyEx( HKEY_LOCAL_MACHINE, WOLAPI_REG_KEY_PATH, 0, KEY_ALL_ACCESS, &handle ) == ERROR_SUCCESS) {
-
-		returnValue = RegQueryValueEx(handle, WOLAPI_REG_KEY_INSTALLPATH, NULL, &type, (unsigned char *) &g_wolapiRegFilename, &size);
+	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, WOLAPI_REG_KEY_PATH, 0, KEY_ALL_ACCESS, &handle) == ERROR_SUCCESS)
+	{
+		returnValue =
+				RegQueryValueEx(handle, WOLAPI_REG_KEY_INSTALLPATH, NULL, &type, (unsigned char *)&g_wolapiRegFilename, &size);
 
 		if (returnValue != ERROR_SUCCESS)
 		{
@@ -117,15 +119,15 @@ void getPathsFromRegistry( void )
 			g_wolapiInstalled = false;
 		}
 
-		RegCloseKey( handle );
+		RegCloseKey(handle);
 	}
 
 	size = sizeof(g_wolapiRealFilename);
 	strcpy(g_wolapiRealFilename, "No wolapi.dll installed");
 
-	if (RegOpenKeyEx( HKEY_CLASSES_ROOT, DLL_REG_KEY_PATH, 0, KEY_ALL_ACCESS, &handle ) == ERROR_SUCCESS) {
-
-		returnValue = RegQueryValueEx(handle, DLL_REG_KEY_LOCATION, NULL, &type, (unsigned char *) &g_wolapiRealFilename, &size);
+	if (RegOpenKeyEx(HKEY_CLASSES_ROOT, DLL_REG_KEY_PATH, 0, KEY_ALL_ACCESS, &handle) == ERROR_SUCCESS)
+	{
+		returnValue = RegQueryValueEx(handle, DLL_REG_KEY_LOCATION, NULL, &type, (unsigned char *)&g_wolapiRealFilename, &size);
 
 		if (returnValue != ERROR_SUCCESS)
 		{
@@ -133,11 +135,11 @@ void getPathsFromRegistry( void )
 			g_wolapiInstalled = false;
 		}
 
-		RegCloseKey( handle );
+		RegCloseKey(handle);
 	}
 }
 
-void setupGenerals( const char *genPath, const char *genSerial )
+void setupGenerals(const char *genPath, const char *genSerial)
 {
 	HKEY handle;
 	unsigned long type;
@@ -145,40 +147,48 @@ void setupGenerals( const char *genPath, const char *genSerial )
 	int size;
 	char lpClass[] = "REG_NONE";
 
-	if (RegCreateKeyEx( HKEY_LOCAL_MACHINE, GENERALS_REG_KEY_PATH, 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &handle, NULL ) == ERROR_SUCCESS) {
-
+	if (RegCreateKeyEx(
+					HKEY_LOCAL_MACHINE,
+					GENERALS_REG_KEY_PATH,
+					0,
+					lpClass,
+					REG_OPTION_NON_VOLATILE,
+					KEY_ALL_ACCESS,
+					NULL,
+					&handle,
+					NULL)
+			== ERROR_SUCCESS)
+	{
 		type = REG_SZ;
-		size = strlen(genPath)+1;
-		returnValue = RegSetValueEx(handle, GENERALS_REG_KEY_INSTALLPATH, 0, type, (unsigned char *) genPath, size);
+		size = strlen(genPath) + 1;
+		returnValue = RegSetValueEx(handle, GENERALS_REG_KEY_INSTALLPATH, 0, type, (unsigned char *)genPath, size);
 
-		size = strlen(genSerial)+1;
-		returnValue = RegSetValueEx(handle, GENERALS_REG_KEY_SERIAL, 0, type, (unsigned char *) genSerial, size);
+		size = strlen(genSerial) + 1;
+		returnValue = RegSetValueEx(handle, GENERALS_REG_KEY_SERIAL, 0, type, (unsigned char *)genSerial, size);
 
-		size = strlen("Generals")+1;
-		returnValue = RegSetValueEx(handle, GENERALS_REG_KEY_NAME, 0, type, (unsigned char *) "Generals", size);
+		size = strlen("Generals") + 1;
+		returnValue = RegSetValueEx(handle, GENERALS_REG_KEY_NAME, 0, type, (unsigned char *)"Generals", size);
 
 		type = REG_DWORD;
 		size = sizeof(DWORD);
 		unsigned long value = 65536;
-		returnValue = RegSetValueEx(handle, GENERALS_REG_KEY_VERSION, 0, type, (unsigned char *) &value, size);
+		returnValue = RegSetValueEx(handle, GENERALS_REG_KEY_VERSION, 0, type, (unsigned char *)&value, size);
 		value = 12544;
-		returnValue = RegSetValueEx(handle, GENERALS_REG_KEY_SKU, 0, type, (unsigned char *) &value, size);
+		returnValue = RegSetValueEx(handle, GENERALS_REG_KEY_SKU, 0, type, (unsigned char *)&value, size);
 
-		RegCloseKey( handle );
+		RegCloseKey(handle);
 	}
-
 }
 
-
 /**
-	* OLEInitializer class - Init and shutdown OLE & COM as a global
-	* object.  Scary, nasty stuff, COM.  /me shivers.
-	*/
+ * OLEInitializer class - Init and shutdown OLE & COM as a global
+ * object.  Scary, nasty stuff, COM.  /me shivers.
+ */
 class OLEInitializer
 {
- public:
-          OLEInitializer() { OleInitialize(NULL); }
-         ~OLEInitializer() { OleUninitialize(); }
+public:
+	OLEInitializer() { OleInitialize(NULL); }
+	~OLEInitializer() { OleUninitialize(); }
 };
 OLEInitializer g_OLEInitializer;
 CComModule _Module;
@@ -186,17 +196,16 @@ CComModule _Module;
 IChat *g_pChat = NULL;
 
 /**
-	* checkInstalledWolapiVersion inits WOLAPI if possible and gets its version
-	* number.  It also saves off its install path from the registry.
-	*/
-void checkInstalledWolapiVersion( void )
+ * checkInstalledWolapiVersion inits WOLAPI if possible and gets its version
+ * number.  It also saves off its install path from the registry.
+ */
+void checkInstalledWolapiVersion(void)
 {
 	// Initialize this instance
 	_Module.Init(NULL, g_hInst);
 
 	// Create the WOLAPI instance
-	CoCreateInstance(CLSID_Chat, NULL, CLSCTX_INPROC_SERVER, \
-					 IID_IChat, (void**)&g_pChat);
+	CoCreateInstance(CLSID_Chat, NULL, CLSCTX_INPROC_SERVER, IID_IChat, (void **)&g_pChat);
 
 	if (g_pChat)
 	{
@@ -216,4 +225,3 @@ void checkInstalledWolapiVersion( void )
 
 	return;
 }
-

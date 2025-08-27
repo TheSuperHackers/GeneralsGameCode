@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file in the GameEngine
 #include "Common/WorkerProcess.h"
 
 // We need Job-related functions, but these aren't defined in the Windows-headers that VC6 uses.
@@ -56,13 +56,16 @@ struct JOBOBJECT_EXTENDED_LIMIT_INFORMATION
 #define JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE 0x00002000
 const int JobObjectExtendedLimitInformation = 9;
 
-typedef HANDLE (WINAPI *PFN_CreateJobObjectW)(LPSECURITY_ATTRIBUTES, LPCWSTR);
-typedef BOOL (WINAPI *PFN_SetInformationJobObject)(HANDLE, JOBOBJECTINFOCLASS, LPVOID, DWORD);
-typedef BOOL (WINAPI *PFN_AssignProcessToJobObject)(HANDLE, HANDLE);
+typedef HANDLE(WINAPI *PFN_CreateJobObjectW)(LPSECURITY_ATTRIBUTES, LPCWSTR);
+typedef BOOL(WINAPI *PFN_SetInformationJobObject)(HANDLE, JOBOBJECTINFOCLASS, LPVOID, DWORD);
+typedef BOOL(WINAPI *PFN_AssignProcessToJobObject)(HANDLE, HANDLE);
 
-static PFN_CreateJobObjectW CreateJobObjectW = (PFN_CreateJobObjectW)GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "CreateJobObjectW");
-static PFN_SetInformationJobObject SetInformationJobObject = (PFN_SetInformationJobObject)GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "SetInformationJobObject");
-static PFN_AssignProcessToJobObject AssignProcessToJobObject = (PFN_AssignProcessToJobObject)GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "AssignProcessToJobObject");
+static PFN_CreateJobObjectW CreateJobObjectW =
+		(PFN_CreateJobObjectW)GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "CreateJobObjectW");
+static PFN_SetInformationJobObject SetInformationJobObject =
+		(PFN_SetInformationJobObject)GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "SetInformationJobObject");
+static PFN_AssignProcessToJobObject AssignProcessToJobObject =
+		(PFN_AssignProcessToJobObject)GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "AssignProcessToJobObject");
 #endif
 
 WorkerProcess::WorkerProcess()
@@ -95,9 +98,7 @@ bool WorkerProcess::startProcess(UnicodeString command)
 
 	PROCESS_INFORMATION pi = { 0 };
 
-	if (!CreateProcessW(NULL, (LPWSTR)command.str(),
-			NULL, NULL, /*bInheritHandles=*/TRUE, 0,
-			NULL, 0, &si, &pi))
+	if (!CreateProcessW(NULL, (LPWSTR)command.str(), NULL, NULL, /*bInheritHandles=*/TRUE, 0, NULL, 0, &si, &pi))
 	{
 		CloseHandle(writeHandle);
 		CloseHandle(m_readHandle);
@@ -161,7 +162,7 @@ bool WorkerProcess::fetchStdOutput()
 
 		DWORD readBytes = 0;
 		char buffer[1024];
-		success = ReadFile(m_readHandle, buffer, ARRAY_SIZE(buffer)-1, &readBytes, NULL);
+		success = ReadFile(m_readHandle, buffer, ARRAY_SIZE(buffer) - 1, &readBytes, NULL);
 		if (!success)
 			return true;
 		DEBUG_ASSERTCRASH(readBytes != 0, ("expected readBytes to be non null"));
@@ -228,4 +229,3 @@ void WorkerProcess::kill()
 	m_stdOutput.clear();
 	m_isDone = false;
 }
-

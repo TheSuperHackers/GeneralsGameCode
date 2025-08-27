@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
 
 #include "Common/MessageStream.h"
@@ -34,7 +33,7 @@ class GameMessageParserArgumentType : public MemoryPoolObject
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameMessageParserArgumentType, "GameMessageParserArgumentType")
 public:
 	GameMessageParserArgumentType(GameMessageArgumentDataType type, Int argCount);
-	//virtual ~GameMessageParserArgumentType();
+	// virtual ~GameMessageParserArgumentType();
 
 	GameMessageParserArgumentType *getNext();
 	void setNext(GameMessageParserArgumentType *next);
@@ -42,13 +41,13 @@ public:
 	GameMessageArgumentDataType getType();
 
 protected:
-	GameMessageParserArgumentType*	m_next;
-	GameMessageArgumentDataType			m_type;
-	Int															m_argCount;
+	GameMessageParserArgumentType *m_next;
+	GameMessageArgumentDataType m_type;
+	Int m_argCount;
 };
 
 //----------------------------------------------------------------------------
-inline GameMessageParserArgumentType * GameMessageParserArgumentType::getNext()
+inline GameMessageParserArgumentType *GameMessageParserArgumentType::getNext()
 {
 	return m_next;
 }
@@ -80,7 +79,7 @@ class GameMessageParser : public MemoryPoolObject
 public:
 	GameMessageParser();
 	GameMessageParser(GameMessage *msg);
-	//virtual ~GameMessageParser();
+	// virtual ~GameMessageParser();
 
 	GameMessageParserArgumentType *getFirstArgumentType();
 	void addArgType(GameMessageArgumentDataType type, Int argCount);
@@ -92,7 +91,7 @@ protected:
 };
 
 //----------------------------------------------------------------------------
-inline GameMessageParserArgumentType * GameMessageParser::getFirstArgumentType()
+inline GameMessageParserArgumentType *GameMessageParser::getFirstArgumentType()
 {
 	return m_first;
 }
@@ -102,4 +101,3 @@ inline Int GameMessageParser::getNumTypes()
 {
 	return m_argTypeCount;
 }
-

@@ -37,37 +37,31 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class DelayedWeaponSetUpgradeUpdateModuleData: public UpdateModuleData
+class DelayedWeaponSetUpgradeUpdateModuleData : public UpdateModuleData
 {
-
 public:
+	DelayedWeaponSetUpgradeUpdateModuleData(void);
 
-	DelayedWeaponSetUpgradeUpdateModuleData( void );
-
-	static void buildFieldParse(MultiIniFieldParse& p);
-
+	static void buildFieldParse(MultiIniFieldParse &p);
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class DelayedWeaponSetUpgradeUpdate : public UpdateModule, public DelayedUpgradeUpdateInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( DelayedWeaponSetUpgradeUpdate, "DelayedWeaponSetUpgradeUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( DelayedWeaponSetUpgradeUpdate, DelayedWeaponSetUpgradeUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DelayedWeaponSetUpgradeUpdate, "DelayedWeaponSetUpgradeUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(DelayedWeaponSetUpgradeUpdate, DelayedWeaponSetUpgradeUpdateModuleData)
 
 public:
-
-	DelayedWeaponSetUpgradeUpdate( Thing *thing, const ModuleData* moduleData );
+	DelayedWeaponSetUpgradeUpdate(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual Bool isTriggeredBy( UpgradeMaskType potentialMask );	///< If you were an upgrade, would you trigger for this?
-	virtual void setDelay( UnsignedInt startingDelay );	///< Start the upgrade doing countdown
+	virtual Bool isTriggeredBy(UpgradeMaskType potentialMask); ///< If you were an upgrade, would you trigger for this?
+	virtual void setDelay(UnsignedInt startingDelay); ///< Start the upgrade doing countdown
 
 	virtual UpdateSleepTime update();
 
 protected:
-
 };
 
 #endif

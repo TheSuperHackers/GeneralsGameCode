@@ -37,13 +37,13 @@ class NetCommandWrapperListNode : public MemoryPoolObject
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetCommandWrapperListNode, "NetCommandWrapperListNode")
 public:
 	NetCommandWrapperListNode(NetWrapperCommandMsg *msg);
-	//virtual ~NetCommandWrapperListNode();
+	// virtual ~NetCommandWrapperListNode();
 
 	Bool isComplete();
 	UnsignedShort getCommandID();
 	UnsignedInt getRawDataLength();
 	void copyChunkData(NetWrapperCommandMsg *msg);
-	UnsignedByte * getRawData();
+	UnsignedByte *getRawData();
 
 	Int getPercentComplete(void);
 
@@ -56,7 +56,6 @@ protected:
 	Bool *m_chunksPresent;
 	UnsignedInt m_numChunks;
 	UnsignedInt m_numChunksPresent;
-
 };
 
 class NetCommandWrapperList : public MemoryPoolObject
@@ -64,13 +63,13 @@ class NetCommandWrapperList : public MemoryPoolObject
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetCommandWrapperList, "NetCommandWrapperList")
 public:
 	NetCommandWrapperList();
-	//virtual ~NetCommandWrapperList();
+	// virtual ~NetCommandWrapperList();
 
 	void init();
 	void reset();
 
 	void processWrapper(NetCommandRef *ref);
-	NetCommandList * getReadyCommands();
+	NetCommandList *getReadyCommands();
 
 	Int getPercentComplete(UnsignedShort wrappedCommandID);
 

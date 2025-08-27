@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Damage.h"
@@ -38,69 +38,65 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ImmortalBody::ImmortalBody( Thing *thing, const ModuleData* moduleData )
-						 : ActiveBody( thing, moduleData )
+ImmortalBody::ImmortalBody(Thing *thing, const ModuleData *moduleData) : ActiveBody(thing, moduleData)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ImmortalBody::~ImmortalBody( void )
+ImmortalBody::~ImmortalBody(void)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void ImmortalBody::internalChangeHealth( Real delta )
+void ImmortalBody::internalChangeHealth(Real delta)
 {
 	// Don't let anything changes us to below one hit point
-	delta = max( delta, -getHealth() + 1 );
+	delta = max(delta, -getHealth() + 1);
 
 	// extend functionality, but I go first because I can't let you die and then fix it, I must prevent
-	ActiveBody::internalChangeHealth( delta );
+	ActiveBody::internalChangeHealth(delta);
 
 	// nothing -- never mark it as dead.
-	DEBUG_ASSERTCRASH( (getHealth() > 0 && !getObject()->isEffectivelyDead() ), ("Immortal objects should never get marked as dead!"));
-
+	DEBUG_ASSERTCRASH(
+			(getHealth() > 0 && !getObject()->isEffectivelyDead()),
+			("Immortal objects should never get marked as dead!"));
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ImmortalBody::crc( Xfer *xfer )
+void ImmortalBody::crc(Xfer *xfer)
 {
-
 	// extend base class
-	ActiveBody::crc( xfer );
+	ActiveBody::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ImmortalBody::xfer( Xfer *xfer )
+void ImmortalBody::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	ActiveBody::xfer( xfer );
+	ActiveBody::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ImmortalBody::loadPostProcess( void )
+void ImmortalBody::loadPostProcess(void)
 {
-
 	// extend base class
 	ActiveBody::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

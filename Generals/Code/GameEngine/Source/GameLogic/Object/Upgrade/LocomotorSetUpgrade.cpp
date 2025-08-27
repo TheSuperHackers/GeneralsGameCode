@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
@@ -37,21 +37,21 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-LocomotorSetUpgrade::LocomotorSetUpgrade( Thing *thing, const ModuleData* moduleData ) : UpgradeModule( thing, moduleData )
+LocomotorSetUpgrade::LocomotorSetUpgrade(Thing *thing, const ModuleData *moduleData) : UpgradeModule(thing, moduleData)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-LocomotorSetUpgrade::~LocomotorSetUpgrade( void )
+LocomotorSetUpgrade::~LocomotorSetUpgrade(void)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void LocomotorSetUpgrade::upgradeImplementation( )
+void LocomotorSetUpgrade::upgradeImplementation()
 {
-	AIUpdateInterface* ai = getObject()->getAIUpdateInterface();
+	AIUpdateInterface *ai = getObject()->getAIUpdateInterface();
 	if (ai)
 		ai->setLocomotorUpgrade(true);
 }
@@ -59,39 +59,36 @@ void LocomotorSetUpgrade::upgradeImplementation( )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void LocomotorSetUpgrade::crc( Xfer *xfer )
+void LocomotorSetUpgrade::crc(Xfer *xfer)
 {
-
 	// extend base class
-	UpgradeModule::crc( xfer );
+	UpgradeModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void LocomotorSetUpgrade::xfer( Xfer *xfer )
+void LocomotorSetUpgrade::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpgradeModule::xfer( xfer );
+	UpgradeModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void LocomotorSetUpgrade::loadPostProcess( void )
+void LocomotorSetUpgrade::loadPostProcess(void)
 {
-
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

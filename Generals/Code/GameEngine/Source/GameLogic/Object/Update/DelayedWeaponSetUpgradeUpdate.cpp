@@ -28,32 +28,28 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Module/DelayedWeaponSetUpgradeUpdate.h"
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DelayedWeaponSetUpgradeUpdateModuleData::DelayedWeaponSetUpgradeUpdateModuleData( void )
+DelayedWeaponSetUpgradeUpdateModuleData::DelayedWeaponSetUpgradeUpdateModuleData(void)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void DelayedWeaponSetUpgradeUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
+void DelayedWeaponSetUpgradeUpdateModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
+	UpdateModuleData::buildFieldParse(p);
 
-  UpdateModuleData::buildFieldParse( p );
+	static const FieldParse dataFieldParse[] = { { 0, 0, 0, 0 } };
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ 0, 0, 0, 0 }
-	};
+	p.add(dataFieldParse);
 
-  p.add(dataFieldParse);
-
-}  // end buildFieldParse
+} // end buildFieldParse
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,34 +57,31 @@ void DelayedWeaponSetUpgradeUpdateModuleData::buildFieldParse(MultiIniFieldParse
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DelayedWeaponSetUpgradeUpdate::DelayedWeaponSetUpgradeUpdate( Thing *thing, const ModuleData* moduleData )
-																: UpdateModule( thing, moduleData )
+DelayedWeaponSetUpgradeUpdate::DelayedWeaponSetUpgradeUpdate(Thing *thing, const ModuleData *moduleData) :
+		UpdateModule(thing, moduleData)
 {
-
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DelayedWeaponSetUpgradeUpdate::~DelayedWeaponSetUpgradeUpdate( void )
+DelayedWeaponSetUpgradeUpdate::~DelayedWeaponSetUpgradeUpdate(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime DelayedWeaponSetUpgradeUpdate::update( void )
+UpdateSleepTime DelayedWeaponSetUpgradeUpdate::update(void)
 {
 	return UPDATE_SLEEP_NONE;
 }
 
-Bool DelayedWeaponSetUpgradeUpdate::isTriggeredBy( UpgradeMaskType potentialMask )
+Bool DelayedWeaponSetUpgradeUpdate::isTriggeredBy(UpgradeMaskType potentialMask)
 {
 	potentialMask;
 	return FALSE;
 }
 
-void DelayedWeaponSetUpgradeUpdate::setDelay( UnsignedInt startingDelay )
+void DelayedWeaponSetUpgradeUpdate::setDelay(UnsignedInt startingDelay)
 {
 	startingDelay;
 }
@@ -96,39 +89,36 @@ void DelayedWeaponSetUpgradeUpdate::setDelay( UnsignedInt startingDelay )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void DelayedWeaponSetUpgradeUpdate::crc( Xfer *xfer )
+void DelayedWeaponSetUpgradeUpdate::crc(Xfer *xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
+	UpdateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void DelayedWeaponSetUpgradeUpdate::xfer( Xfer *xfer )
+void DelayedWeaponSetUpgradeUpdate::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DelayedWeaponSetUpgradeUpdate::loadPostProcess( void )
+void DelayedWeaponSetUpgradeUpdate::loadPostProcess(void)
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

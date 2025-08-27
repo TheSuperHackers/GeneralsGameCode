@@ -36,10 +36,12 @@
 //
 // ObjectTool class.
 //
-	enum {HYSTERESIS = 3};
+enum
+{
+	HYSTERESIS = 3
+};
 /// Constructor
-ObjectTool::ObjectTool(void) :
-	Tool(ID_PLACE_OBJECT_TOOL, IDC_PLACE_OBJECT)
+ObjectTool::ObjectTool(void) : Tool(ID_PLACE_OBJECT_TOOL, IDC_PLACE_OBJECT)
 {
 }
 
@@ -48,12 +50,15 @@ ObjectTool::~ObjectTool(void)
 {
 }
 
-Real ObjectTool::calcAngle(Coord3D downPt, Coord3D curPt, WbView* pView)
+Real ObjectTool::calcAngle(Coord3D downPt, Coord3D curPt, WbView *pView)
 {
-	enum {HYSTERESIS = 3};
+	enum
+	{
+		HYSTERESIS = 3
+	};
 	double dx = curPt.x - downPt.x;
 	double dy = curPt.y - downPt.y;
-	double dist = sqrt(dx*dx+dy*dy);
+	double dist = sqrt(dx * dx + dy * dy);
 	double angle = 0;
 	if (dist < 0.1) // check for div-by-zero.
 	{
@@ -61,30 +66,32 @@ Real ObjectTool::calcAngle(Coord3D downPt, Coord3D curPt, WbView* pView)
 	}
 	else if (abs(dx) > abs(dy))
 	{
-		angle = acos(	(double)dx / dist);
-		if (dy<0) angle = -angle;
+		angle = acos((double)dx / dist);
+		if (dy < 0)
+			angle = -angle;
 	}
 	else
 	{
-		angle = asin(	((double)dy) / dist);
-		if (dx<0) angle = PI-angle;
+		angle = asin(((double)dy) / dist);
+		if (dx < 0)
+			angle = PI - angle;
 	}
-	if (angle > PI) angle -= 2*PI;
+	if (angle > PI)
+		angle -= 2 * PI;
 #ifdef RTS_DEBUG
 	CString buf;
-	buf.Format("Angle %f rad, %d degrees\n", angle, (int)(angle*180/PI));
+	buf.Format("Angle %f rad, %d degrees\n", angle, (int)(angle * 180 / PI));
 	::OutputDebugString(buf);
 #endif
-	return((Real)angle);
+	return ((Real)angle);
 }
-
-
 
 /// Turn off object tracking.
 void ObjectTool::deactivate()
 {
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
-	if (pDoc==NULL) return;
+	if (pDoc == NULL)
+		return;
 	WbView3d *p3View = pDoc->GetActive3DView();
 	p3View->setObjTracking(NULL, m_downPt3d, 0, false);
 }
@@ -94,15 +101,17 @@ void ObjectTool::activate()
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_OBJECT_OPTIONS);
 	DrawObject::setDoBrushFeedback(false);
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
-	if (pDoc==NULL) return;
+	if (pDoc == NULL)
+		return;
 	WbView3d *p3View = pDoc->GetActive3DView();
 	p3View->setObjTracking(NULL, m_downPt3d, 0, false);
 }
 
 /** Execute the tool on mouse down - Place an object. */
-void ObjectTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void ObjectTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
-	if (m != TRACK_L) return;
+	if (m != TRACK_L)
+		return;
 
 	Coord3D cpt;
 	pView->viewToDocCoords(viewPt, &cpt);
@@ -111,42 +120,48 @@ void ObjectTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 }
 
 /** Tracking - show the object. */
-void ObjectTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void ObjectTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
 	Bool justAClick = true;
 	Coord3D cpt;
 	pView->viewToDocCoords(viewPt, &cpt, false); // Don't constrain.
 	Coord3D loc = cpt;
 	pView->snapPoint(&loc);
-	if (m == TRACK_L) {	// Mouse is down, so preview the angle if > hysteresis.
+	if (m == TRACK_L)
+	{ // Mouse is down, so preview the angle if > hysteresis.
 		// always check hysteresis in view coords.
-		justAClick = (abs(viewPt.x - m_downPt2d.x)<HYSTERESIS || abs(viewPt.x - m_downPt2d.x)<HYSTERESIS);
+		justAClick = (abs(viewPt.x - m_downPt2d.x) < HYSTERESIS || abs(viewPt.x - m_downPt2d.x) < HYSTERESIS);
 		loc = m_downPt3d;
 	}
 	MapObject *pCur = ObjectOptions::getObjectNamed(AsciiString(ObjectOptions::getCurObjectName()));
 	Real angle = justAClick ? 0 : calcAngle(loc, cpt, pView);
-	if (justAClick && pCur && pCur->getThingTemplate()) {
+	if (justAClick && pCur && pCur->getThingTemplate())
+	{
 		angle = pCur->getThingTemplate()->getPlacementViewAngle();
 	}
 	WbView3d *p3View = pDoc->GetActive3DView();
 	p3View->setObjTracking(NULL, m_downPt3d, 0, false);
 	loc.z = ObjectOptions::getCurObjectHeight();
-	if (pCur) {
+	if (pCur)
+	{
 		// Display the transparent version of this object.
 		p3View->setObjTracking(pCur, loc, angle, true);
-	} else {
+	}
+	else
+	{
 		// Don't display anything.
 		p3View->setObjTracking(NULL, loc, angle, false);
 	}
 }
 
 /** Execute the tool on mouse up - Place an object. */
-void ObjectTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void ObjectTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc)
 {
-	if (m != TRACK_L) return;
+	if (m != TRACK_L)
+		return;
 
 	// always check hysteresis in view coords.
-	Bool justAClick = (abs(viewPt.x - m_downPt2d.x)<HYSTERESIS || abs(viewPt.x - m_downPt2d.x)<HYSTERESIS);
+	Bool justAClick = (abs(viewPt.x - m_downPt2d.x) < HYSTERESIS || abs(viewPt.x - m_downPt2d.x) < HYSTERESIS);
 
 	Coord3D cpt;
 	pView->viewToDocCoords(viewPt, &cpt, false); // Don't constrain.
@@ -156,8 +171,10 @@ void ObjectTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 	loc.z = ObjectOptions::getCurObjectHeight();
 	Real angle = justAClick ? 0 : calcAngle(loc, cpt, pView);
 	MapObject *pNew = ObjectOptions::duplicateCurMapObjectForPlace(&loc, angle, true);
-	if (pNew) {
-		if (justAClick && pNew->getThingTemplate()) {
+	if (pNew)
+	{
+		if (justAClick && pNew->getThingTemplate())
+		{
 			angle = pNew->getThingTemplate()->getPlacementViewAngle();
 			pNew->setAngle(angle);
 		}
@@ -167,4 +184,3 @@ void ObjectTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 		pNew = NULL; // undoable owns it now.
 	}
 }
-

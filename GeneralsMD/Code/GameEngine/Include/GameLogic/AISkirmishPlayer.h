@@ -37,27 +37,28 @@
 class BuildListInfo;
 class SpecialPowerTemplate;
 
-
 /**
  * The computer-controlled opponent.
  */
 class AISkirmishPlayer : public AIPlayer
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AISkirmishPlayer, "AISkirmishPlayer"  )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AISkirmishPlayer, "AISkirmishPlayer")
 
-public:	 // AISkirmish specific methods.
+public: // AISkirmish specific methods.
+	AISkirmishPlayer(Player *p); ///< constructor
+	virtual Bool computeSuperweaponTarget(
+			const SpecialPowerTemplate *power,
+			Coord3D *pos,
+			Int playerNdx,
+			Real weaponRadius); ///< Calculates best pos for weapon given radius.
 
-	AISkirmishPlayer( Player *p );							///< constructor
-	virtual Bool computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *pos, Int playerNdx, Real weaponRadius); ///< Calculates best pos for weapon given radius.
+public: // AIPlayer interface methods.
+	virtual void update(); ///< simulates the behavior of a player
 
-public:	// AIPlayer interface methods.
-
-	virtual void update();											///< simulates the behavior of a player
-
-	virtual void newMap();											///< New map loaded call.
+	virtual void newMap(); ///< New map loaded call.
 
 	/// Invoked when a unit I am training comes into existence
-	virtual void onUnitProduced( Object *factory, Object *unit );
+	virtual void onUnitProduced(Object *factory, Object *unit);
 
 	virtual void buildSpecificAITeam(TeamPrototype *teamProto, Bool priorityBuild); ///< Builds this team immediately.
 
@@ -65,22 +66,23 @@ public:	// AIPlayer interface methods.
 
 	virtual void buildAIBaseDefense(Bool flank); ///< Builds base defense on front or flank of base.
 
-	virtual void buildAIBaseDefenseStructure(const AsciiString &thingName, Bool flank); ///< Builds base defense on front or flank of base.
+	virtual void buildAIBaseDefenseStructure(const AsciiString &thingName, Bool flank); ///< Builds base defense on front or
+																																											///< flank of base.
 
 	virtual void recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadius); ///< Builds this team immediately.
 
-	virtual Bool isSkirmishAI(void) {return true;}
+	virtual Bool isSkirmishAI(void) { return true; }
 
 	virtual Bool checkBridges(Object *unit, Waypoint *way);
 
-	virtual Player *getAiEnemy(void);	///< Solo AI attacks based on scripting.  Only skirmish auto-acquires an enemy at this point.  jba.
+	virtual Player *getAiEnemy(void); ///< Solo AI attacks based on scripting.  Only skirmish auto-acquires an enemy at this
+																		///< point.  jba.
 
 protected:
-
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
+	virtual void loadPostProcess(void);
 
 	virtual void doBaseBuilding(void);
 	virtual void checkReadyTeams(void);
@@ -90,14 +92,14 @@ protected:
 	virtual void queueDozer(void);
 
 protected:
+	virtual Bool selectTeamToBuild(void); ///< determine the next team to build
+	virtual Bool selectTeamToReinforce(Int minPriority); ///< determine the next team to reinforce
+	virtual Bool startTraining(WorkOrder *order, Bool busyOK, AsciiString teamName); ///< find a production building that can
+																																									 ///< handle the order, and start building
 
-	virtual Bool selectTeamToBuild( void );			///< determine the next team to build
-	virtual Bool selectTeamToReinforce( Int minPriority );			///< determine the next team to reinforce
-	virtual Bool startTraining( WorkOrder *order, Bool busyOK, AsciiString teamName);	///< find a production building that can handle the order, and start building
-
-	virtual Bool isAGoodIdeaToBuildTeam( TeamPrototype *proto );		///< return true if team should be built
-	virtual void processBaseBuilding( void );		///< do base-building behaviors
-	virtual void processTeamBuilding( void );		///< do team-building behaviors
+	virtual Bool isAGoodIdeaToBuildTeam(TeamPrototype *proto); ///< return true if team should be built
+	virtual void processBaseBuilding(void); ///< do base-building behaviors
+	virtual void processTeamBuilding(void); ///< do team-building behaviors
 
 protected:
 	void adjustBuildList(BuildListInfo *list);
@@ -115,11 +117,7 @@ protected:
 	Real m_curRightFlankRightDefenseAngle;
 
 	UnsignedInt m_frameToCheckEnemy;
-	Player			*m_currentEnemy;
-
+	Player *m_currentEnemy;
 };
 
 #endif // _AI_SKIRMISH_PLAYER_H_
-
-
-

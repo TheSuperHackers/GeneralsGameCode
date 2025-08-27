@@ -22,8 +22,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-char* TheCurrentIgnoreCrashPtr = NULL;
-
+char *TheCurrentIgnoreCrashPtr = NULL;
 
 #ifdef DEBUG_LOGGING
 

@@ -72,8 +72,9 @@ class Targa;
 **      WW3D_FORMAT_A8L8 indicates that the high byte of this two byte
 **      format is alpha.
 */
-enum WW3DFormat {
-	WW3D_FORMAT_UNKNOWN=0,
+enum WW3DFormat
+{
+	WW3D_FORMAT_UNKNOWN = 0,
 	WW3D_FORMAT_R8G8B8,
 	WW3D_FORMAT_A8R8G8B8,
 	WW3D_FORMAT_X8R8G8B8,
@@ -90,24 +91,25 @@ enum WW3DFormat {
 	WW3D_FORMAT_L8,
 	WW3D_FORMAT_A8L8,
 	WW3D_FORMAT_A4L4,
-	WW3D_FORMAT_U8V8,		// Bumpmap
-	WW3D_FORMAT_L6V5U5,	// Bumpmap
-	WW3D_FORMAT_X8L8V8U8,	// Bumpmap
+	WW3D_FORMAT_U8V8, // Bumpmap
+	WW3D_FORMAT_L6V5U5, // Bumpmap
+	WW3D_FORMAT_X8L8V8U8, // Bumpmap
 	WW3D_FORMAT_DXT1,
 	WW3D_FORMAT_DXT2,
 	WW3D_FORMAT_DXT3,
 	WW3D_FORMAT_DXT4,
 	WW3D_FORMAT_DXT5,
-	WW3D_FORMAT_COUNT	// Used only to determine number of surface formats
+	WW3D_FORMAT_COUNT // Used only to determine number of surface formats
 };
 
 // depth stencil buffer formats
 enum WW3DZFormat
 {
-	WW3D_ZFORMAT_UNKNOWN=0,
+	WW3D_ZFORMAT_UNKNOWN = 0,
 	WW3D_ZFORMAT_D16_LOCKABLE, // 16-bit z-buffer bit depth. This is an application-lockable surface format.
 	WW3D_ZFORMAT_D32, // 32-bit z-buffer bit depth.
-	WW3D_ZFORMAT_D15S1, // 16-bit z-buffer bit depth where 15 bits are reserved for the depth channel and 1 bit is reserved for the stencil channel.
+	WW3D_ZFORMAT_D15S1, // 16-bit z-buffer bit depth where 15 bits are reserved for the depth channel and 1 bit is reserved for
+											// the stencil channel.
 	WW3D_ZFORMAT_D24S8, // 32-bit z-buffer bit depth using 24 bits for the depth channel and 8 bits for the stencil channel.
 	WW3D_ZFORMAT_D16, // 16-bit z-buffer bit depth.
 	WW3D_ZFORMAT_D24X8, // 32-bit z-buffer bit depth using 24 bits for the depth channel.
@@ -123,8 +125,10 @@ enum WW3DZFormat
 
 // Utility function - not much used otherwise it would use an array.
 // NOTE: when adding values to WW3DFormat add here also (if they have alpha).
-inline bool Has_Alpha(WW3DFormat format) {
-	switch (format) {
+inline bool Has_Alpha(WW3DFormat format)
+{
+	switch (format)
+	{
 		case WW3D_FORMAT_A8R8G8B8:
 		case WW3D_FORMAT_A1R5G5B5:
 		case WW3D_FORMAT_A4R4G4B4:
@@ -145,8 +149,10 @@ inline bool Has_Alpha(WW3DFormat format) {
 	};
 }
 
-inline int Alpha_Bits(WW3DFormat format) {
-	switch (format) {
+inline int Alpha_Bits(WW3DFormat format)
+{
+	switch (format)
+	{
 		case WW3D_FORMAT_A8R8G8B8:
 		case WW3D_FORMAT_A8:
 		case WW3D_FORMAT_A8R3G3B2:
@@ -175,11 +181,11 @@ inline int Alpha_Bits(WW3DFormat format) {
 
 // The color will be returned as an unsigned int always
 // any unused bits will be garbage
-void Vector4_to_Color(unsigned int *outc,const Vector4 &inc,const WW3DFormat format);
+void Vector4_to_Color(unsigned int *outc, const Vector4 &inc, const WW3DFormat format);
 
 // If the format does not support alpha
 // the alpha will be garbage
-void Color_to_Vector4(Vector4* outc,const unsigned int inc,const WW3DFormat format);
+void Color_to_Vector4(Vector4 *outc, const unsigned int inc, const WW3DFormat format);
 
 // Define matching WW3D format based from Targa header.
 //
@@ -187,21 +193,21 @@ void Color_to_Vector4(Vector4* outc,const unsigned int inc,const WW3DFormat form
 // src_format - WW3DFormat that represents the format the bitmap is stored in the targa file.
 // src_bpp - bytes per pixel in the source surface
 // targa - reference to the targa object...
-void Get_WW3D_Format(WW3DFormat& dest_format,WW3DFormat& src_format,unsigned& src_bpp,const Targa& targa);
+void Get_WW3D_Format(WW3DFormat &dest_format, WW3DFormat &src_format, unsigned &src_bpp, const Targa &targa);
 
 // The same as above, but doesn't validate the device - only checks the source format.
-void Get_WW3D_Format(WW3DFormat& src_format,unsigned& src_bpp,const Targa& targa);
+void Get_WW3D_Format(WW3DFormat &src_format, unsigned &src_bpp, const Targa &targa);
 
 // Get valid texture format (on current hardware) that is closest to the given format (for instance, 32 bit ARGB8888 would
 // return 16 bit ARGB4444 if the device doesn't support 32 bit textures).
 // Pass false to the second parameter if you don't wish to consider compressed textures on hardware that supports them.
 // The parameter has no effect on hardware that doesn't support compression.
-WW3DFormat Get_Valid_Texture_Format(WW3DFormat format,bool is_compression_allowed);
+WW3DFormat Get_Valid_Texture_Format(WW3DFormat format, bool is_compression_allowed);
 
 unsigned Get_Bytes_Per_Pixel(WW3DFormat format);
 
-void Get_WW3D_Format_Name(WW3DFormat format, StringClass& name);
-void Get_WW3D_ZFormat_Name(WW3DZFormat format, StringClass& name);
+void Get_WW3D_Format_Name(WW3DFormat format, StringClass &name);
+void Get_WW3D_ZFormat_Name(WW3DZFormat format, StringClass &name);
 
 unsigned Get_Num_Depth_Bits(WW3DZFormat zformat);
 unsigned Get_Num_Stencil_Bits(WW3DZFormat zformat);

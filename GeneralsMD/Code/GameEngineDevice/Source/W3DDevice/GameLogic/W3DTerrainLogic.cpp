@@ -41,31 +41,26 @@
 #include "GameLogic/AI.h"
 #include "GameLogic/AIPathfind.h"
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DTerrainLogic::W3DTerrainLogic():
-m_mapMinZ(0),
-m_mapMaxZ(1)
+W3DTerrainLogic::W3DTerrainLogic() : m_mapMinZ(0), m_mapMaxZ(1)
 {
 	m_mapData = NULL;
-}  // end W3DTerrainLogic
+} // end W3DTerrainLogic
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 W3DTerrainLogic::~W3DTerrainLogic()
 {
-
 	// free terrain data
 
-}  // end W3DTerrainLogic
+} // end W3DTerrainLogic
 
 //-------------------------------------------------------------------------------------------------
 /** Device DEPENDENT implementation init details for logical terrain */
 //-------------------------------------------------------------------------------------------------
-void W3DTerrainLogic::init( void )
+void W3DTerrainLogic::init(void)
 {
-
 	// enhancing functionality
 	TerrainLogic::init();
 	m_mapDX = 0;
@@ -73,12 +68,12 @@ void W3DTerrainLogic::init( void )
 	m_mapMinZ = 0;
 	m_mapMaxZ = 1;
 
-}  // end init
+} // end init
 
 //-------------------------------------------------------------------------------------------------
 /** Reset */
 //-------------------------------------------------------------------------------------------------
-void W3DTerrainLogic::reset( void )
+void W3DTerrainLogic::reset(void)
 {
 	TerrainLogic::reset();
 	m_mapDX = 0;
@@ -86,56 +81,55 @@ void W3DTerrainLogic::reset( void )
 	m_mapMinZ = 0;
 	m_mapMaxZ = 1;
 	WorldHeightMap::freeListOfMapObjects();
-}  // end reset
+} // end reset
 
 //-------------------------------------------------------------------------------------------------
 /** newMap */
 //-------------------------------------------------------------------------------------------------
-void W3DTerrainLogic::newMap( Bool saveGame )
+void W3DTerrainLogic::newMap(Bool saveGame)
 {
-
-	TheTerrainRenderObject->loadRoadsAndBridges( this, saveGame );
-	TerrainLogic::newMap( saveGame );
-}  // end update
+	TheTerrainRenderObject->loadRoadsAndBridges(this, saveGame);
+	TerrainLogic::newMap(saveGame);
+} // end update
 
 //-------------------------------------------------------------------------------------------------
 /** Update */
 //-------------------------------------------------------------------------------------------------
-void W3DTerrainLogic::update( void )
+void W3DTerrainLogic::update(void)
 {
 	TerrainLogic::update();
-}  // end update
+} // end update
 
 //-------------------------------------------------------------------------------------------------
 /** Device DEPENDENT implementation for load details of logical terrain.
 Note - if query is true, we are  */
 //-------------------------------------------------------------------------------------------------
-Bool W3DTerrainLogic::loadMap( AsciiString filename , Bool query )
+Bool W3DTerrainLogic::loadMap(AsciiString filename, Bool query)
 {
-	if(!TheMapCache)
+	if (!TheMapCache)
 		return FALSE;
 
-	WorldHeightMap *terrainHeightMap;				///< holds raw heightmap data samples
+	WorldHeightMap *terrainHeightMap; ///< holds raw heightmap data samples
 
-	char	tempBuf[_MAX_PATH];
-	char	filenameBuf[_MAX_PATH];
+	char tempBuf[_MAX_PATH];
+	char filenameBuf[_MAX_PATH];
 	int length = 0;
 
 	strcpy(tempBuf, filename.str());
 
-	length = strlen( tempBuf );
-	if( length >= 4 )
+	length = strlen(tempBuf);
+	if (length >= 4)
 	{
-		memset( filenameBuf, '\0', _MAX_PATH);
-		strncpy( filenameBuf, tempBuf, length - 4);
+		memset(filenameBuf, '\0', _MAX_PATH);
+		strncpy(filenameBuf, tempBuf, length - 4);
 	}
 
-//	const char *fname = filename.reverseFind('\\');
-//	if (fname)
-//		filename = fname+1;
+	//	const char *fname = filename.reverseFind('\\');
+	//	if (fname)
+	//		filename = fname+1;
 
 	CachedFileInputStream fileStrm;
-	if ( !fileStrm.open(filename) )
+	if (!fileStrm.open(filename))
 	{
 		return FALSE;
 	}
@@ -147,10 +141,10 @@ Bool W3DTerrainLogic::loadMap( AsciiString filename , Bool query )
 	terrainHeightMap = NEW WorldHeightMap(pStrm, true);
 
 	if (terrainHeightMap)
-	{	//copy loaded data
+	{ // copy loaded data
 		// Get the whole map, because we don't know which boundary is active yet
-		m_mapDX=terrainHeightMap->getXExtent();
-		m_mapDY=terrainHeightMap->getYExtent();
+		m_mapDX = terrainHeightMap->getXExtent();
+		m_mapDY = terrainHeightMap->getYExtent();
 
 		// now, get all the boudnaries, and set the current active boundary to boundary 0.
 		m_boundaries = terrainHeightMap->getAllBoundaries();
@@ -161,38 +155,42 @@ Bool W3DTerrainLogic::loadMap( AsciiString filename , Bool query )
 		minHt = terrainHeightMap->getMaxHeightValue();
 		maxHt = 0;
 
-		for (j=0; j<m_mapDY; j++) {
-			for (i=0; i<m_mapDX; i++) {
-				Short cur = terrainHeightMap->getHeight(i,j);
-				if (cur<minHt) minHt = cur;
-				if (maxHt<cur) maxHt = cur;
+		for (j = 0; j < m_mapDY; j++)
+		{
+			for (i = 0; i < m_mapDX; i++)
+			{
+				Short cur = terrainHeightMap->getHeight(i, j);
+				if (cur < minHt)
+					minHt = cur;
+				if (maxHt < cur)
+					maxHt = cur;
 			}
 		}
 		m_mapMinZ = minHt * MAP_HEIGHT_SCALE;
 		m_mapMaxZ = maxHt * MAP_HEIGHT_SCALE;
-		//release temporary object used for loading height values
+		// release temporary object used for loading height values
 		REF_PTR_RELEASE(terrainHeightMap);
 	}
 	else
-		return FALSE;	//could not create heightmap object.  File not found?
+		return FALSE; // could not create heightmap object.  File not found?
 
 	// Note - It is very important that this get called AFTER the map is read in.  jba.
 	// enhancing functionality
-	if( TerrainLogic::loadMap( filename, query ) == false )
+	if (TerrainLogic::loadMap(filename, query) == false)
 		return FALSE;
 
 	// Map file now contains lighting & time of day info.
-	if( TheWritableGlobalData->setTimeOfDay( TheGlobalData->m_timeOfDay ) )
-		TheGameClient->setTimeOfDay( TheGlobalData->m_timeOfDay );
+	if (TheWritableGlobalData->setTimeOfDay(TheGlobalData->m_timeOfDay))
+		TheGameClient->setTimeOfDay(TheGlobalData->m_timeOfDay);
 
-	return TRUE;  // success
+	return TRUE; // success
 
-}  // end load
+} // end load
 
 //-------------------------------------------------------------------------------------------------
 /** Get the 3D extent of the terrain in world coordinates */
 //-------------------------------------------------------------------------------------------------
-void W3DTerrainLogic::getExtent( Region3D *extent ) const
+void W3DTerrainLogic::getExtent(Region3D *extent) const
 {
 	extent->lo.x = 0.0f;
 
@@ -200,10 +198,13 @@ void W3DTerrainLogic::getExtent( Region3D *extent ) const
 
 	// Note - m_boundaries are stored in height map grids wide, so we have to
 	// multiply by the grid width.
-	if (m_boundaries.size() > 0) {
-		extent->hi.x = m_boundaries[m_activeBoundary].x*MAP_XY_FACTOR;
-		extent->hi.y = m_boundaries[m_activeBoundary].y*MAP_XY_FACTOR;
-	} else {
+	if (m_boundaries.size() > 0)
+	{
+		extent->hi.x = m_boundaries[m_activeBoundary].x * MAP_XY_FACTOR;
+		extent->hi.y = m_boundaries[m_activeBoundary].y * MAP_XY_FACTOR;
+	}
+	else
+	{
 		extent->hi.x = 0.0f;
 		extent->hi.y = 0.0f;
 	}
@@ -216,7 +217,7 @@ void W3DTerrainLogic::getExtent( Region3D *extent ) const
 //-------------------------------------------------------------------------------------------------
 /** Get the 3D largest bounds defined in the map. */
 //-------------------------------------------------------------------------------------------------
-void W3DTerrainLogic::getMaximumPathfindExtent( Region3D *extent ) const
+void W3DTerrainLogic::getMaximumPathfindExtent(Region3D *extent) const
 {
 	extent->lo.x = 0.0f;
 
@@ -227,12 +228,15 @@ void W3DTerrainLogic::getMaximumPathfindExtent( Region3D *extent ) const
 	// Note - m_boundaries are stored in height map grids wide, so we have to
 	// multiply by the grid width.
 	size_t i;
-	for (i=0; i<m_boundaries.size(); i++) {
-		if (extent->hi.x < m_boundaries[i].x*MAP_XY_FACTOR) {
-			extent->hi.x = m_boundaries[i].x*MAP_XY_FACTOR;
+	for (i = 0; i < m_boundaries.size(); i++)
+	{
+		if (extent->hi.x < m_boundaries[i].x * MAP_XY_FACTOR)
+		{
+			extent->hi.x = m_boundaries[i].x * MAP_XY_FACTOR;
 		}
-		if (extent->hi.y < m_boundaries[i].y*MAP_XY_FACTOR) {
-			extent->hi.y = m_boundaries[i].y*MAP_XY_FACTOR;
+		if (extent->hi.y < m_boundaries[i].y * MAP_XY_FACTOR)
+		{
+			extent->hi.y = m_boundaries[i].y * MAP_XY_FACTOR;
 		}
 	}
 
@@ -241,10 +245,9 @@ void W3DTerrainLogic::getMaximumPathfindExtent( Region3D *extent ) const
 	extent->hi.z = m_mapMaxZ;
 }
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DTerrainLogic::getExtentIncludingBorder( Region3D *extent ) const
+void W3DTerrainLogic::getExtentIncludingBorder(Region3D *extent) const
 {
 	extent->lo.x = 0.0f;
 	extent->lo.y = 0.0f;
@@ -252,12 +255,12 @@ void W3DTerrainLogic::getExtentIncludingBorder( Region3D *extent ) const
 	Real border = TheTerrainRenderObject->getMap()->getBorderSizeInline() * MAP_XY_FACTOR;
 	extent->lo.x -= border;
 	extent->lo.y -= border;
-	extent->hi.x = (m_mapDX * MAP_XY_FACTOR)-border;
-	extent->hi.y = (m_mapDY * MAP_XY_FACTOR)-border;
+	extent->hi.x = (m_mapDX * MAP_XY_FACTOR) - border;
+	extent->hi.y = (m_mapDY * MAP_XY_FACTOR) - border;
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool W3DTerrainLogic::isClearLineOfSight(const Coord3D& pos, const Coord3D& posOther) const
+Bool W3DTerrainLogic::isClearLineOfSight(const Coord3D &pos, const Coord3D &posOther) const
 {
 	if (TheTerrainRenderObject)
 	{
@@ -272,7 +275,7 @@ Bool W3DTerrainLogic::isClearLineOfSight(const Coord3D& pos, const Coord3D& posO
 //-------------------------------------------------------------------------------------------------
 /** W3D specific get height function for logical terrain */
 //-------------------------------------------------------------------------------------------------
-Real W3DTerrainLogic::getGroundHeight( Real x, Real y, Coord3D* normal ) const
+Real W3DTerrainLogic::getGroundHeight(Real x, Real y, Coord3D *normal) const
 {
 #define USE_THE_TERRAIN_OBJECT
 #ifdef USE_THE_TERRAIN_OBJECT
@@ -280,26 +283,26 @@ Real W3DTerrainLogic::getGroundHeight( Real x, Real y, Coord3D* normal ) const
 	// W3DTerrainLogic shouldn't depend on TheTerrainRenderObject!
 	if (TheTerrainRenderObject)
 	{
-		return TheTerrainRenderObject->getHeightMapHeight(x,y,normal);
+		return TheTerrainRenderObject->getHeightMapHeight(x, y, normal);
 	}
 	else
 	{
 		if (normal)
 		{
-			//return a default normal pointing up
-			normal->x=0.0f;
-			normal->y=0.0f;
-			normal->z=1.0f;
+			// return a default normal pointing up
+			normal->x = 0.0f;
+			normal->y = 0.0f;
+			normal->z = 1.0f;
 		}
 		return 0;
 	}
 #endif
-}  // end getHight
+} // end getHight
 
 //-------------------------------------------------------------------------------------------------
 /** Get the height considering the layer. */
 //-------------------------------------------------------------------------------------------------
-Real W3DTerrainLogic::getLayerHeight( Real x, Real y, PathfindLayerEnum layer, Coord3D* normal, Bool clip ) const
+Real W3DTerrainLogic::getLayerHeight(Real x, Real y, PathfindLayerEnum layer, Coord3D *normal, Bool clip) const
 {
 #ifdef USE_THE_TERRAIN_OBJECT
 
@@ -307,15 +310,15 @@ Real W3DTerrainLogic::getLayerHeight( Real x, Real y, PathfindLayerEnum layer, C
 	{
 		if (normal)
 		{
-			//return a default normal pointing up
-			normal->x=0.0f;
-			normal->y=0.0f;
-			normal->z=1.0f;
+			// return a default normal pointing up
+			normal->x = 0.0f;
+			normal->y = 0.0f;
+			normal->z = 1.0f;
 		}
 		return 0;
 	}
 
-	Real height = TheTerrainRenderObject->getHeightMapHeight(x,y,normal);
+	Real height = TheTerrainRenderObject->getHeightMapHeight(x, y, normal);
 
 	if (layer != LAYER_GROUND)
 	{
@@ -334,13 +337,13 @@ Real W3DTerrainLogic::getLayerHeight( Real x, Real y, PathfindLayerEnum layer, C
 				return height;
 			}
 		}
-		Bridge* pBridge;
+		Bridge *pBridge;
 		if ((pBridge = findBridgeLayerAt(&loc, layer, clip)) != 0)
 		{
 			Real bridgeHeight = pBridge->getBridgeHeight(&loc, normal);
 			if (bridgeHeight > height)
 			{
-				return bridgeHeight;	// Don't return bridge height if it's in the ground.
+				return bridgeHeight; // Don't return bridge height if it's in the ground.
 			}
 		}
 	}
@@ -348,55 +351,52 @@ Real W3DTerrainLogic::getLayerHeight( Real x, Real y, PathfindLayerEnum layer, C
 	return height;
 
 #endif
-}  // end getLayerHeight
+} // end getLayerHeight
 
 //-------------------------------------------------------------------------------------------------
 /** W3D isCliffCell for terrain logic */
 //-------------------------------------------------------------------------------------------------
-Bool W3DTerrainLogic::isCliffCell( Real x, Real y) const
+Bool W3DTerrainLogic::isCliffCell(Real x, Real y) const
 {
 	// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
 	// W3DTerrainLogic shouldn't depend on TheTerrainRenderObject!
-	return TheTerrainRenderObject->isCliffCell(x,y);
+	return TheTerrainRenderObject->isCliffCell(x, y);
 
-}  // end isCliffCell
+} // end isCliffCell
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void W3DTerrainLogic::crc( Xfer *xfer )
+void W3DTerrainLogic::crc(Xfer *xfer)
 {
-
 	// extend base class
-	TerrainLogic::crc( xfer );
+	TerrainLogic::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void W3DTerrainLogic::xfer( Xfer *xfer )
+void W3DTerrainLogic::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	TerrainLogic::xfer( xfer );
+	TerrainLogic::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DTerrainLogic::loadPostProcess( void )
+void W3DTerrainLogic::loadPostProcess(void)
 {
-
 	// extend base class
 	TerrainLogic::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

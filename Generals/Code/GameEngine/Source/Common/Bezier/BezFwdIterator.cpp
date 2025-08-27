@@ -26,7 +26,7 @@
 #include "Common/BezFwdIterator.h"
 
 //-------------------------------------------------------------------------------------------------
-BezFwdIterator::BezFwdIterator(): mStep(0), mStepsDesired(0)
+BezFwdIterator::BezFwdIterator() : mStep(0), mStepsDesired(0)
 {
 	// Added by Sadullah Nader
 	mCurrPoint.zero();
@@ -57,13 +57,25 @@ void BezFwdIterator::start(void)
 	if (mStepsDesired <= 1)
 		return;
 
-	float d	 = 1.0f / (mStepsDesired - 1);
+	float d = 1.0f / (mStepsDesired - 1);
 	float d2 = d * d;
 	float d3 = d * d2;
 
-	D3DXVECTOR4 px(mBezSeg.m_controlPoints[0].x, mBezSeg.m_controlPoints[1].x, mBezSeg.m_controlPoints[2].x, mBezSeg.m_controlPoints[3].x);
-	D3DXVECTOR4 py(mBezSeg.m_controlPoints[0].y, mBezSeg.m_controlPoints[1].y, mBezSeg.m_controlPoints[2].y, mBezSeg.m_controlPoints[3].y);
-	D3DXVECTOR4 pz(mBezSeg.m_controlPoints[0].z, mBezSeg.m_controlPoints[1].z, mBezSeg.m_controlPoints[2].z, mBezSeg.m_controlPoints[3].z);
+	D3DXVECTOR4 px(
+			mBezSeg.m_controlPoints[0].x,
+			mBezSeg.m_controlPoints[1].x,
+			mBezSeg.m_controlPoints[2].x,
+			mBezSeg.m_controlPoints[3].x);
+	D3DXVECTOR4 py(
+			mBezSeg.m_controlPoints[0].y,
+			mBezSeg.m_controlPoints[1].y,
+			mBezSeg.m_controlPoints[2].y,
+			mBezSeg.m_controlPoints[3].y);
+	D3DXVECTOR4 pz(
+			mBezSeg.m_controlPoints[0].z,
+			mBezSeg.m_controlPoints[1].z,
+			mBezSeg.m_controlPoints[2].z,
+			mBezSeg.m_controlPoints[3].z);
 
 	D3DXVECTOR4 cVec[3];
 	D3DXVec4Transform(&cVec[0], &px, &BezierSegment::s_bezBasisMatrix);
@@ -73,22 +85,28 @@ void BezFwdIterator::start(void)
 	mCurrPoint = mBezSeg.m_controlPoints[0];
 
 	int i = 3;
-	while (i--) {
+	while (i--)
+	{
 		float a = cVec[i].x;
 		float b = cVec[i].y;
 		float c = cVec[i].z;
 
 		float *pD, *pDD, *pDDD;
 
-		if (i == 2) {
+		if (i == 2)
+		{
 			pD = &mDq.z;
 			pDD = &mDDq.z;
 			pDDD = &mDDDq.z;
-		} else if (i == 1) {
+		}
+		else if (i == 1)
+		{
 			pD = &mDq.y;
 			pDD = &mDDq.y;
 			pDDD = &mDDDq.y;
-		} else if (i == 0) {
+		}
+		else if (i == 0)
+		{
 			pD = &mDq.x;
 			pDD = &mDDq.x;
 			pDDD = &mDDDq.x;
@@ -107,7 +125,7 @@ Bool BezFwdIterator::done(void)
 }
 
 //-------------------------------------------------------------------------------------------------
-const Coord3D& BezFwdIterator::getCurrent(void) const
+const Coord3D &BezFwdIterator::getCurrent(void) const
 {
 	return mCurrPoint;
 }
@@ -121,4 +139,3 @@ void BezFwdIterator::next(void)
 
 	++mStep;
 }
-

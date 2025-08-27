@@ -63,9 +63,8 @@
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/GlobalData.h"
 #include "Common/BuildAssistant.h"
@@ -99,35 +98,34 @@ static GameWindow *theWindow = NULL;
 static AnimateWindowManager *theAnimateWindowManager = NULL;
 static GameWindow *prevWindow = NULL;
 static Bool useAnimation = FALSE;
-void ControlBarPopupDescriptionUpdateFunc( WindowLayout *layout, void *param )
+void ControlBarPopupDescriptionUpdateFunc(WindowLayout *layout, void *param)
 {
-	if(TheScriptEngine->isGameEnding())
+	if (TheScriptEngine->isGameEnding())
 		TheControlBar->hideBuildTooltipLayout();
 
-	if(theAnimateWindowManager && !TheControlBar->getShowBuildTooltipLayout() && !theAnimateWindowManager->isReversed())
+	if (theAnimateWindowManager && !TheControlBar->getShowBuildTooltipLayout() && !theAnimateWindowManager->isReversed())
 		theAnimateWindowManager->reverseAnimateWindow();
-	else if(!TheControlBar->getShowBuildTooltipLayout() && (!TheGlobalData->m_animateWindows || !useAnimation))
+	else if (!TheControlBar->getShowBuildTooltipLayout() && (!TheGlobalData->m_animateWindows || !useAnimation))
 		TheControlBar->deleteBuildTooltipLayout();
 
-
-	if ( useAnimation && theAnimateWindowManager && TheGlobalData->m_animateWindows)
+	if (useAnimation && theAnimateWindowManager && TheGlobalData->m_animateWindows)
 	{
 		Bool wasFinished = theAnimateWindowManager->isFinished();
 		theAnimateWindowManager->update();
-		if (theAnimateWindowManager && theAnimateWindowManager->isFinished() && !wasFinished && theAnimateWindowManager->isReversed())
+		if (theAnimateWindowManager && theAnimateWindowManager->isFinished() && !wasFinished
+				&& theAnimateWindowManager->isReversed())
 		{
 			delete theAnimateWindowManager;
 			theAnimateWindowManager = NULL;
 			TheControlBar->deleteBuildTooltipLayout();
 		}
 	}
-
 }
 
 // ---------------------------------------------------------------------------------------
-void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
+void ControlBar::showBuildTooltipLayout(GameWindow *cmdButton)
 {
-	if (TheInGameUI->areTooltipsDisabled() 	|| TheScriptEngine->isGameEnding())
+	if (TheInGameUI->areTooltipsDisabled() || TheScriptEngine->isGameEnding())
 	{
 		return;
 	}
@@ -135,40 +133,40 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 	Bool passedWaitTime = FALSE;
 	static Bool isInitialized = FALSE;
 	static UnsignedInt beginWaitTime;
-	if(prevWindow == cmdButton)
+	if (prevWindow == cmdButton)
 	{
 		m_showBuildToolTipLayout = TRUE;
-		if(!isInitialized &&  beginWaitTime + cmdButton->getTooltipDelay() < timeGetTime())
+		if (!isInitialized && beginWaitTime + cmdButton->getTooltipDelay() < timeGetTime())
 		{
-			//DEBUG_LOG(("%d beginwaittime, %d tooltipdelay, %dtimegettime", beginWaitTime, cmdButton->getTooltipDelay(), timeGetTime()));
+			// DEBUG_LOG(("%d beginwaittime, %d tooltipdelay, %dtimegettime", beginWaitTime, cmdButton->getTooltipDelay(),
+			// timeGetTime()));
 			passedWaitTime = TRUE;
 		}
 
-		if(!passedWaitTime)
+		if (!passedWaitTime)
 			return;
 	}
-	else if( !m_buildToolTipLayout->isHidden() )
+	else if (!m_buildToolTipLayout->isHidden())
 	{
-		if(useAnimation && TheGlobalData->m_animateWindows && !theAnimateWindowManager->isReversed())
+		if (useAnimation && TheGlobalData->m_animateWindows && !theAnimateWindowManager->isReversed())
 			theAnimateWindowManager->reverseAnimateWindow();
-		else if( useAnimation && TheGlobalData->m_animateWindows && theAnimateWindowManager->isReversed())
+		else if (useAnimation && TheGlobalData->m_animateWindows && theAnimateWindowManager->isReversed())
 		{
 			return;
 		}
 		else
 		{
-//			m_buildToolTipLayout->destroyWindows();
-//			deleteInstance(m_buildToolTipLayout);
-//			m_buildToolTipLayout = NULL;
+			//			m_buildToolTipLayout->destroyWindows();
+			//			deleteInstance(m_buildToolTipLayout);
+			//			m_buildToolTipLayout = NULL;
 			m_buildToolTipLayout->hide(TRUE);
 			prevWindow = NULL;
 		}
 		return;
 	}
 
-
 	// will only get here the firsttime through the function through this window
-	if(!passedWaitTime)
+	if (!passedWaitTime)
 	{
 		prevWindow = cmdButton;
 		beginWaitTime = timeGetTime();
@@ -177,13 +175,13 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 	}
 	isInitialized = TRUE;
 
-	if(!cmdButton)
+	if (!cmdButton)
 		return;
-	if(BitIsSet(cmdButton->winGetStyle(), GWS_PUSH_BUTTON))
+	if (BitIsSet(cmdButton->winGetStyle(), GWS_PUSH_BUTTON))
 	{
 		const CommandButton *commandButton = (const CommandButton *)GadgetButtonGetData(cmdButton);
 
-		if(!commandButton)
+		if (!commandButton)
 			return;
 
 		// note that, in this branch, ENABLE_SOLO_PLAY is ***NEVER*** defined...
@@ -214,7 +212,7 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 	else
 	{
 		// we're a generic window
-		if(!BitIsSet(cmdButton->winGetStyle(), GWS_USER_WINDOW) && !BitIsSet(cmdButton->winGetStyle(), GWS_STATIC_TEXT))
+		if (!BitIsSet(cmdButton->winGetStyle(), GWS_USER_WINDOW) && !BitIsSet(cmdButton->winGetStyle(), GWS_STATIC_TEXT))
 			return;
 		populateBuildTooltipLayout(NULL, cmdButton);
 	}
@@ -224,26 +222,24 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 	{
 		theAnimateWindowManager = NEW AnimateWindowManager;
 		theAnimateWindowManager->reset();
-		theAnimateWindowManager->registerGameWindow( m_buildToolTipLayout->getFirstWindow(), WIN_ANIMATION_SLIDE_RIGHT_FAST, TRUE, 200 );
+		theAnimateWindowManager
+				->registerGameWindow(m_buildToolTipLayout->getFirstWindow(), WIN_ANIMATION_SLIDE_RIGHT_FAST, TRUE, 200);
 	}
-
-
 }
 
-
-void ControlBar::repopulateBuildTooltipLayout( void )
+void ControlBar::repopulateBuildTooltipLayout(void)
 {
-	if(!prevWindow || !m_buildToolTipLayout)
+	if (!prevWindow || !m_buildToolTipLayout)
 		return;
-	if(!BitIsSet(prevWindow->winGetStyle(), GWS_PUSH_BUTTON))
+	if (!BitIsSet(prevWindow->winGetStyle(), GWS_PUSH_BUTTON))
 		return;
 	const CommandButton *commandButton = (const CommandButton *)GadgetButtonGetData(prevWindow);
 	populateBuildTooltipLayout(commandButton);
 }
 
-void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton, GameWindow *tooltipWin)
+void ControlBar::populateBuildTooltipLayout(const CommandButton *commandButton, GameWindow *tooltipWin)
 {
-	if(!m_buildToolTipLayout)
+	if (!m_buildToolTipLayout)
 		return;
 
 	Player *player = ThePlayerList->getLocalPlayer();
@@ -254,167 +250,165 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 	Bool fireScienceButton = false;
 	UnsignedInt costToBuild = 0;
 
-	if(commandButton)
+	if (commandButton)
 	{
 		const ThingTemplate *thingTemplate = commandButton->getThingTemplate();
 		const UpgradeTemplate *upgradeTemplate = commandButton->getUpgradeTemplate();
 
-		ScienceType	st = SCIENCE_INVALID;
-		if( commandButton->getCommandType() != GUI_COMMAND_PLAYER_UPGRADE &&
-				commandButton->getCommandType() != GUI_COMMAND_OBJECT_UPGRADE )
+		ScienceType st = SCIENCE_INVALID;
+		if (commandButton->getCommandType() != GUI_COMMAND_PLAYER_UPGRADE
+				&& commandButton->getCommandType() != GUI_COMMAND_OBJECT_UPGRADE)
 		{
-			if( commandButton->getScienceVec().size() > 1 )
+			if (commandButton->getScienceVec().size() > 1)
 			{
-				for(size_t j = 0; j < commandButton->getScienceVec().size(); ++j)
+				for (size_t j = 0; j < commandButton->getScienceVec().size(); ++j)
 				{
-					st = commandButton->getScienceVec()[ j ];
+					st = commandButton->getScienceVec()[j];
 
-					if( commandButton->getCommandType() != GUI_COMMAND_PURCHASE_SCIENCE )
+					if (commandButton->getCommandType() != GUI_COMMAND_PURCHASE_SCIENCE)
 					{
-						if( !player->hasScience( st ) && j > 0 )
+						if (!player->hasScience(st) && j > 0)
 						{
-							//If we're not looking at a command button that purchases a science, then
-							//it means we are looking at a command button that can USE the science. This
-							//means we want to get the description for the previous science -- the one
-							//we can use, not purchase!
-							st = commandButton->getScienceVec()[ j - 1 ];
+							// If we're not looking at a command button that purchases a science, then
+							// it means we are looking at a command button that can USE the science. This
+							// means we want to get the description for the previous science -- the one
+							// we can use, not purchase!
+							st = commandButton->getScienceVec()[j - 1];
 						}
 
-						//Now that we got the science for the button that executes the science, we need
-						//to generate a simpler help text!
+						// Now that we got the science for the button that executes the science, we need
+						// to generate a simpler help text!
 						fireScienceButton = TRUE;
 
 						break;
 					}
-					else if( !player->hasScience( st ) )
+					else if (!player->hasScience(st))
 					{
-						//Purchase science case. The first science we run into that we don't have, that's the
-						//one we'll want to show!
+						// Purchase science case. The first science we run into that we don't have, that's the
+						// one we'll want to show!
 						break;
 					}
 				}
 			}
-			else if(commandButton->getScienceVec().size() == 1 )
+			else if (commandButton->getScienceVec().size() == 1)
 			{
-				st = commandButton->getScienceVec()[ 0 ];
-				if( commandButton->getCommandType() != GUI_COMMAND_PURCHASE_SCIENCE )
+				st = commandButton->getScienceVec()[0];
+				if (commandButton->getCommandType() != GUI_COMMAND_PURCHASE_SCIENCE)
 				{
-					//Now that we got the science for the button that executes the science, we need
-					//to generate a simpler help text!
+					// Now that we got the science for the button that executes the science, we need
+					// to generate a simpler help text!
 					fireScienceButton = TRUE;
 				}
 			}
 		}
 
-		if( commandButton->getDescriptionLabel().isNotEmpty() )
+		if (commandButton->getDescriptionLabel().isNotEmpty())
 		{
 			descrip = TheGameText->fetch(commandButton->getDescriptionLabel());
 
 			Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
 			Object *selectedObject = draw ? draw->getObject() : NULL;
-			if( selectedObject )
+			if (selectedObject)
 			{
-				//Special case: Append status of overcharge on China power plant.
-				if( commandButton->getCommandType() == GUI_COMMAND_TOGGLE_OVERCHARGE )
+				// Special case: Append status of overcharge on China power plant.
+				if (commandButton->getCommandType() == GUI_COMMAND_TOGGLE_OVERCHARGE)
 				{
 					{
 						OverchargeBehaviorInterface *obi;
-						for( BehaviorModule **bmi = selectedObject->getBehaviorModules(); *bmi; ++bmi )
+						for (BehaviorModule **bmi = selectedObject->getBehaviorModules(); *bmi; ++bmi)
 						{
 							obi = (*bmi)->getOverchargeBehaviorInterface();
-							if( obi )
+							if (obi)
 							{
-								descrip.concat( L"\n" );
-								if( obi->isOverchargeActive() )
-									descrip.concat( TheGameText->fetch( "TOOLTIP:TooltipNukeReactorOverChargeIsOn" ) );
+								descrip.concat(L"\n");
+								if (obi->isOverchargeActive())
+									descrip.concat(TheGameText->fetch("TOOLTIP:TooltipNukeReactorOverChargeIsOn"));
 								else
-									descrip.concat( TheGameText->fetch( "TOOLTIP:TooltipNukeReactorOverChargeIsOff" ) );
+									descrip.concat(TheGameText->fetch("TOOLTIP:TooltipNukeReactorOverChargeIsOff"));
 							}
 						}
 					}
-				} //End overcharge special case
+				} // End overcharge special case
 
-				//Special case: When building units & buildings, the CanMakeType determines reasons for not being able to buy stuff.
-				else if( thingTemplate )
+				// Special case: When building units & buildings, the CanMakeType determines reasons for not being able to buy stuff.
+				else if (thingTemplate)
 				{
-					CanMakeType makeType = TheBuildAssistant->canMakeUnit( selectedObject, commandButton->getThingTemplate() );
-					switch( makeType )
+					CanMakeType makeType = TheBuildAssistant->canMakeUnit(selectedObject, commandButton->getThingTemplate());
+					switch (makeType)
 					{
 						case CANMAKE_NO_MONEY:
-							descrip.concat( L"\n\n" );
-							descrip.concat( TheGameText->fetch( "TOOLTIP:TooltipNotEnoughMoneyToBuild" ) );
+							descrip.concat(L"\n\n");
+							descrip.concat(TheGameText->fetch("TOOLTIP:TooltipNotEnoughMoneyToBuild"));
 							break;
 						case CANMAKE_QUEUE_FULL:
-							descrip.concat( L"\n\n" );
-							descrip.concat( TheGameText->fetch( "TOOLTIP:TooltipCannotPurchaseBecauseQueueFull" ) );
+							descrip.concat(L"\n\n");
+							descrip.concat(TheGameText->fetch("TOOLTIP:TooltipCannotPurchaseBecauseQueueFull"));
 							break;
 						case CANMAKE_PARKING_PLACES_FULL:
-							descrip.concat( L"\n\n" );
-							descrip.concat( TheGameText->fetch( "TOOLTIP:TooltipCannotBuildUnitBecauseParkingFull" ) );
+							descrip.concat(L"\n\n");
+							descrip.concat(TheGameText->fetch("TOOLTIP:TooltipCannotBuildUnitBecauseParkingFull"));
 							break;
 						case CANMAKE_MAXED_OUT_FOR_PLAYER:
-							descrip.concat( L"\n\n" );
-              if ( thingTemplate->isKindOf( KINDOF_STRUCTURE ) )
-              {
-                descrip.concat( TheGameText->fetch( "TOOLTIP:TooltipCannotBuildBuildingBecauseMaximumNumber" ) );
-              }
-              else
-              {
-  							descrip.concat( TheGameText->fetch( "TOOLTIP:TooltipCannotBuildUnitBecauseMaximumNumber" ) );
-              }
+							descrip.concat(L"\n\n");
+							if (thingTemplate->isKindOf(KINDOF_STRUCTURE))
+							{
+								descrip.concat(TheGameText->fetch("TOOLTIP:TooltipCannotBuildBuildingBecauseMaximumNumber"));
+							}
+							else
+							{
+								descrip.concat(TheGameText->fetch("TOOLTIP:TooltipCannotBuildUnitBecauseMaximumNumber"));
+							}
 							break;
-						//case CANMAKE_NO_PREREQ:
-						//	descrip.concat( L"\n\n" );
-						//	descrip.concat( TheGameText->fetch( "TOOLTIP:TooltipCannotBuildDueToPrerequisites" ) );
-						//	break;
+							// case CANMAKE_NO_PREREQ:
+							//	descrip.concat( L"\n\n" );
+							//	descrip.concat( TheGameText->fetch( "TOOLTIP:TooltipCannotBuildDueToPrerequisites" ) );
+							//	break;
 					}
 				}
 
-				//Special case: When building upgrades
-				else if( upgradeTemplate && !player->hasUpgradeInProduction( upgradeTemplate ) )
+				// Special case: When building upgrades
+				else if (upgradeTemplate && !player->hasUpgradeInProduction(upgradeTemplate))
 				{
-					if( commandButton->getCommandType() == GUI_COMMAND_PLAYER_UPGRADE ||
-						  commandButton->getCommandType() == GUI_COMMAND_OBJECT_UPGRADE )
+					if (commandButton->getCommandType() == GUI_COMMAND_PLAYER_UPGRADE
+							|| commandButton->getCommandType() == GUI_COMMAND_OBJECT_UPGRADE)
 					{
 						ProductionUpdateInterface *pui = selectedObject->getProductionUpdateInterface();
-						if( pui && pui->getProductionCount() == MAX_BUILD_QUEUE_BUTTONS )
+						if (pui && pui->getProductionCount() == MAX_BUILD_QUEUE_BUTTONS)
 						{
-							descrip.concat( L"\n\n" );
-							descrip.concat( TheGameText->fetch( "TOOLTIP:TooltipCannotPurchaseBecauseQueueFull" ) );
+							descrip.concat(L"\n\n");
+							descrip.concat(TheGameText->fetch("TOOLTIP:TooltipCannotPurchaseBecauseQueueFull"));
 						}
-						else if( !TheUpgradeCenter->canAffordUpgrade( ThePlayerList->getLocalPlayer(), upgradeTemplate, FALSE ) )
+						else if (!TheUpgradeCenter->canAffordUpgrade(ThePlayerList->getLocalPlayer(), upgradeTemplate, FALSE))
 						{
-							descrip.concat( L"\n\n" );
-							descrip.concat( TheGameText->fetch( "TOOLTIP:TooltipNotEnoughMoneyToBuild" ) );
+							descrip.concat(L"\n\n");
+							descrip.concat(TheGameText->fetch("TOOLTIP:TooltipNotEnoughMoneyToBuild"));
 						}
 					}
 				}
-
 			}
-
 		}
 
 		name = TheGameText->fetch(commandButton->getTextLabel().str());
 
-		if( thingTemplate && commandButton->getCommandType() != GUI_COMMAND_PURCHASE_SCIENCE )
+		if (thingTemplate && commandButton->getCommandType() != GUI_COMMAND_PURCHASE_SCIENCE)
 		{
-			//We are either looking at building a unit or a structure that may or may not have any
-			//prerequisites.
+			// We are either looking at building a unit or a structure that may or may not have any
+			// prerequisites.
 
-			//Format the cost only when we have to pay for it.
-			costToBuild = thingTemplate->calcCostToBuild( player );
-			if( costToBuild > 0 )
+			// Format the cost only when we have to pay for it.
+			costToBuild = thingTemplate->calcCostToBuild(player);
+			if (costToBuild > 0)
 			{
-				cost.format( TheGameText->fetch("TOOLTIP:Cost"), costToBuild );
+				cost.format(TheGameText->fetch("TOOLTIP:Cost"), costToBuild);
 			}
 
 			// ask each prerequisite to give us a list of the non satisfied prerequisites
-			for( Int i=0; i<thingTemplate->getPrereqCount(); i++ )
+			for (Int i = 0; i < thingTemplate->getPrereqCount(); i++)
 			{
 				prereq = thingTemplate->getNthPrereq(i);
 				requiresList = prereq->getRequiresList(player);
 
-				if( requiresList != UnicodeString::TheEmptyString )
+				if (requiresList != UnicodeString::TheEmptyString)
 				{
 					// make sure to put in 'returns' to space things correctly
 					if (firstRequirement)
@@ -424,115 +418,115 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 				}
 				requiresFormat.concat(requiresList);
 			}
-			if( !requiresFormat.isEmpty() )
+			if (!requiresFormat.isEmpty())
 			{
 				UnicodeString requireFormat = TheGameText->fetch("CONTROLBAR:Requirements");
 				requiresFormat.format(requireFormat.str(), requiresFormat.str());
-				if(!descrip.isEmpty())
+				if (!descrip.isEmpty())
 					descrip.concat(L"\n");
 				descrip.concat(requiresFormat);
-
 			}
 		}
-		else if( upgradeTemplate )
+		else if (upgradeTemplate)
 		{
-			//We are looking at an upgrade purchase icon. Maybe we already purchased it?
+			// We are looking at an upgrade purchase icon. Maybe we already purchased it?
 
-			Bool hasUpgradeAlready = player->hasUpgradeComplete( upgradeTemplate );
+			Bool hasUpgradeAlready = player->hasUpgradeComplete(upgradeTemplate);
 			Bool hasConflictingUpgrade = FALSE;
 			Bool missingScience = FALSE;
 			Bool playerUpgradeButton = commandButton->getCommandType() == GUI_COMMAND_PLAYER_UPGRADE;
 			Bool objectUpgradeButton = commandButton->getCommandType() == GUI_COMMAND_OBJECT_UPGRADE;
 
-			if( !hasUpgradeAlready )
+			if (!hasUpgradeAlready)
 			{
-				//Check if the first selected object has the specified upgrade.
+				// Check if the first selected object has the specified upgrade.
 				Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
-				if( draw )
+				if (draw)
 				{
 					Object *object = draw->getObject();
-					if( object )
+					if (object)
 					{
-						hasUpgradeAlready = object->hasUpgrade( upgradeTemplate );
-						if( objectUpgradeButton )
+						hasUpgradeAlready = object->hasUpgrade(upgradeTemplate);
+						if (objectUpgradeButton)
 						{
-							hasConflictingUpgrade = !object->affectedByUpgrade( upgradeTemplate );
+							hasConflictingUpgrade = !object->affectedByUpgrade(upgradeTemplate);
 						}
 					}
 				}
 			}
-			if( hasConflictingUpgrade && !hasUpgradeAlready )
+			if (hasConflictingUpgrade && !hasUpgradeAlready)
 			{
-				if( commandButton->getConflictingLabel().isNotEmpty() )
+				if (commandButton->getConflictingLabel().isNotEmpty())
 				{
-					descrip = TheGameText->fetch( commandButton->getConflictingLabel() );
+					descrip = TheGameText->fetch(commandButton->getConflictingLabel());
 				}
 				else
 				{
-					descrip = TheGameText->fetch( "TOOLTIP:HasConflictingUpgradeDefault" );
+					descrip = TheGameText->fetch("TOOLTIP:HasConflictingUpgradeDefault");
 				}
 			}
-			else if( hasUpgradeAlready && ( playerUpgradeButton || objectUpgradeButton ) )
+			else if (hasUpgradeAlready && (playerUpgradeButton || objectUpgradeButton))
 			{
-				//See if we can fetch the "already upgraded" text for this upgrade. If not.... use the default "fill me in".
-				if( commandButton->getPurchasedLabel().isNotEmpty() )
+				// See if we can fetch the "already upgraded" text for this upgrade. If not.... use the default "fill me in".
+				if (commandButton->getPurchasedLabel().isNotEmpty())
 				{
-					descrip = TheGameText->fetch( commandButton->getPurchasedLabel() );
+					descrip = TheGameText->fetch(commandButton->getPurchasedLabel());
 				}
 				else
 				{
-					descrip = TheGameText->fetch( "TOOLTIP:AlreadyUpgradedDefault" );
+					descrip = TheGameText->fetch("TOOLTIP:AlreadyUpgradedDefault");
 				}
 			}
-			else if( !hasUpgradeAlready )
+			else if (!hasUpgradeAlready)
 			{
-
-				//Do we have a prerequisite science?
-				for( size_t i = 0; i < commandButton->getScienceVec().size(); i++ )
+				// Do we have a prerequisite science?
+				for (size_t i = 0; i < commandButton->getScienceVec().size(); i++)
 				{
-					ScienceType st = commandButton->getScienceVec()[ i ];
-					if( !player->hasScience( st ) )
+					ScienceType st = commandButton->getScienceVec()[i];
+					if (!player->hasScience(st))
 					{
 						missingScience = TRUE;
 						break;
 					}
 				}
 
-				//Determine the cost of the upgrade.
-				costToBuild = upgradeTemplate->calcCostToBuild( player );
-				if( costToBuild > 0 )
+				// Determine the cost of the upgrade.
+				costToBuild = upgradeTemplate->calcCostToBuild(player);
+				if (costToBuild > 0)
 				{
-					cost.format( TheGameText->fetch("TOOLTIP:Cost"), costToBuild );
+					cost.format(TheGameText->fetch("TOOLTIP:Cost"), costToBuild);
 				}
 
-				if( missingScience )
+				if (missingScience)
 				{
-					if( !descrip.isEmpty() )
+					if (!descrip.isEmpty())
 						descrip.concat(L"\n");
-					requiresFormat.format( TheGameText->fetch( "CONTROLBAR:Requirements" ).str(), TheGameText->fetch( "CONTROLBAR:GeneralsPromotion" ).str() );
-					descrip.concat( requiresFormat );
+					requiresFormat.format(
+							TheGameText->fetch("CONTROLBAR:Requirements").str(),
+							TheGameText->fetch("CONTROLBAR:GeneralsPromotion").str());
+					descrip.concat(requiresFormat);
 				}
 			}
 		}
-		else if( st != SCIENCE_INVALID && !fireScienceButton )
+		else if (st != SCIENCE_INVALID && !fireScienceButton)
 		{
 			TheScienceStore->getNameAndDescription(st, name, descrip);
 
-			costToBuild = TheScienceStore->getSciencePurchaseCost( st );
-			if( costToBuild > 0 )
+			costToBuild = TheScienceStore->getSciencePurchaseCost(st);
+			if (costToBuild > 0)
 			{
-				cost.format( TheGameText->fetch("TOOLTIP:ScienceCost"), costToBuild );
+				cost.format(TheGameText->fetch("TOOLTIP:ScienceCost"), costToBuild);
 			}
 
 			// ask each prerequisite to give us a list of the non satisfied prerequisites
-			if( thingTemplate )
+			if (thingTemplate)
 			{
-				for( Int i=0; i<thingTemplate->getPrereqCount(); i++ )
+				for (Int i = 0; i < thingTemplate->getPrereqCount(); i++)
 				{
 					prereq = thingTemplate->getNthPrereq(i);
 					requiresList = prereq->getRequiresList(player);
 
-					if( requiresList != UnicodeString::TheEmptyString )
+					if (requiresList != UnicodeString::TheEmptyString)
 					{
 						// make sure to put in 'returns' to space things correctly
 						if (firstRequirement)
@@ -542,34 +536,39 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 					}
 					requiresFormat.concat(requiresList);
 				}
-				if( !requiresFormat.isEmpty() )
+				if (!requiresFormat.isEmpty())
 				{
 					UnicodeString requireFormat = TheGameText->fetch("CONTROLBAR:Requirements");
 					requiresFormat.format(requireFormat.str(), requiresFormat.str());
-					if(!descrip.isEmpty())
+					if (!descrip.isEmpty())
 						descrip.concat(L"\n");
 					descrip.concat(requiresFormat);
 				}
 			}
-
 		}
 	}
-	else if(tooltipWin)
+	else if (tooltipWin)
 	{
-
-		if( tooltipWin == TheWindowManager->winGetWindowFromId(m_buildToolTipLayout->getFirstWindow(), TheNameKeyGenerator->nameToKey("ControlBar.wnd:MoneyDisplay")))
+		if (tooltipWin
+				== TheWindowManager->winGetWindowFromId(
+						m_buildToolTipLayout->getFirstWindow(),
+						TheNameKeyGenerator->nameToKey("ControlBar.wnd:MoneyDisplay")))
 		{
 			name = TheGameText->fetch("CONTROLBAR:Money");
 			descrip = TheGameText->fetch("CONTROLBAR:MoneyDescription");
 		}
-		else if(tooltipWin == TheWindowManager->winGetWindowFromId(m_buildToolTipLayout->getFirstWindow(), TheNameKeyGenerator->nameToKey("ControlBar.wnd:PowerWindow")) )
+		else if (
+				tooltipWin
+				== TheWindowManager->winGetWindowFromId(
+						m_buildToolTipLayout->getFirstWindow(),
+						TheNameKeyGenerator->nameToKey("ControlBar.wnd:PowerWindow")))
 		{
 			name = TheGameText->fetch("CONTROLBAR:Power");
 			descrip = TheGameText->fetch("CONTROLBAR:PowerDescription");
 
-			Player* playerToDisplay = TheControlBar->getCurrentlyViewedPlayer();
+			Player *playerToDisplay = TheControlBar->getCurrentlyViewedPlayer();
 
-			if( playerToDisplay && playerToDisplay->getEnergy() )
+			if (playerToDisplay && playerToDisplay->getEnergy())
 			{
 				Energy *energy = playerToDisplay->getEnergy();
 				descrip.format(descrip, energy->getProduction(), energy->getConsumption());
@@ -579,43 +578,55 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 				descrip.format(descrip, 0, 0);
 			}
 		}
-		else if(tooltipWin == TheWindowManager->winGetWindowFromId(m_buildToolTipLayout->getFirstWindow(), TheNameKeyGenerator->nameToKey("ControlBar.wnd:GeneralsExp")) )
+		else if (
+				tooltipWin
+				== TheWindowManager->winGetWindowFromId(
+						m_buildToolTipLayout->getFirstWindow(),
+						TheNameKeyGenerator->nameToKey("ControlBar.wnd:GeneralsExp")))
 		{
 			name = TheGameText->fetch("CONTROLBAR:GeneralsExp");
 			descrip = TheGameText->fetch("CONTROLBAR:GeneralsExpDescription");
 		}
 		else
 		{
-			DEBUG_ASSERTCRASH(FALSE, ("ControlBar::populateBuildTooltipLayout We attempted to call the popup tooltip on a game window that has yet to be hand coded in as this fuction was/is designed for only buttons but has been hacked to work with GameWindows."));
+			DEBUG_ASSERTCRASH(
+					FALSE,
+					("ControlBar::populateBuildTooltipLayout We attempted to call the popup tooltip on a game window that has yet to "
+					 "be hand coded in as this fuction was/is designed for only buttons but has been hacked to work with "
+					 "GameWindows."));
 			return;
 		}
-
 	}
-	GameWindow *win = TheWindowManager->winGetWindowFromId(m_buildToolTipLayout->getFirstWindow(), TheNameKeyGenerator->nameToKey("ControlBarPopupDescription.wnd:StaticTextName"));
-	if(win)
+	GameWindow *win = TheWindowManager->winGetWindowFromId(
+			m_buildToolTipLayout->getFirstWindow(),
+			TheNameKeyGenerator->nameToKey("ControlBarPopupDescription.wnd:StaticTextName"));
+	if (win)
 	{
 		GadgetStaticTextSetText(win, name);
 	}
 
-	win = TheWindowManager->winGetWindowFromId(m_buildToolTipLayout->getFirstWindow(), TheNameKeyGenerator->nameToKey("ControlBarPopupDescription.wnd:StaticTextCost"));
-	if(win)
+	win = TheWindowManager->winGetWindowFromId(
+			m_buildToolTipLayout->getFirstWindow(),
+			TheNameKeyGenerator->nameToKey("ControlBarPopupDescription.wnd:StaticTextCost"));
+	if (win)
 	{
-		if( costToBuild > 0 )
+		if (costToBuild > 0)
 		{
-			win->winHide( FALSE );
+			win->winHide(FALSE);
 			GadgetStaticTextSetText(win, cost);
 		}
 		else
 		{
-			win->winHide( TRUE );
+			win->winHide(TRUE);
 		}
 	}
 
-	win = TheWindowManager->winGetWindowFromId(m_buildToolTipLayout->getFirstWindow(), TheNameKeyGenerator->nameToKey("ControlBarPopupDescription.wnd:StaticTextDescription"));
-	if(win)
+	win = TheWindowManager->winGetWindowFromId(
+			m_buildToolTipLayout->getFirstWindow(),
+			TheNameKeyGenerator->nameToKey("ControlBarPopupDescription.wnd:StaticTextDescription"));
+	if (win)
 	{
-
-		static NameKeyType winNamekey	= TheNameKeyGenerator->nameToKey( AsciiString( "ControlBar.wnd:BackgroundMarker" ) );
+		static NameKeyType winNamekey = TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:BackgroundMarker"));
 		static ICoord2D lastOffset = { 0, 0 };
 
 		ICoord2D size, newSize, pos;
@@ -630,35 +641,36 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 		TheDisplayStringManager->freeDisplayString(tempDString);
 		tempDString = NULL;
 		diffSize = newSize.y - size.y;
- 		GameWindow *parent = m_buildToolTipLayout->getFirstWindow();
- 		if(!parent)
- 			return;
+		GameWindow *parent = m_buildToolTipLayout->getFirstWindow();
+		if (!parent)
+			return;
 
- 		parent->winGetSize(&size.x, &size.y);
- 		if(size.y + diffSize < 102) {
+		parent->winGetSize(&size.x, &size.y);
+		if (size.y + diffSize < 102)
+		{
 			diffSize = 102 - size.y;
 		}
 
 		parent->winSetSize(size.x, size.y + diffSize);
- 		parent->winGetPosition(&pos.x, &pos.y);
-//		if(size.y + diffSize < 102)
-//		{
-//
-//			parent->winSetPosition(pos.x, pos.y -  (102 - (newSize.y + size.y + diffSize) ));
-//		}
-//		else
+		parent->winGetPosition(&pos.x, &pos.y);
+		//		if(size.y + diffSize < 102)
+		//		{
+		//
+		//			parent->winSetPosition(pos.x, pos.y -  (102 - (newSize.y + size.y + diffSize) ));
+		//		}
+		//		else
 
-//		heightChange = controlBarPos.y - m_defaultControlBarPosition.y;
+		//		heightChange = controlBarPos.y - m_defaultControlBarPosition.y;
 
-		GameWindow *marker =  TheWindowManager->winGetWindowFromId(NULL,winNamekey);
+		GameWindow *marker = TheWindowManager->winGetWindowFromId(NULL, winNamekey);
 		static ICoord2D basePos;
-		if(!marker)
+		if (!marker)
 		{
 			return;
 		}
 		TheControlBar->getBackgroundMarkerPos(&basePos.x, &basePos.y);
 		ICoord2D curPos, offset;
-		marker->winGetScreenPosition(&curPos.x,&curPos.y);
+		marker->winGetScreenPosition(&curPos.x, &curPos.y);
 
 		offset.x = curPos.x - basePos.x;
 		offset.y = curPos.y - basePos.y;
@@ -669,7 +681,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 		lastOffset.y = offset.y;
 
 		win->winGetSize(&size.x, &size.y);
- 		win->winSetSize(size.x, size.y + diffSize);
+		win->winSetSize(size.x, size.y + diffSize);
 
 		GadgetStaticTextSetText(win, descrip);
 	}
@@ -680,28 +692,26 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 // ------------------------------------------------------------------------------------------------
 void ControlBar::hideBuildTooltipLayout()
 {
-	if(theAnimateWindowManager && theAnimateWindowManager->isReversed())
+	if (theAnimateWindowManager && theAnimateWindowManager->isReversed())
 		return;
-	if(useAnimation && theAnimateWindowManager && TheGlobalData->m_animateWindows)
+	if (useAnimation && theAnimateWindowManager && TheGlobalData->m_animateWindows)
 		theAnimateWindowManager->reverseAnimateWindow();
 	else
 		deleteBuildTooltipLayout();
-
 }
 
-void ControlBar::deleteBuildTooltipLayout( void )
+void ControlBar::deleteBuildTooltipLayout(void)
 {
 	m_showBuildToolTipLayout = FALSE;
-	prevWindow= NULL;
+	prevWindow = NULL;
 	m_buildToolTipLayout->hide(TRUE);
-//	if(!m_buildToolTipLayout)
-//		return;
-//
-//	m_buildToolTipLayout->destroyWindows();
-//	deleteInstance(m_buildToolTipLayout);
-//	m_buildToolTipLayout = NULL;
-	if(theAnimateWindowManager)
+	//	if(!m_buildToolTipLayout)
+	//		return;
+	//
+	//	m_buildToolTipLayout->destroyWindows();
+	//	deleteInstance(m_buildToolTipLayout);
+	//	m_buildToolTipLayout = NULL;
+	if (theAnimateWindowManager)
 		delete theAnimateWindowManager;
 	theAnimateWindowManager = NULL;
-
 }

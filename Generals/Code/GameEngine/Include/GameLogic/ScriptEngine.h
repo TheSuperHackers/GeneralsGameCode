@@ -58,13 +58,13 @@ class ObjectTypes;
 // set by script, so it's as good a place as any.  john a.
 struct BreezeInfo
 {
-	Real		m_direction;				///< Direction of the breeze in radians. 0 == +x direction.
-	Coord2D	m_directionVec;			///< sin/cos of direction, for efficiency.
-	Real		m_intensity;				///< How far to sway back & forth in radians.  0 = none.
-	Real		m_lean;							///< How far to lean with the wind in radians.  0 = none.
-	Real		m_randomness;				///< Randomness 0=perfectly uniform, 1 = +- up to 50% randomly.
-	Short		m_breezePeriod;			///< How many frames it takes to sway forward & back.
-	Short		m_breezeVersion;		///< Incremented each time the settings are updated.
+	Real m_direction; ///< Direction of the breeze in radians. 0 == +x direction.
+	Coord2D m_directionVec; ///< sin/cos of direction, for efficiency.
+	Real m_intensity; ///< How far to sway back & forth in radians.  0 = none.
+	Real m_lean; ///< How far to lean with the wind in radians.  0 = none.
+	Real m_randomness; ///< Randomness 0=perfectly uniform, 1 = +- up to 50% randomly.
+	Short m_breezePeriod; ///< How many frames it takes to sway forward & back.
+	Short m_breezeVersion; ///< Incremented each time the settings are updated.
 };
 
 // This could belong elsewhere, but for now...
@@ -72,7 +72,7 @@ struct NamedReveal
 {
 	AsciiString m_revealName;
 	AsciiString m_waypointName;
-	Real				m_radiusToReveal;
+	Real m_radiusToReveal;
 	AsciiString m_playerName;
 };
 
@@ -102,7 +102,7 @@ typedef std::pair<AsciiString, UnsignedInt> PairAsciiStringUINT;
 typedef std::list<PairAsciiStringUINT> ListAsciiStringUINT;
 typedef ListAsciiStringUINT::iterator ListAsciiStringUINTIt;
 
-typedef std::map< const ThingTemplate *, Int, std::less<const ThingTemplate *> > AttackPriorityMap;
+typedef std::map<const ThingTemplate *, Int, std::less<const ThingTemplate *> > AttackPriorityMap;
 typedef std::pair<AsciiString, ObjectID> AsciiStringObjectIDPair;
 typedef std::list<AsciiStringObjectIDPair> ListAsciiStringObjectID;
 typedef std::list<AsciiStringObjectIDPair>::iterator ListAsciiStringObjectIDIt;
@@ -111,12 +111,12 @@ typedef std::pair<AsciiString, Coord3D> AsciiStringCoord3DPair;
 typedef std::list<AsciiStringCoord3DPair> ListAsciiStringCoord3D;
 typedef ListAsciiStringCoord3D::iterator ListAsciiStringCoord3DIt;
 
-typedef std::map< AsciiString, Int > ObjectTypeCount;
+typedef std::map<AsciiString, Int> ObjectTypeCount;
 
 typedef std::vector<Player *> VectorPlayerPtr;
 typedef VectorPlayerPtr::iterator VectorPlayerPtrIt;
 
-typedef std::vector<ObjectTypes*> AllObjectTypes;
+typedef std::vector<ObjectTypes *> AllObjectTypes;
 typedef AllObjectTypes::iterator AllObjectTypesIt;
 
 typedef std::vector<NamedReveal> VecNamedReveal;
@@ -127,35 +127,31 @@ typedef VecNamedReveal::iterator VecNamedRevealIt;
 class AttackPriorityInfo : public Snapshot
 {
 public:
-
 	AttackPriorityInfo();
 	~AttackPriorityInfo();
 
 public:
-
 	void setPriority(const ThingTemplate *tThing, Int priority);
 	Int getPriority(const ThingTemplate *tThing) const;
-	AsciiString getName(void) const {return m_name;}
+	AsciiString getName(void) const { return m_name; }
 #ifdef RTS_DEBUG
 	void dumpPriorityInfo(void);
 #endif
 
-	void friend_setName(const AsciiString& n) { m_name = n; }
+	void friend_setName(const AsciiString &n) { m_name = n; }
 	void friend_setDefaultPriority(Int n) { m_defaultPriority = n; }
 
 	void reset(void);
 
 protected:
-
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
+	virtual void loadPostProcess(void);
 
 	AsciiString m_name;
-	Int	m_defaultPriority;
+	Int m_defaultPriority;
 	AttackPriorityMap *m_priorityMap;
-
 };
 
 class SequentialScript : public MemoryPoolObject, public Snapshot
@@ -163,27 +159,27 @@ class SequentialScript : public MemoryPoolObject, public Snapshot
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SequentialScript, "SequentialScript")
 
 public:
-
-	enum { START_INSTRUCTION = -1 };
+	enum
+	{
+		START_INSTRUCTION = -1
+	};
 	Team *m_teamToExecOn;
 	ObjectID m_objectID;
 	Script *m_scriptToExecuteSequentially;
-	Int m_currentInstruction;								// Which action within m_scriptToExecuteSequentially am I currently executing?
-	Int m_timesToLoop;											// 0 = do once,  >0, loop till 0, <0, loop infinitely
-	Int m_framesToWait;											// 0 = transition to next instruction, >0 = countdown to 0, <0 = advance on idle only
-	Bool m_dontAdvanceInstruction;					// Must be set every frame by the instruction requesting the wait.
-																					// so this parm tells us how many we've been idle so far.
+	Int m_currentInstruction; // Which action within m_scriptToExecuteSequentially am I currently executing?
+	Int m_timesToLoop; // 0 = do once,  >0, loop till 0, <0, loop infinitely
+	Int m_framesToWait; // 0 = transition to next instruction, >0 = countdown to 0, <0 = advance on idle only
+	Bool m_dontAdvanceInstruction; // Must be set every frame by the instruction requesting the wait.
+																 // so this parm tells us how many we've been idle so far.
 	SequentialScript *m_nextScriptInSequence;
 
 	SequentialScript();
 
 protected:
-
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
-
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
+	virtual void loadPostProcess(void);
 };
 EMPTY_DTOR(SequentialScript)
 
@@ -193,18 +189,15 @@ class SequentialScriptStatus : public MemoryPoolObject, public Snapshot
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SequentialScriptStatus, "SequentialScriptStatus")
 
 public:
-
 	ObjectID m_objectID;
 	AsciiString m_sequentialScriptCompleted;
 	Bool m_isExecutingSequentially;
 
 protected:
-
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
-
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
+	virtual void loadPostProcess(void);
 };
 #endif
 
@@ -213,25 +206,35 @@ protected:
 //-----------------------------------------------------------------------------
 /** Implementation for the Script Engine singleton */
 //-----------------------------------------------------------------------------
-class ScriptEngine : public SubsystemInterface,
-										 public Snapshot
+class ScriptEngine : public SubsystemInterface, public Snapshot
 {
-
 public:
-	enum {MAX_COUNTERS=256, MAX_FLAGS=256, MAX_ATTACK_PRIORITIES=256};
-	enum TFade {FADE_NONE, FADE_SUBTRACT, FADE_ADD, FADE_SATURATE, FADE_MULTIPLY};
+	enum
+	{
+		MAX_COUNTERS = 256,
+		MAX_FLAGS = 256,
+		MAX_ATTACK_PRIORITIES = 256
+	};
+	enum TFade
+	{
+		FADE_NONE,
+		FADE_SUBTRACT,
+		FADE_ADD,
+		FADE_SATURATE,
+		FADE_MULTIPLY
+	};
 	ScriptEngine();
 	virtual ~ScriptEngine();
 
-	virtual void init( void );		///< Init
-	virtual void reset( void );		///< Reset
-	virtual void update( void );	///< Update
+	virtual void init(void); ///< Init
+	virtual void reset(void); ///< Reset
+	virtual void update(void); ///< Update
 
 	void appendSequentialScript(const SequentialScript *scriptToSequence);
 	void removeSequentialScript(SequentialScript *scriptToRemove);
 	void notifyOfTeamDestruction(Team *teamDestroyed);
 	void notifyOfObjectCreationOrDestruction(void);
-	UnsignedInt getFrameObjectCountChanged(void) {return m_frameObjectCountChanged;}
+	UnsignedInt getFrameObjectCountChanged(void) { return m_frameObjectCountChanged; }
 	void setSequentialTimer(Object *obj, Int frameCount);
 	void setSequentialTimer(Team *team, Int frameCount);
 
@@ -240,19 +243,20 @@ public:
 
 	AsciiString getStats(Real *curTime, Real *script1Time, Real *script2Time);
 
-	virtual void newMap(  );	///< reset script engine for new map
-	virtual const ActionTemplate *getActionTemplate( Int ndx); ///< Get the template for a script action.
-	virtual const ConditionTemplate *getConditionTemplate( Int ndx); ///< Get the template for a script Condition.
+	virtual void newMap(); ///< reset script engine for new map
+	virtual const ActionTemplate *getActionTemplate(Int ndx); ///< Get the template for a script action.
+	virtual const ConditionTemplate *getConditionTemplate(Int ndx); ///< Get the template for a script Condition.
 	virtual void startEndGameTimer(void); ///< Starts the end game timer after a mission is won or lost.
-	Bool isGameEnding( void ) { return m_endGameTimer >= 0;	}
+	Bool isGameEnding(void) { return m_endGameTimer >= 0; }
 	virtual void startQuickEndGameTimer(void); ///< Starts the quick end game timer after a campaign is won or lost.
 	virtual void startCloseWindowTimer(void); ///< Starts the timer to close windows after a mission is won or lost.
-	virtual void runScript(const AsciiString& scriptName, Team *pThisTeam=NULL); ///<  Runs a script.
-	virtual void runObjectScript(const AsciiString& scriptName, Object *pThisObject=NULL); ///<  Runs a script attached to this object.
-	virtual Team *getTeamNamed(const AsciiString& teamName); ///<  Gets the named team.  May be null.
+	virtual void runScript(const AsciiString &scriptName, Team *pThisTeam = NULL); ///<  Runs a script.
+	virtual void runObjectScript(const AsciiString &scriptName, Object *pThisObject = NULL); ///<  Runs a script attached to
+																																													 ///<  this object.
+	virtual Team *getTeamNamed(const AsciiString &teamName); ///<  Gets the named team.  May be null.
 	virtual Player *getSkirmishEnemyPlayer(void); ///< Gets the ai's enemy Human player. May be null.
 	virtual Player *getCurrentPlayer(void); ///<  Gets the player that owns the current script.  May be null.
-	virtual Player *getPlayerFromAsciiString(const AsciiString& skirmishPlayerString);
+	virtual Player *getPlayerFromAsciiString(const AsciiString &skirmishPlayerString);
 
 	void setObjectsShouldReceiveDifficultyBonus(Bool receive) { m_objectsShouldReceiveDifficultyBonus = receive; }
 	Bool getObjectsShouldReceiveDifficultyBonus() const { return m_objectsShouldReceiveDifficultyBonus; }
@@ -265,230 +269,249 @@ public:
 
 	// NOTE NOTE NOTE: do not store of the return value of this call (getObjectTypeList) beyond the life of the
 	// function it will be used in, as it can be deleted from under you if maintenance is performed on the object.
-	virtual ObjectTypes *getObjectTypes(const AsciiString& objectTypeList);
-	virtual void doObjectTypeListMaintenance(const AsciiString& objectTypeList, const AsciiString& objectType, Bool addObject);
+	virtual ObjectTypes *getObjectTypes(const AsciiString &objectTypeList);
+	virtual void doObjectTypeListMaintenance(const AsciiString &objectTypeList, const AsciiString &objectType, Bool addObject);
 
 	/// Return the trigger area with the given name
-	virtual PolygonTrigger *getQualifiedTriggerAreaByName( AsciiString name );
+	virtual PolygonTrigger *getQualifiedTriggerAreaByName(AsciiString name);
 
 	// For other systems to evaluate Conditions, execute Actions, etc.
 
 	///< if pThisTeam is specified, then scripts in here can use <This Team> to mean the team this script is attached to.
-	virtual Bool evaluateConditions( Script *pScript, Team *pThisTeam = NULL, Player *pPlayer=NULL );
-	virtual void friend_executeAction( ScriptAction *pActionHead, Team *pThisTeam = NULL);	///< Use this at yer peril.
+	virtual Bool evaluateConditions(Script *pScript, Team *pThisTeam = NULL, Player *pPlayer = NULL);
+	virtual void friend_executeAction(ScriptAction *pActionHead, Team *pThisTeam = NULL); ///< Use this at yer peril.
 
-	virtual Object *getUnitNamed(const AsciiString& unitName); ///< Gets the named unit. May be null.
-	virtual Bool didUnitExist(const AsciiString& unitName);
-	virtual void addObjectToCache( Object* pNewObject );
-	virtual void removeObjectFromCache( Object* pDeadObject );
-	virtual void transferObjectName( const AsciiString& unitName, Object *pNewObject );
-	virtual void notifyOfObjectDestruction( Object *pDeadObject );
-	virtual void notifyOfCompletedVideo( const AsciiString& completedVideo );	///< Notify the script engine that a video has completed
-	virtual void notifyOfTriggeredSpecialPower( Int playerIndex, const AsciiString& completedPower, ObjectID sourceObj );
-	virtual void notifyOfMidwaySpecialPower		( Int playerIndex, const AsciiString& completedPower, ObjectID sourceObj );
-	virtual void notifyOfCompletedSpecialPower( Int playerIndex, const AsciiString& completedPower, ObjectID sourceObj );
-	virtual void notifyOfCompletedUpgrade			( Int playerIndex, const AsciiString& upgrade,				 ObjectID sourceObj );
-	virtual void notifyOfAcquiredScience				( Int playerIndex, ScienceType science );
+	virtual Object *getUnitNamed(const AsciiString &unitName); ///< Gets the named unit. May be null.
+	virtual Bool didUnitExist(const AsciiString &unitName);
+	virtual void addObjectToCache(Object *pNewObject);
+	virtual void removeObjectFromCache(Object *pDeadObject);
+	virtual void transferObjectName(const AsciiString &unitName, Object *pNewObject);
+	virtual void notifyOfObjectDestruction(Object *pDeadObject);
+	virtual void notifyOfCompletedVideo(const AsciiString &completedVideo); ///< Notify the script engine that a video has
+																																					///< completed
+	virtual void notifyOfTriggeredSpecialPower(Int playerIndex, const AsciiString &completedPower, ObjectID sourceObj);
+	virtual void notifyOfMidwaySpecialPower(Int playerIndex, const AsciiString &completedPower, ObjectID sourceObj);
+	virtual void notifyOfCompletedSpecialPower(Int playerIndex, const AsciiString &completedPower, ObjectID sourceObj);
+	virtual void notifyOfCompletedUpgrade(Int playerIndex, const AsciiString &upgrade, ObjectID sourceObj);
+	virtual void notifyOfAcquiredScience(Int playerIndex, ScienceType science);
 
-	virtual void signalUIInteract(const AsciiString& hookName);	///< Notify that a UI button was pressed and some flag should go true, for one frame only.
+	virtual void signalUIInteract(const AsciiString &hookName); ///< Notify that a UI button was pressed and some flag should
+																															///< go true, for one frame only.
 
-	virtual Bool isVideoComplete( const AsciiString& completedVideo, Bool removeFromList );	///< Determine whether a video has completed
-	virtual Bool isSpeechComplete( const AsciiString& completedSpeech, Bool removeFromList );	///< Determine whether a speech has completed
-	virtual Bool isAudioComplete( const AsciiString& completedAudio, Bool removeFromList );	///< Determine whether a sound has completed
-	virtual Bool isSpecialPowerTriggered( Int playerIndex, const AsciiString& completedPower, Bool removeFromList, ObjectID sourceObj );
-	virtual Bool isSpecialPowerMidway		( Int playerIndex, const AsciiString& completedPower, Bool removeFromList, ObjectID sourceObj );
-	virtual Bool isSpecialPowerComplete	( Int playerIndex, const AsciiString& completedPower, Bool removeFromList, ObjectID sourceObj );
-	virtual Bool isUpgradeComplete			( Int playerIndex, const AsciiString& upgrade,				 Bool removeFromList, ObjectID sourceObj );
-	virtual Bool isScienceAcquired			( Int playerIndex, ScienceType science, Bool removeFromList );
+	virtual Bool isVideoComplete(const AsciiString &completedVideo, Bool removeFromList); ///< Determine whether a video has
+																																												///< completed
+	virtual Bool isSpeechComplete(const AsciiString &completedSpeech, Bool removeFromList); ///< Determine whether a speech has
+																																													///< completed
+	virtual Bool isAudioComplete(const AsciiString &completedAudio, Bool removeFromList); ///< Determine whether a sound has
+																																												///< completed
+	virtual Bool isSpecialPowerTriggered(
+			Int playerIndex,
+			const AsciiString &completedPower,
+			Bool removeFromList,
+			ObjectID sourceObj);
+	virtual Bool isSpecialPowerMidway(
+			Int playerIndex,
+			const AsciiString &completedPower,
+			Bool removeFromList,
+			ObjectID sourceObj);
+	virtual Bool isSpecialPowerComplete(
+			Int playerIndex,
+			const AsciiString &completedPower,
+			Bool removeFromList,
+			ObjectID sourceObj);
+	virtual Bool isUpgradeComplete(Int playerIndex, const AsciiString &upgrade, Bool removeFromList, ObjectID sourceObj);
+	virtual Bool isScienceAcquired(Int playerIndex, ScienceType science, Bool removeFromList);
 
-	void setToppleDirection( const AsciiString& objectName, const Coord3D *direction );
-	virtual void adjustToppleDirection( Object *object, Coord2D *direction);
-	virtual void adjustToppleDirection( Object *object, Coord3D *direction);
-	virtual const Script *findScriptByName(const AsciiString& scriptName) {return findScript(scriptName);} ///<  Finds a script.
+	void setToppleDirection(const AsciiString &objectName, const Coord3D *direction);
+	virtual void adjustToppleDirection(Object *object, Coord2D *direction);
+	virtual void adjustToppleDirection(Object *object, Coord3D *direction);
+	virtual const Script *findScriptByName(const AsciiString &scriptName)
+	{
+		return findScript(scriptName);
+	} ///<  Finds a script.
 
-	const BreezeInfo& getBreezeInfo() const {return m_breezeInfo;}
+	const BreezeInfo &getBreezeInfo() const { return m_breezeInfo; }
 
-	Bool isTimeFrozenScript( void );		///< Ask whether a script has frozen time or not
-	void doFreezeTime( void );
-	void doUnfreezeTime( void );
+	Bool isTimeFrozenScript(void); ///< Ask whether a script has frozen time or not
+	void doFreezeTime(void);
+	void doUnfreezeTime(void);
 
 	/// The following functions are used to update and query the debug window
-	Bool isTimeFrozenDebug( void );		///< Ask whether the debug window has requested a pause.
-	Bool isTimeFast( void );		///< Ask whether the debug window has requested a fast forward.
-	void forceUnfreezeTime( void );	///< Force that time becomes unfrozen temporarily.
-	void AppendDebugMessage(const AsciiString& strToAdd, Bool forcePause);
-	void AdjustDebugVariableData(const AsciiString& variableName, Int value, Bool forcePause);
+	Bool isTimeFrozenDebug(void); ///< Ask whether the debug window has requested a pause.
+	Bool isTimeFast(void); ///< Ask whether the debug window has requested a fast forward.
+	void forceUnfreezeTime(void); ///< Force that time becomes unfrozen temporarily.
+	void AppendDebugMessage(const AsciiString &strToAdd, Bool forcePause);
+	void AdjustDebugVariableData(const AsciiString &variableName, Int value, Bool forcePause);
 
 	void clearTeamFlags(void); ///< Hack for dustin.
 	void clearFlag(const AsciiString &name); ///< Hack for dustin.
 
-	TFade getFade(void) {return m_fade;}
-	Real	getFadeValue(void) {return m_curFadeValue;}
+	TFade getFade(void) { return m_fade; }
+	Real getFadeValue(void) { return m_curFadeValue; }
 
 	AsciiString getCurrentTrackName() const { return m_currentTrackName; }
 	void setCurrentTrackName(AsciiString a) { m_currentTrackName = a; }
 
-	GameDifficulty getGlobalDifficulty( void ) const { return m_gameDifficulty; }
-	void setGlobalDifficulty( GameDifficulty difficulty );
+	GameDifficulty getGlobalDifficulty(void) const { return m_gameDifficulty; }
+	void setGlobalDifficulty(GameDifficulty difficulty);
 
 	/// Attack priority stuff.
 	const AttackPriorityInfo *getDefaultAttackInfo(void);
-	const AttackPriorityInfo *getAttackInfo(const AsciiString& name);
+	const AttackPriorityInfo *getAttackInfo(const AsciiString &name);
 
-	const TCounter *getCounter(const AsciiString& counterName);
+	const TCounter *getCounter(const AsciiString &counterName);
 
-	void createNamedMapReveal(const AsciiString& revealName, const AsciiString& waypointName, Real radiusToReveal, const AsciiString& playerName);
-	void doNamedMapReveal(const AsciiString& revealName);
-	void undoNamedMapReveal(const AsciiString& revealName);
-	void removeNamedMapReveal(const AsciiString& revealName);
+	void createNamedMapReveal(
+			const AsciiString &revealName,
+			const AsciiString &waypointName,
+			Real radiusToReveal,
+			const AsciiString &playerName);
+	void doNamedMapReveal(const AsciiString &revealName);
+	void undoNamedMapReveal(const AsciiString &revealName);
+	void removeNamedMapReveal(const AsciiString &revealName);
 
-	Int getObjectCount(Int playerIndex, const AsciiString& objectTypeName) const;
-	void setObjectCount(Int playerIndex, const AsciiString& objectTypeName, Int newCount);
+	Int getObjectCount(Int playerIndex, const AsciiString &objectTypeName) const;
+	void setObjectCount(Int playerIndex, const AsciiString &objectTypeName, Int newCount);
 
-	//Kris: Moved to public... so that I can refresh it when building abilities in script dialogs.
-	void createNamedCache( void );
+	// Kris: Moved to public... so that I can refresh it when building abilities in script dialogs.
+	void createNamedCache(void);
 
-	///Begin VTUNE
+	/// Begin VTUNE
 	void setEnableVTune(Bool value);
 	Bool getEnableVTune() const;
-	///End VTUNE
-//#if defined(RTS_DEBUG)
-	void debugVictory( void );
-//#endif
+	/// End VTUNE
+	// #if defined(RTS_DEBUG)
+	void debugVictory(void);
+	// #endif
 protected:
-
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
+	virtual void loadPostProcess(void);
 
-	Int allocateCounter( const AsciiString& name);
-	Int allocateFlag( const AsciiString& name);
-	void executeScripts( Script *pScriptHead );
-	void executeScript( Script *pScript );
-	Script *findScript(const AsciiString& name);
-	ScriptGroup *findGroup(const AsciiString& name);
-	void setSway( ScriptAction *pAction );
-	void setCounter( ScriptAction *pAction );
-	void addCounter( ScriptAction *pAction );
-	void subCounter( ScriptAction *pAction );
-	void setFade( ScriptAction *pAction );
-	void setFlag( ScriptAction *pAction );
-	void pauseTimer( ScriptAction *pAction );
-	void restartTimer( ScriptAction *pAction );
-	void setTimer( ScriptAction *pAction, Bool milisecondTimer, Bool random);
-	void adjustTimer( ScriptAction *pAction, Bool milisecondTimer, Bool add);
-	void enableScript( ScriptAction *pAction );
-	void disableScript( ScriptAction *pAction );
-	void callSubroutine( ScriptAction *pAction );
+	Int allocateCounter(const AsciiString &name);
+	Int allocateFlag(const AsciiString &name);
+	void executeScripts(Script *pScriptHead);
+	void executeScript(Script *pScript);
+	Script *findScript(const AsciiString &name);
+	ScriptGroup *findGroup(const AsciiString &name);
+	void setSway(ScriptAction *pAction);
+	void setCounter(ScriptAction *pAction);
+	void addCounter(ScriptAction *pAction);
+	void subCounter(ScriptAction *pAction);
+	void setFade(ScriptAction *pAction);
+	void setFlag(ScriptAction *pAction);
+	void pauseTimer(ScriptAction *pAction);
+	void restartTimer(ScriptAction *pAction);
+	void setTimer(ScriptAction *pAction, Bool milisecondTimer, Bool random);
+	void adjustTimer(ScriptAction *pAction, Bool milisecondTimer, Bool add);
+	void enableScript(ScriptAction *pAction);
+	void disableScript(ScriptAction *pAction);
+	void callSubroutine(ScriptAction *pAction);
 	void checkConditionsForTeamNames(Script *pScript);
-	Bool evaluateCounter( Condition *pCondition );
-	Bool evaluateFlag( Condition *pCondition );
-	Bool evaluateTimer( Condition *pCondition );
-	Bool evaluateCondition( Condition *pCondition );
-	void executeActions( ScriptAction *pActionHead );
+	Bool evaluateCounter(Condition *pCondition);
+	Bool evaluateFlag(Condition *pCondition);
+	Bool evaluateTimer(Condition *pCondition);
+	Bool evaluateCondition(Condition *pCondition);
+	void executeActions(ScriptAction *pActionHead);
 
-	void setPriorityThing( ScriptAction *pAction );
-	void setPriorityKind( ScriptAction *pAction );
-	void setPriorityDefault( ScriptAction *pAction );
+	void setPriorityThing(ScriptAction *pAction);
+	void setPriorityKind(ScriptAction *pAction);
+	void setPriorityDefault(ScriptAction *pAction);
 
 	// For Object types maintenance.
 	void removeObjectTypes(ObjectTypes *typesToRemove);
 
-	void particleEditorUpdate( void );
-	void updateFades( void );
+	void particleEditorUpdate(void);
+	void updateFades(void);
 
-	AttackPriorityInfo *findAttackInfo(const AsciiString& name, Bool addIfNotFound);
+	AttackPriorityInfo *findAttackInfo(const AsciiString &name, Bool addIfNotFound);
 
 protected:
 	/// Stuff to execute scripts sequentially
-	typedef std::vector<SequentialScript*> VecSequentialScriptPtr;
+	typedef std::vector<SequentialScript *> VecSequentialScriptPtr;
 	typedef VecSequentialScriptPtr::iterator VecSequentialScriptPtrIt;
 
 	VecSequentialScriptPtr m_sequentialScripts;
 
-	void evaluateAndProgressAllSequentialScripts( void );
+	void evaluateAndProgressAllSequentialScripts(void);
 	VecSequentialScriptPtrIt cleanupSequentialScript(VecSequentialScriptPtrIt it, Bool cleanDanglers);
 
-	Bool hasUnitCompletedSequentialScript( Object *object, const AsciiString& sequentialScriptName );
-	Bool hasTeamCompletedSequentialScript( Team *team, const AsciiString& sequentialScriptName );
-
-
-
+	Bool hasUnitCompletedSequentialScript(Object *object, const AsciiString &sequentialScriptName);
+	Bool hasTeamCompletedSequentialScript(Team *team, const AsciiString &sequentialScriptName);
 
 protected:
-	ActionTemplate		m_actionTemplates[ScriptAction::NUM_ITEMS];
-	ConditionTemplate	m_conditionTemplates[Condition::NUM_ITEMS];
-	TCounter					m_counters[MAX_COUNTERS];
-	Int								m_numCounters;
-	TFlag							m_flags[MAX_FLAGS];
-	Int								m_numFlags;
+	ActionTemplate m_actionTemplates[ScriptAction::NUM_ITEMS];
+	ConditionTemplate m_conditionTemplates[Condition::NUM_ITEMS];
+	TCounter m_counters[MAX_COUNTERS];
+	Int m_numCounters;
+	TFlag m_flags[MAX_FLAGS];
+	Int m_numFlags;
 	AttackPriorityInfo m_attackPriorityInfo[MAX_ATTACK_PRIORITIES];
-	Int								m_numAttackInfo;
-	Int								m_endGameTimer;
-	Int								m_closeWindowTimer;
-	Team							*m_callingTeam;					///< Team that is calling script, used for THIS_TEAM
-	Object						*m_callingObject;					///< Object that is calling script, used for THIS_OBJECT
-	Team							*m_conditionTeam;				///< Team that is being used to evaluate conditions, used for THIS_TEAM
-	Object						*m_conditionObject;				///< Unit that is being used to evaluate conditions, used for THIS_OBJECT
-	VecNamedRequests	m_namedObjects;
-	Bool							m_firstUpdate;
-	Player						*m_currentPlayer;
-	Player						*m_skirmishHumanPlayer;
-	AsciiString				m_currentTrackName;
+	Int m_numAttackInfo;
+	Int m_endGameTimer;
+	Int m_closeWindowTimer;
+	Team *m_callingTeam; ///< Team that is calling script, used for THIS_TEAM
+	Object *m_callingObject; ///< Object that is calling script, used for THIS_OBJECT
+	Team *m_conditionTeam; ///< Team that is being used to evaluate conditions, used for THIS_TEAM
+	Object *m_conditionObject; ///< Unit that is being used to evaluate conditions, used for THIS_OBJECT
+	VecNamedRequests m_namedObjects;
+	Bool m_firstUpdate;
+	Player *m_currentPlayer;
+	Player *m_skirmishHumanPlayer;
+	AsciiString m_currentTrackName;
 
-	TFade							m_fade;
-	Real							m_minFade;
-	Real							m_maxFade;
-	Real							m_curFadeValue;
-	Int								m_curFadeFrame;
-	Int								m_fadeFramesIncrease;
-	Int								m_fadeFramesHold;
-	Int								m_fadeFramesDecrease;
+	TFade m_fade;
+	Real m_minFade;
+	Real m_maxFade;
+	Real m_curFadeValue;
+	Int m_curFadeFrame;
+	Int m_fadeFramesIncrease;
+	Int m_fadeFramesHold;
+	Int m_fadeFramesDecrease;
 
-	UnsignedInt				m_frameObjectCountChanged;
+	UnsignedInt m_frameObjectCountChanged;
 
-	ObjectTypeCount		m_objectCounts[MAX_PLAYER_COUNT];
+	ObjectTypeCount m_objectCounts[MAX_PLAYER_COUNT];
 
 	/// These are three separate lists rather than one to increase speed efficiency
-	ListAsciiString				m_completedVideo;
-	ListAsciiStringUINT		m_testingSpeech;
-	ListAsciiStringUINT		m_testingAudio;
+	ListAsciiString m_completedVideo;
+	ListAsciiStringUINT m_testingSpeech;
+	ListAsciiStringUINT m_testingAudio;
 
-	ListAsciiString				m_uiInteractions;
+	ListAsciiString m_uiInteractions;
 
-	ListAsciiStringObjectID	m_triggeredSpecialPowers[MAX_PLAYER_COUNT];
-	ListAsciiStringObjectID	m_midwaySpecialPowers		[MAX_PLAYER_COUNT];
-	ListAsciiStringObjectID	m_finishedSpecialPowers	[MAX_PLAYER_COUNT];
-	ListAsciiStringObjectID	m_completedUpgrades			[MAX_PLAYER_COUNT];
-	ScienceVec							m_acquiredSciences			[MAX_PLAYER_COUNT];
+	ListAsciiStringObjectID m_triggeredSpecialPowers[MAX_PLAYER_COUNT];
+	ListAsciiStringObjectID m_midwaySpecialPowers[MAX_PLAYER_COUNT];
+	ListAsciiStringObjectID m_finishedSpecialPowers[MAX_PLAYER_COUNT];
+	ListAsciiStringObjectID m_completedUpgrades[MAX_PLAYER_COUNT];
+	ScienceVec m_acquiredSciences[MAX_PLAYER_COUNT];
 
 	ListAsciiStringCoord3D m_toppleDirections;
 
-	VecNamedReveal		m_namedReveals;
+	VecNamedReveal m_namedReveals;
 
-	BreezeInfo				m_breezeInfo;
-	GameDifficulty		m_gameDifficulty;
+	BreezeInfo m_breezeInfo;
+	GameDifficulty m_gameDifficulty;
 
-	Bool							m_freezeByScript;
-	AllObjectTypes		m_allObjectTypeLists;
-	Bool							m_objectsShouldReceiveDifficultyBonus;
-	Bool							m_ChooseVictimAlwaysUsesNormal;
+	Bool m_freezeByScript;
+	AllObjectTypes m_allObjectTypeLists;
+	Bool m_objectsShouldReceiveDifficultyBonus;
+	Bool m_ChooseVictimAlwaysUsesNormal;
 
-	Bool							m_shownMPLocalDefeatWindow;
+	Bool m_shownMPLocalDefeatWindow;
 
 #ifdef SPECIAL_SCRIPT_PROFILING
 #ifdef DEBUG_LOGGING
-	double						m_numFrames;
-	double						m_totalUpdateTime;
-	double						m_maxUpdateTime;
-	double						m_curUpdateTime;
+	double m_numFrames;
+	double m_totalUpdateTime;
+	double m_maxUpdateTime;
+	double m_curUpdateTime;
 #endif
 #endif
 
-};  // end class ScriptEngine
+}; // end class ScriptEngine
 
-extern ScriptEngine *TheScriptEngine;   ///< singleton definition
+extern ScriptEngine *TheScriptEngine; ///< singleton definition
 
-
-#endif  // end __SCRIPTENGINE_H_
+#endif // end __SCRIPTENGINE_H_

@@ -39,290 +39,293 @@ static unsigned m_inputUsed;
 
 static void InitConsole(void)
 {
-  AllocConsole();
+	AllocConsole();
 
-  HANDLE h=GetStdHandle(STD_INPUT_HANDLE);
-  SetConsoleMode(h,0);
+	HANDLE h = GetStdHandle(STD_INPUT_HANDLE);
+	SetConsoleMode(h, 0);
 
-  // make screen buffer same size as currently displayed area
-  // (prevents that our input line gets scrolled out of view)
-  h=GetStdHandle(STD_OUTPUT_HANDLE);
-  CONSOLE_SCREEN_BUFFER_INFO info;
-  GetConsoleScreenBufferInfo(h,&info);
+	// make screen buffer same size as currently displayed area
+	// (prevents that our input line gets scrolled out of view)
+	h = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO info;
+	GetConsoleScreenBufferInfo(h, &info);
 
-  COORD newSize;
-  newSize.X=info.srWindow.Right+1;
-  newSize.Y=info.srWindow.Bottom+1;
-  SetConsoleScreenBufferSize(h,newSize);
+	COORD newSize;
+	newSize.X = info.srWindow.Right + 1;
+	newSize.Y = info.srWindow.Bottom + 1;
+	SetConsoleScreenBufferSize(h, newSize);
 
-  // hide cursor
-  CONSOLE_CURSOR_INFO ci;
-  ci.dwSize=1;
-  ci.bVisible=FALSE;
-  SetConsoleCursorInfo(h,&ci);
+	// hide cursor
+	CONSOLE_CURSOR_INFO ci;
+	ci.dwSize = 1;
+	ci.bVisible = FALSE;
+	SetConsoleCursorInfo(h, &ci);
 }
 
 static char *InputConsole(void)
 {
-  // update our input buffer
-  HANDLE h=GetStdHandle(STD_INPUT_HANDLE);
-  bool returnChars=false;
-  for (;;)
-  {
-    DWORD dwRecords;
-    if (!GetNumberOfConsoleInputEvents(h,&dwRecords))
-      break;
-    if (!dwRecords)
-      break;
+	// update our input buffer
+	HANDLE h = GetStdHandle(STD_INPUT_HANDLE);
+	bool returnChars = false;
+	for (;;)
+	{
+		DWORD dwRecords;
+		if (!GetNumberOfConsoleInputEvents(h, &dwRecords))
+			break;
+		if (!dwRecords)
+			break;
 
-    INPUT_RECORD record;
-    ReadConsoleInput(h,&record,1,&dwRecords);
-    if (record.EventType!=KEY_EVENT)
-      continue;
+		INPUT_RECORD record;
+		ReadConsoleInput(h, &record, 1, &dwRecords);
+		if (record.EventType != KEY_EVENT)
+			continue;
 
-    KEY_EVENT_RECORD &key=record.Event.KeyEvent;
-    if (!key.bKeyDown||!key.uChar.AsciiChar)
-      continue;
+		KEY_EVENT_RECORD &key = record.Event.KeyEvent;
+		if (!key.bKeyDown || !key.uChar.AsciiChar)
+			continue;
 
-    if (key.uChar.AsciiChar=='\r'||
-        key.uChar.AsciiChar=='\n')
-    {
-      m_input[m_inputUsed++]='\n';
-      returnChars=true;
-      break;
-    }
+		if (key.uChar.AsciiChar == '\r' || key.uChar.AsciiChar == '\n')
+		{
+			m_input[m_inputUsed++] = '\n';
+			returnChars = true;
+			break;
+		}
 
-    /// @todo_opt if somebody wants this can be improved by adding support for cursor keys, history, etc
+		/// @todo_opt if somebody wants this can be improved by adding support for cursor keys, history, etc
 
-    if (key.uChar.AsciiChar=='\b')
-    {
-      if (m_inputUsed)
-        m_inputUsed--;
-    }
-    else if (((unsigned char)key.uChar.AsciiChar)>=' ')
-    {
-      if (m_inputUsed<sizeof(m_input)-1)
-        m_input[m_inputUsed++]=key.uChar.AsciiChar;
-    }
-  }
+		if (key.uChar.AsciiChar == '\b')
+		{
+			if (m_inputUsed)
+				m_inputUsed--;
+		}
+		else if (((unsigned char)key.uChar.AsciiChar) >= ' ')
+		{
+			if (m_inputUsed < sizeof(m_input) - 1)
+				m_input[m_inputUsed++] = key.uChar.AsciiChar;
+		}
+	}
 
-  // update screen
-  h=GetStdHandle(STD_OUTPUT_HANDLE);
-  CONSOLE_SCREEN_BUFFER_INFO info;
-  GetConsoleScreenBufferInfo(h,&info);
-  CHAR_INFO ci[sizeof(m_input)+1];
-  for (unsigned k=0;k<=sizeof(m_input);k++)
-  {
-    ci[k].Char.AsciiChar=k<m_inputUsed?m_input[k]:' ';
-    ci[k].Attributes=BACKGROUND_BLUE|FOREGROUND_BLUE|FOREGROUND_GREEN
-                    |FOREGROUND_RED|FOREGROUND_INTENSITY;
-  }
+	// update screen
+	h = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO info;
+	GetConsoleScreenBufferInfo(h, &info);
+	CHAR_INFO ci[sizeof(m_input) + 1];
+	for (unsigned k = 0; k <= sizeof(m_input); k++)
+	{
+		ci[k].Char.AsciiChar = k < m_inputUsed ? m_input[k] : ' ';
+		ci[k].Attributes = BACKGROUND_BLUE | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY;
+	}
 
-  // fake another cursor
-  if (GetTickCount()&512)
-    ci[m_inputUsed].Attributes=BACKGROUND_BLUE|BACKGROUND_GREEN
-                              |BACKGROUND_RED|BACKGROUND_INTENSITY|FOREGROUND_BLUE;
+	// fake another cursor
+	if (GetTickCount() & 512)
+		ci[m_inputUsed].Attributes =
+				BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY | FOREGROUND_BLUE;
 
-  COORD srcSize,srcCoord;
-  srcSize.X=sizeof(m_input); srcSize.Y=1;
-  srcCoord.X=srcCoord.Y=0;
+	COORD srcSize, srcCoord;
+	srcSize.X = sizeof(m_input);
+	srcSize.Y = 1;
+	srcCoord.X = srcCoord.Y = 0;
 
-  SMALL_RECT r;
-  r.Left=r.Top=r.Bottom=0; r.Right=info.dwSize.X-1;
-  WriteConsoleOutput(h,ci+(m_inputUsed<=info.dwSize.X?0:m_inputUsed-info.dwSize.X),
-                      srcSize,srcCoord,&r);
+	SMALL_RECT r;
+	r.Left = r.Top = r.Bottom = 0;
+	r.Right = info.dwSize.X - 1;
+	WriteConsoleOutput(h, ci + (m_inputUsed <= info.dwSize.X ? 0 : m_inputUsed - info.dwSize.X), srcSize, srcCoord, &r);
 
-  // return data now?
-  if (returnChars&&m_inputUsed>1)
-  {
-    m_input[--m_inputUsed]=0;
-    m_inputUsed=0;
-    return m_input;
-  }
+	// return data now?
+	if (returnChars && m_inputUsed > 1)
+	{
+		m_input[--m_inputUsed] = 0;
+		m_inputUsed = 0;
+		return m_input;
+	}
 
-  return 0;
+	return 0;
 }
 
 class Pipe
 {
-  Pipe(const Pipe&);
-  Pipe& operator=(const Pipe&);
+	Pipe(const Pipe &);
+	Pipe &operator=(const Pipe &);
 
-  HANDLE m_pipe;
-  bool m_connected;
-  int m_state;
-  int m_stringType;
-  int m_len;
-  char *m_src;
-  char *m_str;
+	HANDLE m_pipe;
+	bool m_connected;
+	int m_state;
+	int m_stringType;
+	int m_len;
+	char *m_src;
+	char *m_str;
 
 public:
-  Pipe(void):
-    m_pipe(INVALID_HANDLE_VALUE),
-    m_src(NULL), m_str(NULL), m_stringType(0)
-  {
-  }
+	Pipe(void) : m_pipe(INVALID_HANDLE_VALUE), m_src(NULL), m_str(NULL), m_stringType(0) {}
 
-  ~Pipe()
-  {
-    if (m_pipe!=INVALID_HANDLE_VALUE)
-    {
-      DisconnectNamedPipe(m_pipe);
-      CloseHandle(m_pipe);
-      free(m_src);
-      free(m_str);
-    }
-  }
+	~Pipe()
+	{
+		if (m_pipe != INVALID_HANDLE_VALUE)
+		{
+			DisconnectNamedPipe(m_pipe);
+			CloseHandle(m_pipe);
+			free(m_src);
+			free(m_str);
+		}
+	}
 
-  bool Create(const char *name)
-  {
-    m_pipe=CreateNamedPipe(name,
-                           PIPE_ACCESS_DUPLEX,
-                           PIPE_TYPE_MESSAGE|PIPE_READMODE_MESSAGE|PIPE_NOWAIT,
-                           PIPE_UNLIMITED_INSTANCES,1024,1024,0,NULL);
-    m_connected=false;
-    return m_pipe!=INVALID_HANDLE_VALUE;
-  }
+	bool Create(const char *name)
+	{
+		m_pipe = CreateNamedPipe(
+				name,
+				PIPE_ACCESS_DUPLEX,
+				PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_NOWAIT,
+				PIPE_UNLIMITED_INSTANCES,
+				1024,
+				1024,
+				0,
+				NULL);
+		m_connected = false;
+		return m_pipe != INVALID_HANDLE_VALUE;
+	}
 
-  bool Connected(void)
-  {
-    if (!m_connected)
-    {
-      ConnectNamedPipe(m_pipe,NULL);
-      if (GetLastError()==ERROR_PIPE_CONNECTED)
-      {
-        DWORD dwDummy;
-        WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),"\n<connect>\n",11,&dwDummy,NULL);
-        m_connected=true;
-        m_state=0;
-      }
-    }
-    return m_connected;
-  }
+	bool Connected(void)
+	{
+		if (!m_connected)
+		{
+			ConnectNamedPipe(m_pipe, NULL);
+			if (GetLastError() == ERROR_PIPE_CONNECTED)
+			{
+				DWORD dwDummy;
+				WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), "\n<connect>\n", 11, &dwDummy, NULL);
+				m_connected = true;
+				m_state = 0;
+			}
+		}
+		return m_connected;
+	}
 
-  void Write(char msg)
-  {
-    DWORD dummy;
-    if (!WriteFile(m_pipe,&msg,1,&dummy,NULL)||!dummy)
-    {
-      char sp[30];
-      wsprintf(sp,"%c:%i/%i\n",msg,dummy,GetLastError());
+	void Write(char msg)
+	{
+		DWORD dummy;
+		if (!WriteFile(m_pipe, &msg, 1, &dummy, NULL) || !dummy)
+		{
+			char sp[30];
+			wsprintf(sp, "%c:%i/%i\n", msg, dummy, GetLastError());
 
-      DWORD dwDummy;
-      WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),sp,strlen(sp),&dwDummy,NULL);
-    }
-  }
+			DWORD dwDummy;
+			WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), sp, strlen(sp), &dwDummy, NULL);
+		}
+	}
 
-  const char *Read(void)
-  {
-    DWORD read;
-    switch(m_state)
-    {
-      case 0:
-        if (!ReadFile(m_pipe,&m_stringType,1,&read,NULL))
-          break;
-        if (read==1)
-          m_state++;
-        return NULL;
-      case 1:
-      case 3:
-        if (!ReadFile(m_pipe,&m_len,4,&read,NULL))
-          break;
-        if (read==4)
-        {
-          if (m_state==1)
-            m_src=(char *)realloc(m_src,m_len+1);
-          else
-            m_str=(char *)realloc(m_str,m_len+1);
-          m_state++;
-        }
-        return NULL;
-      case 2:
-        if (!ReadFile(m_pipe,m_src,m_len,&read,NULL))
-          break;
-        if (read==m_len)
-        {
-          m_src[m_len]=0;
-          m_state++;
-        }
-        return NULL;
-      case 4:
-        if (!ReadFile(m_pipe,m_str,m_len,&read,NULL))
-          break;
-        if (read==m_len)
-        {
-          m_str[m_len]=0;
-          m_state=0;
-          return m_str;
-        }
-        return NULL;
-    }
+	const char *Read(void)
+	{
+		DWORD read;
+		switch (m_state)
+		{
+			case 0:
+				if (!ReadFile(m_pipe, &m_stringType, 1, &read, NULL))
+					break;
+				if (read == 1)
+					m_state++;
+				return NULL;
+			case 1:
+			case 3:
+				if (!ReadFile(m_pipe, &m_len, 4, &read, NULL))
+					break;
+				if (read == 4)
+				{
+					if (m_state == 1)
+						m_src = (char *)realloc(m_src, m_len + 1);
+					else
+						m_str = (char *)realloc(m_str, m_len + 1);
+					m_state++;
+				}
+				return NULL;
+			case 2:
+				if (!ReadFile(m_pipe, m_src, m_len, &read, NULL))
+					break;
+				if (read == m_len)
+				{
+					m_src[m_len] = 0;
+					m_state++;
+				}
+				return NULL;
+			case 4:
+				if (!ReadFile(m_pipe, m_str, m_len, &read, NULL))
+					break;
+				if (read == m_len)
+				{
+					m_str[m_len] = 0;
+					m_state = 0;
+					return m_str;
+				}
+				return NULL;
+		}
 
-    if (GetLastError()==ERROR_BROKEN_PIPE)
-    {
-      DisconnectNamedPipe(m_pipe);
+		if (GetLastError() == ERROR_BROKEN_PIPE)
+		{
+			DisconnectNamedPipe(m_pipe);
 
-      DWORD dwDummy;
-      WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),"\n<disconnect>\n",14,&dwDummy,NULL);
-      m_connected=false;
-    }
+			DWORD dwDummy;
+			WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), "\n<disconnect>\n", 14, &dwDummy, NULL);
+			m_connected = false;
+		}
 
-    return NULL;
-  }
+		return NULL;
+	}
 };
 
-int CALLBACK WinMain(HINSTANCE,HINSTANCE,LPSTR,int)
+int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-  InitConsole();
+	InitConsole();
 
-  char buf1[200],buf2[400];
-  DWORD dwDummy=sizeof(buf1);
-  GetComputerName(buf1,&dwDummy);
-  WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),buf2,
-            wsprintf(buf2,"\n\nSimple debug.net Server ready. Enter 'quit' to exit.\n\nLocal machine: %s\n\n",buf1),
-            &dwDummy,NULL);
+	char buf1[200], buf2[400];
+	DWORD dwDummy = sizeof(buf1);
+	GetComputerName(buf1, &dwDummy);
+	WriteFile(
+			GetStdHandle(STD_OUTPUT_HANDLE),
+			buf2,
+			wsprintf(buf2, "\n\nSimple debug.net Server ready. Enter 'quit' to exit.\n\nLocal machine: %s\n\n", buf1),
+			&dwDummy,
+			NULL);
 
-  Pipe p[10];
-  for (int k=0;k<10;k++)
-    if (!p[k].Create("\\\\.\\pipe\\ea_debug_v1"))
-    {
-      char msg[200];
-      wsprintf(msg,"Can't create named pipe (Code %i).",GetLastError());
-      MessageBox(NULL,msg,"Error",MB_OK);
-      return 1;
-    }
+	Pipe p[10];
+	for (int k = 0; k < 10; k++)
+		if (!p[k].Create("\\\\.\\pipe\\ea_debug_v1"))
+		{
+			char msg[200];
+			wsprintf(msg, "Can't create named pipe (Code %i).", GetLastError());
+			MessageBox(NULL, msg, "Error", MB_OK);
+			return 1;
+		}
 
-  for (;;)
-  {
-    char *input=InputConsole();
-    if (input)
-    {
-      if (!strcmp(input,"quit"))
-        break;
-    }
+	for (;;)
+	{
+		char *input = InputConsole();
+		if (input)
+		{
+			if (!strcmp(input, "quit"))
+				break;
+		}
 
-    for (int k=0;k<10;k++)
-    {
-      if (!p[k].Connected())
-        continue;
+		for (int k = 0; k < 10; k++)
+		{
+			if (!p[k].Connected())
+				continue;
 
-      const char *msg=p[k].Read();
-      if (msg)
-      {
-        DWORD dwDummy;
-        WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),msg,strlen(msg),&dwDummy,NULL);
-      }
+			const char *msg = p[k].Read();
+			if (msg)
+			{
+				DWORD dwDummy;
+				WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), msg, strlen(msg), &dwDummy, NULL);
+			}
 
-      if (input)
-      {
-        for (unsigned i=0;input[i];i++)
-          p[k].Write(input[i]);
-        p[k].Write('\n');
-      }
-    }
+			if (input)
+			{
+				for (unsigned i = 0; input[i]; i++)
+					p[k].Write(input[i]);
+				p[k].Write('\n');
+			}
+		}
 
-    Sleep(10);
-  }
+		Sleep(10);
+	}
 
-  return 0;
+	return 0;
 }

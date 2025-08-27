@@ -37,12 +37,15 @@ class WorldHeightMapEdit;
 class RoadTool : public Tool
 {
 protected:
-	enum {HYSTERESIS = 3,
-				MIN_LENGTH = 4};
+	enum
+	{
+		HYSTERESIS = 3,
+		MIN_LENGTH = 4
+	};
 	MapObject *m_mapObj;
 
 private:
-	MapObject* findSegment(const Coord3D *pLoc, Coord3D *outLoc);
+	MapObject *findSegment(const Coord3D *pLoc, Coord3D *outLoc);
 
 public:
 	RoadTool(void);
@@ -53,11 +56,10 @@ public:
 
 public:
 	/// Perform tool on mouse down.
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView *pView, CWorldBuilderDoc *pDoc);
 	virtual void activate(); ///< Become the current tool.
 };
 
-
-#endif //TOOL_H
+#endif // TOOL_H

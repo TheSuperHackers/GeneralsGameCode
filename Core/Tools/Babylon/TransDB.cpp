@@ -28,29 +28,25 @@
 #include "bin.h"
 #include "list.h"
 
-static char buffer[100*1024];
+static char buffer[100 * 1024];
 
-static List	DataBases;
+static List DataBases;
 
-static LANGINFO langinfo[] =
-	{
-		{	LANGID_US, "US", "us", "e"},
-		{ LANGID_UK, "UK", "uk", "e" },
-		{ LANGID_GERMAN, "German", "ge", "g" },
-		{ LANGID_FRENCH, "French", "fr", "f" },
-		{ LANGID_SPANISH, "Spanish", "sp", "s" },
-		{ LANGID_ITALIAN, "Italian", "it", "i" },
-		{ LANGID_JAPANESE, "Japanese", "ja", "j" },
-		{ LANGID_KOREAN, "Korean", "ko", "k" },
-		{ LANGID_CHINESE, "Chinese", "ch", "c" },
-		{ LANGID_JABBER, "Jabberwockie", "jb", "e" },
-		{ LANGID_UNKNOWN, "Unknown", NULL, NULL }
-	};
+static LANGINFO langinfo[] = { { LANGID_US, "US", "us", "e" },
+															 { LANGID_UK, "UK", "uk", "e" },
+															 { LANGID_GERMAN, "German", "ge", "g" },
+															 { LANGID_FRENCH, "French", "fr", "f" },
+															 { LANGID_SPANISH, "Spanish", "sp", "s" },
+															 { LANGID_ITALIAN, "Italian", "it", "i" },
+															 { LANGID_JAPANESE, "Japanese", "ja", "j" },
+															 { LANGID_KOREAN, "Korean", "ko", "k" },
+															 { LANGID_CHINESE, "Chinese", "ch", "c" },
+															 { LANGID_JABBER, "Jabberwockie", "jb", "e" },
+															 { LANGID_UNKNOWN, "Unknown", NULL, NULL } };
 
-LANGINFO *GetLangInfo ( int index )
+LANGINFO *GetLangInfo(int index)
 {
-
-	if ( (index >= 0) && (index < (sizeof ( langinfo ) / sizeof (LANGINFO )) -1) )
+	if ((index >= 0) && (index < (sizeof(langinfo) / sizeof(LANGINFO)) - 1))
 	{
 		return &langinfo[index];
 	}
@@ -58,15 +54,15 @@ LANGINFO *GetLangInfo ( int index )
 	return NULL;
 }
 
-LANGINFO *GetLangInfo ( LangID langid )
+LANGINFO *GetLangInfo(LangID langid)
 {
 	LANGINFO *item;
 
 	item = langinfo;
 
-	while ( item->langid != LANGID_UNKNOWN )
+	while (item->langid != LANGID_UNKNOWN)
 	{
-		if ( item->langid == langid )
+		if (item->langid == langid)
 		{
 			return item;
 		}
@@ -76,11 +72,11 @@ LANGINFO *GetLangInfo ( LangID langid )
 	return NULL;
 }
 
-const char *GetLangName ( LangID langid )
+const char *GetLangName(LangID langid)
 {
 	LANGINFO *item;
 
-	if ( ( item = GetLangInfo ( langid )) )
+	if ((item = GetLangInfo(langid)))
 	{
 		return item->name;
 	}
@@ -88,15 +84,15 @@ const char *GetLangName ( LangID langid )
 	return "unknown";
 }
 
-LANGINFO *GetLangInfo ( char *language )
+LANGINFO *GetLangInfo(char *language)
 {
 	LANGINFO *item;
 
 	item = langinfo;
 
-	while ( item->langid != LANGID_UNKNOWN )
+	while (item->langid != LANGID_UNKNOWN)
 	{
-		if ( !stricmp ( language, item->name ) )
+		if (!stricmp(language, item->name))
 		{
 			return item;
 		}
@@ -106,28 +102,28 @@ LANGINFO *GetLangInfo ( char *language )
 	return NULL;
 }
 
-TransDB* FirstTransDB ( void )
+TransDB *FirstTransDB(void)
 {
 	ListNode *first;
 
-	first = DataBases.Next ();
-	if ( first )
+	first = DataBases.Next();
+	if (first)
 	{
-		return (TransDB *) first->Item ();
+		return (TransDB *)first->Item();
 	}
 	return NULL;
 }
 
-TransDB::TransDB ( const char *cname )
+TransDB::TransDB(const char *cname)
 {
-	text_bin = new Bin ();
-	text_id_bin = new BinID ();
-	label_bin = new Bin ();
-	obsolete_bin = new Bin ();
-	strncpy ( name, cname, sizeof ( name ) -1 );
-	name[sizeof(name)-1] = 0;
-	node.SetItem ( this );
-	DataBases.AddToTail ( &node );
+	text_bin = new Bin();
+	text_id_bin = new BinID();
+	label_bin = new Bin();
+	obsolete_bin = new Bin();
+	strncpy(name, cname, sizeof(name) - 1);
+	name[sizeof(name) - 1] = 0;
+	node.SetItem(this);
+	DataBases.AddToTail(&node);
 	next_string_id = -1;
 	valid = TRUE;
 	num_obsolete = 0;
@@ -135,204 +131,196 @@ TransDB::TransDB ( const char *cname )
 	flags = TRANSDB_OPTION_NONE | TRANSDB_OPTION_DUP_TEXT;
 }
 
-TransDB::	~TransDB ( )
+TransDB::~TransDB()
 {
-	Clear ();
-	node.Remove ();
+	Clear();
+	node.Remove();
 	delete text_bin;
 	delete text_id_bin;
 	delete label_bin;
 	delete obsolete_bin;
-
 }
 
-void					TransDB::AddLabel		( BabylonLabel *label )
+void TransDB::AddLabel(BabylonLabel *label)
 {
-	ListNode	*node = new ListNode ();
+	ListNode *node = new ListNode();
 
-	node->SetItem ( label );
+	node->SetItem(label);
 
-	label_bin->Add ( label, label->Name() );
+	label_bin->Add(label, label->Name());
 
-	labels.AddToTail ( node );
-	label->SetDB ( this );
-	Changed ();
-
+	labels.AddToTail(node);
+	label->SetDB(this);
+	Changed();
 }
 
-void					TransDB::AddText		( BabylonText *text )
+void TransDB::AddText(BabylonText *text)
 {
-
-	text_bin->Add ( text, text->Get() );
-	if ( text->ID () > 0 )
+	text_bin->Add(text, text->Get());
+	if (text->ID() > 0)
 	{
-		text_id_bin->Add ( text, text->ID ());
+		text_id_bin->Add(text, text->ID());
 	}
-
 }
 
-void					TransDB::AddObsolete		( BabylonText *text )
+void TransDB::AddObsolete(BabylonText *text)
 {
-	ListNode	*node = new ListNode ();
+	ListNode *node = new ListNode();
 
-	node->SetItem ( text );
+	node->SetItem(text);
 
-	obsolete_bin->Add ( text, text->Get() );
-	if ( text->ID () > 0 )
+	obsolete_bin->Add(text, text->Get());
+	if (text->ID() > 0)
 	{
-		text_id_bin->Add ( text, text->ID ());
+		text_id_bin->Add(text, text->ID());
 	}
 
 	num_obsolete++;
-	text->SetParent ( (DBAttribs *)this );
-	text->Changed ();
+	text->SetParent((DBAttribs *)this);
+	text->Changed();
 
-	obsolete.AddToTail ( node );
-	Changed ();
-
+	obsolete.AddToTail(node);
+	Changed();
 }
 
-void					TransDB::RemoveLabel ( BabylonLabel *label )
+void TransDB::RemoveLabel(BabylonLabel *label)
 {
 	ListNode *node;
 
-	if ( (node = labels.Find ( label )) )
+	if ((node = labels.Find(label)))
 	{
-		node->Remove ();
-		label->SetDB ( NULL );
-		label_bin->Remove ( label );
+		node->Remove();
+		label->SetDB(NULL);
+		label_bin->Remove(label);
 		delete node;
-		Changed ();
+		Changed();
 	}
 }
 
-void					TransDB::RemoveText ( BabylonText *text )
+void TransDB::RemoveText(BabylonText *text)
 {
-	text_bin->Remove ( text );
-	text_id_bin->Remove ( text );
+	text_bin->Remove(text);
+	text_id_bin->Remove(text);
 }
 
-void					TransDB::RemoveObsolete ( BabylonText *text )
+void TransDB::RemoveObsolete(BabylonText *text)
 {
 	ListNode *node;
 
-	if ( (node = obsolete.Find ( text )) )
+	if ((node = obsolete.Find(text)))
 	{
-		node->Remove ();
-		obsolete_bin->Remove ( text );
-		text_id_bin->Remove ( text );
+		node->Remove();
+		obsolete_bin->Remove(text);
+		text_id_bin->Remove(text);
 		num_obsolete--;
 		delete node;
-		Changed ();
+		Changed();
 	}
 }
 
-int					TransDB::NumLabelsChanged ( void )
+int TransDB::NumLabelsChanged(void)
 {
-	BabylonLabel	*label;
+	BabylonLabel *label;
 	ListSearch sh;
 	int changed = 0;
 
-	label = FirstLabel ( sh );
+	label = FirstLabel(sh);
 
-	while ( label )
+	while (label)
 	{
-		if ( label->IsChanged ())
+		if (label->IsChanged())
 		{
 			changed++;
 		}
 
-		label = NextLabel ( sh );
+		label = NextLabel(sh);
 	}
 
 	return changed;
 }
 
-int					TransDB::NumLabels ( void )
+int TransDB::NumLabels(void)
 {
-
 	return labels.NumItems();
 }
 
-BabylonLabel*			TransDB::FirstLabel	( ListSearch& sh )
+BabylonLabel *TransDB::FirstLabel(ListSearch &sh)
 {
 	ListNode *node;
 
-	if ( ( node = sh.FirstNode ( &labels )))
+	if ((node = sh.FirstNode(&labels)))
 	{
-		return (BabylonLabel *) node->Item ();
+		return (BabylonLabel *)node->Item();
 	}
 
 	return NULL;
 }
 
-BabylonLabel*			TransDB::NextLabel		( ListSearch& sh)
+BabylonLabel *TransDB::NextLabel(ListSearch &sh)
 {
 	ListNode *node;
 
-	if ( ( node = sh.Next ()))
+	if ((node = sh.Next()))
 	{
-		return (BabylonLabel *) node->Item ();
+		return (BabylonLabel *)node->Item();
 	}
 
 	return NULL;
 }
 
-BabylonText*			TransDB::FirstObsolete	( ListSearch& sh )
+BabylonText *TransDB::FirstObsolete(ListSearch &sh)
 {
 	ListNode *node;
 
-	if ( ( node = sh.FirstNode ( &obsolete )))
+	if ((node = sh.FirstNode(&obsolete)))
 	{
-		return (BabylonText *) node->Item ();
+		return (BabylonText *)node->Item();
 	}
 
 	return NULL;
 }
 
-BabylonText*			TransDB::NextObsolete		( ListSearch& sh)
+BabylonText *TransDB::NextObsolete(ListSearch &sh)
 {
 	ListNode *node;
 
-	if ( ( node = sh.Next ()))
+	if ((node = sh.Next()))
 	{
-		return (BabylonText *) node->Item ();
+		return (BabylonText *)node->Item();
 	}
 
 	return NULL;
 }
 
-BabylonLabel*			TransDB::FindLabel		( OLECHAR *name )
+BabylonLabel *TransDB::FindLabel(OLECHAR *name)
 {
-	return (BabylonLabel *) label_bin->Get ( name );
+	return (BabylonLabel *)label_bin->Get(name);
 }
 
-BabylonText*			TransDB::FindText		( OLECHAR *text )
+BabylonText *TransDB::FindText(OLECHAR *text)
 {
-
-	return (BabylonText *) text_bin->Get ( text );
+	return (BabylonText *)text_bin->Get(text);
 }
 
-BabylonText*			TransDB::FindSubText		( OLECHAR *pattern, int item )
+BabylonText *TransDB::FindSubText(OLECHAR *pattern, int item)
 {
-	BabylonLabel	*label;
+	BabylonLabel *label;
 	ListSearch sh;
-	BabylonText		*text;
+	BabylonText *text;
 	ListSearch sh_text;
-	int plen = wcslen ( pattern );
+	int plen = wcslen(pattern);
 
-	label = FirstLabel ( sh );
+	label = FirstLabel(sh);
 
-	while ( label )
+	while (label)
 	{
-		text = label->FirstText ( sh_text );
+		text = label->FirstText(sh_text);
 
-		while ( text )
+		while (text)
 		{
-
-			if ( !wcsnicmp ( text->Get (), pattern, 15 ))
+			if (!wcsnicmp(text->Get(), pattern, 15))
 			{
-				if ( !item )
+				if (!item)
 				{
 					return text;
 				}
@@ -340,41 +328,36 @@ BabylonText*			TransDB::FindSubText		( OLECHAR *pattern, int item )
 				item--;
 			}
 
-			text = label->NextText ( sh_text );
+			text = label->NextText(sh_text);
 		}
 
-		label = NextLabel ( sh );
+		label = NextLabel(sh);
 	}
 
 	return NULL;
-
 }
 
-BabylonText*			TransDB::FindText		( int id )
+BabylonText *TransDB::FindText(int id)
 {
-
-	return (BabylonText *) text_id_bin->Get ( id );
+	return (BabylonText *)text_id_bin->Get(id);
 }
 
-BabylonText*			TransDB::FindNextText		( void )
+BabylonText *TransDB::FindNextText(void)
 {
-
-	return (BabylonText *) text_bin->GetNext ( );
+	return (BabylonText *)text_bin->GetNext();
 }
 
-BabylonText*			TransDB::FindObsolete		( OLECHAR *name )
+BabylonText *TransDB::FindObsolete(OLECHAR *name)
 {
-	return (BabylonText *) obsolete_bin->Get ( name );
+	return (BabylonText *)obsolete_bin->Get(name);
 }
 
-BabylonText*			TransDB::FindNextObsolete		( void )
+BabylonText *TransDB::FindNextObsolete(void)
 {
-
-	return (BabylonText *) obsolete_bin->GetNext ( );
-
+	return (BabylonText *)obsolete_bin->GetNext();
 }
 
-int					TransDB::Clear				( void )
+int TransDB::Clear(void)
 {
 	ListSearch sh;
 	BabylonLabel *label;
@@ -382,24 +365,24 @@ int					TransDB::Clear				( void )
 	ListNode *node;
 	int count = 0;
 
-	text_bin->Clear ();
-	text_id_bin->Clear ();
-	label_bin->Clear ();
-	obsolete_bin->Clear ();
+	text_bin->Clear();
+	text_id_bin->Clear();
+	label_bin->Clear();
+	obsolete_bin->Clear();
 
-	while ( node = sh.FirstNode ( &labels ) )
+	while (node = sh.FirstNode(&labels))
 	{
-		node->Remove ();
-		label = (BabylonLabel *) node->Item ();
+		node->Remove();
+		label = (BabylonLabel *)node->Item();
 		count++;
 		delete label;
 		delete node;
 	}
 
-	while ( node = sh.FirstNode ( &obsolete ) )
+	while (node = sh.FirstNode(&obsolete))
 	{
-		node->Remove ();
-		text = (BabylonText *) node->Item ();
+		node->Remove();
+		text = (BabylonText *)node->Item();
 		count++;
 		delete text;
 		delete node;
@@ -407,14 +390,14 @@ int					TransDB::Clear				( void )
 
 	num_obsolete = 0;
 
-	if ( next_string_id != -1 )
+	if (next_string_id != -1)
 	{
-			next_string_id = START_STRING_ID;
+		next_string_id = START_STRING_ID;
 	}
 
-	if ( count )
+	if (count)
 	{
-		Changed ();
+		Changed();
 	}
 
 	valid = TRUE;
@@ -422,126 +405,123 @@ int					TransDB::Clear				( void )
 	return count;
 }
 
-void					TransDB::ClearChanges				( void )
+void TransDB::ClearChanges(void)
 {
 	ListSearch sh;
 	BabylonLabel *label;
 
-	label = FirstLabel ( sh );
-	while ( label )
+	label = FirstLabel(sh);
+	while (label)
 	{
-		label->ClearChanges ();
-		label = NextLabel ( sh );
+		label->ClearChanges();
+		label = NextLabel(sh);
 	}
 
-	BabylonText *text = FirstObsolete ( sh );
-	while ( text )
+	BabylonText *text = FirstObsolete(sh);
+	while (text)
 	{
-		text->ClearChanges ();
-		text = NextObsolete ( sh );
+		text->ClearChanges();
+		text = NextObsolete(sh);
 	}
 
-	NotChanged ();
+	NotChanged();
 }
 
-void					TransDB::ClearProcessed				( void )
+void TransDB::ClearProcessed(void)
 {
 	ListSearch sh;
 	BabylonLabel *label;
 
-	label = FirstLabel ( sh );
-	while ( label )
+	label = FirstLabel(sh);
+	while (label)
 	{
-		label->ClearProcessed ();
-		label = NextLabel ( sh );
+		label->ClearProcessed();
+		label = NextLabel(sh);
 	}
-	NotProcessed ();
+	NotProcessed();
 }
 
-void					TransDB::ClearMatched				( void )
+void TransDB::ClearMatched(void)
 {
 	ListSearch sh;
 	BabylonLabel *label;
 
-	label = FirstLabel ( sh );
-	while ( label )
+	label = FirstLabel(sh);
+	while (label)
 	{
-		label->ClearMatched ();
-		label = NextLabel ( sh );
+		label->ClearMatched();
+		label = NextLabel(sh);
 	}
-	NotMatched ();
+	NotMatched();
 }
 
-void					TransDB::AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes, void (*cb) ( void ) )
+void TransDB::AddToTree(CTreeCtrl *tc, HTREEITEM parent, int changes, void (*cb)(void))
 {
-	HTREEITEM		item;
-	HTREEITEM		ilabels, iobsolete;
-	ListSearch	sh;
-	BabylonLabel		*label;
-	BabylonText			*txt;
+	HTREEITEM item;
+	HTREEITEM ilabels, iobsolete;
+	ListSearch sh;
+	BabylonLabel *label;
+	BabylonText *txt;
 
-	sprintf ( buffer, "%s%c  (%d/%d)",name, ChangedSymbol(), NumLabelsChanged(), NumLabels() );
-	item = tc->InsertItem ( buffer, parent );
-	ilabels = tc->InsertItem ( "Labels", item );
+	sprintf(buffer, "%s%c  (%d/%d)", name, ChangedSymbol(), NumLabelsChanged(), NumLabels());
+	item = tc->InsertItem(buffer, parent);
+	ilabels = tc->InsertItem("Labels", item);
 
-	label = FirstLabel ( sh );
+	label = FirstLabel(sh);
 
-	while ( label )
+	while (label)
 	{
-		if ( !changes || label->IsChanged ())
+		if (!changes || label->IsChanged())
 		{
-			label->AddToTree ( tc, ilabels, changes );
+			label->AddToTree(tc, ilabels, changes);
 		}
 
-		if ( cb )
+		if (cb)
 		{
-			cb ( );
+			cb();
 		}
 
-		label = NextLabel ( sh );
+		label = NextLabel(sh);
 	}
 
-	if ( num_obsolete )
+	if (num_obsolete)
 	{
-		iobsolete = tc->InsertItem ( "Obsolete Strings", item );
+		iobsolete = tc->InsertItem("Obsolete Strings", item);
 
-		txt = FirstObsolete ( sh );
+		txt = FirstObsolete(sh);
 
-		while ( txt )
+		while (txt)
 		{
-			if ( !changes || txt->IsChanged ())
+			if (!changes || txt->IsChanged())
 			{
-				txt->AddToTree ( tc, iobsolete );
+				txt->AddToTree(tc, iobsolete);
 			}
 
-			if ( cb )
+			if (cb)
 			{
-				cb ( );
+				cb();
 			}
 
-			txt = NextObsolete ( sh );
+			txt = NextObsolete(sh);
 		}
 	}
-
-
 }
 
-TransDB*			TransDB::Next				( void )
+TransDB *TransDB::Next(void)
 {
 	ListNode *next;
 
-	next = node.Next ();
+	next = node.Next();
 
-	if ( next )
+	if (next)
 	{
-		return (TransDB *) next->Item ();
+		return (TransDB *)next->Item();
 	}
 
 	return NULL;
-
 }
 
-void BabylonLabel::init ( void )
+void BabylonLabel::init(void)
 {
 	db = NULL;
 	comment = NULL;
@@ -550,21 +530,19 @@ void BabylonLabel::init ( void )
 	name = NULL;
 }
 
-BabylonLabel::BabylonLabel ( void )
+BabylonLabel::BabylonLabel(void)
 {
-	init ();
-	name = new OLEString ( );
-	comment = new OLEString ( );
-	context = new OLEString ( );
-	speaker = new OLEString ( );
-	listener = new OLEString ( );
-
-
+	init();
+	name = new OLEString();
+	comment = new OLEString();
+	context = new OLEString();
+	speaker = new OLEString();
+	listener = new OLEString();
 }
 
-BabylonLabel::~BabylonLabel ( )
+BabylonLabel::~BabylonLabel()
 {
-	Clear ();
+	Clear();
 	delete name;
 	delete comment;
 	delete context;
@@ -572,309 +550,301 @@ BabylonLabel::~BabylonLabel ( )
 	delete listener;
 }
 
-void					BabylonLabel::Remove			( void )
+void BabylonLabel::Remove(void)
 {
-	if ( db )
+	if (db)
 	{
-		db->RemoveLabel ( this );
+		db->RemoveLabel(this);
 	}
 }
 
-void					BabylonLabel::RemoveText ( BabylonText *txt )
+void BabylonLabel::RemoveText(BabylonText *txt)
 {
 	ListNode *node;
 
-	if ( (node = text.Find ( txt )) )
+	if ((node = text.Find(txt)))
 	{
-		node->Remove ();
-		txt->SetDB ( NULL );
-		txt->SetLabel ( NULL );
-		txt->SetParent ( NULL );
+		node->Remove();
+		txt->SetDB(NULL);
+		txt->SetLabel(NULL);
+		txt->SetParent(NULL);
 		delete node;
-		Changed ();
+		Changed();
 	}
 }
 
-void					BabylonLabel::AddText			( BabylonText *new_text )
+void BabylonLabel::AddText(BabylonText *new_text)
 {
 	TransDB *db = DB();
-	ListNode	*node = new ListNode ();
+	ListNode *node = new ListNode();
 
-	node->SetItem ( new_text );
+	node->SetItem(new_text);
 
-	text.AddToTail ( node );
-	Changed ();
-	new_text->SetDB ( db );
-	new_text->SetParent ( (DBAttribs *) this );
-	new_text->SetLabel ( this );
+	text.AddToTail(node);
+	Changed();
+	new_text->SetDB(db);
+	new_text->SetParent((DBAttribs *)this);
+	new_text->SetLabel(this);
 }
 
-int					BabylonLabel::Clear				( void )
+int BabylonLabel::Clear(void)
 {
 	ListSearch sh;
 	BabylonText *txt;
 	ListNode *node;
 	int count = 0;
 
-	while ( node = sh.FirstNode ( &text ) )
+	while (node = sh.FirstNode(&text))
 	{
-		node->Remove ();
-		txt = (BabylonText *) node->Item ();
+		node->Remove();
+		txt = (BabylonText *)node->Item();
 		delete txt;
 		delete node;
 		count++;
 	}
 
-	if ( count )
+	if (count)
 	{
-		Changed ();
+		Changed();
 	}
 
 	return count;
 }
 
-BabylonLabel*			BabylonLabel::Clone				( void )
+BabylonLabel *BabylonLabel::Clone(void)
 {
 	BabylonLabel *clone = new BabylonLabel();
 	BabylonText *txt;
 	ListSearch sh;
 
-	clone->SetName ( Name());
-	clone->SetComment ( Comment ());
-	clone->SetListener ( Listener ());
-	clone->SetSpeaker ( Speaker ());
-	clone->SetMaxLen ( MaxLen ());
-	clone->SetContext ( Context ());
+	clone->SetName(Name());
+	clone->SetComment(Comment());
+	clone->SetListener(Listener());
+	clone->SetSpeaker(Speaker());
+	clone->SetMaxLen(MaxLen());
+	clone->SetContext(Context());
 
-	txt = FirstText ( sh );
+	txt = FirstText(sh);
 
-	while ( txt )
+	while (txt)
 	{
-		clone->AddText ( txt->Clone ());
+		clone->AddText(txt->Clone());
 
-		txt = NextText ( sh );
+		txt = NextText(sh);
 	}
 
 	return clone;
 }
 
-BabylonText*			BabylonLabel::FirstText		( ListSearch& sh )
+BabylonText *BabylonLabel::FirstText(ListSearch &sh)
 {
 	ListNode *node;
 
-	if ( ( node = sh.FirstNode ( &text )))
+	if ((node = sh.FirstNode(&text)))
 	{
-		return (BabylonText *) node->Item ();
+		return (BabylonText *)node->Item();
 	}
 
 	return NULL;
 }
 
-BabylonText*			BabylonLabel::NextText		( ListSearch& sh)
+BabylonText *BabylonLabel::NextText(ListSearch &sh)
 {
 	ListNode *node;
 
-	if ( ( node = sh.Next (  )))
+	if ((node = sh.Next()))
 	{
-		return (BabylonText *) node->Item ();
+		return (BabylonText *)node->Item();
 	}
 
 	return NULL;
-
 }
 
-BabylonText*			BabylonLabel::FindText ( OLECHAR *find_text )
+BabylonText *BabylonLabel::FindText(OLECHAR *find_text)
 {
 	ListSearch sh;
 	BabylonText *txt;
 
-	txt = FirstText ( sh );
+	txt = FirstText(sh);
 
-	while ( txt )
+	while (txt)
 	{
-		if ( !wcscmp ( txt->Get(), find_text ))
+		if (!wcscmp(txt->Get(), find_text))
 		{
 			return txt;
 		}
-		txt = NextText ( sh );
+		txt = NextText(sh);
 	}
 
 	return NULL;
 }
 
-
-void					BabylonLabel::SetDB				( TransDB *new_db )
+void BabylonLabel::SetDB(TransDB *new_db)
 {
 	BabylonText *ntext;
 	ListSearch sh;
 
 	db = new_db;
-	SetParent ( (DBAttribs *) new_db );
+	SetParent((DBAttribs *)new_db);
 
-	ntext = FirstText ( sh );
+	ntext = FirstText(sh);
 
-	while ( ntext )
+	while (ntext)
 	{
-		ntext->SetDB ( new_db );
+		ntext->SetDB(new_db);
 
-		ntext = NextText ( sh );
+		ntext = NextText(sh);
 	}
-
 }
 
-void					BabylonLabel::ClearChanges				( void )
+void BabylonLabel::ClearChanges(void)
 {
 	BabylonText *ntext;
 	ListSearch sh;
 
-	ntext = FirstText ( sh );
+	ntext = FirstText(sh);
 
-	while ( ntext )
+	while (ntext)
 	{
 		ntext->ClearChanges();
 
-		ntext = NextText ( sh );
+		ntext = NextText(sh);
 	}
 
 	NotChanged();
-
 }
 
-void					BabylonLabel::ClearProcessed				( void )
+void BabylonLabel::ClearProcessed(void)
 {
 	BabylonText *ntext;
 	ListSearch sh;
 
-	ntext = FirstText ( sh );
+	ntext = FirstText(sh);
 
-	while ( ntext )
+	while (ntext)
 	{
 		ntext->ClearProcessed();
 
-		ntext = NextText ( sh );
+		ntext = NextText(sh);
 	}
 
 	NotProcessed();
-
 }
 
-void					BabylonLabel::ClearMatched				( void )
+void BabylonLabel::ClearMatched(void)
 {
 	BabylonText *ntext;
 	ListSearch sh;
 
-	ntext = FirstText ( sh );
+	ntext = FirstText(sh);
 
-	while ( ntext )
+	while (ntext)
 	{
 		ntext->ClearMatched();
 
-		ntext = NextText ( sh );
+		ntext = NextText(sh);
 	}
 
 	NotMatched();
-
 }
 
-int					BabylonLabel::AllMatched				( void )
+int BabylonLabel::AllMatched(void)
 {
 	BabylonText *ntext;
 	ListSearch sh;
 
-	ntext = FirstText ( sh );
+	ntext = FirstText(sh);
 
-	while ( ntext )
+	while (ntext)
 	{
-		if ( !ntext->Matched() )
+		if (!ntext->Matched())
 		{
 			return FALSE;
 		}
 
-		ntext = NextText ( sh );
+		ntext = NextText(sh);
 	}
 
 	return TRUE;
 }
 
-BabylonText::BabylonText( void )
+BabylonText::BabylonText(void)
 {
-	init ();
-	text = new OLEString (  );
-	wavefile = new OLEString (  );
-
+	init();
+	text = new OLEString();
+	wavefile = new OLEString();
 }
 
-int BabylonText::IsSent ( void )
+int BabylonText::IsSent(void)
 {
 	return sent;
 }
 
-void BabylonText::Sent ( int val )
+void BabylonText::Sent(int val)
 {
 	sent = val;
 }
 
-void					BabylonLabel::AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes )
+void BabylonLabel::AddToTree(CTreeCtrl *tc, HTREEITEM parent, int changes)
 {
-	HTREEITEM		litem;
-	ListSearch	sh;
-	BabylonText			*txt;
+	HTREEITEM litem;
+	ListSearch sh;
+	BabylonText *txt;
 
-	sprintf ( buffer, "%s%c", NameSB(), ChangedSymbol() );
+	sprintf(buffer, "%s%c", NameSB(), ChangedSymbol());
 
-	litem = tc->InsertItem ( buffer, parent );
+	litem = tc->InsertItem(buffer, parent);
 
-	txt = FirstText ( sh );
+	txt = FirstText(sh);
 
-	while ( txt )
+	while (txt)
 	{
-		if ( !changes || txt->IsChanged ())
+		if (!changes || txt->IsChanged())
 		{
-			txt->AddToTree ( tc, litem );
+			txt->AddToTree(tc, litem);
 		}
 
-		txt = NextText ( sh );
+		txt = NextText(sh);
 	}
 
-	if ( strcmp ( CommentSB(), "" ) )
+	if (strcmp(CommentSB(), ""))
 	{
-		sprintf ( buffer, "COMMENT : %s", CommentSB() );
-		tc->InsertItem ( buffer, litem );
+		sprintf(buffer, "COMMENT : %s", CommentSB());
+		tc->InsertItem(buffer, litem);
 	}
 
-	if ( strcmp ( ContextSB(), "" ) )
+	if (strcmp(ContextSB(), ""))
 	{
-		sprintf ( buffer, "CONTEXT : %s", ContextSB() );
-		tc->InsertItem ( buffer, litem );
+		sprintf(buffer, "CONTEXT : %s", ContextSB());
+		tc->InsertItem(buffer, litem);
 	}
 
-	if ( strcmp ( SpeakerSB(), "" ) )
+	if (strcmp(SpeakerSB(), ""))
 	{
-		sprintf ( buffer, "SPEAKER : %s", SpeakerSB() );
-		tc->InsertItem ( buffer, litem );
+		sprintf(buffer, "SPEAKER : %s", SpeakerSB());
+		tc->InsertItem(buffer, litem);
 	}
 
-	if ( strcmp ( ListenerSB(), "" ) )
+	if (strcmp(ListenerSB(), ""))
 	{
-		sprintf ( buffer, "LISTENER: %s", ListenerSB() );
-		tc->InsertItem ( buffer, litem );
+		sprintf(buffer, "LISTENER: %s", ListenerSB());
+		tc->InsertItem(buffer, litem);
 	}
 
-	if ( line_number != -1 )
+	if (line_number != -1)
 	{
-		sprintf ( buffer, "LINE    : %d", line_number );
-		tc->InsertItem ( buffer, litem );
+		sprintf(buffer, "LINE    : %d", line_number);
+		tc->InsertItem(buffer, litem);
 	}
 
-	if ( max_len )
+	if (max_len)
 	{
-		sprintf ( buffer, "MAX LEN : %d", max_len );
-		tc->InsertItem ( buffer, litem );
+		sprintf(buffer, "MAX LEN : %d", max_len);
+		tc->InsertItem(buffer, litem);
 	}
-
 }
 
-void BabylonText::init ( void )
+void BabylonText::init(void)
 {
 	db = NULL;
 	label = NULL;
@@ -885,748 +855,731 @@ void BabylonText::init ( void )
 	id = -1;
 	retranslate = FALSE;
 	sent = FALSE;
-
-
 }
 
-BabylonText::~BabylonText( )
+BabylonText::~BabylonText()
 {
 	Clear();
 	delete text;
 	delete wavefile;
-
 }
 
-void					BabylonText::SetDB				( TransDB *new_db )
+void BabylonText::SetDB(TransDB *new_db)
 {
 	Translation *trans;
 	ListSearch sh;
 
-	if ( db )
+	if (db)
 	{
-		db->RemoveText ( this );
+		db->RemoveText(this);
 	}
 
-
-	if ( (db = new_db) )
+	if ((db = new_db))
 	{
-		AssignID ();
-		db->AddText ( this );
+		AssignID();
+		db->AddText(this);
 	}
 
-	trans = FirstTranslation ( sh );
+	trans = FirstTranslation(sh);
 
-	while ( trans )
+	while (trans)
 	{
-		trans->SetDB ( new_db );
+		trans->SetDB(new_db);
 
-		trans = NextTranslation ( sh );
-	}
-
-}
-
-void					BabylonText::Remove			( void )
-{
-	if ( label )
-	{
-		label->RemoveText ( this );
+		trans = NextTranslation(sh);
 	}
 }
 
-int						BabylonText::IsDialog ( void )
+void BabylonText::Remove(void)
 {
-
-	return strcmp (WaveSB(), "" );
-
+	if (label)
+	{
+		label->RemoveText(this);
+	}
 }
 
-int						BabylonText::DialogIsValid ( const char *path, LangID langid, int check )
+int BabylonText::IsDialog(void)
 {
-	LANGINFO	*linfo;
+	return strcmp(WaveSB(), "");
+}
+
+int BabylonText::DialogIsValid(const char *path, LangID langid, int check)
+{
+	LANGINFO *linfo;
 	CWaveInfo *winfo;
 	DBAttribs *attribs;
 
-	linfo = GetLangInfo ( langid );
+	linfo = GetLangInfo(langid);
 
-	if ( langid == LANGID_US )
+	if (langid == LANGID_US)
 	{
 		winfo = &WaveInfo;
-		attribs = (DBAttribs *) this;
+		attribs = (DBAttribs *)this;
 	}
 	else
 	{
-		Translation *trans = GetTranslation ( langid );
+		Translation *trans = GetTranslation(langid);
 
-		if ( !trans )
+		if (!trans)
 		{
 			return FALSE;
 		}
 
-		attribs = (DBAttribs *) trans;
+		attribs = (DBAttribs *)trans;
 		winfo = &trans->WaveInfo;
 	}
 
-
-	if ( winfo->Valid () && check )
+	if (winfo->Valid() && check)
 	{
 		WIN32_FIND_DATA info;
-		HANDLE	handle;
+		HANDLE handle;
 
-		winfo->SetValid ( FALSE );
-		winfo->SetMissing ( TRUE );
+		winfo->SetValid(FALSE);
+		winfo->SetMissing(TRUE);
 
-		sprintf ( buffer, "%s%s\\%s%s.wav", path, linfo->character, WaveSB(), linfo->character );
-		if ( (handle = FindFirstFile ( buffer, &info )) != INVALID_HANDLE_VALUE )
+		sprintf(buffer, "%s%s\\%s%s.wav", path, linfo->character, WaveSB(), linfo->character);
+		if ((handle = FindFirstFile(buffer, &info)) != INVALID_HANDLE_VALUE)
 		{
-			if ( ! (info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
+			if (!(info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 			{
-				if ( winfo->Lo () == info.nFileSizeLow && winfo->Hi() == info.nFileSizeHigh )
+				if (winfo->Lo() == info.nFileSizeLow && winfo->Hi() == info.nFileSizeHigh)
 				{
-					winfo->SetValid ( TRUE );
+					winfo->SetValid(TRUE);
 				}
-				winfo->SetMissing ( FALSE );
+				winfo->SetMissing(FALSE);
 			}
 
-			FindClose ( handle );
+			FindClose(handle);
 		}
-
 	}
 
-	return winfo->Valid ();
+	return winfo->Valid();
 }
 
-int						BabylonText::ValidateDialog ( const char *path, LangID langid )
+int BabylonText::ValidateDialog(const char *path, LangID langid)
 {
 	WIN32_FIND_DATA info;
-	HANDLE	handle;
+	HANDLE handle;
 	CWaveInfo *winfo;
 	LANGINFO *linfo;
 	DBAttribs *attribs;
 
-	linfo = GetLangInfo ( langid );
+	linfo = GetLangInfo(langid);
 
-	if ( langid == LANGID_US )
+	if (langid == LANGID_US)
 	{
 		winfo = &WaveInfo;
-		attribs = (DBAttribs *) this;
+		attribs = (DBAttribs *)this;
 	}
 	else
 	{
-		Translation *trans = GetTranslation ( langid );
+		Translation *trans = GetTranslation(langid);
 
-		if ( !trans )
+		if (!trans)
 		{
 			return FALSE;
 		}
 
-		attribs = (DBAttribs *) trans;
+		attribs = (DBAttribs *)trans;
 		winfo = &trans->WaveInfo;
 	}
 
-	winfo->SetValid  ( FALSE );
-	winfo->SetMissing ( TRUE );
+	winfo->SetValid(FALSE);
+	winfo->SetMissing(TRUE);
 
-	sprintf ( buffer, "%s%s\\%s%s.wav", path, linfo->character , WaveSB(), linfo->character );
-	if ( (handle = FindFirstFile ( buffer, &info )) != INVALID_HANDLE_VALUE )
+	sprintf(buffer, "%s%s\\%s%s.wav", path, linfo->character, WaveSB(), linfo->character);
+	if ((handle = FindFirstFile(buffer, &info)) != INVALID_HANDLE_VALUE)
 	{
-		if ( ! (info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
+		if (!(info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 		{
-			winfo->SetLo ( info.nFileSizeLow );
-			winfo->SetHi ( info.nFileSizeHigh );
-			winfo->SetValid  ( TRUE );
-			winfo->SetMissing ( FALSE );
+			winfo->SetLo(info.nFileSizeLow);
+			winfo->SetHi(info.nFileSizeHigh);
+			winfo->SetValid(TRUE);
+			winfo->SetMissing(FALSE);
 			attribs->Changed();
 		}
-		FindClose ( handle );
+		FindClose(handle);
 	}
 
-	return winfo->Valid ();
+	return winfo->Valid();
 }
 
-int						BabylonText::DialogIsPresent ( const char *path, LangID langid )
+int BabylonText::DialogIsPresent(const char *path, LangID langid)
 {
-
 	WIN32_FIND_DATA info;
-	HANDLE	handle;
+	HANDLE handle;
 	int present = FALSE;
-	LANGINFO	*linfo = GetLangInfo ( langid );
+	LANGINFO *linfo = GetLangInfo(langid);
 
-	sprintf ( buffer, "%s%s\\%s%s.wav", path, linfo->character , WaveSB(), linfo->character );
-	if ( (handle = FindFirstFile ( buffer, &info )) != INVALID_HANDLE_VALUE )
+	sprintf(buffer, "%s%s\\%s%s.wav", path, linfo->character, WaveSB(), linfo->character);
+	if ((handle = FindFirstFile(buffer, &info)) != INVALID_HANDLE_VALUE)
 	{
-		if ( ! (info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
+		if (!(info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 		{
-				present = TRUE;
+			present = TRUE;
 		}
 
-		FindClose ( handle );
+		FindClose(handle);
 	}
 
 	return present;
 }
 
-void					BabylonText::AddTranslation			( Translation *trans )
+void BabylonText::AddTranslation(Translation *trans)
 {
-	ListNode	*node = new ListNode ();
+	ListNode *node = new ListNode();
 
-	node->SetItem ( trans );
+	node->SetItem(trans);
 
-	translations.AddToTail ( node );
-	Changed ();
-	trans->SetDB ( DB() );
-	trans->SetParent ( (DBAttribs *) this );
-
+	translations.AddToTail(node);
+	Changed();
+	trans->SetDB(DB());
+	trans->SetParent((DBAttribs *)this);
 }
 
-Translation*			BabylonText::FirstTranslation		( ListSearch& sh )
+Translation *BabylonText::FirstTranslation(ListSearch &sh)
 {
 	ListNode *node;
 
-	if ( ( node = sh.FirstNode ( &translations )))
+	if ((node = sh.FirstNode(&translations)))
 	{
-		return (Translation *) node->Item ();
+		return (Translation *)node->Item();
 	}
 
 	return NULL;
 }
 
-Translation*			BabylonText::NextTranslation		( ListSearch& sh)
+Translation *BabylonText::NextTranslation(ListSearch &sh)
 {
 	ListNode *node;
 
-	if ( ( node = sh.Next (  )))
+	if ((node = sh.Next()))
 	{
-		return (Translation *) node->Item ();
+		return (Translation *)node->Item();
 	}
 
 	return NULL;
 }
 
-Translation*			BabylonText::GetTranslation		( LangID langid )
+Translation *BabylonText::GetTranslation(LangID langid)
 {
 	ListSearch sh;
 	Translation *trans;
 
-	trans = FirstTranslation ( sh );
+	trans = FirstTranslation(sh);
 
-	while ( trans )
+	while (trans)
 	{
-		if ( langid == trans->GetLangID())
+		if (langid == trans->GetLangID())
 		{
 			break;
 		}
 
-		trans = NextTranslation ( sh );
+		trans = NextTranslation(sh);
 	}
-
 
 	return trans;
 }
 
-int					BabylonText::Clear				( void )
+int BabylonText::Clear(void)
 {
 	ListSearch sh;
 	Translation *trans;
 	ListNode *node;
 	int count = 0;
 
-	while ( node = sh.FirstNode ( &translations ) )
+	while (node = sh.FirstNode(&translations))
 	{
-		node->Remove ();
-		trans = (Translation *) node->Item ();
+		node->Remove();
+		trans = (Translation *)node->Item();
 		delete trans;
 		delete node;
 		count++;
 	}
-	if ( count )
+	if (count)
 	{
-		Changed ();
+		Changed();
 	}
 
 	return count;
 }
 
-BabylonText*			BabylonText::Clone				( void )
+BabylonText *BabylonText::Clone(void)
 {
 	BabylonText *clone = new BabylonText();
 	Translation *trans;
 	ListSearch sh;
 
-	clone->Set ( Get ());
-	clone->SetWave ( Wave ());
-	clone->SetRevision ( Revision ());
+	clone->Set(Get());
+	clone->SetWave(Wave());
+	clone->SetRevision(Revision());
 
-	trans = FirstTranslation ( sh );
+	trans = FirstTranslation(sh);
 
-	while ( trans )
+	while (trans)
 	{
-		clone->AddTranslation ( trans->Clone ());
+		clone->AddTranslation(trans->Clone());
 
-		trans = NextTranslation ( sh );
+		trans = NextTranslation(sh);
 	}
 
 	return clone;
 }
 
-void					BabylonText::ClearChanges				( void )
+void BabylonText::ClearChanges(void)
 {
 	Translation *trans;
 	ListSearch sh;
 
-	trans = FirstTranslation ( sh );
+	trans = FirstTranslation(sh);
 
-	while ( trans )
+	while (trans)
 	{
 		trans->ClearChanges();
 
-		trans = NextTranslation ( sh );
+		trans = NextTranslation(sh);
 	}
 
 	NotChanged();
-
 }
 
-void					BabylonText::ClearProcessed				( void )
+void BabylonText::ClearProcessed(void)
 {
 	Translation *trans;
 	ListSearch sh;
 
-	trans = FirstTranslation ( sh );
+	trans = FirstTranslation(sh);
 
-	while ( trans )
+	while (trans)
 	{
 		trans->ClearProcessed();
 
-		trans = NextTranslation ( sh );
+		trans = NextTranslation(sh);
 	}
 
 	NotProcessed();
-
 }
 
-void					BabylonText::ClearMatched				( void )
+void BabylonText::ClearMatched(void)
 {
 	Translation *trans;
 	ListSearch sh;
 
-	trans = FirstTranslation ( sh );
+	trans = FirstTranslation(sh);
 
-	while ( trans )
+	while (trans)
 	{
 		trans->ClearMatched();
 
-		trans = NextTranslation ( sh );
+		trans = NextTranslation(sh);
 	}
 
 	NotMatched();
-
 }
 
-void					BabylonText::AssignID ( void )
+void BabylonText::AssignID(void)
 {
-	if ( id != -1 )
+	if (id != -1)
 	{
-		return;	// already assigned
+		return; // already assigned
 	}
-	if ( db )
+	if (db)
 	{
-		SetID ( db->NewID ());
+		SetID(db->NewID());
 	}
 }
 
-void					BabylonText::Set ( OLECHAR *string )
+void BabylonText::Set(OLECHAR *string)
 {
-	if ( db )
+	if (db)
 	{
-		db->RemoveText ( this );
+		db->RemoveText(this);
 	}
 
-	text->Set ( string );
-	InvalidateWave ( );
-	if ( db )
+	text->Set(string);
+	InvalidateWave();
+	if (db)
 	{
-		db->AddText ( this );
+		db->AddText(this);
 	}
 
-	Changed ();
+	Changed();
 }
 
-void					BabylonText::Set ( char *string )
+void BabylonText::Set(char *string)
 {
-	if ( db )
+	if (db)
 	{
-		db->RemoveText ( this );
+		db->RemoveText(this);
 	}
 
-	text->Set ( string );
-	InvalidateWave ();
-	if ( db )
+	text->Set(string);
+	InvalidateWave();
+	if (db)
 	{
-		db->AddText ( this );
+		db->AddText(this);
 	}
 
-	Changed ();
+	Changed();
 }
 
-void					BabylonText::InvalidateAllWaves			( void  )
+void BabylonText::InvalidateAllWaves(void)
 {
 	Translation *trans;
 	ListSearch sh;
 
-	WaveInfo.SetValid ( FALSE );
+	WaveInfo.SetValid(FALSE);
 
-	trans = FirstTranslation ( sh );
+	trans = FirstTranslation(sh);
 
-	while ( trans )
+	while (trans)
 	{
-		trans->WaveInfo.SetValid ( FALSE );
+		trans->WaveInfo.SetValid(FALSE);
 
-		trans = NextTranslation ( sh );
+		trans = NextTranslation(sh);
 	}
-
 }
 
-void					BabylonText::InvalidateWave			( void )
+void BabylonText::InvalidateWave(void)
 {
-
-	WaveInfo.SetValid ( FALSE );
-
+	WaveInfo.SetValid(FALSE);
 }
 
-void					BabylonText::InvalidateWave			( LangID langid  )
+void BabylonText::InvalidateWave(LangID langid)
 {
+	WaveInfo.SetValid(FALSE);
 
-	WaveInfo.SetValid ( FALSE );
-
-	if ( langid == LANGID_US )
+	if (langid == LANGID_US)
 	{
-		InvalidateWave ();
+		InvalidateWave();
 	}
 	else
 	{
-		Translation *trans = GetTranslation ( langid );
+		Translation *trans = GetTranslation(langid);
 
-		if ( trans )
+		if (trans)
 		{
-			trans->WaveInfo.SetValid ( FALSE );
+			trans->WaveInfo.SetValid(FALSE);
 		}
-
 	}
 }
 
-void					BabylonText::AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes )
+void BabylonText::AddToTree(CTreeCtrl *tc, HTREEITEM parent, int changes)
 {
-	HTREEITEM		item;
-	ListSearch	sh;
-	Translation	*trans;
+	HTREEITEM item;
+	ListSearch sh;
+	Translation *trans;
 
-	sprintf ( buffer, "TEXT %c : %s", ChangedSymbol() ,GetSB ());
-	item = tc->InsertItem ( buffer, parent );
+	sprintf(buffer, "TEXT %c : %s", ChangedSymbol(), GetSB());
+	item = tc->InsertItem(buffer, parent);
 
-	trans = FirstTranslation ( sh );
+	trans = FirstTranslation(sh);
 
-	while ( trans )
+	while (trans)
 	{
-		if ( !changes || trans->IsChanged ())
+		if (!changes || trans->IsChanged())
 		{
-			trans->AddToTree ( tc, item );
+			trans->AddToTree(tc, item);
 		}
 
-		trans = NextTranslation ( sh );
+		trans = NextTranslation(sh);
 	}
 
-	if ( ID() != -1 )
+	if (ID() != -1)
 	{
-		sprintf ( buffer, "ID     : %d", ID ());
-		tc->InsertItem ( buffer, item );
+		sprintf(buffer, "ID     : %d", ID());
+		tc->InsertItem(buffer, item);
 	}
 
-	if ( strcmp ( WaveSB(), "" ) )
+	if (strcmp(WaveSB(), ""))
 	{
-		sprintf ( buffer, "WAVE   : %s", WaveSB() );
-		tc->InsertItem ( buffer, item );
+		sprintf(buffer, "WAVE   : %s", WaveSB());
+		tc->InsertItem(buffer, item);
 	}
 
-	if ( line_number != -1 )
+	if (line_number != -1)
 	{
-		sprintf ( buffer, "LINE   : %d", line_number );
-		tc->InsertItem ( buffer, item );
+		sprintf(buffer, "LINE   : %d", line_number);
+		tc->InsertItem(buffer, item);
 	}
 
-	sprintf ( buffer, "REV    : %d", revision );
-	tc->InsertItem ( buffer, item );
+	sprintf(buffer, "REV    : %d", revision);
+	tc->InsertItem(buffer, item);
 
-	sprintf ( buffer, "LEN    : %d", this->Len() );
-	tc->InsertItem ( buffer, item );
-
+	sprintf(buffer, "LEN    : %d", this->Len());
+	tc->InsertItem(buffer, item);
 }
 
-Translation::Translation ( void )
+Translation::Translation(void)
 {
-	text = new OLEString (  );
-	comment = new OLEString (  );
+	text = new OLEString();
+	comment = new OLEString();
 	revision = 0;
 	sent = FALSE;
-
 }
 
-Translation::~Translation ( )
+Translation::~Translation()
 {
 	delete text;
 	delete comment;
 }
 
-int Translation::IsSent ( void )
+int Translation::IsSent(void)
 {
 	return sent;
 }
 
-void Translation::Sent ( int val )
+void Translation::Sent(int val)
 {
 	sent = val;
 }
 
-void					Translation::SetDB				( TransDB *new_db )
+void Translation::SetDB(TransDB *new_db)
 {
 	db = new_db;
 }
 
-Translation*			Translation::Clone				( void )
+Translation *Translation::Clone(void)
 {
 	Translation *clone = new Translation();
 
-	clone->Set ( Get ());
-	clone->SetComment ( Comment ());
-	clone->SetLangID ( GetLangID ());
-	clone->SetRevision ( Revision ());
+	clone->Set(Get());
+	clone->SetComment(Comment());
+	clone->SetLangID(GetLangID());
+	clone->SetRevision(Revision());
 
 	return clone;
 }
 
-void					Translation::AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes )
+void Translation::AddToTree(CTreeCtrl *tc, HTREEITEM parent, int changes)
 {
-	HTREEITEM		item;
+	HTREEITEM item;
 
-	sprintf ( buffer, "%s%c   : %s", Language(), ChangedSymbol(), GetSB ());
+	sprintf(buffer, "%s%c   : %s", Language(), ChangedSymbol(), GetSB());
 
-	item = tc->InsertItem ( buffer, parent );
+	item = tc->InsertItem(buffer, parent);
 
-	if ( strcmp ( CommentSB(), "" ) )
+	if (strcmp(CommentSB(), ""))
 	{
-		sprintf ( buffer, "COMMENT: %s", CommentSB() );
-		tc->InsertItem ( buffer, item );
+		sprintf(buffer, "COMMENT: %s", CommentSB());
+		tc->InsertItem(buffer, item);
 	}
 
-	sprintf ( buffer, "REV    : %d", revision );
-	tc->InsertItem ( buffer, item );
+	sprintf(buffer, "REV    : %d", revision);
+	tc->InsertItem(buffer, item);
 
-	sprintf ( buffer, "LEN    : %d", Len() );
-	tc->InsertItem ( buffer, item );
-
+	sprintf(buffer, "LEN    : %d", Len());
+	tc->InsertItem(buffer, item);
 }
 
-int Translation::TooLong ( int maxlen )
+int Translation::TooLong(int maxlen)
 {
-	return maxlen != 0 && text->Len () > maxlen;
-
+	return maxlen != 0 && text->Len() > maxlen;
 }
 
-int Translation::ValidateFormat ( BabylonText *ntext )
+int Translation::ValidateFormat(BabylonText *ntext)
 {
-	return SameFormat ( text->Get(), ntext->Get ());
-
+	return SameFormat(text->Get(), ntext->Get());
 }
 
-int TransDB::Warnings ( CBabylonDlg *dlg )
+int TransDB::Warnings(CBabylonDlg *dlg)
 {
 	BabylonLabel *label;
 	ListSearch sh_label;
 	int count = 0;
 	int warnings = 0;
-	List	dups;
+	List dups;
 
-	if ( dlg )
+	if (dlg)
 	{
-		dlg->InitProgress ( NumLabels ());
-		dlg->Log ("");
-		dlg->Log ("Generals.str Warnigs:");
-		dlg->Status ( "Creating warnings report...", FALSE );
+		dlg->InitProgress(NumLabels());
+		dlg->Log("");
+		dlg->Log("Generals.str Warnigs:");
+		dlg->Status("Creating warnings report...", FALSE);
 	}
 
 	text_bin->Clear();
 
-	label = FirstLabel ( sh_label );
+	label = FirstLabel(sh_label);
 
-	while ( label )
+	while (label)
 	{
 		BabylonText *text;
 		BabylonText *existing_text;
 		ListSearch sh_text;
 
-		text = label->FirstText ( sh_text );
+		text = label->FirstText(sh_text);
 
-		while ( text )
+		while (text)
 		{
-			if ( text->Len ( ) == 0 )
+			if (text->Len() == 0)
 			{
-				if ( dlg )
+				if (dlg)
 				{
-					sprintf ( buffer, "Warning:: text at line %5d is NULL",
-								text->LineNumber());
-					dlg->Log ( buffer );
+					sprintf(buffer, "Warning:: text at line %5d is NULL", text->LineNumber());
+					dlg->Log(buffer);
 				}
 				warnings++;
 			}
-			else if ( !DuplicatesAllowed() && ( existing_text = FindText ( text->Get () )))
+			else if (!DuplicatesAllowed() && (existing_text = FindText(text->Get())))
 			{
 				warnings++;
-				if ( dlg )
+				if (dlg)
 				{
-					DupNode *dup = new DupNode ( text, existing_text );
-					dups.Add ( dup );
+					DupNode *dup = new DupNode(text, existing_text);
+					dups.Add(dup);
 				}
 			}
 			else
 			{
-				text_bin->Add ( text, text->Get() );
+				text_bin->Add(text, text->Get());
 			}
 
-			text = label->NextText ( sh_text );
+			text = label->NextText(sh_text);
 		}
 
 		count++;
-		if ( dlg )
+		if (dlg)
 		{
-			dlg->SetProgress ( count );
+			dlg->SetProgress(count);
 		}
-		label = NextLabel ( sh_label );
+		label = NextLabel(sh_label);
 	}
 
-	if ( dlg )
+	if (dlg)
 	{
 		DupNode *dup;
 
-		while ( (dup = (DupNode*)dups.LastNode ()))
+		while ((dup = (DupNode *)dups.LastNode()))
 		{
-			sprintf ( buffer, "Warning:: text at line %5d is a duplicate of text on line %5d",
-									dup->Duplicate()->LineNumber(), dup->Original()->LineNumber());
-			dlg->Log ( buffer );
+			sprintf(
+					buffer,
+					"Warning:: text at line %5d is a duplicate of text on line %5d",
+					dup->Duplicate()->LineNumber(),
+					dup->Original()->LineNumber());
+			dlg->Log(buffer);
 
-			dup->Remove ();
+			dup->Remove();
 			delete dup;
 		}
-		sprintf ( buffer, "Total warnings: %d", warnings );
-		dlg->Log ( buffer );
+		sprintf(buffer, "Total warnings: %d", warnings);
+		dlg->Log(buffer);
 		dlg->Ready();
 	}
 
 	return warnings;
 }
 
-int TransDB::Errors ( CBabylonDlg *dlg )
+int TransDB::Errors(CBabylonDlg *dlg)
 {
 	BabylonLabel *label;
 	BabylonLabel *existing_label;
 	ListSearch sh_label;
-	Bin	*tbin = new Bin ();
+	Bin *tbin = new Bin();
 	int count = 0;
 	int errors = 0;
 
-	if ( dlg )
+	if (dlg)
 	{
-		dlg->InitProgress ( NumLabels ());
-		dlg->Log ("");
-		dlg->Log ("Generals.str Errors:");
-		dlg->Status ( "Creating error report...", FALSE );
+		dlg->InitProgress(NumLabels());
+		dlg->Log("");
+		dlg->Log("Generals.str Errors:");
+		dlg->Status("Creating error report...", FALSE);
 	}
-
-
 
 	label_bin->Clear();
 
-	label = FirstLabel ( sh_label );
+	label = FirstLabel(sh_label);
 
-	while ( label )
+	while (label)
 	{
 		BabylonText *text;
 		BabylonText *existing_text;
 		ListSearch sh_text;
 
-		if ( !MultiTextAllowed () && label->NumStrings () > 1 )
+		if (!MultiTextAllowed() && label->NumStrings() > 1)
 		{
 			errors++;
-			if ( dlg )
+			if (dlg)
 			{
-				sprintf ( buffer, "Error  : Label \"%s\" at line %d is has more than 1 string defined",
-							label->NameSB(), label->LineNumber());
-				dlg->Log ( buffer );
-			}
-
-		}
-
-		if ( ( existing_label = FindLabel ( label->Name () )))
-		{
-			errors++;
-			if ( dlg )
-			{
-				sprintf ( buffer, "Error  : Label \"%s\" at line %d is already defined on line %d",
-							label->NameSB(), label->LineNumber(), existing_label->LineNumber());
-				dlg->Log ( buffer );
+				sprintf(
+						buffer,
+						"Error  : Label \"%s\" at line %d is has more than 1 string defined",
+						label->NameSB(),
+						label->LineNumber());
+				dlg->Log(buffer);
 			}
 		}
 
-		label_bin->Add ( label, label->Name());
-
-		tbin->Clear ();
-
-		text = label->FirstText ( sh_text );
-
-		while ( text )
+		if ((existing_label = FindLabel(label->Name())))
 		{
-				if ( ( existing_text = (BabylonText *) tbin->Get ( text->Get () )))
+			errors++;
+			if (dlg)
+			{
+				sprintf(
+						buffer,
+						"Error  : Label \"%s\" at line %d is already defined on line %d",
+						label->NameSB(),
+						label->LineNumber(),
+						existing_label->LineNumber());
+				dlg->Log(buffer);
+			}
+		}
+
+		label_bin->Add(label, label->Name());
+
+		tbin->Clear();
+
+		text = label->FirstText(sh_text);
+
+		while (text)
+		{
+			if ((existing_text = (BabylonText *)tbin->Get(text->Get())))
+			{
+				errors++;
+				if (dlg)
 				{
-					errors++;
-					if ( dlg )
-					{
-						sprintf ( buffer, "Error  : Label \"%s\" has duplicate text at line %d",
-									label->NameSB(), text->LineNumber());
-						dlg->Log ( buffer );
-					}
+					sprintf(buffer, "Error  : Label \"%s\" has duplicate text at line %d", label->NameSB(), text->LineNumber());
+					dlg->Log(buffer);
 				}
+			}
 
-			tbin->Add ( text, text->Get() );
+			tbin->Add(text, text->Get());
 
 			// check string length against max len
 
-			if ( label->MaxLen () )
+			if (label->MaxLen())
 			{
-				if ( text->Len () > label->MaxLen ())
+				if (text->Len() > label->MaxLen())
 				{
 					errors++;
-					if ( dlg )
+					if (dlg)
 					{
-						sprintf ( buffer, "Error  : The US text at line %d (for label \"%s\") exceeds the max length",
-									text->LineNumber(), label->NameSB());
-						dlg->Log ( buffer );
+						sprintf(
+								buffer,
+								"Error  : The US text at line %d (for label \"%s\") exceeds the max length",
+								text->LineNumber(),
+								label->NameSB());
+						dlg->Log(buffer);
 					}
 				}
 			}
 
-			text = label->NextText ( sh_text );
+			text = label->NextText(sh_text);
 		}
 
 		count++;
-		if ( dlg )
+		if (dlg)
 		{
-			dlg->SetProgress ( count );
+			dlg->SetProgress(count);
 		}
-		label = NextLabel ( sh_label );
+		label = NextLabel(sh_label);
 	}
 
-	if ( dlg )
+	if (dlg)
 	{
-		sprintf ( buffer, "Total errors: %d", errors );
-		dlg->Log ( buffer );
+		sprintf(buffer, "Total errors: %d", errors);
+		dlg->Log(buffer);
 
 		dlg->Ready();
 	}
@@ -1637,80 +1590,78 @@ int TransDB::Errors ( CBabylonDlg *dlg )
 	return errors;
 }
 
-CWaveInfo::CWaveInfo ( void )
+CWaveInfo::CWaveInfo(void)
 {
 	wave_valid = FALSE;
 	missing = TRUE;
 }
 
-void TransDB::VerifyDialog( LangID langid, void (*cb) (void) )
+void TransDB::VerifyDialog(LangID langid, void (*cb)(void))
 {
 	BabylonLabel *label;
 	ListSearch sh_label;
 	int count = 0;
-	LANGINFO *linfo = GetLangInfo ( langid );
+	LANGINFO *linfo = GetLangInfo(langid);
 
-	label = FirstLabel ( sh_label );
+	label = FirstLabel(sh_label);
 
-	while ( label )
+	while (label)
 	{
 		BabylonText *text;
 		ListSearch sh_text;
 
-		text = label->FirstText ( sh_text );
+		text = label->FirstText(sh_text);
 
-		while ( text )
+		while (text)
 		{
-			if ( text->IsDialog ())
+			if (text->IsDialog())
 			{
-				if ( text->DialogIsPresent ( DialogPath, langid ))
+				if (text->DialogIsPresent(DialogPath, langid))
 				{
-					text->DialogIsValid ( DialogPath, langid );
+					text->DialogIsValid(DialogPath, langid);
 				}
 			}
 
-			text = label->NextText ( sh_text );
+			text = label->NextText(sh_text);
 		}
 
-		if ( cb )
+		if (cb)
 		{
 			cb();
 		}
-		label = NextLabel ( sh_label );
+		label = NextLabel(sh_label);
 	}
-
 }
 
-void TransDB::InvalidateDialog( LangID langid )
+void TransDB::InvalidateDialog(LangID langid)
 {
 	BabylonLabel *label;
 	ListSearch sh_label;
 
-	label = FirstLabel ( sh_label );
+	label = FirstLabel(sh_label);
 
-	while ( label )
+	while (label)
 	{
 		BabylonText *text;
 		ListSearch sh_text;
 
-		text = label->FirstText ( sh_text );
+		text = label->FirstText(sh_text);
 
-		while ( text )
+		while (text)
 		{
-			if ( text->IsDialog ())
+			if (text->IsDialog())
 			{
-				text->InvalidateWave ( langid );
+				text->InvalidateWave(langid);
 			}
 
-			text = label->NextText ( sh_text );
+			text = label->NextText(sh_text);
 		}
 
-		label = NextLabel ( sh_label );
+		label = NextLabel(sh_label);
 	}
-
 }
 
-int TransDB::ReportDialog( DLGREPORT *report, LangID langid, void (*print) ( const char *), PMASK pmask )
+int TransDB::ReportDialog(DLGREPORT *report, LangID langid, void (*print)(const char *), PMASK pmask)
 {
 	BabylonLabel *label;
 	ListSearch sh_label;
@@ -1718,38 +1669,37 @@ int TransDB::ReportDialog( DLGREPORT *report, LangID langid, void (*print) ( con
 	DLGREPORT _info;
 	DLGREPORT *info = &_info;
 	int skip_verify = FALSE;
-	LANGINFO *linfo = GetLangInfo ( langid );
+	LANGINFO *linfo = GetLangInfo(langid);
 
-	if ( report )
+	if (report)
 	{
 		info = report;
 	}
 
-	memset ( info, 0, sizeof ( DLGREPORT ));
+	memset(info, 0, sizeof(DLGREPORT));
 
+	label = FirstLabel(sh_label);
 
-	label = FirstLabel ( sh_label );
-
-	while ( label )
+	while (label)
 	{
 		BabylonText *text;
 		ListSearch sh_text;
 
-		text = label->FirstText ( sh_text );
+		text = label->FirstText(sh_text);
 
-		while ( text )
+		while (text)
 		{
-			if ( text->IsDialog ())
+			if (text->IsDialog())
 			{
-				if ( text->DialogIsPresent ( DialogPath, langid))
+				if (text->DialogIsPresent(DialogPath, langid))
 				{
-					if ( !text->DialogIsValid ( DialogPath, langid, FALSE ) )
+					if (!text->DialogIsValid(DialogPath, langid, FALSE))
 					{
-						if ( print && pmask & PMASK_UNRESOLVED )
+						if (print && pmask & PMASK_UNRESOLVED)
 						{
-							sprintf ( buffer, "%d: audio file \"%s%s.wav\" not verified", text->ID(), text->WaveSB (), linfo->character);
+							sprintf(buffer, "%d: audio file \"%s%s.wav\" not verified", text->ID(), text->WaveSB(), linfo->character);
 
-							print ( buffer );
+							print(buffer);
 						}
 						info->unresolved++;
 					}
@@ -1760,11 +1710,11 @@ int TransDB::ReportDialog( DLGREPORT *report, LangID langid, void (*print) ( con
 				}
 				else
 				{
-					if ( print && pmask & PMASK_MISSING )
+					if (print && pmask & PMASK_MISSING)
 					{
-						sprintf ( buffer, "%d: audio file \"%s%s.wav\" missing", text->ID(), text->WaveSB (), linfo->character);
+						sprintf(buffer, "%d: audio file \"%s%s.wav\" missing", text->ID(), text->WaveSB(), linfo->character);
 
-						print ( buffer );
+						print(buffer);
 					}
 					info->missing++;
 				}
@@ -1772,16 +1722,16 @@ int TransDB::ReportDialog( DLGREPORT *report, LangID langid, void (*print) ( con
 				info->numdialog++;
 			}
 
-			text = label->NextText ( sh_text );
+			text = label->NextText(sh_text);
 		}
 
-		label = NextLabel ( sh_label );
+		label = NextLabel(sh_label);
 	}
 
-	return info->missing + info->unresolved + info->errors ;
+	return info->missing + info->unresolved + info->errors;
 }
 
-int TransDB::ReportTranslations( TRNREPORT *report, LangID langid, void (*print) ( const char *buffer), PMASK pmask )
+int TransDB::ReportTranslations(TRNREPORT *report, LangID langid, void (*print)(const char *buffer), PMASK pmask)
 {
 	BabylonLabel *label;
 	ListSearch sh_label;
@@ -1790,67 +1740,67 @@ int TransDB::ReportTranslations( TRNREPORT *report, LangID langid, void (*print)
 	TRNREPORT _info;
 	TRNREPORT *info = &_info;
 
-	if ( report )
+	if (report)
 	{
 		info = report;
 	}
 
-	memset ( info, 0, sizeof ( TRNREPORT ));
+	memset(info, 0, sizeof(TRNREPORT));
 
-	label = FirstLabel ( sh_label );
+	label = FirstLabel(sh_label);
 
-	while ( label )
+	while (label)
 	{
 		BabylonText *text;
 		ListSearch sh_text;
-		int maxlen = label->MaxLen ();
+		int maxlen = label->MaxLen();
 
-		text = label->FirstText ( sh_text );
+		text = label->FirstText(sh_text);
 
-		while ( text )
+		while (text)
 		{
 			int textnum = 0;
 			Translation *trans;
 			int too_big = FALSE;
 
-			if ( text->Len ())
+			if (text->Len())
 			{
 				info->numstrings++;
-				if ( langid != LANGID_US )
+				if (langid != LANGID_US)
 				{
-					if ( (trans = text->GetTranslation ( langid ) ))
+					if ((trans = text->GetTranslation(langid)))
 					{
-						if ( maxlen && trans->Len() > maxlen )
+						if (maxlen && trans->Len() > maxlen)
 						{
-							if ( print && pmask & PMASK_TOOLONG )
+							if (print && pmask & PMASK_TOOLONG)
 							{
-								sprintf ( buffer, "%d: translation is too long by %d characters", text->ID (), trans->Len() - maxlen);
+								sprintf(buffer, "%d: translation is too long by %d characters", text->ID(), trans->Len() - maxlen);
 
-								print ( buffer );
+								print(buffer);
 							}
 							too_big = TRUE;
 						}
 
-						if ( text->Revision () > trans->Revision ())
+						if (text->Revision() > trans->Revision())
 						{
-							if ( print && pmask & PMASK_RETRANSLATE )
+							if (print && pmask & PMASK_RETRANSLATE)
 							{
-								sprintf ( buffer, "%d: needs re-translation", text->ID () );
+								sprintf(buffer, "%d: needs re-translation", text->ID());
 
-								print ( buffer );
+								print(buffer);
 							}
 							info->retranslate++;
 						}
 						else
 						{
 							info->translated++;
-							if ( !trans->ValidateFormat ( text ) )
+							if (!trans->ValidateFormat(text))
 							{
-								if ( print && pmask & PMASK_BADFORMAT )
+								if (print && pmask & PMASK_BADFORMAT)
 								{
-									sprintf ( buffer, "%d: translation has differring formating to original", text->ID () );
+									sprintf(buffer, "%d: translation has differring formating to original", text->ID());
 
-									print ( buffer );
+									print(buffer);
 								}
 								info->bad_format++;
 							}
@@ -1858,11 +1808,11 @@ int TransDB::ReportTranslations( TRNREPORT *report, LangID langid, void (*print)
 					}
 					else
 					{
-						if ( print && pmask & PMASK_MISSING )
+						if (print && pmask & PMASK_MISSING)
 						{
-							sprintf ( buffer, "%d: not translated", text->ID ());
+							sprintf(buffer, "%d: not translated", text->ID());
 
-							print ( buffer );
+							print(buffer);
 						}
 						info->missing++;
 					}
@@ -1870,33 +1820,32 @@ int TransDB::ReportTranslations( TRNREPORT *report, LangID langid, void (*print)
 				else
 				{
 					// check maxlen
-					if ( maxlen )
+					if (maxlen)
 					{
-						if ( text->Len() > maxlen )
+						if (text->Len() > maxlen)
 						{
-							if ( print && pmask & PMASK_TOOLONG )
+							if (print && pmask & PMASK_TOOLONG)
 							{
-								sprintf ( buffer, "%d: is too long by %d characters", text->ID (), text->Len() - maxlen);
+								sprintf(buffer, "%d: is too long by %d characters", text->ID(), text->Len() - maxlen);
 
-								print ( buffer );
+								print(buffer);
 							}
 							too_big = TRUE;
 						}
 					}
 				}
-
 			}
 
-			if ( too_big )
+			if (too_big)
 			{
 				info->too_big++;
 			}
-			text = label->NextText ( sh_text );
+			text = label->NextText(sh_text);
 		}
 
 		info->numlabels++;
 
-		label = NextLabel ( sh_label );
+		label = NextLabel(sh_label);
 	}
 
 	info->errors = info->too_big + info->bad_format;

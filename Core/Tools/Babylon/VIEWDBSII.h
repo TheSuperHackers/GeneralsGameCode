@@ -30,35 +30,36 @@
 
 class VIEWDBSII : public CDialog
 {
-// Construction
+	// Construction
 public:
-	VIEWDBSII(CWnd* pParent = NULL);   // standard constructor
+	VIEWDBSII(CWnd *pParent = NULL); // standard constructor
 
 	void OnClose();
 	BOOL OnInitDialog();
-	HTREEITEM create_changes_view ( void );
-	HTREEITEM create_full_view ( void );
+	HTREEITEM create_changes_view(void);
+	HTREEITEM create_full_view(void);
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(VIEWDBSII)
-	enum { IDD = IDD_VIEWDBS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_VIEWDBS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(VIEWDBSII)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(VIEWDBSII)
-		// NOTE: the ClassWizard will add member functions here
+	// NOTE: the ClassWizard will add member functions here
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

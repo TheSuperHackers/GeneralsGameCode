@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Radar.h"
 #include "Common/ThingFactory.h"
@@ -56,94 +56,83 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BridgeBehaviorModuleData::BridgeBehaviorModuleData( void )
+BridgeBehaviorModuleData::BridgeBehaviorModuleData(void)
 {
-
 	m_lateralScaffoldSpeed = 1.0f;
 	m_verticalScaffoldSpeed = 1.0f;
 
-}  // end BridgeBehaviorModuleData
+} // end BridgeBehaviorModuleData
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BridgeBehaviorModuleData::~BridgeBehaviorModuleData( void )
+BridgeBehaviorModuleData::~BridgeBehaviorModuleData(void)
 {
-
 	// clear the fx list
 	m_fx.clear();
 
 	// clear the ocl list
 	m_ocl.clear();
 
-}  // end ~BridgeBehaviorModuleData
+} // end ~BridgeBehaviorModuleData
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void BridgeBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
+/*static*/ void BridgeBehaviorModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-  BehaviorModuleData::buildFieldParse( p );
+	BehaviorModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "LateralScaffoldSpeed",			INI::parseVelocityReal, NULL, offsetof( BridgeBehaviorModuleData, m_lateralScaffoldSpeed ) },
-		{ "VerticalScaffoldSpeed",		INI::parseVelocityReal, NULL, offsetof( BridgeBehaviorModuleData, m_verticalScaffoldSpeed ) },
-		{ "BridgeDieFX",		parseFX,		NULL,			offsetof( BridgeBehaviorModuleData, m_fx ) },
-		{ "BridgeDieOCL",		parseOCL,		NULL,			offsetof( BridgeBehaviorModuleData, m_ocl ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "LateralScaffoldSpeed", INI::parseVelocityReal, NULL, offsetof(BridgeBehaviorModuleData, m_lateralScaffoldSpeed) },
+		{ "VerticalScaffoldSpeed", INI::parseVelocityReal, NULL, offsetof(BridgeBehaviorModuleData, m_verticalScaffoldSpeed) },
+		{ "BridgeDieFX", parseFX, NULL, offsetof(BridgeBehaviorModuleData, m_fx) },
+		{ "BridgeDieOCL", parseOCL, NULL, offsetof(BridgeBehaviorModuleData, m_ocl) },
 		{ 0, 0, 0, 0 }
 	};
 
-  p.add( dataFieldParse );
+	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+} // end buildFieldParse
 
 // ------------------------------------------------------------------------------------------------
 /** Parse time and location info in the form of:
-	* Delay:#### <Bone:BoneName> */
+ * Delay:#### <Bone:BoneName> */
 // ------------------------------------------------------------------------------------------------
-static void parseTimeAndLocationInfo( INI *ini, void *instance,
-																			TimeAndLocationInfo *timeAndLocationInfo )
+static void parseTimeAndLocationInfo(INI *ini, void *instance, TimeAndLocationInfo *timeAndLocationInfo)
 {
-
 	// delay label
-	const char *token = ini->getNextToken( ini->getSepsColon() );
-	if( stricmp( token, "Delay" ) != 0 )
+	const char *token = ini->getNextToken(ini->getSepsColon());
+	if (stricmp(token, "Delay") != 0)
 	{
-
-		DEBUG_CRASH(( "Expected 'Delay' token, found '%s'", token ));
+		DEBUG_CRASH(("Expected 'Delay' token, found '%s'", token));
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	} // end if
 
 	// delay value
-	ini->parseDurationUnsignedInt( ini, instance, &timeAndLocationInfo->delay, NULL );
+	ini->parseDurationUnsignedInt(ini, instance, &timeAndLocationInfo->delay, NULL);
 
 	// get optional bone label
-	token = ini->getNextTokenOrNull( ini->getSepsColon() );
-	if( token )
+	token = ini->getNextTokenOrNull(ini->getSepsColon());
+	if (token)
 	{
-
 		// token must be a label for bone location
-		if( stricmp( token, "Bone" ) != 0 )
+		if (stricmp(token, "Bone") != 0)
 		{
-
-			DEBUG_CRASH(( "Expected 'Bone' token, found '%s'", token ));
+			DEBUG_CRASH(("Expected 'Bone' token, found '%s'", token));
 			throw INI_INVALID_DATA;
 
-		}  // end if
+		} // end if
 
 		// read bone name and store
 		timeAndLocationInfo->boneName = ini->getNextAsciiString();
 
-	}  // end if
+	} // end if
 
-}  // end parseTimeAndLocationInfo
+} // end parseTimeAndLocationInfo
 
 //-------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void BridgeBehaviorModuleData::parseFX( INI *ini,
-											 														 void *instance,
-																									 void *store,
-																									 const void *userData )
+/*static*/ void BridgeBehaviorModuleData::parseFX(INI *ini, void *instance, void *store, const void *userData)
 {
 	const char *token;
 
@@ -155,36 +144,32 @@ static void parseTimeAndLocationInfo( INI *ini, void *instance,
 	BridgeFXList *bridgeFXList = (BridgeFXList *)store;
 
 	// fx list label
-	token = ini->getNextToken( ini->getSepsColon() );
-	if( stricmp( token, "FX" ) != 0 )
+	token = ini->getNextToken(ini->getSepsColon());
+	if (stricmp(token, "FX") != 0)
 	{
-
-		DEBUG_CRASH(( "Expected 'FX' token, found '%s'", token ));
+		DEBUG_CRASH(("Expected 'FX' token, found '%s'", token));
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	} // end if
 
 	// fx list name and store as pointer
 	FXList *fx;
-	ini->parseFXList( ini, instance, &fx, NULL );
+	ini->parseFXList(ini, instance, &fx, NULL);
 
 	// store fx list to item
 	item.fx = fx;
 
 	// parse the timing and location info
-	parseTimeAndLocationInfo( ini, instance, &item.timeAndLocationInfo );
+	parseTimeAndLocationInfo(ini, instance, &item.timeAndLocationInfo);
 
 	// put on list
-	bridgeFXList->push_back( item );
+	bridgeFXList->push_back(item);
 
-}  // end parseFX
+} // end parseFX
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void BridgeBehaviorModuleData::parseOCL( INI *ini,
-																										void *instance,
-																										void *store,
-																										const void *userData )
+/*static*/ void BridgeBehaviorModuleData::parseOCL(INI *ini, void *instance, void *store, const void *userData)
 {
 	const char *token;
 
@@ -196,29 +181,28 @@ static void parseTimeAndLocationInfo( INI *ini, void *instance,
 	BridgeOCLList *bridgeOCLList = (BridgeOCLList *)store;
 
 	// fx list label
-	token = ini->getNextToken( ini->getSepsColon() );
-	if( stricmp( token, "OCL" ) != 0 )
+	token = ini->getNextToken(ini->getSepsColon());
+	if (stricmp(token, "OCL") != 0)
 	{
-
-		DEBUG_CRASH(( "Expected 'OCL' token, found '%s'", token ));
+		DEBUG_CRASH(("Expected 'OCL' token, found '%s'", token));
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	} // end if
 
 	// fx list name and store as pointer
 	ObjectCreationList *ocl;
-	ini->parseObjectCreationList( ini, instance, &ocl, NULL );
+	ini->parseObjectCreationList(ini, instance, &ocl, NULL);
 
 	// store ocl list to item
 	item.ocl = ocl;
 
 	// parse the timing and location info
-	parseTimeAndLocationInfo( ini, instance, &item.timeAndLocationInfo );
+	parseTimeAndLocationInfo(ini, instance, &item.timeAndLocationInfo);
 
 	// put on list
-	bridgeOCLList->push_back( item );
+	bridgeOCLList->push_back(item);
 
-}  // end parseOCL
+} // end parseOCL
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -226,213 +210,200 @@ static void parseTimeAndLocationInfo( INI *ini, void *instance,
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BridgeBehavior::BridgeBehavior( Thing *thing, const ModuleData *moduleData )
-							: UpdateModule( thing, moduleData )
+BridgeBehavior::BridgeBehavior(Thing *thing, const ModuleData *moduleData) : UpdateModule(thing, moduleData)
 {
 	Int i;
 	m_scaffoldObjectIDList.clear();
 	m_scaffoldPresent = FALSE;
 
-	for( i = 0; i < BRIDGE_MAX_TOWERS; ++i )
-		m_towerID[ i ] = INVALID_ID;
+	for (i = 0; i < BRIDGE_MAX_TOWERS; ++i)
+		m_towerID[i] = INVALID_ID;
 
 	m_fxResolved = FALSE;
-	for( Int bodyState = BODY_PRISTINE; bodyState < BODYDAMAGETYPE_COUNT; ++bodyState )
+	for (Int bodyState = BODY_PRISTINE; bodyState < BODYDAMAGETYPE_COUNT; ++bodyState)
 	{
-
 		// initialize the fx and ocl lists
-		for( i = 0; i < MAX_BRIDGE_BODY_FX; ++i )
+		for (i = 0; i < MAX_BRIDGE_BODY_FX; ++i)
 		{
+			m_damageToOCL[bodyState][i] = NULL;
+			m_damageToFX[bodyState][i] = NULL;
+			m_repairToOCL[bodyState][i] = NULL;
+			m_repairToFX[bodyState][i] = NULL;
 
-			m_damageToOCL[ bodyState ][ i ] = NULL;
-			m_damageToFX[ bodyState ][ i ] = NULL;
-			m_repairToOCL[ bodyState ][ i ] = NULL;
-			m_repairToFX[ bodyState ][ i ] = NULL;
-
-		}  // end for i
+		} // end for i
 
 		// these don't need initialization, they have constructors
 		// m_damageToSound[ bodyState ] = ???
 		// m_repairToSound[ bodyState ] = ???
 
-	}  // end for, bodyState
+	} // end for, bodyState
 
 	m_deathFrame = 0;
 
-}  // end BridgeBehavior
+} // end BridgeBehavior
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BridgeBehavior::~BridgeBehavior( void )
+BridgeBehavior::~BridgeBehavior(void)
 {
-
 	//
 	// destroy our four towers if they are still present in the world (they wouldn't be if we
 	// are resetting the engine, and those towers were earlier in the destruction list than
 	// we were)
 	//
-	for( Int i = 0; i < BRIDGE_MAX_TOWERS; ++i )
+	for (Int i = 0; i < BRIDGE_MAX_TOWERS; ++i)
 	{
 		Object *tower;
 
 		// get the tower and destroy
-		tower = TheGameLogic->findObjectByID( getTowerID( (BridgeTowerType)i ) );
-		if( tower )
-			TheGameLogic->destroyObject( tower );
+		tower = TheGameLogic->findObjectByID(getTowerID((BridgeTowerType)i));
+		if (tower)
+			TheGameLogic->destroyObject(tower);
 
-	}  // end for i
+	} // end for i
 
-}  // end ~BridgeBehavior
+} // end ~BridgeBehavior
 
 // ------------------------------------------------------------------------------------------------
 /** Get bridge behavior interface */
 // ------------------------------------------------------------------------------------------------
-/*static */BridgeBehaviorInterface *BridgeBehavior::getBridgeBehaviorInterfaceFromObject( Object *obj )
+/*static */ BridgeBehaviorInterface *BridgeBehavior::getBridgeBehaviorInterfaceFromObject(Object *obj)
 {
-
 	// sanity
-	if( obj == NULL )
+	if (obj == NULL)
 		return NULL;
 
 	BehaviorModule **bmi;
 	BridgeBehaviorInterface *bbi = NULL;
-	for( bmi = obj->getBehaviorModules(); *bmi; ++bmi )
+	for (bmi = obj->getBehaviorModules(); *bmi; ++bmi)
 	{
-
 		bbi = (*bmi)->getBridgeBehaviorInterface();
-		if( bbi )
+		if (bbi)
 			return bbi;
 
-	}  // end for, bmi
+	} // end for, bmi
 
 	// interface not found
 	return NULL;
 
-}  // end getBridgeBehaviorInterfaceFromObject
+} // end getBridgeBehaviorInterfaceFromObject
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::onDelete( void )
+void BridgeBehavior::onDelete(void)
 {
-
 	// clear the list of scaffold objects
 	m_scaffoldObjectIDList.clear();
 
-}  // end onDelete
+} // end onDelete
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::resolveFX( void )
+void BridgeBehavior::resolveFX(void)
 {
 	Object *us = getObject();
-	Bridge *bridge = TheTerrainLogic->findBridgeAt( us->getPosition() );
+	Bridge *bridge = TheTerrainLogic->findBridgeAt(us->getPosition());
 
 	// sanity
-	if( bridge == NULL )
+	if (bridge == NULL)
 		return;
 
 	// get the bridge template name
 	AsciiString bridgeTemplateName = bridge->getBridgeTemplateName();
 
 	// find the bridge template
-	TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge( bridgeTemplateName );
+	TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge(bridgeTemplateName);
 
 	// sanity
-	if( bridgeTemplate == NULL )
+	if (bridgeTemplate == NULL)
 		return;
 
 	AsciiString name;
-	for( Int bodyState = BODY_PRISTINE; bodyState < BODYDAMAGETYPE_COUNT; ++bodyState )
+	for (Int bodyState = BODY_PRISTINE; bodyState < BODYDAMAGETYPE_COUNT; ++bodyState)
 	{
-
 		// initialize the fx and ocl lists
-		for( Int i = 0; i < MAX_BRIDGE_BODY_FX; ++i )
+		for (Int i = 0; i < MAX_BRIDGE_BODY_FX; ++i)
 		{
+			name = bridgeTemplate->getDamageToOCLString((BodyDamageType)bodyState, i);
+			m_damageToOCL[bodyState][i] = TheObjectCreationListStore->findObjectCreationList(name.str());
+			if (name.isEmpty() == FALSE && m_damageToOCL[bodyState][i] == NULL)
+				DEBUG_CRASH(("OCL list '%s' not found", name.str()));
 
-			name = bridgeTemplate->getDamageToOCLString( (BodyDamageType)bodyState, i );
-			m_damageToOCL[ bodyState ][ i ] = TheObjectCreationListStore->findObjectCreationList( name.str() );
-			if( name.isEmpty() == FALSE && m_damageToOCL[ bodyState ][ i ] == NULL )
-				DEBUG_CRASH(( "OCL list '%s' not found", name.str() ));
+			name = bridgeTemplate->getDamageToFXString((BodyDamageType)bodyState, i);
+			m_damageToFX[bodyState][i] = TheFXListStore->findFXList(name.str());
+			if (name.isEmpty() == FALSE && m_damageToFX[bodyState][i] == NULL)
+				DEBUG_CRASH(("FX list '%s' not found", name.str()));
 
-			name = bridgeTemplate->getDamageToFXString( (BodyDamageType)bodyState, i );
-			m_damageToFX[ bodyState ][ i ] = TheFXListStore->findFXList( name.str() );
-			if( name.isEmpty() == FALSE && m_damageToFX[ bodyState ][ i ] == NULL )
-				DEBUG_CRASH(( "FX list '%s' not found", name.str() ));
+			name = bridgeTemplate->getRepairedToOCLString((BodyDamageType)bodyState, i);
+			m_repairToOCL[bodyState][i] = TheObjectCreationListStore->findObjectCreationList(name.str());
+			if (name.isEmpty() == FALSE && m_repairToOCL[bodyState][i] == NULL)
+				DEBUG_CRASH(("OCL list '%s' not found", name.str()));
 
-			name = bridgeTemplate->getRepairedToOCLString( (BodyDamageType)bodyState, i );
-			m_repairToOCL[ bodyState ][ i ] = TheObjectCreationListStore->findObjectCreationList( name.str() );
-			if( name.isEmpty() == FALSE && m_repairToOCL[ bodyState ][ i ] == NULL )
-				DEBUG_CRASH(( "OCL list '%s' not found", name.str() ));
+			name = bridgeTemplate->getRepairedToFXString((BodyDamageType)bodyState, i);
+			m_repairToFX[bodyState][i] = TheFXListStore->findFXList(name.str());
+			;
+			if (name.isEmpty() == FALSE && m_repairToFX[bodyState][i] == NULL)
+				DEBUG_CRASH(("FX list '%s' not found", name.str()));
 
-			name = bridgeTemplate->getRepairedToFXString( (BodyDamageType)bodyState, i );
-			m_repairToFX[ bodyState ][ i ] = TheFXListStore->findFXList( name.str() );;
-			if( name.isEmpty() == FALSE && m_repairToFX[ bodyState ][ i ] == NULL )
-				DEBUG_CRASH(( "FX list '%s' not found", name.str() ));
-
-		}  // end for i
+		} // end for i
 
 		// audio sounds
-		name = bridgeTemplate->getDamageToSoundString( (BodyDamageType)bodyState );
-		m_damageToSound[ bodyState ].setEventName( name );
-		m_damageToSound[ bodyState ].setObjectID( us->getID() );
+		name = bridgeTemplate->getDamageToSoundString((BodyDamageType)bodyState);
+		m_damageToSound[bodyState].setEventName(name);
+		m_damageToSound[bodyState].setObjectID(us->getID());
 
-		name = bridgeTemplate->getRepairedToSoundString( (BodyDamageType)bodyState );
-		m_repairToSound[ bodyState ].setEventName( name );
-		m_repairToSound[ bodyState ].setObjectID( us->getID() );
+		name = bridgeTemplate->getRepairedToSoundString((BodyDamageType)bodyState);
+		m_repairToSound[bodyState].setEventName(name);
+		m_repairToSound[bodyState].setObjectID(us->getID());
 
-	}  // end for, bodyState
+	} // end for, bodyState
 
 	// fx are now "resolved"
 	m_fxResolved = TRUE;
 
-}  // end resolveFX
+} // end resolveFX
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::setTower( BridgeTowerType towerType, Object *tower )
+void BridgeBehavior::setTower(BridgeTowerType towerType, Object *tower)
 {
-
 	// sanity
-	if( towerType < 0 || towerType >= BRIDGE_MAX_TOWERS )
+	if (towerType < 0 || towerType >= BRIDGE_MAX_TOWERS)
 	{
-
-		DEBUG_CRASH(( "BridgeBehavior::setTower - Invalid tower type index '%d'", towerType ));
+		DEBUG_CRASH(("BridgeBehavior::setTower - Invalid tower type index '%d'", towerType));
 		return;
 
-	}  // end if
+	} // end if
 
 	// store it
-	if( tower )
-		m_towerID[ towerType ] = tower->getID();
+	if (tower)
+		m_towerID[towerType] = tower->getID();
 	else
-		m_towerID[ towerType ] = INVALID_ID;
+		m_towerID[towerType] = INVALID_ID;
 
-}  // end setTower
+} // end setTower
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ObjectID BridgeBehavior::getTowerID( BridgeTowerType towerType )
+ObjectID BridgeBehavior::getTowerID(BridgeTowerType towerType)
 {
-
 	// sanity
-	if( towerType < 0 || towerType >= BRIDGE_MAX_TOWERS )
+	if (towerType < 0 || towerType >= BRIDGE_MAX_TOWERS)
 	{
-
-		DEBUG_CRASH(( "BridgeBehavior::setTower - Invalid tower type index '%d'", towerType ));
+		DEBUG_CRASH(("BridgeBehavior::setTower - Invalid tower type index '%d'", towerType));
 		return INVALID_ID;
 
-	}  // end if
+	} // end if
 
 	// return the stored ID
-	return m_towerID[ towerType ];
+	return m_towerID[towerType];
 
-}  // end getTowerID
+} // end getTowerID
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::onDamage( DamageInfo *damageInfo )
+void BridgeBehavior::onDamage(DamageInfo *damageInfo)
 {
-
 	//
 	// get our body info so we now how much damage percent is being done to us ... we need this
 	// so that we can propagate the same damage percentage amont the towers and the bridge
@@ -444,39 +415,37 @@ void BridgeBehavior::onDamage( DamageInfo *damageInfo )
 	// if the damage didn't come from a bridge tower, then we must propagate this damage
 	// to all our towers
 	//
-	Object *source = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
-	if( source == NULL || source->isKindOf( KINDOF_BRIDGE_TOWER ) == FALSE )
+	Object *source = TheGameLogic->findObjectByID(damageInfo->in.m_sourceID);
+	if (source == NULL || source->isKindOf(KINDOF_BRIDGE_TOWER) == FALSE)
 	{
 		Object *tower;
 
-		for( Int i = 0; i < BRIDGE_MAX_TOWERS; i++ )
+		for (Int i = 0; i < BRIDGE_MAX_TOWERS; i++)
 		{
-
-			tower = TheGameLogic->findObjectByID( getTowerID( (BridgeTowerType)i ) );
-			if( tower )
+			tower = TheGameLogic->findObjectByID(getTowerID((BridgeTowerType)i));
+			if (tower)
 			{
 				BodyModuleInterface *towerBody = tower->getBodyModule();
 				DamageInfo towerDamage;
 
 				towerDamage.in.m_amount = damagePercentage * towerBody->getMaxHealth();
-				towerDamage.in.m_sourceID = getObject()->getID();  // we're now the source
+				towerDamage.in.m_sourceID = getObject()->getID(); // we're now the source
 				towerDamage.in.m_damageType = damageInfo->in.m_damageType;
 				towerDamage.in.m_deathType = damageInfo->in.m_deathType;
-				tower->attemptDamage( &towerDamage );
+				tower->attemptDamage(&towerDamage);
 
-			}  // end if
+			} // end if
 
-		}  // end for i
+		} // end for i
 
-	}  // end if
+	} // end if
 
-}  // end onDamage
+} // end onDamage
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::onHealing( DamageInfo *damageInfo )
+void BridgeBehavior::onHealing(DamageInfo *damageInfo)
 {
-
 	//
 	// get our body info so we now how much healing percent is being done to us ... we need this
 	// so that we can propagate the same healing percentage amont the towers and the bridge
@@ -488,38 +457,34 @@ void BridgeBehavior::onHealing( DamageInfo *damageInfo )
 	// if the healing didn't come from a bridge tower, then we must propagate this healing
 	// to all our towers
 	//
-	Object *source = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
-	if( source == NULL || source->isKindOf( KINDOF_BRIDGE_TOWER ) == FALSE )
+	Object *source = TheGameLogic->findObjectByID(damageInfo->in.m_sourceID);
+	if (source == NULL || source->isKindOf(KINDOF_BRIDGE_TOWER) == FALSE)
 	{
 		Object *tower;
 
-		for( Int i = 0; i < BRIDGE_MAX_TOWERS; i++ )
+		for (Int i = 0; i < BRIDGE_MAX_TOWERS; i++)
 		{
-
-			tower = TheGameLogic->findObjectByID( getTowerID( (BridgeTowerType)i ) );
-			if( tower )
+			tower = TheGameLogic->findObjectByID(getTowerID((BridgeTowerType)i));
+			if (tower)
 			{
 				BodyModuleInterface *towerBody = tower->getBodyModule();
 				tower->attemptHealing(healingPercentage * towerBody->getMaxHealth(), getObject());
 
-			}  // end if
+			} // end if
 
-		}  // end for i
+		} // end for i
 
-	}  // end if
+	} // end if
 
-}  // end onHealing
+} // end onHealing
 
 // ------------------------------------------------------------------------------------------------
 /** Pick a random surface spot on the bridge surface */
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::getRandomSurfacePosition( TerrainRoadType *bridgeTemplate,
-																							 const BridgeInfo *bridgeInfo,
-																							 Coord3D *pos )
+void BridgeBehavior::getRandomSurfacePosition(TerrainRoadType *bridgeTemplate, const BridgeInfo *bridgeInfo, Coord3D *pos)
 {
-
 	// sanity
-	if( bridgeInfo == NULL || pos == NULL )
+	if (bridgeInfo == NULL || pos == NULL)
 		return;
 
 	//
@@ -532,7 +497,7 @@ void BridgeBehavior::getRandomSurfacePosition( TerrainRoadType *bridgeTemplate,
 	v1.x = bridgeInfo->toLeft.x - bridgeInfo->fromLeft.x;
 	v1.y = bridgeInfo->toLeft.y - bridgeInfo->fromLeft.y;
 	v1.z = bridgeInfo->toLeft.z - bridgeInfo->fromLeft.z;
-	scale = GameLogicRandomValueReal( 0.0f, 1.0f );
+	scale = GameLogicRandomValueReal(0.0f, 1.0f);
 	v1.x *= scale;
 	v1.y *= scale;
 	v1.z *= scale;
@@ -541,7 +506,7 @@ void BridgeBehavior::getRandomSurfacePosition( TerrainRoadType *bridgeTemplate,
 	v2.x = bridgeInfo->fromRight.x - bridgeInfo->fromLeft.x;
 	v2.y = bridgeInfo->fromRight.y - bridgeInfo->fromLeft.y;
 	v2.z = bridgeInfo->fromRight.z - bridgeInfo->fromLeft.z;
-	scale = GameLogicRandomValueReal( 0.0f, 1.0f );
+	scale = GameLogicRandomValueReal(0.0f, 1.0f);
 	v2.x *= scale;
 	v2.y *= scale;
 	v2.z *= scale;
@@ -555,24 +520,24 @@ void BridgeBehavior::getRandomSurfacePosition( TerrainRoadType *bridgeTemplate,
 	// we now have a position picked, the last thing to do is add in an additional
 	// Z component so that effects can be created in a "cube" area on and above the bridge
 	//
-	pos->z += GameLogicRandomValueReal( 0.0f, bridgeTemplate->getTransitionEffectsHeight() );
+	pos->z += GameLogicRandomValueReal(0.0f, bridgeTemplate->getTransitionEffectsHeight());
 
-}  // end getRandomSurfacePosition
+} // end getRandomSurfacePosition
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::doAreaEffects( TerrainRoadType *bridgeTemplate,
-																		Bridge *bridge,
-																		const ObjectCreationList *ocl,
-																		const FXList *fx )
+void BridgeBehavior::doAreaEffects(
+		TerrainRoadType *bridgeTemplate,
+		Bridge *bridge,
+		const ObjectCreationList *ocl,
+		const FXList *fx)
 {
-
 	// sanity
-	if( bridge == NULL )
+	if (bridge == NULL)
 		return;
 
 	// if no effects, don't bother
-	if( ocl == NULL && fx == NULL )
+	if (ocl == NULL && fx == NULL)
 		return;
 
 	// get bridge info
@@ -581,109 +546,104 @@ void BridgeBehavior::doAreaEffects( TerrainRoadType *bridgeTemplate,
 	// play effects in the bridge area
 	const Int maxEffects = bridgeTemplate->getNumFXPerType();
 	Coord3D pos;
-	for( Int i = 0; i < maxEffects; ++i )
+	for (Int i = 0; i < maxEffects; ++i)
 	{
-
 		// pick spot in the bridge area and do FX
-		if( fx )
+		if (fx)
 		{
+			getRandomSurfacePosition(bridgeTemplate, bridgeInfo, &pos);
+			FXList::doFXPos(fx, &pos);
 
-			getRandomSurfacePosition( bridgeTemplate, bridgeInfo, &pos );
-			FXList::doFXPos( fx, &pos );
-
-		}  // end if
+		} // end if
 
 		// pick spot in the bridge area and do OCL
-		if( ocl )
+		if (ocl)
 		{
+			getRandomSurfacePosition(bridgeTemplate, bridgeInfo, &pos);
+			ObjectCreationList::create(ocl, getObject(), &pos, NULL);
 
-			getRandomSurfacePosition( bridgeTemplate, bridgeInfo, &pos );
-			ObjectCreationList::create( ocl, getObject(), &pos, NULL );
+		} // end if
 
-		}  // end if
+	} // end for i
 
-	}  // end for i
-
-}  // end doAreaEffects
+} // end doAreaEffects
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::onBodyDamageStateChange( const DamageInfo* damageInfo,
-																							BodyDamageType oldState,
-																							BodyDamageType newState )
+void BridgeBehavior::onBodyDamageStateChange(const DamageInfo *damageInfo, BodyDamageType oldState, BodyDamageType newState)
 {
-
 	//
 	// check for coming back from the dead, if our new state is not the rubble state, we can't
 	// possibly be dead
 	//
-	if( newState != BODY_RUBBLE )
+	if (newState != BODY_RUBBLE)
 		m_deathFrame = 0;
 
 	// first resolve any fx stuff if we need to
-	if( m_fxResolved == FALSE )
+	if (m_fxResolved == FALSE)
 		resolveFX();
 
 	// sanity
-	if( m_fxResolved == FALSE )
+	if (m_fxResolved == FALSE)
 		return;
 
 	// sanity
-	DEBUG_ASSERTCRASH( oldState != newState, ("BridgeBehavior::onBodyDamageStateChange - oldState and newState should be different if this is getting called") );
+	DEBUG_ASSERTCRASH(
+			oldState != newState,
+			("BridgeBehavior::onBodyDamageStateChange - oldState and newState should be different if this is getting called"));
 
 	Object *us = getObject();
-	Bridge *bridge = TheTerrainLogic->findBridgeAt( us->getPosition() );
+	Bridge *bridge = TheTerrainLogic->findBridgeAt(us->getPosition());
 
 	// sanity
-	if( bridge == NULL )
+	if (bridge == NULL)
 	{
-
-		DEBUG_CRASH(( "BridgeBehavior - Unable to find bridge" ));
+		DEBUG_CRASH(("BridgeBehavior - Unable to find bridge"));
 		return;
 
-	}  // end if
+	} // end if
 
 	// get the bridge template name
 	AsciiString bridgeTemplateName = bridge->getBridgeTemplateName();
 
 	// find the bridge template
-	TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge( bridgeTemplateName );
+	TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge(bridgeTemplateName);
 
 	// sanity
-	DEBUG_ASSERTCRASH( bridgeTemplate, ("BridgeBehavior: Unable to find bridge template '%s' in bridge object '%s'",
-																		 bridgeTemplateName.str(),
-																		 us->getTemplate()->getName().str()) );
+	DEBUG_ASSERTCRASH(
+			bridgeTemplate,
+			("BridgeBehavior: Unable to find bridge template '%s' in bridge object '%s'",
+			 bridgeTemplateName.str(),
+			 us->getTemplate()->getName().str()));
 
 	//
 	// given the old state and the new state, did we get worse (damaged) or did
 	// we get better (repaired)?
 	//
-	Bool gotRepaired = IS_CONDITION_WORSE( oldState, newState );
+	Bool gotRepaired = IS_CONDITION_WORSE(oldState, newState);
 
 	// get the effect data
 	AsciiString soundString;
-	AsciiString oclString[ MAX_BRIDGE_BODY_FX ];
-	AsciiString fxString[ MAX_BRIDGE_BODY_FX ];
-	if( gotRepaired )
+	AsciiString oclString[MAX_BRIDGE_BODY_FX];
+	AsciiString fxString[MAX_BRIDGE_BODY_FX];
+	if (gotRepaired)
 	{
-
 		// play the sound
-		TheAudio->addAudioEvent( &m_repairToSound[ newState ] );
+		TheAudio->addAudioEvent(&m_repairToSound[newState]);
 
-		for( Int i = 0; i < MAX_BRIDGE_BODY_FX; i++ )
-			doAreaEffects( bridgeTemplate, bridge, m_repairToOCL[ newState ][ i ], m_repairToFX[ newState ][ i ] );
+		for (Int i = 0; i < MAX_BRIDGE_BODY_FX; i++)
+			doAreaEffects(bridgeTemplate, bridge, m_repairToOCL[newState][i], m_repairToFX[newState][i]);
 
-	}  // end if
+	} // end if
 	else
 	{
-
 		// play the sound
-		TheAudio->addAudioEvent( &m_damageToSound[ newState ] );
+		TheAudio->addAudioEvent(&m_damageToSound[newState]);
 
-		for( Int i = 0; i < MAX_BRIDGE_BODY_FX; i++ )
-			doAreaEffects( bridgeTemplate, bridge, m_damageToOCL[ newState ][ i ], m_damageToFX[ newState ][ i ] );
+		for (Int i = 0; i < MAX_BRIDGE_BODY_FX; i++)
+			doAreaEffects(bridgeTemplate, bridge, m_damageToOCL[newState][i], m_damageToFX[newState][i]);
 
-	}  // end else
+	} // end else
 
 	// update bridge damage states
 	///@todo this should be re-written, there no need for this looping bridge examination
@@ -696,18 +656,17 @@ void BridgeBehavior::onBodyDamageStateChange( const DamageInfo* damageInfo,
 	// track of how often we makes requests to do a refresh and doesn't do them too
 	// often because it's expensive to refresh the terrain
 	//
-	if( oldState == BODY_RUBBLE || newState == BODY_RUBBLE )
+	if (oldState == BODY_RUBBLE || newState == BODY_RUBBLE)
 		TheRadar->queueTerrainRefresh();
 
-}  // end onBodyDamageStateChange
+} // end onBodyDamageStateChange
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime BridgeBehavior::update( void )
+UpdateSleepTime BridgeBehavior::update(void)
 {
-
 	// if we're dead, we need to possibly throw off some effects
-	if( m_deathFrame != 0 )
+	if (m_deathFrame != 0)
 	{
 		AsciiString boneName;
 
@@ -718,20 +677,22 @@ UpdateSleepTime BridgeBehavior::update( void )
 		const BridgeBehaviorModuleData *modData = getBridgeBehaviorModuleData();
 
 		// get bridge information
-		Bridge *bridge = TheTerrainLogic->findBridgeAt( us->getPosition() );
+		Bridge *bridge = TheTerrainLogic->findBridgeAt(us->getPosition());
 		const BridgeInfo *bridgeInfo = NULL;
 		TerrainRoadType *bridgeTemplate = NULL;
-		if ( bridge )
+		if (bridge)
 		{
-			DEBUG_ASSERTCRASH( bridge, ("BridgeBehavior::update - Unable to find bridge") );
+			DEBUG_ASSERTCRASH(bridge, ("BridgeBehavior::update - Unable to find bridge"));
 
 			// get bridge info
 			bridgeInfo = bridge->peekBridgeInfo();
 
 			// get the bridge template info
 			AsciiString bridgeTemplateName = bridge->getBridgeTemplateName();
-			bridgeTemplate = TheTerrainRoads->findBridge( bridgeTemplateName );
-			DEBUG_ASSERTCRASH( bridgeTemplate, ("BridgeBeahvior::getRandomSurfacePosition - Encountered a bridge with no template!") );
+			bridgeTemplate = TheTerrainRoads->findBridge(bridgeTemplateName);
+			DEBUG_ASSERTCRASH(
+					bridgeTemplate,
+					("BridgeBeahvior::getRandomSurfacePosition - Encountered a bridge with no template!"));
 		}
 
 		// how much time has passed between now and our destruction frame
@@ -739,14 +700,13 @@ UpdateSleepTime BridgeBehavior::update( void )
 
 		// see if there are any fx visuals we need to execute
 		BridgeFXList::const_iterator fxIt;
-		for( fxIt = modData->m_fx.begin(); fxIt != modData->m_fx.end(); ++fxIt )
+		for (fxIt = modData->m_fx.begin(); fxIt != modData->m_fx.end(); ++fxIt)
 		{
-
 			//
 			// we'll launch an fx list if our death time is equal to exactly the delay
 			// we're waiting for to launch the list
 			//
-			if( deathTime == (*fxIt).timeAndLocationInfo.delay )
+			if (deathTime == (*fxIt).timeAndLocationInfo.delay)
 			{
 				Coord3D pos;
 
@@ -755,31 +715,29 @@ UpdateSleepTime BridgeBehavior::update( void )
 				// spot somewhere on the bridge surface
 				//
 				boneName = (*fxIt).timeAndLocationInfo.boneName;
-				if( boneName.isEmpty() == FALSE )
-					us->getSingleLogicalBonePosition( boneName.str(), &pos, NULL );
-				else if ( bridge && bridgeTemplate && bridgeInfo)//we have valid Terrain data for the bridge
-					getRandomSurfacePosition( bridgeTemplate, bridgeInfo, &pos );
+				if (boneName.isEmpty() == FALSE)
+					us->getSingleLogicalBonePosition(boneName.str(), &pos, NULL);
+				else if (bridge && bridgeTemplate && bridgeInfo) // we have valid Terrain data for the bridge
+					getRandomSurfacePosition(bridgeTemplate, bridgeInfo, &pos);
 				else
-					pos.set( getObject()->getPosition() );
-
+					pos.set(getObject()->getPosition());
 
 				// launch the fx list
-				FXList::doFXPos( (*fxIt).fx, &pos );
+				FXList::doFXPos((*fxIt).fx, &pos);
 
-			}  // end if
+			} // end if
 
-		}  // end for, fxIt
+		} // end for, fxIt
 
 		// see if there are any ocl visuals we need to execute
 		BridgeOCLList::const_iterator oclIt;
-		for( oclIt = modData->m_ocl.begin(); oclIt != modData->m_ocl.end(); ++oclIt )
+		for (oclIt = modData->m_ocl.begin(); oclIt != modData->m_ocl.end(); ++oclIt)
 		{
-
 			//
 			// we'll launch an ocl list if our death time is equal to exactly the delay
 			// we're waiting for to launch the list
 			//
-			if( deathTime == (*oclIt).timeAndLocationInfo.delay )
+			if (deathTime == (*oclIt).timeAndLocationInfo.delay)
 			{
 				Coord3D pos;
 
@@ -788,9 +746,8 @@ UpdateSleepTime BridgeBehavior::update( void )
 				// spot somewhere on the bridge surface
 				//
 				boneName = (*oclIt).timeAndLocationInfo.boneName;
-				if( boneName.isEmpty() == FALSE )
+				if (boneName.isEmpty() == FALSE)
 				{
-
 					//
 					// special case for creating an OCL for using the bridge object parent center location
 					// why do we have this ... well, apparently the OCL ignores the obj parameter
@@ -798,64 +755,59 @@ UpdateSleepTime BridgeBehavior::update( void )
 					// to that object parameteter so the OCL stuff can inherit the LIKE_EXISTING
 					// properties from its parent
 					//
-					if( boneName.compare( "ParentObject" ) == 0 )
+					if (boneName.compare("ParentObject") == 0)
 					{
-
 						// launch the effects just using the parent object for location info
-						ObjectCreationList::create( (*oclIt).ocl, us, NULL );
+						ObjectCreationList::create((*oclIt).ocl, us, NULL);
 
-					}  // endif
+					} // endif
 					else
 					{
-
 						// get bone position
-						us->getSingleLogicalBonePosition( boneName.str(), &pos, NULL );
+						us->getSingleLogicalBonePosition(boneName.str(), &pos, NULL);
 
 						// launch the fx list
-						ObjectCreationList::create( (*oclIt).ocl, us, &pos, NULL );
+						ObjectCreationList::create((*oclIt).ocl, us, &pos, NULL);
 
-					}  // end else
+					} // end else
 
-				}  // end if, bone name not empty
+				} // end if, bone name not empty
 				else
 				{
-
 					// get random place on bridge
-					if ( bridge && bridgeTemplate && bridgeInfo )//we have valid Terrain data for the bridge
-						getRandomSurfacePosition( bridgeTemplate, bridgeInfo, &pos );
+					if (bridge && bridgeTemplate && bridgeInfo) // we have valid Terrain data for the bridge
+						getRandomSurfacePosition(bridgeTemplate, bridgeInfo, &pos);
 					else
-						pos.set( getObject()->getPosition() );
+						pos.set(getObject()->getPosition());
 
 					// launch the fx list
-					ObjectCreationList::create( (*oclIt).ocl, us, &pos, NULL );
+					ObjectCreationList::create((*oclIt).ocl, us, &pos, NULL);
 
-				}  // end else
+				} // end else
 
-			}  // end if
+			} // end if
 
-		}  // end for, oclIt
+		} // end for, oclIt
 
-	}  // end if
+	} // end if
 
 	return UPDATE_SLEEP_NONE;
 
-}  // end update
+} // end update
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::onDie( const DamageInfo *damageInfo )
+void BridgeBehavior::onDie(const DamageInfo *damageInfo)
 {
-
 	// kill the towers associated with us
 	Object *tower;
-	for( Int i = 0; i < BRIDGE_MAX_TOWERS; ++i )
+	for (Int i = 0; i < BRIDGE_MAX_TOWERS; ++i)
 	{
-
-		tower = TheGameLogic->findObjectByID( getTowerID( (BridgeTowerType)i ) );
-		if( tower )
+		tower = TheGameLogic->findObjectByID(getTowerID((BridgeTowerType)i));
+		if (tower)
 			tower->kill();
 
-	}  // end for, i
+	} // end for, i
 
 	// we need to handle anything that was on top of us now that we've been destroyed
 	handleObjectsOnBridgeOnDie();
@@ -863,40 +815,40 @@ void BridgeBehavior::onDie( const DamageInfo *damageInfo )
 	// we have now died, record the death frame
 	m_deathFrame = TheGameLogic->getFrame();
 
-}  // end onDie
+} // end onDie
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::handleObjectsOnBridgeOnDie( void )
+void BridgeBehavior::handleObjectsOnBridgeOnDie(void)
 {
 	const Object *bridge = getObject();
 	const Coord3D *bridgePos = bridge->getPosition();
 
-	Bridge *terrainBridge = TheTerrainLogic->findBridgeAt( getObject()->getPosition() );
-	if( terrainBridge )
+	Bridge *terrainBridge = TheTerrainLogic->findBridgeAt(getObject()->getPosition());
+	if (terrainBridge)
 	{
 		PathfindLayerEnum bridgeLayer = terrainBridge->getLayer();
 
 		BridgeInfo bridgeInfo;
 
 		// get the bridge info
-		terrainBridge->getBridgeInfo( &bridgeInfo );
+		terrainBridge->getBridgeInfo(&bridgeInfo);
 
 		// setup a polygon area using the bridge extents
-		Coord3D bridgePolygon[ 4 ];
-		bridgePolygon[ 0 ] = bridgeInfo.fromLeft;
-		bridgePolygon[ 1 ] = bridgeInfo.fromRight;
-		bridgePolygon[ 2 ] = bridgeInfo.toRight;
-		bridgePolygon[ 3 ] = bridgeInfo.toLeft;
+		Coord3D bridgePolygon[4];
+		bridgePolygon[0] = bridgeInfo.fromLeft;
+		bridgePolygon[1] = bridgeInfo.fromRight;
+		bridgePolygon[2] = bridgeInfo.toRight;
+		bridgePolygon[3] = bridgeInfo.toLeft;
 
 		//
 		// find the lowest Z point of the bridge area ... we will use this to figure out of
 		// objects in the bridge area are "on top" of the bridge
 		//
-		Real lowBridgeZ = bridgePolygon[ 0 ].z;
-		for( Int i = 0; i < 4; ++i )
-			if( bridgePolygon[ i ].z < lowBridgeZ )
-				lowBridgeZ = bridgePolygon[ i ].z;
+		Real lowBridgeZ = bridgePolygon[0].z;
+		for (Int i = 0; i < 4; ++i)
+			if (bridgePolygon[i].z < lowBridgeZ)
+				lowBridgeZ = bridgePolygon[i].z;
 
 		//
 		// given the polygon area, how big is the radius that we need to scan in the world
@@ -909,71 +861,68 @@ void BridgeBehavior::handleObjectsOnBridgeOnDie( void )
 		Real radius = v.length();
 
 		// scan the objects in the radius
-		ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( bridgePos,
-																																			 radius,
-																																			 FROM_CENTER_2D );
-		MemoryPoolObjectHolder hold( iter );
+		ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange(bridgePos, radius, FROM_CENTER_2D);
+		MemoryPoolObjectHolder hold(iter);
 		Object *other;
-		for( other = iter->first(); other; other = iter->next() )
+		for (other = iter->first(); other; other = iter->next())
 		{
-
 			// ingnore some kind of objects
-			if( other->isKindOf( KINDOF_BRIDGE ) || other->isKindOf( KINDOF_BRIDGE_TOWER ) )
+			if (other->isKindOf(KINDOF_BRIDGE) || other->isKindOf(KINDOF_BRIDGE_TOWER))
 				continue;
 
 			// ignore airborne objects
-			if( other->isAboveTerrain() )
+			if (other->isAboveTerrain())
 				continue;
 
 			// ignore objects that were not actually on the bridge
-			if( other->getPosition()->z < lowBridgeZ )
+			if (other->getPosition()->z < lowBridgeZ)
 				continue;
 
 			// ignore objects that are not inside the bridge polygon
-			if( PointInsideArea2D( other->getPosition(), bridgePolygon, 4 ) == FALSE )
+			if (PointInsideArea2D(other->getPosition(), bridgePolygon, 4) == FALSE)
 				continue;
 
 			// if object not on same layer as bridge do nothing
-			if( bridgeLayer != other->getLayer() )
+			if (bridgeLayer != other->getLayer())
 				continue;
 
 			if (other->getLayer() == bridgeLayer)
 				other->setLayer(LAYER_GROUND);
 
 			// if they have physics, let 'em fall, otherwise just kill 'em
-			PhysicsBehavior* physics = other->getPhysics();
+			PhysicsBehavior *physics = other->getPhysics();
 			if (physics)
 				physics->setAllowToFall(true);
 			else
 				other->kill();
 
-		}  // end for, other
+		} // end for, other
 
-	}  // end if, terrainBridge
+	} // end if, terrainBridge
 
-}  // end handleObjectsOnBridgeDie
+} // end handleObjectsOnBridgeDie
 
 // ------------------------------------------------------------------------------------------------
 /** Set all the position, angle, and speed data we need to for a single scaffold object */
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::setScaffoldData( Object *obj,
-																			Real *angle,
-																			Real *sunkenHeight,
-																			const Coord3D *riseToPos,
-																			const Coord3D *buildPos,
-																			const Coord3D *bridgeCenter )
+void BridgeBehavior::setScaffoldData(
+		Object *obj,
+		Real *angle,
+		Real *sunkenHeight,
+		const Coord3D *riseToPos,
+		const Coord3D *buildPos,
+		const Coord3D *bridgeCenter)
 {
-
 	// sanity
-	if( obj == NULL || angle == NULL || riseToPos == NULL || buildPos == NULL )
+	if (obj == NULL || angle == NULL || riseToPos == NULL || buildPos == NULL)
 		return;
 
 	const BridgeBehaviorModuleData *modData = getBridgeBehaviorModuleData();
 
 	// get the scaffold behavior interface
 	BridgeScaffoldBehaviorInterface *scaffoldBehavior;
-	scaffoldBehavior = BridgeScaffoldBehavior::getBridgeScaffoldBehaviorInterfaceFromObject( obj );
-	DEBUG_ASSERTCRASH( scaffoldBehavior, ("Unable to find bridge scaffold behavior interface") );
+	scaffoldBehavior = BridgeScaffoldBehavior::getBridgeScaffoldBehaviorInterfaceFromObject(obj);
+	DEBUG_ASSERTCRASH(scaffoldBehavior, ("Unable to find bridge scaffold behavior interface"));
 
 	// compute the sunken position that the object will initially start at
 	Real fudge = 8.0f;
@@ -981,16 +930,16 @@ void BridgeBehavior::setScaffoldData( Object *obj,
 	sunkenPos.z = sunkenPos.z - *sunkenHeight - fudge;
 
 	// set object initial position
-	obj->setPosition( &sunkenPos );
+	obj->setPosition(&sunkenPos);
 
 	// set all the destination points for all scaffold motion
-	scaffoldBehavior->setPositions( &sunkenPos, riseToPos, buildPos );
+	scaffoldBehavior->setPositions(&sunkenPos, riseToPos, buildPos);
 
 	// set the scaffold object in motion rising up out of the ground
-	scaffoldBehavior->setMotion( STM_RISE );
+	scaffoldBehavior->setMotion(STM_RISE);
 
 	// set object angle
-	obj->setOrientation( *angle );
+	obj->setOrientation(*angle);
 
 	//
 	// set the speed of the scaffold "animation" which is based on how big of a distance
@@ -1007,23 +956,22 @@ void BridgeBehavior::setScaffoldData( Object *obj,
 	riseToPosToBridgeCenter.z = bridgeCenter->z - riseToPos->z;
 	Real distBuildUpPosToBridgeCenter = buildUpPosToBridgeCenter.length();
 	Real distRiseToPosToBridgeCenter = riseToPosToBridgeCenter.length();
-	scaffoldBehavior->setLateralSpeed( lateralSpeed * (distBuildUpPosToBridgeCenter / distRiseToPosToBridgeCenter) );
+	scaffoldBehavior->setLateralSpeed(lateralSpeed * (distBuildUpPosToBridgeCenter / distRiseToPosToBridgeCenter));
 
 	// rising speed is always the same for all objects
 	Real verticalSpeed = modData->m_verticalScaffoldSpeed;
-	scaffoldBehavior->setVerticalSpeed( verticalSpeed );
+	scaffoldBehavior->setVerticalSpeed(verticalSpeed);
 
-}  // end setScaffoldData
+} // end setScaffoldData
 
 // ------------------------------------------------------------------------------------------------
 /** Start the bridge repair scaffolding.  If we already have scaffolding this call
-	* is ignored */
+ * is ignored */
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::createScaffolding( void )
+void BridgeBehavior::createScaffolding(void)
 {
-
 	// if we have scaffolding up already do nothing
-	if( m_scaffoldPresent == TRUE )
+	if (m_scaffoldPresent == TRUE)
 		return;
 
 	// get the bridge world object
@@ -1031,47 +979,45 @@ void BridgeBehavior::createScaffolding( void )
 	const Coord3D *center = us->getPosition();
 
 	// get our bridge object
-	Bridge *bridge = TheTerrainLogic->findBridgeAt( us->getPosition() );
+	Bridge *bridge = TheTerrainLogic->findBridgeAt(us->getPosition());
 
 	// get the bridge template
 	AsciiString bridgeTemplateName = bridge->getBridgeTemplateName();
-	TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge( bridgeTemplateName );
-	DEBUG_ASSERTCRASH( bridgeTemplate, ("Unable to find bridge template to create scaffolding") );
+	TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge(bridgeTemplateName);
+	DEBUG_ASSERTCRASH(bridgeTemplate, ("Unable to find bridge template to create scaffolding"));
 
 	// get the thing template for the scaffold object we're going to use
 	AsciiString scaffoldObjectName = bridgeTemplate->getScaffoldObjectName();
-	const ThingTemplate *scaffoldTemplate = TheThingFactory->findTemplate( scaffoldObjectName );
-	if( scaffoldTemplate == NULL )
+	const ThingTemplate *scaffoldTemplate = TheThingFactory->findTemplate(scaffoldObjectName);
+	if (scaffoldTemplate == NULL)
 	{
-
-		DEBUG_CRASH(( "Unable to find bridge scaffold template" ));
+		DEBUG_CRASH(("Unable to find bridge scaffold template"));
 		return;
 
-	}  // end if
+	} // end if
 
 	// get thing template for scaffold support object
 	AsciiString scaffoldSupportObjectName = bridgeTemplate->getScaffoldSupportObjectName();
-	const ThingTemplate *scaffoldSupportTemplate = TheThingFactory->findTemplate( scaffoldSupportObjectName );
-	if( scaffoldSupportTemplate == NULL )
+	const ThingTemplate *scaffoldSupportTemplate = TheThingFactory->findTemplate(scaffoldSupportObjectName);
+	if (scaffoldSupportTemplate == NULL)
 	{
-
-		DEBUG_CRASH(( "Unable to find bridge support scaffold template" ));
+		DEBUG_CRASH(("Unable to find bridge support scaffold template"));
 		return;
 
-	}  // end if
+	} // end if
 
 	// how much space is going to be between each of the scaffold objects at their final positions
 	Real spacing = scaffoldTemplate->getTemplateGeometryInfo().getMajorRadius() * 2.0f;
 
 	// how tall are the scaffold objects
-	Real scaffoldHeight = scaffoldTemplate->getTemplateGeometryInfo().getMaxHeightAbovePosition() +
-												scaffoldTemplate->getTemplateGeometryInfo().getMaxHeightBelowPosition();
-	Real scaffoldSupportHeight = scaffoldSupportTemplate->getTemplateGeometryInfo().getMaxHeightAbovePosition() +
-															 scaffoldSupportTemplate->getTemplateGeometryInfo().getMaxHeightBelowPosition();
+	Real scaffoldHeight = scaffoldTemplate->getTemplateGeometryInfo().getMaxHeightAbovePosition()
+			+ scaffoldTemplate->getTemplateGeometryInfo().getMaxHeightBelowPosition();
+	Real scaffoldSupportHeight = scaffoldSupportTemplate->getTemplateGeometryInfo().getMaxHeightAbovePosition()
+			+ scaffoldSupportTemplate->getTemplateGeometryInfo().getMaxHeightBelowPosition();
 
 	// get the bridge info
 	BridgeInfo bridgeInfo;
-	bridge->getBridgeInfo( &bridgeInfo );
+	bridge->getBridgeInfo(&bridgeInfo);
 
 	//
 	// given the area of the bridge, figure out what the start and end points are to create
@@ -1115,7 +1061,7 @@ void BridgeBehavior::createScaffolding( void )
 	// to the center area of the bridge
 	//
 	Real tileDistance = leftVector.length();
-	Int numObjects = REAL_TO_INT_CEIL( tileDistance / spacing ) + 1;
+	Int numObjects = REAL_TO_INT_CEIL(tileDistance / spacing) + 1;
 
 	//
 	// given the number of objects that we need to tile across the whole bridge, we will
@@ -1124,7 +1070,7 @@ void BridgeBehavior::createScaffolding( void )
 	// bridge, except the last object if the number of objects is odd is dead in the
 	// center
 	//
-	Int numIterations = REAL_TO_INT_CEIL( INT_TO_REAL( numObjects ) / 2.0f );
+	Int numIterations = REAL_TO_INT_CEIL(INT_TO_REAL(numObjects) / 2.0f);
 
 	//
 	// normalize left and right vectors as it is a vector that goes from our left start
@@ -1140,15 +1086,13 @@ void BridgeBehavior::createScaffolding( void )
 	Coord3D destinationPos, *riseToPos;
 	Real *angle;
 	Object *obj;
-	for( Int i = 0; i < numIterations; ++i )
+	for (Int i = 0; i < numIterations; ++i)
 	{
-
 		// sanity
-		DEBUG_ASSERTCRASH( scaffoldObjectsCreated < numObjects,
-											 ("Creating too many scaffold objects") );
+		DEBUG_ASSERTCRASH(scaffoldObjectsCreated < numObjects, ("Creating too many scaffold objects"));
 
 		// create object
-		obj = TheThingFactory->newObject( scaffoldTemplate, us->getTeam() );
+		obj = TheThingFactory->newObject(scaffoldTemplate, us->getTeam());
 
 		// this object is from the "left" side of the bridge
 		riseToPos = &leftStart;
@@ -1168,11 +1112,11 @@ void BridgeBehavior::createScaffolding( void )
 		// now that they key positions are calculated, set the rest of the position data
 		// and movement speeds for the object
 		//
-		setScaffoldData( obj, angle, &scaffoldHeight, riseToPos, &destinationPos, center );
+		setScaffoldData(obj, angle, &scaffoldHeight, riseToPos, &destinationPos, center);
 
 		// keeping track of objects created
 		scaffoldObjectsCreated++;
-		m_scaffoldObjectIDList.push_back( obj->getID() );
+		m_scaffoldObjectIDList.push_back(obj->getID());
 
 		//
 		// create support object layers under the scaffold object, this object mirrors the scaffold
@@ -1182,41 +1126,32 @@ void BridgeBehavior::createScaffolding( void )
 		Coord3D supportRiseToPos = *riseToPos;
 		Coord3D supportDestinationPos = destinationPos;
 		Coord3D supportBridgeCenter = *center;
-		while( offset >= 0.0f )
+		while (offset >= 0.0f)
 		{
-
 			supportRiseToPos.z -= scaffoldSupportHeight;
 			supportDestinationPos.z -= scaffoldSupportHeight;
 			supportBridgeCenter.z -= scaffoldSupportHeight;
-			obj = TheThingFactory->newObject( scaffoldSupportTemplate, us->getTeam() );
-			setScaffoldData( obj,
-											 angle,
-											 &scaffoldSupportHeight,
-											 &supportRiseToPos,
-											 &supportDestinationPos,
-											 &supportBridgeCenter );
-			m_scaffoldObjectIDList.push_back( obj->getID() );
-
+			obj = TheThingFactory->newObject(scaffoldSupportTemplate, us->getTeam());
+			setScaffoldData(obj, angle, &scaffoldSupportHeight, &supportRiseToPos, &supportDestinationPos, &supportBridgeCenter);
+			m_scaffoldObjectIDList.push_back(obj->getID());
 
 			// off to the next layer
 			offset -= scaffoldSupportHeight;
 
-		}  // end while
+		} // end while
 
 		//
 		// now create the object from the "right" side of the bridge ... but note that
 		// we don't do this on the last iteration through this loop when we have an odd
 		// number of objects we're tiling because all the space is already perfectly used up)
 		//
-		if( scaffoldObjectsCreated < numObjects )
+		if (scaffoldObjectsCreated < numObjects)
 		{
-
 			// sanity
-			DEBUG_ASSERTCRASH( scaffoldObjectsCreated < numObjects,
-												 ("Creating too many scaffold objects") );
+			DEBUG_ASSERTCRASH(scaffoldObjectsCreated < numObjects, ("Creating too many scaffold objects"));
 
 			// create new object
-			obj = TheThingFactory->newObject( scaffoldTemplate, us->getTeam() );
+			obj = TheThingFactory->newObject(scaffoldTemplate, us->getTeam());
 
 			// this object is on the "right" side of the bridge
 			riseToPos = &rightStart;
@@ -1233,11 +1168,11 @@ void BridgeBehavior::createScaffolding( void )
 			destinationPos.z = rightVector.z * (spacing * i) + riseToPos->z;
 
 			// set the rest scaffold data again
-			setScaffoldData( obj, angle, &scaffoldHeight, riseToPos, &destinationPos, center );
+			setScaffoldData(obj, angle, &scaffoldHeight, riseToPos, &destinationPos, center);
 
 			// keeping track of objects created
 			scaffoldObjectsCreated++;
-			m_scaffoldObjectIDList.push_back( obj->getID() );
+			m_scaffoldObjectIDList.push_back(obj->getID());
 
 			//
 			// create support object layers under the scaffold object, this object mirrors the scaffold
@@ -1247,69 +1182,60 @@ void BridgeBehavior::createScaffolding( void )
 			Coord3D supportRiseToPos = *riseToPos;
 			Coord3D supportDestinationPos = destinationPos;
 			Coord3D supportBridgeCenter = *center;
-			while( offset >= 0.0f )
+			while (offset >= 0.0f)
 			{
-
 				supportRiseToPos.z -= scaffoldSupportHeight;
 				supportDestinationPos.z -= scaffoldSupportHeight;
 				supportBridgeCenter.z -= scaffoldSupportHeight;
-				obj = TheThingFactory->newObject( scaffoldSupportTemplate, us->getTeam() );
-				setScaffoldData( obj,
-												 angle,
-												 &scaffoldSupportHeight,
-												 &supportRiseToPos,
-												 &supportDestinationPos,
-												 &supportBridgeCenter );
-				m_scaffoldObjectIDList.push_back( obj->getID() );
-
+				obj = TheThingFactory->newObject(scaffoldSupportTemplate, us->getTeam());
+				setScaffoldData(obj, angle, &scaffoldSupportHeight, &supportRiseToPos, &supportDestinationPos, &supportBridgeCenter);
+				m_scaffoldObjectIDList.push_back(obj->getID());
 
 				// off to the next layer
 				offset -= scaffoldSupportHeight;
 
-			}  // end while
+			} // end while
 
-		}  // end if
+		} // end if
 
-	}  // end for i
+	} // end for i
 
 	// scaffolding is now present
 	m_scaffoldPresent = TRUE;
 
 	// when scaffolding is present, a bridge cannot be used
-	TheAI->pathfinder()->changeBridgeState( bridge->getLayer(), FALSE );
+	TheAI->pathfinder()->changeBridgeState(bridge->getLayer(), FALSE);
 
-}  // end createScaffolding
+} // end createScaffolding
 
 // ------------------------------------------------------------------------------------------------
 /** Remove the bridge scaffolding.  If we don't have any then this call is ignored */
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::removeScaffolding( void )
+void BridgeBehavior::removeScaffolding(void)
 {
-
 	// if we have no scaffolding, do nothing
-	if( m_scaffoldPresent == FALSE )
+	if (m_scaffoldPresent == FALSE)
 		return;
 
 	// go through each object and tell them to reverse course
 	Object *obj;
 	ObjectIDListIterator it;
 	BridgeScaffoldBehaviorInterface *scaffoldBehavior;
-	for( it = m_scaffoldObjectIDList.begin(); it != m_scaffoldObjectIDList.end(); ++it )
+	for (it = m_scaffoldObjectIDList.begin(); it != m_scaffoldObjectIDList.end(); ++it)
 	{
-
 		// get the object
-		obj = TheGameLogic->findObjectByID( (*it) );
-		if( obj == NULL )
+		obj = TheGameLogic->findObjectByID((*it));
+		if (obj == NULL)
 			continue;
 
 		// get the scaffold behavior
-		scaffoldBehavior = BridgeScaffoldBehavior::getBridgeScaffoldBehaviorInterfaceFromObject( obj );
-		DEBUG_ASSERTCRASH( scaffoldBehavior, ("Unable to find bridge scaffold behavior interface") );
+		scaffoldBehavior = BridgeScaffoldBehavior::getBridgeScaffoldBehaviorInterfaceFromObject(obj);
+		DEBUG_ASSERTCRASH(scaffoldBehavior, ("Unable to find bridge scaffold behavior interface"));
 
 		// reverse the motion
 		scaffoldBehavior->reverseMotion();
 
-	}  // end for, it
+	} // end for, it
 
 	// clear our scaffold object list
 	m_scaffoldObjectIDList.clear();
@@ -1321,163 +1247,155 @@ void BridgeBehavior::removeScaffolding( void )
 	Object *us = getObject();
 	BodyModuleInterface *body = us->getBodyModule();
 
-	if( body->getDamageState() != BODY_RUBBLE )
+	if (body->getDamageState() != BODY_RUBBLE)
 	{
-		Bridge *bridge = TheTerrainLogic->findBridgeAt( us->getPosition() );
+		Bridge *bridge = TheTerrainLogic->findBridgeAt(us->getPosition());
 
-		if( bridge )
-			TheAI->pathfinder()->changeBridgeState( bridge->getLayer(), TRUE );
+		if (bridge)
+			TheAI->pathfinder()->changeBridgeState(bridge->getLayer(), TRUE);
 
-	}  // end if
+	} // end if
 
-}  // end removeScaffolding
+} // end removeScaffolding
 
 // ------------------------------------------------------------------------------------------------
 /** Is any of the scaffolding in motion */
 // ------------------------------------------------------------------------------------------------
-Bool BridgeBehavior::isScaffoldInMotion( void )
+Bool BridgeBehavior::isScaffoldInMotion(void)
 {
 	Object *obj;
 
 	// go through the scaffold objects, if any of them are in motion the scaffold is in motion
 	ObjectIDListIterator it;
-	for( it = m_scaffoldObjectIDList.begin(); it != m_scaffoldObjectIDList.end(); ++it )
+	for (it = m_scaffoldObjectIDList.begin(); it != m_scaffoldObjectIDList.end(); ++it)
 	{
-
 		// get object
-		obj = TheGameLogic->findObjectByID( (*it) );
-		if( obj == NULL )
+		obj = TheGameLogic->findObjectByID((*it));
+		if (obj == NULL)
 			continue;
 
 		// get scaffold interface
-		BridgeScaffoldBehaviorInterface *bsbi = BridgeScaffoldBehavior::getBridgeScaffoldBehaviorInterfaceFromObject( obj );
-		if( bsbi == NULL )
+		BridgeScaffoldBehaviorInterface *bsbi = BridgeScaffoldBehavior::getBridgeScaffoldBehaviorInterfaceFromObject(obj);
+		if (bsbi == NULL)
 			continue;
 
 		// check in motion
-		if( bsbi->getCurrentMotion() != STM_STILL )
+		if (bsbi->getCurrentMotion() != STM_STILL)
 			return TRUE;
 
-	}  // end for
+	} // end for
 
 	// not in motion
 	return FALSE;
 
-}  // end isScaffoldInMotion
+} // end isScaffoldInMotion
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::crc( Xfer *xfer )
+void BridgeBehavior::crc(Xfer *xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
+	UpdateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::xfer( Xfer *xfer )
+void BridgeBehavior::xfer(Xfer *xfer)
 {
 	Object *us = getObject();
 
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// set us as the bridge object in the bridge info
-	if( xfer->getXferMode() == XFER_LOAD )
+	if (xfer->getXferMode() == XFER_LOAD)
 	{
-		Bridge *bridge = TheTerrainLogic->findBridgeAt( us->getPosition() );
+		Bridge *bridge = TheTerrainLogic->findBridgeAt(us->getPosition());
 
 		// sanity
-		DEBUG_ASSERTCRASH( bridge, ("BridgeBehavior::xfer - Unable to find bridge" ));
+		DEBUG_ASSERTCRASH(bridge, ("BridgeBehavior::xfer - Unable to find bridge"));
 
 		// set new object ID in bridge info to us
-		bridge->setBridgeObjectID( us->getID() );
+		bridge->setBridgeObjectID(us->getID());
 
-	}  // end if
+	} // end if
 
 	// xfer the tower object ids
-	for( Int i = 0; i < BRIDGE_MAX_TOWERS; ++i )
-		xfer->xferObjectID( &m_towerID[ i ] );
+	for (Int i = 0; i < BRIDGE_MAX_TOWERS; ++i)
+		xfer->xferObjectID(&m_towerID[i]);
 
 	// set the tower object ids in the bridge info
-	if( xfer->getXferMode() == XFER_LOAD )
+	if (xfer->getXferMode() == XFER_LOAD)
 	{
 		Object *us = getObject();
-		Bridge *bridge = TheTerrainLogic->findBridgeAt( us->getPosition() );
+		Bridge *bridge = TheTerrainLogic->findBridgeAt(us->getPosition());
 
 		// sanity
-		DEBUG_ASSERTCRASH( bridge, ("BridgeBehavior::xfer - Unable to find bridge" ));
+		DEBUG_ASSERTCRASH(bridge, ("BridgeBehavior::xfer - Unable to find bridge"));
 
 		// set new object ID in bridge info to us
-		for( Int i = 0; i < BRIDGE_MAX_TOWERS; ++i )
-			bridge->setTowerObjectID( m_towerID[ i ], (BridgeTowerType)i );
+		for (Int i = 0; i < BRIDGE_MAX_TOWERS; ++i)
+			bridge->setTowerObjectID(m_towerID[i], (BridgeTowerType)i);
 
-	}  // end if
+	} // end if
 
 	// scaffold present flag
-	xfer->xferBool( &m_scaffoldPresent );
+	xfer->xferBool(&m_scaffoldPresent);
 
 	// scaffold object id list
 	UnsignedShort scaffoldObjectCount = 0;
 	scaffoldObjectCount = m_scaffoldObjectIDList.size();
-	xfer->xferUnsignedShort( &scaffoldObjectCount );
+	xfer->xferUnsignedShort(&scaffoldObjectCount);
 	ObjectID scaffoldObjectID;
-	if( xfer->getXferMode() == XFER_SAVE )
+	if (xfer->getXferMode() == XFER_SAVE)
 	{
-
 		// write out all object IDs
 		ObjectIDListIterator it;
-		for( it = m_scaffoldObjectIDList.begin(); it != m_scaffoldObjectIDList.end(); ++it )
+		for (it = m_scaffoldObjectIDList.begin(); it != m_scaffoldObjectIDList.end(); ++it)
 		{
-
 			scaffoldObjectID = *it;
-			xfer->xferObjectID( &scaffoldObjectID );
+			xfer->xferObjectID(&scaffoldObjectID);
 
-		}  // end for
+		} // end for
 
-	}  // end if, save
+	} // end if, save
 	else
 	{
-
 		// read all object IDs
-		DEBUG_ASSERTCRASH( m_scaffoldObjectIDList.size() == 0,
-											 ("BridgeBehavior::xfer - scaffold object list should be empty") );
-		for( Int i = 0; i < scaffoldObjectCount; ++i )
+		DEBUG_ASSERTCRASH(m_scaffoldObjectIDList.size() == 0, ("BridgeBehavior::xfer - scaffold object list should be empty"));
+		for (Int i = 0; i < scaffoldObjectCount; ++i)
 		{
-
 			// read id
-			xfer->xferObjectID( &scaffoldObjectID );
+			xfer->xferObjectID(&scaffoldObjectID);
 
 			// put on list
-			m_scaffoldObjectIDList.push_back( scaffoldObjectID );
+			m_scaffoldObjectIDList.push_back(scaffoldObjectID);
 
-		}  // end for i
+		} // end for i
 
-	}  // end load
+	} // end load
 
 	// death frame
-	xfer->xferUnsignedInt( &m_deathFrame );
+	xfer->xferUnsignedInt(&m_deathFrame);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BridgeBehavior::loadPostProcess( void )
+void BridgeBehavior::loadPostProcess(void)
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

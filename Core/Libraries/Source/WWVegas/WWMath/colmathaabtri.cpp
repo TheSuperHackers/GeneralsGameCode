@@ -46,19 +46,16 @@
  *   CollisionMath::Intersection_Test -- Intersection check for an AABox and a triangle        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "colmath.h"
 #include "aabox.h"
 #include "tri.h"
 #include "wwdebug.h"
 
-
 /*
 ** Separating Axes have to be rejected if their length is smaller than some epsilon.
 ** Otherwise, erroneous results can be reported.
 */
-#define AXISLEN_EPSILON2	WWMATH_EPSILON * WWMATH_EPSILON	// squared length of a separating axis must be larger than this
-
+#define AXISLEN_EPSILON2 WWMATH_EPSILON *WWMATH_EPSILON // squared length of a separating axis must be larger than this
 
 /*
 ** Axes used in Box-Tri intersection tests
@@ -71,12 +68,12 @@
 enum
 {
 	INTERSECTION = 0,
-	AXIS_N,					// normal of the triangle
-	AXIS_A0,					// first basis vector of the box
-	AXIS_A1,					// second basis vector of the box
-	AXIS_A2,					// third basis vector of the box
+	AXIS_N, // normal of the triangle
+	AXIS_A0, // first basis vector of the box
+	AXIS_A1, // second basis vector of the box
+	AXIS_A2, // third basis vector of the box
 
-	AXIS_A0E0,				// box0 x edge0...
+	AXIS_A0E0, // box0 x edge0...
 	AXIS_A1E0,
 	AXIS_A2E0,
 	AXIS_A0E1,
@@ -87,12 +84,11 @@ enum
 	AXIS_A2E2
 };
 
-
 /******************************************************************************************
 
 	AABox->Triangle collision
 
-   This code is basically a special-case optimization of the OBBox->Triangle collision
+	 This code is basically a special-case optimization of the OBBox->Triangle collision
 	detection code.  There are many dot and cross products that can be simplified due
 	to the fact that we know the axes of the boxes are always the same and are aligned
 	with the world coordinate axes.
@@ -124,60 +120,59 @@ struct BTCollisionStruct
 {
 	BTCollisionStruct(void) {}
 
-	void Init(const AABoxClass &box,const Vector3 &move,const TriClass &tri,const Vector3 &trimove)
+	void Init(const AABoxClass &box, const Vector3 &move, const TriClass &tri, const Vector3 &trimove)
 	{
-		StartBad = true;			// true until an axis clears it
-		MaxFrac = -0.01f;			// maximum move allowed so far
-		AxisId = INTERSECTION;	// axis that allowed the longest move
-		Point = 0;					// index of triangle point that was closest to the box
-		Side = 0;					// side of the interval
+		StartBad = true; // true until an axis clears it
+		MaxFrac = -0.01f; // maximum move allowed so far
+		AxisId = INTERSECTION; // axis that allowed the longest move
+		Point = 0; // index of triangle point that was closest to the box
+		Side = 0; // side of the interval
 		Box = &box;
 		Tri = &tri;
 		BoxMove = &move;
 		TriMove = &trimove;
 
-		Vector3::Subtract(*tri.V[0],box.Center,&D);				// vector from center of box to vertex 0
-		Vector3::Subtract(move,trimove,&Move);						// move vector relative to stationary triangle
+		Vector3::Subtract(*tri.V[0], box.Center, &D); // vector from center of box to vertex 0
+		Vector3::Subtract(move, trimove, &Move); // move vector relative to stationary triangle
 
-		Vector3::Subtract(*tri.V[1],*tri.V[0],&E[0]);
-		Vector3::Subtract(*tri.V[2],*tri.V[0],&E[1]);
-		Vector3::Subtract(E[1],E[0],&E[2]);
+		Vector3::Subtract(*tri.V[1], *tri.V[0], &E[0]);
+		Vector3::Subtract(*tri.V[2], *tri.V[0], &E[1]);
+		Vector3::Subtract(E[1], E[0], &E[2]);
 
-		Vector3::Cross_Product(E[0],E[1],&N);
+		Vector3::Cross_Product(E[0], E[1], &N);
 	}
 
-	bool						StartBad;			// Inital configuration is intersecting?
-	float						MaxFrac;				// Longest move allowed so far
+	bool StartBad; // Inital configuration is intersecting?
+	float MaxFrac; // Longest move allowed so far
 
-	int						AxisId;				// Last separating axis
-	int						Side;					// which side of the interval
-	int						Point;				// Index of the "closest" triangle point (or one of them)
+	int AxisId; // Last separating axis
+	int Side; // which side of the interval
+	int Point; // Index of the "closest" triangle point (or one of them)
 
-	int						TestAxisId;			// Axis 'id' we're working on
-	int						TestSide;			// Was the axis we're working on flipped
-	int						TestPoint;			// Index of the closest vertex
-	Vector3					TestAxis;			// Axis we're working on
+	int TestAxisId; // Axis 'id' we're working on
+	int TestSide; // Was the axis we're working on flipped
+	int TestPoint; // Index of the closest vertex
+	Vector3 TestAxis; // Axis we're working on
 
-	Vector3					D;						// Vector from the center of the box to v0
-	Vector3					Move;					// Move vector relative to stationary triangle
-	float						AE[3][3];			// Dot products of the Basis vectors and edges
-	float						AN[3];				// Dot products of the Basis vectors and the normal
-	Vector3					AxE[3][3];			// Cross products of the Basis vectors and edges
+	Vector3 D; // Vector from the center of the box to v0
+	Vector3 Move; // Move vector relative to stationary triangle
+	float AE[3][3]; // Dot products of the Basis vectors and edges
+	float AN[3]; // Dot products of the Basis vectors and the normal
+	Vector3 AxE[3][3]; // Cross products of the Basis vectors and edges
 
-	Vector3					E[3];					// edge vectors for the triangle
-	Vector3					N;						// normal (NOT normalized!!!)
-	Vector3					FinalD;				// Vector from center of box to v0 at end of move
+	Vector3 E[3]; // edge vectors for the triangle
+	Vector3 N; // normal (NOT normalized!!!)
+	Vector3 FinalD; // Vector from center of box to v0 at end of move
 
-	const AABoxClass *	Box;
-	const TriClass *		Tri;
-	const Vector3 *		BoxMove;
-	const Vector3 *		TriMove;
+	const AABoxClass *Box;
+	const TriClass *Tri;
+	const Vector3 *BoxMove;
+	const Vector3 *TriMove;
 
 private:
-
 	// not implemented
 	BTCollisionStruct(const BTCollisionStruct &);
-	BTCollisionStruct & operator = (const BTCollisionStruct &);
+	BTCollisionStruct &operator=(const BTCollisionStruct &);
 };
 
 static BTCollisionStruct CollisionContext;
@@ -198,15 +193,12 @@ static BTCollisionStruct CollisionContext;
  *   4/8/99     GTH : Created.                                                                 *
  *   7/12/99    GTH : Converted original OBBox code to AABox                                   *
  *=============================================================================================*/
-static inline bool aabtri_separation_test
-(
-	float lp,float leb0,float leb1
-)
+static inline bool aabtri_separation_test(float lp, float leb0, float leb1)
 {
 	/*
 	** - If (I'm no more than 'EPSILON' embedded in the wall)
 	**   - not startbad
-   **   - If (I'm moving towards)
+	**   - If (I'm moving towards)
 	**     - fraction = How far I can move before embedding (can be negative if started embedded)
 	**     - If (I can take entire move)
 	**       - accept entire move
@@ -216,29 +208,38 @@ static inline bool aabtri_separation_test
 	**     - Accept entire move since I'm not moving towards
 	*/
 	float eps = 0.0f;
-	if (lp - leb0 <= 0.0f) {
-		eps = COLLISION_EPSILON * CollisionContext.TestAxis.Length();	// trying to only compute epsilon if I have to
+	if (lp - leb0 <= 0.0f)
+	{
+		eps = COLLISION_EPSILON * CollisionContext.TestAxis.Length(); // trying to only compute epsilon if I have to
 	}
 
-	if (lp - leb0 > -eps) {
+	if (lp - leb0 > -eps)
+	{
 		CollisionContext.StartBad = false;
-		if (leb1 - leb0 > 0.0f) {
-			float frac = (lp-leb0)/(leb1-leb0);
-			if (frac >= 1.0f) {
+		if (leb1 - leb0 > 0.0f)
+		{
+			float frac = (lp - leb0) / (leb1 - leb0);
+			if (frac >= 1.0f)
+			{
 				/* moving toward but not hitting triangle */
 				CollisionContext.AxisId = CollisionContext.TestAxisId;
 				CollisionContext.MaxFrac = 1.0f;
 				return true;
-			} else {
+			}
+			else
+			{
 				/* moving toward, hitting triangle */
-				if (frac > CollisionContext.MaxFrac) {
+				if (frac > CollisionContext.MaxFrac)
+				{
 					CollisionContext.MaxFrac = frac;
 					CollisionContext.AxisId = CollisionContext.TestAxisId;
 					CollisionContext.Side = CollisionContext.TestSide;
 					CollisionContext.Point = CollisionContext.TestPoint;
 				}
 			}
-		} else {
+		}
+		else
+		{
 			/* moving away or not moving */
 			CollisionContext.AxisId = CollisionContext.TestAxisId;
 			CollisionContext.MaxFrac = 1.0f;
@@ -247,7 +248,6 @@ static inline bool aabtri_separation_test
 	}
 	return false;
 }
-
 
 /***********************************************************************************************
  * aabtri_check_axis -- project the aab and tri onto an arbitrary axis                         *
@@ -267,41 +267,47 @@ static inline bool aabtri_separation_test
  *=============================================================================================*/
 static inline bool aabtri_check_axis(void)
 {
-	float		dist;						// separation along the axis
-	float		axismove;				// size of the move along the axis.
-	float		leb0;						// initial coordinate of the leading edge of the box
-	float		leb1;						// final coordinate of the leading edge of the box
-	float		lp;						// leading edge of the polygon.
-	float		tmp;						// temporary
+	float dist; // separation along the axis
+	float axismove; // size of the move along the axis.
+	float leb0; // initial coordinate of the leading edge of the box
+	float leb1; // final coordinate of the leading edge of the box
+	float lp; // leading edge of the polygon.
+	float tmp; // temporary
 
-	dist = Vector3::Dot_Product(CollisionContext.D,CollisionContext.TestAxis);
-	axismove = Vector3::Dot_Product(CollisionContext.Move,CollisionContext.TestAxis);
+	dist = Vector3::Dot_Product(CollisionContext.D, CollisionContext.TestAxis);
+	axismove = Vector3::Dot_Product(CollisionContext.Move, CollisionContext.TestAxis);
 
 	// I want the axis centered at the box, pointing towards the triangle
-	if (dist < 0) {
+	if (dist < 0)
+	{
 		dist = -dist;
 		axismove = -axismove;
 		CollisionContext.TestAxis = -CollisionContext.TestAxis;
 		CollisionContext.TestSide = -1.0f;
-	} else {
+	}
+	else
+	{
 		CollisionContext.TestSide = 1.0f;
 	}
 
 	// compute coordinates of the leading edge of the box at t0 and t1
-	leb0 =	CollisionContext.Box->Extent.X * WWMath::Fabs(CollisionContext.TestAxis.X) +
-				CollisionContext.Box->Extent.Y * WWMath::Fabs(CollisionContext.TestAxis.Y) +
-				CollisionContext.Box->Extent.Z * WWMath::Fabs(CollisionContext.TestAxis.Z);
+	leb0 = CollisionContext.Box->Extent.X * WWMath::Fabs(CollisionContext.TestAxis.X)
+			+ CollisionContext.Box->Extent.Y * WWMath::Fabs(CollisionContext.TestAxis.Y)
+			+ CollisionContext.Box->Extent.Z * WWMath::Fabs(CollisionContext.TestAxis.Z);
 	leb1 = leb0 + axismove;
 
 	// compute coordinate of "leading edge of the triangle" relative to the box center.
 	lp = 0;
-	tmp = Vector3::Dot_Product(CollisionContext.E[0],CollisionContext.TestAxis); if (tmp < lp) lp = tmp;
-	tmp = Vector3::Dot_Product(CollisionContext.E[1],CollisionContext.TestAxis); if (tmp < lp) lp = tmp;
+	tmp = Vector3::Dot_Product(CollisionContext.E[0], CollisionContext.TestAxis);
+	if (tmp < lp)
+		lp = tmp;
+	tmp = Vector3::Dot_Product(CollisionContext.E[1], CollisionContext.TestAxis);
+	if (tmp < lp)
+		lp = tmp;
 	lp = dist + lp;
 
-	return aabtri_separation_test(/*CollisionContext,*/lp,leb0,leb1);
+	return aabtri_separation_test(/*CollisionContext,*/ lp, leb0, leb1);
 }
-
 
 /***********************************************************************************************
  * aabtri_check_cross_axis -- projects aab and tri onto a "cross" axis                         *
@@ -319,29 +325,27 @@ static inline bool aabtri_check_axis(void)
  * HISTORY:                                                                                    *
  *   4/8/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-static inline bool aabtri_check_cross_axis
-(
-	float						dp,
-	int						dpi,
-	float						leb0
-)
+static inline bool aabtri_check_cross_axis(float dp, int dpi, float leb0)
 {
-	float		p0;						// distance from box center to vertex 0
-	float		axismove;				// size of the move along the axis.
-	float		leb1;						// final coordinate of the leading edge of the box
-	float		lp;						// leading edge of the polygon.
+	float p0; // distance from box center to vertex 0
+	float axismove; // size of the move along the axis.
+	float leb1; // final coordinate of the leading edge of the box
+	float lp; // leading edge of the polygon.
 
-	p0 = Vector3::Dot_Product(CollisionContext.D,CollisionContext.TestAxis);
-	axismove = Vector3::Dot_Product(CollisionContext.Move,CollisionContext.TestAxis);
+	p0 = Vector3::Dot_Product(CollisionContext.D, CollisionContext.TestAxis);
+	axismove = Vector3::Dot_Product(CollisionContext.Move, CollisionContext.TestAxis);
 
 	// I want the axis centered at the box, pointing towards the triangle
-	if (p0 < 0) {
+	if (p0 < 0)
+	{
 		p0 = -p0;
 		axismove = -axismove;
 		dp = -dp;
 		CollisionContext.TestAxis = -CollisionContext.TestAxis;
 		CollisionContext.TestSide = -1.0f;
-	} else {
+	}
+	else
+	{
 		CollisionContext.TestSide = 1.0f;
 	}
 
@@ -349,13 +353,17 @@ static inline bool aabtri_check_cross_axis
 	leb1 = leb0 + axismove;
 
 	// compute coordinate of "leading edge of the triangle" relative to the box center.
-	lp = 0; CollisionContext.TestPoint = 0;
-	if (dp < 0) { lp = dp; CollisionContext.TestPoint = dpi; }
+	lp = 0;
+	CollisionContext.TestPoint = 0;
+	if (dp < 0)
+	{
+		lp = dp;
+		CollisionContext.TestPoint = dpi;
+	}
 	lp = p0 + lp;
 
-	return aabtri_separation_test(/*CollisionContext,*/lp,leb0,leb1);
+	return aabtri_separation_test(/*CollisionContext,*/ lp, leb0, leb1);
 }
-
 
 /***********************************************************************************************
  * aabtri_check_basis_axis -- projects the aab and tri onto a basis axis                       *
@@ -373,30 +381,28 @@ static inline bool aabtri_check_cross_axis
  * HISTORY:                                                                                    *
  *   4/8/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-static inline bool aabtri_check_basis_axis
-(
-	float leb0,
-	float dp1,
-	float dp2
-)
+static inline bool aabtri_check_basis_axis(float leb0, float dp1, float dp2)
 {
-	float		dist;						// separation along the axis
-	float		axismove;				// size of the move along the axis.
-	float		leb1;						// final coordinate of the leading edge of the box
-	float		lp;						// leading edge of the polygon.
+	float dist; // separation along the axis
+	float axismove; // size of the move along the axis.
+	float leb1; // final coordinate of the leading edge of the box
+	float lp; // leading edge of the polygon.
 
-	dist = Vector3::Dot_Product(CollisionContext.D,CollisionContext.TestAxis);
-	axismove = Vector3::Dot_Product(CollisionContext.Move,CollisionContext.TestAxis);
+	dist = Vector3::Dot_Product(CollisionContext.D, CollisionContext.TestAxis);
+	axismove = Vector3::Dot_Product(CollisionContext.Move, CollisionContext.TestAxis);
 
 	// we want the axis centered at the box, pointing towards the triangle
-	if (dist < 0) {
+	if (dist < 0)
+	{
 		dist = -dist;
 		axismove = -axismove;
 		dp1 = -dp1;
 		dp2 = -dp2;
 		CollisionContext.TestAxis = -CollisionContext.TestAxis;
 		CollisionContext.TestSide = -1.0f;
-	} else {
+	}
+	else
+	{
 		CollisionContext.TestSide = 1.0f;
 	}
 
@@ -404,14 +410,22 @@ static inline bool aabtri_check_basis_axis
 	leb1 = leb0 + axismove;
 
 	// compute coordinate of "leading edge of the polygon" relative to the box center.
-	lp = 0; CollisionContext.TestPoint = 0;
-	if (dp1 < lp) { lp = dp1; CollisionContext.TestPoint = 1; }
-	if (dp2 < lp) { lp = dp2; CollisionContext.TestPoint = 2; }
+	lp = 0;
+	CollisionContext.TestPoint = 0;
+	if (dp1 < lp)
+	{
+		lp = dp1;
+		CollisionContext.TestPoint = 1;
+	}
+	if (dp2 < lp)
+	{
+		lp = dp2;
+		CollisionContext.TestPoint = 2;
+	}
 	lp = dist + lp;
 
-	return aabtri_separation_test(/*CollisionContext,*/lp,leb0,leb1);
+	return aabtri_separation_test(/*CollisionContext,*/ lp, leb0, leb1);
 }
-
 
 /***********************************************************************************************
  * aabtri_check_normal_axis -- project the box and tri onto the tri-normal                     *
@@ -430,33 +444,36 @@ static inline bool aabtri_check_basis_axis
  *=============================================================================================*/
 static inline bool aabtri_check_normal_axis(void)
 {
-	float		dist;						// separation along the axis
-	float		axismove;				// size of the move along the axis.
-	float		leb0;						// initial coordinate of the leading edge of the box
-	float		leb1;						// final coordinate of the leading edge of the box
-	float		lp;						// leading edge of the polygon.
+	float dist; // separation along the axis
+	float axismove; // size of the move along the axis.
+	float leb0; // initial coordinate of the leading edge of the box
+	float leb1; // final coordinate of the leading edge of the box
+	float lp; // leading edge of the polygon.
 
-	dist = Vector3::Dot_Product(CollisionContext.D,CollisionContext.TestAxis);
-	axismove = Vector3::Dot_Product(CollisionContext.Move,CollisionContext.TestAxis);
+	dist = Vector3::Dot_Product(CollisionContext.D, CollisionContext.TestAxis);
+	axismove = Vector3::Dot_Product(CollisionContext.Move, CollisionContext.TestAxis);
 
 	// we want the axis centered at the box, pointing towards the triangle
-	if (dist < 0) {
+	if (dist < 0)
+	{
 		dist = -dist;
 		axismove = -axismove;
 		CollisionContext.TestAxis = -CollisionContext.TestAxis;
 		CollisionContext.TestSide = -1.0f;
-	} else {
+	}
+	else
+	{
 		CollisionContext.TestSide = 1.0f;
 	}
 
-	leb0 =	CollisionContext.Box->Extent.X * WWMath::Fabs(CollisionContext.AN[0]) +
-				CollisionContext.Box->Extent.Y * WWMath::Fabs(CollisionContext.AN[1]) +
-				CollisionContext.Box->Extent.Z * WWMath::Fabs(CollisionContext.AN[2]);
+	leb0 = CollisionContext.Box->Extent.X * WWMath::Fabs(CollisionContext.AN[0])
+			+ CollisionContext.Box->Extent.Y * WWMath::Fabs(CollisionContext.AN[1])
+			+ CollisionContext.Box->Extent.Z * WWMath::Fabs(CollisionContext.AN[2]);
 	leb1 = leb0 + axismove;
 	CollisionContext.TestPoint = 0;
-	lp = dist;	// this is the "optimization", don't have to find lp
+	lp = dist; // this is the "optimization", don't have to find lp
 
-	return aabtri_separation_test(/*CollisionContext,*/lp,leb0,leb1);
+	return aabtri_separation_test(/*CollisionContext,*/ lp, leb0, leb1);
 }
 
 /***********************************************************************************************
@@ -471,13 +488,18 @@ static inline bool aabtri_check_normal_axis(void)
  * HISTORY:                                                                                    *
  *   4/8/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-static inline float eval_side(float val,int side)
+static inline float eval_side(float val, int side)
 {
-	if (val > 0.0f) {
+	if (val > 0.0f)
+	{
 		return side;
-	} else if (val < 0.0f) {
+	}
+	else if (val < 0.0f)
+	{
 		return -side;
-	} else {
+	}
+	else
+	{
 		return 0.0f;
 	}
 }
@@ -494,13 +516,10 @@ static inline float eval_side(float val,int side)
  * HISTORY:                                                                                    *
  *   4/8/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-static inline void aabtri_compute_contact_normal
-(
-	Vector3 &						set_norm
-)
+static inline void aabtri_compute_contact_normal(Vector3 &set_norm)
 {
 #if 1
-	switch(CollisionContext.AxisId)
+	switch (CollisionContext.AxisId)
 	{
 		case INTERSECTION:
 			set_norm = CollisionContext.N;
@@ -511,13 +530,13 @@ static inline void aabtri_compute_contact_normal
 			set_norm.Normalize();
 			break;
 		case AXIS_A0:
-			set_norm = -CollisionContext.Side * Vector3(1.0f,0.0f,0.0f);
+			set_norm = -CollisionContext.Side * Vector3(1.0f, 0.0f, 0.0f);
 			break;
 		case AXIS_A1:
-			set_norm = -CollisionContext.Side * Vector3(0.0f,1.0f,0.0f);
+			set_norm = -CollisionContext.Side * Vector3(0.0f, 1.0f, 0.0f);
 			break;
 		case AXIS_A2:
-			set_norm = -CollisionContext.Side * Vector3(0.0f,0.0f,1.0f);
+			set_norm = -CollisionContext.Side * Vector3(0.0f, 0.0f, 1.0f);
 			break;
 		case AXIS_A0E0:
 			set_norm = -CollisionContext.Side * CollisionContext.AxE[0][0];
@@ -562,17 +581,18 @@ static inline void aabtri_compute_contact_normal
 #else
 	set_norm = *CollisionContext.N;
 	set_norm.Normalize();
-	if (Vector3::Dot_Product(set_norm,CollisionContext.Move) > 0.0f) {
+	if (Vector3::Dot_Product(set_norm, CollisionContext.Move) > 0.0f)
+	{
 		set_norm = -(set_norm);
 	}
 #endif
 }
 
-inline void VERIFY_CROSS(const Vector3 & a, const Vector3 & b,const Vector3 & cross)
+inline void VERIFY_CROSS(const Vector3 &a, const Vector3 &b, const Vector3 &cross)
 {
 #ifdef WWDEBUG
 	Vector3 tmp_cross;
-	Vector3::Cross_Product(a,b,&tmp_cross);
+	Vector3::Cross_Product(a, b, &tmp_cross);
 	Vector3 diff = cross - tmp_cross;
 	WWASSERT(WWMath::Fabs(diff.Length()) < 0.0001f);
 #endif
@@ -590,19 +610,13 @@ inline void VERIFY_CROSS(const Vector3 & a, const Vector3 & b,const Vector3 & cr
  * HISTORY:                                                                                    *
  *   4/8/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-bool CollisionMath::Collide
-(
-	const AABoxClass &		box,
-	const Vector3 &			move,
-	const TriClass &			tri,
-	CastResultStruct *		result
-)
+bool CollisionMath::Collide(const AABoxClass &box, const Vector3 &move, const TriClass &tri, CastResultStruct *result)
 {
 	TRACK_COLLISION_AABOX_TRI;
 
-	float dp,leb0;
+	float dp, leb0;
 
-	CollisionContext.Init(box,move,tri,Vector3(0,0,0));
+	CollisionContext.Init(box, move, tri, Vector3(0, 0, 0));
 
 	/*
 	** AXIS_N
@@ -612,59 +626,67 @@ bool CollisionMath::Collide
 	CollisionContext.AN[0] = CollisionContext.N.X;
 	CollisionContext.AN[1] = CollisionContext.N.Y;
 	CollisionContext.AN[2] = CollisionContext.N.Z;
-	if (aabtri_check_normal_axis()) goto exit;
+	if (aabtri_check_normal_axis())
+		goto exit;
 
 	/*
 	** AXIS_A0
 	*/
-	CollisionContext.TestAxis.Set(1,0,0);
+	CollisionContext.TestAxis.Set(1, 0, 0);
 	CollisionContext.TestAxisId = AXIS_A0;
 	CollisionContext.AE[0][0] = CollisionContext.E[0].X;
 	CollisionContext.AE[0][1] = CollisionContext.E[1].X;
-	if (aabtri_check_basis_axis(box.Extent.X,CollisionContext.AE[0][0],CollisionContext.AE[0][1])) goto exit;
+	if (aabtri_check_basis_axis(box.Extent.X, CollisionContext.AE[0][0], CollisionContext.AE[0][1]))
+		goto exit;
 
 	/*
 	** AXIS_A1
 	*/
-	CollisionContext.TestAxis.Set(0,1,0);
+	CollisionContext.TestAxis.Set(0, 1, 0);
 	CollisionContext.TestAxisId = AXIS_A1;
 	CollisionContext.AE[1][0] = CollisionContext.E[0].Y;
 	CollisionContext.AE[1][1] = CollisionContext.E[1].Y;
-	if (aabtri_check_basis_axis(box.Extent.Y,CollisionContext.AE[1][0],CollisionContext.AE[1][1])) goto exit;
+	if (aabtri_check_basis_axis(box.Extent.Y, CollisionContext.AE[1][0], CollisionContext.AE[1][1]))
+		goto exit;
 
 	/*
 	** AXIS_A2
 	*/
-	CollisionContext.TestAxis.Set(0,0,1);
+	CollisionContext.TestAxis.Set(0, 0, 1);
 	CollisionContext.TestAxisId = AXIS_A2;
 	CollisionContext.AE[2][0] = CollisionContext.E[0].Z;
 	CollisionContext.AE[2][1] = CollisionContext.E[1].Z;
-	if (aabtri_check_basis_axis(box.Extent.Z,CollisionContext.AE[2][0],CollisionContext.AE[2][1])) goto exit;
+	if (aabtri_check_basis_axis(box.Extent.Z, CollisionContext.AE[2][0], CollisionContext.AE[2][1]))
+		goto exit;
 
 	/*
 	** AXIS_A0xE0
 	*/
-	CollisionContext.AxE[0][0].Set(0,-CollisionContext.E[0].Z,CollisionContext.E[0].Y);
-	VERIFY_CROSS(Vector3(1,0,0),CollisionContext.E[0],CollisionContext.AxE[0][0]);
+	CollisionContext.AxE[0][0].Set(0, -CollisionContext.E[0].Z, CollisionContext.E[0].Y);
+	VERIFY_CROSS(Vector3(1, 0, 0), CollisionContext.E[0], CollisionContext.AxE[0][0]);
 	CollisionContext.TestAxis = CollisionContext.AxE[0][0];
 	CollisionContext.TestAxisId = AXIS_A0E0;
-	if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2) {
+	if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2)
+	{
 		dp = CollisionContext.AN[0];
-		leb0 = box.Extent[1]*WWMath::Fabs(CollisionContext.AE[2][0]) + box.Extent[2]*WWMath::Fabs(CollisionContext.AE[1][0]);
-		if (aabtri_check_cross_axis(dp,2,leb0)) goto exit;
+		leb0 = box.Extent[1] * WWMath::Fabs(CollisionContext.AE[2][0]) + box.Extent[2] * WWMath::Fabs(CollisionContext.AE[1][0]);
+		if (aabtri_check_cross_axis(dp, 2, leb0))
+			goto exit;
 	}
 
 	/*
 	** AXIS_A0xE1
 	*/
-	CollisionContext.AxE[0][1].Set(0,-CollisionContext.E[1].Z,CollisionContext.E[1].Y);
-	VERIFY_CROSS(Vector3(1,0,0),CollisionContext.E[1],CollisionContext.AxE[0][1]);
+	CollisionContext.AxE[0][1].Set(0, -CollisionContext.E[1].Z, CollisionContext.E[1].Y);
+	VERIFY_CROSS(Vector3(1, 0, 0), CollisionContext.E[1], CollisionContext.AxE[0][1]);
 	CollisionContext.TestAxis = CollisionContext.AxE[0][1];
 	CollisionContext.TestAxisId = AXIS_A0E1;
-	if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2) {
+	if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2)
+	{
 		dp = -CollisionContext.AN[0];
-		leb0 = box.Extent[1]*WWMath::Fabs(CollisionContext.AE[2][1]) + box.Extent[2]*WWMath::Fabs(CollisionContext.AE[1][1]);
-		if (aabtri_check_cross_axis(dp,1,leb0)) goto exit;
+		leb0 = box.Extent[1] * WWMath::Fabs(CollisionContext.AE[2][1]) + box.Extent[2] * WWMath::Fabs(CollisionContext.AE[1][1]);
+		if (aabtri_check_cross_axis(dp, 1, leb0))
+			goto exit;
 	}
 
 	/*
@@ -674,116 +696,137 @@ bool CollisionMath::Collide
 	CollisionContext.AE[1][2] = CollisionContext.E[2].Y;
 	CollisionContext.AE[2][2] = CollisionContext.E[2].Z;
 
-	CollisionContext.AxE[0][2].Set(0,-CollisionContext.E[2].Z,CollisionContext.E[2].Y);
-	VERIFY_CROSS(Vector3(1,0,0),CollisionContext.E[2],CollisionContext.AxE[0][2]);
+	CollisionContext.AxE[0][2].Set(0, -CollisionContext.E[2].Z, CollisionContext.E[2].Y);
+	VERIFY_CROSS(Vector3(1, 0, 0), CollisionContext.E[2], CollisionContext.AxE[0][2]);
 	CollisionContext.TestAxis = CollisionContext.AxE[0][2];
 	CollisionContext.TestAxisId = AXIS_A0E2;
 
-	if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2) {
+	if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2)
+	{
 		dp = -CollisionContext.AN[0];
-		leb0 = box.Extent[1]*WWMath::Fabs(CollisionContext.AE[2][2]) + box.Extent[2]*WWMath::Fabs(CollisionContext.AE[1][2]);
-		if (aabtri_check_cross_axis(dp,1,leb0)) goto exit;
+		leb0 = box.Extent[1] * WWMath::Fabs(CollisionContext.AE[2][2]) + box.Extent[2] * WWMath::Fabs(CollisionContext.AE[1][2]);
+		if (aabtri_check_cross_axis(dp, 1, leb0))
+			goto exit;
 	}
 
 	/*
 	** AXIS_A1xE0
 	*/
-	CollisionContext.AxE[1][0].Set(CollisionContext.E[0].Z,0,-CollisionContext.E[0].X);
-	VERIFY_CROSS(Vector3(0,1,0),CollisionContext.E[0],CollisionContext.AxE[1][0]);
+	CollisionContext.AxE[1][0].Set(CollisionContext.E[0].Z, 0, -CollisionContext.E[0].X);
+	VERIFY_CROSS(Vector3(0, 1, 0), CollisionContext.E[0], CollisionContext.AxE[1][0]);
 	CollisionContext.TestAxis = CollisionContext.AxE[1][0];
 	CollisionContext.TestAxisId = AXIS_A1E0;
-	if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2) {
+	if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2)
+	{
 		dp = CollisionContext.AN[1];
-		leb0 = box.Extent[0]*WWMath::Fabs(CollisionContext.AE[2][0]) + box.Extent[2]*WWMath::Fabs(CollisionContext.AE[0][0]);
-		if (aabtri_check_cross_axis(dp,2,leb0)) goto exit;
+		leb0 = box.Extent[0] * WWMath::Fabs(CollisionContext.AE[2][0]) + box.Extent[2] * WWMath::Fabs(CollisionContext.AE[0][0]);
+		if (aabtri_check_cross_axis(dp, 2, leb0))
+			goto exit;
 	}
 
 	/*
 	** AXIS_A1xE1
 	*/
-	CollisionContext.AxE[1][1].Set(CollisionContext.E[1].Z,0,-CollisionContext.E[1].X);
-	VERIFY_CROSS(Vector3(0,1,0),CollisionContext.E[1],CollisionContext.AxE[1][1]);
+	CollisionContext.AxE[1][1].Set(CollisionContext.E[1].Z, 0, -CollisionContext.E[1].X);
+	VERIFY_CROSS(Vector3(0, 1, 0), CollisionContext.E[1], CollisionContext.AxE[1][1]);
 	CollisionContext.TestAxis = CollisionContext.AxE[1][1];
 	CollisionContext.TestAxisId = AXIS_A1E1;
-	if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2) {
+	if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2)
+	{
 		dp = -CollisionContext.AN[1];
-		leb0 = box.Extent[0]*WWMath::Fabs(CollisionContext.AE[2][1]) + box.Extent[2]*WWMath::Fabs(CollisionContext.AE[0][1]);
-		if (aabtri_check_cross_axis(dp,1,leb0)) goto exit;
+		leb0 = box.Extent[0] * WWMath::Fabs(CollisionContext.AE[2][1]) + box.Extent[2] * WWMath::Fabs(CollisionContext.AE[0][1]);
+		if (aabtri_check_cross_axis(dp, 1, leb0))
+			goto exit;
 	}
 
 	/*
 	** AXIS_A1xE2
 	*/
-	CollisionContext.AxE[1][2].Set(CollisionContext.E[2].Z,0,-CollisionContext.E[2].X);
-	VERIFY_CROSS(Vector3(0,1,0),CollisionContext.E[2],CollisionContext.AxE[1][2]);
+	CollisionContext.AxE[1][2].Set(CollisionContext.E[2].Z, 0, -CollisionContext.E[2].X);
+	VERIFY_CROSS(Vector3(0, 1, 0), CollisionContext.E[2], CollisionContext.AxE[1][2]);
 	CollisionContext.TestAxis = CollisionContext.AxE[1][2];
 	CollisionContext.TestAxisId = AXIS_A1E2;
-	if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2) {
+	if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2)
+	{
 		dp = -CollisionContext.AN[1];
-		leb0 = box.Extent[0]*WWMath::Fabs(CollisionContext.AE[2][2]) + box.Extent[2]*WWMath::Fabs(CollisionContext.AE[0][2]);
-		if (aabtri_check_cross_axis(dp,1,leb0)) goto exit;
+		leb0 = box.Extent[0] * WWMath::Fabs(CollisionContext.AE[2][2]) + box.Extent[2] * WWMath::Fabs(CollisionContext.AE[0][2]);
+		if (aabtri_check_cross_axis(dp, 1, leb0))
+			goto exit;
 	}
 
 	/*
 	** AXIS_A2xE0
 	*/
-	CollisionContext.AxE[2][0].Set(-CollisionContext.E[0].Y,CollisionContext.E[0].X,0);
-	VERIFY_CROSS(Vector3(0,0,1),CollisionContext.E[0],CollisionContext.AxE[2][0]);
+	CollisionContext.AxE[2][0].Set(-CollisionContext.E[0].Y, CollisionContext.E[0].X, 0);
+	VERIFY_CROSS(Vector3(0, 0, 1), CollisionContext.E[0], CollisionContext.AxE[2][0]);
 	CollisionContext.TestAxis = CollisionContext.AxE[2][0];
 	CollisionContext.TestAxisId = AXIS_A2E0;
-	if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2) {
+	if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2)
+	{
 		dp = CollisionContext.AN[2];
-		leb0 = box.Extent[0]*WWMath::Fabs(CollisionContext.AE[1][0]) + box.Extent[1]*WWMath::Fabs(CollisionContext.AE[0][0]);
-		if (aabtri_check_cross_axis(dp,2,leb0)) goto exit;
+		leb0 = box.Extent[0] * WWMath::Fabs(CollisionContext.AE[1][0]) + box.Extent[1] * WWMath::Fabs(CollisionContext.AE[0][0]);
+		if (aabtri_check_cross_axis(dp, 2, leb0))
+			goto exit;
 	}
 
 	/*
 	** AXIS_A2xE1
 	*/
-	CollisionContext.AxE[2][1].Set(-CollisionContext.E[1].Y,CollisionContext.E[1].X,0);
-	VERIFY_CROSS(Vector3(0,0,1),CollisionContext.E[1],CollisionContext.AxE[2][1]);
+	CollisionContext.AxE[2][1].Set(-CollisionContext.E[1].Y, CollisionContext.E[1].X, 0);
+	VERIFY_CROSS(Vector3(0, 0, 1), CollisionContext.E[1], CollisionContext.AxE[2][1]);
 	CollisionContext.TestAxis = CollisionContext.AxE[2][1];
 	CollisionContext.TestAxisId = AXIS_A2E1;
-	if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2) {
+	if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2)
+	{
 		dp = -CollisionContext.AN[2];
-		leb0 = box.Extent[0]*WWMath::Fabs(CollisionContext.AE[1][1]) + box.Extent[1]*WWMath::Fabs(CollisionContext.AE[0][1]);
-		if (aabtri_check_cross_axis(dp,1,leb0)) goto exit;
+		leb0 = box.Extent[0] * WWMath::Fabs(CollisionContext.AE[1][1]) + box.Extent[1] * WWMath::Fabs(CollisionContext.AE[0][1]);
+		if (aabtri_check_cross_axis(dp, 1, leb0))
+			goto exit;
 	}
 
 	/*
 	** AXIS_A2xE2
 	*/
-	CollisionContext.AxE[2][2].Set(-CollisionContext.E[2].Y,CollisionContext.E[2].X,0);
-	VERIFY_CROSS(Vector3(0,0,1),CollisionContext.E[2],CollisionContext.AxE[2][2]);
+	CollisionContext.AxE[2][2].Set(-CollisionContext.E[2].Y, CollisionContext.E[2].X, 0);
+	VERIFY_CROSS(Vector3(0, 0, 1), CollisionContext.E[2], CollisionContext.AxE[2][2]);
 	CollisionContext.TestAxis = CollisionContext.AxE[2][2];
 	CollisionContext.TestAxisId = AXIS_A2E2;
-	if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2) {
+	if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2)
+	{
 		dp = -CollisionContext.AN[2];
-		leb0 = box.Extent[0]*WWMath::Fabs(CollisionContext.AE[1][2]) + box.Extent[1]*WWMath::Fabs(CollisionContext.AE[0][2]);
-		if (aabtri_check_cross_axis(dp,1,leb0)) goto exit;
+		leb0 = box.Extent[0] * WWMath::Fabs(CollisionContext.AE[1][2]) + box.Extent[1] * WWMath::Fabs(CollisionContext.AE[0][2]);
+		if (aabtri_check_cross_axis(dp, 1, leb0))
+			goto exit;
 	}
 
 	/*
 	** Last ditch effort, check an axis based on the move vector
 	*/
-	if (!CollisionContext.StartBad) {
+	if (!CollisionContext.StartBad)
+	{
 		CollisionContext.TestPoint = CollisionContext.Point;
 		CollisionContext.TestAxisId = CollisionContext.AxisId;
 
-		CollisionContext.TestAxis.Set(0,-CollisionContext.Move.Z,CollisionContext.Move.Y);						// A0 X Move
-		VERIFY_CROSS(Vector3(1,0,0),CollisionContext.Move,CollisionContext.TestAxis);
-		if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2) {
-			if (aabtri_check_axis()) goto exit;
+		CollisionContext.TestAxis.Set(0, -CollisionContext.Move.Z, CollisionContext.Move.Y); // A0 X Move
+		VERIFY_CROSS(Vector3(1, 0, 0), CollisionContext.Move, CollisionContext.TestAxis);
+		if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2)
+		{
+			if (aabtri_check_axis())
+				goto exit;
 		}
-		CollisionContext.TestAxis.Set(CollisionContext.Move.Z,0,-CollisionContext.Move.X);						// A1 X Move
-		VERIFY_CROSS(Vector3(0,1,0),CollisionContext.Move,CollisionContext.TestAxis);
-		if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2) {
-			if (aabtri_check_axis()) goto exit;
+		CollisionContext.TestAxis.Set(CollisionContext.Move.Z, 0, -CollisionContext.Move.X); // A1 X Move
+		VERIFY_CROSS(Vector3(0, 1, 0), CollisionContext.Move, CollisionContext.TestAxis);
+		if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2)
+		{
+			if (aabtri_check_axis())
+				goto exit;
 		}
-		CollisionContext.TestAxis.Set(-CollisionContext.Move.Y,CollisionContext.Move.X,0);						// A2 X Move
-		VERIFY_CROSS(Vector3(0,0,1),CollisionContext.Move,CollisionContext.TestAxis);
-		if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2) {
-			if (aabtri_check_axis()) goto exit;
+		CollisionContext.TestAxis.Set(-CollisionContext.Move.Y, CollisionContext.Move.X, 0); // A2 X Move
+		VERIFY_CROSS(Vector3(0, 0, 1), CollisionContext.Move, CollisionContext.TestAxis);
+		if (CollisionContext.TestAxis.Length2() > AXISLEN_EPSILON2)
+		{
+			if (aabtri_check_axis())
+				goto exit;
 		}
 	}
 
@@ -793,7 +836,8 @@ exit:
 	** If MaxFrac is less than zero, clamp it to zero.  Negative fractions can
 	** leak through this routine due to the epsilon in the separation test.
 	*/
-	if (CollisionContext.MaxFrac < 0.0f) {
+	if (CollisionContext.MaxFrac < 0.0f)
+	{
 		CollisionContext.MaxFrac = 0.0f;
 	}
 
@@ -801,7 +845,8 @@ exit:
 	** If the triangle and box are intersecting before the move, return that
 	** result.
 	*/
-	if (CollisionContext.StartBad) {
+	if (CollisionContext.StartBad)
+	{
 		result->StartBad = true;
 		result->Fraction = 0.0f;
 		result->Normal = *tri.N;
@@ -814,24 +859,24 @@ exit:
 	** another polygon, try to pick the polygon which is least "edge-on" to the
 	** move.
 	*/
-	if ((CollisionContext.MaxFrac <= result->Fraction) && (CollisionContext.MaxFrac < 1.0f)) {
-
+	if ((CollisionContext.MaxFrac <= result->Fraction) && (CollisionContext.MaxFrac < 1.0f))
+	{
 		/*
 		** Reflect the normal if it is pointing the same way as our move
 		** (probably hitting the back side of a polygon)
 		*/
-		Vector3 tmp_norm(0.0f,0.0f,0.0f);
+		Vector3 tmp_norm(0.0f, 0.0f, 0.0f);
 		aabtri_compute_contact_normal(tmp_norm);
-//		if (Vector3::Dot_Product(tmp_norm,move) > 0.0f) {
-//			tmp_norm = -tmp_norm;
-//		}
+		//		if (Vector3::Dot_Product(tmp_norm,move) > 0.0f) {
+		//			tmp_norm = -tmp_norm;
+		//		}
 
 		/*
 		** If this polygon cuts off more of the move -OR- this polygon cuts
 		** of the same amount but has a "better" normal, then use this normal
 		*/
-		if (	(WWMath::Fabs(CollisionContext.MaxFrac - result->Fraction) > WWMATH_EPSILON) ||
-				(Vector3::Dot_Product(tmp_norm,move) < Vector3::Dot_Product(result->Normal,move)))
+		if ((WWMath::Fabs(CollisionContext.MaxFrac - result->Fraction) > WWMATH_EPSILON)
+				|| (Vector3::Dot_Product(tmp_norm, move) < Vector3::Dot_Product(result->Normal, move)))
 		{
 			result->Normal = tmp_norm;
 			WWASSERT(WWMath::Fabs(result->Normal.Length() - 1.0f) < WWMATH_EPSILON);
@@ -846,8 +891,6 @@ exit:
 	return false;
 }
 
-
-
 /*
 ** AABTIntersectStruct
 ** Scratchpad variables for the AABox-Triangle intersection functions.  One instance
@@ -859,45 +902,38 @@ exit:
 */
 struct AABTIntersectStruct
 {
-	AABTIntersectStruct(void) :
-		Box(NULL),
-		Tri(NULL)
-	{
-	}
+	AABTIntersectStruct(void) : Box(NULL), Tri(NULL) {}
 
-	void Init(const AABoxClass &box,const TriClass &tri)
+	void Init(const AABoxClass &box, const TriClass &tri)
 	{
 		Box = &box;
 		Tri = &tri;
-		Vector3::Subtract(*tri.V[0],box.Center,&D);				// vector from center of box to vertex 0
-		Vector3::Subtract(*tri.V[1],*tri.V[0],&E[0]);
-		Vector3::Subtract(*tri.V[2],*tri.V[0],&E[1]);
-		Vector3::Subtract(E[1],E[0],&E[2]);
+		Vector3::Subtract(*tri.V[0], box.Center, &D); // vector from center of box to vertex 0
+		Vector3::Subtract(*tri.V[1], *tri.V[0], &E[0]);
+		Vector3::Subtract(*tri.V[2], *tri.V[0], &E[1]);
+		Vector3::Subtract(E[1], E[0], &E[2]);
 
-		Vector3::Cross_Product(E[0],E[1],&N);
+		Vector3::Cross_Product(E[0], E[1], &N);
 	}
 
+	Vector3 D; // Vector from the center of the box to v0
+	float AE[3][3]; // Dot products of the Basis vectors and edges
+	float AN[3]; // Dot products of the Basis vectors and the normal
+	Vector3 AxE[3][3]; // Cross produts of the Basis vectors and edges
 
-	Vector3					D;						// Vector from the center of the box to v0
-	float						AE[3][3];			// Dot products of the Basis vectors and edges
-	float						AN[3];				// Dot products of the Basis vectors and the normal
-	Vector3					AxE[3][3];			// Cross produts of the Basis vectors and edges
+	Vector3 E[3]; // edge vectors for the triangle
+	Vector3 N; // normal (NOT normalized!!!)
 
-	Vector3					E[3];					// edge vectors for the triangle
-	Vector3					N;						// normal (NOT normalized!!!)
-
-	const AABoxClass *	Box;
-	const TriClass *		Tri;
+	const AABoxClass *Box;
+	const TriClass *Tri;
 
 private:
-
 	// not implemented
 	AABTIntersectStruct(const AABTIntersectStruct &);
-	AABTIntersectStruct & operator = (const AABTIntersectStruct &);
+	AABTIntersectStruct &operator=(const AABTIntersectStruct &);
 };
 
 static AABTIntersectStruct IntersectContext;
-
 
 /***********************************************************************************************
  * aabtri_intersect_cross_axis -- intersection check for a "cross-product" axis                *
@@ -913,20 +949,16 @@ static AABTIntersectStruct IntersectContext;
  * HISTORY:                                                                                    *
  *   5/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-static inline bool aabtri_intersect_cross_axis
-(
-	Vector3 &					axis,
-	float							dp,
-	float							leb0
-)
+static inline bool aabtri_intersect_cross_axis(Vector3 &axis, float dp, float leb0)
 {
-	float		p0;						// distance from box center to vertex 0
-	float		lp;						// leading edge of the polygon.
+	float p0; // distance from box center to vertex 0
+	float lp; // leading edge of the polygon.
 
-	p0 = Vector3::Dot_Product(IntersectContext.D,axis);
+	p0 = Vector3::Dot_Product(IntersectContext.D, axis);
 
 	// I want the axis centered at the box, pointing towards the triangle
-	if (p0 < 0) {
+	if (p0 < 0)
+	{
 		p0 = -p0;
 		axis = -axis;
 		dp = -dp;
@@ -934,12 +966,14 @@ static inline bool aabtri_intersect_cross_axis
 
 	// compute coordinate of "leading edge of the triangle" relative to the box center.
 	lp = 0;
-	if (dp < 0) { lp = dp; }
+	if (dp < 0)
+	{
+		lp = dp;
+	}
 	lp = p0 + lp;
 
 	return (lp - leb0 > -WWMATH_EPSILON);
 }
-
 
 /***********************************************************************************************
  * aabtri_intersect_basis_axis -- intersection check for a basis axis                          *
@@ -955,21 +989,16 @@ static inline bool aabtri_intersect_cross_axis
  * HISTORY:                                                                                    *
  *   5/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-static inline bool aabtri_intersect_basis_axis
-(
-	Vector3 &					axis,
-	float							leb0,
-	float							dp1,
-	float							dp2
-)
+static inline bool aabtri_intersect_basis_axis(Vector3 &axis, float leb0, float dp1, float dp2)
 {
-	float		dist;						// separation along the axis
-	float		lp;						// leading edge of the polygon.
+	float dist; // separation along the axis
+	float lp; // leading edge of the polygon.
 
-	dist = Vector3::Dot_Product(IntersectContext.D,axis);
+	dist = Vector3::Dot_Product(IntersectContext.D, axis);
 
 	// we want the axis centered at the box, pointing towards the triangle
-	if (dist < 0) {
+	if (dist < 0)
+	{
 		dist = -dist;
 		axis = -axis;
 		dp1 = -dp1;
@@ -978,13 +1007,18 @@ static inline bool aabtri_intersect_basis_axis
 
 	// compute coordinate of "leading edge of the polygon" relative to the box center.
 	lp = 0;
-	if (dp1 < lp) { lp = dp1; }
-	if (dp2 < lp) { lp = dp2; }
+	if (dp1 < lp)
+	{
+		lp = dp1;
+	}
+	if (dp2 < lp)
+	{
+		lp = dp2;
+	}
 	lp = dist + lp;
 
 	return (lp - leb0 > -WWMATH_EPSILON);
 }
-
 
 /***********************************************************************************************
  * aabtri_intersect_normal_axis -- intersection check for the triangle normal                  *
@@ -1000,31 +1034,28 @@ static inline bool aabtri_intersect_basis_axis
  * HISTORY:                                                                                    *
  *   5/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-static inline bool aabtri_intersect_normal_axis
-(
-	Vector3 &					axis
-)
+static inline bool aabtri_intersect_normal_axis(Vector3 &axis)
 {
-	float		dist;						// separation along the axis
-	float		leb0;						// initial coordinate of the leading edge of the box
-	float		lp;						// leading edge of the polygon.
+	float dist; // separation along the axis
+	float leb0; // initial coordinate of the leading edge of the box
+	float lp; // leading edge of the polygon.
 
-	dist = Vector3::Dot_Product(IntersectContext.D,axis);
+	dist = Vector3::Dot_Product(IntersectContext.D, axis);
 
 	// we want the axis centered at the box, pointing towards the triangle
-	if (dist < 0) {
+	if (dist < 0)
+	{
 		dist = -dist;
 		axis = -axis;
 	}
 
-	leb0 =	IntersectContext.Box->Extent.X * WWMath::Fabs(IntersectContext.AN[0]) +
-				IntersectContext.Box->Extent.Y * WWMath::Fabs(IntersectContext.AN[1]) +
-				IntersectContext.Box->Extent.Z * WWMath::Fabs(IntersectContext.AN[2]);
-	lp = dist;	// this is the "optimization", don't have to find lp
+	leb0 = IntersectContext.Box->Extent.X * WWMath::Fabs(IntersectContext.AN[0])
+			+ IntersectContext.Box->Extent.Y * WWMath::Fabs(IntersectContext.AN[1])
+			+ IntersectContext.Box->Extent.Z * WWMath::Fabs(IntersectContext.AN[2]);
+	lp = dist; // this is the "optimization", don't have to find lp
 
 	return (lp - leb0 > -WWMATH_EPSILON);
 }
-
 
 /***********************************************************************************************
  * CollisionMath::Intersection_Test -- Intersection check for an AABox and a triangle          *
@@ -1038,12 +1069,12 @@ static inline bool aabtri_intersect_normal_axis
  * HISTORY:                                                                                    *
  *   1/20/00    gth : copied from OBBox version and removed some Dot-products                  *
  *=============================================================================================*/
-bool CollisionMath::Intersection_Test(const AABoxClass & box,const TriClass & tri)
+bool CollisionMath::Intersection_Test(const AABoxClass &box, const TriClass &tri)
 {
 	Vector3 axis;
-	float dp,leb0;
+	float dp, leb0;
 
-	IntersectContext.Init(box,tri);
+	IntersectContext.Init(box, tri);
 
 	/*
 	** AXIS_N
@@ -1052,132 +1083,154 @@ bool CollisionMath::Intersection_Test(const AABoxClass & box,const TriClass & tr
 	IntersectContext.AN[0] = IntersectContext.N.X;
 	IntersectContext.AN[1] = IntersectContext.N.Y;
 	IntersectContext.AN[2] = IntersectContext.N.Z;
-	if (aabtri_intersect_normal_axis(axis)) return false;
+	if (aabtri_intersect_normal_axis(axis))
+		return false;
 
 	/*
 	** AXIS_A0
 	*/
-	axis.Set(1,0,0);
+	axis.Set(1, 0, 0);
 	IntersectContext.AE[0][0] = IntersectContext.E[0].X;
 	IntersectContext.AE[0][1] = IntersectContext.E[1].Y;
-	if (aabtri_intersect_basis_axis(axis,box.Extent.X,IntersectContext.AE[0][0],IntersectContext.AE[0][1])) return false;
+	if (aabtri_intersect_basis_axis(axis, box.Extent.X, IntersectContext.AE[0][0], IntersectContext.AE[0][1]))
+		return false;
 
 	/*
 	** AXIS_A1
 	*/
-	axis.Set(0,1,0);
+	axis.Set(0, 1, 0);
 	IntersectContext.AE[1][0] = IntersectContext.E[0].Y;
 	IntersectContext.AE[1][1] = IntersectContext.E[1].Y;
-	if (aabtri_intersect_basis_axis(axis,box.Extent.Y,IntersectContext.AE[1][0],IntersectContext.AE[1][1])) return false;
+	if (aabtri_intersect_basis_axis(axis, box.Extent.Y, IntersectContext.AE[1][0], IntersectContext.AE[1][1]))
+		return false;
 
 	/*
 	** AXIS_A2
 	*/
-	axis.Set(0,0,1);
+	axis.Set(0, 0, 1);
 	IntersectContext.AE[2][0] = IntersectContext.E[0].Z;
 	IntersectContext.AE[2][1] = IntersectContext.E[1].Z;
-	if (aabtri_intersect_basis_axis(axis,box.Extent.Z,IntersectContext.AE[2][0],IntersectContext.AE[2][1])) return false;
+	if (aabtri_intersect_basis_axis(axis, box.Extent.Z, IntersectContext.AE[2][0], IntersectContext.AE[2][1]))
+		return false;
 
 	/*
 	** AXIS_A0xE0
 	*/
-	Vector3::Cross_Product(Vector3(1,0,0),IntersectContext.E[0],&IntersectContext.AxE[0][0]);
+	Vector3::Cross_Product(Vector3(1, 0, 0), IntersectContext.E[0], &IntersectContext.AxE[0][0]);
 	axis = IntersectContext.AxE[0][0];
-	if (axis.Length2() > AXISLEN_EPSILON2) {
+	if (axis.Length2() > AXISLEN_EPSILON2)
+	{
 		dp = IntersectContext.AN[0];
-		leb0 = box.Extent[1]*WWMath::Fabs(IntersectContext.AE[2][0]) + box.Extent[2]*WWMath::Fabs(IntersectContext.AE[1][0]);
-		if (aabtri_intersect_cross_axis(axis,dp,leb0)) return false;
+		leb0 = box.Extent[1] * WWMath::Fabs(IntersectContext.AE[2][0]) + box.Extent[2] * WWMath::Fabs(IntersectContext.AE[1][0]);
+		if (aabtri_intersect_cross_axis(axis, dp, leb0))
+			return false;
 	}
 
 	/*
 	** AXIS_A0xE1
 	*/
-	Vector3::Cross_Product(Vector3(1,0,0),IntersectContext.E[1],&IntersectContext.AxE[0][1]);
+	Vector3::Cross_Product(Vector3(1, 0, 0), IntersectContext.E[1], &IntersectContext.AxE[0][1]);
 	axis = IntersectContext.AxE[0][1];
-	if (axis.Length2() > AXISLEN_EPSILON2) {
+	if (axis.Length2() > AXISLEN_EPSILON2)
+	{
 		dp = -IntersectContext.AN[0];
-		leb0 = box.Extent[1]*WWMath::Fabs(IntersectContext.AE[2][1]) + box.Extent[2]*WWMath::Fabs(IntersectContext.AE[1][1]);
-		if (aabtri_intersect_cross_axis(axis,dp,leb0)) return false;
+		leb0 = box.Extent[1] * WWMath::Fabs(IntersectContext.AE[2][1]) + box.Extent[2] * WWMath::Fabs(IntersectContext.AE[1][1]);
+		if (aabtri_intersect_cross_axis(axis, dp, leb0))
+			return false;
 	}
 
 	/*
 	** AXIS_A0xE2
 	*/
-	Vector3::Cross_Product(Vector3(1,0,0),IntersectContext.E[2],&IntersectContext.AxE[0][2]);
+	Vector3::Cross_Product(Vector3(1, 0, 0), IntersectContext.E[2], &IntersectContext.AxE[0][2]);
 	axis = IntersectContext.AxE[0][2];
 	IntersectContext.AE[1][2] = IntersectContext.E[2].Y;
 	IntersectContext.AE[2][2] = IntersectContext.E[2].Z;
-	if (axis.Length2() > AXISLEN_EPSILON2) {
+	if (axis.Length2() > AXISLEN_EPSILON2)
+	{
 		dp = -IntersectContext.AN[0];
-		leb0 = box.Extent[1]*WWMath::Fabs(IntersectContext.AE[2][2]) + box.Extent[2]*WWMath::Fabs(IntersectContext.AE[1][2]);
-		if (aabtri_intersect_cross_axis(axis,dp,leb0)) return false;
+		leb0 = box.Extent[1] * WWMath::Fabs(IntersectContext.AE[2][2]) + box.Extent[2] * WWMath::Fabs(IntersectContext.AE[1][2]);
+		if (aabtri_intersect_cross_axis(axis, dp, leb0))
+			return false;
 	}
 
 	/*
 	** AXIS_A1xE0
 	*/
-	Vector3::Cross_Product(Vector3(0,1,0),IntersectContext.E[0],&IntersectContext.AxE[1][0]);
+	Vector3::Cross_Product(Vector3(0, 1, 0), IntersectContext.E[0], &IntersectContext.AxE[1][0]);
 	axis = IntersectContext.AxE[1][0];
-	if (axis.Length2() > AXISLEN_EPSILON2) {
+	if (axis.Length2() > AXISLEN_EPSILON2)
+	{
 		dp = IntersectContext.AN[1];
-		leb0 = box.Extent[0]*WWMath::Fabs(IntersectContext.AE[2][0]) + box.Extent[2]*WWMath::Fabs(IntersectContext.AE[0][0]);
-		if (aabtri_intersect_cross_axis(axis,dp,leb0)) return false;
+		leb0 = box.Extent[0] * WWMath::Fabs(IntersectContext.AE[2][0]) + box.Extent[2] * WWMath::Fabs(IntersectContext.AE[0][0]);
+		if (aabtri_intersect_cross_axis(axis, dp, leb0))
+			return false;
 	}
 
 	/*
 	** AXIS_A1xE1
 	*/
-	Vector3::Cross_Product(Vector3(0,1,0),IntersectContext.E[1],&IntersectContext.AxE[1][1]);
+	Vector3::Cross_Product(Vector3(0, 1, 0), IntersectContext.E[1], &IntersectContext.AxE[1][1]);
 	axis = IntersectContext.AxE[1][1];
-	if (axis.Length2() > AXISLEN_EPSILON2) {
+	if (axis.Length2() > AXISLEN_EPSILON2)
+	{
 		dp = -IntersectContext.AN[1];
-		leb0 = box.Extent[0]*WWMath::Fabs(IntersectContext.AE[2][1]) + box.Extent[2]*WWMath::Fabs(IntersectContext.AE[0][1]);
-		if (aabtri_intersect_cross_axis(axis,dp,leb0)) return false;
+		leb0 = box.Extent[0] * WWMath::Fabs(IntersectContext.AE[2][1]) + box.Extent[2] * WWMath::Fabs(IntersectContext.AE[0][1]);
+		if (aabtri_intersect_cross_axis(axis, dp, leb0))
+			return false;
 	}
 
 	/*
 	** AXIS_A1xE2
 	*/
-	Vector3::Cross_Product(Vector3(0,1,0),IntersectContext.E[2],&IntersectContext.AxE[1][2]);
+	Vector3::Cross_Product(Vector3(0, 1, 0), IntersectContext.E[2], &IntersectContext.AxE[1][2]);
 	axis = IntersectContext.AxE[1][2];
 	IntersectContext.AE[0][2] = IntersectContext.E[2].X;
-	if (axis.Length2() > AXISLEN_EPSILON2) {
+	if (axis.Length2() > AXISLEN_EPSILON2)
+	{
 		dp = -IntersectContext.AN[1];
-		leb0 = box.Extent[0]*WWMath::Fabs(IntersectContext.AE[2][2]) + box.Extent[2]*WWMath::Fabs(IntersectContext.AE[0][2]);
-		if (aabtri_intersect_cross_axis(axis,dp,leb0)) return false;
+		leb0 = box.Extent[0] * WWMath::Fabs(IntersectContext.AE[2][2]) + box.Extent[2] * WWMath::Fabs(IntersectContext.AE[0][2]);
+		if (aabtri_intersect_cross_axis(axis, dp, leb0))
+			return false;
 	}
 
 	/*
 	** AXIS_A2xE0
 	*/
-	Vector3::Cross_Product(Vector3(0,0,1),IntersectContext.E[0],&IntersectContext.AxE[2][0]);
+	Vector3::Cross_Product(Vector3(0, 0, 1), IntersectContext.E[0], &IntersectContext.AxE[2][0]);
 	axis = IntersectContext.AxE[2][0];
-	if (axis.Length2() > AXISLEN_EPSILON2) {
+	if (axis.Length2() > AXISLEN_EPSILON2)
+	{
 		dp = IntersectContext.AN[2];
-		leb0 = box.Extent[0]*WWMath::Fabs(IntersectContext.AE[1][0]) + box.Extent[1]*WWMath::Fabs(IntersectContext.AE[0][0]);
-		if (aabtri_intersect_cross_axis(axis,dp,leb0)) return false;
+		leb0 = box.Extent[0] * WWMath::Fabs(IntersectContext.AE[1][0]) + box.Extent[1] * WWMath::Fabs(IntersectContext.AE[0][0]);
+		if (aabtri_intersect_cross_axis(axis, dp, leb0))
+			return false;
 	}
 
 	/*
 	** AXIS_A2xE1
 	*/
-	Vector3::Cross_Product(Vector3(0,0,1),IntersectContext.E[1],&IntersectContext.AxE[2][1]);
+	Vector3::Cross_Product(Vector3(0, 0, 1), IntersectContext.E[1], &IntersectContext.AxE[2][1]);
 	axis = IntersectContext.AxE[2][1];
-	if (axis.Length2() > AXISLEN_EPSILON2) {
+	if (axis.Length2() > AXISLEN_EPSILON2)
+	{
 		dp = -IntersectContext.AN[2];
-		leb0 = box.Extent[0]*WWMath::Fabs(IntersectContext.AE[1][1]) + box.Extent[1]*WWMath::Fabs(IntersectContext.AE[0][1]);
-		if (aabtri_intersect_cross_axis(axis,dp,leb0)) return false;
+		leb0 = box.Extent[0] * WWMath::Fabs(IntersectContext.AE[1][1]) + box.Extent[1] * WWMath::Fabs(IntersectContext.AE[0][1]);
+		if (aabtri_intersect_cross_axis(axis, dp, leb0))
+			return false;
 	}
 
 	/*
 	** AXIS_A2xE2
 	*/
-	Vector3::Cross_Product(Vector3(0,0,1),IntersectContext.E[2],&IntersectContext.AxE[2][2]);
+	Vector3::Cross_Product(Vector3(0, 0, 1), IntersectContext.E[2], &IntersectContext.AxE[2][2]);
 	axis = IntersectContext.AxE[2][2];
-	if (axis.Length2() > AXISLEN_EPSILON2) {
+	if (axis.Length2() > AXISLEN_EPSILON2)
+	{
 		dp = -IntersectContext.AN[2];
-		leb0 = box.Extent[0]*WWMath::Fabs(IntersectContext.AE[1][2]) + box.Extent[1]*WWMath::Fabs(IntersectContext.AE[0][2]);
-		if (aabtri_intersect_cross_axis(axis,dp,leb0)) return false;
+		leb0 = box.Extent[0] * WWMath::Fabs(IntersectContext.AE[1][2]) + box.Extent[1] * WWMath::Fabs(IntersectContext.AE[0][2]);
+		if (aabtri_intersect_cross_axis(axis, dp, leb0))
+			return false;
 	}
 
 	return true;

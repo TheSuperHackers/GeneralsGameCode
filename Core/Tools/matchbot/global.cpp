@@ -22,7 +22,8 @@
 GlobalClass Global;
 
 GlobalClass::GlobalClass(void)
-{}
+{
+}
 
 bool GlobalClass::ReadFile(const char *fname)
 {
@@ -35,7 +36,7 @@ bool GlobalClass::ReadFile(const char *fname)
 	return true;
 }
 
-bool GlobalClass::GetString(const Wstring& key, Wstring& val)
+bool GlobalClass::GetString(const Wstring &key, Wstring &val)
 {
 	val = "";
 	config.getString(key, val, "STRINGS");
@@ -46,6 +47,4 @@ bool GlobalClass::GetString(const Wstring& key, Wstring& val)
 	}
 
 	return true;
-
 }
-

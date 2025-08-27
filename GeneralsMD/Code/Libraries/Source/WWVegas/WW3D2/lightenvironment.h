@@ -47,10 +47,8 @@
 #include "always.h"
 #include "vector3.h"
 
-
 class Matrix3D;
 class LightClass;
-
 
 /**
 ** LightEnvironmentClass
@@ -73,7 +71,6 @@ class LightClass;
 class LightEnvironmentClass
 {
 public:
-
 	LightEnvironmentClass(void);
 	~LightEnvironmentClass(void);
 
@@ -88,97 +85,99 @@ public:
 	** - Reset and collect the lights once and keep this object around
 	** - When ready to render, call Pre_Render_Update and push into the gerd.
 	*/
-	void					Reset(const Vector3 & object_center,const Vector3 & scene_ambient);
-	void					Add_Light(const LightClass & light);
-	void					Pre_Render_Update(const Matrix3D & camera_tm);
-	void					Add_Fill_Light(void);
-	void					Calculate_Fill_Light(void);
-	void					Set_Fill_Intensity(float intensity)			{ FillIntensity = intensity; }
+	void Reset(const Vector3 &object_center, const Vector3 &scene_ambient);
+	void Add_Light(const LightClass &light);
+	void Pre_Render_Update(const Matrix3D &camera_tm);
+	void Add_Fill_Light(void);
+	void Calculate_Fill_Light(void);
+	void Set_Fill_Intensity(float intensity) { FillIntensity = intensity; }
 
 	/*
 	** Accessors
 	*/
-	const Vector3 &	Get_Equivalent_Ambient(void) const			{ return OutputAmbient; }
-	void Set_Output_Ambient(Vector3& oa) { OutputAmbient = oa; }
-	int					Get_Light_Count(void) const					{ return LightCount; }
-	const Vector3 &	Get_Light_Direction(int i)	const				{ return InputLights[i].Direction; }
-	const Vector3 &	Get_Light_Diffuse(int i) const				{ return InputLights[i].Diffuse; }
+	const Vector3 &Get_Equivalent_Ambient(void) const { return OutputAmbient; }
+	void Set_Output_Ambient(Vector3 &oa) { OutputAmbient = oa; }
+	int Get_Light_Count(void) const { return LightCount; }
+	const Vector3 &Get_Light_Direction(int i) const { return InputLights[i].Direction; }
+	const Vector3 &Get_Light_Diffuse(int i) const { return InputLights[i].Diffuse; }
 
-	bool isPointLight(int i) const {return InputLights[i].m_point;}
-	float getPointIrad(int i) const {return InputLights[i].m_innerRadius;}
-	float getPointOrad(int i) const {return InputLights[i].m_outerRadius;}
-	const Vector3 &	getPointDiffuse(int i) const				{ return InputLights[i].m_diffuse; }
-	const Vector3 &	getPointAmbient(int i) const				{ return InputLights[i].m_ambient; }
- 	const Vector3 &	getPointCenter(int i)	const				{ return InputLights[i].m_center; }
+	bool isPointLight(int i) const { return InputLights[i].m_point; }
+	float getPointIrad(int i) const { return InputLights[i].m_innerRadius; }
+	float getPointOrad(int i) const { return InputLights[i].m_outerRadius; }
+	const Vector3 &getPointDiffuse(int i) const { return InputLights[i].m_diffuse; }
+	const Vector3 &getPointAmbient(int i) const { return InputLights[i].m_ambient; }
+	const Vector3 &getPointCenter(int i) const { return InputLights[i].m_center; }
 
 	/*
 	** Lighting LOD.  This is a static setting that is used to convert weak diffuse lights
 	** into pure ambient lights.
 	*/
-	static void			Set_Lighting_LOD_Cutoff(float inten);
-	static float		Get_Lighting_LOD_Cutoff(void);
+	static void Set_Lighting_LOD_Cutoff(float inten);
+	static float Get_Lighting_LOD_Cutoff(void);
 
-	static int			Get_Max_Lights() { return MAX_LIGHTS; }
-	enum { MAX_LIGHTS = 4 };	//Made this public, so other code can tell how many lights are allowed. - MW
-
-	inline bool operator== (const LightEnvironmentClass& that) const
+	static int Get_Max_Lights() { return MAX_LIGHTS; }
+	enum
 	{
-		if (LightCount!=that.LightCount) return false;
-		bool dif=!(ObjectCenter==that.ObjectCenter);
-		dif|=OutputAmbient!=that.OutputAmbient;
-		for (int i=0;i<LightCount;++i) {
-			dif|=!(OutputLights[i].Diffuse==that.OutputLights[i].Diffuse);
-			dif|=!(OutputLights[i].Direction==that.OutputLights[i].Direction);
-			if (dif) return false;
+		MAX_LIGHTS = 4
+	}; // Made this public, so other code can tell how many lights are allowed. - MW
+
+	inline bool operator==(const LightEnvironmentClass &that) const
+	{
+		if (LightCount != that.LightCount)
+			return false;
+		bool dif = !(ObjectCenter == that.ObjectCenter);
+		dif |= OutputAmbient != that.OutputAmbient;
+		for (int i = 0; i < LightCount; ++i)
+		{
+			dif |= !(OutputLights[i].Diffuse == that.OutputLights[i].Diffuse);
+			dif |= !(OutputLights[i].Direction == that.OutputLights[i].Direction);
+			if (dif)
+				return false;
 		}
 		return true;
 	}
 
 protected:
-
 	struct InputLightStruct
 	{
-		void				Init(const LightClass & light,const Vector3 & object_center);
-		void				Init_From_Point_Or_Spot_Light(const LightClass & light,const Vector3 & object_center);
-		void				Init_From_Directional_Light(const LightClass & light,const Vector3 & object_center);
-		float				Contribution(void);
+		void Init(const LightClass &light, const Vector3 &object_center);
+		void Init_From_Point_Or_Spot_Light(const LightClass &light, const Vector3 &object_center);
+		void Init_From_Directional_Light(const LightClass &light, const Vector3 &object_center);
+		float Contribution(void);
 
-		Vector3			Direction;
-		Vector3			Ambient;
-		Vector3			Diffuse;
-		bool				DiffuseRejected;
+		Vector3 Direction;
+		Vector3 Ambient;
+		Vector3 Diffuse;
+		bool DiffuseRejected;
 
-		bool				m_point;
-		Vector3			m_center;
-		float				m_innerRadius;
-		float				m_outerRadius;
-		Vector3			m_ambient;
-		Vector3			m_diffuse;
-
+		bool m_point;
+		Vector3 m_center;
+		float m_innerRadius;
+		float m_outerRadius;
+		Vector3 m_ambient;
+		Vector3 m_diffuse;
 	};
 
 	struct OutputLightStruct
 	{
-		void				Init(const InputLightStruct & input,const Matrix3D & camera_tm);
+		void Init(const InputLightStruct &input, const Matrix3D &camera_tm);
 
-		Vector3			Direction;						// direction to the light.
-		Vector3			Diffuse;							// diffuse color * attenuation
+		Vector3 Direction; // direction to the light.
+		Vector3 Diffuse; // diffuse color * attenuation
 	};
 
 	/*
 	** Member variables
 	*/
-	int					LightCount;
-	Vector3				ObjectCenter;					// center of the object to be lit
-	InputLightStruct	InputLights[MAX_LIGHTS];	// Sorted list of input lights from the greatest contributor to the least
+	int LightCount;
+	Vector3 ObjectCenter; // center of the object to be lit
+	InputLightStruct InputLights[MAX_LIGHTS]; // Sorted list of input lights from the greatest contributor to the least
 
-	Vector3				OutputAmbient;					// scene ambient + lights' ambients
-	OutputLightStruct	OutputLights[MAX_LIGHTS];	// ouput lights
+	Vector3 OutputAmbient; // scene ambient + lights' ambients
+	OutputLightStruct OutputLights[MAX_LIGHTS]; // ouput lights
 
-	InputLightStruct 	FillLight;						// Used to store the calculated fill light
-	float					FillIntensity;					// Used to determine how strong the fill light should be
+	InputLightStruct FillLight; // Used to store the calculated fill light
+	float FillIntensity; // Used to determine how strong the fill light should be
 };
 
-
-#endif //LIGHTENVIRONMENT_H
-
+#endif // LIGHTENVIRONMENT_H

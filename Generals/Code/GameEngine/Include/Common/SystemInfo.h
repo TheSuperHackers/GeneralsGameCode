@@ -33,6 +33,4 @@
 
 extern const Bool TheSystemIsUnicode;
 
-
-
 #endif /* __SYSTEMINFO_H__ */

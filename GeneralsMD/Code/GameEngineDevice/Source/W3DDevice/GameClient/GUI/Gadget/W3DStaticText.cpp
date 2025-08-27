@@ -60,8 +60,8 @@
 // PRIVATE TYPES //////////////////////////////////////////////////////////////
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////
-//enum { DRAW_BUF_LEN = 2048 };
-//static WideChar drawBuf[ DRAW_BUF_LEN ];
+// enum { DRAW_BUF_LEN = 2048 };
+// static WideChar drawBuf[ DRAW_BUF_LEN ];
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 
@@ -74,8 +74,7 @@
 // drawStaticTextText =========================================================
 /** Draw the text for a static text window */
 //=============================================================================
-static void drawStaticTextText( GameWindow *window, WinInstanceData *instData,
-																Color textColor, Color textDropColor )
+static void drawStaticTextText(GameWindow *window, WinInstanceData *instData, Color textColor, Color textDropColor)
 {
 	TextData *tData = (TextData *)window->winGetUserData();
 	Int textWidth, textHeight, wordWrap;
@@ -83,39 +82,38 @@ static void drawStaticTextText( GameWindow *window, WinInstanceData *instData,
 	ICoord2D origin, size, textPos;
 	IRegion2D clipRegion;
 	// sanity
-	if( text == NULL || text->getTextLength() == 0 )
+	if (text == NULL || text->getTextLength() == 0)
 		return;
 
 	// get window position and size
-	window->winGetScreenPosition( &origin.x, &origin.y );
-	window->winGetSize( &size.x, &size.y );
+	window->winGetScreenPosition(&origin.x, &origin.y);
+	window->winGetSize(&size.x, &size.y);
 
 	// Set the text Wrap width
 	wordWrap = size.x - 10;
-	//if(wordWrap == 89)
+	// if(wordWrap == 89)
 	//	wordWrap = 95;
 	text->setWordWrap(wordWrap);
-	if( BitIsSet(window->winGetStatus(), WIN_STATUS_WRAP_CENTERED)		)
+	if (BitIsSet(window->winGetStatus(), WIN_STATUS_WRAP_CENTERED))
 		text->setWordWrapCentered(TRUE);
 	else
 		text->setWordWrapCentered(FALSE);
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_HOTKEY_TEXT ) && TheGlobalData)
+	if (BitIsSet(window->winGetStatus(), WIN_STATUS_HOTKEY_TEXT) && TheGlobalData)
 		text->setUseHotkey(TRUE, TheGlobalData->m_hotKeyTextColor);
 	else
 		text->setUseHotkey(FALSE, 0);
 
-
 	// how much space will this text take up
-	text->getSize( &textWidth, &textHeight );
+	text->getSize(&textWidth, &textHeight);
 
-	//Init the clip region
-	clipRegion.lo.x = origin.x ;
-	clipRegion.lo.y = origin.y ;
-	clipRegion.hi.x = origin.x + size.x ;
+	// Init the clip region
+	clipRegion.lo.x = origin.x;
+	clipRegion.lo.y = origin.y;
+	clipRegion.hi.x = origin.x + size.x;
 	clipRegion.hi.y = origin.y + size.y;
 
 	// horizontal centering?
-	if( tData->centered )
+	if (tData->centered)
 	{
 		textPos.x = origin.x + (size.x / 2) - (textWidth / 2);
 	}
@@ -125,7 +123,7 @@ static void drawStaticTextText( GameWindow *window, WinInstanceData *instData,
 	}
 
 	// vertical centering?
-	if ( tData->centeredVertically )
+	if (tData->centeredVertically)
 	{
 		textPos.y = origin.y + (size.y / 2) - (textHeight / 2);
 	}
@@ -136,9 +134,9 @@ static void drawStaticTextText( GameWindow *window, WinInstanceData *instData,
 
 	// draw the text
 	text->setClipRegion(&clipRegion);
-	text->draw( textPos.x, textPos.y, textColor, textDropColor );
+	text->draw(textPos.x, textPos.y, textColor, textDropColor);
 
-}  // end drawStaticTextText
+} // end drawStaticTextText
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -147,73 +145,65 @@ static void drawStaticTextText( GameWindow *window, WinInstanceData *instData,
 // W3DGadgetStaticTextDraw ====================================================
 /** Draw colored text field using standard graphics */
 //=============================================================================
-void W3DGadgetStaticTextDraw( GameWindow *window, WinInstanceData *instData )
+void W3DGadgetStaticTextDraw(GameWindow *window, WinInstanceData *instData)
 {
 	TextData *tData = (TextData *)window->winGetUserData();
 	Color backColor, backBorder, textColor, textOutlineColor;
 	ICoord2D size, origin, start, end;
 
 	// get window position and size
-	window->winGetScreenPosition( &origin.x, &origin.y );
-	window->winGetSize( &size.x, &size.y );
+	window->winGetScreenPosition(&origin.x, &origin.y);
+	window->winGetSize(&size.x, &size.y);
 
 	// get the colors we will use
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if (BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED) == FALSE)
 	{
+		backColor = GadgetStaticTextGetDisabledColor(window);
+		backBorder = GadgetStaticTextGetDisabledBorderColor(window);
+		textColor = window->winGetDisabledTextColor();
+		textOutlineColor = window->winGetDisabledTextBorderColor();
 
-		backColor					= GadgetStaticTextGetDisabledColor( window );
-		backBorder				= GadgetStaticTextGetDisabledBorderColor( window );
-		textColor					= window->winGetDisabledTextColor();
-		textOutlineColor	= window->winGetDisabledTextBorderColor();
-
-	}  // end if, disabled
+	} // end if, disabled
 	else
 	{
+		backColor = GadgetStaticTextGetEnabledColor(window);
+		backBorder = GadgetStaticTextGetEnabledBorderColor(window);
+		textColor = window->winGetEnabledTextColor();
+		textOutlineColor = window->winGetEnabledTextBorderColor();
 
-		backColor					= GadgetStaticTextGetEnabledColor( window );
-		backBorder				= GadgetStaticTextGetEnabledBorderColor( window );
-		textColor					= window->winGetEnabledTextColor();
-		textOutlineColor	= window->winGetEnabledTextBorderColor();
-
-	}  // end else, enabled
+	} // end else, enabled
 
 	// draw the back border
-	if( backBorder != WIN_COLOR_UNDEFINED )
+	if (backBorder != WIN_COLOR_UNDEFINED)
 	{
-
 		start.x = origin.x;
 		start.y = origin.y;
 		end.x = start.x + size.x;
 		end.y = start.y + size.y;
-		TheWindowManager->winOpenRect( backBorder, WIN_DRAW_LINE_WIDTH,
-																	 start.x, start.y, end.x, end.y );
+		TheWindowManager->winOpenRect(backBorder, WIN_DRAW_LINE_WIDTH, start.x, start.y, end.x, end.y);
 
-	}  // end if
+	} // end if
 
 	// draw the back fill area
-	if( backColor != WIN_COLOR_UNDEFINED )
+	if (backColor != WIN_COLOR_UNDEFINED)
 	{
-
 		start.x = origin.x + 1;
 		start.y = origin.y + 1;
 		end.x = start.x + size.x - 2;
 		end.y = start.y + size.y - 2;
-		TheWindowManager->winFillRect( backColor, WIN_DRAW_LINE_WIDTH,
-																	 start.x, start.y, end.x, end.y );
-	}  // end if
+		TheWindowManager->winFillRect(backColor, WIN_DRAW_LINE_WIDTH, start.x, start.y, end.x, end.y);
+	} // end if
 
 	// draw the text
-  if( tData->text && (textColor != WIN_COLOR_UNDEFINED) )
-		drawStaticTextText( window, instData, textColor, textOutlineColor );
+	if (tData->text && (textColor != WIN_COLOR_UNDEFINED))
+		drawStaticTextText(window, instData, textColor, textOutlineColor);
 
-
-
-}  // end W3DGadgetStaticTextDraw
+} // end W3DGadgetStaticTextDraw
 
 // W3DGadgetStaticTextImageDraw ===============================================
 /** Draw colored text field with user supplied images */
 //=============================================================================
-void W3DGadgetStaticTextImageDraw( GameWindow *window, WinInstanceData *instData )
+void W3DGadgetStaticTextImageDraw(GameWindow *window, WinInstanceData *instData)
 {
 	TextData *tData = (TextData *)window->winGetUserData();
 	Color textColor, textOutlineColor;
@@ -221,44 +211,38 @@ void W3DGadgetStaticTextImageDraw( GameWindow *window, WinInstanceData *instData
 	const Image *image;
 
 	// get window position and size
-	window->winGetScreenPosition( &origin.x, &origin.y );
-	window->winGetSize( &size.x, &size.y );
+	window->winGetScreenPosition(&origin.x, &origin.y);
+	window->winGetSize(&size.x, &size.y);
 
 	// get the colors we will use
-	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if (BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED) == FALSE)
 	{
+		image = GadgetStaticTextGetDisabledImage(window);
+		textColor = window->winGetDisabledTextColor();
+		textOutlineColor = window->winGetDisabledTextBorderColor();
 
-		image							= GadgetStaticTextGetDisabledImage( window );
-		textColor					= window->winGetDisabledTextColor();
-		textOutlineColor	= window->winGetDisabledTextBorderColor();
-
-	}  // end if, disabled
+	} // end if, disabled
 	else
 	{
+		image = GadgetStaticTextGetEnabledImage(window);
+		textColor = window->winGetEnabledTextColor();
+		textOutlineColor = window->winGetEnabledTextBorderColor();
 
-		image							= GadgetStaticTextGetEnabledImage( window );
-		textColor					= window->winGetEnabledTextColor();
-		textOutlineColor	= window->winGetEnabledTextBorderColor();
-
-	}  // end else, enabled
+	} // end else, enabled
 
 	// draw the back image
-	if( image )
+	if (image)
 	{
-
 		start.x = origin.x + instData->m_imageOffset.x;
 		start.y = origin.y + instData->m_imageOffset.y;
 		end.x = start.x + size.x;
 		end.y = start.y + size.y;
-		TheWindowManager->winDrawImage( image, start.x, start.y, end.x, end.y );
+		TheWindowManager->winDrawImage(image, start.x, start.y, end.x, end.y);
 
-	}  // end if
+	} // end if
 
 	// draw the text
-  if( tData->text && (textColor != WIN_COLOR_UNDEFINED) )
-		drawStaticTextText( window, instData, textColor, textOutlineColor );
+	if (tData->text && (textColor != WIN_COLOR_UNDEFINED))
+		drawStaticTextText(window, instData, textColor, textOutlineColor);
 
-
-
-}  // end W3DGadgetStaticTextImageDraw
-
+} // end W3DGadgetStaticTextImageDraw

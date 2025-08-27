@@ -63,11 +63,10 @@
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-const FieldParse HeaderTemplateManager::m_headerFieldParseTable[] =
-{
-	{ "Font",								INI::parseQuotedAsciiString,						NULL, offsetof( HeaderTemplate, m_fontName ) },
-	{ "Point",							INI::parseInt,										NULL, offsetof( HeaderTemplate, m_point) },
-	{ "Bold",								INI::parseBool,										NULL, offsetof( HeaderTemplate, m_bold ) },
+const FieldParse HeaderTemplateManager::m_headerFieldParseTable[] = {
+	{ "Font", INI::parseQuotedAsciiString, NULL, offsetof(HeaderTemplate, m_fontName) },
+	{ "Point", INI::parseInt, NULL, offsetof(HeaderTemplate, m_point) },
+	{ "Bold", INI::parseBool, NULL, offsetof(HeaderTemplate, m_bold) },
 	{ NULL, NULL, NULL, 0 },
 };
 
@@ -75,152 +74,150 @@ HeaderTemplateManager *TheHeaderTemplateManager = NULL;
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-void INI::parseHeaderTemplateDefinition( INI *ini )
+void INI::parseHeaderTemplateDefinition(INI *ini)
 {
 	AsciiString name;
 	HeaderTemplate *hTemplate;
 
 	// read the name
-	const char* c = ini->getNextToken();
-	name.set( c );
+	const char *c = ini->getNextToken();
+	name.set(c);
 
 	// find existing item if present
-	hTemplate = TheHeaderTemplateManager->findHeaderTemplate( name );
-	if( hTemplate == NULL )
+	hTemplate = TheHeaderTemplateManager->findHeaderTemplate(name);
+	if (hTemplate == NULL)
 	{
-
 		// allocate a new item
-		hTemplate = TheHeaderTemplateManager->newHeaderTemplate( name );
+		hTemplate = TheHeaderTemplateManager->newHeaderTemplate(name);
 
-	}  // end if
+	} // end if
 	else
 	{
-		DEBUG_CRASH(( "[LINE: %d in '%s'] Duplicate header Template %s found!", ini->getLineNum(), ini->getFilename().str(), name.str() ));
+		DEBUG_CRASH(
+				("[LINE: %d in '%s'] Duplicate header Template %s found!", ini->getLineNum(), ini->getFilename().str(), name.str()));
 	}
 	// parse the ini definition
-	ini->initFromINI( hTemplate, TheHeaderTemplateManager->getFieldParse() );
+	ini->initFromINI(hTemplate, TheHeaderTemplateManager->getFieldParse());
 
-}  // end parseCommandButtonDefinition
+} // end parseCommandButtonDefinition
 
-HeaderTemplate::HeaderTemplate( void ) :
-m_font(NULL),
-m_point(0),
-m_bold(FALSE)
+HeaderTemplate::HeaderTemplate(void) : m_font(NULL), m_point(0), m_bold(FALSE)
 {
-	//Added By Sadullah Nader
-	//Initializations missing and needed
+	// Added By Sadullah Nader
+	// Initializations missing and needed
 	m_fontName.clear();
 	m_name.clear();
 }
 
-HeaderTemplate::~HeaderTemplate( void ){}
+HeaderTemplate::~HeaderTemplate(void)
+{
+}
 
-HeaderTemplateManager::HeaderTemplateManager( void )
-{}
+HeaderTemplateManager::HeaderTemplateManager(void)
+{
+}
 
-HeaderTemplateManager::~HeaderTemplateManager( void )
+HeaderTemplateManager::~HeaderTemplateManager(void)
 {
 	HeaderTemplateListIt it = m_headerTemplateList.begin();
-	while(it != m_headerTemplateList.end())
+	while (it != m_headerTemplateList.end())
 	{
 		HeaderTemplate *hTemplate = *it;
-		if(hTemplate)
+		if (hTemplate)
 		{
 			hTemplate->m_font = NULL;
 			delete hTemplate;
 		}
 		it = m_headerTemplateList.erase(it);
-
 	}
 }
 
-void HeaderTemplateManager::init( void )
+void HeaderTemplateManager::init(void)
 {
 	INI ini;
 	AsciiString fname;
 	fname.format("Data\\%s\\HeaderTemplate.ini", GetRegistryLanguage().str());
-	OSVERSIONINFO	osvi;
-	osvi.dwOSVersionInfoSize=sizeof(OSVERSIONINFO);
+	OSVERSIONINFO osvi;
+	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 	if (GetVersionEx(&osvi))
-	{	//check if we're running Win9x variant since they may need different fonts
+	{ // check if we're running Win9x variant since they may need different fonts
 		if (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
-		{	AsciiString tempName;
+		{
+			AsciiString tempName;
 
 			tempName.format("Data\\%s\\HeaderTemplate9x.ini", GetRegistryLanguage().str());
 			if (TheFileSystem->doesFileExist(tempName.str()))
 				fname = tempName;
 		}
 	}
-	ini.load( fname, INI_LOAD_OVERWRITE, NULL );
+	ini.load(fname, INI_LOAD_OVERWRITE, NULL);
 	populateGameFonts();
 }
 
-HeaderTemplate *HeaderTemplateManager::findHeaderTemplate( AsciiString name )
+HeaderTemplate *HeaderTemplateManager::findHeaderTemplate(AsciiString name)
 {
 	HeaderTemplateListIt it = m_headerTemplateList.begin();
-	while(it != m_headerTemplateList.end())
+	while (it != m_headerTemplateList.end())
 	{
 		HeaderTemplate *hTemplate = *it;
-		if(hTemplate->m_name.compare(name) == 0)
+		if (hTemplate->m_name.compare(name) == 0)
 			return hTemplate;
 		++it;
 	}
 	return NULL;
 }
 
-HeaderTemplate *HeaderTemplateManager::newHeaderTemplate( AsciiString name )
+HeaderTemplate *HeaderTemplateManager::newHeaderTemplate(AsciiString name)
 {
 	HeaderTemplate *newHTemplate = NEW HeaderTemplate;
 	DEBUG_ASSERTCRASH(newHTemplate, ("Unable to create a new Header Template in HeaderTemplateManager::newHeaderTemplate"));
-	if(!newHTemplate)
+	if (!newHTemplate)
 		return NULL;
 
 	newHTemplate->m_name = name;
 	m_headerTemplateList.push_front(newHTemplate);
 	return newHTemplate;
-
 }
 
-GameFont *HeaderTemplateManager::getFontFromTemplate( AsciiString name )
+GameFont *HeaderTemplateManager::getFontFromTemplate(AsciiString name)
 {
-	HeaderTemplate *ht = findHeaderTemplate( name );
-	if(!ht)
+	HeaderTemplate *ht = findHeaderTemplate(name);
+	if (!ht)
 	{
-		//DEBUG_LOG(("HeaderTemplateManager::getFontFromTemplate - Could not find header %s", name.str()));
+		// DEBUG_LOG(("HeaderTemplateManager::getFontFromTemplate - Could not find header %s", name.str()));
 		return NULL;
 	}
 
 	return ht->m_font;
 }
 
-HeaderTemplate *HeaderTemplateManager::getFirstHeader( void )
+HeaderTemplate *HeaderTemplateManager::getFirstHeader(void)
 {
 	HeaderTemplateListIt it = m_headerTemplateList.begin();
-	if( it == m_headerTemplateList.end())
+	if (it == m_headerTemplateList.end())
 		return NULL;
 
 	return *it;
 }
 
-HeaderTemplate *HeaderTemplateManager::getNextHeader( HeaderTemplate *ht )
+HeaderTemplate *HeaderTemplateManager::getNextHeader(HeaderTemplate *ht)
 {
 	HeaderTemplateListIt it = m_headerTemplateList.begin();
-	while(it != m_headerTemplateList.end())
+	while (it != m_headerTemplateList.end())
 	{
-		if(*it == ht)
+		if (*it == ht)
 		{
 			++it;
-			if( it == m_headerTemplateList.end())
+			if (it == m_headerTemplateList.end())
 				return NULL;
 			return *it;
 		}
 		++it;
 	}
 	return NULL;
-
 }
 
-void HeaderTemplateManager::headerNotifyResolutionChange( void )
+void HeaderTemplateManager::headerNotifyResolutionChange(void)
 {
 	populateGameFonts();
 }
@@ -228,15 +225,19 @@ void HeaderTemplateManager::headerNotifyResolutionChange( void )
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-void HeaderTemplateManager::populateGameFonts( void )
+void HeaderTemplateManager::populateGameFonts(void)
 {
 	HeaderTemplateListIt it = m_headerTemplateList.begin();
-	while(it != m_headerTemplateList.end())
+	while (it != m_headerTemplateList.end())
 	{
 		HeaderTemplate *hTemplate = *it;
 		Real pointSize = TheGlobalLanguageData->adjustFontSize(hTemplate->m_point);
-		GameFont *font = TheFontLibrary->getFont(hTemplate->m_fontName, pointSize,hTemplate->m_bold);
-		DEBUG_ASSERTCRASH(font,("HeaderTemplateManager::populateGameFonts - Could not find font %s %d",hTemplate->m_fontName.str(), hTemplate->m_point));
+		GameFont *font = TheFontLibrary->getFont(hTemplate->m_fontName, pointSize, hTemplate->m_bold);
+		DEBUG_ASSERTCRASH(
+				font,
+				("HeaderTemplateManager::populateGameFonts - Could not find font %s %d",
+				 hTemplate->m_fontName.str(),
+				 hTemplate->m_point));
 
 		hTemplate->m_font = font;
 

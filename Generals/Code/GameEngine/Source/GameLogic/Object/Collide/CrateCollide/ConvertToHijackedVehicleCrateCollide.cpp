@@ -32,10 +32,8 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Radar.h"
@@ -44,7 +42,7 @@
 
 #include "GameClient/Drawable.h"
 #include "GameClient/Eva.h"
-#include "GameClient/InGameUI.h"  // useful for printing quick debug strings when we need to
+#include "GameClient/InGameUI.h" // useful for printing quick debug strings when we need to
 
 #include "GameLogic/ExperienceTracker.h"
 #include "GameLogic/Module/AIUpdate.h"
@@ -56,228 +54,223 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/Module/DozerAIUpdate.h"
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ConvertToHijackedVehicleCrateCollide::ConvertToHijackedVehicleCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
+ConvertToHijackedVehicleCrateCollide::ConvertToHijackedVehicleCrateCollide(Thing *thing, const ModuleData *moduleData) :
+		CrateCollide(thing, moduleData)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ConvertToHijackedVehicleCrateCollide::~ConvertToHijackedVehicleCrateCollide( void )
+ConvertToHijackedVehicleCrateCollide::~ConvertToHijackedVehicleCrateCollide(void)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool ConvertToHijackedVehicleCrateCollide::isValidToExecute( const Object *other ) const
+Bool ConvertToHijackedVehicleCrateCollide::isValidToExecute(const Object *other) const
 {
-	if( !CrateCollide::isValidToExecute(other) )
+	if (!CrateCollide::isValidToExecute(other))
 	{
 		return FALSE;
 	}
 
-	if( other->isEffectivelyDead() )
+	if (other->isEffectivelyDead())
 	{
-		return FALSE;// can't hijack a dead vehicle
+		return FALSE; // can't hijack a dead vehicle
 	}
 
-	if( other->isKindOf( KINDOF_AIRCRAFT ) || other->isKindOf( KINDOF_BOAT ) )
+	if (other->isKindOf(KINDOF_AIRCRAFT) || other->isKindOf(KINDOF_BOAT))
 	{
-		//Can't hijack planes and boats!
+		// Can't hijack planes and boats!
 		return FALSE;
 	}
 
-	if( other->getStatusBits().test( OBJECT_STATUS_HIJACKED ) )
+	if (other->getStatusBits().test(OBJECT_STATUS_HIJACKED))
 	{
-		return FALSE;// oops, sorry, I'll jack the next one.
+		return FALSE; // oops, sorry, I'll jack the next one.
 	}
 
-	Relationship r = getObject()->getRelationship( other );
-	//Only hijack enemy objects
-	if( r != ENEMIES )
+	Relationship r = getObject()->getRelationship(other);
+	// Only hijack enemy objects
+	if (r != ENEMIES)
 	{
 		return FALSE;
 	}
 
-	if( other->isKindOf( KINDOF_TRANSPORT ) )
+	if (other->isKindOf(KINDOF_TRANSPORT))
 	{
-		//Kris: Allow empty transports to be hijacked.
-		if( other->getContain() && other->getContain()->getContainCount() > 0 )
+		// Kris: Allow empty transports to be hijacked.
+		if (other->getContain() && other->getContain()->getContainCount() > 0)
 		{
-			return FALSE;// dustin sez: do not jack vehicles that may carry hostile passengers
+			return FALSE; // dustin sez: do not jack vehicles that may carry hostile passengers
 		}
 	}
 
-	//Kris: Make sure you can't hijack any aircraft (or hijack-enter).
-	if( other->isKindOf( KINDOF_AIRCRAFT ) )
+	// Kris: Make sure you can't hijack any aircraft (or hijack-enter).
+	if (other->isKindOf(KINDOF_AIRCRAFT))
 	{
 		return FALSE;
 	}
 
-	//VeterancyLevel veterancyLevel = other->getVeterancyLevel();
-	//if( veterancyLevel >= LEVEL_ELITE )
+	// VeterancyLevel veterancyLevel = other->getVeterancyLevel();
+	// if( veterancyLevel >= LEVEL_ELITE )
 	//{
 	//	return FALSE;
-	//}
+	// }
 
 	return TRUE;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool ConvertToHijackedVehicleCrateCollide::executeCrateBehavior( Object *other )
+Bool ConvertToHijackedVehicleCrateCollide::executeCrateBehavior(Object *other)
 {
-	//Check to make sure that the other object is also the goal object in the AIUpdateInterface
-	//in order to prevent an unintentional conversion simply by having the terrorist walk too close
-	//to it.
-	//Assume ai is valid because CrateCollide::isValidToExecute(other) checks it.
+	// Check to make sure that the other object is also the goal object in the AIUpdateInterface
+	// in order to prevent an unintentional conversion simply by having the terrorist walk too close
+	// to it.
+	// Assume ai is valid because CrateCollide::isValidToExecute(other) checks it.
 	Object *obj = getObject();
-	AIUpdateInterface* ai = obj->getAIUpdateInterface();
+	AIUpdateInterface *ai = obj->getAIUpdateInterface();
 	if (ai && ai->getGoalObject() != other)
 	{
 		return false;
 	}
 
-	TheRadar->tryInfiltrationEvent( other );
+	TheRadar->tryInfiltrationEvent(other);
 
-	//Before the actual defection takes place, play the "vehicle stolen" EVA
-	//event if the local player is the victim!
-	if( other->isLocallyControlled() )
+	// Before the actual defection takes place, play the "vehicle stolen" EVA
+	// event if the local player is the victim!
+	if (other->isLocallyControlled())
 	{
-		TheEva->setShouldPlay( EVA_VehicleStolen );
+		TheEva->setShouldPlay(EVA_VehicleStolen);
 	}
 
-	other->setTeam( obj->getControllingPlayer()->getDefaultTeam() );
-	other->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_HIJACKED ) );// I claim this car in the name of the GLA
+	other->setTeam(obj->getControllingPlayer()->getDefaultTeam());
+	other->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_HIJACKED)); // I claim this car in the name of the GLA
 
-	AIUpdateInterface* targetAI = other->getAIUpdateInterface();
-	targetAI->aiMoveToPosition( other->getPosition(), CMD_FROM_AI );
-	targetAI->aiIdle( CMD_FROM_AI );
+	AIUpdateInterface *targetAI = other->getAIUpdateInterface();
+	targetAI->aiMoveToPosition(other->getPosition(), CMD_FROM_AI);
+	targetAI->aiIdle(CMD_FROM_AI);
 
-
-	//Just in case this target is a dozer, lets make him stop al his dozer tasks, like building and repairing,
-	//So the previous owner does not benefit from these tasks
-	DozerAIInterface * dozerAI = targetAI->getDozerAIInterface();
-	if ( dozerAI )
+	// Just in case this target is a dozer, lets make him stop al his dozer tasks, like building and repairing,
+	// So the previous owner does not benefit from these tasks
+	DozerAIInterface *dozerAI = targetAI->getDozerAIInterface();
+	if (dozerAI)
 	{
 		for (UnsignedInt task = DOZER_TASK_FIRST; task < DOZER_NUM_TASKS; ++task)
 		{
-			dozerAI->cancelTask( (DozerTask)task );
+			dozerAI->cancelTask((DozerTask)task);
 		}
 	}
 
-	AudioEventRTS hijackEvent( "HijackDriver", obj->getID() );
-	TheAudio->addAudioEvent( &hijackEvent );
+	AudioEventRTS hijackEvent("HijackDriver", obj->getID());
+	TheAudio->addAudioEvent(&hijackEvent);
 
-	//In order to make things easier for the designers, we are going to transfer the hijacker's name
-	//to the car... so the designer can control the car with their scripts.
-	TheScriptEngine->transferObjectName( obj->getName(), other );
+	// In order to make things easier for the designers, we are going to transfer the hijacker's name
+	// to the car... so the designer can control the car with their scripts.
+	TheScriptEngine->transferObjectName(obj->getName(), other);
 
 	ExperienceTracker *targetExp = other->getExperienceTracker();
 	ExperienceTracker *jackerExp = obj->getExperienceTracker();
-	if ( targetExp && jackerExp )
+	if (targetExp && jackerExp)
 	{
-		VeterancyLevel highestLevel = MAX(targetExp->getVeterancyLevel(),jackerExp->getVeterancyLevel());
-		jackerExp->setVeterancyLevel( highestLevel );
-		targetExp->setVeterancyLevel( highestLevel );
+		VeterancyLevel highestLevel = MAX(targetExp->getVeterancyLevel(), jackerExp->getVeterancyLevel());
+		jackerExp->setVeterancyLevel(highestLevel);
+		targetExp->setVeterancyLevel(highestLevel);
 	}
-
 
 	Bool targetCanEject = FALSE;
 	BehaviorModule **dmi = NULL;
-	for( dmi = other->getBehaviorModules(); *dmi; ++dmi )
+	for (dmi = other->getBehaviorModules(); *dmi; ++dmi)
 	{
-		if( (*dmi)->getEjectPilotDieInterface() )
+		if ((*dmi)->getEjectPilotDieInterface())
 		{
 			targetCanEject = TRUE;
 			break;
 		}
-	}  // end for dmi
+	} // end for dmi
 
-	if ( ! targetCanEject )
+	if (!targetCanEject)
 	{
-		TheGameLogic->destroyObject( obj );
+		TheGameLogic->destroyObject(obj);
 		return TRUE;
 	}
 
 	// I we have made it this far, we are going to ride in this vehicle for a while
 	// get the name of the hijackerupdate
-	static NameKeyType key_HijackerUpdate = NAMEKEY( "HijackerUpdate" );
-	HijackerUpdate *hijackerUpdate = (HijackerUpdate*)obj->findUpdateModule( key_HijackerUpdate );
-	if( hijackerUpdate )
+	static NameKeyType key_HijackerUpdate = NAMEKEY("HijackerUpdate");
+	HijackerUpdate *hijackerUpdate = (HijackerUpdate *)obj->findUpdateModule(key_HijackerUpdate);
+	if (hijackerUpdate)
 	{
-		hijackerUpdate->setTargetObject( other );
-		hijackerUpdate->setIsInVehicle( TRUE );
-		hijackerUpdate->setUpdate( TRUE );
+		hijackerUpdate->setTargetObject(other);
+		hijackerUpdate->setIsInVehicle(TRUE);
+		hijackerUpdate->setUpdate(TRUE);
 
 		// flag bits so hijacker won't be selectible or collideable
-		//while within the vehicle
-		obj->setStatus( MAKE_OBJECT_STATUS_MASK3( OBJECT_STATUS_NO_COLLISIONS, OBJECT_STATUS_MASKED, OBJECT_STATUS_UNSELECTABLE ) );
+		// while within the vehicle
+		obj->setStatus(MAKE_OBJECT_STATUS_MASK3(OBJECT_STATUS_NO_COLLISIONS, OBJECT_STATUS_MASKED, OBJECT_STATUS_UNSELECTABLE));
 	}
 
 	// THIS BLOCK HIDES THE HIJACKER AND REMOVES HIM FROM PARTITION MANAGER
 	// remove object from its group (if any)
 	obj->leaveGroup();
-	if( ai )
+	if (ai)
 	{
-		//By setting him to idle, we will prevent him from entering the target after this gets called.
-		ai->aiIdle( CMD_FROM_AI );
+		// By setting him to idle, we will prevent him from entering the target after this gets called.
+		ai->aiIdle(CMD_FROM_AI);
 	}
 
-	//This is kinda special... we will endow our new ride with our vision and shroud range, since we are driving
+	// This is kinda special... we will endow our new ride with our vision and shroud range, since we are driving
 	other->setVisionRange(getObject()->getVisionRange());
 	other->setShroudClearingRange(getObject()->getShroudClearingRange());
 
 	// remove rider from partition manager
-	ThePartitionManager->unRegisterObject( obj );
+	ThePartitionManager->unRegisterObject(obj);
 
 	// hide the drawable associated with rider
-	if( obj->getDrawable() )
-		obj->getDrawable()->setDrawableHidden( true );
+	if (obj->getDrawable())
+		obj->getDrawable()->setDrawableHidden(true);
 
 	// By returning FALSE, we will not remove the object (Hijacker)
 	return FALSE;
-//	return TRUE;
+	//	return TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ConvertToHijackedVehicleCrateCollide::crc( Xfer *xfer )
+void ConvertToHijackedVehicleCrateCollide::crc(Xfer *xfer)
 {
-
 	// extend base class
-	CrateCollide::crc( xfer );
+	CrateCollide::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ConvertToHijackedVehicleCrateCollide::xfer( Xfer *xfer )
+void ConvertToHijackedVehicleCrateCollide::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CrateCollide::xfer( xfer );
+	CrateCollide::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ConvertToHijackedVehicleCrateCollide::loadPostProcess( void )
+void ConvertToHijackedVehicleCrateCollide::loadPostProcess(void)
 {
-
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

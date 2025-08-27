@@ -61,13 +61,17 @@
 class PlaneClass
 {
 public:
+	enum
+	{
+		FRONT = 0,
+		BACK,
+		ON
+	};
 
-	enum { FRONT = 0, BACK, ON };
+	Vector3 N; // Normal of the plane
+	float D; // Distance along the normal from the origin
 
-	Vector3	N;			// Normal of the plane
-	float		D;			// Distance along the normal from the origin
-
-	PlaneClass(void) : N(0.0f,0.0f,1.0f), D(0.0f) { }
+	PlaneClass(void) : N(0.0f, 0.0f, 1.0f), D(0.0f) {}
 
 	/*
 	** Plane initialization:
@@ -76,45 +80,45 @@ public:
 	** normal,point - compute plane with normal, containing point
 	** p1,p2,p3 - compute plane containing three points
 	*/
-	PlaneClass(float nx,float ny,float nz,float dist);
-	PlaneClass(const Vector3 & normal,float dist);
-	PlaneClass(const Vector3 & normal,const Vector3 & point);
-	PlaneClass(const Vector3 & point1,const Vector3 & point2,const Vector3 & point3);
+	PlaneClass(float nx, float ny, float nz, float dist);
+	PlaneClass(const Vector3 &normal, float dist);
+	PlaneClass(const Vector3 &normal, const Vector3 &point);
+	PlaneClass(const Vector3 &point1, const Vector3 &point2, const Vector3 &point3);
 
-	inline void Set(float a,float b,float c,float d);
-	inline void Set(const Vector3 & normal,float dist);
-	inline void Set(const Vector3 & normal,const Vector3 & point);
-	inline void Set(const Vector3 & point1,const Vector3 & point2,const Vector3 & point3);
+	inline void Set(float a, float b, float c, float d);
+	inline void Set(const Vector3 &normal, float dist);
+	inline void Set(const Vector3 &normal, const Vector3 &point);
+	inline void Set(const Vector3 &point1, const Vector3 &point2, const Vector3 &point3);
 
-	bool Compute_Intersection(const Vector3 & p0,const Vector3 & p1,float * set_t) const;
-	bool In_Front(const Vector3 & point) const;
-	bool In_Front(const SphereClass & sphere) const;
-	bool In_Front_Or_Intersecting(const SphereClass & sphere) const;
+	bool Compute_Intersection(const Vector3 &p0, const Vector3 &p1, float *set_t) const;
+	bool In_Front(const Vector3 &point) const;
+	bool In_Front(const SphereClass &sphere) const;
+	bool In_Front_Or_Intersecting(const SphereClass &sphere) const;
 
-	static void Intersect_Planes(const PlaneClass & a, const PlaneClass & b, Vector3 *line_dir, Vector3 *line_point);
+	static void Intersect_Planes(const PlaneClass &a, const PlaneClass &b, Vector3 *line_dir, Vector3 *line_point);
 };
 
-inline PlaneClass::PlaneClass(float nx,float ny,float nz,float dist)
+inline PlaneClass::PlaneClass(float nx, float ny, float nz, float dist)
 {
-	Set(nx,ny,nz,dist);
+	Set(nx, ny, nz, dist);
 }
 
-inline PlaneClass::PlaneClass(const Vector3 & normal,float dist)
+inline PlaneClass::PlaneClass(const Vector3 &normal, float dist)
 {
-	Set(normal,dist);
+	Set(normal, dist);
 }
 
-inline PlaneClass::PlaneClass(const Vector3 & normal,const Vector3 & point)
+inline PlaneClass::PlaneClass(const Vector3 &normal, const Vector3 &point)
 {
-	Set(normal,point);
+	Set(normal, point);
 }
 
-inline PlaneClass::PlaneClass(const Vector3 & point1, const Vector3 & point2, const Vector3 & point3)
+inline PlaneClass::PlaneClass(const Vector3 &point1, const Vector3 &point2, const Vector3 &point3)
 {
-	Set(point1,point2,point3);
+	Set(point1, point2, point3);
 }
 
-inline void PlaneClass::Set(float a,float b,float c,float d)
+inline void PlaneClass::Set(float a, float b, float c, float d)
 {
 	N.X = a;
 	N.Y = b;
@@ -122,86 +126,90 @@ inline void PlaneClass::Set(float a,float b,float c,float d)
 	D = d;
 }
 
-inline void PlaneClass::Set(const Vector3 & normal,float dist)
+inline void PlaneClass::Set(const Vector3 &normal, float dist)
 {
 	N = normal;
 	D = dist;
 }
 
-inline void PlaneClass::Set(const Vector3 & normal,const Vector3 & point)
+inline void PlaneClass::Set(const Vector3 &normal, const Vector3 &point)
 {
 	N = normal;
-	D = Vector3::Dot_Product(normal , point);
+	D = Vector3::Dot_Product(normal, point);
 }
 
-
-inline void PlaneClass::Set(const Vector3 & point1, const Vector3 & point2, const Vector3 & point3)
+inline void PlaneClass::Set(const Vector3 &point1, const Vector3 &point2, const Vector3 &point3)
 {
 #ifdef ALLOW_TEMPORARIES
 	N = Vector3::Cross_Product((point2 - point1), (point3 - point1));
 #else
 	Vector3::Cross_Product((point2 - point1), (point3 - point1), &N);
 #endif
-	if (N != Vector3(0.0f, 0.0f, 0.0f)) {
+	if (N != Vector3(0.0f, 0.0f, 0.0f))
+	{
 		// Points are not colinear. Normalize N and calculate D.
 		N.Normalize();
 		D = Vector3::Dot_Product(N, point1);
-	} else {
+	}
+	else
+	{
 		// They are colinear - return default plane (constructors can't fail).
 		N = Vector3(0.0f, 0.0f, 1.0f);
 		D = 0.0f;
 	}
 }
 
-inline bool PlaneClass::Compute_Intersection(const Vector3 & p0,const Vector3 & p1,float * set_t) const
+inline bool PlaneClass::Compute_Intersection(const Vector3 &p0, const Vector3 &p1, float *set_t) const
 {
-	float num,den;
-	den = Vector3::Dot_Product(N,p1-p0);
+	float num, den;
+	den = Vector3::Dot_Product(N, p1 - p0);
 
 	/*
 	** If the denominator is zero, the ray is parallel to the plane
 	*/
-	if (den == 0.0f) {
+	if (den == 0.0f)
+	{
 		return false;
 	}
 
-	num = -(Vector3::Dot_Product(N,p0) - D);
+	num = -(Vector3::Dot_Product(N, p0) - D);
 
-	*set_t = num/den;
+	*set_t = num / den;
 
 	/*
 	** If t is not between 0 and 1, the line containing the segment intersects
 	** the plane but the segment does not
 	*/
-	if ((*set_t < 0.0f) || (*set_t > 1.0f)) {
+	if ((*set_t < 0.0f) || (*set_t > 1.0f))
+	{
 		return false;
 	}
 
 	return true;
 }
 
-inline bool PlaneClass::In_Front(const Vector3 & point) const
+inline bool PlaneClass::In_Front(const Vector3 &point) const
 {
-	float dist = Vector3::Dot_Product(point,N);
+	float dist = Vector3::Dot_Product(point, N);
 	return (dist > D);
 }
 
 // This function returns true if the sphere is in front of the plane.
-inline bool PlaneClass::In_Front(const SphereClass & sphere) const
+inline bool PlaneClass::In_Front(const SphereClass &sphere) const
 {
-	float dist = Vector3::Dot_Product(sphere.Center,N);
+	float dist = Vector3::Dot_Product(sphere.Center, N);
 	return ((dist - D) >= sphere.Radius);
 }
 
 // This function will return 1 if any part of the sphere is in front of the plane.
 // (i.e. if the sphere is entirely in front of the plane or if it intersects the plane).
-inline bool PlaneClass::In_Front_Or_Intersecting(const SphereClass & sphere) const
+inline bool PlaneClass::In_Front_Or_Intersecting(const SphereClass &sphere) const
 {
-	float dist = Vector3::Dot_Product(sphere.Center , N);
+	float dist = Vector3::Dot_Product(sphere.Center, N);
 	return ((D - dist) < sphere.Radius);
 }
 
-inline void PlaneClass::Intersect_Planes(const PlaneClass & a, const PlaneClass & b, Vector3 *line_dir, Vector3 *line_point)
+inline void PlaneClass::Intersect_Planes(const PlaneClass &a, const PlaneClass &b, Vector3 *line_dir, Vector3 *line_point)
 {
 	// Method used is from "plane-to-plane intersection", Graphics Gems III, pp. 233-235.
 
@@ -212,28 +220,37 @@ inline void PlaneClass::Intersect_Planes(const PlaneClass & a, const PlaneClass 
 	// direction vector is.
 	Vector3 abs_dir = *line_dir;
 	abs_dir.Update_Max(-abs_dir);
-	if (abs_dir.X > abs_dir.Y) {
-		if (abs_dir.X > abs_dir.Z) {
+	if (abs_dir.X > abs_dir.Y)
+	{
+		if (abs_dir.X > abs_dir.Z)
+		{
 			// X largest
 			float ool = 1.0f / line_dir->X;
 			line_point->Y = (b.N.Z * a.D - a.N.Z * b.D) * ool;
 			line_point->Z = (a.N.Y * b.D - b.N.Y * a.D) * ool;
 			line_point->X = 0.0f;
-		} else {
+		}
+		else
+		{
 			// Z largest
 			float ool = 1.0f / line_dir->Z;
 			line_point->X = (b.N.Y * a.D - a.N.Y * b.D) * ool;
 			line_point->Y = (a.N.X * b.D - b.N.X * a.D) * ool;
 			line_point->Z = 0.0f;
 		}
-	} else {
-		if (abs_dir.Y > abs_dir.Z) {
+	}
+	else
+	{
+		if (abs_dir.Y > abs_dir.Z)
+		{
 			// Y largest
 			float ool = 1.0f / line_dir->Y;
 			line_point->Z = (b.N.X * a.D - a.N.X * b.D) * ool;
 			line_point->X = (a.N.Z * b.D - b.N.Z * a.D) * ool;
 			line_point->Y = 0.0f;
-		} else {
+		}
+		else
+		{
 			// Z largest
 			float ool = 1.0f / line_dir->Z;
 			line_point->X = (b.N.Y * a.D - a.N.Y * b.D) * ool;

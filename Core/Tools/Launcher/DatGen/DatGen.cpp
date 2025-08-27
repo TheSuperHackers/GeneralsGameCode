@@ -40,9 +40,9 @@ static void doIt(void)
 	bool usesHKeycurrentUser = false;
 
 #if RTS_GENERALS
-	const char* gameRegistryKey = "Software\\Electronic Arts\\EA Games\\Generals";
+	const char *gameRegistryKey = "Software\\Electronic Arts\\EA Games\\Generals";
 #elif RTS_ZEROHOUR
-	const char* gameRegistryKey = "Software\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour";
+	const char *gameRegistryKey = "Software\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour";
 #endif
 
 	LONG result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, gameRegistryKey, 0, KEY_READ, &hKey);
@@ -64,19 +64,26 @@ static void doIt(void)
 	result = RegQueryValueEx(hKey, "InstallPath", NULL, &type, installPath, &sizeOfBuffer);
 
 	assert((result == ERROR_SUCCESS) && "Failed to obtain game install path!");
-	assert((strlen((const char*)installPath) > 0) && "Game install path invalid!");
+	assert((strlen((const char *)installPath) > 0) && "Game install path invalid!");
 	DebugPrint("Game install path: %s\n", installPath);
 
 	// Retrieve Hard drive S/N
 	char drive[8];
-	_splitpath((const char*)installPath, drive, NULL, NULL, NULL);
+	_splitpath((const char *)installPath, drive, NULL, NULL, NULL);
 	strcat(drive, "\\");
 
 	DWORD volumeSerialNumber = 0;
 	DWORD maxComponentLength;
 	DWORD fileSystemFlags;
-	BOOL volInfoSuccess = GetVolumeInformation((const char*)drive, NULL, 0,
-		                    &volumeSerialNumber, &maxComponentLength, &fileSystemFlags, NULL, 0);
+	BOOL volInfoSuccess = GetVolumeInformation(
+			(const char *)drive,
+			NULL,
+			0,
+			&volumeSerialNumber,
+			&maxComponentLength,
+			&fileSystemFlags,
+			NULL,
+			0);
 
 	if (volInfoSuccess == FALSE)
 	{
@@ -96,9 +103,9 @@ static void doIt(void)
 	sizeOfBuffer = sizeof(gameSerialNumber);
 
 #if RTS_GENERALS
-	const char* serialRegistryKey = "Software\\Electronic Arts\\EA Games\\Generals\\ergc";
+	const char *serialRegistryKey = "Software\\Electronic Arts\\EA Games\\Generals\\ergc";
 #elif RTS_ZEROHOUR
-	const char* serialRegistryKey = "Software\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour\\ergc";
+	const char *serialRegistryKey = "Software\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour\\ergc";
 #endif
 
 	if (usesHKeycurrentUser)
@@ -115,7 +122,7 @@ static void doIt(void)
 	{
 		result = RegQueryValueEx(hKey, "", NULL, &type, gameSerialNumber, &sizeOfBuffer);
 		assert((result == ERROR_SUCCESS) && "Failed to obtain game serial number!");
-		assert((strlen((const char*)gameSerialNumber) > 0) && "Game serial number invalid!");
+		assert((strlen((const char *)gameSerialNumber) > 0) && "Game serial number invalid!");
 	}
 
 	DebugPrint("Game serial number: %s\n", gameSerialNumber);
@@ -123,7 +130,7 @@ static void doIt(void)
 	RegCloseKey(hKey);
 
 	// Add game serial number portion
-	strcat(passKey, (char*)gameSerialNumber);
+	strcat(passKey, (char *)gameSerialNumber);
 
 	// Obtain windows product ID
 	result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows\\CurrentVersion", 0, KEY_READ, &hKey);
@@ -140,7 +147,7 @@ static void doIt(void)
 		result = RegQueryValueEx(hKey, "ProductID", NULL, &type, winProductID, &sizeOfBuffer);
 
 		assert((result == ERROR_SUCCESS) && "Failed to obtain windows product ID!");
-		assert((strlen((const char*)winProductID) > 0) && "Invalid windows product ID");
+		assert((strlen((const char *)winProductID) > 0) && "Invalid windows product ID");
 
 		DebugPrint("Windows Product ID: %s\n", winProductID);
 
@@ -148,7 +155,7 @@ static void doIt(void)
 
 		// Add windows product ID portion
 		strcat(passKey, "-");
-		strcat(passKey, (char*)winProductID);
+		strcat(passKey, (char *)winProductID);
 	}
 
 	DebugPrint("Retrieved PassKey: %s\n", passKey);
@@ -188,15 +195,9 @@ static void doIt(void)
 	}
 }
 
-int APIENTRY WinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     LPSTR     lpCmdLine,
-                     int       nCmdShow)
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	doIt();
 
 	return 0;
 }
-
-
-

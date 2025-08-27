@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Module/ActiveShroudUpgrade.h"
@@ -36,27 +36,25 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ActiveShroudUpgradeModuleData::ActiveShroudUpgradeModuleData( void )
+ActiveShroudUpgradeModuleData::ActiveShroudUpgradeModuleData(void)
 {
-
 	m_newShroudRange = 0.0f;
 
-}  // end SpecialPowerModuleData
+} // end SpecialPowerModuleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-/* static */ void ActiveShroudUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
+/* static */ void ActiveShroudUpgradeModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-	UpgradeModuleData::buildFieldParse( p );
+	UpgradeModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "NewShroudRange", INI::parseReal, NULL, offsetof( ActiveShroudUpgradeModuleData, m_newShroudRange ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "NewShroudRange", INI::parseReal, NULL, offsetof(ActiveShroudUpgradeModuleData, m_newShroudRange) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+} // end buildFieldParse
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,67 +62,61 @@ ActiveShroudUpgradeModuleData::ActiveShroudUpgradeModuleData( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ActiveShroudUpgrade::ActiveShroudUpgrade( Thing *thing, const ModuleData* moduleData ) :
-							UpgradeModule( thing, moduleData )
+ActiveShroudUpgrade::ActiveShroudUpgrade(Thing *thing, const ModuleData *moduleData) : UpgradeModule(thing, moduleData)
 {
-
-}  // end ActiveShroudUpgrade
+} // end ActiveShroudUpgrade
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ActiveShroudUpgrade::~ActiveShroudUpgrade( void )
+ActiveShroudUpgrade::~ActiveShroudUpgrade(void)
 {
-
-}  // end ~ActiveShroudUpgrade
+} // end ~ActiveShroudUpgrade
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ActiveShroudUpgrade::upgradeImplementation( void )
+void ActiveShroudUpgrade::upgradeImplementation(void)
 {
 	// Set my object's ability to actively shroud.
-	if( getActiveShroudUpgradeModuleData() )
+	if (getActiveShroudUpgradeModuleData())
 	{
-		getObject()->setShroudRange( getActiveShroudUpgradeModuleData()->m_newShroudRange );
-		getObject()->handlePartitionCellMaintenance();// To shroud where I am without waiting.
+		getObject()->setShroudRange(getActiveShroudUpgradeModuleData()->m_newShroudRange);
+		getObject()->handlePartitionCellMaintenance(); // To shroud where I am without waiting.
 	}
-}  // end upgradeImplementation
+} // end upgradeImplementation
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ActiveShroudUpgrade::crc( Xfer *xfer )
+void ActiveShroudUpgrade::crc(Xfer *xfer)
 {
-
 	// extend base class
-	UpgradeModule::crc( xfer );
+	UpgradeModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ActiveShroudUpgrade::xfer( Xfer *xfer )
+void ActiveShroudUpgrade::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpgradeModule::xfer( xfer );
+	UpgradeModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ActiveShroudUpgrade::loadPostProcess( void )
+void ActiveShroudUpgrade::loadPostProcess(void)
 {
-
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

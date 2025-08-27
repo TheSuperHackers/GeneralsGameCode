@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 /***********************************************************************************************
  ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
  ***********************************************************************************************
@@ -46,7 +45,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/crc.h"
 #include "Common/UserPreferences.h"
@@ -56,14 +55,12 @@
 #include "GameNetwork/NetworkDefs.h"
 #include "GameNetwork/GameSpy/GSConfig.h"
 
-
 FirewallHelperClass *TheFirewallHelper = NULL;
 
-FirewallHelperClass * createFirewallHelper()
+FirewallHelperClass *createFirewallHelper()
 {
 	return NEW FirewallHelperClass();
 }
-
 
 /***********************************************************************************************
  * FirewallHelperClass::FirewallHelperClass -- Constructor                                     *
@@ -83,8 +80,8 @@ FirewallHelperClass * createFirewallHelper()
 
 FirewallHelperClass::FirewallHelperClass(void)
 {
-	//Added Sadullah Nader
-	//Initializations missing and needed
+	// Added Sadullah Nader
+	// Initializations missing and needed
 	m_currentTry = 0;
 	m_numManglers = 0;
 	m_numResponses = 0;
@@ -98,7 +95,8 @@ FirewallHelperClass::FirewallHelperClass(void)
 	m_sourcePortAllocationDelta = 0;
 	m_lastSourcePortAllocationDelta = 0;
 	Int i = 0;
-	for (; i < MAX_SPARE_SOCKETS; ++i) {
+	for (; i < MAX_SPARE_SOCKETS; ++i)
+	{
 		m_spareSockets[i].port = 0;
 		m_messages[i].length = 0;
 		m_mangledPorts[i] = 0;
@@ -113,11 +111,9 @@ FirewallHelperClass::FirewallHelperClass(void)
 	m_currentState = DETECTIONSTATE_IDLE;
 
 	m_sourcePortPool = 4096 + ((timeGetTime() / 1000) % 1000); // do this to make sure we don't use the same source
-																										// port before a previous connection has had a chance
-																										// to time out.
+																														 // port before a previous connection has had a chance
+																														 // to time out.
 }
-
-
 
 /***********************************************************************************************
  * FirewallHelperClass::~FirewallHelperClass -- Destructor                                     *
@@ -156,13 +152,11 @@ void FirewallHelperClass::reset(void)
 {
 	closeAllSpareSockets();
 	m_currentState = DETECTIONSTATE_IDLE;
-	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i) {
+	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i)
+	{
 		m_messages[i].length = 0;
 	}
 }
-
-
-
 
 /***********************************************************************************************
  * FirewallHelperClass::Detect_Firewall -- See what our firewall is up to                      *
@@ -183,64 +177,82 @@ Bool FirewallHelperClass::detectFirewall(void)
 	OptionPreferences pref;
 
 	OptionPreferences::const_iterator it = pref.find("FirewallNeedToRefresh");
-	if (it != pref.end()) {
+	if (it != pref.end())
+	{
 		AsciiString str = it->second;
-		if (str.compareNoCase("TRUE") == 0) {
+		if (str.compareNoCase("TRUE") == 0)
+		{
 			TheWritableGlobalData->m_firewallBehavior = FIREWALL_TYPE_UNKNOWN;
 		}
 	}
 
-	if (TheWritableGlobalData->m_firewallBehavior == FIREWALL_TYPE_UNKNOWN) {
+	if (TheWritableGlobalData->m_firewallBehavior == FIREWALL_TYPE_UNKNOWN)
+	{
 		detectFirewallBehavior();
 
 		return FALSE;
-	} else {
-		DEBUG_LOG(("FirewallHelperClass::detectFirewall - firewall behavior already specified as %d, port allocation delta is %d, skipping detection.", TheWritableGlobalData->m_firewallBehavior, TheWritableGlobalData->m_firewallPortAllocationDelta));
+	}
+	else
+	{
+		DEBUG_LOG(
+				("FirewallHelperClass::detectFirewall - firewall behavior already specified as %d, port allocation delta is %d, "
+				 "skipping detection.",
+				 TheWritableGlobalData->m_firewallBehavior,
+				 TheWritableGlobalData->m_firewallPortAllocationDelta));
 	}
 
 	return TRUE;
 }
 
-
 Bool FirewallHelperClass::behaviorDetectionUpdate()
 {
-	if (m_currentState == DETECTIONSTATE_IDLE) {
+	if (m_currentState == DETECTIONSTATE_IDLE)
+	{
 		return FALSE;
 	}
 
-	if (m_currentState == DETECTIONSTATE_DONE) {
+	if (m_currentState == DETECTIONSTATE_DONE)
+	{
 		return TRUE;
 	}
 
-	if (m_currentState == DETECTIONSTATE_BEGIN) {
+	if (m_currentState == DETECTIONSTATE_BEGIN)
+	{
 		return detectionBeginUpdate();
 	}
 
-	if (m_currentState == DETECTIONSTATE_TEST1) {
+	if (m_currentState == DETECTIONSTATE_TEST1)
+	{
 		return detectionTest1Update();
 	}
 
-	if (m_currentState == DETECTIONSTATE_TEST2) {
+	if (m_currentState == DETECTIONSTATE_TEST2)
+	{
 		return detectionTest2Update();
 	}
 
-	if (m_currentState == DETECTIONSTATE_TEST3) {
+	if (m_currentState == DETECTIONSTATE_TEST3)
+	{
 		return detectionTest3Update();
 	}
 
-	if (m_currentState == DETECTIONSTATE_TEST3_WAITFORRESPONSES) {
+	if (m_currentState == DETECTIONSTATE_TEST3_WAITFORRESPONSES)
+	{
 		return detectionTest3WaitForResponsesUpdate();
 	}
 
-	if (m_currentState == DETECTIONSTATE_TEST4_1) {
+	if (m_currentState == DETECTIONSTATE_TEST4_1)
+	{
 		return detectionTest4Stage1Update();
 	}
 
-	if (m_currentState == DETECTIONSTATE_TEST4_2) {
+	if (m_currentState == DETECTIONSTATE_TEST4_2)
+	{
 		return detectionTest4Stage2Update();
 	}
 
-	if (m_currentState == DETECTIONSTATE_TEST5) {
+	if (m_currentState == DETECTIONSTATE_TEST5)
+	{
 		return detectionTest5Update();
 	}
 
@@ -263,22 +275,24 @@ Bool FirewallHelperClass::behaviorDetectionUpdate()
  *=============================================================================================*/
 UnsignedShort FirewallHelperClass::getNextTemporarySourcePort(Int skip)
 {
-	UnsignedShort return_port = (UnsignedShort) m_sourcePortPool;
+	UnsignedShort return_port = (UnsignedShort)m_sourcePortPool;
 
 	/*
 	** Try max 256 ports until we find one we can bind to a socket.
 	*/
 	Int tries = 256;
-	if (skip == 0) {
+	if (skip == 0)
+	{
 		skip = 1;
 	}
 
-	while (tries--) {
-
+	while (tries--)
+	{
 		m_sourcePortPool += skip;
-		return_port = (UnsignedShort) m_sourcePortPool;
+		return_port = (UnsignedShort)m_sourcePortPool;
 
-		if (m_sourcePortPool > 65535) {
+		if (m_sourcePortPool > 65535)
+		{
 			m_sourcePortPool = 2048;
 		}
 
@@ -287,21 +301,19 @@ UnsignedShort FirewallHelperClass::getNextTemporarySourcePort(Int skip)
 		*/
 		Bool result = openSpareSocket(return_port);
 
-		if (result) {
+		if (result)
+		{
 			closeSpareSocket(return_port);
-			return(return_port);
-		} else {
+			return (return_port);
+		}
+		else
+		{
 			DEBUG_LOG(("FirewallHelperClass::getNextTemporarySourcePort - failed to open socket on port %d", return_port));
 		}
 	}
 
-	return(return_port);
-
+	return (return_port);
 }
-
-
-
-
 
 /***********************************************************************************************
  * FHC::sendToManglerFromPort -- Send to the mangler from the specified port               *
@@ -318,75 +330,87 @@ UnsignedShort FirewallHelperClass::getNextTemporarySourcePort(Int skip)
  * HISTORY:                                                                                    *
  *   3/15/01 12:47PM ST : Created                                                              *
  *=============================================================================================*/
-Bool FirewallHelperClass::sendToManglerFromPort(UnsignedInt address, UnsignedShort port, UnsignedShort packetID, Bool blitzme)
+Bool FirewallHelperClass::sendToManglerFromPort(
+		UnsignedInt address,
+		UnsignedShort port,
+		UnsignedShort packetID,
+		Bool blitzme)
 {
-	DEBUG_LOG(("sizeof(ManglerMessage) == %d, sizeof(ManglerData) == %d",
-		sizeof(ManglerMessage), sizeof(ManglerData)));
+	DEBUG_LOG(("sizeof(ManglerMessage) == %d, sizeof(ManglerData) == %d", sizeof(ManglerMessage), sizeof(ManglerData)));
 
 	/*
 	** Build the packet to send out.
 	*/
 	ManglerMessage packet;
-	memset(&(packet.data),0x44, sizeof(ManglerData));
+	memset(&(packet.data), 0x44, sizeof(ManglerData));
 	packet.data.NetCommandType = 12; // mangler request.
 	packet.data.PacketID = packetID;
-	if (blitzme) {
+	if (blitzme)
+	{
 		packet.data.BlitzMe = 1;
-	} else {
+	}
+	else
+	{
 		packet.data.BlitzMe = 0;
 	}
 	packet.data.magic = GENERALS_MAGIC_NUMBER;
 	packet.data.OriginalPortNumber = port;
-/*
-	DEBUG_LOG_RAW(("Pre-Adjust Buffer = "));
-	for (Int i = 0; i < sizeof(ManglerData); ++i) {
-		DEBUG_LOG_RAW(("%02x", *(((unsigned char *)(&(packet.data))) + i)));
-	}
-	DEBUG_LOG_RAW(("\n"));
-*/
+	/*
+		DEBUG_LOG_RAW(("Pre-Adjust Buffer = "));
+		for (Int i = 0; i < sizeof(ManglerData); ++i) {
+			DEBUG_LOG_RAW(("%02x", *(((unsigned char *)(&(packet.data))) + i)));
+		}
+		DEBUG_LOG_RAW(("\n"));
+	*/
 	byteAdjust(&(packet.data));
-/*
-	DEBUG_LOG_RAW(("Pre-CRC Buffer = "));
-	for (i = 0; i < sizeof(ManglerData); ++i) {
-		DEBUG_LOG_RAW(("%02x", *(((unsigned char *)(&(packet.data))) + i)));
-	}
-	DEBUG_LOG_RAW(("\n"));
-*/
+	/*
+		DEBUG_LOG_RAW(("Pre-CRC Buffer = "));
+		for (i = 0; i < sizeof(ManglerData); ++i) {
+			DEBUG_LOG_RAW(("%02x", *(((unsigned char *)(&(packet.data))) + i)));
+		}
+		DEBUG_LOG_RAW(("\n"));
+	*/
 	CRC crc;
 	crc.computeCRC((unsigned char *)(&(packet.data.magic)), sizeof(ManglerData) - sizeof(unsigned int));
 	packet.data.CRC = htonl(crc.get());
 
 	packet.length = sizeof(ManglerData);
 
-	DEBUG_LOG(("FirewallHelperClass::sendToManglerFromPort - Sending from port %d to %d.%d.%d.%d:%d", (UnsignedInt)port,
-		PRINTF_IP_AS_4_INTS(address), MANGLER_PORT));
-/*
-	DEBUG_LOG_RAW(("Buffer = "));
-	for (i = 0; i < sizeof(ManglerData); ++i) {
-		DEBUG_LOG_RAW(("%02x", *(((unsigned char *)(&(packet.data))) + i)));
-	}
-	DEBUG_LOG_RAW(("\n"));
-*/
+	DEBUG_LOG(
+			("FirewallHelperClass::sendToManglerFromPort - Sending from port %d to %d.%d.%d.%d:%d",
+			 (UnsignedInt)port,
+			 PRINTF_IP_AS_4_INTS(address),
+			 MANGLER_PORT));
+	/*
+		DEBUG_LOG_RAW(("Buffer = "));
+		for (i = 0; i < sizeof(ManglerData); ++i) {
+			DEBUG_LOG_RAW(("%02x", *(((unsigned char *)(&(packet.data))) + i)));
+		}
+		DEBUG_LOG_RAW(("\n"));
+	*/
 	SpareSocketStruct *spareSocket = findSpareSocketByPort(port);
-//	DEBUG_LOG(("PacketID = %u", packetID));
-//	DEBUG_LOG(("OriginalPortNumber = %u", port));
+	//	DEBUG_LOG(("PacketID = %u", packetID));
+	//	DEBUG_LOG(("OriginalPortNumber = %u", port));
 
-	if (spareSocket == NULL) {
+	if (spareSocket == NULL)
+	{
 		DEBUG_ASSERTCRASH(spareSocket != NULL, ("Could not find spare socket for send."));
 		DEBUG_LOG(("FirewallHelperClass::sendToManglerFromPort - failed to find the spare socket for port %d", port));
 		return FALSE;
 	}
 
-	spareSocket->udp->Write((UnsignedByte *) &packet, sizeof(ManglerData), address, MANGLER_PORT);
+	spareSocket->udp->Write((UnsignedByte *)&packet, sizeof(ManglerData), address, MANGLER_PORT);
 
-	return(TRUE);
+	return (TRUE);
 }
 
-
-SpareSocketStruct * FirewallHelperClass::findSpareSocketByPort(UnsignedShort port) {
+SpareSocketStruct *FirewallHelperClass::findSpareSocketByPort(UnsignedShort port)
+{
 	DEBUG_LOG(("FirewallHelperClass::findSpareSocketByPort - trying to find spare socket with port %d", port));
-	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i) {
-		if (m_spareSockets[i].port == port) {
+	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i)
+	{
+		if (m_spareSockets[i].port == port)
+		{
 			DEBUG_LOG(("FirewallHelperClass::findSpareSocketByPort - found it!"));
 			return &(m_spareSockets[i]);
 		}
@@ -396,20 +420,24 @@ SpareSocketStruct * FirewallHelperClass::findSpareSocketByPort(UnsignedShort por
 	return NULL;
 }
 
-ManglerMessage * FirewallHelperClass::findEmptyMessage() {
-	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i) {
-		if (m_messages[i].length == 0) {
+ManglerMessage *FirewallHelperClass::findEmptyMessage()
+{
+	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i)
+	{
+		if (m_messages[i].length == 0)
+		{
 			return &(m_messages[i]);
 		}
 	}
 	return NULL;
 }
 
-void FirewallHelperClass::byteAdjust(ManglerData *data) {
-//	for (Int i = 0; i < len/4; ++i) {
-//		*buf = htonl(*buf);
-//		++buf;
-//	}
+void FirewallHelperClass::byteAdjust(ManglerData *data)
+{
+	//	for (Int i = 0; i < len/4; ++i) {
+	//		*buf = htonl(*buf);
+	//		++buf;
+	//	}
 	data->CRC = htonl(data->CRC);
 	data->magic = htons(data->magic);
 	data->MyMangledPortNumber = htons(data->MyMangledPortNumber);
@@ -435,36 +463,54 @@ UnsignedShort FirewallHelperClass::getManglerResponse(UnsignedShort packetID, In
 {
 	ManglerMessage *msg = NULL;
 
-//	SpareSocketStruct *spareSocket = NULL;
+	//	SpareSocketStruct *spareSocket = NULL;
 
 	sockaddr_in addr;
 
 	Int i = 0;
-	for (; i < MAX_SPARE_SOCKETS; ++i) {
-		if (m_spareSockets[i].udp != NULL) {
+	for (; i < MAX_SPARE_SOCKETS; ++i)
+	{
+		if (m_spareSockets[i].udp != NULL)
+		{
 			ManglerMessage *message = findEmptyMessage();
-			if (message == NULL) {
+			if (message == NULL)
+			{
 				break;
 			}
 			Int retval = m_spareSockets[i].udp->Read((unsigned char *)message, sizeof(ManglerData), &addr);
-			if (retval > 0) {
-
+			if (retval > 0)
+			{
 				CRC crc;
 				crc.computeCRC((unsigned char *)(&(message->data.magic)), sizeof(ManglerData) - sizeof(unsigned int));
-				if (crc.get() != htonl(message->data.CRC)) {
-					DEBUG_LOG(("FirewallHelperClass::getManglerResponse - Saw message, CRC mismatch.  Expected CRC %u, computed CRC %u", message->data.CRC, crc.get()));
+				if (crc.get() != htonl(message->data.CRC))
+				{
+					DEBUG_LOG(
+							("FirewallHelperClass::getManglerResponse - Saw message, CRC mismatch.  Expected CRC %u, computed CRC %u",
+							 message->data.CRC,
+							 crc.get()));
 					continue;
 				}
 				byteAdjust(&(message->data));
 				message->length = retval;
-				DEBUG_LOG(("FirewallHelperClass::getManglerResponse - Saw message of %d bytes from mangler %d on port %u", retval, i, m_spareSockets[i].port));
-				DEBUG_LOG(("FirewallHelperClass::getManglerResponse - Message has packet ID %d 0x%08X, looking for packet id %d 0x%08X", message->data.PacketID, message->data.PacketID, packetID, packetID));
-				if (message->data.PacketID == packetID) {
+				DEBUG_LOG(
+						("FirewallHelperClass::getManglerResponse - Saw message of %d bytes from mangler %d on port %u",
+						 retval,
+						 i,
+						 m_spareSockets[i].port));
+				DEBUG_LOG(
+						("FirewallHelperClass::getManglerResponse - Message has packet ID %d 0x%08X, looking for packet id %d 0x%08X",
+						 message->data.PacketID,
+						 message->data.PacketID,
+						 packetID,
+						 packetID));
+				if (message->data.PacketID == packetID)
+				{
 					DEBUG_LOG(("FirewallHelperClass::getManglerResponse - packet ID's match, returning message"));
 					msg = message;
 					message->length = 0;
 				}
-				if (ntohs(message->data.PacketID) == packetID) {
+				if (ntohs(message->data.PacketID) == packetID)
+				{
 					DEBUG_LOG(("FirewallHelperClass::getManglerResponse - NETWORK BYTE ORDER packet ID's match, returning message"));
 					msg = message;
 					message->length = 0;
@@ -474,26 +520,30 @@ UnsignedShort FirewallHelperClass::getManglerResponse(UnsignedShort packetID, In
 	}
 
 	// See if we have already received it and saved it.
-	if (msg == NULL) {
-		for (i = 0; i < MAX_SPARE_SOCKETS; ++i) {
-			if ((m_messages[i].length != 0) && (m_messages[i].data.PacketID == packetID)) {
+	if (msg == NULL)
+	{
+		for (i = 0; i < MAX_SPARE_SOCKETS; ++i)
+		{
+			if ((m_messages[i].length != 0) && (m_messages[i].data.PacketID == packetID))
+			{
 				msg = &(m_messages[i]);
 				msg->length = 0;
 			}
 		}
 	}
 
-	if (msg == NULL) {
+	if (msg == NULL)
+	{
 		return 0;
 	}
 
 	UnsignedShort mangled_port = msg->data.MyMangledPortNumber;
-	DEBUG_LOG(("Mangler is seeing packets from port %d as coming from port %d", (UnsignedInt)msg->data.OriginalPortNumber, (UnsignedInt)mangled_port));
+	DEBUG_LOG(
+			("Mangler is seeing packets from port %d as coming from port %d",
+			 (UnsignedInt)msg->data.OriginalPortNumber,
+			 (UnsignedInt)mangled_port));
 	return mangled_port;
 }
-
-
-
 
 /***********************************************************************************************
  * FirewallHelperClass::Write_Firewall_Settings -- Save out firewall settings.                 *
@@ -529,7 +579,6 @@ void FirewallHelperClass::writeFirewallBehavior(void)
 	pref.write();
 }
 
-
 /***********************************************************************************************
  * FirewallHelperClass::flagNeedToRefresh -- Flag that the next time we log in we need to      *
  *    refresh our firewall settings.                                                           *
@@ -554,7 +603,6 @@ void FirewallHelperClass::flagNeedToRefresh(Bool flag)
 	pref.write();
 }
 
-
 /***********************************************************************************************
  * FirewallHelperClass::Read_Firewall_Behavior -- Read in old firewall settings                *
  *                                                                                             *
@@ -572,12 +620,10 @@ void FirewallHelperClass::flagNeedToRefresh(Bool flag)
 void FirewallHelperClass::readFirewallBehavior(void)
 {
 #if (0)
-	m_lastBehavior = (FirewallBehaviorType) ConfigINI.Get_Int("MultiPlayer", "FirewallSettings", FIREWALL_UNKNOWN);
+	m_lastBehavior = (FirewallBehaviorType)ConfigINI.Get_Int("MultiPlayer", "FirewallSettings", FIREWALL_UNKNOWN);
 	m_lastSourcePortAllocationDelta = ConfigINI.Get_Int("MultiPlayer", "FirewallDelta", 1);
 #endif //(0)
 }
-
-
 
 /***********************************************************************************************
  * FHC::detectFirewallBehavior -- What is that wacky firewall doing to our packet headers?   *
@@ -600,12 +646,14 @@ void FirewallHelperClass::detectFirewallBehavior(/*Bool &canRecord*/)
 	m_currentState = DETECTIONSTATE_BEGIN;
 }
 
-FirewallHelperClass::FirewallBehaviorType FirewallHelperClass::getFirewallBehavior() {
+FirewallHelperClass::FirewallBehaviorType FirewallHelperClass::getFirewallBehavior()
+{
 	m_currentState = DETECTIONSTATE_IDLE;
 	return m_behavior;
 }
 
-Short FirewallHelperClass::getSourcePortAllocationDelta() {
+Short FirewallHelperClass::getSourcePortAllocationDelta()
+{
 	return m_sourcePortAllocationDelta;
 }
 
@@ -617,10 +665,11 @@ Short FirewallHelperClass::getSourcePortAllocationDelta() {
 	strcpy(nameBuf, host.str());
 }
 
-Bool FirewallHelperClass::detectionBeginUpdate() {
-//	UnsignedShort mangler_port = MANGLER_PORT;
-	 m_packetID = 0x7f00;
-	//int current_mangler = 0;
+Bool FirewallHelperClass::detectionBeginUpdate()
+{
+	//	UnsignedShort mangler_port = MANGLER_PORT;
+	m_packetID = 0x7f00;
+	// int current_mangler = 0;
 
 	/*
 	** Well, we are going to need some manglers.
@@ -628,34 +677,34 @@ Bool FirewallHelperClass::detectionBeginUpdate() {
 
 	UnsignedByte mangler_addresses[4][4];
 
-//	Int delta = 0;
-
+	//	Int delta = 0;
 
 	/*
 	** If the user specified a particular port to use then we act as if there is no firewall.
 	*/
-	if (TheWritableGlobalData->m_firewallPortOverride != 0) {
+	if (TheWritableGlobalData->m_firewallPortOverride != 0)
+	{
 		m_behavior = FIREWALL_TYPE_SIMPLE;
 		DEBUG_LOG(("Source port %d specified by user", TheGlobalData->m_firewallPortOverride));
 
-		if (TheGlobalData->m_firewallSendDelay) {
+		if (TheGlobalData->m_firewallSendDelay)
+		{
 			UnsignedInt addbehavior = FIREWALL_TYPE_NETGEAR_BUG;
 			addbehavior |= (UnsignedInt)m_behavior;
-			m_behavior = (FirewallBehaviorType) addbehavior;
+			m_behavior = (FirewallBehaviorType)addbehavior;
 			DEBUG_LOG(("Netgear bug specified by command line or SendDelay flag"));
 		}
 		m_currentState = DETECTIONSTATE_DONE;
 		return TRUE;
 	}
 
-
-
 	m_timeoutStart = timeGetTime();
 	m_timeoutLength = 5000;
 	DEBUG_LOG(("About to call gethostbyname for the mangler address"));
 	int namenum = 0;
 
-	do {
+	do
+	{
 		AsciiString host;
 		UnsignedShort port;
 		TheGameSpyConfig->getManglerLocation(namenum, host, port);
@@ -665,15 +714,16 @@ Bool FirewallHelperClass::detectionBeginUpdate() {
 		/*
 		** Use the wolapi supplied mangler info if available.
 		*/
-//		if (NumManglerServers > namenum) {
-//			mangler_name_ptr = &ManglerServerAddress[namenum][0];
-//			mangler_port = ManglerServerPort[namenum];
-			//current_mangler = CurrentManglerServer;
-//			DEBUG_LOG(("Using mangler from servserv"));
-//		}
+		//		if (NumManglerServers > namenum) {
+		//			mangler_name_ptr = &ManglerServerAddress[namenum][0];
+		//			mangler_port = ManglerServerPort[namenum];
+		// current_mangler = CurrentManglerServer;
+		//			DEBUG_LOG(("Using mangler from servserv"));
+		//		}
 		namenum++;
 
-		if (strlen(mangler_name_ptr) == 0) {
+		if (strlen(mangler_name_ptr) == 0)
+		{
 			break;
 		}
 
@@ -684,7 +734,8 @@ Bool FirewallHelperClass::detectionBeginUpdate() {
 		strcpy(temp_name, mangler_name_ptr);
 		struct hostent *host_info = gethostbyname(temp_name);
 
-		if (!host_info) {
+		if (!host_info)
+		{
 			DEBUG_LOG(("gethostbyname failed! Error code %d", WSAGetLastError()));
 			break;
 		}
@@ -693,8 +744,10 @@ Bool FirewallHelperClass::detectionBeginUpdate() {
 		** See if we already have that address in the list.
 		*/
 		Bool found = FALSE;
-		for (Int i=0 ; i<m_numManglers; i++) {
-			if (memcmp(mangler_addresses[i], &host_info->h_addr_list[0][0], 4) == 0) {
+		for (Int i = 0; i < m_numManglers; i++)
+		{
+			if (memcmp(mangler_addresses[i], &host_info->h_addr_list[0][0], 4) == 0)
+			{
 				found = TRUE;
 				break;
 			}
@@ -702,30 +755,37 @@ Bool FirewallHelperClass::detectionBeginUpdate() {
 		/*
 		** Add the address in if we didn't find it.
 		*/
-		if (!found) {
+		if (!found)
+		{
 			Int m = m_numManglers++;
 			memcpy(&mangler_addresses[m][0], &host_info->h_addr_list[0][0], 4);
 			ntohl((UnsignedInt)mangler_addresses[m]);
-			DEBUG_LOG(("Found mangler address at %d.%d.%d.%d", mangler_addresses[m][0], mangler_addresses[m][1], mangler_addresses[m][2], mangler_addresses[m][3]));
+			DEBUG_LOG(
+					("Found mangler address at %d.%d.%d.%d",
+					 mangler_addresses[m][0],
+					 mangler_addresses[m][1],
+					 mangler_addresses[m][2],
+					 mangler_addresses[m][3]));
 		}
 
 	} while ((m_numManglers < MAX_NUM_MANGLERS) && ((timeGetTime() - m_timeoutStart) < m_timeoutLength));
 
-
 	DEBUG_ASSERTCRASH(m_numManglers > 2, ("not enough mangler addresses found."));
-	if (m_numManglers < 3) {
+	if (m_numManglers < 3)
+	{
 		m_currentState = DETECTIONSTATE_DONE;
 		return TRUE;
 	}
 
-	for (Int i=0 ; i<m_numManglers ; i++) {
+	for (Int i = 0; i < m_numManglers; i++)
+	{
 		UnsignedInt temp = 0;
 		temp = mangler_addresses[i][3];
 		temp += mangler_addresses[i][2] << 8;
 		temp += mangler_addresses[i][1] << 16;
 		temp += mangler_addresses[i][0] << 24;
 		m_manglers[i] = temp;
-//		memcpy(&(m_manglers[i]), &mangler_addresses[i][0], 4);
+		//		memcpy(&(m_manglers[i]), &mangler_addresses[i][0], 4);
 	}
 
 	DEBUG_LOG(("FirewallHelperClass::detectionBeginUpdate - Testing for Netgear bug"));
@@ -733,12 +793,15 @@ Bool FirewallHelperClass::detectionBeginUpdate() {
 	/*
 	** See if the user specified a netgear firewall - that will save us the trouble.
 	*/
-	if (TheGlobalData->m_firewallSendDelay) {
+	if (TheGlobalData->m_firewallSendDelay)
+	{
 		UnsignedInt addbehavior = FIREWALL_TYPE_NETGEAR_BUG;
 		addbehavior |= (UnsignedInt)m_behavior;
-		m_behavior = (FirewallBehaviorType) addbehavior;
+		m_behavior = (FirewallBehaviorType)addbehavior;
 		DEBUG_LOG(("FirewallHelperClass::detectionBeginUpdate - Netgear bug specified by command line or SendDelay flag"));
-	} else {
+	}
+	else
+	{
 		DEBUG_LOG(("FirewallHelperClass::detectionBeginUpdate - Netgear bug not specified"));
 	}
 
@@ -756,7 +819,8 @@ Bool FirewallHelperClass::detectionBeginUpdate() {
 	** Get a spare port number and create a new socket to bind it to.
 	*/
 	m_sparePorts[0] = getNextTemporarySourcePort(0);
-	if (!openSpareSocket(m_sparePorts[0])) {
+	if (!openSpareSocket(m_sparePorts[0]))
+	{
 		m_currentState = DETECTIONSTATE_DONE;
 		return TRUE;
 	}
@@ -772,25 +836,28 @@ Bool FirewallHelperClass::detectionBeginUpdate() {
 	return FALSE;
 }
 
-
-Bool FirewallHelperClass::detectionTest1Update() {
-
+Bool FirewallHelperClass::detectionTest1Update()
+{
 	m_mangledPorts[0] = getManglerResponse(m_packetID);
 
 	/*
 	** See if we got no response or a non-mangled response.
 	*/
-	if (m_mangledPorts[0] == 0 || m_mangledPorts[0] == m_sparePorts[0]) {
-		if (m_mangledPorts[0] == m_sparePorts[0]) {
+	if (m_mangledPorts[0] == 0 || m_mangledPorts[0] == m_sparePorts[0])
+	{
+		if (m_mangledPorts[0] == m_sparePorts[0])
+		{
 			m_sourcePortAllocationDelta = 0;
 			DEBUG_LOG(("FirewallHelperClass::detectionTest1Update - Non-mangled response from mangler, quitting test."));
 		}
-		if ((m_mangledPorts[0] == 0) && ((timeGetTime() - m_timeoutStart) < m_timeoutLength)) {
+		if ((m_mangledPorts[0] == 0) && ((timeGetTime() - m_timeoutStart) < m_timeoutLength))
+		{
 			// we are still waiting for a response and haven't timed out yet.
 			DEBUG_LOG(("FirewallHelperClass::detectionTest1Update - waiting for response from mangler."));
 			return FALSE;
 		}
-		if ((m_mangledPorts[0] == 0) && ((timeGetTime() - m_timeoutStart) >= m_timeoutLength)) {
+		if ((m_mangledPorts[0] == 0) && ((timeGetTime() - m_timeoutStart) >= m_timeoutLength))
+		{
 			// we are still waiting for a response and we timed out.
 			DEBUG_LOG(("FirewallHelperClass::detectionTest1Update - timed out waiting for response from mangler."));
 		}
@@ -817,18 +884,20 @@ Bool FirewallHelperClass::detectionTest1Update() {
 	m_timeoutStart = timeGetTime();
 	m_timeoutLength = 6000;
 	m_mangledPorts[1] = 0;
-	sendToManglerFromPort(m_manglers[1], m_sparePorts[0], m_packetID+1);
+	sendToManglerFromPort(m_manglers[1], m_sparePorts[0], m_packetID + 1);
 
 	m_currentState = DETECTIONSTATE_TEST2;
 	return FALSE;
 }
 
-Bool FirewallHelperClass::detectionTest2Update() {
+Bool FirewallHelperClass::detectionTest2Update()
+{
+	m_mangledPorts[1] = getManglerResponse(m_packetID + 1);
 
-	m_mangledPorts[1] = getManglerResponse(m_packetID+1);
-
-	if (m_mangledPorts[1] == 0) {
-		if ((timeGetTime() - m_timeoutStart) <= m_timeoutLength) {
+	if (m_mangledPorts[1] == 0)
+	{
+		if ((timeGetTime() - m_timeoutStart) <= m_timeoutLength)
+		{
 			return FALSE;
 		}
 		DEBUG_LOG(("FirewallHelperClass::detectionTest2Update - timed out waiting for mangler response"));
@@ -844,35 +913,42 @@ Bool FirewallHelperClass::detectionTest2Update() {
 	/*
 	** See if we got no response or a non-mangled response.
 	*/
-	if (m_mangledPorts[1] == 0 || m_mangledPorts[1] == m_sparePorts[0]) {
+	if (m_mangledPorts[1] == 0 || m_mangledPorts[1] == m_sparePorts[0])
+	{
 		m_currentState = DETECTIONSTATE_DONE;
 		UnsignedInt addBehavior = (UnsignedInt)FIREWALL_TYPE_SIMPLE;
 		addBehavior |= (UnsignedInt)m_behavior;
 		m_behavior = (FirewallBehaviorType)addBehavior;
 
-		if (m_mangledPorts[1] == 0) {
+		if (m_mangledPorts[1] == 0)
+		{
 			DEBUG_LOG(("FirewallHelperClass::detectionTest2Update - got no response from mangler"));
-		} else {
+		}
+		else
+		{
 			DEBUG_LOG(("FirewallHelperClass::detectionTest2Update - got a mangler response, no port mangling"));
 		}
 		DEBUG_LOG(("FirewallHelperClass::detectionTest2Update - Setting behavior to SIMPLE, done testing"));
 		return TRUE;
 	}
 
-	if (m_mangledPorts[0] == m_mangledPorts[1]) {
-		DEBUG_LOG(("FirewallHelperClass::detectionTest2Update - port mangling doesn't depend on destination IP, setting to DUMB_MANGLING"));
+	if (m_mangledPorts[0] == m_mangledPorts[1])
+	{
+		DEBUG_LOG(
+				("FirewallHelperClass::detectionTest2Update - port mangling doesn't depend on destination IP, setting to "
+				 "DUMB_MANGLING"));
 		UnsignedInt addBehavior = (UnsignedInt)FIREWALL_TYPE_DUMB_MANGLING;
 		addBehavior |= (UnsignedInt)m_behavior;
 		m_behavior = (FirewallBehaviorType)addBehavior;
-	} else {
-		DEBUG_LOG(("FirewallHelperClass::detectionTest2Update - port mangling depends on destination IP, setting to SMART_MANGLING"));
+	}
+	else
+	{
+		DEBUG_LOG(
+				("FirewallHelperClass::detectionTest2Update - port mangling depends on destination IP, setting to SMART_MANGLING"));
 		UnsignedInt addBehavior = (UnsignedInt)FIREWALL_TYPE_SMART_MANGLING;
 		addBehavior |= (UnsignedInt)m_behavior;
 		m_behavior = (FirewallBehaviorType)addBehavior;
 	}
-
-
-
 
 	/*
 	** Third test.
@@ -891,11 +967,13 @@ Bool FirewallHelperClass::detectionTest2Update() {
 	return FALSE;
 }
 
-Bool FirewallHelperClass::detectionTest3Update() {
+Bool FirewallHelperClass::detectionTest3Update()
+{
 	/*
 	** Try this whole thing a max of 3 times.
 	*/
-	if (m_currentTry < 3) {
+	if (m_currentTry < 3)
+	{
 		memset(m_sparePorts, 0, sizeof(m_sparePorts));
 		memset(m_mangledPorts, 0, sizeof(m_mangledPorts));
 
@@ -904,16 +982,19 @@ Bool FirewallHelperClass::detectionTest3Update() {
 		** We should use a non-linear set of source ports so we can detect the NAT32 relative offset
 		** case.
 		*/
-		Int i=0;
-		for (; i<NUM_TEST_PORTS ; i++) {
+		Int i = 0;
+		for (; i < NUM_TEST_PORTS; i++)
+		{
 			m_sparePorts[i] = getNextTemporarySourcePort(i);
-			if (!openSpareSocket(m_sparePorts[i])) {
-
+			if (!openSpareSocket(m_sparePorts[i]))
+			{
 				/*
 				** Close any spare ports we allocated already before we bail.
 				*/
-				for (Int j=0 ; j<i ; j++) {
-					if (m_sparePorts[j]) {
+				for (Int j = 0; j < i; j++)
+				{
+					if (m_sparePorts[j])
+					{
 						closeSpareSocket(m_sparePorts[j]);
 					}
 				}
@@ -933,9 +1014,11 @@ Bool FirewallHelperClass::detectionTest3Update() {
 		m_timeoutLength = 12000;
 
 		DEBUG_LOG(("FirewallHelperClass::detectionTest3Update - Sending to %d manglers", NUM_TEST_PORTS));
-		for (i=0 ; i<NUM_TEST_PORTS ; i++) {
-			if (m_mangledPorts[i] == 0) {
-				sendToManglerFromPort(m_manglers[0], m_sparePorts[i], m_packetID+i);
+		for (i = 0; i < NUM_TEST_PORTS; i++)
+		{
+			if (m_mangledPorts[i] == 0)
+			{
+				sendToManglerFromPort(m_manglers[0], m_sparePorts[i], m_packetID + i);
 			}
 		}
 
@@ -951,24 +1034,32 @@ Bool FirewallHelperClass::detectionTest3Update() {
 	return TRUE;
 }
 
-Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
+Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate()
+{
 	Int i = 0;
-	for (; i < NUM_TEST_PORTS; ++i) {
-		if (m_mangledPorts[i] == 0) {
+	for (; i < NUM_TEST_PORTS; ++i)
+	{
+		if (m_mangledPorts[i] == 0)
+		{
 			m_mangledPorts[i] = getManglerResponse(m_packetID + i);
-			if (m_mangledPorts[i] != 0) {
+			if (m_mangledPorts[i] != 0)
+			{
 				++m_numResponses;
 			}
 		}
 	}
 
-	if (m_numResponses < NUM_TEST_PORTS) {
-		if ((timeGetTime() - m_timeoutStart) > m_timeoutLength) {
+	if (m_numResponses < NUM_TEST_PORTS)
+	{
+		if ((timeGetTime() - m_timeoutStart) > m_timeoutLength)
+		{
 			/*
 			** Close down those sockets - we are finished with them.
 			*/
-			for (Int j=0 ; j<i ; j++) {
-				if (m_spareSockets[j].port != 0) {
+			for (Int j = 0; j < i; j++)
+			{
+				if (m_spareSockets[j].port != 0)
+				{
 					closeSpareSocket(m_spareSockets[j].port);
 				}
 			}
@@ -982,8 +1073,10 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 	/*
 	** Close down those sockets - we are finished with them.
 	*/
-	for (Int j=0 ; j<i ; j++) {
-		if (m_spareSockets[j].port != 0) {
+	for (Int j = 0; j < i; j++)
+	{
+		if (m_spareSockets[j].port != 0)
+		{
 			closeSpareSocket(m_spareSockets[j].port);
 		}
 	}
@@ -991,49 +1084,62 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 	/*
 	** We need at least 4 responses to be sure of the port allocation scheme.
 	*/
-	if (m_numResponses < 4) {
-		if (m_lastSourcePortAllocationDelta != 0 && (int)m_lastBehavior > (int)FIREWALL_TYPE_SIMPLE) {
+	if (m_numResponses < 4)
+	{
+		if (m_lastSourcePortAllocationDelta != 0 && (int)m_lastBehavior > (int)FIREWALL_TYPE_SIMPLE)
+		{
 			/*
 			** If the delta we got last time we played looks good then use that.
 			*/
 			m_sourcePortAllocationDelta = m_lastSourcePortAllocationDelta;
 		}
-		DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - didn't get enough responses, using %d as the source port allocation delta, finished test", m_sourcePortAllocationDelta));
+		DEBUG_LOG(
+				("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - didn't get enough responses, using %d as the source "
+				 "port allocation delta, finished test",
+				 m_sourcePortAllocationDelta));
 		m_currentState = DETECTIONSTATE_DONE;
 		return TRUE;
 	}
-
 
 	Bool relative_delta = FALSE;
 	Bool looks_good = FALSE;
 	Int delta = getNATPortAllocationScheme(m_numResponses, m_sparePorts, m_mangledPorts, relative_delta, looks_good);
 	DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - getNATPortAllocationScheme returned %d", delta));
 
-	if (delta) {
-
+	if (delta)
+	{
 		/*
 		** Hey, we got it!
 		*/
 		UnsignedInt addbehavior = 0;
-		if (relative_delta) {
+		if (relative_delta)
+		{
 			DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - detected RELATIVE PORT ALLOCATION"));
 			addbehavior = (UnsignedInt)FIREWALL_TYPE_RELATIVE_PORT_ALLOCATION;
-		} else {
+		}
+		else
+		{
 			DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - detected SIMPLE PORT ALLOCATION"));
 			addbehavior = (UnsignedInt)FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION;
 		}
 		addbehavior |= (UnsignedInt)m_behavior;
-		m_behavior = (FirewallBehaviorType) addbehavior;
+		m_behavior = (FirewallBehaviorType)addbehavior;
 
 		m_sourcePortAllocationDelta = delta;
 		DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - setting source port delta to %d", delta));
-	} else {
+	}
+	else
+	{
 		DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - didn't get a delta value"));
-		if (m_lastSourcePortAllocationDelta != 0 && (Int)m_lastBehavior > (Int)FIREWALL_TYPE_SIMPLE) {
+		if (m_lastSourcePortAllocationDelta != 0 && (Int)m_lastBehavior > (Int)FIREWALL_TYPE_SIMPLE)
+		{
 			/*
 			** If the delta we got last time we played looks good then use that.
 			*/
-			DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - using the port allocation delta we have from before which is %d", m_lastSourcePortAllocationDelta));
+			DEBUG_LOG(
+					("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - using the port allocation delta we have from before "
+					 "which is %d",
+					 m_lastSourcePortAllocationDelta));
 			m_sourcePortAllocationDelta = m_lastSourcePortAllocationDelta;
 		}
 		++m_currentTry;
@@ -1047,24 +1153,28 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 	**
 	** Test to see if the NAT mangles differently per destination port at the same IP.
 	*/
-	if ((m_behavior & FIREWALL_TYPE_SMART_MANGLING) != 0) {
-
-		if ((m_behavior & FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION) != 0) {
-
-			DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - simple port allocation, Testing to see if the NAT mangles differently per destination port at the same IP"));
+	if ((m_behavior & FIREWALL_TYPE_SMART_MANGLING) != 0)
+	{
+		if ((m_behavior & FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION) != 0)
+		{
+			DEBUG_LOG(
+					("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - simple port allocation, Testing to see if the NAT "
+					 "mangles differently per destination port at the same IP"));
 
 			/*
 			** We need 2 source ports for this.
 			*/
 			m_sparePorts[0] = getNextTemporarySourcePort(0);
-			if (!openSpareSocket(m_sparePorts[0])) {
+			if (!openSpareSocket(m_sparePorts[0]))
+			{
 				m_currentState = DETECTIONSTATE_DONE;
 				DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - Failed to open first spare port, bailing"));
 				return TRUE;
 			}
 
 			m_sparePorts[1] = getNextTemporarySourcePort(0);
-			if (!openSpareSocket(m_sparePorts[1])) {
+			if (!openSpareSocket(m_sparePorts[1]))
+			{
 				closeSpareSocket(m_sparePorts[0]);
 				m_currentState = DETECTIONSTATE_DONE;
 				DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - Failed to open second spare port, bailing"));
@@ -1086,7 +1196,9 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 
 			m_currentState = DETECTIONSTATE_TEST4_1;
 			return FALSE;
-		} else {
+		}
+		else
+		{
 			/*
 			** NAT32 uses different mangled source ports for different destination ports.
 			*/
@@ -1095,10 +1207,14 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 			addbehavior = (UnsignedInt)FIREWALL_TYPE_DESTINATION_PORT_DELTA;
 			DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - adding DESTINATION PORT DELTA to behavior"));
 			addbehavior |= (UnsignedInt)m_behavior;
-			m_behavior = (FirewallBehaviorType) addbehavior;
+			m_behavior = (FirewallBehaviorType)addbehavior;
 		}
-	} else {
-		DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - We don't have smart mangling, skipping test 4, entering test 5"));
+	}
+	else
+	{
+		DEBUG_LOG(
+				("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - We don't have smart mangling, skipping test 4, "
+				 "entering test 5"));
 	}
 
 	DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - entering test 5"));
@@ -1107,13 +1223,14 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 	return FALSE;
 }
 
-
-
-Bool FirewallHelperClass::detectionTest4Stage1Update() {
+Bool FirewallHelperClass::detectionTest4Stage1Update()
+{
 	m_mangledPorts[0] = getManglerResponse(m_packetID);
 
-	if (m_mangledPorts[0] == 0) {
-		if ((timeGetTime() - m_timeoutStart) > m_timeoutLength) {
+	if (m_mangledPorts[0] == 0)
+	{
+		if ((timeGetTime() - m_timeoutStart) > m_timeoutLength)
+		{
 			closeSpareSocket(m_sparePorts[0]);
 			closeSpareSocket(m_sparePorts[1]);
 			m_currentState = DETECTIONSTATE_DONE;
@@ -1148,32 +1265,48 @@ Bool FirewallHelperClass::detectionTest4Stage1Update() {
 	return FALSE;
 }
 
-Bool FirewallHelperClass::detectionTest4Stage2Update() {
+Bool FirewallHelperClass::detectionTest4Stage2Update()
+{
 	m_mangledPorts[1] = getManglerResponse(m_packetID);
 
-	if (m_mangledPorts[1] == 0) {
-		if ((timeGetTime() - m_timeoutStart) > m_timeoutLength) {
+	if (m_mangledPorts[1] == 0)
+	{
+		if ((timeGetTime() - m_timeoutStart) > m_timeoutLength)
+		{
 			closeSpareSocket(m_sparePorts[0]);
 			closeSpareSocket(m_sparePorts[1]);
 			m_currentState = DETECTIONSTATE_DONE;
-			DEBUG_LOG(("FirewallHelperClass::detectionTest4Stage2Update - timed out waiting for the second mangler response, quitting"));
+			DEBUG_LOG(
+					("FirewallHelperClass::detectionTest4Stage2Update - timed out waiting for the second mangler response, quitting"));
 			return TRUE;
 		}
 		return FALSE;
 	}
 
-	if (m_mangledPorts[1] != m_mangledPorts[0] + m_sourcePortAllocationDelta) {
-		DEBUG_LOG(("FirewallHelperClass::detectionTest4Stage2Update - NAT uses different source ports for different destination ports"));
+	if (m_mangledPorts[1] != m_mangledPorts[0] + m_sourcePortAllocationDelta)
+	{
+		DEBUG_LOG(
+				("FirewallHelperClass::detectionTest4Stage2Update - NAT uses different source ports for different destination "
+				 "ports"));
 
 		UnsignedInt addbehavior = 0;
 		addbehavior = (UnsignedInt)FIREWALL_TYPE_DESTINATION_PORT_DELTA;
 		addbehavior |= (UnsignedInt)m_behavior;
-		m_behavior = (FirewallBehaviorType) addbehavior;
-	} else {
-		DEBUG_ASSERTCRASH(m_mangledPorts[1] == m_mangledPorts[0] + m_sourcePortAllocationDelta, ("Problem getting the source port deltas."));
-		if (m_mangledPorts[1] == m_mangledPorts[0] + m_sourcePortAllocationDelta) {
-			DEBUG_LOG(("FirewallHelperClass::detectionTest4Stage2Update - NAT uses the same source port for different destination ports"));
-		} else {
+		m_behavior = (FirewallBehaviorType)addbehavior;
+	}
+	else
+	{
+		DEBUG_ASSERTCRASH(
+				m_mangledPorts[1] == m_mangledPorts[0] + m_sourcePortAllocationDelta,
+				("Problem getting the source port deltas."));
+		if (m_mangledPorts[1] == m_mangledPorts[0] + m_sourcePortAllocationDelta)
+		{
+			DEBUG_LOG(
+					("FirewallHelperClass::detectionTest4Stage2Update - NAT uses the same source port for different destination "
+					 "ports"));
+		}
+		else
+		{
 			DEBUG_LOG(("FirewallHelperClass::detectionTest4Stage2Update - Unable to complete destination port mangling test"));
 			DEBUG_CRASH(("Unable to complete destination port mangling test"));
 		}
@@ -1184,53 +1317,64 @@ Bool FirewallHelperClass::detectionTest4Stage2Update() {
 	return detectionTest5Update();
 }
 
-Bool FirewallHelperClass::detectionTest5Update() {
+Bool FirewallHelperClass::detectionTest5Update()
+{
 	/*
 	** We have done all the tests we *have* to. There's other info that it would be nice to know though.
 	**
 	** Test for the netgear bug behavior.
 	*/
 #if (0)
-// moved to before test 1.  Moved because this flag could be specified for another firewall
-// for testing purposes and never get this far because it has behavior that doesn't require
-// all the tests to be performed.
-// BGC 10/1/02
+	// moved to before test 1.  Moved because this flag could be specified for another firewall
+	// for testing purposes and never get this far because it has behavior that doesn't require
+	// all the tests to be performed.
+	// BGC 10/1/02
 	DEBUG_LOG(("FirewallHelperClass::detectionTest5Update - Testing for Netgear bug"));
 
 	/*
 	** See if the user specified a netgear firewall - that will save us the trouble.
 	*/
-	if (TheGlobalData->m_firewallSendDelay) {
+	if (TheGlobalData->m_firewallSendDelay)
+	{
 		UnsignedInt addbehavior = FIREWALL_TYPE_NETGEAR_BUG;
 		addbehavior |= (UnsignedInt)m_behavior;
-		m_behavior = (FirewallBehaviorType) addbehavior;
+		m_behavior = (FirewallBehaviorType)addbehavior;
 		DEBUG_LOG(("FirewallHelperClass::detectionTest5Update - Netgear bug specified by command line or SendDelay flag"));
-	} else {
+	}
+	else
+	{
 		DEBUG_LOG(("FirewallHelperClass::detectionTest5Update - Netgear bug not specified"));
 	}
 #endif // #if (0)
 
 	DEBUG_LOG_RAW(("FirewallHelperClass::detectionTest5Update - All done, behavior is: "));
 
-	if ((m_behavior & FIREWALL_TYPE_SIMPLE) != 0) {
+	if ((m_behavior & FIREWALL_TYPE_SIMPLE) != 0)
+	{
 		DEBUG_LOG_RAW((" FIREWALL_TYPE_SIMPLE "));
 	}
-	if ((m_behavior & FIREWALL_TYPE_DUMB_MANGLING) != 0) {
+	if ((m_behavior & FIREWALL_TYPE_DUMB_MANGLING) != 0)
+	{
 		DEBUG_LOG_RAW((" FIREWALL_TYPE_DUMB_MANGLING "));
 	}
-	if ((m_behavior & FIREWALL_TYPE_SMART_MANGLING) != 0) {
+	if ((m_behavior & FIREWALL_TYPE_SMART_MANGLING) != 0)
+	{
 		DEBUG_LOG_RAW((" FIREWALL_TYPE_SMART_MANGLING "));
 	}
-	if ((m_behavior & FIREWALL_TYPE_NETGEAR_BUG) != 0) {
+	if ((m_behavior & FIREWALL_TYPE_NETGEAR_BUG) != 0)
+	{
 		DEBUG_LOG_RAW((" FIREWALL_TYPE_NETGEAR_BUG "));
 	}
-	if ((m_behavior & FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION) != 0) {
+	if ((m_behavior & FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION) != 0)
+	{
 		DEBUG_LOG_RAW((" FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION "));
 	}
-	if ((m_behavior & FIREWALL_TYPE_RELATIVE_PORT_ALLOCATION) != 0) {
+	if ((m_behavior & FIREWALL_TYPE_RELATIVE_PORT_ALLOCATION) != 0)
+	{
 		DEBUG_LOG_RAW((" FIREWALL_TYPE_RELATIVE_PORT_ALLOCATION "));
 	}
-	if ((m_behavior & FIREWALL_TYPE_DESTINATION_PORT_DELTA) != 0) {
+	if ((m_behavior & FIREWALL_TYPE_DESTINATION_PORT_DELTA) != 0)
+	{
 		DEBUG_LOG_RAW((" FIREWALL_TYPE_DESTINATION_PORT_DELTA "));
 	}
 
@@ -1239,7 +1383,6 @@ Bool FirewallHelperClass::detectionTest5Update() {
 	m_currentState = DETECTIONSTATE_DONE;
 	return TRUE;
 }
-
 
 /***********************************************************************************************
  * FHC::Get_NAT_Port_Allocation_Scheme -- Find out how a NAT is allocating ports               *
@@ -1259,25 +1402,38 @@ Bool FirewallHelperClass::detectionTest5Update() {
  * HISTORY:                                                                                    *
  *   3/15/01 4:45PM ST : Created                                                               *
  *=============================================================================================*/
-Int FirewallHelperClass::getNATPortAllocationScheme(Int numPorts, UnsignedShort *originalPorts, UnsignedShort *mangledPorts, Bool &relativeDelta, Bool &looksGood)
+Int FirewallHelperClass::getNATPortAllocationScheme(
+		Int numPorts,
+		UnsignedShort *originalPorts,
+		UnsignedShort *mangledPorts,
+		Bool &relativeDelta,
+		Bool &looksGood)
 {
 	DEBUG_ASSERTCRASH(numPorts > 3, ("numPorts too small"));
 
-	DEBUG_LOG(("Looking for port allocation pattern in originalPorts %d, %d, %d, %d", originalPorts[0], originalPorts[1], originalPorts[2], originalPorts[3]));
+	DEBUG_LOG(
+			("Looking for port allocation pattern in originalPorts %d, %d, %d, %d",
+			 originalPorts[0],
+			 originalPorts[1],
+			 originalPorts[2],
+			 originalPorts[3]));
 
 	/*
 	** Sort the mangled ports into order - should be easier to detect patterns.
 	** Stupid bubble sort will do. original_ports may be out of oder after the sort.
 	*/
-	for (Int x=0 ; x<numPorts ; x++) {
-		for (Int y=0 ; y<numPorts-1 ; y++) {
-			if (mangledPorts[y] > mangledPorts[y+1]) {
+	for (Int x = 0; x < numPorts; x++)
+	{
+		for (Int y = 0; y < numPorts - 1; y++)
+		{
+			if (mangledPorts[y] > mangledPorts[y + 1])
+			{
 				Int temp = mangledPorts[y];
-				mangledPorts[y] = mangledPorts[y+1];
-				mangledPorts[y+1] = temp;
+				mangledPorts[y] = mangledPorts[y + 1];
+				mangledPorts[y + 1] = temp;
 				temp = originalPorts[y];
-				originalPorts[y] = originalPorts[y+1];
-				originalPorts[y+1] = temp;
+				originalPorts[y] = originalPorts[y + 1];
+				originalPorts[y + 1] = temp;
 			}
 		}
 	}
@@ -1294,13 +1450,16 @@ Int FirewallHelperClass::getNATPortAllocationScheme(Int numPorts, UnsignedShort 
 	/*
 	** 1. Check for absolute sequential allocation.
 	*/
-	if (mangledPorts[1] - mangledPorts[0] == 1) {
-		if (mangledPorts[2] - mangledPorts[1] == 1) {
-			if (mangledPorts[3] - mangledPorts[2] == 1) {
+	if (mangledPorts[1] - mangledPorts[0] == 1)
+	{
+		if (mangledPorts[2] - mangledPorts[1] == 1)
+		{
+			if (mangledPorts[3] - mangledPorts[2] == 1)
+			{
 				DEBUG_LOG(("Incremental port allocation detected"));
 				relativeDelta = FALSE;
 				looksGood = TRUE;
-				return(1);
+				return (1);
 			}
 		}
 	}
@@ -1308,13 +1467,16 @@ Int FirewallHelperClass::getNATPortAllocationScheme(Int numPorts, UnsignedShort 
 	/*
 	** 2. Check for semi sequential.
 	*/
-	if (mangledPorts[1] - mangledPorts[0] == 2) {
-		if (mangledPorts[2] - mangledPorts[1] == 2) {
-			if (mangledPorts[3] - mangledPorts[2] == 2) {
+	if (mangledPorts[1] - mangledPorts[0] == 2)
+	{
+		if (mangledPorts[2] - mangledPorts[1] == 2)
+		{
+			if (mangledPorts[3] - mangledPorts[2] == 2)
+			{
 				DEBUG_LOG(("Semi-incremental port allocation detected"));
 				relativeDelta = FALSE;
 				looksGood = TRUE;
-				return(2);
+				return (2);
 			}
 		}
 	}
@@ -1323,45 +1485,43 @@ Int FirewallHelperClass::getNATPortAllocationScheme(Int numPorts, UnsignedShort 
 	Int diff2 = mangledPorts[2] - mangledPorts[1];
 	Int diff3 = mangledPorts[3] - mangledPorts[2];
 
-
 	/*
 	** 3. Check for absolute scheme skipping 'n' ports.
 	*/
-	if (diff1 == diff2 && diff2 == diff3) {
+	if (diff1 == diff2 && diff2 == diff3)
+	{
 		DEBUG_LOG(("Looks good for absolute allocation sequence delta of %d", diff1));
 		relativeDelta = FALSE;
 		looksGood = TRUE;
-		return(diff1);
+		return (diff1);
 	}
 
-	if (diff1 == diff2) {
+	if (diff1 == diff2)
+	{
 		DEBUG_LOG(("Probable absolute allocation sequence delta of %d", diff1));
 		relativeDelta = FALSE;
 		looksGood = FALSE;
-		return(diff1);
+		return (diff1);
 	}
 
-	if (diff2 == diff3) {
+	if (diff2 == diff3)
+	{
 		DEBUG_LOG(("Probable absolute allocation sequence delta of %d", diff2));
 		relativeDelta = FALSE;
 		looksGood = FALSE;
-		return(diff2);
+		return (diff2);
 	}
-
-
-
 
 	/*
 	** Insert more tests here if we can think of any!!!!!
 	*/
 
-
-
 	/*
 	** 4. Check for relative scheme skipping 'n' ports. NAT32 behaves this way, it skips 100 ports
 	** each time.
 	*/
-	for (Int i=0 ; i<numPorts ; i++) {
+	for (Int i = 0; i < numPorts; i++)
+	{
 		mangledPorts[i] -= originalPorts[i];
 	}
 
@@ -1372,46 +1532,43 @@ Int FirewallHelperClass::getNATPortAllocationScheme(Int numPorts, UnsignedShort 
 	/*
 	** Look for a linear pattern.
 	*/
-	if (diff1 == diff2 && diff2 == diff3) {
+	if (diff1 == diff2 && diff2 == diff3)
+	{
 		/*
 		** Return a -ve result to indicate that port mangling is relative.
 		*/
 		DEBUG_LOG(("Looks good for a relative port range delta of %d", diff1));
 		relativeDelta = TRUE;
 		looksGood = TRUE;
-		return(diff1);
+		return (diff1);
 	}
 
 	/*
 	** Look for a broken pattern. Maybe the NAT skipped a whole range.
 	*/
-	if (diff1 == diff2 || diff1 == diff3) {
+	if (diff1 == diff2 || diff1 == diff3)
+	{
 		DEBUG_LOG(("Detected probable broken relative port range delta of %d", diff1));
 		relativeDelta = TRUE;
 		looksGood = FALSE;
-		return(diff1);
+		return (diff1);
 	}
 
-	if (diff2 == diff3) {
+	if (diff2 == diff3)
+	{
 		DEBUG_LOG(("Detected probable broken relative port range delta of %d", diff2));
 		relativeDelta = TRUE;
 		looksGood = FALSE;
-		return(diff2);
+		return (diff2);
 	}
-
 
 	/*
 	** Aw hell, I don't know what it is.
 	*/
 	looksGood = FALSE;
 	relativeDelta = FALSE;
-	return(0);
+	return (0);
 }
-
-
-
-
-
 
 /***********************************************************************************************
  * FHC::Get_Firewall_Hardness -- How hard is it to connect to this firewall                    *
@@ -1429,42 +1586,42 @@ Int FirewallHelperClass::getNATPortAllocationScheme(Int numPorts, UnsignedShort 
  *=============================================================================================*/
 Int FirewallHelperClass::getFirewallHardness(FirewallBehaviorType behavior)
 {
-
 	Int hardness = 0;
 
+	UnsignedInt fw = (UnsignedInt)behavior;
 
-	UnsignedInt fw = (UnsignedInt) behavior;
-
-	if (((UnsignedInt)FIREWALL_TYPE_SIMPLE & fw) != 0) {
+	if (((UnsignedInt)FIREWALL_TYPE_SIMPLE & fw) != 0)
+	{
 		hardness++;
 	}
 
-	if (((UnsignedInt)FIREWALL_TYPE_DUMB_MANGLING & fw) != 0) {
+	if (((UnsignedInt)FIREWALL_TYPE_DUMB_MANGLING & fw) != 0)
+	{
 		hardness += 2;
 	}
 
-	if (((UnsignedInt)FIREWALL_TYPE_SMART_MANGLING & fw) != 0) {
+	if (((UnsignedInt)FIREWALL_TYPE_SMART_MANGLING & fw) != 0)
+	{
 		hardness += 3;
 	}
 
-	if (((UnsignedInt)FIREWALL_TYPE_NETGEAR_BUG & fw) != 0) {
+	if (((UnsignedInt)FIREWALL_TYPE_NETGEAR_BUG & fw) != 0)
+	{
 		hardness += 10;
 	}
 
-	if (((UnsignedInt)FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION & fw) != 0) {
+	if (((UnsignedInt)FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION & fw) != 0)
+	{
 		hardness += 1;
 	}
 
-	if (((UnsignedInt)FIREWALL_TYPE_RELATIVE_PORT_ALLOCATION & fw) != 0) {
+	if (((UnsignedInt)FIREWALL_TYPE_RELATIVE_PORT_ALLOCATION & fw) != 0)
+	{
 		hardness += 2;
 	}
 
-	return(hardness);
+	return (hardness);
 }
-
-
-
-
 
 /***********************************************************************************************
  * FHC::Get_Firewall_Retries -- How many retries is it likely to take before we connect?       *
@@ -1482,66 +1639,74 @@ Int FirewallHelperClass::getFirewallHardness(FirewallBehaviorType behavior)
  *=============================================================================================*/
 Int FirewallHelperClass::getFirewallRetries(FirewallBehaviorType behavior)
 {
-
 	Int retries = 2;
 
+	UnsignedInt fw = (UnsignedInt)behavior;
 
-	UnsignedInt fw = (UnsignedInt) behavior;
-
-	if (((UnsignedInt)FIREWALL_TYPE_SIMPLE & fw) != 0) {
+	if (((UnsignedInt)FIREWALL_TYPE_SIMPLE & fw) != 0)
+	{
 		retries++;
 	}
 
-	if (((UnsignedInt)FIREWALL_TYPE_DUMB_MANGLING & fw) != 0) {
+	if (((UnsignedInt)FIREWALL_TYPE_DUMB_MANGLING & fw) != 0)
+	{
 		retries += 1;
 	}
 
-	if (((UnsignedInt)FIREWALL_TYPE_SMART_MANGLING & fw) != 0) {
+	if (((UnsignedInt)FIREWALL_TYPE_SMART_MANGLING & fw) != 0)
+	{
 		retries += 1;
 	}
 
-	if (((UnsignedInt)FIREWALL_TYPE_NETGEAR_BUG & fw) != 0) {
-		//retries += 10;
+	if (((UnsignedInt)FIREWALL_TYPE_NETGEAR_BUG & fw) != 0)
+	{
+		// retries += 10;
 	}
 
-	if (((UnsignedInt)FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION & fw) != 0) {
-		//retries += 1;
+	if (((UnsignedInt)FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION & fw) != 0)
+	{
+		// retries += 1;
 	}
 
-	if (((UnsignedInt)FIREWALL_TYPE_RELATIVE_PORT_ALLOCATION & fw) != 0) {
+	if (((UnsignedInt)FIREWALL_TYPE_RELATIVE_PORT_ALLOCATION & fw) != 0)
+	{
 		retries += 5;
 	}
 
-	return(retries);
+	return (retries);
 }
-
-
 
 /*
  *  openSpareSocket - opens a socket for communication on a specified port.
  *  returns TRUE if successful, FALSE otherwise.
  */
-Bool FirewallHelperClass::openSpareSocket(UnsignedShort port) {
+Bool FirewallHelperClass::openSpareSocket(UnsignedShort port)
+{
 	Int i = 0;
-	for (; i < MAX_SPARE_SOCKETS; ++i) {
-		if (m_spareSockets[i].port == 0) {
+	for (; i < MAX_SPARE_SOCKETS; ++i)
+	{
+		if (m_spareSockets[i].port == 0)
+		{
 			break;
 		}
 	}
 
 	// don't have room for any more spare sockets.  Fail.
-	if (i == MAX_SPARE_SOCKETS) {
+	if (i == MAX_SPARE_SOCKETS)
+	{
 		DEBUG_ASSERTCRASH(i < MAX_SPARE_SOCKETS, ("Ran out of spare sockets."));
 		return FALSE;
 	}
 
 	m_spareSockets[i].udp = NEW UDP();
-	if (m_spareSockets[i].udp == NULL) {
+	if (m_spareSockets[i].udp == NULL)
+	{
 		DEBUG_LOG(("FirewallHelperClass::openSpareSocket - failed to create UDP object"));
 		return FALSE;
 	}
 
-	if (m_spareSockets[i].udp->Bind((UnsignedInt)0, port) != 0) {
+	if (m_spareSockets[i].udp->Bind((UnsignedInt)0, port) != 0)
+	{
 		DEBUG_CRASH(("FirewallHelperClass::openSpareSocket - Failed to init spare socket"));
 		return FALSE;
 	}
@@ -1554,10 +1719,14 @@ Bool FirewallHelperClass::openSpareSocket(UnsignedShort port) {
 /*
  *  closeSpareSocket - closes a socket at a specific port.
  */
-void FirewallHelperClass::closeSpareSocket(UnsignedShort port) {
-	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i) {
-		if (m_spareSockets[i].port == port) {
-			if (m_spareSockets[i].udp != NULL) {
+void FirewallHelperClass::closeSpareSocket(UnsignedShort port)
+{
+	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i)
+	{
+		if (m_spareSockets[i].port == port)
+		{
+			if (m_spareSockets[i].udp != NULL)
+			{
 				delete m_spareSockets[i].udp;
 				m_spareSockets[i].udp = NULL;
 			}
@@ -1570,12 +1739,16 @@ void FirewallHelperClass::closeSpareSocket(UnsignedShort port) {
 /*
  *  closeAllSpareSockets - closes all spare sockets, duh.
  */
-void FirewallHelperClass::closeAllSpareSockets() {
-	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i) {
-		if (m_spareSockets[i].port != 0) {
+void FirewallHelperClass::closeAllSpareSockets()
+{
+	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i)
+	{
+		if (m_spareSockets[i].port != 0)
+		{
 			m_spareSockets[i].port = 0;
 		}
-		if (m_spareSockets[i].udp != NULL) {
+		if (m_spareSockets[i].udp != NULL)
+		{
 			delete (m_spareSockets[i].udp);
 			m_spareSockets[i].udp = NULL;
 		}

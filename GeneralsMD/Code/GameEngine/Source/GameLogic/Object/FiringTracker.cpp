@@ -27,7 +27,7 @@
 // Desc:   Keeps track of shots fired and people targeted for weapons that want a history of such a thing
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/AudioHandleSpecialValues.h"
 #include "Common/GameType.h"
@@ -42,14 +42,13 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Weapon.h"
 
-
 //-------------------------------------------------------------------------------------------------
-FiringTracker::FiringTracker(Thing* thing, const ModuleData *modData) : UpdateModule( thing, modData )
+FiringTracker::FiringTracker(Thing *thing, const ModuleData *modData) : UpdateModule(thing, modData)
 {
 	m_consecutiveShots = 0;
 	m_victimID = INVALID_ID;
 	m_frameToStartCooldown = 0;
- 	m_frameToForceReload = 0;
+	m_frameToForceReload = 0;
 	m_frameToStopLoopingSound = 0;
 	m_audioHandle = AHSV_NoSound;
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
@@ -59,32 +58,32 @@ FiringTracker::FiringTracker(Thing* thing, const ModuleData *modData) : UpdateMo
 FiringTracker::~FiringTracker()
 {
 	// no need to protect this.
-	TheAudio->removeAudioEvent( m_audioHandle );
+	TheAudio->removeAudioEvent(m_audioHandle);
 	m_audioHandle = AHSV_NoSound;
 }
 
 //-------------------------------------------------------------------------------------------------
-Int FiringTracker::getNumConsecutiveShotsAtVictim( const Object *victim ) const
+Int FiringTracker::getNumConsecutiveShotsAtVictim(const Object *victim) const
 {
-	if( victim == NULL )
-		return 0;// safety, this function is for asking about shots at a victim
+	if (victim == NULL)
+		return 0; // safety, this function is for asking about shots at a victim
 
-	if( victim->getID() != m_victimID )
-		return 0;// nope, not shooting at him
+	if (victim->getID() != m_victimID)
+		return 0; // nope, not shooting at him
 
-	return m_consecutiveShots;// this is how any times I have shot at this hoser right now
+	return m_consecutiveShots; // this is how any times I have shot at this hoser right now
 }
 
 //-------------------------------------------------------------------------------------------------
-void FiringTracker::shotFired(const Weapon* weaponFired, ObjectID victimID)
+void FiringTracker::shotFired(const Weapon *weaponFired, ObjectID victimID)
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 	Object *me = getObject();
 	const Object *victim = TheGameLogic->findObjectByID(victimID); // May be null for ground shot
 
-	if( victim && victim->testStatus(OBJECT_STATUS_FAERIE_FIRE) )
+	if (victim && victim->testStatus(OBJECT_STATUS_FAERIE_FIRE))
 	{
-		if( !me->testWeaponBonusCondition(WEAPONBONUSCONDITION_TARGET_FAERIE_FIRE) )
+		if (!me->testWeaponBonusCondition(WEAPONBONUSCONDITION_TARGET_FAERIE_FIRE))
 		{
 			// We shoot faster at guys marked thusly
 			me->setWeaponBonusCondition(WEAPONBONUSCONDITION_TARGET_FAERIE_FIRE);
@@ -93,18 +92,18 @@ void FiringTracker::shotFired(const Weapon* weaponFired, ObjectID victimID)
 	else
 	{
 		// A ground shot or the lack of the status on the target will clear this
-		if( me->testWeaponBonusCondition(WEAPONBONUSCONDITION_TARGET_FAERIE_FIRE) )
+		if (me->testWeaponBonusCondition(WEAPONBONUSCONDITION_TARGET_FAERIE_FIRE))
 		{
 			me->clearWeaponBonusCondition(WEAPONBONUSCONDITION_TARGET_FAERIE_FIRE);
 		}
 	}
 
-	if( victimID == m_victimID )
+	if (victimID == m_victimID)
 	{
 		// Shooting at the same guy
 		++m_consecutiveShots;
 	}
-	else if( now < m_frameToStartCooldown )
+	else if (now < m_frameToStartCooldown)
 	{
 		// Switching targets within the coast time is valid, and we will not spin down
 		++m_consecutiveShots;
@@ -117,10 +116,10 @@ void FiringTracker::shotFired(const Weapon* weaponFired, ObjectID victimID)
 		m_victimID = victimID;
 	}
 
- 	// Push back the time that we should force a reload with each shot
- 	UnsignedInt autoReloadDelay = weaponFired->getAutoReloadWhenIdleFrames();
- 	if( autoReloadDelay > 0 )
- 		m_frameToForceReload = now + autoReloadDelay;
+	// Push back the time that we should force a reload with each shot
+	UnsignedInt autoReloadDelay = weaponFired->getAutoReloadWhenIdleFrames();
+	if (autoReloadDelay > 0)
+		m_frameToForceReload = now + autoReloadDelay;
 
 	UnsignedInt coast = weaponFired->getContinuousFireCoastFrames();
 	if (coast)
@@ -131,18 +130,18 @@ void FiringTracker::shotFired(const Weapon* weaponFired, ObjectID victimID)
 	Int shotsNeededOne = weaponFired->getContinuousFireOneShotsNeeded();
 	Int shotsNeededTwo = weaponFired->getContinuousFireTwoShotsNeeded();
 
-	if( me->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN ) )
+	if (me->testWeaponBonusCondition(WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN))
 	{
 		// Can either go up or down from here.
-		if( m_consecutiveShots < shotsNeededOne )
+		if (m_consecutiveShots < shotsNeededOne)
 			coolDown();
-		else if( m_consecutiveShots > shotsNeededTwo )
+		else if (m_consecutiveShots > shotsNeededTwo)
 			speedUp();
 	}
-	else if( me->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST ) )
+	else if (me->testWeaponBonusCondition(WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST))
 	{
 		// Only place I can go here from here is all the way down
-		if( m_consecutiveShots < shotsNeededTwo )
+		if (m_consecutiveShots < shotsNeededTwo)
 		{
 			coolDown();
 		}
@@ -150,7 +149,7 @@ void FiringTracker::shotFired(const Weapon* weaponFired, ObjectID victimID)
 	else
 	{
 		// Check to go up
-		if( m_consecutiveShots > shotsNeededOne )
+		if (m_consecutiveShots > shotsNeededOne)
 			speedUp();
 	}
 
@@ -162,7 +161,7 @@ void FiringTracker::shotFired(const Weapon* weaponFired, ObjectID victimID)
 		{
 			AudioEventRTS audio = weaponFired->getFireSound();
 			audio.setObjectID(getObject()->getID());
-			m_audioHandle = TheAudio->addAudioEvent( &audio );
+			m_audioHandle = TheAudio->addAudioEvent(&audio);
 		}
 		m_frameToStopLoopingSound = now + fireSoundLoopTime;
 	}
@@ -174,23 +173,22 @@ void FiringTracker::shotFired(const Weapon* weaponFired, ObjectID victimID)
 		m_frameToStopLoopingSound = 0;
 	}
 
-
 	setWakeFrame(me, calcTimeToSleep());
 }
 
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime FiringTracker::update()
 {
-	//DEBUG_ASSERTCRASH(m_frameToStartCooldown != 0 || m_frameToStopLoopingSound != 0, ("hmm, should be asleep"));
+	// DEBUG_ASSERTCRASH(m_frameToStartCooldown != 0 || m_frameToStopLoopingSound != 0, ("hmm, should be asleep"));
 
 	UnsignedInt now = TheGameLogic->getFrame();
 
- 	// I have been idle long enough that I should reload, so I do not hang around with a near empty clip forever.
- 	if( m_frameToForceReload != 0  &&  now >= m_frameToForceReload )
- 	{
- 		getObject()->reloadAllAmmo(TRUE);
- 		m_frameToForceReload = 0;
- 	}
+	// I have been idle long enough that I should reload, so I do not hang around with a near empty clip forever.
+	if (m_frameToForceReload != 0 && now >= m_frameToForceReload)
+	{
+		getObject()->reloadAllAmmo(TRUE);
+		m_frameToForceReload = 0;
+	}
 
 	// If it has been too long since I fired.  I have to start over.
 	// (don't call if we don't need to cool down... it's expensive!)
@@ -199,16 +197,16 @@ UpdateSleepTime FiringTracker::update()
 	{
 		if (now >= m_frameToStopLoopingSound)
 		{
-			TheAudio->removeAudioEvent( m_audioHandle );
+			TheAudio->removeAudioEvent(m_audioHandle);
 			m_audioHandle = AHSV_NoSound;
 			m_frameToStopLoopingSound = 0;
 		}
 	}
 
-	if( m_frameToStartCooldown != 0 && now > m_frameToStartCooldown )
+	if (m_frameToStartCooldown != 0 && now > m_frameToStartCooldown)
 	{
 		m_frameToStartCooldown = now + LOGICFRAMES_PER_SECOND;
-		coolDown();// if this is the coolest call to cooldown, it will set m_frameToStartCooldown to zero
+		coolDown(); // if this is the coolest call to cooldown, it will set m_frameToStartCooldown to zero
 		return UPDATE_SLEEP(LOGICFRAMES_PER_SECOND);
 	}
 
@@ -220,38 +218,38 @@ UpdateSleepTime FiringTracker::update()
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime FiringTracker::calcTimeToSleep()
 {
- 	// Figure out the longest amount of time we can sleep as unneeded
+	// Figure out the longest amount of time we can sleep as unneeded
 
- 	// If all the timers are off, then we aren't needed at all
- 	if (m_frameToStopLoopingSound == 0 && m_frameToStartCooldown == 0 && m_frameToForceReload == 0)
-   		return UPDATE_SLEEP_FOREVER;
+	// If all the timers are off, then we aren't needed at all
+	if (m_frameToStopLoopingSound == 0 && m_frameToStartCooldown == 0 && m_frameToForceReload == 0)
+		return UPDATE_SLEEP_FOREVER;
 
- 	// Otherwise, we need to wake up to service the shortest timer
-   	UnsignedInt now = TheGameLogic->getFrame();
- 	UnsignedInt sleepTime = UPDATE_SLEEP_FOREVER;
- 	if( m_frameToStopLoopingSound != 0 )
- 	{
- 		if( m_frameToStopLoopingSound <= now )
- 			sleepTime = UPDATE_SLEEP_NONE;
- 		else if( (m_frameToStopLoopingSound - now) < sleepTime )
- 			sleepTime = m_frameToStopLoopingSound - now;
- 	}
- 	if( m_frameToStartCooldown != 0 )
- 	{
- 		if( m_frameToStartCooldown <= now )
- 			sleepTime = UPDATE_SLEEP_NONE;
- 		else if( (m_frameToStartCooldown - now) < sleepTime )
- 			sleepTime = m_frameToStartCooldown - now;
- 	}
- 	if( m_frameToForceReload != 0 )
- 	{
- 		if( m_frameToForceReload <= now )
- 			sleepTime = UPDATE_SLEEP_NONE;
- 		else if( (m_frameToForceReload - now) < sleepTime )
- 			sleepTime = m_frameToForceReload - now;
- 	}
+	// Otherwise, we need to wake up to service the shortest timer
+	UnsignedInt now = TheGameLogic->getFrame();
+	UnsignedInt sleepTime = UPDATE_SLEEP_FOREVER;
+	if (m_frameToStopLoopingSound != 0)
+	{
+		if (m_frameToStopLoopingSound <= now)
+			sleepTime = UPDATE_SLEEP_NONE;
+		else if ((m_frameToStopLoopingSound - now) < sleepTime)
+			sleepTime = m_frameToStopLoopingSound - now;
+	}
+	if (m_frameToStartCooldown != 0)
+	{
+		if (m_frameToStartCooldown <= now)
+			sleepTime = UPDATE_SLEEP_NONE;
+		else if ((m_frameToStartCooldown - now) < sleepTime)
+			sleepTime = m_frameToStartCooldown - now;
+	}
+	if (m_frameToForceReload != 0)
+	{
+		if (m_frameToForceReload <= now)
+			sleepTime = UPDATE_SLEEP_NONE;
+		else if ((m_frameToForceReload - now) < sleepTime)
+			sleepTime = m_frameToForceReload - now;
+	}
 
- 	return UPDATE_SLEEP(sleepTime);
+	return UPDATE_SLEEP(sleepTime);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -260,45 +258,40 @@ void FiringTracker::speedUp()
 	ModelConditionFlags clr, set;
 	Object *self = getObject();
 
-	if( self->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST ) )
+	if (self->testWeaponBonusCondition(WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST))
 	{
-		//self->clearWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN );
-		//self->clearModelConditionState( MODELCONDITION_CONTINUOUS_FIRE_MEAN );
-		//self->clearModelConditionState( MODELCONDITION_CONTINUOUS_FIRE_SLOW );
+		// self->clearWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN );
+		// self->clearModelConditionState( MODELCONDITION_CONTINUOUS_FIRE_MEAN );
+		// self->clearModelConditionState( MODELCONDITION_CONTINUOUS_FIRE_SLOW );
 	}
-	else if(self->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN ) )
+	else if (self->testWeaponBonusCondition(WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN))
 	{
-		const AudioEventRTS *soundToPlayPtr = self->getTemplate()->getPerUnitSound( "VoiceRapidFire" );
+		const AudioEventRTS *soundToPlayPtr = self->getTemplate()->getPerUnitSound("VoiceRapidFire");
 		AudioEventRTS soundToPlay = *soundToPlayPtr;
-		soundToPlay.setObjectID( self->getID() );
-		TheAudio->addAudioEvent( &soundToPlay );
+		soundToPlay.setObjectID(self->getID());
+		TheAudio->addAudioEvent(&soundToPlay);
 
 		// These flags are exclusive, not cumulative
-		self->setWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST );
+		self->setWeaponBonusCondition(WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST);
 		set.set(MODELCONDITION_CONTINUOUS_FIRE_FAST);
 
 		// These flags are exclusive, not cumulative
-		self->clearWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN );
+		self->clearWeaponBonusCondition(WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN);
 		clr.set(MODELCONDITION_CONTINUOUS_FIRE_MEAN);
 		clr.set(MODELCONDITION_CONTINUOUS_FIRE_SLOW);
-
-
 	}
 	else
 	{
-
-		self->setWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN );
+		self->setWeaponBonusCondition(WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN);
 		set.set(MODELCONDITION_CONTINUOUS_FIRE_MEAN);
 
 		// These flags are exclusive, not cumulative
-		self->clearWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST );
+		self->clearWeaponBonusCondition(WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST);
 		clr.set(MODELCONDITION_CONTINUOUS_FIRE_FAST);
 		clr.set(MODELCONDITION_CONTINUOUS_FIRE_SLOW);
-
 	}
 
 	self->clearAndSetModelConditionFlags(clr, set);
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -306,25 +299,21 @@ void FiringTracker::coolDown()
 {
 	ModelConditionFlags clr, set;
 
-	if( getObject()->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST )
-	 || getObject()->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN ))
+	if (getObject()->testWeaponBonusCondition(WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST)
+			|| getObject()->testWeaponBonusCondition(WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN))
 	{
-
 		// Straight to zero from wherever it is
 		set.set(MODELCONDITION_CONTINUOUS_FIRE_SLOW);
 
-		getObject()->clearWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST );
-		getObject()->clearWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN );
+		getObject()->clearWeaponBonusCondition(WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST);
+		getObject()->clearWeaponBonusCondition(WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN);
 		clr.set(MODELCONDITION_CONTINUOUS_FIRE_FAST);
 		clr.set(MODELCONDITION_CONTINUOUS_FIRE_MEAN);
-
-
 	}
 	else // we stop, now
 	{
-
-		getObject()->clearWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST );
-		getObject()->clearWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN );
+		getObject()->clearWeaponBonusCondition(WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST);
+		getObject()->clearWeaponBonusCondition(WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN);
 		// Just chillin, nothing to change
 		clr.set(MODELCONDITION_CONTINUOUS_FIRE_FAST);
 		clr.set(MODELCONDITION_CONTINUOUS_FIRE_MEAN);
@@ -343,48 +332,45 @@ void FiringTracker::coolDown()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void FiringTracker::crc( Xfer *xfer )
+void FiringTracker::crc(Xfer *xfer)
 {
-
 	// object helper base class
-	UpdateModule::crc( xfer );
+	UpdateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void FiringTracker::xfer( Xfer *xfer )
+void FiringTracker::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// object helper base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// consecutive shots
-	xfer->xferInt( &m_consecutiveShots );
+	xfer->xferInt(&m_consecutiveShots);
 
 	// victim id
-	xfer->xferObjectID( &m_victimID );
+	xfer->xferObjectID(&m_victimID);
 
 	// frame to start cooldown
-	xfer->xferUnsignedInt( &m_frameToStartCooldown );
+	xfer->xferUnsignedInt(&m_frameToStartCooldown);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FiringTracker::loadPostProcess( void )
+void FiringTracker::loadPostProcess(void)
 {
-
 	// object helper back class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

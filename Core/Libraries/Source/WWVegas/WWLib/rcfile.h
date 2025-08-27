@@ -55,42 +55,38 @@
 */
 class ResourceFileClass : public FileClass
 {
-	public:
+public:
+	ResourceFileClass(HMODULE hmodule, char const *filename);
+	virtual ~ResourceFileClass(void);
 
-		ResourceFileClass(HMODULE hmodule, char const *filename);
-		virtual ~ResourceFileClass(void);
+	virtual char const *File_Name(void) const { return ResourceName; }
+	virtual char const *Set_Name(char const *filename);
+	virtual int Create(void) { return false; }
+	virtual int Delete(void) { return false; }
+	virtual bool Is_Available(int /*forced=false*/) { return Is_Open(); }
+	virtual bool Is_Open(void) const { return (FileBytes != NULL); }
 
-		virtual char const * File_Name(void) const					{ return ResourceName; }
-		virtual char const * Set_Name(char const *filename);
-		virtual int Create(void)											{ return false; }
-		virtual int Delete(void)											{ return false; }
-		virtual bool Is_Available(int /*forced=false*/)				{ return Is_Open (); }
-		virtual bool Is_Open(void) const									{ return (FileBytes != NULL); }
+	virtual int Open(char const * /*fname*/, int /*rights=READ*/) { return Is_Open(); }
+	virtual int Open(int /*rights=READ*/) { return Is_Open(); }
 
-		virtual int Open(char const * /*fname*/, int /*rights=READ*/)	{ return Is_Open(); }
-		virtual int Open(int /*rights=READ*/)							{ return Is_Open(); }
+	virtual int Read(void *buffer, int size);
+	virtual int Seek(int pos, int dir = SEEK_CUR);
+	virtual int Size(void);
+	virtual int Write(void const * /*buffer*/, int /*size*/) { return 0; }
+	virtual void Close(void) {}
+	virtual void Error(int error, int canretry = false, char const *filename = NULL);
+	virtual void Bias(int start, int length = -1) {}
 
-		virtual int Read(void *buffer, int size);
-		virtual int Seek(int pos, int dir=SEEK_CUR);
-		virtual int Size(void);
-		virtual int Write(void const * /*buffer*/, int /*size*/)	{ return 0; }
-		virtual void Close(void)											{ }
-		virtual void Error(int error, int canretry = false, char const * filename=NULL);
-		virtual void Bias(int start, int length=-1) {}
+	virtual unsigned char *Peek_Data(void) const { return FileBytes; }
 
-		virtual unsigned char *Peek_Data(void) const					{ return FileBytes; }
+protected:
+	char *ResourceName;
 
-	protected:
+	HMODULE hModule;
 
-		char *				ResourceName;
-
-		HMODULE				hModule;
-
-		unsigned char *	FileBytes;
-		unsigned char *	FilePtr;
-		unsigned char *	EndOfFile;
-
+	unsigned char *FileBytes;
+	unsigned char *FilePtr;
+	unsigned char *EndOfFile;
 };
-
 
 #endif

@@ -25,7 +25,7 @@
 // DeliverPayloadAIUpdate.cpp ////////////
 // Author: Graham Smallwood, March 2002
 // Desc:   State machine that controls the approach and deployment of airborne cargo
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 
@@ -50,65 +50,78 @@
 #include "GameLogic/Weapon.h"
 #include "GameLogic/WeaponSet.h"
 
-
 //-------------------------------------------------------------------------------------------------
-const FieldParse* DeliverPayloadData::getFieldParse()
+const FieldParse *DeliverPayloadData::getFieldParse()
 {
-	static const FieldParse dataFieldParse[] =
-	{
+	static const FieldParse dataFieldParse[] = {
 
-		{ "DeliveryDistance",								INI::parseReal,								NULL, offsetof( DeliverPayloadData, m_distToTarget) },
-		{ "PreOpenDistance",								INI::parseReal,								NULL, offsetof( DeliverPayloadData, m_preOpenDistance) },
-		{ "MaxAttempts",										INI::parseInt,								NULL, offsetof( DeliverPayloadData, m_maxAttempts) },
+		{ "DeliveryDistance", INI::parseReal, NULL, offsetof(DeliverPayloadData, m_distToTarget) },
+		{ "PreOpenDistance", INI::parseReal, NULL, offsetof(DeliverPayloadData, m_preOpenDistance) },
+		{ "MaxAttempts", INI::parseInt, NULL, offsetof(DeliverPayloadData, m_maxAttempts) },
 
-		//Drop information
-		{ "DropDelay",											INI::parseDurationUnsignedInt,NULL, offsetof( DeliverPayloadData, m_dropDelay ) },
-		{ "DropOffset",											INI::parseCoord3D,						NULL, offsetof( DeliverPayloadData, m_dropOffset ) },
-		{ "DropVariance",										INI::parseCoord3D,						NULL, offsetof( DeliverPayloadData, m_dropVariance ) },
-		{ "InheritTransportVelocity",				INI::parseBool,								NULL, offsetof( DeliverPayloadData, m_inheritTransportVelocity ) },
-		{ "ExitPitchRate",									INI::parseAngularVelocityReal,NULL, offsetof( DeliverPayloadData, m_exitPitchRate ) },
-		{ "ParachuteDirectly",							INI::parseBool,								NULL, offsetof( DeliverPayloadData, m_isParachuteDirectly) },
+		// Drop information
+		{ "DropDelay", INI::parseDurationUnsignedInt, NULL, offsetof(DeliverPayloadData, m_dropDelay) },
+		{ "DropOffset", INI::parseCoord3D, NULL, offsetof(DeliverPayloadData, m_dropOffset) },
+		{ "DropVariance", INI::parseCoord3D, NULL, offsetof(DeliverPayloadData, m_dropVariance) },
+		{ "InheritTransportVelocity", INI::parseBool, NULL, offsetof(DeliverPayloadData, m_inheritTransportVelocity) },
+		{ "ExitPitchRate", INI::parseAngularVelocityReal, NULL, offsetof(DeliverPayloadData, m_exitPitchRate) },
+		{ "ParachuteDirectly", INI::parseBool, NULL, offsetof(DeliverPayloadData, m_isParachuteDirectly) },
 
-		//Visible payload information (payload assumed to be show visibly and it's created only when dropped)
-		{ "VisibleItemsDroppedPerInterval",	INI::parseInt,								NULL, offsetof( DeliverPayloadData, m_visibleItemsDroppedPerInterval ) },
-		{ "VisibleDropBoneBaseName",				INI::parseAsciiString,				NULL, offsetof( DeliverPayloadData, m_visibleDropBoneName ) },
-		{ "VisibleSubObjectBaseName",				INI::parseAsciiString,				NULL, offsetof( DeliverPayloadData, m_visibleSubObjectName ) },
-		{ "VisibleNumBones",								INI::parseInt,								NULL, offsetof( DeliverPayloadData, m_visibleNumBones ) },
-		{ "VisiblePayloadTemplateName",			INI::parseAsciiString,				NULL, offsetof( DeliverPayloadData, m_visiblePayloadTemplateName ) },
-		{ "VisiblePayloadWeaponTemplate",		INI::parseWeaponTemplate,			NULL, offsetof( DeliverPayloadData, m_visiblePayloadWeaponTemplate ) },
-		{ "SelfDestructObject",		          INI::parseBool,		           	NULL, offsetof( DeliverPayloadData, m_selfDestructObject ) },
+		// Visible payload information (payload assumed to be show visibly and it's created only when dropped)
+		{ "VisibleItemsDroppedPerInterval",
+			INI::parseInt,
+			NULL,
+			offsetof(DeliverPayloadData, m_visibleItemsDroppedPerInterval) },
+		{ "VisibleDropBoneBaseName", INI::parseAsciiString, NULL, offsetof(DeliverPayloadData, m_visibleDropBoneName) },
+		{ "VisibleSubObjectBaseName", INI::parseAsciiString, NULL, offsetof(DeliverPayloadData, m_visibleSubObjectName) },
+		{ "VisibleNumBones", INI::parseInt, NULL, offsetof(DeliverPayloadData, m_visibleNumBones) },
+		{ "VisiblePayloadTemplateName",
+			INI::parseAsciiString,
+			NULL,
+			offsetof(DeliverPayloadData, m_visiblePayloadTemplateName) },
+		{ "VisiblePayloadWeaponTemplate",
+			INI::parseWeaponTemplate,
+			NULL,
+			offsetof(DeliverPayloadData, m_visiblePayloadWeaponTemplate) },
+		{ "SelfDestructObject", INI::parseBool, NULL, offsetof(DeliverPayloadData, m_selfDestructObject) },
 
-		//Weapon based payload
-		{ "FireWeapon",											INI::parseBool,								NULL, offsetof( DeliverPayloadData, m_fireWeapon ) },
+		// Weapon based payload
+		{ "FireWeapon", INI::parseBool, NULL, offsetof(DeliverPayloadData, m_fireWeapon) },
 
-		//Specify an additional weaponslot to be fired while strafing
-		{ "DiveStartDistance",							INI::parseReal,								NULL, offsetof( DeliverPayloadData, m_diveStartDistance ) },
-		{ "DiveEndDistance",								INI::parseReal,								NULL, offsetof( DeliverPayloadData, m_diveEndDistance ) },
-		{ "StrafingWeaponSlot",							INI::parseLookupList,					TheWeaponSlotTypeNamesLookupList, offsetof( DeliverPayloadData, m_strafingWeaponSlot ) },
-		{ "StrafeWeaponFX",									INI::parseFXList,							NULL, offsetof( DeliverPayloadData, m_strafeFX ) },
-		{ "StrafeLength",										INI::parseReal,								NULL, offsetof( DeliverPayloadData, m_strafeLength ) },
+		// Specify an additional weaponslot to be fired while strafing
+		{ "DiveStartDistance", INI::parseReal, NULL, offsetof(DeliverPayloadData, m_diveStartDistance) },
+		{ "DiveEndDistance", INI::parseReal, NULL, offsetof(DeliverPayloadData, m_diveEndDistance) },
+		{ "StrafingWeaponSlot",
+			INI::parseLookupList,
+			TheWeaponSlotTypeNamesLookupList,
+			offsetof(DeliverPayloadData, m_strafingWeaponSlot) },
+		{ "StrafeWeaponFX", INI::parseFXList, NULL, offsetof(DeliverPayloadData, m_strafeFX) },
+		{ "StrafeLength", INI::parseReal, NULL, offsetof(DeliverPayloadData, m_strafeLength) },
 
-		{ "DeliveryDecal",									RadiusDecalTemplate::parseRadiusDecalTemplate,	NULL, offsetof( DeliverPayloadData, m_deliveryDecalTemplate ) },
-		{ "DeliveryDecalRadius",						INI::parseReal, NULL, offsetof(DeliverPayloadData, m_deliveryDecalRadius) },
+		{ "DeliveryDecal",
+			RadiusDecalTemplate::parseRadiusDecalTemplate,
+			NULL,
+			offsetof(DeliverPayloadData, m_deliveryDecalTemplate) },
+		{ "DeliveryDecalRadius", INI::parseReal, NULL, offsetof(DeliverPayloadData, m_deliveryDecalRadius) },
 
 		{ 0, 0, 0, 0 }
 	};
 	return dataFieldParse;
 }
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-AIStateMachine* DeliverPayloadAIUpdate::makeStateMachine()
+AIStateMachine *DeliverPayloadAIUpdate::makeStateMachine()
 {
-	return newInstance(AIStateMachine)( getObject(), "DeliverPayloadBasicAI");
+	return newInstance(AIStateMachine)(getObject(), "DeliverPayloadBasicAI");
 }
 
 //-------------------------------------------------------------------------------------------------
-DeliverPayloadAIUpdate::DeliverPayloadAIUpdate( Thing *thing, const ModuleData* moduleData ) : AIUpdateInterface( thing, moduleData )
+DeliverPayloadAIUpdate::DeliverPayloadAIUpdate(Thing *thing, const ModuleData *moduleData) :
+		AIUpdateInterface(thing, moduleData)
 {
 	m_deliverPayloadStateMachine = NULL;
 	m_targetPos.zero();
@@ -129,7 +142,7 @@ DeliverPayloadAIUpdate::DeliverPayloadAIUpdate( Thing *thing, const ModuleData* 
 }
 
 //-------------------------------------------------------------------------------------------------
-DeliverPayloadAIUpdate::~DeliverPayloadAIUpdate( void )
+DeliverPayloadAIUpdate::~DeliverPayloadAIUpdate(void)
 {
 	m_deliveryDecal.clear();
 
@@ -138,9 +151,9 @@ DeliverPayloadAIUpdate::~DeliverPayloadAIUpdate( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-AIFreeToExitType DeliverPayloadAIUpdate::getAiFreeToExit(const Object* exiter) const
+AIFreeToExitType DeliverPayloadAIUpdate::getAiFreeToExit(const Object *exiter) const
 {
-	if( getObject()->isEffectivelyDead() )
+	if (getObject()->isEffectivelyDead())
 		return NOT_FREE_TO_EXIT;
 
 	return m_freeToExit ? FREE_TO_EXIT : NOT_FREE_TO_EXIT;
@@ -153,7 +166,7 @@ void DeliverPayloadAIUpdate::killDeliveryDecal()
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool DeliverPayloadAIUpdate::isAllowedToRespondToAiCommands(const AICommandParms* parms) const
+Bool DeliverPayloadAIUpdate::isAllowedToRespondToAiCommands(const AICommandParms *parms) const
 {
 	if (!m_acceptingCommands)
 	{
@@ -164,76 +177,76 @@ Bool DeliverPayloadAIUpdate::isAllowedToRespondToAiCommands(const AICommandParms
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime DeliverPayloadAIUpdate::update( void )
+UpdateSleepTime DeliverPayloadAIUpdate::update(void)
 {
 	m_deliveryDecal.update();
 
-	if(!(isAiInDeadState()) && m_deliverPayloadStateMachine)
+	if (!(isAiInDeadState()) && m_deliverPayloadStateMachine)
 		m_deliverPayloadStateMachine->updateStateMachine();
 
-	//Handling diving logic (regardless of state)
-	if( m_diveState != DIVESTATE_POSTDIVE )
+	// Handling diving logic (regardless of state)
+	if (m_diveState != DIVESTATE_POSTDIVE)
 	{
-		if( m_diveState == DIVESTATE_PREDIVE )
+		if (m_diveState == DIVESTATE_PREDIVE)
 		{
-			//Check to see if we are close enough to start diving.
-			Real startDiveDistanceSquared = sqr( getData()->m_diveStartDistance );
-			Real currentDistanceSquared  = ThePartitionManager->getDistanceSquared( getObject(), getTargetPos(), FROM_CENTER_2D );
-			if( currentDistanceSquared <= startDiveDistanceSquared )
+			// Check to see if we are close enough to start diving.
+			Real startDiveDistanceSquared = sqr(getData()->m_diveStartDistance);
+			Real currentDistanceSquared = ThePartitionManager->getDistanceSquared(getObject(), getTargetPos(), FROM_CENTER_2D);
+			if (currentDistanceSquared <= startDiveDistanceSquared)
 			{
 				m_diveState = DIVESTATE_DIVING;
-				getObject()->getAIUpdateInterface()->getCurLocomotor()->setUsePreciseZPos( true );
+				getObject()->getAIUpdateInterface()->getCurLocomotor()->setUsePreciseZPos(true);
 
 				AudioEventRTS soundDive = *(getObject()->getTemplate()->getPerUnitSound("StartDive"));
-				if( soundDive.getEventName().isNotEmpty() )
+				if (soundDive.getEventName().isNotEmpty())
 				{
-					soundDive.setPosition( getObject()->getPosition() );
-					TheAudio->addAudioEvent( &soundDive );
+					soundDive.setPosition(getObject()->getPosition());
+					TheAudio->addAudioEvent(&soundDive);
 				}
 			}
 		}
 		else
 		{
-			//Check to see when we shall end diving
-			Real endDiveDistanceSquared = sqr( getData()->m_diveEndDistance );
-			Real currentDistanceSquared  = ThePartitionManager->getDistanceSquared( getObject(), getTargetPos(), FROM_CENTER_3D );
-			if( currentDistanceSquared <= endDiveDistanceSquared )
+			// Check to see when we shall end diving
+			Real endDiveDistanceSquared = sqr(getData()->m_diveEndDistance);
+			Real currentDistanceSquared = ThePartitionManager->getDistanceSquared(getObject(), getTargetPos(), FROM_CENTER_3D);
+			if (currentDistanceSquared <= endDiveDistanceSquared)
 			{
 				m_diveState = DIVESTATE_POSTDIVE;
-				getObject()->getAIUpdateInterface()->getCurLocomotor()->setUsePreciseZPos( false );
+				getObject()->getAIUpdateInterface()->getCurLocomotor()->setUsePreciseZPos(false);
 			}
 
-			if( m_data.m_strafingWeaponSlot != -1 )
+			if (m_data.m_strafingWeaponSlot != -1)
 			{
-				//SHOOT!!
+				// SHOOT!!
 				const Coord3D *velocity = getObject()->getPhysics()->getVelocity();
-				if( velocity->z < 5.0f )
+				if (velocity->z < 5.0f)
 				{
-					//Calc strafe ratio
+					// Calc strafe ratio
 					Real startDiveDistance = getData()->m_diveStartDistance;
-					Real endDiveDistance = sqrt( endDiveDistanceSquared );
-					Real currentDistance = sqrt( currentDistanceSquared );
+					Real endDiveDistance = sqrt(endDiveDistanceSquared);
+					Real currentDistance = sqrt(currentDistanceSquared);
 
 					Real diveRatio = (startDiveDistance - currentDistance) / (startDiveDistance - endDiveDistance);
 
 					Coord3D velocity = *getObject()->getPhysics()->getVelocity();
 					velocity.z = 0.0f;
 					velocity.normalize();
-					velocity.scale( diveRatio * 100.0f );
+					velocity.scale(diveRatio * 100.0f);
 
 					Coord3D backwards = velocity;
-					backwards.scale( 0.33f );
+					backwards.scale(0.33f);
 
 					Coord3D strafePoint = *getTargetPos();
-					strafePoint.sub( &backwards );
+					strafePoint.sub(&backwards);
 
-					strafePoint.add( &velocity );
-					strafePoint.z = TheTerrainLogic->getGroundHeight( strafePoint.x, strafePoint.y );
+					strafePoint.add(&velocity);
+					strafePoint.z = TheTerrainLogic->getGroundHeight(strafePoint.x, strafePoint.y);
 
 					// lock it just till the weapon is empty or the attack is "done"
-					getObject()->setWeaponLock( m_data.m_strafingWeaponSlot, LOCKED_TEMPORARILY );
-					getObject()->fireCurrentWeapon( &strafePoint );
-					FXList::doFXPos( m_data.m_strafeFX, &strafePoint );
+					getObject()->setWeaponLock(m_data.m_strafingWeaponSlot, LOCKED_TEMPORARILY);
+					getObject()->fireCurrentWeapon(&strafePoint);
+					FXList::doFXPos(m_data.m_strafeFX, &strafePoint);
 				}
 			}
 		}
@@ -241,19 +254,17 @@ UpdateSleepTime DeliverPayloadAIUpdate::update( void )
 
 	AIUpdateInterface::update();
 
-	return UPDATE_SLEEP_NONE;	// ignore our parent, and never sleep
+	return UPDATE_SLEEP_NONE; // ignore our parent, and never sleep
 }
 
 //-------------------------------------------------------------------------------------------------
 void DeliverPayloadAIUpdate::deliverPayload(
-	const Coord3D *moveToPos,
-	const Coord3D *targetPos,
-	const DeliverPayloadData *data
-)
+		const Coord3D *moveToPos,
+		const Coord3D *targetPos,
+		const DeliverPayloadData *data)
 {
-
 	//****************************************************
-	//THIS GETS CALLED VIA OBJECT CREATION LISTS ONLY!!!
+	// THIS GETS CALLED VIA OBJECT CREATION LISTS ONLY!!!
 	//****************************************************
 
 	if (m_deliverPayloadStateMachine)
@@ -262,16 +273,16 @@ void DeliverPayloadAIUpdate::deliverPayload(
 
 	m_moveToPos = *moveToPos;
 	m_targetPos = *targetPos;
-	m_data			= *data;
+	m_data = *data;
 
 	m_deliveryDecal.clear();
-	m_data.m_deliveryDecalTemplate.createRadiusDecal(*targetPos,
-		m_data.m_deliveryDecalRadius, getObject()->getControllingPlayer(), m_deliveryDecal);
+	m_data.m_deliveryDecalTemplate
+			.createRadiusDecal(*targetPos, m_data.m_deliveryDecalRadius, getObject()->getControllingPlayer(), m_deliveryDecal);
 
-	if( m_data.m_diveStartDistance <= 0.0f )
+	if (m_data.m_diveStartDistance <= 0.0f)
 	{
-		//We can't dive, so setting it to post-dive will prevent
-		//dive logic from being processed.
+		// We can't dive, so setting it to post-dive will prevent
+		// dive logic from being processed.
 		m_diveState = DIVESTATE_POSTDIVE;
 	}
 	else
@@ -281,24 +292,23 @@ void DeliverPayloadAIUpdate::deliverPayload(
 
 	m_visibleItemsDelivered = 0;
 
-	//If we have visible bones, then show each of those subobjects.
+	// If we have visible bones, then show each of those subobjects.
 	Drawable *draw = getObject()->getDrawable();
-	if( draw )
+	if (draw)
 	{
-		for( int i = 1; i <= m_data.m_visibleNumBones; i++ )
+		for (int i = 1; i <= m_data.m_visibleNumBones; i++)
 		{
-			if( m_data.m_visibleSubObjectName.isNotEmpty() )
+			if (m_data.m_visibleSubObjectName.isNotEmpty())
 			{
 				AsciiString name;
-				name.format( "%s%02d", m_data.m_visibleSubObjectName.str(), i );
-				draw->showSubObject( name, true );
+				name.format("%s%02d", m_data.m_visibleSubObjectName.str(), i);
+				draw->showSubObject(name, true);
 			}
 		}
 	}
 
-
 	// must make the state machine AFTER initing the other stuff, since it may inquire of its values...
-	m_deliverPayloadStateMachine = newInstance(DeliverPayloadStateMachine)( getObject() );
+	m_deliverPayloadStateMachine = newInstance(DeliverPayloadStateMachine)(getObject());
 	m_deliverPayloadStateMachine->initDefaultState();
 #ifdef RTS_DEBUG
 	m_deliverPayloadStateMachine->setName("DeliverPayloadSpecificAI");
@@ -306,42 +316,42 @@ void DeliverPayloadAIUpdate::deliverPayload(
 }
 
 //-------------------------------------------------------------------------------------------------
-void DeliverPayloadAIUpdate::deliverPayloadViaModuleData( const Coord3D *moveToPos )
+void DeliverPayloadAIUpdate::deliverPayloadViaModuleData(const Coord3D *moveToPos)
 {
 	const DeliverPayloadAIUpdateModuleData *data = getDeliverPayloadAIUpdateModuleData();
 
 	//****************************************************
-	//THIS GETS CALLED FOR SCRIPTED REINFORCEMENTS ONLY!!!
-	//These don't and can't use object creation lists.
+	// THIS GETS CALLED FOR SCRIPTED REINFORCEMENTS ONLY!!!
+	// These don't and can't use object creation lists.
 	//****************************************************
 
 	DeliverPayloadData dpData;
-	dpData.m_dropOffset.set( &data->m_dropOffset );
-	dpData.m_dropVariance.set( &data->m_dropVariance );
-	dpData.m_distToTarget						= data->m_maxDistanceToTarget;
-	dpData.m_maxAttempts						= data->m_maxNumberAttempts;
-	dpData.m_dropDelay							= data->m_dropDelay;
-	dpData.m_deliveryDecalTemplate	= data->m_deliveryDecalTemplate;
-	dpData.m_deliveryDecalRadius		= data->m_deliveryDecalRadius;
+	dpData.m_dropOffset.set(&data->m_dropOffset);
+	dpData.m_dropVariance.set(&data->m_dropVariance);
+	dpData.m_distToTarget = data->m_maxDistanceToTarget;
+	dpData.m_maxAttempts = data->m_maxNumberAttempts;
+	dpData.m_dropDelay = data->m_dropDelay;
+	dpData.m_deliveryDecalTemplate = data->m_deliveryDecalTemplate;
+	dpData.m_deliveryDecalRadius = data->m_deliveryDecalRadius;
 
-	deliverPayload( moveToPos, moveToPos, &dpData );
+	deliverPayload(moveToPos, moveToPos, &dpData);
 }
 
 //-------------------------------------------------------------------------------------------------
-const ThingTemplate* DeliverPayloadAIUpdate::getPutInContainerTemplateViaModuleData() const
+const ThingTemplate *DeliverPayloadAIUpdate::getPutInContainerTemplateViaModuleData() const
 {
 	AsciiString name = getDeliverPayloadAIUpdateModuleData()->m_putInContainerName;
-	return name.isEmpty() ? NULL : TheThingFactory->findTemplate( name );
+	return name.isEmpty() ? NULL : TheThingFactory->findTemplate(name);
 }
 
 //-------------------------------------------------------------------------------------------------
-Real DeliverPayloadAIUpdate::calcMinTurnRadius(Real* timeToTravelThatDist) const
+Real DeliverPayloadAIUpdate::calcMinTurnRadius(Real *timeToTravelThatDist) const
 {
-	const Locomotor* loco = getCurLocomotor();
+	const Locomotor *loco = getCurLocomotor();
 	BodyDamageType bdt = getObject()->getBodyModule()->getDamageState();
 	/// @todo srj -- this should probably use min-speed, not max-speed... fix after E3
-	Real maxSpeed = loco->getMaxSpeedForCondition(bdt);				// in dist/frame
-	Real maxTurnRate = loco->getMaxTurnRate(bdt);	// in rads/frame
+	Real maxSpeed = loco->getMaxSpeedForCondition(bdt); // in dist/frame
+	Real maxTurnRate = loco->getMaxTurnRate(bdt); // in rads/frame
 
 	/*
 		our minimum circumference will be like so:
@@ -362,39 +372,36 @@ Real DeliverPayloadAIUpdate::calcMinTurnRadius(Real* timeToTravelThatDist) const
 	return minTurnRadius;
 }
 
-
 //-------------------------------------------------------------------------------------------------
 Bool DeliverPayloadAIUpdate::isCloseEnoughToTarget()
 {
 	// In addition to testing distance, it is also sensitive to being in/outward bound
-////The new getPreOpenDistance() allows the deliver state to fire early, but only if inbound,
-////so the doors can open and payload can get ready...
+	////The new getPreOpenDistance() allows the deliver state to fire early, but only if inbound,
+	////so the doors can open and payload can get ready...
 
-	Real allowedDistanceSqr = sqr( getAllowedDistanceToTarget() );
-	Real currentDistanceSqr = ThePartitionManager->getDistanceSquared( getObject(), getTargetPos(), FROM_CENTER_2D );
+	Real allowedDistanceSqr = sqr(getAllowedDistanceToTarget());
+	Real currentDistanceSqr = ThePartitionManager->getDistanceSquared(getObject(), getTargetPos(), FROM_CENTER_2D);
 	Bool inBound = m_previousDistanceSqr > currentDistanceSqr;
-	m_previousDistanceSqr = currentDistanceSqr;// for the next test
+	m_previousDistanceSqr = currentDistanceSqr; // for the next test
 
-	if ( inBound )
+	if (inBound)
 		allowedDistanceSqr = sqr(getAllowedDistanceToTarget() + getPreOpenDistance());
 
-	//DEBUG_LOG(("Dist to target is %f (allowed %f)",sqrt(currentDistanceSqr),sqrt(allowedDistanceSqr)));
+	// DEBUG_LOG(("Dist to target is %f (allowed %f)",sqrt(currentDistanceSqr),sqrt(allowedDistanceSqr)));
 
-
-	if ( allowedDistanceSqr > currentDistanceSqr )
+	if (allowedDistanceSqr > currentDistanceSqr)
 		return TRUE;
 
 	return FALSE;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 Bool DeliverPayloadAIUpdate::isOffMap() const
 {
 	Region3D mapRegion;
-	TheTerrainLogic->getExtentIncludingBorder( &mapRegion );
+	TheTerrainLogic->getExtentIncludingBorder(&mapRegion);
 
-	if (!mapRegion.isInRegionNoZ( getObject()->getPosition() ))
+	if (!mapRegion.isInRegionNoZ(getObject()->getPosition()))
 		return true;
 
 	return false;
@@ -403,27 +410,27 @@ Bool DeliverPayloadAIUpdate::isOffMap() const
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void DeliverPayloadAIUpdate::crc( Xfer *xfer )
+void DeliverPayloadAIUpdate::crc(Xfer *xfer)
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version
-	* 5: Whoops version.  preOpenDistance just wasn't saved.
-*/
+ * Version Info:
+ * 1: Initial version
+ * 5: Whoops version.  preOpenDistance just wasn't saved.
+ */
 // ------------------------------------------------------------------------------------------------
-void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
+void DeliverPayloadAIUpdate::xfer(Xfer *xfer)
 {
-  // version
-  const XferVersion currentVersion = 5;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	const XferVersion currentVersion = 5;
+	XferVersion version = currentVersion;
+	xfer->xferVersion(&version, currentVersion);
 
- // extend base class
+	// extend base class
 	AIUpdateInterface::xfer(xfer);
 
 	xfer->xferCoord3D(&m_targetPos);
@@ -436,8 +443,8 @@ void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
 	xfer->xferAsciiString(&data.m_visibleDropBoneName);
 	xfer->xferAsciiString(&data.m_visibleSubObjectName);
 	xfer->xferAsciiString(&data.m_visiblePayloadTemplateName);
-  xfer->xferReal(&data.m_distToTarget);
-	if( version >= 5 )
+	xfer->xferReal(&data.m_distToTarget);
+	if (version >= 5)
 		xfer->xferReal(&data.m_preOpenDistance);
 	xfer->xferInt(&data.m_maxAttempts);
 	xfer->xferCoord3D(&data.m_dropOffset);
@@ -461,19 +468,19 @@ void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
 		weaponTemplateName = data.m_visiblePayloadWeaponTemplate->getName();
 	}
 	xfer->xferAsciiString(&weaponTemplateName);
-	if( xfer->getXferMode() == XFER_LOAD && weaponTemplateName.isNotEmpty())
+	if (xfer->getXferMode() == XFER_LOAD && weaponTemplateName.isNotEmpty())
 	{
 		data.m_visiblePayloadWeaponTemplate = TheWeaponStore->findWeaponTemplate(weaponTemplateName);
 	}
 	data.m_deliveryDecalTemplate.xferRadiusDecalTemplate(xfer);
 	xfer->xferReal(&data.m_deliveryDecalRadius);
-	 *((DeliverPayloadData*)&m_data) = data;
+	*((DeliverPayloadData *)&m_data) = data;
 
-	Bool hasStateMachine = m_deliverPayloadStateMachine!=NULL;
+	Bool hasStateMachine = m_deliverPayloadStateMachine != NULL;
 	xfer->xferBool(&hasStateMachine);
-	if (hasStateMachine && m_deliverPayloadStateMachine==NULL)
+	if (hasStateMachine && m_deliverPayloadStateMachine == NULL)
 	{
-		m_deliverPayloadStateMachine = newInstance(DeliverPayloadStateMachine)( getObject() );
+		m_deliverPayloadStateMachine = newInstance(DeliverPayloadStateMachine)(getObject());
 	}
 	if (m_deliverPayloadStateMachine && version >= 2)
 	{
@@ -495,40 +502,43 @@ void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
 		xfer->xferReal(&m_previousDistanceSqr);
 	}
 
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DeliverPayloadAIUpdate::loadPostProcess( void )
+void DeliverPayloadAIUpdate::loadPostProcess(void)
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+} // end loadPostProcess
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-DeliverPayloadStateMachine::DeliverPayloadStateMachine( Object *owner ) : StateMachine( owner, "DeliverPayloadStateMachine" )
+DeliverPayloadStateMachine::DeliverPayloadStateMachine(Object *owner) : StateMachine(owner, "DeliverPayloadStateMachine")
 {
-//	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate*)owner->getAIUpdateInterface();
+	//	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate*)owner->getAIUpdateInterface();
 
-	static const StateConditionInfo considerConditions[] =
-	{
+	static const StateConditionInfo considerConditions[] = {
 		StateConditionInfo(DeliverPayloadStateMachine::isOffMap, RECOVER_FROM_OFF_MAP, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL) // keep last
 	};
 
 	// order matters: first state is the default state.
-	defineState( APPROACH,								newInstance(ApproachState)( this ), DELIVERING, CONSIDER_NEW_APPROACH );
-	defineState( DELIVERING,							newInstance(DeliveringState)( this ), HEAD_OFF_MAP, CONSIDER_NEW_APPROACH );
-	defineState( CONSIDER_NEW_APPROACH,		newInstance(ConsiderNewApproachState)( this ), APPROACH, HEAD_OFF_MAP, considerConditions );
-	defineState( RECOVER_FROM_OFF_MAP,		newInstance(RecoverFromOffMapState)( this ), APPROACH, APPROACH );
-	defineState( HEAD_OFF_MAP,						newInstance(HeadOffMapState)( this ), CLEAN_UP, CLEAN_UP );
-	defineState( CLEAN_UP,								newInstance(CleanUpState)( this ), INVALID_STATE_ID, INVALID_STATE_ID );
+	defineState(APPROACH, newInstance(ApproachState)(this), DELIVERING, CONSIDER_NEW_APPROACH);
+	defineState(DELIVERING, newInstance(DeliveringState)(this), HEAD_OFF_MAP, CONSIDER_NEW_APPROACH);
+	defineState(
+			CONSIDER_NEW_APPROACH,
+			newInstance(ConsiderNewApproachState)(this),
+			APPROACH,
+			HEAD_OFF_MAP,
+			considerConditions);
+	defineState(RECOVER_FROM_OFF_MAP, newInstance(RecoverFromOffMapState)(this), APPROACH, APPROACH);
+	defineState(HEAD_OFF_MAP, newInstance(HeadOffMapState)(this), CLEAN_UP, CLEAN_UP);
+	defineState(CLEAN_UP, newInstance(CleanUpState)(this), INVALID_STATE_ID, INVALID_STATE_ID);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -539,37 +549,37 @@ DeliverPayloadStateMachine::~DeliverPayloadStateMachine()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void DeliverPayloadStateMachine::crc( Xfer *xfer )
+void DeliverPayloadStateMachine::crc(Xfer *xfer)
 {
 	StateMachine::crc(xfer);
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
-void DeliverPayloadStateMachine::xfer( Xfer *xfer )
+void DeliverPayloadStateMachine::xfer(Xfer *xfer)
 {
 	XferVersion cv = 1;
 	XferVersion v = cv;
-	xfer->xferVersion( &v, cv );
+	xfer->xferVersion(&v, cv);
 
 	StateMachine::xfer(xfer);
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DeliverPayloadStateMachine::loadPostProcess( void )
+void DeliverPayloadStateMachine::loadPostProcess(void)
 {
 	StateMachine::loadPostProcess();
-}  // end loadPostProcess
+} // end loadPostProcess
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ Bool DeliverPayloadStateMachine::isOffMap( State *thisState, void* userData )
+/*static*/ Bool DeliverPayloadStateMachine::isOffMap(State *thisState, void *userData)
 {
 	Object *owner = thisState->getMachineOwner();
-	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate*)owner->getAIUpdateInterface();
-	if( !ai )
+	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate *)owner->getAIUpdateInterface();
+	if (!ai)
 	{
 		return TRUE;
 	}
@@ -584,8 +594,8 @@ void DeliverPayloadStateMachine::loadPostProcess( void )
 StateReturnType ApproachState::onEnter() // Give the move command
 {
 	Object *owner = getMachineOwner();
-	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate*)owner->getAIUpdateInterface();
-	if( !ai )
+	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate *)owner->getAIUpdateInterface();
+	if (!ai)
 	{
 		return STATE_FAILURE;
 	}
@@ -593,7 +603,7 @@ StateReturnType ApproachState::onEnter() // Give the move command
 	{
 		return STATE_FAILURE;
 	}
- 	ai->aiMoveToPosition( ai->getMoveToPos(), CMD_FROM_AI );
+	ai->aiMoveToPosition(ai->getMoveToPos(), CMD_FROM_AI);
 
 	return STATE_CONTINUE;
 }
@@ -602,8 +612,8 @@ StateReturnType ApproachState::onEnter() // Give the move command
 StateReturnType ApproachState::update()
 {
 	Object *owner = getMachineOwner();
-	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate*)owner->getAIUpdateInterface();
-	if( !ai )
+	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate *)owner->getAIUpdateInterface();
+	if (!ai)
 	{
 		return STATE_FAILURE;
 	}
@@ -618,15 +628,14 @@ StateReturnType ApproachState::update()
 
 	if (ai->getAIStateType() != AI_MOVE_TO)
 	{
-    if ( ai->getAIStateType() == AI_IDLE )
-    // Because something outside us has told us to IDLE, so geez, ignore it and try our approach again
-      return STATE_FAILURE;
-    else
-    {
-		  DEBUG_CRASH(("hmm, bailed from moveto state early... should this be possible?"));
-		  ai->aiMoveToPosition( ai->getMoveToPos(), CMD_FROM_AI );
-    }
-
+		if (ai->getAIStateType() == AI_IDLE)
+			// Because something outside us has told us to IDLE, so geez, ignore it and try our approach again
+			return STATE_FAILURE;
+		else
+		{
+			DEBUG_CRASH(("hmm, bailed from moveto state early... should this be possible?"));
+			ai->aiMoveToPosition(ai->getMoveToPos(), CMD_FROM_AI);
+		}
 	}
 
 	return STATE_CONTINUE;
@@ -639,44 +648,43 @@ StateReturnType ApproachState::update()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void DeliveringState::crc( Xfer *xfer )
+void DeliveringState::crc(Xfer *xfer)
 {
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
-void DeliveringState::xfer( Xfer *xfer )
+void DeliveringState::xfer(Xfer *xfer)
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion(&version, currentVersion);
 
 	xfer->xferUnsignedInt(&m_dropDelayLeft);
 	xfer->xferBool(&m_didOpen);
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DeliveringState::loadPostProcess( void )
+void DeliveringState::loadPostProcess(void)
 {
-}  // end loadPostProcess
-
+} // end loadPostProcess
 
 //-------------------------------------------------------------------------------------------------
 StateReturnType DeliveringState::onEnter() // Open the pod bay doors, Hal
 {
 	Object *owner = getMachineOwner();
-	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate*)owner->getAIUpdateInterface();
-	if( !ai )
+	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate *)owner->getAIUpdateInterface();
+	if (!ai)
 	{
 		return STATE_FAILURE;
 	}
 
-				/// @todo srj -- for now, this assumes at most one door
-	owner->clearAndSetModelConditionState( MODELCONDITION_DOOR_1_CLOSING, MODELCONDITION_DOOR_1_OPENING );
+	/// @todo srj -- for now, this assumes at most one door
+	owner->clearAndSetModelConditionState(MODELCONDITION_DOOR_1_CLOSING, MODELCONDITION_DOOR_1_OPENING);
 	m_dropDelayLeft = ai->getDoorDelay();
 	m_didOpen = false;
 	return STATE_CONTINUE;
@@ -692,8 +700,8 @@ StateReturnType DeliveringState::update() // Kick a dude out every so often
 	}
 
 	Object *owner = getMachineOwner();
-	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate*)owner->getAIUpdateInterface();
-	if( !ai )
+	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate *)owner->getAIUpdateInterface();
+	if (!ai)
 	{
 		return STATE_FAILURE;
 	}
@@ -706,31 +714,31 @@ StateReturnType DeliveringState::update() // Kick a dude out every so often
 	if (!ai->isCloseEnoughToTarget())
 		return STATE_FAILURE;
 
-	const ContainedItemsList* items = owner->getContain() ? owner->getContain()->getContainedItemsList() : NULL;
-	if( (!items || !items->size()) && ai->getVisibleItemsDelivered() == ai->getData()->m_visibleNumBones )
+	const ContainedItemsList *items = owner->getContain() ? owner->getContain()->getContainedItemsList() : NULL;
+	if ((!items || !items->size()) && ai->getVisibleItemsDelivered() == ai->getData()->m_visibleNumBones)
 	{
-		//We are out of payload to drop AND our visible payload is empty. It's possible for deliverers to
-		//have one or the other or even both.
+		// We are out of payload to drop AND our visible payload is empty. It's possible for deliverers to
+		// have one or the other or even both.
 		return STATE_SUCCESS;
 	}
 
-	//Handle contained payload delivery.
-	if( items )
+	// Handle contained payload delivery.
+	if (items)
 	{
-		Object* item = items->front();
+		Object *item = items->front();
 
-		if( ai->isFireWeapon() )
+		if (ai->isFireWeapon())
 		{
 			Coord3D pos = *ai->getTargetPos();
 			pos.x += ai->getDropOffset().x;
 			pos.y += ai->getDropOffset().y;
 			pos.z += ai->getDropOffset().z;
-			owner->fireCurrentWeapon( &pos );
-			TheGameLogic->destroyObject( item );
+			owner->fireCurrentWeapon(&pos);
+			TheGameLogic->destroyObject(item);
 		}
 		else
 		{
-			AIUpdateInterface* itemAI = item->getAIUpdateInterface();
+			AIUpdateInterface *itemAI = item->getAIUpdateInterface();
 			if (itemAI)
 			{
 				itemAI->aiExit(NULL, CMD_FROM_AI);
@@ -750,157 +758,168 @@ StateReturnType DeliveringState::update() // Kick a dude out every so often
 			item->setPosition(&pos);
 
 			ContainModuleInterface *contain = item->getContain();
-			if( ai->getData()->m_isParachuteDirectly  &&  contain )
+			if (ai->getData()->m_isParachuteDirectly && contain)
 			{
-				contain->setOverrideDestination( ai->getTargetPos() );// go for the direct hit
+				contain->setOverrideDestination(ai->getTargetPos()); // go for the direct hit
 			}
 			else if (itemAI)
 			{
 				// This will most likely be ignored, as the item is still in the transport, and therefore Held.
-				itemAI->aiMoveToPosition( ai->getMoveToPos(), CMD_FROM_AI );
+				itemAI->aiMoveToPosition(ai->getMoveToPos(), CMD_FROM_AI);
 			}
 
 			/// @todo srj -- urg. icky.
 			static NameKeyType key_GenerateMinefieldBehavior = NAMEKEY("GenerateMinefieldBehavior");
-			GenerateMinefieldBehavior* mfb = (GenerateMinefieldBehavior *)item->findUpdateModule(key_GenerateMinefieldBehavior);
+			GenerateMinefieldBehavior *mfb = (GenerateMinefieldBehavior *)item->findUpdateModule(key_GenerateMinefieldBehavior);
 			if (mfb)
 			{
 				mfb->setMinefieldTarget(ai->getMoveToPos());
 			}
 
-
 			static NameKeyType key_SmartBombTargetHomingUpdate = NAMEKEY("SmartBombTargetHomingUpdate");
-			SmartBombTargetHomingUpdate* smthu = (SmartBombTargetHomingUpdate *)item->findUpdateModule(key_SmartBombTargetHomingUpdate);
+			SmartBombTargetHomingUpdate *smthu =
+					(SmartBombTargetHomingUpdate *)item->findUpdateModule(key_SmartBombTargetHomingUpdate);
 			if (smthu)
 			{
-				smthu->SetTargetPosition( *ai->getMoveToPos() );
+				smthu->SetTargetPosition(*ai->getMoveToPos());
 			}
 
-
-
-			if( ai->getData()->m_inheritTransportVelocity )
+			if (ai->getData()->m_inheritTransportVelocity)
 			{
 				Coord3D velocity = *owner->getPhysics()->getVelocity();
-				item->getPhysics()->applyForce( &velocity );
+				item->getPhysics()->applyForce(&velocity);
 			}
 		}
 	}
 
-	//Handle visible payload delivery.
-	if( ai->getVisibleItemsDelivered() < ai->getData()->m_visibleNumBones )
+	// Handle visible payload delivery.
+	if (ai->getVisibleItemsDelivered() < ai->getData()->m_visibleNumBones)
 	{
 		Int attemptDrops = ai->getData()->m_visibleItemsDroppedPerInterval;
 		Drawable *draw = owner->getDrawable();
 		Bool updateSubObjects = false;
-		while( attemptDrops && ai->getVisibleItemsDelivered() < ai->getData()->m_visibleNumBones )
+		while (attemptDrops && ai->getVisibleItemsDelivered() < ai->getData()->m_visibleNumBones)
 		{
-			//Drop an item!
-			if( draw )
+			// Drop an item!
+			if (draw)
 			{
-				//First hide the subobject as it becomes the delivered payload.
-				if( ai->getData()->m_visibleSubObjectName.isNotEmpty() )
+				// First hide the subobject as it becomes the delivered payload.
+				if (ai->getData()->m_visibleSubObjectName.isNotEmpty())
 				{
 					AsciiString name;
-					name.format( "%s%02d", ai->getData()->m_visibleSubObjectName.str(), ai->getVisibleItemsDelivered() + 1 );
-					draw->showSubObject( name, false );
+					name.format("%s%02d", ai->getData()->m_visibleSubObjectName.str(), ai->getVisibleItemsDelivered() + 1);
+					draw->showSubObject(name, false);
 					updateSubObjects = true;
 				}
 
-				//Second, create the subobject for real
-				if( ai->getData()->m_visiblePayloadTemplateName.isNotEmpty() )
+				// Second, create the subobject for real
+				if (ai->getData()->m_visiblePayloadTemplateName.isNotEmpty())
 				{
-					const ThingTemplate* thing = TheThingFactory->findTemplate( ai->getData()->m_visiblePayloadTemplateName.str() );
-					Object *payload = TheThingFactory->newObject( thing, owner->getControllingPlayer()->getDefaultTeam() );
+					const ThingTemplate *thing = TheThingFactory->findTemplate(ai->getData()->m_visiblePayloadTemplateName.str());
+					Object *payload = TheThingFactory->newObject(thing, owner->getControllingPlayer()->getDefaultTeam());
 
-					if( payload )
+					if (payload)
 					{
-						payload->setProducer( owner );
+						payload->setProducer(owner);
 
-						if( ai->getData()->m_visibleDropBoneName.isNotEmpty() )
+						if (ai->getData()->m_visibleDropBoneName.isNotEmpty())
 						{
 							Coord3D pos;
 							AsciiString bone;
-							bone.format( "%s%02d", ai->getData()->m_visibleDropBoneName.str(), ai->getVisibleItemsDelivered() + 1 );
-							if( draw->getPristineBonePositions( ai->getData()->m_visibleDropBoneName.str(), ai->getVisibleItemsDelivered() + 1, &pos, NULL, 1 ) > 0 )
+							bone.format("%s%02d", ai->getData()->m_visibleDropBoneName.str(), ai->getVisibleItemsDelivered() + 1);
+							if (draw->getPristineBonePositions(
+											ai->getData()->m_visibleDropBoneName.str(),
+											ai->getVisibleItemsDelivered() + 1,
+											&pos,
+											NULL,
+											1)
+									> 0)
 							{
-								draw->convertBonePosToWorldPos( &pos, NULL, &pos, NULL );
-								payload->setPosition( &pos );
+								draw->convertBonePosToWorldPos(&pos, NULL, &pos, NULL);
+								payload->setPosition(&pos);
 							}
 							else
 							{
-								payload->setPosition( owner->getPosition() );
+								payload->setPosition(owner->getPosition());
 							}
 						}
 						else
 						{
-							payload->setPosition( owner->getPosition() );
+							payload->setPosition(owner->getPosition());
 						}
-						payload->setOrientation( owner->getOrientation() );
+						payload->setOrientation(owner->getOrientation());
 
-						//If we want the payload to inherit the transport's velocity, do so now.
-						if( ai->getData()->m_inheritTransportVelocity )
+						// If we want the payload to inherit the transport's velocity, do so now.
+						if (ai->getData()->m_inheritTransportVelocity)
 						{
 							Coord3D startingForce = *owner->getPhysics()->getVelocity();
-							startingForce.scale( payload->getPhysics()->getMass() );
-							payload->getPhysics()->applyMotiveForce( &startingForce );
+							startingForce.scale(payload->getPhysics()->getMass());
+							payload->getPhysics()->applyMotiveForce(&startingForce);
 
 							Coord3D backPosition = *owner->getPhysics()->getVelocity();
-							backPosition.scale( -1.0f );
-							backPosition.add( payload->getPosition() );
-							payload->setPosition( &backPosition );
+							backPosition.scale(-1.0f);
+							backPosition.add(payload->getPosition());
+							payload->setPosition(&backPosition);
 						}
 
-						//Are we firing a missile?
+						// Are we firing a missile?
 						Bool projectileFired = false;
-						for( BehaviorModule** u = payload->getBehaviorModules(); *u; ++u )
+						for (BehaviorModule **u = payload->getBehaviorModules(); *u; ++u)
 						{
-							ProjectileUpdateInterface* pui = (*u)->getProjectileUpdateInterface();
-							if( pui  )
+							ProjectileUpdateInterface *pui = (*u)->getProjectileUpdateInterface();
+							if (pui)
 							{
-								//Missile!
+								// Missile!
 								const WeaponTemplate *weaponTemplate = ai->getData()->m_visiblePayloadWeaponTemplate;
-								if( !weaponTemplate )
+								if (!weaponTemplate)
 								{
-									DEBUG_ASSERTCRASH( 0, ("%s tried to fire missile %s via DeliverPayload, and is missing required weapon template in ObjectCreationList.ini entry.",
-																				owner->getTemplate()->getName().str(), payload->getTemplate()->getName().str() ) );
+									DEBUG_ASSERTCRASH(
+											0,
+											("%s tried to fire missile %s via DeliverPayload, and is missing required weapon template in "
+											 "ObjectCreationList.ini entry.",
+											 owner->getTemplate()->getName().str(),
+											 payload->getTemplate()->getName().str()));
 									break;
 								}
 								VeterancyLevel v = owner->getVeterancyLevel();
-								pui->projectileFireAtObjectOrPosition( NULL, ai->getTargetPos(), weaponTemplate, weaponTemplate->getProjectileExhaust(v) );
+								pui->projectileFireAtObjectOrPosition(
+										NULL,
+										ai->getTargetPos(),
+										weaponTemplate,
+										weaponTemplate->getProjectileExhaust(v));
 								projectileFired = true;
-								//damageInfo.in.m_sourceID = pui->projectileGetLauncherID();
+								// damageInfo.in.m_sourceID = pui->projectileGetLauncherID();
 								break;
 							}
 						}
 
-						//If not, are we dropping a bomb?
-						if( !projectileFired )
+						// If not, are we dropping a bomb?
+						if (!projectileFired)
 						{
-							//Bomb!
-							if( ai->getData()->m_exitPitchRate != 0 )
+							// Bomb!
+							if (ai->getData()->m_exitPitchRate != 0)
 							{
-								//If the payload needs to pitch, do so now.
+								// If the payload needs to pitch, do so now.
 								Real pitchRate = payload->getPhysics()->getCenterOfMassOffset() * ai->getData()->m_exitPitchRate;
-								payload->getPhysics()->setPitchRate( pitchRate );
+								payload->getPhysics()->setPitchRate(pitchRate);
 							}
 
-							//If payload can move independently, order the move. A lot of bombs don't have locomotors,
-							//in which case the "start move sound" is played, but nothing else actually happens.
-							if( payload->getAIUpdateInterface() )
+							// If payload can move independently, order the move. A lot of bombs don't have locomotors,
+							// in which case the "start move sound" is played, but nothing else actually happens.
+							if (payload->getAIUpdateInterface())
 							{
-								payload->getAIUpdateInterface()->aiMoveToPosition( ai->getMoveToPos(), CMD_FROM_AI );
+								payload->getAIUpdateInterface()->aiMoveToPosition(ai->getMoveToPos(), CMD_FROM_AI);
 							}
-
 						}
 					}
 				}
 			}
 
-			//Update the counters
+			// Update the counters
 			attemptDrops--;
-			ai->setVisibleItemsDelivered( ai->getVisibleItemsDelivered() + 1 );
+			ai->setVisibleItemsDelivered(ai->getVisibleItemsDelivered() + 1);
 		}
-		if( updateSubObjects )
+		if (updateSubObjects)
 		{
 			draw->updateSubObjects();
 		}
@@ -910,16 +929,16 @@ StateReturnType DeliveringState::update() // Kick a dude out every so often
 }
 
 //-------------------------------------------------------------------------------------------------
-void DeliveringState::onExit( StateExitType ) // Close the doors
+void DeliveringState::onExit(StateExitType) // Close the doors
 {
 	Object *owner = getMachineOwner();
-	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate*)owner->getAIUpdateInterface();
+	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate *)owner->getAIUpdateInterface();
 	if (ai)
 		ai->friend_setFreeToExit(false);
 
 	DEBUG_ASSERTCRASH(m_didOpen, ("Not enough time for the doors to open to drop anything!"));
-				/// @todo srj -- for now, this assumes at most one door
-	owner->clearAndSetModelConditionState( MODELCONDITION_DOOR_1_OPENING, MODELCONDITION_DOOR_1_CLOSING );
+	/// @todo srj -- for now, this assumes at most one door
+	owner->clearAndSetModelConditionState(MODELCONDITION_DOOR_1_OPENING, MODELCONDITION_DOOR_1_CLOSING);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -929,45 +948,44 @@ void DeliveringState::onExit( StateExitType ) // Close the doors
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ConsiderNewApproachState::crc( Xfer *xfer )
+void ConsiderNewApproachState::crc(Xfer *xfer)
 {
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
-void ConsiderNewApproachState::xfer( Xfer *xfer )
+void ConsiderNewApproachState::xfer(Xfer *xfer)
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion(&version, currentVersion);
 
 	xfer->xferInt(&m_numberEntriesToState);
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ConsiderNewApproachState::loadPostProcess( void )
+void ConsiderNewApproachState::loadPostProcess(void)
 {
-}  // end loadPostProcess
-
+} // end loadPostProcess
 
 //-------------------------------------------------------------------------------------------------
 StateReturnType ConsiderNewApproachState::onEnter() // Increment local counter o' futility
 {
 	Object *owner = getMachineOwner();
-	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate*)owner->getAIUpdateInterface();
-	if( !ai )
+	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate *)owner->getAIUpdateInterface();
+	if (!ai)
 	{
 		return STATE_FAILURE;
 	}
 
 	++m_numberEntriesToState;
 
-	DEBUG_LOG(("Considering approach #%d...",m_numberEntriesToState));
-	if( m_numberEntriesToState > ai->getMaxNumberAttempts() )
+	DEBUG_LOG(("Considering approach #%d...", m_numberEntriesToState));
+	if (m_numberEntriesToState > ai->getMaxNumberAttempts())
 	{
 		DEBUG_LOG(("Too many approaches! Time to give up."));
 		return STATE_FAILURE;
@@ -986,14 +1004,14 @@ StateReturnType ConsiderNewApproachState::onEnter() // Increment local counter o
 	const Real DIST_FUDGE = 2.2f;
 	Real minReApproachDist = minTurnRadius * DIST_FUDGE;
 
-	const Coord3D* dir = owner->getUnitDirectionVector2D();
+	const Coord3D *dir = owner->getUnitDirectionVector2D();
 
 	Coord3D reApproachPoint;
 	reApproachPoint.x = owner->getPosition()->x + dir->x * minReApproachDist;
 	reApproachPoint.y = owner->getPosition()->y + dir->y * minReApproachDist;
-	reApproachPoint.z = 0.0f;	// yeah, yeah, should be terrainpos, but doesn't really matter here...
+	reApproachPoint.z = 0.0f; // yeah, yeah, should be terrainpos, but doesn't really matter here...
 
-	ai->aiMoveToPosition( &reApproachPoint, CMD_FROM_AI );
+	ai->aiMoveToPosition(&reApproachPoint, CMD_FROM_AI);
 
 	// we allow these guys to go to invalid (ie, off-map) positions
 	ai->getCurLocomotor()->setAllowInvalidPosition(true);
@@ -1005,8 +1023,8 @@ StateReturnType ConsiderNewApproachState::onEnter() // Increment local counter o
 StateReturnType ConsiderNewApproachState::update() // Success if we should try again, failure if we should give up
 {
 	Object *owner = getMachineOwner();
-	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate*)owner->getAIUpdateInterface();
-	if( !ai )
+	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate *)owner->getAIUpdateInterface();
+	if (!ai)
 	{
 		return STATE_FAILURE;
 	}
@@ -1021,11 +1039,11 @@ StateReturnType ConsiderNewApproachState::update() // Success if we should try a
 }
 
 //-------------------------------------------------------------------------------------------------
-void ConsiderNewApproachState::onExit( StateExitType status )
+void ConsiderNewApproachState::onExit(StateExitType status)
 {
 	Object *owner = getMachineOwner();
-	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate*)owner->getAIUpdateInterface();
-	if( !ai )
+	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate *)owner->getAIUpdateInterface();
+	if (!ai)
 	{
 		return;
 	}
@@ -1041,57 +1059,56 @@ void ConsiderNewApproachState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void RecoverFromOffMapState::crc( Xfer *xfer )
+void RecoverFromOffMapState::crc(Xfer *xfer)
 {
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
-void RecoverFromOffMapState::xfer( Xfer *xfer )
+void RecoverFromOffMapState::xfer(Xfer *xfer)
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion(&version, currentVersion);
 
 	xfer->xferUnsignedInt(&m_reEntryFrame);
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RecoverFromOffMapState::loadPostProcess( void )
+void RecoverFromOffMapState::loadPostProcess(void)
 {
-}  // end loadPostProcess
-
+} // end loadPostProcess
 
 //-------------------------------------------------------------------------------------------------
 StateReturnType RecoverFromOffMapState::onEnter() // Increment local counter o' futility
 {
 	Object *owner = getMachineOwner();
-	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate*)owner->getAIUpdateInterface();
-	if( !ai )
+	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate *)owner->getAIUpdateInterface();
+	if (!ai)
 	{
 		return STATE_FAILURE;
 	}
 
-  // have him hold in place, if possible.
-	ai->aiMoveToPosition( owner->getPosition(), CMD_FROM_AI );
+	// have him hold in place, if possible.
+	ai->aiMoveToPosition(owner->getPosition(), CMD_FROM_AI);
 
-  // a little cheesy... make a delay based on turn-radius time to simulate offscreen
-  // maneuvering.
-  Real timeToTravelThatDist;
-	/*Real minTurnRadius =*/ ai->calcMinTurnRadius(&timeToTravelThatDist);
-  m_reEntryFrame = TheGameLogic->getFrame() + REAL_TO_INT_CEIL(timeToTravelThatDist);
+	// a little cheesy... make a delay based on turn-radius time to simulate offscreen
+	// maneuvering.
+	Real timeToTravelThatDist;
+	/*Real minTurnRadius =*/ai->calcMinTurnRadius(&timeToTravelThatDist);
+	m_reEntryFrame = TheGameLogic->getFrame() + REAL_TO_INT_CEIL(timeToTravelThatDist);
 
 	// kill its momentum
-	PhysicsBehavior* physics = owner->getPhysics();
+	PhysicsBehavior *physics = owner->getPhysics();
 	physics->resetDynamicPhysics();
 
-	ThePartitionManager->unRegisterObject( owner );
-	if( owner->getDrawable() )
-		owner->getDrawable()->setDrawableHidden( true );
+	ThePartitionManager->unRegisterObject(owner);
+	if (owner->getDrawable())
+		owner->getDrawable()->setDrawableHidden(true);
 
 	return STATE_CONTINUE;
 }
@@ -1103,17 +1120,17 @@ StateReturnType RecoverFromOffMapState::update() // Success if we should try aga
 		return STATE_CONTINUE;
 
 	Object *owner = getMachineOwner();
-	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate*)owner->getAIUpdateInterface();
-	if( !ai )
+	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate *)owner->getAIUpdateInterface();
+	if (!ai)
 	{
 		return STATE_FAILURE;
 	}
 
-	ThePartitionManager->registerObject( owner );
-	if( owner->getDrawable() )
-		owner->getDrawable()->setDrawableHidden( false );
+	ThePartitionManager->registerObject(owner);
+	if (owner->getDrawable())
+		owner->getDrawable()->setDrawableHidden(false);
 
-	Coord3D enterCoord = TheTerrainLogic->findClosestEdgePoint( owner->getPosition() );
+	Coord3D enterCoord = TheTerrainLogic->findClosestEdgePoint(owner->getPosition());
 	if (owner->isAboveTerrain())
 		enterCoord.z = owner->getPosition()->z;
 	owner->setPosition(&enterCoord);
@@ -1121,7 +1138,7 @@ StateReturnType RecoverFromOffMapState::update() // Success if we should try aga
 	Real enterAngle = atan2(ai->getMoveToPos()->y - enterCoord.y, ai->getMoveToPos()->x - enterCoord.x);
 	owner->setOrientation(enterAngle);
 
-	PhysicsBehavior* physics = owner->getPhysics();
+	PhysicsBehavior *physics = owner->getPhysics();
 	physics->resetDynamicPhysics();
 
 	return STATE_SUCCESS;
@@ -1135,28 +1152,28 @@ StateReturnType RecoverFromOffMapState::update() // Success if we should try aga
 StateReturnType HeadOffMapState::onEnter() // Give move order out of town
 {
 	Object *owner = getMachineOwner();
-	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate*)owner->getAIUpdateInterface();
-	if( !ai )
+	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate *)owner->getAIUpdateInterface();
+	if (!ai)
 	{
 		return STATE_FAILURE;
 	}
 
 	ai->killDeliveryDecal();
 
-	if ( ai->getData()->m_selfDestructObject ) //Lorenzen... this makes delivery unit pop away like a bubble...
+	if (ai->getData()->m_selfDestructObject) // Lorenzen... this makes delivery unit pop away like a bubble...
 	{
-		TheGameLogic->destroyObject( owner );
+		TheGameLogic->destroyObject(owner);
 		return STATE_CONTINUE;
 	}
 
-	//Coord3D exitCoord = TheTerrainLogic->findClosestEdgePoint( owner->getPosition() );
+	// Coord3D exitCoord = TheTerrainLogic->findClosestEdgePoint( owner->getPosition() );
 
 	// just keep moving straight ahead till we exit the map.
 	Coord3D exitCoord = *owner->getPosition();
-	const Coord3D* dir = owner->getUnitDirectionVector2D();
+	const Coord3D *dir = owner->getUnitDirectionVector2D();
 
 	Region3D terrainExtent;
-	TheTerrainLogic->getExtent( &terrainExtent );
+	TheTerrainLogic->getExtent(&terrainExtent);
 	const Real FUDGE = 1.2f;
 	Real HUGE_DIST = FUDGE * sqrt(sqr(terrainExtent.hi.x - terrainExtent.lo.x) + sqr(terrainExtent.hi.y - terrainExtent.lo.y));
 
@@ -1164,21 +1181,20 @@ StateReturnType HeadOffMapState::onEnter() // Give move order out of town
 	exitCoord.y += dir->y * HUGE_DIST;
 
 	ai->getCurLocomotor()->setAllowInvalidPosition(true);
-	ai->getCurLocomotor()->setUltraAccurate(true);	// set ultra-accurate just so AI won't try to adjust our dest
-	ai->aiMoveToPosition( &exitCoord, CMD_FROM_AI );
+	ai->getCurLocomotor()->setUltraAccurate(true); // set ultra-accurate just so AI won't try to adjust our dest
+	ai->aiMoveToPosition(&exitCoord, CMD_FROM_AI);
 
-		// once we get into head-off-map state, we're done... don't respond to anything else.
-		// this addresses the bug where a plane delivering team "foo" hasn't made it off the map
-		// before all of team "foo" lands, whereupon team "foo" is given a script command to
-		// (say) move to a given point... and since the cargo plane might be a member of "foo"
-		// it would respond to said command, which sucks and is confusing. might be better
-		// to have these guys generally ignore most commands, but this is pretty safe, in that
-		// AFAIK nothing with deliverpayload should ever respond to anything, not even IDLE,
-		// once they start heading off the map. (srj)
+	// once we get into head-off-map state, we're done... don't respond to anything else.
+	// this addresses the bug where a plane delivering team "foo" hasn't made it off the map
+	// before all of team "foo" lands, whereupon team "foo" is given a script command to
+	// (say) move to a given point... and since the cargo plane might be a member of "foo"
+	// it would respond to said command, which sucks and is confusing. might be better
+	// to have these guys generally ignore most commands, but this is pretty safe, in that
+	// AFAIK nothing with deliverpayload should ever respond to anything, not even IDLE,
+	// once they start heading off the map. (srj)
 	ai->friend_setAcceptingCommands(false);
 
-
-  owner->getUnitDirectionVector3D( facingDirectionUponDelivery );
+	owner->getUnitDirectionVector3D(facingDirectionUponDelivery);
 
 	return STATE_CONTINUE;
 }
@@ -1187,8 +1203,8 @@ StateReturnType HeadOffMapState::onEnter() // Give move order out of town
 StateReturnType HeadOffMapState::update()
 {
 	Object *owner = getMachineOwner();
-	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate*)owner->getAIUpdateInterface();
-	if( !ai )
+	DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate *)owner->getAIUpdateInterface();
+	if (!ai)
 	{
 		return STATE_FAILURE;
 	}
@@ -1196,30 +1212,26 @@ StateReturnType HeadOffMapState::update()
 	if (ai->isOffMap())
 		return STATE_SUCCESS;
 
-  // greasy as this hack seems... if terrain or objects or whatever have turned me away from the map-edge that I had first headed for,...
-  //I blow up, rather than face eternally spinning on the point of a mineret or derrick or something awful.
-  if ( owner->getPhysics()->getTurning() != 0 )
-  {
-    Coord3D currentDirection;
-    owner->getUnitDirectionVector3D( currentDirection );
-  	Real dot = facingDirectionUponDelivery.x * currentDirection.x
-             + facingDirectionUponDelivery.y * currentDirection.y
-             + facingDirectionUponDelivery.z * currentDirection.z;
+	// greasy as this hack seems... if terrain or objects or whatever have turned me away from the map-edge that I had first
+	// headed for,...
+	// I blow up, rather than face eternally spinning on the point of a mineret or derrick or something awful.
+	if (owner->getPhysics()->getTurning() != 0)
+	{
+		Coord3D currentDirection;
+		owner->getUnitDirectionVector3D(currentDirection);
+		Real dot = facingDirectionUponDelivery.x * currentDirection.x + facingDirectionUponDelivery.y * currentDirection.y
+				+ facingDirectionUponDelivery.z * currentDirection.z;
 
-    if ( dot < 0.3f )
-      owner->kill();
-  }
+		if (dot < 0.3f)
+			owner->kill();
+	}
 
-
-
-//  Coord3D pos = *owner->getPosition();
-//
-//  if( TheTerrainLogic->getGroundHeight( pos->x, pos,y ) )
-
+	//  Coord3D pos = *owner->getPosition();
+	//
+	//  if( TheTerrainLogic->getGroundHeight( pos->x, pos,y ) )
 
 	return STATE_CONTINUE;
 }
-
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -1228,14 +1240,13 @@ StateReturnType HeadOffMapState::update()
 //-------------------------------------------------------------------------------------------------
 StateReturnType CleanUpState::onEnter() // Delete my successful butt
 {
-	if( getMachineOwner()->getContain() )
+	if (getMachineOwner()->getContain())
 	{
 		DEBUG_ASSERTCRASH(getMachineOwner()->getContain()->getContainCount() == 0, ("did not drop all items!"));
 	}
 
 	Object *owner = getMachineOwner();
-	TheGameLogic->destroyObject( owner );
+	TheGameLogic->destroyObject(owner);
 
 	return STATE_CONTINUE;
 }
-

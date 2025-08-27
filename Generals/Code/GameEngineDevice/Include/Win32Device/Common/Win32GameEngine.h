@@ -50,58 +50,87 @@
 #include "W3DDevice/Common/W3DFunctionLexicon.h"
 #include "W3DDevice/Common/W3DThingFactory.h"
 
-
-
-
 //-------------------------------------------------------------------------------------------------
 /** Class declaration for the Win32 game engine */
 //-------------------------------------------------------------------------------------------------
 class Win32GameEngine : public GameEngine
 {
-
 public:
-
 	Win32GameEngine();
 	virtual ~Win32GameEngine();
 
-	virtual void init( void );															///< initialization
-	virtual void reset( void );															///< reset engine
-	virtual void update( void );														///< update the game engine
-	virtual void serviceWindowsOS( void );									///< allow windows maintenance in background
+	virtual void init(void); ///< initialization
+	virtual void reset(void); ///< reset engine
+	virtual void update(void); ///< update the game engine
+	virtual void serviceWindowsOS(void); ///< allow windows maintenance in background
 
 protected:
-
-	virtual GameLogic *createGameLogic( void );							///< factory for game logic
- 	virtual GameClient *createGameClient( void );						///< factory for game client
-	virtual ModuleFactory *createModuleFactory( void );			///< factory for creating modules
-	virtual ThingFactory *createThingFactory( void );				///< factory for the thing factory
-	virtual FunctionLexicon *createFunctionLexicon( void ); ///< factory for function lexicon
-	virtual LocalFileSystem *createLocalFileSystem( void ); ///< factory for local file system
-	virtual ArchiveFileSystem *createArchiveFileSystem( void );	///< factory for archive file system
-	virtual NetworkInterface *createNetwork( void );				///< Factory for the network
-	virtual Radar *createRadar( void );											///< Factory for radar
-	virtual WebBrowser *createWebBrowser( void );						///< Factory for embedded browser
-	virtual AudioManager *createAudioManager( void );				///< Factory for audio device
-	virtual ParticleSystemManager* createParticleSystemManager( void );
-
+	virtual GameLogic *createGameLogic(void); ///< factory for game logic
+	virtual GameClient *createGameClient(void); ///< factory for game client
+	virtual ModuleFactory *createModuleFactory(void); ///< factory for creating modules
+	virtual ThingFactory *createThingFactory(void); ///< factory for the thing factory
+	virtual FunctionLexicon *createFunctionLexicon(void); ///< factory for function lexicon
+	virtual LocalFileSystem *createLocalFileSystem(void); ///< factory for local file system
+	virtual ArchiveFileSystem *createArchiveFileSystem(void); ///< factory for archive file system
+	virtual NetworkInterface *createNetwork(void); ///< Factory for the network
+	virtual Radar *createRadar(void); ///< Factory for radar
+	virtual WebBrowser *createWebBrowser(void); ///< Factory for embedded browser
+	virtual AudioManager *createAudioManager(void); ///< Factory for audio device
+	virtual ParticleSystemManager *createParticleSystemManager(void);
 
 protected:
 	UINT m_previousErrorMode;
-};  // end Win32GameEngine
+}; // end Win32GameEngine
 
 // INLINE -----------------------------------------------------------------------------------------
-inline GameLogic *Win32GameEngine::createGameLogic( void ) { return NEW W3DGameLogic; }
-inline GameClient *Win32GameEngine::createGameClient( void ) { return NEW W3DGameClient; }
-inline ModuleFactory *Win32GameEngine::createModuleFactory( void ) { return NEW W3DModuleFactory; }
-inline ThingFactory *Win32GameEngine::createThingFactory( void ) { return NEW W3DThingFactory; }
-inline FunctionLexicon *Win32GameEngine::createFunctionLexicon( void ) { return NEW W3DFunctionLexicon; }
-inline LocalFileSystem *Win32GameEngine::createLocalFileSystem( void ) { return NEW Win32LocalFileSystem; }
-inline ArchiveFileSystem *Win32GameEngine::createArchiveFileSystem( void ) { return NEW Win32BIGFileSystem; }
-inline ParticleSystemManager* Win32GameEngine::createParticleSystemManager( void ) { return NEW W3DParticleSystemManager; }
+inline GameLogic *Win32GameEngine::createGameLogic(void)
+{
+	return NEW W3DGameLogic;
+}
+inline GameClient *Win32GameEngine::createGameClient(void)
+{
+	return NEW W3DGameClient;
+}
+inline ModuleFactory *Win32GameEngine::createModuleFactory(void)
+{
+	return NEW W3DModuleFactory;
+}
+inline ThingFactory *Win32GameEngine::createThingFactory(void)
+{
+	return NEW W3DThingFactory;
+}
+inline FunctionLexicon *Win32GameEngine::createFunctionLexicon(void)
+{
+	return NEW W3DFunctionLexicon;
+}
+inline LocalFileSystem *Win32GameEngine::createLocalFileSystem(void)
+{
+	return NEW Win32LocalFileSystem;
+}
+inline ArchiveFileSystem *Win32GameEngine::createArchiveFileSystem(void)
+{
+	return NEW Win32BIGFileSystem;
+}
+inline ParticleSystemManager *Win32GameEngine::createParticleSystemManager(void)
+{
+	return NEW W3DParticleSystemManager;
+}
 
-inline NetworkInterface *Win32GameEngine::createNetwork( void ) { return NetworkInterface::createNetwork(); }
-inline Radar *Win32GameEngine::createRadar( void ) { return NEW W3DRadar; }
-inline WebBrowser *Win32GameEngine::createWebBrowser( void ) { return NEW CComObject<W3DWebBrowser>; }
-inline AudioManager *Win32GameEngine::createAudioManager( void ) { return NEW MilesAudioManager; }
+inline NetworkInterface *Win32GameEngine::createNetwork(void)
+{
+	return NetworkInterface::createNetwork();
+}
+inline Radar *Win32GameEngine::createRadar(void)
+{
+	return NEW W3DRadar;
+}
+inline WebBrowser *Win32GameEngine::createWebBrowser(void)
+{
+	return NEW CComObject<W3DWebBrowser>;
+}
+inline AudioManager *Win32GameEngine::createAudioManager(void)
+{
+	return NEW MilesAudioManager;
+}
 
-#endif  // end __WIN32GAMEENGINE_H_
+#endif // end __WIN32GAMEENGINE_H_

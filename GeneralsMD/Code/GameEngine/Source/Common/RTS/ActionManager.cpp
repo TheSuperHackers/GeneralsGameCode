@@ -33,7 +33,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/ActionManager.h"
 #include "Common/GlobalData.h"
@@ -62,8 +62,7 @@
 #include "GameLogic/Module/SpecialAbilityUpdate.h"
 #include "GameLogic/Weapon.h"
 
-#include "GameLogic/ExperienceTracker.h"//LORENZEN
-
+#include "GameLogic/ExperienceTracker.h" //LORENZEN
 
 // GLOBAL /////////////////////////////////////////////////////////////////////////////////////////
 ActionManager *TheActionManager = NULL;
@@ -72,16 +71,16 @@ ActionManager *TheActionManager = NULL;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-static Bool appearsToContainFriendlies(const Object* obj, const Object* otherObject)
+static Bool appearsToContainFriendlies(const Object *obj, const Object *otherObject)
 {
 	// check if the object is a container containing stealth units tricking
 	// the player into thinking it isn't actually an enemy.
 	const ContainModuleInterface *otherContain = otherObject->getContain();
-	if( otherContain )
+	if (otherContain)
 	{
 		const Player *otherPlayer = otherContain->getApparentControllingPlayer(obj->getControllingPlayer());
-//	if( otherPlayer && otherPlayer->getRelationship( obj->getTeam() ) != ENEMIES )
-// the above test is wrong; we want to know how WE consider THEM, not how THEY consider US
+		//	if( otherPlayer && otherPlayer->getRelationship( obj->getTeam() ) != ENEMIES )
+		// the above test is wrong; we want to know how WE consider THEM, not how THEY consider US
 		if (otherPlayer && obj->getTeam()->getRelationship(otherPlayer->getDefaultTeam()) != ENEMIES)
 		{
 			return TRUE;
@@ -92,12 +91,12 @@ static Bool appearsToContainFriendlies(const Object* obj, const Object* otherObj
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-static Bool isObjectShroudedForAction ( const Object *source, const Object *target, CommandSourceType commandSource )
+static Bool isObjectShroudedForAction(const Object *source, const Object *target, CommandSourceType commandSource)
 {
 	/// @todo - reenable this when we can avoid breaking scripted actions.
 	// In order to support ai and scripted actions in singler player, we have to disable this for now.
 	// We can re-enable it when we can tell that this is a player generated action.  jba.
-//	return false;
+	//	return false;
 	// GS Keeping this comment to show we now have commandSource, so everything should be fine again.
 
 	// The target is only shrouded for action if...
@@ -106,12 +105,10 @@ static Bool isObjectShroudedForAction ( const Object *source, const Object *targ
 	// the asking impetus is not from a script
 	// and the target object is Fogged or worse
 
-	if( source && target && source->getControllingPlayer() )
+	if (source && target && source->getControllingPlayer())
 	{
-		if( source->getControllingPlayer()->getPlayerType() == PLAYER_HUMAN
-			&& commandSource != CMD_FROM_SCRIPT
-			&& target->getShroudedStatus( source->getControllingPlayer()->getPlayerIndex() ) >= OBJECTSHROUD_FOGGED
-			)
+		if (source->getControllingPlayer()->getPlayerType() == PLAYER_HUMAN && commandSource != CMD_FROM_SCRIPT
+				&& target->getShroudedStatus(source->getControllingPlayer()->getPlayerIndex()) >= OBJECTSHROUD_FOGGED)
 		{
 			return TRUE;
 		}
@@ -124,71 +121,67 @@ static Bool isObjectShroudedForAction ( const Object *source, const Object *targ
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ActionManager::ActionManager( void )
+ActionManager::ActionManager(void)
 {
-
-}  // end ActionManager
+} // end ActionManager
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ActionManager::~ActionManager( void )
+ActionManager::~ActionManager(void)
 {
-
-}  // end ~ActionManager
+} // end ~ActionManager
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canGetRepairedAt( const Object *obj, const Object *repairDest, CommandSourceType commandSource )
+Bool ActionManager::canGetRepairedAt(const Object *obj, const Object *repairDest, CommandSourceType commandSource)
 {
-
 	// sanity
-	if( obj == NULL || repairDest == NULL )
+	if (obj == NULL || repairDest == NULL)
 		return FALSE;
 
 	Relationship r = obj->getRelationship(repairDest);
 
 	// only available by our allies
-	if( r != ALLIES )
+	if (r != ALLIES)
 		return FALSE;
 
 	// dead objects cannot be repaired
-	if( obj->isEffectivelyDead() )
+	if (obj->isEffectivelyDead())
 		return FALSE;
 
 	// If I can't move, I can't get repaired
-	if( !obj->isMobile() )
+	if (!obj->isMobile())
 		return FALSE;
 
 	// nothing can be done with things that are under construction
-	if( obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ||
-			repairDest->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	if (obj->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION)
+			|| repairDest->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
 		return FALSE;
 
 	// Can't get repaired at something being sold
-	if( repairDest->testStatus(OBJECT_STATUS_SOLD) )
+	if (repairDest->testStatus(OBJECT_STATUS_SOLD))
 		return FALSE;
 
 	// only vehicles can go get repaired at something
-	if( obj->isKindOf( KINDOF_VEHICLE ) == FALSE )
+	if (obj->isKindOf(KINDOF_VEHICLE) == FALSE)
 		return FALSE;
 
 	// vehicles can only be repaired at something that is designated as a repair pad
-	if (obj->isKindOf( KINDOF_AIRCRAFT ))
+	if (obj->isKindOf(KINDOF_AIRCRAFT))
 	{
 		// aircraft require an airfield.
-		if( !obj->isAboveTerrain() ||
-					repairDest->isKindOf( KINDOF_FS_AIRFIELD ) == FALSE )
+		if (!obj->isAboveTerrain() || repairDest->isKindOf(KINDOF_FS_AIRFIELD) == FALSE)
 			return FALSE;
 	}
 	else
 	{
-		if( repairDest->isKindOf( KINDOF_REPAIR_PAD ) == FALSE )
+		if (repairDest->isKindOf(KINDOF_REPAIR_PAD) == FALSE)
 			return FALSE;
 	}
 
 	// if I am at full health, I can't get repair there
 	BodyModuleInterface *body = obj->getBodyModule();
-	if( body->getHealth() == body->getMaxHealth() )
+	if (body->getHealth() == body->getMaxHealth())
 		return FALSE;
 
 	// if the target is in the shroud, we can't do anything
@@ -198,58 +191,58 @@ Bool ActionManager::canGetRepairedAt( const Object *obj, const Object *repairDes
 	// all is well, we can be repaired here
 	return TRUE;
 
-}  // end canGetRepairedAt
+} // end canGetRepairedAt
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 // note that "dest" is typically a building...
-Bool ActionManager::canTransferSuppliesAt( const Object *obj, const Object *transferDest )
+Bool ActionManager::canTransferSuppliesAt(const Object *obj, const Object *transferDest)
 {
-
 	// sanity
-	if( obj == NULL || transferDest == NULL )
+	if (obj == NULL || transferDest == NULL)
 		return FALSE;
 
-	if( transferDest->isEffectivelyDead() )
+	if (transferDest->isEffectivelyDead())
 	{
 		return FALSE;
 	}
 
 	// nothing can be done with things that are under construction
-	if( obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ||
-			transferDest->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	if (obj->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION)
+			|| transferDest->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
 		return FALSE;
 
 	// Can't transfer at something being sold
-	if( transferDest->testStatus(OBJECT_STATUS_SOLD) )
+	if (transferDest->testStatus(OBJECT_STATUS_SOLD))
 		return FALSE;
 
 	// I must be something with a Supply Transfering AI interface
-	const AIUpdateInterface *ai= obj->getAI();
-	if( ai == NULL )
+	const AIUpdateInterface *ai = obj->getAI();
+	if (ai == NULL)
 		return FALSE;
 
-	const SupplyTruckAIInterface* supplyTruck = ai->getSupplyTruckAIInterface();
-	if( supplyTruck == NULL )
+	const SupplyTruckAIInterface *supplyTruck = ai->getSupplyTruckAIInterface();
+	if (supplyTruck == NULL)
 		return FALSE;
 
 	// If it is a warehouse, it must have boxes left and not be an enemy
 	static const NameKeyType key_warehouseUpdate = NAMEKEY("SupplyWarehouseDockUpdate");
-	SupplyWarehouseDockUpdate *warehouseModule = (SupplyWarehouseDockUpdate*)transferDest->findUpdateModule( key_warehouseUpdate );
-	if( warehouseModule )
-		if( warehouseModule->getBoxesStored() == 0 || transferDest->getRelationship( obj ) == ENEMIES )
+	SupplyWarehouseDockUpdate *warehouseModule =
+			(SupplyWarehouseDockUpdate *)transferDest->findUpdateModule(key_warehouseUpdate);
+	if (warehouseModule)
+		if (warehouseModule->getBoxesStored() == 0 || transferDest->getRelationship(obj) == ENEMIES)
 			return FALSE;
 
 	// if it is a supply center, I must have boxes, and must be controlled by the same player
 	// (not merely an ally... otherwise you may find yourself funding your allies. ick.)
 	static const NameKeyType key_centerUpdate = NAMEKEY("SupplyCenterDockUpdate");
-	SupplyCenterDockUpdate *centerModule = (SupplyCenterDockUpdate*)transferDest->findUpdateModule( key_centerUpdate );
-	if( centerModule  )
-		if( supplyTruck->getNumberBoxes() == 0  || transferDest->getControllingPlayer() != obj->getControllingPlayer() )
+	SupplyCenterDockUpdate *centerModule = (SupplyCenterDockUpdate *)transferDest->findUpdateModule(key_centerUpdate);
+	if (centerModule)
+		if (supplyTruck->getNumberBoxes() == 0 || transferDest->getControllingPlayer() != obj->getControllingPlayer())
 			return FALSE;
 
 	// if he is not a warehouse or a center, then shut the hell up
-	if( (warehouseModule == NULL)  &&  (centerModule == NULL) )
+	if ((warehouseModule == NULL) && (centerModule == NULL))
 		return FALSE;
 
 	// We do not check ClearToApproach, as it is a temporary failure that is handled
@@ -259,16 +252,16 @@ Bool ActionManager::canTransferSuppliesAt( const Object *obj, const Object *tran
 		return FALSE;
 
 	// if the target is in the shroud, we can't do anything
-//	if (isObjectShroudedForAction(obj, transferDest))
-//		return FALSE;
-	//Commented out to show it is an intentional difference to most commands.
+	//	if (isObjectShroudedForAction(obj, transferDest))
+	//		return FALSE;
+	// Commented out to show it is an intentional difference to most commands.
 
 	// Fogged is okay for player, and anything is okay for AI.
 	Player *objPlayer = obj->getControllingPlayer();
-	if( objPlayer )
+	if (objPlayer)
 	{
-		if( objPlayer->getPlayerType() == PLAYER_HUMAN &&
-			transferDest->getShroudedStatus( objPlayer->getPlayerIndex() ) == OBJECTSHROUD_SHROUDED )
+		if (objPlayer->getPlayerType() == PLAYER_HUMAN
+				&& transferDest->getShroudedStatus(objPlayer->getPlayerIndex()) == OBJECTSHROUD_SHROUDED)
 		{
 			return FALSE;
 		}
@@ -276,15 +269,13 @@ Bool ActionManager::canTransferSuppliesAt( const Object *obj, const Object *tran
 
 	// all is well, we can transfer here
 	return TRUE;
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Can object 'obj' dock with object 'dockDest' for any reason */
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canDockAt( const Object *obj, const Object *dockDest, CommandSourceType commandSource )
+Bool ActionManager::canDockAt(const Object *obj, const Object *dockDest, CommandSourceType commandSource)
 {
-
 	// look for a dock interface
 	DockUpdateInterface *di = NULL;
 	for (BehaviorModule **u = dockDest->getBehaviorModules(); *u; ++u)
@@ -292,69 +283,67 @@ Bool ActionManager::canDockAt( const Object *obj, const Object *dockDest, Comman
 		if ((di = (*u)->getDockUpdateInterface()) != NULL)
 			break;
 	}
-	if( di == NULL )
-		return FALSE;  // no dock update interface, can't possibly dock
+	if (di == NULL)
+		return FALSE; // no dock update interface, can't possibly dock
 
-/*
-	// can't dock if the dock is closed
-	if( di->isDockOpen() == FALSE )
-		return FALSE;
-*/
+	/*
+		// can't dock if the dock is closed
+		if( di->isDockOpen() == FALSE )
+			return FALSE;
+	*/
 
 	// transferring supplies is a valid docking action
-	if( canTransferSuppliesAt( obj, dockDest ) == TRUE )
+	if (canTransferSuppliesAt(obj, dockDest) == TRUE)
 		return TRUE;
 
 	// units and infantry can dock with a railed transport
-	static const NameKeyType key = NAMEKEY( "RailedTransportDockUpdate" );
-	RailedTransportDockUpdate *fdu = (RailedTransportDockUpdate *)dockDest->findUpdateModule( key );
-	if( fdu )
+	static const NameKeyType key = NAMEKEY("RailedTransportDockUpdate");
+	RailedTransportDockUpdate *fdu = (RailedTransportDockUpdate *)dockDest->findUpdateModule(key);
+	if (fdu)
 	{
-
-		if( obj->isKindOf( KINDOF_VEHICLE ) || obj->isKindOf( KINDOF_INFANTRY ) )
+		if (obj->isKindOf(KINDOF_VEHICLE) || obj->isKindOf(KINDOF_INFANTRY))
 			return TRUE;
 
-	}  // end if
+	} // end if
 
 	// cannot dock
 	return FALSE;
 
-}  // end canDockAt
+} // end canDockAt
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canGetHealedAt( const Object *obj, const Object *healDest, CommandSourceType commandSource )
+Bool ActionManager::canGetHealedAt(const Object *obj, const Object *healDest, CommandSourceType commandSource)
 {
-
 	// sanity
-	if( obj == NULL || healDest == NULL )
+	if (obj == NULL || healDest == NULL)
 		return FALSE;
 
 	Relationship r = obj->getRelationship(healDest);
 
 	// only available by our allies
-	if( r != ALLIES )
+	if (r != ALLIES)
 		return FALSE;
 
 	// dead objects cannot be healed
-	if( healDest->isEffectivelyDead() )
+	if (healDest->isEffectivelyDead())
 		return FALSE;
 
 	// nothing can be done with things that are under construction
-	if( obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ||
-			healDest->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	if (obj->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION)
+			|| healDest->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
 		return FALSE;
 
 	// Can't get healed at something being sold
-	if( healDest->testStatus(OBJECT_STATUS_SOLD) )
+	if (healDest->testStatus(OBJECT_STATUS_SOLD))
 		return FALSE;
 
 	// only infantry can go get "healed" somewhere (vehicles get "repaired")
-	if( obj->isKindOf( KINDOF_INFANTRY ) == FALSE )
+	if (obj->isKindOf(KINDOF_INFANTRY) == FALSE)
 		return FALSE;
 
 	// infantry can only be healed at something that is designated as a heal pad
-	if( healDest->isKindOf( KINDOF_HEAL_PAD ) == FALSE )
+	if (healDest->isKindOf(KINDOF_HEAL_PAD) == FALSE)
 		return FALSE;
 
 	// if the target is in the shroud, we can't do anything
@@ -362,24 +351,23 @@ Bool ActionManager::canGetHealedAt( const Object *obj, const Object *healDest, C
 		return FALSE;
 
 	BodyModuleInterface *body = obj->getBodyModule();
-	if( body && body->getHealth() == body->getMaxHealth() )
+	if (body && body->getHealth() == body->getMaxHealth())
 	{
-		//No point in healing if you have full health!
+		// No point in healing if you have full health!
 		return FALSE;
 	}
 
 	// all is well, we can be healed here
 	return TRUE;
 
-}  // end canGetHealedAt
+} // end canGetHealedAt
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canRepairObject( const Object *obj, const Object *objectToRepair, CommandSourceType commandSource )
+Bool ActionManager::canRepairObject(const Object *obj, const Object *objectToRepair, CommandSourceType commandSource)
 {
-
 	// sanity
-	if( obj == NULL || objectToRepair == NULL )
+	if (obj == NULL || objectToRepair == NULL)
 		return FALSE;
 
 	Relationship r = obj->getRelationship(objectToRepair);
@@ -387,7 +375,7 @@ Bool ActionManager::canRepairObject( const Object *obj, const Object *objectToRe
 	// you can only repair allies, we ignore this restriction for bridges
 	// srj sez: nope, allow neutral too, so civ bldgs can be repaired
 	// GS repairing bridges cut 12/12/02 , so this check is just no to enemies
-	if( r == ENEMIES )
+	if (r == ENEMIES)
 		return FALSE;
 
 	//
@@ -395,44 +383,44 @@ Bool ActionManager::canRepairObject( const Object *obj, const Object *objectToRe
 	// be destroyed and die, but can be repaired to bring the bring "back to life"
 	//
 	// GS and again, repairing bridges is cut, so this is just a dead check
-	if( objectToRepair->isEffectivelyDead() )
+	if (objectToRepair->isEffectivelyDead())
 	{
 		return FALSE;
 	}
 
-	//GS So here's the ensuring that they can't be repaired
-	if( objectToRepair->isKindOf(KINDOF_BRIDGE) || objectToRepair->isKindOf(KINDOF_BRIDGE_TOWER) )
+	// GS So here's the ensuring that they can't be repaired
+	if (objectToRepair->isKindOf(KINDOF_BRIDGE) || objectToRepair->isKindOf(KINDOF_BRIDGE_TOWER))
 		return FALSE;
 
 	// nothing can be done with things that are under construction
-	if( obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ||
-			objectToRepair->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	if (obj->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION)
+			|| objectToRepair->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
 		return FALSE;
 
 	// we cannot manually repair things that are regeneration holes
-	if( objectToRepair->isKindOf( KINDOF_REBUILD_HOLE ) == TRUE )
+	if (objectToRepair->isKindOf(KINDOF_REBUILD_HOLE) == TRUE)
 		return FALSE;
 
 	// only Dozers can go repair things
-	if( obj->isKindOf( KINDOF_DOZER ) == FALSE )
+	if (obj->isKindOf(KINDOF_DOZER) == FALSE)
 		return FALSE;
 
 	// dozers can only repair buildings
-	if( objectToRepair->isKindOf( KINDOF_STRUCTURE ) == FALSE )
+	if (objectToRepair->isKindOf(KINDOF_STRUCTURE) == FALSE)
 		return FALSE;
 
 	// get the body module from the object to repair
 	BodyModuleInterface *body = objectToRepair->getBodyModule();
 
 	// buildings that are at full health cannot be repaired
-	if( body->getHealth() == body->getMaxHealth() )
+	if (body->getHealth() == body->getMaxHealth())
 		return FALSE;
 
 	// if the target is in the shroud, we can't do anything
 	if (isObjectShroudedForAction(obj, objectToRepair, commandSource))
 		return FALSE;
 
-	if( obj->getContainedBy() )
+	if (obj->getContainedBy())
 	{
 		// We can't heal things while in a transport (especially our own transport, you cheater)
 		return FALSE;
@@ -440,36 +428,36 @@ Bool ActionManager::canRepairObject( const Object *obj, const Object *objectToRe
 
 	return TRUE;
 
-}  // end canRepair
+} // end canRepair
 
 // ------------------------------------------------------------------------------------------------
 /** Can 'obj' resume the construction of 'objectBeingConstructed' */
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canResumeConstructionOf( const Object *obj,
-																						 const Object *objectBeingConstructed,
-																						 CommandSourceType commandSource )
+Bool ActionManager::canResumeConstructionOf(
+		const Object *obj,
+		const Object *objectBeingConstructed,
+		CommandSourceType commandSource)
 {
-
 	// sanity
-	if( obj == NULL || objectBeingConstructed == NULL )
+	if (obj == NULL || objectBeingConstructed == NULL)
 		return FALSE;
 
 	// only dozers or workers can resume construction of things
-	if( obj->isKindOf( KINDOF_DOZER ) == FALSE )
+	if (obj->isKindOf(KINDOF_DOZER) == FALSE)
 		return FALSE;
 
 	Relationship r = obj->getRelationship(objectBeingConstructed);
 
 	// only available to our allies
-	if( r != ALLIES )
+	if (r != ALLIES)
 		return FALSE;
 
 	// if the objectBeingConstructed is not actually under construction we can't resume that!
-	if( !objectBeingConstructed->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	if (!objectBeingConstructed->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
 		return FALSE;
 
 	// dead things can do nothing
-	if( obj->isEffectivelyDead() )
+	if (obj->isEffectivelyDead())
 	{
 		return FALSE;
 	}
@@ -479,29 +467,28 @@ Bool ActionManager::canResumeConstructionOf( const Object *obj,
 	// add more effectiveness to the construction so we'll say no (this might change for workers
 	// in the future)
 	//
-	Object *builder = TheGameLogic->findObjectByID( objectBeingConstructed->getBuilderID() );
-	if( builder )
+	Object *builder = TheGameLogic->findObjectByID(objectBeingConstructed->getBuilderID());
+	if (builder)
 	{
 		AIUpdateInterface *ai = builder->getAI();
-		DEBUG_ASSERTCRASH( ai, ("Builder object does not have an AI interface!") );
+		DEBUG_ASSERTCRASH(ai, ("Builder object does not have an AI interface!"));
 
-		if( ai )
+		if (ai)
 		{
 			DozerAIInterface *dozerAI = ai->getDozerAIInterface();
-			DEBUG_ASSERTCRASH( dozerAI, ("Builder object doest not have a DozerAI interface!") );
+			DEBUG_ASSERTCRASH(dozerAI, ("Builder object doest not have a DozerAI interface!"));
 
-			if( dozerAI )
+			if (dozerAI)
 			{
-
-				if( dozerAI->getCurrentTask() == DOZER_TASK_BUILD &&
-						dozerAI->getTaskTarget( DOZER_TASK_BUILD ) == objectBeingConstructed->getID() )
+				if (dozerAI->getCurrentTask() == DOZER_TASK_BUILD
+						&& dozerAI->getTaskTarget(DOZER_TASK_BUILD) == objectBeingConstructed->getID())
 					return FALSE;
 
-			}  // end if
+			} // end if
 
-		}  // en dif
+		} // en dif
 
-	}  //end if
+	} // end if
 
 	// if the target is in the shroud, we can't do anything
 	if (isObjectShroudedForAction(obj, objectBeingConstructed, commandSource))
@@ -514,25 +501,28 @@ Bool ActionManager::canResumeConstructionOf( const Object *obj,
 
 	return TRUE;
 
-}  // end canResumeConstructionOf
+} // end canResumeConstructionOf
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canEnterObject( const Object *obj, const Object *objectToEnter, CommandSourceType commandSource, CanEnterType mode )
+Bool ActionManager::canEnterObject(
+		const Object *obj,
+		const Object *objectToEnter,
+		CommandSourceType commandSource,
+		CanEnterType mode)
 {
-
 	// sanity
-	if( obj == NULL || objectToEnter == NULL )
+	if (obj == NULL || objectToEnter == NULL)
 		return FALSE;
 
-	if( obj == objectToEnter )
+	if (obj == objectToEnter)
 	{
-		//You can't contain yourself (crash fix for pow truck reselection)
+		// You can't contain yourself (crash fix for pow truck reselection)
 		return FALSE;
 	}
 
 	// can't enter dead things
-	if( objectToEnter->isEffectivelyDead() )
+	if (objectToEnter->isEffectivelyDead())
 		return FALSE;
 
 	// if the target is in the shroud, we can't do anything
@@ -540,48 +530,44 @@ Bool ActionManager::canEnterObject( const Object *obj, const Object *objectToEnt
 		return FALSE;
 
 	// nothing can be done with things that are under construction
-	if( obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ||
-			objectToEnter->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	if (obj->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION)
+			|| objectToEnter->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
 	{
 		return FALSE;
 	}
 
 	// Can't enter something being sold
-	if( objectToEnter->testStatus(OBJECT_STATUS_SOLD) )
+	if (objectToEnter->testStatus(OBJECT_STATUS_SOLD))
 		return FALSE;
-	if ( obj->isKindOf( KINDOF_IGNORED_IN_GUI )  //As in, Angry Mob Members, Cargo Planes
-		|| obj->isKindOf( KINDOF_MOB_NEXUS )
-		|| objectToEnter->isKindOf( KINDOF_IGNORED_IN_GUI ) )  // As in Cargo Planes
+	if (obj->isKindOf(KINDOF_IGNORED_IN_GUI) // As in, Angry Mob Members, Cargo Planes
+			|| obj->isKindOf(KINDOF_MOB_NEXUS) || objectToEnter->isKindOf(KINDOF_IGNORED_IN_GUI)) // As in Cargo Planes
 	{
-
 		return FALSE;
 	}
 
+	if (objectToEnter->isDisabledByType(DISABLED_SUBDUED))
+		return FALSE; // a microwave tank has soldered the doors shut
 
-  if (objectToEnter->isDisabledByType( DISABLED_SUBDUED ))
-    return FALSE; // a microwave tank has soldered the doors shut
-
-
-	if( obj->isKindOf( KINDOF_STRUCTURE ) || obj->isKindOf( KINDOF_IMMOBILE ) )
+	if (obj->isKindOf(KINDOF_STRUCTURE) || obj->isKindOf(KINDOF_IMMOBILE))
 	{
-		//Structures or immobiles can't garrison
+		// Structures or immobiles can't garrison
 		return FALSE;
 	}
 
 	// Special case for unmanned vehicles. Any infantry unit can take over any unmanned vehicle!
-	if( obj->isKindOf( KINDOF_INFANTRY ) && objectToEnter->isDisabledByType( DISABLED_UNMANNED ) )
+	if (obj->isKindOf(KINDOF_INFANTRY) && objectToEnter->isDisabledByType(DISABLED_UNMANNED))
 	{
-		if( !obj->isKindOf( KINDOF_REJECT_UNMANNED ) )
+		if (!obj->isKindOf(KINDOF_REJECT_UNMANNED))
 		{
-			//But only if it's allowed to.
+			// But only if it's allowed to.
 			return TRUE;
 		}
 	}
 
 	// Special case for aircraft.
-	if( obj->isKindOf( KINDOF_AIRCRAFT ) && objectToEnter->isKindOf( KINDOF_FS_AIRFIELD ) )
+	if (obj->isKindOf(KINDOF_AIRCRAFT) && objectToEnter->isKindOf(KINDOF_FS_AIRFIELD))
 	{
-		if( obj->getStatusBits().test( OBJECT_STATUS_DECK_HEIGHT_OFFSET ) && obj->getCarrierDeckHeight() >= obj->getPosition()->z )
+		if (obj->getStatusBits().test(OBJECT_STATUS_DECK_HEIGHT_OFFSET) && obj->getCarrierDeckHeight() >= obj->getPosition()->z)
 		{
 			return FALSE;
 		}
@@ -589,14 +575,14 @@ Bool ActionManager::canEnterObject( const Object *obj, const Object *objectToEnt
 		if (!obj->isAboveTerrain())
 			return FALSE;
 
-		if( obj->getControllingPlayer() == objectToEnter->getControllingPlayer() )
+		if (obj->getControllingPlayer() == objectToEnter->getControllingPlayer())
 		{
-			//Kris -- added code to prevent aircraft from landing in any airstrips other than their own!
+			// Kris -- added code to prevent aircraft from landing in any airstrips other than their own!
 
 			/// @todo srj -- this is horrible, but expedient.
-			for (BehaviorModule** i = objectToEnter->getBehaviorModules(); *i; ++i)
+			for (BehaviorModule **i = objectToEnter->getBehaviorModules(); *i; ++i)
 			{
-				ParkingPlaceBehaviorInterface* pp = (*i)->getParkingPlaceBehaviorInterface();
+				ParkingPlaceBehaviorInterface *pp = (*i)->getParkingPlaceBehaviorInterface();
 				if (pp == NULL)
 					continue;
 
@@ -611,54 +597,54 @@ Bool ActionManager::canEnterObject( const Object *obj, const Object *objectToEnt
 	}
 
 	// first, see if we'd like to collide with 'other'
-	for (BehaviorModule** m = obj->getBehaviorModules(); *m; ++m)
+	for (BehaviorModule **m = obj->getBehaviorModules(); *m; ++m)
 	{
-		CollideModuleInterface* collide = (*m)->getCollide();
+		CollideModuleInterface *collide = (*m)->getCollide();
 		if (!collide)
 			continue;
 
-		if( collide->wouldLikeToCollideWith( objectToEnter ) )
+		if (collide->wouldLikeToCollideWith(objectToEnter))
 		{
-			//I thought this was a little confusing that it would return TRUE here before
-			//getting to any of the other checks. The key is that it usually doesn't return
-			//TRUE because most things aren't trying to collide with objects. This is different
-			//for terrorist converting carbombs, and pilots entering vehicles. In these cases,
-			//the vehicles don't have transport capacities, therefore returning true here
-			//foregoes that checking later on.
+			// I thought this was a little confusing that it would return TRUE here before
+			// getting to any of the other checks. The key is that it usually doesn't return
+			// TRUE because most things aren't trying to collide with objects. This is different
+			// for terrorist converting carbombs, and pilots entering vehicles. In these cases,
+			// the vehicles don't have transport capacities, therefore returning true here
+			// foregoes that checking later on.
 			return TRUE;
 		}
 	}
 
 #ifdef ALLOW_SURRENDER
-	if( objectToEnter->isKindOf( KINDOF_PRISON ) )
+	if (objectToEnter->isKindOf(KINDOF_PRISON))
 	{
-		//We can't manually enter a prison!
+		// We can't manually enter a prison!
 		return FALSE;
 	}
 #endif
 
 #ifdef ALLOW_SURRENDER
-	if( objectToEnter->isKindOf( KINDOF_POW_TRUCK ) )
+	if (objectToEnter->isKindOf(KINDOF_POW_TRUCK))
 	{
-		//We can't manually enter POWTruck, either!
+		// We can't manually enter POWTruck, either!
 		return FALSE;
 	}
 #endif
 
 	// make sure our objectToEnter has a contain module.
 	ContainModuleInterface *contain = objectToEnter->getContain();
-	if( !contain )
+	if (!contain)
 	{
 		return FALSE;
 	}
 
-	if( contain->isHealContain() )
+	if (contain->isHealContain())
 	{
 		BodyModuleInterface *body = obj->getBodyModule();
-		if( body->getHealth() == body->getMaxHealth() )
+		if (body->getHealth() == body->getMaxHealth())
 		{
-			//This container is only used for the purposes of healing and we cannot
-			//enter it with full health. This is not a normal container.
+			// This container is only used for the purposes of healing and we cannot
+			// enter it with full health. This is not a normal container.
 			return FALSE;
 		}
 	}
@@ -696,72 +682,74 @@ Bool ActionManager::canEnterObject( const Object *obj, const Object *objectToEnt
 
 		// if our transport slot count is zero, we can't be transported. so punt.
 		/// @todo srj -- seems like we should check always (not just for checkCap), but scared to change now -- check later
-		if( checkCapacity && obj->getTransportSlotCount() == 0 )
+		if (checkCapacity && obj->getTransportSlotCount() == 0)
 		{
 			return FALSE;
 		}
 
 		// finally: make sure that objectToEnter is a valid container for obj
-		if( contain->isValidContainerFor( obj, checkCapacity ) == FALSE )
+		if (contain->isValidContainerFor(obj, checkCapacity) == FALSE)
 		{
 			return FALSE;
 		}
 	}
 
 	return TRUE;
-
 }
 
-
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-CanAttackResult ActionManager::getCanAttackObject( const Object *obj, const Object *objectToAttack, CommandSourceType commandSource, AbleToAttackType attackType )
+CanAttackResult ActionManager::getCanAttackObject(
+		const Object *obj,
+		const Object *objectToAttack,
+		CommandSourceType commandSource,
+		AbleToAttackType attackType)
 {
 	// sanity
-	if( !obj || !objectToAttack || obj->isEffectivelyDead() || objectToAttack->isEffectivelyDead() || objectToAttack == obj )
+	if (!obj || !objectToAttack || obj->isEffectivelyDead() || objectToAttack->isEffectivelyDead() || objectToAttack == obj)
 	{
 		return ATTACKRESULT_NOT_POSSIBLE;
 	}
 
-	if( !obj->isAbleToAttack() )
+	if (!obj->isAbleToAttack())
 	{
 		return ATTACKRESULT_NOT_POSSIBLE;
 	}
 
-	//has any weapons that are capable of inflicting damage. Special damage types are rejected
-	//such as hack weapons... others can be added.
-	CanAttackResult result = obj->getAbleToAttackSpecificObject( attackType, objectToAttack, commandSource );
-	if( result != ATTACKRESULT_NOT_POSSIBLE  )
+	// has any weapons that are capable of inflicting damage. Special damage types are rejected
+	// such as hack weapons... others can be added.
+	CanAttackResult result = obj->getAbleToAttackSpecificObject(attackType, objectToAttack, commandSource);
+	if (result != ATTACKRESULT_NOT_POSSIBLE)
 	{
-		//Kris: August 5, 2003
-		//Fix a case where the Demo_GLAInfantryWorker is able to attack using his passive bomb upgrade. We don't
-		//want him to allow a visible attack cursor for the player. This code never checked for AutoChoosesSources
-		//logic, but now we will but only when the commandSource is FROM_PLAYER.
-		if( commandSource == CMD_FROM_PLAYER )
+		// Kris: August 5, 2003
+		// Fix a case where the Demo_GLAInfantryWorker is able to attack using his passive bomb upgrade. We don't
+		// want him to allow a visible attack cursor for the player. This code never checked for AutoChoosesSources
+		// logic, but now we will but only when the commandSource is FROM_PLAYER.
+		if (commandSource == CMD_FROM_PLAYER)
 		{
-			//Check if it's got any weapons that can be used.
+			// Check if it's got any weapons that can be used.
 			Bool anyValidWeapon = FALSE;
-			for( Int i = 0; i < WEAPONSLOT_COUNT;	i++ )
+			for (Int i = 0; i < WEAPONSLOT_COUNT; i++)
 			{
-				UnsignedInt cmdSourceMask = obj->getWeaponInWeaponSlotCommandSourceMask( (WeaponSlotType)i );
-				if( cmdSourceMask )
+				UnsignedInt cmdSourceMask = obj->getWeaponInWeaponSlotCommandSourceMask((WeaponSlotType)i);
+				if (cmdSourceMask)
 				{
 					anyValidWeapon = TRUE;
 					break;
 				}
 			}
-			if( !anyValidWeapon )
+			if (!anyValidWeapon)
 			{
 				return ATTACKRESULT_NOT_POSSIBLE;
 			}
 		}
 
-		if( result == ATTACKRESULT_INVALID_SHOT && obj->isKindOf( KINDOF_DOZER ) )
+		if (result == ATTACKRESULT_INVALID_SHOT && obj->isKindOf(KINDOF_DOZER))
 		{
-			//For the case of dozers, we don't ever want to see an attack cursor
-			//unless it's valid on a mine.
+			// For the case of dozers, we don't ever want to see an attack cursor
+			// unless it's valid on a mine.
 			const Weapon *weapon = obj->getCurrentWeapon();
-			if( weapon && weapon->getDamageType() == DAMAGE_DISARM )
+			if (weapon && weapon->getDamageType() == DAMAGE_DISARM)
 			{
 				return ATTACKRESULT_NOT_POSSIBLE;
 			}
@@ -769,40 +757,41 @@ CanAttackResult ActionManager::getCanAttackObject( const Object *obj, const Obje
 		return result;
 	}
 
-	//Special case code for stinger sites: Stinger sites have no weapons, instead -- their spawns are the weapons, in this case the
-	//stinger soldiers.
-	if( obj->isKindOf( KINDOF_SPAWNS_ARE_THE_WEAPONS ) )
+	// Special case code for stinger sites: Stinger sites have no weapons, instead -- their spawns are the weapons, in this
+	// case the stinger soldiers.
+	if (obj->isKindOf(KINDOF_SPAWNS_ARE_THE_WEAPONS))
 	{
-		//Look at the spawn behavior and evaluate them!
+		// Look at the spawn behavior and evaluate them!
 		SpawnBehaviorInterface *spawnInterface = obj->getSpawnBehaviorInterface();
-		if( spawnInterface )
+		if (spawnInterface)
 		{
-			//We found the spawn interface, now get the closest slave to the target.
-			Object *slave = spawnInterface->getClosestSlave( objectToAttack->getPosition() );
+			// We found the spawn interface, now get the closest slave to the target.
+			Object *slave = spawnInterface->getClosestSlave(objectToAttack->getPosition());
 
-			if( slave )
+			if (slave)
 			{
-				result = slave->getAbleToAttackSpecificObject( attackType, objectToAttack, commandSource );
-				if( result != ATTACKRESULT_NOT_POSSIBLE )
+				result = slave->getAbleToAttackSpecificObject(attackType, objectToAttack, commandSource);
+				if (result != ATTACKRESULT_NOT_POSSIBLE)
 				{
 					return result;
 				}
 			}
 		}
-    else if( result == ATTACKRESULT_NOT_POSSIBLE )// oh dear me. The wierd case of a garrisoncontainer being a KINDOF_SPAWNS_ARE_THE_WEAPONS... the AmericaBuildingFirebase
-    {
-      ContainModuleInterface *contain = obj->getContain();
-      if ( contain )
-      {
-        Object *rider = contain->getClosestRider( objectToAttack->getPosition() );
-        if ( rider )
-        {
-          result = rider->getAbleToAttackSpecificObject( attackType, objectToAttack, commandSource );
-          if( result != ATTACKRESULT_NOT_POSSIBLE )
-            return result;
-        }
-      }
-    }
+		else if (result == ATTACKRESULT_NOT_POSSIBLE) // oh dear me. The wierd case of a garrisoncontainer being a
+																									// KINDOF_SPAWNS_ARE_THE_WEAPONS... the AmericaBuildingFirebase
+		{
+			ContainModuleInterface *contain = obj->getContain();
+			if (contain)
+			{
+				Object *rider = contain->getClosestRider(objectToAttack->getPosition());
+				if (rider)
+				{
+					result = rider->getAbleToAttackSpecificObject(attackType, objectToAttack, commandSource);
+					if (result != ATTACKRESULT_NOT_POSSIBLE)
+						return result;
+				}
+			}
+		}
 	}
 
 	return ATTACKRESULT_NOT_POSSIBLE;
@@ -810,16 +799,18 @@ CanAttackResult ActionManager::getCanAttackObject( const Object *obj, const Obje
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canConvertObjectToCarBomb( const Object *obj, const Object *objectToConvert, CommandSourceType commandSource )
+Bool ActionManager::canConvertObjectToCarBomb(
+		const Object *obj,
+		const Object *objectToConvert,
+		CommandSourceType commandSource)
 {
-
 	// sanity
-	if( obj == NULL || objectToConvert == NULL )
+	if (obj == NULL || objectToConvert == NULL)
 	{
 		return FALSE;
 	}
 
-	if( objectToConvert->isEffectivelyDead() )
+	if (objectToConvert->isEffectivelyDead())
 	{
 		return FALSE;
 	}
@@ -829,13 +820,13 @@ Bool ActionManager::canConvertObjectToCarBomb( const Object *obj, const Object *
 		return FALSE;
 
 	// first, see if we'd like to collide with 'other'
-	for (BehaviorModule** m = obj->getBehaviorModules(); *m; ++m)
+	for (BehaviorModule **m = obj->getBehaviorModules(); *m; ++m)
 	{
-		CollideModuleInterface* collide = (*m)->getCollide();
+		CollideModuleInterface *collide = (*m)->getCollide();
 		if (!collide)
 			continue;
 
-		if( collide->wouldLikeToCollideWith( objectToConvert ) && collide->isCarBombCrateCollide() )
+		if (collide->wouldLikeToCollideWith(objectToConvert) && collide->isCarBombCrateCollide())
 		{
 			return TRUE;
 		}
@@ -845,16 +836,19 @@ Bool ActionManager::canConvertObjectToCarBomb( const Object *obj, const Object *
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canHijackVehicle( const Object *obj, const Object *objectToHijack, CommandSourceType commandSource ) //LORENZEN
+Bool ActionManager::canHijackVehicle(
+		const Object *obj,
+		const Object *objectToHijack,
+		CommandSourceType commandSource) // LORENZEN
 {
 	// sanity
-	if( obj == NULL || objectToHijack == NULL )
+	if (obj == NULL || objectToHijack == NULL)
 	{
 		return FALSE;
 	}
 
-	//Make sure it's alive.
-	if( objectToHijack->isEffectivelyDead() )
+	// Make sure it's alive.
+	if (objectToHijack->isEffectivelyDead())
 	{
 		return FALSE;
 	}
@@ -866,38 +860,38 @@ Bool ActionManager::canHijackVehicle( const Object *obj, const Object *objectToH
 	}
 
 	Relationship r = obj->getRelationship(objectToHijack);
-	//Only hijack enemy objects
-	if( r != ENEMIES )
+	// Only hijack enemy objects
+	if (r != ENEMIES)
 	{
 		return FALSE;
 	}
 
-	//Make sure target is a vehicle.
-	if( ! objectToHijack->isKindOf( KINDOF_VEHICLE ) )
+	// Make sure target is a vehicle.
+	if (!objectToHijack->isKindOf(KINDOF_VEHICLE))
 	{
 		return FALSE;
 	}
 
-	//Kris -- Hijackers can no longer hijack any aircraft.
-	if( objectToHijack->isKindOf( KINDOF_AIRCRAFT ) )
+	// Kris -- Hijackers can no longer hijack any aircraft.
+	if (objectToHijack->isKindOf(KINDOF_AIRCRAFT))
 	{
 		return FALSE;
 	}
 
-	//Can't hijack a drone type.
-	if( objectToHijack->isKindOf( KINDOF_DRONE ) )
+	// Can't hijack a drone type.
+	if (objectToHijack->isKindOf(KINDOF_DRONE))
 	{
 		return FALSE;
 	}
 
 	// last, see if we'd like to collide with 'objectToHijack'
-	for (BehaviorModule** m = obj->getBehaviorModules(); *m; ++m)
+	for (BehaviorModule **m = obj->getBehaviorModules(); *m; ++m)
 	{
-		CollideModuleInterface* collide = (*m)->getCollide();
+		CollideModuleInterface *collide = (*m)->getCollide();
 		if (!collide)
 			continue;
 
-		if( collide->wouldLikeToCollideWith( objectToHijack ) && collide->isHijackedVehicleCrateCollide() )
+		if (collide->wouldLikeToCollideWith(objectToHijack) && collide->isHijackedVehicleCrateCollide())
 		{
 			return TRUE;
 		}
@@ -907,16 +901,16 @@ Bool ActionManager::canHijackVehicle( const Object *obj, const Object *objectToH
 }
 
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canSabotageBuilding( const Object *obj, const Object *objectToSabotage, CommandSourceType commandSource )
+Bool ActionManager::canSabotageBuilding(const Object *obj, const Object *objectToSabotage, CommandSourceType commandSource)
 {
 	// sanity
-	if( obj == NULL || objectToSabotage == NULL )
+	if (obj == NULL || objectToSabotage == NULL)
 	{
 		return FALSE;
 	}
 
-	//Make sure it's alive.
-	if( objectToSabotage->isEffectivelyDead() )
+	// Make sure it's alive.
+	if (objectToSabotage->isEffectivelyDead())
 	{
 		return FALSE;
 	}
@@ -928,20 +922,20 @@ Bool ActionManager::canSabotageBuilding( const Object *obj, const Object *object
 	}
 
 	Relationship r = obj->getRelationship(objectToSabotage);
-	//Only sabotage enemy objects
-	if( r != ENEMIES )
+	// Only sabotage enemy objects
+	if (r != ENEMIES)
 	{
 		return FALSE;
 	}
 
 	// last, see if we'd like to collide with 'objectToSabotage'
-	for (BehaviorModule** m = obj->getBehaviorModules(); *m; ++m)
+	for (BehaviorModule **m = obj->getBehaviorModules(); *m; ++m)
 	{
-		CollideModuleInterface* collide = (*m)->getCollide();
+		CollideModuleInterface *collide = (*m)->getCollide();
 		if (!collide)
 			continue;
 
-		if( collide->wouldLikeToCollideWith( objectToSabotage ) && collide->isSabotageBuildingCrateCollide() )
+		if (collide->wouldLikeToCollideWith(objectToSabotage) && collide->isSabotageBuildingCrateCollide())
 		{
 			return TRUE;
 		}
@@ -952,24 +946,27 @@ Bool ActionManager::canSabotageBuilding( const Object *obj, const Object *object
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canMakeObjectDefector( const Object *obj, const Object *objectToMakeDefector, CommandSourceType commandSource ) //LORENZEN
+Bool ActionManager::canMakeObjectDefector(
+		const Object *obj,
+		const Object *objectToMakeDefector,
+		CommandSourceType commandSource) // LORENZEN
 {
 	// sanity
-	if( obj == NULL || objectToMakeDefector == NULL )
+	if (obj == NULL || objectToMakeDefector == NULL)
 	{
 		return FALSE;
 	}
 
 	Relationship r = obj->getRelationship(objectToMakeDefector);
 
-	//Only make defectors of enemy objects
-	if( r != ENEMIES )
+	// Only make defectors of enemy objects
+	if (r != ENEMIES)
 	{
 		return FALSE;
 	}
 
-	//Make sure it's alive.
-	if( objectToMakeDefector->isEffectivelyDead() )
+	// Make sure it's alive.
+	if (objectToMakeDefector->isEffectivelyDead())
 	{
 		return FALSE;
 	}
@@ -980,53 +977,50 @@ Bool ActionManager::canMakeObjectDefector( const Object *obj, const Object *obje
 		return FALSE;
 	}
 
-
 	return TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 
-Bool ActionManager::canCaptureBuilding( const Object *obj, const Object *objectToCapture, CommandSourceType commandSource )
+Bool ActionManager::canCaptureBuilding(const Object *obj, const Object *objectToCapture, CommandSourceType commandSource)
 {
-
 	// sanity
-	if( obj == NULL || objectToCapture == NULL )
+	if (obj == NULL || objectToCapture == NULL)
 		return FALSE;
 
-	//Make sure our object has the capability of performing this special ability.
+	// Make sure our object has the capability of performing this special ability.
 
-	Bool isOwnerBlackLotus = obj->hasSpecialPower( SPECIAL_BLACKLOTUS_CAPTURE_BUILDING );
+	Bool isOwnerBlackLotus = obj->hasSpecialPower(SPECIAL_BLACKLOTUS_CAPTURE_BUILDING);
 
-	if( !obj->hasSpecialPower( SPECIAL_INFANTRY_CAPTURE_BUILDING ) && !isOwnerBlackLotus)
+	if (!obj->hasSpecialPower(SPECIAL_INFANTRY_CAPTURE_BUILDING) && !isOwnerBlackLotus)
 	{
 		return false;
 	}
 
-	if( objectToCapture->isKindOf( KINDOF_IMMUNE_TO_CAPTURE ) )
+	if (objectToCapture->isKindOf(KINDOF_IMMUNE_TO_CAPTURE))
 	{
 		return false;
 	}
 
-//  This is the althernate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or until 12/10/02
-//	if ( isOwnerBlackLotus )
-//	{
-//		SpecialPowerModuleInterface *disableSPI = obj->findSpecialPowerModuleInterface( SPECIAL_BLACKLOTUS_DISABLE_VEHICLE_HACK );
-//		if ( disableSPI && disableSPI->isBusy() )
-//			return FALSE;
-//		SpecialPowerModuleInterface *cashSPI = obj->findSpecialPowerModuleInterface( SPECIAL_BLACKLOTUS_STEAL_CASH_HACK );
-//		if ( cashSPI && cashSPI->isBusy() )
-//			return FALSE;
-//	}
+	//  This is the althernate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or
+	//  until 12/10/02
+	//	if ( isOwnerBlackLotus )
+	//	{
+	//		SpecialPowerModuleInterface *disableSPI = obj->findSpecialPowerModuleInterface(
+	// SPECIAL_BLACKLOTUS_DISABLE_VEHICLE_HACK ); 		if ( disableSPI && disableSPI->isBusy() ) 			return FALSE;
+	//		SpecialPowerModuleInterface *cashSPI = obj->findSpecialPowerModuleInterface( SPECIAL_BLACKLOTUS_STEAL_CASH_HACK );
+	//		if ( cashSPI && cashSPI->isBusy() )
+	//			return FALSE;
+	//	}
 
-
-	SpecialPowerModuleInterface *spInterface = obj->findSpecialPowerModuleInterface( SPECIAL_INFANTRY_CAPTURE_BUILDING );
+	SpecialPowerModuleInterface *spInterface = obj->findSpecialPowerModuleInterface(SPECIAL_INFANTRY_CAPTURE_BUILDING);
 	if (!spInterface)
-		spInterface = obj->findSpecialPowerModuleInterface( SPECIAL_BLACKLOTUS_CAPTURE_BUILDING );
+		spInterface = obj->findSpecialPowerModuleInterface(SPECIAL_BLACKLOTUS_CAPTURE_BUILDING);
 	if (!spInterface)
 		return false;
 
-	if( spInterface->getPercentReady() < 1.0f )
+	if (spInterface->getPercentReady() < 1.0f)
 	{
 		// Special not ready or non-existent.
 		return false;
@@ -1039,14 +1033,13 @@ Bool ActionManager::canCaptureBuilding( const Object *obj, const Object *objectT
 	}
 
 	// Make sure we are targeting a building!
-	if( !objectToCapture->isKindOf( KINDOF_STRUCTURE ) )
+	if (!objectToCapture->isKindOf(KINDOF_STRUCTURE))
 	{
 		return FALSE;
 	}
 
 	// can't capture things that are under construction, or sold.
-	if (objectToCapture->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) ||
-			objectToCapture->testStatus(OBJECT_STATUS_SOLD))
+	if (objectToCapture->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) || objectToCapture->testStatus(OBJECT_STATUS_SOLD))
 	{
 		return FALSE;
 	}
@@ -1062,10 +1055,9 @@ Bool ActionManager::canCaptureBuilding( const Object *obj, const Object *objectT
 	if (!(r == ENEMIES || (objectToCapture->isKindOf(KINDOF_CAPTURABLE) && r != ALLIES)))
 		return false;
 
-	//If the enemy unit is stealthed and not detected, then we can't capture it!
-	if( objectToCapture->testStatus( OBJECT_STATUS_STEALTHED ) &&
-			!objectToCapture->testStatus( OBJECT_STATUS_DETECTED ) &&
-			!objectToCapture->testStatus( OBJECT_STATUS_DISGUISED ) )
+	// If the enemy unit is stealthed and not detected, then we can't capture it!
+	if (objectToCapture->testStatus(OBJECT_STATUS_STEALTHED) && !objectToCapture->testStatus(OBJECT_STATUS_DETECTED)
+			&& !objectToCapture->testStatus(OBJECT_STATUS_DISGUISED))
 	{
 		return FALSE;
 	}
@@ -1087,51 +1079,55 @@ Bool ActionManager::canCaptureBuilding( const Object *obj, const Object *objectT
 	if (appearsToContainFriendlies(obj, objectToCapture))
 		return FALSE;
 
-  return TRUE;
+	return TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canDisableVehicleViaHacking( const Object *obj, const Object *objectToHack, CommandSourceType commandSource, Bool checkSourceRequirements)
+Bool ActionManager::canDisableVehicleViaHacking(
+		const Object *obj,
+		const Object *objectToHack,
+		CommandSourceType commandSource,
+		Bool checkSourceRequirements)
 {
 	// sanity
-	if( obj == NULL || objectToHack == NULL )
+	if (obj == NULL || objectToHack == NULL)
 		return FALSE;
 
 	if (checkSourceRequirements)
 	{
-		//Make sure our object has the capability of performing this special ability.
-		if( !obj->hasSpecialPower( SPECIAL_BLACKLOTUS_DISABLE_VEHICLE_HACK ) )
+		// Make sure our object has the capability of performing this special ability.
+		if (!obj->hasSpecialPower(SPECIAL_BLACKLOTUS_DISABLE_VEHICLE_HACK))
 		{
 			return false;
 		}
 	}
 
-//  This is the althernate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or until 12/10/02
-//	SpecialPowerModuleInterface *captureSPI = obj->findSpecialPowerModuleInterface( SPECIAL_BLACKLOTUS_CAPTURE_BUILDING );
-//	if ( captureSPI && captureSPI->isBusy() )
-//		return FALSE;
-//	SpecialPowerModuleInterface *cashSPI = obj->findSpecialPowerModuleInterface( SPECIAL_BLACKLOTUS_STEAL_CASH_HACK );
-//	if ( cashSPI && cashSPI->isBusy() )
-//		return FALSE;
+	//  This is the althernate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or
+	//  until 12/10/02
+	//	SpecialPowerModuleInterface *captureSPI = obj->findSpecialPowerModuleInterface( SPECIAL_BLACKLOTUS_CAPTURE_BUILDING );
+	//	if ( captureSPI && captureSPI->isBusy() )
+	//		return FALSE;
+	//	SpecialPowerModuleInterface *cashSPI = obj->findSpecialPowerModuleInterface( SPECIAL_BLACKLOTUS_STEAL_CASH_HACK );
+	//	if ( cashSPI && cashSPI->isBusy() )
+	//		return FALSE;
 
-
-	SpecialPowerModuleInterface *spInterface = obj->findSpecialPowerModuleInterface( SPECIAL_BLACKLOTUS_DISABLE_VEHICLE_HACK );
+	SpecialPowerModuleInterface *spInterface = obj->findSpecialPowerModuleInterface(SPECIAL_BLACKLOTUS_DISABLE_VEHICLE_HACK);
 	if (checkSourceRequirements)
 	{
-		if( !spInterface || spInterface->getPercentReady() < 1.0f )
+		if (!spInterface || spInterface->getPercentReady() < 1.0f)
 		{
-			//Special not ready or non-existent.
+			// Special not ready or non-existent.
 			return FALSE;
 		}
 	}
 
-	if( objectToHack->isEffectivelyDead() )
+	if (objectToHack->isEffectivelyDead())
 	{
 		return FALSE;
 	}
 
-	if( objectToHack->isKindOf( KINDOF_AIRCRAFT ) || objectToHack->isAirborneTarget() )
+	if (objectToHack->isKindOf(KINDOF_AIRCRAFT) || objectToHack->isAirborneTarget())
 	{
 		return false;
 	}
@@ -1143,25 +1139,23 @@ Bool ActionManager::canDisableVehicleViaHacking( const Object *obj, const Object
 	Relationship r = obj->getRelationship(objectToHack);
 
 	// Make sure object is an enemy
-	if( r == ENEMIES )
+	if (r == ENEMIES)
 	{
-
-		//Make sure we are targeting a building!
-		if( !objectToHack->isKindOf( KINDOF_VEHICLE ) )
+		// Make sure we are targeting a building!
+		if (!objectToHack->isKindOf(KINDOF_VEHICLE))
 		{
 			return FALSE;
 		}
 
-		//If the enemy unit is stealthed and not detected, then we can't attack it!
-	if( objectToHack->testStatus( OBJECT_STATUS_STEALTHED ) &&
-			!objectToHack->testStatus( OBJECT_STATUS_DETECTED ) &&
-			!objectToHack->testStatus( OBJECT_STATUS_DISGUISED ) )
+		// If the enemy unit is stealthed and not detected, then we can't attack it!
+		if (objectToHack->testStatus(OBJECT_STATUS_STEALTHED) && !objectToHack->testStatus(OBJECT_STATUS_DETECTED)
+				&& !objectToHack->testStatus(OBJECT_STATUS_DISGUISED))
 		{
 			return FALSE;
 		}
 
-		//Also check if the object is a container containing stealth units tricking
-		//the player into thinking it isn't actually an enemy.
+		// Also check if the object is a container containing stealth units tricking
+		// the player into thinking it isn't actually an enemy.
 		if (appearsToContainFriendlies(obj, objectToHack))
 			return FALSE;
 
@@ -1174,82 +1168,80 @@ Bool ActionManager::canDisableVehicleViaHacking( const Object *obj, const Object
 // ------------------------------------------------------------------------------------------------
 /** Can 'obj' pick up the prisoner 'prisoner' */
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canPickUpPrisoner( const Object *obj, const Object *prisoner, CommandSourceType commandSource )
+Bool ActionManager::canPickUpPrisoner(const Object *obj, const Object *prisoner, CommandSourceType commandSource)
 {
-
 	// sanity
-	if( obj == NULL || prisoner == NULL )
+	if (obj == NULL || prisoner == NULL)
 		return FALSE;
 
 	// only pow trucks can pick up anything
-	if( obj->isKindOf( KINDOF_POW_TRUCK ) == FALSE )
+	if (obj->isKindOf(KINDOF_POW_TRUCK) == FALSE)
 		return FALSE;
 
 	// only infantry can be picked up
-	if( prisoner->isKindOf( KINDOF_INFANTRY ) == FALSE )
+	if (prisoner->isKindOf(KINDOF_INFANTRY) == FALSE)
 		return FALSE;
 
 	// prisoner cannot be contained inside anything
-	if( prisoner->getContainedBy() )
+	if (prisoner->getContainedBy())
 		return FALSE;
 
 	// prisoner must be in a surrendered state
 	const AIUpdateInterface *ai = prisoner->getAI();
-	if( ai == NULL || ai->isSurrendered() == FALSE )
+	if (ai == NULL || ai->isSurrendered() == FALSE)
 		return FALSE;
 
 	// prisoner must have been put in a surrendered state by our own player
 	// (or be surrendered to "everyone")
 	Int idx = ai->getSurrenderedPlayerIndex();
-	Player* surrenderedToPlayer = (idx >= 0) ? ThePlayerList->getNthPlayer(idx) : NULL;
+	Player *surrenderedToPlayer = (idx >= 0) ? ThePlayerList->getNthPlayer(idx) : NULL;
 	if (surrenderedToPlayer != NULL && surrenderedToPlayer != obj->getControllingPlayer())
 		return FALSE;
 
 	// we must be enemies
-	if( obj->getRelationship( prisoner ) != ENEMIES )
+	if (obj->getRelationship(prisoner) != ENEMIES)
 		return FALSE;
 
 	return TRUE;
 
-}  // end canPickUpPrisoner
+} // end canPickUpPrisoner
 #endif
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canStealCashViaHacking( const Object *obj, const Object *objectToHack, CommandSourceType commandSource )
+Bool ActionManager::canStealCashViaHacking(const Object *obj, const Object *objectToHack, CommandSourceType commandSource)
 {
 	// sanity
-	if( obj == NULL || objectToHack == NULL )
+	if (obj == NULL || objectToHack == NULL)
 		return FALSE;
 
-	//Make sure our object has the capability of performing this special ability.
-	if( !obj->hasSpecialPower( SPECIAL_BLACKLOTUS_STEAL_CASH_HACK ) )
+	// Make sure our object has the capability of performing this special ability.
+	if (!obj->hasSpecialPower(SPECIAL_BLACKLOTUS_STEAL_CASH_HACK))
 	{
 		return false;
 	}
 
-//  This is the althernate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or until 12/10/02
-//	SpecialPowerModuleInterface *captureSPI = obj->findSpecialPowerModuleInterface( SPECIAL_BLACKLOTUS_CAPTURE_BUILDING );
-//	if ( captureSPI && captureSPI->isBusy() )
-//		return FALSE;
-//	SpecialPowerModuleInterface *disableSPI = obj->findSpecialPowerModuleInterface( SPECIAL_BLACKLOTUS_DISABLE_VEHICLE_HACK );
-//	if ( disableSPI && disableSPI->isBusy() )
-//		return FALSE;
+	//  This is the althernate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or
+	//  until 12/10/02
+	//	SpecialPowerModuleInterface *captureSPI = obj->findSpecialPowerModuleInterface( SPECIAL_BLACKLOTUS_CAPTURE_BUILDING );
+	//	if ( captureSPI && captureSPI->isBusy() )
+	//		return FALSE;
+	//	SpecialPowerModuleInterface *disableSPI = obj->findSpecialPowerModuleInterface( SPECIAL_BLACKLOTUS_DISABLE_VEHICLE_HACK
+	//); 	if ( disableSPI && disableSPI->isBusy() ) 		return FALSE;
 
-
-	SpecialPowerModuleInterface *spInterface = obj->findSpecialPowerModuleInterface( SPECIAL_BLACKLOTUS_STEAL_CASH_HACK );
-	if( !spInterface || spInterface->getPercentReady() < 1.0f )
+	SpecialPowerModuleInterface *spInterface = obj->findSpecialPowerModuleInterface(SPECIAL_BLACKLOTUS_STEAL_CASH_HACK);
+	if (!spInterface || spInterface->getPercentReady() < 1.0f)
 	{
-		//Special not ready or non-existent.
+		// Special not ready or non-existent.
 		return false;
 	}
 
-	if( objectToHack->isEffectivelyDead() )
+	if (objectToHack->isEffectivelyDead())
 	{
 		return FALSE;
 	}
 
-	if( objectToHack->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	if (objectToHack->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
 	{
 		return FALSE;
 	}
@@ -1261,37 +1253,35 @@ Bool ActionManager::canStealCashViaHacking( const Object *obj, const Object *obj
 	Relationship r = obj->getRelationship(objectToHack);
 
 	// Make sure object is an enemy
-	if( r == ENEMIES )
+	if (r == ENEMIES)
 	{
-
-		//Make sure we are targeting something that contains cash!
-		if( !objectToHack->isKindOf( KINDOF_CASH_GENERATOR ) )
+		// Make sure we are targeting something that contains cash!
+		if (!objectToHack->isKindOf(KINDOF_CASH_GENERATOR))
 		{
 			return FALSE;
 		}
 
-		//Make sure object isn't under construction!
-		if( objectToHack->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+		// Make sure object isn't under construction!
+		if (objectToHack->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
 		{
 			return FALSE;
 		}
 
-		//Make sure the building is considered hackable (temp: using capturable)
-		if( !objectToHack->isKindOf( KINDOF_CAPTURABLE ) || objectToHack->isKindOf( KINDOF_REBUILD_HOLE ) )
+		// Make sure the building is considered hackable (temp: using capturable)
+		if (!objectToHack->isKindOf(KINDOF_CAPTURABLE) || objectToHack->isKindOf(KINDOF_REBUILD_HOLE))
 		{
 			return FALSE;
 		}
 
-		//If the enemy unit is stealthed and not detected, then we can't attack it!
-	if( objectToHack->testStatus( OBJECT_STATUS_STEALTHED ) &&
-			!objectToHack->testStatus( OBJECT_STATUS_DETECTED ) &&
-			!objectToHack->testStatus( OBJECT_STATUS_DISGUISED ) )
+		// If the enemy unit is stealthed and not detected, then we can't attack it!
+		if (objectToHack->testStatus(OBJECT_STATUS_STEALTHED) && !objectToHack->testStatus(OBJECT_STATUS_DETECTED)
+				&& !objectToHack->testStatus(OBJECT_STATUS_DISGUISED))
 		{
 			return FALSE;
 		}
 
-		//Also check if the object is a container containing stealth units tricking
-		//the player into thinking it isn't actually an enemy.
+		// Also check if the object is a container containing stealth units tricking
+		// the player into thinking it isn't actually an enemy.
 		if (appearsToContainFriendlies(obj, objectToHack))
 			return FALSE;
 
@@ -1302,26 +1292,29 @@ Bool ActionManager::canStealCashViaHacking( const Object *obj, const Object *obj
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canDisableBuildingViaHacking( const Object *obj, const Object *objectToHack, CommandSourceType commandSource )
+Bool ActionManager::canDisableBuildingViaHacking(
+		const Object *obj,
+		const Object *objectToHack,
+		CommandSourceType commandSource)
 {
 	// sanity
-	if( obj == NULL || objectToHack == NULL )
+	if (obj == NULL || objectToHack == NULL)
 		return FALSE;
 
-	//Make sure our object has the capability of performing this special ability.
-	if( !obj->hasSpecialPower( SPECIAL_HACKER_DISABLE_BUILDING ) )
+	// Make sure our object has the capability of performing this special ability.
+	if (!obj->hasSpecialPower(SPECIAL_HACKER_DISABLE_BUILDING))
 	{
 		return FALSE;
 	}
 
-	SpecialPowerModuleInterface *spInterface = obj->findSpecialPowerModuleInterface( SPECIAL_HACKER_DISABLE_BUILDING );
-	if( !spInterface || spInterface->getPercentReady() < 1.0f )
+	SpecialPowerModuleInterface *spInterface = obj->findSpecialPowerModuleInterface(SPECIAL_HACKER_DISABLE_BUILDING);
+	if (!spInterface || spInterface->getPercentReady() < 1.0f)
 	{
-		//Special not ready or non-existent.
+		// Special not ready or non-existent.
 		return FALSE;
 	}
 
-	if( objectToHack->isEffectivelyDead() )
+	if (objectToHack->isEffectivelyDead())
 	{
 		return FALSE;
 	}
@@ -1333,38 +1326,35 @@ Bool ActionManager::canDisableBuildingViaHacking( const Object *obj, const Objec
 	Relationship r = obj->getRelationship(objectToHack);
 
 	// Make sure object is an enemy
-	if( r != ENEMIES )
+	if (r != ENEMIES)
 		return FALSE;
 
-	//Make sure we are targeting a building!
-	if( !objectToHack->isKindOf( KINDOF_STRUCTURE ) )
+	// Make sure we are targeting a building!
+	if (!objectToHack->isKindOf(KINDOF_STRUCTURE))
 	{
 		return FALSE;
 	}
 
-	//Make sure the building is considered hackable (temp: using capturable)
-	// An exception is any TechFactionBuilding that is not explicitly immune to capture
-	if( ( !objectToHack->isKindOf( KINDOF_CAPTURABLE ) || objectToHack->isKindOf( KINDOF_REBUILD_HOLE ) ) &&
-		! (objectToHack->isKindOf(KINDOF_FS_TECHNOLOGY) && ! objectToHack->isKindOf(KINDOF_IMMUNE_TO_CAPTURE)) )
+	// Make sure the building is considered hackable (temp: using capturable)
+	//  An exception is any TechFactionBuilding that is not explicitly immune to capture
+	if ((!objectToHack->isKindOf(KINDOF_CAPTURABLE) || objectToHack->isKindOf(KINDOF_REBUILD_HOLE))
+			&& !(objectToHack->isKindOf(KINDOF_FS_TECHNOLOGY) && !objectToHack->isKindOf(KINDOF_IMMUNE_TO_CAPTURE)))
 	{
 		return FALSE;
 	}
 
-
-	if ( objectToHack->isKindOf( KINDOF_REBUILD_HOLE ) || objectToHack->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ))
+	if (objectToHack->isKindOf(KINDOF_REBUILD_HOLE) || objectToHack->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
 		return FALSE;
 
-
-	//If the enemy unit is stealthed and not detected, then we can't attack it!
-	if( objectToHack->testStatus( OBJECT_STATUS_STEALTHED ) &&
-			!objectToHack->testStatus( OBJECT_STATUS_DETECTED ) &&
-			!objectToHack->testStatus( OBJECT_STATUS_DISGUISED ) )
+	// If the enemy unit is stealthed and not detected, then we can't attack it!
+	if (objectToHack->testStatus(OBJECT_STATUS_STEALTHED) && !objectToHack->testStatus(OBJECT_STATUS_DETECTED)
+			&& !objectToHack->testStatus(OBJECT_STATUS_DISGUISED))
 	{
 		return FALSE;
 	}
 
-	//Also check if the object is a container containing stealth units tricking
-	//the player into thinking it isn't actually an enemy.
+	// Also check if the object is a container containing stealth units tricking
+	// the player into thinking it isn't actually an enemy.
 	if (appearsToContainFriendlies(obj, objectToHack))
 		return FALSE;
 
@@ -1372,29 +1362,29 @@ Bool ActionManager::canDisableBuildingViaHacking( const Object *obj, const Objec
 }
 
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canBribeUnit( const Object *obj, const Object *objectToBribe, CommandSourceType commandSource )
+Bool ActionManager::canBribeUnit(const Object *obj, const Object *objectToBribe, CommandSourceType commandSource)
 {
 	return FALSE;
 }
 
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canCutBuildingPower( const Object *obj, const Object *building, CommandSourceType commandSource )
+Bool ActionManager::canCutBuildingPower(const Object *obj, const Object *building, CommandSourceType commandSource)
 {
 	return FALSE;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canSnipeVehicle( const Object *obj, const Object *objectToSnipe, CommandSourceType commandSource )
+Bool ActionManager::canSnipeVehicle(const Object *obj, const Object *objectToSnipe, CommandSourceType commandSource)
 {
-	//Sanity check
-	if( obj == NULL || objectToSnipe == NULL )
+	// Sanity check
+	if (obj == NULL || objectToSnipe == NULL)
 	{
 		return FALSE;
 	}
 
-	//Make sure it's alive.
-	if( objectToSnipe->isEffectivelyDead() )
+	// Make sure it's alive.
+	if (objectToSnipe->isEffectivelyDead())
 	{
 		return FALSE;
 	}
@@ -1405,28 +1395,28 @@ Bool ActionManager::canSnipeVehicle( const Object *obj, const Object *objectToSn
 
 	Relationship r = obj->getRelationship(objectToSnipe);
 
-	if( r == ENEMIES )
+	if (r == ENEMIES)
 	{
-		//Make sure target is a vehicle.
-		if( !objectToSnipe->isKindOf( KINDOF_VEHICLE ) )
+		// Make sure target is a vehicle.
+		if (!objectToSnipe->isKindOf(KINDOF_VEHICLE))
 		{
 			return FALSE;
 		}
 
-		//Can't be a drone type.
-		if( objectToSnipe->isKindOf( KINDOF_DRONE ) )
+		// Can't be a drone type.
+		if (objectToSnipe->isKindOf(KINDOF_DRONE))
 		{
 			return FALSE;
 		}
 
-		//Make sure object is not flying
-		if( objectToSnipe->isAirborneTarget() )
+		// Make sure object is not flying
+		if (objectToSnipe->isAirborneTarget())
 		{
 			return FALSE;
 		}
 
-		//Make sure the vehicle is manned!
-		if( objectToSnipe->isDisabledByType( DISABLED_UNMANNED ) )
+		// Make sure the vehicle is manned!
+		if (objectToSnipe->isDisabledByType(DISABLED_UNMANNED))
 		{
 			return FALSE;
 		}
@@ -1437,59 +1427,61 @@ Bool ActionManager::canSnipeVehicle( const Object *obj, const Object *objectToSn
 	return FALSE;
 }
 
-
-
-
 //-------------------------------------------------------------------------------------------------
-inline Bool isPointOnMap( const Coord3D  *testPos )
+inline Bool isPointOnMap(const Coord3D *testPos)
 {
 	Region3D mapRegion;
-	TheTerrainLogic->getExtent( &mapRegion );
-	return mapRegion.isInRegionNoZ( testPos );
-
+	TheTerrainLogic->getExtent(&mapRegion);
+	return mapRegion.isInRegionNoZ(testPos);
 }
 
-
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3D *loc, CommandSourceType commandSource, const SpecialPowerTemplate *spTemplate, const Object *objectInWay, UnsignedInt commandOptions, Bool checkSourceRequirements )
+Bool ActionManager::canDoSpecialPowerAtLocation(
+		const Object *obj,
+		const Coord3D *loc,
+		CommandSourceType commandSource,
+		const SpecialPowerTemplate *spTemplate,
+		const Object *objectInWay,
+		UnsignedInt commandOptions,
+		Bool checkSourceRequirements)
 {
 	if (checkSourceRequirements)
 	{
-		//First check, if our object can do this special power.
-		if( !obj->hasSpecialPower( spTemplate->getSpecialPowerType() ) )
+		// First check, if our object can do this special power.
+		if (!obj->hasSpecialPower(spTemplate->getSpecialPowerType()))
 		{
 			return false;
 		}
 	}
 
-	SpecialPowerModuleInterface *mod = obj->getSpecialPowerModule( spTemplate );
-	if( mod )
+	SpecialPowerModuleInterface *mod = obj->getSpecialPowerModule(spTemplate);
+	if (mod)
 	{
 		if (checkSourceRequirements)
 		{
-			if( mod->getPercentReady() < 1.0f )
+			if (mod->getPercentReady() < 1.0f)
 			{
-				//Not fully ready
+				// Not fully ready
 				return false;
 			}
 		}
 
 		// First check terrain type, if it is cared about.  Don't return a true, since there are more checks.
-		switch( spTemplate->getSpecialPowerType() )
+		switch (spTemplate->getSpecialPowerType())
 		{
 			case SPECIAL_PARADROP_AMERICA:
 			case INFA_SPECIAL_PARADROP_AMERICA:
 			case SPECIAL_CRATE_DROP:
 			case SPECIAL_TANK_PARADROP:
 			{
-				if( TheTerrainLogic->isUnderwater( loc->x, loc->y ) )
+				if (TheTerrainLogic->isUnderwater(loc->x, loc->y))
 					return FALSE;
 			}
 		}
 
 		// Last check is shroudedness, if it is cared about
-		switch( spTemplate->getSpecialPowerType() )
+		switch (spTemplate->getSpecialPowerType())
 		{
 			case SPECIAL_DAISY_CUTTER:
 			case AIRF_SPECIAL_DAISY_CUTTER:
@@ -1525,7 +1517,7 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 			case AIRF_SPECIAL_SPECTRE_GUNSHIP:
 			case SPECIAL_REPAIR_VEHICLES:
 			case EARLY_SPECIAL_REPAIR_VEHICLES:
-      case SPECIAL_GPS_SCRAMBLER:
+			case SPECIAL_GPS_SCRAMBLER:
 			case SLTH_SPECIAL_GPS_SCRAMBLER:
 			case SPECIAL_ARTILLERY_BARRAGE:
 			case SPECIAL_FRENZY:
@@ -1536,20 +1528,21 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 			case SPECIAL_CLEANUP_AREA:
 			case SPECIAL_SNEAK_ATTACK:
 			case SPECIAL_BATTLESHIP_BOMBARDMENT:
-				//Don't allow "damaging" special powers in shrouded areas, but Fogged are okay.
-				return ThePartitionManager->getShroudStatusForPlayer( obj->getControllingPlayer()->getPlayerIndex(), loc ) != CELLSHROUD_SHROUDED;
+				// Don't allow "damaging" special powers in shrouded areas, but Fogged are okay.
+				return ThePartitionManager->getShroudStatusForPlayer(obj->getControllingPlayer()->getPlayerIndex(), loc)
+						!= CELLSHROUD_SHROUDED;
 
 			case SPECIAL_SPY_SATELLITE:
 			case SPECIAL_RADAR_VAN_SCAN:
 			case SPECIAL_SPY_DRONE:
 			case SPECIAL_HELIX_NAPALM_BOMB:
 
-        //These specials can be used anywhere!
-        return isPointOnMap( loc );
-      case SPECIAL_LAUNCH_BAIKONUR_ROCKET:
-			  return TRUE;
+				// These specials can be used anywhere!
+				return isPointOnMap(loc);
+			case SPECIAL_LAUNCH_BAIKONUR_ROCKET:
+				return TRUE;
 
-			//These special powers require object targets!
+			// These special powers require object targets!
 			case SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES:
 			case SPECIAL_HACKER_DISABLE_BUILDING:
 			case SPECIAL_TANKHUNTER_TNT_ATTACK:
@@ -1574,32 +1567,38 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *target, CommandSourceType commandSource, const SpecialPowerTemplate *spTemplate, UnsignedInt commandOptions, Bool checkSourceRequirements )
+Bool ActionManager::canDoSpecialPowerAtObject(
+		const Object *obj,
+		const Object *target,
+		CommandSourceType commandSource,
+		const SpecialPowerTemplate *spTemplate,
+		UnsignedInt commandOptions,
+		Bool checkSourceRequirements)
 {
 	if (checkSourceRequirements)
 	{
-		//First check, if our object can do this special power.
-		if( !obj->hasSpecialPower( spTemplate->getSpecialPowerType() ) )
+		// First check, if our object can do this special power.
+		if (!obj->hasSpecialPower(spTemplate->getSpecialPowerType()))
 		{
 			return false;
 		}
 	}
 
-	if( target->isEffectivelyDead() )
+	if (target->isEffectivelyDead())
 	{
 		return FALSE;
 	}
 
 	Relationship r = obj->getRelationship(target);
 
-	SpecialPowerModuleInterface *mod = obj->getSpecialPowerModule( spTemplate );
-	if( mod )
+	SpecialPowerModuleInterface *mod = obj->getSpecialPowerModule(spTemplate);
+	if (mod)
 	{
 		if (checkSourceRequirements)
 		{
-			if( mod->getPercentReady() < 1.0f )
+			if (mod->getPercentReady() < 1.0f)
 			{
-				//Not fully ready
+				// Not fully ready
 				return false;
 			}
 		}
@@ -1608,20 +1607,20 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 		if (isObjectShroudedForAction(obj, target, commandSource))
 			return FALSE;
 
-		switch( spTemplate->getSpecialPowerType() )
+		switch (spTemplate->getSpecialPowerType())
 		{
 			case SPECIAL_CASH_BOUNTY:
 				return false;
 
 			case SPECIAL_BATTLESHIP_BOMBARDMENT:
-				if( obj->getRelationship( target ) != ALLIES )
+				if (obj->getRelationship(target) != ALLIES)
 				{
 					return TRUE;
 				}
 				return FALSE;
 
 			case SPECIAL_TANKHUNTER_TNT_ATTACK:
-				if( target->isKindOf( KINDOF_STRUCTURE ) || (target->isKindOf( KINDOF_VEHICLE ) && !target->isKindOf(KINDOF_AIRCRAFT)) )
+				if (target->isKindOf(KINDOF_STRUCTURE) || (target->isKindOf(KINDOF_VEHICLE) && !target->isKindOf(KINDOF_AIRCRAFT)))
 				{
 					return true;
 				}
@@ -1630,7 +1629,7 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 			case SPECIAL_BOOBY_TRAP:
 			{
 				// We can booby trap any building that is allied or neutral
-				if( target->isKindOf(KINDOF_STRUCTURE) && (r == NEUTRAL || r == ALLIES) )
+				if (target->isKindOf(KINDOF_STRUCTURE) && (r == NEUTRAL || r == ALLIES))
 				{
 					return TRUE;
 				}
@@ -1638,19 +1637,19 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 			}
 
 			case SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES:
-				//Can only use laser guided missiles on vehicles!
-				if( target->isKindOf( KINDOF_VEHICLE ) && r == ENEMIES )
+				// Can only use laser guided missiles on vehicles!
+				if (target->isKindOf(KINDOF_VEHICLE) && r == ENEMIES)
 				{
 					return true;
 				}
 				break;
 
 			case SPECIAL_HACKER_DISABLE_BUILDING:
-				//Can only disable buildings...
-				if( target->isKindOf( KINDOF_STRUCTURE ) && r == ENEMIES )
+				// Can only disable buildings...
+				if (target->isKindOf(KINDOF_STRUCTURE) && r == ENEMIES)
 				{
-					//Make sure the building is considered hackable (temp: using capturable)
-					if( !target->isKindOf( KINDOF_CAPTURABLE ) || target->isKindOf( KINDOF_REBUILD_HOLE ) )
+					// Make sure the building is considered hackable (temp: using capturable)
+					if (!target->isKindOf(KINDOF_CAPTURABLE) || target->isKindOf(KINDOF_REBUILD_HOLE))
 					{
 						return FALSE;
 					}
@@ -1660,31 +1659,31 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 
 			case SPECIAL_INFANTRY_CAPTURE_BUILDING:
 			case SPECIAL_BLACKLOTUS_CAPTURE_BUILDING:
-				return canCaptureBuilding( obj, target, commandSource );
+				return canCaptureBuilding(obj, target, commandSource);
 
 			case SPECIAL_BLACKLOTUS_DISABLE_VEHICLE_HACK:
-				return canDisableVehicleViaHacking( obj, target, commandSource, false );
+				return canDisableVehicleViaHacking(obj, target, commandSource, false);
 
 			case SPECIAL_BLACKLOTUS_STEAL_CASH_HACK:
-				return canStealCashViaHacking( obj, target, commandSource );
+				return canStealCashViaHacking(obj, target, commandSource);
 
 			case SPECIAL_CASH_HACK:
-				//Can only disable enemy supply centers.
-				if( target->isKindOf( KINDOF_STRUCTURE ) && r == ENEMIES )
+				// Can only disable enemy supply centers.
+				if (target->isKindOf(KINDOF_STRUCTURE) && r == ENEMIES)
 				{
-					//Make sure the building is considered hackable (temp: using capturable)
-					if( !target->isKindOf( KINDOF_CAPTURABLE ) || target->isKindOf( KINDOF_REBUILD_HOLE ) )
+					// Make sure the building is considered hackable (temp: using capturable)
+					if (!target->isKindOf(KINDOF_CAPTURABLE) || target->isKindOf(KINDOF_REBUILD_HOLE))
 					{
 						return FALSE;
 					}
 
-					//Can't cash hack a building that's under construction.
-					if( target->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+					// Can't cash hack a building that's under construction.
+					if (target->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
 					{
 						return FALSE;
 					}
 
-					if (target->isKindOf( KINDOF_CASH_GENERATOR ) )
+					if (target->isKindOf(KINDOF_CASH_GENERATOR))
 					{
 						return true;
 					}
@@ -1692,19 +1691,17 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 				break;
 
 			case SPECIAL_DISGUISE_AS_VEHICLE:
-				if( target->isKindOf( KINDOF_VEHICLE )
-						&& !target->isKindOf( KINDOF_AIRCRAFT )
-						&& !target->isKindOf( KINDOF_BOAT )
-						&& !target->isKindOf( KINDOF_CLIFF_JUMPER ) )
+				if (target->isKindOf(KINDOF_VEHICLE) && !target->isKindOf(KINDOF_AIRCRAFT) && !target->isKindOf(KINDOF_BOAT)
+						&& !target->isKindOf(KINDOF_CLIFF_JUMPER))
 				{
-					//Don't allow it to disguise as another bomb truck -- that's just plain dumb.
-					//if( target->getTemplate() != obj->getTemplate() )
+					// Don't allow it to disguise as another bomb truck -- that's just plain dumb.
+					// if( target->getTemplate() != obj->getTemplate() )
 					{
-						//Don't allow it to disguise as a train -- they don't have KINDOF_TRAIN yet, but
-						//if added, please change this code so it'll be faster!
-						static const NameKeyType key = NAMEKEY( "RailroadBehavior" );
-						RailroadBehavior *rBehavior = (RailroadBehavior*)target->findUpdateModule( key );
-						if( !rBehavior )
+						// Don't allow it to disguise as a train -- they don't have KINDOF_TRAIN yet, but
+						// if added, please change this code so it'll be faster!
+						static const NameKeyType key = NAMEKEY("RailroadBehavior");
+						RailroadBehavior *rBehavior = (RailroadBehavior *)target->findUpdateModule(key);
+						if (!rBehavior)
 						{
 							return true;
 						}
@@ -1713,25 +1710,25 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 				break;
 
 			case SPECIAL_DEFECTOR:
-				//buildings do not defect
-				if( ! target->isKindOf( KINDOF_STRUCTURE ) )
+				// buildings do not defect
+				if (!target->isKindOf(KINDOF_STRUCTURE))
 				{
 					// only attacking type things will defect (no dozers, supply trucks, workers...)
-// srj sez: I don't know why this is commented out, but it should remain thus, because
-// it is not necessarily the case that dozers, workers, etc. cannot attack; they may
-// "attack" Mines to disarm them...
-//				if ( target->isKindOf( KINDOF_CAN_ATTACK ) )
+					// srj sez: I don't know why this is commented out, but it should remain thus, because
+					// it is not necessarily the case that dozers, workers, etc. cannot attack; they may
+					// "attack" Mines to disarm them...
+					//				if ( target->isKindOf( KINDOF_CAN_ATTACK ) )
 					{
-						//neutral or same-team units are worthless defectors
-						if( r == ENEMIES )
+						// neutral or same-team units are worthless defectors
+						if (r == ENEMIES)
 						{
-							return canMakeObjectDefector( obj, target, commandSource );
+							return canMakeObjectDefector(obj, target, commandSource);
 						}
 					}
 				}
 				break;
 
-			//These special powers require locations, not objects!
+			// These special powers require locations, not objects!
 			case SPECIAL_DAISY_CUTTER:
 			case AIRF_SPECIAL_DAISY_CUTTER:
 			case SPECIAL_PARADROP_AMERICA:
@@ -1763,14 +1760,14 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 			case SPECIAL_SCUD_STORM:
 			case SPECIAL_A10_THUNDERBOLT_STRIKE:
 			case AIRF_SPECIAL_A10_THUNDERBOLT_STRIKE:
-      case SPECIAL_SPECTRE_GUNSHIP:
+			case SPECIAL_SPECTRE_GUNSHIP:
 			case AIRF_SPECIAL_SPECTRE_GUNSHIP:
 			case SPECIAL_ARTILLERY_BARRAGE:
 			case SPECIAL_FRENZY:
 			case EARLY_SPECIAL_FRENZY:
 			case SPECIAL_REPAIR_VEHICLES:
 			case EARLY_SPECIAL_REPAIR_VEHICLES:
-      case SPECIAL_GPS_SCRAMBLER:
+			case SPECIAL_GPS_SCRAMBLER:
 			case SLTH_SPECIAL_GPS_SCRAMBLER:
 			case SPECIAL_PARTICLE_UPLINK_CANNON:
 			case SPECIAL_CHANGE_BATTLE_PLANS:
@@ -1783,42 +1780,40 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 			case SPECIAL_TIMED_CHARGES:
 			case SPECIAL_HELIX_NAPALM_BOMB:
 			{
-				if( target->isEffectivelyDead() ||
-						target->isKindOf( KINDOF_BRIDGE ) ||
-						target->isKindOf( KINDOF_BRIDGE_TOWER ) )
+				if (target->isEffectivelyDead() || target->isKindOf(KINDOF_BRIDGE) || target->isKindOf(KINDOF_BRIDGE_TOWER))
 					return FALSE;
 
-				if( target->isKindOf( KINDOF_STRUCTURE ) || target->isKindOf( KINDOF_VEHICLE ) )
+				if (target->isKindOf(KINDOF_STRUCTURE) || target->isKindOf(KINDOF_VEHICLE))
 				{
-					SpecialAbilityUpdate *spUpdate = obj->findSpecialAbilityUpdate( spTemplate->getSpecialPowerType() );
-					if( spUpdate )
+					SpecialAbilityUpdate *spUpdate = obj->findSpecialAbilityUpdate(spTemplate->getSpecialPowerType());
+					if (spUpdate)
 					{
-						//Make sure we have enough equipment to place an additional charge.
-						if( spUpdate->getSpecialObjectCount() < spUpdate->getSpecialObjectMax() )
+						// Make sure we have enough equipment to place an additional charge.
+						if (spUpdate->getSpecialObjectCount() < spUpdate->getSpecialObjectMax())
 						{
-							//Also restrict the unit from placing more than one charge on the same building.
-							//We accomplish this by having the stickybomb update store the target as the producer ID.
-							if( spUpdate->findSpecialObjectWithProducerID( target ) )
+							// Also restrict the unit from placing more than one charge on the same building.
+							// We accomplish this by having the stickybomb update store the target as the producer ID.
+							if (spUpdate->findSpecialObjectWithProducerID(target))
 							{
 								return false;
 							}
 
-							//HERE'S THE TOUGH CASE...
-							//We also don't want to allow a unit that can place timed charges on a building to be able to place
-							//remote charges (or vice-versa). So we're going to look for the other special ability update and
-							//reject if the other one has it planted...
-							if( spTemplate->getSpecialPowerType() == SPECIAL_REMOTE_CHARGES )
+							// HERE'S THE TOUGH CASE...
+							// We also don't want to allow a unit that can place timed charges on a building to be able to place
+							// remote charges (or vice-versa). So we're going to look for the other special ability update and
+							// reject if the other one has it planted...
+							if (spTemplate->getSpecialPowerType() == SPECIAL_REMOTE_CHARGES)
 							{
-								spUpdate = obj->findSpecialAbilityUpdate( SPECIAL_TIMED_CHARGES );
+								spUpdate = obj->findSpecialAbilityUpdate(SPECIAL_TIMED_CHARGES);
 							}
-							else if( spTemplate->getSpecialPowerType() == SPECIAL_TIMED_CHARGES )
+							else if (spTemplate->getSpecialPowerType() == SPECIAL_TIMED_CHARGES)
 							{
-								spUpdate = obj->findSpecialAbilityUpdate( SPECIAL_REMOTE_CHARGES );
+								spUpdate = obj->findSpecialAbilityUpdate(SPECIAL_REMOTE_CHARGES);
 							}
 
-							//If we have a valid pointer at this point, we found the other special. Make sure it
-							//isn't planted on the same target.
-							if( spUpdate && spUpdate->findSpecialObjectWithProducerID( target ) )
+							// If we have a valid pointer at this point, we found the other special. Make sure it
+							// isn't planted on the same target.
+							if (spUpdate && spUpdate->findSpecialObjectWithProducerID(target))
 							{
 								return false;
 							}
@@ -1836,30 +1831,35 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool ActionManager::canDoSpecialPower( const Object *obj, const SpecialPowerTemplate *spTemplate, CommandSourceType commandSource, UnsignedInt commandOptions, Bool checkSourceRequirements )
+Bool ActionManager::canDoSpecialPower(
+		const Object *obj,
+		const SpecialPowerTemplate *spTemplate,
+		CommandSourceType commandSource,
+		UnsignedInt commandOptions,
+		Bool checkSourceRequirements)
 {
 	if (checkSourceRequirements)
 	{
-		//First check, if our object can do this special power.
-		if( !obj->hasSpecialPower( spTemplate->getSpecialPowerType() ) )
+		// First check, if our object can do this special power.
+		if (!obj->hasSpecialPower(spTemplate->getSpecialPowerType()))
 		{
 			return false;
 		}
 	}
 
-	SpecialPowerModuleInterface *mod = obj->getSpecialPowerModule( spTemplate );
-	if( mod )
+	SpecialPowerModuleInterface *mod = obj->getSpecialPowerModule(spTemplate);
+	if (mod)
 	{
 		if (checkSourceRequirements)
 		{
-			if( mod->getPercentReady() < 1.0f )
+			if (mod->getPercentReady() < 1.0f)
 			{
-				//Not fully ready
+				// Not fully ready
 				return false;
 			}
 		}
 
-		switch( spTemplate->getSpecialPowerType() )
+		switch (spTemplate->getSpecialPowerType())
 		{
 			case SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES:
 			case SPECIAL_TANKHUNTER_TNT_ATTACK:
@@ -1892,7 +1892,7 @@ Bool ActionManager::canDoSpecialPower( const Object *obj, const SpecialPowerTemp
 			case SPECIAL_SCUD_STORM:
 			case SPECIAL_A10_THUNDERBOLT_STRIKE:
 			case AIRF_SPECIAL_A10_THUNDERBOLT_STRIKE:
-      case SPECIAL_SPECTRE_GUNSHIP:
+			case SPECIAL_SPECTRE_GUNSHIP:
 			case AIRF_SPECIAL_SPECTRE_GUNSHIP:
 			case SPECIAL_ARTILLERY_BARRAGE:
 			case SPECIAL_FRENZY:
@@ -1900,16 +1900,16 @@ Bool ActionManager::canDoSpecialPower( const Object *obj, const SpecialPowerTemp
 			case SPECIAL_DISGUISE_AS_VEHICLE:
 			case SPECIAL_REPAIR_VEHICLES:
 			case EARLY_SPECIAL_REPAIR_VEHICLES:
-      case SPECIAL_GPS_SCRAMBLER:
+			case SPECIAL_GPS_SCRAMBLER:
 			case SLTH_SPECIAL_GPS_SCRAMBLER:
 			case SPECIAL_PARTICLE_UPLINK_CANNON:
 			case SPECIAL_CASH_BOUNTY:
- 			case SPECIAL_CLEANUP_AREA:
+			case SPECIAL_CLEANUP_AREA:
 			case SPECIAL_HELIX_NAPALM_BOMB:
 			case SPECIAL_SNEAK_ATTACK:
 			case SPECIAL_EMP_PULSE:
 			case SPECIAL_CASH_HACK:
-				//These all require object or location targets.
+				// These all require object or location targets.
 				return false;
 
 			case SPECIAL_REMOTE_CHARGES:
@@ -1918,7 +1918,7 @@ Bool ActionManager::canDoSpecialPower( const Object *obj, const SpecialPowerTemp
 			case SPECIAL_DETONATE_DIRTY_NUKE:
 			case SPECIAL_CHANGE_BATTLE_PLANS:
 			case SPECIAL_LAUNCH_BAIKONUR_ROCKET:
-				//Detonate's any existing charges
+				// Detonate's any existing charges
 				return true;
 		}
 	}
@@ -1926,17 +1926,22 @@ Bool ActionManager::canDoSpecialPower( const Object *obj, const SpecialPowerTemp
 }
 
 //------------------------------------------------------------------------------------------------
-Bool ActionManager::canFireWeaponAtLocation( const Object *obj, const Coord3D *loc, CommandSourceType commandSource, const WeaponSlotType slot, const Object *objectInWay )
+Bool ActionManager::canFireWeaponAtLocation(
+		const Object *obj,
+		const Coord3D *loc,
+		CommandSourceType commandSource,
+		const WeaponSlotType slot,
+		const Object *objectInWay)
 {
-	//Sanity check
-	if( obj == NULL || loc == NULL )
+	// Sanity check
+	if (obj == NULL || loc == NULL)
 	{
 		return false;
 	}
 
-	//Make sure we have the right weapon.
-	Weapon *weapon = obj->getWeaponInWeaponSlot( slot );
-	if( !weapon )
+	// Make sure we have the right weapon.
+	Weapon *weapon = obj->getWeaponInWeaponSlot(slot);
+	if (!weapon)
 	{
 		return false;
 	}
@@ -1945,25 +1950,29 @@ Bool ActionManager::canFireWeaponAtLocation( const Object *obj, const Coord3D *l
 }
 
 //------------------------------------------------------------------------------------------------
-Bool ActionManager::canFireWeaponAtObject( const Object *obj, const Object *target, CommandSourceType commandSource, const WeaponSlotType slot )
+Bool ActionManager::canFireWeaponAtObject(
+		const Object *obj,
+		const Object *target,
+		CommandSourceType commandSource,
+		const WeaponSlotType slot)
 {
-	//Sanity check
-	if( obj == NULL || target == NULL )
+	// Sanity check
+	if (obj == NULL || target == NULL)
 	{
 		return FALSE;
 	}
 
-	//Make sure we have the right weapon.
-	Weapon *weapon = obj->getWeaponInWeaponSlot( slot );
-	if( !weapon )
+	// Make sure we have the right weapon.
+	Weapon *weapon = obj->getWeaponInWeaponSlot(slot);
+	if (!weapon)
 	{
 		return FALSE;
 	}
 
 	Bool sniper = FALSE;
-	if( weapon->getDamageType() == DAMAGE_KILLPILOT )
+	if (weapon->getDamageType() == DAMAGE_KILLPILOT)
 	{
-		if( !canSnipeVehicle( obj, target, commandSource ) )
+		if (!canSnipeVehicle(obj, target, commandSource))
 		{
 			return FALSE;
 		}
@@ -1971,40 +1980,39 @@ Bool ActionManager::canFireWeaponAtObject( const Object *obj, const Object *targ
 	}
 
 	CanAttackResult result;
-	if( sniper )
-		result = obj->getAbleToAttackSpecificObject( ATTACK_NEW_TARGET, target, commandSource, slot );
+	if (sniper)
+		result = obj->getAbleToAttackSpecificObject(ATTACK_NEW_TARGET, target, commandSource, slot);
 	else
-		result = obj->getAbleToAttackSpecificObject( ATTACK_NEW_TARGET, target, commandSource );
+		result = obj->getAbleToAttackSpecificObject(ATTACK_NEW_TARGET, target, commandSource);
 
-	if( result == ATTACKRESULT_POSSIBLE || result == ATTACKRESULT_POSSIBLE_AFTER_MOVING )
+	if (result == ATTACKRESULT_POSSIBLE || result == ATTACKRESULT_POSSIBLE_AFTER_MOVING)
 	{
-		return weapon->estimateWeaponDamage( obj, target ) != 0.0f;
+		return weapon->estimateWeaponDamage(obj, target) != 0.0f;
 	}
 	return FALSE;
 }
 
 //------------------------------------------------------------------------------------------------
-Bool ActionManager::canFireWeapon( const Object *obj, const WeaponSlotType slot, CommandSourceType commandSource )
+Bool ActionManager::canFireWeapon(const Object *obj, const WeaponSlotType slot, CommandSourceType commandSource)
 {
-	//Sanity check
-	if( obj == NULL )
+	// Sanity check
+	if (obj == NULL)
 	{
 		return false;
 	}
 
-	//Make sure we have the right weapon.
-	Weapon *weapon = obj->getWeaponInWeaponSlot( slot );
-	if( !weapon )
+	// Make sure we have the right weapon.
+	Weapon *weapon = obj->getWeaponInWeaponSlot(slot);
+	if (!weapon)
 	{
 		return false;
 	}
 
 	return true;
-
 }
 
 //------------------------------------------------------------------------------------------------
-Bool ActionManager::canGarrison( const Object *obj, const Object *target, CommandSourceType commandSource )
+Bool ActionManager::canGarrison(const Object *obj, const Object *target, CommandSourceType commandSource)
 {
 	if (!(obj && target))
 		return false;
@@ -2042,12 +2050,13 @@ Bool ActionManager::canGarrison( const Object *obj, const Object *target, Comman
 }
 
 //------------------------------------------------------------------------------------------------
-Bool ActionManager::canPlayerGarrison( const Player *player, const Object *target, CommandSourceType commandSource )
+Bool ActionManager::canPlayerGarrison(const Player *player, const Object *target, CommandSourceType commandSource)
 {
 	if (!(player && target))
 		return false;
 
-	if (target->isEffectivelyDead()) {
+	if (target->isEffectivelyDead())
+	{
 		return false;
 	}
 
@@ -2076,13 +2085,18 @@ Bool ActionManager::canPlayerGarrison( const Player *player, const Object *targe
 }
 
 //------------------------------------------------------------------------------------------------
-Bool ActionManager::canOverrideSpecialPowerDestination( const Object *obj, const Coord3D *loc, SpecialPowerType spType, CommandSourceType commandSource )
+Bool ActionManager::canOverrideSpecialPowerDestination(
+		const Object *obj,
+		const Coord3D *loc,
+		SpecialPowerType spType,
+		CommandSourceType commandSource)
 {
-	SpecialPowerUpdateInterface* spuInterface = obj->findSpecialPowerWithOverridableDestinationActive( spType );
-	if( spuInterface )
+	SpecialPowerUpdateInterface *spuInterface = obj->findSpecialPowerWithOverridableDestinationActive(spType);
+	if (spuInterface)
 	{
-		//But so long as it's not in the black areas of the map.
-		return ThePartitionManager->getShroudStatusForPlayer( obj->getControllingPlayer()->getPlayerIndex(), loc ) != CELLSHROUD_SHROUDED;
+		// But so long as it's not in the black areas of the map.
+		return ThePartitionManager->getShroudStatusForPlayer(obj->getControllingPlayer()->getPlayerIndex(), loc)
+				!= CELLSHROUD_SHROUDED;
 	}
 	return false;
 }

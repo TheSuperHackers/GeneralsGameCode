@@ -43,80 +43,68 @@
 
 class Overridable : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( Overridable, "Overridable"  )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Overridable, "Overridable")
 
-	private:
-		Overridable *m_nextOverride;
-		Bool m_isOverride;
+private:
+	Overridable *m_nextOverride;
+	Bool m_isOverride;
 
-	public:
-		Overridable() : m_nextOverride(NULL), m_isOverride(false) {}
+public:
+	Overridable() : m_nextOverride(NULL), m_isOverride(false) {}
 
-		// return a constant version of m_nextOverride, which can be NULL if there is no
-		// override
-		const Overridable *getNextOverride( void ) const
+	// return a constant version of m_nextOverride, which can be NULL if there is no
+	// override
+	const Overridable *getNextOverride(void) const { return m_nextOverride; }
+
+	// recursively ask if there is a next override, and if not, return this.
+	const Overridable *getFinalOverride(void) const
+	{
+		if (m_nextOverride)
+			return m_nextOverride->getFinalOverride();
+		return this;
+	}
+
+	// set the next override on this object. This currently makes no attempt to prevent leaks.
+	// it probably shouldn't because doing so could cause infinite loops
+	void setNextOverride(Overridable *nextOverridable) { m_nextOverride = nextOverridable; }
+
+	// useful for the LocomotorStore to cleanup overrides.
+	Overridable *friend_getNextOverride(void) { return m_nextOverride; }
+
+	// useful for the LocomotorStore to create an override dangling off the final override.
+	Overridable *friend_getFinalOverride(void)
+	{
+		if (m_nextOverride)
+			return m_nextOverride->friend_getFinalOverride();
+		return this;
+	}
+
+	// useful for the LocomotorStore to create an override dangling off the final override.
+	const Overridable *friend_getFinalOverride(void) const
+	{
+		if (m_nextOverride)
+			return m_nextOverride->friend_getFinalOverride();
+		return this;
+	}
+
+	// used by ini-parsing functions to mark specific Overridables as overrides
+	void markAsOverride(void) { m_isOverride = true; }
+
+	// used in factory reset() calls at the end of a game to clean up overrides.  Can return NULL
+	// if the first Overridable is itself an override
+	Overridable *deleteOverrides(void)
+	{
+		if (m_isOverride)
 		{
-			return m_nextOverride;
+			deleteInstance(this);
+			return NULL;
 		}
-
-		// recursively ask if there is a next override, and if not, return this.
-		const Overridable *getFinalOverride( void ) const
+		else if (m_nextOverride)
 		{
-			if (m_nextOverride)
-				return m_nextOverride->getFinalOverride();
-			return this;
+			m_nextOverride = m_nextOverride->deleteOverrides();
 		}
-
-		// set the next override on this object. This currently makes no attempt to prevent leaks.
-		// it probably shouldn't because doing so could cause infinite loops
-		void setNextOverride(Overridable *nextOverridable)
-		{
-			m_nextOverride = nextOverridable;
-		}
-
-		// useful for the LocomotorStore to cleanup overrides.
-		Overridable *friend_getNextOverride( void )
-		{
-			return m_nextOverride;
-		}
-
-		// useful for the LocomotorStore to create an override dangling off the final override.
-		Overridable *friend_getFinalOverride( void )
-		{
-			if (m_nextOverride)
-				return m_nextOverride->friend_getFinalOverride();
-			return this;
-		}
-
-		// useful for the LocomotorStore to create an override dangling off the final override.
-		const Overridable *friend_getFinalOverride( void ) const
-		{
-			if (m_nextOverride)
-				return m_nextOverride->friend_getFinalOverride();
-			return this;
-		}
-
-		// used by ini-parsing functions to mark specific Overridables as overrides
-		void markAsOverride( void )
-		{
-			m_isOverride = true;
-		}
-
-		// used in factory reset() calls at the end of a game to clean up overrides.  Can return NULL
-		// if the first Overridable is itself an override
-		Overridable *deleteOverrides( void )
-		{
-			if ( m_isOverride )
-			{
-				deleteInstance(this);
-				return NULL;
-			}
-			else if ( m_nextOverride )
-			{
-				m_nextOverride = m_nextOverride->deleteOverrides();
-			}
-			return this;
-		}
+		return this;
+	}
 };
 
 // cleans up and dangling overrides.
@@ -125,6 +113,5 @@ __inline Overridable::~Overridable()
 	if (m_nextOverride)
 		deleteInstance(m_nextOverride);
 }
-
 
 #endif /* _OVERRIDABLE_H_ */

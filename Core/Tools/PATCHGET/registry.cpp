@@ -30,7 +30,7 @@
 namespace patchget
 {
 
-bool  getStringFromRegistry(HKEY root, std::string path, std::string key, std::string& val)
+bool getStringFromRegistry(HKEY root, std::string path, std::string key, std::string &val)
 {
 	HKEY handle;
 	unsigned char buffer[256];
@@ -38,10 +38,10 @@ bool  getStringFromRegistry(HKEY root, std::string path, std::string key, std::s
 	unsigned long type;
 	int returnValue;
 
-	if ((returnValue = RegOpenKeyEx( root, path.c_str(), 0, KEY_ALL_ACCESS, &handle )) == ERROR_SUCCESS)
+	if ((returnValue = RegOpenKeyEx(root, path.c_str(), 0, KEY_ALL_ACCESS, &handle)) == ERROR_SUCCESS)
 	{
-		returnValue = RegQueryValueEx(handle, key.c_str(), NULL, &type, (unsigned char *) &buffer, &size);
-		RegCloseKey( handle );
+		returnValue = RegQueryValueEx(handle, key.c_str(), NULL, &type, (unsigned char *)&buffer, &size);
+		RegCloseKey(handle);
 	}
 
 	if (returnValue == ERROR_SUCCESS)
@@ -53,7 +53,7 @@ bool  getStringFromRegistry(HKEY root, std::string path, std::string key, std::s
 	return false;
 }
 
-bool getUnsignedIntFromRegistry(HKEY root, std::string path, std::string key, unsigned int& val)
+bool getUnsignedIntFromRegistry(HKEY root, std::string path, std::string key, unsigned int &val)
 {
 	HKEY handle;
 	unsigned long buffer;
@@ -61,10 +61,10 @@ bool getUnsignedIntFromRegistry(HKEY root, std::string path, std::string key, un
 	unsigned long type;
 	int returnValue;
 
-	if ((returnValue = RegOpenKeyEx( root, path.c_str(), 0, KEY_ALL_ACCESS, &handle )) == ERROR_SUCCESS)
+	if ((returnValue = RegOpenKeyEx(root, path.c_str(), 0, KEY_ALL_ACCESS, &handle)) == ERROR_SUCCESS)
 	{
-		returnValue = RegQueryValueEx(handle, key.c_str(), NULL, &type, (unsigned char *) &buffer, &size);
-		RegCloseKey( handle );
+		returnValue = RegQueryValueEx(handle, key.c_str(), NULL, &type, (unsigned char *)&buffer, &size);
+		RegCloseKey(handle);
 	}
 
 	if (returnValue == ERROR_SUCCESS)
@@ -76,7 +76,7 @@ bool getUnsignedIntFromRegistry(HKEY root, std::string path, std::string key, un
 	return false;
 }
 
-bool setStringInRegistry( HKEY root, std::string path, std::string key, std::string val)
+bool setStringInRegistry(HKEY root, std::string path, std::string key, std::string val)
 {
 	HKEY handle;
 	unsigned long type;
@@ -84,18 +84,20 @@ bool setStringInRegistry( HKEY root, std::string path, std::string key, std::str
 	int size;
 	char lpClass[] = "REG_NONE";
 
-	if ((returnValue = RegCreateKeyEx( root, path.c_str(), 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &handle, NULL )) == ERROR_SUCCESS)
+	if ((returnValue =
+					 RegCreateKeyEx(root, path.c_str(), 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &handle, NULL))
+			== ERROR_SUCCESS)
 	{
 		type = REG_SZ;
-		size = val.length()+1;
+		size = val.length() + 1;
 		returnValue = RegSetValueEx(handle, key.c_str(), 0, type, (unsigned char *)val.c_str(), size);
-		RegCloseKey( handle );
+		RegCloseKey(handle);
 	}
 
 	return (returnValue == ERROR_SUCCESS);
 }
 
-bool setUnsignedIntInRegistry( HKEY root, std::string path, std::string key, unsigned int val)
+bool setUnsignedIntInRegistry(HKEY root, std::string path, std::string key, unsigned int val)
 {
 	HKEY handle;
 	unsigned long type;
@@ -103,18 +105,20 @@ bool setUnsignedIntInRegistry( HKEY root, std::string path, std::string key, uns
 	int size;
 	char lpClass[] = "REG_NONE";
 
-	if ((returnValue = RegCreateKeyEx( root, path.c_str(), 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &handle, NULL )) == ERROR_SUCCESS)
+	if ((returnValue =
+					 RegCreateKeyEx(root, path.c_str(), 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &handle, NULL))
+			== ERROR_SUCCESS)
 	{
 		type = REG_DWORD;
 		size = 4;
 		returnValue = RegSetValueEx(handle, key.c_str(), 0, type, (unsigned char *)&val, size);
-		RegCloseKey( handle );
+		RegCloseKey(handle);
 	}
 
 	return (returnValue == ERROR_SUCCESS);
 }
 
-bool GetStringFromRegistry(std::string path, std::string key, std::string& val)
+bool GetStringFromRegistry(std::string path, std::string key, std::string &val)
 {
 	std::string fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Generals";
 
@@ -127,7 +131,7 @@ bool GetStringFromRegistry(std::string path, std::string key, std::string& val)
 	return getStringFromRegistry(HKEY_CURRENT_USER, fullPath.c_str(), key.c_str(), val);
 }
 
-bool GetUnsignedIntFromRegistry(std::string path, std::string key, unsigned int& val)
+bool GetUnsignedIntFromRegistry(std::string path, std::string key, unsigned int &val)
 {
 	std::string fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Generals";
 

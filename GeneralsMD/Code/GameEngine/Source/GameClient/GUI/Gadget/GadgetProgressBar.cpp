@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Language.h"
@@ -69,50 +69,48 @@
 // GadgetProgressBarSystem ====================================================
 /** Handle system messages for Progress Bar */
 //=============================================================================
-WindowMsgHandledType GadgetProgressBarSystem( GameWindow *window, UnsignedInt msg,
-									            WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GadgetProgressBarSystem(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-
-  switch( msg )
+	switch (msg)
 	{
 		// ------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
-			window->winSetUserData( NULL );
+			window->winSetUserData(NULL);
 			break;
 		}
 
 		// ------------------------------------------------------------------------
-    case GPM_SET_PROGRESS:
-    {
-      Int newPos = (Int)mData1;
+		case GPM_SET_PROGRESS:
+		{
+			Int newPos = (Int)mData1;
 
-      if (newPos < 0 || newPos > 100)
-        break;
+			if (newPos < 0 || newPos > 100)
+				break;
 
-      window->winSetUserData( (void *)newPos );
+			window->winSetUserData((void *)newPos);
 
 			break;
 
-    }  // end set progress
+		} // end set progress
 
 		// ------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	} // end switch
 
 	return MSG_HANDLED;
 
-}  // end GadgetProgressBarSystem
+} // end GadgetProgressBarSystem
 
 // GadgetProgressBarSetProgress ===============================================
 /** send progress system message to Progress Bar */
 //=============================================================================
-void GadgetProgressBarSetProgress( GameWindow *g, Int progress )
+void GadgetProgressBarSetProgress(GameWindow *g, Int progress)
 {
-	if(!g)
+	if (!g)
 		return;
 
-	TheWindowManager->winSendSystemMsg( g, GPM_SET_PROGRESS, progress, 0);
+	TheWindowManager->winSendSystemMsg(g, GPM_SET_PROGRESS, progress, 0);
 } // end GadgetProgressBarSetProgress

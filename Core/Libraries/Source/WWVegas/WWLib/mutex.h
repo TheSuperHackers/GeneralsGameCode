@@ -41,7 +41,7 @@
 
 class MutexClass
 {
-	void* handle;
+	void *handle;
 	unsigned locked;
 
 	// Lock and unlock are private so that you can't use them directly. Use LockClass as a sentry instead!
@@ -51,28 +51,30 @@ class MutexClass
 
 public:
 	// Name can (and usually should) be NULL. Use name only if you wish to create a globally unique mutex
-	MutexClass(const char* name = NULL);
+	MutexClass(const char *name = NULL);
 	~MutexClass();
 
-	enum {
-		WAIT_INFINITE=-1
+	enum
+	{
+		WAIT_INFINITE = -1
 	};
 
 	class LockClass
 	{
-		MutexClass& mutex;
+		MutexClass &mutex;
 		bool failed;
-	public:
 
+	public:
 		// In order to lock a mutex create a local instance of LockClass with mutex as a parameter.
 		// Time is in milliseconds, INFINITE means infinite wait.
-		LockClass(MutexClass& m, int time=MutexClass::WAIT_INFINITE);
+		LockClass(MutexClass &m, int time = MutexClass::WAIT_INFINITE);
 		~LockClass();
 
 		// Returns true if the lock failed
 		bool Failed() { return failed; }
+
 	private:
-		LockClass &operator=(const LockClass&) { return(*this); }
+		LockClass &operator=(const LockClass &) { return (*this); }
 	};
 	friend class LockClass;
 };
@@ -86,7 +88,7 @@ public:
 
 class CriticalSectionClass
 {
-	void* handle;
+	void *handle;
 	unsigned locked;
 
 	// Lock and unlock are private so that you can't use them directly. Use LockClass as a sentry instead!
@@ -100,13 +102,15 @@ public:
 
 	class LockClass
 	{
-		CriticalSectionClass& CriticalSection;
+		CriticalSectionClass &CriticalSection;
+
 	public:
 		// In order to lock a mutex create a local instance of LockClass with mutex as a parameter.
-		LockClass(CriticalSectionClass& c);
+		LockClass(CriticalSectionClass &c);
 		~LockClass();
+
 	private:
-		LockClass &operator=(const LockClass&) { return(*this); }
+		LockClass &operator=(const LockClass &) { return (*this); }
 	};
 	friend class LockClass;
 };
@@ -131,79 +135,74 @@ public:
 	// Name can (and usually should) be NULL. Use name only if you wish to create a globally unique mutex
 	FastCriticalSectionClass()
 #if defined(_MSC_VER) && _MSC_VER < 1300
-		: Flag(0)
+			:
+			Flag(0)
 #endif
-	{}
+	{
+	}
 
 	class LockClass
 	{
-		FastCriticalSectionClass& cs;
-	public:
-		__forceinline LockClass(FastCriticalSectionClass& critical_section) : cs(critical_section)
-		{
-			lock();
-		}
+		FastCriticalSectionClass &cs;
 
-		~LockClass()
-		{
-			unlock();
-		}
+	public:
+		__forceinline LockClass(FastCriticalSectionClass &critical_section) : cs(critical_section) { lock(); }
+
+		~LockClass() { unlock(); }
 
 	private:
-
-    void lock() {
+		void lock()
+		{
 #if defined(_MSC_VER) && _MSC_VER < 1300
-		  volatile unsigned& nFlag=cs.Flag;
+			volatile unsigned &nFlag = cs.Flag;
 
-		  #define ts_lock _emit 0xF0
-		  assert(((unsigned)&nFlag % 4) == 0);
+#define ts_lock _emit 0xF0
+			assert(((unsigned)&nFlag % 4) == 0);
 
-      // I'm terribly sorry for these emits in here but
-      // VC won't inline any functions that have labels in them...
+			// I'm terribly sorry for these emits in here but
+			// VC won't inline any functions that have labels in them...
 
-      // Had to remove the emits back to normal
-      // ASM statements because sometimes the jump
-      // would be 1 byte off....
+			// Had to remove the emits back to normal
+			// ASM statements because sometimes the jump
+			// would be 1 byte off....
 
-		  __asm mov ebx, [nFlag]
-		  __asm ts_lock
-		  __asm bts dword ptr [ebx], 0
-		  __asm jnc BitSet
-      //__asm _emit 0x73
-      //__asm _emit 0x0f
+			__asm mov ebx, [nFlag] __asm ts_lock __asm bts dword ptr[ebx],
+					0 __asm jnc BitSet
+							//__asm _emit 0x73
+							//__asm _emit 0x0f
 
-		  The_Bit_Was_Previously_Set_So_Try_Again:
-		    ThreadClass::Switch_Thread();
-		  __asm mov ebx, [nFlag]
-		  __asm ts_lock
-		  __asm bts dword ptr [ebx], 0
-		  __asm jc  The_Bit_Was_Previously_Set_So_Try_Again
-      //_asm _emit 0x72
-      //_asm _emit 0xf1
+							The_Bit_Was_Previously_Set_So_Try_Again
+					: ThreadClass::Switch_Thread();
+			__asm mov ebx, [nFlag] __asm ts_lock __asm bts dword ptr[ebx],
+					0 __asm jc The_Bit_Was_Previously_Set_So_Try_Again
+							//_asm _emit 0x72
+							//_asm _emit 0xf1
 
-      BitSet:
-        ;
+							BitSet
+					:;
 #else
-        while (cs.Flag.test_and_set(std::memory_order_acq_rel)) {
-            cs.Flag.wait(true, std::memory_order_relaxed);
-        }
+			while (cs.Flag.test_and_set(std::memory_order_acq_rel))
+			{
+				cs.Flag.wait(true, std::memory_order_relaxed);
+			}
 #endif
-    }
+		}
 
-    void unlock() {
+		void unlock()
+		{
 #if defined(_MSC_VER) && _MSC_VER < 1300
-      cs.Flag=0;
+			cs.Flag = 0;
 #else
-      cs.Flag.clear(std::memory_order_release);
-      cs.Flag.notify_one();
+			cs.Flag.clear(std::memory_order_release);
+			cs.Flag.notify_one();
 #endif
-    }
+		}
 
-		LockClass &operator=(const LockClass&);
-    LockClass(const LockClass&);
+		LockClass &operator=(const LockClass &);
+		LockClass(const LockClass &);
 	};
 
-  friend class LockClass;
+	friend class LockClass;
 };
 
 #endif

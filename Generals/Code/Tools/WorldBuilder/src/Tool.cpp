@@ -39,15 +39,14 @@ Tool::Tool(Int toolID, Int cursorID)
 	m_cursor = NULL;
 }
 
-
 /// Destructor
 Tool::~Tool(void)
 {
-	if (m_cursor) {
+	if (m_cursor)
+	{
 		::DestroyCursor(m_cursor);
 	}
 }
-
 
 /// Shows the "no options"  options panel.
 void Tool::activate()
@@ -56,13 +55,13 @@ void Tool::activate()
 	DrawObject::setDoBrushFeedback(false);
 }
 
-
 void Tool::setCursor(void)
 {
-		if (m_cursor == NULL) {
-			m_cursor = AfxGetApp()->LoadCursor(MAKEINTRESOURCE(m_cursorID));
-		}
-		::SetCursor(m_cursor);
+	if (m_cursor == NULL)
+	{
+		m_cursor = AfxGetApp()->LoadCursor(MAKEINTRESOURCE(m_cursorID));
+	}
+	::SetCursor(m_cursor);
 }
 
 /// Calculate the round blend factor.
@@ -71,27 +70,31 @@ height, 0.0 means no change, and between blends proportionally. */
 Real Tool::calcRoundBlendFactor(CPoint center, Int x, Int y, Int brushWidth, Int featherWidth)
 {
 	Real offset = 0;
-	if (brushWidth&1) offset = 0.5;
-	const Real CLOSE_ENOUGH = 0.05f;	 // We are working on an integer grid.
+	if (brushWidth & 1)
+		offset = 0.5;
+	const Real CLOSE_ENOUGH = 0.05f; // We are working on an integer grid.
 
-	Real dx = abs(center.x+offset-x);
-	Real dy = abs(center.y+offset-y);
+	Real dx = abs(center.x + offset - x);
+	Real dy = abs(center.y + offset - y);
 
-	Real dist = (Real)sqrt(dx*dx+dy*dy);
+	Real dist = (Real)sqrt(dx * dx + dy * dy);
 
-	if (dist <= (brushWidth/2.0f)+CLOSE_ENOUGH) return (1.0f);
+	if (dist <= (brushWidth / 2.0f) + CLOSE_ENOUGH)
+		return (1.0f);
 
-	dist -= (brushWidth/2.0f);
+	dist -= (brushWidth / 2.0f);
 
-	if (featherWidth < 1) {
-		return(0);
+	if (featherWidth < 1)
+	{
+		return (0);
 	}
 
-	if (dist <= featherWidth) {
-		return (featherWidth-dist)/featherWidth;
+	if (dist <= featherWidth)
+	{
+		return (featherWidth - dist) / featherWidth;
 	}
 
-	return(0);
+	return (0);
 }
 
 /// Calculate the square blend factor.
@@ -100,27 +103,32 @@ height, 0.0 means no change, and between blends proportionally. */
 Real Tool::calcSquareBlendFactor(CPoint center, Int x, Int y, Int brushWidth, Int featherWidth)
 {
 	Real offset = 0;
-	if (brushWidth&1) offset = 0.5;
+	if (brushWidth & 1)
+		offset = 0.5;
 
-	Real dx = abs(center.x+offset-x);
-	Real dy = abs(center.y+offset-y);
+	Real dx = abs(center.x + offset - x);
+	Real dy = abs(center.y + offset - y);
 
 	Real dist = dx;
-	if (dy>dist) dist = dy;
+	if (dy > dist)
+		dist = dy;
 
-	if (dist <= (brushWidth/2.0f)) return (1.0f);
+	if (dist <= (brushWidth / 2.0f))
+		return (1.0f);
 
-	dist -= (brushWidth/2.0f);
+	dist -= (brushWidth / 2.0f);
 
-	if (featherWidth < 1) {
-		return(0);
+	if (featherWidth < 1)
+	{
+		return (0);
 	}
 
-	if (dist <= featherWidth) {
-		return (featherWidth-dist)/featherWidth;
+	if (dist <= featherWidth)
+	{
+		return (featherWidth - dist) / featherWidth;
 	}
 
-	return(0);
+	return (0);
 }
 
 /// Gets the cell index for the center of the brush.
@@ -129,21 +137,28 @@ void Tool::getCenterIndex(Coord3D *docLocP, Int brushWidth, CPoint *center, CWor
 {
 	Coord3D cpt = *docLocP;
 	// center on half pixel for even widths.
-	if (!(brushWidth&1)) {
-		cpt.x += MAP_XY_FACTOR/2;
-		cpt.y += MAP_XY_FACTOR/2;
+	if (!(brushWidth & 1))
+	{
+		cpt.x += MAP_XY_FACTOR / 2;
+		cpt.y += MAP_XY_FACTOR / 2;
 	}
-	if (!pDoc->getCellIndexFromCoord(cpt, center)) {
+	if (!pDoc->getCellIndexFromCoord(cpt, center))
+	{
 		return;
 	}
 }
 
-void Tool::getAllIndexesIn(const Coord3D *bl, const Coord3D *br,
-													 const Coord3D *tl, const Coord3D *tr,
-													 Int widthOutside, CWorldBuilderDoc *pDoc,
-													 VecHeightMapIndexes* allIndices)
+void Tool::getAllIndexesIn(
+		const Coord3D *bl,
+		const Coord3D *br,
+		const Coord3D *tl,
+		const Coord3D *tr,
+		Int widthOutside,
+		CWorldBuilderDoc *pDoc,
+		VecHeightMapIndexes *allIndices)
 {
-	if (!(bl && br && tl && tr && pDoc && allIndices)) {
+	if (!(bl && br && tl && tr && pDoc && allIndices))
+	{
 		return;
 	}
 

@@ -39,37 +39,40 @@ class EmitterPhysicsPropPageClass : public CPropertyPage
 {
 	DECLARE_DYNCREATE(EmitterPhysicsPropPageClass)
 
-// Construction
+	// Construction
 public:
-	EmitterPhysicsPropPageClass (EmitterInstanceListClass *pemitter_list = NULL);
-	~EmitterPhysicsPropPageClass ();
+	EmitterPhysicsPropPageClass(EmitterInstanceListClass *pemitter_list = NULL);
+	~EmitterPhysicsPropPageClass();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(EmitterPhysicsPropPageClass)
-	enum { IDD = IDD_PROP_PAGE_EMITTER_PHYSICS };
-	CSpinButtonCtrl	m_OutSpin;
-	CSpinButtonCtrl	m_InheritanceSpin;
-	CSpinButtonCtrl	m_VelocityZSpin;
-	CSpinButtonCtrl	m_VelocityYSpin;
-	CSpinButtonCtrl	m_VelocityXSpin;
-	CSpinButtonCtrl	m_AccelZSpin;
-	CSpinButtonCtrl	m_AccelYSpin;
-	CSpinButtonCtrl	m_AccelXSpin;
+	enum
+	{
+		IDD = IDD_PROP_PAGE_EMITTER_PHYSICS
+	};
+	CSpinButtonCtrl m_OutSpin;
+	CSpinButtonCtrl m_InheritanceSpin;
+	CSpinButtonCtrl m_VelocityZSpin;
+	CSpinButtonCtrl m_VelocityYSpin;
+	CSpinButtonCtrl m_VelocityXSpin;
+	CSpinButtonCtrl m_AccelZSpin;
+	CSpinButtonCtrl m_AccelYSpin;
+	CSpinButtonCtrl m_AccelXSpin;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(EmitterPhysicsPropPageClass)
-	public:
+public:
 	virtual BOOL OnApply();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(EmitterPhysicsPropPageClass)
@@ -78,49 +81,50 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	public:
+public:
+	/////////////////////////////////////////////////////////
+	//
+	//	Public methods
+	//
 
-		/////////////////////////////////////////////////////////
-		//
-		//	Public methods
-		//
+	//
+	//	Inline accessors
+	//
+	EmitterInstanceListClass *Get_Emitter(void) const { return m_pEmitterList; }
+	void Set_Emitter(EmitterInstanceListClass *pemitter_list)
+	{
+		m_pEmitterList = pemitter_list;
+		Initialize();
+	}
+	bool Is_Data_Valid(void) const { return m_bValid; }
 
-		//
-		//	Inline accessors
-		//
-		EmitterInstanceListClass *	Get_Emitter (void) const { return m_pEmitterList; }
-		void								Set_Emitter (EmitterInstanceListClass *pemitter_list) { m_pEmitterList = pemitter_list; Initialize (); }
-		bool								Is_Data_Valid (void) const { return m_bValid; }
+	Vector3Randomizer *Get_Velocity_Random(void) const { return m_Randomizer; }
+	const Vector3 &Get_Velocity(void) const { return m_Velocity; }
+	const Vector3 &Get_Acceleration(void) const { return m_Acceleration; }
+	float Get_Out_Factor(void) const { return m_OutFactor; }
+	float Get_Inheritance_Factor(void) const { return m_InheritanceFactor; }
 
-		Vector3Randomizer *			Get_Velocity_Random (void) const	{ return m_Randomizer; }
-		const Vector3 &				Get_Velocity (void) const			{ return m_Velocity; }
-		const Vector3 &				Get_Acceleration (void) const		{ return m_Acceleration; }
-		float								Get_Out_Factor (void) const		{ return m_OutFactor; }
-		float								Get_Inheritance_Factor (void) const	{ return m_InheritanceFactor; }
+protected:
+	/////////////////////////////////////////////////////////
+	//
+	//	Protected methods
+	//
+	void Initialize(void);
+	void On_Setting_Changed(UINT ctrl_id);
 
-	protected:
+private:
+	/////////////////////////////////////////////////////////
+	//
+	//	Private member data
+	//
+	EmitterInstanceListClass *m_pEmitterList;
+	bool m_bValid;
 
-		/////////////////////////////////////////////////////////
-		//
-		//	Protected methods
-		//
-		void								Initialize (void);
-		void								On_Setting_Changed (UINT ctrl_id);
-
-	private:
-
-		/////////////////////////////////////////////////////////
-		//
-		//	Private member data
-		//
-		EmitterInstanceListClass *	m_pEmitterList;
-		bool								m_bValid;
-
-		Vector3							m_Velocity;
-		Vector3							m_Acceleration;
-		float								m_OutFactor;
-		float								m_InheritanceFactor;
-		Vector3Randomizer *			m_Randomizer;
+	Vector3 m_Velocity;
+	Vector3 m_Acceleration;
+	float m_OutFactor;
+	float m_InheritanceFactor;
+	Vector3Randomizer *m_Randomizer;
 };
 
 //{{AFX_INSERT_LOCATION}}

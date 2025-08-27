@@ -60,98 +60,141 @@
 #include "wwmath.h"
 #include <math.h>
 
-
 /*
 ** 2-Dimensional Vectors
 */
 
 class Vector2
 {
-
 public:
-
-	union {
-		float	X;
+	union
+	{
+		float X;
 		float U;
 	};
 
-	union {
-		float	Y;
+	union
+	{
+		float Y;
 		float V;
 	};
 
 	// Constructors
 	Vector2(void) {};
-	Vector2(const Vector2 & v) { X = v.X; Y = v.Y; }
-	Vector2(float x, float y) { X = x; Y = y; }
-	Vector2(const float vector[2]) { X = vector[0]; Y = vector[1]; }
-
+	Vector2(const Vector2 &v)
+	{
+		X = v.X;
+		Y = v.Y;
+	}
+	Vector2(float x, float y)
+	{
+		X = x;
+		Y = y;
+	}
+	Vector2(const float vector[2])
+	{
+		X = vector[0];
+		Y = vector[1];
+	}
 
 	// Assignment
-	Vector2 & operator = (const Vector2 & v) { X = v[0]; Y = v[1]; return *this; }
-	void	Set(float x, float y) { X = x; Y = y; }
-	void	Set(const Vector2 & v) { X = v.X; Y = v.Y; }
+	Vector2 &operator=(const Vector2 &v)
+	{
+		X = v[0];
+		Y = v[1];
+		return *this;
+	}
+	void Set(float x, float y)
+	{
+		X = x;
+		Y = y;
+	}
+	void Set(const Vector2 &v)
+	{
+		X = v.X;
+		Y = v.Y;
+	}
 
 	// Array access
-	float &	operator [](int i) { return (&X)[i]; }
-	const float &  operator [](int i) const { return (&X)[i]; }
+	float &operator[](int i) { return (&X)[i]; }
+	const float &operator[](int i) const { return (&X)[i]; }
 
 	// normalize, compute length
-	void	Normalize(void);
-	float	Length(void) const;
-	float	Length2(void) const;
+	void Normalize(void);
+	float Length(void) const;
+	float Length2(void) const;
 
 	// unary operators
-	Vector2 operator-() const { return Vector2(-X,-Y); }
+	Vector2 operator-() const { return Vector2(-X, -Y); }
 	Vector2 operator+() const { return *this; }
 
-	Vector2 & operator += (const Vector2 & v) { X += v.X; Y += v.Y; return *this; }
-	Vector2 & operator -= (const Vector2 & v) { X -= v.X; Y -= v.Y; return *this; }
-	Vector2 & operator *= (float k) { X = (float)(X*k); Y=(float)(Y*k); return *this; }
-	Vector2 & operator /= (float k) { k=1.0f/k; X*=k; Y*=k; return *this; }
+	Vector2 &operator+=(const Vector2 &v)
+	{
+		X += v.X;
+		Y += v.Y;
+		return *this;
+	}
+	Vector2 &operator-=(const Vector2 &v)
+	{
+		X -= v.X;
+		Y -= v.Y;
+		return *this;
+	}
+	Vector2 &operator*=(float k)
+	{
+		X = (float)(X * k);
+		Y = (float)(Y * k);
+		return *this;
+	}
+	Vector2 &operator/=(float k)
+	{
+		k = 1.0f / k;
+		X *= k;
+		Y *= k;
+		return *this;
+	}
 
 	// scalar multiplication, division
-	friend Vector2 operator * (const Vector2 &a,float k);
-	friend Vector2 operator * (float k,const Vector2 &a);
- 	friend Vector2 operator / (const Vector2 &a,float k);
+	friend Vector2 operator*(const Vector2 &a, float k);
+	friend Vector2 operator*(float k, const Vector2 &a);
+	friend Vector2 operator/(const Vector2 &a, float k);
 
 	// vector addition,subtraction
-	friend Vector2 operator + (const Vector2 &a,const Vector2 &b);
-	friend Vector2 operator - (const Vector2 &a,const Vector2 &b);
+	friend Vector2 operator+(const Vector2 &a, const Vector2 &b);
+	friend Vector2 operator-(const Vector2 &a, const Vector2 &b);
 
 	// dot product / inner product
-	friend float operator * (const Vector2 &a,const Vector2 &b);
-	static float Dot_Product(const Vector2 &a,const Vector2 &b);
+	friend float operator*(const Vector2 &a, const Vector2 &b);
+	static float Dot_Product(const Vector2 &a, const Vector2 &b);
 
 	// dot product between a and perpendicular vector to b
-	static float Perp_Dot_Product(const Vector2 &a,const Vector2 &b);
+	static float Perp_Dot_Product(const Vector2 &a, const Vector2 &b);
 
 	// Equality operators
-	friend bool operator == (const Vector2 &a,const Vector2 &b);
-	friend bool operator != (const Vector2 &a,const Vector2 &b);
-   friend bool Equal_Within_Epsilon(const Vector2 &a,const Vector2 &b,float epsilon);
+	friend bool operator==(const Vector2 &a, const Vector2 &b);
+	friend bool operator!=(const Vector2 &a, const Vector2 &b);
+	friend bool Equal_Within_Epsilon(const Vector2 &a, const Vector2 &b, float epsilon);
 
 	// Rotation
 	void Rotate(float theta);
 	void Rotate(float s, float c);
-	bool Rotate_Towards_Vector(Vector2 &target, float max_theta, bool & positive_turn);
-	bool Rotate_Towards_Vector(Vector2 &target, float max_s, float max_c, bool & positive_turn);
+	bool Rotate_Towards_Vector(Vector2 &target, float max_theta, bool &positive_turn);
+	bool Rotate_Towards_Vector(Vector2 &target, float max_s, float max_c, bool &positive_turn);
 
 	// verify that none of the members of this vector are invalid floats
 	bool Is_Valid(void) const;
 
 	// make this vector the min or max of itself and the passed vector
-	void Update_Min (const Vector2 & a);
-	void Update_Max (const Vector2 & a);
-	void Scale (float a, float b);
+	void Update_Min(const Vector2 &a);
+	void Update_Max(const Vector2 &a);
+	void Scale(float a, float b);
 
 	static float Distance(const Vector2 &p1, const Vector2 &p2);
 	static float Quick_Distance(const Vector2 &p1, const Vector2 &p2);
 
 	// interpolate between two Vector2's
-	static void Lerp(const Vector2 & a,const Vector2 & b,float t,Vector2 * set_result);
+	static void Lerp(const Vector2 &a, const Vector2 &b, float t, Vector2 *set_result);
 };
-
 
 /**************************************************************************
  * Scalar Multiply Operator -- Multiply a vector by a scalar              *
@@ -165,14 +208,14 @@ public:
  * HISTORY:                                                               *
  *   02/24/1997 GH  : Created.                                            *
  *========================================================================*/
-inline Vector2 operator * (const Vector2 &a,float k)
+inline Vector2 operator*(const Vector2 &a, float k)
 {
-	return Vector2((a[0] * k),(a[1] * k));
+	return Vector2((a[0] * k), (a[1] * k));
 }
 
-inline Vector2 operator * (float k, const Vector2 &a)
+inline Vector2 operator*(float k, const Vector2 &a)
 {
-	return Vector2((a[0] * k),(a[1] * k));
+	return Vector2((a[0] * k), (a[1] * k));
 }
 
 /**************************************************************************
@@ -186,10 +229,10 @@ inline Vector2 operator * (float k, const Vector2 &a)
  *                                                                        *
  * HISTORY:                                                               *
  *========================================================================*/
-inline Vector2 operator / (const Vector2 &a,float k)
+inline Vector2 operator/(const Vector2 &a, float k)
 {
-	float ook=1.0f/k;
-	return Vector2((a[0] * ook),(a[1] * ook));
+	float ook = 1.0f / k;
+	return Vector2((a[0] * ook), (a[1] * ook));
 }
 
 /**************************************************************************
@@ -204,12 +247,9 @@ inline Vector2 operator / (const Vector2 &a,float k)
  * HISTORY:                                                               *
  *   02/24/1997 GH  : Created.                                            *
  *========================================================================*/
-inline Vector2 operator + (const Vector2 &a,const Vector2 &b)
+inline Vector2 operator+(const Vector2 &a, const Vector2 &b)
 {
-	return Vector2(
-							a.X + b.X,
-							a.Y + b.Y
-						);
+	return Vector2(a.X + b.X, a.Y + b.Y);
 }
 
 /**************************************************************************
@@ -224,12 +264,9 @@ inline Vector2 operator + (const Vector2 &a,const Vector2 &b)
  * HISTORY:                                                               *
  *   02/24/1997 GH  : Created.                                            *
  *========================================================================*/
-inline Vector2 operator - (const Vector2 &a,const Vector2 &b)
+inline Vector2 operator-(const Vector2 &a, const Vector2 &b)
 {
-	return Vector2(
-							a.X - b.X,
-							a.Y - b.Y
-						);
+	return Vector2(a.X - b.X, a.Y - b.Y);
 }
 
 /**************************************************************************
@@ -243,17 +280,17 @@ inline Vector2 operator - (const Vector2 &a,const Vector2 &b)
  *                                                                        *
  * HISTORY:                                                               *
  *========================================================================*/
-inline float operator * (const Vector2 &a,const Vector2 &b)
+inline float operator*(const Vector2 &a, const Vector2 &b)
 {
-	return	a.X*b.X + a.Y*b.Y;
+	return a.X * b.X + a.Y * b.Y;
 }
 
-inline float Vector2::Dot_Product(const Vector2 &a,const Vector2 &b)
+inline float Vector2::Dot_Product(const Vector2 &a, const Vector2 &b)
 {
-	return a*b;
+	return a * b;
 }
 
-inline float Vector2::Perp_Dot_Product(const Vector2 &a,const Vector2 &b)
+inline float Vector2::Perp_Dot_Product(const Vector2 &a, const Vector2 &b)
 {
 	return a.X * -b.Y + a.Y * b.X;
 }
@@ -269,9 +306,9 @@ inline float Vector2::Perp_Dot_Product(const Vector2 &a,const Vector2 &b)
  *                                                                        *
  * HISTORY:                                                               *
  *========================================================================*/
-inline bool operator == (const Vector2 &a,const Vector2 &b)
+inline bool operator==(const Vector2 &a, const Vector2 &b)
 {
-	return ( (a[0] == b[0]) && (a[1] == b[1]));
+	return ((a[0] == b[0]) && (a[1] == b[1]));
 }
 
 /**************************************************************************
@@ -285,9 +322,9 @@ inline bool operator == (const Vector2 &a,const Vector2 &b)
  *                                                                        *
  * HISTORY:                                                               *
  *========================================================================*/
-inline bool operator != (const Vector2 &a,const Vector2 &b)
+inline bool operator!=(const Vector2 &a, const Vector2 &b)
 {
-	return ( (a[0] != b[0]) || (a[1] != b[1]));
+	return ((a[0] != b[0]) || (a[1] != b[1]));
 }
 
 /**************************************************************************
@@ -301,9 +338,9 @@ inline bool operator != (const Vector2 &a,const Vector2 &b)
  *                                                                        *
  * HISTORY:                                                               *
  *========================================================================*/
-inline bool Equal_Within_Epsilon(const Vector2 &a,const Vector2 &b,float epsilon)
+inline bool Equal_Within_Epsilon(const Vector2 &a, const Vector2 &b, float epsilon)
 {
-   return( (WWMath::Fabs(a.X - b.X) < epsilon) && (WWMath::Fabs(a.Y - b.Y) < epsilon) );
+	return ((WWMath::Fabs(a.X - b.X) < epsilon) && (WWMath::Fabs(a.Y - b.Y) < epsilon));
 }
 
 /**************************************************************************
@@ -320,17 +357,19 @@ inline bool Equal_Within_Epsilon(const Vector2 &a,const Vector2 &b,float epsilon
 inline void Vector2::Normalize()
 {
 	float len2 = Length2();
-	if (len2 != 0.0f) {
+	if (len2 != 0.0f)
+	{
 		float oolen = WWMath::Inv_Sqrt(len2);
 		X *= oolen;
 		Y *= oolen;
 	}
 }
 
-inline Vector2 Normalize(const Vector2 & vec)
+inline Vector2 Normalize(const Vector2 &vec)
 {
 	float len2 = vec.Length2();
-	if (len2 != 0.0f) {
+	if (len2 != 0.0f)
+	{
 		float oolen = WWMath::Inv_Sqrt(len2);
 		return vec / oolen;
 	}
@@ -365,7 +404,7 @@ inline float Vector2::Length() const
  *========================================================================*/
 inline float Vector2::Length2() const
 {
-	return (X*X + Y*Y);
+	return (X * X + Y * Y);
 }
 
 /**************************************************************************
@@ -420,7 +459,7 @@ inline void Vector2::Rotate(float s, float c)
  *                                                                        *
  * HISTORY:                                                               *
  *========================================================================*/
-inline bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_theta, bool & positive_turn)
+inline bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_theta, bool &positive_turn)
 {
 	return Rotate_Towards_Vector(target, sin(max_theta), cos(max_theta), positive_turn);
 }
@@ -440,20 +479,26 @@ inline bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_theta, boo
  *                                                                        *
  * HISTORY:                                                               *
  *========================================================================*/
-inline bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_s, float max_c, bool & positive_turn)
+inline bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_s, float max_c, bool &positive_turn)
 {
 	bool return_value = false;
 
 	positive_turn = Vector2::Perp_Dot_Product(target, *this) > 0.0f;
 
-	if (Vector2::Dot_Product(*this, target) >= max_c) {
+	if (Vector2::Dot_Product(*this, target) >= max_c)
+	{
 		Set(target);
 		return_value = true;
-	} else {
+	}
+	else
+	{
 		// Determine turn direction and rotate accordingly.
-		if (positive_turn) {
+		if (positive_turn)
+		{
 			Rotate(max_s, max_c);
-		} else {
+		}
+		else
+		{
 			Rotate(-max_s, max_c);
 		}
 	}
@@ -473,13 +518,12 @@ inline bool Vector2::Rotate_Towards_Vector(Vector2 &target, float max_s, float m
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-inline void Swap(Vector2 & a,Vector2 & b)
+inline void Swap(Vector2 &a, Vector2 &b)
 {
 	Vector2 tmp(a);
 	a = b;
 	b = tmp;
 }
-
 
 /***********************************************************************************************
  * Vector2::Is_Valid -- Verifies that all components are valid floats                          *
@@ -498,7 +542,6 @@ inline bool Vector2::Is_Valid(void) const
 	return (WWMath::Is_Valid_Float(X) && WWMath::Is_Valid_Float(Y));
 }
 
-
 /***********************************************************************************************
  * Vector2::Update_Min -- Set each component of the vector to the min of this and a.			  *
  *                                                                                             *
@@ -511,12 +554,13 @@ inline bool Vector2::Is_Valid(void) const
  * HISTORY:                                                                                    *
  *   06/12/00   IML : Created.                                                                 *
  *=============================================================================================*/
-inline void Vector2::Update_Min (const Vector2 & a)
+inline void Vector2::Update_Min(const Vector2 &a)
 {
-	if (a.X < X) X = a.X;
-	if (a.Y < Y) Y = a.Y;
+	if (a.X < X)
+		X = a.X;
+	if (a.Y < Y)
+		Y = a.Y;
 }
-
 
 /***********************************************************************************************
  * Vector2::Update_Max -- Set each component of the vector to the max of this and a.			  *
@@ -530,12 +574,13 @@ inline void Vector2::Update_Min (const Vector2 & a)
  * HISTORY:                                                                                    *
  *   06/12/00   IML : Created.                                                                 *
  *=============================================================================================*/
-inline void Vector2::Update_Max (const Vector2 & a)
+inline void Vector2::Update_Max(const Vector2 &a)
 {
-	if (a.X > X) X = a.X;
-	if (a.Y > Y) Y = a.Y;
+	if (a.X > X)
+		X = a.X;
+	if (a.Y > Y)
+		Y = a.Y;
 }
-
 
 /***********************************************************************************************
  * Vector2::Scale -- multiply components of a vector by independant scaling factors.			  *
@@ -549,12 +594,11 @@ inline void Vector2::Update_Max (const Vector2 & a)
  * HISTORY:                                                                                    *
  *   06/19/2000  IML : Created.                                                                 *
  *=============================================================================================*/
-inline void Vector2::Scale (float a, float b)
+inline void Vector2::Scale(float a, float b)
 {
 	X *= a;
 	Y *= b;
 }
-
 
 /***********************************************************************************************
  * Quick_Distance -- Fast but inaccurate 2D distance calculation.                              *
@@ -589,7 +633,6 @@ inline float Vector2::Quick_Distance(const Vector2 &a, const Vector2 &b)
 	return ::Quick_Distance(a.X, a.Y, b.X, b.Y);
 }
 
-
 /***********************************************************************************************
  * Distance -- Accurate distance 2D calculation.                                               *
  *                                                                                             *
@@ -615,7 +658,6 @@ inline float Distance(float x1, float y1, float x2, float y2)
 	return (WWMath::Sqrt((x_diff * x_diff) + (y_diff * y_diff)));
 }
 
-
 /***********************************************************************************************
  * Vector2::Lerp -- linearly interpolates two Vector2's                                        *
  *                                                                                             *
@@ -628,13 +670,11 @@ inline float Distance(float x1, float y1, float x2, float y2)
  * HISTORY:                                                                                    *
  *   4/14/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-inline void Vector2::Lerp(const Vector2 & a,const Vector2 & b,float t,Vector2 * set_result)
+inline void Vector2::Lerp(const Vector2 &a, const Vector2 &b, float t, Vector2 *set_result)
 {
 	assert(set_result != NULL);
-	set_result->X = (a.X + (b.X - a.X)*t);
-   set_result->Y = (a.Y + (b.Y - a.Y)*t);
+	set_result->X = (a.X + (b.X - a.X) * t);
+	set_result->Y = (a.Y + (b.Y - a.Y) * t);
 }
 
-
 #endif /* VECTOR2_H */
-

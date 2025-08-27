@@ -26,78 +26,77 @@
 // Will give self random move commands
 // Author: Graham Smallwood, April 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/RandomValue.h"
 #include "GameLogic/Module/WanderAIUpdate.h"
 #include "GameLogic/Object.h"
 
 //-------------------------------------------------------------------------------------------------
-AIStateMachine* WanderAIUpdate::makeStateMachine()
+AIStateMachine *WanderAIUpdate::makeStateMachine()
 {
-	return newInstance(AIStateMachine)( getObject(), "WanderAIUpdateMachine");
+	return newInstance(AIStateMachine)(getObject(), "WanderAIUpdateMachine");
 }
 
 //-------------------------------------------------------------------------------------------------
-WanderAIUpdate::WanderAIUpdate( Thing *thing, const ModuleData* moduleData ) : AIUpdateInterface( thing, moduleData )
+WanderAIUpdate::WanderAIUpdate(Thing *thing, const ModuleData *moduleData) : AIUpdateInterface(thing, moduleData)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
-WanderAIUpdate::~WanderAIUpdate( void )
+WanderAIUpdate::~WanderAIUpdate(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime WanderAIUpdate::update( void )
+UpdateSleepTime WanderAIUpdate::update(void)
 {
 	// If I'm standing still, move somewhere
 	if (isIdle())
 	{
 		Coord3D dest = *(getObject()->getPosition());
-		dest.x += GameLogicRandomValue( 5, 50 );
-		dest.y += GameLogicRandomValue( 5, 50 );
- 		aiMoveToPosition( &dest, CMD_FROM_AI );
+		dest.x += GameLogicRandomValue(5, 50);
+		dest.y += GameLogicRandomValue(5, 50);
+		aiMoveToPosition(&dest, CMD_FROM_AI);
 	}
 
 	// extend
-	/*UpdateSleepTime ret =*/ AIUpdateInterface::update();
-	//return (mine < ret) ? mine : ret;
+	/*UpdateSleepTime ret =*/AIUpdateInterface::update();
+	// return (mine < ret) ? mine : ret;
 	/// @todo srj -- someday, make sleepy. for now, must not sleep.
 	return UPDATE_SLEEP_NONE;
-}  // end update
+} // end update
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void WanderAIUpdate::crc( Xfer *xfer )
+void WanderAIUpdate::crc(Xfer *xfer)
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void WanderAIUpdate::xfer( Xfer *xfer )
+void WanderAIUpdate::xfer(Xfer *xfer)
 {
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion(&version, currentVersion);
 
- // extend base class
+	// extend base class
 	AIUpdateInterface::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void WanderAIUpdate::loadPostProcess( void )
+void WanderAIUpdate::loadPostProcess(void)
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+} // end loadPostProcess

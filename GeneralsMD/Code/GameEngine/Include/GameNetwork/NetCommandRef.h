@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
 
 #ifndef __NETCOMMANDREF_H
@@ -40,7 +39,6 @@
 #else
 #define NEW_NETCOMMANDREF(msg) newInstance(NetCommandRef)(msg)
 #endif
-
 
 class NetCommandRef : public MemoryPoolObject
 {
@@ -69,7 +67,8 @@ protected:
 	NetCommandMsg *m_msg;
 	NetCommandRef *m_next;
 	NetCommandRef *m_prev;
-	UnsignedByte m_relay; ///< Need this in the command reference since the relay value will be different depending on where this particular reference is being sent.
+	UnsignedByte m_relay; ///< Need this in the command reference since the relay value will be different depending on where
+												///< this particular reference is being sent.
 	time_t m_timeLastSent;
 
 #ifdef DEBUG_NETCOMMANDREF
@@ -80,7 +79,7 @@ protected:
 /**
  * Return the command message.
  */
-inline NetCommandMsg * NetCommandRef::getCommand()
+inline NetCommandMsg *NetCommandRef::getCommand()
 {
 	return m_msg;
 }
@@ -88,7 +87,7 @@ inline NetCommandMsg * NetCommandRef::getCommand()
 /**
  * Return the next command ref in the list.
  */
-inline NetCommandRef * NetCommandRef::getNext()
+inline NetCommandRef *NetCommandRef::getNext()
 {
 	return m_next;
 }
@@ -96,7 +95,7 @@ inline NetCommandRef * NetCommandRef::getNext()
 /**
  * Return the previous command ref in the list.
  */
-inline NetCommandRef * NetCommandRef::getPrev()
+inline NetCommandRef *NetCommandRef::getPrev()
 {
 	return m_prev;
 }

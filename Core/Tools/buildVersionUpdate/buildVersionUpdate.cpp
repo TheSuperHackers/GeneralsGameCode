@@ -21,7 +21,7 @@
 // Author: Matthew D. Campbell, November 2001
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#define WIN32_LEAN_AND_MEAN  // only bare bones windows stuff wanted
+#define WIN32_LEAN_AND_MEAN // only bare bones windows stuff wanted
 #include <windows.h>
 #include <lmcons.h>
 #include <stdlib.h>
@@ -69,23 +69,20 @@ static void usage(char *progname)
 {
 	if (progname)
 	{
-		printf ("Usage: %s versionfile.h", progname);
+		printf("Usage: %s versionfile.h", progname);
 	}
 }
 
-int APIENTRY WinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     LPSTR     lpCmdLine,
-                     int       nCmdShow)
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	/*
 	** Convert WinMain arguments to simple main argc and argv
 	*/
 	int argc = 1;
-	char * argv[20];
+	char *argv[20];
 	argv[0] = NULL;
 
-	char * token = strtok(lpCmdLine, " ");
+	char *token = strtok(lpCmdLine, " ");
 	while (argc < 20 && token != NULL)
 	{
 		argv[argc++] = strtrim(token);
@@ -102,10 +99,11 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	}
 	else
 	{
-		char *target = argv[argc-1];
+		char *target = argv[argc - 1];
 		FILE *filePtr;
 
-		if (target) {
+		if (target)
+		{
 			filePtr = fopen(target, "r+");
 			if (filePtr)
 			{
@@ -120,26 +118,27 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 						char *ptr;
 
 						// Looking for '#define VERSION "x.y.z"'
-						ptr = strtok(stringPtr, " ");	// The VERSION
-						ptr = strtok(NULL, "\n");			// The remainder
+						ptr = strtok(stringPtr, " "); // The VERSION
+						ptr = strtok(NULL, "\n"); // The remainder
 
 						if (*ptr == '\"')
 						{
 							ptr++; // Inc past the first "
-							ptr = strtok(ptr, ".");	// The first number
+							ptr = strtok(ptr, "."); // The first number
 							major = atoi(ptr);
-							ptr = strtok(NULL, ".");  // The second number
+							ptr = strtok(NULL, "."); // The second number
 							minor = atoi(ptr);
 							ptr = strtok(NULL, "\""); // The final number
 							build = atoi(ptr);
 							fclose(filePtr);
 
 							writeVersion(target, major, minor, ++build);
-							printf ("Build %d Version %d.%d.%d\n", build, major, minor, build);
+							printf("Build %d Version %d.%d.%d\n", build, major, minor, build);
 							break;
-						} else
+						}
+						else
 						{
-							printf ("Build 0. Oops, didn't find a string of the format: '#define VERSION \"x.y.z\"'");
+							printf("Build 0. Oops, didn't find a string of the format: '#define VERSION \"x.y.z\"'");
 						}
 					} // End if if (strstr
 				} // End of while

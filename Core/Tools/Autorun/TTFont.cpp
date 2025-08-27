@@ -45,8 +45,7 @@
  *   TTFontClass::String_Pixel_Width -- Determines the width of the string in pixels.			*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-
-#define  STRICT
+#define STRICT
 #include <windows.h>
 #include <windowsx.h>
 #include <assert.h>
@@ -57,49 +56,46 @@
 #include "RECT.h"
 #include "Wnd_File.h"
 #include "TTFont.h"
-#include "JSUPPORT.H"		// [OYO]
+#include "JSUPPORT.H" // [OYO]
 #include "Locale_API.h"
 
-
-#define FONTINFOMAXHEIGHT		4
-#define FONTINFOMAXWIDTH		5
-#define FUDGEDIV				16
+#define FONTINFOMAXHEIGHT 4
+#define FONTINFOMAXWIDTH 5
+#define FUDGEDIV 16
 
 //-------------------------------------------------------------------------
 // Text Fonts.
 //-------------------------------------------------------------------------
-TTFontClass *TTButtonFontPtr		= NULL;
-TTFontClass *TTButtonFontPtrSmall	= NULL;
-TTFontClass *TTTextFontPtr			= NULL;
-TTFontClass	*TTTextFontPtr640		= NULL;
-TTFontClass	*TTTextFontPtr800		= NULL;
-TTFontClass	*TTLicenseFontPtr		= NULL;
+TTFontClass *TTButtonFontPtr = NULL;
+TTFontClass *TTButtonFontPtrSmall = NULL;
+TTFontClass *TTTextFontPtr = NULL;
+TTFontClass *TTTextFontPtr640 = NULL;
+TTFontClass *TTTextFontPtr800 = NULL;
+TTFontClass *TTLicenseFontPtr = NULL;
 
-FontManagerClass * FontManager		= NULL;
+FontManagerClass *FontManager = NULL;
 
-//unsigned long TEXT_COLOR			  		= RGB( 247, 171,  11 );
-//unsigned long SHADOW_COLOR		  		= RGB(  40,   8,   8 );
-unsigned long TEXT_COLOR			  		= RGB( 255, 204,  51 );
-unsigned long SHADOW_COLOR		  			= RGB(  40,   8,   8 );
+// unsigned long TEXT_COLOR			  		= RGB( 247, 171,  11 );
+// unsigned long SHADOW_COLOR		  		= RGB(  40,   8,   8 );
+unsigned long TEXT_COLOR = RGB(255, 204, 51);
+unsigned long SHADOW_COLOR = RGB(40, 8, 8);
 
-unsigned long TEXT_NORMAL_COLOR	  	   		= RGB( 255, 204,  51 );
-unsigned long TEXT_NORMAL_SHADOW_COLOR 		= RGB(  40,   8,   8 );
-unsigned long TEXT_FOCUSED_COLOR		 	= RGB( 255, 204,  51 );
-unsigned long TEXT_FOCUSED_SHADOW_COLOR  	= RGB(  40,   8,   8 );
-unsigned long TEXT_PRESSED_COLOR		 	= RGB( 194,  79,  32 );
-unsigned long TEXT_PRESSED_SHADOW_COLOR  	= RGB(  70,  55,  49 );
+unsigned long TEXT_NORMAL_COLOR = RGB(255, 204, 51);
+unsigned long TEXT_NORMAL_SHADOW_COLOR = RGB(40, 8, 8);
+unsigned long TEXT_FOCUSED_COLOR = RGB(255, 204, 51);
+unsigned long TEXT_FOCUSED_SHADOW_COLOR = RGB(40, 8, 8);
+unsigned long TEXT_PRESSED_COLOR = RGB(194, 79, 32);
+unsigned long TEXT_PRESSED_SHADOW_COLOR = RGB(70, 55, 49);
 
-
-unsigned long BLACK_COLOR					= RGB(   0,	  0,   0 );
-unsigned long WHITE_COLOR					= RGB( 255, 255, 255 );
-unsigned long RED_COLOR						= RGB( 255,   0,   0 );
-unsigned long ORANGE_COLOR					= RGB( 199,  91,   0 );
-unsigned long YELLOW_COLOR					= RGB( 255, 247,   0 );
-unsigned long GREEN_COLOR					= RGB(   0, 255,   0 );
-unsigned long BLUE_COLOR					= RGB(   0,   0, 255 );
-unsigned long INDIGO_COLOR		  			= RGB(  90,   2, 253 );
-unsigned long VIOLET_COLOR		  			= RGB( 128,   0, 255 );
-
+unsigned long BLACK_COLOR = RGB(0, 0, 0);
+unsigned long WHITE_COLOR = RGB(255, 255, 255);
+unsigned long RED_COLOR = RGB(255, 0, 0);
+unsigned long ORANGE_COLOR = RGB(199, 91, 0);
+unsigned long YELLOW_COLOR = RGB(255, 247, 0);
+unsigned long GREEN_COLOR = RGB(0, 255, 0);
+unsigned long BLUE_COLOR = RGB(0, 0, 255);
+unsigned long INDIGO_COLOR = RGB(90, 2, 253);
+unsigned long VIOLET_COLOR = RGB(128, 0, 255);
 
 /************************************************************************************
  * TTFontClass::TTFontClass -- Constructor for a font class object.					*
@@ -118,105 +114,111 @@ unsigned long VIOLET_COLOR		  			= RGB( 128,   0, 255 );
  *   08/24/1999 MML : Created.                                                      *
  *==================================================================================*/
 TTFontClass::TTFontClass(
-	HDC		hdc,
-	char *filename,
-	char *facename,
-	int		height,
-	int		weight,
-	BYTE	charset,
-	int		width,
-	int		escapement,
-	int		orientation,
-	BYTE	italic,
-	BYTE	underline,
-	BYTE	strikeout,
-	BYTE	outputPrecision,
-	BYTE	clipPrecision,
-	BYTE	quality,
-	BYTE	pitchAndFamily )
+		HDC hdc,
+		char *filename,
+		char *facename,
+		int height,
+		int weight,
+		BYTE charset,
+		int width,
+		int escapement,
+		int orientation,
+		BYTE italic,
+		BYTE underline,
+		BYTE strikeout,
+		BYTE outputPrecision,
+		BYTE clipPrecision,
+		BYTE quality,
+		BYTE pitchAndFamily)
 {
-	HGDIOBJ		old_object;
-	TEXTMETRIC	tm;
-	char		real_facename[MAX_PATH];
+	HGDIOBJ old_object;
+	TEXTMETRIC tm;
+	char real_facename[MAX_PATH];
 
 	//--------------------------------------------------------------------------
 	// Get or Set a Font filename.
 	//--------------------------------------------------------------------------
-	if (( filename == NULL ) || ( filename[0] == '\0' )) {
-		strcpy( szFilename, "Arial.ttf" );
-	} else {
-		strcpy( szFilename, filename );
+	if ((filename == NULL) || (filename[0] == '\0'))
+	{
+		strcpy(szFilename, "Arial.ttf");
+	}
+	else
+	{
+		strcpy(szFilename, filename);
 	}
 
 	//--------------------------------------------------------------------------
 	// Get or Set a Font facename.
 	//--------------------------------------------------------------------------
-	if (( facename == NULL ) || ( facename[0] == '\0' )) {
-		strcpy( szFacename, "Arial" );
-	} else {
-		strcpy( szFacename, facename );
+	if ((facename == NULL) || (facename[0] == '\0'))
+	{
+		strcpy(szFacename, "Arial");
+	}
+	else
+	{
+		strcpy(szFacename, facename);
 	}
 	real_facename[0] = '\0';
 
-	Msg( __LINE__, __FILE__, "TTFontClass -- filename=%s, facename=%s, height=%d.", filename, facename, height );
+	Msg(__LINE__, __FILE__, "TTFontClass -- filename=%s, facename=%s, height=%d.", filename, facename, height);
 
 	//--------------------------------------------------------------------------
 	// Make sure the font file is "Registered".  Then create the font.
 	//--------------------------------------------------------------------------
-	AddFontResource( szFilename );
+	AddFontResource(szFilename);
 	Font = CreateFont(
-				height,
-				width,
-				escapement,
-				orientation,
-				weight,
-				italic,
-				underline,
-				strikeout,
-				charset,
-				outputPrecision,
-				clipPrecision,
-				quality,
-				pitchAndFamily,
-				szFacename );
+			height,
+			width,
+			escapement,
+			orientation,
+			weight,
+			italic,
+			underline,
+			strikeout,
+			charset,
+			outputPrecision,
+			clipPrecision,
+			quality,
+			pitchAndFamily,
+			szFacename);
 
-	if ( hdc && ( Font != NULL )) {
-
+	if (hdc && (Font != NULL))
+	{
 		//----------------------------------------------------------------------
 		// The GetTextFace function lets a program determine the face name of
 		// THE font currently selected in the device context:
 		//----------------------------------------------------------------------
-		old_object = SelectObject( hdc, Font );
-		GetTextFace( hdc, ( sizeof( real_facename ) / sizeof( TCHAR )), real_facename );
+		old_object = SelectObject(hdc, Font);
+		GetTextFace(hdc, (sizeof(real_facename) / sizeof(TCHAR)), real_facename);
 
-		if( _stricmp( real_facename, szFacename ) != 0 ) {
+		if (_stricmp(real_facename, szFacename) != 0)
+		{
+			strcpy(szFilename, "Arial.ttf");
+			strcpy(szFacename, "Arial");
 
-			strcpy( szFilename, "Arial.ttf" );
-			strcpy( szFacename, "Arial" );
-
-			SelectObject( hdc, old_object );
-			DeleteObject( Font );
+			SelectObject(hdc, old_object);
+			DeleteObject(Font);
 			Font = NULL;
 
 			Font = CreateFont(
-					height,				// height of font
-					width, 				// average character width
-					escapement, 		// angle of escapement
-					orientation, 		// base-line orientation angle
-					weight, 			// font weight
-					italic, 			// italic attribute option
-					underline, 			// underline attribute option
-					strikeout,			// strikeout attribute option
-					charset, 			// character set identifier
-					outputPrecision, 	// output precision
-					clipPrecision, 		// clipping precision
-					quality, 			// output quality
-					pitchAndFamily, 	// pitch and family
-					szFacename );		// typeface name
+					height, // height of font
+					width, // average character width
+					escapement, // angle of escapement
+					orientation, // base-line orientation angle
+					weight, // font weight
+					italic, // italic attribute option
+					underline, // underline attribute option
+					strikeout, // strikeout attribute option
+					charset, // character set identifier
+					outputPrecision, // output precision
+					clipPrecision, // clipping precision
+					quality, // output quality
+					pitchAndFamily, // pitch and family
+					szFacename); // typeface name
 
 			real_facename[0] = '\0';
-			old_object = SelectObject( hdc, Font );
-			GetTextFace( hdc, ( sizeof( real_facename ) / sizeof( TCHAR )), real_facename );
+			old_object = SelectObject(hdc, Font);
+			GetTextFace(hdc, (sizeof(real_facename) / sizeof(TCHAR)), real_facename);
 		}
 	}
 
@@ -225,48 +227,47 @@ TTFontClass::TTFontClass(
 	//--------------------------------------------------------------------------
 	Height = height;
 
-	if ( hdc ) {
-
+	if (hdc)
+	{
 		//-----------------------------------------------------------------------
 		// Get info from the font in BackBuffer's DC.
 		//-----------------------------------------------------------------------
-		old_object = SelectObject( hdc, Font );
-		GetTextMetrics( hdc, &tm );
+		old_object = SelectObject(hdc, Font);
+		GetTextMetrics(hdc, &tm);
 
-		FontXSpacing	= GetTextCharacterExtra( hdc );
-		Ascent			= tm.tmAscent;
-		Descent			= tm.tmDescent;
-		InternalLeading	= tm.tmInternalLeading;
-		ExternalLeading	= tm.tmExternalLeading;
-		AveCharWidth	= tm.tmAveCharWidth;
-		MaxCharWidth	= tm.tmMaxCharWidth;
-		Overhang		= tm.tmOverhang;
-		Italic			= tm.tmItalic;
-		Underlined		= tm.tmUnderlined;
-		StruckOut		= tm.tmStruckOut;
-		CharSet			= tm.tmCharSet;						// [OYO] It is important to support Double Byte Chars
- 		SelectObject( hdc, old_object );
-
-	} else {
-
+		FontXSpacing = GetTextCharacterExtra(hdc);
+		Ascent = tm.tmAscent;
+		Descent = tm.tmDescent;
+		InternalLeading = tm.tmInternalLeading;
+		ExternalLeading = tm.tmExternalLeading;
+		AveCharWidth = tm.tmAveCharWidth;
+		MaxCharWidth = tm.tmMaxCharWidth;
+		Overhang = tm.tmOverhang;
+		Italic = tm.tmItalic;
+		Underlined = tm.tmUnderlined;
+		StruckOut = tm.tmStruckOut;
+		CharSet = tm.tmCharSet; // [OYO] It is important to support Double Byte Chars
+		SelectObject(hdc, old_object);
+	}
+	else
+	{
 		//-----------------------------------------------------------------------
 		// Set default values.
 		//-----------------------------------------------------------------------
-		Ascent			= 0;
-		Descent			= 0;
-		InternalLeading	= 0;
-		ExternalLeading	= 0;
-		AveCharWidth	= 0;
-		MaxCharWidth	= 0;
-		Overhang		= 0;
-		Italic			= 0;
-		Underlined		= 0;
-		StruckOut		= 0;
-		CharSet			= 0;								// [OYO]
-		FontXSpacing	= 0;
+		Ascent = 0;
+		Descent = 0;
+		InternalLeading = 0;
+		ExternalLeading = 0;
+		AveCharWidth = 0;
+		MaxCharWidth = 0;
+		Overhang = 0;
+		Italic = 0;
+		Underlined = 0;
+		StruckOut = 0;
+		CharSet = 0; // [OYO]
+		FontXSpacing = 0;
 	}
 }
-
 
 /***********************************************************************************************
  * TTFontClass::Char_Pixel_Width -- Fetch the pixel width of the character specified.          *
@@ -285,7 +286,7 @@ TTFontClass::TTFontClass(
  *   05/26/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
 
-int TTFontClass::Char_Pixel_Width( HDC hdc, UINT c ) const
+int TTFontClass::Char_Pixel_Width(HDC hdc, UINT c) const
 {
 	HGDIOBJ old_object;
 	ABC abc;
@@ -294,12 +295,13 @@ int TTFontClass::Char_Pixel_Width( HDC hdc, UINT c ) const
 	abc.abcB = 0;
 	abc.abcC = 0;
 
-	if ( hdc ) {
-		old_object = SelectObject( hdc, Font );
-		GetCharABCWidths( hdc, c, c, &abc );
-		SelectObject( hdc, old_object );
+	if (hdc)
+	{
+		old_object = SelectObject(hdc, Font);
+		GetCharABCWidths(hdc, c, c, &abc);
+		SelectObject(hdc, old_object);
 	}
-	return( abc.abcA + abc.abcB + abc.abcC );
+	return (abc.abcA + abc.abcB + abc.abcC);
 }
 
 /************************************************************************************************
@@ -326,23 +328,25 @@ int TTFontClass::Char_Pixel_Width( HDC hdc, UINT c ) const
 //
 // [OYO]	Supports DBCS ( multi-byte characters ).
 //
-int TTFontClass::Char_Pixel_Width ( HDC hdc, char const * string, int *num_bytes ) const
+int TTFontClass::Char_Pixel_Width(HDC hdc, char const *string, int *num_bytes) const
 {
 	char const *letter = string;
-	int	length = 0;
-	UINT	c;
+	int length = 0;
+	UINT c;
 
 	//--------------------------------------------------------------------------
 	// These values must be passed in.
 	//--------------------------------------------------------------------------
-	if ( string == NULL || *string == '\0' || hdc == NULL ) {
-		return( 0 );
+	if (string == NULL || *string == '\0' || hdc == NULL)
+	{
+		return (0);
 	}
 
 	//--------------------------------------------------------------------------
 	// If this value is passed in, the set the default value (1=single).
 	//--------------------------------------------------------------------------
-	if ( num_bytes!= NULL ) {
+	if (num_bytes != NULL)
+	{
 		*num_bytes = 1;
 	}
 
@@ -350,15 +354,17 @@ int TTFontClass::Char_Pixel_Width ( HDC hdc, char const * string, int *num_bytes
 	// Get the pixel width of the character.  If it is a double-byte character,
 	// then num_bytes will come back as '2'.
 	//--------------------------------------------------------------------------
-	if( IsFontDBCS() && IsDBCSLeadByte( *letter )){
-		c = Get_Double_Byte_Char( letter, num_bytes );
-		length += Char_Pixel_Width( hdc, c );									// pixel length of double-byte character.
-	} else {
-		length += Char_Pixel_Width( hdc, *letter );								// pixel length of single-byte character.
+	if (IsFontDBCS() && IsDBCSLeadByte(*letter))
+	{
+		c = Get_Double_Byte_Char(letter, num_bytes);
+		length += Char_Pixel_Width(hdc, c); // pixel length of double-byte character.
 	}
-	return( length );
+	else
+	{
+		length += Char_Pixel_Width(hdc, *letter); // pixel length of single-byte character.
+	}
+	return (length);
 }
-
 
 /************************************************************************************************
  * TTFontClass::String_Pixel_Width -- Determines the width of the string in pixels.				*
@@ -376,55 +382,58 @@ int TTFontClass::Char_Pixel_Width ( HDC hdc, char const * string, int *num_bytes
  *   05/26/1997 JLB : Created.																	*
  *==============================================================================================*/
 
-int TTFontClass::String_Pixel_Width( HDC hdc, char const * string ) const
+int TTFontClass::String_Pixel_Width(HDC hdc, char const *string) const
 {
-	if ( string == NULL ) {
-		return(0);
+	if (string == NULL)
+	{
+		return (0);
 	}
 
-	int		largest = 0;		// Largest recorded width of the string.
-	int		width   = 0;
-	HGDIOBJ	old_object;
-	int		length;
-	SIZE  	size;
-	bool  	make_dc = FALSE;
-	HDC		localDC = hdc;
+	int largest = 0; // Largest recorded width of the string.
+	int width = 0;
+	HGDIOBJ old_object;
+	int length;
+	SIZE size;
+	bool make_dc = FALSE;
+	HDC localDC = hdc;
 
 	size.cx = 0;
 
-	if ( localDC == NULL ) {
-		return( size.cx );
+	if (localDC == NULL)
+	{
+		return (size.cx);
 	}
 
-	if ( localDC ) {
-		length = strlen( string );
-		old_object = SelectObject( localDC, Font );
-		GetTextExtentPoint32( localDC, string, length, &size );
-		SelectObject( localDC, old_object );
+	if (localDC)
+	{
+		length = strlen(string);
+		old_object = SelectObject(localDC, Font);
+		GetTextExtentPoint32(localDC, string, length, &size);
+		SelectObject(localDC, old_object);
 	}
-	return( size.cx );
+	return (size.cx);
 }
 
 /****************************************************************************
-*
-* NAME
-*     String_Pixel_Bounds(String, Bounds)
-*
-* DESCRIPTION
-*     Calculate the bounding box for the specified string.
-*
-* INPUTS
-*     String - String to calculate bounds for
-*     Bounds - Rect to fill with bounds
-*
-* RESULT
-*     NONE
-*
-****************************************************************************/
+ *
+ * NAME
+ *     String_Pixel_Bounds(String, Bounds)
+ *
+ * DESCRIPTION
+ *     Calculate the bounding box for the specified string.
+ *
+ * INPUTS
+ *     String - String to calculate bounds for
+ *     Bounds - Rect to fill with bounds
+ *
+ * RESULT
+ *     NONE
+ *
+ ****************************************************************************/
 //
 // [OYO]	Supports DBCS ( multi-byte characters ).
 //
-void TTFontClass::String_Pixel_Bounds( HDC hdc, const char* string, Rect& bounds ) const
+void TTFontClass::String_Pixel_Bounds(HDC hdc, const char *string, Rect &bounds) const
 {
 	int width;
 	int height;
@@ -432,56 +441,60 @@ void TTFontClass::String_Pixel_Bounds( HDC hdc, const char* string, Rect& bounds
 	bounds.Width = 0;
 	bounds.Height = 0;
 
-	if ( string == NULL ) {
+	if (string == NULL)
+	{
 		return;
 	}
 
-	if ( hdc == NULL ) {
+	if (hdc == NULL)
+	{
 		return;
 	}
 
-	width	= 0;
-	height	= Get_Height();
+	width = 0;
+	height = Get_Height();
 
-	while ( *string != 0 ) {
-
-		if (( *string == '\r' ) || ( *string == '\n' )) {
-
+	while (*string != 0)
+	{
+		if ((*string == '\r') || (*string == '\n'))
+		{
 			string++;
 			height += Get_Height();
-			bounds.Width = max( bounds.Width, width );
+			bounds.Width = max(bounds.Width, width);
 			width = 0;
-
-		} else if( IsFontDBCS()){
-
-#if(0)
+		}
+		else if (IsFontDBCS())
+		{
+#if (0)
 			//--------------------------------------------------------------------
 			// Using one of those _tc functions:
 			//		Get a character, get the width of that character, then
 			//		move the pointer to the next character.
 			//--------------------------------------------------------------------
-			UINT c = Get_Double_Byte_Char( string );
-			width += Char_Pixel_Width( hdc, c );
-			string = _tcsinc( string );
+			UINT c = Get_Double_Byte_Char(string);
+			width += Char_Pixel_Width(hdc, c);
+			string = _tcsinc(string);
 #else
 			//--------------------------------------------------------------------
 			// MBCS way: Get a byte.  If byte is a "Lead" byte, get the second half,
 			// combine them into one character, then get the width of that character.
 			//--------------------------------------------------------------------
-			UINT c = *(BYTE*)string++;
-			if( IsDBCSLeadByte( c )&& *string ) {
-				c = ( c << 8 ) | *(BYTE *)string++;
+			UINT c = *(BYTE *)string++;
+			if (IsDBCSLeadByte(c) && *string)
+			{
+				c = (c << 8) | *(BYTE *)string++;
 			}
-			width += Char_Pixel_Width( hdc, c );
+			width += Char_Pixel_Width(hdc, c);
 #endif
-
-		} else {
-			width += Char_Pixel_Width( hdc, *string++ );
+		}
+		else
+		{
+			width += Char_Pixel_Width(hdc, *string++);
 		}
 	}
 
-	bounds.Width	= max( bounds.Width, width );
-	bounds.Height	= height;
+	bounds.Width = max(bounds.Width, width);
+	bounds.Height = height;
 }
 
 /***********************************************************************************************
@@ -499,16 +512,18 @@ void TTFontClass::String_Pixel_Bounds( HDC hdc, const char* string, Rect& bounds
 //
 // [OYO]	Supports DBCS ( multi-byte characters ).
 //
-UINT TTFontClass::Get_Double_Byte_Char	( const char *string, int *num_bytes ) const
+UINT TTFontClass::Get_Double_Byte_Char(const char *string, int *num_bytes) const
 {
-	if ( string == NULL || *string == '\0' ) {
-		return( 0 );
+	if (string == NULL || *string == '\0')
+	{
+		return (0);
 	}
 
 	const char *ptr = string;
 	UINT c = *(BYTE *)ptr++;
 
-	if ( num_bytes != NULL ) {
+	if (num_bytes != NULL)
+	{
 		*num_bytes = 1;
 	}
 
@@ -534,15 +549,16 @@ UINT TTFontClass::Get_Double_Byte_Char	( const char *string, int *num_bytes ) co
 	//
 	//	Declared in winnls.h.
 	//--------------------------------------------------------------------------
-	if( IsDBCSLeadByte( c )&& *ptr ) {		// [OYO]
-		c = ( c << 8 ) | *(BYTE *)ptr++;
-		if ( num_bytes != NULL ) {
+	if (IsDBCSLeadByte(c) && *ptr)
+	{ // [OYO]
+		c = (c << 8) | *(BYTE *)ptr++;
+		if (num_bytes != NULL)
+		{
 			*num_bytes = 2;
 		}
 	}
-	return( c );
+	return (c);
 }
-
 
 /***********************************************************************************************
  * TTFontClass::Get_Width -- Get normalized width of the nominal font character.               *
@@ -559,9 +575,9 @@ UINT TTFontClass::Get_Double_Byte_Char	( const char *string, int *num_bytes ) co
  * HISTORY:                                                                                    *
  *   05/26/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-int TTFontClass::Get_Width( void ) const
+int TTFontClass::Get_Width(void) const
 {
-	return( MaxCharWidth - Overhang );
+	return (MaxCharWidth - Overhang);
 }
 
 /***********************************************************************************************
@@ -579,9 +595,9 @@ int TTFontClass::Get_Width( void ) const
  * HISTORY:                                                                                    *
  *   05/26/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-int TTFontClass::Get_Height( void ) const
+int TTFontClass::Get_Height(void) const
 {
-	return( Height );
+	return (Height);
 }
 
 /***********************************************************************************************
@@ -600,20 +616,19 @@ int TTFontClass::Get_Height( void ) const
  * HISTORY:                                                                                    *
  *   05/26/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-int TTFontClass::Set_XSpacing( HDC hdc, int x )
+int TTFontClass::Set_XSpacing(HDC hdc, int x)
 {
-//	HGDIOBJ old_object;
-//	int answer = 0;
+	//	HGDIOBJ old_object;
+	//	int answer = 0;
 
-//	if ( hdc ) {
-//		old_object = SelectObject( hdc, Font );
-//		answer = SetTextCharacterExtra( hdc, x );
-//		SelectObject( hdc, old_object );
-//	}
+	//	if ( hdc ) {
+	//		old_object = SelectObject( hdc, Font );
+	//		answer = SetTextCharacterExtra( hdc, x );
+	//		SelectObject( hdc, old_object );
+	//	}
 	FontXSpacing = x;
-	return( x );
+	return (x);
 }
-
 
 /***********************************************************************************************
  * TTFontClass::Set_YSpacing -- Set the vertical (Y) spacing override value.                   *
@@ -631,12 +646,11 @@ int TTFontClass::Set_XSpacing( HDC hdc, int x )
  * HISTORY:                                                                                    *
  *   05/26/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-int TTFontClass::Set_YSpacing( int y )
+int TTFontClass::Set_YSpacing(int y)
 {
 	FontYSpacing = y;
-	return(y);
+	return (y);
 }
-
 
 /***********************************************************************************************
  * TTFontClass::Print -- Print text to the surface specified.  WCHAR Version.		           *
@@ -662,114 +676,111 @@ int TTFontClass::Set_YSpacing( int y )
  *	  06/20/1887 BNA : Modified to handle new fonts.														  *
  *=============================================================================================*/
 
-#if(NDEBUG)
+#if (NDEBUG)
 
 Point2D TTFontClass::Print(
-	HDC hdc,
-	wchar_t const * string,
-	Rect const & cliprect,
-	COLORREF forecolor,		/* = TEXT_COLOR,		*/
-	COLORREF backcolor,		/* = TEXT_SHADOW_COLOR,	*/
-	TextFormatType flag,  	/* = TPF_DEFAULT,		*/
-	TextShadowType shadow )	/* = TPF_FULLSHADOW		*/
+		HDC hdc,
+		wchar_t const *string,
+		Rect const &cliprect,
+		COLORREF forecolor, /* = TEXT_COLOR,		*/
+		COLORREF backcolor, /* = TEXT_SHADOW_COLOR,	*/
+		TextFormatType flag, /* = TPF_DEFAULT,		*/
+		TextShadowType shadow) /* = TPF_FULLSHADOW		*/
 {
-	char buffer[ _MAX_PATH ];
-	int length = wcslen( string );
+	char buffer[_MAX_PATH];
+	int length = wcslen(string);
 
-	memset( buffer, '\0', _MAX_PATH );
-	WideCharToMultiByte( CodePage, 0, string, length, buffer, _MAX_PATH, NULL, NULL );
+	memset(buffer, '\0', _MAX_PATH);
+	WideCharToMultiByte(CodePage, 0, string, length, buffer, _MAX_PATH, NULL, NULL);
 
-	return( Print( hdc, buffer, cliprect, forecolor, backcolor, flag, shadow ));
+	return (Print(hdc, buffer, cliprect, forecolor, backcolor, flag, shadow));
 }
 
 #else
 
 Point2D TTFontClass::Print(
-	HDC hdc,
-	wchar_t const * string,
-	Rect const & cliprect,
-	COLORREF forecolor,		/* = TEXT_COLOR,		*/
-	COLORREF backcolor,		/* = TEXT_SHADOW_COLOR,	*/
-	TextFormatType flag,  	/* = TPF_DEFAULT,		*/
-	TextShadowType shadow )	/* = TPF_FULLSHADOW		*/
+		HDC hdc,
+		wchar_t const *string,
+		Rect const &cliprect,
+		COLORREF forecolor, /* = TEXT_COLOR,		*/
+		COLORREF backcolor, /* = TEXT_SHADOW_COLOR,	*/
+		TextFormatType flag, /* = TPF_DEFAULT,		*/
+		TextShadowType shadow) /* = TPF_FULLSHADOW		*/
 {
-	Point2D	point( cliprect.X, cliprect.Y );
-	RECT	rect;
-	HGDIOBJ	old_object;
-	SIZE	size;
-	int		length = 0;
-	int		result = 0;
+	Point2D point(cliprect.X, cliprect.Y);
+	RECT rect;
+	HGDIOBJ old_object;
+	SIZE size;
+	int length = 0;
+	int result = 0;
 
 	//--------------------------------------------------------------------------
 	// If no string, why continue?
 	//--------------------------------------------------------------------------
-	assert( string != NULL );
-	assert( hdc != NULL );
+	assert(string != NULL);
+	assert(hdc != NULL);
 
-	if (( string == NULL ) || ( string[0] == '\0' )) {
-		return( point );
+	if ((string == NULL) || (string[0] == '\0'))
+	{
+		return (point);
 	}
 
 	//--------------------------------------------------------------------------
 	// Set up rectangle print regions for the "shadow" and the main color.
 	//--------------------------------------------------------------------------
-	length		= wcslen( string );
-	rect.left	= cliprect.X;
-	rect.top	= cliprect.Y;
-	rect.right	= cliprect.X + cliprect.Width;
-	rect.bottom	= cliprect.Y + cliprect.Height;
+	length = wcslen(string);
+	rect.left = cliprect.X;
+	rect.top = cliprect.Y;
+	rect.right = cliprect.X + cliprect.Width;
+	rect.bottom = cliprect.Y + cliprect.Height;
 
-	Msg( __LINE__, __FILE__, "TTFontClass::Print -- string = %s.", string );
-	Msg( __LINE__, __FILE__, "TTFontClass::Print -- strlen = %d.", length );
-	Msg( __LINE__, __FILE__, "TTFontClass::Print -- rect = [%d, %d, %d, %d].", rect.left, rect.top, rect.right, rect.bottom );
-//	Msg( __LINE__, __FILE__, "TTFontClass::Print -- rect2 = [%d, %d, %d, %d].", rect.left, rect.top, rect.right, rect.bottom );
+	Msg(__LINE__, __FILE__, "TTFontClass::Print -- string = %s.", string);
+	Msg(__LINE__, __FILE__, "TTFontClass::Print -- strlen = %d.", length);
+	Msg(__LINE__, __FILE__, "TTFontClass::Print -- rect = [%d, %d, %d, %d].", rect.left, rect.top, rect.right, rect.bottom);
+	//	Msg( __LINE__, __FILE__, "TTFontClass::Print -- rect2 = [%d, %d, %d, %d].", rect.left, rect.top, rect.right,
+	// rect.bottom );
 
 	//--------------------------------------------------------------------------
 	// Print the "Shadow" depending on style desired, then the text in the requested color.
 	//--------------------------------------------------------------------------
-	if ( hdc ) {
+	if (hdc)
+	{
+		assert(Font != NULL);
 
-		assert( Font != NULL );
+		old_object = SelectObject(hdc, Font);
 
-		old_object = SelectObject( hdc, Font );
+		SetTextCharacterExtra(hdc, FontXSpacing);
+		SetTextAlign(hdc, TA_LEFT | TA_TOP);
+		SetBkMode(hdc, TRANSPARENT);
 
-		SetTextCharacterExtra( hdc, FontXSpacing );
-		SetTextAlign( hdc, TA_LEFT | TA_TOP );
-		SetBkMode( hdc, TRANSPARENT );
+		SetTextColor(hdc, forecolor);
 
-		SetTextColor( hdc, forecolor );
+		//		result = ExtTextOutW(
+		//			hdc,				// handle to DC
+		//			rect.left,			// x-coordinate of reference point
+		//			rect.top,			// y-coordinate of reference point
+		//			ETO_CLIPPED,		// text-output options
+		//			&rect,				// optional dimensions
+		//			string,				// string
+		//			length,				// number of characters in string
+		//			NULL				// array of spacing values
+		//		);
 
-//		result = ExtTextOutW(
-//			hdc,				// handle to DC
-//			rect.left,			// x-coordinate of reference point
-//			rect.top,			// y-coordinate of reference point
-//			ETO_CLIPPED,		// text-output options
-//			&rect,				// optional dimensions
-//			string,				// string
-//			length,				// number of characters in string
-//			NULL				// array of spacing values
-//		);
+		// 		result = TextOutW(
+		// 			hdc,				// handle to DC
+		// 			rect.left,			// x-coordinate of starting position
+		// 			rect.top,			// y-coordinate of starting position
+		// 			string,				// character string
+		// 			length				// number of characters
+		// 		);
 
-// 		result = TextOutW(
-// 			hdc,				// handle to DC
-// 			rect.left,			// x-coordinate of starting position
-// 			rect.top,			// y-coordinate of starting position
-// 			string,				// character string
-// 			length				// number of characters
-// 		);
+		result = DrawTextW(hdc, string, length, &rect, flag);
 
- 		result = DrawTextW(
- 			hdc,
- 			string,
- 			length,
- 			&rect,
- 			flag );
-
-		GetTextExtentPointW( hdc, string, length, &size );
-		SelectObject( hdc, old_object );
+		GetTextExtentPointW(hdc, string, length, &size);
+		SelectObject(hdc, old_object);
 	}
 	point.X += size.cx;
-	return( point );
+	return (point);
 }
 
 #endif
@@ -799,229 +810,230 @@ Point2D TTFontClass::Print(
  *=============================================================================================*/
 
 Point2D TTFontClass::Print(
-	HDC hdc,
-	char const * string,
-	Rect const & cliprect,
-	COLORREF forecolor,		/* = TEXT_COLOR,		*/
-	COLORREF backcolor,		/* = TEXT_SHADOW_COLOR,	*/
-	TextFormatType flag,  	/* = TPF_DEFAULT,		*/
-	TextShadowType shadow )	/* = TPF_FULLSHADOW		*/
+		HDC hdc,
+		char const *string,
+		Rect const &cliprect,
+		COLORREF forecolor, /* = TEXT_COLOR,		*/
+		COLORREF backcolor, /* = TEXT_SHADOW_COLOR,	*/
+		TextFormatType flag, /* = TPF_DEFAULT,		*/
+		TextShadowType shadow) /* = TPF_FULLSHADOW		*/
 {
-	Point2D	point( cliprect.X, cliprect.Y );
-	RECT	rect, rect2;
-	HGDIOBJ	old_object;
-	SIZE	size;
-	int		length = 0;
-	int		result = 0;
+	Point2D point(cliprect.X, cliprect.Y);
+	RECT rect, rect2;
+	HGDIOBJ old_object;
+	SIZE size;
+	int length = 0;
+	int result = 0;
 
 	//--------------------------------------------------------------------------
 	// If no string, why continue?
 	//--------------------------------------------------------------------------
-	assert( string != NULL );
-	assert( hdc != NULL );
+	assert(string != NULL);
+	assert(hdc != NULL);
 
-	if (( string == NULL ) || ( string[0] == '\0' )) {
-		return( point );
+	if ((string == NULL) || (string[0] == '\0'))
+	{
+		return (point);
 	}
 
 	//--------------------------------------------------------------------------
 	// Set up rectangle print regions for the "shadow" and the main color.
 	//--------------------------------------------------------------------------
-	length		= strlen( string );
-	rect.left	= cliprect.X;
-	rect.top	= cliprect.Y;
-	rect.right	= cliprect.X + cliprect.Width;
-	rect.bottom	= cliprect.Y + cliprect.Height;
+	length = strlen(string);
+	rect.left = cliprect.X;
+	rect.top = cliprect.Y;
+	rect.right = cliprect.X + cliprect.Width;
+	rect.bottom = cliprect.Y + cliprect.Height;
 
 	// Shadow
-	rect2.left	= rect.left - 1;
-	rect2.top 	= rect.top  - 1;
-	rect2.right	= rect.right - 1;
-	rect2.bottom= rect.bottom - 1;
+	rect2.left = rect.left - 1;
+	rect2.top = rect.top - 1;
+	rect2.right = rect.right - 1;
+	rect2.bottom = rect.bottom - 1;
 
-//	Msg( __LINE__, __FILE__, "TTFontClass::Print -- strlen = %d.", length );
-//	Msg( __LINE__, __FILE__, "TTFontClass::Print -- rect = [%d, %d, %d, %d].", rect.left, rect.top, rect.right, rect.bottom );
-//	Msg( __LINE__, __FILE__, "TTFontClass::Print -- rect2 = [%d, %d, %d, %d].", rect.left, rect.top, rect.right, rect.bottom );
+	//	Msg( __LINE__, __FILE__, "TTFontClass::Print -- strlen = %d.", length );
+	//	Msg( __LINE__, __FILE__, "TTFontClass::Print -- rect = [%d, %d, %d, %d].", rect.left, rect.top, rect.right, rect.bottom
+	//); 	Msg( __LINE__, __FILE__, "TTFontClass::Print -- rect2 = [%d, %d, %d, %d].", rect.left, rect.top, rect.right,
+	// rect.bottom );
 
 	//--------------------------------------------------------------------------
 	// Print the "Shadow" depending on style desired, then the text in the requested color.
 	//--------------------------------------------------------------------------
-	if ( hdc ) {
+	if (hdc)
+	{
+		assert(Font != NULL);
 
-		assert( Font != NULL );
+		old_object = SelectObject(hdc, Font);
 
-		old_object = SelectObject( hdc, Font );
+		SetTextCharacterExtra(hdc, FontXSpacing);
+		SetTextAlign(hdc, TA_LEFT | TA_TOP);
+		SetBkMode(hdc, TRANSPARENT);
+		SetTextColor(hdc, backcolor);
 
-		SetTextCharacterExtra( hdc, FontXSpacing );
-		SetTextAlign( hdc, TA_LEFT | TA_TOP );
-		SetBkMode( hdc, TRANSPARENT );
-		SetTextColor( hdc, backcolor );
-
-		if ( shadow == TPF_SHADOW ) {
-
+		if (shadow == TPF_SHADOW)
+		{
 			// One left, One up.
-			result = DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// One left.
-			rect2.left		= rect.left - 1;
-			rect2.top 		= rect.top;
-			rect2.right		= rect.right - 1;
-			rect2.bottom	= rect.bottom;
-			result			= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left - 1;
+			rect2.top = rect.top;
+			rect2.right = rect.right - 1;
+			rect2.bottom = rect.bottom;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// One up.
-			rect2.left	= rect.left;
-			rect2.top 	= rect.top - 1;
-			rect2.right		= rect.right;
-			rect2.bottom	= rect.bottom - 1;
-			result			= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
-
-		} else if ( shadow == TPF_DOUBLESHADOW ) {
-
+			rect2.left = rect.left;
+			rect2.top = rect.top - 1;
+			rect2.right = rect.right;
+			rect2.bottom = rect.bottom - 1;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
+		}
+		else if (shadow == TPF_DOUBLESHADOW)
+		{
 			// One left, One up.
-			result = DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// One left.
-			rect2.left	= rect.left - 1;
-			rect2.top 	= rect.top;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left - 1;
+			rect2.top = rect.top;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// One up.
-			rect2.left	= rect.left;
-			rect2.top 	= rect.top - 1;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left;
+			rect2.top = rect.top - 1;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// Two left, Two up.
-			rect2.left	= rect.left - 2;
-			rect2.top 	= rect.top  - 2;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left - 2;
+			rect2.top = rect.top - 2;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// Two left.
-			rect2.left	= rect.left - 2;
-			rect2.top 	= rect.top;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left - 2;
+			rect2.top = rect.top;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// Two up.
-			rect2.left	= rect.left;
-			rect2.top 	= rect.top - 2;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
-
-		} else if ( shadow == TPF_FULLSHADOW ) {
-
+			rect2.left = rect.left;
+			rect2.top = rect.top - 2;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
+		}
+		else if (shadow == TPF_FULLSHADOW)
+		{
 			// One left, One up.
-			result = DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// One right, One up.
-			rect2.left	= rect.left + 1;
-			rect2.top 	= rect.top  - 1;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left + 1;
+			rect2.top = rect.top - 1;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// One left, One down.
-			rect2.left	= rect.left - 1;
-			rect2.top 	= rect.top  + 1;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left - 1;
+			rect2.top = rect.top + 1;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// One right, One down.
-			rect2.left	= rect.left + 1;
-			rect2.top 	= rect.top  + 1;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left + 1;
+			rect2.top = rect.top + 1;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// One left.
-			rect2.left	= rect.left - 1;
-			rect2.top 	= rect.top;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left - 1;
+			rect2.top = rect.top;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// One right.
-			rect2.left	= rect.left + 1;
-			rect2.top 	= rect.top;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left + 1;
+			rect2.top = rect.top;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// One up.
-			rect2.left	= rect.left;
-			rect2.top 	= rect.top - 1;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left;
+			rect2.top = rect.top - 1;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// One down.
-			rect2.left	= rect.left;
-			rect2.top 	= rect.top + 1;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left;
+			rect2.top = rect.top + 1;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// Two right.
-			rect2.left	= rect.left + 2;
-			rect2.top 	= rect.top;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left + 2;
+			rect2.top = rect.top;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// Two down.
-			rect2.left	= rect.left;
-			rect2.top 	= rect.top + 2;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left;
+			rect2.top = rect.top + 2;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// Two right, One up.
-			rect2.left	= rect.left + 2;
-			rect2.top 	= rect.top  - 2;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left + 2;
+			rect2.top = rect.top - 2;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// Two right, One down.
-			rect2.left	= rect.left + 2;
-			rect2.top 	= rect.top  + 2;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
-
+			rect2.left = rect.left + 2;
+			rect2.top = rect.top + 2;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// Three right.
-			rect2.left	= rect.left + 3;
-			rect2.top 	= rect.top;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left + 3;
+			rect2.top = rect.top;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// Three down.
-			rect2.left	= rect.left;
-			rect2.top 	= rect.top + 3;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left;
+			rect2.top = rect.top + 3;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// Three right, One up.
-			rect2.left	= rect.left + 3;
-			rect2.top 	= rect.top  - 3;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left + 3;
+			rect2.top = rect.top - 3;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 
 			// Three right, One down.
-			rect2.left	= rect.left + 3;
-			rect2.top 	= rect.top  + 3;
-			result		= DrawText( hdc, string, length, &rect2, flag );
-			assert( result != 0 );
+			rect2.left = rect.left + 3;
+			rect2.top = rect.top + 3;
+			result = DrawText(hdc, string, length, &rect2, flag);
+			assert(result != 0);
 		}
 
-		SetTextColor( hdc, forecolor );
-		result = DrawText( hdc, string, length,	&rect, flag  );
-		assert( result != 0 );
+		SetTextColor(hdc, forecolor);
+		result = DrawText(hdc, string, length, &rect, flag);
+		assert(result != 0);
 
-		GetTextExtentPoint( hdc, string, length, &size );
-		SelectObject( hdc, old_object );
+		GetTextExtentPoint(hdc, string, length, &size);
+		SelectObject(hdc, old_object);
 	}
 	point.X += size.cx;
-	return( point );
+	return (point);
 }
 
 /***************************************************************************
@@ -1038,53 +1050,60 @@ Point2D TTFontClass::Print(
 //
 // [OYO]	Supports DBCS ( multi-byte characters ).
 //
-int TTFontClass::Find_Text_VLength( HDC hdc, char *str, int width )
+int TTFontClass::Find_Text_VLength(HDC hdc, char *str, int width)
 {
-	int	curlen	= 0;
-	int	lastlen	= 0;
-	int	lines		= Get_Height();
-	char *letter	= str;
-	bool	make_dc	= FALSE;
-	HDC	localDC	= hdc;
+	int curlen = 0;
+	int lastlen = 0;
+	int lines = Get_Height();
+	char *letter = str;
+	bool make_dc = FALSE;
+	HDC localDC = hdc;
 
-	if ( *str == '\0' || str == NULL ) {
-		return( 0 );
+	if (*str == '\0' || str == NULL)
+	{
+		return (0);
 	}
 
 	//--------------------------------------------------------------------------
 	// If no DC was passed in, then we need to get one.
 	//--------------------------------------------------------------------------
-	if ( localDC == NULL ) {
-		return( 0 );
+	if (localDC == NULL)
+	{
+		return (0);
 	}
 
 	//==========================================================================
 	// Process languages EXCEPT Double-byte languages.
 	//==========================================================================
-	if( !(IS_LANGUAGE_DBCS( LanguageID ))) {
-
+	if (!(IS_LANGUAGE_DBCS(LanguageID)))
+	{
 		//-----------------------------------------------------------------------
 		// Get the pixel length of the string.
 		//-----------------------------------------------------------------------
-		curlen = String_Pixel_Width( localDC, str );
+		curlen = String_Pixel_Width(localDC, str);
 		lines = 0;
 
 		//-----------------------------------------------------------------------
 		// If the string in longer than the width given, calculate the number of
 		// lines needed in pixels (height of string in pixels ).
 		//-----------------------------------------------------------------------
-		if ( curlen > width ) {
-
-			while( curlen > 0 ) {
-				if ( curlen > width ) {
+		if (curlen > width)
+		{
+			while (curlen > 0)
+			{
+				if (curlen > width)
+				{
 					curlen -= width;
-				} else {
+				}
+				else
+				{
 					curlen = 0;
 				}
 				lines += Get_Height();
 			}
-
-		} else {
+		}
+		else
+		{
 			lines = Get_Height();
 		}
 
@@ -1092,68 +1111,75 @@ int TTFontClass::Find_Text_VLength( HDC hdc, char *str, int width )
 		// Check for any newlines.  Add one line per newline.
 		//-----------------------------------------------------------------------
 		letter = str;
-		while ( *letter ) {
-			if ( *letter == '\n') {
+		while (*letter)
+		{
+			if (*letter == '\n')
+			{
 				lines += Get_Height();
 			}
 			letter++;
 		}
-
-	} else {
-
+	}
+	else
+	{
 		//=======================================================================
 		// Process Double-Byte language text.
 		//=======================================================================
-		int	i, n, wspc;
-		UINT	c;
-		int 	fdbcs = IsFontDBCS();
+		int i, n, wspc;
+		UINT c;
+		int fdbcs = IsFontDBCS();
 
-		lines	= 0;
+		lines = 0;
 
 		//-----------------------------------------------------------------------
 		// For each word...
 		//-----------------------------------------------------------------------
-		while ( n = nGetWord( letter, fdbcs )) {
-
+		while (n = nGetWord(letter, fdbcs))
+		{
 			//--------------------------------------------------------------------
 			// For each character in the word...
 			//--------------------------------------------------------------------
-			for ( c=0, wspc=0, curlen=0, i=0; i < n; i++ ) {
-
-				if ( c ) {
+			for (c = 0, wspc = 0, curlen = 0, i = 0; i < n; i++)
+			{
+				if (c)
+				{
 					//--------------------------------------------------------------
 					// Double-byte character.
 					//--------------------------------------------------------------
-					c = ( c<<8 )|(UINT)(BYTE)letter[i];
-					curlen += Char_Pixel_Width( localDC, c ) + wspc;
+					c = (c << 8) | (UINT)(BYTE)letter[i];
+					curlen += Char_Pixel_Width(localDC, c) + wspc;
 					c = 0;
 					wspc = 0;
-
-				} else if( fdbcs && IsDBCSLeadByte((BYTE)letter[i])) {
+				}
+				else if (fdbcs && IsDBCSLeadByte((BYTE)letter[i]))
+				{
 					//--------------------------------------------------------------
 					// First half of a Double-byte character.
 					//--------------------------------------------------------------
 					c = (UINT)(BYTE)letter[i];
-
-				} else if((BYTE)letter[i] > ' ' ) {
+				}
+				else if ((BYTE)letter[i] > ' ')
+				{
 					//--------------------------------------------------------------
 					// Single-byte character.
 					//--------------------------------------------------------------
-					curlen += Char_Pixel_Width( localDC, (UINT)(BYTE)letter[i] ) + wspc;
+					curlen += Char_Pixel_Width(localDC, (UINT)(BYTE)letter[i]) + wspc;
 					wspc = 0;
-
-				} else if( letter[i] == ' ') {
+				}
+				else if (letter[i] == ' ')
+				{
 					//--------------------------------------------------------------
 					// Space character.
 					//--------------------------------------------------------------
-					wspc += Char_Pixel_Width( localDC, ' ' );
+					wspc += Char_Pixel_Width(localDC, ' ');
 				}
 			} // end-of-for
 
 			//--------------------------------------------------------------------
 			//
 			//--------------------------------------------------------------------
-			if( lastlen + curlen > width ) {
+			if (lastlen + curlen > width)
+			{
 				lines += Get_Height();
 				lastlen = 0;
 			}
@@ -1167,7 +1193,8 @@ int TTFontClass::Find_Text_VLength( HDC hdc, char *str, int width )
 			//--------------------------------------------------------------------
 			//
 			//--------------------------------------------------------------------
-			if( letter[i] == '\n' ) {
+			if (letter[i] == '\n')
+			{
 				lines += Get_Height();
 				lastlen = 0;
 			}
@@ -1178,7 +1205,8 @@ int TTFontClass::Find_Text_VLength( HDC hdc, char *str, int width )
 		//-----------------------------------------------------------------------
 		// Left over, add a line.
 		//-----------------------------------------------------------------------
-		if( lastlen ) {
+		if (lastlen)
+		{
 			lines += Get_Height();
 		}
 	}
@@ -1186,10 +1214,11 @@ int TTFontClass::Find_Text_VLength( HDC hdc, char *str, int width )
 	//--------------------------------------------------------------------------
 	// Return the number of lines.
 	//--------------------------------------------------------------------------
-	if ( !lines ) {
+	if (!lines)
+	{
 		lines = Get_Height();
 	}
-	return( lines );
+	return (lines);
 }
 
 /***********************************************************************************************
@@ -1204,42 +1233,43 @@ int TTFontClass::Find_Text_VLength( HDC hdc, char *str, int width )
  * HISTORY:                                                                                    *
  *   03/26/1998 MML : Created.                                                                 *
  *=============================================================================================*/
-FontManagerClass::FontManagerClass ( HDC hdc )
+FontManagerClass::FontManagerClass(HDC hdc)
 {
 	//--------------------------------------------------------------------------
 	// Open a DC to the BackBuffer.
 	//--------------------------------------------------------------------------
-	if ( hdc ) {
+	if (hdc)
+	{
+		char szPath[MAX_PATH];
+		char szFile[MAX_PATH];
+		char szFacename[MAX_PATH];
+		char drive[_MAX_DRIVE];
+		char dir[_MAX_DIR];
+		bool b640X480 = false;
+		RECT rect; // Desktop Window ( used once ).
 
-		char	szPath[ MAX_PATH ];
-		char	szFile[ MAX_PATH ];
-		char	szFacename[ MAX_PATH ];
-		char	drive[ _MAX_DRIVE ];
-		char	dir[ _MAX_DIR ];
-		bool	b640X480 = false;
-	  	RECT	rect;								// Desktop Window ( used once ).
+		strcpy(szFile, "Arial.ttf");
+		strcpy(szFacename, "Arial");
 
-		strcpy( szFile, "Arial.ttf" );
-		strcpy( szFacename, "Arial" );
+		strcpy(szPath, Args->Get_argv(0));
+		_splitpath(szPath, drive, dir, NULL, NULL);
+		_makepath(szPath, drive, dir, "Setup\\Setup", ".ini");
 
-		strcpy( szPath, Args->Get_argv(0));
-		_splitpath( szPath, drive, dir, NULL, NULL );
-		_makepath( szPath, drive, dir, "Setup\\Setup", ".ini" );
-
-		GetPrivateProfileString( "Fonts", "Font", "Arial.tff", szFile, MAX_PATH, szPath );
-		GetPrivateProfileString( "Fonts", "Fontname", "Arial", szFacename, MAX_PATH, szPath );
+		GetPrivateProfileString("Fonts", "Font", "Arial.tff", szFile, MAX_PATH, szPath);
+		GetPrivateProfileString("Fonts", "Fontname", "Arial", szFacename, MAX_PATH, szPath);
 
 		//---------------------------------------------------------------------
 		// Use codepage set by Locomoto class.
 		//---------------------------------------------------------------------
-		UINT codepage = CodePage;				// GetACP();
+		UINT codepage = CodePage; // GetACP();
 
-		GetClientRect( GetDesktopWindow(), &rect );
-		if( rect.right <= 640 ) {
+		GetClientRect(GetDesktopWindow(), &rect);
+		if (rect.right <= 640)
+		{
 			b640X480 = TRUE;
 		}
 
-		Msg( __LINE__, __FILE__, "FontManagerClass -- szFile = %s, szFilename = %s.", szFile, szFacename );
+		Msg(__LINE__, __FILE__, "FontManagerClass -- szFile = %s, szFilename = %s.", szFile, szFacename);
 
 		//---------------------------------------------------------------------
 		// Create the True Type Fonts.
@@ -1263,45 +1293,46 @@ FontManagerClass::FontManagerClass ( HDC hdc )
 		//	FW_BLACK		900
 		//---------------------------------------------------------------------
 
-		switch( LanguageID ) { 	// [OYO] Add this line if you wish to support another languages
+		switch (LanguageID)
+		{ // [OYO] Add this line if you wish to support another languages
 
 			//=================================================================
 			// JAPANESE
 			//=================================================================
-			case LANG_JAP:		// [OYO] Use MS PGothic for Japanese Win9x
+			case LANG_JAP: // [OYO] Use MS PGothic for Japanese Win9x
 
-				if( codepage == 932 ) {
+				if (codepage == 932)
+				{
+					strcpy(szFile, "MSGothic.ttc");
+					strcpy(szFacename, "MS PGothic");
 
-					strcpy( szFile, "MSGothic.ttc" );
-					strcpy( szFacename, "MS PGothic" );
+					TTButtonFontPtr = new TTFontClass(hdc, szFile, szFacename, 20, FW_NORMAL, SHIFTJIS_CHARSET);
+					TTButtonFontPtrSmall = new TTFontClass(hdc, szFile, szFacename, 12, FW_NORMAL, SHIFTJIS_CHARSET);
 
-					TTButtonFontPtr		= new TTFontClass( hdc, szFile, szFacename, 20, FW_NORMAL,	SHIFTJIS_CHARSET );
-					TTButtonFontPtrSmall= new TTFontClass( hdc, szFile, szFacename, 12, FW_NORMAL,	SHIFTJIS_CHARSET );
-
-					TTTextFontPtr		= new TTFontClass( hdc, szFile, szFacename, 16, FW_MEDIUM,	SHIFTJIS_CHARSET );
-					TTTextFontPtr640	= new TTFontClass( hdc, szFile, szFacename, 14, FW_MEDIUM,	SHIFTJIS_CHARSET );
-					TTTextFontPtr800	= new TTFontClass( hdc, szFile, szFacename, 14, FW_MEDIUM,	SHIFTJIS_CHARSET );
-					TTLicenseFontPtr	= new TTFontClass( hdc, szFile, szFacename, 12, FW_NORMAL,	SHIFTJIS_CHARSET );
+					TTTextFontPtr = new TTFontClass(hdc, szFile, szFacename, 16, FW_MEDIUM, SHIFTJIS_CHARSET);
+					TTTextFontPtr640 = new TTFontClass(hdc, szFile, szFacename, 14, FW_MEDIUM, SHIFTJIS_CHARSET);
+					TTTextFontPtr800 = new TTFontClass(hdc, szFile, szFacename, 14, FW_MEDIUM, SHIFTJIS_CHARSET);
+					TTLicenseFontPtr = new TTFontClass(hdc, szFile, szFacename, 12, FW_NORMAL, SHIFTJIS_CHARSET);
 				}
 				break;
 
 			//=================================================================
 			// KOREAN
 			//=================================================================
-			case LANG_KOR:		// [OYO] Use GulimChe for Korean Win9x
+			case LANG_KOR: // [OYO] Use GulimChe for Korean Win9x
 
-				if ( codepage == 949 ) {
+				if (codepage == 949)
+				{
+					strcpy(szFile, "Gulim.tff");
+					strcpy(szFacename, "Gulim");
 
-					strcpy( szFile, "Gulim.tff" );
-					strcpy( szFacename, "Gulim" );
+					TTButtonFontPtr = new TTFontClass(hdc, szFile, szFacename, 20, FW_NORMAL, HANGEUL_CHARSET);
+					TTButtonFontPtrSmall = new TTFontClass(hdc, szFile, szFacename, 20, FW_NORMAL, HANGEUL_CHARSET);
 
-					TTButtonFontPtr		= new TTFontClass( hdc, szFile,	szFacename, 20, FW_NORMAL,	HANGEUL_CHARSET );
-					TTButtonFontPtrSmall= new TTFontClass( hdc, szFile, szFacename, 20, FW_NORMAL,	HANGEUL_CHARSET );
-
-					TTTextFontPtr		= new TTFontClass( hdc, szFile,	szFacename, 16, FW_MEDIUM,	HANGEUL_CHARSET );
-					TTTextFontPtr640	= new TTFontClass( hdc, szFile, szFacename, 14, FW_MEDIUM,	HANGEUL_CHARSET );
-					TTTextFontPtr800	= new TTFontClass( hdc, szFile, szFacename, 14, FW_MEDIUM,	HANGEUL_CHARSET );
-					TTLicenseFontPtr	= new TTFontClass( hdc, szFile, szFacename, 12, FW_NORMAL,	HANGEUL_CHARSET );
+					TTTextFontPtr = new TTFontClass(hdc, szFile, szFacename, 16, FW_MEDIUM, HANGEUL_CHARSET);
+					TTTextFontPtr640 = new TTFontClass(hdc, szFile, szFacename, 14, FW_MEDIUM, HANGEUL_CHARSET);
+					TTTextFontPtr800 = new TTFontClass(hdc, szFile, szFacename, 14, FW_MEDIUM, HANGEUL_CHARSET);
+					TTLicenseFontPtr = new TTFontClass(hdc, szFile, szFacename, 12, FW_NORMAL, HANGEUL_CHARSET);
 				}
 				break;
 
@@ -1310,18 +1341,18 @@ FontManagerClass::FontManagerClass ( HDC hdc )
 			//=================================================================
 			case LANG_CHI:
 
-				if ( codepage == 950 ) {
+				if (codepage == 950)
+				{
+					strcpy(szFile, "mingliu.ttc");
+					strcpy(szFacename, "mingliu");
 
-					strcpy( szFile, "mingliu.ttc" );
-					strcpy( szFacename, "mingliu" );
+					TTButtonFontPtr = new TTFontClass(hdc, szFile, szFacename, 20, FW_NORMAL, CHINESEBIG5_CHARSET);
+					TTButtonFontPtrSmall = new TTFontClass(hdc, szFile, szFacename, 14, FW_NORMAL, CHINESEBIG5_CHARSET);
 
-					TTButtonFontPtr		= new TTFontClass( hdc, szFile, szFacename, 20, FW_NORMAL,	CHINESEBIG5_CHARSET );
-					TTButtonFontPtrSmall= new TTFontClass( hdc, szFile, szFacename, 14, FW_NORMAL,	CHINESEBIG5_CHARSET );
-
-					TTTextFontPtr		= new TTFontClass( hdc, szFile, szFacename, 16, FW_MEDIUM,	CHINESEBIG5_CHARSET );
-					TTTextFontPtr640	= new TTFontClass( hdc, szFile, szFacename, 14, FW_MEDIUM,	CHINESEBIG5_CHARSET );
-					TTTextFontPtr800	= new TTFontClass( hdc, szFile, szFacename, 14, FW_MEDIUM,	CHINESEBIG5_CHARSET );
-					TTLicenseFontPtr	= new TTFontClass( hdc, szFile, szFacename, 12, FW_NORMAL,	CHINESEBIG5_CHARSET );
+					TTTextFontPtr = new TTFontClass(hdc, szFile, szFacename, 16, FW_MEDIUM, CHINESEBIG5_CHARSET);
+					TTTextFontPtr640 = new TTFontClass(hdc, szFile, szFacename, 14, FW_MEDIUM, CHINESEBIG5_CHARSET);
+					TTTextFontPtr800 = new TTFontClass(hdc, szFile, szFacename, 14, FW_MEDIUM, CHINESEBIG5_CHARSET);
+					TTLicenseFontPtr = new TTFontClass(hdc, szFile, szFacename, 12, FW_NORMAL, CHINESEBIG5_CHARSET);
 				}
 				break;
 
@@ -1333,55 +1364,64 @@ FontManagerClass::FontManagerClass ( HDC hdc )
 			case LANG_USA:
 			default:
 
-				TTButtonFontPtr		= new TTFontClass( hdc, szFile, szFacename, 22, FW_SEMIBOLD,	ANSI_CHARSET, 0, 0, 0, FALSE );
+				TTButtonFontPtr = new TTFontClass(hdc, szFile, szFacename, 22, FW_SEMIBOLD, ANSI_CHARSET, 0, 0, 0, FALSE);
 
-				if( LANG_FRE == LanguageID ) {
-					TTButtonFontPtrSmall= new TTFontClass( hdc, szFile, szFacename, 20, FW_SEMIBOLD, ANSI_CHARSET, 0, 0, 0, FALSE );
-				} else {
-					TTButtonFontPtrSmall= new TTFontClass( hdc, szFile, szFacename, 22, FW_SEMIBOLD, ANSI_CHARSET, 0, 0, 0, FALSE );
+				if (LANG_FRE == LanguageID)
+				{
+					TTButtonFontPtrSmall = new TTFontClass(hdc, szFile, szFacename, 20, FW_SEMIBOLD, ANSI_CHARSET, 0, 0, 0, FALSE);
+				}
+				else
+				{
+					TTButtonFontPtrSmall = new TTFontClass(hdc, szFile, szFacename, 22, FW_SEMIBOLD, ANSI_CHARSET, 0, 0, 0, FALSE);
 				}
 
-				TTTextFontPtr		= new TTFontClass( hdc, szFile, szFacename, 16, FW_SEMIBOLD,	ANSI_CHARSET, 0, 0, 0, FALSE );
-				TTTextFontPtr640	= new TTFontClass( hdc, szFile, szFacename, 14, FW_SEMIBOLD,	ANSI_CHARSET, 0, 0, 0, FALSE );
-				TTTextFontPtr800	= new TTFontClass( hdc, szFile, szFacename, 14, FW_SEMIBOLD,	ANSI_CHARSET, 0, 0, 0, FALSE );
-				TTLicenseFontPtr	= new TTFontClass( hdc, szFile, szFacename, 12, FW_MEDIUM,		ANSI_CHARSET, 0, 0, 0, FALSE );
+				TTTextFontPtr = new TTFontClass(hdc, szFile, szFacename, 16, FW_SEMIBOLD, ANSI_CHARSET, 0, 0, 0, FALSE);
+				TTTextFontPtr640 = new TTFontClass(hdc, szFile, szFacename, 14, FW_SEMIBOLD, ANSI_CHARSET, 0, 0, 0, FALSE);
+				TTTextFontPtr800 = new TTFontClass(hdc, szFile, szFacename, 14, FW_SEMIBOLD, ANSI_CHARSET, 0, 0, 0, FALSE);
+				TTLicenseFontPtr = new TTFontClass(hdc, szFile, szFacename, 12, FW_MEDIUM, ANSI_CHARSET, 0, 0, 0, FALSE);
 				break;
 		}
 
 		//----------------------------------------------------------------------
 		// If we fell through...
 		//----------------------------------------------------------------------
-		if( TTButtonFontPtr == NULL || TTTextFontPtr == NULL ) {
+		if (TTButtonFontPtr == NULL || TTTextFontPtr == NULL)
+		{
+			strcpy(szFile, "Arial.tff");
+			strcpy(szFacename, "Arial");
 
-			strcpy( szFile, "Arial.tff" );
-			strcpy( szFacename, "Arial" );
-
-			if( TTButtonFontPtr	== NULL ) {
-				TTButtonFontPtr		= new TTFontClass( hdc, szFile, szFacename, 22, FW_SEMIBOLD,	ANSI_CHARSET, 0, 0, 0, FALSE );
+			if (TTButtonFontPtr == NULL)
+			{
+				TTButtonFontPtr = new TTFontClass(hdc, szFile, szFacename, 22, FW_SEMIBOLD, ANSI_CHARSET, 0, 0, 0, FALSE);
 			}
-			if( TTButtonFontPtrSmall == NULL ) {
-				TTButtonFontPtrSmall= new TTFontClass( hdc, szFile, szFacename, 22, FW_SEMIBOLD,	ANSI_CHARSET, 0, 0, 0, FALSE );
+			if (TTButtonFontPtrSmall == NULL)
+			{
+				TTButtonFontPtrSmall = new TTFontClass(hdc, szFile, szFacename, 22, FW_SEMIBOLD, ANSI_CHARSET, 0, 0, 0, FALSE);
 			}
-			if( TTTextFontPtr == NULL ) {
-				TTTextFontPtr		= new TTFontClass( hdc, szFile, szFacename, 16, FW_SEMIBOLD,	ANSI_CHARSET, 0, 0, 0, FALSE );
+			if (TTTextFontPtr == NULL)
+			{
+				TTTextFontPtr = new TTFontClass(hdc, szFile, szFacename, 16, FW_SEMIBOLD, ANSI_CHARSET, 0, 0, 0, FALSE);
 			}
-			if( TTTextFontPtr640 == NULL ) {
-				TTTextFontPtr640	= new TTFontClass( hdc, szFile, szFacename, 14, FW_SEMIBOLD, 	ANSI_CHARSET, 0, 0, 0, FALSE );
+			if (TTTextFontPtr640 == NULL)
+			{
+				TTTextFontPtr640 = new TTFontClass(hdc, szFile, szFacename, 14, FW_SEMIBOLD, ANSI_CHARSET, 0, 0, 0, FALSE);
 			}
-			if( TTTextFontPtr800 == NULL ) {
-				TTTextFontPtr800	= new TTFontClass( hdc, szFile, szFacename, 14, FW_SEMIBOLD, 	ANSI_CHARSET, 0, 0, 0, FALSE );
+			if (TTTextFontPtr800 == NULL)
+			{
+				TTTextFontPtr800 = new TTFontClass(hdc, szFile, szFacename, 14, FW_SEMIBOLD, ANSI_CHARSET, 0, 0, 0, FALSE);
 			}
-			if( TTLicenseFontPtr == NULL ) {
-				TTLicenseFontPtr	= new TTFontClass( hdc, szFile, szFacename, 12, FW_MEDIUM,		ANSI_CHARSET, 0, 0, 0, FALSE );
+			if (TTLicenseFontPtr == NULL)
+			{
+				TTLicenseFontPtr = new TTFontClass(hdc, szFile, szFacename, 12, FW_MEDIUM, ANSI_CHARSET, 0, 0, 0, FALSE);
 			}
 		}
 	}
-	assert( TTTextFontPtr			!= NULL );
-	assert( TTTextFontPtr640		!= NULL );
-	assert( TTTextFontPtr800		!= NULL );
-	assert( TTButtonFontPtr			!= NULL );
-	assert( TTButtonFontPtrSmall	!= NULL );
-	assert( TTLicenseFontPtr		!= NULL );
+	assert(TTTextFontPtr != NULL);
+	assert(TTTextFontPtr640 != NULL);
+	assert(TTTextFontPtr800 != NULL);
+	assert(TTButtonFontPtr != NULL);
+	assert(TTButtonFontPtrSmall != NULL);
+	assert(TTLicenseFontPtr != NULL);
 }
 
 /***********************************************************************************************
@@ -1396,18 +1436,19 @@ FontManagerClass::FontManagerClass ( HDC hdc )
  * HISTORY:                                                                                    *
  *   03/26/1998 MML : Created.                                                                 *
  *=============================================================================================*/
-FontManagerClass::~FontManagerClass ( void )
+FontManagerClass::~FontManagerClass(void)
 {
-	if ( TTButtonFontPtr != NULL ) {
+	if (TTButtonFontPtr != NULL)
+	{
 		delete TTButtonFontPtr;
 		TTButtonFontPtr = NULL;
 	}
-	if ( TTTextFontPtr != NULL ) {
+	if (TTTextFontPtr != NULL)
+	{
 		delete TTTextFontPtr;
 		TTTextFontPtr = NULL;
 	}
 }
-
 
 /***********************************************************************************************
  * Font_From_TPF -- Convert flags into a font pointer.                                         *
@@ -1424,12 +1465,12 @@ FontManagerClass::~FontManagerClass ( void )
  * HISTORY:                                                                                    *
  *   05/26/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-TTFontClass * Font_From_TPF ( TextPrintType flags )
+TTFontClass *Font_From_TPF(TextPrintType flags)
 {
-	TTFontClass *fontptr= NULL;
+	TTFontClass *fontptr = NULL;
 
-	switch (flags & 0x000F) {
-
+	switch (flags & 0x000F)
+	{
 		case TPF_BUTTON_FONT:
 			fontptr = TTButtonFontPtr;
 			break;
@@ -1442,9 +1483,8 @@ TTFontClass * Font_From_TPF ( TextPrintType flags )
 			fontptr = TTTextFontPtr;
 			break;
 	}
-	return( fontptr );
+	return (fontptr);
 }
-
 
 /************************************************************************************************
  * Is_True_Type_Font -- Convert flags into a font pointer.										*
@@ -1462,14 +1502,14 @@ TTFontClass * Font_From_TPF ( TextPrintType flags )
  *   05/26/1997 JLB : Created.																	*
  *==============================================================================================*/
 
-bool Is_True_Type_Font( TextPrintType flags )
+bool Is_True_Type_Font(TextPrintType flags)
 {
-	if (( flags == TPF_BUTTON_FONT ) || ( flags == TPF_TEXT_FONT )) {
+	if ((flags == TPF_BUTTON_FONT) || (flags == TPF_TEXT_FONT))
+	{
 		return TRUE;
-	} else {
+	}
+	else
+	{
 		return FALSE;
 	}
 }
-
-
-

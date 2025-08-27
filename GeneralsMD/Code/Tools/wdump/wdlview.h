@@ -31,37 +31,36 @@
 class CWDumpListView : public CListView
 {
 protected:
-	CWDumpListView();           // protected constructor used by dynamic creation
+	CWDumpListView(); // protected constructor used by dynamic creation
 	DECLARE_DYNCREATE(CWDumpListView)
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWDumpListView)
-	public:
+public:
 	virtual void OnInitialUpdate();
-	protected:
-	virtual void OnDraw(CDC* pDC);      // overridden to draw this view
-	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
+
+protected:
+	virtual void OnDraw(CDC *pDC); // overridden to draw this view
+	virtual void OnUpdate(CView *pSender, LPARAM lHint, CObject *pHint);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	virtual ~CWDumpListView();
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	virtual void Dump(CDumpContext &dc) const;
 #endif
 
 	// Generated message map functions
 protected:
 	//{{AFX_MSG(CWDumpListView)
-		// NOTE - the ClassWizard will add and remove member functions here.
+	// NOTE - the ClassWizard will add and remove member functions here.
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

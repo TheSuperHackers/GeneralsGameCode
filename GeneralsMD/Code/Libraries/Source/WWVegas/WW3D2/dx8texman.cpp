@@ -42,7 +42,6 @@
  *   DX8TextureManagerClass::Recreate_Textures -- Reallocates lost textures                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 // This class manages textures that are in the default pool
 // ensuring that they are released on device loss
 // and created on device reset
@@ -53,7 +52,6 @@
 #include "dx8texman.h"
 
 TextureTrackerList DX8TextureManagerClass::Managed_Textures;
-
 
 /***********************************************************************************************
  * DX8TextureManagerClass::Shutdown -- Shuts down the texture manager                          *
@@ -75,9 +73,9 @@ void DX8TextureManagerClass::Shutdown()
 {
 	while (!Managed_Textures.Is_Empty())
 	{
-		TextureTrackerClass *track=Managed_Textures.Remove_Head();
+		TextureTrackerClass *track = Managed_Textures.Remove_Head();
 		delete track;
-		track=NULL;
+		track = NULL;
 	}
 }
 
@@ -103,7 +101,6 @@ void DX8TextureManagerClass::Add(TextureTrackerClass *track)
 	Managed_Textures.Add(track);
 }
 
-
 /***********************************************************************************************
  * DX8TextureManagerClass::Remove -- Removes a texture from being managed                      *
  *                                                                                             *
@@ -127,8 +124,8 @@ void DX8TextureManagerClass::Remove(TextureBaseClass *tex)
 
 	while (!it.Is_Done())
 	{
-		TextureTrackerClass *track=it.Peek_Obj();
-		if (track->Get_Texture()==tex)
+		TextureTrackerClass *track = it.Peek_Obj();
+		if (track->Get_Texture() == tex)
 		{
 			it.Remove_Current_Object();
 			delete track;
@@ -137,7 +134,6 @@ void DX8TextureManagerClass::Remove(TextureBaseClass *tex)
 		it.Next();
 	}
 }
-
 
 /***********************************************************************************************
  * DX8TextureManagerClass::Release_Textures -- Releases the internal d3d texture               *
@@ -161,12 +157,11 @@ void DX8TextureManagerClass::Release_Textures()
 
 	while (!it.Is_Done())
 	{
-		TextureTrackerClass *track=it.Peek_Obj();
+		TextureTrackerClass *track = it.Peek_Obj();
 		track->Release();
 		it.Next();
 	}
 }
-
 
 /***********************************************************************************************
  * DX8TextureManagerClass::Recreate_Textures -- Reallocates lost textures                      *
@@ -190,10 +185,9 @@ void DX8TextureManagerClass::Recreate_Textures()
 
 	while (!it.Is_Done())
 	{
-		TextureTrackerClass *track=it.Peek_Obj();
+		TextureTrackerClass *track = it.Peek_Obj();
 		track->Recreate();
 		track->Get_Texture()->Set_Dirty();
 		it.Next();
 	}
 }
-

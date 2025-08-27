@@ -31,42 +31,40 @@
 #include "fileops.h"
 #include "olestring.h"
 
-static char buffer[100*1024];
-static char buffer2[100*1024];
-static OLECHAR olebuf[100*1024];
-static OLECHAR olebuf2[100*1024];
-static OLECHAR oletrans[100*1024];
+static char buffer[100 * 1024];
+static char buffer2[100 * 1024];
+static OLECHAR olebuf[100 * 1024];
+static OLECHAR olebuf2[100 * 1024];
+static OLECHAR oletrans[100 * 1024];
 
 static CBabylonDlg *progress_dlg;
 static int progress_count;
 
-static void progress_cb ( void )
+static void progress_cb(void)
 {
-	progress_count ++;
+	progress_count++;
 
-	if ( progress_dlg )
+	if (progress_dlg)
 	{
-		progress_dlg->SetProgress ( progress_count );
+		progress_dlg->SetProgress(progress_count);
 	}
 }
 
 static FILE *cb_file;
 
-static void print_to_file ( const char *text )
+static void print_to_file(const char *text)
 {
-
-	fprintf ( cb_file, "\t\t\tString %s\n", text );
-
+	fprintf(cb_file, "\t\t\tString %s\n", text);
 }
 
-static void reverseWord ( OLECHAR *fp, OLECHAR *lp )
+static void reverseWord(OLECHAR *fp, OLECHAR *lp)
 {
 	int first = TRUE;
 	OLECHAR f, l;
 
-	while ( TRUE )
+	while (TRUE)
 	{
-		if ( fp >= lp )
+		if (fp >= lp)
 		{
 			return;
 		}
@@ -74,11 +72,11 @@ static void reverseWord ( OLECHAR *fp, OLECHAR *lp )
 		f = *fp;
 		l = *lp;
 
-		if ( first )
+		if (first)
 		{
-			if ( f >= 'A' && f <= 'Z' )
+			if (f >= 'A' && f <= 'Z')
 			{
-				if ( l >= 'a' && l <= 'z' )
+				if (l >= 'a' && l <= 'z')
 				{
 					f = (f - 'A') + 'a';
 					l = (l - 'a') + 'A';
@@ -90,45 +88,42 @@ static void reverseWord ( OLECHAR *fp, OLECHAR *lp )
 
 		*lp-- = f;
 		*fp++ = l;
-
 	}
-
 }
 
-
-static void translateCopy( OLECHAR *outbuf, OLECHAR *inbuf )
+static void translateCopy(OLECHAR *outbuf, OLECHAR *inbuf)
 {
 	int slash = FALSE;
 
 	{
-		static OLECHAR buffer[100*1024];
+		static OLECHAR buffer[100 * 1024];
 		OLECHAR *firstLetter = NULL, *lastLetter;
 		OLECHAR *b = buffer;
 		int formatWord = FALSE;
 		OLECHAR ch;
 
-		while ( (ch = *inbuf++))
+		while ((ch = *inbuf++))
 		{
-			if ( ! (( ch >= 'a' && ch <= 'z') || ( ch >= 'A' && ch <= 'Z' )))
+			if (!((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')))
 			{
-				if ( firstLetter )
+				if (firstLetter)
 				{
-					if ( !formatWord )
+					if (!formatWord)
 					{
-						lastLetter = b-1;
-						reverseWord ( firstLetter, lastLetter );
+						lastLetter = b - 1;
+						reverseWord(firstLetter, lastLetter);
 					}
 					firstLetter = NULL;
 					formatWord = FALSE;
 				}
 				*b++ = ch;
-				if ( ch == '\\' )
+				if (ch == '\\')
 				{
 					*b++ = *inbuf++;
 				}
-				if ( ch == '%' )
+				if (ch == '%')
 				{
-					while ( (ch = *inbuf++) && !IsFormatTypeChar ( ch ) && ch != '%')
+					while ((ch = *inbuf++) && !IsFormatTypeChar(ch) && ch != '%')
 					{
 						*b++ = ch;
 					}
@@ -137,82 +132,76 @@ static void translateCopy( OLECHAR *outbuf, OLECHAR *inbuf )
 			}
 			else
 			{
-				if ( !firstLetter )
+				if (!firstLetter)
 				{
 					firstLetter = b;
 				}
 
 				*b++ = ch;
-
 			}
 		}
 
-		if ( firstLetter )
+		if (firstLetter)
 		{
-			lastLetter = b-1;
-			reverseWord ( firstLetter, lastLetter );
+			lastLetter = b - 1;
+			reverseWord(firstLetter, lastLetter);
 		}
 
 		*b++ = 0;
 		inbuf = buffer;
-
 	}
 
-
-
-	while( *inbuf != '\0' )
+	while (*inbuf != '\0')
 	{
-
-			*outbuf++ = *inbuf++;
+		*outbuf++ = *inbuf++;
 	}
-	*outbuf= 0;
+	*outbuf = 0;
 }
 
-
-static void writeLabel ( BabylonLabel *label, int row )
+static void writeLabel(BabylonLabel *label, int row)
 {
-	PutCell ( row, CELL_LABEL, label->Name (), 0);
-	wcscpy ( olebuf, label->Comment());
-	EncodeFormat ( olebuf );
-	PutCell ( row, CELL_COMMENT,  olebuf, 0);
-	wcscpy ( olebuf, label->Context());
-	EncodeFormat ( olebuf );
-	PutCell ( row, CELL_CONTEXT, olebuf, 0);
-	wcscpy ( olebuf, label->Speaker());
-	EncodeFormat ( olebuf );
-	PutCell ( row, CELL_SPEAKER, olebuf, 0);
-	wcscpy ( olebuf, label->Listener());
-	EncodeFormat ( olebuf );
-	PutCell ( row, CELL_LISTENER, olebuf , 0);
+	PutCell(row, CELL_LABEL, label->Name(), 0);
+	wcscpy(olebuf, label->Comment());
+	EncodeFormat(olebuf);
+	PutCell(row, CELL_COMMENT, olebuf, 0);
+	wcscpy(olebuf, label->Context());
+	EncodeFormat(olebuf);
+	PutCell(row, CELL_CONTEXT, olebuf, 0);
+	wcscpy(olebuf, label->Speaker());
+	EncodeFormat(olebuf);
+	PutCell(row, CELL_SPEAKER, olebuf, 0);
+	wcscpy(olebuf, label->Listener());
+	EncodeFormat(olebuf);
+	PutCell(row, CELL_LISTENER, olebuf, 0);
 }
 
-static void writeText ( BabylonText *text, int row )
+static void writeText(BabylonText *text, int row)
 {
-	BabylonLabel *label = text->Label ();
-	int maxlen = label->MaxLen ();
+	BabylonLabel *label = text->Label();
+	int maxlen = label->MaxLen();
 	OLECHAR buffer[100];
 
-	if ( !maxlen )
+	if (!maxlen)
 	{
 		maxlen = 10000;
 	}
 
-	wcscpy ( olebuf, text->Get());
-	EncodeFormat ( olebuf );
-	PutCell ( row, CELL_ENGLISH, olebuf , 0);
-	PutCell ( row, CELL_MAXLEN, NULL , maxlen );
+	wcscpy(olebuf, text->Get());
+	EncodeFormat(olebuf);
+	PutCell(row, CELL_ENGLISH, olebuf, 0);
+	PutCell(row, CELL_MAXLEN, NULL, maxlen);
 
-	swprintf ( buffer, L"=LEN(%c%d)",'A' + CELL_LOCALIZED -1,  row );
-	PutCell ( row, CELL_STRLEN, buffer , 0);
-	swprintf ( buffer, L"=IF(%c%d>%c%d,\"Too long!\",\" \")", 'A' + CELL_STRLEN -1,  row, 'A' + CELL_MAXLEN -1,  row );
-	PutCell ( row, CELL_LENCHECK ,buffer , 0);
-	PutCell ( row, CELL_REVISION , 0, text->Revision ());
-	PutCell ( row, CELL_STRINGID , 0, text->ID ());
+	swprintf(buffer, L"=LEN(%c%d)", 'A' + CELL_LOCALIZED - 1, row);
+	PutCell(row, CELL_STRLEN, buffer, 0);
+	swprintf(buffer, L"=IF(%c%d>%c%d,\"Too long!\",\" \")", 'A' + CELL_STRLEN - 1, row, 'A' + CELL_MAXLEN - 1, row);
+	PutCell(row, CELL_LENCHECK, buffer, 0);
+	PutCell(row, CELL_REVISION, 0, text->Revision());
+	PutCell(row, CELL_STRINGID, 0, text->ID());
 
-	writeLabel ( label, row );
+	writeLabel(label, row);
 }
 
-static int export_trans ( TransDB *db, LangID langid, TROPTIONS *options, void (*cb) (void ), int write )
+static int export_trans(TransDB *db, LangID langid, TROPTIONS *options, void (*cb)(void), int write)
 {
 	BabylonLabel *label;
 	BabylonText *text;
@@ -222,86 +211,87 @@ static int export_trans ( TransDB *db, LangID langid, TROPTIONS *options, void (
 	int limit = FALSE;
 	int all = TRUE;
 	int row;
-	LANGINFO	*linfo;
+	LANGINFO *linfo;
 
-	linfo = GetLangInfo ( langid );
+	linfo = GetLangInfo(langid);
 
-	if ( options->filter == TR_SAMPLE )
+	if (options->filter == TR_SAMPLE)
 	{
 		limit = TRUE;
 	}
-	else if ( options->filter == TR_CHANGES )
+	else if (options->filter == TR_CHANGES)
 	{
 		all = FALSE;
 	}
 
-	if ( write )
+	if (write)
 	{
 		OLECHAR buffer[100];
 
-		swprintf ( buffer, L"%S", GetLangName ( langid ));
-		PutCell ( ROW_LANGUAGE, COLUMN_LANGUAGE,buffer,0);
+		swprintf(buffer, L"%S", GetLangName(langid));
+		PutCell(ROW_LANGUAGE, COLUMN_LANGUAGE, buffer, 0);
 
-		swprintf ( buffer, L"%S Translation", GetLangName ( langid ));
-		PutCell ( 2, CELL_LOCALIZED,buffer,0);
+		swprintf(buffer, L"%S Translation", GetLangName(langid));
+		PutCell(2, CELL_LOCALIZED, buffer, 0);
 	}
 
 	row = 3;
-	label = db->FirstLabel ( sh_label );
+	label = db->FirstLabel(sh_label);
 
-	while ( label )
+	while (label)
 	{
 		int label_written = FALSE;
-		text = label->FirstText ( sh_text );
+		text = label->FirstText(sh_text);
 
-		while ( text )
+		while (text)
 		{
 			int do_export;
 			int bad_format = FALSE;
 			int too_long = FALSE;
 
-			trans = text->GetTranslation ( langid );
+			trans = text->GetTranslation(langid);
 
-			if ( options->filter == TR_UNSENT )
+			if (options->filter == TR_UNSENT)
 			{
-				do_export = !text->IsSent ();
+				do_export = !text->IsSent();
 			}
-			else	if ( options->filter == TR_NONDIALOG )
+			else if (options->filter == TR_NONDIALOG)
 			{
-				do_export = !text->IsDialog ();
+				do_export = !text->IsDialog();
 			}
-			else if ( options->filter == TR_UNVERIFIED )
+			else if (options->filter == TR_UNVERIFIED)
 			{
-					do_export = text->IsDialog() && text->DialogIsPresent( DialogPath, langid) && !text->DialogIsValid( DialogPath, langid);
+				do_export =
+						text->IsDialog() && text->DialogIsPresent(DialogPath, langid) && !text->DialogIsValid(DialogPath, langid);
 			}
-			else if ( options->filter == TR_MISSING_DIALOG )
+			else if (options->filter == TR_MISSING_DIALOG)
 			{
-					do_export = text->IsDialog() && !text->DialogIsPresent( DialogPath, langid);
+				do_export = text->IsDialog() && !text->DialogIsPresent(DialogPath, langid);
 			}
-			else if ( options->filter == TR_DIALOG )
+			else if (options->filter == TR_DIALOG)
 			{
-				do_export = text->IsDialog ();
+				do_export = text->IsDialog();
 			}
 			else
 			{
-				if ( ! (do_export = all) )
+				if (!(do_export = all))
 				{
-					if ( !trans )
+					if (!trans)
 					{
 						do_export = TRUE;
 					}
 					else
 					{
-						if ( text->Revision () > trans->Revision ())
+						if (text->Revision() > trans->Revision())
 						{
 							do_export = TRUE;
 						}
-						else if ( trans->TooLong ( label->MaxLen ()) )
+						else if (trans->TooLong(label->MaxLen()))
 						{
 							do_export = TRUE;
 							too_long = TRUE;
 						}
-						else if ( !trans->ValidateFormat ( text ) )
+						else if (!trans->ValidateFormat(text))
 						{
 							do_export = TRUE;
 							bad_format = TRUE;
@@ -310,70 +300,69 @@ static int export_trans ( TransDB *db, LangID langid, TROPTIONS *options, void (
 				}
 			}
 
-			if ( do_export && text->Len () )
+			if (do_export && text->Len())
 			{
 				count++;
-				if ( cb )
+				if (cb)
 				{
-					cb ();
+					cb();
 				}
 
-				if ( write )
+				if (write)
 				{
-					static OLECHAR buffer[100*1024];
+					static OLECHAR buffer[100 * 1024];
 
-					if ( !label_written )
+					if (!label_written)
 					{
 						// write out the lable
-						//PutSeparator ( row++ );
-						//writeLabel ( label, row );
+						// PutSeparator ( row++ );
+						// writeLabel ( label, row );
 						label_written = TRUE;
 					}
 
 					// write out text
-					writeText ( text, row );
-					if ( text->IsDialog ())
+					writeText(text, row);
+					if (text->IsDialog())
 					{
-						swprintf  ( buffer, L"%s%S.wav", text->Wave (), linfo->character );
-						wcsupr ( buffer );
-						PutCell ( row, CELL_WAVEFILE , buffer, 0);
+						swprintf(buffer, L"%s%S.wav", text->Wave(), linfo->character);
+						wcsupr(buffer);
+						PutCell(row, CELL_WAVEFILE, buffer, 0);
 					}
 
 					{
-						Translation *trans = text->GetTranslation ( langid );
+						Translation *trans = text->GetTranslation(langid);
 
-						if ( langid == LANGID_JABBER || (trans && ( options->include_translations || too_long || bad_format )))
+						if (langid == LANGID_JABBER || (trans && (options->include_translations || too_long || bad_format)))
 						{
-
-							if ( langid == LANGID_JABBER )
+							if (langid == LANGID_JABBER)
 							{
-								translateCopy ( olebuf, text->Get() );
+								translateCopy(olebuf, text->Get());
 							}
 							else
 							{
-								wcscpy ( olebuf, trans->Get());
+								wcscpy(olebuf, trans->Get());
 							}
 
-							EncodeFormat ( olebuf );
-							PutCell ( row, CELL_LOCALIZED, olebuf, 0);
-							if ( bad_format || too_long)
+							EncodeFormat(olebuf);
+							PutCell(row, CELL_LOCALIZED, olebuf, 0);
+							if (bad_format || too_long)
 							{
-									wcscpy ( olebuf, L"ERROR: " );
-									if ( too_long )
+								wcscpy(olebuf, L"ERROR: ");
+								if (too_long)
+								{
+									wcscat(olebuf, L"too long");
+									if (bad_format)
 									{
-										wcscat ( olebuf, L"too long" );
-										if ( bad_format )
-										{
-											wcscat ( olebuf, L"and " );
-										}
+										wcscat(olebuf, L"and ");
 									}
+								}
 
-									if ( bad_format )
-									{
-										wcscat ( olebuf, L"bad format" );
-									}
+								if (bad_format)
+								{
+									wcscat(olebuf, L"bad format");
+								}
 
-									PutCell ( row, CELL_COMMENT, olebuf , 0);
+								PutCell(row, CELL_COMMENT, olebuf, 0);
 							}
 						}
 					}
@@ -381,51 +370,50 @@ static int export_trans ( TransDB *db, LangID langid, TROPTIONS *options, void (
 				}
 			}
 
-			text = label->NextText ( sh_text );
+			text = label->NextText(sh_text);
 		}
 
-		if ( limit && count > 50 )
+		if (limit && count > 50)
 		{
 			break;
 		}
 
-		label = db->NextLabel ( sh_label );
+		label = db->NextLabel(sh_label);
 	}
 
-	if ( write )
+	if (write)
 	{
-		PutCell ( row, CELL_STRINGID, NULL, -1 );
-		PutCell ( ROW_COUNT, COLUMN_COUNT, NULL, count );
+		PutCell(row, CELL_STRINGID, NULL, -1);
+		PutCell(ROW_COUNT, COLUMN_COUNT, NULL, count);
 	}
 
 	return count;
 }
 
-
-int ExportTranslations ( TransDB *db, const char *filename, LangID langid, TROPTIONS *options, CBabylonDlg *dlg )
+int ExportTranslations(TransDB *db, const char *filename, LangID langid, TROPTIONS *options, CBabylonDlg *dlg)
 {
-	int exports ;
-	exports = export_trans ( db, langid, options, NULL, FALSE );
+	int exports;
+	exports = export_trans(db, langid, options, NULL, FALSE);
 
-	if ( !exports )
+	if (!exports)
 	{
-		if ( dlg )
+		if (dlg)
 		{
-			AfxMessageBox ( "Nothing to export." );
-			dlg->Ready ();
+			AfxMessageBox("Nothing to export.");
+			dlg->Ready();
 		}
 
 		return 0;
 	}
 
-	if ( (progress_dlg = dlg) )
+	if ((progress_dlg = dlg))
 	{
 		const char *format;
-		dlg->InitProgress ( exports );
+		dlg->InitProgress(exports);
 
-		dlg->Log ("");
+		dlg->Log("");
 
-		switch (options->filter )
+		switch (options->filter)
 		{
 			case TR_ALL:
 				format = "Exporting all strings";
@@ -449,43 +437,40 @@ int ExportTranslations ( TransDB *db, const char *filename, LangID langid, TROPT
 				format = "Exporting all missing %s dialog";
 				break;
 
-
 			default:
 				format = "Undefined switch";
 				break;
-
-
 		}
-		strcpy ( buffer2, format );
-		if ( options->include_comments && options->include_translations )
+		strcpy(buffer2, format);
+		if (options->include_comments && options->include_translations)
 		{
-			strcat ( buffer2, " with current %s translations and translator comments" );
+			strcat(buffer2, " with current %s translations and translator comments");
 		}
-		else if ( options->include_comments )
+		else if (options->include_comments)
 		{
-			strcat ( buffer2, " with %s translator comments" );
+			strcat(buffer2, " with %s translator comments");
 		}
-		else if ( options->include_translations )
+		else if (options->include_translations)
 		{
-			strcat ( buffer2, " with current %s translations" );
+			strcat(buffer2, " with current %s translations");
 		}
-		strcat ( buffer2, "..." );
-		sprintf ( buffer, buffer2, GetLangName ( langid ), GetLangName ( langid ) );
-		dlg->Status ( buffer );
+		strcat(buffer2, "...");
+		sprintf(buffer, buffer2, GetLangName(langid), GetLangName(langid));
+		dlg->Status(buffer);
 	}
 
-	_getcwd ( buffer, sizeof ( buffer ) -1 );
+	_getcwd(buffer, sizeof(buffer) - 1);
 
-	strcat ( buffer, "\\babylon.xlt" );
+	strcat(buffer, "\\babylon.xlt");
 
-	if ( !FileExists ( buffer ) )
+	if (!FileExists(buffer))
 	{
-		if ( dlg )
+		if (dlg)
 		{
-			dlg->Log ("FAILED", SAME_LINE );
-			sprintf ( buffer2, "Template file \"%s\" is missing. Cannot export.", buffer );
-			AfxMessageBox ( buffer2 );
-			dlg->Log ( buffer2 );
+			dlg->Log("FAILED", SAME_LINE);
+			sprintf(buffer2, "Template file \"%s\" is missing. Cannot export.", buffer);
+			AfxMessageBox(buffer2);
+			dlg->Log(buffer2);
 			dlg->Ready();
 		}
 		return -1;
@@ -494,43 +479,43 @@ int ExportTranslations ( TransDB *db, const char *filename, LangID langid, TROPT
 	progress_count = 0;
 	exports = -1;
 
-	if ( NewWorkBook ( buffer ) )
+	if (NewWorkBook(buffer))
 	{
-		if ( (exports = export_trans ( db, langid, options, progress_cb, TRUE )) != -1 )
+		if ((exports = export_trans(db, langid, options, progress_cb, TRUE)) != -1)
 		{
-			if ( SaveWorkBook ( filename, TRUE ) )
+			if (SaveWorkBook(filename, TRUE))
 			{
-				if ( dlg )
+				if (dlg)
 				{
-					dlg->Log ("DONE", SAME_LINE );
+					dlg->Log("DONE", SAME_LINE);
 				}
 			}
 			else
 			{
-				if ( dlg )
+				if (dlg)
 				{
-					dlg->Log ("FAILED", SAME_LINE );
-					sprintf ( buffer2, "Failed to save export!");
-					AfxMessageBox ( buffer2 );
-					dlg->Log ( buffer2 );
+					dlg->Log("FAILED", SAME_LINE);
+					sprintf(buffer2, "Failed to save export!");
+					AfxMessageBox(buffer2);
+					dlg->Log(buffer2);
 				}
 				exports = -1;
 			}
 		}
-		CloseWorkBook ( );
+		CloseWorkBook();
 	}
 	else
 	{
-		if ( dlg )
+		if (dlg)
 		{
-			dlg->Log ("FAILED", SAME_LINE );
-			sprintf ( buffer2, "Failed to create new work book. File \"%s\" may be corrupt", buffer );
-			AfxMessageBox ( buffer2 );
-			dlg->Log ( buffer2 );
+			dlg->Log("FAILED", SAME_LINE);
+			sprintf(buffer2, "Failed to create new work book. File \"%s\" may be corrupt", buffer);
+			AfxMessageBox(buffer2);
+			dlg->Log(buffer2);
 		}
 	}
 
-	if ( dlg )
+	if (dlg)
 	{
 		dlg->Ready();
 	}
@@ -538,8 +523,7 @@ int ExportTranslations ( TransDB *db, const char *filename, LangID langid, TROPT
 	return exports;
 }
 
-
-static int import_trans ( TransDB *db, LangID langid, void (*cb) ( void ), CBabylonDlg *dlg )
+static int import_trans(TransDB *db, LangID langid, void (*cb)(void), CBabylonDlg *dlg)
 {
 	int row = 3;
 	int id;
@@ -549,62 +533,67 @@ static int import_trans ( TransDB *db, LangID langid, void (*cb) ( void ), CBaby
 	int missing_count = 0;
 	int mismatch_count = 0;
 	int stale_count = 0;
-	int	first_mismatch = TRUE;
+	int first_mismatch = TRUE;
 	int bad_id = FALSE;
 	int error_count = 0;
 	int revision;
 
-	while ( (id = GetInt ( row, CELL_STRINGID )) != -1)
+	while ((id = GetInt(row, CELL_STRINGID)) != -1)
 	{
-		if ( id == 0 )
+		if (id == 0)
 		{
 			goto skip;
 		}
 
 		BabylonText *text;
 
-		if ( (text = db->FindText ( id )) == NULL )
+		if ((text = db->FindText(id)) == NULL)
 		{
 			// string is no longer in database
 			stale_count++;
 			goto next;
 		}
 
-		revision = GetInt ( row, CELL_REVISION );
+		revision = GetInt(row, CELL_REVISION);
 
-		if ( text->Revision() > revision )
+		if (text->Revision() > revision)
 		{
 			// old translation
 			stale_count++;
 			goto next;
 		}
 
-		if ( text->Revision() < revision )
+		if (text->Revision() < revision)
 		{
-			if ( dlg )
+			if (dlg)
 			{
-				sprintf ( buffer, "ERROR: expecting revision %d for string ID %d but found revision %d. Possible bad ID!", text->Revision (), id, revision );
-				dlg->Log ( buffer );
+				sprintf(
+						buffer,
+						"ERROR: expecting revision %d for string ID %d but found revision %d. Possible bad ID!",
+						text->Revision(),
+						id,
+						revision);
+				dlg->Log(buffer);
 			}
 			error_count++;
 			goto next;
 		}
 
 		// first see if there is any translation there
-		GetString ( row, CELL_LOCALIZED, oletrans );
-		DecodeFormat ( oletrans );
+		GetString(row, CELL_LOCALIZED, oletrans);
+		DecodeFormat(oletrans);
 
-		if ( !oletrans[0] )
+		if (!oletrans[0])
 		{
 			missing_count++;
 			goto next;
 		}
 
 		// verify that the translated engish is the same as the current english
-		GetString ( row, CELL_ENGLISH, olebuf );
-		DecodeFormat ( olebuf );
+		GetString(row, CELL_ENGLISH, olebuf);
+		DecodeFormat(olebuf);
 
-		if ( wcscmp ( text->Get(), olebuf ) )
+		if (wcscmp(text->Get(), olebuf))
 		{
 			// they are two possible reasons for the text to mismatch
 			// 1. text was modified but not re-translated
@@ -616,28 +605,27 @@ static int import_trans ( TransDB *db, LangID langid, void (*cb) ( void ), CBaby
 			int nrow = row;
 
 			olebuf2[0] = 0;
-			while ( nrow > 0 )
+			while (nrow > 0)
 			{
-				GetString ( nrow, CELL_LABEL, olebuf2 );
-				if ( olebuf2[0] )
+				GetString(nrow, CELL_LABEL, olebuf2);
+				if (olebuf2[0])
 				{
 					break;
 				}
 				nrow--;
 			}
 
-
-			if ( !olebuf2[0] || wcscmp ( text->Label ()->Name(), olebuf2))
+			if (!olebuf2[0] || wcscmp(text->Label()->Name(), olebuf2))
 			{
-				sprintf ( buffer, "%S", olebuf );
+				sprintf(buffer, "%S", olebuf);
 				CVerifyTextDlg dlg(buffer, text->GetSB());
 
 				// didnt find label or label doesn't match
 				// It is possible that the xl was resorted so ask user to do a visual confirmation
 
-				bad_id = dlg.DoModal ()==IDNO;
+				bad_id = dlg.DoModal() == IDNO;
 			}
-			else if ( text->Label()->FindText( olebuf ))
+			else if (text->Label()->FindText(olebuf))
 			{
 				// we did find the label but text other than the current ID sourced text matches with the import text
 				// this means the ID is definitely wrong
@@ -648,93 +636,89 @@ static int import_trans ( TransDB *db, LangID langid, void (*cb) ( void ), CBaby
 				bad_id = FALSE;
 			}
 
-			if ( bad_id )
+			if (bad_id)
 			{
 				goto done;
 			}
-
 		}
 
 		// ok import the translation
 
 		Translation *trans;
 
-		if ( ! (trans = text->GetTranslation ( langid )))
+		if (!(trans = text->GetTranslation(langid)))
 		{
-				new_count++;
+			new_count++;
 
-				trans = new Translation	 ();
-				trans->SetLangID ( langid );
-				text->AddTranslation ( trans );
+			trans = new Translation();
+			trans->SetLangID(langid);
+			text->AddTranslation(trans);
 		}
 
-
-		if ( trans->Revision () == revision && !wcscmp ( trans->Get (), oletrans ))
+		if (trans->Revision() == revision && !wcscmp(trans->Get(), oletrans))
 		{
 			// already up to date
 			goto next;
 		}
 
-		trans->Set ( oletrans );
-		trans->WaveInfo.SetValid ( FALSE );
-		trans->SetRevision ( revision );
+		trans->Set(oletrans);
+		trans->WaveInfo.SetValid(FALSE);
+		trans->SetRevision(revision);
 		changes_count++;
 
+	next:
+		count++;
 
-		next:
-				count++;
+		if (cb)
+		{
+			cb();
+		}
 
-				if ( cb )
-				{
-					cb ();
-				}
-
-		skip:
-			row++;
+	skip:
+		row++;
 	}
 
 done:
 
-	if ( dlg )
+	if (dlg)
 	{
-			sprintf ( buffer, "Total found : %d", count );
-		dlg->Log ( buffer );
+		sprintf(buffer, "Total found : %d", count);
+		dlg->Log(buffer);
 
 		{
-			sprintf ( buffer, "New         : %d", new_count);
-			dlg->Log ( buffer );
+			sprintf(buffer, "New         : %d", new_count);
+			dlg->Log(buffer);
 		}
 		{
-			sprintf ( buffer, "Updates     : %d", (changes_count - new_count));
-			dlg->Log ( buffer );
+			sprintf(buffer, "Updates     : %d", (changes_count - new_count));
+			dlg->Log(buffer);
 		}
-		if ( missing_count )
+		if (missing_count)
 		{
-			sprintf ( buffer, "Missing     : %d", missing_count );
-			dlg->Log ( buffer );
+			sprintf(buffer, "Missing     : %d", missing_count);
+			dlg->Log(buffer);
 		}
-		if ( stale_count )
+		if (stale_count)
 		{
-			sprintf ( buffer, "Unmatched   : %d", stale_count);
-			dlg->Log ( buffer );
+			sprintf(buffer, "Unmatched   : %d", stale_count);
+			dlg->Log(buffer);
 		}
-
 	}
 
-		if ( bad_id )
+	if (bad_id)
+	{
+		if (dlg)
 		{
-			if ( dlg )
-			{
-				sprintf ( buffer, "Aborting import: BAD IDs");
-				dlg->Log ( buffer );
-			}
-
-			AfxMessageBox ("The imported translation file has bad string IDs! Fix the string IDs and re-import" );
+			sprintf(buffer, "Aborting import: BAD IDs");
+			dlg->Log(buffer);
 		}
+
+		AfxMessageBox("The imported translation file has bad string IDs! Fix the string IDs and re-import");
+	}
 	return count;
 }
 
-static int update_sent_trans ( TransDB *db, LangID langid, void (*cb) ( void ), CBabylonDlg *dlg )
+static int update_sent_trans(TransDB *db, LangID langid, void (*cb)(void), CBabylonDlg *dlg)
 {
 	int row = 3;
 	int id;
@@ -743,53 +727,57 @@ static int update_sent_trans ( TransDB *db, LangID langid, void (*cb) ( void ), 
 	int matched = 0;
 	int unmatched = 0;
 	int changed = 0;
-	int	first_mismatch = TRUE;
+	int first_mismatch = TRUE;
 	int bad_id = FALSE;
 	int error_count = 0;
 	int revision;
 
-	while ( (id = GetInt ( row, CELL_STRINGID )) != -1)
+	while ((id = GetInt(row, CELL_STRINGID)) != -1)
 	{
-		if ( id == 0 )
+		if (id == 0)
 		{
 			goto skip;
 		}
 
 		BabylonText *text;
 
-		if ( (text = db->FindText ( id )) == NULL )
+		if ((text = db->FindText(id)) == NULL)
 		{
 			// string is no longer in database
 			unmatched++;
 			goto next;
 		}
 
-		revision = GetInt ( row, CELL_REVISION );
+		revision = GetInt(row, CELL_REVISION);
 
-		if ( text->Revision() > revision )
+		if (text->Revision() > revision)
 		{
 			// old translation
 			changed++;
 			goto next;
 		}
 
-		if ( text->Revision() < revision )
+		if (text->Revision() < revision)
 		{
-			if ( dlg )
+			if (dlg)
 			{
-				sprintf ( buffer, "ERROR: expecting revision %d for string ID %d but found revision %d. Possible bad ID!", text->Revision (), id, revision );
-				dlg->Log ( buffer );
+				sprintf(
+						buffer,
+						"ERROR: expecting revision %d for string ID %d but found revision %d. Possible bad ID!",
+						text->Revision(),
+						id,
+						revision);
+				dlg->Log(buffer);
 			}
 			error_count++;
 			goto next;
 		}
 
-
 		// verify that the translated engish is the same as the current english
-		GetString ( row, CELL_ENGLISH, olebuf );
-		DecodeFormat ( olebuf );
+		GetString(row, CELL_ENGLISH, olebuf);
+		DecodeFormat(olebuf);
 
-		if ( wcscmp ( text->Get(), olebuf ) )
+		if (wcscmp(text->Get(), olebuf))
 		{
 			// they are two possible reasons for the text to mismatch
 			// 1. text was modified but not re-translated
@@ -801,28 +789,27 @@ static int update_sent_trans ( TransDB *db, LangID langid, void (*cb) ( void ), 
 			int nrow = row;
 
 			olebuf2[0] = 0;
-			while ( nrow > 0 )
+			while (nrow > 0)
 			{
-				GetString ( nrow, CELL_LABEL, olebuf2 );
-				if ( olebuf2[0] )
+				GetString(nrow, CELL_LABEL, olebuf2);
+				if (olebuf2[0])
 				{
 					break;
 				}
 				nrow--;
 			}
 
-
-			if ( !olebuf2[0] || wcscmp ( text->Label ()->Name(), olebuf2))
+			if (!olebuf2[0] || wcscmp(text->Label()->Name(), olebuf2))
 			{
-				sprintf ( buffer, "%S", olebuf );
+				sprintf(buffer, "%S", olebuf);
 				CVerifyTextDlg dlg(buffer, text->GetSB());
 
 				// didnt find label or label doesn't match
 				// It is possible that the xl was resorted so ask user to do a visual confirmation
 
-				bad_id = dlg.DoModal ()==IDNO;
+				bad_id = dlg.DoModal() == IDNO;
 			}
-			else if ( text->Label()->FindText( olebuf ))
+			else if (text->Label()->FindText(olebuf))
 			{
 				// we did find the label but text other than the current ID sourced text matches with the import text
 				// this means the ID is definitely wrong
@@ -833,128 +820,124 @@ static int update_sent_trans ( TransDB *db, LangID langid, void (*cb) ( void ), 
 				bad_id = FALSE;
 			}
 
-			if ( bad_id )
+			if (bad_id)
 			{
 				goto done;
 			}
-
 		}
 		else
 		{
 			// text is still the same
-			text->Sent ( TRUE );
+			text->Sent(TRUE);
 			matched++;
-
 		}
 
-		next:
-				count++;
+	next:
+		count++;
 
-				if ( cb )
-				{
-					cb ();
-				}
+		if (cb)
+		{
+			cb();
+		}
 
-		skip:
-			row++;
+	skip:
+		row++;
 	}
 
 done:
 
-	if ( dlg )
+	if (dlg)
 	{
-			sprintf ( buffer, "Total found : %d", count );
-		dlg->Log ( buffer );
+		sprintf(buffer, "Total found : %d", count);
+		dlg->Log(buffer);
 
 		{
-			sprintf ( buffer, "Matched         : %d", matched);
-			dlg->Log ( buffer );
+			sprintf(buffer, "Matched         : %d", matched);
+			dlg->Log(buffer);
 		}
 		{
-			sprintf ( buffer, "Unmatched     : %d", unmatched);
-			dlg->Log ( buffer );
+			sprintf(buffer, "Unmatched     : %d", unmatched);
+			dlg->Log(buffer);
 		}
 
-		if ( changed )
+		if (changed)
 		{
-			sprintf ( buffer, "changed   : %d", changed);
-			dlg->Log ( buffer );
+			sprintf(buffer, "changed   : %d", changed);
+			dlg->Log(buffer);
 		}
-
 	}
 
-		if ( bad_id )
+	if (bad_id)
+	{
+		if (dlg)
 		{
-			if ( dlg )
-			{
-				sprintf ( buffer, "Aborting import: BAD IDs");
-				dlg->Log ( buffer );
-			}
-
-			AfxMessageBox ("The imported translation file has bad string IDs! Fix the string IDs and re-import" );
+			sprintf(buffer, "Aborting import: BAD IDs");
+			dlg->Log(buffer);
 		}
+
+		AfxMessageBox("The imported translation file has bad string IDs! Fix the string IDs and re-import");
+	}
 	return count;
 }
 
-int ImportTranslations ( TransDB *db, const char *filename, CBabylonDlg *dlg )
+int ImportTranslations(TransDB *db, const char *filename, CBabylonDlg *dlg)
 {
 	int imports = -1;
 
 	progress_dlg = dlg;
-	if ( dlg )
+	if (dlg)
 	{
-		dlg->Log ("");
-		sprintf ( buffer, "Importing \"%s\"...", filename );
-		dlg->Status ( buffer );
+		dlg->Log("");
+		sprintf(buffer, "Importing \"%s\"...", filename);
+		dlg->Status(buffer);
 	}
 
-	if ( OpenWorkBook ( filename ) )
+	if (OpenWorkBook(filename))
 	{
 		int num_strings;
 		LANGINFO *info;
 
-		num_strings = GetInt ( ROW_COUNT, COLUMN_COUNT );
-		GetString ( ROW_LANGUAGE, COLUMN_LANGUAGE, olebuf );
-		sprintf ( buffer, "%S", olebuf );
-		info = GetLangInfo ( buffer );
+		num_strings = GetInt(ROW_COUNT, COLUMN_COUNT);
+		GetString(ROW_LANGUAGE, COLUMN_LANGUAGE, olebuf);
+		sprintf(buffer, "%S", olebuf);
+		info = GetLangInfo(buffer);
 
-		if ( !info )
+		if (!info)
 		{
-			if ( dlg )
+			if (dlg)
 			{
-				AfxMessageBox ( "Import file is of an unknown language or is not a translation file" );
-				dlg->Log ( "FAILED", SAME_LINE );
+				AfxMessageBox("Import file is of an unknown language or is not a translation file");
+				dlg->Log("FAILED", SAME_LINE);
 				dlg->Ready();
 			}
-			CloseWorkBook ();
+			CloseWorkBook();
 			return -1;
 		}
 
-
-		if ( dlg )
+		if (dlg)
 		{
-			dlg->InitProgress ( num_strings );
+			dlg->InitProgress(num_strings);
 			progress_count = 0;
-			sprintf ( buffer, "...%s", info->name );
-			dlg->Log ( buffer, SAME_LINE );
+			sprintf(buffer, "...%s", info->name);
+			dlg->Log(buffer, SAME_LINE);
 		}
 
-		imports = import_trans ( db, info->langid, progress_cb, dlg );
+		imports = import_trans(db, info->langid, progress_cb, dlg);
 
-		CloseWorkBook ( );
+		CloseWorkBook();
 	}
 	else
 	{
-		if ( dlg )
+		if (dlg)
 		{
-			dlg->Log ("FAILED", SAME_LINE );
-			sprintf ( buffer2, "Failed to open \"%s\"", buffer );
-			AfxMessageBox ( buffer2 );
-			dlg->Log ( buffer2 );
+			dlg->Log("FAILED", SAME_LINE);
+			sprintf(buffer2, "Failed to open \"%s\"", buffer);
+			AfxMessageBox(buffer2);
+			dlg->Log(buffer2);
 		}
 	}
 
-	if ( dlg )
+	if (dlg)
 	{
 		dlg->Ready();
 	}
@@ -962,18 +945,18 @@ int ImportTranslations ( TransDB *db, const char *filename, CBabylonDlg *dlg )
 	return imports;
 }
 
-static int generate_Babylonstr ( TransDB *db, const char *filename, LangID langid, GNOPTIONS *options )
+static int generate_Babylonstr(TransDB *db, const char *filename, LangID langid, GNOPTIONS *options)
 {
 	int ok = FALSE;
 	FILE *file;
 
-	if ( ! ( file = fopen ( filename, "wt" ) ))
+	if (!(file = fopen(filename, "wt")))
 	{
 		goto error;
 	}
 
-	fprintf ( file, "// Generated by %s\n", AppTitle );
-	fprintf ( file, "// Generated on %s %s\n\n\n", __DATE__, __TIME__ );
+	fprintf(file, "// Generated by %s\n", AppTitle);
+	fprintf(file, "// Generated on %s %s\n\n\n", __DATE__, __TIME__);
 
 	{
 		BabylonLabel *label;
@@ -981,34 +964,34 @@ static int generate_Babylonstr ( TransDB *db, const char *filename, LangID langi
 		Translation *trans;
 		ListSearch sh_label, sh_text;
 
-		label = db->FirstLabel ( sh_label );
+		label = db->FirstLabel(sh_label);
 
-		while ( label )
+		while (label)
 		{
-			text = label->FirstText ( sh_text );
+			text = label->FirstText(sh_text);
 
-			fprintf ( file, "\n\n%s\n", label->NameSB ());
+			fprintf(file, "\n\n%s\n", label->NameSB());
 
-			while ( text )
+			while (text)
 			{
 				const char *string;
 
-				trans = text->GetTranslation ( langid );
+				trans = text->GetTranslation(langid);
 
-				if ( !trans )
+				if (!trans)
 				{
-					if ( langid == LANGID_US )
+					if (langid == LANGID_US)
 					{
-						string = text->GetSB ();
+						string = text->GetSB();
 					}
 					else
 					{
-						if ( text->Len ())
+						if (text->Len())
 						{
-							if ( options->untranslated == GN_USEIDS )
+							if (options->untranslated == GN_USEIDS)
 							{
 								string = buffer2;
-								sprintf (buffer2, "%d", text->ID ());
+								sprintf(buffer2, "%d", text->ID());
 							}
 							else
 							{
@@ -1023,61 +1006,61 @@ static int generate_Babylonstr ( TransDB *db, const char *filename, LangID langi
 				}
 				else
 				{
-					string = trans->GetSB ();
+					string = trans->GetSB();
 				}
 
-				if ( text->Len() == 0 )
+				if (text->Len() == 0)
 				{
 					string = "";
 				}
 
-				fprintf ( file, "\"%s\" %s\n", string, text->WaveSB() );
-				text = label->NextText ( sh_text );
+				fprintf(file, "\"%s\" %s\n", string, text->WaveSB());
+				text = label->NextText(sh_text);
 			}
 
-			fprintf ( file, "END\n" );
-			label = db->NextLabel ( sh_label );
+			fprintf(file, "END\n");
+			label = db->NextLabel(sh_label);
 		}
 
 		ok = TRUE;
 	}
 error:
 
-	if ( file )
+	if (file)
 	{
-		fclose ( file );
+		fclose(file);
 	}
 
 	return ok;
 }
 
-static int writeCSFLabel ( FILE *file, BabylonLabel *label )
+static int writeCSFLabel(FILE *file, BabylonLabel *label)
 {
 	int id = CSF_LABEL;
-	int len = strlen ( label->NameSB() );
-	int strings = label->NumStrings ();
+	int len = strlen(label->NameSB());
+	int strings = label->NumStrings();
 
-	if ( fwrite ( &id, sizeof ( int ), 1, file ) != 1 )
+	if (fwrite(&id, sizeof(int), 1, file) != 1)
 	{
 		return FALSE;
 	}
 
-	if ( fwrite ( &strings, sizeof ( int ), 1, file ) != 1 )
+	if (fwrite(&strings, sizeof(int), 1, file) != 1)
 	{
 		return FALSE;
 	}
 
-	if ( fwrite ( &len, sizeof ( int ), 1, file ) != 1 )
+	if (fwrite(&len, sizeof(int), 1, file) != 1)
 	{
 		return FALSE;
 	}
 
-	if ( !len )
+	if (!len)
 	{
 		return FALSE;
 	}
 
-	if ( fwrite ( label->NameSB(), len, 1, file ) != 1 )
+	if (fwrite(label->NameSB(), len, 1, file) != 1)
 	{
 		return FALSE;
 	}
@@ -1085,62 +1068,61 @@ static int writeCSFLabel ( FILE *file, BabylonLabel *label )
 	return TRUE;
 }
 
-static int writeCSFString ( FILE *file, const OLECHAR *string, char *wave, LANGINFO *linfo )
+static int writeCSFString(FILE *file, const OLECHAR *string, char *wave, LANGINFO *linfo)
 {
 	int id = CSF_STRING;
-	int len ;
-	int wlen = strlen ( wave );
+	int len;
+	int wlen = strlen(wave);
 
-	if ( wlen )
+	if (wlen)
 	{
 		id = CSF_STRINGWITHWAVE;
 	}
 
-	wcscpy ( olebuf, string );
-	StripSpaces ( olebuf );
-	ConvertMetaChars ( olebuf );
-	len = wcslen ( olebuf );
+	wcscpy(olebuf, string);
+	StripSpaces(olebuf);
+	ConvertMetaChars(olebuf);
+	len = wcslen(olebuf);
 
 	{
 		OLECHAR *ptr = olebuf;
 
-		while ( *ptr)
+		while (*ptr)
 		{
 			*ptr = ~*ptr++;
 		}
-
 	}
 
-	if ( fwrite ( &id, sizeof ( int ), 1, file ) != 1 )
+	if (fwrite(&id, sizeof(int), 1, file) != 1)
 	{
 		return FALSE;
 	}
 
-	if ( fwrite ( &len, sizeof ( int ), 1, file ) != 1 )
+	if (fwrite(&len, sizeof(int), 1, file) != 1)
 	{
 		return FALSE;
 	}
 
-	if ( len )
+	if (len)
 	{
-		if ( fwrite ( olebuf, len*sizeof(OLECHAR), 1, file ) != 1 )
+		if (fwrite(olebuf, len * sizeof(OLECHAR), 1, file) != 1)
 		{
 			return FALSE;
 		}
 	}
-	if ( wlen )
+	if (wlen)
 	{
 		wlen++;
-		if ( fwrite ( &wlen, sizeof ( int ), 1, file ) != 1 )
+		if (fwrite(&wlen, sizeof(int), 1, file) != 1)
 		{
 			return FALSE;
 		}
 
-		if ( fwrite ( wave, wlen-1, 1, file ) != 1 )
+		if (fwrite(wave, wlen - 1, 1, file) != 1)
 		{
 			return FALSE;
 		}
-		if ( fwrite ( linfo->character, 1, 1, file ) != 1 )
+		if (fwrite(linfo->character, 1, 1, file) != 1)
 		{
 			return FALSE;
 		}
@@ -1148,15 +1130,15 @@ static int writeCSFString ( FILE *file, const OLECHAR *string, char *wave, LANGI
 	return TRUE;
 }
 
-static int generate_csf ( TransDB *db, const char *filename, LangID langid, GNOPTIONS *options )
+static int generate_csf(TransDB *db, const char *filename, LangID langid, GNOPTIONS *options)
 {
 	CSF_HEADER header;
 	int header_size;
 	int ok = FALSE;
 	FILE *file;
-	LANGINFO	*linfo = GetLangInfo ( langid);
+	LANGINFO *linfo = GetLangInfo(langid);
 
-	if ( ! ( file = fopen ( filename, "w+b" ) ))
+	if (!(file = fopen(filename, "w+b")))
 	{
 		goto error;
 	}
@@ -1167,9 +1149,9 @@ static int generate_csf ( TransDB *db, const char *filename, LangID langid, GNOP
 	header.num_labels = 0;
 	header.num_strings = 0;
 	header.langid = langid;
-	header_size = sizeof ( header );
+	header_size = sizeof(header);
 
-	fseek ( file, header_size, SEEK_SET );
+	fseek(file, header_size, SEEK_SET);
 
 	{
 		BabylonLabel *label;
@@ -1177,38 +1159,38 @@ static int generate_csf ( TransDB *db, const char *filename, LangID langid, GNOP
 		Translation *trans;
 		ListSearch sh_label, sh_text;
 
-		label = db->FirstLabel ( sh_label );
+		label = db->FirstLabel(sh_label);
 
-		while ( label )
+		while (label)
 		{
-			text = label->FirstText ( sh_text );
+			text = label->FirstText(sh_text);
 
-			if ( !writeCSFLabel ( file, label ) )
+			if (!writeCSFLabel(file, label))
 			{
 				goto error;
 			}
 			header.num_labels++;
 
-			while ( text )
+			while (text)
 			{
 				const OLECHAR *string;
 
-				trans = text->GetTranslation ( langid );
+				trans = text->GetTranslation(langid);
 
-				if ( !trans )
+				if (!trans)
 				{
-					if ( langid == LANGID_US )
+					if (langid == LANGID_US)
 					{
-						string = text->Get ();
+						string = text->Get();
 					}
 					else
 					{
-						if ( text->Len ())
+						if (text->Len())
 						{
-							if ( options->untranslated == GN_USEIDS )
+							if (options->untranslated == GN_USEIDS)
 							{
 								string = olebuf2;
-								swprintf (olebuf2, L"%d", text->ID ());
+								swprintf(olebuf2, L"%d", text->ID());
 							}
 							else
 							{
@@ -1223,66 +1205,64 @@ static int generate_csf ( TransDB *db, const char *filename, LangID langid, GNOP
 				}
 				else
 				{
-					string = trans->Get ();
+					string = trans->Get();
 				}
 
-				if ( !writeCSFString ( file, string, text->WaveSB (), linfo ) )
+				if (!writeCSFString(file, string, text->WaveSB(), linfo))
 				{
 					goto error;
 				}
-				header.num_strings ++;
+				header.num_strings++;
 
-				text = label->NextText ( sh_text );
+				text = label->NextText(sh_text);
 			}
 
-			label = db->NextLabel ( sh_label );
+			label = db->NextLabel(sh_label);
 		}
 
-		fseek ( file, 0, SEEK_SET );
-		if ( fwrite ( &header, header_size, 1, file ) != 1 )
+		fseek(file, 0, SEEK_SET);
+		if (fwrite(&header, header_size, 1, file) != 1)
 		{
 			goto error;
 		}
 
-		fseek ( file, 0, SEEK_END );
+		fseek(file, 0, SEEK_END);
 
 		ok = TRUE;
 	}
 
 error:
 
-	if ( file )
+	if (file)
 	{
-		fclose ( file );
+		fclose(file);
 	}
-
 
 	return ok;
 }
 
-
-int GenerateGameFiles ( TransDB *db, const char *filepattern, GNOPTIONS *options, LangID *languages, CBabylonDlg *dlg)
+int GenerateGameFiles(TransDB *db, const char *filepattern, GNOPTIONS *options, LangID *languages, CBabylonDlg *dlg)
 {
-	static char filename[2*1024];
+	static char filename[2 * 1024];
 	LangID langid;
-	int count= 0 ;
+	int count = 0;
 	int num;
 
-	if ( dlg )
+	if (dlg)
 	{
 		LangID *temp = languages;
 		num = 0;
-		while ( *temp++ != LANGID_UNKNOWN )
+		while (*temp++ != LANGID_UNKNOWN)
 		{
 			num++;
 		}
 
-		dlg->Log ( "" );
-		dlg->Status ( "Generating game files:" );
-		dlg->InitProgress ( num );
+		dlg->Log("");
+		dlg->Status("Generating game files:");
+		dlg->InitProgress(num);
 		num = 0;
 	}
-	while ( (langid = *languages++) != LANGID_UNKNOWN )
+	while ((langid = *languages++) != LANGID_UNKNOWN)
 	{
 		LANGINFO *info;
 		TRNREPORT trnreport;
@@ -1291,118 +1271,120 @@ int GenerateGameFiles ( TransDB *db, const char *filepattern, GNOPTIONS *options
 		int trnwarning;
 		int done;
 
-		info = GetLangInfo ( langid );
+		info = GetLangInfo(langid);
 
-		sprintf ( filename, "%s_%s.%s", filepattern, info->initials, options->format == GN_BABYLONSTR ? "str" : "csf" );
-		strlwr ( filename );
+		sprintf(filename, "%s_%s.%s", filepattern, info->initials, options->format == GN_BABYLONSTR ? "str" : "csf");
+		strlwr(filename);
 
-		if ( dlg )
+		if (dlg)
 		{
-			sprintf ( buffer, "Writing: %s  - %s...", filename, GetLangName ( langid ));
-			dlg->Status ( buffer );
-			dlgwarning = db->ReportDialog ( &dlgreport, langid );
-			trnwarning = db->ReportTranslations ( &trnreport, langid );
+			sprintf(buffer, "Writing: %s  - %s...", filename, GetLangName(langid));
+			dlg->Status(buffer);
+			dlgwarning = db->ReportDialog(&dlgreport, langid);
+			trnwarning = db->ReportTranslations(&trnreport, langid);
 		}
 
-
-		if ( options->format == GN_BABYLONSTR )
+		if (options->format == GN_BABYLONSTR)
 		{
-			done = generate_Babylonstr ( db, filename, langid, options );
+			done = generate_Babylonstr(db, filename, langid, options);
 		}
 		else
 		{
-			done = generate_csf ( db, filename, langid, options );
+			done = generate_csf(db, filename, langid, options);
 		}
 
-		if ( done )
+		if (done)
 		{
 			count++;
-			if ( dlg )
+			if (dlg)
 			{
-				if ( trnwarning || dlgwarning )
+				if (trnwarning || dlgwarning)
 				{
-					dlg->Log ( "WARNING", SAME_LINE );
+					dlg->Log("WARNING", SAME_LINE);
 
-					if ( trnwarning )
+					if (trnwarning)
 					{
 						int missing;
 
-						if ( (missing = trnreport.missing + trnreport.retranslate) )
+						if ((missing = trnreport.missing + trnreport.retranslate))
 						{
-							sprintf ( buffer, "%d translation%s missing", missing, missing > 1 ? "s are" : " is" );
-							dlg->Log ( buffer );
+							sprintf(buffer, "%d translation%s missing", missing, missing > 1 ? "s are" : " is");
+							dlg->Log(buffer);
 						}
 
-						if ( trnreport.too_big )
+						if (trnreport.too_big)
 						{
-							sprintf ( buffer, "%d string%s too big", trnreport.too_big, trnreport.too_big > 1 ? "s are" : " is" );
-							dlg->Log ( buffer );
+							sprintf(buffer, "%d string%s too big", trnreport.too_big, trnreport.too_big > 1 ? "s are" : " is");
+							dlg->Log(buffer);
 						}
 
-						if ( trnreport.bad_format )
+						if (trnreport.bad_format)
 						{
-							sprintf ( buffer, "%d translation%s bad format", trnreport.bad_format, trnreport.bad_format > 1 ? "s have a" : " has a" );
-							dlg->Log ( buffer );
+							sprintf(
+									buffer,
+									"%d translation%s bad format",
+									trnreport.bad_format,
+									trnreport.bad_format > 1 ? "s have a" : " has a");
+							dlg->Log(buffer);
 						}
 					}
 
-					if ( dlgwarning )
+					if (dlgwarning)
 					{
-						if ( dlgreport.missing )
+						if (dlgreport.missing)
 						{
-							sprintf ( buffer, "%d dialog%s missing", dlgreport.missing, dlgreport.missing > 1 ? "s are" : " is" );
-							dlg->Log ( buffer );
+							sprintf(buffer, "%d dialog%s missing", dlgreport.missing, dlgreport.missing > 1 ? "s are" : " is");
+							dlg->Log(buffer);
 						}
 
-						if ( dlgreport.unresolved )
+						if (dlgreport.unresolved)
 						{
-							sprintf ( buffer, "%d dialog%s not verified", dlgreport.unresolved, dlgreport.unresolved> 1 ? "s are" : " is" );
-							dlg->Log ( buffer );
+							sprintf(buffer, "%d dialog%s not verified", dlgreport.unresolved, dlgreport.unresolved > 1 ? "s are" : " is");
+							dlg->Log(buffer);
 						}
 					}
 				}
 				else
 				{
-					dlg->Log ( "OK", SAME_LINE );
+					dlg->Log("OK", SAME_LINE);
 				}
 			}
 		}
 		else
 		{
-			if ( dlg )
+			if (dlg)
 			{
-				dlg->Log ( "FAILED", SAME_LINE );
+				dlg->Log("FAILED", SAME_LINE);
 			}
 		}
 
-		if ( dlg )
+		if (dlg)
 		{
-			dlg->SetProgress ( ++num );
+			dlg->SetProgress(++num);
 		}
-
 	}
 
-	if ( dlg )
+	if (dlg)
 	{
-		dlg->Ready ();
+		dlg->Ready();
 	}
 	return count;
 }
 
-void ProcessWaves ( TransDB *db, const char *filename, CBabylonDlg *dlg )
+void ProcessWaves(TransDB *db, const char *filename, CBabylonDlg *dlg)
 {
 	int imports = -1;
 
 	progress_dlg = dlg;
 
-	if ( dlg )
+	if (dlg)
 	{
-		dlg->Log ("");
-		sprintf ( buffer, "Processing wavefile \"%s\"...", filename );
-		dlg->Status ( buffer );
+		dlg->Log("");
+		sprintf(buffer, "Processing wavefile \"%s\"...", filename);
+		dlg->Status(buffer);
 	}
 
-	if ( OpenWorkBook ( filename ) )
+	if (OpenWorkBook(filename))
 	{
 		int row = 1;
 		int last_row = 1;
@@ -1411,106 +1393,103 @@ void ProcessWaves ( TransDB *db, const char *filename, CBabylonDlg *dlg )
 		FILE *file = NULL;
 		char *ptr;
 
-		strcpy ( buffer, filename );
+		strcpy(buffer, filename);
 
-		if ( (ptr = strchr ( buffer, '.' )) )
+		if ((ptr = strchr(buffer, '.')))
 		{
 			*ptr = 0;
 		}
 
-		strcat ( buffer, ".txt" );
+		strcat(buffer, ".txt");
 
-		if ( (file = fopen (buffer, "wt" )))
+		if ((file = fopen(buffer, "wt")))
 		{
-
-			while ( row - last_row < 1000 )
+			while (row - last_row < 1000)
 			{
 				BabylonText *text;
 
-				GetString ( row, 'J' - 'A' + 1, olebuf );
+				GetString(row, 'J' - 'A' + 1, olebuf);
 
-				wcslwr ( olebuf );
+				wcslwr(olebuf);
 
-				if ( wcsstr ( olebuf, L".wav" ) )
+				if (wcsstr(olebuf, L".wav"))
 				{
 					last_row = row;
 
-					fprintf ( file, "%S : ", olebuf );
-					GetString ( row, 'K' -'A' + 1, olebuf );
-					StripSpaces ( olebuf );
+					fprintf(file, "%S : ", olebuf);
+					GetString(row, 'K' - 'A' + 1, olebuf);
+					StripSpaces(olebuf);
 
-					if ( (text = db->FindSubText ( olebuf ) ))
+					if ((text = db->FindSubText(olebuf)))
 					{
-						fprintf ( file, "%6d", text->LineNumber () );
+						fprintf(file, "%6d", text->LineNumber());
 					}
 					else
 					{
-						fprintf ( file, "??????" );
+						fprintf(file, "??????");
 					}
 
-					fprintf ( file, " - \"%S\"\n", olebuf );
+					fprintf(file, " - \"%S\"\n", olebuf);
 				}
 
 				row++;
 			}
 
-			fclose ( file );
+			fclose(file);
 		}
 
-		CloseWorkBook ( );
+		CloseWorkBook();
 	}
 	else
 	{
-		if ( dlg )
+		if (dlg)
 		{
-			dlg->Log ("FAILED", SAME_LINE );
-			sprintf ( buffer2, "Failed to open \"%s\"", buffer );
-			AfxMessageBox ( buffer2 );
-			dlg->Log ( buffer2 );
+			dlg->Log("FAILED", SAME_LINE);
+			sprintf(buffer2, "Failed to open \"%s\"", buffer);
+			AfxMessageBox(buffer2);
+			dlg->Log(buffer2);
 		}
 	}
 
-	if ( dlg )
+	if (dlg)
 	{
 		dlg->Ready();
 	}
-
 }
 
-
-int GenerateReport ( TransDB *db, const char *filename, RPOPTIONS *options, LangID *languages, CBabylonDlg *dlg)
+int GenerateReport(TransDB *db, const char *filename, RPOPTIONS *options, LangID *languages, CBabylonDlg *dlg)
 {
 	LangID langid;
-	int count= 0 ;
+	int count = 0;
 	int num;
 	FILE *file = NULL;
 
-	if ( dlg )
+	if (dlg)
 	{
 		LangID *temp = languages;
 		num = 0;
-		while ( *temp++ != LANGID_UNKNOWN )
+		while (*temp++ != LANGID_UNKNOWN)
 		{
 			num++;
 		}
 
-		dlg->Log ( "" );
-		dlg->Status ( "Generating Report:" );
-		dlg->InitProgress ( num );
+		dlg->Log("");
+		dlg->Status("Generating Report:");
+		dlg->InitProgress(num);
 		num = 0;
 	}
 
-	if ( ! ( file = fopen ( filename, "wt" )))
+	if (!(file = fopen(filename, "wt")))
 	{
 		static char buffer[500];
 
-		sprintf ( buffer, "Unable to open file \"%s\".\n\nCannot create report!", filename);
-		AfxMessageBox ( buffer );
+		sprintf(buffer, "Unable to open file \"%s\".\n\nCannot create report!", filename);
+		AfxMessageBox(buffer);
 
-		if ( dlg )
+		if (dlg)
 		{
-			dlg->Log ( "FAILED", SAME_LINE );
-			dlg->Ready ();
+			dlg->Log("FAILED", SAME_LINE);
+			dlg->Ready();
 		}
 		return 0;
 	}
@@ -1520,154 +1499,147 @@ int GenerateReport ( TransDB *db, const char *filename, RPOPTIONS *options, Lang
 	{
 		char date[50];
 		char time[50];
-		_strtime ( time );
-		_strdate ( date );
-		fprintf ( file, "Babylon Report: %s %s\n", date, time);
+		_strtime(time);
+		_strdate(date);
+		fprintf(file, "Babylon Report: %s %s\n", date, time);
 	}
 
-
-
-	while ( (langid = *languages++) != LANGID_UNKNOWN )
+	while ((langid = *languages++) != LANGID_UNKNOWN)
 	{
 		LANGINFO *info;
 		TRNREPORT tr_report;
 		DLGREPORT dlg_report;
 
-		info = GetLangInfo ( langid );
+		info = GetLangInfo(langid);
 
-		fprintf ( file, "\n\n%s Status:\n", info->name );
+		fprintf(file, "\n\n%s Status:\n", info->name);
 
-
-		if ( options->translations )
+		if (options->translations)
 		{
 			int count;
 
-			count = db->ReportTranslations ( &tr_report, langid );
+			count = db->ReportTranslations(&tr_report, langid);
 
-			fprintf ( file, "\n\tText Summary: %s\n", info->name );
-			fprintf ( file,   "\t-------------\n\n");
+			fprintf(file, "\n\tText Summary: %s\n", info->name);
+			fprintf(file, "\t-------------\n\n");
 
-			fprintf ( file, "\t\tErrors: %d\n", tr_report.errors);
+			fprintf(file, "\t\tErrors: %d\n", tr_report.errors);
 
-			if ( langid != LANGID_US )
+			if (langid != LANGID_US)
 			{
-				fprintf ( file, "\t\tNot translated: %d\n", tr_report.missing);
-				fprintf ( file, "\t\tRetranslation: %d\n", tr_report.retranslate);
-				fprintf ( file, "\t\tTranslated: %d\n", tr_report.translated );
+				fprintf(file, "\t\tNot translated: %d\n", tr_report.missing);
+				fprintf(file, "\t\tRetranslation: %d\n", tr_report.retranslate);
+				fprintf(file, "\t\tTranslated: %d\n", tr_report.translated);
 			}
-			fprintf ( file, "\t\tTotal text: %d\n", tr_report.numstrings );
+			fprintf(file, "\t\tTotal text: %d\n", tr_report.numstrings);
 
-			if ( count && count < options->limit )
+			if (count && count < options->limit)
 			{
-				fprintf ( file, "\n\tText Details: %s\n", info->name);
-				fprintf ( file,   "\t------------\n\n" );
-				db->ReportTranslations ( &tr_report, langid, print_to_file );
+				fprintf(file, "\n\tText Details: %s\n", info->name);
+				fprintf(file, "\t------------\n\n");
+				db->ReportTranslations(&tr_report, langid, print_to_file);
 			}
-
 		}
 
-		if ( options->dialog )
+		if (options->dialog)
 		{
 			int count;
 
-			count = db->ReportDialog ( &dlg_report, langid );
+			count = db->ReportDialog(&dlg_report, langid);
 
-			fprintf ( file, "\n\tDialog Summary: %s\n", info->name );
-			fprintf ( file,   "\t-------------\n\n");
+			fprintf(file, "\n\tDialog Summary: %s\n", info->name);
+			fprintf(file, "\t-------------\n\n");
 
-			fprintf ( file, "\t\tMissing Audio: %d\n", dlg_report.missing);
-			fprintf ( file, "\t\tNot verified: %d\n", dlg_report.unresolved);
-			fprintf ( file, "\t\tVerified: %d\n", dlg_report.resolved);
-			fprintf ( file, "\t\tTotal dialog: %d\n", dlg_report.numdialog );
+			fprintf(file, "\t\tMissing Audio: %d\n", dlg_report.missing);
+			fprintf(file, "\t\tNot verified: %d\n", dlg_report.unresolved);
+			fprintf(file, "\t\tVerified: %d\n", dlg_report.resolved);
+			fprintf(file, "\t\tTotal dialog: %d\n", dlg_report.numdialog);
 
-			if ( count && count < options->limit )
+			if (count && count < options->limit)
 			{
-				fprintf ( file, "\n\tDialog Details: %s\n", info->name );
-				fprintf ( file,   "\t------------\n\n" );
-				db->ReportDialog ( &dlg_report, langid, print_to_file );
+				fprintf(file, "\n\tDialog Details: %s\n", info->name);
+				fprintf(file, "\t------------\n\n");
+				db->ReportDialog(&dlg_report, langid, print_to_file);
 			}
 		}
 
-		if ( dlg )
+		if (dlg)
 		{
-			dlg->SetProgress ( ++num );
+			dlg->SetProgress(++num);
 		}
-
 	}
 
-	if ( dlg )
+	if (dlg)
 	{
-		dlg->Ready ();
+		dlg->Ready();
 	}
 
-	fclose ( file );
+	fclose(file);
 
 	return count;
 }
 
-int UpdateSentTranslations ( TransDB *db, const char *filename, CBabylonDlg *dlg )
+int UpdateSentTranslations(TransDB *db, const char *filename, CBabylonDlg *dlg)
 {
 	int imports = -1;
 
 	progress_dlg = dlg;
-	if ( dlg )
+	if (dlg)
 	{
-		dlg->Log ("");
-		sprintf ( buffer, "Importing \"%s\"...", filename );
-		dlg->Status ( buffer );
+		dlg->Log("");
+		sprintf(buffer, "Importing \"%s\"...", filename);
+		dlg->Status(buffer);
 	}
 
-	if ( OpenWorkBook ( filename ) )
+	if (OpenWorkBook(filename))
 	{
 		int num_strings;
 		LANGINFO *info;
 
-		num_strings = GetInt ( ROW_COUNT, COLUMN_COUNT );
-		GetString ( ROW_LANGUAGE, COLUMN_LANGUAGE, olebuf );
-		sprintf ( buffer, "%S", olebuf );
-		info = GetLangInfo ( buffer );
+		num_strings = GetInt(ROW_COUNT, COLUMN_COUNT);
+		GetString(ROW_LANGUAGE, COLUMN_LANGUAGE, olebuf);
+		sprintf(buffer, "%S", olebuf);
+		info = GetLangInfo(buffer);
 
-		if ( !info )
+		if (!info)
 		{
-			if ( dlg )
+			if (dlg)
 			{
-				AfxMessageBox ( "Import file is of an unknown language or is not a translation file" );
-				dlg->Log ( "FAILED", SAME_LINE );
+				AfxMessageBox("Import file is of an unknown language or is not a translation file");
+				dlg->Log("FAILED", SAME_LINE);
 				dlg->Ready();
 			}
-			CloseWorkBook ();
+			CloseWorkBook();
 			return -1;
 		}
 
-
-		if ( dlg )
+		if (dlg)
 		{
-			dlg->InitProgress ( num_strings );
+			dlg->InitProgress(num_strings);
 			progress_count = 0;
-			sprintf ( buffer, "...%s", info->name );
-			dlg->Log ( buffer, SAME_LINE );
+			sprintf(buffer, "...%s", info->name);
+			dlg->Log(buffer, SAME_LINE);
 		}
 
-		imports = update_sent_trans ( db, info->langid, progress_cb, dlg );
+		imports = update_sent_trans(db, info->langid, progress_cb, dlg);
 
-		CloseWorkBook ( );
+		CloseWorkBook();
 	}
 	else
 	{
-		if ( dlg )
+		if (dlg)
 		{
-			dlg->Log ("FAILED", SAME_LINE );
-			sprintf ( buffer2, "Failed to open \"%s\"", buffer );
-			AfxMessageBox ( buffer2 );
-			dlg->Log ( buffer2 );
+			dlg->Log("FAILED", SAME_LINE);
+			sprintf(buffer2, "Failed to open \"%s\"", buffer);
+			AfxMessageBox(buffer2);
+			dlg->Log(buffer2);
 		}
 	}
 
-	if ( dlg )
+	if (dlg)
 	{
 		dlg->Ready();
 	}
 
 	return imports;
 }
-

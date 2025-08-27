@@ -38,77 +38,77 @@
 
 //-------------------------------------------------------------------------------------------------
 /** Kind of flags for determining groups of things that belong together
-	* NOTE: You *MUST* keep this in the same order as the DisabledNames[] below */
+ * NOTE: You *MUST* keep this in the same order as the DisabledNames[] below */
 //-------------------------------------------------------------------------------------------------
-enum DisabledType CPP_11(: Int)
-{
-	DISABLED_DEFAULT,     //Typical disable -- like systems, things that don't need to run.
-	DISABLED_HACKED,      //This unit has been hacked
-	DISABLED_EMP,         //This unit has been disabled via electro-magnetic-pulse.
-	DISABLED_HELD,	      //Special case -- held means it can fire and isHeld checks to make sure ONLY held is set!
-	DISABLED_PARALYZED,   //Battle plans have changed, and unit is confused/paralyzed
-	DISABLED_UNMANNED,		//Vehicle is unmanned
-	DISABLED_UNDERPOWERED,//Seperate from ScriptUnderpowered, the owning player has insufficient power.  Energy status controls this
-	DISABLED_FREEFALL,    //This unit has been disabled via being in free fall
+enum DisabledType CPP_11( : Int){
+	DISABLED_DEFAULT, // Typical disable -- like systems, things that don't need to run.
+	DISABLED_HACKED, // This unit has been hacked
+	DISABLED_EMP, // This unit has been disabled via electro-magnetic-pulse.
+	DISABLED_HELD, // Special case -- held means it can fire and isHeld checks to make sure ONLY held is set!
+	DISABLED_PARALYZED, // Battle plans have changed, and unit is confused/paralyzed
+	DISABLED_UNMANNED, // Vehicle is unmanned
+	DISABLED_UNDERPOWERED, // Seperate from ScriptUnderpowered, the owning player has insufficient power.  Energy status
+												 // controls this
+	DISABLED_FREEFALL, // This unit has been disabled via being in free fall
 
-	//These ones are specificially for scripts to enable/reenable!
+	// These ones are specificially for scripts to enable/reenable!
 	DISABLED_SCRIPT_DISABLED,
 	DISABLED_SCRIPT_UNDERPOWERED,
 
 	DISABLED_COUNT,
 };
 
-typedef BitFlags<DISABLED_COUNT>	DisabledMaskType;
+typedef BitFlags<DISABLED_COUNT> DisabledMaskType;
 
 #define MAKE_DISABLED_MASK(k) DisabledMaskType(DisabledMaskType::kInit, (k))
-#define MAKE_DISABLED_MASK2(k,a) DisabledMaskType(DisabledMaskType::kInit, (k), (a))
-#define MAKE_DISABLED_MASK3(k,a,b) DisabledMaskType(DisabledMaskType::kInit, (k), (a), (b))
-#define MAKE_DISABLED_MASK4(k,a,b,c) DisabledMaskType(DisabledMaskType::kInit, (k), (a), (b), (c))
-#define MAKE_DISABLED_MASK5(k,a,b,c,d) DisabledMaskType(DisabledMaskType::kInit, (k), (a), (b), (c), (d))
+#define MAKE_DISABLED_MASK2(k, a) DisabledMaskType(DisabledMaskType::kInit, (k), (a))
+#define MAKE_DISABLED_MASK3(k, a, b) DisabledMaskType(DisabledMaskType::kInit, (k), (a), (b))
+#define MAKE_DISABLED_MASK4(k, a, b, c) DisabledMaskType(DisabledMaskType::kInit, (k), (a), (b), (c))
+#define MAKE_DISABLED_MASK5(k, a, b, c, d) DisabledMaskType(DisabledMaskType::kInit, (k), (a), (b), (c), (d))
 
-inline Bool TEST_DISABLEDMASK(const DisabledMaskType& m, DisabledType t)
+inline Bool TEST_DISABLEDMASK(const DisabledMaskType &m, DisabledType t)
 {
 	return m.test(t);
 }
 
-inline Bool TEST_DISABLEDMASK_ANY(const DisabledMaskType& m, const DisabledMaskType& mask)
+inline Bool TEST_DISABLEDMASK_ANY(const DisabledMaskType &m, const DisabledMaskType &mask)
 {
 	return m.anyIntersectionWith(mask);
 }
 
-inline Bool TEST_DISABLEDMASK_MULTI(const DisabledMaskType& m, const DisabledMaskType& mustBeSet, const DisabledMaskType& mustBeClear)
+inline Bool TEST_DISABLEDMASK_MULTI(
+		const DisabledMaskType &m,
+		const DisabledMaskType &mustBeSet,
+		const DisabledMaskType &mustBeClear)
 {
 	return m.testSetAndClear(mustBeSet, mustBeClear);
 }
 
-inline Bool DISABLEDMASK_ANY_SET(const DisabledMaskType& m)
+inline Bool DISABLEDMASK_ANY_SET(const DisabledMaskType &m)
 {
 	return m.any();
 }
 
-inline void CLEAR_DISABLEDMASK(DisabledMaskType& m)
+inline void CLEAR_DISABLEDMASK(DisabledMaskType &m)
 {
 	m.clear();
 }
 
-inline void SET_ALL_DISABLEDMASK_BITS(DisabledMaskType& m)
+inline void SET_ALL_DISABLEDMASK_BITS(DisabledMaskType &m)
 {
 	m.clear();
 	m.flip();
 }
 
-inline void FLIP_DISABLEDMASK(DisabledMaskType& m)
+inline void FLIP_DISABLEDMASK(DisabledMaskType &m)
 {
 	m.flip();
 }
-
-
 
 // defined in Common/System/DisabledTypes.cpp
 extern const char *TheDisabledNames[];
-extern DisabledMaskType DISABLEDMASK_NONE;	// inits to all zeroes
-extern DisabledMaskType DISABLEDMASK_ALL;		// inits to all bits set.
+extern DisabledMaskType DISABLEDMASK_NONE; // inits to all zeroes
+extern DisabledMaskType DISABLEDMASK_ALL; // inits to all bits set.
 void initDisabledMasks();
 
-#endif	// __DISABLED_TYPES_H_
-
+#endif // __DISABLED_TYPES_H_

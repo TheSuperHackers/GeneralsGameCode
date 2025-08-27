@@ -26,24 +26,21 @@
 #include "debug.h"
 #include "expander.h"
 
-Expander::Expander( const std::string& leftMarker, const std::string& rightMarker ) :
-	m_left(leftMarker), m_right(rightMarker)
+Expander::Expander(const std::string &leftMarker, const std::string &rightMarker) : m_left(leftMarker), m_right(rightMarker)
 {
 }
 
-void Expander::addExpansion( const std::string& key, const std::string val )
+void Expander::addExpansion(const std::string &key, const std::string val)
 {
 	m_expansions[key] = val;
 }
 
-void Expander::clear( void )
+void Expander::clear(void)
 {
 	m_expansions.clear();
 }
 
-void Expander::expand( const std::string& input,
-		std::string& output,
-		bool stripUnknown )
+void Expander::expand(const std::string &input, std::string &output, bool stripUnknown)
 {
 	output = "";
 	unsigned int pos = input.find(m_left);
@@ -57,31 +54,31 @@ void Expander::expand( const std::string& input,
 			{
 				// first time
 				output.append(input.substr(0, pos));
-				//DEBUG_LOG(("First time, output='%s'", output.c_str()));
+				// DEBUG_LOG(("First time, output='%s'", output.c_str()));
 			}
 			else
 			{
 				// done this before
-				std::string sub = input.substr(lastpos, pos-lastpos);
-				//DEBUG_LOG(("*** lastpos = %d, pos=%d, sub='%s'", lastpos, pos, sub.c_str()));
+				std::string sub = input.substr(lastpos, pos - lastpos);
+				// DEBUG_LOG(("*** lastpos = %d, pos=%d, sub='%s'", lastpos, pos, sub.c_str()));
 				output.append(sub);
-				//DEBUG_LOG(("output='%s'", output.c_str()));
+				// DEBUG_LOG(("output='%s'", output.c_str()));
 			}
 		}
 		else
 		{
-			//DEBUG_LOG(("pos == 0"));
+			// DEBUG_LOG(("pos == 0"));
 		}
 
 		// pos is the first position of a possible expansion
-		//DEBUG_LOG(("Looking for endpos via '%s' in '%s'", m_right.c_str(), input.substr(pos+m_left.length()).c_str()));
-		unsigned int endpos = input.find(m_right, pos+m_left.length());
-		//DEBUG_LOG(("substr is %d-%d of '%s'", pos, endpos, input.c_str()));
+		// DEBUG_LOG(("Looking for endpos via '%s' in '%s'", m_right.c_str(), input.substr(pos+m_left.length()).c_str()));
+		unsigned int endpos = input.find(m_right, pos + m_left.length());
+		// DEBUG_LOG(("substr is %d-%d of '%s'", pos, endpos, input.c_str()));
 		if (endpos != input.npos)
 		{
 			// found a complete token - expand it
-			std::string sub = input.substr(pos+m_left.length(), endpos-pos-m_left.length());
-			//DEBUG_LOG(("found token: '%s'", sub.c_str()));
+			std::string sub = input.substr(pos + m_left.length(), endpos - pos - m_left.length());
+			// DEBUG_LOG(("found token: '%s'", sub.c_str()));
 
 			ExpansionMap::iterator it = m_expansions.find(sub);
 			if (it == m_expansions.end())
@@ -89,27 +86,27 @@ void Expander::expand( const std::string& input,
 				// unknown key
 				if (stripUnknown)
 				{
-					//output.append("<<CENSORED>>");
+					// output.append("<<CENSORED>>");
 				}
 				else
 				{
-					output.append(input.substr(pos, endpos-pos+m_right.length()));
+					output.append(input.substr(pos, endpos - pos + m_right.length()));
 				}
 			}
 			else
 			{
 				std::string toExpand = it->second;
 				std::string expanded = "";
-				//DEBUG_LOG(("###### expanding '%s'", toExpand.c_str()));
+				// DEBUG_LOG(("###### expanding '%s'", toExpand.c_str()));
 				expand(toExpand, expanded, stripUnknown);
-				//DEBUG_LOG(("###### expanded '%s'", expanded.c_str()));
+				// DEBUG_LOG(("###### expanded '%s'", expanded.c_str()));
 				output.append(expanded);
 			}
 		}
 
-		lastpos = endpos+m_right.length();
+		lastpos = endpos + m_right.length();
 
-		pos = input.find(m_left, pos+m_left.length());
+		pos = input.find(m_left, pos + m_left.length());
 	}
 
 	if (lastpos != input.npos)
@@ -122,5 +119,3 @@ void Expander::expand( const std::string& input,
 		output = input;
 	}
 }
-
-

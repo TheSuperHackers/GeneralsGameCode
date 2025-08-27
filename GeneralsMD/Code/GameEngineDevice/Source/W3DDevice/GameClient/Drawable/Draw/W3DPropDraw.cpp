@@ -38,7 +38,6 @@
 #include "W3DDevice/GameClient/Module/W3DPropDraw.h"
 #include "W3DDevice/GameClient/BaseHeightMap.h"
 
-
 //-------------------------------------------------------------------------------------------------
 W3DPropDrawModuleData::W3DPropDrawModuleData()
 {
@@ -50,16 +49,15 @@ W3DPropDrawModuleData::~W3DPropDrawModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DPropDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
+void W3DPropDrawModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-  ModuleData::buildFieldParse(p);
-	static const FieldParse dataFieldParse[] =
-	{
+	ModuleData::buildFieldParse(p);
+	static const FieldParse dataFieldParse[] = {
 		{ "ModelName", INI::parseAsciiString, NULL, offsetof(W3DPropDrawModuleData, m_modelName) },
 
 		{ 0, 0, 0, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,89 +66,81 @@ void W3DPropDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DPropDraw::W3DPropDraw( Thing *thing, const ModuleData* moduleData ) : DrawModule( thing, moduleData ),
-m_propAdded(false)
+W3DPropDraw::W3DPropDraw(Thing *thing, const ModuleData *moduleData) : DrawModule(thing, moduleData), m_propAdded(false)
 {
-
-}  // end W3DPropDraw
-
+} // end W3DPropDraw
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DPropDraw::~W3DPropDraw( void )
+W3DPropDraw::~W3DPropDraw(void)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DPropDraw::reactToTransformChange( const Matrix3D *oldMtx,
-																							 const Coord3D *oldPos,
-																							 Real oldAngle )
+void W3DPropDraw::reactToTransformChange(const Matrix3D *oldMtx, const Coord3D *oldPos, Real oldAngle)
 {
 	Drawable *draw = getDrawable();
-	if (m_propAdded) {
+	if (m_propAdded)
+	{
 		return;
 	}
-	if (draw->getPosition()->x==0.0f && draw->getPosition()->y == 0.0f) {
+	if (draw->getPosition()->x == 0.0f && draw->getPosition()->y == 0.0f)
+	{
 		return;
 	}
 	m_propAdded = true;
 	const W3DPropDrawModuleData *moduleData = getW3DPropDrawModuleData();
-	if (!moduleData) {
+	if (!moduleData)
+	{
 		return;
 	}
 	Real scale = draw->getScale();
-	TheTerrainRenderObject->addProp((Int)draw->getID(), *draw->getPosition(),
-		draw->getOrientation(), scale, moduleData->m_modelName);
-
+	TheTerrainRenderObject
+			->addProp((Int)draw->getID(), *draw->getPosition(), draw->getOrientation(), scale, moduleData->m_modelName);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DPropDraw::doDrawModule(const Matrix3D* transformMtx)
+void W3DPropDraw::doDrawModule(const Matrix3D *transformMtx)
 {
-
 	return;
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void W3DPropDraw::crc( Xfer *xfer )
+void W3DPropDraw::crc(Xfer *xfer)
 {
-
 	// extend base class
-	DrawModule::crc( xfer );
+	DrawModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void W3DPropDraw::xfer( Xfer *xfer )
+void W3DPropDraw::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DrawModule::xfer( xfer );
+	DrawModule::xfer(xfer);
 
 	// no data to save here, nobody will ever notice
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DPropDraw::loadPostProcess( void )
+void W3DPropDraw::loadPostProcess(void)
 {
-
 	// extend base class
 	DrawModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

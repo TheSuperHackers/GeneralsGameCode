@@ -40,7 +40,7 @@
 #ifndef B64PIPE_H
 #define B64PIPE_H
 
-#include	"PIPE.H"
+#include "PIPE.H"
 
 /*
 **	This class performs Base64 encoding/decoding to the data that is piped through. Note that
@@ -48,46 +48,46 @@
 */
 class Base64Pipe : public Pipe
 {
-	public:
-		typedef enum CodeControl {
-			ENCODE,
-			DECODE
-		} CodeControl;
+public:
+	typedef enum CodeControl
+	{
+		ENCODE,
+		DECODE
+	} CodeControl;
 
-		Base64Pipe(CodeControl control) : Control(control), Counter(0) {}
+	Base64Pipe(CodeControl control) : Control(control), Counter(0) {}
 
-		virtual int Flush(void);
-		virtual int Put(void const * source, int slen);
+	virtual int Flush(void);
+	virtual int Put(void const *source, int slen);
 
-	private:
+private:
+	/*
+	**	Indicates if this is for encoding or decoding of Base64 data.
+	*/
+	CodeControl Control;
 
-		/*
-		**	Indicates if this is for encoding or decoding of Base64 data.
-		*/
-		CodeControl Control;
+	/*
+	**	The counter of the number of accumulated bytes pending for processing.
+	*/
+	int Counter;
 
-		/*
-		**	The counter of the number of accumulated bytes pending for processing.
-		*/
-		int Counter;
+	/*
+	**	Buffer that holds the Base64 coded bytes. This will be the staging buffer if
+	**	this is for a decoding process. Otherwise, it will be used as a scratch buffer.
+	*/
+	char CBuffer[4];
 
-		/*
-		**	Buffer that holds the Base64 coded bytes. This will be the staging buffer if
-		**	this is for a decoding process. Otherwise, it will be used as a scratch buffer.
-		*/
-		char CBuffer[4];
+	/*
+	**	Buffer that holds the plain bytes. This will be the staging buffer if this
+	**	is for an encoding process. Otherwise, it will be used as a scratch buffer.
+	*/
+	char PBuffer[3];
 
-		/*
-		**	Buffer that holds the plain bytes. This will be the staging buffer if this
-		**	is for an encoding process. Otherwise, it will be used as a scratch buffer.
-		*/
-		char PBuffer[3];
-
-		/*
-		**	Explicitly disable the copy constructor and the assignment operator.
-		*/
-		Base64Pipe(Base64Pipe & rvalue);
-		Base64Pipe & operator = (Base64Pipe const & pipe);
+	/*
+	**	Explicitly disable the copy constructor and the assignment operator.
+	*/
+	Base64Pipe(Base64Pipe &rvalue);
+	Base64Pipe &operator=(Base64Pipe const &pipe);
 };
 
 #endif

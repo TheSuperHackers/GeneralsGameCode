@@ -22,19 +22,22 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameNetwork/Connection.h"
 #include "GameNetwork/networkutil.h"
 #include "GameLogic/GameLogic.h"
 
-enum { MaxQuitFlushTime = 30000 }; // wait this many milliseconds at most to retry things before quitting
+enum
+{
+	MaxQuitFlushTime = 30000
+}; // wait this many milliseconds at most to retry things before quitting
 
 /**
  * The constructor.
  */
-Connection::Connection() {
+Connection::Connection()
+{
 	m_transport = NULL;
 	m_user = NULL;
 	m_netCommandList = NULL;
@@ -47,7 +50,7 @@ Connection::Connection() {
 	// clearing out the latency tracker
 	m_averageLatency = 0.0f;
 	Int i;
-	for(i = 0; i < CONNECTION_LATENCY_HISTORY_LENGTH; i++)
+	for (i = 0; i < CONNECTION_LATENCY_HISTORY_LENGTH; i++)
 	{
 		m_latencies[i] = 0.0f;
 	}
@@ -57,13 +60,16 @@ Connection::Connection() {
 /**
  * The destructor.
  */
-Connection::~Connection() {
-	if (m_user != NULL) {
+Connection::~Connection()
+{
+	if (m_user != NULL)
+	{
 		deleteInstance(m_user);
 		m_user = NULL;
 	}
 
-	if (m_netCommandList != NULL) {
+	if (m_netCommandList != NULL)
+	{
 		deleteInstance(m_netCommandList);
 		m_netCommandList = NULL;
 	}
@@ -72,15 +78,18 @@ Connection::~Connection() {
 /**
  * Initialize the connection and any subsystems.
  */
-void Connection::init() {
+void Connection::init()
+{
 	m_transport = NULL;
 
-	if (m_user != NULL) {
+	if (m_user != NULL)
+	{
 		deleteInstance(m_user);
 		m_user = NULL;
 	}
 
-	if (m_netCommandList == NULL) {
+	if (m_netCommandList == NULL)
+	{
 		m_netCommandList = newInstance(NetCommandList);
 		m_netCommandList->init();
 	}
@@ -91,7 +100,8 @@ void Connection::init() {
 	m_numRetries = 0;
 	m_retryMetricsTime = 0;
 
-	for (Int i = 0; i < CONNECTION_LATENCY_HISTORY_LENGTH; ++i) {
+	for (Int i = 0; i < CONNECTION_LATENCY_HISTORY_LENGTH; ++i)
+	{
 		m_latencies[i] = 0;
 	}
 	m_averageLatency = 0;
@@ -102,28 +112,33 @@ void Connection::init() {
 /**
  * Take the connection back to the initial state.
  */
-void Connection::reset() {
+void Connection::reset()
+{
 	init();
 }
 
 /**
  * Doesn't really do anything.
  */
-void Connection::update() {
+void Connection::update()
+{
 }
 
 /**
  * Attach the transport object that this connection should use.
  */
-void Connection::attachTransport(Transport *transport) {
+void Connection::attachTransport(Transport *transport)
+{
 	m_transport = transport;
 }
 
 /**
  * Assign this connection a user.  This is the user to whome we send all our packetized goodies.
  */
-void Connection::setUser(User *user) {
-	if (m_user != NULL) {
+void Connection::setUser(User *user)
+{
+	if (m_user != NULL)
+	{
 		deleteInstance(m_user);
 	}
 
@@ -133,7 +148,8 @@ void Connection::setUser(User *user) {
 /**
  * Return the user object.
  */
-User * Connection::getUser() {
+User *Connection::getUser()
+{
 	return m_user;
 }
 
@@ -142,19 +158,21 @@ User * Connection::getUser() {
  * The relay is the mask specifying the people the person we are sending to should send to.
  * The relay mostly has to do with the packet router.
  */
-void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay) {
+void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay)
+{
 	static NetPacket *packet = NULL;
 
 	// this is done so we don't have to allocate and delete a packet every time we send a message.
-	if (packet == NULL) {
+	if (packet == NULL)
+	{
 		packet = newInstance(NetPacket);
 	}
-
 
 	if (m_isQuitting)
 		return;
 
-	if (m_netCommandList != NULL) {
+	if (m_netCommandList != NULL)
+	{
 		// check to see if this command will fit in a packet.  If not, we need to split it up.
 		// we are splitting up the command here so that the retry logic will not try to
 		// resend the ENTIRE command (i.e. multiple packets work of data) and only do the retry
@@ -167,19 +185,22 @@ void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay) {
 		deleteInstance(tempref); // delete the temporary reference.
 		tempref = NULL;
 
-		if (!msgFits) {
+		if (!msgFits)
+		{
 			NetCommandRef *origref = NEW_NETCOMMANDREF(msg);
 			origref->setRelay(relay);
 			// the message doesn't fit in a single packet, need to split it up.
 			NetPacketList packetList = NetPacket::ConstructBigCommandPacketList(origref);
 			NetPacketListIter tempPacketPtr = packetList.begin();
 
-			while (tempPacketPtr != packetList.end()) {
+			while (tempPacketPtr != packetList.end())
+			{
 				NetPacket *tempPacket = (*tempPacketPtr);
 
 				NetCommandList *list = tempPacket->getCommandList();
 				NetCommandRef *ref1 = list->getFirstMessage();
-				while (ref1 != NULL) {
+				while (ref1 != NULL)
+				{
 					NetCommandRef *ref2 = m_netCommandList->addMessage(ref1->getCommand());
 					ref2->setRelay(relay);
 
@@ -203,25 +224,25 @@ void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay) {
 		// the message fits in a packet, add to the command list normally.
 		NetCommandRef *ref = m_netCommandList->addMessage(msg);
 
-		if (ref != NULL) {
-
-/*
-#if defined(RTS_DEBUG)
-			if (msg->getNetCommandType() == NETCOMMANDTYPE_GAMECOMMAND) {
-				DEBUG_LOG(("Connection::sendNetCommandMsg - added game command %d to net command list for frame %d.",
-					msg->getID(), msg->getExecutionFrame()));
-			} else if (msg->getNetCommandType() == NETCOMMANDTYPE_FRAMEINFO) {
-				DEBUG_LOG(("Connection::sendNetCommandMsg - added frame info for frame %d", msg->getExecutionFrame()));
-			}
-#endif // RTS_DEBUG
-*/
+		if (ref != NULL)
+		{
+			/*
+			#if defined(RTS_DEBUG)
+						if (msg->getNetCommandType() == NETCOMMANDTYPE_GAMECOMMAND) {
+							DEBUG_LOG(("Connection::sendNetCommandMsg - added game command %d to net command list for frame %d.",
+								msg->getID(), msg->getExecutionFrame()));
+						} else if (msg->getNetCommandType() == NETCOMMANDTYPE_FRAMEINFO) {
+							DEBUG_LOG(("Connection::sendNetCommandMsg - added frame info for frame %d", msg->getExecutionFrame()));
+						}
+			#endif // RTS_DEBUG
+			*/
 
 			ref->setRelay(relay);
 		}
 	}
 }
 
-void Connection::clearCommandsExceptFrom( Int playerIndex )
+void Connection::clearCommandsExceptFrom(Int playerIndex)
 {
 	NetCommandRef *tmp = m_netCommandList->getFirstMessage();
 	while (tmp)
@@ -229,26 +250,33 @@ void Connection::clearCommandsExceptFrom( Int playerIndex )
 		NetCommandMsg *msg = tmp->getCommand();
 		if (msg->getPlayerID() != playerIndex)
 		{
-			DEBUG_LOG(("Connection::clearCommandsExceptFrom(%d) - clearing a command from %d for frame %d",
-				playerIndex, tmp->getCommand()->getPlayerID(), tmp->getCommand()->getExecutionFrame()));
+			DEBUG_LOG(
+					("Connection::clearCommandsExceptFrom(%d) - clearing a command from %d for frame %d",
+					 playerIndex,
+					 tmp->getCommand()->getPlayerID(),
+					 tmp->getCommand()->getExecutionFrame()));
 			m_netCommandList->removeMessage(tmp);
 			NetCommandRef *toDelete = tmp;
 			tmp = tmp->getNext();
 			deleteInstance(toDelete);
-		} else {
+		}
+		else
+		{
 			tmp = tmp->getNext();
 		}
 	}
 }
 
-Bool Connection::isQueueEmpty() {
-	if (m_netCommandList->getFirstMessage() == NULL) {
+Bool Connection::isQueueEmpty()
+{
+	if (m_netCommandList->getFirstMessage() == NULL)
+	{
 		return TRUE;
 	}
 	return FALSE;
 }
 
-void Connection::setQuitting( void )
+void Connection::setQuitting(void)
 {
 	m_isQuitting = TRUE;
 	m_quitTime = timeGetTime();
@@ -259,7 +287,8 @@ void Connection::setQuitting( void )
  * This is the good part. We take all the network commands queued up for this connection,
  * packetize them and put them on the transport's send queue for actual sending.
  */
-UnsignedInt Connection::doSend() {
+UnsignedInt Connection::doSend()
+{
 	Int numpackets = 0;
 	time_t curtime = timeGetTime();
 	Bool couldQueue = TRUE;
@@ -272,15 +301,18 @@ UnsignedInt Connection::doSend() {
 		return 0;
 	}
 
-	if ((curtime - m_lastTimeSent) < m_frameGrouping) {
-//		DEBUG_LOG(("not sending packet, time = %d, m_lastFrameSent = %d, m_frameGrouping = %d", curtime, m_lastTimeSent, m_frameGrouping));
+	if ((curtime - m_lastTimeSent) < m_frameGrouping)
+	{
+		//		DEBUG_LOG(("not sending packet, time = %d, m_lastFrameSent = %d, m_frameGrouping = %d", curtime, m_lastTimeSent,
+		// m_frameGrouping));
 		return 0;
 	}
 
 	// iterate through all the messages and put them into a packet(s).
 	NetCommandRef *msg = m_netCommandList->getFirstMessage();
 
-	while ((msg != NULL) && couldQueue) {
+	while ((msg != NULL) && couldQueue)
+	{
 		NetPacket *packet = newInstance(NetPacket);
 		packet->init();
 		packet->setAddress(m_user->GetIPAddr(), m_user->GetPort());
@@ -288,22 +320,29 @@ UnsignedInt Connection::doSend() {
 		Bool notDone = TRUE;
 
 		// add the command messages until either we run out of messages or the packet is full.
-		while ((msg != NULL) && notDone) {
+		while ((msg != NULL) && notDone)
+		{
 			NetCommandRef *next = msg->getNext(); // Need this since msg could be deleted
 
 			time_t timeLastSent = msg->getTimeLastSent();
 
-			if (((curtime - timeLastSent) > m_retryTime) || (timeLastSent == -1)) {
+			if (((curtime - timeLastSent) > m_retryTime) || (timeLastSent == -1))
+			{
 				notDone = packet->addCommand(msg);
-				if (notDone) {
+				if (notDone)
+				{
 					// the msg command was added to the packet.
-					if (CommandRequiresAck(msg->getCommand())) {
-						if (timeLastSent != -1) {
+					if (CommandRequiresAck(msg->getCommand()))
+					{
+						if (timeLastSent != -1)
+						{
 							++m_numRetries;
 						}
 						doRetryMetrics();
 						msg->setTimeLastSent(curtime);
-					} else {
+					}
+					else
+					{
 						m_netCommandList->removeMessage(msg);
 						deleteInstance(msg);
 					}
@@ -312,20 +351,24 @@ UnsignedInt Connection::doSend() {
 			msg = next;
 		}
 
-		if (msg != NULL) {
+		if (msg != NULL)
+		{
 			DEBUG_LOG(("didn't finish sending all commands in connection"));
 		}
 
 		++numpackets;
 
-		/// @todo Make the act of giving the transport object a packet to send more efficient.  Make the transport take a NetPacket object rather than the raw data, thus avoiding an extra memcpy.
-		if (packet->getNumCommands() > 0) {
+		/// @todo Make the act of giving the transport object a packet to send more efficient.  Make the transport take a
+		/// NetPacket object rather than the raw data, thus avoiding an extra memcpy.
+		if (packet->getNumCommands() > 0)
+		{
 			// If the packet actually has any information to give, give it to the transport object
 			// for transmission.
 			couldQueue = m_transport->queueSend(packet->getAddr(), packet->getPort(), packet->getData(), packet->getLength());
 			m_lastTimeSent = curtime;
 		}
-		if (packet != NULL) {
+		if (packet != NULL)
+		{
 			deleteInstance(packet); // delete the packet now that we're done with it.
 		}
 	}
@@ -333,21 +376,26 @@ UnsignedInt Connection::doSend() {
 	return numpackets;
 }
 
-NetCommandRef * Connection::processAck(NetAckStage1CommandMsg *msg) {
+NetCommandRef *Connection::processAck(NetAckStage1CommandMsg *msg)
+{
 	return processAck(msg->getCommandID(), msg->getOriginalPlayerID());
 }
 
-NetCommandRef * Connection::processAck(NetAckBothCommandMsg *msg) {
+NetCommandRef *Connection::processAck(NetAckBothCommandMsg *msg)
+{
 	return processAck(msg->getCommandID(), msg->getOriginalPlayerID());
 }
 
-NetCommandRef * Connection::processAck(NetCommandMsg *msg) {
-	if (msg->getNetCommandType() == NETCOMMANDTYPE_ACKSTAGE1) {
+NetCommandRef *Connection::processAck(NetCommandMsg *msg)
+{
+	if (msg->getNetCommandType() == NETCOMMANDTYPE_ACKSTAGE1)
+	{
 		NetAckStage1CommandMsg *ackmsg = (NetAckStage1CommandMsg *)msg;
 		return processAck(ackmsg);
 	}
 
-	if (msg->getNetCommandType() == NETCOMMANDTYPE_ACKBOTH) {
+	if (msg->getNetCommandType() == NETCOMMANDTYPE_ACKBOTH)
+	{
 		NetAckBothCommandMsg *ackmsg = (NetAckBothCommandMsg *)msg;
 		return processAck(ackmsg);
 	}
@@ -359,21 +407,25 @@ NetCommandRef * Connection::processAck(NetCommandMsg *msg) {
  * The person we are sending to has ack'd one of the messages we sent him.
  * Take that message off the list of commands to send.
  */
-NetCommandRef * Connection::processAck(UnsignedShort commandID, UnsignedByte originalPlayerID) {
+NetCommandRef *Connection::processAck(UnsignedShort commandID, UnsignedByte originalPlayerID)
+{
 	NetCommandRef *temp = m_netCommandList->getFirstMessage();
-	while ((temp != NULL) && ((temp->getCommand()->getID() != commandID) || (temp->getCommand()->getPlayerID() != originalPlayerID))) {
-
+	while ((temp != NULL)
+				 && ((temp->getCommand()->getID() != commandID) || (temp->getCommand()->getPlayerID() != originalPlayerID)))
+	{
 		// cycle through the commands till we find the one we need to remove.
 		// Need to check for both the command ID and the player ID.
 		temp = temp->getNext();
 	}
-	if (temp == NULL) {
+	if (temp == NULL)
+	{
 		return NULL;
 	}
 
 #if defined(RTS_DEBUG)
 	Bool doDebug = FALSE;
-	if (temp->getCommand()->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTFRAME) {
+	if (temp->getCommand()->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTFRAME)
+	{
 		doDebug = TRUE;
 	}
 #endif
@@ -385,7 +437,8 @@ NetCommandRef * Connection::processAck(UnsignedShort commandID, UnsignedByte ori
 	m_latencies[index] = lat;
 
 #if defined(RTS_DEBUG)
-	if (doDebug == TRUE) {
+	if (doDebug == TRUE)
+	{
 		DEBUG_LOG(("Connection::processAck - disconnect frame command %d found, removing from command list.", commandID));
 	}
 #endif
@@ -393,31 +446,39 @@ NetCommandRef * Connection::processAck(UnsignedShort commandID, UnsignedByte ori
 	return temp;
 }
 
-void Connection::setFrameGrouping(time_t frameGrouping) {
+void Connection::setFrameGrouping(time_t frameGrouping)
+{
 	m_frameGrouping = frameGrouping;
-//	m_retryTime = frameGrouping * 4;
+	//	m_retryTime = frameGrouping * 4;
 }
 
-void Connection::doRetryMetrics() {
+void Connection::doRetryMetrics()
+{
 	static Int numSeconds = 0;
 	time_t curTime = timeGetTime();
 
-	if ((curTime - m_retryMetricsTime) > 10000) {
+	if ((curTime - m_retryMetricsTime) > 10000)
+	{
 		m_retryMetricsTime = curTime;
 		++numSeconds;
-//		DEBUG_LOG(("Retries in the last 10 seconds = %d, average latency = %fms", m_numRetries, m_averageLatency));
+		//		DEBUG_LOG(("Retries in the last 10 seconds = %d, average latency = %fms", m_numRetries, m_averageLatency));
 		m_numRetries = 0;
-//		m_retryTime = m_averageLatency * 1.5;
+		//		m_retryTime = m_averageLatency * 1.5;
 	}
 }
 
 #if defined(RTS_DEBUG)
-void Connection::debugPrintCommands() {
+void Connection::debugPrintCommands()
+{
 	NetCommandRef *ref = m_netCommandList->getFirstMessage();
-	while (ref != NULL) {
-		DEBUG_LOG(("Connection::debugPrintCommands - ID: %d\tType: %s\tRelay: 0x%X for frame %d",
-			ref->getCommand()->getID(), GetNetCommandTypeAsString(ref->getCommand()->getNetCommandType()),
-			ref->getRelay(), ref->getCommand()->getExecutionFrame()));
+	while (ref != NULL)
+	{
+		DEBUG_LOG(
+				("Connection::debugPrintCommands - ID: %d\tType: %s\tRelay: 0x%X for frame %d",
+				 ref->getCommand()->getID(),
+				 GetNetCommandTypeAsString(ref->getCommand()->getNetCommandType()),
+				 ref->getRelay(),
+				 ref->getCommand()->getExecutionFrame()));
 		ref = ref->getNext();
 	}
 }

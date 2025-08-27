@@ -27,36 +27,31 @@
 /////////////////////////////////////////////////////////////////////////////
 // OpenMap dialog
 
-
-OpenMap::OpenMap(TOpenMapInfo *pInfo, CWnd* pParent /*=NULL*/)
-	: CDialog(OpenMap::IDD, pParent),
-	m_pInfo(pInfo)
+OpenMap::OpenMap(TOpenMapInfo *pInfo, CWnd *pParent /*=NULL*/) : CDialog(OpenMap::IDD, pParent), m_pInfo(pInfo)
 {
 	m_pInfo->browse = false;
 	m_usingSystemDir = ::AfxGetApp()->GetProfileInt(MAP_OPENSAVE_PANEL_SECTION, "UseSystemDir", TRUE);
 
 	//{{AFX_DATA_INIT(OpenMap)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void OpenMap::DoDataExchange(CDataExchange* pDX)
+void OpenMap::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(OpenMap)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(OpenMap, CDialog)
-	//{{AFX_MSG_MAP(OpenMap)
-	ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
-	ON_BN_CLICKED(IDC_SYSTEMMAPS, OnSystemMaps)
-	ON_BN_CLICKED(IDC_USERMAPS, OnUserMaps)
-	ON_LBN_DBLCLK(IDC_OPEN_LIST, OnDblclkOpenList)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(OpenMap)
+ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
+ON_BN_CLICKED(IDC_SYSTEMMAPS, OnSystemMaps)
+ON_BN_CLICKED(IDC_USERMAPS, OnUserMaps)
+ON_LBN_DBLCLK(IDC_OPEN_LIST, OnDblclkOpenList)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -64,12 +59,12 @@ END_MESSAGE_MAP()
 
 void OpenMap::OnSystemMaps()
 {
-	populateMapListbox( TRUE );
+	populateMapListbox(TRUE);
 }
 
 void OpenMap::OnUserMaps()
 {
-	populateMapListbox( FALSE );
+	populateMapListbox(FALSE);
 }
 
 void OpenMap::OnBrowse()
@@ -81,17 +76,21 @@ void OpenMap::OnBrowse()
 void OpenMap::OnOK()
 {
 	CListBox *pList = (CListBox *)this->GetDlgItem(IDC_OPEN_LIST);
-	if (pList == NULL) {
+	if (pList == NULL)
+	{
 		OnCancel();
 		return;
 	}
 
 	Int sel = pList->GetCurSel();
-	if (sel == LB_ERR) {
+	if (sel == LB_ERR)
+	{
 		m_pInfo->browse = true;
-	} else {
+	}
+	else
+	{
 		CString newName;
-		pList->GetText(sel, newName );
+		pList->GetText(sel, newName);
 		if (m_usingSystemDir)
 			m_pInfo->filename = ".\\Maps\\" + newName + "\\" + newName + ".map";
 		else
@@ -103,16 +102,16 @@ void OpenMap::OnOK()
 	CDialog::OnOK();
 }
 
-void OpenMap::populateMapListbox( Bool systemMaps )
+void OpenMap::populateMapListbox(Bool systemMaps)
 {
 	m_usingSystemDir = systemMaps;
 	::AfxGetApp()->WriteProfileInt(MAP_OPENSAVE_PANEL_SECTION, "UseSystemDir", m_usingSystemDir);
 
-	HANDLE			hFindFile = 0;
-	WIN32_FIND_DATA			findData;
-	char				dirBuf[_MAX_PATH];
-	char				findBuf[_MAX_PATH];
-	char				fileBuf[_MAX_PATH];
+	HANDLE hFindFile = 0;
+	WIN32_FIND_DATA findData;
+	char dirBuf[_MAX_PATH];
+	char findBuf[_MAX_PATH];
+	char fileBuf[_MAX_PATH];
 
 	if (systemMaps)
 		strcpy(dirBuf, "Maps\\");
@@ -124,12 +123,14 @@ void OpenMap::populateMapListbox( Bool systemMaps )
 
 	int len = strlen(dirBuf);
 
-	if (len > 0 && dirBuf[len - 1] != '\\') {
+	if (len > 0 && dirBuf[len - 1] != '\\')
+	{
 		dirBuf[len++] = '\\';
 		dirBuf[len] = 0;
 	}
 	CListBox *pList = (CListBox *)this->GetDlgItem(IDC_OPEN_LIST);
-	if (pList == NULL) return;
+	if (pList == NULL)
+		return;
 	pList->ResetContent();
 	strcpy(findBuf, dirBuf);
 	strcat(findBuf, "*.*");
@@ -137,11 +138,14 @@ void OpenMap::populateMapListbox( Bool systemMaps )
 	Bool found = false;
 
 	hFindFile = FindFirstFile(findBuf, &findData);
-	if (hFindFile != INVALID_HANDLE_VALUE) {
-		do {
+	if (hFindFile != INVALID_HANDLE_VALUE)
+	{
+		do
+		{
 			if (strcmp(findData.cFileName, ".") == 0 || strcmp(findData.cFileName, "..") == 0)
 				continue;
-			if ((findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
+			if ((findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
+			{
 				continue;
 			}
 
@@ -150,25 +154,36 @@ void OpenMap::populateMapListbox( Bool systemMaps )
 			strcat(fileBuf, "\\");
 			strcat(fileBuf, findData.cFileName);
 			strcat(fileBuf, ".map");
-			try {
+			try
+			{
 				CFileStatus status;
-				if (CFile::GetStatus(fileBuf, status)) {
-					if (!(status.m_attribute & CFile::directory)) {
+				if (CFile::GetStatus(fileBuf, status))
+				{
+					if (!(status.m_attribute & CFile::directory))
+					{
 						pList->AddString(findData.cFileName);
 						found = true;
 					};
 				}
-			} catch(...) {}
+			}
+			catch (...)
+			{
+			}
 
 		} while (FindNextFile(hFindFile, &findData));
 
-		if (hFindFile) FindClose(hFindFile);
- 	}
-	if (found) {
+		if (hFindFile)
+			FindClose(hFindFile);
+	}
+	if (found)
+	{
 		pList->SetCurSel(0);
-	} else {
+	}
+	else
+	{
 		CWnd *pOk = GetDlgItem(IDOK);
-		if (pOk) pOk->EnableWindow(false);
+		if (pOk)
+			pOk->EnableWindow(false);
 	}
 }
 
@@ -178,20 +193,20 @@ BOOL OpenMap::OnInitDialog()
 
 	CButton *pSystemMaps = (CButton *)this->GetDlgItem(IDC_SYSTEMMAPS);
 	if (pSystemMaps != NULL)
-		pSystemMaps->SetCheck( m_usingSystemDir );
+		pSystemMaps->SetCheck(m_usingSystemDir);
 
 	CButton *pUserMaps = (CButton *)this->GetDlgItem(IDC_USERMAPS);
 	if (pUserMaps != NULL)
-		pUserMaps->SetCheck( !m_usingSystemDir );
+		pUserMaps->SetCheck(!m_usingSystemDir);
 
 	// TheSuperHackers @tweak Originally World Builder has hidden the System Maps tab button in Release builds,
 	// perhaps with the intention to only show User Maps to community users. However, World Builder did release
 	// as a Debug build and always had the System Maps tab, therefore this now shows it always for simplicity.
 
-	populateMapListbox( m_usingSystemDir );
+	populateMapListbox(m_usingSystemDir);
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+							 // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void OpenMap::OnDblclkOpenList()

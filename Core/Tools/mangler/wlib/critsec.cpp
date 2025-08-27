@@ -20,25 +20,23 @@
 #include <assert.h>
 #include "wlib/wdebug.h"
 
-
-
 CritSec::CritSec()
 {
 #ifdef _UNIX
-  pthread_mutex_init(&Mutex_, NULL);
-  RefCount_ = 0;
+	pthread_mutex_init(&Mutex_, NULL);
+	RefCount_ = 0;
 #elif defined(_WIN32)
-  InitializeCriticalSection(&CritSec_);
+	InitializeCriticalSection(&CritSec_);
 #endif
 }
 
 CritSec::~CritSec()
 {
- #ifdef _UNIX
-   pthread_mutex_destroy(&Mutex_);
- #elif defined(_WIN32)
-   DeleteCriticalSection(&CritSec_);
- #endif
+#ifdef _UNIX
+	pthread_mutex_destroy(&Mutex_);
+#elif defined(_WIN32)
+	DeleteCriticalSection(&CritSec_);
+#endif
 }
 
 // The "lock" function blocks until the mutex is available.
@@ -51,79 +49,78 @@ CritSec::~CritSec()
 //
 sint32 CritSec::lock(int *refcount) RO
 {
- #ifdef _UNIX
-    sint32	status;
+#ifdef _UNIX
+	sint32 status;
 
-    // I TRY to get the lock. IF I succeed, OR if I fail because
-    // I already have the lock, I  just increment the reference
-    // count and return.
-    if (((status = pthread_mutex_trylock(&Mutex_)) == 0) ||
-	((status == EBUSY) && (ThreadId_ == pthread_self())))
-    {
-	ThreadId_ = pthread_self();
-	RefCount_++;
-        if (refcount)
-          *refcount=RefCount_;
-	return(0);
-    }
+	// I TRY to get the lock. IF I succeed, OR if I fail because
+	// I already have the lock, I  just increment the reference
+	// count and return.
+	if (((status = pthread_mutex_trylock(&Mutex_)) == 0) || ((status == EBUSY) && (ThreadId_ == pthread_self())))
+	{
+		ThreadId_ = pthread_self();
+		RefCount_++;
+		if (refcount)
+			*refcount = RefCount_;
+		return (0);
+	}
 
-    // Otherwise, I wait for the lock.
-    if ((status = pthread_mutex_lock(&Mutex_)) == 0)
-    {
-	assert(RefCount_ == 0);
-	ThreadId_ = pthread_self();
-	RefCount_++;
-    }
-    else
-    {
-	ERRMSG("pthread_mutex_lock: " << strerror(errno));
-    }
+	// Otherwise, I wait for the lock.
+	if ((status = pthread_mutex_lock(&Mutex_)) == 0)
+	{
+		assert(RefCount_ == 0);
+		ThreadId_ = pthread_self();
+		RefCount_++;
+	}
+	else
+	{
+		ERRMSG("pthread_mutex_lock: " << strerror(errno));
+	}
 
-    if (refcount)
-      *refcount=RefCount_;
+	if (refcount)
+		*refcount = RefCount_;
 
-    return(status);
- #elif defined(_WIN32)
-   // TOFIX update the refcount
-   EnterCriticalSection(&CritSec_);
-   return(0);
-  #else
-    #error Must define either _WIN32 or _UNIX
- #endif
+	return (status);
+#elif defined(_WIN32)
+	// TOFIX update the refcount
+	EnterCriticalSection(&CritSec_);
+	return (0);
+#else
+#error Must define either _WIN32 or _UNIX
+#endif
 }
 
 // The "unlock" function release the critical section.
 sint32 CritSec::unlock(void) RO
 {
- #ifdef _UNIX
-    sint32	status = 0;
+#ifdef _UNIX
+	sint32 status = 0;
 
-    assert(RefCount_ >= 0);
-    if (RefCount_ <= 0)
-    {
-	//ERRMSG("unlocking unlocked mutex!");
-	return(-1);
-    }
+	assert(RefCount_ >= 0);
+	if (RefCount_ <= 0)
+	{
+		// ERRMSG("unlocking unlocked mutex!");
+		return (-1);
+	}
 
-    ///assert(ThreadId_ == pthread_self());
-    if (ThreadId_ != pthread_self())
-    {
-	WRNMSG("tried to unlock a mutex not owned by self");
-        return(-1);
-    }
+	/// assert(ThreadId_ == pthread_self());
+	if (ThreadId_ != pthread_self())
+	{
+		WRNMSG("tried to unlock a mutex not owned by self");
+		return (-1);
+	}
 
-    if (--RefCount_ == 0)
-    {
-	// Set thread id to zero -- we're going to release mutex
-	ThreadId_ = (pthread_t)0;
+	if (--RefCount_ == 0)
+	{
+		// Set thread id to zero -- we're going to release mutex
+		ThreadId_ = (pthread_t)0;
 
-	// Unlock the mutex.
-	if ((status = pthread_mutex_unlock(&Mutex_)) != 0)
-	    ERRMSG("pthread_mutex_lock: " << strerror(errno));
-    }
-    return status;
- #elif defined(_WIN32)
-    LeaveCriticalSection(&CritSec_);
-    return(0);
- #endif
+		// Unlock the mutex.
+		if ((status = pthread_mutex_unlock(&Mutex_)) != 0)
+			ERRMSG("pthread_mutex_lock: " << strerror(errno));
+	}
+	return status;
+#elif defined(_WIN32)
+	LeaveCriticalSection(&CritSec_);
+	return (0);
+#endif
 }

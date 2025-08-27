@@ -38,15 +38,15 @@ char AppTitle[200];
 CBabylonDlg *MainDLG = NULL;
 
 static const char *AppName = "Babylon:";
-static int AlreadyRunning( void );
+static int AlreadyRunning(void);
 static HWND FoundWindow = NULL;
 /////////////////////////////////////////////////////////////////////////////
 // CBabylonApp
 
 BEGIN_MESSAGE_MAP(CBabylonApp, CWinApp)
-	//{{AFX_MSG_MAP(CBabylonApp)
-	//}}AFX_MSG_MAP
-	ON_COMMAND(ID_HELP, CWinApp::OnHelp)
+//{{AFX_MSG_MAP(CBabylonApp)
+//}}AFX_MSG_MAP
+ON_COMMAND(ID_HELP, CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -62,14 +62,13 @@ CBabylonApp::CBabylonApp()
 // The one and only CBabylonApp object
 
 CBabylonApp theApp;
-TransDB				*BabylonstrDB = NULL;
-TransDB				*MainDB = NULL;
-char		BabylonstrFilename[_MAX_PATH];
-char		MainXLSFilename[_MAX_PATH];
-char		DialogPath[_MAX_PATH];
-char		RootPath[_MAX_PATH];
-LangID	CurrentLanguage = LANGID_US;
-
+TransDB *BabylonstrDB = NULL;
+TransDB *MainDB = NULL;
+char BabylonstrFilename[_MAX_PATH];
+char MainXLSFilename[_MAX_PATH];
+char DialogPath[_MAX_PATH];
+char RootPath[_MAX_PATH];
+LangID CurrentLanguage = LANGID_US;
 
 /////////////////////////////////////////////////////////////////////////////
 // CBabylonApp initialization
@@ -89,9 +88,9 @@ BOOL CBabylonApp::InitInstance()
 	//  the specific initialization routines you do not need.
 
 #ifdef _AFXDLL
-	Enable3dControls();			// Call this when using MFC in a shared DLL
+	Enable3dControls(); // Call this when using MFC in a shared DLL
 #else
-	Enable3dControlsStatic();	// Call this when linking to MFC statically
+	Enable3dControlsStatic(); // Call this when linking to MFC statically
 #endif
 
 	// Parse the command line to see if launched as OLE server
@@ -108,39 +107,39 @@ BOOL CBabylonApp::InitInstance()
 		COleObjectFactory::UpdateRegistryAll();
 	}
 
-	MainDB = new TransDB ( "Main" );
-	BabylonstrDB = new TransDB ( "Generals.str" );
-	MainDB->EnableIDs ();
+	MainDB = new TransDB("Main");
+	BabylonstrDB = new TransDB("Generals.str");
+	MainDB->EnableIDs();
 
-	if ( !AfxInitRichEdit( ) )
+	if (!AfxInitRichEdit())
 	{
-		AfxMessageBox ( "Error initializing Rich Edit" );
+		AfxMessageBox("Error initializing Rich Edit");
 	}
 
-	sprintf (AppTitle, "%s Built on %s - %s", AppName, __DATE__, __TIME__ );
+	sprintf(AppTitle, "%s Built on %s - %s", AppName, __DATE__, __TIME__);
 
-  if ( !_getcwd( RootPath, _MAX_PATH ) )
+	if (!_getcwd(RootPath, _MAX_PATH))
 	{
-		AfxMessageBox ( "Failed to obtain current working directoy!\n\n Set directoy path to \"c:\\Babylon\"." );
-		strcpy ( (char *) RootPath, "c:\\Babylon" );
+		AfxMessageBox("Failed to obtain current working directoy!\n\n Set directoy path to \"c:\\Babylon\".");
+		strcpy((char *)RootPath, "c:\\Babylon");
 	}
-	strlwr ( RootPath );
+	strlwr(RootPath);
 
-	strcpy ( (char *) BabylonstrFilename, RootPath );
-	strcat ( (char *) BabylonstrFilename, "\\Data\\Generals.str" );
-	strcpy ( (char *) MainXLSFilename, RootPath );
-	strcat ( (char *) MainXLSFilename, "\\Data\\main.db" );
-	strcpy ( (char *) DialogPath, RootPath );
-	strcat ( (char *) DialogPath, "\\dialog" );
+	strcpy((char *)BabylonstrFilename, RootPath);
+	strcat((char *)BabylonstrFilename, "\\Data\\Generals.str");
+	strcpy((char *)MainXLSFilename, RootPath);
+	strcat((char *)MainXLSFilename, "\\Data\\main.db");
+	strcpy((char *)DialogPath, RootPath);
+	strcat((char *)DialogPath, "\\dialog");
 
-	if ( AlreadyRunning ()  )
+	if (AlreadyRunning())
 	{
-		if ( FoundWindow )
+		if (FoundWindow)
 		{
-			SetForegroundWindow ( FoundWindow );
+			SetForegroundWindow(FoundWindow);
 		}
 	}
-	else if ( OpenExcel ( ) )
+	else if (OpenExcel())
 	{
 		CBabylonDlg dlg;
 		m_pMainWnd = &dlg;
@@ -148,47 +147,47 @@ BOOL CBabylonApp::InitInstance()
 
 		int nResponse = dlg.DoModal();
 
-		CloseExcel ();
+		CloseExcel();
 	}
 
-	delete BabylonstrDB ;
+	delete BabylonstrDB;
 	delete MainDB;
 	// Since the dialog has been closed, return FALSE so that we exit the
 	//  application, rather than start the application's message pump.
 	return FALSE;
 }
 
-//DEL void CBabylonApp::OnDropFiles(HDROP hDropInfo)
-//DEL {
-//DEL 	// TODO: Add your message handler code here and/or call default
-//DEL
-//DEL 	CWinApp::OnDropFiles(hDropInfo);
-//DEL }
+// DEL void CBabylonApp::OnDropFiles(HDROP hDropInfo)
+// DEL {
+// DEL 	// TODO: Add your message handler code here and/or call default
+// DEL
+// DEL 	CWinApp::OnDropFiles(hDropInfo);
+// DEL }
 
 static BOOL CALLBACK EnumAllWindowsProc(HWND hWnd, LPARAM lParam);
 static BOOL CALLBACK EnumAllWindowsProcExact(HWND hWnd, LPARAM lParam);
 static const char *szSearchTitle;
 
-static int AlreadyRunning( void )
+static int AlreadyRunning(void)
 {
 	BOOL found = FALSE;
 
 	szSearchTitle = AppName;
 
-	EnumWindows((WNDENUMPROC) EnumAllWindowsProcExact, (LPARAM) &found);
+	EnumWindows((WNDENUMPROC)EnumAllWindowsProcExact, (LPARAM)&found);
 
 	return found;
 }
 
 //--------------------------------------------------------------------------------
 
-int ExcelRunning( void )
+int ExcelRunning(void)
 {
 	BOOL found = FALSE;
 
 	szSearchTitle = "Microsoft Excel";
 
-	EnumWindows((WNDENUMPROC) EnumAllWindowsProc, (LPARAM) &found);
+	EnumWindows((WNDENUMPROC)EnumAllWindowsProc, (LPARAM)&found);
 
 	return found;
 }
@@ -201,11 +200,11 @@ BOOL CALLBACK EnumAllWindowsProc(HWND hWnd, LPARAM lParam)
 
 	GetWindowText(hWnd, szText, sizeof(szText));
 
-	if ( strstr(szText, szSearchTitle))
+	if (strstr(szText, szSearchTitle))
 	{
-		* (BOOL *) lParam = TRUE;
-		 FoundWindow = hWnd;
-		 return FALSE;
+		*(BOOL *)lParam = TRUE;
+		FoundWindow = hWnd;
+		return FALSE;
 	}
 
 	FoundWindow = NULL;
@@ -220,14 +219,13 @@ BOOL CALLBACK EnumAllWindowsProcExact(HWND hWnd, LPARAM lParam)
 
 	GetWindowText(hWnd, szText, sizeof(szText));
 
-	if ( !strncmp (szText, szSearchTitle, strlen ( szSearchTitle)))
+	if (!strncmp(szText, szSearchTitle, strlen(szSearchTitle)))
 	{
-		* (BOOL *) lParam = TRUE;
-		 FoundWindow = hWnd;
-		 return FALSE;
+		*(BOOL *)lParam = TRUE;
+		FoundWindow = hWnd;
+		return FALSE;
 	}
 
 	FoundWindow = NULL;
 	return TRUE;
 }
-

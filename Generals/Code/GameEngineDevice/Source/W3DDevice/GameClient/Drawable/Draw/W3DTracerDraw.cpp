@@ -41,16 +41,14 @@
 #include "WW3D2/line3d.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DTracerDraw::W3DTracerDraw( Thing *thing, const ModuleData* moduleData ) : DrawModule( thing, moduleData )
+W3DTracerDraw::W3DTracerDraw(Thing *thing, const ModuleData *moduleData) : DrawModule(thing, moduleData)
 {
-
 	// set opacity
 	m_opacity = 1.0f;
 	m_length = 20.0f;
@@ -61,11 +59,11 @@ W3DTracerDraw::W3DTracerDraw( Thing *thing, const ModuleData* moduleData ) : Dra
 	m_speedInDistPerFrame = 1.0f;
 	m_theTracer = NULL;
 
-}  // end W3DTracerDraw
+} // end W3DTracerDraw
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DTracerDraw::setTracerParms(Real speed, Real length, Real width, const RGBColor& color, Real initialOpacity)
+void W3DTracerDraw::setTracerParms(Real speed, Real length, Real width, const RGBColor &color, Real initialOpacity)
 {
 	m_speedInDistPerFrame = speed;
 	m_length = length;
@@ -74,63 +72,59 @@ void W3DTracerDraw::setTracerParms(Real speed, Real length, Real width, const RG
 	m_opacity = initialOpacity;
 	if (m_theTracer)
 	{
-		Vector3 start( 0.0f, 0.0f, 0.0f );
-		Vector3 stop( m_length, 0.0f, 0.0f );
+		Vector3 start(0.0f, 0.0f, 0.0f);
+		Vector3 stop(m_length, 0.0f, 0.0f);
 		m_theTracer->Reset(start, stop, m_width);
 		m_theTracer->Re_Color(m_color.red, m_color.green, m_color.blue);
-		m_theTracer->Set_Opacity( m_opacity );
+		m_theTracer->Set_Opacity(m_opacity);
 		// these calls nuke the internal transform, so re-set it here
-		m_theTracer->Set_Transform( *getDrawable()->getTransformMatrix() );
+		m_theTracer->Set_Transform(*getDrawable()->getTransformMatrix());
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DTracerDraw::~W3DTracerDraw( void )
+W3DTracerDraw::~W3DTracerDraw(void)
 {
 	// remove tracer from the scene and delete
-	if( m_theTracer )
+	if (m_theTracer)
 	{
-		W3DDisplay::m_3DScene->Remove_Render_Object( m_theTracer );
-		REF_PTR_RELEASE( m_theTracer );
+		W3DDisplay::m_3DScene->Remove_Render_Object(m_theTracer);
+		REF_PTR_RELEASE(m_theTracer);
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DTracerDraw::reactToTransformChange( const Matrix3D *oldMtx,
-																							 const Coord3D *oldPos,
-																							 Real oldAngle )
+void W3DTracerDraw::reactToTransformChange(const Matrix3D *oldMtx, const Coord3D *oldPos, Real oldAngle)
 {
-	if( m_theTracer )
-		m_theTracer->Set_Transform( *getDrawable()->getTransformMatrix() );
+	if (m_theTracer)
+		m_theTracer->Set_Transform(*getDrawable()->getTransformMatrix());
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DTracerDraw::doDrawModule(const Matrix3D* transformMtx)
+void W3DTracerDraw::doDrawModule(const Matrix3D *transformMtx)
 {
-
 	// create tracer
-	if( m_theTracer == NULL )
+	if (m_theTracer == NULL)
 	{
-
-		Vector3 start( 0.0f, 0.0f, 0.0f );
-		Vector3 stop( m_length, 0.0f, 0.0f );
+		Vector3 start(0.0f, 0.0f, 0.0f);
+		Vector3 stop(m_length, 0.0f, 0.0f);
 
 		// create tracer render object for us to manipulate
 		// poolify
-		m_theTracer = NEW Line3DClass( start,
-																	 stop,
-																	 m_width,  // width
-																	 m_color.red,  // red
-																	 m_color.green,  // green
-																	 m_color.blue,  // blue
-																	 m_opacity );  // transparency
-		W3DDisplay::m_3DScene->Add_Render_Object( m_theTracer );
+		m_theTracer = NEW Line3DClass(
+				start,
+				stop,
+				m_width, // width
+				m_color.red, // red
+				m_color.green, // green
+				m_color.blue, // blue
+				m_opacity); // transparency
+		W3DDisplay::m_3DScene->Add_Render_Object(m_theTracer);
 
 		// set the transform for the tracer to that of the drawable
-		m_theTracer->Set_Transform( *transformMtx );
-
+		m_theTracer->Set_Transform(*transformMtx);
 	}
 
 	UnsignedInt expDate = getDrawable()->getExpirationDate();
@@ -138,57 +132,53 @@ void W3DTracerDraw::doDrawModule(const Matrix3D* transformMtx)
 	{
 		Real decay = m_opacity / (expDate - TheGameLogic->getFrame());
 		m_opacity -= decay;
-		m_theTracer->Set_Opacity( m_opacity );
+		m_theTracer->Set_Opacity(m_opacity);
 	}
 
 	// set the position for the tracer
 	if (m_speedInDistPerFrame != 0.0f)
 	{
 		Matrix3D pos = m_theTracer->Get_Transform();
-		pos.Translate( Vector3( m_speedInDistPerFrame, 0.0f, 0.0 ) );
-		m_theTracer->Set_Transform( pos );
+		pos.Translate(Vector3(m_speedInDistPerFrame, 0.0f, 0.0));
+		m_theTracer->Set_Transform(pos);
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void W3DTracerDraw::crc( Xfer *xfer )
+void W3DTracerDraw::crc(Xfer *xfer)
 {
-
 	// extend base class
-	DrawModule::crc( xfer );
+	DrawModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void W3DTracerDraw::xfer( Xfer *xfer )
+void W3DTracerDraw::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DrawModule::xfer( xfer );
+	DrawModule::xfer(xfer);
 
 	// no data to save here, nobody will ever notice
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DTracerDraw::loadPostProcess( void )
+void W3DTracerDraw::loadPostProcess(void)
 {
-
 	// extend base class
 	DrawModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

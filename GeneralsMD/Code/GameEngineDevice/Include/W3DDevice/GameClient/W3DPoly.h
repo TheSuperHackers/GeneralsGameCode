@@ -54,15 +54,15 @@
 
 //-------------------------------------------------------------------------------------------------
 /**VisPolyClass - This class is used to clip a polygon to a plane.  Useful for manually
-	* clipping polys to the frustum or other geometry.  Based on internal WW3D2 code. */
+ * clipping polys to the frustum or other geometry.  Based on internal WW3D2 code. */
 //-------------------------------------------------------------------------------------------------
 
 class ClipPolyClass
 {
 public:
 	void Reset(void);
-	void Add_Vertex(const Vector3 & point);
-	void Clip(const PlaneClass & plane,ClipPolyClass & dest) const;
+	void Add_Vertex(const Vector3 &point);
+	void Clip(const PlaneClass &plane, ClipPolyClass &dest) const;
 
 	SimpleDynVecClass<Vector3> Verts;
 };

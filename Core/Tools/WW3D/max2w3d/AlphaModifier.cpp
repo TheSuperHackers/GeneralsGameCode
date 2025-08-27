@@ -57,9 +57,8 @@ void AlphaModifierClass::ModifyObject(TimeValue t, ModContext &mc, ObjectState *
 		return;
 	}
 
-
 	// Get a mesh from input object
-	TriObject *object = (TriObject*)os->obj;
+	TriObject *object = (TriObject *)os->obj;
 
 	Mesh *mesh = &object->mesh;
 
@@ -70,9 +69,9 @@ void AlphaModifierClass::ModifyObject(TimeValue t, ModContext &mc, ObjectState *
 	float *vdata = NULL;
 
 	// Get parameters from pblock
-	float		sparam = 0.0f;
-	Interval	valid = LocalValidity(t);
-	int			pass = 1;
+	float sparam = 0.0f;
+	Interval valid = LocalValidity(t);
+	int pass = 1;
 
 	pblock->GetValue(DL_EDIT_VALUE, t, sparam, valid);
 
@@ -80,8 +79,7 @@ void AlphaModifierClass::ModifyObject(TimeValue t, ModContext &mc, ObjectState *
 	// pass to apply the alpha values to.  At this time, it was decided to
 	// not implement this because of the complexity to the artist and the
 	// performance issues in game.
-	//pblock->GetValue(DL_EDIT_PASS, t, pass, valid);
-
+	// pblock->GetValue(DL_EDIT_PASS, t, pass, valid);
 
 	// Start from 0.
 	pass -= 1;
@@ -105,12 +103,10 @@ void AlphaModifierClass::ModifyObject(TimeValue t, ModContext &mc, ObjectState *
 				vdata[i] = 0.0f;
 			}
 		}
-
 	}
 
 	// Tracks the state of the FIND check box.
 	int box_checked = 0;
-
 
 	if (Message == AM_UPDATE_DATA)
 	{
@@ -135,7 +131,6 @@ void AlphaModifierClass::ModifyObject(TimeValue t, ModContext &mc, ObjectState *
 		pblock->GetValue(DL_FIND_CHECK_BOX, t, box_checked, valid);
 	}
 
-
 	// The user is trying to find vertices with certain values.
 	if (box_checked)
 	{
@@ -153,9 +148,7 @@ void AlphaModifierClass::ModifyObject(TimeValue t, ModContext &mc, ObjectState *
 				mesh->VertSel().Clear(i);
 				SelectedVertices.Clear(i);
 			}
-
 		}
-
 	}
 
 	if (Message == AM_INITIALIZE)
@@ -174,9 +167,7 @@ void AlphaModifierClass::ModifyObject(TimeValue t, ModContext &mc, ObjectState *
 				break;
 			}
 		}
-
 	}
-
 
 	// Always select the vertices that have been saved by the modifier.
 	// This must be done because the mesh changes each time ModfiyObject is called.
@@ -190,20 +181,16 @@ void AlphaModifierClass::ModifyObject(TimeValue t, ModContext &mc, ObjectState *
 		{
 			mesh->VertSel().Clear(i);
 		}
-
 	}
 
 	// Display the vertices.
 	mesh->SetDispFlag(DISP_SELVERTS | DISP_VERTTICKS);
 	mesh->selLevel = MESH_VERTEX;
-	object->UpdateValidity(SELECT_CHAN_NUM, object->ChannelValidity (t, SELECT_CHAN_NUM));
+	object->UpdateValidity(SELECT_CHAN_NUM, object->ChannelValidity(t, SELECT_CHAN_NUM));
 
 	// Clear messages.
 	Message = AM_NOTHING;
 }
-
-
-
 
 /*===========================================================================*\
  |	NotifyInputChanged is called each time the input object is changed in some way
@@ -212,69 +199,98 @@ void AlphaModifierClass::ModifyObject(TimeValue t, ModContext &mc, ObjectState *
 
 void AlphaModifierClass::NotifyInputChanged(Interval changeInt, PartID partID, RefMessage message, ModContext *mc)
 {
-	if( (partID&PART_TOPO) || (partID&PART_GEOM) || (partID&PART_SELECT) )
+	if ((partID & PART_TOPO) || (partID & PART_GEOM) || (partID & PART_SELECT))
 	{
 		NotifyDependents(FOREVER, PART_OBJ, REFMSG_CHANGE);
 	}
 }
 
-
 /*===========================================================================*\
  |	Class Descriptor OSM
 \*===========================================================================*/
 
-class AlphaClassDesc : public ClassDesc2 {
-	public:
-	int 			IsPublic()					{ return TRUE; }
-	void *			Create( BOOL loading )		{ return new AlphaModifierClass; }
-	const TCHAR *	ClassName()					{ return Get_String(IDS_ALPHA_MODIFIER_CLASS); }
-	SClass_ID		SuperClassID()				{ return OSM_CLASS_ID; }
-	Class_ID 		ClassID()					{ return ALPHA_MODIFIER_CLASSID; }
-	const TCHAR* 	Category()					{ return _T("");  }
+class AlphaClassDesc : public ClassDesc2
+{
+public:
+	int IsPublic() { return TRUE; }
+	void *Create(BOOL loading) { return new AlphaModifierClass; }
+	const TCHAR *ClassName() { return Get_String(IDS_ALPHA_MODIFIER_CLASS); }
+	SClass_ID SuperClassID() { return OSM_CLASS_ID; }
+	Class_ID ClassID() { return ALPHA_MODIFIER_CLASSID; }
+	const TCHAR *Category() { return _T(""); }
 
-	HINSTANCE		HInstance()					{ return AppInstance; }
+	HINSTANCE HInstance() { return AppInstance; }
 
 	// Hardwired name, used by MAX Script as unique identifier
-	const TCHAR*	InternalName()				{ return _T("AlphaMod"); }
+	const TCHAR *InternalName() { return _T("AlphaMod"); }
 };
 
 static AlphaClassDesc AlphaCD;
-ClassDesc* Get_Alpha_Desc() {return &AlphaCD;}
+ClassDesc *Get_Alpha_Desc()
+{
+	return &AlphaCD;
+}
 
 /*===========================================================================*\
  |	Paramblock2 Descriptor
 \*===========================================================================*/
-static ParamBlockDesc2 alpha_param_blk
-(
-	//rollout
-		0, _T("AlphaModifierParams"),  0, &AlphaCD, P_AUTO_CONSTRUCT + P_AUTO_UI, 0,
-		IDD_ALPHA_MODIFIER, IDS_PARAMETERS, 0, 0, NULL,
+static ParamBlockDesc2 alpha_param_blk(
+		// rollout
+		0,
+		_T("AlphaModifierParams"),
+		0,
+		&AlphaCD,
+		P_AUTO_CONSTRUCT + P_AUTO_UI,
+		0,
+		IDD_ALPHA_MODIFIER,
+		IDS_PARAMETERS,
+		0,
+		0,
+		NULL,
 
-	// params
+		// params
 
-		DL_EDIT_VALUE,	_T("Custom Data Value"),	TYPE_FLOAT,	P_ANIMATABLE,	IDS_ALPHA_MODIFIER_CLASS,
-		p_default,		0.0f,
-		p_range, 		0.0f, 100.0f,
-		p_ui,			TYPE_SPINNER, EDITTYPE_FLOAT, IDC_ALPHA_EDIT, IDC_ALPHA_SPIN, 1.0f,
+		DL_EDIT_VALUE,
+		_T("Custom Data Value"),
+		TYPE_FLOAT,
+		P_ANIMATABLE,
+		IDS_ALPHA_MODIFIER_CLASS,
+		p_default,
+		0.0f,
+		p_range,
+		0.0f,
+		100.0f,
+		p_ui,
+		TYPE_SPINNER,
+		EDITTYPE_FLOAT,
+		IDC_ALPHA_EDIT,
+		IDC_ALPHA_SPIN,
+		1.0f,
 		end,
 
-		DL_FIND_CHECK_BOX,	_T("1 Custom Data Value"),	TYPE_BOOL,	0,	IDS_ALPHA_MODIFIER_CLASS,
-		p_default,		FALSE,
-		p_ui,			TYPE_SINGLECHEKBOX, IDC_ALPHA_CHECKBOX,
-		p_enabled,		TRUE,
+		DL_FIND_CHECK_BOX,
+		_T("1 Custom Data Value"),
+		TYPE_BOOL,
+		0,
+		IDS_ALPHA_MODIFIER_CLASS,
+		p_default,
+		FALSE,
+		p_ui,
+		TYPE_SINGLECHEKBOX,
+		IDC_ALPHA_CHECKBOX,
+		p_enabled,
+		TRUE,
 		end,
 
-/*
-		DL_EDIT_PASS,	_T("2 Custom Data Value"),	TYPE_INT,	P_ANIMATABLE,	IDS_ALPHA_MODIFIER_CLASS,
-		p_default,		1,
-		p_range, 		1, 4,
-		p_ui,			TYPE_SPINNER, EDITTYPE_INT, IDC_ALPHA_EDIT2, IDC_ALPHA_SPIN2, 1.0,
-		end,
-*/
+		/*
+				DL_EDIT_PASS,	_T("2 Custom Data Value"),	TYPE_INT,	P_ANIMATABLE,	IDS_ALPHA_MODIFIER_CLASS,
+				p_default,		1,
+				p_range, 		1, 4,
+				p_ui,			TYPE_SPINNER, EDITTYPE_INT, IDC_ALPHA_EDIT2, IDC_ALPHA_SPIN2, 1.0,
+				end,
+		*/
 
-	end
-);
-
+		end);
 
 /*===========================================================================*\
  |	Basic implementation of a dialog handler
@@ -296,13 +312,13 @@ BOOL AlphaModDlgProc::DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg,
 			switch (code)
 			{
 				case EN_UPDATE:
-				break;
+					break;
 				case EN_SETFOCUS:
-				break;
+					break;
 				case EN_KILLFOCUS:
-				break;
+					break;
 				case EN_CHANGE:
-				break;
+					break;
 			}
 			if (id == IDC_ALPHA_EDIT)
 			{
@@ -323,12 +339,9 @@ BOOL AlphaModDlgProc::DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg,
 
 		default:
 			break;
-
-
 	}
 	return FALSE;
 }
-
 
 /*===========================================================================*\
  |	Constructor
@@ -342,7 +355,6 @@ AlphaModifierClass::AlphaModifierClass()
 	Message = 0;
 }
 
-
 /*===========================================================================*\
  |	Invalidate our UI (or the recently changed parameter)
 \*===========================================================================*/
@@ -352,53 +364,46 @@ void AlphaModifierClass::InvalidateUI()
 	alpha_param_blk.InvalidateUI(pblock->LastNotifyParamID());
 }
 
-
-
 /*===========================================================================*\
  |	Open and Close dialog UIs
  |	We ask the ClassDesc2 to handle Beginning and Ending EditParams for us
 \*===========================================================================*/
 
-void AlphaModifierClass::BeginEditParams( IObjParam *ip, ULONG flags,Animatable *prev )
+void AlphaModifierClass::BeginEditParams(IObjParam *ip, ULONG flags, Animatable *prev)
 {
-
 	AlphaCD.BeginEditParams(ip, this, flags, prev);
 
 	alpha_param_blk.SetUserDlgProc(new AlphaModDlgProc(this));
 }
 
-void AlphaModifierClass::EndEditParams( IObjParam *ip, ULONG flags,Animatable *next )
+void AlphaModifierClass::EndEditParams(IObjParam *ip, ULONG flags, Animatable *next)
 {
 	AlphaCD.EndEditParams(ip, this, flags, next);
 }
-
-
 
 /*===========================================================================*\
  |	Standard clone
 \*===========================================================================*/
 
-
-RefTargetHandle AlphaModifierClass::Clone(RemapDir& remap)
+RefTargetHandle AlphaModifierClass::Clone(RemapDir &remap)
 {
-	AlphaModifierClass* newmod = new AlphaModifierClass();
-	newmod->ReplaceReference(0,pblock->Clone(remap));
-	return(newmod);
+	AlphaModifierClass *newmod = new AlphaModifierClass();
+	newmod->ReplaceReference(0, pblock->Clone(remap));
+	return (newmod);
 }
-
-
-
 
 /*===========================================================================*\
  |	Subanim & References support
 \*===========================================================================*/
 
-Animatable* AlphaModifierClass::SubAnim(int i)
+Animatable *AlphaModifierClass::SubAnim(int i)
 {
 	switch (i)
 	{
-		case 0: return pblock;
-		default: return NULL;
+		case 0:
+			return pblock;
+		default:
+			return NULL;
 	}
 }
 
@@ -406,8 +411,10 @@ TSTR AlphaModifierClass::SubAnimName(int i)
 {
 	switch (i)
 	{
-		case 0: return Get_String(IDS_PARAMETERS);
-		default: return _T("");
+		case 0:
+			return Get_String(IDS_PARAMETERS);
+		default:
+			return _T("");
 	}
 }
 
@@ -415,7 +422,8 @@ RefTargetHandle AlphaModifierClass::GetReference(int i)
 {
 	switch (i)
 	{
-		case 0: return pblock;
+		case 0:
+			return pblock;
 		default:
 			assert(TRUE);
 			return NULL;
@@ -426,34 +434,31 @@ void AlphaModifierClass::SetReference(int i, RefTargetHandle rtarg)
 {
 	switch (i)
 	{
-		case 0: pblock = (IParamBlock2*)rtarg; break;
+		case 0:
+			pblock = (IParamBlock2 *)rtarg;
+			break;
 		default:
 			assert(TRUE);
 			break;
 	}
 }
 
-RefResult AlphaModifierClass::NotifyRefChanged
-(
+RefResult AlphaModifierClass::NotifyRefChanged(
 		Interval changeInt,
 		RefTargetHandle hTarget,
-		PartID& partID,
-		RefMessage message
-)
+		PartID &partID,
+		RefMessage message)
 {
 	switch (message)
 	{
 		case REFMSG_CHANGE:
 		{
- 			alpha_param_blk.InvalidateUI();
+			alpha_param_blk.InvalidateUI();
 		}
 		break;
 	}
 	return REF_SUCCEED;
 }
-
-
-
 
 /*===========================================================================*\
  |	The validity of our parameters
@@ -472,6 +477,3 @@ Interval AlphaModifierClass::LocalValidity(TimeValue t)
 {
 	return GetValidity(t);
 }
-
-
-

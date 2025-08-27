@@ -16,200 +16,187 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include"loadbmp.h"
-
+#include "loadbmp.h"
 
 LoadBmp::LoadBmp()
 {
-  BitmapHandle_=NULL;
-  PalHandle_=NULL;
+	BitmapHandle_ = NULL;
+	PalHandle_ = NULL;
 }
 
 LoadBmp::~LoadBmp()
 {
-  // free resources
-  DeleteObject(BitmapHandle_);
-  DeleteObject(PalHandle_);
+	// free resources
+	DeleteObject(BitmapHandle_);
+	DeleteObject(PalHandle_);
 }
 
 //
 //  Load a specified bitmap for later display on a window
 //
-bit8 LoadBmp::init(const char *filename,HWND hwnd)
+bit8 LoadBmp::init(const char *filename, HWND hwnd)
 {
-  int                  i;
-  HANDLE               hBitmapFile;
-  DWORD                dwRead;
-  BITMAPFILEHEADER     bitmapHeader;
-  BITMAPINFOHEADER     bitmapInfoHeader;
-  LPLOGPALETTE         lpLogPalette;
-  char                *palData;
-  HGLOBAL              hmem2;
-  LPVOID               lpvBits;
-  HDC                  hdc;
-  HPALETTE             select;
-  UINT                 realize;
-  RECT                 rect;
+	int i;
+	HANDLE hBitmapFile;
+	DWORD dwRead;
+	BITMAPFILEHEADER bitmapHeader;
+	BITMAPINFOHEADER bitmapInfoHeader;
+	LPLOGPALETTE lpLogPalette;
+	char *palData;
+	HGLOBAL hmem2;
+	LPVOID lpvBits;
+	HDC hdc;
+	HPALETTE select;
+	UINT realize;
+	RECT rect;
 
+	// Set the member for future reference
+	WindowHandle_ = hwnd;
 
-  // Set the member for future reference
-  WindowHandle_=hwnd;
+	// Retrieve a handle identifying the file.
+	hBitmapFile = CreateFile(
+			filename,
+			GENERIC_READ,
+			FILE_SHARE_READ,
+			(LPSECURITY_ATTRIBUTES)NULL,
+			OPEN_EXISTING,
+			FILE_ATTRIBUTE_READONLY,
+			(HANDLE)NULL);
 
-  // Retrieve a handle identifying the file.
-  hBitmapFile = CreateFile(
-    filename,
-    GENERIC_READ,
-    FILE_SHARE_READ,
-    (LPSECURITY_ATTRIBUTES) NULL,
-    OPEN_EXISTING,
-    FILE_ATTRIBUTE_READONLY,
-    (HANDLE) NULL);
+	if (hBitmapFile == NULL)
+		return (FALSE);
 
-  if (hBitmapFile==NULL)
-    return(FALSE);
+	// Retrieve the BITMAPFILEHEADER structure.
+	ReadFile(hBitmapFile, &bitmapHeader, sizeof(BITMAPFILEHEADER), &dwRead, (LPOVERLAPPED)NULL);
 
-  // Retrieve the BITMAPFILEHEADER structure.
-  ReadFile(hBitmapFile, &bitmapHeader, sizeof(BITMAPFILEHEADER), &dwRead,
-    (LPOVERLAPPED)NULL);
+	// Retrieve the BITMAPFILEHEADER structure.
+	ReadFile(hBitmapFile, &bitmapInfoHeader, sizeof(BITMAPINFOHEADER), &dwRead, (LPOVERLAPPED)NULL);
 
+	// Allocate memory for the BITMAPINFO structure.
+	HGLOBAL infoHeaderMem =
+			GlobalAlloc(GHND, sizeof(BITMAPINFOHEADER) + ((1 << bitmapInfoHeader.biBitCount) * sizeof(RGBQUAD)));
 
-  // Retrieve the BITMAPFILEHEADER structure.
-  ReadFile(hBitmapFile, &bitmapInfoHeader, sizeof(BITMAPINFOHEADER),
-    &dwRead, (LPOVERLAPPED)NULL);
+	LPBITMAPINFO lpHeaderMem = (LPBITMAPINFO)GlobalLock(infoHeaderMem);
 
+	// Load BITMAPINFOHEADER into the BITMAPINFO structure.
+	lpHeaderMem->bmiHeader.biSize = bitmapInfoHeader.biSize;
+	lpHeaderMem->bmiHeader.biWidth = bitmapInfoHeader.biWidth;
+	lpHeaderMem->bmiHeader.biHeight = bitmapInfoHeader.biHeight;
+	lpHeaderMem->bmiHeader.biPlanes = bitmapInfoHeader.biPlanes;
+	lpHeaderMem->bmiHeader.biBitCount = bitmapInfoHeader.biBitCount;
+	lpHeaderMem->bmiHeader.biCompression = bitmapInfoHeader.biCompression;
+	lpHeaderMem->bmiHeader.biSizeImage = bitmapInfoHeader.biSizeImage;
+	lpHeaderMem->bmiHeader.biXPelsPerMeter = bitmapInfoHeader.biXPelsPerMeter;
+	lpHeaderMem->bmiHeader.biYPelsPerMeter = bitmapInfoHeader.biYPelsPerMeter;
+	lpHeaderMem->bmiHeader.biClrUsed = bitmapInfoHeader.biClrUsed;
+	lpHeaderMem->bmiHeader.biClrImportant = bitmapInfoHeader.biClrImportant;
 
-  // Allocate memory for the BITMAPINFO structure.
-  HGLOBAL infoHeaderMem = GlobalAlloc(GHND, sizeof(BITMAPINFOHEADER) +
-    ((1<<bitmapInfoHeader.biBitCount) * sizeof(RGBQUAD)));
+	// Retrieve the color table.
+	// 1 << bitmapInfoHeader.biBitCount == 2 ^ bitmapInfoHeader.biBitCount
+	ReadFile(
+			hBitmapFile,
+			lpHeaderMem->bmiColors,
+			((1 << bitmapInfoHeader.biBitCount) * sizeof(RGBQUAD)),
+			&dwRead,
+			(LPOVERLAPPED)NULL);
 
-  LPBITMAPINFO lpHeaderMem = (LPBITMAPINFO)GlobalLock(infoHeaderMem);
+	lpLogPalette = (LPLOGPALETTE) new char[(sizeof(LOGPALETTE) + sizeof(PALETTEENTRY) * 256)];
+	lpLogPalette->palVersion = 0x300;
+	lpLogPalette->palNumEntries = 256;
 
-  // Load BITMAPINFOHEADER into the BITMAPINFO structure.
-  lpHeaderMem->bmiHeader.biSize          = bitmapInfoHeader.biSize;
-  lpHeaderMem->bmiHeader.biWidth         = bitmapInfoHeader.biWidth;
-  lpHeaderMem->bmiHeader.biHeight        = bitmapInfoHeader.biHeight;
-  lpHeaderMem->bmiHeader.biPlanes        = bitmapInfoHeader.biPlanes;
-  lpHeaderMem->bmiHeader.biBitCount      = bitmapInfoHeader.biBitCount;
-  lpHeaderMem->bmiHeader.biCompression   = bitmapInfoHeader.biCompression;
-  lpHeaderMem->bmiHeader.biSizeImage     = bitmapInfoHeader.biSizeImage;
-  lpHeaderMem->bmiHeader.biXPelsPerMeter = bitmapInfoHeader.biXPelsPerMeter;
-  lpHeaderMem->bmiHeader.biYPelsPerMeter = bitmapInfoHeader.biYPelsPerMeter;
-  lpHeaderMem->bmiHeader.biClrUsed       = bitmapInfoHeader.biClrUsed;
-  lpHeaderMem->bmiHeader.biClrImportant  = bitmapInfoHeader.biClrImportant;
+	palData = (char *)lpHeaderMem->bmiColors;
 
+	for (i = 0; i < 256; i++)
+	{
+		lpLogPalette->palPalEntry[i].peRed = *palData++;
+		lpLogPalette->palPalEntry[i].peGreen = *palData++;
+		lpLogPalette->palPalEntry[i].peBlue = *palData++;
+		lpLogPalette->palPalEntry[i].peFlags = *palData++;
+	}
+	PalHandle_ = CreatePalette(lpLogPalette);
+	delete (lpLogPalette);
 
-  // Retrieve the color table.
-  // 1 << bitmapInfoHeader.biBitCount == 2 ^ bitmapInfoHeader.biBitCount
-  ReadFile(hBitmapFile, lpHeaderMem->bmiColors,
-    ((1<<bitmapInfoHeader.biBitCount) * sizeof(RGBQUAD)),
-    &dwRead, (LPOVERLAPPED) NULL);
+	// Allocate memory for the required number of bytes.
+	hmem2 = GlobalAlloc(GHND, (bitmapHeader.bfSize - bitmapHeader.bfOffBits));
 
+	lpvBits = GlobalLock(hmem2);
 
-  lpLogPalette=(LPLOGPALETTE)new char[(sizeof(LOGPALETTE)+
-      sizeof(PALETTEENTRY)*256)];
-  lpLogPalette->palVersion=0x300;
-  lpLogPalette->palNumEntries=256;
+	// Retrieve the bitmap data.
+	ReadFile(hBitmapFile, lpvBits, (bitmapHeader.bfSize - bitmapHeader.bfOffBits), &dwRead, (LPOVERLAPPED)NULL);
 
-  palData=(char *)lpHeaderMem->bmiColors;
+	// Create a bitmap from the data stored in the .BMP file.
+	hdc = GetDC(hwnd);
+	select = SelectPalette(hdc, PalHandle_, 0);
+	if (select == NULL)
+		return (FALSE);
+	realize = RealizePalette(hdc);
+	if (realize == GDI_ERROR)
+		return (FALSE);
+	BitmapHandle_ = CreateDIBitmap(hdc, &bitmapInfoHeader, CBM_INIT, lpvBits, lpHeaderMem, DIB_RGB_COLORS);
+	ReleaseDC(hwnd, hdc);
 
-  for (i=0; i<256; i++)
-  {
-    lpLogPalette->palPalEntry[i].peRed=*palData++;
-    lpLogPalette->palPalEntry[i].peGreen=*palData++;
-    lpLogPalette->palPalEntry[i].peBlue=*palData++;
-    lpLogPalette->palPalEntry[i].peFlags=*palData++;
-  }
-  PalHandle_=CreatePalette(lpLogPalette);
-  delete(lpLogPalette);
+	if (BitmapHandle_ == NULL)
+		return (FALSE);
 
+	// Unlock the global memory objects and close the .BMP file.
+	GlobalUnlock(infoHeaderMem);
+	GlobalUnlock(hmem2);
+	CloseHandle(hBitmapFile);
 
-  // Allocate memory for the required number of bytes.
-  hmem2 = GlobalAlloc(GHND, (bitmapHeader.bfSize - bitmapHeader.bfOffBits));
+	if (BitmapHandle_ == NULL)
+		return (FALSE);
 
-  lpvBits = GlobalLock(hmem2);
+	// Inform windows the window needs to be repainted
+	GetClientRect(hwnd, &rect);
+	InvalidateRect(hwnd, &rect, TRUE);
+	UpdateWindow(hwnd);
 
-  // Retrieve the bitmap data.
-  ReadFile(hBitmapFile, lpvBits, (bitmapHeader.bfSize - bitmapHeader.bfOffBits),
-    &dwRead, (LPOVERLAPPED) NULL);
-
-
-  // Create a bitmap from the data stored in the .BMP file.
-  hdc=GetDC(hwnd);
-  select=SelectPalette(hdc,PalHandle_,0);
-  if (select==NULL)
-    return(FALSE);
-  realize=RealizePalette(hdc);
-  if (realize==GDI_ERROR)
-    return(FALSE);
-  BitmapHandle_=CreateDIBitmap(hdc, &bitmapInfoHeader, CBM_INIT, lpvBits, lpHeaderMem, DIB_RGB_COLORS);
-  ReleaseDC(hwnd,hdc);
-
-
-  if (BitmapHandle_==NULL)
-    return(FALSE);
-
-  // Unlock the global memory objects and close the .BMP file.
-  GlobalUnlock(infoHeaderMem);
-  GlobalUnlock(hmem2);
-  CloseHandle(hBitmapFile);
-
-  if (BitmapHandle_==NULL)
-    return(FALSE);
-
-  // Inform windows the window needs to be repainted
-  GetClientRect(hwnd, &rect);
-  InvalidateRect(hwnd, &rect, TRUE);
-  UpdateWindow(hwnd);
-
-  return(TRUE);
+	return (TRUE);
 }
-
 
 bit8 LoadBmp::drawBmp(void)
 {
-  // Paint the window (and draw the bitmap).
+	// Paint the window (and draw the bitmap).
 
-  PAINTSTRUCT ps;
-  HDC         hdc;
-  char        string[128];
+	PAINTSTRUCT ps;
+	HDC hdc;
+	char string[128];
 
-  if (BitmapHandle_ == NULL)    // NAK - new
-    return(FALSE);
+	if (BitmapHandle_ == NULL) // NAK - new
+		return (FALSE);
 
-  InvalidateRect(WindowHandle_,NULL,FALSE); // keep windows from screwing up the
-                                           //  redrawing (as much).
-  hdc=BeginPaint(WindowHandle_,&ps);
+	InvalidateRect(WindowHandle_, NULL, FALSE); // keep windows from screwing up the
+																							//  redrawing (as much).
+	hdc = BeginPaint(WindowHandle_, &ps);
 
-  //Do palette stuff
-  HPALETTE select=SelectPalette(ps.hdc,PalHandle_,0);
-  if (select==NULL)
-  {
-    sprintf(string,"Select Pal Fail: %d",GetLastError());
-    MessageBox(NULL,string,"OK",MB_OK);
-  }
-  UINT realize=RealizePalette(ps.hdc);
-  if (realize==GDI_ERROR)
-  {
-    sprintf(string,"Realize Pal Fail: %d",GetLastError());
-    MessageBox(NULL,string,"OK",MB_OK);
-  }
+	// Do palette stuff
+	HPALETTE select = SelectPalette(ps.hdc, PalHandle_, 0);
+	if (select == NULL)
+	{
+		sprintf(string, "Select Pal Fail: %d", GetLastError());
+		MessageBox(NULL, string, "OK", MB_OK);
+	}
+	UINT realize = RealizePalette(ps.hdc);
+	if (realize == GDI_ERROR)
+	{
+		sprintf(string, "Realize Pal Fail: %d", GetLastError());
+		MessageBox(NULL, string, "OK", MB_OK);
+	}
 
-  HDC hdcMem = CreateCompatibleDC(ps.hdc);
-  SelectObject(hdcMem, BitmapHandle_);
-  BITMAP bm;
-  GetObject(BitmapHandle_, sizeof(BITMAP), (LPSTR) &bm);
+	HDC hdcMem = CreateCompatibleDC(ps.hdc);
+	SelectObject(hdcMem, BitmapHandle_);
+	BITMAP bm;
+	GetObject(BitmapHandle_, sizeof(BITMAP), (LPSTR)&bm);
 
-  /// for non-stretching version
-  ///////BitBlt(ps.hdc, 0, 0, bm.bmWidth, bm.bmHeight, hdcMem, 0, 0, SRCCOPY);
+	/// for non-stretching version
+	///////BitBlt(ps.hdc, 0, 0, bm.bmWidth, bm.bmHeight, hdcMem, 0, 0, SRCCOPY);
 
-  RECT clientRect;
-  GetClientRect(WindowHandle_,&clientRect);
-  SetStretchBltMode(ps.hdc,COLORONCOLOR);
-  StretchBlt(ps.hdc,0,0,clientRect.right,clientRect.bottom,hdcMem,0,0,bm.bmWidth,
-    bm.bmHeight,SRCCOPY);
+	RECT clientRect;
+	GetClientRect(WindowHandle_, &clientRect);
+	SetStretchBltMode(ps.hdc, COLORONCOLOR);
+	StretchBlt(ps.hdc, 0, 0, clientRect.right, clientRect.bottom, hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
 
-
-  DeleteDC(hdcMem);
-  EndPaint(WindowHandle_,&ps);
-  return(TRUE);
+	DeleteDC(hdcMem);
+	EndPaint(WindowHandle_, &ps);
+	return (TRUE);
 }

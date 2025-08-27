@@ -45,42 +45,40 @@ class HiveStructureBodyModuleData : public StructureBodyModuleData
 {
 public:
 	DamageTypeFlags m_damageTypesToPropagateToSlaves;
-	DamageTypeFlags m_damageTypesToSwallow;							///< A subset of the damage types to propagate. Do not take them ourselves
+	DamageTypeFlags m_damageTypesToSwallow; ///< A subset of the damage types to propagate. Do not take them ourselves
 
 	HiveStructureBodyModuleData();
 
-	static void buildFieldParse(MultiIniFieldParse& p)
+	static void buildFieldParse(MultiIniFieldParse &p)
 	{
-    StructureBodyModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "PropagateDamageTypesToSlavesWhenExisting",   INI::parseDamageTypeFlags, NULL, offsetof( HiveStructureBodyModuleData, m_damageTypesToPropagateToSlaves ) },
-			{ "SwallowDamageTypesIfSlavesNotExisting",			INI::parseDamageTypeFlags, NULL, offsetof( HiveStructureBodyModuleData, m_damageTypesToSwallow ) },
-			{ 0, 0, 0, 0 }
-		};
-    p.add(dataFieldParse);
+		StructureBodyModuleData::buildFieldParse(p);
+		static const FieldParse dataFieldParse[] = { { "PropagateDamageTypesToSlavesWhenExisting",
+																									 INI::parseDamageTypeFlags,
+																									 NULL,
+																									 offsetof(HiveStructureBodyModuleData, m_damageTypesToPropagateToSlaves) },
+																								 { "SwallowDamageTypesIfSlavesNotExisting",
+																									 INI::parseDamageTypeFlags,
+																									 NULL,
+																									 offsetof(HiveStructureBodyModuleData, m_damageTypesToSwallow) },
+																								 { 0, 0, 0, 0 } };
+		p.add(dataFieldParse);
 	}
 };
-
 
 //-------------------------------------------------------------------------------------------------
 /** Structure body module */
 //-------------------------------------------------------------------------------------------------
 class HiveStructureBody : public StructureBody
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( HiveStructureBody, "HiveStructureBody" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( HiveStructureBody, HiveStructureBodyModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HiveStructureBody, "HiveStructureBody")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(HiveStructureBody, HiveStructureBodyModuleData)
 
 public:
-
-	HiveStructureBody( Thing *thing, const ModuleData* moduleData );
+	HiveStructureBody(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 protected:
-
-	virtual void attemptDamage( DamageInfo *damageInfo );		///< try to damage this object
+	virtual void attemptDamage(DamageInfo *damageInfo); ///< try to damage this object
 };
 
 #endif // __HIVE_STRUCTURE_BODY_H
-

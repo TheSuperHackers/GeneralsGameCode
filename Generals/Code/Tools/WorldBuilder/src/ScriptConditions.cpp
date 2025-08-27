@@ -31,13 +31,11 @@
 
 IMPLEMENT_DYNCREATE(ScriptConditionsDlg, CPropertyPage)
 
-ScriptConditionsDlg::ScriptConditionsDlg() : CPropertyPage(ScriptConditionsDlg::IDD),
-m_condition(NULL),
-m_orCondition(NULL),
-m_index(0)
+ScriptConditionsDlg::ScriptConditionsDlg() :
+		CPropertyPage(ScriptConditionsDlg::IDD), m_condition(NULL), m_orCondition(NULL), m_index(0)
 {
 	//{{AFX_DATA_INIT(ScriptConditionsDlg)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
@@ -45,28 +43,27 @@ ScriptConditionsDlg::~ScriptConditionsDlg()
 {
 }
 
-void ScriptConditionsDlg::DoDataExchange(CDataExchange* pDX)
+void ScriptConditionsDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(ScriptConditionsDlg)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(ScriptConditionsDlg, CPropertyPage)
-	//{{AFX_MSG_MAP(ScriptConditionsDlg)
-	ON_BN_CLICKED(IDC_EDIT_CONDITION, OnEditCondition)
-	ON_LBN_SELCHANGE(IDC_CONDITION_LIST, OnSelchangeConditionList)
-	ON_LBN_DBLCLK(IDC_CONDITION_LIST, OnDblclkConditionList)
-	ON_BN_CLICKED(IDC_OR, OnOr)
-	ON_BN_CLICKED(IDC_NEW, OnNew)
-	ON_BN_CLICKED(IDC_DELETE, OnDelete)
-	ON_BN_CLICKED(IDC_COPY, OnCopy)
-	ON_BN_CLICKED(IDC_MOVE_DOWN, OnMoveDown)
-	ON_BN_CLICKED(IDC_MOVE_UP, OnMoveUp)
-	ON_EN_CHANGE(IDC_EDIT_COMMENT, OnChangeEditComment)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(ScriptConditionsDlg)
+ON_BN_CLICKED(IDC_EDIT_CONDITION, OnEditCondition)
+ON_LBN_SELCHANGE(IDC_CONDITION_LIST, OnSelchangeConditionList)
+ON_LBN_DBLCLK(IDC_CONDITION_LIST, OnDblclkConditionList)
+ON_BN_CLICKED(IDC_OR, OnOr)
+ON_BN_CLICKED(IDC_NEW, OnNew)
+ON_BN_CLICKED(IDC_DELETE, OnDelete)
+ON_BN_CLICKED(IDC_COPY, OnCopy)
+ON_BN_CLICKED(IDC_MOVE_DOWN, OnMoveDown)
+ON_BN_CLICKED(IDC_MOVE_UP, OnMoveUp)
+ON_EN_CHANGE(IDC_EDIT_COMMENT, OnChangeEditComment)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -79,9 +76,9 @@ BOOL ScriptConditionsDlg::OnInitDialog()
 	CWnd *pWnd = GetDlgItem(IDC_EDIT_COMMENT);
 	pWnd->SetWindowText(m_script->getConditionComment().str());
 	CListBox *pList = (CListBox *)GetDlgItem(IDC_CONDITION_LIST);
-	pList->SetHorizontalExtent(10000);	// band-aid fix until more precise length can be determined
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	pList->SetHorizontalExtent(10000); // band-aid fix until more precise length can be determined
+	return TRUE; // return TRUE unless you set the focus to a control
+							 // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void ScriptConditionsDlg::loadList(void)
@@ -89,21 +86,29 @@ void ScriptConditionsDlg::loadList(void)
 	Int count = 0;
 	ScriptDialog::updateScriptWarning(m_script);
 	CListBox *pList = (CListBox *)GetDlgItem(IDC_CONDITION_LIST);
-	if (pList) {
+	if (pList)
+	{
 		pList->ResetContent();
 		OrCondition *pOr = m_script->getOrCondition();
-		while (pOr) {
-			if (count==0) {
+		while (pOr)
+		{
+			if (count == 0)
+			{
 				pList->AddString("*** IF ***");
-			} else {
+			}
+			else
+			{
 				pList->AddString("*** OR ***");
 			}
 			Condition *pCond = pOr->getFirstAndCondition();
 			Bool first = true;
-			while (pCond) {
+			while (pCond)
+			{
 				AsciiString label;
-				if (first) label = "  ";
-				else label = "  *AND* ";
+				if (first)
+					label = "  ";
+				else
+					label = "  *AND* ";
 				first = false;
 				label.concat(pCond->getUiText());
 				pList->AddString(label.str());
@@ -112,16 +117,17 @@ void ScriptConditionsDlg::loadList(void)
 			count++;
 			pOr = pOr->getNextOrCondition();
 		}
-		if (count>0) pList->SetCurSel(1);
+		if (count > 0)
+			pList->SetCurSel(1);
 		OnSelchangeConditionList();
 	}
 }
 
-
 void ScriptConditionsDlg::OnEditCondition()
 {
 	CListBox *pList = (CListBox *)GetDlgItem(IDC_CONDITION_LIST);
-	if (m_condition == NULL) {
+	if (m_condition == NULL)
+	{
 		return;
 	}
 	EditCondition cDlg;
@@ -131,11 +137,14 @@ void ScriptConditionsDlg::OnEditCondition()
 	pList->DeleteString(m_index);
 	AsciiString label;
 	Bool first;
-	if (m_orCondition && m_orCondition->getFirstAndCondition() == m_condition) {
+	if (m_orCondition && m_orCondition->getFirstAndCondition() == m_condition)
+	{
 		first = true;
 	}
-	if (first) label = "  ";
-	else label = "    AND ";
+	if (first)
+		label = "  ";
+	else
+		label = "    AND ";
 	label.concat(m_condition->getUiText());
 	pList->InsertString(m_index, label.str());
 }
@@ -143,10 +152,10 @@ void ScriptConditionsDlg::OnEditCondition()
 void ScriptConditionsDlg::enableUI()
 {
 	CWnd *pWnd = GetDlgItem(IDC_EDIT_CONDITION);
-	pWnd->EnableWindow(m_condition!=NULL);
+	pWnd->EnableWindow(m_condition != NULL);
 
 	pWnd = GetDlgItem(IDC_COPY);
-	pWnd->EnableWindow(m_condition!=NULL);
+	pWnd->EnableWindow(m_condition != NULL);
 
 	pWnd = GetDlgItem(IDC_DELETE);
 	pWnd->EnableWindow(m_condition || m_orCondition);
@@ -157,20 +166,25 @@ void ScriptConditionsDlg::setSel(OrCondition *pOr, Condition *pCond)
 	m_orCondition = NULL;
 	m_condition = NULL;
 	CListBox *pList = (CListBox *)GetDlgItem(IDC_CONDITION_LIST);
-	if (pList) {
+	if (pList)
+	{
 		pList->SetCurSel(-1);
 		Int count = 0;
 		m_orCondition = m_script->getOrCondition();
-		while (m_orCondition) {
-			if (m_orCondition==pOr && pCond==NULL) {
+		while (m_orCondition)
+		{
+			if (m_orCondition == pOr && pCond == NULL)
+			{
 				pList->SetCurSel(count);
 				enableUI();
 				return;
 			}
 			count++;
 			m_condition = m_orCondition->getFirstAndCondition();
-			while (m_condition) {
-				if (m_condition == pCond) {
+			while (m_condition)
+			{
+				if (m_condition == pCond)
+				{
 					pList->SetCurSel(count);
 					enableUI();
 					return;
@@ -189,22 +203,28 @@ void ScriptConditionsDlg::OnSelchangeConditionList()
 	m_orCondition = NULL;
 	m_condition = NULL;
 	CListBox *pList = (CListBox *)GetDlgItem(IDC_CONDITION_LIST);
-	if (pList) {
+	if (pList)
+	{
 		Int count = pList->GetCurSel();
 		m_index = count;
-		if (count<0) return;
-		count+=1;
+		if (count < 0)
+			return;
+		count += 1;
 		m_orCondition = m_script->getOrCondition();
-		while (m_orCondition) {
+		while (m_orCondition)
+		{
 			count--;
-			if (count==0) {
+			if (count == 0)
+			{
 				enableUI(); // Enable buttons based on selection.
 				return;
 			}
 			m_condition = m_orCondition->getFirstAndCondition();
-			while (m_condition) {
+			while (m_condition)
+			{
 				count--;
-				if (count==0) {
+				if (count == 0)
+				{
 					enableUI(); // Enable buttons based on selection.
 					return;
 				}
@@ -220,14 +240,16 @@ void ScriptConditionsDlg::OnDblclkConditionList()
 	OnEditCondition();
 }
 
-
 void ScriptConditionsDlg::OnOr()
 {
-	OrCondition *pOr = newInstance( OrCondition);
-	if (m_orCondition) {
+	OrCondition *pOr = newInstance(OrCondition);
+	if (m_orCondition)
+	{
 		pOr->setNextOrCondition(m_orCondition->getNextOrCondition());
 		m_orCondition->setNextOrCondition(pOr);
-	} else {
+	}
+	else
+	{
 		pOr->setNextOrCondition(m_script->getOrCondition());
 		m_script->setOrCondition(pOr);
 	}
@@ -237,17 +259,22 @@ void ScriptConditionsDlg::OnOr()
 
 void ScriptConditionsDlg::OnNew()
 {
-	Condition *pCond = newInstance( Condition)(Condition::CONDITION_TRUE);
+	Condition *pCond = newInstance(Condition)(Condition::CONDITION_TRUE);
 	EditCondition cDlg;
 	cDlg.setCondition(pCond);
-	if (IDOK==cDlg.DoModal()) {
+	if (IDOK == cDlg.DoModal())
+	{
 		OrCondition *pSavOr = m_orCondition;
-		if (m_condition) {
+		if (m_condition)
+		{
 			pCond->setNextCondition(m_condition->getNext());
 			m_condition->setNextCondition(pCond);
-		} else {
-			if (m_orCondition == NULL) {
-				OrCondition *pOr = newInstance( OrCondition);
+		}
+		else
+		{
+			if (m_orCondition == NULL)
+			{
+				OrCondition *pOr = newInstance(OrCondition);
 				pOr->setNextOrCondition(m_script->getOrCondition());
 				m_script->setOrCondition(pOr);
 				m_orCondition = pOr;
@@ -257,17 +284,22 @@ void ScriptConditionsDlg::OnNew()
 		}
 		loadList();
 		setSel(pSavOr, pCond);
-	} else {
+	}
+	else
+	{
 		deleteInstance(pCond);
 	}
 }
 
 void ScriptConditionsDlg::OnDelete()
 {
-	if (m_condition && m_orCondition) {
+	if (m_condition && m_orCondition)
+	{
 		m_orCondition->deleteCondition(m_condition);
 		loadList();
-	} else if (m_orCondition) {
+	}
+	else if (m_orCondition)
+	{
 		m_script->deleteOrCondition(m_orCondition);
 		loadList();
 	}
@@ -275,7 +307,8 @@ void ScriptConditionsDlg::OnDelete()
 
 void ScriptConditionsDlg::OnCopy()
 {
-	if (m_condition) {
+	if (m_condition)
+	{
 		OrCondition *pSavOr = m_orCondition;
 		Condition *pCopy = m_condition->duplicate();
 		pCopy->setNextCondition(m_condition->getNext());
@@ -285,15 +318,18 @@ void ScriptConditionsDlg::OnCopy()
 	}
 }
 
-Int ScriptConditionsDlg::doMoveDown( OrCondition **outWhichNow )
+Int ScriptConditionsDlg::doMoveDown(OrCondition **outWhichNow)
 {
 	(*outWhichNow) = m_orCondition;
-	if (m_condition && m_orCondition) {
+	if (m_condition && m_orCondition)
+	{
 		Condition *pNext = m_condition->getNext();
-		if (pNext==NULL) {
+		if (pNext == NULL)
+		{
 			OrCondition *pNOr = m_orCondition->getNextOrCondition();
-			if (!pNOr) {
-				pNOr = newInstance( OrCondition);
+			if (!pNOr)
+			{
+				pNOr = newInstance(OrCondition);
 				m_orCondition->setNextOrCondition(pNOr);
 			}
 			Condition *newNext = pNOr->getFirstAndCondition();
@@ -302,44 +338,57 @@ Int ScriptConditionsDlg::doMoveDown( OrCondition **outWhichNow )
 			m_condition->setNextCondition(newNext);
 
 			*outWhichNow = pNOr;
-			return 2;	// we moved 2 indices, not just one.
+			return 2; // we moved 2 indices, not just one.
 		}
 
 		Condition *pCur = m_orCondition->getFirstAndCondition();
 		Condition *pPrev = NULL;
-		while (pCur != m_condition) {
+		while (pCur != m_condition)
+		{
 			pPrev = pCur;
 			pCur = pCur->getNext();
 		}
 		DEBUG_ASSERTCRASH(pCur, ("Didn't find condition in list."));
-		if (!pCur) return 0;
-		if (pPrev) {
+		if (!pCur)
+			return 0;
+		if (pPrev)
+		{
 			pPrev->setNextCondition(pNext);
 			pCur->setNextCondition(pNext->getNext());
 			pNext->setNextCondition(pCur);
-		} else {
+		}
+		else
+		{
 			DEBUG_ASSERTCRASH(m_condition == m_orCondition->getFirstAndCondition(), ("Logic error."));
 			pCur->setNextCondition(pNext->getNext());
 			pNext->setNextCondition(pCur);
 			m_orCondition->setFirstAndCondition(pNext);
 		}
 		return 1;
-	} else if (m_orCondition) {
+	}
+	else if (m_orCondition)
+	{
 		OrCondition *pNext = m_orCondition->getNextOrCondition();
-		if (pNext==NULL) return 0;
+		if (pNext == NULL)
+			return 0;
 		OrCondition *pCur = m_script->getOrCondition();
 		OrCondition *pPrev = NULL;
-		while (pCur != m_orCondition) {
+		while (pCur != m_orCondition)
+		{
 			pPrev = pCur;
 			pCur = pCur->getNextOrCondition();
 		}
 		DEBUG_ASSERTCRASH(pCur, ("Didn't find Or in list."));
-		if (!pCur) return 0;
-		if (pPrev) {
+		if (!pCur)
+			return 0;
+		if (pPrev)
+		{
 			pPrev->setNextOrCondition(pNext);
 			pCur->setNextOrCondition(pNext->getNextOrCondition());
 			pNext->setNextOrCondition(pCur);
-		} else {
+		}
+		else
+		{
 			DEBUG_ASSERTCRASH(m_orCondition == m_script->getOrCondition(), ("Logic error."));
 			pCur->setNextOrCondition(pNext->getNextOrCondition());
 			pNext->setNextOrCondition(pCur);
@@ -350,46 +399,58 @@ Int ScriptConditionsDlg::doMoveDown( OrCondition **outWhichNow )
 	return 0;
 }
 
-Int ScriptConditionsDlg::doMoveUp( OrCondition **outWhichNow )
+Int ScriptConditionsDlg::doMoveUp(OrCondition **outWhichNow)
 {
 	(*outWhichNow) = m_orCondition;
-	if (m_condition && m_orCondition) {
+	if (m_condition && m_orCondition)
+	{
 		(*outWhichNow) = m_orCondition;
 		Condition *pPrev = m_orCondition->findPreviousCondition(m_condition);
-		if (pPrev == NULL) {
+		if (pPrev == NULL)
+		{
 			OrCondition *pNOr = m_script->findPreviousOrCondition(m_orCondition);
-			if (!pNOr) {
-				pNOr = newInstance( OrCondition);
+			if (!pNOr)
+			{
+				pNOr = newInstance(OrCondition);
 				pNOr->setNextOrCondition(m_orCondition);
 				m_script->setOrCondition(pNOr);
 			}
 			Condition *previous = pNOr->findPreviousCondition(NULL);
-			if (previous) {
+			if (previous)
+			{
 				m_orCondition->removeCondition(m_condition);
 				previous->setNextCondition(m_condition);
-			} else {
+			}
+			else
+			{
 				m_orCondition->removeCondition(m_condition);
 				pNOr->setFirstAndCondition(m_condition);
 			}
 
 			(*outWhichNow) = pNOr;
-			return 2;	// we moved 2 indices, not just one.
+			return 2; // we moved 2 indices, not just one.
 		}
 
 		pPrev->setNextCondition(m_condition->getNext());
 		m_condition->setNextCondition(pPrev);
 
 		Condition *pPrevPrev = m_orCondition->findPreviousCondition(pPrev);
-		if (pPrevPrev) {
+		if (pPrevPrev)
+		{
 			pPrevPrev->setNextCondition(m_condition);
-		} else {
+		}
+		else
+		{
 			m_orCondition->setFirstAndCondition(m_condition);
 		}
 
 		return 1;
-	} else if (m_orCondition) {
+	}
+	else if (m_orCondition)
+	{
 		OrCondition *pOrPrev = m_script->findPreviousOrCondition(m_orCondition);
-		if (!pOrPrev) {
+		if (!pOrPrev)
+		{
 			return 0;
 		}
 
@@ -397,9 +458,12 @@ Int ScriptConditionsDlg::doMoveUp( OrCondition **outWhichNow )
 		m_orCondition->setNextOrCondition(pOrPrev);
 
 		OrCondition *pOrPrevPrev = m_script->findPreviousOrCondition(pOrPrev);
-		if (pOrPrevPrev) {
+		if (pOrPrevPrev)
+		{
 			pOrPrevPrev->setNextOrCondition(m_orCondition);
-		} else {
+		}
+		else
+		{
 			m_script->setOrCondition(m_orCondition);
 		}
 		return 1;
@@ -411,7 +475,8 @@ void ScriptConditionsDlg::OnMoveDown()
 {
 	Condition *pSav = m_condition;
 	OrCondition *pSavOr;
-	if (doMoveDown(&pSavOr) == 0) {
+	if (doMoveDown(&pSavOr) == 0)
+	{
 		return;
 	}
 
@@ -423,7 +488,8 @@ void ScriptConditionsDlg::OnMoveUp()
 {
 	Condition *pSav = m_condition;
 	OrCondition *pSavOr;
-	if (doMoveUp(&pSavOr) == 0) {
+	if (doMoveUp(&pSavOr) == 0)
+	{
 		return;
 	}
 

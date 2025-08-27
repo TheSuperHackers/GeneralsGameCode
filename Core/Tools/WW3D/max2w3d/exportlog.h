@@ -36,7 +36,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #ifndef EXPORTLOG_H
 #define EXPORTLOG_H
 
@@ -52,11 +51,9 @@ public:
 	static void Init(HWND parent);
 	static void Shutdown(bool wait_for_ok);
 
-   static void	printf(const char *, ...);
+	static void printf(const char *, ...);
 	static void rprintf(const char *, ...);
-	static void	updatebar(float position, float total);
+	static void updatebar(float position, float total);
 };
 
-
-#endif //EXPORTLOG_H
-
+#endif // EXPORTLOG_H

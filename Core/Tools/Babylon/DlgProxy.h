@@ -35,29 +35,28 @@ class CBabylonDlgAutoProxy : public CCmdTarget
 {
 	DECLARE_DYNCREATE(CBabylonDlgAutoProxy)
 
-	CBabylonDlgAutoProxy();           // protected constructor used by dynamic creation
+	CBabylonDlgAutoProxy(); // protected constructor used by dynamic creation
 
-// Attributes
+	// Attributes
 public:
-	CBabylonDlg* m_pDialog;
+	CBabylonDlg *m_pDialog;
 
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CBabylonDlgAutoProxy)
-	public:
+public:
 	virtual void OnFinalRelease();
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	virtual ~CBabylonDlgAutoProxy();
 
 	// Generated message map functions
 	//{{AFX_MSG(CBabylonDlgAutoProxy)
-		// NOTE - the ClassWizard will add and remove member functions here.
+	// NOTE - the ClassWizard will add and remove member functions here.
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
@@ -65,7 +64,7 @@ protected:
 
 	// Generated OLE dispatch map functions
 	//{{AFX_DISPATCH(CBabylonDlgAutoProxy)
-		// NOTE - the ClassWizard will add and remove member functions here.
+	// NOTE - the ClassWizard will add and remove member functions here.
 	//}}AFX_DISPATCH
 	DECLARE_DISPATCH_MAP()
 	DECLARE_INTERFACE_MAP()

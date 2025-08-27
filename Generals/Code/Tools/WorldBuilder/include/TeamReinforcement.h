@@ -30,31 +30,34 @@
 
 class TeamReinforcement : public CPropertyPage
 {
-// Construction
+	// Construction
 public:
-	TeamReinforcement();   // standard constructor
+	TeamReinforcement(); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(TeamReinforcement)
-	enum { IDD = IDD_TeamReinforcement };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_TeamReinforcement
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(TeamReinforcement)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	Dict *m_teamDict;
-public:
-	void setTeamDict(Dict *pDict) {m_teamDict = pDict;};
-protected:
 
+public:
+	void setTeamDict(Dict *pDict) { m_teamDict = pDict; };
+
+protected:
 	// Generated message map functions
 	//{{AFX_MSG(TeamReinforcement)
 	afx_msg void OnDeployBy();

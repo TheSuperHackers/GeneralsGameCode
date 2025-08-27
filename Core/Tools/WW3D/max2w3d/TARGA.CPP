@@ -17,48 +17,48 @@
 */
 
 /****************************************************************************
-*
-*        C O N F I D E N T I A L --- W E S T W O O D   S T U D I O S
-*
-*----------------------------------------------------------------------------
-*
-* FILE
-*     targa.cpp
-*
-* DESCRIPTION
-*     Targa image file class.
-*
-* PROGRAMMER
-*     Denzil E. Long, Jr.
-*
-* DATE
-*     August 8, 1995
-*
-*----------------------------------------------------------------------------
-*
-* PUBLIC
-*     Open - Open Targa image file.
-*     Close - Close Targa image file.
-*     Load - Load Targa image file.
-*     Save - Save a Targa Image File.
-*     XFlip - X flip the image.
-*     YFlip - Y flip the image.
-*     SetImage - Set the image buffer.
-*     GetImage - Get the current image buffer address.
-*     SetPalette - Set the palette buffer.
-*     GetPalette - Retrieve the current palette buffer address.
-*     GetExtension - Get Extension data. (Targa 2.0 files only)
-*
-* PRIVATE
-*     DecodeImage - Decompress Targa image data.
-*     EncodeImage - Compress the image using targa RLE.
-*     InvertImage - Invert TrueColor image data.
-*
-* MODIFICATIONS:
-*     Converted to work with FileClass, FileFactory (changes are inside
-*     ifdefs, so can be easily reversed). Naty Hoffman, January 25, 2001
-*
-****************************************************************************/
+ *
+ *        C O N F I D E N T I A L --- W E S T W O O D   S T U D I O S
+ *
+ *----------------------------------------------------------------------------
+ *
+ * FILE
+ *     targa.cpp
+ *
+ * DESCRIPTION
+ *     Targa image file class.
+ *
+ * PROGRAMMER
+ *     Denzil E. Long, Jr.
+ *
+ * DATE
+ *     August 8, 1995
+ *
+ *----------------------------------------------------------------------------
+ *
+ * PUBLIC
+ *     Open - Open Targa image file.
+ *     Close - Close Targa image file.
+ *     Load - Load Targa image file.
+ *     Save - Save a Targa Image File.
+ *     XFlip - X flip the image.
+ *     YFlip - Y flip the image.
+ *     SetImage - Set the image buffer.
+ *     GetImage - Get the current image buffer address.
+ *     SetPalette - Set the palette buffer.
+ *     GetPalette - Retrieve the current palette buffer address.
+ *     GetExtension - Get Extension data. (Targa 2.0 files only)
+ *
+ * PRIVATE
+ *     DecodeImage - Decompress Targa image data.
+ *     EncodeImage - Compress the image using targa RLE.
+ *     InvertImage - Invert TrueColor image data.
+ *
+ * MODIFICATIONS:
+ *     Converted to work with FileClass, FileFactory (changes are inside
+ *     ifdefs, so can be easily reversed). Naty Hoffman, January 25, 2001
+ *
+ ****************************************************************************/
 
 #include "TARGA.H"
 #ifndef TGA_USES_WWLIB_FILE_CLASSES
@@ -76,30 +76,29 @@
 #include <sys/stat.h>
 #endif
 
-
 /****************************************************************************
-*
-* NAME
-*     Targa::Targa - Initialize a Targa instance.
-*
-* SYNOPSIS
-*     Targa()
-*
-*     void Targa(void);
-*
-* FUNCTION
-*     Initialize the targa class instance.
-*
-* INPUTS
-*     NONE
-*
-* RESULT
-*     NONE
-*
-****************************************************************************/
+ *
+ * NAME
+ *     Targa::Targa - Initialize a Targa instance.
+ *
+ * SYNOPSIS
+ *     Targa()
+ *
+ *     void Targa(void);
+ *
+ * FUNCTION
+ *     Initialize the targa class instance.
+ *
+ * INPUTS
+ *     NONE
+ *
+ * RESULT
+ *     NONE
+ *
+ ****************************************************************************/
 
 Targa::Targa(void)
-	{
+{
 	mImage = NULL;
 	mPalette = NULL;
 	Clear_File();
@@ -107,28 +106,27 @@ Targa::Targa(void)
 	mFlags = 0;
 	memset(&Header, 0, sizeof(TGAHeader));
 	memset(&mExtension, 0, sizeof(TGA2Extension));
-	}
-
+}
 
 /****************************************************************************
-*
-* NAME
-*     Targa::~Targa - Targa class destructor.
-*
-* SYNOPSIS
-*     ~Targa()
-*
-*     void ~Targa(void);
-*
-* FUNCTION
-*
-* INPUTS
-*     NONE
-*
-* RESULT
-*     NONE
-*
-****************************************************************************/
+ *
+ * NAME
+ *     Targa::~Targa - Targa class destructor.
+ *
+ * SYNOPSIS
+ *     ~Targa()
+ *
+ *     void ~Targa(void);
+ *
+ * FUNCTION
+ *
+ * INPUTS
+ *     NONE
+ *
+ * RESULT
+ *     NONE
+ *
+ ****************************************************************************/
 
 Targa::~Targa(void)
 {
@@ -144,38 +142,38 @@ Targa::~Targa(void)
 		free(mImage);
 }
 
-
 /****************************************************************************
-*
-* NAME
-*     Targa::Open - Open Targa image file.
-*
-* SYNOPSIS
-*     Error = Open(Name, Mode)
-*
-*     long Open(char *, long);
-*
-* FUNCTION
-*     Open a Targa image file and read in its header. The file stream will
-*     positioned after the ID field (if there is one).
-*
-* INPUTS
-*     Name - Pointer to name of Targa file.
-*     Mode - Access mode.
-*
-* RESULT
-*     Error - Error code, 0 if okay.
-*
-****************************************************************************/
+ *
+ * NAME
+ *     Targa::Open - Open Targa image file.
+ *
+ * SYNOPSIS
+ *     Error = Open(Name, Mode)
+ *
+ *     long Open(char *, long);
+ *
+ * FUNCTION
+ *     Open a Targa image file and read in its header. The file stream will
+ *     positioned after the ID field (if there is one).
+ *
+ * INPUTS
+ *     Name - Pointer to name of Targa file.
+ *     Mode - Access mode.
+ *
+ * RESULT
+ *     Error - Error code, 0 if okay.
+ *
+ ****************************************************************************/
 
-long Targa::Open(const char* name, long mode)
+long Targa::Open(const char *name, long mode)
 {
-	TGA2Footer	footer;
-	long			size;
-	long			error = 0;
+	TGA2Footer footer;
+	long size;
+	long error = 0;
 
 	/* File already open? */
-	if (Is_File_Open() && (mAccess == mode)) {
+	if (Is_File_Open() && (mAccess == mode))
+	{
 		return (0);
 	}
 
@@ -185,24 +183,31 @@ long Targa::Open(const char* name, long mode)
 	mAccess = mode;
 	mFlags &= ~TGAF_TGA2;
 
-	switch (mode) {
-
+	switch (mode)
+	{
 		/* Open targa file for read. */
 		case TGA_READMODE:
-			if (File_Open_Read(name)) {
-
+			if (File_Open_Read(name))
+			{
 				/* Check for 2.0 targa file by loading the footer */
-				if (File_Seek(-26, SEEK_END) == -1) {
+				if (File_Seek(-26, SEEK_END) == -1)
+				{
 					error = TGAERR_READ;
 				}
 
-				if (!error) {
-					if (File_Read(&footer, sizeof(TGA2Footer)) != sizeof(TGA2Footer)) {
+				if (!error)
+				{
+					if (File_Read(&footer, sizeof(TGA2Footer)) != sizeof(TGA2Footer))
+					{
 						error = TGAERR_READ;
-					} else {
+					}
+					else
+					{
 						/* If this a 2.0 file with an extension? */
-						if (strncmp(footer.Signature, TGA2_SIGNATURE, 16) == 0) {
-							if (footer.Extension != 0) {
+						if (strncmp(footer.Signature, TGA2_SIGNATURE, 16) == 0)
+						{
+							if (footer.Extension != 0)
+							{
 								mFlags |= TGAF_TGA2;
 							}
 						}
@@ -210,176 +215,196 @@ long Targa::Open(const char* name, long mode)
 				}
 
 				/* Read in Extension data */
-				if (!error && (mFlags & TGAF_TGA2)) {
-
-					if (File_Seek(footer.Extension, SEEK_SET) == -1) {
+				if (!error && (mFlags & TGAF_TGA2))
+				{
+					if (File_Seek(footer.Extension, SEEK_SET) == -1)
+					{
 						error = TGAERR_READ;
 					}
 
-					if (!error) {
-						if (File_Read(&mExtension, sizeof(TGA2Extension)) != sizeof(TGA2Extension)) {
+					if (!error)
+					{
+						if (File_Read(&mExtension, sizeof(TGA2Extension)) != sizeof(TGA2Extension))
+						{
 							error = TGAERR_READ;
 						}
 					}
 				}
 
 				/* Read in header. */
-				if (!error && (File_Seek(0, SEEK_SET) == -1)) {
+				if (!error && (File_Seek(0, SEEK_SET) == -1))
+				{
 					error = TGAERR_READ;
-				} else {
-
+				}
+				else
+				{
 					size = File_Read(&Header, sizeof(TGAHeader));
-					if (size != sizeof(TGAHeader)) {
+					if (size != sizeof(TGAHeader))
+					{
 						error = TGAERR_READ;
 					}
 				}
 
 				/* Skip the ID field */
-				if (!error && (Header.IDLength != 0)) {
-					if (File_Seek(Header.IDLength, SEEK_CUR) == -1) {
+				if (!error && (Header.IDLength != 0))
+				{
+					if (File_Seek(Header.IDLength, SEEK_CUR) == -1)
+					{
 						error = TGAERR_READ;
 					}
 				}
-
-			} else {
+			}
+			else
+			{
 				error = TGAERR_OPEN;
 			}
 			break;
 
 		/* Open targa file for write. */
 		case TGA_WRITEMODE:
-			if (!File_Open_Write(name)) {
+			if (!File_Open_Write(name))
+			{
 				error = TGAERR_OPEN;
-			} else {
-//				printf("\r");
+			}
+			else
+			{
+				//				printf("\r");
 			}
 			break;
 
 		/* Open targa file for read/write.*/
 		case TGA_RDWRMODE:
-			if (File_Open_ReadWrite(name)) {
-
+			if (File_Open_ReadWrite(name))
+			{
 				/* Read in header. */
 				size = File_Read(&Header, sizeof(TGAHeader));
 
-				if (size != sizeof(TGAHeader)) {
+				if (size != sizeof(TGAHeader))
+				{
 					error = TGAERR_READ;
 				}
 				/* Skip the ID field */
-				if (!error && (Header.IDLength != 0)) {
-					if (File_Seek(Header.IDLength, SEEK_CUR) == -1) {
+				if (!error && (Header.IDLength != 0))
+				{
+					if (File_Seek(Header.IDLength, SEEK_CUR) == -1)
+					{
 						error = TGAERR_READ;
 					}
 				}
-
-			} else {
+			}
+			else
+			{
 				error = TGAERR_OPEN;
 			}
 			break;
 	}
 
 	/* Close on any error! */
-	if (error) {
+	if (error)
+	{
 		Close();
 	}
 
 	return (error);
 }
 
-
 /****************************************************************************
-*
-* NAME
-*     Targa::Close - Close Targa image file.
-*
-* SYNOPSIS
-*     Close()
-*
-*     void Close(void);
-*
-* FUNCTION
-*     Close the Targa image file and free its handle.
-*
-* INPUTS
-*     NONE
-*
-* RESULT
-*     NONE
-*
-****************************************************************************/
+ *
+ * NAME
+ *     Targa::Close - Close Targa image file.
+ *
+ * SYNOPSIS
+ *     Close()
+ *
+ *     void Close(void);
+ *
+ * FUNCTION
+ *     Close the Targa image file and free its handle.
+ *
+ * INPUTS
+ *     NONE
+ *
+ * RESULT
+ *     NONE
+ *
+ ****************************************************************************/
 
 void Targa::Close(void)
 {
 #ifdef TGA_USES_WWLIB_FILE_CLASSES
-	if (TGAFile) {
+	if (TGAFile)
+	{
 		TGAFile->Close();
 		_TheFileFactory->Return_File(TGAFile);
 		TGAFile = NULL;
 	}
 #else
 	/* Close the file if it is open. */
-	if (mFH != -1) {
+	if (mFH != -1)
+	{
 		close(mFH);
 		mFH = -1;
 	}
 #endif
 }
 
-
 /****************************************************************************
-*
-* NAME
-*     Targa::Load - Load Targa Image File into specified buffers.
-*
-* SYNOPSIS
-*     Error = Load(Name, Palette, ImageBuffer)
-*
-*     long Load(char *, char *, char *);
-*
-* FUNCTION
-*     Open and load the Targa into the specified buffers. If either buffer
-*     pointer is NULL then that field will not be processed.
-*
-* INPUTS
-*     Name        - Name of Targa image file to load.
-*     Palette     - Pointer to buffer to load the palette into.
-*     ImageBuffer - Pointer to buffer to load the image data into.
-*
-* RESULT
-*     Error - 0 if successful, or TGAERR_??? error code.
-*
-****************************************************************************/
+ *
+ * NAME
+ *     Targa::Load - Load Targa Image File into specified buffers.
+ *
+ * SYNOPSIS
+ *     Error = Load(Name, Palette, ImageBuffer)
+ *
+ *     long Load(char *, char *, char *);
+ *
+ * FUNCTION
+ *     Open and load the Targa into the specified buffers. If either buffer
+ *     pointer is NULL then that field will not be processed.
+ *
+ * INPUTS
+ *     Name        - Name of Targa image file to load.
+ *     Palette     - Pointer to buffer to load the palette into.
+ *     ImageBuffer - Pointer to buffer to load the image data into.
+ *
+ * RESULT
+ *     Error - 0 if successful, or TGAERR_??? error code.
+ *
+ ****************************************************************************/
 
-long Targa::Load(const char* name, char* palette, char* image,bool invert_image)
+long Targa::Load(const char *name, char *palette, char *image, bool invert_image)
 {
 	long size;
 	long depth;
 	long error = 0;
 
 	/* Open the Targa */
-	if (Open(name, TGA_READMODE) == NULL) {
-
+	if (Open(name, TGA_READMODE) == NULL)
+	{
 		/* Process ColorMap (palette) */
-		if (Header.ColorMapType == 1) {
-
+		if (Header.ColorMapType == 1)
+		{
 			depth = (Header.CMapDepth >> 3);
 			size = (Header.CMapLength * depth);
 
 			/* Load the palette from the TGA if a palette buffer is provided
 			 * otherwise we will skip it.
 			 */
-			if ((palette != NULL) && (Header.CMapLength > 0)) {
-
+			if ((palette != NULL) && (Header.CMapLength > 0))
+			{
 				/* Adjust palette to the starting color entry. */
 				palette += (Header.CMapStart * depth);
 
 				/* Read in the palette. */
-				if (File_Read(palette, size) != size) {
+				if (File_Read(palette, size) != size)
+				{
 					error = TGAERR_READ;
 				}
-
-			} else {
-				if (File_Seek(size, SEEK_CUR) == -1) {
+			}
+			else
+			{
+				if (File_Seek(size, SEEK_CUR) == -1)
+				{
 					error = TGAERR_READ;
 				}
 			}
@@ -388,28 +413,35 @@ long Targa::Load(const char* name, char* palette, char* image,bool invert_image)
 		/* Load the image data from the TGA if an image buffer is provided
 		 * otherwise we are done.
 		 */
-		if (!error && (image != NULL)) {
-
+		if (!error && (image != NULL))
+		{
 			depth = TGA_BytesPerPixel(Header.PixelDepth);
 			size = ((Header.Width * Header.Height) * depth);
 
-			switch (Header.ImageType) {
+			switch (Header.ImageType)
+			{
 				case TGA_CMAPPED:
-					if (File_Read(image, size) != size) {
+					if (File_Read(image, size) != size)
+					{
 						error = TGAERR_READ;
 					}
 					break;
 
 				case TGA_TRUECOLOR:
-					if (File_Read(image, size) == size) {
-						if (invert_image) InvertImage();
-					} else {
+					if (File_Read(image, size) == size)
+					{
+						if (invert_image)
+							InvertImage();
+					}
+					else
+					{
 						error = TGAERR_READ;
 					}
 					break;
 
 				case TGA_MONO:
-					if (File_Read(image, size) != size) {
+					if (File_Read(image, size) != size)
+					{
 						error = TGAERR_READ;
 					}
 					break;
@@ -419,8 +451,10 @@ long Targa::Load(const char* name, char* palette, char* image,bool invert_image)
 					break;
 
 				case TGA_TRUECOLOR_ENCODED:
-					if ((error = DecodeImage()) == NULL) {
-						if (invert_image) InvertImage();
+					if ((error = DecodeImage()) == NULL)
+					{
+						if (invert_image)
+							InvertImage();
 					}
 					break;
 
@@ -432,8 +466,10 @@ long Targa::Load(const char* name, char* palette, char* image,bool invert_image)
 			/* Arrange the image so that the origin position (coordinate 0,0)
 			 * is the upperleft hand corner of the image.
 			 */
-			if (!error) {
-				if ( Header.ImageDescriptor & TGAIDF_XORIGIN ) {
+			if (!error)
+			{
+				if (Header.ImageDescriptor & TGAIDF_XORIGIN)
+				{
 					XFlip();
 					Header.ImageDescriptor &= ~TGAIDF_XORIGIN;
 				}
@@ -442,7 +478,8 @@ long Targa::Load(const char* name, char* palette, char* image,bool invert_image)
 				// will make ot consistent with .TGA's that have been generated with our
 				// existing software.
 				//	if (( Header.ImageDescriptor & TGAIDF_YORIGIN ) == 0){
-				if ( Header.ImageDescriptor & TGAIDF_YORIGIN ) {
+				if (Header.ImageDescriptor & TGAIDF_YORIGIN)
+				{
 					YFlip();
 					//	Bug fix (IML) : Clear this flag to indicate to the targa reader
 					// that the Y-origin is at the bottom of the image.
@@ -453,66 +490,71 @@ long Targa::Load(const char* name, char* palette, char* image,bool invert_image)
 
 		/* Close the Targa */
 		Close();
-
-	} else {
+	}
+	else
+	{
 		error = TGAERR_OPEN;
 	}
 
 	return (error);
 }
 
-
 /****************************************************************************
-*
-* NAME
-*     Targa::Load - Load Targa Image File. (Auto buffer allocation).
-*
-* SYNOPSIS
-*     Error = Load(Name, Flags)
-*
-*     long Load(char, long);
-*
-* FUNCTION
-*     Open and load the Targa into buffers allocated by this function.
-*
-* INPUTS
-*     Name  - Name of Targa image file to load.
-*     Flags -
-*
-* RESULT
-*     Error - 0 if successful, or TGAERR_??? error code.
-*
-****************************************************************************/
+ *
+ * NAME
+ *     Targa::Load - Load Targa Image File. (Auto buffer allocation).
+ *
+ * SYNOPSIS
+ *     Error = Load(Name, Flags)
+ *
+ *     long Load(char, long);
+ *
+ * FUNCTION
+ *     Open and load the Targa into buffers allocated by this function.
+ *
+ * INPUTS
+ *     Name  - Name of Targa image file to load.
+ *     Flags -
+ *
+ * RESULT
+ *     Error - 0 if successful, or TGAERR_??? error code.
+ *
+ ****************************************************************************/
 
-long Targa::Load(const char* name, long flags, bool invert_image)
+long Targa::Load(const char *name, long flags, bool invert_image)
 {
 	long size;
 	long error = 0;
 
 	/* Open the file to get the header. */
-	if (Open(name, TGA_READMODE) == 0) {
-
+	if (Open(name, TGA_READMODE) == 0)
+	{
 		/* Allocate palette memory if requested to and the targa has one. */
-		if ((flags & TGAF_PAL) && (Header.ColorMapType == 1)) {
-
+		if ((flags & TGAF_PAL) && (Header.ColorMapType == 1))
+		{
 			/* Dispose of any previous palette. */
-			if ((mPalette != NULL) && (mFlags & TGAF_PAL)) {
+			if ((mPalette != NULL) && (mFlags & TGAF_PAL))
+			{
 				free(mPalette);
 				mPalette = NULL;
 				mFlags &= ~TGAF_PAL;
 			}
 
 			/* Only allocate a palette if the client hasn't assigned one. */
-			if ((mPalette == NULL) && !(mFlags & TGAF_PAL)) {
-
+			if ((mPalette == NULL) && !(mFlags & TGAF_PAL))
+			{
 				/* Compute the size of the palette from the targa header. */
 				size = (Header.CMapLength * (Header.CMapDepth >> 3));
 
-				if (size != 0) {
+				if (size != 0)
+				{
 					/* Allocate memory for the palette. */
-					if ((mPalette = (char *)malloc(size)) != NULL) {
+					if ((mPalette = (char *)malloc(size)) != NULL)
+					{
 						mFlags |= TGAF_PAL; /* We allocated the palette. */
-					} else {
+					}
+					else
+					{
 						error = TGAERR_NOMEM;
 					}
 				}
@@ -520,25 +562,30 @@ long Targa::Load(const char* name, long flags, bool invert_image)
 		}
 
 		/* Allocate image memory if requested to. */
-		if (!error && (flags & TGAF_IMAGE)) {
-
+		if (!error && (flags & TGAF_IMAGE))
+		{
 			/* Dispose of any previous image. */
-			if ((mImage != NULL) && (mFlags & TGAF_IMAGE)) {
+			if ((mImage != NULL) && (mFlags & TGAF_IMAGE))
+			{
 				free(mImage);
 				mImage = NULL;
 				mFlags &= ~TGAF_IMAGE;
 			}
 
 			/* Only allocate an image if the client hasn't assigned one. */
-			if ((mImage == NULL) && !(mFlags & TGAF_IMAGE)) {
-
+			if ((mImage == NULL) && !(mFlags & TGAF_IMAGE))
+			{
 				/* Compute the size of the image data from the targa header. */
 				size = ((Header.Width * Header.Height) * TGA_BytesPerPixel(Header.PixelDepth));
-				if (size != 0) {
+				if (size != 0)
+				{
 					/* Allocate memory for the image. */
-					if ((mImage = (char *)malloc(size)) != NULL) {
+					if ((mImage = (char *)malloc(size)) != NULL)
+					{
 						mFlags |= TGAF_IMAGE; /* We allocated the image. */
-					} else {
+					}
+					else
+					{
 						error = TGAERR_NOMEM;
 					}
 				}
@@ -546,81 +593,82 @@ long Targa::Load(const char* name, long flags, bool invert_image)
 		}
 
 		/* Read in the file contents. */
-		if (!error) {
+		if (!error)
+		{
 			error = Load(name, mPalette, mImage, invert_image);
 		}
 
 		/* Close the file. */
 		Close();
-
-	} else {
+	}
+	else
+	{
 		error = TGAERR_OPEN;
 	}
 
 	return (error);
 }
 
-
 /****************************************************************************
-*
-* NAME
-*     Targa::Save - Save a Targa Image File.
-*
-* SYNOPSIS
-*     Error = Save(Name, Flags)
-*
-*     long Save(char *, long);
-*
-* FUNCTION
-*
-* INPUTS
-*     Name  - Pointer to name of file to save.
-*     Flags -
-*
-* RESULT
-*     Error - 0 if successful, or TGAERR_??? error code.
-*
-****************************************************************************/
+ *
+ * NAME
+ *     Targa::Save - Save a Targa Image File.
+ *
+ * SYNOPSIS
+ *     Error = Save(Name, Flags)
+ *
+ *     long Save(char *, long);
+ *
+ * FUNCTION
+ *
+ * INPUTS
+ *     Name  - Pointer to name of file to save.
+ *     Flags -
+ *
+ * RESULT
+ *     Error - 0 if successful, or TGAERR_??? error code.
+ *
+ ****************************************************************************/
 
-long Targa::Save(const char* name, long flags, bool addextension)
-	{
+long Targa::Save(const char *name, long flags, bool addextension)
+{
 	long size;
 	long depth;
 	char *palette;
 	char *temppal;
 	char *ptr;
-	//long i,n;
-	//char c;
+	// long i,n;
+	// char c;
 	long error = 0;
 	TGA2Footer footer;
 
 	/* Open the Targa for write. */
 	if (Open(name, TGA_WRITEMODE) == NULL)
-		{
+	{
 		Header.IDLength = 0;
 
 		/* Set the ImageType for compression. */
 		if (flags & TGAF_COMPRESS)
-			{
+		{
 			switch (Header.ImageType)
-				{
+			{
 				case TGA_CMAPPED:
 				case TGA_TRUECOLOR:
 				case TGA_MONO:
 					Header.ImageType += 8;
-				break;
+					break;
 
 				case TGA_CMAPPED_ENCODED:
 				case TGA_TRUECOLOR_ENCODED:
 				case TGA_MONO_ENCODED:
-				break;
+					break;
 
 				/* Turn off compression for unknown types. */
 				default:
 					flags &= ~TGAF_COMPRESS;
-				break;
-				}
+					break;
 			}
+		}
 
 		/*-----------------------------------------------------------------------
 		 * WRITE THE HEADER DATA SECTION
@@ -631,9 +679,8 @@ long Targa::Save(const char* name, long flags, bool addextension)
 		/*-----------------------------------------------------------------------
 		 * WRITE THE COLORMAP (PALETTE) DATA SECTION
 		 *---------------------------------------------------------------------*/
-		if (!error && (flags & TGAF_PAL) && (mPalette != NULL)
-				&& (Header.CMapLength > 0))
-			{
+		if (!error && (flags & TGAF_PAL) && (mPalette != NULL) && (Header.CMapLength > 0))
+		{
 			/* Adjust palette to the starting color entry. */
 			depth = (Header.CMapDepth >> 3);
 			palette = mPalette + (Header.CMapStart * depth);
@@ -641,22 +688,22 @@ long Targa::Save(const char* name, long flags, bool addextension)
 
 			/* Allocate temporary buffer for palette manipulation. */
 			if ((temppal = (char *)malloc(size)) != NULL)
-				{
+			{
 				memcpy(temppal, palette, size);
 				ptr = temppal;
 
-				#if(0)
+#if (0)
 				/* Swap the byte ordering of the palette entries. */
 				for (i = 0; i < Header.CMapLength; i++)
-					{
+				{
 					c = *ptr;
 					*ptr = *(ptr + (depth - 1));
 					*(ptr + (depth - 1)) = c;
 
 					/* Next entry */
 					palette += depth;
-					}
-				#endif
+				}
+#endif
 
 				/* Write the palette. */
 				if (File_Write(temppal, size) != size)
@@ -664,24 +711,26 @@ long Targa::Save(const char* name, long flags, bool addextension)
 
 				/* Free temporary palette buffer. */
 				free(temppal);
-				}
+			}
 			else
 				error = TGAERR_NOMEM;
-			}
+		}
 
 		/*-----------------------------------------------------------------------
 		 * WRITE THE IMAGE DATA SECTION
 		 *---------------------------------------------------------------------*/
 		if (!error && (flags & TGAF_IMAGE) && (mImage != NULL))
-			{
-
+		{
 			bool imageinverted;
 
 			/* Invert truecolor data. */
-			if ((Header.ImageType == TGA_TRUECOLOR) || (Header.ImageType == TGA_TRUECOLOR_ENCODED)) {
+			if ((Header.ImageType == TGA_TRUECOLOR) || (Header.ImageType == TGA_TRUECOLOR_ENCODED))
+			{
 				InvertImage();
 				imageinverted = true;
-			} else {
+			}
+			else
+			{
 				imageinverted = false;
 			}
 
@@ -689,26 +738,28 @@ long Targa::Save(const char* name, long flags, bool addextension)
 			if (flags & TGAF_COMPRESS)
 				EncodeImage();
 			else
-				{
+			{
 				depth = TGA_BytesPerPixel(Header.PixelDepth);
 				size = (((Header.Width * Header.Height)) * depth);
 
 				if (File_Write(mImage, size) != size)
 					error = TGAERR_WRITE;
-				}
+			}
 
 			// Bug fix (IML) : If the image was inverted, invert it again to restore it to its prior state.
-			if (imageinverted) InvertImage();
-			}
+			if (imageinverted)
+				InvertImage();
+		}
 
 		/*-----------------------------------------------------------------------
 		 * WRITE THE EXTENSION DATA SECTION
 		 *---------------------------------------------------------------------*/
 
 		// Mod (IML) Optionally add an extension to the file.
-		if (addextension) {
-			if (!error) {
-
+		if (addextension)
+		{
+			if (!error)
+			{
 				mExtension.ExtSize = 495;
 				strncpy(mExtension.SoftID, "Denzil's Targa Code", 41);
 				mExtension.SoftVer.Number = (1 * 100);
@@ -718,11 +769,12 @@ long Targa::Save(const char* name, long flags, bool addextension)
 				if ((footer.Extension = File_Seek(0, SEEK_CUR)) == -1)
 					error = TGAERR_WRITE;
 
-				if (!error && (File_Write(&mExtension, sizeof(TGA2Extension))
-						!= sizeof(TGA2Extension)))
+				if (!error && (File_Write(&mExtension, sizeof(TGA2Extension)) != sizeof(TGA2Extension)))
 					error = TGAERR_WRITE;
 			}
-		} else {
+		}
+		else
+		{
 			footer.Extension = 0;
 		}
 
@@ -730,7 +782,7 @@ long Targa::Save(const char* name, long flags, bool addextension)
 		 * WRITE THE FOOTER DATA SECTION
 		 *---------------------------------------------------------------------*/
 		if (!error)
-			{
+		{
 			footer.Developer = 0;
 			strncpy(footer.Signature, TGA2_SIGNATURE, 16);
 			footer.RsvdChar = '.';
@@ -738,104 +790,102 @@ long Targa::Save(const char* name, long flags, bool addextension)
 
 			if (File_Write(&footer, sizeof(TGA2Footer)) != sizeof(TGA2Footer))
 				error = TGAERR_WRITE;
-			}
+		}
 
 		/* Close targa file. */
 		Close();
-		}
+	}
 	else
 		error = TGAERR_OPEN;
 
 	return (error);
-	}
-
+}
 
 /****************************************************************************
-*
-* NAME
-*     Targa::XFlip - X flip the image.
-*
-* SYNOPSIS
-*     XFlip()
-*
-*     void XFlip();
-*
-* FUNCTION
-*     Flip the image in memory on its X axis. (left to right)
-*
-* INPUTS
-*     NONE
-*
-* RESULT
-*     NONE
-*
-****************************************************************************/
+ *
+ * NAME
+ *     Targa::XFlip - X flip the image.
+ *
+ * SYNOPSIS
+ *     XFlip()
+ *
+ *     void XFlip();
+ *
+ * FUNCTION
+ *     Flip the image in memory on its X axis. (left to right)
+ *
+ * INPUTS
+ *     NONE
+ *
+ * RESULT
+ *     NONE
+ *
+ ****************************************************************************/
 
 void Targa::XFlip(void)
-	{
-	char *ptr,*ptr1;
-	long  x,y,d;
-	char  v,v1;
-	char  depth;
+{
+	char *ptr, *ptr1;
+	long x, y, d;
+	char v, v1;
+	char depth;
 
 	/* Pixel depth in bytes. */
 	depth = TGA_BytesPerPixel(Header.PixelDepth);
 
 	for (y = 0; y < Header.Height; y++)
-		{
+	{
 		ptr = (mImage + ((Header.Width * depth) * y));
 		ptr1 = (ptr + ((Header.Width * depth) - depth));
 
 		for (x = 0; x < (Header.Width / 2); x++)
-			{
+		{
 			for (d = 0; d < depth; d++)
-				{
+			{
 				v = *(ptr + d);
 				v1 = *(ptr1 + d);
 				*(ptr + d) = v1;
 				*(ptr1 + d) = v;
-				}
+			}
 
 			ptr += depth;
 			ptr1 -= depth;
-			}
 		}
 	}
-
+}
 
 /****************************************************************************
-*
-* NAME
-*     Targa::YFlip - Y flip the image.
-*
-* SYNOPSIS
-*     YFlip()
-*
-*     void YFlip();
-*
-* FUNCTION
-*     Flip the image in memory on its Y axis. (top to bottom)
-*
-* INPUTS
-*     NONE
-*
-* RESULT
-*     NONE
-*
-****************************************************************************/
+ *
+ * NAME
+ *     Targa::YFlip - Y flip the image.
+ *
+ * SYNOPSIS
+ *     YFlip()
+ *
+ *     void YFlip();
+ *
+ * FUNCTION
+ *     Flip the image in memory on its Y axis. (top to bottom)
+ *
+ * INPUTS
+ *     NONE
+ *
+ * RESULT
+ *     NONE
+ *
+ ****************************************************************************/
 
 void Targa::YFlip(void)
-	{
-	char *ptr,*ptr1;
-	long  x,y;
-	char  v,v1;
-	char  depth;
+{
+	char *ptr, *ptr1;
+	long x, y;
+	char v, v1;
+	char depth;
 
 	/* Pixel depth in bytes. */
 	depth = TGA_BytesPerPixel(Header.PixelDepth);
 
 	for (y = 0; y < (Header.Height >> 1); y++)
-		{
+	{
 		/* Compute address of lines to exchange. */
 		ptr = (mImage + ((Header.Width * y) * depth));
 		ptr1 = (mImage + ((Header.Width * (Header.Height - 1)) * depth));
@@ -843,38 +893,37 @@ void Targa::YFlip(void)
 
 		/* Exchange all the pixels on this scan line. */
 		for (x = 0; x < (Header.Width * depth); x++)
-			{
+		{
 			v = *ptr;
 			v1 = *ptr1;
 			*ptr = v1;
 			*ptr1 = v;
 			ptr++;
 			ptr1++;
-			}
 		}
 	}
-
+}
 
 /****************************************************************************
-*
-* NAME
-*     Targa::SetImage - Set the image buffer.
-*
-* SYNOPSIS
-*     OldImage = SetImage(Image)
-*
-*     char *SetImage(char *);
-*
-* FUNCTION
-*     Set the image buffer to one provided by the caller.
-*
-* INPUTS
-*     Image - Pointer to buffer to use for the image buffer.
-*
-* RESULT
-*     OldImage - Previous caller assigned image buffer.
-*
-****************************************************************************/
+ *
+ * NAME
+ *     Targa::SetImage - Set the image buffer.
+ *
+ * SYNOPSIS
+ *     OldImage = SetImage(Image)
+ *
+ *     char *SetImage(char *);
+ *
+ * FUNCTION
+ *     Set the image buffer to one provided by the caller.
+ *
+ * INPUTS
+ *     Image - Pointer to buffer to use for the image buffer.
+ *
+ * RESULT
+ *     OldImage - Previous caller assigned image buffer.
+ *
+ ****************************************************************************/
 
 char *Targa::SetImage(char *buffer)
 {
@@ -898,26 +947,25 @@ char *Targa::SetImage(char *buffer)
 	return (oldbuffer);
 }
 
-
 /****************************************************************************
-*
-* NAME
-*     Targa::SetPalette - Set the palette buffer.
-*
-* SYNOPSIS
-*     OldPal = SetPalette(Pal)
-*
-*     char *SetPalette(char *);
-*
-* FUNCTION
-*
-* INPUTS
-*     Pal - Pointer to buffer to use for palette.
-*
-* RESULT
-*     OldPal - Pointer to previous user palette.
-*
-****************************************************************************/
+ *
+ * NAME
+ *     Targa::SetPalette - Set the palette buffer.
+ *
+ * SYNOPSIS
+ *     OldPal = SetPalette(Pal)
+ *
+ *     char *SetPalette(char *);
+ *
+ * FUNCTION
+ *
+ * INPUTS
+ *     Pal - Pointer to buffer to use for palette.
+ *
+ * RESULT
+ *     OldPal - Pointer to previous user palette.
+ *
+ ****************************************************************************/
 
 char *Targa::SetPalette(char *buffer)
 {
@@ -941,79 +989,76 @@ char *Targa::SetPalette(char *buffer)
 	return (oldbuffer);
 }
 
-
 bool Targa::IsCompressed(void)
-	{
+{
 	if (Header.ImageType > 8)
 		return true;
 
 	return false;
-	}
-
+}
 
 /****************************************************************************
-*
-* NAME
-*     Targa::GetExtension - Get Extension data. (Targa 2.0 files only)
-*
-* SYNOPSIS
-*     Ext = GetExtension()
-*
-*     TGA2Extension *GetExtension(void);
-*
-* FUNCTION
-*     Retrieve a pointer to the Targa 2.0 extension data area. If the file
-*     version is 1.0 OR there is no extensio area then a NULL will be returned.
-*
-* INPUTS
-*     NONE
-*
-* RESULT
-*     Ext - Pointer to Extension data, NULL if not available.
-*
-****************************************************************************/
+ *
+ * NAME
+ *     Targa::GetExtension - Get Extension data. (Targa 2.0 files only)
+ *
+ * SYNOPSIS
+ *     Ext = GetExtension()
+ *
+ *     TGA2Extension *GetExtension(void);
+ *
+ * FUNCTION
+ *     Retrieve a pointer to the Targa 2.0 extension data area. If the file
+ *     version is 1.0 OR there is no extensio area then a NULL will be returned.
+ *
+ * INPUTS
+ *     NONE
+ *
+ * RESULT
+ *     Ext - Pointer to Extension data, NULL if not available.
+ *
+ ****************************************************************************/
 
 TGA2Extension *Targa::GetExtension(void)
-	{
+{
 	if (mFlags & TGAF_TGA2)
 		return (&mExtension);
 
 	return (NULL);
-	}
-
+}
 
 /****************************************************************************
-*
-* NAME
-*     Targa::DecodeImage - Decompress Targa image data.
-*
-* SYNOPSIS
-*     Error = DecodeImage()
-*
-*     long DecodeImage();
-*
-* FUNCTION
-*     Decode the RLE compressed image data into the specified buffer from
-*     the file I/O stream.
-*
-* INPUTS
-*     NONE
-*
-* RESULT
-*     Error - 0 if successful, or TGAERR_??? error code.
-*
-****************************************************************************/
+ *
+ * NAME
+ *     Targa::DecodeImage - Decompress Targa image data.
+ *
+ * SYNOPSIS
+ *     Error = DecodeImage()
+ *
+ *     long DecodeImage();
+ *
+ * FUNCTION
+ *     Decode the RLE compressed image data into the specified buffer from
+ *     the file I/O stream.
+ *
+ * INPUTS
+ *     NONE
+ *
+ * RESULT
+ *     Error - 0 if successful, or TGAERR_??? error code.
+ *
+ ****************************************************************************/
 
 long Targa::DecodeImage()
-	{
-	char          *image;
-	char          *color;
+{
+	char *image;
+	char *color;
 	unsigned char count;
 	unsigned char depth;
 	unsigned long pixel_count;
 	unsigned long size;
-	unsigned long c,i;
-	long          error = 0;
+	unsigned long c, i;
+	long error = 0;
 
 	/* Initialize */
 	image = mImage;
@@ -1025,21 +1070,21 @@ long Targa::DecodeImage()
 	pixel_count = (Header.Width * Header.Height);
 
 	while ((pixel_count > 0) && !error)
-		{
- 		/* Read count. */
+	{
+		/* Read count. */
 		if (File_Read(&count, 1) == 1)
-			{
+		{
 			/* If bit 8 of the count is set then we have a run of pixels,
 			 * otherwise the data is raw pixels.
 			 */
 			if (count & 0x80)
-				{
+			{
 				count &= 0x7F;
 				count++;
 
 				/* Read in run pixel. */
 				if (File_Read(image, depth) == depth)
-					{
+				{
 					color = image;
 					image += depth;
 
@@ -1047,12 +1092,12 @@ long Targa::DecodeImage()
 					for (c = 1; c < count; c++)
 						for (i = 0; i < depth; i++)
 							*image++ = *(color + i);
-					}
+				}
 				else
 					error = TGAERR_READ;
-				}
+			}
 			else
-				{
+			{
 				count++;
 				size = (count * depth);
 
@@ -1061,43 +1106,42 @@ long Targa::DecodeImage()
 					image += size;
 				else
 					error = TGAERR_READ;
-				}
+			}
 
 			/* Adjust the pixel count. */
 			pixel_count -= count;
-			}
+		}
 		else
 			error = TGAERR_READ;
-		}
-
-	return (error);
 	}
 
+	return (error);
+}
 
 /****************************************************************************
-*
-* NAME
-*     Targa::EncodeImage - Compress the image using targa RLE.
-*
-* SYNOPSIS
-*     EncodeImage()
-*
-*     void EncodeImage(void);
-*
-* FUNCTION
-*     Encode the image data using the RLE algorithm outlined in the TARGA
-*     file specification.
-*
-* INPUTS
-*     NONE
-*
-* RESULT
-*     NONE
-*
-****************************************************************************/
+ *
+ * NAME
+ *     Targa::EncodeImage - Compress the image using targa RLE.
+ *
+ * SYNOPSIS
+ *     EncodeImage()
+ *
+ *     void EncodeImage(void);
+ *
+ * FUNCTION
+ *     Encode the image data using the RLE algorithm outlined in the TARGA
+ *     file specification.
+ *
+ * INPUTS
+ *     NONE
+ *
+ * RESULT
+ *     NONE
+ *
+ ****************************************************************************/
 
 long Targa::EncodeImage()
-	{
+{
 	char *packet;
 	long packet_index;
 	char *start;
@@ -1114,7 +1158,7 @@ long Targa::EncodeImage()
 
 	/* Allocate packet buffer to hold maximum encoded data run. */
 	if ((packet = (char *)malloc(128 * depth)) != NULL)
-		{
+	{
 		pixels = Header.Width * Header.Height;
 		start = mImage;
 		end = start;
@@ -1123,7 +1167,7 @@ long Targa::EncodeImage()
 		packet_index = 1;
 
 		while ((pixels != 0) && !error)
-			{
+		{
 			match = 1;
 
 			/* Advance to the next pixel */
@@ -1132,34 +1176,34 @@ long Targa::EncodeImage()
 
 			/* Compare pixels. */
 			for (i = 0; i < depth; i++)
-				{
+			{
 				if (start[i] != end[i])
-					{
+				{
 					match = 0;
 					break;
-					}
 				}
+			}
 
 			/* Run of pixels */
- 			if (match == 1)
-				{
+			if (match == 1)
+			{
 				count++;
 
 				/* Continue counting until the maximum has been reached. */
 				if (count < 128)
-					{
+				{
 					if (packet[0] == 0)
 						continue;
-					}
+				}
 				else
 					count--;
-				}
+			}
 
 			/* If there is a count then write out the run. Otherwise, write
 			 * the raw pixel to the packet.
 			 */
 			if ((count != 0) && (packet[0] == 0))
-				{
+			{
 				/* Run count */
 				packet[0] = (count | 0x80);
 
@@ -1175,11 +1219,11 @@ long Targa::EncodeImage()
 				start = end;
 				count = 0;
 				packet[0] = 0;
-				}
+			}
 			else
-				{
+			{
 				if (count == 0)
-					{
+				{
 					/* Copy the raw pixel to the packet. */
 					for (i = 0; i < depth; i++)
 						packet[packet_index + i] = start[i];
@@ -1190,13 +1234,13 @@ long Targa::EncodeImage()
 					/* Reposition start */
 					start = end;
 					packet_index += depth;
-					}
+				}
 
 				/* Write the raw packet if the packet is full or a run has started
 				 * or all the pixels have been processed.
 				 */
 				if ((packet[0] == 127) || (count != 0) || (pixels == 0))
-					{
+				{
 					i = packet[0];
 					packet[0]--;
 
@@ -1205,42 +1249,41 @@ long Targa::EncodeImage()
 
 					packet_index = 1;
 					packet[0] = 0;
-					}
 				}
 			}
+		}
 
 		/* Free the packet buffer. */
 		free(packet);
-		}
+	}
 	else
 		error = TGAERR_NOMEM;
 
 	return (error);
-	}
-
+}
 
 /****************************************************************************
-*
-* NAME
-*     Targa::InvertImage - Invert TrueColor image data.
-*
-* SYNOPSIS
-*     InvertImage()
-*
-*     void InvertImage(void);
-*
-* FUNCTION
-*
-* INPUTS
-*     NONE
-*
-* RESULT
-*     NONE
-*
-****************************************************************************/
+ *
+ * NAME
+ *     Targa::InvertImage - Invert TrueColor image data.
+ *
+ * SYNOPSIS
+ *     InvertImage()
+ *
+ *     void InvertImage(void);
+ *
+ * FUNCTION
+ *
+ * INPUTS
+ *     NONE
+ *
+ * RESULT
+ *     NONE
+ *
+ ****************************************************************************/
 
 void Targa::InvertImage(void)
-	{
+{
 	char *buffer;
 	long depth;
 	long pixel_count;
@@ -1258,23 +1301,22 @@ void Targa::InvertImage(void)
 
 	/* 16-bit pixel layout is different that 24-bit and 32-bit. */
 	if (depth > 2)
-		{
+	{
 		while (pixel_count > 0)
-			{
+		{
 			for (i = 0; i < (depth / 2); i++)
-				{
+			{
 				c = *(buffer + i);
 				*(buffer + i) = *(buffer + ((depth - 1) - i));
 				*(buffer + ((depth - 1) - i)) = c;
-				}
+			}
 
 			/* Next pixel */
 			pixel_count--;
 			buffer += depth;
-			}
 		}
 	}
-
+}
 
 /*
 ** These functions are just for ease of ifdef'ing between standard io calls and FileClass.
@@ -1295,45 +1337,54 @@ bool Targa::Is_File_Open(void)
 	return (mFH != -1);
 #endif
 }
-bool Targa::File_Open_Read(const char* name)
+bool Targa::File_Open_Read(const char *name)
 {
 #ifdef TGA_USES_WWLIB_FILE_CLASSES
 	TGAFile = _TheFileFactory->Get_File(name);
-	if (TGAFile && TGAFile->Is_Available()) {
+	if (TGAFile && TGAFile->Is_Available())
+	{
 		return (TGAFile->Open(FileClass::READ) != 0);
-	} else {
+	}
+	else
+	{
 		return false;
 	}
 #else
-	mFH = open(name, (O_RDONLY|O_BINARY));
+	mFH = open(name, (O_RDONLY | O_BINARY));
 	return (mFH != -1);
 #endif
 }
-bool Targa::File_Open_Write(const char* name)
+bool Targa::File_Open_Write(const char *name)
 {
 #ifdef TGA_USES_WWLIB_FILE_CLASSES
 	TGAFile = _TheWritingFileFactory->Get_File(name);
-	if (TGAFile) {
+	if (TGAFile)
+	{
 		return (TGAFile->Open(FileClass::WRITE) != 0);
-	} else {
+	}
+	else
+	{
 		return false;
 	}
 #else
-	mFH = open(name, (O_CREAT|O_TRUNC|O_WRONLY|O_BINARY), (S_IREAD|S_IWRITE));
+	mFH = open(name, (O_CREAT | O_TRUNC | O_WRONLY | O_BINARY), (S_IREAD | S_IWRITE));
 	return (mFH != -1);
 #endif
 }
-bool Targa::File_Open_ReadWrite(const char* name)
+bool Targa::File_Open_ReadWrite(const char *name)
 {
 #ifdef TGA_USES_WWLIB_FILE_CLASSES
 	TGAFile = _TheWritingFileFactory->Get_File(name);
-	if (TGAFile && TGAFile->Is_Available()) {
-		return (TGAFile->Open(FileClass::READ|FileClass::WRITE) != 0);
-	} else {
+	if (TGAFile && TGAFile->Is_Available())
+	{
+		return (TGAFile->Open(FileClass::READ | FileClass::WRITE) != 0);
+	}
+	else
+	{
 		return false;
 	}
 #else
-	mFH = open(name, (O_RDWR|O_BINARY), (S_IREAD|S_IWRITE));
+	mFH = open(name, (O_RDWR | O_BINARY), (S_IREAD | S_IWRITE));
 	return (mFH != -1);
 #endif
 }
@@ -1368,30 +1419,31 @@ int Targa::File_Write(void *buffer, int size)
 //
 // ----------------------------------------------------------------------------
 
-long Targa_Error_Handler(long load_err,const char* filename)
+long Targa_Error_Handler(long load_err, const char *filename)
 {
-	switch (load_err) {
-	case 0:
-		return 0;
-	case TGAERR_OPEN:
-//		WWDEBUG_SAY(("Targa: Failed to open file \"%s\"", filename));
-		break;
+	switch (load_err)
+	{
+		case 0:
+			return 0;
+		case TGAERR_OPEN:
+			//		WWDEBUG_SAY(("Targa: Failed to open file \"%s\"", filename));
+			break;
 
-	case TGAERR_READ:
-//		WWDEBUG_SAY(("Targa: Failed to read file \"%s\"", filename));
-		break;
+		case TGAERR_READ:
+			//		WWDEBUG_SAY(("Targa: Failed to read file \"%s\"", filename));
+			break;
 
-	case TGAERR_NOTSUPPORTED:
-//		WWDEBUG_SAY(("Targa: File \"%s\" is an unsupported Targa type", filename));
-		break;
+		case TGAERR_NOTSUPPORTED:
+			//		WWDEBUG_SAY(("Targa: File \"%s\" is an unsupported Targa type", filename));
+			break;
 
-	case TGAERR_NOMEM:
-//		WWDEBUG_SAY(("Targa: Failed to allocate memory for file \"%s\"", filename));
-		break;
+		case TGAERR_NOMEM:
+			//		WWDEBUG_SAY(("Targa: Failed to allocate memory for file \"%s\"", filename));
+			break;
 
-	default:
-//		WWDEBUG_SAY(("Targa: Unknown error when loading file \"%s\"", filename));
-		break;
+		default:
+			//		WWDEBUG_SAY(("Targa: Unknown error when loading file \"%s\"", filename));
+			break;
 	}
 	return load_err;
 }

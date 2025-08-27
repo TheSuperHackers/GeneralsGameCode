@@ -44,12 +44,12 @@ class GameFont : public MemoryPoolObject
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameFont, "GameFont")
 public:
-	GameFont*			next;  ///< for library use
-	AsciiString		nameString;
-	Int						pointSize;		 ///< point size of font
-	Int						height;				///< pixel height of font
-	void*					fontData;  ///< font data to be filled out for device specific font
-	Bool					bold;				 ///< is this font bold
+	GameFont *next; ///< for library use
+	AsciiString nameString;
+	Int pointSize; ///< point size of font
+	Int height; ///< pixel height of font
+	void *fontData; ///< font data to be filled out for device specific font
+	Bool bold; ///< is this font bold
 };
 EMPTY_DTOR(GameFont)
 
@@ -58,54 +58,53 @@ EMPTY_DTOR(GameFont)
 //-------------------------------------------------------------------------------------------------
 class FontLibrary : public SubsystemInterface
 {
-
 public:
-
-
 public:
+	FontLibrary(void);
+	virtual ~FontLibrary(void);
 
-	FontLibrary( void );
-	virtual ~FontLibrary( void );
+	virtual void init(void);
+	virtual void reset(void);
+	virtual void update(void) {}
 
-	virtual void init( void );
-	virtual void reset( void );
-	virtual void update( void ) { }
+	GameFont *getFont(AsciiString name, Int pointSize, Bool bold); ///< get a font pointer
 
-	GameFont *getFont( AsciiString name, Int pointSize, Bool bold );  ///< get a font pointer
+	GameFont *firstFont(void); ///< return first font
+	GameFont *nextFont(GameFont *font); ///< get next font in library
 
-	GameFont *firstFont( void );  ///< return first font
-	GameFont *nextFont( GameFont *font );  ///< get next font in library
-
-	Int getCount( void );  ///< return how many fonts are loaded in this lib
+	Int getCount(void); ///< return how many fonts are loaded in this lib
 
 protected:
-
-	void deleteAllFonts( void );				///< delete all fonts in this library
-	void linkFont( GameFont *font );		///< add to font list
-	void unlinkFont( GameFont *font );  ///< remove font from list
+	void deleteAllFonts(void); ///< delete all fonts in this library
+	void linkFont(GameFont *font); ///< add to font list
+	void unlinkFont(GameFont *font); ///< remove font from list
 
 	/// load the font data pointer based on everything else we already have set
-	virtual Bool loadFontData( GameFont *font ) = 0;
+	virtual Bool loadFontData(GameFont *font) = 0;
 	/// release the font data pointer
-	virtual void releaseFontData( GameFont *font ) { };
+	virtual void releaseFontData(GameFont *font) {};
 
-	GameFont *m_fontList;  ///< list of fonts we have loaded
-	Int m_count;  ///< number of unique fonts loaded in this lib
-
+	GameFont *m_fontList; ///< list of fonts we have loaded
+	Int m_count; ///< number of unique fonts loaded in this lib
 };
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
-inline Int FontLibrary::getCount( void ) { return m_count; }
-inline GameFont *FontLibrary::firstFont( void ) { return m_fontList; }
-inline GameFont *FontLibrary::nextFont( GameFont *font )
+inline Int FontLibrary::getCount(void)
 {
-	if( font )
+	return m_count;
+}
+inline GameFont *FontLibrary::firstFont(void)
+{
+	return m_fontList;
+}
+inline GameFont *FontLibrary::nextFont(GameFont *font)
+{
+	if (font)
 		return font->next;
 	return NULL;
 }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
-extern FontLibrary *TheFontLibrary;  ///< font library external
+extern FontLibrary *TheFontLibrary; ///< font library external
 
 #endif // __GAMEFONT_H_
-

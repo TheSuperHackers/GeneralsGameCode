@@ -30,32 +30,32 @@
 
 class SelectMacrotexture : public CDialog
 {
-// Construction
+	// Construction
 public:
-	SelectMacrotexture(CWnd* pParent = NULL);   // standard constructor
+	SelectMacrotexture(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(SelectMacrotexture)
-	enum { IDD = IDD_MACRO_TEXTURE };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_MACRO_TEXTURE
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SelectMacrotexture)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 	//}}AFX_VIRTUAL
 
 protected:
-	CTreeCtrl		m_textureTreeView;
+	CTreeCtrl m_textureTreeView;
 
-
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(SelectMacrotexture)
 	virtual BOOL OnInitDialog();

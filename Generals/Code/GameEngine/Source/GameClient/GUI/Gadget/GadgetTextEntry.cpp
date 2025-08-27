@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Language.h"
@@ -62,8 +62,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 static Byte drawCnt = 0;
 // static TbIME *ourIME = NULL;  ///< @todo need this for IME kanji support
-static GameWindow *curWindow = NULL;  /**< so we can keep track of the input
-																					 window when using IME */
+static GameWindow *curWindow = NULL; /**< so we can keep track of the input
+																					window when using IME */
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 
@@ -78,78 +78,71 @@ static GameWindow *curWindow = NULL;  /**< so we can keep track of the input
 // GadgetTextEntryInput =======================================================
 /** Handle input for text entry field */
 //=============================================================================
-WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
-													 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GadgetTextEntryInput(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
 	EntryData *e = (EntryData *)window->winGetUserData();
 	WinInstanceData *instData = window->winGetInstanceData();
 
-	if ( TheIMEManager && TheIMEManager->isAttachedTo( window) && TheIMEManager->isComposing())
+	if (TheIMEManager && TheIMEManager->isAttachedTo(window) && TheIMEManager->isComposing())
 	{
 		// ignore input while IME has focus
 		return MSG_HANDLED;
 	}
 
-	switch( msg )
+	switch (msg)
 	{
 		// ------------------------------------------------------------------------
 		case GWM_IME_CHAR:
 		{
-			WideChar ch = (WideChar) mData1;
+			WideChar ch = (WideChar)mData1;
 
 			// --------------------------------------------------------------------
-			if ( ch == VK_RETURN )
+			if (ch == VK_RETURN)
 			{
 				// Done with this edit
-			 		TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-			 																				GEM_EDIT_DONE,
-			 																				(WindowMsgData)window,
-			 																				0 );
+				TheWindowManager->winSendSystemMsg(window->winGetOwner(), GEM_EDIT_DONE, (WindowMsgData)window, 0);
 				return MSG_HANDLED;
 			};
 
-			if( ch )
+			if (ch)
 			{
 				// Constrain keys based on rules for entry box.
-				if( e->numericalOnly )
+				if (e->numericalOnly)
 				{
-					if( TheWindowManager->winIsDigit( ch ) == 0 )
+					if (TheWindowManager->winIsDigit(ch) == 0)
 						return MSG_HANDLED;
 				}
-				if( e->alphaNumericalOnly )
+				if (e->alphaNumericalOnly)
 				{
-					if( TheWindowManager->winIsAlNum( ch ) == 0 )
+					if (TheWindowManager->winIsAlNum(ch) == 0)
 						return MSG_HANDLED;
 				}
-				if ( e->aSCIIOnly )
+				if (e->aSCIIOnly)
 				{
-					if ( TheWindowManager->winIsAscii( ch ) == 0 )
+					if (TheWindowManager->winIsAscii(ch) == 0)
 					{
 						return MSG_HANDLED;
 					}
 				}
 
-				if( e->charPos < e->maxTextLen-1 )
+				if (e->charPos < e->maxTextLen - 1)
 				{
-						e->text->appendChar( ch );
-						e->sText->appendChar( L'*' );
-						e->charPos++;
-						TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																						GEM_UPDATE_TEXT,
-																						(WindowMsgData)window,
-																						0 );
+					e->text->appendChar(ch);
+					e->sText->appendChar(L'*');
+					e->charPos++;
+					TheWindowManager->winSendSystemMsg(window->winGetOwner(), GEM_UPDATE_TEXT, (WindowMsgData)window, 0);
 				}
 			}
 			break;
 		}
 		// ------------------------------------------------------------------------
 		case GWM_CHAR:
-			if ( BitIsSet( mData2, KEY_STATE_DOWN ) && BitIsSet( mData2, KEY_STATE_ALT | KEY_STATE_CONTROL ) )
+			if (BitIsSet(mData2, KEY_STATE_DOWN) && BitIsSet(mData2, KEY_STATE_ALT | KEY_STATE_CONTROL))
 			{
 				return MSG_IGNORED; // text extries shouldn't care about CTRL+* or ALT+*
 			}
 
-			switch( mData1 )
+			switch (mData1)
 			{
 				/*
 				// --------------------------------------------------------------------
@@ -197,13 +190,13 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 				case KEY_RIGHT:
 				case KEY_TAB:
 
-					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
+					if (BitIsSet(mData2, KEY_STATE_DOWN))
 					{
 						GameWindow *parent;
 						parent = window->winGetParent();
-						if(parent && !BitIsSet(parent->winGetStyle(), GWS_COMBO_BOX))
+						if (parent && !BitIsSet(parent->winGetStyle(), GWS_COMBO_BOX))
 							parent = NULL;
-						if(parent)
+						if (parent)
 							TheWindowManager->winNextTab(parent);
 						else
 							TheWindowManager->winNextTab(window);
@@ -215,13 +208,13 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 				case KEY_UP:
 				case KEY_LEFT:
 
-					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
+					if (BitIsSet(mData2, KEY_STATE_DOWN))
 					{
 						GameWindow *parent;
 						parent = window->winGetParent();
-						if(parent && !BitIsSet(parent->winGetStyle(), GWS_COMBO_BOX))
+						if (parent && !BitIsSet(parent->winGetStyle(), GWS_COMBO_BOX))
 							parent = NULL;
-						if(parent)
+						if (parent)
 							TheWindowManager->winPrevTab(parent);
 						else
 							TheWindowManager->winPrevTab(window);
@@ -231,48 +224,41 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 				// --------------------------------------------------------------------
 				case KEY_BACKSPACE:
 
-					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
+					if (BitIsSet(mData2, KEY_STATE_DOWN))
 					{
 						// if conCharPos != 0 this will fall through to next case.
 						// it should be noted that conCharPos can only != 0 in Jap & Kor
-						if( e->conCharPos == 0 )
+						if (e->conCharPos == 0)
 						{
-							if( e->charPos > 0 )
+							if (e->charPos > 0)
 							{
-
 								e->text->removeLastChar();
 								e->sText->removeLastChar();
 								e->charPos--;
-								TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																								GEM_UPDATE_TEXT,
-																								(WindowMsgData)window,
-																								0 );
-							}  // end if
+								TheWindowManager->winSendSystemMsg(window->winGetOwner(), GEM_UPDATE_TEXT, (WindowMsgData)window, 0);
+							} // end if
 						}
 					}
 					break;
 
-			}  // end switch( mData1 )
+			} // end switch( mData1 )
 
 			break;
 
 		// ------------------------------------------------------------------------
 		case GWM_LEFT_DOWN:
-			BitSet( instData->m_state, WIN_STATE_HILITED );
-			TheWindowManager->winSetFocus( window );
+			BitSet(instData->m_state, WIN_STATE_HILITED);
+			TheWindowManager->winSetFocus(window);
 			break;
 
 		// ------------------------------------------------------------------------
 		case GWM_MOUSE_ENTERING:
 
-			if (BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
+			if (BitIsSet(instData->getStyle(), GWS_MOUSE_TRACK))
 			{
-
-				BitSet( instData->m_state, WIN_STATE_HILITED );
-				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																						GBM_MOUSE_ENTERING,
-																						(WindowMsgData)window, 0 );
-				//TheWindowManager->winSetFocus( window );
+				BitSet(instData->m_state, WIN_STATE_HILITED);
+				TheWindowManager->winSendSystemMsg(window->winGetOwner(), GBM_MOUSE_ENTERING, (WindowMsgData)window, 0);
+				// TheWindowManager->winSetFocus( window );
 			}
 
 			break;
@@ -280,71 +266,63 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 		// ------------------------------------------------------------------------
 		case GWM_MOUSE_LEAVING:
 
-			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
+			if (BitIsSet(instData->getStyle(), GWS_MOUSE_TRACK))
 			{
-
-				BitClear( instData->m_state, WIN_STATE_HILITED );
-				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																						GBM_MOUSE_LEAVING,
-																						(WindowMsgData)window, 0 );
+				BitClear(instData->m_state, WIN_STATE_HILITED);
+				TheWindowManager->winSendSystemMsg(window->winGetOwner(), GBM_MOUSE_LEAVING, (WindowMsgData)window, 0);
 			}
 			break;
 
 		// ------------------------------------------------------------------------
 		case GWM_LEFT_DRAG:
 
-			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
-				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																						GGM_LEFT_DRAG,
-																						(WindowMsgData)window, 0 );
+			if (BitIsSet(instData->getStyle(), GWS_MOUSE_TRACK))
+				TheWindowManager->winSendSystemMsg(window->winGetOwner(), GGM_LEFT_DRAG, (WindowMsgData)window, 0);
 			break;
 
 		// ------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	} // end switch( msg )
 
 	return MSG_HANDLED;
 
-}  // end GadgetTextEntryInput
+} // end GadgetTextEntryInput
 
 // GadgetTextEntrySystem ======================================================
 /** Handle system messages for entry field */
 //=============================================================================
-WindowMsgHandledType GadgetTextEntrySystem( GameWindow *window, UnsignedInt msg,
-														WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GadgetTextEntrySystem(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
 	EntryData *e = (EntryData *)window->winGetUserData();
 	WinInstanceData *instData = window->winGetInstanceData();
 
-	switch( msg )
+	switch (msg)
 	{
-
 		// ------------------------------------------------------------------------
 		case GEM_GET_TEXT:
-			*(UnicodeString*)mData2 = e->text->getText();
+			*(UnicodeString *)mData2 = e->text->getText();
 			break;
 
 		// ------------------------------------------------------------------------
 		case GEM_SET_TEXT:
 		{
-
-			const UnicodeString* ustr = (const UnicodeString*)mData1;
-			e->text->setText( *ustr );
+			const UnicodeString *ustr = (const UnicodeString *)mData1;
+			e->text->setText(*ustr);
 			e->charPos = ustr->getLength();
-			e->constructText->setText( UnicodeString::TheEmptyString );
+			e->constructText->setText(UnicodeString::TheEmptyString);
 			e->conCharPos = 0;
 
 			// set our secret text string to be filled with '*' the same length
-			e->sText->setText( UnicodeString::TheEmptyString );
+			e->sText->setText(UnicodeString::TheEmptyString);
 			Int len = ustr->getLength();
-			for( Int i = 0; i < len; i++ )
-				e->sText->appendChar( L'*' );
+			for (Int i = 0; i < len; i++)
+				e->sText->appendChar(L'*');
 
 			break;
 
-		}  // end set text
+		} // end set text
 
 		// ------------------------------------------------------------------------
 		case GWM_CREATE:
@@ -355,69 +333,66 @@ WindowMsgHandledType GadgetTextEntrySystem( GameWindow *window, UnsignedInt msg,
 		case GWM_DESTROY:
 
 			// delete the edit display string
-			TheDisplayStringManager->freeDisplayString( e->text );
-			TheDisplayStringManager->freeDisplayString( e->sText );
-			TheDisplayStringManager->freeDisplayString( e->constructText );
+			TheDisplayStringManager->freeDisplayString(e->text);
+			TheDisplayStringManager->freeDisplayString(e->sText);
+			TheDisplayStringManager->freeDisplayString(e->constructText);
 
 			// delete construct list
-			if( e->constructList )
-				TheWindowManager->winDestroy( e->constructList );
+			if (e->constructList)
+				TheWindowManager->winDestroy(e->constructList);
 
 			// free all edit data
-			delete( (EntryData *)window->winGetUserData() );
+			delete ((EntryData *)window->winGetUserData());
 			window->winSetUserData(NULL);
 			e = NULL;
 			break;
 
 		// ------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
-			if( mData1 == FALSE )
+			if (mData1 == FALSE)
 			{
 				// If we're losing focus
 				/// @todo need to enable this for IME support
 				// ourIME->UnActivate();
 				curWindow = NULL;
-				BitClear( instData->m_state, WIN_STATE_SELECTED );
-				BitClear( instData->m_state, WIN_STATE_HILITED );
+				BitClear(instData->m_state, WIN_STATE_SELECTED);
+				BitClear(instData->m_state, WIN_STATE_HILITED);
 
-				if( e->constructList )
-					e->constructList->winHide( TRUE );
-				e->constructText->setText( UnicodeString::TheEmptyString );
+				if (e->constructList)
+					e->constructList->winHide(TRUE);
+				e->constructText->setText(UnicodeString::TheEmptyString);
 				e->conCharPos = 0;
-				if(TheIMEManager && TheIMEManager->isAttachedTo(window))
+				if (TheIMEManager && TheIMEManager->isAttachedTo(window))
 					TheIMEManager->attach(NULL);
-				//TheIMEManager->detatch();
+				// TheIMEManager->detatch();
 			}
 			else
 			{
 				curWindow = window;
 				/// @todo need to enable this for IME support
 				if (TheIMEManager)
-					TheIMEManager->attach( window );
+					TheIMEManager->attach(window);
 				// ourIME->Activate( (void *)ApplicationHWnd );
-				BitSet( instData->m_state, WIN_STATE_SELECTED );
-				BitSet( instData->m_state, WIN_STATE_HILITED );
+				BitSet(instData->m_state, WIN_STATE_SELECTED);
+				BitSet(instData->m_state, WIN_STATE_HILITED);
 			}
 
-			TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																					GGM_FOCUS_CHANGE,
-																					mData1,
-																					window->winGetWindowId() );
+			TheWindowManager->winSendSystemMsg(window->winGetOwner(), GGM_FOCUS_CHANGE, mData1, window->winGetWindowId());
 
-			*(Bool*)mData2 = TRUE;
+			*(Bool *)mData2 = TRUE;
 			break;
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	} // end switch( msg )
 
 	return MSG_HANDLED;
 
-}  // end GadgetTextEntrySystem
+} // end GadgetTextEntrySystem
 
 /** @todo we might want to do something like this if we use IME for language
-	* support in this product */
+ * support in this product */
 /*
 // used to create interface to IME
 BoolCode InitializeEntryGadget( void )
@@ -532,53 +507,51 @@ void InformEntry( WideChar c )
 
 // GadgetTextEntrySetFont =====================================================
 /** Set the font for a text entry control, we need to set the window
-	* text font, the tooltip font, and the edit text display strings for
-	* the text data itself and the secret text */
+ * text font, the tooltip font, and the edit text display strings for
+ * the text data itself and the secret text */
 //=============================================================================
-void GadgetTextEntrySetFont( GameWindow *g, GameFont *font )
+void GadgetTextEntrySetFont(GameWindow *g, GameFont *font)
 {
 	EntryData *entryData = (EntryData *)g->winGetUserData();
 	DisplayString *dString;
 
 	// set the font for the display strings all windows have
 	dString = g->winGetInstanceData()->getTextDisplayString();
-	if( dString )
-		dString->setFont( font );
+	if (dString)
+		dString->setFont(font);
 	dString = g->winGetInstanceData()->getTooltipDisplayString();
-	if( dString )
-		dString->setFont( font );
+	if (dString)
+		dString->setFont(font);
 
 	// text entry specific
-	if( entryData )
+	if (entryData)
 	{
-
 		dString = entryData->text;
-		if( dString )
-			dString->setFont( font );
+		if (dString)
+			dString->setFont(font);
 		dString = entryData->sText;
-		if( dString )
-			dString->setFont( font );
+		if (dString)
+			dString->setFont(font);
 
-	}  // end if
+	} // end if
 
-}  // end GadgetTextEntrySetFont
+} // end GadgetTextEntrySetFont
 
 // GadgetTextEntryGetText =======================================================
 /** Get the text for a Text entry */
 //=============================================================================
-UnicodeString GadgetTextEntryGetText( GameWindow *textentry )
+UnicodeString GadgetTextEntryGetText(GameWindow *textentry)
 {
-
 	// sanity
-	if( textentry == NULL )
+	if (textentry == NULL)
 		return UnicodeString::TheEmptyString;
 
 	// verify that this is a list box
-	if( BitIsSet( textentry->winGetStyle(), GWS_ENTRY_FIELD ) == FALSE )
+	if (BitIsSet(textentry->winGetStyle(), GWS_ENTRY_FIELD) == FALSE)
 		return UnicodeString::TheEmptyString;
 
 	UnicodeString result;
-	TheWindowManager->winSendSystemMsg( textentry, GEM_GET_TEXT, 0, (WindowMsgData)&result );
+	TheWindowManager->winSendSystemMsg(textentry, GEM_GET_TEXT, 0, (WindowMsgData)&result);
 	return result;
 
-}  // end GadgetListBoxGetText
+} // end GadgetListBoxGetText

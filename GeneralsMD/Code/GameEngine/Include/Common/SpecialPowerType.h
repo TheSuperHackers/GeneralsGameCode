@@ -37,12 +37,11 @@
 // Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
 // existing values!
 //
-enum SpecialPowerType CPP_11(: Int)
-{
+enum SpecialPowerType CPP_11( : Int){
 	SPECIAL_INVALID,
 	// don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]
 
-	//Superweapons
+	// Superweapons
 	SPECIAL_DAISY_CUTTER,
 	SPECIAL_PARADROP_AMERICA,
 	SPECIAL_CARPET_BOMB,
@@ -69,7 +68,7 @@ enum SpecialPowerType CPP_11(: Int)
 	SPECIAL_ARTILLERY_BARRAGE,
 	// don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]
 
-	//Special abilities
+	// Special abilities
 	SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES,
 	SPECIAL_REMOTE_CHARGES,
 	SPECIAL_TIMED_CHARGES,
@@ -94,18 +93,18 @@ enum SpecialPowerType CPP_11(: Int)
 	// don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]
 	SPECIAL_LAUNCH_BAIKONUR_ROCKET,
 
-  SPECIAL_SPECTRE_GUNSHIP,
-  SPECIAL_GPS_SCRAMBLER,
+	SPECIAL_SPECTRE_GUNSHIP,
+	SPECIAL_GPS_SCRAMBLER,
 
 	SPECIAL_FRENZY,
 	SPECIAL_SNEAK_ATTACK,
 
-	//Ack, this is ass. These enums fix a bug where new enums were missing for
-	//shortcut powers... but the real clincher was that if you were say USA and
-	//captured a Tank China command center, your US paradrop would be assigned
-	//to the china tank drop and when you tried to fire it from the shortcut
-	//it could pick the china one and not fire it because it didn't have
-	//complete connection... ugh!!!
+	// Ack, this is ass. These enums fix a bug where new enums were missing for
+	// shortcut powers... but the real clincher was that if you were say USA and
+	// captured a Tank China command center, your US paradrop would be assigned
+	// to the china tank drop and when you tried to fire it from the shortcut
+	// it could pick the china one and not fire it because it didn't have
+	// complete connection... ugh!!!
 	SPECIAL_CHINA_CARPET_BOMB,
 	EARLY_SPECIAL_CHINA_CARPET_BOMB,
 	SPECIAL_LEAFLET_DROP,
@@ -133,6 +132,6 @@ enum SpecialPowerType CPP_11(: Int)
 	// don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]
 };
 
-	// Definition of these names is located in SpecialPower.cpp
+// Definition of these names is located in SpecialPower.cpp
 
 #endif /* __SPECIALPOWERTYPE_H__ */

@@ -45,7 +45,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Debug.h"
@@ -71,7 +71,7 @@
 // DisplayString::DisplayString ===============================================
 /** */
 //=============================================================================
-DisplayString::DisplayString( void )
+DisplayString::DisplayString(void)
 {
 	// m_textString = "";	// not necessary, done by default
 	m_font = NULL;
@@ -79,23 +79,22 @@ DisplayString::DisplayString( void )
 	m_next = NULL;
 	m_prev = NULL;
 
-}  // end DisplayString
+} // end DisplayString
 
 // DisplayString::~DisplayString ==============================================
 /** */
 //=============================================================================
-DisplayString::~DisplayString( void )
+DisplayString::~DisplayString(void)
 {
-
 	// free any data
 	reset();
 
-}  // end ~DisplayString
+} // end ~DisplayString
 
 // DisplayString::setText =====================================================
 /** Copy the text to this instance */
 //=============================================================================
-void DisplayString::setText( UnicodeString text )
+void DisplayString::setText(UnicodeString text)
 {
 	if (text == m_textString)
 		return;
@@ -105,33 +104,32 @@ void DisplayString::setText( UnicodeString text )
 	// our text has now changed
 	notifyTextChanged();
 
-}  // end setText
+} // end setText
 
 // DisplayString::reset =======================================================
 /** Free and reset all the data for this string, effectively making this
-	* instance like brand new */
+ * instance like brand new */
 //=============================================================================
-void DisplayString::reset( void )
+void DisplayString::reset(void)
 {
-
 	m_textString.clear();
 
 	// no font
 	m_font = NULL;
 
-}  // end reset
+} // end reset
 
 // DisplayString::removeLastChar ==============================================
 /** Remove the last character from the string text */
 //=============================================================================
-void DisplayString::removeLastChar( void )
+void DisplayString::removeLastChar(void)
 {
 	m_textString.removeLastChar();
 
 	// our text has now changed
 	notifyTextChanged();
 
-}  // end removeLastChar
+} // end removeLastChar
 
 // DisplayString::truncateBy ==================================================
 /** Remove the last charCount characters from the string text */
@@ -143,12 +141,12 @@ void DisplayString::truncateBy(const Int charCount)
 	// our text has now changed
 	notifyTextChanged();
 
-}  // end truncateBy
+} // end truncateBy
 
 // DisplayString::truncateTo ==================================================
 /** Remove the last characters from the string text so it's at the most
-	* maxLength characters long */
-	//=============================================================================
+ * maxLength characters long */
+//=============================================================================
 void DisplayString::truncateTo(const Int maxLength)
 {
 	m_textString.truncateTo(maxLength);
@@ -156,17 +154,16 @@ void DisplayString::truncateTo(const Int maxLength)
 	// our text has now changed
 	notifyTextChanged();
 
-}  // end truncateTo
+} // end truncateTo
 
 // DisplayString::appendChar ==================================================
 /** Append character to the end of the string */
 //=============================================================================
-void DisplayString::appendChar( WideChar c )
+void DisplayString::appendChar(WideChar c)
 {
 	m_textString.concat(c);
 
 	// text has now changed
 	notifyTextChanged();
 
-}  // end appendchar
-
+} // end appendchar

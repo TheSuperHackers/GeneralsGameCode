@@ -16,14 +16,12 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #if _MSC_VER >= 1000
 #pragma once
 #endif // _MSC_VER >= 1000
 
 #ifndef BSEARCH_H
 #define BSEARCH_H
-
 
 /*
 **	Binary searching template. It can be faster than the built in C library
@@ -32,18 +30,19 @@
 **	a function call, then using the C library version would be appropriate.
 */
 template<class T>
-T * Binary_Search(T * A, int n, T const & target)
+T *Binary_Search(T *A, int n, T const &target)
 {
-   const T * pointer = A;
-   int stride = n;
+	const T *pointer = A;
+	int stride = n;
 
 	/*
 	**	Keep binary searching until a match has been found
 	**	or the search has resulted in no match.
 	*/
-   while (0 < stride) {
-      int const pivot = stride / 2;
-      T const * const tryptr = pointer + pivot;
+	while (0 < stride)
+	{
+		int const pivot = stride / 2;
+		T const *const tryptr = pointer + pivot;
 
 		/*
 		**	Binary stride forward or backward depending on if the candidate
@@ -52,10 +51,12 @@ T * Binary_Search(T * A, int n, T const & target)
 		**	then the base pointer must be adjusted and the stride must be
 		**	moved backward.
 		*/
-      if (target < *tryptr) {
+		if (target < *tryptr)
+		{
 			stride = pivot;
-		} else {
-
+		}
+		else
+		{
 			/*
 			**	An exact match results in the pointer being found
 			**	and returned to the caller. This check is performed
@@ -63,16 +64,16 @@ T * Binary_Search(T * A, int n, T const & target)
 			**	be true and thus the equality comparison would be
 			**	called less often -- should be faster as a result.
 			*/
-			if (*tryptr == target) {
-				return ((T *) tryptr);
+			if (*tryptr == target)
+			{
+				return ((T *)tryptr);
 			}
 
-	      pointer = tryptr + 1;
-		   stride -= pivot + 1;
+			pointer = tryptr + 1;
+			stride -= pivot + 1;
 		}
-   }
-   return (NULL);
+	}
+	return (NULL);
 }
-
 
 #endif

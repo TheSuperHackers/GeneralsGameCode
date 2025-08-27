@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : WWAudio                                                      *
  *                                                                                             *
- *                     $Archive:: /Commando/Code/WWAudio/Threads.cpp                                                                                                                                                                                                                                                                                                                               $Modtime:: 7/17/99 3:32p                                               $*
+ *                     $Archive:: /Commando/Code/WWAudio/Threads.cpp $Modtime:: 7/17/99 3:32p $*
  *                                                                                             *
  *                    $Revision:: 5                                                           $*
  *                                                                                             *
@@ -30,43 +30,40 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "Threads.h"
 #include "refcount.h"
 #include "Utils.h"
 #include <process.h>
 #include "wwdebug.h"
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////
 //	Static member initialization
 ///////////////////////////////////////////////////////////////////////////////////////////
-WWAudioThreadsClass::DELAYED_RELEASE_INFO *	WWAudioThreadsClass::m_ReleaseListHead	= NULL;
-CriticalSectionClass		WWAudioThreadsClass::m_ListMutex;
-HANDLE						WWAudioThreadsClass::m_hDelayedReleaseThread	= (HANDLE)-1;
-HANDLE						WWAudioThreadsClass::m_hDelayedReleaseEvent	= (HANDLE)-1;
-CriticalSectionClass		WWAudioThreadsClass::m_CriticalSection;
-bool							WWAudioThreadsClass::m_IsShuttingDown			= false;
+WWAudioThreadsClass::DELAYED_RELEASE_INFO *WWAudioThreadsClass::m_ReleaseListHead = NULL;
+CriticalSectionClass WWAudioThreadsClass::m_ListMutex;
+HANDLE WWAudioThreadsClass::m_hDelayedReleaseThread = (HANDLE)-1;
+HANDLE WWAudioThreadsClass::m_hDelayedReleaseEvent = (HANDLE)-1;
+CriticalSectionClass WWAudioThreadsClass::m_CriticalSection;
+bool WWAudioThreadsClass::m_IsShuttingDown = false;
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //
 //	WWAudioThreadsClass
 //
 ///////////////////////////////////////////////////////////////////////////////////////////
-WWAudioThreadsClass::WWAudioThreadsClass (void)
+WWAudioThreadsClass::WWAudioThreadsClass(void)
 {
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //
 //	~WWAudioThreadsClass
 //
 ///////////////////////////////////////////////////////////////////////////////////////////
-WWAudioThreadsClass::~WWAudioThreadsClass (void)
+WWAudioThreadsClass::~WWAudioThreadsClass(void)
 {
-	return ;
+	return;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -75,67 +72,64 @@ WWAudioThreadsClass::~WWAudioThreadsClass (void)
 //
 ///////////////////////////////////////////////////////////////////////////////////////////
 HANDLE
-WWAudioThreadsClass::Create_Delayed_Release_Thread (LPVOID param)
+WWAudioThreadsClass::Create_Delayed_Release_Thread(LPVOID param)
 {
 	//
 	//	If the thread isn't already running, then
 	//
-	if (m_hDelayedReleaseThread == (HANDLE)-1) {
-		m_hDelayedReleaseEvent	= ::CreateEvent (NULL, FALSE, FALSE, NULL);
-		m_hDelayedReleaseThread = (HANDLE)::_beginthread (Delayed_Release_Thread_Proc, 0, param);
+	if (m_hDelayedReleaseThread == (HANDLE)-1)
+	{
+		m_hDelayedReleaseEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
+		m_hDelayedReleaseThread = (HANDLE)::_beginthread(Delayed_Release_Thread_Proc, 0, param);
 	}
 
 	return m_hDelayedReleaseThread;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //
 //	End_Delayed_Release_Thread
 //
 ///////////////////////////////////////////////////////////////////////////////////////////
-void
-WWAudioThreadsClass::End_Delayed_Release_Thread (DWORD timeout)
+void WWAudioThreadsClass::End_Delayed_Release_Thread(DWORD timeout)
 {
 	m_IsShuttingDown = true;
 
 	//
 	//	If the thread is running, then wait for it to finish
 	//
-	if (m_hDelayedReleaseThread != (HANDLE)-1) {
-		::SetEvent (m_hDelayedReleaseEvent);
-		::WaitForSingleObject (m_hDelayedReleaseThread, timeout);
+	if (m_hDelayedReleaseThread != (HANDLE)-1)
+	{
+		::SetEvent(m_hDelayedReleaseEvent);
+		::WaitForSingleObject(m_hDelayedReleaseThread, timeout);
 
-		m_hDelayedReleaseEvent	= (HANDLE)-1;
-		m_hDelayedReleaseThread	= (HANDLE)-1;
+		m_hDelayedReleaseEvent = (HANDLE)-1;
+		m_hDelayedReleaseThread = (HANDLE)-1;
 	}
 
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //
 //	Add_Delayed_Release_Object
 //
 ///////////////////////////////////////////////////////////////////////////////////////////
-void
-WWAudioThreadsClass::Add_Delayed_Release_Object
-(
-	RefCountClass *	object,
-	DWORD					delay
-)
+void WWAudioThreadsClass::Add_Delayed_Release_Object(RefCountClass *object, DWORD delay)
 {
-	if (m_IsShuttingDown) {
-		REF_PTR_RELEASE (object);
-	} else {
-
+	if (m_IsShuttingDown)
+	{
+		REF_PTR_RELEASE(object);
+	}
+	else
+	{
 		//
 		//	Make sure we have a thread running that will handle
 		// the operation for us.
 		//
-		if (m_hDelayedReleaseThread == (HANDLE)-1) {
-			Create_Delayed_Release_Thread ();
+		if (m_hDelayedReleaseThread == (HANDLE)-1)
+		{
+			Create_Delayed_Release_Thread();
 		}
 
 		//
@@ -150,25 +144,23 @@ WWAudioThreadsClass::Add_Delayed_Release_Object
 			//	add it to our list
 			//
 			DELAYED_RELEASE_INFO *info = W3DNEW DELAYED_RELEASE_INFO;
-			info->object	= object;
-			info->time		= ::GetTickCount () + delay;
-			info->next		= m_ReleaseListHead;
+			info->object = object;
+			info->time = ::GetTickCount() + delay;
+			info->next = m_ReleaseListHead;
 
 			m_ReleaseListHead = info;
 		}
 	}
 
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //
 //	Flush_Delayed_Release_Objects
 //
 ///////////////////////////////////////////////////////////////////////////////////////////
-void
-WWAudioThreadsClass::Flush_Delayed_Release_Objects (void)
+void WWAudioThreadsClass::Flush_Delayed_Release_Objects(void)
 {
 	CriticalSectionClass::LockClass lock(m_CriticalSection);
 
@@ -178,37 +170,36 @@ WWAudioThreadsClass::Flush_Delayed_Release_Objects (void)
 	//
 	DELAYED_RELEASE_INFO *info = NULL;
 	DELAYED_RELEASE_INFO *next = NULL;
-	for (info = m_ReleaseListHead; info != NULL; info = next) {
+	for (info = m_ReleaseListHead; info != NULL; info = next)
+	{
 		next = info->next;
 
 		//
 		//	Free the object
 		//
-		REF_PTR_RELEASE (info->object);
-		SAFE_DELETE (info);
+		REF_PTR_RELEASE(info->object);
+		SAFE_DELETE(info);
 	}
 
 	m_ReleaseListHead = NULL;
-	return ;
+	return;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //
 //	Delayed_Release_Thread_Proc
 //
 ///////////////////////////////////////////////////////////////////////////////////////////
-void __cdecl
-WWAudioThreadsClass::Delayed_Release_Thread_Proc (LPVOID /*param*/)
+void __cdecl WWAudioThreadsClass::Delayed_Release_Thread_Proc(LPVOID /*param*/)
 {
 	const DWORD base_timeout = 2000;
-	DWORD timeout = base_timeout + rand () % 1000;
+	DWORD timeout = base_timeout + rand() % 1000;
 
 	//
 	//	Keep looping forever until we are singalled to quit (or an error occurs)
 	//
-	while (::WaitForSingleObject (m_hDelayedReleaseEvent, timeout) == WAIT_TIMEOUT) {
-
+	while (::WaitForSingleObject(m_hDelayedReleaseEvent, timeout) == WAIT_TIMEOUT)
+	{
 		{
 			CriticalSectionClass::LockClass lock(m_ListMutex);
 
@@ -216,34 +207,39 @@ WWAudioThreadsClass::Delayed_Release_Thread_Proc (LPVOID /*param*/)
 			//	Loop through all the objects in our delay list, and
 			// free any that have expired.
 			//
-			DWORD current_time			= ::GetTickCount ();
+			DWORD current_time = ::GetTickCount();
 			DELAYED_RELEASE_INFO *curr = NULL;
-			DELAYED_RELEASE_INFO *prev	= NULL;
-			DELAYED_RELEASE_INFO *next	= NULL;
-			for (curr = m_ReleaseListHead; curr != NULL; curr = next) {
+			DELAYED_RELEASE_INFO *prev = NULL;
+			DELAYED_RELEASE_INFO *next = NULL;
+			for (curr = m_ReleaseListHead; curr != NULL; curr = next)
+			{
 				next = curr->next;
 
 				//
 				//	If the time has expired, free the object
 				//
-				if (current_time >= curr->time) {
-
+				if (current_time >= curr->time)
+				{
 					//
 					//	Unlink the object
 					//
-					if (prev == NULL) {
+					if (prev == NULL)
+					{
 						m_ReleaseListHead = next;
-					} else {
+					}
+					else
+					{
 						prev->next = next;
 					}
 
 					//
 					//	Free the object
 					//
-					REF_PTR_RELEASE (curr->object);
-					SAFE_DELETE (curr);
-
-				} else {
+					REF_PTR_RELEASE(curr->object);
+					SAFE_DELETE(curr);
+				}
+				else
+				{
 					prev = curr;
 				}
 			}
@@ -252,11 +248,11 @@ WWAudioThreadsClass::Delayed_Release_Thread_Proc (LPVOID /*param*/)
 		//
 		//	To avoid 'periodic' releases, randomize our timeout
 		//
-		timeout = base_timeout + rand () % 1000;
+		timeout = base_timeout + rand() % 1000;
 	}
 
-	Flush_Delayed_Release_Objects ();
-	return ;
+	Flush_Delayed_Release_Objects();
+	return;
 }
 
 /*
@@ -300,4 +296,3 @@ WWAudioThreadsClass::End_Modify_List (void)
 	return ;
 }
 */
-

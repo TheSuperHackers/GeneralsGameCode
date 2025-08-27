@@ -30,43 +30,44 @@
 
 class CAmbientLightDialog : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CAmbientLightDialog(CWnd* pParent = NULL);   // standard constructor
+	CAmbientLightDialog(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CAmbientLightDialog)
-	enum { IDD = IDD_LIGHT_AMBIENT_DIALOG };
-	CSliderCtrl	m_blueSlider;
-	CSliderCtrl	m_greenSlider;
-	CSliderCtrl	m_redSlider;
+	enum
+	{
+		IDD = IDD_LIGHT_AMBIENT_DIALOG
+	};
+	CSliderCtrl m_blueSlider;
+	CSliderCtrl m_greenSlider;
+	CSliderCtrl m_redSlider;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CAmbientLightDialog)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CAmbientLightDialog)
 	virtual BOOL OnInitDialog();
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar);
 	virtual void OnCancel();
 	afx_msg void OnGrayscaleCheck();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-    private:
-        int m_initialRed;
-        int m_initialGreen;
-        int m_initialBlue;
+private:
+	int m_initialRed;
+	int m_initialGreen;
+	int m_initialBlue;
 };
 
 //{{AFX_INSERT_LOCATION}}

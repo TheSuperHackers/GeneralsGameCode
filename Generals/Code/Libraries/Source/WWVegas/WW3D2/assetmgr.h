@@ -35,7 +35,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -52,16 +51,16 @@
 #include "hashtemplate.h"
 #include "simplevec.h"
 
-class	HAnimClass;
-class	HTreeClass;
-class	ChunkLoadClass;
+class HAnimClass;
+class HTreeClass;
+class ChunkLoadClass;
 
 class FileClass;
 class FileFactoryClass;
 class PrototypeLoaderClass;
-class	Font3DDataClass;
-class	Font3DInstanceClass;
-class	FontCharsClass;
+class Font3DDataClass;
+class Font3DInstanceClass;
+class FontCharsClass;
 class RenderObjClass;
 class HModelClass;
 class PrototypeClass;
@@ -75,7 +74,6 @@ struct StreamingTextureConfig;
 class TextureClass;
 class MetalMapManagerClass;
 
-
 /*
 ** AssetIterator
 **	This object can iterate through the 3D assets which
@@ -84,19 +82,16 @@ class MetalMapManagerClass;
 */
 class AssetIterator
 {
-
 public:
-
-	virtual							~AssetIterator(void) { };
-	virtual void					First(void) { Index = 0; }
-	virtual void					Next(void)	{ Index ++; }
-	virtual bool					Is_Done(void) = 0;
-	virtual const char *			Current_Item_Name(void) = 0;
+	virtual ~AssetIterator(void) {};
+	virtual void First(void) { Index = 0; }
+	virtual void Next(void) { Index++; }
+	virtual bool Is_Done(void) = 0;
+	virtual const char *Current_Item_Name(void) = 0;
 
 protected:
-
-	AssetIterator(void)			{ Index = 0; }
-	int								Index;
+	AssetIterator(void) { Index = 0; }
+	int Index;
 };
 
 /*
@@ -107,9 +102,8 @@ protected:
 class RenderObjIterator : public AssetIterator
 {
 public:
-	virtual int						Current_Item_Class_ID(void) = 0;
+	virtual int Current_Item_Class_ID(void) = 0;
 };
-
 
 /*
 
@@ -136,7 +130,7 @@ public:
 	- Future caching: In the case that we want to implement a caching system,
 	assets must be "released" when not in use.
 
-   - CommandoW3d asset manager asks the game data asset manager for assets by name.
+	 - CommandoW3d asset manager asks the game data asset manager for assets by name.
 	Game data manager must have a "directory" structure which maps each named
 	asset to data on disk.  It then returns an image of the file once it has
 	been loaded into ram.
@@ -145,7 +139,7 @@ public:
 	We will write a tool which chops w3d files up so that all of the individual assets
 	are brought out into their own file and named with the actual w3d name.
 
-   - Data Asset Manager will load the file into ram, give it to us and forget about it
+	 - Data Asset Manager will load the file into ram, give it to us and forget about it
 	W3d will release_ref it or delete it and the file image will go away.
 
 	- Each time the 3d asset manager is requested for an asset, it will look through
@@ -180,12 +174,9 @@ public:
 
 */
 
-
 class WW3DAssetManager
 {
-
 public:
-
 	/*
 	** Constructor and destructor
 	*/
@@ -202,160 +193,162 @@ public:
 	** use a line of code like this:
 	**	WW3DAssetManager::Get_Instance();
 	*/
-	static WW3DAssetManager *		Get_Instance(void) { return TheInstance; }
-	static void							Delete_This(void) { if (TheInstance) delete TheInstance; TheInstance=NULL; }
+	static WW3DAssetManager *Get_Instance(void) { return TheInstance; }
+	static void Delete_This(void)
+	{
+		if (TheInstance)
+			delete TheInstance;
+		TheInstance = NULL;
+	}
 
 	/*
 	** Load data from any type of w3d file
 	*/
-	virtual bool						Load_3D_Assets( const char * filename);
-	virtual bool						Load_3D_Assets(FileClass & assetfile);
+	virtual bool Load_3D_Assets(const char *filename);
+	virtual bool Load_3D_Assets(FileClass &assetfile);
 
 	/*
 	** Get rid of all of the currently loaded assets
 	*/
-	virtual void						Free_Assets(void);
+	virtual void Free_Assets(void);
 
 	/*
 	**	Release any assets that only the asset manager has a reference to.
 	*/
-	virtual void						Release_Unused_Assets(void);
+	virtual void Release_Unused_Assets(void);
 
 	/*
 	** Release assets not in the given exclusion list.
 	*/
-	virtual void						Free_Assets_With_Exclusion_List(const DynamicVectorClass<StringClass> & model_exclusion_list);
-	virtual void						Create_Asset_List(DynamicVectorClass<StringClass> & model_exclusion_list);
+	virtual void Free_Assets_With_Exclusion_List(const DynamicVectorClass<StringClass> &model_exclusion_list);
+	virtual void Create_Asset_List(DynamicVectorClass<StringClass> &model_exclusion_list);
 
 	/*
 	** create me an instance of one of the prototype render objects
 	*/
-	virtual RenderObjClass *		Create_Render_Obj(const char * name);
+	virtual RenderObjClass *Create_Render_Obj(const char *name);
 
 	/*
 	** query if there is a render object with the specified name
 	*/
-	virtual bool						Render_Obj_Exists(const char * name);
+	virtual bool Render_Obj_Exists(const char *name);
 
 	/*
 	** Iterate through all render objects or through the
 	** sub-categories of render objects.  NOTE! the user is responsible
 	** for releasing the iterator when finished with it!
 	*/
-	virtual RenderObjIterator *	Create_Render_Obj_Iterator(void);
-	virtual void						Release_Render_Obj_Iterator(RenderObjIterator *);
+	virtual RenderObjIterator *Create_Render_Obj_Iterator(void);
+	virtual void Release_Render_Obj_Iterator(RenderObjIterator *);
 
 	/*
 	** Access to HAnims, Used by Animatable3DObj's
 	** TODO: make HAnims accessible from the HMODELS (or Animatable3DObj...)
 	*/
-	virtual AssetIterator *			Create_HAnim_Iterator(void);
-	virtual HAnimClass *				Get_HAnim(const char * name);
-	virtual bool						Add_Anim (HAnimClass *new_anim) { return HAnimManager.Add_Anim (new_anim); }
+	virtual AssetIterator *Create_HAnim_Iterator(void);
+	virtual HAnimClass *Get_HAnim(const char *name);
+	virtual bool Add_Anim(HAnimClass *new_anim) { return HAnimManager.Add_Anim(new_anim); }
 
 	/*
 	** Access to textures
 	*/
-//	virtual AssetIterator *			Create_Texture_Iterator(void);
+	//	virtual AssetIterator *			Create_Texture_Iterator(void);
 
-	HashTemplateClass<StringClass,TextureClass*>& Texture_Hash() { return TextureHash; }
+	HashTemplateClass<StringClass, TextureClass *> &Texture_Hash() { return TextureHash; }
 
 	static void Log_Texture_Statistics();
 
-	virtual TextureClass *			Get_Texture
-	(
-		const char * filename,
-		MipCountType mip_level_count=MIP_LEVELS_ALL,
-		WW3DFormat texture_format=WW3D_FORMAT_UNKNOWN,
-		bool allow_compression=true,
-		TextureBaseClass::TexAssetType type=TextureBaseClass::TEX_REGULAR,
-		bool allow_reduction=true
-	);
-	TextureClass*						Get_Bumpmap_Based_On_Texture(TextureClass* texture);
+	virtual TextureClass *Get_Texture(
+			const char *filename,
+			MipCountType mip_level_count = MIP_LEVELS_ALL,
+			WW3DFormat texture_format = WW3D_FORMAT_UNKNOWN,
+			bool allow_compression = true,
+			TextureBaseClass::TexAssetType type = TextureBaseClass::TEX_REGULAR,
+			bool allow_reduction = true);
+	TextureClass *Get_Bumpmap_Based_On_Texture(TextureClass *texture);
 
-	virtual void						Release_All_Textures(void);
-	virtual void						Release_Unused_Textures(void);
-	virtual void						Release_Texture(TextureClass *);
-	virtual void						Load_Procedural_Textures();
-	virtual MetalMapManagerClass* Peek_Metal_Map_Manager() { return MetalManager; }
+	virtual void Release_All_Textures(void);
+	virtual void Release_Unused_Textures(void);
+	virtual void Release_Texture(TextureClass *);
+	virtual void Load_Procedural_Textures();
+	virtual MetalMapManagerClass *Peek_Metal_Map_Manager() { return MetalManager; }
 
 	/*
 	** Access to Font3DInstances. (These are not saved, we just use the
 	** asset manager as a convienient way to create them.)
 	*/
-	virtual Font3DInstanceClass * Get_Font3DInstance( const char * name);
+	virtual Font3DInstanceClass *Get_Font3DInstance(const char *name);
 
 	/*
 	** Access to FontChars. Used by Render2DSentenceClass
 	*/
-	virtual FontCharsClass *		Get_FontChars( const char * name, int point_size, bool is_bold = false );
+	virtual FontCharsClass *Get_FontChars(const char *name, int point_size, bool is_bold = false);
 
 	/*
 	** Access to HTrees, Used by Animatable3DObj's
 	*/
-	virtual AssetIterator *			Create_HTree_Iterator(void);
-	virtual HTreeClass *				Get_HTree(const char * name);
+	virtual AssetIterator *Create_HTree_Iterator(void);
+	virtual HTreeClass *Get_HTree(const char *name);
 
 	/*
 	** Prototype Loaders, The user can register new loaders here.  Note that
 	** a the pointer to your loader will be stored inside the asset manager.
 	** For this reason, your loader should be a static or global object.
 	*/
-	virtual void						Register_Prototype_Loader(PrototypeLoaderClass * loader);
+	virtual void Register_Prototype_Loader(PrototypeLoaderClass *loader);
 
 	/*
 	**	The Add_Prototype is public so that we can add prototypes for procedurally
 	** generated objects to the asset manager.
 	*/
-	void									Add_Prototype(PrototypeClass * newproto);
-	void									Remove_Prototype(PrototypeClass *proto);
-	void									Remove_Prototype(const char *name);
-	PrototypeClass *					Find_Prototype(const char * name);
+	void Add_Prototype(PrototypeClass *newproto);
+	void Remove_Prototype(PrototypeClass *proto);
+	void Remove_Prototype(const char *name);
+	PrototypeClass *Find_Prototype(const char *name);
 
 	/*
 	** Load on Demand
 	*/
-	bool	Get_WW3D_Load_On_Demand( void )			{ return WW3D_Load_On_Demand; }
-	void	Set_WW3D_Load_On_Demand( bool on_off )	{ WW3D_Load_On_Demand = on_off; }
+	bool Get_WW3D_Load_On_Demand(void) { return WW3D_Load_On_Demand; }
+	void Set_WW3D_Load_On_Demand(bool on_off) { WW3D_Load_On_Demand = on_off; }
 
 	/*
 	** Add fog to objects on load
 	*/
-	bool	Get_Activate_Fog_On_Load( void )				{ return Activate_Fog_On_Load; }
-	void	Set_Activate_Fog_On_Load( bool on_off )	{ Activate_Fog_On_Load = on_off; }
+	bool Get_Activate_Fog_On_Load(void) { return Activate_Fog_On_Load; }
+	void Set_Activate_Fog_On_Load(bool on_off) { Activate_Fog_On_Load = on_off; }
 
 	// Log texture statistics
 	void Log_All_Textures();
 
 protected:
-
 	/*
 	** Access to Font3DData. (These are privately managed/accessed)
 	*/
-	virtual AssetIterator *			Create_Font3DData_Iterator(void);
-	virtual void						Add_Font3DData(Font3DDataClass * font);
-	virtual void						Remove_Font3DData(Font3DDataClass * font);
-	virtual Font3DDataClass *		Get_Font3DData(const char * name);
-	virtual void						Release_All_Font3DDatas( void);
-	virtual void						Release_Unused_Font3DDatas( void);
+	virtual AssetIterator *Create_Font3DData_Iterator(void);
+	virtual void Add_Font3DData(Font3DDataClass *font);
+	virtual void Remove_Font3DData(Font3DDataClass *font);
+	virtual Font3DDataClass *Get_Font3DData(const char *name);
+	virtual void Release_All_Font3DDatas(void);
+	virtual void Release_Unused_Font3DDatas(void);
 
-	virtual void						Release_All_FontChars( void );
+	virtual void Release_All_FontChars(void);
 
-	void									Free(void);
+	void Free(void);
 
-	PrototypeLoaderClass *			Find_Prototype_Loader(int chunk_id);
-	bool									Load_Prototype(ChunkLoadClass & cload);
+	PrototypeLoaderClass *Find_Prototype_Loader(int chunk_id);
+	bool Load_Prototype(ChunkLoadClass &cload);
 
 	/*
 	** Compile time control over the dynamic arrays:
 	*/
 	enum
 	{
-		PROTOLOADERS_VECTOR_SIZE =	32,
-		PROTOLOADERS_GROWTH_RATE =	16,
+		PROTOLOADERS_VECTOR_SIZE = 32,
+		PROTOLOADERS_GROWTH_RATE = 16,
 
-		PROTOTYPES_VECTOR_SIZE =	256,
-		PROTOTYPES_GROWTH_RATE =	32,
+		PROTOTYPES_VECTOR_SIZE = 256,
+		PROTOTYPES_GROWTH_RATE = 32,
 	};
 
 	/*
@@ -363,14 +356,14 @@ protected:
 	** These objects are responsible for importing certain W3D chunk types and turning
 	** them into prototypes.
 	*/
-	DynamicVectorClass < PrototypeLoaderClass * >			PrototypeLoaders;
+	DynamicVectorClass<PrototypeLoaderClass *> PrototypeLoaders;
 
 	/*
 	** Prototypes
 	** These objects are abstract factories for named render objects.  Prototypes is
 	** a dynamic array of pointers to the currently loaded prototypes.
 	*/
-	DynamicVectorClass < PrototypeClass * >					Prototypes;
+	DynamicVectorClass<PrototypeClass *> Prototypes;
 
 	/*
 	** Prototype Hash Table
@@ -378,41 +371,41 @@ protected:
 	*/
 	enum
 	{
-		PROTOTYPE_HASH_TABLE_SIZE =	4096,
-		PROTOTYPE_HASH_BITS =			12,
-		PROTOTYPE_HASH_MASK =			0x00000FFF
+		PROTOTYPE_HASH_TABLE_SIZE = 4096,
+		PROTOTYPE_HASH_BITS = 12,
+		PROTOTYPE_HASH_MASK = 0x00000FFF
 	};
 
-	PrototypeClass * *												PrototypeHashTable;
+	PrototypeClass **PrototypeHashTable;
 
 	/*
 	** managers of HTrees, HAnims, Textures....
 	*/
-	HTreeManagerClass					HTreeManager;
-	HAnimManagerClass					HAnimManager;
+	HTreeManagerClass HTreeManager;
+	HAnimManagerClass HAnimManager;
 
 	/*
 	** list of Font3DDatas
 	*/
-	SList<Font3DDataClass>			Font3DDatas;
+	SList<Font3DDataClass> Font3DDatas;
 
 	/*
 	** list of FontChars
 	*/
-	SimpleDynVecClass<FontCharsClass*>		FontCharsList;
+	SimpleDynVecClass<FontCharsClass *> FontCharsList;
 
 	/*
 	** Should .W3D be loaded if not in memory
 	*/
-	bool									WW3D_Load_On_Demand;
+	bool WW3D_Load_On_Demand;
 
 	/*
 	** Should we activate fog on objects while loading them
 	*/
-	bool									Activate_Fog_On_Load;
+	bool Activate_Fog_On_Load;
 
 	// Metal Map Manager
-	MetalMapManagerClass * MetalManager;
+	MetalMapManagerClass *MetalManager;
 
 	/*
 	** Texture hash table for quick texture lookups
@@ -423,7 +416,7 @@ protected:
 	** The 3d asset manager is a singleton, there should be only
 	** one and it is accessible through Get_Instance()
 	*/
-	static WW3DAssetManager *		TheInstance;
+	static WW3DAssetManager *TheInstance;
 
 	/*
 	** the iterator classes are friends

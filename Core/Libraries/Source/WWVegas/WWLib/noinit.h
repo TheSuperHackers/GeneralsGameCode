@@ -47,11 +47,11 @@
 **	into a class object, simply perform an in-place new operation.
 */
 #ifndef NoInitClass
-class NoInitClass {
-	public:
-		void operator () (void) const {};
+class NoInitClass
+{
+public:
+	void operator()(void) const {};
 };
 #endif
-
 
 #endif

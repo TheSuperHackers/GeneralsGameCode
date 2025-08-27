@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/NameKeyGenerator.h"
 #include "Common/ThingTemplate.h"
@@ -44,9 +44,8 @@
 #include "GameClient/GadgetPushButton.h"
 #include "GameClient/HotKey.h"
 
-
-#define STOP_ID			10
-#define EVACUATE_ID	11
+#define STOP_ID 10
+#define EVACUATE_ID 11
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -54,45 +53,44 @@ struct PopulateButtonInfo
 {
 	Object *source;
 	Int buttonIndex;
-	ControlBar* self;
-	GameWindow** inventoryButtons;
+	ControlBar *self;
+	GameWindow **inventoryButtons;
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ControlBar::populateButtonProc( Object *obj, void *userData )
+void ControlBar::populateButtonProc(Object *obj, void *userData)
 {
-	PopulateButtonInfo* info = (PopulateButtonInfo*)userData;
+	PopulateButtonInfo *info = (PopulateButtonInfo *)userData;
 
 	// sanity
-	DEBUG_ASSERTCRASH( info->buttonIndex < MAX_STRUCTURE_INVENTORY_BUTTONS,
-										 ("Too many objects inside '%s' for the inventory buttons to hold",
-											info->source->getTemplate()->getName().str()) );
+	DEBUG_ASSERTCRASH(
+			info->buttonIndex < MAX_STRUCTURE_INVENTORY_BUTTONS,
+			("Too many objects inside '%s' for the inventory buttons to hold", info->source->getTemplate()->getName().str()));
 
 	// put object in inventory data
-	info->self->m_containData[ info->buttonIndex ].control = info->inventoryButtons[ info->buttonIndex ];
-	info->self->m_containData[ info->buttonIndex ].objectID = obj->getID();
+	info->self->m_containData[info->buttonIndex].control = info->inventoryButtons[info->buttonIndex];
+	info->self->m_containData[info->buttonIndex].objectID = obj->getID();
 
 	// set the UI button that will allow us to press it and cause the object to exit the container
 	const Image *image;
 	image = obj->getTemplate()->getButtonImage();
-	GadgetButtonSetEnabledImage( info->inventoryButtons[ info->buttonIndex ], image );
+	GadgetButtonSetEnabledImage(info->inventoryButtons[info->buttonIndex], image);
 
-	//Show the auto-contained object's veterancy symbol!
-	image = calculateVeterancyOverlayForObject( obj );
-	GadgetButtonDrawOverlayImage( info->inventoryButtons[ info->buttonIndex ], image );
+	// Show the auto-contained object's veterancy symbol!
+	image = calculateVeterancyOverlayForObject(obj);
+	GadgetButtonDrawOverlayImage(info->inventoryButtons[info->buttonIndex], image);
 
 	// Enable the button
-	info->inventoryButtons[ info->buttonIndex ]->winEnable( TRUE );
+	info->inventoryButtons[info->buttonIndex]->winEnable(TRUE);
 
 	// move to the next button index
 	info->buttonIndex++;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ControlBar::populateStructureInventory( Object *building )
+void ControlBar::populateStructureInventory(Object *building)
 {
 	Int i;
 
@@ -102,68 +100,67 @@ void ControlBar::populateStructureInventory( Object *building )
 	// reset hotkeys -- seeing it only is reset in switching contexts. This is a special case
 	// because we are building the hotkeys on the fly sort of... and it changes as guys enter
 	// and leave. Taking this call out will cause multiple hotkeys to be added.
-	if(TheHotKeyManager)
+	if (TheHotKeyManager)
 		TheHotKeyManager->reset();
 
 	// get the contain module of the object
 	ContainModuleInterface *contain = building->getContain();
-	DEBUG_ASSERTCRASH( contain, ("Object in structure inventory does not contain a Contain Module") );
+	DEBUG_ASSERTCRASH(contain, ("Object in structure inventory does not contain a Contain Module"));
 	if (!contain)
 		return;
 
 	/// @todo srj -- remove hard-coding here, please
-	const CommandButton *evacuateCommand = findCommandButton( "Command_Evacuate" );
-	setControlCommand( m_commandWindows[ EVACUATE_ID ], evacuateCommand );
-	m_commandWindows[ EVACUATE_ID ]->winEnable( FALSE );
+	const CommandButton *evacuateCommand = findCommandButton("Command_Evacuate");
+	setControlCommand(m_commandWindows[EVACUATE_ID], evacuateCommand);
+	m_commandWindows[EVACUATE_ID]->winEnable(FALSE);
 
 	/// @todo srj -- remove hard-coding here, please
-	const CommandButton *stopCommand = findCommandButton( "Command_Stop" );
-	setControlCommand( m_commandWindows[ STOP_ID ], stopCommand );
-	m_commandWindows[ STOP_ID ]->winEnable( FALSE );
+	const CommandButton *stopCommand = findCommandButton("Command_Stop");
+	setControlCommand(m_commandWindows[STOP_ID], stopCommand);
+	m_commandWindows[STOP_ID]->winEnable(FALSE);
 
 	// get the inventory exit command to assign into the button
 	/// @todo srj -- remove hard-coding here, please
-	const CommandButton *exitCommand = findCommandButton( "Command_StructureExit" );
+	const CommandButton *exitCommand = findCommandButton("Command_StructureExit");
 
 	// get window handles for each of the inventory buttons
 	AsciiString windowName;
-	for( i = 0; i < MAX_STRUCTURE_INVENTORY_BUTTONS; i++ )
+	for (i = 0; i < MAX_STRUCTURE_INVENTORY_BUTTONS; i++)
 	{
 		// show the window
-		m_commandWindows[ i ]->winHide( FALSE );
+		m_commandWindows[i]->winHide(FALSE);
 
 		//
 		// disable the button for now, it will be enabled if there is something there
 		// for its contents
 		//
-		m_commandWindows[ i ]->winEnable( FALSE );
-		m_commandWindows[ i ]->winSetStatus( WIN_STATUS_ALWAYS_COLOR );
-		m_commandWindows[ i ]->winClearStatus( WIN_STATUS_NOT_READY );
+		m_commandWindows[i]->winEnable(FALSE);
+		m_commandWindows[i]->winSetStatus(WIN_STATUS_ALWAYS_COLOR);
+		m_commandWindows[i]->winClearStatus(WIN_STATUS_NOT_READY);
 
 		// set an inventory command into the game window UI element
-		setControlCommand( m_commandWindows[ i ], exitCommand );
+		setControlCommand(m_commandWindows[i], exitCommand);
 
 		// Clear any veterancy icon incase the unit leaves!
-		GadgetButtonDrawOverlayImage( m_commandWindows[ i ], NULL );
+		GadgetButtonDrawOverlayImage(m_commandWindows[i], NULL);
 		//
 		// if the structure can hold a lesser amount inside it than what the GUI displays
 		// we will completely hide the buttons that can't contain anything
 		//
-		if( i + 1 > contain->getContainMax() )
-			m_commandWindows[ i ]->winHide( TRUE );
+		if (i + 1 > contain->getContainMax())
+			m_commandWindows[i]->winHide(TRUE);
 
-
-	}  // end for i
+	} // end for i
 
 	// show the window
-	m_commandWindows[ EVACUATE_ID ]->winHide( FALSE );
-	m_commandWindows[ STOP_ID ]->winHide( FALSE );
+	m_commandWindows[EVACUATE_ID]->winHide(FALSE);
+	m_commandWindows[STOP_ID]->winHide(FALSE);
 
 	// if there is at least one item in there enable the evacuate and stop buttons
-	if( contain->getContainCount() != 0 )
+	if (contain->getContainCount() != 0)
 	{
-		m_commandWindows[ EVACUATE_ID ]->winEnable( TRUE );
-		m_commandWindows[ STOP_ID ]->winEnable( TRUE );
+		m_commandWindows[EVACUATE_ID]->winEnable(TRUE);
+		m_commandWindows[STOP_ID]->winEnable(TRUE);
 	}
 
 	//
@@ -175,7 +172,7 @@ void ControlBar::populateStructureInventory( Object *building )
 	info.buttonIndex = 0;
 	info.self = this;
 	info.inventoryButtons = m_commandWindows;
-	contain->iterateContained(populateButtonProc, &info, FALSE );
+	contain->iterateContained(populateButtonProc, &info, FALSE);
 
 	//
 	// save how many items were contained by the object at this time so that we can update
@@ -183,11 +180,11 @@ void ControlBar::populateStructureInventory( Object *building )
 	//
 	m_lastRecordedInventoryCount = contain->getContainCount();
 
-}  // end populateStructureInventory
+} // end populateStructureInventory
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ControlBar::updateContextStructureInventory( void )
+void ControlBar::updateContextStructureInventory(void)
 {
 	Object *source = m_currentSelectedDrawable->getObject();
 
@@ -197,28 +194,26 @@ void ControlBar::updateContextStructureInventory( void )
 	// in that case we want to unselect the building so that we can't see the contents
 	//
 	Player *localPlayer = ThePlayerList->getLocalPlayer();
-	if( source->isLocallyControlled() == FALSE &&
-			localPlayer->getRelationship( source->getTeam() ) != NEUTRAL )
+	if (source->isLocallyControlled() == FALSE && localPlayer->getRelationship(source->getTeam()) != NEUTRAL)
 	{
 		Drawable *draw = source->getDrawable();
 
-		if( draw )
-			TheInGameUI->deselectDrawable( draw );
+		if (draw)
+			TheInGameUI->deselectDrawable(draw);
 		return;
 
-	}  // end if
+	} // end if
 
 	//
 	// if the object being displayed in the interface has a different count than we last knew
 	// about we need to repopulate the buttons of the interface
 	//
 	ContainModuleInterface *contain = source->getContain();
-	DEBUG_ASSERTCRASH( contain, ("No contain module defined for object in the iventory bar") );
+	DEBUG_ASSERTCRASH(contain, ("No contain module defined for object in the iventory bar"));
 	if (!contain)
 		return;
 
-	if( m_lastRecordedInventoryCount != contain->getContainCount() )
-		populateStructureInventory( source );
+	if (m_lastRecordedInventoryCount != contain->getContainCount())
+		populateStructureInventory(source);
 
-}  // end updateContextStructureInventory
-
+} // end updateContextStructureInventory

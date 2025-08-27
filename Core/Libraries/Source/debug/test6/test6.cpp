@@ -29,31 +29,31 @@
 #include "../debug.h"
 #include <stdio.h>
 
-int test,divByZero;
+int test, divByZero;
 
 void func1(void)
 {
-  test/=divByZero;
+	test /= divByZero;
 }
 
 void func2(void)
 {
-  func1();
+	func1();
 }
 
 void func3(void)
 {
-  func2();
+	func2();
 }
 
 void main(void)
 {
-  try
-  {
-    func3();
-  }
-  catch (...)
-  {
-    printf("This catch clause should not be executed.\n");
-  }
+	try
+	{
+		func3();
+	}
+	catch (...)
+	{
+		printf("This catch clause should not be executed.\n");
+	}
 }

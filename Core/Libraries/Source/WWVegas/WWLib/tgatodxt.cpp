@@ -34,7 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#pragma message ("(gth) disabling TGAtoDXTClass temporarily so I can test the WW libs merge...")
+#pragma message("(gth) disabling TGAtoDXTClass temporarily so I can test the WW libs merge...")
 #if 0
 
 #include "always.h"
@@ -43,7 +43,7 @@
 #include "tgatodxt.h"
 #include "wwdebug.h"
 #include <io.h>
-#include	<stdlib.h>
+#include <stdlib.h>
 
 // Singletons.
 TGAToDXTClass _TGAToDXTConverter;
@@ -264,6 +264,5 @@ void WriteDTXnFile (DWORD datacount, void *data)
 	memcpy (_TGAToDXTConverter.Buffer + _TGAToDXTConverter.BufferCount, data, datacount);
 	_TGAToDXTConverter.BufferCount += datacount;
 }
-
 
 #endif

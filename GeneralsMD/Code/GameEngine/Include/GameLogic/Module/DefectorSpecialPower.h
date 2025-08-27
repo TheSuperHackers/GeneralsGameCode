@@ -42,44 +42,34 @@
 class Object;
 class SpecialPowerTemplate;
 struct FieldParse;
-enum ScienceType CPP_11(: Int);
-
-
-
+enum ScienceType CPP_11( : Int);
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class DefectorSpecialPowerModuleData : public SpecialPowerModuleData
 {
-
 public:
+	DefectorSpecialPowerModuleData(void);
 
-	DefectorSpecialPowerModuleData( void );
+	static void buildFieldParse(MultiIniFieldParse &p);
 
-	static void buildFieldParse( MultiIniFieldParse& p );
-
-	Real m_fatCursorRadius;					///< the distance around the target we will reveal
-
+	Real m_fatCursorRadius; ///< the distance around the target we will reveal
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class DefectorSpecialPower : public SpecialPowerModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( DefectorSpecialPower, "DefectorSpecialPower" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( DefectorSpecialPower, DefectorSpecialPowerModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DefectorSpecialPower, "DefectorSpecialPower")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(DefectorSpecialPower, DefectorSpecialPowerModuleData)
 
 public:
-
-	DefectorSpecialPower( Thing *thing, const ModuleData *moduleData );
+	DefectorSpecialPower(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool object
 
-	virtual void doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions );
+	virtual void doSpecialPowerAtObject(Object *obj, UnsignedInt commandOptions);
+	virtual void doSpecialPowerAtLocation(const Coord3D *loc, Real angle, UnsignedInt commandOptions);
 
 protected:
-
 };
-#endif  // end DefectorSpecialPower
-
+#endif // end DefectorSpecialPower

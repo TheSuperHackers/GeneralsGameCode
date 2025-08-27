@@ -20,8 +20,7 @@
 #include <Utility/stdio_adapter.h>
 #include "Registry.h"
 
-void FormatURLFromRegistry( std::string& gamePatchURL, std::string& mapPatchURL,
-													 std::string& configURL, std::string& motdURL )
+void FormatURLFromRegistry(std::string &gamePatchURL, std::string &mapPatchURL, std::string &configURL, std::string &motdURL)
 {
 #if RTS_GENERALS
 	std::string sku = "generals";
@@ -50,4 +49,3 @@ void FormatURLFromRegistry( std::string& gamePatchURL, std::string& mapPatchURL,
 	snprintf(buf, 256, "%sMOTD-%s.txt", baseURL.c_str(), language.c_str());
 	motdURL = buf;
 }
-

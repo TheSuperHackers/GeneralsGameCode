@@ -63,16 +63,22 @@
 class AsciiString;
 class Image;
 
-enum{ MAX_OBJECTIVE_LINES = 5	};
-enum{ MAX_DISPLAYED_UNITS = 3 };
+enum
+{
+	MAX_OBJECTIVE_LINES = 5
+};
+enum
+{
+	MAX_DISPLAYED_UNITS = 3
+};
 //-----------------------------------------------------------------------------
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 class Mission : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( Mission, "Mission" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Mission, "Mission")
 public:
-	Mission( void );
+	Mission(void);
 	//~Mission( void );
 
 public:
@@ -89,23 +95,23 @@ public:
 
 class Campaign : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( Campaign, "Campaign" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Campaign, "Campaign")
 public:
-	Campaign( void );
+	Campaign(void);
 	//~Campaign( void );
 
-	Mission *newMission( AsciiString name );
-	Mission *getNextMission( Mission *current);
-	Mission *getMission( AsciiString missionName);
-	AsciiString getFinalVictoryMovie( void );
+	Mission *newMission(AsciiString name);
+	Mission *getNextMission(Mission *current);
+	Mission *getMission(AsciiString missionName);
+	AsciiString getFinalVictoryMovie(void);
 
 public:
-	typedef std::list< Mission* > MissionList;			///< list of Shell Menu schemes
+	typedef std::list<Mission *> MissionList; ///< list of Shell Menu schemes
 	typedef MissionList::iterator MissionListIt;
 
 	AsciiString m_name;
 	AsciiString m_firstMission;
-	AsciiString m_campaignNameLabel;		///< campaign name label from string manager
+	AsciiString m_campaignNameLabel; ///< campaign name label from string manager
 	MissionList m_missions;
 	AsciiString m_finalMovieName;
 };
@@ -113,48 +119,50 @@ public:
 class CampaignManager : public Snapshot
 {
 public:
-	CampaignManager( void );
-	~CampaignManager( void );
+	CampaignManager(void);
+	~CampaignManager(void);
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer ) { }
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void ) { }
+	virtual void crc(Xfer *xfer) {}
+	virtual void xfer(Xfer *xfer);
+	virtual void loadPostProcess(void) {}
 
-	void init( void );
-	Campaign *getCurrentCampaign( void );		///< Returns a point to the current Campaign
-	Mission *getCurrentMission( void );			///< Returns a point to the current mission
-	Mission *gotoNextMission( void );				///< Set the next mission as the current Mission, and returns a point to it
-	void setCampaignAndMission( AsciiString campaign, AsciiString mission );		///< Sets the campaing and Mission we're on
-	void setCampaign( AsciiString campaign );																		///< sets the campaign and set's it's first mission
-	AsciiString getCurrentMap( void );			///< Get the map located in m_currentMission;
-	enum { INVALID_MISSION_NUMBER = -1 };
-	Int getCurrentMissionNumber( void );		///< get mission number for the currently loaded level if we are in a campaign
+	void init(void);
+	Campaign *getCurrentCampaign(void); ///< Returns a point to the current Campaign
+	Mission *getCurrentMission(void); ///< Returns a point to the current mission
+	Mission *gotoNextMission(void); ///< Set the next mission as the current Mission, and returns a point to it
+	void setCampaignAndMission(AsciiString campaign, AsciiString mission); ///< Sets the campaing and Mission we're on
+	void setCampaign(AsciiString campaign); ///< sets the campaign and set's it's first mission
+	AsciiString getCurrentMap(void); ///< Get the map located in m_currentMission;
+	enum
+	{
+		INVALID_MISSION_NUMBER = -1
+	};
+	Int getCurrentMissionNumber(void); ///< get mission number for the currently loaded level if we are in a campaign
 
-	const FieldParse *getFieldParse( void ) const { return m_campaignFieldParseTable; }								///< returns the parsing fields
-	static const FieldParse m_campaignFieldParseTable[];																				///< the parse table
-	static void parseMissionPart( INI* ini, void *instance, void *store, const void *userData );					///< Parse the Mission Part
+	const FieldParse *getFieldParse(void) const { return m_campaignFieldParseTable; } ///< returns the parsing fields
+	static const FieldParse m_campaignFieldParseTable[]; ///< the parse table
+	static void parseMissionPart(INI *ini, void *instance, void *store, const void *userData); ///< Parse the Mission Part
 
 	Campaign *newCampaign(AsciiString name);
-	Bool isVictorious( void ) { return m_victorious; }
-	void SetVictorious( Bool victory ) { m_victorious = victory;	}
+	Bool isVictorious(void) { return m_victorious; }
+	void SetVictorious(Bool victory) { m_victorious = victory; }
 
-	void setRankPoints( Int rankPoints ) { m_currentRankPoints = rankPoints; }
+	void setRankPoints(Int rankPoints) { m_currentRankPoints = rankPoints; }
 	Int getRankPoints() const { return m_currentRankPoints; }
 
 	GameDifficulty getGameDifficulty() const { return m_difficulty; }
 	void setGameDifficulty(GameDifficulty d) { m_difficulty = d; }
 
 private:
-	typedef std::list< Campaign* > CampaignList;			///< list of Shell Menu schemes
+	typedef std::list<Campaign *> CampaignList; ///< list of Shell Menu schemes
 	typedef CampaignList::iterator CampaignListIt;
-	CampaignList m_campaignList;											///< Our List of Campaigns
-	Campaign *m_currentCampaign;											///< Our current Campaign
-	Mission *m_currentMission;												///< our Current Mission
+	CampaignList m_campaignList; ///< Our List of Campaigns
+	Campaign *m_currentCampaign; ///< Our current Campaign
+	Mission *m_currentMission; ///< our Current Mission
 	Bool m_victorious;
 	Int m_currentRankPoints;
 	GameDifficulty m_difficulty;
-
 };
 //-----------------------------------------------------------------------------
 // INLINING ///////////////////////////////////////////////////////////////////

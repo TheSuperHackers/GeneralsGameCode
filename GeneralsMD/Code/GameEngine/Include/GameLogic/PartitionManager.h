@@ -52,13 +52,13 @@
 //-----------------------------------------------------------------------------
 //           Includes
 //-----------------------------------------------------------------------------
-#include "Common/GameCommon.h"	// ensure we get DUMP_PERF_STATS, or not
+#include "Common/GameCommon.h" // ensure we get DUMP_PERF_STATS, or not
 #include "GameLogic/ObjectIter.h"
 #include "Common/ObjectStatusTypes.h"
 #include "Common/KindOf.h"
 #include "Common/Snapshot.h"
 #include "Common/Geometry.h"
-#include "GameClient/Display.h"	// for ShroudLevel
+#include "GameClient/Display.h" // for ShroudLevel
 
 //-----------------------------------------------------------------------------
 //           defines
@@ -96,66 +96,59 @@ class ThingTemplate;
 class GhostObject;
 class CommandButton;
 
-enum CommandSourceType CPP_11(: Int);
+enum CommandSourceType CPP_11( : Int);
 
 // ----------------------------------------------------------------------------------------------
-enum ValueOrThreat CPP_11(: Int)
-{
-	VOT_CashValue = 1,
-	VOT_ThreatValue,
-	VOT_NumItems
-};
+enum ValueOrThreat CPP_11( : Int){ VOT_CashValue = 1, VOT_ThreatValue, VOT_NumItems };
 
 // ----------------------------------------------------------------------------------------------
-enum FindPositionFlags CPP_11(: Int)
-{
-	FPF_NONE															= 0x00000000,		// no options, default behavior
-	FPF_IGNORE_WATER											= 0x00000001,		// a position found underwater is ok
-	FPF_WATER_ONLY												= 0x00000002,		// find positions in the water only
-	FPF_IGNORE_ALL_OBJECTS								= 0x00000004,		// ignore all objects, positions inside objects are ok
-	FPF_IGNORE_ALLY_OR_NEUTRAL_UNITS			= 0x00000008,		// ignore friendly units (requires relationshipObject)
-	FPF_IGNORE_ALLY_OR_NEUTRAL_STRUCTURES	= 0x00000010,		// ignore friendly structures (requires relationshipObject)
-	FPF_IGNORE_ENEMY_UNITS								= 0x00000020,		// ignore enemy units (requires relationshipObject)
-	FPF_IGNORE_ENEMY_STRUCTURES						= 0x00000040,		// ignore enemy structures (requires relationshipObject)
-	FPF_USE_HIGHEST_LAYER									= 0x00000080,		// examine pos on highest layer at given xy (rather than on ground layer)
-	FPF_CLEAR_CELLS_ONLY									= 0x00000100,		// Reject anything that is not PathFindCell::Clear
+enum FindPositionFlags CPP_11( : Int){
+	FPF_NONE = 0x00000000, // no options, default behavior
+	FPF_IGNORE_WATER = 0x00000001, // a position found underwater is ok
+	FPF_WATER_ONLY = 0x00000002, // find positions in the water only
+	FPF_IGNORE_ALL_OBJECTS = 0x00000004, // ignore all objects, positions inside objects are ok
+	FPF_IGNORE_ALLY_OR_NEUTRAL_UNITS = 0x00000008, // ignore friendly units (requires relationshipObject)
+	FPF_IGNORE_ALLY_OR_NEUTRAL_STRUCTURES = 0x00000010, // ignore friendly structures (requires relationshipObject)
+	FPF_IGNORE_ENEMY_UNITS = 0x00000020, // ignore enemy units (requires relationshipObject)
+	FPF_IGNORE_ENEMY_STRUCTURES = 0x00000040, // ignore enemy structures (requires relationshipObject)
+	FPF_USE_HIGHEST_LAYER = 0x00000080, // examine pos on highest layer at given xy (rather than on ground layer)
+	FPF_CLEAR_CELLS_ONLY = 0x00000100, // Reject anything that is not PathFindCell::Clear
 };
 // ----------------------------------------------------------------------------------------------
 
-const Real RANDOM_START_ANGLE = -99999.9f;			///< no start angle (an unlikely number to use for the start angle)
+const Real RANDOM_START_ANGLE = -99999.9f; ///< no start angle (an unlikely number to use for the start angle)
 
 struct FindPositionOptions
 {
-	FindPositionOptions( void )
+	FindPositionOptions(void)
 	{
-		flags									= FPF_NONE;
-		minRadius							= 0.0f;
-		maxRadius							= 0.0f;
-		startAngle						= RANDOM_START_ANGLE;
-		maxZDelta							= 1e10f;	// ie, any z delta.
-		ignoreObject					= NULL;
-		sourceToPathToDest    = NULL;
-		relationshipObject		= NULL;
+		flags = FPF_NONE;
+		minRadius = 0.0f;
+		maxRadius = 0.0f;
+		startAngle = RANDOM_START_ANGLE;
+		maxZDelta = 1e10f; // ie, any z delta.
+		ignoreObject = NULL;
+		sourceToPathToDest = NULL;
+		relationshipObject = NULL;
 	};
-	FindPositionFlags flags;					///< flags for finding the legal position
-	Real minRadius;										///< min radius to search around
-	Real maxRadius;										///< max radius to search around
-	Real startAngle;									///< use this angle to start the search at
-	Real maxZDelta;										///< maximum delta-z we will allow
-	const Object *ignoreObject;				///< ignore this object in legal position checks
-	const Object *sourceToPathToDest;	///< object that must be able to path to the position chosen
-	const Object *relationshipObject;	///< object to use for relationship tests
+	FindPositionFlags flags; ///< flags for finding the legal position
+	Real minRadius; ///< min radius to search around
+	Real maxRadius; ///< max radius to search around
+	Real startAngle; ///< use this angle to start the search at
+	Real maxZDelta; ///< maximum delta-z we will allow
+	const Object *ignoreObject; ///< ignore this object in legal position checks
+	const Object *sourceToPathToDest; ///< object that must be able to path to the position chosen
+	const Object *relationshipObject; ///< object to use for relationship tests
 };
 
 //=====================================
 /** */
 //=====================================
-enum DistanceCalculationType CPP_11(: Int)
-{
-	FROM_CENTER_2D					= 0,	///< measure from Object center in 2d.
-	FROM_CENTER_3D					= 1,	///< measure from Object center in 3d.
-	FROM_BOUNDINGSPHERE_2D	= 2,	///< measure from Object bounding sphere in 2d.
-	FROM_BOUNDINGSPHERE_3D	= 3		///< measure from Object bounding sphere in 3d.
+enum DistanceCalculationType CPP_11( : Int){
+	FROM_CENTER_2D = 0, ///< measure from Object center in 2d.
+	FROM_CENTER_3D = 1, ///< measure from Object center in 3d.
+	FROM_BOUNDINGSPHERE_2D = 2, ///< measure from Object bounding sphere in 2d.
+	FROM_BOUNDINGSPHERE_3D = 3 ///< measure from Object bounding sphere in 3d.
 };
 
 //=====================================
@@ -178,7 +171,6 @@ struct CollideLocAndNormal
 //=====================================
 class PartitionContactList;
 
-
 //=====================================
 /**
 	This class (often called COI for short) is the abstraction
@@ -189,15 +181,15 @@ class PartitionContactList;
 	and, for every Cell, we know the Objects that touch it.
 */
 //=====================================
-class CellAndObjectIntersection	// not MPO: we allocate these in arrays
+class CellAndObjectIntersection // not MPO: we allocate these in arrays
 {
 private:
-	PartitionCell							*m_cell;									///< the cell being touched
-	PartitionData							*m_module;								///< the module (and thus, Object) touching
-	CellAndObjectIntersection *m_prevCoi, *m_nextCoi;		///< if in use, next/prev in this cell. if not in use, next/prev free in this module.
+	PartitionCell *m_cell; ///< the cell being touched
+	PartitionData *m_module; ///< the module (and thus, Object) touching
+	CellAndObjectIntersection *m_prevCoi, *m_nextCoi; ///< if in use, next/prev in this cell. if not in use, next/prev free in
+																										///< this module.
 
 public:
-
 	// Note, we allocate these in arrays, thus we must have a default ctor (and NOT descend from MPO)
 	CellAndObjectIntersection();
 	~CellAndObjectIntersection();
@@ -245,27 +237,24 @@ public:
 */
 class SightingInfo : public MemoryPoolObject, public Snapshot
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SightingInfo, "SightingInfo" );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SightingInfo, "SightingInfo");
 
 public:
-
 	SightingInfo();
 	void reset();
 	Bool isInvalid() const;
 
-	Coord3D					m_where;
-	Real						m_howFar;
-	PlayerMaskType	m_forWhom;	// ask not for whom the sighting is masked; it masks for thee
+	Coord3D m_where;
+	Real m_howFar;
+	PlayerMaskType m_forWhom; // ask not for whom the sighting is masked; it masks for thee
 
-	UnsignedInt			m_data;			// Threat and value use as the value.  Sighting uses it for a Timestamp
+	UnsignedInt m_data; // Threat and value use as the value.  Sighting uses it for a Timestamp
 
 protected:
-
 	// snapshot method
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
 	virtual void loadPostProcess();
-
 };
 
 //=====================================
@@ -284,7 +273,7 @@ enum
 struct ShroudStatusStoreRestore
 {
 	std::vector<UnsignedByte> m_foggedOrRevealed[MAX_PLAYER_COUNT];
-	Int m_cellsWide;	// m_cellsHigh is computed by m_foggedOrRevealed[0].size() / m_cellsWide
+	Int m_cellsWide; // m_cellsHigh is computed by m_foggedOrRevealed[0].size() / m_cellsWide
 };
 
 //=====================================
@@ -293,55 +282,64 @@ struct ShroudStatusStoreRestore
 	The Cell is the fundamental unit of space in the Partition Manager.
 */
 //=====================================
-class PartitionCell : public Snapshot	// not MPO: allocated in an array
+class PartitionCell : public Snapshot // not MPO: allocated in an array
 {
 private:
-	CellAndObjectIntersection*		m_firstCoiInCell;	///< list of COIs in this cell (may be null).
-	ShroudLevel										m_shroudLevel[MAX_PLAYER_COUNT];
+	CellAndObjectIntersection *m_firstCoiInCell; ///< list of COIs in this cell (may be null).
+	ShroudLevel m_shroudLevel[MAX_PLAYER_COUNT];
 #ifdef PM_CACHE_TERRAIN_HEIGHT
-	Real													m_loTerrainZ;			///< lowest terrain-pt in this cell
-	Real													m_hiTerrainZ;			///< highest terrain-pt in this cell
+	Real m_loTerrainZ; ///< lowest terrain-pt in this cell
+	Real m_hiTerrainZ; ///< highest terrain-pt in this cell
 #endif
-	Int														m_threatValue[MAX_PLAYER_COUNT];
-	Int														m_cashValue[MAX_PLAYER_COUNT];
-	Short													m_coiCount;					///< number of COIs in this cell.
-	Short													m_cellX;						///< x-coord of this cell within the Partition Mgr coords (NOT in world coords)
-	Short													m_cellY;						///< y-coord of this cell within the Partition Mgr coords (NOT in world coords)
+	Int m_threatValue[MAX_PLAYER_COUNT];
+	Int m_cashValue[MAX_PLAYER_COUNT];
+	Short m_coiCount; ///< number of COIs in this cell.
+	Short m_cellX; ///< x-coord of this cell within the Partition Mgr coords (NOT in world coords)
+	Short m_cellY; ///< y-coord of this cell within the Partition Mgr coords (NOT in world coords)
 
 public:
-
 	// Note, we allocate these in arrays, thus we must have a default ctor (and NOT descend from MPO)
 	PartitionCell();
 #ifdef PM_CACHE_TERRAIN_HEIGHT
-	void init(Int x, Int y, Real loZ, Real hiZ) { m_cellX = x; m_cellY = y; m_loTerrainZ = loZ; m_hiTerrainZ = hiZ; }
+	void init(Int x, Int y, Real loZ, Real hiZ)
+	{
+		m_cellX = x;
+		m_cellY = y;
+		m_loTerrainZ = loZ;
+		m_hiTerrainZ = hiZ;
+	}
 #else
-	void init(Int x, Int y) { m_cellX = x; m_cellY = y; }
+	void init(Int x, Int y)
+	{
+		m_cellX = x;
+		m_cellY = y;
+	}
 #endif
 	~PartitionCell();
 
 	// --------------- inherited from Snapshot interface --------------
-	void crc( Xfer *xfer );
-	void xfer( Xfer *xfer );
-	void loadPostProcess( void );
+	void crc(Xfer *xfer);
+	void xfer(Xfer *xfer);
+	void loadPostProcess(void);
 
-	Int getCoiCount() const { return m_coiCount; }		///< return number of COIs touching this cell.
+	Int getCoiCount() const { return m_coiCount; } ///< return number of COIs touching this cell.
 	Int getCellX() const { return m_cellX; }
 	Int getCellY() const { return m_cellY; }
 
-	void addLooker( Int playerIndex );
-	void removeLooker( Int playerIndex );
-	void addShrouder( Int playerIndex );
-	void removeShrouder( Int playerIndex );
-	CellShroudStatus getShroudStatusForPlayer( Int playerIndex ) const;
+	void addLooker(Int playerIndex);
+	void removeLooker(Int playerIndex);
+	void addShrouder(Int playerIndex);
+	void removeShrouder(Int playerIndex);
+	CellShroudStatus getShroudStatusForPlayer(Int playerIndex) const;
 
 	// @todo: All of these are inline candidates
-	UnsignedInt getThreatValue( Int playerIndex );
-	void addThreatValue( Int playerIndex, UnsignedInt threatValue );
-	void removeThreatValue( Int playerIndex, UnsignedInt threatValue );
+	UnsignedInt getThreatValue(Int playerIndex);
+	void addThreatValue(Int playerIndex, UnsignedInt threatValue);
+	void removeThreatValue(Int playerIndex, UnsignedInt threatValue);
 
-	UnsignedInt getCashValue( Int playerIndex );
-	void addCashValue( Int playerIndex, UnsignedInt cashValue );
-	void removeCashValue( Int playerIndex, UnsignedInt cashValue );
+	UnsignedInt getCashValue(Int playerIndex);
+	void addCashValue(Int playerIndex, UnsignedInt cashValue);
+	void removeCashValue(Int playerIndex, UnsignedInt cashValue);
 
 	void invalidateShroudedStatusForAllCois(Int playerIndex);
 
@@ -350,13 +348,13 @@ public:
 	inline Real getHiTerrain() const { return m_hiTerrainZ; }
 #endif
 
-	void getCellCenterPos(Real& x, Real& y);
+	void getCellCenterPos(Real &x, Real &y);
 
 	inline CellAndObjectIntersection *getFirstCoiInCell() { return m_firstCoiInCell; }
 
-	#ifdef RTS_DEBUG
+#ifdef RTS_DEBUG
 	void validateCoiList();
-	#endif
+#endif
 
 	// intended only for CellAndObjectIntersection.
 	void friend_addToCellList(CellAndObjectIntersection *coi);
@@ -373,10 +371,9 @@ public:
 //=====================================
 class PartitionData : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PartitionData, "PartitionDataPool" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PartitionData, "PartitionDataPool")
 
 private:
-
 	enum DirtyStatus
 	{
 		NOT_DIRTY,
@@ -384,22 +381,23 @@ private:
 		NEED_CELL_UPDATE_AND_COLLISION_CHECK
 	};
 
-	Object											*m_object;								///< Object this module is for
-	GhostObject										*m_ghostObject;							///< Temporary object used when real object is gone but player thinks it's there because of fog.
-	PartitionData								*m_next;									///< next module in master list
-	PartitionData								*m_prev;									///< prev module in master list
-	PartitionData								*m_nextDirty;
-	PartitionData								*m_prevDirty;
+	Object *m_object; ///< Object this module is for
+	GhostObject *m_ghostObject; ///< Temporary object used when real object is gone but player thinks it's there because of
+															///< fog.
+	PartitionData *m_next; ///< next module in master list
+	PartitionData *m_prev; ///< prev module in master list
+	PartitionData *m_nextDirty;
+	PartitionData *m_prevDirty;
 
-	Int													m_coiArrayCount;					///< number of COIs allocated (may be more than are in use)
-	Int													m_coiInUseCount;					///< number of COIs that are actually in use
-	CellAndObjectIntersection		*m_coiArray;							///< The array of COIs
-	Int													m_doneFlag;
-	DirtyStatus									m_dirtyStatus;
-	ObjectShroudStatus					m_shroudedness[MAX_PLAYER_COUNT];
-	ObjectShroudStatus					m_shroudednessPrevious[MAX_PLAYER_COUNT];	///<previous frames value of m_shroudedness
-	Bool												m_everSeenByPlayer[MAX_PLAYER_COUNT];		///<whether this object has ever been seen by a given player.
-	const PartitionCell					*m_lastCell;							///< The last cell I thought my center was in.
+	Int m_coiArrayCount; ///< number of COIs allocated (may be more than are in use)
+	Int m_coiInUseCount; ///< number of COIs that are actually in use
+	CellAndObjectIntersection *m_coiArray; ///< The array of COIs
+	Int m_doneFlag;
+	DirtyStatus m_dirtyStatus;
+	ObjectShroudStatus m_shroudedness[MAX_PLAYER_COUNT];
+	ObjectShroudStatus m_shroudednessPrevious[MAX_PLAYER_COUNT]; ///< previous frames value of m_shroudedness
+	Bool m_everSeenByPlayer[MAX_PLAYER_COUNT]; ///< whether this object has ever been seen by a given player.
+	const PartitionCell *m_lastCell; ///< The last cell I thought my center was in.
 
 	/**
 		Given a shape's geometry and size parameters, calculate the maximum number of COIs
@@ -449,11 +447,7 @@ private:
 		a more efficient special-purpose filler, rather than a general
 		rasterizer.
 	*/
-	void doSmallFill(
-		Real centerX,
-		Real centerY,
-		Real radius
-	);
+	void doSmallFill(Real centerX, Real centerY, Real radius);
 
 	/// helper function for doCircleFill.
 	void hLineCircle(Int x1, Int x2, Int y);
@@ -462,23 +456,13 @@ private:
 		fill in the pixels covered by the given circular shape with the given
 		center and radius. Note that this is used for both spheres and cylinders.
 	*/
-	void doCircleFill(
-		Real centerX,
-		Real centerY,
-		Real radius
-	);
+	void doCircleFill(Real centerX, Real centerY, Real radius);
 
 	/**
 		fill in the pixels covered by the given rectangular shape with the given
 		center, dimensions, and rotation.
 	*/
-	void doRectFill(
-		Real centerX,
-		Real centerY,
-		Real halfsizeX,
-		Real halfsizeY,
-		Real angle
-	);
+	void doRectFill(Real centerX, Real centerY, Real halfsizeX, Real halfsizeY, Real angle);
 
 	/**
 		do a careful test of the geometries of 'this' and 'that', and return
@@ -489,18 +473,17 @@ private:
 	Bool collidesWith(const PartitionData *that, CollideLocAndNormal *cinfo) const;
 
 public:
-
 	PartitionData();
 
-	void attachToObject( Object* object );
-	void detachFromObject( void );
-	void attachToGhostObject(GhostObject* object);
+	void attachToObject(Object *object);
+	void detachFromObject(void);
+	void attachToGhostObject(GhostObject *object);
 	void detachFromGhostObject(void);
 
-	void setNext( PartitionData *next ) { m_next = next; }			///< set next pointer
-	PartitionData *getNext( void ) { return m_next; }						///< get the next pointer
-	void setPrev( PartitionData *prev ) { m_prev = prev; }			///< set the prev pointer
-	PartitionData *getPrev( void ) { return m_prev; }						///< get the prev pointer
+	void setNext(PartitionData *next) { m_next = next; } ///< set next pointer
+	PartitionData *getNext(void) { return m_next; } ///< get the next pointer
+	void setPrev(PartitionData *prev) { m_prev = prev; } ///< set the prev pointer
+	PartitionData *getPrev(void) { return m_prev; } ///< get the prev pointer
 
 	/// mark the given module as being "dirty", needing recalcing during next update phase.
 	// if needToUpdateCells is true, we'll recalc the partition cells it touches and do collision testing.
@@ -515,15 +498,15 @@ public:
 
 	ObjectShroudStatus getShroudedStatus(Int playerIndex);
 
-	inline Int wasSeenByAnyPlayers() const	///<check if a player in the game has seen the object but is now looking at fogged version.
+	inline Int wasSeenByAnyPlayers() const ///< check if a player in the game has seen the object but is now looking at fogged
+																				 ///< version.
 	{
-		Int i=0;
-		for (; i<MAX_PLAYER_COUNT; i++)
+		Int i = 0;
+		for (; i < MAX_PLAYER_COUNT; i++)
 			if (m_everSeenByPlayer[i] && m_shroudedness[i] == OBJECTSHROUD_FOGGED)
 				return i;
 		return i;
 	}
-
 
 	Int getControllingPlayerIndex() const;
 
@@ -536,31 +519,41 @@ public:
 	*/
 	void addPossibleCollisions(PartitionContactList *ctList);
 
-	Object *getObject() { return m_object; }				///< return the Object that owns this module
-	const Object *getObject() const { return m_object; }				///< return the Object that owns this module
-	void friend_setObject(Object *object) { m_object = object;}	///< to be used only by the partition manager.
-	GhostObject *getGhostObject() const { return m_ghostObject; }	///< return the ghost object that serves as fogged memory of object.
-	void friend_setGhostObject(GhostObject *object) {m_ghostObject=object;}	///<used by ghost object manager to free link to partition data.
-	void friend_setShroudednessPrevious(Int playerIndex,ObjectShroudStatus status); ///<only used to restore state after map border resizing and/or xfer!
-	ObjectShroudStatus friend_getShroudednessPrevious(Int playerIndex) {return m_shroudednessPrevious[playerIndex];}
+	Object *getObject() { return m_object; } ///< return the Object that owns this module
+	const Object *getObject() const { return m_object; } ///< return the Object that owns this module
+	void friend_setObject(Object *object) { m_object = object; } ///< to be used only by the partition manager.
+	GhostObject *getGhostObject() const
+	{
+		return m_ghostObject;
+	} ///< return the ghost object that serves as fogged memory of object.
+	void friend_setGhostObject(GhostObject *object)
+	{
+		m_ghostObject = object;
+	} ///< used by ghost object manager to free link to partition data.
+	void friend_setShroudednessPrevious(Int playerIndex, ObjectShroudStatus status); ///< only used to restore state after map
+																																									 ///< border resizing and/or xfer!
+	ObjectShroudStatus friend_getShroudednessPrevious(Int playerIndex) { return m_shroudednessPrevious[playerIndex]; }
 
-	void friend_removeAllTouchedCells() { removeAllTouchedCells(); }	///< this is only for use by PartitionManager
-	void friend_updateCellsTouched()	{ updateCellsTouched(); } ///< this is only for use by PartitionManager
+	void friend_removeAllTouchedCells() { removeAllTouchedCells(); } ///< this is only for use by PartitionManager
+	void friend_updateCellsTouched() { updateCellsTouched(); } ///< this is only for use by PartitionManager
 	Int friend_getCoiInUseCount() { return m_coiInUseCount; } ///< this is only for use by PartitionManager
-	Bool friend_collidesWith(const PartitionData *that, CollideLocAndNormal *cinfo) const { return collidesWith(that, cinfo); }	///< this is only for use by PartitionContactList
+	Bool friend_collidesWith(const PartitionData *that, CollideLocAndNormal *cinfo) const
+	{
+		return collidesWith(that, cinfo);
+	} ///< this is only for use by PartitionContactList
 
 	// these are only for use by getClosestObjects.
 	// (note, if we ever use other bits in this, smarten this up...)
 	Int friend_getDoneFlag() { return m_doneFlag; }
 	void friend_setDoneFlag(Int i) { m_doneFlag = i; }
 
-	inline Bool isInListDirtyModules(PartitionData* const* pListHead) const
+	inline Bool isInListDirtyModules(PartitionData *const *pListHead) const
 	{
 		Bool result = (*pListHead == this || m_prevDirty || m_nextDirty);
 		DEBUG_ASSERTCRASH(result == (m_dirtyStatus != NOT_DIRTY), ("dirty flag mismatch"));
 		return result;
 	}
-	inline void prependToDirtyModules(PartitionData** pListHead)
+	inline void prependToDirtyModules(PartitionData **pListHead)
 	{
 		DEBUG_ASSERTCRASH((m_dirtyStatus != NOT_DIRTY), ("dirty flag mismatch"));
 		m_nextDirty = *pListHead;
@@ -568,7 +561,7 @@ public:
 			(*pListHead)->m_prevDirty = this;
 		*pListHead = this;
 	}
-	void removeFromDirtyModules(PartitionData** pListHead)
+	void removeFromDirtyModules(PartitionData **pListHead)
 	{
 		m_dirtyStatus = NOT_DIRTY;
 		if (m_nextDirty)
@@ -580,7 +573,6 @@ public:
 		m_prevDirty = 0;
 		m_nextDirty = 0;
 	}
-
 };
 
 //=====================================
@@ -597,7 +589,7 @@ class PartitionFilter
 public:
 	virtual Bool allow(Object *objOther) = 0;
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() = 0;
+	virtual const char *debugGetName() = 0;
 #endif
 };
 
@@ -608,10 +600,10 @@ public:
 class PartitionFilterIsFlying : public PartitionFilter
 {
 public:
-	PartitionFilterIsFlying() { }
+	PartitionFilterIsFlying() {}
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterIsFlying"; }
+	virtual const char *debugGetName() { return "PartitionFilterIsFlying"; }
 #endif
 };
 
@@ -622,12 +614,12 @@ private:
 	Coord3D m_position;
 	GeometryInfo m_geom;
 	Real m_angle;
-  Bool m_desiredCollisionResult;  // collision must match this for allow to return true
+	Bool m_desiredCollisionResult; // collision must match this for allow to return true
 public:
-	PartitionFilterWouldCollide(const Coord3D& pos, const GeometryInfo& geom, Real angle, Bool desired);
+	PartitionFilterWouldCollide(const Coord3D &pos, const GeometryInfo &geom, Real angle, Bool desired);
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterWouldCollide"; }
+	virtual const char *debugGetName() { return "PartitionFilterWouldCollide"; }
 #endif
 };
 
@@ -639,11 +631,12 @@ class PartitionFilterSamePlayer : public PartitionFilter
 {
 private:
 	const Player *m_player;
+
 public:
-	PartitionFilterSamePlayer(const Player *player) : m_player(player) { }
+	PartitionFilterSamePlayer(const Player *player) : m_player(player) {}
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterSamePlayer"; }
+	virtual const char *debugGetName() { return "PartitionFilterSamePlayer"; }
 #endif
 };
 
@@ -659,17 +652,18 @@ class PartitionFilterRelationship : public PartitionFilter
 private:
 	const Object *m_obj;
 	Int m_flags;
+
 public:
 	enum RelationshipAllowTypes
 	{
-		ALLOW_ALLIES					= (1<<ALLIES),		///< allow objects that m_obj considers allies
-		ALLOW_ENEMIES					= (1<<ENEMIES),		///< allow objects that m_obj considers enemy
-		ALLOW_NEUTRAL					= (1<<NEUTRAL)		///< allow objects that m_obj considers neutral
+		ALLOW_ALLIES = (1 << ALLIES), ///< allow objects that m_obj considers allies
+		ALLOW_ENEMIES = (1 << ENEMIES), ///< allow objects that m_obj considers enemy
+		ALLOW_NEUTRAL = (1 << NEUTRAL) ///< allow objects that m_obj considers neutral
 	};
-	PartitionFilterRelationship(const Object *obj, Int flags) : m_obj(obj), m_flags(flags) { }
+	PartitionFilterRelationship(const Object *obj, Int flags) : m_obj(obj), m_flags(flags) {}
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterRelationship"; }
+	virtual const char *debugGetName() { return "PartitionFilterRelationship"; }
 #endif
 };
 
@@ -682,11 +676,12 @@ class PartitionFilterAcceptOnTeam : public PartitionFilter
 {
 private:
 	const Team *m_team;
+
 public:
 	PartitionFilterAcceptOnTeam(const Team *team);
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterAcceptOnTeam"; }
+	virtual const char *debugGetName() { return "PartitionFilterAcceptOnTeam"; }
 #endif
 };
 
@@ -699,11 +694,12 @@ class PartitionFilterAcceptOnSquad : public PartitionFilter
 {
 private:
 	const Squad *m_squad;
+
 public:
 	PartitionFilterAcceptOnSquad(const Squad *squad);
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterAcceptOnSquad"; }
+	virtual const char *debugGetName() { return "PartitionFilterAcceptOnSquad"; }
 #endif
 };
 
@@ -722,11 +718,12 @@ class PartitionFilterLineOfSight : public PartitionFilter
 {
 private:
 	const Object *m_obj;
+
 public:
 	PartitionFilterLineOfSight(const Object *obj);
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterLineOfSight"; }
+	virtual const char *debugGetName() { return "PartitionFilterLineOfSight"; }
 #endif
 };
 
@@ -740,11 +737,12 @@ private:
 	const Object *m_obj;
 	CommandSourceType m_commandSource;
 	AbleToAttackType m_attackType;
+
 public:
 	PartitionFilterPossibleToAttack(AbleToAttackType t, const Object *obj, CommandSourceType commandSource);
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterPossibleToAttack"; }
+	virtual const char *debugGetName() { return "PartitionFilterPossibleToAttack"; }
 #endif
 };
 
@@ -762,7 +760,7 @@ public:
 	PartitionFilterPossibleToEnter(const Object *obj, CommandSourceType commandSource);
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterPossibleToEnter"; }
+	virtual const char *debugGetName() { return "PartitionFilterPossibleToEnter"; }
 #endif
 };
 
@@ -780,7 +778,7 @@ public:
 	PartitionFilterPossibleToHijack(const Object *obj, CommandSourceType commandSource);
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterPossibleToHijack"; }
+	virtual const char *debugGetName() { return "PartitionFilterPossibleToHijack"; }
 #endif
 };
 
@@ -792,11 +790,12 @@ class PartitionFilterLastAttackedBy : public PartitionFilter
 {
 private:
 	ObjectID m_lastAttackedBy;
+
 public:
 	PartitionFilterLastAttackedBy(Object *obj);
 	virtual Bool allow(Object *other);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterLastAttackedBy"; }
+	virtual const char *debugGetName() { return "PartitionFilterLastAttackedBy"; }
 #endif
 };
 
@@ -808,11 +807,15 @@ class PartitionFilterAcceptByObjectStatus : public PartitionFilter
 {
 private:
 	ObjectStatusMaskType m_mustBeSet, m_mustBeClear;
+
 public:
-	PartitionFilterAcceptByObjectStatus( ObjectStatusMaskType mustBeSet, ObjectStatusMaskType mustBeClear) : m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear) { }
+	PartitionFilterAcceptByObjectStatus(ObjectStatusMaskType mustBeSet, ObjectStatusMaskType mustBeClear) :
+			m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear)
+	{
+	}
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterAcceptByObjectStatus"; }
+	virtual const char *debugGetName() { return "PartitionFilterAcceptByObjectStatus"; }
 #endif
 };
 
@@ -825,14 +828,15 @@ class PartitionFilterRejectByObjectStatus : public PartitionFilter
 {
 private:
 	ObjectStatusMaskType m_mustBeSet, m_mustBeClear;
+
 public:
-	PartitionFilterRejectByObjectStatus( ObjectStatusMaskType mustBeSet, ObjectStatusMaskType mustBeClear )
-		: m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear)
+	PartitionFilterRejectByObjectStatus(ObjectStatusMaskType mustBeSet, ObjectStatusMaskType mustBeClear) :
+			m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear)
 	{
 	}
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterRejectByObjectStatus"; }
+	virtual const char *debugGetName() { return "PartitionFilterRejectByObjectStatus"; }
 #endif
 };
 
@@ -845,11 +849,16 @@ class PartitionFilterStealthedAndUndetected : public PartitionFilter
 private:
 	const Object *m_obj;
 	Bool m_allow;
+
 public:
-	PartitionFilterStealthedAndUndetected( const Object *obj, Bool allow ) { m_obj = obj; m_allow = allow; }
+	PartitionFilterStealthedAndUndetected(const Object *obj, Bool allow)
+	{
+		m_obj = obj;
+		m_allow = allow;
+	}
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterStealthedAndUndetected"; }
+	virtual const char *debugGetName() { return "PartitionFilterStealthedAndUndetected"; }
 #endif
 };
 
@@ -861,11 +870,15 @@ class PartitionFilterAcceptByKindOf : public PartitionFilter
 {
 private:
 	KindOfMaskType m_mustBeSet, m_mustBeClear;
+
 public:
-	PartitionFilterAcceptByKindOf(const KindOfMaskType& mustBeSet, const KindOfMaskType& mustBeClear) : m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear) { }
+	PartitionFilterAcceptByKindOf(const KindOfMaskType &mustBeSet, const KindOfMaskType &mustBeClear) :
+			m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear)
+	{
+	}
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterAcceptByKindOf"; }
+	virtual const char *debugGetName() { return "PartitionFilterAcceptByKindOf"; }
 #endif
 };
 
@@ -878,14 +891,15 @@ class PartitionFilterRejectByKindOf : public PartitionFilter
 {
 private:
 	KindOfMaskType m_mustBeSet, m_mustBeClear;
+
 public:
-	PartitionFilterRejectByKindOf(const KindOfMaskType& mustBeSet, const KindOfMaskType& mustBeClear)
-		: m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear)
+	PartitionFilterRejectByKindOf(const KindOfMaskType &mustBeSet, const KindOfMaskType &mustBeClear) :
+			m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear)
 	{
 	}
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterRejectByKindOf"; }
+	virtual const char *debugGetName() { return "PartitionFilterRejectByKindOf"; }
 #endif
 };
 
@@ -894,15 +908,16 @@ public:
  * Reject any objects "behind" the given object.
  * This is a 3D check.
  */
-class PartitionFilterRejectBehind: public PartitionFilter
+class PartitionFilterRejectBehind : public PartitionFilter
 {
 private:
 	Object *m_obj;
+
 public:
-	PartitionFilterRejectBehind( Object *obj );
-	virtual Bool allow( Object *other );
+	PartitionFilterRejectBehind(Object *obj);
+	virtual Bool allow(Object *other);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterRejectBehind"; }
+	virtual const char *debugGetName() { return "PartitionFilterRejectBehind"; }
 #endif
 };
 
@@ -913,11 +928,12 @@ public:
 class PartitionFilterAlive : public PartitionFilter
 {
 public:
-	PartitionFilterAlive(void) { }
+	PartitionFilterAlive(void) {}
+
 protected:
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterAlive"; }
+	virtual const char *debugGetName() { return "PartitionFilterAlive"; }
 #endif
 };
 
@@ -930,12 +946,14 @@ class PartitionFilterSameMapStatus : public PartitionFilter
 {
 private:
 	const Object *m_obj;
+
 public:
-	PartitionFilterSameMapStatus(const Object *obj) : m_obj(obj) { }
+	PartitionFilterSameMapStatus(const Object *obj) : m_obj(obj) {}
+
 protected:
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterSameMapStatus"; }
+	virtual const char *debugGetName() { return "PartitionFilterSameMapStatus"; }
 #endif
 };
 
@@ -946,11 +964,12 @@ protected:
 class PartitionFilterOnMap : public PartitionFilter
 {
 public:
-	PartitionFilterOnMap() { }
+	PartitionFilterOnMap() {}
+
 protected:
 	virtual Bool allow(Object *objOther);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterOnMap"; }
+	virtual const char *debugGetName() { return "PartitionFilterOnMap"; }
 #endif
 };
 
@@ -965,12 +984,14 @@ class PartitionFilterRejectBuildings : public PartitionFilter
 private:
 	const Object *m_self;
 	Bool m_acquireEnemies;
+
 public:
 	PartitionFilterRejectBuildings(const Object *o);
+
 protected:
-	virtual Bool allow( Object *other );
+	virtual Bool allow(Object *other);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterRejectBuildings"; }
+	virtual const char *debugGetName() { return "PartitionFilterRejectBuildings"; }
 #endif
 };
 
@@ -984,13 +1005,17 @@ class PartitionFilterInsignificantBuildings : public PartitionFilter
 private:
 	Bool m_allowNonBuildings;
 	Bool m_allowInsignificant;
+
 public:
 	PartitionFilterInsignificantBuildings(Bool allowNonBuildings, Bool allowInsignificant) :
-			m_allowNonBuildings(allowNonBuildings), m_allowInsignificant(allowInsignificant) {}
+			m_allowNonBuildings(allowNonBuildings), m_allowInsignificant(allowInsignificant)
+	{
+	}
+
 protected:
-	virtual Bool allow( Object *other );
+	virtual Bool allow(Object *other);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterInsignificantBuildings"; }
+	virtual const char *debugGetName() { return "PartitionFilterInsignificantBuildings"; }
 #endif
 };
 
@@ -1002,13 +1027,14 @@ class PartitionFilterFreeOfFog : public PartitionFilter
 {
 private:
 	Int m_comparisonIndex;
+
 public:
-	PartitionFilterFreeOfFog(Int toWhom) :
-			m_comparisonIndex(toWhom){}
+	PartitionFilterFreeOfFog(Int toWhom) : m_comparisonIndex(toWhom) {}
+
 protected:
-	virtual Bool allow( Object *other );
+	virtual Bool allow(Object *other);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterFreeOfFog"; }
+	virtual const char *debugGetName() { return "PartitionFilterFreeOfFog"; }
 #endif
 };
 
@@ -1020,12 +1046,14 @@ class PartitionFilterRepulsor : public PartitionFilter
 {
 private:
 	const Object *m_self;
+
 public:
-	PartitionFilterRepulsor(const Object *o) : m_self(o) { }
+	PartitionFilterRepulsor(const Object *o) : m_self(o) {}
+
 protected:
-	virtual Bool allow( Object *other );
+	virtual Bool allow(Object *other);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterRepulsor"; }
+	virtual const char *debugGetName() { return "PartitionFilterRepulsor"; }
 #endif
 };
 
@@ -1042,11 +1070,12 @@ private:
 	Int m_numPointsInArea;
 
 public:
-	PartitionFilterIrregularArea(Coord3D* area, Int numPointsInArea) : m_area(area), m_numPointsInArea(numPointsInArea) {}
+	PartitionFilterIrregularArea(Coord3D *area, Int numPointsInArea) : m_area(area), m_numPointsInArea(numPointsInArea) {}
+
 protected:
-	virtual Bool allow( Object *other );
+	virtual Bool allow(Object *other);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterIrregularArea"; }
+	virtual const char *debugGetName() { return "PartitionFilterIrregularArea"; }
 #endif
 };
 
@@ -1063,10 +1092,11 @@ private:
 
 public:
 	PartitionFilterPolygonTrigger(const PolygonTrigger *trigger) : m_trigger(trigger) {}
+
 protected:
-	virtual Bool allow( Object *other );
+	virtual Bool allow(Object *other);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterPolygonTrigger"; }
+	virtual const char *debugGetName() { return "PartitionFilterPolygonTrigger"; }
 #endif
 };
 
@@ -1079,14 +1109,15 @@ class PartitionFilterPlayer : public PartitionFilter
 {
 private:
 	const Player *m_player;
-	Bool  m_match;
+	Bool m_match;
 
 public:
 	PartitionFilterPlayer(const Player *player, Bool match) : m_player(player), m_match(match) {}
+
 protected:
-	virtual Bool allow( Object *other );
+	virtual Bool allow(Object *other);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterPlayer"; }
+	virtual const char *debugGetName() { return "PartitionFilterPlayer"; }
 #endif
 };
 
@@ -1099,19 +1130,20 @@ class PartitionFilterPlayerAffiliation : public PartitionFilter
 {
 private:
 	const Player *m_player;
-	Bool  m_match;
+	Bool m_match;
 	UnsignedInt m_affiliation;
 
 public:
 	// whichAffiliation should use AllowPlayerRelationship flags specified in PlayerList.h
-	PartitionFilterPlayerAffiliation(const Player *player, UnsignedInt whichAffiliation, Bool match)
-		: m_player(player), m_affiliation(whichAffiliation), m_match(match)
+	PartitionFilterPlayerAffiliation(const Player *player, UnsignedInt whichAffiliation, Bool match) :
+			m_player(player), m_affiliation(whichAffiliation), m_match(match)
 	{
 	}
+
 protected:
-	virtual Bool allow( Object *other );
+	virtual Bool allow(Object *other);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterPlayerAffiliation"; }
+	virtual const char *debugGetName() { return "PartitionFilterPlayerAffiliation"; }
 #endif
 };
 
@@ -1124,16 +1156,18 @@ class PartitionFilterThing : public PartitionFilter
 {
 private:
 	const ThingTemplate *m_tThing;
-	Bool  m_match;
+	Bool m_match;
 
 public:
-	PartitionFilterThing(const ThingTemplate *thing, Bool match) : m_tThing(thing), m_match(match) {
+	PartitionFilterThing(const ThingTemplate *thing, Bool match) : m_tThing(thing), m_match(match)
+	{
 		DEBUG_ASSERTCRASH(m_tThing != NULL, ("ThingTemplate for PartitionFilterThing is NULL"));
 	}
+
 protected:
-	virtual Bool allow( Object *other );
+	virtual Bool allow(Object *other);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterThing"; }
+	virtual const char *debugGetName() { return "PartitionFilterThing"; }
 #endif
 };
 
@@ -1145,20 +1179,21 @@ class PartitionFilterGarrisonable : public PartitionFilter
 {
 private:
 	Player *m_player;
-	Bool  m_match;
+	Bool m_match;
 
 public:
-	PartitionFilterGarrisonable( Bool match ) : m_match(match)
+	PartitionFilterGarrisonable(Bool match) : m_match(match)
 	{
-		//Added By Sadullah Nader
-		//Initializations
+		// Added By Sadullah Nader
+		// Initializations
 		m_player = NULL;
 		//
 	}
+
 protected:
-	virtual Bool allow( Object *other );
+	virtual Bool allow(Object *other);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterGarrisonable"; }
+	virtual const char *debugGetName() { return "PartitionFilterGarrisonable"; }
 #endif
 };
 
@@ -1170,18 +1205,19 @@ class PartitionFilterGarrisonableByPlayer : public PartitionFilter
 {
 private:
 	Player *m_player;
-	Bool  m_match;
+	Bool m_match;
 	CommandSourceType m_commandSource;
 
 public:
-	PartitionFilterGarrisonableByPlayer( Player *player, Bool match, CommandSourceType commandSource ):
+	PartitionFilterGarrisonableByPlayer(Player *player, Bool match, CommandSourceType commandSource) :
 			m_player(player), m_match(match), m_commandSource(commandSource)
 	{
 	}
+
 protected:
-	virtual Bool allow( Object *other );
+	virtual Bool allow(Object *other);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterGarrisonableByPlayer"; }
+	virtual const char *debugGetName() { return "PartitionFilterGarrisonableByPlayer"; }
 #endif
 };
 
@@ -1192,14 +1228,15 @@ protected:
 class PartitionFilterUnmannedObject : public PartitionFilter
 {
 private:
-	Bool  m_match;
+	Bool m_match;
 
 public:
-	PartitionFilterUnmannedObject( Bool match ) : m_match(match) {}
+	PartitionFilterUnmannedObject(Bool match) : m_match(match) {}
+
 protected:
-	virtual Bool allow( Object *other );
+	virtual Bool allow(Object *other);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterUnmannedObject"; }
+	virtual const char *debugGetName() { return "PartitionFilterUnmannedObject"; }
 #endif
 };
 
@@ -1216,12 +1253,19 @@ private:
 	CommandSourceType m_commandSource;
 
 public:
-	PartitionFilterValidCommandButtonTarget( Object *source, const CommandButton *commandButton, Bool match, CommandSourceType commandSource) :
-		m_source(source), m_commandButton(commandButton), m_match(match), m_commandSource(commandSource) {}
+	PartitionFilterValidCommandButtonTarget(
+			Object *source,
+			const CommandButton *commandButton,
+			Bool match,
+			CommandSourceType commandSource) :
+			m_source(source), m_commandButton(commandButton), m_match(match), m_commandSource(commandSource)
+	{
+	}
+
 protected:
-	virtual Bool allow( Object *other );
+	virtual Bool allow(Object *other);
 #if defined(RTS_DEBUG)
-	virtual const char* debugGetName() { return "PartitionFilterValidCommandButtonTarget"; }
+	virtual const char *debugGetName() { return "PartitionFilterValidCommandButtonTarget"; }
 #endif
 };
 
@@ -1233,67 +1277,64 @@ protected:
 */
 class PartitionManager : public SubsystemInterface, public Snapshot
 {
-
 private:
-
 #ifdef FASTER_GCO
-	typedef std::vector<ICoord2D>		OffsetVec;
-	typedef std::vector<OffsetVec>	RadiusVec;
+	typedef std::vector<ICoord2D> OffsetVec;
+	typedef std::vector<OffsetVec> RadiusVec;
 #endif
 
-	PartitionData		*m_moduleList;		///< master partition module list
+	PartitionData *m_moduleList; ///< master partition module list
 
-	Region3D				m_worldExtents;		///< should be same as TheTerrainLogic->getExtents()
-	Real						m_cellSize;				///< edge size of each cell, in world coord space
-	Real						m_cellSizeInv;		///< 1/cellSize (used for efficiency)
-	Int							m_cellCountX;			///< number of cells, x
-	Int							m_cellCountY;			///< number of cells, y
-	Int							m_totalCellCount;	///< x * y
-	PartitionCell*	m_cells;					///< array of cells
-	PartitionData*	m_dirtyModules;
-	Bool						m_updatedSinceLastReset;	///< Used to force a return of OBJECTSHROUD_INVALID before update has been called.
+	Region3D m_worldExtents; ///< should be same as TheTerrainLogic->getExtents()
+	Real m_cellSize; ///< edge size of each cell, in world coord space
+	Real m_cellSizeInv; ///< 1/cellSize (used for efficiency)
+	Int m_cellCountX; ///< number of cells, x
+	Int m_cellCountY; ///< number of cells, y
+	Int m_totalCellCount; ///< x * y
+	PartitionCell *m_cells; ///< array of cells
+	PartitionData *m_dirtyModules;
+	Bool m_updatedSinceLastReset; ///< Used to force a return of OBJECTSHROUD_INVALID before update has been called.
 
-	std::queue<SightingInfo *> m_pendingUndoShroudReveals;	///< Anything can queue up an Undo to happen later. This is a queue, because "later" is a constant
+	std::queue<SightingInfo *> m_pendingUndoShroudReveals; ///< Anything can queue up an Undo to happen later. This is a queue,
+																												 ///< because "later" is a constant
 
 #ifdef FASTER_GCO
-	Int							m_maxGcoRadius;
-	RadiusVec				m_radiusVec;
+	Int m_maxGcoRadius;
+	RadiusVec m_radiusVec;
 #endif
 
 protected:
-
 	/**
 		This is an internal function that is used to implement the public
 		getClosestObject and iterateObjects calls.
 	*/
 	Object *getClosestObjects(
-		const Object *obj,
-		const Coord3D *pos,
-		Real maxDist,
-		DistanceCalculationType dc,
-		PartitionFilter **filters,
-		SimpleObjectIterator *iter,	// if nonnull, append ALL satisfactory objects to the iterator (not just the single closest)
-		Real *closestDistArg,
-		Coord3D *closestVecArg
-	);
+			const Object *obj,
+			const Coord3D *pos,
+			Real maxDist,
+			DistanceCalculationType dc,
+			PartitionFilter **filters,
+			SimpleObjectIterator *iter, // if nonnull, append ALL satisfactory objects to the iterator (not just the single
+																	// closest)
+			Real *closestDistArg,
+			Coord3D *closestVecArg);
 
-	void shutdown( void );
+	void shutdown(void);
 
 	/// used to validate the positions for findPositionAround family of methods
-	Bool tryPosition( const Coord3D *center, Real dist, Real angle,
-										const FindPositionOptions *options, Coord3D *result );
+	Bool tryPosition(const Coord3D *center, Real dist, Real angle, const FindPositionOptions *options, Coord3D *result);
 
-	typedef Int (*CellAlongLineProc)(PartitionCell* cell, void* userData);
+	typedef Int (*CellAlongLineProc)(PartitionCell *cell, void *userData);
 
-	Int iterateCellsAlongLine(const Coord3D& pos, const Coord3D& posOther, CellAlongLineProc proc, void* userData);
+	Int iterateCellsAlongLine(const Coord3D &pos, const Coord3D &posOther, CellAlongLineProc proc, void *userData);
 
 	// note iterateCellsBreadthFirst returns the cell index that made the CellBreadthFirstProc return
 	// non-Zero.
-	typedef Int (*CellBreadthFirstProc)(PartitionCell* cell, void* userData);
+	typedef Int (*CellBreadthFirstProc)(PartitionCell *cell, void *userData);
 	Int iterateCellsBreadthFirst(const Coord3D *pos, CellBreadthFirstProc proc, void *userData);
 
 #ifdef FASTER_GCO
-	Int calcMinRadius(const ICoord2D& cur);
+	Int calcMinRadius(const ICoord2D &cur);
 	void calcRadiusVec();
 #endif
 
@@ -1309,39 +1350,48 @@ protected:
 	friend void hLineAddValue(Int x1, Int x2, Int y, void *threatValueParms);
 	friend void hLineRemoveValue(Int x1, Int x2, Int y, void *threatValueParms);
 
-	void processPendingUndoShroudRevealQueue(Bool considerTimestamp = TRUE);				///< keep popping and processing untill you get to one that is in the future
-	void resetPendingUndoShroudRevealQueue();					///< Just delete everything in the queue without doing anything with them
+	void processPendingUndoShroudRevealQueue(Bool considerTimestamp = TRUE); ///< keep popping and processing untill you get to
+																																					 ///< one that is in the future
+	void resetPendingUndoShroudRevealQueue(); ///< Just delete everything in the queue without doing anything with them
 
 public:
-
-	PartitionManager( void );
-	virtual ~PartitionManager( void );
+	PartitionManager(void);
+	virtual ~PartitionManager(void);
 
 	// --------------- inherited from Subsystem interface -------------
-	virtual void init( void );			///< initialize
-	virtual void reset( void );			///< system reset
-	virtual void update( void );		///< system update
+	virtual void init(void); ///< initialize
+	virtual void reset(void); ///< system reset
+	virtual void update(void); ///< system update
 	// ----------------------------------------------------------------
 
 	// --------------- inherited from Snapshot interface --------------
-	void crc( Xfer *xfer );
-	void xfer( Xfer *xfer );
-	void loadPostProcess( void );
+	void crc(Xfer *xfer);
+	void xfer(Xfer *xfer);
+	void loadPostProcess(void);
 
-	inline Bool getUpdatedSinceLastReset( void ) const { return m_updatedSinceLastReset; }
+	inline Bool getUpdatedSinceLastReset(void) const { return m_updatedSinceLastReset; }
 
-	void registerObject( Object *object );				///< add thing to system
-	void unRegisterObject( Object *object );			///< remove thing from system
-	void registerGhostObject( GhostObject* object);	///<recreate partition data needed to hold object (only used to restore after PM reset).
-	void unRegisterGhostObject (GhostObject *object);	///< release partition data held for ghost object.
+	void registerObject(Object *object); ///< add thing to system
+	void unRegisterObject(Object *object); ///< remove thing from system
+	void registerGhostObject(GhostObject *object); ///< recreate partition data needed to hold object (only used to restore
+																								 ///< after PM reset).
+	void unRegisterGhostObject(GhostObject *object); ///< release partition data held for ghost object.
 
 	void processEntirePendingUndoShroudRevealQueue(); ///< process every pending one regardless of timestamp
 
 	/// return the number of PartitionCells in the x-dimension.
-	Int getCellCountX() { DEBUG_ASSERTCRASH(m_cellCountX != 0, ("partition not inited")); return m_cellCountX; }
+	Int getCellCountX()
+	{
+		DEBUG_ASSERTCRASH(m_cellCountX != 0, ("partition not inited"));
+		return m_cellCountX;
+	}
 
 	/// return the number of PartitionCells in the y-dimension.
-	Int getCellCountY() { DEBUG_ASSERTCRASH(m_cellCountY != 0, ("partition not inited")); return m_cellCountY; }
+	Int getCellCountY()
+	{
+		DEBUG_ASSERTCRASH(m_cellCountY != 0, ("partition not inited"));
+		return m_cellCountY;
+	}
 
 	/// return the PartitionCell located at cell coordinates (x,y).
 	PartitionCell *getCellAt(Int x, Int y);
@@ -1349,20 +1399,20 @@ public:
 
 	/// A convenience funtion to reveal shroud at some location
 	// Queueing does not give you control of the timestamp to enforce the queue.  I own the delay, you don't.
-	void doShroudReveal( Real centerX, Real centerY, Real radius, PlayerMaskType playerMask);
-	void undoShroudReveal( Real centerX, Real centerY, Real radius, PlayerMaskType playerMask);
-	void queueUndoShroudReveal( Real centerX, Real centerY, Real radius, PlayerMaskType playerMask );
+	void doShroudReveal(Real centerX, Real centerY, Real radius, PlayerMaskType playerMask);
+	void undoShroudReveal(Real centerX, Real centerY, Real radius, PlayerMaskType playerMask);
+	void queueUndoShroudReveal(Real centerX, Real centerY, Real radius, PlayerMaskType playerMask);
 
-	void doShroudCover( Real centerX, Real centerY, Real radius, PlayerMaskType playerMask);
-	void undoShroudCover( Real centerX, Real centerY, Real radius, PlayerMaskType playerMask);
+	void doShroudCover(Real centerX, Real centerY, Real radius, PlayerMaskType playerMask);
+	void undoShroudCover(Real centerX, Real centerY, Real radius, PlayerMaskType playerMask);
 
 	/// Perform threat map and value map updates.
-	void doThreatAffect( Real centerX, Real centerY, Real radius, UnsignedInt threatVal, PlayerMaskType playerMask);
-	void undoThreatAffect( Real centerX, Real centerY, Real radius, UnsignedInt threatVal, PlayerMaskType playerMask);
-	void doValueAffect( Real centerX, Real centerY, Real radius, UnsignedInt valueVal, PlayerMaskType playerMask);
-	void undoValueAffect( Real centerX, Real centerY, Real radius, UnsignedInt valueVal, PlayerMaskType playerMask);
+	void doThreatAffect(Real centerX, Real centerY, Real radius, UnsignedInt threatVal, PlayerMaskType playerMask);
+	void undoThreatAffect(Real centerX, Real centerY, Real radius, UnsignedInt threatVal, PlayerMaskType playerMask);
+	void doValueAffect(Real centerX, Real centerY, Real radius, UnsignedInt valueVal, PlayerMaskType playerMask);
+	void undoValueAffect(Real centerX, Real centerY, Real radius, UnsignedInt valueVal, PlayerMaskType playerMask);
 
-	void getCellCenterPos(Int x, Int y, Real& xx, Real& yy);
+	void getCellCenterPos(Int x, Int y, Real &xx, Real &yy);
 
 	// find the cell that covers the world coords (wx,wy) and return its coords.
 	void worldToCell(Real wx, Real wy, Int *cx, Int *cy);
@@ -1371,62 +1421,74 @@ public:
 	Int worldToCellDist(Real w);
 
 	Object *getClosestObject(
-		const Object *obj,
-		Real maxDist,
-		DistanceCalculationType dc,
-		PartitionFilter **filters = NULL,
-		Real *closestDist = NULL,
-		Coord3D *closestDistVec = NULL
-	);
+			const Object *obj,
+			Real maxDist,
+			DistanceCalculationType dc,
+			PartitionFilter **filters = NULL,
+			Real *closestDist = NULL,
+			Coord3D *closestDistVec = NULL);
 	Object *getClosestObject(
-		const Coord3D *pos,
-		Real maxDist,
-		DistanceCalculationType dc,
-		PartitionFilter **filters = NULL,
-		Real *closestDist = NULL,
-		Coord3D *closestDistVec = NULL
-	);
+			const Coord3D *pos,
+			Real maxDist,
+			DistanceCalculationType dc,
+			PartitionFilter **filters = NULL,
+			Real *closestDist = NULL,
+			Coord3D *closestDistVec = NULL);
 
-	Real getRelativeAngle2D( const Object *obj, const Object *otherObj );
-	Real getRelativeAngle2D( const Object *obj, const Coord3D *pos );
+	Real getRelativeAngle2D(const Object *obj, const Object *otherObj);
+	Real getRelativeAngle2D(const Object *obj, const Coord3D *pos);
 
-	void getVectorTo(const Object *obj, const Object *otherObj, DistanceCalculationType dc, Coord3D& vec);
-	void getVectorTo(const Object *obj, const Coord3D *pos, DistanceCalculationType dc, Coord3D& vec);
+	void getVectorTo(const Object *obj, const Object *otherObj, DistanceCalculationType dc, Coord3D &vec);
+	void getVectorTo(const Object *obj, const Coord3D *pos, DistanceCalculationType dc, Coord3D &vec);
 
 	// just like 'getDistance', but return the dist-sqr, meaning we save a sqrt() call if you don't need it.
 	Real getDistanceSquared(const Object *obj, const Object *otherObj, DistanceCalculationType dc, Coord3D *vec = NULL);
 	Real getDistanceSquared(const Object *obj, const Coord3D *pos, DistanceCalculationType dc, Coord3D *vec = NULL);
 
 	// just like 'getDistanceSquared', but return the dist-sqr where the obj is at goalPos.
-	Real getGoalDistanceSquared(const Object *obj, const Coord3D *goalPos, const Object *otherObj, DistanceCalculationType dc, Coord3D *vec = NULL);
-	Real getGoalDistanceSquared(const Object *obj, const Coord3D *goalPos, const Coord3D *otherPos, DistanceCalculationType dc, Coord3D *vec = NULL);
+	Real getGoalDistanceSquared(
+			const Object *obj,
+			const Coord3D *goalPos,
+			const Object *otherObj,
+			DistanceCalculationType dc,
+			Coord3D *vec = NULL);
+	Real getGoalDistanceSquared(
+			const Object *obj,
+			const Coord3D *goalPos,
+			const Coord3D *otherPos,
+			DistanceCalculationType dc,
+			Coord3D *vec = NULL);
 
 #ifdef PM_CACHE_TERRAIN_HEIGHT
 	// note that the 2d positions aren't guaranteed to be the actual spot within the cell where the terrain
 	// is lowest or highest.... just the center of the relevant cell. this function is used for rough-n-quick
 	// estimates only.
-	Bool estimateTerrainExtremesAlongLine(const Coord3D& startWorld, const Coord3D& endWorld, Real* minZ, Real* maxZ, Coord2D* minZPos, Coord2D* maxZPos);
+	Bool estimateTerrainExtremesAlongLine(
+			const Coord3D &startWorld,
+			const Coord3D &endWorld,
+			Real *minZ,
+			Real *maxZ,
+			Coord2D *minZPos,
+			Coord2D *maxZPos);
 #endif
 
 #ifdef DUMP_PERF_STATS
-	void getPMStats(double& gcoTimeThisFrameTotal, double& gcoTimeThisFrameAvg);
+	void getPMStats(double &gcoTimeThisFrameTotal, double &gcoTimeThisFrameAvg);
 #endif
 
 	SimpleObjectIterator *iterateObjectsInRange(
-		const Object *obj,
-		Real maxDist,
-		DistanceCalculationType dc,
-		PartitionFilter **filters = NULL,
-		IterOrderType order = ITER_FASTEST
-	);
+			const Object *obj,
+			Real maxDist,
+			DistanceCalculationType dc,
+			PartitionFilter **filters = NULL,
+			IterOrderType order = ITER_FASTEST);
 
 	SimpleObjectIterator *iterateObjectsInRange(
-		const Coord3D *pos,
-		Real maxDist,
-		DistanceCalculationType dc,
-		PartitionFilter **filters = NULL,
-		IterOrderType order = ITER_FASTEST
-	);
+			const Coord3D *pos,
+			Real maxDist,
+			DistanceCalculationType dc,
+			PartitionFilter **filters = NULL,
+			IterOrderType order = ITER_FASTEST);
 
 	SimpleObjectIterator *iterateAllObjects(PartitionFilter **filters = NULL);
 
@@ -1434,31 +1496,28 @@ public:
 		return the Objects that would (or would not) collide with the given
 		geometry.
 	*/
-	SimpleObjectIterator* iteratePotentialCollisions(
-		const Coord3D* pos,
-		const GeometryInfo& geom,
-		Real angle,
-		Bool use2D = false
-	);
+	SimpleObjectIterator *iteratePotentialCollisions(
+			const Coord3D *pos,
+			const GeometryInfo &geom,
+			Real angle,
+			Bool use2D = false);
 
-	Bool isColliding( const Object *a, const Object *b ) const;
+	Bool isColliding(const Object *a, const Object *b) const;
 
 	/// Checks a geometry against an arbitrary geometry.
-	Bool geomCollidesWithGeom( const Coord3D* pos1,
-							const GeometryInfo& geom1,
-							Real angle1,
-							const Coord3D* pos2,
-							const GeometryInfo& geom2,
-							Real angle2
-  ) const;
+	Bool geomCollidesWithGeom(
+			const Coord3D *pos1,
+			const GeometryInfo &geom1,
+			Real angle1,
+			const Coord3D *pos2,
+			const GeometryInfo &geom2,
+			Real angle2) const;
 
 	/// finding legal positions in the world
-	Bool findPositionAround( const Coord3D *center,
-													 const FindPositionOptions *options,
-													 Coord3D *result );
+	Bool findPositionAround(const Coord3D *center, const FindPositionOptions *options, Coord3D *result);
 
 	/// return the size of a PartitionCell, in world coords.
-	Real getCellSize() { return m_cellSize; }				// only for the use of PartitionData!
+	Real getCellSize() { return m_cellSize; } // only for the use of PartitionData!
 
 	/// return (1.0 / getCellSize); this is used frequently, so we cache it for efficiency
 	Real getCellSizeInv() { return m_cellSizeInv; }
@@ -1468,20 +1527,11 @@ public:
 		this only takes terrain into account; it does not consider objects, units,
 		trees, buildings, etc.
 	*/
-	Bool isClearLineOfSightTerrain(const Object* obj, const Coord3D& objPos, const Object* other, const Coord3D& otherPos);
+	Bool isClearLineOfSightTerrain(const Object *obj, const Coord3D &objPos, const Object *other, const Coord3D &otherPos);
 
-	inline Bool isInListDirtyModules(PartitionData* o) const
-	{
-		return o->isInListDirtyModules(&m_dirtyModules);
-	}
-	inline void prependToDirtyModules(PartitionData* o)
-	{
-		o->prependToDirtyModules(&m_dirtyModules);
-	}
-	inline void removeFromDirtyModules(PartitionData* o)
-	{
-		o->removeFromDirtyModules(&m_dirtyModules);
-	}
+	inline Bool isInListDirtyModules(PartitionData *o) const { return o->isInListDirtyModules(&m_dirtyModules); }
+	inline void prependToDirtyModules(PartitionData *o) { o->prependToDirtyModules(&m_dirtyModules); }
+	inline void removeFromDirtyModules(PartitionData *o) { o->removeFromDirtyModules(&m_dirtyModules); }
 	inline void removeAllDirtyModules()
 	{
 		while (m_dirtyModules)
@@ -1494,22 +1544,22 @@ public:
 	/**
 		Reveals the map for the given player, but does not override Shroud generation.  (Script)
 		*/
-	void revealMapForPlayer( Int playerIndex );
+	void revealMapForPlayer(Int playerIndex);
 
 	/**
 		Reveals the map for the given player, AND permanently disables all Shroud generation (Observer Mode).
 		*/
-	void revealMapForPlayerPermanently( Int playerIndex );
+	void revealMapForPlayerPermanently(Int playerIndex);
 
 	/**
 		Adds a layer of permanent blindness.  Used solely to undo the permanent reveal for debugging
 		*/
-	void undoRevealMapForPlayerPermanently( Int playerIndex );
+	void undoRevealMapForPlayerPermanently(Int playerIndex);
 
 	/**
 		Resets the shroud for the given player with passive shroud (can re-explore).
 		*/
-	void shroudMapForPlayer( Int playerIndex );
+	void shroudMapForPlayer(Int playerIndex);
 
 	/** this doesn't change the actual shroud values in logic, just pushes them
 		back out to the display... this should generally only be used when the local
@@ -1520,22 +1570,28 @@ public:
 	/**
 		Shrouded has no absolute meaning.  It only makes sense to say "Shrouded for him".
 	*/
-	CellShroudStatus getShroudStatusForPlayer( Int playerIndex, Int x, Int y ) const;
-	CellShroudStatus getShroudStatusForPlayer( Int playerIndex, const Coord3D *loc ) const;
+	CellShroudStatus getShroudStatusForPlayer(Int playerIndex, Int x, Int y) const;
+	CellShroudStatus getShroudStatusForPlayer(Int playerIndex, const Coord3D *loc) const;
 
-	ObjectShroudStatus getPropShroudStatusForPlayer(Int playerIndex, const Coord3D *loc ) const;
+	ObjectShroudStatus getPropShroudStatusForPlayer(Int playerIndex, const Coord3D *loc) const;
 
 	Real getGroundOrStructureHeight(Real posx, Real posy);
 
-	void getMostValuableLocation( Int playerIndex, UnsignedInt whichPlayerTypes, ValueOrThreat valType, Coord3D *outLocation );
-	void getNearestGroupWithValue( Int playerIndex, UnsignedInt whichPlayerTypes, ValueOrThreat valType, const Coord3D *sourceLocation,
-																 Int valueRequired, Bool greaterThan, Coord3D *outLocation );
+	void getMostValuableLocation(Int playerIndex, UnsignedInt whichPlayerTypes, ValueOrThreat valType, Coord3D *outLocation);
+	void getNearestGroupWithValue(
+			Int playerIndex,
+			UnsignedInt whichPlayerTypes,
+			ValueOrThreat valType,
+			const Coord3D *sourceLocation,
+			Int valueRequired,
+			Bool greaterThan,
+			Coord3D *outLocation);
 
 	// If saveToFog is true, then we are writing STORE_FOG.
 	// If saveToFog is false, then we are writing STORE_PERMENANT_REVEAL
 	void storeFoggedCells(ShroudStatusStoreRestore &outPartitionStore, Bool storeToFog) const;
 	void restoreFoggedCells(const ShroudStatusStoreRestore &inPartitionStore, Bool restoreToFog);
-};  // end class PartitionManager
+}; // end class PartitionManager
 
 // -----------------------------------------------------------------------------
 inline void PartitionManager::worldToCell(Real wx, Real wy, Int *cx, Int *cy)
@@ -1547,7 +1603,7 @@ inline void PartitionManager::worldToCell(Real wx, Real wy, Int *cx, Int *cy)
 //-----------------------------------------------------------------------------
 inline Int PartitionManager::worldToCellDist(Real w)
 {
-	return REAL_TO_INT_CEIL(w  * m_cellSizeInv);
+	return REAL_TO_INT_CEIL(w * m_cellSizeInv);
 }
 
 //-----------------------------------------------------------------------------
@@ -1570,16 +1626,17 @@ inline const PartitionCell *PartitionManager::getCellAt(Int x, Int y) const
 class CellOutwardIterator
 {
 private:
-	PartitionManager	*m_mgr;
-	Int								m_cellCenterX, m_cellCenterY;
-	Int								m_maxRadius;
-	Int								m_cellRadius;
-	Int								m_delta[2];
-	Int								m_inc;
-	Int								m_cnt;
-	Int								m_axis;
-	Int								m_iter;
+	PartitionManager *m_mgr;
+	Int m_cellCenterX, m_cellCenterY;
+	Int m_maxRadius;
+	Int m_cellRadius;
+	Int m_delta[2];
+	Int m_inc;
+	Int m_cnt;
+	Int m_axis;
+	Int m_iter;
 	PartitionCell *nextCell(Bool skipEmpties);
+
 public:
 	CellOutwardIterator(PartitionManager *mgr, Int x, Int y);
 	~CellOutwardIterator();
@@ -1598,7 +1655,6 @@ public:
 //-----------------------------------------------------------------------------
 //           Externals
 //-----------------------------------------------------------------------------
-extern PartitionManager *ThePartitionManager;  ///< object manager singleton
+extern PartitionManager *ThePartitionManager; ///< object manager singleton
 
 #endif // __PARTITIONMANAGER_H_
-

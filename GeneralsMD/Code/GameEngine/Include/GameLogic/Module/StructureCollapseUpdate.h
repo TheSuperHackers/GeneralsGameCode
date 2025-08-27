@@ -41,46 +41,44 @@
 class FXList;
 class ObjectCreationList;
 
-typedef std::vector<const ObjectCreationList*> OCLVec;
-typedef std::vector<const FXList*> FXVec;
-
+typedef std::vector<const ObjectCreationList *> OCLVec;
+typedef std::vector<const FXList *> FXVec;
 
 //-------------------------------------------------------------------------------------------------
-enum StructureCollapsePhaseType CPP_11(: Int)
-{
+enum StructureCollapsePhaseType CPP_11( : Int){
 	SCPHASE_INITIAL = 0,
 	SCPHASE_DELAY,
 	SCPHASE_BURST,
 	SCPHASE_FINAL,
 
-	SC_PHASE_COUNT	// keep last
+	SC_PHASE_COUNT // keep last
 };
 
 //-------------------------------------------------------------------------------------------------
 class StructureCollapseUpdateModuleData : public UpdateModuleData
 {
 public:
-	DieMuxData				m_dieMuxData;
-	Int								m_minCollapseDelay;
-	Int								m_maxCollapseDelay;
-	Int								m_minBurstDelay;
-	Int								m_maxBurstDelay;
-	Int								m_bigBurstFrequency;
-	Real							m_collapseDamping;
-	Real							m_maxShudder;
-	OCLVec						m_ocls[SC_PHASE_COUNT];
-	FXVec							m_fxs[SC_PHASE_COUNT];
-	UnsignedInt				m_oclCount[SC_PHASE_COUNT];
-	UnsignedInt				m_fxCount[SC_PHASE_COUNT];
+	DieMuxData m_dieMuxData;
+	Int m_minCollapseDelay;
+	Int m_maxCollapseDelay;
+	Int m_minBurstDelay;
+	Int m_maxBurstDelay;
+	Int m_bigBurstFrequency;
+	Real m_collapseDamping;
+	Real m_maxShudder;
+	OCLVec m_ocls[SC_PHASE_COUNT];
+	FXVec m_fxs[SC_PHASE_COUNT];
+	UnsignedInt m_oclCount[SC_PHASE_COUNT];
+	UnsignedInt m_fxCount[SC_PHASE_COUNT];
 
 	StructureCollapseUpdateModuleData()
 	{
 		m_minCollapseDelay = 0;
 		m_maxCollapseDelay = 0;
 		m_minBurstDelay = 9999;
-		//Removed by Sadullah Nader
-		//Redundancy from above
-		//m_minBurstDelay = 9999;
+		// Removed by Sadullah Nader
+		// Redundancy from above
+		// m_minBurstDelay = 9999;
 		m_maxShudder = 0;
 		m_collapseDamping = 0.0;
 		m_bigBurstFrequency = 0;
@@ -93,41 +91,35 @@ public:
 		}
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p);
-
+	static void buildFieldParse(MultiIniFieldParse &p);
 };
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class StructureCollapseUpdate : public UpdateModule,
-																public DieModuleInterface
+class StructureCollapseUpdate : public UpdateModule, public DieModuleInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( StructureCollapseUpdate, "StructureCollapseUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( StructureCollapseUpdate, StructureCollapseUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(StructureCollapseUpdate, "StructureCollapseUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(StructureCollapseUpdate, StructureCollapseUpdateModuleData)
 
 public:
-
-	StructureCollapseUpdate( Thing *thing, const ModuleData* moduleData );
+	StructureCollapseUpdate(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
 	// BehaviorModule
-	virtual DieModuleInterface* getDie() { return this; }
+	virtual DieModuleInterface *getDie() { return this; }
 
 	// UpdateModuleInterface
 	virtual UpdateSleepTime update();
 
 	// DieModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual void onDie(const DamageInfo *damageInfo);
 
 protected:
-
 	void applyCrushingDamage(Real theta);
-	void beginStructureCollapse( const DamageInfo *damageInfo );
-	void doDamageLine(Object *building, const WeaponTemplate* wt, Real jcos, Real jsin, Real facingWidth, Real collapseAngle);
+	void beginStructureCollapse(const DamageInfo *damageInfo);
+	void doDamageLine(Object *building, const WeaponTemplate *wt, Real jcos, Real jsin, Real facingWidth, Real collapseAngle);
 	void doCollapseStartFX(Object *building, const DamageInfo *damageInfo);
 	void doCollapseDelayBurstFX();
 	void doCollapseDoneStuff();
@@ -142,13 +134,11 @@ protected:
 		COLLAPSESTATE_DONE
 	};
 
-	UnsignedInt									m_collapseFrame;
-	UnsignedInt									m_burstFrame;
-	StructureCollapseStateType	m_collapseState;
-	Real												m_collapseVelocity;
-	Real												m_currentHeight;
-
+	UnsignedInt m_collapseFrame;
+	UnsignedInt m_burstFrame;
+	StructureCollapseStateType m_collapseState;
+	Real m_collapseVelocity;
+	Real m_currentHeight;
 };
 
 #endif // __StructureCollapseUpdate_H_
-

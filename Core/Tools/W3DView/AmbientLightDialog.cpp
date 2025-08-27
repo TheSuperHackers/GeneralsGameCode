@@ -34,21 +34,17 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CAmbientLightDialog dialog
 
-
-CAmbientLightDialog::CAmbientLightDialog(CWnd* pParent /*=NULL*/)
-	: CDialog(CAmbientLightDialog::IDD, pParent)
+CAmbientLightDialog::CAmbientLightDialog(CWnd *pParent /*=NULL*/) : CDialog(CAmbientLightDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CAmbientLightDialog)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void CAmbientLightDialog::DoDataExchange(CDataExchange* pDX)
+void CAmbientLightDialog::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CAmbientLightDialog)
@@ -58,57 +54,54 @@ void CAmbientLightDialog::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CAmbientLightDialog, CDialog)
-	//{{AFX_MSG_MAP(CAmbientLightDialog)
-	ON_WM_HSCROLL()
-	ON_BN_CLICKED(IDC_GRAYSCALE_CHECK, OnGrayscaleCheck)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CAmbientLightDialog)
+ON_WM_HSCROLL()
+ON_BN_CLICKED(IDC_GRAYSCALE_CHECK, OnGrayscaleCheck)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////
 //
 //  OnInitDialog
 //
-BOOL
-CAmbientLightDialog::OnInitDialog (void)
+BOOL CAmbientLightDialog::OnInitDialog(void)
 {
 	// Allow the base class to process this message
-    CDialog::OnInitDialog ();
+	CDialog::OnInitDialog();
 
-    // Center the dialog around the data tree view instead
-    // of the direct center of the screen
-    ::CenterDialogAroundTreeView (m_hWnd);
+	// Center the dialog around the data tree view instead
+	// of the direct center of the screen
+	::CenterDialogAroundTreeView(m_hWnd);
 
-    m_redSlider.SetRange (0, 100);
-    m_greenSlider.SetRange (0, 100);
-    m_blueSlider.SetRange (0, 100);
+	m_redSlider.SetRange(0, 100);
+	m_greenSlider.SetRange(0, 100);
+	m_blueSlider.SetRange(0, 100);
 
-    // Get a pointer to the doc so we can get at the current scene
-    // pointer.
-    CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
-    if (pCDoc && pCDoc->GetScene ())
-    {
-        Vector3 lightSettings = pCDoc->GetScene ()->Get_Ambient_Light ();
+	// Get a pointer to the doc so we can get at the current scene
+	// pointer.
+	CW3DViewDoc *pCDoc = ::GetCurrentDocument();
+	if (pCDoc && pCDoc->GetScene())
+	{
+		Vector3 lightSettings = pCDoc->GetScene()->Get_Ambient_Light();
 
-        // Remember these initial settings so we can restore them
-        // if the user cancels
-        m_initialRed = int(lightSettings.X * 100.00F);
-        m_initialGreen = int(lightSettings.Y * 100.00F);
-        m_initialBlue = int(lightSettings.Z * 100.00F);
-    }
+		// Remember these initial settings so we can restore them
+		// if the user cancels
+		m_initialRed = int(lightSettings.X * 100.00F);
+		m_initialGreen = int(lightSettings.Y * 100.00F);
+		m_initialBlue = int(lightSettings.Z * 100.00F);
+	}
 
-    if ((m_initialRed == m_initialGreen) &&
-        (m_initialRed == m_initialBlue))
-    {
-        // Check the grayscale checkbox
-        SendDlgItemMessage (IDC_GRAYSCALE_CHECK, BM_SETCHECK, (WPARAM)TRUE);
-    }
+	if ((m_initialRed == m_initialGreen) && (m_initialRed == m_initialBlue))
+	{
+		// Check the grayscale checkbox
+		SendDlgItemMessage(IDC_GRAYSCALE_CHECK, BM_SETCHECK, (WPARAM)TRUE);
+	}
 
-    // Set the initial slider position
-    m_redSlider.SetPos (m_initialRed);
-    m_greenSlider.SetPos (m_initialGreen);
-    m_blueSlider.SetPos (m_initialBlue);
+	// Set the initial slider position
+	m_redSlider.SetPos(m_initialRed);
+	m_greenSlider.SetPos(m_initialGreen);
+	m_blueSlider.SetPos(m_initialBlue);
 	return TRUE;
 }
 
@@ -116,79 +109,72 @@ CAmbientLightDialog::OnInitDialog (void)
 //
 //  OnHScroll
 //
-void
-CAmbientLightDialog::OnHScroll
-(
-    UINT nSBCode,
-    UINT nPos,
-    CScrollBar* pScrollBar
-)
+void CAmbientLightDialog::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar)
 {
-    if (SendDlgItemMessage (IDC_GRAYSCALE_CHECK, BM_GETCHECK))
-    {
-        int iCurrentPos = 0;
-        if (pScrollBar == GetDlgItem (IDC_SLIDER_RED))
-        {
-            iCurrentPos = m_redSlider.GetPos ();
-        }
-        else if (pScrollBar == GetDlgItem (IDC_SLIDER_GREEN))
-        {
-            iCurrentPos = m_greenSlider.GetPos ();
-        }
-        else
-        {
-            iCurrentPos = m_blueSlider.GetPos ();
-        }
+	if (SendDlgItemMessage(IDC_GRAYSCALE_CHECK, BM_GETCHECK))
+	{
+		int iCurrentPos = 0;
+		if (pScrollBar == GetDlgItem(IDC_SLIDER_RED))
+		{
+			iCurrentPos = m_redSlider.GetPos();
+		}
+		else if (pScrollBar == GetDlgItem(IDC_SLIDER_GREEN))
+		{
+			iCurrentPos = m_greenSlider.GetPos();
+		}
+		else
+		{
+			iCurrentPos = m_blueSlider.GetPos();
+		}
 
-        // Make all the sliders the same pos
-        m_redSlider.SetPos (iCurrentPos);
-        m_greenSlider.SetPos (iCurrentPos);
-        m_blueSlider.SetPos (iCurrentPos);
-    }
+		// Make all the sliders the same pos
+		m_redSlider.SetPos(iCurrentPos);
+		m_greenSlider.SetPos(iCurrentPos);
+		m_blueSlider.SetPos(iCurrentPos);
+	}
 
-    Vector3 lightSettings;
-    lightSettings.X = float(m_redSlider.GetPos ()) / 100.00F;
-    lightSettings.Y = float(m_greenSlider.GetPos ()) / 100.00F;
-    lightSettings.Z = float(m_blueSlider.GetPos ()) / 100.00F;
+	Vector3 lightSettings;
+	lightSettings.X = float(m_redSlider.GetPos()) / 100.00F;
+	lightSettings.Y = float(m_greenSlider.GetPos()) / 100.00F;
+	lightSettings.Z = float(m_blueSlider.GetPos()) / 100.00F;
 
-    // Get a pointer to the document so we can change the scene's light
-    // settings
-    CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
-    if (pCDoc && pCDoc->GetScene ())
-    {
-        // Modify the ambient light for this scene
-        pCDoc->GetScene ()->Set_Ambient_Light (lightSettings);
-    }
+	// Get a pointer to the document so we can change the scene's light
+	// settings
+	CW3DViewDoc *pCDoc = ::GetCurrentDocument();
+	if (pCDoc && pCDoc->GetScene())
+	{
+		// Modify the ambient light for this scene
+		pCDoc->GetScene()->Set_Ambient_Light(lightSettings);
+	}
 
 	// Allow the base class to process this message
-    CDialog::OnHScroll (nSBCode, nPos, pScrollBar);
-    return ;
+	CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
+	return;
 }
 
 //////////////////////////////////////////////////////////////
 //
 //  OnCancel
 //
-void
-CAmbientLightDialog::OnCancel (void)
+void CAmbientLightDialog::OnCancel(void)
 {
-    Vector3 lightSettings;
-    lightSettings.X = float(m_initialRed) / 100.00F;
-    lightSettings.Y = float(m_initialGreen) / 100.00F;
-    lightSettings.Z = float(m_initialBlue) / 100.00F;
+	Vector3 lightSettings;
+	lightSettings.X = float(m_initialRed) / 100.00F;
+	lightSettings.Y = float(m_initialGreen) / 100.00F;
+	lightSettings.Z = float(m_initialBlue) / 100.00F;
 
-    // Get a pointer to the document so we can change the scene's light
-    // settings
-    CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
-    if (pCDoc && pCDoc->GetScene ())
-    {
-        // Modify the ambient light for this scene
-        pCDoc->GetScene ()->Set_Ambient_Light (lightSettings);
-    }
+	// Get a pointer to the document so we can change the scene's light
+	// settings
+	CW3DViewDoc *pCDoc = ::GetCurrentDocument();
+	if (pCDoc && pCDoc->GetScene())
+	{
+		// Modify the ambient light for this scene
+		pCDoc->GetScene()->Set_Ambient_Light(lightSettings);
+	}
 
 	// Allow the base class to process this message
-    CDialog::OnCancel();
-    return ;
+	CDialog::OnCancel();
+	return;
 }
 
 //////////////////////////////////////////////////////////////
@@ -196,53 +182,46 @@ CAmbientLightDialog::OnCancel (void)
 //  WindowProc
 //
 LRESULT
-CAmbientLightDialog::WindowProc
-(
-    UINT message,
-    WPARAM wParam,
-    LPARAM lParam
-)
+CAmbientLightDialog::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-    if (message == WM_PAINT)
-    {
-        // Paint the gradients for each color
-        ::Paint_Gradient (::GetDlgItem (m_hWnd, IDC_RED_GRADIENT), 1, 0, 0);
-        ::Paint_Gradient (::GetDlgItem (m_hWnd, IDC_GREEN_GRADIENT), 0, 1, 0);
-        ::Paint_Gradient (::GetDlgItem (m_hWnd, IDC_BLUE_GRADIENT), 0, 0, 1);
-    }
+	if (message == WM_PAINT)
+	{
+		// Paint the gradients for each color
+		::Paint_Gradient(::GetDlgItem(m_hWnd, IDC_RED_GRADIENT), 1, 0, 0);
+		::Paint_Gradient(::GetDlgItem(m_hWnd, IDC_GREEN_GRADIENT), 0, 1, 0);
+		::Paint_Gradient(::GetDlgItem(m_hWnd, IDC_BLUE_GRADIENT), 0, 0, 1);
+	}
 
 	// Allow the base class to process this message
-    return CDialog::WindowProc (message, wParam, lParam);
+	return CDialog::WindowProc(message, wParam, lParam);
 }
 
 //////////////////////////////////////////////////////////////
 //
 //  OnGrayscaleCheck
 //
-void
-CAmbientLightDialog::OnGrayscaleCheck (void)
+void CAmbientLightDialog::OnGrayscaleCheck(void)
 {
-    if (SendDlgItemMessage (IDC_GRAYSCALE_CHECK, BM_GETCHECK))
-    {
-        // Make the green and blue sliders the same as red
-        m_greenSlider.SetPos (m_redSlider.GetPos ());
-        m_blueSlider.SetPos (m_redSlider.GetPos ());
+	if (SendDlgItemMessage(IDC_GRAYSCALE_CHECK, BM_GETCHECK))
+	{
+		// Make the green and blue sliders the same as red
+		m_greenSlider.SetPos(m_redSlider.GetPos());
+		m_blueSlider.SetPos(m_redSlider.GetPos());
 
-        Vector3 lightSettings;
-        lightSettings.X = float(m_redSlider.GetPos ()) / 100.00F;
-        lightSettings.Y = float(m_greenSlider.GetPos ()) / 100.00F;
-        lightSettings.Z = float(m_blueSlider.GetPos ()) / 100.00F;
+		Vector3 lightSettings;
+		lightSettings.X = float(m_redSlider.GetPos()) / 100.00F;
+		lightSettings.Y = float(m_greenSlider.GetPos()) / 100.00F;
+		lightSettings.Z = float(m_blueSlider.GetPos()) / 100.00F;
 
-        // Get a pointer to the document so we can change the scene's light
-        // settings
-        CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
-        if (pCDoc && pCDoc->GetScene ())
-        {
-            // Modify the ambient light for this scene
-            pCDoc->GetScene ()->Set_Ambient_Light (lightSettings);
-        }
-    }
+		// Get a pointer to the document so we can change the scene's light
+		// settings
+		CW3DViewDoc *pCDoc = ::GetCurrentDocument();
+		if (pCDoc && pCDoc->GetScene())
+		{
+			// Modify the ambient light for this scene
+			pCDoc->GetScene()->Set_Ambient_Light(lightSettings);
+		}
+	}
 
-    return ;
+	return;
 }
-

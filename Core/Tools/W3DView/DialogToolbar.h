@@ -34,11 +34,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
-
 
 #ifndef __DIALOGTOOLBAR_H
 #define __DIALOGTOOLBAR_H
@@ -51,32 +49,30 @@
 //
 class DialogToolbarClass : public CToolBar
 {
-	public:
-		DialogToolbarClass (void);
-		virtual ~DialogToolbarClass (void) {}
+public:
+	DialogToolbarClass(void);
+	virtual ~DialogToolbarClass(void) {}
 
-// Form Data
+	// Form Data
 public:
 	//{{AFX_DATA(DialogToolbarClass)
 	//}}AFX_DATA
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(DialogToolbarClass)
-	protected:
+protected:
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	virtual void Dump(CDumpContext &dc) const;
 #endif
 
 	// Generated message map functions
@@ -86,20 +82,15 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	//virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
-	BOOL OnNeedToolTipText (UINT id, NMHDR *pTTTStruct, LRESULT *pResult);
+	// virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+	BOOL OnNeedToolTipText(UINT id, NMHDR *pTTTStruct, LRESULT *pResult);
 
-
-
-	public:
-
-		///////////////////////////////////////////////////////
-		//
-		//	Public methods
-		//
-		void						Enable_Button (int id, bool benable = true);
+public:
+	///////////////////////////////////////////////////////
+	//
+	//	Public methods
+	//
+	void Enable_Button(int id, bool benable = true);
 };
 
-
 #endif //__DIALOGTOOLBAR_H
-

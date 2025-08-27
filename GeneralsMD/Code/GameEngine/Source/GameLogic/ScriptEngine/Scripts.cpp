@@ -41,7 +41,7 @@
 // Desc:      Contains the information describing scripts.
 //
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Lib/BaseType.h"
 
@@ -66,9 +66,6 @@
 #include "GameLogic/SidesList.h"
 #include "GameLogic/Module/ContainModule.h"
 
-
-
-
 static Script *s_mtScript = NULL;
 static ScriptGroup *s_mtGroup = NULL;
 
@@ -76,46 +73,45 @@ static ScriptGroup *s_mtGroup = NULL;
 // These strings must be in the same order as they are in their definitions
 // (See SHELL_SCRIPT_HOOK_* )
 //
-const char *TheShellHookNames[]=
-{
-	"ShellMainMenuCampaignPushed", //SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_SELECTED,
-	"ShellMainMenuCampaignHighlighted", //SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_HIGHLIGHTED,
-	"ShellMainMenuCampaignUnhighlighted", //SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_UNHIGHLIGHTED,
+const char *TheShellHookNames[] = {
+	"ShellMainMenuCampaignPushed", // SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_SELECTED,
+	"ShellMainMenuCampaignHighlighted", // SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_HIGHLIGHTED,
+	"ShellMainMenuCampaignUnhighlighted", // SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_UNHIGHLIGHTED,
 
-	"ShellMainMenuSkirmishPushed", //SHELL_SCRIPT_HOOK_MAIN_MENU_SKIRMISH_SELECTED,
-	"ShellMainMenuSkirmishHighlighted", //SHELL_SCRIPT_HOOK_MAIN_MENU_SKIRMISH_HIGHLIGHTED,
-	"ShellMainMenuSkirmishUnhighlighted", //SHELL_SCRIPT_HOOK_MAIN_MENU_SKIRMISH_UNHIGHLIGHTED,
+	"ShellMainMenuSkirmishPushed", // SHELL_SCRIPT_HOOK_MAIN_MENU_SKIRMISH_SELECTED,
+	"ShellMainMenuSkirmishHighlighted", // SHELL_SCRIPT_HOOK_MAIN_MENU_SKIRMISH_HIGHLIGHTED,
+	"ShellMainMenuSkirmishUnhighlighted", // SHELL_SCRIPT_HOOK_MAIN_MENU_SKIRMISH_UNHIGHLIGHTED,
 
-	"ShellMainMenuOptionsPushed", //SHELL_SCRIPT_HOOK_MAIN_MENU_OPTIONS_SELECTED,
-	"ShellMainMenuOptionsHighlighted", //SHELL_SCRIPT_HOOK_MAIN_MENU_OPTIONS_HIGHLIGHTED,
-	"ShellMainMenuOptionsUnhighlighted", //SHELL_SCRIPT_HOOK_MAIN_MENU_OPTIONS_UNHIGHLIGHTED,
+	"ShellMainMenuOptionsPushed", // SHELL_SCRIPT_HOOK_MAIN_MENU_OPTIONS_SELECTED,
+	"ShellMainMenuOptionsHighlighted", // SHELL_SCRIPT_HOOK_MAIN_MENU_OPTIONS_HIGHLIGHTED,
+	"ShellMainMenuOptionsUnhighlighted", // SHELL_SCRIPT_HOOK_MAIN_MENU_OPTIONS_UNHIGHLIGHTED,
 
-	"ShellMainMenuOnlinePushed", //SHELL_SCRIPT_HOOK_MAIN_MENU_ONLINE_SELECTED,
-	"ShellMainMenuOnlineHighlighted", //SHELL_SCRIPT_HOOK_MAIN_MENU_ONLINE_HIGHLIGHTED,
-	"ShellMainMenuOnlineUnhighlighted", //SHELL_SCRIPT_HOOK_MAIN_MENU_ONLINE_UNHIGHLIGHTED,
+	"ShellMainMenuOnlinePushed", // SHELL_SCRIPT_HOOK_MAIN_MENU_ONLINE_SELECTED,
+	"ShellMainMenuOnlineHighlighted", // SHELL_SCRIPT_HOOK_MAIN_MENU_ONLINE_HIGHLIGHTED,
+	"ShellMainMenuOnlineUnhighlighted", // SHELL_SCRIPT_HOOK_MAIN_MENU_ONLINE_UNHIGHLIGHTED,
 
-	"ShellMainMenuNetworkPushed", //SHELL_SCRIPT_HOOK_MAIN_MENU_NETWORK_SELECTED,
-	"ShellMainMenuNetworkHighlighted", //SHELL_SCRIPT_HOOK_MAIN_MENU_NETWORK_HIGHLIGHTED,
-	"ShellMainMenuNetworkUnhighlighted", //SHELL_SCRIPT_HOOK_MAIN_MENU_NETWORK_UNHIGHLIGHTED,
+	"ShellMainMenuNetworkPushed", // SHELL_SCRIPT_HOOK_MAIN_MENU_NETWORK_SELECTED,
+	"ShellMainMenuNetworkHighlighted", // SHELL_SCRIPT_HOOK_MAIN_MENU_NETWORK_HIGHLIGHTED,
+	"ShellMainMenuNetworkUnhighlighted", // SHELL_SCRIPT_HOOK_MAIN_MENU_NETWORK_UNHIGHLIGHTED,
 
-	"ShellMainMenuExitPushed", //SHELL_SCRIPT_HOOK_MAIN_MENU_EXIT_SELECTED,
-	"ShellMainMenuExitHighlighted", //SHELL_SCRIPT_HOOK_MAIN_MENU_EXIT_HIGHLIGHTED,
-	"ShellMainMenuExitUnhighlighted", //SHELL_SCRIPT_HOOK_MAIN_MENU_EXIT_UNHIGHLIGHTED,
+	"ShellMainMenuExitPushed", // SHELL_SCRIPT_HOOK_MAIN_MENU_EXIT_SELECTED,
+	"ShellMainMenuExitHighlighted", // SHELL_SCRIPT_HOOK_MAIN_MENU_EXIT_HIGHLIGHTED,
+	"ShellMainMenuExitUnhighlighted", // SHELL_SCRIPT_HOOK_MAIN_MENU_EXIT_UNHIGHLIGHTED,
 
-	"ShellGeneralsOnlineLogin", //SHELL_SCRIPT_HOOK_GENERALS_ONLINE_LOGIN,
-	"ShellGeneralsOnlineLogout", //SHELL_SCRIPT_HOOK_GENERALS_ONLINE_LOGOUT,
-	"ShellGeneralsOnlineEnteredFromGame", //SHELL_SCRIPT_HOOK_GENERALS_ONLINE_ENTERED_FROM_GAME,
+	"ShellGeneralsOnlineLogin", // SHELL_SCRIPT_HOOK_GENERALS_ONLINE_LOGIN,
+	"ShellGeneralsOnlineLogout", // SHELL_SCRIPT_HOOK_GENERALS_ONLINE_LOGOUT,
+	"ShellGeneralsOnlineEnteredFromGame", // SHELL_SCRIPT_HOOK_GENERALS_ONLINE_ENTERED_FROM_GAME,
 
-	"ShellOptionsOpened", //SHELL_SCRIPT_HOOK_OPTIONS_OPENED,
-	"ShellOptionsClosed", //SHELL_SCRIPT_HOOK_OPTIONS_CLOSED,
+	"ShellOptionsOpened", // SHELL_SCRIPT_HOOK_OPTIONS_OPENED,
+	"ShellOptionsClosed", // SHELL_SCRIPT_HOOK_OPTIONS_CLOSED,
 
-	"ShellSkirmishOpened", //SHELL_SCRIPT_HOOK_SKIRMISH_OPENED,
-	"ShellSkirmishClosed", //SHELL_SCRIPT_HOOK_SKIRMISH_CLOSED,
-	"ShellSkirmishEnteredFromGame", //SHELL_SCRIPT_HOOK_SKIRMISH_ENTERED_FROM_GAME,
+	"ShellSkirmishOpened", // SHELL_SCRIPT_HOOK_SKIRMISH_OPENED,
+	"ShellSkirmishClosed", // SHELL_SCRIPT_HOOK_SKIRMISH_CLOSED,
+	"ShellSkirmishEnteredFromGame", // SHELL_SCRIPT_HOOK_SKIRMISH_ENTERED_FROM_GAME,
 
-	"ShellLANOpened", //SHELL_SCRIPT_HOOK_LAN_OPENED,
-	"ShellLANClosed", //SHELL_SCRIPT_HOOK_LAN_CLOSED,
-	"ShellLANEnteredFromGame", //SHELL_SCRIPT_HOOK_LAN_ENTERED_FROM_GAME,
+	"ShellLANOpened", // SHELL_SCRIPT_HOOK_LAN_OPENED,
+	"ShellLANClosed", // SHELL_SCRIPT_HOOK_LAN_CLOSED,
+	"ShellLANEnteredFromGame", // SHELL_SCRIPT_HOOK_LAN_ENTERED_FROM_GAME,
 };
 void SignalUIInteraction(Int interaction)
 {
@@ -123,49 +119,52 @@ void SignalUIInteraction(Int interaction)
 		TheScriptEngine->signalUIInteract(TheShellHookNames[interaction]);
 }
 
-
 // Changing the order or meaning of either of these will require you to update the maps
 // in a meaningful way. If there are new entries, add them to the end, rather than the middle.
-const char *Surfaces[] = { "Ground", "Air", "Ground or Air", };
+const char *Surfaces[] = {
+	"Ground",
+	"Air",
+	"Ground or Air",
+};
 const char *ShakeIntensities[] = { "Subtle", "Normal", "Strong", "Severe", "Cine_Extreme", "Cine_Insane" };
 
-enum { K_SCRIPT_LIST_DATA_VERSION_1 = 1,
-			K_SCRIPT_GROUP_DATA_VERSION_1 = 1,
-			K_SCRIPT_GROUP_DATA_VERSION_2 = 2,
-			K_SCRIPT_DATA_VERSION_1 = 1,
-			K_SCRIPT_DATA_VERSION_2 = 2,
-			K_SCRIPT_OR_CONDITION_DATA_VERSION_1=1,
-			K_SCRIPT_ACTION_VERSION_1 = 1,
-			K_SCRIPT_ACTION_VERSION_2 = 2,
-			K_SCRIPT_CONDITION_VERSION_1 = 1,
-			K_SCRIPT_CONDITION_VERSION_2 = 2,
-			K_SCRIPT_CONDITION_VERSION_3 = 3,
-			K_SCRIPT_CONDITION_VERSION_4 = 4,
-			K_SCRIPTS_DATA_VERSION_1,
-			end_of_the_enumeration
-};
-
-static Condition::ConditionType ParameterChangesVer2[] =
+enum
 {
-	// Seven Changed from version 1.
-	Condition::TEAM_INSIDE_AREA_PARTIALLY,
-	Condition::TEAM_INSIDE_AREA_ENTIRELY,
-	Condition::TEAM_OUTSIDE_AREA_ENTIRELY,
-	Condition::TEAM_ENTERED_AREA_PARTIALLY,
-	Condition::TEAM_ENTERED_AREA_ENTIRELY,
-	Condition::TEAM_EXITED_AREA_ENTIRELY,
-	Condition::TEAM_EXITED_AREA_PARTIALLY,
-	(Condition::ConditionType) -1,
+	K_SCRIPT_LIST_DATA_VERSION_1 = 1,
+	K_SCRIPT_GROUP_DATA_VERSION_1 = 1,
+	K_SCRIPT_GROUP_DATA_VERSION_2 = 2,
+	K_SCRIPT_DATA_VERSION_1 = 1,
+	K_SCRIPT_DATA_VERSION_2 = 2,
+	K_SCRIPT_OR_CONDITION_DATA_VERSION_1 = 1,
+	K_SCRIPT_ACTION_VERSION_1 = 1,
+	K_SCRIPT_ACTION_VERSION_2 = 2,
+	K_SCRIPT_CONDITION_VERSION_1 = 1,
+	K_SCRIPT_CONDITION_VERSION_2 = 2,
+	K_SCRIPT_CONDITION_VERSION_3 = 3,
+	K_SCRIPT_CONDITION_VERSION_4 = 4,
+	K_SCRIPTS_DATA_VERSION_1,
+	end_of_the_enumeration
 };
 
-enum { AT_END = 0x00FFFFFF };
+static Condition::ConditionType ParameterChangesVer2[] = {
+	// Seven Changed from version 1.
+	Condition::TEAM_INSIDE_AREA_PARTIALLY,	Condition::TEAM_INSIDE_AREA_ENTIRELY,	 Condition::TEAM_OUTSIDE_AREA_ENTIRELY,
+	Condition::TEAM_ENTERED_AREA_PARTIALLY, Condition::TEAM_ENTERED_AREA_ENTIRELY, Condition::TEAM_EXITED_AREA_ENTIRELY,
+	Condition::TEAM_EXITED_AREA_PARTIALLY,	(Condition::ConditionType)-1,
+};
+
+enum
+{
+	AT_END = 0x00FFFFFF
+};
 
 //-------------------------------------------------------------------------------------------------
 // ******************************** class  ScriptList *********************************************
 //-------------------------------------------------------------------------------------------------
 // Statics ///////////////////////////////////////////////////////////////////////////////////////
-ScriptList *ScriptList::s_readLists[MAX_PLAYER_COUNT] = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
-Int					ScriptList::s_numInReadList = 0;
+ScriptList *ScriptList::s_readLists[MAX_PLAYER_COUNT] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+																													NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+Int ScriptList::s_numInReadList = 0;
 
 Int ScriptList::m_curId = 0;
 
@@ -176,10 +175,11 @@ Int ScriptList::m_curId = 0;
 void ScriptList::updateDefaults(void)
 {
 	Int i;
-	for (i=0; i<TheSidesList->getNumSides(); i++)
+	for (i = 0; i < TheSidesList->getNumSides(); i++)
 	{
-		ScriptList* pList = TheSidesList->getSideInfo(i)->getScriptList();
-		if (pList == NULL) {
+		ScriptList *pList = TheSidesList->getSideInfo(i)->getScriptList();
+		if (pList == NULL)
+		{
 			pList = newInstance(ScriptList);
 			TheSidesList->getSideInfo(i)->setScriptList(pList);
 		}
@@ -187,42 +187,41 @@ void ScriptList::updateDefaults(void)
 }
 
 /**
-  Deletes any script lists attached to sides.  Used for editor cleanup.
+	Deletes any script lists attached to sides.  Used for editor cleanup.
 */
 void ScriptList::reset(void)
 {
 	Int i;
-	if (TheSidesList == NULL) return; /// @todo - move this code into sides list.
-	for (i=0; i<TheSidesList->getNumSides(); i++)
+	if (TheSidesList == NULL)
+		return; /// @todo - move this code into sides list.
+	for (i = 0; i < TheSidesList->getNumSides(); i++)
 	{
-		ScriptList* pList = TheSidesList->getSideInfo(i)->getScriptList();
+		ScriptList *pList = TheSidesList->getSideInfo(i)->getScriptList();
 		TheSidesList->getSideInfo(i)->setScriptList(NULL);
 		deleteInstance(pList);
 	}
 }
 
-
-
 /**
-  Ctor.
+	Ctor.
 */
-ScriptList::ScriptList(void) :
-m_firstGroup(NULL),
-m_firstScript(NULL)
+ScriptList::ScriptList(void) : m_firstGroup(NULL), m_firstScript(NULL)
 {
 }
 
 /**
-  Dtor.  Deletes any script lists or group lists.  Note that dtors for groups and script lists
+	Dtor.  Deletes any script lists or group lists.  Note that dtors for groups and script lists
 	delete the whole list, so don't need to traverse here.
 */
 ScriptList::~ScriptList(void)
 {
-	if (m_firstGroup) {
+	if (m_firstGroup)
+	{
 		deleteInstance(m_firstGroup);
 		m_firstGroup = NULL;
 	}
-	if (m_firstScript) {
+	if (m_firstScript)
+	{
 		deleteInstance(m_firstScript);
 		m_firstScript = NULL;
 	}
@@ -231,50 +230,53 @@ ScriptList::~ScriptList(void)
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ScriptList::crc( Xfer *xfer )
+void ScriptList::crc(Xfer *xfer)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ScriptList::xfer( Xfer *xfer )
+void ScriptList::xfer(Xfer *xfer)
 {
 	UnsignedShort countVerify;
 
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// count of scripts here
 	Script *script;
 	UnsignedShort scriptCount = 0;
-	for( script = getScript(); script; script = script->getNext() )
+	for (script = getScript(); script; script = script->getNext())
 		scriptCount++;
 	countVerify = scriptCount;
-	xfer->xferUnsignedShort( &scriptCount );
-	if( countVerify != scriptCount )
+	xfer->xferUnsignedShort(&scriptCount);
+	if (countVerify != scriptCount)
 	{
-
-		DEBUG_CRASH(( "ScriptList::xfer - Script list count has changed, attempting to recover."));
+		DEBUG_CRASH(("ScriptList::xfer - Script list count has changed, attempting to recover."));
 		// throw SC_INVALID_DATA; try to recover. jba.
 
-	}  // end if
+	} // end if
 
 	// all script data here
-	for( script = getScript(); script; script = script->getNext() )	{
-		xfer->xferSnapshot( script );
+	for (script = getScript(); script; script = script->getNext())
+	{
+		xfer->xferSnapshot(script);
 		scriptCount--;
-		if (scriptCount==0) break;
+		if (scriptCount == 0)
+			break;
 	}
-	if (scriptCount>0) {
+	if (scriptCount > 0)
+	{
 		DEBUG_CRASH(("Stripping out extra scripts - Bad..."));
-		if (s_mtScript==NULL) s_mtScript = newInstance(Script);	// Yes it leaks, but this is unusual recovery only. jba.
-		while (scriptCount) {
+		if (s_mtScript == NULL)
+			s_mtScript = newInstance(Script); // Yes it leaks, but this is unusual recovery only. jba.
+		while (scriptCount)
+		{
 			xfer->xferSnapshot(s_mtScript);
 			scriptCount--;
 		}
@@ -283,44 +285,46 @@ void ScriptList::xfer( Xfer *xfer )
 	// count of script groups
 	ScriptGroup *scriptGroup;
 	UnsignedShort scriptGroupCount = 0;
-	for( scriptGroup = getScriptGroup(); scriptGroup; scriptGroup = scriptGroup->getNext() )
+	for (scriptGroup = getScriptGroup(); scriptGroup; scriptGroup = scriptGroup->getNext())
 		scriptGroupCount++;
 	countVerify = scriptGroupCount;
-	xfer->xferUnsignedShort( &scriptGroupCount );
-	if( countVerify != scriptGroupCount )
+	xfer->xferUnsignedShort(&scriptGroupCount);
+	if (countVerify != scriptGroupCount)
 	{
+		DEBUG_CRASH(("ScriptList::xfer - Script group count has changed, attempting to recover."));
 
-		DEBUG_CRASH(( "ScriptList::xfer - Script group count has changed, attempting to recover."));
-
-	}  // end if
+	} // end if
 
 	// all script group data
-	for( scriptGroup = getScriptGroup(); scriptGroup; scriptGroup = scriptGroup->getNext() ) {
-		xfer->xferSnapshot( scriptGroup );
+	for (scriptGroup = getScriptGroup(); scriptGroup; scriptGroup = scriptGroup->getNext())
+	{
+		xfer->xferSnapshot(scriptGroup);
 		scriptGroupCount--;
-		if (scriptGroupCount==0) break;
+		if (scriptGroupCount == 0)
+			break;
 	}
-	if (scriptGroupCount>0) {
+	if (scriptGroupCount > 0)
+	{
 		DEBUG_CRASH(("Stripping out extra groups. - Bad..."));
-		if (s_mtGroup == NULL) s_mtGroup = newInstance(ScriptGroup);	// Yes it leaks, but this is only for recovery.
-		while (scriptGroupCount) {
+		if (s_mtGroup == NULL)
+			s_mtGroup = newInstance(ScriptGroup); // Yes it leaks, but this is only for recovery.
+		while (scriptGroupCount)
+		{
 			xfer->xferSnapshot(s_mtGroup);
 			scriptGroupCount--;
 		}
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ScriptList::loadPostProcess( void )
+void ScriptList::loadPostProcess(void)
 {
-
 }
 
 /**
-  ScriptList::duplicate - Creates a full, "deep" copy of scriptlist.
+	ScriptList::duplicate - Creates a full, "deep" copy of scriptlist.
 */
 ScriptList *ScriptList::duplicate(void) const
 {
@@ -364,11 +368,13 @@ ScriptList *ScriptList::duplicate(void) const
 }
 
 /**
-  ScriptList::duplicateAndQualify - Creates a full, "deep" copy of scriptlist,
+	ScriptList::duplicateAndQualify - Creates a full, "deep" copy of scriptlist,
 	adding the qualifier to names.
 */
-ScriptList *ScriptList::duplicateAndQualify(const AsciiString& qualifier,
-			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const
+ScriptList *ScriptList::duplicateAndQualify(
+		const AsciiString &qualifier,
+		const AsciiString &playerTemplateName,
+		const AsciiString &newPlayerName) const
 {
 	ScriptList *pNew = newInstance(ScriptList);
 
@@ -377,7 +383,7 @@ ScriptList *ScriptList::duplicateAndQualify(const AsciiString& qualifier,
 		ScriptGroup *dst = NULL;
 		while (src)
 		{
-			ScriptGroup *tmp = src->duplicateAndQualify( qualifier, playerTemplateName, newPlayerName);
+			ScriptGroup *tmp = src->duplicateAndQualify(qualifier, playerTemplateName, newPlayerName);
 
 			if (dst)
 				dst->setNextGroup(tmp);
@@ -410,7 +416,7 @@ ScriptList *ScriptList::duplicateAndQualify(const AsciiString& qualifier,
 }
 
 /**
-  ScriptList::discard - Deletes a script list, but not any children.
+	ScriptList::discard - Deletes a script list, but not any children.
 */
 void ScriptList::discard(void)
 {
@@ -420,23 +426,27 @@ void ScriptList::discard(void)
 }
 
 /**
-  Add a script group to the current list of groups.  Offset to position ndx.
+	Add a script group to the current list of groups.  Offset to position ndx.
 */
 void ScriptList::addGroup(ScriptGroup *pGrp, Int ndx)
 {
 	ScriptGroup *pPrev = NULL;
 	ScriptGroup *pCur = m_firstGroup;
-	DEBUG_ASSERTCRASH(pGrp->getNext()==NULL, ("Adding already linked group."));
-	while (ndx && pCur) {
+	DEBUG_ASSERTCRASH(pGrp->getNext() == NULL, ("Adding already linked group."));
+	while (ndx && pCur)
+	{
 		pPrev = pCur;
 		pCur = pCur->getNext();
 		ndx--;
 	}
-	if (pPrev) {
+	if (pPrev)
+	{
 		// Weave into prev link.
 		pGrp->setNextGroup(pPrev->getNext());
 		pPrev->setNextGroup(pGrp);
-	} else {
+	}
+	else
+	{
 		// Goes at head of list.
 		pGrp->setNextGroup(m_firstGroup);
 		m_firstGroup = pGrp;
@@ -444,45 +454,54 @@ void ScriptList::addGroup(ScriptGroup *pGrp, Int ndx)
 }
 
 /**
-  Add a script to the current list of scripts.  Offset to position ndx.
+	Add a script to the current list of scripts.  Offset to position ndx.
 */
 void ScriptList::addScript(Script *pScr, Int ndx)
 {
 	Script *pPrev = NULL;
 	Script *pCur = m_firstScript;
-	DEBUG_ASSERTCRASH(pScr->getNext()==NULL, ("Adding already linked group."));
-	while (ndx && pCur) {
+	DEBUG_ASSERTCRASH(pScr->getNext() == NULL, ("Adding already linked group."));
+	while (ndx && pCur)
+	{
 		pPrev = pCur;
 		pCur = pCur->getNext();
 		ndx--;
 	}
-	if (pPrev) {
+	if (pPrev)
+	{
 		pScr->setNextScript(pPrev->getNext());
 		pPrev->setNextScript(pScr);
-	} else {
+	}
+	else
+	{
 		pScr->setNextScript(m_firstScript);
 		m_firstScript = pScr;
 	}
 }
 
 /**
-  Delete a script from the current list of scripts.
+	Delete a script from the current list of scripts.
 */
 void ScriptList::deleteScript(Script *pScr)
 {
 	Script *pPrev = NULL;
 	Script *pCur = m_firstScript;
-	while (pCur != pScr) {
+	while (pCur != pScr)
+	{
 		pPrev = pCur;
 		pCur = pCur->getNext();
 	}
 	DEBUG_ASSERTCRASH(pCur, ("Couldn't find script."));
-	if (pCur==NULL) return;
+	if (pCur == NULL)
+		return;
 
-	if (pPrev) {
+	if (pPrev)
+	{
 		// unlink from previous script.
 		pPrev->setNextScript(pCur->getNext());
-	} else {
+	}
+	else
+	{
 		// Unlink from head of list.
 		m_firstScript = pCur->getNext();
 	}
@@ -492,22 +511,27 @@ void ScriptList::deleteScript(Script *pScr)
 }
 
 /**
-  Delete a group from the current list of groups.
+	Delete a group from the current list of groups.
 */
 void ScriptList::deleteGroup(ScriptGroup *pGrp)
 {
 	ScriptGroup *pPrev = NULL;
 	ScriptGroup *pCur = m_firstGroup;
-	while (pCur != pGrp) {
+	while (pCur != pGrp)
+	{
 		pPrev = pCur;
 		pCur = pCur->getNext();
 	}
 	DEBUG_ASSERTCRASH(pCur, ("Couldn't find group."));
-	if (pCur==NULL) return;
-	if (pPrev) {
+	if (pCur == NULL)
+		return;
+	if (pPrev)
+	{
 		// unlink from previous group.
 		pPrev->setNextGroup(pCur->getNext());
-	} else {
+	}
+	else
+	{
 		// Unlink from head of list.
 		m_firstGroup = pCur->getNext();
 	}
@@ -517,32 +541,37 @@ void ScriptList::deleteGroup(ScriptGroup *pGrp)
 }
 
 /**
-* ScriptList::ParseScriptsDataChunk - read a Scripts chunk.
-* Format is the newer CHUNKY format.
-*	See ScriptList::ScriptList for the writer.
-*	Input: DataChunkInput
-*
-*/
+ * ScriptList::ParseScriptsDataChunk - read a Scripts chunk.
+ * Format is the newer CHUNKY format.
+ *	See ScriptList::ScriptList for the writer.
+ *	Input: DataChunkInput
+ *
+ */
 Bool ScriptList::ParseScriptsDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
 	Int i;
-	file.registerParser( AsciiString("ScriptList"), info->label, ScriptList::ParseScriptListDataChunk );
-	DEBUG_ASSERTCRASH(s_numInReadList==0, ("Leftover scripts floating aroung."));
-	for (i=0; i<s_numInReadList; i++) {
-		if (s_readLists[i]) {
+	file.registerParser(AsciiString("ScriptList"), info->label, ScriptList::ParseScriptListDataChunk);
+	DEBUG_ASSERTCRASH(s_numInReadList == 0, ("Leftover scripts floating aroung."));
+	for (i = 0; i < s_numInReadList; i++)
+	{
+		if (s_readLists[i])
+		{
 			deleteInstance(s_readLists[i]);
 			s_readLists[i] = NULL;
 		}
 	}
 	TScriptListReadInfo readInfo;
-	for (i=0; i<MAX_PLAYER_COUNT; i++) {
+	for (i = 0; i < MAX_PLAYER_COUNT; i++)
+	{
 		readInfo.readLists[i] = 0;
 	}
 	readInfo.numLists = 0;
-	if (file.parse(&readInfo)) {
-		DEBUG_ASSERTCRASH(readInfo.numLists<MAX_PLAYER_COUNT, ("Read too many, overrun buffer."));
+	if (file.parse(&readInfo))
+	{
+		DEBUG_ASSERTCRASH(readInfo.numLists < MAX_PLAYER_COUNT, ("Read too many, overrun buffer."));
 		s_numInReadList = readInfo.numLists;
-		for (i=0; i<s_numInReadList; i++) {
+		for (i = 0; i < s_numInReadList; i++)
+		{
 			s_readLists[i] = readInfo.readLists[i];
 		}
 		return true;
@@ -551,16 +580,17 @@ Bool ScriptList::ParseScriptsDataChunk(DataChunkInput &file, DataChunkInfo *info
 }
 
 /**
-* ScriptList::getReadScripts - Gets the scripts read in from a file by .
-* ScriptList::ParseScriptsDataChunk.
-*
-*/
+ * ScriptList::getReadScripts - Gets the scripts read in from a file by .
+ * ScriptList::ParseScriptsDataChunk.
+ *
+ */
 Int ScriptList::getReadScripts(ScriptList *scriptLists[MAX_PLAYER_COUNT])
 {
 	Int i;
 	Int count = s_numInReadList;
 	s_numInReadList = 0;
-	for (i=0; i<count; i++) {
+	for (i = 0; i < count; i++)
+	{
 		scriptLists[i] = s_readLists[i];
 		s_readLists[i] = NULL;
 	}
@@ -568,100 +598,102 @@ Int ScriptList::getReadScripts(ScriptList *scriptLists[MAX_PLAYER_COUNT])
 }
 
 /**
-* ScriptList::WriteScriptsDataChunk - Writes a Scripts chunk.
-* Format is the newer CHUNKY format.
-*	See ScriptEngine::ParseScriptsDataChunk for the reader.
-*	Input: DataChunkInput
-*
-*/
-void ScriptList::WriteScriptsDataChunk(DataChunkOutput &chunkWriter, ScriptList *scriptLists[], Int numLists )
+ * ScriptList::WriteScriptsDataChunk - Writes a Scripts chunk.
+ * Format is the newer CHUNKY format.
+ *	See ScriptEngine::ParseScriptsDataChunk for the reader.
+ *	Input: DataChunkInput
+ *
+ */
+void ScriptList::WriteScriptsDataChunk(DataChunkOutput &chunkWriter, ScriptList *scriptLists[], Int numLists)
 {
 	/**********SCRIPTS DATA ***********************/
 	chunkWriter.openDataChunk("PlayerScriptsList", K_SCRIPTS_DATA_VERSION_1);
-		Int i;
-		for (i=0; i<numLists; i++) {
-			chunkWriter.openDataChunk("ScriptList", K_SCRIPT_LIST_DATA_VERSION_1);
-			if (scriptLists[i]) scriptLists[i]->WriteScriptListDataChunk(chunkWriter);
-			chunkWriter.closeDataChunk();
-		}
+	Int i;
+	for (i = 0; i < numLists; i++)
+	{
+		chunkWriter.openDataChunk("ScriptList", K_SCRIPT_LIST_DATA_VERSION_1);
+		if (scriptLists[i])
+			scriptLists[i]->WriteScriptListDataChunk(chunkWriter);
+		chunkWriter.closeDataChunk();
+	}
 	chunkWriter.closeDataChunk();
-
 }
 
-
-
 /**
-* ScriptList::WriteScriptListDataChunk - Writes a Scripts chunk.
-* Format is the newer CHUNKY format.
-*	Input: DataChunkInput
-*
-*/
+ * ScriptList::WriteScriptListDataChunk - Writes a Scripts chunk.
+ * Format is the newer CHUNKY format.
+ *	Input: DataChunkInput
+ *
+ */
 void ScriptList::WriteScriptListDataChunk(DataChunkOutput &chunkWriter)
 {
 	/**********SCRIPTS DATA ***********************/
-		if (m_firstScript) m_firstScript->WriteScriptDataChunk(chunkWriter, m_firstScript);
-		if (m_firstGroup) m_firstGroup->WriteGroupDataChunk(chunkWriter, m_firstGroup);
+	if (m_firstScript)
+		m_firstScript->WriteScriptDataChunk(chunkWriter, m_firstScript);
+	if (m_firstGroup)
+		m_firstGroup->WriteGroupDataChunk(chunkWriter, m_firstGroup);
 }
 
-
 /**
-* ScriptList::ParseScriptListDataChunk - read a Scripts chunk.
-* Format is the newer CHUNKY format.
-*	See ScriptList::WriteScriptListDataChunk for the writer.
-*	Input: DataChunkInput
-*
-*/
+ * ScriptList::ParseScriptListDataChunk - read a Scripts chunk.
+ * Format is the newer CHUNKY format.
+ *	See ScriptList::WriteScriptListDataChunk for the writer.
+ *	Input: DataChunkInput
+ *
+ */
 Bool ScriptList::ParseScriptListDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
-	TScriptListReadInfo *pInfo = (TScriptListReadInfo*)userData;
+	TScriptListReadInfo *pInfo = (TScriptListReadInfo *)userData;
 	DEBUG_ASSERTCRASH(pInfo->numLists < MAX_PLAYER_COUNT, ("Too many."));
-	if (pInfo->numLists >= MAX_PLAYER_COUNT) return false;
+	if (pInfo->numLists >= MAX_PLAYER_COUNT)
+		return false;
 	pInfo->readLists[pInfo->numLists] = newInstance(ScriptList);
 	Int cur = pInfo->numLists;
 	pInfo->numLists++;
-	file.registerParser( AsciiString("Script"), info->label, Script::ParseScriptFromListDataChunk );
-	file.registerParser( AsciiString("ScriptGroup"), info->label, ScriptGroup::ParseGroupDataChunk );
+	file.registerParser(AsciiString("Script"), info->label, Script::ParseScriptFromListDataChunk);
+	file.registerParser(AsciiString("ScriptGroup"), info->label, ScriptGroup::ParseGroupDataChunk);
 	return file.parse(pInfo->readLists[cur]);
-
 }
-
 
 //-------------------------------------------------------------------------------------------------
 // ******************************** class  ScriptGroup *********************************************
 //-------------------------------------------------------------------------------------------------
 
 /**
-  Ctor - gives it a default name.
+	Ctor - gives it a default name.
 */
 ScriptGroup::ScriptGroup(void) :
-m_firstScript(NULL),
-m_hasWarnings(false),
-m_isGroupActive(true),
-m_isGroupSubroutine(false),
-//Added By Sadullah Nader
-//Initializations inserted
-m_nextGroup(NULL)
+		m_firstScript(NULL),
+		m_hasWarnings(false),
+		m_isGroupActive(true),
+		m_isGroupSubroutine(false),
+		// Added By Sadullah Nader
+		// Initializations inserted
+		m_nextGroup(NULL)
 //
 {
 	m_groupName.format("Script Group %d", ScriptList::getNextID());
 }
 
 /**
-  Dtor - The script list deletes the rest of the list, but we have to loop & delete
+	Dtor - The script list deletes the rest of the list, but we have to loop & delete
 	sll the script groups in out list.
 */
 ScriptGroup::~ScriptGroup(void)
 {
-	if (m_firstScript) {
+	if (m_firstScript)
+	{
 		// Delete the first script.  m_firstScript deletes the entire list.
 		deleteInstance(m_firstScript);
 		m_firstScript = NULL;
 	}
-	if (m_nextGroup) {
+	if (m_nextGroup)
+	{
 		// Delete all the subsequent groups in our list.
 		ScriptGroup *cur = m_nextGroup;
 		ScriptGroup *next;
-		while (cur) {
+		while (cur)
+		{
 			next = cur->getNext();
 			cur->setNextGroup(NULL); // prevents recursion.
 			deleteInstance(cur);
@@ -673,71 +705,72 @@ ScriptGroup::~ScriptGroup(void)
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ScriptGroup::crc( Xfer *xfer )
+void ScriptGroup::crc(Xfer *xfer)
 {
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version
-	* 2: m_isGroupActive, since it is twiddled by other scripts.  Only its initial state is determined by the map.
-*/
+ * Version Info:
+ * 1: Initial version
+ * 2: m_isGroupActive, since it is twiddled by other scripts.  Only its initial state is determined by the map.
+ */
 // ------------------------------------------------------------------------------------------------
-void ScriptGroup::xfer( Xfer *xfer )
+void ScriptGroup::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
-	if( version >= 2 )
+	if (version >= 2)
 		xfer->xferBool(&m_isGroupActive);
 
 	// count of scripts here
 	UnsignedShort scriptCount = 0;
 	Script *script;
-	for( script = getScript(); script; script = script->getNext() )
+	for (script = getScript(); script; script = script->getNext())
 		scriptCount++;
 	UnsignedShort countVerify = scriptCount;
-	xfer->xferUnsignedShort( &scriptCount );
-	if( countVerify != scriptCount )
+	xfer->xferUnsignedShort(&scriptCount);
+	if (countVerify != scriptCount)
 	{
-
-		DEBUG_CRASH(( "ScriptGroup::xfer - Script list count has changed, attempting to recover."));
+		DEBUG_CRASH(("ScriptGroup::xfer - Script list count has changed, attempting to recover."));
 		// throw SC_INVALID_DATA; try to recover. jba.
 
-	}  // end if
+	} // end if
 
 	// xfer script data
-	for( script = getScript(); script; script = script->getNext() )	{
-		xfer->xferSnapshot( script );
+	for (script = getScript(); script; script = script->getNext())
+	{
+		xfer->xferSnapshot(script);
 		scriptCount--;
-		if (scriptCount==0) break;
+		if (scriptCount == 0)
+			break;
 	}
-	if (scriptCount>0) {
+	if (scriptCount > 0)
+	{
 		DEBUG_CRASH(("Stripping out extra scripts - Bad..."));
-		if (s_mtScript==NULL) s_mtScript = newInstance(Script);	// Yes it leaks, but this is unusual recovery only. jba.
-		while (scriptCount) {
+		if (s_mtScript == NULL)
+			s_mtScript = newInstance(Script); // Yes it leaks, but this is unusual recovery only. jba.
+		while (scriptCount)
+		{
 			xfer->xferSnapshot(s_mtScript);
 			scriptCount--;
 		}
 	}
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ScriptGroup::loadPostProcess( void )
+void ScriptGroup::loadPostProcess(void)
 {
-
-}  // end loadPostProcess
+} // end loadPostProcess
 
 /**
-  ScriptGroup::duplicate - Creates a full, "deep" copy of ScriptGroup.
+	ScriptGroup::duplicate - Creates a full, "deep" copy of ScriptGroup.
 	m_nextGroup is NULL on the copy.
 */
 ScriptGroup *ScriptGroup::duplicate(void) const
@@ -770,12 +803,14 @@ ScriptGroup *ScriptGroup::duplicate(void) const
 }
 
 /**
-  ScriptGroup::duplicateAndQualify - Creates a full, "deep" copy of ScriptGroup,
+	ScriptGroup::duplicateAndQualify - Creates a full, "deep" copy of ScriptGroup,
 	adding qualifier to names.
 	m_nextGroup is NULL on the copy.
 */
-ScriptGroup *ScriptGroup::duplicateAndQualify(const AsciiString& qualifier,
-			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const
+ScriptGroup *ScriptGroup::duplicateAndQualify(
+		const AsciiString &qualifier,
+		const AsciiString &playerTemplateName,
+		const AsciiString &newPlayerName) const
 {
 	ScriptGroup *pNew = newInstance(ScriptGroup);
 
@@ -806,21 +841,26 @@ ScriptGroup *ScriptGroup::duplicateAndQualify(const AsciiString& qualifier,
 }
 
 /**
-  Delete a script from the current list of scripts.
+	Delete a script from the current list of scripts.
 */
 void ScriptGroup::deleteScript(Script *pScr)
 {
 	Script *pPrev = NULL;
 	Script *pCur = m_firstScript;
-	while (pScr != pCur) {
+	while (pScr != pCur)
+	{
 		pPrev = pCur;
 		pCur = pCur->getNext();
 	}
 	DEBUG_ASSERTCRASH(pCur, ("Couldn't find script."));
-	if (pCur==NULL) return;
-	if (pPrev) {
+	if (pCur == NULL)
+		return;
+	if (pPrev)
+	{
 		pPrev->setNextScript(pCur->getNext());
-	} else {
+	}
+	else
+	{
 		m_firstScript = pCur->getNext();
 	}
 	// Clear link & delete.
@@ -829,23 +869,27 @@ void ScriptGroup::deleteScript(Script *pScr)
 }
 
 /**
-  Add a script to the current list of scripts.  Offset to position ndx.
+	Add a script to the current list of scripts.  Offset to position ndx.
 */
 void ScriptGroup::addScript(Script *pScr, Int ndx)
 {
 	Script *pPrev = NULL;
 	Script *pCur = m_firstScript;
-	DEBUG_ASSERTCRASH(pScr->getNext()==NULL, ("Adding already linked group."));
-	while (ndx && pCur) {
+	DEBUG_ASSERTCRASH(pScr->getNext() == NULL, ("Adding already linked group."));
+	while (ndx && pCur)
+	{
 		pPrev = pCur;
 		pCur = pCur->getNext();
 		ndx--;
 	}
-	if (pPrev) {
+	if (pPrev)
+	{
 		// link to pPrev
 		pScr->setNextScript(pPrev->getNext());
 		pPrev->setNextScript(pScr);
-	} else {
+	}
+	else
+	{
 		// add to head of list.
 		pScr->setNextScript(m_firstScript);
 		m_firstScript = pScr;
@@ -853,34 +897,34 @@ void ScriptGroup::addScript(Script *pScr, Int ndx)
 }
 
 /**
-* ScriptGroup::WriteGroupDataChunk - Writes a Scripts chunk.
-* Format is the newer CHUNKY format.
-*	Input: DataChunkInput
-*
-*/
+ * ScriptGroup::WriteGroupDataChunk - Writes a Scripts chunk.
+ * Format is the newer CHUNKY format.
+ *	Input: DataChunkInput
+ *
+ */
 void ScriptGroup::WriteGroupDataChunk(DataChunkOutput &chunkWriter, ScriptGroup *pGroup)
 {
-
 	/**********SCRIPT GROUP DATA ***********************/
-	while (pGroup) {
+	while (pGroup)
+	{
 		chunkWriter.openDataChunk("ScriptGroup", K_SCRIPT_GROUP_DATA_VERSION_2);
-			chunkWriter.writeAsciiString(pGroup->m_groupName);
-			chunkWriter.writeByte(pGroup->m_isGroupActive);
-			chunkWriter.writeByte(pGroup->m_isGroupSubroutine);
-			if (pGroup->m_firstScript) Script::WriteScriptDataChunk(chunkWriter, pGroup->m_firstScript);
+		chunkWriter.writeAsciiString(pGroup->m_groupName);
+		chunkWriter.writeByte(pGroup->m_isGroupActive);
+		chunkWriter.writeByte(pGroup->m_isGroupSubroutine);
+		if (pGroup->m_firstScript)
+			Script::WriteScriptDataChunk(chunkWriter, pGroup->m_firstScript);
 		chunkWriter.closeDataChunk();
 		pGroup = pGroup->getNext();
 	}
-
 }
 
 /**
-* ScriptGroup::ParseGroupDataChunk - read a Group chunk.
-* Format is the newer CHUNKY format.
-*	See ScriptList::WriteScriptListDataChunk for the writer.
-*	Input: DataChunkInput
-*
-*/
+ * ScriptGroup::ParseGroupDataChunk - read a Group chunk.
+ * Format is the newer CHUNKY format.
+ *	See ScriptList::WriteScriptListDataChunk for the writer.
+ *	Input: DataChunkInput
+ *
+ */
 Bool ScriptGroup::ParseGroupDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
 	ScriptList *pList = (ScriptList *)userData;
@@ -888,68 +932,73 @@ Bool ScriptGroup::ParseGroupDataChunk(DataChunkInput &file, DataChunkInfo *info,
 
 	pGroup->m_groupName = file.readAsciiString();
 	pGroup->m_isGroupActive = file.readByte();
-	if (info->version == K_SCRIPT_GROUP_DATA_VERSION_2) {
-		pGroup->m_isGroupSubroutine= file.readByte();
+	if (info->version == K_SCRIPT_GROUP_DATA_VERSION_2)
+	{
+		pGroup->m_isGroupSubroutine = file.readByte();
 	}
 	pList->addGroup(pGroup, AT_END);
-	file.registerParser( AsciiString("Script"), info->label, Script::ParseScriptFromGroupDataChunk );
+	file.registerParser(AsciiString("Script"), info->label, Script::ParseScriptFromGroupDataChunk);
 	return file.parse(pGroup);
-
 }
 
 //-------------------------------------------------------------------------------------------------
 // ******************************** class  Script *********************************************
 //-------------------------------------------------------------------------------------------------
 /**
-  Ctor - initializes members.
+	Ctor - initializes members.
 */
 Script::Script(void) :
-m_isActive(true),
-m_isOneShot(true),
-m_easy(true),
-m_normal(true),
-m_hard(true),
-m_delayEvaluationSeconds(0),
-m_conditionTime(0),
-m_conditionExecutedCount(0),
-m_frameToEvaluateAt(0),
-m_isSubroutine(false),
-m_hasWarnings(false),
-m_nextScript(NULL),
-m_condition(NULL),
-m_action(NULL),
-//Added By Sadullah Nader
-//Initializations inserted
-m_actionFalse(NULL),
-m_curTime(0.0f)
+		m_isActive(true),
+		m_isOneShot(true),
+		m_easy(true),
+		m_normal(true),
+		m_hard(true),
+		m_delayEvaluationSeconds(0),
+		m_conditionTime(0),
+		m_conditionExecutedCount(0),
+		m_frameToEvaluateAt(0),
+		m_isSubroutine(false),
+		m_hasWarnings(false),
+		m_nextScript(NULL),
+		m_condition(NULL),
+		m_action(NULL),
+		// Added By Sadullah Nader
+		// Initializations inserted
+		m_actionFalse(NULL),
+		m_curTime(0.0f)
 //
 {
 }
 
 /**
-  Dtor - The condition and action deletes the rest of the list, but we have to loop & delete
+	Dtor - The condition and action deletes the rest of the list, but we have to loop & delete
 	all the scripts in out list.
 */
 Script::~Script(void)
 {
-	if (m_nextScript) {
+	if (m_nextScript)
+	{
 		Script *cur = m_nextScript;
 		Script *next;
-		while (cur) {
+		while (cur)
+		{
 			next = cur->getNext();
 			cur->setNextScript(NULL); // prevents recursion.
 			deleteInstance(cur);
 			cur = next;
 		}
 	}
-	if (m_condition) {
+	if (m_condition)
+	{
 		deleteInstance(m_condition);
 	}
-	if (m_action) {
+	if (m_action)
+	{
 		deleteInstance(m_action);
 	}
 
-	if (m_actionFalse) {
+	if (m_actionFalse)
+	{
 		deleteInstance(m_actionFalse);
 	}
 }
@@ -957,51 +1006,50 @@ Script::~Script(void)
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void Script::crc( Xfer *xfer )
+void Script::crc(Xfer *xfer)
 {
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void Script::xfer( Xfer *xfer )
+void Script::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// active
 	Bool active = isActive();
-	xfer->xferBool( &active );
-	setActive( active );
+	xfer->xferBool(&active);
+	setActive(active);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void Script::loadPostProcess( void )
+void Script::loadPostProcess(void)
 {
-
-}  // end loadPostProcess
+} // end loadPostProcess
 
 /**
-  Script::duplicate - Creates a full, "deep" copy of script. Condition list and action
-  list is duplicated as well.  Note - just the script, doesn't
+	Script::duplicate - Creates a full, "deep" copy of script. Condition list and action
+	list is duplicated as well.  Note - just the script, doesn't
 	duplicate a list of scripts.  m_nextScript is NULL on the copy.
 */
 Script *Script::duplicate(void) const
 {
 	Script *pNew = newInstance(Script);
-	if (pNew->m_condition) {
+	if (pNew->m_condition)
+	{
 		deleteInstance(pNew->m_condition);
 	}
-	if (pNew->m_action) {
+	if (pNew->m_action)
+	{
 		deleteInstance(pNew->m_action);
 	}
 	pNew->m_scriptName = m_scriptName;
@@ -1015,32 +1063,39 @@ Script *Script::duplicate(void) const
 	pNew->m_normal = m_normal;
 	pNew->m_hard = m_hard;
 	pNew->m_delayEvaluationSeconds = m_delayEvaluationSeconds;
-	if (m_condition) {
+	if (m_condition)
+	{
 		pNew->m_condition = m_condition->duplicate();
 	}
-	if (m_action) {
+	if (m_action)
+	{
 		pNew->m_action = m_action->duplicate();
 	}
-	if (m_actionFalse) {
+	if (m_actionFalse)
+	{
 		pNew->m_actionFalse = m_actionFalse->duplicate();
 	}
 	return pNew;
 }
 
 /**
-  Script::duplicate - Creates a full, "deep" copy of script, with qualifier
-  added to names. Condition list and action
-  list is duplicated as well.  Note - just the script, doesn't
+	Script::duplicate - Creates a full, "deep" copy of script, with qualifier
+	added to names. Condition list and action
+	list is duplicated as well.  Note - just the script, doesn't
 	duplicate a list of scripts.  m_nextScript is NULL on the copy.
 */
-Script *Script::duplicateAndQualify(const AsciiString& qualifier,
-			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const
+Script *Script::duplicateAndQualify(
+		const AsciiString &qualifier,
+		const AsciiString &playerTemplateName,
+		const AsciiString &newPlayerName) const
 {
 	Script *pNew = newInstance(Script);
-	if (pNew->m_condition) {
+	if (pNew->m_condition)
+	{
 		deleteInstance(pNew->m_condition);
 	}
-	if (pNew->m_action) {
+	if (pNew->m_action)
+	{
 		deleteInstance(pNew->m_action);
 	}
 	pNew->m_scriptName = m_scriptName;
@@ -1055,20 +1110,23 @@ Script *Script::duplicateAndQualify(const AsciiString& qualifier,
 	pNew->m_normal = m_normal;
 	pNew->m_hard = m_hard;
 	pNew->m_delayEvaluationSeconds = m_delayEvaluationSeconds;
-	if (m_condition) {
+	if (m_condition)
+	{
 		pNew->m_condition = m_condition->duplicateAndQualify(qualifier, playerTemplateName, newPlayerName);
 	}
-	if (m_action) {
+	if (m_action)
+	{
 		pNew->m_action = m_action->duplicateAndQualify(qualifier, playerTemplateName, newPlayerName);
 	}
-	if (m_actionFalse) {
+	if (m_actionFalse)
+	{
 		pNew->m_actionFalse = m_actionFalse->duplicateAndQualify(qualifier, playerTemplateName, newPlayerName);
 	}
 	return pNew;
 }
 
 /**
-  Script::updateFrom - Copies all the data from pSrc into this.  Any data in this
+	Script::updateFrom - Copies all the data from pSrc into this.  Any data in this
 	is deleted (conditions, actions).  Note that this guts pSrc, and removes it's conditions
 	and actions.  Intended for use in an edit dialog, where pSrc is a copy edited, and if cancelled
 	discarded, and if not cancelled, updated into the real script, then discarded.
@@ -1086,17 +1144,20 @@ void Script::updateFrom(Script *pSrc)
 	this->m_easy = pSrc->m_easy;
 	this->m_normal = pSrc->m_normal;
 	this->m_hard = pSrc->m_hard;
-	if (this->m_condition) {
+	if (this->m_condition)
+	{
 		deleteInstance(this->m_condition);
 	}
 	this->m_condition = pSrc->m_condition;
 	pSrc->m_condition = NULL;
-	if (this->m_action) {
+	if (this->m_action)
+	{
 		deleteInstance(this->m_action);
 	}
 	this->m_action = pSrc->m_action;
 	pSrc->m_action = NULL;
-	if (this->m_actionFalse) {
+	if (this->m_actionFalse)
+	{
 		deleteInstance(this->m_actionFalse);
 	}
 	this->m_actionFalse = pSrc->m_actionFalse;
@@ -1104,91 +1165,109 @@ void Script::updateFrom(Script *pSrc)
 }
 
 /**
-  Script::deleteOrCondition - delete pCond from the or condition list.
+	Script::deleteOrCondition - delete pCond from the or condition list.
 */
 void Script::deleteOrCondition(OrCondition *pCond)
 {
 	OrCondition *pPrev = NULL;
 	OrCondition *pCur = m_condition;
-	while (pCond != pCur) {
+	while (pCond != pCur)
+	{
 		pPrev = pCur;
 		pCur = pCur->getNextOrCondition();
 	}
 	DEBUG_ASSERTCRASH(pCur, ("Couldn't find condition."));
-	if (pCur==NULL) return;
-	if (pPrev) {
+	if (pCur == NULL)
+		return;
+	if (pPrev)
+	{
 		pPrev->setNextOrCondition(pCur->getNextOrCondition());
-	} else {
+	}
+	else
+	{
 		m_condition = pCur->getNextOrCondition();
 	}
 	pCur->setNextOrCondition(NULL);
 	deleteInstance(pCur);
 }
 
-
 /**
-  Script::deleteAction - delete pAct from the action list.
+	Script::deleteAction - delete pAct from the action list.
 */
 void Script::deleteAction(ScriptAction *pAct)
 {
 	ScriptAction *pPrev = NULL;
 	ScriptAction *pCur = m_action;
-	while (pAct != pCur) {
+	while (pAct != pCur)
+	{
 		pPrev = pCur;
 		pCur = pCur->getNext();
 	}
 	DEBUG_ASSERTCRASH(pCur, ("Couldn't find action."));
-	if (pCur==NULL) return;
-	if (pPrev) {
+	if (pCur == NULL)
+		return;
+	if (pPrev)
+	{
 		pPrev->setNextAction(pCur->getNext());
-	} else {
+	}
+	else
+	{
 		m_action = pCur->getNext();
 	}
 	pCur->setNextAction(NULL);
 	deleteInstance(pCur);
 }
 
-
 /**
-  Script::deleteFalseAction - delete pAct from the false action list.
+	Script::deleteFalseAction - delete pAct from the false action list.
 */
 void Script::deleteFalseAction(ScriptAction *pAct)
 {
 	ScriptAction *pPrev = NULL;
 	ScriptAction *pCur = m_actionFalse;
-	while (pAct != pCur) {
+	while (pAct != pCur)
+	{
 		pPrev = pCur;
 		pCur = pCur->getNext();
 	}
 	DEBUG_ASSERTCRASH(pCur, ("Couldn't find action."));
-	if (pCur==NULL) return;
-	if (pPrev) {
+	if (pCur == NULL)
+		return;
+	if (pPrev)
+	{
 		pPrev->setNextAction(pCur->getNext());
-	} else {
+	}
+	else
+	{
 		m_actionFalse = pCur->getNext();
 	}
 	pCur->setNextAction(NULL);
 	deleteInstance(pCur);
 }
 
-
 /**
-  Script::getUiText - Creates the string to display in the scripts dialog box.
+	Script::getUiText - Creates the string to display in the scripts dialog box.
 */
 AsciiString Script::getUiText(void)
 {
 	AsciiString uiText("*** IF ***\r\n");
 	OrCondition *pOr = m_condition;
-	Int count=0;
+	Int count = 0;
 
-	while (pOr) {
+	while (pOr)
+	{
 		Condition *pCond = pOr->getFirstAndCondition();
-		if (count>0) uiText.concat("  *** OR ***\r\n");
+		if (count > 0)
+			uiText.concat("  *** OR ***\r\n");
 		count = 0;
-		while (pCond) {
-			if (count>0) {
+		while (pCond)
+		{
+			if (count > 0)
+			{
 				uiText.concat("    *AND* ");
-			} else {
+			}
+			else
+			{
 				uiText.concat("    ");
 			}
 			uiText.concat(pCond->getUiText());
@@ -1200,16 +1279,19 @@ AsciiString Script::getUiText(void)
 	}
 	uiText.concat("*** THEN ***\r\n");
 	ScriptAction *pAction = m_action;
-	while (pAction) {
+	while (pAction)
+	{
 		uiText.concat("  ");
 		uiText.concat(pAction->getUiText());
 		uiText.concat("\r\n");
 		pAction = pAction->getNext();
 	}
 	pAction = m_actionFalse;
-	if (pAction) {
+	if (pAction)
+	{
 		uiText.concat("*** ELSE ***\r\n");
-		while (pAction) {
+		while (pAction)
+		{
 			uiText.concat("  ");
 			uiText.concat(pAction->getUiText());
 			uiText.concat("\r\n");
@@ -1220,42 +1302,46 @@ AsciiString Script::getUiText(void)
 }
 
 /**
-* Script::WriteScriptDataChunk - Writes a Scripts chunk.
-* Format is the newer CHUNKY format.
-*	Input: DataChunkInput
-*
-*/
+ * Script::WriteScriptDataChunk - Writes a Scripts chunk.
+ * Format is the newer CHUNKY format.
+ *	Input: DataChunkInput
+ *
+ */
 void Script::WriteScriptDataChunk(DataChunkOutput &chunkWriter, Script *pScript)
 {
 	/**********SCRIPT  DATA ***********************/
-	while (pScript) {
+	while (pScript)
+	{
 		chunkWriter.openDataChunk("Script", K_SCRIPT_DATA_VERSION_2);
-			chunkWriter.writeAsciiString(pScript->m_scriptName);
-			chunkWriter.writeAsciiString(pScript->m_comment);
-			chunkWriter.writeAsciiString(pScript->m_conditionComment);
-			chunkWriter.writeAsciiString(pScript->m_actionComment);
+		chunkWriter.writeAsciiString(pScript->m_scriptName);
+		chunkWriter.writeAsciiString(pScript->m_comment);
+		chunkWriter.writeAsciiString(pScript->m_conditionComment);
+		chunkWriter.writeAsciiString(pScript->m_actionComment);
 
-			chunkWriter.writeByte(pScript->m_isActive);
-			chunkWriter.writeByte(pScript->m_isOneShot);
-			chunkWriter.writeByte(pScript->m_easy);
-			chunkWriter.writeByte(pScript->m_normal);
-			chunkWriter.writeByte(pScript->m_hard);
-			chunkWriter.writeByte(pScript->m_isSubroutine);
-			chunkWriter.writeInt(pScript->m_delayEvaluationSeconds);
-			if (pScript->m_condition) OrCondition::WriteOrConditionDataChunk(chunkWriter, pScript->m_condition);
-			if (pScript->m_action) ScriptAction::WriteActionDataChunk(chunkWriter, pScript->m_action);
-			if (pScript->m_actionFalse) ScriptAction::WriteActionFalseDataChunk(chunkWriter, pScript->m_actionFalse);
+		chunkWriter.writeByte(pScript->m_isActive);
+		chunkWriter.writeByte(pScript->m_isOneShot);
+		chunkWriter.writeByte(pScript->m_easy);
+		chunkWriter.writeByte(pScript->m_normal);
+		chunkWriter.writeByte(pScript->m_hard);
+		chunkWriter.writeByte(pScript->m_isSubroutine);
+		chunkWriter.writeInt(pScript->m_delayEvaluationSeconds);
+		if (pScript->m_condition)
+			OrCondition::WriteOrConditionDataChunk(chunkWriter, pScript->m_condition);
+		if (pScript->m_action)
+			ScriptAction::WriteActionDataChunk(chunkWriter, pScript->m_action);
+		if (pScript->m_actionFalse)
+			ScriptAction::WriteActionFalseDataChunk(chunkWriter, pScript->m_actionFalse);
 		chunkWriter.closeDataChunk();
 		pScript = pScript->getNext();
 	}
 }
 /**
-* Script::ParseScript - read a script chunk.
-* Format is the newer CHUNKY format.
-*	See ScriptList::WriteScriptDataChunk for the writer.
-*	Input: DataChunkInput
-*
-*/
+ * Script::ParseScript - read a script chunk.
+ * Format is the newer CHUNKY format.
+ *	See ScriptList::WriteScriptDataChunk for the writer.
+ *	Input: DataChunkInput
+ *
+ */
 Script *Script::ParseScript(DataChunkInput &file, unsigned short version)
 {
 	Script *pScript = newInstance(Script);
@@ -1271,13 +1357,14 @@ Script *Script::ParseScript(DataChunkInput &file, unsigned short version)
 	pScript->m_normal = file.readByte();
 	pScript->m_hard = file.readByte();
 	pScript->m_isSubroutine = file.readByte();
-	if (version>=K_SCRIPT_DATA_VERSION_2) {
+	if (version >= K_SCRIPT_DATA_VERSION_2)
+	{
 		pScript->m_delayEvaluationSeconds = file.readInt();
 	}
-	file.registerParser( AsciiString("OrCondition"), AsciiString("Script"), OrCondition::ParseOrConditionDataChunk );
-	file.registerParser( AsciiString("ScriptAction"),  AsciiString("Script"), ScriptAction::ParseActionDataChunk );
-	file.registerParser( AsciiString("ScriptActionFalse"),  AsciiString("Script"), ScriptAction::ParseActionFalseDataChunk );
-	if (! file.parse(pScript) )
+	file.registerParser(AsciiString("OrCondition"), AsciiString("Script"), OrCondition::ParseOrConditionDataChunk);
+	file.registerParser(AsciiString("ScriptAction"), AsciiString("Script"), ScriptAction::ParseActionDataChunk);
+	file.registerParser(AsciiString("ScriptActionFalse"), AsciiString("Script"), ScriptAction::ParseActionFalseDataChunk);
+	if (!file.parse(pScript))
 	{
 		return NULL;
 	}
@@ -1286,12 +1373,12 @@ Script *Script::ParseScript(DataChunkInput &file, unsigned short version)
 }
 
 /**
-* Script::ParseScriptFromListDataChunk - read a script chunk in a script list.
-* Format is the newer CHUNKY format.
-*	See ScriptList::WriteScriptListDataChunk for the writer.
-*	Input: DataChunkInput
-*
-*/
+ * Script::ParseScriptFromListDataChunk - read a script chunk in a script list.
+ * Format is the newer CHUNKY format.
+ *	See ScriptList::WriteScriptListDataChunk for the writer.
+ *	Input: DataChunkInput
+ *
+ */
 Bool Script::ParseScriptFromListDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
 	ScriptList *pList = (ScriptList *)userData;
@@ -1302,12 +1389,12 @@ Bool Script::ParseScriptFromListDataChunk(DataChunkInput &file, DataChunkInfo *i
 }
 
 /**
-* Script::ParseScriptFromGroupDataChunk - read a script chunk in a script group.
-* Format is the newer CHUNKY format.
-*	See ScriptList::WriteScriptListDataChunk for the writer.
-*	Input: DataChunkInput
-*
-*/
+ * Script::ParseScriptFromGroupDataChunk - read a script chunk in a script group.
+ * Format is the newer CHUNKY format.
+ *	See ScriptList::WriteScriptListDataChunk for the writer.
+ *	Input: DataChunkInput
+ *
+ */
 Bool Script::ParseScriptFromGroupDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
 	ScriptGroup *pGroup = (ScriptGroup *)userData;
@@ -1317,21 +1404,23 @@ Bool Script::ParseScriptFromGroupDataChunk(DataChunkInput &file, DataChunkInfo *
 	return true;
 }
 
-
 /**
-* Script::findPreviousOrCondition - find the OrCondition that immediately proceeds curOr.
-*	Input: OrCondition
-*
-*/
-OrCondition *Script::findPreviousOrCondition( OrCondition *curOr )
+ * Script::findPreviousOrCondition - find the OrCondition that immediately proceeds curOr.
+ *	Input: OrCondition
+ *
+ */
+OrCondition *Script::findPreviousOrCondition(OrCondition *curOr)
 {
 	OrCondition *myConditions = getOrCondition();
-	if ( myConditions == curOr ) {
+	if (myConditions == curOr)
+	{
 		return NULL;
 	}
 
-	while (myConditions) {
-		if (myConditions->getNextOrCondition() == curOr) {
+	while (myConditions)
+	{
+		if (myConditions->getNextOrCondition() == curOr)
+		{
 			return myConditions;
 		}
 		myConditions = myConditions->getNextOrCondition();
@@ -1346,14 +1435,17 @@ OrCondition *Script::findPreviousOrCondition( OrCondition *curOr )
 //-------------------------------------------------------------------------------------------------
 OrCondition::~OrCondition(void)
 {
-	if (m_firstAnd) {
+	if (m_firstAnd)
+	{
 		deleteInstance(m_firstAnd);
 		m_firstAnd = NULL;
 	}
-	if (m_nextOr) {
+	if (m_nextOr)
+	{
 		OrCondition *cur = m_nextOr;
 		OrCondition *next;
-		while (cur) {
+		while (cur)
+		{
 			next = cur->getNextOrCondition();
 			cur->setNextOrCondition(NULL); // prevents recursion.
 			deleteInstance(cur);
@@ -1365,15 +1457,18 @@ OrCondition::~OrCondition(void)
 OrCondition *OrCondition::duplicate(void) const
 {
 	OrCondition *pNew = newInstance(OrCondition);
-	if (m_firstAnd) {
+	if (m_firstAnd)
+	{
 		pNew->m_firstAnd = m_firstAnd->duplicate();
 	}
 	OrCondition *pLink = m_nextOr;
 	OrCondition *pCur = pNew;
-	while (pLink) {
+	while (pLink)
+	{
 		pCur->m_nextOr = newInstance(OrCondition);
 		pCur = pCur->m_nextOr;
-		if (pLink->m_firstAnd) {
+		if (pLink->m_firstAnd)
+		{
 			pCur->m_firstAnd = pLink->m_firstAnd->duplicate();
 		}
 		pLink = pLink->m_nextOr;
@@ -1381,19 +1476,24 @@ OrCondition *OrCondition::duplicate(void) const
 	return pNew;
 }
 
-OrCondition *OrCondition::duplicateAndQualify(const AsciiString& qualifier,
-			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const
+OrCondition *OrCondition::duplicateAndQualify(
+		const AsciiString &qualifier,
+		const AsciiString &playerTemplateName,
+		const AsciiString &newPlayerName) const
 {
 	OrCondition *pNew = newInstance(OrCondition);
-	if (m_firstAnd) {
+	if (m_firstAnd)
+	{
 		pNew->m_firstAnd = m_firstAnd->duplicateAndQualify(qualifier, playerTemplateName, newPlayerName);
 	}
 	OrCondition *pLink = m_nextOr;
 	OrCondition *pCur = pNew;
-	while (pLink) {
+	while (pLink)
+	{
 		pCur->m_nextOr = newInstance(OrCondition);
 		pCur = pCur->m_nextOr;
-		if (pLink->m_firstAnd) {
+		if (pLink->m_firstAnd)
+		{
 			pCur->m_firstAnd = pLink->m_firstAnd->duplicateAndQualify(qualifier, playerTemplateName, newPlayerName);
 		}
 		pLink = pLink->m_nextOr;
@@ -1405,17 +1505,21 @@ Condition *OrCondition::removeCondition(Condition *pCond)
 {
 	Condition *pPrev = NULL;
 	Condition *pCur = m_firstAnd;
-	while (pCond != pCur) {
+	while (pCond != pCur)
+	{
 		pPrev = pCur;
 		pCur = pCur->getNext();
 	}
 
 	DEBUG_ASSERTCRASH(pCur, ("Couldn't find condition."));
-	if (pCur==NULL)
+	if (pCur == NULL)
 		return NULL;
-	if (pPrev) {
+	if (pPrev)
+	{
 		pPrev->setNextCondition(pCur->getNext());
-	} else {
+	}
+	else
+	{
 		m_firstAnd = pCur->getNext();
 	}
 
@@ -1427,71 +1531,77 @@ void OrCondition::deleteCondition(Condition *pCond)
 {
 	Condition *pCur = removeCondition(pCond);
 	DEBUG_ASSERTCRASH(pCur, ("Couldn't find condition."));
-	if (pCur==NULL)
+	if (pCur == NULL)
 		return;
 	deleteInstance(pCur);
 }
 
-
 /**
-* OrCondition::WriteOrConditionDataChunk - Writes a Or condition chunk.
-* Format is the newer CHUNKY format.
-*	Input: DataChunkInput
-*
-*/
-void OrCondition::WriteOrConditionDataChunk(DataChunkOutput &chunkWriter, OrCondition	*pOrCondition)
+ * OrCondition::WriteOrConditionDataChunk - Writes a Or condition chunk.
+ * Format is the newer CHUNKY format.
+ *	Input: DataChunkInput
+ *
+ */
+void OrCondition::WriteOrConditionDataChunk(DataChunkOutput &chunkWriter, OrCondition *pOrCondition)
 {
 	/**********OR CONDITION DATA ***********************/
-	while (pOrCondition) {
+	while (pOrCondition)
+	{
 		chunkWriter.openDataChunk("OrCondition", K_SCRIPT_OR_CONDITION_DATA_VERSION_1);
-		if (pOrCondition->m_firstAnd) Condition::WriteConditionDataChunk(chunkWriter, pOrCondition->m_firstAnd);
+		if (pOrCondition->m_firstAnd)
+			Condition::WriteConditionDataChunk(chunkWriter, pOrCondition->m_firstAnd);
 		chunkWriter.closeDataChunk();
 		pOrCondition = pOrCondition->getNextOrCondition();
 	}
-
 }
 
 /**
-* OrCondition::ParseOrConditionDataChunk - read a Or condition chunk.
-* Format is the newer CHUNKY format.
-*	See OrCondition::WriteOrConditionDataChunk for the writer.
-*	Input: DataChunkInput
-*
-*/
+ * OrCondition::ParseOrConditionDataChunk - read a Or condition chunk.
+ * Format is the newer CHUNKY format.
+ *	See OrCondition::WriteOrConditionDataChunk for the writer.
+ *	Input: DataChunkInput
+ *
+ */
 Bool OrCondition::ParseOrConditionDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
 	Script *pScript = (Script *)userData;
 	OrCondition *pOrCondition = newInstance(OrCondition);
 	OrCondition *pFirst = pScript->getOrCondition();
-	while (pFirst && pFirst->getNextOrCondition()) {
+	while (pFirst && pFirst->getNextOrCondition())
+	{
 		pFirst = pFirst->getNextOrCondition();
 	}
-	if (pFirst) {
+	if (pFirst)
+	{
 		pFirst->setNextOrCondition(pOrCondition);
-	} else {
+	}
+	else
+	{
 		pScript->setOrCondition(pOrCondition);
 	}
-	file.registerParser( AsciiString("Condition"), info->label, Condition::ParseConditionDataChunk );
+	file.registerParser(AsciiString("Condition"), info->label, Condition::ParseConditionDataChunk);
 	return file.parse(pOrCondition);
-
 }
 
 /**
-* OrCondition::findPreviousCondition - find the condition that immediately proceeds curCond.
-* Format is the newer CHUNKY format.
-*	See OrCondition::WriteOrConditionDataChunk for the writer.
-*	Input: DataChunkInput
-*
-*/
-Condition *OrCondition::findPreviousCondition( Condition *curCond )
+ * OrCondition::findPreviousCondition - find the condition that immediately proceeds curCond.
+ * Format is the newer CHUNKY format.
+ *	See OrCondition::WriteOrConditionDataChunk for the writer.
+ *	Input: DataChunkInput
+ *
+ */
+Condition *OrCondition::findPreviousCondition(Condition *curCond)
 {
 	Condition *myConditions = getFirstAndCondition();
-	if (myConditions == curCond) {
+	if (myConditions == curCond)
+	{
 		return NULL;
 	}
 
-	while (myConditions) {
-		if (myConditions->getNext() == curCond) {
+	while (myConditions)
+	{
+		if (myConditions->getNext() == curCond)
+		{
 			return myConditions;
 		}
 		myConditions = myConditions->getNext();
@@ -1501,17 +1611,16 @@ Condition *OrCondition::findPreviousCondition( Condition *curCond )
 	return NULL;
 }
 
-
 //-------------------------------------------------------------------------------------------------
 // ******************************** class  Condition *********************************************
 //-------------------------------------------------------------------------------------------------
-Condition::Condition():
-m_conditionType(CONDITION_FALSE),
-m_hasWarnings(false),
-m_customData(0),
-m_customFrame(0),
-m_numParms(0),
-m_nextAndCondition(NULL)
+Condition::Condition() :
+		m_conditionType(CONDITION_FALSE),
+		m_hasWarnings(false),
+		m_customData(0),
+		m_customFrame(0),
+		m_numParms(0),
+		m_nextAndCondition(NULL)
 {
 	Int i;
 	for (i = 0; i < MAX_PARMS; i++)
@@ -1520,16 +1629,12 @@ m_nextAndCondition(NULL)
 	}
 }
 
-Condition::Condition(enum ConditionType type):
-m_conditionType(type),
-m_hasWarnings(false),
-m_customData(0),
-m_customFrame(0),
-m_numParms(0),
-m_nextAndCondition(NULL)
+Condition::Condition(enum ConditionType type) :
+		m_conditionType(type), m_hasWarnings(false), m_customData(0), m_customFrame(0), m_numParms(0), m_nextAndCondition(NULL)
 {
 	Int i;
-	for (i=0; i<MAX_PARMS; i++) {
+	for (i = 0; i < MAX_PARMS; i++)
+	{
 		m_parms[i] = NULL;
 	}
 	setConditionType(type);
@@ -1538,7 +1643,8 @@ m_nextAndCondition(NULL)
 void Condition::setConditionType(enum ConditionType type)
 {
 	Int i;
-	for (i=0; i<m_numParms; i++) {
+	for (i = 0; i < m_numParms; i++)
+	{
 		if (m_parms[i])
 			deleteInstance(m_parms[i]);
 		m_parms[i] = NULL;
@@ -1546,7 +1652,8 @@ void Condition::setConditionType(enum ConditionType type)
 	m_conditionType = type;
 	const ConditionTemplate *pTemplate = TheScriptEngine->getConditionTemplate(m_conditionType);
 	m_numParms = pTemplate->getNumParameters();
-	for (i=0; i<m_numParms; i++) {
+	for (i = 0; i < m_numParms; i++)
+	{
 		m_parms[i] = newInstance(Parameter)(pTemplate->getParameterType(i));
 	}
 }
@@ -1555,15 +1662,18 @@ Condition *Condition::duplicate(void) const
 {
 	Condition *pNew = newInstance(Condition)(m_conditionType);
 	Int i;
-	for (i=0; i<m_numParms && i<pNew->m_numParms; i++) {
+	for (i = 0; i < m_numParms && i < pNew->m_numParms; i++)
+	{
 		*pNew->m_parms[i] = *m_parms[i];
 	}
 	Condition *pLink = m_nextAndCondition;
 	Condition *pCur = pNew;
-	while (pLink) {
+	while (pLink)
+	{
 		pCur->m_nextAndCondition = newInstance(Condition)(pLink->getConditionType());
 		pCur = pCur->m_nextAndCondition;
-		for (i=0; i<pLink->m_numParms; i++) {
+		for (i = 0; i < pLink->m_numParms; i++)
+		{
 			*pCur->m_parms[i] = *pLink->m_parms[i];
 		}
 		pLink = pLink->m_nextAndCondition;
@@ -1571,21 +1681,26 @@ Condition *Condition::duplicate(void) const
 	return pNew;
 }
 
-Condition *Condition::duplicateAndQualify(const AsciiString& qualifier,
-			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const
+Condition *Condition::duplicateAndQualify(
+		const AsciiString &qualifier,
+		const AsciiString &playerTemplateName,
+		const AsciiString &newPlayerName) const
 {
 	Condition *pNew = newInstance(Condition)(m_conditionType);
 	Int i;
-	for (i=0; i<m_numParms && i<pNew->m_numParms; i++) {
+	for (i = 0; i < m_numParms && i < pNew->m_numParms; i++)
+	{
 		*pNew->m_parms[i] = *m_parms[i];
 		pNew->m_parms[i]->qualify(qualifier, playerTemplateName, newPlayerName);
 	}
 	Condition *pLink = m_nextAndCondition;
 	Condition *pCur = pNew;
-	while (pLink) {
+	while (pLink)
+	{
 		pCur->m_nextAndCondition = newInstance(Condition)(pLink->getConditionType());
 		pCur = pCur->m_nextAndCondition;
-		for (i=0; i<pLink->m_numParms; i++) {
+		for (i = 0; i < pLink->m_numParms; i++)
+		{
 			*pCur->m_parms[i] = *pLink->m_parms[i];
 			pCur->m_parms[i]->qualify(qualifier, playerTemplateName, newPlayerName);
 		}
@@ -1597,14 +1712,17 @@ Condition *Condition::duplicateAndQualify(const AsciiString& qualifier,
 Condition::~Condition(void)
 {
 	Int i;
-	for (i=0; i<m_numParms; i++) {
+	for (i = 0; i < m_numParms; i++)
+	{
 		deleteInstance(m_parms[i]);
 		m_parms[i] = NULL;
 	}
-	if (m_nextAndCondition) {
+	if (m_nextAndCondition)
+	{
 		Condition *cur = m_nextAndCondition;
 		Condition *next;
-		while (cur) {
+		while (cur)
+		{
 			next = cur->getNext();
 			cur->setNextCondition(NULL); // prevents recursion.
 			deleteInstance(cur);
@@ -1612,8 +1730,6 @@ Condition::~Condition(void)
 		}
 	}
 }
-
-
 
 Int Condition::getUiStrings(AsciiString strings[MAX_PARMS])
 {
@@ -1628,15 +1744,19 @@ AsciiString Condition::getUiText(void)
 	Int numStrings = getUiStrings(strings);
 	Int i;
 
-	if (m_hasWarnings) {
+	if (m_hasWarnings)
+	{
 		uiText = "[???]";
 	}
 
-	for (i=0; i<MAX_PARMS; i++) {
-		if (i<numStrings) {
+	for (i = 0; i < MAX_PARMS; i++)
+	{
+		if (i < numStrings)
+		{
 			uiText.concat(strings[i]);
 		}
-		if (i<m_numParms) {
+		if (i < m_numParms)
+		{
 			uiText.concat(m_parms[i]->getUiText());
 		}
 	}
@@ -1644,60 +1764,69 @@ AsciiString Condition::getUiText(void)
 	return uiText;
 }
 
-
 /**
-* Condition::WriteConditionDataChunk - Writes a condition chunk.
-* Format is the newer CHUNKY format.
-*	Input: DataChunkInput
-*
-*/
-void Condition::WriteConditionDataChunk(DataChunkOutput &chunkWriter, Condition	*pCondition)
+ * Condition::WriteConditionDataChunk - Writes a condition chunk.
+ * Format is the newer CHUNKY format.
+ *	Input: DataChunkInput
+ *
+ */
+void Condition::WriteConditionDataChunk(DataChunkOutput &chunkWriter, Condition *pCondition)
 {
 	/**********Condition  DATA ***********************/
-	while (pCondition) {
+	while (pCondition)
+	{
 		chunkWriter.openDataChunk("Condition", K_SCRIPT_CONDITION_VERSION_4);
-			chunkWriter.writeInt(pCondition->m_conditionType);
-			const ConditionTemplate* ct = TheScriptEngine->getConditionTemplate(pCondition->m_conditionType);
-			if (ct) {
-				chunkWriter.writeNameKey(ct->m_internalNameKey);
-			}	else {
-				DEBUG_CRASH(("Invalid condition."));
-				chunkWriter.writeNameKey(NAMEKEY("Bogus"));
-			}
-			chunkWriter.writeInt(pCondition->m_numParms);
-			Int i;
-			for (i=0; i<pCondition->m_numParms; i++) {
-				pCondition->m_parms[i]->WriteParameter(chunkWriter);
-			}
+		chunkWriter.writeInt(pCondition->m_conditionType);
+		const ConditionTemplate *ct = TheScriptEngine->getConditionTemplate(pCondition->m_conditionType);
+		if (ct)
+		{
+			chunkWriter.writeNameKey(ct->m_internalNameKey);
+		}
+		else
+		{
+			DEBUG_CRASH(("Invalid condition."));
+			chunkWriter.writeNameKey(NAMEKEY("Bogus"));
+		}
+		chunkWriter.writeInt(pCondition->m_numParms);
+		Int i;
+		for (i = 0; i < pCondition->m_numParms; i++)
+		{
+			pCondition->m_parms[i]->WriteParameter(chunkWriter);
+		}
 		chunkWriter.closeDataChunk();
 		pCondition = pCondition->getNext();
 	}
 }
 /**
-* Condition::ParseConditionDataChunk - read a condition.
-* Format is the newer CHUNKY format.
-*	See Condition::WriteActionDataChunk for the writer.
-*	Input: DataChunkInput
-*
-*/
+ * Condition::ParseConditionDataChunk - read a condition.
+ * Format is the newer CHUNKY format.
+ *	See Condition::WriteActionDataChunk for the writer.
+ *	Input: DataChunkInput
+ *
+ */
 Bool Condition::ParseConditionDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
-	Condition	*pCondition = newInstance(Condition);
+	Condition *pCondition = newInstance(Condition);
 	OrCondition *pOr = (OrCondition *)userData;
 	pCondition->m_conditionType = (enum ConditionType)file.readInt();
-	const ConditionTemplate* ct = TheScriptEngine->getConditionTemplate(pCondition->m_conditionType);
-	if (info->version >= K_SCRIPT_CONDITION_VERSION_4) {
+	const ConditionTemplate *ct = TheScriptEngine->getConditionTemplate(pCondition->m_conditionType);
+	if (info->version >= K_SCRIPT_CONDITION_VERSION_4)
+	{
 		NameKeyType key = file.readNameKey();
 		Bool match = false;
-		if (ct && ct->m_internalNameKey == key) {
+		if (ct && ct->m_internalNameKey == key)
+		{
 			match = TRUE; // All good. jba. [3/20/2003]
 		}
-		if (!match) {
+		if (!match)
+		{
 			//  name and id don't match.  Find the name [3/20/2003]
 			Int i;
-			for (i=0; i<Condition::NUM_ITEMS; i++) {
+			for (i = 0; i < Condition::NUM_ITEMS; i++)
+			{
 				ct = TheScriptEngine->getConditionTemplate(i);
-				if (key == ct->m_internalNameKey) {
+				if (key == ct->m_internalNameKey)
+				{
 					match = true;
 					DEBUG_LOG(("Rematching script condition %s", KEYNAME(key).str()));
 					pCondition->m_conditionType = (enum ConditionType)i;
@@ -1705,23 +1834,27 @@ Bool Condition::ParseConditionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 				}
 			}
 		}
-		if (!match) {
+		if (!match)
+		{
 			// Invalid script [3/20/2003]
 			DEBUG_CRASH(("Invalid script condition.  Making it false. jba."));
 			pCondition->m_conditionType = CONDITION_FALSE;
 			pCondition->m_numParms = 0;
 		}
 	}
-	pCondition->m_numParms =file.readInt();
+	pCondition->m_numParms = file.readInt();
 	Int i;
-	for (i=0; i<pCondition->m_numParms; i++)
+	for (i = 0; i < pCondition->m_numParms; i++)
 	{
 		pCondition->m_parms[i] = Parameter::ReadParameter(file);
 	}
 
-	if (file.getChunkVersion() < K_SCRIPT_CONDITION_VERSION_2) {
-		for (int j = 0; ParameterChangesVer2[j] != -1; ++j) {
-			if (pCondition->m_conditionType == ParameterChangesVer2[j]) {
+	if (file.getChunkVersion() < K_SCRIPT_CONDITION_VERSION_2)
+	{
+		for (int j = 0; ParameterChangesVer2[j] != -1; ++j)
+		{
+			if (pCondition->m_conditionType == ParameterChangesVer2[j])
+			{
 				pCondition->m_parms[pCondition->m_numParms] = newInstance(Parameter)(Parameter::SURFACES_ALLOWED, 3);
 				pCondition->m_numParms = 3;
 			}
@@ -1741,47 +1874,52 @@ Bool Condition::ParseConditionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 			break;
 	}
 #ifdef COUNT_SCRIPT_USAGE
-	const ConditionTemplate* conT = TheScriptEngine->getConditionTemplate(pCondition->m_conditionType);
+	const ConditionTemplate *conT = TheScriptEngine->getConditionTemplate(pCondition->m_conditionType);
 	conT->m_numTimesUsed++;
 	conT->m_firstMapUsed = TheGlobalData->m_mapName;
 #endif
-	if (ct->getNumParameters() != pCondition->getNumParameters()) {
+	if (ct->getNumParameters() != pCondition->getNumParameters())
+	{
 		// Invalid script [3/20/2003]
 		DEBUG_CRASH(("Invalid script condition.  Making it false. jba."));
 		pCondition->m_conditionType = ConditionType::CONDITION_FALSE;
 		pCondition->m_numParms = 0;
 	}
 	Condition *pLast = pOr->getFirstAndCondition();
-	while (pLast && pLast->getNext()) {
+	while (pLast && pLast->getNext())
+	{
 		pLast = pLast->getNext();
 	}
-	if (pLast) {
+	if (pLast)
+	{
 		pLast->setNextCondition(pCondition);
-	} else {
+	}
+	else
+	{
 		pOr->setFirstAndCondition(pCondition);
 	}
 	DEBUG_ASSERTCRASH(file.atEndOfChunk(), ("Unexpected data left over."));
 	return true;
 }
 
-
 //-------------------------------------------------------------------------------------------------
 // ******************************** class  Template *********************************************
 //-------------------------------------------------------------------------------------------------
 Template::Template() :
-m_numUiStrings(0),
-m_numParameters(0),
+		m_numUiStrings(0),
+		m_numParameters(0),
 #ifdef COUNT_SCRIPT_USAGE
-m_numTimesUsed(0),
+		m_numTimesUsed(0),
 #endif
-m_uiName("UNUSED/(placeholder)/placeholder")
+		m_uiName("UNUSED/(placeholder)/placeholder")
 {
 }
 
 Int Template::getUiStrings(AsciiString strings[MAX_PARMS]) const
 {
 	Int i;
-	for (i=0; i<m_numUiStrings; i++) {
+	for (i = 0; i < m_numUiStrings; i++)
+	{
 		strings[i] = m_uiStrings[i];
 	}
 	return m_numUiStrings;
@@ -1792,7 +1930,8 @@ Int Template::getUiStrings(AsciiString strings[MAX_PARMS]) const
 //-------------------------------------------------------------------------------------------------
 enum Parameter::ParameterType Template::getParameterType(Int ndx) const
 {
-	if (ndx >= 0 && ndx < m_numParameters) {
+	if (ndx >= 0 && ndx < m_numParameters)
+	{
 		return m_parameters[ndx];
 	}
 	DEBUG_CRASH(("Index out of range."));
@@ -1801,43 +1940,53 @@ enum Parameter::ParameterType Template::getParameterType(Int ndx) const
 
 void Parameter::getCoord3D(Coord3D *pLoc) const
 {
-	DEBUG_ASSERTCRASH(m_paramType==COORD3D, ("Wrong parameter type."));
+	DEBUG_ASSERTCRASH(m_paramType == COORD3D, ("Wrong parameter type."));
 	pLoc->x = pLoc->y = pLoc->z = 0;
-	if (m_paramType==COORD3D) {
+	if (m_paramType == COORD3D)
+	{
 		*pLoc = m_coord;
 	}
 }
 
 void Parameter::setCoord3D(const Coord3D *pLoc)
 {
-	DEBUG_ASSERTCRASH(m_paramType==COORD3D, ("Wrong parameter type."));
-	if (m_paramType==COORD3D) {
-		m_coord= *pLoc ;
+	DEBUG_ASSERTCRASH(m_paramType == COORD3D, ("Wrong parameter type."));
+	if (m_paramType == COORD3D)
+	{
+		m_coord = *pLoc;
 	}
 }
 
-void Parameter::qualify(const AsciiString& qualifier,
-			const AsciiString& playerTemplateName, const AsciiString& newPlayerName)
+void Parameter::qualify(
+		const AsciiString &qualifier,
+		const AsciiString &playerTemplateName,
+		const AsciiString &newPlayerName)
 {
 	AsciiString tmpString;
-	switch (m_paramType) {
+	switch (m_paramType)
+	{
 		case SIDE:
 			tmpString = m_string;
 			tmpString.concat(qualifier);
-			if (tmpString==playerTemplateName) {
+			if (tmpString == playerTemplateName)
+			{
 				m_string = newPlayerName;
 			}
 			break;
 		case TEAM:
-			if (m_string == THIS_TEAM) {
+			if (m_string == THIS_TEAM)
+			{
 				break;
 			}
 			FALLTHROUGH; /// otherwise drop down & qualify.
 		case SCRIPT:
 		case COUNTER:
 		case FLAG:
-		case SCRIPT_SUBROUTINE: m_string.concat(qualifier); break;
-		default: break;
+		case SCRIPT_SUBROUTINE:
+			m_string.concat(qualifier);
+			break;
+		default:
+			break;
 	}
 }
 
@@ -1845,7 +1994,8 @@ AsciiString Parameter::getUiText(void) const
 {
 	AsciiString uiText;
 	AsciiString uiString = m_string;
-	if (uiString.isEmpty()) {
+	if (uiString.isEmpty())
+	{
 		uiString = "???";
 	}
 
@@ -1901,20 +2051,20 @@ AsciiString Parameter::getUiText(void) const
 			uiText.format("Bridge '%s'", uiString.str());
 			break;
 		case ANGLE:
-			uiText.format("%.2f degrees", m_real*180/PI);
+			uiText.format("%.2f degrees", m_real * 180 / PI);
 			break;
 		case PERCENT:
-			uiText.format("%.2f%%", m_real*100.0f);
+			uiText.format("%.2f%%", m_real * 100.0f);
 			break;
 		case COORD3D:
 			getCoord3D(&pos);
-			uiText.format("(%.2f,%.2f,%.2f)", pos.x,pos.y,pos.z);
+			uiText.format("(%.2f,%.2f,%.2f)", pos.x, pos.y, pos.z);
 			break;
 		case OBJECT_TYPE:
 			uiText.format("'%s'", uiString.str());
 			break;
 		case KIND_OF_PARAM:
-			if (m_int >= KINDOF_FIRST && m_int < KINDOF_COUNT )
+			if (m_int >= KINDOF_FIRST && m_int < KINDOF_COUNT)
 				uiText.format("Kind is '%s'", KindOfMaskType::getNameFromSingleBit(m_int));
 			else
 				uiText.format("Kind is ???");
@@ -1929,7 +2079,7 @@ AsciiString Parameter::getUiText(void) const
 			uiText.format(" %d ", m_int);
 			break;
 		case BOOLEAN:
-			uiText.concat(m_int?"TRUE":"FALSE");
+			uiText.concat(m_int ? "TRUE" : "FALSE");
 			break;
 
 		case REAL:
@@ -1940,61 +2090,116 @@ AsciiString Parameter::getUiText(void) const
 			uiText.format("Flag named '%s'", uiString.str());
 			break;
 		case COMPARISON:
-			switch (m_int) {
-				case LESS_THAN: uiText.format("Less Than"); break;
-				case LESS_EQUAL: uiText.format("Less Than or Equal"); break;
-				case EQUAL: uiText.format("Equal To"); break;
-				case GREATER_EQUAL: uiText.format("Greater Than or Equal To"); break;
-				case GREATER: uiText.format("Greater Than"); break;
-				case NOT_EQUAL: uiText.format("Not Equal To"); break;
-				default : DEBUG_CRASH(("Unknown comparison type."));
+			switch (m_int)
+			{
+				case LESS_THAN:
+					uiText.format("Less Than");
+					break;
+				case LESS_EQUAL:
+					uiText.format("Less Than or Equal");
+					break;
+				case EQUAL:
+					uiText.format("Equal To");
+					break;
+				case GREATER_EQUAL:
+					uiText.format("Greater Than or Equal To");
+					break;
+				case GREATER:
+					uiText.format("Greater Than");
+					break;
+				case NOT_EQUAL:
+					uiText.format("Not Equal To");
+					break;
+				default:
+					DEBUG_CRASH(("Unknown comparison type."));
 			}
 			break;
 
 		case RELATION:
-			switch (m_int) {
-				case REL_ENEMY: uiText.format("Enemy"); break;
-				case REL_NEUTRAL: uiText.format("Neutral"); break;
-				case REL_FRIEND: uiText.format("Friend"); break;
-				default : DEBUG_CRASH(("Unknown Relation type."));
+			switch (m_int)
+			{
+				case REL_ENEMY:
+					uiText.format("Enemy");
+					break;
+				case REL_NEUTRAL:
+					uiText.format("Neutral");
+					break;
+				case REL_FRIEND:
+					uiText.format("Friend");
+					break;
+				default:
+					DEBUG_CRASH(("Unknown Relation type."));
 			}
 			break;
 
 		case AI_MOOD:
-			switch (m_int) {
-				case ATTITUDE_SLEEP: uiText.format("Sleep"); break;
-				case ATTITUDE_PASSIVE: uiText.format("Passive"); break;
-				case ATTITUDE_NORMAL: uiText.format("Normal"); break;
-				case ATTITUDE_ALERT: uiText.format("Alert"); break;
-				case ATTITUDE_AGGRESSIVE: uiText.format("Aggressive"); break;
-				default : DEBUG_CRASH(("Unknown AI Mood type."));
+			switch (m_int)
+			{
+				case ATTITUDE_SLEEP:
+					uiText.format("Sleep");
+					break;
+				case ATTITUDE_PASSIVE:
+					uiText.format("Passive");
+					break;
+				case ATTITUDE_NORMAL:
+					uiText.format("Normal");
+					break;
+				case ATTITUDE_ALERT:
+					uiText.format("Alert");
+					break;
+				case ATTITUDE_AGGRESSIVE:
+					uiText.format("Aggressive");
+					break;
+				default:
+					DEBUG_CRASH(("Unknown AI Mood type."));
 			}
 			break;
 
 		case RADAR_EVENT_TYPE:
-			switch (m_int) {
-				//case RADAR_EVENT_INVALID: ++m_int;	// continue to the next case.
-				case RADAR_EVENT_INVALID: DEBUG_CRASH(("Invalid radar event")); uiText.format("Construction"); break;
-				case RADAR_EVENT_CONSTRUCTION: uiText.format("Construction"); break;
-				case RADAR_EVENT_UPGRADE: uiText.format("Upgrade"); break;
-				case RADAR_EVENT_UNDER_ATTACK: uiText.format("Under Attack"); break;
-				case RADAR_EVENT_INFORMATION: uiText.format("Information"); break;
-				case RADAR_EVENT_INFILTRATION: uiText.format("Infiltration"); break;
-				default : DEBUG_CRASH(("Unknown Radar event type."));
+			switch (m_int)
+			{
+				// case RADAR_EVENT_INVALID: ++m_int;	// continue to the next case.
+				case RADAR_EVENT_INVALID:
+					DEBUG_CRASH(("Invalid radar event"));
+					uiText.format("Construction");
+					break;
+				case RADAR_EVENT_CONSTRUCTION:
+					uiText.format("Construction");
+					break;
+				case RADAR_EVENT_UPGRADE:
+					uiText.format("Upgrade");
+					break;
+				case RADAR_EVENT_UNDER_ATTACK:
+					uiText.format("Under Attack");
+					break;
+				case RADAR_EVENT_INFORMATION:
+					uiText.format("Information");
+					break;
+				case RADAR_EVENT_INFILTRATION:
+					uiText.format("Infiltration");
+					break;
+				default:
+					DEBUG_CRASH(("Unknown Radar event type."));
 			}
 			break;
 
-    case LEFT_OR_RIGHT:
-      switch (m_int)
-      {
-        case EVAC_BURST_FROM_CENTER: uiText.format("normal (burst from center)"); break;
-        case EVAC_TO_LEFT: uiText.format("left"); break;
-        case EVAC_TO_RIGHT: uiText.format("right"); break;
-        default :  uiText.format("unspecified"); break;
-      }
-      break;
-
-
+		case LEFT_OR_RIGHT:
+			switch (m_int)
+			{
+				case EVAC_BURST_FROM_CENTER:
+					uiText.format("normal (burst from center)");
+					break;
+				case EVAC_TO_LEFT:
+					uiText.format("left");
+					break;
+				case EVAC_TO_RIGHT:
+					uiText.format("right");
+					break;
+				default:
+					uiText.format("unspecified");
+					break;
+			}
+			break;
 
 		case DIALOG:
 			uiText.format("'%s'", uiString.str());
@@ -2005,7 +2210,7 @@ AsciiString Parameter::getUiText(void) const
 			break;
 
 		case COLOR:
-			uiText.format(" R:%d G:%d B:%d ", (m_int&0x00ff0000)>>16, (m_int&0x0000ff00)>>8, (m_int&0x000000ff) );
+			uiText.format(" R:%d G:%d B:%d ", (m_int & 0x00ff0000) >> 16, (m_int & 0x0000ff00) >> 8, (m_int & 0x000000ff));
 			break;
 
 		case MUSIC:
@@ -2025,7 +2230,7 @@ AsciiString Parameter::getUiText(void) const
 			break;
 
 		case SCIENCE_AVAILABILITY:
-			uiText.format( "Science availability '%s'", uiString.str() );
+			uiText.format("Science availability '%s'", uiString.str());
 			break;
 
 		case UPGRADE:
@@ -2034,11 +2239,11 @@ AsciiString Parameter::getUiText(void) const
 
 		case COMMANDBUTTON_ABILITY:
 		case COMMANDBUTTON_ALL_ABILITIES:
-			uiText.format( "Ability '%s'", uiString.str() );
+			uiText.format("Ability '%s'", uiString.str());
 			break;
 
 		case EMOTICON:
-			uiText.format( "Emoticon '%s'", uiString.str() );
+			uiText.format("Emoticon '%s'", uiString.str());
 			break;
 
 		case BOUNDARY:
@@ -2046,7 +2251,7 @@ AsciiString Parameter::getUiText(void) const
 			break;
 
 		case BUILDABLE:
-			if (m_int >= BSTATUS_YES && m_int < BSTATUS_NUM_TYPES )
+			if (m_int >= BSTATUS_YES && m_int < BSTATUS_NUM_TYPES)
 				uiText.format("Buildable (%s)", BuildableStatusNames[m_int - BSTATUS_YES]);
 			else
 				uiText.format("Buildable ???");
@@ -2072,9 +2277,12 @@ AsciiString Parameter::getUiText(void) const
 
 		case OBJECT_STATUS:
 		{
-			if (m_string.isEmpty()) {
+			if (m_string.isEmpty())
+			{
 				uiText.format("Object Status is ???");
-			} else {
+			}
+			else
+			{
 				uiText.format("Object Status is '%s'", m_string.str());
 			}
 			break;
@@ -2102,25 +2310,28 @@ AsciiString Parameter::getUiText(void) const
 }
 
 /**
-* Parameter::WriteParameter - Writes an Parameter.
-* Format is the newer CHUNKY format.
-*	Input: DataChunkInput
-*
-*/
+ * Parameter::WriteParameter - Writes an Parameter.
+ * Format is the newer CHUNKY format.
+ *	Input: DataChunkInput
+ *
+ */
 void Parameter::WriteParameter(DataChunkOutput &chunkWriter)
 {
-
 	/**********Parameter  DATA ***********************/
 	chunkWriter.writeInt(m_paramType);
-	if (m_paramType == KIND_OF_PARAM) {
+	if (m_paramType == KIND_OF_PARAM)
+	{
 		// To get the proper kindof string stored.
 		m_string = KindOfMaskType::getNameFromSingleBit(m_int);
 	}
-	if (m_paramType == COORD3D) {
+	if (m_paramType == COORD3D)
+	{
 		chunkWriter.writeReal(m_coord.x);
 		chunkWriter.writeReal(m_coord.y);
 		chunkWriter.writeReal(m_coord.z);
-	} else {
+	}
+	else
+	{
 		chunkWriter.writeInt(m_int);
 		chunkWriter.writeReal(m_real);
 		chunkWriter.writeAsciiString(m_string);
@@ -2128,17 +2339,18 @@ void Parameter::WriteParameter(DataChunkOutput &chunkWriter)
 }
 
 /**
-* Parameter::ReadParameter - read a parameter.
-* Format is the newer CHUNKY format.
-*	See Parameter::WriteParameter for the writer.
-*	Input: DataChunkInput
-*
-*/
+ * Parameter::ReadParameter - read a parameter.
+ * Format is the newer CHUNKY format.
+ *	See Parameter::WriteParameter for the writer.
+ *	Input: DataChunkInput
+ *
+ */
 Parameter *Parameter::ReadParameter(DataChunkInput &file)
 {
-	Parameter *pParm = newInstance(Parameter)( (ParameterType)file.readInt());
+	Parameter *pParm = newInstance(Parameter)((ParameterType)file.readInt());
 	pParm->m_initialized = true;
-	if (pParm->getParameterType() == COORD3D) {
+	if (pParm->getParameterType() == COORD3D)
+	{
 		Coord3D pos;
 		pos.x = file.readReal();
 		pos.y = file.readReal();
@@ -2161,7 +2373,7 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 			char newName[256];
 			strcpy(oldName, pParm->m_string.str());
 			strcpy(newName, "GLA");
-			strcat(newName, oldName+strlen("Fundamentalist"));
+			strcat(newName, oldName + strlen("Fundamentalist"));
 			pParm->m_string.set(newName);
 			DEBUG_LOG(("Changing Script Ref from %s to %s", oldName, newName));
 		}
@@ -2170,9 +2382,8 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 	if (pParm->getParameterType() == UPGRADE)
 	{
 		// quick hack to make obsolete capture building upgrades switch to the new one. jba.
-		if (pParm->m_string == "Upgrade_AmericaRangerCaptureBuilding" ||
-			pParm->m_string == "Upgrade_ChinaRedguardCaptureBuilding" ||
-			pParm->m_string == "Upgrade_GLARebelCaptureBuilding")
+		if (pParm->m_string == "Upgrade_AmericaRangerCaptureBuilding"
+				|| pParm->m_string == "Upgrade_ChinaRedguardCaptureBuilding" || pParm->m_string == "Upgrade_GLARebelCaptureBuilding")
 		{
 			pParm->m_string.set("Upgrade_InfantryCaptureBuilding");
 		}
@@ -2181,60 +2392,69 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 	if (pParm->getParameterType() == OBJECT_STATUS)
 	{
 		// Need to change the string to an ObjectStatusMaskType
-		for( int i = 0; i < OBJECT_STATUS_COUNT; ++i )
+		for (int i = 0; i < OBJECT_STATUS_COUNT; ++i)
 		{
-			if( !pParm->m_string.compareNoCase( ObjectStatusMaskType::getBitNames()[i] ) )
+			if (!pParm->m_string.compareNoCase(ObjectStatusMaskType::getBitNames()[i]))
 			{
-				pParm->setStatus( MAKE_OBJECT_STATUS_MASK( i ) );
+				pParm->setStatus(MAKE_OBJECT_STATUS_MASK(i));
 				break;
 			}
 		}
 	}
 
 	if (pParm->getParameterType() == KIND_OF_PARAM)
-  {
+	{
 		// Need to change the string to an integer
-		const char** kindofNames = KindOfMaskType::getBitNames();
+		const char **kindofNames = KindOfMaskType::getBitNames();
 		if (!pParm->m_string.isEmpty())
-    {
+		{
 			Bool found = false;
 			for (int i = 0; kindofNames[i]; ++i)
 			{
 				if (pParm->m_string.compareNoCase(kindofNames[i]) == 0)
-        {
+				{
 					pParm->setInt(i);
 					found = true;
 					break;
 				}
-				if( !pParm->m_string.compareNoCase( "CRUSHER" ) )
+				if (!pParm->m_string.compareNoCase("CRUSHER"))
 				{
 					//????
 					pParm->setInt(i);
 					found = true;
-					DEBUG_CRASH(( "Kindof CRUSHER no longer exists -- in order to get your map to load, it has been switched to OBSTACLE, please call Kris (x36844).", pParm->m_string.str()));
+					DEBUG_CRASH(
+							("Kindof CRUSHER no longer exists -- in order to get your map to load, it has been switched to OBSTACLE, "
+							 "please call Kris (x36844).",
+							 pParm->m_string.str()));
 					break;
 				}
-				else if( !pParm->m_string.compareNoCase( "CRUSHABLE" ) )
+				else if (!pParm->m_string.compareNoCase("CRUSHABLE"))
 				{
 					//????
 					pParm->setInt(i);
 					found = true;
-					DEBUG_CRASH(( "Kindof CRUSHABLE no longer exists -- in order to get your map to load, it has been switched to OBSTACLE, please call Kris (x36844).", pParm->m_string.str()));
+					DEBUG_CRASH(
+							("Kindof CRUSHABLE no longer exists -- in order to get your map to load, it has been switched to OBSTACLE, "
+							 "please call Kris (x36844).",
+							 pParm->m_string.str()));
 					break;
 				}
-				else if( !pParm->m_string.compareNoCase( "OVERLAPPABLE" ) )
+				else if (!pParm->m_string.compareNoCase("OVERLAPPABLE"))
 				{
 					//????
 					pParm->setInt(i);
 					found = true;
-					DEBUG_CRASH(( "Kindof OVERLAPPABLE no longer exists -- in order to get your map to load, it has been switched to OBSTACLE, please call Kris (x36844).", pParm->m_string.str()));
+					DEBUG_CRASH(
+							("Kindof OVERLAPPABLE no longer exists -- in order to get your map to load, it has been switched to OBSTACLE, "
+							 "please call Kris (x36844).",
+							 pParm->m_string.str()));
 					break;
 				}
-				else if( !pParm->m_string.compareNoCase( "MISSILE" ) )
+				else if (!pParm->m_string.compareNoCase("MISSILE"))
 				{
-					//MISSILE was split into two kinds -- SMALL_MISSILE and BALLISTIC_MISSILE.
-					pParm->m_string.format( "SMALL_MISSILE" );
-					for( i = 0; kindofNames[i]; ++i )
+					// MISSILE was split into two kinds -- SMALL_MISSILE and BALLISTIC_MISSILE.
+					pParm->m_string.format("SMALL_MISSILE");
+					for (i = 0; kindofNames[i]; ++i)
 					{
 						if (pParm->m_string.compareNoCase("SMALL_MISSILE") == 0)
 						{
@@ -2245,16 +2465,15 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 					}
 					DEBUG_CRASH(("Unable to find Kindof SMALL_MISSILE', please call KrisM (x36844).", pParm->m_string.str()));
 				}
-
 			}
 			if (!found)
-      {
+			{
 				DEBUG_CRASH(("Unable to find Kindof '%s', please call JKM (x36872).", pParm->m_string.str()));
 				throw ERROR_BUG;
 			}
 		}
-    else
-    {
+		else
+		{
 			// Seems weird, but this is so WB will load them into the proper format.
 			pParm->m_string = kindofNames[pParm->m_int];
 		}
@@ -2266,23 +2485,22 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 //-------------------------------------------------------------------------------------------------
 // ******************************** class ScriptAction ***********************************************
 //-------------------------------------------------------------------------------------------------
-ScriptAction::ScriptAction():
-m_actionType(NO_OP),
-m_hasWarnings(false),
-m_numParms(0),
-//Added By Sadullah Nader
-//Initializations inserted
-m_nextAction(NULL)
+ScriptAction::ScriptAction() :
+		m_actionType(NO_OP),
+		m_hasWarnings(false),
+		m_numParms(0),
+		// Added By Sadullah Nader
+		// Initializations inserted
+		m_nextAction(NULL)
 //
 {
 }
 
-ScriptAction::ScriptAction(enum ScriptActionType type):
-m_actionType(type),
-m_numParms(0)
+ScriptAction::ScriptAction(enum ScriptActionType type) : m_actionType(type), m_numParms(0)
 {
 	Int i;
-	for (i=0; i<MAX_PARMS; i++) {
+	for (i = 0; i < MAX_PARMS; i++)
+	{
 		m_parms[i] = NULL;
 	}
 	setActionType(type);
@@ -2291,7 +2509,8 @@ m_numParms(0)
 void ScriptAction::setActionType(enum ScriptActionType type)
 {
 	Int i;
-	for (i=0; i<m_numParms; i++) {
+	for (i = 0; i < m_numParms; i++)
+	{
 		if (m_parms[i])
 			deleteInstance(m_parms[i]);
 		m_parms[i] = NULL;
@@ -2299,7 +2518,8 @@ void ScriptAction::setActionType(enum ScriptActionType type)
 	m_actionType = type;
 	const ActionTemplate *pTemplate = TheScriptEngine->getActionTemplate(m_actionType);
 	m_numParms = pTemplate->getNumParameters();
-	for (i=0; i<m_numParms; i++) {
+	for (i = 0; i < m_numParms; i++)
+	{
 		m_parms[i] = newInstance(Parameter)(pTemplate->getParameterType(i));
 	}
 }
@@ -2308,18 +2528,23 @@ ScriptAction *ScriptAction::duplicate(void) const
 {
 	ScriptAction *pNew = newInstance(ScriptAction)(m_actionType);
 	Int i;
-	for (i=0; i<m_numParms; i++) {
-		if (pNew->m_parms[i]) {
+	for (i = 0; i < m_numParms; i++)
+	{
+		if (pNew->m_parms[i])
+		{
 			*pNew->m_parms[i] = *m_parms[i];
 		}
 	}
 	ScriptAction *pLink = m_nextAction;
 	ScriptAction *pCur = pNew;
-	while (pLink) {
+	while (pLink)
+	{
 		pCur->m_nextAction = newInstance(ScriptAction)(pLink->m_actionType);
 		pCur = pCur->m_nextAction;
-		for (i=0; i<pLink->m_numParms; i++) {
-			if (pCur->m_parms[i] && pLink->m_parms[i]) {
+		for (i = 0; i < pLink->m_numParms; i++)
+		{
+			if (pCur->m_parms[i] && pLink->m_parms[i])
+			{
 				*pCur->m_parms[i] = *pLink->m_parms[i];
 			}
 		}
@@ -2328,24 +2553,31 @@ ScriptAction *ScriptAction::duplicate(void) const
 	return pNew;
 }
 
-ScriptAction *ScriptAction::duplicateAndQualify(const AsciiString& qualifier,
-			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const
+ScriptAction *ScriptAction::duplicateAndQualify(
+		const AsciiString &qualifier,
+		const AsciiString &playerTemplateName,
+		const AsciiString &newPlayerName) const
 {
 	ScriptAction *pNew = newInstance(ScriptAction)(m_actionType);
 	Int i;
-	for (i=0; i<m_numParms; i++) {
-		if (pNew->m_parms[i]) {
+	for (i = 0; i < m_numParms; i++)
+	{
+		if (pNew->m_parms[i])
+		{
 			*pNew->m_parms[i] = *m_parms[i];
 			pNew->m_parms[i]->qualify(qualifier, playerTemplateName, newPlayerName);
 		}
 	}
 	ScriptAction *pLink = m_nextAction;
 	ScriptAction *pCur = pNew;
-	while (pLink) {
+	while (pLink)
+	{
 		pCur->m_nextAction = newInstance(ScriptAction)(pLink->m_actionType);
 		pCur = pCur->m_nextAction;
-		for (i=0; i<pLink->m_numParms; i++) {
-			if (pCur->m_parms[i] && pLink->m_parms[i]) {
+		for (i = 0; i < pLink->m_numParms; i++)
+		{
+			if (pCur->m_parms[i] && pLink->m_parms[i])
+			{
 				*pCur->m_parms[i] = *pLink->m_parms[i];
 				pCur->m_parms[i]->qualify(qualifier, playerTemplateName, newPlayerName);
 			}
@@ -2358,14 +2590,17 @@ ScriptAction *ScriptAction::duplicateAndQualify(const AsciiString& qualifier,
 ScriptAction::~ScriptAction(void)
 {
 	Int i;
-	for (i=0; i<m_numParms; i++) {
+	for (i = 0; i < m_numParms; i++)
+	{
 		deleteInstance(m_parms[i]);
 		m_parms[i] = NULL;
 	}
-	if (m_nextAction) {
+	if (m_nextAction)
+	{
 		ScriptAction *cur = m_nextAction;
 		ScriptAction *next;
-		while (cur) {
+		while (cur)
+		{
 			next = cur->getNext();
 			cur->setNextAction(NULL); // prevents recursion.
 			deleteInstance(cur);
@@ -2373,8 +2608,6 @@ ScriptAction::~ScriptAction(void)
 		}
 	}
 }
-
-
 
 Int ScriptAction::getUiStrings(AsciiString strings[MAX_PARMS])
 {
@@ -2389,15 +2622,19 @@ AsciiString ScriptAction::getUiText(void)
 	Int numStrings = getUiStrings(strings);
 	Int i;
 
-	if (m_hasWarnings) {
+	if (m_hasWarnings)
+	{
 		uiText = "[???]";
 	}
 
-	for (i=0; i<MAX_PARMS; i++) {
-		if (i<numStrings) {
+	for (i = 0; i < MAX_PARMS; i++)
+	{
+		if (i < numStrings)
+		{
 			uiText.concat(strings[i]);
 		}
-		if (i<m_numParms) {
+		if (i < m_numParms)
+		{
 			uiText.concat(m_parms[i]->getUiText());
 		}
 	}
@@ -2406,67 +2643,78 @@ AsciiString ScriptAction::getUiText(void)
 }
 
 /**
-* ScriptAction::WriteActionDataChunk - Writes an Action chunk.
-* Format is the newer CHUNKY format.
-*	Input: DataChunkInput
-*
-*/
-void ScriptAction::WriteActionDataChunk(DataChunkOutput &chunkWriter, ScriptAction	*pScriptAction)
+ * ScriptAction::WriteActionDataChunk - Writes an Action chunk.
+ * Format is the newer CHUNKY format.
+ *	Input: DataChunkInput
+ *
+ */
+void ScriptAction::WriteActionDataChunk(DataChunkOutput &chunkWriter, ScriptAction *pScriptAction)
 {
 	/**********ACTION  DATA ***********************/
-	while (pScriptAction) {
+	while (pScriptAction)
+	{
 		chunkWriter.openDataChunk("ScriptAction", K_SCRIPT_ACTION_VERSION_2);
-			chunkWriter.writeInt(pScriptAction->m_actionType);
-			const ActionTemplate* at = TheScriptEngine->getActionTemplate(pScriptAction->m_actionType);
-			if (at) {
-				chunkWriter.writeNameKey(at->m_internalNameKey);
-			}	else {
-				DEBUG_CRASH(("Invalid action."));
-				chunkWriter.writeNameKey(NAMEKEY("Bogus"));
-			}
-			chunkWriter.writeInt(pScriptAction->m_numParms);
-			Int i;
-			for (i=0; i<pScriptAction->m_numParms; i++) {
-				pScriptAction->m_parms[i]->WriteParameter(chunkWriter);
-			}
+		chunkWriter.writeInt(pScriptAction->m_actionType);
+		const ActionTemplate *at = TheScriptEngine->getActionTemplate(pScriptAction->m_actionType);
+		if (at)
+		{
+			chunkWriter.writeNameKey(at->m_internalNameKey);
+		}
+		else
+		{
+			DEBUG_CRASH(("Invalid action."));
+			chunkWriter.writeNameKey(NAMEKEY("Bogus"));
+		}
+		chunkWriter.writeInt(pScriptAction->m_numParms);
+		Int i;
+		for (i = 0; i < pScriptAction->m_numParms; i++)
+		{
+			pScriptAction->m_parms[i]->WriteParameter(chunkWriter);
+		}
 		chunkWriter.closeDataChunk();
 		pScriptAction = pScriptAction->getNext();
 	}
 }
 
 /**
-* ScriptAction::ParseAction - read an action chunk in a script list.
-* Format is the newer CHUNKY format.
-*	See ScriptAction::WriteActionDataChunk for the writer.
-*	Input: DataChunkInput
-*
-*/
+ * ScriptAction::ParseAction - read an action chunk in a script list.
+ * Format is the newer CHUNKY format.
+ *	See ScriptAction::WriteActionDataChunk for the writer.
+ *	Input: DataChunkInput
+ *
+ */
 ScriptAction *ScriptAction::ParseAction(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
-	ScriptAction	*pScriptAction = newInstance(ScriptAction);
+	ScriptAction *pScriptAction = newInstance(ScriptAction);
 
 	pScriptAction->m_actionType = (enum ScriptActionType)file.readInt();
 
-	const ActionTemplate* at = TheScriptEngine->getActionTemplate(pScriptAction->m_actionType);
-	if (info->version >= K_SCRIPT_ACTION_VERSION_2) {
+	const ActionTemplate *at = TheScriptEngine->getActionTemplate(pScriptAction->m_actionType);
+	if (info->version >= K_SCRIPT_ACTION_VERSION_2)
+	{
 		NameKeyType key = file.readNameKey();
 		Bool match = false;
-		if (at && at->m_internalNameKey == key) {
+		if (at && at->m_internalNameKey == key)
+		{
 			match = TRUE; // All good. jba. [3/20/2003]
 		}
-		if (!match) {
+		if (!match)
+		{
 			//  name and id don't match.  Find the name [3/20/2003]
 			Int i;
-			for (i=0; i<ScriptAction::NUM_ITEMS; i++) {
+			for (i = 0; i < ScriptAction::NUM_ITEMS; i++)
+			{
 				at = TheScriptEngine->getActionTemplate(i);
-				if (key == at->m_internalNameKey) {
+				if (key == at->m_internalNameKey)
+				{
 					match = true;
 					DEBUG_LOG(("Rematching script action %s", KEYNAME(key).str()));
 					pScriptAction->m_actionType = (enum ScriptActionType)i;
 					break;
 				}
 			}
-			if (!match) {
+			if (!match)
+			{
 				// Invalid script [3/20/2003]
 				DEBUG_CRASH(("Invalid script action.  Making it noop. jba."));
 				pScriptAction->m_actionType = ScriptAction::NO_OP;
@@ -2476,18 +2724,19 @@ ScriptAction *ScriptAction::ParseAction(DataChunkInput &file, DataChunkInfo *inf
 	}
 #ifdef DEBUG_CRASHING
 	Script *pScript = (Script *)userData;
-	if (at && (at->getName().isEmpty() || (at->getName().compareNoCase("(placeholder)") == 0))) {
+	if (at && (at->getName().isEmpty() || (at->getName().compareNoCase("(placeholder)") == 0)))
+	{
 		DEBUG_CRASH(("Invalid Script Action found in script '%s'", pScript->getName().str()));
 	}
 #endif
 #ifdef COUNT_SCRIPT_USAGE
-	const ActionTemplate* at2 = TheScriptEngine->getActionTemplate(pScriptAction->m_actionType);
+	const ActionTemplate *at2 = TheScriptEngine->getActionTemplate(pScriptAction->m_actionType);
 	at2->m_numTimesUsed++;
 	at2->m_firstMapUsed = TheGlobalData->m_mapName;
 #endif
-	pScriptAction->m_numParms =file.readInt();
+	pScriptAction->m_numParms = file.readInt();
 	Int i;
-	for (i=0; i<pScriptAction->m_numParms; i++)
+	for (i = 0; i < pScriptAction->m_numParms; i++)
 	{
 		pScriptAction->m_parms[i] = Parameter::ReadParameter(file);
 	}
@@ -2514,10 +2763,11 @@ ScriptAction *ScriptAction::ParseAction(DataChunkInput &file, DataChunkInfo *inf
 		case SKIRMISH_BUILD_BASE_DEFENSE_FRONT:
 			if (pScriptAction->m_numParms == 1)
 			{
-				Bool flank = pScriptAction->m_parms[0]->getInt()!=0;
+				Bool flank = pScriptAction->m_parms[0]->getInt() != 0;
 				deleteInstance(pScriptAction->m_parms[0]);
 				pScriptAction->m_numParms = 0;
-				if (flank) pScriptAction->m_actionType = SKIRMISH_BUILD_BASE_DEFENSE_FLANK;
+				if (flank)
+					pScriptAction->m_actionType = SKIRMISH_BUILD_BASE_DEFENSE_FLANK;
 			}
 			break;
 		case NAMED_SET_ATTITUDE:
@@ -2600,7 +2850,8 @@ ScriptAction *ScriptAction::ParseAction(DataChunkInput &file, DataChunkInfo *inf
 			break;
 	}
 
-	if (at->getNumParameters() != pScriptAction->getNumParameters()) {
+	if (at->getNumParameters() != pScriptAction->getNumParameters())
+	{
 		// Invalid script [3/20/2003]
 		DEBUG_CRASH(("Invalid script action.  Making it noop. jba."));
 		pScriptAction->m_actionType = ScriptAction::NO_OP;
@@ -2611,17 +2862,17 @@ ScriptAction *ScriptAction::ParseAction(DataChunkInput &file, DataChunkInfo *inf
 }
 
 /**
-* ScriptAction::ParseActionDataChunk - read an action chunk in a script list.
-* Format is the newer CHUNKY format.
-*	See ScriptAction::WriteActionDataChunk for the writer.
-*	Input: DataChunkInput
-*
-*/
+ * ScriptAction::ParseActionDataChunk - read an action chunk in a script list.
+ * Format is the newer CHUNKY format.
+ *	See ScriptAction::WriteActionDataChunk for the writer.
+ *	Input: DataChunkInput
+ *
+ */
 Bool ScriptAction::ParseActionDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
 	Script *pScript = (Script *)userData;
 
-	ScriptAction	*pScriptAction = ParseAction(file, info, userData);
+	ScriptAction *pScriptAction = ParseAction(file, info, userData);
 
 	ScriptAction *pLast = pScript->getAction();
 	while (pLast && pLast->getNext())
@@ -2641,56 +2892,64 @@ Bool ScriptAction::ParseActionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 	return true;
 }
 
-
 /**
-* ScriptAction::WriteActionFalseDataChunk - Writes a false Action chunk.
-* Format is the newer CHUNKY format.
-*	Input: DataChunkInput
-*
-*/
-void ScriptAction::WriteActionFalseDataChunk(DataChunkOutput &chunkWriter, ScriptAction	*pScriptAction)
+ * ScriptAction::WriteActionFalseDataChunk - Writes a false Action chunk.
+ * Format is the newer CHUNKY format.
+ *	Input: DataChunkInput
+ *
+ */
+void ScriptAction::WriteActionFalseDataChunk(DataChunkOutput &chunkWriter, ScriptAction *pScriptAction)
 {
 	/**********ACTION  DATA ***********************/
-	while (pScriptAction) {
+	while (pScriptAction)
+	{
 		chunkWriter.openDataChunk("ScriptActionFalse", K_SCRIPT_ACTION_VERSION_2);
-			chunkWriter.writeInt(pScriptAction->m_actionType);
-			const ActionTemplate* at = TheScriptEngine->getActionTemplate(pScriptAction->m_actionType);
-			if (at) {
-				chunkWriter.writeNameKey(at->m_internalNameKey);
-			}	else {
-				DEBUG_CRASH(("Invalid action."));
-				chunkWriter.writeNameKey(NAMEKEY("Bogus"));
-			}
-			chunkWriter.writeInt(pScriptAction->m_numParms);
-			Int i;
-			for (i=0; i<pScriptAction->m_numParms; i++) {
-				pScriptAction->m_parms[i]->WriteParameter(chunkWriter);
-			}
+		chunkWriter.writeInt(pScriptAction->m_actionType);
+		const ActionTemplate *at = TheScriptEngine->getActionTemplate(pScriptAction->m_actionType);
+		if (at)
+		{
+			chunkWriter.writeNameKey(at->m_internalNameKey);
+		}
+		else
+		{
+			DEBUG_CRASH(("Invalid action."));
+			chunkWriter.writeNameKey(NAMEKEY("Bogus"));
+		}
+		chunkWriter.writeInt(pScriptAction->m_numParms);
+		Int i;
+		for (i = 0; i < pScriptAction->m_numParms; i++)
+		{
+			pScriptAction->m_parms[i]->WriteParameter(chunkWriter);
+		}
 		chunkWriter.closeDataChunk();
 		pScriptAction = pScriptAction->getNext();
 	}
 }
 
 /**
-* ScriptAction::ParseActionFalseDataChunk - read a false action chunk in a script list.
-* Format is the newer CHUNKY format.
-*	See ScriptAction::WriteActionDataChunk for the writer.
-*	Input: DataChunkInput
-*
-*/
+ * ScriptAction::ParseActionFalseDataChunk - read a false action chunk in a script list.
+ * Format is the newer CHUNKY format.
+ *	See ScriptAction::WriteActionDataChunk for the writer.
+ *	Input: DataChunkInput
+ *
+ */
 Bool ScriptAction::ParseActionFalseDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
 	Script *pScript = (Script *)userData;
 
-	ScriptAction	*pScriptAction = ParseAction(file, info, userData);
+	ScriptAction *pScriptAction = ParseAction(file, info, userData);
 
 	ScriptAction *pLast = pScript->getFalseAction();
-	while (pLast && pLast->getNext()) {
+	while (pLast && pLast->getNext())
+	{
 		pLast = pLast->getNext();
 	}
-	if (pLast) {
+	if (pLast)
+	{
 		pLast->setNextAction(pScriptAction);
-	} else {
+	}
+	else
+	{
 		pScript->setFalseAction(pScriptAction);
 	}
 	DEBUG_ASSERTCRASH(file.atEndOfChunk(), ("Unexpected data left over."));
@@ -2700,14 +2959,6 @@ Bool ScriptAction::ParseActionFalseDataChunk(DataChunkInput &file, DataChunkInfo
 // NOTE: Changing these or adding ot TheOBjectFlagNames requires changes to
 // ScriptActions::changeObjectPanelFlagForSingleObject
 // THEY SHOULD STAY IN SYNC.
-const char* TheObjectFlagsNames[] =
-{
-	"Enabled",
-	"Powered",
-	"Indestructible",
-	"Unsellable",
-	"Selectable",
-	"AI Recruitable",
-	"Player Targetable",
-	NULL,
+const char *TheObjectFlagsNames[] = {
+	"Enabled", "Powered", "Indestructible", "Unsellable", "Selectable", "AI Recruitable", "Player Targetable", NULL,
 };

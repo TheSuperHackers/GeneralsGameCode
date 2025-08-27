@@ -31,47 +31,50 @@
 #ifndef _MAP_READER_WRITER_INFO_H_
 #define _MAP_READER_WRITER_INFO_H_
 
-#define K_HEIGHT_MAP_VERSION_1	1	// Height map cell = 5.0
-#define K_HEIGHT_MAP_VERSION_2	2	// Height map cell = 10.0
-#define K_HEIGHT_MAP_VERSION_3	3	// Added m_borderSize
-#define K_HEIGHT_MAP_VERSION_4	4	// Major rev. See comments at bottom of file.
-#define K_BLEND_TILE_VERSION_1	1	// Height map cell = 5.0
-#define K_BLEND_TILE_VERSION_2	2	// Height map cell = 10.0
-#define K_BLEND_TILE_VERSION_3	3	// Added long diagonal blends.
-#define K_BLEND_TILE_VERSION_4	4	// Added custom edge blends.
-#define K_BLEND_TILE_VERSION_5	5	// Added custom cliff u/v coordinates.
-#define K_BLEND_TILE_VERSION_6	6	// Added extra blend layer for 3 textures in cell.
-#define K_BLEND_TILE_VERSION_7	7	// Added flag for painting passable/impassable to cells.
-#define K_OBJECTS_VERSION_1			1	// no dict
-#define K_OBJECTS_VERSION_2			2	// includes dict
-#define K_OBJECTS_VERSION_3			3	// includes dict
-#define K_MAP_OBJECT_VERSION_1	1
-#define K_WAYPOINTS_VERSION_1		1
-#define K_PLAYERLIST_VERSION_1	1
+#define K_HEIGHT_MAP_VERSION_1 1 // Height map cell = 5.0
+#define K_HEIGHT_MAP_VERSION_2 2 // Height map cell = 10.0
+#define K_HEIGHT_MAP_VERSION_3 3 // Added m_borderSize
+#define K_HEIGHT_MAP_VERSION_4 4 // Major rev. See comments at bottom of file.
+#define K_BLEND_TILE_VERSION_1 1 // Height map cell = 5.0
+#define K_BLEND_TILE_VERSION_2 2 // Height map cell = 10.0
+#define K_BLEND_TILE_VERSION_3 3 // Added long diagonal blends.
+#define K_BLEND_TILE_VERSION_4 4 // Added custom edge blends.
+#define K_BLEND_TILE_VERSION_5 5 // Added custom cliff u/v coordinates.
+#define K_BLEND_TILE_VERSION_6 6 // Added extra blend layer for 3 textures in cell.
+#define K_BLEND_TILE_VERSION_7 7 // Added flag for painting passable/impassable to cells.
+#define K_OBJECTS_VERSION_1 1 // no dict
+#define K_OBJECTS_VERSION_2 2 // includes dict
+#define K_OBJECTS_VERSION_3 3 // includes dict
+#define K_MAP_OBJECT_VERSION_1 1
+#define K_WAYPOINTS_VERSION_1 1
+#define K_PLAYERLIST_VERSION_1 1
 #define K_TRIGGERS_VERSION_1 1
-#define K_TRIGGERS_VERSION_2 2		// Added m_isWaterArea
-#define K_TRIGGERS_VERSION_3 3		// Added m_isRiver & m_riverStart
-#define K_LIGHTING_VERSION_1	1
-#define K_LIGHTING_VERSION_2	2	// Added 2 additional global lights for objects.
-#define K_LIGHTING_VERSION_3	3	// Added 2 additional global lights for terrain.
+#define K_TRIGGERS_VERSION_2 2 // Added m_isWaterArea
+#define K_TRIGGERS_VERSION_3 3 // Added m_isRiver & m_riverStart
+#define K_LIGHTING_VERSION_1 1
+#define K_LIGHTING_VERSION_2 2 // Added 2 additional global lights for objects.
+#define K_LIGHTING_VERSION_3 3 // Added 2 additional global lights for terrain.
 #define K_WORLDDICT_VERSION_1 1
 #define K_MAPPREVIEW_VERSION_1 1
 /** Virtual helper class, so that we can write map data using FILE* or CFile. */
-class OutputStream {
+class OutputStream
+{
 public:
 	virtual Int write(const void *pData, Int numBytes) = 0;
 };
 
 /** Virtual helper class, so that we can read in tile and map data from a
 variety of sources, such as FILE* or CFile. */
-class InputStream {
+class InputStream
+{
 public:
 	virtual Int read(void *pData, Int numBytes) = 0;
 };
 
 /** Virtual helper class, so that we can read in tile and map data from a
 variety of sources, such as FILE* or CFile. */
-class ChunkInputStream : public InputStream{
+class ChunkInputStream : public InputStream
+{
 public:
 	virtual Int read(void *pData, Int numBytes) = 0;
 	virtual UnsignedInt tell(void) = 0;
@@ -84,13 +87,14 @@ class CachedFileInputStream : public ChunkInputStream
 {
 protected:
 	int m_size;
-	char* m_buffer;
+	char *m_buffer;
 	int m_pos;
+
 public:
 	CachedFileInputStream(void);
 	~CachedFileInputStream(void);
-	Bool open(AsciiString path);	///< Returns true if open succeeded.
-	void close(void);  ///< Explict close.  Destructor closes if file is left open.
+	Bool open(AsciiString path); ///< Returns true if open succeeded.
+	void close(void); ///< Explict close.  Destructor closes if file is left open.
 	virtual Int read(void *pData, Int numBytes);
 	virtual UnsignedInt tell(void);
 	virtual Bool absoluteSeek(UnsignedInt pos);

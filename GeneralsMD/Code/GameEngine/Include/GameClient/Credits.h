@@ -66,26 +66,27 @@ class DisplayString;
 //-----------------------------------------------------------------------------
 enum
 {
-CREDIT_STYLE_TITLE = 0,
-CREDIT_STYLE_POSITION,
-CREDIT_STYLE_NORMAL,
-CREDIT_STYLE_COLUMN,
-CREDIT_STYLE_BLANK,			///< Keep this second to last
-MAX_CREDIT_STYLES				///< Keep this last
+	CREDIT_STYLE_TITLE = 0,
+	CREDIT_STYLE_POSITION,
+	CREDIT_STYLE_NORMAL,
+	CREDIT_STYLE_COLUMN,
+	CREDIT_STYLE_BLANK, ///< Keep this second to last
+	MAX_CREDIT_STYLES ///< Keep this last
 };
 
-enum{ CREDIT_SPACE_OFFSET = 2 };
-
-static const LookupListRec CreditStyleNames[] =
+enum
 {
-	{ "TITLE",					CREDIT_STYLE_TITLE },
-	{ "MINORTITLE",				CREDIT_STYLE_POSITION },
-	{ "NORMAL",			CREDIT_STYLE_NORMAL },
-	{ "COLUMN",				CREDIT_STYLE_COLUMN },
-
-	{ NULL, 0	}// keep this last!
+	CREDIT_SPACE_OFFSET = 2
 };
 
+static const LookupListRec CreditStyleNames[] = {
+	{ "TITLE", CREDIT_STYLE_TITLE },
+	{ "MINORTITLE", CREDIT_STYLE_POSITION },
+	{ "NORMAL", CREDIT_STYLE_NORMAL },
+	{ "COLUMN", CREDIT_STYLE_COLUMN },
+
+	{ NULL, 0 } // keep this last!
+};
 
 class CreditsLine
 {
@@ -93,14 +94,14 @@ public:
 	CreditsLine();
 	~CreditsLine();
 
-// parsing variables
+	// parsing variables
 	Int m_style;
 	UnicodeString m_text;
 	UnicodeString m_secondText;
 	Bool m_useSecond;
 	Bool m_done;
 
-// drawing variables
+	// drawing variables
 	DisplayString *m_displayString;
 	DisplayString *m_secondDisplayString;
 	ICoord2D m_pos;
@@ -108,28 +109,30 @@ public:
 	Int m_color;
 };
 
-class CreditsManager: public SubsystemInterface
+class CreditsManager : public SubsystemInterface
 {
 public:
 	CreditsManager(void);
 	~CreditsManager(void);
 
-	void init(void );
-	void load(void );
-	void reset( void );
-	void update( void );
-	void draw( void );
+	void init(void);
+	void load(void);
+	void reset(void);
+	void update(void);
+	void draw(void);
 
-	const FieldParse *getFieldParse() const { return m_creditsFieldParseTable; }								///< returns the parsing fields
-	static const FieldParse m_creditsFieldParseTable[];																				///< the parse table
-	static void parseBlank( INI* ini, void *instance, void *store, const void *userData );					///< Parse the image part of the INI file
-	static void parseText( INI* ini, void *instance, void *store, const void *userData );					///< Parse the image part of the INI file
+	const FieldParse *getFieldParse() const { return m_creditsFieldParseTable; } ///< returns the parsing fields
+	static const FieldParse m_creditsFieldParseTable[]; ///< the parse table
+	static void parseBlank(INI *ini, void *instance, void *store, const void *userData); ///< Parse the image part of the INI
+																																											 ///< file
+	static void parseText(INI *ini, void *instance, void *store, const void *userData); ///< Parse the image part of the INI
+																																											///< file
 
-	Bool isFinished( void ) { return m_isFinished;	}
-	void addBlank( void );
-	void addText( AsciiString text );
+	Bool isFinished(void) { return m_isFinished; }
+	void addBlank(void);
+	void addText(AsciiString text);
+
 private:
-
 	UnicodeString getUnicodeString(AsciiString str);
 
 	typedef std::list<CreditsLine *> CreditsLineList;
@@ -140,11 +143,11 @@ private:
 
 	Int m_scrollRate; // in pixels
 	Int m_scrollRatePerFrames;
-	Bool m_scrollDown;	// if TRUE text will come from the top to the bottom if False, it will go from the bottom up
+	Bool m_scrollDown; // if TRUE text will come from the top to the bottom if False, it will go from the bottom up
 
-	Color			m_titleColor;
-	Color			m_positionColor;
-	Color			m_normalColor;
+	Color m_titleColor;
+	Color m_positionColor;
+	Color m_normalColor;
 
 	Int m_currentStyle;
 
@@ -153,7 +156,6 @@ private:
 	Int m_framesSinceStarted;
 	Int m_normalFontHeight;
 };
-
 
 //-----------------------------------------------------------------------------
 // INLINING ///////////////////////////////////////////////////////////////////

@@ -57,7 +57,6 @@
 #include "iostruct.h"
 #endif
 
-
 /************************************************************************************
 
 	ChunkIO
@@ -92,16 +91,34 @@ struct ChunkHeader
 {
 	// Functions.
 	ChunkHeader() : ChunkType(0), ChunkSize(0) {}
-	ChunkHeader(uint32 type, uint32 size) {ChunkType = type; ChunkSize = size;}
+	ChunkHeader(uint32 type, uint32 size)
+	{
+		ChunkType = type;
+		ChunkSize = size;
+	}
 
 	// Use these accessors to ensure you correctly deal with the data in the chunk header
-	void		Set_Type(uint32 type)					{ ChunkType = type; }
-	uint32	Get_Type(void)								{ return ChunkType; }
-	void		Set_Size(uint32 size)					{ ChunkSize &= 0x80000000; ChunkSize |= (size & 0x7FFFFFFF); }
-	void		Add_Size(uint32 add)						{ Set_Size(Get_Size() + add); }
-	uint32	Get_Size(void)								{ return (ChunkSize & 0x7FFFFFFF); }
-	void		Set_Sub_Chunk_Flag(bool onoff)		{ if (onoff) { ChunkSize |= 0x80000000; } else { ChunkSize &= 0x7FFFFFFF; } }
-	int		Get_Sub_Chunk_Flag(void)				{ return (ChunkSize & 0x80000000); }
+	void Set_Type(uint32 type) { ChunkType = type; }
+	uint32 Get_Type(void) { return ChunkType; }
+	void Set_Size(uint32 size)
+	{
+		ChunkSize &= 0x80000000;
+		ChunkSize |= (size & 0x7FFFFFFF);
+	}
+	void Add_Size(uint32 add) { Set_Size(Get_Size() + add); }
+	uint32 Get_Size(void) { return (ChunkSize & 0x7FFFFFFF); }
+	void Set_Sub_Chunk_Flag(bool onoff)
+	{
+		if (onoff)
+		{
+			ChunkSize |= 0x80000000;
+		}
+		else
+		{
+			ChunkSize &= 0x7FFFFFFF;
+		}
+	}
+	int Get_Sub_Chunk_Flag(void) { return (ChunkSize & 0x80000000); }
 
 	// Chunk type and size.
 	// Note: MSB of ChunkSize is used to indicate whether this chunk
@@ -115,16 +132,15 @@ struct MicroChunkHeader
 	MicroChunkHeader() {}
 	MicroChunkHeader(uint8 type, uint8 size) { ChunkType = type, ChunkSize = size; }
 
-	void		Set_Type(uint8 type)						{ ChunkType = type; }
-	uint8		Get_Type(void)								{ return ChunkType; }
-	void		Set_Size(uint8 size)						{ ChunkSize = size; }
-	void		Add_Size(uint8 add)						{ Set_Size(Get_Size() + add); }
-	uint8		Get_Size(void)								{ return ChunkSize; }
+	void Set_Type(uint8 type) { ChunkType = type; }
+	uint8 Get_Type(void) { return ChunkType; }
+	void Set_Size(uint8 size) { ChunkSize = size; }
+	void Add_Size(uint8 add) { Set_Size(Get_Size() + add); }
+	uint8 Get_Size(void) { return ChunkSize; }
 
-	uint8	ChunkType;
-	uint8	ChunkSize;
+	uint8 ChunkType;
+	uint8 ChunkSize;
 };
-
 
 /**************************************************************************************
 **
@@ -136,41 +152,42 @@ struct MicroChunkHeader
 class ChunkSaveClass
 {
 public:
-	ChunkSaveClass(FileClass * file);
+	ChunkSaveClass(FileClass *file);
 
 	// Chunk methods
-	bool					Begin_Chunk(uint32 id);
-	bool					End_Chunk();
-	int					Cur_Chunk_Depth();
+	bool Begin_Chunk(uint32 id);
+	bool End_Chunk();
+	int Cur_Chunk_Depth();
 
 	// Micro chunk methods
-	bool					Begin_Micro_Chunk(uint32 id);
-	bool					End_Micro_Chunk();
+	bool Begin_Micro_Chunk(uint32 id);
+	bool End_Micro_Chunk();
 
 	// Write data into the file
-	uint32				Write(const void *buf, uint32 nbytes);
-	uint32				Write(const IOVector2Struct & v);
-	uint32				Write(const IOVector3Struct & v);
-	uint32				Write(const IOVector4Struct & v);
-	uint32				Write(const IOQuaternionStruct & q);
+	uint32 Write(const void *buf, uint32 nbytes);
+	uint32 Write(const IOVector2Struct &v);
+	uint32 Write(const IOVector3Struct &v);
+	uint32 Write(const IOVector4Struct &v);
+	uint32 Write(const IOQuaternionStruct &q);
 
 private:
+	enum
+	{
+		MAX_STACK_DEPTH = 256
+	};
 
-	enum { MAX_STACK_DEPTH = 256 };
-
-	FileClass *			File;
+	FileClass *File;
 
 	// Chunk building support
-	int					StackIndex;
-	int					PositionStack[MAX_STACK_DEPTH];
-	ChunkHeader			HeaderStack[MAX_STACK_DEPTH];
+	int StackIndex;
+	int PositionStack[MAX_STACK_DEPTH];
+	ChunkHeader HeaderStack[MAX_STACK_DEPTH];
 
 	// MicroChunk building support
-	bool					InMicroChunk;
-	int					MicroChunkPosition;
-	MicroChunkHeader	MCHeader;
+	bool InMicroChunk;
+	int MicroChunkPosition;
+	MicroChunkHeader MCHeader;
 };
-
 
 /**************************************************************************************
 **
@@ -182,49 +199,49 @@ private:
 class ChunkLoadClass
 {
 public:
-
-	ChunkLoadClass(FileClass * file);
+	ChunkLoadClass(FileClass *file);
 
 	// Chunk methods
-	bool					Open_Chunk();
-	bool					Close_Chunk();
-	uint32				Cur_Chunk_ID();
-	uint32				Cur_Chunk_Length();
-	int					Cur_Chunk_Depth();
-	int					Contains_Chunks();
+	bool Open_Chunk();
+	bool Close_Chunk();
+	uint32 Cur_Chunk_ID();
+	uint32 Cur_Chunk_Length();
+	int Cur_Chunk_Depth();
+	int Contains_Chunks();
 
 	// Micro Chunk methods
-	bool					Open_Micro_Chunk();
-	bool					Close_Micro_Chunk();
-	uint32				Cur_Micro_Chunk_ID();
-	uint32				Cur_Micro_Chunk_Length();
+	bool Open_Micro_Chunk();
+	bool Close_Micro_Chunk();
+	uint32 Cur_Micro_Chunk_ID();
+	uint32 Cur_Micro_Chunk_Length();
 
 	// Read a block of bytes from the output stream.
-	uint32				Read(void *buf, uint32 nbytes);
-	uint32				Read(IOVector2Struct * v);
-	uint32				Read(IOVector3Struct * v);
-	uint32				Read(IOVector4Struct * v);
-	uint32				Read(IOQuaternionStruct * q);
+	uint32 Read(void *buf, uint32 nbytes);
+	uint32 Read(IOVector2Struct *v);
+	uint32 Read(IOVector3Struct *v);
+	uint32 Read(IOVector4Struct *v);
+	uint32 Read(IOQuaternionStruct *q);
 
 	// Seek over a block of bytes in the stream (same as Read but don't copy the data to a buffer)
-	uint32				Seek(uint32 nbytes);
+	uint32 Seek(uint32 nbytes);
 
 private:
+	enum
+	{
+		MAX_STACK_DEPTH = 256
+	};
 
-	enum { MAX_STACK_DEPTH = 256 };
-
-	FileClass *			File;
+	FileClass *File;
 
 	// Chunk reading support
-	int					StackIndex;
-	uint32				PositionStack[MAX_STACK_DEPTH];
-	ChunkHeader			HeaderStack[MAX_STACK_DEPTH];
+	int StackIndex;
+	uint32 PositionStack[MAX_STACK_DEPTH];
+	ChunkHeader HeaderStack[MAX_STACK_DEPTH];
 
 	// Micro-chunk reading support
-	bool					InMicroChunk;
-	int					MicroChunkPosition;
-	MicroChunkHeader	MCHeader;
-
+	bool InMicroChunk;
+	int MicroChunkPosition;
+	MicroChunkHeader MCHeader;
 };
 
 /*
@@ -246,16 +263,19 @@ private:
 **	csave.End_Chunk();
 **
 */
-#define WRITE_WWSTRING_CHUNK(csave,id,var) { \
-	csave.Begin_Chunk(id); \
-	csave.Write((const TCHAR *)var, var.Get_Length () + 1); \
-	csave.End_Chunk(); }
+#define WRITE_WWSTRING_CHUNK(csave, id, var) \
+	{ \
+		csave.Begin_Chunk(id); \
+		csave.Write((const TCHAR *)var, var.Get_Length() + 1); \
+		csave.End_Chunk(); \
+	}
 
-#define WRITE_WIDESTRING_CHUNK(csave,id,var) { \
-	csave.Begin_Chunk(id); \
-	csave.Write((const WCHAR *)var, (var.Get_Length () + 1) * 2); \
-	csave.End_Chunk(); }
-
+#define WRITE_WIDESTRING_CHUNK(csave, id, var) \
+	{ \
+		csave.Begin_Chunk(id); \
+		csave.Write((const WCHAR *)var, (var.Get_Length() + 1) * 2); \
+		csave.End_Chunk(); \
+	}
 
 /*
 ** READ_WWSTRING_CHUNK	- use this macro in a switch statement to read the contents
@@ -272,12 +292,15 @@ private:
 **	}
 **
 */
-#define READ_WWSTRING_CHUNK(cload,id,var)		\
-	case (id):	cload.Read(var.Get_Buffer(cload.Cur_Chunk_Length()),cload.Cur_Chunk_Length()); break;	\
+#define READ_WWSTRING_CHUNK(cload, id, var) \
+	case (id): \
+		cload.Read(var.Get_Buffer(cload.Cur_Chunk_Length()), cload.Cur_Chunk_Length()); \
+		break;
 
-#define READ_WIDESTRING_CHUNK(cload,id,var)		\
-	case (id):	cload.Read(var.Get_Buffer((cload.Cur_Chunk_Length()+1)/2),cload.Cur_Chunk_Length()); break;	\
-
+#define READ_WIDESTRING_CHUNK(cload, id, var) \
+	case (id): \
+		cload.Read(var.Get_Buffer((cload.Cur_Chunk_Length() + 1) / 2), cload.Cur_Chunk_Length()); \
+		break;
 
 /*
 ** WRITE_MICRO_CHUNK	- use this one-line macro to easily make a micro chunk for an individual variable.
@@ -290,32 +313,41 @@ private:
 **	WRITE_MICRO_CHUNK(csave,PHYSGRID_VARIABLE_BASEVISID,BaseVisId);
 **	csave.End_Chunk();
 */
-#define WRITE_MICRO_CHUNK(csave,id,var) { \
-	csave.Begin_Micro_Chunk(id); \
-	csave.Write(&var,sizeof(var)); \
-	csave.End_Micro_Chunk(); }
+#define WRITE_MICRO_CHUNK(csave, id, var) \
+	{ \
+		csave.Begin_Micro_Chunk(id); \
+		csave.Write(&var, sizeof(var)); \
+		csave.End_Micro_Chunk(); \
+	}
 
-#define WRITE_SAFE_MICRO_CHUNK(csave,id,var,type) { \
-	csave.Begin_Micro_Chunk(id);		\
-	type data = (type)var;				\
-	csave.Write(&data,sizeof(data)); \
-	csave.End_Micro_Chunk(); }
+#define WRITE_SAFE_MICRO_CHUNK(csave, id, var, type) \
+	{ \
+		csave.Begin_Micro_Chunk(id); \
+		type data = (type)var; \
+		csave.Write(&data, sizeof(data)); \
+		csave.End_Micro_Chunk(); \
+	}
 
-#define WRITE_MICRO_CHUNK_STRING(csave,id,var) { \
-	csave.Begin_Micro_Chunk(id); \
-	csave.Write(var, strlen(var) + 1); \
-	csave.End_Micro_Chunk(); }
+#define WRITE_MICRO_CHUNK_STRING(csave, id, var) \
+	{ \
+		csave.Begin_Micro_Chunk(id); \
+		csave.Write(var, strlen(var) + 1); \
+		csave.End_Micro_Chunk(); \
+	}
 
-#define WRITE_MICRO_CHUNK_WWSTRING(csave,id,var) { \
-	csave.Begin_Micro_Chunk(id); \
-	csave.Write((const TCHAR *)var, var.Get_Length () + 1); \
-	csave.End_Micro_Chunk(); }
+#define WRITE_MICRO_CHUNK_WWSTRING(csave, id, var) \
+	{ \
+		csave.Begin_Micro_Chunk(id); \
+		csave.Write((const TCHAR *)var, var.Get_Length() + 1); \
+		csave.End_Micro_Chunk(); \
+	}
 
-#define WRITE_MICRO_CHUNK_WIDESTRING(csave,id,var) { \
-	csave.Begin_Micro_Chunk(id); \
-	csave.Write((const WCHAR *)var, (var.Get_Length () + 1) * 2); \
-	csave.End_Micro_Chunk(); }
-
+#define WRITE_MICRO_CHUNK_WIDESTRING(csave, id, var) \
+	{ \
+		csave.Begin_Micro_Chunk(id); \
+		csave.Write((const WCHAR *)var, (var.Get_Length() + 1) * 2); \
+		csave.End_Micro_Chunk(); \
+	}
 
 /*
 ** READ_MICRO_CHUNK - use this macro in a switch statement to read a micro chunk into a variable
@@ -331,41 +363,49 @@ private:
 **		cload.Close_Micro_Chunk();
 **	}
 */
-#define READ_MICRO_CHUNK(cload,id,var)						\
-	case (id):	cload.Read(&var,sizeof(var)); break;	\
+#define READ_MICRO_CHUNK(cload, id, var) \
+	case (id): \
+		cload.Read(&var, sizeof(var)); \
+		break;
 
 /*
 ** Like READ_MICRO_CHUNK but reads items straight into the data safe.
 */
-#define READ_SAFE_MICRO_CHUNK(cload,id,var,type)								\
-	case (id):	{                                                     \
-		void *temp_read_buffer_on_the_stack = _alloca(sizeof(type));	\
-		cload.Read(temp_read_buffer_on_the_stack, sizeof(type));       \
-		var = *((type*)temp_read_buffer_on_the_stack);                 \
-		break;                                                         \
+#define READ_SAFE_MICRO_CHUNK(cload, id, var, type) \
+	case (id): \
+	{ \
+		void *temp_read_buffer_on_the_stack = _alloca(sizeof(type)); \
+		cload.Read(temp_read_buffer_on_the_stack, sizeof(type)); \
+		var = *((type *)temp_read_buffer_on_the_stack); \
+		break; \
 	}
 
-#define READ_MICRO_CHUNK_STRING(cload,id,var,size)		\
-	case (id):	WWASSERT(cload.Cur_Micro_Chunk_Length() <= size); cload.Read(var,cload.Cur_Micro_Chunk_Length()); break;	\
+#define READ_MICRO_CHUNK_STRING(cload, id, var, size) \
+	case (id): \
+		WWASSERT(cload.Cur_Micro_Chunk_Length() <= size); \
+		cload.Read(var, cload.Cur_Micro_Chunk_Length()); \
+		break;
 
-#define READ_MICRO_CHUNK_WWSTRING(cload,id,var)		\
-	case (id):	cload.Read(var.Get_Buffer(cload.Cur_Micro_Chunk_Length()),cload.Cur_Micro_Chunk_Length()); break;	\
+#define READ_MICRO_CHUNK_WWSTRING(cload, id, var) \
+	case (id): \
+		cload.Read(var.Get_Buffer(cload.Cur_Micro_Chunk_Length()), cload.Cur_Micro_Chunk_Length()); \
+		break;
 
-#define READ_MICRO_CHUNK_WIDESTRING(cload,id,var)		\
-	case (id):	cload.Read(var.Get_Buffer((cload.Cur_Micro_Chunk_Length()+1)/2),cload.Cur_Micro_Chunk_Length()); break;	\
+#define READ_MICRO_CHUNK_WIDESTRING(cload, id, var) \
+	case (id): \
+		cload.Read(var.Get_Buffer((cload.Cur_Micro_Chunk_Length() + 1) / 2), cload.Cur_Micro_Chunk_Length()); \
+		break;
 
 /*
 ** These load macros make it easier to add extra code to a specifc case
 */
-#define LOAD_MICRO_CHUNK(cload,var)						\
-	cload.Read(&var,sizeof(var)); \
+#define LOAD_MICRO_CHUNK(cload, var) cload.Read(&var, sizeof(var));
 
-#define LOAD_MICRO_CHUNK_WWSTRING(cload,var)		\
-	cload.Read(var.Get_Buffer(cload.Cur_Micro_Chunk_Length()),cload.Cur_Micro_Chunk_Length());	\
+#define LOAD_MICRO_CHUNK_WWSTRING(cload, var) \
+	cload.Read(var.Get_Buffer(cload.Cur_Micro_Chunk_Length()), cload.Cur_Micro_Chunk_Length());
 
-#define LOAD_MICRO_CHUNK_WIDESTRING(cload,var)		\
-	cload.Read(var.Get_Buffer((cload.Cur_Micro_Chunk_Length()+1)/2),cload.Cur_Micro_Chunk_Length());	\
-
+#define LOAD_MICRO_CHUNK_WIDESTRING(cload, var) \
+	cload.Read(var.Get_Buffer((cload.Cur_Micro_Chunk_Length() + 1) / 2), cload.Cur_Micro_Chunk_Length());
 
 /*
 ** OBSOLETE_MICRO_CHUNK - use this macro in a switch statement when you want your code
@@ -373,8 +413,7 @@ private:
 ** prints an "unrecognized chunk" warning message.
 */
 #define OBSOLETE_MICRO_CHUNK(id) \
-	case (id): break;
-
-
+	case (id): \
+		break;
 
 #endif // CHUNKIO_H

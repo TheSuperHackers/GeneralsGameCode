@@ -36,39 +36,50 @@
 #include "GameClient/GameWindowManager.h"
 
 // return codes for message box callbacks
-enum MessageBoxReturnType CPP_11(: Int) {
-	MB_RETURN_CLOSE,
-	MB_RETURN_KEEPOPEN
-};
+enum MessageBoxReturnType CPP_11( : Int){ MB_RETURN_CLOSE, MB_RETURN_KEEPOPEN };
 
-typedef MessageBoxReturnType (* MessageBoxFunc)( void *userData );
+typedef MessageBoxReturnType (*MessageBoxFunc)(void *userData);
 
 // WindowExMessageBoxData ---------------------------------------------------------
 /** Data attached to each extended Message box window */
 //-----------------------------------------------------------------------------
 struct WindowExMessageBoxData
 {
-	MessageBoxFunc yesCallback;		///<Function pointer to the Yes Button Callback
-  MessageBoxFunc noCallback;			///<Function pointer to the No Button Callback
-  MessageBoxFunc okCallback;			///<Function pointer to the Ok Button Callback
-  MessageBoxFunc cancelCallback;	///<Function pointer to the Cancel Button Callback
+	MessageBoxFunc yesCallback; ///< Function pointer to the Yes Button Callback
+	MessageBoxFunc noCallback; ///< Function pointer to the No Button Callback
+	MessageBoxFunc okCallback; ///< Function pointer to the Ok Button Callback
+	MessageBoxFunc cancelCallback; ///< Function pointer to the Cancel Button Callback
 	void *userData;
 };
 
+GameWindow *ExMessageBoxYesNo(
+		UnicodeString titleString,
+		UnicodeString bodyString,
+		void *userData,
+		MessageBoxFunc yesCallback,
+		MessageBoxFunc noCallback);
 
-GameWindow *ExMessageBoxYesNo				(UnicodeString titleString,UnicodeString bodyString, void *userData,
-																		 MessageBoxFunc yesCallback, MessageBoxFunc noCallback);
+GameWindow *ExMessageBoxYesNoCancel(
+		UnicodeString titleString,
+		UnicodeString bodyString,
+		void *userData,
+		MessageBoxFunc yesCallback,
+		MessageBoxFunc noCallback,
+		MessageBoxFunc cancelCallback);
 
-GameWindow *ExMessageBoxYesNoCancel	(UnicodeString titleString,UnicodeString bodyString, void *userData,
-																		 MessageBoxFunc yesCallback, MessageBoxFunc noCallback, MessageBoxFunc cancelCallback);
+GameWindow *ExMessageBoxOkCancel(
+		UnicodeString titleString,
+		UnicodeString bodyString,
+		void *userData,
+		MessageBoxFunc okCallback,
+		MessageBoxFunc cancelCallback);
 
-GameWindow *ExMessageBoxOkCancel		(UnicodeString titleString,UnicodeString bodyString, void *userData,
-																		 MessageBoxFunc okCallback, MessageBoxFunc cancelCallback);
+GameWindow *ExMessageBoxOk(UnicodeString titleString, UnicodeString bodyString, void *userData, MessageBoxFunc okCallback);
 
-GameWindow *ExMessageBoxOk					(UnicodeString titleString,UnicodeString bodyString, void *userData,
-																		 MessageBoxFunc okCallback);
-
-GameWindow *ExMessageBoxCancel			(UnicodeString titleString,UnicodeString bodyString, void *userData,
-																		 MessageBoxFunc cancelCallback);
+GameWindow *ExMessageBoxCancel(
+		UnicodeString titleString,
+		UnicodeString bodyString,
+		void *userData,
+		MessageBoxFunc cancelCallback);
 
 #endif //__EXTENDEDMESSAGEBOX_H_

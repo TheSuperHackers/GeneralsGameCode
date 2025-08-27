@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -42,11 +41,10 @@
 #ifndef __ASSET_TYPES_H
 #define __ASSET_TYPES_H
 
-
 typedef enum
 {
-	TypeUnknown		= -1,
-	TypeMaterial	= 0,
+	TypeUnknown = -1,
+	TypeMaterial = 0,
 	TypeMesh,
 	TypeHierarchy,
 	TypeAggregate,
@@ -59,6 +57,5 @@ typedef enum
 	TypeSound
 
 } ASSET_TYPE;
-
 
 #endif //__ASSET_TYPES_H

@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "twiddler.h"
 #include "RANDOM.H"
 #include "saveloadids.h"
@@ -44,221 +43,203 @@
 #include "wwhack.h"
 #include "systimer.h"
 
-
-DECLARE_FORCE_LINK( Twiddler )
+DECLARE_FORCE_LINK(Twiddler)
 
 //////////////////////////////////////////////////////////////////////////////////
 //	Constants
 //////////////////////////////////////////////////////////////////////////////////
 enum
 {
-	CHUNKID_VARIABLES			= 0x00000100,
-	CHUNKID_BASE_CLASS		= 0x00000200,
+	CHUNKID_VARIABLES = 0x00000100,
+	CHUNKID_BASE_CLASS = 0x00000200,
 };
 
 enum
 {
-	VARID_DEFINTION_ID		= 0x01,
+	VARID_DEFINTION_ID = 0x01,
 	VARID_INDIRECT_CLASSID,
 };
-
 
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	Static factories
 //
 //////////////////////////////////////////////////////////////////////////////////
-DECLARE_DEFINITION_FACTORY(TwiddlerClass, CLASSID_TWIDDLERS, "Twiddler")	_TwiddlerFactory;
-SimplePersistFactoryClass<TwiddlerClass, CHUNKID_TWIDDLER>						_TwiddlerPersistFactory;
-
+DECLARE_DEFINITION_FACTORY(TwiddlerClass, CLASSID_TWIDDLERS, "Twiddler") _TwiddlerFactory;
+SimplePersistFactoryClass<TwiddlerClass, CHUNKID_TWIDDLER> _TwiddlerPersistFactory;
 
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	TwiddlerClass
 //
 //////////////////////////////////////////////////////////////////////////////////
-TwiddlerClass::TwiddlerClass (void)
-	:	m_IndirectClassID (0)
+TwiddlerClass::TwiddlerClass(void) : m_IndirectClassID(0)
 
 {
-	CLASSID_DEFIDLIST_PARAM (TwiddlerClass, m_DefinitionList, 0, m_IndirectClassID, "Preset List");
-	return ;
+	CLASSID_DEFIDLIST_PARAM(TwiddlerClass, m_DefinitionList, 0, m_IndirectClassID, "Preset List");
+	return;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	~TwiddlerClass
 //
 //////////////////////////////////////////////////////////////////////////////////
-TwiddlerClass::~TwiddlerClass (void)
+TwiddlerClass::~TwiddlerClass(void)
 {
-	return ;
+	return;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	Twiddle
 //
 //////////////////////////////////////////////////////////////////////////////////
-DefinitionClass *
-TwiddlerClass::Twiddle (void) const
+DefinitionClass *TwiddlerClass::Twiddle(void) const
 {
 	DefinitionClass *definition = NULL;
 
-	if (m_DefinitionList.Count () > 0) {
-
+	if (m_DefinitionList.Count() > 0)
+	{
 		//
 		//	Get a random index into our definition list
 		//
-		RandomClass randomizer (TIMEGETTIME ());
-		int index = randomizer (0, m_DefinitionList.Count () - 1);
+		RandomClass randomizer(TIMEGETTIME());
+		int index = randomizer(0, m_DefinitionList.Count() - 1);
 
 		//
 		//	Lookup the definition this entry represents
 		//
 		int def_id = m_DefinitionList[index];
-		definition = DefinitionMgrClass::Find_Definition (def_id);
+		definition = DefinitionMgrClass::Find_Definition(def_id);
 	}
 
 	return definition;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	Create
 //
 //////////////////////////////////////////////////////////////////////////////////
-PersistClass *
-TwiddlerClass::Create (void) const
+PersistClass *TwiddlerClass::Create(void) const
 {
 	PersistClass *retval = NULL;
 
 	//
 	//	Pick a random definition
 	//
-	DefinitionClass *definition = Twiddle ();
-	if (definition != NULL) {
-
+	DefinitionClass *definition = Twiddle();
+	if (definition != NULL)
+	{
 		//
 		//	Indirect the creation to the definition we randomly selected
 		//
-		retval = definition->Create ();
-
+		retval = definition->Create();
 	}
 
 	return retval;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	Get_Factory
 //
 //////////////////////////////////////////////////////////////////////////////////
-const PersistFactoryClass &
-TwiddlerClass::Get_Factory (void) const
+const PersistFactoryClass &TwiddlerClass::Get_Factory(void) const
 {
 	return _TwiddlerPersistFactory;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	Save
 //
 //////////////////////////////////////////////////////////////////////////////////
-bool
-TwiddlerClass::Save (ChunkSaveClass &csave)
+bool TwiddlerClass::Save(ChunkSaveClass &csave)
 {
 	bool retval = true;
 
-	csave.Begin_Chunk (CHUNKID_VARIABLES);
-		retval &= Save_Variables (csave);
-	csave.End_Chunk ();
+	csave.Begin_Chunk(CHUNKID_VARIABLES);
+	retval &= Save_Variables(csave);
+	csave.End_Chunk();
 
-	csave.Begin_Chunk (CHUNKID_BASE_CLASS);
-		retval &= DefinitionClass::Save (csave);
-	csave.End_Chunk ();
+	csave.Begin_Chunk(CHUNKID_BASE_CLASS);
+	retval &= DefinitionClass::Save(csave);
+	csave.End_Chunk();
 
 	return retval;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	Load
 //
 //////////////////////////////////////////////////////////////////////////////////
-bool
-TwiddlerClass::Load (ChunkLoadClass &cload)
+bool TwiddlerClass::Load(ChunkLoadClass &cload)
 {
 	bool retval = true;
 
-	while (cload.Open_Chunk ()) {
-		switch (cload.Cur_Chunk_ID ()) {
-
+	while (cload.Open_Chunk())
+	{
+		switch (cload.Cur_Chunk_ID())
+		{
 			case CHUNKID_VARIABLES:
-				retval &= Load_Variables (cload);
+				retval &= Load_Variables(cload);
 				break;
 
 			case CHUNKID_BASE_CLASS:
-				retval &= DefinitionClass::Load (cload);
+				retval &= DefinitionClass::Load(cload);
 				break;
 		}
 
-		cload.Close_Chunk ();
+		cload.Close_Chunk();
 	}
 
 	return retval;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	Save_Variables
 //
 //////////////////////////////////////////////////////////////////////////////////
-bool
-TwiddlerClass::Save_Variables (ChunkSaveClass &csave)
+bool TwiddlerClass::Save_Variables(ChunkSaveClass &csave)
 {
-	WRITE_MICRO_CHUNK (csave, VARID_INDIRECT_CLASSID, m_IndirectClassID)
+	WRITE_MICRO_CHUNK(csave, VARID_INDIRECT_CLASSID, m_IndirectClassID)
 
-	for (int index = 0; index < m_DefinitionList.Count (); index ++) {
-
+	for (int index = 0; index < m_DefinitionList.Count(); index++)
+	{
 		//
 		//	Save this definition ID to the chunk
 		//
 		int def_id = m_DefinitionList[index];
-		WRITE_MICRO_CHUNK (csave, VARID_DEFINTION_ID, def_id)
+		WRITE_MICRO_CHUNK(csave, VARID_DEFINTION_ID, def_id)
 	}
 
 	return true;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	Load_Variables
 //
 //////////////////////////////////////////////////////////////////////////////////
-bool
-TwiddlerClass::Load_Variables (ChunkLoadClass &cload)
+bool TwiddlerClass::Load_Variables(ChunkLoadClass &cload)
 {
 	//
 	//	Start fresh
 	//
-	m_DefinitionList.Delete_All ();
+	m_DefinitionList.Delete_All();
 
 	//
 	//	Loop through all the microchunks that define the variables
 	//
-	while (cload.Open_Micro_Chunk ()) {
-		switch (cload.Cur_Micro_Chunk_ID ()) {
-
-			READ_MICRO_CHUNK (cload, VARID_INDIRECT_CLASSID, m_IndirectClassID)
+	while (cload.Open_Micro_Chunk())
+	{
+		switch (cload.Cur_Micro_Chunk_ID())
+		{
+			READ_MICRO_CHUNK(cload, VARID_INDIRECT_CLASSID, m_IndirectClassID)
 
 			case VARID_DEFINTION_ID:
 			{
@@ -267,13 +248,13 @@ TwiddlerClass::Load_Variables (ChunkLoadClass &cload)
 				// to our list
 				//
 				int def_id = 0;
-				cload.Read (&def_id, sizeof (def_id));
-				m_DefinitionList.Add (def_id);
+				cload.Read(&def_id, sizeof(def_id));
+				m_DefinitionList.Add(def_id);
 			}
 			break;
 		}
 
-		cload.Close_Micro_Chunk ();
+		cload.Close_Micro_Chunk();
 	}
 
 	return true;

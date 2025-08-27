@@ -42,7 +42,6 @@
  *   CatmullRomSpline1DClass::Load -- Load this curve                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "catmullromspline.h"
 #include "persistfactory.h"
 #include "wwmathids.h"
@@ -56,18 +55,17 @@ DECLARE_FORCE_LINK(catmullromspline);
 /*
 ** Save-Load stuff
 */
-SimplePersistFactoryClass<CatmullRomSpline3DClass,WWMATH_CHUNKID_CATMULLROMSPLINE3D>	_CatmullRomSpline3DFactory;
-SimplePersistFactoryClass<CatmullRomSpline1DClass,WWMATH_CHUNKID_CATMULLROMSPLINE1D>	_CatmullRomSpline1DFactory;
+SimplePersistFactoryClass<CatmullRomSpline3DClass, WWMATH_CHUNKID_CATMULLROMSPLINE3D> _CatmullRomSpline3DFactory;
+SimplePersistFactoryClass<CatmullRomSpline1DClass, WWMATH_CHUNKID_CATMULLROMSPLINE1D> _CatmullRomSpline1DFactory;
 
 enum
 {
 	// ID's used by CatmullRomSpline3D
-	CATMULLROM3D_CHUNK_HERMITE3D					= 0x00020727,
+	CATMULLROM3D_CHUNK_HERMITE3D = 0x00020727,
 
 	// ID's used by CatmullRomSpline1D
-	CATMULLROM1D_CHUNK_HERMITE1D					= 0x00020729,
+	CATMULLROM1D_CHUNK_HERMITE1D = 0x00020729,
 };
-
 
 /*
 ** Catmull-Rom 3D spline implementation
@@ -88,60 +86,61 @@ enum
  *=============================================================================================*/
 void CatmullRomSpline3DClass::Update_Tangents(void)
 {
-	if (Keys.Count() < 2) {
-		for (int i=0; i<Keys.Count(); i++) {
-			Tangents[0].InTangent.Set(0,0,0);
-			Tangents[0].OutTangent.Set(0,0,0);
+	if (Keys.Count() < 2)
+	{
+		for (int i = 0; i < Keys.Count(); i++)
+		{
+			Tangents[0].InTangent.Set(0, 0, 0);
+			Tangents[0].OutTangent.Set(0, 0, 0);
 		}
 	}
 
 	// first and last knot
 	int end = Keys.Count() - 1;
-	Tangents[0].InTangent.Set(0,0,0);
-	Tangents[end].OutTangent.Set(0,0,0);
+	Tangents[0].InTangent.Set(0, 0, 0);
+	Tangents[end].OutTangent.Set(0, 0, 0);
 
-	if (IsLooping) {
-
+	if (IsLooping)
+	{
 		// This really only works if the start and end points have the same position...
-		Tangents[0].OutTangent.X = 0.5f*(Keys[1].Point.X - Keys[end-1].Point.X);
-		Tangents[0].OutTangent.Y = 0.5f*(Keys[1].Point.Y - Keys[end-1].Point.Y);
-		Tangents[0].OutTangent.Z = 0.5f*(Keys[1].Point.Z - Keys[end-1].Point.Z);
+		Tangents[0].OutTangent.X = 0.5f * (Keys[1].Point.X - Keys[end - 1].Point.X);
+		Tangents[0].OutTangent.Y = 0.5f * (Keys[1].Point.Y - Keys[end - 1].Point.Y);
+		Tangents[0].OutTangent.Z = 0.5f * (Keys[1].Point.Z - Keys[end - 1].Point.Z);
 		Tangents[end].InTangent = Tangents[0].OutTangent;
-
-	} else {
-
+	}
+	else
+	{
 		// TODO: second derivative = 0... what is formula?  I'm making this up...
-		Tangents[0].OutTangent.X = 0.25f*(Keys[1].Point.X - Keys[0].Point.X);
-		Tangents[0].OutTangent.Y = 0.25f*(Keys[1].Point.Y - Keys[0].Point.Y);
-		Tangents[0].OutTangent.Z = 0.25f*(Keys[1].Point.Z - Keys[0].Point.Z);
+		Tangents[0].OutTangent.X = 0.25f * (Keys[1].Point.X - Keys[0].Point.X);
+		Tangents[0].OutTangent.Y = 0.25f * (Keys[1].Point.Y - Keys[0].Point.Y);
+		Tangents[0].OutTangent.Z = 0.25f * (Keys[1].Point.Z - Keys[0].Point.Z);
 
-		Tangents[end].InTangent.X = 0.25f*(Keys[end].Point.X - Keys[end-1].Point.X);
-		Tangents[end].InTangent.Y = 0.25f*(Keys[end].Point.Y - Keys[end-1].Point.Y);
-		Tangents[end].InTangent.Z = 0.25f*(Keys[end].Point.Z - Keys[end-1].Point.Z);
-
+		Tangents[end].InTangent.X = 0.25f * (Keys[end].Point.X - Keys[end - 1].Point.X);
+		Tangents[end].InTangent.Y = 0.25f * (Keys[end].Point.Y - Keys[end - 1].Point.Y);
+		Tangents[end].InTangent.Z = 0.25f * (Keys[end].Point.Z - Keys[end - 1].Point.Z);
 	}
 
-	float total_time = (Keys[1].Time - Keys[0].Time) + (Keys[end].Time - Keys[end-1].Time);
-	float in_factor = 2.0f * (Keys[end].Time - Keys[end-1].Time) / total_time;
+	float total_time = (Keys[1].Time - Keys[0].Time) + (Keys[end].Time - Keys[end - 1].Time);
+	float in_factor = 2.0f * (Keys[end].Time - Keys[end - 1].Time) / total_time;
 	float out_factor = 2.0f * (Keys[1].Time - Keys[0].Time) / total_time;
 	Tangents[end].InTangent *= in_factor;
 	Tangents[0].OutTangent *= out_factor;
 
 	// inner knots
-	for (int i=1; i<Keys.Count()-1; i++) {
-		Tangents[i].InTangent.X = 0.5f*(Keys[i+1].Point.X - Keys[i-1].Point.X);
-		Tangents[i].InTangent.Y = 0.5f*(Keys[i+1].Point.Y - Keys[i-1].Point.Y);
-		Tangents[i].InTangent.Z = 0.5f*(Keys[i+1].Point.Z - Keys[i-1].Point.Z);
+	for (int i = 1; i < Keys.Count() - 1; i++)
+	{
+		Tangents[i].InTangent.X = 0.5f * (Keys[i + 1].Point.X - Keys[i - 1].Point.X);
+		Tangents[i].InTangent.Y = 0.5f * (Keys[i + 1].Point.Y - Keys[i - 1].Point.Y);
+		Tangents[i].InTangent.Z = 0.5f * (Keys[i + 1].Point.Z - Keys[i - 1].Point.Z);
 		Tangents[i].OutTangent = Tangents[i].InTangent;
 
-		float in_factor = 2.0f * (Keys[i].Time - Keys[i-1].Time) / (Keys[i+1].Time - Keys[i-1].Time);
-		float out_factor = 2.0f * (Keys[i+1].Time - Keys[i].Time) / (Keys[i+1].Time - Keys[i-1].Time);
-		Tangents[i].InTangent *= in_factor;			// compensating for the un-even keys
+		float in_factor = 2.0f * (Keys[i].Time - Keys[i - 1].Time) / (Keys[i + 1].Time - Keys[i - 1].Time);
+		float out_factor = 2.0f * (Keys[i + 1].Time - Keys[i].Time) / (Keys[i + 1].Time - Keys[i - 1].Time);
+		Tangents[i].InTangent *= in_factor; // compensating for the un-even keys
 		Tangents[i].OutTangent *= out_factor;
 	}
 	TangentsDirty = false;
 }
-
 
 /***********************************************************************************************
  * CatmullRomSpline3DClass::Get_Factory -- returns the factory for CatmullRomSpline3D          *
@@ -155,11 +154,10 @@ void CatmullRomSpline3DClass::Update_Tangents(void)
  * HISTORY:                                                                                    *
  *   3/7/2000   gth : Created.                                                                 *
  *=============================================================================================*/
-const PersistFactoryClass & CatmullRomSpline3DClass::Get_Factory(void) const
+const PersistFactoryClass &CatmullRomSpline3DClass::Get_Factory(void) const
 {
 	return _CatmullRomSpline3DFactory;
 }
-
 
 /***********************************************************************************************
  * CatmullRomSpline3DClass::Save -- save this curve                                            *
@@ -181,7 +179,6 @@ bool CatmullRomSpline3DClass::Save(ChunkSaveClass &csave)
 	return true;
 }
 
-
 /***********************************************************************************************
  * CatmullRomSpline3DClass::Load -- load this curve                                            *
  *                                                                                             *
@@ -196,16 +193,16 @@ bool CatmullRomSpline3DClass::Save(ChunkSaveClass &csave)
  *=============================================================================================*/
 bool CatmullRomSpline3DClass::Load(ChunkLoadClass &cload)
 {
-	while (cload.Open_Chunk()) {
-
-		switch(cload.Cur_Chunk_ID())
+	while (cload.Open_Chunk())
+	{
+		switch (cload.Cur_Chunk_ID())
 		{
 			case CATMULLROM3D_CHUNK_HERMITE3D:
 				HermiteSpline3DClass::Load(cload);
 				break;
 
 			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
+				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d", __FILE__, __LINE__));
 				break;
 		}
 		cload.Close_Chunk();
@@ -214,11 +211,9 @@ bool CatmullRomSpline3DClass::Load(ChunkLoadClass &cload)
 	return true;
 }
 
-
 /*
 ** The 1D Catmull-Rom implementation.
 */
-
 
 /***********************************************************************************************
  * CatmullRomSpline1DClass::Update_Tangents -- Computes the tangents at each key               *
@@ -234,8 +229,10 @@ bool CatmullRomSpline3DClass::Load(ChunkLoadClass &cload)
  *=============================================================================================*/
 void CatmullRomSpline1DClass::Update_Tangents(void)
 {
-	if (Keys.Count() < 2) {
-		for (int i=0; i<Keys.Count(); i++) {
+	if (Keys.Count() < 2)
+	{
+		for (int i = 0; i < Keys.Count(); i++)
+		{
 			Tangents[i].InTangent = 0.0f;
 			Tangents[i].OutTangent = 0.0f;
 		}
@@ -247,40 +244,39 @@ void CatmullRomSpline1DClass::Update_Tangents(void)
 	Tangents[0].InTangent = 0.0f;
 	Tangents[end].OutTangent = 0.0f;
 
-	if (IsLooping) {
-
+	if (IsLooping)
+	{
 		// This really only works if the start and end points have the same position...
-		Tangents[0].OutTangent = 0.5f*(Keys[1].Point - Keys[end-1].Point);
+		Tangents[0].OutTangent = 0.5f * (Keys[1].Point - Keys[end - 1].Point);
 		Tangents[end].InTangent = Tangents[0].OutTangent;
-
-	} else {
-
+	}
+	else
+	{
 		// TODO: second derivative = 0... what is formula?  I'm making this up...
-		Tangents[0].OutTangent = 0.25f*(Keys[1].Point - Keys[0].Point);
+		Tangents[0].OutTangent = 0.25f * (Keys[1].Point - Keys[0].Point);
 
-		Tangents[end].InTangent = 0.25f*(Keys[end].Point - Keys[end-1].Point);
-
+		Tangents[end].InTangent = 0.25f * (Keys[end].Point - Keys[end - 1].Point);
 	}
 
-	float total_time = (Keys[1].Time - Keys[0].Time) + (Keys[end].Time - Keys[end-1].Time);
-	float in_factor = 2.0f * (Keys[end].Time - Keys[end-1].Time) / total_time;
+	float total_time = (Keys[1].Time - Keys[0].Time) + (Keys[end].Time - Keys[end - 1].Time);
+	float in_factor = 2.0f * (Keys[end].Time - Keys[end - 1].Time) / total_time;
 	float out_factor = 2.0f * (Keys[1].Time - Keys[0].Time) / total_time;
 	Tangents[end].InTangent *= in_factor;
 	Tangents[0].OutTangent *= out_factor;
 
 	// inner knots
-	for (int i=1; i<Keys.Count()-1; i++) {
-		Tangents[i].InTangent = 0.5f*(Keys[i+1].Point - Keys[i-1].Point);
+	for (int i = 1; i < Keys.Count() - 1; i++)
+	{
+		Tangents[i].InTangent = 0.5f * (Keys[i + 1].Point - Keys[i - 1].Point);
 		Tangents[i].OutTangent = Tangents[i].InTangent;
 
-		float in_factor = 2.0f * (Keys[i].Time - Keys[i-1].Time) / (Keys[i+1].Time - Keys[i-1].Time);
-		float out_factor = 2.0f * (Keys[i+1].Time - Keys[i].Time) / (Keys[i+1].Time - Keys[i-1].Time);
-		Tangents[i].InTangent *= in_factor;			// compensating for the un-even keys
+		float in_factor = 2.0f * (Keys[i].Time - Keys[i - 1].Time) / (Keys[i + 1].Time - Keys[i - 1].Time);
+		float out_factor = 2.0f * (Keys[i + 1].Time - Keys[i].Time) / (Keys[i + 1].Time - Keys[i - 1].Time);
+		Tangents[i].InTangent *= in_factor; // compensating for the un-even keys
 		Tangents[i].OutTangent *= out_factor;
 	}
 	TangentsDirty = false;
 }
-
 
 /***********************************************************************************************
  * CatmullRomSpline1DClass::Get_Factory -- returns the factory for CatmullRomSpline1D          *
@@ -294,11 +290,10 @@ void CatmullRomSpline1DClass::Update_Tangents(void)
  * HISTORY:                                                                                    *
  *   3/7/2000   gth : Created.                                                                 *
  *=============================================================================================*/
-const PersistFactoryClass & CatmullRomSpline1DClass::Get_Factory(void) const
+const PersistFactoryClass &CatmullRomSpline1DClass::Get_Factory(void) const
 {
 	return _CatmullRomSpline1DFactory;
 }
-
 
 /***********************************************************************************************
  * CatmullRomSpline1DClass::Save -- Save this curve                                            *
@@ -320,7 +315,6 @@ bool CatmullRomSpline1DClass::Save(ChunkSaveClass &csave)
 	return true;
 }
 
-
 /***********************************************************************************************
  * CatmullRomSpline1DClass::Load -- Load this curve                                            *
  *                                                                                             *
@@ -335,16 +329,16 @@ bool CatmullRomSpline1DClass::Save(ChunkSaveClass &csave)
  *=============================================================================================*/
 bool CatmullRomSpline1DClass::Load(ChunkLoadClass &cload)
 {
-	while (cload.Open_Chunk()) {
-
-		switch(cload.Cur_Chunk_ID())
+	while (cload.Open_Chunk())
+	{
+		switch (cload.Cur_Chunk_ID())
 		{
 			case CATMULLROM1D_CHUNK_HERMITE1D:
 				HermiteSpline1DClass::Load(cload);
 				break;
 
 			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
+				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d", __FILE__, __LINE__));
 				break;
 		}
 		cload.Close_Chunk();

@@ -31,36 +31,34 @@
 class CWDumpEditView : public CEditView
 {
 protected:
-	CWDumpEditView();           // protected constructor used by dynamic creation
+	CWDumpEditView(); // protected constructor used by dynamic creation
 	DECLARE_DYNCREATE(CWDumpEditView)
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWDumpEditView)
-	protected:
-	virtual void OnDraw(CDC* pDC);      // overridden to draw this view
-	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
+protected:
+	virtual void OnDraw(CDC *pDC); // overridden to draw this view
+	virtual void OnUpdate(CView *pSender, LPARAM lHint, CObject *pHint);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	virtual ~CWDumpEditView();
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	virtual void Dump(CDumpContext &dc) const;
 #endif
 
 	// Generated message map functions
 protected:
-	char * Build_Hex_Text(unsigned char *Source, int Length);
+	char *Build_Hex_Text(unsigned char *Source, int Length);
 	//{{AFX_MSG(CWDumpEditView)
-		// NOTE - the ClassWizard will add and remove member functions here.
+	// NOTE - the ClassWizard will add and remove member functions here.
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

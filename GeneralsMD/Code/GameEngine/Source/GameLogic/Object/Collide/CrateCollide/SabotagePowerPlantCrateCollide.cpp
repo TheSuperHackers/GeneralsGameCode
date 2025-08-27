@@ -30,10 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/GameAudio.h"
 #include "Common/MiscAudio.h"
@@ -45,7 +43,7 @@
 
 #include "GameClient/Drawable.h"
 #include "GameClient/Eva.h"
-#include "GameClient/InGameUI.h"  // useful for printing quick debug strings when we need to
+#include "GameClient/InGameUI.h" // useful for printing quick debug strings when we need to
 
 #include "GameLogic/ExperienceTracker.h"
 #include "GameLogic/Module/AIUpdate.h"
@@ -57,38 +55,38 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/Module/DozerAIUpdate.h"
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SabotagePowerPlantCrateCollide::SabotagePowerPlantCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
+SabotagePowerPlantCrateCollide::SabotagePowerPlantCrateCollide(Thing *thing, const ModuleData *moduleData) :
+		CrateCollide(thing, moduleData)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SabotagePowerPlantCrateCollide::~SabotagePowerPlantCrateCollide( void )
+SabotagePowerPlantCrateCollide::~SabotagePowerPlantCrateCollide(void)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool SabotagePowerPlantCrateCollide::isValidToExecute( const Object *other ) const
+Bool SabotagePowerPlantCrateCollide::isValidToExecute(const Object *other) const
 {
-	if( !CrateCollide::isValidToExecute(other) )
+	if (!CrateCollide::isValidToExecute(other))
 	{
-		//Extend functionality.
+		// Extend functionality.
 		return FALSE;
 	}
 
-	if( other->isEffectivelyDead() )
+	if (other->isEffectivelyDead())
 	{
-		//Can't sabotage dead structures
+		// Can't sabotage dead structures
 		return FALSE;
 	}
 
-	if( !other->isKindOf( KINDOF_FS_POWER ) )
+	if (!other->isKindOf(KINDOF_FS_POWER))
 	{
-		//We can only sabotage power plants.
+		// We can only sabotage power plants.
 		return FALSE;
 	}
 
@@ -98,10 +96,10 @@ Bool SabotagePowerPlantCrateCollide::isValidToExecute( const Object *other ) con
 		return FALSE;
 	}
 
-	Relationship r = getObject()->getRelationship( other );
-	if( r != ENEMIES )
+	Relationship r = getObject()->getRelationship(other);
+	if (r != ENEMIES)
 	{
-		//Can only sabotage enemy buildings.
+		// Can only sabotage enemy buildings.
 		return FALSE;
 	}
 
@@ -110,41 +108,41 @@ Bool SabotagePowerPlantCrateCollide::isValidToExecute( const Object *other ) con
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool SabotagePowerPlantCrateCollide::executeCrateBehavior( Object *other )
+Bool SabotagePowerPlantCrateCollide::executeCrateBehavior(Object *other)
 {
-	//Check to make sure that the other object is also the goal object in the AIUpdateInterface
-	//in order to prevent an unintentional conversion simply by having the terrorist walk too close
-	//to it.
-	//Assume ai is valid because CrateCollide::isValidToExecute(other) checks it.
+	// Check to make sure that the other object is also the goal object in the AIUpdateInterface
+	// in order to prevent an unintentional conversion simply by having the terrorist walk too close
+	// to it.
+	// Assume ai is valid because CrateCollide::isValidToExecute(other) checks it.
 	Object *obj = getObject();
-	AIUpdateInterface* ai = obj->getAIUpdateInterface();
+	AIUpdateInterface *ai = obj->getAIUpdateInterface();
 	if (ai && ai->getGoalObject() != other)
 	{
 		return false;
 	}
 
-	TheRadar->tryInfiltrationEvent( other );
+	TheRadar->tryInfiltrationEvent(other);
 
-  doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_POWER_PLANT );
+	doSabotageFeedbackFX(other, CrateCollide::SAB_VICTIM_POWER_PLANT);
 
-	//When the sabotage occurs, play the appropriate EVA
-	//event if the local player is the victim!
-	if( other->isLocallyControlled() )
+	// When the sabotage occurs, play the appropriate EVA
+	// event if the local player is the victim!
+	if (other->isLocallyControlled())
 	{
-		TheEva->setShouldPlay( EVA_BuildingSabotaged );
+		TheEva->setShouldPlay(EVA_BuildingSabotaged);
 	}
 
 	Player *player = other->getControllingPlayer();
-	if( player )
+	if (player)
 	{
-		//Set the duration inside the player's energy class to record the length of the power outage.
+		// Set the duration inside the player's energy class to record the length of the power outage.
 		UnsignedInt frame = TheGameLogic->getFrame() + getSabotagePowerPlantCrateCollideModuleData()->m_powerSabotageFrames;
-		player->getEnergy()->setPowerSabotagedTillFrame( frame );
+		player->getEnergy()->setPowerSabotagedTillFrame(frame);
 
-		//Trigger the callback function that will turn everything off.
-		player->onPowerBrownOutChange( TRUE );
+		// Trigger the callback function that will turn everything off.
+		player->onPowerBrownOutChange(TRUE);
 
-		//Note: Player::update() will check to turn it back on again once the timer expires.
+		// Note: Player::update() will check to turn it back on again once the timer expires.
 	}
 
 	return TRUE;
@@ -153,39 +151,36 @@ Bool SabotagePowerPlantCrateCollide::executeCrateBehavior( Object *other )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SabotagePowerPlantCrateCollide::crc( Xfer *xfer )
+void SabotagePowerPlantCrateCollide::crc(Xfer *xfer)
 {
-
 	// extend base class
-	CrateCollide::crc( xfer );
+	CrateCollide::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SabotagePowerPlantCrateCollide::xfer( Xfer *xfer )
+void SabotagePowerPlantCrateCollide::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CrateCollide::xfer( xfer );
+	CrateCollide::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SabotagePowerPlantCrateCollide::loadPostProcess( void )
+void SabotagePowerPlantCrateCollide::loadPostProcess(void)
 {
-
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

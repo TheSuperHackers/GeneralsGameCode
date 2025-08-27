@@ -64,10 +64,6 @@
 #include "W3DDevice/GameClient/BaseHeightMap.h"
 #include "GameLogic/PartitionManager.h"
 
-
-
-
-
 //-----------------------------------------------------------------------------
 //         Private Functions
 //-----------------------------------------------------------------------------
@@ -78,17 +74,16 @@
 /** Culls the props, marking the visible flag.  If a prop becomes visible, it sets
 it's sortKey */
 //=============================================================================
-void W3DPropBuffer::cull(CameraClass * camera)
+void W3DPropBuffer::cull(CameraClass *camera)
 {
 	Int curProp;
 
-	for (curProp=0; curProp<m_numProps; curProp++) {
+	for (curProp = 0; curProp < m_numProps; curProp++)
+	{
 		Bool visible = !camera->Cull_Sphere(m_props[curProp].bounds);
-		m_props[curProp].visible=visible;
+		m_props[curProp].visible = visible;
 	}
 }
-
-
 
 //-----------------------------------------------------------------------------
 //         Public Functions
@@ -117,14 +112,10 @@ W3DPropBuffer::W3DPropBuffer(void)
 	m_initialized = false;
 	m_numProps = 0;
 	m_numPropTypes = 0;
-	m_light = NEW_REF( LightClass, (LightClass::DIRECTIONAL) );
-	m_propShroudMaterialPass = NEW_REF(W3DShroudMaterialPassClass,());
+	m_light = NEW_REF(LightClass, (LightClass::DIRECTIONAL));
+	m_propShroudMaterialPass = NEW_REF(W3DShroudMaterialPassClass, ());
 	m_initialized = true;
 }
-
-
-
-
 
 //=============================================================================
 // W3DPropBuffer::clearAllProps
@@ -134,11 +125,13 @@ W3DPropBuffer::W3DPropBuffer(void)
 void W3DPropBuffer::clearAllProps(void)
 {
 	Int i;
-	for (i=0; i<m_numPropTypes; i++) {
+	for (i = 0; i < m_numPropTypes; i++)
+	{
 		REF_PTR_RELEASE(m_propTypes[i].m_robj);
 		m_propTypes[i].m_robjName.clear();
 	}
-	for (i=0; i<m_numProps; i++) {
+	for (i = 0; i < m_numProps; i++)
+	{
 		REF_PTR_RELEASE(m_props[i].m_robj);
 	}
 	m_numPropTypes = 0;
@@ -152,13 +145,15 @@ void W3DPropBuffer::clearAllProps(void)
 //=============================================================================
 Int W3DPropBuffer::addPropType(const AsciiString &modelName)
 {
-	if (m_numPropTypes>=MAX_TYPES) {
+	if (m_numPropTypes >= MAX_TYPES)
+	{
 		DEBUG_CRASH(("Too many kinds of props in map.  Reduce kinds of props, or raise prop limit. jba."));
 		return 0;
 	}
 
 	m_propTypes[m_numPropTypes].m_robj = WW3DAssetManager::Get_Instance()->Create_Render_Obj(modelName.str());
-	if (m_propTypes[m_numPropTypes].m_robj==NULL) {
+	if (m_propTypes[m_numPropTypes].m_robj == NULL)
+	{
 		DEBUG_CRASH(("Unable to find model for prop %s", modelName.str()));
 		return -1;
 	}
@@ -167,7 +162,7 @@ Int W3DPropBuffer::addPropType(const AsciiString &modelName)
 	SphereClass bounds = m_propTypes[m_numPropTypes].m_robj->Get_Bounding_Sphere();
 	m_propTypes[m_numPropTypes].m_bounds = bounds;
 	m_numPropTypes++;
-	return m_numPropTypes-1;
+	return m_numPropTypes - 1;
 }
 
 //=============================================================================
@@ -176,25 +171,31 @@ Int W3DPropBuffer::addPropType(const AsciiString &modelName)
 /** Adds a prop.  Name is the W3D model name, supported models are
 ALPINE, DECIDUOUS and SHRUB. */
 //=============================================================================
-void W3DPropBuffer::addProp(Int id, Coord3D location, Real angle,Real scale, const AsciiString &modelName)
+void W3DPropBuffer::addProp(Int id, Coord3D location, Real angle, Real scale, const AsciiString &modelName)
 {
-	if (m_numProps >= MAX_PROPS) {
+	if (m_numProps >= MAX_PROPS)
+	{
 		return;
 	}
-	if (!m_initialized) {
+	if (!m_initialized)
+	{
 		return;
 	}
 	Int propType = -1;
 	Int i;
-	for (i=0; i<m_numPropTypes; i++) {
-		if (m_propTypes[i].m_robjName.compareNoCase(modelName)==0) {
+	for (i = 0; i < m_numPropTypes; i++)
+	{
+		if (m_propTypes[i].m_robjName.compareNoCase(modelName) == 0)
+		{
 			propType = i;
 			break;
 		}
 	}
-	if (propType<0) {
+	if (propType < 0)
+	{
 		propType = addPropType(modelName);
-		if (propType<0) {
+		if (propType < 0)
+		{
 			return;
 		}
 	}
@@ -228,8 +229,10 @@ void W3DPropBuffer::addProp(Int id, Coord3D location, Real angle,Real scale, con
 Bool W3DPropBuffer::updatePropPosition(Int id, const Coord3D &location, Real angle, Real scale)
 {
 	Int i;
-	for (i=0; i<m_numProps; i++) {
-		if (m_props[i].id == id) {
+	for (i = 0; i < m_numProps; i++)
+	{
+		if (m_props[i].id == id)
+		{
 			Matrix3D mtx(true);
 			mtx.Rotate_Z(angle);
 			mtx.Scale(scale);
@@ -255,13 +258,15 @@ Bool W3DPropBuffer::updatePropPosition(Int id, const Coord3D &location, Real ang
 void W3DPropBuffer::removeProp(Int id)
 {
 	Int i;
-	for (i=0; i<m_numProps; i++) {
-		if (m_props[i].id == id) {
-			m_props[i].location.set(0,0,0);
+	for (i = 0; i < m_numProps; i++)
+	{
+		if (m_props[i].id == id)
+		{
+			m_props[i].location.set(0, 0, 0);
 			m_props[i].propType = -1;
 			REF_PTR_RELEASE(m_props[i].m_robj);
 			// Translate the bounding sphere of the model.
-			m_props[i].bounds.Center = Vector3(0,0,0);
+			m_props[i].bounds.Center = Vector3(0, 0, 0);
 			m_props[i].bounds.Radius = 1;
 			m_anythingChanged = true;
 		}
@@ -273,30 +278,31 @@ void W3DPropBuffer::removeProp(Int id)
 //=============================================================================
 /** Removes any props that would be under a building.  */
 //=============================================================================
-void W3DPropBuffer::removePropsForConstruction(const Coord3D* pos, const GeometryInfo& geom, Real angle )
+void W3DPropBuffer::removePropsForConstruction(const Coord3D *pos, const GeometryInfo &geom, Real angle)
 {
 	// Just iterate all trees, as even non-collidable ones get removed. jba. [7/11/2003]
 	Int i;
-	for (i=0; i<m_numProps; i++) {
-		if (m_props[i].m_robj == NULL) {
+	for (i = 0; i < m_numProps; i++)
+	{
+		if (m_props[i].m_robj == NULL)
+		{
 			continue; // already deleted.
 		}
 		Real radius = m_props[i].bounds.Radius;
-		GeometryInfo info(GEOMETRY_CYLINDER, false, 5*radius, 2*radius, 2*radius);
-		if (ThePartitionManager->geomCollidesWithGeom( pos, geom, angle, &m_props[i].location, info, 0.0f)) {
+		GeometryInfo info(GEOMETRY_CYLINDER, false, 5 * radius, 2 * radius, 2 * radius);
+		if (ThePartitionManager->geomCollidesWithGeom(pos, geom, angle, &m_props[i].location, info, 0.0f))
+		{
 			// remove it [7/11/2003]
-			m_props[i].location.set(0,0,0);
+			m_props[i].location.set(0, 0, 0);
 			m_props[i].propType = -1;
 			REF_PTR_RELEASE(m_props[i].m_robj);
 			// Translate the bounding sphere of the model.
-			m_props[i].bounds.Center = Vector3(0,0,0);
+			m_props[i].bounds.Center = Vector3(0, 0, 0);
 			m_props[i].bounds.Radius = 1;
 			m_anythingChanged = true;
 		}
 	}
 }
-
-
 
 //=============================================================================
 // W3DPropBuffer::notifyShroudChanged
@@ -306,11 +312,11 @@ void W3DPropBuffer::removePropsForConstruction(const Coord3D* pos, const Geometr
 void W3DPropBuffer::notifyShroudChanged()
 {
 	Int i;
-	for (i=0; i<m_numProps; i++) {
-		m_props[i].ss = ThePartitionManager?OBJECTSHROUD_INVALID:OBJECTSHROUD_CLEAR;
+	for (i = 0; i < m_numProps; i++)
+	{
+		m_props[i].ss = ThePartitionManager ? OBJECTSHROUD_INVALID : OBJECTSHROUD_CLEAR;
 	}
 }
-
 
 DECLARE_PERF_TIMER(Prop_Render)
 
@@ -324,13 +330,14 @@ void W3DPropBuffer::drawProps(RenderInfoClass &rinfo)
 	USE_PERF_TIMER(Prop_Render)
 
 	Int i;
-	if (m_doCull) {
+	if (m_doCull)
+	{
 		cull(&rinfo.Camera);
 	}
 	const GlobalData::TerrainLighting *objectLighting = TheGlobalData->m_terrainObjectsLighting[TheGlobalData->m_timeOfDay];
 
 	LightEnvironmentClass lightEnv;
-	Vector3 center(0,0,0); // arbitrary center point. [6/6/2003]
+	Vector3 center(0, 0, 0); // arbitrary center point. [6/6/2003]
 	Vector3 ambient(objectLighting[0].ambient.red, objectLighting[0].ambient.green, objectLighting[0].ambient.blue);
 	lightEnv.Reset(center, ambient);
 
@@ -341,80 +348,88 @@ void W3DPropBuffer::drawProps(RenderInfoClass &rinfo)
 
 	for (i = 0; i < MAX_GLOBAL_LIGHTS; ++i)
 	{
-			m_light->Set_Ambient(zeroVector);
-			m_light->Set_Diffuse(Vector3(objectLighting[i].diffuse.red,
-																		 objectLighting[i].diffuse.green,
-																		 objectLighting[i].diffuse.blue));
-			m_light->Set_Specular(zeroVector);
-			mtx.Set(xVector, yVector, Vector3(objectLighting[i].lightPos.x, objectLighting[i].lightPos.y, objectLighting[i].lightPos.z), zeroVector);
-			m_light->Set_Transform(mtx);
-			lightEnv.Add_Light(*m_light);
+		m_light->Set_Ambient(zeroVector);
+		m_light->Set_Diffuse(
+				Vector3(objectLighting[i].diffuse.red, objectLighting[i].diffuse.green, objectLighting[i].diffuse.blue));
+		m_light->Set_Specular(zeroVector);
+		mtx.Set(
+				xVector,
+				yVector,
+				Vector3(objectLighting[i].lightPos.x, objectLighting[i].lightPos.y, objectLighting[i].lightPos.z),
+				zeroVector);
+		m_light->Set_Transform(mtx);
+		lightEnv.Add_Light(*m_light);
 	}
 
 	rinfo.light_environment = &lightEnv;
-	for	(i=0; i<m_numProps; i++) {
-		if (!m_props[i].visible) {
+	for (i = 0; i < m_numProps; i++)
+	{
+		if (!m_props[i].visible)
+		{
 			continue;
 		}
-		if (m_props[i].m_robj==NULL) {
+		if (m_props[i].m_robj == NULL)
+		{
 			continue;
 		}
-		if (!ThePlayerList || !ThePartitionManager) {
+		if (!ThePlayerList || !ThePartitionManager)
+		{
 			//  in Worldbuilder. No shroud either. jba. [6/9/2003]
 			m_props[i].ss = OBJECTSHROUD_CLEAR;
 		}
-		if (m_props[i].ss == OBJECTSHROUD_INVALID) {
+		if (m_props[i].ss == OBJECTSHROUD_INVALID)
+		{
 			Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
 			m_props[i].ss = ThePartitionManager->getPropShroudStatusForPlayer(localPlayerIndex, &m_props[i].location);
 		}
-		if (m_props[i].ss >= OBJECTSHROUD_SHROUDED) {
+		if (m_props[i].ss >= OBJECTSHROUD_SHROUDED)
+		{
 			continue;
 		}
-		if (m_props[i].ss <= OBJECTSHROUD_INVALID) {
+		if (m_props[i].ss <= OBJECTSHROUD_INVALID)
+		{
 			continue;
 		}
-		if (TheTerrainRenderObject->getShroud() && m_props[i].ss != CELLSHROUD_CLEAR) {
+		if (TheTerrainRenderObject->getShroud() && m_props[i].ss != CELLSHROUD_CLEAR)
+		{
 			rinfo.Push_Material_Pass(m_propShroudMaterialPass);
 			m_props[i].m_robj->Render(rinfo);
 			rinfo.Pop_Material_Pass();
-		} else {
+		}
+		else
+		{
 			m_props[i].m_robj->Render(rinfo);
 		}
 	}
 	rinfo.light_environment = NULL;
-
 }
-
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void W3DPropBuffer::crc( Xfer *xfer )
+void W3DPropBuffer::crc(Xfer *xfer)
 {
 	// empty. jba [8/11/2003]
-}  // end CRC
+} // end CRC
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void W3DPropBuffer::xfer( Xfer *xfer )
+void W3DPropBuffer::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
-
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DPropBuffer::loadPostProcess( void )
+void W3DPropBuffer::loadPostProcess(void)
 {
 	// empty. jba [8/11/2003]
-}  // end loadPostProcess
-
+} // end loadPostProcess

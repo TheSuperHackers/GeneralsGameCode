@@ -53,7 +53,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/GameState.h"
 #include "Common/KindOf.h"
@@ -74,21 +74,20 @@
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-ScoreKeeper::ScoreKeeper( void )
+ScoreKeeper::ScoreKeeper(void)
 {
 	reset(0);
 }
 
-ScoreKeeper::~ScoreKeeper( void )
+ScoreKeeper::~ScoreKeeper(void)
 {
-
 }
 
 static KindOfMaskType scoringBuildingMask;
 static KindOfMaskType scoringBuildingDestroyMask;
 static KindOfMaskType scoringBuildingCreateMask;
 
-void ScoreKeeper::reset( Int playerIdx )
+void ScoreKeeper::reset(Int playerIdx)
 {
 	scoringBuildingMask.set(KINDOF_STRUCTURE);
 	scoringBuildingMask.set(KINDOF_SCORE);
@@ -102,31 +101,32 @@ void ScoreKeeper::reset( Int playerIdx )
 	m_totalMoneyEarned = m_totalMoneySpent = 0;
 	m_totalUnitsLost = m_totalUnitsBuilt = 0;
 	m_totalBuildingsLost = m_totalBuildingsBuilt = 0;
-	//Added By Sadullah Nader
-	//Initializtion(s) inserted
+	// Added By Sadullah Nader
+	// Initializtion(s) inserted
 	m_totalFactionBuildingsCaptured = m_totalTechBuildingsCaptured = 0;
 	//
 	m_currentScore = 0;
 	m_objectsBuilt.clear();
 	m_objectsCaptured.clear();
 	m_objectsLost.clear();
-	for(int i = 0; i < MAX_PLAYER_COUNT; ++i)
+	for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
 	{
 		m_objectsDestroyed[i].clear();
 		m_totalBuildingsDestroyed[i] = m_totalUnitsDestroyed[i] = 0;
 	}
-	m_myPlayerIdx	= playerIdx;
+	m_myPlayerIdx = playerIdx;
 }
 
-void ScoreKeeper::addObjectBuilt( const Object *o)
+void ScoreKeeper::addObjectBuilt(const Object *o)
 {
 	Bool addToCount = FALSE;
 
-	if (TheGameLogic->isScoringEnabled() == FALSE) {
+	if (TheGameLogic->isScoringEnabled() == FALSE)
+	{
 		return;
 	}
 
-	if(o->getTemplate()->isKindOfMulti(scoringBuildingMask, KINDOFMASK_NONE))
+	if (o->getTemplate()->isKindOfMulti(scoringBuildingMask, KINDOFMASK_NONE))
 	{
 		++m_totalBuildingsBuilt;
 		addToCount = TRUE;
@@ -136,7 +136,7 @@ void ScoreKeeper::addObjectBuilt( const Object *o)
 		++m_totalBuildingsBuilt;
 		addToCount = TRUE;
 	}
-	else if(o->getTemplate()->isKindOf(KINDOF_INFANTRY) || o->getTemplate()->isKindOf(KINDOF_VEHICLE))
+	else if (o->getTemplate()->isKindOf(KINDOF_INFANTRY) || o->getTemplate()->isKindOf(KINDOF_VEHICLE))
 	{
 		if (o->getTemplate()->isKindOf(KINDOF_SCORE) || o->getTemplate()->isKindOf(KINDOF_SCORE_CREATE))
 		{
@@ -145,7 +145,7 @@ void ScoreKeeper::addObjectBuilt( const Object *o)
 		}
 	}
 
-	if(addToCount)
+	if (addToCount)
 	{
 		Int existingCount = 0;
 		ObjectCountMapIt it = m_objectsBuilt.find(o->getTemplate());
@@ -155,7 +155,7 @@ void ScoreKeeper::addObjectBuilt( const Object *o)
 	}
 }
 
-Int ScoreKeeper::getTotalUnitsBuilt( KindOfMaskType validMask, KindOfMaskType invalidMask )
+Int ScoreKeeper::getTotalUnitsBuilt(KindOfMaskType validMask, KindOfMaskType invalidMask)
 {
 	Int count = 0;
 	for (ObjectCountMapIt it = m_objectsBuilt.begin(); it != m_objectsBuilt.end(); ++it)
@@ -168,7 +168,7 @@ Int ScoreKeeper::getTotalUnitsBuilt( KindOfMaskType validMask, KindOfMaskType in
 	return count;
 }
 
-Int ScoreKeeper::getTotalObjectsBuilt( const ThingTemplate *pTemplate )
+Int ScoreKeeper::getTotalObjectsBuilt(const ThingTemplate *pTemplate)
 {
 	Int count = 0;
 	for (ObjectCountMapIt it = m_objectsBuilt.begin(); it != m_objectsBuilt.end(); ++it)
@@ -180,10 +180,10 @@ Int ScoreKeeper::getTotalObjectsBuilt( const ThingTemplate *pTemplate )
 	return count;
 }
 
-
-void ScoreKeeper::removeObjectBuilt( const Object *o)
+void ScoreKeeper::removeObjectBuilt(const Object *o)
 {
-	if (TheGameLogic->isScoringEnabled() == FALSE) {
+	if (TheGameLogic->isScoringEnabled() == FALSE)
+	{
 		return;
 	}
 
@@ -217,14 +217,15 @@ void ScoreKeeper::removeObjectBuilt( const Object *o)
 	}
 }
 
-void ScoreKeeper::addObjectCaptured( const Object *o )
+void ScoreKeeper::addObjectCaptured(const Object *o)
 {
-	if (TheGameLogic->isScoringEnabled() == FALSE) {
+	if (TheGameLogic->isScoringEnabled() == FALSE)
+	{
 		return;
 	}
 
 	Bool addToCount = FALSE;
-	if(o->getTemplate()->isKindOf(KINDOF_STRUCTURE))
+	if (o->getTemplate()->isKindOf(KINDOF_STRUCTURE))
 	{
 		if (o->getTemplate()->isKindOf(KINDOF_SCORE))
 		{
@@ -237,7 +238,7 @@ void ScoreKeeper::addObjectCaptured( const Object *o )
 		addToCount = TRUE;
 	}
 
-	if(addToCount)
+	if (addToCount)
 	{
 		Int existingCount = 0;
 		ObjectCountMapIt it = m_objectsCaptured.find(o->getTemplate());
@@ -247,44 +248,45 @@ void ScoreKeeper::addObjectCaptured( const Object *o )
 	}
 }
 
-
-
-void ScoreKeeper::addObjectDestroyed( const Object *o)
+void ScoreKeeper::addObjectDestroyed(const Object *o)
 {
-
-	if (TheGameLogic->isScoringEnabled() == FALSE) {
+	if (TheGameLogic->isScoringEnabled() == FALSE)
+	{
 		return;
 	}
 
 	Int playerIdx = o->getControllingPlayer()->getPlayerIndex();
 
 	Bool addToCount = FALSE;
-	if(o->getTemplate()->isKindOfMulti(scoringBuildingMask, KINDOFMASK_NONE))
+	if (o->getTemplate()->isKindOfMulti(scoringBuildingMask, KINDOFMASK_NONE))
 	{
-		if (!(o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))) {
+		if (!(o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION)))
+		{
 			++m_totalBuildingsDestroyed[playerIdx];
 			addToCount = TRUE;
 		}
 	}
 	else if (o->getTemplate()->isKindOfMulti(scoringBuildingDestroyMask, KINDOFMASK_NONE))
 	{
-		if (!(o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))) {
+		if (!(o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION)))
+		{
 			++m_totalBuildingsDestroyed[playerIdx];
 			addToCount = TRUE;
 		}
 	}
-	else if(o->getTemplate()->isKindOf(KINDOF_INFANTRY) || o->getTemplate()->isKindOf(KINDOF_VEHICLE))
+	else if (o->getTemplate()->isKindOf(KINDOF_INFANTRY) || o->getTemplate()->isKindOf(KINDOF_VEHICLE))
 	{
 		if (o->getTemplate()->isKindOf(KINDOF_SCORE) || o->getTemplate()->isKindOf(KINDOF_SCORE_DESTROY))
 		{
-			if (!(o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))) {
+			if (!(o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION)))
+			{
 				m_totalUnitsDestroyed[playerIdx]++;
 				addToCount = TRUE;
 			}
 		}
 	}
 
-	if(addToCount)
+	if (addToCount)
 	{
 		Int existingCount = 0;
 		ObjectCountMapIt it = m_objectsDestroyed[playerIdx].find(o->getTemplate());
@@ -294,39 +296,43 @@ void ScoreKeeper::addObjectDestroyed( const Object *o)
 	}
 }
 
-void ScoreKeeper::addObjectLost( const Object *o )
+void ScoreKeeper::addObjectLost(const Object *o)
 {
-	if (TheGameLogic->isScoringEnabled() == FALSE) {
+	if (TheGameLogic->isScoringEnabled() == FALSE)
+	{
 		return;
 	}
 
 	Bool addToCount = FALSE;
-	if(o->getTemplate()->isKindOfMulti(scoringBuildingMask, KINDOFMASK_NONE))
+	if (o->getTemplate()->isKindOfMulti(scoringBuildingMask, KINDOFMASK_NONE))
 	{
-		if (!(o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))) {
+		if (!(o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION)))
+		{
 			++m_totalBuildingsLost;
 			addToCount = TRUE;
 		}
 	}
 	else if (o->getTemplate()->isKindOfMulti(scoringBuildingDestroyMask, KINDOFMASK_NONE))
 	{
-		if (!(o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))) {
+		if (!(o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION)))
+		{
 			++m_totalBuildingsLost;
 			addToCount = TRUE;
 		}
 	}
-	else if(o->getTemplate()->isKindOf(KINDOF_INFANTRY) || o->getTemplate()->isKindOf(KINDOF_VEHICLE))
+	else if (o->getTemplate()->isKindOf(KINDOF_INFANTRY) || o->getTemplate()->isKindOf(KINDOF_VEHICLE))
 	{
 		if (o->getTemplate()->isKindOf(KINDOF_SCORE) || o->getTemplate()->isKindOf(KINDOF_SCORE_DESTROY))
 		{
-			if (!(o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))) {
+			if (!(o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION)))
+			{
 				++m_totalUnitsLost;
 				addToCount = TRUE;
 			}
 		}
 	}
 
-	if(addToCount)
+	if (addToCount)
 	{
 		Int existingCount = 0;
 		ObjectCountMapIt it = m_objectsLost.find(o->getTemplate());
@@ -336,7 +342,7 @@ void ScoreKeeper::addObjectLost( const Object *o )
 	}
 }
 
-Int ScoreKeeper::calculateScore( void )
+Int ScoreKeeper::calculateScore(void)
 {
 	Int score = 0;
 	score += m_totalUnitsBuilt * 100;
@@ -344,7 +350,7 @@ Int ScoreKeeper::calculateScore( void )
 	score += m_totalBuildingsBuilt * 100;
 	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
 	{
-		if(i == m_myPlayerIdx)
+		if (i == m_myPlayerIdx)
 			continue;
 		score += m_totalUnitsDestroyed[i] * 100;
 		score += m_totalBuildingsDestroyed[i] * 100;
@@ -352,43 +358,41 @@ Int ScoreKeeper::calculateScore( void )
 
 	m_currentScore = score;
 	return m_currentScore;
-
 }
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-Int ScoreKeeper::getTotalBuildingsDestroyed( void )
+Int ScoreKeeper::getTotalBuildingsDestroyed(void)
 {
 	int count = 0;
-	for (int i = 0; i< MAX_PLAYER_COUNT; ++i)
+	for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
 	{
-	// Design change, display even if we killed our own
-//		if(i == m_myPlayerIdx)
-//			continue;
+		// Design change, display even if we killed our own
+		//		if(i == m_myPlayerIdx)
+		//			continue;
 		count += m_totalBuildingsDestroyed[i];
-		//for (ObjectCountMapIt it = m_objectsDestroyed[i].begin(); it != m_objectsDestroyed[i].end(); ++it)
+		// for (ObjectCountMapIt it = m_objectsDestroyed[i].begin(); it != m_objectsDestroyed[i].end(); ++it)
 		//		{
 		//
 		//			count += it->second;
 		//		}
-
 	}
 	return count;
 }
-Int ScoreKeeper::getTotalUnitsDestroyed( void )
+Int ScoreKeeper::getTotalUnitsDestroyed(void)
 {
 	int count = 0;
-	for (int i = 0; i< MAX_PLAYER_COUNT; ++i)
+	for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
 	{
-	// Design change, display even if we killed our own
-//		if(i == m_myPlayerIdx)
-//			continue;
+		// Design change, display even if we killed our own
+		//		if(i == m_myPlayerIdx)
+		//			continue;
 		count += m_totalUnitsDestroyed[i];
-//		for (ObjectCountMapIt it = m_objectsDestroyed[i].begin(); it != m_objectsDestroyed[i].end(); ++it)
-//		{
-//		}
+		//		for (ObjectCountMapIt it = m_objectsDestroyed[i].begin(); it != m_objectsDestroyed[i].end(); ++it)
+		//		{
+		//		}
 	}
 	return count;
 }
@@ -396,173 +400,162 @@ Int ScoreKeeper::getTotalUnitsDestroyed( void )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ScoreKeeper::crc( Xfer *xfer )
+void ScoreKeeper::crc(Xfer *xfer)
 {
-
-}  // end ScoreKeeper
+} // end ScoreKeeper
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer of an object count map
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ScoreKeeper::xferObjectCountMap( Xfer *xfer, ObjectCountMap *map )
+void ScoreKeeper::xferObjectCountMap(Xfer *xfer, ObjectCountMap *map)
 {
-
 	// sanity
-	if( map == NULL )
+	if (map == NULL)
 	{
-
-		DEBUG_CRASH(( "xferObjectCountMap - Invalid map parameter" ));
+		DEBUG_CRASH(("xferObjectCountMap - Invalid map parameter"));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	} // end if
 
 	// version info
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// size of the map
 	UnsignedShort mapSize = map->size();
-	xfer->xferUnsignedShort( &mapSize );
+	xfer->xferUnsignedShort(&mapSize);
 
 	// map data
 	Int count;
 	const ThingTemplate *thingTemplate;
 	AsciiString thingTemplateName;
-	if( xfer->getXferMode() == XFER_SAVE )
+	if (xfer->getXferMode() == XFER_SAVE)
 	{
 		ObjectCountMapIt it;
 
 		// save all entries
-		for( it = map->begin(); it != map->end(); ++it )
+		for (it = map->begin(); it != map->end(); ++it)
 		{
-
 			// thing template
 			thingTemplate = it->first;
 			thingTemplateName = thingTemplate->getName();
-			xfer->xferAsciiString( &thingTemplateName );
+			xfer->xferAsciiString(&thingTemplateName);
 
 			// the count
 			count = it->second;
-			xfer->xferInt( &count );
+			xfer->xferInt(&count);
 
-		}  // end for, it
+		} // end for, it
 
-	}  // end if, save
+	} // end if, save
 	else
 	{
-
 		// read all entries
-		for( UnsignedShort i = 0; i < mapSize; ++i )
+		for (UnsignedShort i = 0; i < mapSize; ++i)
 		{
-
 			// read thing template name
-			xfer->xferAsciiString( &thingTemplateName );
-			thingTemplate = TheThingFactory->findTemplate( thingTemplateName );
-			if( thingTemplate == NULL )
+			xfer->xferAsciiString(&thingTemplateName);
+			thingTemplate = TheThingFactory->findTemplate(thingTemplateName);
+			if (thingTemplate == NULL)
 			{
-
-				DEBUG_CRASH(( "xferObjectCountMap - Unknown thing template '%s'", thingTemplateName.str() ));
+				DEBUG_CRASH(("xferObjectCountMap - Unknown thing template '%s'", thingTemplateName.str()));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			} // end if
 
 			// read count
-			xfer->xferInt( &count );
+			xfer->xferInt(&count);
 
 			// add to map
-			(*map)[ thingTemplate ] = count;
+			(*map)[thingTemplate] = count;
 
-		}  // end for, i
+		} // end for, i
 
-	}  // end else
+	} // end else
 
-}  // end xferObjectCountMap
+} // end xferObjectCountMap
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ScoreKeeper::xfer( Xfer *xfer )
+void ScoreKeeper::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// money earned
-	xfer->xferInt( &m_totalMoneyEarned );
+	xfer->xferInt(&m_totalMoneyEarned);
 
 	// money spent
-	xfer->xferInt( &m_totalMoneySpent );
+	xfer->xferInt(&m_totalMoneySpent);
 
 	// units destroyed
-	xfer->xferUser( m_totalUnitsDestroyed, sizeof( Int ) * MAX_PLAYER_COUNT );
+	xfer->xferUser(m_totalUnitsDestroyed, sizeof(Int) * MAX_PLAYER_COUNT);
 
 	// units built
-	xfer->xferInt( &m_totalUnitsBuilt );
+	xfer->xferInt(&m_totalUnitsBuilt);
 
 	// units lost
-	xfer->xferInt( &m_totalUnitsLost );
+	xfer->xferInt(&m_totalUnitsLost);
 
 	// buildings destroyed
-	xfer->xferUser( m_totalBuildingsDestroyed, sizeof( Int ) * MAX_PLAYER_COUNT );
+	xfer->xferUser(m_totalBuildingsDestroyed, sizeof(Int) * MAX_PLAYER_COUNT);
 
 	// buildings built
-	xfer->xferInt( &m_totalBuildingsBuilt );
+	xfer->xferInt(&m_totalBuildingsBuilt);
 
 	// buildings lost
-	xfer->xferInt( &m_totalBuildingsLost );
+	xfer->xferInt(&m_totalBuildingsLost);
 
 	// tech buildings captured
-	xfer->xferInt( &m_totalTechBuildingsCaptured );
+	xfer->xferInt(&m_totalTechBuildingsCaptured);
 
 	// faction buildings captured
-	xfer->xferInt( &m_totalFactionBuildingsCaptured );
+	xfer->xferInt(&m_totalFactionBuildingsCaptured);
 
 	// current score
-	xfer->xferInt( &m_currentScore );
+	xfer->xferInt(&m_currentScore);
 
 	// player index
-	xfer->xferInt( &m_myPlayerIdx );
+	xfer->xferInt(&m_myPlayerIdx);
 
 	// objects built
-	xferObjectCountMap( xfer, &m_objectsBuilt );
+	xferObjectCountMap(xfer, &m_objectsBuilt);
 
 	// objects destroyed
 	UnsignedShort destroyedArraySize = MAX_PLAYER_COUNT;
-	xfer->xferUnsignedShort( &destroyedArraySize );
-	if( destroyedArraySize != MAX_PLAYER_COUNT )
+	xfer->xferUnsignedShort(&destroyedArraySize);
+	if (destroyedArraySize != MAX_PLAYER_COUNT)
 	{
-
-		DEBUG_CRASH(( "ScoreKeeper::xfer - size of objects destroyed array has changed" ));
+		DEBUG_CRASH(("ScoreKeeper::xfer - size of objects destroyed array has changed"));
 		throw SC_INVALID_DATA;
 
-	}  // end if
-	for( UnsignedShort i = 0; i < destroyedArraySize; ++i )
+	} // end if
+	for (UnsignedShort i = 0; i < destroyedArraySize; ++i)
 	{
-
 		// xfer map data
-		xferObjectCountMap( xfer, &m_objectsDestroyed[ i ] );
+		xferObjectCountMap(xfer, &m_objectsDestroyed[i]);
 
-	}  // end for i
+	} // end for i
 
 	// objects lost
-	xferObjectCountMap( xfer, &m_objectsLost );
+	xferObjectCountMap(xfer, &m_objectsLost);
 
 	// objects captured
-	xferObjectCountMap( xfer, &m_objectsCaptured );
+	xferObjectCountMap(xfer, &m_objectsCaptured);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ScoreKeeper::loadPostProcess( void )
+void ScoreKeeper::loadPostProcess(void)
 {
-
-}  // end loadPostProcess
+} // end loadPostProcess

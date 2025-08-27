@@ -44,45 +44,31 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-
 #include "WSYS_file.h"
-
 
 //----------------------------------------------------------------------------
 //         Externals
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Data
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Prototypes
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Functions
@@ -92,21 +78,14 @@
 // File::File
 //=================================================================
 
-File::File()
-:	m_open(FALSE),
-	m_deleteOnClose(FALSE),
-	m_access(NONE)
+File::File() : m_open(FALSE), m_deleteOnClose(FALSE), m_access(NONE)
 {
-
 	setName("<no file>");
-
 }
-
 
 //----------------------------------------------------------------------------
 //         Public Functions
 //----------------------------------------------------------------------------
-
 
 //=================================================================
 // File::~File
@@ -121,38 +100,38 @@ File::~File()
 // File::open
 //=================================================================
 /**
-  * Any derived open() members must first call File::open. If File::open
-	* succeeds but the derived class's open failes then make sure to call
-	* File::close() before returning.
-	*/
+ * Any derived open() members must first call File::open. If File::open
+ * succeeds but the derived class's open failes then make sure to call
+ * File::close() before returning.
+ */
 //=================================================================
 
-Bool File::open( const Char *filename, Int access )
+Bool File::open(const Char *filename, Int access)
 {
-	if( m_open )
+	if (m_open)
 	{
 		return FALSE;
 	}
 
-	setName( filename );
+	setName(filename);
 
-	if( (access & ( TEXT | BINARY)) == ( TEXT | BINARY ))
+	if ((access & (TEXT | BINARY)) == (TEXT | BINARY))
 	{
 		// illegal access
 		return FALSE;
 	}
 
-	if ( !(access & (READ|APPEND)) )
+	if (!(access & (READ | APPEND)))
 	{
 		access |= TRUNCATE;
 	}
 
-	if ( (access & (READ|WRITE)) == 0 )
+	if ((access & (READ | WRITE)) == 0)
 	{
 		access = READ;
 	}
 
-	if ( (access & (TEXT|BINARY)) == 0 )
+	if ((access & (TEXT | BINARY)) == 0)
 	{
 		access = BINARY;
 	}
@@ -166,17 +145,17 @@ Bool File::open( const Char *filename, Int access )
 // File::close
 //=================================================================
 /**
-  * Must call File::close() for each successful File::open() call.
-	*/
+ * Must call File::close() for each successful File::open() call.
+ */
 //=================================================================
 
-void File::close( void )
+void File::close(void)
 {
-	if( m_open )
+	if (m_open)
 	{
-		setName( "<no file>" );
+		setName("<no file>");
 		m_open = FALSE;
-		if ( m_deleteOnClose )
+		if (m_deleteOnClose)
 		{
 			delete this; // on special cases File object will delete itself when closing
 		}
@@ -187,17 +166,17 @@ void File::close( void )
 // File::size
 //=================================================================
 /**
-  * Default implementation of File::size. Derived classes can optimize
-	* this member function.
-	*/
+ * Default implementation of File::size. Derived classes can optimize
+ * this member function.
+ */
 //=================================================================
 
-Int File::size( void )
+Int File::size(void)
 {
-	Int pos = seek( 0, CURRENT );
-	Int size = seek( 0, END );
+	Int pos = seek(0, CURRENT);
+	Int size = seek(0, END);
 
-	seek( pos, START );
+	seek(pos, START);
 
 	return size < 0 ? 0 : size;
 }
@@ -206,7 +185,7 @@ Int File::size( void )
 // File::position
 //============================================================================
 
-Int File::position( void )
+Int File::position(void)
 {
 	return seek(0, CURRENT);
 }
@@ -215,22 +194,21 @@ Int File::position( void )
 // File::setName
 //=================================================================
 
-void File::setName( const Char *name )
+void File::setName(const Char *name)
 {
-	strncpy( m_name, name, sizeof( m_name ));
-	m_name[sizeof(m_name)-1] = 0;
-
+	strncpy(m_name, name, sizeof(m_name));
+	m_name[sizeof(m_name) - 1] = 0;
 }
 
 //=================================================================
 // File::getName
 //=================================================================
 
-Bool File::getName( Char *buffer, Int max )
+Bool File::getName(Char *buffer, Int max)
 {
-	if( buffer && max > 0 && (strlen( m_name ) < (UnsignedInt) max))
+	if (buffer && max > 0 && (strlen(m_name) < (UnsignedInt)max))
 	{
-		strcpy( buffer, m_name );
+		strcpy(buffer, m_name);
 		return TRUE;
 	}
 
@@ -241,28 +219,27 @@ Bool File::getName( Char *buffer, Int max )
 // File::printf
 //============================================================================
 
-Bool	File::printf ( const Char *format, ...)
+Bool File::printf(const Char *format, ...)
 {
-	Char buffer[10*1024];
+	Char buffer[10 * 1024];
 	Int len;
 
-	if ( ! (m_access & TEXT ) )
+	if (!(m_access & TEXT))
 	{
 		return FALSE;
 	}
 
 	va_list args;
-	va_start( args, format );     /* Initialize variable arguments. */
-	len = vsprintf( buffer, format, args );
-	va_end( args );
+	va_start(args, format); /* Initialize variable arguments. */
+	len = vsprintf(buffer, format, args);
+	va_end(args);
 
-	if ( len >= sizeof(buffer) )
+	if (len >= sizeof(buffer))
 	{
 		// Big Problem
-		assert( FALSE );
+		assert(FALSE);
 		return FALSE;
 	}
 
-	return (write ( buffer, len ) == len);
+	return (write(buffer, len) == len);
 }
-

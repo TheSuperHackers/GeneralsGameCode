@@ -30,97 +30,82 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // ParticleSizeDialogClass
 //
 /////////////////////////////////////////////////////////////////////////////
-ParticleSizeDialogClass::ParticleSizeDialogClass (float size, CWnd *pParent)
-	:	m_Size (size),
-		CDialog(ParticleSizeDialogClass::IDD, pParent)
+ParticleSizeDialogClass::ParticleSizeDialogClass(float size, CWnd *pParent) :
+		m_Size(size), CDialog(ParticleSizeDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(ParticleSizeDialogClass)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // DoDataExchange
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ParticleSizeDialogClass::DoDataExchange (CDataExchange *pDX)
+void ParticleSizeDialogClass::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(ParticleSizeDialogClass)
 	DDX_Control(pDX, IDC_SIZE_SPIN, m_SizeSpin);
 	//}}AFX_DATA_MAP
-	return ;
+	return;
 }
 
-
 BEGIN_MESSAGE_MAP(ParticleSizeDialogClass, CDialog)
-	//{{AFX_MSG_MAP(ParticleSizeDialogClass)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(ParticleSizeDialogClass)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // ParticleSizeDialogClass message handlers
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnInitDialog
 //
 /////////////////////////////////////////////////////////////////////////////
-BOOL
-ParticleSizeDialogClass::OnInitDialog (void)
+BOOL ParticleSizeDialogClass::OnInitDialog(void)
 {
 	CDialog::OnInitDialog();
 
-	Initialize_Spinner (m_SizeSpin, m_Size, 0, 10000);
+	Initialize_Spinner(m_SizeSpin, m_Size, 0, 10000);
 	return TRUE;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnOK
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ParticleSizeDialogClass::OnOK (void)
+void ParticleSizeDialogClass::OnOK(void)
 {
-	m_Size = GetDlgItemFloat (m_hWnd, IDC_SIZE_EDIT);
-	CDialog::OnOK ();
-	return ;
+	m_Size = GetDlgItemFloat(m_hWnd, IDC_SIZE_EDIT);
+	CDialog::OnOK();
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnNotify
 //
 /////////////////////////////////////////////////////////////////////////////
-BOOL
-ParticleSizeDialogClass::OnNotify
-(
-	WPARAM wParam,
-	LPARAM lParam,
-	LRESULT *pResult
-)
+BOOL ParticleSizeDialogClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult)
 {
 	//
 	//	Update the spinner control if necessary
 	//
 	NMHDR *pheader = (NMHDR *)lParam;
-	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
+	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS))
+	{
 		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
-		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
+		::Update_Spinner_Buddy(pheader->hwndFrom, pupdown->iDelta);
 	}
 
 	return CDialog::OnNotify(wParam, lParam, pResult);

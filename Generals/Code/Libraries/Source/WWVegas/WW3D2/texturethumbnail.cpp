@@ -26,20 +26,15 @@
 #include "bitmaphandler.h"
 #include "ffactory.h"
 
-static HashTemplateClass<StringClass,ThumbnailClass*> thumbnail_hash;
+static HashTemplateClass<StringClass, ThumbnailClass *> thumbnail_hash;
 static bool _ThumbHashModified;
-static unsigned char* _ThumbnailMemory;
+static unsigned char *_ThumbnailMemory;
 static const char *THUMBNAIL_FILENAME = "thumbnails.dat";
 
-ThumbnailClass::ThumbnailClass(const char* name, unsigned char* bitmap, unsigned w, unsigned h, bool allocated)
-	:
-	Name(name),
-	Bitmap(bitmap),
-	Allocated(allocated),
-	Width(w),
-	Height(h)
+ThumbnailClass::ThumbnailClass(const char *name, unsigned char *bitmap, unsigned w, unsigned h, bool allocated) :
+		Name(name), Bitmap(bitmap), Allocated(allocated), Width(w), Height(h)
 {
-	thumbnail_hash.Insert(Name,this);
+	thumbnail_hash.Insert(Name, this);
 }
 
 // ----------------------------------------------------------------------------
@@ -51,90 +46,90 @@ ThumbnailClass::ThumbnailClass(const char* name, unsigned char* bitmap, unsigned
 //
 // ----------------------------------------------------------------------------
 
-ThumbnailClass::ThumbnailClass(const StringClass& filename)
-	:
-	Bitmap(0),
-	Name(filename),
-	Allocated(false),
-	Width(0),
-	Height(0)
+ThumbnailClass::ThumbnailClass(const StringClass &filename) :
+		Bitmap(0), Name(filename), Allocated(false), Width(0), Height(0)
 {
-	unsigned reduction_factor=3;
+	unsigned reduction_factor = 3;
 
 	// First, try loading image from a DDS file
-	DDSFileClass dds_file(filename,reduction_factor);
-	if (dds_file.Is_Available() && dds_file.Load()) {
-		Width=dds_file.Get_Width(0);
-		Height=dds_file.Get_Height(0);
-		Bitmap=W3DNEWARRAY unsigned char[Width*Height*4];
-		Allocated=true;
+	DDSFileClass dds_file(filename, reduction_factor);
+	if (dds_file.Is_Available() && dds_file.Load())
+	{
+		Width = dds_file.Get_Width(0);
+		Height = dds_file.Get_Height(0);
+		Bitmap = W3DNEWARRAY unsigned char[Width * Height * 4];
+		Allocated = true;
 		dds_file.Copy_Level_To_Surface(
-			0,			// Level
-			WW3D_FORMAT_A8R8G8B8,
-			Width,
-			Height,
-			Bitmap,
-			Width*4);
+				0, // Level
+				WW3D_FORMAT_A8R8G8B8,
+				Width,
+				Height,
+				Bitmap,
+				Width * 4);
 	}
 	// If DDS file can't be used try loading from TGA
-	else {
+	else
+	{
 		// Make sure the file can be opened. If not, return missing texture.
 		Targa targa;
-		if (TARGA_ERROR_HANDLER(targa.Open(filename,TGA_READMODE),filename)) return;
+		if (TARGA_ERROR_HANDLER(targa.Open(filename, TGA_READMODE), filename))
+			return;
 
 		// DX8 uses image upside down compared to TGA
 		targa.Header.ImageDescriptor ^= TGAIDF_YORIGIN;
 
-		WW3DFormat src_format,dest_format;
-		unsigned src_bpp=0;
-		Get_WW3D_Format(dest_format,src_format,src_bpp,targa);
+		WW3DFormat src_format, dest_format;
+		unsigned src_bpp = 0;
+		Get_WW3D_Format(dest_format, src_format, src_bpp, targa);
 
 		// Destination size will be the next power of two square from the larger width and height...
-		Width=targa.Header.Width>>reduction_factor;
-		Height=targa.Header.Height>>reduction_factor;
-		unsigned depth=1;
-		TextureLoader::Validate_Texture_Size(Width,Height,depth);
-		unsigned src_width=targa.Header.Width;
-		unsigned src_height=targa.Header.Height;
+		Width = targa.Header.Width >> reduction_factor;
+		Height = targa.Header.Height >> reduction_factor;
+		unsigned depth = 1;
+		TextureLoader::Validate_Texture_Size(Width, Height, depth);
+		unsigned src_width = targa.Header.Width;
+		unsigned src_height = targa.Header.Height;
 
 		// NOTE: We load the palette but we do not yet support paletted textures!
-		char palette[256*4];
+		char palette[256 * 4];
 		targa.SetPalette(palette);
-		if (TARGA_ERROR_HANDLER(targa.Load(filename, TGAF_IMAGE, false),filename)) return;
+		if (TARGA_ERROR_HANDLER(targa.Load(filename, TGAF_IMAGE, false), filename))
+			return;
 
-		unsigned char* src_surface=(unsigned char*)targa.GetImage();
+		unsigned char *src_surface = (unsigned char *)targa.GetImage();
 
-		Bitmap=W3DNEWARRAY unsigned char[Width*Height*4];
-		Allocated=true;
+		Bitmap = W3DNEWARRAY unsigned char[Width * Height * 4];
+		Allocated = true;
 
-		dest_format=WW3D_FORMAT_A8R8G8B8;
+		dest_format = WW3D_FORMAT_A8R8G8B8;
 		BitmapHandlerClass::Copy_Image(
-			Bitmap,
-			Width,
-			Height,
-			Width*4,
-			WW3D_FORMAT_A8R8G8B8,
-			src_surface,
-			src_width,
-			src_height,
-			src_width*src_bpp,
-			src_format,
-			(unsigned char*)targa.GetPalette(),
-			targa.Header.CMapDepth>>3,
-			false);
+				Bitmap,
+				Width,
+				Height,
+				Width * 4,
+				WW3D_FORMAT_A8R8G8B8,
+				src_surface,
+				src_width,
+				src_height,
+				src_width * src_bpp,
+				src_format,
+				(unsigned char *)targa.GetPalette(),
+				targa.Header.CMapDepth >> 3,
+				false);
 	}
 
-	_ThumbHashModified=true;
-	thumbnail_hash.Insert(Name,this);
+	_ThumbHashModified = true;
+	thumbnail_hash.Insert(Name, this);
 }
 
 ThumbnailClass::~ThumbnailClass()
 {
-	if (Allocated) delete[] Bitmap;
+	if (Allocated)
+		delete[] Bitmap;
 	thumbnail_hash.Remove(Name);
 }
 
-ThumbnailClass* ThumbnailClass::Peek_Instance(const StringClass& name)
+ThumbnailClass *ThumbnailClass::Peek_Instance(const StringClass &name)
 {
 	return thumbnail_hash.Get(name);
 }
@@ -206,8 +201,9 @@ void ThumbnailClass::Init()
 void ThumbnailClass::Deinit()
 {
 	// If the thumbnail hash table was modified, save it to disk
-	HashTemplateIterator<StringClass,ThumbnailClass*> ite(thumbnail_hash);
-	if (_ThumbHashModified) {
+	HashTemplateIterator<StringClass, ThumbnailClass *> ite(thumbnail_hash);
+	if (_ThumbHashModified)
+	{
 #if 0 // don't write thumbnails.  jba.
 		int total_header_length=0;
 		int total_data_length=0;
@@ -280,12 +276,13 @@ void ThumbnailClass::Deinit()
 	}
 
 	ite.First();
-	while (!ite.Is_Done()) {
-		ThumbnailClass* thumb=ite.Peek_Value();
+	while (!ite.Is_Done())
+	{
+		ThumbnailClass *thumb = ite.Peek_Value();
 		delete thumb;
 		ite.First();
 	}
 
-	delete [] _ThumbnailMemory;
-	_ThumbnailMemory=NULL;
+	delete[] _ThumbnailMemory;
+	_ThumbnailMemory = NULL;
 }

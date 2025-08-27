@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/ActionManager.h"
 #include "Common/Team.h"
@@ -61,51 +61,44 @@
 #include "GameLogic/Module/SupplyWarehouseDockUpdate.h"
 #include "GameLogic/Module/WorkerAIUpdate.h"
 
-
-
-
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 enum
 {
-	AS_DOZER,				///< When not actively Gathering, or when actively building, I am a dozer
-	AS_SUPPLY_TRUCK	///< When told explicitly by player or other object, I become a supply truck
+	AS_DOZER, ///< When not actively Gathering, or when actively building, I am a dozer
+	AS_SUPPLY_TRUCK ///< When told explicitly by player or other object, I become a supply truck
 };
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WorkerAIUpdate::WorkerAIUpdate( Thing *thing, const ModuleData* moduleData ) :
-							 AIUpdateInterface( thing, moduleData )
+WorkerAIUpdate::WorkerAIUpdate(Thing *thing, const ModuleData *moduleData) : AIUpdateInterface(thing, moduleData)
 
 {
-
 	//
 	// initialize the dozer machine to NULL, we want to do this and create it during the update
 	// implementation because at this point we don't have the object all setup
 	//
 
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
+	// Added By Sadullah Nader
+	// Initialization(s) inserted
 	m_isRebuild = FALSE;
 	//
 	m_dozerMachine = NULL;
-	for( Int i = 0; i < DOZER_NUM_TASKS; i++ )
+	for (Int i = 0; i < DOZER_NUM_TASKS; i++)
 	{
-		m_task[ i ].m_targetObjectID = INVALID_ID;
-		m_task[ i ].m_taskOrderFrame = 0;
-		for( Int j = 0; j < DOZER_NUM_DOCK_POINTS; j++ )
+		m_task[i].m_targetObjectID = INVALID_ID;
+		m_task[i].m_taskOrderFrame = 0;
+		for (Int j = 0; j < DOZER_NUM_DOCK_POINTS; j++)
 		{
-			m_dockPoint[ i ][ j ].valid = FALSE;
-			m_dockPoint[ i ][ j ].location.zero();
+			m_dockPoint[i][j].valid = FALSE;
+			m_dockPoint[i][j].location.zero();
 		}
 	}
 	m_currentTask = DOZER_TASK_INVALID;
-	m_buildSubTask = DOZER_SELECT_BUILD_DOCK_LOCATION;  // irrelavant, but I want non-garbage value
+	m_buildSubTask = DOZER_SELECT_BUILD_DOCK_LOCATION; // irrelavant, but I want non-garbage value
 
 	m_supplyTruckStateMachine = NULL;
 	m_numberBoxes = 0;
@@ -114,27 +107,24 @@ WorkerAIUpdate::WorkerAIUpdate( Thing *thing, const ModuleData* moduleData ) :
 
 	m_workerMachine = NULL;
 
- 	m_suppliesDepletedVoice = getWorkerAIUpdateModuleData()->m_suppliesDepletedVoice;
+	m_suppliesDepletedVoice = getWorkerAIUpdateModuleData()->m_suppliesDepletedVoice;
 
 	createMachines();
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WorkerAIUpdate::~WorkerAIUpdate( void )
+WorkerAIUpdate::~WorkerAIUpdate(void)
 {
-
 	// delete our behavior state machine
-	if( m_dozerMachine )
+	if (m_dozerMachine)
 		deleteInstance(m_dozerMachine);
 
-	if( m_supplyTruckStateMachine )
+	if (m_supplyTruckStateMachine)
 		deleteInstance(m_supplyTruckStateMachine);
 
-	if( m_workerMachine )
+	if (m_workerMachine)
 		deleteInstance(m_workerMachine);
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -163,66 +153,66 @@ Bool WorkerAIUpdate::isAvailableForSupplying() const
 }
 
 // ------------------------------------------------------------------------------------------------
-Real WorkerAIUpdate::getRepairHealthPerSecond( void ) const
+Real WorkerAIUpdate::getRepairHealthPerSecond(void) const
 {
 	return getWorkerAIUpdateModuleData()->m_repairHealthPercentPerSecond;
 }
 // ------------------------------------------------------------------------------------------------
-Real WorkerAIUpdate::getBoredTime( void ) const
+Real WorkerAIUpdate::getBoredTime(void) const
 {
 	return getWorkerAIUpdateModuleData()->m_boredTime;
 }
 // ------------------------------------------------------------------------------------------------
-Real WorkerAIUpdate::getBoredRange( void ) const
+Real WorkerAIUpdate::getBoredRange(void) const
 {
 	return getWorkerAIUpdateModuleData()->m_boredRange;
 }
 
 // ------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::createMachines( void )
+void WorkerAIUpdate::createMachines(void)
 {
-
-	if( m_workerMachine == NULL )
+	if (m_workerMachine == NULL)
 	{
-		m_workerMachine = newInstance(WorkerStateMachine)( getObject() );
+		m_workerMachine = newInstance(WorkerStateMachine)(getObject());
 
-		if( m_dozerMachine == NULL )
+		if (m_dozerMachine == NULL)
 		{
-			m_dozerMachine = newInstance(DozerPrimaryStateMachine)( getObject() );
+			m_dozerMachine = newInstance(DozerPrimaryStateMachine)(getObject());
 			m_dozerMachine->initDefaultState();
 		}
 
-		if( m_supplyTruckStateMachine == NULL )
+		if (m_supplyTruckStateMachine == NULL)
 		{
-			m_supplyTruckStateMachine = newInstance(SupplyTruckStateMachine)( getObject() );
+			m_supplyTruckStateMachine = newInstance(SupplyTruckStateMachine)(getObject());
 			m_supplyTruckStateMachine->initDefaultState();
 		}
 
-		m_workerMachine->initDefaultState();// this has to wait until all three are in place since
+		m_workerMachine->initDefaultState(); // this has to wait until all three are in place since
 		// an immediate transition check will ask questions of the machines.
 
-//#ifdef RTS_DEBUG
-//		m_workerMachine->setDebugOutput(TRUE);
-//		m_dozerMachine->setDebugOutput(TRUE);
-//		m_supplyTruckStateMachine->setDebugOutput(TRUE);
-//#endif
+		// #ifdef RTS_DEBUG
+		//		m_workerMachine->setDebugOutput(TRUE);
+		//		m_dozerMachine->setDebugOutput(TRUE);
+		//		m_supplyTruckStateMachine->setDebugOutput(TRUE);
+		// #endif
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------
-UnsignedInt WorkerAIUpdate::getActionDelayForDock( Object *dock )
+UnsignedInt WorkerAIUpdate::getActionDelayForDock(Object *dock)
 {
 	// Decide whether to use my Center or Warehouse delay time
 	static const NameKeyType key_warehouseUpdate = NAMEKEY("SupplyWarehouseDockUpdate");
-	SupplyWarehouseDockUpdate *warehouseModule = (SupplyWarehouseDockUpdate*) dock->findUpdateModule( key_warehouseUpdate );
-	if (warehouseModule) {
+	SupplyWarehouseDockUpdate *warehouseModule = (SupplyWarehouseDockUpdate *)dock->findUpdateModule(key_warehouseUpdate);
+	if (warehouseModule)
+	{
 		return getWorkerAIUpdateModuleData()->m_warehouseDelay;
 	}
 	static const NameKeyType key_centerUpdate = NAMEKEY("SupplyCenterDockUpdate");
-	SupplyCenterDockUpdate *centerModule = (SupplyCenterDockUpdate*) dock->findUpdateModule( key_centerUpdate );
-	if (centerModule) {
+	SupplyCenterDockUpdate *centerModule = (SupplyCenterDockUpdate *)dock->findUpdateModule(key_centerUpdate);
+	if (centerModule)
+	{
 		return getWorkerAIUpdateModuleData()->m_centerDelay;
 	}
 
@@ -234,7 +224,8 @@ UnsignedInt WorkerAIUpdate::getActionDelayForDock( Object *dock )
 Real WorkerAIUpdate::getWarehouseScanDistance() const
 {
 	// Ai players get larger scan range.  jba.
-	if (getObject()->getControllingPlayer()->getPlayerType() == PLAYER_COMPUTER) {
+	if (getObject()->getControllingPlayer()->getPlayerType() == PLAYER_COMPUTER)
+	{
 		return 2 * getWorkerAIUpdateModuleData()->m_warehouseScanDistance;
 	}
 	return getWorkerAIUpdateModuleData()->m_warehouseScanDistance;
@@ -242,9 +233,8 @@ Real WorkerAIUpdate::getWarehouseScanDistance() const
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime WorkerAIUpdate::update( void )
+UpdateSleepTime WorkerAIUpdate::update(void)
 {
-
 	//
 	// NOTE: Any changes to DozerAIUpdate::* you probably want to reflect and copy into
 	// WorkerAIUPdate:* as well ... sigh
@@ -259,55 +249,53 @@ UpdateSleepTime WorkerAIUpdate::update( void )
 
 	// DO NOT set us as being to able to move with super precision off grid locations
 	// Causes workers to get stuck.  jba.
-	//if( getCurLocomotor() )
-		//getCurLocomotor()->setUltraAccurate( TRUE );
+	// if( getCurLocomotor() )
+	// getCurLocomotor()->setUltraAccurate( TRUE );
 
 	// extend the normal AI system
 	AIUpdateInterface::update();
 
 	// do nothing if we're dead
 	///@todo shouldn't this be at a higher level?
-	if( getObject()->isEffectivelyDead() )
+	if (getObject()->isEffectivelyDead())
 		return UPDATE_SLEEP_NONE;
 
 	// run our own state machine, and the appropriate sub machine
 	m_workerMachine->updateStateMachine();
 
-	if( m_workerMachine->getCurrentStateID() == AS_DOZER )
+	if (m_workerMachine->getCurrentStateID() == AS_DOZER)
 	{
-
 		// get and validate our current task
 		DozerTask currentTask = getCurrentTask();
-		if( currentTask != DOZER_TASK_INVALID )
+		if (currentTask != DOZER_TASK_INVALID)
 		{
-			ObjectID taskTarget = getTaskTarget( currentTask );
-			Object *targetObject = TheGameLogic->findObjectByID( taskTarget );
+			ObjectID taskTarget = getTaskTarget(currentTask);
+			Object *targetObject = TheGameLogic->findObjectByID(taskTarget);
 			Bool invalidTask = FALSE;
 
 			// validate the task and the target
-			if( currentTask == DOZER_TASK_REPAIR &&
-					TheActionManager->canRepairObject( getObject(), targetObject, getLastCommandSource() ) == FALSE )
+			if (currentTask == DOZER_TASK_REPAIR
+					&& TheActionManager->canRepairObject(getObject(), targetObject, getLastCommandSource()) == FALSE)
 				invalidTask = TRUE;
 
 			// cancel the task if it's now invalid
-			if( invalidTask == TRUE )
-				cancelTask( currentTask );
+			if (invalidTask == TRUE)
+				cancelTask(currentTask);
 
-		}  // end if
+		} // end if
 
 		// update dozer behavior
 		m_dozerMachine->updateStateMachine();
 
-	}  // end if
+	} // end if
 	else
 	{
 		m_supplyTruckStateMachine->updateStateMachine();
 		// If we are harvesting, we can be diverted to clear mines.  jba.
-		getObject()->setWeaponSetFlag(WEAPONSET_MINE_CLEARING_DETAIL);//maybe go clear some mines, if I feel like it
+		getObject()->setWeaponSetFlag(WEAPONSET_MINE_CLEARING_DETAIL); // maybe go clear some mines, if I feel like it
 	}
 	return UPDATE_SLEEP_NONE;
 }
-
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -319,18 +307,18 @@ UpdateSleepTime WorkerAIUpdate::update( void )
 //-------------------------------------------------------------------------------------------------
 /** The entry point of a construct command to the Dozer */
 //-------------------------------------------------------------------------------------------------
-Object *WorkerAIUpdate::construct( const ThingTemplate *what,
-																	 const Coord3D *pos,
-																	 Real angle,
-																	 Player *owningPlayer,
-																	 Bool isRebuild )
+Object *WorkerAIUpdate::construct(
+		const ThingTemplate *what,
+		const Coord3D *pos,
+		Real angle,
+		Player *owningPlayer,
+		Bool isRebuild)
 {
-
 	// !!! NOTE: If you modify this you must modify the dozer too !!!
 	// !!! Graham: Please please please have inspiration for how to *not* duplicate this code
 	// GS - Construct needs to be an AI primitive.  Inheriting off of AIUpdate means you are writing a
 	// master brain that will call AI primitives on the object, not something that does stuff itself.
-  // SupplyTruckAI decides who to call AIDock on.  Worker should decide to AIDock or AIConstruct
+	// SupplyTruckAI decides who to call AIDock on.  Worker should decide to AIDock or AIConstruct
 	// or AIRepair.  Dozer should just use the latter two.  No construction logic should be in
 	// the inherited AIUpdates at all.
 
@@ -342,83 +330,88 @@ Object *WorkerAIUpdate::construct( const ThingTemplate *what,
 	createMachines();
 
 	// sanity
-	if( what == NULL || pos == NULL || owningPlayer == NULL )
+	if (what == NULL || pos == NULL || owningPlayer == NULL)
 		return NULL;
 
 	// sanity
-	DEBUG_ASSERTCRASH( getObject()->getControllingPlayer() == owningPlayer,
-										 ("Dozer::Construct - The controlling player of the Dozer is not the owning player passed in") );
+	DEBUG_ASSERTCRASH(
+			getObject()->getControllingPlayer() == owningPlayer,
+			("Dozer::Construct - The controlling player of the Dozer is not the owning player passed in"));
 
 	// if we're not rebuilding, we have a few checks to pass first for sanity
-	if( isRebuild == FALSE )
+	if (isRebuild == FALSE)
 	{
-
 		// AI has weaker restriction on building
 		Bool dozerIsAI = owningPlayer->getPlayerType() == PLAYER_COMPUTER;
-		if( dozerIsAI )
+		if (dozerIsAI)
 		{
-
 			// validate the the position to build at is valid
-			if( TheBuildAssistant->isLocationLegalToBuild( pos, what, angle,
-																										 BuildAssistant::CLEAR_PATH |
-																										 BuildAssistant::NO_OBJECT_OVERLAP,
-																										 getObject(), NULL ) != LBC_OK )
+			if (TheBuildAssistant->isLocationLegalToBuild(
+							pos,
+							what,
+							angle,
+							BuildAssistant::CLEAR_PATH | BuildAssistant::NO_OBJECT_OVERLAP,
+							getObject(),
+							NULL)
+					!= LBC_OK)
 				return NULL;
 
-		}  // end if
+		} // end if
 		else
 		{
-
 			// make sure the player is capable of building this
-			if( TheBuildAssistant->canMakeUnit( getObject(), what ) != CANMAKE_OK )
+			if (TheBuildAssistant->canMakeUnit(getObject(), what) != CANMAKE_OK)
 				return NULL;
 
 			// validate the the position to build at is valid
-			if( TheBuildAssistant->isLocationLegalToBuild( pos, what, angle,
-																										 BuildAssistant::TERRAIN_RESTRICTIONS |
-																										 BuildAssistant::CLEAR_PATH |
-																										 BuildAssistant::NO_OBJECT_OVERLAP |
-																										 BuildAssistant::SHROUD_REVEALED,
-																										 getObject(), NULL ) != LBC_OK )
+			if (TheBuildAssistant->isLocationLegalToBuild(
+							pos,
+							what,
+							angle,
+							BuildAssistant::TERRAIN_RESTRICTIONS | BuildAssistant::CLEAR_PATH | BuildAssistant::NO_OBJECT_OVERLAP
+									| BuildAssistant::SHROUD_REVEALED,
+							getObject(),
+							NULL)
+					!= LBC_OK)
 				return NULL;
 
-		}  // end else
+		} // end else
 
-	}  // end if
+	} // end if
 
 	// what will our initial status bits
-	ObjectStatusMaskType statusBits = MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNDER_CONSTRUCTION );
-	if( isRebuild )
-		statusBits.set( OBJECT_STATUS_RECONSTRUCTING );
+	ObjectStatusMaskType statusBits = MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_UNDER_CONSTRUCTION);
+	if (isRebuild)
+		statusBits.set(OBJECT_STATUS_RECONSTRUCTING);
 
 	// create an object at the destination location
-	Object *obj = TheThingFactory->newObject( what, owningPlayer->getDefaultTeam(), statusBits );
+	Object *obj = TheThingFactory->newObject(what, owningPlayer->getDefaultTeam(), statusBits);
 
 	// even though we haven't actually built anything yet, this keeps things tidy
-	obj->setProducer( getObject() );
-	obj->setBuilder( getObject() );
+	obj->setProducer(getObject());
+	obj->setBuilder(getObject());
 
 	// leave the supply truck state and now behave like a dozer.
 	exitingSupplyTruckState();
 
 	// take the required money away from the player
-	if( isRebuild == FALSE )
+	if (isRebuild == FALSE)
 	{
 		Money *money = owningPlayer->getMoney();
 
-		money->withdraw( what->calcCostToBuild( owningPlayer ) );
+		money->withdraw(what->calcCostToBuild(owningPlayer));
 
-	}  // end if
+	} // end if
 
 	//
 	// set a bit that this object is under construction, it is important to do this early
 	// before the hooks add/subtract power from a player are executed
 	//
-	obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNDER_CONSTRUCTION ) );
+	obj->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_UNDER_CONSTRUCTION));
 
 	// initialize object
-	obj->setPosition( pos );
-	obj->setOrientation( angle );
+	obj->setPosition(pos);
+	obj->setOrientation(angle);
 
 	// Flatten the terrain underneath the object, then adjust to the flattened height. jba.
 	TheTerrainLogic->flattenTerrain(obj);
@@ -427,29 +420,27 @@ Object *WorkerAIUpdate::construct( const ThingTemplate *what,
 	obj->setPosition(&adjustedPos);
 
 	// Note - very important that we add to map AFTER we flatten terrain. jba.
-	TheAI->pathfinder()->addObjectToPathfindMap( obj );
+	TheAI->pathfinder()->addObjectToPathfindMap(obj);
 
 	// "callback" event for structure created (note that it's not yet "complete")
-	owningPlayer->onStructureCreated( getObject(), obj );
+	owningPlayer->onStructureCreated(getObject(), obj);
 
 	// set a construction percent for the new object to zero and a status for under construction
-	obj->setConstructionPercent( 0.0 );
+	obj->setConstructionPercent(0.0);
 
 	// newly constructed objects start at one hit point
 	BodyModuleInterface *body = obj->getBodyModule();
-	body->internalChangeHealth( -body->getHealth() + 1.0f );
+	body->internalChangeHealth(-body->getHealth() + 1.0f);
 
 	// set the model action state to awaiting construction
 	obj->clearAndSetModelConditionFlags(
-		MAKE_MODELCONDITION_MASK2(MODELCONDITION_PARTIALLY_CONSTRUCTED, MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED),
-		MAKE_MODELCONDITION_MASK(MODELCONDITION_AWAITING_CONSTRUCTION)
-	);
+			MAKE_MODELCONDITION_MASK2(MODELCONDITION_PARTIALLY_CONSTRUCTED, MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED),
+			MAKE_MODELCONDITION_MASK(MODELCONDITION_AWAITING_CONSTRUCTION));
 
 	// we have a construction pending
-	newTask( DOZER_TASK_BUILD, obj );
+	newTask(DOZER_TASK_BUILD, obj);
 
 	return obj;
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -458,96 +449,91 @@ Object *WorkerAIUpdate::construct( const ThingTemplate *what,
 // ------------------------------------------------------------------------------------------------
 void WorkerAIUpdate::exitingSupplyTruckState()
 {
-	if( m_workerMachine->getCurrentStateID() == AS_SUPPLY_TRUCK )
+	if (m_workerMachine->getCurrentStateID() == AS_SUPPLY_TRUCK)
 	{
- 		// We've been given a Dozer specific order that the Supply Truck machine doesn't recognize
- 		// as BUSY (because this command also recognizes its own busy and is likewise waiting).
- 		// Explicitly slap it upside the head.
- 		if( getObject()->getAIUpdateInterface() )
- 		{
- 			getObject()->getAIUpdateInterface()->aiIdle(CMD_FROM_AI);
- 		}
- 		m_workerMachine->setState( AS_DOZER );
- 		// To clarify, I leave supply truck mode when I notice I am doing something not supply
- 		// truck related.  When given a construct command, I wait to do anything until I notice
- 		// I'm not busy.  Both states are being polite, so I must force the switch.
+		// We've been given a Dozer specific order that the Supply Truck machine doesn't recognize
+		// as BUSY (because this command also recognizes its own busy and is likewise waiting).
+		// Explicitly slap it upside the head.
+		if (getObject()->getAIUpdateInterface())
+		{
+			getObject()->getAIUpdateInterface()->aiIdle(CMD_FROM_AI);
+		}
+		m_workerMachine->setState(AS_DOZER);
+		// To clarify, I leave supply truck mode when I notice I am doing something not supply
+		// truck related.  When given a construct command, I wait to do anything until I notice
+		// I'm not busy.  Both states are being polite, so I must force the switch.
 	}
 }
-
 
 // ------------------------------------------------------------------------------------------------
 /** Given our current task and repair target, can we accept this as a new repair target */
 // ------------------------------------------------------------------------------------------------
-Bool WorkerAIUpdate::canAcceptNewRepair( Object *obj )
+Bool WorkerAIUpdate::canAcceptNewRepair(Object *obj)
 {
-
 	// sanity
-	if( obj == NULL )
+	if (obj == NULL)
 		return FALSE;
 
 	// if we're not repairing right now, we don't have any accept restrictions
-	if( getCurrentTask() != DOZER_TASK_REPAIR )
+	if (getCurrentTask() != DOZER_TASK_REPAIR)
 		return TRUE;
 
 	// get current repair target
-	Object *currentRepair = TheGameLogic->findObjectByID( m_task[ DOZER_TASK_REPAIR ].m_targetObjectID );
+	Object *currentRepair = TheGameLogic->findObjectByID(m_task[DOZER_TASK_REPAIR].m_targetObjectID);
 
-	if( currentRepair )
+	if (currentRepair)
 	{
-
 		// check for same object
-		if( currentRepair == obj )
+		if (currentRepair == obj)
 			return FALSE;
 
 		// check for repairing any tower on the same bridge
-		if( currentRepair->isKindOf( KINDOF_BRIDGE_TOWER ) &&
-				obj->isKindOf( KINDOF_BRIDGE_TOWER ) )
+		if (currentRepair->isKindOf(KINDOF_BRIDGE_TOWER) && obj->isKindOf(KINDOF_BRIDGE_TOWER))
 		{
 			BridgeTowerBehaviorInterface *currentTowerInterface = NULL;
 			BridgeTowerBehaviorInterface *newTowerInterface = NULL;
 
-			currentTowerInterface = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( currentRepair );
-			newTowerInterface = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( obj );
+			currentTowerInterface = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject(currentRepair);
+			newTowerInterface = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject(obj);
 
 			// sanity
-			if( currentTowerInterface == NULL || newTowerInterface == NULL )
+			if (currentTowerInterface == NULL || newTowerInterface == NULL)
 			{
-
-				DEBUG_CRASH(( "Unable to find bridge tower interface on object" ));
+				DEBUG_CRASH(("Unable to find bridge tower interface on object"));
 				return FALSE;
 
-			}  // end if
+			} // end if
 
 			// if they are part of the same bridge, ignore this repair command
-			if( currentTowerInterface->getBridgeID() == newTowerInterface->getBridgeID() )
+			if (currentTowerInterface->getBridgeID() == newTowerInterface->getBridgeID())
 				return FALSE;
 
-		}  // end if
+		} // end if
 
-	}  // end if, currentRepair object exists
+	} // end if, currentRepair object exists
 
 	// all is well
 	return TRUE;
 
-}  // end canAcceptNewRepair
+} // end canAcceptNewRepair
 
 //----------------------------------------------------------------------------------------
 void WorkerAIUpdate::privateIdle(CommandSourceType cmdSource)
 {
-// Leaving this commented out to show that although the regular supply truck does this, the
+	// Leaving this commented out to show that although the regular supply truck does this, the
 	// worker's dozer brain will get completely screwed.
 
 	// If the user gives a stop command, I have to turn off autopilot
-//	if( cmdSource == CMD_FROM_PLAYER )
-//		setForceBusyState(TRUE);
+	//	if( cmdSource == CMD_FROM_PLAYER )
+	//		setForceBusyState(TRUE);
 
 	AIUpdateInterface::privateIdle(cmdSource);
 }
 
 //----------------------------------------------------------------------------------------
-void WorkerAIUpdate::privateDock( Object *dock, CommandSourceType cmdSource )
+void WorkerAIUpdate::privateDock(Object *dock, CommandSourceType cmdSource)
 {
-	AIUpdateInterface::privateDock( dock, cmdSource );
+	AIUpdateInterface::privateDock(dock, cmdSource);
 
 	// If this is a command from a player, I will remember this as my favorite dock to override
 	// ResourceManager searches.
@@ -562,60 +548,58 @@ void WorkerAIUpdate::privateDock( Object *dock, CommandSourceType cmdSource )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::privateRepair( Object *obj, CommandSourceType cmdSource )
+void WorkerAIUpdate::privateRepair(Object *obj, CommandSourceType cmdSource)
 {
 	Object *dozer = getObject();
 
 	// sanity, if we can't repair the object then get out of there
-	if( TheActionManager->canRepairObject( dozer, obj, cmdSource ) == FALSE )
+	if (TheActionManager->canRepairObject(dozer, obj, cmdSource) == FALSE)
 		return;
 
 	// if we are already repairing this target do nothing
-	if( canAcceptNewRepair( obj ) == FALSE )
+	if (canAcceptNewRepair(obj) == FALSE)
 		return;
 
 	//
 	// if this object has already been targeted for repair by an object we won't also try to
 	// go repair it
 	ObjectID currentRepairer = obj->getSoleHealingBenefactor();
-	if( currentRepairer != INVALID_ID && currentRepairer != dozer->getID() )
+	if (currentRepairer != INVALID_ID && currentRepairer != dozer->getID())
 		return;
 
 	// start the new task
-	newTask( DOZER_TASK_REPAIR, obj );
+	newTask(DOZER_TASK_REPAIR, obj);
 
-}  // end privateRepair
+} // end privateRepair
 
 // ------------------------------------------------------------------------------------------------
 /** Resume construction on a building */
 // ------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::privateResumeConstruction( Object *obj, CommandSourceType cmdSource )
+void WorkerAIUpdate::privateResumeConstruction(Object *obj, CommandSourceType cmdSource)
 {
-
 	// sanity
-	if( obj == NULL )
+	if (obj == NULL)
 		return;
 
 	// make sure we can resume construction on this
-	if( TheActionManager->canResumeConstructionOf( getObject(), obj, cmdSource ) == FALSE )
+	if (TheActionManager->canResumeConstructionOf(getObject(), obj, cmdSource) == FALSE)
 		return;
 
 	// start the new task for construction
-	newTask( DOZER_TASK_BUILD, obj );
+	newTask(DOZER_TASK_BUILD, obj);
 
-}  // end privateResumeConstruction
+} // end privateResumeConstruction
 
 //-------------------------------------------------------------------------------------------------
 /** Issue and order to the dozer */
 //-------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::newTask( DozerTask task, Object* target )
+void WorkerAIUpdate::newTask(DozerTask task, Object *target)
 {
+	// sanity
+	DEBUG_ASSERTCRASH(task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'", task));
 
 	// sanity
-	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'", task) );
-
-	// sanity
-	if( target == NULL )
+	if (target == NULL)
 		return;
 
 	m_preferredDock = INVALID_ID; // If we are dozing, we don't want any supply truck stuff going on. jba.
@@ -625,12 +609,11 @@ void WorkerAIUpdate::newTask( DozerTask task, Object* target )
 	// for the other tasks we just forget what we were doing and the new target takes
 	// precedence for the task
 	//
-	if( task == DOZER_TASK_BUILD || task == DOZER_TASK_REPAIR )
+	if (task == DOZER_TASK_BUILD || task == DOZER_TASK_REPAIR)
 	{
-
 		// handle getting two tasks
-		if( isTaskPending( task ) == TRUE )
-			cancelTask( task );
+		if (isTaskPending(task) == TRUE)
+			cancelTask(task);
 
 		// get our object
 		Object *me = getObject();
@@ -638,7 +621,7 @@ void WorkerAIUpdate::newTask( DozerTask task, Object* target )
 		Coord3D position;
 		target = DozerAIUpdate::findGoodBuildOrRepairPositionAndTarget(me, target, position);
 		if (target == NULL)
-			return;	// could happen for some bridges
+			return; // could happen for some bridges
 
 		//
 		// for building, we say that even "thinking" about building or rebuilding an object
@@ -647,190 +630,173 @@ void WorkerAIUpdate::newTask( DozerTask task, Object* target )
 		// care of it and then they won't be even try to resume a build since we don't allow
 		// multiple dozers/workers to double up on construction efforts
 		//
-		if( task == DOZER_TASK_BUILD )
-			target->setBuilder( me );
+		if (task == DOZER_TASK_BUILD)
+			target->setBuilder(me);
 
-		m_dockPoint[ task ][ DOZER_DOCK_POINT_START ].valid			= TRUE;
-		m_dockPoint[ task ][ DOZER_DOCK_POINT_START ].location	= position;
-		m_dockPoint[ task ][ DOZER_DOCK_POINT_ACTION ].valid		= TRUE;
-		m_dockPoint[ task ][ DOZER_DOCK_POINT_ACTION ].location = position;
-		m_dockPoint[ task ][ DOZER_DOCK_POINT_END ].valid				= TRUE;
-		m_dockPoint[ task ][ DOZER_DOCK_POINT_END ].location		= position;
+		m_dockPoint[task][DOZER_DOCK_POINT_START].valid = TRUE;
+		m_dockPoint[task][DOZER_DOCK_POINT_START].location = position;
+		m_dockPoint[task][DOZER_DOCK_POINT_ACTION].valid = TRUE;
+		m_dockPoint[task][DOZER_DOCK_POINT_ACTION].location = position;
+		m_dockPoint[task][DOZER_DOCK_POINT_END].valid = TRUE;
+		m_dockPoint[task][DOZER_DOCK_POINT_END].location = position;
 
-	}  // end if, build task
+	} // end if, build task
 
 	// set the new task target and the frame in which we got this order
-	m_task[ task ].m_targetObjectID = target->getID();
-	m_task[ task ].m_taskOrderFrame = TheGameLogic->getFrame();
+	m_task[task].m_targetObjectID = target->getID();
+	m_task[task].m_taskOrderFrame = TheGameLogic->getFrame();
 
 	// reset the dozer behavior so that it can re-evluate which task to continue working on
 	m_dozerMachine->resetToDefaultState();
 
 	// reset the workermachine, if we've been acting like a supply truck
-	if( m_workerMachine->getCurrentStateID() == AS_SUPPLY_TRUCK )
+	if (m_workerMachine->getCurrentStateID() == AS_SUPPLY_TRUCK)
 	{
 		// We've been given a Dozer specific order that the Supply Truck machine doesn't recognize
 		// as BUSY (because this command also recognizes its own busy and is likewise waiting).
 		// Explicitly slap it upside the head.
-		if( getObject()->getAIUpdateInterface() )
+		if (getObject()->getAIUpdateInterface())
 		{
 			getObject()->getAIUpdateInterface()->aiIdle(CMD_FROM_AI);
 		}
-		m_workerMachine->setState( AS_DOZER );
+		m_workerMachine->setState(AS_DOZER);
 		// To clarify, I leave supply truck mode when I notice I am doing something not supply
 		// truck related.  When given a construct command, I wait to do anything until I notice
 		// I'm not busy.  Both states are being polite, so I must force the switch.
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Cancel a task and reset the dozer behavior state machine so that it can
-	* re-evaluate what it wants to do if it was working on the task being
-	* cancelled */
+ * re-evaluate what it wants to do if it was working on the task being
+ * cancelled */
 //-------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::cancelTask( DozerTask task )
+void WorkerAIUpdate::cancelTask(DozerTask task)
 {
-
 	// clear the order
-	internalCancelTask( task );
+	internalCancelTask(task);
 
 	// reset the machine to we can re-evaluate what we want to do
 	m_dozerMachine->resetToDefaultState();
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Is there a given task waiting to be done */
 //-------------------------------------------------------------------------------------------------
-Bool WorkerAIUpdate::isTaskPending( DozerTask task )
+Bool WorkerAIUpdate::isTaskPending(DozerTask task)
 {
-
 	// sanity
-	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'", task) );
+	DEBUG_ASSERTCRASH(task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'", task));
 
-	return m_task[ task ].m_targetObjectID != 0 ? TRUE : FALSE;
-
+	return m_task[task].m_targetObjectID != 0 ? TRUE : FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Is there any task pending */
 //-------------------------------------------------------------------------------------------------
-Bool WorkerAIUpdate::isAnyTaskPending( void )
+Bool WorkerAIUpdate::isAnyTaskPending(void)
 {
-
-	for( Int i = 0; i < DOZER_NUM_TASKS; i++ )
-		if( isTaskPending( (DozerTask)i ) )
+	for (Int i = 0; i < DOZER_NUM_TASKS; i++)
+		if (isTaskPending((DozerTask)i))
 			return TRUE;
 
 	return FALSE;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Get the target object of a given task */
 //-------------------------------------------------------------------------------------------------
-ObjectID WorkerAIUpdate::getTaskTarget( DozerTask task )
+ObjectID WorkerAIUpdate::getTaskTarget(DozerTask task)
 {
-
 	// sanity
-	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'", task) );
+	DEBUG_ASSERTCRASH(task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'", task));
 
-	return m_task[ task ].m_targetObjectID;
-
+	return m_task[task].m_targetObjectID;
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Set a task as successfully completed */
 //-------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::internalTaskComplete( DozerTask task )
+void WorkerAIUpdate::internalTaskComplete(DozerTask task)
 {
-
 	// sanity
-	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'", task) );
+	DEBUG_ASSERTCRASH(task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'", task));
 
 	// call the single method that gets called for completing and canceling tasks
-	internalTaskCompleteOrCancelled( task );
+	internalTaskCompleteOrCancelled(task);
 
 	// remove the info for this task
-	m_task[ task ].m_targetObjectID = INVALID_ID;
-	m_task[ task ].m_taskOrderFrame = 0;
+	m_task[task].m_targetObjectID = INVALID_ID;
+	m_task[task].m_taskOrderFrame = 0;
 
 	// remove dock point info for this task
-	for( Int i = 0; i < DOZER_NUM_DOCK_POINTS; i++ )
-		m_dockPoint[ task ][ i ].valid = FALSE;
-
+	for (Int i = 0; i < DOZER_NUM_DOCK_POINTS; i++)
+		m_dockPoint[task][i].valid = FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Clear a task from the Dozer for consideration, we can use this when a goal object becomes
-	* invalid/destroyed etc. */
+ * invalid/destroyed etc. */
 //-------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::internalCancelTask( DozerTask task )
+void WorkerAIUpdate::internalCancelTask(DozerTask task)
 {
-
 	// sanity
-	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'", task) );
+	DEBUG_ASSERTCRASH(task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'", task));
 
-	if(task < 0 || task >= DOZER_NUM_TASKS)
-		return;  //DAMNIT!  You CANNOT assert and then not handle the damn error!  The.  Code.  Must.  Not.  Crash.
+	if (task < 0 || task >= DOZER_NUM_TASKS)
+		return; // DAMNIT!  You CANNOT assert and then not handle the damn error!  The.  Code.  Must.  Not.  Crash.
 
 	// call the single method that gets called for completing and canceling tasks
-	internalTaskCompleteOrCancelled( task );
+	internalTaskCompleteOrCancelled(task);
 
 	// remove the info for this task
-	m_task[ task ].m_targetObjectID = INVALID_ID;
-	m_task[ task ].m_taskOrderFrame = 0;
+	m_task[task].m_targetObjectID = INVALID_ID;
+	m_task[task].m_taskOrderFrame = 0;
 
 	// remove dock point info for this task
-	for( Int i = 0; i < DOZER_NUM_DOCK_POINTS; i++ )
-		m_dockPoint[ task ][ i ].valid = FALSE;
+	for (Int i = 0; i < DOZER_NUM_DOCK_POINTS; i++)
+		m_dockPoint[task][i].valid = FALSE;
 
 	// stop the dozer from moving
 	AIUpdateInterface *ai = getObject()->getAIUpdateInterface();
-	if( !ai )
+	if (!ai)
 	{
 		return;
 	}
 	/// @todo we really need a stop command instead of making it move to it's current location
-	ai->aiMoveToPosition( getObject()->getPosition(), CMD_FROM_AI );
-
+	ai->aiMoveToPosition(getObject()->getPosition(), CMD_FROM_AI);
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
+void WorkerAIUpdate::internalTaskCompleteOrCancelled(DozerTask task)
 {
-
-	switch( task )
+	switch (task)
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case DOZER_TASK_INVALID:
 		{
+			break; // do nothing, this is really no task
 
-			break;  // do nothing, this is really no task
-
-		}  // end invalid
+		} // end invalid
 
 		// --------------------------------------------------------------------------------------------
 		case DOZER_TASK_BUILD:
 		{
-
 			// the builder is no longer actively building something
-			getObject()->clearModelConditionState( MODELCONDITION_ACTIVELY_CONSTRUCTING );
+			getObject()->clearModelConditionState(MODELCONDITION_ACTIVELY_CONSTRUCTING);
 
 			// And the thing we were working on is no longer being actively built
 
 			///@todo This would be correct except that we don't have idle crane animations and it is December.
-//			Object* goalObject = TheGameLogic->findObjectByID(m_task[task].m_targetObjectID);
-//			if (goalObject != NULL)
-//			{
-//				goalObject->clearModelConditionState(MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED);
-//			}
+			//			Object* goalObject = TheGameLogic->findObjectByID(m_task[task].m_targetObjectID);
+			//			if (goalObject != NULL)
+			//			{
+			//				goalObject->clearModelConditionState(MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED);
+			//			}
 			break;
 
-		}  // end build
+		} // end build
 
 		// --------------------------------------------------------------------------------------------
 		case DOZER_TASK_REPAIR:
@@ -838,63 +804,59 @@ void WorkerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
 			Object *obj = NULL;
 
 			// the builder is no longer actively repairing something
-			getObject()->clearModelConditionState( MODELCONDITION_ACTIVELY_CONSTRUCTING );
+			getObject()->clearModelConditionState(MODELCONDITION_ACTIVELY_CONSTRUCTING);
 
 			// get object to reapir (if present)
-			obj = TheGameLogic->findObjectByID( m_task[ task ].m_targetObjectID );
+			obj = TheGameLogic->findObjectByID(m_task[task].m_targetObjectID);
 
-			if( obj )
+			if (obj)
 			{
- 				// when we're done repairing bridges, tell the scaffolding to go away
- 				if( obj->isKindOf( KINDOF_BRIDGE_TOWER ) )
- 					removeBridgeScaffolding( obj );
+				// when we're done repairing bridges, tell the scaffolding to go away
+				if (obj->isKindOf(KINDOF_BRIDGE_TOWER))
+					removeBridgeScaffolding(obj);
 
-			}  // end if
+			} // end if
 
 			break;
 
-		}  // end repair
+		} // end repair
 
 		// --------------------------------------------------------------------------------------------
 		case DOZER_TASK_FORTIFY:
 		{
-
 			break;
 
-		}  // end fortify
+		} // end fortify
 
 		// --------------------------------------------------------------------------------------------
 		default:
 		{
-
-			DEBUG_CRASH(( "internalTaskCompleteOrCancelled: Unknown Dozer task '%d'", task ));
+			DEBUG_CRASH(("internalTaskCompleteOrCancelled: Unknown Dozer task '%d'", task));
 			break;
 
-		}  // end default
+		} // end default
 
-	}  // end switch( task )
-
+	} // end switch( task )
 }
 
 //-------------------------------------------------------------------------------------------------
 /** If we were building something, kill the active-construction flag on it */
 //-------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::onDelete( void )
+void WorkerAIUpdate::onDelete(void)
 {
 	Int i;
 
 	// cancel any of the tasks we had queued up
-	for( i = DOZER_TASK_FIRST; i < DOZER_NUM_TASKS; ++i )
+	for (i = DOZER_TASK_FIRST; i < DOZER_NUM_TASKS; ++i)
 	{
+		if (isTaskPending((DozerTask)i))
+			cancelTask((DozerTask)i);
 
-		if( isTaskPending( (DozerTask)i ) )
-			cancelTask( (DozerTask)i );
+	} // end for i
 
-	}  // end for i
-
-	for( i = 0; i < DOZER_NUM_TASKS; i++ )
+	for (i = 0; i < DOZER_NUM_TASKS; i++)
 	{
-		Object* goalObject = TheGameLogic->findObjectByID(m_task[i].m_targetObjectID);
+		Object *goalObject = TheGameLogic->findObjectByID(m_task[i].m_targetObjectID);
 		if (goalObject != NULL)
 		{
 			goalObject->clearModelConditionState(MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED);
@@ -905,20 +867,20 @@ void WorkerAIUpdate::onDelete( void )
 //-------------------------------------------------------------------------------------------------
 /** Get the most recently issued task */
 //-------------------------------------------------------------------------------------------------
-DozerTask WorkerAIUpdate::getMostRecentCommand( void )
+DozerTask WorkerAIUpdate::getMostRecentCommand(void)
 {
 	Int i;
 	DozerTask mostRecentTask = DOZER_TASK_INVALID;
 	UnsignedInt mostRecentFrame = 0;
 
-	for( i = 0; i < DOZER_NUM_TASKS; i++ )
+	for (i = 0; i < DOZER_NUM_TASKS; i++)
 	{
-		if( isTaskPending( (DozerTask)i ) )
+		if (isTaskPending((DozerTask)i))
 		{
-			if( m_task[ i ].m_taskOrderFrame > mostRecentFrame )
+			if (m_task[i].m_taskOrderFrame > mostRecentFrame)
 			{
 				mostRecentTask = (DozerTask)i;
-				mostRecentFrame = m_task[ i ].m_taskOrderFrame;
+				mostRecentFrame = m_task[i].m_taskOrderFrame;
 			}
 		}
 	}
@@ -927,25 +889,24 @@ DozerTask WorkerAIUpdate::getMostRecentCommand( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-const Coord3D* WorkerAIUpdate::getDockPoint( DozerTask task, DozerDockPoint point )
+const Coord3D *WorkerAIUpdate::getDockPoint(DozerTask task, DozerDockPoint point)
 {
-
 	// sanity
-	if( task < 0 || task >= DOZER_NUM_TASKS )
+	if (task < 0 || task >= DOZER_NUM_TASKS)
 		return NULL;
 
 	// sanity
-	if( point < 0 || point >= DOZER_NUM_DOCK_POINTS )
+	if (point < 0 || point >= DOZER_NUM_DOCK_POINTS)
 		return NULL;
 
 	// if the point has been set (is valid) then return it
-	if( m_dockPoint[ task ][ point ].valid )
-		return &m_dockPoint[ task ][ point ].location;
+	if (m_dockPoint[task][point].valid)
+		return &m_dockPoint[task][point].location;
 
 	// no valid point has been set for this dock point on this task
 	return NULL;
 
-}  // end getDockPoint
+} // end getDockPoint
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -955,14 +916,13 @@ const Coord3D* WorkerAIUpdate::getDockPoint( DozerTask task, DozerDockPoint poin
 // ------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::aiDoCommand(const AICommandParms* parms)
+void WorkerAIUpdate::aiDoCommand(const AICommandParms *parms)
 {
-
 	//
 	// anytime we get a command, just remove any model condition that has us actively building
 	// if we need to show that, that bit will be set anyway again during the build process
 	//
-	getObject()->clearModelConditionState( MODELCONDITION_ACTIVELY_CONSTRUCTING );
+	getObject()->clearModelConditionState(MODELCONDITION_ACTIVELY_CONSTRUCTING);
 
 	if (!isAllowedToRespondToAiCommands(parms))
 		return;
@@ -970,70 +930,64 @@ void WorkerAIUpdate::aiDoCommand(const AICommandParms* parms)
 	// create our machines if they don't yet exist
 	createMachines();
 
-	switch( parms->m_cmd )
+	switch (parms->m_cmd)
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case AICMD_REPAIR:
 		{
-
 			// if we have no task right now, go idle so we can immediately respond to this
-			if( getCurrentTask() == DOZER_TASK_INVALID )
-				aiIdle( CMD_FROM_AI );
+			if (getCurrentTask() == DOZER_TASK_INVALID)
+				aiIdle(CMD_FROM_AI);
 
 			// do the repair
 			privateRepair(parms->m_obj, parms->m_cmdSource);
 			break;
 
-		}  // end repair
+		} // end repair
 
 		// --------------------------------------------------------------------------------------------
 		case AICMD_RESUME_CONSTRUCTION:
 		{
-
 			// if we have no task right now, go idle so we can immediately respond to this
-			if( getCurrentTask() == DOZER_TASK_INVALID )
-				aiIdle( CMD_FROM_AI );
+			if (getCurrentTask() == DOZER_TASK_INVALID)
+				aiIdle(CMD_FROM_AI);
 
 			// do the command
-			privateResumeConstruction( parms->m_obj, parms->m_cmdSource );
+			privateResumeConstruction(parms->m_obj, parms->m_cmdSource);
 			break;
 
-		}  // end resume construction
+		} // end resume construction
 
 		// --------------------------------------------------------------------------------------------
 		default:
 		{
-
 			// if this is from the player, cancel our current task
-			if( parms->m_cmdSource == CMD_FROM_PLAYER && getCurrentTask() != DOZER_TASK_INVALID )
-				cancelTask( getCurrentTask() );
+			if (parms->m_cmdSource == CMD_FROM_PLAYER && getCurrentTask() != DOZER_TASK_INVALID)
+				cancelTask(getCurrentTask());
 
 			// issue the command
 			AIUpdateInterface::aiDoCommand(parms);
 
 			// when a player issues commands, this will cause the dozer to re-evaluate what it's doing
-			if( parms->m_cmdSource == CMD_FROM_PLAYER )
+			if (parms->m_cmdSource == CMD_FROM_PLAYER)
 				m_dozerMachine->resetToDefaultState();
 			break;
 
-		}  // end default
+		} // end default
 
-	}  // end switch
+	} // end switch
 
-	if (isClearingMines() && m_numberBoxes > 0 )
+	if (isClearingMines() && m_numberBoxes > 0)
 	{
 		// if clearing mines, we drop any boxes we were carrying
 		m_numberBoxes = 0;
 		Drawable *draw = getObject()->getDrawable();
-		if( draw )
+		if (draw)
 		{
-			draw->updateDrawableSupplyStatus( getWorkerAIUpdateModuleData()->m_maxBoxesData, m_numberBoxes );
+			draw->updateDrawableSupplyStatus(getWorkerAIUpdateModuleData()->m_maxBoxesData, m_numberBoxes);
 		}
 	}
-
 }
-
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -1047,15 +1001,15 @@ void WorkerAIUpdate::aiDoCommand(const AICommandParms* parms)
 // ------------------------------------------------------------------------------------------------
 Bool WorkerAIUpdate::loseOneBox()
 {
-	if( m_numberBoxes == 0 )
+	if (m_numberBoxes == 0)
 		return FALSE;
 
 	m_numberBoxes--;
 
 	Drawable *draw = getObject()->getDrawable();
-	if( draw )
+	if (draw)
 	{
-		draw->updateDrawableSupplyStatus( getWorkerAIUpdateModuleData()->m_maxBoxesData, m_numberBoxes );
+		draw->updateDrawableSupplyStatus(getWorkerAIUpdateModuleData()->m_maxBoxesData, m_numberBoxes);
 	}
 
 	return TRUE;
@@ -1063,27 +1017,28 @@ Bool WorkerAIUpdate::loseOneBox()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool WorkerAIUpdate::gainOneBox( Int remainingStock )
+Bool WorkerAIUpdate::gainOneBox(Int remainingStock)
 {
-	if( getWorkerAIUpdateModuleData() && m_numberBoxes >= getWorkerAIUpdateModuleData()->m_maxBoxesData )
+	if (getWorkerAIUpdateModuleData() && m_numberBoxes >= getWorkerAIUpdateModuleData()->m_maxBoxesData)
 		return FALSE;
 
 	++m_numberBoxes;
 
-	//if I just took the last box,
-	//i will announce that this supply source is now empty
+	// if I just took the last box,
+	// i will announce that this supply source is now empty
 	if (remainingStock == 0)
 	{
-		Object* bestWarehouse = getObject()->getControllingPlayer()->getResourceGatheringManager()->findBestSupplyWarehouse( getObject() );
+		Object *bestWarehouse =
+				getObject()->getControllingPlayer()->getResourceGatheringManager()->findBestSupplyWarehouse(getObject());
 
 		Bool playDepleted = FALSE;
-		if ( bestWarehouse )
+		if (bestWarehouse)
 		{
-			//figure out whether the best one is considerably far from the previous one (current position)
+			// figure out whether the best one is considerably far from the previous one (current position)
 			Coord3D delta = *getObject()->getPosition();
-			delta.sub( bestWarehouse->getPosition() );
-			if ( delta.length() > getWarehouseScanDistance()/4)
-			playDepleted = TRUE;
+			delta.sub(bestWarehouse->getPosition());
+			if (delta.length() > getWarehouseScanDistance() / 4)
+				playDepleted = TRUE;
 		}
 		else
 			playDepleted = TRUE;
@@ -1095,11 +1050,10 @@ Bool WorkerAIUpdate::gainOneBox( Int remainingStock )
 		}
 	}
 
-
 	Drawable *draw = getObject()->getDrawable();
-	if( draw )
+	if (draw)
 	{
-		draw->updateDrawableSupplyStatus( getWorkerAIUpdateModuleData()->m_maxBoxesData, m_numberBoxes );
+		draw->updateDrawableSupplyStatus(getWorkerAIUpdateModuleData()->m_maxBoxesData, m_numberBoxes);
 	}
 
 	return TRUE;
@@ -1110,7 +1064,7 @@ Bool WorkerAIUpdate::gainOneBox( Int remainingStock )
 Bool WorkerAIUpdate::isSupplyTruckBrainActiveAndBusy()
 {
 	return (m_workerMachine->getCurrentStateID() == AS_SUPPLY_TRUCK)
-				&& (m_supplyTruckStateMachine->getCurrentStateID() == ST_BUSY);
+			&& (m_supplyTruckStateMachine->getCurrentStateID() == ST_BUSY);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1134,17 +1088,17 @@ void WorkerAIUpdate::resetDozerBrain()
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 // Worker's master state machine, that controls Dozerness or Supplytruckness
-class ActAsDozerState :  public State
+class ActAsDozerState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ActAsDozerState, "ActAsDozerState")
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){};
-	virtual void loadPostProcess(){};
+	virtual void crc(Xfer *xfer) {};
+	virtual void xfer(Xfer *xfer) {};
+	virtual void loadPostProcess() {};
 
 public:
-	ActAsDozerState( StateMachine *machine ) :State( machine, "ActAsDozerState" ){}
+	ActAsDozerState(StateMachine *machine) : State(machine, "ActAsDozerState") {}
 	virtual StateReturnType onEnter();
 	virtual StateReturnType update();
 	virtual StateReturnType onExit();
@@ -1153,17 +1107,17 @@ EMPTY_DTOR(ActAsDozerState)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-class ActAsSupplyTruckState :  public State
+class ActAsSupplyTruckState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ActAsSupplyTruckState, "ActAsSupplyTruckState")
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){};
-	virtual void loadPostProcess(){};
+	virtual void crc(Xfer *xfer) {};
+	virtual void xfer(Xfer *xfer) {};
+	virtual void loadPostProcess() {};
 
 public:
-	ActAsSupplyTruckState( StateMachine *machine ) :State( machine, "ActAsSupplyTruckState" ){}
+	ActAsSupplyTruckState(StateMachine *machine) : State(machine, "ActAsSupplyTruckState") {}
 	virtual StateReturnType onEnter();
 	virtual StateReturnType update();
 	virtual StateReturnType onExit();
@@ -1172,23 +1126,26 @@ EMPTY_DTOR(ActAsSupplyTruckState)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-WorkerStateMachine::WorkerStateMachine( Object *owner ) : StateMachine( owner, "WorkerStateMachine" )
+WorkerStateMachine::WorkerStateMachine(Object *owner) : StateMachine(owner, "WorkerStateMachine")
 {
-	static const StateConditionInfo asDozerConditions[] =
-	{
+	static const StateConditionInfo asDozerConditions[] = {
 		StateConditionInfo(supplyTruckSubMachineWantsToEnter, AS_SUPPLY_TRUCK, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL) // keep last
 	};
 
-	static const StateConditionInfo asTruckConditions[] =
-	{
+	static const StateConditionInfo asTruckConditions[] = {
 		StateConditionInfo(supplyTruckSubMachineReadyToLeave, AS_DOZER, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL) // keep last
 	};
 
 	// order matters: first state is the default state.
-	defineState( AS_DOZER,					newInstance(ActAsDozerState)( this ), INVALID_STATE_ID, INVALID_STATE_ID, asDozerConditions );
-	defineState( AS_SUPPLY_TRUCK,		newInstance(ActAsSupplyTruckState)( this ), INVALID_STATE_ID, INVALID_STATE_ID, asTruckConditions );
+	defineState(AS_DOZER, newInstance(ActAsDozerState)(this), INVALID_STATE_ID, INVALID_STATE_ID, asDozerConditions);
+	defineState(
+			AS_SUPPLY_TRUCK,
+			newInstance(ActAsSupplyTruckState)(this),
+			INVALID_STATE_ID,
+			INVALID_STATE_ID,
+			asTruckConditions);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1200,68 +1157,67 @@ WorkerStateMachine::~WorkerStateMachine()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void WorkerStateMachine::crc( Xfer *xfer )
+void WorkerStateMachine::crc(Xfer *xfer)
 {
 	StateMachine::crc(xfer);
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
-void WorkerStateMachine::xfer( Xfer *xfer )
+void WorkerStateMachine::xfer(Xfer *xfer)
 {
 	XferVersion cv = 1;
 	XferVersion v = cv;
-	xfer->xferVersion( &v, cv );
+	xfer->xferVersion(&v, cv);
 
 	StateMachine::xfer(xfer);
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void WorkerStateMachine::loadPostProcess( void )
+void WorkerStateMachine::loadPostProcess(void)
 {
 	StateMachine::loadPostProcess();
-}  // end loadPostProcess
+} // end loadPostProcess
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool WorkerStateMachine::supplyTruckSubMachineWantsToEnter( State *thisState, void* userData )
+Bool WorkerStateMachine::supplyTruckSubMachineWantsToEnter(State *thisState, void *userData)
 {
 	Object *owner = thisState->getMachineOwner();
-	WorkerAIUpdate *update = (WorkerAIUpdate*)owner->getAIUpdateInterface();
-	if( !update )
+	WorkerAIUpdate *update = (WorkerAIUpdate *)owner->getAIUpdateInterface();
+	if (!update)
 	{
 		return false;
 	}
 	AIStateType masterState = update->getAIStateType();
 
-	//If I detect a Supply force message, or if I have been put straight in dock,
-	//then the worker master part of me wants to switch to the Supply sub-brain
+	// If I detect a Supply force message, or if I have been put straight in dock,
+	// then the worker master part of me wants to switch to the Supply sub-brain
 
 	return update->isForcedIntoWantingState() || (masterState == AI_DOCK);
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool WorkerStateMachine::supplyTruckSubMachineReadyToLeave( State *thisState, void* userData )
+Bool WorkerStateMachine::supplyTruckSubMachineReadyToLeave(State *thisState, void *userData)
 {
 	Object *owner = thisState->getMachineOwner();
-	WorkerAIUpdate *update = (WorkerAIUpdate*)owner->getAIUpdateInterface();
-	if( !update )
+	WorkerAIUpdate *update = (WorkerAIUpdate *)owner->getAIUpdateInterface();
+	if (!update)
 	{
 		return false;
 	}
-//	AIStateType masterState = update->getAIStateType();
+	//	AIStateType masterState = update->getAIStateType();
 
 	// It isn't ready to leave if it is on its way in.  The first clause
 	// allow a latch for a moment
 	// so there is no transition out on the way in.  Active and Busy means it isn't doing
 	// anything Supply related.
 
-	return !supplyTruckSubMachineWantsToEnter( thisState, NULL )
-				&& update->isSupplyTruckBrainActiveAndBusy();
+	return !supplyTruckSubMachineWantsToEnter(thisState, NULL) && update->isSupplyTruckBrainActiveAndBusy();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1283,8 +1239,8 @@ StateReturnType ActAsDozerState::update()
 StateReturnType ActAsDozerState::onExit()
 {
 	Object *owner = getMachineOwner();
-	WorkerAIUpdate *update = (WorkerAIUpdate*)owner->getAIUpdateInterface();
-	if( !update )
+	WorkerAIUpdate *update = (WorkerAIUpdate *)owner->getAIUpdateInterface();
+	if (!update)
 	{
 		return STATE_FAILURE;
 	}
@@ -1293,7 +1249,6 @@ StateReturnType ActAsDozerState::onExit()
 
 	return STATE_CONTINUE;
 }
-
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -1314,8 +1269,8 @@ StateReturnType ActAsSupplyTruckState::update()
 StateReturnType ActAsSupplyTruckState::onExit()
 {
 	Object *owner = getMachineOwner();
-	WorkerAIUpdate *update = (WorkerAIUpdate*)owner->getAIUpdateInterface();
-	if( !update )
+	WorkerAIUpdate *update = (WorkerAIUpdate *)owner->getAIUpdateInterface();
+	if (!update)
 	{
 		return STATE_FAILURE;
 	}
@@ -1328,74 +1283,72 @@ StateReturnType ActAsSupplyTruckState::onExit()
 // ------------------------------------------------------------------------------------------------
 /** Create the bridge scaffolding if necessary for the bridge that is attached to this tower */
 // ------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::createBridgeScaffolding( Object *bridgeTower )
+void WorkerAIUpdate::createBridgeScaffolding(Object *bridgeTower)
 {
-
 	// sanity
-	if( bridgeTower == NULL )
+	if (bridgeTower == NULL)
 		return;
 
 	// get the bridge behavior interface from the bridge object that this tower is a part of
-	BridgeTowerBehaviorInterface *btbi = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( bridgeTower );
-	if( btbi == NULL )
+	BridgeTowerBehaviorInterface *btbi = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject(bridgeTower);
+	if (btbi == NULL)
 		return;
-	Object *bridgeObject = TheGameLogic->findObjectByID( btbi->getBridgeID() );
-	if( bridgeObject == NULL )
+	Object *bridgeObject = TheGameLogic->findObjectByID(btbi->getBridgeID());
+	if (bridgeObject == NULL)
 		return;
-	BridgeBehaviorInterface *bbi = BridgeBehavior::getBridgeBehaviorInterfaceFromObject( bridgeObject );
-	if( bbi == NULL )
+	BridgeBehaviorInterface *bbi = BridgeBehavior::getBridgeBehaviorInterfaceFromObject(bridgeObject);
+	if (bbi == NULL)
 		return;
 
 	// tell the bridge to create scaffolding if necessary
 	bbi->createScaffolding();
 
-}  // end createBridgeScaffolding
+} // end createBridgeScaffolding
 
 // ------------------------------------------------------------------------------------------------
 /** Remove the bridge scaffolding from the bridge object that is attached to this tower */
 // ------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::removeBridgeScaffolding( Object *bridgeTower )
+void WorkerAIUpdate::removeBridgeScaffolding(Object *bridgeTower)
 {
-
 	// sanity
-	if( bridgeTower == NULL )
+	if (bridgeTower == NULL)
 		return;
 
 	// get the bridge behavior interface from the bridge object that this tower is a part of
-	BridgeTowerBehaviorInterface *btbi = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( bridgeTower );
-	if( btbi == NULL )
+	BridgeTowerBehaviorInterface *btbi = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject(bridgeTower);
+	if (btbi == NULL)
 		return;
-	Object *bridgeObject = TheGameLogic->findObjectByID( btbi->getBridgeID() );
-	if( bridgeObject == NULL )
+	Object *bridgeObject = TheGameLogic->findObjectByID(btbi->getBridgeID());
+	if (bridgeObject == NULL)
 		return;
-	BridgeBehaviorInterface *bbi = BridgeBehavior::getBridgeBehaviorInterfaceFromObject( bridgeObject );
-	if( bbi == NULL )
+	BridgeBehaviorInterface *bbi = BridgeBehavior::getBridgeBehaviorInterfaceFromObject(bridgeObject);
+	if (bbi == NULL)
 		return;
 
 	// tell the bridge to end any scaffolding from repairing
 	bbi->removeScaffolding();
 
-}  // end removeBridgeScaffolding
+} // end removeBridgeScaffolding
 
 //------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::startBuildingSound( const AudioEventRTS *sound, ObjectID constructionSiteID )
+void WorkerAIUpdate::startBuildingSound(const AudioEventRTS *sound, ObjectID constructionSiteID)
 {
 	m_buildingSound = *sound;
-	m_buildingSound.setObjectID( constructionSiteID );
-	m_buildingSound.setPlayingHandle( TheAudio->addAudioEvent( &m_buildingSound ) );
+	m_buildingSound.setObjectID(constructionSiteID);
+	m_buildingSound.setPlayingHandle(TheAudio->addAudioEvent(&m_buildingSound));
 }
 
 //------------------------------------------------------------------------------------------------
 void WorkerAIUpdate::finishBuildingSound()
 {
-	TheAudio->removeAudioEvent( m_buildingSound.getPlayingHandle() );
+	TheAudio->removeAudioEvent(m_buildingSound.getPlayingHandle());
 }
 
 //------------------------------------------------------------------------------------------------
 Int WorkerAIUpdate::getUpgradedSupplyBoost() const
 {
 	Player *player = getObject()->getControllingPlayer();
-	static const UpgradeTemplate *workerShoeTemplate = TheUpgradeCenter->findUpgrade( "Upgrade_GLAWorkerShoes" );
+	static const UpgradeTemplate *workerShoeTemplate = TheUpgradeCenter->findUpgrade("Upgrade_GLAWorkerShoes");
 
 	if (player && workerShoeTemplate && player->hasUpgradeComplete(workerShoeTemplate))
 		return getWorkerAIUpdateModuleData()->m_upgradedSupplyBoost;
@@ -1403,41 +1356,41 @@ Int WorkerAIUpdate::getUpgradedSupplyBoost() const
 		return 0;
 }
 
-
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::crc( Xfer *xfer )
+void WorkerAIUpdate::crc(Xfer *xfer)
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::xfer( Xfer *xfer )
+void WorkerAIUpdate::xfer(Xfer *xfer)
 {
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion(&version, currentVersion);
 
- // extend base class
+	// extend base class
 	AIUpdateInterface::xfer(xfer);
-
 
 	//------------------------- xfer Dozer info
 
 	Int numTasks = DOZER_NUM_TASKS;
 	xfer->xferInt(&numTasks);
-	if (numTasks != DOZER_NUM_TASKS) {
+	if (numTasks != DOZER_NUM_TASKS)
+	{
 		DEBUG_CRASH(("DOZER_NUM_TASKS changed unexpectedly."));
 		throw SC_INVALID_DATA;
 	}
 	Int i, j;
-	for (i=0; i<DOZER_NUM_TASKS; i++) {
+	for (i = 0; i < DOZER_NUM_TASKS; i++)
+	{
 		xfer->xferObjectID(&m_task[i].m_targetObjectID);
 		xfer->xferUnsignedInt(&m_task[i].m_taskOrderFrame);
 	}
@@ -1446,18 +1399,20 @@ void WorkerAIUpdate::xfer( Xfer *xfer )
 
 	Int dockPoints = DOZER_NUM_DOCK_POINTS;
 	xfer->xferInt(&dockPoints);
-	if (dockPoints!=DOZER_NUM_DOCK_POINTS) {
+	if (dockPoints != DOZER_NUM_DOCK_POINTS)
+	{
 		DEBUG_CRASH(("DOZER_NUM_DOCK_POINTS changed unexpectedly."));
 		throw SC_INVALID_DATA;
 	}
-	for (i=0; i<DOZER_NUM_TASKS; i++) {
-		for (j=0; j<DOZER_NUM_DOCK_POINTS; j++) {
+	for (i = 0; i < DOZER_NUM_TASKS; i++)
+	{
+		for (j = 0; j < DOZER_NUM_DOCK_POINTS; j++)
+		{
 			xfer->xferBool(&m_dockPoint[i][j].valid);
 			xfer->xferCoord3D(&m_dockPoint[i][j].location);
 		}
 	}
 	xfer->xferUser(&m_buildSubTask, sizeof(m_buildSubTask));
-
 
 	//------------------------- xfer Supply Truck info
 	xfer->xferSnapshot(m_supplyTruckStateMachine);
@@ -1468,13 +1423,13 @@ void WorkerAIUpdate::xfer( Xfer *xfer )
 	//-------------------------- xfer Worker info
 	xfer->xferSnapshot(m_workerMachine);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::loadPostProcess( void )
+void WorkerAIUpdate::loadPostProcess(void)
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+} // end loadPostProcess

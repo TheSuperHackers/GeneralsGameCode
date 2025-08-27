@@ -61,11 +61,11 @@
 //-----------------------------------------------------------------------------
 class Player;
 class Thing;
-void parseUpgradePair( INI *ini, void *instance, void *store, const void *userData );
+void parseUpgradePair(INI *ini, void *instance, void *store, const void *userData);
 struct upgradePair
 {
 	std::string type;
-	Int         amount;
+	Int amount;
 };
 
 //-----------------------------------------------------------------------------
@@ -85,44 +85,37 @@ public:
 		m_initialCaptureBonus = 0;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p)
+	static void buildFieldParse(MultiIniFieldParse &p)
 	{
-    UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "DepositTiming",					INI::parseDurationUnsignedInt,		NULL, offsetof( AutoDepositUpdateModuleData, m_depositFrame ) },
-			{ "DepositAmount",					INI::parseInt,		NULL, offsetof( AutoDepositUpdateModuleData, m_depositAmount ) },
-			{ "InitialCaptureBonus",		INI::parseInt,		NULL, offsetof( AutoDepositUpdateModuleData, m_initialCaptureBonus ) },
+		UpdateModuleData::buildFieldParse(p);
+		static const FieldParse dataFieldParse[] = {
+			{ "DepositTiming", INI::parseDurationUnsignedInt, NULL, offsetof(AutoDepositUpdateModuleData, m_depositFrame) },
+			{ "DepositAmount", INI::parseInt, NULL, offsetof(AutoDepositUpdateModuleData, m_depositAmount) },
+			{ "InitialCaptureBonus", INI::parseInt, NULL, offsetof(AutoDepositUpdateModuleData, m_initialCaptureBonus) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
-
 
 //-------------------------------------------------------------------------------------------------
 class AutoDepositUpdate : public UpdateModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AutoDepositUpdate, "AutoDepositUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( AutoDepositUpdate, AutoDepositUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AutoDepositUpdate, "AutoDepositUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(AutoDepositUpdate, AutoDepositUpdateModuleData)
 
 public:
-
-	AutoDepositUpdate( Thing *thing, const ModuleData* moduleData );
+	AutoDepositUpdate(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	void awardInitialCaptureBonus( Player *player );	// Test and award the initial capture bonus
-	virtual UpdateSleepTime update( void );
+	void awardInitialCaptureBonus(Player *player); // Test and award the initial capture bonus
+	virtual UpdateSleepTime update(void);
 
 protected:
-
 	UnsignedInt m_depositOnFrame;
 	Bool m_awardInitialCaptureBonus;
 	Bool m_initialized;
-
 };
-
 
 //-----------------------------------------------------------------------------
 // INLINING ///////////////////////////////////////////////////////////////////

@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -46,12 +45,10 @@
 #include "RingGeneralPropPage.h"
 #include "RingSizePropPage.h"
 
-
 // Forward declarations
 class ParticleEmitterClass;
 class EmitterInstanceListClass;
 class AssetInfoClass;
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -62,25 +59,23 @@ class RingPropertySheetClass : public CPropertySheet
 {
 	DECLARE_DYNAMIC(RingPropertySheetClass)
 
-// Construction
+	// Construction
 public:
-	RingPropertySheetClass (RingRenderObjClass *ring, UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-	RingPropertySheetClass (RingRenderObjClass *ring, LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	RingPropertySheetClass(RingRenderObjClass *ring, UINT nIDCaption, CWnd *pParentWnd = NULL, UINT iSelectPage = 0);
+	RingPropertySheetClass(RingRenderObjClass *ring, LPCTSTR pszCaption, CWnd *pParentWnd = NULL, UINT iSelectPage = 0);
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(RingPropertySheetClass)
-	protected:
+protected:
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~RingPropertySheetClass();
 
@@ -91,32 +86,29 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-
 	//////////////////////////////////////////////////////////////////////
 	//	Public methods
 	//////////////////////////////////////////////////////////////////////
 
 protected:
-
 	//////////////////////////////////////////////////////////////////////
 	//	Protected methods
 	//////////////////////////////////////////////////////////////////////
-	void						Initialize (void);
-	RingRenderObjClass *	Create_Object (void);
-	void						Update_Object (void);
-	void						Add_Object_To_Viewer (void);
-	void						Create_New_Object (void);
+	void Initialize(void);
+	RingRenderObjClass *Create_Object(void);
+	void Update_Object(void);
+	void Add_Object_To_Viewer(void);
+	void Create_New_Object(void);
 
 private:
-
 	//////////////////////////////////////////////////////////////////////
 	//	Private member data
 	//////////////////////////////////////////////////////////////////////
-	RingGeneralPropPageClass	m_GeneralPage;
-	RingColorPropPageClass		m_ColorPage;
-	RingSizePropPageClass		m_ScalePage;
-	RingRenderObjClass *			m_RenderObj;
-	CString							m_LastSavedName;
+	RingGeneralPropPageClass m_GeneralPage;
+	RingColorPropPageClass m_ColorPage;
+	RingSizePropPageClass m_ScalePage;
+	RingRenderObjClass *m_RenderObj;
+	CString m_LastSavedName;
 };
 
 /////////////////////////////////////////////////////////////////////////////

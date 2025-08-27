@@ -35,9 +35,8 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ObjectSMCHelper::~ObjectSMCHelper( void )
+ObjectSMCHelper::~ObjectSMCHelper(void)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -54,40 +53,36 @@ UpdateSleepTime ObjectSMCHelper::update()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ObjectSMCHelper::crc( Xfer *xfer )
+void ObjectSMCHelper::crc(Xfer *xfer)
 {
-
 	// object helper crc
-	ObjectHelper::crc( xfer );
+	ObjectHelper::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info;
-	* 1: Initial version */
+ * Version Info;
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ObjectSMCHelper::xfer( Xfer *xfer )
+void ObjectSMCHelper::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// object helper base class
-	ObjectHelper::xfer( xfer );
+	ObjectHelper::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ObjectSMCHelper::loadPostProcess( void )
+void ObjectSMCHelper::loadPostProcess(void)
 {
-
 	// object helper base class
 	ObjectHelper::loadPostProcess();
 
-}  // end loadPostProcess
-
+} // end loadPostProcess

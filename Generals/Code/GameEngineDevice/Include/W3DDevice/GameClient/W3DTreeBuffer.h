@@ -70,7 +70,8 @@ class MeshClass;
 //           Type Defines
 //-----------------------------------------------------------------------------
 
-typedef enum {
+typedef enum
+{
 	ALPINE_TREE = 0,
 	DECIDUOUS_TREE = 1,
 	SHRUB = 2,
@@ -78,18 +79,19 @@ typedef enum {
 } TTreeType;
 
 /// The individual data for a tree.
-typedef struct {
-	Vector3 location;					///< Drawing location
-	Real		scale;						///< Scale at location.
-	Real		sin;							///< Sine of the rotation angle at location.
-	Real		cos;							///< Cosine of the rotation angle at location.
-	Int			panelStart;				///< Index of the "panel" lod.
-	TTreeType			treeType;		///< Type of tree.  Currently only 3 supported.
-	Bool		visible;					///< Visible flag, updated each frame.
-	Bool		mirrorVisible;		///< Possibly visible in mirror.
-	Bool		rotates;					///< Trees rotate to follow the camera in single panel mode, fences don't
-	SphereClass bounds;				///< Bounding sphere for culling to set the visible flag.
-	Real		sortKey;					///< Sort key, essentially the distance along the look at vector.
+typedef struct
+{
+	Vector3 location; ///< Drawing location
+	Real scale; ///< Scale at location.
+	Real sin; ///< Sine of the rotation angle at location.
+	Real cos; ///< Cosine of the rotation angle at location.
+	Int panelStart; ///< Index of the "panel" lod.
+	TTreeType treeType; ///< Type of tree.  Currently only 3 supported.
+	Bool visible; ///< Visible flag, updated each frame.
+	Bool mirrorVisible; ///< Possibly visible in mirror.
+	Bool rotates; ///< Trees rotate to follow the camera in single panel mode, fences don't
+	SphereClass bounds; ///< Bounding sphere for culling to set the visible flag.
+	Real sortKey; ///< Sort key, essentially the distance along the look at vector.
 } TTree;
 
 //
@@ -98,9 +100,9 @@ typedef struct {
 //
 class W3DTreeBuffer
 {
-friend class HeightMapRenderObjClass;
-public:
+	friend class HeightMapRenderObjClass;
 
+public:
 	W3DTreeBuffer(void);
 	~W3DTreeBuffer(void);
 	/// Add a tree at location.  Name is the w3d model name.
@@ -108,42 +110,57 @@ public:
 	/// Empties the tree buffer.
 	void clearAllTrees(void);
 	/// Draws the trees.  Uses camera for culling.
-	void drawTrees(CameraClass * camera, RefRenderObjListIterator *pDynamicLightsIterator);
+	void drawTrees(CameraClass *camera, RefRenderObjListIterator *pDynamicLightsIterator);
 	/// Called when the view changes, and sort key needs to be recalculated.
 	/// Normally sortKey gets calculated when a tree becomes visible.
-	void doFullUpdate(void) {m_updateAllKeys = true;};
-	void setIsTerrain(void) {m_isTerrainPass = true;}; ///< Terrain calls this to tell trees to draw.
-	Bool needToDraw(void) {return m_isTerrainPass;};
-protected:
-	enum { MAX_TREE_VERTEX=4000,
-					MAX_TREE_INDEX=2*4000,
-					MAX_TREES=2000};
-	enum {MAX_TYPES = 4,
-				SORT_ITERATIONS_PER_FRAME=10};
-	DX8VertexBufferClass	*m_vertexTree;	///<Tree vertex buffer.
-	DX8IndexBufferClass			*m_indexTree;	///<indices defining a triangles for the tree drawing.
-	TextureClass *m_treeTexture;	///<Trees texture
-	Int			m_curNumTreeVertices; ///<Number of vertices used in m_vertexTree.
-	Int			m_curNumTreeIndices;	///<Number of indices used in b_indexTree;
-	Int			m_curTreeIndexOffset;	///<First index to draw at.  We draw the trees backwards by filling up the index buffer backwards,
-																// so any trees that don't fit are far away from the camera.
-	TTree	m_trees[MAX_TREES];			///< The tree buffer.  All trees are stored here.
-	Int			m_numTrees;						///< Number of trees in m_trees.
-	Bool		m_anythingChanged;	///< Set to true if visibility or sorting changed.
-	Bool		m_updateAllKeys;  ///< Set to true when the view changes.
-	Bool		m_initialized;		///< True if the subsystem initialized.
-	Bool		m_isTerrainPass;  ///< True if the terrain was drawn in this W3D scene render pass.
+	void doFullUpdate(void) { m_updateAllKeys = true; };
+	void setIsTerrain(void) { m_isTerrainPass = true; }; ///< Terrain calls this to tell trees to draw.
+	Bool needToDraw(void) { return m_isTerrainPass; };
 
-	SphereClass m_typeBounds[MAX_TYPES];	///< Bounding boxes for the base tree models.
-	MeshClass *m_typeMesh[MAX_TYPES];			///< W3D mesh models for the trees.
+protected:
+	enum
+	{
+		MAX_TREE_VERTEX = 4000,
+		MAX_TREE_INDEX = 2 * 4000,
+		MAX_TREES = 2000
+	};
+	enum
+	{
+		MAX_TYPES = 4,
+		SORT_ITERATIONS_PER_FRAME = 10
+	};
+	DX8VertexBufferClass *m_vertexTree; ///< Tree vertex buffer.
+	DX8IndexBufferClass *m_indexTree; ///< indices defining a triangles for the tree drawing.
+	TextureClass *m_treeTexture; ///< Trees texture
+	Int m_curNumTreeVertices; ///< Number of vertices used in m_vertexTree.
+	Int m_curNumTreeIndices; ///< Number of indices used in b_indexTree;
+	Int m_curTreeIndexOffset; ///< First index to draw at.  We draw the trees backwards by filling up the index buffer
+														///< backwards,
+														// so any trees that don't fit are far away from the camera.
+	TTree m_trees[MAX_TREES]; ///< The tree buffer.  All trees are stored here.
+	Int m_numTrees; ///< Number of trees in m_trees.
+	Bool m_anythingChanged; ///< Set to true if visibility or sorting changed.
+	Bool m_updateAllKeys; ///< Set to true when the view changes.
+	Bool m_initialized; ///< True if the subsystem initialized.
+	Bool m_isTerrainPass; ///< True if the terrain was drawn in this W3D scene render pass.
+
+	SphereClass m_typeBounds[MAX_TYPES]; ///< Bounding boxes for the base tree models.
+	MeshClass *m_typeMesh[MAX_TYPES]; ///< W3D mesh models for the trees.
 	Vector3 m_cameraLookAtVector;
-	void loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *pDynamicLightsIterator); ///< Fills the index and vertex buffers for drawing.
-	void allocateTreeBuffers(void);							 ///< Allocates the buffers.
-	void cull(CameraClass * camera);						 ///< Culls the trees.
-	void cullMirror(CameraClass * camera);		   ///< Culls the trees in the mirror view.
-	Int  doLighting(Vector3 *loc, Real r, Real g, Real b, SphereClass &bounds, RefRenderObjListIterator *pDynamicLightsIterator);
-	void freeTreeBuffers(void);									 ///< Frees the index and vertex buffers.
-	void sort( Int iterations );								 ///< Performs partial bubble sort.
+	void loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *pDynamicLightsIterator); ///< Fills the index and vertex
+																																													 ///< buffers for drawing.
+	void allocateTreeBuffers(void); ///< Allocates the buffers.
+	void cull(CameraClass *camera); ///< Culls the trees.
+	void cullMirror(CameraClass *camera); ///< Culls the trees in the mirror view.
+	Int doLighting(
+			Vector3 *loc,
+			Real r,
+			Real g,
+			Real b,
+			SphereClass &bounds,
+			RefRenderObjListIterator *pDynamicLightsIterator);
+	void freeTreeBuffers(void); ///< Frees the index and vertex buffers.
+	void sort(Int iterations); ///< Performs partial bubble sort.
 };
 
-#endif  // end __W3DTREE_BUFFER_H_
+#endif // end __W3DTREE_BUFFER_H_

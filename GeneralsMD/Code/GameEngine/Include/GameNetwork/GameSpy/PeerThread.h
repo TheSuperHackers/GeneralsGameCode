@@ -34,13 +34,7 @@
 #include "gamespy/peer/peer.h"
 #include "GameNetwork/NetworkDefs.h"
 
-enum SerialAuthResult CPP_11(: Int)
-{
-	SERIAL_NONEXISTENT,
-	SERIAL_AUTHFAILED,
-	SERIAL_BANNED,
-	SERIAL_OK
-};
+enum SerialAuthResult CPP_11( : Int){ SERIAL_NONEXISTENT, SERIAL_AUTHFAILED, SERIAL_BANNED, SERIAL_OK };
 
 // this class encapsulates a request for the peer thread
 class PeerRequest
@@ -48,8 +42,8 @@ class PeerRequest
 public:
 	enum
 	{
-		PEERREQUEST_LOGIN,				// attempt to login
-		PEERREQUEST_LOGOUT,				// log out if connected
+		PEERREQUEST_LOGIN, // attempt to login
+		PEERREQUEST_LOGOUT, // log out if connected
 		PEERREQUEST_MESSAGEPLAYER,
 		PEERREQUEST_MESSAGEROOM,
 		PEERREQUEST_JOINGROUPROOM,
@@ -71,8 +65,8 @@ public:
 		PEERREQUEST_MAX
 	} peerRequestType;
 
-	std::string nick;	// only used by login, but must be outside the union b/c of copy constructor
-	std::wstring text;  // can't be in a union
+	std::string nick; // only used by login, but must be outside the union b/c of copy constructor
+	std::wstring text; // can't be in a union
 	std::string password;
 	std::string email;
 	std::string id;
@@ -119,7 +113,7 @@ public:
 			UnsignedInt iniCRC;
 			UnsignedInt gameVersion;
 			Bool allowObservers;
-      Bool useStats;
+			Bool useStats;
 			UnsignedShort ladPort;
 			UnsignedInt ladPassCRC;
 			Bool restrictGameList;
@@ -170,14 +164,12 @@ public:
 			Int side;
 			Bool preorder;
 		} statsToPush;
-
 	};
 };
 
 //-------------------------------------------------------------------------
 
-enum DisconnectReason CPP_11(: Int)
-{
+enum DisconnectReason CPP_11( : Int){
 	DISCONNECT_NICKTAKEN = 1,
 	DISCONNECT_BADNICK,
 	DISCONNECT_LOSTCON,
@@ -200,8 +192,7 @@ enum DisconnectReason CPP_11(: Int)
 	DISCONNECT_MAX,
 };
 
-enum QMStatus CPP_11(: Int)
-{
+enum QMStatus CPP_11( : Int){
 	QM_IDLE,
 	QM_JOININGQMCHANNEL,
 	QM_LOOKINGFORBOT,
@@ -250,9 +241,9 @@ public:
 
 	std::string groupRoomName; // can't be in union
 
-	std::string nick;   // can't be in a union
-	std::string oldNick;   // can't be in a union
-	std::wstring text;  // can't be in a union
+	std::string nick; // can't be in a union
+	std::string oldNick; // can't be in a union
+	std::wstring text; // can't be in a union
 	std::string locale; // can't be in a union
 
 	std::string stagingServerGameOptions; // full string from UTMs
@@ -333,7 +324,7 @@ public:
 			Bool isStaging;
 			Bool requiresPassword;
 			Bool allowObservers;
-      Bool useStats;
+			Bool useStats;
 			UnsignedInt version;
 			UnsignedInt exeCRC;
 			UnsignedInt iniCRC;
@@ -370,21 +361,21 @@ class GameSpyPeerMessageQueueInterface
 {
 public:
 	virtual ~GameSpyPeerMessageQueueInterface() {}
-	virtual void startThread( void ) = 0;
-	virtual void endThread( void ) = 0;
-	virtual Bool isThreadRunning( void ) = 0;
-	virtual Bool isConnected( void ) = 0;
-	virtual Bool isConnecting( void ) = 0;
+	virtual void startThread(void) = 0;
+	virtual void endThread(void) = 0;
+	virtual Bool isThreadRunning(void) = 0;
+	virtual Bool isConnected(void) = 0;
+	virtual Bool isConnecting(void) = 0;
 
-	virtual void addRequest( const PeerRequest& req ) = 0;
-	virtual Bool getRequest( PeerRequest& req ) = 0;
+	virtual void addRequest(const PeerRequest &req) = 0;
+	virtual Bool getRequest(PeerRequest &req) = 0;
 
-	virtual void addResponse( const PeerResponse& resp ) = 0;
-	virtual Bool getResponse( PeerResponse& resp ) = 0;
+	virtual void addResponse(const PeerResponse &resp) = 0;
+	virtual Bool getResponse(PeerResponse &resp) = 0;
 
-	virtual SerialAuthResult getSerialAuthResult( void ) = 0;
+	virtual SerialAuthResult getSerialAuthResult(void) = 0;
 
-	static GameSpyPeerMessageQueueInterface* createNewMessageQueue( void );
+	static GameSpyPeerMessageQueueInterface *createNewMessageQueue(void);
 };
 
 extern GameSpyPeerMessageQueueInterface *TheGameSpyPeerMessageQueue;

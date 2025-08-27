@@ -24,134 +24,123 @@
 #include "Utils.h"
 #include "AudibleSound.h"
 
-
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // PlaySoundDialogClass
 //
 /////////////////////////////////////////////////////////////////////////////
-PlaySoundDialogClass::PlaySoundDialogClass(LPCTSTR filename, CWnd* pParent /*=NULL*/)
-	:	Filename (filename),
-		SoundObj (NULL),
-		CDialog(PlaySoundDialogClass::IDD, pParent)
+PlaySoundDialogClass::PlaySoundDialogClass(LPCTSTR filename, CWnd *pParent /*=NULL*/) :
+		Filename(filename), SoundObj(NULL), CDialog(PlaySoundDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(PlaySoundDialogClass)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // DoDataExchange
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-PlaySoundDialogClass::DoDataExchange (CDataExchange *pDX)
+void PlaySoundDialogClass::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(PlaySoundDialogClass)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
-	return ;
+	return;
 }
 
-
 BEGIN_MESSAGE_MAP(PlaySoundDialogClass, CDialog)
-	//{{AFX_MSG_MAP(PlaySoundDialogClass)
-	ON_BN_CLICKED(IDC_PLAY_SOUND_EFFECT, OnPlaySoundEffect)
-	ON_BN_CLICKED(IDC_STOP_SOUND_EFFECT, OnStopSoundEffect)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(PlaySoundDialogClass)
+ON_BN_CLICKED(IDC_PLAY_SOUND_EFFECT, OnPlaySoundEffect)
+ON_BN_CLICKED(IDC_STOP_SOUND_EFFECT, OnStopSoundEffect)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnPlaySoundEffect
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-PlaySoundDialogClass::OnPlaySoundEffect (void)
+void PlaySoundDialogClass::OnPlaySoundEffect(void)
 {
-	ASSERT (SoundObj != NULL);
-	if (SoundObj != NULL) {
-		SoundObj->Stop ();
-		SoundObj->Play ();
+	ASSERT(SoundObj != NULL);
+	if (SoundObj != NULL)
+	{
+		SoundObj->Stop();
+		SoundObj->Play();
 	}
 
-	return ;
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnCancel
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-PlaySoundDialogClass::OnCancel (void)
+void PlaySoundDialogClass::OnCancel(void)
 {
-	SoundObj->Stop ();
-	MEMBER_RELEASE (SoundObj);
+	SoundObj->Stop();
+	MEMBER_RELEASE(SoundObj);
 
-	CDialog::OnCancel ();
-	return ;
+	CDialog::OnCancel();
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnInitDialog
 //
 /////////////////////////////////////////////////////////////////////////////
-BOOL
-PlaySoundDialogClass::OnInitDialog (void)
+BOOL PlaySoundDialogClass::OnInitDialog(void)
 {
-	CDialog::OnInitDialog ();
+	CDialog::OnInitDialog();
 
 	//
 	//	Put the filename into the dialog
 	//
-	SetDlgItemText (IDC_FILENAME, Filename);
+	SetDlgItemText(IDC_FILENAME, Filename);
 
 	//
 	//	Create the sound effect so we can play it
 	//
-	SoundObj = WWAudioClass::Get_Instance ()->Create_Sound_Effect (Filename);
-	if (SoundObj == NULL) {
+	SoundObj = WWAudioClass::Get_Instance()->Create_Sound_Effect(Filename);
+	if (SoundObj == NULL)
+	{
 		CString message;
-		message.Format ("Cannot find sound file: %s!", (LPCTSTR)Filename, MB_OK);
-		MessageBox (message, "File Not Found", MB_ICONEXCLAMATION | MB_OK);
-		EndDialog (IDCANCEL);
-	} else {
-		OnPlaySoundEffect ();
+		message.Format("Cannot find sound file: %s!", (LPCTSTR)Filename, MB_OK);
+		MessageBox(message, "File Not Found", MB_ICONEXCLAMATION | MB_OK);
+		EndDialog(IDCANCEL);
+	}
+	else
+	{
+		OnPlaySoundEffect();
 	}
 
 	return TRUE;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnStopSoundEffect
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-PlaySoundDialogClass::OnStopSoundEffect (void)
+void PlaySoundDialogClass::OnStopSoundEffect(void)
 {
-	ASSERT (SoundObj != NULL);
-	if (SoundObj != NULL) {
-		SoundObj->Stop ();
+	ASSERT(SoundObj != NULL);
+	if (SoundObj != NULL)
+	{
+		SoundObj->Stop();
 	}
 
-	return ;
+	return;
 }
-

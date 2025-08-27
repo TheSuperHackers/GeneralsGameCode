@@ -125,7 +125,7 @@ UnsignedInt ClientInstance::getInstanceId()
 	return getInstanceIndex() + 1;
 }
 
-const char* ClientInstance::getFirstInstanceName()
+const char *ClientInstance::getFirstInstanceName()
 {
 	return GENERALS_GUID;
 }

@@ -38,12 +38,11 @@ class GameWindow;
 
 class W3DWebBrowser : public WebBrowser
 {
-	public:
-		W3DWebBrowser();
+public:
+	W3DWebBrowser();
 
-		virtual Bool createBrowserWindow(const char *tag, GameWindow *win);
-		virtual void closeBrowserWindow(GameWindow *win);
-
+	virtual Bool createBrowserWindow(const char *tag, GameWindow *win);
+	virtual void closeBrowserWindow(GameWindow *win);
 };
 
 #endif // #ifndef W3DWEBBROWSER_H

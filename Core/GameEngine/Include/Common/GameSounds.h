@@ -52,52 +52,51 @@ class AudioEventRTS;
 
 class SoundManager : public SubsystemInterface
 {
-	public:
-		SoundManager();
-		virtual ~SoundManager();
+public:
+	SoundManager();
+	virtual ~SoundManager();
 
-		virtual void init( void );										///< Initializes the sounds system
-		virtual void postProcessLoad();
-		virtual void update( void );									///< Services sounds tasks. Called by AudioInterface
-		virtual void reset( void );										///< Reset the sounds system
+	virtual void init(void); ///< Initializes the sounds system
+	virtual void postProcessLoad();
+	virtual void update(void); ///< Services sounds tasks. Called by AudioInterface
+	virtual void reset(void); ///< Reset the sounds system
 
-		virtual void loseFocus( void );								///< Called when application loses focus
-		virtual void regainFocus( void );							///< Called when application regains focus
+	virtual void loseFocus(void); ///< Called when application loses focus
+	virtual void regainFocus(void); ///< Called when application regains focus
 
-		virtual void setListenerPosition( const Coord3D *position );	///< Set the listener position for map3DSound() calculations
-		virtual void setViewRadius( Real viewRadius );///< Sets the radius of the view from the center of the screen in world coordinate units
-		virtual void setCameraAudibleDistance( Real audibleDistance );
-		virtual Real getCameraAudibleDistance( void );
+	virtual void setListenerPosition(const Coord3D *position); ///< Set the listener position for map3DSound() calculations
+	virtual void setViewRadius(Real viewRadius); ///< Sets the radius of the view from the center of the screen in world
+																							 ///< coordinate units
+	virtual void setCameraAudibleDistance(Real audibleDistance);
+	virtual Real getCameraAudibleDistance(void);
 
-		virtual void addAudioEvent(AudioEventRTS *&eventToAdd);	// pre-copied
+	virtual void addAudioEvent(AudioEventRTS *&eventToAdd); // pre-copied
 
-		virtual void notifyOf2DSampleStart( void );
-		virtual void notifyOf3DSampleStart( void );
+	virtual void notifyOf2DSampleStart(void);
+	virtual void notifyOf3DSampleStart(void);
 
-		virtual void notifyOf2DSampleCompletion( void );
-		virtual void notifyOf3DSampleCompletion( void );
+	virtual void notifyOf2DSampleCompletion(void);
+	virtual void notifyOf3DSampleCompletion(void);
 
-		virtual Int getAvailableSamples( void );
-		virtual Int getAvailable3DSamples( void );
+	virtual Int getAvailableSamples(void);
+	virtual Int getAvailable3DSamples(void);
 
-		// empty string means that this sound wasn't found or some error occurred. CHECK FOR EMPTY STRING.
-		virtual AsciiString getFilenameForPlayFromAudioEvent( const AudioEventRTS *eventToGetFrom );
+	// empty string means that this sound wasn't found or some error occurred. CHECK FOR EMPTY STRING.
+	virtual AsciiString getFilenameForPlayFromAudioEvent(const AudioEventRTS *eventToGetFrom);
 
-		// called by this class and MilesAudioManager to determine if a sound can still be played
-		virtual Bool canPlayNow( AudioEventRTS *event );
+	// called by this class and MilesAudioManager to determine if a sound can still be played
+	virtual Bool canPlayNow(AudioEventRTS *event);
 
-	protected:
-		virtual Bool violatesVoice( AudioEventRTS *event );
-		virtual Bool isInterrupting( AudioEventRTS *event );
+protected:
+	virtual Bool violatesVoice(AudioEventRTS *event);
+	virtual Bool isInterrupting(AudioEventRTS *event);
 
+protected:
+	UnsignedInt m_num2DSamples;
+	UnsignedInt m_num3DSamples;
 
-	protected:
-		UnsignedInt m_num2DSamples;
-		UnsignedInt m_num3DSamples;
-
-		UnsignedInt m_numPlaying2DSamples;
-		UnsignedInt m_numPlaying3DSamples;
+	UnsignedInt m_numPlaying2DSamples;
+	UnsignedInt m_numPlaying3DSamples;
 };
 
 #endif // __COMMON_GAMESOUNDS_H_
-

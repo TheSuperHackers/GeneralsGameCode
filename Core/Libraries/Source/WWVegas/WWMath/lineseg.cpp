@@ -39,7 +39,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "lineseg.h"
-//#include <stdlib.h>
+// #include <stdlib.h>
 
 #include "matrix3d.h"
 
@@ -55,13 +55,13 @@
  * HISTORY:                                                                                    *
  *   6/17/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void LineSegClass::Set(const LineSegClass & that,const Matrix3D & tm)
+void LineSegClass::Set(const LineSegClass &that, const Matrix3D &tm)
 {
 	/*
 	** Transform P0 and P1
 	*/
-	Matrix3D::Transform_Vector(tm,that.P0,&P0);
-	Matrix3D::Transform_Vector(tm,that.P1,&P1);
+	Matrix3D::Transform_Vector(tm, that.P0, &P0);
+	Matrix3D::Transform_Vector(tm, that.P1, &P1);
 
 	/*
 	** Just calculate DP
@@ -71,7 +71,7 @@ void LineSegClass::Set(const LineSegClass & that,const Matrix3D & tm)
 	/*
 	** Rotate the direction vector
 	*/
-	Matrix3D::Rotate_Vector(tm,that.Dir,&Dir);
+	Matrix3D::Rotate_Vector(tm, that.Dir, &Dir);
 
 	/*
 	** Length should be un-changed
@@ -91,7 +91,7 @@ void LineSegClass::Set(const LineSegClass & that,const Matrix3D & tm)
  * HISTORY:                                                                                    *
  *   4/21/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void LineSegClass::Set_Random(const Vector3 & min,const Vector3 & max)
+void LineSegClass::Set_Random(const Vector3 &min, const Vector3 &max)
 {
 	float frac;
 
@@ -115,9 +115,6 @@ void LineSegClass::Set_Random(const Vector3 & min,const Vector3 & max)
 	Length = DP.Length();
 }
 
-
-
-
 /***********************************************************************************************
  * LineSegClass::Find_Point_Closest_To -- Finds point on line closest to point supplied.       *
  *                                                                                             *
@@ -138,17 +135,19 @@ Vector3 LineSegClass::Find_Point_Closest_To(const Vector3 &pos) const
 
 	// Check to see if point is past either of the endpoints.
 	// (Unable to draw a perpendicular line from the point to the line segment.)
-	if (dotprod <= 0.0) {
-		return(P0);
-	} else if (dotprod >= Length) {
-		return(P1);
+	if (dotprod <= 0.0)
+	{
+		return (P0);
+	}
+	else if (dotprod >= Length)
+	{
+		return (P1);
 	}
 
 	// Find point on line seg that is closest to pos passed in.
 	Vector3 point = P0 + (dotprod * Dir);
-	return(point);
+	return (point);
 }
-
 
 /***********************************************************************************************
  * LineSegClass::Find_Intersection -- Finds the closest points on the two lines..				  *
@@ -162,46 +161,44 @@ Vector3 LineSegClass::Find_Point_Closest_To(const Vector3 &pos) const
  * HISTORY:                                                                                    *
  *   03/03/2000 PDS : Created.                                                                 *
  *=============================================================================================*/
-bool
-LineSegClass::Find_Intersection
-(
-	const LineSegClass &	other_line,
-	Vector3 *				p1,
-	float	*					fraction1,
-	Vector3 *				p2,
-	float *					fraction2
-) const
+bool LineSegClass::Find_Intersection(
+		const LineSegClass &other_line,
+		Vector3 *p1,
+		float *fraction1,
+		Vector3 *p2,
+		float *fraction2) const
 {
 	bool retval = false;
 
 #ifdef ALLOW_TEMPORARIES
-	Vector3 cross1 = Vector3::Cross_Product (Dir, other_line.Dir);
-	Vector3 cross2 = Vector3::Cross_Product (other_line.P0 - P0, other_line.Dir);
-	float top1		= cross2 * cross1;
-	float bottom1	= cross1 * cross1;
+	Vector3 cross1 = Vector3::Cross_Product(Dir, other_line.Dir);
+	Vector3 cross2 = Vector3::Cross_Product(other_line.P0 - P0, other_line.Dir);
+	float top1 = cross2 * cross1;
+	float bottom1 = cross1 * cross1;
 
-	Vector3 cross3 = Vector3::Cross_Product (other_line.Dir, Dir);
-	Vector3 cross4 = Vector3::Cross_Product (P0 - other_line.P0, Dir);
-	float top2		= cross4 * cross3;
-	float bottom2	= cross3 * cross3;
+	Vector3 cross3 = Vector3::Cross_Product(other_line.Dir, Dir);
+	Vector3 cross4 = Vector3::Cross_Product(P0 - other_line.P0, Dir);
+	float top2 = cross4 * cross3;
+	float bottom2 = cross3 * cross3;
 #else
 	Vector3 cross1, cross2, cross3, cross4;
 
 	Vector3::Cross_Product(Dir, other_line.Dir, &cross1);
 	Vector3::Cross_Product(other_line.P0 - P0, other_line.Dir, &cross2);
-	float top1		= Vector3::Dot_Product(cross2, cross1);
-	float bottom1	= Vector3::Dot_Product(cross1, cross1);
+	float top1 = Vector3::Dot_Product(cross2, cross1);
+	float bottom1 = Vector3::Dot_Product(cross1, cross1);
 
 	Vector3::Cross_Product(other_line.Dir, Dir, &cross3);
 	Vector3::Cross_Product(P0 - other_line.P0, Dir, &cross4);
-	float top2		= Vector3::Dot_Product(cross4, cross3);
-	float bottom2	= Vector3::Dot_Product(cross3, cross3);
+	float top2 = Vector3::Dot_Product(cross4, cross3);
+	float bottom2 = Vector3::Dot_Product(cross3, cross3);
 #endif
 
 	//
 	//	If either of the divisors are 0, then the lines are parallel
 	//
-	if (bottom1 != 0 && bottom2 != 0) {
+	if (bottom1 != 0 && bottom2 != 0)
+	{
 		float length1 = top1 / bottom1;
 		float length2 = top2 / bottom2;
 
@@ -215,11 +212,13 @@ LineSegClass::Find_Intersection
 		//
 		//	Return the fractions if they caller wants them
 		//
-		if (fraction1 != NULL) {
+		if (fraction1 != NULL)
+		{
 			(*fraction1) = length1 / Length;
 		}
 
-		if (fraction2 != NULL) {
+		if (fraction2 != NULL)
+		{
 			(*fraction2) = length2 / Length;
 		}
 
@@ -228,4 +227,3 @@ LineSegClass::Find_Intersection
 
 	return retval;
 }
-

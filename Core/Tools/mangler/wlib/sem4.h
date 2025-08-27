@@ -41,24 +41,24 @@
 
 class Sem4
 {
- private:
-  #ifdef _REENTRANT
+private:
+#ifdef _REENTRANT
 #ifndef _WINDOWS
-  sem_t sem;
+	sem_t sem;
 #else
-  HANDLE sem;
+	HANDLE sem;
 #endif
-  #endif
- public:
-               Sem4();
-               Sem4(uint32 value);
-              ~Sem4();
+#endif
+public:
+	Sem4();
+	Sem4(uint32 value);
+	~Sem4();
 
-  sint32       Wait(void) const;
-  sint32       TryWait(void) const;
-  sint32       Post(void) const;
-  sint32       GetValue(int *sval) const;
-  sint32       Destroy(void);
+	sint32 Wait(void) const;
+	sint32 TryWait(void) const;
+	sint32 Post(void) const;
+	sint32 GetValue(int *sval) const;
+	sint32 Destroy(void);
 };
 
 #endif

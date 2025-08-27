@@ -36,29 +36,30 @@ private:
 	AsciiString m_side;
 	AsciiString m_addedSide;
 
-// Construction
+	// Construction
 public:
-	AddPlayerDialog(AsciiString side, CWnd* pParent = NULL);   // standard constructor
+	AddPlayerDialog(AsciiString side, CWnd *pParent = NULL); // standard constructor
 
 	AsciiString getAddedSide() { return m_addedSide; }
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(AddPlayerDialog)
-	enum { IDD = IDD_ADDPLAYER };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_ADDPLAYER
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(AddPlayerDialog)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(AddPlayerDialog)
 	virtual void OnOK();

@@ -41,9 +41,6 @@
 #include "GameLogic/Module/ContainModule.h"
 #include "W3DDevice/GameClient/Module/W3DOverlordAircraftDraw.h"
 
-
-
-
 //-------------------------------------------------------------------------------------------------
 W3DOverlordAircraftDrawModuleData::W3DOverlordAircraftDrawModuleData()
 {
@@ -55,21 +52,18 @@ W3DOverlordAircraftDrawModuleData::~W3DOverlordAircraftDrawModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DOverlordAircraftDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
+void W3DOverlordAircraftDrawModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-  W3DModelDrawModuleData::buildFieldParse(p);
+	W3DModelDrawModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ 0, 0, 0, 0 }
-	};
-  p.add(dataFieldParse);
+	static const FieldParse dataFieldParse[] = { { 0, 0, 0, 0 } };
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DOverlordAircraftDraw::W3DOverlordAircraftDraw( Thing *thing, const ModuleData* moduleData )
-: W3DModelDraw( thing, moduleData )
+W3DOverlordAircraftDraw::W3DOverlordAircraftDraw(Thing *thing, const ModuleData *moduleData) :
+		W3DModelDraw(thing, moduleData)
 {
 }
 
@@ -80,31 +74,26 @@ W3DOverlordAircraftDraw::~W3DOverlordAircraftDraw()
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DOverlordAircraftDraw::doDrawModule(const Matrix3D* transformMtx)
+void W3DOverlordAircraftDraw::doDrawModule(const Matrix3D *transformMtx)
 {
 	W3DModelDraw::doDrawModule(transformMtx);
 
 	// Our big thing is that we get our specific passenger (the turret thing) and then wake it up and make it draw
 	// It depends on us because our renderObject is only made correct in the act of drawing.
 	Object *me = getDrawable()->getObject();
-	if( me
-		&& me->getContain()
-		&& me->getContain()->friend_getRider()
-		&& me->getContain()->friend_getRider()->getDrawable()
-		)
+	if (me && me->getContain() && me->getContain()->friend_getRider() && me->getContain()->friend_getRider()->getDrawable())
 	{
 		Drawable *riderDraw = me->getContain()->friend_getRider()->getDrawable();
-    if ( riderDraw )
-    {
-      TintEnvelope *env = getDrawable()->getColorTintEnvelope();
-      if ( env )
-        riderDraw->setColorTintEnvelope( *env );
+		if (riderDraw)
+		{
+			TintEnvelope *env = getDrawable()->getColorTintEnvelope();
+			if (env)
+				riderDraw->setColorTintEnvelope(*env);
 
-      riderDraw->notifyDrawableDependencyCleared();
-		  riderDraw->draw( NULL );// What the hell?  This param isn't used for anything
-    }
-    DEBUG_ASSERTCRASH( riderDraw, ("OverlordAircraftDraw finds no rider's drawable") );
-
+			riderDraw->notifyDrawableDependencyCleared();
+			riderDraw->draw(NULL); // What the hell?  This param isn't used for anything
+		}
+		DEBUG_ASSERTCRASH(riderDraw, ("OverlordAircraftDraw finds no rider's drawable"));
 	}
 }
 
@@ -115,11 +104,7 @@ void W3DOverlordAircraftDraw::setHidden(Bool h)
 
 	// We need to hide our rider, since he won't realize he's being contained in a contained container
 	Object *me = getDrawable()->getObject();
-	if( me
-		&& me->getContain()
-		&& me->getContain()->friend_getRider()
-		&& me->getContain()->friend_getRider()->getDrawable()
-		)
+	if (me && me->getContain() && me->getContain()->friend_getRider() && me->getContain()->friend_getRider()->getDrawable())
 	{
 		me->getContain()->friend_getRider()->getDrawable()->setDrawableHidden(h);
 	}
@@ -129,39 +114,36 @@ void W3DOverlordAircraftDraw::setHidden(Bool h)
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void W3DOverlordAircraftDraw::crc( Xfer *xfer )
+void W3DOverlordAircraftDraw::crc(Xfer *xfer)
 {
-
 	// extend base class
-	W3DModelDraw::crc( xfer );
+	W3DModelDraw::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void W3DOverlordAircraftDraw::xfer( Xfer *xfer )
+void W3DOverlordAircraftDraw::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	W3DModelDraw::xfer( xfer );
+	W3DModelDraw::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void W3DOverlordAircraftDraw::loadPostProcess( void )
+void W3DOverlordAircraftDraw::loadPostProcess(void)
 {
-
 	// extend base class
 	W3DModelDraw::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

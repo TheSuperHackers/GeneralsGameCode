@@ -38,28 +38,26 @@
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class DemoTrapUpdateModuleData : public ModuleData
 {
 public:
 	WeaponTemplate *m_detonationWeaponTemplate;
-	KindOfMaskType	m_ignoreKindOf;
-	WeaponSlotType  m_manualModeWeaponSlot;
-	WeaponSlotType  m_detonationWeaponSlot;
-	WeaponSlotType  m_proximityModeWeaponSlot;
-	Real						m_triggerDetonationRange;
-	UnsignedInt			m_scanFrames;
-	Bool						m_defaultsToProximityMode;
-	Bool						m_friendlyDetonation;
-	Bool						m_detonateWhenKilled;
+	KindOfMaskType m_ignoreKindOf;
+	WeaponSlotType m_manualModeWeaponSlot;
+	WeaponSlotType m_detonationWeaponSlot;
+	WeaponSlotType m_proximityModeWeaponSlot;
+	Real m_triggerDetonationRange;
+	UnsignedInt m_scanFrames;
+	Bool m_defaultsToProximityMode;
+	Bool m_friendlyDetonation;
+	Bool m_detonateWhenKilled;
 
 	DemoTrapUpdateModuleData();
-	static void buildFieldParse(MultiIniFieldParse& p);
+	static void buildFieldParse(MultiIniFieldParse &p);
 
 private:
-
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -67,13 +65,11 @@ private:
 //-------------------------------------------------------------------------------------------------
 class DemoTrapUpdate : public UpdateModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( DemoTrapUpdate, "DemoTrapUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( DemoTrapUpdate, DemoTrapUpdateModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DemoTrapUpdate, "DemoTrapUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(DemoTrapUpdate, DemoTrapUpdateModuleData);
 
 public:
-
-	DemoTrapUpdate( Thing *thing, const ModuleData* moduleData );
+	DemoTrapUpdate(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual void onObjectCreated();
@@ -82,11 +78,8 @@ public:
 	void detonate();
 
 protected:
-
 	Int m_nextScanFrames;
 	Bool m_detonated;
 };
 
-
 #endif
-

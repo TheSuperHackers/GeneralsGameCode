@@ -53,13 +53,10 @@
 #include "multilist.h"
 #include "projector.h"
 
-
 class SpecialRenderInfoClass;
 class RenderObjClass;
 class MaterialPassClass;
 class SurfaceClass;
-
-
 
 /**
 ** TexProjectClass
@@ -101,35 +98,34 @@ class SurfaceClass;
 class TexProjectClass : public ProjectorClass, public CullableClass, public MultiListObjectClass
 {
 public:
-
 	TexProjectClass(void);
 	virtual ~TexProjectClass(void);
 
 	/*
 	** Material settings
 	*/
-	void						Set_Texture_Size(int size);
-	int						Get_Texture_Size(void);
-	void						Init_Multiplicative(void);
-	void						Init_Additive(void);
-	void						Set_Intensity(float intensity,bool immediate = false);	// 1.0 = on 100%, 0.0 = 'off'
-	float						Get_Intensity(void);
-	bool						Is_Intensity_Zero(void);
-	void						Set_Attenuation(float attenuation);								// 1.0 = on, 0.0 = off
-	float						Get_Attenuation(void);
-	void						Enable_Attenuation(bool onoff);
-	bool						Is_Attenuation_Enabled(void);
-	MaterialPassClass *	Peek_Material_Pass(void);
+	void Set_Texture_Size(int size);
+	int Get_Texture_Size(void);
+	void Init_Multiplicative(void);
+	void Init_Additive(void);
+	void Set_Intensity(float intensity, bool immediate = false); // 1.0 = on 100%, 0.0 = 'off'
+	float Get_Intensity(void);
+	bool Is_Intensity_Zero(void);
+	void Set_Attenuation(float attenuation); // 1.0 = on, 0.0 = off
+	float Get_Attenuation(void);
+	void Enable_Attenuation(bool onoff);
+	bool Is_Attenuation_Enabled(void);
+	MaterialPassClass *Peek_Material_Pass(void);
 
 	/*
 	** Options
 	*/
-	void						Enable_Affect_Dynamic_Objects(bool onoff)				{ Set_Flag(AFFECT_DYNAMIC_OBJS,onoff); }
-	bool						Is_Affect_Dynamic_Objects_Enabled(void)				{ return Get_Flag(AFFECT_DYNAMIC_OBJS); }
-	void						Enable_Affect_Static_Objects(bool onoff)				{ Set_Flag(AFFECT_STATIC_OBJS,onoff); }
-	bool						Is_Affect_Static_Objects_Enabled(void)					{ return Get_Flag(AFFECT_STATIC_OBJS); }
-	void						Enable_Depth_Gradient(bool onoff);
-	bool						Is_Depth_Gradient_Enabled(bool onoff);
+	void Enable_Affect_Dynamic_Objects(bool onoff) { Set_Flag(AFFECT_DYNAMIC_OBJS, onoff); }
+	bool Is_Affect_Dynamic_Objects_Enabled(void) { return Get_Flag(AFFECT_DYNAMIC_OBJS); }
+	void Enable_Affect_Static_Objects(bool onoff) { Set_Flag(AFFECT_STATIC_OBJS, onoff); }
+	bool Is_Affect_Static_Objects_Enabled(void) { return Get_Flag(AFFECT_STATIC_OBJS); }
+	void Enable_Depth_Gradient(bool onoff);
+	bool Is_Depth_Gradient_Enabled(bool onoff);
 
 	/*
 	** Manual initialization of a TexProjectClass
@@ -137,33 +133,43 @@ public:
 	** 2 - call Set_Projection_Perspective -or- Set_Projection_Ortho
 	** 3 - call Set_Texture.
 	*/
-	virtual void			Set_Perspective_Projection(float hfov,float vfov,float znear,float zfar);
-	virtual void			Set_Ortho_Projection(float xmin,float xmax,float ymin,float ymax,float znear,float zfar);
+	virtual void Set_Perspective_Projection(float hfov, float vfov, float znear, float zfar);
+	virtual void Set_Ortho_Projection(float xmin, float xmax, float ymin, float ymax, float znear, float zfar);
 
-	void						Set_Texture(TextureClass * texture);
-	TextureClass *			Get_Texture(void) const;
-	TextureClass *			Peek_Texture(void) const;
+	void Set_Texture(TextureClass *texture);
+	TextureClass *Get_Texture(void) const;
+	TextureClass *Peek_Texture(void) const;
 
 	/*
 	** Automatic initialization of a TexProjectClass.
 	** First set up your projection parameters, give the projector a render target, then call Compute_Texture
 	*/
-	bool						Compute_Perspective_Projection(RenderObjClass * obj,const Vector3 & lightpos,float znear=-1.0f,float zfar=-1.0f);
-	bool						Compute_Perspective_Projection(const AABoxClass & obj_box,const Matrix3D & tm,const Vector3 & lightpos,float znear=-1.0f,float zfar=-1.0f);
+	bool Compute_Perspective_Projection(RenderObjClass *obj, const Vector3 &lightpos, float znear = -1.0f, float zfar = -1.0f);
+	bool Compute_Perspective_Projection(
+			const AABoxClass &obj_box,
+			const Matrix3D &tm,
+			const Vector3 &lightpos,
+			float znear = -1.0f,
+			float zfar = -1.0f);
 
-	bool						Compute_Ortho_Projection(RenderObjClass * obj,const Vector3 & lightdir,float znear=-1.0f,float zfar=-1.0f);
-	bool						Compute_Ortho_Projection(const AABoxClass & obj_box,const Matrix3D & tm,const Vector3 & lightdir,float znear=-1.0f,float zfar=-1.0f);
+	bool Compute_Ortho_Projection(RenderObjClass *obj, const Vector3 &lightdir, float znear = -1.0f, float zfar = -1.0f);
+	bool Compute_Ortho_Projection(
+			const AABoxClass &obj_box,
+			const Matrix3D &tm,
+			const Vector3 &lightdir,
+			float znear = -1.0f,
+			float zfar = -1.0f);
 
-	bool						Needs_Render_Target(void);
-	void						Set_Render_Target(TextureClass * render_target);
-	TextureClass *			Peek_Render_Target(void);
+	bool Needs_Render_Target(void);
+	void Set_Render_Target(TextureClass *render_target);
+	TextureClass *Peek_Render_Target(void);
 
-	bool						Compute_Texture(RenderObjClass * model,SpecialRenderInfoClass * context);
+	bool Compute_Texture(RenderObjClass *model, SpecialRenderInfoClass *context);
 
 	/*
 	** Prep for rendering, called by the scene prior to usage.
 	*/
-	virtual void			Pre_Render_Update(const Matrix3D & camera);
+	virtual void Pre_Render_Update(const Matrix3D &camera);
 
 	/*
 	** virtual interface for getting the pointer of the object that generated this shadow.
@@ -172,68 +178,64 @@ public:
 	** the projection...
 	** (gth) feels kludgy, this got a little messy when I moved this code into WW3D from WWPhys
 	*/
-	virtual void *			Get_Projection_Object_ID(void) const { return NULL; }
+	virtual void *Get_Projection_Object_ID(void) const { return NULL; }
 
 protected:
-
-	void						Set_Flag(uint32 flag,bool onoff);
-	bool						Get_Flag(uint32 flag) const;
-	virtual void			Update_WS_Bounding_Volume(void);
-	void						Configure_Camera(CameraClass & camera);
+	void Set_Flag(uint32 flag, bool onoff);
+	bool Get_Flag(uint32 flag) const;
+	virtual void Update_WS_Bounding_Volume(void);
+	void Configure_Camera(CameraClass &camera);
 
 	enum FlagsType
 	{
-		PERSPECTIVE				= 0x00000001,		// PERSPECTIVE or ORTHO
-		ADDITIVE					= 0x00000002,		// ADDITIVE or MULTIPLICATIVE
-		TEXTURE_DIRTY			= 0x00000004,		// used by derived DynTexProjectClass
-		VOLATILE					= 0x00000008,		// this is a volatile texture.
-		ATTENUATE				= 0x00000010,		// this projector should be attenuated based on distance to viewer
-		AFFECT_DYNAMIC_OBJS	= 0x00000020,		// this projector affects dynamic objects
-		AFFECT_STATIC_OBJS	= 0x00000040,		// this projector affects static objects
-		USE_DEPTH_GRADIENT	= 0x00000080,		// fade the projection as a function of depth
-		HAS_RENDER_TARGET		= 0x00000100,		// the texture we have can be a render target
-		SIZE_MASK				= 0xFFF00000,		// desired texture size stored in upper 3 nibbles
-		SIZE_SHIFT				= 20,
+		PERSPECTIVE = 0x00000001, // PERSPECTIVE or ORTHO
+		ADDITIVE = 0x00000002, // ADDITIVE or MULTIPLICATIVE
+		TEXTURE_DIRTY = 0x00000004, // used by derived DynTexProjectClass
+		VOLATILE = 0x00000008, // this is a volatile texture.
+		ATTENUATE = 0x00000010, // this projector should be attenuated based on distance to viewer
+		AFFECT_DYNAMIC_OBJS = 0x00000020, // this projector affects dynamic objects
+		AFFECT_STATIC_OBJS = 0x00000040, // this projector affects static objects
+		USE_DEPTH_GRADIENT = 0x00000080, // fade the projection as a function of depth
+		HAS_RENDER_TARGET = 0x00000100, // the texture we have can be a render target
+		SIZE_MASK = 0xFFF00000, // desired texture size stored in upper 3 nibbles
+		SIZE_SHIFT = 20,
 
-		DEFAULT_FLAGS			= ATTENUATE | AFFECT_DYNAMIC_OBJS | AFFECT_STATIC_OBJS | (64<<SIZE_SHIFT)
+		DEFAULT_FLAGS = ATTENUATE | AFFECT_DYNAMIC_OBJS | AFFECT_STATIC_OBJS | (64 << SIZE_SHIFT)
 	};
 
-	uint32						Flags;
+	uint32 Flags;
 
 	/*
 	** Intensity Controls
 	*/
-	float							DesiredIntensity;					// last input desired intensity.
-	float							Intensity;							// basic shadow intensity.  value between 0 and 1
-	float							Attenuation;						// attenuation factor based on distance from camera.  value between 0 and 1
+	float DesiredIntensity; // last input desired intensity.
+	float Intensity; // basic shadow intensity.  value between 0 and 1
+	float Attenuation; // attenuation factor based on distance from camera.  value between 0 and 1
 
 	/*
 	** Material pass to be added to any object that intersects the volume
 	*/
-	MaterialPassClass *		MaterialPass;
-	MatrixMapperClass *		Mapper1;
-	TextureClass *				RenderTarget;
+	MaterialPassClass *MaterialPass;
+	MatrixMapperClass *Mapper1;
+	TextureClass *RenderTarget;
 
 	/*
 	** I have to remember all of these values so that I can properly initialize a CameraClass
 	** when we do render-to-texture.  Some day we will merge CameraClass and ProjectorClass.
 	*/
-	float							HFov;				// horizontal fov (for perspective mode)
-	float							VFov;				// vertical fov (for perspective mode)
-	float							XMin;				// left x clip plane (for ortho)
-	float							XMax;				// right x clip plane (for ortho)
-	float							YMin;				// bottom y clip plane (for ortho)
-	float							YMax;				// top y clip plane (for ortho)
-	float							ZNear,ZFar;		// z clip planes (for both modes)
+	float HFov; // horizontal fov (for perspective mode)
+	float VFov; // vertical fov (for perspective mode)
+	float XMin; // left x clip plane (for ortho)
+	float XMax; // right x clip plane (for ortho)
+	float YMin; // bottom y clip plane (for ortho)
+	float YMax; // top y clip plane (for ortho)
+	float ZNear, ZFar; // z clip planes (for both modes)
 };
-
 
 /*
 ** Texture Projector Lists
 */
-typedef RefMultiListClass<TexProjectClass>		TexProjListClass;
-typedef RefMultiListIterator<TexProjectClass>	TexProjListIterator;
-
+typedef RefMultiListClass<TexProjectClass> TexProjListClass;
+typedef RefMultiListIterator<TexProjectClass> TexProjListIterator;
 
 #endif
-

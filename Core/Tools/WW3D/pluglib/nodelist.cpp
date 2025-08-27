@@ -48,25 +48,22 @@
 
 #include "nodelist.h"
 
-
-static AnyINodeFilter				_AnyFilter;
-
+static AnyINodeFilter _AnyFilter;
 
 /*******************************************************************************
-*	ListEntryClass
-*
-*	Used to implement a linked list of INodes.
-*
-*******************************************************************************/
+ *	ListEntryClass
+ *
+ *	Used to implement a linked list of INodes.
+ *
+ *******************************************************************************/
 class INodeListEntryClass
 {
 public:
-
-	INodeListEntryClass(INode * n,TimeValue /*time*/) { Node = n; }
+	INodeListEntryClass(INode *n, TimeValue /*time*/) { Node = n; }
 	~INodeListEntryClass(void) {}
 
-	INode							* Node;
-	INodeListEntryClass		* Next;
+	INode *Node;
+	INodeListEntryClass *Next;
 };
 
 /***********************************************************************************************
@@ -81,13 +78,11 @@ public:
  * HISTORY:                                                                                    *
  *   07/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-INodeListClass::INodeListClass(TimeValue time,INodeFilterClass * inodefilter) :
-	NumNodes(0),
-	Time(time),
-	ListHead(NULL),
-	INodeFilter(inodefilter)
+INodeListClass::INodeListClass(TimeValue time, INodeFilterClass *inodefilter) :
+		NumNodes(0), Time(time), ListHead(NULL), INodeFilter(inodefilter)
 {
-	if (INodeFilter == NULL) {
+	if (INodeFilter == NULL)
+	{
 		INodeFilter = &_AnyFilter;
 	}
 }
@@ -107,18 +102,15 @@ INodeListClass::INodeListClass(TimeValue time,INodeFilterClass * inodefilter) :
  * HISTORY:                                                                                    *
  *   06/09/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-INodeListClass::INodeListClass(IScene * scene,TimeValue time,INodeFilterClass * inodefilter) :
-	NumNodes(0),
-	Time(time),
-	ListHead(NULL),
-	INodeFilter(inodefilter)
+INodeListClass::INodeListClass(IScene *scene, TimeValue time, INodeFilterClass *inodefilter) :
+		NumNodes(0), Time(time), ListHead(NULL), INodeFilter(inodefilter)
 {
-	if (INodeFilter == NULL) {
+	if (INodeFilter == NULL)
+	{
 		INodeFilter = &_AnyFilter;
 	}
 	scene->EnumTree(this);
 }
-
 
 /***********************************************************************************************
  * INodeListClass::INodeListClass -- Constructor                                               *
@@ -132,18 +124,15 @@ INodeListClass::INodeListClass(IScene * scene,TimeValue time,INodeFilterClass * 
  * HISTORY:                                                                                    *
  *   1/13/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-INodeListClass::INodeListClass(INode * root,TimeValue time,INodeFilterClass * nodefilter) :
-	NumNodes(0),
-	Time(time),
-	ListHead(NULL),
-	INodeFilter(nodefilter)
+INodeListClass::INodeListClass(INode *root, TimeValue time, INodeFilterClass *nodefilter) :
+		NumNodes(0), Time(time), ListHead(NULL), INodeFilter(nodefilter)
 {
-	if (INodeFilter == NULL) {
+	if (INodeFilter == NULL)
+	{
 		INodeFilter = &_AnyFilter;
 	}
 	Add_Tree(root);
 }
-
 
 /***********************************************************************************************
  * INodeListClass::INodeListClass -- A "copy" contstructor with filtering...                   *
@@ -157,16 +146,15 @@ INodeListClass::INodeListClass(INode * root,TimeValue time,INodeFilterClass * no
  * HISTORY:                                                                                    *
  *   07/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-INodeListClass::INodeListClass(INodeListClass & copyfrom,TimeValue time,INodeFilterClass * inodefilter) :
-	NumNodes(0),
-	Time(time),
-	ListHead(NULL),
-	INodeFilter(inodefilter)
+INodeListClass::INodeListClass(INodeListClass &copyfrom, TimeValue time, INodeFilterClass *inodefilter) :
+		NumNodes(0), Time(time), ListHead(NULL), INodeFilter(inodefilter)
 {
-	if (INodeFilter == NULL) {
+	if (INodeFilter == NULL)
+	{
 		INodeFilter = &_AnyFilter;
 	}
-	for (unsigned i=0; i<copyfrom.Num_Nodes(); i++) {
+	for (unsigned i = 0; i < copyfrom.Num_Nodes(); i++)
+	{
 		Insert(copyfrom[i]);
 	}
 }
@@ -187,7 +175,7 @@ INodeListClass::~INodeListClass(void)
 {
 	while (ListHead)
 	{
-		INodeListEntryClass * next = ListHead->Next;
+		INodeListEntryClass *next = ListHead->Next;
 		delete ListHead;
 		ListHead = next;
 	}
@@ -195,7 +183,6 @@ INodeListClass::~INodeListClass(void)
 	NumNodes = 0;
 	ListHead = NULL;
 }
-
 
 /***********************************************************************************************
  * INode * INodeListClass::operator[] -- Array-like access to the list members                 *
@@ -211,17 +198,16 @@ INodeListClass::~INodeListClass(void)
  * HISTORY:                                                                                    *
  *   06/09/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-INode * INodeListClass::operator[] ( int index ) const
+INode *INodeListClass::operator[](int index) const
 {
-	INodeListEntryClass * entry = ListHead;
-	while (index > 0 && entry != NULL )
+	INodeListEntryClass *entry = ListHead;
+	while (index > 0 && entry != NULL)
 	{
 		entry = entry->Next;
 		index--;
 	}
 	return entry->Node;
 }
-
 
 /***********************************************************************************************
  * INodeListClass::Insert -- insert a list of nodes into this list                             *
@@ -235,9 +221,10 @@ INode * INodeListClass::operator[] ( int index ) const
  * HISTORY:                                                                                    *
  *   1/14/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void INodeListClass::Insert(INodeListClass & insertlist)
+void INodeListClass::Insert(INodeListClass &insertlist)
 {
-	for (unsigned int i=0; i<insertlist.Num_Nodes(); i++) {
+	for (unsigned int i = 0; i < insertlist.Num_Nodes(); i++)
+	{
 		Insert(insertlist[i]);
 	}
 }
@@ -254,17 +241,16 @@ void INodeListClass::Insert(INodeListClass & insertlist)
  * HISTORY:                                                                                    *
  *   07/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void INodeListClass::Insert(INode * node)
+void INodeListClass::Insert(INode *node)
 {
-	if (INodeFilter->Accept_Node(node,Time))
+	if (INodeFilter->Accept_Node(node, Time))
 	{
-		INodeListEntryClass * newentry = new INodeListEntryClass(node, Time);
+		INodeListEntryClass *newentry = new INodeListEntryClass(node, Time);
 		newentry->Next = ListHead;
 		ListHead = newentry;
 		NumNodes++;
 	}
 }
-
 
 /***********************************************************************************************
  * INodeListClass::Remove -- Remove the i'th element of the list                               *
@@ -280,22 +266,24 @@ void INodeListClass::Insert(INode * node)
  *=============================================================================================*/
 void INodeListClass::Remove(int i)
 {
-	if ((i < 0) || (i > Num_Nodes())) {
+	if ((i < 0) || (i > Num_Nodes()))
+	{
 		return;
 	}
 
-	INodeListEntryClass * prev = ListHead;
-	while (i > 1) {
+	INodeListEntryClass *prev = ListHead;
+	while (i > 1)
+	{
 		prev = prev->Next;
 	}
 
-	INodeListEntryClass * deleteme = prev->Next;
-	if (deleteme != NULL) {
+	INodeListEntryClass *deleteme = prev->Next;
+	if (deleteme != NULL)
+	{
 		prev->Next = prev->Next->Next;
 		delete deleteme;
 	}
 }
-
 
 /***********************************************************************************************
  * INodeListClass::Add_Tree -- Add a tree of INodes to the list                                *
@@ -309,16 +297,17 @@ void INodeListClass::Remove(int i)
  * HISTORY:                                                                                    *
  *   1/13/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void INodeListClass::Add_Tree(INode * root)
+void INodeListClass::Add_Tree(INode *root)
 {
-	if (root == NULL) return;
+	if (root == NULL)
+		return;
 
 	Insert(root);
-	for (int i=0; i<root->NumberOfChildren(); i++) {
+	for (int i = 0; i < root->NumberOfChildren(); i++)
+	{
 		Add_Tree(root->GetChildNode(i));
 	}
 }
-
 
 /***********************************************************************************************
  * INodeListClass::callback -- callback function for MAX                                       *
@@ -335,24 +324,25 @@ void INodeListClass::Add_Tree(INode * root)
  * HISTORY:                                                                                    *
  *   06/09/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-int INodeListClass::callback(INode * node)
+int INodeListClass::callback(INode *node)
 {
 	Insert(node);
 
-	return TREE_CONTINUE;	// Keep on enumerating....
+	return TREE_CONTINUE; // Keep on enumerating....
 }
 
-
-void INodeListClass::Sort(const INodeCompareClass & node_compare)
+void INodeListClass::Sort(const INodeCompareClass &node_compare)
 {
-	for (unsigned int i=0; i<Num_Nodes(); i++) {
-		for (unsigned int j=0; j<Num_Nodes(); j++) {
+	for (unsigned int i = 0; i < Num_Nodes(); i++)
+	{
+		for (unsigned int j = 0; j < Num_Nodes(); j++)
+		{
+			INodeListEntryClass *ni = get_nth_item(i);
+			INodeListEntryClass *nj = get_nth_item(j);
 
-			INodeListEntryClass * ni = get_nth_item(i);
-			INodeListEntryClass * nj = get_nth_item(j);
-
-			if (node_compare(ni->Node,nj->Node) > 0) {
-				INode * tmp = ni->Node;
+			if (node_compare(ni->Node, nj->Node) > 0)
+			{
+				INode *tmp = ni->Node;
 				ni->Node = nj->Node;
 				nj->Node = tmp;
 			}
@@ -360,14 +350,13 @@ void INodeListClass::Sort(const INodeCompareClass & node_compare)
 	}
 }
 
-INodeListEntryClass * INodeListClass::get_nth_item(int index)
+INodeListEntryClass *INodeListClass::get_nth_item(int index)
 {
-	INodeListEntryClass * entry = ListHead;
-	while (index > 0 && entry != NULL )
+	INodeListEntryClass *entry = ListHead;
+	while (index > 0 && entry != NULL)
 	{
 		entry = entry->Next;
 		index--;
 	}
 	return entry;
 }
-

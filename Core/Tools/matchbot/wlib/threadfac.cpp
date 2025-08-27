@@ -20,12 +20,11 @@
 
 #include "threadfac.h"
 
-int       Runnable::ThreadCount_ = 0;
-CritSec   Runnable::CritSec_;           // to protect ThreadCount_
+int Runnable::ThreadCount_ = 0;
+CritSec Runnable::CritSec_; // to protect ThreadCount_
 
 // MDC: Made all this dependent on _REENTRANT being defined so VC++ doesn't complain on
 // single-threaded programs...
-
 
 //
 // Note: I chose the following type signature for thread functions
@@ -42,12 +41,10 @@ CritSec   Runnable::CritSec_;           // to protect ThreadCount_
 //
 struct ThreadInformation
 {
-  void     *startPoint;    // The address of the _real_ thread function, or class
-  void     *data;          // data to pass to real thread function or class
-  bit8      destroy;       // only applies to classes, should delete after execution?
+	void *startPoint; // The address of the _real_ thread function, or class
+	void *data; // data to pass to real thread function or class
+	bit8 destroy; // only applies to classes, should delete after execution?
 };
-
-
 
 //
 // Start a thread inside a class
@@ -56,60 +53,58 @@ bit8 ThreadFactory::startThread(Runnable &runable, void *data, bit8 destroy)
 {
 #ifdef _REENTRANT
 
-  {
-	  Runnable::CritSec_.lock();
-	  Runnable::ThreadCount_++;
-	  Runnable::CritSec_.unlock();
-  }
+	{
+		Runnable::CritSec_.lock();
+		Runnable::ThreadCount_++;
+		Runnable::CritSec_.unlock();
+	}
 
+	ThreadInformation *tInfo = new ThreadInformation;
+	tInfo->startPoint = (void *)&runable;
+	tInfo->data = data;
+	tInfo->destroy = destroy;
 
-  ThreadInformation *tInfo=new ThreadInformation;
-  tInfo->startPoint=(void *)&runable;
-  tInfo->data=data;
-  tInfo->destroy=destroy;
-
-  #ifdef _WIN32
-    // Under windows call _beginthreadex instead of CreateThread so you can
-    //  use all the normal C library stuff. (IMPORTANT!!!)
-    uint32 handle;
+#ifdef _WIN32
+	// Under windows call _beginthreadex instead of CreateThread so you can
+	//  use all the normal C library stuff. (IMPORTANT!!!)
+	uint32 handle;
 	uint32 stup1d;
-    handle=_beginthreadex(NULL,0,  threadClassLauncher, tInfo, 0, &stup1d);
-    if (handle!=NULL)
-      return(TRUE);
-    else
-    {
-      {
-        runable.CritSec_.lock();
-        runable.ThreadCount_--;   // Ok, so it didn't really start
-        runable.CritSec_.unlock();
-      }
-      return(FALSE);
-    }
-  #else // UNIX
-    // Setup thread attributes for client threads
-    int retval;
-    pthread_attr_t threadAttr;
-    pthread_attr_init(&threadAttr);
-    pthread_attr_setdetachstate(&threadAttr, PTHREAD_CREATE_DETACHED);
-    pthread_attr_setscope(&threadAttr,PTHREAD_SCOPE_SYSTEM);
-    retval=pthread_create(NULL,&threadAttr, threadClassLauncher, tInfo);
-    if (retval==0)
-      return(TRUE);
-    else
-    {
-      {
-        runable.CritSec_.lock();
-        runable.ThreadCount_--;   // Ok, so it didn't really start
-        runable.CritSec_.unlock();
-      }
-      return(FALSE);
-    }
-  #endif
+	handle = _beginthreadex(NULL, 0, threadClassLauncher, tInfo, 0, &stup1d);
+	if (handle != NULL)
+		return (TRUE);
+	else
+	{
+		{
+			runable.CritSec_.lock();
+			runable.ThreadCount_--; // Ok, so it didn't really start
+			runable.CritSec_.unlock();
+		}
+		return (FALSE);
+	}
+#else // UNIX
+	// Setup thread attributes for client threads
+	int retval;
+	pthread_attr_t threadAttr;
+	pthread_attr_init(&threadAttr);
+	pthread_attr_setdetachstate(&threadAttr, PTHREAD_CREATE_DETACHED);
+	pthread_attr_setscope(&threadAttr, PTHREAD_SCOPE_SYSTEM);
+	retval = pthread_create(NULL, &threadAttr, threadClassLauncher, tInfo);
+	if (retval == 0)
+		return (TRUE);
+	else
+	{
+		{
+			runable.CritSec_.lock();
+			runable.ThreadCount_--; // Ok, so it didn't really start
+			runable.CritSec_.unlock();
+		}
+		return (FALSE);
+	}
+#endif
 #else
 	return (FALSE);
 #endif /* _REENTRANT */
 }
-
 
 //
 // Start a thread inside a function
@@ -117,105 +112,107 @@ bit8 ThreadFactory::startThread(Runnable &runable, void *data, bit8 destroy)
 bit8 ThreadFactory::startThread(void (*start_func)(void *), void *data)
 {
 #ifdef _REENTRANT
-  ThreadInformation *tInfo=new ThreadInformation;
-  tInfo->startPoint=start_func;
-  tInfo->data=data;
+	ThreadInformation *tInfo = new ThreadInformation;
+	tInfo->startPoint = start_func;
+	tInfo->data = data;
 
-  #ifdef _WIN32
-    // Under windows call _beginthreadex instead of CreateThread so you can
-    //  use all the normal C library stuff. (IMPORTANT!!!)
-    uint32 handle;
+#ifdef _WIN32
+	// Under windows call _beginthreadex instead of CreateThread so you can
+	//  use all the normal C library stuff. (IMPORTANT!!!)
+	uint32 handle;
 	unsigned temp;
-    handle=_beginthreadex(NULL,0,  threadFuncLauncher, tInfo, 0, &temp);
-    if (handle!=NULL)
-      return(TRUE);
-    return(FALSE);
-  #else // UNIX
-    // Setup thread attributes for client threads
-    int retval;
-    pthread_attr_t threadAttr;
-    pthread_attr_init(&threadAttr);
-    pthread_attr_setdetachstate(&threadAttr, PTHREAD_CREATE_DETACHED);
-    pthread_attr_setscope(&threadAttr,PTHREAD_SCOPE_SYSTEM);
-    retval=pthread_create(NULL,&threadAttr, threadFuncLauncher, tInfo);
-    if (retval==0)
-      return(TRUE);
-    else
-      return(FALSE);
-  #endif
+	handle = _beginthreadex(NULL, 0, threadFuncLauncher, tInfo, 0, &temp);
+	if (handle != NULL)
+		return (TRUE);
+	return (FALSE);
+#else // UNIX
+	// Setup thread attributes for client threads
+	int retval;
+	pthread_attr_t threadAttr;
+	pthread_attr_init(&threadAttr);
+	pthread_attr_setdetachstate(&threadAttr, PTHREAD_CREATE_DETACHED);
+	pthread_attr_setscope(&threadAttr, PTHREAD_SCOPE_SYSTEM);
+	retval = pthread_create(NULL, &threadAttr, threadFuncLauncher, tInfo);
+	if (retval == 0)
+		return (TRUE);
+	else
+		return (FALSE);
+#endif
 #else
-	return(FALSE);
+	return (FALSE);
 #endif /* REENTRANT */
 }
 
 #ifdef _WIN32
-  unsigned __stdcall threadFuncLauncher(void *temp)
-#else  // UNIX
-  void *threadFuncLauncher(void *temp)
+unsigned __stdcall threadFuncLauncher(void *temp)
+#else // UNIX
+void *threadFuncLauncher(void *temp)
 #endif
 {
-  ThreadInformation *tInfo=(ThreadInformation *)temp;
+	ThreadInformation *tInfo = (ThreadInformation *)temp;
 
-  void (*start_func)(void *);
-  start_func=(void (*)(void *))tInfo->startPoint;
+	void (*start_func)(void *);
+	start_func = (void (*)(void *))tInfo->startPoint;
 
-  void     *data=tInfo->data;
-  delete(tInfo);
+	void *data = tInfo->data;
+	delete (tInfo);
 
-  start_func(data);
-  return(0);
+	start_func(data);
+	return (0);
 }
 
 #ifdef _WIN32
-  unsigned __stdcall threadClassLauncher(void *temp)
-#else  // UNIX
-  void *threadClassLauncher(void *temp)
+unsigned __stdcall threadClassLauncher(void *temp)
+#else // UNIX
+void *threadClassLauncher(void *temp)
 #endif
 {
-  ThreadInformation *tInfo=(ThreadInformation *)temp;
+	ThreadInformation *tInfo = (ThreadInformation *)temp;
 
-  Runnable *thrClass=(Runnable *)tInfo->startPoint;
-  void     *data=tInfo->data;
-  bit8      destroy=tInfo->destroy;
-  delete(tInfo);
+	Runnable *thrClass = (Runnable *)tInfo->startPoint;
+	void *data = tInfo->data;
+	bit8 destroy = tInfo->destroy;
+	delete (tInfo);
 
-  thrClass->run(data);
+	thrClass->run(data);
 
-  if (destroy)     // May want to free memory after thread finishes
-    delete(thrClass);
+	if (destroy) // May want to free memory after thread finishes
+		delete (thrClass);
 
-  {
-	  Runnable::CritSec_.lock();
-	  Runnable::ThreadCount_--;
-	  Runnable::CritSec_.unlock();
-  }
+	{
+		Runnable::CritSec_.lock();
+		Runnable::ThreadCount_--;
+		Runnable::CritSec_.unlock();
+	}
 
-  #ifdef _WIN32
-    ExitThread(0);    // is this really needed?
-  #endif
-  return(0);
+#ifdef _WIN32
+	ExitThread(0); // is this really needed?
+#endif
+	return (0);
 }
 
 Runnable::Runnable()
-{ }
+{
+}
 
 Runnable::~Runnable()
-{ }
+{
+}
 
 // Is there a thread running in this class
 bit8 Runnable::isRunning(void)
 {
-  // Don't need to lock a simple assignment
-  int temp=ThreadCount_;
-  return((temp>0)?TRUE:FALSE);
+	// Don't need to lock a simple assignment
+	int temp = ThreadCount_;
+	return ((temp > 0) ? TRUE : FALSE);
 }
 
 // How many threads are running in this class
 int Runnable::getThreadCount(void)
 {
-  // Don't need to lock a simple assignment
-  int temp=ThreadCount_;
-  return(temp);
+	// Don't need to lock a simple assignment
+	int temp = ThreadCount_;
+	return (temp);
 }
 
 #undef THREADFAC_CODE

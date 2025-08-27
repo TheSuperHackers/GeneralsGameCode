@@ -45,7 +45,7 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class ObjectCreationList;
 class Object;
-enum ScienceType CPP_11(: Int);
+enum ScienceType CPP_11( : Int);
 struct FieldParse;
 
 // For SpecialPowerType and SpecialPowerMaskType::s_bitNameList. Part of detangling.
@@ -56,36 +56,39 @@ struct FieldParse;
 
 #define MAKE_SPECIALPOWER_MASK(k) SpecialPowerMaskType(SpecialPowerMaskType::kInit, (k))
 
-inline Bool TEST_SPECIALPOWERMASK(const SpecialPowerMaskType& m, SpecialPowerType t)
+inline Bool TEST_SPECIALPOWERMASK(const SpecialPowerMaskType &m, SpecialPowerType t)
 {
 	return m.test(t);
 }
-inline Bool TEST_SPECIALPOWERMASK_ANY(const SpecialPowerMaskType& m, const SpecialPowerMaskType& mask)
+inline Bool TEST_SPECIALPOWERMASK_ANY(const SpecialPowerMaskType &m, const SpecialPowerMaskType &mask)
 {
 	return m.anyIntersectionWith(mask);
 }
-inline Bool TEST_SPECIALPOWERMASK_MULTI(const SpecialPowerMaskType& m, const SpecialPowerMaskType& mustBeSet, const SpecialPowerMaskType& mustBeClear)
+inline Bool TEST_SPECIALPOWERMASK_MULTI(
+		const SpecialPowerMaskType &m,
+		const SpecialPowerMaskType &mustBeSet,
+		const SpecialPowerMaskType &mustBeClear)
 {
 	return m.testSetAndClear(mustBeSet, mustBeClear);
 }
-inline Bool SPECIALPOWERMASK_ANY_SET(const SpecialPowerMaskType& m)
+inline Bool SPECIALPOWERMASK_ANY_SET(const SpecialPowerMaskType &m)
 {
 	return m.any();
 }
-inline void CLEAR_SPECIALPOWERMASK(SpecialPowerMaskType& m)
+inline void CLEAR_SPECIALPOWERMASK(SpecialPowerMaskType &m)
 {
 	m.clear();
 }
-inline void SET_SPECIALPOWERMASK( SpecialPowerMaskType& m, SpecialPowerType t, Int val = 1 )
+inline void SET_SPECIALPOWERMASK(SpecialPowerMaskType &m, SpecialPowerType t, Int val = 1)
 {
-	m.set( t, val );
+	m.set(t, val);
 }
-inline void SET_ALL_SPECIALPOWERMASK_BITS(SpecialPowerMaskType& m)
+inline void SET_ALL_SPECIALPOWERMASK_BITS(SpecialPowerMaskType &m)
 {
 	m.clear();
 	m.flip();
 }
-inline void FLIP_SPECIALPOWERMASK(SpecialPowerMaskType& m)
+inline void FLIP_SPECIALPOWERMASK(SpecialPowerMaskType &m)
 {
 	m.flip();
 }
@@ -94,99 +97,91 @@ inline void FLIP_SPECIALPOWERMASK(SpecialPowerMaskType& m)
 //-------------------------------------------------------------------------------------------------
 class SpecialPowerTemplate : public Overridable
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SpecialPowerTemplate, "SpecialPowerTemplate" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SpecialPowerTemplate, "SpecialPowerTemplate")
 
 public:
-
-  SpecialPowerTemplate();
+	SpecialPowerTemplate();
 	// virtual destructor prototype provided by MemoryPoolObject
 
-	static const FieldParse* getFieldParse( void ) { return m_specialPowerFieldParse; }
+	static const FieldParse *getFieldParse(void) { return m_specialPowerFieldParse; }
 
-	void friend_setNameAndID(const AsciiString& name, UnsignedInt id)
+	void friend_setNameAndID(const AsciiString &name, UnsignedInt id)
 	{
 		m_name = name;
 		m_id = id;
 	}
 
-	AsciiString getName( void ) const { return getFO()->m_name; }
-	UnsignedInt getID( void ) const { return getFO()->m_id; }
-	SpecialPowerType getSpecialPowerType( void ) const { return getFO()->m_type; }
-	UnsignedInt getReloadTime( void ) const { return getFO()->m_reloadTime; }
-	ScienceType getRequiredScience( void ) const { return getFO()->m_requiredScience; }
-	const AudioEventRTS *getInitiateSound( void ) const { return &getFO()->m_initiateSound; }
-	const AudioEventRTS *getInitiateAtTargetSound( void ) const { return &getFO()->m_initiateAtLocationSound; }
-	Bool hasPublicTimer( void ) const { return getFO()->m_publicTimer; }
-	Bool isSharedNSync( void ) const { return getFO()->m_sharedNSync; }
-	UnsignedInt getDetectionTime( void ) const { return getFO()->m_detectionTime; }
-	UnsignedInt getViewObjectDuration( void ) const { return getFO()->m_viewObjectDuration; }
-	Real getViewObjectRange( void ) const { return getFO()->m_viewObjectRange; }
+	AsciiString getName(void) const { return getFO()->m_name; }
+	UnsignedInt getID(void) const { return getFO()->m_id; }
+	SpecialPowerType getSpecialPowerType(void) const { return getFO()->m_type; }
+	UnsignedInt getReloadTime(void) const { return getFO()->m_reloadTime; }
+	ScienceType getRequiredScience(void) const { return getFO()->m_requiredScience; }
+	const AudioEventRTS *getInitiateSound(void) const { return &getFO()->m_initiateSound; }
+	const AudioEventRTS *getInitiateAtTargetSound(void) const { return &getFO()->m_initiateAtLocationSound; }
+	Bool hasPublicTimer(void) const { return getFO()->m_publicTimer; }
+	Bool isSharedNSync(void) const { return getFO()->m_sharedNSync; }
+	UnsignedInt getDetectionTime(void) const { return getFO()->m_detectionTime; }
+	UnsignedInt getViewObjectDuration(void) const { return getFO()->m_viewObjectDuration; }
+	Real getViewObjectRange(void) const { return getFO()->m_viewObjectRange; }
 	Real getRadiusCursorRadius() const { return getFO()->m_radiusCursorRadius; }
 	Bool isShortcutPower() const { return getFO()->m_shortcutPower; }
 
 private:
+	const SpecialPowerTemplate *getFO() const { return (const SpecialPowerTemplate *)friend_getFinalOverride(); }
 
-	const SpecialPowerTemplate* getFO() const { return (const SpecialPowerTemplate*)friend_getFinalOverride(); }
+	AsciiString m_name; ///< name
+	UnsignedInt m_id; ///< unique identifier
+	SpecialPowerType m_type; ///< enum allowing for fast type checking for ability processing.
+	UnsignedInt m_reloadTime; ///< (frames) after using special power, how long it takes to use again
+	ScienceType m_requiredScience; ///< science required (if any) to actually execute this power
+	AudioEventRTS m_initiateSound; ///< sound to play when initiated
+	AudioEventRTS m_initiateAtLocationSound; ///< sound to play at target location (if any)
+	UnsignedInt m_detectionTime; ///< (frames) after using infiltration power (defection, etc.),
+															 ///< how long it takes for ex comrades to realize it on their own
+	UnsignedInt m_viewObjectDuration; ///< Lifetime of a looking object we slap down so you can watch the effect
+	Real m_viewObjectRange; ///< And how far that object can see.
+	Real m_radiusCursorRadius; ///< size of radius cursor, if any
+	Bool m_publicTimer; ///< display a countdown timer for this special power for all to see
+	Bool m_sharedNSync; ///< If true, this is a special that is shared between all of a player's command centers
+	Bool m_shortcutPower; ///< Is this shortcut power capable of being fired by the side panel?
 
-	AsciiString				m_name;								///< name
-	UnsignedInt				m_id;									///< unique identifier
-	SpecialPowerType	m_type;								///< enum allowing for fast type checking for ability processing.
-	UnsignedInt				m_reloadTime;					///< (frames) after using special power, how long it takes to use again
-	ScienceType				m_requiredScience;		///< science required (if any) to actually execute this power
-	AudioEventRTS			m_initiateSound;			///< sound to play when initiated
-	AudioEventRTS			m_initiateAtLocationSound;		///< sound to play at target location (if any)
-	UnsignedInt				m_detectionTime;			///< (frames) after using infiltration power (defection, etc.),
-																					///< how long it takes for ex comrades to realize it on their own
-	UnsignedInt				m_viewObjectDuration;	///< Lifetime of a looking object we slap down so you can watch the effect
-	Real							m_viewObjectRange;		///< And how far that object can see.
-	Real							m_radiusCursorRadius;	///< size of radius cursor, if any
-	Bool							m_publicTimer;				///< display a countdown timer for this special power for all to see
-	Bool							m_sharedNSync;				///< If true, this is a special that is shared between all of a player's command centers
-	Bool							m_shortcutPower;		///< Is this shortcut power capable of being fired by the side panel?
-
-	static const FieldParse m_specialPowerFieldParse[];		///< the parse table
-
+	static const FieldParse m_specialPowerFieldParse[]; ///< the parse table
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class SpecialPowerStore : public SubsystemInterface
 {
-
 public:
+	SpecialPowerStore(void);
+	~SpecialPowerStore(void);
 
-	SpecialPowerStore( void );
-	~SpecialPowerStore( void );
+	virtual void init(void) {};
+	virtual void update(void) {};
+	virtual void reset(void);
 
-	virtual void init( void ) { };
-	virtual void update( void ) { };
-	virtual void reset( void );
-
-	const SpecialPowerTemplate *findSpecialPowerTemplate( AsciiString name ) { return findSpecialPowerTemplatePrivate(name); }
-	const SpecialPowerTemplate *findSpecialPowerTemplateByID( UnsignedInt id );
-	const SpecialPowerTemplate *getSpecialPowerTemplateByIndex( UnsignedInt index ); // for WorldBuilder
+	const SpecialPowerTemplate *findSpecialPowerTemplate(AsciiString name) { return findSpecialPowerTemplatePrivate(name); }
+	const SpecialPowerTemplate *findSpecialPowerTemplateByID(UnsignedInt id);
+	const SpecialPowerTemplate *getSpecialPowerTemplateByIndex(UnsignedInt index); // for WorldBuilder
 
 	/// does the object (and therefore the player) meet all the requirements to use this power
-	Bool canUseSpecialPower( Object *obj, const SpecialPowerTemplate *specialPowerTemplate );
+	Bool canUseSpecialPower(Object *obj, const SpecialPowerTemplate *specialPowerTemplate);
 
-	Int getNumSpecialPowers( void ); // for WorldBuilder
+	Int getNumSpecialPowers(void); // for WorldBuilder
 
-	static void parseSpecialPowerDefinition( INI *ini );
+	static void parseSpecialPowerDefinition(INI *ini);
 
 private:
-
 protected:
-	SpecialPowerTemplate *findSpecialPowerTemplatePrivate( AsciiString name );
+	SpecialPowerTemplate *findSpecialPowerTemplatePrivate(AsciiString name);
 
 	typedef std::vector<SpecialPowerTemplate *> SpecialPowerTemplatePtrVector;
-	SpecialPowerTemplatePtrVector m_specialPowerTemplates;			///< the special power templates
+	SpecialPowerTemplatePtrVector m_specialPowerTemplates; ///< the special power templates
 
 	UnsignedInt m_nextSpecialPowerID;
-
 };
 
 // EXTERNAL ///////////////////////////////////////////////////////////////////////////////////////
 extern SpecialPowerStore *TheSpecialPowerStore;
 
-#endif  // end __SPECIALPOWER_H_
+#endif // end __SPECIALPOWER_H_

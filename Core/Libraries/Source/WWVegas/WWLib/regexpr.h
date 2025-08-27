@@ -25,7 +25,6 @@
 #ifndef REGEXPR_H
 #define REGEXPR_H
 
-
 /*
 ** RegularExpressionClass - This class encapsulates regular expression
 ** evaluation. It provides a nice and simple wrapper around the
@@ -42,9 +41,9 @@
 class RegularExpressionClass
 {
 public:
-	RegularExpressionClass (const char *expression=0);
-	RegularExpressionClass (const RegularExpressionClass &copy);
-	~RegularExpressionClass (void);
+	RegularExpressionClass(const char *expression = 0);
+	RegularExpressionClass(const RegularExpressionClass &copy);
+	~RegularExpressionClass(void);
 
 	// Before you try to match a string against this regular expression,
 	// you must first compile the expression. This has the logical effect
@@ -55,28 +54,25 @@ public:
 	// constructor succeeded, check the return value of Is_Valid().
 	// Compile() returns true if the compilation succeeded (ie. the given
 	// expression string formed a valid regular expression).
-	bool Compile (const char *expression);
+	bool Compile(const char *expression);
 
 	// Returns true if a valid regular expression has been assigned to
 	// this object. If you passed a regular expression string into this
 	// object's constructor, make sure you check Is_Valid before calling
 	// Match().
-	bool Is_Valid (void) const;
+	bool Is_Valid(void) const;
 
 	// Tests if 'string' matches this regular expression.
-	bool Match (const char *string) const;
+	bool Match(const char *string) const;
 
 	// Standard operators.
-	RegularExpressionClass & operator = (const RegularExpressionClass &rhs);
-	bool operator == (const RegularExpressionClass &rhs) const;
-	bool operator != (const RegularExpressionClass &rhs) const;
+	RegularExpressionClass &operator=(const RegularExpressionClass &rhs);
+	bool operator==(const RegularExpressionClass &rhs) const;
+	bool operator!=(const RegularExpressionClass &rhs) const;
 
 private:
-
 	struct DataStruct;
-	DataStruct	*Data;
+	DataStruct *Data;
 };
 
-
 #endif
-

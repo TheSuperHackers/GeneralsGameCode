@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameClient/Drawable.h"
@@ -39,23 +39,21 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-BoneFXDamage::BoneFXDamage( Thing *thing, const ModuleData* moduleData )
-																		  : DamageModule( thing, moduleData )
+BoneFXDamage::BoneFXDamage(Thing *thing, const ModuleData *moduleData) : DamageModule(thing, moduleData)
 {
-}  // end BoneFXDamage
+} // end BoneFXDamage
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-BoneFXDamage::~BoneFXDamage( void )
+BoneFXDamage::~BoneFXDamage(void)
 {
-
-}  // end ~BoneFXDamage
+} // end ~BoneFXDamage
 
 //-------------------------------------------------------------------------------------------------
 void BoneFXDamage::onObjectCreated()
 {
 	static NameKeyType key_BoneFXUpdate = NAMEKEY("BoneFXUpdate");
-	BoneFXUpdate* bfxu = (BoneFXUpdate*)getObject()->findUpdateModule(key_BoneFXUpdate);
+	BoneFXUpdate *bfxu = (BoneFXUpdate *)getObject()->findUpdateModule(key_BoneFXUpdate);
 	if (bfxu == NULL)
 	{
 		DEBUG_ASSERTCRASH(bfxu != NULL, ("BoneFXDamage requires BoneFXUpdate"));
@@ -66,53 +64,48 @@ void BoneFXDamage::onObjectCreated()
 //-------------------------------------------------------------------------------------------------
 /** Switching damage states */
 //-------------------------------------------------------------------------------------------------
-void BoneFXDamage::onBodyDamageStateChange( const DamageInfo *damageInfo,
-																						BodyDamageType oldState,
-																						BodyDamageType newState )
+void BoneFXDamage::onBodyDamageStateChange(const DamageInfo *damageInfo, BodyDamageType oldState, BodyDamageType newState)
 {
 	static NameKeyType key_BoneFXUpdate = NAMEKEY("BoneFXUpdate");
-	BoneFXUpdate* bfxu = (BoneFXUpdate*)getObject()->findUpdateModule(key_BoneFXUpdate);
+	BoneFXUpdate *bfxu = (BoneFXUpdate *)getObject()->findUpdateModule(key_BoneFXUpdate);
 	if (bfxu)
 		bfxu->changeBodyDamageState(oldState, newState);
 
-}  // end onBodyDamageStateChange
+} // end onBodyDamageStateChange
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void BoneFXDamage::crc( Xfer *xfer )
+void BoneFXDamage::crc(Xfer *xfer)
 {
-
 	// extend base class
-	DamageModule::crc( xfer );
+	DamageModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void BoneFXDamage::xfer( Xfer *xfer )
+void BoneFXDamage::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DamageModule::xfer( xfer );
+	DamageModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BoneFXDamage::loadPostProcess( void )
+void BoneFXDamage::loadPostProcess(void)
 {
-
 	// extend base class
 	DamageModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

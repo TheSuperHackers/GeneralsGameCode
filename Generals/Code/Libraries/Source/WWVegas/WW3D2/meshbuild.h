@@ -45,7 +45,7 @@
 #ifndef MESHBUILD_H
 #define MESHBUILD_H
 
-#include	"always.h"
+#include "always.h"
 #include "vector2.h"
 #include "vector3.h"
 #include "bittype.h"
@@ -60,13 +60,13 @@
 */
 class WorldInfoClass
 {
-	public:
-		WorldInfoClass(void)				{ }
-		virtual ~WorldInfoClass(void)	{ }
+public:
+	WorldInfoClass(void) {}
+	virtual ~WorldInfoClass(void) {}
 
-		// Public methods
-		virtual Vector3	Get_Shared_Vertex_Normal (Vector3 pos, int smgroup) = 0;
-		virtual bool		Are_Meshes_Smoothed (void) const { return true; }
+	// Public methods
+	virtual Vector3 Get_Shared_Vertex_Normal(Vector3 pos, int smgroup) = 0;
+	virtual bool Are_Meshes_Smoothed(void) const { return true; }
 };
 
 /*
@@ -92,21 +92,20 @@ class WorldInfoClass
 */
 class MeshBuilderClass
 {
-
 public:
+	enum
+	{
+		STATE_ACCEPTING_INPUT = 0, // mesh builder is accepting input triangles
+		STATE_MESH_PROCESSED, // mesh builder has processed the mesh
 
-	enum {
-		STATE_ACCEPTING_INPUT = 0,		// mesh builder is accepting input triangles
-		STATE_MESH_PROCESSED,			// mesh builder has processed the mesh
-
-		MAX_PASSES = 4,					// maximum number of material passes supported
-		MAX_STAGES = 2,					// maximum number of texture stages supported in a single pass
+		MAX_PASSES = 4, // maximum number of material passes supported
+		MAX_STAGES = 2, // maximum number of texture stages supported in a single pass
 	};
 
 	/*
 	** Constructor, Destructor
 	*/
-	MeshBuilderClass(int pass_count=1,int face_count_guess=255,int face_count_growth_rate=64);
+	MeshBuilderClass(int pass_count = 1, int face_count_guess = 255, int face_count_growth_rate = 64);
 	~MeshBuilderClass(void);
 
 	/*
@@ -115,36 +114,34 @@ public:
 	class VertClass
 	{
 	public:
-		VertClass(void)		{ Reset(); }
-		void						Reset(void);
+		VertClass(void) { Reset(); }
+		void Reset(void);
 
 	public:
+		Vector3 Position; // position of the vertex
+		Vector3 Normal; // vertex normal (can be calculated by mesh builder)
+		int SmGroup; // smoothing group of the face this vertex was submitted with
+		int Id; // id of the vertex, must match for vert to be welded, ok at zero if you don't care
+		int BoneIndex; // bone influence if the mesh is a skin
 
-		Vector3					Position;			// position of the vertex
-		Vector3					Normal;				// vertex normal (can be calculated by mesh builder)
-		int						SmGroup;				// smoothing group of the face this vertex was submitted with
-		int						Id;					// id of the vertex, must match for vert to be welded, ok at zero if you don't care
-		int						BoneIndex;			// bone influence if the mesh is a skin
+		int MaxVertColIndex; // Index into the Max mesh.vertCol array of this vertex.
 
-		int						MaxVertColIndex;	// Index into the Max mesh.vertCol array of this vertex.
+		Vector2 TexCoord[MAX_PASSES][MAX_STAGES];
+		Vector3 DiffuseColor[MAX_PASSES]; // diffuse color
+		Vector3 SpecularColor[MAX_PASSES]; // specular color
+		Vector3 DiffuseIllumination[MAX_PASSES]; // pre-calced diffuse illum
+		float Alpha[MAX_PASSES]; // alpha
+		int VertexMaterialIndex[MAX_PASSES]; // vertex material index
 
-		Vector2					TexCoord[MAX_PASSES][MAX_STAGES];
-		Vector3					DiffuseColor[MAX_PASSES];			// diffuse color
-		Vector3					SpecularColor[MAX_PASSES];			// specular color
-		Vector3					DiffuseIllumination[MAX_PASSES];	// pre-calced diffuse illum
-		float						Alpha[MAX_PASSES];					// alpha
-		int						VertexMaterialIndex[MAX_PASSES];	// vertex material index
-
-		int						Attribute0;			// user-set attributes (passed on through...)
-		int						Attribute1;			// user-set attributes
+		int Attribute0; // user-set attributes (passed on through...)
+		int Attribute1; // user-set attributes
 
 		// These values are set up by the mesh builder:
 
-		int						SharedSmGroup;		// smooth bits that were on in all faces that contributed to this final vertex
-		int						UniqueIndex;		// used internally!
-		int						ShadeIndex;			// used internally!
-		VertClass *				NextHash;			// used internally!
-
+		int SharedSmGroup; // smooth bits that were on in all faces that contributed to this final vertex
+		int UniqueIndex; // used internally!
+		int ShadeIndex; // used internally!
+		VertClass *NextHash; // used internally!
 	};
 
 	/*
@@ -155,27 +152,27 @@ public:
 	class FaceClass
 	{
 	public:
-		FaceClass(void)		{ Reset(); }
-		void						Reset(void);									// reset this face
+		FaceClass(void) { Reset(); }
+		void Reset(void); // reset this face
 
 	public:
-		VertClass				Verts[3];										// array of 3 verts
-		int						SmGroup;											// smoothing group
-		int						Index;											// user-set index of the face
-		int						Attributes;										// user-set attributes
-		int						TextureIndex[MAX_PASSES][MAX_STAGES];	// texture to use for each pass
-		int						ShaderIndex[MAX_PASSES];					// shader for each pass
-		uint32					SurfaceType;									// surface type identifier
+		VertClass Verts[3]; // array of 3 verts
+		int SmGroup; // smoothing group
+		int Index; // user-set index of the face
+		int Attributes; // user-set attributes
+		int TextureIndex[MAX_PASSES][MAX_STAGES]; // texture to use for each pass
+		int ShaderIndex[MAX_PASSES]; // shader for each pass
+		uint32 SurfaceType; // surface type identifier
 
-		int						AddIndex;			// set by builder: index of addition
-		int						VertIdx[3];			// set by builder: "optimized" vertex indices
-		Vector3					Normal;		 		// set by builder: Face normal
-		float32					Dist;			 		// set by builder: Plane distance
+		int AddIndex; // set by builder: index of addition
+		int VertIdx[3]; // set by builder: "optimized" vertex indices
+		Vector3 Normal; // set by builder: Face normal
+		float32 Dist; // set by builder: Plane distance
 
-		void						Compute_Plane(void);
-		bool						operator != (const FaceClass & that)		{ return !(*this == that); }
-		bool						operator == (const FaceClass & /*that*/)	{ return false; }
-		bool						Is_Degenerate(void);
+		void Compute_Plane(void);
+		bool operator!=(const FaceClass &that) { return !(*this == that); }
+		bool operator==(const FaceClass & /*that*/) { return false; }
+		bool Is_Degenerate(void);
 
 		friend class MeshBuilderClass;
 	};
@@ -186,9 +183,9 @@ public:
 	** 3. Submit each face in the form of a FaceClass, set only the fields you need (leave others at default)
 	** 4. Call Build_Mesh
 	*/
-	void							Reset(int pass_count,int face_count_guess,int face_count_growth_rate);
-	int							Add_Face(const FaceClass & face);
-	void							Build_Mesh(bool compute_normals);
+	void Reset(int pass_count, int face_count_guess, int face_count_growth_rate);
+	int Add_Face(const FaceClass &face);
+	void Build_Mesh(bool compute_normals);
 
 	/*
 	** Optional controls:
@@ -198,7 +195,7 @@ public:
 	** Sort_Vertices can be used to order the vertices arbitrarily.  I use it to
 	** sort them according to the bone they are attached for skin meshes.
 	*/
-	void							Set_Polygon_Ordering_Channel(int pass,int texstage);
+	void Set_Polygon_Ordering_Channel(int pass, int texstage);
 
 	/*
 	** To use the results:
@@ -206,11 +203,11 @@ public:
 	** 2. Loop through the verts, looking at each one using Get_Vertex
 	** 3. Loop through the faces, looking at each one using Get_Face
 	*/
-	int							Get_Pass_Count(void) const;
-	int							Get_Vertex_Count(void) const;
-	int							Get_Face_Count(void) const;
-	const VertClass &			Get_Vertex(int index) const;
-	const FaceClass &			Get_Face(int index) const;
+	int Get_Pass_Count(void) const;
+	int Get_Vertex_Count(void) const;
+	int Get_Face_Count(void) const;
+	const VertClass &Get_Vertex(int index) const;
+	const FaceClass &Get_Face(int index) const;
 
 	/*
 	** Access to the Vertices and Faces for modifications.  This is used by
@@ -218,25 +215,25 @@ public:
 	** what you do to them.  (I haven't thought through all of the
 	** possible things you might do to mess up my nice clean mesh...).
 	*/
-	VertClass &					Get_Vertex(int index);
-	FaceClass &					Get_Face(int index);
+	VertClass &Get_Vertex(int index);
+	FaceClass &Get_Face(int index);
 
 	/*
 	** Bounding volume information about the mesh.  These functions can compute
 	** various types of bounding volumes for the mesh you just processed...
 	*/
-	void							Compute_Bounding_Box(Vector3 * set_min,Vector3 * set_max);
-	void							Compute_Bounding_Sphere(Vector3 * set_center,float * set_radius);
+	void Compute_Bounding_Box(Vector3 *set_min, Vector3 *set_max);
+	void Compute_Bounding_Sphere(Vector3 *set_center, float *set_radius);
 
 	// For per-pixel lighting KM
-	void							Compute_Tangent_Basis();
+	void Compute_Tangent_Basis();
 
 	/*
 	** World information managment.  Used to give the mesh builder information
 	** about the world outside of its mesh.
 	*/
-	WorldInfoClass *			Peek_World_Info(void) const						{ return WorldInfo; }
-	void							Set_World_Info(WorldInfoClass *world_info)	{ WorldInfo = world_info; }
+	WorldInfoClass *Peek_World_Info(void) const { return WorldInfo; }
+	void Set_World_Info(WorldInfoClass *world_info) { WorldInfo = world_info; }
 
 	/*
 	** Mesh Stats, mainly lots of flags for whether this mesh has various
@@ -244,80 +241,78 @@ public:
 	*/
 	struct MeshStatsStruct
 	{
-		void		Reset(void);
+		void Reset(void);
 
-		bool		HasTexture[MAX_PASSES][MAX_STAGES];				// has at least one texture in given pass/stage
-		bool		HasShader[MAX_PASSES];								// has at least one shader in given pass
-		bool		HasVertexMaterial[MAX_PASSES];					// has at least one vert material in given pass
+		bool HasTexture[MAX_PASSES][MAX_STAGES]; // has at least one texture in given pass/stage
+		bool HasShader[MAX_PASSES]; // has at least one shader in given pass
+		bool HasVertexMaterial[MAX_PASSES]; // has at least one vert material in given pass
 
-		bool		HasPerPolyTexture[MAX_PASSES][MAX_STAGES];	// has 2+ textures in given pass/stage
-		bool		HasPerPolyShader[MAX_PASSES];						// has 2+ shaders in given pass
-		bool		HasPerVertexMaterial[MAX_PASSES];				// has 2+ vertex materials in given pass
+		bool HasPerPolyTexture[MAX_PASSES][MAX_STAGES]; // has 2+ textures in given pass/stage
+		bool HasPerPolyShader[MAX_PASSES]; // has 2+ shaders in given pass
+		bool HasPerVertexMaterial[MAX_PASSES]; // has 2+ vertex materials in given pass
 
-		bool		HasDiffuseColor[MAX_PASSES];						// has diffuse colors in given pass
-		bool		HasSpecularColor[MAX_PASSES];						// has specular colors in given pass
-		bool		HasDiffuseIllumination[MAX_PASSES];				// has diffuse illum in given pass
+		bool HasDiffuseColor[MAX_PASSES]; // has diffuse colors in given pass
+		bool HasSpecularColor[MAX_PASSES]; // has specular colors in given pass
+		bool HasDiffuseIllumination[MAX_PASSES]; // has diffuse illum in given pass
 
-		bool		HasTexCoords[MAX_PASSES][MAX_STAGES];			// has texture coords in given pass
+		bool HasTexCoords[MAX_PASSES][MAX_STAGES]; // has texture coords in given pass
 
-		int		UVSplitCount;											// how many vertices were split due solely to UV discontinuities
-		int		StripCount;												// number of strips that were created
-		int		MaxStripLength;										// longest strip created
-		float		AvgStripLength;										// average strip length
+		int UVSplitCount; // how many vertices were split due solely to UV discontinuities
+		int StripCount; // number of strips that were created
+		int MaxStripLength; // longest strip created
+		float AvgStripLength; // average strip length
 	};
 
-	const MeshStatsStruct & Get_Mesh_Stats(void) const;
+	const MeshStatsStruct &Get_Mesh_Stats(void) const;
 
 private:
-
-	void							Free(void);
-	void							Compute_Mesh_Stats(void);
-	void							Optimize_Mesh(bool compute_normals);
-	void							Strip_Optimize_Mesh(void);
-	void							Remove_Degenerate_Faces(void);
-	void							Compute_Face_Normals(void);
-	bool							Verify_Face_Normals(void);
-	void							Compute_Vertex_Normals(void);
-	void							Grow_Face_Array(void);
-	void							Sort_Vertices(void);
+	void Free(void);
+	void Compute_Mesh_Stats(void);
+	void Optimize_Mesh(bool compute_normals);
+	void Strip_Optimize_Mesh(void);
+	void Remove_Degenerate_Faces(void);
+	void Compute_Face_Normals(void);
+	bool Verify_Face_Normals(void);
+	void Compute_Vertex_Normals(void);
+	void Grow_Face_Array(void);
+	void Sort_Vertices(void);
 
 	/*
 	** Winged edge stuff is used by the strip optimize function
 	*/
 	struct WingedEdgeStruct
 	{
-		int						MaterialIdx;
-		WingedEdgeStruct *	Next;
-		int						Vertex[2];
-		int						Poly[2];
+		int MaterialIdx;
+		WingedEdgeStruct *Next;
+		int Vertex[2];
+		int Poly[2];
 	};
 
 	struct WingedEdgePolyStruct
 	{
-		WingedEdgeStruct *	Edge[3];
+		WingedEdgeStruct *Edge[3];
 	};
 
+	int State; // is the builder accepting input or already processed the mesh.
+	int PassCount; // number of render passes for this mesh
+	int FaceCount; // number of faces
+	FaceClass *Faces; // array of faces
+	int InputVertCount; // number of input verts;
+	int VertCount; // number of verts;
+	VertClass *Verts; // array of verts;
+	int CurFace; // current face being added
 
-	int							State;					// is the builder accepting input or already processed the mesh.
-	int							PassCount;				// number of render passes for this mesh
-	int							FaceCount;				// number of faces
-	FaceClass *					Faces;					// array of faces
-	int							InputVertCount;		// number of input verts;
-	int							VertCount;				// number of verts;
-	VertClass *					Verts;					// array of verts;
-	int							CurFace;					// current face being added
+	WorldInfoClass *WorldInfo; // obj containing info about other meshes in the world
 
-	WorldInfoClass	*			WorldInfo;				// obj containing info about other meshes in the world
+	MeshStatsStruct Stats; // internally useful junk about the mesh being processed.
+	int PolyOrderPass; // order the polys using the texture indices in this pass
+	int PolyOrderStage; // order the polys using the texture indices in this stage
 
-	MeshStatsStruct			Stats;					// internally useful junk about the mesh being processed.
-	int							PolyOrderPass;			// order the polys using the texture indices in this pass
-	int							PolyOrderStage;		// order the polys using the texture indices in this stage
-
-	int							AllocFaceCount;		// number of faces allocated
-	int							AllocFaceGrowth;		// growth rate of face array
+	int AllocFaceCount; // number of faces allocated
+	int AllocFaceGrowth; // growth rate of face array
 };
 
-inline void	MeshBuilderClass::Set_Polygon_Ordering_Channel(int pass,int texstage)
+inline void MeshBuilderClass::Set_Polygon_Ordering_Channel(int pass, int texstage)
 {
 	assert(pass >= 0);
 	assert(pass < MAX_PASSES);
@@ -345,7 +340,7 @@ inline int MeshBuilderClass::Get_Face_Count(void) const
 	return FaceCount;
 }
 
-inline const MeshBuilderClass::VertClass & MeshBuilderClass::Get_Vertex(int index) const
+inline const MeshBuilderClass::VertClass &MeshBuilderClass::Get_Vertex(int index) const
 {
 	assert(State == STATE_MESH_PROCESSED);
 	assert(index >= 0);
@@ -353,7 +348,7 @@ inline const MeshBuilderClass::VertClass & MeshBuilderClass::Get_Vertex(int inde
 	return Verts[index];
 }
 
-inline const MeshBuilderClass::FaceClass & MeshBuilderClass::Get_Face(int index) const
+inline const MeshBuilderClass::FaceClass &MeshBuilderClass::Get_Face(int index) const
 {
 	assert(State == STATE_MESH_PROCESSED);
 	assert(index >= 0);
@@ -361,7 +356,7 @@ inline const MeshBuilderClass::FaceClass & MeshBuilderClass::Get_Face(int index)
 	return Faces[index];
 }
 
-inline MeshBuilderClass::VertClass & MeshBuilderClass::Get_Vertex(int index)
+inline MeshBuilderClass::VertClass &MeshBuilderClass::Get_Vertex(int index)
 {
 	assert(State == STATE_MESH_PROCESSED);
 	assert(index >= 0);
@@ -369,7 +364,7 @@ inline MeshBuilderClass::VertClass & MeshBuilderClass::Get_Vertex(int index)
 	return Verts[index];
 }
 
-inline MeshBuilderClass::FaceClass & MeshBuilderClass::Get_Face(int index)
+inline MeshBuilderClass::FaceClass &MeshBuilderClass::Get_Face(int index)
 {
 	assert(State == STATE_MESH_PROCESSED);
 	assert(index >= 0);
@@ -377,7 +372,7 @@ inline MeshBuilderClass::FaceClass & MeshBuilderClass::Get_Face(int index)
 	return Faces[index];
 }
 
-inline const MeshBuilderClass::MeshStatsStruct & MeshBuilderClass::Get_Mesh_Stats(void) const
+inline const MeshBuilderClass::MeshStatsStruct &MeshBuilderClass::Get_Mesh_Stats(void) const
 {
 	assert(State == STATE_MESH_PROCESSED);
 	return Stats;

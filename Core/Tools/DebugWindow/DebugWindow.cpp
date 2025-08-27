@@ -60,10 +60,10 @@ static char THIS_FILE[] = __FILE__;
 // CDebugWindowApp
 
 BEGIN_MESSAGE_MAP(CDebugWindowApp, CWinApp)
-	//{{AFX_MSG_MAP(CDebugWindowApp)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-		//    DO NOT EDIT what you see in these blocks of generated code!
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CDebugWindowApp)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//    DO NOT EDIT what you see in these blocks of generated code!
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -72,16 +72,16 @@ END_MESSAGE_MAP()
 CDebugWindowApp::CDebugWindowApp()
 {
 	AfxInitialize(true);
-	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	m_DialogWindow = NULL;
 }
 
-DebugWindowDialog* CDebugWindowApp::GetDialogWindow(void)
+DebugWindowDialog *CDebugWindowApp::GetDialogWindow(void)
 {
 	return m_DialogWindow;
 }
 
-void CDebugWindowApp::SetDialogWindow(DebugWindowDialog* pWnd)
+void CDebugWindowApp::SetDialogWindow(DebugWindowDialog *pWnd)
 {
 	m_DialogWindow = pWnd;
 }
@@ -90,7 +90,6 @@ CDebugWindowApp::~CDebugWindowApp()
 {
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 // The one and only CDebugWindowApp object
 
@@ -98,14 +97,15 @@ CDebugWindowApp theApp;
 
 void __declspec(dllexport) CreateDebugDialog(void)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	DebugWindowDialog* tmpWnd;
+	DebugWindowDialog *tmpWnd;
 	tmpWnd = new DebugWindowDialog;
 	tmpWnd->Create(DebugWindowDialog::IDD);
 	tmpWnd->SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 	tmpWnd->ShowWindow(SW_SHOW);
-	if (tmpWnd->GetMainWndHWND()) {
+	if (tmpWnd->GetMainWndHWND())
+	{
 		SetFocus(tmpWnd->GetMainWndHWND());
 	}
 
@@ -114,24 +114,25 @@ void __declspec(dllexport) CreateDebugDialog(void)
 
 void __declspec(dllexport) DestroyDebugDialog(void)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-	DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+	DebugWindowDialog *tmpWnd = theApp.GetDialogWindow();
 
-	if (tmpWnd) {
+	if (tmpWnd)
+	{
 		tmpWnd->DestroyWindow();
 		delete tmpWnd;
 		theApp.SetDialogWindow(NULL);
 	}
-
 }
 
 bool __declspec(dllexport) CanAppContinue(void)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	DebugWindowDialog* pDbg;
+	DebugWindowDialog *pDbg;
 	pDbg = theApp.GetDialogWindow();
-	if (!pDbg) {
+	if (!pDbg)
+	{
 		return true;
 	}
 
@@ -140,11 +141,12 @@ bool __declspec(dllexport) CanAppContinue(void)
 
 void __declspec(dllexport) ForceAppContinue(void)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	DebugWindowDialog* pDbg;
+	DebugWindowDialog *pDbg;
 	pDbg = theApp.GetDialogWindow();
-	if (!pDbg) {
+	if (!pDbg)
+	{
 		return;
 	}
 
@@ -153,75 +155,79 @@ void __declspec(dllexport) ForceAppContinue(void)
 
 bool __declspec(dllexport) RunAppFast(void)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	DebugWindowDialog* pDbg;
+	DebugWindowDialog *pDbg;
 	pDbg = theApp.GetDialogWindow();
-	if (!pDbg) {
+	if (!pDbg)
+	{
 		return true;
 	}
 
 	return pDbg->RunAppFast();
 }
 
-void __declspec(dllexport) AppendMessage(const char* messageToPass)
+void __declspec(dllexport) AppendMessage(const char *messageToPass)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	DebugWindowDialog* pDbg;
+	DebugWindowDialog *pDbg;
 	pDbg = theApp.GetDialogWindow();
 
-	if (pDbg) {
+	if (pDbg)
+	{
 		pDbg->AppendMessage(messageToPass);
 	}
 }
 
 void __declspec(dllexport) SetFrameNumber(int frameNumber)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	DebugWindowDialog* pDbg;
+	DebugWindowDialog *pDbg;
 	pDbg = theApp.GetDialogWindow();
 
-	if (pDbg) {
+	if (pDbg)
+	{
 		pDbg->SetFrameNumber(frameNumber);
 	}
 }
 
-
-void __declspec(dllexport) AppendMessageAndPause(const char* messageToPass)
+void __declspec(dllexport) AppendMessageAndPause(const char *messageToPass)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-	DebugWindowDialog* pDbg;
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+	DebugWindowDialog *pDbg;
 	pDbg = theApp.GetDialogWindow();
 
-	if (pDbg) {
+	if (pDbg)
+	{
 		pDbg->AppendMessage(messageToPass);
 		pDbg->ForcePause();
 	}
 }
 
-
-void __declspec(dllexport) AdjustVariable(const char* variable, const char* value)
+void __declspec(dllexport) AdjustVariable(const char *variable, const char *value)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	DebugWindowDialog* pDbg;
+	DebugWindowDialog *pDbg;
 	pDbg = theApp.GetDialogWindow();
 
-	if (pDbg) {
+	if (pDbg)
+	{
 		pDbg->AdjustVariable(variable, value);
 	}
 }
 
-void __declspec(dllexport) AdjustVariableAndPause(const char* variable, const char* value)
+void __declspec(dllexport) AdjustVariableAndPause(const char *variable, const char *value)
 {
-	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	DebugWindowDialog* pDbg;
+	DebugWindowDialog *pDbg;
 	pDbg = theApp.GetDialogWindow();
 
-	if (pDbg) {
+	if (pDbg)
+	{
 		pDbg->AdjustVariable(variable, value);
 		pDbg->ForcePause();
 	}

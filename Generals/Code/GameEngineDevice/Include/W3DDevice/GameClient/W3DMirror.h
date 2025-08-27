@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
 
 #ifndef __W3DMirror_H_
@@ -47,73 +46,71 @@ render clouds and sky bodies.
 */
 class MirrorRenderObjClass : public RenderObjClass
 {
-
 public:
-
 	MirrorRenderObjClass(void);
 	~MirrorRenderObjClass(void);
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface (W3D methods)
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone(void) const;
-	virtual int						Class_ID(void) const;
-	virtual void					Render(RenderInfoClass & rinfo);
-/// @todo: Add methods for collision detection with mirror surface
-//	virtual Bool					Cast_Ray(RayCollisionTestClass & raytest);
-//	virtual Bool					Cast_AABox(AABoxCollisionTestClass & boxtest);
-//	virtual Bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest);
-//	virtual Bool					Intersect_AABox(AABoxIntersectionTestClass & boxtest);
-//	virtual Bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest);
+	virtual RenderObjClass *Clone(void) const;
+	virtual int Class_ID(void) const;
+	virtual void Render(RenderInfoClass &rinfo);
+	/// @todo: Add methods for collision detection with mirror surface
+	//	virtual Bool					Cast_Ray(RayCollisionTestClass & raytest);
+	//	virtual Bool					Cast_AABox(AABoxCollisionTestClass & boxtest);
+	//	virtual Bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest);
+	//	virtual Bool					Intersect_AABox(AABoxIntersectionTestClass & boxtest);
+	//	virtual Bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest);
 
-	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
+	virtual void Get_Obj_Space_Bounding_Sphere(SphereClass &sphere) const;
+	virtual void Get_Obj_Space_Bounding_Box(AABoxClass &aabox) const;
 
-	///allocate W3D resources needed to render mirror
+	/// allocate W3D resources needed to render mirror
 	Int init(Real waterLevel, Real dx, Real dy, SceneClass *parentScene);
-	static void setTimeOfDay(TimeOfDay tod)	{m_tod=tod;}	///<change sky/water for time of day
-	void toggleCloudLayer(Bool state)	{	m_useCloudLayer=state;}	///<enables/disables the cloud layer
+	static void setTimeOfDay(TimeOfDay tod) { m_tod = tod; } ///< change sky/water for time of day
+	void toggleCloudLayer(Bool state) { m_useCloudLayer = state; } ///< enables/disables the cloud layer
 
 protected:
-	DX8IndexBufferClass			*m_indexBuffer;	///<indices defining quad
-	SceneClass							*m_parentScene;	///<scene to be reflected
-	ShaderClass m_shaderClass; ///<shader or rendering state for heightmap
-	VertexMaterialClass	  		*m_vertexMaterialClass;	///<vertex lighting material
-	TextureClass *m_alphaClippingTexture;	///<used for faked clipping using alpha
-	Real	m_dx;	///<x extent of mirror surface (offset from local center)
-	Real	m_dy;	///<y extent of mirror surface (offset from local center)
-	Vector3 m_planeNormal;		///<mirror plane normal
-	Real		m_planeDistance;	///<mirror plane distance
-	Real		m_level;			///<level of mirror (hack for water)
-	Real		m_uOffset;			///<current texture offset on u axis
-	Real		m_vOffset;			///<current texture offset on v axis
-	Real		m_uScrollPerMs;		///<texels per/ms scroll rate in u direction
-	Real		m_vScrollPerMs;		///<texels per/ms scroll rate in v direction
-	Int			m_LastUpdateTime;	///<time of last cloud update
-	Bool		m_useCloudLayer;	///<flag if clouds are on/off
+	DX8IndexBufferClass *m_indexBuffer; ///< indices defining quad
+	SceneClass *m_parentScene; ///< scene to be reflected
+	ShaderClass m_shaderClass; ///< shader or rendering state for heightmap
+	VertexMaterialClass *m_vertexMaterialClass; ///< vertex lighting material
+	TextureClass *m_alphaClippingTexture; ///< used for faked clipping using alpha
+	Real m_dx; ///< x extent of mirror surface (offset from local center)
+	Real m_dy; ///< y extent of mirror surface (offset from local center)
+	Vector3 m_planeNormal; ///< mirror plane normal
+	Real m_planeDistance; ///< mirror plane distance
+	Real m_level; ///< level of mirror (hack for water)
+	Real m_uOffset; ///< current texture offset on u axis
+	Real m_vOffset; ///< current texture offset on v axis
+	Real m_uScrollPerMs; ///< texels per/ms scroll rate in u direction
+	Real m_vScrollPerMs; ///< texels per/ms scroll rate in v direction
+	Int m_LastUpdateTime; ///< time of last cloud update
+	Bool m_useCloudLayer; ///< flag if clouds are on/off
 
-	static TimeOfDay m_tod;	///<time of day setting for reflected cloud layer
+	static TimeOfDay m_tod; ///< time of day setting for reflected cloud layer
 
 	struct skySetting
 	{
-		TextureClass	*skyTexture;
-		TextureClass	*waterTexture;
-		Int				waterRepeatCount;
-		Int				skyRepeatCount;
-		DWORD			vertex00Diffuse;
-		DWORD			vertex10Diffuse;
-		DWORD			vertex11Diffuse;
-		DWORD			vertex01Diffuse;
-		DWORD			waterDiffuse;
-		Real			uScrollPerMs;
-		Real			vScrollPerMs;
+		TextureClass *skyTexture;
+		TextureClass *waterTexture;
+		Int waterRepeatCount;
+		Int skyRepeatCount;
+		DWORD vertex00Diffuse;
+		DWORD vertex10Diffuse;
+		DWORD vertex11Diffuse;
+		DWORD vertex01Diffuse;
+		DWORD waterDiffuse;
+		Real uScrollPerMs;
+		Real vScrollPerMs;
 	};
 
-	skySetting m_skySettings[TIME_OF_DAY_COUNT];	///< settings for each time of day
-	void renderSky(void);	///<draw the sky layer (clouds, stars, etc.)
-	void renderSkyBody(Matrix3D *mat);	///<draw the sky body (sun, moon, etc.)
+	skySetting m_skySettings[TIME_OF_DAY_COUNT]; ///< settings for each time of day
+	void renderSky(void); ///< draw the sky layer (clouds, stars, etc.)
+	void renderSkyBody(Matrix3D *mat); ///< draw the sky body (sun, moon, etc.)
 	void renderWater(void);
 	void renderWaterMesh(void);
 };
 
-#endif  // end __W3DMirror_H_
+#endif // end __W3DMirror_H_

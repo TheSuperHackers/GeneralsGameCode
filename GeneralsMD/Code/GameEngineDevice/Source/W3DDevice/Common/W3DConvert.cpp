@@ -80,31 +80,26 @@
 // W3DLogicalScreenToPixelScreen
 //=============================================================================
 /** Translate a W3D logical pixel coord with (-1,-1) at the lower left and
-  * (1,1) at the upper right to a pixel screen coord with (0,0) at the
-	* upper left */
+ * (1,1) at the upper right to a pixel screen coord with (0,0) at the
+ * upper left */
 //=============================================================================
-void W3DLogicalScreenToPixelScreen( Real logX, Real logY,
-																		Int *screenX, Int *screenY,
-																		Int screenWidth, Int screenHeight )
+void W3DLogicalScreenToPixelScreen(Real logX, Real logY, Int *screenX, Int *screenY, Int screenWidth, Int screenHeight)
 {
-	*screenX = REAL_TO_INT((screenWidth  * (logX + 1.0f)) / 2.0f);
+	*screenX = REAL_TO_INT((screenWidth * (logX + 1.0f)) / 2.0f);
 	*screenY = REAL_TO_INT((screenHeight * (-logY + 1.0f)) / 2.0f);
 
-}  // end W3DLogicalScreenToPixelScreen
+} // end W3DLogicalScreenToPixelScreen
 
 //=============================================================================
 // PixelScreenToW3DLogicalScreen
 //=============================================================================
 /** Translate a pixel coord with (0,0) at the upper left to the W3D logical
-  * coord system used with (-1,-1) in the lower left corner and (1,1) the
-	* upper right corner */
+ * coord system used with (-1,-1) in the lower left corner and (1,1) the
+ * upper right corner */
 //=============================================================================
-void PixelScreenToW3DLogicalScreen( Int screenX, Int screenY,
-																		Real *logX, Real *logY,
-																		Int screenWidth, Int screenHeight )
+void PixelScreenToW3DLogicalScreen(Int screenX, Int screenY, Real *logX, Real *logY, Int screenWidth, Int screenHeight)
 {
-
 	*logX = ((2.0f * screenX) / (Real)screenWidth) - 1.0f;
 	*logY = -(((2.0f * screenY) / (Real)screenHeight) - 1.0f);
 
-}  // end PixelScreenToW3DLogicalScreen
+} // end PixelScreenToW3DLogicalScreen

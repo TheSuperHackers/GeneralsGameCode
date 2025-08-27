@@ -20,37 +20,35 @@
 // OLEString.cpp
 //
 
-
 #include "StdAfx.h"
 #include <assert.h>
 #include "olestring.h"
 
-template void StripSpaces<OLECHAR> ( OLECHAR *string);
-template void StripSpaces<char> ( char *string );
-template void StripSpacesFromMetaString<OLECHAR> ( OLECHAR *string );
-template void StripSpacesFromMetaString<char> ( char *string);
-template void ConvertMetaChars<OLECHAR> ( OLECHAR *string);
-template void ConvertMetaChars<char> ( char *string);
-template int SameFormat<char> (  char *string1,  char *string2 );
-template int SameFormat<OLECHAR> ( OLECHAR  *string1,  OLECHAR *string2 );
-template void EncodeFormat<char> (  char *string );
-template void EncodeFormat<OLECHAR> ( OLECHAR  *string );
-template void DecodeFormat<char> (  char *string1 );
-template void DecodeFormat<OLECHAR> ( OLECHAR  *string );
-template int IsFormatTypeChar<char> (  char string1 );
-template int IsFormatTypeChar<OLECHAR> ( OLECHAR  string );
-
-
+template void StripSpaces<OLECHAR>(OLECHAR *string);
+template void StripSpaces<char>(char *string);
+template void StripSpacesFromMetaString<OLECHAR>(OLECHAR *string);
+template void StripSpacesFromMetaString<char>(char *string);
+template void ConvertMetaChars<OLECHAR>(OLECHAR *string);
+template void ConvertMetaChars<char>(char *string);
+template int SameFormat<char>(char *string1, char *string2);
+template int SameFormat<OLECHAR>(OLECHAR *string1, OLECHAR *string2);
+template void EncodeFormat<char>(char *string);
+template void EncodeFormat<OLECHAR>(OLECHAR *string);
+template void DecodeFormat<char>(char *string1);
+template void DecodeFormat<OLECHAR>(OLECHAR *string);
+template int IsFormatTypeChar<char>(char string1);
+template int IsFormatTypeChar<OLECHAR>(OLECHAR string);
 
 static const char *format_type = "cCdiouxXeEfgGnpsS"; // printf type as in %<width>.<presicion>{h|l|i64|L}<type>
 
-template <typename text>int IsFormatTypeChar ( text ch )
+template<typename text>
+int IsFormatTypeChar(text ch)
 {
 	const char *ptr = format_type;
 
-	while ( *ptr )
+	while (*ptr)
 	{
-		if ( 	(unsigned int)*ptr++ == (unsigned int) ch )
+		if ((unsigned int)*ptr++ == (unsigned int)ch)
 		{
 			return TRUE;
 		}
@@ -58,136 +56,128 @@ template <typename text>int IsFormatTypeChar ( text ch )
 	return FALSE;
 }
 
-
-
-OLEString::OLEString ( void )
+OLEString::OLEString(void)
 {
 	ole = NULL;
 	sb = NULL;
 	len = 0;
 
-	Unlock ();
-	Set ("");
-
+	Unlock();
+	Set("");
 }
 
-OLEString::~OLEString ( )
+OLEString::~OLEString()
 {
-	delete [] ole;
-	delete [] sb;
+	delete[] ole;
+	delete[] sb;
 	ole = NULL;
 	sb = NULL;
 	len = 0;
-
 }
 
-void OLEString::Set ( OLECHAR *new_ole )
+void OLEString::Set(OLECHAR *new_ole)
 {
-
-	if ( !locked )
+	if (!locked)
 	{
-		delete [] ole;
-		delete [] sb;
+		delete[] ole;
+		delete[] sb;
 		ole = NULL;
 		sb = NULL;
 
-		len = wcslen ( new_ole );
+		len = wcslen(new_ole);
 		{
-			ole = new OLECHAR[len+1];
-			wcscpy ( ole, new_ole );
-			sb = new char[len+1];
-			sprintf ( sb, "%S", ole );
-		}
-	}
-
-}
-
-void OLEString::Set ( const char *new_sb )
-{
-
-	if ( !locked )
-	{
-		delete [] ole;
-		delete [] sb;
-		ole = NULL;
-		sb = NULL;
-
-		len = strlen ( new_sb );
-
-		{
-			ole = new OLECHAR[len+1];
-			swprintf ( ole, L"%S", new_sb );
-			sb = new char[len+1];
-			strcpy ( sb, new_sb );
+			ole = new OLECHAR[len + 1];
+			wcscpy(ole, new_ole);
+			sb = new char[len + 1];
+			sprintf(sb, "%S", ole);
 		}
 	}
 }
 
-void OLEString::StripSpaces ( void )
+void OLEString::Set(const char *new_sb)
 {
-	if ( locked )
+	if (!locked)
+	{
+		delete[] ole;
+		delete[] sb;
+		ole = NULL;
+		sb = NULL;
+
+		len = strlen(new_sb);
+
+		{
+			ole = new OLECHAR[len + 1];
+			swprintf(ole, L"%S", new_sb);
+			sb = new char[len + 1];
+			strcpy(sb, new_sb);
+		}
+	}
+}
+
+void OLEString::StripSpaces(void)
+{
+	if (locked)
 	{
 		return;
 	}
 
-	if ( ole )
+	if (ole)
 	{
-		::StripSpaces ( ole );
+		::StripSpaces(ole);
 	}
-	if ( sb )
+	if (sb)
 	{
-		::StripSpaces ( sb );
+		::StripSpaces(sb);
 	}
 }
 
-
-void OLEString::FormatMetaString ( void )
+void OLEString::FormatMetaString(void)
 {
 	char *str, *ptr;
 	char ch, last = -1;
 	int skipall = TRUE;
 	int slash = FALSE;
 
-	if ( !len || locked )
+	if (!len || locked)
 	{
 		return;
 	}
 
-	char *string = new char[len*2];
+	char *string = new char[len * 2];
 
 	str = string;
 	ptr = sb;
 
-	while ( (ch = *ptr++) )
+	while ((ch = *ptr++))
 	{
-		if ( ch == ' '  )
+		if (ch == ' ')
 		{
-			if ( last == ' ' )
+			if (last == ' ')
 			{
 				continue;
 			}
 		}
 
-		skipall= FALSE;
+		skipall = FALSE;
 
-		if ( ch == '\\' )
+		if (ch == '\\')
 		{
 			char esc;
 			slash = !slash;
 
-			if ( slash && ((esc = *ptr) == 'n' || esc == 't') )
+			if (slash && ((esc = *ptr) == 'n' || esc == 't'))
 			{
-					// remove last space
-					if ( last != ' ' )
-					{
-						*str++ = ' ';
-					}
+				// remove last space
+				if (last != ' ')
+				{
+					*str++ = ' ';
+				}
 
-					*str++ = '\\';
-					ptr++;
-					*str++ = esc;
-					last = *str++ = ' ';
-					continue;
+				*str++ = '\\';
+				ptr++;
+				*str++ = esc;
+				last = *str++ = ' ';
+				continue;
 			}
 		}
 		else
@@ -198,19 +188,20 @@ void OLEString::FormatMetaString ( void )
 		last = *str++ = ch;
 	}
 
-	if ( last == ' ' )
+	if (last == ' ')
 	{
 		str--;
 	}
 
 	*str = 0;
 
-	Set ( string );
-	delete [] string;
+	Set(string);
+	delete[] string;
 	string = NULL;
 }
 
-template <typename text> void StripSpaces ( text *string )
+template<typename text>
+void StripSpaces(text *string)
 {
 	text *str, *ptr;
 	text ch, last = -1;
@@ -218,34 +209,34 @@ template <typename text> void StripSpaces ( text *string )
 
 	str = ptr = string;
 
-	while ( (ch = *ptr++) )
+	while ((ch = *ptr++))
 	{
-		if ( ch == ' '  )
+		if (ch == ' ')
 		{
-			if ( last == ' ' || skipall )
+			if (last == ' ' || skipall)
 			{
 				continue;
 			}
 		}
 
-		if ( ch == '\n' || ch == '\t' )
+		if (ch == '\n' || ch == '\t')
 		{
-				// remove last space
-				if ( last == ' ' )
-				{
-					str--;
-				}
+			// remove last space
+			if (last == ' ')
+			{
+				str--;
+			}
 
-				skipall = TRUE;		// skip all spaces
-				last = *str++ = ch;
-				continue;
+			skipall = TRUE; // skip all spaces
+			last = *str++ = ch;
+			continue;
 		}
 
 		last = *str++ = ch;
 		skipall = FALSE;
 	}
 
-	if ( last == ' ' )
+	if (last == ' ')
 	{
 		str--;
 	}
@@ -253,7 +244,8 @@ template <typename text> void StripSpaces ( text *string )
 	*str = 0;
 }
 
-template <typename text> void StripSpacesFromMetaString ( text *string )
+template<typename text>
+void StripSpacesFromMetaString(text *string)
 {
 	text *str, *ptr;
 	text ch, last = -1;
@@ -262,36 +254,36 @@ template <typename text> void StripSpacesFromMetaString ( text *string )
 
 	str = ptr = string;
 
-	while ( (ch = *ptr++) )
+	while ((ch = *ptr++))
 	{
-		if ( ch == ' '  )
+		if (ch == ' ')
 		{
-			if ( last == ' ' || skipall )
+			if (last == ' ' || skipall)
 			{
 				continue;
 			}
 		}
 
-		skipall= FALSE;
+		skipall = FALSE;
 
-		if ( ch == '\\' )
+		if (ch == '\\')
 		{
 			text esc;
 			slash = !slash;
 
-			if ( slash && (esc = *ptr) == 'n' || esc == 't' )
+			if (slash && (esc = *ptr) == 'n' || esc == 't')
 			{
-					// remove last space
-					if ( last == ' ' )
-					{
-						str--;
-					}
+				// remove last space
+				if (last == ' ')
+				{
+					str--;
+				}
 
-					skipall = TRUE;		// skip all spaces
-					*str++ = '\\';
-					ptr++;
-					last = *str++ = esc;
-					continue;
+				skipall = TRUE; // skip all spaces
+				*str++ = '\\';
+				ptr++;
+				last = *str++ = esc;
+				continue;
 			}
 		}
 		else
@@ -302,7 +294,7 @@ template <typename text> void StripSpacesFromMetaString ( text *string )
 		last = *str++ = ch;
 	}
 
-	if ( last == ' ' )
+	if (last == ' ')
 	{
 		str--;
 	}
@@ -310,21 +302,21 @@ template <typename text> void StripSpacesFromMetaString ( text *string )
 	*str = 0;
 }
 
-
-template <typename text> void ConvertMetaChars ( text *string )
+template<typename text>
+void ConvertMetaChars(text *string)
 {
 	text *ptr;
 	text ch;
 
 	ptr = string;
 
-	while ( (ch = *string++) )
+	while ((ch = *string++))
 	{
-		if ( ch == '\\' )
+		if (ch == '\\')
 		{
-			if ( ch = *string )
+			if (ch = *string)
 			{
-				switch  ( ch )
+				switch (ch)
 				{
 					case 'n':
 					case 'N':
@@ -345,61 +337,60 @@ template <typename text> void ConvertMetaChars ( text *string )
 	*ptr = 0;
 }
 
-template <typename text> int SameFormat ( text *string1, text *string2 )
+template<typename text>
+int SameFormat(text *string1, text *string2)
 {
-
-	while ( *string1 && *string2 )
+	while (*string1 && *string2)
 	{
-
-		while ( *string1 )
+		while (*string1)
 		{
-				if (*string1 == '%')
-				{
-					string1++;
-					break;
-				}
+			if (*string1 == '%')
+			{
+				string1++;
+				break;
+			}
 
-				if ( *string1 == '\\' )
-				{
-					string1++;
-				}
+			if (*string1 == '\\')
+			{
+				string1++;
+			}
 
-				if ( *string1 )
-				{
-					string1++;
-				}
+			if (*string1)
+			{
+				string1++;
+			}
 		}
 
-		while ( *string2 )
+		while (*string2)
 		{
-				if (*string2 == '%')
-				{
-					string2++;
-					break;
-				}
+			if (*string2 == '%')
+			{
+				string2++;
+				break;
+			}
 
-				if ( *string2 == '\\' )
-				{
-					string2++;
-				}
-				if ( *string2)
-				{
-					string2++;
-				}
+			if (*string2 == '\\')
+			{
+				string2++;
+			}
+			if (*string2)
+			{
+				string2++;
+			}
 		}
 
-		if ( !*string1 && !*string2)
+		if (!*string1 && !*string2)
 		{
 			return TRUE;
 		}
 
 		int found_type = FALSE;
 
-		while ( *string1 && *string2 && !found_type )
+		while (*string1 && *string2 && !found_type)
 		{
-			found_type = IsFormatTypeChar ( *string1 );
+			found_type = IsFormatTypeChar(*string1);
 
-			if ( *string1 != *string2 )
+			if (*string1 != *string2)
 			{
 				return FALSE;
 			}
@@ -407,18 +398,16 @@ template <typename text> int SameFormat ( text *string1, text *string2 )
 			string1++;
 			string2++;
 		}
-
 	}
 	return TRUE;
 }
 
-template <typename text> void EncodeFormat ( text *string )
+template<typename text>
+void EncodeFormat(text *string)
 {
-
 }
 
-template <typename text> void DecodeFormat ( text *string )
+template<typename text>
+void DecodeFormat(text *string)
 {
-
 }
-

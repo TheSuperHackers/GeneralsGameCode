@@ -17,22 +17,22 @@
 */
 
 /******************************************************************************
-*
-* FILE
-*     $Archive:  $
-*
-* DESCRIPTION
-*     Generic user type definitions
-*
-* PROGRAMMER
-*     Denzil E. Long, Jr.
-*     $Author:  $
-*
-* VERSION INFO
-*     $Modtime:  $
-*     $Revision:  $
-*
-******************************************************************************/
+ *
+ * FILE
+ *     $Archive:  $
+ *
+ * DESCRIPTION
+ *     Generic user type definitions
+ *
+ * PROGRAMMER
+ *     Denzil E. Long, Jr.
+ *     $Author:  $
+ *
+ * VERSION INFO
+ *     $Modtime:  $
+ *     $Revision:  $
+ *
+ ******************************************************************************/
 
 #ifndef UTYPES_H
 #define UTYPES_H
@@ -84,7 +84,12 @@ typedef double Float64;
 typedef Float32 Float;
 
 //! TriState
-typedef enum {OFF = false, ON = true, PENDING = -1} TriState;
+typedef enum
+{
+	OFF = false,
+	ON = true,
+	PENDING = -1
+} TriState;
 
 //! Empty pointer
 #ifndef NULL

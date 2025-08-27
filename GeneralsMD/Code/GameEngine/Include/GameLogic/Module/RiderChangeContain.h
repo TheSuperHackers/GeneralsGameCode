@@ -37,9 +37,9 @@
 
 #define MAX_RIDERS 8 //***NOTE: If you change this, make sure you update the parsing section!
 
-enum WeaponSetType CPP_11(: Int);
-enum ObjectStatusType CPP_11(: Int);
-enum LocomotorSetType CPP_11(: Int);
+enum WeaponSetType CPP_11( : Int);
+enum ObjectStatusType CPP_11( : Int);
+enum LocomotorSetType CPP_11( : Int);
 
 struct RiderInfo
 {
@@ -55,67 +55,66 @@ struct RiderInfo
 class RiderChangeContainModuleData : public TransportContainModuleData
 {
 public:
-
-	RiderInfo m_riders[ MAX_RIDERS ];
+	RiderInfo m_riders[MAX_RIDERS];
 	UnsignedInt m_scuttleFrames;
 	ModelConditionFlagType m_scuttleState;
 
 	RiderChangeContainModuleData();
 
-	static void buildFieldParse(MultiIniFieldParse& p);
-	static void parseRiderInfo( INI* ini, void *instance, void *store, const void* /*userData*/ );
-
+	static void buildFieldParse(MultiIniFieldParse &p);
+	static void parseRiderInfo(INI *ini, void *instance, void *store, const void * /*userData*/);
 };
 
 //-------------------------------------------------------------------------------------------------
 class RiderChangeContain : public TransportContain
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( RiderChangeContain, "RiderChangeContain" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( RiderChangeContain, RiderChangeContainModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RiderChangeContain, "RiderChangeContain")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(RiderChangeContain, RiderChangeContainModuleData)
 
 public:
-
-	RiderChangeContain( Thing *thing, const ModuleData* moduleData );
+	RiderChangeContain(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual Bool isValidContainerFor( const Object* obj, Bool checkCapacity) const;
+	virtual Bool isValidContainerFor(const Object *obj, Bool checkCapacity) const;
 
-	virtual void onCapture( Player *oldOwner, Player *newOwner ); // have to kick everyone out on capture.
-	virtual void onContaining( Object *obj, Bool wasSelected );		///< object now contains 'obj'
-	virtual void onRemoving( Object *obj );			///< object no longer contains 'obj'
-	virtual UpdateSleepTime update();							///< called once per frame
+	virtual void onCapture(Player *oldOwner, Player *newOwner); // have to kick everyone out on capture.
+	virtual void onContaining(Object *obj, Bool wasSelected); ///< object now contains 'obj'
+	virtual void onRemoving(Object *obj); ///< object no longer contains 'obj'
+	virtual UpdateSleepTime update(); ///< called once per frame
 
 	virtual Bool isRiderChangeContain() const { return TRUE; }
 	virtual const Object *friend_getRider() const;
 
-	virtual Int getContainMax( void ) const;
+	virtual Int getContainMax(void) const;
 
-	virtual Int getExtraSlotsInUse( void ) { return m_extraSlotsInUse; }///< Transports have the ability to carry guys how take up more than spot.
+	virtual Int getExtraSlotsInUse(void)
+	{
+		return m_extraSlotsInUse;
+	} ///< Transports have the ability to carry guys how take up more than spot.
 
-	virtual Bool isExitBusy() const;	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
-	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject );
-	virtual void unreserveDoorForExit( ExitDoorType exitDoor );
-	virtual Bool isDisplayedOnControlBar() const {return TRUE;}///< Does this container display its contents on the ControlBar?
+	virtual Bool isExitBusy() const; ///< Contain style exiters are getting the ability to space out exits, so ask this before
+																	 ///< reserveDoor as a kind of no-commitment check.
+	virtual ExitDoorType reserveDoorForExit(const ThingTemplate *objType, Object *specificObject);
+	virtual void unreserveDoorForExit(ExitDoorType exitDoor);
+	virtual Bool isDisplayedOnControlBar() const
+	{
+		return TRUE;
+	} ///< Does this container display its contents on the ControlBar?
 
-	virtual Bool getContainerPipsToShow( Int& numTotal, Int& numFull );
+	virtual Bool getContainerPipsToShow(Int &numTotal, Int &numFull);
 
 protected:
-
 	// exists primarily for RiderChangeContain to override
 	virtual void killRidersWhoAreNotFreeToExit();
-	virtual Bool isSpecificRiderFreeToExit(Object* obj);
+	virtual Bool isSpecificRiderFreeToExit(Object *obj);
 	virtual void createPayload();
 
 private:
-
 	Int m_extraSlotsInUse;
 	UnsignedInt m_frameExitNotBusy;
 	UnsignedInt m_scuttledOnFrame;
 
-	Bool m_containing; //doesn't require xfer.
-
+	Bool m_containing; // doesn't require xfer.
 };
 
 #endif // __RIDER_CHANGE_CONTAIN_H
-

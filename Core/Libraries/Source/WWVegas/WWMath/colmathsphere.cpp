@@ -42,7 +42,6 @@
  *   CollisionMath::Overlap_Test -- Sphere - OBBox overlap test                                *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "colmath.h"
 #include "aaplane.h"
 #include "plane.h"
@@ -52,7 +51,6 @@
 #include "aabox.h"
 #include "obbox.h"
 #include "wwdebug.h"
-
 
 // Sphere Intersection fucntions.  Does the sphere intersect the passed in object
 /***********************************************************************************************
@@ -67,7 +65,7 @@
  * HISTORY:                                                                                    *
  *   4/25/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-bool CollisionMath::Intersection_Test(const SphereClass & sphere,const AABoxClass & box)
+bool CollisionMath::Intersection_Test(const SphereClass &sphere, const AABoxClass &box)
 {
 	/*
 	** Simple but slightly inaccurate test, expand the box by the sphere's radius, then
@@ -75,12 +73,14 @@ bool CollisionMath::Intersection_Test(const SphereClass & sphere,const AABoxClas
 	** against a cube which encloses the sphere...
 	*/
 	Vector3 dc = box.Center - sphere.Center;
-	if (WWMath::Fabs(dc.X) < box.Extent.X + sphere.Radius) return false;
-	if (WWMath::Fabs(dc.Y) < box.Extent.Y + sphere.Radius) return false;
-	if (WWMath::Fabs(dc.Z) < box.Extent.Z + sphere.Radius) return false;
+	if (WWMath::Fabs(dc.X) < box.Extent.X + sphere.Radius)
+		return false;
+	if (WWMath::Fabs(dc.Y) < box.Extent.Y + sphere.Radius)
+		return false;
+	if (WWMath::Fabs(dc.Z) < box.Extent.Z + sphere.Radius)
+		return false;
 	return true;
 }
-
 
 /***********************************************************************************************
  * CollisionMath::Intersection_Test -- Sphere - OBBox intersection                             *
@@ -94,18 +94,21 @@ bool CollisionMath::Intersection_Test(const SphereClass & sphere,const AABoxClas
  * HISTORY:                                                                                    *
  *   4/25/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-bool CollisionMath::Intersection_Test(const SphereClass & sphere,const OBBoxClass & box)
+bool CollisionMath::Intersection_Test(const SphereClass &sphere, const OBBoxClass &box)
 {
 	/*
 	** Compute the sphere's position in the box's coordinate system
 	*/
-	Matrix3D tm(box.Basis,box.Center);
+	Matrix3D tm(box.Basis, box.Center);
 	Vector3 box_rel_center;
-	Matrix3D::Inverse_Transform_Vector(tm,sphere.Center,&box_rel_center);
+	Matrix3D::Inverse_Transform_Vector(tm, sphere.Center, &box_rel_center);
 
-	if (box.Extent.X < WWMath::Fabs(box_rel_center.X)) return false;
-	if (box.Extent.Y < WWMath::Fabs(box_rel_center.Y)) return false;
-	if (box.Extent.Z < WWMath::Fabs(box_rel_center.Z)) return false;
+	if (box.Extent.X < WWMath::Fabs(box_rel_center.X))
+		return false;
+	if (box.Extent.Y < WWMath::Fabs(box_rel_center.Y))
+		return false;
+	if (box.Extent.Z < WWMath::Fabs(box_rel_center.Z))
+		return false;
 
 	return true;
 }
@@ -123,19 +126,19 @@ bool CollisionMath::Intersection_Test(const SphereClass & sphere,const OBBoxClas
  * HISTORY:                                                                                    *
  *   4/25/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-CollisionMath::OverlapType
-CollisionMath::Overlap_Test(const SphereClass & sphere,const Vector3 & point)
+CollisionMath::OverlapType CollisionMath::Overlap_Test(const SphereClass &sphere, const Vector3 &point)
 {
 	float r2 = (point - sphere.Center).Length2();
-	if (r2 < sphere.Radius * sphere.Radius - COINCIDENCE_EPSILON) {
+	if (r2 < sphere.Radius * sphere.Radius - COINCIDENCE_EPSILON)
+	{
 		return NEG;
 	}
-	if (r2 > sphere.Radius * sphere.Radius + COINCIDENCE_EPSILON) {
+	if (r2 > sphere.Radius * sphere.Radius + COINCIDENCE_EPSILON)
+	{
 		return POS;
 	}
 	return ON;
 }
-
 
 /***********************************************************************************************
  * CollisionMath::Overlap_Test -- sphere line overlap test                                     *
@@ -149,13 +152,11 @@ CollisionMath::Overlap_Test(const SphereClass & sphere,const Vector3 & point)
  * HISTORY:                                                                                    *
  *   4/25/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-CollisionMath::OverlapType
-CollisionMath::Overlap_Test(const SphereClass & /*sphere*/,const LineSegClass & /*line*/)
+CollisionMath::OverlapType CollisionMath::Overlap_Test(const SphereClass & /*sphere*/, const LineSegClass & /*line*/)
 {
-	WWASSERT(0); //TODO
+	WWASSERT(0); // TODO
 	return POS;
 }
-
 
 /***********************************************************************************************
  * CollisionMath::Overlap_Test -- sphere triangle overlap test                                 *
@@ -169,13 +170,11 @@ CollisionMath::Overlap_Test(const SphereClass & /*sphere*/,const LineSegClass & 
  * HISTORY:                                                                                    *
  *   4/25/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-CollisionMath::OverlapType
-CollisionMath::Overlap_Test(const SphereClass & /*sphere*/,const TriClass & /*tri*/)
+CollisionMath::OverlapType CollisionMath::Overlap_Test(const SphereClass & /*sphere*/, const TriClass & /*tri*/)
 {
-	WWASSERT(0); //TODO
+	WWASSERT(0); // TODO
 	return POS;
 }
-
 
 /***********************************************************************************************
  * CollisionMath::Overlap_Test -- Sphere - Sphere overlap test                                 *
@@ -189,23 +188,24 @@ CollisionMath::Overlap_Test(const SphereClass & /*sphere*/,const TriClass & /*tr
  * HISTORY:                                                                                    *
  *   4/25/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-CollisionMath::OverlapType
-CollisionMath::Overlap_Test(const SphereClass & sphere,const SphereClass & sphere2)
+CollisionMath::OverlapType CollisionMath::Overlap_Test(const SphereClass &sphere, const SphereClass &sphere2)
 {
 	CollisionMath::OverlapType retval = OUTSIDE;
 
-	float radius	= sphere.Radius + sphere2.Radius;
-	float dist2		= (sphere2.Center - sphere.Center).Length2();
+	float radius = sphere.Radius + sphere2.Radius;
+	float dist2 = (sphere2.Center - sphere.Center).Length2();
 
-	if (dist2 == 0 && sphere.Radius == sphere2.Radius) {
+	if (dist2 == 0 && sphere.Radius == sphere2.Radius)
+	{
 		retval = OVERLAPPED;
-	} else if (dist2 <= radius * radius - COINCIDENCE_EPSILON) {
+	}
+	else if (dist2 <= radius * radius - COINCIDENCE_EPSILON)
+	{
 		retval = INSIDE;
 	}
 
 	return retval;
 }
-
 
 /***********************************************************************************************
  * CollisionMath::Overlap_Test -- Sphere - AABox overlap test                                  *
@@ -219,13 +219,11 @@ CollisionMath::Overlap_Test(const SphereClass & sphere,const SphereClass & spher
  * HISTORY:                                                                                    *
  *   4/25/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-CollisionMath::OverlapType
-CollisionMath::Overlap_Test(const SphereClass & sphere,const AABoxClass & aabox)
+CollisionMath::OverlapType CollisionMath::Overlap_Test(const SphereClass &sphere, const AABoxClass &aabox)
 {
 	// TODO: overlap function that detects containment?
-	return ( Intersection_Test(sphere,aabox) ? BOTH : POS );
+	return (Intersection_Test(sphere, aabox) ? BOTH : POS);
 }
-
 
 /***********************************************************************************************
  * CollisionMath::Overlap_Test -- Sphere - OBBox overlap test                                  *
@@ -239,11 +237,8 @@ CollisionMath::Overlap_Test(const SphereClass & sphere,const AABoxClass & aabox)
  * HISTORY:                                                                                    *
  *   4/25/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-CollisionMath::OverlapType
-CollisionMath::Overlap_Test(const SphereClass & sphere,const OBBoxClass & obbox)
+CollisionMath::OverlapType CollisionMath::Overlap_Test(const SphereClass &sphere, const OBBoxClass &obbox)
 {
 	// TODO: overlap function that detects containment?
-	return ( Intersection_Test(sphere,obbox) ? BOTH : POS );
+	return (Intersection_Test(sphere, obbox) ? BOTH : POS);
 }
-
-

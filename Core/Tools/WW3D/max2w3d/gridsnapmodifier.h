@@ -41,7 +41,6 @@
 
 class ClassDesc;
 
-ClassDesc * Get_Grid_Snap_Modifier_Desc(void);
+ClassDesc *Get_Grid_Snap_Modifier_Desc(void);
 
-
-#endif //GRIDSNAPMODIFIER_H
+#endif // GRIDSNAPMODIFIER_H

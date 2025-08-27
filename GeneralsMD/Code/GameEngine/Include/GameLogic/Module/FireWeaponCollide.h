@@ -43,7 +43,7 @@ class Object;
 class FireWeaponCollideModuleData : public CollideModuleData
 {
 public:
-	const WeaponTemplate* m_collideWeaponTemplate;
+	const WeaponTemplate *m_collideWeaponTemplate;
 	ObjectStatusMaskType m_requiredStatus;
 	ObjectStatusMaskType m_forbiddenStatus;
 	Bool m_fireOnce;
@@ -54,33 +54,27 @@ public:
 		m_fireOnce = FALSE;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p);
+	static void buildFieldParse(MultiIniFieldParse &p);
 };
 
 //-------------------------------------------------------------------------------------------------
 class FireWeaponCollide : public CollideModule
 {
-
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( FireWeaponCollide, FireWeaponCollideModuleData );
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( FireWeaponCollide, "FireWeaponCollide" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(FireWeaponCollide, FireWeaponCollideModuleData);
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FireWeaponCollide, "FireWeaponCollide")
 
 public:
-
-	FireWeaponCollide( Thing *thing, const ModuleData* moduleData );
+	FireWeaponCollide(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 protected:
-
-	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal );
+	virtual void onCollide(Object *other, const Coord3D *loc, const Coord3D *normal);
 
 	virtual Bool shouldFireWeapon();
 
 private:
-	Weapon* m_collideWeapon;
+	Weapon *m_collideWeapon;
 	Bool m_everFired;
-
 };
 
-
 #endif
-

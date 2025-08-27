@@ -49,7 +49,6 @@
 #include "refcount.h"
 #include "matrixmapper.h"
 
-
 /***********************************************************************************************
  * ProjectorClass::ProjectorClass -- Constructor                                               *
  *                                                                                             *
@@ -62,14 +61,13 @@
  * HISTORY:                                                                                    *
  *=============================================================================================*/
 ProjectorClass::ProjectorClass(void) :
-	Transform(1),
-	Projection(1),
-	LocalBoundingVolume(Vector3(0,0,0),Vector3(1,1,1)),
-	WorldBoundingVolume(Vector3(0,0,0),Vector3(1,1,1),Matrix3x3(1))
+		Transform(1),
+		Projection(1),
+		LocalBoundingVolume(Vector3(0, 0, 0), Vector3(1, 1, 1)),
+		WorldBoundingVolume(Vector3(0, 0, 0), Vector3(1, 1, 1), Matrix3x3(1))
 {
-	Mapper=NEW_REF(MatrixMapperClass,(0));
+	Mapper = NEW_REF(MatrixMapperClass, (0));
 }
-
 
 /***********************************************************************************************
  * ProjectorClass::~ProjectorClass -- Destructor                                               *
@@ -103,12 +101,11 @@ ProjectorClass::~ProjectorClass(void)
  *   1/11/00    gth : Created.                                                                 *
  *   1/27/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void ProjectorClass::Set_Transform(const Matrix3D & tm)
+void ProjectorClass::Set_Transform(const Matrix3D &tm)
 {
 	Transform = tm;
 	Update_WS_Bounding_Volume();
 }
-
 
 /***********************************************************************************************
  * ProjectorClass::Get_Transform -- Returns the current transform                              *
@@ -122,11 +119,10 @@ void ProjectorClass::Set_Transform(const Matrix3D & tm)
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-const Matrix3D & ProjectorClass::Get_Transform(void) const
+const Matrix3D &ProjectorClass::Get_Transform(void) const
 {
 	return Transform;
 }
-
 
 /***********************************************************************************************
  * ProjectorClass::Set_Perspective_Projection -- Set up a perspective projection               *
@@ -146,22 +142,21 @@ const Matrix3D & ProjectorClass::Get_Transform(void) const
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void ProjectorClass::Set_Perspective_Projection(float hfov,float vfov,float znear,float zfar)
+void ProjectorClass::Set_Perspective_Projection(float hfov, float vfov, float znear, float zfar)
 {
 	Mapper->Set_Type(MatrixMapperClass::PERSPECTIVE_PROJECTION);
-	Projection.Init_Perspective(hfov,vfov,0.1f,zfar);					// don't use znear for the projection matrix
+	Projection.Init_Perspective(hfov, vfov, 0.1f, zfar); // don't use znear for the projection matrix
 
 	float tan_hfov2 = tan(hfov) * 0.5f;
 	float tan_vfov2 = tan(vfov) * 0.5f;
 
-	LocalBoundingVolume.Center.Set(0.0f,0.0f,-(zfar+znear)*0.5f);	// note, zcenter is negative
+	LocalBoundingVolume.Center.Set(0.0f, 0.0f, -(zfar + znear) * 0.5f); // note, zcenter is negative
 	LocalBoundingVolume.Extent.X = zfar * tan_hfov2;
 	LocalBoundingVolume.Extent.Y = zfar * tan_vfov2;
-	LocalBoundingVolume.Extent.Z = (zfar-znear)*0.5f;
+	LocalBoundingVolume.Extent.Z = (zfar - znear) * 0.5f;
 
 	Update_WS_Bounding_Volume();
 }
-
 
 /***********************************************************************************************
  * ProjectorClass::Set_Ortho_Projection -- Set up an orthographic projection                   *
@@ -183,17 +178,16 @@ void ProjectorClass::Set_Perspective_Projection(float hfov,float vfov,float znea
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void ProjectorClass::Set_Ortho_Projection(float xmin,float xmax,float ymin,float ymax,float znear,float zfar)
+void ProjectorClass::Set_Ortho_Projection(float xmin, float xmax, float ymin, float ymax, float znear, float zfar)
 {
 	Mapper->Set_Type(MatrixMapperClass::ORTHO_PROJECTION);
-	Projection.Init_Ortho(xmin,xmax,ymin,ymax,0.1f,zfar);			// don't use znear for the projection matrix
+	Projection.Init_Ortho(xmin, xmax, ymin, ymax, 0.1f, zfar); // don't use znear for the projection matrix
 
-	LocalBoundingVolume.Center.Set((xmax+xmin)*0.5f, (ymax+ymin)*0.5f, -(zfar+znear)*0.5f);
-	LocalBoundingVolume.Extent.Set((xmax-xmin)*0.5f, (ymax-ymin)*0.5f, (zfar-znear)*0.5f);
+	LocalBoundingVolume.Center.Set((xmax + xmin) * 0.5f, (ymax + ymin) * 0.5f, -(zfar + znear) * 0.5f);
+	LocalBoundingVolume.Extent.Set((xmax - xmin) * 0.5f, (ymax - ymin) * 0.5f, (zfar - znear) * 0.5f);
 
 	Update_WS_Bounding_Volume();
 }
-
 
 /***********************************************************************************************
  * ProjectorClass::Compute_Texture_Coordinate -- computes texcoord for given world-space point *
@@ -207,11 +201,10 @@ void ProjectorClass::Set_Ortho_Projection(float xmin,float xmax,float ymin,float
  * HISTORY:                                                                                    *
  *   1/27/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void ProjectorClass::Compute_Texture_Coordinate(const Vector3 & point,Vector3 * set_stq)
+void ProjectorClass::Compute_Texture_Coordinate(const Vector3 &point, Vector3 *set_stq)
 {
-	Mapper->Compute_Texture_Coordinate(point,set_stq);
+	Mapper->Compute_Texture_Coordinate(point, set_stq);
 }
-
 
 /***********************************************************************************************
  * ProjectorClass::Update_WS_Bounding_Volume -- Recalculate the world-space bounding box       *
@@ -230,7 +223,6 @@ void ProjectorClass::Update_WS_Bounding_Volume(void)
 	/*
 	** Recompute our world-space bounding volume
 	*/
-	OBBoxClass localbox(LocalBoundingVolume.Center,LocalBoundingVolume.Extent,Matrix3x3(1));
-	OBBoxClass::Transform(Transform,localbox,&WorldBoundingVolume);
+	OBBoxClass localbox(LocalBoundingVolume.Center, LocalBoundingVolume.Extent, Matrix3x3(1));
+	OBBoxClass::Transform(Transform, localbox, &WorldBoundingVolume);
 }
-

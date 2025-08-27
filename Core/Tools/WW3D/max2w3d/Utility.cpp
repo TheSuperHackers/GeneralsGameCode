@@ -36,12 +36,10 @@
  *  wwInputBox  -- Retrive a string from the user in a nice friendly manner.                   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 /*
 ** Utility.cpp - Implementation of a some convenient features the WIN32 API provides
 ** that the MAXScript API doesn't.
 */
-
 
 #include <maxscrpt.h>
 #include <arrays.h>
@@ -51,13 +49,11 @@
 #include "util.h"
 #include "InputDlg.h"
 
-
 /*
 ** Let MAXScript know we're implementing new built-in functions.
 */
-def_visible_primitive(get_absolute_path,	"wwGetAbsolutePath");
-def_visible_primitive(input_box,				"wwInputBox");
-
+def_visible_primitive(get_absolute_path, "wwGetAbsolutePath");
+def_visible_primitive(input_box, "wwInputBox");
 
 /***********************************************************************************************
  * get_absolute_path_cf -- Returns the absolute path based on a relative one.                  *
@@ -73,7 +69,7 @@ def_visible_primitive(input_box,				"wwInputBox");
  * HISTORY:                                                                                    *
  *   10/4/1999  AJA : Created.                                                                 *
  *=============================================================================================*/
-Value * get_absolute_path_cf (Value **arg_list, int count)
+Value *get_absolute_path_cf(Value **arg_list, int count)
 {
 	// We want an array as an argument
 	check_arg_count("wwGetAbsolutePath", 2, count);
@@ -83,17 +79,16 @@ Value * get_absolute_path_cf (Value **arg_list, int count)
 	// Grab the arguments out of the array.
 	char absolute[MAX_PATH];
 	char *relative = arg_list[0]->to_string();
-	char *context  = arg_list[1]->to_string();
+	char *context = arg_list[1]->to_string();
 
 	// Turn the relative path into an absolute one.
 	Create_Full_Path(absolute, context, relative);
 
 	// Return the absolute path.
-	one_typed_value_local(String *abs);
+	one_typed_value_local(String * abs);
 	vl.abs = new String(absolute);
 	return_value(vl.abs);
 }
-
 
 /***********************************************************************************************
  * input_box_cf -- Retrive a string from the user in a nice friendly manner.                   *
@@ -108,7 +103,7 @@ Value * get_absolute_path_cf (Value **arg_list, int count)
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-Value * input_box_cf (Value **arg_list, int count)
+Value *input_box_cf(Value **arg_list, int count)
 {
 	// Create the input box (but don't show it yet).
 	InputDlg input_box(MAXScript_interface->GetMAXHWnd());
@@ -134,8 +129,7 @@ Value * input_box_cf (Value **arg_list, int count)
 		return &undefined;
 
 	// Return the value the user entered.
-	one_typed_value_local(String *val);
+	one_typed_value_local(String * val);
 	vl.val = new String(input_box.m_Value);
 	return_value(vl.val);
 }
-

@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Player.h"
 #include "Common/Xfer.h"
@@ -42,37 +42,34 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SpecialAbility::SpecialAbility( Thing *thing, const ModuleData *moduleData )
-												: SpecialPowerModule( thing, moduleData )
+SpecialAbility::SpecialAbility(Thing *thing, const ModuleData *moduleData) : SpecialPowerModule(thing, moduleData)
 {
-
-}  // end SpecialAbility
+} // end SpecialAbility
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-SpecialAbility::~SpecialAbility( void )
+SpecialAbility::~SpecialAbility(void)
 {
-
-}  // end ~SpecialAbility
+} // end ~SpecialAbility
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void SpecialAbility::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
+void SpecialAbility::doSpecialPowerAtLocation(const Coord3D *loc, Real angle, UnsignedInt commandOptions)
 {
 	if (getObject()->isDisabled())
 		return;
 
 	// sanity
-	if( loc == NULL )
+	if (loc == NULL)
 		return;
 
 	// call the base class action cause we are *EXTENDING* functionality
-	SpecialPowerModule::doSpecialPowerAtLocation( loc, angle, commandOptions );
+	SpecialPowerModule::doSpecialPowerAtLocation(loc, angle, commandOptions);
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void SpecialAbility::doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions )
+void SpecialAbility::doSpecialPowerAtObject(Object *obj, UnsignedInt commandOptions)
 {
 	if (getObject()->isDisabled())
 		return;
@@ -81,57 +78,53 @@ void SpecialAbility::doSpecialPowerAtObject( Object *obj, UnsignedInt commandOpt
 		return;
 
 	// call the base class action cause we are *EXTENDING* functionality
-	SpecialPowerModule::doSpecialPowerAtObject( obj, commandOptions );
+	SpecialPowerModule::doSpecialPowerAtObject(obj, commandOptions);
 }
 
-
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void SpecialAbility::doSpecialPower( UnsignedInt commandOptions )
+void SpecialAbility::doSpecialPower(UnsignedInt commandOptions)
 {
 	if (getObject()->isDisabled())
 		return;
 
 	// call the base class action cause we are *EXTENDING* functionality
-	SpecialPowerModule::doSpecialPower( commandOptions );
+	SpecialPowerModule::doSpecialPower(commandOptions);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SpecialAbility::crc( Xfer *xfer )
+void SpecialAbility::crc(Xfer *xfer)
 {
-
 	// extend base class
-	SpecialPowerModule::crc( xfer );
+	SpecialPowerModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SpecialAbility::xfer( Xfer *xfer )
+void SpecialAbility::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	SpecialPowerModule::xfer( xfer );
+	SpecialPowerModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpecialAbility::loadPostProcess( void )
+void SpecialAbility::loadPostProcess(void)
 {
-
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

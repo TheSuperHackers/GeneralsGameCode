@@ -28,11 +28,11 @@
 // Description: General's Challenge Mode Menu
 ///////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/FileSystem.h"
 #include "Common/GameEngine.h"
-//#include "Common/GameLOD.h"
+// #include "Common/GameLOD.h"
 #include "Common/GameState.h"
 #include "Common/PlayerTemplate.h"
 #include "Common/RandomValue.h"
@@ -55,7 +55,6 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/ScriptEngine.h"
 
-
 SkirmishGameInfo *TheChallengeGameInfo = NULL;
 
 // defines
@@ -71,7 +70,7 @@ static NameKeyType bioNameEntryID = NAMEKEY_INVALID;
 static NameKeyType bioDOBEntryID = NAMEKEY_INVALID;
 static NameKeyType bioBirthplaceEntryID = NAMEKEY_INVALID;
 static NameKeyType bioStrategyEntryID = NAMEKEY_INVALID;
-static NameKeyType buttonGeneralPositionID[NUM_GENERALS] = {NAMEKEY_INVALID};
+static NameKeyType buttonGeneralPositionID[NUM_GENERALS] = { NAMEKEY_INVALID };
 static NameKeyType backdropID = NAMEKEY_INVALID;
 static NameKeyType bioParentID = NAMEKEY_INVALID;
 
@@ -84,16 +83,16 @@ static GameWindow *bioLine1Entry = NULL;
 static GameWindow *bioLine2Entry = NULL;
 static GameWindow *bioLine3Entry = NULL;
 static GameWindow *bioLine4Entry = NULL;
-static GameWindow *buttonGeneralPosition[NUM_GENERALS] = {NULL};
+static GameWindow *buttonGeneralPosition[NUM_GENERALS] = { NULL };
 static GameWindow *backdrop = NULL;
 static GameWindow *bioParent = NULL;
 
-//static NameKeyType testWinID = NAMEKEY_INVALID;
-//static GameWindow *testWin = NULL;
+// static NameKeyType testWinID = NAMEKEY_INVALID;
+// static GameWindow *testWin = NULL;
 static WindowVideoManager *wndVideoManager = NULL;
 
 //
-static Int	initialGadgetDelay = 2;
+static Int initialGadgetDelay = 2;
 static Bool justEntered = FALSE;
 static Bool isShuttingDown = FALSE;
 
@@ -122,11 +121,10 @@ AudioHandle lastPreviewSound = NULL;
 static Int introAudioMagicNumber = 0;
 static Bool hasPlayedIntroAudio = FALSE;
 
-
 //-------------------------------------------------------------------------------------------------
 // returns the index of the General Position button selected, or -1 if not found
 //-------------------------------------------------------------------------------------------------
-Int findPositionButton( Int controlID )
+Int findPositionButton(Int controlID)
 {
 	for (Int i = 0; i < NUM_GENERALS; i++)
 	{
@@ -136,7 +134,6 @@ Int findPositionButton( Int controlID )
 	return -1;
 }
 
-
 //-------------------------------------------------------------------------------------------------
 // enable the appropriate buttons, make sure they aren't hidden, and set the correct images
 //-------------------------------------------------------------------------------------------------
@@ -144,41 +141,40 @@ void setEnabledButtons()
 {
 	for (Int i = 0; i < NUM_GENERALS; i++)
 	{
-		const GeneralPersona* generals = TheChallengeGenerals->getChallengeGenerals();
+		const GeneralPersona *generals = TheChallengeGenerals->getChallengeGenerals();
 		buttonGeneralPosition[i]->winEnable(generals[i].isStartingEnabled());
-		buttonGeneralPosition[i]->winHide(! generals[i].isStartingEnabled());
+		buttonGeneralPosition[i]->winHide(!generals[i].isStartingEnabled());
 
 		Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[i].getPlayerTemplateName());
 		const PlayerTemplate *playerTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(templateNum);
 		if (playerTemplate)
 		{
-			const Image *enabledImage = TheMappedImageCollection->findImageByName( playerTemplate->getMedallionNormal() );
-			GadgetCheckBoxSetEnabledImage( buttonGeneralPosition[i], enabledImage );
+			const Image *enabledImage = TheMappedImageCollection->findImageByName(playerTemplate->getMedallionNormal());
+			GadgetCheckBoxSetEnabledImage(buttonGeneralPosition[i], enabledImage);
 			if (enabledImage)
 				// image size keeps changing, so it'll drive the window size directly
-				buttonGeneralPosition[i]->winSetSize( enabledImage->getImageWidth(), enabledImage->getImageWidth() );
+				buttonGeneralPosition[i]->winSetSize(enabledImage->getImageWidth(), enabledImage->getImageWidth());
 
-			const Image *selectedImage = TheMappedImageCollection->findImageByName( playerTemplate->getMedallionSelected() );
-			GadgetCheckBoxSetHiliteUncheckedBoxImage( buttonGeneralPosition[i], selectedImage);
-			GadgetCheckBoxSetDisabledUncheckedBoxImage( buttonGeneralPosition[i], selectedImage);
+			const Image *selectedImage = TheMappedImageCollection->findImageByName(playerTemplate->getMedallionSelected());
+			GadgetCheckBoxSetHiliteUncheckedBoxImage(buttonGeneralPosition[i], selectedImage);
+			GadgetCheckBoxSetDisabledUncheckedBoxImage(buttonGeneralPosition[i], selectedImage);
 
-			const Image *hilitedImage = TheMappedImageCollection->findImageByName( playerTemplate->getMedallionHilite() );
-			GadgetCheckBoxSetHiliteImage( buttonGeneralPosition[i], hilitedImage);
+			const Image *hilitedImage = TheMappedImageCollection->findImageByName(playerTemplate->getMedallionHilite());
+			GadgetCheckBoxSetHiliteImage(buttonGeneralPosition[i], hilitedImage);
 		}
 	}
 }
 
-
 //-------------------------------------------------------------------------------------------------
 // sets the appropriate campaign for the chosen general
 //-------------------------------------------------------------------------------------------------
-void setGeneralCampaign( Int buttonIndex )
+void setGeneralCampaign(Int buttonIndex)
 {
 	if (buttonIndex < 0 || buttonIndex >= NUM_GENERALS)
 		return;
 
 	// determine which general and player template is selected and store it
-	const GeneralPersona* generals = TheChallengeGenerals->getChallengeGenerals();
+	const GeneralPersona *generals = TheChallengeGenerals->getChallengeGenerals();
 	TheCampaignManager->setCampaign(generals[buttonIndex].getCampaign());
 	Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[buttonIndex].getPlayerTemplateName());
 	TheChallengeGenerals->setCurrentPlayerTemplateNum(templateNum);
@@ -191,11 +187,10 @@ void setGeneralCampaign( Int buttonIndex )
 	TheChallengeGameInfo->setSlot(0, slot);
 }
 
-
 //-------------------------------------------------------------------------------------------------
 // set the appropriate bio for the given general and initialize the bio windows
 //-------------------------------------------------------------------------------------------------
-void setGeneralBio( Int buttonIndex )
+void setGeneralBio(Int buttonIndex)
 {
 	if (buttonIndex < 0 || buttonIndex >= NUM_GENERALS)
 		return;
@@ -204,10 +199,10 @@ void setGeneralBio( Int buttonIndex )
 	// @todo: use a fancy transition
 	bioParent->winHide(FALSE);
 
-	const GeneralPersona* generals = TheChallengeGenerals->getChallengeGenerals();
+	const GeneralPersona *generals = TheChallengeGenerals->getChallengeGenerals();
 	const Image *image = generals[buttonIndex].getBioPortraitSmall();
-	bioPortrait->winSetEnabledImage( 0, image );
-	bioPortrait->winSetStatus( WIN_STATUS_IMAGE );
+	bioPortrait->winSetEnabledImage(0, image);
+	bioPortrait->winSetStatus(WIN_STATUS_IMAGE);
 
 	bioTextPosition = 0;
 	bioLine1 = TheGameText->fetch(generals[buttonIndex].getBioName());
@@ -232,7 +227,7 @@ void updateButtonSequence(Int stepsPerUpdate)
 	if (buttonSequenceStep > NUM_GENERALS + cleanupStates)
 		return;
 
-	const GeneralPersona* generals = TheChallengeGenerals->getChallengeGenerals();
+	const GeneralPersona *generals = TheChallengeGenerals->getChallengeGenerals();
 
 	for (Int i = 0; i < stepsPerUpdate; i++)
 	{
@@ -243,7 +238,9 @@ void updateButtonSequence(Int stepsPerUpdate)
 			Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[pos].getPlayerTemplateName());
 			const PlayerTemplate *playerTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(templateNum);
 			if (playerTemplate)
-				GadgetCheckBoxSetEnabledImage( buttonGeneralPosition[pos], TheMappedImageCollection->findImageByName( playerTemplate->getMedallionSelected() ) );
+				GadgetCheckBoxSetEnabledImage(
+						buttonGeneralPosition[pos],
+						TheMappedImageCollection->findImageByName(playerTemplate->getMedallionSelected()));
 		}
 
 		// mouseover look
@@ -252,7 +249,9 @@ void updateButtonSequence(Int stepsPerUpdate)
 			Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[pos].getPlayerTemplateName());
 			const PlayerTemplate *playerTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(templateNum);
 			if (playerTemplate)
-				GadgetCheckBoxSetEnabledImage( buttonGeneralPosition[pos], TheMappedImageCollection->findImageByName( playerTemplate->getMedallionHilite() ) );
+				GadgetCheckBoxSetEnabledImage(
+						buttonGeneralPosition[pos],
+						TheMappedImageCollection->findImageByName(playerTemplate->getMedallionHilite()));
 		}
 
 		// regular look
@@ -261,7 +260,9 @@ void updateButtonSequence(Int stepsPerUpdate)
 			Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[pos].getPlayerTemplateName());
 			const PlayerTemplate *playerTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(templateNum);
 			if (playerTemplate)
-				GadgetCheckBoxSetEnabledImage( buttonGeneralPosition[pos], TheMappedImageCollection->findImageByName( playerTemplate->getMedallionNormal() ) );
+				GadgetCheckBoxSetEnabledImage(
+						buttonGeneralPosition[pos],
+						TheMappedImageCollection->findImageByName(playerTemplate->getMedallionNormal()));
 		}
 
 		buttonSequenceStep++;
@@ -320,13 +321,12 @@ Bool updateBio(Int frames)
 	return ret;
 }
 
-
 //-------------------------------------------------------------------------------------------------
 /** init the challenge mode menu */
 //-------------------------------------------------------------------------------------------------
-void ChallengeMenuInit( WindowLayout *layout, void *userData )
+void ChallengeMenuInit(WindowLayout *layout, void *userData)
 {
-	if( !TheChallengeGameInfo )
+	if (!TheChallengeGameInfo)
 		TheChallengeGameInfo = NEW SkirmishGameInfo;
 
 	TheChallengeGameInfo->init();
@@ -334,41 +334,40 @@ void ChallengeMenuInit( WindowLayout *layout, void *userData )
 	TheChallengeGameInfo->reset();
 	TheChallengeGameInfo->enterGame();
 
-
 	TheShell->showShellMap(TRUE);
 
 	// init window ids and pointers
-	parentID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:ParentChallengeMenu") );
-	parentMenu = TheWindowManager->winGetWindowFromId( NULL, parentID );
-	buttonPlayID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:ButtonPlay") );
-	buttonPlay = TheWindowManager->winGetWindowFromId( parentMenu, buttonPlayID );
-	buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:ButtonBack") );
-	buttonBack = TheWindowManager->winGetWindowFromId( parentMenu, buttonBackID );
-	bioPortraitID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:BioPortrait") );
-	bioPortrait = TheWindowManager->winGetWindowFromId( parentMenu, bioPortraitID );
-	bioNameEntryID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:BioNameEntry") );
-	bioLine1Entry = TheWindowManager->winGetWindowFromId( parentMenu, bioNameEntryID ); // this window has been repurposed
-	bioDOBEntryID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:BioDOBEntry") );
-	bioLine2Entry = TheWindowManager->winGetWindowFromId( parentMenu, bioDOBEntryID ); // this window has been repurposed
-	bioBirthplaceEntryID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:BioBirthplaceEntry") );
-	bioLine3Entry = TheWindowManager->winGetWindowFromId( parentMenu, bioBirthplaceEntryID ); // this window has been repurposed
-	bioStrategyEntryID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:BioStrategyEntry") );
-	bioLine4Entry = TheWindowManager->winGetWindowFromId( parentMenu, bioStrategyEntryID ); // this window has been repurposed
-	backdropID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:MainBackdrop") );
-	backdrop = TheWindowManager->winGetWindowFromId( parentMenu, backdropID);
-	bioParentID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:GeneralsBioParent") );
-	bioParent = TheWindowManager->winGetWindowFromId( parentMenu, bioParentID);
+	parentID = TheNameKeyGenerator->nameToKey(AsciiString("ChallengeMenu.wnd:ParentChallengeMenu"));
+	parentMenu = TheWindowManager->winGetWindowFromId(NULL, parentID);
+	buttonPlayID = TheNameKeyGenerator->nameToKey(AsciiString("ChallengeMenu.wnd:ButtonPlay"));
+	buttonPlay = TheWindowManager->winGetWindowFromId(parentMenu, buttonPlayID);
+	buttonBackID = TheNameKeyGenerator->nameToKey(AsciiString("ChallengeMenu.wnd:ButtonBack"));
+	buttonBack = TheWindowManager->winGetWindowFromId(parentMenu, buttonBackID);
+	bioPortraitID = TheNameKeyGenerator->nameToKey(AsciiString("ChallengeMenu.wnd:BioPortrait"));
+	bioPortrait = TheWindowManager->winGetWindowFromId(parentMenu, bioPortraitID);
+	bioNameEntryID = TheNameKeyGenerator->nameToKey(AsciiString("ChallengeMenu.wnd:BioNameEntry"));
+	bioLine1Entry = TheWindowManager->winGetWindowFromId(parentMenu, bioNameEntryID); // this window has been repurposed
+	bioDOBEntryID = TheNameKeyGenerator->nameToKey(AsciiString("ChallengeMenu.wnd:BioDOBEntry"));
+	bioLine2Entry = TheWindowManager->winGetWindowFromId(parentMenu, bioDOBEntryID); // this window has been repurposed
+	bioBirthplaceEntryID = TheNameKeyGenerator->nameToKey(AsciiString("ChallengeMenu.wnd:BioBirthplaceEntry"));
+	bioLine3Entry = TheWindowManager->winGetWindowFromId(parentMenu, bioBirthplaceEntryID); // this window has been repurposed
+	bioStrategyEntryID = TheNameKeyGenerator->nameToKey(AsciiString("ChallengeMenu.wnd:BioStrategyEntry"));
+	bioLine4Entry = TheWindowManager->winGetWindowFromId(parentMenu, bioStrategyEntryID); // this window has been repurposed
+	backdropID = TheNameKeyGenerator->nameToKey(AsciiString("ChallengeMenu.wnd:MainBackdrop"));
+	backdrop = TheWindowManager->winGetWindowFromId(parentMenu, backdropID);
+	bioParentID = TheNameKeyGenerator->nameToKey(AsciiString("ChallengeMenu.wnd:GeneralsBioParent"));
+	bioParent = TheWindowManager->winGetWindowFromId(parentMenu, bioParentID);
 
 	AsciiString strButtonName;
 	for (Int i = 0; i < NUM_GENERALS; i++)
 	{
 		strButtonName.format("ChallengeMenu.wnd:GeneralPosition%d", i);
-		buttonGeneralPositionID[i] = TheNameKeyGenerator->nameToKey( strButtonName );
-		buttonGeneralPosition[i] = TheWindowManager->winGetWindowFromId( parentMenu, buttonGeneralPositionID[i] );
-		DEBUG_ASSERTCRASH(buttonGeneralPosition[i], ("Could not find the ButtonGeneralPosition[%d]",i ));
+		buttonGeneralPositionID[i] = TheNameKeyGenerator->nameToKey(strButtonName);
+		buttonGeneralPosition[i] = TheWindowManager->winGetWindowFromId(parentMenu, buttonGeneralPositionID[i]);
+		DEBUG_ASSERTCRASH(buttonGeneralPosition[i], ("Could not find the ButtonGeneralPosition[%d]", i));
 
 		// start all buttons hidden, then expose them later if there is a general for this spot
-		buttonGeneralPosition[i]->winHide( TRUE );
+		buttonGeneralPosition[i]->winHide(TRUE);
 	}
 
 	// set defaults
@@ -379,40 +378,38 @@ void ChallengeMenuInit( WindowLayout *layout, void *userData )
 	setEnabledButtons();
 
 	// show menu
-	layout->hide( FALSE );
+	layout->hide(FALSE);
 
 	// set keyboard focus to main parent
-	TheWindowManager->winSetFocus( parentMenu );
+	TheWindowManager->winSetFocus(parentMenu);
 	justEntered = TRUE;
 	initialGadgetDelay = 2;
-	GameWindow *winGadgetParent = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ChallengeMenu.wnd:GadgetParent"));
-	if(winGadgetParent)
+	GameWindow *winGadgetParent =
+			TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ChallengeMenu.wnd:GadgetParent"));
+	if (winGadgetParent)
 		winGadgetParent->winHide(TRUE);
 	isShuttingDown = FALSE;
 
-	if(!wndVideoManager)
+	if (!wndVideoManager)
 		wndVideoManager = NEW WindowVideoManager;
 	wndVideoManager->init();
 
 	lastSelectionSound = NULL;
 	lastPreviewSound = NULL;
 	hasPlayedIntroAudio = FALSE;
-
 }
-
 
 //-------------------------------------------------------------------------------------------------
 /** update the challenge mode menu */
 //-------------------------------------------------------------------------------------------------
-void ChallengeMenuUpdate( WindowLayout *layout, void *userData )
+void ChallengeMenuUpdate(WindowLayout *layout, void *userData)
 {
-	if(justEntered)
+	if (justEntered)
 	{
-		if(initialGadgetDelay == 1)
+		if (initialGadgetDelay == 1)
 		{
 			TheTransitionHandler->setGroup("ChallengeMenuFade");
-//			TheTransitionHandler->setGroup("ChallengeButtonsIntro");
-
+			//			TheTransitionHandler->setGroup("ChallengeButtonsIntro");
 
 			initialGadgetDelay = 2;
 			justEntered = FALSE;
@@ -421,8 +418,8 @@ void ChallengeMenuUpdate( WindowLayout *layout, void *userData )
 			initialGadgetDelay--;
 	}
 
-//	if (TheTransitionHandler->isFinished())
-//		updateButtonSequence( 1 );
+	//	if (TheTransitionHandler->isFinished())
+	//		updateButtonSequence( 1 );
 
 	// delay the voice for N updates after the transition is done
 	if (!hasPlayedIntroAudio && TheTransitionHandler->isFinished())
@@ -431,30 +428,29 @@ void ChallengeMenuUpdate( WindowLayout *layout, void *userData )
 		if (introAudioMagicNumber == 10)
 		{
 			// "Choose your general."
-			AudioEventRTS event( "Taunts_GCAnnouncer01" );
-			TheAudio->addAudioEvent( &event );
+			AudioEventRTS event("Taunts_GCAnnouncer01");
+			TheAudio->addAudioEvent(&event);
 			hasPlayedIntroAudio = TRUE;
 		}
 	}
 
-	updateBio( TELETYPE_SKIP );
+	updateBio(TELETYPE_SKIP);
 
-	if(isShuttingDown && TheShell->isAnimFinished() && TheTransitionHandler->isFinished())
+	if (isShuttingDown && TheShell->isAnimFinished() && TheTransitionHandler->isFinished())
 	{
-		TheShell->shutdownComplete( layout );
+		TheShell->shutdownComplete(layout);
 	}
 
-	if(wndVideoManager)
+	if (wndVideoManager)
 		wndVideoManager->update();
 }
-
 
 //-------------------------------------------------------------------------------------------------
 /** shutdown the challenge mode menu */
 //-------------------------------------------------------------------------------------------------
-void ChallengeMenuShutdown( WindowLayout *layout, void *userData )
+void ChallengeMenuShutdown(WindowLayout *layout, void *userData)
 {
-	if(wndVideoManager)
+	if (wndVideoManager)
 		delete wndVideoManager;
 	wndVideoManager = NULL;
 
@@ -463,91 +459,86 @@ void ChallengeMenuShutdown( WindowLayout *layout, void *userData )
 	buttonSequenceStep = 0;
 
 	Bool popImmediate = *(Bool *)userData;
-	if( popImmediate )
+	if (popImmediate)
 	{
-		layout->hide( TRUE );
-		TheShell->shutdownComplete( layout );
+		layout->hide(TRUE);
+		TheShell->shutdownComplete(layout);
 		return;
 	}
 
 	TheTransitionHandler->reverse("ChallengeMenuFade");
 	isShuttingDown = TRUE;
 
-	if(TheChallengeGameInfo)
+	if (TheChallengeGameInfo)
 		delete TheChallengeGameInfo;
 	TheChallengeGameInfo = NULL;
 
-	TheAudio->removeAudioEvent( lastSelectionSound );
-	TheAudio->removeAudioEvent( lastPreviewSound );
+	TheAudio->removeAudioEvent(lastSelectionSound);
+	TheAudio->removeAudioEvent(lastPreviewSound);
 	lastSelectionSound = NULL;
 	lastPreviewSound = NULL;
 	introAudioMagicNumber = 0;
 }
 
-
 //-------------------------------------------------------------------------------------------------
 /** challenge mode menu input callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType ChallengeMenuInput( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType ChallengeMenuInput(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-	switch( msg )
+	switch (msg)
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case GWM_CHAR:
 		{
 			UnsignedByte key = mData1;
 			UnsignedByte state = mData2;
 
-			switch( key )
+			switch (key)
 			{
-
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitIsSet( state, KEY_STATE_UP ) )
+					if (BitIsSet(state, KEY_STATE_UP))
 					{
+						TheWindowManager->winSendSystemMsg(window, GBM_SELECTED, (WindowMsgData)buttonBack, buttonBackID);
 
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, (WindowMsgData)buttonBack, buttonBackID );
-
-					}  // end if
+					} // end if
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				} // end escape
 
-			}  // end switch( key )
+			} // end switch( key )
 
-		}  // end char
+		} // end char
 
-	}  // end switch( msg )
+	} // end switch( msg )
 
 	return MSG_IGNORED;
-
 }
-
 
 //-------------------------------------------------------------------------------------------------
 /** challenge mode menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType ChallengeMenuSystem(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-	switch( msg )
+	switch (msg)
 	{
-		case GWM_CREATE: break;
+		case GWM_CREATE:
+			break;
 
-		case GWM_DESTROY: break;
+		case GWM_DESTROY:
+			break;
 
 		case GWM_INPUT_FOCUS:
 		{
 			// if we're givin the opportunity to take the keyboard focus we must say we want it
-			if( mData1 == TRUE )
+			if (mData1 == TRUE)
 				*(Bool *)mData2 = TRUE;
 
 			return MSG_HANDLED;
@@ -559,13 +550,13 @@ WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, W
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 			Int buttonIndex = findPositionButton(controlID);
-			if( buttonIndex != -1 && buttonIndex != lastButtonIndex )
+			if (buttonIndex != -1 && buttonIndex != lastButtonIndex)
 			{
 				setGeneralBio(buttonIndex);
 
 				// special sound for Harvard
-				AudioEventRTS event( "GUILogoMouseOver" );
-				TheAudio->addAudioEvent( &event );
+				AudioEventRTS event("GUILogoMouseOver");
+				TheAudio->addAudioEvent(&event);
 
 				lastHilitedIndex = buttonIndex;
 			}
@@ -579,14 +570,14 @@ WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, W
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 			Int buttonIndex = findPositionButton(controlID);
-			if( buttonIndex != -1 && buttonIndex != lastButtonIndex )
+			if (buttonIndex != -1 && buttonIndex != lastButtonIndex)
 			{
 				if (lastButtonIndex == -1)
 				{
 					// they're just browsing and haven't made a selection yet
 					// @todo: make this a nice transition
-//					bioParent->winHide(TRUE);
-//					buttonPlay->winHide(TRUE);
+					//					bioParent->winHide(TRUE);
+					//					buttonPlay->winHide(TRUE);
 				}
 
 				setGeneralBio(lastButtonIndex);
@@ -600,15 +591,15 @@ WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, W
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 
- 			// we don't need to handle these
- 			if ( isAutoSelecting )
- 			{
- 				isAutoSelecting = FALSE;
- 				break;
- 			}
+			// we don't need to handle these
+			if (isAutoSelecting)
+			{
+				isAutoSelecting = FALSE;
+				break;
+			}
 
 			Int buttonIndex = findPositionButton(controlID);
-			if( buttonIndex != -1)
+			if (buttonIndex != -1)
 			{
 				// partial radio button behavior (I'm not using actual radio buttons
 				// because it limits options on how the interface can work, which is a
@@ -618,25 +609,25 @@ WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, W
 				if (lastButtonIndex != -1)
 				{
 					isAutoSelecting = TRUE;
-					GameWindow *lastControl = TheWindowManager->winGetWindowFromId( NULL, buttonGeneralPositionID[lastButtonIndex]);
+					GameWindow *lastControl = TheWindowManager->winGetWindowFromId(NULL, buttonGeneralPositionID[lastButtonIndex]);
 					GadgetCheckBoxToggle(lastControl);
 				}
 
 				// play audio to indicate selection
 				TheAudio->removeAudioEvent(lastSelectionSound);
 				TheAudio->removeAudioEvent(lastPreviewSound);
-				const GeneralPersona* generals = TheChallengeGenerals->getChallengeGenerals();
-				AudioEventRTS event( generals[buttonIndex].getPreviewSound() );
-				lastPreviewSound = TheAudio->addAudioEvent( &event );
+				const GeneralPersona *generals = TheChallengeGenerals->getChallengeGenerals();
+				AudioEventRTS event(generals[buttonIndex].getPreviewSound());
+				lastPreviewSound = TheAudio->addAudioEvent(&event);
 
-/*
-				// play audio to indicate selection
-				TheAudio->removeAudioEvent(lastSelectionSound);
-				TheAudio->removeAudioEvent(lastPreviewSound);
-				const GeneralPersona* generals = TheChallengeGenerals->getChallengeGenerals();
-				AudioEventRTS event( generals[buttonIndex].getSelectionSound() );
-				lastSelectionSound = TheAudio->addAudioEvent( &event );
-*/
+				/*
+								// play audio to indicate selection
+								TheAudio->removeAudioEvent(lastSelectionSound);
+								TheAudio->removeAudioEvent(lastPreviewSound);
+								const GeneralPersona* generals = TheChallengeGenerals->getChallengeGenerals();
+								AudioEventRTS event( generals[buttonIndex].getSelectionSound() );
+								lastSelectionSound = TheAudio->addAudioEvent( &event );
+				*/
 
 				lastButtonIndex = buttonIndex;
 
@@ -644,9 +635,9 @@ WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, W
 
 				//@todo: outro transitions
 			}
-			else if( controlID == buttonPlayID )
- 			{
-				if( TheChallengeGameInfo == NULL )
+			else if (controlID == buttonPlayID)
+			{
+				if (TheChallengeGameInfo == NULL)
 				{
 					// If this is NULL, then we must be on the way back out of this menu.
 					// Don't crash, just eat the button click message.
@@ -659,10 +650,10 @@ WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, W
 
 				// turn off the last button so the screen will be pristine when the user returns
 				isAutoSelecting = TRUE;
-				GameWindow *lastControl = TheWindowManager->winGetWindowFromId( NULL, buttonGeneralPositionID[lastButtonIndex]);
+				GameWindow *lastControl = TheWindowManager->winGetWindowFromId(NULL, buttonGeneralPositionID[lastButtonIndex]);
 				GadgetCheckBoxSetChecked(lastControl, FALSE);
 				lastButtonIndex = -1;
-//				introAudioHasPlayed = FALSE;
+				//				introAudioHasPlayed = FALSE;
 
 				buttonSequenceStep = 0;
 
@@ -673,31 +664,31 @@ WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, W
 				DEBUG_ASSERTCRASH(TheChallengeGenerals, ("TheChallengeGenerals are not initialized."));
 				if (TheChallengeGenerals)
 				{
-	        TheCampaignManager->setGameDifficulty(TheChallengeGenerals->getCurrentDifficulty());
+					TheCampaignManager->setGameDifficulty(TheChallengeGenerals->getCurrentDifficulty());
 					TheScriptEngine->setGlobalDifficulty(TheChallengeGenerals->getCurrentDifficulty());
 				}
 
 				// put a request in the message stream for a new game
-				GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_NEW_GAME );
+				GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_NEW_GAME);
 				msg->appendIntegerArgument(GAME_SINGLE_PLAYER);
 				msg->appendIntegerArgument(TheCampaignManager->getGameDifficulty());
 				msg->appendIntegerArgument(TheCampaignManager->getRankPoints());
 
-
-        // Added so that, even though a ChallengeGame is really a SkirmishGame in SinglePlayerGame's clothing,
-        // GameEngine will still apply the default "FRAME CAP" as it does during "Solo Missions."
-        msg->appendIntegerArgument(LOGICFRAMES_PER_SECOND);	// FPS limit
+				// Added so that, even though a ChallengeGame is really a SkirmishGame in SinglePlayerGame's clothing,
+				// GameEngine will still apply the default "FRAME CAP" as it does during "Solo Missions."
+				msg->appendIntegerArgument(LOGICFRAMES_PER_SECOND); // FPS limit
 
 				InitRandom(0);
 			}
-			else if( controlID == buttonBackID )
+			else if (controlID == buttonBackID)
 			{
 				TheShell->pop();
 			}
 			break;
 		}
 
-		default: return MSG_IGNORED;
+		default:
+			return MSG_IGNORED;
 	}
 
 	return MSG_HANDLED;

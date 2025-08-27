@@ -69,48 +69,47 @@ class AsciiString;
 class GlobalLanguage : public SubsystemInterface
 {
 public:
-
 	GlobalLanguage();
 	virtual ~GlobalLanguage();
 
 	void init();
 	void reset();
-	void update() { }
+	void update() {}
 
 	AsciiString m_unicodeFontName;
 	AsciiString m_unicodeFontFileName;
 	Bool m_useHardWrap;
 	Int m_militaryCaptionSpeed;
-	FontDesc	m_copyrightFont;
-	FontDesc	m_messageFont;
-	FontDesc	m_militaryCaptionTitleFont;
-	FontDesc	m_militaryCaptionFont;
-	FontDesc	m_superweaponCountdownNormalFont;
-	FontDesc	m_superweaponCountdownReadyFont;
-	FontDesc	m_namedTimerCountdownNormalFont;
-	FontDesc	m_namedTimerCountdownReadyFont;
-	FontDesc	m_drawableCaptionFont;
-	FontDesc	m_defaultWindowFont;
-	FontDesc	m_defaultDisplayStringFont;
-	FontDesc	m_tooltipFontName;
-	FontDesc	m_nativeDebugDisplay;
-	FontDesc	m_drawGroupInfoFont;
-	FontDesc	m_creditsTitleFont;
-	FontDesc  m_creditsPositionFont;
-	FontDesc  m_creditsNormalFont;
+	FontDesc m_copyrightFont;
+	FontDesc m_messageFont;
+	FontDesc m_militaryCaptionTitleFont;
+	FontDesc m_militaryCaptionFont;
+	FontDesc m_superweaponCountdownNormalFont;
+	FontDesc m_superweaponCountdownReadyFont;
+	FontDesc m_namedTimerCountdownNormalFont;
+	FontDesc m_namedTimerCountdownReadyFont;
+	FontDesc m_drawableCaptionFont;
+	FontDesc m_defaultWindowFont;
+	FontDesc m_defaultDisplayStringFont;
+	FontDesc m_tooltipFontName;
+	FontDesc m_nativeDebugDisplay;
+	FontDesc m_drawGroupInfoFont;
+	FontDesc m_creditsTitleFont;
+	FontDesc m_creditsPositionFont;
+	FontDesc m_creditsNormalFont;
 
-	Real			m_resolutionFontSizeAdjustment;
+	Real m_resolutionFontSizeAdjustment;
 
-	//UnicodeString	m_unicodeFontNameUStr;
+	// UnicodeString	m_unicodeFontNameUStr;
 
-	Int adjustFontSize(Int theFontSize);	// Adjusts font size for resolution. jba.
+	Int adjustFontSize(Int theFontSize); // Adjusts font size for resolution. jba.
 
-	typedef std::list<AsciiString> StringList;					// Used for our font file names that we want to load
+	typedef std::list<AsciiString> StringList; // Used for our font file names that we want to load
 	typedef StringList::iterator StringListIt;
 
-	StringList m_localFonts;														// List of the font filenames that are in our local directory
-	static void parseFontFileName( INI *ini, void *instance, void *store, const void* userData );
-	static void parseFontDesc(INI *ini, void *instance, void *store, const void* userData);
+	StringList m_localFonts; // List of the font filenames that are in our local directory
+	static void parseFontFileName(INI *ini, void *instance, void *store, const void *userData);
+	static void parseFontDesc(INI *ini, void *instance, void *store, const void *userData);
 };
 //-----------------------------------------------------------------------------
 // INLINING ///////////////////////////////////////////////////////////////////

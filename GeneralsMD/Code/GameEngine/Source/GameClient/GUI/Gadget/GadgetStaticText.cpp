@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Language.h"
@@ -72,155 +72,148 @@
 // GadgetStaticTextInput ======================================================
 /** Handle input for text field */
 //=============================================================================
-WindowMsgHandledType GadgetStaticTextInput( GameWindow *window, UnsignedInt msg,
-											      WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GadgetStaticTextInput(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-
-  switch( msg )
+	switch (msg)
 	{
 		// ------------------------------------------------------------------------
-    case GWM_CHAR:
-      switch (mData1)
+		case GWM_CHAR:
+			switch (mData1)
 			{
-
-        case KEY_DOWN:
-        case KEY_RIGHT:
-        case KEY_TAB:
+				case KEY_DOWN:
+				case KEY_RIGHT:
+				case KEY_TAB:
 					// Just in case some fool sets static text as a tab stop
-					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
-            window->winNextTab();
-          break;
+					if (BitIsSet(mData2, KEY_STATE_DOWN))
+						window->winNextTab();
+					break;
 
-        case KEY_UP:
-        case KEY_LEFT:
-					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
-            window->winPrevTab();
-          break;
+				case KEY_UP:
+				case KEY_LEFT:
+					if (BitIsSet(mData2, KEY_STATE_DOWN))
+						window->winPrevTab();
+					break;
 
 				default:
 					return MSG_IGNORED;
-      }
+			}
 
 			break;
 
 		default:
 			return MSG_IGNORED;
-
-  }
+	}
 	return MSG_HANDLED;
 
-
-}  // end GadgetStaticTextInput
+} // end GadgetStaticTextInput
 
 // GadgetStaticTextSystem =====================================================
 /** Handle system messages for text field */
 //=============================================================================
-WindowMsgHandledType GadgetStaticTextSystem( GameWindow *window, UnsignedInt msg,
-														 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GadgetStaticTextSystem(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-//	WinInstanceData *instData = window->winGetInstanceData();
+	//	WinInstanceData *instData = window->winGetInstanceData();
 
-  switch( msg )
+	switch (msg)
 	{
 		// ------------------------------------------------------------------------
 		case GGM_GET_LABEL:
 		{
 			TextData *tData = (TextData *)window->winGetUserData();
 			if (tData && tData->text)
-				*(UnicodeString*)mData2 = tData->text->getText();
+				*(UnicodeString *)mData2 = tData->text->getText();
 			break;
 
-		}  // end get label
+		} // end get label
 
 		// ------------------------------------------------------------------------
 		case GGM_SET_LABEL:
 		{
-			if( mData1 )
+			if (mData1)
 			{
 				TextData *tData = (TextData *)window->winGetUserData();
 				if (tData && tData->text)
-					tData->text->setText( *(UnicodeString*)mData1 );
+					tData->text->setText(*(UnicodeString *)mData1);
 			}
 
-      break;
+			break;
 
-		}  // end set label
+		} // end set label
 
 		// ------------------------------------------------------------------------
 		case GWM_CREATE:
-      break;
+			break;
 
 		// ------------------------------------------------------------------------
-    case GWM_DESTROY:
+		case GWM_DESTROY:
 		{
 			TextData *data = (TextData *)window->winGetUserData();
 
 			// free the display string
-			TheDisplayStringManager->freeDisplayString( data->text );
+			TheDisplayStringManager->freeDisplayString(data->text);
 
 			// free text data
 			delete (TextData *)window->winGetUserData();
-			window->winSetUserData( NULL );
+			window->winSetUserData(NULL);
 
-      break;
+			break;
 
-		}  // end destroy
+		} // end destroy
 
 		default:
 			return MSG_IGNORED;
 
-  }  // end switch( msg )
+	} // end switch( msg )
 
 	return MSG_HANDLED;
-}  // end GadgetStaticTextSystem
+} // end GadgetStaticTextSystem
 
 // GadgetStaticTextSetText ====================================================
 /** Set the text for a static text control */
 //=============================================================================
-void GadgetStaticTextSetText( GameWindow *window, UnicodeString text )
+void GadgetStaticTextSetText(GameWindow *window, UnicodeString text)
 {
-	if(!window)
+	if (!window)
 		return;
-	TheWindowManager->winSendSystemMsg( window, GGM_SET_LABEL, (WindowMsgData)&text, 0 );
+	TheWindowManager->winSendSystemMsg(window, GGM_SET_LABEL, (WindowMsgData)&text, 0);
 
-}  // end GadgetStaticTextSetText
+} // end GadgetStaticTextSetText
 
-UnicodeString GadgetStaticTextGetText( GameWindow *window )
+UnicodeString GadgetStaticTextGetText(GameWindow *window)
 {
-	if(!window)
+	if (!window)
 		return UnicodeString::TheEmptyString;
 	TextData *tData = (TextData *)window->winGetUserData();
-	if(!tData)
+	if (!tData)
 		return UnicodeString::TheEmptyString;
 	return tData->text->getText();
 }
 
 // GadgetStaticTextSetFont ====================================================
 /** Set the font for a text control, we need to set the window
-	* text font, the tooltip font, and the static text display strings for
-	* the text data itself */
+ * text font, the tooltip font, and the static text display strings for
+ * the text data itself */
 //=============================================================================
-void GadgetStaticTextSetFont( GameWindow *g, GameFont *font )
+void GadgetStaticTextSetFont(GameWindow *g, GameFont *font)
 {
 	TextData *textData = (TextData *)g->winGetUserData();
 	DisplayString *dString;
 
 	// set the font for the display strings all windows have
 	dString = g->winGetInstanceData()->getTextDisplayString();
-	if( dString )
-		dString->setFont( font );
+	if (dString)
+		dString->setFont(font);
 	dString = g->winGetInstanceData()->getTooltipDisplayString();
-	if( dString )
-		dString->setFont( font );
+	if (dString)
+		dString->setFont(font);
 
 	// static text specific
-	if( textData )
+	if (textData)
 	{
-
 		dString = textData->text;
-		if( dString )
-			dString->setFont( font );
+		if (dString)
+			dString->setFont(font);
 
-	}  // end if
+	} // end if
 
-}  // end GadgetStaticTextSetFont
+} // end GadgetStaticTextSetFont

@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/GlobalData.h"
 #include "Common/NameKeyGenerator.h"
@@ -63,7 +63,6 @@
 #include "GameNetwork/GameSpy/PeerThread.h"
 #include "GameNetwork/GameSpyOverlay.h"
 
-
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -75,7 +74,7 @@ static NameKeyType buttonCancelID = NAMEKEY_INVALID;
 static GameWindow *parentPopup = NULL;
 static GameWindow *textEntryGamePassword = NULL;
 
-static void joinGame( AsciiString password );
+static void joinGame(AsciiString password);
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -84,7 +83,7 @@ static void joinGame( AsciiString password );
 //-------------------------------------------------------------------------------------------------
 /** Initialize the PopupHostGameInit menu */
 //-------------------------------------------------------------------------------------------------
-void PopupJoinGameInit( WindowLayout *layout, void *userData )
+void PopupJoinGameInit(WindowLayout *layout, void *userData)
 {
 	parentPopupID = TheNameKeyGenerator->nameToKey(AsciiString("PopupJoinGame.wnd:ParentJoinPopUp"));
 	parentPopup = TheWindowManager->winGetWindowFromId(NULL, parentPopupID);
@@ -103,82 +102,74 @@ void PopupJoinGameInit( WindowLayout *layout, void *userData )
 	if (ourRoom)
 		GadgetStaticTextSetText(staticTextGameName, ourRoom->getGameName());
 
-	TheWindowManager->winSetFocus( parentPopup );
-	TheWindowManager->winSetModal( parentPopup );
-
+	TheWindowManager->winSetFocus(parentPopup);
+	TheWindowManager->winSetModal(parentPopup);
 }
 
 //-------------------------------------------------------------------------------------------------
 /** PopupHostGameInput callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType PopupJoinGameInput( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType PopupJoinGameInput(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-	switch( msg )
+	switch (msg)
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case GWM_CHAR:
 		{
 			UnsignedByte key = mData1;
 			UnsignedByte state = mData2;
-//			if (buttonPushed)
-//				break;
+			//			if (buttonPushed)
+			//				break;
 
-			switch( key )
+			switch (key)
 			{
-
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitIsSet( state, KEY_STATE_UP ) )
+					if (BitIsSet(state, KEY_STATE_UP))
 					{
 						GameSpyCloseOverlay(GSOVERLAY_GAMEPASSWORD);
-						SetLobbyAttemptHostJoin( FALSE );
+						SetLobbyAttemptHostJoin(FALSE);
 						parentPopup = NULL;
-					}  // end if
+					} // end if
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				} // end escape
 
-			}  // end switch( key )
+			} // end switch( key )
 
-		}  // end char
+		} // end char
 
-	}  // end switch( msg )
+	} // end switch( msg )
 
 	return MSG_IGNORED;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** PopupHostGameSystem callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType PopupJoinGameSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType PopupJoinGameSystem(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-  switch( msg )
+	switch (msg)
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case GWM_CREATE:
 		{
-
 			break;
 
-		}  // end create
-    //---------------------------------------------------------------------------------------------
+		} // end create
+		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
-
 			break;
 
-		}  // end case
+		} // end case
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -188,34 +179,33 @@ WindowMsgHandledType PopupJoinGameSystem( GameWindow *window, UnsignedInt msg, W
 			if (controlID == buttonCancelID)
 			{
 				GameSpyCloseOverlay(GSOVERLAY_GAMEPASSWORD);
-				SetLobbyAttemptHostJoin( FALSE );
+				SetLobbyAttemptHostJoin(FALSE);
 				parentPopup = NULL;
 			}
 			break;
 		}
 
-    //----------------------------------------------------------------------------------------------
-    case GWM_INPUT_FOCUS:
+		//----------------------------------------------------------------------------------------------
+		case GWM_INPUT_FOCUS:
 		{
-
 			// if we're givin the opportunity to take the keyboard focus we must say we want it
-			if( mData1 == TRUE )
+			if (mData1 == TRUE)
 				*(Bool *)mData2 = TRUE;
 
 			break;
 
-		}  // end input
-    //---------------------------------------------------------------------------------------------
+		} // end input
+		//---------------------------------------------------------------------------------------------
 		case GEM_EDIT_DONE:
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 
-      if( controlID == textEntryGamePasswordID )
+			if (controlID == textEntryGamePasswordID)
 			{
 				// read the user's input and clear the entry box
 				UnicodeString txtInput;
-				txtInput.set(GadgetTextEntryGetText( textEntryGamePassword ));
+				txtInput.set(GadgetTextEntryGetText(textEntryGamePassword));
 				GadgetTextEntrySetText(textEntryGamePassword, UnicodeString::TheEmptyString);
 				txtInput.trim();
 				if (!txtInput.isEmpty())
@@ -230,24 +220,22 @@ WindowMsgHandledType PopupJoinGameSystem( GameWindow *window, UnsignedInt msg, W
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	} // end switch
 
 	return MSG_HANDLED;
-
 }
-
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-static void joinGame( AsciiString password )
+static void joinGame(AsciiString password)
 {
 	GameSpyStagingRoom *ourRoom = TheGameSpyInfo->findStagingRoomByID(TheGameSpyInfo->getCurrentStagingRoomID());
 	if (!ourRoom)
 	{
 		GameSpyCloseOverlay(GSOVERLAY_GAMEPASSWORD);
-		SetLobbyAttemptHostJoin( FALSE );
+		SetLobbyAttemptHostJoin(FALSE);
 		parentPopup = NULL;
 		return;
 	}
@@ -257,7 +245,11 @@ static void joinGame( AsciiString password )
 	req.stagingRoom.id = ourRoom->getID();
 	req.password = password.str();
 	TheGameSpyPeerMessageQueue->addRequest(req);
-	DEBUG_LOG(("Attempting to join game %d(%ls) with password [%s]", ourRoom->getID(), ourRoom->getGameName().str(), password.str()));
+	DEBUG_LOG(
+			("Attempting to join game %d(%ls) with password [%s]",
+			 ourRoom->getID(),
+			 ourRoom->getGameName().str(),
+			 password.str()));
 	GameSpyCloseOverlay(GSOVERLAY_GAMEPASSWORD);
 	parentPopup = NULL;
 }

@@ -28,7 +28,7 @@
 class PopupSliderOwner
 {
 public:
-	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial)=0;
+	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) = 0;
 	virtual void PopSliderChanged(const long sliderID, long theVal) = 0;
 	virtual void PopSliderFinished(const long sliderID, long theVal) = 0;
 };
@@ -40,25 +40,23 @@ public:
 
 class WBPopupSliderButton : public CButton
 {
-// Construction
+	// Construction
 public:
 	WBPopupSliderButton();
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-	void SetupPopSliderButton(CWnd *pParentWnd, long controlID,
-							   PopupSliderOwner *pOwner);
+	void SetupPopSliderButton(CWnd *pParentWnd, long controlID, PopupSliderOwner *pOwner);
 
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(WBPopupSliderButton)
-	protected:
+protected:
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~WBPopupSliderButton();
 
@@ -78,7 +76,6 @@ private:
 
 /////////////////////////////////////////////////////////////////////////////
 
-
 /////////////////////////////////////////////////////////////////////////////
 // PopupSlider window
 
@@ -92,7 +89,7 @@ private:
 
 class PopupSlider : public CWnd
 {
-// Construction
+	// Construction
 public:
 	PopupSlider();
 
@@ -102,25 +99,23 @@ public:
 		constructs the object, calls its create method,
 		and starts it running
 	*/
-	static void New(CWnd* pParentWnd, long kind,
-					PopupSliderOwner *pSliderOwner, long sliderID);
+	static void New(CWnd *pParentWnd, long kind, PopupSliderOwner *pSliderOwner, long sliderID);
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(PopupSlider)
-	public:
-	virtual BOOL Create(const RECT& rect, CWnd* pParentWnd);
-	protected:
+public:
+	virtual BOOL Create(const RECT &rect, CWnd *pParentWnd);
+
+protected:
 	virtual void PostNcDestroy();
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~PopupSlider();
 
@@ -170,13 +165,12 @@ private:
 	// the one and only slider windoid that should ever be open
 	static PopupSlider *gPopupSlider;
 
-	void GetChannelRect(CRect* rect);
-	void GetThumbIconRect(CRect* rect);
+	void GetChannelRect(CRect *rect);
+	void GetThumbIconRect(CRect *rect);
 
 	// the background color brush
-	CBrush	m_brush3dFaceColor;
+	CBrush m_brush3dFaceColor;
 };
-
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.

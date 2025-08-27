@@ -39,22 +39,15 @@
 #include "logdlg.h"
 #include "exportlog.h"
 
-
-BitChannelClass::BitChannelClass
-(
-	uint32 id,
-	int maxframes,
-	uint32 chntype,
-	bool default_val
-) :
-	ID(id),
-	ChannelType(chntype),
-	MaxFrames(maxframes),
-	IsEmpty(true),
-	DefaultVal(default_val),
-	Data(maxframes),
-	Begin(0),
-	End(0)
+BitChannelClass::BitChannelClass(uint32 id, int maxframes, uint32 chntype, bool default_val) :
+		ID(id),
+		ChannelType(chntype),
+		MaxFrames(maxframes),
+		IsEmpty(true),
+		DefaultVal(default_val),
+		Data(maxframes),
+		Begin(0),
+		End(0)
 {
 	// start "Begin" at the end of the array, whenever we set a value
 	// at an index less than "Begin", we push "Begin" back.
@@ -66,25 +59,26 @@ BitChannelClass::~BitChannelClass(void)
 {
 }
 
-void BitChannelClass::Set_Bit(int frameidx,bool bit)
+void BitChannelClass::Set_Bit(int frameidx, bool bit)
 {
 	assert(frameidx >= 0);
 	assert(frameidx < MaxFrames);
 
 	Data[frameidx] = bit;
 
-	if (!is_default(bit)) {
+	if (!is_default(bit))
+	{
 		IsEmpty = false;
 	}
 }
 
-void BitChannelClass::Set_Bits(BooleanVectorClass & bits)
+void BitChannelClass::Set_Bits(BooleanVectorClass &bits)
 {
-	for (int i=0; i<bits.Length(); i++) {
-		Set_Bit(i,bits[i]);
+	for (int i = 0; i < bits.Length(); i++)
+	{
+		Set_Bit(i, bits[i]);
 	}
 }
-
 
 bool BitChannelClass::Get_Bit(int frameidx)
 {
@@ -94,81 +88,89 @@ bool BitChannelClass::Get_Bit(int frameidx)
 	return Data[frameidx];
 }
 
-
-bool BitChannelClass::Save(ChunkSaveClass & csave, bool compress)
+bool BitChannelClass::Save(ChunkSaveClass &csave, bool compress)
 {
-	if (IsEmpty) return true;
+	if (IsEmpty)
+		return true;
 
-  if (compress)  {
-  	// Save the Channel Data Compressed
-    // TIMECODED
-		if (!csave.Begin_Chunk(W3D_CHUNK_COMPRESSED_BIT_CHANNEL)) {
+	if (compress)
+	{
+		// Save the Channel Data Compressed
+		// TIMECODED
+		if (!csave.Begin_Chunk(W3D_CHUNK_COMPRESSED_BIT_CHANNEL))
+		{
 			return false;
 		}
 
-    uint32	channelsize  = sizeof(W3dTimeCodedBitChannelStruct);
-		uint32  packetsize   = sizeof(uint32);
+		uint32 channelsize = sizeof(W3dTimeCodedBitChannelStruct);
+		uint32 packetsize = sizeof(uint32);
 
-    channelsize	+= packetsize * MaxFrames;
-    channelsize -= sizeof(uint32);
+		channelsize += packetsize * MaxFrames;
+		channelsize -= sizeof(uint32);
 
-    W3dTimeCodedBitChannelStruct * chn = (W3dTimeCodedBitChannelStruct *)malloc(channelsize);
+		W3dTimeCodedBitChannelStruct *chn = (W3dTimeCodedBitChannelStruct *)malloc(channelsize);
 
-    if (chn == NULL)  {
-    	return false;
-    }
-
-    chn->NumTimeCodes = MaxFrames;
-    chn->Pivot        = ID;
-    chn->Flags        = ChannelType;
-    chn->DefaultVal   = DefaultVal;
-
-    // copy data into the channel struct, in timecoded raw format
-
-		for (uint32 fcount=0; fcount < chn->NumTimeCodes; fcount++) {
-
-			if (Get_Bit(fcount)) {
-      		chn->Data[fcount] = fcount | W3D_TIMECODED_BIT_MASK;
-			}
-			else  {
-      		chn->Data[fcount] = fcount;
-			}
-		}
-
-    // Compress the new structure
-
-    BitChannelClass::compress( chn );
-
-	 float originalchannelsize = channelsize;
-
-    // Update Channel Size
-    channelsize  = sizeof(W3dTimeCodedBitChannelStruct);
-    channelsize	+= packetsize * chn->NumTimeCodes;
-    channelsize -= sizeof(uint32);
-
-	 float percent = (((float) channelsize) / originalchannelsize) * 100.0f;
-
-	 ExportLog::printf("%.0f", percent);
-
-
-    // save
-
-		if (csave.Write(chn,channelsize) != channelsize) {
+		if (chn == NULL)
+		{
 			return false;
 		}
 
-		if (chn != NULL) {
+		chn->NumTimeCodes = MaxFrames;
+		chn->Pivot = ID;
+		chn->Flags = ChannelType;
+		chn->DefaultVal = DefaultVal;
+
+		// copy data into the channel struct, in timecoded raw format
+
+		for (uint32 fcount = 0; fcount < chn->NumTimeCodes; fcount++)
+		{
+			if (Get_Bit(fcount))
+			{
+				chn->Data[fcount] = fcount | W3D_TIMECODED_BIT_MASK;
+			}
+			else
+			{
+				chn->Data[fcount] = fcount;
+			}
+		}
+
+		// Compress the new structure
+
+		BitChannelClass::compress(chn);
+
+		float originalchannelsize = channelsize;
+
+		// Update Channel Size
+		channelsize = sizeof(W3dTimeCodedBitChannelStruct);
+		channelsize += packetsize * chn->NumTimeCodes;
+		channelsize -= sizeof(uint32);
+
+		float percent = (((float)channelsize) / originalchannelsize) * 100.0f;
+
+		ExportLog::printf("%.0f", percent);
+
+		// save
+
+		if (csave.Write(chn, channelsize) != channelsize)
+		{
+			return false;
+		}
+
+		if (chn != NULL)
+		{
 			free(chn);
 		}
 
-		if (!csave.End_Chunk()) {
+		if (!csave.End_Chunk())
+		{
 			return false;
 		}
-
-  }
-  else  {
-  	// Stock Raw Save
-		if (!csave.Begin_Chunk(W3D_CHUNK_BIT_CHANNEL)) {
+	}
+	else
+	{
+		// Stock Raw Save
+		if (!csave.Begin_Chunk(W3D_CHUNK_BIT_CHANNEL))
+		{
 			return false;
 		}
 
@@ -181,9 +183,10 @@ bool BitChannelClass::Save(ChunkSaveClass & csave, bool compress)
 		unsigned int channelsize = sizeof(W3dBitChannelStruct);
 		channelsize += numbytes - 1; // one byte inside the W3dBitChannelStruct...
 
-		W3dBitChannelStruct * chn = (W3dBitChannelStruct *)malloc(channelsize);
+		W3dBitChannelStruct *chn = (W3dBitChannelStruct *)malloc(channelsize);
 
-		if (chn == NULL) {
+		if (chn == NULL)
+		{
 			return false;
 		}
 
@@ -193,29 +196,31 @@ bool BitChannelClass::Save(ChunkSaveClass & csave, bool compress)
 		chn->Pivot = ID;
 		chn->DefaultVal = DefaultVal;
 
-		uint8 * bits = (uint8 *)&(chn->Data[0]);
+		uint8 *bits = (uint8 *)&(chn->Data[0]);
 
-		for (int fcount=0; fcount < End-Begin+1; fcount++) {
-			::Set_Bit(bits,fcount,Get_Bit(Begin + fcount));
+		for (int fcount = 0; fcount < End - Begin + 1; fcount++)
+		{
+			::Set_Bit(bits, fcount, Get_Bit(Begin + fcount));
 		}
 
-		if (csave.Write(chn,channelsize) != channelsize) {
+		if (csave.Write(chn, channelsize) != channelsize)
+		{
 			return false;
 		}
 
-		if (chn != NULL) {
+		if (chn != NULL)
+		{
 			free(chn);
 		}
 
-		if (!csave.End_Chunk()) {
+		if (!csave.End_Chunk())
+		{
 			return false;
 		}
-
-  }
+	}
 
 	return true;
 }
-
 
 bool BitChannelClass::is_default(bool bit)
 {
@@ -225,16 +230,17 @@ bool BitChannelClass::is_default(bool bit)
 void BitChannelClass::compute_range(void)
 {
 	Begin = 0;
-	while ((Begin < MaxFrames) && (is_default(Get_Bit(Begin)))) {
+	while ((Begin < MaxFrames) && (is_default(Get_Bit(Begin))))
+	{
 		Begin++;
 	}
 
-	End = MaxFrames-1;
-	while ((End >= 0) && (is_default(Get_Bit(End)))) {
+	End = MaxFrames - 1;
+	while ((End >= 0) && (is_default(Get_Bit(End))))
+	{
 		End--;
 	}
-}	 // compute_range
-
+} // compute_range
 
 //
 // find a packet that isn't needed, and return the index
@@ -243,55 +249,52 @@ void BitChannelClass::compute_range(void)
 //
 #define PACKETS_ALL_USEFUL (0xFFFFFFFF)
 //
-uint32 BitChannelClass::find_useless_packet(W3dTimeCodedBitChannelStruct * c)
+uint32 BitChannelClass::find_useless_packet(W3dTimeCodedBitChannelStruct *c)
 {
+	assert(c); // make sure pointer exists
+	assert(c->NumTimeCodes); // make sure some packets exist
 
-  assert( c );	// make sure pointer exists
-  assert( c->NumTimeCodes );	// make sure some packets exist
+	if (c->NumTimeCodes > 2)
+	{
+		for (uint32 try_idx = 0; try_idx < (c->NumTimeCodes - 1); try_idx++)
+		{
+			if ((c->Data[try_idx] & W3D_TIMECODED_BIT_MASK) == (c->Data[try_idx + 1] & W3D_TIMECODED_BIT_MASK))
+			{
+				return (try_idx + 1);
+			}
 
-  	if (c->NumTimeCodes > 2)  {
+		} // for
+	}
 
-      for(uint32 try_idx = 0; try_idx < (c->NumTimeCodes - 1); try_idx++)  {
-
-        if ((c->Data[try_idx]   & W3D_TIMECODED_BIT_MASK) ==
-            (c->Data[try_idx+1] & W3D_TIMECODED_BIT_MASK))  {
-            	return(try_idx + 1);
-            }
-
-      }	// for
-    }
-
-	return( PACKETS_ALL_USEFUL );
+	return (PACKETS_ALL_USEFUL);
 
 } // find_useless_packet
-
 
 //
 //  Remove a packet from a W3dTimeCodedBitChannelStruct
 //
-void BitChannelClass::remove_packet(W3dTimeCodedBitChannelStruct * c, uint32 packet_idx)
+void BitChannelClass::remove_packet(W3dTimeCodedBitChannelStruct *c, uint32 packet_idx)
 {
-	assert( c );
-  assert( c->NumTimeCodes > 1 );
+	assert(c);
+	assert(c->NumTimeCodes > 1);
 
-  uint32 packet_size = 1;
-  uint32 packet_len  = packet_size * sizeof(uint32);
+	uint32 packet_size = 1;
+	uint32 packet_len = packet_size * sizeof(uint32);
 
-  uint32 *src, *dst;
+	uint32 *src, *dst;
 
-  dst = (uint32 *) &c->Data[ packet_size * packet_idx ];
-  src = (uint32 *) &c->Data[ packet_size * (packet_idx + 1) ];
+	dst = (uint32 *)&c->Data[packet_size * packet_idx];
+	src = (uint32 *)&c->Data[packet_size * (packet_idx + 1)];
 
-  uint32 copy_length = (c->NumTimeCodes - (packet_idx + 1)) * packet_len;
+	uint32 copy_length = (c->NumTimeCodes - (packet_idx + 1)) * packet_len;
 
-  if (copy_length)  {
+	if (copy_length)
+	{
+		memcpy(dst, src, copy_length);
+	}
 
-    memcpy(dst, src, copy_length);
-
-  }
-
-  // Decrement Packet Count
-  c->NumTimeCodes--;
+	// Decrement Packet Count
+	c->NumTimeCodes--;
 
 } // remove_packet
 
@@ -299,21 +302,18 @@ void BitChannelClass::remove_packet(W3dTimeCodedBitChannelStruct * c, uint32 pac
 //  Take a non-compressed TimeCoded Bit Channel
 //  and compress the packets
 //
-void BitChannelClass::compress(W3dTimeCodedBitChannelStruct * c)
+void BitChannelClass::compress(W3dTimeCodedBitChannelStruct *c)
 {
-	while(1) {
+	while (1)
+	{
+		uint32 idx = find_useless_packet(c);
 
-		uint32 idx = find_useless_packet( c );
+		if (PACKETS_ALL_USEFUL == idx)
+			break;
 
-		if (PACKETS_ALL_USEFUL == idx) break;
-
-		remove_packet( c, idx );
-
+		remove_packet(c, idx);
 	}
 
 } // compress
-
-
-
 
 // EOF - bchannel.cpp

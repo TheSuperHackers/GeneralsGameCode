@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 //----------------------------------------------------------------------------
 //
 //                       Westwood Studios Pacific.
@@ -45,7 +44,6 @@
 #ifndef __GAMECLIENT_GAMETEXT_H_
 #define __GAMECLIENT_GAMETEXT_H_
 
-
 //----------------------------------------------------------------------------
 //           Includes
 //----------------------------------------------------------------------------
@@ -66,45 +64,43 @@ typedef std::vector<AsciiString> AsciiStringVec;
 // GameTextInterface
 //===============================
 /** Game text interface object for localised text.
-	*/
+ */
 //===============================
 
 class GameTextInterface : public SubsystemInterface
 {
+public:
+	virtual ~GameTextInterface() {};
 
-	public:
+	virtual UnicodeString fetch(const Char *label, Bool *exists = NULL) = 0; ///< Returns the associated labeled unicode text
+	virtual UnicodeString fetch(AsciiString label, Bool *exists = NULL) = 0; ///< Returns the associated labeled unicode text ;
+																																					 ///< TheSuperHackers @todo Remove
+	virtual UnicodeString fetchFormat(const Char *label, ...) = 0;
 
-		virtual ~GameTextInterface() {};
+	// Do not call this directly, but use the FETCH_OR_SUBSTITUTE macro
+	virtual UnicodeString fetchOrSubstitute(const Char *label, const WideChar *substituteText) = 0;
+	virtual UnicodeString fetchOrSubstituteFormat(const Char *label, const WideChar *substituteFormat, ...) = 0;
+	virtual UnicodeString fetchOrSubstituteFormatVA(const Char *label, const WideChar *substituteFormat, va_list args) = 0;
 
-		virtual UnicodeString fetch( const Char *label, Bool *exists = NULL ) = 0;		///< Returns the associated labeled unicode text
-		virtual UnicodeString fetch( AsciiString label, Bool *exists = NULL ) = 0;		///< Returns the associated labeled unicode text ; TheSuperHackers @todo Remove
-		virtual UnicodeString fetchFormat( const Char *label, ... ) = 0;
+	// This function is not performance tuned.. Its really only for Worldbuilder. jkmcd
+	virtual AsciiStringVec &getStringsWithLabelPrefix(AsciiString label) = 0;
 
-		// Do not call this directly, but use the FETCH_OR_SUBSTITUTE macro
-		virtual UnicodeString fetchOrSubstitute( const Char *label, const WideChar *substituteText ) = 0;
-		virtual UnicodeString fetchOrSubstituteFormat( const Char *label, const WideChar *substituteFormat, ... ) = 0;
-		virtual UnicodeString fetchOrSubstituteFormatVA( const Char *label, const WideChar *substituteFormat, va_list args ) = 0;
-
-		// This function is not performance tuned.. Its really only for Worldbuilder. jkmcd
-		virtual AsciiStringVec& getStringsWithLabelPrefix(AsciiString label) = 0;
-
-		virtual void					initMapStringFile( const AsciiString& filename ) = 0;
+	virtual void initMapStringFile(const AsciiString &filename) = 0;
 
 #if __cplusplus < 201103L // TheSuperHackers @todo Remove function when abandoning VC6
-		inline UnicodeString FETCH_OR_SUBSTITUTE_FORMAT( const Char *label, const WideChar *substituteFormat, ... )
-		{
-			va_list args;
-			va_start(args, substituteFormat);
-			UnicodeString str = fetchOrSubstituteFormatVA(label, substituteFormat, args);
-			va_end(args);
-			return str;
-		}
+	inline UnicodeString FETCH_OR_SUBSTITUTE_FORMAT(const Char *label, const WideChar *substituteFormat, ...)
+	{
+		va_list args;
+		va_start(args, substituteFormat);
+		UnicodeString str = fetchOrSubstituteFormatVA(label, substituteFormat, args);
+		va_end(args);
+		return str;
+	}
 #endif
 };
 
-
 extern GameTextInterface *TheGameText;
-extern GameTextInterface* CreateGameTextInterface( void );
+extern GameTextInterface *CreateGameTextInterface(void);
 
 //----------------------------------------------------------------------------
 //           Inlining
@@ -118,7 +114,8 @@ extern GameTextInterface* CreateGameTextInterface( void );
 
 #define FETCH_OR_SUBSTITUTE(labelA, substituteTextW) fetchOrSubstitute(labelA, substituteTextW)
 #if __cplusplus >= 201103L // TheSuperHackers @todo Remove condition when abandoning VC6
-#define FETCH_OR_SUBSTITUTE_FORMAT(labelA, substituteFormatW, ...) fetchOrSubstituteFormat(labelA, substituteFormatW, __VA_ARGS__)
+#define FETCH_OR_SUBSTITUTE_FORMAT(labelA, substituteFormatW, ...) \
+	fetchOrSubstituteFormat(labelA, substituteFormatW, __VA_ARGS__)
 #endif
 
 #else

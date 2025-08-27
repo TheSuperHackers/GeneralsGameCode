@@ -33,8 +33,7 @@
 #define __THINGSORT_H_
 
 //-------------------------------------------------------------------------------------------------
-enum EditorSortingType CPP_11(: Int)
-{
+enum EditorSortingType CPP_11( : Int){
 	ES_FIRST = 0,
 
 	ES_NONE = ES_FIRST,
@@ -45,37 +44,23 @@ enum EditorSortingType CPP_11(: Int)
 	ES_MISC_MAN_MADE,
 	ES_MISC_NATURAL,
 	ES_DEBRIS,
-	ES_SYSTEM,				// game "system" stuff (programmer objects, not objects to put on a map)
+	ES_SYSTEM, // game "system" stuff (programmer objects, not objects to put on a map)
 	ES_AUDIO,
-	ES_TEST,					// for test stuff loaded for the world builder
-	ES_FOR_REVIEW,						// awaiting review from the divine messenger
-	ES_ROAD,						// road objects...should never actually be in the object panel.
-	ES_WAYPOINT,					// waypoint objects...should never actually be in the object panel.
+	ES_TEST, // for test stuff loaded for the world builder
+	ES_FOR_REVIEW, // awaiting review from the divine messenger
+	ES_ROAD, // road objects...should never actually be in the object panel.
+	ES_WAYPOINT, // waypoint objects...should never actually be in the object panel.
 
-	ES_NUM_SORTING_TYPES      // keep this last
+	ES_NUM_SORTING_TYPES // keep this last
 
 };
 #ifdef DEFINE_EDITOR_SORTING_NAMES
-static const char *EditorSortingNames[] =
-{
-	"NONE",
-	"STRUCTURE",
-	"INFANTRY",
-	"VEHICLE",
-	"SHRUBBERY",
-	"MISC_MAN_MADE",
-	"MISC_NATURAL",
-	"DEBRIS",
-	"SYSTEM",
-	"AUDIO",
-	"TEST",
-	"FOR_REVIEW",
-	"ROAD",
-	"WAYPOINT",
+static const char *EditorSortingNames[] = { "NONE",			 "STRUCTURE",			"INFANTRY",			"VEHICLE",
+																						"SHRUBBERY", "MISC_MAN_MADE", "MISC_NATURAL", "DEBRIS",
+																						"SYSTEM",		 "AUDIO",					"TEST",					"FOR_REVIEW",
+																						"ROAD",			 "WAYPOINT",
 
-	NULL
-};
+																						NULL };
 #endif
 
 #endif // __THINGSORT_H_
-

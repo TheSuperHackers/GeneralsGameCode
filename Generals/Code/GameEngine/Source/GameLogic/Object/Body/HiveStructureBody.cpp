@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Xfer.h"
 #include "Common/ThingTemplate.h"
@@ -50,44 +50,42 @@ HiveStructureBodyModuleData::HiveStructureBodyModuleData()
 	m_damageTypesToSwallow = DAMAGE_TYPE_FLAGS_NONE;
 }
 
-
 //-------------------------------------------------------------------------------------------------
-HiveStructureBody::HiveStructureBody( Thing *thing, const ModuleData* moduleData )
-							: StructureBody( thing, moduleData )
+HiveStructureBody::HiveStructureBody(Thing *thing, const ModuleData *moduleData) : StructureBody(thing, moduleData)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
-HiveStructureBody::~HiveStructureBody( void )
+HiveStructureBody::~HiveStructureBody(void)
 {
 }
 
 //------------------------------------------------------------------------------------------------
-void HiveStructureBody::attemptDamage( DamageInfo *damageInfo )
+void HiveStructureBody::attemptDamage(DamageInfo *damageInfo)
 {
 	const HiveStructureBodyModuleData *data = getHiveStructureBodyModuleData();
 	Object *hive = getObject();
 
-	if( getDamageTypeFlag( data->m_damageTypesToPropagateToSlaves, damageInfo->in.m_damageType ) )
+	if (getDamageTypeFlag(data->m_damageTypesToPropagateToSlaves, damageInfo->in.m_damageType))
 	{
-		//We have the right type of damage types incoming to propagate to slaves. Do we have slaves?
+		// We have the right type of damage types incoming to propagate to slaves. Do we have slaves?
 		SpawnBehaviorInterface *spawnInterface = hive->getSpawnBehaviorInterface();
-		if( spawnInterface )
+		if (spawnInterface)
 		{
-			//We found the spawn interface, now get some slaves!
-			Object *shooter = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
-			if( shooter )
+			// We found the spawn interface, now get some slaves!
+			Object *shooter = TheGameLogic->findObjectByID(damageInfo->in.m_sourceID);
+			if (shooter)
 			{
-				Object *slave = spawnInterface->getClosestSlave( shooter->getPosition() );
-				if( slave )
+				Object *slave = spawnInterface->getClosestSlave(shooter->getPosition());
+				if (slave)
 				{
-					//Propagate damage and return!
-					slave->attemptDamage( damageInfo );
+					// Propagate damage and return!
+					slave->attemptDamage(damageInfo);
 					return;
 				}
-				else if( getDamageTypeFlag( data->m_damageTypesToSwallow, damageInfo->in.m_damageType ) )
+				else if (getDamageTypeFlag(data->m_damageTypesToSwallow, damageInfo->in.m_damageType))
 				{
-					//no slave to give to, so eat it
+					// no slave to give to, so eat it
 					damageInfo->out.m_actualDamageDealt = 0.0f;
 					damageInfo->out.m_actualDamageClipped = 0.0f;
 					damageInfo->out.m_noEffect = true;
@@ -97,45 +95,45 @@ void HiveStructureBody::attemptDamage( DamageInfo *damageInfo )
 		}
 		else
 		{
-			DEBUG_CRASH( ("%s has a HiveStructureBody module, which requires a SpawnBehavior module. Thus it is unable to propagate damage to slaves.", hive->getTemplate()->getName().str() ) );
+			DEBUG_CRASH(
+					("%s has a HiveStructureBody module, which requires a SpawnBehavior module. Thus it is unable to propagate damage "
+					 "to slaves.",
+					 hive->getTemplate()->getName().str()));
 		}
 	}
 
-	//Nothing to propagate (either different damage type or no slaves),
-	//so damage me instead!
-	StructureBody::attemptDamage( damageInfo );
+	// Nothing to propagate (either different damage type or no slaves),
+	// so damage me instead!
+	StructureBody::attemptDamage(damageInfo);
 }
 
 //------------------------------------------------------------------------------------------------
-void HiveStructureBody::crc( Xfer *xfer )
+void HiveStructureBody::crc(Xfer *xfer)
 {
-
 	// extend parent class
-	StructureBody::crc( xfer );
+	StructureBody::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void HiveStructureBody::xfer( Xfer *xfer )
+void HiveStructureBody::xfer(Xfer *xfer)
 {
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// parent class
-	StructureBody::xfer( xfer );
+	StructureBody::xfer(xfer);
 }
 
 //------------------------------------------------------------------------------------------------
-void HiveStructureBody::loadPostProcess( void )
+void HiveStructureBody::loadPostProcess(void)
 {
-
 	// extend parent class
 	StructureBody::loadPostProcess();
-
 }

@@ -37,12 +37,12 @@
 // Windows doesn't have a syslog equivalent (does it?), so this class does little there
 class SyslogD : public OutputDevice
 {
- public:
-   SyslogD(char *ident,int logopt,int facility,int priority);
-   virtual int print(const char *str,int len);
+public:
+	SyslogD(char *ident, int logopt, int facility, int priority);
+	virtual int print(const char *str, int len);
 
- private:
-   int priority;
+private:
+	int priority;
 };
 
 #endif

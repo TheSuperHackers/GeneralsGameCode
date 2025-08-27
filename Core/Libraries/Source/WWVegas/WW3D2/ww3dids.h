@@ -34,11 +34,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
-
 
 #ifndef WW3DIDS_H
 #define WW3DIDS_H
@@ -69,7 +67,7 @@
 */
 enum
 {
-	WW3D_PERSIST_CHUNKID_RENDEROBJ		= CHUNKID_WW3D_BEGIN,
+	WW3D_PERSIST_CHUNKID_RENDEROBJ = CHUNKID_WW3D_BEGIN,
 	WW3D_PERSIST_CHUNKID_LIGHT,
 	WW3D_PERSIST_CHUNKID_DAZZLE,
 };

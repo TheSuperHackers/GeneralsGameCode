@@ -37,7 +37,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -55,7 +54,6 @@
 #include "coltype.h"
 
 class RenderObjClass;
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CollisionTestClass
@@ -91,30 +89,24 @@ class RenderObjClass;
 class CollisionTestClass
 {
 public:
-	CollisionTestClass(CastResultStruct * res,int collision_type);
-	CollisionTestClass(const CollisionTestClass & that);
+	CollisionTestClass(CastResultStruct *res, int collision_type);
+	CollisionTestClass(const CollisionTestClass &that);
 
 public:
-	CastResultStruct *			Result;
-	int								CollisionType;
-	RenderObjClass *				CollidedRenderObj;
+	CastResultStruct *Result;
+	int CollisionType;
+	RenderObjClass *CollidedRenderObj;
 };
 
-
-inline CollisionTestClass::CollisionTestClass(CastResultStruct * res,int collision_type) :
-	Result(res),
-	CollisionType(collision_type),
-	CollidedRenderObj(NULL)
+inline CollisionTestClass::CollisionTestClass(CastResultStruct *res, int collision_type) :
+		Result(res), CollisionType(collision_type), CollidedRenderObj(NULL)
 {
 }
 
-inline CollisionTestClass::CollisionTestClass(const CollisionTestClass & that) :
-	Result(that.Result),
-	CollisionType(that.CollisionType),
-	CollidedRenderObj(that.CollidedRenderObj)
+inline CollisionTestClass::CollisionTestClass(const CollisionTestClass &that) :
+		Result(that.Result), CollisionType(that.CollisionType), CollidedRenderObj(that.CollidedRenderObj)
 {
 }
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RayCollisionTestClass
@@ -126,60 +118,61 @@ inline CollisionTestClass::CollisionTestClass(const CollisionTestClass & that) :
 class RayCollisionTestClass : public CollisionTestClass
 {
 public:
+	RayCollisionTestClass(
+			const LineSegClass &ray,
+			CastResultStruct *res,
+			int collision_type = COLL_TYPE_0,
+			bool check_translucent = false,
+			bool check_hidden = false);
+	RayCollisionTestClass(const RayCollisionTestClass &raytest, const Matrix3D &tm);
 
-	RayCollisionTestClass(const LineSegClass & ray,CastResultStruct * res,int collision_type = COLL_TYPE_0,bool check_translucent=false, bool check_hidden=false);
-	RayCollisionTestClass(const RayCollisionTestClass & raytest,const Matrix3D & tm);
-
-	bool Cull(const Vector3 & min,const Vector3 & max);
-	bool Cull(const AABoxClass & box);
-	bool Cast_To_Triangle(const TriClass & tri);
+	bool Cull(const Vector3 &min, const Vector3 &max);
+	bool Cull(const AABoxClass &box);
+	bool Cast_To_Triangle(const TriClass &tri);
 
 public:
-
-	LineSegClass 		Ray;
+	LineSegClass Ray;
 	bool CheckTranslucent;
 	bool CheckHidden;
 
 private:
-
 	// not implemented
 	RayCollisionTestClass(const RayCollisionTestClass &);
-	RayCollisionTestClass & operator = (const RayCollisionTestClass &);
-
+	RayCollisionTestClass &operator=(const RayCollisionTestClass &);
 };
 
-
-inline RayCollisionTestClass::RayCollisionTestClass(const LineSegClass & ray,CastResultStruct * res,int collision_type,bool check_translucent, bool check_hidden) :
-	CollisionTestClass(res,collision_type),
-	Ray(ray),
-	CheckTranslucent(check_translucent),
-	CheckHidden(check_hidden)
+inline RayCollisionTestClass::RayCollisionTestClass(
+		const LineSegClass &ray,
+		CastResultStruct *res,
+		int collision_type,
+		bool check_translucent,
+		bool check_hidden) :
+		CollisionTestClass(res, collision_type), Ray(ray), CheckTranslucent(check_translucent), CheckHidden(check_hidden)
 {
 }
 
-inline RayCollisionTestClass::RayCollisionTestClass(const RayCollisionTestClass & raytest,const Matrix3D & tm) :
-	CollisionTestClass(raytest),
-	Ray(raytest.Ray,tm),
-	CheckTranslucent(raytest.CheckTranslucent),
-	CheckHidden(raytest.CheckHidden)
+inline RayCollisionTestClass::RayCollisionTestClass(const RayCollisionTestClass &raytest, const Matrix3D &tm) :
+		CollisionTestClass(raytest),
+		Ray(raytest.Ray, tm),
+		CheckTranslucent(raytest.CheckTranslucent),
+		CheckHidden(raytest.CheckHidden)
 {
 }
 
-inline bool RayCollisionTestClass::Cull(const Vector3 & min,const Vector3 & max)
+inline bool RayCollisionTestClass::Cull(const Vector3 &min, const Vector3 &max)
 {
-	return (CollisionMath::Overlap_Test(min,max,Ray) == CollisionMath::POS);
+	return (CollisionMath::Overlap_Test(min, max, Ray) == CollisionMath::POS);
 }
 
-inline bool RayCollisionTestClass::Cull(const AABoxClass & box)
+inline bool RayCollisionTestClass::Cull(const AABoxClass &box)
 {
-	return (CollisionMath::Overlap_Test(box,Ray) == CollisionMath::POS);
+	return (CollisionMath::Overlap_Test(box, Ray) == CollisionMath::POS);
 }
 
-inline bool RayCollisionTestClass::Cast_To_Triangle(const TriClass & tri)
+inline bool RayCollisionTestClass::Cast_To_Triangle(const TriClass &tri)
 {
-	return CollisionMath::Collide(Ray,tri,Result);
+	return CollisionMath::Collide(Ray, tri, Result);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // AABoxCollisionTestClass
@@ -192,9 +185,12 @@ inline bool RayCollisionTestClass::Cast_To_Triangle(const TriClass & tri)
 class AABoxCollisionTestClass : public CollisionTestClass
 {
 public:
-
-	AABoxCollisionTestClass(const AABoxClass & aabox,const Vector3 & move,CastResultStruct * res,int collision_type = COLL_TYPE_0);
-	AABoxCollisionTestClass(const AABoxCollisionTestClass & that);
+	AABoxCollisionTestClass(
+			const AABoxClass &aabox,
+			const Vector3 &move,
+			CastResultStruct *res,
+			int collision_type = COLL_TYPE_0);
+	AABoxCollisionTestClass(const AABoxCollisionTestClass &that);
 
 	enum ROTATION_TYPE
 	{
@@ -204,31 +200,27 @@ public:
 		ROTATE_Z270
 	};
 
-	bool							Cull(const Vector3 & min,const Vector3 & max);
-	bool							Cull(const AABoxClass & box);
-	bool							Cast_To_Triangle(const TriClass & tri);
+	bool Cull(const Vector3 &min, const Vector3 &max);
+	bool Cull(const AABoxClass &box);
+	bool Cast_To_Triangle(const TriClass &tri);
 
-	void							Translate(const Vector3 & translation);
-	void							Rotate(ROTATION_TYPE rotation);
-	void							Transform(const Matrix3D & tm);
+	void Translate(const Vector3 &translation);
+	void Rotate(ROTATION_TYPE rotation);
+	void Transform(const Matrix3D &tm);
 
 public:
+	AABoxClass Box;
+	Vector3 Move;
 
-	AABoxClass					Box;
-	Vector3						Move;
-
-	Vector3						SweepMin;
-	Vector3						SweepMax;
+	Vector3 SweepMin;
+	Vector3 SweepMax;
 
 private:
-
 	// not implemented
-	AABoxCollisionTestClass & operator = (const AABoxCollisionTestClass &);
-
+	AABoxCollisionTestClass &operator=(const AABoxCollisionTestClass &);
 };
 
-
-inline void AABoxCollisionTestClass::Translate(const Vector3 & translation)
+inline void AABoxCollisionTestClass::Translate(const Vector3 &translation)
 {
 	// translate the test by the desired translation vector
 	Box.Center += translation;
@@ -236,27 +228,29 @@ inline void AABoxCollisionTestClass::Translate(const Vector3 & translation)
 	SweepMax += translation;
 }
 
-inline bool AABoxCollisionTestClass::Cull(const Vector3 & min,const Vector3 & max)
+inline bool AABoxCollisionTestClass::Cull(const Vector3 &min, const Vector3 &max)
 {
-	if ((SweepMin.X > max.X) || (SweepMax.X < min.X)) {
+	if ((SweepMin.X > max.X) || (SweepMax.X < min.X))
+	{
 		return true;
 	}
 
-	if ((SweepMin.Y > max.Y) || (SweepMax.Y < min.Y)) {
+	if ((SweepMin.Y > max.Y) || (SweepMax.Y < min.Y))
+	{
 		return true;
 	}
 
-	if ((SweepMin.Z > max.Z) || (SweepMax.Z < min.Z)) {
+	if ((SweepMin.Z > max.Z) || (SweepMax.Z < min.Z))
+	{
 		return true;
 	}
 	return false;
 }
 
-inline bool AABoxCollisionTestClass::Cast_To_Triangle(const TriClass & tri)
+inline bool AABoxCollisionTestClass::Cast_To_Triangle(const TriClass &tri)
 {
-	return CollisionMath::Collide(Box,Move,tri,Result);
+	return CollisionMath::Collide(Box, Move, tri, Result);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // OBBoxCollisionTestClass
@@ -269,49 +263,48 @@ inline bool AABoxCollisionTestClass::Cast_To_Triangle(const TriClass & tri)
 class OBBoxCollisionTestClass : public CollisionTestClass
 {
 public:
+	OBBoxCollisionTestClass(const OBBoxClass &obbox, const Vector3 &move, CastResultStruct *res, int type = COLL_TYPE_0);
+	OBBoxCollisionTestClass(const OBBoxCollisionTestClass &that);
+	OBBoxCollisionTestClass(const OBBoxCollisionTestClass &that, const Matrix3D &tm);
+	OBBoxCollisionTestClass(const AABoxCollisionTestClass &that, const Matrix3D &tm);
 
-	OBBoxCollisionTestClass(const OBBoxClass & obbox,const Vector3 & move,CastResultStruct * res,int type = COLL_TYPE_0);
-	OBBoxCollisionTestClass(const OBBoxCollisionTestClass & that);
-	OBBoxCollisionTestClass(const OBBoxCollisionTestClass & that,const Matrix3D & tm);
-	OBBoxCollisionTestClass(const AABoxCollisionTestClass & that,const Matrix3D & tm);
-
-	bool Cull(const Vector3 & min,const Vector3 & max);
-	bool Cull(const AABoxClass & box);
-	bool Cast_To_Triangle(const TriClass & tri);
+	bool Cull(const Vector3 &min, const Vector3 &max);
+	bool Cull(const AABoxClass &box);
+	bool Cast_To_Triangle(const TriClass &tri);
 
 public:
-
-	OBBoxClass	 				Box;
-	Vector3						Move;
-	Vector3						SweepMin;
-	Vector3						SweepMax;
+	OBBoxClass Box;
+	Vector3 Move;
+	Vector3 SweepMin;
+	Vector3 SweepMax;
 
 private:
 	// not implemented
-	OBBoxCollisionTestClass & operator = (const OBBoxCollisionTestClass &);
+	OBBoxCollisionTestClass &operator=(const OBBoxCollisionTestClass &);
 };
 
-
-inline bool OBBoxCollisionTestClass::Cull(const Vector3 & min,const Vector3 & max)
+inline bool OBBoxCollisionTestClass::Cull(const Vector3 &min, const Vector3 &max)
 {
-	if ((SweepMin.X > max.X) || (SweepMax.X < min.X)) {
+	if ((SweepMin.X > max.X) || (SweepMax.X < min.X))
+	{
 		return true;
 	}
 
-	if ((SweepMin.Y > max.Y) || (SweepMax.Y < min.Y)) {
+	if ((SweepMin.Y > max.Y) || (SweepMax.Y < min.Y))
+	{
 		return true;
 	}
 
-	if ((SweepMin.Z > max.Z) || (SweepMax.Z < min.Z)) {
+	if ((SweepMin.Z > max.Z) || (SweepMax.Z < min.Z))
+	{
 		return true;
 	}
 	return false;
 }
 
-inline bool OBBoxCollisionTestClass::Cast_To_Triangle(const TriClass & tri)
+inline bool OBBoxCollisionTestClass::Cast_To_Triangle(const TriClass &tri)
 {
-	return CollisionMath::Collide(Box,Move,tri,Vector3(0,0,0),Result);
+	return CollisionMath::Collide(Box, Move, tri, Vector3(0, 0, 0), Result);
 }
-
 
 #endif

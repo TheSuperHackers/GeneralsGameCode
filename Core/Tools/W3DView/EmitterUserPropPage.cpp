@@ -41,137 +41,121 @@ IMPLEMENT_DYNCREATE(EmitterUserPropPageClass, CPropertyPage)
 //
 //  EmitterUserPropPageClass
 //
-EmitterUserPropPageClass::EmitterUserPropPageClass (EmitterInstanceListClass *pemitter)
-	: m_pEmitterList (NULL),
-	  m_bValid (true),
-	  m_iType (EMITTER_TYPEID_DEFAULT),
-	  CPropertyPage(EmitterUserPropPageClass::IDD)
+EmitterUserPropPageClass::EmitterUserPropPageClass(EmitterInstanceListClass *pemitter) :
+		m_pEmitterList(NULL), m_bValid(true), m_iType(EMITTER_TYPEID_DEFAULT), CPropertyPage(EmitterUserPropPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(EmitterUserPropPageClass)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	Initialize ();
-	return ;
+	Initialize();
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  ~EmitterUserPropPageClass
 //
-EmitterUserPropPageClass::~EmitterUserPropPageClass (void)
+EmitterUserPropPageClass::~EmitterUserPropPageClass(void)
 {
 	return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  DoDataExchange
 //
-void
-EmitterUserPropPageClass::DoDataExchange (CDataExchange* pDX)
+void EmitterUserPropPageClass::DoDataExchange(CDataExchange *pDX)
 {
 	// Allow the base class to process this message
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(EmitterUserPropPageClass)
 	DDX_Control(pDX, IDC_TYPE_COMBO, m_TypeCombo);
 	//}}AFX_DATA_MAP
-	return ;
+	return;
 }
 
-
 BEGIN_MESSAGE_MAP(EmitterUserPropPageClass, CPropertyPage)
-	//{{AFX_MSG_MAP(EmitterUserPropPageClass)
-	ON_EN_CHANGE(IDC_PROGRAMMER_SETTINGS_EDIT, OnChangeProgrammerSettingsEdit)
-	ON_CBN_SELCHANGE(IDC_TYPE_COMBO, OnSelchangeTypeCombo)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(EmitterUserPropPageClass)
+ON_EN_CHANGE(IDC_PROGRAMMER_SETTINGS_EDIT, OnChangeProgrammerSettingsEdit)
+ON_CBN_SELCHANGE(IDC_TYPE_COMBO, OnSelchangeTypeCombo)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////
 //
 //  Initialize
 //
-void
-EmitterUserPropPageClass::Initialize (void)
+void EmitterUserPropPageClass::Initialize(void)
 {
-	if (m_pEmitterList != NULL) {
-
+	if (m_pEmitterList != NULL)
+	{
 		// Record the user information from the emitter (if it exists)
-		m_iType			= m_pEmitterList->Get_User_Type ();
-		m_UserString	= m_pEmitterList->Get_User_String ();
+		m_iType = m_pEmitterList->Get_User_Type();
+		m_UserString = m_pEmitterList->Get_User_String();
 	}
 
-	return ;
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnInitDialog
 //
-BOOL
-EmitterUserPropPageClass::OnInitDialog (void)
+BOOL EmitterUserPropPageClass::OnInitDialog(void)
 {
 	// Allow the base class to process this message
-	CPropertyPage::OnInitDialog ();
+	CPropertyPage::OnInitDialog();
 
 	// Add the list of user-types to the combobox
-	for (int index = 0; index < EMITTER_TYPEID_COUNT; index ++) {
-		m_TypeCombo.AddString (EMITTER_TYPE_NAMES[index]);
+	for (int index = 0; index < EMITTER_TYPEID_COUNT; index++)
+	{
+		m_TypeCombo.AddString(EMITTER_TYPE_NAMES[index]);
 	}
 
 	// Select the correct entry in the combobox
-	m_TypeCombo.SetCurSel (m_iType);
+	m_TypeCombo.SetCurSel(m_iType);
 
 	// Fill in the user-box
-	SetDlgItemText (IDC_PROGRAMMER_SETTINGS_EDIT, m_UserString);
+	SetDlgItemText(IDC_PROGRAMMER_SETTINGS_EDIT, m_UserString);
 	return TRUE;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnApply
 //
-BOOL
-EmitterUserPropPageClass::OnApply (void)
+BOOL EmitterUserPropPageClass::OnApply(void)
 {
 	// Get the settings from the controls
-	m_iType = m_TypeCombo.GetCurSel ();
-	GetDlgItemText (IDC_PROGRAMMER_SETTINGS_EDIT, m_UserString);
+	m_iType = m_TypeCombo.GetCurSel();
+	GetDlgItemText(IDC_PROGRAMMER_SETTINGS_EDIT, m_UserString);
 
 	//
 	//	Pass the new settings onto the emitter
 	//
-	m_pEmitterList->Set_User_Type (m_iType);
-	m_pEmitterList->Set_User_String (m_UserString);
+	m_pEmitterList->Set_User_Type(m_iType);
+	m_pEmitterList->Set_User_String(m_UserString);
 
 	// Allow the base class to process this message
-	return CPropertyPage::OnApply ();
+	return CPropertyPage::OnApply();
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnChangeProgrammerSettingsEdit
 //
-void
-EmitterUserPropPageClass::OnChangeProgrammerSettingsEdit (void)
+void EmitterUserPropPageClass::OnChangeProgrammerSettingsEdit(void)
 {
-	SetModified ();
-	return ;
+	SetModified();
+	return;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnSelchangeTypeCombo
 //
-void
-EmitterUserPropPageClass::OnSelchangeTypeCombo (void)
+void EmitterUserPropPageClass::OnSelchangeTypeCombo(void)
 {
-	SetModified ();
-	return ;
+	SetModified();
+	return;
 }

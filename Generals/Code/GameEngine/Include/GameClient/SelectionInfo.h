@@ -58,7 +58,6 @@ struct SelectionInfo
 	Bool selectMineBuildings;
 	Bool selectFriends;
 
-
 	SelectionInfo();
 };
 
@@ -76,11 +75,11 @@ struct PickDrawableStruct
 };
 
 //-------------------------------------------------------------------------------------------------
-extern Bool contextCommandForNewSelection(const DrawableList *currentlySelectedDrawables,
-																					const DrawableList *newlySelectedDrawables,
-																					SelectionInfo *outSelectionInfo,
-																					Bool selectionIsPoint);
-
+extern Bool contextCommandForNewSelection(
+		const DrawableList *currentlySelectedDrawables,
+		const DrawableList *newlySelectedDrawables,
+		SelectionInfo *outSelectionInfo,
+		Bool selectionIsPoint);
 
 //-------------------------------------------------------------------------------------------------
 // Returns ORed picktypes.
@@ -90,16 +89,14 @@ extern UnsignedInt getPickTypesForContext(Bool forceAttackMode);
 // Returns ORed picktypes based on the current selection.
 extern UnsignedInt getPickTypesForCurrentSelection(Bool forceAttackMode);
 
-
 //-------------------------------------------------------------------------------------------------
 // expects ORed picktypes.
-extern void translatePickTypesToKindof(UnsignedInt pickTypes, KindOfMaskType& outmask);
+extern void translatePickTypesToKindof(UnsignedInt pickTypes, KindOfMaskType &outmask);
 
 //-------------------------------------------------------------------------------------------------
 // Given a drawable, add it to an stl list. Useful for iterateDrawablesInRegion.
 // userData should be a pointer to a PickDrawableStruct, which is defined in
 // above.
-extern Bool addDrawableToList( Drawable *draw, void *userData );
-
+extern Bool addDrawableToList(Drawable *draw, void *userData);
 
 #endif /* __SELECTIONINFO_H__ */

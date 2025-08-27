@@ -17,22 +17,22 @@
 */
 
 /******************************************************************************
-*
-* FILE
-*     $Archive:  $
-*
-* DESCRIPTION
-*     Debug printing mechanism
-*
-* PROGRAMMER
-*     Denzil E. Long, Jr.
-*     $Author:  $
-*
-* VERSION INFO
-*     $Modtime:  $
-*     $Revision:  $
-*
-******************************************************************************/
+ *
+ * FILE
+ *     $Archive:  $
+ *
+ * DESCRIPTION
+ *     Debug printing mechanism
+ *
+ * PROGRAMMER
+ *     Denzil E. Long, Jr.
+ *     $Author:  $
+ *
+ * VERSION INFO
+ *     $Modtime:  $
+ *     $Revision:  $
+ *
+ ******************************************************************************/
 
 #ifdef RTS_DEBUG
 
@@ -45,31 +45,31 @@
 char debugLogName[_MAX_PATH];
 
 /******************************************************************************
-*
-* NAME
-*     DebugPrint(String, ArgList...)
-*
-* DESCRIPTION
-*     Ouput debug print messages to the debugger and log file.
-*
-* INPUTS
-*     String  - String to output.
-*     ArgList - Argument list
-*
-* RESULT
-*     NONE
-*
-******************************************************************************/
+ *
+ * NAME
+ *     DebugPrint(String, ArgList...)
+ *
+ * DESCRIPTION
+ *     Ouput debug print messages to the debugger and log file.
+ *
+ * INPUTS
+ *     String  - String to output.
+ *     ArgList - Argument list
+ *
+ * RESULT
+ *     NONE
+ *
+ ******************************************************************************/
 
-void __cdecl DebugPrint(const char* string, ...)
-	{
+void __cdecl DebugPrint(const char *string, ...)
+{
 	static char _buffer[1024];
 	static char _filename[512] = "";
 
 	if (string != NULL)
-		{
+	{
 		// Format string
-		va_list	va;
+		va_list va;
 		va_start(va, string);
 		vsprintf(&_buffer[0], string, va);
 		va_end(va);
@@ -78,7 +78,7 @@ void __cdecl DebugPrint(const char* string, ...)
 		HANDLE file = INVALID_HANDLE_VALUE;
 
 		if (strlen(_filename) == 0)
-			{
+		{
 			char path[_MAX_PATH];
 			char drive[_MAX_DRIVE];
 			char dir[_MAX_DIR];
@@ -91,14 +91,12 @@ void __cdecl DebugPrint(const char* string, ...)
 			OutputDebugString(_filename);
 			OutputDebugString("\n");
 
-			file = CreateFile(_filename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
-				FILE_ATTRIBUTE_NORMAL, NULL);
-			}
+			file = CreateFile(_filename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		}
 		else
-			{
-			file = CreateFile(_filename, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS,
-				FILE_ATTRIBUTE_NORMAL, NULL);
-			}
+		{
+			file = CreateFile(_filename, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		}
 
 		// Send string to debugger
 		OutputDebugString(_buffer);
@@ -107,79 +105,83 @@ void __cdecl DebugPrint(const char* string, ...)
 		int i = 0;
 
 		while (_buffer[i] != '\0')
-			{
+		{
 			if (_buffer[i] == '\n')
-				{
+			{
 				int end = strlen(_buffer);
 				assert((end + 1) <= sizeof(_buffer));
 
 				while (end >= i)
-					{
+				{
 					_buffer[end + 1] = _buffer[end];
 					end--;
-					}
+				}
 
 				_buffer[i] = '\r';
 				i++;
-				}
+			}
 
 			i++;
-			}
+		}
 
 		// Send string to log file
 		assert(file != INVALID_HANDLE_VALUE);
 
 		if (file != INVALID_HANDLE_VALUE)
-			{
+		{
 			SetFilePointer(file, 0, NULL, FILE_END);
 
 			DWORD written;
 			WriteFile(file, &_buffer[0], strlen(_buffer), &written, NULL);
 
 			CloseHandle(file);
-			}
 		}
 	}
-
+}
 
 /******************************************************************************
-*
-* NAME
-*     PrintWin32Error
-*
-* DESCRIPTION
-*     Display Win32 error message (Error retrieved from GetLastError())
-*
-* INPUTS
-*     Message string
-*
-* RESULT
-*     NONE
-*
-******************************************************************************/
+ *
+ * NAME
+ *     PrintWin32Error
+ *
+ * DESCRIPTION
+ *     Display Win32 error message (Error retrieved from GetLastError())
+ *
+ * INPUTS
+ *     Message string
+ *
+ * RESULT
+ *     NONE
+ *
+ ******************************************************************************/
 
-void __cdecl PrintWin32Error(const char* string, ...)
-	{
+void __cdecl PrintWin32Error(const char *string, ...)
+{
 	static char _buffer[1024];
 
 	if (string != NULL)
-		{
+	{
 		// Format string
-		va_list	va;
+		va_list va;
 		va_start(va, string);
 		vsprintf(&_buffer[0], string, va);
 		va_end(va);
 
 		LPVOID lpMsgBuf;
-		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
-			FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(),
-			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&lpMsgBuf, 0, NULL);
+		FormatMessage(
+				FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+				NULL,
+				GetLastError(),
+				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+				(LPTSTR)&lpMsgBuf,
+				0,
+				NULL);
 
 		DebugPrint("***** Win32 Error: %s\n", _buffer);
-		DebugPrint("      Reason: %s\n", (char*)lpMsgBuf);
+		DebugPrint("      Reason: %s\n", (char *)lpMsgBuf);
 
 		LocalFree(lpMsgBuf);
-		}
 	}
+}
 
 #endif // RTS_DEBUG

@@ -40,7 +40,7 @@
 #ifndef PALETTE_H
 #define PALETTE_H
 
-#include	"rgb.h"
+#include "rgb.h"
 
 /*
 **	The palette class is used to manipulate a palette as a whole. All 256 colors are
@@ -48,34 +48,34 @@
 */
 class PaletteClass
 {
-	public:
-		enum {
-			COLOR_COUNT=256			// Number of color indices on the palette.
-		};
+public:
+	enum
+	{
+		COLOR_COUNT = 256 // Number of color indices on the palette.
+	};
 
-		PaletteClass(void) {};
-		PaletteClass(RGBClass const & rgb);
-		PaletteClass(unsigned char *binary_palette);
+	PaletteClass(void) {};
+	PaletteClass(RGBClass const &rgb);
+	PaletteClass(unsigned char *binary_palette);
 
-		RGBClass & operator[] (int index) {return(Palette[index % COLOR_COUNT]);};
-		RGBClass const & operator[] (int index) const {return(Palette[index % COLOR_COUNT]);};
-		RGBClass & Get_Color(int index) {return(Palette[index % COLOR_COUNT]);};
-		RGBClass const & Get_Color(int index) const {return(Palette[index % COLOR_COUNT]);};
-		int operator == (PaletteClass const & palette) const;
-		int operator != (PaletteClass const & palette) const {return(!(operator ==(palette)));};
-		PaletteClass & operator = (PaletteClass const & palette);
-		operator const unsigned char * (void) const {return((const unsigned char *)&Palette[0]);};
-		operator unsigned char * (void) {return((unsigned char *)&Palette[0]);};
+	RGBClass &operator[](int index) { return (Palette[index % COLOR_COUNT]); };
+	RGBClass const &operator[](int index) const { return (Palette[index % COLOR_COUNT]); };
+	RGBClass &Get_Color(int index) { return (Palette[index % COLOR_COUNT]); };
+	RGBClass const &Get_Color(int index) const { return (Palette[index % COLOR_COUNT]); };
+	int operator==(PaletteClass const &palette) const;
+	int operator!=(PaletteClass const &palette) const { return (!(operator==(palette))); };
+	PaletteClass &operator=(PaletteClass const &palette);
+	operator const unsigned char *(void) const { return ((const unsigned char *)&Palette[0]); };
+	operator unsigned char *(void) { return ((unsigned char *)&Palette[0]); };
 
-		void Adjust(int ratio);
-		void Adjust(int ratio, PaletteClass const & palette);
-		void Partial_Adjust(int ratio, char *lut);
-		void Partial_Adjust(int ratio, PaletteClass const & palette, char *lut);
-		int Closest_Color(RGBClass const & rgb) const;
+	void Adjust(int ratio);
+	void Adjust(int ratio, PaletteClass const &palette);
+	void Partial_Adjust(int ratio, char *lut);
+	void Partial_Adjust(int ratio, PaletteClass const &palette, char *lut);
+	int Closest_Color(RGBClass const &rgb) const;
 
-	protected:
-		RGBClass Palette[COLOR_COUNT];
+protected:
+	RGBClass Palette[COLOR_COUNT];
 };
-
 
 #endif

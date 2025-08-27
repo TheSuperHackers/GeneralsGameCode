@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/GameEngine.h"
 #include "Common/NameKeyGenerator.h"
@@ -68,15 +68,15 @@ static NameKeyType staticTextFileID = NAMEKEY_INVALID;
 static NameKeyType staticTextStatusID = NAMEKEY_INVALID;
 static NameKeyType progressBarMunkeeID = NAMEKEY_INVALID;
 
-static GameWindow * staticTextSize = NULL;
-static GameWindow * staticTextTime = NULL;
-static GameWindow * staticTextFile = NULL;
-static GameWindow * staticTextStatus = NULL;
-static GameWindow * progressBarMunkee = NULL;
+static GameWindow *staticTextSize = NULL;
+static GameWindow *staticTextTime = NULL;
+static GameWindow *staticTextFile = NULL;
+static GameWindow *staticTextStatus = NULL;
+static GameWindow *progressBarMunkee = NULL;
 
 static GameWindow *parent = NULL;
 
-static void closeDownloadWindow( void )
+static void closeDownloadWindow(void)
 {
 	DEBUG_ASSERTCRASH(parent, ("No Parent"));
 	if (!parent)
@@ -91,28 +91,28 @@ static void closeDownloadWindow( void )
 		menuLayout = NULL;
 	}
 
-	GameWindow *mainWin = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY("MainMenu.wnd:MainMenuParent") );
+	GameWindow *mainWin = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("MainMenu.wnd:MainMenuParent"));
 	if (mainWin)
-		TheWindowManager->winSetFocus( mainWin );
+		TheWindowManager->winSetFocus(mainWin);
 }
 
-static void errorCallback( void )
+static void errorCallback(void)
 {
 	HandleCanceledDownload();
 	closeDownloadWindow();
 }
 
-static void successQuitCallback( void )
+static void successQuitCallback(void)
 {
-	TheGameEngine->setQuitting( TRUE );
+	TheGameEngine->setQuitting(TRUE);
 	closeDownloadWindow();
 
 	// Clean up game data.  No crashy-crash for you!
 	if (TheGameLogic->isInGame())
-		TheMessageStream->appendMessage( GameMessage::MSG_CLEAR_GAME_DATA );
+		TheMessageStream->appendMessage(GameMessage::MSG_CLEAR_GAME_DATA);
 }
 
-static void successNoQuitCallback( void )
+static void successNoQuitCallback(void)
 {
 	HandleCanceledDownload();
 	closeDownloadWindow();
@@ -121,18 +121,36 @@ static void successNoQuitCallback( void )
 class DownloadManagerMunkee : public DownloadManager
 {
 public:
-	DownloadManagerMunkee() {m_shouldQuitOnSuccess = true; m_shouldQuitOnSuccess = false;}
-	virtual HRESULT OnError( Int error );
+	DownloadManagerMunkee()
+	{
+		m_shouldQuitOnSuccess = true;
+		m_shouldQuitOnSuccess = false;
+	}
+	virtual HRESULT OnError(Int error);
 	virtual HRESULT OnEnd();
-	virtual HRESULT OnProgressUpdate( Int bytesread, Int totalsize, Int timetaken, Int timeleft );
-	virtual HRESULT OnStatusUpdate( Int status );
-	virtual HRESULT downloadFile( AsciiString server, AsciiString username, AsciiString password, AsciiString file, AsciiString localfile, AsciiString regkey, Bool tryResume );
+	virtual HRESULT OnProgressUpdate(Int bytesread, Int totalsize, Int timetaken, Int timeleft);
+	virtual HRESULT OnStatusUpdate(Int status);
+	virtual HRESULT downloadFile(
+			AsciiString server,
+			AsciiString username,
+			AsciiString password,
+			AsciiString file,
+			AsciiString localfile,
+			AsciiString regkey,
+			Bool tryResume);
 
 private:
 	Bool m_shouldQuitOnSuccess;
 };
 
-HRESULT DownloadManagerMunkee::downloadFile( AsciiString server, AsciiString username, AsciiString password, AsciiString file, AsciiString localfile, AsciiString regkey, Bool tryResume )
+HRESULT DownloadManagerMunkee::downloadFile(
+		AsciiString server,
+		AsciiString username,
+		AsciiString password,
+		AsciiString file,
+		AsciiString localfile,
+		AsciiString regkey,
+		Bool tryResume)
 {
 	// see if we'll need to restart
 	if (strstr(localfile.str(), "patches\\") != NULL)
@@ -147,10 +165,10 @@ HRESULT DownloadManagerMunkee::downloadFile( AsciiString server, AsciiString use
 		// just get the filename, not the pathname
 		const char *tmp = bob.reverseFind('/');
 		if (tmp)
-			bob = tmp+1;
+			bob = tmp + 1;
 		tmp = bob.reverseFind('\\');
 		if (tmp)
-			bob = tmp+1;
+			bob = tmp + 1;
 
 		UnicodeString fileString;
 		fileString.translate(bob);
@@ -158,11 +176,11 @@ HRESULT DownloadManagerMunkee::downloadFile( AsciiString server, AsciiString use
 	}
 
 	password.format("-%s", password.str());
-	return DownloadManager::downloadFile( server, username, password, file, localfile, regkey, tryResume );
+	return DownloadManager::downloadFile(server, username, password, file, localfile, regkey, tryResume);
 }
-HRESULT DownloadManagerMunkee::OnError( Int error )
+HRESULT DownloadManagerMunkee::OnError(Int error)
 {
-	HRESULT ret = DownloadManager::OnError( error );
+	HRESULT ret = DownloadManager::OnError(error);
 
 	MessageBoxOk(TheGameText->fetch("GUI:DownloadErrorTitle"), getErrorString(), errorCallback);
 	return ret;
@@ -176,22 +194,28 @@ HRESULT DownloadManagerMunkee::OnEnd()
 		return downloadNextQueuedFile();
 	}
 	if (m_shouldQuitOnSuccess)
-		MessageBoxOk(TheGameText->fetch("GUI:DownloadSuccessTitle"), TheGameText->fetch("GUI:DownloadSuccessMustQuit"), successQuitCallback);
+		MessageBoxOk(
+				TheGameText->fetch("GUI:DownloadSuccessTitle"),
+				TheGameText->fetch("GUI:DownloadSuccessMustQuit"),
+				successQuitCallback);
 	else
-		MessageBoxOk(TheGameText->fetch("GUI:DownloadSuccessTitle"), TheGameText->fetch("GUI:DownloadSuccess"), successNoQuitCallback);
+		MessageBoxOk(
+				TheGameText->fetch("GUI:DownloadSuccessTitle"),
+				TheGameText->fetch("GUI:DownloadSuccess"),
+				successNoQuitCallback);
 	return ret;
 }
 
 static time_t lastUpdate = 0;
 static Int timeLeft = 0;
-HRESULT DownloadManagerMunkee::OnProgressUpdate( Int bytesread, Int totalsize, Int timetaken, Int timeleft )
+HRESULT DownloadManagerMunkee::OnProgressUpdate(Int bytesread, Int totalsize, Int timetaken, Int timeleft)
 {
-	HRESULT ret = DownloadManager::OnProgressUpdate( bytesread, totalsize, timetaken, timeleft );
+	HRESULT ret = DownloadManager::OnProgressUpdate(bytesread, totalsize, timetaken, timeleft);
 
 	if (progressBarMunkee)
 	{
 		Int percent = bytesread * 100 / totalsize;
-		GadgetProgressBarSetProgress( progressBarMunkee, percent );
+		GadgetProgressBarSetProgress(progressBarMunkee, percent);
 	}
 
 	if (staticTextSize)
@@ -224,9 +248,9 @@ HRESULT DownloadManagerMunkee::OnProgressUpdate( Int bytesread, Int totalsize, I
 	return ret;
 }
 
-HRESULT DownloadManagerMunkee::OnStatusUpdate( Int status )
+HRESULT DownloadManagerMunkee::OnStatusUpdate(Int status)
 {
-	HRESULT ret = DownloadManager::OnStatusUpdate( status );
+	HRESULT ret = DownloadManager::OnStatusUpdate(status);
 
 	if (staticTextStatus)
 	{
@@ -240,26 +264,25 @@ HRESULT DownloadManagerMunkee::OnStatusUpdate( Int status )
 //-------------------------------------------------------------------------------------------------
 /** Initialize the menu */
 //-------------------------------------------------------------------------------------------------
-void DownloadMenuInit( WindowLayout *layout, void *userData )
+void DownloadMenuInit(WindowLayout *layout, void *userData)
 {
-
-	//set keyboard focus to main parent and set modal
+	// set keyboard focus to main parent and set modal
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey("DownloadMenu.wnd:ParentDownload");
-	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	parent = TheWindowManager->winGetWindowFromId(NULL, parentID);
 
-  // get ids for our children controls
-	buttonCancelID = TheNameKeyGenerator->nameToKey( "DownloadMenu.wnd:ButtonCancel" );
-	staticTextSizeID = TheNameKeyGenerator->nameToKey( "DownloadMenu.wnd:StaticTextSize" );
-	staticTextTimeID = TheNameKeyGenerator->nameToKey( "DownloadMenu.wnd:StaticTextTime" );
-	staticTextFileID = TheNameKeyGenerator->nameToKey( "DownloadMenu.wnd:StaticTextFile" );
-	staticTextStatusID = TheNameKeyGenerator->nameToKey( "DownloadMenu.wnd:StaticTextStatus" );
-	progressBarMunkeeID = TheNameKeyGenerator->nameToKey( "DownloadMenu.wnd:ProgressBarMunkee" );
+	// get ids for our children controls
+	buttonCancelID = TheNameKeyGenerator->nameToKey("DownloadMenu.wnd:ButtonCancel");
+	staticTextSizeID = TheNameKeyGenerator->nameToKey("DownloadMenu.wnd:StaticTextSize");
+	staticTextTimeID = TheNameKeyGenerator->nameToKey("DownloadMenu.wnd:StaticTextTime");
+	staticTextFileID = TheNameKeyGenerator->nameToKey("DownloadMenu.wnd:StaticTextFile");
+	staticTextStatusID = TheNameKeyGenerator->nameToKey("DownloadMenu.wnd:StaticTextStatus");
+	progressBarMunkeeID = TheNameKeyGenerator->nameToKey("DownloadMenu.wnd:ProgressBarMunkee");
 
-	staticTextSize = TheWindowManager->winGetWindowFromId( parent, staticTextSizeID );
-	staticTextTime = TheWindowManager->winGetWindowFromId( parent, staticTextTimeID );
-	staticTextFile = TheWindowManager->winGetWindowFromId( parent, staticTextFileID );
-	staticTextStatus = TheWindowManager->winGetWindowFromId( parent, staticTextStatusID );
-	progressBarMunkee = TheWindowManager->winGetWindowFromId( parent, progressBarMunkeeID );
+	staticTextSize = TheWindowManager->winGetWindowFromId(parent, staticTextSizeID);
+	staticTextTime = TheWindowManager->winGetWindowFromId(parent, staticTextTimeID);
+	staticTextFile = TheWindowManager->winGetWindowFromId(parent, staticTextFileID);
+	staticTextStatus = TheWindowManager->winGetWindowFromId(parent, staticTextStatusID);
+	progressBarMunkee = TheWindowManager->winGetWindowFromId(parent, progressBarMunkeeID);
 
 	DEBUG_ASSERTCRASH(!TheDownloadManager, ("Download manager already exists"));
 	if (TheDownloadManager)
@@ -268,12 +291,12 @@ void DownloadMenuInit( WindowLayout *layout, void *userData )
 	}
 	TheDownloadManager = NEW DownloadManagerMunkee;
 
-}  // end DownloadMenuInit
+} // end DownloadMenuInit
 
 //-------------------------------------------------------------------------------------------------
 /** menu shutdown method */
 //-------------------------------------------------------------------------------------------------
-void DownloadMenuShutdown( WindowLayout *layout, void *userData )
+void DownloadMenuShutdown(WindowLayout *layout, void *userData)
 {
 	DEBUG_ASSERTCRASH(TheDownloadManager, ("No download manager"));
 	if (TheDownloadManager)
@@ -289,12 +312,12 @@ void DownloadMenuShutdown( WindowLayout *layout, void *userData )
 	progressBarMunkee = NULL;
 	parent = NULL;
 
-}  // end DownloadMenuShutdown
+} // end DownloadMenuShutdown
 
 //-------------------------------------------------------------------------------------------------
 /** menu update method */
 //-------------------------------------------------------------------------------------------------
-void DownloadMenuUpdate( WindowLayout *layout, void *userData )
+void DownloadMenuUpdate(WindowLayout *layout, void *userData)
 {
 	if (staticTextTime && !GadgetStaticTextGetText(staticTextTime).isEmpty())
 	{
@@ -322,117 +345,105 @@ void DownloadMenuUpdate( WindowLayout *layout, void *userData )
 		GadgetStaticTextSetText(staticTextTime, timeString);
 	}
 
-}  // end DownloadMenuUpdate
+} // end DownloadMenuUpdate
 
 //-------------------------------------------------------------------------------------------------
 /** menu input callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType DownloadMenuInput( GameWindow *window, UnsignedInt msg,
-																			 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType DownloadMenuInput(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-
-	switch( msg )
+	switch (msg)
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case GWM_CHAR:
 		{
 			UnsignedByte key = mData1;
 			UnsignedByte state = mData2;
 
-			switch( key )
+			switch (key)
 			{
-
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitIsSet( state, KEY_STATE_UP ) )
+					if (BitIsSet(state, KEY_STATE_UP))
 					{
-						AsciiString buttonName( "DownloadMenu.wnd:ButtonCancel" );
-						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
-						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
+						AsciiString buttonName("DownloadMenu.wnd:ButtonCancel");
+						NameKeyType buttonID = TheNameKeyGenerator->nameToKey(buttonName);
+						GameWindow *button = TheWindowManager->winGetWindowFromId(window, buttonID);
 
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
-																								(WindowMsgData)button, buttonID );
+						TheWindowManager->winSendSystemMsg(window, GBM_SELECTED, (WindowMsgData)button, buttonID);
 
-					}  // end if
+					} // end if
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				} // end escape
 
-			}  // end switch( key )
+			} // end switch( key )
 
-		}  // end char
+		} // end char
 
-	}  // end switch( msg )
+	} // end switch( msg )
 
 	return MSG_IGNORED;
 
-}  // end DownloadMenuInput
+} // end DownloadMenuInput
 
 //-------------------------------------------------------------------------------------------------
 /** menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType DownloadMenuSystem( GameWindow *window, UnsignedInt msg,
-																		 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType DownloadMenuSystem(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-
-  switch( msg )
+	switch (msg)
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case GWM_CREATE:
 		{
-
 			break;
 
-		}  // end create
-    //---------------------------------------------------------------------------------------------
+		} // end create
+		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
-
 			break;
 
-		}  // end case
+		} // end case
 
-    //----------------------------------------------------------------------------------------------
-    case GWM_INPUT_FOCUS:
+		//----------------------------------------------------------------------------------------------
+		case GWM_INPUT_FOCUS:
 		{
-
 			// if we're givin the opportunity to take the keyboard focus we must say we want it
-			if( mData1 == TRUE )
+			if (mData1 == TRUE)
 				*(Bool *)mData2 = TRUE;
 
 			break;
 
-		}  // end input
-    //---------------------------------------------------------------------------------------------
+		} // end input
+		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 
-			if( controlID == buttonCancelID )
+			if (controlID == buttonCancelID)
 			{
 				HandleCanceledDownload();
 				closeDownloadWindow();
-			}  // end if
+			} // end if
 
 			break;
 
-		}  // end selected
+		} // end selected
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	} // end switch
 
 	return MSG_HANDLED;
 

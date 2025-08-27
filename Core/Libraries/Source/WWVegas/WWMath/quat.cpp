@@ -48,7 +48,6 @@
  *   Cached_Slerp -- Quaternion slerping, optimized with cached values                         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "quat.h"
 #include "matrix3d.h"
 #include "matrix4.h"
@@ -59,16 +58,14 @@
 #include <math.h>
 #include <assert.h>
 
-#define SLERP_EPSILON		0.001
+#define SLERP_EPSILON 0.001
 
-static int _nxt[3] = { 1 , 2 , 0 };
-
+static int _nxt[3] = { 1, 2, 0 };
 
 // ------------------------------------------------------------
 // 	local functions
 // ------------------------------------------------------------
-static float project_to_sphere(float,float,float);
-
+static float project_to_sphere(float, float, float);
 
 /***********************************************************************************************
  * Quaternion::Quaternion -- constructor                                                       *
@@ -86,16 +83,15 @@ static float project_to_sphere(float,float,float);
  * HISTORY:                                                                                    *
  *   12/10/97   GTH : Created.                                                                 *
  *=============================================================================================*/
-Quaternion::Quaternion(const Vector3 & axis,float angle)
+Quaternion::Quaternion(const Vector3 &axis, float angle)
 {
-	float s = WWMath::Sin(angle/2);
-	float c = WWMath::Cos(angle/2);
+	float s = WWMath::Sin(angle / 2);
+	float c = WWMath::Cos(angle / 2);
 	X = s * axis.X;
 	Y = s * axis.Y;
 	Z = s * axis.Z;
 	W = c;
 }
-
 
 /***********************************************************************************************
  * Quaternion::Normalize -- Normalize to a unit quaternion                                     *
@@ -111,10 +107,13 @@ Quaternion::Quaternion(const Vector3 & axis,float angle)
  *=============================================================================================*/
 void Quaternion::Normalize()
 {
-	float len2=X * X + Y * Y + Z * Z + W * W;
-	if (0.0f == len2) {
+	float len2 = X * X + Y * Y + Z * Z + W * W;
+	if (0.0f == len2)
+	{
 		return;
-	} else {
+	}
+	else
+	{
 		float inv_mag = WWMath::Inv_Sqrt(len2);
 
 		X *= inv_mag;
@@ -136,12 +135,13 @@ void Quaternion::Normalize()
  * HISTORY:                                                                                    *
  *   02/28/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-Quaternion & Quaternion::Make_Closest(const Quaternion & qto)
+Quaternion &Quaternion::Make_Closest(const Quaternion &qto)
 {
 	float cos_t = qto.X * X + qto.Y * Y + qto.Z * Z + qto.W * W;
 
 	// if we are on opposite hemisphere from qto, negate ourselves
-	if (cos_t < 0.0) {
+	if (cos_t < 0.0)
+	{
 		X = -X;
 		Y = -Y;
 		Z = -Z;
@@ -168,17 +168,17 @@ Quaternion & Quaternion::Make_Closest(const Quaternion & qto)
  *=============================================================================================*/
 Quaternion Trackball(float x0, float y0, float x1, float y1, float sphsize)
 {
-	Vector3	a;
-	Vector3	p1;
-	Vector3	p2;
-	Vector3	d;
+	Vector3 a;
+	Vector3 p1;
+	Vector3 p2;
+	Vector3 d;
 
-	float phi,t;
+	float phi, t;
 
-	if ((x0 == x1) && (y0 == y1)) {
-		return Quaternion(0.0f, 0.0f, 0.0f, 1.0f);	// Zero rotation
+	if ((x0 == x1) && (y0 == y1))
+	{
+		return Quaternion(0.0f, 0.0f, 0.0f, 1.0f); // Zero rotation
 	}
-
 
 	// Compute z coordinates for projection of p1 and p2 to
 	// deformed sphere
@@ -190,22 +190,22 @@ Quaternion Trackball(float x0, float y0, float x1, float y1, float sphsize)
 	p2[1] = y1;
 	p2[2] = project_to_sphere(sphsize, x1, y1);
 
-
 	// Find their cross product
-	Vector3::Cross_Product(p2,p1,&a);
+	Vector3::Cross_Product(p2, p1, &a);
 
 	// Compute how much to rotate
 	d = p1 - p2;
 	t = d.Length() / (2.0f * sphsize);
 
 	// Avoid problems with out of control values
-	if (t >  1.0f) t =  1.0f;
-	if (t < -1.0f) t = -1.0f;
+	if (t > 1.0f)
+		t = 1.0f;
+	if (t < -1.0f)
+		t = -1.0f;
 	phi = 2.0f * WWMath::Asin(t);
 
 	return Axis_To_Quat(a, phi);
 }
-
 
 /***********************************************************************************************
  * Axis_To_Quat -- Creates a quaternion given an axis and angle of rotation                    *
@@ -230,7 +230,7 @@ Quaternion Axis_To_Quat(const Vector3 &a, float phi)
 	q[2] = tmp[2];
 
 	q.Scale(WWMath::Sin(phi / 2.0f));
-	q[3] =  WWMath::Cos(phi / 2.0f);
+	q[3] = WWMath::Cos(phi / 2.0f);
 
 	return q;
 }
@@ -252,7 +252,7 @@ Quaternion Axis_To_Quat(const Vector3 &a, float phi)
  *=============================================================================================*/
 
 #if 0
-#pragma warning (disable : 4725)
+#pragma warning(disable : 4725)
 
 #define ARC_TABLE_SIZE_MASK 1023
 #define SIN_TABLE_SIZE_MASK 1023
@@ -438,96 +438,104 @@ no_negative:
 	}
 }
 #else
-void __cdecl Fast_Slerp(Quaternion& res, const Quaternion & p,const Quaternion & q,float alpha)
+void __cdecl Fast_Slerp(Quaternion &res, const Quaternion &p, const Quaternion &q, float alpha)
 {
-	float beta;			// complementary interploation parameter
-	float theta;		// angle between p and q
-	float cos_t; 		// sine, cosine of theta
+	float beta; // complementary interploation parameter
+	float theta; // angle between p and q
+	float cos_t; // sine, cosine of theta
 	float oo_sin_t;
-	int qflip;			// use flip of q?
+	int qflip; // use flip of q?
 
 	// cos theta = dot product of p and q
 	cos_t = p.X * q.X + p.Y * q.Y + p.Z * q.Z + p.W * q.W;
 
 	// if q is on opposite hemisphere from A, use -B instead
-	if (cos_t < 0.0f) {
+	if (cos_t < 0.0f)
+	{
 		cos_t = -cos_t;
 		qflip = true;
-	} else {
+	}
+	else
+	{
 		qflip = false;
 	}
 
-	if (1.0f - cos_t < WWMATH_EPSILON * WWMATH_EPSILON) {
-
+	if (1.0f - cos_t < WWMATH_EPSILON * WWMATH_EPSILON)
+	{
 		// if q is very close to p, just linearly interpolate
 		// between the two.
 		beta = 1.0f - alpha;
-
-	} else {
-
+	}
+	else
+	{
 		theta = WWMath::Fast_Acos(cos_t);
 		float sin_t = WWMath::Fast_Sin(theta);
 		oo_sin_t = 1.0f / sin_t;
-		beta = WWMath::Fast_Sin(theta - alpha*theta) * oo_sin_t;
-		alpha = WWMath::Fast_Sin(alpha*theta) * oo_sin_t;
+		beta = WWMath::Fast_Sin(theta - alpha * theta) * oo_sin_t;
+		alpha = WWMath::Fast_Sin(alpha * theta) * oo_sin_t;
 	}
 
-	if (qflip) {
+	if (qflip)
+	{
 		alpha = -alpha;
 	}
 
-	res.X = beta*p.X + alpha*q.X;
-	res.Y = beta*p.Y + alpha*q.Y;
-	res.Z = beta*p.Z + alpha*q.Z;
-	res.W = beta*p.W + alpha*q.W;
+	res.X = beta * p.X + alpha * q.X;
+	res.Y = beta * p.Y + alpha * q.Y;
+	res.Z = beta * p.Z + alpha * q.Z;
+	res.W = beta * p.W + alpha * q.W;
 }
 
-#endif	// MSC_VER
+#endif // MSC_VER
 
-void Slerp(Quaternion& res, const Quaternion & p,const Quaternion & q,float alpha)
+void Slerp(Quaternion &res, const Quaternion &p, const Quaternion &q, float alpha)
 {
-	float beta;				// complementary interploation parameter
-	float theta;				// angle between p and q
-	//float sin_t
-	float cos_t; 		// sine, cosine of theta
+	float beta; // complementary interploation parameter
+	float theta; // angle between p and q
+	// float sin_t
+	float cos_t; // sine, cosine of theta
 	float oo_sin_t;
-	int qflip;					// use flip of q?
+	int qflip; // use flip of q?
 
 	// cos theta = dot product of p and q
 	cos_t = p.X * q.X + p.Y * q.Y + p.Z * q.Z + p.W * q.W;
 
 	// if q is on opposite hemisphere from A, use -B instead
-	if (cos_t < 0.0f) {
+	if (cos_t < 0.0f)
+	{
 		cos_t = -cos_t;
 		qflip = true;
-	} else {
+	}
+	else
+	{
 		qflip = false;
 	}
 
-	if (1.0f - cos_t < WWMATH_EPSILON * WWMATH_EPSILON) {
-
+	if (1.0f - cos_t < WWMATH_EPSILON * WWMATH_EPSILON)
+	{
 		// if q is very close to p, just linearly interpolate
 		// between the two.
 		beta = 1.0f - alpha;
-
-	} else {
-
+	}
+	else
+	{
 		// normal slerp!
 		theta = WWMath::Acos(cos_t);
 		float sin_t = WWMath::Sin(theta);
 		oo_sin_t = 1.0f / sin_t;
-		beta = WWMath::Sin(theta - alpha*theta) * oo_sin_t;
-		alpha = WWMath::Sin(alpha*theta) * oo_sin_t;
+		beta = WWMath::Sin(theta - alpha * theta) * oo_sin_t;
+		alpha = WWMath::Sin(alpha * theta) * oo_sin_t;
 	}
 
-	if (qflip) {
+	if (qflip)
+	{
 		alpha = -alpha;
 	}
 
-	res.X = beta*p.X + alpha*q.X;
-	res.Y = beta*p.Y + alpha*q.Y;
-	res.Z = beta*p.Z + alpha*q.Z;
-	res.W = beta*p.W + alpha*q.W;
+	res.X = beta * p.X + alpha * q.X;
+	res.Y = beta * p.Y + alpha * q.Y;
+	res.Z = beta * p.Z + alpha * q.Z;
+	res.W = beta * p.W + alpha * q.W;
 }
 
 /***********************************************************************************************
@@ -542,7 +550,7 @@ void Slerp(Quaternion& res, const Quaternion & p,const Quaternion & q,float alph
  * HISTORY:                                                                                    *
  *   2/27/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void Slerp_Setup(const Quaternion & p,const Quaternion & q,SlerpInfoStruct * slerpinfo)
+void Slerp_Setup(const Quaternion &p, const Quaternion &q, SlerpInfoStruct *slerpinfo)
 {
 	float cos_t;
 
@@ -552,25 +560,27 @@ void Slerp_Setup(const Quaternion & p,const Quaternion & q,SlerpInfoStruct * sle
 	cos_t = p.X * q.X + p.Y * q.Y + p.Z * q.Z + p.W * q.W;
 
 	// if q is on opposite hemisphere from A, use -B instead
-	if (cos_t < 0.0f) {
+	if (cos_t < 0.0f)
+	{
 		cos_t = -cos_t;
 		slerpinfo->Flip = true;
-	} else {
+	}
+	else
+	{
 		slerpinfo->Flip = false;
 	}
 
-	if (1.0f - cos_t < SLERP_EPSILON) {
-
+	if (1.0f - cos_t < SLERP_EPSILON)
+	{
 		slerpinfo->Linear = true;
 		slerpinfo->Theta = 0.0f;
 		slerpinfo->SinT = 0.0f;
-
-	} else {
-
+	}
+	else
+	{
 		slerpinfo->Linear = false;
 		slerpinfo->Theta = WWMath::Acos(cos_t);
 		slerpinfo->SinT = WWMath::Sin(slerpinfo->Theta);
-
 	}
 }
 
@@ -586,65 +596,67 @@ void Slerp_Setup(const Quaternion & p,const Quaternion & q,SlerpInfoStruct * sle
  * HISTORY:                                                                                    *
  *   2/27/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-Quaternion Cached_Slerp(const Quaternion & p,const Quaternion & q,float alpha,SlerpInfoStruct * slerpinfo)
+Quaternion Cached_Slerp(const Quaternion &p, const Quaternion &q, float alpha, SlerpInfoStruct *slerpinfo)
 {
-	float beta;				// complementary interploation parameter
+	float beta; // complementary interploation parameter
 	float oo_sin_t;
 
-	if (slerpinfo->Linear) {
-
+	if (slerpinfo->Linear)
+	{
 		// if q is very close to p, just linearly interpolate
 		// between the two.
 		beta = 1.0f - alpha;
-
-	} else {
-
+	}
+	else
+	{
 		// normal slerp!
 		oo_sin_t = 1.0f / slerpinfo->Theta;
-		beta = WWMath::Sin(slerpinfo->Theta - alpha*slerpinfo->Theta) * oo_sin_t;
-		alpha = WWMath::Sin(alpha*slerpinfo->Theta) * oo_sin_t;
+		beta = WWMath::Sin(slerpinfo->Theta - alpha * slerpinfo->Theta) * oo_sin_t;
+		alpha = WWMath::Sin(alpha * slerpinfo->Theta) * oo_sin_t;
 	}
 
-	if (slerpinfo->Flip) {
+	if (slerpinfo->Flip)
+	{
 		alpha = -alpha;
 	}
 
 	Quaternion res;
-	res.X = beta*p.X + alpha*q.X;
-	res.Y = beta*p.Y + alpha*q.Y;
-	res.Z = beta*p.Z + alpha*q.Z;
-	res.W = beta*p.W + alpha*q.W;
+	res.X = beta * p.X + alpha * q.X;
+	res.Y = beta * p.Y + alpha * q.Y;
+	res.Z = beta * p.Z + alpha * q.Z;
+	res.W = beta * p.W + alpha * q.W;
 
 	return res;
 }
 
-void Cached_Slerp(const Quaternion & p,const Quaternion & q,float alpha,SlerpInfoStruct * slerpinfo,Quaternion * set_q)
+void Cached_Slerp(const Quaternion &p, const Quaternion &q, float alpha, SlerpInfoStruct *slerpinfo, Quaternion *set_q)
 {
-	float beta;				// complementary interploation parameter
+	float beta; // complementary interploation parameter
 	float oo_sin_t;
 
-	if (slerpinfo->Linear) {
-
+	if (slerpinfo->Linear)
+	{
 		// if q is very close to p, just linearly interpolate
 		// between the two.
 		beta = 1.0f - alpha;
-
-	} else {
-
+	}
+	else
+	{
 		// normal slerp!
 		oo_sin_t = 1.0f / slerpinfo->Theta;
-		beta = WWMath::Sin(slerpinfo->Theta - alpha*slerpinfo->Theta) * oo_sin_t;
-		alpha = WWMath::Sin(alpha*slerpinfo->Theta) * oo_sin_t;
+		beta = WWMath::Sin(slerpinfo->Theta - alpha * slerpinfo->Theta) * oo_sin_t;
+		alpha = WWMath::Sin(alpha * slerpinfo->Theta) * oo_sin_t;
 	}
 
-	if (slerpinfo->Flip) {
+	if (slerpinfo->Flip)
+	{
 		alpha = -alpha;
 	}
 
-	set_q->X = beta*p.X + alpha*q.X;
-	set_q->Y = beta*p.Y + alpha*q.Y;
-	set_q->Z = beta*p.Z + alpha*q.Z;
-	set_q->W = beta*p.W + alpha*q.W;
+	set_q->X = beta * p.X + alpha * q.X;
+	set_q->Y = beta * p.Y + alpha * q.Y;
+	set_q->Z = beta * p.Z + alpha * q.Z;
+	set_q->W = beta * p.W + alpha * q.W;
 }
 
 /***********************************************************************************************
@@ -660,17 +672,17 @@ void Cached_Slerp(const Quaternion & p,const Quaternion & q,float alpha,SlerpInf
  * HISTORY:                                                                                    *
  *   02/28/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-Quaternion Build_Quaternion(const Matrix3D & mat)
+Quaternion Build_Quaternion(const Matrix3D &mat)
 {
-	float tr,s;
-	int i,j,k;
+	float tr, s;
+	int i, j, k;
 	Quaternion q;
 
 	// sum the diagonal of the rotation matrix
 	tr = mat[0][0] + mat[1][1] + mat[2][2];
 
-	if (tr > 0.0f) {
-
+	if (tr > 0.0f)
+	{
 		s = sqrt(tr + 1.0);
 		q[3] = s * 0.5;
 		s = 0.5 / s;
@@ -678,42 +690,44 @@ Quaternion Build_Quaternion(const Matrix3D & mat)
 		q[0] = (mat[2][1] - mat[1][2]) * s;
 		q[1] = (mat[0][2] - mat[2][0]) * s;
 		q[2] = (mat[1][0] - mat[0][1]) * s;
-
-	} else {
-
-		i=0;
-		if (mat[1][1] > mat[0][0]) i = 1;
-		if (mat[2][2] > mat[i][i]) i = 2;
+	}
+	else
+	{
+		i = 0;
+		if (mat[1][1] > mat[0][0])
+			i = 1;
+		if (mat[2][2] > mat[i][i])
+			i = 2;
 		j = _nxt[i];
 		k = _nxt[j];
 
 		s = sqrt((mat[i][i] - (mat[j][j] + mat[k][k])) + 1.0);
 
 		q[i] = s * 0.5;
-		if (s != 0.0) {
+		if (s != 0.0)
+		{
 			s = 0.5 / s;
 		}
 
-		q[3] = 	( mat[k][j] - mat[j][k] ) * s;
-		q[j] =	( mat[j][i] + mat[i][j] ) * s;
-		q[k] =	( mat[k][i] + mat[i][k] ) * s;
-
+		q[3] = (mat[k][j] - mat[j][k]) * s;
+		q[j] = (mat[j][i] + mat[i][j]) * s;
+		q[k] = (mat[k][i] + mat[i][k]) * s;
 	}
 
 	return q;
 }
 
-Quaternion Build_Quaternion(const Matrix3x3 & mat)
+Quaternion Build_Quaternion(const Matrix3x3 &mat)
 {
-	float tr,s;
-	int i,j,k;
+	float tr, s;
+	int i, j, k;
 	Quaternion q;
 
 	// sum the diagonal of the rotation matrix
 	tr = mat[0][0] + mat[1][1] + mat[2][2];
 
-	if (tr > 0.0) {
-
+	if (tr > 0.0)
+	{
 		s = sqrt(tr + 1.0);
 		q[3] = s * 0.5;
 		s = 0.5 / s;
@@ -721,43 +735,46 @@ Quaternion Build_Quaternion(const Matrix3x3 & mat)
 		q[0] = (mat[2][1] - mat[1][2]) * s;
 		q[1] = (mat[0][2] - mat[2][0]) * s;
 		q[2] = (mat[1][0] - mat[0][1]) * s;
-
-	} else {
-
+	}
+	else
+	{
 		i = 0;
-		if (mat[1][1] > mat[0][0]) i = 1;
-		if (mat[2][2] > mat[i][i]) i = 2;
+		if (mat[1][1] > mat[0][0])
+			i = 1;
+		if (mat[2][2] > mat[i][i])
+			i = 2;
 
 		j = _nxt[i];
 		k = _nxt[j];
 
-		s = sqrt( (mat[i][i] - (mat[j][j]+mat[k][k])) + 1.0);
+		s = sqrt((mat[i][i] - (mat[j][j] + mat[k][k])) + 1.0);
 
-		q[i] =	s * 0.5;
+		q[i] = s * 0.5;
 
-		if (s != 0.0) {
-			s = 0.5/s;
+		if (s != 0.0)
+		{
+			s = 0.5 / s;
 		}
 
-		q[3] = 	( mat[k][j] - mat[j][k] ) * s;
-		q[j] =	( mat[j][i] + mat[i][j] ) * s;
-		q[k] =	( mat[k][i] + mat[i][k] ) * s;
+		q[3] = (mat[k][j] - mat[j][k]) * s;
+		q[j] = (mat[j][i] + mat[i][j]) * s;
+		q[k] = (mat[k][i] + mat[i][k]) * s;
 	}
 
 	return q;
 }
 
-Quaternion Build_Quaternion(const Matrix4x4 & mat)
+Quaternion Build_Quaternion(const Matrix4x4 &mat)
 {
-	float tr,s;
-	int i,j,k;
+	float tr, s;
+	int i, j, k;
 	Quaternion q;
 
 	// sum the diagonal of the rotation matrix
 	tr = mat[0][0] + mat[1][1] + mat[2][2];
 
-	if (tr > 0.0) {
-
+	if (tr > 0.0)
+	{
 		s = sqrt(tr + 1.0);
 		q[3] = s * 0.5;
 		s = 0.5 / s;
@@ -765,30 +782,32 @@ Quaternion Build_Quaternion(const Matrix4x4 & mat)
 		q[0] = (mat[2][1] - mat[1][2]) * s;
 		q[1] = (mat[0][2] - mat[2][0]) * s;
 		q[2] = (mat[1][0] - mat[0][1]) * s;
-
-	} else {
-
+	}
+	else
+	{
 		i = 0;
-		if (mat[1][1] > mat[0][0]) i = 1;
-		if (mat[2][2] > mat[i][i]) i = 2;
+		if (mat[1][1] > mat[0][0])
+			i = 1;
+		if (mat[2][2] > mat[i][i])
+			i = 2;
 
 		j = _nxt[i];
 		k = _nxt[j];
 
-		s = sqrt( (mat[i][i] - (mat[j][j]+mat[k][k])) + 1.0);
+		s = sqrt((mat[i][i] - (mat[j][j] + mat[k][k])) + 1.0);
 
-		q[i] =	s * 0.5;
-		if (s != 0.0) {
-			s = 0.5/s;
+		q[i] = s * 0.5;
+		if (s != 0.0)
+		{
+			s = 0.5 / s;
 		}
-		q[3] = 	( mat[k][j] - mat[j][k] ) * s;
-		q[j] =	( mat[j][i] + mat[i][j] ) * s;
-		q[k] =	( mat[k][i] + mat[i][k] ) * s;
+		q[3] = (mat[k][j] - mat[j][k]) * s;
+		q[j] = (mat[j][i] + mat[i][j]) * s;
+		q[k] = (mat[k][i] + mat[i][k]) * s;
 	}
 
 	return q;
 }
-
 
 /***********************************************************************************************
  * Build_Matrix -- Creates a Matrix from a Quaternion                                          *
@@ -802,7 +821,7 @@ Quaternion Build_Quaternion(const Matrix4x4 & mat)
  * HISTORY:                                                                                    *
  *   02/28/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-Matrix3x3 Build_Matrix3(const Quaternion & q)
+Matrix3x3 Build_Matrix3(const Quaternion &q)
 {
 	Matrix3x3 m;
 
@@ -816,12 +835,12 @@ Matrix3x3 Build_Matrix3(const Quaternion & q)
 
 	m[2][0] = (float)(2.0 * (q[2] * q[0] - q[1] * q[3]));
 	m[2][1] = (float)(2.0 * (q[1] * q[2] + q[0] * q[3]));
-	m[2][2] =(float)(1.0 - 2.0 * (q[1] * q[1] + q[0] * q[0]));
+	m[2][2] = (float)(1.0 - 2.0 * (q[1] * q[1] + q[0] * q[0]));
 
 	return m;
 }
 
-Matrix4x4 Build_Matrix4(const Quaternion & q)
+Matrix4x4 Build_Matrix4(const Quaternion &q)
 {
 	Matrix4x4 m;
 
@@ -850,19 +869,19 @@ Matrix4x4 Build_Matrix4(const Quaternion & q)
 void Quaternion::Rotate_X(float theta)
 {
 	// TODO: optimize this
-	*this = (*this) * Quaternion(Vector3(1,0,0),theta);
+	*this = (*this) * Quaternion(Vector3(1, 0, 0), theta);
 }
 
 void Quaternion::Rotate_Y(float theta)
 {
 	// TODO: optimize this
-	*this = (*this) * Quaternion(Vector3(0,1,0),theta);
+	*this = (*this) * Quaternion(Vector3(0, 1, 0), theta);
 }
 
 void Quaternion::Rotate_Z(float theta)
 {
 	// TODO: optimize this
-	*this = (*this) * Quaternion(Vector3(0,0,1),theta);
+	*this = (*this) * Quaternion(Vector3(0, 0, 1), theta);
 }
 
 float project_to_sphere(float r, float x, float y)
@@ -871,9 +890,10 @@ float project_to_sphere(float r, float x, float y)
 	float t, z;
 	float d = WWMath::Sqrt(x * x + y * y);
 
-	if (d < r * (SQRT2/(2.0f)))			// inside sphere
+	if (d < r * (SQRT2 / (2.0f))) // inside sphere
 		z = WWMath::Sqrt(r * r - d * d);
-	else {								// on hyperbola
+	else
+	{ // on hyperbola
 		t = r / SQRT2;
 		z = t * t / d;
 	}
@@ -881,15 +901,12 @@ float project_to_sphere(float r, float x, float y)
 	return z;
 }
 
-
 void Quaternion::Randomize(void)
 {
-	X = ((float) (rand() & 0xFFFF)) / 65536.0f;
-	Y = ((float) (rand() & 0xFFFF)) / 65536.0f;
-	Z = ((float) (rand() & 0xFFFF)) / 65536.0f;
-	W = ((float) (rand() & 0xFFFF)) / 65536.0f;
+	X = ((float)(rand() & 0xFFFF)) / 65536.0f;
+	Y = ((float)(rand() & 0xFFFF)) / 65536.0f;
+	Z = ((float)(rand() & 0xFFFF)) / 65536.0f;
+	W = ((float)(rand() & 0xFFFF)) / 65536.0f;
 
 	Normalize();
 }
-
-

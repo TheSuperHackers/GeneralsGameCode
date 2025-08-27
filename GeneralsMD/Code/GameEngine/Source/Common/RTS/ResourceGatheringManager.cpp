@@ -27,7 +27,7 @@
 // gathering type decisions based on them.
 // Author: Graham Smallwood, January, 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/ResourceGatheringManager.h"
 
@@ -47,80 +47,80 @@ ResourceGatheringManager::ResourceGatheringManager()
 
 ResourceGatheringManager::~ResourceGatheringManager()
 {
-	m_supplyWarehouses.erase( m_supplyWarehouses.begin(), m_supplyWarehouses.end() );
-	m_supplyCenters.erase( m_supplyCenters.begin(), m_supplyCenters.end() );
+	m_supplyWarehouses.erase(m_supplyWarehouses.begin(), m_supplyWarehouses.end());
+	m_supplyCenters.erase(m_supplyCenters.begin(), m_supplyCenters.end());
 }
 
-void ResourceGatheringManager::addSupplyCenter( Object *newCenter )
+void ResourceGatheringManager::addSupplyCenter(Object *newCenter)
 {
-	if( newCenter == NULL )
+	if (newCenter == NULL)
 		return;
 
-	m_supplyCenters.push_back( newCenter->getID() );
+	m_supplyCenters.push_back(newCenter->getID());
 }
 
-void ResourceGatheringManager::removeSupplyCenter( Object *oldCenter )
+void ResourceGatheringManager::removeSupplyCenter(Object *oldCenter)
 {
-	if( oldCenter == NULL )
+	if (oldCenter == NULL)
 		return;
 
 	ObjectID targetID = oldCenter->getID();
 
 	objectIDListIterator iterator = m_supplyCenters.begin();
-	while( iterator != m_supplyCenters.end() )
+	while (iterator != m_supplyCenters.end())
 	{
-		if( targetID == *iterator )
+		if (targetID == *iterator)
 		{
-			iterator = m_supplyCenters.erase( iterator );
+			iterator = m_supplyCenters.erase(iterator);
 		}
 		else
 			iterator++;
 	}
 }
 
-void ResourceGatheringManager::addSupplyWarehouse( Object *newWarehouse )
+void ResourceGatheringManager::addSupplyWarehouse(Object *newWarehouse)
 {
-	if( newWarehouse == NULL )
+	if (newWarehouse == NULL)
 		return;
 
-	m_supplyWarehouses.push_back( newWarehouse->getID() );
+	m_supplyWarehouses.push_back(newWarehouse->getID());
 }
 
-void ResourceGatheringManager::removeSupplyWarehouse( Object *oldWarehouse )
+void ResourceGatheringManager::removeSupplyWarehouse(Object *oldWarehouse)
 {
-	if( oldWarehouse == NULL )
+	if (oldWarehouse == NULL)
 		return;
 
 	ObjectID targetID = oldWarehouse->getID();
 
 	objectIDListIterator iterator = m_supplyWarehouses.begin();
-	while( iterator != m_supplyWarehouses.end() )
+	while (iterator != m_supplyWarehouses.end())
 	{
-		if( targetID == *iterator )
+		if (targetID == *iterator)
 		{
-			iterator = m_supplyWarehouses.erase( iterator );
+			iterator = m_supplyWarehouses.erase(iterator);
 		}
 		else
 			iterator++;
 	}
 }
 
-static Real computeRelativeCost( Object *queryObject, Object *destObject, Real *pureDistanceSquared )
+static Real computeRelativeCost(Object *queryObject, Object *destObject, Real *pureDistanceSquared)
 {
 	/** @todo This gets filled with Pathfinding computations, analysis of Boxes remaining,
 			Threat calculations, paths of other trucks, and other fancy stuff.
 	*/
 
-	//A good score is a very small number.
+	// A good score is a very small number.
 
-	if( queryObject == NULL  ||  destObject == NULL )
+	if (queryObject == NULL || destObject == NULL)
 		return FLT_MAX;
 
-	if( !TheActionManager->canTransferSuppliesAt(queryObject, destObject) )
-		return FLT_MAX;// Handles emptyness and alliances
+	if (!TheActionManager->canTransferSuppliesAt(queryObject, destObject))
+		return FLT_MAX; // Handles emptyness and alliances
 
 	DockUpdateInterface *dockInterface = destObject->getDockUpdateInterface();
-	if( !dockInterface->isClearToApproach( queryObject ) )
+	if (!dockInterface->isClearToApproach(queryObject))
 		return FLT_MAX;
 
 	// since we don't care about the distance as a distance per se, but rather as
@@ -130,32 +130,32 @@ static Real computeRelativeCost( Object *queryObject, Object *destObject, Real *
 	// I need the distance, but I don't want to count on the coincidence that
 	// the abstract 'cost' this function returns happens to be just the distance, since it could
 	// become more complicated
-	if( pureDistanceSquared )
+	if (pureDistanceSquared)
 		*pureDistanceSquared = distSquared;
 
 	return distSquared;
 }
 
-Object *ResourceGatheringManager::findBestSupplyWarehouse( Object *queryObject )
+Object *ResourceGatheringManager::findBestSupplyWarehouse(Object *queryObject)
 {
 	Object *bestWarehouse = NULL;
 	Real maxDistanceSquared = 100000;
 
-	if( ( queryObject == NULL ) || ( queryObject->getAI() == NULL ) )
+	if ((queryObject == NULL) || (queryObject->getAI() == NULL))
 		return NULL;
 
 	SupplyTruckAIInterface *supplyTruckAI = queryObject->getAI()->getSupplyTruckAIInterface();
-	if( supplyTruckAI )
+	if (supplyTruckAI)
 	{
 		// Check for a dock override being set.
 		ObjectID dockID = supplyTruckAI->getPreferredDockID();
 		Object *dock = TheGameLogic->findObjectByID(dockID);
-		if( dock )
+		if (dock)
 		{
 			static const NameKeyType key_warehouseUpdate = NAMEKEY("SupplyWarehouseDockUpdate");
-			SupplyWarehouseDockUpdate *warehouseModule = (SupplyWarehouseDockUpdate*)dock->findUpdateModule( key_warehouseUpdate );
-			//If remotely okay, let User win.
-			if( warehouseModule && computeRelativeCost( queryObject, dock, NULL ) != FLT_MAX )
+			SupplyWarehouseDockUpdate *warehouseModule = (SupplyWarehouseDockUpdate *)dock->findUpdateModule(key_warehouseUpdate);
+			// If remotely okay, let User win.
+			if (warehouseModule && computeRelativeCost(queryObject, dock, NULL) != FLT_MAX)
 				return dock;
 		}
 		// Please note, there is not a separate Warehouse and Center memory by Design.  Because
@@ -167,24 +167,24 @@ Object *ResourceGatheringManager::findBestSupplyWarehouse( Object *queryObject )
 		maxDistanceSquared = supplyTruckAI->getWarehouseScanDistance() * supplyTruckAI->getWarehouseScanDistance();
 	}
 
-	//Otherwise, search for a good one.
+	// Otherwise, search for a good one.
 	Real bestCost = FLT_MAX;
 
 	objectIDListIterator iterator = m_supplyWarehouses.begin();
-	while( iterator != m_supplyWarehouses.end() )
+	while (iterator != m_supplyWarehouses.end())
 	{
 		ObjectID currentID = *iterator;
-		Object *currentWarehouse =TheGameLogic->findObjectByID(currentID);
+		Object *currentWarehouse = TheGameLogic->findObjectByID(currentID);
 
-		if( currentWarehouse == NULL )
+		if (currentWarehouse == NULL)
 		{
-			iterator = m_supplyWarehouses.erase( iterator );
+			iterator = m_supplyWarehouses.erase(iterator);
 		}
 		else
 		{
 			Real distanceSquared;
-			Real currentCost = computeRelativeCost( queryObject, currentWarehouse, &distanceSquared );
-			if( (currentCost < bestCost) && (distanceSquared < maxDistanceSquared) )
+			Real currentCost = computeRelativeCost(queryObject, currentWarehouse, &distanceSquared);
+			if ((currentCost < bestCost) && (distanceSquared < maxDistanceSquared))
 			{
 				bestWarehouse = currentWarehouse;
 				bestCost = currentCost;
@@ -197,25 +197,25 @@ Object *ResourceGatheringManager::findBestSupplyWarehouse( Object *queryObject )
 	return bestWarehouse;
 }
 
-Object *ResourceGatheringManager::findBestSupplyCenter( Object *queryObject )
+Object *ResourceGatheringManager::findBestSupplyCenter(Object *queryObject)
 {
 	Object *bestCenter = NULL;
 
-	if( ( queryObject == NULL ) || ( queryObject->getAI() == NULL ) )
+	if ((queryObject == NULL) || (queryObject->getAI() == NULL))
 		return NULL;
 
 	SupplyTruckAIInterface *supplyTruckAI = queryObject->getAI()->getSupplyTruckAIInterface();
-	if( supplyTruckAI )
+	if (supplyTruckAI)
 	{
 		// Check for a dock override being set.
 		ObjectID dockID = supplyTruckAI->getPreferredDockID();
 		Object *dock = TheGameLogic->findObjectByID(dockID);
-		if( dock )
+		if (dock)
 		{
 			static const NameKeyType key_centerUpdate = NAMEKEY("SupplyCenterDockUpdate");
-			SupplyCenterDockUpdate *centerModule = (SupplyCenterDockUpdate*)dock->findUpdateModule( key_centerUpdate );
-			//If remotely okay, let User win.
-			if( centerModule && computeRelativeCost( queryObject, dock, NULL ) != FLT_MAX )
+			SupplyCenterDockUpdate *centerModule = (SupplyCenterDockUpdate *)dock->findUpdateModule(key_centerUpdate);
+			// If remotely okay, let User win.
+			if (centerModule && computeRelativeCost(queryObject, dock, NULL) != FLT_MAX)
 				return dock;
 		}
 		// Please note, there is not a separate Warehouse and Center memory by Design.  Because
@@ -223,23 +223,23 @@ Object *ResourceGatheringManager::findBestSupplyCenter( Object *queryObject )
 		// practical realization has been made that you do not want separate memory.
 	}
 
-	//Otherwise, search for a good one.
+	// Otherwise, search for a good one.
 	Real bestCost = FLT_MAX;
 
 	objectIDListIterator iterator = m_supplyCenters.begin();
-	while( iterator != m_supplyCenters.end() )
+	while (iterator != m_supplyCenters.end())
 	{
 		ObjectID currentID = *iterator;
-		Object *currentCenter =TheGameLogic->findObjectByID(currentID);
+		Object *currentCenter = TheGameLogic->findObjectByID(currentID);
 
-		if( currentCenter == NULL )
+		if (currentCenter == NULL)
 		{
-			iterator = m_supplyCenters.erase( iterator );
+			iterator = m_supplyCenters.erase(iterator);
 		}
 		else
 		{
-			Real currentCost = computeRelativeCost( queryObject, currentCenter, NULL );
-			if( currentCost < bestCost )
+			Real currentCost = computeRelativeCost(queryObject, currentCenter, NULL);
+			if (currentCost < bestCost)
 			{
 				bestCenter = currentCenter;
 				bestCost = currentCost;
@@ -255,37 +255,33 @@ Object *ResourceGatheringManager::findBestSupplyCenter( Object *queryObject )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ResourceGatheringManager::crc( Xfer *xfer )
+void ResourceGatheringManager::crc(Xfer *xfer)
 {
-
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ResourceGatheringManager::xfer( Xfer *xfer )
+void ResourceGatheringManager::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// supply warehouses
-	xfer->xferSTLObjectIDList( &m_supplyWarehouses );
+	xfer->xferSTLObjectIDList(&m_supplyWarehouses);
 
 	// supply centers
-	xfer->xferSTLObjectIDList( &m_supplyCenters );
+	xfer->xferSTLObjectIDList(&m_supplyCenters);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ResourceGatheringManager::loadPostProcess( void )
+void ResourceGatheringManager::loadPostProcess(void)
 {
-
-}  // end loadPostProcess
-
+} // end loadPostProcess

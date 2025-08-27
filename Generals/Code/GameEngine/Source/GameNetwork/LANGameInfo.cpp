@@ -26,7 +26,7 @@
 // LAN game setup state info
 // Author: Matthew D. Campbell, December 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameClient/GameInfoWindow.h"
 #include "GameClient/GameText.h"
@@ -54,8 +54,7 @@ LANGameSlot::LANGameSlot()
 	m_lastHeard = 0;
 }
 
-
-LANPlayer * LANGameSlot::getUser( void )
+LANPlayer *LANGameSlot::getUser(void)
 {
 	if (isHuman())
 	{
@@ -69,17 +68,17 @@ LANPlayer * LANGameSlot::getUser( void )
 }
 
 // Various tests
-Bool LANGameSlot::isUser( LANPlayer *user )
+Bool LANGameSlot::isUser(LANPlayer *user)
 {
 	return (user && m_state == SLOT_PLAYER && user->getIP() == getIP());
 }
 
-Bool LANGameSlot::isUser( UnicodeString userName )
+Bool LANGameSlot::isUser(UnicodeString userName)
 {
 	return (m_state == SLOT_PLAYER && !userName.compareNoCase(getName()));
 }
 
-Bool LANGameSlot::isLocalPlayer( void ) const
+Bool LANGameSlot::isLocalPlayer(void) const
 {
 	return isHuman() && TheLAN && TheLAN->GetLocalIP() == getIP();
 }
@@ -88,20 +87,20 @@ Bool LANGameSlot::isLocalPlayer( void ) const
 
 LANGameInfo::LANGameInfo()
 {
-	//Added By Sadullah Nader
-	//Initializtions missing and needed
+	// Added By Sadullah Nader
+	// Initializtions missing and needed
 	m_lastHeard = 0;
 	m_next = NULL;
 	//
-	for (Int i = 0; i< MAX_SLOTS; ++i)
+	for (Int i = 0; i < MAX_SLOTS; ++i)
 		setSlotPointer(i, &m_LANSlot[i]);
 
 	setLocalIP(TheLAN->GetLocalIP());
 }
 
-void LANGameInfo::setSlot( Int slotNum, LANGameSlot slotInfo )
+void LANGameInfo::setSlot(Int slotNum, LANGameSlot slotInfo)
 {
-	DEBUG_ASSERTCRASH( slotNum >= 0 && slotNum < MAX_SLOTS, ("LANGameInfo::setSlot - Invalid slot number"));
+	DEBUG_ASSERTCRASH(slotNum >= 0 && slotNum < MAX_SLOTS, ("LANGameInfo::setSlot - Invalid slot number"));
 	if (slotNum < 0 || slotNum >= MAX_SLOTS)
 		return;
 
@@ -114,31 +113,31 @@ void LANGameInfo::setSlot( Int slotNum, LANGameSlot slotInfo )
 	}
 }
 
-LANGameSlot* LANGameInfo::getLANSlot( Int slotNum )
+LANGameSlot *LANGameInfo::getLANSlot(Int slotNum)
 {
-	DEBUG_ASSERTCRASH( slotNum >= 0 && slotNum < MAX_SLOTS, ("LANGameInfo::getLANSlot - Invalid slot number"));
+	DEBUG_ASSERTCRASH(slotNum >= 0 && slotNum < MAX_SLOTS, ("LANGameInfo::getLANSlot - Invalid slot number"));
 	if (slotNum < 0 || slotNum >= MAX_SLOTS)
 		return NULL;
 
 	return &m_LANSlot[slotNum];
 }
 
-const LANGameSlot* LANGameInfo::getConstLANSlot( Int slotNum ) const
+const LANGameSlot *LANGameInfo::getConstLANSlot(Int slotNum) const
 {
-	DEBUG_ASSERTCRASH( slotNum >= 0 && slotNum < MAX_SLOTS, ("LANGameInfo::getConstLANSlot - Invalid slot number"));
+	DEBUG_ASSERTCRASH(slotNum >= 0 && slotNum < MAX_SLOTS, ("LANGameInfo::getConstLANSlot - Invalid slot number"));
 	if (slotNum < 0 || slotNum >= MAX_SLOTS)
 		return NULL;
 
 	return &m_LANSlot[slotNum];
 }
 
-Int LANGameInfo::getLocalSlotNum( void ) const
+Int LANGameInfo::getLocalSlotNum(void) const
 {
 	DEBUG_ASSERTCRASH(m_inGame, ("Looking for local game slot while not in game"));
 	if (!m_inGame)
 		return -1;
 
-	for (Int i=0; i<MAX_SLOTS; ++i)
+	for (Int i = 0; i < MAX_SLOTS; ++i)
 	{
 		const LANGameSlot *slot = getConstLANSlot(i);
 		if (slot->isLocalPlayer())
@@ -147,22 +146,22 @@ Int LANGameInfo::getLocalSlotNum( void ) const
 	return -1;
 }
 
-Int LANGameInfo::getSlotNum( UnicodeString userName )
+Int LANGameInfo::getSlotNum(UnicodeString userName)
 {
 	DEBUG_ASSERTCRASH(m_inGame, ("Looking for game slot while not in game"));
 	if (!m_inGame)
 		return -1;
 
-	for (Int i=0; i<MAX_SLOTS; ++i)
+	for (Int i = 0; i < MAX_SLOTS; ++i)
 	{
 		LANGameSlot *slot = getLANSlot(i);
-		if (slot->isUser( userName ))
+		if (slot->isUser(userName))
 			return i;
 	}
 	return -1;
 }
 
-Bool LANGameInfo::amIHost( void )
+Bool LANGameInfo::amIHost(void)
 {
 	DEBUG_ASSERTCRASH(m_inGame, ("Looking for game slot while not in game"));
 	if (!m_inGame)
@@ -171,17 +170,17 @@ Bool LANGameInfo::amIHost( void )
 	return getLANSlot(0)->isLocalPlayer();
 }
 
-void LANGameInfo::setMap( AsciiString mapName )
+void LANGameInfo::setMap(AsciiString mapName)
 {
 	GameInfo::setMap(mapName);
 }
 
-void LANGameInfo::setSeed( Int seed )
+void LANGameInfo::setSeed(Int seed)
 {
 	GameInfo::setSeed(seed);
 }
 
-void LANGameInfo::resetAccepted( void )
+void LANGameInfo::resetAccepted(void)
 {
 	if (TheLAN)
 	{
@@ -189,15 +188,14 @@ void LANGameInfo::resetAccepted( void )
 		if (TheLAN->GetMyGame() == this && TheLAN->AmIHost())
 			LANEnableStartButton(true);
 	}
-	for(int i = 0; i< MAX_SLOTS; i++)
+	for (int i = 0; i < MAX_SLOTS; i++)
 	{
 		m_LANSlot[i].unAccept();
 	}
 }
 // Misc game-related functionality --------------------
 
-
-void LANDisplayGameList( GameWindow *gameListbox, LANGameInfo *gameList )
+void LANDisplayGameList(GameWindow *gameListbox, LANGameInfo *gameList)
 {
 	LANGameInfo *selectedPtr = NULL;
 	Int selectedIndex = -1;
@@ -206,7 +204,7 @@ void LANDisplayGameList( GameWindow *gameListbox, LANGameInfo *gameList )
 	{
 		GadgetListBoxGetSelected(gameListbox, &selectedIndex);
 
-		if (selectedIndex != -1 )
+		if (selectedIndex != -1)
 		{
 			selectedPtr = (LANGameInfo *)GadgetListBoxGetItemData(gameListbox, selectedIndex, 0);
 		}
@@ -217,17 +215,22 @@ void LANDisplayGameList( GameWindow *gameListbox, LANGameInfo *gameList )
 		{
 			UnicodeString txtGName;
 			txtGName = L"";
-			if( gameList->isGameInProgress() )
+			if (gameList->isGameInProgress())
 			{
 				txtGName.concat(L"[");
 			}
 			txtGName.concat(gameList->getPlayerName(0));
-			if( gameList->isGameInProgress() )
+			if (gameList->isGameInProgress())
 			{
 				txtGName.concat(L"]");
 			}
-			Int addedIndex = GadgetListBoxAddEntryText(gameListbox, txtGName, (gameList->isGameInProgress())?gameInProgressColor:gameColor, -1, -1);
-			GadgetListBoxSetItemData(gameListbox, (void *)gameList, addedIndex, 0 );
+			Int addedIndex = GadgetListBoxAddEntryText(
+					gameListbox,
+					txtGName,
+					(gameList->isGameInProgress()) ? gameInProgressColor : gameColor,
+					-1,
+					-1);
+			GadgetListBoxSetItemData(gameListbox, (void *)gameList, addedIndex, 0);
 
 			if (selectedPtr == gameList)
 				indexToSelect = addedIndex;
@@ -242,9 +245,9 @@ void LANDisplayGameList( GameWindow *gameListbox, LANGameInfo *gameList )
 	}
 }
 
-AsciiString GenerateGameOptionsString( void )
+AsciiString GenerateGameOptionsString(void)
 {
-	if(!TheLAN->GetMyGame() || !TheLAN->GetMyGame()->amIHost())
+	if (!TheLAN->GetMyGame() || !TheLAN->GetMyGame()->amIHost())
 		return AsciiString::TheEmptyString;
 
 	return GameInfoToAsciiString(TheLAN->GetMyGame());
@@ -257,7 +260,7 @@ Bool ParseGameOptionsString(LANGameInfo *game, AsciiString options)
 
 	Int oldLocalSlotNum = (game->isInGame()) ? game->getLocalSlotNum() : -1;
 	Bool wasInGame = oldLocalSlotNum >= 0;
-//	Int hadMap = wasInGame && game->getSlot(oldLocalSlotNum)->hasMap();
+	//	Int hadMap = wasInGame && game->getSlot(oldLocalSlotNum)->hasMap();
 	AsciiString oldMap = game->getMap();
 	UnsignedInt oldMapCRC, newMapCRC;
 	oldMapCRC = game->getMapCRC();
@@ -265,12 +268,13 @@ Bool ParseGameOptionsString(LANGameInfo *game, AsciiString options)
 	std::map<UnicodeString, UnicodeString> oldLogins, oldMachines;
 	std::map<UnicodeString, UnicodeString>::iterator mapIt;
 	Int i;
-	for (i=0; i<MAX_SLOTS; ++i)
+	for (i = 0; i < MAX_SLOTS; ++i)
 	{
 		LANGameSlot *slot = game->getLANSlot(i);
 		if (slot && slot->isHuman())
 		{
-			//DEBUG_LOG(("Saving off %ls@%ls for %ls", slot->getUser()->getLogin().str(), slot->getUser()->getHost().str(), slot->getName().str()));
+			// DEBUG_LOG(("Saving off %ls@%ls for %ls", slot->getUser()->getLogin().str(), slot->getUser()->getHost().str(),
+			// slot->getName().str()));
 			oldLogins[slot->getName()] = slot->getUser()->getLogin();
 			oldMachines[slot->getName()] = slot->getUser()->getHost();
 		}
@@ -282,10 +286,11 @@ Bool ParseGameOptionsString(LANGameInfo *game, AsciiString options)
 		Bool isInGame = newLocalSlotNum >= 0;
 		if (!TheLAN->AmIHost() && isInGame)
 		{
-//			Int hasMap = game->getSlot(newLocalSlotNum)->hasMap();
+			//			Int hasMap = game->getSlot(newLocalSlotNum)->hasMap();
 			newMapCRC = game->getMapCRC();
-			//DEBUG_LOG(("wasInGame:%d isInGame:%d hadMap:%d hasMap:%d oldMap:%s newMap:%s", wasInGame, isInGame, hadMap, hasMap, oldMap.str(), game->getMap().str()));
-			if ( (oldMapCRC ^ newMapCRC)/*(hasMap ^ hadMap)*/ || (!wasInGame && isInGame) )
+			// DEBUG_LOG(("wasInGame:%d isInGame:%d hadMap:%d hasMap:%d oldMap:%s newMap:%s", wasInGame, isInGame, hadMap, hasMap,
+			// oldMap.str(), game->getMap().str()));
+			if ((oldMapCRC ^ newMapCRC) /*(hasMap ^ hadMap)*/ || (!wasInGame && isInGame))
 			{
 				// it changed.  send it
 				TheLAN->RequestHasMap();
@@ -295,7 +300,7 @@ Bool ParseGameOptionsString(LANGameInfo *game, AsciiString options)
 		}
 		// clean up LAN users, etc.
 		UnsignedInt now = timeGetTime();
-		for (i=0; i<MAX_SLOTS; ++i)
+		for (i = 0; i < MAX_SLOTS; ++i)
 		{
 			LANGameSlot *slot = game->getLANSlot(i);
 
@@ -308,7 +313,8 @@ Bool ParseGameOptionsString(LANGameInfo *game, AsciiString options)
 				mapIt = oldMachines.find(slot->getName());
 				if (mapIt != oldMachines.end())
 					slot->setHost(mapIt->second);
-				//DEBUG_LOG(("Restored %ls@%ls for %ls", slot->getUser()->getLogin().str(), slot->getUser()->getHost().str(), slot->getName().str()));
+				// DEBUG_LOG(("Restored %ls@%ls for %ls", slot->getUser()->getLogin().str(), slot->getUser()->getHost().str(),
+				// slot->getName().str()));
 			}
 		}
 
@@ -317,4 +323,3 @@ Bool ParseGameOptionsString(LANGameInfo *game, AsciiString options)
 
 	return false;
 }
-

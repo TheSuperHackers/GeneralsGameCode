@@ -47,42 +47,29 @@
 
 #include "WSYS_StdFile.h"
 
-
 //----------------------------------------------------------------------------
 //         Externals
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Public Data
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Prototypes
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Functions
@@ -92,17 +79,13 @@
 // StdFile::StdFile
 //=================================================================
 
-StdFile::StdFile()
-: m_handle(-1)
+StdFile::StdFile() : m_handle(-1)
 {
-
 }
-
 
 //----------------------------------------------------------------------------
 //         Public Functions
 //----------------------------------------------------------------------------
-
 
 //=================================================================
 // StdFile::~StdFile
@@ -110,29 +93,28 @@ StdFile::StdFile()
 
 StdFile::~StdFile()
 {
-	if( m_handle != -1 )
+	if (m_handle != -1)
 	{
-		_close( m_handle );
+		_close(m_handle);
 		m_handle = -1;
 	}
 
 	File::close();
-
 }
 
 //=================================================================
 // StdFile::open
 //=================================================================
 /**
-  *	This function opens a file using the standard C open() call. Access flags
-	* are mapped to the appropriate open flags. Returns true if file was opened
-	* successfully.
-	*/
+ *	This function opens a file using the standard C open() call. Access flags
+ * are mapped to the appropriate open flags. Returns true if file was opened
+ * successfully.
+ */
 //=================================================================
 
-Bool StdFile::open( const Char *filename, Int access )
+Bool StdFile::open(const Char *filename, Int access)
 {
-	if( !File::open( filename, access) )
+	if (!File::open(filename, access))
 	{
 		return FALSE;
 	}
@@ -141,33 +123,38 @@ Bool StdFile::open( const Char *filename, Int access )
 
 	int flags = 0;
 
-	if(m_access & CREATE)			flags |= _O_CREAT;
-	if(m_access & TRUNCATE)		flags |= _O_TRUNC;
-	if(m_access & APPEND)			flags |= _O_APPEND;
-	if(m_access & TEXT)				flags |= _O_TEXT;
-	if(m_access & BINARY)			flags |= _O_BINARY;
+	if (m_access & CREATE)
+		flags |= _O_CREAT;
+	if (m_access & TRUNCATE)
+		flags |= _O_TRUNC;
+	if (m_access & APPEND)
+		flags |= _O_APPEND;
+	if (m_access & TEXT)
+		flags |= _O_TEXT;
+	if (m_access & BINARY)
+		flags |= _O_BINARY;
 
-	if((m_access & READWRITE )== READWRITE )
+	if ((m_access & READWRITE) == READWRITE)
 	{
 		flags |= _O_RDWR;
 	}
-	else if(m_access & WRITE)
+	else if (m_access & WRITE)
 	{
 		flags |= _O_WRONLY;
 	}
 	else
 		flags |= _O_RDONLY;
 
-	m_handle = _open( filename, flags , _S_IREAD | _S_IWRITE);
+	m_handle = _open(filename, flags, _S_IREAD | _S_IWRITE);
 
-	if( m_handle == -1 )
+	if (m_handle == -1)
 	{
 		goto error;
 	}
 
-	if ( m_access & APPEND )
+	if (m_access & APPEND)
 	{
-		if ( seek ( 0, END ) < 0 )
+		if (seek(0, END) < 0)
 		{
 			goto error;
 		}
@@ -186,12 +173,12 @@ error:
 // StdFile::close
 //=================================================================
 /**
-	* Closes the current file if it is open.
-  * Must call StdFile::close() for each successful StdFile::open() call.
-	*/
+ * Closes the current file if it is open.
+ * Must call StdFile::close() for each successful StdFile::open() call.
+ */
 //=================================================================
 
-void StdFile::close( void )
+void StdFile::close(void)
 {
 	File::close();
 }
@@ -200,41 +187,39 @@ void StdFile::close( void )
 // StdFile::read
 //=================================================================
 
-Int StdFile::read( void *buffer, Int bytes )
+Int StdFile::read(void *buffer, Int bytes)
 {
-	if( !m_open || !buffer )
+	if (!m_open || !buffer)
 	{
 		return -1;
 	}
 
-	return _read( m_handle, buffer, bytes );
+	return _read(m_handle, buffer, bytes);
 }
 
 //=================================================================
 // StdFile::write
 //=================================================================
 
-Int StdFile::write( void *buffer, Int bytes )
+Int StdFile::write(void *buffer, Int bytes)
 {
-
-	if( !m_open || !buffer )
+	if (!m_open || !buffer)
 	{
 		return -1;
 	}
 
-	return _write( m_handle, buffer, bytes );
-
+	return _write(m_handle, buffer, bytes);
 }
 
 //=================================================================
 // StdFile::seek
 //=================================================================
 
-Int StdFile::seek( Int pos, seekMode mode)
+Int StdFile::seek(Int pos, seekMode mode)
 {
 	int lmode;
 
-	switch( mode )
+	switch (mode)
 	{
 		case START:
 			lmode = SEEK_SET;
@@ -250,7 +235,5 @@ Int StdFile::seek( Int pos, seekMode mode)
 			return -1;
 	}
 
-	return _lseek( m_handle, pos, lmode );
-
+	return _lseek(m_handle, pos, lmode);
 }
-

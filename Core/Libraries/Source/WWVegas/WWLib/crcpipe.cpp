@@ -36,9 +36,8 @@
  *   CRCPipe::Put -- Retrieves the data bytes specified and calculates CRC on it.              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
-#include	"crcpipe.h"
-
+#include "always.h"
+#include "crcpipe.h"
 
 /***********************************************************************************************
  * CRCPipe::Put -- Retrieves the data bytes specified and calculates CRC on it.                *
@@ -60,12 +59,11 @@
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int CRCPipe::Put(void const * source, int slen)
+int CRCPipe::Put(void const *source, int slen)
 {
 	CRC(source, slen);
-	return(Pipe::Put(source, slen));
+	return (Pipe::Put(source, slen));
 }
-
 
 /***********************************************************************************************
  * CRCPipe::Result -- Fetches the current CRC of the data.                                     *
@@ -84,6 +82,5 @@ int CRCPipe::Put(void const * source, int slen)
  *=============================================================================================*/
 long CRCPipe::Result(void) const
 {
-	return(CRC());
+	return (CRC());
 }
-

@@ -31,7 +31,6 @@
 // Forward delcarations
 class EmitterInstanceListClass;
 
-
 /////////////////////////////////////////////////////////////////////////////
 // EmitterRotationPropPageClass dialog
 
@@ -39,29 +38,31 @@ class EmitterRotationPropPageClass : public CPropertyPage
 {
 	DECLARE_DYNCREATE(EmitterRotationPropPageClass)
 
-// Construction
+	// Construction
 public:
 	EmitterRotationPropPageClass();
 	~EmitterRotationPropPageClass();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(EmitterRotationPropPageClass)
-	enum { IDD = IDD_PROP_PAGE_EMITTER_ROTATION };
-	CSpinButtonCtrl	m_InitialOrientationRandomSpin;
-	CSpinButtonCtrl	m_RotationRandomSpin;
+	enum
+	{
+		IDD = IDD_PROP_PAGE_EMITTER_ROTATION
+	};
+	CSpinButtonCtrl m_InitialOrientationRandomSpin;
+	CSpinButtonCtrl m_RotationRandomSpin;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(EmitterRotationPropPageClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(EmitterRotationPropPageClass)
@@ -69,9 +70,7 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-
 public:
-
 	/////////////////////////////////////////////////////////
 	//
 	//	Public methods
@@ -80,43 +79,44 @@ public:
 	//
 	//	Inline accessors
 	//
-	EmitterInstanceListClass *	Get_Emitter (void) const { return m_pEmitterList; }
-	void								Set_Emitter (EmitterInstanceListClass *pemitter_list) { m_pEmitterList = pemitter_list; Initialize (); }
-	bool								Is_Data_Valid (void) const { return m_bValid; }
+	EmitterInstanceListClass *Get_Emitter(void) const { return m_pEmitterList; }
+	void Set_Emitter(EmitterInstanceListClass *pemitter_list)
+	{
+		m_pEmitterList = pemitter_list;
+		Initialize();
+	}
+	bool Is_Data_Valid(void) const { return m_bValid; }
 
-	void								Get_Rotation_Keyframes (ParticlePropertyStruct<float> &rotations)		{ rotations = m_Rotations; }
-	void								On_Lifetime_Changed (float lifetime);
+	void Get_Rotation_Keyframes(ParticlePropertyStruct<float> &rotations) { rotations = m_Rotations; }
+	void On_Lifetime_Changed(float lifetime);
 
 protected:
-
 	/////////////////////////////////////////////////////////
 	//
 	//	Protected methods
 	//
-	void								Initialize (void);
-	void								Update_Rotations (void);
+	void Initialize(void);
+	void Update_Rotations(void);
 
 private:
-
-	float								Normalize_Rotation(float rot);
-	float								Normalize_Rotation(float rot,float min,float max);
-	float								Denormalize_Rotation(float normalized_val);
+	float Normalize_Rotation(float rot);
+	float Normalize_Rotation(float rot, float min, float max);
+	float Denormalize_Rotation(float normalized_val);
 
 	/////////////////////////////////////////////////////////
 	//
 	//	Private member data
 	//
-	EmitterInstanceListClass *			m_pEmitterList;
-	bool										m_bValid;
-	ColorBarClass *						m_RotationBar;
+	EmitterInstanceListClass *m_pEmitterList;
+	bool m_bValid;
+	ColorBarClass *m_RotationBar;
 
-	ParticlePropertyStruct<float>		m_Rotations;
+	ParticlePropertyStruct<float> m_Rotations;
 
-	float										m_Lifetime;
-	float										m_MinRotation;
-	float										m_MaxRotation;
-	float										m_InitialOrientationRandom;
-
+	float m_Lifetime;
+	float m_MinRotation;
+	float m_MaxRotation;
+	float m_InitialOrientationRandom;
 };
 
 inline float EmitterRotationPropPageClass::Normalize_Rotation(float rot)
@@ -124,7 +124,7 @@ inline float EmitterRotationPropPageClass::Normalize_Rotation(float rot)
 	return (rot - m_MinRotation) / (m_MaxRotation - m_MinRotation);
 }
 
-inline float EmitterRotationPropPageClass::Normalize_Rotation(float rot,float min,float max)
+inline float EmitterRotationPropPageClass::Normalize_Rotation(float rot, float min, float max)
 {
 	return (rot - min) / (max - min);
 }
@@ -133,9 +133,6 @@ inline float EmitterRotationPropPageClass::Denormalize_Rotation(float normalized
 {
 	return normalized_val * (m_MaxRotation - m_MinRotation) + m_MinRotation;
 }
-
-
-
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

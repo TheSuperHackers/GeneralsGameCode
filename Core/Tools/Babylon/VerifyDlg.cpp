@@ -29,43 +29,40 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-#define TIMERID	1000
+#define TIMERID 1000
 
 /////////////////////////////////////////////////////////////////////////////
 // VerifyDlg dialog
 
-
-VerifyDlg::VerifyDlg( BabylonText *ntext, LangID langid,  const char *path, CWnd* pParent /*=NULL*/)
-	: CDialog(VerifyDlg::IDD, pParent)
+VerifyDlg::VerifyDlg(BabylonText *ntext, LangID langid, const char *path, CWnd *pParent /*=NULL*/) :
+		CDialog(VerifyDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(VerifyDlg)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 
 	babylon_text = ntext;
-	linfo = GetLangInfo ( langid );
-	sprintf ( wavefile, "%s%s\\%s%s.wav", path, linfo->character, ntext->WaveSB(), linfo->character  );
+	linfo = GetLangInfo(langid);
+	sprintf(wavefile, "%s%s\\%s%s.wav", path, linfo->character, ntext->WaveSB(), linfo->character);
 }
 
-
-void VerifyDlg::DoDataExchange(CDataExchange* pDX)
+void VerifyDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(VerifyDlg)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(VerifyDlg, CDialog)
-	//{{AFX_MSG_MAP(VerifyDlg)
-	ON_BN_CLICKED(IDC_NOMATCH, OnNomatch)
-	ON_BN_CLICKED(IDOK, OnMatch)
-	ON_BN_CLICKED(IDC_STOP, OnStop)
-	ON_BN_CLICKED(IDC_PLAY, OnPlay)
-	ON_BN_CLICKED(IDC_PAUSE, OnPause)
-	ON_WM_TIMER()
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(VerifyDlg)
+ON_BN_CLICKED(IDC_NOMATCH, OnNomatch)
+ON_BN_CLICKED(IDOK, OnMatch)
+ON_BN_CLICKED(IDC_STOP, OnStop)
+ON_BN_CLICKED(IDC_PLAY, OnPlay)
+ON_BN_CLICKED(IDC_PAUSE, OnPause)
+ON_WM_TIMER()
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -73,43 +70,42 @@ END_MESSAGE_MAP()
 
 BOOL VerifyDlg::OnInitDialog()
 {
-	//long total;
+	// long total;
 	CDialog::OnInitDialog();
 	RECT rect;
 
 	// TODO: Add extra initialization here
 
-	this->GetWindowRect ( &rect );
+	this->GetWindowRect(&rect);
 	rect.top -= 100;
 	rect.bottom -= 100;
-	this->MoveWindow ( &rect );
-	stop.AutoLoad ( IDC_STOP, this );
-	pause.AutoLoad ( IDC_PAUSE, this );
-	play.AutoLoad ( IDC_PLAY, this );
+	this->MoveWindow(&rect);
+	stop.AutoLoad(IDC_STOP, this);
+	pause.AutoLoad(IDC_PAUSE, this);
+	play.AutoLoad(IDC_PLAY, this);
 
-	wave = GetDlgItem ( IDC_WAVENAME );
-	text = (CStatic *) GetDlgItem ( IDC_TEXT );
-	slider = (CSliderCtrl *) GetDlgItem ( IDC_SLIDER );
+	wave = GetDlgItem(IDC_WAVENAME);
+	text = (CStatic *)GetDlgItem(IDC_TEXT);
+	slider = (CSliderCtrl *)GetDlgItem(IDC_SLIDER);
 
-	wave->SetWindowText ( wavefile );
-	SetDlgItemText ( IDC_TEXT_TITLE, (babylon_text->Label()->NameSB()));
-	if ( linfo->langid == LANGID_US )
+	wave->SetWindowText(wavefile);
+	SetDlgItemText(IDC_TEXT_TITLE, (babylon_text->Label()->NameSB()));
+	if (linfo->langid == LANGID_US)
 	{
-		text->SetWindowText ( babylon_text->GetSB ());
+		text->SetWindowText(babylon_text->GetSB());
 	}
 	else
 	{
-		Translation *trans = babylon_text->GetTranslation ( linfo->langid );
+		Translation *trans = babylon_text->GetTranslation(linfo->langid);
 
-		if ( trans )
+		if (trans)
 		{
-			text->SetWindowText ( trans->GetSB ());
+			text->SetWindowText(trans->GetSB());
 		}
 		else
 		{
-			text->SetWindowText ( "No translation!!");
+			text->SetWindowText("No translation!!");
 		}
-
 	}
 
 #if 0
@@ -127,51 +123,50 @@ BOOL VerifyDlg::OnInitDialog()
 		}
 #endif
 
-	PostMessage ( WM_COMMAND, MAKEWPARAM ( IDC_PLAY, BN_CLICKED ));
+	PostMessage(WM_COMMAND, MAKEWPARAM(IDC_PLAY, BN_CLICKED));
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+							 // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void VerifyDlg::OnNomatch()
 {
 	// TODO: Add your control notification handler code here
-		CloseAudio ();
-		this->EndDialog ( IDSKIP );
+	CloseAudio();
+	this->EndDialog(IDSKIP);
 }
 
 void VerifyDlg::OnMatch()
 {
 	// TODO: Add your control notification handler code here
-	CloseAudio ();
+	CloseAudio();
 	CDialog::OnOK();
-
 }
 
 void VerifyDlg::OnCancel()
 {
 	// TODO: Add extra cleanup here
 
-	CloseAudio ();
+	CloseAudio();
 	CDialog::OnCancel();
 }
 
 void VerifyDlg::OnStop()
 {
-	// TODO: Add your control notification handler code here
-	#if 0
+// TODO: Add your control notification handler code here
+#if 0
 		if ( stream )
 		{
 			AIL_pause_stream ( stream, TRUE );
 			AIL_set_stream_ms_position ( stream, 0 );
 		}
-		#endif
+#endif
 }
 
 void VerifyDlg::OnPlay()
 {
-	// TODO: Add your control notification handler code here
-	#if 0
+// TODO: Add your control notification handler code here
+#if 0
 	if ( stream )
 	{
 		if ( AIL_stream_status ( stream ) == SMP_STOPPED )
@@ -183,13 +178,13 @@ void VerifyDlg::OnPlay()
 			AIL_start_stream ( stream );
 		}
 	}
-	#endif
+#endif
 }
 
 void VerifyDlg::OnPause()
 {
-	// TODO: Add your control notification handler code here
-	#if 0
+// TODO: Add your control notification handler code here
+#if 0
 	if ( stream )
 	{
 		if ( AIL_stream_status ( stream ) == SMP_STOPPED )
@@ -201,38 +196,36 @@ void VerifyDlg::OnPause()
 			AIL_pause_stream ( stream, TRUE);
 		}
 	}
-	#endif
-
+#endif
 }
 
-void VerifyDlg::CloseAudio ( void )
+void VerifyDlg::CloseAudio(void)
 {
-	#if 0
+#if 0
 	if ( stream )
 	{
 		AIL_close_stream ( stream );
 		stream = NULL;
 	}
-	#endif
+#endif
 }
 
 void VerifyDlg::OnTimer(UINT nIDEvent)
 {
 	// TODO: Add your message handler code here and/or call default
-	if ( nIDEvent == TIMERID )
+	if (nIDEvent == TIMERID)
 	{
-	#if 0
+#if 0
 		if ( stream )
 		{
 			long current;
 			AIL_stream_ms_position ( stream, NULL, &current );
 			slider->SetPos ( current );
 		}
-	#endif
+#endif
 	}
 	else
 	{
 		CDialog::OnTimer(nIDEvent);
 	}
 }
-

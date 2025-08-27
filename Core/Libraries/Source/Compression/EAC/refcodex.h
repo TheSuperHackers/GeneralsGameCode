@@ -36,23 +36,23 @@ extern "C" {
 /* Information Functions */
 
 CODEXABOUT *GCALL REF_about(void);
-bool        GCALL REF_is(const void *compresseddata);
+bool GCALL REF_is(const void *compresseddata);
 
 /* Decode Functions */
 
-int        GCALL REF_size(const void *compresseddata);
+int GCALL REF_size(const void *compresseddata);
 #ifdef __cplusplus
-int        GCALL REF_decode(void *dest, const void *compresseddata, int *compressedsize=0);
+int GCALL REF_decode(void *dest, const void *compresseddata, int *compressedsize = 0);
 #else
-int        GCALL REF_decode(void *dest, const void *compresseddata, int *compressedsize);
+int GCALL REF_decode(void *dest, const void *compresseddata, int *compressedsize);
 #endif
 
 /* Encode Functions */
 
 #ifdef __cplusplus
-int        GCALL REF_encode(void *compresseddata, const void *source, int sourcesize, int *opts=0);
+int GCALL REF_encode(void *compresseddata, const void *source, int sourcesize, int *opts = 0);
 #else
-int        GCALL REF_encode(void *compresseddata, const void *source, int sourcesize, int *opts);
+int GCALL REF_encode(void *compresseddata, const void *source, int sourcesize, int *opts);
 #endif
 
 /****************************************************************/
@@ -60,15 +60,14 @@ int        GCALL REF_encode(void *compresseddata, const void *source, int source
 /****************************************************************/
 
 #ifndef qmin
-#define qmin(a,b) ((a)<(b)?(a):(b))
+#define qmin(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
 #ifndef qmax
-#define qmax(a,b) ((a)>(b)?(a):(b))
+#define qmax(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
 #ifdef __cplusplus
 }
 #endif
 #endif
-

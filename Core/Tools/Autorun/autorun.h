@@ -17,26 +17,25 @@
 */
 
 /************************************************************************************************
-*   C O N F I D E N T I A L --- W E S T W O O D   A S S O C I A T E S							*
-*************************************************************************************************
-*
-* FILE
-*     $Archive: /Renegade Setup/Autorun/autorun.h $
-*
-* DESCRIPTION
-*
-* PROGRAMMER
-*     $Author: Maria_l $
-*
-* VERSION INFO
-*     $Modtime: 1/28/02 11:11a $
-*     $Revision: 10 $
-*
-*************************************************************************************************/
+ *   C O N F I D E N T I A L --- W E S T W O O D   A S S O C I A T E S							*
+ *************************************************************************************************
+ *
+ * FILE
+ *     $Archive: /Renegade Setup/Autorun/autorun.h $
+ *
+ * DESCRIPTION
+ *
+ * PROGRAMMER
+ *     $Author: Maria_l $
+ *
+ * VERSION INFO
+ *     $Modtime: 1/28/02 11:11a $
+ *     $Revision: 10 $
+ *
+ *************************************************************************************************/
 
-
-#ifndef  AUTORUN_H
-#define  AUTORUN_H
+#ifndef AUTORUN_H
+#define AUTORUN_H
 
 #include <tchar.h>
 #include <string.h>
@@ -44,96 +43,97 @@
 #include <stdlib.h>
 #include "TTFont.h"
 
-
 //--------------------------------------------------------------------
 // Externs
 //--------------------------------------------------------------------
-extern int	Language;
+extern int Language;
 
 //--------------------------------------------------------------------
 // Structs that everyone can use.
 //--------------------------------------------------------------------
-typedef enum {
-	LANG_USA,	//0
-	LANG_UK,	//1
-	LANG_GER,	//2
-	LANG_FRE,	//3
-	LANG_DUT,	//4
-	LANG_ITA,	//5
-	LANG_JAP,	//6
-	LANG_SPA,	//7
-	LANG_SCA,	//8
-	LANG_KOR,	//9
-	LANG_CHI,	//10
+typedef enum
+{
+	LANG_USA, // 0
+	LANG_UK, // 1
+	LANG_GER, // 2
+	LANG_FRE, // 3
+	LANG_DUT, // 4
+	LANG_ITA, // 5
+	LANG_JAP, // 6
+	LANG_SPA, // 7
+	LANG_SCA, // 8
+	LANG_KOR, // 9
+	LANG_CHI, // 10
 	LANG_NUM,
 } LanguageType;
 
-#define	IS_LANGUAGE_DBCS(l)	(((l)==LANG_CHI)||((l)==LANG_JAP)||((l)==LANG_KOR))		// [OYO]
-#define	IS_CODEPAGE_DBCS(C)	((C==949)||(C==950)||(C==932))						// [OYO]
+#define IS_LANGUAGE_DBCS(l) (((l) == LANG_CHI) || ((l) == LANG_JAP) || ((l) == LANG_KOR)) // [OYO]
+#define IS_CODEPAGE_DBCS(C) ((C == 949) || (C == 950) || (C == 932)) // [OYO]
 
 //----------------------------------------------------------------------------
 // DEFINES
 //----------------------------------------------------------------------------
-#define MAX_COMMAND_LINE_ARGUMENTS	10
-#define MAX_ARGUMENT_LENGTH			80
+#define MAX_COMMAND_LINE_ARGUMENTS 10
+#define MAX_ARGUMENT_LENGTH 80
 
-#define MIN(a,b)    				(((a) < (b)) ? (a) : (b))
-#define MAX(a,b)    				(((a) > (b)) ? (a) : (b))
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
 
-#define WM_GO					   	(WM_USER)+1
-#define WM_USERSTAT 			   	(WM_USER + 100)
+#define WM_GO (WM_USER) + 1
+#define WM_USERSTAT (WM_USER + 100)
 
-#define EXPLORER_NAME				"EXPLORER.EXE"
-#define INSTALL_PATH_KEY			"InstallPath"
-#define INTERNET_PATH_KEY			"InternetPath"
-#define SETUP_NAME					"Setup.exe"
-#define UNINSTALL_NAME	  			"Uninst.exe"
+#define EXPLORER_NAME "EXPLORER.EXE"
+#define INSTALL_PATH_KEY "InstallPath"
+#define INTERNET_PATH_KEY "InternetPath"
+#define SETUP_NAME "Setup.exe"
+#define UNINSTALL_NAME "Uninst.exe"
 
-//#define SHELL_FOLDERS_KEY			"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
+// #define SHELL_FOLDERS_KEY			"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
 #if RTS_GENERALS
-# define SHELL_UNINSTALL_KEY			"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall"
+#define SHELL_UNINSTALL_KEY "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall"
 #elif RTS_ZEROHOUR
-# define SHELL_UNINSTALL_KEY			"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\InstallShield_{F3E9C243-122E-4D6B-ACC1-E1FEC02F6CA1}"
+#define SHELL_UNINSTALL_KEY \
+	"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\InstallShield_{F3E9C243-122E-4D6B-ACC1-E1FEC02F6CA1}"
 #endif
-#define SHELL_APP_PATHS_KEY			"Software\\Microsoft\\Windows\\CurrentVersion\\App Paths"
-#define PROGRAMS_SUBKEY				"Programs"
-#define COMMON_PROGRAMS_SUBKEY		"Common Programs"
-#define SOFTWARE_SUBKEY				"Software"
+#define SHELL_APP_PATHS_KEY "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths"
+#define PROGRAMS_SUBKEY "Programs"
+#define COMMON_PROGRAMS_SUBKEY "Common Programs"
+#define SOFTWARE_SUBKEY "Software"
 /*
 #define WESTWOOD_SUBKEY				"Westwood"
 #define SOFTWARE_WESTWOOD_KEY		"Software\\Westwood\\"
 #define WESTWOOD_WOLAPI_KEY			"Software\\Westwood\\WOLAPI"
 #define WESTWOOD_REGISTER_KEY		"Software\\Westwood\\Register"
 */
-#define ELECTRONICARTS_SUBKEY		"Electronic Arts"
-#define EAGAMES_SUBKEY				"EA Games"
-#define SOFTWARE_EAGAMES_KEY		"Software\\Electronic Arts\\EA Games\\"
+#define ELECTRONICARTS_SUBKEY "Electronic Arts"
+#define EAGAMES_SUBKEY "EA Games"
+#define SOFTWARE_EAGAMES_KEY "Software\\Electronic Arts\\EA Games\\"
 #if RTS_GENERALS
-# define GENERALS_SUBKEY				"Generals"
-# define EAGAMES_GENERALS_KEY		"Software\\Electronic Arts\\EA Games\\Generals"
-# define EAGAMES_ERGC_KEY				"Software\\Electronic Arts\\EA Games\\Generals\\ergc"
+#define GENERALS_SUBKEY "Generals"
+#define EAGAMES_GENERALS_KEY "Software\\Electronic Arts\\EA Games\\Generals"
+#define EAGAMES_ERGC_KEY "Software\\Electronic Arts\\EA Games\\Generals\\ergc"
 #elif RTS_ZEROHOUR
-# define GENERALS_SUBKEY				"Command and Conquer Generals Zero Hour"
-# define EAGAMES_GENERALS_KEY		"Software\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour"
-# define EAGAMES_ERGC_KEY				"Software\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour\\ergc"
+#define GENERALS_SUBKEY "Command and Conquer Generals Zero Hour"
+#define EAGAMES_GENERALS_KEY "Software\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour"
+#define EAGAMES_ERGC_KEY "Software\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour\\ergc"
 #endif
-#define LAUNCHER_FILENAME			"Generals.exe"
-#define WORLDBUILDER_FILENAME		"WorldBuilder.exe"
-#define PATCHGET_FILENAME			"patchget.dat"
+#define LAUNCHER_FILENAME "Generals.exe"
+#define WORLDBUILDER_FILENAME "WorldBuilder.exe"
+#define PATCHGET_FILENAME "patchget.dat"
 
-#define UNINSTALL_STRING_SUBKEY		"UninstallString"
-#define INSTALLPATH_SUBKEY			"InstallPath"
-#define VERSION_SUBKEY				"Version"
-#define LANGUAGE_SUBKEY				"Language"
-#define MAPPACKVERSION_SUBKEY		"MapPackVersion"
+#define UNINSTALL_STRING_SUBKEY "UninstallString"
+#define INSTALLPATH_SUBKEY "InstallPath"
+#define VERSION_SUBKEY "Version"
+#define LANGUAGE_SUBKEY "Language"
+#define MAPPACKVERSION_SUBKEY "MapPackVersion"
 
-#define DDRAW  							"DDRAW.DLL"
-#define DSOUND 							"DSOUND.DLL"
-#define DDHELP 							"DDHELP.EXE"
+#define DDRAW "DDRAW.DLL"
+#define DSOUND "DSOUND.DLL"
+#define DDHELP "DDHELP.EXE"
 
-#define NORMAL							"Normal"
-#define FOCUSED							"Focused"
-#define PRESSED							"Pressed"
+#define NORMAL "Normal"
+#define FOCUSED "Focused"
+#define PRESSED "Pressed"
 /*
 #define BUTTON1NORMAL 			"Button1Normal"
 #define BUTTON2NORMAL				"Button2Normal"
@@ -158,27 +158,27 @@ typedef enum {
 #define BUTTON10FOCUSED			"Button8Focused"
 */
 
-#define BUTTON_REG					"BUTTON_REG"
-#define BUTTON_SEL					"BUTTON_SEL"
+#define BUTTON_REG "BUTTON_REG"
+#define BUTTON_SEL "BUTTON_SEL"
 
 //-------------------------------------------------------------------------
 // LaunchObject Class
 //-------------------------------------------------------------------------
 class LaunchObjectClass
 {
-	public:
-		LaunchObjectClass ( char *path=NULL, char *args=NULL );
+public:
+	LaunchObjectClass(char *path = NULL, char *args = NULL);
 
-		void			SetPath				( char *path );
-		void			SetArgs				( char *args );
-		unsigned int	Launch				( void );
-		bool			Launch_A_Program	( void )			{ return( LaunchSomething ); };
-		void			Set_Launch			( bool value )		{ LaunchSomething = value; };
+	void SetPath(char *path);
+	void SetArgs(char *args);
+	unsigned int Launch(void);
+	bool Launch_A_Program(void) { return (LaunchSomething); };
+	void Set_Launch(bool value) { LaunchSomething = value; };
 
-	public:
-		char	szPath[ _MAX_PATH ];
-		char	szArgs[ _MAX_PATH ];
-		bool	LaunchSomething;
+public:
+	char szPath[_MAX_PATH];
+	char szArgs[_MAX_PATH];
+	bool LaunchSomething;
 };
 
 extern LaunchObjectClass LaunchObject;
@@ -188,12 +188,12 @@ extern LaunchObjectClass LaunchObject;
 //-------------------------------------------------------------------------
 class Main
 {
-	public:
-		static HINSTANCE hInstance;
-		static HINSTANCE hPrevInstance;
-		static HMODULE hModule;
-		static int nCmdShow;
-		static int MessageLoop( void );
+public:
+	static HINSTANCE hInstance;
+	static HINSTANCE hPrevInstance;
+	static HMODULE hModule;
+	static int nCmdShow;
+	static int MessageLoop(void);
 };
 
 //-------------------------------------------------------------------------
@@ -204,14 +204,14 @@ class Main
 //-------------------------------------------------------------------------
 class Window
 {
-	protected:
-		HWND hWnd;
+protected:
+	HWND hWnd;
 
-	public:
-		HWND GetHandle( void ) 		{ return hWnd; }
-		BOOL Show( int nCmdShow ) 	{ return ShowWindow( hWnd, nCmdShow ); }
-		void Update( void ) 		{ UpdateWindow( hWnd ); }
-		virtual LRESULT Window_Proc( HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam ) = 0;
+public:
+	HWND GetHandle(void) { return hWnd; }
+	BOOL Show(int nCmdShow) { return ShowWindow(hWnd, nCmdShow); }
+	void Update(void) { UpdateWindow(hWnd); }
+	virtual LRESULT Window_Proc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam) = 0;
 };
 
 //-------------------------------------------------------------------------
@@ -219,38 +219,35 @@ class Window
 //-------------------------------------------------------------------------
 class MainWindow : public Window
 {
-	protected:
+protected:
+	static char szClassName[100];
 
-		static char szClassName[ 100 ];
+public:
+	MainWindow(void);
 
-	public:
+	static void Register(void);
+	static void Reset_Class_Name(char *string)
+	{
+		if (string != NULL && string[0] != '\0')
+		{
+			strcpy(szClassName, string);
+		}
+	};
 
-		MainWindow( void );
-
-		static void		Register		  		( void );
-		static void	  	Reset_Class_Name		( char *string )
-			{
-				if ( string != NULL && string[0] != '\0' ) {
-					strcpy( szClassName, string );
-				}
-			};
-
-		BOOL			Is_Product_Registered	( void );
-		void	 		Create_Buttons	  		( HWND hWnd, RECT *dlg_rect );
-		unsigned int	Run_Auto_Update			( HWND hWnd, RECT *rect );
-		unsigned int	Run_Demo 		  		( HWND hWnd, RECT *rect, int cd_drive );
-		BOOL			Run_Explorer	  		( const char *, HWND hWnd, RECT *rect );
-		unsigned int	Run_Game 		  		( HWND hWnd, RECT *rect );
-		unsigned int	Run_WorldBuilder	( HWND hWnd, RECT *rect );
-		unsigned int	Run_PatchGet			( HWND hWnd, RECT *rect );
-		unsigned int	Run_New_Account	  		( HWND hWnd, RECT *rect );
-		unsigned int	Run_Register	  		( HWND hWnd, RECT *rect );
-		unsigned int	Run_Setup		  		( HWND hWnd, RECT *rect, int cd_drive );
-		unsigned int	Run_Uninstall 	  		( HWND hWnd, RECT *rect );
-		unsigned int	Run_OpenFile						(int cd_drive, const char *filename, bool wait = false);
-		LRESULT			Window_Proc		  		( HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam );
+	BOOL Is_Product_Registered(void);
+	void Create_Buttons(HWND hWnd, RECT *dlg_rect);
+	unsigned int Run_Auto_Update(HWND hWnd, RECT *rect);
+	unsigned int Run_Demo(HWND hWnd, RECT *rect, int cd_drive);
+	BOOL Run_Explorer(const char *, HWND hWnd, RECT *rect);
+	unsigned int Run_Game(HWND hWnd, RECT *rect);
+	unsigned int Run_WorldBuilder(HWND hWnd, RECT *rect);
+	unsigned int Run_PatchGet(HWND hWnd, RECT *rect);
+	unsigned int Run_New_Account(HWND hWnd, RECT *rect);
+	unsigned int Run_Register(HWND hWnd, RECT *rect);
+	unsigned int Run_Setup(HWND hWnd, RECT *rect, int cd_drive);
+	unsigned int Run_Uninstall(HWND hWnd, RECT *rect);
+	unsigned int Run_OpenFile(int cd_drive, const char *filename, bool wait = false);
+	LRESULT Window_Proc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 };
 
-
 #endif
-

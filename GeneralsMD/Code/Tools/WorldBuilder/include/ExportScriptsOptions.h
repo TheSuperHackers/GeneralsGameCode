@@ -30,25 +30,27 @@
 
 class ExportScriptsOptions : public CDialog
 {
-// Construction
+	// Construction
 public:
-	ExportScriptsOptions(CWnd* pParent = NULL);   // standard constructor
+	ExportScriptsOptions(CWnd *pParent = NULL); // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(ExportScriptsOptions)
-	enum { IDD = IDD_EXPORT_SCRIPTS_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_EXPORT_SCRIPTS_OPTIONS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ExportScriptsOptions)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	static Bool m_units;
 	static Bool m_waypoints;
@@ -57,14 +59,13 @@ protected:
 	static Bool m_sides;
 
 public:
-	Bool getDoUnits(void) {return m_units;}
-	Bool getDoWaypoints(void) {return m_waypoints;}
-	Bool getDoTriggers(void) {return m_triggers;}
-	Bool getDoAllScripts(void) {return m_allScripts;}
-	Bool getDoSides(void) {return m_sides;}
+	Bool getDoUnits(void) { return m_units; }
+	Bool getDoWaypoints(void) { return m_waypoints; }
+	Bool getDoTriggers(void) { return m_triggers; }
+	Bool getDoAllScripts(void) { return m_allScripts; }
+	Bool getDoSides(void) { return m_sides; }
 
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(ExportScriptsOptions)
 	virtual void OnOK();

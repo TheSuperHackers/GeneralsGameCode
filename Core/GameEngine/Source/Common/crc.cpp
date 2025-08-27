@@ -22,26 +22,27 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/crc.h"
 #include "Common/Debug.h"
 
 #ifdef RTS_DEBUG
 
-void CRC::addCRC( UnsignedByte val )
+void CRC::addCRC(UnsignedByte val)
 {
 	int hibit;
 
-	//cout << "\t\t" << hex << val;
-//	val = htonl(val);
-	//cout << " / " << hex << val <<endl;
+	// cout << "\t\t" << hex << val;
+	//	val = htonl(val);
+	// cout << " / " << hex << val <<endl;
 
-
-	if (crc & 0x80000000) {
+	if (crc & 0x80000000)
+	{
 		hibit = 1;
-	} else {
+	}
+	else
+	{
 		hibit = 0;
 	}
 
@@ -49,35 +50,34 @@ void CRC::addCRC( UnsignedByte val )
 	crc += val;
 	crc += hibit;
 
-	//cout << hex << (*crc) <<endl;
+	// cout << hex << (*crc) <<endl;
 }
 
-
-void CRC::computeCRC( const void *buf, Int len )
+void CRC::computeCRC(const void *buf, Int len)
 {
 	if (!buf || len < 1)
 	{
 		return;
 	}
 
-	//crc = 0;
+	// crc = 0;
 
 	UnsignedByte *uintPtr = (UnsignedByte *)buf;
 
-	for (int i=0 ; i<len ; i++) {
-		addCRC (*(uintPtr++));
+	for (int i = 0; i < len; i++)
+	{
+		addCRC(*(uintPtr++));
 	}
-	//crc = htonl(crc);
+	// crc = htonl(crc);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UnsignedInt CRC::get( void )
+UnsignedInt CRC::get(void)
 {
-
 	UnsignedInt tcrc = crc;
 	return tcrc;
 
-}  // end skip
+} // end skip
 
 #endif

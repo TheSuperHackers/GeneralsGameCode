@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/GameLogic.h"
@@ -36,13 +36,12 @@
 #include "GameLogic/Module/ProjectileStreamUpdate.h"
 #include "WWMath/vector3.h"
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ProjectileStreamUpdate::ProjectileStreamUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+ProjectileStreamUpdate::ProjectileStreamUpdate(Thing *thing, const ModuleData *moduleData) : UpdateModule(thing, moduleData)
 {
 	ObjectID m_projectileIDs[MAX_PROJECTILE_STREAM];
-	for( Int index = 0; index < MAX_PROJECTILE_STREAM; index++ )
+	for (Int index = 0; index < MAX_PROJECTILE_STREAM; index++)
 	{
 		m_projectileIDs[index] = INVALID_ID;
 	}
@@ -54,41 +53,45 @@ ProjectileStreamUpdate::ProjectileStreamUpdate( Thing *thing, const ModuleData* 
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ProjectileStreamUpdate::~ProjectileStreamUpdate( void )
+ProjectileStreamUpdate::~ProjectileStreamUpdate(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime ProjectileStreamUpdate::update( void )
+UpdateSleepTime ProjectileStreamUpdate::update(void)
 {
 	cullFrontOfList();
 
 	// Update the draw module about our points (arrange array so they can read?)
 
-	if( considerDying() )
-		TheGameLogic->destroyObject( getObject() );
+	if (considerDying())
+		TheGameLogic->destroyObject(getObject());
 
 	return UPDATE_SLEEP_NONE;
 }
 
-void ProjectileStreamUpdate::addProjectile( ObjectID sourceID, ObjectID newID )
+void ProjectileStreamUpdate::addProjectile(ObjectID sourceID, ObjectID newID)
 {
-	DEBUG_ASSERTCRASH( m_owningObject == INVALID_ID  ||  m_owningObject == sourceID, ("Two objects are trying to use the same Projectile stream.") );//Don't cross the streams!
-	if( m_owningObject == INVALID_ID )
+	DEBUG_ASSERTCRASH(
+			m_owningObject == INVALID_ID || m_owningObject == sourceID,
+			("Two objects are trying to use the same Projectile stream.")); // Don't cross the streams!
+	if (m_owningObject == INVALID_ID)
 		m_owningObject = sourceID;
 
 	// Keep track of the id in a circular array
-	m_projectileIDs[ m_nextFreeIndex ] = newID;
+	m_projectileIDs[m_nextFreeIndex] = newID;
 	m_nextFreeIndex = (m_nextFreeIndex + 1) % MAX_PROJECTILE_STREAM;
-	DEBUG_ASSERTCRASH( m_nextFreeIndex != m_firstValidIndex, ("Need to increase the allowed number of simultaneous particles in ProjectileStreamUpdate.") );
+	DEBUG_ASSERTCRASH(
+			m_nextFreeIndex != m_firstValidIndex,
+			("Need to increase the allowed number of simultaneous particles in ProjectileStreamUpdate."));
 }
 
 void ProjectileStreamUpdate::cullFrontOfList()
 {
-	while( (m_firstValidIndex != m_nextFreeIndex)  &&  (TheGameLogic->findObjectByID( m_projectileIDs[m_firstValidIndex] ) == NULL) )
+	while (
+			(m_firstValidIndex != m_nextFreeIndex) && (TheGameLogic->findObjectByID(m_projectileIDs[m_firstValidIndex]) == NULL))
 	{
 		// Chew off the front if they are gone.  Don't chew on the middle, as bad ones there are just a break in the chain
 		m_firstValidIndex = (m_firstValidIndex + 1) % MAX_PROJECTILE_STREAM;
@@ -97,41 +100,38 @@ void ProjectileStreamUpdate::cullFrontOfList()
 
 Bool ProjectileStreamUpdate::considerDying()
 {
-	if( m_firstValidIndex == m_nextFreeIndex  &&  m_owningObject != INVALID_ID )
+	if (m_firstValidIndex == m_nextFreeIndex && m_owningObject != INVALID_ID)
 	{
-		//If I have no projectiles to watch, and my master is dead, then yes, I want to die
-		if( TheGameLogic->findObjectByID(m_owningObject) == NULL )
+		// If I have no projectiles to watch, and my master is dead, then yes, I want to die
+		if (TheGameLogic->findObjectByID(m_owningObject) == NULL)
 			return TRUE;
 	}
 
 	return FALSE;
 }
 
-void ProjectileStreamUpdate::getAllPoints( Vector3 *points, Int *count )
+void ProjectileStreamUpdate::getAllPoints(Vector3 *points, Int *count)
 {
 	Int pointCount = 0;
 	Int pointIndex = m_firstValidIndex;
 
-
 	Object *obj = TheGameLogic->findObjectByID(m_owningObject);
 
-
-	while( pointIndex != m_nextFreeIndex )
+	while (pointIndex != m_nextFreeIndex)
 	{
 		// Go through the array I think of as good.  Holes in the middle get 0,0,0.  I write
 		// to pointCount because I am unrolling a circular array into the same sized flat one
 		// since I am writing anyway.
-		Object *projectile = TheGameLogic->findObjectByID( m_projectileIDs[pointIndex] );
+		Object *projectile = TheGameLogic->findObjectByID(m_projectileIDs[pointIndex]);
 
-		if( projectile )
+		if (projectile)
 		{
 			Coord3D thisPoint = *projectile->getPosition();
 			points[pointCount].X = thisPoint.x;
 			points[pointCount].Y = thisPoint.y;
 			points[pointCount].Z = thisPoint.z;
 
-
-			if ( obj && obj->isKindOf( KINDOF_VEHICLE ) )				// this makes the stream skim along my roof, if I have a roof
+			if (obj && obj->isKindOf(KINDOF_VEHICLE)) // this makes the stream skim along my roof, if I have a roof
 			{
 				const Coord3D *pos = obj->getPosition();
 				Real myTop = obj->getGeometryInfo().getMaxHeightAbovePosition() + pos->z + 0.5f;
@@ -139,13 +139,9 @@ void ProjectileStreamUpdate::getAllPoints( Vector3 *points, Int *count )
 				delta.x = pos->x - points[pointCount].X;
 				delta.y = pos->y - points[pointCount].Y;
 				delta.z = 0.0f;
-				if( delta.length() <= obj->getGeometryInfo().getMajorRadius() * 1.5f )
-					points[pointCount].Z = MAX( points[pointCount].Z, myTop );
+				if (delta.length() <= obj->getGeometryInfo().getMajorRadius() * 1.5f)
+					points[pointCount].Z = MAX(points[pointCount].Z, myTop);
 			}
-
-
-
-
 		}
 		else
 		{
@@ -161,60 +157,57 @@ void ProjectileStreamUpdate::getAllPoints( Vector3 *points, Int *count )
 	*count = pointCount;
 }
 
-void ProjectileStreamUpdate::setPosition( const Coord3D *newPosition )
+void ProjectileStreamUpdate::setPosition(const Coord3D *newPosition)
 {
 	Object *me = getObject();
-	me->setPosition( newPosition );
+	me->setPosition(newPosition);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ProjectileStreamUpdate::crc( Xfer *xfer )
+void ProjectileStreamUpdate::crc(Xfer *xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
+	UpdateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ProjectileStreamUpdate::xfer( Xfer *xfer )
+void ProjectileStreamUpdate::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// projectile ids
-	xfer->xferUser( m_projectileIDs, sizeof( ObjectID ) * MAX_PROJECTILE_STREAM );
+	xfer->xferUser(m_projectileIDs, sizeof(ObjectID) * MAX_PROJECTILE_STREAM);
 
 	// next free index
-	xfer->xferInt( &m_nextFreeIndex );
+	xfer->xferInt(&m_nextFreeIndex);
 
 	// first valid index
-	xfer->xferInt( &m_firstValidIndex );
+	xfer->xferInt(&m_firstValidIndex);
 
 	// owning object
-	xfer->xferObjectID( &m_owningObject );
+	xfer->xferObjectID(&m_owningObject);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ProjectileStreamUpdate::loadPostProcess( void )
+void ProjectileStreamUpdate::loadPostProcess(void)
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

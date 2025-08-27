@@ -20,7 +20,7 @@
 wdebug                        Neal Kettler
 
 MT-LEVEL
-    MT-Safe
+		MT-Safe
 
 The debugging module is pretty good for debugging and it has some message
 printing stuff as well.  The basic idea is that you write a class that
@@ -41,9 +41,9 @@ Note that since these are defines you really don't need to put a semicolon
 at the end, and it can be bad in situations like this:
 
 if (x)
-  DBGMSG("Stuff is broken");
+	DBGMSG("Stuff is broken");
 else
-  DBGMSG("Stuff is NOT broken");
+	DBGMSG("Stuff is NOT broken");
 
 This won't compile, read the code until you figure it out.  Only then
 will you be ready to leave grasshopper.
@@ -96,74 +96,70 @@ extern CritSec DebugLibSemaphore;
 #endif
 
 // Print an information message
-#define INFMSG(X)\
-{\
-  char     timebuf[40]; \
-  Xtime now; \
-  now -= TimezoneOffset(); \
-  now.FormatTime(timebuf, "mm/dd/yy hh:mm:ss"); \
-  DEBUGLOCK; \
-  if (MsgManager::infoStream()) \
-    (*(MsgManager::infoStream())) << "INF " << timebuf << " [" << \
-        __FILE__ <<  " " << __LINE__ << "] " << X << endl; \
-  DEBUGUNLOCK; \
-}
+#define INFMSG(X) \
+	{ \
+		char timebuf[40]; \
+		Xtime now; \
+		now -= TimezoneOffset(); \
+		now.FormatTime(timebuf, "mm/dd/yy hh:mm:ss"); \
+		DEBUGLOCK; \
+		if (MsgManager::infoStream()) \
+			(*(MsgManager::infoStream())) << "INF " << timebuf << " [" << __FILE__ << " " << __LINE__ << "] " << X << endl; \
+		DEBUGUNLOCK; \
+	}
 
 // Print a warning message
-#define WRNMSG(X)\
-{\
-  char     timebuf[40]; \
-  Xtime now; \
-  now -= TimezoneOffset(); \
-  now.FormatTime(timebuf, "mm/dd/yy hh:mm:ss"); \
-  DEBUGLOCK; \
-  if (MsgManager::warnStream()) \
-    (*(MsgManager::warnStream())) << "WRN " << timebuf << " [" << \
-        __FILE__ <<  " " << __LINE__ << "] " << X << endl; \
-  DEBUGUNLOCK; \
-}
+#define WRNMSG(X) \
+	{ \
+		char timebuf[40]; \
+		Xtime now; \
+		now -= TimezoneOffset(); \
+		now.FormatTime(timebuf, "mm/dd/yy hh:mm:ss"); \
+		DEBUGLOCK; \
+		if (MsgManager::warnStream()) \
+			(*(MsgManager::warnStream())) << "WRN " << timebuf << " [" << __FILE__ << " " << __LINE__ << "] " << X << endl; \
+		DEBUGUNLOCK; \
+	}
 
 // Print an error message
-#define ERRMSG(X)\
-{\
-  char     timebuf[40]; \
-  Xtime now; \
-  now -= TimezoneOffset(); \
-  now.FormatTime(timebuf, "mm/dd/yy hh:mm:ss"); \
-  DEBUGLOCK; \
-  if (MsgManager::errorStream()) \
-    (*(MsgManager::errorStream())) << "ERR " << timebuf << " [" << \
-        __FILE__ <<  " " << __LINE__ << "] " << X << endl; \
-  DEBUGUNLOCK; \
-}
-
+#define ERRMSG(X) \
+	{ \
+		char timebuf[40]; \
+		Xtime now; \
+		now -= TimezoneOffset(); \
+		now.FormatTime(timebuf, "mm/dd/yy hh:mm:ss"); \
+		DEBUGLOCK; \
+		if (MsgManager::errorStream()) \
+			(*(MsgManager::errorStream())) << "ERR " << timebuf << " [" << __FILE__ << " " << __LINE__ << "] " << X << endl; \
+		DEBUGUNLOCK; \
+	}
 
 // Just get a stream to the information device, no extra junk
-#define INFSTREAM(X)\
-{\
-  DEBUGLOCK; \
-  if (MsgManager::infoStream()) \
-    (*(MsgManager::infoStream())) << X;\
-  DEBUGUNLOCK; \
-}
+#define INFSTREAM(X) \
+	{ \
+		DEBUGLOCK; \
+		if (MsgManager::infoStream()) \
+			(*(MsgManager::infoStream())) << X; \
+		DEBUGUNLOCK; \
+	}
 
 // Just get a stream to the warning device, no extra junk
-#define WRNSTREAM(X)\
-{\
-  DEBUGLOCK; \
-  if (MsgManager::warnStream()) \
-    (*(MsgManager::warnStream())) << X;\
-  DEBUGUNLOCK; \
-}
+#define WRNSTREAM(X) \
+	{ \
+		DEBUGLOCK; \
+		if (MsgManager::warnStream()) \
+			(*(MsgManager::warnStream())) << X; \
+		DEBUGUNLOCK; \
+	}
 
 // Just get a stream to the error device, no extra junk
-#define ERRSTREAM(X)\
-{\
-  DEBUGLOCK; \
-  if (MsgManager::errorStream()) \
-    (*(MsgManager::errorStream())) << X;\
-  DEBUGUNLOCK; \
-}
+#define ERRSTREAM(X) \
+	{ \
+		DEBUGLOCK; \
+		if (MsgManager::errorStream()) \
+			(*(MsgManager::errorStream())) << X; \
+		DEBUGUNLOCK; \
+	}
 
 #ifndef DEBUG
 
@@ -173,12 +169,20 @@ extern CritSec DebugLibSemaphore;
 // They are defined to {} for consistency when DEBUG is defined
 
 #define DBG(X)
-#define DBGSTREAM(X)  {}
-#define PVAR(v)       {}
-#define DBGMSG(X)     {}
-#define VERBOSE(X)    {}
+#define DBGSTREAM(X) \
+	{ \
+	}
+#define PVAR(v) \
+	{ \
+	}
+#define DBGMSG(X) \
+	{ \
+	}
+#define VERBOSE(X) \
+	{ \
+	}
 
-#else  // DEBUG _is_ defined
+#else // DEBUG _is_ defined
 
 // Execute only if in debugging mode
 #define DBG(X) X
@@ -188,131 +192,120 @@ extern CritSec DebugLibSemaphore;
 
 // Print a variable
 #define PVAR(v) \
-{ \
-  DEBUGLOCK; \
-  if (MsgManager::debugStream()) \
-    (*(MsgManager::debugStream())) << __FILE__ << "[" << __LINE__ << \
-       "]: " << ##V << " = " << V << endl; \
-  strstream __s;\
-  __s << __FILE__ << "[" << __LINE__ << \
-       "]: " << ##V << " = " << V << '\n' << '\0';\
-  OutputDebugString(STRSTREAM_CSTR(__s));\
-  OutputDebugString("\n");\
-  DEBUGUNLOCK; \
-}
+	{ \
+		DEBUGLOCK; \
+		if (MsgManager::debugStream()) \
+			(*(MsgManager::debugStream())) << __FILE__ << "[" << __LINE__ << "]: " << ##V << " = " << V << endl; \
+		strstream __s; \
+		__s << __FILE__ << "[" << __LINE__ << "]: " << ##V << " = " << V << '\n' << '\0'; \
+		OutputDebugString(STRSTREAM_CSTR(__s)); \
+		OutputDebugString("\n"); \
+		DEBUGUNLOCK; \
+	}
 
-
-#define DBGMSG(X)\
-{\
-  DEBUGLOCK; \
-  if (MsgManager::debugStream()) \
-    (*(MsgManager::debugStream())) << "DBG [" << __FILE__ <<  \
-    " " << __LINE__ << "] " << X << endl;\
-  strstream __s;\
-  __s << "DBG [" << __FILE__ <<  \
-    " " << __LINE__ << "] " << X << '\n' << '\0';\
-  OutputDebugString(STRSTREAM_CSTR(__s));\
-  OutputDebugString("\n");\
-  DEBUGUNLOCK; \
-}
+#define DBGMSG(X) \
+	{ \
+		DEBUGLOCK; \
+		if (MsgManager::debugStream()) \
+			(*(MsgManager::debugStream())) << "DBG [" << __FILE__ << " " << __LINE__ << "] " << X << endl; \
+		strstream __s; \
+		__s << "DBG [" << __FILE__ << " " << __LINE__ << "] " << X << '\n' << '\0'; \
+		OutputDebugString(STRSTREAM_CSTR(__s)); \
+		OutputDebugString("\n"); \
+		DEBUGUNLOCK; \
+	}
 
 // Just get a stream to the debugging device, no extra junk
-#define DBGSTREAM(X)\
-{\
-  DEBUGLOCK; \
-  if (MsgManager::debugStream()) \
-    (*(MsgManager::debugStream())) << X;\
-  strstream __s;\
-  __s << X << '\0';\
-  OutputDebugString(STRSTREAM_CSTR(__s));\
-  OutputDebugString("\n");\
-  DEBUGUNLOCK; \
-}
+#define DBGSTREAM(X) \
+	{ \
+		DEBUGLOCK; \
+		if (MsgManager::debugStream()) \
+			(*(MsgManager::debugStream())) << X; \
+		strstream __s; \
+		__s << X << '\0'; \
+		OutputDebugString(STRSTREAM_CSTR(__s)); \
+		OutputDebugString("\n"); \
+		DEBUGUNLOCK; \
+	}
 
 // Verbosely execute a statement
-#define VERBOSE(X)\
-{ \
-  DEBUGLOCK; \
-  if (MsgManager::debugStream()) \
-    (*(DebugManager::debugStream())) << __FILE__ << "[" << __LINE__ << \
-     "]: " << ##X << endl; X \
-  strstream __s;\
-  __s  << __FILE__ << "[" << __LINE__ << \
-     "]: " << ##X << '\n' << '\0';\
-  OutputDebugString(STRSTREAM_CSTR(__s));\
-  OutputDebugString("\n");\
-  DEBUGUNLOCK; \
-}
+#define VERBOSE(X) \
+	{ \
+		DEBUGLOCK; \
+		if (MsgManager::debugStream()) \
+			(*(DebugManager::debugStream())) << __FILE__ << "[" << __LINE__ << "]: " << ##X << endl; \
+		X strstream __s; \
+		__s << __FILE__ << "[" << __LINE__ << "]: " << ##X << '\n' << '\0'; \
+		OutputDebugString(STRSTREAM_CSTR(__s)); \
+		OutputDebugString("\n"); \
+		DEBUGUNLOCK; \
+	}
 
 #else // _WINDOWS
 
 // Print a variable
 #define PVAR(v) \
-{ \
-  DEBUGLOCK; \
-  if (MsgManager::debugStream()) \
-    (*(MsgManager::debugStream())) << __FILE__ << "[" << __LINE__ << \
-       "]: " << ##V << " = " << V << endl; \
-  DEBUGUNLOCK; \
-}
+	{ \
+		DEBUGLOCK; \
+		if (MsgManager::debugStream()) \
+			(*(MsgManager::debugStream())) << __FILE__ << "[" << __LINE__ << "]: " << ##V << " = " << V << endl; \
+		DEBUGUNLOCK; \
+	}
 
-
-#define DBGMSG(X)\
-{\
-  DEBUGLOCK; \
-  if (MsgManager::debugStream()) \
-    (*(MsgManager::debugStream())) << "DBG [" << __FILE__ <<  \
-    " " << __LINE__ << "] " << X << endl;\
-  DEBUGUNLOCK; \
-}
+#define DBGMSG(X) \
+	{ \
+		DEBUGLOCK; \
+		if (MsgManager::debugStream()) \
+			(*(MsgManager::debugStream())) << "DBG [" << __FILE__ << " " << __LINE__ << "] " << X << endl; \
+		DEBUGUNLOCK; \
+	}
 
 // Just get a stream to the debugging device, no extra junk
-#define DBGSTREAM(X)\
-{\
-  DEBUGLOCK; \
-  if (MsgManager::debugStream()) \
-    (*(MsgManager::debugStream())) << X;\
-  DEBUGUNLOCK; \
-}
+#define DBGSTREAM(X) \
+	{ \
+		DEBUGLOCK; \
+		if (MsgManager::debugStream()) \
+			(*(MsgManager::debugStream())) << X; \
+		DEBUGUNLOCK; \
+	}
 
 // Verbosely execute a statement
-#define VERBOSE(X)\
-{ \
-  DEBUGLOCK; \
-  if (MsgManager::debugStream()) \
-    (*(DebugManager::debugStream())) << __FILE__ << "[" << __LINE__ << \
-     "]: " << ##X << endl; X \
-  DEBUGUNLOCK; \
-}
+#define VERBOSE(X) \
+	{ \
+		DEBUGLOCK; \
+		if (MsgManager::debugStream()) \
+			(*(DebugManager::debugStream())) << __FILE__ << "[" << __LINE__ << "]: " << ##X << endl; \
+		X DEBUGUNLOCK; \
+	}
 #endif // _WINDOWS
 
-#endif  // DEBUG
+#endif // DEBUG
 
-//#undef DEBUGLOCK
-//#undef DEBUGUNLOCK
+// #undef DEBUGLOCK
+// #undef DEBUGUNLOCK
 
 class MsgManager
 {
- protected:
-   MsgManager();
+protected:
+	MsgManager();
 
- public:
-   static int                 setAllStreams(OutputDevice *device);
-   static int                 ReplaceAllStreams(FileD *output_device, IN char *device_filename, IN char *copy_filename);
-   static int                 setDebugStream(OutputDevice *device);
-   static int                 setInfoStream(OutputDevice *device);
-   static int                 setWarnStream(OutputDevice *device);
-   static int                 setErrorStream(OutputDevice *device);
+public:
+	static int setAllStreams(OutputDevice *device);
+	static int ReplaceAllStreams(FileD *output_device, IN char *device_filename, IN char *copy_filename);
+	static int setDebugStream(OutputDevice *device);
+	static int setInfoStream(OutputDevice *device);
+	static int setWarnStream(OutputDevice *device);
+	static int setErrorStream(OutputDevice *device);
 
-   static void                enableDebug(int flag);
-   static void                enableInfo(int flag);
-   static void                enableWarn(int flag);
-   static void                enableError(int flag);
+	static void enableDebug(int flag);
+	static void enableInfo(int flag);
+	static void enableWarn(int flag);
+	static void enableError(int flag);
 
-   static ostream            *debugStream(void);
-   static ostream            *infoStream(void);
-   static ostream            *warnStream(void);
-   static ostream            *errorStream(void);
+	static ostream *debugStream(void);
+	static ostream *infoStream(void);
+	static ostream *warnStream(void);
+	static ostream *errorStream(void);
 };
 
 #endif

@@ -61,16 +61,16 @@ class INIClass;
 #define METALMAP_SIZE 16
 #define METALMAP_SIZE_2 (METALMAP_SIZE * METALMAP_SIZE)
 
-class MetalMapManagerClass {
-
+class MetalMapManagerClass
+{
 public:
-
 	// These parameters are for a simple Phong reflectance model
-	struct MetalParams {
-		Vector3	AmbientColor;
-		Vector3	DiffuseColor;
-		Vector3	SpecularColor;
-		float		Shininess;
+	struct MetalParams
+	{
+		Vector3 AmbientColor;
+		Vector3 DiffuseColor;
+		Vector3 SpecularColor;
+		float Shininess;
 	};
 
 	// Create metal map manager with maps specified by INI file
@@ -78,44 +78,46 @@ public:
 	~MetalMapManagerClass(void);
 
 	// Get the texture for a metal map by id number
-	TextureClass *	Get_Metal_Map(int id);
+	TextureClass *Get_Metal_Map(int id);
 
 	// Get the number of metal maps in the manager
-	int				Metal_Map_Count(void);
+	int Metal_Map_Count(void);
 
 	// Update the lighting parameters used for generating the maps
-	void				Update_Lighting(const Vector3& ambient, const Vector3& main_light_color,
-							const Vector3& main_light_dir, const Vector3& camera_dir);
+	void Update_Lighting(
+			const Vector3 &ambient,
+			const Vector3 &main_light_color,
+			const Vector3 &main_light_dir,
+			const Vector3 &camera_dir);
 
 	// Update the metal map textures (should call once/frame before rendering)
-	void				Update_Textures(void);
+	void Update_Textures(void);
 
 private:
-
 	// 16 x 16 table of cameraspace normals for the environment maps
-	static Vector3 *	_NormalTable;
-	void					initialize_normal_table(void);	// Utility function
+	static Vector3 *_NormalTable;
+	void initialize_normal_table(void); // Utility function
 
 	// Utility function - shared CTor code
-	void					initialize_metal_params(int map_count, MetalParams *metal_params);
+	void initialize_metal_params(int map_count, MetalParams *metal_params);
 
 	// Number of metal maps
-	int					MapCount;
+	int MapCount;
 
 	// Array of metal map texture pointers
-	TextureClass **	Textures;
+	TextureClass **Textures;
 
 	// Array of metal parameters
-	MetalParams *		MetalParameters;
+	MetalParams *MetalParameters;
 
 	// Current lighting parameters
-	Vector3				CurrentAmbient;
-	Vector3				CurrentMainLightColor;
-	Vector3				CurrentMainLightDir;
-	Vector3				CurrentCameraDir;
+	Vector3 CurrentAmbient;
+	Vector3 CurrentMainLightColor;
+	Vector3 CurrentMainLightDir;
+	Vector3 CurrentCameraDir;
 
 	// Use 16-bit metal maps or not
-	bool					Use16Bit;
+	bool Use16Bit;
 };
 
 #endif

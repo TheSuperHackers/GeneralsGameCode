@@ -42,9 +42,9 @@
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
-#define DEFINE_WEAPONSLOTTYPE_NAMES //For access to TheWeaponSlotTypeNames
+#define DEFINE_WEAPONSLOTTYPE_NAMES // For access to TheWeaponSlotTypeNames
 
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"
@@ -57,161 +57,151 @@
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/FireWeaponPower.h"
 
-
-FireWeaponPowerModuleData::FireWeaponPowerModuleData( void )
+FireWeaponPowerModuleData::FireWeaponPowerModuleData(void)
 {
 	m_maxShotsToFire = 1;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void FireWeaponPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
+/*static*/ void FireWeaponPowerModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-	SpecialPowerModuleData::buildFieldParse( p );
+	SpecialPowerModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "MaxShotsToFire", INI::parseUnsignedInt, NULL, offsetof( FireWeaponPowerModuleData, m_maxShotsToFire ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "MaxShotsToFire", INI::parseUnsignedInt, NULL, offsetof(FireWeaponPowerModuleData, m_maxShotsToFire) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
-
+} // end buildFieldParse
 
 // ------------------------------------------------------------------------------------------------
-FireWeaponPower::FireWeaponPower( Thing *thing, const ModuleData *moduleData )
-												: SpecialPowerModule( thing, moduleData )
+FireWeaponPower::FireWeaponPower(Thing *thing, const ModuleData *moduleData) : SpecialPowerModule(thing, moduleData)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
-FireWeaponPower::~FireWeaponPower( void )
+FireWeaponPower::~FireWeaponPower(void)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
-void FireWeaponPower::doSpecialPower( UnsignedInt commandOptions )
+void FireWeaponPower::doSpecialPower(UnsignedInt commandOptions)
 {
 	Object *self = getObject();
 	const FireWeaponPowerModuleData *data = getFireWeaponPowerModuleData();
 
-	if( self->isDisabled() )
+	if (self->isDisabled())
 		return;
 
 	// call the base class action cause we are *EXTENDING* functionality
-	SpecialPowerModule::doSpecialPower( commandOptions );
+	SpecialPowerModule::doSpecialPower(commandOptions);
 
-	self->reloadAllAmmo( TRUE );
+	self->reloadAllAmmo(TRUE);
 
 	AIUpdateInterface *ai = self->getAI();
-	if( ai )
+	if (ai)
 	{
-		// TheSuperHackers @bugfix Caball009 09/08/2025 Position should be irrelevant, but aiAttackPosition requires a valid position pointer to avoid a crash.
-		ai->aiAttackPosition( self->getPosition(), data->m_maxShotsToFire, CMD_FROM_AI );
+		// TheSuperHackers @bugfix Caball009 09/08/2025 Position should be irrelevant, but aiAttackPosition requires a valid
+		// position pointer to avoid a crash.
+		ai->aiAttackPosition(self->getPosition(), data->m_maxShotsToFire, CMD_FROM_AI);
 
-		//Order any turrets to attack as well.
-		for( Int i = 0; i < MAX_TURRETS; i++ )
+		// Order any turrets to attack as well.
+		for (Int i = 0; i < MAX_TURRETS; i++)
 		{
-			ai->setTurretTargetPosition( (WhichTurretType)i, self->getPosition() );
+			ai->setTurretTargetPosition((WhichTurretType)i, self->getPosition());
 		}
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
-void FireWeaponPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
+void FireWeaponPower::doSpecialPowerAtLocation(const Coord3D *loc, Real angle, UnsignedInt commandOptions)
 {
 	Object *self = getObject();
 	const FireWeaponPowerModuleData *data = getFireWeaponPowerModuleData();
 
-	if( self->isDisabled() )
+	if (self->isDisabled())
 		return;
 
 	// call the base class action cause we are *EXTENDING* functionality
-	SpecialPowerModule::doSpecialPowerAtLocation( loc, angle, commandOptions );
+	SpecialPowerModule::doSpecialPowerAtLocation(loc, angle, commandOptions);
 
-	self->reloadAllAmmo( TRUE );
+	self->reloadAllAmmo(TRUE);
 
 	AIUpdateInterface *ai = self->getAI();
-	if( ai )
+	if (ai)
 	{
-		ai->aiAttackPosition( loc, data->m_maxShotsToFire, CMD_FROM_AI );
+		ai->aiAttackPosition(loc, data->m_maxShotsToFire, CMD_FROM_AI);
 
-		//Order any turrets to attack as well.
-		for( Int i = 0; i < MAX_TURRETS; i++ )
+		// Order any turrets to attack as well.
+		for (Int i = 0; i < MAX_TURRETS; i++)
 		{
-			ai->setTurretTargetPosition( (WhichTurretType)i, loc );
+			ai->setTurretTargetPosition((WhichTurretType)i, loc);
 		}
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
-void FireWeaponPower::doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions )
+void FireWeaponPower::doSpecialPowerAtObject(Object *obj, UnsignedInt commandOptions)
 {
 	Object *self = getObject();
 	const FireWeaponPowerModuleData *data = getFireWeaponPowerModuleData();
 
-	if( self->isDisabled() )
+	if (self->isDisabled())
 		return;
 
 	// call the base class action cause we are *EXTENDING* functionality
-	SpecialPowerModule::doSpecialPowerAtObject( obj, commandOptions );
+	SpecialPowerModule::doSpecialPowerAtObject(obj, commandOptions);
 
-	self->reloadAllAmmo( TRUE );
+	self->reloadAllAmmo(TRUE);
 
 	AIUpdateInterface *ai = self->getAI();
-	if( ai )
+	if (ai)
 	{
-		ai->aiAttackObject( obj, data->m_maxShotsToFire, CMD_FROM_AI );
+		ai->aiAttackObject(obj, data->m_maxShotsToFire, CMD_FROM_AI);
 
-		//Order any turrets to attack as well.
-		for( Int i = 0; i < MAX_TURRETS; i++ )
+		// Order any turrets to attack as well.
+		for (Int i = 0; i < MAX_TURRETS; i++)
 		{
-			ai->setTurretTargetObject( (WhichTurretType)i, obj );
+			ai->setTurretTargetObject((WhichTurretType)i, obj);
 		}
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void FireWeaponPower::crc( Xfer *xfer )
+void FireWeaponPower::crc(Xfer *xfer)
 {
-
 	// extend base class
-	SpecialPowerModule::crc( xfer );
+	SpecialPowerModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void FireWeaponPower::xfer( Xfer *xfer )
+void FireWeaponPower::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	SpecialPowerModule::xfer( xfer );
+	SpecialPowerModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FireWeaponPower::loadPostProcess( void )
+void FireWeaponPower::loadPostProcess(void)
 {
-
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

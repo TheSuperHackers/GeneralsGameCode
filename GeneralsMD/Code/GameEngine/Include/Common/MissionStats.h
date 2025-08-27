@@ -62,29 +62,24 @@
 */
 class MissionStats : public Snapshot
 {
-
 public:
-
 	MissionStats();
 
 	/// reset all stats to "nothing".
 	void init();
 
 protected:
-
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
+	virtual void loadPostProcess(void);
 
 private:
-
-	Int m_unitsKilled[MAX_PLAYER_COUNT];					///< how many units for each Player were killed by us?
-	Int m_unitsLost;															///< how many of our units were destroyed?
-	Int m_buildingsKilled[MAX_PLAYER_COUNT];			///< how many buildings for each Player were killed by us?
-	Int m_buildingsLost;													///< how many of our buildings were destroyed?
-	//Int	m_whoLastHurtMe;													///< last Player to destroy one of my units
+	Int m_unitsKilled[MAX_PLAYER_COUNT]; ///< how many units for each Player were killed by us?
+	Int m_unitsLost; ///< how many of our units were destroyed?
+	Int m_buildingsKilled[MAX_PLAYER_COUNT]; ///< how many buildings for each Player were killed by us?
+	Int m_buildingsLost; ///< how many of our buildings were destroyed?
+	// Int	m_whoLastHurtMe;													///< last Player to destroy one of my units
 };
 
 #endif // _MISSIONSTATS_H_
-

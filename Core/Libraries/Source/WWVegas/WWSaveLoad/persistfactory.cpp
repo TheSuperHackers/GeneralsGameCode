@@ -34,12 +34,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "persistfactory.h"
 #include "saveload.h"
 
-PersistFactoryClass::PersistFactoryClass(void) :
-	NextFactory(NULL)
+PersistFactoryClass::PersistFactoryClass(void) : NextFactory(NULL)
 {
 	SaveLoadSystemClass::Register_Persist_Factory(this);
 }

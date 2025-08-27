@@ -23,22 +23,22 @@
 
 class SplashScreen : public CDialog
 {
-	protected:
-		CRect m_rect;
-		CString m_loadString;
-		CFont m_font;
+protected:
+	CRect m_rect;
+	CString m_loadString;
+	CFont m_font;
 
-	public:
-		SplashScreen();
+public:
+	SplashScreen();
 
-	public:
-		void setTextOutputLocation(const CRect& rect);
-		void outputText(UINT nIDString);
+public:
+	void setTextOutputLocation(const CRect &rect);
+	void outputText(UINT nIDString);
 
-	protected:
-		afx_msg void OnPaint();
+protected:
+	afx_msg void OnPaint();
 
-		DECLARE_MESSAGE_MAP()
+	DECLARE_MESSAGE_MAP()
 };
 
 #endif /* __SPLASHSCREEN_H__ */

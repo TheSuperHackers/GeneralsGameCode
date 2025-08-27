@@ -20,8 +20,8 @@
 // Author: Matthew D. Campbell, Dec 2002
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#define WIN32_LEAN_AND_MEAN  // only bare bones windows stuff wanted
-//#include <afxwin.h>
+#define WIN32_LEAN_AND_MEAN // only bare bones windows stuff wanted
+// #include <afxwin.h>
 #include <windows.h>
 #include <lmcons.h>
 #include <stdlib.h>
@@ -56,9 +56,9 @@ static void logStuff(const char *fmt, ...)
 {
 	static char buffer[1024];
 	va_list va;
-	va_start( va, fmt );
-	vsnprintf(buffer, 1024, fmt, va );
-	va_end( va );
+	va_start(va, fmt);
+	vsnprintf(buffer, 1024, fmt, va);
+	va_end(va);
 
 	puts(buffer);
 	::MessageBox(NULL, buffer, "textureCompress", MB_OK);
@@ -70,7 +70,12 @@ class DebugMunkee
 {
 public:
 	DebugMunkee(const char *fname = "debugLog.txt") { m_fp = fopen(fname, "w"); }
-	~DebugMunkee() { if (m_fp) fclose(m_fp); m_fp = NULL; }
+	~DebugMunkee()
+	{
+		if (m_fp)
+			fclose(m_fp);
+		m_fp = NULL;
+	}
 
 	FILE *m_fp;
 };
@@ -82,11 +87,11 @@ static void debugLog(const char *fmt, ...)
 {
 	static char buffer[1024];
 	va_list va;
-	va_start( va, fmt );
-	vsnprintf(buffer, 1024, fmt, va );
-	va_end( va );
+	va_start(va, fmt);
+	vsnprintf(buffer, 1024, fmt, va);
+	va_end(va);
 
-	OutputDebugString( buffer );
+	OutputDebugString(buffer);
 	puts(buffer);
 	if (theDebugMunkee)
 		fputs(buffer, theDebugMunkee->m_fp);
@@ -94,16 +99,17 @@ static void debugLog(const char *fmt, ...)
 
 #else
 
-#define DEBUG_LOG(x) {}
+#define DEBUG_LOG(x) \
+	{ \
+	}
 
 #endif // NDEBUG
-
 
 static void usage(const char *progname)
 {
 	if (!progname)
 		progname = "textureCompress";
-	LOG (("Usage: %s sourceDir destDir cacheDir outFile dxtOutFile\n", progname));
+	LOG(("Usage: %s sourceDir destDir cacheDir outFile dxtOutFile\n", progname));
 }
 
 class FileInfo
@@ -112,24 +118,21 @@ public:
 	FileInfo() {}
 	~FileInfo() {}
 
-	void set( const WIN32_FIND_DATA& info );
+	void set(const WIN32_FIND_DATA &info);
 
 	std::string filename;
 	time_t creationTime;
 	time_t accessTime;
 	time_t modTime;
 	DWORD attributes;
-	DWORD filesize;	// only care about 32 bits for our purposes
+	DWORD filesize; // only care about 32 bits for our purposes
 
 protected:
 };
 
 struct FileInfoComparator
 {
-	bool operator()(const FileInfo& a, const FileInfo& b) const
-	{
-		return a.filename < b.filename;
-	}
+	bool operator()(const FileInfo &a, const FileInfo &b) const { return a.filename < b.filename; }
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -141,11 +144,11 @@ typedef std::set<FileInfo, FileInfoComparator> FileInfoSet;
 class Directory
 {
 public:
-	Directory(const std::string& dirPath);
+	Directory(const std::string &dirPath);
 	~Directory() {}
 
-	FileInfoSet* getFiles( void );
-	FileInfoSet* getSubdirs( void );
+	FileInfoSet *getFiles(void);
+	FileInfoSet *getSubdirs(void);
 
 protected:
 	std::string m_dirPath;
@@ -156,14 +159,14 @@ protected:
 
 //-------------------------------------------------------------------------------------------------
 
-static void TimetToFileTime( time_t t, FILETIME& ft )
+static void TimetToFileTime(time_t t, FILETIME &ft)
 {
 	LONGLONG ll = Int32x32To64(t, 10000000) + 116444736000000000;
-	ft.dwLowDateTime = (DWORD) ll;
-	ft.dwHighDateTime = ll >>32;
+	ft.dwLowDateTime = (DWORD)ll;
+	ft.dwHighDateTime = ll >> 32;
 }
 
-static time_t FileTimeToTimet( const FILETIME& ft )
+static time_t FileTimeToTimet(const FILETIME &ft)
 {
 	LONGLONG ll = (ft.dwHighDateTime << 32) + ft.dwLowDateTime - 116444736000000000;
 	ll /= 10000000;
@@ -172,10 +175,10 @@ static time_t FileTimeToTimet( const FILETIME& ft )
 
 //-------------------------------------------------------------------------------------------------
 
-void FileInfo::set( const WIN32_FIND_DATA& info )
+void FileInfo::set(const WIN32_FIND_DATA &info)
 {
 	filename = info.cFileName;
-	for (int i=0; i<filename.size(); ++i)
+	for (int i = 0; i < filename.size(); ++i)
 	{
 		char c[2] = { tolower(info.cFileName[i]), 0 };
 		filename.replace(i, 1, c, 1);
@@ -187,39 +190,39 @@ void FileInfo::set( const WIN32_FIND_DATA& info )
 	filesize = info.nFileSizeLow;
 
 	struct stat origStat;
-	stat( filename.c_str(), &origStat);
+	stat(filename.c_str(), &origStat);
 	modTime = origStat.st_mtime; // use stat(), since the LONGLONG code is unpredictable
 
-	//DEBUG_LOG(("FileInfo::set(): fname=%s, size=%d, modTime=%d", filename.c_str(), filesize, modTime));
+	// DEBUG_LOG(("FileInfo::set(): fname=%s, size=%d, modTime=%d", filename.c_str(), filesize, modTime));
 }
 
 //-------------------------------------------------------------------------------------------------
 
-Directory::Directory( const std::string& dirPath ) : m_dirPath(dirPath)
+Directory::Directory(const std::string &dirPath) : m_dirPath(dirPath)
 {
-	WIN32_FIND_DATA			item;  // search item
-	HANDLE							hFile;  // handle for search resources
-	char								currDir[ MAX_PATH ];
+	WIN32_FIND_DATA item; // search item
+	HANDLE hFile; // handle for search resources
+	char currDir[MAX_PATH];
 
 	// sanity
-	if( !m_dirPath.length() )
+	if (!m_dirPath.length())
 	{
 		return;
 	}
 
 	// save the current directory
-	GetCurrentDirectory( MAX_PATH, currDir );
+	GetCurrentDirectory(MAX_PATH, currDir);
 
 	// switch into the directory provided
-	if( SetCurrentDirectory( m_dirPath.c_str() ) == 0 )
+	if (SetCurrentDirectory(m_dirPath.c_str()) == 0)
 	{
 		return;
 	}
 
 	// go through each item in the output directory
 	bool done = false;
-	hFile = FindFirstFile( "*", &item);
-	if( hFile == INVALID_HANDLE_VALUE )
+	hFile = FindFirstFile("*", &item);
+	if (hFile == INVALID_HANDLE_VALUE)
 	{
 		done = true;
 	}
@@ -229,39 +232,39 @@ Directory::Directory( const std::string& dirPath ) : m_dirPath(dirPath)
 	while (!done)
 	{
 		// if this is a subdirectory keep the name around till the end
-		if( item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
+		if (item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 		{
-			if ( strcmp( item.cFileName, "." ) && strcmp( item.cFileName, ".." ) )
+			if (strcmp(item.cFileName, ".") && strcmp(item.cFileName, ".."))
 			{
 				info.set(item);
-				m_subdirs.insert( info );
+				m_subdirs.insert(info);
 			}
 		}
 		else
 		{
 			info.set(item);
-			m_files.insert( info );
+			m_files.insert(info);
 		}
 
-		if ( FindNextFile( hFile, &item ) == 0 )
+		if (FindNextFile(hFile, &item) == 0)
 		{
 			done = true;
 		}
 	}
 
 	// close search
-	FindClose( hFile );
+	FindClose(hFile);
 
 	// restore the working directory to what it was when we started here
-	SetCurrentDirectory( currDir );
+	SetCurrentDirectory(currDir);
 }
 
-FileInfoSet* Directory::getFiles( void )
+FileInfoSet *Directory::getFiles(void)
 {
 	return &m_files;
 }
 
-FileInfoSet* Directory::getSubdirs( void )
+FileInfoSet *Directory::getSubdirs(void)
 {
 	return &m_subdirs;
 }
@@ -270,8 +273,11 @@ FileInfoSet* Directory::getSubdirs( void )
 typedef std::set<std::string> StringSet;
 
 //-------------------------------------------------------------------------------------------------
-void eraseCachedFiles(const std::string& sourceDirName, const std::string& targetDirName, const std::string& cacheDirName,
-											StringSet& cachedFilesToErase)
+void eraseCachedFiles(
+		const std::string &sourceDirName,
+		const std::string &targetDirName,
+		const std::string &cacheDirName,
+		StringSet &cachedFilesToErase)
 {
 	StringSet::const_iterator sit;
 	for (sit = cachedFilesToErase.begin(); sit != cachedFilesToErase.end(); ++sit)
@@ -286,8 +292,11 @@ void eraseCachedFiles(const std::string& sourceDirName, const std::string& targe
 }
 
 //-------------------------------------------------------------------------------------------------
-void copyCachedFiles(const std::string& sourceDirName, const std::string& targetDirName, const std::string& cacheDirName,
-										 StringSet& cachedFilesToCopy)
+void copyCachedFiles(
+		const std::string &sourceDirName,
+		const std::string &targetDirName,
+		const std::string &cacheDirName,
+		StringSet &cachedFilesToCopy)
 {
 	StringSet::const_iterator sit;
 	for (sit = cachedFilesToCopy.begin(); sit != cachedFilesToCopy.end(); ++sit)
@@ -310,8 +319,12 @@ void copyCachedFiles(const std::string& sourceDirName, const std::string& target
 }
 
 //-------------------------------------------------------------------------------------------------
-void compressOrigFiles(const std::string& sourceDirName, const std::string& targetDirName, const std::string& cacheDirName,
-											 StringSet& origFilesToCompress, const std::string& dxtOutFname)
+void compressOrigFiles(
+		const std::string &sourceDirName,
+		const std::string &targetDirName,
+		const std::string &cacheDirName,
+		StringSet &origFilesToCompress,
+		const std::string &dxtOutFname)
 {
 	char tmpPath[_MAX_PATH] = "C:\\temp\\";
 	char tmpFname[_MAX_PATH] = "C:\\temp\\tmp.txt";
@@ -357,7 +370,7 @@ void compressOrigFiles(const std::string& sourceDirName, const std::string& targ
 		orig.append(*sit);
 
 		struct stat origStat;
-		stat( orig.c_str(), &origStat);
+		stat(orig.c_str(), &origStat);
 
 		struct _utimbuf utb;
 		utb.actime = origStat.st_atime;
@@ -366,14 +379,14 @@ void compressOrigFiles(const std::string& sourceDirName, const std::string& targ
 		std::string src = cacheDirName;
 		src.append("\\");
 		src.append(*sit);
-		src.replace(src.size()-4, 4, ".dds");
+		src.replace(src.size() - 4, 4, ".dds");
 
 		_utime(src.c_str(), &utb);
 
 		std::string dest = targetDirName;
 		dest.append("\\");
 		dest.append(*sit);
-		dest.replace(dest.size()-4, 4, ".dds");
+		dest.replace(dest.size() - 4, 4, ".dds");
 
 		DEBUG_LOG(("Copying new file from %s to %s", src.c_str(), dest.c_str()));
 
@@ -392,8 +405,11 @@ void compressOrigFiles(const std::string& sourceDirName, const std::string& targ
 }
 
 //-------------------------------------------------------------------------------------------------
-void copyOrigFiles(const std::string& sourceDirName, const std::string& targetDirName, const std::string& cacheDirName,
-									 StringSet& origFilesToCopy)
+void copyOrigFiles(
+		const std::string &sourceDirName,
+		const std::string &targetDirName,
+		const std::string &cacheDirName,
+		StringSet &origFilesToCopy)
 {
 	StringSet::const_iterator sit;
 	for (sit = origFilesToCopy.begin(); sit != origFilesToCopy.end(); ++sit)
@@ -416,7 +432,11 @@ void copyOrigFiles(const std::string& sourceDirName, const std::string& targetDi
 }
 
 //-------------------------------------------------------------------------------------------------
-static void scanDir( const std::string& sourceDirName, const std::string& targetDirName, const std::string& cacheDirName, const std::string& dxtOutFname )
+static void scanDir(
+		const std::string &sourceDirName,
+		const std::string &targetDirName,
+		const std::string &cacheDirName,
+		const std::string &dxtOutFname)
 {
 	DEBUG_LOG(("Scanning '%s'", sourceDirName.c_str()));
 	Directory sourceDir(sourceDirName);
@@ -441,12 +461,12 @@ static void scanDir( const std::string& sourceDirName, const std::string& target
 	{
 		FileInfo f = *targetIt;
 		std::string fname = f.filename;
-		f.filename.replace(f.filename.size()-4, 4, ".tga");
+		f.filename.replace(f.filename.size() - 4, 4, ".tga");
 		FileInfoSet::iterator fit = sourceFiles->find(f);
 		if (fit == sourceFiles->end())
 		{
 			// look for pre-existing dds files too
-			f.filename.replace(f.filename.size()-4, 4, ".dds");
+			f.filename.replace(f.filename.size() - 4, 4, ".dds");
 			FileInfoSet::iterator ddsfit = sourceFiles->find(f);
 			if (ddsfit == sourceFiles->end())
 			{
@@ -468,7 +488,7 @@ static void scanDir( const std::string& sourceDirName, const std::string& target
 			continue;
 		}
 		std::string fname = f.filename;
-		f.filename.replace(len-4, 4, ".tga");
+		f.filename.replace(len - 4, 4, ".tga");
 		FileInfoSet::iterator fit = sourceFiles->find(f);
 		if (fit != sourceFiles->end())
 		{
@@ -559,7 +579,7 @@ static void scanDir( const std::string& sourceDirName, const std::string& target
 		else
 		{
 			int len = f.filename.size();
-			f.filename.replace(len-4, 4, ".dds");
+			f.filename.replace(len - 4, 4, ".dds");
 			FileInfoSet::iterator fit = cacheFiles->find(f);
 			if (fit != cacheFiles->end())
 			{
@@ -577,28 +597,25 @@ static void scanDir( const std::string& sourceDirName, const std::string& target
 	}
 
 	// now dump our files
-	eraseCachedFiles (sourceDirName, targetDirName, cacheDirName, cachedFilesToErase);
-	copyCachedFiles  (sourceDirName, targetDirName, cacheDirName, cachedFilesToCopy);
-	copyOrigFiles    (sourceDirName, targetDirName, cacheDirName, origFilesToCopy);
+	eraseCachedFiles(sourceDirName, targetDirName, cacheDirName, cachedFilesToErase);
+	copyCachedFiles(sourceDirName, targetDirName, cacheDirName, cachedFilesToCopy);
+	copyOrigFiles(sourceDirName, targetDirName, cacheDirName, origFilesToCopy);
 	compressOrigFiles(sourceDirName, targetDirName, cacheDirName, origFilesToCompress, dxtOutFname);
 }
 
 //-------------------------------------------------------------------------------------------------
 #define USE_WINMAIN
 #ifdef USE_WINMAIN
-int APIENTRY WinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     LPSTR     lpCmdLine,
-                     int       nCmdShow)
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	/*
 	** Convert WinMain arguments to simple main argc and argv
 	*/
 	int argc = 1;
-	char * argv[20];
+	char *argv[20];
 	argv[0] = NULL;
 
-	char * token = strtok(lpCmdLine, " ");
+	char *token = strtok(lpCmdLine, " ");
 	while (argc < 20 && token != NULL)
 	{
 		argv[argc++] = strtrim(token);
@@ -617,19 +634,19 @@ int main(int argc, const char **argv)
 	{
 		const char *sourceDir = argv[1];
 		const char *targetDir = argv[2];
-		const char *cacheDir  = argv[3];
+		const char *cacheDir = argv[3];
 
 #ifndef NDEBUG
 		theDebugMunkee = new DebugMunkee(argv[4]);
 #endif
 
-		//setUpLoadWindow();
+		// setUpLoadWindow();
 		scanDir(sourceDir, targetDir, cacheDir, argv[5]);
-		//setLoadWindowText("Writing to file...");
-		//printSet( noAlphaChannel, "No Alpha Channel" );
-		//printSet( noAlpha, "Not Using Alpha Channel" );
-		//printSet( hasAlpha, "Using Alpha Channel" );
-		//tearDownLoadWindow();
+		// setLoadWindowText("Writing to file...");
+		// printSet( noAlphaChannel, "No Alpha Channel" );
+		// printSet( noAlpha, "Not Using Alpha Channel" );
+		// printSet( hasAlpha, "Using Alpha Channel" );
+		// tearDownLoadWindow();
 
 #ifndef NDEBUG
 		delete theDebugMunkee;

@@ -27,19 +27,39 @@
 
 #include "GameLogic/SidesList.h"
 
-class ListType  {
+class ListType
+{
 public:
-	enum {BOGUS_TYPE = 0, PLAYER_TYPE = 1, GROUP_TYPE, SCRIPT_IN_PLAYER_TYPE, SCRIPT_IN_GROUP_TYPE};
-	unsigned char m_objType;		 // 4 bits
+	enum
+	{
+		BOGUS_TYPE = 0,
+		PLAYER_TYPE = 1,
+		GROUP_TYPE,
+		SCRIPT_IN_PLAYER_TYPE,
+		SCRIPT_IN_GROUP_TYPE
+	};
+	unsigned char m_objType; // 4 bits
 	unsigned char m_playerIndex; // 4 bits
-	unsigned short int m_groupIndex;	 // 12 bits
+	unsigned short int m_groupIndex; // 12 bits
 	unsigned short int m_scriptIndex; // 12 bits
 
-	ListType(void) {m_objType=BOGUS_TYPE;m_playerIndex=0;m_groupIndex = 0; m_scriptIndex=0;}
+	ListType(void)
+	{
+		m_objType = BOGUS_TYPE;
+		m_playerIndex = 0;
+		m_groupIndex = 0;
+		m_scriptIndex = 0;
+	}
 
-	Int ListToInt(void) { return((m_objType<<28)+(m_playerIndex<<24)+(m_groupIndex<<12)+m_scriptIndex);}
+	Int ListToInt(void) { return ((m_objType << 28) + (m_playerIndex << 24) + (m_groupIndex << 12) + m_scriptIndex); }
 
-	void IntToList(int i) {m_objType = ((i)>>28)&0x0F; m_playerIndex = ((i)>>24)&0x0F; m_groupIndex = ((i)>>12)&0x0FFF; m_scriptIndex = (i)&0x0FFF;}
+	void IntToList(int i)
+	{
+		m_objType = ((i) >> 28) & 0x0F;
+		m_playerIndex = ((i) >> 24) & 0x0F;
+		m_groupIndex = ((i) >> 12) & 0x0FFF;
+		m_scriptIndex = (i) & 0x0FFF;
+	}
 };
 
 class ScriptList;
@@ -48,14 +68,13 @@ class Script;
 class Parameter;
 
 /** Class Definition for overridden Tree control that
-    supports Right-click context sensitive menu.*/
+		supports Right-click context sensitive menu.*/
 class CSDTreeCtrl : public CTreeCtrl
 {
-	public:
-
-	protected:
-		virtual void OnRButtonDown(UINT nFlags, CPoint point);
-		DECLARE_MESSAGE_MAP()
+public:
+protected:
+	virtual void OnRButtonDown(UINT nFlags, CPoint point);
+	DECLARE_MESSAGE_MAP()
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -63,26 +82,28 @@ class CSDTreeCtrl : public CTreeCtrl
 
 class ScriptDialog : public CDialog
 {
-// Construction
+	// Construction
 public:
-	ScriptDialog(CWnd* pParent = NULL);   // standard constructor
-	~ScriptDialog();   //  destructor
+	ScriptDialog(CWnd *pParent = NULL); // standard constructor
+	~ScriptDialog(); //  destructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(ScriptDialog)
-	enum { IDD = IDD_ScriptDialog };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_ScriptDialog
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ScriptDialog)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	static void updateWarnings(void);
 	static void updateScriptWarning(Script *pScript);
@@ -92,20 +113,20 @@ public:
 	ScriptGroup *friend_getCurGroup(void);
 
 protected:
-	ListType	m_curSelection;
+	ListType m_curSelection;
 	CImageList m_imageList;
-	SidesList	m_sides;
+	SidesList m_sides;
 	static ScriptDialog *m_staticThis;
 	CSDTreeCtrl *mTree;
-	Bool			m_draggingTreeView;
+	Bool m_draggingTreeView;
 	HTREEITEM m_dragItem;
 
 	MapObject *m_firstReadObject;
 	PolygonTrigger *m_firstTrigger;
-	Int							m_waypointBase;
-	Int							m_maxWaypoint;
+	Int m_waypointBase;
+	Int m_maxWaypoint;
 
-	AsciiString			m_readPlayerNames[MAX_PLAYER_COUNT];
+	AsciiString m_readPlayerNames[MAX_PLAYER_COUNT];
 
 protected:
 	HTREEITEM addPlayer(Int playerIndx);
@@ -132,10 +153,9 @@ protected:
 	static Bool ParsePlayersDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
 
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(ScriptDialog)
-	afx_msg void OnSelchangedScriptTree(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnSelchangedScriptTree(NMHDR *pNMHDR, LRESULT *pResult);
 	virtual BOOL OnInitDialog();
 	afx_msg void OnNewFolder();
 	afx_msg void OnNewScript();
@@ -144,10 +164,10 @@ protected:
 	afx_msg void OnDelete();
 	afx_msg void OnSave();
 	afx_msg void OnLoad();
-	afx_msg void OnDblclkScriptTree(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDblclkScriptTree(NMHDR *pNMHDR, LRESULT *pResult);
 	virtual void OnOK();
 	virtual void OnCancel();
-	afx_msg void OnBegindragScriptTree(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBegindragScriptTree(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnScriptActivate();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

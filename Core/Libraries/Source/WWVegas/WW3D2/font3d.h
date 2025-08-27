@@ -32,7 +32,6 @@
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*/
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -71,76 +70,75 @@ class SurfaceClass;
 ** settable width, and skip the drawing.
 **
 *******************************************************************/
-class Font3DDataClass : public RefCountClass {
-
+class Font3DDataClass : public RefCountClass
+{
 public:
-
 	/*
 	** Constructor,  Constructor which loads a targa file,
 	** and Destructor
 	*/
-	Font3DDataClass( const char *filename );
+	Font3DDataClass(const char *filename);
 	~Font3DDataClass();
 
 	// the name of the font data (used for name matching and the like.)
-	char		*Name;
+	char *Name;
 
 	/*
 	** access character width and height in pixels (clamp char to 0.255)
 	*/
 
-	unsigned char	Char_Width( WCHAR ch = (WCHAR)'H' )			{ return CharWidthTable[ch&0xFF]; }// & 0xFF]; } // No need to "& 0xff" with chars!!!
-	unsigned char	Char_Height( WCHAR /*ch = 'H'*/ )			{ return CharHeight; }
+	unsigned char Char_Width(WCHAR ch = (WCHAR)'H')
+	{
+		return CharWidthTable[ch & 0xFF];
+	} // & 0xFF]; } // No need to "& 0xff" with chars!!!
+	unsigned char Char_Height(WCHAR /*ch = 'H'*/) { return CharHeight; }
 
 	// u and v are in normalized texture space
-	inline float	Char_U_Offset( WCHAR ch = (WCHAR)'H')		{ return UOffsetTable[ch&0xFF]; }// & 0xFF]; }
-	inline float	Char_V_Offset( WCHAR ch = (WCHAR)'H')		{ return VOffsetTable[ch&0xFF]; }// & 0xFF]; }
-	inline float	Char_U_Width( WCHAR ch = (WCHAR)'H' )		{ return UWidthTable[ch&0xFF]; }// & 0xFF]; }
-	inline float	Char_V_Height( WCHAR /*ch = 'H'*/)			{ return VHeight; }
+	inline float Char_U_Offset(WCHAR ch = (WCHAR)'H') { return UOffsetTable[ch & 0xFF]; } // & 0xFF]; }
+	inline float Char_V_Offset(WCHAR ch = (WCHAR)'H') { return VOffsetTable[ch & 0xFF]; } // & 0xFF]; }
+	inline float Char_U_Width(WCHAR ch = (WCHAR)'H') { return UWidthTable[ch & 0xFF]; } // & 0xFF]; }
+	inline float Char_V_Height(WCHAR /*ch = 'H'*/) { return VHeight; }
 
 	// get all four UV values as one vector4
-	Vector4 Char_UV_Corners( WCHAR ch = (WCHAR)'H' )
+	Vector4 Char_UV_Corners(WCHAR ch = (WCHAR)'H')
 	{
-//		ch &= 0xFF;
-		return Vector4( UOffsetTable[ch], VOffsetTable[ch],
-						UOffsetTable[ch] + UWidthTable[ch],
-						VOffsetTable[ch] + VHeight );
+		//		ch &= 0xFF;
+		return Vector4(UOffsetTable[ch], VOffsetTable[ch], UOffsetTable[ch] + UWidthTable[ch], VOffsetTable[ch] + VHeight);
 	}
 
 	/*
 	** access texture material
 	*/
-	TextureClass *	Peek_Texture( void )								{ return Texture; }
+	TextureClass *Peek_Texture(void) { return Texture; }
 
 private:
 	/*
 	** The material (texture) which holds the font
 	*/
-	TextureClass *		Texture;
+	TextureClass *Texture;
 
 	/*
 	** Normalized texture page offsets for each character
 	*/
-	float				UOffsetTable[ 256 ];
-	float				VOffsetTable[ 256 ];
-	float				UWidthTable[ 256 ];
-	float				VHeight;
+	float UOffsetTable[256];
+	float VOffsetTable[256];
+	float UWidthTable[256];
+	float VHeight;
 
-	unsigned char	CharWidthTable[ 256 ];
-	unsigned char	CharHeight;
+	unsigned char CharWidthTable[256];
+	unsigned char CharHeight;
 
 	/*
 	** load a targa font image (.TGA)
 	*/
-	bool	Load_Font_Image( const char *filename );
+	bool Load_Font_Image(const char *filename);
 
 	/*
 	** routines to convert a mono-spaced font to a proportional
 	** font and minimize texture image size as a result
 	*/
-	SurfaceClass *Make_Proportional( SurfaceClass *font_image );
-	SurfaceClass *Minimize_Font_Image( SurfaceClass *font_image );
-
+	SurfaceClass *Make_Proportional(SurfaceClass *font_image);
+	SurfaceClass *Minimize_Font_Image(SurfaceClass *font_image);
 };
 
 /******************************************************************
@@ -148,48 +146,54 @@ private:
 ** Font3DInstanceClass
 **
 *******************************************************************/
-class Font3DInstanceClass : public RefCountClass {
-
+class Font3DInstanceClass : public RefCountClass
+{
 public:
 	/*
 	** Constructor which creates/gets a Font3DDataClass object,
 	** and Destructor
 	*/
-	Font3DInstanceClass( const char *filename );
+	Font3DInstanceClass(const char *filename);
 	~Font3DInstanceClass();
 
 	/*
 	** access texture material
 	*/
-	TextureClass *Peek_Texture( void ) { return FontData->Peek_Texture(); }
+	TextureClass *Peek_Texture(void) { return FontData->Peek_Texture(); }
 
 	/*
 	** The non-scaled monospace char width in pixels ( set to 0 for proportional spaced font )
 	*/
-	void	Set_Mono_Spaced( void );
-	void	Set_Proportional( void )	{ MonoSpacing = 0;  Build_Cached_Tables(); }
-
+	void Set_Mono_Spaced(void);
+	void Set_Proportional(void)
+	{
+		MonoSpacing = 0;
+		Build_Cached_Tables();
+	}
 
 	/*
 	** Set the font scale (default to 1)
 	** This amount will be automatically applied to all Char_Screen_Width calls
 	*/
-	void	Set_Scale( float scale )				{ Scale = scale; Build_Cached_Tables(); }
+	void Set_Scale(float scale)
+	{
+		Scale = scale;
+		Build_Cached_Tables();
+	}
 	//	float Get_Scale() const							{ return Scale; }
 
-   /*
-	** The scaled character pixel width, height, and spacing data (clamp char to 0.255)
-	*/
-	float	Char_Width( WCHAR ch ) const		{ return ScaledWidthTable[ch&0xFF]; }
-	float	Char_Spacing( WCHAR ch ) const	{ return ScaledSpacingTable[ch&0xFF]; }
-	float	Char_Height( void ) const			{ return ScaledHeight; }
-
+	/*
+	 ** The scaled character pixel width, height, and spacing data (clamp char to 0.255)
+	 */
+	float Char_Width(WCHAR ch) const { return ScaledWidthTable[ch & 0xFF]; }
+	float Char_Spacing(WCHAR ch) const { return ScaledSpacingTable[ch & 0xFF]; }
+	float Char_Height(void) const { return ScaledHeight; }
 
 	/*
 	** The scaled pixel width of a string; useful before printing to avoid screen overflows.
 	*/
-	float String_Width( const WCHAR *test_str );
-	float String_Width( const char *test_str );
+	float String_Width(const WCHAR *test_str);
+	float String_Width(const char *test_str);
 
 	/*
 	** Char UVs
@@ -200,24 +204,27 @@ public:
 	//	inline float	Char_U_Width( WCHAR ch = (WCHAR)'H' ) { return FontData->Char_U_Width( ch & 0xFF );  }
 	//	inline float	Char_V_Height( WCHAR ch = (WCHAR)'H') { return FontData->Char_V_Height( ch & 0xFF ); }
 	//	Vector4 Char_UV_Corners( WCHAR ch = (WCHAR)'H' )	{ return FontData->Char_UV_Corners( ch & 0xFF ); }
-	RectClass		Char_UV( WCHAR ch )	{ return RectClass(	FontData->Char_U_Offset(ch),
-																				FontData->Char_V_Offset(ch),
-																				FontData->Char_U_Offset(ch) + FontData->Char_U_Width(ch),
-																				FontData->Char_V_Offset(ch) + FontData->Char_V_Height(ch) ); }
+	RectClass Char_UV(WCHAR ch)
+	{
+		return RectClass(
+				FontData->Char_U_Offset(ch),
+				FontData->Char_V_Offset(ch),
+				FontData->Char_U_Offset(ch) + FontData->Char_U_Width(ch),
+				FontData->Char_V_Offset(ch) + FontData->Char_V_Height(ch));
+	}
+
 private:
+	Font3DDataClass *FontData; // The font data
+	float Scale; // The current scale factor
+	float SpaceSpacing; // non-scaled width of space in pixels ( defaults to 1/2 'H' width )
+	float InterCharSpacing; // non-scaled width between chars in pixels
+	float MonoSpacing; // non-scaled monospace char width in pixels (0 for proportional)
 
-	Font3DDataClass *	FontData;			// The font data
-	float					Scale;				// The current scale factor
-	float					SpaceSpacing; 		// non-scaled width of space in pixels ( defaults to 1/2 'H' width )
-	float					InterCharSpacing;	// non-scaled width between chars in pixels
-	float					MonoSpacing;		// non-scaled monospace char width in pixels (0 for proportional)
+	float ScaledWidthTable[256]; // scaled cache of the chars pixel widths
+	float ScaledSpacingTable[256]; // scaled cache of the chars pixel spacing
+	float ScaledHeight; // scaled cache of the chars pixel height
 
-	float					ScaledWidthTable[256];		// scaled cache of the chars pixel widths
-	float					ScaledSpacingTable[256];	// scaled cache of the chars pixel spacing
-	float					ScaledHeight;					// scaled cache of the chars pixel height
-
-	void					Build_Cached_Tables();
+	void Build_Cached_Tables();
 };
-
 
 #endif

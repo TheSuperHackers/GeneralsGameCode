@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/INI.h"
 #include "GameLogic/AI.h"
@@ -44,9 +44,7 @@
 //-------------------------------------------------------------------------------------------------
 /** Parse GameData entry */
 //-------------------------------------------------------------------------------------------------
-void INI::parseAIDataDefinition( INI* ini )
+void INI::parseAIDataDefinition(INI *ini)
 {
 	AI::parseAiDataDefinition(ini);
 }
-
-

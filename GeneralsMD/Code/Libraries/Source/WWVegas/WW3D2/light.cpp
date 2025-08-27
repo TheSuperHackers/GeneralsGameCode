@@ -68,25 +68,21 @@
 #include "persistfactory.h"
 #include "statistics.h"
 
-
-
 /*
 ** PersistFactory for LightClasses - lights have custom save-load support
 */
-SimplePersistFactoryClass<LightClass,WW3D_PERSIST_CHUNKID_LIGHT>	_LightFactory;
+SimplePersistFactoryClass<LightClass, WW3D_PERSIST_CHUNKID_LIGHT> _LightFactory;
 
 /*
 ** Chunk ID's used by LightClass's save-load support (different from the W3D file format...)
 */
 enum
 {
-	LIGHT_CHUNK_W3DFILE						= 0x02157100,			// (w3d format light)
-	LIGHT_CHUNK_VARIABLES,												// other state not stored in the w3d format
+	LIGHT_CHUNK_W3DFILE = 0x02157100, // (w3d format light)
+	LIGHT_CHUNK_VARIABLES, // other state not stored in the w3d format
 
-	LIGHT_VARIABLE_TRANSFORM				= 0x00,					// transform for the light
+	LIGHT_VARIABLE_TRANSFORM = 0x00, // transform for the light
 };
-
-
 
 /***********************************************************************************************
  * LightClass::LightClass -- Constructor                                                       *
@@ -102,29 +98,29 @@ enum
  *   3/21/98    GTH : Created.                                                                 *
  *=============================================================================================*/
 LightClass::LightClass(LightType type) :
-	Type(type),
-	Flags(0),
-	CastShadows(false),
-	Intensity(1.0f),
-	Ambient(1,1,1),
-	Diffuse(1,1,1),
-	Specular(1,1,1),
-	NearAttenStart(0.0f),
-	NearAttenEnd(0.0f),
-	FarAttenStart(50.0f),
-	FarAttenEnd(100.0f),
-	SpotAngle(DEG_TO_RADF(45.0f)),
-	SpotAngleCos(0.707f),
-	SpotExponent(1.0f),
-	SpotDirection(0,0,1)//,
-	//Donut (false)
+		Type(type),
+		Flags(0),
+		CastShadows(false),
+		Intensity(1.0f),
+		Ambient(1, 1, 1),
+		Diffuse(1, 1, 1),
+		Specular(1, 1, 1),
+		NearAttenStart(0.0f),
+		NearAttenEnd(0.0f),
+		FarAttenStart(50.0f),
+		FarAttenEnd(100.0f),
+		SpotAngle(DEG_TO_RADF(45.0f)),
+		SpotAngleCos(0.707f),
+		SpotExponent(1.0f),
+		SpotDirection(0, 0, 1) //,
+// Donut (false)
 
 {
-	if (type == DIRECTIONAL) {
-		Set_Force_Visible(true);	// The light has no position so culling cant work.
+	if (type == DIRECTIONAL)
+	{
+		Set_Force_Visible(true); // The light has no position so culling cant work.
 	}
 }
-
 
 /***********************************************************************************************
  * LightClass::LightClass -- copy constructor                                                  *
@@ -138,25 +134,24 @@ LightClass::LightClass(LightType type) :
  * HISTORY:                                                                                    *
  *   3/21/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-LightClass::LightClass(const LightClass & src) :
-	Type(src.Type),
-	Flags(src.Flags),
-	CastShadows(src.CastShadows),
-	Intensity(src.Intensity),
-	Ambient(src.Ambient),
-	Diffuse(src.Diffuse),
-	Specular(src.Specular),
-	NearAttenStart(src.NearAttenStart),
-	NearAttenEnd(src.NearAttenEnd),
-	FarAttenStart(src.FarAttenStart),
-	FarAttenEnd(src.FarAttenEnd),
-	SpotAngle(src.SpotAngle),
-	SpotAngleCos(src.SpotAngleCos),
-	SpotExponent(src.SpotExponent),
-	SpotDirection(src.SpotDirection)
+LightClass::LightClass(const LightClass &src) :
+		Type(src.Type),
+		Flags(src.Flags),
+		CastShadows(src.CastShadows),
+		Intensity(src.Intensity),
+		Ambient(src.Ambient),
+		Diffuse(src.Diffuse),
+		Specular(src.Specular),
+		NearAttenStart(src.NearAttenStart),
+		NearAttenEnd(src.NearAttenEnd),
+		FarAttenStart(src.FarAttenStart),
+		FarAttenEnd(src.FarAttenEnd),
+		SpotAngle(src.SpotAngle),
+		SpotAngleCos(src.SpotAngleCos),
+		SpotExponent(src.SpotExponent),
+		SpotDirection(src.SpotDirection)
 {
 }
-
 
 /***********************************************************************************************
  * LightClass::operator == -- assignment operator                                              *
@@ -170,10 +165,11 @@ LightClass::LightClass(const LightClass & src) :
  * HISTORY:                                                                                    *
  *   3/21/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-LightClass & LightClass::operator = (const LightClass & that)
+LightClass &LightClass::operator=(const LightClass &that)
 {
-	if (this != &that) {
-		RenderObjClass::operator = (that);
+	if (this != &that)
+	{
+		RenderObjClass::operator=(that);
 
 		Type = that.Type;
 		Flags = that.Flags;
@@ -191,9 +187,8 @@ LightClass & LightClass::operator = (const LightClass & that)
 		SpotExponent = that.SpotExponent;
 		SpotDirection = that.SpotDirection;
 	}
-	return * this;
+	return *this;
 }
-
 
 /***********************************************************************************************
  * LightClass::~LightClass -- destructor                                                       *
@@ -211,7 +206,6 @@ LightClass::~LightClass(void)
 {
 }
 
-
 /***********************************************************************************************
  * LightClass::Clone -- virtual copy constructor                                               *
  *                                                                                             *
@@ -224,11 +218,10 @@ LightClass::~LightClass(void)
  * HISTORY:                                                                                    *
  *   3/21/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-RenderObjClass * LightClass::Clone(void) const
+RenderObjClass *LightClass::Clone(void) const
 {
 	return W3DNEW LightClass(*this);
 }
-
 
 /***********************************************************************************************
  * LightClass::Notify_Added -- lights add themselves to the VP list when added                 *
@@ -242,12 +235,11 @@ RenderObjClass * LightClass::Clone(void) const
  * HISTORY:                                                                                    *
  *   2/26/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-void LightClass::Notify_Added(SceneClass * scene)
+void LightClass::Notify_Added(SceneClass *scene)
 {
 	RenderObjClass::Notify_Added(scene);
-	scene->Register(this,SceneClass::LIGHT);
+	scene->Register(this, SceneClass::LIGHT);
 }
-
 
 /***********************************************************************************************
  * LightClass::Notify_Removed -- lights remove themselves from the VP list when removed        *
@@ -261,13 +253,11 @@ void LightClass::Notify_Added(SceneClass * scene)
  * HISTORY:                                                                                    *
  *   2/26/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-void LightClass::Notify_Removed(SceneClass * scene)
+void LightClass::Notify_Removed(SceneClass *scene)
 {
-	scene->Unregister(this,SceneClass::LIGHT);
+	scene->Unregister(this, SceneClass::LIGHT);
 	RenderObjClass::Notify_Removed(scene);
 }
-
-
 
 /***********************************************************************************************
  * LightClass::Get_Obj_Space_Bounding_Sphere -- returns the object space bounding sphere       *
@@ -281,12 +271,11 @@ void LightClass::Notify_Removed(SceneClass * scene)
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void LightClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
+void LightClass::Get_Obj_Space_Bounding_Sphere(SphereClass &sphere) const
 {
-	sphere.Center.Set(0,0,0);
+	sphere.Center.Set(0, 0, 0);
 	sphere.Radius = Get_Attenuation_Range();
 }
-
 
 /***********************************************************************************************
  * LightClass::Get_Obj_Space_Bounding_Box -- returns the object space bounding box             *
@@ -300,13 +289,12 @@ void LightClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
  * HISTORY:                                                                                    *
  *   12/8/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void LightClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
+void LightClass::Get_Obj_Space_Bounding_Box(AABoxClass &box) const
 {
 	float r = Get_Attenuation_Range();
-	box.Center.Set(0,0,0);
-	box.Extent.Set(r,r,r);
+	box.Center.Set(0, 0, 0);
+	box.Extent.Set(r, r, r);
 }
-
 
 /***********************************************************************************************
  * LightClass::Load_W3D -- Initialize this light from a W3D file                               *
@@ -320,72 +308,72 @@ void LightClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
  * HISTORY:                                                                                    *
  *   9/23/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-WW3DErrorType LightClass::Load_W3D(ChunkLoadClass & cload)
+WW3DErrorType LightClass::Load_W3D(ChunkLoadClass &cload)
 {
 	W3dLightStruct lightinfo;
 
 	cload.Open_Chunk();
 	WWASSERT(cload.Cur_Chunk_ID() == W3D_CHUNK_LIGHT_INFO);
-	cload.Read(&lightinfo,sizeof(lightinfo));
+	cload.Read(&lightinfo, sizeof(lightinfo));
 	cload.Close_Chunk();
 
-	switch(lightinfo.Attributes & W3D_LIGHT_ATTRIBUTE_TYPE_MASK)
+	switch (lightinfo.Attributes & W3D_LIGHT_ATTRIBUTE_TYPE_MASK)
 	{
-	case W3D_LIGHT_ATTRIBUTE_POINT:
-		Type = POINT;
-		break;
-	case W3D_LIGHT_ATTRIBUTE_DIRECTIONAL:
-		Type = DIRECTIONAL;
-		break;
-	case W3D_LIGHT_ATTRIBUTE_SPOT:
-		Type = SPOT;
-		break;
+		case W3D_LIGHT_ATTRIBUTE_POINT:
+			Type = POINT;
+			break;
+		case W3D_LIGHT_ATTRIBUTE_DIRECTIONAL:
+			Type = DIRECTIONAL;
+			break;
+		case W3D_LIGHT_ATTRIBUTE_SPOT:
+			Type = SPOT;
+			break;
 	}
 
 	Enable_Shadows((lightinfo.Attributes & W3D_LIGHT_ATTRIBUTE_CAST_SHADOWS) == W3D_LIGHT_ATTRIBUTE_CAST_SHADOWS);
 	Set_Intensity(lightinfo.Intensity);
 
 	Vector3 color;
-	W3dUtilityClass::Convert_Color(lightinfo.Ambient,&color);
+	W3dUtilityClass::Convert_Color(lightinfo.Ambient, &color);
 	Set_Ambient(color);
-	W3dUtilityClass::Convert_Color(lightinfo.Diffuse,&color);
+	W3dUtilityClass::Convert_Color(lightinfo.Diffuse, &color);
 	Set_Diffuse(color);
-	W3dUtilityClass::Convert_Color(lightinfo.Specular,&color);
+	W3dUtilityClass::Convert_Color(lightinfo.Specular, &color);
 	Set_Specular(color);
 
-	W3dSpotLightStruct				spotinfo;
-	W3dLightAttenuationStruct		atteninfo;
-	Vector3								vec;
+	W3dSpotLightStruct spotinfo;
+	W3dLightAttenuationStruct atteninfo;
+	Vector3 vec;
 
-	while (cload.Open_Chunk()) {
-		switch(cload.Cur_Chunk_ID())
+	while (cload.Open_Chunk())
+	{
+		switch (cload.Cur_Chunk_ID())
 		{
-		case W3D_CHUNK_SPOT_LIGHT_INFO:
-			cload.Read(&spotinfo,sizeof(spotinfo));
-			Set_Spot_Angle(spotinfo.SpotAngle);
-			Set_Spot_Exponent(spotinfo.SpotExponent);
-			W3dUtilityClass::Convert_Vector(spotinfo.SpotDirection,&vec);
-			Set_Spot_Direction(vec);
-			break;
+			case W3D_CHUNK_SPOT_LIGHT_INFO:
+				cload.Read(&spotinfo, sizeof(spotinfo));
+				Set_Spot_Angle(spotinfo.SpotAngle);
+				Set_Spot_Exponent(spotinfo.SpotExponent);
+				W3dUtilityClass::Convert_Vector(spotinfo.SpotDirection, &vec);
+				Set_Spot_Direction(vec);
+				break;
 
-		case W3D_CHUNK_NEAR_ATTENUATION:
-			cload.Read(&atteninfo,sizeof(atteninfo));
-			Set_Flag(NEAR_ATTENUATION,true);
-			Set_Near_Attenuation_Range(atteninfo.Start,atteninfo.End);
-			break;
+			case W3D_CHUNK_NEAR_ATTENUATION:
+				cload.Read(&atteninfo, sizeof(atteninfo));
+				Set_Flag(NEAR_ATTENUATION, true);
+				Set_Near_Attenuation_Range(atteninfo.Start, atteninfo.End);
+				break;
 
-		case W3D_CHUNK_FAR_ATTENUATION:
-			cload.Read(&atteninfo,sizeof(atteninfo));
-			Set_Flag(FAR_ATTENUATION,true);
-			Set_Far_Attenuation_Range(atteninfo.Start,atteninfo.End);
-			break;
+			case W3D_CHUNK_FAR_ATTENUATION:
+				cload.Read(&atteninfo, sizeof(atteninfo));
+				Set_Flag(FAR_ATTENUATION, true);
+				Set_Far_Attenuation_Range(atteninfo.Start, atteninfo.End);
+				break;
 		}
 		cload.Close_Chunk();
 	}
 
 	return WW3D_ERROR_OK;
 }
-
 
 /***********************************************************************************************
  * LightClass::Save_W3D -- Save this light's settings into a W3D file                          *
@@ -399,86 +387,90 @@ WW3DErrorType LightClass::Load_W3D(ChunkLoadClass & cload)
  * HISTORY:                                                                                    *
  *   9/23/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-WW3DErrorType LightClass::Save_W3D(ChunkSaveClass & csave)
+WW3DErrorType LightClass::Save_W3D(ChunkSaveClass &csave)
 {
 	csave.Begin_Chunk(W3D_CHUNK_LIGHT);
 
 	csave.Begin_Chunk(W3D_CHUNK_LIGHT_INFO);
 
 	W3dLightStruct lightinfo;
-	memset(&lightinfo,0,sizeof(lightinfo));
+	memset(&lightinfo, 0, sizeof(lightinfo));
 
 	switch (Type)
 	{
-	case POINT:
-		lightinfo.Attributes |= W3D_LIGHT_ATTRIBUTE_POINT;
-		break;
-	case DIRECTIONAL:
-		lightinfo.Attributes |= W3D_LIGHT_ATTRIBUTE_DIRECTIONAL;
-		break;
-	case SPOT:
-		lightinfo.Attributes |= W3D_LIGHT_ATTRIBUTE_SPOT;
-		break;
+		case POINT:
+			lightinfo.Attributes |= W3D_LIGHT_ATTRIBUTE_POINT;
+			break;
+		case DIRECTIONAL:
+			lightinfo.Attributes |= W3D_LIGHT_ATTRIBUTE_DIRECTIONAL;
+			break;
+		case SPOT:
+			lightinfo.Attributes |= W3D_LIGHT_ATTRIBUTE_SPOT;
+			break;
 	}
 
-	if (Are_Shadows_Enabled()) {
+	if (Are_Shadows_Enabled())
+	{
 		lightinfo.Attributes |= W3D_LIGHT_ATTRIBUTE_CAST_SHADOWS;
 	}
 
 	Vector3 color;
 	Get_Ambient(&color);
-	W3dUtilityClass::Convert_Color(color,(&lightinfo.Ambient));
+	W3dUtilityClass::Convert_Color(color, (&lightinfo.Ambient));
 	Get_Diffuse(&color);
-	W3dUtilityClass::Convert_Color(color,(&lightinfo.Diffuse));
+	W3dUtilityClass::Convert_Color(color, (&lightinfo.Diffuse));
 	Get_Specular(&color);
-	W3dUtilityClass::Convert_Color(color,(&lightinfo.Specular));
+	W3dUtilityClass::Convert_Color(color, (&lightinfo.Specular));
 
 	lightinfo.Intensity = Get_Intensity();
 
-	csave.Write(&lightinfo,sizeof(lightinfo));
+	csave.Write(&lightinfo, sizeof(lightinfo));
 	csave.End_Chunk();
 
-	if (Type == SPOT) {
+	if (Type == SPOT)
+	{
 		csave.Begin_Chunk(W3D_CHUNK_SPOT_LIGHT_INFO);
 
 		W3dSpotLightStruct spotinfo;
-		memset(&spotinfo,0,sizeof(spotinfo));
+		memset(&spotinfo, 0, sizeof(spotinfo));
 		spotinfo.SpotAngle = SpotAngle;
 		spotinfo.SpotExponent = SpotExponent;
 		spotinfo.SpotDirection.X = SpotDirection.X;
 		spotinfo.SpotDirection.Y = SpotDirection.Y;
 		spotinfo.SpotDirection.Z = SpotDirection.Z;
-		csave.Write(&spotinfo,sizeof(spotinfo));
+		csave.Write(&spotinfo, sizeof(spotinfo));
 
 		csave.End_Chunk();
 	}
 
-	if (Get_Flag(NEAR_ATTENUATION)) {
+	if (Get_Flag(NEAR_ATTENUATION))
+	{
 		csave.Begin_Chunk(W3D_CHUNK_NEAR_ATTENUATION);
 
-		double start,end;
-		Get_Near_Attenuation_Range(start,end);
+		double start, end;
+		Get_Near_Attenuation_Range(start, end);
 
 		W3dLightAttenuationStruct atten;
-		memset(&atten,0,sizeof(atten));
+		memset(&atten, 0, sizeof(atten));
 		atten.Start = start;
 		atten.End = end;
-		csave.Write(&atten,sizeof(atten));
+		csave.Write(&atten, sizeof(atten));
 
 		csave.End_Chunk();
 	}
 
-	if (Get_Flag(FAR_ATTENUATION)) {
+	if (Get_Flag(FAR_ATTENUATION))
+	{
 		csave.Begin_Chunk(W3D_CHUNK_FAR_ATTENUATION);
 
-		double start,end;
-		Get_Far_Attenuation_Range(start,end);
+		double start, end;
+		Get_Far_Attenuation_Range(start, end);
 
 		W3dLightAttenuationStruct atten;
-		memset(&atten,0,sizeof(atten));
+		memset(&atten, 0, sizeof(atten));
 		atten.Start = start;
 		atten.End = end;
-		csave.Write(&atten,sizeof(atten));
+		csave.Write(&atten, sizeof(atten));
 
 		csave.End_Chunk();
 	}
@@ -487,7 +479,6 @@ WW3DErrorType LightClass::Save_W3D(ChunkSaveClass & csave)
 
 	return WW3D_ERROR_OK;
 }
-
 
 /***********************************************************************************************
  * LightClass::Get_Factory -- get the PersistFactory for LightClass                            *
@@ -501,11 +492,10 @@ WW3DErrorType LightClass::Save_W3D(ChunkSaveClass & csave)
  * HISTORY:                                                                                    *
  *   9/23/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-const PersistFactoryClass & LightClass::Get_Factory (void) const
+const PersistFactoryClass &LightClass::Get_Factory(void) const
 {
 	return _LightFactory;
 }
-
 
 /***********************************************************************************************
  * LightClass::Save -- persistant object support                                               *
@@ -519,7 +509,7 @@ const PersistFactoryClass & LightClass::Get_Factory (void) const
  * HISTORY:                                                                                    *
  *   9/23/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-bool LightClass::Save (ChunkSaveClass &csave)
+bool LightClass::Save(ChunkSaveClass &csave)
 {
 	csave.Begin_Chunk(LIGHT_CHUNK_W3DFILE);
 	Save_W3D(csave);
@@ -527,12 +517,11 @@ bool LightClass::Save (ChunkSaveClass &csave)
 
 	Matrix3D tm = Get_Transform();
 	csave.Begin_Chunk(LIGHT_CHUNK_VARIABLES);
-	WRITE_MICRO_CHUNK(csave,LIGHT_VARIABLE_TRANSFORM,tm);
+	WRITE_MICRO_CHUNK(csave, LIGHT_VARIABLE_TRANSFORM, tm);
 	csave.End_Chunk();
 
 	return true;
 }
-
 
 /***********************************************************************************************
  * LightClass::Load -- persistant object support                                               *
@@ -546,12 +535,13 @@ bool LightClass::Save (ChunkSaveClass &csave)
  * HISTORY:                                                                                    *
  *   9/23/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-bool LightClass::Load (ChunkLoadClass &cload)
+bool LightClass::Load(ChunkLoadClass &cload)
 {
 	Matrix3D tm(1);
-	while (cload.Open_Chunk()) {
-		switch (cload.Cur_Chunk_ID()) {
-
+	while (cload.Open_Chunk())
+	{
+		switch (cload.Cur_Chunk_ID())
+		{
 			case LIGHT_CHUNK_W3DFILE:
 				// The W3D code is non-symmetrical, the Save function writes a W3D_LIGHT chunk
 				// but the load function expects the external user to have opened it.  So open it here...
@@ -561,16 +551,18 @@ bool LightClass::Load (ChunkLoadClass &cload)
 				break;
 
 			case LIGHT_CHUNK_VARIABLES:
-				while (cload.Open_Micro_Chunk()) {
-					switch(cload.Cur_Micro_Chunk_ID()) {
-						READ_MICRO_CHUNK(cload,LIGHT_VARIABLE_TRANSFORM,tm);
+				while (cload.Open_Micro_Chunk())
+				{
+					switch (cload.Cur_Micro_Chunk_ID())
+					{
+						READ_MICRO_CHUNK(cload, LIGHT_VARIABLE_TRANSFORM, tm);
 					}
 					cload.Close_Micro_Chunk();
 				}
 				break;
 
 			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
+				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d", __FILE__, __LINE__));
 				break;
 		}
 		cload.Close_Chunk();
@@ -578,4 +570,3 @@ bool LightClass::Load (ChunkLoadClass &cload)
 	Set_Transform(tm);
 	return true;
 }
-

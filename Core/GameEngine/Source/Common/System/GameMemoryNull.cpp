@@ -40,7 +40,7 @@ DynamicMemoryAllocator *TheDynamicMemoryAllocator = NULL;
 	out the block. if unable to allocate, throw ERROR_OUT_OF_MEMORY. this
 	function will never return null.
 
-  added code to make sure we're on a DWord boundary, throw exception if not
+	added code to make sure we're on a DWord boundary, throw exception if not
 */
 void *DynamicMemoryAllocator::allocateBytesDoNotZeroImplementation(Int numBytes)
 {
@@ -57,7 +57,7 @@ void *DynamicMemoryAllocator::allocateBytesDoNotZeroImplementation(Int numBytes)
 */
 void *DynamicMemoryAllocator::allocateBytesImplementation(Int numBytes)
 {
-	void* p = allocateBytesDoNotZeroImplementation(numBytes);	// throws on failure
+	void *p = allocateBytesDoNotZeroImplementation(numBytes); // throws on failure
 	memset(p, 0, numBytes);
 	return p;
 }
@@ -65,7 +65,7 @@ void *DynamicMemoryAllocator::allocateBytesImplementation(Int numBytes)
 /**
 	free a chunk-o-bytes allocated by this dma. it's ok to pass null.
 */
-void DynamicMemoryAllocator::freeBytes(void* pBlockPtr)
+void DynamicMemoryAllocator::freeBytes(void *pBlockPtr)
 {
 	free(pBlockPtr);
 }
@@ -76,7 +76,7 @@ Int DynamicMemoryAllocator::getActualAllocationSize(Int numBytes)
 }
 
 #ifdef MEMORYPOOL_DEBUG
-void DynamicMemoryAllocator::debugIgnoreLeaksForThisBlock(void* pBlockPtr)
+void DynamicMemoryAllocator::debugIgnoreLeaksForThisBlock(void *pBlockPtr)
 {
 }
 #endif
@@ -85,12 +85,12 @@ void DynamicMemoryAllocator::debugIgnoreLeaksForThisBlock(void* pBlockPtr)
 // METHODS for MemoryPoolFactory
 //-----------------------------------------------------------------------------
 
-void MemoryPoolFactory::memoryPoolUsageReport( const char* filename, FILE *appendToFileInstead )
+void MemoryPoolFactory::memoryPoolUsageReport(const char *filename, FILE *appendToFileInstead)
 {
 }
 
 #ifdef MEMORYPOOL_DEBUG
-void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int endCheckpoint, FILE *fp )
+void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int endCheckpoint, FILE *fp)
 {
 }
 void MemoryPoolFactory::debugSetInitFillerIndex(Int index)
@@ -117,7 +117,7 @@ void initMemoryManager()
 	}
 	else
 	{
-			DEBUG_CRASH(("Null Memory Manager is already initialized"));
+		DEBUG_CRASH(("Null Memory Manager is already initialized"));
 	}
 
 	theMainInitFlag = true;
@@ -155,10 +155,9 @@ void shutdownMemoryManager()
 	DEBUG_SHUTDOWN();
 }
 
-
 #ifndef DISABLE_GAMEMEMORY_NEW_OPERATORS
 
-extern void * __cdecl operator new(size_t size)
+extern void *__cdecl operator new(size_t size)
 {
 	void *p = malloc(size);
 	if (p == NULL)
@@ -172,7 +171,7 @@ extern void __cdecl operator delete(void *p)
 	free(p);
 }
 
-extern void * __cdecl operator new[](size_t size)
+extern void *__cdecl operator new[](size_t size)
 {
 	void *p = malloc(size);
 	if (p == NULL)
@@ -187,7 +186,7 @@ extern void __cdecl operator delete[](void *p)
 }
 
 // additional overloads to account for VC/MFC funky versions
-extern void* __cdecl operator new(size_t size, const char *, int)
+extern void *__cdecl operator new(size_t size, const char *, int)
 {
 	void *p = malloc(size);
 	if (p == NULL)
@@ -201,7 +200,7 @@ extern void __cdecl operator delete(void *p, const char *, int)
 	free(p);
 }
 
-extern void* __cdecl operator new[](size_t size, const char *, int)
+extern void *__cdecl operator new[](size_t size, const char *, int)
 {
 	void *p = malloc(size);
 	if (p == NULL)

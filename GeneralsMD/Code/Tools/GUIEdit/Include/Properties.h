@@ -63,14 +63,12 @@
 
 // ColorControl ---------------------------------------------------------------
 /** This makes it easier for us to associate colors with dialog
-	* control ID's for purposes of custom color buttons */
+ * control ID's for purposes of custom color buttons */
 //-----------------------------------------------------------------------------
 struct ColorControl
 {
-
-	UnsignedInt controlID;  ///< controlID from resource file
-	RGBColorInt color;					///< the color for this controlID
-
+	UnsignedInt controlID; ///< controlID from resource file
+	RGBColorInt color; ///< the color for this controlID
 };
 
 // StateIdentifiers -----------------------------------------------------------
@@ -78,8 +76,7 @@ struct ColorControl
 //-----------------------------------------------------------------------------
 typedef enum
 {
-
-	IDENTIFIER_INVALID = 0,  // keep this 0 and keep it first
+	IDENTIFIER_INVALID = 0, // keep this 0 and keep it first
 
 	FIRST_VALID_IDENTIFIER = 1,
 
@@ -347,28 +344,26 @@ typedef enum
 	GENERIC_DISABLED,
 	GENERIC_HILITE,
 
-	NUM_STATE_IDENTIFIERS  // keep this last
+	NUM_STATE_IDENTIFIERS // keep this last
 
 } StateIdentifier;
 
 // ImageAndColorInfo ----------------------------------------------------------
 /** This is a place for us to store image and color information for
-	* all the various states for each of the controls, it makes it easier
-	* for us cause we can just put and get queries in this table and
-	* work with only one set of dialog controls on all the property
-	* dialog windows */
+ * all the various states for each of the controls, it makes it easier
+ * for us cause we can just put and get queries in this table and
+ * work with only one set of dialog controls on all the property
+ * dialog windows */
 //-----------------------------------------------------------------------------
 struct ImageAndColorInfo
 {
-
-	UnsignedInt windowType;  ///< this entry applies to these kind of windows
-	StateIdentifier stateID;  ///< state identifier
-	const char *stateName;  ///< string state name that this affects
-	char* stateNameBuffer; ///< optional buffer for state name string
-	const Image *image;  ///< the image for this entry
-	Color color;  ///< color for this entry
-	Color borderColor;   ///< border color for this entry
-
+	UnsignedInt windowType; ///< this entry applies to these kind of windows
+	StateIdentifier stateID; ///< state identifier
+	const char *stateName; ///< string state name that this affects
+	char *stateNameBuffer; ///< optional buffer for state name string
+	const Image *image; ///< the image for this entry
+	Color color; ///< color for this entry
+	Color borderColor; ///< border color for this entry
 };
 
 // INLINING ///////////////////////////////////////////////////////////////////
@@ -376,55 +371,55 @@ struct ImageAndColorInfo
 ///////////////////////////////////////////////////////////////////////////////
 // EXTERNALS //////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-extern void InitPropertiesDialog( GameWindow *window, Int x, Int y );
+extern void InitPropertiesDialog(GameWindow *window, Int x, Int y);
 
-extern HWND InitPushButtonPropertiesDialog( GameWindow *window );
-extern HWND InitRadioButtonPropertiesDialog( GameWindow *window );
-extern HWND InitCheckBoxPropertiesDialog( GameWindow *window );
-extern HWND InitListboxPropertiesDialog( GameWindow *window );
-extern HWND InitComboBoxPropertiesDialog( GameWindow *window );
-extern HWND InitProgressBarPropertiesDialog( GameWindow *window );
-extern HWND InitTabControlPropertiesDialog( GameWindow *window );
-extern HWND InitStaticTextPropertiesDialog( GameWindow *window );
-extern HWND InitTextEntryPropertiesDialog( GameWindow *window );
-extern HWND InitSliderPropertiesDialog( GameWindow *window );
-extern HWND InitUserWinPropertiesDialog( GameWindow *window );
+extern HWND InitPushButtonPropertiesDialog(GameWindow *window);
+extern HWND InitRadioButtonPropertiesDialog(GameWindow *window);
+extern HWND InitCheckBoxPropertiesDialog(GameWindow *window);
+extern HWND InitListboxPropertiesDialog(GameWindow *window);
+extern HWND InitComboBoxPropertiesDialog(GameWindow *window);
+extern HWND InitProgressBarPropertiesDialog(GameWindow *window);
+extern HWND InitTabControlPropertiesDialog(GameWindow *window);
+extern HWND InitStaticTextPropertiesDialog(GameWindow *window);
+extern HWND InitTextEntryPropertiesDialog(GameWindow *window);
+extern HWND InitSliderPropertiesDialog(GameWindow *window);
+extern HWND InitUserWinPropertiesDialog(GameWindow *window);
 
 // these functions help us in managing the dialog "engine"
-extern Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
-																				WPARAM wParam, LPARAM lParam,
-																				Int *returnCode );
-extern void CommonDialogInitialize( GameWindow *window, HWND dialog );
-extern void LoadImageListComboBox( HWND comboBox );
-extern void LoadHeaderTemplateListComboBox( HWND comboBox, AsciiString selected );
-extern const Image *ComboBoxSelectionToImage( HWND comboBox );
-extern RGBColorInt *GetControlColor( UnsignedInt controlID );
-extern void SetControlColor( UnsignedInt controlID, Color color );
-extern void PositionWindowOnScreen( HWND window, Int x, Int y );
-extern Bool SaveCommonDialogProperties( HWND dialog, GameWindow *window );
-extern void LoadStateCombo( UnsignedInt style, HWND comboBox );
-extern void LoadTextStateCombo( HWND comboBox,
-																Color enabled, Color enabledBorder,
-																Color disabled, Color disabledBorder,
-																Color hilite, Color hiliteBorder );
-extern void InitCallbackCombos( HWND dialog, GameWindow *window );
-extern void SaveCallbacks( GameWindow *window, HWND dialog );
+extern Bool HandleCommonDialogMessages(HWND hWndDialog, UINT message, WPARAM wParam, LPARAM lParam, Int *returnCode);
+extern void CommonDialogInitialize(GameWindow *window, HWND dialog);
+extern void LoadImageListComboBox(HWND comboBox);
+extern void LoadHeaderTemplateListComboBox(HWND comboBox, AsciiString selected);
+extern const Image *ComboBoxSelectionToImage(HWND comboBox);
+extern RGBColorInt *GetControlColor(UnsignedInt controlID);
+extern void SetControlColor(UnsignedInt controlID, Color color);
+extern void PositionWindowOnScreen(HWND window, Int x, Int y);
+extern Bool SaveCommonDialogProperties(HWND dialog, GameWindow *window);
+extern void LoadStateCombo(UnsignedInt style, HWND comboBox);
+extern void LoadTextStateCombo(
+		HWND comboBox,
+		Color enabled,
+		Color enabledBorder,
+		Color disabled,
+		Color disabledBorder,
+		Color hilite,
+		Color hiliteBorder);
+extern void InitCallbackCombos(HWND dialog, GameWindow *window);
+extern void SaveCallbacks(GameWindow *window, HWND dialog);
 
-extern ImageAndColorInfo *GetStateInfo( StateIdentifier id );
-extern ImageAndColorInfo *GetCurrentStateInfo( HWND dialog );
-void SwitchToState( StateIdentifier id, HWND dialog );
-extern void StoreImageAndColor( StateIdentifier id, const Image *image,
-																Color color, Color borderColor );
-extern void StoreColor( StateIdentifier id, Color color, Color borderColor );
-extern void LoadFontCombo( HWND comboBox, GameFont *currFont );
-extern GameFont *GetSelectedFontFromCombo( HWND combo );
+extern ImageAndColorInfo *GetStateInfo(StateIdentifier id);
+extern ImageAndColorInfo *GetCurrentStateInfo(HWND dialog);
+void SwitchToState(StateIdentifier id, HWND dialog);
+extern void StoreImageAndColor(StateIdentifier id, const Image *image, Color color, Color borderColor);
+extern void StoreColor(StateIdentifier id, Color color, Color borderColor);
+extern void LoadFontCombo(HWND comboBox, GameFont *currFont);
+extern GameFont *GetSelectedFontFromCombo(HWND combo);
 
-extern Color GetPropsEnabledTextColor( void );
-extern Color GetPropsEnabledTextBorderColor( void );
-extern Color GetPropsDisabledTextColor( void );
-extern Color GetPropsDisabledTextBorderColor( void );
-extern Color GetPropsHiliteTextColor( void );
-extern Color GetPropsHiliteTextBorderColor( void );
+extern Color GetPropsEnabledTextColor(void);
+extern Color GetPropsEnabledTextBorderColor(void);
+extern Color GetPropsDisabledTextColor(void);
+extern Color GetPropsDisabledTextBorderColor(void);
+extern Color GetPropsHiliteTextColor(void);
+extern Color GetPropsHiliteTextBorderColor(void);
 
 #endif // __PROPERTIES_H_
-

@@ -27,9 +27,8 @@
 // Desc:   Simple Die module
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #define DEFINE_DAMAGE_NAMES
 #include "Common/INI.h"
@@ -44,31 +43,29 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FXListDie::FXListDie( Thing *thing, const ModuleData* moduleData ) : DieModule( thing, moduleData )
+FXListDie::FXListDie(Thing *thing, const ModuleData *moduleData) : DieModule(thing, moduleData)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FXListDie::~FXListDie( void )
+FXListDie::~FXListDie(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** The die callback. */
 //-------------------------------------------------------------------------------------------------
-void FXListDie::onDie( const DamageInfo *damageInfo )
+void FXListDie::onDie(const DamageInfo *damageInfo)
 {
 	if (!isDieApplicable(damageInfo))
 		return;
-	const FXListDieModuleData* d = getFXListDieModuleData();
+	const FXListDieModuleData *d = getFXListDieModuleData();
 	if (d->m_defaultDeathFX)
 	{
-
 		if (d->m_orientToObject)
 		{
-			Object *damageDealer = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
+			Object *damageDealer = TheGameLogic->findObjectByID(damageInfo->in.m_sourceID);
 			FXList::doFXObj(getFXListDieModuleData()->m_defaultDeathFX, getObject(), damageDealer);
 		}
 		else
@@ -81,39 +78,36 @@ void FXListDie::onDie( const DamageInfo *damageInfo )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void FXListDie::crc( Xfer *xfer )
+void FXListDie::crc(Xfer *xfer)
 {
-
 	// extend base class
-	DieModule::crc( xfer );
+	DieModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void FXListDie::xfer( Xfer *xfer )
+void FXListDie::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DieModule::xfer( xfer );
+	DieModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FXListDie::loadPostProcess( void )
+void FXListDie::loadPostProcess(void)
 {
-
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

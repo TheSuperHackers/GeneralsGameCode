@@ -39,7 +39,7 @@
 // ***********************************
 // Set this to 0 to remove all embedded browser code.
 //
-#define ENABLE_EMBEDDED_BROWSER		1
+#define ENABLE_EMBEDDED_BROWSER 1
 //
 // ***********************************
 
@@ -47,8 +47,8 @@
 
 // These options must match the browser option bits defined in the BrowserEngine code.
 // Look in febrowserengine.h
-#define BROWSEROPTION_SCROLLBARS		0x0001
-#define BROWSEROPTION_3DBORDER		0x0002
+#define BROWSEROPTION_SCROLLBARS 0x0001
+#define BROWSEROPTION_3DBORDER 0x0002
 
 struct IDirect3DDevice8;
 
@@ -60,32 +60,41 @@ struct IDirect3DDevice8;
 class DX8WebBrowser
 {
 public:
+	static bool Initialize(
+			const char *badpageurl = 0,
+			const char *loadingpageurl = 0,
+			const char *mousefilename = 0,
+			const char *mousebusyfilename = 0); // Initialize the Embedded Browser
 
-	static bool			Initialize(	const char* badpageurl = 0,
-											const char* loadingpageurl = 0,
-											const char* mousefilename = 0,
-											const char* mousebusyfilename = 0);			//Initialize the Embedded Browser
+	static void Shutdown(void); // Shutdown the embedded browser.  Will close any open browsers.
 
-	static void			Shutdown(void);			// Shutdown the embedded browser.  Will close any open browsers.
-
-	static void			Update(void);				// Copies all browser contexts to D3D Image surfaces.
-	static void			Render(int backbufferindex);	//Draws all browsers to the backbuffer.
+	static void Update(void); // Copies all browser contexts to D3D Image surfaces.
+	static void Render(int backbufferindex); // Draws all browsers to the backbuffer.
 
 	// Creates a browser with the specified name
-	static void			CreateBrowser(const char* browsername, const char* url, int x, int y, int w, int h, int updateticks = 0, LONG options = BROWSEROPTION_SCROLLBARS | BROWSEROPTION_3DBORDER, LPDISPATCH gamedispatch = 0);
+	static void CreateBrowser(
+			const char *browsername,
+			const char *url,
+			int x,
+			int y,
+			int w,
+			int h,
+			int updateticks = 0,
+			LONG options = BROWSEROPTION_SCROLLBARS | BROWSEROPTION_3DBORDER,
+			LPDISPATCH gamedispatch = 0);
 
 	// Destroys the browser with the specified name
-	static void			DestroyBrowser(const char* browsername);
+	static void DestroyBrowser(const char *browsername);
 
 	// Returns true if a browser with the specified name is open.
-	static bool			Is_Browser_Open(const char* browsername);
+	static bool Is_Browser_Open(const char *browsername);
 
 	// Navigates the specified browser to the specified page.
-	static void			Navigate(const char* browsername, const char* url);
+	static void Navigate(const char *browsername, const char *url);
 
 private:
 	// The window handle of the application.  This is initialized by Initialize().
-	static				HWND						hWnd;
+	static HWND hWnd;
 };
 
 #endif

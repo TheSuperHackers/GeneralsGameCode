@@ -47,11 +47,10 @@
 ///////////////////////////////////////////////////////////////////////////
 typedef enum
 {
-	VERT_POSITION		= 1,
-	VERT_COLORS			= 2,
-	BOTH					= VERT_POSITION | VERT_COLORS
+	VERT_POSITION = 1,
+	VERT_COLORS = 2,
+	BOTH = VERT_POSITION | VERT_COLORS
 } DEFORM_CHANNELS;
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -68,25 +67,21 @@ typedef enum
 ///////////////////////////////////////////////////////////////////////////
 typedef struct _VERT_INFO
 {
-	_VERT_INFO (void)
-		:	index (0),
-			color_index (0),
-			value (0,0,0)				{ }
+	_VERT_INFO(void) : index(0), color_index(0), value(0, 0, 0) {}
 
-	_VERT_INFO (int vert_index, const Point3 &point, int vert_color_index = 0)
-		:	index (vert_index),
-			color_index (vert_color_index),
-			value (point)				{ }
+	_VERT_INFO(int vert_index, const Point3 &point, int vert_color_index = 0) :
+			index(vert_index), color_index(vert_color_index), value(point)
+	{
+	}
 
-	UINT			index;
-	UINT			color_index;
-	Point3		value;
+	UINT index;
+	UINT color_index;
+	Point3 value;
 
 	// Don't care, DynamicVectorClass needs these
-	bool operator== (const _VERT_INFO &src) { return false; }
-	bool operator!= (const _VERT_INFO &src) { return true; }
+	bool operator==(const _VERT_INFO &src) { return false; }
+	bool operator!=(const _VERT_INFO &src) { return true; }
 } VERT_INFO;
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -95,6 +90,4 @@ typedef struct _VERT_INFO
 ///////////////////////////////////////////////////////////////////////////
 typedef DynamicVectorClass<VERT_INFO> DEFORM_LIST;
 
-
 #endif //__MESH_DEFORM_DEFS_H
-

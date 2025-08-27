@@ -28,49 +28,58 @@ namespace patchget
 
 #if defined(DEBUG) || defined(DEBUG_LOGGING)
 
-void DebugLog( const char *fmt, ... );
+void DebugLog(const char *fmt, ...);
 #define DEBUG_LOG(x) DebugLog x
 
 #else // DEBUG
 
-#define DEBUG_LOG(x) {}
+#define DEBUG_LOG(x) \
+	{ \
+	}
 
 #endif // DEBUG
 
-
 #ifdef DEBUG_CRASHING
 
-	extern void DebugCrash(const char *format, ...);
+extern void DebugCrash(const char *format, ...);
 
-	/*
-		Yeah, it's a sleazy global, since we can't reasonably add
-		any args to DebugCrash due to the varargs nature of it.
-		We'll just let it slide in this case...
-	*/
-	extern char* TheCurrentIgnoreCrashPtr;
+/*
+	Yeah, it's a sleazy global, since we can't reasonably add
+	any args to DebugCrash due to the varargs nature of it.
+	We'll just let it slide in this case...
+*/
+extern char *TheCurrentIgnoreCrashPtr;
 
-	#define DEBUG_CRASH(m)	\
-		do { \
+#define DEBUG_CRASH(m) \
+	do \
+	{ \
+		{ \
+			static char ignoreCrash = 0; \
+			if (!ignoreCrash) \
 			{ \
-				static char ignoreCrash = 0; \
-				if (!ignoreCrash) { \
-					TheCurrentIgnoreCrashPtr = &ignoreCrash; \
-					DebugCrash m ; \
-					TheCurrentIgnoreCrashPtr = NULL; \
-				} \
+				TheCurrentIgnoreCrashPtr = &ignoreCrash; \
+				DebugCrash m; \
+				TheCurrentIgnoreCrashPtr = NULL; \
 			} \
-		} while (0)
+		} \
+	} while (0)
 
-	#define DEBUG_ASSERTCRASH(c, m)		do { { if (!(c)) DEBUG_CRASH(m); } } while (0)
+#define DEBUG_ASSERTCRASH(c, m) \
+	do \
+	{ \
+		{ \
+			if (!(c)) \
+				DEBUG_CRASH(m); \
+		} \
+	} while (0)
 
 #else
 
-	#define DEBUG_CRASH(m)					((void)0)
-	#define DEBUG_ASSERTCRASH(c, m)	((void)0)
+#define DEBUG_CRASH(m) ((void)0)
+#define DEBUG_ASSERTCRASH(c, m) ((void)0)
 
 #endif
 
 } // namespace patchget
 
 #endif // __DEBUG_H__
-

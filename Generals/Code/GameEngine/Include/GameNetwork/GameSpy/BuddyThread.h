@@ -41,18 +41,18 @@ class BuddyRequest
 public:
 	enum
 	{
-		BUDDYREQUEST_LOGIN,				// attempt to login
-		BUDDYREQUEST_RELOGIN,			// log in after being disconnected
-		BUDDYREQUEST_LOGOUT,			// log out if connected
+		BUDDYREQUEST_LOGIN, // attempt to login
+		BUDDYREQUEST_RELOGIN, // log in after being disconnected
+		BUDDYREQUEST_LOGOUT, // log out if connected
 		BUDDYREQUEST_MESSAGE,
-		BUDDYREQUEST_LOGINNEW,		// attempt to create a new nick and login
-		//BUDDYREQUEST_DELETELOGIN,
-		BUDDYREQUEST_ADDBUDDY,		// add someone to your buddy list
-		BUDDYREQUEST_DELBUDDY,		// delete someone from your buddy list
-		BUDDYREQUEST_OKADD,				// allow someone to add you to their buddy list
-		BUDDYREQUEST_DENYADD,			// don't allow someone to add you to their buddy list
-		BUDDYREQUEST_SETSTATUS,		// Set our status
-		BUDDYREQUEST_DELETEACCT,	// Delete our account
+		BUDDYREQUEST_LOGINNEW, // attempt to create a new nick and login
+		// BUDDYREQUEST_DELETELOGIN,
+		BUDDYREQUEST_ADDBUDDY, // add someone to your buddy list
+		BUDDYREQUEST_DELBUDDY, // delete someone from your buddy list
+		BUDDYREQUEST_OKADD, // allow someone to add you to their buddy list
+		BUDDYREQUEST_DENYADD, // don't allow someone to add you to their buddy list
+		BUDDYREQUEST_SETSTATUS, // Set our status
+		BUDDYREQUEST_DELETEACCT, // Delete our account
 		BUDDYREQUEST_MAX
 	} buddyRequestType;
 
@@ -131,7 +131,7 @@ public:
 
 		struct
 		{
-			//GPResult result;
+			// GPResult result;
 			GPErrorCode errorCode;
 			char errorString[MAX_BUDDY_CHAT_LEN];
 			GPEnum fatal;
@@ -156,24 +156,23 @@ class GameSpyBuddyMessageQueueInterface
 {
 public:
 	virtual ~GameSpyBuddyMessageQueueInterface() {}
-	virtual void startThread( void ) = 0;
-	virtual void endThread( void ) = 0;
-	virtual Bool isThreadRunning( void ) = 0;
-	virtual Bool isConnected( void ) = 0;
-	virtual Bool isConnecting( void ) = 0;
+	virtual void startThread(void) = 0;
+	virtual void endThread(void) = 0;
+	virtual Bool isThreadRunning(void) = 0;
+	virtual Bool isConnected(void) = 0;
+	virtual Bool isConnecting(void) = 0;
 
-	virtual void addRequest( const BuddyRequest& req ) = 0;
-	virtual Bool getRequest( BuddyRequest& req ) = 0;
+	virtual void addRequest(const BuddyRequest &req) = 0;
+	virtual Bool getRequest(BuddyRequest &req) = 0;
 
-	virtual void addResponse( const BuddyResponse& resp ) = 0;
-	virtual Bool getResponse( BuddyResponse& resp ) = 0;
+	virtual void addResponse(const BuddyResponse &resp) = 0;
+	virtual Bool getResponse(BuddyResponse &resp) = 0;
 
-	virtual GPProfile getLocalProfileID( void ) = 0;
+	virtual GPProfile getLocalProfileID(void) = 0;
 
-	static GameSpyBuddyMessageQueueInterface* createNewMessageQueue( void );
+	static GameSpyBuddyMessageQueueInterface *createNewMessageQueue(void);
 };
 
 extern GameSpyBuddyMessageQueueInterface *TheGameSpyBuddyMessageQueue;
-
 
 #endif // __BUDDYTHREAD_H__

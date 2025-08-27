@@ -27,14 +27,13 @@
 // Desc:      @todo
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/INI.h"
 #include "Common/Player.h"
 #include "Common/Science.h"
 
-ScienceStore* TheScienceStore = NULL;
-
+ScienceStore *TheScienceStore = NULL;
 
 //-----------------------------------------------------------------------------
 void ScienceStore::init()
@@ -47,14 +46,15 @@ void ScienceStore::init()
 ScienceStore::~ScienceStore()
 {
 	// nope.
-	//m_sciences.clear();
+	// m_sciences.clear();
 
 	// go through all sciences and delete any overrides
 	for (ScienceInfoVec::iterator it = m_sciences.begin(); it != m_sciences.end(); /*++it*/)
 	{
-		ScienceInfo* si = *it;
+		ScienceInfo *si = *it;
 		++it;
-		if (si) {
+		if (si)
+		{
 			deleteInstance(si);
 		}
 	}
@@ -64,13 +64,13 @@ ScienceStore::~ScienceStore()
 void ScienceStore::reset()
 {
 	// nope.
-	//m_sciences.clear();
+	// m_sciences.clear();
 
 	// go through all sciences and delete any overrides
 	for (ScienceInfoVec::iterator it = m_sciences.begin(); it != m_sciences.end(); /*++it*/)
 	{
-		ScienceInfo* si = *it;
-		Overridable* temp = si->deleteOverrides();
+		ScienceInfo *si = *it;
+		Overridable *temp = si->deleteOverrides();
 		if (!temp)
 		{
 			it = m_sciences.erase(it);
@@ -83,7 +83,7 @@ void ScienceStore::reset()
 }
 
 //-----------------------------------------------------------------------------
-ScienceType ScienceStore::getScienceFromInternalName(const AsciiString& name) const
+ScienceType ScienceStore::getScienceFromInternalName(const AsciiString &name) const
 {
 	if (name.isEmpty())
 		return SCIENCE_INVALID;
@@ -110,7 +110,7 @@ std::vector<AsciiString> ScienceStore::friend_getScienceNames() const
 	std::vector<AsciiString> v;
 	for (ScienceInfoVec::const_iterator it = m_sciences.begin(); it != m_sciences.end(); ++it)
 	{
-		const ScienceInfo* si = (const ScienceInfo*)(*it)->getFinalOverride();
+		const ScienceInfo *si = (const ScienceInfo *)(*it)->getFinalOverride();
 		NameKeyType nk = (NameKeyType)(si->m_science);
 		v.push_back(TheNameKeyGenerator->keyToName(nk));
 	}
@@ -118,7 +118,7 @@ std::vector<AsciiString> ScienceStore::friend_getScienceNames() const
 }
 
 //-----------------------------------------------------------------------------
-void ScienceInfo::addRootSciences(ScienceVec& v) const
+void ScienceInfo::addRootSciences(ScienceVec &v) const
 {
 	if (m_prereqSciences.empty())
 	{
@@ -131,7 +131,7 @@ void ScienceInfo::addRootSciences(ScienceVec& v) const
 		// we're not a root. add the roots of all our prereqs.
 		for (ScienceVec::const_iterator it = m_prereqSciences.begin(); it != m_prereqSciences.end(); ++it)
 		{
-			const ScienceInfo* si = TheScienceStore->findScienceInfo(*it);
+			const ScienceInfo *si = TheScienceStore->findScienceInfo(*it);
 			if (si)
 				si->addRootSciences(v);
 		}
@@ -140,11 +140,11 @@ void ScienceInfo::addRootSciences(ScienceVec& v) const
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
+const ScienceInfo *ScienceStore::findScienceInfo(ScienceType st) const
 {
 	for (ScienceInfoVec::const_iterator it = m_sciences.begin(); it != m_sciences.end(); ++it)
 	{
-		const ScienceInfo* si = (const ScienceInfo*)(*it)->getFinalOverride();
+		const ScienceInfo *si = (const ScienceInfo *)(*it)->getFinalOverride();
 		if (si->m_science == st)
 		{
 			return si;
@@ -154,26 +154,24 @@ const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
 }
 
 //-----------------------------------------------------------------------------
-/*static*/ void ScienceStore::friend_parseScienceDefinition( INI* ini )
+/*static*/ void ScienceStore::friend_parseScienceDefinition(INI *ini)
 {
-	const char* c = ini->getNextToken();
+	const char *c = ini->getNextToken();
 	NameKeyType nkt = NAMEKEY(c);
 	ScienceType st = (ScienceType)nkt;
 
 	if (TheScienceStore)
 	{
-
-		static const FieldParse myFieldParse[] =
-		{
-			{ "PrerequisiteSciences", INI::parseScienceVector, NULL, offsetof( ScienceInfo, m_prereqSciences ) },
-			{ "SciencePurchasePointCost", INI::parseInt, NULL, offsetof( ScienceInfo, m_sciencePurchasePointCost ) },
-			{ "IsGrantable", INI::parseBool, NULL, offsetof( ScienceInfo, m_grantable ) },
-			{ "DisplayName", INI::parseAndTranslateLabel, NULL, offsetof( ScienceInfo, m_name) },
-			{ "Description", INI::parseAndTranslateLabel, NULL, offsetof( ScienceInfo, m_description) },
+		static const FieldParse myFieldParse[] = {
+			{ "PrerequisiteSciences", INI::parseScienceVector, NULL, offsetof(ScienceInfo, m_prereqSciences) },
+			{ "SciencePurchasePointCost", INI::parseInt, NULL, offsetof(ScienceInfo, m_sciencePurchasePointCost) },
+			{ "IsGrantable", INI::parseBool, NULL, offsetof(ScienceInfo, m_grantable) },
+			{ "DisplayName", INI::parseAndTranslateLabel, NULL, offsetof(ScienceInfo, m_name) },
+			{ "Description", INI::parseAndTranslateLabel, NULL, offsetof(ScienceInfo, m_description) },
 			{ 0, 0, 0, 0 }
 		};
 
-		ScienceInfo* info = NULL;
+		ScienceInfo *info = NULL;
 
 		// see if the science already exists. (can't use findScienceInfo() since it is const and should remain so.)
 		for (ScienceInfoVec::iterator it = TheScienceStore->m_sciences.begin(); it != TheScienceStore->m_sciences.end(); ++it)
@@ -188,34 +186,34 @@ const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
 
 		if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
 		{
-			ScienceInfo* newInfo = newInstance(ScienceInfo);
+			ScienceInfo *newInfo = newInstance(ScienceInfo);
 
 			if (info == NULL)
 			{
 				// only add if it's not overriding an existing one.
 				info = newInfo;
-				info->markAsOverride();	// yep, so we will get cleared on reset()
+				info->markAsOverride(); // yep, so we will get cleared on reset()
 				TheScienceStore->m_sciences.push_back(info);
 			}
 			else
 			{
 				// copy data from final override to 'newInfo' as a set of initial default values
-				info = (ScienceInfo*)(info->friend_getFinalOverride());
+				info = (ScienceInfo *)(info->friend_getFinalOverride());
 
 				*newInfo = *info;
 				info->setNextOverride(newInfo);
-				newInfo->markAsOverride();	// must do AFTER the copy
+				newInfo->markAsOverride(); // must do AFTER the copy
 
 				// use the newly created override for us to set values with etc
 				info = newInfo;
-				//TheScienceStore->m_sciences.push_back(info);	// NO, BAD, WRONG -- don't add in this case.
+				// TheScienceStore->m_sciences.push_back(info);	// NO, BAD, WRONG -- don't add in this case.
 			}
 		}
 		else
 		{
 			if (info != NULL)
 			{
-				DEBUG_CRASH(("duplicate science %s!",c));
+				DEBUG_CRASH(("duplicate science %s!", c));
 				throw INI_INVALID_DATA;
 			}
 			info = newInstance(ScienceInfo);
@@ -231,7 +229,7 @@ const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
 //-----------------------------------------------------------------------------
 Int ScienceStore::getSciencePurchaseCost(ScienceType st) const
 {
-	const ScienceInfo* si = findScienceInfo(st);
+	const ScienceInfo *si = findScienceInfo(st);
 	if (si)
 	{
 		return si->m_sciencePurchasePointCost;
@@ -245,7 +243,7 @@ Int ScienceStore::getSciencePurchaseCost(ScienceType st) const
 //-----------------------------------------------------------------------------
 Bool ScienceStore::isScienceGrantable(ScienceType st) const
 {
-	const ScienceInfo* si = findScienceInfo(st);
+	const ScienceInfo *si = findScienceInfo(st);
 	if (si)
 	{
 		return si->m_grantable;
@@ -257,9 +255,9 @@ Bool ScienceStore::isScienceGrantable(ScienceType st) const
 }
 
 //-----------------------------------------------------------------------------
-Bool ScienceStore::getNameAndDescription(ScienceType st, UnicodeString& name, UnicodeString& description) const
+Bool ScienceStore::getNameAndDescription(ScienceType st, UnicodeString &name, UnicodeString &description) const
 {
-	const ScienceInfo* si = findScienceInfo(st);
+	const ScienceInfo *si = findScienceInfo(st);
 	if (si)
 	{
 		name = si->m_name;
@@ -273,9 +271,9 @@ Bool ScienceStore::getNameAndDescription(ScienceType st, UnicodeString& name, Un
 }
 
 //-----------------------------------------------------------------------------
-Bool ScienceStore::playerHasPrereqsForScience(const Player* player, ScienceType st) const
+Bool ScienceStore::playerHasPrereqsForScience(const Player *player, ScienceType st) const
 {
-	const ScienceInfo* si = findScienceInfo(st);
+	const ScienceInfo *si = findScienceInfo(st);
 	if (si)
 	{
 		for (ScienceVec::const_iterator it2 = si->m_prereqSciences.begin(); it2 != si->m_prereqSciences.end(); ++it2)
@@ -294,9 +292,9 @@ Bool ScienceStore::playerHasPrereqsForScience(const Player* player, ScienceType 
 }
 
 //-----------------------------------------------------------------------------
-Bool ScienceStore::playerHasRootPrereqsForScience(const Player* player, ScienceType st) const
+Bool ScienceStore::playerHasRootPrereqsForScience(const Player *player, ScienceType st) const
 {
-	const ScienceInfo* si = findScienceInfo(st);
+	const ScienceInfo *si = findScienceInfo(st);
 	if (si)
 	{
 		for (ScienceVec::const_iterator it2 = si->m_rootSciences.begin(); it2 != si->m_rootSciences.end(); ++it2)
@@ -317,13 +315,16 @@ Bool ScienceStore::playerHasRootPrereqsForScience(const Player* player, ScienceT
 //-----------------------------------------------------------------------------
 /** return a list of the sciences the given player can purchase now, and a list he might be able to purchase in the future,
 	but currently lacks prereqs or points for. (either might be an empty list) */
-void ScienceStore::getPurchasableSciences(const Player* player, ScienceVec& purchasable, ScienceVec& potentiallyPurchasable) const
+void ScienceStore::getPurchasableSciences(
+		const Player *player,
+		ScienceVec &purchasable,
+		ScienceVec &potentiallyPurchasable) const
 {
 	purchasable.clear();
 	potentiallyPurchasable.clear();
 	for (ScienceInfoVec::const_iterator it = m_sciences.begin(); it != m_sciences.end(); ++it)
 	{
-		const ScienceInfo* si = (const ScienceInfo*)(*it)->getFinalOverride();
+		const ScienceInfo *si = (const ScienceInfo *)(*it)->getFinalOverride();
 
 		if (si->m_sciencePurchasePointCost == 0)
 		{
@@ -351,13 +352,13 @@ void ScienceStore::getPurchasableSciences(const Player* player, ScienceVec& purc
 // this is intended ONLY for use by INI::scanScience.
 // Don't use it anywhere else. In particular, never, ever, ever
 // call this with a hardcoded science name. (srj)
-ScienceType ScienceStore::friend_lookupScience(const char* scienceName) const
+ScienceType ScienceStore::friend_lookupScience(const char *scienceName) const
 {
 	NameKeyType nkt = NAMEKEY(scienceName);
 	ScienceType st = (ScienceType)nkt;
 	if (!isValidScience(st))
 	{
-		DEBUG_CRASH(("Science name %s not known! (Did you define it in Science.ini?)",scienceName));
+		DEBUG_CRASH(("Science name %s not known! (Did you define it in Science.ini?)", scienceName));
 		throw INI_INVALID_DATA;
 	}
 	return st;
@@ -366,13 +367,12 @@ ScienceType ScienceStore::friend_lookupScience(const char* scienceName) const
 //-----------------------------------------------------------------------------
 Bool ScienceStore::isValidScience(ScienceType st) const
 {
-	const ScienceInfo* si = findScienceInfo(st);
+	const ScienceInfo *si = findScienceInfo(st);
 	return si != NULL;
 }
 
 //-----------------------------------------------------------------------------
-void INI::parseScienceDefinition( INI* ini )
+void INI::parseScienceDefinition(INI *ini)
 {
 	ScienceStore::friend_parseScienceDefinition(ini);
 }
-

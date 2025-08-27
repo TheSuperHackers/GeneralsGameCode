@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/GlobalData.h"
 #include "Common/NameKeyGenerator.h"
@@ -100,8 +100,7 @@ static GameWindow *textEntryGamePassword = NULL;
 static GameWindow *checkBoxLimitArmies = NULL;
 static GameWindow *checkBoxUseStats = NULL;
 
-
-void createGame( void );
+void createGame(void);
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -116,7 +115,7 @@ void CustomMatchHideHostPopup(Bool hide)
 	if (!parentPopup)
 		return;
 
-	parentPopup->winHide( hide );
+	parentPopup->winHide(hide);
 }
 
 void HandleCustomLadderSelection(Int ladderID)
@@ -146,7 +145,7 @@ void HandleCustomLadderSelection(Int ladderID)
 	pref.write();
 }
 
-void PopulateCustomLadderListBox( GameWindow *win )
+void PopulateCustomLadderListBox(GameWindow *win)
 {
 	if (!parentPopup || !win)
 		return;
@@ -160,30 +159,30 @@ void PopulateCustomLadderListBox( GameWindow *win )
 	Color favoriteColor = GameSpyColor[GSCOLOR_MAP_UNSELECTED];
 	Color localColor = GameSpyColor[GSCOLOR_MAP_UNSELECTED];
 	Int index;
-	GadgetListBoxReset( win );
+	GadgetListBoxReset(win);
 
 	std::set<const LadderInfo *> usedLadders;
 
 	// start with "No Ladder"
-	index = GadgetListBoxAddEntryText( win, TheGameText->fetch("GUI:NoLadder"), normalColor, -1 );
-	GadgetListBoxSetItemData( win, 0, index );
+	index = GadgetListBoxAddEntryText(win, TheGameText->fetch("GUI:NoLadder"), normalColor, -1);
+	GadgetListBoxSetItemData(win, 0, index);
 
 	// add the last ladder
 	Int selectedPos = 0;
 	AsciiString lastLadderAddr = pref.getLastLadderAddr();
 	UnsignedShort lastLadderPort = pref.getLastLadderPort();
-	const LadderInfo *info = TheLadderList->findLadder( lastLadderAddr, lastLadderPort );
+	const LadderInfo *info = TheLadderList->findLadder(lastLadderAddr, lastLadderPort);
 	if (info && info->index > 0 && info->validCustom)
 	{
 		usedLadders.insert(info);
-		index = GadgetListBoxAddEntryText( win, info->name, favoriteColor, -1 );
-		GadgetListBoxSetItemData( win, (void *)(info->index), index );
+		index = GadgetListBoxAddEntryText(win, info->name, favoriteColor, -1);
+		GadgetListBoxSetItemData(win, (void *)(info->index), index);
 		selectedPos = index;
 	}
 
 	// our recent ladders
 	LadderPreferences ladPref;
-	ladPref.loadProfile( TheGameSpyInfo->getLocalProfileID() );
+	ladPref.loadProfile(TheGameSpyInfo->getLocalProfileID());
 	const LadderPrefMap recentLadders = ladPref.getRecentLadders();
 	for (LadderPrefMap::const_iterator cit = recentLadders.begin(); cit != recentLadders.end(); ++cit)
 	{
@@ -191,12 +190,12 @@ void PopulateCustomLadderListBox( GameWindow *win )
 		UnsignedShort port = cit->second.port;
 		if (addr == lastLadderAddr && port == lastLadderPort)
 			continue;
-		const LadderInfo *info = TheLadderList->findLadder( addr, port );
+		const LadderInfo *info = TheLadderList->findLadder(addr, port);
 		if (info && info->index > 0 && info->validCustom && usedLadders.find(info) == usedLadders.end())
 		{
 			usedLadders.insert(info);
-			index = GadgetListBoxAddEntryText( win, info->name, favoriteColor, -1 );
-			GadgetListBoxSetItemData( win, (void *)(info->index), index );
+			index = GadgetListBoxAddEntryText(win, info->name, favoriteColor, -1);
+			GadgetListBoxSetItemData(win, (void *)(info->index), index);
 		}
 	}
 
@@ -209,8 +208,8 @@ void PopulateCustomLadderListBox( GameWindow *win )
 		if (info && info->index < 0 && info->validCustom && usedLadders.find(info) == usedLadders.end())
 		{
 			usedLadders.insert(info);
-			index = GadgetListBoxAddEntryText( win, info->name, localColor, -1 );
-			GadgetListBoxSetItemData( win, (void *)(info->index), index );
+			index = GadgetListBoxAddEntryText(win, info->name, localColor, -1);
+			GadgetListBoxSetItemData(win, (void *)(info->index), index);
 		}
 	}
 
@@ -222,8 +221,8 @@ void PopulateCustomLadderListBox( GameWindow *win )
 		if (info && info->index > 0 && info->validCustom && usedLadders.find(info) == usedLadders.end())
 		{
 			usedLadders.insert(info);
-			index = GadgetListBoxAddEntryText( win, info->name, specialColor, -1 );
-			GadgetListBoxSetItemData( win, (void *)(info->index), index );
+			index = GadgetListBoxAddEntryText(win, info->name, specialColor, -1);
+			GadgetListBoxSetItemData(win, (void *)(info->index), index);
 		}
 	}
 
@@ -235,16 +234,16 @@ void PopulateCustomLadderListBox( GameWindow *win )
 		if (info && info->index > 0 && info->validCustom && usedLadders.find(info) == usedLadders.end())
 		{
 			usedLadders.insert(info);
-			index = GadgetListBoxAddEntryText( win, info->name, normalColor, -1 );
-			GadgetListBoxSetItemData( win, (void *)(info->index), index );
+			index = GadgetListBoxAddEntryText(win, info->name, normalColor, -1);
+			GadgetListBoxSetItemData(win, (void *)(info->index), index);
 		}
 	}
 
-	GadgetListBoxSetSelected( win, selectedPos );
+	GadgetListBoxSetSelected(win, selectedPos);
 	isPopulatingLadderBox = false;
 }
 
-void PopulateCustomLadderComboBox( void )
+void PopulateCustomLadderComboBox(void)
 {
 	if (!parentPopup || !comboBoxLadderName)
 		return;
@@ -262,24 +261,24 @@ void PopulateCustomLadderComboBox( void )
 	Color specialColor = GameSpyColor[GSCOLOR_MAP_SELECTED];
 	Color normalColor = GameSpyColor[GSCOLOR_MAP_UNSELECTED];
 	Int index;
-	GadgetComboBoxReset( comboBoxLadderName );
-	index = GadgetComboBoxAddEntry( comboBoxLadderName, TheGameText->fetch("GUI:NoLadder"), normalColor );
-	GadgetComboBoxSetItemData( comboBoxLadderName, index, 0 );
+	GadgetComboBoxReset(comboBoxLadderName);
+	index = GadgetComboBoxAddEntry(comboBoxLadderName, TheGameText->fetch("GUI:NoLadder"), normalColor);
+	GadgetComboBoxSetItemData(comboBoxLadderName, index, 0);
 
 	Int selectedPos = 0;
 	AsciiString lastLadderAddr = pref.getLastLadderAddr();
 	UnsignedShort lastLadderPort = pref.getLastLadderPort();
-	const LadderInfo *info = TheLadderList->findLadder( lastLadderAddr, lastLadderPort );
+	const LadderInfo *info = TheLadderList->findLadder(lastLadderAddr, lastLadderPort);
 	if (info && info->validCustom)
 	{
 		usedLadders.insert(info);
-		index = GadgetComboBoxAddEntry( comboBoxLadderName, info->name, specialColor );
-		GadgetComboBoxSetItemData( comboBoxLadderName, index, (void *)(info->index) );
+		index = GadgetComboBoxAddEntry(comboBoxLadderName, info->name, specialColor);
+		GadgetComboBoxSetItemData(comboBoxLadderName, index, (void *)(info->index));
 		selectedPos = index;
 	}
 
 	LadderPreferences ladPref;
-	ladPref.loadProfile( localProfile );
+	ladPref.loadProfile(localProfile);
 	const LadderPrefMap recentLadders = ladPref.getRecentLadders();
 	for (LadderPrefMap::const_iterator cit = recentLadders.begin(); cit != recentLadders.end(); ++cit)
 	{
@@ -287,19 +286,19 @@ void PopulateCustomLadderComboBox( void )
 		UnsignedShort port = cit->second.port;
 		if (addr == lastLadderAddr && port == lastLadderPort)
 			continue;
-		const LadderInfo *info = TheLadderList->findLadder( addr, port );
+		const LadderInfo *info = TheLadderList->findLadder(addr, port);
 		if (info && info->validCustom && usedLadders.find(info) == usedLadders.end())
 		{
 			usedLadders.insert(info);
-			index = GadgetComboBoxAddEntry( comboBoxLadderName, info->name, normalColor );
-			GadgetComboBoxSetItemData( comboBoxLadderName, index, (void *)(info->index) );
+			index = GadgetComboBoxAddEntry(comboBoxLadderName, info->name, normalColor);
+			GadgetComboBoxSetItemData(comboBoxLadderName, index, (void *)(info->index));
 		}
 	}
 
-	index = GadgetComboBoxAddEntry( comboBoxLadderName, TheGameText->fetch("GUI:ChooseLadder"), normalColor );
-	GadgetComboBoxSetItemData( comboBoxLadderName, index, (void *)-1 );
+	index = GadgetComboBoxAddEntry(comboBoxLadderName, TheGameText->fetch("GUI:ChooseLadder"), normalColor);
+	GadgetComboBoxSetItemData(comboBoxLadderName, index, (void *)-1);
 
-	GadgetComboBoxSetSelectedPos( comboBoxLadderName, selectedPos );
+	GadgetComboBoxSetSelectedPos(comboBoxLadderName, selectedPos);
 	isPopulatingLadderBox = false;
 }
 
@@ -308,7 +307,7 @@ void PopulateCustomLadderComboBox( void )
 //-------------------------------------------------------------------------------------------------
 /** Initialize the PopupHostGameInit menu */
 //-------------------------------------------------------------------------------------------------
-void PopupHostGameInit( WindowLayout *layout, void *userData )
+void PopupHostGameInit(WindowLayout *layout, void *userData)
 {
 	parentPopupID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:ParentHostPopUp"));
 	parentPopup = TheWindowManager->winGetWindowFromId(NULL, parentPopupID);
@@ -348,196 +347,185 @@ void PopupHostGameInit( WindowLayout *layout, void *userData )
 		GadgetComboBoxReset(comboBoxLadderName);
 	PopulateCustomLadderComboBox();
 
-  checkBoxUseStatsID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:CheckBoxUseStats"));
-  checkBoxUseStats = TheWindowManager->winGetWindowFromId(parentPopup, checkBoxUseStatsID);
+	checkBoxUseStatsID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:CheckBoxUseStats"));
+	checkBoxUseStats = TheWindowManager->winGetWindowFromId(parentPopup, checkBoxUseStatsID);
 	Bool usingStats = customPref.getUseStats();
-  GadgetCheckBoxSetChecked( checkBoxUseStats, usingStats );
+	GadgetCheckBoxSetChecked(checkBoxUseStats, usingStats);
 
 	// limit armies is disallowed in "use stats" games
-  checkBoxLimitArmiesID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:CheckBoxLimitArmies"));
-  checkBoxLimitArmies = TheWindowManager->winGetWindowFromId(parentPopup, checkBoxLimitArmiesID);
-	checkBoxLimitArmies->winEnable(! usingStats );
-  GadgetCheckBoxSetChecked( checkBoxLimitArmies, usingStats? FALSE : customPref.getFactionsLimited() );
+	checkBoxLimitArmiesID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:CheckBoxLimitArmies"));
+	checkBoxLimitArmies = TheWindowManager->winGetWindowFromId(parentPopup, checkBoxLimitArmiesID);
+	checkBoxLimitArmies->winEnable(!usingStats);
+	GadgetCheckBoxSetChecked(checkBoxLimitArmies, usingStats ? FALSE : customPref.getFactionsLimited());
 
-	TheWindowManager->winSetFocus( parentPopup );
-	TheWindowManager->winSetModal( parentPopup );
-
+	TheWindowManager->winSetFocus(parentPopup);
+	TheWindowManager->winSetModal(parentPopup);
 }
-
 
 //-------------------------------------------------------------------------------------------------
 /** PopupHostGameUpdate callback */
 //-------------------------------------------------------------------------------------------------
-void PopupHostGameUpdate( WindowLayout * layout, void *userData)
+void PopupHostGameUpdate(WindowLayout *layout, void *userData)
 {
-	if (GadgetCheckBoxIsChecked( checkBoxUseStats ))
+	if (GadgetCheckBoxIsChecked(checkBoxUseStats))
 	{
-		checkBoxLimitArmies->winEnable( FALSE );
-		GadgetCheckBoxSetChecked( checkBoxLimitArmies, FALSE );
+		checkBoxLimitArmies->winEnable(FALSE);
+		GadgetCheckBoxSetChecked(checkBoxLimitArmies, FALSE);
 	}
 	else
 	{
-		checkBoxLimitArmies->winEnable( TRUE );
+		checkBoxLimitArmies->winEnable(TRUE);
 	}
 }
-
 
 //-------------------------------------------------------------------------------------------------
 /** PopupHostGameInput callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType PopupHostGameInput( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType PopupHostGameInput(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-	switch( msg )
+	switch (msg)
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case GWM_CHAR:
 		{
 			UnsignedByte key = mData1;
 			UnsignedByte state = mData2;
-//			if (buttonPushed)
-//				break;
+			//			if (buttonPushed)
+			//				break;
 
-			switch( key )
+			switch (key)
 			{
-
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitIsSet( state, KEY_STATE_UP ) )
+					if (BitIsSet(state, KEY_STATE_UP))
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
-																							(WindowMsgData)buttonCancel, buttonCancelID );
+						TheWindowManager->winSendSystemMsg(window, GBM_SELECTED, (WindowMsgData)buttonCancel, buttonCancelID);
 
-					}  // end if
+					} // end if
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				} // end escape
 
-			}  // end switch( key )
+			} // end switch( key )
 
-		}  // end char
+		} // end char
 
-	}  // end switch( msg )
+	} // end switch( msg )
 
 	return MSG_IGNORED;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** PopupHostGameSystem callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType PopupHostGameSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType PopupHostGameSystem(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-  switch( msg )
+	switch (msg)
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case GWM_CREATE:
 		{
-
 			break;
 
-		}  // end create
-    //---------------------------------------------------------------------------------------------
+		} // end create
+		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
 			parentPopup = NULL;
 
 			break;
 
-		}  // end case
+		} // end case
 
-    //----------------------------------------------------------------------------------------------
-    case GWM_INPUT_FOCUS:
+		//----------------------------------------------------------------------------------------------
+		case GWM_INPUT_FOCUS:
 		{
-
 			// if we're givin the opportunity to take the keyboard focus we must say we want it
-			if( mData1 == TRUE )
+			if (mData1 == TRUE)
 				*(Bool *)mData2 = TRUE;
 
 			break;
 
-		}  // end input
+		} // end input
 
-    //----------------------------------------------------------------------------------------------
+		//----------------------------------------------------------------------------------------------
 		case GEM_UPDATE_TEXT:
+		{
+			GameWindow *control = (GameWindow *)mData1;
+			Int controlID = control->winGetWindowId();
+
+			if (controlID == textEntryGameNameID)
 			{
-				GameWindow *control = (GameWindow *)mData1;
-				Int controlID = control->winGetWindowId();
+				UnicodeString txtInput;
 
-				if ( controlID == textEntryGameNameID )
-				{
-					UnicodeString txtInput;
+				// grab the game's name
+				txtInput.set(GadgetTextEntryGetText(textEntryGameName));
 
-					// grab the game's name
-					txtInput.set(GadgetTextEntryGetText( textEntryGameName ));
+				// Clean up the text (remove leading/trailing chars, etc)
+				const WideChar *c = txtInput.str();
+				while (c && (iswspace(*c)))
+					c++;
 
-					// Clean up the text (remove leading/trailing chars, etc)
-					const WideChar *c = txtInput.str();
-					while (c && (iswspace(*c)))
-						c++;
+				if (c)
+					txtInput = UnicodeString(c);
+				else
+					txtInput = UnicodeString::TheEmptyString;
 
-					if (c)
-						txtInput = UnicodeString(c);
-					else
-						txtInput = UnicodeString::TheEmptyString;
+				// Put the whitespace-free version in the box
+				GadgetTextEntrySetText(textEntryGameName, txtInput);
 
-					// Put the whitespace-free version in the box
-					GadgetTextEntrySetText( textEntryGameName, txtInput );
-
-				}// if ( controlID == textEntryPlayerNameID )
-				break;
-			}//case GEM_UPDATE_TEXT:
-    //---------------------------------------------------------------------------------------------
+			} // if ( controlID == textEntryPlayerNameID )
+			break;
+		} // case GEM_UPDATE_TEXT:
+		//---------------------------------------------------------------------------------------------
 		case GCM_SELECTED:
-			{
-				GameWindow *control = (GameWindow *)mData1;
-				Int controlID = control->winGetWindowId();
-				Int pos = -1;
-				GadgetComboBoxGetSelectedPos(control, &pos);
+		{
+			GameWindow *control = (GameWindow *)mData1;
+			Int controlID = control->winGetWindowId();
+			Int pos = -1;
+			GadgetComboBoxGetSelectedPos(control, &pos);
 
-				if (controlID == comboBoxLadderNameID && !isPopulatingLadderBox)
+			if (controlID == comboBoxLadderNameID && !isPopulatingLadderBox)
+			{
+				if (pos >= 0)
 				{
-					if (pos >= 0)
+					Int ladderID = (Int)GadgetComboBoxGetItemData(control, pos);
+					if (ladderID < 0)
 					{
-						Int ladderID = (Int)GadgetComboBoxGetItemData(control, pos);
-						if (ladderID < 0)
-						{
-							// "Choose a ladder" selected - open overlay
-							PopulateCustomLadderComboBox(); // this restores the non-"Choose a ladder" selection
-							GameSpyOpenOverlay( GSOVERLAY_LADDERSELECT );
-						}
+						// "Choose a ladder" selected - open overlay
+						PopulateCustomLadderComboBox(); // this restores the non-"Choose a ladder" selection
+						GameSpyOpenOverlay(GSOVERLAY_LADDERSELECT);
 					}
 				}
-				break;
-			} // case GCM_SELECTED
+			}
+			break;
+		} // case GCM_SELECTED
 
-    //---------------------------------------------------------------------------------------------
+		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 
-      if( controlID == buttonCancelID )
+			if (controlID == buttonCancelID)
 			{
 				parentPopup = NULL;
 				GameSpyCloseOverlay(GSOVERLAY_GAMEOPTIONS);
-				SetLobbyAttemptHostJoin( FALSE );
+				SetLobbyAttemptHostJoin(FALSE);
 			}
-			else if( controlID == buttonCreateGameID)
+			else if (controlID == buttonCreateGameID)
 			{
 				UnicodeString name;
 				name = GadgetTextEntryGetText(textEntryGameName);
 				name.trim();
-				if(name.getLength() <= 0)
+				if (name.getLength() <= 0)
 				{
 					name.translate(TheGameSpyInfo->getLocalName());
 					GadgetTextEntrySetText(textEntryGameName, name);
@@ -551,18 +539,16 @@ WindowMsgHandledType PopupHostGameSystem( GameWindow *window, UnsignedInt msg, W
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	} // end switch
 
 	return MSG_HANDLED;
-
 }
-
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-void createGame( void )
+void createGame(void)
 {
 	TheGameSpyInfo->setCurrentGroupRoom(0);
 	PeerRequest req;
@@ -575,17 +561,17 @@ void createGame( void )
 	req.password = passwd.str();
 	CustomMatchPreferences customPref;
 	Bool aO = GadgetCheckBoxIsChecked(checkBoxAllowObservers);
-  Bool limitArmies = GadgetCheckBoxIsChecked( checkBoxLimitArmies );
-  Bool useStats = GadgetCheckBoxIsChecked( checkBoxUseStats );
+	Bool limitArmies = GadgetCheckBoxIsChecked(checkBoxLimitArmies);
+	Bool useStats = GadgetCheckBoxIsChecked(checkBoxUseStats);
 	customPref.setAllowsObserver(aO);
-  customPref.setFactionsLimited( limitArmies );
-  customPref.setUseStats( useStats );
+	customPref.setFactionsLimited(limitArmies);
+	customPref.setUseStats(useStats);
 	customPref.write();
 	req.stagingRoomCreation.allowObservers = aO;
-  req.stagingRoomCreation.useStats = useStats;
+	req.stagingRoomCreation.useStats = useStats;
 	TheGameSpyGame->setAllowObservers(aO);
-  TheGameSpyGame->setOldFactionsOnly( limitArmies );
-  TheGameSpyGame->setUseStats( useStats );
+	TheGameSpyGame->setOldFactionsOnly(limitArmies);
+	TheGameSpyGame->setUseStats(useStats);
 	req.stagingRoomCreation.exeCRC = TheGlobalData->m_exeCRC;
 	req.stagingRoomCreation.iniCRC = TheGlobalData->m_iniCRC;
 	req.stagingRoomCreation.gameVersion = TheGameSpyInfo->getInternalIP();

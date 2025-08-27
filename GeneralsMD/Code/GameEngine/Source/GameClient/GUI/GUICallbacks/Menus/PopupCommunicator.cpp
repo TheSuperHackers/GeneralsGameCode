@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameClient/GUICallbacks.h"
 #include "GameClient/GameWindowManager.h"
@@ -59,130 +59,114 @@ static GameWindow *parent = NULL;
 //-------------------------------------------------------------------------------------------------
 /** Initialize the Popup Communicator */
 //-------------------------------------------------------------------------------------------------
-void PopupCommunicatorInit( WindowLayout *layout, void *userData )
+void PopupCommunicatorInit(WindowLayout *layout, void *userData)
 {
-
-	//set keyboard focus to main parent and set modal
+	// set keyboard focus to main parent and set modal
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey("PopupCommunicator.wnd:PopupCommunicator");
-	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
-	TheWindowManager->winSetFocus( parent );
-	TheWindowManager->winSetModal( parent );
+	parent = TheWindowManager->winGetWindowFromId(NULL, parentID);
+	TheWindowManager->winSetFocus(parent);
+	TheWindowManager->winSetModal(parent);
 
 	// get ids for our children controls
-	buttonOkID = TheNameKeyGenerator->nameToKey( AsciiString("PopupCommunicator.wnd:ButtonOk") );
-	buttonOk = TheWindowManager->winGetWindowFromId( parent, buttonOkID );
+	buttonOkID = TheNameKeyGenerator->nameToKey(AsciiString("PopupCommunicator.wnd:ButtonOk"));
+	buttonOk = TheWindowManager->winGetWindowFromId(parent, buttonOkID);
 
-}  // end PopupCommunicatorInit
+} // end PopupCommunicatorInit
 
 //-------------------------------------------------------------------------------------------------
 /** Popup Communicator shutdown method */
 //-------------------------------------------------------------------------------------------------
-void PopupCommunicatorShutdown( WindowLayout *layout, void *userData )
+void PopupCommunicatorShutdown(WindowLayout *layout, void *userData)
 {
-
-}  // end PopupCommunicatorShutdown
+} // end PopupCommunicatorShutdown
 
 //-------------------------------------------------------------------------------------------------
 /** Popup Communicator update method */
 //-------------------------------------------------------------------------------------------------
-void PopupcommunicatorUpdate( WindowLayout *layout, void *userData )
+void PopupcommunicatorUpdate(WindowLayout *layout, void *userData)
 {
-
-}  // end PopupCommunicatorUpdate
+} // end PopupCommunicatorUpdate
 
 //-------------------------------------------------------------------------------------------------
 /** Popup Communicator input callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType PopupCommunicatorInput( GameWindow *window, UnsignedInt msg,
-																						WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType PopupCommunicatorInput(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-
-	switch( msg )
+	switch (msg)
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case GWM_CHAR:
 		{
 			UnsignedByte key = mData1;
 			UnsignedByte state = mData2;
 
-			switch( key )
+			switch (key)
 			{
-
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitIsSet( state, KEY_STATE_UP ) )
+					if (BitIsSet(state, KEY_STATE_UP))
 					{
+						TheWindowManager->winSendSystemMsg(window, GBM_SELECTED, (WindowMsgData)buttonOk, buttonOkID);
 
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
-																								(WindowMsgData)buttonOk, buttonOkID );
-
-					}  // end if
+					} // end if
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				} // end escape
 
-			}  // end switch( key )
+			} // end switch( key )
 
-		}  // end char
+		} // end char
 
-	}  // end switch( msg )
+	} // end switch( msg )
 
 	return MSG_IGNORED;
 
-}  // end PopupCommunicatorInput
+} // end PopupCommunicatorInput
 
 //-------------------------------------------------------------------------------------------------
 /** Popup Communicator window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType PopupCommunicatorSystem( GameWindow *window, UnsignedInt msg,
-																		 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType PopupCommunicatorSystem(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-
-  switch( msg )
+	switch (msg)
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case GWM_CREATE:
 		{
-
 			break;
 
-		}  // end create
-    //---------------------------------------------------------------------------------------------
+		} // end create
+		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
-
 			break;
 
-		}  // end case
+		} // end case
 
-    //----------------------------------------------------------------------------------------------
-    case GWM_INPUT_FOCUS:
+		//----------------------------------------------------------------------------------------------
+		case GWM_INPUT_FOCUS:
 		{
-
 			// if we're givin the opportunity to take the keyboard focus we must say we want it
-			if( mData1 == TRUE )
+			if (mData1 == TRUE)
 				*(Bool *)mData2 = TRUE;
 
 			break;
 
-		}  // end input
-    //---------------------------------------------------------------------------------------------
+		} // end input
+		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 
-			if( controlID == buttonOkID )
+			if (controlID == buttonOkID)
 			{
 				WindowLayout *popupCommunicatorLayout = window->winGetLayout();
 				if (popupCommunicatorLayout)
@@ -191,17 +175,16 @@ WindowMsgHandledType PopupCommunicatorSystem( GameWindow *window, UnsignedInt ms
 					deleteInstance(popupCommunicatorLayout);
 					popupCommunicatorLayout = NULL;
 				}
-			}  // end if
+			} // end if
 
 			break;
 
-		}  // end selected
+		} // end selected
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	} // end switch
 
 	return MSG_HANDLED;
-
 }

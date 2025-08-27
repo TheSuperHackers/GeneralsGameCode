@@ -32,7 +32,6 @@ function :-)
 #ifndef XTIME_HEADER
 #define XTIME_HEADER
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -54,93 +53,90 @@ function :-)
 
 class Xtime
 {
-  public:
+public:
+	Xtime(); // init to system time
+	Xtime(Xtime &other);
+	Xtime(time_t other); // 1970-2038
+	~Xtime();
 
-              Xtime();  // init to system time
-              Xtime( Xtime &other );
-              Xtime( time_t other );   // 1970-2038
-             ~Xtime();
+	void addSeconds(sint32 seconds);
 
-    void      addSeconds(sint32 seconds);
+	bit8 getTime(int &month, int &mday, int &year, int &hour, int &minute, int &second) const;
 
-    bit8      getTime(int &month, int &mday, int &year, int &hour, int &minute,
-                        int &second) const;
+	bit8 setTime(int month, int mday, int year, int hour, int minute, int second);
 
-    bit8      setTime(int month, int mday, int year, int hour, int minute,
-                        int second);
+	void update(); // Update members sec & usec to system time
+								 // This will break after 2038
 
-    void      update();   // Update members sec & usec to system time
-                          // This will break after 2038
+	/********
+			void      PrintTime(FILE *out) const;
+			void      PrintTime(char *out) const;
+			void      PrintDate(FILE *out) const;
+			void      PrintDate(char *out) const;
+	**********/
 
-/********
-    void      PrintTime(FILE *out) const;
-    void      PrintTime(char *out) const;
-    void      PrintDate(FILE *out) const;
-    void      PrintDate(char *out) const;
-**********/
+	sint32 getDay(void) const; // Get days since year 0
+	sint32 getMsec(void) const; // Get milliseconds into the day
 
-    sint32    getDay(void) const;    // Get days since year 0
-    sint32    getMsec(void) const;   // Get milliseconds into the day
+	void setDay(sint32 day);
+	void setMsec(sint32 msec);
 
-    void      setDay(sint32 day);
-    void      setMsec(sint32 msec);
+	void set(sint32 newday, sint32 newmsec);
+	bit8 ParseDate(char *in);
+	bit8 FormatTime(char *out, const char *format);
 
-    void      set(sint32 newday, sint32 newmsec);
-    bit8      ParseDate(char *in);
-    bit8      FormatTime(char *out, const char *format);
+	bit8 getTimeval(struct timeval &tv);
 
-    bit8      getTimeval(struct timeval &tv);
+	// All of these may return -1 if the time is invalid
+	int getSecond(void) const; // Second (0-60) (60 is for a leap second)
+	int getMinute(void) const; // Minute (0-59)
+	int getHour(void) const; // Hour (0-23)
+	int getMDay(void) const; // Day of Month (1-31)
+	int getWDay(void) const; // Day of Week  (1-7)
+	int getYDay(void) const; // Day of Year  (1-366)  (366 = leap yr)
+	int getMonth(void) const; // Month (1-12)
+	int getYWeek(void) const; // Week of Year (1-53)
+	int getYear(void) const; // Year (e.g. 1997)
 
-    // All of these may return -1 if the time is invalid
-    int    getSecond(void) const; // Second (0-60) (60 is for a leap second)
-    int    getMinute(void) const; // Minute (0-59)
-    int    getHour(void) const;   // Hour (0-23)
-    int    getMDay(void) const;   // Day of Month (1-31)
-    int    getWDay(void) const;   // Day of Week  (1-7)
-    int    getYDay(void) const;   // Day of Year  (1-366)  (366 = leap yr)
-    int    getMonth(void) const;  // Month (1-12)
-    int    getYWeek(void) const;  // Week of Year (1-53)
-    int    getYear(void) const;   // Year (e.g. 1997)
+	// Modify the time components.  Return FALSE if fail
+	bit8 setSecond(sint32 sec);
+	bit8 setMinute(sint32 min);
+	bit8 setHour(sint32 hour);
+	bit8 setYear(sint32 year);
+	bit8 setMonth(sint32 month);
+	bit8 setMDay(sint32 mday);
 
-    // Modify the time components.  Return FALSE if fail
-    bit8      setSecond(sint32 sec);
-    bit8      setMinute(sint32 min);
-    bit8      setHour(sint32 hour);
-    bit8      setYear(sint32 year);
-    bit8      setMonth(sint32 month);
-    bit8      setMDay(sint32 mday);
+	void normalize(void); // move msec overflows to the day
 
-    void      normalize(void);  // move msec overflows to the day
+	// Compare two times
+	int compare(const Xtime &other) const;
 
-    // Compare two times
-    int       compare(const Xtime &other) const;
+	// comparisons
+	bit8 operator==(const Xtime &other) const;
+	bit8 operator!=(const Xtime &other) const;
+	bit8 operator<(const Xtime &other) const;
+	bit8 operator>(const Xtime &other) const;
+	bit8 operator<=(const Xtime &other) const;
+	bit8 operator>=(const Xtime &other) const;
 
-    // comparisons
-    bit8   operator == ( const Xtime &other ) const;
-    bit8   operator != ( const Xtime &other ) const;
-    bit8   operator  < ( const Xtime &other ) const;
-    bit8   operator  > ( const Xtime &other ) const;
-    bit8   operator <= ( const Xtime &other ) const;
-    bit8   operator >= ( const Xtime &other ) const;
+	// assignments
+	Xtime &operator=(const Xtime &other);
+	Xtime &operator=(const time_t other);
 
-    // assignments
-    Xtime   &operator = (const Xtime &other);
-    Xtime   &operator = (const time_t other);
+	// signed
+	Xtime &operator+=(const Xtime &other);
+	Xtime &operator-=(const Xtime &other);
+	Xtime operator+(Xtime &other);
+	Xtime operator-(Xtime &other);
 
-    // signed
-    Xtime   &operator += (const Xtime &other);
-    Xtime   &operator -= (const Xtime &other);
-    Xtime    operator +  (Xtime &other);
-    Xtime    operator -  (Xtime &other);
+	Xtime &operator+=(const time_t other);
+	Xtime &operator-=(const time_t other);
+	Xtime operator+(time_t other);
+	Xtime operator-(time_t other);
 
-    Xtime   &operator += (const time_t other);
-    Xtime   &operator -= (const time_t other);
-    Xtime    operator +  (time_t other);
-    Xtime    operator -  (time_t other);
-
-  protected:
-    sint32    day_;    // days since Jan 1, 0
-    sint32    msec_;   // milliseconds  (thousandths of a sec)
+protected:
+	sint32 day_; // days since Jan 1, 0
+	sint32 msec_; // milliseconds  (thousandths of a sec)
 };
 
 #endif

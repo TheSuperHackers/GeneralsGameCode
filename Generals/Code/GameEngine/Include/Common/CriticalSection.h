@@ -41,58 +41,58 @@ class CriticalSection
 {
 	CRITICAL_SECTION m_windowsCriticalSection;
 
-	public:
-		CriticalSection()
-		{
-			#ifdef PERF_TIMERS
-			AutoPerfGather a(TheCritSecPerfGather);
-			#endif
-			InitializeCriticalSection( &m_windowsCriticalSection );
-		}
+public:
+	CriticalSection()
+	{
+#ifdef PERF_TIMERS
+		AutoPerfGather a(TheCritSecPerfGather);
+#endif
+		InitializeCriticalSection(&m_windowsCriticalSection);
+	}
 
-		virtual ~CriticalSection()
-		{
-			#ifdef PERF_TIMERS
-			AutoPerfGather a(TheCritSecPerfGather);
-			#endif
-			DeleteCriticalSection( &m_windowsCriticalSection );
-		}
+	virtual ~CriticalSection()
+	{
+#ifdef PERF_TIMERS
+		AutoPerfGather a(TheCritSecPerfGather);
+#endif
+		DeleteCriticalSection(&m_windowsCriticalSection);
+	}
 
-	public:	// Use these when entering/exiting a critical section.
-		void enter( void )
-		{
-			#ifdef PERF_TIMERS
-			AutoPerfGather a(TheCritSecPerfGather);
-			#endif
-			EnterCriticalSection( &m_windowsCriticalSection );
-		}
+public: // Use these when entering/exiting a critical section.
+	void enter(void)
+	{
+#ifdef PERF_TIMERS
+		AutoPerfGather a(TheCritSecPerfGather);
+#endif
+		EnterCriticalSection(&m_windowsCriticalSection);
+	}
 
-		void exit( void )
-		{
-			#ifdef PERF_TIMERS
-			AutoPerfGather a(TheCritSecPerfGather);
-			#endif
-			LeaveCriticalSection( &m_windowsCriticalSection );
-		}
+	void exit(void)
+	{
+#ifdef PERF_TIMERS
+		AutoPerfGather a(TheCritSecPerfGather);
+#endif
+		LeaveCriticalSection(&m_windowsCriticalSection);
+	}
 };
 
 class ScopedCriticalSection
 {
-	private:
-		CriticalSection *m_cs;
+private:
+	CriticalSection *m_cs;
 
-	public:
-		ScopedCriticalSection( CriticalSection *cs ) : m_cs(cs)
-		{
-			if (m_cs)
-				m_cs->enter();
-		}
+public:
+	ScopedCriticalSection(CriticalSection *cs) : m_cs(cs)
+	{
+		if (m_cs)
+			m_cs->enter();
+	}
 
-		virtual ~ScopedCriticalSection( )
-		{
-			if (m_cs)
-				m_cs->exit();
-		}
+	virtual ~ScopedCriticalSection()
+	{
+		if (m_cs)
+			m_cs->exit();
+	}
 };
 
 // These should be NULL on creation then non-NULL in WinMain or equivalent.

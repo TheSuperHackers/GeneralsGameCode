@@ -42,19 +42,18 @@ CWDumpListView::~CWDumpListView()
 {
 }
 
-
 BEGIN_MESSAGE_MAP(CWDumpListView, CListView)
-	//{{AFX_MSG_MAP(CWDumpListView)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CWDumpListView)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CWDumpListView drawing
 
-void CWDumpListView::OnDraw(CDC* pDC)
+void CWDumpListView::OnDraw(CDC *pDC)
 {
-	CDocument* pDoc = GetDocument();
+	CDocument *pDoc = GetDocument();
 	// TODO: add draw code here
 }
 
@@ -67,24 +66,24 @@ void CWDumpListView::AssertValid() const
 	CListView::AssertValid();
 }
 
-void CWDumpListView::Dump(CDumpContext& dc) const
+void CWDumpListView::Dump(CDumpContext &dc) const
 {
 	CListView::Dump(dc);
 }
-#endif //RTS_DEBUG
+#endif // RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CWDumpListView message handlers
 
-void CWDumpListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void CWDumpListView::OnUpdate(CView *pSender, LPARAM lHint, CObject *pHint)
 {
 	CListCtrl &list = GetListCtrl();
-	CWdumpDoc *doc= (CWdumpDoc *) GetDocument();
+	CWdumpDoc *doc = (CWdumpDoc *)GetDocument();
 	ChunkItem *item = doc->m_ChunkItem;
 	list.DeleteAllItems();
 
-
-	if((item != 0) && (item->Type != 0) && (item->Type->Callback != 0)) {
+	if ((item != 0) && (item->Type != 0) && (item->Type->Callback != 0))
+	{
 		(*item->Type->Callback)(item, &list);
 	}
 }
@@ -98,9 +97,9 @@ void CWDumpListView::OnInitialUpdate()
 	flags |= LVS_REPORT;
 	SetWindowLong(list.GetSafeHwnd(), GWL_STYLE, flags);
 
-	static LV_COLUMN Name_Column = { LVCF_TEXT | LVCF_WIDTH | LVCF_FMT, LVCFMT_LEFT, 230, const_cast<LPSTR>("Name"), 0,0 };
-	static LV_COLUMN Type_Column = { LVCF_TEXT | LVCF_WIDTH | LVCF_FMT, LVCFMT_LEFT, 70, const_cast<LPSTR>("Type"), 0,0 };
-	static LV_COLUMN Value_Column = { LVCF_TEXT | LVCF_WIDTH | LVCF_FMT, LVCFMT_LEFT, 300, const_cast<LPSTR>("Value"), 0,0 };
+	static LV_COLUMN Name_Column = { LVCF_TEXT | LVCF_WIDTH | LVCF_FMT, LVCFMT_LEFT, 230, const_cast<LPSTR>("Name"), 0, 0 };
+	static LV_COLUMN Type_Column = { LVCF_TEXT | LVCF_WIDTH | LVCF_FMT, LVCFMT_LEFT, 70, const_cast<LPSTR>("Type"), 0, 0 };
+	static LV_COLUMN Value_Column = { LVCF_TEXT | LVCF_WIDTH | LVCF_FMT, LVCFMT_LEFT, 300, const_cast<LPSTR>("Value"), 0, 0 };
 
 	list.InsertColumn(0, &Name_Column);
 	list.InsertColumn(1, &Type_Column);

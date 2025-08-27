@@ -33,24 +33,20 @@
 #include <atlbase.h>
 extern CComModule _Module;
 #include <atlcom.h>
-#include <comutil.h>    // For _bstr_t.
+#include <comutil.h> // For _bstr_t.
 
 #include "oleauto.h"
 
-template <class T, class C, const IID *I>
-class FEBDispatch :
-public CComObjectRootEx<CComSingleThreadModel>,
-public CComCoClass<T>,
-public C
+template<class T, class C, const IID *I>
+class FEBDispatch : public CComObjectRootEx<CComSingleThreadModel>, public CComCoClass<T>, public C
 {
 public:
-
 	BEGIN_COM_MAP(T)
-		COM_INTERFACE_ENTRY(C)
-		COM_INTERFACE_ENTRY_AGGREGATE(IID_IDispatch, m_dispatch)
+	COM_INTERFACE_ENTRY(C)
+	COM_INTERFACE_ENTRY_AGGREGATE(IID_IDispatch, m_dispatch)
 	END_COM_MAP()
 
-		FEBDispatch()
+	FEBDispatch()
 	{
 		m_ptinfo = NULL;
 		m_dispatch = NULL;
@@ -74,7 +70,7 @@ public:
 
 			if (hr == S_OK)
 			{
-				hr = CreateStdDispatch(static_cast<IUnknown*>(this), static_cast<C*>(this), m_ptinfo, &m_dispatch);
+				hr = CreateStdDispatch(static_cast<IUnknown *>(this), static_cast<C *>(this), m_ptinfo, &m_dispatch);
 
 				m_dispatch->AddRef();
 				// Don't release the IUnknown from CreateStdDispatch without calling AddRef.
@@ -82,7 +78,7 @@ public:
 			}
 		}
 
-		if ( m_dispatch == NULL )
+		if (m_dispatch == NULL)
 		{
 			DEBUG_LOG(("Error creating Dispatch for Web interface"));
 		}

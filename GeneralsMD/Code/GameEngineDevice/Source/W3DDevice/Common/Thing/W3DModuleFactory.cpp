@@ -52,31 +52,30 @@
 //-------------------------------------------------------------------------------------------------
 /** Initialize method */
 //-------------------------------------------------------------------------------------------------
-void W3DModuleFactory::init( void )
+void W3DModuleFactory::init(void)
 {
-
 	// extending functionality
 	ModuleFactory::init();
 
 	// add the specific module templates we need for the draw methods
-	addModule( W3DDefaultDraw );
-	addModule( W3DDebrisDraw );
-	addModule( W3DModelDraw );
-	addModule( W3DLaserDraw );
-	addModule( W3DOverlordTankDraw );
-	addModule( W3DOverlordTruckDraw );
-	addModule( W3DOverlordAircraftDraw );
-	addModule( W3DProjectileStreamDraw );
-	addModule( W3DPoliceCarDraw );
-	addModule( W3DRopeDraw );
-	addModule( W3DScienceModelDraw );
-	addModule( W3DSupplyDraw );
-	addModule( W3DDependencyModelDraw );
-	addModule( W3DTankDraw );
-	addModule( W3DTruckDraw );
-	addModule( W3DTracerDraw );
-	addModule( W3DTankTruckDraw );
-	addModule( W3DTreeDraw );
-	addModule( W3DPropDraw );
+	addModule(W3DDefaultDraw);
+	addModule(W3DDebrisDraw);
+	addModule(W3DModelDraw);
+	addModule(W3DLaserDraw);
+	addModule(W3DOverlordTankDraw);
+	addModule(W3DOverlordTruckDraw);
+	addModule(W3DOverlordAircraftDraw);
+	addModule(W3DProjectileStreamDraw);
+	addModule(W3DPoliceCarDraw);
+	addModule(W3DRopeDraw);
+	addModule(W3DScienceModelDraw);
+	addModule(W3DSupplyDraw);
+	addModule(W3DDependencyModelDraw);
+	addModule(W3DTankDraw);
+	addModule(W3DTruckDraw);
+	addModule(W3DTracerDraw);
+	addModule(W3DTankTruckDraw);
+	addModule(W3DTreeDraw);
+	addModule(W3DPropDraw);
 
-}  // end init
+} // end init

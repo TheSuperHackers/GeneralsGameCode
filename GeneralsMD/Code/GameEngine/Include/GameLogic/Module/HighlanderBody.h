@@ -43,20 +43,16 @@ class Object;
 //-------------------------------------------------------------------------------------------------
 class HighlanderBody : public ActiveBody
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( HighlanderBody, "HighlanderBody" )
-	MAKE_STANDARD_MODULE_MACRO( HighlanderBody )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HighlanderBody, "HighlanderBody")
+	MAKE_STANDARD_MODULE_MACRO(HighlanderBody)
 
 public:
-
-	HighlanderBody( Thing *thing, const ModuleData* moduleData );
+	HighlanderBody(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void attemptDamage( DamageInfo *damageInfo );		///< try to damage this object
+	virtual void attemptDamage(DamageInfo *damageInfo); ///< try to damage this object
 
 protected:
-
 };
 
 #endif
-

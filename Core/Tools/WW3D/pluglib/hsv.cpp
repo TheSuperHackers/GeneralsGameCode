@@ -37,13 +37,11 @@
  *   HSVClass::operator RGBClass -- Conversion operator for RGBClass object.                   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#include	"always.h"
-#include	"hsv.h"
-#include	"rgb.h"
+#include "always.h"
+#include "hsv.h"
+#include "rgb.h"
 
 HSVClass const HSVClass::BlackColor(0, 0, 0);
-
 
 /***********************************************************************************************
  * HSVClass::Adjust -- Adjust an HSV color toward specified color.                             *
@@ -65,7 +63,7 @@ HSVClass const HSVClass::BlackColor(0, 0, 0);
  * HISTORY:                                                                                    *
  *   02/20/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void HSVClass::Adjust(int ratio, HSVClass const & hsv)
+void HSVClass::Adjust(int ratio, HSVClass const &hsv)
 {
 	/*
 	**	Ratio conversion is limited to 0 through 100%. This is
@@ -87,7 +85,6 @@ void HSVClass::Adjust(int ratio, HSVClass const & hsv)
 	Hue = (unsigned char)(Get_Hue() + (hue * ratio) / 256);
 }
 
-
 /***********************************************************************************************
  * HSVClass::Difference -- Finds the difference between two HSV color objects.                 *
  *                                                                                             *
@@ -104,20 +101,22 @@ void HSVClass::Adjust(int ratio, HSVClass const & hsv)
  * HISTORY:                                                                                    *
  *   02/20/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int HSVClass::Difference(HSVClass const & hsv) const
+int HSVClass::Difference(HSVClass const &hsv) const
 {
 	int hue = (int)Hue - (int)hsv.Hue;
-	if (hue < 0) hue = -hue;
+	if (hue < 0)
+		hue = -hue;
 
 	int saturation = (int)Saturation - (int)hsv.Saturation;
-	if (saturation < 0) saturation = -saturation;
+	if (saturation < 0)
+		saturation = -saturation;
 
 	int value = (int)Value - (int)hsv.Value;
-	if (value < 0) value = -value;
+	if (value < 0)
+		value = -value;
 
-	return(hue*hue + saturation*saturation + value*value);
+	return (hue * hue + saturation * saturation + value * value);
 }
-
 
 /***********************************************************************************************
  * HSVClass::operator RGBClass -- Conversion operator for RGBClass object.                     *
@@ -134,25 +133,23 @@ int HSVClass::Difference(HSVClass const & hsv) const
  * HISTORY:                                                                                    *
  *   02/20/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-HSVClass::operator RGBClass (void) const
+HSVClass::operator RGBClass(void) const
 {
-	unsigned int i;				// Integer part.
-	unsigned int f;				// Fractional or remainder part.  f/HSV_BASE gives fraction.
-	unsigned int tmp;			// Temporary variable to help with calculations.
-	unsigned int values[7];	// Possible rgb values.  Don't use zero.
+	unsigned int i; // Integer part.
+	unsigned int f; // Fractional or remainder part.  f/HSV_BASE gives fraction.
+	unsigned int tmp; // Temporary variable to help with calculations.
+	unsigned int values[7]; // Possible rgb values.  Don't use zero.
 
 	int hue = Get_Hue();
 	int saturation = Get_Saturation();
 	int value = Get_Value();
 	int red, green, blue;
 
-
 	hue *= 6;
 	f = hue % 255;
 
 	// Set up possible red, green and blue values.
-	values[1] =
-	values[2] = value;
+	values[1] = values[2] = value;
 
 	//
 	// The following lines of code change
@@ -165,12 +162,10 @@ HSVClass::operator RGBClass (void) const
 	tmp = (saturation * f) / 255;
 	values[3] = (value * (255 - tmp)) / 255;
 
-	values[4] =
-	values[5] = (value * (255 - saturation)) / 255;
+	values[4] = values[5] = (value * (255 - saturation)) / 255;
 
 	tmp = 255 - (saturation * (255 - f)) / 255;
 	values[6] = (value * tmp) / 255;
-
 
 	// This should not be rounded.
 	i = hue / 255;
@@ -185,7 +180,5 @@ HSVClass::operator RGBClass (void) const
 	green = values[i];
 
 	RGBClass rgb((unsigned char)red, (unsigned char)green, (unsigned char)blue);
-	return(rgb);
+	return (rgb);
 }
-
-

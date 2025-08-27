@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/NameKeyGenerator.h"
 #include "Common/Player.h"
@@ -54,17 +54,14 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/ScriptEngine.h"
 
-//external declarations of the Gadgets the callbacks can use
+// external declarations of the Gadgets the callbacks can use
 WindowLayout *popupCommunicatorLayout = NULL;
-
 
 //-------------------------------------------------------------------------------------------------
 /** Input procedure for the left HUD */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
-																	 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType LeftHUDInput(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-
 	// get player
 	Player *player = ThePlayerList->getLocalPlayer();
 
@@ -72,18 +69,17 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 	// if the player doesn't have a radar, or the radar is hidden, and the radar is not being
 	// forced to on, we just eat input over the radar window
 	//
-	if( !TheRadar->isRadarForced() && (TheRadar->isRadarHidden() || !player->hasRadar()) )
+	if (!TheRadar->isRadarForced() && (TheRadar->isRadarHidden() || !player->hasRadar()))
 		return MSG_HANDLED;
 
 	// If the middle mouse button is depressed, then just let the message fall all the
 	// way back to the usual middle mouse button processing.
 	// jkmcd
-	if( TheMouse->getMouseStatus()->middleState == MBS_Down )
+	if (TheMouse->getMouseStatus()->middleState == MBS_Down)
 		return MSG_IGNORED;
 
-	switch( msg )
+	switch (msg)
 	{
-
 		/** @todo
 			This is wrong.  The radar should be in the message stream, and eat all messages and propagate them
 			as a new message with the coords converted to world coords and the message flagged as being from
@@ -96,19 +92,19 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 		case GWM_MOUSE_ENTERING:
 		case GWM_MOUSE_LEAVING:
 		{
-
 			//
 			// consider changing the mouse cursor if we are not in the process of firing
 			// targeted "superweapons" which we can use the radar itself to fire
 			//
 			Bool targeting = FALSE;
 			const CommandButton *command = TheInGameUI->getGUICommand();
-			if( command
-					&& (command->getCommandType() == GUI_COMMAND_SPECIAL_POWER || command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT)
-					&& BitIsSet( command->getOptions(), NEED_TARGET_POS ) )
+			if (command
+					&& (command->getCommandType() == GUI_COMMAND_SPECIAL_POWER
+							|| command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT)
+					&& BitIsSet(command->getOptions(), NEED_TARGET_POS))
 				targeting = TRUE;
 
-			if( targeting == FALSE )
+			if (targeting == FALSE)
 			{
 				const DrawableList *drawableList = TheInGameUI->getAllSelectedLocalDrawables();
 				Mouse::MouseCursor cur = Mouse::ARROW;
@@ -128,7 +124,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 				// Groovy
 				TheMouse->setCursor(cur);
 
-			}  // end if
+			} // end if
 
 			return MSG_HANDLED;
 		}
@@ -136,7 +132,6 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 		// --------------------------------------------------------------------------------------------
 		case GWM_MOUSE_POS:
 		{
-
 			// get mouse position
 			ICoord2D mouse;
 			mouse.x = mData1 & 0xFFFF;
@@ -144,7 +139,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 
 			// get window screen position
 			ICoord2D screenPos;
-			window->winGetScreenPosition( &screenPos.x, &screenPos.y );
+			window->winGetScreenPosition(&screenPos.x, &screenPos.y);
 
 			// set mouse position to be relative to this window
 			mouse.x -= screenPos.x;
@@ -152,42 +147,41 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 
 			// is the mouse in the radar window
 			ICoord2D radar;
-			if( (TheRadar->isRadarHidden() == FALSE || TheRadar->isRadarForced()) &&
-					TheRadar->localPixelToRadar( &mouse, &radar ) )
+			if ((TheRadar->isRadarHidden() == FALSE || TheRadar->isRadarForced()) && TheRadar->localPixelToRadar(&mouse, &radar))
 			{
+				/*
+				//
+				// this is an example piece of code to find the object under the pixel position
+				// of the radar ... should we in the future wish to allow commands to be executed
+				// on objects throught he radar.  note tho that this is extremely hard to do because
+				// the pixels on the radar are very small and it's hard to do accurate targeting
+				//
 
-/*
-//
-// this is an example piece of code to find the object under the pixel position
-// of the radar ... should we in the future wish to allow commands to be executed
-// on objects throught he radar.  note tho that this is extremely hard to do because
-// the pixels on the radar are very small and it's hard to do accurate targeting
-//
-
-				Object *obj = TheRadar->objectUnderRadarPixel( &mouse );
-				UnicodeString msg;
-				if( obj )
-					msg.format( L"Object under mouse on radar '%S'(%d)",
-											obj->getTemplate()->getName().str(), obj->getID() );
-				else
-					msg.format( L"Mouse (%d,%d) in Radar window L(%d,%d)", mouse.x, mouse.y, radar.x, radar.y );
-				TheInGameUI->message( msg );
-*/
+								Object *obj = TheRadar->objectUnderRadarPixel( &mouse );
+								UnicodeString msg;
+								if( obj )
+									msg.format( L"Object under mouse on radar '%S'(%d)",
+															obj->getTemplate()->getName().str(), obj->getID() );
+								else
+									msg.format( L"Mouse (%d,%d) in Radar window L(%d,%d)", mouse.x, mouse.y, radar.x, radar.y );
+								TheInGameUI->message( msg );
+				*/
 
 				// keep the cursor for any context commands
 				const CommandButton *command = TheInGameUI->getGUICommand();
-				if( command
-						&& (command->getCommandType() == GUI_COMMAND_SPECIAL_POWER || command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT)
-						&& BitIsSet( command->getOptions(), NEED_TARGET_POS ) )
+				if (command
+						&& (command->getCommandType() == GUI_COMMAND_SPECIAL_POWER
+								|| command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT)
+						&& BitIsSet(command->getOptions(), NEED_TARGET_POS))
 				{
-					Int index = TheMouse->getCursorIndex( command->getCursorName() );
+					Int index = TheMouse->getCursorIndex(command->getCursorName());
 
-					if( index != Mouse::INVALID_MOUSE_CURSOR )
-						TheMouse->setCursor( (Mouse::MouseCursor)index );
+					if (index != Mouse::INVALID_MOUSE_CURSOR)
+						TheMouse->setCursor((Mouse::MouseCursor)index);
 					else
-						TheMouse->setCursor( Mouse::CROSS );
+						TheMouse->setCursor(Mouse::CROSS);
 
-				}  // end if
+				} // end if
 				else
 				{
 					// Else we are not super targeting, so we have to try to refresh the move cursor.
@@ -212,15 +206,15 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 					TheMouse->setCursor(cur);
 				}
 
-			}  // end if
+			} // end if
 
 			break;
 
-		}  // end case mouse position
+		} // end case mouse position
 
 		// ------------------------------------------------------------------------
-		case GWM_RIGHT_UP:// Here to eat
-		case GWM_LEFT_UP:// Here to eat
+		case GWM_RIGHT_UP: // Here to eat
+		case GWM_LEFT_UP: // Here to eat
 			break;
 
 		case GWM_RIGHT_DOWN:
@@ -233,14 +227,14 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 			Coord3D world;
 
 			// get window size
-			window->winGetSize( &size.x, &size.y );
+			window->winGetSize(&size.x, &size.y);
 
 			// get mouse position
 			mouse.x = mData1 & 0xFFFF;
 			mouse.y = mData1 >> 16;
 
 			// get window screen position
-			window->winGetScreenPosition( &screenPos.x, &screenPos.y );
+			window->winGetScreenPosition(&screenPos.x, &screenPos.y);
 
 			// set mouse position to be relative to this window
 			mouse.x -= screenPos.x;
@@ -252,11 +246,9 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 			// completely drawn with the radar ... so it's just a translation from
 			// our window size we're drawing into to the radar cell size
 			//
-			if( (TheRadar->isRadarHidden() == FALSE || TheRadar->isRadarForced()) &&
-					TheRadar->localPixelToRadar( &mouse, &radar ) &&
-					TheRadar->radarToWorld( &radar, &world ) )
+			if ((TheRadar->isRadarHidden() == FALSE || TheRadar->isRadarForced()) && TheRadar->localPixelToRadar(&mouse, &radar)
+					&& TheRadar->radarToWorld(&radar, &world))
 			{
-
 				// No drawables, or a right click automatically means its a look at.
 				// Having drawables and being in attack move mode means that we should attack move.
 				// Having drawables and not being in attack move mode means that we should move.
@@ -264,32 +256,30 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 				const DrawableList *drawableList = TheInGameUI->getAllSelectedLocalDrawables(); // locally-owned only
 
 				// see if the user wants to move the tactical view
-				if (	drawableList->empty()
-					||	(! TheGlobalData->m_useAlternateMouse && msg == GWM_RIGHT_DOWN)
-					||	(TheGlobalData->m_useAlternateMouse && msg == GWM_LEFT_DOWN)	)
+				if (drawableList->empty() || (!TheGlobalData->m_useAlternateMouse && msg == GWM_RIGHT_DOWN)
+						|| (TheGlobalData->m_useAlternateMouse && msg == GWM_LEFT_DOWN))
 				{
-					TheTacticalView->lookAt( &world );
+					TheTacticalView->lookAt(&world);
 					break;
 				}
 
 				// evaluate any special powers that can be executed from the radar
 				const CommandButton *command = TheInGameUI->getGUICommand();
-				if( command
-					&& (command->getCommandType() == GUI_COMMAND_SPECIAL_POWER || command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT)
-					&& BitIsSet( command->getOptions(), NEED_TARGET_POS )
-					)
+				if (command
+						&& (command->getCommandType() == GUI_COMMAND_SPECIAL_POWER
+								|| command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT)
+						&& BitIsSet(command->getOptions(), NEED_TARGET_POS))
 				{
-
 					// do the command
-					TheGameClient->evaluateContextCommand( NULL, &world, CommandTranslator::DO_COMMAND );
+					TheGameClient->evaluateContextCommand(NULL, &world, CommandTranslator::DO_COMMAND);
 
-				}  // end if
-				else if( command && command->getCommandType() == GUI_COMMAND_ATTACK_MOVE)
+				} // end if
+				else if (command && command->getCommandType() == GUI_COMMAND_ATTACK_MOVE)
 				{
 					// Attack move has changed from a modifier to a command, so it moves up here.
 
-					GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_ATTACKMOVETO );
-					msg->appendLocationArgument( world );
+					GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_DO_ATTACKMOVETO);
+					msg->appendLocationArgument(world);
 
 					// Play the unit voice response
 					pickAndPlayUnitVoiceResponse(TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_DO_ATTACKMOVETO);
@@ -301,72 +291,66 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 					// Do the superweapon stuff here, before issuing these other messages
 
 					// GS Leaving commented out to show that isInAttackMoveToMode is NEVER SET.  It's a command now, not a modifier.
-//					if (TheInGameUI->isInAttackMoveToMode())
-//					{
-//						newMsg = TheMessageStream->appendMessage(GameMessage::MSG_DO_ATTACKMOVETO);
-//						newMsg->appendLocationArgument(world);
-//						// Play the unit voice response
-//						pickAndPlayUnitVoiceResponse(drawableList, GameMessage::MSG_DO_ATTACKMOVETO);
-//						break;
-//					}
+					//					if (TheInGameUI->isInAttackMoveToMode())
+					//					{
+					//						newMsg = TheMessageStream->appendMessage(GameMessage::MSG_DO_ATTACKMOVETO);
+					//						newMsg->appendLocationArgument(world);
+					//						// Play the unit voice response
+					//						pickAndPlayUnitVoiceResponse(drawableList, GameMessage::MSG_DO_ATTACKMOVETO);
+					//						break;
+					//					}
 
 					newMsg = TheMessageStream->appendMessage(GameMessage::MSG_DO_MOVETO);
 					newMsg->appendLocationArgument(world);
 					// Play the unit voice response
 					pickAndPlayUnitVoiceResponse(drawableList, GameMessage::MSG_DO_MOVETO);
 
-				}  // end else
-
+				} // end else
 			}
 
+			break;
 
-	break;
-
-		}  // end left down
+		} // end left down
 
 		// ------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	} // end switch( msg )
 
 	TheInGameUI->clearAttackMoveToMode();
 	return MSG_HANDLED;
 
-}  // end LeftHUDInput
+} // end LeftHUDInput
 
 //-------------------------------------------------------------------------------------------------
 /** Input procedure for the control bar */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType ControlBarInput( GameWindow *window, UnsignedInt msg,
-																			WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType ControlBarInput(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
-
 	return MSG_IGNORED;
 
-}  // end ControlBarInput
+} // end ControlBarInput
 void ToggleQuitMenu(void);
 //-------------------------------------------------------------------------------------------------
 /** System callback for the control bar parent */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
-																			 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType ControlBarSystem(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
 {
 	static NameKeyType buttonCommunicator = NAMEKEY_INVALID;
-	if(TheScriptEngine && TheScriptEngine->isGameEnding())
+	if (TheScriptEngine && TheScriptEngine->isGameEnding())
 		return MSG_IGNORED;
-	switch( msg )
+	switch (msg)
 	{
 		// --------------------------------------------------------------------------------------------
 		case GWM_CREATE:
 		{
-
 			// get ids for our children controls
-			buttonCommunicator = TheNameKeyGenerator->nameToKey( AsciiString("ControlBar.wnd:PopupCommunicator") );
+			buttonCommunicator = TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:PopupCommunicator"));
 
 			break;
 
-		}  // end create
+		} // end create
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_MOUSE_ENTERING:
@@ -374,7 +358,7 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 		{
 			GameWindow *control = (GameWindow *)mData1;
 
-			TheControlBar->processContextSensitiveButtonTransition( control, (GadgetGameMessage)msg);
+			TheControlBar->processContextSensitiveButtonTransition(control, (GadgetGameMessage)msg);
 			break;
 		}
 
@@ -387,42 +371,43 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 			static NameKeyType beaconDeleteButtonID = NAMEKEY("ControlBar.wnd:ButtonDeleteBeacon");
 			static NameKeyType beaconClearTextButtonID = NAMEKEY("ControlBar.wnd:ButtonClearBeaconText");
 			static NameKeyType beaconGeneralButtonID = NAMEKEY("ControlBar.wnd:ButtonGeneral");
-//			static NameKeyType buttonSmallID = NAMEKEY("ControlBar.wnd:ButtonSmall");
-//			static NameKeyType buttonMediumID = NAMEKEY("ControlBar.wnd:ButtonMedium");
+			//			static NameKeyType buttonSmallID = NAMEKEY("ControlBar.wnd:ButtonSmall");
+			//			static NameKeyType buttonMediumID = NAMEKEY("ControlBar.wnd:ButtonMedium");
 			static NameKeyType buttonLargeID = NAMEKEY("ControlBar.wnd:ButtonLarge");
 			static NameKeyType buttonOptions = NAMEKEY("ControlBar.wnd:ButtonOptions");
 			static NameKeyType buttonIdleWorker = NAMEKEY("ControlBar.wnd:ButtonIdleWorker");
 
 			Int controlID = control->winGetWindowId();
-			if( controlID == buttonCommunicator )
+			if (controlID == buttonCommunicator)
 			{
 				ToggleDiplomacy(FALSE);
 			}
-			else if( controlID == beaconPlacementButtonID && TheGameLogic->isInMultiplayerGame() &&
-				ThePlayerList->getLocalPlayer()->isPlayerActive())
+			else if (
+					controlID == beaconPlacementButtonID && TheGameLogic->isInMultiplayerGame()
+					&& ThePlayerList->getLocalPlayer()->isPlayerActive())
 			{
-				const CommandButton *commandButton = TheControlBar->findCommandButton( "Command_PlaceBeacon" );
-				TheInGameUI->setGUICommand( commandButton );
+				const CommandButton *commandButton = TheControlBar->findCommandButton("Command_PlaceBeacon");
+				TheInGameUI->setGUICommand(commandButton);
 			}
-			else if( controlID == beaconDeleteButtonID && TheGameLogic->isInMultiplayerGame() )
+			else if (controlID == beaconDeleteButtonID && TheGameLogic->isInMultiplayerGame())
 			{
-				TheMessageStream->appendMessage( GameMessage::MSG_REMOVE_BEACON );
+				TheMessageStream->appendMessage(GameMessage::MSG_REMOVE_BEACON);
 			}
-			else if( controlID == beaconClearTextButtonID && TheGameLogic->isInMultiplayerGame() )
+			else if (controlID == beaconClearTextButtonID && TheGameLogic->isInMultiplayerGame())
 			{
 				static NameKeyType textID = NAMEKEY("ControlBar.wnd:EditBeaconText");
 				GameWindow *win = TheWindowManager->winGetWindowFromId(NULL, textID);
 				if (win)
 				{
-					GadgetTextEntrySetText( win, UnicodeString::TheEmptyString );
+					GadgetTextEntrySetText(win, UnicodeString::TheEmptyString);
 				}
 			}
-			else if( controlID == beaconGeneralButtonID)
+			else if (controlID == beaconGeneralButtonID)
 			{
-				HideQuitMenu( );
+				HideQuitMenu();
 				TheControlBar->togglePurchaseScience();
 			}
-			//else if( controlID == buttonSmallID)
+			// else if( controlID == buttonSmallID)
 			//			{
 			//				TheControlBar->switchControlBarStage( CONTROL_BAR_STAGE_LOW	);
 			//			}
@@ -431,17 +416,17 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 			//				TheControlBar->switchControlBarStage( CONTROL_BAR_STAGE_SQUISHED	);
 			//			}
 
-			else if( controlID == buttonLargeID)
+			else if (controlID == buttonLargeID)
 			{
 				TheControlBar->toggleControlBarStage();
 			}
-			else if( controlID == buttonOptions)
+			else if (controlID == buttonOptions)
 			{
 				ToggleQuitMenu();
 			}
-			else if( controlID == buttonIdleWorker)
+			else if (controlID == buttonIdleWorker)
 			{
-				HideQuitMenu( );
+				HideQuitMenu();
 				TheInGameUI->selectNextIdleWorker();
 			}
 			else
@@ -450,11 +435,11 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 				// all buttons from all the context sensitive user interface windows are part of the
 				// control bar, send the button processing that way
 				//
-				TheControlBar->processContextSensitiveButtonClick( control, (GadgetGameMessage)msg );
+				TheControlBar->processContextSensitiveButtonClick(control, (GadgetGameMessage)msg);
 			}
 			break;
 
-		}  // end button selected
+		} // end button selected
 
 		//---------------------------------------------------------------------------------------------
 		case GEM_EDIT_DONE:
@@ -467,15 +452,15 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 				// set beacon text
 				if (TheInGameUI->getSelectCount() == 1)
 				{
-					GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_SET_BEACON_TEXT );
-					UnicodeString newText = GadgetTextEntryGetText( control );
+					GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_SET_BEACON_TEXT);
+					UnicodeString newText = GadgetTextEntryGetText(control);
 					TheLanguageFilter->filterLine(newText);
-					const WideChar * c = newText.str();
-					while ( c && *c )
+					const WideChar *c = newText.str();
+					while (c && *c)
 					{
-						msg->appendWideCharArgument( *c++ );
+						msg->appendWideCharArgument(*c++);
 					}
-					msg->appendWideCharArgument( L'\0' ); // trailing NULL
+					msg->appendWideCharArgument(L'\0'); // trailing NULL
 				}
 			}
 			break;
@@ -485,20 +470,20 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	} // end switch( msg )
 
 	return MSG_HANDLED;
 
-}  // end ControlBarSystem
+} // end ControlBarSystem
 
-extern void showReplayControls( void );
-extern void hideReplayControls( void );
-extern void toggleReplayControls( void );
+extern void showReplayControls(void);
+extern void hideReplayControls(void);
+extern void toggleReplayControls(void);
 
 //-------------------------------------------------------------------------------------------------
 /** Force the control bar to be shown */
 //-------------------------------------------------------------------------------------------------
-void ShowControlBar( Bool immediate )
+void ShowControlBar(Bool immediate)
 {
 	if (!TheWindowManager || !TheControlBar)
 		return;
@@ -518,7 +503,7 @@ void ShowControlBar( Bool immediate )
 		if (TheControlBar->m_animateWindowManager && !immediate)
 		{
 			TheControlBar->m_animateWindowManager->reset();
-			//TheControlBar->m_animateWindowManager->registerGameWindow(window, WIN_ANIMATION_SLIDE_BOTTOM_TIMED, TRUE, 1000, 0);
+			// TheControlBar->m_animateWindowManager->registerGameWindow(window, WIN_ANIMATION_SLIDE_BOTTOM_TIMED, TRUE, 1000, 0);
 			TheControlBar->m_animateWindowManager->registerGameWindow(window, WIN_ANIMATION_SLIDE_BOTTOM, TRUE, 500, 0);
 			TheControlBar->animateSpecialPowerShortcut(TRUE);
 		}
@@ -533,7 +518,7 @@ void ShowControlBar( Bool immediate )
 //-------------------------------------------------------------------------------------------------
 /** Force the control bar to be hidden */
 //-------------------------------------------------------------------------------------------------
-void HideControlBar( Bool immediate )
+void HideControlBar(Bool immediate)
 {
 	if (!TheWindowManager || !TheControlBar)
 		return;
@@ -564,14 +549,14 @@ void HideControlBar( Bool immediate )
 		TheControlBar->animateSpecialPowerShortcut(FALSE);
 	}
 
-	//Always get rid of the purchase science screen!
+	// Always get rid of the purchase science screen!
 	TheControlBar->hidePurchaseScience();
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Toggle the control bar on or off */
 //-------------------------------------------------------------------------------------------------
-void ToggleControlBar( Bool immediate )
+void ToggleControlBar(Bool immediate)
 {
 	if (!TheWindowManager || !TheControlBar)
 		return;
@@ -587,7 +572,7 @@ void ToggleControlBar( Bool immediate )
 		{
 			TheControlBar->showSpecialPowerShortcut();
 
-			//now hidden, we're making it visible again so shrink viewport under the window
+			// now hidden, we're making it visible again so shrink viewport under the window
 			TheControlBar->setScaledViewportHeight();
 			window->winHide(FALSE);
 			TheControlBar->switchControlBarStage(CONTROL_BAR_STAGE_DEFAULT);
@@ -595,7 +580,8 @@ void ToggleControlBar( Bool immediate )
 			if (TheControlBar->m_animateWindowManager && !immediate)
 			{
 				TheControlBar->m_animateWindowManager->reset();
-				//TheControlBar->m_animateWindowManager->registerGameWindow(window, WIN_ANIMATION_SLIDE_BOTTOM_TIMED, FALSE, 500, 0);
+				// TheControlBar->m_animateWindowManager->registerGameWindow(window, WIN_ANIMATION_SLIDE_BOTTOM_TIMED, FALSE, 500,
+				// 0);
 				TheControlBar->m_animateWindowManager->registerGameWindow(window, WIN_ANIMATION_SLIDE_BOTTOM, TRUE, 500, 0);
 				TheControlBar->animateSpecialPowerShortcut(TRUE);
 			}

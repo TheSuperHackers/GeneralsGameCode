@@ -39,21 +39,23 @@ class Object;
 struct DrawableInfo
 {
 	enum ExtraRenderFlags
-	{	ERF_IS_NORMAL=0,
-		ERF_IS_OCCLUDED=	0x00000001,
-		ERF_POTENTIAL_OCCLUDER=	0x00000002,
-		ERF_POTENTIAL_OCCLUDEE=	0x00000004,
-		ERF_IS_TRANSLUCENT= 0x00000008,
+	{
+		ERF_IS_NORMAL = 0,
+		ERF_IS_OCCLUDED = 0x00000001,
+		ERF_POTENTIAL_OCCLUDER = 0x00000002,
+		ERF_POTENTIAL_OCCLUDEE = 0x00000004,
+		ERF_IS_TRANSLUCENT = 0x00000008,
 		ERF_IS_NON_OCCLUDER_OR_OCCLUDEE = 0x00000010,
-		ERF_DELAYED_RENDER = ERF_IS_TRANSLUCENT|ERF_POTENTIAL_OCCLUDEE,
+		ERF_DELAYED_RENDER = ERF_IS_TRANSLUCENT | ERF_POTENTIAL_OCCLUDEE,
 	};
 
 	DrawableInfo(void) : m_shroudStatusObjectID(INVALID_ID), m_drawable(NULL), m_ghostObject(NULL), m_flags(ERF_IS_NORMAL) {}
 
-	ObjectID m_shroudStatusObjectID;	///<since we sometimes have drawables without objects, this points to a parent object from which we pull shroud status.
-	Drawable *m_drawable;	///<pointer back to drawable containing this DrawableInfo
-	GhostObject *m_ghostObject;	///<pointer to ghostObject for this drawable used for fogged versions.
-	Int m_flags;	///<extra render settings flags that are tied to render objects with drawables.
+	ObjectID m_shroudStatusObjectID; ///< since we sometimes have drawables without objects, this points to a parent object
+																	 ///< from which we pull shroud status.
+	Drawable *m_drawable; ///< pointer back to drawable containing this DrawableInfo
+	GhostObject *m_ghostObject; ///< pointer to ghostObject for this drawable used for fogged versions.
+	Int m_flags; ///< extra render settings flags that are tied to render objects with drawables.
 };
 
 #endif // _DRAWABLEINFO_H_

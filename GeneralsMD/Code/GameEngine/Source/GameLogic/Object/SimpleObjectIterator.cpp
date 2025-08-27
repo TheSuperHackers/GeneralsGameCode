@@ -25,19 +25,17 @@
 // SimpleObjectIterator
 // Implementation of a simple object iterator
 // Author: Steven Johnson, September 2001
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameLogic/ObjectIter.h"
 
 #include "Common/ThingTemplate.h"
 #include "GameLogic/Object.h"
 
-
 /// @todo Doxygenize this file
 
-SimpleObjectIterator::ClumpCompareProc SimpleObjectIterator::theClumpCompareProcs[] =
-{
-	NULL,						// "fastest" gets no proc
+SimpleObjectIterator::ClumpCompareProc SimpleObjectIterator::theClumpCompareProcs[] = {
+	NULL, // "fastest" gets no proc
 	SimpleObjectIterator::sortNearToFar,
 	SimpleObjectIterator::sortFarToNear,
 	SimpleObjectIterator::sortCheapToExpensive,
@@ -133,24 +131,24 @@ void SimpleObjectIterator::sort(IterOrderType order)
 		return;
 
 #ifdef INTENSE_DEBUG
-{
-	DEBUG_LOG(("\n\n---------- BEFORE sort for %d -----------",order));
-	for (Clump *p = m_firstClump; p; p = p->m_nextClump)
 	{
-		DEBUG_LOG(("    obj %08lx numeric %f",p->m_obj,p->m_numeric));
+		DEBUG_LOG(("\n\n---------- BEFORE sort for %d -----------", order));
+		for (Clump *p = m_firstClump; p; p = p->m_nextClump)
+		{
+			DEBUG_LOG(("    obj %08lx numeric %f", p->m_obj, p->m_numeric));
+		}
 	}
-}
 #endif
 
 	ClumpCompareProc cmpProc = theClumpCompareProcs[order];
 
 	if (!cmpProc)
-		return;	// my, that was easy
+		return; // my, that was easy
 
 	// do a basic mergesort, which works nicely for linked lists,
 	// and is reasonably efficient (N log N).
 
-  for ( Int n = 1 ; ; n *= 2 )
+	for (Int n = 1;; n *= 2)
 	{
 		Clump *to_do = m_firstClump;
 		Clump *tail = NULL;
@@ -177,8 +175,8 @@ void SimpleObjectIterator::sort(IterOrderType order)
 
 			// merge the two lists.
 			DEBUG_ASSERTCRASH(to_do_count + subCount >= 0, ("uhoh"));
-			while (to_do_count + subCount > 0) {
-
+			while (to_do_count + subCount > 0)
+			{
 				DEBUG_ASSERTCRASH(to_do_count + subCount >= 0, ("uhoh"));
 
 				Clump *tmp;
@@ -212,8 +210,10 @@ void SimpleObjectIterator::sort(IterOrderType order)
 					sub = sub->m_nextClump;
 					--subCount;
 				}
-				if (!sub) subCount = 0;
-				if (!to_do) to_do_count = 0;
+				if (!sub)
+					subCount = 0;
+				if (!to_do)
+					to_do_count = 0;
 
 				if (tail)
 					tail->m_nextClump = tmp;
@@ -227,18 +227,18 @@ void SimpleObjectIterator::sort(IterOrderType order)
 		if (tail)
 			tail->m_nextClump = NULL;
 
-		if (mergeCount <= 1)	// when we have done just one (or none) swap, we're done
+		if (mergeCount <= 1) // when we have done just one (or none) swap, we're done
 			break;
 	}
 
 #ifdef INTENSE_DEBUG
-{
-	DEBUG_LOG(("\n\n---------- sort for %d -----------",order));
-	for (Clump *p = m_firstClump; p; p = p->m_nextClump)
 	{
-		DEBUG_LOG(("    obj %08lx numeric %f",p->m_obj,p->m_numeric));
+		DEBUG_LOG(("\n\n---------- sort for %d -----------", order));
+		for (Clump *p = m_firstClump; p; p = p->m_nextClump)
+		{
+			DEBUG_LOG(("    obj %08lx numeric %f", p->m_obj, p->m_numeric));
+		}
 	}
-}
 #endif
 
 	// always reset after sorting, to prevent weirdness
@@ -260,14 +260,11 @@ Real SimpleObjectIterator::sortFarToNear(Clump *a, Clump *b)
 //-----------------------------------------------------------------------------
 Real SimpleObjectIterator::sortCheapToExpensive(Clump *a, Clump *b)
 {
-	return a->m_obj->getTemplate()->friend_getBuildCost() -
-				 b->m_obj->getTemplate()->friend_getBuildCost();
+	return a->m_obj->getTemplate()->friend_getBuildCost() - b->m_obj->getTemplate()->friend_getBuildCost();
 }
 
 //-----------------------------------------------------------------------------
 Real SimpleObjectIterator::sortExpensiveToCheap(Clump *a, Clump *b)
 {
-	return b->m_obj->getTemplate()->friend_getBuildCost() -
-				 a->m_obj->getTemplate()->friend_getBuildCost();
+	return b->m_obj->getTemplate()->friend_getBuildCost() - a->m_obj->getTemplate()->friend_getBuildCost();
 }
-

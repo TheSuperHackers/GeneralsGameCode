@@ -37,10 +37,10 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CWdumpView, CView)
 
 BEGIN_MESSAGE_MAP(CWdumpView, CView)
-	//{{AFX_MSG_MAP(CWdumpView)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-		//    DO NOT EDIT what you see in these blocks of generated code!
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CWdumpView)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//    DO NOT EDIT what you see in these blocks of generated code!
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -49,14 +49,13 @@ END_MESSAGE_MAP()
 CWdumpView::CWdumpView()
 {
 	// TODO: add construction code here
-
 }
 
 CWdumpView::~CWdumpView()
 {
 }
 
-BOOL CWdumpView::PreCreateWindow(CREATESTRUCT& cs)
+BOOL CWdumpView::PreCreateWindow(CREATESTRUCT &cs)
 {
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
@@ -67,9 +66,9 @@ BOOL CWdumpView::PreCreateWindow(CREATESTRUCT& cs)
 /////////////////////////////////////////////////////////////////////////////
 // CWdumpView drawing
 
-void CWdumpView::OnDraw(CDC* pDC)
+void CWdumpView::OnDraw(CDC *pDC)
 {
-	CWdumpDoc* pDoc = GetDocument();
+	CWdumpDoc *pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 
 	// TODO: add draw code for native data here
@@ -84,17 +83,17 @@ void CWdumpView::AssertValid() const
 	CView::AssertValid();
 }
 
-void CWdumpView::Dump(CDumpContext& dc) const
+void CWdumpView::Dump(CDumpContext &dc) const
 {
 	CView::Dump(dc);
 }
 
-CWdumpDoc* CWdumpView::GetDocument() // non-debug version is inline
+CWdumpDoc *CWdumpView::GetDocument() // non-debug version is inline
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CWdumpDoc)));
-	return (CWdumpDoc*)m_pDocument;
+	return (CWdumpDoc *)m_pDocument;
 }
-#endif //RTS_DEBUG
+#endif // RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CWdumpView message handlers

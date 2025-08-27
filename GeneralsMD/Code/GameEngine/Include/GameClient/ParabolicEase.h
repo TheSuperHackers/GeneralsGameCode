@@ -67,25 +67,24 @@
  */
 class ParabolicEase
 {
-  public:
-		explicit ParabolicEase(Real easeInTime = 0.0f, Real easeOutTime = 0.0f)
-			{ setEaseTimes(easeInTime, easeOutTime); }
+public:
+	explicit ParabolicEase(Real easeInTime = 0.0f, Real easeOutTime = 0.0f) { setEaseTimes(easeInTime, easeOutTime); }
 
-		/// Initialize the ease-in/ease-out function.
-		/**
-		 * \param easeInTime/\param easeOutTime is the amount of time to
-		 * accomplish the transition.  The time is normalized from 0 to 1.
-		 */
-		void setEaseTimes(Real easeInTime, Real easeOutTime);
+	/// Initialize the ease-in/ease-out function.
+	/**
+	 * \param easeInTime/\param easeOutTime is the amount of time to
+	 * accomplish the transition.  The time is normalized from 0 to 1.
+	 */
+	void setEaseTimes(Real easeInTime, Real easeOutTime);
 
-		/// Evaluate the ease-in/ease-out function at time \param param.
-		/**
-		 * \param param is normalized from 0 to 1.
-		 */
-		Real operator ()(Real param) const;
+	/// Evaluate the ease-in/ease-out function at time \param param.
+	/**
+	 * \param param is normalized from 0 to 1.
+	 */
+	Real operator()(Real param) const;
 
-	private:
-		Real m_in, m_out;
+private:
+	Real m_in, m_out;
 };
 
 // ============================================================================

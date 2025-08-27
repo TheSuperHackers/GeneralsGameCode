@@ -30,32 +30,28 @@
 /////////////////////////////////////////////////////////////////////////////
 // ShadowOptions dialog
 
-
-ShadowOptions::ShadowOptions(CWnd* pParent /*=NULL*/)
-	: CDialog(ShadowOptions::IDD, pParent)
+ShadowOptions::ShadowOptions(CWnd *pParent /*=NULL*/) : CDialog(ShadowOptions::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(ShadowOptions)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
-void ShadowOptions::DoDataExchange(CDataExchange* pDX)
+void ShadowOptions::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(ShadowOptions)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(ShadowOptions, CDialog)
-	//{{AFX_MSG_MAP(ShadowOptions)
-	ON_EN_CHANGE(IDC_ALPHA_EDIT, OnChangeAlphaEdit)
-	ON_EN_CHANGE(IDC_BA_EDIT, OnChangeBaEdit)
-	ON_EN_CHANGE(IDC_GA_EDIT, OnChangeGaEdit)
-	ON_EN_CHANGE(IDC_RA_EDIT, OnChangeRaEdit)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(ShadowOptions)
+ON_EN_CHANGE(IDC_ALPHA_EDIT, OnChangeAlphaEdit)
+ON_EN_CHANGE(IDC_BA_EDIT, OnChangeBaEdit)
+ON_EN_CHANGE(IDC_GA_EDIT, OnChangeGaEdit)
+ON_EN_CHANGE(IDC_RA_EDIT, OnChangeRaEdit)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -65,23 +61,31 @@ void ShadowOptions::setShadowColor(void)
 {
 	Int r, g, b, shift;
 
-	shift = (1.0-m_intensity)*255;
-	if (shift>255) shift = 255;
-	if (shift<0) shift = 0;
+	shift = (1.0 - m_intensity) * 255;
+	if (shift > 255)
+		shift = 255;
+	if (shift < 0)
+		shift = 0;
 
-	r = m_intensity*m_red*255 + shift;
-	if (r>255) r = 255;
-	if (r<0) r = 0;
+	r = m_intensity * m_red * 255 + shift;
+	if (r > 255)
+		r = 255;
+	if (r < 0)
+		r = 0;
 
-	g = m_intensity*m_green*255 + shift;
-	if (g>255) g = 255;
-	if (g<0) g = 0;
+	g = m_intensity * m_green * 255 + shift;
+	if (g > 255)
+		g = 255;
+	if (g < 0)
+		g = 0;
 
-	b = m_intensity*m_blue*255 + shift;
-	if (b>255) b = 255;
-	if (b<0) b = 0;
+	b = m_intensity * m_blue * 255 + shift;
+	if (b > 255)
+		b = 255;
+	if (b < 0)
+		b = 0;
 
-	UnsignedInt clr = (255<<24) + (r<<16) + (g<<8) + b;
+	UnsignedInt clr = (255 << 24) + (r << 16) + (g << 8) + b;
 	DEBUG_LOG(("Setting shadows to %x", clr));
 	TheW3DShadowManager->setShadowColor(clr);
 }
@@ -91,9 +95,11 @@ void ShadowOptions::OnChangeAlphaEdit()
 	CWnd *pEdit = GetDlgItem(IDC_ALPHA_EDIT);
 	Real clr;
 	char buffer[_MAX_PATH];
-	if (pEdit) {
+	if (pEdit)
+	{
 		pEdit->GetWindowText(buffer, sizeof(buffer));
-		if (1==sscanf(buffer, "%f", &clr)) {
+		if (1 == sscanf(buffer, "%f", &clr))
+		{
 			m_intensity = clr;
 			setShadowColor();
 		}
@@ -105,9 +111,11 @@ void ShadowOptions::OnChangeBaEdit()
 	CWnd *pEdit = GetDlgItem(IDC_BA_EDIT);
 	Real clr;
 	char buffer[_MAX_PATH];
-	if (pEdit) {
+	if (pEdit)
+	{
 		pEdit->GetWindowText(buffer, sizeof(buffer));
-		if (1==sscanf(buffer, "%f", &clr)) {
+		if (1 == sscanf(buffer, "%f", &clr))
+		{
 			m_blue = clr;
 			setShadowColor();
 		}
@@ -119,9 +127,11 @@ void ShadowOptions::OnChangeGaEdit()
 	CWnd *pEdit = GetDlgItem(IDC_GA_EDIT);
 	Real clr;
 	char buffer[_MAX_PATH];
-	if (pEdit) {
+	if (pEdit)
+	{
 		pEdit->GetWindowText(buffer, sizeof(buffer));
-		if (1==sscanf(buffer, "%f", &clr)) {
+		if (1 == sscanf(buffer, "%f", &clr))
+		{
 			m_green = clr;
 			setShadowColor();
 		}
@@ -133,9 +143,11 @@ void ShadowOptions::OnChangeRaEdit()
 	CWnd *pEdit = GetDlgItem(IDC_RA_EDIT);
 	Real clr;
 	char buffer[_MAX_PATH];
-	if (pEdit) {
+	if (pEdit)
+	{
 		pEdit->GetWindowText(buffer, sizeof(buffer));
-		if (1==sscanf(buffer, "%f", &clr)) {
+		if (1 == sscanf(buffer, "%f", &clr))
+		{
 			m_red = clr;
 			setShadowColor();
 		}
@@ -147,47 +159,56 @@ BOOL ShadowOptions::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	UnsignedInt clr = TheW3DShadowManager->getShadowColor();
-	m_red = ((clr>>16)&0x00FF)/255.0f;
-	m_green = ((clr>>8)&0x00FF)/255.0f;
-	m_blue = ((clr)&0x00FF)/255.0f;
+	m_red = ((clr >> 16) & 0x00FF) / 255.0f;
+	m_green = ((clr >> 8) & 0x00FF) / 255.0f;
+	m_blue = ((clr) & 0x00FF) / 255.0f;
 
 	m_intensity = m_red;
-	if (m_green<m_red) m_intensity = m_green;
-	if (m_blue < m_intensity) m_intensity = m_blue;
+	if (m_green < m_red)
+		m_intensity = m_green;
+	if (m_blue < m_intensity)
+		m_intensity = m_blue;
 	m_intensity = 1.0f - m_intensity;
-	if (m_intensity < (1/256.0f)) {
+	if (m_intensity < (1 / 256.0f))
+	{
 		m_intensity = 0;
 		m_red = m_green = m_blue = 0;
-	} else {
-		m_red -= (1.0-m_intensity);
+	}
+	else
+	{
+		m_red -= (1.0 - m_intensity);
 		m_red /= m_intensity;
-		m_green -= (1.0-m_intensity);
+		m_green -= (1.0 - m_intensity);
 		m_green /= m_intensity;
-		m_blue -= (1.0-m_intensity);
+		m_blue -= (1.0 - m_intensity);
 		m_blue /= m_intensity;
 	}
 
 	CWnd *pEdit = GetDlgItem(IDC_RA_EDIT);
 	CString text;
-	if (pEdit) {
+	if (pEdit)
+	{
 		text.Format("%.2f", m_red);
 		pEdit->SetWindowText(text);
 	}
 	pEdit = GetDlgItem(IDC_BA_EDIT);
-	if (pEdit) {
+	if (pEdit)
+	{
 		text.Format("%.2f", m_blue);
 		pEdit->SetWindowText(text);
 	}
 	pEdit = GetDlgItem(IDC_GA_EDIT);
-	if (pEdit) {
+	if (pEdit)
+	{
 		text.Format("%.2f", m_green);
 		pEdit->SetWindowText(text);
 	}
 	pEdit = GetDlgItem(IDC_ALPHA_EDIT);
-	if (pEdit) {
+	if (pEdit)
+	{
 		text.Format("%.2f", m_intensity);
 		pEdit->SetWindowText(text);
 	}
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return TRUE; // return TRUE unless you set the focus to a control
+							 // EXCEPTION: OCX Property Pages should return FALSE
 }

@@ -45,21 +45,19 @@
 #include "units.h"
 #include "presetexportoptionsdialog.h"
 
-
 #define ENABLE_MESH_OPTIMIZING 0
 
 /*
 ** Static functions
 */
-static BOOL CALLBACK		_options_dialog_proc(HWND Hwnd,UINT message,WPARAM wParam,LPARAM lParam);
-static void					_init_ofn(void);
+static BOOL CALLBACK _options_dialog_proc(HWND Hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+static void _init_ofn(void);
 
 /*
 ** Static data
 */
-static bool					_OfnInited = false;
-static OPENFILENAME 		_HierarchyFileOFN;
-
+static bool _OfnInited = false;
+static OPENFILENAME _HierarchyFileOFN;
 
 /***********************************************************************************************
  * W3dOptionsDialogClass::W3dOptionsDialogClass -- constructor for the options dialog object   *
@@ -73,11 +71,12 @@ static OPENFILENAME 		_HierarchyFileOFN;
  * HISTORY:                                                                                    *
  *   07/24/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-W3dOptionsDialogClass::W3dOptionsDialogClass(Interface * maxinterface,ExpInterface * exportinterface)
+W3dOptionsDialogClass::W3dOptionsDialogClass(Interface *maxinterface, ExpInterface *exportinterface)
 {
 	MaxInterface = maxinterface;
 	ExportInterface = exportinterface;
-	if (!_OfnInited) _init_ofn();
+	if (!_OfnInited)
+		_init_ofn();
 	GotHierarchyFilename = false;
 
 	RangeLowSpin = NULL;
@@ -92,7 +91,7 @@ W3dOptionsDialogClass::~W3dOptionsDialogClass(void)
 	ReleaseISpinner(RangeHighSpin);
 }
 
-bool W3dOptionsDialogClass::Get_Export_Options(W3dExportOptionsStruct * options)
+bool W3dOptionsDialogClass::Get_Export_Options(W3dExportOptionsStruct *options)
 {
 	Options = options;
 
@@ -106,18 +105,20 @@ bool W3dOptionsDialogClass::Get_Export_Options(W3dExportOptionsStruct * options)
 							(LPARAM) this
 						);*/
 
-	PresetExportOptionsDialogClass dialog (MaxInterface, MaxInterface->GetMAXHWnd ());
+	PresetExportOptionsDialogClass dialog(MaxInterface, MaxInterface->GetMAXHWnd());
 
-	dialog.Set_Options (Options);
-	int result = dialog.Do_Modal ();
+	dialog.Set_Options(Options);
+	int result = dialog.Do_Modal();
 
-	if (result == IDOK) {
+	if (result == IDOK)
+	{
 		return true;
-	} else {
+	}
+	else
+	{
 		return false;
 	}
 }
-
 
 /***********************************************************************************************
  * W3dOptionsDialogClass::Dialog_Proc -- Handles the windows message for the options dialog    *
@@ -131,47 +132,41 @@ bool W3dOptionsDialogClass::Get_Export_Options(W3dExportOptionsStruct * options)
  * HISTORY:                                                                                    *
  *   07/24/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-bool W3dOptionsDialogClass::Dialog_Proc
-(
-	HWND hwnd,
-	UINT message,
-	WPARAM wParam,
-	LPARAM
-)
+bool W3dOptionsDialogClass::Dialog_Proc(HWND hwnd, UINT message, WPARAM wParam, LPARAM)
 {
 	int code = HIWORD(wParam);
 
-	switch (message )	{
-
+	switch (message)
+	{
 		/*******************************************************************
-		* WM_INITDIALOG
-		*
-		* Initialize all of the custom controls for the dialog box
-		*
-		*******************************************************************/
+		 * WM_INITDIALOG
+		 *
+		 * Initialize all of the custom controls for the dialog box
+		 *
+		 *******************************************************************/
 		case WM_INITDIALOG:
 
 			Dialog_Init();
 			return 1;
 
-
 		/*******************************************************************
-		* WM_COMMAND
-		*
-		*
-		*******************************************************************/
+		 * WM_COMMAND
+		 *
+		 *
+		 *******************************************************************/
 		case WM_COMMAND:
 
 			switch (LOWORD(wParam))
 			{
 				case IDOK:
 
-					if (Dialog_Ok() == FALSE) {
-						MessageBox(Hwnd,"You have not supplied a Base Pose hierarchy file!","Error",MB_OK);
+					if (Dialog_Ok() == FALSE)
+					{
+						MessageBox(Hwnd, "You have not supplied a Base Pose hierarchy file!", "Error", MB_OK);
 						return 1;
 					}
 
-					SetCursor(LoadCursor (NULL, IDC_WAIT));
+					SetCursor(LoadCursor(NULL, IDC_WAIT));
 					EndDialog(Hwnd, 1);
 					break;
 
@@ -214,19 +209,23 @@ bool W3dOptionsDialogClass::Dialog_Proc
 					_HierarchyFileOFN.lpstrFileTitle = NULL;
 					_HierarchyFileOFN.lpstrFile = Options->HierarchyFilename;
 
-					if (GetOpenFileName(&_HierarchyFileOFN)) {
-
+					if (GetOpenFileName(&_HierarchyFileOFN))
+					{
 						// Get the relative path between the current export path
 						// and the full file path to the hierarchy file:
-						Create_Relative_Path(Options->RelativeHierarchyFilename,
-							W3dExportClass::CurrentExportPath,
-							_HierarchyFileOFN.lpstrFile);
+						Create_Relative_Path(
+								Options->RelativeHierarchyFilename,
+								W3dExportClass::CurrentExportPath,
+								_HierarchyFileOFN.lpstrFile);
 
 						// set window text to the relative path.
-						HWND butHwnd = GetDlgItem(hwnd,IDC_WHT_BROWSE_BUTTON);
-						if (Options->RelativeHierarchyFilename[0] != 0) {
+						HWND butHwnd = GetDlgItem(hwnd, IDC_WHT_BROWSE_BUTTON);
+						if (Options->RelativeHierarchyFilename[0] != 0)
+						{
 							SetWindowText(butHwnd, Options->RelativeHierarchyFilename);
-						} else {
+						}
+						else
+						{
 							SetWindowText(butHwnd, Options->HierarchyFilename);
 						}
 						GotHierarchyFilename = true;
@@ -240,11 +239,11 @@ bool W3dOptionsDialogClass::Dialog_Proc
 			return 1;
 
 		/*******************************************************************
-		* CC_SPINNER_CHANGE
-		*
-		* Max custom spinner controls
-		*
-		*******************************************************************/
+		 * CC_SPINNER_CHANGE
+		 *
+		 * Max custom spinner controls
+		 *
+		 *******************************************************************/
 		case CC_SPINNER_CHANGE:
 
 			switch (LOWORD(wParam))
@@ -252,19 +251,17 @@ bool W3dOptionsDialogClass::Dialog_Proc
 				case IDC_RANGE_LOW_SPIN:
 					if (RangeLowSpin->GetIVal() > RangeHighSpin->GetIVal())
 					{
-						RangeHighSpin->SetValue (RangeLowSpin->GetIVal(),FALSE);
+						RangeHighSpin->SetValue(RangeLowSpin->GetIVal(), FALSE);
 					}
 					break;
 
 				case IDC_RANGE_HIGH_SPIN:
 					if (RangeHighSpin->GetIVal() < RangeLowSpin->GetIVal())
 					{
-						RangeLowSpin->SetValue(RangeHighSpin->GetIVal(),FALSE);
+						RangeLowSpin->SetValue(RangeHighSpin->GetIVal(), FALSE);
 					}
 					break;
-
-	 		}
-
+			}
 	}
 	return 0;
 }
@@ -272,22 +269,27 @@ bool W3dOptionsDialogClass::Dialog_Proc
 void W3dOptionsDialogClass::Dialog_Init()
 {
 	CenterWindow(Hwnd, GetParent(Hwnd));
-	SetCursor(LoadCursor (NULL, IDC_ARROW));
+	SetCursor(LoadCursor(NULL, IDC_ARROW));
 
 	// initialize the export radio buttons
-	if (Options->ExportHierarchy) {
-		CheckDlgButton(Hwnd,IDC_WHT_EXPORT_RADIO,BST_CHECKED);
+	if (Options->ExportHierarchy)
+	{
+		CheckDlgButton(Hwnd, IDC_WHT_EXPORT_RADIO, BST_CHECKED);
 		Enable_WHT_Export();
-	} else {
-		if (Options->LoadHierarchy) {
-			CheckDlgButton(Hwnd,IDC_WHT_LOAD_RADIO,BST_CHECKED);
+	}
+	else
+	{
+		if (Options->LoadHierarchy)
+		{
+			CheckDlgButton(Hwnd, IDC_WHT_LOAD_RADIO, BST_CHECKED);
 			Enable_WHT_Load();
 
 			// If the relative path is a full path, just erase both paths
 			// This case happens with files which were exported using a previous,
 			// bugged version of the exporter which did not handle files on
 			// different drives correctly.
-			if (Is_Full_Path(Options->RelativeHierarchyFilename)) {
+			if (Is_Full_Path(Options->RelativeHierarchyFilename))
+			{
 				Options->RelativeHierarchyFilename[0] = 0;
 				Options->HierarchyFilename[0] = 0;
 			}
@@ -295,40 +297,43 @@ void W3dOptionsDialogClass::Dialog_Init()
 			// Honor the relative path if it is present
 			if (Options->RelativeHierarchyFilename[0] != 0)
 			{
-
-				HWND butHwnd = GetDlgItem(Hwnd,IDC_WHT_BROWSE_BUTTON);
+				HWND butHwnd = GetDlgItem(Hwnd, IDC_WHT_BROWSE_BUTTON);
 				SetWindowText(butHwnd, Options->RelativeHierarchyFilename);
-				Create_Full_Path(Options->HierarchyFilename,
-					W3dExportClass::CurrentExportPath,
-					Options->RelativeHierarchyFilename);
+				Create_Full_Path(Options->HierarchyFilename, W3dExportClass::CurrentExportPath, Options->RelativeHierarchyFilename);
 				GotHierarchyFilename = true;
-
-			} else if (Options->HierarchyFilename[0] != 0) {
-
-				HWND butHwnd = GetDlgItem(Hwnd,IDC_WHT_BROWSE_BUTTON);
+			}
+			else if (Options->HierarchyFilename[0] != 0)
+			{
+				HWND butHwnd = GetDlgItem(Hwnd, IDC_WHT_BROWSE_BUTTON);
 				SetWindowText(butHwnd, Options->HierarchyFilename);
 				GotHierarchyFilename = true;
-
 			}
-
-		} else {
-			CheckDlgButton(Hwnd,IDC_WHT_NO_EXPORT_RADIO,BST_CHECKED);
+		}
+		else
+		{
+			CheckDlgButton(Hwnd, IDC_WHT_NO_EXPORT_RADIO, BST_CHECKED);
 			Disable_WHT_Export();
 		}
 	}
 
-	if (Options->ExportGeometry) {
-		CheckDlgButton(Hwnd,IDC_WTM_EXPORT_RADIO,BST_CHECKED);
+	if (Options->ExportGeometry)
+	{
+		CheckDlgButton(Hwnd, IDC_WTM_EXPORT_RADIO, BST_CHECKED);
 		Enable_WTM_Export();
-	} else {
-		CheckDlgButton(Hwnd,IDC_WTM_NO_EXPORT_RADIO,BST_CHECKED);
+	}
+	else
+	{
+		CheckDlgButton(Hwnd, IDC_WTM_NO_EXPORT_RADIO, BST_CHECKED);
 		Disable_WTM_Export();
 	}
 
-	if (Options->SmoothBetweenMeshes && Options->ExportGeometry) {
-		CheckDlgButton(Hwnd,IDC_EXPORT_MESH_SMOOTH_CHECK,BST_CHECKED);
-	} else {
-		CheckDlgButton(Hwnd,IDC_EXPORT_MESH_SMOOTH_CHECK,BST_UNCHECKED);
+	if (Options->SmoothBetweenMeshes && Options->ExportGeometry)
+	{
+		CheckDlgButton(Hwnd, IDC_EXPORT_MESH_SMOOTH_CHECK, BST_CHECKED);
+	}
+	else
+	{
+		CheckDlgButton(Hwnd, IDC_EXPORT_MESH_SMOOTH_CHECK, BST_UNCHECKED);
 	}
 
 	SetCheckBox(Hwnd, IDC_TRANSLATION_ONLY_CHECK, Options->TranslationOnly);
@@ -337,17 +342,16 @@ void W3dOptionsDialogClass::Dialog_Init()
 	// Initialize additional Animation Options
 
 	SetCheckBox(Hwnd, IDC_COMPRESS_ANIMATION_CHECK, Options->CompressAnimation);
-	SetCheckBox(Hwnd, IDC_REDUCE_ANIMATION_CHECK	 , Options->ReduceAnimation);
+	SetCheckBox(Hwnd, IDC_REDUCE_ANIMATION_CHECK, Options->ReduceAnimation);
 	SetCheckBox(Hwnd, IDC_VIEWLOG_CHECK, Options->ReviewLog);
 
-	char string[128];	// temp string buffer
+	char string[128]; // temp string buffer
 
 	sprintf(string, "Current FPS:  %d", GetFrameRate());
 
 	SetDlgItemText(Hwnd, IDC_ANIMATION_FPS_STATIC, string);
 
-
-  // initialize animation combo/list boxes
+	// initialize animation combo/list boxes
 
 	HwndReduce = GetDlgItem(Hwnd, IDC_REDUCE_ANIMATION_COMBO);
 	HwndFlavor = GetDlgItem(Hwnd, IDC_COMPRESS_ANIMATION_FLAVOR_COMBO);
@@ -355,7 +359,8 @@ void W3dOptionsDialogClass::Dialog_Init()
 	ComboBox_ResetContent(HwndReduce);
 	ComboBox_ResetContent(HwndFlavor);
 
-	for (int i=1; i<100; i++) {
+	for (int i = 1; i < 100; i++)
+	{
 		sprintf(string, "%d", i);
 		ComboBox_AddString(HwndReduce, string);
 	}
@@ -363,19 +368,18 @@ void W3dOptionsDialogClass::Dialog_Init()
 	ComboBox_AddString(HwndFlavor, "TimeCoded");
 	ComboBox_AddString(HwndFlavor, "Adaptive Delta");
 
-
-	if ((Options->ReduceAnimationPercent < 1) || (Options->ReduceAnimationPercent > 99)) {
+	if ((Options->ReduceAnimationPercent < 1) || (Options->ReduceAnimationPercent > 99))
+	{
 		Options->ReduceAnimationPercent = 50;
-
 	}
 
-	if ((Options->CompressAnimationFlavor < 0) || (Options->CompressAnimationFlavor >= ANIM_FLAVOR_VALID)) {
+	if ((Options->CompressAnimationFlavor < 0) || (Options->CompressAnimationFlavor >= ANIM_FLAVOR_VALID))
+	{
 		Options->CompressAnimationFlavor = 0;
 	}
 
-	ComboBox_SetCurSel(HwndReduce, Options->ReduceAnimationPercent-1);
+	ComboBox_SetCurSel(HwndReduce, Options->ReduceAnimationPercent - 1);
 	ComboBox_SetCurSel(HwndFlavor, Options->CompressAnimationFlavor);
-
 
 	HwndTError = GetDlgItem(Hwnd, IDC_MAX_TRANS_ERROR_EDIT);
 	HwndRError = GetDlgItem(Hwnd, IDC_MAX_ROT_ERROR_EDIT);
@@ -386,52 +390,37 @@ void W3dOptionsDialogClass::Dialog_Init()
 	sprintf(string, "%f", Options->CompressAnimationRotationError);
 	Edit_SetText(HwndRError, string);
 
-
 	// Make sure everything under animations is properly active/inactive
 
 	WHA_Compress_Animation_Check_Changed();
 
-	if (Options->ExportAnimation) {
-		CheckDlgButton(Hwnd,IDC_WHA_EXPORT_RADIO,BST_CHECKED);
+	if (Options->ExportAnimation)
+	{
+		CheckDlgButton(Hwnd, IDC_WHA_EXPORT_RADIO, BST_CHECKED);
 		Enable_WHA_Export();
-	} else {
-		CheckDlgButton(Hwnd,IDC_WHA_NO_EXPORT_RADIO,BST_CHECKED);
+	}
+	else
+	{
+		CheckDlgButton(Hwnd, IDC_WHA_NO_EXPORT_RADIO, BST_CHECKED);
 		Disable_WHA_Export();
 	}
-
 
 	// initialize the frame-range spinners
 	int ticksperframe = GetTicksPerFrame();
 	int startframe = MaxInterface->GetAnimRange().Start() / ticksperframe;
 	int endframe = MaxInterface->GetAnimRange().End() / ticksperframe;
 
-	RangeLowSpin = SetupIntSpinner
-	(
-		Hwnd,
-		IDC_RANGE_LOW_SPIN,
-		IDC_RANGE_LOW_EDIT,
-		startframe,
-		endframe,
-		Options->StartFrame
-	);
+	RangeLowSpin = SetupIntSpinner(Hwnd, IDC_RANGE_LOW_SPIN, IDC_RANGE_LOW_EDIT, startframe, endframe, Options->StartFrame);
 
-	RangeHighSpin = SetupIntSpinner
-	(
-		Hwnd,
-		IDC_RANGE_HIGH_SPIN,
-		IDC_RANGE_HIGH_EDIT,
-		startframe,
-		endframe,
-		Options->EndFrame
-	);
+	RangeHighSpin = SetupIntSpinner(Hwnd, IDC_RANGE_HIGH_SPIN, IDC_RANGE_HIGH_EDIT, startframe, endframe, Options->EndFrame);
 
 	// initialize the 'DisableExportAABTrees' option
-	CheckDlgButton(Hwnd,IDC_EXPORT_MESH_AABTREES,!Options->DisableExportAABTrees);
+	CheckDlgButton(Hwnd, IDC_EXPORT_MESH_AABTREES, !Options->DisableExportAABTrees);
 
-	CheckDlgButton(Hwnd,IDC_EXPORT_MESH_MAT_TO_TEXTURE,Options->EnableMaterialColorToTextureConversion);
+	CheckDlgButton(Hwnd, IDC_EXPORT_MESH_MAT_TO_TEXTURE, Options->EnableMaterialColorToTextureConversion);
 
 #if ENABLE_MESH_OPTIMIZING
-	CheckDlgButton(Hwnd,IDC_EXPORT_MESH_OPTIMIZE,Options->EnableOptimizeMeshData);
+	CheckDlgButton(Hwnd, IDC_EXPORT_MESH_OPTIMIZE, Options->EnableOptimizeMeshData);
 #endif
 }
 
@@ -440,44 +429,46 @@ BOOL W3dOptionsDialogClass::Dialog_Ok()
 	bool changed = false;
 
 	// export options:
-	bool export_h = (IsDlgButtonChecked(Hwnd,IDC_WHT_EXPORT_RADIO) == BST_CHECKED);
+	bool export_h = (IsDlgButtonChecked(Hwnd, IDC_WHT_EXPORT_RADIO) == BST_CHECKED);
 	changed = changed || (Options->ExportHierarchy != export_h);
 	Options->ExportHierarchy = export_h;
 
-	bool load_h = (IsDlgButtonChecked(Hwnd,IDC_WHT_LOAD_RADIO) == BST_CHECKED);
+	bool load_h = (IsDlgButtonChecked(Hwnd, IDC_WHT_LOAD_RADIO) == BST_CHECKED);
 	changed = changed || (Options->LoadHierarchy != load_h);
 	Options->LoadHierarchy = load_h;
 
-	bool export_a = (IsDlgButtonChecked(Hwnd,IDC_WHA_EXPORT_RADIO) == BST_CHECKED);
+	bool export_a = (IsDlgButtonChecked(Hwnd, IDC_WHA_EXPORT_RADIO) == BST_CHECKED);
 	changed = changed || (Options->ExportAnimation != export_a);
 	Options->ExportAnimation = export_a;
 
-	bool export_g = (IsDlgButtonChecked(Hwnd,IDC_WTM_EXPORT_RADIO) == BST_CHECKED);
+	bool export_g = (IsDlgButtonChecked(Hwnd, IDC_WTM_EXPORT_RADIO) == BST_CHECKED);
 	changed = changed || (Options->ExportGeometry != export_g);
 	Options->ExportGeometry = export_g;
 
-	if (export_g) {
-		bool smooth_meshes = (IsDlgButtonChecked(Hwnd,IDC_EXPORT_MESH_SMOOTH_CHECK) == BST_CHECKED);
+	if (export_g)
+	{
+		bool smooth_meshes = (IsDlgButtonChecked(Hwnd, IDC_EXPORT_MESH_SMOOTH_CHECK) == BST_CHECKED);
 		changed = changed || (Options->SmoothBetweenMeshes != smooth_meshes);
 		Options->SmoothBetweenMeshes = smooth_meshes;
 
-		bool disable_export_aabs = (IsDlgButtonChecked(Hwnd,IDC_EXPORT_MESH_AABTREES) != BST_CHECKED);
+		bool disable_export_aabs = (IsDlgButtonChecked(Hwnd, IDC_EXPORT_MESH_AABTREES) != BST_CHECKED);
 		changed = changed || (Options->DisableExportAABTrees != disable_export_aabs);
 		Options->DisableExportAABTrees = disable_export_aabs;
 
-		bool convert_materials = (IsDlgButtonChecked(Hwnd,IDC_EXPORT_MESH_MAT_TO_TEXTURE) == BST_CHECKED);
+		bool convert_materials = (IsDlgButtonChecked(Hwnd, IDC_EXPORT_MESH_MAT_TO_TEXTURE) == BST_CHECKED);
 		changed = changed || (Options->EnableMaterialColorToTextureConversion != convert_materials);
 		Options->EnableMaterialColorToTextureConversion = convert_materials;
 
 #if ENABLE_MESH_OPTIMIZING
-		bool optimize_mesh_data = (IsDlgButtonChecked(Hwnd,IDC_EXPORT_MESH_OPTIMIZE) == BST_CHECKED);
+		bool optimize_mesh_data = (IsDlgButtonChecked(Hwnd, IDC_EXPORT_MESH_OPTIMIZE) == BST_CHECKED);
 		changed = changed || (Options->EnableOptimizeMeshData != optimize_mesh_data);
 		Options->EnableOptimizeMeshData = optimize_mesh_data;
 #else
 		Options->EnableOptimizeMeshData = false;
 #endif
-
-	} else {
+	}
+	else
+	{
 		Options->SmoothBetweenMeshes = false;
 		Options->DisableExportAABTrees = false;
 		Options->EnableOptimizeMeshData = false;
@@ -485,26 +476,33 @@ BOOL W3dOptionsDialogClass::Dialog_Ok()
 	}
 
 	// Hierarchy Options:
-	bool xlation_only = (IsDlgButtonChecked(Hwnd,IDC_TRANSLATION_ONLY_CHECK) == BST_CHECKED);
+	bool xlation_only = (IsDlgButtonChecked(Hwnd, IDC_TRANSLATION_ONLY_CHECK) == BST_CHECKED);
 	changed = changed || (Options->TranslationOnly != xlation_only);
 	Options->TranslationOnly = xlation_only;
 
-	bool terrain_mode = (IsDlgButtonChecked(Hwnd,IDC_TERRAIN_MODE_CHECK) == BST_CHECKED);
+	bool terrain_mode = (IsDlgButtonChecked(Hwnd, IDC_TERRAIN_MODE_CHECK) == BST_CHECKED);
 	changed = changed || (Options->EnableTerrainMode != terrain_mode);
 	Options->EnableTerrainMode = terrain_mode;
 
-	if (Options->LoadHierarchy && (Options->ExportAnimation || Options->ExportGeometry)) {
-		if (!GotHierarchyFilename) {
-			MessageBox(Hwnd,"You have not supplied a Base Pose hierarchy file!","Error",MB_OK);
-			if (changed) SetSaveRequiredFlag(true);
+	if (Options->LoadHierarchy && (Options->ExportAnimation || Options->ExportGeometry))
+	{
+		if (!GotHierarchyFilename)
+		{
+			MessageBox(Hwnd, "You have not supplied a Base Pose hierarchy file!", "Error", MB_OK);
+			if (changed)
+				SetSaveRequiredFlag(true);
 			return FALSE;
 		}
 
 		RawFileClass file(Options->HierarchyFilename);
-		if (!file.Open()) {
-			char buf[100+_MAX_FNAME+_MAX_EXT];
-			sprintf(buf,"Unable to load hierarchy file: %s\nIf this Max file has been moved, please re-select the hierarchy file.",Options->HierarchyFilename);
-			MessageBox(Hwnd,buf,"Error",MB_OK);
+		if (!file.Open())
+		{
+			char buf[100 + _MAX_FNAME + _MAX_EXT];
+			sprintf(
+					buf,
+					"Unable to load hierarchy file: %s\nIf this Max file has been moved, please re-select the hierarchy file.",
+					Options->HierarchyFilename);
+			MessageBox(Hwnd, buf, "Error", MB_OK);
 			return FALSE;
 		}
 		file.Close();
@@ -551,160 +549,177 @@ BOOL W3dOptionsDialogClass::Dialog_Ok()
 	Options->ReviewLog = review_log;
 
 	// Geometry options:
-	//Options->UseVoxelizer = (IsDlgButtonChecked(Hwnd,IDC_VOXELIZER_CHECK) == BST_CHECKED);
+	// Options->UseVoxelizer = (IsDlgButtonChecked(Hwnd,IDC_VOXELIZER_CHECK) == BST_CHECKED);
 	Options->UseVoxelizer = false;
 
-	if (changed) SetSaveRequiredFlag(true);
+	if (changed)
+		SetSaveRequiredFlag(true);
 	return TRUE;
 }
 
 void W3dOptionsDialogClass::Enable_WHT_Export(void)
 {
-	EnableWindow(GetDlgItem(Hwnd,IDC_TRANSLATION_ONLY_CHECK),TRUE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_TERRAIN_MODE_CHECK),TRUE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_WHT_BROWSE_BUTTON),FALSE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_WHA_EXPORT_RADIO),TRUE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_TRANSLATION_ONLY_CHECK), TRUE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_TERRAIN_MODE_CHECK), TRUE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_WHT_BROWSE_BUTTON), FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_WHA_EXPORT_RADIO), TRUE);
 }
 
 void W3dOptionsDialogClass::Enable_WHT_Load(void)
 {
-	EnableWindow(GetDlgItem(Hwnd,IDC_TRANSLATION_ONLY_CHECK),FALSE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_TERRAIN_MODE_CHECK),FALSE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_WHT_BROWSE_BUTTON),TRUE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_WHA_EXPORT_RADIO),TRUE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_TRANSLATION_ONLY_CHECK), FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_TERRAIN_MODE_CHECK), FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_WHT_BROWSE_BUTTON), TRUE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_WHA_EXPORT_RADIO), TRUE);
 }
 
 void W3dOptionsDialogClass::Disable_WHT_Export(void)
 {
 	// since there will be no hierarchy tree, disable animation
-	CheckDlgButton(Hwnd,IDC_WHA_EXPORT_RADIO,BST_UNCHECKED);
-	CheckDlgButton(Hwnd,IDC_WHA_NO_EXPORT_RADIO,BST_CHECKED);
+	CheckDlgButton(Hwnd, IDC_WHA_EXPORT_RADIO, BST_UNCHECKED);
+	CheckDlgButton(Hwnd, IDC_WHA_NO_EXPORT_RADIO, BST_CHECKED);
 	Disable_WHA_Export();
 
-	EnableWindow(GetDlgItem(Hwnd,IDC_TRANSLATION_ONLY_CHECK),FALSE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_TERRAIN_MODE_CHECK),FALSE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_WHT_BROWSE_BUTTON),FALSE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_WHA_EXPORT_RADIO),FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_TRANSLATION_ONLY_CHECK), FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_TERRAIN_MODE_CHECK), FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_WHT_BROWSE_BUTTON), FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_WHA_EXPORT_RADIO), FALSE);
 }
 
 void W3dOptionsDialogClass::Enable_WHA_Export(void)
 {
-	EnableWindow(GetDlgItem(Hwnd,IDC_RANGE_LOW_EDIT),TRUE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_RANGE_LOW_SPIN),TRUE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_RANGE_HIGH_EDIT),TRUE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_RANGE_HIGH_SPIN),TRUE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_VIEWLOG_CHECK), TRUE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_RANGE_LOW_EDIT), TRUE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_RANGE_LOW_SPIN), TRUE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_RANGE_HIGH_EDIT), TRUE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_RANGE_HIGH_SPIN), TRUE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_VIEWLOG_CHECK), TRUE);
 
-	EnableWindow(GetDlgItem(Hwnd,IDC_COMPRESS_ANIMATION_CHECK),TRUE);
-	if (IsDlgButtonChecked(Hwnd, IDC_COMPRESS_ANIMATION_CHECK) == BST_CHECKED) {
+	EnableWindow(GetDlgItem(Hwnd, IDC_COMPRESS_ANIMATION_CHECK), TRUE);
+	if (IsDlgButtonChecked(Hwnd, IDC_COMPRESS_ANIMATION_CHECK) == BST_CHECKED)
+	{
 		Enable_CompressAnimationOptions_Export();
-
 	}
 }
 
 void W3dOptionsDialogClass::Disable_WHA_Export(void)
 {
-	EnableWindow(GetDlgItem(Hwnd,IDC_RANGE_LOW_EDIT),FALSE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_RANGE_LOW_SPIN),FALSE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_RANGE_HIGH_EDIT),FALSE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_RANGE_HIGH_SPIN),FALSE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_VIEWLOG_CHECK), FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_RANGE_LOW_EDIT), FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_RANGE_LOW_SPIN), FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_RANGE_HIGH_EDIT), FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_RANGE_HIGH_SPIN), FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_VIEWLOG_CHECK), FALSE);
 
-	EnableWindow(GetDlgItem(Hwnd,IDC_COMPRESS_ANIMATION_CHECK),FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_COMPRESS_ANIMATION_CHECK), FALSE);
 	Disable_CompressAnimationOptions_Export();
 }
 
 void W3dOptionsDialogClass::Enable_ReduceAnimationOptions_Export(void)
 {
-	EnableWindow(GetDlgItem(Hwnd,IDC_REDUCE_ANIMATION_COMBO), TRUE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_REDUCE_ANIMATION_COMBO), TRUE);
 }
 
 void W3dOptionsDialogClass::Disable_ReduceAnimationOptions_Export(void)
 {
-	EnableWindow(GetDlgItem(Hwnd,IDC_REDUCE_ANIMATION_COMBO), FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_REDUCE_ANIMATION_COMBO), FALSE);
 }
 
 void W3dOptionsDialogClass::Enable_CompressAnimationOptions_Export(void)
 {
-	EnableWindow(GetDlgItem(Hwnd,IDC_COMPRESS_ANIMATION_FLAVOR_COMBO), TRUE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_MAX_TRANS_ERROR_EDIT), TRUE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_MAX_ROT_ERROR_EDIT), TRUE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_REDUCE_ANIMATION_CHECK), TRUE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_COMPRESS_ANIMATION_FLAVOR_COMBO), TRUE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_MAX_TRANS_ERROR_EDIT), TRUE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_MAX_ROT_ERROR_EDIT), TRUE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_REDUCE_ANIMATION_CHECK), TRUE);
 	WHA_Reduce_Animation_Check_Changed();
 	WHA_Compression_Flavor_Changed();
 }
 
 void W3dOptionsDialogClass::Disable_CompressAnimationOptions_Export(void)
 {
-	EnableWindow(GetDlgItem(Hwnd,IDC_COMPRESS_ANIMATION_FLAVOR_COMBO), FALSE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_MAX_TRANS_ERROR_EDIT), FALSE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_MAX_ROT_ERROR_EDIT), FALSE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_REDUCE_ANIMATION_CHECK), FALSE);
-	EnableWindow(GetDlgItem(Hwnd,IDC_REDUCE_ANIMATION_COMBO), FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_COMPRESS_ANIMATION_FLAVOR_COMBO), FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_MAX_TRANS_ERROR_EDIT), FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_MAX_ROT_ERROR_EDIT), FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_REDUCE_ANIMATION_CHECK), FALSE);
+	EnableWindow(GetDlgItem(Hwnd, IDC_REDUCE_ANIMATION_COMBO), FALSE);
 }
 
 void W3dOptionsDialogClass::Enable_WTM_Export(void)
 {
-	::EnableWindow(::GetDlgItem(Hwnd,IDC_EXPORT_MESH_SMOOTH_CHECK),TRUE);
-	::EnableWindow(::GetDlgItem(Hwnd,IDC_EXPORT_MESH_AABTREES),TRUE);
+	::EnableWindow(::GetDlgItem(Hwnd, IDC_EXPORT_MESH_SMOOTH_CHECK), TRUE);
+	::EnableWindow(::GetDlgItem(Hwnd, IDC_EXPORT_MESH_AABTREES), TRUE);
 #if ENABLE_MESH_OPTIMIZING
-	::EnableWindow(::GetDlgItem(Hwnd,IDC_EXPORT_MESH_OPTIMIZE),TRUE);
+	::EnableWindow(::GetDlgItem(Hwnd, IDC_EXPORT_MESH_OPTIMIZE), TRUE);
 #endif
 }
 
 void W3dOptionsDialogClass::Disable_WTM_Export(void)
 {
-	::EnableWindow(::GetDlgItem(Hwnd,IDC_EXPORT_MESH_SMOOTH_CHECK),FALSE);
-	::EnableWindow(::GetDlgItem(Hwnd,IDC_EXPORT_MESH_AABTREES),FALSE);
+	::EnableWindow(::GetDlgItem(Hwnd, IDC_EXPORT_MESH_SMOOTH_CHECK), FALSE);
+	::EnableWindow(::GetDlgItem(Hwnd, IDC_EXPORT_MESH_AABTREES), FALSE);
 #if ENABLE_MESH_OPTIMIZING
-	::EnableWindow(::GetDlgItem(Hwnd,IDC_EXPORT_MESH_OPTIMIZE),FALSE);
+	::EnableWindow(::GetDlgItem(Hwnd, IDC_EXPORT_MESH_OPTIMIZE), FALSE);
 #endif
 }
 
 void W3dOptionsDialogClass::WHT_Export_Radio_Changed(void)
 {
-	if (IsDlgButtonChecked(Hwnd, IDC_WHT_EXPORT_RADIO) == BST_CHECKED) {
+	if (IsDlgButtonChecked(Hwnd, IDC_WHT_EXPORT_RADIO) == BST_CHECKED)
+	{
 		Enable_WHT_Export();
-	} else if (IsDlgButtonChecked(Hwnd,IDC_WHT_LOAD_RADIO) == BST_CHECKED) {
+	}
+	else if (IsDlgButtonChecked(Hwnd, IDC_WHT_LOAD_RADIO) == BST_CHECKED)
+	{
 		Enable_WHT_Load();
-	} else if (IsDlgButtonChecked(Hwnd,IDC_WHT_NO_EXPORT_RADIO) == BST_CHECKED) {
+	}
+	else if (IsDlgButtonChecked(Hwnd, IDC_WHT_NO_EXPORT_RADIO) == BST_CHECKED)
+	{
 		Disable_WHT_Export();
 	}
 }
 
 void W3dOptionsDialogClass::WHA_Export_Radio_Changed(void)
 {
-	if (IsDlgButtonChecked(Hwnd, IDC_WHA_EXPORT_RADIO) == BST_CHECKED) {
+	if (IsDlgButtonChecked(Hwnd, IDC_WHA_EXPORT_RADIO) == BST_CHECKED)
+	{
 		Enable_WHA_Export();
-	} else if (IsDlgButtonChecked(Hwnd,IDC_WHA_NO_EXPORT_RADIO) == BST_CHECKED) {
+	}
+	else if (IsDlgButtonChecked(Hwnd, IDC_WHA_NO_EXPORT_RADIO) == BST_CHECKED)
+	{
 		Disable_WHA_Export();
 	}
 }
 
 void W3dOptionsDialogClass::WTM_Export_Radio_Changed(void)
 {
-	if (IsDlgButtonChecked(Hwnd, IDC_WTM_EXPORT_RADIO) == BST_CHECKED) {
+	if (IsDlgButtonChecked(Hwnd, IDC_WTM_EXPORT_RADIO) == BST_CHECKED)
+	{
 		Enable_WTM_Export();
-	} else if (IsDlgButtonChecked(Hwnd,IDC_WTM_NO_EXPORT_RADIO) == BST_CHECKED) {
+	}
+	else if (IsDlgButtonChecked(Hwnd, IDC_WTM_NO_EXPORT_RADIO) == BST_CHECKED)
+	{
 		Disable_WTM_Export();
 	}
 }
 
-
 void W3dOptionsDialogClass::WHA_Compress_Animation_Check_Changed(void)
 {
-	if (IsDlgButtonChecked(Hwnd, IDC_COMPRESS_ANIMATION_CHECK) == BST_CHECKED) {
+	if (IsDlgButtonChecked(Hwnd, IDC_COMPRESS_ANIMATION_CHECK) == BST_CHECKED)
+	{
 		Enable_CompressAnimationOptions_Export();
-	} else {
+	}
+	else
+	{
 		Disable_CompressAnimationOptions_Export();
 	}
 }
 
 void W3dOptionsDialogClass::WHA_Reduce_Animation_Check_Changed(void)
 {
-	if (IsDlgButtonChecked(Hwnd, IDC_REDUCE_ANIMATION_CHECK) == BST_CHECKED) {
+	if (IsDlgButtonChecked(Hwnd, IDC_REDUCE_ANIMATION_CHECK) == BST_CHECKED)
+	{
 		Enable_ReduceAnimationOptions_Export();
-	} else {
+	}
+	else
+	{
 		Disable_ReduceAnimationOptions_Export();
 	}
 }
@@ -713,38 +728,34 @@ void W3dOptionsDialogClass::WHA_Compression_Flavor_Changed()
 {
 	int flavor = ComboBox_GetCurSel(HwndFlavor);
 
-	switch (flavor) {
-
-
-		case ANIM_FLAVOR_TIMECODED: {
+	switch (flavor)
+	{
+		case ANIM_FLAVOR_TIMECODED:
+		{
 			WHA_Reduce_Animation_Check_Changed();
-			EnableWindow(GetDlgItem(Hwnd,IDC_REDUCE_ANIMATION_CHECK), TRUE);
-			EnableWindow(GetDlgItem(Hwnd,IDC_MAX_TRANS_ERROR_EDIT), TRUE);
-			EnableWindow(GetDlgItem(Hwnd,IDC_MAX_ROT_ERROR_EDIT), TRUE);
+			EnableWindow(GetDlgItem(Hwnd, IDC_REDUCE_ANIMATION_CHECK), TRUE);
+			EnableWindow(GetDlgItem(Hwnd, IDC_MAX_TRANS_ERROR_EDIT), TRUE);
+			EnableWindow(GetDlgItem(Hwnd, IDC_MAX_ROT_ERROR_EDIT), TRUE);
 
 			break;
 		}
 
-		case ANIM_FLAVOR_ADAPTIVE_DELTA: {
+		case ANIM_FLAVOR_ADAPTIVE_DELTA:
+		{
 			// Disable Reduce animation controls
 			Disable_ReduceAnimationOptions_Export();
-			EnableWindow(GetDlgItem(Hwnd,IDC_REDUCE_ANIMATION_CHECK), FALSE);
-			EnableWindow(GetDlgItem(Hwnd,IDC_MAX_TRANS_ERROR_EDIT), FALSE);
-			EnableWindow(GetDlgItem(Hwnd,IDC_MAX_ROT_ERROR_EDIT), FALSE);
+			EnableWindow(GetDlgItem(Hwnd, IDC_REDUCE_ANIMATION_CHECK), FALSE);
+			EnableWindow(GetDlgItem(Hwnd, IDC_MAX_TRANS_ERROR_EDIT), FALSE);
+			EnableWindow(GetDlgItem(Hwnd, IDC_MAX_ROT_ERROR_EDIT), FALSE);
 
 			break;
 		}
 
-
 		default:
-			assert(0);  // invalid compressed flavor setting
+			assert(0); // invalid compressed flavor setting
 			break;
-
 	}
-
 }
-
-
 
 /***********************************************************************************************
  * _options_dialog_proc -- thunks into the Options dialog class's windows message handler      *
@@ -758,28 +769,25 @@ void W3dOptionsDialogClass::WHA_Compression_Flavor_Changed()
  * HISTORY:                                                                                    *
  *   07/24/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-BOOL CALLBACK _options_dialog_proc
-(
-	HWND hwnd,
-	UINT message,
-	WPARAM wParam,
-	LPARAM lParam
-)
+BOOL CALLBACK _options_dialog_proc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	static W3dOptionsDialogClass * optdialog = NULL;
+	static W3dOptionsDialogClass *optdialog = NULL;
 
-	if (message == WM_INITDIALOG) {
-		optdialog = (W3dOptionsDialogClass *) lParam;
+	if (message == WM_INITDIALOG)
+	{
+		optdialog = (W3dOptionsDialogClass *)lParam;
 		optdialog->Hwnd = hwnd;
 	}
 
-	if (optdialog) {
+	if (optdialog)
+	{
 		return optdialog->Dialog_Proc(hwnd, message, wParam, lParam);
-	} else {
+	}
+	else
+	{
 		return FALSE;
 	}
 }
-
 
 /***********************************************************************************************
  * _init_ofn -- initialize the OpenFilename struct.                                            *

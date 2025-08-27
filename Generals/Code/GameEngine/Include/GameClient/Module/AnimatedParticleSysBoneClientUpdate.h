@@ -40,25 +40,18 @@ class Thing;
 
 class AnimatedParticleSysBoneClientUpdate : public ClientUpdateModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AnimatedParticleSysBoneClientUpdate, "AnimatedParticleSysBoneClientUpdate" )
-	MAKE_STANDARD_MODULE_MACRO( AnimatedParticleSysBoneClientUpdate );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AnimatedParticleSysBoneClientUpdate, "AnimatedParticleSysBoneClientUpdate")
+	MAKE_STANDARD_MODULE_MACRO(AnimatedParticleSysBoneClientUpdate);
 
 public:
-
-	AnimatedParticleSysBoneClientUpdate( Thing *thing, const ModuleData* moduleData );
+	AnimatedParticleSysBoneClientUpdate(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	/// the client update callback
-	virtual void clientUpdate( void );
-
+	virtual void clientUpdate(void);
 
 protected:
-
-
 	UnsignedInt m_life;
-
 };
 
 #endif // __ANIMPARTICLESYSBONEUPDATE_H_
-

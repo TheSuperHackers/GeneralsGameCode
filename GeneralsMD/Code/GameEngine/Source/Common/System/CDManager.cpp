@@ -44,7 +44,7 @@
 //----------------------------------------------------------------------------
 //         Includes
 //----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/CDManager.h"
 #include "GameLogic/GameLogic.h"
@@ -53,59 +53,44 @@
 //         Externals
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Data
 //----------------------------------------------------------------------------
 
-CDManagerInterface* TheCDManager = NULL;
+CDManagerInterface *TheCDManager = NULL;
 
 //----------------------------------------------------------------------------
 //         Private Prototypes
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Functions
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Functions
 //----------------------------------------------------------------------------
 
-
 //============================================================================
 // CDDrive::CDDrive
 //============================================================================
 
-CDDrive::CDDrive()
-: m_disk(CD::UNKNOWN_DISK)
+CDDrive::CDDrive() : m_disk(CD::UNKNOWN_DISK)
 {
 	m_diskName.clear();
 	m_drivePath.clear();
-
 }
 
 //============================================================================
@@ -114,14 +99,13 @@ CDDrive::CDDrive()
 
 CDDrive::~CDDrive()
 {
-
 }
 
 //============================================================================
 // CDDrive::getPath
 //============================================================================
 
-AsciiString CDDrive::getPath( void )
+AsciiString CDDrive::getPath(void)
 {
 	return m_drivePath;
 }
@@ -130,22 +114,22 @@ AsciiString CDDrive::getPath( void )
 // CDDrive::getDiskName
 //============================================================================
 
-AsciiString CDDrive::getDiskName( void )
+AsciiString CDDrive::getDiskName(void)
 {
 	return m_diskName;
 }
 
-void CDDrive::refreshInfo( void )
+void CDDrive::refreshInfo(void)
 {
-		// map disk names to disk ID
-		m_disk = CD::UNKNOWN_DISK;
+	// map disk names to disk ID
+	m_disk = CD::UNKNOWN_DISK;
 }
 
 //============================================================================
 // CDDrive::getDisk
 //============================================================================
 
-CD::Disk CDDrive::getDisk( void )
+CD::Disk CDDrive::getDisk(void)
 {
 	return m_disk;
 }
@@ -154,7 +138,7 @@ CD::Disk CDDrive::getDisk( void )
 // CDDrive::setPath
 //============================================================================
 
-void CDDrive::setPath( const Char *path )
+void CDDrive::setPath(const Char *path)
 {
 	m_drivePath = path;
 }
@@ -165,7 +149,6 @@ void CDDrive::setPath( const Char *path )
 
 CDManager::CDManager()
 {
-
 }
 
 //============================================================================
@@ -181,19 +164,19 @@ CDManager::~CDManager()
 // CDManager::init
 //============================================================================
 
-void CDManager::init( void )
+void CDManager::init(void)
 {
-
 }
 
 //============================================================================
 // CDManager::update
 //============================================================================
 
-void CDManager::update( void )
+void CDManager::update(void)
 {
 	// Every so often, check to make sure the CD is still in the drive
-	if ((TheGameLogic->getFrame() % 300) == 299) {
+	if ((TheGameLogic->getFrame() % 300) == 299)
+	{
 		refreshDrives();
 	}
 }
@@ -202,16 +185,15 @@ void CDManager::update( void )
 // CDManager::reset
 //============================================================================
 
-void CDManager::reset( void )
+void CDManager::reset(void)
 {
-
 }
 
 //============================================================================
 // CDManager::driveCount
 //============================================================================
 
-Int CDManager::driveCount( void )
+Int CDManager::driveCount(void)
 {
 	return m_drives.nodeCount();
 }
@@ -220,14 +202,14 @@ Int CDManager::driveCount( void )
 // CDManager::getDrive
 //============================================================================
 
-CDDriveInterface* CDManager::getDrive( Int index )
+CDDriveInterface *CDManager::getDrive(Int index)
 {
 	CDDriveInterface *cd = NULL;
-	LListNode *node = m_drives.getNode( index );
+	LListNode *node = m_drives.getNode(index);
 
-	if ( node )
+	if (node)
 	{
-		cd = (CDDriveInterface*) node->item();
+		cd = (CDDriveInterface *)node->item();
 	}
 
 	return cd;
@@ -237,16 +219,16 @@ CDDriveInterface* CDManager::getDrive( Int index )
 // CDManager::newDrive
 //============================================================================
 
-CDDriveInterface* CDManager::newDrive( const Char *path )
+CDDriveInterface *CDManager::newDrive(const Char *path)
 {
-	CDDrive *drive= (CDDrive*) createDrive();
+	CDDrive *drive = (CDDrive *)createDrive();
 
-	if ( drive )
+	if (drive)
 	{
-		drive->setPath( path );
+		drive->setPath(path);
 
-		drive->m_node.setItem( drive );
-		m_drives.add( &drive->m_node );
+		drive->m_node.setItem(drive);
+		m_drives.add(&drive->m_node);
 	}
 	return drive;
 }
@@ -255,14 +237,14 @@ CDDriveInterface* CDManager::newDrive( const Char *path )
 // CDManager::refreshDrives
 //============================================================================
 
-void CDManager::refreshDrives( void )
+void CDManager::refreshDrives(void)
 {
 	LListNode *node = m_drives.firstNode();
 
-	while ( node )
+	while (node)
 	{
-		CDDriveInterface *drive = (CDDriveInterface *) node->item();
-		if ( drive )
+		CDDriveInterface *drive = (CDDriveInterface *)node->item();
+		if (drive)
 		{
 			drive->refreshInfo();
 		}
@@ -271,27 +253,21 @@ void CDManager::refreshDrives( void )
 	}
 }
 
-
 //============================================================================
 // CDManager::destroyAllDrives
 //============================================================================
 
-void CDManager::destroyAllDrives( void )
+void CDManager::destroyAllDrives(void)
 {
 	LListNode *node;
 
-	while ( (node = m_drives.firstNode() ) != NULL )
+	while ((node = m_drives.firstNode()) != NULL)
 	{
 		node->remove();
-		CDDriveInterface *drive = (CDDriveInterface *) node->item();
-		if ( drive )
+		CDDriveInterface *drive = (CDDriveInterface *)node->item();
+		if (drive)
 		{
 			delete drive;
 		}
 	}
 }
-
-
-
-
-

@@ -33,9 +33,9 @@
 class CGenerateDlg : public CDialog
 {
 	char filename[200];
-	GNOPTIONS	options;
-	LangID	langids[200];
-	int			langindices[200];
+	GNOPTIONS options;
+	LangID langids[200];
+	int langindices[200];
 	int num_langs;
 	CListBox *list;
 	CEdit *edit;
@@ -45,31 +45,32 @@ class CGenerateDlg : public CDialog
 	CButton *useids;
 	CButton *usetext;
 
-// Construction
+	// Construction
 public:
-	CGenerateDlg(CWnd* pParent = NULL);   // standard constructor
+	CGenerateDlg(CWnd *pParent = NULL); // standard constructor
 
-	char*					FilePrefix	( void )		{ return filename; };
-	GNOPTIONS*		Options			( void )		{ return &options; };
-	LangID*				Langauges		( void )		{ return langids; };
+	char *FilePrefix(void) { return filename; };
+	GNOPTIONS *Options(void) { return &options; };
+	LangID *Langauges(void) { return langids; };
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CGenerateDlg)
-	enum { IDD = IDD_GENERATE };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_GENERATE
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CGenerateDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CGenerateDlg)
 	virtual BOOL OnInitDialog();

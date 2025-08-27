@@ -23,10 +23,10 @@
 //  that can be used for the debugging package.
 class OutputDevice
 {
- public:
-                 OutputDevice() {}
-    virtual     ~OutputDevice() {};
-    virtual int print(const char *s,int len)=0;
+public:
+	OutputDevice() {}
+	virtual ~OutputDevice() {};
+	virtual int print(const char *s, int len) = 0;
 };
 
 #endif

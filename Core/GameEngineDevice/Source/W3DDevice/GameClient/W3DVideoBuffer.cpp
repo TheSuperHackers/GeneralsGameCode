@@ -54,99 +54,80 @@
 //         Externals
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Data
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Prototypes
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Functions
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Public Functions
 //----------------------------------------------------------------------------
-
 
 //============================================================================
 // W3DVideoBuffer::W3DVideoBuffer
 //============================================================================
 
-W3DVideoBuffer::W3DVideoBuffer( VideoBuffer::Type format )
-: VideoBuffer(format),
-	m_texture(NULL),
-	m_surface(NULL)
+W3DVideoBuffer::W3DVideoBuffer(VideoBuffer::Type format) : VideoBuffer(format), m_texture(NULL), m_surface(NULL)
 {
-
 }
-
 
 //============================================================================
 // W3DVideoBuffer::SetBuffer
 //============================================================================
 
-Bool W3DVideoBuffer::allocate( UnsignedInt width, UnsignedInt height )
+Bool W3DVideoBuffer::allocate(UnsignedInt width, UnsignedInt height)
 {
 	free();
 
 	m_width = width;
 	m_height = height;
-	m_textureWidth = width;;
-	m_textureHeight = height;;
-	unsigned int temp_depth=1;
-	TextureLoader::Validate_Texture_Size( m_textureWidth, m_textureHeight, temp_depth);
+	m_textureWidth = width;
+	;
+	m_textureHeight = height;
+	;
+	unsigned int temp_depth = 1;
+	TextureLoader::Validate_Texture_Size(m_textureWidth, m_textureHeight, temp_depth);
 
-	WW3DFormat w3dFormat = TypeToW3DFormat(  m_format );
+	WW3DFormat w3dFormat = TypeToW3DFormat(m_format);
 
-	if ( w3dFormat == WW3D_FORMAT_UNKNOWN )
+	if (w3dFormat == WW3D_FORMAT_UNKNOWN)
 	{
 		return NULL;
 	}
 
-	m_texture  = MSGNEW("TextureClass") TextureClass ( m_textureWidth, m_textureHeight, w3dFormat, MIP_LEVELS_1 );
+	m_texture = MSGNEW("TextureClass") TextureClass(m_textureWidth, m_textureHeight, w3dFormat, MIP_LEVELS_1);
 
-	if ( m_texture == NULL )
+	if (m_texture == NULL)
 	{
 		return FALSE;
 	}
 
-	if ( lock() == NULL )
+	if (lock() == NULL)
 	{
 		free();
 		return FALSE;
 	}
 
 	unlock();
-
 
 	return TRUE;
 }
@@ -164,20 +145,20 @@ W3DVideoBuffer::~W3DVideoBuffer()
 // W3DVideoBuffer::lock
 //============================================================================
 
-void*		W3DVideoBuffer::lock( void )
+void *W3DVideoBuffer::lock(void)
 {
 	void *mem = NULL;
 
-	if ( m_surface != NULL )
+	if (m_surface != NULL)
 	{
 		unlock();
 	}
 
 	m_surface = m_texture->Get_Surface_Level();
 
-	if ( m_surface )
+	if (m_surface)
 	{
-		mem = m_surface->Lock( (Int*) &m_pitch );
+		mem = m_surface->Lock((Int *)&m_pitch);
 	}
 
 	return mem;
@@ -187,9 +168,9 @@ void*		W3DVideoBuffer::lock( void )
 // W3DVideoBuffer::unlock
 //============================================================================
 
-void		W3DVideoBuffer::unlock( void )
+void W3DVideoBuffer::unlock(void)
 {
-	if ( m_surface != NULL )
+	if (m_surface != NULL)
 	{
 		m_surface->Unlock();
 		m_surface->Release_Ref();
@@ -201,7 +182,7 @@ void		W3DVideoBuffer::unlock( void )
 // W3DVideoBuffer::valid
 //============================================================================
 
-Bool		W3DVideoBuffer::valid( void )
+Bool W3DVideoBuffer::valid(void)
 {
 	return m_texture != NULL;
 }
@@ -210,11 +191,11 @@ Bool		W3DVideoBuffer::valid( void )
 // W3DVideoBuffer::reset
 //============================================================================
 
-void	W3DVideoBuffer::free( void )
+void W3DVideoBuffer::free(void)
 {
 	unlock();
 
-	if ( m_texture )
+	if (m_texture)
 	{
 		unlock();
 		m_texture->Release_Ref();
@@ -225,29 +206,28 @@ void	W3DVideoBuffer::free( void )
 	VideoBuffer::free();
 }
 
-
 //============================================================================
 // W3DVideoBuffer::TypeToW3DFormat
 //============================================================================
 
-WW3DFormat W3DVideoBuffer::TypeToW3DFormat( VideoBuffer::Type format )
+WW3DFormat W3DVideoBuffer::TypeToW3DFormat(VideoBuffer::Type format)
 {
 	WW3DFormat w3dFormat = WW3D_FORMAT_UNKNOWN;
-	switch ( format )
+	switch (format)
 	{
 		case TYPE_X8R8G8B8:
 			w3dFormat = WW3D_FORMAT_X8R8G8B8;
 			break;
 
- 		case TYPE_R8G8B8:
+		case TYPE_R8G8B8:
 			w3dFormat = WW3D_FORMAT_R8G8B8;
 			break;
 
- 		case TYPE_R5G6B5:
+		case TYPE_R5G6B5:
 			w3dFormat = WW3D_FORMAT_R5G6B5;
 			break;
 
- 		case TYPE_X1R5G5B5:
+		case TYPE_X1R5G5B5:
 			w3dFormat = WW3D_FORMAT_X1R5G5B5;
 			break;
 	}
@@ -259,23 +239,23 @@ WW3DFormat W3DVideoBuffer::TypeToW3DFormat( VideoBuffer::Type format )
 // W3DFormatToType
 //============================================================================
 
-VideoBuffer::Type W3DVideoBuffer::W3DFormatToType( WW3DFormat w3dFormat )
+VideoBuffer::Type W3DVideoBuffer::W3DFormatToType(WW3DFormat w3dFormat)
 {
 	Type format = TYPE_UNKNOWN;
-	switch ( w3dFormat )
+	switch (w3dFormat)
 	{
 		case WW3D_FORMAT_X8R8G8B8:
-				format = VideoBuffer::TYPE_X8R8G8B8;
-				break;
+			format = VideoBuffer::TYPE_X8R8G8B8;
+			break;
 		case WW3D_FORMAT_R8G8B8:
-				format = VideoBuffer::TYPE_R8G8B8;
-				break;
+			format = VideoBuffer::TYPE_R8G8B8;
+			break;
 		case WW3D_FORMAT_R5G6B5:
-				format = VideoBuffer::TYPE_R5G6B5;
-				break;
+			format = VideoBuffer::TYPE_R5G6B5;
+			break;
 		case WW3D_FORMAT_X1R5G5B5:
-				format = VideoBuffer::TYPE_X1R5G5B5;
-				break;
+			format = VideoBuffer::TYPE_X1R5G5B5;
+			break;
 	}
 
 	return format;

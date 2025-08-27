@@ -43,33 +43,29 @@ public:
 	AsciiString m_treadDebrisNameLeft;
 	AsciiString m_treadDebrisNameRight;
 
-	Real m_treadAnimationRate;	///<amount of tread texture to scroll per sec.  1.0 == full width.
-	Real m_treadPivotSpeedFraction;	///<fraction of locomotor speed below which we allow pivoting.
-	Real m_treadDriveSpeedFraction;	///<fraction of locomotor speed below which treads stop animating.
+	Real m_treadAnimationRate; ///< amount of tread texture to scroll per sec.  1.0 == full width.
+	Real m_treadPivotSpeedFraction; ///< fraction of locomotor speed below which we allow pivoting.
+	Real m_treadDriveSpeedFraction; ///< fraction of locomotor speed below which treads stop animating.
 
 	W3DOverlordTankDrawModuleData();
 	~W3DOverlordTankDrawModuleData();
-	static void buildFieldParse(MultiIniFieldParse& p);
+	static void buildFieldParse(MultiIniFieldParse &p);
 };
 
 //-------------------------------------------------------------------------------------------------
 class W3DOverlordTankDraw : public W3DTankDraw
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DOverlordTankDraw, "W3DOverlordTankDraw" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DOverlordTankDraw, W3DOverlordTankDrawModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(W3DOverlordTankDraw, "W3DOverlordTankDraw")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(W3DOverlordTankDraw, W3DOverlordTankDrawModuleData)
 
 public:
-
-	W3DOverlordTankDraw( Thing *thing, const ModuleData* moduleData );
+	W3DOverlordTankDraw(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
- 	virtual void setHidden(Bool h);
-	virtual void doDrawModule(const Matrix3D* transformMtx);
+	virtual void setHidden(Bool h);
+	virtual void doDrawModule(const Matrix3D *transformMtx);
 
 protected:
-
 };
 
 #endif
-

@@ -26,7 +26,7 @@
 // Author:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/PerfTimer.h"
 
@@ -34,8 +34,6 @@
 #include "GameClient/DebugDisplay.h"
 #include "GameClient/Display.h"
 #include "GameClient/GraphDraw.h"
-
-
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -49,7 +47,7 @@ static double s_ticksPerMSec = 0;
 static double s_ticksPerUSec = 0;
 
 //-------------------------------------------------------------------------------------------------
-void GetPrecisionTimerTicksPerSec(Int64* t)
+void GetPrecisionTimerTicksPerSec(Int64 *t)
 {
 	*t = s_ticksPerSec;
 }
@@ -58,23 +56,23 @@ void GetPrecisionTimerTicksPerSec(Int64* t)
 void InitPrecisionTimer()
 {
 #ifdef USE_QPF
-	QueryPerformanceFrequency((LARGE_INTEGER*)&s_ticksPerSec);
+	QueryPerformanceFrequency((LARGE_INTEGER *)&s_ticksPerSec);
 #else
 	// Init the precision timers
 	Int64 totalTime = 0;
-	Int64	TotalTicks = 0;
+	Int64 TotalTicks = 0;
 	static int TESTS = 5;
 
 	for (int i = 0; i < TESTS; ++i)
 	{
-		int        TimeStart;
-		int        TimeStop;
-		Int64		   StartTicks;
-		Int64		   EndTicks;
+		int TimeStart;
+		int TimeStop;
+		Int64 StartTicks;
+		Int64 EndTicks;
 
 		TimeStart = timeGetTime();
 		GetPrecisionTimer(&StartTicks);
-		for(;;)
+		for (;;)
 		{
 			TimeStop = timeGetTime();
 			if ((TimeStop - TimeStart) > 1000)
@@ -109,10 +107,9 @@ void InitPrecisionTimer()
 		GetPrecisionTimer(&bogus[6]);
 		GetPrecisionTimer(&bogus[7]);
 	}
-	TheTicksToGetTicks = (bogus[7] - start) / (ITERS*8);
-	DEBUG_LOG(("TheTicksToGetTicks is %d (%f usec)",(int)TheTicksToGetTicks,TheTicksToGetTicks/s_ticksPerUSec));
+	TheTicksToGetTicks = (bogus[7] - start) / (ITERS * 8);
+	DEBUG_LOG(("TheTicksToGetTicks is %d (%f usec)", (int)TheTicksToGetTicks, TheTicksToGetTicks / s_ticksPerUSec));
 #endif
-
 }
 #endif // defined(PERF_TIMERS) || defined(DUMP_PERF_STATS)
 
@@ -129,7 +126,7 @@ void InitPrecisionTimer()
 /*static*/ Bool AutoPerfGatherIgnore::s_ignoring = false;
 
 //-------------------------------------------------------------------------------------------------
-typedef std::vector< std::pair< AsciiString, AsciiString > > StringPairVec;
+typedef std::vector<std::pair<AsciiString, AsciiString> > StringPairVec;
 
 //-------------------------------------------------------------------------------------------------
 // PerfMetrics class. Basically, request a handle with your name and it will return. We use a vector
@@ -141,8 +138,7 @@ private:
 	StringPairVec m_outputStats;
 
 public:
-
-	AsciiString& getStatsString(const AsciiString& id)
+	AsciiString &getStatsString(const AsciiString &id)
 	{
 		for (int i = 0; i < m_outputStats.size(); ++i)
 		{
@@ -155,7 +151,7 @@ public:
 		return m_outputStats.back().second;
 	}
 
-	void clearStatsString(const AsciiString& id)
+	void clearStatsString(const AsciiString &id)
 	{
 		for (int i = 0; i < m_outputStats.size(); ++i)
 		{
@@ -167,37 +163,36 @@ public:
 		}
 	}
 
-	StringPairVec& friend_getAllStatsStrings() { return m_outputStats; }
+	StringPairVec &friend_getAllStatsStrings() { return m_outputStats; }
 };
 
 //-------------------------------------------------------------------------------------------------
 static PerfMetricsOutput s_output;
-static FILE* s_perfStatsFile = NULL;
+static FILE *s_perfStatsFile = NULL;
 static Int s_perfDumpOptions = 0;
 static UnsignedInt s_lastDumpedFrame = 0;
 static char s_buf[256] = "";
 
-PerfGather*		PerfGather::m_active[MAX_ACTIVE_STACK] = { 0 };
-PerfGather**	PerfGather::m_activeHead = &PerfGather::m_active[0];
-Int64					PerfGather::s_stopStartOverhead = -1;
-
-
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
+PerfGather *PerfGather::m_active[MAX_ACTIVE_STACK] = { 0 };
+PerfGather **PerfGather::m_activeHead = &PerfGather::m_active[0];
+Int64 PerfGather::s_stopStartOverhead = -1;
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ PerfGather*& PerfGather::getHeadPtr()
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------
+/*static*/ PerfGather *&PerfGather::getHeadPtr()
 {
 	// funky technique for order-of-init problem. trust me. (srj)
-	static PerfGather* s_head = NULL;
+	static PerfGather *s_head = NULL;
 	return s_head;
 }
 
 //-------------------------------------------------------------------------------------------------
 void PerfGather::addToList()
 {
-	PerfGather*& head = getHeadPtr();
+	PerfGather *&head = getHeadPtr();
 
 	this->m_next = head;
 	if (head)
@@ -208,7 +203,7 @@ void PerfGather::addToList()
 //-------------------------------------------------------------------------------------------------
 void PerfGather::removeFromList()
 {
-	PerfGather*& head = getHeadPtr();
+	PerfGather *&head = getHeadPtr();
 
 	if (this->m_next)
 		this->m_next->m_prev = this->m_prev;
@@ -224,16 +219,16 @@ void PerfGather::removeFromList()
 
 //-------------------------------------------------------------------------------------------------
 PerfGather::PerfGather(const char *identifier) :
-	m_identifier(identifier),
-	m_startTime(0),
-	m_runningTimeGross(0),
-	m_runningTimeNet(0),
-	m_callCount(0),
-	m_next(0),
-	m_prev(0)
+		m_identifier(identifier),
+		m_startTime(0),
+		m_runningTimeGross(0),
+		m_runningTimeNet(0),
+		m_callCount(0),
+		m_next(0),
+		m_prev(0)
 {
-	//Added By Sadullah Nader
-	//Initializations inserted
+	// Added By Sadullah Nader
+	// Initializations inserted
 	m_ignore = FALSE;
 	//
 	DEBUG_ASSERTCRASH(strchr(m_identifier, ',') == NULL, ("PerfGather names must not contain commas"));
@@ -258,14 +253,14 @@ void PerfGather::reset()
 //-------------------------------------------------------------------------------------------------
 /*static*/ void PerfGather::resetAll()
 {
-	for (PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+	for (PerfGather *head = getHeadPtr(); head != NULL; head = head->m_next)
 	{
 		head->reset();
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void PerfGather::initPerfDump(const char* fname, Int options)
+/*static*/ void PerfGather::initPerfDump(const char *fname, Int options)
 {
 	PerfGather::termPerfDump();
 
@@ -280,7 +275,7 @@ void PerfGather::reset()
 
 	if (s_perfStatsFile == NULL)
 	{
-		DEBUG_CRASH(("could not open/create perf file %s -- is it open in another app?",s_buf));
+		DEBUG_CRASH(("could not open/create perf file %s -- is it open in another app?", s_buf));
 		return;
 	}
 
@@ -292,18 +287,26 @@ void PerfGather::reset()
 		GetPrecisionTimer(&start);
 		for (Int ii = 0; ii < ITERS; ++ii)
 		{
-			pf.startTimer(); pf.stopTimer();
-			pf.startTimer(); pf.stopTimer();
-			pf.startTimer(); pf.stopTimer();
-			pf.startTimer(); pf.stopTimer();
-			pf.startTimer(); pf.stopTimer();
-			pf.startTimer(); pf.stopTimer();
-			pf.startTimer(); pf.stopTimer();
-			pf.startTimer(); pf.stopTimer();
+			pf.startTimer();
+			pf.stopTimer();
+			pf.startTimer();
+			pf.stopTimer();
+			pf.startTimer();
+			pf.stopTimer();
+			pf.startTimer();
+			pf.stopTimer();
+			pf.startTimer();
+			pf.stopTimer();
+			pf.startTimer();
+			pf.stopTimer();
+			pf.startTimer();
+			pf.stopTimer();
+			pf.startTimer();
+			pf.stopTimer();
 		}
 		GetPrecisionTimer(&end);
-		s_stopStartOverhead = (end - start) / (ITERS*8);
-		DEBUG_LOG(("s_stopStartOverhead is %d (%f usec)",(int)s_stopStartOverhead,s_stopStartOverhead/s_ticksPerUSec));
+		s_stopStartOverhead = (end - start) / (ITERS * 8);
+		DEBUG_LOG(("s_stopStartOverhead is %d (%f usec)", (int)s_stopStartOverhead, s_stopStartOverhead / s_ticksPerUSec));
 	}
 }
 
@@ -334,21 +337,21 @@ void PerfGather::reset()
 			fprintf(s_perfStatsFile, "Frame");
 			if (s_perfDumpOptions & PERF_GROSSTIME)
 			{
-				for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+				for (const PerfGather *head = getHeadPtr(); head != NULL; head = head->m_next)
 				{
 					fprintf(s_perfStatsFile, ",Gross:%s", head->m_identifier);
 				}
 			}
 			if (s_perfDumpOptions & PERF_NETTIME)
 			{
-				for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+				for (const PerfGather *head = getHeadPtr(); head != NULL; head = head->m_next)
 				{
 					fprintf(s_perfStatsFile, ",Net:%s", head->m_identifier);
 				}
 			}
 			if (s_perfDumpOptions & PERF_CALLCOUNT)
 			{
-				for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+				for (const PerfGather *head = getHeadPtr(); head != NULL; head = head->m_next)
 				{
 					fprintf(s_perfStatsFile, ",Count:%s", head->m_identifier);
 				}
@@ -358,14 +361,14 @@ void PerfGather::reset()
 
 		// a strange value so we can find it in the dump, if necessary.
 		// there's nothing magic about this value, it's purely determined from sample dumps...
-//		const Real CLIP_BIG_SPIKES = 1e10f;
+		//		const Real CLIP_BIG_SPIKES = 1e10f;
 		const Real CLIP_BIG_SPIKES = 100000.0f;
 
 		// make this a nonnumeric thing so Excel won't try to graph it...
 		fprintf(s_perfStatsFile, "Frame%08d", frame);
 		if (s_perfDumpOptions & PERF_GROSSTIME)
 		{
-			for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+			for (const PerfGather *head = getHeadPtr(); head != NULL; head = head->m_next)
 			{
 				double t = head->m_runningTimeGross;
 				t /= s_ticksPerUSec;
@@ -376,7 +379,7 @@ void PerfGather::reset()
 		}
 		if (s_perfDumpOptions & PERF_NETTIME)
 		{
-			for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+			for (const PerfGather *head = getHeadPtr(); head != NULL; head = head->m_next)
 			{
 				double t = head->m_runningTimeNet;
 				t /= s_ticksPerUSec;
@@ -387,7 +390,7 @@ void PerfGather::reset()
 		}
 		if (s_perfDumpOptions & PERF_CALLCOUNT)
 		{
-			for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+			for (const PerfGather *head = getHeadPtr(); head != NULL; head = head->m_next)
 			{
 				fprintf(s_perfStatsFile, ",%d", head->m_callCount);
 			}
@@ -397,9 +400,7 @@ void PerfGather::reset()
 		fflush(s_perfStatsFile);
 
 		s_lastDumpedFrame = frame;
-
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -407,7 +408,8 @@ void PerfGather::reset()
 // perf timers to not include time spent paused by the script engine.
 /*static*/ void PerfGather::displayGraph(UnsignedInt frame)
 {
-	if (!TheGraphDraw) {
+	if (!TheGraphDraw)
+	{
 		return;
 	}
 
@@ -421,7 +423,7 @@ void PerfGather::reset()
 
 		if (s_perfDumpOptions & PERF_GROSSTIME)
 		{
-			for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+			for (const PerfGather *head = getHeadPtr(); head != NULL; head = head->m_next)
 			{
 				Real t = head->m_runningTimeGross;
 				t /= s_ticksPerUSec;
@@ -433,7 +435,7 @@ void PerfGather::reset()
 		}
 		if (s_perfDumpOptions & PERF_NETTIME)
 		{
-			for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+			for (const PerfGather *head = getHeadPtr(); head != NULL; head = head->m_next)
 			{
 				Real t = head->m_runningTimeNet;
 				t /= s_ticksPerUSec;
@@ -445,11 +447,10 @@ void PerfGather::reset()
 		}
 		if (s_perfDumpOptions & PERF_CALLCOUNT)
 		{
-			for (const PerfGather* head = getHeadPtr(); head != NULL; head = head->m_next)
+			for (const PerfGather *head = getHeadPtr(); head != NULL; head = head->m_next)
 			{
 				Real t = head->m_callCount;
 				TheGraphDraw->addEntry(head->m_identifier, REAL_TO_INT(t));
-
 			}
 		}
 	}
@@ -472,42 +473,48 @@ void PerfGather::reset()
 //-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-PerfTimer::PerfTimer( const char *identifier, Bool crashWithInfo, Int startFrame, Int endFrame) :
-	m_identifier(identifier),
-	m_crashWithInfo(crashWithInfo),
-	m_startFrame(startFrame),
-	m_endFrame(endFrame),
-	m_callCount(0),
-	m_runningTime(0),
-	m_outputInfo(true),
-	//Added By Sadullah Nader
-	//Intializations inserted
-	m_lastFrame(-1)
+PerfTimer::PerfTimer(const char *identifier, Bool crashWithInfo, Int startFrame, Int endFrame) :
+		m_identifier(identifier),
+		m_crashWithInfo(crashWithInfo),
+		m_startFrame(startFrame),
+		m_endFrame(endFrame),
+		m_callCount(0),
+		m_runningTime(0),
+		m_outputInfo(true),
+		// Added By Sadullah Nader
+		// Intializations inserted
+		m_lastFrame(-1)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
-PerfTimer::~PerfTimer( )
+PerfTimer::~PerfTimer()
 {
-	if (m_endFrame == -1) {
+	if (m_endFrame == -1)
+	{
 		outputInfo();
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-void PerfTimer::outputInfo( void )
+void PerfTimer::outputInfo(void)
 {
-	if (TheGlobalData->m_showMetrics) {
+	if (TheGlobalData->m_showMetrics)
+	{
 		return;
 	}
 
-	if (m_outputInfo && !TheGlobalData->m_showMetrics) {
+	if (m_outputInfo && !TheGlobalData->m_showMetrics)
+	{
 		m_outputInfo = false;
-	} else {
+	}
+	else
+	{
 		return;
 	}
 
-	if (!s_ticksPerSec) {
+	if (!s_ticksPerSec)
+	{
 		// DEBUG_CRASH here
 		return;
 	}
@@ -518,37 +525,42 @@ void PerfTimer::outputInfo( void )
 	double avgTimePerCall = totalTimeInMS / m_callCount;
 #endif
 
-	if (m_crashWithInfo) {
-		DEBUG_CRASH(("%s\n"
-								 "Average Time (per call): %.4f ms\n"
-								 "Average Time (per frame): %.4f ms\n"
-								 "Average calls per frame: %.2f\n"
-								 "Number of calls: %d\n"
-								 "Max possible FPS: %.4f",
-								 m_identifier,
-								 avgTimePerCall,
-								 avgTimePerFrame,
-								 1.0f * m_callCount / (m_lastFrame - m_startFrame + 1),
-								 m_callCount,
-								 1000.0f / avgTimePerFrame));
-	} else {
-		DEBUG_LOG(("%s\n"
-								 "Average Time (per call): %.4f ms\n"
-								 "Average Time (per frame): %.4f ms\n"
-								 "Average calls per frame: %.2f\n"
-								 "Number of calls: %d\n"
-								 "Max possible FPS: %.4f",
-								 m_identifier,
-								 avgTimePerCall,
-								 avgTimePerFrame,
-								 1.0f * m_callCount / (m_lastFrame - m_startFrame + 1),
-								 m_callCount,
-								 1000.0f / avgTimePerFrame));
+	if (m_crashWithInfo)
+	{
+		DEBUG_CRASH(
+				("%s\n"
+				 "Average Time (per call): %.4f ms\n"
+				 "Average Time (per frame): %.4f ms\n"
+				 "Average calls per frame: %.2f\n"
+				 "Number of calls: %d\n"
+				 "Max possible FPS: %.4f",
+				 m_identifier,
+				 avgTimePerCall,
+				 avgTimePerFrame,
+				 1.0f * m_callCount / (m_lastFrame - m_startFrame + 1),
+				 m_callCount,
+				 1000.0f / avgTimePerFrame));
+	}
+	else
+	{
+		DEBUG_LOG(
+				("%s\n"
+				 "Average Time (per call): %.4f ms\n"
+				 "Average Time (per frame): %.4f ms\n"
+				 "Average calls per frame: %.2f\n"
+				 "Number of calls: %d\n"
+				 "Max possible FPS: %.4f",
+				 m_identifier,
+				 avgTimePerCall,
+				 avgTimePerFrame,
+				 1.0f * m_callCount / (m_lastFrame - m_startFrame + 1),
+				 m_callCount,
+				 1000.0f / avgTimePerFrame));
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-void PerfTimer::showMetrics( void )
+void PerfTimer::showMetrics(void)
 {
 #if defined(RTS_DEBUG)
 	double totalTimeInMS = 1000.0 * m_runningTime / s_ticksPerSec;
@@ -559,10 +571,7 @@ void PerfTimer::showMetrics( void )
 	// we want to work on the thing in the array, so just store a reference.
 	AsciiString &outputStats = s_output.getStatsString(m_identifier);
 
-	outputStats.format("%s: %.2fms / call, %.2fms / frame \n",
-											m_identifier,
-											avgTimePerCall,
-											avgTimePerFrame);
+	outputStats.format("%s: %.2fms / call, %.2fms / frame \n", m_identifier, avgTimePerCall, avgTimePerFrame);
 	m_callCount = 0;
 	m_runningTime = 0;
 
@@ -572,16 +581,16 @@ void PerfTimer::showMetrics( void )
 }
 
 //-------------------------------------------------------------------------------StatMetricsDisplay
-void StatMetricsDisplay( DebugDisplayInterface *dd, void *, FILE *fp )
+void StatMetricsDisplay(DebugDisplayInterface *dd, void *, FILE *fp)
 {
 	dd->printf("Performance Metrics: \n");
 	// no copies will take place because we are storing a reference to the thing
 	StringPairVec &stats = s_output.friend_getAllStatsStrings();
 
-	for (int i = 0; i < stats.size(); ++i) {
+	for (int i = 0; i < stats.size(); ++i)
+	{
 		dd->printf("%s", stats[i].second.str());
 	}
 }
 
-#endif	// PERF_TIMERS
-
+#endif // PERF_TIMERS

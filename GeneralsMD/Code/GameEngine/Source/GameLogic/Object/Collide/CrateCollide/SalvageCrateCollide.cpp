@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "GameLogic/Module/SalvageCrateCollide.h"
 
 #include "Common/AudioEventRTS.h"
@@ -46,71 +46,69 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SalvageCrateCollide::SalvageCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
+SalvageCrateCollide::SalvageCrateCollide(Thing *thing, const ModuleData *moduleData) : CrateCollide(thing, moduleData)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SalvageCrateCollide::~SalvageCrateCollide( void )
+SalvageCrateCollide::~SalvageCrateCollide(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool SalvageCrateCollide::isValidToExecute( const Object *other ) const
+Bool SalvageCrateCollide::isValidToExecute(const Object *other) const
 {
-	if( ! CrateCollide::isValidToExecute( other ) )
+	if (!CrateCollide::isValidToExecute(other))
 		return FALSE;
 
 	// Only salvage units can pick up a Salvage crate
-	if( ! other->getTemplate()->isKindOf( KINDOF_SALVAGER ) )
+	if (!other->getTemplate()->isKindOf(KINDOF_SALVAGER))
 		return FALSE;
 
 	return TRUE;
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool SalvageCrateCollide::executeCrateBehavior( Object *other )
+Bool SalvageCrateCollide::executeCrateBehavior(Object *other)
 {
-	if( eligibleForArmorSet(other) )// No percent chance on this one, if you can get it, you get it.
+	if (eligibleForArmorSet(other)) // No percent chance on this one, if you can get it, you get it.
 	{
 		doArmorSet(other);
 
-		//Play the salvage installation crate pickup sound.
+		// Play the salvage installation crate pickup sound.
 		AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateSalvage;
-		soundToPlay.setObjectID( other->getID() );
-		TheAudio->addAudioEvent( &soundToPlay );
+		soundToPlay.setObjectID(other->getID());
+		TheAudio->addAudioEvent(&soundToPlay);
 	}
-	else if( eligibleForWeaponSet( other ) && testWeaponChance() )
+	else if (eligibleForWeaponSet(other) && testWeaponChance())
 	{
-		doWeaponSet( other );
+		doWeaponSet(other);
 
-		//Play the salvage installation crate pickup sound.
+		// Play the salvage installation crate pickup sound.
 		AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateSalvage;
-		soundToPlay.setObjectID( other->getID() );
-		TheAudio->addAudioEvent( &soundToPlay );
+		soundToPlay.setObjectID(other->getID());
+		TheAudio->addAudioEvent(&soundToPlay);
 
-		//Play the unit voice acknowledgement for upgrading weapons.
-		//Already handled by the "move order"
-		//const AudioEventRTS *soundToPlayPtr = other->getTemplate()->getPerUnitSound( "VoiceSalvage" );
-		//soundToPlay = *soundToPlayPtr;
-		//soundToPlay.setObjectID( other->getID() );
-		//TheAudio->addAudioEvent( &soundToPlay );
+		// Play the unit voice acknowledgement for upgrading weapons.
+		// Already handled by the "move order"
+		// const AudioEventRTS *soundToPlayPtr = other->getTemplate()->getPerUnitSound( "VoiceSalvage" );
+		// soundToPlay = *soundToPlayPtr;
+		// soundToPlay.setObjectID( other->getID() );
+		// TheAudio->addAudioEvent( &soundToPlay );
 	}
-	else if( eligibleForLevel( other ) && testLevelChance() )
+	else if (eligibleForLevel(other) && testLevelChance())
 	{
-		doLevelGain( other );
+		doLevelGain(other);
 
-		//Sound will play in
-		//soundToPlay = TheAudio->getMiscAudio()->m_unitPromoted;
+		// Sound will play in
+		// soundToPlay = TheAudio->getMiscAudio()->m_unitPromoted;
 	}
 	else // just assume the testMoneyChance
 	{
-		doMoney( other );
+		doMoney(other);
 		AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateMoney;
-		soundToPlay.setObjectID( other->getID() );
+		soundToPlay.setObjectID(other->getID());
 		TheAudio->addAudioEvent(&soundToPlay);
 	}
 
@@ -120,47 +118,47 @@ Bool SalvageCrateCollide::executeCrateBehavior( Object *other )
 }
 
 // ------------------------------------------------------------------------------------------------
-Bool SalvageCrateCollide::eligibleForWeaponSet( Object *other )
+Bool SalvageCrateCollide::eligibleForWeaponSet(Object *other)
 {
-	if( other == NULL )
+	if (other == NULL)
 		return FALSE;
 
 	// A kindof marks eligibility, and you must not be fully upgraded
-	if( !other->isKindOf(KINDOF_WEAPON_SALVAGER) )
+	if (!other->isKindOf(KINDOF_WEAPON_SALVAGER))
 		return FALSE;
-	if( other->testWeaponSetFlag(WEAPONSET_CRATEUPGRADE_TWO) )
+	if (other->testWeaponSetFlag(WEAPONSET_CRATEUPGRADE_TWO))
 		return FALSE;
 
 	return TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------
-Bool SalvageCrateCollide::eligibleForArmorSet( Object *other )
+Bool SalvageCrateCollide::eligibleForArmorSet(Object *other)
 {
-	if( other == NULL )
+	if (other == NULL)
 		return FALSE;
 
 	// A kindof marks eligibility, and you must not be fully upgraded
-	if( !other->isKindOf(KINDOF_ARMOR_SALVAGER) )
+	if (!other->isKindOf(KINDOF_ARMOR_SALVAGER))
 		return FALSE;
-	if( other->testArmorSetFlag(ARMORSET_CRATE_UPGRADE_TWO) )
+	if (other->testArmorSetFlag(ARMORSET_CRATE_UPGRADE_TWO))
 		return FALSE;
 
 	return TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------
-Bool SalvageCrateCollide::eligibleForLevel( Object *other )
+Bool SalvageCrateCollide::eligibleForLevel(Object *other)
 {
-	if( other == NULL )
+	if (other == NULL)
 		return FALSE;
 
 	// Sorry, you are max level
-	if( other->getExperienceTracker()->getVeterancyLevel() == LEVEL_HEROIC )
+	if (other->getExperienceTracker()->getVeterancyLevel() == LEVEL_HEROIC)
 		return FALSE;
 
 	// Sorry, you can't gain levels
-	if( !other->getExperienceTracker()->isTrainable() )
+	if (!other->getExperienceTracker()->isTrainable())
 		return FALSE;
 
 	return TRUE;
@@ -170,11 +168,11 @@ Bool SalvageCrateCollide::eligibleForLevel( Object *other )
 Bool SalvageCrateCollide::testWeaponChance()
 {
 	const SalvageCrateCollideModuleData *md = getSalvageCrateCollideModuleData();
-	if( md->m_weaponChance == 1.0f )
+	if (md->m_weaponChance == 1.0f)
 		return TRUE; // don't waste a random number for a 100%
 
-	Real randomNumber = GameLogicRandomValueReal( 0, 1 );
-	if( randomNumber < md->m_weaponChance )
+	Real randomNumber = GameLogicRandomValueReal(0, 1);
+	if (randomNumber < md->m_weaponChance)
 		return TRUE;
 
 	return FALSE;
@@ -184,117 +182,116 @@ Bool SalvageCrateCollide::testWeaponChance()
 Bool SalvageCrateCollide::testLevelChance()
 {
 	const SalvageCrateCollideModuleData *md = getSalvageCrateCollideModuleData();
-	if( md->m_levelChance == 1.0f )
+	if (md->m_levelChance == 1.0f)
 		return TRUE; // don't waste a random number for a 100%
 
-	Real randomNumber = GameLogicRandomValueReal( 0, 1 );
-	if( randomNumber < md->m_levelChance )
+	Real randomNumber = GameLogicRandomValueReal(0, 1);
+	if (randomNumber < md->m_levelChance)
 		return TRUE;
 
 	return FALSE;
 }
 
 // ------------------------------------------------------------------------------------------------
-void SalvageCrateCollide::doWeaponSet( Object *other )
+void SalvageCrateCollide::doWeaponSet(Object *other)
 {
-	if( other->testWeaponSetFlag( WEAPONSET_CRATEUPGRADE_ONE ) )
+	if (other->testWeaponSetFlag(WEAPONSET_CRATEUPGRADE_ONE))
 	{
-		other->clearWeaponSetFlag( WEAPONSET_CRATEUPGRADE_ONE );
-		other->setWeaponSetFlag( WEAPONSET_CRATEUPGRADE_TWO );
+		other->clearWeaponSetFlag(WEAPONSET_CRATEUPGRADE_ONE);
+		other->setWeaponSetFlag(WEAPONSET_CRATEUPGRADE_TWO);
 	}
 	else
 	{
-		other->setWeaponSetFlag( WEAPONSET_CRATEUPGRADE_ONE );
+		other->setWeaponSetFlag(WEAPONSET_CRATEUPGRADE_ONE);
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
-void SalvageCrateCollide::doArmorSet( Object *other )
+void SalvageCrateCollide::doArmorSet(Object *other)
 {
-	if( other->testArmorSetFlag( ARMORSET_CRATE_UPGRADE_ONE ) )
+	if (other->testArmorSetFlag(ARMORSET_CRATE_UPGRADE_ONE))
 	{
-		other->clearArmorSetFlag( ARMORSET_CRATE_UPGRADE_ONE );
-		other->setArmorSetFlag( ARMORSET_CRATE_UPGRADE_TWO );
+		other->clearArmorSetFlag(ARMORSET_CRATE_UPGRADE_ONE);
+		other->setArmorSetFlag(ARMORSET_CRATE_UPGRADE_TWO);
 
-		other->clearAndSetModelConditionState(MODELCONDITION_ARMORSET_CRATEUPGRADE_ONE, MODELCONDITION_ARMORSET_CRATEUPGRADE_TWO);
+		other->clearAndSetModelConditionState(
+				MODELCONDITION_ARMORSET_CRATEUPGRADE_ONE,
+				MODELCONDITION_ARMORSET_CRATEUPGRADE_TWO);
 	}
 	else
 	{
-		other->setArmorSetFlag( ARMORSET_CRATE_UPGRADE_ONE );
+		other->setArmorSetFlag(ARMORSET_CRATE_UPGRADE_ONE);
 
 		other->setModelConditionState(MODELCONDITION_ARMORSET_CRATEUPGRADE_ONE);
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
-void SalvageCrateCollide::doLevelGain( Object *other )
+void SalvageCrateCollide::doLevelGain(Object *other)
 {
-	other->getExperienceTracker()->gainExpForLevel( 1 );
+	other->getExperienceTracker()->gainExpForLevel(1);
 }
 
 // ------------------------------------------------------------------------------------------------
-void SalvageCrateCollide::doMoney( Object *other )
+void SalvageCrateCollide::doMoney(Object *other)
 {
 	const SalvageCrateCollideModuleData *md = getSalvageCrateCollideModuleData();
 
 	Int money;
-	if( md->m_minimumMoney != md->m_maximumMoney )// Random value doesn't like to get a constant range
-		money = GameLogicRandomValue( md->m_minimumMoney, md->m_maximumMoney );
+	if (md->m_minimumMoney != md->m_maximumMoney) // Random value doesn't like to get a constant range
+		money = GameLogicRandomValue(md->m_minimumMoney, md->m_maximumMoney);
 	else
 		money = md->m_minimumMoney;
 
-	if( money > 0 )
+	if (money > 0)
 	{
-		other->getControllingPlayer()->getMoney()->deposit( money );
-		other->getControllingPlayer()->getScoreKeeper()->addMoneyEarned( money );
+		other->getControllingPlayer()->getMoney()->deposit(money);
+		other->getControllingPlayer()->getScoreKeeper()->addMoneyEarned(money);
 
-		//Display cash income floating over the crate.  Position is me, everything else is them.
+		// Display cash income floating over the crate.  Position is me, everything else is them.
 		UnicodeString moneyString;
-		moneyString.format( TheGameText->fetch( "GUI:AddCash" ), money );
+		moneyString.format(TheGameText->fetch("GUI:AddCash"), money);
 		Coord3D pos;
-		pos.set( getObject()->getPosition() );
-		pos.z += 10.0f; //add a little z to make it show up above the unit.
-		Color color = other->getControllingPlayer()->getPlayerColor() | GameMakeColor( 0, 0, 0, 230 );
-		TheInGameUI->addFloatingText( moneyString, &pos, color );
+		pos.set(getObject()->getPosition());
+		pos.z += 10.0f; // add a little z to make it show up above the unit.
+		Color color = other->getControllingPlayer()->getPlayerColor() | GameMakeColor(0, 0, 0, 230);
+		TheInGameUI->addFloatingText(moneyString, &pos, color);
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void SalvageCrateCollide::crc( Xfer *xfer )
+void SalvageCrateCollide::crc(Xfer *xfer)
 {
-
 	// extend base class
-	CrateCollide::crc( xfer );
+	CrateCollide::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void SalvageCrateCollide::xfer( Xfer *xfer )
+void SalvageCrateCollide::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CrateCollide::xfer( xfer );
+	CrateCollide::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SalvageCrateCollide::loadPostProcess( void )
+void SalvageCrateCollide::loadPostProcess(void)
 {
-
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

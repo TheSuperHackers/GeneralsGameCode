@@ -34,7 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if defined(_MSC_VER)
 #pragma once
 #endif
@@ -48,8 +47,8 @@
 #include "robjlist.h"
 #include "wwdebug.h"
 
-class	RenderObjClass;
-class	RenderInfoClass;
+class RenderObjClass;
+class RenderInfoClass;
 class CameraClass;
 class ChunkLoadClass;
 class ChunkSaveClass;
@@ -62,18 +61,15 @@ class ChunkSaveClass;
 class SceneIterator
 {
 public:
-
-	virtual							~SceneIterator(void) { };
-	virtual void					First(void) = 0;
-	virtual void					Next(void) = 0;
-	virtual bool					Is_Done(void) = 0;
-	virtual RenderObjClass *	Current_Item(void) = 0;
+	virtual ~SceneIterator(void) {};
+	virtual void First(void) = 0;
+	virtual void Next(void) = 0;
+	virtual bool Is_Done(void) = 0;
+	virtual RenderObjClass *Current_Item(void) = 0;
 
 protected:
-
-	SceneIterator(void) { };
+	SceneIterator(void) {};
 };
-
 
 /**
 ** SceneClass
@@ -100,36 +96,44 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////
 	// RTTI information.
 	///////////////////////////////////////////////////////////////////////////////////
-	enum {
+	enum
+	{
 		SCENE_ID_UNKOWN = 0xFFFFFFFF,
 		SCENE_ID_SCENE = 0,
 		SCENE_ID_SIMPLE,
 
 		SCENE_ID_LAST = 0x0000FFFF,
 	};
-	virtual int					Get_Scene_ID(void) const	{	return SCENE_ID_SCENE;	}
+	virtual int Get_Scene_ID(void) const { return SCENE_ID_SCENE; }
 
+	virtual void Add_Render_Object(RenderObjClass *obj);
+	virtual void Remove_Render_Object(RenderObjClass *obj);
 
-	virtual void				Add_Render_Object(RenderObjClass * obj);
-	virtual void				Remove_Render_Object(RenderObjClass * obj);
+	virtual SceneIterator *Create_Iterator(bool onlyvisible = false) = 0;
+	virtual void Destroy_Iterator(SceneIterator *it) = 0;
 
-	virtual SceneIterator *	Create_Iterator(bool onlyvisible = false)				= 0;
-	virtual void				Destroy_Iterator(SceneIterator * it)					= 0;
-
-	virtual void				Set_Ambient_Light(const Vector3 & color)				{ AmbientLight = color; }
-	virtual const Vector3 &	Get_Ambient_Light(void)										{ return AmbientLight; }
+	virtual void Set_Ambient_Light(const Vector3 &color) { AmbientLight = color; }
+	virtual const Vector3 &Get_Ambient_Light(void) { return AmbientLight; }
 
 	///////////////////////////////////////////////////////////////////////////////////
 	//	Fog methods
 	///////////////////////////////////////////////////////////////////////////////////
-	virtual void				Set_Fog_Enable(bool set)									{ FogEnabled = set; }
-	virtual bool				Get_Fog_Enable(void)											{ return FogEnabled; }
+	virtual void Set_Fog_Enable(bool set) { FogEnabled = set; }
+	virtual bool Get_Fog_Enable(void) { return FogEnabled; }
 
-	virtual void				Set_Fog_Color(const Vector3 & color)					{ FogColor = color; }
-	virtual const Vector3 &	Get_Fog_Color(void)											{ return FogColor; }
+	virtual void Set_Fog_Color(const Vector3 &color) { FogColor = color; }
+	virtual const Vector3 &Get_Fog_Color(void) { return FogColor; }
 
-	virtual void				Set_Fog_Range( float start, float end )				{ FogStart = start; FogEnd = end; }
-	virtual void				Get_Fog_Range( float * start, float * end )			{ *start = FogStart; *end = FogEnd; }
+	virtual void Set_Fog_Range(float start, float end)
+	{
+		FogStart = start;
+		FogEnd = end;
+	}
+	virtual void Get_Fog_Range(float *start, float *end)
+	{
+		*start = FogStart;
+		*end = FogEnd;
+	}
 
 	///////////////////////////////////////////////////////////////////////////////////
 	//	Render Modes
@@ -141,8 +145,8 @@ public:
 		FILL
 	};
 
-	void							Set_Polygon_Mode(PolyRenderType mode)					{ PolyRenderMode = mode; }
-	PolyRenderType				Get_Polygon_Mode(void)										{ return PolyRenderMode; }
+	void Set_Polygon_Mode(PolyRenderType mode) { PolyRenderMode = mode; }
+	PolyRenderType Get_Polygon_Mode(void) { return PolyRenderMode; }
 
 	///////////////////////////////////////////////////////////////////////////////////
 	//	Second pass render mode is a debug feature which renders the whole scene twice.
@@ -154,8 +158,8 @@ public:
 		EXTRA_PASS_CLEAR_LINE
 	};
 
-	void							Set_Extra_Pass_Polygon_Mode(ExtraPassPolyRenderType mode)		{ ExtraPassPolyRenderMode = mode; }
-	ExtraPassPolyRenderType Get_Extra_Pass_Polygon_Mode(void)										{ return ExtraPassPolyRenderMode; }
+	void Set_Extra_Pass_Polygon_Mode(ExtraPassPolyRenderType mode) { ExtraPassPolyRenderMode = mode; }
+	ExtraPassPolyRenderType Get_Extra_Pass_Polygon_Mode(void) { return ExtraPassPolyRenderMode; }
 
 	///////////////////////////////////////////////////////////////////////////////////
 	//	Object processing registration
@@ -167,47 +171,44 @@ public:
 		RELEASE,
 	};
 
-	virtual void				Register(RenderObjClass * obj,RegType for_what)		= 0;
-	virtual void				Unregister(RenderObjClass * obj,RegType for_what)	= 0;
+	virtual void Register(RenderObjClass *obj, RegType for_what) = 0;
+	virtual void Unregister(RenderObjClass *obj, RegType for_what) = 0;
 
 	///////////////////////////////////////////////////////////////////////////////////
 	//	Point visibility - used by DazzleRenderObj when no custom handler is installed
 	///////////////////////////////////////////////////////////////////////////////////
-	virtual float				Compute_Point_Visibility(	RenderInfoClass & rinfo,
-																		const Vector3 & point)	{ return 1.0f; }
-
+	virtual float Compute_Point_Visibility(RenderInfoClass &rinfo, const Vector3 &point) { return 1.0f; }
 
 	///////////////////////////////////////////////////////////////////////////////////
 	//	Save-Load, records the fog, depth cue, etc settings into a chunk
 	///////////////////////////////////////////////////////////////////////////////////
-	virtual void				Save(ChunkSaveClass & csave);
-	virtual void				Load(ChunkLoadClass & cload);
+	virtual void Save(ChunkSaveClass &csave);
+	virtual void Load(ChunkLoadClass &cload);
 
 protected:
-	virtual void	Render(RenderInfoClass & rinfo);	//Made virtual so we can override -MW
+	virtual void Render(RenderInfoClass &rinfo); // Made virtual so we can override -MW
 
-	Vector3						AmbientLight;
-	PolyRenderType				PolyRenderMode;
-	ExtraPassPolyRenderType	ExtraPassPolyRenderMode;
+	Vector3 AmbientLight;
+	PolyRenderType PolyRenderMode;
+	ExtraPassPolyRenderType ExtraPassPolyRenderMode;
 
-	bool							FogEnabled;
-	Vector3						FogColor;
-	float							FogStart;
-	float							FogEnd;
+	bool FogEnabled;
+	Vector3 FogColor;
+	float FogStart;
+	float FogEnd;
 
 	friend class WW3D;
 
 	/*
 	** Not implemented!
 	*/
-	SceneClass (const SceneClass &);
-	SceneClass & operator == (const SceneClass &);
+	SceneClass(const SceneClass &);
+	SceneClass &operator==(const SceneClass &);
 
 private:
-	virtual void				Customized_Render(RenderInfoClass & rinfo)=0;
-	virtual void				Pre_Render_Processing(RenderInfoClass & rinfo) {}
-	virtual void				Post_Render_Processing(RenderInfoClass & rinfo) {}
-
+	virtual void Customized_Render(RenderInfoClass &rinfo) = 0;
+	virtual void Pre_Render_Processing(RenderInfoClass &rinfo) {}
+	virtual void Post_Render_Processing(RenderInfoClass &rinfo) {}
 };
 
 /**
@@ -223,47 +224,44 @@ private:
 class SimpleSceneClass : public SceneClass
 {
 public:
-
 	SimpleSceneClass(void);
 	virtual ~SimpleSceneClass(void);
 
-	virtual int	Get_Scene_ID(void)	{	return SCENE_ID_SIMPLE;	}
+	virtual int Get_Scene_ID(void) { return SCENE_ID_SIMPLE; }
 
-	virtual void Add_Render_Object(RenderObjClass * obj);
-	virtual void Remove_Render_Object(RenderObjClass * obj);
+	virtual void Add_Render_Object(RenderObjClass *obj);
+	virtual void Remove_Render_Object(RenderObjClass *obj);
 
 	virtual void Remove_All_Render_Objects(void);
 
-	virtual void Register(RenderObjClass * obj,RegType for_what);
-	virtual void Unregister(RenderObjClass * obj,RegType for_what);
+	virtual void Register(RenderObjClass *obj, RegType for_what);
+	virtual void Unregister(RenderObjClass *obj, RegType for_what);
 
-	virtual SceneIterator *		Create_Iterator(bool onlyvisible = false);
-	virtual void					Destroy_Iterator(SceneIterator * it);
+	virtual SceneIterator *Create_Iterator(bool onlyvisible = false);
+	virtual void Destroy_Iterator(SceneIterator *it);
 
 	// Set visibility status for my render objects. If not called explicitly
 	// beforehand, will be called inside Render().
-	virtual void Visibility_Check(CameraClass * camera);
+	virtual void Visibility_Check(CameraClass *camera);
 
 	///////////////////////////////////////////////////////////////////////////////////
 	//	Point visibility - used by DazzleRenderObj when no custom handler is installed
 	///////////////////////////////////////////////////////////////////////////////////
-	virtual float				Compute_Point_Visibility(	RenderInfoClass & rinfo,
-																		const Vector3 & point);
+	virtual float Compute_Point_Visibility(RenderInfoClass &rinfo, const Vector3 &point);
 
 protected:
+	// Has a visibility check been performed since scene was last rendered?
+	bool Visibility_Checked;
 
-   // Has a visibility check been performed since scene was last rendered?
-   bool Visibility_Checked;
-
-	RefRenderObjListClass	RenderList;
-	RefRenderObjListClass	UpdateList;
-	RefRenderObjListClass	LightList;
-	RefRenderObjListClass	ReleaseList;
+	RefRenderObjListClass RenderList;
+	RefRenderObjListClass UpdateList;
+	RefRenderObjListClass LightList;
+	RefRenderObjListClass ReleaseList;
 
 	friend class SimpleSceneIterator;
 
-	virtual void Customized_Render(RenderInfoClass & rinfo);
-	virtual void Post_Render_Processing(RenderInfoClass& rinfo);
+	virtual void Customized_Render(RenderInfoClass &rinfo);
+	virtual void Post_Render_Processing(RenderInfoClass &rinfo);
 };
 
 #endif

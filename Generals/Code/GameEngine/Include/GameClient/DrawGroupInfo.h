@@ -59,8 +59,8 @@ struct DrawGroupInfo
 
 	DrawGroupInfo();
 
-	static const FieldParse s_fieldParseTable[];		///< the parse table for INI definition
-	const FieldParse *getFieldParse( void ) const { return s_fieldParseTable; }
+	static const FieldParse s_fieldParseTable[]; ///< the parse table for INI definition
+	const FieldParse *getFieldParse(void) const { return s_fieldParseTable; }
 };
 
 extern DrawGroupInfo *TheDrawGroupInfo;

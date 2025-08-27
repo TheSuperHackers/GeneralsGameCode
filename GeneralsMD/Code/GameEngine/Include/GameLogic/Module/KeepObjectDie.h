@@ -44,18 +44,14 @@ class Thing;
 
 class KeepObjectDie : public DieModule
 {
-
-	MAKE_STANDARD_MODULE_MACRO( KeepObjectDie );
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( KeepObjectDie, "KeepObjectDie" )
+	MAKE_STANDARD_MODULE_MACRO(KeepObjectDie);
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(KeepObjectDie, "KeepObjectDie")
 
 public:
-
-	KeepObjectDie( Thing *thing, const ModuleData* moduleData );
+	KeepObjectDie(Thing *thing, const ModuleData *moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDie( const DamageInfo *damageInfo );
-
+	virtual void onDie(const DamageInfo *damageInfo);
 };
 
 #endif // __KEEP_OBJECT_DIE_H_
-

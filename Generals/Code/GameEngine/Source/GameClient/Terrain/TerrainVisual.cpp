@@ -27,13 +27,9 @@
 // Author: Colin Day, April 2001
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 #include "Common/Xfer.h"
 #include "GameClient/TerrainVisual.h"
-
-
-
-
 
 // GLOBALS ////////////////////////////////////////////////////////////////////////////////////////
 TerrainVisual *TheTerrainVisual = NULL;
@@ -46,85 +42,78 @@ TerrainVisual *TheTerrainVisual = NULL;
 //-------------------------------------------------------------------------------------------------
 TerrainVisual::TerrainVisual()
 {
-
-}  // end TerrainVisual
+} // end TerrainVisual
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 TerrainVisual::~TerrainVisual()
 {
-
-}  // end ~TerrainVisual
+} // end ~TerrainVisual
 
 //-------------------------------------------------------------------------------------------------
 /** initialize the device independent functionality of the visual terrain */
 //-------------------------------------------------------------------------------------------------
-void TerrainVisual::init( void )
+void TerrainVisual::init(void)
 {
-
-}  // end init
+} // end init
 
 //-------------------------------------------------------------------------------------------------
 /** Reset */
 //-------------------------------------------------------------------------------------------------
-void TerrainVisual::reset( void )
+void TerrainVisual::reset(void)
 {
-
 	m_filenameString.clear();
 
-}  // end reset
+} // end reset
 
 //-------------------------------------------------------------------------------------------------
 /** Update */
 //-------------------------------------------------------------------------------------------------
-void TerrainVisual::update( void )
+void TerrainVisual::update(void)
 {
 	// All the interesting stuff happens in load.  jba.
-}  // end update
+} // end update
 
 //-------------------------------------------------------------------------------------------------
 /** device independent implementation for common terrain visual systems */
 //-------------------------------------------------------------------------------------------------
-Bool TerrainVisual::load( AsciiString filename )
+Bool TerrainVisual::load(AsciiString filename)
 {
-
 	// save the filename
 	if (filename.isEmpty())
 		return FALSE;
 
 	m_filenameString = filename;
 
-	return TRUE;;  // success
+	return TRUE;
+	; // success
 
-}  // end load
+} // end load
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void TerrainVisual::crc( Xfer *xfer )
+void TerrainVisual::crc(Xfer *xfer)
 {
-
-}  // end CRC
+} // end CRC
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void TerrainVisual::xfer( Xfer *xfer )
+void TerrainVisual::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TerrainVisual::loadPostProcess( void )
+void TerrainVisual::loadPostProcess(void)
 {
-
-}  // end loadPostProcess
+} // end loadPostProcess

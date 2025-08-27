@@ -72,7 +72,7 @@ std::string intToString(int val)
 	buf[1] = 0;
 	while (val)
 	{
-		buf[0] = '0' + val%10;
+		buf[0] = '0' + val % 10;
 		val /= 10;
 		s.insert(0, buf);
 	}
@@ -91,20 +91,20 @@ std::string uintToString(unsigned int val)
 	buf[1] = 0;
 	while (val)
 	{
-		buf[0] = '0' + val%10;
+		buf[0] = '0' + val % 10;
 		val /= 10;
 		s.insert(0, buf);
 	}
 	return s;
 }
 
-MapBitSet MapSetUnion(const MapBitSet& a, const MapBitSet& b)
+MapBitSet MapSetUnion(const MapBitSet &a, const MapBitSet &b)
 {
 	MapBitSet c;
 	if (a.size() != b.size())
 		return c;
 
-	for (int i=0; i<(int)a.size(); ++i)
+	for (int i = 0; i < (int)a.size(); ++i)
 	{
 		c.push_back(a[i] && b[i]);
 	}
@@ -112,12 +112,12 @@ MapBitSet MapSetUnion(const MapBitSet& a, const MapBitSet& b)
 	return c;
 }
 
-int MapSetCount(const MapBitSet& a)
+int MapSetCount(const MapBitSet &a)
 {
-	int count=0;
-	for (int i=0; i<(int)a.size(); ++i)
+	int count = 0;
+	for (int i = 0; i < (int)a.size(); ++i)
 	{
-		//DBGMSG(a[i]);
+		// DBGMSG(a[i]);
 		if (a[i])
 			++count;
 	}
@@ -144,7 +144,7 @@ GeneralsUser::GeneralsUser(void)
 	maxPing = 1000;
 }
 
-static const int MaxPingValue = 255*255*2;
+static const int MaxPingValue = 255 * 255 * 2;
 
 int calcPingDelta(const GeneralsUser *a, const GeneralsUser *b)
 {
@@ -152,7 +152,7 @@ int calcPingDelta(const GeneralsUser *a, const GeneralsUser *b)
 		return MaxPingValue; // Max ping
 
 	int bestPing = MaxPingValue;
-	for (int i=0; i<(int)a->pseudoPing.size(); ++i)
+	for (int i = 0; i < (int)a->pseudoPing.size(); ++i)
 	{
 		int p1, p2;
 		p1 = a->pseudoPing[i];
@@ -164,7 +164,6 @@ int calcPingDelta(const GeneralsUser *a, const GeneralsUser *b)
 
 	return (int)sqrt(bestPing);
 }
-
 
 // =====================================================================
 // Matcher thread
@@ -198,20 +197,33 @@ GeneralsMatcher::GeneralsMatcher()
 }
 
 void GeneralsMatcher::init(void)
-{}
-
+{
+}
 
 #define W(x) setw(x) <<
 void GeneralsMatcher::dumpUsers(void)
-{}
+{
+}
 
-
-
-void GeneralsMatcher::sendMatchInfo(std::string name1, std::string name2, std::string name3, std::string name4,
-                                    std::string name5, std::string name6, std::string name7, std::string name8,
-                                    GeneralsUser *user1, GeneralsUser *user2, GeneralsUser *user3, GeneralsUser *user4,
-                                    GeneralsUser *user5, GeneralsUser *user6, GeneralsUser *user7, GeneralsUser *user8,
-                                    int numPlayers, int ladderID)
+void GeneralsMatcher::sendMatchInfo(
+		std::string name1,
+		std::string name2,
+		std::string name3,
+		std::string name4,
+		std::string name5,
+		std::string name6,
+		std::string name7,
+		std::string name8,
+		GeneralsUser *user1,
+		GeneralsUser *user2,
+		GeneralsUser *user3,
+		GeneralsUser *user4,
+		GeneralsUser *user5,
+		GeneralsUser *user6,
+		GeneralsUser *user7,
+		GeneralsUser *user8,
+		int numPlayers,
+		int ladderID)
 {
 	MapBitSet tmp = MapSetUnion(user1->maps, user2->maps);
 	if (numPlayers > 2)
@@ -272,16 +284,16 @@ void GeneralsMatcher::sendMatchInfo(std::string name1, std::string name2, std::s
 		user8->status = STATUS_MATCHED;
 	}
 
-	int whichMap = Global.rnd.Int(0, RAND_MAX-1);
+	int whichMap = Global.rnd.Int(0, RAND_MAX - 1);
 	DBGMSG(whichMap);
-	whichMap = whichMap%numMaps;
+	whichMap = whichMap % numMaps;
 	DBGMSG(whichMap);
 	++whichMap;
 	DBGMSG(whichMap);
 	DBGMSG("Random map #" << whichMap << "/" << numMaps);
 
 	int i;
-	for (i=0; i<(int)user1->maps.size(); ++i)
+	for (i = 0; i < (int)user1->maps.size(); ++i)
 	{
 		if (tmp[i])
 			--whichMap;
@@ -294,7 +306,7 @@ void GeneralsMatcher::sendMatchInfo(std::string name1, std::string name2, std::s
 	s = "MBOT:MATCHED ";
 	s.append(intToString(i));
 	s.append(" ");
-	s.append(intToString( Global.rnd.Int(0, RAND_MAX-1) ));
+	s.append(intToString(Global.rnd.Int(0, RAND_MAX - 1)));
 	s.append(" ");
 	s.append(name1);
 	s.append(" ");
@@ -451,9 +463,13 @@ void GeneralsMatcher::checkMatches(void)
 	}
 }
 
-double GeneralsMatcher::computeMatchFitness(const std::string& i1, const GeneralsUser *u1, const std::string& i2, const GeneralsUser *u2)
+double GeneralsMatcher::computeMatchFitness(
+		const std::string &i1,
+		const GeneralsUser *u1,
+		const std::string &i2,
+		const GeneralsUser *u2)
 {
-	//DBGMSG("matching "<<i1<< " vs "<<i2);
+	// DBGMSG("matching "<<i1<< " vs "<<i2);
 	if (u1->status != STATUS_WORKING || u2->status != STATUS_WORKING)
 		return 0.0;
 
@@ -462,21 +478,20 @@ double GeneralsMatcher::computeMatchFitness(const std::string& i1, const General
 		return 0.0;
 
 	// check point percentage ranges
-	int p1 = max(1,u1->points), p2 = max(1,u2->points);
-	double p1percent = (double)p2/(double)p1;
-	double p2percent = (double)p1/(double)p2;
-	//DBGMSG("points: " << p1 << "," << p2 << " - " << p1percent << "," << p2percent);
-	if (!u1->widened && ( p1percent < u1->minPoints || p1percent > u1->maxPoints ))
+	int p1 = max(1, u1->points), p2 = max(1, u2->points);
+	double p1percent = (double)p2 / (double)p1;
+	double p2percent = (double)p1 / (double)p2;
+	// DBGMSG("points: " << p1 << "," << p2 << " - " << p1percent << "," << p2percent);
+	if (!u1->widened && (p1percent < u1->minPoints || p1percent > u1->maxPoints))
 		return 0.0;
 
-	if (!u2->widened && ( p2percent < u2->minPoints || p2percent > u2->maxPoints ))
+	if (!u2->widened && (p2percent < u2->minPoints || p2percent > u2->maxPoints))
 		return 0.0;
-
 
 	int minP = min(p1, p2);
 	int maxP = max(p1, p2);
-	double pointPercent = (double)minP/(double)maxP;
-	//DBGMSG("\tpointPercent = "<<pointPercent);
+	double pointPercent = (double)minP / (double)maxP;
+	// DBGMSG("\tpointPercent = "<<pointPercent);
 
 	// check pings
 	int pingDelta = calcPingDelta(u1, u2);
@@ -484,15 +499,15 @@ double GeneralsMatcher::computeMatchFitness(const std::string& i1, const General
 		return 0.0;
 	if (!u2->widened && pingDelta > u2->maxPing)
 		return 0.0;
-	//DBGMSG("pingDelta="<<pingDelta);
+	// DBGMSG("pingDelta="<<pingDelta);
 
-	//DBGMSG(u1->discons << "," << u1->maxDiscons << "  " << u2->discons << "," << u2->maxDiscons);
-	// check discons
+	// DBGMSG(u1->discons << "," << u1->maxDiscons << "  " << u2->discons << "," << u2->maxDiscons);
+	//  check discons
 	if (u1->maxDiscons && (!u1->widened && u2->discons > u1->maxDiscons))
 		return 0.0;
 	if (u2->maxDiscons && (!u2->widened && u1->discons > u2->maxDiscons))
 		return 0.0;
-	//DBGMSG("Made it through discons");
+	// DBGMSG("Made it through discons");
 
 	{
 		MapBitSet tmp = MapSetUnion(u1->maps, u2->maps);
@@ -501,25 +516,25 @@ double GeneralsMatcher::computeMatchFitness(const std::string& i1, const General
 	}
 
 	// they have something in common.  calculate match fitness.
-	double matchFitness = ( weightAvgPoints * (1-pointPercent) +
-	                        weightLowPing * (MaxPingValue - pingDelta)/MaxPingValue ) / (double)totalWeight;
-	//DBGMSG("Match fitness: "<<matchFitness);
+	double matchFitness = (weightAvgPoints * (1 - pointPercent) + weightLowPing * (MaxPingValue - pingDelta) / MaxPingValue)
+			/ (double)totalWeight;
+	// DBGMSG("Match fitness: "<<matchFitness);
 
 	/*
 	DBGMSG(i1->first << " vs " << i2->first << " has fitness " << matchFitness
-			   "\tpointPercent: " << pointPercent << "\n"
-			   "\tpingDelta: " << pingDelta << "\n"
-			   "\twidened: " << u1->widened << u2->widened << "\n"
-			   "\tweightAvgPoints: " << weightAvgPoints << "\n"
-			   "\tweightLowPing: " << weightLowPing << "\n"
-			   "\ttotalWeight: " << totalWeight
-			  );
+				 "\tpointPercent: " << pointPercent << "\n"
+				 "\tpingDelta: " << pingDelta << "\n"
+				 "\twidened: " << u1->widened << u2->widened << "\n"
+				 "\tweightAvgPoints: " << weightAvgPoints << "\n"
+				 "\tweightLowPing: " << weightLowPing << "\n"
+				 "\ttotalWeight: " << totalWeight
+				);
 				*/
 
 	return matchFitness;
 }
 
-void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int numPlayers, bool showPoolSize)
+void GeneralsMatcher::checkMatchesInUserMap(UserMap &userMap, int ladderID, int numPlayers, bool showPoolSize)
 {
 	UserMap::iterator i1, i2, i3, i4, i5, i6, i7, i8;
 	GeneralsUser *u1, *u2, *u3, *u4, *u5, *u6, *u7, *u8;
@@ -546,7 +561,7 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 		{
 			u1->timeToWiden = 0;
 			u1->widened = true;
-			for (int m=0; m<(int)u1->maps.size(); ++m)
+			for (int m = 0; m < (int)u1->maps.size(); ++m)
 				u1->maps[m] = 1;
 			DBGMSG("Widening search for " << i1->first);
 			peerMessagePlayer(m_peer, i1->first.c_str(), "MBOT:WIDENINGSEARCH", NormalMessage);
@@ -613,18 +628,35 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 								MapBitSet tmp = MapSetUnion(u1->maps, u2->maps);
 								tmp = MapSetUnion(tmp, u3->maps);
 								tmp = MapSetUnion(tmp, u4->maps);
-								if (MapSetCount(tmp) && matchFitness1 > fitnessThreshold && matchFitness2 > fitnessThreshold && matchFitness3 > fitnessThreshold)
+								if (MapSetCount(tmp) && matchFitness1 > fitnessThreshold && matchFitness2 > fitnessThreshold
+										&& matchFitness3 > fitnessThreshold)
 								{
 									if (numPlayers == 4)
 									{
 										// match 4 players
-										sendMatchInfo(i1->first, i2->first, i3->first, i4->first, "", "", "", "",
-										              u1, u2, u3, u4, NULL, NULL, NULL, NULL, 4, ladderID);
+										sendMatchInfo(
+												i1->first,
+												i2->first,
+												i3->first,
+												i4->first,
+												"",
+												"",
+												"",
+												"",
+												u1,
+												u2,
+												u3,
+												u4,
+												NULL,
+												NULL,
+												NULL,
+												NULL,
+												4,
+												ladderID);
 										break;
 									}
 									else
 									{
-
 										i5 = i4;
 										for (++i5; i5 != userMap.end(); ++i5)
 										{
@@ -640,7 +672,8 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 											tmp = MapSetUnion(tmp, u3->maps);
 											tmp = MapSetUnion(tmp, u4->maps);
 											tmp = MapSetUnion(tmp, u5->maps);
-											if (MapSetCount(tmp) && matchFitness1 > fitnessThreshold && matchFitness2 > fitnessThreshold && matchFitness3 > fitnessThreshold && matchFitness4 > fitnessThreshold)
+											if (MapSetCount(tmp) && matchFitness1 > fitnessThreshold && matchFitness2 > fitnessThreshold
+													&& matchFitness3 > fitnessThreshold && matchFitness4 > fitnessThreshold)
 											{
 												i6 = i5;
 												for (++i6; i6 != userMap.end(); ++i6)
@@ -659,18 +692,36 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 													tmp = MapSetUnion(tmp, u4->maps);
 													tmp = MapSetUnion(tmp, u5->maps);
 													tmp = MapSetUnion(tmp, u6->maps);
-													if (MapSetCount(tmp) && matchFitness1 > fitnessThreshold && matchFitness2 > fitnessThreshold && matchFitness3 > fitnessThreshold && matchFitness4 > fitnessThreshold && matchFitness5 > fitnessThreshold)
+													if (MapSetCount(tmp) && matchFitness1 > fitnessThreshold && matchFitness2 > fitnessThreshold
+															&& matchFitness3 > fitnessThreshold && matchFitness4 > fitnessThreshold
+															&& matchFitness5 > fitnessThreshold)
 													{
 														if (numPlayers == 6)
 														{
 															// match 6 players
-															sendMatchInfo(i1->first, i2->first, i3->first, i4->first, i5->first, i6->first, "", "",
-															              u1, u2, u3, u4, u5, u6, NULL, NULL, 6, ladderID);
+															sendMatchInfo(
+																	i1->first,
+																	i2->first,
+																	i3->first,
+																	i4->first,
+																	i5->first,
+																	i6->first,
+																	"",
+																	"",
+																	u1,
+																	u2,
+																	u3,
+																	u4,
+																	u5,
+																	u6,
+																	NULL,
+																	NULL,
+																	6,
+																	ladderID);
 															break;
 														}
 														else
 														{
-
 															i7 = i6;
 															for (++i7; i7 != userMap.end(); ++i7)
 															{
@@ -690,7 +741,9 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 																tmp = MapSetUnion(tmp, u5->maps);
 																tmp = MapSetUnion(tmp, u6->maps);
 																tmp = MapSetUnion(tmp, u7->maps);
-																if (MapSetCount(tmp) && matchFitness1 > fitnessThreshold && matchFitness2 > fitnessThreshold && matchFitness3 > fitnessThreshold && matchFitness4 > fitnessThreshold && matchFitness5 > fitnessThreshold && matchFitness6 > fitnessThreshold)
+																if (MapSetCount(tmp) && matchFitness1 > fitnessThreshold && matchFitness2 > fitnessThreshold
+																		&& matchFitness3 > fitnessThreshold && matchFitness4 > fitnessThreshold
+																		&& matchFitness5 > fitnessThreshold && matchFitness6 > fitnessThreshold)
 																{
 																	i8 = i7;
 																	for (++i8; i8 != userMap.end(); ++i8)
@@ -713,23 +766,41 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 																		tmp = MapSetUnion(tmp, u6->maps);
 																		tmp = MapSetUnion(tmp, u7->maps);
 																		tmp = MapSetUnion(tmp, u8->maps);
-																		if (MapSetCount(tmp) && matchFitness1 > fitnessThreshold && matchFitness2 > fitnessThreshold && matchFitness3 > fitnessThreshold && matchFitness4 > fitnessThreshold && matchFitness5 > fitnessThreshold && matchFitness6 > fitnessThreshold && matchFitness7 > fitnessThreshold)
+																		if (MapSetCount(tmp) && matchFitness1 > fitnessThreshold
+																				&& matchFitness2 > fitnessThreshold && matchFitness3 > fitnessThreshold
+																				&& matchFitness4 > fitnessThreshold && matchFitness5 > fitnessThreshold
+																				&& matchFitness6 > fitnessThreshold && matchFitness7 > fitnessThreshold)
 																		{
 																			// match 8 players
-																			sendMatchInfo(i1->first, i2->first, i3->first, i4->first, i5->first, i6->first, i7->first, i8->first,
-																			              u1, u2, u3, u4, u5, u6, u7, u8, 8, ladderID);
+																			sendMatchInfo(
+																					i1->first,
+																					i2->first,
+																					i3->first,
+																					i4->first,
+																					i5->first,
+																					i6->first,
+																					i7->first,
+																					i8->first,
+																					u1,
+																					u2,
+																					u3,
+																					u4,
+																					u5,
+																					u6,
+																					u7,
+																					u8,
+																					8,
+																					ladderID);
 																			break;
 																		}
 																	}
 																}
 															}
-
 														}
 													}
 												}
 											}
 										}
-
 									}
 								}
 							}
@@ -742,14 +813,42 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 		if (bestUser && numPlayers == 2)
 		{
 			// we had a match.  send the info.
-			DBGMSG("Matching " << i1->first << " with " << bestName << ":"
-			       "\tmatch fitness: " << bestMatchFitness << "\n"
-			       "\tpoint percentage: " << (1-bestUser->points/(double)u1->points)*100 << "\n"
-			       "\tpoints: " << u1->points << ", " << u2->points << "\n"
-			       "\tping in ms: " << sqrt(1000000 * calcPingDelta(u1, bestUser) / (255*255*2)) << "\n"
-			       "\tprevious attempts: " << u1->widened << ", " << bestUser->widened);
-			sendMatchInfo(i1->first, bestName, "", "", "", "", "", "",
-			              u1, bestUser, NULL, NULL, NULL, NULL, NULL, NULL, 2, ladderID);
+			DBGMSG(
+					"Matching " << i1->first << " with " << bestName
+											<< ":"
+												 "\tmatch fitness: "
+											<< bestMatchFitness
+											<< "\n"
+												 "\tpoint percentage: "
+											<< (1 - bestUser->points / (double)u1->points) * 100
+											<< "\n"
+												 "\tpoints: "
+											<< u1->points << ", " << u2->points
+											<< "\n"
+												 "\tping in ms: "
+											<< sqrt(1000000 * calcPingDelta(u1, bestUser) / (255 * 255 * 2))
+											<< "\n"
+												 "\tprevious attempts: "
+											<< u1->widened << ", " << bestUser->widened);
+			sendMatchInfo(
+					i1->first,
+					bestName,
+					"",
+					"",
+					"",
+					"",
+					"",
+					"",
+					u1,
+					bestUser,
+					NULL,
+					NULL,
+					NULL,
+					NULL,
+					NULL,
+					NULL,
+					2,
+					ladderID);
 			break;
 		}
 	} // for i1
@@ -779,7 +878,7 @@ bool GeneralsMatcher::handleUserWiden(const char *nick)
 	return true;
 }
 
-bool GeneralsMatcher::handleUserInfo(const char *nick, const std::string& msg)
+bool GeneralsMatcher::handleUserInfo(const char *nick, const std::string &msg)
 {
 	DBGMSG("Got user info [" << msg << "] from " << nick);
 	GeneralsUser *userInfo = removeNonMatchingUser(nick);
@@ -845,10 +944,10 @@ bool GeneralsMatcher::handleUserInfo(const char *nick, const std::string& msg)
 		else if (k == "Maps")
 		{
 #ifdef DEBUG
-			//int curMaps = userInfo->maps.size();
+			// int curMaps = userInfo->maps.size();
 #endif
 
-			//DBGMSG("map cur size is " << curMaps);
+			// DBGMSG("map cur size is " << curMaps);
 			userInfo->maps.clear();
 			if (!v.length())
 			{
@@ -861,8 +960,8 @@ bool GeneralsMatcher::handleUserInfo(const char *nick, const std::string& msg)
 			while (*buf)
 			{
 				bool hasMap = (*buf != '0');
-				//DBGMSG("Setting map " << pos << " to " << hasMap);
-				userInfo->maps.push_back( hasMap );
+				// DBGMSG("Setting map " << pos << " to " << hasMap);
+				userInfo->maps.push_back(hasMap);
 				++pos;
 				++buf;
 			}
@@ -870,8 +969,7 @@ bool GeneralsMatcher::handleUserInfo(const char *nick, const std::string& msg)
 		else if (k == "NumPlayers")
 		{
 			userInfo->numPlayers = atoi(v.c_str());
-			if (userInfo->numPlayers != 2 && userInfo->numPlayers != 4 &&
-			        userInfo->numPlayers != 6 && userInfo->numPlayers != 8)
+			if (userInfo->numPlayers != 2 && userInfo->numPlayers != 4 && userInfo->numPlayers != 6 && userInfo->numPlayers != 8)
 			{
 				INFMSG("Bad numPlayers from " << nick << ": [" << userInfo->numPlayers << "]");
 				peerMessagePlayer(m_peer, nick, "MBOT:BADCINFO", NormalMessage);
@@ -943,18 +1041,18 @@ bool GeneralsMatcher::handleUserInfo(const char *nick, const std::string& msg)
 		addNonLadderUser(nick, userInfo);
 		switch (userInfo->numPlayers)
 		{
-		case 2:
-			s.append(intToString(m_nonLadderUsers1v1.size()));
-			break;
-		case 4:
-			s.append(intToString(m_nonLadderUsers2v2.size()));
-			break;
-		case 6:
-			s.append(intToString(m_nonLadderUsers3v3.size()));
-			break;
-		case 8:
-			s.append(intToString(m_nonLadderUsers4v4.size()));
-			break;
+			case 2:
+				s.append(intToString(m_nonLadderUsers1v1.size()));
+				break;
+			case 4:
+				s.append(intToString(m_nonLadderUsers2v2.size()));
+				break;
+			case 6:
+				s.append(intToString(m_nonLadderUsers3v3.size()));
+				break;
+			case 8:
+				s.append(intToString(m_nonLadderUsers4v4.size()));
+				break;
 		}
 	}
 
@@ -966,7 +1064,7 @@ bool GeneralsMatcher::handleUserInfo(const char *nick, const std::string& msg)
 	return true;
 }
 
-GeneralsUser* GeneralsMatcher::findUser(const std::string& who)
+GeneralsUser *GeneralsMatcher::findUser(const std::string &who)
 {
 	GeneralsUser *user;
 	user = findNonLadderUser(who);
@@ -982,7 +1080,7 @@ GeneralsUser* GeneralsMatcher::findUser(const std::string& who)
 	return NULL;
 }
 
-GeneralsUser* GeneralsMatcher::findUserInAnyLadder(const std::string& who)
+GeneralsUser *GeneralsMatcher::findUserInAnyLadder(const std::string &who)
 {
 	for (LadderMap::iterator lIt = m_ladders.begin(); lIt != m_ladders.end(); ++lIt)
 	{
@@ -993,7 +1091,7 @@ GeneralsUser* GeneralsMatcher::findUserInAnyLadder(const std::string& who)
 	return NULL;
 }
 
-GeneralsUser* GeneralsMatcher::findUserInLadder(const std::string& who, int ladderID)
+GeneralsUser *GeneralsMatcher::findUserInLadder(const std::string &who, int ladderID)
 {
 	LadderMap::iterator lIt = m_ladders.find(ladderID);
 	if (lIt == m_ladders.end())
@@ -1006,7 +1104,7 @@ GeneralsUser* GeneralsMatcher::findUserInLadder(const std::string& who, int ladd
 	return uIt->second;
 }
 
-GeneralsUser* GeneralsMatcher::findNonLadderUser(const std::string& who)
+GeneralsUser *GeneralsMatcher::findNonLadderUser(const std::string &who)
 {
 	UserMap::iterator it = m_nonLadderUsers1v1.find(who);
 	if (it != m_nonLadderUsers1v1.end())
@@ -1027,7 +1125,7 @@ GeneralsUser* GeneralsMatcher::findNonLadderUser(const std::string& who)
 	return NULL;
 }
 
-GeneralsUser* GeneralsMatcher::findNonMatchingUser(const std::string& who)
+GeneralsUser *GeneralsMatcher::findNonMatchingUser(const std::string &who)
 {
 	UserMap::iterator it = m_nonMatchingUsers.find(who);
 	if (it == m_nonMatchingUsers.end())
@@ -1036,7 +1134,7 @@ GeneralsUser* GeneralsMatcher::findNonMatchingUser(const std::string& who)
 	return it->second;
 }
 
-void GeneralsMatcher::addUser(const std::string& who)
+void GeneralsMatcher::addUser(const std::string &who)
 {
 	if (findUser(who))
 	{
@@ -1047,37 +1145,36 @@ void GeneralsMatcher::addUser(const std::string& who)
 	addNonMatchingUser(who, new GeneralsUser);
 }
 
-void GeneralsMatcher::addUserInLadder(const std::string& who, int ladderID, GeneralsUser *user)
+void GeneralsMatcher::addUserInLadder(const std::string &who, int ladderID, GeneralsUser *user)
 {
 	m_ladders[ladderID][who] = user;
 }
 
-void GeneralsMatcher::addNonLadderUser(const std::string& who, GeneralsUser *user)
+void GeneralsMatcher::addNonLadderUser(const std::string &who, GeneralsUser *user)
 {
 	switch (user->numPlayers)
 	{
-	case 2:
-		m_nonLadderUsers1v1[who] = user;
-		break;
-	case 4:
-		m_nonLadderUsers2v2[who] = user;
-		break;
-	case 6:
-		m_nonLadderUsers3v3[who] = user;
-		break;
-	case 8:
-		m_nonLadderUsers4v4[who] = user;
-		break;
+		case 2:
+			m_nonLadderUsers1v1[who] = user;
+			break;
+		case 4:
+			m_nonLadderUsers2v2[who] = user;
+			break;
+		case 6:
+			m_nonLadderUsers3v3[who] = user;
+			break;
+		case 8:
+			m_nonLadderUsers4v4[who] = user;
+			break;
 	}
 }
 
-void GeneralsMatcher::addNonMatchingUser(const std::string& who, GeneralsUser *user)
+void GeneralsMatcher::addNonMatchingUser(const std::string &who, GeneralsUser *user)
 {
 	m_nonMatchingUsers[who] = user;
 }
 
-
-bool GeneralsMatcher::removeUser(const std::string& who)
+bool GeneralsMatcher::removeUser(const std::string &who)
 {
 	GeneralsUser *user;
 	user = removeUserInAnyLadder(who);
@@ -1102,7 +1199,7 @@ bool GeneralsMatcher::removeUser(const std::string& who)
 	return false;
 }
 
-GeneralsUser* GeneralsMatcher::removeUserInLadder(const std::string& who, int ladderID)
+GeneralsUser *GeneralsMatcher::removeUserInLadder(const std::string &who, int ladderID)
 {
 	LadderMap::iterator lIt = m_ladders.find(ladderID);
 	if (lIt == m_ladders.end())
@@ -1117,7 +1214,7 @@ GeneralsUser* GeneralsMatcher::removeUserInLadder(const std::string& who, int la
 	return user;
 }
 
-GeneralsUser* GeneralsMatcher::removeUserInAnyLadder(const std::string& who)
+GeneralsUser *GeneralsMatcher::removeUserInAnyLadder(const std::string &who)
 {
 	for (LadderMap::iterator lIt = m_ladders.begin(); lIt != m_ladders.end(); ++lIt)
 	{
@@ -1132,7 +1229,7 @@ GeneralsUser* GeneralsMatcher::removeUserInAnyLadder(const std::string& who)
 	return NULL;
 }
 
-GeneralsUser* GeneralsMatcher::removeNonLadderUser(const std::string& who)
+GeneralsUser *GeneralsMatcher::removeNonLadderUser(const std::string &who)
 {
 	UserMap::iterator it = m_nonLadderUsers1v1.find(who);
 	if (it != m_nonLadderUsers1v1.end())
@@ -1169,7 +1266,7 @@ GeneralsUser* GeneralsMatcher::removeNonLadderUser(const std::string& who)
 	return NULL;
 }
 
-GeneralsUser* GeneralsMatcher::removeNonMatchingUser(const std::string& who)
+GeneralsUser *GeneralsMatcher::removeNonMatchingUser(const std::string &who)
 {
 	UserMap::iterator it = m_nonMatchingUsers.find(who);
 	if (it == m_nonMatchingUsers.end())
@@ -1180,15 +1277,14 @@ GeneralsUser* GeneralsMatcher::removeNonMatchingUser(const std::string& who)
 	return user;
 }
 
-
-void GeneralsMatcher::handleDisconnect( const char *reason )
+void GeneralsMatcher::handleDisconnect(const char *reason)
 {
 	ERRMSG("Disconnected");
 	done = true;
 	exit(0);
 }
 
-void GeneralsMatcher::handleRoomMessage( const char *nick, const char *message, MessageType messageType )
+void GeneralsMatcher::handleRoomMessage(const char *nick, const char *message, MessageType messageType)
 {
 	if (messageType == ActionMessage)
 	{
@@ -1200,7 +1296,7 @@ void GeneralsMatcher::handleRoomMessage( const char *nick, const char *message, 
 	}
 }
 
-void GeneralsMatcher::handlePlayerMessage( const char *nick, const char *message, MessageType messageType )
+void GeneralsMatcher::handlePlayerMessage(const char *nick, const char *message, MessageType messageType)
 {
 	if (messageType == ActionMessage)
 	{
@@ -1225,7 +1321,7 @@ void GeneralsMatcher::handlePlayerMessage( const char *nick, const char *message
 		std::string marker = line.substr(firstMarker + 1, secondMarker - firstMarker - 1);
 		if (marker == "CINFO")
 		{
-			handleUserInfo(nick, line.substr(secondMarker));//, std::string::npos));
+			handleUserInfo(nick, line.substr(secondMarker)); //, std::string::npos));
 		}
 		else if (marker == "WIDEN")
 		{
@@ -1242,27 +1338,27 @@ void GeneralsMatcher::handlePlayerMessage( const char *nick, const char *message
 	}
 }
 
-void GeneralsMatcher::handlePlayerJoined( const char *nick )
+void GeneralsMatcher::handlePlayerJoined(const char *nick)
 {
 	DBGMSG("Player " << nick << " joined");
 	addUser(nick);
 }
 
-void GeneralsMatcher::handlePlayerLeft( const char *nick )
+void GeneralsMatcher::handlePlayerLeft(const char *nick)
 {
 	DBGMSG("Player " << nick << " left");
 	if (m_nick != nick)
 		removeUser(nick);
 }
 
-void GeneralsMatcher::handlePlayerChangedNick( const char *oldNick, const char *newNick )
+void GeneralsMatcher::handlePlayerChangedNick(const char *oldNick, const char *newNick)
 {
 	DBGMSG("Player " << oldNick << " changed nick to " << newNick << " - resetting to non-matching state");
 	removeUser(oldNick);
 	addUser(newNick);
 }
 
-void GeneralsMatcher::handlePlayerEnum( bool success, int gameSpyIndex, const char *nick, int flags )
+void GeneralsMatcher::handlePlayerEnum(bool success, int gameSpyIndex, const char *nick, int flags)
 {
 	if (!nick)
 		nick = "";
@@ -1273,7 +1369,6 @@ void GeneralsMatcher::handlePlayerEnum( bool success, int gameSpyIndex, const ch
 		addUser(nick);
 	}
 }
-
 
 // =====================================================================
 // TEST Client Matcher class
@@ -1297,26 +1392,31 @@ void GeneralsClientMatcher::init(void)
 }
 
 void GeneralsClientMatcher::checkMatches(void)
-{}
+{
+}
 
-void GeneralsClientMatcher::handleDisconnect( const char *reason )
-{}
-void GeneralsClientMatcher::handleRoomMessage( const char *nick, const char *message, MessageType messageType )
-{}
-void GeneralsClientMatcher::handlePlayerMessage( const char *nick, const char *message, MessageType messageType )
-{}
-void GeneralsClientMatcher::handlePlayerJoined( const char *nick )
-{}
-void GeneralsClientMatcher::handlePlayerLeft( const char *nick )
-{}
-void GeneralsClientMatcher::handlePlayerChangedNick( const char *oldNick, const char *newNick )
-{}
-void GeneralsClientMatcher::handlePlayerEnum( bool success, int gameSpyIndex, const char *nick, int flags )
-{}
-
+void GeneralsClientMatcher::handleDisconnect(const char *reason)
+{
+}
+void GeneralsClientMatcher::handleRoomMessage(const char *nick, const char *message, MessageType messageType)
+{
+}
+void GeneralsClientMatcher::handlePlayerMessage(const char *nick, const char *message, MessageType messageType)
+{
+}
+void GeneralsClientMatcher::handlePlayerJoined(const char *nick)
+{
+}
+void GeneralsClientMatcher::handlePlayerLeft(const char *nick)
+{
+}
+void GeneralsClientMatcher::handlePlayerChangedNick(const char *oldNick, const char *newNick)
+{
+}
+void GeneralsClientMatcher::handlePlayerEnum(bool success, int gameSpyIndex, const char *nick, int flags)
+{
+}
 
 // =====================================================================
 // End of File
 // =====================================================================
-
-

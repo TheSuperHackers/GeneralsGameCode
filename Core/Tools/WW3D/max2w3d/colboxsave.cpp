@@ -34,67 +34,73 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "colboxsave.h"
 #include "w3d_file.h"
 #include "util.h"
 #include "w3dappdata.h"
 #include "errclass.h"
 
-
-CollisionBoxSaveClass::CollisionBoxSaveClass
-(
-	char * mesh_name,
-	char * container_name,
-	INode * inode,
-	Matrix3 & exportspace,
-	TimeValue curtime,
-	Progress_Meter_Class & meter
-)
+CollisionBoxSaveClass::CollisionBoxSaveClass(
+		char *mesh_name,
+		char *container_name,
+		INode *inode,
+		Matrix3 &exportspace,
+		TimeValue curtime,
+		Progress_Meter_Class &meter)
 {
 	//////////////////////////////////////////////////////////////////////
 	// wrestle the mesh out of 3dsMAX
 	//////////////////////////////////////////////////////////////////////
-	Object *       obj = inode->EvalWorldState(curtime).obj;
-	TriObject *    tri = (TriObject *)obj->ConvertToType(curtime, triObjectClassID);
-	Mesh           mesh = tri->mesh;
-	DWORD				wirecolor = inode->GetWireColor();
+	Object *obj = inode->EvalWorldState(curtime).obj;
+	TriObject *tri = (TriObject *)obj->ConvertToType(curtime, triObjectClassID);
+	Mesh mesh = tri->mesh;
+	DWORD wirecolor = inode->GetWireColor();
 
-	if (mesh.getNumVerts() == 0) {
-		throw ErrorClass("Mesh %s has no vertices!\n",mesh_name);
+	if (mesh.getNumVerts() == 0)
+	{
+		throw ErrorClass("Mesh %s has no vertices!\n", mesh_name);
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	// Generate the AABox or OBBox data.
 	//////////////////////////////////////////////////////////////////////
-	memset(&BoxData,0,sizeof(BoxData));
+	memset(&BoxData, 0, sizeof(BoxData));
 
 	BoxData.Version = W3D_BOX_CURRENT_VERSION;
-	if ((container_name != NULL) && (strlen(container_name) > 0)) {
-		strcpy(BoxData.Name,container_name);
-		strcat(BoxData.Name,".");
+	if ((container_name != NULL) && (strlen(container_name) > 0))
+	{
+		strcpy(BoxData.Name, container_name);
+		strcat(BoxData.Name, ".");
 	}
-	strcat(BoxData.Name,mesh_name);
+	strcat(BoxData.Name, mesh_name);
 
 	BoxData.Attributes = 0;
-	if (Is_Collision_AABox(inode)) {
+	if (Is_Collision_AABox(inode))
+	{
 		BoxData.Attributes |= W3D_BOX_ATTRIBUTE_ALIGNED;
-	} else {
+	}
+	else
+	{
 		BoxData.Attributes |= W3D_BOX_ATTRIBUTE_ORIENTED;
 	}
-	if (Is_Physical_Collision(inode)) {
+	if (Is_Physical_Collision(inode))
+	{
 		BoxData.Attributes |= W3D_BOX_ATTRIBTUE_COLLISION_TYPE_PHYSICAL;
 	}
-	if (Is_Projectile_Collision(inode)) {
+	if (Is_Projectile_Collision(inode))
+	{
 		BoxData.Attributes |= W3D_BOX_ATTRIBTUE_COLLISION_TYPE_PROJECTILE;
 	}
-	if (Is_Vis_Collision(inode)) {
+	if (Is_Vis_Collision(inode))
+	{
 		BoxData.Attributes |= W3D_BOX_ATTRIBTUE_COLLISION_TYPE_VIS;
 	}
-	if (Is_Camera_Collision(inode)) {
+	if (Is_Camera_Collision(inode))
+	{
 		BoxData.Attributes |= W3D_BOX_ATTRIBTUE_COLLISION_TYPE_CAMERA;
 	}
-	if (Is_Vehicle_Collision(inode)) {
+	if (Is_Vehicle_Collision(inode))
+	{
 		BoxData.Attributes |= W3D_BOX_ATTRIBTUE_COLLISION_TYPE_VEHICLE;
 	}
 
@@ -103,7 +109,8 @@ CollisionBoxSaveClass::CollisionBoxSaveClass
 	BoxData.Color.B = GetBValue(wirecolor);
 
 	// if this is an axis-aligned box, then use the world coord system
-	if (Is_Collision_AABox(inode)) {
+	if (Is_Collision_AABox(inode))
+	{
 		exportspace.NoRot();
 	}
 
@@ -112,7 +119,8 @@ CollisionBoxSaveClass::CollisionBoxSaveClass
 	Matrix3 offset_matrix = node_matrix * Inverse(exportspace);
 	int ivert;
 
-	for (ivert = 0; ivert < mesh.getNumVerts (); ++ivert) {
+	for (ivert = 0; ivert < mesh.getNumVerts(); ++ivert)
+	{
 		mesh.verts[ivert] = mesh.verts[ivert] * offset_matrix;
 	}
 
@@ -120,14 +128,21 @@ CollisionBoxSaveClass::CollisionBoxSaveClass
 	Point3 min_point = mesh.verts[0];
 	Point3 max_point = mesh.verts[1];
 
-	for (ivert=0; ivert < mesh.getNumVerts(); ++ivert) {
-		if (mesh.verts[ivert].x < min_point.x) min_point.x = mesh.verts[ivert].x;
-		if (mesh.verts[ivert].y < min_point.y) min_point.y = mesh.verts[ivert].y;
-		if (mesh.verts[ivert].z < min_point.z) min_point.z = mesh.verts[ivert].z;
+	for (ivert = 0; ivert < mesh.getNumVerts(); ++ivert)
+	{
+		if (mesh.verts[ivert].x < min_point.x)
+			min_point.x = mesh.verts[ivert].x;
+		if (mesh.verts[ivert].y < min_point.y)
+			min_point.y = mesh.verts[ivert].y;
+		if (mesh.verts[ivert].z < min_point.z)
+			min_point.z = mesh.verts[ivert].z;
 
-		if (mesh.verts[ivert].x > max_point.x) max_point.x = mesh.verts[ivert].x;
-		if (mesh.verts[ivert].y > max_point.y) max_point.y = mesh.verts[ivert].y;
-		if (mesh.verts[ivert].z > max_point.z) max_point.z = mesh.verts[ivert].z;
+		if (mesh.verts[ivert].x > max_point.x)
+			max_point.x = mesh.verts[ivert].x;
+		if (mesh.verts[ivert].y > max_point.y)
+			max_point.y = mesh.verts[ivert].y;
+		if (mesh.verts[ivert].z > max_point.z)
+			max_point.z = mesh.verts[ivert].z;
 	}
 
 	Point3 center = (max_point + min_point) / 2.0f;
@@ -142,15 +157,10 @@ CollisionBoxSaveClass::CollisionBoxSaveClass
 	BoxData.Extent.Z = extent.z;
 }
 
-
-
-int CollisionBoxSaveClass::Write_To_File(ChunkSaveClass & csave)
+int CollisionBoxSaveClass::Write_To_File(ChunkSaveClass &csave)
 {
 	csave.Begin_Chunk(W3D_CHUNK_BOX);
-	csave.Write(&BoxData,sizeof(BoxData));
+	csave.Write(&BoxData, sizeof(BoxData));
 	csave.End_Chunk();
 	return 0;
 }
-
-
-

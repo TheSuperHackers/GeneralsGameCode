@@ -49,10 +49,10 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Snapshot;
 typedef Int Color;
-enum ObjectID CPP_11(: Int);
-enum DrawableID CPP_11(: Int);
-enum KindOfType CPP_11(: Int);
-enum ScienceType CPP_11(: Int);
+enum ObjectID CPP_11( : Int);
+enum DrawableID CPP_11( : Int);
+enum KindOfType CPP_11( : Int);
+enum ScienceType CPP_11( : Int);
 class Matrix3D;
 
 // ------------------------------------------------------------------------------------------------
@@ -60,53 +60,50 @@ typedef UnsignedByte XferVersion;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum XferMode CPP_11(: Int)
-{
+enum XferMode CPP_11( : Int){
 	XFER_INVALID = 0,
 
 	XFER_SAVE,
 	XFER_LOAD,
 	XFER_CRC,
 
-	NUM_XFER_TYPES  // please keep this last
+	NUM_XFER_TYPES // please keep this last
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum XferStatus CPP_11(: Int)
-{
+enum XferStatus CPP_11( : Int){
 	XFER_STATUS_INVALID = 0,
 
-	XFER_OK,														///< all is green and good
-	XFER_EOF,														///< end of file encountered
-	XFER_FILE_NOT_FOUND,								///< requested file does not exist
-	XFER_FILE_NOT_OPEN,									///< file was not open
-	XFER_FILE_ALREADY_OPEN,							///< this xfer is already open
-	XFER_READ_ERROR,										///< error reading from file
-	XFER_WRITE_ERROR,										///< error writing to file
-	XFER_MODE_UNKNOWN,									///< unknown xfer mode
-	XFER_SKIP_ERROR,										///< error skipping file
-	XFER_BEGIN_END_MISMATCH,						///< mismatched pair calls of begin/end block
-	XFER_OUT_OF_MEMORY,									///< out of memory
-	XFER_STRING_ERROR,									///< error with strings
-	XFER_INVALID_VERSION,								///< invalid version encountered
-	XFER_INVALID_PARAMETERS,						///< invalid parameters
-	XFER_LIST_NOT_EMPTY,								///< trying to xfer into a list that should be empty, but isn't
-	XFER_UNKNOWN_STRING,								///< unrecognized string value
+	XFER_OK, ///< all is green and good
+	XFER_EOF, ///< end of file encountered
+	XFER_FILE_NOT_FOUND, ///< requested file does not exist
+	XFER_FILE_NOT_OPEN, ///< file was not open
+	XFER_FILE_ALREADY_OPEN, ///< this xfer is already open
+	XFER_READ_ERROR, ///< error reading from file
+	XFER_WRITE_ERROR, ///< error writing to file
+	XFER_MODE_UNKNOWN, ///< unknown xfer mode
+	XFER_SKIP_ERROR, ///< error skipping file
+	XFER_BEGIN_END_MISMATCH, ///< mismatched pair calls of begin/end block
+	XFER_OUT_OF_MEMORY, ///< out of memory
+	XFER_STRING_ERROR, ///< error with strings
+	XFER_INVALID_VERSION, ///< invalid version encountered
+	XFER_INVALID_PARAMETERS, ///< invalid parameters
+	XFER_LIST_NOT_EMPTY, ///< trying to xfer into a list that should be empty, but isn't
+	XFER_UNKNOWN_STRING, ///< unrecognized string value
 
-	XFER_ERROR_UNKNOWN,									///< unknown error (isn't that useful!)
+	XFER_ERROR_UNKNOWN, ///< unknown error (isn't that useful!)
 
-	NUM_XFER_STATUS  // please keep this last
+	NUM_XFER_STATUS // please keep this last
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum XferOptions CPP_11(: UnsignedInt)
-{
-	XO_NONE										= 0x00000000,
-	XO_NO_POST_PROCESSING			= 0x00000001,
+enum XferOptions CPP_11( : UnsignedInt){
+	XO_NONE = 0x00000000,
+	XO_NO_POST_PROCESSING = 0x00000001,
 
-	XO_ALL										= 0xFFFFFFFF  // keep this last please
+	XO_ALL = 0xFFFFFFFF // keep this last please
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -116,81 +113,77 @@ typedef Int XferBlockSize;
 //-------------------------------------------------------------------------------------------------
 class Xfer
 {
-
 public:
+	Xfer(void);
+	virtual ~Xfer(void);
 
-	Xfer( void );
-	virtual ~Xfer( void );
-
-	virtual XferMode getXferMode( void ) { return m_xferMode; }
-	AsciiString getIdentifier( void ) { return m_identifier; }
+	virtual XferMode getXferMode(void) { return m_xferMode; }
+	AsciiString getIdentifier(void) { return m_identifier; }
 
 	// xfer management
-	virtual void setOptions( UnsignedInt options ) { BitSet( m_options, options ); }
-	virtual void clearOptions( UnsignedInt options ) { BitClear( m_options, options ); }
-	virtual UnsignedInt getOptions( void ) { return m_options; }
-	virtual void open( AsciiString identifier ) = 0;		///< xfer open event
-	virtual void close( void ) = 0;											///< xfer close event
-	virtual Int beginBlock( void ) = 0;									///< xfer begin block event
-	virtual void endBlock( void ) = 0;									///< xfer end block event
-	virtual void skip( Int dataSize ) = 0;							///< xfer skip data
+	virtual void setOptions(UnsignedInt options) { BitSet(m_options, options); }
+	virtual void clearOptions(UnsignedInt options) { BitClear(m_options, options); }
+	virtual UnsignedInt getOptions(void) { return m_options; }
+	virtual void open(AsciiString identifier) = 0; ///< xfer open event
+	virtual void close(void) = 0; ///< xfer close event
+	virtual Int beginBlock(void) = 0; ///< xfer begin block event
+	virtual void endBlock(void) = 0; ///< xfer end block event
+	virtual void skip(Int dataSize) = 0; ///< xfer skip data
 
-	virtual void xferSnapshot( Snapshot *snapshot ) = 0;		///< entry point for xfering a snapshot
+	virtual void xferSnapshot(Snapshot *snapshot) = 0; ///< entry point for xfering a snapshot
 
 	//
 	// default transfer methods, these call the implementation method with the data
 	// parameters.  You may use the default, or derive and create new ways to xfer each
 	// of these types of data
 	//
-	virtual void xferVersion( XferVersion *versionData, XferVersion currentVersion );
-	virtual void xferByte( Byte *byteData );
-	virtual void xferUnsignedByte( UnsignedByte *unsignedByteData );
-	virtual void xferBool( Bool *boolData );
-	virtual void xferInt( Int *intData );
-	virtual void xferInt64( Int64 *int64Data );
-	virtual void xferUnsignedInt( UnsignedInt *unsignedIntData );
-	virtual void xferShort( Short *shortData );
-	virtual void xferUnsignedShort( UnsignedShort *unsignedShortData );
-	virtual void xferReal( Real *realData );
-	virtual void xferMarkerLabel( AsciiString asciiStringData ); // This is purely for readability purposes - it is explicitly discarded on load.
-	virtual void xferAsciiString( AsciiString *asciiStringData );
-	virtual void xferUnicodeString( UnicodeString *unicodeStringData );
-	virtual void xferCoord3D( Coord3D *coord3D );
-	virtual void xferICoord3D( ICoord3D *iCoord3D );
-	virtual void xferRegion3D( Region3D *region3D );
-	virtual void xferIRegion3D( IRegion3D *iRegion3D );
-	virtual void xferCoord2D( Coord2D *coord2D );
-	virtual void xferICoord2D( ICoord2D *iCoord2D );
-	virtual void xferRegion2D( Region2D *region2D );
-	virtual void xferIRegion2D( IRegion2D *iRegion2D );
-	virtual void xferRealRange( RealRange *realRange );
-	virtual void xferColor( Color *color );
-	virtual void xferRGBColor( RGBColor *rgbColor );
-	virtual void xferRGBAColorReal( RGBAColorReal *rgbaColorReal );
-	virtual void xferRGBAColorInt( RGBAColorInt *rgbaColorInt );
-	virtual void xferObjectID( ObjectID *objectID );
-	virtual void xferDrawableID( DrawableID *drawableID );
-	virtual void xferSTLObjectIDVector( std::vector<ObjectID> *objectIDVectorData );
-	virtual void xferSTLObjectIDList( std::list< ObjectID > *objectIDListData );
-	virtual void xferSTLIntList( std::list< Int > *intListData );
-	virtual void xferScienceType( ScienceType *science );
-	virtual void xferScienceVec( ScienceVec *scienceVec );
-	virtual void xferKindOf( KindOfType *kindOfData );
-	virtual void xferUpgradeMask( UpgradeMaskType *upgradeMaskData );
-	virtual void xferUser( void *data, Int dataSize );
-	virtual void xferMatrix3D( Matrix3D* mtx );
-	virtual void xferMapName( AsciiString *mapNameData );
+	virtual void xferVersion(XferVersion *versionData, XferVersion currentVersion);
+	virtual void xferByte(Byte *byteData);
+	virtual void xferUnsignedByte(UnsignedByte *unsignedByteData);
+	virtual void xferBool(Bool *boolData);
+	virtual void xferInt(Int *intData);
+	virtual void xferInt64(Int64 *int64Data);
+	virtual void xferUnsignedInt(UnsignedInt *unsignedIntData);
+	virtual void xferShort(Short *shortData);
+	virtual void xferUnsignedShort(UnsignedShort *unsignedShortData);
+	virtual void xferReal(Real *realData);
+	virtual void xferMarkerLabel(AsciiString asciiStringData); // This is purely for readability purposes - it is explicitly
+																														 // discarded on load.
+	virtual void xferAsciiString(AsciiString *asciiStringData);
+	virtual void xferUnicodeString(UnicodeString *unicodeStringData);
+	virtual void xferCoord3D(Coord3D *coord3D);
+	virtual void xferICoord3D(ICoord3D *iCoord3D);
+	virtual void xferRegion3D(Region3D *region3D);
+	virtual void xferIRegion3D(IRegion3D *iRegion3D);
+	virtual void xferCoord2D(Coord2D *coord2D);
+	virtual void xferICoord2D(ICoord2D *iCoord2D);
+	virtual void xferRegion2D(Region2D *region2D);
+	virtual void xferIRegion2D(IRegion2D *iRegion2D);
+	virtual void xferRealRange(RealRange *realRange);
+	virtual void xferColor(Color *color);
+	virtual void xferRGBColor(RGBColor *rgbColor);
+	virtual void xferRGBAColorReal(RGBAColorReal *rgbaColorReal);
+	virtual void xferRGBAColorInt(RGBAColorInt *rgbaColorInt);
+	virtual void xferObjectID(ObjectID *objectID);
+	virtual void xferDrawableID(DrawableID *drawableID);
+	virtual void xferSTLObjectIDVector(std::vector<ObjectID> *objectIDVectorData);
+	virtual void xferSTLObjectIDList(std::list<ObjectID> *objectIDListData);
+	virtual void xferSTLIntList(std::list<Int> *intListData);
+	virtual void xferScienceType(ScienceType *science);
+	virtual void xferScienceVec(ScienceVec *scienceVec);
+	virtual void xferKindOf(KindOfType *kindOfData);
+	virtual void xferUpgradeMask(UpgradeMaskType *upgradeMaskData);
+	virtual void xferUser(void *data, Int dataSize);
+	virtual void xferMatrix3D(Matrix3D *mtx);
+	virtual void xferMapName(AsciiString *mapNameData);
 
 protected:
-
 	// this is the actual xfer impelmentation that each derived class should implement
-	virtual void xferImplementation( void *data, Int dataSize ) = 0;
+	virtual void xferImplementation(void *data, Int dataSize) = 0;
 
-	UnsignedInt m_options;					///< xfer options
-	XferMode m_xferMode;						///< the current xfer mode
-	AsciiString m_identifier;				///< the string identifier
-
+	UnsignedInt m_options; ///< xfer options
+	XferMode m_xferMode; ///< the current xfer mode
+	AsciiString m_identifier; ///< the string identifier
 };
 
 #endif // __XFER_H_
-

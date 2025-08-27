@@ -37,45 +37,44 @@
 
 // #define DEBUG_FOG_MEMORY	///< this define is used to force object snapshots for all players, not just local player.
 
-//Magic pointer value which indicates that a drawable pointer is actually invalid
-//because we're looking at a ghost object.
-#define GHOST_OBJECT_DRAWABLE	0xFFFFFFFF
+// Magic pointer value which indicates that a drawable pointer is actually invalid
+// because we're looking at a ghost object.
+#define GHOST_OBJECT_DRAWABLE 0xFFFFFFFF
 
 class Object;
 class PartitionData;
-enum GeometryType CPP_11(: Int);
-enum ObjectID CPP_11(: Int);
+enum GeometryType CPP_11( : Int);
+enum ObjectID CPP_11( : Int);
 
 class GhostObject : public Snapshot
 {
 public:
 	GhostObject();
 	virtual ~GhostObject();
-	virtual void snapShot(int playerIndex)=0;
-	virtual void updateParentObject(Object *object, PartitionData *mod)=0;
-	virtual void freeSnapShot(int playerIndex)=0;
-	inline PartitionData *friend_getPartitionData(void) const {return m_partitionData;}
-	inline GeometryType getGeometryType(void) const {return m_parentGeometryType;}
-	inline Bool getGeometrySmall(void) const {return m_parentGeometryIsSmall;}
-	inline Real getGeometryMajorRadius(void) const {return m_parentGeometryMajorRadius;}
-	inline Real getGeometryMinorRadius(void) const {return m_parentGeometryminorRadius;}
-	inline Real getParentAngle(void) const {return m_parentAngle;}
-	inline const Coord3D *getParentPosition(void) const {return &m_parentPosition;}
+	virtual void snapShot(int playerIndex) = 0;
+	virtual void updateParentObject(Object *object, PartitionData *mod) = 0;
+	virtual void freeSnapShot(int playerIndex) = 0;
+	inline PartitionData *friend_getPartitionData(void) const { return m_partitionData; }
+	inline GeometryType getGeometryType(void) const { return m_parentGeometryType; }
+	inline Bool getGeometrySmall(void) const { return m_parentGeometryIsSmall; }
+	inline Real getGeometryMajorRadius(void) const { return m_parentGeometryMajorRadius; }
+	inline Real getGeometryMinorRadius(void) const { return m_parentGeometryminorRadius; }
+	inline Real getParentAngle(void) const { return m_parentAngle; }
+	inline const Coord3D *getParentPosition(void) const { return &m_parentPosition; }
 
 protected:
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
+	virtual void loadPostProcess(void);
 
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
-
-	Object *m_parentObject;		///< object which we are ghosting
+	Object *m_parentObject; ///< object which we are ghosting
 	GeometryType m_parentGeometryType;
 	Bool m_parentGeometryIsSmall;
 	Real m_parentGeometryMajorRadius;
 	Real m_parentGeometryminorRadius;
 	Real m_parentAngle;
 	Coord3D m_parentPosition;
-	PartitionData	*m_partitionData;	///< our PartitionData
+	PartitionData *m_partitionData; ///< our PartitionData
 };
 
 class GhostObjectManager : public Snapshot
@@ -87,19 +86,23 @@ public:
 	virtual GhostObject *addGhostObject(Object *object, PartitionData *pd);
 	virtual void removeGhostObject(GhostObject *mod);
 	virtual inline void setLocalPlayerIndex(int index) { m_localPlayer = index; }
-	inline int getLocalPlayerIndex(void)	{ return m_localPlayer; }
+	inline int getLocalPlayerIndex(void) { return m_localPlayer; }
 	virtual void updateOrphanedObjects(int *playerIndexList, int numNonLocalPlayers);
-	virtual void releasePartitionData(void);	///<saves data needed to later rebuild partition manager data.
-	virtual void restorePartitionData(void);	///<restores ghost objects into the partition manager.
-	inline void lockGhostObjects(Bool enableLock) {m_lockGhostObjects=enableLock;}	///<temporary lock on creating new ghost objects. Only used by map border resizing!
-	inline void saveLockGhostObjects(Bool enableLock) {m_saveLockGhostObjects=enableLock;}
+	virtual void releasePartitionData(void); ///< saves data needed to later rebuild partition manager data.
+	virtual void restorePartitionData(void); ///< restores ghost objects into the partition manager.
+	inline void lockGhostObjects(Bool enableLock)
+	{
+		m_lockGhostObjects = enableLock;
+	} ///< temporary lock on creating new ghost objects. Only used by map border resizing!
+	inline void saveLockGhostObjects(Bool enableLock) { m_saveLockGhostObjects = enableLock; }
+
 protected:
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void crc(Xfer *xfer);
+	virtual void xfer(Xfer *xfer);
+	virtual void loadPostProcess(void);
 	Int m_localPlayer;
 	Bool m_lockGhostObjects;
-	Bool m_saveLockGhostObjects;	///< used to lock the ghost object system during a save/load
+	Bool m_saveLockGhostObjects; ///< used to lock the ghost object system during a save/load
 };
 
 // the singleton

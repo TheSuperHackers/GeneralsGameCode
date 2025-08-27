@@ -50,11 +50,9 @@
 #ifndef _GAMECOMMON_H_
 #define _GAMECOMMON_H_
 
-
-
 #define DONT_ALLOW_DEBUG_CHEATS_IN_RELEASE ///< Take of the DONT to get cheats back in to release
 
-//#define _CAMPEA_DEMO
+// #define _CAMPEA_DEMO
 
 // ----------------------------------------------------------------------------------------------
 #include "Lib/BaseType.h"
@@ -63,9 +61,9 @@
 
 // ----------------------------------------------------------------------------------------------
 #if defined(RTS_DEBUG)
-	#define DUMP_PERF_STATS
+#define DUMP_PERF_STATS
 #else
-	#define NO_DUMP_PERF_STATS
+#define NO_DUMP_PERF_STATS
 #endif
 
 // ----------------------------------------------------------------------------------------------
@@ -113,7 +111,7 @@ inline Real ConvertAngularVelocityInDegreesPerSecToRadsPerFrame(Real degPerSec)
 // ----------------------------------------------------------------------------------------------
 enum
 {
-	MAX_PLAYER_COUNT = 16											///< max number of Players.
+	MAX_PLAYER_COUNT = 16 ///< max number of Players.
 };
 
 // ----------------------------------------------------------------------------------------------
@@ -121,17 +119,17 @@ enum
 	a bitmask that can uniquely represent each player.
 */
 #if MAX_PLAYER_COUNT <= 16
-	typedef UnsignedShort PlayerMaskType;
-	const PlayerMaskType PLAYERMASK_ALL = 0xffff;
-	const PlayerMaskType PLAYERMASK_NONE = 0x0;
+typedef UnsignedShort PlayerMaskType;
+const PlayerMaskType PLAYERMASK_ALL = 0xffff;
+const PlayerMaskType PLAYERMASK_NONE = 0x0;
 #else
-	#error "this is the wrong size"
+#error "this is the wrong size"
 #endif
 
 // ----------------------------------------------------------------------------------------------
 enum
 {
-	MAX_GLOBAL_GENERAL_TYPES = 9,		///< number of playable General Types, not including the boss)
+	MAX_GLOBAL_GENERAL_TYPES = 9, ///< number of playable General Types, not including the boss)
 
 	/// The start of the playable global generals playertemplates
 	GLOBAL_GENERAL_BEGIN = 5,
@@ -141,63 +139,52 @@ enum
 };
 
 //-------------------------------------------------------------------------------------------------
-enum GameDifficulty CPP_11(: Int)
-{
-	DIFFICULTY_EASY,
-	DIFFICULTY_NORMAL,
-	DIFFICULTY_HARD,
+enum GameDifficulty CPP_11( : Int){ DIFFICULTY_EASY,
+																		DIFFICULTY_NORMAL,
+																		DIFFICULTY_HARD,
 
-	DIFFICULTY_COUNT
-};
+																		DIFFICULTY_COUNT };
 
 //-------------------------------------------------------------------------------------------------
-enum PlayerType CPP_11(: Int)
-{
-	PLAYER_HUMAN,				///< player is human-controlled
-	PLAYER_COMPUTER,		///< player is computer-controlled
+enum PlayerType CPP_11( : Int){ PLAYER_HUMAN, ///< player is human-controlled
+																PLAYER_COMPUTER, ///< player is computer-controlled
 
-	PLAYERTYPE_COUNT
-};
+																PLAYERTYPE_COUNT };
 
 //-------------------------------------------------------------------------------------------------
 /// A PartitionCell can be one of three states for Shroud
-enum CellShroudStatus CPP_11(: Int)
-{
-	CELLSHROUD_CLEAR,
-	CELLSHROUD_FOGGED,
-	CELLSHROUD_SHROUDED,
+enum CellShroudStatus CPP_11( : Int){ CELLSHROUD_CLEAR,
+																			CELLSHROUD_FOGGED,
+																			CELLSHROUD_SHROUDED,
 
-	CELLSHROUD_COUNT
-};
+																			CELLSHROUD_COUNT };
 
 //-------------------------------------------------------------------------------------------------
 /// Since an object can take up more than a single PartitionCell, this is a status that applies to the whole Object
-enum ObjectShroudStatus CPP_11(: Int)
-{
-	OBJECTSHROUD_INVALID,				///< indeterminate state, will recompute
-	OBJECTSHROUD_CLEAR,					///< object is not shrouded at all (ie, completely visible)
-	OBJECTSHROUD_PARTIAL_CLEAR,	///< object is partly clear (rest is shroud or fog)
-	OBJECTSHROUD_FOGGED,				///< object is completely fogged
-	OBJECTSHROUD_SHROUDED,			///< object is completely shrouded
-	OBJECTSHROUD_INVALID_BUT_PREVIOUS_VALID,			///< indeterminate state, will recompute, BUT previous status is valid, don't reset (used for save/load)
+enum ObjectShroudStatus CPP_11( : Int){ OBJECTSHROUD_INVALID, ///< indeterminate state, will recompute
+																				OBJECTSHROUD_CLEAR, ///< object is not shrouded at all (ie, completely visible)
+																				OBJECTSHROUD_PARTIAL_CLEAR, ///< object is partly clear (rest is shroud or fog)
+																				OBJECTSHROUD_FOGGED, ///< object is completely fogged
+																				OBJECTSHROUD_SHROUDED, ///< object is completely shrouded
+																				OBJECTSHROUD_INVALID_BUT_PREVIOUS_VALID, ///< indeterminate state, will recompute,
+																																								 ///< BUT previous status is valid, don't
+																																								 ///< reset (used for save/load)
 
-	OBJECTSHROUD_COUNT
-};
+																				OBJECTSHROUD_COUNT };
 
 //-------------------------------------------------------------------------------------------------
-enum GuardMode CPP_11(: Int)
-{
+enum GuardMode CPP_11( : Int){
 	GUARDMODE_NORMAL,
-	GUARDMODE_GUARD_WITHOUT_PURSUIT,	// no pursuit out of guard area
-	GUARDMODE_GUARD_FLYING_UNITS_ONLY	// ignore nonflyers
+	GUARDMODE_GUARD_WITHOUT_PURSUIT, // no pursuit out of guard area
+	GUARDMODE_GUARD_FLYING_UNITS_ONLY // ignore nonflyers
 };
 
 // ---------------------------------------------------
 enum
 {
-	NEVER				= 0,
-	FOREVER			= 0x3fffffff			// (we use 0x3fffffff so that we can add offsets and not overflow...
-																//		at 30fps we're still pretty safe!)
+	NEVER = 0,
+	FOREVER = 0x3fffffff // (we use 0x3fffffff so that we can add offsets and not overflow...
+											 //		at 30fps we're still pretty safe!)
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -206,74 +193,70 @@ enum
 
 /// Veterancy level define needed by several files that don't need the full Experience code.
 // NOTE NOTE NOTE: Keep TheVeterencyNames in sync with these.
-enum VeterancyLevel CPP_11(: Int)
-{
-	LEVEL_REGULAR = 0,
-	LEVEL_VETERAN,
-	LEVEL_ELITE,
-	LEVEL_HEROIC,
+enum VeterancyLevel CPP_11( : Int){ LEVEL_REGULAR = 0,
+																		LEVEL_VETERAN,
+																		LEVEL_ELITE,
+																		LEVEL_HEROIC,
 
-	LEVEL_COUNT,
-	LEVEL_INVALID,
+																		LEVEL_COUNT,
+																		LEVEL_INVALID,
 
-	LEVEL_FIRST = LEVEL_REGULAR,
-	LEVEL_LAST = LEVEL_HEROIC
-};
+																		LEVEL_FIRST = LEVEL_REGULAR,
+																		LEVEL_LAST = LEVEL_HEROIC };
 
 // TheVeterancyNames is defined in GameCommon.cpp
 extern const char *TheVeterancyNames[];
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum CommandSourceType CPP_11(: Int)
-{
+enum CommandSourceType CPP_11( : Int){
 
 	CMD_FROM_PLAYER = 0,
 	CMD_FROM_SCRIPT,
 	CMD_FROM_AI,
-	CMD_FROM_DOZER,							// Special rare command when the dozer originates a command to attack a mine. Mines are not ai-attackable, and it seems deceitful for the dozer to generate a player or script command. jba.
-	CMD_DEFAULT_SWITCH_WEAPON,	// Special case: A weapon that can be chosen -- this is the default case (machine gun vs flashbang).
+	CMD_FROM_DOZER, // Special rare command when the dozer originates a command to attack a mine. Mines are not ai-attackable,
+									// and it seems deceitful for the dozer to generate a player or script command. jba.
+	CMD_DEFAULT_SWITCH_WEAPON, // Special case: A weapon that can be chosen -- this is the default case (machine gun vs
+														 // flashbang).
 
-};		///< the source of a command
+}; ///< the source of a command
 
 //-------------------------------------------------------------------------------------------------
-enum AbleToAttackType CPP_11(: Int)
-{
-	_ATTACK_FORCED			= 0x01,
-	_ATTACK_CONTINUED		= 0x02,
-	_ATTACK_TUNNELNETWORK_GUARD = 0x04,
+enum AbleToAttackType CPP_11( : Int){ _ATTACK_FORCED = 0x01,
+																			_ATTACK_CONTINUED = 0x02,
+																			_ATTACK_TUNNELNETWORK_GUARD = 0x04,
 
-	/**
-		can we attack if this is a new target?
-	*/
-	ATTACK_NEW_TARGET = (0),
+																			/**
+																				can we attack if this is a new target?
+																			*/
+																			ATTACK_NEW_TARGET = (0),
 
-	/**
-		can we attack if this is a new target, via force-fire?
-		(The only current difference between this and ATTACK_NEW_TARGET is that disguised units
-		are force-attackable even when stealthed.)
-	*/
-	ATTACK_NEW_TARGET_FORCED= (_ATTACK_FORCED),
+																			/**
+																				can we attack if this is a new target, via force-fire?
+																				(The only current difference between this and ATTACK_NEW_TARGET is that disguised
+																				units are force-attackable even when stealthed.)
+																			*/
+																			ATTACK_NEW_TARGET_FORCED = (_ATTACK_FORCED),
 
-	/**
-		can we attack if this is continuation of an existing attack?
-		(The only current difference between this and ATTACK_NEW_TARGET is you are allowed to follow
-		immobile shrouded units into the fog)
-	*/
-	ATTACK_CONTINUED_TARGET = (_ATTACK_CONTINUED),
+																			/**
+																				can we attack if this is continuation of an existing attack?
+																				(The only current difference between this and ATTACK_NEW_TARGET is you are allowed to
+																				follow immobile shrouded units into the fog)
+																			*/
+																			ATTACK_CONTINUED_TARGET = (_ATTACK_CONTINUED),
 
-	/**
-		can we attack if this is continuation of an existing attack?
-		(The only current difference between this and ATTACK_NEW_TARGET is you are allowed to follow
-		immobile shrouded units into the fog)
-	*/
-	ATTACK_CONTINUED_TARGET_FORCED = (_ATTACK_FORCED | _ATTACK_CONTINUED),
+																			/**
+																				can we attack if this is continuation of an existing attack?
+																				(The only current difference between this and ATTACK_NEW_TARGET is you are allowed to
+																				follow immobile shrouded units into the fog)
+																			*/
+																			ATTACK_CONTINUED_TARGET_FORCED = (_ATTACK_FORCED | _ATTACK_CONTINUED),
 
-	/**
-		Special case that bypasses some of the checks for units guarding from within tunnel networks!
-		For example, a unit inside couldn't normally see outside and would fail.
-	*/
-	ATTACK_TUNNEL_NETWORK_GUARD = (_ATTACK_TUNNELNETWORK_GUARD)
+																			/**
+																				Special case that bypasses some of the checks for units guarding from within tunnel
+																				networks! For example, a unit inside couldn't normally see outside and would fail.
+																			*/
+																			ATTACK_TUNNEL_NETWORK_GUARD = (_ATTACK_TUNNELNETWORK_GUARD)
 
 };
 
@@ -316,129 +299,154 @@ inline VeterancyLevelFlags clearVeterancyLevelFlag(VeterancyLevelFlags flags, Ve
 #define BOGUSPTR(p) ((((unsigned int)(p)) & 1) != 0)
 
 // ----------------------------------------------------------------------------------------------
-#define MAKE_DLINK_HEAD(OBJCLASS, LISTNAME)																						\
-public:																																								\
-	inline DLINK_ITERATOR<OBJCLASS> iterate_##LISTNAME() const													\
-	{																																										\
-		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr"));	\
-		return DLINK_ITERATOR<OBJCLASS>(m_dlinkhead_##LISTNAME.m_head, &OBJCLASS::dlink_next_##LISTNAME);	\
-	}																																										\
-	inline OBJCLASS *getFirstItemIn_##LISTNAME() const																	\
-	{																																										\
-		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr"));	\
-		return m_dlinkhead_##LISTNAME.m_head;																							\
-	}																																										\
-	inline Bool isInList_##LISTNAME(OBJCLASS* o) const																	\
-	{																																										\
-		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr"));	\
-		return o->dlink_isInList_##LISTNAME(&m_dlinkhead_##LISTNAME.m_head);							\
-	}																																										\
-	inline void prependTo_##LISTNAME(OBJCLASS* o)																				\
-	{																																										\
-		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr"));	\
-		if (!isInList_##LISTNAME(o))																											\
-			o->dlink_prependTo_##LISTNAME(&m_dlinkhead_##LISTNAME.m_head);									\
-	}																																										\
-	inline void removeFrom_##LISTNAME(OBJCLASS* o)																			\
-	{																																										\
-		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr"));	\
-		if (isInList_##LISTNAME(o))																												\
-			o->dlink_removeFrom_##LISTNAME(&m_dlinkhead_##LISTNAME.m_head);									\
-	}																																										\
-	typedef void (*RemoveAllProc_##LISTNAME)(OBJCLASS* o);															\
-	inline void removeAll_##LISTNAME(RemoveAllProc_##LISTNAME p = NULL)									\
-	{																																										\
-		while (m_dlinkhead_##LISTNAME.m_head)																							\
-		{																																									\
-			DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr"));\
-			OBJCLASS *tmp = m_dlinkhead_##LISTNAME.m_head;																	\
-			removeFrom_##LISTNAME(tmp);																											\
-			if (p) (*p)(tmp);																																\
-		}																																									\
-	}																																										\
-	inline void reverse_##LISTNAME()																										\
-	{																																										\
-		OBJCLASS* cur = m_dlinkhead_##LISTNAME.m_head;																		\
-		OBJCLASS* prev = NULL;																														\
-		while (cur)																																				\
-		{																																									\
-			OBJCLASS* originalNext = cur->dlink_next_##LISTNAME();													\
-			cur->dlink_swapLinks_##LISTNAME();																							\
-			prev = cur;																																			\
-			cur = originalNext;																															\
-		}																																									\
-		m_dlinkhead_##LISTNAME.m_head = prev;																							\
-	}																																										\
-private:																																							\
-	/* a trick: init head to zero */																										\
-	struct DLINKHEAD_##LISTNAME																													\
-	{																																										\
-	public:																																							\
-		OBJCLASS* m_head;																																	\
-		inline DLINKHEAD_##LISTNAME() :																										\
-			m_head(0) { }																																		\
-		inline ~DLINKHEAD_##LISTNAME()																										\
-			{ DEBUG_ASSERTCRASH(!m_head,("destroying dlinkhead still in a list " #LISTNAME)); }				\
-	};																																									\
+#define MAKE_DLINK_HEAD(OBJCLASS, LISTNAME) \
+public: \
+	inline DLINK_ITERATOR<OBJCLASS> iterate_##LISTNAME() const \
+	{ \
+		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr")); \
+		return DLINK_ITERATOR<OBJCLASS>(m_dlinkhead_##LISTNAME.m_head, &OBJCLASS::dlink_next_##LISTNAME); \
+	} \
+	inline OBJCLASS *getFirstItemIn_##LISTNAME() const \
+	{ \
+		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr")); \
+		return m_dlinkhead_##LISTNAME.m_head; \
+	} \
+	inline Bool isInList_##LISTNAME(OBJCLASS *o) const \
+	{ \
+		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr")); \
+		return o->dlink_isInList_##LISTNAME(&m_dlinkhead_##LISTNAME.m_head); \
+	} \
+	inline void prependTo_##LISTNAME(OBJCLASS *o) \
+	{ \
+		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr")); \
+		if (!isInList_##LISTNAME(o)) \
+			o->dlink_prependTo_##LISTNAME(&m_dlinkhead_##LISTNAME.m_head); \
+	} \
+	inline void removeFrom_##LISTNAME(OBJCLASS *o) \
+	{ \
+		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr")); \
+		if (isInList_##LISTNAME(o)) \
+			o->dlink_removeFrom_##LISTNAME(&m_dlinkhead_##LISTNAME.m_head); \
+	} \
+	typedef void (*RemoveAllProc_##LISTNAME)(OBJCLASS * o); \
+	inline void removeAll_##LISTNAME(RemoveAllProc_##LISTNAME p = NULL) \
+	{ \
+		while (m_dlinkhead_##LISTNAME.m_head) \
+		{ \
+			DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr")); \
+			OBJCLASS *tmp = m_dlinkhead_##LISTNAME.m_head; \
+			removeFrom_##LISTNAME(tmp); \
+			if (p) \
+				(*p)(tmp); \
+		} \
+	} \
+	inline void reverse_##LISTNAME() \
+	{ \
+		OBJCLASS *cur = m_dlinkhead_##LISTNAME.m_head; \
+		OBJCLASS *prev = NULL; \
+		while (cur) \
+		{ \
+			OBJCLASS *originalNext = cur->dlink_next_##LISTNAME(); \
+			cur->dlink_swapLinks_##LISTNAME(); \
+			prev = cur; \
+			cur = originalNext; \
+		} \
+		m_dlinkhead_##LISTNAME.m_head = prev; \
+	} \
+\
+private: \
+	/* a trick: init head to zero */ \
+	struct DLINKHEAD_##LISTNAME \
+	{ \
+	public: \
+		OBJCLASS *m_head; \
+		inline DLINKHEAD_##LISTNAME() : m_head(0) \
+		{ \
+		} \
+		inline ~DLINKHEAD_##LISTNAME() \
+		{ \
+			DEBUG_ASSERTCRASH(!m_head, ("destroying dlinkhead still in a list " #LISTNAME)); \
+		} \
+	}; \
 	DLINKHEAD_##LISTNAME m_dlinkhead_##LISTNAME;
 
 // ----------------------------------------------------------------------------------------------
-#define MAKE_DLINK(OBJCLASS, LISTNAME)	\
-public:																	\
-	OBJCLASS* dlink_prev_##LISTNAME() const { return m_dlink_##LISTNAME.m_prev; }										\
-	OBJCLASS* dlink_next_##LISTNAME() const	{ return m_dlink_##LISTNAME.m_next; }										\
-	void dlink_swapLinks_##LISTNAME()																									\
-	{																																													\
-		OBJCLASS* originalNext = m_dlink_##LISTNAME.m_next;																			\
-		m_dlink_##LISTNAME.m_next = m_dlink_##LISTNAME.m_prev;																	\
-		m_dlink_##LISTNAME.m_prev = originalNext;																								\
-	}																																													\
-	Bool dlink_isInList_##LISTNAME(OBJCLASS* const* pListHead) const										\
-	{																																													\
-		DEBUG_ASSERTCRASH(!BOGUSPTR(*pListHead) && !BOGUSPTR(m_dlink_##LISTNAME.m_next) && !BOGUSPTR(m_dlink_##LISTNAME.m_prev), ("bogus ptrs")); \
-		return *pListHead == this || m_dlink_##LISTNAME.m_prev || m_dlink_##LISTNAME.m_next;		\
-	}																																													\
-	void dlink_prependTo_##LISTNAME(OBJCLASS** pListHead)															\
-	{																																													\
-		DEBUG_ASSERTCRASH(!dlink_isInList_##LISTNAME(pListHead), ("already in list " #LISTNAME));					\
-		DEBUG_ASSERTCRASH(!BOGUSPTR(*pListHead) && !BOGUSPTR(m_dlink_##LISTNAME.m_next) && !BOGUSPTR(m_dlink_##LISTNAME.m_prev), ("bogus ptrs")); \
-		m_dlink_##LISTNAME.m_next = *pListHead;																									\
-		if (*pListHead)																																					\
-			(*pListHead)->m_dlink_##LISTNAME.m_prev = this;																				\
-		*pListHead = this;																																			\
-		DEBUG_ASSERTCRASH(!BOGUSPTR(*pListHead) && !BOGUSPTR(m_dlink_##LISTNAME.m_next) && !BOGUSPTR(m_dlink_##LISTNAME.m_prev), ("bogus ptrs")); \
-	}																																													\
-	void dlink_removeFrom_##LISTNAME(OBJCLASS** pListHead)															\
-	{																																													\
-		DEBUG_ASSERTCRASH(dlink_isInList_##LISTNAME(pListHead), ("not in list" #LISTNAME));			\
-		DEBUG_ASSERTCRASH(!BOGUSPTR(*pListHead) && !BOGUSPTR(m_dlink_##LISTNAME.m_next) && !BOGUSPTR(m_dlink_##LISTNAME.m_prev), ("bogus ptrs")); \
-		if (m_dlink_##LISTNAME.m_next)																													\
-			m_dlink_##LISTNAME.m_next->m_dlink_##LISTNAME.m_prev = m_dlink_##LISTNAME.m_prev;			\
-		if (m_dlink_##LISTNAME.m_prev)																													\
-			m_dlink_##LISTNAME.m_prev->m_dlink_##LISTNAME.m_next = m_dlink_##LISTNAME.m_next;			\
-		else																																										\
-			*pListHead = m_dlink_##LISTNAME.m_next;																								\
-		m_dlink_##LISTNAME.m_prev = 0;																													\
-		m_dlink_##LISTNAME.m_next = 0;																													\
-		DEBUG_ASSERTCRASH(!BOGUSPTR(*pListHead) && !BOGUSPTR(m_dlink_##LISTNAME.m_next) && !BOGUSPTR(m_dlink_##LISTNAME.m_prev), ("bogus ptrs")); \
-	}																																													\
-private:																\
-	/* a trick: init links to zero */			\
-	struct DLINK_##LISTNAME								\
-	{																			\
-	public:																\
-		OBJCLASS* m_prev;										\
-		OBJCLASS* m_next;										\
-		inline DLINK_##LISTNAME() :					\
-			m_prev(0), m_next(0) { }					\
-		inline ~DLINK_##LISTNAME()					\
-			{ DEBUG_ASSERTCRASH(!m_prev && !m_next,("destroying dlink still in a list "  #LISTNAME)); } \
-	};																		\
+#define MAKE_DLINK(OBJCLASS, LISTNAME) \
+public: \
+	OBJCLASS *dlink_prev_##LISTNAME() const \
+	{ \
+		return m_dlink_##LISTNAME.m_prev; \
+	} \
+	OBJCLASS *dlink_next_##LISTNAME() const \
+	{ \
+		return m_dlink_##LISTNAME.m_next; \
+	} \
+	void dlink_swapLinks_##LISTNAME() \
+	{ \
+		OBJCLASS *originalNext = m_dlink_##LISTNAME.m_next; \
+		m_dlink_##LISTNAME.m_next = m_dlink_##LISTNAME.m_prev; \
+		m_dlink_##LISTNAME.m_prev = originalNext; \
+	} \
+	Bool dlink_isInList_##LISTNAME(OBJCLASS *const *pListHead) const \
+	{ \
+		DEBUG_ASSERTCRASH( \
+				!BOGUSPTR(*pListHead) && !BOGUSPTR(m_dlink_##LISTNAME.m_next) && !BOGUSPTR(m_dlink_##LISTNAME.m_prev), \
+				("bogus ptrs")); \
+		return *pListHead == this || m_dlink_##LISTNAME.m_prev || m_dlink_##LISTNAME.m_next; \
+	} \
+	void dlink_prependTo_##LISTNAME(OBJCLASS **pListHead) \
+	{ \
+		DEBUG_ASSERTCRASH(!dlink_isInList_##LISTNAME(pListHead), ("already in list " #LISTNAME)); \
+		DEBUG_ASSERTCRASH( \
+				!BOGUSPTR(*pListHead) && !BOGUSPTR(m_dlink_##LISTNAME.m_next) && !BOGUSPTR(m_dlink_##LISTNAME.m_prev), \
+				("bogus ptrs")); \
+		m_dlink_##LISTNAME.m_next = *pListHead; \
+		if (*pListHead) \
+			(*pListHead)->m_dlink_##LISTNAME.m_prev = this; \
+		*pListHead = this; \
+		DEBUG_ASSERTCRASH( \
+				!BOGUSPTR(*pListHead) && !BOGUSPTR(m_dlink_##LISTNAME.m_next) && !BOGUSPTR(m_dlink_##LISTNAME.m_prev), \
+				("bogus ptrs")); \
+	} \
+	void dlink_removeFrom_##LISTNAME(OBJCLASS **pListHead) \
+	{ \
+		DEBUG_ASSERTCRASH(dlink_isInList_##LISTNAME(pListHead), ("not in list" #LISTNAME)); \
+		DEBUG_ASSERTCRASH( \
+				!BOGUSPTR(*pListHead) && !BOGUSPTR(m_dlink_##LISTNAME.m_next) && !BOGUSPTR(m_dlink_##LISTNAME.m_prev), \
+				("bogus ptrs")); \
+		if (m_dlink_##LISTNAME.m_next) \
+			m_dlink_##LISTNAME.m_next->m_dlink_##LISTNAME.m_prev = m_dlink_##LISTNAME.m_prev; \
+		if (m_dlink_##LISTNAME.m_prev) \
+			m_dlink_##LISTNAME.m_prev->m_dlink_##LISTNAME.m_next = m_dlink_##LISTNAME.m_next; \
+		else \
+			*pListHead = m_dlink_##LISTNAME.m_next; \
+		m_dlink_##LISTNAME.m_prev = 0; \
+		m_dlink_##LISTNAME.m_next = 0; \
+		DEBUG_ASSERTCRASH( \
+				!BOGUSPTR(*pListHead) && !BOGUSPTR(m_dlink_##LISTNAME.m_next) && !BOGUSPTR(m_dlink_##LISTNAME.m_prev), \
+				("bogus ptrs")); \
+	} \
+\
+private: \
+	/* a trick: init links to zero */ \
+	struct DLINK_##LISTNAME \
+	{ \
+	public: \
+		OBJCLASS *m_prev; \
+		OBJCLASS *m_next; \
+		inline DLINK_##LISTNAME() : m_prev(0), m_next(0) \
+		{ \
+		} \
+		inline ~DLINK_##LISTNAME() \
+		{ \
+			DEBUG_ASSERTCRASH(!m_prev && !m_next, ("destroying dlink still in a list " #LISTNAME)); \
+		} \
+	}; \
 	DLINK_##LISTNAME m_dlink_##LISTNAME;
 
 // ------------------------------------------------------------------------
 // this is the weird C++ syntax for "call pointer-to-member-function"... see C++ FAQ LITE for details.
-#define callMemberFunction(object,ptrToMember)  ((object).*(ptrToMember))
+#define callMemberFunction(object, ptrToMember) ((object).*(ptrToMember))
 
 // ------------------------------------------------------------------------
 template<class OBJCLASS>
@@ -446,14 +454,13 @@ class DLINK_ITERATOR
 {
 public:
 	// this is the weird C++ syntax for "pointer-to-member-function"
-	typedef OBJCLASS* (OBJCLASS::*GetNextFunc)() const;
+	typedef OBJCLASS *(OBJCLASS::*GetNextFunc)() const;
+
 private:
-	OBJCLASS* m_cur;
-	GetNextFunc m_getNextFunc;	// this is the weird C++ syntax for "pointer-to-member-function"
+	OBJCLASS *m_cur;
+	GetNextFunc m_getNextFunc; // this is the weird C++ syntax for "pointer-to-member-function"
 public:
-	DLINK_ITERATOR(OBJCLASS* cur, GetNextFunc getNextFunc) : m_cur(cur), m_getNextFunc(getNextFunc)
-	{
-	}
+	DLINK_ITERATOR(OBJCLASS *cur, GetNextFunc getNextFunc) : m_cur(cur), m_getNextFunc(getNextFunc) {}
 
 	void advance()
 	{
@@ -461,29 +468,19 @@ public:
 			m_cur = callMemberFunction(*m_cur, m_getNextFunc)();
 	}
 
-	Bool done() const
-	{
-		return m_cur == NULL;
-	}
+	Bool done() const { return m_cur == NULL; }
 
-	OBJCLASS* cur() const
-	{
-		return m_cur;
-	}
-
+	OBJCLASS *cur() const { return m_cur; }
 };
 
 // ------------------------------------------------------------------------
 
-enum WhichTurretType CPP_11(: Int)
-{
-	TURRET_INVALID = -1,
+enum WhichTurretType CPP_11( : Int){ TURRET_INVALID = -1,
 
-	TURRET_MAIN = 0,
-	TURRET_ALT,
+																		 TURRET_MAIN = 0,
+																		 TURRET_ALT,
 
-	MAX_TURRETS
-};
+																		 MAX_TURRETS };
 
 // ------------------------------------------------------------------------
 // this normalizes an angle to the range -PI...PI.
@@ -498,16 +495,9 @@ inline Real stdAngleDiff(Real a1, Real a2)
 
 // ------------------------------------------------------------------------
 // NOTE NOTE NOTE: Keep TheRelationShipNames in sync with this enum
-enum Relationship CPP_11(: Int)
-{
-	ENEMIES = 0,
-	NEUTRAL,
-	ALLIES
-};
-
+enum Relationship CPP_11( : Int){ ENEMIES = 0, NEUTRAL, ALLIES };
 
 // TheRelationShipNames is defined in Common/GameCommon.cpp
 extern const char *TheRelationshipNames[];
 
 #endif // _GAMECOMMON_H_
-

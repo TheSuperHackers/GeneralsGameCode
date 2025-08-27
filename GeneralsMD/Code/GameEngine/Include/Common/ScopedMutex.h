@@ -28,22 +28,20 @@
 
 class ScopedMutex
 {
-	private:
-		HANDLE m_mutex;
+private:
+	HANDLE m_mutex;
 
-	public:
-		ScopedMutex(HANDLE mutex) : m_mutex(mutex)
+public:
+	ScopedMutex(HANDLE mutex) : m_mutex(mutex)
+	{
+		DWORD status = WaitForSingleObject(m_mutex, 500);
+		if (status != WAIT_OBJECT_0)
 		{
-			DWORD status = WaitForSingleObject(m_mutex, 500);
-			if (status != WAIT_OBJECT_0) {
-				DEBUG_LOG(("ScopedMutex WaitForSingleObject timed out - status %d", status));
-			}
+			DEBUG_LOG(("ScopedMutex WaitForSingleObject timed out - status %d", status));
 		}
+	}
 
-		~ScopedMutex()
-		{
-			ReleaseMutex(m_mutex);
-		}
+	~ScopedMutex() { ReleaseMutex(m_mutex); }
 };
 
 #endif /* __SCOPEDMUTEX_H__ */

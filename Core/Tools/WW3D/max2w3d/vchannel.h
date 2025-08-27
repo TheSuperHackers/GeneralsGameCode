@@ -35,7 +35,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #ifndef VCHANNEL_H
 #define VCHANNEL_H
 
@@ -54,7 +53,6 @@
 #ifndef W3D_FILE_H
 #include "w3d_file.h"
 #endif
-
 
 class BitChannelClass;
 
@@ -78,63 +76,60 @@ class BitChannelClass;
 class VectorChannelClass
 {
 public:
-
-	VectorChannelClass(uint32 id,int maxframes,uint32 flags,int vectorlength,float32 * identvec);
+	VectorChannelClass(uint32 id, int maxframes, uint32 flags, int vectorlength, float32 *identvec);
 	~VectorChannelClass(void);
 
-	void		Set_Vector(int framenumber,float32 * vector);
-	float *	Get_Vector(int frameidx);
-	bool		Is_Empty(void) { return IsEmpty; }
-	void		SetSaveOptions(bool compress, int flavor, float Terr, float Rerr, bool reduce, int reduce_percent);
-	bool		Save(ChunkSaveClass & csave, BitChannelClass *binmov);
-	void		ClearInvisibleData(BitChannelClass *vis);
+	void Set_Vector(int framenumber, float32 *vector);
+	float *Get_Vector(int frameidx);
+	bool Is_Empty(void) { return IsEmpty; }
+	void SetSaveOptions(bool compress, int flavor, float Terr, float Rerr, bool reduce, int reduce_percent);
+	bool Save(ChunkSaveClass &csave, BitChannelClass *binmov);
+	void ClearInvisibleData(BitChannelClass *vis);
 
 private:
+	uint32 ID;
+	uint32 Flags;
+	int MaxFrames;
+	int VectorLen;
+	bool IsEmpty;
 
-	uint32		ID;
-	uint32		Flags;
-	int	  		MaxFrames;
-	int	  		VectorLen;
-	bool			IsEmpty;
-
-	float32 *	IdentVect;
-	float32 *	Data;
-	int	  		Begin;
-	int	  		End;
+	float32 *IdentVect;
+	float32 *Data;
+	int Begin;
+	int End;
 
 	// Save Options
 
-	bool			ReduceAnimation;
-	int			ReduceAnimationPercent;
-	bool			CompressAnimation;
-	int			CompressAnimationFlavor;
-	float			CompressAnimationTranslationError;
-	float			CompressAnimationRotationError;
+	bool ReduceAnimation;
+	int ReduceAnimationPercent;
+	bool CompressAnimation;
+	int CompressAnimationFlavor;
+	float CompressAnimationTranslationError;
+	float CompressAnimationRotationError;
 
 	// Write a single value
-	void set_value(int framenum,int vindex,float32 val);
+	void set_value(int framenum, int vindex, float32 val);
 
 	// Read a single value
-	float32 get_value(int framenum,int vindex);
+	float32 get_value(int framenum, int vindex);
 
 	// Test a vector against the "identity" vector
-	bool is_identity(float32 * vec);
+	bool is_identity(float32 *vec);
 
 	// This function finds the start and end of the "non-identity" data
 	void compute_range(void);
 
 	// compress functions
-	void		compress(W3dTimeCodedAnimChannelStruct * c);
-   float		compress(int filter_index, float scale, float value1, float *indata, unsigned char *pPacket, float *outdata);
-   float		test_compress(int filter_index, float scale, float value1, float *indata, float *outdata);
-	uint32	find_useless_packet(W3dTimeCodedAnimChannelStruct * c, double tolerance);
-	uint32	find_useless_packetQ(W3dTimeCodedAnimChannelStruct * c, double tolerance);
-	uint32	find_least_useful_packet(W3dTimeCodedAnimChannelStruct *c);
-	uint32	find_least_useful_packetQ(W3dTimeCodedAnimChannelStruct *c);
-	void		remove_packet(W3dTimeCodedAnimChannelStruct * c, uint32 packet_idx);
-	bool		SaveTimeCoded(ChunkSaveClass & csave, BitChannelClass *binmov);
-	bool		SaveAdaptiveDelta(ChunkSaveClass & csave, BitChannelClass *binmov);
-
+	void compress(W3dTimeCodedAnimChannelStruct *c);
+	float compress(int filter_index, float scale, float value1, float *indata, unsigned char *pPacket, float *outdata);
+	float test_compress(int filter_index, float scale, float value1, float *indata, float *outdata);
+	uint32 find_useless_packet(W3dTimeCodedAnimChannelStruct *c, double tolerance);
+	uint32 find_useless_packetQ(W3dTimeCodedAnimChannelStruct *c, double tolerance);
+	uint32 find_least_useful_packet(W3dTimeCodedAnimChannelStruct *c);
+	uint32 find_least_useful_packetQ(W3dTimeCodedAnimChannelStruct *c);
+	void remove_packet(W3dTimeCodedAnimChannelStruct *c, uint32 packet_idx);
+	bool SaveTimeCoded(ChunkSaveClass &csave, BitChannelClass *binmov);
+	bool SaveAdaptiveDelta(ChunkSaveClass &csave, BitChannelClass *binmov);
 };
 
 #endif /*VCHANNEL_H*/

@@ -51,7 +51,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h" // This must go first in EVERY cpp file int the GameEngine
 
 #include "GameLogic/Module/WeaponBonusUpdate.h"
 
@@ -74,34 +74,41 @@ WeaponBonusUpdateModuleData::WeaponBonusUpdateModuleData()
 }
 
 //-----------------------------------------------------------------------------
-void WeaponBonusUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
+void WeaponBonusUpdateModuleData::buildFieldParse(MultiIniFieldParse &p)
 {
-  UpdateModuleData::buildFieldParse(p);
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "RequiredAffectKindOf",		KindOfMaskType::parseFromINI,		NULL, offsetof( WeaponBonusUpdateModuleData, m_requiredAffectKindOf ) },
-		{ "ForbiddenAffectKindOf",	KindOfMaskType::parseFromINI,		NULL, offsetof( WeaponBonusUpdateModuleData, m_forbiddenAffectKindOf ) },
-		{ "BonusDuration",					INI::parseDurationUnsignedInt,	NULL, offsetof( WeaponBonusUpdateModuleData, m_bonusDuration ) },
-		{ "BonusDelay",							INI::parseDurationUnsignedInt,	NULL, offsetof( WeaponBonusUpdateModuleData, m_bonusDelay ) },
-		{ "BonusRange",							INI::parseReal,									NULL, offsetof( WeaponBonusUpdateModuleData, m_bonusRange ) },
-		{ "BonusConditionType",			INI::parseIndexList,	TheWeaponBonusNames, offsetof( WeaponBonusUpdateModuleData, m_bonusConditionType ) },
+	UpdateModuleData::buildFieldParse(p);
+	static const FieldParse dataFieldParse[] = {
+		{ "RequiredAffectKindOf",
+			KindOfMaskType::parseFromINI,
+			NULL,
+			offsetof(WeaponBonusUpdateModuleData, m_requiredAffectKindOf) },
+		{ "ForbiddenAffectKindOf",
+			KindOfMaskType::parseFromINI,
+			NULL,
+			offsetof(WeaponBonusUpdateModuleData, m_forbiddenAffectKindOf) },
+		{ "BonusDuration", INI::parseDurationUnsignedInt, NULL, offsetof(WeaponBonusUpdateModuleData, m_bonusDuration) },
+		{ "BonusDelay", INI::parseDurationUnsignedInt, NULL, offsetof(WeaponBonusUpdateModuleData, m_bonusDelay) },
+		{ "BonusRange", INI::parseReal, NULL, offsetof(WeaponBonusUpdateModuleData, m_bonusRange) },
+		{ "BonusConditionType",
+			INI::parseIndexList,
+			TheWeaponBonusNames,
+			offsetof(WeaponBonusUpdateModuleData, m_bonusConditionType) },
 		{ 0, 0, 0, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-WeaponBonusUpdate::WeaponBonusUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+WeaponBonusUpdate::WeaponBonusUpdate(Thing *thing, const ModuleData *moduleData) : UpdateModule(thing, moduleData)
 {
 	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 }
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WeaponBonusUpdate::~WeaponBonusUpdate( void )
+WeaponBonusUpdate::~WeaponBonusUpdate(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -113,94 +120,90 @@ struct tempWeaponBonusData // Hey Steven, bite me!  hahahaha  _Lowercase_ since 
 	KindOfMaskType m_requiredMask;
 	KindOfMaskType m_forbiddenMask;
 };
-void containIteratingDoTempWeaponBonus( Object *passenger, void *voidData)
+void containIteratingDoTempWeaponBonus(Object *passenger, void *voidData)
 {
 	tempWeaponBonusData *data = (tempWeaponBonusData *)voidData;
 
-	if( passenger->isKindOfMulti(data->m_requiredMask, data->m_forbiddenMask) )
+	if (passenger->isKindOfMulti(data->m_requiredMask, data->m_forbiddenMask))
 		passenger->doTempWeaponBonus(data->m_type, data->m_duration);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime WeaponBonusUpdate::update( void )
+UpdateSleepTime WeaponBonusUpdate::update(void)
 {
-	const WeaponBonusUpdateModuleData * data = getWeaponBonusUpdateModuleData();
+	const WeaponBonusUpdateModuleData *data = getWeaponBonusUpdateModuleData();
 	Object *me = getObject();
 
-	PartitionFilterRelationship relationship( me, PartitionFilterRelationship::ALLOW_ALLIES );
+	PartitionFilterRelationship relationship(me, PartitionFilterRelationship::ALLOW_ALLIES);
 	PartitionFilterSameMapStatus filterMapStatus(me);
 	PartitionFilterAlive filterAlive;
 
 	// Leaving this here commented out to show that I need to reach valid contents of invalid transports.
 	// So these checks are on an individual basis, not in the Partition query
-//	PartitionFilterAcceptByKindOf filterKindof(data->m_requiredAffectKindOf,data->m_forbiddenAffectKindOf);
+	//	PartitionFilterAcceptByKindOf filterKindof(data->m_requiredAffectKindOf,data->m_forbiddenAffectKindOf);
 	PartitionFilter *filters[] = { &relationship, &filterAlive, &filterMapStatus, NULL };
 
 	// scan objects in our region
-	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( me->getPosition(),
-																																			data->m_bonusRange,
-																																			FROM_CENTER_2D,
-																																			filters );
-	MemoryPoolObjectHolder hold( iter );
+	ObjectIterator *iter =
+			ThePartitionManager->iterateObjectsInRange(me->getPosition(), data->m_bonusRange, FROM_CENTER_2D, filters);
+	MemoryPoolObjectHolder hold(iter);
 	tempWeaponBonusData weaponBonusData;
 	weaponBonusData.m_type = data->m_bonusConditionType;
 	weaponBonusData.m_duration = data->m_bonusDuration;
 	weaponBonusData.m_requiredMask = data->m_requiredAffectKindOf;
 	weaponBonusData.m_forbiddenMask = data->m_forbiddenAffectKindOf;
 
-	for( Object *currentObj = iter->first(); currentObj != NULL; currentObj = iter->next() )
+	for (Object *currentObj = iter->first(); currentObj != NULL; currentObj = iter->next())
 	{
-		if( currentObj->isKindOfMulti(data->m_requiredAffectKindOf, data->m_forbiddenAffectKindOf) )
+		if (currentObj->isKindOfMulti(data->m_requiredAffectKindOf, data->m_forbiddenAffectKindOf))
 		{
 			currentObj->doTempWeaponBonus(data->m_bonusConditionType, data->m_bonusDuration);
 		}
 
-		if( currentObj->getContain() )
+		if (currentObj->getContain())
 		{
 			currentObj->getContain()->iterateContained(containIteratingDoTempWeaponBonus, &weaponBonusData, FALSE);
 		}
 	}
 
-	return UPDATE_SLEEP(data->m_bonusDelay); // Only need an internal timer if there are external hooks for wakning us up, or a second thing we can do
+	return UPDATE_SLEEP(data->m_bonusDelay); // Only need an internal timer if there are external hooks for wakning us up, or a
+																					 // second thing we can do
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void WeaponBonusUpdate::crc( Xfer *xfer )
+void WeaponBonusUpdate::crc(Xfer *xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
+	UpdateModule::crc(xfer);
 
-}  // end crc
+} // end crc
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void WeaponBonusUpdate::xfer( Xfer *xfer )
+void WeaponBonusUpdate::xfer(Xfer *xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
-}  // end xfer
+} // end xfer
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void WeaponBonusUpdate::loadPostProcess( void )
+void WeaponBonusUpdate::loadPostProcess(void)
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+} // end loadPostProcess

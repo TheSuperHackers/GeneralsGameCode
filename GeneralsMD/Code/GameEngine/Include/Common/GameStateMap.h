@@ -41,33 +41,28 @@ class Xfer;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-class GameStateMap : public SubsystemInterface,
-										 public Snapshot
+class GameStateMap : public SubsystemInterface, public Snapshot
 {
-
 public:
-
-	GameStateMap( void );
-	virtual ~GameStateMap( void );
+	GameStateMap(void);
+	virtual ~GameStateMap(void);
 
 	// subsystem interface methods
-	virtual void init( void ) { }
-	virtual void reset( void ) { }
-	virtual void update( void ) { }
+	virtual void init(void) {}
+	virtual void reset(void) {}
+	virtual void update(void) {}
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer ) { }
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void ) { }
+	virtual void crc(Xfer *xfer) {}
+	virtual void xfer(Xfer *xfer);
+	virtual void loadPostProcess(void) {}
 
-	void clearScratchPadMaps( void );		///< clear any scratch pad maps from the save directory
+	void clearScratchPadMaps(void); ///< clear any scratch pad maps from the save directory
 
 protected:
-
-
 };
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern GameStateMap *TheGameStateMap;
 
-#endif  // end __GAME_STATE_MAP_H_
+#endif // end __GAME_STATE_MAP_H_
