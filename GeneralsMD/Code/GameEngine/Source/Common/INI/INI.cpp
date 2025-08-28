@@ -1890,7 +1890,10 @@ Bool INI::isDeclarationOfType( AsciiString blockType, AsciiString blockName, cha
 		++tempBuff;
 	}
 
-	if (strlen(tempBuff) > blockTypeLength) {
+	size_t tempBuffLen = strlen(tempBuff);
+	char* tempBuffEnd = tempBuff + tempBuffLen;
+
+	if (tempBuffLen > blockTypeLength) {
 		restoreChar = tempBuff[blockTypeLength];
 		tempBuff[blockTypeLength] = 0;
 
@@ -1908,7 +1911,8 @@ Bool INI::isDeclarationOfType( AsciiString blockType, AsciiString blockName, cha
 		++tempBuff;
 	}
 
-	if (strlen(tempBuff) > blockNameLength) {
+	tempBuffLen = tempBuffEnd - tempBuff;
+	if (tempBuffLen > blockNameLength) {
 		restoreChar = tempBuff[blockNameLength];
 		tempBuff[blockNameLength] = 0;
 
