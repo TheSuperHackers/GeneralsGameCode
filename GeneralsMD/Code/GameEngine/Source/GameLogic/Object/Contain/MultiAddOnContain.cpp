@@ -350,14 +350,16 @@ void MultiAddOnContain::onSelling()
 
 
 //-------------------------------------------------------------------------------------------------
-//Bool MultiAddOnContain::isValidContainerFor(const Object* obj, Bool checkCapacity) const
-//{
-//  // TODO: Check list of allowed passengers
-//  if (obj->isKindOf(KINDOF_PORTABLE_STRUCTURE) && INVALID_ID == m_portableStructureID)
-//    return TRUE;
-//
-//  return TransportContain::isValidContainerFor(obj, checkCapacity);
-//}
+Bool MultiAddOnContain::isValidContainerFor(const Object* obj, Bool checkCapacity) const
+{
+  const MultiAddOnContainModuleData* d = getMultiAddOnContainModuleData();
+
+  // TODO: Check list of allowed passengers
+  if (d->m_addOnEntries.find(NAMEKEY(obj->getTemplate()->getName())) == d->m_addOnEntries.end())
+    return FALSE;
+
+  return TransportContain::isValidContainerFor(obj, checkCapacity);
+}
 
 
 //-------------------------------------------------------------------------------------------------

@@ -98,7 +98,7 @@ public:
 
 	virtual void onSelling();
 
-	//virtual Bool isValidContainerFor(const Object* obj, Bool checkCapacity) const;
+	virtual Bool isValidContainerFor(const Object* obj, Bool checkCapacity) const;
 	//virtual void addToContain(Object* obj);				///< add 'obj' to contain list
 	//virtual void addToContainList(Object* obj);		///< The part of AddToContain that inheritors can override (Can't do whole thing because of all the private stuff involved)
 	//virtual void removeFromContain(Object* obj, Bool exposeStealthUnits = FALSE);	///< remove 'obj' from contain list
