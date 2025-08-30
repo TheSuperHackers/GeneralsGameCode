@@ -236,11 +236,17 @@ void AsciiString::set(const AsciiString& stringSrc)
 // -----------------------------------------------------
 void AsciiString::set(const char* s)
 {
+	int len = s ? strlen(s) : 0;
+	set(s, len);
+}
+
+// -----------------------------------------------------
+void AsciiString::set(const char* s, int len)
+{
 	validate();
 	if (!m_data || s != peek())
 	{
-		int len = s ? strlen(s) : 0;
-		if (len)
+		if (len > 0)
 		{
 			ensureUniqueBufferOfSize(len + 1, false, s, NULL);
 		}

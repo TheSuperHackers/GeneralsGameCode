@@ -185,11 +185,17 @@ void UnicodeString::set(const UnicodeString& stringSrc)
 // -----------------------------------------------------
 void UnicodeString::set(const WideChar* s)
 {
+	int len = s ? wcslen(s) : 0;
+	set(s, len);
+}
+
+// -----------------------------------------------------
+void UnicodeString::set(const WideChar* s, int len)
+{
 	validate();
 	if (!m_data || s != peek())
 	{
-		int len = s ? wcslen(s) : 0;
-		if (len)
+		if (len > 0)
 		{
 			ensureUniqueBufferOfSize(len + 1, false, s, NULL);
 		}

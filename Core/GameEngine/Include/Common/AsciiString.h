@@ -206,11 +206,19 @@ public:
 		refcount.)
 	*/
 	void set(const AsciiString& stringSrc);
+
 	/**
 		Replace the contents of self with the given string.
 		Note that a copy of the string is made; the input ptr is not saved.
 	*/
 	void set(const char* s);
+
+	/**
+		Replace the contents of self with the given string and length.
+		Note that a copy of the string is made; the input ptr is not saved.
+		The length must not be larger than the actual string length.
+	*/
+	void set(const char* s, int len);
 
 	/**
 		replace contents of self with the given string. Note the
