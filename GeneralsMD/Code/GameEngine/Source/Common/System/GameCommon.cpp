@@ -48,6 +48,7 @@ const char *TheRelationshipNames[] =
 };
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @todo DO NOT USE THIS FUNCTION! Use WWMath::Normalize_Angle instead. Delete this.
 Real normalizeAngle(Real angle)
 {
 	DEBUG_ASSERTCRASH(!_isnan(angle), ("Angle is NAN in normalizeAngle!"));

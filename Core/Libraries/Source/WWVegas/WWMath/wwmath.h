@@ -52,7 +52,8 @@
 */
 #define WWMATH_EPSILON		0.0001f
 #define WWMATH_EPSILON2		WWMATH_EPSILON * WWMATH_EPSILON
-#define WWMATH_PI				3.141592654f
+#define WWMATH_PI					3.141592654f
+#define WWMATH_TWO_PI			6.283185308f
 #define WWMATH_FLOAT_MAX	(FLT_MAX)
 #define WWMATH_FLOAT_MIN	(FLT_MIN)
 #define WWMATH_SQRT2			1.414213562f
@@ -170,6 +171,8 @@ static WWINLINE float			Byte_To_Unit_Float(unsigned char byte) { return ((float)
 
 static WWINLINE bool			Is_Valid_Float(float x);
 static WWINLINE bool			Is_Valid_Double(double x);
+
+static WWINLINE float Normalize_Angle(float angle); // Normalizes the angle to the range -PI..PI
 
 };
 
@@ -653,5 +656,9 @@ WWINLINE float WWMath::Inv_Sqrt(float val)
 }
 #endif
 
+WWINLINE float WWMath::Normalize_Angle(float angle)
+{
+	return angle - (WWMATH_TWO_PI * Floor((angle + WWMATH_PI) / WWMATH_TWO_PI));
+}
 
 #endif
