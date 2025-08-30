@@ -835,7 +835,9 @@ void ActiveBody::attemptHealing( DamageInfo *damageInfo )
 		//(object pointer loses scope as soon as atteptdamage's caller ends)
 		m_lastDamageInfo = *damageInfo;
 		m_lastDamageCleared = false;
+#if RETAIL_COMPATIBLE_CRC
 		m_lastDamageTimestamp = TheGameLogic->getFrame();
+#endif
 		m_lastHealingTimestamp = TheGameLogic->getFrame();
 
 		// if our health has gone UP then do run the damage module callback

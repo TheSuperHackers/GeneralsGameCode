@@ -317,8 +317,10 @@ Bool StealthUpdate::allowedToStealth( Object *stealthOwner ) const
 
 	if( flags & STEALTH_NOT_WHILE_TAKING_DAMAGE && self->getBodyModule()->getLastDamageTimestamp() >= now - 1 )
 	{
+#if RETAIL_COMPATIBLE_CRC
 		//Only if it's not healing damage.
 		if( self->getBodyModule()->getLastDamageInfo()->in.m_damageType != DAMAGE_HEALING )
+#endif
 		{
 			//Can't stealth if we just took damage in the last frame or two.
 			if( self->getBodyModule()->getLastDamageTimestamp() != 0xffffffff )
