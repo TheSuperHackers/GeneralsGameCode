@@ -1887,7 +1887,7 @@ Bool INI::isDeclarationOfType( AsciiString blockType, AsciiString blockName, cha
 
 	tempBuff += blockTypeLength;
 
-	if (!isspace(*tempBuff))
+	if (!isspace(*tempBuff++))
 		return false;
 
 	while (isspace(*tempBuff))
@@ -1899,13 +1899,11 @@ Bool INI::isDeclarationOfType( AsciiString blockType, AsciiString blockName, cha
 
 	tempBuff += blockNameLength;
 
-	while (*tempBuff)
-	{
-		if (!isspace(*tempBuff))
-			return false;
-
+	while (isspace(*tempBuff))
 		++tempBuff;
-	}
+
+	if (*tempBuff != '\0')
+		return false;
 
 	return true;
 }
