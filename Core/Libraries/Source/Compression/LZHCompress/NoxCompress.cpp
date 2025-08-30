@@ -69,7 +69,7 @@ Bool DecompressFile		(char *infile, char *outfile)
 		outBlock= (char *) DbgMalloc( rawSize );
 
 		if (( inBlock == NULL ) || ( outBlock == NULL ))
-			return FALSE;
+			goto free_error;
 
 		// Read in a big chunk o file
 		NoxRead(inBlock, 1, compressedSize, inFilePtr);
@@ -105,13 +105,18 @@ Bool DecompressFile		(char *infile, char *outfile)
 			fclose(outFilePtr);
 		}
 		else
-			return FALSE;
+			goto free_error;
 
 		// Clean up this mess
 		DbgFree(inBlock);
 		DbgFree(outBlock);
 		return TRUE;
 
+		free_error:
+		// Clean up this mess
+		if (inBlock) DbgFree(inBlock);
+		if (outBlock) DbgFree(outBlock);
+		return FALSE;
 	} // End of if fileptr
 
 	return FALSE;
