@@ -35,12 +35,8 @@ size_t wcsnlen(const wchar_t *str, size_t maxlen);
 template<typename T> size_t strlcpy_t(T *dst, const T *src, size_t dstsize);
 template<typename T> size_t strlcat_t(T *dst, const T *src, size_t dstsize);
 
-#ifndef HAVE_STRLCPY
 size_t strlcpy(char *dst, const char *src, size_t dstsize);
-#endif
-#ifndef HAVE_STRLCAT
 size_t strlcat(char *dst, const char *src, size_t dstsize);
-#endif
 size_t wcslcpy(wchar_t *dst, const wchar_t *src, size_t dstsize);
 size_t wcslcat(wchar_t *dst, const wchar_t *src, size_t dstsize);
 
