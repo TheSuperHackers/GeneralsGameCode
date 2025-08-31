@@ -123,7 +123,45 @@ AsciiString NameKeyGenerator::keyToName(NameKeyType key)
 }
 
 //-------------------------------------------------------------------------------------------------
-NameKeyType NameKeyGenerator::nameToKey(const char* nameString)
+#if RETAIL_COMPATIBLE_CRC
+Bool NameKeyGenerator::addReservedKey()
+{
+	switch (m_nextID)
+	{
+	case 97: nameToLowercaseKeyImpl("Data\\English\\Language9x.ini"); return true;
+	case 98: nameToLowercaseKeyImpl("Data\\Audio\\Tracks\\English\\GLA_02.mp3"); return true;
+	case 99: nameToLowercaseKeyImpl("Data\\Audio\\Tracks\\GLA_02.mp3"); return true;
+	}
+	return false;
+}
+#endif
+
+//-------------------------------------------------------------------------------------------------
+NameKeyType NameKeyGenerator::nameToKey(const char* name)
+{
+	const NameKeyType key = nameToKeyImpl(name);
+
+#if RETAIL_COMPATIBLE_CRC
+	while (addReservedKey());
+#endif
+
+	return key;
+}
+
+//-------------------------------------------------------------------------------------------------
+NameKeyType NameKeyGenerator::nameToLowercaseKey(const char *name)
+{
+	const NameKeyType key = nameToLowercaseKeyImpl(name);
+
+#if RETAIL_COMPATIBLE_CRC
+	while (addReservedKey());
+#endif
+
+	return key;
+}
+
+//-------------------------------------------------------------------------------------------------
+NameKeyType NameKeyGenerator::nameToKeyImpl(const char* nameString)
 {
 	Bucket *b;
 
@@ -171,7 +209,7 @@ NameKeyType NameKeyGenerator::nameToKey(const char* nameString)
 }  // end nameToKey
 
 //-------------------------------------------------------------------------------------------------
-NameKeyType NameKeyGenerator::nameToLowercaseKey(const char* nameString)
+NameKeyType NameKeyGenerator::nameToLowercaseKeyImpl(const char* nameString)
 {
 	Bucket *b;
 

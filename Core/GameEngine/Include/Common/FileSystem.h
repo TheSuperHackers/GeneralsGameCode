@@ -54,6 +54,8 @@
 #include "Common/STLTypedefs.h"
 #include "Common/SubsystemInterface.h"
 
+#include <Utility/hash_map_adapter.h>
+
 //----------------------------------------------------------------------------
 //           Forward References
 //----------------------------------------------------------------------------
@@ -117,7 +119,6 @@ struct FileInfo {
 	* created when FileSystem::Open() gets called.
 	*/
 //===============================
-#include <map>
 
 class FileSystem : public SubsystemInterface
 {
@@ -147,7 +148,11 @@ public:
 
 protected:
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
-	mutable std::map<unsigned,bool> m_fileExist;
+	typedef std::hash_map<
+		rts::string_key<AsciiString>, bool,
+		rts::string_key_hash<AsciiString>,
+		rts::string_key_equal<AsciiString> > FileExistMap;
+	mutable FileExistMap m_fileExist;
 #endif
 };
 

@@ -114,6 +114,10 @@ protected:
 
 public:
 
+	typedef WideChar value_type;
+	typedef value_type* pointer;
+	typedef const value_type* const_pointer;
+
 	enum
 	{
 		MAX_FORMAT_BUF_LEN = 2048,		///< max total len of string created by format/format_va

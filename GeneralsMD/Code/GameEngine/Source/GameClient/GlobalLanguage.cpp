@@ -140,16 +140,17 @@ void GlobalLanguage::init( void )
 	AsciiString fname;
 	fname.format("Data\\%s\\Language.ini", GetRegistryLanguage().str());
 
+	//check if we're running Win9x variant since they may need different fonts
 	OSVERSIONINFO	osvi;
 	osvi.dwOSVersionInfoSize=sizeof(OSVERSIONINFO);
-
-	//GS NOTE: Must call doesFileExist in either case so that NameKeyGenerator will stay in sync
-	AsciiString tempName;
-	tempName.format("Data\\%s\\Language9x.ini", GetRegistryLanguage().str());
-	bool isExist = TheFileSystem->doesFileExist(tempName.str());
-	if (GetVersionEx(&osvi)  &&  osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS  && isExist)
-	{	//check if we're running Win9x variant since they may need different fonts
-		fname = tempName;
+	if (GetVersionEx(&osvi) && osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
+	{
+		AsciiString tempName;
+		tempName.format("Data\\%s\\Language9x.ini", GetRegistryLanguage().str());
+		if (TheFileSystem->doesFileExist(tempName.str()))
+		{
+			fname = tempName;
+		}
 	}
 
 
