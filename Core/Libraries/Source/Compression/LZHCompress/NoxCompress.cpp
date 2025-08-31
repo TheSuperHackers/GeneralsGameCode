@@ -69,7 +69,11 @@ Bool DecompressFile		(char *infile, char *outfile)
 		outBlock= (char *) DbgMalloc( rawSize );
 
 		if (( inBlock == NULL ) || ( outBlock == NULL ))
-			goto free_error;
+		{
+			if (inBlock) DbgFree(inBlock);
+			if (outBlock) DbgFree(outBlock);
+			return FALSE;
+		}
 
 		// Read in a big chunk o file
 		NoxRead(inBlock, 1, compressedSize, inFilePtr);
@@ -105,18 +109,16 @@ Bool DecompressFile		(char *infile, char *outfile)
 			fclose(outFilePtr);
 		}
 		else
-			goto free_error;
+		{
+			if (inBlock) DbgFree(inBlock);
+			if (outBlock) DbgFree(outBlock);
+			return FALSE;
+		}
 
 		// Clean up this mess
 		DbgFree(inBlock);
 		DbgFree(outBlock);
 		return TRUE;
-
-		free_error:
-		// Clean up this mess
-		if (inBlock) DbgFree(inBlock);
-		if (outBlock) DbgFree(outBlock);
-		return FALSE;
 	} // End of if fileptr
 
 	return FALSE;
@@ -137,7 +139,11 @@ Bool CompressFile			(char *infile, char *outfile)
 	// Parameter checking
 
 	if (( infile == NULL ) || ( outfile == NULL ))
+	{
+		if (infile) DbgFree(infile);
+		if (outfile) DbgFree(outfile);
 		return FALSE;
+	}
 
 	// Allocate the appropriate amount of memory
 	inFilePtr = fopen( infile, "rb" );
@@ -153,7 +159,11 @@ Bool CompressFile			(char *infile, char *outfile)
 		outBlock= (char *) DbgMalloc( LZHLCompressorCalcMaxBuf( rawSize ));
 
 		if (( inBlock == NULL ) || ( outBlock == NULL ))
+		{
+			DbgFree(inBlock);
+			DbgFree(outBlock);
 			return FALSE;
+		}
 
 		// Read in a big chunk o file
 		NoxRead(inBlock, 1, rawSize, inFilePtr);
@@ -180,7 +190,11 @@ Bool CompressFile			(char *infile, char *outfile)
 			fclose(outFilePtr);
 		}
 		else
+		{
+			DbgFree(inBlock);
+			DbgFree(outBlock);
 			return FALSE;
+		}
 
 		// Clean up
 		DbgFree(inBlock);
