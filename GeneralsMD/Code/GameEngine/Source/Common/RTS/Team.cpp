@@ -330,8 +330,10 @@ Call team->setActive() when all members are added. */
 Team *TeamFactory::createInactiveTeam(const AsciiString& name)
 {
 	TeamPrototype *tp = findTeamPrototype(name);
-	if (!tp)
-		throw ERROR_BAD_ARG;
+	if (!tp) {
+		DEBUG_CRASH(( "Team prototype '%s' does not exist", name.str() ));
+		return NULL;
+	}
 
 	Team *t = NULL;
 	if (tp->getIsSingleton())
@@ -362,9 +364,11 @@ Team *TeamFactory::createInactiveTeam(const AsciiString& name)
 // ------------------------------------------------------------------------
 Team *TeamFactory::createTeam(const AsciiString& name)
 {
-	Team *t = NULL;
-	t = createInactiveTeam(name);
-	t->setActive();
+	Team *t = createInactiveTeam(name);
+
+	if (t)
+		t->setActive();
+
 	return t;
 }
 
