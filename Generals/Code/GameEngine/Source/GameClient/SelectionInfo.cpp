@@ -347,6 +347,17 @@ Bool addDrawableToList( Drawable *draw, void *userData )
 	if (!pds->drawableListToFill)
 		return FALSE;
 
+#if !RETAIL_COMPATIBLE_BUG
+	// In retail, drag-selecting allows the player to select stealthed objects and objects through the
+	// fog. Some players exploit this bug to determine where an opponent's units are and consider this
+	// an important feature and an advanced skill to pull off, so we must leave the exploit.
+	if (draw->getFullyObscuredByShroud())
+		return FALSE;
+
+	if (draw->isDrawableEffectivelyHidden())
+		return FALSE;
+#endif
+
 	if (!draw->getTemplate()->isAnyKindOf(pds->kindofsToMatch))
 		return FALSE;
 
