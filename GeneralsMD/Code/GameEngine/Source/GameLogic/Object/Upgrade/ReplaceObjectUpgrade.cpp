@@ -84,12 +84,8 @@ void ReplaceObjectUpgrade::upgradeImplementation( )
 		return;
 	}
 
-#if RETAIL_COMPATIBLE_CRC
 	Drawable* selectedDrawable = TheInGameUI->getFirstSelectedDrawable();
 	Bool oldObjectSelected = selectedDrawable && selectedDrawable->getID() == me->getDrawable()->getID();
-#else
-	Bool oldObjectSelected = me->getControllingPlayer()->isCurrentlySelected(me);
-#endif
 	Int oldObjectSquadNumber = me->getControllingPlayer()->getSquadNumberForObject(me);
 
 	// Remove us first since occupation of cells is apparently not a refcount, but a flag.  If I don't remove, then the new
@@ -117,7 +113,6 @@ void ReplaceObjectUpgrade::upgradeImplementation( )
 
 		if (oldObjectSelected)
 		{
-#if RETAIL_COMPATIBLE_CRC
 			if (replacementObject->isLocallyControlled())
 			{
 				GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_CREATE_SELECTED_GROUP_NO_SOUND);
@@ -125,22 +120,15 @@ void ReplaceObjectUpgrade::upgradeImplementation( )
 				msg->appendObjectIDArgument(replacementObject->getID());
 				TheInGameUI->selectDrawable(replacementObject->getDrawable());
 			}
-#else
-			TheGameLogic->selectObject(replacementObject, TRUE, replacementObject->getControllingPlayer()->getPlayerMask(), replacementObject->isLocallyControlled());
-#endif
 		}
 
 		if (oldObjectSquadNumber != NO_HOTKEY_SQUAD)
 		{
-#if RETAIL_COMPATIBLE_CRC
 			if (replacementObject->isLocallyControlled())
 			{
 				GameMessage* msg = TheMessageStream->appendMessage((GameMessage::Type)(GameMessage::MSG_CREATE_TEAM0 + oldObjectSquadNumber));
 				msg->appendObjectIDArgument(replacementObject->getID());
 			}
-#else
-			replacementObject->getControllingPlayer()->addObjectToSquad(replacementObject, oldObjectSquadNumber, true);
-#endif
 		}
 	}
 }

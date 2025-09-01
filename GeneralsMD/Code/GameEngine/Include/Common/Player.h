@@ -643,14 +643,8 @@ public:
 	// sets the currently selected group to be the given AIGroup
 	void setCurrentlySelectedAIGroup(AIGroup *group);
 
-	// is object selected
-	Bool isCurrentlySelected(Object* obj);
-
 	// adds the given AIGroup to the current selection of this player.
 	void addAIGroupToCurrentSelection(AIGroup *group);
-
-	// adds an object to the player's specified hotkey team.
-	void addObjectToSquad(Object* obj, Int squadNumber, Bool newSquad = false);
 
 	// return the requested hotkey squad
 	Squad *getHotkeySquad(Int squadNumber);

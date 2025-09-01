@@ -3768,14 +3768,6 @@ void Player::getCurrentSelectionAsAIGroup(AIGroup *group) {
 	}
 }
 
-Bool Player::isCurrentlySelected(Object* obj)
-{
-	if (m_currentSelection == NULL || obj == NULL)
-		return false;
-
-	return m_currentSelection->isOnSquad(obj);
-}
-
 //-------------------------------------------------------------------------------------------------
 /** Select a hotkey team based on this GameMessage */
 //-------------------------------------------------------------------------------------------------
@@ -3789,24 +3781,6 @@ void Player::setCurrentlySelectedAIGroup(AIGroup *group) {
 	if (group != NULL) {
 		m_currentSelection->squadFromAIGroup(group, true);
 	}
-}
-
-//-------------------------------------------------------------------------------------------------
-/** Add an object to a squad */
-//-------------------------------------------------------------------------------------------------
-void Player::addObjectToSquad(Object* obj, Int squadNumber, Bool newSquad)
-{
-	if (m_squads[squadNumber] == NULL)
-		return;
-
-	if (obj == NULL)
-		return;
-
-	if (newSquad)
-		m_squads[squadNumber]->clearSquad();
-
-	removeObjectFromHotkeySquad(obj);
-	m_squads[squadNumber]->addObject(obj);
 }
 
 //-------------------------------------------------------------------------------------------------
