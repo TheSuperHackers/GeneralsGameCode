@@ -33,6 +33,21 @@
 #define DbgFree free
 #define DEBUG_LOG(x) {}
 
+static Bool CleanFilesOnSuccess(char* in, char* out)
+{
+	// `in` and `out` will always be non-NULL at this point
+	DbgFree(in);
+	DbgFree(out);
+	return TRUE;
+}
+
+static Bool CleanFilesOnError(char* in, char* out)
+{
+    if (in) DbgFree(in);
+    if (out) DbgFree(out);
+    return FALSE;
+}
+
 Bool DecompressFile		(char *infile, char *outfile)
 {
 	UnsignedInt	rawSize = 0, compressedSize = 0;
@@ -70,9 +85,7 @@ Bool DecompressFile		(char *infile, char *outfile)
 
 		if (( inBlock == NULL ) || ( outBlock == NULL ))
 		{
-			if (inBlock) DbgFree(inBlock);
-			if (outBlock) DbgFree(outBlock);
-			return FALSE;
+		    return CleanFilesOnError(inBlock, outBlock);
 		}
 
 		// Read in a big chunk o file
@@ -110,15 +123,11 @@ Bool DecompressFile		(char *infile, char *outfile)
 		}
 		else
 		{
-			if (inBlock) DbgFree(inBlock);
-			if (outBlock) DbgFree(outBlock);
-			return FALSE;
+		    return CleanFilesOnError(inBlock, outBlock);
 		}
 
 		// Clean up this mess
-		DbgFree(inBlock);
-		DbgFree(outBlock);
-		return TRUE;
+		return CleanFilesOnSuccess(inBlock, outBlock);
 	} // End of if fileptr
 
 	return FALSE;
@@ -140,8 +149,6 @@ Bool CompressFile			(char *infile, char *outfile)
 
 	if (( infile == NULL ) || ( outfile == NULL ))
 	{
-		if (infile) DbgFree(infile);
-		if (outfile) DbgFree(outfile);
 		return FALSE;
 	}
 
@@ -160,9 +167,7 @@ Bool CompressFile			(char *infile, char *outfile)
 
 		if (( inBlock == NULL ) || ( outBlock == NULL ))
 		{
-			DbgFree(inBlock);
-			DbgFree(outBlock);
-			return FALSE;
+			return CleanFilesOnError(inBlock, outBlock);
 		}
 
 		// Read in a big chunk o file
@@ -191,15 +196,11 @@ Bool CompressFile			(char *infile, char *outfile)
 		}
 		else
 		{
-			DbgFree(inBlock);
-			DbgFree(outBlock);
-			return FALSE;
+			return CleanFilesOnError(inBlock, outBlock);
 		}
 
 		// Clean up
-		DbgFree(inBlock);
-		DbgFree(outBlock);
-		return TRUE;
+		return CleanFilesOnSuccess(inBlock, outBlock);
 	}
 
 	return FALSE;
