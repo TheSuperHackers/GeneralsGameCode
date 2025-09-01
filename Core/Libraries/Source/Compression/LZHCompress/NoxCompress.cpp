@@ -47,7 +47,9 @@ Bool DecompressFile		(char *infile, char *outfile)
 	// Parameter checking
 
 	if (( infile == NULL ) || ( outfile == NULL ))
+	{
 		return FALSE;
+	}
 
 	inFilePtr = fopen( infile, "rb" );
 	if ( inFilePtr )
@@ -140,8 +142,6 @@ Bool CompressFile			(char *infile, char *outfile)
 
 	if (( infile == NULL ) || ( outfile == NULL ))
 	{
-		if (infile) DbgFree(infile);
-		if (outfile) DbgFree(outfile);
 		return FALSE;
 	}
 
