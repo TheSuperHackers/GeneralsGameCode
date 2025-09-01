@@ -47,9 +47,7 @@ Bool DecompressFile		(char *infile, char *outfile)
 	// Parameter checking
 
 	if (( infile == NULL ) || ( outfile == NULL ))
-	{
 		return FALSE;
-	}
 
 	inFilePtr = fopen( infile, "rb" );
 	if ( inFilePtr )
@@ -136,9 +134,7 @@ Bool CompressFile			(char *infile, char *outfile)
 	// Parameter checking
 
 	if (( infile == NULL ) || ( outfile == NULL ))
-	{
 		return FALSE;
-	}
 
 	// Allocate the appropriate amount of memory
 	inFilePtr = fopen( infile, "rb" );
