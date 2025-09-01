@@ -58,9 +58,11 @@ public:
 	TemplateNameList m_payloadTemplateNameData;
 	Bool m_drawPips; // TODO: Move this to generic transportcontain
 
-	AddOnEntryMap m_addOnEntries;
+	AddOnEntryMap m_addOnEntries;  ///< allowed passengers and corresponding turrets
 
-	AsciiString m_addOnBoneName;
+	AsciiString m_addOnBoneName;  ///< positions to place the turrets
+	AsciiString m_emptySlotSubObjName;   ///< sub objects to hide/show when a slot is unmanned
+	AsciiString m_occupiedSlotSubObjName;   ///< sub objects to hide/show when a slot is occupied
 
 
 	static void buildFieldParse(MultiIniFieldParse& p);
@@ -155,6 +157,8 @@ private:
 
 	void redeployAddOns();
 	void putObjAtSlot(Object* obj, short slot);
+
+	void updateSubObjForSlot(short slot, bool isNowOccupied);
 
 };
 

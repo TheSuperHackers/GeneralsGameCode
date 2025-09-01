@@ -71,6 +71,8 @@ void MultiAddOnContainModuleData::buildFieldParse(MultiIniFieldParse& p)
     { "PayloadTemplateName",  INI::parseAsciiStringVectorAppend, NULL, offsetof(MultiAddOnContainModuleData, m_payloadTemplateNameData) },
     { "ShouldDrawPips",  INI::parseBool, NULL, offsetof(MultiAddOnContainModuleData, m_drawPips) },
     { "AddOnBoneName",  INI::parseAsciiString, NULL, offsetof(MultiAddOnContainModuleData, m_addOnBoneName) },
+    { "EmptySlotSubObjectName",  INI::parseAsciiString, NULL, offsetof(MultiAddOnContainModuleData, m_emptySlotSubObjName) },
+    { "OccupiedSlotSubObjectName",  INI::parseAsciiString, NULL, offsetof(MultiAddOnContainModuleData, m_occupiedSlotSubObjName) },
     { "AddOnEntry", parseAddOnEntry, NULL, 0 },
     { 0, 0, 0, 0 }
   };
@@ -93,8 +95,6 @@ void MultiAddOnContainModuleData::parseAddOnEntry( INI* ini, void *instance, voi
 MultiAddOnContain::MultiAddOnContain(Thing* thing, const ModuleData* moduleData) :
   TransportContain(thing, moduleData)
 {
-  DEBUG_LOG((">>> MultiAddOnContain::INIT 0"));
-
   m_payloadCreated = FALSE;
 
   m_addOnList.clear();
@@ -110,9 +110,10 @@ MultiAddOnContain::MultiAddOnContain(Thing* thing, const ModuleData* moduleData)
     addOn.portableID = INVALID_ID;
     addOn.slot = i;
     m_addOnSlots.push_back(addOn);
-  }
 
-  DEBUG_LOG((">>> MultiAddOnContain::INIT 1, m_addOnSlots.size() = %d", m_addOnSlots.size()));
+    // Draw is NULL at this point, so lets leave it to the art code to hide the objects initially
+    //updateSubObjForSlot(i, FALSE);
+  }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -289,72 +290,10 @@ void MultiAddOnContain::onSelling()
 }
 
 //-------------------------------------------------------------------------------------------------
-//void MultiAddOnContain::addToContainList(Object* obj)
-//{
-//  if (obj->isKindOf(KINDOF_PORTABLE_STRUCTURE))
-//  {
-//    // This is probably redundant and should happen in addToContain instead
-//    //m_portableStructureIDs.push_back(obj->getID());
-//    //obj->friend_setContainedBy(getObject());//fool portable into thinking my object is his container
-//  }
-//  else {
-//    TransportContain::addToContainList(obj);
-//  }
-//}
-
-//-------------------------------------------------------------------------------------------------
-//void MultiAddOnContain::addToContain(Object* obj)
-//{
-//  if (obj->isKindOf(KINDOF_PORTABLE_STRUCTURE))
-//  {
-//    const MultiAddOnContainModuleData* d = getMultiAddOnContainModuleData();
-//
-//    ////Find the slot we belong to
-//    //for (slot = 0; slot < d->m_slotCapacity; slot++) {
-//    //  if (m_addOnSlots[i].occupantID == obj->getID()) {
-//    //    if (m_addOnSlots[i].portableID != INVALID_ID) {
-//    //      DEBUG_LOG(("MultiAddOnContain::createAddOnForRider - portable for slot %d is already occupied?!", slot));
-//    //    }
-//    //    break;
-//    //  }E
-//    //}
-//    //m_portableStructureIDs.push_back(obj->getID());
-//
-//    // TODO
-//
-//    obj->friend_setContainedBy(getObject());//fool portable into thinking my object is his container
-//
-//  }
-//  else {
-//    TransportContain::addToContain(obj);
-//    
-//  }
-//}
-
-//-------------------------------------------------------------------------------------------------
-//void MultiAddOnContain::removeFromContain(Object* obj, Bool exposeStealthUnits)
-//{
-//  if (obj->isKindOf(KINDOF_PORTABLE_STRUCTURE))
-//  {
-//    for (VecObjectIDIt it = m_portableStructureIDs.begin(); it != m_portableStructureIDs.end(); ) {
-//      if (obj->getID() == (*it))
-//        m_portableStructureIDs.erase(it);
-//    }
-//  }
-//  else
-//  {
-//    // Get corresponding Structure and remove it
-//    TransportContain::removeFromContain(obj, exposeStealthUnits);
-//  }
-//}
-
-
-//-------------------------------------------------------------------------------------------------
 Bool MultiAddOnContain::isValidContainerFor(const Object* obj, Bool checkCapacity) const
 {
   const MultiAddOnContainModuleData* d = getMultiAddOnContainModuleData();
 
-  // TODO: Check list of allowed passengers
   if (d->m_addOnEntries.find(NAMEKEY(obj->getTemplate()->getName())) == d->m_addOnEntries.end())
     return FALSE;
 
@@ -363,30 +302,8 @@ Bool MultiAddOnContain::isValidContainerFor(const Object* obj, Bool checkCapacit
 
 
 //-------------------------------------------------------------------------------------------------
-//const Object* MultiAddOnContain::friend_getRider() const
-//{
-//  // The draw order dependency bug for riders means that our draw module needs to cheat to get around it.
-//
-//  if (m_portableStructureID != INVALID_ID)
-//  {
-//    const Object* portableAsRider = TheGameLogic->findObjectByID(m_portableStructureID);
-//    return portableAsRider;
-//  }
-//
-//  return NULL;
-//}
-
-//-------------------------------------------------------------------------------------------------
 Bool MultiAddOnContain::isEnclosingContainerFor(const Object* obj) const
 {
-
-  //for (std::vector<AddOnSlotData>::const_iterator it = m_addOnSlots.begin(); it != m_addOnSlots.end(); it++) {
-  //  if ((*it).portableID == obj->getID()) {
-  //    const Object* portableAsRider = TheGameLogic->findObjectByID((*it).portableID);
-  //    if (portableAsRider == obj)
-  //      return FALSE;
-  //  }
-  //}
 
   for (Object* addOn : m_addOnList) {
     if (addOn == obj) {
@@ -441,7 +358,6 @@ Bool MultiAddOnContain::isPassengerAllowedToFire(ObjectID id) const
 //-------------------------------------------------------------------------------------------------
 void MultiAddOnContain::onContaining(Object* obj, Bool wasSelected)
 {
-  DEBUG_LOG((">>> MultiAddOnContainModuleData::onContaining 0"));
   // extend base class
   TransportContain::onContaining(obj, wasSelected);
 
@@ -449,7 +365,6 @@ void MultiAddOnContain::onContaining(Object* obj, Bool wasSelected)
   // This should be the only place where we do this! No turret should ever enter the actual container
   createAddOnForRider(obj);
 
-  DEBUG_LOG((">>> MultiAddOnContainModuleData::onContaining 1"));
 }  // end onContaining
 
 //-------------------------------------------------------------------------------------------------
@@ -471,7 +386,7 @@ bool MultiAddOnContain::createAddOnForRider(Object* obj)
 {
   const MultiAddOnContainModuleData* d = getMultiAddOnContainModuleData();
 
-  DEBUG_LOG((">>> MultiAddOnContainModuleData::createAddOnForRider 0"));
+  //DEBUG_LOG((">>> MultiAddOnContainModuleData::createAddOnForRider 0"));
 
   // Get next free slot.
   UnsignedInt slot = -1;
@@ -536,9 +451,11 @@ bool MultiAddOnContain::createAddOnForRider(Object* obj)
 
   m_addOnList.push_back(addOnObj);
 
+  updateSubObjForSlot(slot, true);
+
   redeployAddOns();
 
-  DEBUG_LOG((">>> MultiAddOnContainModuleData::createAddOnForRider 1"));
+  //DEBUG_LOG((">>> MultiAddOnContainModuleData::createAddOnForRider 1"));
 
   return true;
 }
@@ -591,6 +508,8 @@ bool MultiAddOnContain::removeAddOnForRider(Object* obj)
 
   TheGameLogic->destroyObject(addOnObj);
 
+  updateSubObjForSlot(slot, false);
+
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -611,40 +530,6 @@ void MultiAddOnContain::redeployAddOns(void)
 void MultiAddOnContain::putObjAtSlot(Object* obj, short slot)
 {
   const MultiAddOnContainModuleData* d = getMultiAddOnContainModuleData();
-
-  // Load and cache addOn positions
-  //UnsignedShort count = 0;
-  //if (m_addOnPoints.size() == 0 && m_noAddOnPointsInArt == false)
-  //{
-  //  Matrix3D matrix;
-  //  for (int i = 0; i < m_addOnSlots.size(); i++) {
-  //    AsciiString boneName;
-  //    boneName.format("%s%02d", d->m_addOnBoneName.str(), i + 1);
-  //    Bool found = getObject()->getSingleLogicalBonePositionOnTurret(TURRET_MAIN, boneName.str(), NULL, &matrix);
-  //    if (found)
-  //      count++;
-  //    m_addOnPoints.push_back(matrix);
-  //  }
-
-  //  //
-  //  // if there is still no firepoints in the art, we'll set a flag so that we don't
-  //  // ever go through the art stuff again
-  //  //
-  //  if (count == 0)
-  //    m_noAddOnPointsInArt = TRUE;
-  //}  // end if
-
-  //
-  // if there are no fire points in the art we just put the object at the center
-  // of the object
-  //
-  //if (m_noAddOnPointsInArt == TRUE)
-  //{
-  //  obj->setOrientation(getObject()->getOrientation());
-  //  obj->setPosition(getObject()->getPosition());
-  //  return;
-
-  //}  // end if
 
   // get the position
   Matrix3D matrix;
@@ -689,20 +574,53 @@ short MultiAddOnContain::getPortableSlot(ObjectID portableID) const {
   return -1;
 }
 // ------------------------------------------------------------------------------------------------
+void MultiAddOnContain::updateSubObjForSlot(short slot, bool isNowOccupied) {
 
-//const ContainedItemsList* MultiAddOnContain::getAddOnList() const {
-//  if (m_addOnList_valid) {
-//    return &m_addOnList;
-//  }
-//
-//  m_addOnList.clear();
-//  for (std::vector<AddOnSlotData>::const_iterator it = m_addOnSlots.begin(); it != m_addOnSlots.end(); ) {
-//    Object* obj = TheGameLogic->findObjectByID((*it).portableID);
-//    if (obj)
-//      portableStructures.push_back(obj);
-//  }
-//  return &portableStructures;
-//}
+  const MultiAddOnContainModuleData* d = getMultiAddOnContainModuleData();
+
+  Object* obj = getObject();
+  Drawable* draw = obj->getDrawable();
+  if (draw)
+  {
+    AsciiString hideSubObjName;
+    AsciiString showSubObjName;
+    bool updateSubObjects = false;
+
+    // Get SubObj names to hide/show
+    if (d->m_emptySlotSubObjName.isNotEmpty() && isNowOccupied) {
+      hideSubObjName.format("%s%02d", d->m_emptySlotSubObjName.str(), slot + 1);
+    } else if (d->m_occupiedSlotSubObjName.isNotEmpty() && !isNowOccupied) {
+      hideSubObjName.format("%s%02d", d->m_occupiedSlotSubObjName.str(), slot + 1);
+    }
+
+    if (d->m_emptySlotSubObjName.isNotEmpty() && !isNowOccupied) {
+      showSubObjName.format("%s%02d", d->m_emptySlotSubObjName.str(), slot + 1);
+    }
+    else if (d->m_occupiedSlotSubObjName.isNotEmpty() && isNowOccupied) {
+      showSubObjName.format("%s%02d", d->m_occupiedSlotSubObjName.str(), slot + 1);
+    }
+
+    // Hide / Show Objects
+    if (hideSubObjName.isNotEmpty()) {
+      draw->showSubObject(hideSubObjName, false);
+      updateSubObjects = true;
+    }
+
+    if (showSubObjName.isNotEmpty()) {
+      draw->showSubObject(showSubObjName, true);
+      updateSubObjects = true;
+    }
+
+    if (updateSubObjects)
+    {
+      draw->updateSubObjects();
+    }
+  }
+  else {
+    DEBUG_LOG((">>> MultiAddOnContain::updateSubObjForSlot: DRAW IS NULL"));
+  }
+}
+
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */

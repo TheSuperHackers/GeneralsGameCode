@@ -91,7 +91,6 @@ void W3DOverlordAircraftDraw::doDrawModule(const Matrix3D* transformMtx)
 	if (me && me->getContain()) {
 		if (getW3DOverlordAircraftDrawModuleData()->m_hasMultiAddOns) {
 			const ContainedItemsList* addOns = me->getContain()->getAddOnList();
-			DEBUG_LOG((">>> W3DOverlordAircraftDraw::doDrawModule - addOns.size = %d", addOns->size()));
 			for (ContainedItemsList::const_iterator it = addOns->begin(); it != addOns->end(); it++) {
 				Drawable* riderDraw = (*it)->getDrawable();
 				riderDraw->setColorTintEnvelope(*getDrawable()->getColorTintEnvelope());
