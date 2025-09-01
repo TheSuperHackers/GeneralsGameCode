@@ -1863,9 +1863,10 @@ void PartitionData::doCircleFill(
 	Int dec = 3 - 2*cellRadius;
 
 #if RETAIL_COMPATIBLE_CRC
-	for (Int x = 0; x < cellRadius; x++)
+	// Cell coverage diverges at radii >= 240 between algorithms.
+	for (Int x = 0; (cellRadius < 240) ? (x <= y) : (x < cellRadius); ++x)
 #else
-	for (Int x = 0; x <= y; x++)
+	for (Int x = 0; x <= y; ++x)
 #endif
 	{
 		hLineCircle(cellCenterX - x, cellCenterX + x, cellCenterY + y);
