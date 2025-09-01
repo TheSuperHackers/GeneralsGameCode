@@ -139,7 +139,7 @@ void ReplaceObjectUpgrade::upgradeImplementation( )
 				msg->appendObjectIDArgument(replacementObject->getID());
 			}
 #else
-			replacementObject->getControllingPlayer()->addObjectToSquad(replacementObject, oldObjectSquadNumber);
+			replacementObject->getControllingPlayer()->addObjectToSquad(replacementObject, oldObjectSquadNumber, true);
 #endif
 		}
 	}

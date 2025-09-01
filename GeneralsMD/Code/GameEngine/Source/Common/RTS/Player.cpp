@@ -3794,13 +3794,16 @@ void Player::setCurrentlySelectedAIGroup(AIGroup *group) {
 //-------------------------------------------------------------------------------------------------
 /** Add an object to a squad */
 //-------------------------------------------------------------------------------------------------
-void Player::addObjectToSquad(Object* obj, Int squadNumber)
+void Player::addObjectToSquad(Object* obj, Int squadNumber, Bool newSquad)
 {
 	if (m_squads[squadNumber] == NULL)
 		return;
 
 	if (obj == NULL)
 		return;
+
+	if (newSquad)
+		m_squads[squadNumber]->clearSquad();
 
 	removeObjectFromHotkeySquad(obj);
 	m_squads[squadNumber]->addObject(obj);

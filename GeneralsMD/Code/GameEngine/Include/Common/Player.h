@@ -650,7 +650,7 @@ public:
 	void addAIGroupToCurrentSelection(AIGroup *group);
 
 	// adds an object to the player's specified hotkey team.
-	void addObjectToSquad(Object* obj, Int squadNumber);
+	void addObjectToSquad(Object* obj, Int squadNumber, Bool newSquad = false);
 
 	// return the requested hotkey squad
 	Squad *getHotkeySquad(Int squadNumber);
