@@ -1191,9 +1191,10 @@ GameWindow* GameWindowManager::findWindowUnderMouse(GameWindow*& toolTipWindow, 
 			continue;
 		}
 
-		GameWindow* childWindow = window->winPointInAnyChild(mousePos->x, mousePos->y, TRUE, TRUE);
 		if (toolTipWindow == NULL)
 		{
+			GameWindow* childWindow = window->winPointInAnyChild(mousePos->x, mousePos->y, TRUE, TRUE);
+
 			if (childWindow->m_tooltip || childWindow->m_instData.getTooltipTextLength())
 				toolTipWindow = childWindow;
 		}
