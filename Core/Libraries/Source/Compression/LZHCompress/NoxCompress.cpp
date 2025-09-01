@@ -103,24 +103,19 @@ Bool DecompressFile		(char *infile, char *outfile)
 
 		DEBUG_LOG(("Decompressed %s to %s, output size = %d", infile, outfile, rawSize));
 
+		Bool success = FALSE;
 		LZHLDestroyDecompressor(decompress);
 		outFilePtr = fopen(outfile, "wb");
 		if (outFilePtr)
 		{
 			fwrite (outBlock, rawSize, 1, outFilePtr);
 			fclose(outFilePtr);
-		}
-		else
-		{
-			if (inBlock) DbgFree(inBlock);
-			if (outBlock) DbgFree(outBlock);
-			return FALSE;
+			success = TRUE;
 		}
 
-		// Clean up this mess
 		DbgFree(inBlock);
 		DbgFree(outBlock);
-		return TRUE;
+		return success;
 	} // End of if fileptr
 
 	return FALSE;
@@ -179,8 +174,8 @@ Bool CompressFile			(char *infile, char *outfile)
 			compressedSize += compressed;
 		}
 
+		Bool success = FALSE;
 		LZHLDestroyCompressor(compressor);
-
 		outFilePtr = fopen(outfile, "wb");
 		if (outFilePtr)
 		{
@@ -188,18 +183,12 @@ Bool CompressFile			(char *infile, char *outfile)
 			fwrite(&rawSize, sizeof(UnsignedInt), 1, outFilePtr);
 			fwrite(outBlock, compressedSize, 1, outFilePtr);
 			fclose(outFilePtr);
-		}
-		else
-		{
-			DbgFree(inBlock);
-			DbgFree(outBlock);
-			return FALSE;
+			success = TRUE;
 		}
 
-		// Clean up
 		DbgFree(inBlock);
 		DbgFree(outBlock);
-		return TRUE;
+		return success;
 	}
 
 	return FALSE;
