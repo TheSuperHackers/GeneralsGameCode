@@ -349,11 +349,13 @@ Bool addDrawableToList( Drawable *draw, void *userData )
 	if (!pds->drawableListToFill)
 		return FALSE;
 
+#if !RTS_GENERALS || !RETAIL_COMPATIBLE_BUG
 	if (draw->getFullyObscuredByShroud())
 		return FALSE;
 
 	if (draw->isDrawableEffectivelyHidden())
 		return FALSE;
+#endif
 
 	if (!draw->getTemplate()->isAnyKindOf(pds->kindofsToMatch))
 		return FALSE;
@@ -374,7 +376,7 @@ Bool addDrawableToList( Drawable *draw, void *userData )
       return FALSE;
   }
 
-#if RETAIL_COMPATIBLE_BUG
+#if !RTS_GENERALS && RETAIL_COMPATIBLE_BUG
 	// TheSuperHackers @info
 	// In retail, hidden objects such as passengers are included here when drag-selected, which causes
 	// enemy selection logic to exit early (only 1 enemy unit can be selected at a time). Some players
