@@ -544,6 +544,8 @@
 #define IDC_ANCHOR_LABEL                1256
 #define IDC_Grove_UsePropsOnly          1256
 #define IDC_JOIN                        1257
+#define IDC_Grove_WithoutProps          1257
+#define IDC_Grove_WithProps             1258
 #define IDC_WATER_HEIGHT1               1258
 #define IDC_WATER_HEIGHT2               1259
 #define IDC_WAYPOINT_CAPTION2           1260
@@ -781,6 +783,7 @@
 #define IDC_Grove_SetName               33348
 #define IDC_Grove_SaveSet               33349
 #define IDC_LAUNCH_ONSTARTUP            33350
+#define IDC_Grove_Settings              33350
 #define ID_VIEW_SHOWTRACINGOVERLAY      33351
 #define IDS_NEW                         61446
 #define IDS_RESIZE                      61447

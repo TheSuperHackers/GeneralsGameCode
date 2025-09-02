@@ -258,6 +258,7 @@ BEGIN
         BEGIN
             MENUITEM "All\tCtrl+B",                 ID_VIEW_SHOW_OBJECTS
             MENUITEM "Selected Only",               ID_VIEW_SHOW_OBJECTS_SELECTED
+
         END
         MENUITEM "Show Waypoints",              ID_VIEW_SHOWWAYPOINTS
         MENUITEM "Show Trigger Areas",          ID_VIEW_SHOWPOLYGONTRIGGERS
@@ -1152,7 +1153,7 @@ CAPTION "Script Conditions"
 FONT 8, "MS Sans Serif"
 BEGIN
     LISTBOX         IDC_CONDITION_LIST,7,29,389,144,LBS_NOINTEGRALHEIGHT | 
-                    WS_VSCROLL | WS_TABSTOP
+                    WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
     LTEXT           "Conditions for this script:",IDC_STATIC,7,14,81,8
     PUSHBUTTON      "New...",IDC_NEW,401,32,50,14
     PUSHBUTTON      "Edit...",IDC_EDIT_CONDITION,401,48,50,14
@@ -1583,7 +1584,7 @@ BEGIN
     CONTROL         "Allow Impassable Placement",
                     IDC_Grove_AllowCliffPlacement,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,322,110,10
-    COMBOBOX        IDC_Grove_SetName,10,20,180,100,CBS_DROPDOWNLIST | 
+    COMBOBOX        IDC_Grove_SetName,9,13,180,238,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "Save Set",IDC_Grove_SaveSet,92,270,104,14,NOT 
                     WS_VISIBLE | WS_DISABLED
@@ -1611,9 +1612,10 @@ BEGIN
     EDITTEXT        IDC_Grove_Per11,8,239,20,13,ES_AUTOHSCROLL | ES_NUMBER
     CONTROL         "Spawn Only Props",IDC_Grove_UsePropsOnly,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,9,255,74,10
-    LTEXT           "Hint: You can rename grove sets under worldbuilder settings",
-                    IDC_STATIC,11,40,179,21
-    GROUPBOX        "Grove Set:",IDC_STATIC,3,7,193,57
+    LTEXT           "Tip: Share your grove presets (Grovesets.ini) with friends.",
+                    IDC_STATIC,9,28,179,10
+    GROUPBOX        "Grove Set:",IDC_STATIC,3,2,193,64
+    PUSHBUTTON      "Open Grove Settings",IDC_Grove_Settings,85,47,104,14
 END
 
 IDD_FENCE_OPTIONS DIALOG DISCARDABLE  0, 0, 200, 342
@@ -2498,7 +2500,6 @@ BEGIN
     BEGIN
         LEFTMARGIN, 3
         RIGHTMARGIN, 196
-        TOPMARGIN, 7
         BOTTOMMARGIN, 367
     END
 

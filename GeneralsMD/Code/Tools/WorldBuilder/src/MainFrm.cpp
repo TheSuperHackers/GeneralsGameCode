@@ -55,6 +55,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_TIMER()
 	ON_WM_CANCELMODE()
 	ON_COMMAND(ID_EDIT_CAMERAOPTIONS, OnEditCameraoptions)
+	ON_WM_DROPFILES()  
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -80,7 +81,29 @@ CMainFrame::CMainFrame()
 	m_layersList = NULL;
 	m_curDialogID = IDD_NO_OPTIONS;
 	m_scriptDialog = NULL;
+	// DragAcceptFiles(TRUE);
 }
+
+void CMainFrame::OnDropFiles(HDROP hDropInfo)
+{
+    UINT nFiles = DragQueryFile(hDropInfo, 0xFFFFFFFF, NULL, 0);
+
+    for (UINT i = 0; i < nFiles; i++)
+    {
+        TCHAR szFile[MAX_PATH];
+        DragQueryFile(hDropInfo, i, szFile, MAX_PATH);
+
+        CString path = szFile;
+        if (path.Right(4).CompareNoCase(".map") == 0) // accept only .map files
+        {
+            // Use MFC doc template system to open the map
+            AfxGetApp()->OpenDocumentFile(path);
+        }
+    }
+
+    DragFinish(hDropInfo);
+}
+
 
 CMainFrame::~CMainFrame()
 {
@@ -319,6 +342,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	StartMusic();
 #endif
 
+	DragAcceptFiles(TRUE);
 	return 0;
 }
 

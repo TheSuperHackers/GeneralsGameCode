@@ -79,6 +79,8 @@ class GroveOptions : public COptionsPanel
 		afx_msg void _updateTreeCount(void);
 		afx_msg void _updateGroveMakeup(void);
 		afx_msg void _updatePlacementAllowed(void);
+		afx_msg void OnDropDownGroveSetName();
+		afx_msg void OnOpenGroveSettings();
 
 		virtual void OnMove(int x, int y);
 		virtual void OnOK();

@@ -197,3 +197,20 @@ XXX
 == Script Editor ==
 - Fixed script condition label bug when using copy
 - Deleting conditions now selects the previous item instead of resetting to the first
+
+======================================================
+== System ==
+- You can now drag and drop maps directly onto WorldBuilder.
+- Added custom config profile loader (used with groveset.ini).
+
+== Grove Tool ==
+- Fixed several bugs in the save logic 
+- You can now export and share your grovesets.
+- Editing settings no longer requires a full WorldBuilder reload.
+- Maximum readable sets increased to 20.
+- Added preset config — just edit it as needed.
+- Added options to disable props.
+
+== Script Editor ==
+- Conditions list now supports horizontal scrolling.
+- Map.str script edits no longer require restarting WorldBuilder — simply close and reopen the dropdown for map strings.

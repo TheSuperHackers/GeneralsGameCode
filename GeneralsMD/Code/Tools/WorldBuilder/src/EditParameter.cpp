@@ -22,6 +22,7 @@
 #include "StdAfx.h"
 #include "resource.h"
 #include "WorldBuilder.h"
+#include "WorldBuilderDoc.h"
 
 // This is used to allow sounds to be played via PlaySound
 #include <mmsystem.h>
@@ -2463,6 +2464,24 @@ void EditParameter::OnComboSelChange()
 
 AsciiString EditParameter::loadLocalizedText(CComboBox *pCombo, AsciiString isStringInTable)
 {
+	DEBUG_LOG(("EditParameter::loadLocalizedText\n"));
+	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
+	CString path = pDoc->getMapPath();
+	char folderPath[_MAX_PATH];
+	strcpy(folderPath, path);
+	char* lastSlash = strrchr(folderPath, '\\');
+	if (lastSlash) {
+		*lastSlash = '\0';
+	}
+
+	CString strPath = CString(folderPath) + "\\map.str";
+
+	// Convert CString → AsciiString
+	AsciiString mapPath(strPath);
+
+	// Reload map strings
+	TheGameText->reloadMapStrings(mapPath);
+
 	static const AsciiString theScriptPrefix = "SCRIPT";
 	AsciiStringVec vec = TheGameText->getStringsWithLabelPrefix(theScriptPrefix);
 	if (pCombo) {

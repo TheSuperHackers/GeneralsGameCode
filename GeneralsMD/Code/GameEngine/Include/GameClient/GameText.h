@@ -82,6 +82,7 @@ class GameTextInterface : public SubsystemInterface
 		virtual AsciiStringVec& getStringsWithLabelPrefix(AsciiString label) = 0;
 
 		virtual void					initMapStringFile( const AsciiString& filename ) = 0;
+		virtual void					reloadMapStrings(const AsciiString& filename) = 0;
 };
 
 

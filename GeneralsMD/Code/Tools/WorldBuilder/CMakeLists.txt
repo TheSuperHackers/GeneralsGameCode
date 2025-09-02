@@ -196,6 +196,7 @@ set(WORLDBUILDER_SRC
     "include/wbview3d.h"
     "include/WHeightMapEdit.h"
     "include/ToastDialog.h"
+    "include/CustomConfigProfile.h"
     "include/WorldBuilder.h"
     "include/WorldBuilderDoc.h"
     "include/WorldBuilderView.h"

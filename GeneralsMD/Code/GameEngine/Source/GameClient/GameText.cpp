@@ -148,6 +148,7 @@ class GameTextManager : public GameTextInterface
 		virtual void					deinit( void );					///< De-initlaizes the text system
 		virtual void					update( void ) {};			///< update text manager
 		virtual void					reset( void );					///< Resets the text system
+    	virtual void                    reloadMapStrings(const AsciiString& filename);  // Adriane/Deathscythe
 
 		virtual UnicodeString fetch( const Char *label, Bool *exists = NULL );		///< Returns the associated labeled unicode text
 		virtual UnicodeString fetch( AsciiString label, Bool *exists = NULL );		///< Returns the associated labeled unicode text
@@ -1408,4 +1409,16 @@ static int __cdecl compareLUT ( const void *i1,  const void*i2)
 	StringLookUp *lut2 = (StringLookUp*) i2;
 
 	return stricmp( lut1->label->str(), lut2->label->str());
+}
+
+//============================================================================
+// GameTextManager::reloadthefuckingstringlist -- used by the worldbuilder (Adriane/Deathscythe)
+//============================================================================
+void GameTextManager::reloadMapStrings(const AsciiString& filename)
+{
+    // Clear current map strings
+    reset();
+
+    // Re-init from the given map file
+    initMapStringFile(filename);
 }
