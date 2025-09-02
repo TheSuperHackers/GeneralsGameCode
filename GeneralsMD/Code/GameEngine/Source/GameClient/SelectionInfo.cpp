@@ -375,6 +375,7 @@ Bool addDrawableToList( Drawable *draw, void *userData )
   }
 
 #if RETAIL_COMPATIBLE_BUG
+	// TheSuperHackers @info
 	// In retail, hidden objects such as passengers are included here when drag-selected, which causes
 	// enemy selection logic to exit early (only 1 enemy unit can be selected at a time). Some players
 	// exploit this bug to determine if a transport contains passengers and consider this an important
