@@ -665,7 +665,11 @@ void Network::processDestroyPlayerCommand(NetDestroyPlayerCommandMsg *msg)
 	if (pPlayer)
 	{
 		GameMessage *msg = newInstance(GameMessage)(GameMessage::MSG_SELF_DESTRUCT);
+#if RETAIL_COMPATIBLE_CRC
 		msg->appendBooleanArgument(FALSE);
+#else
+		msg->appendBooleanArgument(TRUE);
+#endif
 		msg->friend_setPlayerIndex(pPlayer->getPlayerIndex());
 		TheCommandList->appendMessage(msg);
 	}
