@@ -884,7 +884,7 @@ void findCommandCenterOrMostExpensiveBuilding(Object* obj, void* vccl)
 
 static void viewCommandCenter( void )
 {
-	Player* localPlayer = ThePlayerList->getLocalPlayer();
+	Player* localPlayer = TheControlBar->getCurrentlyViewedPlayer();
 	if (!localPlayer)
 		return;
 
