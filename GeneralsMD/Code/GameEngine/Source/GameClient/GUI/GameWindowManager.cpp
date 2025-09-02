@@ -1177,19 +1177,22 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent( GameWindowMessage ms
 
 }  // end winProcessMouseEvent
 
+bool GameWindowManager::isMouseWithinWindow(GameWindow* window, const ICoord2D* mousePos, unsigned int requiredStatusMask, unsigned int forbiddenStatusMask)
+{
+	return ((BitIsSet(window->m_status, requiredStatusMask) || requiredStatusMask == 0) &&
+		!BitIsSet(window->m_status, forbiddenStatusMask) &&
+		mousePos->x >= window->m_region.lo.x &&
+		mousePos->x <= window->m_region.hi.x &&
+		mousePos->y >= window->m_region.lo.y &&
+		mousePos->y <= window->m_region.hi.y);
+}
+
 GameWindow* GameWindowManager::findWindowUnderMouse(GameWindow*& toolTipWindow, const ICoord2D* mousePos, unsigned int requiredStatusMask, unsigned int forbiddenStatusMask)
 {
 	for (GameWindow* window = m_windowList; window; window = window->m_next)
 	{
-		if (BitIsSet(window->m_status, forbiddenStatusMask) ||
-			(!BitIsSet(window->m_status, requiredStatusMask) && requiredStatusMask != 0) ||
-			mousePos->x < window->m_region.lo.x ||
-			mousePos->x > window->m_region.hi.x ||
-			mousePos->y < window->m_region.lo.y ||
-			mousePos->y > window->m_region.hi.y)
-		{
+		if (!isMouseWithinWindow(window, mousePos, requiredStatusMask, forbiddenStatusMask))
 			continue;
-		}
 
 		if (toolTipWindow == NULL)
 		{

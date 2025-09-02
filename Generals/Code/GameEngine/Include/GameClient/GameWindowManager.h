@@ -258,6 +258,7 @@ public:
 
 	// Finds the top-level window at the mouse position that matches the required and forbidden status masks.
 	virtual GameWindow* findWindowUnderMouse(GameWindow*& toolTipWindow, const ICoord2D* mousePos, unsigned int requiredStatusMask, unsigned int forbiddenStatusMask);
+	static bool isMouseWithinWindow(GameWindow* window, const ICoord2D* mousePos, unsigned int requiredStatusMask, unsigned int forbiddenStatusMask);
 
 	virtual Bool isEnabled( GameWindow *win );  ///< is window or parents enabled
 	virtual Bool isHidden( GameWindow *win );  ///< is parent or parents hidden
