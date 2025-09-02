@@ -113,13 +113,10 @@ void ReplaceObjectUpgrade::upgradeImplementation( )
 
 		if (oldObjectSelected)
 		{
-			if (replacementObject->isLocallyControlled())
-			{
-				GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_CREATE_SELECTED_GROUP_NO_SOUND);
-				msg->appendBooleanArgument(TRUE);
-				msg->appendObjectIDArgument(replacementObject->getID());
-				TheInGameUI->selectDrawable(replacementObject->getDrawable());
-			}
+			GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_CREATE_SELECTED_GROUP_NO_SOUND);
+			msg->appendBooleanArgument(TRUE);
+			msg->appendObjectIDArgument(replacementObject->getID());
+			TheInGameUI->selectDrawable(replacementObject->getDrawable());
 		}
 
 		if (oldObjectSquadNumber != NO_HOTKEY_SQUAD)
