@@ -347,7 +347,7 @@ Bool addDrawableToList( Drawable *draw, void *userData )
 	if (!pds->drawableListToFill)
 		return FALSE;
 
-#if !RETAIL_COMPATIBLE_BUG
+#if !RTS_GENERALS || !RETAIL_COMPATIBLE_BUG
 	// TheSuperHackers @info
 	// In retail, drag-selecting allows the player to select stealthed objects and objects through the
 	// fog. Some players exploit this bug to determine where an opponent's units are and consider this
