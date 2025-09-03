@@ -63,8 +63,7 @@ void TAiData::addFactionBuildList(AISideBuildList *buildList)
 	AISideBuildList *info = m_sideBuildLists;
 	while (info) {
 		if (buildList->m_side == info->m_side) {
-			if (info->m_buildList)
-				deleteInstance(info->m_buildList);
+			deleteInstance(info->m_buildList);
 			info->m_buildList = buildList->m_buildList;
 			buildList->m_buildList = NULL;
 			buildList->m_next = NULL;
@@ -109,9 +108,7 @@ AISideBuildList::AISideBuildList( AsciiString side ) :
 
 AISideBuildList::~AISideBuildList()
 {
-	if (m_buildList) {
-		deleteInstance(m_buildList); // note - deletes all in the list.
-	}
+	deleteInstance(m_buildList); // note - deletes all in the list.
 	m_buildList = NULL;
 }
 

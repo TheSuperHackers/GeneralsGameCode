@@ -1144,11 +1144,8 @@ void INI::parseDynamicAudioEventRTS( INI *ini, void * /*instance*/, void *store,
 	// translate the string into a sound
 	if (stricmp(token, "NoSound") == 0)
 	{
-		if (*theSound)
-		{
-			deleteInstance(*theSound);
-			*theSound = NULL;
-		}
+		deleteInstance(*theSound);
+		*theSound = NULL;
 	}
 	else
 	{

@@ -657,9 +657,7 @@ Object::~Object()
 	delete [] m_behaviors;
 	m_behaviors = NULL;
 
-	if( m_experienceTracker )
-		deleteInstance(m_experienceTracker);
-
+	deleteInstance(m_experienceTracker);
 	m_experienceTracker = NULL;
 
 	// we don't need to delete these, there were deleted on the m_behaviors list
@@ -3758,11 +3756,8 @@ void Object::updateObjValuesFromMapProperties(Dict* properties)
       audioToModify = NULL; // Belongs to TheAudio now
     }
 
-    if ( audioToModify != NULL )
-    {
-      deleteInstance(audioToModify);
-      audioToModify = NULL;
-    }
+    deleteInstance(audioToModify);
+    audioToModify = NULL;
 
     if ( soundEnabledExists && soundEnabled )
     {

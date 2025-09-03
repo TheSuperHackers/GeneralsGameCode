@@ -184,11 +184,9 @@ AudioManager::~AudioManager()
 	AudioEventInfoHashIt it;
 	for (it = m_allAudioEventInfo.begin(); it != m_allAudioEventInfo.end(); ++it) {
 		AudioEventInfo *eventInfo = (*it).second;
-		if (eventInfo) {
-			deleteInstance(eventInfo);
-			eventInfo = NULL;
-		}
+		deleteInstance(eventInfo);
 	}
+	m_allAudioEventInfo.clear();
 
 	delete m_silentAudioEvent;
 	m_silentAudioEvent = NULL;
@@ -807,9 +805,7 @@ AudioRequest *AudioManager::allocateAudioRequest( Bool useAudioEvent )
 //-------------------------------------------------------------------------------------------------
 void AudioManager::releaseAudioRequest( AudioRequest *requestToRelease )
 {
-	if (requestToRelease) {
-		deleteInstance(requestToRelease);
-	}
+	deleteInstance(requestToRelease);
 }
 
 //-------------------------------------------------------------------------------------------------

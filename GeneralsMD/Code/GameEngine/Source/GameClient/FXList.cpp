@@ -791,8 +791,7 @@ void FXList::clear()
 {
 	for (FXNuggetList::iterator it = m_nuggets.begin(); it != m_nuggets.end(); ++it)
 	{
-		if (*it)
-			deleteInstance(*it);
+		deleteInstance(*it);
 	}
 	m_nuggets.clear();
 }
