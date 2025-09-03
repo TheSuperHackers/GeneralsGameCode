@@ -118,6 +118,7 @@ void ReplaceObjectUpgrade::upgradeImplementation( )
 	{
 		replacementObject->getControllingPlayer()->onStructureConstructionComplete(NULL, replacementObject, FALSE);
 
+		// TheSuperHackers @bugfix Stubbjax 26/05/2025 If the old object was selected, select the new one.
 		if (oldObjectSelected)
 		{
 			GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_CREATE_SELECTED_GROUP_NO_SOUND);
@@ -126,6 +127,7 @@ void ReplaceObjectUpgrade::upgradeImplementation( )
 			TheInGameUI->selectDrawable(replacementObject->getDrawable());
 		}
 
+		// TheSuperHackers @bugfix Stubbjax 26/05/2025 If the old object was grouped, group the new one.
 		if (oldObjectSquadNumber != NO_HOTKEY_SQUAD)
 		{
 			if (replacementObject->isLocallyControlled())
