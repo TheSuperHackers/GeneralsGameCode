@@ -926,7 +926,7 @@ void amIAHero(Object* obj, void* heroHolder)
 
 static Object *iNeedAHero( void )
 {
-	Player* localPlayer = ThePlayerList->getLocalPlayer();
+	Player* localPlayer = TheControlBar->getCurrentlyViewedPlayer();
 	if (!localPlayer)
 		return NULL;
 
