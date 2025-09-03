@@ -70,6 +70,7 @@ PoisonedBehavior::PoisonedBehavior( Thing *thing, const ModuleData* moduleData )
 	m_poisonDamageFrame = 0;
 	m_poisonOverallStopFrame = 0;
 	m_poisonDamageAmount = 0.0f;
+	m_poisonSource = INVALID_ID;
 	m_deathType = DEATH_POISONED;
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 }
@@ -117,7 +118,7 @@ UpdateSleepTime PoisonedBehavior::update()
 		// If it is time to do damage, then do it and reset the damage timer
 		DamageInfo damage;
 		damage.in.m_amount = m_poisonDamageAmount;
-		damage.in.m_sourceID = INVALID_ID;
+		damage.in.m_sourceID = m_poisonSource;
 		damage.in.m_damageType = DAMAGE_UNRESISTABLE; // Not poison, as that will infect us again
 		damage.in.m_damageFXOverride = DAMAGE_POISON; // but this will ensure that the right effect is played
 		damage.in.m_deathType = m_deathType;
@@ -158,6 +159,9 @@ void PoisonedBehavior::startPoisonedEffects( const DamageInfo *damageInfo )
 
 	// We are going to take the damage dealt by the original poisoner every so often for a while.
 	m_poisonDamageAmount = damageInfo->out.m_actualDamageDealt;
+#if !RETAIL_COMPATIBLE_CRC
+	m_poisonSource = damageInfo->in.m_sourceID;
+#endif
 
 	m_poisonOverallStopFrame = now + d->m_poisonDurationData;
 
@@ -183,6 +187,7 @@ void PoisonedBehavior::stopPoisonedEffects()
 	m_poisonDamageFrame = 0;
 	m_poisonOverallStopFrame = 0;
 	m_poisonDamageAmount = 0.0f;
+	m_poisonSource = INVALID_ID;
 
 	Drawable *myDrawable = getObject()->getDrawable();
 	if( myDrawable )
@@ -209,7 +214,7 @@ void PoisonedBehavior::xfer( Xfer *xfer )
 {
 
 	// version
-	const XferVersion currentVersion = 2;
+	const XferVersion currentVersion = 3;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -230,6 +235,10 @@ void PoisonedBehavior::xfer( Xfer *xfer )
 		xfer->xferUser(&m_deathType, sizeof(m_deathType));
 	}
 
+	if (version >= 3)
+	{
+		xfer->xferObjectID(&m_poisonSource);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------

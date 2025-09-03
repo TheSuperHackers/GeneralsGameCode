@@ -92,6 +92,7 @@ private:
 	UnsignedInt		m_poisonDamageFrame;
 	UnsignedInt		m_poisonOverallStopFrame;
 	Real					m_poisonDamageAmount;
+	ObjectID			m_poisonSource;
 	DeathType			m_deathType;
 
 };
