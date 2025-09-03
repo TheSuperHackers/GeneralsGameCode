@@ -76,7 +76,7 @@ void ReplaceObjectUpgrade::upgradeImplementation( )
 	Bool oldObjectSelected;
 	Int oldObjectSquadNumber;
 	Matrix3D myMatrix;
-	Team* myTeam = NULL;
+	Team* myTeam;
 
 	{
 		Object* me = getObject();
