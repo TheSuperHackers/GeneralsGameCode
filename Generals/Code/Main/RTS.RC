@@ -1,3 +1,5 @@
+#include "version.rc"
+
 //Microsoft Developer Studio generated resource script.
 //
 #include "resource.h"
@@ -65,7 +67,8 @@ IDB_LOAD_SCREEN         BITMAP  DISCARDABLE     "Install_Final.bmp"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
-// Add manifest to specify that the app is DPI aware and prevent forced scaling by the system
+// TheSuperHackers @tweak Adds manifest to specify that the app is DPI aware
+// and prevent forced scaling by the system.
 1 24 "app.manifest"
 
 
