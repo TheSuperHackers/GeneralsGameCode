@@ -109,6 +109,26 @@ Real ArmorTemplate::adjustDamage(DamageType t, Real damage) const
 	self->m_damageCoefficient[dt] = pct;
 }
 
+void ArmorTemplate::parseArmorMultiplier(INI* ini, void* instance, void* /* store */, const void* userData)
+{
+	ArmorTemplate* self = (ArmorTemplate*)instance;
+
+	const char* damageName = ini->getNextToken();
+	Real mult = INI::scanPercentToReal(ini->getNextToken());
+
+	if (stricmp(damageName, "Default") == 0)
+	{
+		for (Int i = 0; i < DAMAGE_NUM_TYPES; i++)
+		{
+			self->m_damageCoefficient[i] = self->m_damageCoefficient[i] * mult;
+		}
+		return;
+	}
+
+	DamageType dt = (DamageType)DamageTypeFlags::getSingleBitFromName(damageName);
+	self->m_damageCoefficient[dt] = self->m_damageCoefficient[dt] * mult;
+}
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -159,7 +179,8 @@ const ArmorTemplate* ArmorStore::findArmorTemplate(AsciiString name) const
 {
 	static const FieldParse myFieldParse[] =
 	{
-		{ "Armor", ArmorTemplate::parseArmorCoefficients, NULL, 0 }
+		{ "Armor", ArmorTemplate::parseArmorCoefficients, NULL, 0 },
+		{ "ArmorMult", ArmorTemplate::parseArmorMultiplier, NULL, 0 }
 	};
 
 	const char* new_armor_name = ini->getNextToken();

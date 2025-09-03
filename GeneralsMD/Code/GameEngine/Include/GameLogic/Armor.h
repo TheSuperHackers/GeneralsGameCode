@@ -63,6 +63,7 @@ public:
 	Real adjustDamage(DamageType t, Real damage) const;
 
 	static void parseArmorCoefficients( INI* ini, void *instance, void* /* store */, const void* userData );
+	static void parseArmorMultiplier( INI* ini, void *instance, void* /* store */, const void* userData );
 
 protected:
 
