@@ -485,7 +485,8 @@ EMPTY_DTOR(SleepState)
 // @todo Replace calls to deleteInstance with RefCountPtr<StateMachine> when so appropriate.
 inline void deleteInstance(StateMachine* machine)
 {
-	machine->Release_Ref();
+	if (machine != NULL)
+		machine->Release_Ref();
 }
 
 
