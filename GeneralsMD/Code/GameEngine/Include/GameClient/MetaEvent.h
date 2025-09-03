@@ -314,16 +314,18 @@ enum CommandUsableInType CPP_11(: Int)
 {
 	COMMANDUSABLE_NONE				= 0,
 
-	COMMANDUSABLE_SHELL				= (1 << 0),
-	COMMANDUSABLE_GAME				= (1 << 1),
+	COMMANDUSABLE_SHELL				= (1 << 0), // Command is usable when in Shell (Menus)
+	COMMANDUSABLE_GAME				= (1 << 1), // Command is usable when not in Shell
+	COMMANDUSABLE_OBSERVER		= (1 << 2), // TheSuperHackers @feature Command is usable when observing
 
-	COMMANDUSABLE_EVERYWHERE = COMMANDUSABLE_SHELL | COMMANDUSABLE_GAME,
+	COMMANDUSABLE_EVERYWHERE = ~0,
 };
 
 static const char* TheCommandUsableInNames[] =
 {
 	"SHELL",
 	"GAME",
+	"OBSERVER",
 
 	NULL
 };

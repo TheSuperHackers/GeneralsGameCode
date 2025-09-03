@@ -3449,10 +3449,9 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		}
 		case GameMessage::MSG_META_TOGGLE_PAUSE:
+		case GameMessage::MSG_META_TOGGLE_PAUSE_ALT:
 		{
-#if !defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
-			if (TheGameLogic->isInReplayGame())
-#endif
+			if (!TheGameLogic->isInMultiplayerGame())
 			{
 				if (TheGameLogic->isGamePaused())
 				{
@@ -3465,17 +3464,18 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 					Bool pauseInput = FALSE;
 					TheGameLogic->setGamePaused(pause, pauseMusic, pauseInput);
 				}
+				disp = DESTROY_MESSAGE;
 			}
 			break;
 		}
 		case GameMessage::MSG_META_STEP_FRAME:
+		case GameMessage::MSG_META_STEP_FRAME_ALT:
 		{
-#if !defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
-			if (TheGameLogic->isInReplayGame())
-#endif
+			if (!TheGameLogic->isInMultiplayerGame())
 			{
 				TheGameLogic->setGamePaused(FALSE);
 				TheGameLogic->setGamePausedInFrame(TheGameLogic->getFrame() + 1);
+				disp = DESTROY_MESSAGE;
 			}
 			break;
 		}
