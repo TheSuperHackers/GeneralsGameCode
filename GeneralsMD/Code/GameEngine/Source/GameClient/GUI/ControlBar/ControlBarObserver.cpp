@@ -89,6 +89,7 @@ static NameKeyType buttonCancelID = NAMEKEY_INVALID;
 
 static GameWindow *winFlag = NULL;
 static GameWindow *winGeneralPortrait = NULL;
+static GameWindow *buttonIdleWorker = NULL;
 static GameWindow *staticTextNumberOfUnits = NULL;
 static GameWindow *staticTextNumberOfBuildings = NULL;
 static GameWindow *staticTextNumberOfUnitsKilled = NULL;
@@ -123,6 +124,7 @@ void ControlBar::initObserverControls( void )
 	staticTextPlayerName = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextPlayerName"));
 	winFlag = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:WinFlag"));
 	winGeneralPortrait = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:WinGeneralPortrait"));
+	buttonIdleWorker = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("ControlBar.wnd:ButtonIdleWorker"));
 
 	buttonCancelID = TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonCancel");
 }
@@ -163,6 +165,7 @@ WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt m
 				TheControlBar->setObserverLookAtPlayer(NULL);
 				ObserverPlayerInfoWindow->winHide(TRUE);
 				ObserverPlayerListWindow->winHide(FALSE);
+				buttonIdleWorker->winHide(TRUE);
 				TheControlBar->populateObserverList();
 
 			}
@@ -301,6 +304,7 @@ void ControlBar::populateObserverInfoWindow ( void )
 	{
 		ObserverPlayerInfoWindow->winHide(TRUE);
 		ObserverPlayerListWindow->winHide(FALSE);
+		buttonIdleWorker->winHide(TRUE);
 		populateObserverList();
 		return;
 	}
@@ -338,4 +342,5 @@ void ControlBar::populateObserverInfoWindow ( void )
 	staticTextPlayerName->winSetEnabledTextColors(color, GameMakeColor(0,0,0,255));
 	winFlag->winSetEnabledImage(0, m_observerLookAtPlayer->getPlayerTemplate()->getFlagWaterMarkImage());
 	winGeneralPortrait->winHide(FALSE);
+	buttonIdleWorker->winHide(FALSE);
 }

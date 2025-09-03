@@ -5428,7 +5428,7 @@ void InGameUI::removeIdleWorker( Object *obj, Int playerNumber )
 
 void InGameUI::selectNextIdleWorker( void )
 {
-	Int index = ThePlayerList->getLocalPlayer()->getPlayerIndex();
+	Int index = TheControlBar->getCurrentlyViewedPlayer()->getPlayerIndex();
 	if(m_idleWorkers[index].empty())
 	{
 		DEBUG_ASSERTCRASH(FALSE, ("InGameUI::selectNextIdleWorker We're trying to select a worker when our list is empty for player %ls", ThePlayerList->getLocalPlayer()->getPlayerDisplayName().str()));
@@ -5518,8 +5518,13 @@ ObjectPtrVector InGameUI::getUniqueIdleWorkers(const ObjectList& idleWorkers)
 
 Int InGameUI::getIdleWorkerCount( void )
 {
-	Int index = ThePlayerList->getLocalPlayer()->getPlayerIndex();
-	return m_idleWorkers[index].size();
+	if (Player* player = TheControlBar->getCurrentlyViewedPlayer())
+	{
+		Int index = player->getPlayerIndex();
+		return m_idleWorkers[index].size();
+	}
+
+	return 0;
 }
 
 void InGameUI::showIdleWorkerLayout( void )
