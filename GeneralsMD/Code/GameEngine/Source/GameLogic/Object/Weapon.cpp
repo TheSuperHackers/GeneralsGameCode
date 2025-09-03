@@ -327,13 +327,10 @@ WeaponTemplate::WeaponTemplate() : m_nextTemplate(NULL)
 //-------------------------------------------------------------------------------------------------
 WeaponTemplate::~WeaponTemplate()
 {
-	if (m_nextTemplate) {
-		deleteInstance(m_nextTemplate);
-	}
+	deleteInstance(m_nextTemplate);
 
 	// delete any extra-bonus that's present
-	if (m_extraBonus)
-		deleteInstance(m_extraBonus);
+	deleteInstance(m_extraBonus);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1502,8 +1499,7 @@ WeaponStore::~WeaponStore()
 	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
 	{
 		WeaponTemplate* wt = m_weaponTemplateVector[i];
-		if (wt)
-			deleteInstance(wt);
+		deleteInstance(wt);
 	}
 	m_weaponTemplateVector.clear();
 }

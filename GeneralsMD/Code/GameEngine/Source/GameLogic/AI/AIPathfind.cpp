@@ -3871,10 +3871,9 @@ void Pathfinder::reset( void )
 	debugPathPos.y = 0.0f;
 	debugPathPos.z = 0.0f;
 
-	if (debugPath)
-		deleteInstance(debugPath);
-
+	deleteInstance(debugPath);
 	debugPath = NULL;
+
 	m_frameToShowObstacles = 0;
 
 	for (m_queuePRHead=0; m_queuePRHead<PATHFIND_QUEUE_LEN; m_queuePRHead++) {
@@ -8176,10 +8175,10 @@ Bool Pathfinder::slowDoesPathExist( Object *obj,
 	Path *path = findPath(obj, locoSet, from, to);
 	m_ignoreObstacleID = INVALID_ID;
 	Bool found = (path!=NULL);
-	if (path) {
-		deleteInstance(path);
-		path = NULL;
-	}
+
+	deleteInstance(path);
+	path = NULL;
+
 	return found;
 }
 
@@ -9121,9 +9120,7 @@ void Pathfinder::setDebugPath(Path *newDebugpath)
 	if (TheGlobalData->m_debugAI)
 	{
 		// copy the path for debugging
-		if (debugPath)
-			deleteInstance(debugPath);
-
+		deleteInstance(debugPath);
 		debugPath = newInstance(Path);
 
 		for( PathNode *copyNode = newDebugpath->getFirstNode(); copyNode; copyNode = copyNode->getNextOptimized() )

@@ -49,10 +49,8 @@ FrameData::FrameData()
  */
 FrameData::~FrameData()
 {
-	if (m_commandList != NULL) {
-		deleteInstance(m_commandList);
-		m_commandList = NULL;
-	}
+	deleteInstance(m_commandList);
+	m_commandList = NULL;
 }
 
 /**

@@ -130,8 +130,7 @@ Campaign::~Campaign( void )
 	{
 		Mission *mission = *it;
 		it = m_missions.erase( it );
-		if(mission)
-			deleteInstance(mission);
+		deleteInstance(mission);
 	}
 }
 
@@ -236,8 +235,7 @@ CampaignManager::~CampaignManager( void )
 	{
 		Campaign *campaign = *it;
 		it = m_campaignList.erase( it );
-		if(campaign)
-			deleteInstance(campaign);
+		deleteInstance(campaign);
 	}
 }
 

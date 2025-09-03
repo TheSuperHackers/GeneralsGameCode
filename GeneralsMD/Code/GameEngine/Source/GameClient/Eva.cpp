@@ -246,8 +246,7 @@ Eva::~Eva()
 {
 	EvaCheckInfoPtrVecIt it;
 	for (it = m_allCheckInfos.begin(); it != m_allCheckInfos.end(); ++it) {
-		if (*it)
-			deleteInstance(*it);
+		deleteInstance(*it);
 	}
 }
 

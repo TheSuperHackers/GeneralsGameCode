@@ -98,8 +98,7 @@ AIUpdateModuleData::~AIUpdateModuleData()
 		if (m_turretData[i])
 		{
 			TurretAIData* td = const_cast<TurretAIData*>(m_turretData[i]);
-			if (td)
-				deleteInstance(td);
+			deleteInstance(td);
 		}
 	}
 }
@@ -644,8 +643,7 @@ AIUpdateInterface::~AIUpdateInterface( void )
 
 	for (int i = 0; i < MAX_TURRETS; i++)
 	{
-		if (m_turretAI[i])
-			deleteInstance(m_turretAI[i]);
+		deleteInstance(m_turretAI[i]);
 		m_turretAI[i] = NULL;
 	}
 	m_stateMachine = NULL;
@@ -2020,10 +2018,9 @@ Bool AIUpdateInterface::computeAttackPath( PathfindServicesInterface *pathServic
 void AIUpdateInterface::destroyPath( void )
 {
 	// destroy previous path
-	if (m_path)
-		deleteInstance(m_path);
-
+	deleteInstance(m_path);
 	m_path = NULL;
+
 	m_waitingForPath = FALSE; // we no longer need it.
 	//CRCDEBUG_LOG(("AIUpdateInterface::destroyPath() - m_isAttackPath = FALSE for object %d", getObject()->getID()));
 	m_isAttackPath = FALSE;
