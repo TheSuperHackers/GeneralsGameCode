@@ -274,8 +274,10 @@ public:
 		MSG_META_CAMERA_RESET,
     MSG_META_TOGGLE_CAMERA_TRACKING_DRAWABLE,
 		MSG_META_TOGGLE_FAST_FORWARD_REPLAY,				///< Toggle the fast forward feature
-		MSG_META_TOGGLE_PAUSE,											///< TheSuperHackers @feature Toggle game pause (in replay playbacks)
-		MSG_META_STEP_FRAME,												///< TheSuperHackers @feature Step one frame (in replay playbacks)
+		MSG_META_TOGGLE_PAUSE,											///< TheSuperHackers @feature Toggle game pause
+		MSG_META_TOGGLE_PAUSE_ALT,									///< TheSuperHackers @feature Toggle game pause (alternative mapping)
+		MSG_META_STEP_FRAME,												///< TheSuperHackers @feature Step one frame
+		MSG_META_STEP_FRAME_ALT,										///< TheSuperHackers @feature Step one frame (alternative mapping)
 		MSG_META_DEMO_INSTANT_QUIT,									///< bail out of game immediately
 
 

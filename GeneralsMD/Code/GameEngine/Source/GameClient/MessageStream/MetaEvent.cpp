@@ -30,6 +30,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
+#include "Common/GameUtility.h"
 #include "Common/INI.h"
 #include "Common/MessageStream.h"
 #include "Common/Player.h"
@@ -183,8 +184,10 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "TOGGLE_CAMERA_TRACKING_DRAWABLE",					GameMessage::MSG_META_TOGGLE_CAMERA_TRACKING_DRAWABLE },
 	{ "TOGGLE_FAST_FORWARD_REPLAY",								GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY },
 	{ "TOGGLE_PAUSE",															GameMessage::MSG_META_TOGGLE_PAUSE },
+	{ "TOGGLE_PAUSE_ALT",													GameMessage::MSG_META_TOGGLE_PAUSE_ALT },
 	{ "STEP_FRAME",																GameMessage::MSG_META_STEP_FRAME },
-  	{ "DEMO_INSTANT_QUIT",												GameMessage::MSG_META_DEMO_INSTANT_QUIT },
+	{ "STEP_FRAME_ALT",														GameMessage::MSG_META_STEP_FRAME_ALT },
+	{ "DEMO_INSTANT_QUIT",												GameMessage::MSG_META_DEMO_INSTANT_QUIT },
 
 #if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
 	{ "CHEAT_RUNSCRIPT1",								        	GameMessage::MSG_CHEAT_RUNSCRIPT1 },
@@ -401,6 +404,33 @@ static const char * findGameMessageNameByType(GameMessage::Type type)
 }
 
 //-------------------------------------------------------------------------------------------------
+static Bool isMessageUsable(CommandUsableInType usableIn)
+{
+	// We will ignore all commands if the game client has not yet incremented to frame 1.
+	// It prevents the user from doing commands during a map load, which throws the input
+	// system into whack because there isn't a client frame for the input event, and in
+	// the case of a command that pauses the game, like the quit menu, the client frame
+	// will never get beyond 0 and we lose the ability to process any input.
+	if (TheGameClient->getFrame() == 0)
+		return false;
+
+	const Bool usableInShell = (usableIn & COMMANDUSABLE_SHELL);
+	const Bool usableInGame = (usableIn & COMMANDUSABLE_GAME);
+	const Bool usableAsObserver = (usableIn & COMMANDUSABLE_OBSERVER);
+
+	if (usableInShell && TheShell && TheShell->isShellActive())
+		return true;
+
+	if (usableInGame && (!TheShell || !TheShell->isShellActive()))
+		return true;
+
+	if (usableAsObserver && rts::localPlayerIsObserving())
+		return true;
+
+	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
 GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessage *msg)
 {
 	GameMessageDisposition disp = KEEP_MESSAGE;
@@ -431,33 +461,13 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 		}
 
 
-    for (const MetaMapRec *map = TheMetaMap->getFirstMetaMapRec(); map; map = map->m_next)
+		for (const MetaMapRec *map = TheMetaMap->getFirstMetaMapRec(); map; map = map->m_next)
 		{
 			DEBUG_ASSERTCRASH(map->m_meta > GameMessage::MSG_BEGIN_META_MESSAGES &&
 				map->m_meta < GameMessage::MSG_END_META_MESSAGES, ("hmm, expected only meta-msgs here"));
 
-			//
-			// if this command is *only* usable in the game, we will ignore it if the game client
-			// has not yet incremented to frame 1 (keeps us from doing in-game commands during
-			// a map load, which throws the input system into wack because there isn't a
-			// client frame for the input event, and in the case of a command that pauses the
-			// game, like the quit menu, the client frame will never get beyond 0 and we
-			// lose the ability to process any input
-			//
-			if( map->m_usableIn == COMMANDUSABLE_GAME && TheGameClient->getFrame() < 1 )
+			if (!isMessageUsable(map->m_usableIn))
 				continue;
-
-			// if the shell is active, and this command is not usable in shell, continue
-			if (TheShell && TheShell->isShellActive() && !(map->m_usableIn & COMMANDUSABLE_SHELL) )
-				continue;
-
-			// if the shell is not active and this command is not usable in the game, continue
-			if (TheShell && !TheShell->isShellActive() && !(map->m_usableIn & COMMANDUSABLE_GAME) )
-				continue;
-
-
-
-
 
 			// check for the special case of mods-only-changed.
 			if (
@@ -781,7 +791,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 			map->m_key = MK_F;
 			map->m_transition = DOWN;
 			map->m_modState = NONE;
-			map->m_usableIn = COMMANDUSABLE_GAME;
+			map->m_usableIn = COMMANDUSABLE_GAME; // @todo COMMANDUSABLE_OBSERVER
 		}
 	}
 	{
@@ -792,7 +802,18 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 			map->m_key = MK_P;
 			map->m_transition = DOWN;
 			map->m_modState = NONE;
-			map->m_usableIn = COMMANDUSABLE_GAME;
+			map->m_usableIn = COMMANDUSABLE_OBSERVER;
+		}
+	}
+	{
+		// Is useful for Generals and Zero Hour.
+		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_TOGGLE_PAUSE_ALT);
+		if (map->m_key == MK_NONE)
+		{
+			map->m_key = MK_P;
+			map->m_transition = DOWN;
+			map->m_modState = SHIFT; // Requires modifier to avoid key conflicts as a player.
+			map->m_usableIn = COMMANDUSABLE_EVERYWHERE;
 		}
 	}
 	{
@@ -803,7 +824,18 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 			map->m_key = MK_O;
 			map->m_transition = DOWN;
 			map->m_modState = NONE;
-			map->m_usableIn = COMMANDUSABLE_GAME;
+			map->m_usableIn = COMMANDUSABLE_OBSERVER;
+		}
+	}
+	{
+		// Is useful for Generals and Zero Hour.
+		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_STEP_FRAME_ALT);
+		if (map->m_key == MK_NONE)
+		{
+			map->m_key = MK_O;
+			map->m_transition = DOWN;
+			map->m_modState = SHIFT; // Requires modifier to avoid key conflicts as a player.
+			map->m_usableIn = COMMANDUSABLE_EVERYWHERE;
 		}
 	}
 	{

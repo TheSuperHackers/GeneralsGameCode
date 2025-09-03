@@ -53,6 +53,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/GameState.h
 #    Include/Common/GameStateMap.h
 #    Include/Common/GameType.h
+    Include/Common/GameUtility.h
 #    Include/Common/Geometry.h
 #    Include/Common/GlobalData.h
 #    Include/Common/Handicap.h
@@ -574,6 +575,7 @@ set(GAMEENGINE_SRC
 #    Source/Common/GameEngine.cpp
 #    Source/Common/GameLOD.cpp
 #    Source/Common/GameMain.cpp
+    Source/Common/GameUtility.cpp
 #    Source/Common/GlobalData.cpp
 #    Source/Common/INI/INI.cpp
 #    Source/Common/INI/INIAiData.cpp
