@@ -121,7 +121,7 @@ private:
 		SOCKET_COUNT = 45007
 	};
 
-#if RETAIL_COMPATIBLE_CRC
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
 	Bool addReservedKey();
 #endif
 

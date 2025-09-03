@@ -123,7 +123,48 @@ AsciiString NameKeyGenerator::keyToName(NameKeyType key)
 }
 
 //-------------------------------------------------------------------------------------------------
-NameKeyType NameKeyGenerator::nameToKey(const char* nameString)
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
+// TheSuperHackers @info xezon 04/09/2025 This key reservation is required for CRC compatibility,
+// because the name keys are somehow CRC relevant. It was originally used by the file exist cache
+// of the file system in Zero Hour.
+Bool NameKeyGenerator::addReservedKey()
+{
+	switch (m_nextID)
+	{
+	case 97: nameToLowercaseKeyImpl("Data\\English\\Language9x.ini"); return true;
+	case 98: nameToLowercaseKeyImpl("Data\\Audio\\Tracks\\English\\GLA_02.mp3"); return true;
+	case 99: nameToLowercaseKeyImpl("Data\\Audio\\Tracks\\GLA_02.mp3"); return true;
+	}
+	return false;
+}
+#endif
+
+//-------------------------------------------------------------------------------------------------
+NameKeyType NameKeyGenerator::nameToKey(const char* name)
+{
+	const NameKeyType key = nameToKeyImpl(name);
+
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
+	while (addReservedKey());
+#endif
+
+	return key;
+}
+
+//-------------------------------------------------------------------------------------------------
+NameKeyType NameKeyGenerator::nameToLowercaseKey(const char *name)
+{
+	const NameKeyType key = nameToLowercaseKeyImpl(name);
+
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
+	while (addReservedKey());
+#endif
+
+	return key;
+}
+
+//-------------------------------------------------------------------------------------------------
+NameKeyType NameKeyGenerator::nameToKeyImpl(const char* nameString)
 {
 	Bucket *b;
 
@@ -171,7 +212,7 @@ NameKeyType NameKeyGenerator::nameToKey(const char* nameString)
 }  // end nameToKey
 
 //-------------------------------------------------------------------------------------------------
-NameKeyType NameKeyGenerator::nameToLowercaseKey(const char* nameString)
+NameKeyType NameKeyGenerator::nameToLowercaseKeyImpl(const char* nameString)
 {
 	Bucket *b;
 

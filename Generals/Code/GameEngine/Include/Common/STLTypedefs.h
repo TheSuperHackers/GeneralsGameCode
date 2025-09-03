@@ -177,10 +177,24 @@ namespace rts
 		}
 	};
 
+	template<> struct hash<const Char*>
+	{
+		size_t operator()(const Char* s) const
+		{
+#ifdef USING_STLPORT
+			std::hash<const Char*> hasher;
+			return hasher(s);
+#else
+			std::hash<std::string_view> hasher;
+			return hasher(s);
+#endif
+		}
+	};
+
 	// This is the equal_to overload for char* comparisons. We compare the
 	// strings to determine whether they are equal or not.
 	// Other overloads should go into specific header files, not here (unless
-	// they are ot be used in lots of places.)
+	// they are to be used in lots of places.)
 	template<> struct equal_to<const char*>
 	{
 		Bool operator()(const char* s1, const char* s2) const
@@ -227,6 +241,62 @@ namespace rts
 			return (__t1.compareNoCase(__t2) < 0);
 		}
 	};
-}
+
+	// TheSuperHackers @info Structs to help create maps that can use C strings for
+	// lookups without the need to allocate a string.
+	template <typename String>
+	struct string_key
+	{
+		typedef typename String::const_pointer const_pointer;
+
+		static string_key temporary(const_pointer s)
+		{
+			string_key key;
+			key.cstr = s;
+			return key;
+		}
+
+		string_key(const_pointer s)
+			: storage(s)
+			, cstr(storage.str())
+		{}
+
+		string_key(const String& s)
+			: storage(s)
+			, cstr(storage.str())
+		{}
+
+		const_pointer c_str() const
+		{
+			return cstr;
+		}
+
+	private:
+		string_key() {}
+
+		String storage;
+		const_pointer cstr;
+	};
+
+	template <typename String>
+	struct string_key_hash
+	{
+		typedef typename String::const_pointer const_pointer;
+		size_t operator()(const string_key<String>& key) const
+		{
+			return hash<const_pointer>()(key.c_str());
+		}
+	};
+
+	template <typename String>
+	struct string_key_equal
+	{
+		bool operator()(const string_key<String>& a, const string_key<String>& b) const
+		{
+			return strcmp(a.c_str(), b.c_str()) == 0;
+		}
+	};
+
+} // namespace rts
 
 #endif /* __STLTYPEDEFS_H__ */

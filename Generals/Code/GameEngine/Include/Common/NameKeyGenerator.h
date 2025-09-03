@@ -123,6 +123,13 @@ private:
 		SOCKET_COUNT = 6473
 	};
 
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
+	Bool addReservedKey();
+#endif
+
+	NameKeyType nameToKeyImpl(const char* name);
+	NameKeyType nameToLowercaseKeyImpl(const char *name);
+
 	void freeSockets();
 
 	Bucket*				m_sockets[SOCKET_COUNT];			///< Catalog of all Buckets already generated

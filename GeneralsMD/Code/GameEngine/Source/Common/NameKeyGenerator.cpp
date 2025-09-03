@@ -123,7 +123,10 @@ AsciiString NameKeyGenerator::keyToName(NameKeyType key)
 }
 
 //-------------------------------------------------------------------------------------------------
-#if RETAIL_COMPATIBLE_CRC
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
+// TheSuperHackers @info xezon 04/09/2025 This key reservation is required for CRC compatibility,
+// because the name keys are somehow CRC relevant. It was originally used by the file exist cache
+// of the file system in Zero Hour.
 Bool NameKeyGenerator::addReservedKey()
 {
 	switch (m_nextID)
@@ -141,7 +144,7 @@ NameKeyType NameKeyGenerator::nameToKey(const char* name)
 {
 	const NameKeyType key = nameToKeyImpl(name);
 
-#if RETAIL_COMPATIBLE_CRC
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
 	while (addReservedKey());
 #endif
 
@@ -153,7 +156,7 @@ NameKeyType NameKeyGenerator::nameToLowercaseKey(const char *name)
 {
 	const NameKeyType key = nameToLowercaseKeyImpl(name);
 
-#if RETAIL_COMPATIBLE_CRC
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
 	while (addReservedKey());
 #endif
 
