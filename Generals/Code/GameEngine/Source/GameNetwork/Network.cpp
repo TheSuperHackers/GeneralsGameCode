@@ -666,10 +666,11 @@ void Network::processDestroyPlayerCommand(NetDestroyPlayerCommandMsg *msg)
 	{
 		GameMessage *msg = newInstance(GameMessage)(GameMessage::MSG_SELF_DESTRUCT);
 #if RETAIL_COMPATIBLE_CRC
-		msg->appendBooleanArgument(FALSE);
+		const Bool transferAssets = FALSE;
 #else
-		msg->appendBooleanArgument(TRUE);
+		const Bool transferAssets = TRUE;
 #endif
+		msg->appendBooleanArgument(transferAssets);
 		msg->friend_setPlayerIndex(pPlayer->getPlayerIndex());
 		TheCommandList->appendMessage(msg);
 	}
