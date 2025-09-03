@@ -47,6 +47,8 @@ public:
 	Real m_treadPivotSpeedFraction;	///<fraction of locomotor speed below which we allow pivoting.
 	Real m_treadDriveSpeedFraction;	///<fraction of locomotor speed below which treads stop animating.
 
+	Bool m_hasMultiAddOns; ///< compatibility for MultiAddOnContain and similar modules;
+
 	W3DOverlordTankDrawModuleData();
 	~W3DOverlordTankDrawModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);

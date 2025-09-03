@@ -781,20 +781,39 @@ CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType att
 
 	// Do a check to see if we have an occupied container (garrisoned building, transport that allows passengers to fire).
 	ContainModuleInterface *contain = source->getContain();
-	if (contain && contain->isPassengerAllowedToFire())
+	if (contain)
 	{
-		// Loop through each member and if just one of them can attack the specific target, then
-		// we are good to go!
-		const ContainedItemsList* items = contain->getContainedItemsList();
+		if (contain->isPassengerAllowedToFire()) {
+			// Loop through each member and if just one of them can attack the specific target, then
+			// we are good to go!
+			const ContainedItemsList* items = contain->getContainedItemsList();
+			if (items)
+			{
+				for (ContainedItemsList::const_iterator it = items->begin(); it != items->end(); ++it)
+				{
+					Object* garrisonedMember = *it;
+					if (garrisonedMember->isAbleToAttack())
+					{
+						CanAttackResult result = garrisonedMember->getAbleToUseWeaponAgainstTarget(attackType, victim, pos, commandSource);
+						if (result == ATTACKRESULT_POSSIBLE || result == ATTACKRESULT_POSSIBLE_AFTER_MOVING)
+						{
+							return result;
+						}
+					}
+				}
+			}
+		}
+		// Check MultiAddons
+		const ContainedItemsList* items = contain->getAddOnList();
 		if (items)
 		{
 			for (ContainedItemsList::const_iterator it = items->begin(); it != items->end(); ++it)
 			{
 				Object* garrisonedMember = *it;
-				if( garrisonedMember->isAbleToAttack() )
+				if (garrisonedMember->isAbleToAttack())
 				{
-					CanAttackResult result = garrisonedMember->getAbleToUseWeaponAgainstTarget( attackType, victim, pos, commandSource );
-					if( result == ATTACKRESULT_POSSIBLE || result == ATTACKRESULT_POSSIBLE_AFTER_MOVING )
+					CanAttackResult result = garrisonedMember->getAbleToUseWeaponAgainstTarget(attackType, victim, pos, commandSource);
+					if (result == ATTACKRESULT_POSSIBLE || result == ATTACKRESULT_POSSIBLE_AFTER_MOVING)
 					{
 						return result;
 					}

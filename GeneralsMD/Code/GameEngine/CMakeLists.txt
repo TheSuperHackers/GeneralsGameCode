@@ -344,6 +344,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/HeightDieUpdate.h
     Include/GameLogic/Module/HelicopterSlowDeathUpdate.h
     Include/GameLogic/Module/HelixContain.h
+    Include/GameLogic/Module/MultiAddOnContain.h
     Include/GameLogic/Module/HighlanderBody.h
     Include/GameLogic/Module/HijackerUpdate.h
     Include/GameLogic/Module/HiveStructureBody.h
@@ -924,6 +925,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Contain/GarrisonContain.cpp
     Source/GameLogic/Object/Contain/HealContain.cpp
     Source/GameLogic/Object/Contain/HelixContain.cpp
+    Source/GameLogic/Object/Contain/MultiAddOnContain.cpp
     Source/GameLogic/Object/Contain/InternetHackContain.cpp
     Source/GameLogic/Object/Contain/MobNexusContain.cpp
     Source/GameLogic/Object/Contain/OpenContain.cpp

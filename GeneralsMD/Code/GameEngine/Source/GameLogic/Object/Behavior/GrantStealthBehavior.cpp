@@ -83,6 +83,14 @@ static void checkForGrantStealth( Object *testObj, void *userData )
 		{
 			listToAddTo->push_back(rider);
 		}
+
+		// same for multi addons
+		const std::list<Object*>* addOnList = testObj->getContain()->getAddOnList();
+		if (addOnList) {
+			for (Object* addOn : *addOnList) {
+				listToAddTo->push_back(addOn);
+			}
+		}
 	}
 }
 

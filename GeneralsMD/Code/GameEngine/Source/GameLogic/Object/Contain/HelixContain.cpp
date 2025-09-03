@@ -418,7 +418,7 @@ void HelixContain::onRemoving( Object *obj )
 	TransportContain::onRemoving(obj);
 
 	// give the object back a regular weapon
-	obj->clearWeaponBonusCondition( WEAPONBONUSCONDITION_GARRISONED );
+	//obj->clearWeaponBonusCondition( WEAPONBONUSCONDITION_GARRISONED );
   obj->clearDisabled( DISABLED_HELD );
 
 } // end onRemoving

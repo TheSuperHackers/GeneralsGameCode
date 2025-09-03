@@ -3162,6 +3162,15 @@ void AIUpdateInterface::privateIdle(CommandSourceType cmdSource)
 					ai->aiIdle(cmdSource);
 			}
 		}
+
+		const std::list<Object*>* addOnList = contain->getAddOnList();
+		if (addOnList) {
+			for (Object* obj : *addOnList) {
+				AIUpdateInterface* ai = obj ? obj->getAI() : NULL;
+				if (ai)
+					ai->aiIdle(cmdSource);
+			}
+		}
 	}
 
 }
