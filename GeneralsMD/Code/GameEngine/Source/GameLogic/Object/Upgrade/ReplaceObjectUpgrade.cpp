@@ -71,27 +71,34 @@ ReplaceObjectUpgrade::~ReplaceObjectUpgrade( void )
 void ReplaceObjectUpgrade::upgradeImplementation( )
 {
 	const ReplaceObjectUpgradeModuleData *data = getReplaceObjectUpgradeModuleData();
+	const ThingTemplate* replacementTemplate = TheThingFactory->findTemplate(data->m_replaceObjectName);
 
-	Object *me = getObject();
+	Bool oldObjectSelected;
+	Int oldObjectSquadNumber;
+	Matrix3D myMatrix;
+	Team* myTeam = NULL;
 
-	Matrix3D myMatrix = *me->getTransformMatrix();
-	Team *myTeam = me->getTeam();// Team implies player.  It is a subset.
-
-	const ThingTemplate *replacementTemplate = TheThingFactory->findTemplate(data->m_replaceObjectName);
-	if( replacementTemplate == NULL )
 	{
-		DEBUG_ASSERTCRASH(replacementTemplate != NULL, ("No such object '%s' in ReplaceObjectUpgrade.", data->m_replaceObjectName.str() ) );
-		return;
+		Object* me = getObject();
+
+		myMatrix = *me->getTransformMatrix();
+		myTeam = me->getTeam();// Team implies player.  It is a subset.
+
+		if (replacementTemplate == NULL)
+		{
+			DEBUG_ASSERTCRASH(replacementTemplate != NULL, ("No such object '%s' in ReplaceObjectUpgrade.", data->m_replaceObjectName.str()));
+			return;
+		}
+
+		Drawable* selectedDrawable = TheInGameUI->getFirstSelectedDrawable();
+		oldObjectSelected = selectedDrawable && selectedDrawable->getID() == me->getDrawable()->getID();
+		oldObjectSquadNumber = me->getControllingPlayer()->getSquadNumberForObject(me);
+
+		// Remove us first since occupation of cells is apparently not a refcount, but a flag.  If I don't remove, then the new
+		// thing will be placed, and then on deletion I will remove "his" marks.
+		TheAI->pathfinder()->removeObjectFromPathfindMap(me);
+		TheGameLogic->destroyObject(me);
 	}
-
-	Drawable* selectedDrawable = TheInGameUI->getFirstSelectedDrawable();
-	Bool oldObjectSelected = selectedDrawable && selectedDrawable->getID() == me->getDrawable()->getID();
-	Int oldObjectSquadNumber = me->getControllingPlayer()->getSquadNumberForObject(me);
-
-	// Remove us first since occupation of cells is apparently not a refcount, but a flag.  If I don't remove, then the new
-	// thing will be placed, and then on deletion I will remove "his" marks.
-	TheAI->pathfinder()->removeObjectFromPathfindMap( me );
-	TheGameLogic->destroyObject(me);
 
 	Object *replacementObject = TheThingFactory->newObject(replacementTemplate, myTeam);
 	replacementObject->setTransformMatrix(&myMatrix);
@@ -109,7 +116,7 @@ void ReplaceObjectUpgrade::upgradeImplementation( )
 
 	if( replacementObject->getControllingPlayer() )
 	{
-		replacementObject->getControllingPlayer()->onStructureConstructionComplete(me, replacementObject, FALSE);
+		replacementObject->getControllingPlayer()->onStructureConstructionComplete(NULL, replacementObject, FALSE);
 
 		if (oldObjectSelected)
 		{
