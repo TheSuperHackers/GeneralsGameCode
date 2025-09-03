@@ -213,7 +213,11 @@ void PoisonedBehavior::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
+	const XferVersion currentVersion = 2;
+#else
 	const XferVersion currentVersion = 3;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -234,10 +238,12 @@ void PoisonedBehavior::xfer( Xfer *xfer )
 		xfer->xferUser(&m_deathType, sizeof(m_deathType));
 	}
 
+#if !RETAIL_COMPATIBLE_XFER_SAVE
 	if (version >= 3)
 	{
 		xfer->xferObjectID(&m_poisonSource);
 	}
+#endif
 }
 
 // ------------------------------------------------------------------------------------------------
