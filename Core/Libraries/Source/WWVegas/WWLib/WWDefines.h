@@ -18,10 +18,8 @@
 
 #pragma once
 
-#include "stringex.h"
-
-#if defined(_MSC_VER) && _MSC_VER < 1300
-typedef unsigned MemValueType;
-#else
-typedef unsigned long long MemValueType;
+// The WW3D Sync time. This was originally 33 ms, ~30 fps, integer.
+// Changing or removing this will require tweaking all Drawable code that concerns logic time step, including locomotion physics.
+#ifndef MSEC_PER_WWSYNC_FRAME
+#define MSEC_PER_WWSYNC_FRAME (33)
 #endif

@@ -3478,7 +3478,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 #endif
 			{
 				TheGameLogic->setGamePaused(FALSE);
-				TheGameLogic->setGamePausedInFrame(TheGameLogic->getFrame() + 1);
+				TheGameLogic->setGamePausedInFrame(TheGameLogic->getFrame() + 1, TRUE);
 			}
 			break;
 		}

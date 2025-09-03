@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "WWDefines.h"
+
 // Note: Retail compatibility must not be broken before this project officially does.
 // Use RETAIL_COMPATIBLE_CRC and RETAIL_COMPATIBLE_XFER_SAVE to guard breaking changes.
 

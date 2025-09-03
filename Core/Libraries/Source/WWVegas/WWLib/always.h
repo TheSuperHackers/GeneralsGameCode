@@ -41,6 +41,7 @@
 #define ALWAYS_H
 
 #include "WWCommon.h"
+#include "WWDefines.h"
 
 #include <assert.h>
 #include <new>
