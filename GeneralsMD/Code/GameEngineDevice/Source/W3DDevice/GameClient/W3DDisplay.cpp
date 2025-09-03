@@ -1677,52 +1677,9 @@ Int W3DDisplay::getLastFrameDrawCalls()
 	return Debug_Statistics::Get_Draw_Calls();
 }
 
-Bool W3DDisplay::isTimeFrozen()
-{
-	if (TheTacticalView->isTimeFrozen() && !TheTacticalView->isCameraMovementFinished())
-		return true;
-
-	if (TheScriptEngine->isTimeFrozenDebug())
-		return true;
-
-	if (TheScriptEngine->isTimeFrozenScript())
-		return true;
-
-	if (TheGameLogic->isGamePaused())
-		return true;
-
-	return false;
-}
-
-// TheSuperHackers @tweak xezon 12/08/2025 The WW3D Sync is no longer tied
-// to the render update, but is advanced separately for every fixed time step.
+//=============================================================================
 void W3DDisplay::step()
 {
-	// TheSuperHackers @info This will wrap in 1205 hours at 30 fps logic step.
-	static UnsignedInt syncTime = 0;
-
-	extern HWND ApplicationHWnd;
-	if (ApplicationHWnd && ::IsIconic(ApplicationHWnd)) {
-		return;
-	}
-
-	if (TheGlobalData->m_headless)
-		return;
-
-	Bool freezeTime = isTimeFrozen();
-
-	if (!freezeTime)
-	{
-		syncTime += (UnsignedInt)TheW3DFrameLengthInMsec;
-
-		if (TheScriptEngine->isTimeFast())
-		{
-			return;
-		}
-	}
-
-	WW3D::Sync( syncTime );
-
 	stepViews();
 }
 
@@ -1819,12 +1776,7 @@ AGAIN:
   	//
 	//PredictiveLODOptimizerClass::Optimize_LODs( 5000 );
 
-	Bool freezeTime = isTimeFrozen();
-
-	// hack to let client spin fast in network games but still do effects at the same pace. -MDC
-	static UnsignedInt lastFrame = ~0;
-	freezeTime = freezeTime || (TheNetwork != NULL && lastFrame == TheGameClient->getFrame());
-	lastFrame = TheGameClient->getFrame();
+	Bool freezeTime = TheGameEngine->isTimeFrozen() || TheGameEngine->isGameHalted();
 
 	/// @todo: I'm assuming the first view is our main 3D view.
 	W3DView *primaryW3DView=(W3DView *)getFirstView();
@@ -1859,6 +1811,8 @@ AGAIN:
 			}
 		}
 	}
+
+	WW3D::Add_Frame_Time(TheGameEngine->getLogicTimeStepMilliseconds());
 
 	static Int now;
 	now=timeGetTime();
