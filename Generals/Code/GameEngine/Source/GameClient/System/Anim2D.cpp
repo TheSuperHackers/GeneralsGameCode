@@ -755,7 +755,7 @@ void Anim2DCollection::init( void )
 {
 	INI ini;
 
-	ini.load( "Data\\INI\\Animation2D.ini", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Animation2D", INI_LOAD_OVERWRITE, NULL );
 
 }  // end init
 

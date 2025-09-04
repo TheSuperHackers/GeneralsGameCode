@@ -155,7 +155,7 @@ void CreditsManager::load(void )
 {
 	INI ini;
 	// Read from INI all the ControlBarSchemes
-	ini.load( AsciiString( "Data\\INI\\Credits.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\Credits" ), INI_LOAD_OVERWRITE, NULL );
 
 	if(m_scrollRatePerFrames <=0)
 		m_scrollRatePerFrames = 1;

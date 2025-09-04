@@ -2160,6 +2160,9 @@ void GameLogic::loadMapINI( AsciiString mapName )
 		ini.load( AsciiString(fullFledgeFilename), INI_LOAD_CREATE_OVERRIDES, NULL );
 	}
 
+	// TheSuperHackers @todo Implement ini load directory for map folder.
+	// Requires adjustments in map transfer.
+
 	sprintf(fullFledgeFilename, "%s\\solo.ini", filename);
 	if (TheFileSystem->doesFileExist(fullFledgeFilename)) {
 		DEBUG_LOG(("Loading solo.ini"));

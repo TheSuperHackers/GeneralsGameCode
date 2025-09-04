@@ -136,7 +136,7 @@ void GlobalLanguage::init( void )
 
 	INI ini;
 	AsciiString fname;
-	fname.format("Data\\%s\\Language.ini", GetRegistryLanguage().str());
+	fname.format("Data\\%s\\Language", GetRegistryLanguage().str());
 
 	OSVERSIONINFO	osvi;
 	osvi.dwOSVersionInfoSize=sizeof(OSVERSIONINFO);
@@ -149,7 +149,7 @@ void GlobalLanguage::init( void )
 		fname = tempName;
 	}
 
-	ini.load( fname, INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( fname, INI_LOAD_OVERWRITE, NULL );
 	StringListIt it = m_localFonts.begin();
 	while( it != m_localFonts.end())
 	{

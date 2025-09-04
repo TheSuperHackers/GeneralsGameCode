@@ -173,8 +173,19 @@ public:
 	INI();
 	~INI();
 
-	void loadDirectory( AsciiString dirName, Bool subdirs, INILoadType loadType, Xfer *pXfer );  ///< load directory of INI files
-	void load( AsciiString filename, INILoadType loadType, Xfer *pXfer );		///< load INI file
+	// TheSuperHackers @feature Load a specific INI file by name and/or INI files in a directory (and its subdirectories).
+	//  Example 1:  "Data\INI\Armor"          loads "Data\INI\Armor.ini"          and all *.ini files in "Data\INI\Armor"
+	//  Example 2:  "Data\INI\Default\Armor"  loads "Data\INI\Default\Armor.ini"  and all *.ini files in "Data\INI\Default\Armor"
+	// Throws if not a single INI file is found or one is not read correctly.
+	UnsignedInt loadFileDirectory( AsciiString fileDirName, INILoadType loadType, Xfer *pXfer, Bool subdirs = TRUE );
+
+	// Load INI files in a directory (and its subdirectories).
+	// Throws if one INI file is not read correctly.
+	UnsignedInt loadDirectory( AsciiString dirName, INILoadType loadType, Xfer *pXfer, Bool subdirs = TRUE );
+
+	// Load one specific INI file by name.
+	// Throws if the INI file is not found or is not read correctly.
+	UnsignedInt load( AsciiString filename, INILoadType loadType, Xfer *pXfer );
 
 	static Bool isDeclarationOfType( AsciiString blockType, AsciiString blockName, char *bufferToCheck );
 	static Bool isEndOfBlock( char *bufferToCheck );

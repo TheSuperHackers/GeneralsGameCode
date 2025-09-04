@@ -241,7 +241,7 @@ void GameClient::init( void )
 
 	INI ini;
 	// Load the DrawGroupInfo here, before the Display Manager is loaded.
-	ini.load("Data\\INI\\DrawGroupInfo.ini", INI_LOAD_OVERWRITE, NULL);
+	ini.loadFileDirectory("Data\\INI\\DrawGroupInfo", INI_LOAD_OVERWRITE, NULL);
 
 	// Override the ini values with localized versions:
 	if (TheGlobalLanguageData && TheGlobalLanguageData->m_drawGroupInfoFont.name.isNotEmpty())

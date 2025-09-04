@@ -103,7 +103,7 @@ void ControlBarResizer::init( void )
 {
 	INI ini;
 	// Read from INI all the ControlBarSchemes
-	ini.load( AsciiString( "Data\\INI\\ControlBarResizer.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\ControlBarResizer" ), INI_LOAD_OVERWRITE, NULL );
 
 }
 

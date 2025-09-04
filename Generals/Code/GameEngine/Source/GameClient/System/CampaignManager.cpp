@@ -238,7 +238,7 @@ void CampaignManager::init( void )
 {
 	INI ini;
 	// Read from INI all the CampaignManager
-	ini.load( AsciiString( "Data\\INI\\Campaign.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\Campaign" ), INI_LOAD_OVERWRITE, NULL );
 }
 
 //-----------------------------------------------------------------------------

@@ -1015,17 +1015,17 @@ void ControlBarSchemeManager::init( void )
 
 	INI ini;
 	// Read from INI all the ControlBarSchemes
-	ini.load( AsciiString( "Data\\INI\\Default\\ControlBarScheme.ini" ), INI_LOAD_OVERWRITE, NULL );
-	ini.load( AsciiString( "Data\\INI\\ControlBarScheme.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\Default\\ControlBarScheme" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\ControlBarScheme" ), INI_LOAD_OVERWRITE, NULL );
 
 //	//Load the user modified control bar schemes
 //	WIN32_FIND_DATA findData;
 //	AsciiString userDataPath;
 //	if(TheGlobalData)
 //	{
-//		userDataPath.format("%sINI\\ControlBarScheme.ini",TheGlobalData->getPath_UserData().str());
+//		userDataPath.format("%sINI\\ControlBarScheme",TheGlobalData->getPath_UserData().str());
 //		if	(FindFirstFile(userDataPath.str(), &findData) !=INVALID_HANDLE_VALUE)
-//			ini.load(userDataPath,  INI_LOAD_OVERWRITE, NULL );
+//			ini.loadFileDirectory(userDataPath,  INI_LOAD_OVERWRITE, NULL );
 //	}
 	if( m_schemeList.size() <= 0 )
 	{
