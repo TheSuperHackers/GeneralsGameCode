@@ -106,6 +106,9 @@ void TunnelContain::removeFromContain( Object *obj, Bool exposeStealthUnits )
 
 	owningPlayer->getTunnelSystem()->removeFromContain( obj, exposeStealthUnits );
 
+#if !RETAIL_COMPATIBLE_CRC
+	addOrRemoveObjFromWorld(obj, TRUE);
+#endif
 }
 
 
