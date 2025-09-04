@@ -95,8 +95,7 @@ static UnsignedInt calcCRC( AsciiString dirName, AsciiString fname )
 	length = strlen( tempBuf );
 	if( length >= 4 )
 	{
-		memset( filenameBuf, '\0', _MAX_PATH);
-		strncpy( filenameBuf, tempBuf, length - 4);
+		strlcpy( filenameBuf, tempBuf, length - 4 + 1);
 	}
 
 	File *fp;
@@ -242,8 +241,7 @@ static Bool loadMap( AsciiString filename )
 	length = strlen( tempBuf );
 	if( length >= 4 )
 	{
-		memset( filenameBuf, '\0', _MAX_PATH);
-		strncpy( filenameBuf, tempBuf, length - 4);
+		strlcpy( filenameBuf, tempBuf, length - 4 + 1);
 	}
 
 	CachedFileInputStream fileStrm;

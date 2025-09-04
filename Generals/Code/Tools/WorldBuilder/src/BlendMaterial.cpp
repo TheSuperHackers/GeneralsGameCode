@@ -239,7 +239,7 @@ void BlendMaterial::updateTextures(void)
 	for (i=WorldHeightMapEdit::getNumTexClasses()-1; i>=0; i--) {
 		char path[_MAX_PATH];
 		AsciiString uiName = WorldHeightMapEdit::getTexClassUiName(i);
-		strncpy(path, uiName.str(), _MAX_PATH-2);
+		strlcpy(path, uiName.str(), _MAX_PATH);
 		addTerrain(path, i, TVI_ROOT);
 	}
 	m_updating = false;

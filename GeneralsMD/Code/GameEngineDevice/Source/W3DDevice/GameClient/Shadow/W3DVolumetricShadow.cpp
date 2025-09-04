@@ -600,8 +600,8 @@ class W3DShadowGeometry : public RefCountClass, public	HashableClass
 
 		const char *		Get_Name(void) const	{ return m_namebuf;}
 		void				Set_Name(const char *name)
-		{	memset(m_namebuf,0,sizeof(m_namebuf));	//pad with zero so always ends with null character.
-			strncpy(m_namebuf,name,sizeof(m_namebuf)-1);
+		{
+			strlcpy(m_namebuf,name,sizeof(m_namebuf));
 		}
 		Int					getMeshCount(void)	{ return m_meshCount;}
 		W3DShadowGeometryMesh	*getMesh(Int index)	{ return &m_meshList[index];}
