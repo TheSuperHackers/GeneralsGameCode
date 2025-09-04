@@ -165,7 +165,7 @@ void AsciiString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData
 	if (strToCopy)
 	{
 		DEBUG_ASSERTCRASH(usableNumChars <= strlen(strToCopy), ("strToCopy is too small"));
-		strncpy(newData->peek(), strToCopy, usableNumChars);
+		strlcpy(newData->peek(), strToCopy, usableNumChars);
 		newData->peek()[usableNumChars] = 0;
 	}
 	if (strToCat)

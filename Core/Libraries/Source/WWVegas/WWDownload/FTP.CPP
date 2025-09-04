@@ -38,6 +38,7 @@
 #include <errno.h>
 //#include "wlib/wstring.h"
 
+#include "stringex.h"
 #include "DownloadDebug.h"
 
 // umm... what?? BGC 3/27/03
@@ -324,7 +325,7 @@ HRESULT  Cftp::ConnectToServer(LPCSTR szServerName)
 	char                buffer[ 256 ];
 	int                 iReply, error;
 
-	strncpy( m_szServerName, szServerName, 128 );
+	strlcpy( m_szServerName, szServerName, 128 );
 
 	if( m_iStatus == FTPSTAT_INIT )
 	{
@@ -487,8 +488,8 @@ HRESULT  Cftp::LoginToServer( LPCSTR szUserName, LPCSTR szPassword )
 	char command[ 256 ];
 	int iReply;
 
-	strncpy( m_szUserName, szUserName, 128 );
-	strncpy( m_szPassword, szPassword, 128 );
+	strlcpy( m_szUserName, szUserName, 128 );
+	strlcpy( m_szPassword, szPassword, 128 );
 
 	memset( command, 0, 256 );
 
@@ -1396,7 +1397,7 @@ HRESULT  Cftp::GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead )
 
 	//char str[ 256 ];
 
-	strncpy( m_szLocalFileName, szLocalFileName, 256 );
+	strlcpy( m_szLocalFileName, szLocalFileName, 256 );
 
 	// Open local file
 
@@ -1831,7 +1832,7 @@ bool Prepare_Directories(const char *rootdir, const char *filename)
 	while(cptr=strchr(cptr,'\\'))
 	{
 		memset(tempstr,0,256);
-		strncpy(tempstr,filename,cptr-filename);
+		strlcpy(tempstr,filename,cptr-filename);
 		sprintf(newdir,"%s\\%s",rootdir, tempstr);
 		if (!CreateDirectory(newdir, NULL))
 			return false;
