@@ -111,6 +111,7 @@ protected:
 	UnsignedInt							m_damageEndFrame;
 	AudioHandle							m_audioHandle;
 	Real										m_flameDamageLimit;
+	ObjectID								m_flameSource;
 	UnsignedInt							m_lastFlameDamageDealt;
 };
 

@@ -84,6 +84,7 @@ FlammableUpdate::FlammableUpdate( Thing *thing, const ModuleData* moduleData ) :
 	m_damageEndFrame = 0;
 	m_audioHandle = NULL;
 	m_flameDamageLimit = getFlammableUpdateModuleData()->m_flameDamageLimitData;
+	m_flameSource = INVALID_ID;
 	m_lastFlameDamageDealt = 0;
 
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
@@ -110,6 +111,11 @@ void FlammableUpdate::onDamage( DamageInfo *damageInfo )
 			m_flameDamageLimit = getFlammableUpdateModuleData()->m_flameDamageLimitData;
 		}
 		m_lastFlameDamageDealt = now;
+#if RETAIL_COMPATIBLE_CRC
+		m_flameSource = getObject()->getID();
+#else
+		m_flameSource = damageInfo->in.m_sourceID;
+#endif
 
 		Object *me = getObject();
 		if( !me->getStatusBits().test( OBJECT_STATUS_AFLAME ) && !me->getStatusBits().test( OBJECT_STATUS_BURNED ) )
@@ -229,7 +235,7 @@ void FlammableUpdate::doAflameDamage()
 
 	DamageInfo info;
 	info.in.m_amount = data->m_aflameDamageAmount;
-	info.in.m_sourceID = getObject()->getID();
+	info.in.m_sourceID = m_flameSource;
 	info.in.m_damageType = DAMAGE_FLAME;
 	info.in.m_deathType = DEATH_BURNED;
 
@@ -287,7 +293,11 @@ void FlammableUpdate::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
+#else
+	XferVersion currentVersion = 2;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -312,6 +322,12 @@ void FlammableUpdate::xfer( Xfer *xfer )
 	// last flame damage dealt
 	xfer->xferUnsignedInt( &m_lastFlameDamageDealt );
 
+#if !RETAIL_COMPATIBLE_XFER_SAVE
+	if (version >= 2)
+	{
+		xfer->xferObjectID(&m_flameSource);
+	}
+#endif
 }
 
 // ------------------------------------------------------------------------------------------------
