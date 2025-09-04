@@ -2095,6 +2095,13 @@ void GameLogic::startNewGame( Bool saveGame )
 	if (TheGameSpyInfo)
 		TheGameSpyInfo->updateAdditionalGameSpyDisconnections(1);
 
+
+  if ( isInReplayGame() && TheInGameUI && TheGameText )
+  {
+		TheInGameUI->message( TheGameText->fetch( "GUI:FastForwardInstructions" ) );
+  }
+
+
 }  // end startNewGame
 
 //-----------------------------------------------------------------------------------------
