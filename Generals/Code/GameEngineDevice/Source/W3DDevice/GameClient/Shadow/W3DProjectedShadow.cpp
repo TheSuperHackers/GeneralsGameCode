@@ -166,8 +166,8 @@ class W3DShadowTexture : public RefCountClass, public	HashableClass
 
 		const char *		Get_Name(void) const	{ return m_namebuf;}
 		void				Set_Name(const char *name)
-		{	memset(m_namebuf,0,sizeof(m_namebuf));	//pad with zero so always ends with null character.
-			strncpy(m_namebuf,name,sizeof(m_namebuf)-1);
+		{
+			strlcpy(m_namebuf,name,sizeof(m_namebuf));
 		}
 		TextureClass	*getTexture(void)	{ return m_texture;}
 		void					 setTexture(TextureClass *texture)	{m_texture = texture;}
@@ -1482,7 +1482,7 @@ Shadow* W3DProjectedShadowManager::addDecal(Shadow::ShadowTypeInfo *shadowInfo)
 	//can be always perpendicular to model's z-axis or projected
 	//onto world geometry.
 	nameLen=strlen(shadowInfo->m_ShadowName);
-	strncpy(texture_name,shadowInfo->m_ShadowName,nameLen);
+	strlcpy(texture_name,shadowInfo->m_ShadowName,nameLen);
 	strcpy(texture_name+nameLen,".tga");	//append texture extension
 
 	//Check if we previously added a decal using this texture
@@ -1601,7 +1601,7 @@ Shadow* W3DProjectedShadowManager::addDecal(RenderObjClass *robj, Shadow::Shadow
 	//can be always perpendicular to model's z-axis or projected
 	//onto world geometry.
 	nameLen=strlen(shadowInfo->m_ShadowName);
-	strncpy(texture_name,shadowInfo->m_ShadowName,nameLen);
+	strlcpy(texture_name,shadowInfo->m_ShadowName,nameLen);
 	strcpy(texture_name+nameLen,".tga");	//append texture extension
 
 	//Check if we previously added a decal using this texture
@@ -1747,7 +1747,7 @@ W3DProjectedShadow* W3DProjectedShadowManager::addShadow(RenderObjClass *robj, S
 				{	strcpy(texture_name,defaultDecalName);
 				}
 				else
-				{	strncpy(texture_name,shadowInfo->m_ShadowName,nameLen);
+				{	strlcpy(texture_name,shadowInfo->m_ShadowName,nameLen);
 					strcpy(texture_name+nameLen,".tga");	//append texture extension
 				}
 
@@ -1935,7 +1935,7 @@ W3DProjectedShadow* W3DProjectedShadowManager::createDecalShadow(Shadow::ShadowT
 	{	strcpy(texture_name,defaultDecalName);
 	}
 	else
-	{	strncpy(texture_name,shadowInfo->m_ShadowName,nameLen);
+	{	strlcpy(texture_name,shadowInfo->m_ShadowName,nameLen);
 		strcpy(texture_name+nameLen,".tga");	//append texture extension
 	}
 

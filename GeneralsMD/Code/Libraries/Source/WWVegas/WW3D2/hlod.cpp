@@ -165,7 +165,7 @@ public:
 	void					Init(const W3dHLodSubObjectStruct & w3d_data)
 	{
 		BoneIndex = w3d_data.BoneIndex;
-		strncpy(Name,w3d_data.Name,sizeof(Name));
+		strlcpy(Name,w3d_data.Name,sizeof(Name));
 	}
 
 	int					Get_Bone_Index(void)		{ return BoneIndex; }
