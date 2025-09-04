@@ -509,7 +509,10 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
                 TheWritableGlobalData->m_TiVOFastMode = 1 - TheGlobalData->m_TiVOFastMode;
 
               if ( TheInGameUI )
-  				      TheInGameUI->message( TheGlobalData->m_TiVOFastMode ? TheGameText->fetch("GUI:FF_ON") : TheGameText->fetch("GUI:FF_OFF") );
+								TheInGameUI->messageNoFormat( TheGlobalData->m_TiVOFastMode
+									? TheGameText->FETCH_OR_SUBSTITUTE("GUI:FF_ON", L"Fast Forward is on")
+									: TheGameText->FETCH_OR_SUBSTITUTE("GUI:FF_OFF", L"Fast Forward is off")
+								);
 			      }
 			      disp = KEEP_MESSAGE; // cause for goodness sake, this key gets used a lot by non-replay hotkeys
 			      break;

@@ -2098,7 +2098,7 @@ void GameLogic::startNewGame( Bool saveGame )
 
   if ( isInReplayGame() && TheInGameUI && TheGameText )
   {
-		TheInGameUI->message( TheGameText->fetch( "GUI:FastForwardInstructions" ) );
+		TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE( "GUI:FastForwardInstructions", L"Press F to toggle Fast Forward" ) );
   }
 
 
