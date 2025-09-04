@@ -129,7 +129,7 @@ char const * GameFileClass::Set_Name( char const *filename )
 		Close();
 
 	// save the filename
-	strncpy( m_filename, filename, _MAX_PATH );
+	strlcpy( m_filename, filename, _MAX_PATH );
 
 	char name[_MAX_PATH];
 	const Int EXT_LEN = 32;

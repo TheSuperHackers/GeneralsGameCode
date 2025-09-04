@@ -1177,7 +1177,7 @@ void ThingTemplate::initForLTA(const AsciiString& name)
 	m_nameString = name;
 
 	char buffer[1024];
-	strncpy(buffer, name.str(), sizeof(buffer));
+	strlcpy(buffer, name.str(), sizeof(buffer));
 	int i=0;
 	for (; buffer[i]; i++) {
 		if (buffer[i] == '/') {

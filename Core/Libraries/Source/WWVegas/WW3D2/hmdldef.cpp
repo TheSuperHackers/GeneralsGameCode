@@ -149,10 +149,8 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 	/*
 	** process the header info
 	*/
-	strncpy(ModelName,header.Name,W3D_NAME_LEN);
-	ModelName[W3D_NAME_LEN - 1] = 0;
-	strncpy(BasePoseName,header.HierarchyName,W3D_NAME_LEN);
-	BasePoseName[W3D_NAME_LEN-1] = 0;
+	strlcpy(ModelName,header.Name,W3D_NAME_LEN);
+	strlcpy(BasePoseName,header.HierarchyName,W3D_NAME_LEN);
 	strcpy(Name,ModelName);
 
 	/*

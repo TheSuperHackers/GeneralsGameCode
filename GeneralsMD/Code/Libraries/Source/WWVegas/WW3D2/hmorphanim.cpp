@@ -343,8 +343,7 @@ bool HMorphAnimClass::Import(const char *hierarchy_name, TextFileClass &text_des
 	//
 	// Copy the hierarchy name into a class variable
 	//
-	::strncpy (HierarchyName, hierarchy_name, W3D_NAME_LEN);
-	HierarchyName[W3D_NAME_LEN - 1] = 0;
+	strlcpy (HierarchyName, hierarchy_name, W3D_NAME_LEN);
 
 	//
 	// Attempt to load the new base pose
@@ -549,8 +548,8 @@ int HMorphAnimClass::Load_W3D(ChunkLoadClass & cload)
 	cload.Read(&header,sizeof(header));
 	cload.Close_Chunk();
 
-	strncpy(AnimName,header.Name,sizeof(AnimName));
-   strncpy(HierarchyName,header.HierarchyName,sizeof(HierarchyName));
+	strlcpy(AnimName,header.Name,sizeof(AnimName));
+	strlcpy(HierarchyName,header.HierarchyName,sizeof(HierarchyName));
 	strcpy(Name,HierarchyName);
 	strcat(Name,".");
 	strcat(Name,AnimName);
@@ -620,9 +619,8 @@ int HMorphAnimClass::Save_W3D(ChunkSaveClass & csave)
 
 	// init the header data
 	W3dMorphAnimHeaderStruct header;
-	memset(&header,0,sizeof(header));
-	strncpy(header.Name,AnimName,sizeof(header.Name));
-	strncpy(header.HierarchyName,HierarchyName,sizeof(header.HierarchyName));
+	strlcpy(header.Name,AnimName,sizeof(header.Name));
+	strlcpy(header.HierarchyName,HierarchyName,sizeof(header.HierarchyName));
 
 	header.FrameCount = FrameCount;
 	header.FrameRate = FrameRate;

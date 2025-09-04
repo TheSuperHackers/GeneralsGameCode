@@ -19,6 +19,7 @@
 // Download.cpp : Implementation of CDownload
 #include "DownloadDebug.h"
 #include "Download.h"
+#include "stringex.h"
 #include <mmsystem.h>
 #include <assert.h>
 #include <direct.h>
@@ -69,15 +70,15 @@ HRESULT CDownload::DownloadFile(LPCSTR server, LPCSTR username, LPCSTR password,
 	_mkdir("download");
 
 	// Copy parameters to member variables.
-	strncpy( m_Server, server, sizeof( m_Server ) );
-	strncpy( m_Login, username, sizeof( m_Login ) );
-	strncpy( m_Password, password, sizeof( m_Password ) );
-	strncpy( m_File, file, sizeof( m_File ) );
-	strncpy( m_LocalFile, localfile, sizeof( m_LocalFile ) );
+	strlcpy( m_Server, server, sizeof( m_Server ) );
+	strlcpy( m_Login, username, sizeof( m_Login ) );
+	strlcpy( m_Password, password, sizeof( m_Password ) );
+	strlcpy( m_File, file, sizeof( m_File ) );
+	strlcpy( m_LocalFile, localfile, sizeof( m_LocalFile ) );
 
-	strncpy( m_LastLocalFile, localfile, sizeof( m_LastLocalFile ) );
+	strlcpy( m_LastLocalFile, localfile, sizeof( m_LastLocalFile ) );
 
-	strncpy( m_RegKey, regkey, sizeof( m_RegKey ) );
+	strlcpy( m_RegKey, regkey, sizeof( m_RegKey ) );
 	m_TryResume = tryresume;
 	m_StartPosition=0;
 
@@ -113,8 +114,7 @@ HRESULT CDownload::GetLastLocalFile(char *local_file, int maxlen) {
 	if (local_file==0)
 		return(E_FAIL);
 
-	strncpy(local_file, m_LastLocalFile, maxlen);
-	local_file[maxlen-1]=0;
+	strlcpy(local_file, m_LastLocalFile, maxlen);
 
 	return(S_OK);
 }

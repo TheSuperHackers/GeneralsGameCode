@@ -27,6 +27,7 @@
 // Debug class implementation
 //////////////////////////////////////////////////////////////////////////////
 #include "_pch.h"
+#include <stringex.h>
 #include <stdlib.h>
 #include <Utility/stdio_adapter.h>
 #include <string.h>
@@ -729,8 +730,7 @@ Debug& Debug::operator<<(const char *str)
 
 void Debug::SetPrefixAndRadix(const char *prefix, int radix)
 {
-  strncpy(m_prefix,prefix?prefix:"",sizeof(m_prefix)-1);
-  m_prefix[sizeof(m_prefix)-1]=0;
+  strlcpy(m_prefix,prefix?prefix:"",sizeof(m_prefix));
   m_radix=radix;
 }
 
@@ -1423,11 +1423,11 @@ void Debug::SetBuildInfo(const char *version,
                          const char *buildDate)
 {
   if (version)
-    strncpy(Instance.m_version,version,sizeof(Instance.m_version)-1);
+    strlcpy(Instance.m_version,version,sizeof(Instance.m_version));
   if (internalVersion)
-    strncpy(Instance.m_intVersion,internalVersion,sizeof(Instance.m_intVersion)-1);
+    strlcpy(Instance.m_intVersion,internalVersion,sizeof(Instance.m_intVersion));
   if (buildDate)
-    strncpy(Instance.m_buildDate,buildDate,sizeof(Instance.m_buildDate)-1);
+    strlcpy(Instance.m_buildDate,buildDate,sizeof(Instance.m_buildDate));
 }
 
 void Debug::WriteBuildInfo(void)

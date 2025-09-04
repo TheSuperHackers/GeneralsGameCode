@@ -219,7 +219,7 @@ int HRawAnimClass::Load_W3D(ChunkLoadClass & cload)
    WWASSERT(HierarchyName != NULL);
    WWASSERT(aheader.HierarchyName != NULL);
    WWASSERT(sizeof(HierarchyName) >= W3D_NAME_LEN);
-   strncpy(HierarchyName,aheader.HierarchyName,W3D_NAME_LEN);
+   strlcpy(HierarchyName,aheader.HierarchyName,W3D_NAME_LEN);
 
 	HTreeClass * base_pose = WW3DAssetManager::Get_Instance()->Get_HTree(HierarchyName);
 	if (base_pose == NULL) {

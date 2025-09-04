@@ -33,6 +33,7 @@ target_include_directories(core_debug INTERFACE
 )
 
 target_link_libraries(core_debug PRIVATE
+    core_wwcommon
     core_config
     corei_always
 )
