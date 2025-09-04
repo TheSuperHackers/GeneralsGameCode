@@ -44,6 +44,7 @@
 #include "GameClient/ClientInstance.h"
 #include "GameClient/GameClient.h"
 #include "GameClient/InGameUI.h"
+#include "GameClient/LookAtXlat.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/GadgetCheckBox.h"
@@ -419,6 +420,38 @@ CursorCaptureMode OptionPreferences::getCursorCaptureMode() const
 			}
 		}
 	}
+	return mode;
+}
+
+Bool OptionPreferences::getScreenEdgeScrollEnabled() const
+{
+	OptionPreferences::const_iterator it = find("ScreenEdgeScrollEnabled");
+	if (it == end())
+		return (ScreenEdgeScrollMode_Default & ScreenEdgeScrollMode_Enabled);
+
+	if (stricmp(it->second.str(), "yes") == 0) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
+Bool OptionPreferences::getScreenEdgeScrollFullscreenOnly() const
+{
+	OptionPreferences::const_iterator it = find("ScreenEdgeScrollFullscreenOnly");
+	if (it == end())
+		return (ScreenEdgeScrollMode_Default & ScreenEdgeScrollMode_FullscreenOnly);
+
+	if (stricmp(it->second.str(), "yes") == 0) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
+ScreenEdgeScrollMode OptionPreferences::getScreenEdgeScrollMode() const
+{
+	ScreenEdgeScrollMode mode = 0;
+	mode |= getScreenEdgeScrollEnabled() ? ScreenEdgeScrollMode_Enabled : 0;
+	mode |= getScreenEdgeScrollFullscreenOnly() ? ScreenEdgeScrollMode_FullscreenOnly : 0;
 	return mode;
 }
 
@@ -1249,6 +1282,14 @@ static void saveOptions( void )
 		CursorCaptureMode mode = pref->getCursorCaptureMode();
 		(*pref)["CursorCaptureMode"] = TheCursorCaptureModeNames[mode];
 		TheMouse->setCursorCaptureMode(mode);
+	}
+
+	// TheSuperHackers @todo Add combo box ?
+	{
+		ScreenEdgeScrollMode mode = pref->getScreenEdgeScrollMode();
+		(*pref)["ScreenEdgeScrollEnabled"] = (mode & ScreenEdgeScrollMode_Enabled) ? "yes" : "no";
+		(*pref)["ScreenEdgeScrollFullscreenOnly"] = (mode & ScreenEdgeScrollMode_FullscreenOnly) ? "yes" : "no";
+		TheLookAtTranslator->setScreenEdgeScrollMode(mode);
 	}
 
 	//-------------------------------------------------------------------------------------------------
