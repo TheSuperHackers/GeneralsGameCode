@@ -642,7 +642,8 @@ void LANAPI::OnPlayerList( LANPlayer *playerList )
 		LANPlayer *player = m_lobbyPlayers;
 		while (player)
 		{
-			Int addedIndex = GadgetListBoxAddEntryText(listboxPlayers, player->getName(), playerColor, -1, -1);
+			const Color color = (player->getPatchVersion() > 0 || m_localIP == player->getIP()) ? 0xFFFFFF00 : playerColor;
+			Int addedIndex = GadgetListBoxAddEntryText(listboxPlayers, player->getName(), color, -1, -1);
 			GadgetListBoxSetItemData(listboxPlayers, (void *)player->getIP(),addedIndex, 0 );
 
 			if (selectedIP == player->getIP())

@@ -226,7 +226,10 @@ void LANDisplayGameList( GameWindow *gameListbox, LANGameInfo *gameList )
 			{
 				txtGName.concat(L"]");
 			}
-			Int addedIndex = GadgetListBoxAddEntryText(gameListbox, txtGName, (gameList->isGameInProgress())?gameInProgressColor:gameColor, -1, -1);
+			const Color color = (gameList->getSlot(0)->getPatchVersion() > 0)
+				? ((gameList->isGameInProgress()) ? 0xFF808000 : 0xFFFFFF00)
+				: ((gameList->isGameInProgress()) ? gameInProgressColor : gameColor);
+			Int addedIndex = GadgetListBoxAddEntryText(gameListbox, txtGName, color, -1, -1);
 			GadgetListBoxSetItemData(gameListbox, (void *)gameList, addedIndex, 0 );
 
 			if (selectedPtr == gameList)
