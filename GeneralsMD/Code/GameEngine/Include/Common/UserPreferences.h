@@ -40,6 +40,7 @@
 
 class Money;
 enum CursorCaptureMode CPP_11(: Int);
+typedef UnsignedInt ScreenEdgeScrollMode;
 
 //-----------------------------------------------------------------------------
 // PUBLIC TYPES ///////////////////////////////////////////////////////////////
@@ -98,6 +99,9 @@ public:
 	Bool getDrawScrollAnchor(void);
 	Bool getMoveScrollAnchor(void);
 	CursorCaptureMode getCursorCaptureMode() const;
+	Bool getScreenEdgeScrollEnabledInWindowedApp() const;
+	Bool getScreenEdgeScrollEnabledInFullscreenApp() const;
+	ScreenEdgeScrollMode getScreenEdgeScrollMode() const;
 	Bool getSendDelay(void);									// convenience function
 	Int getFirewallBehavior(void);						// convenience function
 	Short getFirewallPortAllocationDelta(void);	// convenience function
