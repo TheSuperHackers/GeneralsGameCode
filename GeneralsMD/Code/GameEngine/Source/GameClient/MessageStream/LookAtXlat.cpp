@@ -114,15 +114,20 @@ void LookAtTranslator::stopScrolling( void )
 Bool LookAtTranslator::canScrollAtScreenEdge() const
 {
 	if (!TheMouse->isCursorCaptured())
-		return FALSE;
+		return false;
 
-	if ((m_screenEdgeScrollMode & ScreenEdgeScrollMode_Enabled) == 0)
-		return FALSE;
+	if (TheDisplay->getWindowed())
+	{
+		if ((m_screenEdgeScrollMode & ScreenEdgeScrollMode_EnabledInWindowedApp) == 0)
+			return false;
+	}
+	else
+	{
+		if ((m_screenEdgeScrollMode & ScreenEdgeScrollMode_EnabledInFullscreenApp) == 0)
+			return false;
+	}
 
-	if (TheDisplay->getWindowed() && (m_screenEdgeScrollMode & ScreenEdgeScrollMode_FullscreenOnly) != 0)
-		return FALSE;
-
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------------

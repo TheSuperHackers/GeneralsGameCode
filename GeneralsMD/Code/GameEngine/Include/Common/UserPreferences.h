@@ -99,8 +99,8 @@ public:
 	Bool getDrawScrollAnchor(void);
 	Bool getMoveScrollAnchor(void);
 	CursorCaptureMode getCursorCaptureMode() const;
-	Bool getScreenEdgeScrollEnabled() const;
-	Bool getScreenEdgeScrollFullscreenOnly() const;
+	Bool getScreenEdgeScrollEnabledInWindowedApp() const;
+	Bool getScreenEdgeScrollEnabledInFullscreenApp() const;
 	ScreenEdgeScrollMode getScreenEdgeScrollMode() const;
 	Bool getSendDelay(void);									// convenience function
 	Int getFirewallBehavior(void);						// convenience function
