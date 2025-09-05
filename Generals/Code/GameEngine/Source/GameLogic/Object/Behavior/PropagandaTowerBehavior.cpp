@@ -205,7 +205,15 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 		}
 	}
 
-	if( self->getContainedBy()  &&  self->getContainedBy()->getContainedBy() )
+#if RETAIL_COMPATIBLE_CRC
+	Bool contained = self->getContainedBy() && self->getContainedBy()->getContainedBy();
+#else
+	Bool contained = (self->isKindOf(KINDOF_PORTABLE_STRUCTURE)) ?
+		contained = self->getContainedBy() && self->getContainedBy()->getContainedBy() :
+		contained = self->getContainedBy();
+#endif
+
+	if (contained)
 	{
 		// If our container is contained, we turn the heck off.  Seems like a weird specific check, but all of
 		// attacking is guarded by the same check in isPassengersAllowedToFire.  We similarly work in a container,
