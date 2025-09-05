@@ -993,16 +993,8 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			ICoord2D pixel = msg->getArgument( 0 )->pixel;
 			UnsignedInt currentTime = (UnsignedInt) msg->getArgument( 2 )->integer;
 
-			Bool isClick = TheMouse->isClick(&m_deselectFeedbackAnchor, &pixel, m_lastClick, currentTime);
-
-			if (isClick &&
-					cameraPos.length() > TheMouse->m_dragTolerance3D)
-			{
-				isClick = FALSE;
-			}
-
 			// right click behavior (not right drag)
-			if (isClick)
+			if (TheMouse->isClick(&m_deselectFeedbackAnchor, &pixel, m_lastClick, currentTime))
 			{
 				//Added support to cancel the GUI command without deselecting the unit(s) involved
 				//when you right click.
