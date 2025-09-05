@@ -854,6 +854,34 @@ Int OptionPreferences::getGameTimeFontSize(void)
 	return fontSize;
 }
 
+Int OptionPreferences::getPerfLatencyFontSize(void)
+{
+    OptionPreferences::const_iterator it = find("PerfLatencyFontSize");
+    if (it == end())
+        return 8;
+
+    Int fontSize = atoi(it->second.str());
+    if (fontSize < 0)
+    {
+        fontSize = 0;
+    }
+    return fontSize;
+}
+
+Int OptionPreferences::getPerfRenderFpsFontSize(void)
+{
+    OptionPreferences::const_iterator it = find("PerfRenderFpsFontSize");
+    if (it == end())
+        return 8;
+
+    Int fontSize = atoi(it->second.str());
+    if (fontSize < 0)
+    {
+        fontSize = 0;
+    }
+    return fontSize;
+}
+
 static OptionPreferences *pref = NULL;
 
 static void setDefaults( void )
@@ -1396,6 +1424,28 @@ static void saveOptions( void )
 		prefString.format("%d", val);
 		(*pref)["GameTimeFontSize"] = prefString;
 		TheInGameUI->refreshGameTimeResources();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// Set Latency Counter Font Size
+	val = pref->getPerfLatencyFontSize();
+	if (val >= 0)
+	{
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["PerfLatencyFontSize"] = prefString;
+		TheInGameUI->refreshGameLatencyResources();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// Set FPS/FPSLimitCounter Font Sizes
+	val = pref->getPerfRenderFpsFontSize();
+	if (val >= 0)
+	{
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["PerfRenderFpsFontSize"] = prefString;
+		TheInGameUI->refreshGameFPSResources();
 	}
 
 	//-------------------------------------------------------------------------------------------------

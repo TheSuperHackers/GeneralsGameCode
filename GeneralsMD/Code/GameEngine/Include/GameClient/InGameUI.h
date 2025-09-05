@@ -573,6 +573,8 @@ public:  // ********************************************************************
 	virtual void refreshCustomUiResources( void );
 	virtual void refreshSystemTimeResources( void );
 	virtual void refreshGameTimeResources( void );
+	virtual void refreshGameLatencyResources( void );
+	virtual void refreshGameFPSResources( void );
 
 	virtual void disableTooltipsUntil(UnsignedInt frameNum);
 	virtual void clearTooltipsDisabled();
@@ -594,6 +596,8 @@ private:
 
 	void drawSystemTime();
 	void drawGameTime();
+	void drawLatencyCounter();
+	void drawFPSCounter();
 
 public:
 	void registerWindowLayout(WindowLayout *layout); // register a layout for updates
@@ -773,6 +777,28 @@ protected:
 	Coord2D												m_gameTimePosition;
 	Color												m_gameTimeColor;
 	Color												m_gameTimeDropColor;
+
+	// Latency Counter
+	DisplayString *							m_latencyString;
+	AsciiString									m_latencyFont;
+	Int													m_latencyPointSize;
+	Bool												m_latencyBold;
+	Coord2D											m_latencyPosition;
+	Color												m_latencyColor;
+	Color												m_latencyDropColor;
+
+	// Render FPS And FPS Limit Counter
+	DisplayString *							m_renderFpsString;
+	DisplayString *							m_fpsLimitString;
+	AsciiString									m_renderFpsFont;
+	Int													m_renderFpsPointSize;
+	Bool												m_renderFpsBold;
+	Coord2D											m_renderFpsPosition;
+	Color												m_renderFpsColor;
+	Color												m_renderFpsDropColor;
+	UnsignedInt								  m_renderFpsLastUpdateMs;
+	UnsignedInt									m_renderFpsFrameCount;
+	Int												  m_renderFpsDisplay;
 
 	// message data
 	UIMessage										m_uiMessages[ MAX_UI_MESSAGES ];/**< messages to display to the user, the

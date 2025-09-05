@@ -410,6 +410,9 @@ public:
 	// TheSuperHackers @feature Mauller 21/06/2025 allow the system time and game time font size to be set, a size of zero disables them
 	Int m_systemTimeFontSize;
 	Int m_gameTimeFontSize;
+	// TheSuperHackers @feature L3-M 05/09/2025 allow the latency counter and render fps counter font size to be set, a size of zero disables them
+	Int m_perfLatencyFontSize;
+	Int m_perfRenderFpsFontSize;
 
 	Real m_shakeSubtleIntensity;			///< Intensity for shaking a camera with SHAKE_SUBTLE
 	Real m_shakeNormalIntensity;			///< Intensity for shaking a camera with SHAKE_NORMAL
