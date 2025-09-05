@@ -133,6 +133,8 @@ public:
 
 	Int getSystemTimeFontSize(void);
 	Int getGameTimeFontSize(void);
+
+	Real getResolutionFontAdjustment(void);
 };
 
 //-----------------------------------------------------------------------------
