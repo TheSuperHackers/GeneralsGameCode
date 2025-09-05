@@ -137,6 +137,8 @@ public:
 
 	Int getSystemTimeFontSize(void);
 	Int getGameTimeFontSize(void);
+	Int getPerfLatencyFontSize(void);
+	Int getPerfRenderFpsFontSize(void);
 };
 
 //-----------------------------------------------------------------------------
