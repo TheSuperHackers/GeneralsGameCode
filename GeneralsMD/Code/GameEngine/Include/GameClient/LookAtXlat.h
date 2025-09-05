@@ -36,10 +36,10 @@
 typedef UnsignedInt ScreenEdgeScrollMode;
 enum ScreenEdgeScrollMode_ CPP_11(: ScreenEdgeScrollMode)
 {
-	ScreenEdgeScrollMode_Enabled = 1<<0, // Can scroll when touching the edge
-	ScreenEdgeScrollMode_FullscreenOnly = 1<<1, // Can scroll in fullscreen only
+	ScreenEdgeScrollMode_EnabledInWindowedApp = 1<<0, // Scroll when touching the edge while the app is windowed
+	ScreenEdgeScrollMode_EnabledInFullscreenApp = 1<<1, // Scroll when touching the edge while the app is fullscreen
 
-	ScreenEdgeScrollMode_Default = ScreenEdgeScrollMode_Enabled | ScreenEdgeScrollMode_FullscreenOnly,
+	ScreenEdgeScrollMode_Default = ScreenEdgeScrollMode_EnabledInFullscreenApp,
 };
 
 //-----------------------------------------------------------------------------
