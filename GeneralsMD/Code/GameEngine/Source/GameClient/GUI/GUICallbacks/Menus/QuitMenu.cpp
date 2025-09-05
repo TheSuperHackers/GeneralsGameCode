@@ -145,9 +145,7 @@ static void exitQuitMenu()
 		GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_SELF_DESTRUCT);
 		msg->appendBooleanArgument(TRUE);
 	}
-	/*GameMessage *msg =*/ TheMessageStream->appendMessage( GameMessage::MSG_CLEAR_GAME_DATA );
-	if ( !TheGameLogic->isInMultiplayerGame() )
-		TheGameLogic->setGamePaused(FALSE);
+	TheGameLogic->exitGame();
 	// TheGameLogic->clearGameData();
 	// display the menu on top of the shell stack
   // TheShell->showShell();

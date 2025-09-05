@@ -477,7 +477,7 @@ void RecorderClass::stopPlayback() {
 
 	if (!m_doingAnalysis)
 	{
-		TheMessageStream->appendMessage(GameMessage::MSG_CLEAR_GAME_DATA);
+		TheGameLogic->exitGame();
 	}
 }
 

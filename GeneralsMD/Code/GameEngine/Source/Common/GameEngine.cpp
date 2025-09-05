@@ -258,6 +258,8 @@ GameEngine::GameEngine( void )
 	m_quitting = FALSE;
 	m_isActive = FALSE;
 	m_enableLogicTimeScale = FALSE;
+	m_isTimeFrozen = FALSE;
+	m_isGameHalted = FALSE;
 
 	_Module.Init(NULL, ApplicationHInstance, NULL);
 }
@@ -337,6 +339,45 @@ Real GameEngine::getUpdateFps()
 }
 
 //-------------------------------------------------------------------------------------------------
+Bool GameEngine::isTimeFrozen()
+{
+	// TheSuperHackers @fix The time can no longer be frozen in Network games. It would disconnect the player.
+	if (TheNetwork != NULL)
+		return false;
+
+	if (TheTacticalView != NULL)
+	{
+		if (TheTacticalView->isTimeFrozen() && !TheTacticalView->isCameraMovementFinished())
+			return true;
+	}
+
+	if (TheScriptEngine != NULL)
+	{
+		if (TheScriptEngine->isTimeFrozenDebug() || TheScriptEngine->isTimeFrozenScript())
+			return true;
+	}
+
+	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool GameEngine::isGameHalted()
+{
+	if (TheNetwork != NULL)
+	{
+		if (TheNetwork->isStalling())
+			return true;
+	}
+	else
+	{
+		if (TheGameLogic != NULL && TheGameLogic->isGamePaused())
+			return true;
+	}
+
+	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
 void GameEngine::setLogicTimeScaleFps( Int fps )
 {
 	m_logicTimeScaleFPS = fps;
@@ -361,41 +402,53 @@ Bool GameEngine::isLogicTimeScaleEnabled()
 }
 
 //-------------------------------------------------------------------------------------------------
-Int GameEngine::getActualLogicTimeScaleFps( void )
+Int GameEngine::getActualLogicTimeScaleFps(LogicTimeQueryFlags flags)
 {
+	if (m_isTimeFrozen && (flags & IgnoreFrozenTime) == 0)
+	{
+		return 0;
+	}
+
+	if (m_isGameHalted && (flags & IgnoreHaltedGame) == 0)
+	{
+		return 0;
+	}
+
 	if (TheNetwork != NULL)
 	{
 		return TheNetwork->getFrameRate();
 	}
-	else
+
+	if (isLogicTimeScaleEnabled())
 	{
-		const Bool enabled = isLogicTimeScaleEnabled();
-		const Int logicTimeScaleFps = getLogicTimeScaleFps();
-		const Int maxFps = getFramesPerSecondLimit();
-
-		if (!enabled || logicTimeScaleFps >= maxFps)
-		{
-			return getFramesPerSecondLimit();
-		}
-		else
-		{
-			return logicTimeScaleFps;
-		}
+		return min(getLogicTimeScaleFps(), getFramesPerSecondLimit());
 	}
+
+	return getFramesPerSecondLimit();
 }
 
 //-------------------------------------------------------------------------------------------------
-Real GameEngine::getActualLogicTimeScaleRatio()
+Real GameEngine::getActualLogicTimeScaleRatio(LogicTimeQueryFlags flags)
 {
-	return (Real)getActualLogicTimeScaleFps() / LOGICFRAMES_PER_SECONDS_REAL;
+	return (Real)getActualLogicTimeScaleFps(flags) / LOGICFRAMES_PER_SECONDS_REAL;
 }
 
 //-------------------------------------------------------------------------------------------------
-Real GameEngine::getActualLogicTimeScaleOverFpsRatio()
+Real GameEngine::getActualLogicTimeScaleOverFpsRatio(LogicTimeQueryFlags flags)
 {
 	// TheSuperHackers @info Clamps ratio to min 1, because the logic
-	// frame rate is (typically) capped by the render frame rate.
-	return min(1.0f, (Real)getActualLogicTimeScaleFps() / getUpdateFps());
+	// frame rate is currently capped by the render frame rate.
+	return min(1.0f, (Real)getActualLogicTimeScaleFps(flags) / getUpdateFps());
+}
+
+Real GameEngine::getLogicTimeStepSeconds(LogicTimeQueryFlags flags)
+{
+	return SECONDS_PER_LOGICFRAME_REAL * getActualLogicTimeScaleOverFpsRatio(flags);
+}
+
+Real GameEngine::getLogicTimeStepMilliseconds(LogicTimeQueryFlags flags)
+{
+	return MSEC_PER_LOGICFRAME_REAL * getActualLogicTimeScaleOverFpsRatio(flags);
 }
 
 /** -----------------------------------------------------------------------------------------------
@@ -872,20 +925,84 @@ void GameEngine::resetSubsystems( void )
 }
 
 /// -----------------------------------------------------------------------------------------------
+Bool GameEngine::canUpdateGameLogic()
+{
+	// Must be first.
+	TheGameLogic->preUpdate();
+
+	m_isTimeFrozen = isTimeFrozen();
+	m_isGameHalted = isGameHalted();
+
+	if (TheNetwork != NULL)
+	{
+		return canUpdateNetworkGameLogic();
+	}
+	else
+	{
+		return canUpdateRegularGameLogic();
+	}
+}
+
+Bool GameEngine::canUpdateNetworkGameLogic()
+{
+	DEBUG_ASSERTCRASH(TheNetwork != NULL, ("TheNetwork is NULL"));
+
+	if (TheNetwork->isFrameDataReady())
+	{
+		// Important: The Network is definitely no longer stalling.
+		m_isGameHalted = false;
+
+		return true;
+	}
+
+	return false;
+}
+
+Bool GameEngine::canUpdateRegularGameLogic()
+{
+	const Bool enabled = isLogicTimeScaleEnabled();
+	const Int logicTimeScaleFps = getLogicTimeScaleFps();
+	const Int maxRenderFps = getFramesPerSecondLimit();
+
+#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+	const Bool useFastMode = TheGlobalData->m_TiVOFastMode;
+#else	//always allow this cheat key if we're in a replay game.
+	const Bool useFastMode = TheGlobalData->m_TiVOFastMode && TheGameLogic->isInReplayGame();
+#endif
+
+	if (useFastMode || !enabled || logicTimeScaleFps >= maxRenderFps)
+	{
+		// Logic time scale is uncapped or larger equal Render FPS. Update straight away.
+		return true;
+	}
+	else
+	{
+		// TheSuperHackers @tweak xezon 06/08/2025
+		// The logic time step is now decoupled from the render update.
+		const Real targetFrameTime = 1.0f / logicTimeScaleFps;
+		m_logicTimeAccumulator += min(m_updateTime, targetFrameTime);
+
+		if (m_logicTimeAccumulator >= targetFrameTime)
+		{
+			m_logicTimeAccumulator -= targetFrameTime;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/// -----------------------------------------------------------------------------------------------
 DECLARE_PERF_TIMER(GameEngine_update)
 
 /** -----------------------------------------------------------------------------------------------
  * Update the game engine by updating the GameClient and GameLogic singletons.
- * @todo Allow the client to run as fast as possible, but limit the execution
- * of TheNetwork and TheGameLogic to a fixed framerate.
  */
 void GameEngine::update( void )
 {
 	USE_PERF_TIMER(GameEngine_update)
 	{
-
 		{
-
 			// VERIFY CRC needs to be in this code block.  Please to not pull TheGameLogic->update() inside this block.
 			VERIFY_CRC
 
@@ -905,55 +1022,22 @@ void GameEngine::update( void )
 			TheCDManager->UPDATE();
 		}
 
-		TheGameLogic->preUpdate();
+		const Bool canUpdate = canUpdateGameLogic();
+		const Bool canUpdateLogic = canUpdate && !m_isGameHalted && !m_isTimeFrozen;
+		const Bool canUpdateScript = canUpdate && !m_isGameHalted;
 
-		if (TheNetwork != NULL)
+		if (canUpdateLogic)
 		{
-			if (TheNetwork->isFrameDataReady())
-			{
-				TheGameClient->step();
-				TheGameLogic->UPDATE();
-			}
+			TheGameClient->step();
+			TheGameLogic->UPDATE();
 		}
-		else
+		else if (canUpdateScript)
 		{
-			if (!TheGameLogic->isGamePaused())
-			{
-				const Bool enabled = isLogicTimeScaleEnabled();
-				const Int logicTimeScaleFps = getLogicTimeScaleFps();
-				const Int maxRenderFps = getFramesPerSecondLimit();
-
-#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
-				Bool useFastMode = TheGlobalData->m_TiVOFastMode;
-#else	//always allow this cheat key if we're in a replay game.
-				Bool useFastMode = TheGlobalData->m_TiVOFastMode && TheGameLogic->isInReplayGame();
-#endif
-
-				if (useFastMode || !enabled || logicTimeScaleFps >= maxRenderFps)
-				{
-					// Logic time scale is uncapped or larger equal Render FPS. Update straight away.
-					TheGameClient->step();
-					TheGameLogic->UPDATE();
-				}
-				else
-				{
-					// TheSuperHackers @tweak xezon 06/08/2025
-					// The logic time step is now decoupled from the render update.
-					const Real targetFrameTime = 1.0f / logicTimeScaleFps;
-					m_logicTimeAccumulator += min(m_updateTime, targetFrameTime);
-
-					if (m_logicTimeAccumulator >= targetFrameTime)
-					{
-						m_logicTimeAccumulator -= targetFrameTime;
-						TheGameClient->step();
-						TheGameLogic->UPDATE();
-					}
-				}
-			}
+			// TheSuperHackers @info Still update the Script Engine to allow
+			// for scripted camera movements while the time is frozen.
+			TheScriptEngine->UPDATE();
 		}
-
 	}	// end perfGather
-
 }
 
 // Horrible reference, but we really, really need to know if we are windowed.
