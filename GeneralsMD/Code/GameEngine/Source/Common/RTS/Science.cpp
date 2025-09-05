@@ -54,9 +54,7 @@ ScienceStore::~ScienceStore()
 	{
 		ScienceInfo* si = *it;
 		++it;
-		if (si) {
-			deleteInstance(si);
-		}
+		deleteInstance(si);
 	}
 }
 

@@ -122,8 +122,7 @@ class Overridable : public MemoryPoolObject
 // cleans up and dangling overrides.
 __inline Overridable::~Overridable()
 {
-	if (m_nextOverride)
-		deleteInstance(m_nextOverride);
+	deleteInstance(m_nextOverride);
 }
 
 

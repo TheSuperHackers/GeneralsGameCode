@@ -133,8 +133,7 @@ DeliverPayloadAIUpdate::~DeliverPayloadAIUpdate( void )
 {
 	m_deliveryDecal.clear();
 
-	if (m_deliverPayloadStateMachine)
-		deleteInstance(m_deliverPayloadStateMachine);
+	deleteInstance(m_deliverPayloadStateMachine);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -256,8 +255,7 @@ void DeliverPayloadAIUpdate::deliverPayload(
 	//THIS GETS CALLED VIA OBJECT CREATION LISTS ONLY!!!
 	//****************************************************
 
-	if (m_deliverPayloadStateMachine)
-		deleteInstance(m_deliverPayloadStateMachine);
+	deleteInstance(m_deliverPayloadStateMachine);
 	m_deliverPayloadStateMachine = NULL;
 
 	m_moveToPos = *moveToPos;

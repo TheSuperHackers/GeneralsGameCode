@@ -118,8 +118,7 @@ void GameWindowManager::processDestroyList( void )
 		DEBUG_ASSERTCRASH(doDestroy->winGetUserData() == NULL, ("Win user data is expected to be deleted now"));
 
 		// free the memory
-		if (doDestroy)
-			deleteInstance(doDestroy);
+		deleteInstance(doDestroy);
 
 	}  // end for
 

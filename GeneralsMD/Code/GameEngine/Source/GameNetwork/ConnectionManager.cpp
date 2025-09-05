@@ -59,57 +59,39 @@
  */
 ConnectionManager::~ConnectionManager(void)
 {
-	if (m_localUser != NULL) {
-		deleteInstance(m_localUser);
-		m_localUser = NULL;
-	}
+	deleteInstance(m_localUser);
+	m_localUser = NULL;
 
-//	m_transport = NULL; // Network will delete transports; we just forget them
-	if (m_transport != NULL) {
-		delete m_transport;
-		m_transport = NULL;
-	}
+	// Network will delete transports; we just forget them
+	delete m_transport;
+	m_transport = NULL;
 
 	Int i = 0;
 	for (; i < MAX_SLOTS; ++i) {
-		if (m_frameData[i] != NULL) {
-			deleteInstance(m_frameData[i]);
-			m_frameData[i] = NULL;
-		}
+		deleteInstance(m_frameData[i]);
+		m_frameData[i] = NULL;
 	}
 
 	for (i = 0; i < NUM_CONNECTIONS; ++i) {
-		if (m_connections[i] != NULL) {
-			deleteInstance(m_connections[i]);
-			m_connections[i] = NULL;
-		}
+		deleteInstance(m_connections[i]);
+		m_connections[i] = NULL;
 	}
 
-	if (TheDisconnectMenu != NULL) {
-		// This is done here since TheDisconnectMenu should only be there if we are in a network game.
-		delete TheDisconnectMenu;
-		TheDisconnectMenu = NULL;
-	}
+	// This is done here since TheDisconnectMenu should only be there if we are in a network game.
+	delete TheDisconnectMenu;
+	TheDisconnectMenu = NULL;
 
-	if (m_disconnectManager != NULL) {
-		delete m_disconnectManager;
-		m_disconnectManager = NULL;
-	}
+	delete m_disconnectManager;
+	m_disconnectManager = NULL;
 
-	if (m_pendingCommands != NULL) {
-		deleteInstance(m_pendingCommands);
-		m_pendingCommands = NULL;
-	}
+	deleteInstance(m_pendingCommands);
+	m_pendingCommands = NULL;
 
-	if (m_relayedCommands != NULL) {
-		deleteInstance(m_relayedCommands);
-		m_relayedCommands = NULL;
-	}
+	deleteInstance(m_relayedCommands);
+	m_relayedCommands = NULL;
 
-	if (m_netCommandWrapperList != NULL) {
-		deleteInstance(m_netCommandWrapperList);
-		m_netCommandWrapperList = NULL;
-	}
+	deleteInstance(m_netCommandWrapperList);
+	m_netCommandWrapperList = NULL;
 
 	s_fileCommandMap.clear();
 	s_fileRecipientMaskMap.clear();
@@ -174,10 +156,8 @@ void ConnectionManager::init()
 	}
 
 	for (i = 0; i < MAX_SLOTS; ++i) {
-		if (m_frameData[i] != NULL) {
-			deleteInstance(m_frameData[i]);
-			m_frameData[i] = NULL;
-		}
+		deleteInstance(m_frameData[i]);
+		m_frameData[i] = NULL;
 	}
 
 //	m_averageFps = 30;			// since 30 fps is the desired rate, we'll start off at that.
@@ -228,18 +208,14 @@ void ConnectionManager::reset()
 
 	UnsignedInt i = 0;
 	for (; i < (UnsignedInt)NUM_CONNECTIONS; ++i) {
-		if (m_connections[i] != NULL) {
-			deleteInstance(m_connections[i]);
-			m_connections[i] = NULL;
-		}
+		deleteInstance(m_connections[i]);
+		m_connections[i] = NULL;
 	}
 
 	for (i=0; i<(UnsignedInt)MAX_SLOTS; ++i)
 	{
-		if (m_frameData[i] != NULL) {
-			deleteInstance(m_frameData[i]);
-			m_frameData[i] = NULL;
-		}
+		deleteInstance(m_frameData[i]);
+		m_frameData[i] = NULL;
 	}
 
 	if (m_pendingCommands == NULL) {

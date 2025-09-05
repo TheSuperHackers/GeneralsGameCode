@@ -292,8 +292,7 @@ StateMachine::~StateMachine()
 	// delete all states in the mapping
 	for( i = m_stateMap.begin(); i != m_stateMap.end(); ++i )
 	{
-		if ((*i).second)
-			deleteInstance((*i).second);
+		deleteInstance((*i).second);
 	}
 }
 

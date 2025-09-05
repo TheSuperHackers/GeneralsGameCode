@@ -5753,8 +5753,7 @@ void InGameUI::resetIdleWorker( void )
 void InGameUI::recreateControlBar( void )
 {
 	GameWindow *win = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd")));
-	if(win)
-		deleteInstance(win);
+	deleteInstance(win);
 
 	m_idleWorkerWin = NULL;
 

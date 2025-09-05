@@ -849,19 +849,13 @@ TeamPrototype::~TeamPrototype()
 	if (m_factory)
 		m_factory->removeTeamPrototypeFromList(this);
 
-	if (m_productionConditionScript)
-	{
-		deleteInstance(m_productionConditionScript);
-	}
+	deleteInstance(m_productionConditionScript);
 	m_productionConditionScript = NULL;
 
 	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i)
 	{
-		if (m_genericScriptsToRun[i])
-		{
-			deleteInstance(m_genericScriptsToRun[i]);
-			m_genericScriptsToRun[i] = NULL;
-		}
+		deleteInstance(m_genericScriptsToRun[i]);
+		m_genericScriptsToRun[i] = NULL;
 	}
 }
 

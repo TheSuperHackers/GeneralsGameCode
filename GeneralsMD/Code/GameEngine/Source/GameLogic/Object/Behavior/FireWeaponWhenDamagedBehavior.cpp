@@ -146,23 +146,15 @@ FireWeaponWhenDamagedBehavior::FireWeaponWhenDamagedBehavior( Thing *thing, cons
 //-------------------------------------------------------------------------------------------------
 FireWeaponWhenDamagedBehavior::~FireWeaponWhenDamagedBehavior( void )
 {
-	if (m_reactionWeaponPristine)
-		deleteInstance(m_reactionWeaponPristine);
-	if (m_reactionWeaponDamaged)
-		deleteInstance(m_reactionWeaponDamaged);
-	if (m_reactionWeaponReallyDamaged)
-		deleteInstance(m_reactionWeaponReallyDamaged);
-	if (m_reactionWeaponRubble)
-		deleteInstance(m_reactionWeaponRubble);
+	deleteInstance(m_reactionWeaponPristine);
+	deleteInstance(m_reactionWeaponDamaged);
+	deleteInstance(m_reactionWeaponReallyDamaged);
+	deleteInstance(m_reactionWeaponRubble);
 
-	if (m_continuousWeaponPristine)
-		deleteInstance(m_continuousWeaponPristine);
-	if (m_continuousWeaponDamaged)
-		deleteInstance(m_continuousWeaponDamaged);
-	if (m_continuousWeaponReallyDamaged)
-		deleteInstance(m_continuousWeaponReallyDamaged);
-	if (m_continuousWeaponRubble)
-		deleteInstance(m_continuousWeaponRubble);
+	deleteInstance(m_continuousWeaponPristine);
+	deleteInstance(m_continuousWeaponDamaged);
+	deleteInstance(m_continuousWeaponReallyDamaged);
+	deleteInstance(m_continuousWeaponRubble);
 }
 
 //-------------------------------------------------------------------------------------------------
