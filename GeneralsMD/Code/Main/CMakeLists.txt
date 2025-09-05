@@ -26,13 +26,53 @@ target_link_libraries(z_generals PRIVATE
     zi_always
 )
 
-# TODO Originally referred to build host and user, replace with git info perhaps?
+# Set build information variables with default values that can be overridden
+if(NOT DEFINED VERSION_BUILDUSER)
+    set(VERSION_BUILDUSER "\"The Super Hackers\"")
+endif()
+
+if(NOT DEFINED VERSION_BUILDLOC)
+    set(VERSION_BUILDLOC "\"https://github.com/TheSuperHackers/GeneralsGameCode\"")
+endif()
+
+# Normalize to ensure they are C string literals even when provided via -D on the CLI
+set(_VERSION_BUILDUSER ${VERSION_BUILDUSER})
+if(NOT _VERSION_BUILDUSER MATCHES "^\".*\"$")
+    set(_VERSION_BUILDUSER "\"${VERSION_BUILDUSER}\"")
+endif()
+
+set(_VERSION_BUILDLOC ${VERSION_BUILDLOC})
+if(NOT _VERSION_BUILDLOC MATCHES "^\".*\"$")
+    set(_VERSION_BUILDLOC "\"${VERSION_BUILDLOC}\"")
+endif()
+
+# Use git revision count as build number if available, otherwise use default or override
+if(NOT DEFINED VERSION_BUILDNUM)
+    if(DEFINED GIT_REV_LIST_COUNT)
+        set(VERSION_BUILDNUM ${GIT_REV_LIST_COUNT})
+    else()
+        set(VERSION_BUILDNUM 601)
+    endif()
+endif()
+
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/GeneratedVersion.h
 "#pragma once
 
+#ifndef VERSION_BUILDNUM
+#define VERSION_BUILDNUM ${VERSION_BUILDNUM}
+#endif
+
+#ifndef VERSION_LOCALBUILDNUM
 #define VERSION_LOCALBUILDNUM 0
-#define VERSION_BUILDUSER \"\"
-#define VERSION_BUILDLOC \"\"
+#endif
+
+#ifndef VERSION_BUILDUSER
+#define VERSION_BUILDUSER ${_VERSION_BUILDUSER}
+#endif
+
+#ifndef VERSION_BUILDLOC
+#define VERSION_BUILDLOC ${_VERSION_BUILDLOC}
+#endif
 "
 )
 
@@ -42,7 +82,6 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h
 
 #define VERSION_MAJOR 1
 #define VERSION_MINOR 4
-#define VERSION_BUILDNUM 601
 "
 )
 
