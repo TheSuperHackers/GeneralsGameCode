@@ -674,6 +674,8 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 	MemoryPoolObjectHolder hold(iter);
 	for( them = iter->first(); them; them = iter->next() )
 	{
+		if (them->getDrawable() && them->getDrawable()->getFullyObscuredByShroud())
+			return false;
 
 		// ignore any kind of class of objects that we will "remove" for building
 		if( isRemovableForConstruction( them ) == TRUE )
@@ -803,22 +805,26 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 
 		// an immobile object will obstruct our building no matter what team it's on
 		if ( them->isKindOf( KINDOF_IMMOBILE ) )	{
+			Bool shrouded = them->getDrawable() && them->getDrawable()->getFullyObscuredByShroud();
 			/* Check for overlap of my exit rectangle to his geom info. */
 			if (checkMyExit && ThePartitionManager->geomCollidesWithGeom(them->getPosition(), hisBounds, them->getOrientation(),
 				&myExitPos, myGeom, angle)) {
-				TheTerrainVisual->addFactionBib(them, true);
+				if (!shrouded)
+					TheTerrainVisual->addFactionBib(them, true);
 				return false;
 			}
 			// Check for overlap of his exit rectangle with my geom info
 			if (checkHisExit && ThePartitionManager->geomCollidesWithGeom(&hisExitPos, hisGeom, them->getOrientation(),
 					worldPos, myBounds, angle)) {
-				TheTerrainVisual->addFactionBib(them, true);
+				if (!shrouded)
+					TheTerrainVisual->addFactionBib(them, true);
 				return false;
 			}
 			// Check both exit rectangles together.
 			if (checkMyExit&&checkHisExit&&ThePartitionManager->geomCollidesWithGeom(&hisExitPos, hisGeom, them->getOrientation(),
 					&myExitPos, myGeom, angle)) {
-				TheTerrainVisual->addFactionBib(them, true);
+				if (!shrouded)
+					TheTerrainVisual->addFactionBib(them, true);
 				return false;
 			}
 		}
