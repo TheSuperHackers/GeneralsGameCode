@@ -936,6 +936,8 @@ GlobalData::GlobalData()
 
 	m_systemTimeFontSize = 8;
 	m_gameTimeFontSize = 8;
+	m_networkLatencyFontSize = 8;
+	m_renderFpsFontSize = 8;
 
 	m_debugShowGraphicalFramerate = FALSE;
 
@@ -1207,6 +1209,8 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 
 	TheWritableGlobalData->m_systemTimeFontSize = optionPref.getSystemTimeFontSize();
 	TheWritableGlobalData->m_gameTimeFontSize = optionPref.getGameTimeFontSize();
+	TheWritableGlobalData->m_networkLatencyFontSize = optionPref.getNetworkLatencyFontSize();
+	TheWritableGlobalData->m_renderFpsFontSize = optionPref.getRenderFpsFontSize();
 
 	Int val=optionPref.getGammaValue();
 	//generate a value between 0.6 and 2.0.

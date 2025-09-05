@@ -854,6 +854,34 @@ Int OptionPreferences::getGameTimeFontSize(void)
 	return fontSize;
 }
 
+Int OptionPreferences::getNetworkLatencyFontSize(void)
+{
+    OptionPreferences::const_iterator it = find("NetworkLatencyFontSize");
+    if (it == end())
+        return 8;
+
+    Int fontSize = atoi(it->second.str());
+    if (fontSize < 0)
+    {
+        fontSize = 0;
+    }
+    return fontSize;
+}
+
+Int OptionPreferences::getRenderFpsFontSize(void)
+{
+    OptionPreferences::const_iterator it = find("RenderFpsFontSize");
+    if (it == end())
+        return 8;
+
+    Int fontSize = atoi(it->second.str());
+    if (fontSize < 0)
+    {
+        fontSize = 0;
+    }
+    return fontSize;
+}
+
 static OptionPreferences *pref = NULL;
 
 static void setDefaults( void )
@@ -1396,6 +1424,28 @@ static void saveOptions( void )
 		prefString.format("%d", val);
 		(*pref)["GameTimeFontSize"] = prefString;
 		TheInGameUI->refreshGameTimeResources();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// Set Network Latency Font Size
+	val = pref->getNetworkLatencyFontSize();
+	if (val >= 0)
+	{
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["NetworkLatencyFontSize"] = prefString;
+		TheInGameUI->refreshNetworkLatencyResources();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// Set Render FPS Font Size
+	val = pref->getRenderFpsFontSize();
+	if (val >= 0)
+	{
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["RenderFpsFontSize"] = prefString;
+		TheInGameUI->refreshRenderFpsResources();
 	}
 
 	//-------------------------------------------------------------------------------------------------
