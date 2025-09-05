@@ -485,7 +485,7 @@ void BuddyThreadClass::errorCallback( GPConnection *con, GPErrorArg *arg )
 		errorResponse.result = arg->result;
 		errorResponse.arg.error.errorCode = arg->errorCode;
 		errorResponse.arg.error.fatal = arg->fatal;
-		strncpy(errorResponse.arg.error.errorString, arg->errorString, MAX_BUDDY_CHAT_LEN);
+		strlcpy(errorResponse.arg.error.errorString, arg->errorString, MAX_BUDDY_CHAT_LEN);
 		errorResponse.arg.error.errorString[MAX_BUDDY_CHAT_LEN-1] = 0;
 		m_isConnecting = m_isConnected = false;
 		TheGameSpyBuddyMessageQueue->addResponse( errorResponse );

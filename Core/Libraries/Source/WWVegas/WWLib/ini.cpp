@@ -1150,8 +1150,7 @@ bool INIClass::Put_TextBlock(char const * section, char const * text)
 
 		char buffer[128];
 
-		strncpy(buffer, text, 75);
-		buffer[75] = '\0';
+		strlcpy(buffer, text, 75);
 
 		char b[32];
 		sprintf(b, "%d", index);
@@ -1724,8 +1723,7 @@ int INIClass::Get_String(char const * section, char const * entry, char const * 
 		buffer[0] = '\0';
 		return(0);
 	} else {
-		strncpy(buffer, defvalue, size);
-		buffer[size-1] = '\0';
+		strlcpy(buffer, defvalue, size);
 		strtrim(buffer);
 		return(strlen(buffer));
 	}
