@@ -39,8 +39,8 @@
 #include "Common/STLTypedefs.h"
 
 class Money;
-enum CursorCaptureMode CPP_11(: Int);
 typedef UnsignedInt ScreenEdgeScrollMode;
+typedef UnsignedInt CursorCaptureMode;
 
 //-----------------------------------------------------------------------------
 // PUBLIC TYPES ///////////////////////////////////////////////////////////////
@@ -98,6 +98,10 @@ public:
 	Real getScrollFactor(void);								// convenience function
 	Bool getDrawScrollAnchor(void);
 	Bool getMoveScrollAnchor(void);
+	Bool getCursorCaptureEnabledInWindowedGame() const;
+	Bool getCursorCaptureEnabledInWindowedMenu() const;
+	Bool getCursorCaptureEnabledInFullscreenGame() const;
+	Bool getCursorCaptureEnabledInFullscreenMenu() const;
 	CursorCaptureMode getCursorCaptureMode() const;
 	Bool getScreenEdgeScrollEnabledInWindowedApp() const;
 	Bool getScreenEdgeScrollEnabledInFullscreenApp() const;
