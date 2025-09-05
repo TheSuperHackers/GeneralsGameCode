@@ -571,6 +571,8 @@ public:  // ********************************************************************
 
 	virtual void recreateControlBar( void );
 	virtual void refreshCustomUiResources( void );
+	virtual void refreshNetworkLatencyResources(void);
+	virtual void refreshRenderFpsResources(void);
 	virtual void refreshSystemTimeResources( void );
 	virtual void refreshGameTimeResources( void );
 
@@ -592,7 +594,10 @@ private:
 	virtual void updateIdleWorker( void );
 	virtual void resetIdleWorker( void );
 
-	void drawSystemTime();
+	void updateRenderFpsString();
+	void drawNetworkLatency(Int &x, Int &y);
+	void drawRenderFps(Int &x, Int &y);
+	void drawSystemTime(Int &x, Int &y);
 	void drawGameTime();
 
 public:
@@ -752,6 +757,31 @@ protected:
 	// Video playback data
 	VideoBuffer*								m_cameoVideoBuffer;///< video playback buffer
 	VideoStreamInterface*				m_cameoVideoStream;///< Video stream;
+
+	// Network Latency Counter
+	DisplayString *							m_networkLatencyString;
+	AsciiString									m_networkLatencyFont;
+	Int													m_networkLatencyPointSize;
+	Bool												m_networkLatencyBold;
+	Coord2D											m_networkLatencyPosition;
+	Color												m_networkLatencyColor;
+	Color												m_networkLatencyDropColor;
+	UnsignedInt									m_lastNetworkLatencyFrames;
+
+	// Render FPS Counter
+	DisplayString *							m_renderFpsString;
+	DisplayString *							m_renderFpsLimitString;
+	AsciiString									m_renderFpsFont;
+	Int													m_renderFpsPointSize;
+	Bool												m_renderFpsBold;
+	Coord2D											m_renderFpsPosition;
+	Color												m_renderFpsColor;
+	Color												m_renderFpsLimitColor;
+	Color												m_renderFpsDropColor;
+	UnsignedInt									m_renderFpsRefreshMs;
+	UnsignedInt									m_lastRenderFps;
+	UnsignedInt									m_lastRenderFpsLimit;
+	UnsignedInt									m_lastRenderFpsUpdateMs;
 
 	// System Time
 	DisplayString *										m_systemTimeString;
