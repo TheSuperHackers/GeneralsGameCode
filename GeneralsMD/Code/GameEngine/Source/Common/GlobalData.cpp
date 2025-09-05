@@ -934,6 +934,8 @@ GlobalData::GlobalData()
 	m_saveCameraInReplay = FALSE;
 	m_useCameraInReplay = FALSE;
 
+	m_showMoneyPerMinute = FALSE;
+
 	m_systemTimeFontSize = 8;
 	m_gameTimeFontSize = 8;
 
@@ -1207,6 +1209,7 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 
 	TheWritableGlobalData->m_systemTimeFontSize = optionPref.getSystemTimeFontSize();
 	TheWritableGlobalData->m_gameTimeFontSize = optionPref.getGameTimeFontSize();
+	TheWritableGlobalData->m_showMoneyPerMinute = optionPref.getShowMoneyPerMinute();
 
 	Int val=optionPref.getGammaValue();
 	//generate a value between 0.6 and 2.0.

@@ -182,6 +182,7 @@ AsciiString PlayerTemplate::getStartingUnit( Int i ) const
 	Money *theMoney = (Money *)store;
 	theMoney->init();
 	theMoney->deposit( money );
+	theMoney->setStartingCash(money);
 
 }  // end parseStartMoney
 
