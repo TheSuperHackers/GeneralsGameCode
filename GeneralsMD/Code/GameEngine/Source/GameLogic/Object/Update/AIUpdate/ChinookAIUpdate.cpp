@@ -361,7 +361,11 @@ private:
 			for (std::list<ObjectID>::iterator oit = it->rappellerIDs.begin(); oit != it->rappellerIDs.end(); )
 			{
 				Object* rappeller = TheGameLogic->findObjectByID(*oit);
+#if RETAIL_COMPATIBLE_CRC
 				if (rappeller == NULL || rappeller->isEffectivelyDead() || !rappeller->isAboveTerrain())
+#else
+				if (rappeller == NULL || rappeller->isEffectivelyDead() || !rappeller->isAboveTerrain() || rappeller->isContained())
+#endif
 				{
 					oit = it->rappellerIDs.erase(oit);
 				}
