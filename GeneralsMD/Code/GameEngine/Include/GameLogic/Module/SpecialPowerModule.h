@@ -52,7 +52,7 @@ public:
 
 	virtual Bool isModuleForPower( const SpecialPowerTemplate *specialPowerTemplate ) const = 0;
 	virtual Bool isReady( void ) const = 0;
-//  This is the althernate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or until 12/10/02
+//  This is the alternate way to one-at-a-time BlackLotus' specials; we'll keep it commented her until Dustin decides, or until 12/10/02
 //	virtual Bool isBusy( void ) const = 0;
 	virtual Real getPercentReady( void ) const = 0;
 	virtual UnsignedInt getReadyFrame( void ) const = 0;
@@ -73,6 +73,7 @@ public:
 
 	//If the special power launches a construction site, we need to know the final product for placement purposes.
 	virtual const ThingTemplate* getReferenceThingTemplate() const = 0;
+	virtual void onConstructionCompleted() = 0;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -165,8 +166,12 @@ public:
 	//If the special power launches a construction site, we need to know the final product for placement purposes.
 	virtual const ThingTemplate* getReferenceThingTemplate() const { return NULL; }
 
+	virtual void onConstructionCompleted();
+
 protected:
 
+	void init();
+	void initCountdown();
 	Bool initiateIntentToDoSpecialPower( const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions );
 	void triggerSpecialPower( const Coord3D *location );
 	void createViewObject( const Coord3D *location );
