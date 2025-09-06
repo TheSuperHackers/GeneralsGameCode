@@ -2704,7 +2704,7 @@ void Player::resetSciences()
 
 //=============================================================================
 /// returns TRUE if sciences were gained/lost.
-Bool Player::addScience(ScienceType science)
+Bool Player::addScience(ScienceType science, Bool playerAction/* = FALSE*/)
 {
 	if (hasScience(science))
 		return false;
@@ -2728,7 +2728,35 @@ Bool Player::addScience(ScienceType science)
 		{
 			DEBUG_LOG(("Player::addScience - Granting upgrade %s.", upgradeName.str()));
 			addUpgrade(upgradeTemplate, UPGRADE_STATUS_COMPLETE);
-			getAcademyStats()->recordUpgrade(upgradeTemplate, FALSE);
+
+			// Only show audio and visuals if this was a manual player command
+			if (playerAction && !upgradeTemplate->getDisplayNameLabel().isEmpty() && !upgradeTemplate->isSilentCompletion()) {
+				getAcademyStats()->recordUpgrade(upgradeTemplate, FALSE);
+				// print a message to the local player
+				if (isLocalPlayer())
+				{
+					UnicodeString msg;
+					UnicodeString format = TheGameText->fetch("UPGRADE:UpgradeComplete");
+					UnicodeString upgradeName = TheGameText->fetch(upgradeTemplate->getDisplayNameLabel().str());
+
+					msg.format(format.str(), upgradeName.str());
+					TheInGameUI->message(msg);
+
+					//Play the sound for the upgrade, because we just built it!
+					AudioEventRTS sound = *upgradeTemplate->getResearchCompleteSound();
+					if (TheAudio->isValidAudioEvent(&sound))
+					{
+						//We have a custom upgrade complete sound.
+						//sound.setObjectID(us->getID());
+						TheAudio->addAudioEvent(&sound);
+					}
+					else
+					{
+						//Use a generic EVA event.
+						TheEva->setShouldPlay(EVA_UpgradeComplete);
+					}
+				}
+			}
 		}
 		else
 		{
@@ -2793,7 +2821,7 @@ void Player::addSciencePurchasePoints(Int delta)
 }
 
 //=============================================================================
-Bool Player::attemptToPurchaseScience(ScienceType science)
+Bool Player::attemptToPurchaseScience(ScienceType science, Bool playerAction/* = FALSE*/)
 {
 	if (!isCapableOfPurchasingScience(science))
 	{
@@ -2803,7 +2831,7 @@ Bool Player::attemptToPurchaseScience(ScienceType science)
 
 	Int cost = TheScienceStore->getSciencePurchaseCost(science);
 	addSciencePurchasePoints(-cost);
-	addScience(science);
+	addScience(science, playerAction);
 
 	getAcademyStats()->recordGeneralsPointsSpent( cost );
 

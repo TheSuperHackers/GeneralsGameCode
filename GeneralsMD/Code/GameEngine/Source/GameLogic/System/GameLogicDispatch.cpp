@@ -2045,7 +2045,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			if( science == SCIENCE_INVALID || thisPlayer == NULL )
 				break;
 
-			thisPlayer->attemptToPurchaseScience(science);
+			thisPlayer->attemptToPurchaseScience(science, TRUE);
 
 			break;
 
