@@ -46,6 +46,8 @@
 
 #define DEFINE_SCIENCE_AVAILABILITY_NAMES
 
+#define NO_DEBUG_CRC
+
 #include "Common/ActionManager.h"
 #include "Common/BuildAssistant.h"
 #include "Common/CRCDebug.h"
@@ -97,6 +99,7 @@
 #include "GameLogic/Module/SupplyTruckAIUpdate.h"
 #include "GameLogic/Module/BattlePlanUpdate.h"
 #include "GameLogic/Module/ProductionUpdate.h"
+#include "GameLogic/Module/BattlePlanBonusBehavior.h"
 #include "GameLogic/VictoryConditions.h"
 
 #include "GameNetwork/GameInfo.h"
@@ -3690,9 +3693,9 @@ static void localApplyBattlePlanBonusesToObject( Object *obj, void *userData )
 	Object *objectToValidate = obj;
 	Object *objectToModify = obj;
 
-	DEBUG_LOG(("localApplyBattlePlanBonusesToObject() - looking at object %d (%s)",
+	/*DEBUG_LOG(("localApplyBattlePlanBonusesToObject() - looking at object %d (%s)",
 		(objectToValidate)?objectToValidate->getID():INVALID_ID,
-		(objectToValidate)?objectToValidate->getTemplate()->getName().str():"<No Object>"));
+		(objectToValidate)?objectToValidate->getTemplate()->getName().str():"<No Object>"));*/
 
 	//First check if the obj is a projectile -- if so split the
 	//object so that the producer is validated, not the projectile.
@@ -3700,20 +3703,36 @@ static void localApplyBattlePlanBonusesToObject( Object *obj, void *userData )
 	if( isProjectile )
 	{
 		objectToValidate = TheGameLogic->findObjectByID( obj->getProducerID() );
-		DEBUG_LOG(("Object is a projectile - looking at object %d (%s) instead",
+		/*DEBUG_LOG(("Object is a projectile - looking at object %d (%s) instead",
 			(objectToValidate)?objectToValidate->getID():INVALID_ID,
-			(objectToValidate)?objectToValidate->getTemplate()->getName().str():"<No Object>"));
+			(objectToValidate)?objectToValidate->getTemplate()->getName().str():"<No Object>"));*/
 	}
 	if( objectToValidate && objectToValidate->isAnyKindOf( bonus->m_validKindOf ) )
 	{
-		DEBUG_LOG(("Is valid kindof"));
+		//DEBUG_LOG(("Is valid kindof"));
 		if( !objectToValidate->isAnyKindOf( bonus->m_invalidKindOf ) )
 		{
-			DEBUG_LOG(("Is not invalid kindof"));
+			//DEBUG_LOG(("Is not invalid kindof"));
 			//Quite the trek eh? Now we can apply the bonuses!
 			if( !isProjectile )
 			{
-				DEBUG_LOG(("Is not projectile.  Armor scalar is %g", bonus->m_armorScalar));
+
+				// ------------------------
+				// Check Modules
+				for (BehaviorModule** b = objectToModify->getBehaviorModules(); *b; ++b)
+				{
+					BattlePlanBonusBehaviorInterface* bpbi = (*b)->getBattlePlanBonusBehaviorInterface();
+					if (bpbi) {
+						bpbi->applyBonus(bonus);
+						if (bpbi->isOverrideGlobalBonus()) {
+							return;
+						}
+					}
+				}
+
+				// ------------------------
+
+				//DEBUG_LOG(("Is not projectile.  Armor scalar is %g", bonus->m_armorScalar));
 				//Really important to not apply certain bonuses like health augmentation to projectiles!
 				if( bonus->m_armorScalar != 1.0f )
 				{
@@ -3723,7 +3742,7 @@ static void localApplyBattlePlanBonusesToObject( Object *obj, void *userData )
 						bonus->m_armorScalar, AS_INT(bonus->m_armorScalar), objectToModify->getID(),
 						objectToModify->getTemplate()->getDisplayName().str(),
 						objectToModify->getControllingPlayer()->getPlayerIndex()));
-					DEBUG_LOG(("After apply, armor scalar is %g", body->getDamageScalar()));
+					//DEBUG_LOG(("After apply, armor scalar is %g", body->getDamageScalar()));
 				}
 				if( bonus->m_sightRangeScalar != 1.0f )
 				{
@@ -3778,9 +3797,18 @@ void Player::removeBattlePlanBonusesForObject( Object *obj ) const
 	*bonus = *m_battlePlanBonuses;
 	bonus->m_armorScalar					= 1.0f / __max( bonus->m_armorScalar, 0.01f );
 	bonus->m_sightRangeScalar			= 1.0f / __max( bonus->m_sightRangeScalar, 0.01f );
-	bonus->m_bombardment					= -ALL_PLANS; //Safe to remove as it clears the weapon bonus flag
-	bonus->m_searchAndDestroy			= -ALL_PLANS; //Safe to remove as it clears the weapon bonus flag
-	bonus->m_holdTheLine					= -ALL_PLANS; //Safe to remove as it clears the weapon bonus flag
+
+	//bonus->m_bombardment					= -ALL_PLANS; //Safe to remove as it clears the weapon bonus flag
+	//bonus->m_searchAndDestroy			= -ALL_PLANS; //Safe to remove as it clears the weapon bonus flag
+	//bonus->m_holdTheLine					= -ALL_PLANS; //Safe to remove as it clears the weapon bonus flag
+
+  // Update AW: We need use these variables now to track which plan should be added/removed
+	if (bonus->m_bombardment > 0)
+		bonus->m_bombardment = -1;
+	if (bonus->m_searchAndDestroy > 0)
+		bonus->m_searchAndDestroy = -1;
+	if (bonus->m_holdTheLine > 0)
+		bonus->m_holdTheLine = -1;
 
 	DUMPBATTLEPLANBONUSES(bonus, this, obj);
 	localApplyBattlePlanBonusesToObject( obj, bonus );

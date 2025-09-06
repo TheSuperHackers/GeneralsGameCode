@@ -753,6 +753,8 @@ public:
 	/** return true attemptToPurchaseScience() would succeed for this science. */
 	Bool isCapableOfPurchasingScience(ScienceType science) const;
 
+	const BattlePlanBonuses* getBattlePlanBonuses(void) const { return m_battlePlanBonuses; }
+
 protected:
 
 	// snapshot methods
