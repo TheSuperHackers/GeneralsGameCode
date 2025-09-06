@@ -2713,6 +2713,29 @@ Bool Player::addScience(ScienceType science)
 
 	m_sciences.push_back(science);
 
+	// Grant Upgrades
+	std::vector<AsciiString> upgrades;
+	TheScienceStore->getGrantedUpgradeNames(science, upgrades);
+	for (AsciiString upgradeName : upgrades) {
+		const UpgradeTemplate* upgradeTemplate = TheUpgradeCenter->findUpgrade(upgradeName);
+		if (!upgradeTemplate)
+		{
+			DEBUG_LOG(("Player::addScience - can't find upgrade template %s.", upgradeName.str()));
+			continue;
+		}
+
+		if (upgradeTemplate->getUpgradeType() == UPGRADE_TYPE_PLAYER)
+		{
+			DEBUG_LOG(("Player::addScience - Granting upgrade %s.", upgradeName.str()));
+			addUpgrade(upgradeTemplate, UPGRADE_STATUS_COMPLETE);
+			getAcademyStats()->recordUpgrade(upgradeTemplate, FALSE);
+		}
+		else
+		{
+			DEBUG_LOG(("Player::addScience - Cannot grant OBJECT type upgrade %s.", upgradeName.str()));
+		}
+	}
+
 	// 'wake up' any special powers controlled by, well, stuff
 	for (PlayerTeamList::iterator it = m_playerTeamPrototypes.begin();
 			 it != m_playerTeamPrototypes.end(); ++it)
