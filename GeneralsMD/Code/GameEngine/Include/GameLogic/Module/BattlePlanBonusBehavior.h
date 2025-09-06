@@ -119,7 +119,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// module methods
-	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | MODULEINTERFACE_UPGRADE; }
+	static Int getInterfaceMask() { return BehaviorModule::getInterfaceMask() | MODULEINTERFACE_UPGRADE; }
 
 	// BehaviorModule
 	virtual UpgradeModuleInterface* getUpgrade() { return this; }

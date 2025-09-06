@@ -2747,7 +2747,7 @@ Bool Player::addScience(ScienceType science, Bool playerAction/* = FALSE*/)
 					if (TheAudio->isValidAudioEvent(&sound))
 					{
 						//We have a custom upgrade complete sound.
-						//sound.setObjectID(us->getID());
+						sound.setPlayerIndex(getPlayerIndex());
 						TheAudio->addAudioEvent(&sound);
 					}
 					else

@@ -84,11 +84,6 @@ void W3DDependencyModelDraw::doDrawModule(const Matrix3D* transformMtx)
 {
 	if( m_dependencyCleared )
 	{
-		if (!transformMtx) {
-			DEBUG_LOG(("####### W3DDependencyModelDraw::doDrawModule -- MTX IS NULL!!!"));
-			return;
-		}
-
 		// We've been cleared by the thing we were waiting to draw, so we can draw.
 		W3DModelDraw::doDrawModule( transformMtx );
 		m_dependencyCleared = FALSE;

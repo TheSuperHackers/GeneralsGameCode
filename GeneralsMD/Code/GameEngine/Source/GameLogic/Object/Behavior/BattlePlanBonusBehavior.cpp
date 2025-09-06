@@ -188,7 +188,7 @@ BattlePlanBonusBehavior::~BattlePlanBonusBehavior(void)
 //-------------------------------------------------------------------------------------------------
 void BattlePlanBonusBehavior::upgradeImplementation(void)
 {
-	DEBUG_LOG(("### BattlePlanBonusBehavior(%s)::upgradeImplementation 0", KEYNAME(getModuleTagNameKey()).str()));
+	// DEBUG_LOG(("### BattlePlanBonusBehavior(%s)::upgradeImplementation 0", KEYNAME(getModuleTagNameKey()).str()));
 
 	// Get other BattlePlanBonusBehavior and remove their active effects if they are conflicting
 	Object* obj = getObject();
@@ -225,18 +225,18 @@ void BattlePlanBonusBehavior::upgradeImplementation(void)
 //-------------------------------------------------------------------------------------------------
 void BattlePlanBonusBehavior::applyBonus(const BattlePlanBonuses* bonus, bool checkIsValid /* = True*/)
 {
-	DEBUG_LOG(("---\n"));
-	DEBUG_LOG(("### BattlePlanBonusBehavior(%s)::applyBonus", KEYNAME(getModuleTagNameKey()).str()));
-	DEBUG_LOG(("- m_bombardment = %d", bonus->m_bombardment));
-	DEBUG_LOG(("- m_holdTheLine = %d", bonus->m_holdTheLine));
-	DEBUG_LOG(("- m_searchAndDestroy = %d", bonus->m_searchAndDestroy));
-	DEBUG_LOG(("---\n"));
+	//DEBUG_LOG(("---\n"));
+	//DEBUG_LOG(("### BattlePlanBonusBehavior(%s)::applyBonus", KEYNAME(getModuleTagNameKey()).str()));
+	//DEBUG_LOG(("- m_bombardment = %d", bonus->m_bombardment));
+	//DEBUG_LOG(("- m_holdTheLine = %d", bonus->m_holdTheLine));
+	//DEBUG_LOG(("- m_searchAndDestroy = %d", bonus->m_searchAndDestroy));
+	//DEBUG_LOG(("---\n"));
 
 
 	//const BattlePlanBonusBehaviorModuleData* d = getBattlePlanBonusBehaviorModuleData();
 	if (!checkIsValid || isEffectValid()) {
 
-		DEBUG_LOG(("### BattlePlanBonusBehavior(%s)::applyBonus - valid", KEYNAME(getModuleTagNameKey()).str()));
+		//DEBUG_LOG(("### BattlePlanBonusBehavior(%s)::applyBonus - valid", KEYNAME(getModuleTagNameKey()).str()));
 
 		//Object* obj = getObject();
 
@@ -261,9 +261,9 @@ void BattlePlanBonusBehavior::applyBonus(const BattlePlanBonuses* bonus, bool ch
 			removeBonusForType(PLANSTATUS_SEARCHANDDESTROY);
 		}
 	}
-	else {
+	/*else {
 		DEBUG_LOG(("### BattlePlanBonusBehavior(%s)::applyBonus - Not Valid.", KEYNAME(getModuleTagNameKey()).str()));
-	}
+	}*/
 	DEBUG_LOG(("---\n"));
 }
 
@@ -272,7 +272,7 @@ void BattlePlanBonusBehavior::applyBonus(const BattlePlanBonuses* bonus, bool ch
 //-------------------------------------------------------------------------------------------------
 void BattlePlanBonusBehavior::addBonusForType(BattlePlanStatus plan)
 {
-	DEBUG_LOG(("### BattlePlanBonusBehavior(%s)::addBonusForType %d", KEYNAME(getModuleTagNameKey()).str(), plan));
+	// DEBUG_LOG(("### BattlePlanBonusBehavior(%s)::addBonusForType %d", KEYNAME(getModuleTagNameKey()).str(), plan));
 	const BattlePlanBonusBehaviorModuleData* d = getBattlePlanBonusBehaviorModuleData();
 	Object* obj = getObject();
 	int idx = plan - 1;
@@ -323,7 +323,7 @@ void BattlePlanBonusBehavior::addBonusForType(BattlePlanStatus plan)
 //-------------------------------------------------------------------------------------------------
 void BattlePlanBonusBehavior::removeBonusForType(BattlePlanStatus plan)
 {
-	DEBUG_LOG(("### BattlePlanBonusBehavior(%s)::removeBonusForType %d", KEYNAME(getModuleTagNameKey()).str(), plan));
+	// DEBUG_LOG(("### BattlePlanBonusBehavior(%s)::removeBonusForType %d", KEYNAME(getModuleTagNameKey()).str(), plan));
 
 	const BattlePlanBonusBehaviorModuleData* d = getBattlePlanBonusBehaviorModuleData();
 	Object* obj = getObject();
@@ -375,10 +375,10 @@ void BattlePlanBonusBehavior::removeBonusForType(BattlePlanStatus plan)
 //-------------------------------------------------------------------------------------------------
 Bool BattlePlanBonusBehavior::shouldParalyze(void) const
 {
-	DEBUG_LOG(("### BattlePlanBonusBehavior(%s)::shouldParalyze ?", KEYNAME(getModuleTagNameKey()).str()));
+	// DEBUG_LOG(("### BattlePlanBonusBehavior(%s)::shouldParalyze ?", KEYNAME(getModuleTagNameKey()).str()));
 	if (isEffectValid()) {
 		Bool shouldParalyze = getBattlePlanBonusBehaviorModuleData()->m_shouldParalyze;
-		DEBUG_LOG(("### BattlePlanBonusBehavior(%s)::shouldParalyze = %d!!!", KEYNAME(getModuleTagNameKey()).str(), shouldParalyze));
+		// DEBUG_LOG(("### BattlePlanBonusBehavior(%s)::shouldParalyze = %d!!!", KEYNAME(getModuleTagNameKey()).str(), shouldParalyze));
 		return shouldParalyze;
 	}
 	return TRUE;
@@ -418,7 +418,7 @@ Bool BattlePlanBonusBehavior::isConflicting(void) const
 //-------------------------------------------------------------------------------------------------
 void BattlePlanBonusBehavior::removeActiveEffects(void)
 {
-	DEBUG_LOG(("### BattlePlanBonusBehavior(%s)::removeActiveEffects 0", KEYNAME(getModuleTagNameKey()).str()));
+	// DEBUG_LOG(("### BattlePlanBonusBehavior(%s)::removeActiveEffects 0", KEYNAME(getModuleTagNameKey()).str()));
 
 	for (int i = 0; i < BATTLE_PLAN_COUNT; i++) {
 		if (m_effectApplied[i]) {
