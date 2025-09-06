@@ -185,6 +185,8 @@ static PoolSizeRec PoolSizes[] =
 	{ "ParticleUplinkCannonUpdate", 16, 16 },
 	{ "SpectreGunshipUpdate", 8, 8 },
 	{ "SpectreGunshipDeploymentUpdate", 8, 8 },
+	{ "KodiakUpdate", 8, 8 },
+	{ "KodiakDeploymentUpdate", 8, 8 },
 	{ "BaikonurLaunchPower", 4, 4 },
 	{ "RadiusDecalUpdate", 16, 16 },
 	{ "RadiusDecalBehavior", 32, 32 },
