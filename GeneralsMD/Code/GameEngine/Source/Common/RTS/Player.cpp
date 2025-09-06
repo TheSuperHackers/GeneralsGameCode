@@ -3723,13 +3723,17 @@ static void localApplyBattlePlanBonusesToObject( Object *obj, void *userData )
 	//First check if the obj is a projectile -- if so split the
 	//object so that the producer is validated, not the projectile.
 	Bool isProjectile = obj->isKindOf( KINDOF_PROJECTILE );
-	if( isProjectile )
-	{
-		objectToValidate = TheGameLogic->findObjectByID( obj->getProducerID() );
-		/*DEBUG_LOG(("Object is a projectile - looking at object %d (%s) instead",
-			(objectToValidate)?objectToValidate->getID():INVALID_ID,
-			(objectToValidate)?objectToValidate->getTemplate()->getName().str():"<No Object>"));*/
-	}
+
+	// Note AW: Shouldn't projectiles just gain the launcher's weapon bonus anyways?
+	// This doesn't really fit with the whole BattlePlanBonusBehavior idea. And I don't think it is needed.
+
+	//if( isProjectile )
+	//{
+	//	objectToValidate = TheGameLogic->findObjectByID( obj->getProducerID() );
+	//	/*DEBUG_LOG(("Object is a projectile - looking at object %d (%s) instead",
+	//		(objectToValidate)?objectToValidate->getID():INVALID_ID,
+	//		(objectToValidate)?objectToValidate->getTemplate()->getName().str():"<No Object>"));*/
+	//}
 	if( objectToValidate && objectToValidate->isAnyKindOf( bonus->m_validKindOf ) )
 	{
 		//DEBUG_LOG(("Is valid kindof"));
@@ -3737,9 +3741,9 @@ static void localApplyBattlePlanBonusesToObject( Object *obj, void *userData )
 		{
 			//DEBUG_LOG(("Is not invalid kindof"));
 			//Quite the trek eh? Now we can apply the bonuses!
-			if( !isProjectile )
-			{
 
+			if (!isProjectile)
+			{
 				// ------------------------
 				// Check Modules
 				for (BehaviorModule** b = objectToModify->getBehaviorModules(); *b; ++b)
@@ -3748,6 +3752,7 @@ static void localApplyBattlePlanBonusesToObject( Object *obj, void *userData )
 					if (bpbi) {
 						bpbi->applyBonus(bonus);
 						if (bpbi->isOverrideGlobalBonus()) {
+							DEBUG_LOG(("### PLAYER localApplyBattlePlanBonusesToObject  - OVERRIDE!"));
 							return;
 						}
 					}

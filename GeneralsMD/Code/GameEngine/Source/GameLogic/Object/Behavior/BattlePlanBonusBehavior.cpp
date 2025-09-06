@@ -204,13 +204,21 @@ void BattlePlanBonusBehavior::upgradeImplementation(void)
 		}
 	}
 
-	// Get current battleplan bonus and apply it
+
+	// Note: this doesn't handle the Regular bonus being applied/removed Instead of Applying our bonus, we should instead just reapply all.
 	Player* player = obj->getControllingPlayer();
 	const BattlePlanBonuses* bonus = player->getBattlePlanBonuses();
+	if (bonus) {
+		player->removeBattlePlanBonusesForObject(obj);
+		player->applyBattlePlanBonusesForObject(obj);
 
-	// Check for valid KindOf. This shouldn't be needed unless you screwed up your INI, but just to be safe
-	if (player->doesObjectQualifyForBattlePlan(obj))
-		applyBonus(bonus, FALSE);
+		// We still need to apply our bonus, because at this point we do not count as Upgraded
+		// Check for valid KindOf. This shouldn't be needed unless you screwed up your INI, but just to be safe
+		if (player->doesObjectQualifyForBattlePlan(obj)) {
+			applyBonus(bonus, FALSE);
+		}
+	}
+
 }
 
 //-------------------------------------------------------------------------------------------------
