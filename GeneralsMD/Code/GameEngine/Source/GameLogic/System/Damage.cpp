@@ -94,6 +94,7 @@ const char* DamageTypeFlags::s_bitNameList[] =
 	"TESLA",
 	// Specific damage types with special logic attached
 	"CHRONO_GUN",
+	"CHRONO_UNRESISTABLE",
 	//"ZOMBIE_VIRUS",  // TODO
 	//"MIND_CONTROL",  // TODO
 	NULL
