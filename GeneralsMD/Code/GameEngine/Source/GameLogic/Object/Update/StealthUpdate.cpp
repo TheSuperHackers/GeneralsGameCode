@@ -148,6 +148,8 @@ StealthUpdate::StealthUpdate( Thing *thing, const ModuleData* moduleData ) : Upd
 	m_nextBlackMarketCheckFrame = 0;
 	m_framesGranted = 0;
 
+	m_stealthLevelOverride = 0;
+
 	if( data->m_innateStealth )
 	{
 		//Giving innate stealth units this status bit allows other code to easily check the status bit.
@@ -257,6 +259,9 @@ Bool StealthUpdate::allowedToStealth( Object *stealthOwner ) const
 	UnsignedInt now = TheGameLogic->getFrame();
 
 	UnsignedInt flags = data->m_stealthLevel;
+	if (m_stealthLevelOverride > 0)
+		flags = m_stealthLevelOverride;
+
 	if( self != stealthOwner )
 	{
 		//Extract the rules from the rider's stealthupdate module data instead
@@ -1205,6 +1210,8 @@ void StealthUpdate::xfer( Xfer *xfer )
 	{
 		xfer->xferUnsignedInt( &m_framesGranted );
 	}
+
+	xfer->xferUnsignedInt( &m_stealthLevelOverride );
 
 }  // end xfer
 

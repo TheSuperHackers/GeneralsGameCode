@@ -93,19 +93,31 @@ void W3DOverlordAircraftDraw::doDrawModule(const Matrix3D* transformMtx)
 			const ContainedItemsList* addOns = me->getContain()->getAddOnList();
 			for (ContainedItemsList::const_iterator it = addOns->begin(); it != addOns->end(); it++) {
 				Drawable* riderDraw = (*it)->getDrawable();
-				riderDraw->setColorTintEnvelope(*getDrawable()->getColorTintEnvelope());
-				riderDraw->notifyDrawableDependencyCleared();
-				riderDraw->draw(NULL);
+				if (riderDraw)
+				{
+					TintEnvelope* env = getDrawable()->getColorTintEnvelope();
+					if (env)
+						riderDraw->setColorTintEnvelope(*env);
+
+					riderDraw->notifyDrawableDependencyCleared();
+					riderDraw->draw(NULL);// What the hell?  This param isn't used for anything
+				}
 			}
 		}
 		else if (me->getContain()->friend_getRider()
 			&& me->getContain()->friend_getRider()->getDrawable())
 		{
 			Drawable* riderDraw = me->getContain()->friend_getRider()->getDrawable();
-			riderDraw->setColorTintEnvelope(*getDrawable()->getColorTintEnvelope());
+			if (riderDraw)
+			{
+				TintEnvelope* env = getDrawable()->getColorTintEnvelope();
+				if (env)
+					riderDraw->setColorTintEnvelope(*env);
 
-			riderDraw->notifyDrawableDependencyCleared();
-			riderDraw->draw(NULL);// What the hell?  This param isn't used for anything
+				riderDraw->notifyDrawableDependencyCleared();
+				riderDraw->draw(NULL);// What the hell?  This param isn't used for anything
+			}
+			DEBUG_ASSERTCRASH(riderDraw, ("OverlordAircraftDraw finds no rider's drawable"));
 		}
 	}
 }

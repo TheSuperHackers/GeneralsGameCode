@@ -765,7 +765,7 @@ UpdateSleepTime ParkingPlaceBehavior::update()
 
 	// Check if Damage Scalar is upgraded:
 
-	if (!m_damageScalarUpgradeApplied) {
+	if (!m_damageScalarUpgradeApplied && d->m_damageScalarUpgradeTrigger.isNotEmpty()) {
 		Player* player = getObject()->getControllingPlayer();
 		const UpgradeTemplate* upgradeTemplate = TheUpgradeCenter->findUpgrade(d->m_damageScalarUpgradeTrigger);
 

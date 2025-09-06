@@ -46,6 +46,8 @@
 
 #define DEFINE_SCIENCE_AVAILABILITY_NAMES
 
+#define NO_DEBUG_CRC
+
 #include "Common/ActionManager.h"
 #include "Common/BuildAssistant.h"
 #include "Common/CRCDebug.h"
@@ -97,6 +99,7 @@
 #include "GameLogic/Module/SupplyTruckAIUpdate.h"
 #include "GameLogic/Module/BattlePlanUpdate.h"
 #include "GameLogic/Module/ProductionUpdate.h"
+#include "GameLogic/Module/BattlePlanBonusBehavior.h"
 #include "GameLogic/VictoryConditions.h"
 
 #include "GameNetwork/GameInfo.h"
@@ -2701,7 +2704,7 @@ void Player::resetSciences()
 
 //=============================================================================
 /// returns TRUE if sciences were gained/lost.
-Bool Player::addScience(ScienceType science)
+Bool Player::addScience(ScienceType science, Bool playerAction/* = FALSE*/)
 {
 	if (hasScience(science))
 		return false;
@@ -2709,6 +2712,57 @@ Bool Player::addScience(ScienceType science)
 	//DEBUG_LOG(("Adding Science %s",TheScienceStore->getInternalNameForScience(science).str()));
 
 	m_sciences.push_back(science);
+
+	// Grant Upgrades
+	std::vector<AsciiString> upgrades;
+	TheScienceStore->getGrantedUpgradeNames(science, upgrades);
+	for (AsciiString upgradeName : upgrades) {
+		const UpgradeTemplate* upgradeTemplate = TheUpgradeCenter->findUpgrade(upgradeName);
+		if (!upgradeTemplate)
+		{
+			DEBUG_LOG(("Player::addScience - can't find upgrade template %s.", upgradeName.str()));
+			continue;
+		}
+
+		if (upgradeTemplate->getUpgradeType() == UPGRADE_TYPE_PLAYER)
+		{
+			DEBUG_LOG(("Player::addScience - Granting upgrade %s.", upgradeName.str()));
+			addUpgrade(upgradeTemplate, UPGRADE_STATUS_COMPLETE);
+
+			// Only show audio and visuals if this was a manual player command
+			if (playerAction && !upgradeTemplate->getDisplayNameLabel().isEmpty() && !upgradeTemplate->isSilentCompletion()) {
+				getAcademyStats()->recordUpgrade(upgradeTemplate, FALSE);
+				// print a message to the local player
+				if (isLocalPlayer())
+				{
+					UnicodeString msg;
+					UnicodeString format = TheGameText->fetch("UPGRADE:UpgradeComplete");
+					UnicodeString upgradeName = TheGameText->fetch(upgradeTemplate->getDisplayNameLabel().str());
+
+					msg.format(format.str(), upgradeName.str());
+					TheInGameUI->message(msg);
+
+					//Play the sound for the upgrade, because we just built it!
+					AudioEventRTS sound = *upgradeTemplate->getResearchCompleteSound();
+					if (TheAudio->isValidAudioEvent(&sound))
+					{
+						//We have a custom upgrade complete sound.
+						sound.setPlayerIndex(getPlayerIndex());
+						TheAudio->addAudioEvent(&sound);
+					}
+					else
+					{
+						//Use a generic EVA event.
+						TheEva->setShouldPlay(EVA_UpgradeComplete);
+					}
+				}
+			}
+		}
+		else
+		{
+			DEBUG_LOG(("Player::addScience - Cannot grant OBJECT type upgrade %s.", upgradeName.str()));
+		}
+	}
 
 	// 'wake up' any special powers controlled by, well, stuff
 	for (PlayerTeamList::iterator it = m_playerTeamPrototypes.begin();
@@ -2767,7 +2821,7 @@ void Player::addSciencePurchasePoints(Int delta)
 }
 
 //=============================================================================
-Bool Player::attemptToPurchaseScience(ScienceType science)
+Bool Player::attemptToPurchaseScience(ScienceType science, Bool playerAction/* = FALSE*/)
 {
 	if (!isCapableOfPurchasingScience(science))
 	{
@@ -2777,7 +2831,7 @@ Bool Player::attemptToPurchaseScience(ScienceType science)
 
 	Int cost = TheScienceStore->getSciencePurchaseCost(science);
 	addSciencePurchasePoints(-cost);
-	addScience(science);
+	addScience(science, playerAction);
 
 	getAcademyStats()->recordGeneralsPointsSpent( cost );
 
@@ -3690,30 +3744,51 @@ static void localApplyBattlePlanBonusesToObject( Object *obj, void *userData )
 	Object *objectToValidate = obj;
 	Object *objectToModify = obj;
 
-	DEBUG_LOG(("localApplyBattlePlanBonusesToObject() - looking at object %d (%s)",
+	/*DEBUG_LOG(("localApplyBattlePlanBonusesToObject() - looking at object %d (%s)",
 		(objectToValidate)?objectToValidate->getID():INVALID_ID,
-		(objectToValidate)?objectToValidate->getTemplate()->getName().str():"<No Object>"));
+		(objectToValidate)?objectToValidate->getTemplate()->getName().str():"<No Object>"));*/
 
 	//First check if the obj is a projectile -- if so split the
 	//object so that the producer is validated, not the projectile.
 	Bool isProjectile = obj->isKindOf( KINDOF_PROJECTILE );
-	if( isProjectile )
-	{
-		objectToValidate = TheGameLogic->findObjectByID( obj->getProducerID() );
-		DEBUG_LOG(("Object is a projectile - looking at object %d (%s) instead",
-			(objectToValidate)?objectToValidate->getID():INVALID_ID,
-			(objectToValidate)?objectToValidate->getTemplate()->getName().str():"<No Object>"));
-	}
+
+	// Note AW: Shouldn't projectiles just gain the launcher's weapon bonus anyways?
+	// This doesn't really fit with the whole BattlePlanBonusBehavior idea. And I don't think it is needed.
+
+	//if( isProjectile )
+	//{
+	//	objectToValidate = TheGameLogic->findObjectByID( obj->getProducerID() );
+	//	/*DEBUG_LOG(("Object is a projectile - looking at object %d (%s) instead",
+	//		(objectToValidate)?objectToValidate->getID():INVALID_ID,
+	//		(objectToValidate)?objectToValidate->getTemplate()->getName().str():"<No Object>"));*/
+	//}
 	if( objectToValidate && objectToValidate->isAnyKindOf( bonus->m_validKindOf ) )
 	{
-		DEBUG_LOG(("Is valid kindof"));
+		//DEBUG_LOG(("Is valid kindof"));
 		if( !objectToValidate->isAnyKindOf( bonus->m_invalidKindOf ) )
 		{
-			DEBUG_LOG(("Is not invalid kindof"));
+			//DEBUG_LOG(("Is not invalid kindof"));
 			//Quite the trek eh? Now we can apply the bonuses!
-			if( !isProjectile )
+
+			if (!isProjectile)
 			{
-				DEBUG_LOG(("Is not projectile.  Armor scalar is %g", bonus->m_armorScalar));
+				// ------------------------
+				// Check Modules
+				for (BehaviorModule** b = objectToModify->getBehaviorModules(); *b; ++b)
+				{
+					BattlePlanBonusBehaviorInterface* bpbi = (*b)->getBattlePlanBonusBehaviorInterface();
+					if (bpbi) {
+						bpbi->applyBonus(bonus);
+						if (bpbi->isOverrideGlobalBonus()) {
+							DEBUG_LOG(("### PLAYER localApplyBattlePlanBonusesToObject  - OVERRIDE!"));
+							return;
+						}
+					}
+				}
+
+				// ------------------------
+
+				//DEBUG_LOG(("Is not projectile.  Armor scalar is %g", bonus->m_armorScalar));
 				//Really important to not apply certain bonuses like health augmentation to projectiles!
 				if( bonus->m_armorScalar != 1.0f )
 				{
@@ -3723,7 +3798,7 @@ static void localApplyBattlePlanBonusesToObject( Object *obj, void *userData )
 						bonus->m_armorScalar, AS_INT(bonus->m_armorScalar), objectToModify->getID(),
 						objectToModify->getTemplate()->getDisplayName().str(),
 						objectToModify->getControllingPlayer()->getPlayerIndex()));
-					DEBUG_LOG(("After apply, armor scalar is %g", body->getDamageScalar()));
+					//DEBUG_LOG(("After apply, armor scalar is %g", body->getDamageScalar()));
 				}
 				if( bonus->m_sightRangeScalar != 1.0f )
 				{
@@ -3778,9 +3853,18 @@ void Player::removeBattlePlanBonusesForObject( Object *obj ) const
 	*bonus = *m_battlePlanBonuses;
 	bonus->m_armorScalar					= 1.0f / __max( bonus->m_armorScalar, 0.01f );
 	bonus->m_sightRangeScalar			= 1.0f / __max( bonus->m_sightRangeScalar, 0.01f );
-	bonus->m_bombardment					= -ALL_PLANS; //Safe to remove as it clears the weapon bonus flag
-	bonus->m_searchAndDestroy			= -ALL_PLANS; //Safe to remove as it clears the weapon bonus flag
-	bonus->m_holdTheLine					= -ALL_PLANS; //Safe to remove as it clears the weapon bonus flag
+
+	//bonus->m_bombardment					= -ALL_PLANS; //Safe to remove as it clears the weapon bonus flag
+	//bonus->m_searchAndDestroy			= -ALL_PLANS; //Safe to remove as it clears the weapon bonus flag
+	//bonus->m_holdTheLine					= -ALL_PLANS; //Safe to remove as it clears the weapon bonus flag
+
+  // Update AW: We need use these variables now to track which plan should be added/removed
+	if (bonus->m_bombardment > 0)
+		bonus->m_bombardment = -1;
+	if (bonus->m_searchAndDestroy > 0)
+		bonus->m_searchAndDestroy = -1;
+	if (bonus->m_holdTheLine > 0)
+		bonus->m_holdTheLine = -1;
 
 	DUMPBATTLEPLANBONUSES(bonus, this, obj);
 	localApplyBattlePlanBonusesToObject( obj, bonus );

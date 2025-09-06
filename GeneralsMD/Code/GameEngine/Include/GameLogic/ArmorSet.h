@@ -45,6 +45,7 @@ class INI;
 // has all condition flags set to zero.
 enum ArmorSetType CPP_11(: Int)
 {
+	ARMORSET_NONE = -1,
 	// The access and use of this enum has the bit shifting built in, so this is a 0,1,2,3,4,5 enum
 	ARMORSET_VETERAN		= 0,
 	ARMORSET_ELITE			= 1,
