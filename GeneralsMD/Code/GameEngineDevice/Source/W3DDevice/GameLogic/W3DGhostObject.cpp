@@ -157,7 +157,7 @@ void W3DRenderObjectSnapshot::update(RenderObjClass *robj, DrawableInfo *drawInf
 // ------------------------------------------------------------------------------------------------
 void W3DRenderObjectSnapshot::addToScene(void)
 {
-	if (W3DDisplay::m_3DScene != NULL)
+	if (!m_robj->Is_In_Scene())
 		W3DDisplay::m_3DScene->Add_Render_Object(m_robj);
 }
 
@@ -410,6 +410,8 @@ void W3DGhostObject::removeParentObject(void)
 		return;
 
 	Drawable *draw = m_parentObject->getDrawable();
+	if (!draw)
+		return;
 
 	//After we remove the unfogged object, we also disable
 	//anything that should be hidden inside fog - shadow, particles, etc.
