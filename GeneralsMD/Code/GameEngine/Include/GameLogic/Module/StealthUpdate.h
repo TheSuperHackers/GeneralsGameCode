@@ -39,6 +39,7 @@
 class Thing;
 enum StealthLookType CPP_11(: Int);
 enum EvaMessage CPP_11(: Int);
+enum WeaponSetType CPP_11(: Int);
 class FXList;
 
 enum
@@ -155,6 +156,8 @@ public:
   Bool isGrantedBySpecialPower( void ) { return getStealthUpdateModuleData()->m_grantedBySpecialPower; }
 	Bool isTemporaryGrant() { return m_framesGranted > 0; }
 
+	inline void setStealthLevelOverride(UnsignedInt stealthLevel) { m_stealthLevelOverride = stealthLevel; }
+
 protected:
 
 	StealthLookType calcStealthedStatusForPlayer(const Object* obj, const Player* player);
@@ -175,6 +178,8 @@ private:
 	Real                  m_pulsePhaseRate;
 	Real                  m_pulsePhase;
 
+	UnsignedInt						m_stealthLevelOverride;   //Override stealth conditions via upgrade
+
 	//Disguise only members
 	Int										m_disguiseAsPlayerIndex;		//The player team we are wanting to disguise as (might not actually be disguised yet).
 	const ThingTemplate  *m_disguiseAsTemplate;				//The disguise template (might not actually be using it yet)
@@ -187,7 +192,6 @@ private:
 	// runtime xfer members (does not need saving)
 	Bool									m_xferRestoreDisguise;			//Tells us we need to restore our disguise
 	WeaponSetType					m_requiresWeaponSetType;
-
 };
 
 

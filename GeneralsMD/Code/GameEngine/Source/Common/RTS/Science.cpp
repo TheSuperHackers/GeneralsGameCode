@@ -170,6 +170,7 @@ const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
 			{ "IsGrantable", INI::parseBool, NULL, offsetof( ScienceInfo, m_grantable ) },
 			{ "DisplayName", INI::parseAndTranslateLabel, NULL, offsetof( ScienceInfo, m_name) },
 			{ "Description", INI::parseAndTranslateLabel, NULL, offsetof( ScienceInfo, m_description) },
+			{ "GrantUpgrades", INI::parseAsciiStringVector, NULL, offsetof( ScienceInfo, m_grantedUpgradeNames) },
 			{ 0, 0, 0, 0 }
 		};
 
@@ -253,6 +254,21 @@ Bool ScienceStore::isScienceGrantable(ScienceType st) const
 	else
 	{
 		return false;
+	}
+}
+
+//-----------------------------------------------------------------------------
+Bool ScienceStore::getGrantedUpgradeNames(ScienceType st, /*out*/ std::vector<AsciiString>& grantedUpgradeNames) const
+{
+	const ScienceInfo* si = findScienceInfo(st);
+	if (si)
+	{
+		grantedUpgradeNames = si->m_grantedUpgradeNames;
+		return NULL;
+	}
+	else
+	{
+		return NULL;
 	}
 }
 

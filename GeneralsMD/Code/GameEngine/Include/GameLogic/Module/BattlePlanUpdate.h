@@ -98,12 +98,26 @@ enum TransitionStatus CPP_11(: Int)
 	TRANSITIONSTATUS_PACKING,
 };
 
+#ifdef DEFINE_BATTLEPLANSTATUS_NAMES
+static const char* TheBattlePlanStatusNames[] =
+{
+	"NONE",
+	"BOMBARDMENT",
+	"HOLD_THE_LINE",
+	"SEARCH_AND_DESTROY",
+
+	NULL
+};
+#endif
+
 enum BattlePlanStatus CPP_11(: Int)
 {
 	PLANSTATUS_NONE,
 	PLANSTATUS_BOMBARDMENT,
 	PLANSTATUS_HOLDTHELINE,
 	PLANSTATUS_SEARCHANDDESTROY,
+
+	PLANSTATUS_COUNT
 };
 
 class BattlePlanBonuses : public MemoryPoolObject

@@ -60,6 +60,7 @@
 #include "GameLogic/Module/ActiveBody.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/StealthDetectorUpdate.h"
+#include "GameLogic/Module/BattlePlanBonusBehavior.h"
 
 
 //-------------------------------------------------------------------------------------------------
@@ -719,7 +720,18 @@ static void paralyzeTroop( Object *obj, void *userData )
 	{
 		if( !obj->isAnyKindOf( data->m_invalidMemberKindOf ) )
 		{
-			obj->setDisabledUntil( DISABLED_PARALYZED, TheGameLogic->getFrame() + data->m_battlePlanParalyzeFrames );
+			Bool shouldParalyze = true;
+			// Check Modules
+			for (BehaviorModule** b = obj->getBehaviorModules(); *b; ++b)
+			{
+				BattlePlanBonusBehaviorInterface* bpbi = (*b)->getBattlePlanBonusBehaviorInterface();
+				if (bpbi && !bpbi->shouldParalyze()) {
+					shouldParalyze = false;
+				}
+			}
+
+			if (shouldParalyze)
+				obj->setDisabledUntil( DISABLED_PARALYZED, TheGameLogic->getFrame() + data->m_battlePlanParalyzeFrames );
 		}
 	}
 }

@@ -293,6 +293,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/ProductionTimeModifierUpgrade.h
     Include/GameLogic/Module/UnitProductionBonusUpgrade.h
     Include/GameLogic/Module/CountermeasuresBehavior.h
+    Include/GameLogic/Module/BattlePlanBonusBehavior.h
     Include/GameLogic/Module/CrateCollide.h
     Include/GameLogic/Module/CreateCrateDie.h
     Include/GameLogic/Module/CreateModule.h
@@ -867,6 +868,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Behavior/BridgeTowerBehavior.cpp
     Source/GameLogic/Object/Behavior/BunkerBusterBehavior.cpp
     Source/GameLogic/Object/Behavior/CountermeasuresBehavior.cpp
+    Source/GameLogic/Object/Behavior/BattlePlanBonusBehavior.cpp
     Source/GameLogic/Object/Behavior/DumbProjectileBehavior.cpp
     Source/GameLogic/Object/Behavior/FreeFallProjectileBehavior.cpp
     Source/GameLogic/Object/Behavior/FireWeaponWhenDamagedBehavior.cpp
