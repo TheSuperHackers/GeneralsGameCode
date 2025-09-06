@@ -488,6 +488,12 @@ enum WhichTurretType CPP_11(: Int)
 
 	TURRET_MAIN = 0,
 	TURRET_ALT,
+	TURRET_3,
+	TURRET_4,
+	TURRET_5,
+	TURRET_6,
+	TURRET_7,
+	TURRET_8,
 
 	MAX_TURRETS
 };

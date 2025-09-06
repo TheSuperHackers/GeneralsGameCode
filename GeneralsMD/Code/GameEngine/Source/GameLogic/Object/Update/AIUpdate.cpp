@@ -133,6 +133,14 @@ const LocomotorTemplateVector* AIUpdateModuleData::findLocomotorTemplateVector(L
 	{
 		{ "Turret",											AIUpdateModuleData::parseTurret,	NULL, offsetof(AIUpdateModuleData, m_turretData[0]) },
 		{ "AltTurret",									AIUpdateModuleData::parseTurret,	NULL, offsetof(AIUpdateModuleData, m_turretData[1]) },
+		{	"Turret1",										AIUpdateModuleData::parseTurret,	NULL, offsetof(AIUpdateModuleData, m_turretData[0]) },
+		{	"Turret2",										AIUpdateModuleData::parseTurret,	NULL, offsetof(AIUpdateModuleData, m_turretData[1]) },
+		{	"Turret3",										AIUpdateModuleData::parseTurret,	NULL, offsetof(AIUpdateModuleData, m_turretData[2]) },
+		{	"Turret4",										AIUpdateModuleData::parseTurret,	NULL, offsetof(AIUpdateModuleData, m_turretData[3]) },
+		{	"Turret5",										AIUpdateModuleData::parseTurret,	NULL, offsetof(AIUpdateModuleData, m_turretData[4]) },
+		{	"Turret6",										AIUpdateModuleData::parseTurret,	NULL, offsetof(AIUpdateModuleData, m_turretData[5]) },
+		{	"Turret7",										AIUpdateModuleData::parseTurret,	NULL, offsetof(AIUpdateModuleData, m_turretData[6]) },
+		{	"Turret8",										AIUpdateModuleData::parseTurret,	NULL, offsetof(AIUpdateModuleData, m_turretData[7]) },
 		{ "AutoAcquireEnemiesWhenIdle", INI::parseBitString32, TheAutoAcquireEnemiesNames, offsetof(AIUpdateModuleData, m_autoAcquireEnemiesWhenIdle) },
 		{ "MoodAttackCheckRate",				INI::parseDurationUnsignedInt,		NULL, offsetof(AIUpdateModuleData, m_moodAttackCheckRate) },
 #ifdef ALLOW_SURRENDER
