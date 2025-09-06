@@ -84,6 +84,11 @@ void W3DDependencyModelDraw::doDrawModule(const Matrix3D* transformMtx)
 {
 	if( m_dependencyCleared )
 	{
+		if (!transformMtx) {
+			DEBUG_LOG(("####### W3DDependencyModelDraw::doDrawModule -- MTX IS NULL!!!"));
+			return;
+		}
+
 		// We've been cleared by the thing we were waiting to draw, so we can draw.
 		W3DModelDraw::doDrawModule( transformMtx );
 		m_dependencyCleared = FALSE;
@@ -142,7 +147,7 @@ void W3DDependencyModelDraw::adjustTransformMtx(Matrix3D& mtx) const
 			AsciiString boneName;
 			// if we are in a MultiAddOnContain, we add the slot number to the bone name
 			short slot = me->getContainedBy()->getContain()->getPortableSlot(me->getID());
-			// DEBUG_LOG((">>> W3DDependencyModelDraw::adjustTransformMtx - riderSlot = %d", slot));
+			DEBUG_LOG((">>> W3DDependencyModelDraw::adjustTransformMtx - riderSlot = %d", slot));
 			if (slot != -1)
 				boneName.format("%s%02d", md->m_attachToDrawableBoneInContainer.str(), slot+1);
 
