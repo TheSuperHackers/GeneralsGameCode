@@ -1287,12 +1287,13 @@ void TurretAIIdleState::resetIdleScan()
 StateReturnType TurretAIIdleState::onEnter()
 {
 	AIUpdateInterface *ai = getMachineOwner()->getAIUpdateInterface();
+	// ai doesn't exist if the object was just created this frame.
 	if (ai)
 	{
 		ai->resetNextMoodCheckTime();
 		if (ai->friend_getTurretSync() == getTurretAI()->friend_getWhichTurret())
 			ai->friend_setTurretSync(TURRET_INVALID);
-	} // ai doesn't exist if the object was just created this frame.
+	}
 
 	resetIdleScan();
 

@@ -163,14 +163,20 @@ public:
                T* pTArray = (T*)mTArray;
                const T* const pTArrayEnd = pTArray + nCount;
                while(pTArray < pTArrayEnd){
-                  new(pTArray)T; //Use the placement operator new. This simply calls the constructor
-                  ++pTArray;     //of T with 'this' set to the input address. Note that we don't put
-               }                 //a '()' after the T this is because () causes trivial types like int
-            }                    //and class* to be assigned zero/NULL. We don't want that.
+                  //Use the placement operator new. This simply calls the constructor
+                  //of T with 'this' set to the input address. Note that we don't put
+                  //a '()' after the T this is because () causes trivial types like int
+                  //and class* to be assigned zero/NULL. We don't want that.
+                  new(pTArray)T;
+                  ++pTArray;
+               }
+            }
             return (T*)mTArray;
-         } //Else the request is too big. So let's use (the slower) operator new.
+         }
+         //Else the request is too big. So let's use (the slower) operator new.
          return (mpTHeap = new T[nCount]); //The compiler will call the constructors here.
-      } //Else we are being used. Let's be nice and allocate something anyway.
+      }
+      //Else we are being used. Let's be nice and allocate something anyway.
       return new T[nCount];
    }
 

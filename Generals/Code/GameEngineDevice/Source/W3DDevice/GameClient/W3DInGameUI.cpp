@@ -355,8 +355,8 @@ void W3DInGameUI::init( void )
 			// hide it for now
 			motd->winHide( TRUE );
 
-		}  // end if*/
-
+		}  // end if
+*/
 
 }  // end init
 

@@ -884,6 +884,7 @@ Try improving the fit to vertical surfaces like cliffs.
 		}	//while (mod)
 	}//edges to flush
 
+	//there are some edges to render in pool.
 	//draw the filled vertex buffers
 	if (m_edgesToFlush >= 2)
 	{
@@ -909,7 +910,7 @@ Try improving the fit to vertical surfaces like cliffs.
 			}
 			mod=mod->m_nextSystem;
 		}
-	}	//there are some edges to render in pool.
+	}
 
 	m_edgesToFlush=0;	//reset count for next flush
 }

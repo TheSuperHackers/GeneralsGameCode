@@ -1658,8 +1658,9 @@ ObjectShroudStatus PartitionData::getShroudedStatus(Int playerIndex)
 		else if( shroudedCells + foggedCells == m_coiInUseCount )
 		{
 			m_shroudedness[playerIndex] = OBJECTSHROUD_FOGGED;	//object is visible but fogged.
-			if (m_object && m_ghostObject)	//object does not exist for modules holding only GhostObjects
+			if (m_object && m_ghostObject)
 			{
+				//object does not exist for modules holding only GhostObjects
 				//fogged but may not be visible if faction unit or faction building that has not been seen before
 				Player *player=ThePlayerList->getNthPlayer(playerIndex);
 				if (player->getRelationship(m_object->getTeam()) == NEUTRAL)
@@ -1667,8 +1668,9 @@ ObjectShroudStatus PartitionData::getShroudedStatus(Int playerIndex)
 					if (!m_object->isKindOf(KINDOF_IMMOBILE))
 						m_shroudedness[playerIndex] = OBJECTSHROUD_SHROUDED;
 				}
-				else	//Not neutral
-				{	//enemy unit will always be shrouded unless it's a building that's already been seen by the player.  Fogged Mines are also always
+				else
+				{	//Not neutral
+					//enemy unit will always be shrouded unless it's a building that's already been seen by the player.  Fogged Mines are also always
 					//shroued no matter what.
 					if (!(m_object->isKindOf(KINDOF_IMMOBILE) && m_everSeenByPlayer[playerIndex]) || m_object->isKindOf(KINDOF_MINE))
 						m_shroudedness[playerIndex] = OBJECTSHROUD_SHROUDED;
@@ -1685,7 +1687,8 @@ ObjectShroudStatus PartitionData::getShroudedStatus(Int playerIndex)
 			}
 		}
 		else if( shroudedCells == 0  &&  foggedCells == 0 )
-		{	//Record that this object was seen by the player.  This info will be used to show fogged enemy faction buildings.
+		{	//no cell I use has anything
+			//Record that this object was seen by the player.  This info will be used to show fogged enemy faction buildings.
 			m_everSeenByPlayer[playerIndex] = true;
 			m_shroudedness[playerIndex] = OBJECTSHROUD_CLEAR;
 			if (m_ghostObject && m_shroudednessPrevious[playerIndex] == OBJECTSHROUD_FOGGED)
@@ -1693,7 +1696,7 @@ ObjectShroudStatus PartitionData::getShroudedStatus(Int playerIndex)
 				//need a ghost object.
 				m_ghostObject->freeSnapShot(playerIndex);
 			}
-		}	// no cell I use has anything
+		}
 		else
 		{	//Record that this object was seen by the player.  This info will be used to show fogged enemy faction buildings.
 			m_everSeenByPlayer[playerIndex] = true;
