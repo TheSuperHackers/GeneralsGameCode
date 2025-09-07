@@ -158,6 +158,9 @@ const char* KindOfMaskType::s_bitNameList[] =
 	"DEMOTRAP",
 	"CONSERVATIVE_BUILDING",
 	"IGNORE_DOCKING_BONES",
+	"CAN_RETALIATE",
+
+	"NO_BATTLE_PLANS",
 
 	"VTOL",
 	"LARGE_AIRCRAFT",
