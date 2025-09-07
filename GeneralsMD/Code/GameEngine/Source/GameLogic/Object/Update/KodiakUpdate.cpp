@@ -152,7 +152,8 @@ void KodiakUpdate::onObjectCreated()
 	}
 
 	m_specialPowerModule = obj->getSpecialPowerModule( data->m_specialPowerTemplate );
-  m_satellitePosition.set( obj->getPosition() );
+  //m_satellitePosition.set( obj->getPosition() );
+  m_satellitePosition = Coord3D(0, 0, 0); // This is now the movement direction
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -405,12 +406,35 @@ UpdateSleepTime KodiakUpdate::update()
         declination.x *= orbitalRadius;
         declination.y *= orbitalRadius;
 
-        m_satellitePosition.x = m_initialTargetPosition.x + declination.x;
-        m_satellitePosition.y = m_initialTargetPosition.y + declination.y;
+        //m_satellitePosition.x = m_initialTargetPosition.x + declination.x;
+        //m_satellitePosition.y = m_initialTargetPosition.y + declination.y;
 
+        Coord3D zero_pos;
+        zero_pos.zero();
+        if (m_satellitePosition.equals(zero_pos)) {
+          // set the direction
+          Coord3D direction = m_initialTargetPosition;
+          direction.sub(gunship->getPosition());
+          direction.z = zero;
+          //Real distanceToTarget = direction.length();
+          direction.normalize();
+
+          m_satellitePosition = direction;
+          m_satellitePosition.scale(200.0f);
+        }
+
+        //Real orbitalRadius = data->m_gunshipOrbitRadius;
+        //DEBUG_LOG(("Initial Location: %f,%f,%f", m_initialTargetPosition.x, m_initialTargetPosition.y, m_initialTargetPosition.z));
+
+        Coord3D target_move_location = *gunship->getPosition();
+        target_move_location.add(&m_satellitePosition);
+
+        //DEBUG_LOG(("Target Location: %f,%f,%f" , target_move_location.x, target_move_location.y, target_move_location.z ));
+        
         if ( shipAI)
         {
-           shipAI->aiMoveToPosition( &m_satellitePosition, CMD_FROM_AI );
+           //shipAI->aiMoveToPosition( &m_satellitePosition, CMD_FROM_AI );
+           shipAI->aiMoveToPosition( &target_move_location, CMD_FROM_AI );
         }
 
         Real constraintRadius = data->m_attackAreaRadius - data->m_targetingReticleRadius;
