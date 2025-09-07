@@ -50,6 +50,7 @@
 BattlePlanBonusBehaviorModuleData::BattlePlanBonusBehaviorModuleData()
 {
 	m_initiallyActive = false;
+	m_shouldParalyze = true;
 	for (UnsignedInt i = 0; i < BATTLE_PLAN_COUNT; i++) {
 		m_weaponBonusEntries[i] = WEAPONBONUSCONDITION_INVALID;
 		m_weaponSetFlagEntries[i] = WEAPONSET_NONE;
