@@ -89,6 +89,7 @@ static NameKeyType buttonCancelID = NAMEKEY_INVALID;
 
 static GameWindow *winFlag = NULL;
 static GameWindow *winGeneralPortrait = NULL;
+// TheSuperHackers @tweak Allow idle worker selection for observers.
 static GameWindow *buttonIdleWorker = NULL;
 static GameWindow *staticTextNumberOfUnits = NULL;
 static GameWindow *staticTextNumberOfBuildings = NULL;
