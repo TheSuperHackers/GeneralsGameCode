@@ -211,8 +211,8 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 	Bool contained = self->getContainedBy() && self->getContainedBy()->getContainedBy();
 #else
 	Bool contained = (self->isKindOf(KINDOF_PORTABLE_STRUCTURE)) ?
-		contained = self->getContainedBy() && self->getContainedBy()->getContainedBy() :
-		contained = self->getContainedBy();
+		self->getContainedBy() && self->getContainedBy()->getContainedBy() :
+		self->getContainedBy() != NULL;
 #endif
 
 	if (contained)
