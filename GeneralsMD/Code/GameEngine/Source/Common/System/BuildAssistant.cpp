@@ -873,26 +873,31 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 
 		// an immobile object will obstruct our building no matter what team it's on
 		if ( them->isKindOf( KINDOF_IMMOBILE ) )	{
-			Bool shrouded = them->getDrawable() && them->getDrawable()->getFullyObscuredByShroud();
 			/* Check for overlap of my exit rectangle to his geom info. */
 			if (checkMyExit && ThePartitionManager->geomCollidesWithGeom(them->getPosition(), hisBounds, them->getOrientation(),
 				&myExitPos, myGeom, angle)) {
-				if (!shrouded)
-					TheTerrainVisual->addFactionBib(them, true);
+				if (them->getDrawable() && them->getDrawable()->getFullyObscuredByShroud())
+					return LBC_SHROUD;
+				
+				TheTerrainVisual->addFactionBib(them, true);
 				return LBC_OBJECTS_IN_THE_WAY;
 			}
 			// Check for overlap of his exit rectangle with my geom info
 			if (checkHisExit && ThePartitionManager->geomCollidesWithGeom(&hisExitPos, hisGeom, them->getOrientation(),
 					worldPos, myBounds, angle)) {
-				if (!shrouded)
-					TheTerrainVisual->addFactionBib(them, true);
+				if (them->getDrawable() && them->getDrawable()->getFullyObscuredByShroud())
+					return LBC_SHROUD;
+				
+				TheTerrainVisual->addFactionBib(them, true);
 				return LBC_OBJECTS_IN_THE_WAY;
 			}
 			// Check both exit rectangles together.
 			if (checkMyExit&&checkHisExit&&ThePartitionManager->geomCollidesWithGeom(&hisExitPos, hisGeom, them->getOrientation(),
 					&myExitPos, myGeom, angle)) {
-				if (!shrouded)
-					TheTerrainVisual->addFactionBib(them, true);
+				if (them->getDrawable() && them->getDrawable()->getFullyObscuredByShroud())
+					return LBC_SHROUD;
+				
+				TheTerrainVisual->addFactionBib(them, true);
 				return LBC_OBJECTS_IN_THE_WAY;
 			}
 		}
