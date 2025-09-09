@@ -131,8 +131,7 @@ void DrawableIconInfo::clear()
 {
 	for (int i = 0; i < MAX_ICONS; ++i)
 	{
-		if (m_icon[i])
-			deleteInstance(m_icon[i]);
+		deleteInstance(m_icon[i]);
 		m_icon[i] = NULL;
 		m_keepTillFrame[i] = 0;
 	}
@@ -504,11 +503,9 @@ Drawable::~Drawable()
 	}
 
 	stopAmbientSound();
-	if (m_ambientSound)
-	{
-		deleteInstance(m_ambientSound);
-		m_ambientSound = NULL;
-	}
+
+	deleteInstance(m_ambientSound);
+	m_ambientSound = NULL;
 
 	/// @todo this is nasty, we need a real general effects system
 	// remove any entries that might be present from the ray effect system
@@ -519,20 +516,17 @@ Drawable::~Drawable()
 	m_particle = NULL;
 
 	// delete any icons present
-	if (m_iconInfo)
-		deleteInstance(m_iconInfo);
+	deleteInstance(m_iconInfo);
+	m_iconInfo = NULL;
 
-	if (m_selectionFlashEnvelope)
-		deleteInstance(m_selectionFlashEnvelope);
+	deleteInstance(m_selectionFlashEnvelope);
+	m_selectionFlashEnvelope = NULL;
 
-	if (m_colorTintEnvelope)
-		deleteInstance(m_colorTintEnvelope);
+	deleteInstance(m_colorTintEnvelope);
+	m_colorTintEnvelope = NULL;
 
-	if (m_locoInfo)
-	{
-		deleteInstance(m_locoInfo);
-		m_locoInfo = NULL;
-	}
+	deleteInstance(m_locoInfo);
+	m_locoInfo = NULL;
 }
 
 //-------------------------------------------------------------------------------------------------

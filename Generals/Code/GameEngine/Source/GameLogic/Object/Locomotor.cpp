@@ -2721,8 +2721,7 @@ void LocomotorSet::clear()
 {
 	for (size_t i = 0; i < m_locomotors.size(); ++i)
 	{
-		if (m_locomotors[i])
-			deleteInstance(m_locomotors[i]);
+		deleteInstance(m_locomotors[i]);
 	}
 	m_locomotors.clear();
 	m_validLocomotorSurfaces = 0;

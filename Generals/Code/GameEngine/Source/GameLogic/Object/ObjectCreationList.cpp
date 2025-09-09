@@ -1494,8 +1494,7 @@ ObjectCreationListStore::~ObjectCreationListStore()
 {
 	for (ObjectCreationNuggetVector::iterator i = m_nuggets.begin(); i != m_nuggets.end(); ++i)
 	{
-		if (*i)
-			deleteInstance(*i);
+		deleteInstance(*i);
 	}
 	m_nuggets.clear();
 }
