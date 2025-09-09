@@ -78,7 +78,9 @@ class W3DProjectedShadowManager	: public ProjectedShadowManager
 
 	private:
 		Int renderProjectedTerrainShadow(W3DProjectedShadow *shadow, AABoxClass &box);	///<render shadow on map terrain.
+		void updateShadowNumbers(ShadowType shadowType, Int addNum);
 
+	private:
 		W3DProjectedShadow *m_shadowList;
 		W3DProjectedShadow *m_decalList;
 		TextureClass	*m_dynamicRenderTarget;	///<offscreen video memory texture used to render all shadow textures.
