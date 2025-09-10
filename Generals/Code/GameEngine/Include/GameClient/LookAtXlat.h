@@ -33,13 +33,15 @@
 #include "GameClient/InGameUI.h"
 
 //-----------------------------------------------------------------------------
+// TheSuperHackers @feature The Screen Edge Scrolling can now be enabled or
+// disabled depending on the App being Windowed or Fullscreen.
 typedef UnsignedInt ScreenEdgeScrollMode;
 enum ScreenEdgeScrollMode_ CPP_11(: ScreenEdgeScrollMode)
 {
 	ScreenEdgeScrollMode_EnabledInWindowedApp = 1<<0, // Scroll when touching the edge while the app is windowed
 	ScreenEdgeScrollMode_EnabledInFullscreenApp = 1<<1, // Scroll when touching the edge while the app is fullscreen
 
-	ScreenEdgeScrollMode_Default = ScreenEdgeScrollMode_EnabledInFullscreenApp,
+	ScreenEdgeScrollMode_Default = ScreenEdgeScrollMode_EnabledInFullscreenApp, // Default based on original game behavior
 };
 
 //-----------------------------------------------------------------------------

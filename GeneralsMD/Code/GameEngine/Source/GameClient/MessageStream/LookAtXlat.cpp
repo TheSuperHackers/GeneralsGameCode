@@ -336,7 +336,6 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 				break;
 			}
 
-			// TheSuperHackers @tweak Ayumi/xezon 26/07/2025 Enables edge scrolling in windowed mode.
 			if (canScrollAtScreenEdge())
 			{
 				if (m_isScrolling)
