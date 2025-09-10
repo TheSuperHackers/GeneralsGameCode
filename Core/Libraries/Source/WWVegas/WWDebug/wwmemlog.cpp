@@ -531,6 +531,7 @@ void WWMemoryLogClass::Register_Memory_Released(int category,int size)
 static void _MemLogCleanup(void)
 {
 	delete _TheMemLog;
+	_TheMemLog = NULL;
 }
 
 

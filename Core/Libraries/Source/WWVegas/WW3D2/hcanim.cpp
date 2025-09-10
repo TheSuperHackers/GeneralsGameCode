@@ -214,9 +214,8 @@ HCompressedAnimClass::~HCompressedAnimClass(void)
  *=============================================================================================*/
 void HCompressedAnimClass::Free(void)
 {
-	if (NodeMotion != NULL) {
-		delete[] NodeMotion;
-	}
+	delete[] NodeMotion;
+	NodeMotion = NULL;
 }
 
 

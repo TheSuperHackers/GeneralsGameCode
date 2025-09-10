@@ -968,6 +968,7 @@ void CollectionDefClass::Free(void)
 	for (int i=0; i<ObjectNames.Count(); i++) {
 		delete[] ObjectNames[i];
 	}
+	ObjectNames.Delete_All ();
 
 	ProxyList.Delete_All ();
 }
