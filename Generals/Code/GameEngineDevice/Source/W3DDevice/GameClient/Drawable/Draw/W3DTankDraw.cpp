@@ -310,12 +310,13 @@ void W3DTankDraw::onRenderObjRecreated(void)
 //-------------------------------------------------------------------------------------------------
 void W3DTankDraw::doDrawModule(const Matrix3D* transformMtx)
 {
+	// TheSuperHackers @tweak Update the draw on every WW Sync only.
+	// All calculations are originally catered to a 30 fps logic step.
+	if (WW3D::Get_Frame_Time() == 0)
+		return;
+
 	const Real DEBRIS_THRESHOLD = 0.00001f;
 
- 	Bool frozen = TheTacticalView->isTimeFrozen() && !TheTacticalView->isCameraMovementFinished();
- 	frozen = frozen || TheScriptEngine->isTimeFrozenDebug() || TheScriptEngine->isTimeFrozenScript();
-	if (frozen)
-		return;
 	if (getRenderObject()==NULL) return;
 	if (getRenderObject() != m_prevRenderObj) {
 		updateTreadObjects();

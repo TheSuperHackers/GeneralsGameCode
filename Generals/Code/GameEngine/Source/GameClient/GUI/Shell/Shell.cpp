@@ -535,7 +535,7 @@ void Shell::showShellMap(Bool useShellMap )
 			return;
 		// we're in some other kind of game, clear it out foo!
 		if(TheGameLogic->isInGame())
-			TheMessageStream->appendMessage( GameMessage::MSG_CLEAR_GAME_DATA );
+			TheGameLogic->exitGame();
 
 		TheWritableGlobalData->m_pendingFile = TheGlobalData->m_shellMapName;
 		InitGameLogicRandom(0);
@@ -547,7 +547,7 @@ void Shell::showShellMap(Bool useShellMap )
 	{
 		// we're in a shell game, stop it!
 		if(TheGameLogic->isInGame() && TheGameLogic->getGameMode() == GAME_SHELL)
-			TheMessageStream->appendMessage( GameMessage::MSG_CLEAR_GAME_DATA );
+			TheGameLogic->exitGame();
 
 		// if the shell is active,we need a background
 		if(!m_isShellActive)

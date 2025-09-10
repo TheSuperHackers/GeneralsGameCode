@@ -555,7 +555,7 @@ void W3DView::reset( void )
 static void drawDrawable( Drawable *draw, void *userData )
 {
 
-	draw->draw( (View *)userData );
+	draw->draw();
 
 }  // end drawDrawable
 
@@ -911,8 +911,8 @@ Bool W3DView::updateCameraMovements()
 	} else if (m_doingMoveCameraOnWaypointPath) {
 		m_previousLookAtPosition = *getPosition();
 		// TheSuperHackers @tweak The scripted camera movement is now decoupled from the render update.
-		const Real logicTimeScaleOverFpsRatio = TheGameEngine->getActualLogicTimeScaleOverFpsRatio();
-		moveAlongWaypointPath(TheW3DFrameLengthInMsec * logicTimeScaleOverFpsRatio);
+		// The scripted camera will still move when the time is frozen, but not when the game is halted.
+		moveAlongWaypointPath(TheGameEngine->getLogicTimeStepMilliseconds(GameEngine::IgnoreFrozenTime));
 		didUpdate = true;
 	}
 	if (m_doingScriptedCameraLock)
@@ -936,13 +936,9 @@ void W3DView::updateView(void)
 	UPDATE();
 }
 
-// TheSuperHackers @tweak xezon 12/08/2025 The drawable update is no longer tied to the
-// render update, but it advanced separately for every fixed time step. This ensures that
-// things like vehicle wheels no longer spin too fast on high frame rates or keep spinning
-// on game pause.
-// The camera shaker is also no longer tied to the render update. The shake does sharp shakes
-// on every fixed time step, and is not intended to have linear interpolation during the
-// render update.
+// TheSuperHackers @tweak xezon 12/08/2025 The camera shaker is no longer tied to the render
+// update. The shake does sharp shakes on every fixed time step, and is not intended to have
+// linear interpolation during the render update.
 void W3DView::stepView()
 {
 	//
@@ -967,17 +963,6 @@ void W3DView::stepView()
 		m_shakeOffset.x = 0.0f;
 		m_shakeOffset.y = 0.0f;
 	}
-
-	if (TheScriptEngine->isTimeFast()) {
-		return; // don't draw - makes it faster :) jba.
-	}
-
-	Region3D axisAlignedRegion;
-	getAxisAlignedViewRegion(axisAlignedRegion);
-
-	// render all of the visible Drawables
-	/// @todo this needs to use a real region partition or something
-	TheGameClient->iterateDrawablesInRegion( &axisAlignedRegion, drawDrawable, this );
 }
 
 //DECLARE_PERF_TIMER(W3DView_updateView)
@@ -1248,6 +1233,13 @@ void W3DView::update(void)
 	}
 	if (recalcCamera)
 		setCameraTransform();
+
+	Region3D axisAlignedRegion;
+	getAxisAlignedViewRegion(axisAlignedRegion);
+
+	// render all of the visible Drawables
+	/// @todo this needs to use a real region partition or something
+	TheGameClient->iterateDrawablesInRegion( &axisAlignedRegion, drawDrawable, NULL );
 }
 
 //-------------------------------------------------------------------------------------------------

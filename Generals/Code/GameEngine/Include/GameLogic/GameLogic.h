@@ -197,6 +197,7 @@ public:
 	void updateObjectsChangedTriggerAreas(void) {m_frameObjectsChangedTriggerAreas = m_frame;}
 	UnsignedInt getFrameObjectsChangedTriggerAreas(void) {return m_frameObjectsChangedTriggerAreas;}
 
+	void exitGame();
 	void clearGameData(Bool showScoreScreen = TRUE);														///< Clear the game data
 	void closeWindows( void );
 
@@ -205,7 +206,7 @@ public:
 
 	void bindObjectAndDrawable(Object* obj, Drawable* draw);
 
-	void setGamePausedInFrame( UnsignedInt frame );
+	void setGamePausedInFrame( UnsignedInt frame, Bool disableLogicTimeScale );
 	UnsignedInt getGamePauseFrame() const { return m_pauseFrame; }
 	void setGamePaused( Bool paused, Bool pauseMusic = TRUE, Bool pauseInput = TRUE );
 	Bool isGamePaused( void );
@@ -352,6 +353,7 @@ private:
 	Bool m_pauseInput;
 	Bool m_inputEnabledMemory;// Latches used to remember what to restore to after we unpause
 	Bool m_mouseVisibleMemory;
+	Bool m_logicTimeScaleEnabledMemory;
 
 	Bool m_progressComplete[MAX_SLOTS];
 	enum { PROGRESS_COMPLETE_TIMEOUT = 60000 };							///< Timeout we wait for when we've completed our Load

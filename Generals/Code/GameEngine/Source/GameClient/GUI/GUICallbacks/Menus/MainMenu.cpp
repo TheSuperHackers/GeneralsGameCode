@@ -243,7 +243,7 @@ static void quitCallback( void )
 	TheGameEngine->setQuitting( TRUE );
 
 	if (TheGameLogic->isInGame())
-		TheMessageStream->appendMessage( GameMessage::MSG_CLEAR_GAME_DATA );
+		TheGameLogic->exitGame();
 }
 
 

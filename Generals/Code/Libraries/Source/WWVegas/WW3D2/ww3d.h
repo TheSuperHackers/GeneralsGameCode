@@ -162,7 +162,9 @@ public:
 
 	static void Flip_To_Primary(void);
 
-
+	// TheSuperHackers @info Call this function to accumulate fractional render time.
+	// It will then call Sync with a new time on its own once an appropriate amount of time has passed.
+	static void Add_Frame_Time(float milliseconds);
 	/*
 	** Timing
 	** By calling the Sync function, the application can move the ww3d library time forward.  This
@@ -320,6 +322,8 @@ private:
 	static void					Update_Pixel_Center(void);
 	static void					Allocate_Debug_Resources(void);
 	static void					Release_Debug_Resources(void);
+
+	static float FractionalSyncMs;
 
 	// Timing info:
    // The absolute synchronized frame time (in milliseconds) supplied by the

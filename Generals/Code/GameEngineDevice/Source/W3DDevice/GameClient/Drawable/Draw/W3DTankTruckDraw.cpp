@@ -515,9 +515,9 @@ void W3DTankTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 	if (!TheGlobalData->m_showClientPhysics)
 		return;
 
- 	Bool frozen = TheTacticalView->isTimeFrozen() && !TheTacticalView->isCameraMovementFinished();
- 	frozen = frozen || TheScriptEngine->isTimeFrozenDebug() || TheScriptEngine->isTimeFrozenScript();
-	if (frozen)
+	// TheSuperHackers @tweak Update the draw on every WW Sync only.
+	// All calculations are originally catered to a 30 fps logic step.
+	if (WW3D::Get_Frame_Time() == 0)
 		return;
 
 	const Real ACCEL_THRESHOLD = 0.01f;
