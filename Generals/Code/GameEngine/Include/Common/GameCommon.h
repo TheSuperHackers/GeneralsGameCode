@@ -468,6 +468,7 @@ enum WhichTurretType CPP_11(: Int)
 
 // ------------------------------------------------------------------------
 // this normalizes an angle to the range -PI...PI.
+// TheSuperHackers @todo DO NOT USE THIS FUNCTION! Use WWMath::Normalize_Angle instead. Delete this.
 extern Real normalizeAngle(Real angle);
 
 // ------------------------------------------------------------------------
