@@ -35,6 +35,7 @@
 #include "Common/PlayerList.h"
 #include "Common/Recorder.h"
 #include "Common/StatsCollector.h"
+#include "Common/UserPreferences.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameClient/Display.h"
@@ -80,7 +81,7 @@ static const Int edgeScrollSize = 3;
 static Mouse::MouseCursor prevCursor = Mouse::ARROW;
 
 //-----------------------------------------------------------------------------
-void LookAtTranslator::setScrolling(Int x)
+void LookAtTranslator::setScrolling(ScrollType scrollType)
 {
 	if (!TheInGameUI->getInputEnabled())
 		return;
@@ -89,7 +90,7 @@ void LookAtTranslator::setScrolling(Int x)
 	m_isScrolling = true;
 	TheInGameUI->setScrolling( TRUE );
 	TheTacticalView->setMouseLock( TRUE );
-	m_scrollType = x;
+	m_scrollType = scrollType;
 	if(TheStatsCollector)
 		TheStatsCollector->startScrollTime();
 }
@@ -103,10 +104,30 @@ void LookAtTranslator::stopScrolling( void )
 	TheMouse->setCursor(prevCursor);
 	m_scrollType = SCROLL_NONE;
 
-	// if we have a stats collectore increment the stats
+	// increment the stats if we have a stats collector
 	if(TheStatsCollector)
 		TheStatsCollector->endScrollTime();
 
+}
+
+//-----------------------------------------------------------------------------
+Bool LookAtTranslator::canScrollAtScreenEdge() const
+{
+	if (!TheMouse->isCursorCaptured())
+		return false;
+
+	if (TheDisplay->getWindowed())
+	{
+		if ((m_screenEdgeScrollMode & ScreenEdgeScrollMode_EnabledInWindowedApp) == 0)
+			return false;
+	}
+	else
+	{
+		if ((m_screenEdgeScrollMode & ScreenEdgeScrollMode_EnabledInFullscreenApp) == 0)
+			return false;
+	}
+
+	return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -121,11 +142,14 @@ LookAtTranslator::LookAtTranslator() :
 	m_scrollType(SCROLL_NONE)
 {
 	//Added By Sadullah Nader
-	//Initializations misssing and needed
+	//Initializations missing and needed
 	m_anchor.x = m_anchor.y = 0;
 	m_currentPos.x = m_currentPos.y = 0;
 	m_originalAnchor.x = m_originalAnchor.y = 0;
 	//
+
+	OptionPreferences prefs;
+	m_screenEdgeScrollMode = prefs.getScreenEdgeScrollMode();
 
 	DEBUG_ASSERTCRASH(!TheLookAtTranslator, ("Already have a LookAtTranslator - why do you need two?"));
 	TheLookAtTranslator = this;
@@ -161,6 +185,11 @@ Bool LookAtTranslator::hasMouseMovedRecently( void )
 void LookAtTranslator::setCurrentPos( const ICoord2D& pos )
 {
 	m_currentPos = pos;
+}
+
+void LookAtTranslator::setScreenEdgeScrollMode(ScreenEdgeScrollMode mode)
+{
+	m_screenEdgeScrollMode = mode;
 }
 
 //-----------------------------------------------------------------------------
@@ -309,7 +338,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			}
 
 			// TheSuperHackers @tweak Ayumi/xezon 26/07/2025 Enables edge scrolling in windowed mode.
-			if (TheMouse->isCursorCaptured())
+			if (canScrollAtScreenEdge())
 			{
 				if (m_isScrolling)
 				{

@@ -44,6 +44,7 @@
 #include "GameClient/ClientInstance.h"
 #include "GameClient/GameClient.h"
 #include "GameClient/InGameUI.h"
+#include "GameClient/LookAtXlat.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/GadgetCheckBox.h"
@@ -387,6 +388,38 @@ CursorCaptureMode OptionPreferences::getCursorCaptureMode() const
 			}
 		}
 	}
+	return mode;
+}
+
+Bool OptionPreferences::getScreenEdgeScrollEnabledInWindowedApp() const
+{
+	OptionPreferences::const_iterator it = find("ScreenEdgeScrollEnabledInWindowedApp");
+	if (it == end())
+		return (ScreenEdgeScrollMode_Default & ScreenEdgeScrollMode_EnabledInWindowedApp) != 0;
+
+	if (stricmp(it->second.str(), "yes") == 0)
+		return TRUE;
+
+	return FALSE;
+}
+
+Bool OptionPreferences::getScreenEdgeScrollEnabledInFullscreenApp() const
+{
+	OptionPreferences::const_iterator it = find("ScreenEdgeScrollEnabledInFullscreenApp");
+	if (it == end())
+		return (ScreenEdgeScrollMode_Default & ScreenEdgeScrollMode_EnabledInFullscreenApp) != 0;
+
+	if (stricmp(it->second.str(), "yes") == 0)
+		return TRUE;
+
+	return FALSE;
+}
+
+ScreenEdgeScrollMode OptionPreferences::getScreenEdgeScrollMode() const
+{
+	ScreenEdgeScrollMode mode = 0;
+	mode |= getScreenEdgeScrollEnabledInWindowedApp() ? ScreenEdgeScrollMode_EnabledInWindowedApp : 0;
+	mode |= getScreenEdgeScrollEnabledInFullscreenApp() ? ScreenEdgeScrollMode_EnabledInFullscreenApp : 0;
 	return mode;
 }
 
@@ -1189,6 +1222,14 @@ static void saveOptions( void )
 		CursorCaptureMode mode = pref->getCursorCaptureMode();
 		(*pref)["CursorCaptureMode"] = TheCursorCaptureModeNames[mode];
 		TheMouse->setCursorCaptureMode(mode);
+	}
+
+	// TheSuperHackers @todo Add combo box ?
+	{
+		ScreenEdgeScrollMode mode = pref->getScreenEdgeScrollMode();
+		(*pref)["ScreenEdgeScrollEnabledInWindowedApp"] = (mode & ScreenEdgeScrollMode_EnabledInWindowedApp) ? "yes" : "no";
+		(*pref)["ScreenEdgeScrollEnabledInFullscreenApp"] = (mode & ScreenEdgeScrollMode_EnabledInFullscreenApp) ? "yes" : "no";
+		TheLookAtTranslator->setScreenEdgeScrollMode(mode);
 	}
 
 	//-------------------------------------------------------------------------------------------------
