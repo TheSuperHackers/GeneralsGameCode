@@ -875,16 +875,13 @@ TexturePage::~TexturePage( void )
 {
 
 	// delete the canvas
-	if( m_canvas )
-		delete [] m_canvas;
+	delete [] m_canvas;
 
 	// delete targa if present, this will NOT delete a user assigned image buffer
-	if( m_targa )
-		delete m_targa;
+	delete m_targa;
 
 	// delete the final image buffer if present
-	if( m_packedImage )
-		delete [] m_packedImage;
+	delete [] m_packedImage;
 
 }
 

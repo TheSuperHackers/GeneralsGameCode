@@ -579,10 +579,9 @@ MemLogClass * WWMemoryLogClass::Get_Log(void)
 void WWMemoryLogClass::Release_Log(void)
 {
 	MemLogMutexLockClass lock;
-	if (_TheMemLog) {
-		delete _TheMemLog;
-		_TheMemLog = NULL;
-	}
+
+	delete _TheMemLog;
+	_TheMemLog = NULL;
 }
 
 

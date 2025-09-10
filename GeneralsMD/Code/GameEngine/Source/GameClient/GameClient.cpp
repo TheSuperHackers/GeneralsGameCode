@@ -124,11 +124,8 @@ GameClient::~GameClient()
 	TheGraphDraw = NULL;
 #endif
 
-	if (TheDrawGroupInfo)
-	{
-		delete TheDrawGroupInfo;
-		TheDrawGroupInfo = NULL;
-	}
+	delete TheDrawGroupInfo;
+	TheDrawGroupInfo = NULL;
 
 	// clear any drawable TOC we might have
 	m_drawableTOC.clear();
@@ -144,8 +141,8 @@ GameClient::~GameClient()
 	//	DEBUG_LOG(("%s", preloadTextureNamesGlobalHack[oog]));
 	//}
 	//DEBUG_LOG(("End Texture files ------------------------------------------------"));
-	if(TheCampaignManager)
-		delete TheCampaignManager;
+
+	delete TheCampaignManager;
 	TheCampaignManager = NULL;
 
 	// destroy all Drawables

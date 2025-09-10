@@ -100,7 +100,7 @@ public:
 	HModelDefClass *				HModelDef;
 
 protected:
-	virtual ~HModelPrototypeClass(void)							{ if (HModelDef) delete HModelDef; }
+	virtual ~HModelPrototypeClass(void)							{ delete HModelDef; }
 
 };
 

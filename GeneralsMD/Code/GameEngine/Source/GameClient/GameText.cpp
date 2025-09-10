@@ -379,17 +379,11 @@ void GameTextManager::init( void )
 void GameTextManager::deinit( void )
 {
 
-	if( m_stringInfo != NULL )
-	{
-		delete [] m_stringInfo;
-		m_stringInfo = NULL;
-	}
+	delete [] m_stringInfo;
+	m_stringInfo = NULL;
 
-	if( m_stringLUT != NULL )
-	{
-		delete [] m_stringLUT;
-		m_stringLUT = NULL;
-	}
+	delete [] m_stringLUT;
+	m_stringLUT = NULL;
 
 	m_textCount = 0;
 
@@ -418,17 +412,11 @@ void GameTextManager::deinit( void )
 
 void GameTextManager::reset( void )
 {
-	if( m_mapStringInfo != NULL )
-	{
-		delete [] m_mapStringInfo;
-		m_mapStringInfo = NULL;
-	}
+	delete [] m_mapStringInfo;
+	m_mapStringInfo = NULL;
 
-	if( m_mapStringLUT != NULL )
-	{
-		delete [] m_mapStringLUT;
-		m_mapStringLUT = NULL;
-	}
+	delete [] m_mapStringLUT;
+	m_mapStringLUT = NULL;
 }
 
 

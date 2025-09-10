@@ -104,8 +104,7 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 	}
 
 	// ------- Bind our port --------
-	if (m_udpsock)
-		delete m_udpsock;
+	delete m_udpsock;
 	m_udpsock = NEW UDP();
 
 	if (!m_udpsock)
@@ -162,11 +161,8 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 
 void Transport::reset( void )
 {
-	if (m_udpsock)
-	{
-		delete m_udpsock;
-		m_udpsock = NULL;
-	}
+	delete m_udpsock;
+	m_udpsock = NULL;
 
 	if (m_winsockInit)
 	{

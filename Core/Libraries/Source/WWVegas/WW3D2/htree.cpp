@@ -357,10 +357,8 @@ bool HTreeClass::read_pivots(ChunkLoadClass & cload,bool pre30)
  *=============================================================================================*/
 void HTreeClass::Free(void)
 {
-	if (Pivot != NULL) {
-		delete[] Pivot;
-		Pivot = NULL;
-	}
+	delete[] Pivot;
+	Pivot = NULL;
 	NumPivots = 0;
 
 	// Also clean up other members:
@@ -1018,11 +1016,8 @@ void HTreeClass::Release_Bone(int boneindex)
 	assert(boneindex >= 0);
 	assert(boneindex < NumPivots);
 #ifdef LAZY_CAP_MTX_ALLOC
-	if (Pivot[boneindex].CapTransformPtr)
-	{
-		delete Pivot[boneindex].CapTransformPtr;
-		Pivot[boneindex].CapTransformPtr = NULL;
-	}
+	delete Pivot[boneindex].CapTransformPtr;
+	Pivot[boneindex].CapTransformPtr = NULL;
 #else
 	Pivot[boneindex].IsCaptured = false;
 #endif

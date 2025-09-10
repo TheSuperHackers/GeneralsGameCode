@@ -230,10 +230,10 @@ Int DrawObject::freeMapResources(void)
 	REF_PTR_RELEASE(m_indexFeedback);
 	REF_PTR_RELEASE(m_indexWater);
 	REF_PTR_RELEASE(m_moldMesh);
-	if (m_lineRenderer) {
-		delete m_lineRenderer;
-		m_lineRenderer = NULL;
-	}
+
+	delete m_lineRenderer;
+	m_lineRenderer = NULL;
+
 	return 0;
 }
 

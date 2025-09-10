@@ -488,11 +488,8 @@ void GameLogic::reset( void )
 	}
 	m_forceGameStartByTimeOut = FALSE;
 
-	if(TheStatsCollector)
-	{
-		delete TheStatsCollector;
-		TheStatsCollector = NULL;
-	}
+	delete TheStatsCollector;
+	TheStatsCollector = NULL;
 
 	// clear any table of contents we have
 	m_objectTOC.clear();
@@ -1116,13 +1113,8 @@ void GameLogic::updateLoadProgress( Int progress )
 void GameLogic::deleteLoadScreen( void )
 {
 
-	if( m_loadScreen )
-	{
-
-		delete m_loadScreen;
-		m_loadScreen = NULL;
-
-	}
+	delete m_loadScreen;
+	m_loadScreen = NULL;
 
 }
 
@@ -1289,10 +1281,8 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		}
 	} else {
 		if (m_gameMode == GAME_SINGLE_PLAYER)	{
-			if (TheSkirmishGameInfo) {
-				delete TheSkirmishGameInfo;
-				TheSkirmishGameInfo = NULL;
-			}
+			delete TheSkirmishGameInfo;
+			TheSkirmishGameInfo = NULL;
 		}
 	}
 

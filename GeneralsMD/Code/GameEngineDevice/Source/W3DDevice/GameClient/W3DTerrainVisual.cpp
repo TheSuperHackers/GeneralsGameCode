@@ -191,23 +191,14 @@ W3DTerrainVisual::~W3DTerrainVisual()
 		TheTerrainRenderObject = NULL;
 	}
 
-	if (TheTerrainTracksRenderObjClassSystem)
-	{
-		delete TheTerrainTracksRenderObjClassSystem;
-		TheTerrainTracksRenderObjClassSystem=NULL;
-	}
+	delete TheTerrainTracksRenderObjClassSystem;
+	TheTerrainTracksRenderObjClassSystem=NULL;
 
-	if (TheW3DShadowManager)
-	{
-		delete TheW3DShadowManager;
-		TheW3DShadowManager=NULL;
-	}
+	delete TheW3DShadowManager;
+	TheW3DShadowManager=NULL;
 
-	if (TheSmudgeManager)
-	{
-		delete TheSmudgeManager;
-		TheSmudgeManager=NULL;
-	}
+	delete TheSmudgeManager;
+	TheSmudgeManager=NULL;
 
 	REF_PTR_RELEASE( m_waterRenderObject );
 	TheWaterRenderObj=NULL;

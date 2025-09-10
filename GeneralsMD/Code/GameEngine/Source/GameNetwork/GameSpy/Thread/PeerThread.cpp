@@ -565,8 +565,7 @@ void GameSpyPeerMessageQueue::startThread( void )
 
 void GameSpyPeerMessageQueue::endThread( void )
 {
-	if (m_thread)
-		delete m_thread;
+	delete m_thread;
 	m_thread = NULL;
 }
 

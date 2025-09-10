@@ -95,10 +95,8 @@ HModelDefClass::~HModelDefClass(void)
  *=============================================================================================*/
 void HModelDefClass::Free(void)
 {
-	if (SubObjects != NULL) {
-		delete[] SubObjects;
-		SubObjects = NULL;
-	}
+	delete[] SubObjects;
+	SubObjects = NULL;
 	SubObjectCount = 0;
 
 	if (SnapPoints != NULL) {

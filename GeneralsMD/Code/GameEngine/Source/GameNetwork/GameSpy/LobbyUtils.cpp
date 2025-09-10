@@ -461,8 +461,7 @@ static void populateBuddyGames(void)
 
 static void clearBuddyGames(void)
 {
-	if (theBuddyGames)
-		delete theBuddyGames;
+	delete theBuddyGames;
 	theBuddyGames = NULL;
 }
 

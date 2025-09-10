@@ -216,10 +216,7 @@ Bool RAMFile::openFromArchive(File *archiveFile, const AsciiString& filename, In
 		return FALSE;
 	}
 
-	if (m_data != NULL) {
-		delete[] m_data;
-		m_data = NULL;
-	}
+	delete[] m_data;
 	m_data = MSGNEW("RAMFILE") Char [size];	// pool[]ify
 	m_size = size;
 

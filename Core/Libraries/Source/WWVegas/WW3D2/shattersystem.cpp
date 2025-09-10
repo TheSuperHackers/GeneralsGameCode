@@ -728,12 +728,8 @@ BSPClass::BSPClass(HTreeClass * tree,int bone_index,int & leaf_index) :
 
 BSPClass::~BSPClass(void)
 {
-	if (Front != NULL) {
-		delete Front;
-	}
-	if (Back != NULL) {
-		delete Back;
-	}
+	delete Front;
+	delete Back;
 	Front = Back = NULL;
 }
 
@@ -847,7 +843,6 @@ void ShatterSystem::Shutdown(void)
 	*/
 	for (int i=0; i<ShatterPatterns.Count(); i++) {
 		delete ShatterPatterns[i];
-		ShatterPatterns[i] = NULL;
 	}
 	ShatterPatterns.Delete_All();
 }

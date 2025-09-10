@@ -92,8 +92,7 @@ LANAPI::LANAPI( void ) : m_transport(NULL)
 LANAPI::~LANAPI( void )
 {
 	reset();
-	if (m_transport)
-		delete m_transport;
+	delete m_transport;
 }
 
 void LANAPI::init( void )

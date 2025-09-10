@@ -94,14 +94,8 @@ ImageInfo::ImageInfo( void )
 ImageInfo::~ImageInfo( void )
 {
 
-	// delete path name
-	if( m_path )
-		delete [] m_path;
-
-	if( m_filenameOnly )
-		delete [] m_filenameOnly;
-
-	if( m_filenameOnlyNoExt )
-		delete [] m_filenameOnlyNoExt;
+	delete [] m_path;
+	delete [] m_filenameOnly;
+	delete [] m_filenameOnlyNoExt;
 
 }

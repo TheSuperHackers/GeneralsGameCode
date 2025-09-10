@@ -275,10 +275,9 @@ void FlatHeightMapRenderObjClass::doPartialUpdate(const IRegion2D &partialRange,
 //=============================================================================
 void FlatHeightMapRenderObjClass::releaseTiles(void)
 {
-	if (m_tiles) {
-		delete [] m_tiles;
-		m_tiles = NULL;
-	}
+	delete [] m_tiles;
+	m_tiles = NULL;
+
 	m_tilesWidth = 0;
 	m_tilesHeight = 0;
 	m_numTiles = 0;

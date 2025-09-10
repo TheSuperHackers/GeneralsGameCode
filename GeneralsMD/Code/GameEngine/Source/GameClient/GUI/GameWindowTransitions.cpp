@@ -157,9 +157,8 @@ TransitionWindow::~TransitionWindow( void )
 		m_win->unlinkTransitionWindow(this);
 
 	m_win = NULL;
-	if(m_transition)
-		delete m_transition;
 
+	delete m_transition;
 	m_transition = NULL;
 }
 
@@ -172,9 +171,7 @@ Bool TransitionWindow::init( void )
 //	if( !m_win )
 //		return FALSE;
 
-	if(m_transition)
-		delete m_transition;
-
+	delete m_transition;
 	m_transition = getTransitionForStyle( m_style );
 	m_transition->init(m_win);
 
@@ -253,7 +250,6 @@ TransitionGroup::~TransitionGroup( void )
 	{
 		TransitionWindow *tWin = *it;
 		delete tWin;
-		tWin = NULL;
 		it = m_transitionWindowList.erase(it);
 	}
 }

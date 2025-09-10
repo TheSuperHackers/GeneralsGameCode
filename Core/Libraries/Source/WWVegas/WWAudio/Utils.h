@@ -46,17 +46,9 @@
 //
 // Macros
 //
-#define SAFE_DELETE(pobject)					\
-			if (pobject) {							\
-				delete pobject;					\
-				pobject = NULL;					\
-			}											\
+#define SAFE_DELETE(pobject) { delete pobject; pobject = NULL; }
 
-#define SAFE_DELETE_ARRAY(pobject)			\
-			if (pobject) {							\
-				delete [] pobject;				\
-				pobject = NULL;					\
-			}											\
+#define SAFE_DELETE_ARRAY(pobject) { delete [] pobject; pobject = NULL; }
 
 #define SAFE_FREE(pobject) { ::free (pobject); pobject = NULL; }
 

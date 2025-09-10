@@ -1355,10 +1355,8 @@ void WOLGameSetupMenuInit( WindowLayout *layout, void *userData )
 	}
 	TheGameSpyInfo->setCurrentGroupRoom(0);
 
-	if (TheNAT != NULL) {
-		delete TheNAT;
-		TheNAT = NULL;
-	}
+	delete TheNAT;
+	TheNAT = NULL;
 
 	nextScreen = NULL;
 	buttonPushed = false;

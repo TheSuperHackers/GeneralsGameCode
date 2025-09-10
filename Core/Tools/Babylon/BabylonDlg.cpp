@@ -1138,10 +1138,7 @@ exit:
 
 	db->ClearChanges ();
 
-	if ( label )
-	{
-		delete label;
-	}
+	delete label;
 
 	if ( file )
 	{

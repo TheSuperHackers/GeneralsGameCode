@@ -101,9 +101,10 @@ WindowVideo::~WindowVideo( void )
 	m_videoBuffer = NULL;
 
 	if ( m_videoStream )
+	{
 		m_videoStream->close();
-	m_videoStream = NULL;
-
+		m_videoStream = NULL;
+	}
 }
 
 void WindowVideo::init( GameWindow *win, AsciiString movieName,
@@ -140,8 +141,7 @@ WindowVideoManager::WindowVideoManager( void )
 	while(it != m_playingVideos.end())
 	{
 		WindowVideo *winVid = it->second;
-		if(winVid)
-			delete winVid;
+		delete winVid;
 		it++;
 	}
 	m_playingVideos.clear();
@@ -157,8 +157,7 @@ WindowVideoManager::~WindowVideoManager( void )
 	while(it != m_playingVideos.end())
 	{
 		WindowVideo *winVid = it->second;
-		if(winVid)
-			delete winVid;
+		delete winVid;
 		it++;
 	}
 	m_playingVideos.clear();
@@ -180,8 +179,7 @@ void WindowVideoManager::reset( void )
 	while(it != m_playingVideos.end())
 	{
 		WindowVideo *winVid = it->second;
-		if(winVid)
-			delete winVid;
+		delete winVid;
 		it++;
 	}
 	m_playingVideos.clear();
@@ -277,8 +275,10 @@ void WindowVideoManager::playMovie( GameWindow *win, AsciiString movieName, Wind
 		videoBuffer = NULL;
 
 		if ( videoStream )
+		{
 			videoStream->close();
-		videoStream = NULL;
+			videoStream = NULL;
+		}
 
 		return;
 	}
@@ -349,9 +349,7 @@ void WindowVideoManager::stopAndRemoveMovie( GameWindow *win )
 	if(it != m_playingVideos.end())
 	{
 		WindowVideo *winVid = it->second;
-		if(winVid)
-			delete winVid;
-		winVid = NULL;
+		delete winVid;
 		m_playingVideos.erase(it);
 	}
 }

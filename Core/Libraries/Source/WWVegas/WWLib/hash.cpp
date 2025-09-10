@@ -58,10 +58,8 @@ HashTableClass::HashTableClass( int size ) :
 HashTableClass::~HashTableClass( void )
 {
 	// If we need to, free the hash table
-	if ( HashTable != NULL) {
-		delete [] HashTable;
-		HashTable = NULL;
-	}
+	delete [] HashTable;
+	HashTable = NULL;
 }
 
 void	HashTableClass::Reset( void )

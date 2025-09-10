@@ -1272,11 +1272,9 @@ WindowMsgHandledType WOLBuddyOverlayRCMenuSystem( GameWindow *window, UnsignedIn
 				else if (rcData->m_itemType == ITEM_REQUEST)
 					isRequest = TRUE;
 
-				if(rcData)
-				{
-					delete rcData;
-					rcData = NULL;
-				}
+				delete rcData;
+				rcData = NULL;
+
 				window->winSetUserData(NULL);
 				//DEBUG_ASSERTCRASH(profileID > 0, ("Bad profile ID in user data!"));
 

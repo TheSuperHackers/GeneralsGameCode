@@ -1969,22 +1969,17 @@ ZoneBlock::~ZoneBlock()
 
 void ZoneBlock::freeZones(void)
 {
-	if (m_groundCliffZones) {
-		delete [] m_groundCliffZones;
-		m_groundCliffZones = NULL;
-	}
-	if (m_groundWaterZones) {
-		delete [] m_groundWaterZones;
-		m_groundWaterZones = NULL;
-	}
-	if (m_groundRubbleZones) {
-		delete [] m_groundRubbleZones;
-		m_groundRubbleZones = NULL;
-	}
-	if (m_crusherZones) {
-		delete [] m_crusherZones;
-		m_crusherZones = NULL;
-	}
+	delete [] m_groundCliffZones;
+	m_groundCliffZones = NULL;
+
+	delete [] m_groundWaterZones;
+	m_groundWaterZones = NULL;
+
+	delete [] m_groundRubbleZones;
+	m_groundRubbleZones = NULL;
+
+	delete [] m_crusherZones;
+	m_crusherZones = NULL;
 }
 
 /* Allocate zone equivalency arrays large enough to hold required entries.  If the arrays are already
@@ -2173,43 +2168,35 @@ PathfindZoneManager::~PathfindZoneManager()
 
 void PathfindZoneManager::freeZones()
 {
-	if (m_groundCliffZones) {
-		delete [] m_groundCliffZones;
-		m_groundCliffZones = NULL;
-	}
-	if (m_groundWaterZones) {
-		delete [] m_groundWaterZones;
-		m_groundWaterZones = NULL;
-	}
-	if (m_groundRubbleZones) {
-		delete [] m_groundRubbleZones;
-		m_groundRubbleZones = NULL;
-	}
-	if (m_terrainZones) {
-		delete [] m_terrainZones;
-		m_terrainZones = NULL;
-	}
-	if (m_crusherZones) {
-		delete [] m_crusherZones;
-		m_crusherZones = NULL;
-	}
-	if (m_hierarchicalZones) {
-		delete [] m_hierarchicalZones;
-		m_hierarchicalZones = NULL;
-	}
+	delete [] m_groundCliffZones;
+	m_groundCliffZones = NULL;
+
+	delete [] m_groundWaterZones;
+	m_groundWaterZones = NULL;
+
+	delete [] m_groundRubbleZones;
+	m_groundRubbleZones = NULL;
+
+	delete [] m_terrainZones;
+	m_terrainZones = NULL;
+
+	delete [] m_crusherZones;
+	m_crusherZones = NULL;
+
+	delete [] m_hierarchicalZones;
+	m_hierarchicalZones = NULL;
+
 	m_zonesAllocated = 0;
 }
 
 void PathfindZoneManager::freeBlocks()
 {
-	if (m_blockOfZoneBlocks) {
-		delete [] m_blockOfZoneBlocks;
-		m_blockOfZoneBlocks = NULL;
-	}
-	if (m_zoneBlocks) {
-		delete [] m_zoneBlocks;
-		m_zoneBlocks = NULL;
-	}
+	delete [] m_blockOfZoneBlocks;
+	m_blockOfZoneBlocks = NULL;
+
+	delete [] m_zoneBlocks;
+	m_zoneBlocks = NULL;
+
 	m_zoneBlockExtent.x = 0;
 	m_zoneBlockExtent.y = 0;
 }
@@ -3214,7 +3201,7 @@ PathfindLayer::~PathfindLayer()
 }
 
 /**
- * Returns true if the layer is avaialble for use.
+ * Returns true if the layer is available for use.
  */
 void PathfindLayer::reset(void)
 {
@@ -3230,10 +3217,10 @@ void PathfindLayer::reset(void)
 		delete [] m_layerCells;
 		m_layerCells = NULL;
 	}
-	if (m_blockOfMapCells) {
-		delete [] m_blockOfMapCells;
-		m_blockOfMapCells = NULL;
-	}
+
+	delete [] m_blockOfMapCells;
+	m_blockOfMapCells = NULL;
+
 	m_width = 0;
 	m_height = 0;
 	m_xOrigin = 0;
@@ -3838,14 +3825,11 @@ void Pathfinder::reset( void )
 	frameToShowObstacles = 0;
 	DEBUG_LOG(("Pathfind cell is %d bytes, PathfindCellInfo is %d bytes", sizeof(PathfindCell), sizeof(PathfindCellInfo)));
 
-	if (m_blockOfMapCells) {
-		delete []m_blockOfMapCells;
-		m_blockOfMapCells = NULL;
-	}
-	if (m_map) {
-		delete [] m_map;
-		m_map = NULL;
-	}
+	delete [] m_blockOfMapCells;
+	m_blockOfMapCells = NULL;
+
+	delete [] m_map;
+	m_map = NULL;
 
 	Int i;
 	for (i=0; i<=LAYER_LAST; i++) {

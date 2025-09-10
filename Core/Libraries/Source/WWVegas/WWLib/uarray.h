@@ -155,10 +155,8 @@ UniqueArrayClass<T>::UniqueArrayClass(int initial_size,int growth_rate,HashCalcu
 template <class T>
 UniqueArrayClass<T>::~UniqueArrayClass(void)
 {
-	if (HashTable != NULL) {
-		delete[] HashTable;
-		HashTable = NULL;
-	}
+	delete[] HashTable;
+	HashTable = NULL;
 }
 
 

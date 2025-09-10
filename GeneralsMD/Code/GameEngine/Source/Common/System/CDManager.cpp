@@ -284,10 +284,7 @@ void CDManager::destroyAllDrives( void )
 	{
 		node->remove();
 		CDDriveInterface *drive = (CDDriveInterface *) node->item();
-		if ( drive )
-		{
-			delete drive;
-		}
+		delete drive;
 	}
 }
 

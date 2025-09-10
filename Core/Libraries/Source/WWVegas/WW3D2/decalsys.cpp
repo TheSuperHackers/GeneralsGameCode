@@ -329,10 +329,8 @@ MultiFixedPoolDecalSystemClass::MultiFixedPoolDecalSystemClass(const MultiFixedP
 
 MultiFixedPoolDecalSystemClass::~MultiFixedPoolDecalSystemClass(void)
 {
-	if (Pools) {
-		delete [] Pools;
-		Pools = 0;
-	}
+	delete [] Pools;
+	Pools = NULL;
 }
 
 // This clears the slot in addition to locking the generator, thus preventing any decal id
@@ -463,25 +461,21 @@ void MultiFixedPoolDecalSystemClass::LogicalDecalClass::Clear(uint32 decal_id)
 */
 
 MultiFixedPoolDecalSystemClass::LogicalDecalPoolClass::LogicalDecalPoolClass(void) :
-	Array(0),
+	Array(NULL),
 	Size(0)
 {
 }
 
 MultiFixedPoolDecalSystemClass::LogicalDecalPoolClass::~LogicalDecalPoolClass(void)
 {
-	if (Array) {
-		delete [] Array;
-		Array = 0;
-	}
+	delete [] Array;
+	Array = NULL;
 }
 
 void MultiFixedPoolDecalSystemClass::LogicalDecalPoolClass::Initialize(uint32 size)
 {
-	if (Array) {
-		delete [] Array;
-		Array = 0;
-	}
+	delete [] Array;
+	Array = NULL;
 
 	Size = size;
 	assert(Size);

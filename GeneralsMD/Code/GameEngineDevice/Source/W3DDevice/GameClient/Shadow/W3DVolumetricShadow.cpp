@@ -155,14 +155,13 @@ struct Geometry
 		return TRUE;
 	}
 	void Release(void)
-	{	if (m_verts)
-		{	delete [] m_verts;
-			m_verts=NULL;
-		}
-		if (m_indices)
-		{	delete [] m_indices;
-			m_indices=NULL;
-		}
+	{
+		delete [] m_verts;
+		m_verts=NULL;
+
+		delete [] m_indices;
+		m_indices=NULL;
+
 		m_numActivePolygon=m_numPolygon=0;
 		m_numActiveVertex=m_numVertex=0;
 	}
@@ -868,11 +867,9 @@ W3DShadowGeometryMesh::~W3DShadowGeometryMesh( void )
 {
 	// remove our neighbor list information allocated
 	deleteNeighbors();
-	if (m_parentVerts) {
-		delete [] m_parentVerts;
-	}
-	if (m_polygonNormals)
-		delete [] m_polygonNormals;
+
+	delete [] m_parentVerts;
+	delete [] m_polygonNormals;
 
 }
 
@@ -1122,14 +1119,9 @@ void W3DShadowGeometryMesh::deleteNeighbors( void )
 {
 
 	// delete list
-	if( m_polyNeighbors )
-	{
-
-		delete [] m_polyNeighbors;
-		m_polyNeighbors = NULL;
-		m_numPolyNeighbors = 0;
-
-	}
+	delete [] m_polyNeighbors;
+	m_polyNeighbors = NULL;
+	m_numPolyNeighbors = 0;
 
 	// sanity error checking
 	assert( m_numPolyNeighbors == 0 );
@@ -1700,8 +1692,8 @@ W3DVolumetricShadow::~W3DVolumetricShadow( void )
 	// free any shadow volume data
 	for( i = 0; i < MAX_SHADOW_LIGHTS; i++ )
 	{	for (j = 0; j < MAX_SHADOW_CASTER_MESHES; j++)
-		{	if( m_shadowVolume[ i ][j] )
-				delete m_shadowVolume[ i ][j];
+		{
+			delete m_shadowVolume[i][j];
 			if( m_shadowVolumeVB[i][j])
 				TheW3DBufferManager->releaseSlot(m_shadowVolumeVB[i][j]);
 			if( m_shadowVolumeIB[i][j])
@@ -3320,8 +3312,7 @@ Bool W3DVolumetricShadow::allocateSilhouette(Int meshIndex, Int numVertices )
 void W3DVolumetricShadow::deleteSilhouette( Int meshIndex )
 {
 
-	if( m_silhouetteIndex[meshIndex])
-		delete [] m_silhouetteIndex[meshIndex];
+	delete [] m_silhouetteIndex[meshIndex];
 	m_silhouetteIndex[meshIndex] = NULL;
 	m_numSilhouetteIndices[meshIndex] = 0;
 

@@ -1398,14 +1398,11 @@ FontManagerClass::FontManagerClass ( HDC hdc )
  *=============================================================================================*/
 FontManagerClass::~FontManagerClass ( void )
 {
-	if ( TTButtonFontPtr != NULL ) {
-		delete TTButtonFontPtr;
-		TTButtonFontPtr = NULL;
-	}
-	if ( TTTextFontPtr != NULL ) {
-		delete TTTextFontPtr;
-		TTTextFontPtr = NULL;
-	}
+	delete TTButtonFontPtr;
+	TTButtonFontPtr = NULL;
+
+	delete TTTextFontPtr;
+	TTTextFontPtr = NULL;
 }
 
 

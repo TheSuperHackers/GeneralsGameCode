@@ -262,10 +262,8 @@ void DownloadMenuInit( WindowLayout *layout, void *userData )
 	progressBarMunkee = TheWindowManager->winGetWindowFromId( parent, progressBarMunkeeID );
 
 	DEBUG_ASSERTCRASH(!TheDownloadManager, ("Download manager already exists"));
-	if (TheDownloadManager)
-	{
-		delete TheDownloadManager;
-	}
+
+	delete TheDownloadManager;
 	TheDownloadManager = NEW DownloadManagerMunkee;
 
 }
@@ -276,11 +274,9 @@ void DownloadMenuInit( WindowLayout *layout, void *userData )
 void DownloadMenuShutdown( WindowLayout *layout, void *userData )
 {
 	DEBUG_ASSERTCRASH(TheDownloadManager, ("No download manager"));
-	if (TheDownloadManager)
-	{
-		delete TheDownloadManager;
-		TheDownloadManager = NULL;
-	}
+
+	delete TheDownloadManager;
+	TheDownloadManager = NULL;
 
 	staticTextSize = NULL;
 	staticTextTime = NULL;

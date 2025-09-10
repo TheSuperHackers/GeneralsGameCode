@@ -137,23 +137,23 @@ NodeCompressedMotionStruct::~NodeCompressedMotionStruct()
 
 	switch (Flavor) {
 		case ANIM_FLAVOR_TIMECODED:
-			if (tc.X) delete tc.X;
-			if (tc.Y) delete tc.Y;
-			if (tc.Z) delete tc.Z;
-			if (tc.Q) delete tc.Q;
+			delete tc.X;
+			delete tc.Y;
+			delete tc.Z;
+			delete tc.Q;
 			break;
 		case ANIM_FLAVOR_ADAPTIVE_DELTA:
-			if (ad.X) delete ad.X;
-			if (ad.Y) delete ad.Y;
-			if (ad.Z) delete ad.Z;
-			if (ad.Q) delete ad.Q;
+			delete ad.X;
+			delete ad.Y;
+			delete ad.Z;
+			delete ad.Q;
 			break;
 		default:
 			WWASSERT(0);	// unknown flavor
 			break;
 	}
 
-	if (Vis) delete Vis;
+	delete Vis;
 
 }
 

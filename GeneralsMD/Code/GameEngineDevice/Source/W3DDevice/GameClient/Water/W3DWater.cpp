@@ -299,8 +299,7 @@ WaterRenderObjClass::~WaterRenderObjClass(void)
 		SAFE_RELEASE( m_pBumpTexture2[i]);
 	}
 
-	if (m_meshData)
-		delete [] m_meshData;
+	delete [] m_meshData;
 	m_meshData = NULL;
 	m_meshDataSize = 0;
 
@@ -313,8 +312,7 @@ WaterRenderObjClass::~WaterRenderObjClass(void)
 	TheWaterTransparency = NULL;
 	ReleaseResources();
 
-	if (m_waterTrackSystem)
-		delete m_waterTrackSystem;
+	delete m_waterTrackSystem;
 }
 
 //-------------------------------------------------------------------------------------------------

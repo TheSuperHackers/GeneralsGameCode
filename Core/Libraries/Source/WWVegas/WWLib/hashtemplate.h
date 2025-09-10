@@ -402,10 +402,8 @@ template <class KeyType, class ValueType> inline HashTemplateClass<KeyType,Value
 
 template <class KeyType, class ValueType> inline HashTemplateClass<KeyType,ValueType>::~HashTemplateClass()
 {
-	if (Hash)
-		delete[] Hash;
-	if (Table)
-		delete[] Table;
+	delete[] Hash;
+	delete[] Table;
 }
 
 // Get_Hash_Value specialization for StringClass. This is intended to be used

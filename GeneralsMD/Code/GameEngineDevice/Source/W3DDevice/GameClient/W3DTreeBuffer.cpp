@@ -1081,10 +1081,9 @@ W3DTreeBuffer::~W3DTreeBuffer(void)
 	for (i=0; i<MAX_TYPES; i++) {
 		REF_PTR_RELEASE(m_treeTypes[i].m_mesh);
 	}
-	if (m_shadow) {
-		delete m_shadow;
-		m_shadow = NULL;
-	}
+
+	delete m_shadow;
+	m_shadow = NULL;
 }
 
 //=============================================================================

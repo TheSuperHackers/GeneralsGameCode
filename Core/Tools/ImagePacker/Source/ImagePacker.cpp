@@ -605,8 +605,7 @@ void ImagePacker::resetImageDirectoryList( void )
 void ImagePacker::resetImageList( void )
 {
 
-	if( m_imageList )
-		delete [] m_imageList;
+	delete [] m_imageList;
 	m_imageList = NULL;
 	m_imageCount = 0;
 
@@ -1138,8 +1137,7 @@ ImagePacker::~ImagePacker( void )
 	resetPageList();
 
 	// delete our targa header loader
-	if( m_targa )
-		delete m_targa;
+	delete m_targa;
 
 }
 

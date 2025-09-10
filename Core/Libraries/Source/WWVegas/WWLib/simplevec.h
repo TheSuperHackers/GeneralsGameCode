@@ -130,11 +130,9 @@ inline SimpleVecClass<T>::SimpleVecClass(int size) :
 template<class T>
 inline SimpleVecClass<T>::~SimpleVecClass(void)
 {
-	if (Vector != NULL) {
-		delete[] Vector;
-		Vector = NULL;
-		VectorMax = 0;
-	}
+	delete[] Vector;
+	Vector = NULL;
+	VectorMax = 0;
 }
 
 /***********************************************************************************************
@@ -194,11 +192,9 @@ inline bool SimpleVecClass<T>::Resize(int newsize)
 		/*
 		** Delete entire vector and reset counts
 		*/
+		delete[] Vector;
+		Vector = NULL;
 		VectorMax = 0;
-		if (Vector != NULL) {
-			delete[] Vector;
-			Vector = NULL;
-		}
 	}
 	return true;
 }
@@ -330,10 +326,8 @@ inline SimpleDynVecClass<T>::SimpleDynVecClass(int size) :
 template<class T>
 inline SimpleDynVecClass<T>::~SimpleDynVecClass(void)
 {
-	if (Vector != NULL) {
-		delete[] Vector;
-		Vector = NULL;
-	}
+	delete[] Vector;
+	Vector = NULL;
 }
 
 /***********************************************************************************************

@@ -240,10 +240,11 @@ int main(int argc, char ** argv)
 		exit( -1);
 	}
 
-	if (s_generalsMatcher)
-		delete s_generalsMatcher;
-	if (s_generalsClientMatcher)
-		delete s_generalsClientMatcher;
+	delete s_generalsMatcher;
+	s_generalsMatcher = NULL;
+
+	delete s_generalsClientMatcher;
+	s_generalsClientMatcher = NULL;
 
 	return 0;
 }

@@ -50,21 +50,14 @@ FrameMetrics::FrameMetrics()
 }
 
 FrameMetrics::~FrameMetrics() {
-	if (m_fpsList != NULL) {
-		delete m_fpsList;
-		m_fpsList = NULL;
-	}
+	delete m_fpsList;
+	m_fpsList = NULL;
 
-	if (m_latencyList != NULL) {
-		delete m_latencyList;
-		m_latencyList = NULL;
-	}
+	delete m_latencyList;
+	m_latencyList = NULL;
 
-	if (m_pendingLatencies)
-	{
-		delete[] m_pendingLatencies;
-		m_pendingLatencies = NULL;
-	}
+	delete[] m_pendingLatencies;
+	m_pendingLatencies = NULL;
 }
 
 void FrameMetrics::init() {

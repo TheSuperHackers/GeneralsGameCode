@@ -426,11 +426,8 @@ void GameStateMap::xfer( Xfer *xfer )
 	}
 	else
 	{
-		if( TheSkirmishGameInfo )
-		{
-			delete TheSkirmishGameInfo;
-			TheSkirmishGameInfo = NULL;
-		}
+		delete TheSkirmishGameInfo;
+		TheSkirmishGameInfo = NULL;
 	}
 
 	//

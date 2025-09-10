@@ -1318,7 +1318,7 @@ void WorldHeightMapEdit::autoBlendOut(Int xIndex, Int yIndex, Int globalEdgeClas
 		delete pCurNode;
 	}
 
-	if (pProcessed) delete[] pProcessed;
+	delete[] pProcessed;
 	pProcessed = NULL;
 }
 

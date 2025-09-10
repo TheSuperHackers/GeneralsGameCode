@@ -615,7 +615,6 @@ void	WWProfileManager::End_Collecting(const char* filename)
 
 	for (i=0;i<ProfileCollectVector.Count();++i) {
 		delete ProfileCollectVector[i];
-		ProfileCollectVector[i]=0;
 	}
 	ProfileCollectVector.Delete_All();
 	ProfileCollecting=false;

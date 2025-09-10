@@ -123,19 +123,14 @@ AABTreeBuilderClass::~AABTreeBuilderClass(void)
  *=============================================================================================*/
 void AABTreeBuilderClass::Reset(void)
 {
-	if (Root) {
-		delete Root; Root = NULL;
-	}
+	delete Root;
+	Root = NULL;
 
-	if (Verts != NULL) {
-		delete[] Verts;
-		Verts = NULL;
-	}
+	delete[] Verts;
+	Verts = NULL;
 
-	if (Polys != NULL) {
-		delete[] Polys;
-		Polys = NULL;
-	}
+	delete[] Polys;
+	Polys = NULL;
 }
 
 /***********************************************************************************************

@@ -1732,13 +1732,13 @@ SphereMeshClass::~SphereMeshClass(void)
  *=============================================================================================*/
 void SphereMeshClass::Free(void)
 {
-	if (vtx)				delete [] vtx;
-	if (vtx_normal)	delete [] vtx_normal;
-	if (vtx_uv)			delete [] vtx_uv;
-	if (dcg)				delete [] dcg;
-	if (strips)			delete [] strips;
-	if (fans)			delete [] fans;
-	if (tri_poly)		delete [] tri_poly;
+	delete [] vtx;
+	delete [] vtx_normal;
+	delete [] vtx_uv;
+	delete [] dcg;
+	delete [] strips;
+	delete [] fans;
+	delete [] tri_poly;
 
 	vtx			= NULL;
 	vtx_normal	= NULL;

@@ -118,15 +118,9 @@ BuildAssistant::BuildAssistant( void )
 BuildAssistant::~BuildAssistant( void )
 {
 
-	// delete build position array if we used it
-	if( m_buildPositions )
-	{
-
-		delete [] m_buildPositions;
-		m_buildPositions = NULL;
-		m_buildPositionSize = 0;
-
-	}
+	delete [] m_buildPositions;
+	m_buildPositions = NULL;
+	m_buildPositionSize = 0;
 
 }
 

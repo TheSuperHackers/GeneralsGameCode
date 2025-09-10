@@ -127,7 +127,6 @@ void LANAPI::handleGameAnnounce( LANMessage *msg, UnsignedInt senderIP )
 				// remove from list
 				removeGame(game);
 				delete game;
-				game = NULL;
 				return;
 			}
 			RequestGameJoin(game, m_directConnectRemoteIP);

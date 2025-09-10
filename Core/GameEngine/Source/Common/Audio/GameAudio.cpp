@@ -203,8 +203,7 @@ AudioManager::~AudioManager()
 	delete m_audioSettings;
 	m_audioSettings = NULL;
 
-	if (m_savedValues)
-		delete [] m_savedValues;
+	delete [] m_savedValues;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1085,11 +1084,8 @@ AudioHandle AudioManager::allocateNewHandle( void )
 //-------------------------------------------------------------------------------------------------
 void AudioManager::releaseAudioEventRTS( AudioEventRTS *&eventToRelease )
 {
-	if( eventToRelease )
-	{
-		delete eventToRelease;
-		eventToRelease = NULL;
-	}
+	delete eventToRelease;
+	eventToRelease = NULL;
 }
 
 //-------------------------------------------------------------------------------------------------

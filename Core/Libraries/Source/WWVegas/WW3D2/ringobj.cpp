@@ -1633,11 +1633,11 @@ RingMeshClass::~RingMeshClass(void)
 void RingMeshClass::Free(void)
 {
 
-	if (vtx)				delete vtx;
-	if (orig_vtx)		delete orig_vtx;
-	if (vtx_normal)	delete vtx_normal;
-	if (vtx_uv)			delete vtx_uv;
-	if (tri_poly)		delete tri_poly;
+	delete vtx;
+	delete orig_vtx;
+	delete vtx_normal;
+	delete vtx_uv;
+	delete tri_poly;
 
 	vtx			= NULL;
 	orig_vtx		= NULL;

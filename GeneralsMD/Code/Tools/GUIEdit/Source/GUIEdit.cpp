@@ -445,25 +445,15 @@ GUIEdit::GUIEdit( void )
 //=============================================================================
 GUIEdit::~GUIEdit( void )
 {
-	if (TheHeaderTemplateManager)
-	{
-		delete TheHeaderTemplateManager;
-		TheHeaderTemplateManager = NULL;
-	}
+	delete TheHeaderTemplateManager;
+	TheHeaderTemplateManager = NULL;
 
-	if (TheGameText)
-	{
-		delete TheGameText;
-		TheGameText = NULL;
-	}
+	delete TheGameText;
+	TheGameText = NULL;
 
 	// delete the IME Manager
-//	if ( TheIMEManager )
-//	{
-//		delete TheIMEManager;
-//		TheIMEManager = NULL;
-//	}
-
+//	delete TheIMEManager;
+//	TheIMEManager = NULL;
 
 	// all the shutdown routine
 	shutdown();

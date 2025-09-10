@@ -1138,10 +1138,9 @@ LRESULT MainWindow::Window_Proc( HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM
 
 			decision = DialogBox( Main::hInstance, _TEXT( "BitmapDialog" ), hWnd, Dialog_Box_Proc );
 
-			if ( Args ) {
-				delete( Args );
-				Args = NULL;
-			}
+			delete( Args );
+			Args = NULL;
+
 			Stop_Sound_Playing();
 
 			MoveWindow(	hWnd, 0, 0, 0, 0, TRUE );
@@ -2216,11 +2215,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 
 	for ( i = 0; i < NUM_BUTTONS; i++ ) {
 
-		if ( ButtonList[i] )
-		{
-			delete( ButtonList[i] );
-		}
-
+		delete( ButtonList[i] );
 		ButtonList[i]			= NULL;
 		ButtonSizes[i].left		= x_pos; 				// X position.
 		ButtonSizes[i].top 		= y_pos;				// Y position.
@@ -3976,10 +3971,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				if( end_dialog ) {
 
 					for ( i = 0; i < NUM_BUTTONS; i++ ) {
-						if ( ButtonList[i] ) {
-							delete( ButtonList[i] );
-							ButtonList[i] = NULL;
-						}
+						delete( ButtonList[i] );
+						ButtonList[i] = NULL;
 					}
 					if ( hpal ) {
 						DeleteObject( hpal );
@@ -4018,10 +4011,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				#if(BACKGROUND_BITMAP)
 
 					for ( i = 0; i < NUM_BUTTONS; i++ ) {
-						if ( ButtonList[i] ) {
-							delete( ButtonList[i] );
-							ButtonList[i] = NULL;
-						}
+						delete( ButtonList[i] );
+						ButtonList[i] = NULL;
 					}
 					if ( hpal ) {
 						DeleteObject( hpal );
@@ -4049,10 +4040,9 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				//-----------------------------------------------------------------------
 				// Delete the arguments.
 				//-----------------------------------------------------------------------
-				if ( Args ) {
-					delete( Args );
-					Args = NULL;
-				}
+				delete( Args );
+				Args = NULL;
+
 				KillTimer( window_handle, timer_id );
 				EndDialog( window_handle, w_param );
 			}

@@ -115,10 +115,8 @@ ShareBufferClass<T>::ShareBufferClass(const ShareBufferClass<T> & that) :
 template <class T>
 ShareBufferClass<T>::~ShareBufferClass(void)
 {
-	if (Array) {
-		delete[] Array;
-		Array = NULL;
-	}
+	delete[] Array;
+	Array = NULL;
 }
 
 template<class T>

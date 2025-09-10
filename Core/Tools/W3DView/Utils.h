@@ -36,17 +36,8 @@ class RenderObjClass;
 //
 // Macros
 //
-#define SAFE_DELETE(pobject)					\
-			if (pobject) {							\
-				delete pobject;					\
-				pobject = NULL;					\
-			}											\
-
-#define SAFE_DELETE_ARRAY(pobject)			\
-			if (pobject) {							\
-				delete [] pobject;				\
-				pobject = NULL;					\
-			}											\
+#define SAFE_DELETE(pobject) { delete pobject; pobject = NULL; }
+#define SAFE_DELETE_ARRAY(pobject) { delete [] pobject; pobject = NULL; }
 
 #define SAFE_ADD_REF(pobject)					\
 			if (pobject) {							\

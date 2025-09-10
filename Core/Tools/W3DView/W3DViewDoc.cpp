@@ -197,10 +197,8 @@ CW3DViewDoc::CleanupResources (void)
     }
 
 	 // Was there a dazzle layer?
-	 if (m_pDazzleLayer) {
-		 delete m_pDazzleLayer;
-		 m_pDazzleLayer = NULL;
-	 }
+	 delete m_pDazzleLayer;
+	 m_pDazzleLayer = NULL;
 
     // Was there a valid scene object?
     if (m_pCBackObjectScene)

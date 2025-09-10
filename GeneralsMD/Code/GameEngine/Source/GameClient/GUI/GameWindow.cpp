@@ -124,12 +124,10 @@ GameWindow::GameWindow( void )
 GameWindow::~GameWindow( void )
 {
 
-	if(	m_inputData )
-		delete m_inputData;
+	delete m_inputData;
 	m_inputData = NULL;
 
-	if( m_editData )
-		delete m_editData;
+	delete m_editData;
 	m_editData = NULL;
 
 	unlinkFromTransitionWindows();

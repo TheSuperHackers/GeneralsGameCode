@@ -340,18 +340,11 @@ void GameTextManager::init( void )
 
 void GameTextManager::deinit( void )
 {
+	delete [] m_stringInfo;
+	m_stringInfo = NULL;
 
-	if( m_stringInfo != NULL )
-	{
-		delete [] m_stringInfo;
-		m_stringInfo = NULL;
-	}
-
-	if( m_stringLUT != NULL )
-	{
-		delete [] m_stringLUT;
-		m_stringLUT = NULL;
-	}
+	delete [] m_stringLUT;
+	m_stringLUT = NULL;
 
 	m_textCount = 0;
 

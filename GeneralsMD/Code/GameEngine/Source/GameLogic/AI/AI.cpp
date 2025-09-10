@@ -370,10 +370,9 @@ void AI::update( void )
  */
 AI::~AI()
 {
-	if (m_pathfinder) {
-		delete m_pathfinder;
-	}
+	delete m_pathfinder;
 	m_pathfinder = NULL;
+
 	while (m_aiData)
 	{
 		TAiData *cur = m_aiData;

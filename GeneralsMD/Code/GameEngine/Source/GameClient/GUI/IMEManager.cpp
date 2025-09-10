@@ -540,10 +540,7 @@ IMEManager::~IMEManager()
 		TheWindowManager->winDestroy( m_statusWindow );
 	}
 
-	if ( m_candidateString )
-	{
-		delete [] m_candidateString;
-	}
+	delete [] m_candidateString;
 
 	detatch();
 	ImmAssociateContext( ApplicationHWnd, m_oldContext );
@@ -1321,11 +1318,8 @@ void IMEManager::closeCandidateList( Int candidateFlags  )
 		TheWindowManager->winUnsetModal( m_candidateWindow );
 	}
 
-	if ( m_candidateString )
-	{
-		delete [] m_candidateString;
-		m_candidateString = NULL;
-	}
+	delete [] m_candidateString;
+	m_candidateString = NULL;
 
 	m_candidateCount = 0;
 
@@ -1338,11 +1332,8 @@ void IMEManager::closeCandidateList( Int candidateFlags  )
 void IMEManager::updateCandidateList( Int candidateFlags  )
 {
 
-	if ( m_candidateString )
-	{
-		delete [] m_candidateString;
-		m_candidateString = NULL;
-	}
+	delete [] m_candidateString;
+	m_candidateString = NULL;
 
 	m_pageSize = 10;
 	m_candidateCount = 0;

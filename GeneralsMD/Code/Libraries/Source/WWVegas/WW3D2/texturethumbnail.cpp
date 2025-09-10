@@ -278,7 +278,7 @@ ThumbnailManagerClass::~ThumbnailManagerClass()
 		ite.First();
 	}
 
-	if (ThumbnailMemory) delete[] ThumbnailMemory;
+	delete[] ThumbnailMemory;
 	ThumbnailMemory=NULL;
 }
 
@@ -404,8 +404,7 @@ void ThumbnailManagerClass::Deinit()
 	while (ThumbnailManagerClass* man=ThumbnailManagerList.Head()) {
 		delete man;
 	}
-	if (GlobalThumbnailManager) {
-		delete GlobalThumbnailManager;
-		GlobalThumbnailManager=NULL;
-	}
+
+	delete GlobalThumbnailManager;
+	GlobalThumbnailManager=NULL;
 }

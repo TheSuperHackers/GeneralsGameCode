@@ -100,10 +100,8 @@ void
 SoundBufferClass::Free_Buffer (void)
 {
 	// Free the buffer's memory
-	if (m_Buffer != NULL) {
-		delete [] m_Buffer;
-		m_Buffer = NULL;
-	}
+	delete [] m_Buffer;
+	m_Buffer = NULL;
 
 	// Make sure we reset the length
 	m_Length = 0L;

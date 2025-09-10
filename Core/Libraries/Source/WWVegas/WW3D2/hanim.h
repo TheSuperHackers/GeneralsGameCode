@@ -161,8 +161,8 @@ private:
 
 	// This info is packaged into a struct to minimize DynamicVectorClass overhead
 	struct WeightInfoStruct {
-		WeightInfoStruct() : Name(0) {}
-		~WeightInfoStruct() { if(Name) delete [] Name; }
+		WeightInfoStruct() : Name(NULL) {}
+		~WeightInfoStruct() { delete [] Name; }
 
 		char *Name;
 		float Weight;

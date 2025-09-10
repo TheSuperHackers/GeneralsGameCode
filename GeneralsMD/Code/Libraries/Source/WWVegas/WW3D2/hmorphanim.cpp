@@ -219,15 +219,11 @@ void HMorphAnimClass::Free(void)
 		PoseData = NULL;
 	}
 
-	if (MorphKeyData != NULL) {
-		delete[] MorphKeyData;
-		MorphKeyData = NULL;
-	}
+	delete[] MorphKeyData;
+	MorphKeyData = NULL;
 
-	if (PivotChannel != NULL) {
-		delete[] PivotChannel;
-		PivotChannel = NULL;
-	}
+	delete[] PivotChannel;
+	PivotChannel = NULL;
 }
 
 
@@ -431,10 +427,8 @@ bool HMorphAnimClass::Import(const char *hierarchy_name, TextFileClass &text_des
 				//
 				// Cleanup
 				//
-				if (channel_list != NULL) {
-					delete [] channel_list;
-					channel_list = NULL;
-				}
+				delete [] channel_list;
+				channel_list = NULL;
 			}
 
 			//
@@ -447,10 +441,8 @@ bool HMorphAnimClass::Import(const char *hierarchy_name, TextFileClass &text_des
 		//
 		// Cleanup
 		//
-		if (column_list != NULL) {
-			delete [] column_list;
-			column_list = NULL;
-		}
+		delete [] column_list;
+		column_list = NULL;
 	}
 
 	return retval;

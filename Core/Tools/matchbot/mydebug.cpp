@@ -80,12 +80,7 @@ int MyMsgManager::ReplaceAllStreams(FileD * output_device, const char *device_fi
 	MYDEBUGLOCK;
 
 	delete(paranoid_ostream);
-
-	if (output_device != NULL)
-	{
-		delete(output_device);
-		output_device = NULL;
-	}
+	delete(output_device);
 
 	rename(device_filename, copy_filename);
 

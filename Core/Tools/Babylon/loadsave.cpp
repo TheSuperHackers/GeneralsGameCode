@@ -583,20 +583,9 @@ int LoadMainDB(TransDB *db, const char *filename, void (*cb) (void) )
 
 error:
 
-	if ( label )
-	{
-		delete label;
-	}
-
-	if ( text )
-	{
-		delete text;
-	}
-
-	if ( trans )
-	{
-		delete trans;
-	}
+	delete label;
+	delete text;
+	delete trans;
 
 	if ( iff )
 	{

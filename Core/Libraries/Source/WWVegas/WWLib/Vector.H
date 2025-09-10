@@ -370,7 +370,7 @@ int VectorClass<T>::ID(T const & object)
 template<class T>
 void VectorClass<T>::Clear(void)
 {
-	if (Vector && IsAllocated) {
+	if (IsAllocated) {
 		delete[] Vector;
 		Vector = 0;
 	}

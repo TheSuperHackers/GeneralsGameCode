@@ -175,12 +175,11 @@ MetalMapManagerClass::~MetalMapManagerClass(void)
 			REF_PTR_RELEASE(Textures[i]);
 		}
 		delete [] Textures;
-		Textures = 0;
+		Textures = NULL;
 	}
-	if (MetalParameters) {
-		delete [] MetalParameters;
-		MetalParameters = 0;
-	}
+
+	delete [] MetalParameters;
+	MetalParameters = NULL;
 }
 
 

@@ -214,10 +214,9 @@ NATStateType NAT::update() {
 		{
 			m_NATState = NATSTATE_DONE;
 			TheEstablishConnectionsMenu->endMenu();
-			if (TheFirewallHelper != NULL) {
-				delete TheFirewallHelper;
-				TheFirewallHelper = NULL;
-			}
+
+			delete TheFirewallHelper;
+			TheFirewallHelper = NULL;
 		}
 	} else if (m_NATState == NATSTATE_DOCONNECTIONPATHS) {
 		if (allConnectionsDoneThisRound() == TRUE) {
@@ -241,10 +240,9 @@ NATStateType NAT::update() {
 				/*
 				m_NATState = NATSTATE_DONE;
 				TheEstablishConnectionsMenu->endMenu();
-				if (TheFirewallHelper != NULL) {
-					delete TheFirewallHelper;
-					TheFirewallHelper = NULL;
-				}
+
+				delete TheFirewallHelper;
+				TheFirewallHelper = NULL;
 				*/
 			} else {
 				doThisConnectionRound();
@@ -277,10 +275,8 @@ NATStateType NAT::update() {
 				TheFirewallHelper = NULL;
 			}
 			// we failed to connect, so we don't have to pass on the transport to the network.
-			if (m_transport != NULL) {
-				delete m_transport;
-				m_transport = NULL;
-			}
+			delete m_transport;
+			m_transport = NULL;
 		}
 	}
 	return m_NATState;

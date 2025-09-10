@@ -516,10 +516,8 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Shutdowns(void)
 	TheDX8MeshRenderer.Shutdown();
 	MissingTexture::_Deinit();
 
-	if (CurrentCaps) {
-		delete CurrentCaps;
-		CurrentCaps=NULL;
-	}
+	delete CurrentCaps;
+	CurrentCaps=NULL;
 
 }
 

@@ -201,46 +201,35 @@ void BaseHeightMapRenderObjClass::drawScorches(void)
 BaseHeightMapRenderObjClass::~BaseHeightMapRenderObjClass(void)
 {
 	freeMapResources();
-	if (m_treeBuffer) {
-		delete m_treeBuffer;
- 		m_treeBuffer = NULL;
-	}
-	if (m_propBuffer) {
-		delete m_propBuffer;
- 		m_propBuffer = NULL;
-	}
-	if (m_bibBuffer) {
-		delete m_bibBuffer;
- 		m_bibBuffer = NULL;
-	}
-#ifdef DO_ROADS
-	if (m_roadBuffer) {
-		delete m_roadBuffer;
- 		m_roadBuffer = NULL;
-	}
-#endif
-	if (m_bridgeBuffer) {
-		delete m_bridgeBuffer;
-	}
 
-	if( m_waypointBuffer )
-	{
-		delete m_waypointBuffer;
-		m_waypointBuffer = NULL;
-	}
-	if (m_shroud) {
-		delete m_shroud;
-		m_shroud = NULL;
-	}
-	if (m_shoreLineTilePositions)	{
-		delete [] m_shoreLineTilePositions;
-		m_shoreLineTilePositions = NULL;
-	}
-	if (m_shoreLineSortInfos)
-	{
-		delete [] m_shoreLineSortInfos;
-		m_shoreLineSortInfos = NULL;
-	}
+	delete m_treeBuffer;
+	m_treeBuffer = NULL;
+
+	delete m_propBuffer;
+	m_propBuffer = NULL;
+
+	delete m_bibBuffer;
+	m_bibBuffer = NULL;
+
+#ifdef DO_ROADS
+	delete m_roadBuffer;
+	m_roadBuffer = NULL;
+#endif
+
+	delete m_bridgeBuffer;
+	m_bridgeBuffer = NULL;
+
+	delete m_waypointBuffer;
+	m_waypointBuffer = NULL;
+
+	delete m_shroud;
+	m_shroud = NULL;
+
+	delete [] m_shoreLineTilePositions;
+	m_shoreLineTilePositions = NULL;
+
+	delete [] m_shoreLineSortInfos;
+	m_shoreLineSortInfos = NULL;
 }
 
 //=============================================================================
@@ -1514,8 +1503,7 @@ void BaseHeightMapRenderObjClass::recordShoreLineSortInfos(void)
 	//Check if we need to allocate memory
 	if (!m_shoreLineSortInfos || shoreLineSortInfosSize > m_shoreLineSortInfosSize)
 	{
-		if (m_shoreLineSortInfos)
-			delete [] m_shoreLineSortInfos;	//old buffer was too small.
+		delete [] m_shoreLineSortInfos;	//old buffer was too small.
 
 		//Find the major map axis (having the most tiles).
 		m_shoreLineSortInfosSize = shoreLineSortInfosSize;

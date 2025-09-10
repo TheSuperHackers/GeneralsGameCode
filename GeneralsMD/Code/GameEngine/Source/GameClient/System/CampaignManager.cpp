@@ -471,11 +471,8 @@ void CampaignManager::xfer( Xfer *xfer )
 		}
 		else
 		{
-			if( TheChallengeGameInfo )
-			{
-				delete TheChallengeGameInfo;
-				TheChallengeGameInfo = NULL;
-			}
+			delete TheChallengeGameInfo;
+			TheChallengeGameInfo = NULL;
 		}
 	}
 

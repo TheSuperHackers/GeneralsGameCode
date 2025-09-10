@@ -405,14 +405,12 @@ void IDBufferClass::Get_Resolution(int * get_w,int * get_h)
 
 void IDBufferClass::Reset(void)
 {
-	if (IDBuffer!=NULL) {
-		delete[] IDBuffer;
-		IDBuffer = NULL;
-	}
-	if (ZBuffer != NULL) {
-		delete[] ZBuffer;
-		ZBuffer = NULL;
-	}
+	delete[] IDBuffer;
+	IDBuffer = NULL;
+
+	delete[] ZBuffer;
+	ZBuffer = NULL;
+
 	PixelCounter = 0;
 }
 

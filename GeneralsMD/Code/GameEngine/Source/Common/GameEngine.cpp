@@ -298,8 +298,8 @@ GameEngine::~GameEngine()
 	delete TheFileSystem;
 	TheFileSystem = NULL;
 
-	if (TheGameLODManager)
-		delete TheGameLODManager;
+	delete TheGameLODManager;
+	TheGameLODManager = NULL;
 
 	Drawable::killStaticImages();
 
@@ -902,8 +902,7 @@ void GameEngine::reset( void )
 	if (deleteNetwork)
 	{
 		DEBUG_ASSERTCRASH(TheNetwork, ("Deleting NULL TheNetwork!"));
-		if (TheNetwork)
-			delete TheNetwork;
+		delete TheNetwork;
 		TheNetwork = NULL;
 	}
 	if(background)

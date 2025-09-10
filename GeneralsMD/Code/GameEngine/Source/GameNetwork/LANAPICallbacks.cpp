@@ -210,10 +210,8 @@ void LANAPI::OnGameStart( void )
 		// Set up the game network
 		DEBUG_ASSERTCRASH(TheNetwork == NULL, ("For some reason TheNetwork isn't NULL at the start of this game.  Better look into that."));
 
-		if (TheNetwork != NULL) {
-			delete TheNetwork;
-			TheNetwork = NULL;
-		}
+		delete TheNetwork;
+		TheNetwork = NULL;
 
 		// Time to initialize TheNetwork for this game.
 		TheNetwork = NetworkInterface::createNetwork();
@@ -237,10 +235,10 @@ void LANAPI::OnGameStart( void )
 			removeGame(m_currentGame);
 			m_currentGame = NULL;
 			m_inLobby = TRUE;
-			if (TheNetwork != NULL) {
-				delete TheNetwork;
-				TheNetwork = NULL;
-			}
+
+			delete TheNetwork;
+			TheNetwork = NULL;
+
 			OnChat(UnicodeString::TheEmptyString, 0, TheGameText->fetch("GUI:CouldNotTransferMap"), LANCHAT_SYSTEM);
 			return;
 		}

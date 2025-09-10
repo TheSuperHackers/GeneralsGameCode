@@ -104,10 +104,9 @@ DynamicMeshModel::DynamicMeshModel(const DynamicMeshModel &src) :
 
 DynamicMeshModel::~DynamicMeshModel(void)
 {
-	if (MatDesc) {
-		delete MatDesc;
-		MatDesc = NULL;
-	}
+	delete MatDesc;
+	MatDesc = NULL;
+
 	REF_PTR_RELEASE(MatInfo);
 }
 

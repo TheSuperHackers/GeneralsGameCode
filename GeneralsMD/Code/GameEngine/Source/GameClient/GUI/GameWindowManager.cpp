@@ -204,8 +204,8 @@ GameWindowManager::~GameWindowManager( void )
 	// destroy all windows
 	winDestroyAll();
 	freeStaticStrings();
-	if(TheTransitionHandler)
-		delete TheTransitionHandler;
+
+	delete TheTransitionHandler;
 	TheTransitionHandler = NULL;
 }
 

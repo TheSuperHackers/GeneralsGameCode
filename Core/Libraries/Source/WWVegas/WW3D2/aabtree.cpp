@@ -211,18 +211,14 @@ AABTreeClass & AABTreeClass::operator = (const AABTreeClass & that)
 void AABTreeClass::Reset(void)
 {
 	NodeCount = 0;
-	if (Nodes) {
-		delete[] Nodes;
-		Nodes = NULL;
-	}
+	delete[] Nodes;
+	Nodes = NULL;
+
 	PolyCount = 0;
-	if (PolyIndices) {
-		delete[] PolyIndices;
-		PolyIndices = NULL;
-	}
-	if (Mesh) {
-		Mesh = NULL;
-	}
+	delete[] PolyIndices;
+	PolyIndices = NULL;
+
+	Mesh = NULL;
 }
 
 /***********************************************************************************************

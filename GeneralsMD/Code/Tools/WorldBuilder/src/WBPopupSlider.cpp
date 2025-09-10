@@ -256,10 +256,8 @@ void PopupSlider::New(CWnd *pParentWnd, long kind,
 		member function */
 	} catch (...) {
 		// don't rethrow
-		if (pPopupSlider) {
-			delete pPopupSlider;
-			pPopupSlider = NULL;
-		}
+		delete pPopupSlider;
+		pPopupSlider = NULL;
 
 	}
 

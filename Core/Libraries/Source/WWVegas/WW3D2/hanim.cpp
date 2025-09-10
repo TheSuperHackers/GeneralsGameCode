@@ -62,8 +62,8 @@ NamedPivotMapClass::~NamedPivotMapClass(void)
 
 NamedPivotMapClass::WeightInfoStruct & NamedPivotMapClass::WeightInfoStruct::operator = (WeightInfoStruct const &that)
 {
-	if(Name) delete [] Name;
-	assert(that.Name != 0);
+	delete [] Name;
+	assert(that.Name != NULL);
 	Name = nstrdup(that.Name);
 	Weight = that.Weight;
 	return *this;

@@ -110,10 +110,7 @@ ArchiveFileSystem::~ArchiveFileSystem()
 	ArchiveFileMap::iterator iter = m_archiveFileMap.begin();
 	while (iter != m_archiveFileMap.end()) {
 		ArchiveFile *file = iter->second;
-		if (file != NULL) {
-			delete file;
-			file = NULL;
-		}
+		delete file;
 		iter++;
 	}
 }

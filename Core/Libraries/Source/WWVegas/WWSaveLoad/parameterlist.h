@@ -148,9 +148,7 @@ ParameterListClass::Free_Parameters (void)
 		//
 		//	Free the parameter object
 		//
-		if (param != NULL) {
-			delete param;
-		}
+		delete param;
 	}
 
 	Delete_All();

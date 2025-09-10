@@ -720,10 +720,8 @@ void WOLQuickMatchMenuInit( WindowLayout *layout, void *userData )
 	isShuttingDown = false;
 	raiseMessageBoxes = true;
 
-	if (TheNAT != NULL) {
-		delete TheNAT;
-		TheNAT = NULL;
-	}
+	delete TheNAT;
+	TheNAT = NULL;
 
 	parentWOLQuickMatchID = NAMEKEY( "WOLQuickMatchMenu.wnd:WOLQuickMatchMenuParent" );
 	buttonBackID = NAMEKEY( "WOLQuickMatchMenu.wnd:ButtonBack" );

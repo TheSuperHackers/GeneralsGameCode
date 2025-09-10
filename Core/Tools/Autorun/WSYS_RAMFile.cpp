@@ -198,11 +198,8 @@ Bool RAMFile::open( File *file )
 
 void RAMFile::close( void )
 {
-	if ( m_data )
-	{
-		delete [] m_data;
-		m_data = NULL;
-	}
+	delete [] m_data;
+	m_data = NULL;
 
 	File::close();
 }

@@ -649,9 +649,8 @@ void FlagsInfo::UndoFlags(CWorldBuilderDoc *pDoc)
 ModifyFlagsUndoable::~ModifyFlagsUndoable(void)
 {
 	m_pDoc = NULL;  // not ref counted.
-	if (m_flagsList) {
-		delete m_flagsList;
-	}
+
+	delete m_flagsList;
 	m_flagsList = NULL;
 }
 
@@ -937,9 +936,8 @@ void DeleteInfo::UndoDelete(WorldHeightMapEdit *pMap)
 DeleteObjectUndoable::~DeleteObjectUndoable(void)
 {
 	m_pDoc = NULL;  // not ref counted.
-	if (m_deleteList) {
-		delete m_deleteList;
-	}
+
+	delete m_deleteList;
 	m_deleteList=NULL;
 }
 

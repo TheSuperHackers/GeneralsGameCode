@@ -71,8 +71,7 @@ public:
 	~PivotClass(void)
 	{
 #ifdef LAZY_CAP_MTX_ALLOC
-		if (CapTransformPtr)
-			delete CapTransformPtr;
+		delete CapTransformPtr;
 #endif
 	}
 

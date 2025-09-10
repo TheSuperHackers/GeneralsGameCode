@@ -124,11 +124,7 @@ HeaderTemplateManager::~HeaderTemplateManager( void )
 	while(it != m_headerTemplateList.end())
 	{
 		HeaderTemplate *hTemplate = *it;
-		if(hTemplate)
-		{
-			hTemplate->m_font = NULL;
-			delete hTemplate;
-		}
+		delete hTemplate;
 		it = m_headerTemplateList.erase(it);
 
 	}

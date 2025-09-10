@@ -71,10 +71,9 @@ m_riverStart(0)
 */
 PolygonTrigger::~PolygonTrigger(void)
 {
-	if (m_points) {
-		delete [] m_points;
-		m_points = NULL;
-	}
+	delete [] m_points;
+	m_points = NULL;
+
 	if (m_nextPolygonTrigger) {
 		PolygonTrigger *cur = m_nextPolygonTrigger;
 		PolygonTrigger *next;

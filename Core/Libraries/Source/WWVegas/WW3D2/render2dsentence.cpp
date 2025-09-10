@@ -1763,10 +1763,8 @@ FontCharsClass::Free_Character_Arrays (void)
 		//	Delete each member of the unicode array
 		//
 		for (int index = 0; index < count; index ++) {
-			if ( UnicodeCharArray[index] != NULL ) {
-				delete UnicodeCharArray[index];
-				UnicodeCharArray[index] = NULL;
-			}
+			delete UnicodeCharArray[index];
+			UnicodeCharArray[index] = NULL;
 		}
 
 		//
@@ -1780,10 +1778,8 @@ FontCharsClass::Free_Character_Arrays (void)
 	//	Delete each member of the ascii character array
 	//
 	for (int index = 0; index < 256; index ++) {
-		if ( ASCIICharArray[index] != NULL ) {
-			delete ASCIICharArray[index];
-			ASCIICharArray[index] = NULL;
-		}
+		delete ASCIICharArray[index];
+		ASCIICharArray[index] = NULL;
 	}
 
 	return ;

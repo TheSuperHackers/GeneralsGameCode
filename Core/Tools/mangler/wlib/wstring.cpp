@@ -265,8 +265,7 @@ void Wstring::removeSpaces(void)
 
 void Wstring::clear(void)
 {
- if(str)
-   delete[](str);
+ delete[](str);
  strsize=0;
  str=NULL;
 }

@@ -154,7 +154,7 @@ AttackPriorityInfo::AttackPriorityInfo() :m_defaultPriority(ATTACK_PRIORITY_DEFA
 //-------------------------------------------------------------------------------------------------
 AttackPriorityInfo::~AttackPriorityInfo()
 {
-	if (m_priorityMap) delete m_priorityMap;
+	delete m_priorityMap;
 	m_priorityMap = NULL;
 }
 
@@ -219,14 +219,8 @@ void AttackPriorityInfo::reset( void )
 	// go back to default priority
 	m_defaultPriority = ATTACK_PRIORITY_DEFAULT;
 
-	// delete the priority map if present
-	if( m_priorityMap )
-	{
-
-		delete m_priorityMap;
-		m_priorityMap = NULL;
-
-	}
+	delete m_priorityMap;
+	m_priorityMap = NULL;
 
 }
 

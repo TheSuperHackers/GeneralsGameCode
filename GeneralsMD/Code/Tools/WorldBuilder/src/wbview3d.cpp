@@ -454,19 +454,15 @@ WbView3d::~WbView3d()
 // ----------------------------------------------------------------------------
 void WbView3d::shutdownWW3D(void)
 {
-	if (m_intersector) {
-		delete m_intersector;
-		m_intersector = NULL;
-	}
+	delete m_intersector;
+	m_intersector = NULL;
 
-	if (m_layer) {
-		delete m_layer;
-		m_layer = NULL;
-	}
-	if (m_buildLayer) {
-		delete m_buildLayer;
-		m_buildLayer = NULL;
-	}
+	delete m_layer;
+	m_layer = NULL;
+
+	delete m_buildLayer;
+	m_buildLayer = NULL;
+
 	if (m3DFont) {
 		m3DFont->Release();
 		m3DFont = NULL;

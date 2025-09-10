@@ -2305,8 +2305,7 @@ ChunkItem::ChunkItem(ChunkLoadClass &cload) {
 }
 
 ChunkItem::~ChunkItem() {
-	if(Data != 0)
-		delete [] Data;
+	delete [] Data;
 	while(!Chunks.IsEmpty()) {
 		ChunkItem *item = Chunks.RemoveHead();
 		delete item;

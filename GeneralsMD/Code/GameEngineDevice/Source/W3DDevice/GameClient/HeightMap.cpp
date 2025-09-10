@@ -1074,10 +1074,9 @@ Int HeightMapRenderObjClass::updateBlock(Int x0, Int y0, Int x1, Int y1,  WorldH
 HeightMapRenderObjClass::~HeightMapRenderObjClass(void)
 {
 	freeMapResources();
-	if (m_extraBlendTilePositions) {
-		delete [] m_extraBlendTilePositions;
-		m_extraBlendTilePositions = NULL;
-	}
+
+	delete [] m_extraBlendTilePositions;
+	m_extraBlendTilePositions = NULL;
 }
 
 //=============================================================================

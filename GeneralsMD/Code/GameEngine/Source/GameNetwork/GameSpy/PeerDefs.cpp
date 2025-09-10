@@ -678,28 +678,17 @@ void TearDownGameSpy( void )
 	if (ThePinger)
 		ThePinger->endThreads();
 
-	if(TheRankPointValues)
-	{
-		delete TheRankPointValues;
-		TheRankPointValues = NULL;
-	}
-	if (TheGameSpyPSMessageQueue)
-	{
-		delete TheGameSpyPSMessageQueue;
-		TheGameSpyPSMessageQueue = NULL;
-	}
+	delete TheRankPointValues;
+	TheRankPointValues = NULL;
 
-	if (TheGameSpyBuddyMessageQueue)
-	{
-		delete TheGameSpyBuddyMessageQueue;
-		TheGameSpyBuddyMessageQueue = NULL;
-	}
+	delete TheGameSpyPSMessageQueue;
+	TheGameSpyPSMessageQueue = NULL;
 
-	if (TheGameSpyPeerMessageQueue)
-	{
-		delete TheGameSpyPeerMessageQueue;
-		TheGameSpyPeerMessageQueue = NULL;
-	}
+	delete TheGameSpyBuddyMessageQueue;
+	TheGameSpyBuddyMessageQueue = NULL;
+
+	delete TheGameSpyPeerMessageQueue;
+	TheGameSpyPeerMessageQueue = NULL;
 
 	if (TheGameSpyInfo)
 	{
@@ -712,23 +701,14 @@ void TearDownGameSpy( void )
 		TheGameSpyInfo = NULL;
 	}
 
-	if (ThePinger)
-	{
-		delete ThePinger;
-		ThePinger = NULL;
-	}
+	delete ThePinger;
+	ThePinger = NULL;
 
-	if (TheLadderList)
-	{
-		delete TheLadderList;
-		TheLadderList = NULL;
-	}
+	delete TheLadderList;
+	TheLadderList = NULL;
 
-	if (TheGameSpyConfig)
-	{
-		delete TheGameSpyConfig;
-		TheGameSpyConfig = NULL;
-	}
+	delete TheGameSpyConfig;
+	TheGameSpyConfig = NULL;
 
 	// make sure the notification box doesn't exist
 	deleteNotificationBox();

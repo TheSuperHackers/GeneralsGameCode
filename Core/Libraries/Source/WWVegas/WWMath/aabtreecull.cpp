@@ -133,10 +133,8 @@ AABTreeCullSystemClass::~AABTreeCullSystemClass(void)
 	delete RootNode;
 
 	// Delete indexed node pointer array
-	if (IndexedNodes) {
-		delete[] IndexedNodes;
-		IndexedNodes = NULL;
-	}
+	delete[] IndexedNodes;
+	IndexedNodes = NULL;
 }
 
 
@@ -884,10 +882,9 @@ void AABTreeCullSystemClass::Save_Object_Linkage(ChunkSaveClass & csave,Cullable
 
 void AABTreeCullSystemClass::Re_Index_Nodes(void)
 {
-	if (IndexedNodes != NULL) {
-		delete[] IndexedNodes;
-		IndexedNodes = NULL;
-	}
+	delete[] IndexedNodes;
+	IndexedNodes = NULL;
+
 	NodeCount = Partition_Node_Count();
 	WWASSERT(NodeCount > 0);
 	IndexedNodes = new AABTreeNodeClass *[NodeCount];
@@ -936,14 +933,11 @@ AABTreeNodeClass::~AABTreeNodeClass(void)
 	WWASSERT(Object == NULL);
 
 	// delete our children
-	if (Front) {
-		delete Front;
-		Front = NULL;
-	}
-	if (Back) {
-		delete Back;
-		Back = NULL;
-	}
+	delete Front;
+	Front = NULL;
+
+	delete Back;
+	Back = NULL;
 }
 
 void AABTreeNodeClass::Compute_Bounding_Box(void)

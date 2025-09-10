@@ -480,26 +480,20 @@ DefinitionMgrClass::Free_Definitions (void)
 	}
 
 	//
-	//	Free each of the definition objects
-	//
-	for (int index = 0; index < _DefinitionCount; index ++) {
-		DefinitionClass *definition = _SortedDefinitionArray[index];
-		if (definition != NULL) {
-			delete definition;
-		}
-	}
-
-	//
 	//	Free the definition array
 	//
 	if (_SortedDefinitionArray != NULL) {
+		//
+		//	Free each of the definition objects
+		//
+		for (int index = 0; index < _DefinitionCount; index ++) {
+			delete _SortedDefinitionArray[index];
+		}
 		delete [] _SortedDefinitionArray;
+		_SortedDefinitionArray = NULL;
+		_MaxDefinitionCount = 0;
+		_DefinitionCount = 0;
 	}
-
-	_SortedDefinitionArray	= NULL;
-	_MaxDefinitionCount		= 0;
-	_DefinitionCount			= 0;
-	return ;
 }
 
 
@@ -527,9 +521,7 @@ DefinitionMgrClass::Prepare_Definition_Array (void)
 		//
 		//	Free the old array and start using the new array
 		//
-		if (_SortedDefinitionArray != NULL) {
-			delete [] _SortedDefinitionArray;
-		}
+		delete [] _SortedDefinitionArray;
 		_SortedDefinitionArray	= new_array;
 		_MaxDefinitionCount		= new_size;
 	}

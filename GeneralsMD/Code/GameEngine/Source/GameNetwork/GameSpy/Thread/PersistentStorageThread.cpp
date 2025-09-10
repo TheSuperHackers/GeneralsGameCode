@@ -481,8 +481,7 @@ void GameSpyPSMessageQueue::startThread( void )
 
 void GameSpyPSMessageQueue::endThread( void )
 {
-	if (m_thread)
-		delete m_thread;
+	delete m_thread;
 	m_thread = NULL;
 }
 
