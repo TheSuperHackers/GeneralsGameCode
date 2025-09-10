@@ -44,6 +44,8 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 #include "Common/Money.h"
+#include <numeric>
+#include <algorithm>
 
 #include "Common/AudioSettings.h"
 #include "Common/GameAudio.h"
@@ -51,6 +53,7 @@
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Xfer.h"
+#include "GameLogic/GameLogic.h"
 
 // ------------------------------------------------------------------------------------------------
 UnsignedInt Money::withdraw(UnsignedInt amountToWithdraw, Bool playSound)
@@ -86,6 +89,7 @@ void Money::deposit(UnsignedInt amountToDeposit, Bool playSound)
 	if (playSound)
 	{
 		triggerAudioEvent(TheAudio->getMiscAudio()->m_moneyDepositSound);
+		m_incomeBuckets[m_currentBucket] += amountToDeposit;
 	}
 
 	m_money += amountToDeposit;
@@ -98,6 +102,45 @@ void Money::deposit(UnsignedInt amountToDeposit, Bool playSound)
 			player->getAcademyStats()->recordIncome();
 		}
 	}
+}
+
+// ------------------------------------------------------------------------------------------------
+void Money::setStartingCash(UnsignedInt amount)
+{
+	m_money = amount;
+	m_currentBucket = 0;
+	m_lastBucketFrame = 0;
+	std::fill(m_incomeBuckets, m_incomeBuckets + ARRAY_SIZE(m_incomeBuckets), 0u);
+}
+
+// ------------------------------------------------------------------------------------------------
+void Money::updateIncomeBucket()
+{
+	UnsignedInt frame = TheGameLogic->getFrame();
+	UnsignedInt lastSec = m_lastBucketFrame / LOGICFRAMES_PER_SECOND;
+	UnsignedInt curSec = frame / LOGICFRAMES_PER_SECOND;
+	UnsignedInt diff = (curSec > lastSec) ? curSec - lastSec : 0;
+	if (diff > 0)
+	{
+		if (diff > ARRAY_SIZE(m_incomeBuckets))
+			diff = ARRAY_SIZE(m_incomeBuckets);
+
+		UnsignedInt next = (m_currentBucket + 1) % ARRAY_SIZE(m_incomeBuckets);
+		UnsignedInt first = std::min(diff, ARRAY_SIZE(m_incomeBuckets) - next);
+		std::fill(m_incomeBuckets + next, m_incomeBuckets + next + first, 0u);
+
+		if (diff > first)
+			std::fill(m_incomeBuckets, m_incomeBuckets + (diff - first), 0u);
+
+		m_currentBucket = (m_currentBucket + diff) % ARRAY_SIZE(m_incomeBuckets);
+	}
+	m_lastBucketFrame = frame;
+}
+
+// ------------------------------------------------------------------------------------------------
+UnsignedInt Money::getCashPerMinute() const
+{
+	return std::accumulate(m_incomeBuckets, m_incomeBuckets + ARRAY_SIZE(m_incomeBuckets), 0u);
 }
 
 void Money::triggerAudioEvent(const AudioEventRTS& audioEvent)
@@ -157,4 +200,5 @@ void Money::parseMoneyAmount( INI *ini, void *instance, void *store, const void*
   // Someday, maybe, have mulitple fields like Gold:10000 Wood:1000 Tiberian:10
   Money * money = (Money *)store;
   INI::parseUnsignedInt( ini, instance, &money->m_money, userData );
+	money->setStartingCash(money->m_money);
 }
