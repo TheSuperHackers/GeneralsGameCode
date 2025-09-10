@@ -427,7 +427,7 @@ Bool OptionPreferences::getScreenEdgeScrollEnabledInWindowedApp() const
 {
 	OptionPreferences::const_iterator it = find("ScreenEdgeScrollEnabledInWindowedApp");
 	if (it == end())
-		return (ScreenEdgeScrollMode_Default & ScreenEdgeScrollMode_EnabledInWindowedApp);
+		return (ScreenEdgeScrollMode_Default & ScreenEdgeScrollMode_EnabledInWindowedApp) != 0;
 
 	if (stricmp(it->second.str(), "yes") == 0)
 		return TRUE;
@@ -439,7 +439,7 @@ Bool OptionPreferences::getScreenEdgeScrollEnabledInFullscreenApp() const
 {
 	OptionPreferences::const_iterator it = find("ScreenEdgeScrollEnabledInFullscreenApp");
 	if (it == end())
-		return (ScreenEdgeScrollMode_Default & ScreenEdgeScrollMode_EnabledInFullscreenApp);
+		return (ScreenEdgeScrollMode_Default & ScreenEdgeScrollMode_EnabledInFullscreenApp) != 0;
 
 	if (stricmp(it->second.str(), "yes") == 0)
 		return TRUE;
