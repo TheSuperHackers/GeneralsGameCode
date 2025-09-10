@@ -74,10 +74,10 @@ static void AILCALLBACK setSampleCompleted( HSAMPLE sampleCompleted );
 static void AILCALLBACK set3DSampleCompleted( H3DSAMPLE sample3DCompleted );
 static void AILCALLBACK setStreamCompleted( HSTREAM streamCompleted );
 
-static U32 AILCALLBACK streamingFileOpen(char const *fileName, U32 *file_handle);
-static void AILCALLBACK streamingFileClose(U32 fileHandle);
-static S32 AILCALLBACK streamingFileSeek(U32 fileHandle, S32 offset, U32 type);
-static U32 AILCALLBACK streamingFileRead(U32 fileHandle, void *buffer, U32 bytes);
+static U32 AILCALLBACK streamingFileOpen(char const *fileName, void **file_handle);
+static void AILCALLBACK streamingFileClose(void *fileHandle);
+static S32 AILCALLBACK streamingFileSeek(void *fileHandle, S32 offset, U32 type);
+static U32 AILCALLBACK streamingFileRead(void *fileHandle, void *buffer, U32 bytes);
 
 //-------------------------------------------------------------------------------------------------
 MilesAudioManager::MilesAudioManager() :
@@ -235,7 +235,7 @@ void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FIL
 				continue;
 			}
 
-			playingArray[AIL_sample_user_data(playing->m_sample, 0)] = playing;
+			playingArray[(int)AIL_sample_user_data(playing->m_sample, 0)] = playing;
 		}
 
 		for (Int i = 1; i <= maxChannels && i <= channelCount; ++i) {
@@ -296,7 +296,7 @@ void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FIL
 				continue;
 			}
 
-			playingArray[AIL_3D_user_data(playing->m_3DSample, 0)] = playing;
+			playingArray[(int)AIL_3D_user_data(playing->m_3DSample, 0)] = playing;
 		}
 
 		for (Int i = 1; i <= maxChannels && i <= channelCount; ++i)
@@ -2912,7 +2912,7 @@ void MilesAudioManager::initSamplePools( void )
 		DEBUG_ASSERTCRASH(sample, ("Couldn't get %d 2D samples", i + 1));
 		if (sample) {
 			AIL_init_sample(sample);
-			AIL_set_sample_user_data(sample, 0, i + 1);
+			AIL_set_sample_user_data(sample, 0, (void *)(i + 1));
 			m_availableSamples.push_back(sample);
 			++m_num2DSamples;
 		}
@@ -2922,7 +2922,7 @@ void MilesAudioManager::initSamplePools( void )
 		H3DSAMPLE sample = AIL_allocate_3D_sample_handle(m_provider3D[m_selectedProvider].id);
 		DEBUG_ASSERTCRASH(sample, ("Couldn't get %d 3D samples", i + 1));
 		if (sample) {
-			AIL_set_3D_user_data(sample, 0, i + 1);
+			AIL_set_3D_user_data(sample, 0, (void *)(i + 1));
 			m_available3DSamples.push_back(sample);
 			++m_num3DSamples;
 		}
@@ -3058,7 +3058,7 @@ void AILCALLBACK setStreamCompleted( HSTREAM streamCompleted )
 }
 
 //-------------------------------------------------------------------------------------------------
-U32 AILCALLBACK streamingFileOpen(char const *fileName, U32 *file_handle)
+U32 AILCALLBACK streamingFileOpen(char const *fileName, void **file_handle)
 {
 #if defined(RTS_DEBUG)
 	if (sizeof(U32) != sizeof(File*)) {
@@ -3066,24 +3066,24 @@ U32 AILCALLBACK streamingFileOpen(char const *fileName, U32 *file_handle)
 	}
 #endif
 
-	(*file_handle) = (U32) TheFileSystem->openFile(fileName, File::READ | File::STREAMING);
+	(*file_handle) = (void *) TheFileSystem->openFile(fileName, File::READ | File::STREAMING);
 	return ((*file_handle) != 0);
 }
 
 //-------------------------------------------------------------------------------------------------
-void AILCALLBACK streamingFileClose(U32 fileHandle)
+void AILCALLBACK streamingFileClose(void *fileHandle)
 {
 	((File*) fileHandle)->close();
 }
 
 //-------------------------------------------------------------------------------------------------
-S32 AILCALLBACK streamingFileSeek(U32 fileHandle, S32 offset, U32 type)
+S32 AILCALLBACK streamingFileSeek(void *fileHandle, S32 offset, U32 type)
 {
 	return ((File*) fileHandle)->seek(offset, (File::seekMode) type);
 }
 
 //-------------------------------------------------------------------------------------------------
-U32 AILCALLBACK streamingFileRead(U32 file_handle, void *buffer, U32 bytes)
+U32 AILCALLBACK streamingFileRead(void *file_handle, void *buffer, U32 bytes)
 {
 	return ((File*) file_handle)->read(buffer, bytes);
 }

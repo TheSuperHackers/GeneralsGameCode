@@ -90,8 +90,8 @@ public:
 	U32							Get_Sample_Loop_Count (void);
 	void							Set_Sample_MS_Position (U32 ms);
 	void							Get_Sample_MS_Position (S32 *len, S32 *pos);
-	void							Set_Sample_User_Data (S32 i, U32 val);
-	U32							Get_Sample_User_Data (S32 i);
+	void							Set_Sample_User_Data (S32 i, void *val);
+	void *							Get_Sample_User_Data (S32 i);
 	S32							Get_Sample_Playback_Rate (void);
 	void							Set_Sample_Playback_Rate (S32 rate);
 
