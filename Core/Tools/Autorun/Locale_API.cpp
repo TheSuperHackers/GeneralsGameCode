@@ -300,10 +300,8 @@ void Locale_Restore ( void )
 		LOCALE_freetable();
 		LOCALE_restore();
 	#else
-		if( LocaleFile ) {
-			free( LocaleFile );
-			LocaleFile = NULL;
-		}
+		free( LocaleFile );
+		LocaleFile = NULL;
 	#endif
 }
 

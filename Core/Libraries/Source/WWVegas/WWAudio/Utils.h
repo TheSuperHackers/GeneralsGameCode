@@ -58,11 +58,7 @@
 				pobject = NULL;					\
 			}											\
 
-#define SAFE_FREE(pobject)						\
-			if (pobject) {							\
-				::free (pobject);					\
-				pobject = NULL;					\
-			}											\
+#define SAFE_FREE(pobject) { ::free (pobject); pobject = NULL; }
 
 
 /////////////////////////////////////////////////////////////////////////////

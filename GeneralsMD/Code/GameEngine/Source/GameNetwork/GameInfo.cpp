@@ -1455,7 +1455,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 						break;
 					}
 				}
-		if(freeMe)
+
 			free(freeMe);
 		}
 		else
@@ -1464,8 +1464,8 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 			break;
 		}
 	}
-	if( buf )
-		free(buf);
+
+	free(buf);
 
 	//DEBUG_LOG(("Options were ok == %d", optionsOk));
 	if (optionsOk && sawMap && sawMapCRC && sawMapSize && sawSeed && sawSlotlist && sawCRC && sawUseStats && sawSuperweaponRestriction && sawStartingCash && sawOldFactions )

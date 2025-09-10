@@ -141,7 +141,7 @@ RawFileMClass::RawFileMClass(char const * filename) :
  *=============================================================================================*/
 char const * RawFileMClass::Set_Name(char const * filename)
 {
-	if (Filename != NULL && Allocated) {
+	if (Allocated) {
 		free((char *)Filename);
 		Filename = NULL;
 		Allocated = false;

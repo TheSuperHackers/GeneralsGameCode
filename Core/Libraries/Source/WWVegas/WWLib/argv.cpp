@@ -301,7 +301,7 @@ void ArgvClass::Free()
 {
 	for (int lp = 0; lp < Argc; lp++) {
 		free(Argv[lp]);
-		Argv[lp] = 0;
+		Argv[lp] = NULL;
 	}
 	Argc = -1;
 }

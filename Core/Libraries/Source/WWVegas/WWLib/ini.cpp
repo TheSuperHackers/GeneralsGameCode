@@ -133,7 +133,7 @@ INIEntry::~INIEntry(void)
 INISection::~INISection(void)
 {
 	free(Section);
-	Section = 0;
+	Section = NULL;
 	EntryList.Delete();
 }
 
