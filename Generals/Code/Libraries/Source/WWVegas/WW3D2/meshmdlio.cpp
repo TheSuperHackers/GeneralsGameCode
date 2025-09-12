@@ -1920,10 +1920,9 @@ MeshLoadContextClass::~MeshLoadContextClass(void)
 {
 	int i;
 
-	if (TexCoords != NULL) {
-		delete TexCoords;
-		TexCoords = NULL;
-	}
+	delete TexCoords;
+	TexCoords = NULL;
+
 	for (i=0; i<Textures.Count(); i++) {
 		Textures[i]->Release_Ref();
 	}

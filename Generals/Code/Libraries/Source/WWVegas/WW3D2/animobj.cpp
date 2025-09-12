@@ -177,9 +177,7 @@ Animatable3DObjClass::~Animatable3DObjClass(void)
 {
 	Release();
 
-	if (HTree) {
-		delete HTree;
-	}
+	delete HTree;
 }
 
 
@@ -199,9 +197,6 @@ Animatable3DObjClass & Animatable3DObjClass::operator = (const Animatable3DObjCl
 {
 	if (&that != this) {
 		Release();
-		if (HTree) {
-			delete HTree;
-		}
 
 		CompositeRenderObjClass::operator = (that);
 
@@ -222,6 +217,7 @@ Animatable3DObjClass & Animatable3DObjClass::operator = (const Animatable3DObjCl
 		ModeInterp.Percentage = 0.0f;
 		ModeCombo.AnimCombo = NULL;
 
+		delete HTree;
 		HTree = W3DNEW HTreeClass(*that.HTree);
 	}
 	return *this;
@@ -1127,9 +1123,7 @@ void Animatable3DObjClass::Set_HTree(HTreeClass * new_htree)
 	WWASSERT(new_htree->Num_Pivots() == HTree->Num_Pivots());
 
 	// just assign it...
-	if (HTree != NULL) {
-		delete HTree;
-	}
+	delete HTree;
 	HTree = W3DNEW HTreeClass(*new_htree);
 }
 

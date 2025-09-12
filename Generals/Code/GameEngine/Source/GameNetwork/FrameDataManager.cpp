@@ -47,12 +47,8 @@ FrameDataManager::~FrameDataManager() {
 	for (Int i = 0; i < FRAME_DATA_LENGTH; ++i) {
 		m_frameData[i].reset();
 	}
-
-	if (m_frameData)
-	{
-		delete[] m_frameData;
-		m_frameData = NULL;
-	}
+	delete[] m_frameData;
+	m_frameData = NULL;
 }
 
 /**

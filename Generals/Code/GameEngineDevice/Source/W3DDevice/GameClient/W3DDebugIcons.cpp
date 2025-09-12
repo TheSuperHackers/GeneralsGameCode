@@ -99,7 +99,7 @@ Int				 W3DDebugIcons::m_numDebugIcons = 0;
 W3DDebugIcons::~W3DDebugIcons(void)
 {
 	REF_PTR_RELEASE(m_vertexMaterialClass);
-	if (m_debugIcons) delete m_debugIcons;
+	delete m_debugIcons;
 	m_debugIcons = NULL;
 	m_numDebugIcons = 0;
 }

@@ -275,11 +275,8 @@ const Int MAX_ENABLED_MODULES								= 16;
 //-------------------------------------------------------------------------------------------------
 /*static*/ void Drawable::killStaticImages()
 {
-	if( s_animationTemplates )
-	{
-		delete[] s_animationTemplates;
-		s_animationTemplates = NULL;
-	}
+	delete[] s_animationTemplates;
+	s_animationTemplates = NULL;
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -44,10 +44,8 @@ CachedFileInputStream::CachedFileInputStream(void):m_buffer(NULL),m_size(0)
 
 CachedFileInputStream::~CachedFileInputStream(void)
 {
-	if (m_buffer) {
-		delete[] m_buffer;
-		m_buffer=NULL;
-	}
+	delete[] m_buffer;
+	m_buffer=NULL;
 }
 
 Bool CachedFileInputStream::open(AsciiString path)
@@ -104,10 +102,9 @@ Bool CachedFileInputStream::open(AsciiString path)
 
 void CachedFileInputStream::close(void)
 {
-	if (m_buffer) {
-		delete[] m_buffer;
-		m_buffer=NULL;
-	}
+	delete[] m_buffer;
+	m_buffer=NULL;
+
 	m_pos=0;
 	m_size=0;
 }

@@ -131,10 +131,8 @@ MotionChannelClass::~MotionChannelClass(void)
  *=============================================================================================*/
 void MotionChannelClass::Free(void)
 {
-	if (Data) {
-		delete[] Data;
-		Data = NULL;
-	}
+	delete[] Data;
+	Data = NULL;
 }
 
 
@@ -233,10 +231,8 @@ BitChannelClass::~BitChannelClass(void)
  *=============================================================================================*/
 void BitChannelClass::Free(void)
 {
-	if (Bits != NULL) {
-		delete[] Bits;
-		Bits = NULL;
-	}
+	delete[] Bits;
+	Bits = NULL;
 }
 
 
@@ -346,10 +342,8 @@ TimeCodedMotionChannelClass::~TimeCodedMotionChannelClass(void)
  *=============================================================================================*/
 void TimeCodedMotionChannelClass::Free(void)
 {
-	if (Data) {
-		delete[] Data;
-		Data = NULL;
-	}
+	delete[] Data;
+	Data = NULL;
 }
 
 
@@ -714,10 +708,8 @@ TimeCodedBitChannelClass::~TimeCodedBitChannelClass(void)
  *=============================================================================================*/
 void TimeCodedBitChannelClass::Free(void)
 {
-	if (Bits != NULL) {
-		delete[] Bits;
-		Bits = NULL;
-	}
+	delete[] Bits;
+	Bits = NULL;
 }
 
 
@@ -894,16 +886,11 @@ AdaptiveDeltaMotionChannelClass::~AdaptiveDeltaMotionChannelClass(void)
  *=============================================================================================*/
 void AdaptiveDeltaMotionChannelClass::Free(void)
 {
-	if (Data) {
-		delete[] Data;
-		Data = NULL;
-	}
+	delete[] Data;
+	Data = NULL;
 
-	if (CacheData) {
-		delete CacheData;
-		CacheData = NULL;
-	}
-
+	delete CacheData;
+	CacheData = NULL;
 }
 
 

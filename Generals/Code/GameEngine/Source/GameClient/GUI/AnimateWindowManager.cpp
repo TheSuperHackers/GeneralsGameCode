@@ -137,22 +137,14 @@ AnimateWindowManager::AnimateWindowManager( void )
 }
 AnimateWindowManager::~AnimateWindowManager( void )
 {
-	if(m_slideFromRight)
-		delete m_slideFromRight;
-	if(m_slideFromRightFast)
-		delete m_slideFromRightFast;
-	if(m_slideFromLeft)
-		delete m_slideFromLeft;
-	if(m_slideFromTop)
-		delete m_slideFromTop;
-	if(m_slideFromTopFast)
-		delete m_slideFromTopFast;
-	if(m_slideFromBottom)
-		delete m_slideFromBottom;
-	if(m_spiral)
-		delete m_spiral;
-	if (m_slideFromBottomTimed)
-		delete m_slideFromBottomTimed;
+	delete m_slideFromRight;
+	delete m_slideFromRightFast;
+	delete m_slideFromLeft;
+	delete m_slideFromTop;
+	delete m_slideFromTopFast;
+	delete m_slideFromBottom;
+	delete m_spiral;
+	delete m_slideFromBottomTimed;
 
 	m_slideFromRight = NULL;
 	resetToRestPosition( );

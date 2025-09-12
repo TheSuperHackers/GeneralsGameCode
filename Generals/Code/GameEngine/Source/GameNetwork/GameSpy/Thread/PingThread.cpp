@@ -130,11 +130,8 @@ void Pinger::endThreads( void )
 {
 	for (Int i=0; i<NumWorkerThreads; ++i)
 	{
-		if (m_workerThreads[i])
-		{
-			delete m_workerThreads[i];
-			m_workerThreads[i] = NULL;
-		}
+		delete m_workerThreads[i];
+		m_workerThreads[i] = NULL;
 	}
 }
 

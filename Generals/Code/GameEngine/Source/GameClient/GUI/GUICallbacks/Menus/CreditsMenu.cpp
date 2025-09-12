@@ -80,8 +80,8 @@ static GameWindow *parentMainMenu = NULL;
 void CreditsMenuInit( WindowLayout *layout, void *userData )
 {
 	TheShell->showShellMap(FALSE);
-	if(TheCredits)
-		delete TheCredits;
+
+	delete TheCredits;
 	TheCredits = new CreditsManager;
 	TheCredits->load();
 	TheCredits->init();

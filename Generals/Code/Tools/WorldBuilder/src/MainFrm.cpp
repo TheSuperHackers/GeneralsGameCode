@@ -75,9 +75,7 @@ CMainFrame::CMainFrame()
 
 CMainFrame::~CMainFrame()
 {
-	if (m_layersList) {
-		delete m_layersList;
-	}
+	delete m_layersList;
 
 	SaveBarState("MainFrame");
 	TheMainFrame = NULL;

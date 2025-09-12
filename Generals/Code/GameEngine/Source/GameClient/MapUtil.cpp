@@ -275,17 +275,12 @@ static Bool loadMap( AsciiString filename )
 
 static void resetMap( void )
 {
-	if (m_data)
-	{
-		delete[] m_data;
-		m_data = 0;
-	}
+	delete[] m_data;
+	m_data = NULL;
 
-	if (m_waypoints)
-	{
-		delete m_waypoints;
-		m_waypoints = 0;
-	}
+	delete m_waypoints;
+	m_waypoints = NULL;
+
 	m_techPositions.clear();
 	m_supplyPositions.clear();
 }
@@ -907,11 +902,8 @@ typedef MapDisplayToFileNameList::iterator MapDisplayToFileNameListIter;
 		++curNumPlayersInMap;
 	}
 
-	if (battleHonors)
-	{
-		delete battleHonors;
-		battleHonors = NULL;
-	}
+	delete battleHonors;
+	battleHonors = NULL;
 
 	GadgetListBoxSetSelected(listbox, &selectionIndex, 1);
 	if (selectionIndex >= 0)

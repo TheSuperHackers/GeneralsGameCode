@@ -605,15 +605,11 @@ MeshBuilderClass::~MeshBuilderClass(void)
  *=============================================================================================*/
 void MeshBuilderClass::Free(void)
 {
-	if (Faces != NULL) {
-		delete[] Faces;
-		Faces = NULL;
-	}
+	delete[] Faces;
+	Faces = NULL;
 
-	if (Verts != NULL) {
-		delete Verts;
-		Verts = NULL;
-	}
+	delete Verts;
+	Verts = NULL;
 
 	FaceCount = 0;
 	VertCount = 0;

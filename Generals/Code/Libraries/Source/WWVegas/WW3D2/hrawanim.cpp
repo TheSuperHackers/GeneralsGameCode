@@ -94,30 +94,14 @@ NodeMotionStruct::NodeMotionStruct() :
  *=============================================================================================*/
 NodeMotionStruct::~NodeMotionStruct()
 {
-	if (X != NULL) {
-		delete X;
-	}
-	if (Y != NULL) {
-		delete Y;
-	}
-	if (Z != NULL) {
-		delete Z;
-	}
-	if (XR != NULL) {
-		delete XR;
-	}
-	if (YR != NULL) {
-		delete YR;
-	}
-	if (ZR != NULL) {
-		delete ZR;
-	}
-	if (Q != NULL) {
-		delete Q;
-	}
-	if (Vis != NULL) {
-		delete Vis;
-	}
+	delete X;
+	delete Y;
+	delete Z;
+	delete XR;
+	delete YR;
+	delete ZR;
+	delete Q;
+	delete Vis;
 }
 
 
@@ -176,10 +160,8 @@ HRawAnimClass::~HRawAnimClass(void)
  *=============================================================================================*/
 void HRawAnimClass::Free(void)
 {
-	if (NodeMotion != NULL) {
-		delete[] NodeMotion;
-		NodeMotion = NULL;
-	}
+	delete[] NodeMotion;
+	NodeMotion = NULL;
 }
 
 

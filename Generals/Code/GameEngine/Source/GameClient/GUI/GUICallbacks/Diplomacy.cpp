@@ -290,8 +290,8 @@ void ResetDiplomacy( void )
 		theLayout = NULL;
 	}
 	theWindow = NULL;
-	if (theAnimateWindowManager)
-		delete theAnimateWindowManager;
+
+	delete theAnimateWindowManager;
 	theAnimateWindowManager = NULL;
 }
 

@@ -57,15 +57,11 @@ NetCommandWrapperListNode::NetCommandWrapperListNode(NetWrapperCommandMsg *msg)
 }
 
 NetCommandWrapperListNode::~NetCommandWrapperListNode() {
-	if (m_chunksPresent != NULL) {
-		delete[] m_chunksPresent;
-		m_chunksPresent = NULL;
-	}
+	delete[] m_chunksPresent;
+	m_chunksPresent = NULL;
 
-	if (m_data != NULL) {
-		delete[] m_data;
-		m_data = NULL;
-	}
+	delete[] m_data;
+	m_data = NULL;
 }
 
 Bool NetCommandWrapperListNode::isComplete() {

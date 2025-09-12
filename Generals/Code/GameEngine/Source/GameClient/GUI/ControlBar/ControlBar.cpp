@@ -975,29 +975,25 @@ ControlBar::~ControlBar( void )
 		m_scienceLayout = NULL;
 	}
 	m_genArrow = NULL;
-	if(m_videoManager)
-		delete m_videoManager;
+
+	delete m_videoManager;
 	m_videoManager = NULL;
 
-
-	if(m_animateWindowManagerForGenShortcuts)
-		delete m_animateWindowManagerForGenShortcuts;
+	delete m_animateWindowManagerForGenShortcuts;
 	m_animateWindowManagerForGenShortcuts = NULL;
-	if(m_animateWindowManager)
-		delete m_animateWindowManager;
+
+	delete m_animateWindowManager;
 	m_animateWindowManager = NULL;
 
-	if(m_generalsScreenAnimate)
-		delete m_generalsScreenAnimate;
+	delete m_generalsScreenAnimate;
 	m_generalsScreenAnimate = NULL;
 
-	if( m_controlBarSchemeManager )
-		delete m_controlBarSchemeManager;
+	delete m_controlBarSchemeManager;
 	m_controlBarSchemeManager = NULL;
 
-//	if(m_controlBarResizer)
-//		delete m_controlBarResizer;
+//	delete m_controlBarResizer;
 //	m_controlBarResizer = NULL;
+
 	// destroy all the command set definitions
 	CommandSet *set;
 	while( m_commandSets )

@@ -2168,11 +2168,9 @@ WindowMsgHandledType OptionsMenuSystem( GameWindow *window, UnsignedInt msg,
 			{
 				// go back one screen
 				//TheShell->pop();
-				if (pref)
-				{
-					delete pref;
-					pref = NULL;
-				}
+
+				delete pref;
+				pref = NULL;
 
 				comboBoxLANIP = NULL;
 				comboBoxOnlineIP = NULL;

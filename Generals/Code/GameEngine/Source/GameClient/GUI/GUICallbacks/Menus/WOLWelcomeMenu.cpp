@@ -553,10 +553,8 @@ void WOLWelcomeMenuShutdown( WindowLayout *layout, void *userData )
 {
 	listboxInfo = NULL;
 
-	if (TheFirewallHelper != NULL) {
-		delete TheFirewallHelper;
-		TheFirewallHelper = NULL;
-	}
+	delete TheFirewallHelper;
+	TheFirewallHelper = NULL;
 
 	isShuttingDown = TRUE;
 

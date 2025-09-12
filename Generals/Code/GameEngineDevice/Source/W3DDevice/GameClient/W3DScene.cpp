@@ -203,17 +203,10 @@ RTS3DScene::~RTS3DScene()
 
 	REF_PTR_RELEASE(m_heatVisionOnlyPass);
 
-	if (m_translucentObjectsBuffer)
-		delete [] m_translucentObjectsBuffer;
-
-	if (m_nonOccludersOrOccludees)
-		delete [] m_nonOccludersOrOccludees;
-
-	if (m_potentialOccludees)
-		delete [] m_potentialOccludees;
-
-	if (m_potentialOccluders)
-		delete [] m_potentialOccluders;
+	delete [] m_translucentObjectsBuffer;
+	delete [] m_nonOccludersOrOccludees;
+	delete [] m_potentialOccludees;
+	delete [] m_potentialOccluders;
 
 	for (i=0; i<MAX_PLAYER_COUNT; i++)
 	{	REF_PTR_RELEASE(m_occludedMaterialPass[i]);

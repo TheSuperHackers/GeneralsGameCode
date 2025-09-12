@@ -1557,10 +1557,8 @@ Bool FirewallHelperClass::openSpareSocket(UnsignedShort port) {
 void FirewallHelperClass::closeSpareSocket(UnsignedShort port) {
 	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i) {
 		if (m_spareSockets[i].port == port) {
-			if (m_spareSockets[i].udp != NULL) {
-				delete m_spareSockets[i].udp;
-				m_spareSockets[i].udp = NULL;
-			}
+			delete m_spareSockets[i].udp;
+			m_spareSockets[i].udp = NULL;
 			m_spareSockets[i].port = 0;
 			break;
 		}
@@ -1572,12 +1570,8 @@ void FirewallHelperClass::closeSpareSocket(UnsignedShort port) {
  */
 void FirewallHelperClass::closeAllSpareSockets() {
 	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i) {
-		if (m_spareSockets[i].port != 0) {
-			m_spareSockets[i].port = 0;
-		}
-		if (m_spareSockets[i].udp != NULL) {
-			delete (m_spareSockets[i].udp);
-			m_spareSockets[i].udp = NULL;
-		}
+		delete (m_spareSockets[i].udp);
+		m_spareSockets[i].udp = NULL;
+		m_spareSockets[i].port = 0;
 	}
 }

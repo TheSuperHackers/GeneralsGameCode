@@ -1250,41 +1250,37 @@ void HeightMapRenderObjClass::drawScorches(void)
 HeightMapRenderObjClass::~HeightMapRenderObjClass(void)
 {
 	freeMapResources();
-	if (m_treeBuffer) {
-		delete m_treeBuffer;
- 		m_treeBuffer = NULL;
-	}
-	if (m_bibBuffer) {
-		delete m_bibBuffer;
- 		m_bibBuffer = NULL;
-	}
-#ifdef TEST_CUSTOM_EDGING
-	if (m_customEdging) {
-		delete m_customEdging;
- 		m_customEdging = NULL;
-	}
-#endif
-#ifdef DO_ROADS
-	if (m_roadBuffer) {
-		delete m_roadBuffer;
- 		m_roadBuffer = NULL;
-	}
-#endif
-	if (m_bridgeBuffer) {
-		delete m_bridgeBuffer;
-	}
 
-	if( m_waypointBuffer )
-	{
-		delete m_waypointBuffer;
-	}
-	if (m_shroud) {
-		delete m_shroud;
-	}
-	if (m_extraBlendTilePositions)
-		delete [] m_extraBlendTilePositions;
-	if (m_shoreLineTilePositions)
-		delete [] m_shoreLineTilePositions;
+	delete m_treeBuffer;
+	m_treeBuffer = NULL;
+
+	delete m_bibBuffer;
+	m_bibBuffer = NULL;
+
+#ifdef TEST_CUSTOM_EDGING
+	delete m_customEdging;
+	m_customEdging = NULL;
+#endif
+
+#ifdef DO_ROADS
+	delete m_roadBuffer;
+	m_roadBuffer = NULL;
+#endif
+
+	delete m_bridgeBuffer;
+	m_bridgeBuffer = NULL;
+
+	delete m_waypointBuffer;
+	m_waypointBuffer = NULL;
+
+	delete m_shroud;
+	m_shroud = NULL;
+
+	delete [] m_extraBlendTilePositions;
+	m_extraBlendTilePositions = NULL;
+
+	delete [] m_shoreLineTilePositions;
+	m_shoreLineTilePositions = NULL;
 }
 
 //=============================================================================

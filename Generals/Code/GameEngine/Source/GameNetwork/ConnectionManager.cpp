@@ -201,10 +201,9 @@ void ConnectionManager::reset()
 //		m_transport = new Transport;
 //	}
 //	m_transport->reset();
-	if (m_transport != NULL) {
-		delete m_transport;
-		m_transport = NULL;
-	}
+
+	delete m_transport;
+	m_transport = NULL;
 
 	UnsignedInt i = 0;
 	for (; i < (UnsignedInt)NUM_CONNECTIONS; ++i) {
@@ -277,10 +276,7 @@ Bool ConnectionManager::isPlayerConnected( Int playerID )
 }
 
 void ConnectionManager::attachTransport(Transport *transport) {
-	if (m_transport != NULL) {
-		delete m_transport;
-		m_transport = NULL;
-	}
+	delete m_transport;
 	m_transport = transport;
 }
 
@@ -1409,10 +1405,8 @@ void ConnectionManager::setLocalAddress(UnsignedInt ip, UnsignedInt port) {
 void ConnectionManager::initTransport() {
 	DEBUG_ASSERTCRASH((m_transport == NULL), ("m_transport already exists when trying to init it."));
 	DEBUG_LOG(("ConnectionManager::initTransport - Initializing Transport"));
-	if (m_transport != NULL) {
-		delete m_transport;
-		m_transport = NULL;
-	}
+
+	delete m_transport;
 	m_transport = new Transport;
 	m_transport->reset();
 	m_transport->init(m_localAddr, m_localPort);
@@ -2147,7 +2141,7 @@ void ConnectionManager::sendFile(AsciiString path, UnsignedByte playerMask, Unsi
 		compressedSize = CompressionManager::compressData(CompressionManager::getPreferredCompression(),
 		buf, len, compressedBuf, compressedLen);
 
-	if (compressedBuf && !compressedSize)
+	if (!compressedSize)
 	{
 		delete[] compressedBuf;
 		compressedBuf = NULL;
@@ -2177,11 +2171,8 @@ void ConnectionManager::sendFile(AsciiString path, UnsignedByte playerMask, Unsi
 	delete[] buf;
 	buf = NULL;
 #ifdef COMPRESS_TARGAS
-	if (compressedBuf)
-	{
-		delete[] compressedBuf;
-		compressedBuf = NULL;
-	}
+	delete[] compressedBuf;
+	compressedBuf = NULL;
 #endif // COMPRESS_TARGAS
 
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Sending file: '%s', len %d, to %X", path.str(), len, playerMask));

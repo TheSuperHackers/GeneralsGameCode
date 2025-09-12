@@ -535,10 +535,8 @@ void GameSpyStagingRoom::startGame(Int gameID)
 	UnsignedInt localIP = TheGameSpyInfo->getInternalIP();
 	setLocalIP(localIP);
 
-	if (TheNAT != NULL) {
-		delete TheNAT;
-		TheNAT = NULL;
-	}
+	delete TheNAT;
+	TheNAT = NULL;
 
 	// fill in GS-specific info
 	Int numHumans = 0;
@@ -801,10 +799,8 @@ void GameSpyStagingRoom::launchGame( void )
 	AsciiString userList;
 	DEBUG_ASSERTCRASH(TheNetwork == NULL, ("For some reason TheNetwork isn't NULL at the start of this game.  Better look into that."));
 
-	if (TheNetwork != NULL) {
-		delete TheNetwork;
-		TheNetwork = NULL;
-	}
+	delete TheNetwork;
+	TheNetwork = NULL;
 
 	// Time to initialize TheNetwork for this game.
 	TheNetwork = NetworkInterface::createNetwork();
@@ -830,10 +826,10 @@ void GameSpyStagingRoom::launchGame( void )
 	if (!filesOk || TheMapCache->findMap(getMap()) == NULL)
 	{
 		DEBUG_LOG(("After transfer, we didn't really have the map.  Bailing..."));
-		if (TheNetwork != NULL) {
-			delete TheNetwork;
-			TheNetwork = NULL;
-		}
+
+		delete TheNetwork;
+		TheNetwork = NULL;
+
 		GSMessageBoxOk(TheGameText->fetch("GUI:Error"), TheGameText->fetch("GUI:CouldNotTransferMap"));
 
 		void PopBackToLobby( void );
@@ -865,10 +861,8 @@ void GameSpyStagingRoom::launchGame( void )
 	sprintf(req.arg.status.locationString, "%s", WideCharStringToMultiByte(TheGameSpyGame->getGameName().str()).c_str());
 	TheGameSpyBuddyMessageQueue->addRequest(req);
 
-	if (TheNAT != NULL) {
-		delete TheNAT;
-		TheNAT = NULL;
-	}
+	delete TheNAT;
+	TheNAT = NULL;
 }
 
 void GameSpyStagingRoom::reset(void)

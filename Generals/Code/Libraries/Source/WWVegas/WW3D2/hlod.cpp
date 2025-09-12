@@ -343,10 +343,8 @@ void HLodDefClass::Free(void)
 	::free(HierarchyTreeName);
 	HierarchyTreeName = NULL;
 
-	if (Lod) {
-		delete[] Lod;
-		Lod = NULL;
-	}
+	delete[] Lod;
+	Lod = NULL;
 	LodCount = 0;
 
 	REF_PTR_RELEASE(ProxyArray);
@@ -773,10 +771,9 @@ void HLodDefClass::SubObjectArrayClass::Reset(void)
 		delete[] ModelName;
 		ModelName = NULL;
 	}
-	if (BoneIndex != NULL) {
-		delete[] BoneIndex;
-		BoneIndex = NULL;
-	}
+
+	delete[] BoneIndex;
+	BoneIndex = NULL;
 
 	ModelCount = 0;
 }
@@ -1363,20 +1360,16 @@ void HLodClass::Free(void)
 
 		Lod[lod].Delete_All();
 	}
-	if (Lod != NULL) {
-		delete[] Lod;
-		Lod = NULL;
-	}
+
+	delete[] Lod;
+	Lod = NULL;
 	LodCount = 0;
 
-	if (Cost != NULL) {
-		delete[] Cost;
-		Cost = NULL;
-	}
-	if (Value != NULL) {
-		delete[] Value;
-		Value = NULL;
-	}
+	delete[] Cost;
+	Cost = NULL;
+
+	delete[] Value;
+	Value = NULL;
 
 	for (model = 0; model < AdditionalModels.Count(); model++) {
 		RenderObjClass * robj = AdditionalModels[model].Model;

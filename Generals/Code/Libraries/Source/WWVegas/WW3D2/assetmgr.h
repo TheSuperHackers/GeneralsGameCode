@@ -203,7 +203,7 @@ public:
 	**	WW3DAssetManager::Get_Instance();
 	*/
 	static WW3DAssetManager *		Get_Instance(void) { return TheInstance; }
-	static void							Delete_This(void) { if (TheInstance) delete TheInstance; TheInstance=NULL; }
+	static void							Delete_This(void) { delete TheInstance; TheInstance=NULL; }
 
 	/*
 	** Load data from any type of w3d file

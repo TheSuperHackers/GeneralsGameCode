@@ -179,15 +179,11 @@ ParticleEmitterClass::~ParticleEmitterClass(void)
 	Buffer->Emitter_Is_Dead();
 	Buffer->Release_Ref();
 
-	if (PosRand != NULL) {
-		delete PosRand;
-		PosRand = NULL;
-	}
+	delete PosRand;
+	PosRand = NULL;
 
-	if (VelRand != NULL) {
-		delete VelRand;
-		VelRand = NULL;
-	}
+	delete VelRand;
+	VelRand = NULL;
 
 	if (NameString != NULL) {
 		::free (NameString);
@@ -278,27 +274,24 @@ ParticleEmitterClass::Create_From_Definition (const ParticleEmitterDefClass &def
 																definition.Get_Frame_Mode (),
 																definition.Get_Line_Properties ()) );
 
-	if (color_keys.KeyTimes != NULL) delete [] color_keys.KeyTimes;
-	if (color_keys.Values != NULL) delete [] color_keys.Values;
-	if (opacity_keys.KeyTimes != NULL) delete [] opacity_keys.KeyTimes;
-	if (opacity_keys.Values != NULL) delete [] opacity_keys.Values;
-	if (size_keys.KeyTimes != NULL) delete [] size_keys.KeyTimes;
-	if (size_keys.Values != NULL) delete [] size_keys.Values;
-	if (rotation_keys.KeyTimes != NULL) delete [] rotation_keys.KeyTimes;
-	if (rotation_keys.Values != NULL) delete [] rotation_keys.Values;
-	if (frame_keys.KeyTimes != NULL) delete [] frame_keys.KeyTimes;
-	if (frame_keys.Values != NULL) delete [] frame_keys.Values;
-	if (blur_time_keys.KeyTimes != NULL) delete [] blur_time_keys.KeyTimes;
-	if (blur_time_keys.Values != NULL) delete [] blur_time_keys.Values;
+	delete [] color_keys.KeyTimes;
+	delete [] color_keys.Values;
+	delete [] opacity_keys.KeyTimes;
+	delete [] opacity_keys.Values;
+	delete [] size_keys.KeyTimes;
+	delete [] size_keys.Values;
+	delete [] rotation_keys.KeyTimes;
+	delete [] rotation_keys.Values;
+	delete [] frame_keys.KeyTimes;
+	delete [] frame_keys.Values;
+	delete [] blur_time_keys.KeyTimes;
+	delete [] blur_time_keys.Values;
 
 	// Pass the name along to the emitter
 	pemitter->Set_Name (definition.Get_Name ());
 
 	// release our reference to particle texture.
-	if (ptexture) {
-		REF_PTR_RELEASE(ptexture);
-		ptexture = 0;
-	}
+	REF_PTR_RELEASE(ptexture);
 
 	// Return a pointer to the new emitter
 	return pemitter;
@@ -442,21 +435,16 @@ bool ParticleEmitterClass::Is_Stopped(void)
 
 void ParticleEmitterClass::Set_Position_Randomizer(Vector3Randomizer *rand)
 {
-	if (PosRand) {
-		delete PosRand;
-		PosRand =NULL;
-	}
+	delete PosRand;
 	PosRand = rand;
 }
 
 
 void ParticleEmitterClass::Set_Velocity_Randomizer(Vector3Randomizer *rand)
 {
-	if (VelRand) {
-		delete VelRand;
-		VelRand =NULL;
-	}
+	delete VelRand;
 	VelRand = rand;
+
 	if (VelRand) {
 		VelRand->Scale(0.001f);	// Convert from seconds to ms
 	}
@@ -745,8 +733,8 @@ ParticleEmitterClass::Build_Definition (void) const
 		ParticlePropertyStruct<Vector3> colors;
 		Get_Color_Key_Frames (colors);
 		pdefinition->Set_Color_Keyframes (colors);
-		if (colors.KeyTimes != NULL) delete [] colors.KeyTimes;
-		if (colors.Values != NULL) delete [] colors.Values;
+		delete [] colors.KeyTimes;
+		delete [] colors.Values;
 
 		//
 		//	Pass the opacity keyframes onto the definition
@@ -754,8 +742,8 @@ ParticleEmitterClass::Build_Definition (void) const
 		ParticlePropertyStruct<float> opacities;
 		Get_Opacity_Key_Frames (opacities);
 		pdefinition->Set_Opacity_Keyframes (opacities);
-		if (opacities.KeyTimes != NULL) delete [] opacities.KeyTimes;
-		if (opacities.Values != NULL) delete [] opacities.Values;
+		delete [] opacities.KeyTimes;
+		delete [] opacities.Values;
 
 		//
 		//	Pass the size keyframes onto the definition
@@ -763,8 +751,8 @@ ParticleEmitterClass::Build_Definition (void) const
 		ParticlePropertyStruct<float> sizes;
 		Get_Size_Key_Frames (sizes);
 		pdefinition->Set_Size_Keyframes (sizes);
-		if (sizes.KeyTimes != NULL) delete [] sizes.KeyTimes;
-		if (sizes.Values != NULL) delete [] sizes.Values;
+		delete [] sizes.KeyTimes;
+		delete [] sizes.Values;
 
 		//
 		//	Pass the rotation keyframes onto the definition
@@ -772,8 +760,8 @@ ParticleEmitterClass::Build_Definition (void) const
 		ParticlePropertyStruct<float> rotations;
 		Get_Rotation_Key_Frames (rotations);
 		pdefinition->Set_Rotation_Keyframes (rotations, Get_Initial_Orientation_Random());
-		if (rotations.KeyTimes != NULL) delete [] rotations.KeyTimes;
-		if (rotations.Values != NULL) delete [] rotations.Values;
+		delete [] rotations.KeyTimes;
+		delete [] rotations.Values;
 
 		//
 		//	Pass the frame keyframes onto the definition
@@ -781,8 +769,8 @@ ParticleEmitterClass::Build_Definition (void) const
 		ParticlePropertyStruct<float> frames;
 		Get_Frame_Key_Frames (frames);
 		pdefinition->Set_Frame_Keyframes (frames);
-		if (frames.KeyTimes != NULL) delete [] frames.KeyTimes;
-		if (frames.Values != NULL) delete [] frames.Values;
+		delete [] frames.KeyTimes;
+		delete [] frames.Values;
 
 		//
 		//	Pass the blur time keyframes onto the definition
@@ -790,8 +778,8 @@ ParticleEmitterClass::Build_Definition (void) const
 		ParticlePropertyStruct<float> blur_times;
 		Get_Blur_Time_Key_Frames (blur_times);
 		pdefinition->Set_Blur_Time_Keyframes (blur_times);
-		if (blur_times.KeyTimes != NULL) delete [] blur_times.KeyTimes;
-		if (blur_times.Values != NULL) delete [] blur_times.Values;
+		delete [] blur_times.KeyTimes;
+		delete [] blur_times.Values;
 
 
 		//

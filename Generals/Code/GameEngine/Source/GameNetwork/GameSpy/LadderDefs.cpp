@@ -236,11 +236,7 @@ static LadderInfo *parseLadder(AsciiString raw)
 		}
 	}
 
-	if (lad)
-	{
-		delete lad;
-		lad = NULL;
-	}
+	delete lad;
 	return NULL;
 }
 

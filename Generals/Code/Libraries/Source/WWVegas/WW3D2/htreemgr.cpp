@@ -121,10 +121,8 @@ void HTreeManagerClass::Free(void)
 void HTreeManagerClass::Free_All_Trees(void)
 {
 	for (int treeidx=0; treeidx < MAX_TREES; treeidx++) {
-		if (TreePtr[treeidx] != NULL) {
-			delete TreePtr[treeidx];
-			TreePtr[treeidx] = NULL;
-		}
+		delete TreePtr[treeidx];
+		TreePtr[treeidx] = NULL;
 	}
 	NumTrees = 0;
 }

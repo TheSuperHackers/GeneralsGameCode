@@ -114,7 +114,7 @@ void ControlBarPopupDescriptionUpdateFunc( WindowLayout *layout, void *param )
 	{
 		Bool wasFinished = theAnimateWindowManager->isFinished();
 		theAnimateWindowManager->update();
-		if (theAnimateWindowManager && theAnimateWindowManager->isFinished() && !wasFinished && theAnimateWindowManager->isReversed())
+		if (theAnimateWindowManager->isFinished() && !wasFinished && theAnimateWindowManager->isReversed())
 		{
 			delete theAnimateWindowManager;
 			theAnimateWindowManager = NULL;
@@ -642,8 +642,8 @@ void ControlBar::deleteBuildTooltipLayout( void )
 //	m_buildToolTipLayout->destroyWindows();
 //	deleteInstance(m_buildToolTipLayout);
 //	m_buildToolTipLayout = NULL;
-	if(theAnimateWindowManager)
-		delete theAnimateWindowManager;
+
+	delete theAnimateWindowManager;
 	theAnimateWindowManager = NULL;
 
 }

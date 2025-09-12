@@ -66,9 +66,7 @@ Anim2DTemplate::Anim2DTemplate( AsciiString name )
 Anim2DTemplate::~Anim2DTemplate( void )
 {
 
-	// delete the images
-	if( m_images )
-		delete [] m_images;
+	delete [] m_images;
 
 }
 

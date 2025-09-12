@@ -248,15 +248,13 @@ WW3DAssetManager::WW3DAssetManager(void) :
  *=============================================================================================*/
 WW3DAssetManager::~WW3DAssetManager(void)
 {
-	if (MetalManager) delete MetalManager;
+	delete MetalManager;
+
 	Free();
 	TheInstance = NULL;
 
-	// If we need to, free the hash table
-	if (PrototypeHashTable != NULL) {
-		delete [] PrototypeHashTable;
-		PrototypeHashTable = NULL;
-	}
+	delete [] PrototypeHashTable;
+	PrototypeHashTable = NULL;
 }
 
 static void Create_Number_String(StringClass& number, unsigned value)

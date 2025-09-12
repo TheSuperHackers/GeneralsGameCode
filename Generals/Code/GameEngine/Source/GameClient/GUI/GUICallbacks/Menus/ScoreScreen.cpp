@@ -628,8 +628,10 @@ void PlayMovieAndBlock(AsciiString movieTitle)
 		videoBuffer = NULL;
 
 		if ( videoStream )
+		{
 			videoStream->close();
-		videoStream = NULL;
+			videoStream = NULL;
+		}
 
 		return;
 	}
@@ -666,11 +668,10 @@ void PlayMovieAndBlock(AsciiString movieTitle)
 	}
 	TheWritableGlobalData->m_loadScreenRender = FALSE;
 	movieWindow->winGetInstanceData()->setVideoBuffer(NULL);
-	if (videoBuffer)
-	{
-		delete videoBuffer;
-		videoBuffer = NULL;
-	}
+
+	delete videoBuffer;
+	videoBuffer = NULL;
+
 	if (videoStream)
 	{
 		videoStream->close();

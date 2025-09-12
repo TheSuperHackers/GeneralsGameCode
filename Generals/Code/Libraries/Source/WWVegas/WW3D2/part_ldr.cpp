@@ -42,23 +42,12 @@
 #include "texture.h"
 
 #ifndef SAFE_DELETE
-#define SAFE_DELETE(pointer) \
-{ \
-	if (pointer) {	\
-		delete pointer; \
-		pointer = 0; \
-	} \
-}
-#endif //SAFE_DELETE
+#define SAFE_DELETE(pointer) { delete pointer; pointer = NULL; }
+#endif
 
 #ifndef SAFE_DELETE_ARRAY
-#define SAFE_DELETE_ARRAY(pointer)	\
-	if (pointer) {					\
-		delete [] pointer;			\
-		pointer = 0;				\
-	}									\
-
-#endif //SAFE_DELETE
+#define SAFE_DELETE_ARRAY(pointer) { delete [] pointer; pointer = NULL; }
+#endif
 
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -1822,7 +1811,6 @@ ParticleEmitterLoaderClass::Load_W3D (ChunkLoadClass &chunk_load)
 
 			// Error!  Free the definition
 			delete pdefinition;
-			pdefinition = NULL;
 		} else {
 
 			// Success!  Create a prototype from the definition

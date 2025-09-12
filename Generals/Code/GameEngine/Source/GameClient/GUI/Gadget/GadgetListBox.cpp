@@ -1968,10 +1968,8 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 			}
 
 			delete[]( list->listData );
-			if( list->columnWidth	)
-				delete[]( list->columnWidth );
-			if( list->columnWidthPercentage	)
-				delete[]( list->columnWidthPercentage );
+			delete[]( list->columnWidth );
+			delete[]( list->columnWidthPercentage );
 			if( list->multiSelect )
 				delete[]( list->selections );
 
@@ -2459,13 +2457,8 @@ void GadgetListBoxRemoveMultiSelect( GameWindow *listbox )
 {
 	ListboxData *listData = (ListboxData *)listbox->winGetUserData();
 
-	if( listData->selections )
-	{
-
-		delete[]( listData->selections );
-		listData->selections = NULL;
-
-	}
+	delete[]( listData->selections );
+	listData->selections = NULL;
 
 	listData->multiSelect = FALSE;
 
@@ -2556,8 +2549,7 @@ void GadgetListBoxSetListLength( GameWindow *listbox, Int newLength )
 
 	listboxData->listLength = newLength;
 
-	if( listboxData->listData )
-		delete[]( listboxData->listData );
+	delete[]( listboxData->listData );
 	listboxData->listData = newData;
 
 	//reset the total height
