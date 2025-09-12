@@ -669,7 +669,7 @@ void GameClient::update( void )
 					}
 
 					ObjectShroudStatus ss=object->getShroudedStatus(localPlayerIndex);
-					if (ss >= OBJECTSHROUD_FOGGED && draw->getShroudClearFrame()!=0) {
+					if (ss >= OBJECTSHROUD_FOGGED && draw->getShroudClearFrame() != InvalidShroudClearFrame) {
 						UnsignedInt limit = 2*LOGICFRAMES_PER_SECOND;
 						if (object->isEffectivelyDead()) {
 							// extend the time, so we can see the dead plane blow up & crash.

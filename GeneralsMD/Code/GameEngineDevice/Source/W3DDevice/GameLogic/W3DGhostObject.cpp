@@ -343,6 +343,13 @@ void W3DGhostObject::snapShot(int playerIndex)
 	if (draw->isDrawableEffectivelyHidden())
 		return;	//don't bother to snapshot things which nobody can see.
 
+	//After we remove the unfogged object, we also disable
+	//anything that should be hidden inside fog - shadow, particles, etc.
+	draw->setFullyObscuredByShroud(true);
+
+	// TheSuperHackers @bugfix Definitely keep this shrouded from here on until the shroud becomes clear again.
+	draw->setShroudClearFrame(InvalidShroudClearFrame);
+
 	W3DRenderObjectSnapshot *snap = m_parentSnapshots[playerIndex];
 	W3DRenderObjectSnapshot *prevSnap = NULL;
 
@@ -420,6 +427,9 @@ void W3DGhostObject::removeParentObject(void)
 	//After we remove the unfogged object, we also disable
 	//anything that should be hidden inside fog - shadow, particles, etc.
 	draw->setFullyObscuredByShroud(true);
+
+	// TheSuperHackers @bugfix Definitely keep this shrouded from here on until the shroud becomes clear again.
+	draw->setShroudClearFrame(InvalidShroudClearFrame);
 
 	//walk through all W3D render objects used by this object
 	for (DrawModule ** dm = draw->getDrawModules(); *dm; ++dm)
@@ -989,6 +999,12 @@ void W3DGhostObjectManager::setLocalPlayerIndex(int playerIndex)
 		const ObjectShroudStatus shroudStatus = obj->getShroudedStatus(playerIndex);
 		const Bool shrouded = shroudStatus >= OBJECTSHROUD_FOGGED;
 		draw->setFullyObscuredByShroud(shrouded);
+
+		if (shrouded)
+		{
+			// TheSuperHackers @bugfix Definitely keep this shrouded from here on until the shroud becomes clear again.
+			draw->setShroudClearFrame(InvalidShroudClearFrame);
+		}
 	}
 }
 

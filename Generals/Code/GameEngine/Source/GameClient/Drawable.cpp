@@ -362,7 +362,7 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatusBits statu
 	m_timeElapsedFade = 0;
 	m_timeToFade = 0;
 
-	m_shroudClearFrame = 0;
+	m_shroudClearFrame = InvalidShroudClearFrame;
 
 	for (i = 0; i < NUM_DRAWABLE_MODULE_TYPES; ++i)
 		m_modules[i] = NULL;

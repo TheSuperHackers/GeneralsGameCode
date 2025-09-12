@@ -621,7 +621,7 @@ void RTS3DScene::renderOneObject(RenderInfoClass &rinfo, RenderObjClass *robj, I
 			// so the player can see them and missiles chasing them.  jba.
 			if (ss == OBJECTSHROUD_CLEAR) {
 				draw->setShroudClearFrame(TheGameLogic->getFrame());
-			}	else if (ss >= OBJECTSHROUD_FOGGED && draw->getShroudClearFrame()!=0) {
+			}	else if (ss >= OBJECTSHROUD_FOGGED && draw->getShroudClearFrame() != InvalidShroudClearFrame) {
 				UnsignedInt limit = 2*LOGICFRAMES_PER_SECOND;
 				if (obj->isEffectivelyDead()) {
 					limit += 3*LOGICFRAMES_PER_SECOND;
