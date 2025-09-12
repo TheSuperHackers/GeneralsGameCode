@@ -661,28 +661,19 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 		// get object
 		const Object *obj = rObj->friend_getObject();
 
-		// cache hero objects for drawing in icon layer
-		if( calcHero && obj->isHero() )
-		{
-			m_cachedHeroObjectList.push_back(obj);
-		}
-    Bool skip = FALSE;
-
 		// check for shrouded status
 		if (obj->getShroudedStatus(playerIndex) > OBJECTSHROUD_PARTIAL_CLEAR)
-			skip = TRUE;	//object is fogged or shrouded, don't render it.
+			continue;	//object is fogged or shrouded, don't render it.
 
  		//
  		// objects with a local only unit priority will only appear on the radar if they
  		// are controlled by the local player, or if the local player is an observer (cause
 		// they are godlike and can see everything)
  		//
-
-
  		if( obj->getRadarPriority() == RADAR_PRIORITY_LOCAL_UNIT_ONLY &&
- 				obj->getControllingPlayer() != ThePlayerList->getLocalPlayer() &&
-				ThePlayerList->getLocalPlayer()->isPlayerActive() )
- 			skip = TRUE;
+				obj->getControllingPlayer() != player &&
+				player->isPlayerActive() )
+			continue;
 
 		// get object position
 		const Coord3D *pos = obj->getPosition();
@@ -691,10 +682,6 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 		radarPoint.x = pos->x / (m_mapExtent.width() / RADAR_CELL_WIDTH);
 		radarPoint.y = pos->y / (m_mapExtent.height() / RADAR_CELL_HEIGHT);
 
-
-    if ( skip )
-      continue;
-
     // get the color we're going to draw in
 		Color c = rObj->getColor();
 
@@ -702,8 +689,8 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 
 		// adjust the alpha for stealth units so they "fade/blink" on the radar for the controller
 		// if( obj->getRadarPriority() == RADAR_PRIORITY_LOCAL_UNIT_ONLY )
-		// ML-- What the heck is this? local-only and neutral-observier-viewed units are stealthy?? Since when?
-		// Now it twinkles for any stealthed object, whether locally controlled or neutral-observier-viewed
+		// ML-- What the heck is this? local-only and neutral-observer-viewed units are stealthy?? Since when?
+		// Now it twinkles for any stealthed object, whether locally controlled or neutral-observer-viewed
 		if( obj->testStatus( OBJECT_STATUS_STEALTHED ) )
 		{
 			StealthUpdate* stealth = obj->getStealth();
@@ -712,16 +699,13 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 
       if ( TheControlBar->getCurrentlyViewedPlayerRelationship(obj->getTeam()) == ENEMIES )
         if( !obj->testStatus( OBJECT_STATUS_DETECTED ) && !stealth->isDisguised() )
-				  skip = TRUE;
+				  continue;
 
 			UnsignedByte r, g, b, a;
 			GameGetColorComponents( c, &r, &g, &b, &a );
 
 			const UnsignedInt framesForTransition = LOGICFRAMES_PER_SECOND;
 			const UnsignedByte minAlpha = 32;
-
-      if (skip)
-        continue;
 
 			Real alphaScale = INT_TO_REAL(TheGameLogic->getFrame() % framesForTransition) / (framesForTransition / 2.0f);
 			if( alphaScale > 0.0f )
@@ -732,8 +716,11 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 
 		}
 
-
-
+		// cache hero objects for drawing in icon layer
+		if( calcHero && obj->isHero() )
+		{
+			m_cachedHeroObjectList.push_back(obj);
+		}
 
 		// draw the blip, but make sure the points are legal
 		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
