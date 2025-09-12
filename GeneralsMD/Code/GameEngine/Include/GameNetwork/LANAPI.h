@@ -414,6 +414,7 @@ struct LANMessage
 		{
 			char options[m_lanMaxOptionsLength+1];
 		} GameOptions;
+		static_assert(ARRAY_SIZE(GameOptions.options) > m_lanMaxOptionsLength, "GameOptions.options buffer must be larger than m_lanMaxOptionsLength");
 
 	};
 };
