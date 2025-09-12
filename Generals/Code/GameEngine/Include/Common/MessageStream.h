@@ -273,8 +273,10 @@ public:
 		MSG_META_END_CAMERA_ZOOM_OUT,
 		MSG_META_CAMERA_RESET,
 		MSG_META_TOGGLE_FAST_FORWARD_REPLAY,				///< Toggle the fast forward feature
-		MSG_META_TOGGLE_PAUSE,											///< TheSuperHackers @feature Toggle game pause (in replay playbacks)
-		MSG_META_STEP_FRAME,												///< TheSuperHackers @feature Step one frame (in replay playbacks)
+		MSG_META_TOGGLE_PAUSE,											///< TheSuperHackers @feature Toggle game pause
+		MSG_META_TOGGLE_PAUSE_ALT,									///< TheSuperHackers @feature Toggle game pause (alternative mapping)
+		MSG_META_STEP_FRAME,												///< TheSuperHackers @feature Step one frame
+		MSG_META_STEP_FRAME_ALT,										///< TheSuperHackers @feature Step one frame (alternative mapping)
 
 
 		// META items that are really for debug/demo/development use only...
