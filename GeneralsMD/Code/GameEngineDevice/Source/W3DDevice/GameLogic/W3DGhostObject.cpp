@@ -981,12 +981,14 @@ void W3DGhostObjectManager::updateOrphanedObjects(int *playerIndexList, int play
 
 			if (playerIndexList != NULL && playerIndexCount > 0)
 			{
-				for (int i=0; i<playerIndexCount; i++, playerIndexList++)
+				int* playerIndex = playerIndexList;
+				int* const playerIndexEnd = playerIndexList + playerIndexCount;
+				for (; playerIndex < playerIndexEnd; ++playerIndex)
 				{
-					if (mod->m_parentSnapshots[*playerIndexList])
-						mod->getShroudStatus(*playerIndexList);
+					if (mod->m_parentSnapshots[*playerIndex])
+						mod->getShroudStatus(*playerIndex);
 
-					if (mod->m_parentSnapshots[*playerIndexList])
+					if (mod->m_parentSnapshots[*playerIndex])
 						numStoredSnapshots++;
 				}
 			}
