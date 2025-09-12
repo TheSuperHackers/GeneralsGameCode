@@ -642,26 +642,28 @@ void GameClient::update( void )
 
 	if (!freezeTime)
 	{
+#ifdef DEBUG_FOG_MEMORY
+		Int numPlayers = ThePlayerList->getPlayerCount();
+		Int numNonLocalPlayers = 0;
+		Int nonLocalPlayerIndices[MAX_PLAYER_COUNT];
+#endif
+
 #if ENABLE_CONFIGURABLE_SHROUD
 		if (TheGlobalData->m_shroudOn)
 #else
 		if (true)
 #endif
 		{
-			//localPlayerIndex=TheGhostObjectManager->getLocalPlayerIndex();	//always use the first local player set since normally can't change.  Doesn't work with debug "CTRL_SHIFT_SPACE"
 #ifdef DEBUG_FOG_MEMORY
 			//Find indices of all active players
-			Int numPlayers=ThePlayerList->getPlayerCount();
-			Int numNonLocalPlayers=0;
-			Int nonLocalPlayerIndices[MAX_PLAYER_COUNT];
-			for (Int i=0; i<numPlayers; i++)
-			{	Player *player=ThePlayerList->getNthPlayer(i);
-				//if (player->getPlayerType == PLAYER_HUMAN)
-				if (player->getPlayerIndex() != localPlayerIndex)
-					nonLocalPlayerIndices[numNonLocalPlayers++]=player->getPlayerIndex();
+			for (Int i=0; i < numPlayers; i++)
+			{
+				Player *player = ThePlayerList->getNthPlayer(i);
+				if (player->getPlayerTemplate() != NULL && player->getPlayerIndex() != localPlayerIndex)
+					nonLocalPlayerIndices[numNonLocalPlayers++] = player->getPlayerIndex();
 			}
-			//update ghostObjects which don't have drawables or objects.
-			TheGhostObjectManager->updateOrphanedObjects(nonLocalPlayerIndices,numNonLocalPlayers);
+			//update ghost objects which don't have drawables or objects.
+			TheGhostObjectManager->updateOrphanedObjects(nonLocalPlayerIndices, numNonLocalPlayers);
 #else
 			TheGhostObjectManager->updateOrphanedObjects(NULL,0);
 #endif
@@ -678,7 +680,8 @@ void GameClient::update( void )
 #else
 			if (true)
 #endif
-			{	//immobile objects need to take snapshots whenever they become fogged
+			{
+				//immobile objects need to take snapshots whenever they become fogged
 				//so need to refresh their status.  We can't rely on external calls
 				//to getShroudStatus() because they are only made for visible on-screen
 				//objects.
@@ -686,9 +689,12 @@ void GameClient::update( void )
 				if (object)
 				{
 	#ifdef DEBUG_FOG_MEMORY
-					Int *playerIndex=nonLocalPlayerIndices;
-					for (i=0; i<numNonLocalPlayers; i++, playerIndex++)
+					Int *playerIndex = nonLocalPlayerIndices;
+					Int *const playerIndexEnd = nonLocalPlayerIndices + numNonLocalPlayers;
+					for (; playerIndex < playerIndexEnd; ++playerIndex)
+					{
 						object->getShroudedStatus(*playerIndex);
+					}
 	#endif
 					ObjectShroudStatus ss=object->getShroudedStatus(localPlayerIndex);
 					if (ss >= OBJECTSHROUD_FOGGED && draw->getShroudClearFrame()!=0) {
