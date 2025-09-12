@@ -1561,20 +1561,7 @@ Shadow* W3DProjectedShadowManager::addDecal(Shadow::ShadowTypeInfo *shadowInfo)
 		m_decalList = shadow;
 	}
 
-	switch (shadow->m_type)
-	{
-		case SHADOW_DECAL:
-		case SHADOW_ALPHA_DECAL:
-		case SHADOW_ADDITIVE_DECAL:
-			m_numDecalShadows++;
-			break;
-		case SHADOW_PROJECTION:
-			m_numProjectionShadows++;
-			break;
-		default:
-			break;
-	}
-
+	updateShadowNumbers(shadow->m_type, +1);
 	return shadow;
 }
 
@@ -1698,20 +1685,7 @@ Shadow* W3DProjectedShadowManager::addDecal(RenderObjClass *robj, Shadow::Shadow
 		m_decalList = shadow;
 	}
 
-	switch (shadow->m_type)
-	{
-		case SHADOW_DECAL:
-		case SHADOW_ALPHA_DECAL:
-		case SHADOW_ADDITIVE_DECAL:
-			m_numDecalShadows++;
-			break;
-		case SHADOW_PROJECTION:
-			m_numProjectionShadows++;
-			break;
-		default:
-			break;
-	}
-
+	updateShadowNumbers(shadow->m_type, +1);
 	return shadow;
 }
 
@@ -1897,18 +1871,7 @@ W3DProjectedShadow* W3DProjectedShadowManager::addShadow(RenderObjClass *robj, S
 		m_shadowList = shadow;
 	}
 
-	switch (shadow->m_type)
-	{
-		case SHADOW_DECAL:
-			m_numDecalShadows++;
-			break;
-		case SHADOW_PROJECTION:
-			m_numProjectionShadows++;
-			break;
-		default:
-			break;
-	}
-
+	updateShadowNumbers(shadow->m_type, +1);
 	return shadow;
 }
 
@@ -2028,17 +1991,8 @@ void W3DProjectedShadowManager::removeShadow (W3DProjectedShadow *shadow)
 					prev_shadow->m_next=shadow->m_next;
 				else
 					m_decalList=shadow->m_next;
-				switch (shadow->m_type)
-				{
-					case SHADOW_DECAL:
-						m_numDecalShadows--;
-						break;
-					case SHADOW_PROJECTION:
-						m_numProjectionShadows--;
-						break;
-					default:
-						break;
-				}
+
+				updateShadowNumbers(shadow->m_type, -1);
 				delete shadow;
 				return;
 			}
@@ -2054,17 +2008,8 @@ void W3DProjectedShadowManager::removeShadow (W3DProjectedShadow *shadow)
 				prev_shadow->m_next=shadow->m_next;
 			else
 				m_shadowList=shadow->m_next;
-			switch (shadow->m_type)
-			{
-				case SHADOW_DECAL:
-					m_numDecalShadows--;
-					break;
-				case SHADOW_PROJECTION:
-					m_numProjectionShadows--;
-					break;
-				default:
-					break;
-			}
+
+			updateShadowNumbers(shadow->m_type, -1);
 			delete shadow;
 			return;
 		}
@@ -2096,6 +2041,23 @@ void W3DProjectedShadowManager::removeAllShadows(void)
 		next_shadow = cur_shadow->m_next;
 		cur_shadow->m_next = NULL;
 		delete cur_shadow;
+	}
+}
+
+void W3DProjectedShadowManager::updateShadowNumbers(ShadowType shadowType, Int addNum)
+{
+	switch (shadowType)
+	{
+		case SHADOW_DECAL:
+		case SHADOW_ALPHA_DECAL:
+		case SHADOW_ADDITIVE_DECAL:
+			m_numDecalShadows += addNum;
+			break;
+		case SHADOW_PROJECTION:
+			m_numProjectionShadows += addNum;
+			break;
+		default:
+			break;
 	}
 }
 

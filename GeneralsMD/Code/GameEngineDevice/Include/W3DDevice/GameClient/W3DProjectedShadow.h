@@ -76,6 +76,10 @@ class W3DProjectedShadowManager	: public ProjectedShadowManager
 		void flushDecals(W3DShadowTexture *texture, ShadowType type);	///<empty queue by rendering all decals with given texture
 
 	private:
+		Int renderProjectedTerrainShadow(W3DProjectedShadow *shadow, AABoxClass &box);	///<render shadow on map terrain.
+		void updateShadowNumbers(ShadowType shadowType, Int addNum);
+
+	private:
 		W3DProjectedShadow *m_shadowList;
 		W3DProjectedShadow *m_decalList;
 		TextureClass	*m_dynamicRenderTarget;	///<offscreen video memory texture used to render all shadow textures.
@@ -86,7 +90,6 @@ class W3DProjectedShadowManager	: public ProjectedShadowManager
 		W3DShadowTextureManager *m_W3DShadowTextureManager;
 		Int m_numDecalShadows;							///< number of decal shadows in the system.
 		Int m_numProjectionShadows;						///< number of projected shadows in the system.
-		Int renderProjectedTerrainShadow(W3DProjectedShadow *shadow, AABoxClass &box);	///<render shadow on map terrain.
 };
 
 extern W3DProjectedShadowManager *TheW3DProjectedShadowManager;
