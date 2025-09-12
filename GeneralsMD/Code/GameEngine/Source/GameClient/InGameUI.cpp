@@ -5729,10 +5729,10 @@ void InGameUI::updateIdleWorker( void )
 {
 	Int idleCount = getIdleWorkerCount();
 
-	if(idleCount > 0 && m_currentIdleWorkerDisplay != idleCount && getInputEnabled())
+	if(idleCount > 0 && m_currentIdleWorkerDisplay != idleCount)
 		showIdleWorkerLayout();
 
-	if((idleCount <= 0 && m_idleWorkerWin) || !getInputEnabled())
+	if(idleCount <= 0 && m_idleWorkerWin)
 		hideIdleWorkerLayout();
 }
 
