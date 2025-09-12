@@ -801,7 +801,7 @@ void CPUDetectClass::Init_Processor_String()
 			case INTEL_PROCESSOR_PENTIUM4:						str+="Pentium4"; break;
 			}
 		}
-		strncpy(ProcessorString,str.str(),sizeof(ProcessorString));
+		strlcpy(ProcessorString,str.str(),sizeof(ProcessorString));
 	}
 
 }

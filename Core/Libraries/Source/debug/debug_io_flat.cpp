@@ -27,6 +27,7 @@
 // Debug I/O class flat (flat or split log file)
 //////////////////////////////////////////////////////////////////////////////
 #include "_pch.h"
+#include "stringex.h"
 #include <stdlib.h>
 #include <new>      // needed for placement new prototype
 
@@ -209,7 +210,7 @@ void DebugIOFlat::ExpandMagic(const char *src, const char *splitName, char *buf)
       const char *p=strrchr(src,'.');
       if (!p)
         p=src+strlen(src);
-      strncpy(buf,src,p-src);
+      strlcpy(buf,src,p-src);
       buf[p-src]='-';
       strcpy(buf+(p-src)+1,splitName);
       strcat(buf,p);
@@ -428,8 +429,7 @@ void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
     // copy <directory>
     if (argn)
     {
-      strncpy(m_copyDir,argv[0],sizeof(m_copyDir)-1);
-      m_copyDir[sizeof(m_copyDir)-1]=0;
+      strlcpy(m_copyDir,argv[0],sizeof(m_copyDir));
     }
   }
   else if (!strcmp(cmd,"splitadd"))
@@ -460,11 +460,8 @@ void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
       if (!cur->stringTypes)
         cur->stringTypes=0xffffffff;
 
-      strncpy(cur->items,argv[1],sizeof(cur->items)-1);
-      cur->items[sizeof(cur->items)-1]=0;
-
-      strncpy(cur->name,argv[2],sizeof(cur->name)-1);
-      cur->name[sizeof(cur->name)-1]=0;
+      strlcpy(cur->items,argv[1],sizeof(cur->items));
+      strlcpy(cur->name,argv[2],sizeof(cur->name));
 
       // create our filename, search for stream with same filename
       char fn[256];
