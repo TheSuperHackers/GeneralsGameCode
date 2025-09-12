@@ -34,6 +34,7 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Radar.h"
@@ -432,7 +433,7 @@ void StealthUpdate::hintDetectableWhileUnstealthed()
 
 	if( self && md->m_hintDetectableStates.testForAny( self->getStatusBits() ) )
 	{
-		if ( self->getControllingPlayer() == ThePlayerList->getLocalPlayer() )
+		if ( self->getControllingPlayer() == rts::getObservedOrLocalPlayer() )
 		{
 			Drawable *selfDraw = self->getDrawable();
 			if ( selfDraw )
@@ -831,7 +832,7 @@ UpdateSleepTime StealthUpdate::update( void )
 
 	if (draw)
 	{
-		StealthLookType stealthLook = calcStealthedStatusForPlayer( self, ThePlayerList->getLocalPlayer() );
+		StealthLookType stealthLook = calcStealthedStatusForPlayer( self, rts::getObservedOrLocalPlayer() );
 		draw->setStealthLook( stealthLook );
 	}
 

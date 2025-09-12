@@ -35,6 +35,7 @@
 #include "Common/ActionManager.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
@@ -600,7 +601,8 @@ void GameClient::update( void )
 	}
 
 	const Bool freezeTime = TheGameEngine->isTimeFrozen() || TheGameEngine->isGameHalted();
-	Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
+
+	const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
 
 	if (!freezeTime)
 	{
@@ -767,6 +769,13 @@ void GameClient::iterateDrawablesInRegion( Region3D *region, GameClientFuncPtr u
 			(*userFunc)( draw, userData );
 		}
 	}
+}
+
+/**Helper function to update fake GLA structures to become visible to certain players.
+We should only call this during critical moments, such as changing teams, changing to
+observer, etc.*/
+void GameClient::updateFakeDrawables(void)
+{
 }
 
 /** -----------------------------------------------------------------------------------------------

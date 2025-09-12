@@ -20,9 +20,15 @@
 
 // For miscellaneous game utility functions.
 
+class Player;
+
 namespace rts
 {
 
 Bool localPlayerIsObserving();
+Player* getObservedOrLocalPlayer(); ///< Get the current observed or local player. Is never null.
+
+void changeLocalPlayer(Player* player); //< Change local player during game
+void changeObservedPlayer(Player* player); ///< Change observed player during game
 
 } // namespace rts

@@ -36,6 +36,7 @@
 #include "Common/GameAudio.h"
 #include "Common/GameEngine.h"
 #include "Common/GameType.h"
+#include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/MessageStream.h"
 #include "Common/MiscAudio.h"
@@ -3724,14 +3725,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 				} while (ThePlayerList->getNthPlayer(idx) == ThePlayerList->getNeutralPlayer());
 
-				ThePlayerList->setLocalPlayer(ThePlayerList->getNthPlayer(idx));
-				TheInGameUI->deselectAllDrawables();
-#ifdef DEBUG_FOG_MEMORY
-				TheGhostObjectManager->setLocalPlayerIndex(idx);
-#endif
-				ThePartitionManager->refreshShroudForLocalPlayer();
-				TheControlBar->initSpecialPowershortcutBar(ThePlayerList->getLocalPlayer());
-				TheControlBar->setControlBarSchemeByPlayer(ThePlayerList->getLocalPlayer());
+				Player* player = ThePlayerList->getNthPlayer(idx);
+				rts::changeLocalPlayer(player);
 			}
 			disp = DESTROY_MESSAGE;
 			break;
@@ -3752,11 +3747,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 					Player *pt = ThePlayerList->getNthPlayer(i);
 					if(pt->getSide().compareNoCase("China") == 0)
 					{
-						ThePlayerList->setLocalPlayer(pt);
-						TheInGameUI->deselectAllDrawables();
-						ThePartitionManager->refreshShroudForLocalPlayer();
-						TheControlBar->setControlBarSchemeByPlayer(ThePlayerList->getLocalPlayer());
-
+						rts::changeLocalPlayer(pt);
 						break;
 					}
 				}
@@ -3769,10 +3760,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 					Player *pt = ThePlayerList->getNthPlayer(i);
 					if(pt->getSide().compareNoCase("America") == 0)
 					{
-						ThePlayerList->setLocalPlayer(pt);
-						TheInGameUI->deselectAllDrawables();
-						ThePartitionManager->refreshShroudForLocalPlayer();
-						TheControlBar->setControlBarSchemeByPlayer(ThePlayerList->getLocalPlayer());
+						rts::changeLocalPlayer(pt);
 						break;
 					}
 				}

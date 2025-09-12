@@ -33,6 +33,7 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameAudio.h"
+#include "Common/GameUtility.h"
 #include "Common/ThingTemplate.h"
 #include "Common/ThingFactory.h"
 #include "Common/Player.h"
@@ -45,7 +46,6 @@
 #include "GameClient/Drawable.h"
 #include "GameClient/ParticleSys.h"
 #include "GameClient/FXList.h"
-#include "GameClient/ParticleSys.h"
 
 #include "GameLogic/Locomotor.h"
 #include "GameLogic/GameLogic.h"
@@ -642,7 +642,7 @@ UpdateSleepTime SpectreGunshipUpdate::update()
             }
 
 
-			const Player *localPlayer = ThePlayerList->getLocalPlayer();
+			const Player *localPlayer = rts::getObservedOrLocalPlayer();
 
 			//Make sure the gunship is visible to the player before drawing effects.
 			if ( gunship->getShroudedStatus( localPlayer->getPlayerIndex() ) <= OBJECTSHROUD_PARTIAL_CLEAR )

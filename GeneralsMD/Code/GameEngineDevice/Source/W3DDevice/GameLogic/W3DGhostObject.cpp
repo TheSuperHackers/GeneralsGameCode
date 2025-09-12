@@ -734,7 +734,7 @@ void W3DGhostObject::xfer( Xfer *xfer )
 	// in the world, we need to remove it
 	//
 	if( m_parentObject &&
-			m_parentSnapshots[ ThePlayerList->getLocalPlayer()->getPlayerIndex() ] != NULL &&
+			m_parentSnapshots[TheGhostObjectManager->getLocalPlayerIndex()] != NULL &&
 			xfer->getXferMode() == XFER_LOAD )
 		removeParentObject();
 

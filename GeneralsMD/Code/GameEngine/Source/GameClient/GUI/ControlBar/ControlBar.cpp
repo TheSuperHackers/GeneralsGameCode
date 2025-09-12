@@ -160,8 +160,8 @@ void ControlBar::markUIDirty( void )
 
 Player* ControlBar::getCurrentlyViewedPlayer()
 {
-	if (TheControlBar->isObserverControlBarOn())
-		return TheControlBar->getObserverLookAtPlayer();
+	if (isObserverControlBarOn())
+		return getObserverLookAtPlayer();
 
 	return ThePlayerList->getLocalPlayer();
 }
@@ -888,6 +888,7 @@ ControlBar::ControlBar( void )
 	m_controlBarSchemeManager = NULL;
 	m_isObserverCommandBar = FALSE;
 	m_observerLookAtPlayer = NULL;
+	m_observedPlayer = NULL;
 	m_buildToolTipLayout = NULL;
 	m_showBuildToolTipLayout = FALSE;
 
@@ -1323,6 +1324,7 @@ void ControlBar::reset( void )
 
 	m_isObserverCommandBar = FALSE; // reset us to use a normal command bar
 	m_observerLookAtPlayer = NULL;
+	m_observedPlayer = NULL;
 
 	if(m_buildToolTipLayout)
 		m_buildToolTipLayout->hide(TRUE);

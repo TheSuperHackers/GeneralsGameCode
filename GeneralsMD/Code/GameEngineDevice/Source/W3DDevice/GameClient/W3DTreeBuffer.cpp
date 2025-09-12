@@ -61,6 +61,7 @@ enum
 #include <assetmgr.h>
 #include <texture.h>
 #include "Common/FramePacer.h"
+#include "Common/GameUtility.h"
 #include "Common/MapReaderWriterInfo.h"
 #include "Common/FileSystem.h"
 #include "Common/file.h"
@@ -1848,7 +1849,7 @@ void W3DTreeBuffer::updateTopplingTree(TTree *tree, Real timeScale)
 		return;
 
 	const W3DTreeDrawModuleData* d = m_treeTypes[tree->treeType].m_data;
-	Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
+	const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
 	Coord3D pos;
 	pos.set(tree->location.X, tree->location.Y, tree->location.Z);
 	ObjectShroudStatus ss = ThePartitionManager->getPropShroudStatusForPlayer(localPlayerIndex, &pos);

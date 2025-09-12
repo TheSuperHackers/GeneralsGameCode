@@ -40,6 +40,7 @@
 #include "Common/GameAudio.h"
 #include "Common/GameLOD.h"
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/ModuleFactory.h"
 #include "Common/PerfTimer.h"
@@ -4162,7 +4163,7 @@ void Drawable::friend_bindToObject( Object *obj ) ///< bind this drawable to an 
 
 		if (getObject()->isKindOf(KINDOF_FS_FAKE))
 		{
-			Relationship rel=ThePlayerList->getLocalPlayer()->getRelationship(getObject()->getTeam());
+			Relationship rel = rts::getObservedOrLocalPlayer()->getRelationship(getObject()->getTeam());
 			if (rel == ALLIES || rel == NEUTRAL)
 				setTerrainDecal(TERRAIN_DECAL_SHADOW_TEXTURE);
 			else
@@ -4200,7 +4201,7 @@ void Drawable::changedTeam()
 
 		if (object->isKindOf(KINDOF_FS_FAKE))
 		{
-			Relationship rel=ThePlayerList->getLocalPlayer()->getRelationship(object->getTeam());
+			Relationship rel = rts::getObservedOrLocalPlayer()->getRelationship(object->getTeam());
 			if (rel == ALLIES || rel == NEUTRAL)
 				setTerrainDecal(TERRAIN_DECAL_SHADOW_TEXTURE);
 			else

@@ -32,6 +32,7 @@
 #include "Common/AudioEventRTS.h"
 #include "Common/Debug.h"
 #include "Common/GlobalData.h"
+#include "Common/GameUtility.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 
@@ -628,10 +629,8 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 	// loop through all objects and draw
 	ICoord2D radarPoint;
 
-	Player *player = ThePlayerList->getLocalPlayer();
-	Int playerIndex=0;
-	if (player)
-		playerIndex=player->getPlayerIndex();
+	Player *player = rts::getObservedOrLocalPlayer();
+	const Int playerIndex = player->getPlayerIndex();
 
 	if( calcHero )
 	{
@@ -1399,7 +1398,7 @@ void W3DRadar::draw( Int pixelX, Int pixelY, Int width, Int height )
 {
 
 	// if the local player does not have a radar then we can't draw anything
-	Player *player = ThePlayerList->getLocalPlayer();
+	Player *player = rts::getObservedOrLocalPlayer();
 	if( !player->hasRadar() && !TheRadar->isRadarForced() )
 		return;
 
@@ -1523,10 +1522,8 @@ void W3DRadar::refreshTerrain( TerrainLogic *terrain )
 	// loop through all objects and draw
 	ICoord2D radarPoint;
 
-	Player *player = ThePlayerList->getLocalPlayer();
-	Int playerIndex=0;
-	if (player)
-		playerIndex=player->getPlayerIndex();
+	Player *player = rts::getObservedOrLocalPlayer();
+	const Int playerIndex = player->getPlayerIndex();
 
 	UnsignedByte minAlpha = 8;
 
@@ -1557,8 +1554,8 @@ void W3DRadar::refreshTerrain( TerrainLogic *terrain )
 		// they are godlike and can see everything)
  		//
  		if( obj->getRadarPriority() == RADAR_PRIORITY_LOCAL_UNIT_ONLY &&
- 				obj->getControllingPlayer() != ThePlayerList->getLocalPlayer() &&
-				ThePlayerList->getLocalPlayer()->isPlayerActive() )
+				obj->getControllingPlayer() != player &&
+				player->isPlayerActive() )
  			continue;
 
     UnsignedByte g = c|a;

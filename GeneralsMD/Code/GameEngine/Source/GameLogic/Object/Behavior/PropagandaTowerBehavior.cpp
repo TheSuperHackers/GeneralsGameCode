@@ -30,6 +30,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Upgrade.h"
@@ -435,7 +436,7 @@ void PropagandaTowerBehavior::doScan( void )
   Object *overlord = us->getContainedBy();
   if ( overlord )
   {
-	  if ( us->getControllingPlayer() != ThePlayerList->getLocalPlayer() )// daling with someone else's tower
+	  if ( us->getControllingPlayer() != rts::getObservedOrLocalPlayer() )// dealing with someone else's tower
     {
       if ( overlord->testStatus( OBJECT_STATUS_STEALTHED ) && !overlord->testStatus( OBJECT_STATUS_DETECTED ) )
         doFX = FALSE;// so they don't give up their position
@@ -461,11 +462,11 @@ void PropagandaTowerBehavior::doScan( void )
 
   }
 
-	if ( us->getControllingPlayer() != ThePlayerList->getLocalPlayer() )// daling with someone else's tower
+	if ( us->getControllingPlayer() != rts::getObservedOrLocalPlayer() )// dealing with someone else's tower
 	{
 		if ( us->testStatus( OBJECT_STATUS_STEALTHED ) && !us->testStatus( OBJECT_STATUS_DETECTED ) )
 		{
-			doFX = FALSE;// Certainly don't play if we ourselves are stelthed.
+			doFX = FALSE;// Certainly don't play if we ourselves are stealthed.
 		}
 	}
 
