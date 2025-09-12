@@ -360,7 +360,9 @@ void W3DGhostObject::snapShot(int playerIndex)
 						m_parentSnapshots[playerIndex] = snap;
 				}
 				else
-					m_parentSnapshots[playerIndex]->update(robj, &m_drawableInfo);
+				{
+					snap->update(robj, &m_drawableInfo);
+				}
 
 				//Adding and removing render objects to the scene is expensive
 				//so only do it for the real player watching the screen.  There is
