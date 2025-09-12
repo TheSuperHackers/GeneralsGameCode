@@ -89,6 +89,7 @@ public:
 	virtual void restorePartitionData(void);	///<restores ghost objects into the partition manager.
 	inline void lockGhostObjects(Bool enableLock) {m_lockGhostObjects=enableLock;}	///<temporary lock on creating new ghost objects. Only used by map border resizing!
 	inline void saveLockGhostObjects(Bool enableLock) {m_saveLockGhostObjects=enableLock;}
+	inline Bool trackAllPlayers() const; ///< returns whether the ghost object status is tracked for all players or for the local player only
 
 protected:
 	virtual void crc( Xfer *xfer );
@@ -98,7 +99,17 @@ protected:
 	Int m_localPlayer;
 	Bool m_lockGhostObjects;
 	Bool m_saveLockGhostObjects;	///< used to lock the ghost object system during a save/load
+	Bool m_trackAllPlayers; ///< if enabled, tracks ghost object status for all players, otherwise for the local player only
 };
+
+inline Bool GhostObjectManager::trackAllPlayers() const
+{
+#ifdef DEBUG_FOG_MEMORY
+	return true;
+#else
+	return m_trackAllPlayers;
+#endif
+}
 
 // the singleton
 extern GhostObjectManager *TheGhostObjectManager;

@@ -133,6 +133,7 @@ GhostObjectManager::GhostObjectManager(void)
 {
 	m_lockGhostObjects = FALSE;
 	m_saveLockGhostObjects = FALSE;
+	m_trackAllPlayers = TheGlobalData->m_enablePlayerObserver;
 	m_localPlayer = 0;
 }
 
@@ -146,6 +147,7 @@ GhostObjectManager::~GhostObjectManager()
 // ------------------------------------------------------------------------------------------------
 void GhostObjectManager::reset(void)
 {
+	m_trackAllPlayers = TheGlobalData->m_enablePlayerObserver;
 }
 
 // ------------------------------------------------------------------------------------------------

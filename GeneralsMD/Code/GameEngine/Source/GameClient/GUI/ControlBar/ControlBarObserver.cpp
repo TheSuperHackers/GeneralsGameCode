@@ -196,15 +196,8 @@ WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt m
 			Int controlID = control->winGetWindowId();
 			if( controlID == buttonCancelID)
 			{
-				if (TheGlobalData->m_enablePlayerObserver || TheControlBar->getObservedPlayer() != NULL)
-				{
-					Player* observerPlayer = ThePlayerList->findPlayerWithNameKey(s_replayObserverNameKey);
-					rts::changeObservedPlayer(observerPlayer);
-				}
-				else
-				{
-					TheControlBar->setObserverLookAtPlayer(NULL);
-				}
+				Player* observerPlayer = ThePlayerList->findPlayerWithNameKey(s_replayObserverNameKey);
+				rts::changeObservedPlayer(observerPlayer);
 
 				ObserverPlayerInfoWindow->winHide(TRUE);
 				ObserverPlayerListWindow->winHide(FALSE);
@@ -216,18 +209,11 @@ WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt m
 			{
 				if( controlID == buttonPlayerID[i])
 				{
+					Player* player = reinterpret_cast<Player*>(GadgetButtonGetData(buttonPlayer[i]));
+					rts::changeObservedPlayer(player);
+
 					ObserverPlayerInfoWindow->winHide(FALSE);
 					ObserverPlayerListWindow->winHide(TRUE);
-					Player* player = reinterpret_cast<Player*>(GadgetButtonGetData(buttonPlayer[i]));
-
-					if (TheGlobalData->m_enablePlayerObserver)
-					{
-						rts::changeObservedPlayer(player);
-					}
-					else
-					{
-						TheControlBar->setObserverLookAtPlayer(player);
-					}
 
 					if(TheControlBar->getObserverLookAtPlayer())
 						TheControlBar->populateObserverInfoWindow();

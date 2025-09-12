@@ -644,11 +644,9 @@ void GameClient::update( void )
 
 	if (!freezeTime)
 	{
-#ifdef DEBUG_FOG_MEMORY
 		Int numPlayers = ThePlayerList->getPlayerCount();
 		Int numNonLocalPlayers = 0;
 		Int nonLocalPlayerIndices[MAX_PLAYER_COUNT];
-#endif
 
 #if ENABLE_CONFIGURABLE_SHROUD
 		if (TheGlobalData->m_shroudOn)
@@ -656,19 +654,22 @@ void GameClient::update( void )
 		if (true)
 #endif
 		{
-#ifdef DEBUG_FOG_MEMORY
-			//Find indices of all active players
-			for (Int i=0; i < numPlayers; i++)
+			if (TheGhostObjectManager->trackAllPlayers())
 			{
-				Player *player = ThePlayerList->getNthPlayer(i);
-				if (player->getPlayerTemplate() != NULL && player->getPlayerIndex() != localPlayerIndex)
-					nonLocalPlayerIndices[numNonLocalPlayers++] = player->getPlayerIndex();
+				//Find indices of all active players
+				for (Int i=0; i < numPlayers; i++)
+				{
+					Player *player = ThePlayerList->getNthPlayer(i);
+					if (player->getPlayerTemplate() != NULL && player->getPlayerIndex() != localPlayerIndex)
+						nonLocalPlayerIndices[numNonLocalPlayers++] = player->getPlayerIndex();
+				}
+				//update ghost objects which don't have drawables or objects.
+				TheGhostObjectManager->updateOrphanedObjects(nonLocalPlayerIndices, numNonLocalPlayers);
 			}
-			//update ghost objects which don't have drawables or objects.
-			TheGhostObjectManager->updateOrphanedObjects(nonLocalPlayerIndices, numNonLocalPlayers);
-#else
-			TheGhostObjectManager->updateOrphanedObjects(NULL,0);
-#endif
+			else
+			{
+				TheGhostObjectManager->updateOrphanedObjects(NULL, 0);
+			}
 		}
 
 
@@ -690,14 +691,16 @@ void GameClient::update( void )
 				Object *object=draw->getObject();
 				if (object)
 				{
-	#ifdef DEBUG_FOG_MEMORY
-					Int *playerIndex = nonLocalPlayerIndices;
-					Int *const playerIndexEnd = nonLocalPlayerIndices + numNonLocalPlayers;
-					for (; playerIndex < playerIndexEnd; ++playerIndex)
+					if (TheGhostObjectManager->trackAllPlayers())
 					{
-						object->getShroudedStatus(*playerIndex);
+						Int *playerIndex = nonLocalPlayerIndices;
+						Int *const playerIndexEnd = nonLocalPlayerIndices + numNonLocalPlayers;
+						for (; playerIndex < playerIndexEnd; ++playerIndex)
+						{
+							object->getShroudedStatus(*playerIndex);
+						}
 					}
-	#endif
+
 					ObjectShroudStatus ss=object->getShroudedStatus(localPlayerIndex);
 					if (ss >= OBJECTSHROUD_FOGGED && draw->getShroudClearFrame()!=0) {
 						UnsignedInt limit = 2*LOGICFRAMES_PER_SECOND;
