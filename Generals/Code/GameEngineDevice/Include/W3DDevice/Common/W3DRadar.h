@@ -72,6 +72,7 @@ public:
 	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting);
 
 	virtual void refreshTerrain( TerrainLogic *terrain );
+	virtual void refreshObjects();
 
 protected:
 
@@ -85,6 +86,7 @@ protected:
 	void drawViewBox( Int pixelX, Int pixelY, Int width, Int height );  ///< draw view box
 	void buildTerrainTexture( TerrainLogic *terrain );	 ///< create the terrain texture of the radar
 	void drawIcons( Int pixelX, Int pixelY, Int width, Int height );	///< draw all of the radar icons
+	void updateObjectTexture(TextureClass *texture);
 	void renderObjectList( const RadarObject *listHead, TextureClass *texture, Bool calcHero = FALSE );			 ///< render an object list to the texture
 	void interpolateColorForHeight( RGBColor *color,
 																	Real height,

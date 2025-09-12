@@ -215,6 +215,9 @@ public:
 	/// refresh the water values for the radar
 	virtual void refreshTerrain( TerrainLogic *terrain );
 
+	/// refresh the radar when the state of world objects changes drastically
+	virtual void refreshObjects() {};
+
 	/// queue a refresh of the terran at the next available time
 	virtual void queueTerrainRefresh( void );
 

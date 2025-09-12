@@ -614,6 +614,20 @@ void W3DRadar::drawIcons( Int pixelX, Int pixelY, Int width, Int height )
 }
 
 //-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void W3DRadar::updateObjectTexture(TextureClass *texture)
+{
+	// reset the overlay texture
+	SurfaceClass *surface = texture->Get_Surface_Level();
+	surface->Clear();
+	REF_PTR_RELEASE(surface);
+
+	// rebuild the object overlay
+	renderObjectList( getObjectList(), texture );
+	renderObjectList( getLocalObjectList(), texture, TRUE );
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Render an object list into the texture passed in */
 //-------------------------------------------------------------------------------------------------
 void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *texture, Bool calcHero )
@@ -1443,16 +1457,7 @@ void W3DRadar::draw( Int pixelX, Int pixelY, Int width, Int height )
 	// refresh the overlay texture once every so many frames
 	if( TheGameClient->getFrame() % OVERLAY_REFRESH_RATE == 0 )
 	{
-
-		// reset the overlay texture
-		SurfaceClass *surface = m_overlayTexture->Get_Surface_Level();
-		surface->Clear();
-		REF_PTR_RELEASE(surface);
-
-		// rebuild the object overlay
-		renderObjectList( getObjectList(), m_overlayTexture );
-		renderObjectList( getLocalObjectList(), m_overlayTexture, TRUE );
-
+		updateObjectTexture(m_overlayTexture);
 	}
 
 	// draw the overlay image
@@ -1501,6 +1506,18 @@ void W3DRadar::refreshTerrain( TerrainLogic *terrain )
 
 }
 
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void W3DRadar::refreshObjects()
+{
+	if constexpr (OVERLAY_REFRESH_RATE > 1)
+	{
+		if (m_overlayTexture != NULL)
+		{
+			updateObjectTexture(m_overlayTexture);
+		}
+	}
+}
 
 
 
