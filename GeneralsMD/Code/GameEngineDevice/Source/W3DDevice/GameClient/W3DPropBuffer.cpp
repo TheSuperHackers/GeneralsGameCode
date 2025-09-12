@@ -50,6 +50,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assetmgr.h>
+#include "Common/GameUtility.h"
 #include "Common/Geometry.h"
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
@@ -364,7 +365,7 @@ void W3DPropBuffer::drawProps(RenderInfoClass &rinfo)
 			m_props[i].ss = OBJECTSHROUD_CLEAR;
 		}
 		if (m_props[i].ss == OBJECTSHROUD_INVALID) {
-			Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
+			const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
 			m_props[i].ss = ThePartitionManager->getPropShroudStatusForPlayer(localPlayerIndex, &m_props[i].location);
 		}
 		if (m_props[i].ss >= OBJECTSHROUD_SHROUDED) {
