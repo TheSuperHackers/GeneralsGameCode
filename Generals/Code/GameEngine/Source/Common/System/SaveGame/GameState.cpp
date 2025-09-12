@@ -89,14 +89,14 @@ SaveGameInfo::SaveGameInfo( void )
 	missionNumber			= 0;
 	saveFileType			= SAVE_FILE_TYPE_NORMAL;
 
-}  // end SaveGameInfo
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 SaveGameInfo::~SaveGameInfo( void )
 {
 
-}  // end ~SaveGameInfo
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Is this date newer than the other one passed in? */
@@ -158,19 +158,19 @@ Bool SaveDate::isNewerThan( SaveDate *other )
 							else
 								return FALSE;
 
-						}  // end else
+						}
 
-					}  // end else
+					}
 
-				}  // end else
+				}
 
-			}  // end else
+			}
 
-		}  // end else
+		}
 
-	}  // end else
+	}
 
-}  // end isNewerThan
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Find a snapshot block info that matches the token passed in */
@@ -195,12 +195,12 @@ GameState::SnapshotBlock *GameState::findBlockInfoByToken( AsciiString token, Sn
 		if( blockInfo->blockName == token )
 			return blockInfo;
 
-	}  // end for
+	}
 
 	// not found
 	return NULL;
 
-}  // end findLexiconEntryByToken
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -279,7 +279,7 @@ GameState::GameState( void )
 	m_availableGames = NULL;
 	m_isInLoadGame = FALSE;
 
-}  // end GameState
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -296,7 +296,7 @@ GameState::~GameState( void )
 	// clear any available game
 	clearAvailableGames();
 
-}  // end ~GameState
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Init the game state subsystem */
@@ -333,7 +333,7 @@ void GameState::init( void )
 
 	m_isInLoadGame = FALSE;
 
-}  // end init
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Reset */
@@ -349,7 +349,7 @@ void GameState::reset( void )
 
 	m_isInLoadGame = FALSE;
 
-}  // end reset
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Clear any available games entries */
@@ -365,9 +365,9 @@ void GameState::clearAvailableGames( void )
 		delete m_availableGames;
 		m_availableGames = gameInfo;
 
-	}  // end while
+	}
 
-}  // end clearAvailableGames
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Add a snapshot and block name pair to the systems used to load and save */
@@ -382,7 +382,7 @@ void GameState::addSnapshotBlock( AsciiString blockName, Snapshot *snapshot, Sna
 		DEBUG_CRASH(( "addSnapshotBlock: Invalid parameters" ));
 		return;
 
-	}  // end if
+	}
 
 	// add to the list
 	SnapshotBlock blockInfo;
@@ -390,7 +390,7 @@ void GameState::addSnapshotBlock( AsciiString blockName, Snapshot *snapshot, Sna
 	blockInfo.blockName = blockName;
 	m_snapshotBlockList[which].push_back( blockInfo );
 
-}  // end addSnapshotBlock
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Given the filename of a save file, find the highest filename number */
@@ -426,7 +426,7 @@ static void findHighFileNumber( AsciiString filename, void *userData )
 	if( fileNumber >= *highFileNumber )
 		*highFileNumber = fileNumber;
 
-}  // end findHighFileNumber
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Given the save files on disk, find the "next" filename to use when saving a game */
@@ -485,7 +485,7 @@ AsciiString GameState::findNextSaveFilename( UnicodeString desc )
 		filename.format( "%08d%s", highFileNumber + 1, SAVE_GAME_EXTENSION );
 		return filename;
 
-	}  // end if
+	}
 	else if( searchType == LOWEST_NUMBER )
 	{
 		AsciiString filename;
@@ -512,22 +512,22 @@ AsciiString GameState::findNextSaveFilename( UnicodeString desc )
 			if( i > MAX_SAVE_FILE_NUMBER )
 				return AsciiString::TheEmptyString;
 
-		}  // end while
+		}
 
-	}  // end else if
+	}
 	else
 	{
 
 		DEBUG_CRASH(( "GameState::findNextSaveFilename - Unknown file search type '%d'", searchType ));
 		return AsciiString::TheEmptyString;
 
-	}  // end else
+	}
 #endif
 
 	// no appropriate filename could be found, return the empty string
 	return AsciiString::TheEmptyString;
 
-}  // end findNextSaveFilename
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Save the current state of the engine in a save file
@@ -546,7 +546,7 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 		DEBUG_CRASH(( "GameState::saveGame - Unable to find valid filename for save game" ));
 		return SC_NO_FILE_AVAILABLE;
 
-	}  // end if
+	}
 
 	// make absolutely sure the save directory exists
 	CreateDirectory( getSaveDirectory().str(), NULL );
@@ -589,7 +589,7 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 		// save file
 		xferSaveData( &xferSave, which );
 
-	}  // end try
+	}
 	catch( ... )
 	{
 
@@ -605,7 +605,7 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 		xferSave.close();
 		return SC_ERROR;
 
-	}  // end catch
+	}
 
 	// close the file
 	xferSave.close();
@@ -616,7 +616,7 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 
 	return SC_OK;
 
-}  // end saveGame
+}
 
 // ------------------------------------------------------------------------------------------------
 /** A mission save */
@@ -638,7 +638,7 @@ SaveCode GameState::missionSave( void )
 	// do an automatic mission save
 	return TheGameState->saveGame( AsciiString(""), desc, SAVE_FILE_TYPE_MISSION );
 
-}  // end missionSave
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load the save game pointed to by filename */
@@ -657,7 +657,7 @@ SaveCode GameState::loadGame( AvailableGameInfo gameInfo )
 		if (TheGameLogic->isInGame())
 			TheGameLogic->clearGameData( FALSE );
 
-	}  // end if
+	}
 
 	//
 	// clear the save directory of any temporary "scratch pad" maps that were extracted
@@ -688,11 +688,11 @@ SaveCode GameState::loadGame( AvailableGameInfo gameInfo )
 		// load file
 		xferSaveData( &xferLoad, SNAPSHOT_SAVELOAD );
 
-	}  // end try
+	}
 	catch( ... )
 	{
 		error = TRUE;
-	}  // end catch
+	}
 
 	// close the file
 	xferLoad.close();
@@ -729,7 +729,7 @@ SaveCode GameState::loadGame( AvailableGameInfo gameInfo )
 
 		return SC_INVALID_DATA;	// you can't use a naked "throw" outside of a catch statement!
 
-	}  // end if
+	}
 
 	//
 	// when loading a mission save, we want to do as much normal loading stuff as we
@@ -752,11 +752,11 @@ SaveCode GameState::loadGame( AvailableGameInfo gameInfo )
 		gameInfo->saveFileType = SAVE_FILE_TYPE_NORMAL;
 		gameInfo->missionMapName.clear();
 
-	}  // end if
+	}
 
 	return SC_OK;
 
-}  // end loadGame
+}
 
 //-------------------------------------------------------------------------------------------------
 AsciiString GameState::getSaveDirectory() const
@@ -955,21 +955,21 @@ Bool GameState::doesSaveGameExist( AsciiString filename )
 		// try to open it
 		xfer.open( filepath );
 
-	}  // end try
+	}
 	catch( ... )
 	{
 
 		// unable to open file, it must not be here
 		return FALSE;
 
-	}  // end catch
+	}
 
 	// close the file, we don't want to to anything with it right now
 	xfer.close();
 
 	return TRUE;
 
-}  // doesSaveGameExist
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Get save game info from the filename specified */
@@ -988,7 +988,7 @@ void GameState::getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *sav
 		DEBUG_CRASH(( "GameState::getSaveGameInfoFromFile - Illegal parameters" ));
 		return;
 
-	}  // end if
+	}
 
 	// open file for partial loading
 	XferLoad xferLoad;
@@ -1015,7 +1015,7 @@ void GameState::getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *sav
 			DEBUG_CRASH(( "GameState::getSaveGameInfoFromFile - Game info not found in file '%s'", filename.str() ));
 			done = TRUE;
 
-		}  // end if
+		}
 		else
 		{
 
@@ -1039,7 +1039,7 @@ void GameState::getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *sav
 					// load data
 					xferLoad.xferSnapshot( &tempGameState );
 
-				}  // end try
+				}
 				catch( ... )
 				{
 
@@ -1047,7 +1047,7 @@ void GameState::getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *sav
 												blockInfo->blockName.str(), filename.str() ));
 					throw;
 
-				}  // end catch
+				}
 
 				// data was found, copy game state info over
 				*saveGameInfo = *tempGameState.getSaveGameInfo();
@@ -1055,7 +1055,7 @@ void GameState::getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *sav
 				// we're all done with this file now
 				done = TRUE;
 
-			}  // end if
+			}
 			else
 			{
 
@@ -1065,16 +1065,16 @@ void GameState::getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *sav
 				// end of block
 				xferLoad.endBlock();
 
-			}  // end else
+			}
 
-		}  // end else, valid data block token
+		}
 
-	}  // end while, not done
+	}
 
 	// close the file
 	xferLoad.close();
 
-}  // end getSaveGameInfoFromFile
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Create game info and add to available list */
@@ -1129,9 +1129,9 @@ static void addGameToAvailableList( AsciiString filename, void *userData )
 
 				break;
 
-			}  // end if
+			}
 
-		}  // end for
+		}
 
 		// if not inserted, put at end
 		if( curr == NULL )
@@ -1140,15 +1140,15 @@ static void addGameToAvailableList( AsciiString filename, void *userData )
 			prev->next = newInfo;
 			newInfo->prev = prev;
 
-		}  // end if
+		}
 
-	}  // end else
+	}
 	} catch(...) {
 		// Do nothing - just return.
 	}
 
 
-}  // end addGameToAvailableList
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Populate the listbox passed in with a list of the save games present on the hard drive */
@@ -1173,7 +1173,7 @@ void GameState::populateSaveGameListbox( GameWindow *listbox, SaveLoadLayoutType
 		index = GadgetListBoxAddEntryText( listbox, newGameText, newGameColor, -1 );
 		GadgetListBoxSetItemData( listbox, NULL, index );
 
-	}  // end if
+	}
 
 	// clear the available games
 	clearAvailableGames();
@@ -1218,7 +1218,7 @@ void GameState::populateSaveGameListbox( GameWindow *listbox, SaveLoadLayoutType
 			if( exists == FALSE )
 				displayLabel.format( L"%S", saveGameInfo->mapLabel.str() );
 
-		}  // end if
+		}
 
 		// pick color for text (we alternate it each game)
 		Color color;
@@ -1237,12 +1237,12 @@ void GameState::populateSaveGameListbox( GameWindow *listbox, SaveLoadLayoutType
 		// add this available game info in the user data pointer of that listbox item
 		GadgetListBoxSetItemData( listbox, info, index );
 
-	}  // end for, info
+	}
 
 	// select the top "new game" entry
 	GadgetListBoxSetSelected( listbox, 0 );
 
-}  // end pupulateSaveGameListbox
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE METHODS ////////////////////////////////////////////////////////////////////////////////
@@ -1285,7 +1285,7 @@ void GameState::iterateSaveFiles( IterateSaveFileCallback callback, void *userDa
 			// we are no longer on our first item
 			first = FALSE;
 
-		}  // end if, first
+		}
 
 		// see if this is a file, and therefore a possible save file
 		if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
@@ -1303,15 +1303,15 @@ void GameState::iterateSaveFiles( IterateSaveFileCallback callback, void *userDa
 				// call the callback
 				callback( filename, userData );
 
-			}  // end if, a save file
+			}
 
-		}  // end if
+		}
 
 		// on to the next file
 		if( FindNextFile( hFile, &item ) == 0 )
 			done = TRUE;
 
-	}  // end while
+	}
 
 	// close search resources
 	FindClose( hFile );
@@ -1319,7 +1319,7 @@ void GameState::iterateSaveFiles( IterateSaveFileCallback callback, void *userDa
 	// restore the current directory
 	SetCurrentDirectory( currentDirectory );
 
-}  // end iterateSaveFiles
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Save game to xfer or load game using xfer */
@@ -1391,7 +1391,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 					// end this block
 					xfer->endBlock();
 
-				}  // end try
+				}
 				catch( ... )
 				{
 
@@ -1399,17 +1399,17 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 												blockName.str(), xfer->getIdentifier().str() ));
 					throw;
 
-				}  // end catch
+				}
 
-			}  // end if
+			}
 
-		}  // end for, all snapshots
+		}
 
 		// write an end of file token
 		AsciiString eofToken = SAVE_FILE_EOF;
 		xfer->xferAsciiString( &eofToken );
 
-	}  // end if, save
+	}
 	else
 	{
 		DEBUG_LOG(("GameState::xferSaveData() - not XFER_SAVE"));
@@ -1432,7 +1432,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 				// all done
 				done = TRUE;
 
-			}  // end if
+			}
 			else
 			{
 
@@ -1454,7 +1454,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 					// continue with while loop reading block tokens
 					continue;
 
-				}  // end if
+				}
 
 				try
 				{
@@ -1468,7 +1468,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 					// read block end
 					xfer->endBlock();
 
-				}  // end try
+				}
 				catch( ... )
 				{
 
@@ -1476,15 +1476,15 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 												blockInfo->blockName.str(), xfer->getIdentifier().str() ));
 					throw;
 
-				}  // end catch
+				}
 
-			}  // end else, valid data block token
+			}
 
-		}  // end while, not done
+		}
 
-	}  // end else, load
+	}
 
-}  // end xferSaveData
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Add a snapshot to the post process list for later */
@@ -1499,7 +1499,7 @@ void GameState::addPostProcessSnapshot( Snapshot *snapshot )
 		DEBUG_CRASH(( "GameState::addPostProcessSnapshot - invalid parameters" ));
 		return;
 
-	}  // end if
+	}
 
 /*
 	//
@@ -1518,15 +1518,15 @@ void GameState::addPostProcessSnapshot( Snapshot *snapshot )
 			DEBUG_CRASH(( "GameState::addPostProcessSnapshot - snapshot is already in list!" ));
 			return;
 
-		}  // end if
+		}
 
-	}  // end for, it
+	}
 */
 
 	// add to the list
 	m_snapshotPostProcessList.push_back( snapshot );
 
-}  // end addPostProcessSnapshot
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Post process entry point after all game data has been xferd from disk */
@@ -1549,7 +1549,7 @@ void GameState::gameStatePostProcessLoad( void )
 		// do processing
 		snapshot->loadPostProcess();
 
-	}  // end for
+	}
 
 	// clear the snapshot post process list as we are now done with it
 	m_snapshotPostProcessList.clear();
@@ -1557,7 +1557,7 @@ void GameState::gameStatePostProcessLoad( void )
 	// evil... must ensure this is updated prior to the script engine running the first time.
 	ThePartitionManager->update();
 
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method for the game state itself
@@ -1586,7 +1586,7 @@ void GameState::xfer( Xfer *xfer )
 		// mission map name
 		xfer->xferAsciiString( &saveGameInfo->missionMapName );
 
-	}  // end if
+	}
 
 	// current system time
 	SYSTEMTIME systemTime;
@@ -1633,9 +1633,9 @@ void GameState::xfer( Xfer *xfer )
 			p++;  // skip the '\' we're on
 			saveGameInfo->mapLabel.set( p );
 
-		}  // end else
+		}
 
-	}  // end if
+	}
 
 	// xfer map label
 	xfer->xferAsciiString( &saveGameInfo->mapLabel );
@@ -1654,7 +1654,7 @@ void GameState::xfer( Xfer *xfer )
 		xfer->xferInt( &saveGameInfo->missionNumber );
 
 
-	}  // end if
+	}
 	else
 	{
 
@@ -1666,6 +1666,6 @@ void GameState::xfer( Xfer *xfer )
 		saveGameInfo->missionNumber = CampaignManager::INVALID_MISSION_NUMBER;
 		xfer->xferInt( &saveGameInfo->missionNumber );
 
-	}  // end else
+	}
 
-}  // end xfer
+}

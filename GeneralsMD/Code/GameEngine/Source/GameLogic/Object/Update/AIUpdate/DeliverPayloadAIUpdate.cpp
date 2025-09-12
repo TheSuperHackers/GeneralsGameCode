@@ -405,7 +405,7 @@ void DeliverPayloadAIUpdate::crc( Xfer *xfer )
 {
  // extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -494,7 +494,7 @@ void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
 	}
 
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -503,7 +503,7 @@ void DeliverPayloadAIUpdate::loadPostProcess( void )
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -540,7 +540,7 @@ DeliverPayloadStateMachine::~DeliverPayloadStateMachine()
 void DeliverPayloadStateMachine::crc( Xfer *xfer )
 {
 	StateMachine::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -552,7 +552,7 @@ void DeliverPayloadStateMachine::xfer( Xfer *xfer )
 	xfer->xferVersion( &v, cv );
 
 	StateMachine::xfer(xfer);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -560,7 +560,7 @@ void DeliverPayloadStateMachine::xfer( Xfer *xfer )
 void DeliverPayloadStateMachine::loadPostProcess( void )
 {
 	StateMachine::loadPostProcess();
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 /*static*/ Bool DeliverPayloadStateMachine::isOffMap( State *thisState, void* userData )
@@ -639,7 +639,7 @@ StateReturnType ApproachState::update()
 // ------------------------------------------------------------------------------------------------
 void DeliveringState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -653,14 +653,14 @@ void DeliveringState::xfer( Xfer *xfer )
 
 	xfer->xferUnsignedInt(&m_dropDelayLeft);
 	xfer->xferBool(&m_didOpen);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void DeliveringState::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -929,7 +929,7 @@ void DeliveringState::onExit( StateExitType ) // Close the doors
 // ------------------------------------------------------------------------------------------------
 void ConsiderNewApproachState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -942,14 +942,14 @@ void ConsiderNewApproachState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferInt(&m_numberEntriesToState);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void ConsiderNewApproachState::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -1041,7 +1041,7 @@ void ConsiderNewApproachState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 void RecoverFromOffMapState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -1054,14 +1054,14 @@ void RecoverFromOffMapState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_reEntryFrame);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void RecoverFromOffMapState::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 
 //-------------------------------------------------------------------------------------------------

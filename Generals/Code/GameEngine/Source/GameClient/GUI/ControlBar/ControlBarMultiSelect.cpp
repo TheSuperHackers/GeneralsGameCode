@@ -57,7 +57,7 @@ void ControlBar::resetCommonCommandData( void )
 		GadgetButtonDrawOverlayImage( m_commandWindows[ i ], NULL );
 	}
 
-}  // end resetCommonCommandData
+}
 
 //-------------------------------------------------------------------------------------------------
 /** add the common commands of this drawable to the common command set */
@@ -99,11 +99,11 @@ void ControlBar::addCommonCommands( Drawable *draw, Bool firstDrawable )
 	// removed from multiplayer branch
 			//showCommandMarkers();
 
-		}  // end for i
+		}
 
 		return;
 
-	}  // end if
+	}
 
 
 	//
@@ -136,11 +136,11 @@ void ControlBar::addCommonCommands( Drawable *draw, Bool firstDrawable )
 				// set the command into the control
 				setControlCommand( m_commandWindows[ i ], command );
 
-			}  // end if
+			}
 
-		}  // end for i
+		}
 
-	}  // end if
+	}
 	else
 	{
 
@@ -189,15 +189,15 @@ void ControlBar::addCommonCommands( Drawable *draw, Bool firstDrawable )
 				m_commandWindows[ i ]->winHide( TRUE );
 			}
 
-		}  // end if
+		}
 
-	}  // end else
+	}
 
 	// After Every change to the m_commandWIndows, we need to show fill in the missing blanks with the images
 	// removed from multiplayer branch
 	//showCommandMarkers();
 
-}  // end addCommonCommands
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Populate the visible command bar with commands that are common to all the objects
@@ -276,18 +276,18 @@ void ControlBar::populateMultiSelect( void )
 				portraitObj = draw->getObject();
 				portraitSet = TRUE;
 
-			}  // end if
+			}
 			else if( draw->getTemplate()->getSelectedPortraitImage() != portrait )
 				portrait = NULL;
 
-		}  // end if
+		}
 
-	}  // end for, drawble id iterator
+	}
 
 	// set the portrait image
 	setPortraitByObject( portraitObj );
 
-}  // end populateMultiSelect
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update logic for the multi select context sensitive GUI */
@@ -390,9 +390,9 @@ void ControlBar::updateContextMultiSelect( void )
 			if( availability == COMMAND_AVAILABLE || availability == COMMAND_ACTIVE )
 					objectsThatCanDoCommand[ i ]++;
 
-		}  // end for i
+		}
 
-	}  // end for, selected drawables
+	}
 
 	//
 	// for each command, if any objects can do the command we enable the window, otherwise
@@ -417,11 +417,11 @@ void ControlBar::updateContextMultiSelect( void )
 		else
 			m_commandWindows[ i ]->winEnable( FALSE );
 
-	}  // end for i
+	}
 
 	// After Every change to the m_commandWIndows, we need to show fill in the missing blanks with the images
 	// removed from multiplayer branch
 	//showCommandMarkers();
 
 
-}  // end updateContextMultiSelect
+}

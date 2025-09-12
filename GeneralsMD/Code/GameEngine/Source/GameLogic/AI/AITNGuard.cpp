@@ -263,7 +263,7 @@ Bool AITNGuardMachine::lookForInnerTarget(void)
 // ------------------------------------------------------------------------------------------------
 void AITNGuardMachine::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -282,14 +282,14 @@ void AITNGuardMachine::xfer( Xfer *xfer )
 	xfer->xferObjectID(&m_nemesisToAttack);
 	xfer->xferCoord3D(&m_positionToGuard);
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void AITNGuardMachine::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 //-- AITNGuardInnerState ----------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -297,7 +297,7 @@ void AITNGuardMachine::loadPostProcess( void )
 // ------------------------------------------------------------------------------------------------
 void AITNGuardInnerState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -309,7 +309,7 @@ void AITNGuardInnerState::xfer( Xfer *xfer )
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -317,7 +317,7 @@ void AITNGuardInnerState::xfer( Xfer *xfer )
 void AITNGuardInnerState::loadPostProcess( void )
 {
 	onEnter();
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 AITNGuardInnerState::~AITNGuardInnerState(void)
@@ -441,7 +441,7 @@ void AITNGuardInnerState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 void AITNGuardOuterState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -453,7 +453,7 @@ void AITNGuardOuterState::xfer( Xfer *xfer )
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -461,7 +461,7 @@ void AITNGuardOuterState::xfer( Xfer *xfer )
 void AITNGuardOuterState::loadPostProcess( void )
 {						 AITNGuardOuterState
 	onEnter();
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 AITNGuardOuterState::~AITNGuardOuterState(void)
@@ -545,7 +545,7 @@ void AITNGuardOuterState::onExit( StateExitType status )
 void AITNGuardReturnState::crc( Xfer *xfer )
 {
 	AIEnterState::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -560,7 +560,7 @@ void AITNGuardReturnState::xfer( Xfer *xfer )
 	AIEnterState::xfer(xfer);
 
 	xfer->xferUnsignedInt(&m_nextReturnScanTime);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -568,7 +568,7 @@ void AITNGuardReturnState::xfer( Xfer *xfer )
 void AITNGuardReturnState::loadPostProcess( void )
 {
 	AIEnterState::loadPostProcess();
-}  // end loadPostProcess
+}
 
 //--------------------------------------------------------------------------------------
 StateReturnType AITNGuardReturnState::onEnter( void )
@@ -651,7 +651,7 @@ void AITNGuardReturnState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 void AITNGuardIdleState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -664,14 +664,14 @@ void AITNGuardIdleState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_nextEnemyScanTime);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void AITNGuardIdleState::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 //--------------------------------------------------------------------------------------
 StateReturnType AITNGuardIdleState::onEnter( void )

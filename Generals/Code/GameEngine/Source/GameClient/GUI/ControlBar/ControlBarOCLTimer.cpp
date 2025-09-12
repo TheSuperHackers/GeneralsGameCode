@@ -71,7 +71,7 @@ void ControlBar::updateOCLTimerTextDisplay( UnsignedInt totalSeconds, Real perce
 	// record this as the last time displayed
 	m_displayedOCLTimerSeconds = totalSeconds;
 
-}  // end updateOCLTimerTextDisplay
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Populate the interface for an OCL Timer context. */
@@ -102,7 +102,7 @@ void ControlBar::populateOCLTimer( Object *creatorObject )
 	// set the portrait for the thing being constructed
 	setPortraitByObject( creatorObject );
 
-}  // end populateUnderConstruction
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -122,4 +122,4 @@ void ControlBar::updateContextOCLTimer( void )
 	if( m_displayedOCLTimerSeconds != seconds )
 		updateOCLTimerTextDisplay( seconds, percent );
 
-}  // end updatecontextUnderConstruction
+}

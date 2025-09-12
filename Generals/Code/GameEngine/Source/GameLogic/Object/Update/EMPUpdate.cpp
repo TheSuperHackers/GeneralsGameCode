@@ -276,7 +276,7 @@ void EMPUpdate::doDisableAttack( void )
 void EMPUpdate::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -291,7 +291,7 @@ void EMPUpdate::xfer( Xfer *xfer )
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -299,4 +299,4 @@ void EMPUpdate::xfer( Xfer *xfer )
 void EMPUpdate::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

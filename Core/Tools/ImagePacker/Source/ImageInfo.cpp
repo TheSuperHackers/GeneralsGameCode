@@ -86,7 +86,7 @@ ImageInfo::ImageInfo( void )
 	m_gutterUsed.x = 0;
 	m_gutterUsed.y = 0;
 
-}  // end ImageInfo
+}
 
 // ImageInfo::~ImageInfo ======================================================
 /** */
@@ -104,4 +104,4 @@ ImageInfo::~ImageInfo( void )
 	if( m_filenameOnlyNoExt )
 		delete [] m_filenameOnlyNoExt;
 
-}  // end ~ImageInfo
+}

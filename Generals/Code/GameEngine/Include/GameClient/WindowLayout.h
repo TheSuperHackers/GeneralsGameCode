@@ -107,7 +107,7 @@ protected:
 	WindowLayoutUpdateFunc	 m_update;							///< update callback
 	WindowLayoutShutdownFunc m_shutdown;						///< shutdown callback
 
-};  // end class WindowLayout
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
 inline AsciiString WindowLayout::getFilename( void ) const { return m_filenameString; }

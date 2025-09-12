@@ -1597,7 +1597,7 @@ void W3DRoadBuffer::addMapObjects()
 				curRoad.m_scale = road->getRoadWidth();
 				curRoad.m_uniqueID = road->getID();
 				found = TRUE;
-			}  // end if
+			}
 #ifdef LOAD_TEST_ASSETS
 			const Real DEFAULT_SCALE = 30;
 			if (!found) {
@@ -3116,9 +3116,9 @@ void W3DRoadBuffer::allocateRoadBuffers(void)
 				m_maxUID = id;
 #endif // LOAD_TEST_ASSETS
 
-		}  // end if
+		}
 
-	}  // end for road
+	}
 
 #ifdef LOAD_TEST_ASSETS
 	while (i<m_maxRoadTypes && m_roadTypes[i].isAutoLoaded()) {

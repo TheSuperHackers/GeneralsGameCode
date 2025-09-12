@@ -407,7 +407,7 @@ void WorldHeightMapEdit::loadBaseImages(void)
 		// load the terrain definition for the WorldBuilder to reference
 		loadImagesFromTerrainType( terrain );
 
-	}  // end for
+	}
 
 }
 
@@ -872,7 +872,7 @@ Int WorldHeightMapEdit::getTileIndexFromTerrainType( TerrainType *terrain )
 	// not found
 	return -1;
 
-}  // end getTileIndexFromTerrainType
+}
 
 Int WorldHeightMapEdit::allocateTiles(Int textureClass)
 {

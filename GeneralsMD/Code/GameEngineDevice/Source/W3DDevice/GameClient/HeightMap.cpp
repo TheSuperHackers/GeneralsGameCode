@@ -2377,9 +2377,9 @@ void HeightMapRenderObjClass::renderExtraBlendTiles(void)
 				ib += 6;
 				vertexCount +=4;
 				indexCount +=6;
-			}//tile has 3rd blend layer and is visible
-		}	//for all extre blend tiles
-	}//unlock vertex buffer
+			}
+		}
+	}
 
 	if (vertexCount)
 	{

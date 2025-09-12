@@ -135,7 +135,7 @@ static void addScrollbar( GameWindow *listbox )
 		info = TheDefaultScheme->getImageAndColor( LISTBOX_UP_BUTTON_HILITE_PUSHED );
 		GadgetButtonSetHiliteSelectedImage( upButton, info->image );
 
-	}  // end if
+	}
 
 	GameWindow *downButton = GadgetListBoxGetDownButton( listbox );
 	if( downButton )
@@ -156,7 +156,7 @@ static void addScrollbar( GameWindow *listbox )
 		info = TheDefaultScheme->getImageAndColor( LISTBOX_DOWN_BUTTON_HILITE_PUSHED );
 		GadgetButtonSetHiliteSelectedImage( downButton, info->image );
 
-	}  // end if
+	}
 
 	GameWindow *slider = GadgetListBoxGetSlider( listbox );
 	if( slider )
@@ -211,9 +211,9 @@ static void addScrollbar( GameWindow *listbox )
 		info = TheDefaultScheme->getImageAndColor( LISTBOX_SLIDER_THUMB_HILITE_PUSHED );
 		GadgetSliderSetHiliteSelectedThumbImage( slider, info->image );
 
-	}  // end if, slider
+	}
 
-}  // end addScrollbar
+}
 
 // removeScrollbar ============================================================
 /** Remove all scrollbar constructs froma listbox that has it already */
@@ -237,7 +237,7 @@ static void removeScrollbar( GameWindow *listbox )
 	// remove the scrollbar flag from the listbox data
 	listData->scrollBar = FALSE;
 
-}  // end removeScrollbar
+}
 
 // resizeMaxItems =============================================================
 /** Change the max items that a listbox can accomodate */
@@ -248,7 +248,7 @@ static void resizeMaxItems( GameWindow *listbox, UnsignedInt newMaxItems )
 
 
 
-}  // end resizeMaxItems
+}
 
 // listboxPropertiesCallback ==================================================
 /** Dialog callback for properties */
@@ -326,7 +326,7 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
 
 					break;
 
-				}  // end case subcontrol color
+				}
 
 				// --------------------------------------------------------------------
         case IDOK:
@@ -432,7 +432,7 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
 							GadgetButtonSetHiliteSelectedColor( upButton, info->color );
 							GadgetButtonSetHiliteSelectedBorderColor( upButton, info->borderColor );
 
-						}  // end if
+						}
 
 						// down button
 						GameWindow *downButton = GadgetListBoxGetDownButton( window );
@@ -472,7 +472,7 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
 							GadgetButtonSetHiliteSelectedColor( downButton, info->color );
 							GadgetButtonSetHiliteSelectedBorderColor( downButton, info->borderColor );
 
-						}  // end if
+						}
 
 						// slider
 						GameWindow *slider = GadgetListBoxGetSlider( window );
@@ -559,7 +559,7 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
 							GadgetSliderSetHiliteSelectedThumbColor( slider, info->color );
 							GadgetSliderSetHiliteSelectedThumbBorderColor( slider, info->borderColor );
 
-						}  // end if
+						}
 
 						// save specific list data
 						ListboxData *listData = (ListboxData *)window->winGetUserData();
@@ -647,12 +647,12 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
 						}
 						listData->columns = newColumns;
 
-					}  // end if
+					}
 
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end OK
+				}
 
 				// --------------------------------------------------------------------
         case IDCANCEL:
@@ -661,13 +661,13 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end cancel
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
     case WM_CLOSE:
@@ -676,15 +676,15 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
       DestroyWindow( hWndDialog );
       return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end listboxPropertiesCallback
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -804,7 +804,7 @@ HWND InitListboxPropertiesDialog( GameWindow *window )
 		borderColor = GadgetButtonGetHiliteSelectedBorderColor( upButton );
 		StoreImageAndColor( LISTBOX_UP_BUTTON_HILITE_PUSHED, image, color, borderColor );
 
-	}  // end if
+	}
 
 	// --------------------------------------------------------------------------
 	GameWindow *downButton = GadgetListBoxGetDownButton( window );
@@ -844,7 +844,7 @@ HWND InitListboxPropertiesDialog( GameWindow *window )
 		borderColor = GadgetButtonGetHiliteSelectedBorderColor( downButton );
 		StoreImageAndColor( LISTBOX_DOWN_BUTTON_HILITE_PUSHED, image, color, borderColor );
 
-	}  // end if
+	}
 
 	GameWindow *slider = GadgetListBoxGetSlider( window );
 	if( slider )
@@ -928,7 +928,7 @@ HWND InitListboxPropertiesDialog( GameWindow *window )
 		borderColor = GadgetSliderGetHiliteSelectedThumbBorderColor( slider );
 		StoreImageAndColor( LISTBOX_SLIDER_THUMB_HILITE_PUSHED, image, color, borderColor );
 
-	}  // end if
+	}
 
 	// init listbox specific property section
 	ListboxData *listData = (ListboxData *)window->winGetUserData();
@@ -968,7 +968,7 @@ HWND InitListboxPropertiesDialog( GameWindow *window )
 
 	return dialog;
 
-}  // end InitListboxPropertiesDialog
+}
 
 
 

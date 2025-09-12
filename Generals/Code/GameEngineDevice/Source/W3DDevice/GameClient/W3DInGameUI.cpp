@@ -273,12 +273,12 @@ W3DInGameUI::W3DInGameUI()
 		m_moveHintRenderObj[ i ] = NULL;
 		m_moveHintAnim[ i ] = NULL;
 
-	}  // end for i
+	}
 
 	m_buildingPlacementAnchor = NULL;
 	m_buildingPlacementArrow = NULL;
 
-}  // end W3DInGameUI
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -293,12 +293,12 @@ W3DInGameUI::~W3DInGameUI()
 		REF_PTR_RELEASE( m_moveHintRenderObj[ i ] );
 		REF_PTR_RELEASE( m_moveHintAnim[ i ] );
 
-	}  // end for i
+	}
 
 	REF_PTR_RELEASE( m_buildingPlacementAnchor );
 	REF_PTR_RELEASE( m_buildingPlacementArrow );
 
-}  // end ~W3DInGameUI
+}
 
 // loadText ===================================================================
 /** Load text from the file */
@@ -326,12 +326,12 @@ static void loadText( char *filename, GameWindow *listboxText )
 		if (line.isEmpty())
 			line = UnicodeString(L" ");
 		GadgetListBoxAddEntryText(listboxText, line, color, -1, -1);
-	}  // end while
+	}
 
 	// close the file
 	fclose( fp );
 
-}  // end loadText
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -355,10 +355,10 @@ void W3DInGameUI::init( void )
 			// hide it for now
 			motd->winHide( TRUE );
 
-		}  // end if
+		}
 */
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update in game UI */
@@ -369,7 +369,7 @@ void W3DInGameUI::update( void )
 	// call base
 	InGameUI::update();
 
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset the in game ui */
@@ -380,7 +380,7 @@ void W3DInGameUI::reset( void )
 	// call base
 	InGameUI::reset();
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Draw member for the W3D implemenation of the game user interface */
@@ -413,9 +413,9 @@ void W3DInGameUI::draw( void )
 			// draw placement angle selection if needed
 			drawPlaceAngle( view );
 
-		}  // end for view
+		}
 
-	}  // end if
+	}
 
 	// repaint all our windows
 
@@ -439,7 +439,7 @@ void W3DInGameUI::draw( void )
 	}
 #endif
 
-}  // end draw
+}
 
 //-------------------------------------------------------------------------------------------------
 /** draw 2d selection region on screen */
@@ -456,7 +456,7 @@ void W3DInGameUI::drawSelectionRegion( void )
 														width,
 														color );
 
-}  // end drawSelectionRegion
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Draw the visual feedback for clicking in the world and telling units
@@ -501,7 +501,7 @@ void W3DInGameUI::drawMoveHints( View *view )
 					DEBUG_CRASH(("unable to create hint"));
 					return;
 
-				}  // end if
+				}
 
 				// asign render objects to GUI data
 				m_moveHintRenderObj[ i ] = hint;
@@ -511,7 +511,7 @@ void W3DInGameUI::drawMoveHints( View *view )
 				REF_PTR_RELEASE(m_moveHintAnim[i]);
 				m_moveHintAnim[i] = anim;
 
-			}  // end if, create render objects
+			}
 
 			// show the render object if hidden
 			if( m_moveHintRenderObj[ i ]->Is_Hidden() == 1 ) {
@@ -560,8 +560,8 @@ void W3DInGameUI::drawMoveHints( View *view )
 					// draw the line
 					TheDisplay->drawLine( start.x, start.y, end.x, end.y, width, color );
 
-				}  // end if
-			}  // end if
+				}
+			}
 #endif
 
 		}
@@ -575,11 +575,11 @@ void W3DInGameUI::drawMoveHints( View *view )
 					W3DDisplay::m_3DScene->Remove_Render_Object( m_moveHintRenderObj[ i ] );
 				}
 
-		}  // end else
+		}
 
-	}  // end for i
+	}
 
-}  // end drawMoveHints
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Draw visual back for clicking to attack a unit in the world */
@@ -587,7 +587,7 @@ void W3DInGameUI::drawMoveHints( View *view )
 void W3DInGameUI::drawAttackHints( View *view )
 {
 
-}  // end drawAttackHints
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Draw the angle selection for placing building if needed */
@@ -729,5 +729,5 @@ void W3DInGameUI::drawPlaceAngle( View *view )
 	//start.y = o.y * size + p.y * (size/2.0f) + end.y;
 	//TheDisplay->drawLine( start.x, start.y, end.x, end.y, width, color );
 
-}  // end drawPlaceAngle
+}
 

@@ -60,7 +60,7 @@ public:
 
 	// Called by the script engine in postProcessLoad()
 	virtual void doEnableOrDisableObjectDifficultyBonuses(Bool enableBonuses) = 0;
-};  // end class ScriptActionsInterface
+};
 extern ScriptActionsInterface *TheScriptActions;   ///< singleton definition
 
 
@@ -390,7 +390,7 @@ protected:
 	void doNamedSetTrainHeld( const AsciiString &locoName, const Bool set );
   void doEnableObjectSound(const AsciiString& objectName, Bool enable);
 
-};  // end class ScriptActions
+};
 
 
 #endif  // end __SCRIPTACTIONS_H_

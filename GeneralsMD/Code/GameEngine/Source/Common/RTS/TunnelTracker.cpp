@@ -285,7 +285,7 @@ void TunnelTracker::healObject( Object *obj, void *frames)
 		// set max health
 		body->attemptHealing( &healInfo );
 
-	}  // end if
+	}
 	else
 	{
 		//
@@ -298,7 +298,7 @@ void TunnelTracker::healObject( Object *obj, void *frames)
 		// do the healing
 		body->attemptHealing( &healInfo );
 
-	}  // end else
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -307,7 +307,7 @@ void TunnelTracker::healObject( Object *obj, void *frames)
 void TunnelTracker::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -340,9 +340,9 @@ void TunnelTracker::xfer( Xfer *xfer )
 			objectID = (*it)->getID();
 			xfer->xferObjectID( &objectID );
 
-		}  // end for, it
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -352,14 +352,14 @@ void TunnelTracker::xfer( Xfer *xfer )
 			xfer->xferObjectID( &objectID );
 			m_xferContainList.push_back( objectID );
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
 	// tunnel count
 	xfer->xferUnsignedInt( &m_tunnelCount );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -374,7 +374,7 @@ void TunnelTracker::loadPostProcess( void )
 		DEBUG_CRASH(( "TunnelTracker::loadPostProcess - m_containList should be empty but is not" ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// translate each object ids on the xferContainList into real object pointers in the contain list
 	Object *obj;
@@ -389,7 +389,7 @@ void TunnelTracker::loadPostProcess( void )
 			DEBUG_CRASH(( "TunnelTracker::loadPostProcess - Unable to find object ID '%d'", *it ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// push on the back of the contain list
 		m_containList.push_back( obj );
@@ -411,9 +411,9 @@ void TunnelTracker::loadPostProcess( void )
 				TheAI->pathfinder()->removeObjectFromPathfindMap( obj );
 
 		}
-	}  // end for, it
+	}
 
 	// we're done with the xfer contain list now
 	m_xferContainList.clear();
 
-}  // end loadPostProcess
+}

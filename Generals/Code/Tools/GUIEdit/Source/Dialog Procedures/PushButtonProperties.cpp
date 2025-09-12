@@ -151,12 +151,12 @@ static LRESULT CALLBACK pushButtonPropertiesCallback( HWND hWndDialog,
 						if( IsDlgButtonChecked( hWndDialog, CHECK_RIGHT_CLICK ) )
 							window->winSetStatus( bit );
 
-					}  // end if
+					}
 
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end OK
+				}
 
 				// --------------------------------------------------------------------
         case IDCANCEL:
@@ -165,13 +165,13 @@ static LRESULT CALLBACK pushButtonPropertiesCallback( HWND hWndDialog,
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end cancel
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
     case WM_CLOSE:
@@ -180,15 +180,15 @@ static LRESULT CALLBACK pushButtonPropertiesCallback( HWND hWndDialog,
       DestroyWindow( hWndDialog );
       return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end pushButtonPropertiesCallback
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -260,7 +260,7 @@ HWND InitPushButtonPropertiesDialog( GameWindow *window )
 
 	return dialog;
 
-}  // end InitPushButtonPropertiesDialog
+}
 
 
 

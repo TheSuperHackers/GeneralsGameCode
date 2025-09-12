@@ -92,7 +92,7 @@ void INI::parseHeaderTemplateDefinition( INI *ini )
 		// allocate a new item
 		hTemplate = TheHeaderTemplateManager->newHeaderTemplate( name );
 
-	}  // end if
+	}
 	else
 	{
 		DEBUG_CRASH(( "[LINE: %d in '%s'] Duplicate header Template %s found!", ini->getLineNum(), ini->getFilename().str(), name.str() ));
@@ -100,7 +100,7 @@ void INI::parseHeaderTemplateDefinition( INI *ini )
 	// parse the ini definition
 	ini->initFromINI( hTemplate, TheHeaderTemplateManager->getFieldParse() );
 
-}  // end parseCommandButtonDefinition
+}
 
 HeaderTemplate::HeaderTemplate( void ) :
 m_font(NULL),

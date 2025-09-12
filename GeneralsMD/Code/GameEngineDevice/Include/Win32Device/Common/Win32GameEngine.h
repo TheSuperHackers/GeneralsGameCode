@@ -87,7 +87,7 @@ protected:
 
 protected:
 	UINT m_previousErrorMode;
-};  // end Win32GameEngine
+};
 
 // INLINE -----------------------------------------------------------------------------------------
 inline GameLogic *Win32GameEngine::createGameLogic( void ) { return NEW W3DGameLogic; }

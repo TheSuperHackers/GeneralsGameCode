@@ -1373,7 +1373,7 @@ void MapObjectProps::GetPopSliderInfo(const long sliderID, long *pMin, long *pMa
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 }
 
 void MapObjectProps::PopSliderChanged(const long sliderID, long theVal)
@@ -1410,7 +1410,7 @@ void MapObjectProps::PopSliderChanged(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 }
 
 void MapObjectProps::PopSliderFinished(const long sliderID, long theVal)
@@ -1426,7 +1426,7 @@ void MapObjectProps::PopSliderFinished(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 
 }
 

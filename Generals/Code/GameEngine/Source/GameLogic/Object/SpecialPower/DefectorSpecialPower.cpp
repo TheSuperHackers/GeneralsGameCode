@@ -48,7 +48,7 @@ DefectorSpecialPowerModuleData::DefectorSpecialPowerModuleData( void )
 
 	m_fatCursorRadius = 0.0f;
 
-}  // end DefectorSpecialPowerModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ DefectorSpecialPowerModuleData::DefectorSpecialPowerModuleData( void )
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,14 +78,14 @@ DefectorSpecialPower::DefectorSpecialPower( Thing *thing, const ModuleData *modu
 												: SpecialPowerModule( thing, moduleData )
 {
 
-}  // end DefectorSpecialPower
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 DefectorSpecialPower::~DefectorSpecialPower( void )
 {
 
-}  // end ~DefectorSpecialPower
+}
 
 
 // ------------------------------------------------------------------------------------------------
@@ -143,7 +143,7 @@ void DefectorSpecialPower::crc( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -161,7 +161,7 @@ void DefectorSpecialPower::xfer( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -172,4 +172,4 @@ void DefectorSpecialPower::loadPostProcess( void )
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

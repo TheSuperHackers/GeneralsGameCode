@@ -51,7 +51,7 @@ WindowLayout::WindowLayout( void )
 	m_update = NULL;
 	m_shutdown = NULL;
 
-}  // end WindowLayout
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ WindowLayout::~WindowLayout( void )
 	DEBUG_ASSERTCRASH( m_windowList == NULL, ("Window layout being destroyed still has window references") );
 	DEBUG_ASSERTCRASH( m_windowTail == NULL, ("Window layout being destroyed still has window references") );
 
-}  // end ~WindowLayout
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Set the hidden/visible status of all the windows in this layout */
@@ -81,12 +81,12 @@ void WindowLayout::hide( Bool hide )
 
 		window->winHide( hide );
 
-	}  // end for window
+	}
 
 	// save the new visible state of the system
 	m_hidden = hide;
 
-}  // end hide
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Add window to this layout */
@@ -120,9 +120,9 @@ void WindowLayout::addWindow( GameWindow *window )
 		// we gots another window now
 		m_windowCount++;
 
-	}  // end if
+	}
 
-}  // end addWindow
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Remove window from this layout */
@@ -158,9 +158,9 @@ void WindowLayout::removeWindow( GameWindow *window )
 		// we lost one sir!
 		m_windowCount--;
 
-	}  // end if
+	}
 
-}  // end removeWindow
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Destroy all the windows in a layout */
@@ -178,9 +178,9 @@ void WindowLayout::destroyWindows( void )
 		// destroy window in window system
 		TheWindowManager->winDestroy( window );
 
-	}  // end while
+	}
 
-}  // end destroyWindows
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Create the windows using the .wnd file script and load all windows into
@@ -211,7 +211,7 @@ Bool WindowLayout::load( AsciiString filename )
 		DEBUG_LOG(( "WindowLayout::load - Unable to load layout file '%s'", filename.str() ));
 		return FALSE;
 
-	}  // end if
+	}
 
 	//
 	// add windows loaded from .wnd file to the layout, via info.windows.
@@ -236,7 +236,7 @@ Bool WindowLayout::load( AsciiString filename )
 		// add window to this layout
 		addWindow( window );
 
-	}  // end for window
+	}
 	*/
 
 	// copy filename
@@ -249,7 +249,7 @@ Bool WindowLayout::load( AsciiString filename )
 
 	return TRUE;  // success
 
-}  // end load
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Bring all windows in this layout forward */
@@ -276,9 +276,9 @@ void WindowLayout::bringForward( void )
 		window->winBringToTop();
 		countLeft--;
 
-	}  // end for window
+	}
 
-}  // end bringForward
+}
 
 
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
@@ -295,4 +295,4 @@ GameWindow *WindowLayout::findWindow( GameWindow *window )
 
 	return NULL;  // window not found
 
-}  // end findWindow
+}

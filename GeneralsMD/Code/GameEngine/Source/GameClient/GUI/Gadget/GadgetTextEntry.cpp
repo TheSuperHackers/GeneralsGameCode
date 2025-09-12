@@ -247,12 +247,12 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 																								GEM_UPDATE_TEXT,
 																								(WindowMsgData)window,
 																								0 );
-							}  // end if
+							}
 						}
 					}
 					break;
 
-			}  // end switch( mData1 )
+			}
 
 			break;
 
@@ -303,11 +303,11 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end GadgetTextEntryInput
+}
 
 // GadgetTextEntrySystem ======================================================
 /** Handle system messages for entry field */
@@ -344,7 +344,7 @@ WindowMsgHandledType GadgetTextEntrySystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end set text
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_CREATE:
@@ -410,11 +410,11 @@ WindowMsgHandledType GadgetTextEntrySystem( GameWindow *window, UnsignedInt msg,
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end GadgetTextEntrySystem
+}
 
 /** @todo we might want to do something like this if we use IME for language
 	* support in this product */
@@ -559,9 +559,9 @@ void GadgetTextEntrySetFont( GameWindow *g, GameFont *font )
 		if( dString )
 			dString->setFont( font );
 
-	}  // end if
+	}
 
-}  // end GadgetTextEntrySetFont
+}
 
 // GadgetTextEntryGetText =======================================================
 /** Get the text for a Text entry */
@@ -581,4 +581,4 @@ UnicodeString GadgetTextEntryGetText( GameWindow *textentry )
 	TheWindowManager->winSendSystemMsg( textentry, GEM_GET_TEXT, 0, (WindowMsgData)&result );
 	return result;
 
-}  // end GadgetListBoxGetText
+}

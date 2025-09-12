@@ -103,7 +103,7 @@ void W3DScienceModelDraw::crc( Xfer *xfer )
 	// extend base class
 	W3DModelDraw::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -121,7 +121,7 @@ void W3DScienceModelDraw::xfer( Xfer *xfer )
 	// extend base class
 	W3DModelDraw::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -132,6 +132,6 @@ void W3DScienceModelDraw::loadPostProcess( void )
 	// extend base class
 	W3DModelDraw::loadPostProcess();
 
-}  // end loadPostProcess
+}
 
 

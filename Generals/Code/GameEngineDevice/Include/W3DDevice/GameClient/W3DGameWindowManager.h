@@ -80,7 +80,7 @@ public:
 
 protected:
 
-};  // end class W3DGameWindowManager
+};
 
 // INLINE //////////////////////////////////////////////////////////////////////////////////////////
 inline GameWindow *W3DGameWindowManager::allocateNewWindow( void ) { return newInstance(W3DGameWindow); }

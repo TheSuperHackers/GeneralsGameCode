@@ -93,7 +93,7 @@ protected:
 	Bool m_needPolyDraw;  ///< TRUE need to redo the text polys
 	Bool m_newTextPos;  ///< TRUE when our window has moved and we need a new text pos
 
-};  // end class W3DGameWindow
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////
 

@@ -378,7 +378,7 @@ void ReplayMenuInit( WindowLayout *layout, void *userData )
 		win->winHide(TRUE);
 	isShuttingDown = FALSE;
 
-}  // end ReplayMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** single player menu shutdown method */
@@ -394,12 +394,12 @@ void ReplayMenuShutdown( WindowLayout *layout, void *userData )
 		TheShell->shutdownComplete( layout );
 		return;
 
-	}  //end if
+	}
 
 	// our shutdown is complete
 	TheTransitionHandler->reverse("ReplayMenuFade");
 	isShuttingDown = TRUE;
-}  // end ReplayMenuShutdown
+}
 
 //-------------------------------------------------------------------------------------------------
 /** single player menu update method */
@@ -427,7 +427,7 @@ void ReplayMenuUpdate( WindowLayout *layout, void *userData )
 	if(isShuttingDown && TheShell->isAnimFinished()&& TheTransitionHandler->isFinished())
 		TheShell->shutdownComplete( layout );
 
-}  // end ReplayMenuUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Replay menu input callback */
@@ -462,22 +462,22 @@ WindowMsgHandledType ReplayMenuInput( GameWindow *window, UnsignedInt msg,
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)buttonBack, buttonBackID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
 
-}  // end ReplayMenuInput
+}
 
 void reallyLoadReplay(void)
 {
@@ -564,7 +564,7 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end create
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
@@ -572,7 +572,7 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end case
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -584,7 +584,7 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			return MSG_HANDLED;
 
-		}  // end input
+		}
 		//---------------------------------------------------------------------------------------------
 		case GLM_DOUBLE_CLICKED:
 			{
@@ -652,14 +652,14 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 					filename = GetReplayFilenameFromListbox(listboxReplayFiles, selected);
 					loadReplay(filename);
 				}
-			}  // end else if
+			}
 			else if( controlID == buttonBackID )
 			{
 
 				// thou art directed to return to thy known solar system immediately!
 				TheShell->pop();
 
-			}  // end else if
+			}
 			else if( controlID == buttonDeleteID )
 			{
 				Int selected;
@@ -685,14 +685,14 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 				MessageBoxYesNo(TheGameText->fetch("GUI:CopyReplay"), TheGameText->fetch("GUI:AreYouSureCopy"), copyReplayFlag, NULL);
 			}
 			break;
-		}  // end selected
+		}
 
 		default:
 			return MSG_IGNORED;
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
-}  // end ReplayMenuSystem
+}
 
 void deleteReplay( void )
 {

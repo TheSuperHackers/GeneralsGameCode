@@ -119,7 +119,7 @@ void W3DOverlordTruckDraw::crc( Xfer *xfer )
 	// extend base class
 	W3DTruckDraw::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -137,7 +137,7 @@ void W3DOverlordTruckDraw::xfer( Xfer *xfer )
 	// extend base class
 	W3DTruckDraw::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -148,4 +148,4 @@ void W3DOverlordTruckDraw::loadPostProcess( void )
 	// extend base class
 	W3DTruckDraw::loadPostProcess();
 
-}  // end loadPostProcess
+}

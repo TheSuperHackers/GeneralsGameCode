@@ -268,7 +268,7 @@ Path::~Path( void )
 // ------------------------------------------------------------------------------------------------
 void Path::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -380,14 +380,14 @@ void Path::xfer( Xfer *xfer )
 		TheAI->pathfinder()->setDebugPath(this);
 	}
 #endif
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void Path::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 /**
  * Create a new node at the head of the path
@@ -3936,11 +3936,11 @@ void Pathfinder::removeWallPiece(Object *wallPiece)
 			// all done
 			return;
 
-		}  // end if
+		}
 
-	}  // end for, i
+	}
 
-}  // end removeWallPiece
+}
 
 /**
  * Checks if a point is on the wall.
@@ -4318,11 +4318,11 @@ void Pathfinder::internal_classifyObjectFootprint( Object *obj, Bool insert )
  							if (cellBounds.hi.y<j) cellBounds.hi.y = j;
 						}
 					}
-				} // for i
-			} // for j
-		} // cylinder
+				}
+			}
+		}
 		break;
-	} // switch
+	}
 	m_zoneManager.updateZonesForModify(m_map, m_layers, cellBounds, m_extent);
 
 	Int i, j;
@@ -11129,7 +11129,7 @@ void Pathfinder::crc( Xfer *xfer )
 	xfer->xferInt(&m_cumulativeCellsAllocated);
 	CRCDEBUG_LOG(("m_cumulativeCellsAllocated: %8.8X", ((XferCRC *)xfer)->getCRC()));
 
-}  // end crc
+}
 
 //-----------------------------------------------------------------------------
 void Pathfinder::xfer( Xfer *xfer )
@@ -11140,10 +11140,10 @@ void Pathfinder::xfer( Xfer *xfer )
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
-}  // end xfer
+}
 
 //-----------------------------------------------------------------------------
 void Pathfinder::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

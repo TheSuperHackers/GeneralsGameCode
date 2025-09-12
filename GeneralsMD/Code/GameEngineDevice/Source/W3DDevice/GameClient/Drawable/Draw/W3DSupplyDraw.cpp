@@ -119,7 +119,7 @@ void W3DSupplyDraw::crc( Xfer *xfer )
 	// extend base class
 	W3DModelDraw::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -139,7 +139,7 @@ void W3DSupplyDraw::xfer( Xfer *xfer )
 
 	// Graham says there's no data to save here
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -150,6 +150,6 @@ void W3DSupplyDraw::loadPostProcess( void )
 	// extend base class
 	W3DModelDraw::loadPostProcess();
 
-}  // end loadPostProcess
+}
 
 

@@ -154,7 +154,7 @@ void UndeadBody::crc( Xfer *xfer )
 	// extend base class
 	ActiveBody::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -174,7 +174,7 @@ void UndeadBody::xfer( Xfer *xfer )
 
 	xfer->xferBool(&m_isSecondLife);
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -185,4 +185,4 @@ void UndeadBody::loadPostProcess( void )
 	// extend base class
 	ActiveBody::loadPostProcess();
 
-}  // end loadPostProcess
+}

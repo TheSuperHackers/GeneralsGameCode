@@ -63,7 +63,7 @@ BunkerBusterBehaviorModuleData::BunkerBusterBehaviorModuleData( void )
   m_shockwaveWeaponTemplate = NULL;
   m_occupantDamageWeaponTemplate = NULL;
 
-}  // end BunkerBusterBehaviorModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ BunkerBusterBehaviorModuleData::BunkerBusterBehaviorModuleData( void )
 
   p.add( dataFieldParse );
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,14 +103,14 @@ BunkerBusterBehavior::BunkerBusterBehavior( Thing *thing, const ModuleData *modD
   m_victimID = INVALID_ID;
   m_upgradeRequired = NULL;
 
-}  // end BunkerBusterBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 BunkerBusterBehavior::~BunkerBusterBehavior( void )
 {
 
-}  // end ~BunkerBusterBehavior
+}
 
 
 
@@ -121,7 +121,7 @@ void BunkerBusterBehavior::onObjectCreated( void )
 	// convert module upgrade name to a pointer
 	m_upgradeRequired = TheUpgradeCenter->findUpgrade( modData->m_upgradeRequired );
 
-}  // end onObjectCreated
+}
 
 
 // ------------------------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ UpdateSleepTime BunkerBusterBehavior::update( void )
 
 	return UPDATE_SLEEP_NONE;
 
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** The death callback */
@@ -240,7 +240,7 @@ void BunkerBusterBehavior::bustTheBunker( void )
 		TheWeaponStore->createAndFireTempWeapon(modData->m_shockwaveWeaponTemplate, objectForFX, objectForFX->getPosition());
 
 
-}  // end onDie
+}
 
 // ------------------------------------------------------------------------------------------------
 
@@ -260,7 +260,7 @@ void BunkerBusterBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -278,7 +278,7 @@ void BunkerBusterBehavior::xfer( Xfer *xfer )
 	// extend base class
 	UpdateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -289,4 +289,4 @@ void BunkerBusterBehavior::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

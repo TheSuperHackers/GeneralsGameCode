@@ -89,21 +89,21 @@ void W3DGadgetProgressBarDraw( GameWindow *window, WinInstanceData *instData )
 		backBorder	= GadgetProgressBarGetDisabledBorderColor( window );
 		barColor		= GadgetProgressBarGetDisabledBarColor( window );
 		barBorder		= GadgetProgressBarGetDisabledBarBorderColor( window );
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		backColor		= GadgetProgressBarGetHiliteColor( window );
 		backBorder	= GadgetProgressBarGetHiliteBorderColor( window );
 		barColor		= GadgetProgressBarGetHiliteBarColor( window );
 		barBorder		= GadgetProgressBarGetHiliteBarBorderColor( window );
-	}  // end else if, hilited
+	}
 	else
 	{
 		backColor		= GadgetProgressBarGetEnabledColor( window );
 		backBorder	= GadgetProgressBarGetEnabledBorderColor( window );
 		barColor		= GadgetProgressBarGetEnabledBarColor( window );
 		barBorder		= GadgetProgressBarGetEnabledBarBorderColor( window );
-	}  // end else, enabled
+	}
 
 	// draw background border
 	if( backBorder != WIN_COLOR_UNDEFINED )
@@ -116,7 +116,7 @@ void W3DGadgetProgressBarDraw( GameWindow *window, WinInstanceData *instData )
 		TheWindowManager->winOpenRect( backBorder, WIN_DRAW_LINE_WIDTH,
 																	 start.x, start.y, end.x, end.y );
 
-	}  // end if
+	}
 
 	// draw background fill
 	if( backColor != WIN_COLOR_UNDEFINED )
@@ -129,7 +129,7 @@ void W3DGadgetProgressBarDraw( GameWindow *window, WinInstanceData *instData )
 		TheWindowManager->winFillRect( backColor, WIN_DRAW_LINE_WIDTH,
 																	 start.x, start.y, end.x, end.y );
 
-	}  // end if
+	}
 
 	// draw the progress so far
 	if( progress )
@@ -149,7 +149,7 @@ void W3DGadgetProgressBarDraw( GameWindow *window, WinInstanceData *instData )
 																		 start.x, start.y, end.x, end.y );
 			}
 
-		}  // end if
+		}
 
 		// draw bar fill
 		if( barColor != WIN_COLOR_UNDEFINED )
@@ -171,13 +171,13 @@ void W3DGadgetProgressBarDraw( GameWindow *window, WinInstanceData *instData )
 				TheWindowManager->winDrawLine(GameMakeColor(200,200,200,255),WIN_DRAW_LINE_WIDTH, start.x, start.y, start.x, end.y);
 			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 
 
-}  // end W3DGadgetProgressBarDraw
+}
 
 // W3DGadgetProgressBarImageDraw ==============================================
 /** Draw Progress Bar with user supplied images */
@@ -254,7 +254,7 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 		//backSmallCenter	= GadgetProgressBarGetDisabledImageSmallCenter( window );
 		//barSmallCenter	= GadgetProgressBarGetDisabledBarImageSmallCenter( window );
 
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
@@ -267,7 +267,7 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 		//backSmallCenter	= GadgetProgressBarGetHiliteImageSmallCenter( window );
 		//barSmallCenter	= GadgetProgressBarGetHiliteBarImageSmallCenter( window );
 
-	}  // end else if, hilited
+	}
 	else
 	{
 
@@ -280,7 +280,7 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 		//backSmallCenter	= GadgetProgressBarGetEnabledImageSmallCenter( window );
 		//barSmallCenter	= GadgetProgressBarGetEnabledBarImageSmallCenter( window );
 
-	}  // end else, enabled
+	}
 
 	// sanity
 	if( backLeft == NULL || backRight == NULL ||
@@ -325,7 +325,7 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 																		end.x, end.y );
 		start.x += backCenter->getImageWidth();
 
-	}  // end for i
+	}
 
 	//
 	// how many small repeating pieces will fit in the gap from where the
@@ -398,7 +398,7 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 																		end.x, end.y );
 		start.x += barCenter->getImageWidth();
 
-	}  // end for i
+	}
 	start.x = origin.x + 10 + barCenter->getImageWidth() * pieces;
 	//pieces = (size.x - barWindowSize.x -20) / barRight->getImageWidth();
 	//Changed By Saad for flashing grey piece
@@ -412,6 +412,6 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 																		end.x, end.y );
 		start.x += barRight->getImageWidth();
 
-	}  // end for i
+	}
 
-}  // end W3DGadgetProgressBarImageDraw
+}

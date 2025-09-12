@@ -176,7 +176,7 @@ void ProjectileStreamUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -206,7 +206,7 @@ void ProjectileStreamUpdate::xfer( Xfer *xfer )
 	// owning object
 	xfer->xferObjectID( &m_owningObject );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -217,4 +217,4 @@ void ProjectileStreamUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -51,7 +51,7 @@ RebuildHoleBehaviorModuleData::RebuildHoleBehaviorModuleData( void )
 	m_workerRespawnDelay = 0.0f;
 	m_holeHealthRegenPercentPerSecond = 0.1f;
 
-}  // end RebuildHoleBehaviorModuleData
+}
 
 //-------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ RebuildHoleBehaviorModuleData::RebuildHoleBehaviorModuleData( void )
 
   p.add( dataFieldParse );
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ RebuildHoleBehavior::RebuildHoleBehavior( Thing *thing, const ModuleData* module
 	m_workerTemplate = NULL;
 	m_rebuildTemplate = NULL;
 
-}  // end RebuildHoleBehavior
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ RebuildHoleBehavior::~RebuildHoleBehavior( void )
 		}
 	}
 
-}  // end ~RebuildHoleBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 /** we need to start all the timers and ID ties to make a new worker at the correct time */
@@ -136,7 +136,7 @@ void RebuildHoleBehavior::newWorkerRespawnProcess( Object *existingWorker )
 	//
 	getObject()->maskObject( FALSE );
 
-}  // end newWorkerRespawnProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -153,7 +153,7 @@ void RebuildHoleBehavior::startRebuildProcess( const ThingTemplate *rebuild, Obj
 	Object *worker = TheGameLogic->findObjectByID(m_workerID);
 	newWorkerRespawnProcess( worker ); //Kill the worker if we have one.
 
-} /// end startRebuildProcess
+}
 
 
 //----------------------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 		if( worker == NULL )
 			newWorkerRespawnProcess( NULL );
 
-	}  // end if
+	}
 
 	// if we have a reconstructing object built, get the actual object pointer
 	if( m_reconstructingID != 0 )
@@ -215,9 +215,9 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 		{
 			newWorkerRespawnProcess( worker );
 			m_reconstructingID = INVALID_ID;
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// see if it's time for us to spawn a worker
 	if( worker == NULL && m_workerWaitCounter > 0 )
@@ -290,13 +290,13 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 
 					transferBombs( reconstructing );
 
-				}  // end if
+				}
 
-			}  // end if, worker
+			}
 
-		}  // end if, time to spawn a worker
+		}
 
-	}  // end if, check for working respawn
+	}
 
 	// holes get auto-healed when they're sittin around
 	BodyModuleInterface *body = hole->getBodyModule();
@@ -312,7 +312,7 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 		healingInfo.in.m_deathType = DEATH_NONE;
 		body->attemptHealing( &healingInfo );
 
-	}  // end if
+	}
 
 	// when re-construction is complete, we remove this hole and worker
 	if( reconstructing && !reconstructing->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
@@ -327,11 +327,11 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 		// make the hole go away
 		TheGameLogic->destroyObject( hole );
 
-	}  // end if
+	}
 
 	return UPDATE_SLEEP_NONE;
 
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -354,7 +354,7 @@ void RebuildHoleBehavior::onDie( const DamageInfo *damageInfo )
 	// destroy us
 	TheGameLogic->destroyObject( obj );
 
-}  // end onDie
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Helper method to get interface given an object */
@@ -373,13 +373,13 @@ void RebuildHoleBehavior::onDie( const DamageInfo *damageInfo )
 			if( rhbi )
 				break;  // exit for
 
-		}  // end for i
+		}
 
-	}  // end if, obj
+	}
 
 	return rhbi;
 
-}  // end getRebuildHoleBehaviorInterfaceFromObject
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -390,7 +390,7 @@ void RebuildHoleBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -439,13 +439,13 @@ void RebuildHoleBehavior::xfer( Xfer *xfer )
 											workerName.str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 		else
 			m_workerTemplate = NULL;
 
-	}  // end if
+	}
 
 	// rebuild template
 	AsciiString rebuildName = m_rebuildTemplate ? m_rebuildTemplate->getName() : AsciiString::TheEmptyString;
@@ -464,15 +464,15 @@ void RebuildHoleBehavior::xfer( Xfer *xfer )
 											rebuildName.str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 		else
 			m_rebuildTemplate = NULL;
 
-	}  // end if
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -483,4 +483,4 @@ void RebuildHoleBehavior::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

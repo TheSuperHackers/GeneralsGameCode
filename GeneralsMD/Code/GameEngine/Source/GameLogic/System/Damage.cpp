@@ -111,7 +111,7 @@ void DamageInfo::xfer( Xfer *xfer )
 	// xfer output
 	xfer->xferSnapshot( &out );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -170,7 +170,7 @@ void DamageInfoInput::xfer( Xfer *xfer )
 		}
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -194,5 +194,5 @@ void DamageInfoOutput::xfer( Xfer *xfer )
 	// no effect
 	xfer->xferBool( &m_noEffect );
 
-}  // end xfer
+}
 

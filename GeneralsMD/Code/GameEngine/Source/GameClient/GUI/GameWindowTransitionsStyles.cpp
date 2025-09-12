@@ -134,7 +134,7 @@ void FlashTransition::update( Int frame )
 			if( TheAudio )
 			{
 				TheAudio->addAudioEvent( &buttonClick );
-			}  // end if
+			}
 
 		}
 		FALLTHROUGH;
@@ -294,7 +294,7 @@ void ButtonFlashTransition::update( Int frame )
 					if( TheAudio )
 					{
 						TheAudio->addAudioEvent( &buttonClick );
-					}  // end if
+					}
 
 					m_drawState = frame;
 				}
@@ -805,7 +805,7 @@ void ScaleUpTransition::update( Int frame )
 			if( TheAudio )
 			{
 				TheAudio->addAudioEvent( &buttonClick );
-			}  // end if
+			}
 
 		}
 		FALLTHROUGH;
@@ -928,7 +928,7 @@ void ScoreScaleUpTransition::update( Int frame )
 			if( TheAudio )
 			{
 				TheAudio->addAudioEvent( &buttonClick );
-			}  // end if
+			}
 
 		}
 		FALLTHROUGH;
@@ -1069,7 +1069,7 @@ void MainMenuScaleUpTransition::update( Int frame )
 		if( TheAudio )
 		{
 			TheAudio->addAudioEvent( &buttonClick );
-		}  // end if
+		}
 	}
 	if(frame > MAINMENUSCALEUPTRANSITION_START && frame < MAINMENUSCALEUPTRANSITION_END)
 	{
@@ -1190,7 +1190,7 @@ void MainMenuMediumScaleUpTransition::update( Int frame )
 			if( TheAudio )
 			{
 				TheAudio->addAudioEvent( &buttonClick );
-			}  // end if
+			}
 		}
 		if(m_win)
 			m_win->winHide(TRUE);
@@ -1417,7 +1417,7 @@ void TextTypeTransition::update( Int frame )
 		if( TheAudio )
 		{
 			TheAudio->addAudioEvent( &buttonClick );
-		}  // end if
+		}
 		if(m_isForward)
 		{
 			m_partialText.concat(m_fullText.getCharAt(frame - 1));
@@ -1561,7 +1561,7 @@ void CountUpTransition::update( Int frame )
 		if( TheAudio )
 		{
 			TheAudio->addAudioEvent( &buttonClick );
-		}  // end if
+		}
 		m_currentValue +=m_countState;
 		if(m_currentValue > m_intValue)
 			m_currentValue = m_intValue;
@@ -2023,7 +2023,7 @@ void ReverseSoundTransition::update( Int frame )
 			if( TheAudio )
 			{
 				TheAudio->addAudioEvent( &buttonClick );
-			}  // end if
+			}
 		}
 		break;
 
@@ -2140,7 +2140,7 @@ void PushButtonImageDrawThree(GameWindow *window, Int alpha )
 																			end.x, end.y,color );
 			start.x += centerImage->getImageWidth();
 
-		}  // end for i
+		}
 
 		// we will draw the image but clip the parts we don't want to show
 		IRegion2D reg;
@@ -2227,7 +2227,7 @@ static void drawTypeText( GameWindow *window, DisplayString *str)
 		textPos.y = origin.y + (size.y / 2) - (textHeight / 2);
 		str->setClipRegion(&clipRegion);
 		str->draw( textPos.x, textPos.y, textColor, textDropColor );
-	}  // end if
+	}
 	else
 	{
 
@@ -2237,7 +2237,7 @@ static void drawTypeText( GameWindow *window, DisplayString *str)
 		str->setClipRegion(&clipRegion);
 		str->draw( textPos.x, textPos.y, textColor, textDropColor );
 
-	}  // end else
+	}
 
 
-}  // end drawStaticTextText
+}

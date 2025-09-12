@@ -85,7 +85,7 @@ MultiplayerSettings::MultiplayerSettings()
 	m_randomColor;
 
   m_gotDefaultStartingMoney = false;
-}  // end MultiplayerSettings
+}
 
 MultiplayerColorDefinition::MultiplayerColorDefinition()
 {

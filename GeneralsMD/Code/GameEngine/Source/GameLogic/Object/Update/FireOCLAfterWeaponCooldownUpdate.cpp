@@ -214,7 +214,7 @@ void FireOCLAfterWeaponCooldownUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpgradeMux::upgradeMuxCRC( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -244,7 +244,7 @@ void FireOCLAfterWeaponCooldownUpdate::xfer( Xfer *xfer )
 	// start frame
 	xfer->xferUnsignedInt( &m_startFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -258,4 +258,4 @@ void FireOCLAfterWeaponCooldownUpdate::loadPostProcess( void )
 	// extend base class
 	UpgradeMux::upgradeMuxLoadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -94,7 +94,7 @@ void INI::parseCredits( INI *ini )
 	// parse the ini definition
 	ini->initFromINI( TheCredits, TheCredits->getFieldParse() );
 
-}  // end parseCommandButtonDefinition
+}
 
 
 CreditsLine::CreditsLine()

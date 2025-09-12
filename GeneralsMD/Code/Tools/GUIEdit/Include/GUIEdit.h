@@ -348,7 +348,7 @@ protected:
 	AsciiString m_layoutUpdateString;	 ///< layout update function name
 	AsciiString m_layoutShutdownString;///< layout shutdown function name
 
-};  // end GUIEdit
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
 inline HWND GUIEdit::getWindowHandle( void ) { return m_appHWnd; }

@@ -269,7 +269,7 @@ void FireWeaponWhenDamagedBehavior::crc( Xfer *xfer )
 	// extend upgrade mux
 	UpgradeMux::upgradeMuxCRC( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -340,7 +340,7 @@ void FireWeaponWhenDamagedBehavior::xfer( Xfer *xfer )
 	if( weaponPresent )
 		xfer->xferSnapshot( m_continuousWeaponRubble );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -354,4 +354,4 @@ void FireWeaponWhenDamagedBehavior::loadPostProcess( void )
 	// extend upgrade mux
 	UpgradeMux::upgradeMuxLoadPostProcess();
 
-}  // end loadPostProcess
+}

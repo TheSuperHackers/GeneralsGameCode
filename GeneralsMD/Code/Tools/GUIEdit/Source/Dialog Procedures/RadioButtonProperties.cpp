@@ -111,7 +111,7 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
 					SetDlgItemInt( hWndDialog, COMBO_GROUP, 0, FALSE );
 					break;
 
-				}  // end clear group
+				}
 
 				// --------------------------------------------------------------------
         case IDOK:
@@ -181,12 +181,12 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
 						Int screen = TheNameKeyGenerator->nameToKey( AsciiString(TheEditor->getSaveFilename()) );
 						GadgetRadioSetGroup( window, group, screen );
 
-					}  // end if
+					}
 
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end OK
+				}
 
 				// --------------------------------------------------------------------
         case IDCANCEL:
@@ -195,13 +195,13 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end cancel
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
     case WM_CLOSE:
@@ -210,15 +210,15 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
       DestroyWindow( hWndDialog );
       return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end radioButtonPropertiesCallback
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -252,7 +252,7 @@ static void loadExistingGroupsCombo( HWND combo, GameWindow *window )
 		if( SendMessage( combo, CB_FINDSTRINGEXACT, -1, (LPARAM)buffer ) == CB_ERR )
 			SendMessage( combo, CB_ADDSTRING, 0, (LPARAM)buffer );
 
-	}  // end if
+	}
 
 	// search our children
 	GameWindow *child;
@@ -262,7 +262,7 @@ static void loadExistingGroupsCombo( HWND combo, GameWindow *window )
 	// search the next in line
 	loadExistingGroupsCombo( combo, window->winGetNext() );
 
-}  // end loadExistingGroupsCombo
+}
 
 // InitRadioButtonPropertiesDialog ============================================
 /** Bring up the radio button properties dialog */
@@ -355,7 +355,7 @@ HWND InitRadioButtonPropertiesDialog( GameWindow *window )
 
 	return dialog;
 
-}  // end InitRadioButtonPropertiesDialog
+}
 
 
 

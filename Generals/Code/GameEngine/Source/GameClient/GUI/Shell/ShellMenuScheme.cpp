@@ -98,7 +98,7 @@ void INI::parseShellMenuSchemeDefinition( INI *ini )
 	// parse the ini definition
 	ini->initFromINI( SMScheme, SMSchemeManager->getFieldParse() );
 
-}  // end parseCommandButtonDefinition
+}
 
 ShellMenuSchemeLine::ShellMenuSchemeLine( void )
 {

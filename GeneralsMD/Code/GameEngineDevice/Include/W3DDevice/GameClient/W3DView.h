@@ -299,7 +299,7 @@ private:
 	Bool				m_useRealZoomCam;
 	AsciiString		m_cameraSlaveObjectName;
 	AsciiString		m_cameraSlaveObjectBoneName;
-};  // end class W3DView
+};
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern Real TheW3DFrameLengthInMsec;

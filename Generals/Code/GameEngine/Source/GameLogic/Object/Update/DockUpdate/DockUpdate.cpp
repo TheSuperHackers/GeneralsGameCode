@@ -61,7 +61,7 @@ DockUpdateModuleData::DockUpdateModuleData( void )
 
   p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 DockUpdate::DockUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
@@ -540,7 +540,7 @@ void DockUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -616,7 +616,7 @@ void DockUpdate::xfer( Xfer *xfer )
 	// dock open
 	xfer->xferBool( &m_dockOpen );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -627,5 +627,5 @@ void DockUpdate::loadPostProcess( void )
 	// call base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

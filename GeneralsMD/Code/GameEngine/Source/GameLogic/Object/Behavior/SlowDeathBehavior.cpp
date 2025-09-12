@@ -533,7 +533,7 @@ void SlowDeathBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -566,7 +566,7 @@ void SlowDeathBehavior::xfer( Xfer *xfer )
 	// flags
 	xfer->xferUnsignedInt( &m_flags );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -577,4 +577,4 @@ void SlowDeathBehavior::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -72,7 +72,7 @@
 GUIEditDisplay::GUIEditDisplay( void )
 {
 
-}  // end GUIEditDisplay
+}
 
 // GUIEditDisplay::~GUIEditDisplay ============================================
 /** */
@@ -80,7 +80,7 @@ GUIEditDisplay::GUIEditDisplay( void )
 GUIEditDisplay::~GUIEditDisplay( void )
 {
 
-}  // end ~GUIEditDisplay
+}
 
 // GUIEditDisplay::drawLine ===================================================
 /** draw a line on the display in pixel coordinates with the specified color */
@@ -92,7 +92,7 @@ void GUIEditDisplay::drawLine( Int startX, Int startY,
 
 	TheEditWindow->drawLine( startX, startY, endX, endY, lineWidth, lineColor );
 
-}  // end drawLIne
+}
 
 // GUIEditDisplay::drawOpenRect ===============================================
 /** draw a rect border on the display in pixel coordinates with the
@@ -106,7 +106,7 @@ void GUIEditDisplay::drawOpenRect( Int startX, Int startY,
 	TheEditWindow->drawOpenRect( startX, startY, width, height,
 															 lineWidth, lineColor );
 
-}  // end drawOpenRect
+}
 
 // GUIEditDisplay::drawFillRect ===============================================
 /** draw a filled rect on the display in pixel coords with the
@@ -121,7 +121,7 @@ void GUIEditDisplay::drawFillRect( Int startX, Int startY,
 															 width, height,
 															 color );
 
-}  // end drawFillRect
+}
 
 // GUIEditDisplay::drawImage ==================================================
 /** draw an image fit within the screen coordinates */
@@ -138,7 +138,7 @@ void GUIEditDisplay::drawImage( const Image *image,
 														color );
 
 
-}  // end drawImage
+}
 
 // GUIEditDisplay::setClipRegion ==============================================
 /** sets clipping rectangle for 2D drawing operations */

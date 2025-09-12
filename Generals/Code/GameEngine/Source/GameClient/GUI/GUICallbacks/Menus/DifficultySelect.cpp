@@ -118,7 +118,7 @@ static void SetDifficultyRadioButton( void )
 			}
 
 		}
-	} // if (TheScriptEngine)
+	}
 
 }
 
@@ -152,7 +152,7 @@ void DifficultySelectInit( WindowLayout *layout, void *userData )
 	parent->winBringToTop();
 	TheWindowManager->winSetModal(parent);
 
-}  // end SkirmishMapSelectMenuInit
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -206,7 +206,7 @@ WindowMsgHandledType DifficultySelectInput( GameWindow *window, UnsignedInt msg,
 
 	return MSG_IGNORED;
 
-}  // end SkirmishMapSelectMenuInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** MapSelect menu window system callback */
@@ -223,14 +223,14 @@ WindowMsgHandledType DifficultySelectSystem( GameWindow *window, UnsignedInt msg
 		{
 			break;
 
-		}  // end create
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
 			break;
 
-		}  // end case
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -242,7 +242,7 @@ WindowMsgHandledType DifficultySelectSystem( GameWindow *window, UnsignedInt msg
 
 			return MSG_HANDLED;
 
-		}  // end input
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -294,12 +294,12 @@ WindowMsgHandledType DifficultySelectSystem( GameWindow *window, UnsignedInt msg
 
 			break;
 
-		}  // end selected
+		}
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 

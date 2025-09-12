@@ -685,7 +685,7 @@ GlobalData::GlobalData()
 		//Added By Sadullah Nader
 		//Initializations missing and needed
 		m_vertexWaterAvailableMaps[i].clear();
-	}  // end for i
+	}
 
 	m_skyBoxPositionZ = 0.0f;
 	m_drawSkyBox = FALSE;
@@ -1051,7 +1051,7 @@ GlobalData::GlobalData()
 
 	m_clientRetaliationModeEnabled = TRUE; //On by default.
 
-}  // end GlobalData
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -1067,7 +1067,7 @@ GlobalData::~GlobalData( void )
 		TheWritableGlobalData = NULL;
 	}
 
-}  // end ~GlobalData
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -1115,7 +1115,7 @@ GlobalData *GlobalData::newOverride( void )
 
 	return override;
 
-}  // end newOveride
+}
 
 //-------------------------------------------------------------------------------------------------
 void GlobalData::init( void )
@@ -1147,7 +1147,7 @@ void GlobalData::reset( void )
 		// set next as top
 		TheWritableGlobalData = next;
 
-	}  // end while
+	}
 
 	//
 	// we now have the one single global data in TheWritableGlobalData singleton, lets sanity check
@@ -1156,7 +1156,7 @@ void GlobalData::reset( void )
 	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("ResetGlobalData: theOriginal is not original") );
 	DEBUG_ASSERTCRASH( TheWritableGlobalData == GlobalData::m_theOriginal, ("ResetGlobalData: oops") );
 
-}  // end ResetGlobalData
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse GameData entry */
@@ -1173,14 +1173,14 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 		if( ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES )
 			TheWritableGlobalData->newOverride();
 
-	}  // end if
+	}
 	else if (!TheWritableGlobalData)
 	{
 
 		// we don't have any global data instance at all yet, create one
 		TheWritableGlobalData = NEW GlobalData;
 
-	}  // end else
+	}
 	// If we're multifile, then continue loading stuff into the Global Data as normal.
 
 	// parse the ini weapon definition

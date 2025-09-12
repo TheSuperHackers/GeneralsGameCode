@@ -53,7 +53,7 @@ RailedTransportDockUpdateModuleData::RailedTransportDockUpdateModuleData( void )
 	m_pullInsideDurationInFrames = 0;
 	m_pushOutsideDurationInFrames = 0;
 
-}  // end RailedTransportDockUpdateModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ RailedTransportDockUpdateModuleData::RailedTransportDockUpdateModuleData( void )
 
   p.add( dataFieldParse );
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,14 +90,14 @@ RailedTransportDockUpdate::RailedTransportDockUpdate( Thing *thing, const Module
 	m_pushOutsideDistancePerFrame = 0.0f;
 	m_unloadCount = UNLOAD_ALL;
 
-}  // end RailedTransportDockUpdate
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 RailedTransportDockUpdate::~RailedTransportDockUpdate( void )
 {
 
-}  // end ~RailedTransportDockUpdate
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ UpdateSleepTime RailedTransportDockUpdate::update( void )
 	doPushOutDocking();
 
 	return UPDATE_SLEEP_NONE;
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** The dock action callback, return FALSE when done docking */
@@ -166,11 +166,11 @@ Bool RailedTransportDockUpdate::action( Object *docker, Object *drone )
 		angleVector.y = dockPos->y - dockerPos->y;
 		docker->setOrientation( angleVector.toAngle() );
 
-	}  // end if
+	}
 
 	return TRUE;
 
-}  // end action
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Is clear to enter the railed transport */
@@ -191,7 +191,7 @@ Bool RailedTransportDockUpdate::isClearToEnter( Object const *docker ) const
 
 	return TRUE;
 
-}  // end isClearToEnter
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Is anything currently loading or unloading */
@@ -204,7 +204,7 @@ Bool RailedTransportDockUpdate::isLoadingOrUnloading( void )
 
 	return FALSE;
 
-}  // end isLoadingOrUnloading
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Start the unload process */
@@ -220,7 +220,7 @@ void RailedTransportDockUpdate::unloadAll( void )
 	m_unloadCount = UNLOAD_ALL;
 	unloadNext();
 
-}  // end manualUnload
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Unload a single individual only */
@@ -232,7 +232,7 @@ void RailedTransportDockUpdate::unloadSingleObject( Object *obj )
 	m_unloadCount = 1;
 	unloadNext();
 
-}  // end unloadSingleObject
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -318,13 +318,13 @@ void RailedTransportDockUpdate::doPullInDocking( void )
 				// no object is docking now
 				m_dockingObjectID = INVALID_ID;
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
-}  // end doPullInDocking
+}
 
 // ------------------------------------------------------------------------------------------------
 /** If we have an object recorded as being pushed out of us then do that here */
@@ -343,7 +343,7 @@ void RailedTransportDockUpdate::doPushOutDocking( void )
 			unloadNext();
 			return;
 
-		}  // end if
+		}
 
 		// pull it
 		if( unloader )
@@ -412,18 +412,18 @@ void RailedTransportDockUpdate::doPushOutDocking( void )
 					us->convertBonePosToWorldPos( &finalPos, NULL, &finalPos, NULL );
 					unloaderAI->aiMoveToPosition( &finalPos, CMD_FROM_AI );
 
-				}  // end if
+				}
 
 				// unload the next object
 				unloadNext();
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if, m_unloadingID
+	}
 
-}  // end doPushOutDocking
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Iterate callback for the finding the first contained object */
@@ -439,7 +439,7 @@ static void getFirstContain( Object *obj, void *userData )
 	// assign this as the first object found
 	*firstContain = obj;
 
-}  // end getFirstContain
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Start the next object contained by us as "unloading and coming out" */
@@ -510,9 +510,9 @@ void RailedTransportDockUpdate::unloadNext( void )
 		if( m_unloadCount != UNLOAD_ALL )
 			--m_unloadCount;
 
-	}  // end if
+	}
 
-}  // end unloadNext
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -523,7 +523,7 @@ void RailedTransportDockUpdate::crc( Xfer *xfer )
 	// extend base class
 	DockUpdate::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -556,7 +556,7 @@ void RailedTransportDockUpdate::xfer( Xfer *xfer )
 	// unload count
 	xfer->xferInt( &m_unloadCount );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -567,4 +567,4 @@ void RailedTransportDockUpdate::loadPostProcess( void )
 	// extend base class
 	DockUpdate::loadPostProcess();
 
-}  // end loadPostProcess
+}

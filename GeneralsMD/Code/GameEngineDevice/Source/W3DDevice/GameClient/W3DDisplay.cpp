@@ -410,7 +410,7 @@ W3DDisplay::W3DDisplay()
 	for (i = 0; i < DisplayStringCount; i++)
 		m_displayStrings[i] = NULL;
 
-}  // end W3DDisplay
+}
 
 // W3DDisplay::~W3DDisplay ====================================================
 /** */
@@ -440,7 +440,7 @@ W3DDisplay::~W3DDisplay()
 		delete m_2DRender;
 		m_2DRender = NULL;
 
-	}  // end if
+	}
 
 	//
 	// delete all our views now since they are W3D views and we need to
@@ -470,7 +470,7 @@ W3DDisplay::~W3DDisplay()
 	delete TheW3DFileSystem;
 	TheW3DFileSystem = NULL;
 
-}  // end ~W3DDisplay
+}
 
 // TheSuperHackers @tweak valeronm 20/03/2025 No longer filters resolutions by a 4:3 aspect ratio.
 inline Bool isResolutionSupported(const ResolutionDescClass &res)
@@ -573,7 +573,7 @@ void W3DDisplay::setWidth( UnsignedInt width )
 	// of the screen with (width,height) at the lower right
 	m_2DRender->Set_Coordinate_Range( RectClass( 0, 0, getWidth(), getHeight() ) );
 
-}  // end set width
+}
 
 // W3DDisplay::setHeight ======================================================
 /** Set height of display */
@@ -588,7 +588,7 @@ void W3DDisplay::setHeight( UnsignedInt height )
 	// of the screen with (width,height) at the lower right
 	m_2DRender->Set_Coordinate_Range( RectClass( 0, 0, getWidth(), getHeight() ) );
 
-}  // end set height
+}
 
 // W3DDisplay::initAssets =====================================================
 /** */
@@ -596,7 +596,7 @@ void W3DDisplay::setHeight( UnsignedInt height )
 void W3DDisplay::initAssets( void )
 {
 
-}  // end initAssets
+}
 
 // W3DDisplay::init3DScene ====================================================
 /** */
@@ -604,7 +604,7 @@ void W3DDisplay::initAssets( void )
 void W3DDisplay::init3DScene( void )
 {
 
-}  // end init3DScene
+}
 
 // W3DDisplay::init2DScene ====================================================
 /** This is the 2D scene, you can use it to draw on a 2D plane over the
@@ -613,7 +613,7 @@ void W3DDisplay::init3DScene( void )
 void W3DDisplay::init2DScene( void )
 {
 
-}  // end init2DScene
+}
 
 // W3DDisplay::init ===========================================================
 /** Initialize or re-initialize the W3D display system.  Here we need to
@@ -635,7 +635,7 @@ void W3DDisplay::init( void )
 		/// @todo W3DDisplay needs RE-init logic!
 		return;
 
-	}  // end if
+	}
 	// Override the W3D File system
 	TheW3DFileSystem = NEW W3DFileSystem;
 
@@ -846,7 +846,7 @@ void W3DDisplay::init( void )
 	{
 		m_debugDisplayCallback = StatDebugDisplay;
 	}
-}  // end init
+}
 
 // W3DDisplay::reset ===========================================================
 /** Reset the W3D display system.  Here we need to
@@ -982,7 +982,7 @@ void W3DDisplay::gatherDebugStats( void )
 			}
 		}
 
-	}  // end if
+	}
 
 	if (m_benchmarkDisplayString == NULL)
 	{
@@ -1498,7 +1498,7 @@ void W3DDisplay::gatherDebugStats( void )
 
 			//Render ALL modelcondition statii
 
-		}  // end if
+		}
 		m_displayStrings[ SelectedInfo ]->setText( unibuffer );
 
 	}
@@ -1533,7 +1533,7 @@ void W3DDisplay::drawDebugStats( void )
 		y += h;
 	}
 
-}  // end drawDebugStats
+}
 
 // W3DDisplay::drawFPSStats =================================================
 /** Draw the FPS on the screen */
@@ -1577,7 +1577,7 @@ void W3DDisplay::drawCurrentDebugDisplay( void )
 			m_debugDisplayCallback( m_debugDisplay, m_debugDisplayUserData, NULL );
 		}
 	}
-}  // end drawCurrentDebugDisplay
+}
 
 // W3DDisplay::calculateTerrainLOD =================================================
 /** Calculates an adequately speedy terrain Level Of Detail. */
@@ -1992,7 +1992,7 @@ AGAIN:
 		goto AGAIN;
 	}
 #endif
-}  // end draw
+}
 
 #define LETTER_BOX_FADE_TIME	1000.0f		///1000 ms.
 
@@ -2185,7 +2185,7 @@ void W3DDisplay::drawLine( Int startX, Int startY,
 												lineWidth, lineColor );
 	m_2DRender->Render();
 
-}  // end drawLine
+}
 
 // W3DDisplay::drawLine =======================================================
 /** draw a line on the display in pixel coordinates with the specified color */
@@ -2203,7 +2203,7 @@ void W3DDisplay::drawLine( Int startX, Int startY,
 												lineWidth, lineColor1, lineColor2 );
 	m_2DRender->Render();
 
-}  // end drawLine
+}
 
 
 // W3DDisplay::drawOpenRect ===================================================
@@ -2256,7 +2256,7 @@ void W3DDisplay::drawOpenRect( Int startX, Int startY, Int width, Int height,
 		m_2DRender->Render();
 	}
 
-}  // end drawOpenRect
+}
 
 // W3DDisplay::drawFillRect ===================================================
 //=============================================================================
@@ -2274,7 +2274,7 @@ void W3DDisplay::drawFillRect( Int startX, Int startY, Int width, Int height,
 	// render it now!
 	m_2DRender->Render();
 
-}  // end drawFillRect
+}
 
 void W3DDisplay::drawRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color)
 {
@@ -2768,14 +2768,14 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 												 Vector2( uv_rect.Left, uv_rect.Top ),
 												 color );
 
-	}  // end if
+	}
 	else
 	{
 
 		// just draw as normal
 		m_2DRender->Add_Quad( screen_rect, uv_rect, color );
 
-	}  // end else
+	}
 
 	m_2DRender->Render();
 
@@ -2784,7 +2784,7 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 	if (doAlphaReset)
 		m_2DRender->Enable_Alpha(true);
 
-}  // end drawImage
+}
 
 //============================================================================
 // W3DDisplay::createVideoBuffer
@@ -2903,7 +2903,7 @@ void W3DDisplay::setClipRegion( IRegion2D *region )
 		m_clipRegion = *region;
 		m_isClippedEnabled = TRUE;
 
-}  // end setClipRegion
+}
 
 //=============================================================================
 /* we don't really need to override this call, since we will soon be called to
@@ -3267,9 +3267,9 @@ void W3DDisplay::preloadModelAssets( AsciiString model )
 		nameWithExtension.format( "%s.w3d", model.str() );
 		m_assetManager->Load_3D_Assets( nameWithExtension.str() );
 
-	}  // end if
+	}
 
-}  // end preloadModelAssets
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Preload using the W3D asset manager the texture referenced by the string parameter */
@@ -3281,9 +3281,9 @@ void W3DDisplay::preloadTextureAssets( AsciiString texture )
 	{
 		TextureClass *theTexture = m_assetManager->Get_Texture( texture.str() );
 		theTexture->Release_Ref();//release reference
-	}  // end if
+	}
 
-}  // end preloadModelAssets
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

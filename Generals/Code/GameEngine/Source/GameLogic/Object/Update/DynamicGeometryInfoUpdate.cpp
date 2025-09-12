@@ -129,7 +129,7 @@ UpdateSleepTime DynamicGeometryInfoUpdate::update( void )
 
 		m_started = TRUE;
 
-	}  // end if
+	}
 
 	// Either we've been running, or we just started right now.  Doesn't matter.
 	const DynamicGeometryInfoUpdateModuleData *data = getDynamicGeometryInfoUpdateModuleData();
@@ -171,16 +171,16 @@ UpdateSleepTime DynamicGeometryInfoUpdate::update( void )
 			m_finalMajorRadius = data->m_initialMajorRadius;
 			m_finalMinorRadius = data->m_initialMinorRadius;
 
-		}  // end if
+		}
 		else
 		{
 
 			// no switch needed ... we're all done
 			m_finished = TRUE;
 
-		}  // end else
+		}
 
-	}  // end if, time active is longer than transition time
+	}
 
 	return UPDATE_SLEEP_NONE;
 }
@@ -194,7 +194,7 @@ void DynamicGeometryInfoUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -251,7 +251,7 @@ void DynamicGeometryInfoUpdate::xfer( Xfer *xfer )
 	// final minor radius
 	xfer->xferReal( &m_finalMinorRadius );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -262,4 +262,4 @@ void DynamicGeometryInfoUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

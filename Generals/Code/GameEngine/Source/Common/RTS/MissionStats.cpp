@@ -75,7 +75,7 @@ void MissionStats::init()
 void MissionStats::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -102,7 +102,7 @@ void MissionStats::xfer( Xfer *xfer )
 	// buildings lost
 	xfer->xferInt( &m_buildingsLost );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -110,4 +110,4 @@ void MissionStats::xfer( Xfer *xfer )
 void MissionStats::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

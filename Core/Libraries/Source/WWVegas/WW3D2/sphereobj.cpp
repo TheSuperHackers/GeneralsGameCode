@@ -236,7 +236,7 @@ SphereRenderObjClass::SphereRenderObjClass(const SphereRenderObjClass & src)
 SphereRenderObjClass::~SphereRenderObjClass()
 {
 	REF_PTR_RELEASE(SphereMaterial);
-} // destructor
+}
 
 /***********************************************************************************************
  * SphereRenderObjClass::operator -- assignment operator                                       *
@@ -365,7 +365,7 @@ void SphereRenderObjClass::Init_Material (void)
 	// is to turn off backface culling...  ug...
 	SphereShader.Set_Cull_Mode(ShaderClass::CULL_MODE_DISABLE);
 
-}	// Init_Material
+}
 
 
 /***********************************************************************************************
@@ -528,7 +528,7 @@ void SphereRenderObjClass::render_sphere()
 		DX8Wrapper::Draw_Triangles(0,mesh.face_ct,0,mesh.Vertex_ct);
 	}
 
-} // render_sphere
+}
 
 
 /***********************************************************************************************
@@ -547,7 +547,7 @@ void SphereRenderObjClass::render_sphere()
  *=============================================================================================*/
 void SphereRenderObjClass::vis_render_sphere(SpecialRenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent)
 {
-}	// vis_render_sphere
+}
 
 
 /***********************************************************************************************
@@ -1141,7 +1141,7 @@ void SphereRenderObjClass::animate (void)
 
 	return ;
 
-} // animate
+}
 
 
 /*
@@ -1382,7 +1382,7 @@ inverse_alpha(false)
 
 	Generate(radius, slices, stacks);
 
-} // SphereMesh Constructor
+}
 
 /***********************************************************************************************
  * SphereMeshClass::SphereMeshClass -- Constructor for SphereMesh Geometry							  *
@@ -1415,7 +1415,7 @@ tri_poly(NULL),
 inverse_alpha(false)
 {
 
-} // Empty SphereMesh Constructor
+}
 
 
 
@@ -1484,7 +1484,7 @@ void	SphereMeshClass::Set_Alpha_Vector (const AlphaVectorStruct &v, bool inverse
 	}
 
 	return ;
-} // Set_Alpha_Vector
+}
 
 
 /***********************************************************************************************
@@ -1563,8 +1563,8 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
 			uv->V = stackstep;
 			uv++;
 
-		} // for slices
-	} // for stacks
+		}
+	}
 
 	// Assign vertex for south pole;
 	*veclist = -1.0f * vec;
@@ -1698,7 +1698,7 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
 	Set_Alpha_Vector (alpha_vector, inverse_alpha, IsAdditive, true);
 	return ;
 
-} // Generate
+}
 
 
 
@@ -1715,7 +1715,7 @@ SphereMeshClass::~SphereMeshClass(void)
 
 	Free();
 
-} // Destructor
+}
 
 
 /***********************************************************************************************

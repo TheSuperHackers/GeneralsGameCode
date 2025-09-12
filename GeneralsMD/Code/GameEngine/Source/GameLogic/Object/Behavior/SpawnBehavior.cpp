@@ -127,9 +127,9 @@ void SpawnBehavior::onDelete()
 			if( obj && obj->isEffectivelyDead() == FALSE )
 				TheGameLogic->destroyObject( obj );
 
-		}  // end for, it
+		}
 
-	}  // end if
+	}
 
 }
 
@@ -185,9 +185,9 @@ void SpawnBehavior::onDie( const DamageInfo *damageInfo )
 			if( obj && obj->isEffectivelyDead() == FALSE )
 				obj->kill();
 
-		}  // end for, it
+		}
 
-	}  // end if
+	}
 
 }
 
@@ -558,9 +558,9 @@ static void findClosestOrphan( Object *obj, void *userData )
 		orphanData->m_closest = obj;
 		orphanData->m_closestDistSq = distSq;
 
-	}  // end if
+	}
 
-}  // findClosestOrphan
+}
 
 // ------------------------------------------------------------------------------------------------
 Object *SpawnBehavior::reclaimOrphanSpawn( void )
@@ -936,7 +936,7 @@ void SpawnBehavior::computeAggregateStates(void)
 
 			spawnCount++;
 		}
-	} // next iter
+	}
 
 
 
@@ -971,7 +971,7 @@ void SpawnBehavior::computeAggregateStates(void)
 						teamMsg->appendObjectIDArgument( currentSpawn->getID() );
 					}
 				}
-			} // next iter
+			}
 		}
 		// if somebody is selected then I sure need to be!
 		if ( ! obj->getDrawable()->isSelected())
@@ -1065,7 +1065,7 @@ void SpawnBehavior::crc( Xfer *xfer )
 	// extend base class
 	BehaviorModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1108,11 +1108,11 @@ void SpawnBehavior::xfer( Xfer *xfer )
 				DEBUG_CRASH(( "SpawnBehavior::xfer - Unable to find template '%s'", name.str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// one shot countdown
 	xfer->xferInt( &m_oneShotCountdown );
@@ -1143,7 +1143,7 @@ void SpawnBehavior::xfer( Xfer *xfer )
 	// self tasking spawn count
 	xfer->xferUnsignedInt( &m_selfTaskingSpawnCount );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1154,4 +1154,4 @@ void SpawnBehavior::loadPostProcess( void )
 	// extend base class
 	BehaviorModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

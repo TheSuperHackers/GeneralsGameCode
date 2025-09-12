@@ -2517,9 +2517,9 @@ void AIGroup::groupExecuteRailedTransport( CommandSourceType cmdSource )
 		if( ai )
 			ai->aiExecuteRailedTransport( cmdSource );
 
-	}  // end for i
+	}
 
-}  // end groupExecuteRailedTransport
+}
 
 ///< life altering state change, if this AI can do it
 void AIGroup::groupGoProne( const DamageInfo *damageInfo, CommandSourceType cmdSource )
@@ -2874,9 +2874,9 @@ void AIGroup::groupToggleOvercharge( CommandSourceType cmdSource )
 			if( obi )
 				obi->toggle();
 
-		}  // end for
+		}
 
-	}  // end for, i
+	}
 
 }
 
@@ -2899,7 +2899,7 @@ void AIGroup::groupPickUpPrisoner( Object *prisoner, enum CommandSourceType cmdS
 		if( ai )
 			ai->aiPickUpPrisoner( prisoner, cmdSource );
 
-	}  // end for, i
+	}
 
 }
 #endif
@@ -2923,7 +2923,7 @@ void AIGroup::groupReturnToPrison( Object *prison, enum CommandSourceType cmdSou
 		if( ai )
 			ai->aiReturnPrisoners( prison, cmdSource );
 
-	}  // end for, i
+	}
 }
 #endif
 
@@ -2946,7 +2946,7 @@ void AIGroup::groupCombatDrop( Object *target, const Coord3D &pos, CommandSource
 		if( ai )
 			ai->aiCombatDrop( target, pos, cmdSource );
 
-	}  // end for, i
+	}
 
 }
 
@@ -2966,7 +2966,7 @@ void AIGroup::groupDoCommandButton( const CommandButton *commandButton, CommandS
 		source = *i;
 
 		source->doCommandButton( commandButton, cmdSource );
-	}  // end for, i
+	}
 }
 
 
@@ -2986,7 +2986,7 @@ void AIGroup::groupDoCommandButtonAtPosition( const CommandButton *commandButton
 		source = *i;
 
 		source->doCommandButtonAtPosition( commandButton, pos, cmdSource );
-	}  // end for, i
+	}
 }
 
 //-------------------------------------------------------------------------------------
@@ -3005,7 +3005,7 @@ void AIGroup::groupDoCommandButtonUsingWaypoints( const CommandButton *commandBu
 		source = *i;
 
 		source->doCommandButtonUsingWaypoints( commandButton, way, cmdSource );
-	}  // end for, i
+	}
 }
 
 //-------------------------------------------------------------------------------------
@@ -3024,7 +3024,7 @@ void AIGroup::groupDoCommandButtonAtObject( const CommandButton *commandButton, 
 		source = *i;
 
 		source->doCommandButtonAtObject( commandButton, obj, cmdSource );
-	}  // end for, i
+	}
 }
 
 
@@ -3340,7 +3340,7 @@ void AIGroup::crc( Xfer *xfer )
 	xfer->xferUnsignedInt( &m_id );
 	CRCGEN_LOG(("CRC after AI AIGroup m_id (%d) for frame %d is 0x%8.8X", m_id, TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 
-}  // end crc
+}
 
 //-----------------------------------------------------------------------------
 void AIGroup::xfer( Xfer *xfer )
@@ -3351,10 +3351,10 @@ void AIGroup::xfer( Xfer *xfer )
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
-}  // end xfer
+}
 
 //-----------------------------------------------------------------------------
 void AIGroup::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

@@ -283,7 +283,7 @@ void DemoTrapUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -307,7 +307,7 @@ void DemoTrapUpdate::xfer( Xfer *xfer )
 	// detonated
 	xfer->xferBool( &m_detonated );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -318,4 +318,4 @@ void DemoTrapUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

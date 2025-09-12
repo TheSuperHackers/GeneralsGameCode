@@ -68,13 +68,13 @@ void INI::parseWaterSettingDefinition( INI* ini )
 			waterSetting = &WaterSettings[ timeOfDayIndex ];
 			break;
 
-		}  // end if
+		}
 
 		// next name
 		timeOfDayName++;
 		timeOfDayIndex++;
 
-	}  // end while
+	}
 
 	// check for no time of day match
 	if( waterSetting == NULL )
@@ -83,7 +83,7 @@ void INI::parseWaterSettingDefinition( INI* ini )
 	// parse the data
 	ini->initFromINI( waterSetting, waterSetting->getFieldParse() );
 
-}  // end parseWaterSetting
+}
 
 //-------------------------------------------------------------------------------------------------
 void INI::parseWaterTransparencyDefinition( INI *ini )

@@ -237,7 +237,7 @@ BOOL RoadOptions::OnInitDialog()
 		index++;
 		m_numberOfRoads++;
 
-	}  // end for raod
+	}
 
 	// load roads from test assets
 #ifdef LOAD_TEST_ASSETS
@@ -298,7 +298,7 @@ BOOL RoadOptions::OnInitDialog()
 		index++;
 		m_numberOfBridges++;
 
-	}  // end for bridge
+	}
 
 	m_currentRoadIndex = 1;
 	setRoadTreeViewSelection(TVI_ROOT, m_currentRoadIndex);
@@ -392,7 +392,7 @@ void RoadOptions::addRoad(char *pPath, Int terrainNdx, HTREEITEM parent)
 		// do the add
 		doAdd = TRUE;
 
-	}  // end if
+	}
 
 #ifdef LOAD_TEST_ASSETS
 	if (!doAdd && !strncmp(TEST_STRING, pPath, strlen(TEST_STRING))) {

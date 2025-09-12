@@ -170,7 +170,7 @@ void W3DDefaultDraw::crc( Xfer *xfer )
 	// extend base class
 	DrawModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -188,7 +188,7 @@ void W3DDefaultDraw::xfer( Xfer *xfer )
 	// extend base class
 	DrawModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -199,4 +199,4 @@ void W3DDefaultDraw::loadPostProcess( void )
 	// extend base class
 	DrawModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

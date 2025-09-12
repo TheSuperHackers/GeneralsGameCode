@@ -1496,7 +1496,7 @@ public:
 	// If saveToFog is false, then we are writing STORE_PERMENANT_REVEAL
 	void storeFoggedCells(ShroudStatusStoreRestore &outPartitionStore, Bool storeToFog) const;
 	void restoreFoggedCells(const ShroudStatusStoreRestore &inPartitionStore, Bool restoreToFog);
-};  // end class PartitionManager
+};
 
 // -----------------------------------------------------------------------------
 inline void PartitionManager::worldToCell(Real wx, Real wy, Int *cx, Int *cy)

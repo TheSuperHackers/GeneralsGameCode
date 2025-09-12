@@ -172,7 +172,7 @@ W3DView::W3DView()
 	m_locationRequests.clear();
 	m_locationRequests.reserve(MAX_REQUEST_CACHE_SIZE + 10);	// This prevents the vector from ever re-allocing
 
-}  // end W3DView
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -182,7 +182,7 @@ W3DView::~W3DView()
 	REF_PTR_RELEASE( m_2DCamera );
 	REF_PTR_RELEASE( m_3DCamera );
 
-}  // end ~W3DView
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Sets the height of the viewport, while maintaining original camera perspective. */
@@ -518,7 +518,7 @@ void W3DView::init( void )
 
 	m_scrollAmountCutoff = TheGlobalData->m_scrollAmountCutoff;
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 const Coord3D& W3DView::get3DCameraPosition() const
@@ -557,7 +557,7 @@ static void drawDrawable( Drawable *draw, void *userData )
 
 	draw->draw();
 
-}  // end drawDrawable
+}
 
 // ------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -623,7 +623,7 @@ static void drawContainedDrawable( Object *obj, void *userData )
 	if( draw )
 		drawDrawableExtents( draw, userData );
 
-}  // end drawContainedDrawable
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -673,11 +673,11 @@ static void drawDrawableExtents( Drawable *draw, void *userData )
 
 				z += draw->getDrawableGeometryInfo().getMaxHeightAbovePosition();
 
-			}  // end for i
+			}
 
 			break;
 
-		}  // end case box
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GEOMETRY_SPHERE:	// not quite right, but close enough
@@ -693,7 +693,7 @@ static void drawDrawableExtents( Drawable *draw, void *userData )
 
         // next time 'round, draw the top of the cylinder
         center.z += draw->getDrawableGeometryInfo().getMaxHeightAbovePosition();
-			}	// end for i
+			}
 
 			// draw centerline
       ICoord2D start, end;
@@ -705,9 +705,9 @@ static void drawDrawableExtents( Drawable *draw, void *userData )
 
 			break;
 
-		}	// case CYLINDER
+		}
 
-	} // end switch
+	}
 
 	// draw any extents for things that are contained by this
 	Object *obj = draw->getObject();
@@ -718,9 +718,9 @@ static void drawDrawableExtents( Drawable *draw, void *userData )
 		if( contain )
 			contain->iterateContained( drawContainedDrawable, userData, FALSE );
 
-	}  // end if
+	}
 
-}  // end drawDrawableExtents
+}
 
 
 void drawAudioLocations( Drawable *draw, void *userData );
@@ -734,7 +734,7 @@ static void drawContainedAudioLocations( Object *obj, void *userData )
   if( draw )
     drawAudioLocations( draw, userData );
 
-}  // end drawContainedAudio
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -751,7 +751,7 @@ static void drawAudioLocations( Drawable *draw, void *userData )
     if( contain )
       contain->iterateContained( drawContainedAudioLocations, userData, FALSE );
 
-  }  // end if
+  }
 
   const ThingTemplate * thingTemplate = draw->getTemplate();
 
@@ -879,7 +879,7 @@ static void drawablePostDraw( Drawable *draw, void *userData )
 
 	TheGameClient->incrementRenderedObjectCount();
 
-}  // end drawablePostDraw
+}
 
 //-------------------------------------------------------------------------------------------------
 // Display AI debug visuals
@@ -1272,7 +1272,7 @@ void W3DView::getAxisAlignedViewRegion(Region3D &axisAlignedRegion)
 		if( box[ i ].y > axisAlignedRegion.hi.y )
 		  axisAlignedRegion.hi.y = box[ i ].y;
 
-	}  // end for i
+	}
 
 	// low and high regions will be based of the extent of the map
 	Region3D mapExtent;
@@ -1533,7 +1533,7 @@ void W3DView::draw( void )
 			}
 		}
 
-	}  // end if, show debug AI
+	}
 
 #if defined(RTS_DEBUG)
 	if( TheGlobalData->m_debugCamera )
@@ -1694,9 +1694,9 @@ void W3DView::scrollBy( Coord2D *delta )
 		// set new camera position
 		setCameraTransform();
 
-	}  // end if
+	}
 
-}  // end scrollBy
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -1787,7 +1787,7 @@ void W3DView::setHeightAboveGround(Real z)
 		if (m_heightAboveGround > m_maxHeightAboveGround)
 			m_heightAboveGround = m_maxHeightAboveGround;
 
-	}  // end if
+	}
 
 	m_doingMoveCameraOnWaypointPath = false;
 	m_doingRotateCamera = false;
@@ -1908,10 +1908,10 @@ View::WorldToScreenReturn W3DView::worldToScreenTriReturn( const Coord3D *w, ICo
 
     return WTS_INSIDE_FRUSTUM;
 
-	}  // end if
+	}
 
   return WTS_INVALID;
-}  // end worldToScreenTriReturn
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Using the W3D camera translate the screen coord to world coord */
@@ -1926,9 +1926,9 @@ void W3DView::screenToWorld( const ICoord2D *s, Coord3D *w )
 	if( m_3DCamera )
 	{
 		DEBUG_CRASH(("implement me"));
-	}  // end if
+	}
 
-}  // end screenToWorld
+}
 
 //-------------------------------------------------------------------------------------------------
 /** all the drawables in the view, that fall within the 2D screen region
@@ -1972,7 +1972,7 @@ Int W3DView::iterateDrawablesInRegion( IRegion2D *screenRegion,
 		normalizedRegion.hi.x = ((Real)(screenRegion->hi.x - m_originX) / (Real)getWidth()) * 2.0f - 1.0f;
 		normalizedRegion.hi.y = -(((Real)(screenRegion->lo.y - m_originY) / (Real)getHeight()) * 2.0f - 1.0f);
 
-	}  // end if
+	}
 
 
 	Drawable *onlyDrawableToTest = NULL;
@@ -2023,10 +2023,10 @@ Int W3DView::iterateDrawablesInRegion( IRegion2D *screenRegion,
 
 					inside = TRUE;
 
-				}  // end if
+				}
 			}
 
-		}  //end else
+		}
 
 		// if inside do the callback and count up
 		if( inside )
@@ -2035,17 +2035,17 @@ Int W3DView::iterateDrawablesInRegion( IRegion2D *screenRegion,
 			if( callback( draw, userData ) )
 				++count;
 
-		}  // end if
+		}
 
 		// If onlyDrawableToTest, then we should bail out now.
 		if (onlyDrawableToTest != NULL)
 			break;
 
-	}  // end for draw
+	}
 
 	return count;
 
-}  // end iterateDrawablesInRegion
+}
 
 //-------------------------------------------------------------------------------------------------
 /** cast a ray from the screen coords into the scene and return a drawable
@@ -2104,7 +2104,7 @@ Drawable *W3DView::pickDrawable( const ICoord2D *screen, Bool forceAttack, PickT
 
 	return draw;
 
-}  // end pickDrawable
+}
 
 //-------------------------------------------------------------------------------------------------
 /** convert a pixel (x,y) to a location in the world on the terrain.
@@ -2151,7 +2151,7 @@ void W3DView::screenToTerrain( const ICoord2D *screen, Coord3D *world )
 		// get the point of intersection according to W3D
 		intersection = result.ContactPoint;
 
-	}  // end if
+	}
 
 	// Pick bridges.
 	Vector3 bridgePt;
@@ -2169,7 +2169,7 @@ void W3DView::screenToTerrain( const ICoord2D *screen, Coord3D *world )
 	req.second = (*world);
 	m_locationRequests.push_back(req);	// Insert this request at the end, requires no extra copies
 
-}  // end screenToTerrain
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -2208,7 +2208,7 @@ void W3DView::lookAt( const Coord3D *o )
 			pos.x = result.ContactPoint.X;
 			pos.y = result.ContactPoint.Y;
 
-		}  // end if
+		}
 	}
 	pos.z = 0;
 	setPosition(&pos);
@@ -3151,5 +3151,5 @@ void W3DView::screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z )
 	w->y = Vector3::Find_Y_At_Z( z, rayStart, rayEnd );
 	w->z = z;
 
-}  // end screenToWorldAtZ
+}
 

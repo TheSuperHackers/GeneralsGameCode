@@ -85,7 +85,7 @@ void SpecialPowerUpdateModule::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 //------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -102,7 +102,7 @@ void SpecialPowerUpdateModule::xfer( Xfer *xfer )
 
 	// extend base class
 	UpdateModule::xfer( xfer );
-}  // end xfer
+}
 
 //------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -113,4 +113,4 @@ void SpecialPowerUpdateModule::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

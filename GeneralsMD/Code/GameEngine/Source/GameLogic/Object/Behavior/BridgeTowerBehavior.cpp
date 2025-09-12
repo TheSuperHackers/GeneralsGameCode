@@ -48,14 +48,14 @@ BridgeTowerBehavior::BridgeTowerBehavior( Thing *thing, const ModuleData *module
 
 	m_bridgeID = INVALID_ID;
 
-}  // end BridgeTowerBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 BridgeTowerBehavior::~BridgeTowerBehavior( void )
 {
 
-}  // end ~BridgeTowerBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ void BridgeTowerBehavior::setBridge( Object *bridge )
 	else
 		m_bridgeID = bridge->getID();
 
-}  // end setBridge
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ ObjectID BridgeTowerBehavior::getBridgeID( void )
 
 	return m_bridgeID;
 
-}  // end getBridge
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ void BridgeTowerBehavior::setTowerType( BridgeTowerType type )
 
 	m_type = type;
 
-}  // end setTowerType
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -114,7 +114,7 @@ void BridgeTowerBehavior::onDamage( DamageInfo *damageInfo )
 		if( bridgeInterface )
 			break;
 
-	}  // end for bmi
+	}
 	DEBUG_ASSERTCRASH( bridgeInterface != NULL, ("BridgeTowerBehavior::onDamage - no 'BridgeBehaviorInterface' found") );
 	if( bridgeInterface )
 	{
@@ -145,9 +145,9 @@ void BridgeTowerBehavior::onDamage( DamageInfo *damageInfo )
 					towerDamage.in.m_deathType = damageInfo->in.m_deathType;
 					tower->attemptDamage( &towerDamage );
 
-				}  // end if
+				}
 
-			}  // end for i
+			}
 
 			//
 			// damage bridge object, but make sure it's done through the bridge interface
@@ -162,11 +162,11 @@ void BridgeTowerBehavior::onDamage( DamageInfo *damageInfo )
 			bridgeDamage.in.m_deathType = damageInfo->in.m_deathType;
 			bridge->attemptDamage( &bridgeDamage );
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
-}  // end onDamage
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -195,7 +195,7 @@ void BridgeTowerBehavior::onHealing( DamageInfo *damageInfo )
 		if( bridgeInterface )
 			break;
 
-	}  // end for bmi
+	}
 	DEBUG_ASSERTCRASH( bridgeInterface != NULL, ("BridgeTowerBehavior::onHealing - no 'BridgeBehaviorInterface' found") );
 	if( bridgeInterface )
 	{
@@ -220,9 +220,9 @@ void BridgeTowerBehavior::onHealing( DamageInfo *damageInfo )
 					BodyModuleInterface *towerBody = tower->getBodyModule();
 					tower->attemptHealing(healingPercentage * towerBody->getMaxHealth(), getObject());
 
-				}  // end if
+				}
 
-			}  // end for i
+			}
 
 			//
 			// heal bridge object, but make sure it's done through the bridge interface
@@ -231,11 +231,11 @@ void BridgeTowerBehavior::onHealing( DamageInfo *damageInfo )
 			BodyModuleInterface *bridgeBody = bridge->getBodyModule();
 			bridge->attemptHealing(healingPercentage * bridgeBody->getMaxHealth(), getObject());
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
-}  // end onHealing
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -244,7 +244,7 @@ void BridgeTowerBehavior::onBodyDamageStateChange( const DamageInfo* damageInfo,
 																									 BodyDamageType newState )
 {
 
-}  // end onBodyDamageStateChange
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -256,7 +256,7 @@ void BridgeTowerBehavior::onDie( const DamageInfo *damageInfo )
 	if( bridge )
 		bridge->kill();
 
-}  // end onDie
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -281,12 +281,12 @@ BridgeTowerBehaviorInterface *BridgeTowerBehavior::getBridgeTowerBehaviorInterfa
 		if( bridgeTowerInterface )
 			return bridgeTowerInterface;
 
-	}  // end for bmi
+	}
 
 	// interface not found
 	return NULL;
 
-}  // getBridgeTowerBehaviorInterfaceFromObject
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -297,7 +297,7 @@ void BridgeTowerBehavior::crc( Xfer *xfer )
 	// extend base class
 	BehaviorModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -321,7 +321,7 @@ void BridgeTowerBehavior::xfer( Xfer *xfer )
 	// xfer tower type
 	xfer->xferUser( &m_type, sizeof( BridgeTowerType ) );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -332,4 +332,4 @@ void BridgeTowerBehavior::loadPostProcess( void )
 	// extend base class
 	BehaviorModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

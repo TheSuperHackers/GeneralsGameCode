@@ -508,7 +508,7 @@ void GenerateMinefieldBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpgradeMux::upgradeMuxCRC( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -547,9 +547,9 @@ void GenerateMinefieldBehavior::xfer( Xfer *xfer )
 		{
 			// object in this space
 			xfer->xferObjectID( &(*it) );
-		}  // end for, it
+		}
 
-	}  // end if, save
+	}
 	else if( xfer->getXferMode() == XFER_LOAD )
 	{
 		ObjectID objectID;
@@ -564,10 +564,10 @@ void GenerateMinefieldBehavior::xfer( Xfer *xfer )
 			xfer->xferObjectID( &objectID );
 
 			m_mineList.push_back(objectID);
-		}  // end for, i
-	}  // end else, load
+		}
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -581,4 +581,4 @@ void GenerateMinefieldBehavior::loadPostProcess( void )
 	// extend base class
 	UpgradeMux::upgradeMuxLoadPostProcess();
 
-}  // end loadPostProcess
+}

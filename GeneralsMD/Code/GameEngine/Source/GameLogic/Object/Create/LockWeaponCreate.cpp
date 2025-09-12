@@ -66,21 +66,21 @@ void LockWeaponCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 //-------------------------------------------------------------------------------------------------
 LockWeaponCreate::LockWeaponCreate( Thing *thing, const ModuleData* moduleData ) : CreateModule( thing, moduleData )
 {
-}  // end GrantUpgradeCreate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 LockWeaponCreate::~LockWeaponCreate( void )
 {
 
-}  // end ~GrantUpgradeCreate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** The create callback. */
 //-------------------------------------------------------------------------------------------------
 void LockWeaponCreate::onCreate( void )
 {
-}  // end onCreate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ void LockWeaponCreate::onBuildComplete( void )
 	Object *me = getObject();
 	WeaponSlotType slot = getLockWeaponCreateModuleData()->m_slotToLock;
 	me->setWeaponLock( slot, LOCKED_PERMANENTLY );
-}  // end onBuildComplete
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -102,7 +102,7 @@ void LockWeaponCreate::crc( Xfer *xfer )
 	// extend base class
 	CreateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -120,7 +120,7 @@ void LockWeaponCreate::xfer( Xfer *xfer )
 	// extend base class
 	CreateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -131,4 +131,4 @@ void LockWeaponCreate::loadPostProcess( void )
 	// extend base class
 	CreateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

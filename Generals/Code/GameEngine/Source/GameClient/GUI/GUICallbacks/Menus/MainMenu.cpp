@@ -328,7 +328,7 @@ static void shutdownComplete( WindowLayout *layout )
 	// our shutdown is complete
 	TheShell->shutdownComplete( layout );
 
-}  // end if
+}
 
 
 
@@ -639,7 +639,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	TheWindowManager->winSetFocus( parentMainMenu );
 
 
-}  // end MainMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Main menu shutdown method */
@@ -669,14 +669,14 @@ void MainMenuShutdown( WindowLayout *layout, void *userData )
 		shutdownComplete( layout );
 		return;
 
-	}  //end if
+	}
 
 	if (!startGame)
 		TheShell->reverseAnimatewindow();
 	//TheShell->reverseAnimatewindow();
 //	if(localAnimateWindowManager && dropDown != DROPDOWN_NONE)
 //		localAnimateWindowManager->reverseAnimateWindow();
-}  // end MainMenuShutdown
+}
 
 extern Bool DontShowMainMenu;
 
@@ -929,7 +929,7 @@ void MainMenuUpdate( WindowLayout *layout, void *userData )
 //	if(winVidManager)
 //		winVidManager->update();
 
-}  // end MainMenuUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Main menu input callback */
@@ -973,7 +973,7 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 				}
 			}
 
-		}  // end char
+		}
 		break;
 		case GWM_CHAR:
 		{
@@ -988,14 +988,14 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 				return MSG_HANDLED;
 			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 
 	return MSG_IGNORED;
 
-}  // end MainMenuInput
+}
 void PrintOffsetsFromControlBarParent( void );
 //-------------------------------------------------------------------------------------------------
 /** Main menu window system callback */
@@ -1014,7 +1014,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 		{
 			ghttpStartup();
 			break;
-		}  // end case
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
@@ -1025,7 +1025,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 			StopAsyncDNSCheck(); // kill off the async DNS check thread in case it is still running
 			break;
 
-		}  // end case
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -1037,7 +1037,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end input
+		}
 		//---------------------------------------------------------------------------------------------
 		case GBM_MOUSE_ENTERING:
 		{
@@ -1267,7 +1267,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				TheTransitionHandler->remove("MainMenuDefaultMenu");
 				TheTransitionHandler->reverse("MainMenuDefaultMenuBack");
 				TheTransitionHandler->setGroup("MainMenuSinglePlayerMenu");
-			}  // end if
+			}
 			else if( controlID == buttonSingleBackID )
 			{
 				if(campaignSelected || dontAllowTransitions)
@@ -1278,7 +1278,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				TheTransitionHandler->reverse("MainMenuSinglePlayerMenuBack");
 				TheTransitionHandler->setGroup("MainMenuDefaultMenu");
 				dontAllowTransitions = TRUE;
-			}  // end if
+			}
 			else if( controlID == buttonMultiBackID )
 			{
 				if(dontAllowTransitions)
@@ -1289,7 +1289,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				TheTransitionHandler->remove("MainMenuMultiPlayerMenu");
 				TheTransitionHandler->reverse("MainMenuMultiPlayerMenuReverse");
 				TheTransitionHandler->setGroup("MainMenuDefaultMenu");
-			}  // end if
+			}
 			else if( controlID == buttonLoadReplayBackID )
 			{
 				if(dontAllowTransitions)
@@ -1300,7 +1300,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				TheTransitionHandler->remove("MainMenuLoadReplayMenu");
 				TheTransitionHandler->reverse("MainMenuLoadReplayMenuBack");
 				TheTransitionHandler->setGroup("MainMenuDefaultMenu");
-			}  // end if
+			}
 
 			else if( control == buttonCredits )
 			{
@@ -1389,7 +1389,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 //				localAnimateWindowManager->reverseAnimateWindow();
 				dropDown = DROPDOWN_NONE;
 
-			}  // end else if
+			}
 			else if( controlID == networkID )
 			{
 				if(dontAllowTransitions)
@@ -1401,7 +1401,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				TheShell->push( AsciiString("Menus/LanLobbyMenu.wnd") );
 
 				TheScriptEngine->signalUIInteract(TheShellHookNames[SHELL_SCRIPT_HOOK_MAIN_MENU_NETWORK_SELECTED]);
-			}  // end else if
+			}
 			else if( controlID == optionsID )
 			{
 				if(dontAllowTransitions)
@@ -1416,7 +1416,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				optLayout->runInit();
 				optLayout->hide(FALSE);
 				optLayout->bringForward();
-			}  // end else if
+			}
 			else if( controlID == worldBuilderID )
 			{
 #if defined RTS_DEBUG
@@ -1450,7 +1450,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				//
 //#endif
 
-			}  // end else if
+			}
 			else if(controlID == buttonTRAININGID)
 			{
 				if(campaignSelected || dontAllowTransitions)
@@ -1541,7 +1541,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 //				layout->bringForward();
 
 //				setupGameStart(TheCampaignManager->getCurrentMap());
-			}// end else if
+			}
 			else if(controlID == buttonEasyID)
 			{
 				if(dontAllowTransitions)
@@ -1576,17 +1576,17 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end selected
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-}  // end MainMenuSystem
+}
 
 void diffReverseSide( void )
 {

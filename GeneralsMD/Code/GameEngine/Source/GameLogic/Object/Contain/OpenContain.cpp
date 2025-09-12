@@ -80,7 +80,7 @@ OpenContainModuleData::OpenContainModuleData( void )
  	m_allowAlliesInside = TRUE;
  	m_allowEnemiesInside = TRUE;
  	m_allowNeutralInside = TRUE;
-}  // end OpenContainModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -150,7 +150,7 @@ OpenContain::OpenContain( Thing *thing, const ModuleData* moduleData ) : UpdateM
 	for( Int i = 0; i < MAX_FIRE_POINTS; i++ )
 	{
 		m_firePoints[ i ].Make_Identity();
-	}  // end for i
+	}
 
 }
 
@@ -162,7 +162,7 @@ Int OpenContain::getContainMax( void ) const
 
 	return modData->m_containMax;
 
-}  // end getContainMax
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -430,9 +430,9 @@ void OpenContain::removeAllContained( Bool exposeStealthUnits )
  		// note that this invalidates the iterator!
  		removeFromContainViaIterator( it, exposeStealthUnits );
 
-	}  // end while
+	}
 
-}  // end removeAllContained
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Kill all contained objects in the contained list */
@@ -465,7 +465,7 @@ void OpenContain::killAllContained( void )
 		}
 	}
 
-}  // end killAllContained
+}
 
 //--------------------------------------------------------------------------------------------------------
 /** Force all contained objects in the contained list to exit, and kick them in the pants on the way out*/
@@ -492,12 +492,12 @@ void OpenContain::harmAndForceExitAllContained( DamageInfo *info )
 		//Fix is to reset the list.
 		it = m_containList.begin();
 
-	}  // end while
+	}
 
 
   DEBUG_ASSERTCRASH( m_containListSize == 0, ("harmAndForceExitAllContained just made a booboo, list size != zero.") );
 
-}  // end harmAndForceExitAllContained
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -732,14 +732,14 @@ void OpenContain::scatterToNearbyPosition(Object* rider)
 		ai->ignoreObstacle(theContainer);
 		ai->aiMoveToPosition( &pos, CMD_FROM_AI );
 
-	}  // end if
+	}
 	else
 	{
 
 		// no ai, just set position at the target pos
 		rider->setPosition( &pos );
 
-	}  // end else
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -925,14 +925,14 @@ Bool OpenContain::isValidContainerFor(const Object* obj, Bool checkCapacity) con
  										obj->getTemplate()->getName().str() ));
  			return FALSE;
 
- 	}  // end switch
+ 	}
  	if( relationshipRestricted == TRUE )
  		return FALSE;
 
 	// all is well
 	return true;
 
-}  // end isValidContainerFor
+}
 
 // ------------------------------------------------------------------------------------------------
 /**
@@ -1198,7 +1198,7 @@ void OpenContain::monitorConditionChanges( void )
 		m_conditionState = currCondition;
 	}
 
-}  // end monitorConditionChanges
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -1226,7 +1226,7 @@ void OpenContain::redeployOccupants( void )
 		putObjAtNextFirePoint( *it );
 	}
 
-}  // end redeployOccupants
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Place the object at the 3D position of the next fire point to use */
@@ -1251,7 +1251,7 @@ void OpenContain::putObjAtNextFirePoint( Object *obj )
 		if( m_firePointSize == 0 )
 			m_noFirePointsInArt = TRUE;
 
-	}  // end if
+	}
 
 	//
 	// if there are no fire points in the art we just put the object at the center
@@ -1264,7 +1264,7 @@ void OpenContain::putObjAtNextFirePoint( Object *obj )
 		obj->setPosition( pos );
 		return;
 
-	}  // end if
+	}
 
 	// get the position
 	Matrix3D matrix;
@@ -1302,7 +1302,7 @@ void OpenContain::putObjAtNextFirePoint( Object *obj )
 	if( m_firePointNext >= m_firePointSize )
 		m_firePointNext = 0;
 
-}  // end putObjAtNextFirePoint
+}
 
 //-------------------------------------------------------------------------------------------------
 /**
@@ -1665,7 +1665,7 @@ void OpenContain::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1697,9 +1697,9 @@ void OpenContain::xfer( Xfer *xfer )
 			objectID = (*it)->getID();
 			xfer->xferObjectID( &objectID );
 
-		}  // end for, it
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -1723,7 +1723,7 @@ void OpenContain::xfer( Xfer *xfer )
 			throw SC_INVALID_DATA;
 #endif
 
-		}  // end if
+		}
 
 		// contain list size
 		xfer->xferUnsignedInt( &m_containListSize );
@@ -1738,9 +1738,9 @@ void OpenContain::xfer( Xfer *xfer )
 			// put on list for later processing once objects are loaded
 			m_xferContainIDList.push_back( objectID );
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
 	// player entered mask
 	xfer->xferUser( &m_playerEnteredMask, sizeof( PlayerMaskType ) );
@@ -1800,9 +1800,9 @@ void OpenContain::xfer( Xfer *xfer )
 			enterExitType = (*it).second;
 			xfer->xferUser( &enterExitType, sizeof( ObjectEnterExitType ) );
 
-		}  // end for, it
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -1813,7 +1813,7 @@ void OpenContain::xfer( Xfer *xfer )
 			DEBUG_CRASH(( "OpenContain::xfer - m_objectEnterExitInfo should be empty, but is not" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// read all data items
 		for( UnsignedShort i = 0; i < enterExitCount; ++i )
@@ -1828,9 +1828,9 @@ void OpenContain::xfer( Xfer *xfer )
 			// assign
 			m_objectEnterExitInfo[ objectID ] = enterExitType;
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
 	// which exit path
 	xfer->xferInt( &m_whichExitPath );
@@ -1842,7 +1842,7 @@ void OpenContain::xfer( Xfer *xfer )
   }
 
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1861,7 +1861,7 @@ void OpenContain::loadPostProcess( void )
 		DEBUG_CRASH(( "OpenContain::loadPostProcess - Contain list should be empty before load but is not" ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// turn the contained id list into actual object pointers in the contain list
 	Object *obj;
@@ -1879,7 +1879,7 @@ void OpenContain::loadPostProcess( void )
 			DEBUG_CRASH(( "OpenContain::loadPostProcess - Unable to find object to put on contain list" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// put object on list
 		m_containList.push_back( obj );
@@ -1891,7 +1891,7 @@ void OpenContain::loadPostProcess( void )
 		// record in the object who we are contained by
 		obj->friend_setContainedBy( us );
 
-	}  // end for, idIt
+	}
 
 	// sanity
 	DEBUG_ASSERTCRASH( m_containListSize == m_containList.size(),
@@ -1900,4 +1900,4 @@ void OpenContain::loadPostProcess( void )
 	// clear the list as we don't need it anymore
 	m_xferContainIDList.clear();
 
-}  // end loadPostProcess
+}

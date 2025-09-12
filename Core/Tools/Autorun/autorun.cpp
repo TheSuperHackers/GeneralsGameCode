@@ -1760,7 +1760,7 @@ unsigned int MainWindow::Run_OpenFile(int cd_drive, const char *filename, bool w
 				TranslateMessage( &msg );
 				DispatchMessage( &msg );
 
-			}  // end while
+			}
 
 			DWORD exitCode;
 			GetExitCodeProcess(hProcess, &exitCode);
@@ -3410,7 +3410,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 										hButtonBitmap = 0;
 									}
 
-								} // END OF DRAW BITMAPS
+								}
 
 #if(0)
 								TTFontClass *fontptr = ButtonList[i]->Return_Font_Ptr();
@@ -3495,9 +3495,9 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 
 
-							} // end of if button
+							}
 
-						}	// For each button...
+						}
 
 						//---------------------------------------------------------------
 						// Used in debugging -- draw rect around where buttons are.
@@ -3553,7 +3553,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						DeleteDC( buttonDC );
 						DeleteDC( licenseDC );
 
-					} // end of bitmaps
+					}
 
 					//===================================================================
 					// Draw a solid colored background.
@@ -4360,7 +4360,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 									ButtonList[i]->Set_State( DrawButton::FOCUS_STATE );
 //									Msg( __LINE__, TEXT(__FILE__), TEXT("WM_MOUSEMOVE -- %s[FOCUS_STATE]."), ButtonList[i]->Return_Normal_Bitmap());
 								}
-							}	// end of if
+							}
 
 							//-----------------------------------------------------------
 							// Get the area of the button, and post it for updating.
@@ -4380,10 +4380,10 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 							done = 1;
 						}
 
-					}	// end of if
+					}
 					i++;
 
-				}	// end of for
+				}
 
 
 			#if( USE_MOUSE_MOVES )

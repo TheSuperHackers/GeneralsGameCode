@@ -418,7 +418,7 @@ void W3DTankDraw::crc( Xfer *xfer )
 	// extend base class
 	W3DModelDraw::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -438,7 +438,7 @@ void W3DTankDraw::xfer( Xfer *xfer )
 
 	// John A and Mark W say there is no data to save here
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -453,4 +453,4 @@ void W3DTankDraw::loadPostProcess( void )
 	tossEmitters();
 	createEmitters();
 
-}  // end loadPostProcess
+}

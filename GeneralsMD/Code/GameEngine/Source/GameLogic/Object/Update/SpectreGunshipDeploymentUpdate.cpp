@@ -296,7 +296,7 @@ void SpectreGunshipDeploymentUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -316,7 +316,7 @@ void SpectreGunshipDeploymentUpdate::xfer( Xfer *xfer )
 	UpdateModule::xfer( xfer );
   xfer->xferObjectID( &m_gunshipID );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -326,4 +326,4 @@ void SpectreGunshipDeploymentUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -346,7 +346,7 @@ protected:
 							 // in our current geometry.
 	W3DShadowGeometry *m_parentGeometry; // mesh hierarchy containing this mesh.
 
-};	//end of meshInfo
+};
 
 #ifdef DO_TERRAIN_SHADOW_VOLUMES
 
@@ -758,7 +758,7 @@ W3DShadowGeometryMesh::W3DShadowGeometryMesh( void )
 	m_numPolyNeighbors = 0;
 	m_parentVerts = NULL;
 	m_polygonNormals = NULL;
-}  // end W3DShadowGeometry
+}
 
 // ~W3DShadowGeometry ============================================================
 // ============================================================================
@@ -772,7 +772,7 @@ W3DShadowGeometryMesh::~W3DShadowGeometryMesh( void )
 	if (m_polygonNormals)
 		delete [] m_polygonNormals;
 
-}  // end ~W3DShadowGeometry
+}
 
 // GetPolyNeighbor ============================================================
 // Return the poly neighbor structure at the given index
@@ -788,11 +788,11 @@ PolyNeighbor *W3DShadowGeometryMesh::GetPolyNeighbor( Int polyIndex )
 		assert( 0 );
 		return NULL;
 
-	}  // en dif
+	}
 
 	return &m_polyNeighbors[ polyIndex ];
 
-}  // end GetPolyNeighbor
+}
 
 // buildPolygonNeighbors ======================================================
 // Whenever we set a new geometry we want to build some information about
@@ -823,7 +823,7 @@ void W3DShadowGeometryMesh::buildPolygonNeighbors( void )
 
 		return;  // nothing to see here people, move along
 
-	}  // end if
+	}
 
 	//
 	// in the event that this geometry can deform on the fly or we are
@@ -842,7 +842,7 @@ void W3DShadowGeometryMesh::buildPolygonNeighbors( void )
 		if( allocateNeighbors( numPolys ) == FALSE )
 			return;
 
-	}  // end if
+	}
 
 	//
 	// initialize all polygon neighbor information to none and assign our
@@ -858,7 +858,7 @@ void W3DShadowGeometryMesh::buildPolygonNeighbors( void )
 		for( j = 0; j < MAX_POLYGON_NEIGHBORS; j++ )
 			m_polyNeighbors[ i ].neighbor[ j ].neighborIndex = NO_NEIGHBOR;
 
-	}  // end for i
+	}
 
 	// assign polygon data for each of our polygons
 	for( i = 0; i < m_numPolyNeighbors; i++ )
@@ -929,7 +929,7 @@ void W3DShadowGeometryMesh::buildPolygonNeighbors( void )
 							index1=index2=-1;
 							continue;
 						}
-					}  // end if
+					}
 			if( index1 != -1 && index2 != -1  )
 			{
 				//
@@ -949,7 +949,7 @@ void W3DShadowGeometryMesh::buildPolygonNeighbors( void )
 
 						break;  // exit for a
 
-					}  // end if
+					}
 
 				//
 				// error condition, if our counter a is at the max number
@@ -973,13 +973,13 @@ void W3DShadowGeometryMesh::buildPolygonNeighbors( void )
 //					DEBUG_ASSERTCRASH(a != MAX_POLYGON_NEIGHBORS,(errorText));
 				}
 
-			}  // end if
+			}
 
-		}  // end for j
+		}
 
-	}  // end for i
+	}
 
-}  // end buildPolygonNeighbors
+}
 
 // allocateNeighbors ==========================================================
 // Allocate storage for the polygon neighbors and record its size
@@ -1000,14 +1000,14 @@ Bool W3DShadowGeometryMesh::allocateNeighbors( Int numPolys )
 		assert( 0 );
 		return FALSE;
 
-	}  // end if
+	}
 
 	// list is now acutally allocated
 	m_numPolyNeighbors = numPolys;
 
 	return TRUE;  // success!
 
-}  // end allocateNeighbors
+}
 
 // deleteNeighbors ============================================================
 // Delete all polygon neighbor storage and information
@@ -1023,13 +1023,13 @@ void W3DShadowGeometryMesh::deleteNeighbors( void )
 		m_polyNeighbors = NULL;
 		m_numPolyNeighbors = 0;
 
-	}  // end if
+	}
 
 	// sanity error checking
 	assert( m_numPolyNeighbors == 0 );
 	assert( m_polyNeighbors == NULL );
 
-}  // end deleteNeighbors
+}
 
 //#include "Common/ThingTemplate.h"
 
@@ -1576,9 +1576,9 @@ W3DVolumetricShadow::W3DVolumetricShadow( void )
 			m_objectXformHistory[ i ][j].Make_Identity();
 			m_lightPosHistory[ i ][j] = Vector3(0,0,0);
 		}
-	}  // end for i
+	}
 
-}  // end W3DVolumetricShadow
+}
 
 // ~W3DVolumetricShadow ====================================================================
 // W3DVolumetricShadow destructor
@@ -1609,7 +1609,7 @@ W3DVolumetricShadow::~W3DVolumetricShadow( void )
 	m_geometry=NULL;
 	m_robj=NULL;
 
-}  // end ~W3DVolumetricShadow
+}
 
 void W3DVolumetricShadow::SetGeometry( W3DShadowGeometry *geometry )
 {
@@ -1646,13 +1646,13 @@ void W3DVolumetricShadow::SetGeometry( W3DShadowGeometry *geometry )
 			if( allocateSilhouette(i, numNewVertices ) == FALSE )
 				return;
 
-		}  // end if
+		}
 	}
 
 	// assign the new geometry, possible over an old geometry
 	m_geometry = geometry;
 
-}  // end SetGeometry
+}
 
 /**Called once per frame for each object, when necessary it will reconstruct
  the shadow volume for this shadow from the silhouette of the geometry
@@ -1730,9 +1730,9 @@ void W3DVolumetricShadow::Update()
 
 		// update delay time
 		lastTime = currentTime;
-	}  // end if
+	}
 
-}  // end Update
+}
 
 /** Update shadow volumes belonging to all meshes of this shadow caster.
 *	Use zoffset to extend shadows below object's base by given amount.
@@ -1814,8 +1814,8 @@ void W3DVolumetricShadow::updateVolumes(Real zoffset)
 					}
 				}
 			}
-		}	// end for j
-	}  // end for, i
+		}
+	}
 }
 
 /*floorZ is the assumed ground height below the model.  The code will try to extrude shadows just long enough to hit this point in order
@@ -2044,7 +2044,7 @@ void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const 
 			sphere.Center -= objectCenter;
 			m_shadowVolume[ lightIndex ][meshIndex]->setBoundingSphere(sphere);
 			m_shadowVolume[ lightIndex ][meshIndex]->setVisibleState(Geometry::STATE_VISIBLE);	//this volume needs rendering.
-		}//end if inside view frustum
+		}
 		else
 		if (m_shadowVolume[ lightIndex ][meshIndex])
 		{	//outside view frustum, shadow wasn't updated.
@@ -2054,7 +2054,7 @@ void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const 
 			m_shadowVolume[ lightIndex ][meshIndex]->setBoundingSphere(sphere);
 			m_shadowVolume[ lightIndex ][meshIndex]->setVisibleState(Geometry::STATE_INVISIBLE);
 		}
-	}  // end if
+	}
 	else
 	{	//not reconstructing volume, so don't know if visible or not.
 		if (m_shadowVolume[ lightIndex ][meshIndex])
@@ -2093,9 +2093,9 @@ void W3DVolumetricShadow::addSilhouetteEdge(Int meshIndex, PolyNeighbor *visible
 			neighborIndex = i;
 			break;  // exit for
 
-		}  // end if
+		}
 
-	}  // end for i
+	}
 
 	// get the three vertex indices of "visible"
 	geomMesh->GetPolygonIndex( visible->myIndex, visibleIndexList, 3 );
@@ -2121,7 +2121,7 @@ void W3DVolumetricShadow::addSilhouetteEdge(Int meshIndex, PolyNeighbor *visible
 		edgeStart = visibleIndexList[ 1 ];
 		edgeEnd = visibleIndexList[ 2 ];
 
-	}  // end if
+	}
 	else if( (visibleIndexList[ 1 ] !=
 					 visible->neighbor[ neighborIndex ].neighborEdgeIndex[ 0 ]) &&
 					 (visibleIndexList[ 1 ] !=
@@ -2132,7 +2132,7 @@ void W3DVolumetricShadow::addSilhouetteEdge(Int meshIndex, PolyNeighbor *visible
 		edgeStart = visibleIndexList[ 2 ];
 		edgeEnd = visibleIndexList[ 0 ];
 
-	}  // end if
+	}
 	else
 	{
 
@@ -2140,12 +2140,12 @@ void W3DVolumetricShadow::addSilhouetteEdge(Int meshIndex, PolyNeighbor *visible
 		edgeStart = visibleIndexList[ 0 ];
 		edgeEnd = visibleIndexList[ 1 ];
 
-	}  // end if
+	}
 
 	// add to silhouette edge list
 	addSilhouetteIndices(meshIndex, edgeStart, edgeEnd );
 
-}  // end addSilhouetteEdge
+}
 
 // addNeighborlessEdges =======================================================
 // Given a polygon neighbor information, it has been determined that this
@@ -2200,11 +2200,11 @@ void W3DVolumetricShadow::addNeighborlessEdges(Int meshIndex, PolyNeighbor *us )
 					addEdge = FALSE;
 					break;  // exit for j, no need to search on
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 
-		}  // end for j
+		}
 
 		// add the edge if no neighbors have that edge
 		if( addEdge == TRUE )
@@ -2212,11 +2212,11 @@ void W3DVolumetricShadow::addNeighborlessEdges(Int meshIndex, PolyNeighbor *us )
 
 			addSilhouetteIndices(meshIndex, edgeStart, edgeEnd );
 
-		}  // end if
+		}
 
-	}  // end for i
+	}
 
-}  // end addNeighborlessEdges
+}
 
 // addSilhouetteIndices =======================================================
 // Add these two indices to the silhouette data
@@ -2233,7 +2233,7 @@ void W3DVolumetricShadow::addSilhouetteIndices(Int meshIndex, Short edgeStart, S
 	assert( m_numSilhouetteIndices[meshIndex] < m_maxSilhouetteEntries[meshIndex] );
 	m_silhouetteIndex[meshIndex][ m_numSilhouetteIndices[meshIndex]++ ] = edgeEnd;
 
-}  // end if
+}
 
 // buildSilhouette ============================================================
 // Given a light position, and our polygon neighbor information this will
@@ -2298,7 +2298,7 @@ void W3DVolumetricShadow::buildSilhouette(Int meshIndex, Vector3 *lightPosObject
 		if( Vector3::Dot_Product( lightVector, normal ) < 0.0f )
 			BitSet( polyNeighbor->status, POLY_VISIBLE );
 
-	}  // end for i
+	}
 
 	//
 	// check all our polys using our poly neighbors, where one poly neighbor
@@ -2338,7 +2338,7 @@ void W3DVolumetricShadow::buildSilhouette(Int meshIndex, Vector3 *lightPosObject
 				if( BitIsSet( otherNeighbor->status, POLY_PROCESSED ) )
 					continue;  // for j
 
-			}  // end if
+			}
 
 			//
 			// finally, if our own visible status is different from our
@@ -2357,16 +2357,16 @@ void W3DVolumetricShadow::buildSilhouette(Int meshIndex, Vector3 *lightPosObject
 
 					visibleNeighborless = TRUE;
 
-				}  // end if
+				}
 				else if( BitIsSet( otherNeighbor->status, POLY_VISIBLE ) == FALSE )
 				{
 
 					// "we" are visible and "they" are not
 					addSilhouetteEdge(meshIndex, polyNeighbor, otherNeighbor );
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 			else if( otherNeighbor != NULL &&
 							 BitIsSet( otherNeighbor->status, POLY_VISIBLE ) )
 			{
@@ -2374,9 +2374,9 @@ void W3DVolumetricShadow::buildSilhouette(Int meshIndex, Vector3 *lightPosObject
 				// "they" are visible and "we" are not
 				addSilhouetteEdge(meshIndex, otherNeighbor, polyNeighbor );
 
-			}  // end else
+			}
 
-		}  // end for j
+		}
 
 		//
 		// if this polygon is visible, add any edges that are not
@@ -2387,7 +2387,7 @@ void W3DVolumetricShadow::buildSilhouette(Int meshIndex, Vector3 *lightPosObject
 
 			addNeighborlessEdges(meshIndex, polyNeighbor );
 
-		}  // end if
+		}
 
 		//
 		// this polyNeighbor is now considered "processed", any other
@@ -2396,12 +2396,12 @@ void W3DVolumetricShadow::buildSilhouette(Int meshIndex, Vector3 *lightPosObject
 		//
 		BitSet( polyNeighbor->status, POLY_PROCESSED );
 
-	}  // end for i
+	}
 
 	//record number of edge indices contrinuted by this mesh
 	m_numIndicesPerMesh[meshIndex]=m_numSilhouetteIndices[meshIndex]-meshEdgeStart;
 
-}  // end buildSilhouette
+}
 
 // constructVolume ============================================================
 // Given a fresh new geometry class called "shadowVolume" to hold the actual
@@ -2441,7 +2441,7 @@ void W3DVolumetricShadow::constructVolume( Vector3 *lightPosObject,Real shadowEx
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	// get the geometry struct we're storing the actual shadow volume data in
 	shadowVolume = m_shadowVolume[ volumeIndex ][meshIndex];
@@ -2453,7 +2453,7 @@ void W3DVolumetricShadow::constructVolume( Vector3 *lightPosObject,Real shadowEx
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	// step through each of the silhouette pairs
 	vertexCount = 0;
@@ -2636,7 +2636,7 @@ void W3DVolumetricShadow::constructVolume( Vector3 *lightPosObject,Real shadowEx
 
 	shadowVolume->SetNumActivePolygon(polygonCount);
 	shadowVolume->SetNumActiveVertex(vertexCount);
-}  // end constructVolume
+}
 
 // constructVolumeVB ==========================================================
 // Given a fresh new geometry class called "shadowVolume" to hold the actual
@@ -2680,7 +2680,7 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	// get the geometry struct we're storing the actual shadow volume data in
 	shadowVolume = m_shadowVolume[ volumeIndex ][meshIndex];
@@ -2692,7 +2692,7 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	//*****************************************************************************************/
 	//Do an initial pass through silhouette data to determine the actual vertex/polygon counts.
@@ -2795,7 +2795,7 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 			maxStripLength=__max(maxStripLength,stripLength);
 	#endif
 		}
-	}	//initial pass to determine vertex/polygon counts.
+	}
 	//***********************************************************************************************
 
 	DEBUG_ASSERTCRASH(m_shadowVolumeVB[ volumeIndex ][meshIndex] == NULL,("Updating Existing Static Vertex Buffer Shadow"));
@@ -2977,7 +2977,7 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 	}
 
 //	DEBUG_ASSERTLOG(polygonCount == vertexCount, ("WARNING***Shadow volume mesh not optimal: %s",m_geometry->Get_Name()));
-}  // end constructVolume
+}
 
 // allocateShadowVolume =======================================================
 // Allocate a space for us to construct the shadow volume in
@@ -2995,7 +2995,7 @@ Bool W3DVolumetricShadow::allocateShadowVolume( Int volumeIndex, Int meshIndex )
 		assert( 0 );
 		return FALSE;
 
-	}  // end if
+	}
 
 	if ((shadowVolume = m_shadowVolume[ volumeIndex ][meshIndex]) == 0)
 	{
@@ -3014,7 +3014,7 @@ Bool W3DVolumetricShadow::allocateShadowVolume( Int volumeIndex, Int meshIndex )
 		m_shadowVolumeCount[meshIndex]--;
 		return FALSE;
 
-	}  // end if
+	}
 
 	// assign to list
 	m_shadowVolume[ volumeIndex ][meshIndex] = shadowVolume;
@@ -3057,12 +3057,12 @@ Bool W3DVolumetricShadow::allocateShadowVolume( Int volumeIndex, Int meshIndex )
 			delete shadowVolume;
 			return FALSE;
 
-		}  // end if
+		}
 	}
 
 	return TRUE;  // success
 
-}  // end allocateShadowVolume
+}
 
 // deleteShadowVolume =========================================================
 // Free all resources allocated to the shadow volume(s)
@@ -3078,7 +3078,7 @@ void W3DVolumetricShadow::deleteShadowVolume( Int volumeIndex )
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	// delete it!
 	for (Int meshIndex=0; meshIndex<MAX_SHADOW_CASTER_MESHES; meshIndex++)
@@ -3092,10 +3092,10 @@ void W3DVolumetricShadow::deleteShadowVolume( Int volumeIndex )
 			// we now have one less shadow volume
 			m_shadowVolumeCount[meshIndex]--;
 
-		}  // end if
+		}
 	}
 
-}  // end deleteShadowVolume
+}
 
 // resetShadowVolume ==========================================================
 // Reset the contents of the shadow volume information.  Since we're using
@@ -3115,7 +3115,7 @@ void W3DVolumetricShadow::resetShadowVolume( Int volumeIndex, Int meshIndex )
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	geometry = m_shadowVolume[ volumeIndex ][meshIndex];
 
@@ -3132,7 +3132,7 @@ void W3DVolumetricShadow::resetShadowVolume( Int volumeIndex, Int meshIndex )
 		geometry->Release();
 	}
 
-}  // end resetShadowVolume
+}
 
 // allocateSilhouette =========================================================
 // Allocate space for new silhouette storage, the number of vertices passed
@@ -3158,7 +3158,7 @@ Bool W3DVolumetricShadow::allocateSilhouette(Int meshIndex, Int numVertices )
 		assert( 0 );
 		return FALSE;
 
-	}  // end if
+	}
 
 	// set our list to empty just to be clean
 	m_numSilhouetteIndices[meshIndex] = 0;
@@ -3168,7 +3168,7 @@ Bool W3DVolumetricShadow::allocateSilhouette(Int meshIndex, Int numVertices )
 
 	return TRUE;  // success
 
-}  // end allocateSilhouette
+}
 
 // deleteSilhouette ===========================================================
 // Delete all silhouette data and memory allocated
@@ -3181,7 +3181,7 @@ void W3DVolumetricShadow::deleteSilhouette( Int meshIndex )
 	m_silhouetteIndex[meshIndex] = NULL;
 	m_numSilhouetteIndices[meshIndex] = 0;
 
-}  // end deletesilhouette
+}
 
 // resetSilhouette ============================================================
 // Resets the silhouette to empty, it does NOT free any of the memory
@@ -3192,7 +3192,7 @@ void W3DVolumetricShadow::resetSilhouette( Int meshIndex )
 
 	m_numSilhouetteIndices[meshIndex] = 0;
 
-}  // end resetSilhouette
+}
 
 // renderStencilShadows =======================================================
 // The stencil buffer now has our shadow information in it, take that
@@ -3263,7 +3263,7 @@ void W3DVolumetricShadowManager::renderStencilShadows( void )
 	// turn off the stencil buffer
 	m_pDev->SetRenderState( D3DRS_STENCILENABLE, FALSE );
 
-}  // end renderStencilShadows
+}
 
 void W3DVolumetricShadowManager::renderShadows( Bool forceStencilFill )
 {
@@ -3401,7 +3401,7 @@ void W3DVolumetricShadowManager::renderShadows( Bool forceStencilFill )
 					numRenderedShadows++;
 				}
 			}
-		}  // end for
+		}
 
 		// Set vertex format to that used by static shadow volumes
 		m_pDev->SetVertexShader(W3DBufferManager::getDX8Format(W3DBufferManager::VBM_FVF_XYZ));
@@ -3496,7 +3496,7 @@ void W3DVolumetricShadowManager::renderShadows( Bool forceStencilFill )
 		DX8Wrapper::Invalidate_Cached_Render_States();
 	}
 
-}  // end RenderShadows
+}
 
 /** This class will manage shadow geometry for each render object.  Shadow geometry may
 be the same as render geometry but doesn't need to be.  This allows lower LOD versions of
@@ -3556,7 +3556,7 @@ void W3DVolumetricShadowManager::invalidateCachedLightPositions(void)
 				shadow->setLightPosHistory(i,meshIndex,vec);
 			}
 		}
-	}  // end for
+	}
 }
 
 // W3DVolumetricShadowManager =============================================================
@@ -3570,7 +3570,7 @@ W3DVolumetricShadowManager::W3DVolumetricShadowManager( void )
 
 	TheW3DBufferManager = NEW W3DBufferManager;
 
-}  // end ShadowManager
+}
 
 // ~W3DVolumetricShadowManager ============================================================
 // ============================================================================
@@ -3585,7 +3585,7 @@ W3DVolumetricShadowManager::~W3DVolumetricShadowManager( void )
 	//all shadows should be freed up at this point but check anyway
 	assert(m_shadowList==NULL);
 
-}  // end ~W3DVolumetricShadowManager
+}
 
 /** Releases all W3D/D3D assets before a reset.. */
 void W3DVolumetricShadowManager::ReleaseResources(void)
@@ -3648,7 +3648,7 @@ Bool W3DVolumetricShadowManager::ReAcquireResources(void)
 Bool W3DVolumetricShadowManager::init( void )
 {
 	return TRUE;
-}  // end Init
+}
 
 // Reset ======================================================================
 // Reset our list of shadows to empty
@@ -3660,7 +3660,7 @@ void W3DVolumetricShadowManager::reset( void )
 	m_W3DShadowGeometryManager->Free_All_Geoms();
 	TheW3DBufferManager->freeAllBuffers();
 
-}  // end Reset
+}
 
 // addShadow ==================================================================
 // Add the shadows for this hierarchy to the shadow management for
@@ -3742,7 +3742,7 @@ void W3DVolumetricShadowManager::removeShadow(W3DVolumetricShadow *shadow)
 			delete shadow;
 			break;
 		}
-	}  // end for
+	}
 }
 
 /** removeAllShadows ===========================================================
@@ -3762,7 +3762,7 @@ void W3DVolumetricShadowManager::removeAllShadows(void)
 		next_shadow = cur_shadow->m_next;
 		cur_shadow->m_next = NULL;
 		delete cur_shadow;
-	}  // end for
+	}
 }
 
 W3DShadowGeometryManager::W3DShadowGeometryManager(void)

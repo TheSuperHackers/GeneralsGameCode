@@ -167,7 +167,7 @@ void OCLUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -191,7 +191,7 @@ void OCLUpdate::xfer( Xfer *xfer )
 	// timer stated frame
 	xfer->xferUnsignedInt( &m_timerStartedFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -202,4 +202,4 @@ void OCLUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

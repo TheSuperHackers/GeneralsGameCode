@@ -62,7 +62,7 @@ SupplyWarehouseDockUpdateModuleData::SupplyWarehouseDockUpdateModuleData( void )
 
   p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 
 // ------------------------------------------------------------------------------------------------
@@ -187,7 +187,7 @@ void SupplyWarehouseDockUpdate::crc( Xfer *xfer )
 	// extend base class
 	DockUpdate::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -208,7 +208,7 @@ void SupplyWarehouseDockUpdate::xfer( Xfer *xfer )
 	// boxes stored
 	xfer->xferInt( &m_boxesStored );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -226,4 +226,4 @@ void SupplyWarehouseDockUpdate::loadPostProcess( void )
 	if( draw )
 		draw->updateDrawableSupplyStatus( modData->m_startingBoxesData, m_boxesStored );
 
-}  // end loadPostProcess
+}

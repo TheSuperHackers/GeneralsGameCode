@@ -344,8 +344,8 @@ Bool MissileAIUpdate::projectileHandleCollision( Object *other )
 							thingToKill->kill();
 							++numKilled;
 						}
-					} // next contained item
-				} // if items
+					}
+				}
 
 				if (numKilled > 0)
 				{
@@ -357,7 +357,7 @@ Bool MissileAIUpdate::projectileHandleCollision( Object *other )
 
 					return true;
 				}
-			}	// if a garrisonable thing
+			}
 		}
 	}
 
@@ -737,7 +737,7 @@ void MissileAIUpdate::crc( Xfer *xfer )
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -803,7 +803,7 @@ void MissileAIUpdate::xfer( Xfer *xfer )
 		xfer->xferUser( &m_exhaustID, sizeof( m_exhaustID ) );
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -812,4 +812,4 @@ void MissileAIUpdate::loadPostProcess( void )
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+}

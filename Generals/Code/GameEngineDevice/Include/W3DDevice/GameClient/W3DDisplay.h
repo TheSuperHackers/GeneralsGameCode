@@ -201,6 +201,6 @@ protected:
 
 	W3DDebugDisplay *m_nativeDebugDisplay;		///< W3D specific debug display interface
 
-};  // end W3DDisplay
+};
 
 #endif  // end __W3DDISPLAY_H_

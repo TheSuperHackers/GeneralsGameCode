@@ -138,7 +138,7 @@ static void drawStaticTextText( GameWindow *window, WinInstanceData *instData,
 	text->setClipRegion(&clipRegion);
 	text->draw( textPos.x, textPos.y, textColor, textDropColor );
 
-}  // end drawStaticTextText
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -166,7 +166,7 @@ void W3DGadgetStaticTextDraw( GameWindow *window, WinInstanceData *instData )
 		textColor					= window->winGetDisabledTextColor();
 		textOutlineColor	= window->winGetDisabledTextBorderColor();
 
-	}  // end if, disabled
+	}
 	else
 	{
 
@@ -175,7 +175,7 @@ void W3DGadgetStaticTextDraw( GameWindow *window, WinInstanceData *instData )
 		textColor					= window->winGetEnabledTextColor();
 		textOutlineColor	= window->winGetEnabledTextBorderColor();
 
-	}  // end else, enabled
+	}
 
 	// draw the back border
 	if( backBorder != WIN_COLOR_UNDEFINED )
@@ -188,7 +188,7 @@ void W3DGadgetStaticTextDraw( GameWindow *window, WinInstanceData *instData )
 		TheWindowManager->winOpenRect( backBorder, WIN_DRAW_LINE_WIDTH,
 																	 start.x, start.y, end.x, end.y );
 
-	}  // end if
+	}
 
 	// draw the back fill area
 	if( backColor != WIN_COLOR_UNDEFINED )
@@ -200,7 +200,7 @@ void W3DGadgetStaticTextDraw( GameWindow *window, WinInstanceData *instData )
 		end.y = start.y + size.y - 2;
 		TheWindowManager->winFillRect( backColor, WIN_DRAW_LINE_WIDTH,
 																	 start.x, start.y, end.x, end.y );
-	}  // end if
+	}
 
 	// draw the text
   if( tData->text && (textColor != WIN_COLOR_UNDEFINED) )
@@ -208,7 +208,7 @@ void W3DGadgetStaticTextDraw( GameWindow *window, WinInstanceData *instData )
 
 
 
-}  // end W3DGadgetStaticTextDraw
+}
 
 // W3DGadgetStaticTextImageDraw ===============================================
 /** Draw colored text field with user supplied images */
@@ -232,7 +232,7 @@ void W3DGadgetStaticTextImageDraw( GameWindow *window, WinInstanceData *instData
 		textColor					= window->winGetDisabledTextColor();
 		textOutlineColor	= window->winGetDisabledTextBorderColor();
 
-	}  // end if, disabled
+	}
 	else
 	{
 
@@ -240,7 +240,7 @@ void W3DGadgetStaticTextImageDraw( GameWindow *window, WinInstanceData *instData
 		textColor					= window->winGetEnabledTextColor();
 		textOutlineColor	= window->winGetEnabledTextBorderColor();
 
-	}  // end else, enabled
+	}
 
 	// draw the back image
 	if( image )
@@ -252,7 +252,7 @@ void W3DGadgetStaticTextImageDraw( GameWindow *window, WinInstanceData *instData
 		end.y = start.y + size.y;
 		TheWindowManager->winDrawImage( image, start.x, start.y, end.x, end.y );
 
-	}  // end if
+	}
 
 	// draw the text
   if( tData->text && (textColor != WIN_COLOR_UNDEFINED) )
@@ -260,5 +260,5 @@ void W3DGadgetStaticTextImageDraw( GameWindow *window, WinInstanceData *instData
 
 
 
-}  // end W3DGadgetStaticTextImageDraw
+}
 

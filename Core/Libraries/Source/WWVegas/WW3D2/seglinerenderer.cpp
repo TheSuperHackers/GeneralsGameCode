@@ -714,7 +714,7 @@ void SegLineRendererClass::Render
 				segment[iidx].StartPlane = -start_pl;
 			}
 
-		}	// for iidx
+		}
 
 
 		/*
@@ -875,7 +875,7 @@ void SegLineRendererClass::Render
 							next_int = &(intersection[iidx_r + 1][edge]);
 							next_seg = &(segment[next_int->NextSegmentID]);
 
-						}	// while <merging needed>
+						}
 
 						// Copy from "read index" to "write index"
 						write_int->PointCount		= curr_int->PointCount;
@@ -886,7 +886,7 @@ void SegLineRendererClass::Render
 						write_int->Direction			= curr_int->Direction;
 						write_int->Fold				= curr_int->Fold;
 
-					}	// for iidx
+					}
 
 					// If iidx_r is exactly equal to num_isects (rather than being larger by one) at this
 					// point, this means that the last intersection was not merged with the previous one. In
@@ -912,9 +912,9 @@ void SegLineRendererClass::Render
 					assert(total_cnt == point_cnt);
 #endif
 
-				}	// for edge
-			}	// while (merged)
-		}	// if (Is_Merge_Intersections())
+				}
+			}
+		}
 
 		/*
 		** Find vertex positions, generate vertices and triangles:
@@ -1158,7 +1158,7 @@ void SegLineRendererClass::Render
 				texture->V = vArray[i].v1;
 				vb += vbSize;
 			}
-		} // copy
+		}
 
 		DynamicIBAccessClass ib_access((sorting?BUFFER_TYPE_DYNAMIC_SORTING:BUFFER_TYPE_DYNAMIC_DX8),tidx*3);
 		{
@@ -1188,7 +1188,7 @@ void SegLineRendererClass::Render
 
 		REF_PTR_RELEASE(mat);
 
-	}	// Chunking loop
+	}
 
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
 

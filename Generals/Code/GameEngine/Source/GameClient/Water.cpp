@@ -122,13 +122,13 @@ WaterSetting::WaterSetting( void )
 	m_uScrollPerMs = 0.0f;
 	m_vScrollPerMs = 0.0f;
 
-}  // end WaterSetting
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 WaterSetting::~WaterSetting( void )
 {
 
-}  // end WaterSetting
+}
 
 

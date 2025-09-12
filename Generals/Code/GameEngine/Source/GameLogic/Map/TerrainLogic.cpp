@@ -86,14 +86,14 @@ m_biDirectional(biDirectional)
 	for (i=0; i<MAX_LINKS; i++) {
 		m_links[i] = NULL;
 	}
-}  // end Waypoint
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 Waypoint::~Waypoint()
 {
 
-}  // end ~Waypoint
+}
 
 // Bridge ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -134,7 +134,7 @@ Object *Bridge::createTower( Coord3D *worldPos,
 		DEBUG_CRASH(( "Bridge::createTower(): Invalid params" ));
 		return NULL;
 
-	}  // end if
+	}
 
 	// create the tower object
 	Object *tower = TheThingFactory->newObject( towerTemplate, bridge->getTeam() );
@@ -169,7 +169,7 @@ Object *Bridge::createTower( Coord3D *worldPos,
 			DEBUG_CRASH(( "Bridge::createTower - Unknown bridge tower type '%d'", towerType ));
 			return NULL;
 
-	}  // end switch
+	}
 
 	// set the position and angle
 	tower->setPosition( worldPos );
@@ -193,7 +193,7 @@ Object *Bridge::createTower( Coord3D *worldPos,
 		// save our position type
 		bridgeTowerInterface->setTowerType( towerType );
 
-	}  // end if
+	}
 
 	// if the bridge is indestructible, so is this tower
 	BodyModuleInterface *bridgeBody = bridge->getBodyModule();
@@ -203,12 +203,12 @@ Object *Bridge::createTower( Coord3D *worldPos,
 
 		towerBody->setIndestructible( TRUE );
 
-	}  // end if
+	}
 
 	// return the newly created tower
 	return tower;
 
-}  // end createTower
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -310,17 +310,17 @@ m_bridgeInfo(theInfo)
 				pos.y -= v.y*offset;
 				break;
 
-		}  // end switch
+		}
 		tower = createTower( &pos, type, towerTemplate, bridge );
 
 		// store the tower object ID
 		m_bridgeInfo.towerObjectID[ i ] = tower->getID();
 
-	}  // end for, i
+	}
 #endif
 
 	m_next = NULL;
-}  // end Bridge
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -423,7 +423,7 @@ Bridge::Bridge(Object *bridgeObj)
 				pos.y -= v.y*offset;
 				break;
 
-		}  // end switch
+		}
 		tower = createTower( &pos, type, towerTemplate, bridgeObj );
 		if( tower )
 		{
@@ -431,17 +431,17 @@ Bridge::Bridge(Object *bridgeObj)
 			m_bridgeInfo.towerObjectID[ i ] = tower->getID();
 		}
 
-	}  // end for, i
+	}
 
 	m_next = NULL;
-}  // end Bridge
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 Bridge::~Bridge()
 {
 
-}  // end ~Bridge
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -542,7 +542,7 @@ Bool LineInRegion( const Coord2D *p1, const Coord2D *p2, const Region2D *clipReg
 	if ((clipCode1 | clipCode2) == 0)
 	{
 		return TRUE;
-	}  // end if
+	}
 
 	// Both points outside window?
 	if (clipCode1 & clipCode2)
@@ -626,7 +626,7 @@ Bool LineInRegion( const Coord2D *p1, const Coord2D *p2, const Region2D *clipReg
 			x2 >= clipLeft && x2 <= clipRight &&
 			y2 >= clipTop && y2 <= clipBottom);
 
-}  // end LineInRegion
+}
 
 static Bool PointInRegion2D( const Coord3D *pt, const Region2D *clipRegion )
 {
@@ -973,7 +973,7 @@ TerrainLogic::TerrainLogic()
 		m_waterToUpdate[ i ].damageAmount = 0.0f;
 		m_waterToUpdate[ i ].currentHeight = 0.0f;
 
-	}  // end for i
+	}
 	m_numWaterToUpdate = 0;
 
 	m_waypointListHead = NULL;
@@ -984,7 +984,7 @@ TerrainLogic::TerrainLogic()
 	m_mapDY = 0;
 
 
-}  // end TerrainLogic
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -993,7 +993,7 @@ TerrainLogic::~TerrainLogic()
 
 	reset(); // just in case
 
-}  // end ~TerrainLogic
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Init */
@@ -1001,7 +1001,7 @@ TerrainLogic::~TerrainLogic()
 void TerrainLogic::init( void )
 {
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset */
@@ -1014,7 +1014,7 @@ void TerrainLogic::reset( void )
 	PolygonTrigger::deleteTriggers();
 	m_numWaterToUpdate = 0;
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update */
@@ -1058,14 +1058,14 @@ void TerrainLogic::update( void )
 				if( currentHeight + changePerFrame >= targetHeight )
 					finalTransition = TRUE;
 
-			}  // end if
+			}
 			else
 			{
 
 				if( currentHeight + changePerFrame <= targetHeight )
 					finalTransition = TRUE;
 
-			}  // end else
+			}
 
 			if( finalTransition == TRUE )
 			{
@@ -1085,7 +1085,7 @@ void TerrainLogic::update( void )
 					m_waterToUpdate[ i ] = m_waterToUpdate[ j ];
 				m_numWaterToUpdate -= 1;
 
-			}  // end if
+			}
 			else
 			{
 
@@ -1107,13 +1107,13 @@ void TerrainLogic::update( void )
 				// update actual water
 				setWaterHeight( water, currentHeight, damageAmount, FALSE );
 
-			}  // end else
+			}
 
-		}  // end for i
+		}
 
-	}  // end if
+	}
 
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 /** newMap */
@@ -1139,7 +1139,7 @@ void TerrainLogic::newMap( Bool saveGame )
 		enable = TRUE;
 	enableWaterGrid( enable );
 
-}  // end newMap
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -1170,7 +1170,7 @@ void TerrainLogic::enableWaterGrid( Bool enable )
 				waterSettingIndex = i;
 				break;  // exit for i
 
-			}  // end if
+			}
 
 			//
 			// no exact map name (including path) was found, try to look for a match in just the
@@ -1203,9 +1203,9 @@ void TerrainLogic::enableWaterGrid( Bool enable )
 				waterSettingIndex = i;
 				break;  // exit for i
 
-			}  // end if
+			}
 
-		}  // end for i
+		}
 
 		// check for no match found
 		if( waterSettingIndex == -1 )
@@ -1215,7 +1215,7 @@ void TerrainLogic::enableWaterGrid( Bool enable )
 										TheGlobalData->m_mapName.str() ));
 			return;
 
-		}  // end if
+		}
 
 		TheTerrainVisual->setWaterGridHeightClamps( NULL,
 																								TheGlobalData->m_vertexWaterHeightClampLow[ waterSettingIndex ],
@@ -1235,12 +1235,12 @@ void TerrainLogic::enableWaterGrid( Bool enable )
 																									TheGlobalData->m_vertexWaterAttenuationC[ waterSettingIndex ],
 																									TheGlobalData->m_vertexWaterAttenuationRange[ waterSettingIndex ] );
 
-	}  // end if
+	}
 
 	// notify the terrain visual of the change
 	TheTerrainVisual->enableWaterGrid( enable );
 
-}  // end enableWaterGrid
+}
 
 //-------------------------------------------------------------------------------------------------
 /** device independent terrain logic load.  If query is true, we are just loading it to get
@@ -1316,7 +1316,7 @@ Bool TerrainLogic::loadMap( AsciiString filename, Bool query )
 
 	return TRUE;  // success
 
-}  // end load
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reads in the waypoint chunk */
@@ -1437,7 +1437,7 @@ Real TerrainLogic::getGroundHeight( Real x, Real y, Coord3D* normal ) const
 
 	return 0;
 
-}  // end getHight
+}
 
 //-------------------------------------------------------------------------------------------------
 /** default get height for terrain logic */
@@ -1449,7 +1449,7 @@ Real TerrainLogic::getLayerHeight( Real x, Real y, PathfindLayerEnum layer, Coor
 
 	return 0;
 
-}  // end getLayerHeight
+}
 
 //-------------------------------------------------------------------------------------------------
 /** default isCliffCell for terrain logic */
@@ -1459,7 +1459,7 @@ Bool TerrainLogic::isCliffCell( Real x, Real y) const
 
 	return false;
 
-}  // end isCliffCell
+}
 
 //-------------------------------------------------------------------------------------------------
 void makeAlignToNormalMatrix( Real angle, const Coord3D& pos, const Coord3D& normal, Matrix3D& mtx)
@@ -2010,7 +2010,7 @@ void TerrainLogic::deleteBridge( Bridge *bridge )
 
 		m_bridgeListHead = bridge->getNext();
 
-	}  // end if
+	}
 	else
 	{
 
@@ -2029,11 +2029,11 @@ void TerrainLogic::deleteBridge( Bridge *bridge )
 				otherBridge->setNext( bridge->getNext() );
 				break;  // exit for
 
-			}  // end if
+			}
 
-		}  // end for, otherBridge
+		}
 
-	}  // end else
+	}
 
 	// delete object associated with bridge if present
 	BridgeInfo bridgeInfo;
@@ -2047,7 +2047,7 @@ void TerrainLogic::deleteBridge( Bridge *bridge )
 	// delete the bridge in question
 	deleteInstance(bridge);
 
-}  // end deleteBridge
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Returns the ground aligned point on the bounding box closest to the given point*/
@@ -2200,11 +2200,11 @@ const WaterHandle* TerrainLogic::getWaterHandle( Real x, Real y )
 				waterZ = pTrig->getPoint( 0 )->z;
 				waterHandle = pTrig->getWaterHandle();
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end for
+	}
 
 	/**@todo: Remove this after we have all water types included
 		in water triggers.  For now do special check for water grid mesh. */
@@ -2224,13 +2224,13 @@ const WaterHandle* TerrainLogic::getWaterHandle( Real x, Real y )
 			waterZ = meshZ;
 			waterHandle = &m_gridWaterHandle;
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	return waterHandle;
 
-}  // end getWaterHandle
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Get water handle by name assigned from the editor */
@@ -2250,7 +2250,7 @@ const WaterHandle* TerrainLogic::getWaterHandleByName( AsciiString name )
 
 	return NULL;
 
-}  // end getWaterHandleByName
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -2271,7 +2271,7 @@ Real TerrainLogic::getWaterHeight( const WaterHandle *water )
 		DEBUG_CRASH(( "TerrainLogic::getWaterHeight( WaterHandle *water ) - water is a grid handle, cannot make this query" ));
 		return 0.0f;
 
-	}  //  end if
+	}
 
 	// sanity
 	DEBUG_ASSERTCRASH( water->m_polygon != NULL, ("getWaterHeight: polygon trigger in water handle is NULL") );
@@ -2279,7 +2279,7 @@ Real TerrainLogic::getWaterHeight( const WaterHandle *water )
 	// return the height of the water using the polygon trigger
 	return water->m_polygon->getPoint( 0 )->z;
 
-}  // end getWaterHeight
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Set the water height.  If the water rises, then any objects that now find themselves
@@ -2314,7 +2314,7 @@ void TerrainLogic::setWaterHeight( const WaterHandle *water, Real height, Real d
 		transform.Set_Z_Translation( height );
 		TheTerrainVisual->setWaterTransform( &transform );
 
-	}  // end if
+	}
 	else
 	{
 
@@ -2334,10 +2334,10 @@ void TerrainLogic::setWaterHeight( const WaterHandle *water, Real height, Real d
 			newPoint.z = height;
 			water->m_polygon->setPoint( newPoint, i );
 
-		}  // end for
+		}
 		height = getWaterHeight(water);
 
-	}  // end else
+	}
 
 	// find the bounding rectangle of this water area
 	Region3D affectedRegion;
@@ -2351,7 +2351,7 @@ void TerrainLogic::setWaterHeight( const WaterHandle *water, Real height, Real d
 		// do the pathfind remapping
 		TheAI->pathfinder()->forceMapRecalculation();
 
-	}  // end if
+	}
 
 	//
 	// if the water height has risen, we need apply water damage to things that are now
@@ -2396,13 +2396,13 @@ void TerrainLogic::setWaterHeight( const WaterHandle *water, Real height, Real d
 				damageInfo.in.m_amount = damageAmount;
 				obj->attemptDamage( &damageInfo );
 
-			}  // end if
+			}
 
-		}  // end for obj
+		}
 
-	}  // end if, water has risen
+	}
 
-}  // end setWaterHeight
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Change the height of a water table over time */
@@ -2420,7 +2420,7 @@ void TerrainLogic::changeWaterHeightOverTime( const WaterHandle *water,
 		DEBUG_CRASH(( "Only '%d' simultaneous water table changes are supported", MAX_DYNAMIC_WATER ));
 		return;
 
-	}  // end if
+	}
 
 	// sanity
 	if( water == NULL )
@@ -2445,9 +2445,9 @@ void TerrainLogic::changeWaterHeightOverTime( const WaterHandle *water,
 			//
 			--i;
 
-		}  // end if
+		}
 
-	}  // end for i
+	}
 
 	// get the current height of the water
 	Real currentHeight = getWaterHeight( water );
@@ -2463,7 +2463,7 @@ void TerrainLogic::changeWaterHeightOverTime( const WaterHandle *water,
 	// we now have one more entry to update
 	++m_numWaterToUpdate;
 
-}  // end chanageWaterHeightOverTime
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Find the axis aligned bounding region around a water table */
@@ -2521,9 +2521,9 @@ void TerrainLogic::findAxisAlignedBoundingRect( const WaterHandle *water, Region
 			if( v.Y > region->hi.y )
 				region->hi.y = v.Y;
 
-		}  // end for i
+		}
 
-	}  // end if
+	}
 	else
 	{
 
@@ -2552,11 +2552,11 @@ void TerrainLogic::findAxisAlignedBoundingRect( const WaterHandle *water, Region
 			if( p->z > region->hi.z )
 				region->hi.z = p->z;
 
-		}  // end for i
+		}
 
-	}  // end else
+	}
 
-}  // end findAxisAlignedBoundingRect
+}
 
 void TerrainLogic::setActiveBoundary(Int newActiveBoundary)
 {
@@ -2840,9 +2840,9 @@ void TerrainLogic::flattenTerrain(Object *obj)
 				}
 			}
 
-		} // cylinder
+		}
 		break;
-	} // switch
+	}
 
 }
 
@@ -2852,7 +2852,7 @@ void TerrainLogic::flattenTerrain(Object *obj)
 void TerrainLogic::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer
@@ -2894,7 +2894,7 @@ void TerrainLogic::xfer( Xfer *xfer )
 				Int triggerID = m_waterToUpdate[ i ].waterTable->m_polygon->getID();
 				xfer->xferInt( &triggerID );
 
-			}  // end if, save
+			}
 			else if (xfer->getXferMode() == XFER_LOAD)
 			{
 
@@ -2913,7 +2913,7 @@ void TerrainLogic::xfer( Xfer *xfer )
 												triggerID ));
 					throw SC_INVALID_DATA;
 
-				}  // end if
+				}
 
 				// set water handle
 				m_waterToUpdate[ i ].waterTable = poly->getWaterHandle();
@@ -2925,9 +2925,9 @@ void TerrainLogic::xfer( Xfer *xfer )
 					DEBUG_CRASH(( "TerrainLogic::xfer - Polygon trigger to use for water handle has no water handle!" ));
 					throw SC_INVALID_DATA;
 
-				}  // end if
+				}
 
-			}  // end else, load
+			}
 
 			// change per frame
 			xfer->xferReal( &m_waterToUpdate[ i ].changePerFrame );
@@ -2941,11 +2941,11 @@ void TerrainLogic::xfer( Xfer *xfer )
 			// current height
 			xfer->xferReal( &m_waterToUpdate[ i ].currentHeight );
 
-		}  // end for, i
+		}
 
-	}  // end if
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -2965,5 +2965,5 @@ void TerrainLogic::loadPostProcess( void )
 		pBridge = pNext;
 	}
 
-}  // end loadPostProcess
+}
 

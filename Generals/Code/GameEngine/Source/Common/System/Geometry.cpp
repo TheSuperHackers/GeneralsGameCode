@@ -553,7 +553,7 @@ AsciiString GeometryInfo::getDescriptiveString() const
 void GeometryInfo::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -589,7 +589,7 @@ void GeometryInfo::xfer( Xfer *xfer )
 	// bounding sphere radius
 	xfer->xferReal( &m_boundingSphereRadius );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -597,4 +597,4 @@ void GeometryInfo::xfer( Xfer *xfer )
 void GeometryInfo::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

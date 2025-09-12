@@ -75,7 +75,7 @@ CBCommandStatus ControlBar::processCommandTransitionUI( GameWindow *control, Gad
 			switchToContext( CB_CONTEXT_NONE, NULL );
 		return CBC_COMMAND_NOT_USED;
 
-	}  // end if
+	}
 
 	return CBC_COMMAND_USED;
 
@@ -109,7 +109,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			switchToContext( CB_CONTEXT_NONE, NULL );
 		return CBC_COMMAND_NOT_USED;
 
-	}  // end if
+	}
 
 	// sanity
 	if( control == NULL )
@@ -231,7 +231,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 			break;
 
-		}  // end dozer construct
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GUI_COMMAND_DOZER_CONSTRUCT_CANCEL:
@@ -251,7 +251,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 			break;
 
-		}  // end cancel dozer construction
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GUI_COMMAND_UNIT_BUILD:
@@ -310,7 +310,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 																factory->getTemplate()->getName().str()) );
 				break;
 
-			}  // end if
+			}
 
 			// get a new production id to assign to this
 			ProductionID productionID = pu->requestUniqueUnitID();
@@ -323,7 +323,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 			break;
 
-		}  // end build unit
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GUI_COMMAND_CANCEL_UNIT_BUILD:
@@ -342,7 +342,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 				DEBUG_ASSERTCRASH( 0, ("Control not found in build queue data") );
 				break;
 
-			}  // end if
+			}
 
 			// sanity
 			if( m_queueData[ i ].type != PRODUCTION_UNIT )
@@ -366,7 +366,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 			break;
 
-		}  // end cancel unit build
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GUI_COMMAND_PLAYER_UPGRADE:
@@ -402,7 +402,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 			break;
 
-		}  // command player upgrade
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GUI_COMMAND_OBJECT_UPGRADE:
@@ -447,7 +447,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 			break;
 
-		}  // end object upgrade
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GUI_COMMAND_CANCEL_UPGRADE:
@@ -466,7 +466,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 				DEBUG_ASSERTCRASH( 0, ("Control not found in build queue data") );
 				break;
 
-			}  // end if
+			}
 
 			// sanity
 			if( m_queueData[ i ].type != PRODUCTION_UPGRADE )
@@ -488,7 +488,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 			break;
 
-		}  // end cancel upgrade
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GUI_COMMAND_ATTACK_MOVE:
@@ -546,7 +546,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 				m_containData[ i ].objectID = INVALID_ID;
 				break;  // exit case
 
-			}  // end if
+			}
 
 			// send message to exit
 			GameMessage *exitMsg = TheMessageStream->appendMessage( GameMessage::MSG_EXIT );
@@ -554,7 +554,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 			break;
 
-		}  // end transport exit
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GUI_COMMAND_EVACUATE:
@@ -568,14 +568,14 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			}
 
 			break;
-		}  // end evacuate
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GUI_COMMAND_EXECUTE_RAILED_TRANSPORT:
 		{
 			TheMessageStream->appendMessage( GameMessage::MSG_EXECUTE_RAILED_TRANSPORT );
 			break;
-		}  // end execute railed transport
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GUI_COMMAND_HACK_INTERNET:
@@ -590,7 +590,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 		{
 			break;
 
-		}  // end set rally point
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GUI_COMMAND_SELL:
@@ -600,7 +600,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			TheMessageStream->appendMessage( GameMessage::MSG_SELL );
 			break;
 
-		}  // end sell
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GUI_COMMAND_TOGGLE_OVERCHARGE:
@@ -609,7 +609,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			TheMessageStream->appendMessage( GameMessage::MSG_TOGGLE_OVERCHARGE );
 			break;
 
-		}  // end overcharge
+		}
 
 #ifdef ALLOW_SURRENDER
 		// ------------------------------------------------------------------------------------------------
@@ -619,7 +619,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			TheMessageStream->appendMessage( GameMessage::MSG_RETURN_TO_PRISON );
 			break;
 
-		}  // end return to prison
+		}
 #endif
 
 		//---------------------------------------------------------------------------------------------
@@ -628,7 +628,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 			break;
 
-		}  // end delete beacon
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GUI_COMMAND_GUARD:
@@ -666,7 +666,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 			break;
 
-		}  // end fire weapon
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GUI_COMMAND_SPECIAL_POWER_FROM_COMMAND_CENTER:
@@ -682,7 +682,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			msg->appendObjectIDArgument( cmdCenter->getID() );
 			break;
 
-		}  // end special weapon
+		}
 
 		case GUI_COMMAND_SPECIAL_POWER:
 		{
@@ -693,7 +693,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			msg->appendObjectIDArgument( INVALID_ID );	// no specific source
 			break;
 
-		}  // end special weapon
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GUI_COMMAND_PURCHASE_SCIENCE:
@@ -726,7 +726,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 			break;
 
-		}  // end pick specialized science
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
@@ -734,9 +734,9 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			DEBUG_ASSERTCRASH( 0, ("Unknown command '%d'", commandButton->getCommandType()) );
 			return CBC_COMMAND_NOT_USED;
 
-	}  // end switch
+	}
 
 	return CBC_COMMAND_USED;
 
-}  // end processCommandUI
+}
 

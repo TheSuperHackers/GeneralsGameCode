@@ -361,7 +361,7 @@ void StructureCollapseUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -394,7 +394,7 @@ void StructureCollapseUpdate::xfer( Xfer *xfer )
 	// current height
 	xfer->xferReal( &m_currentHeight );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -405,4 +405,4 @@ void StructureCollapseUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

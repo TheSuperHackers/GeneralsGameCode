@@ -96,6 +96,6 @@ void INI::parseControlBarSchemeDefinition( INI *ini )
 	// parse the ini definition
 	ini->initFromINI( CBScheme, CBSchemeManager->getFieldParse() );
 
-}  // end parseCommandButtonDefinition
+}
 
 

@@ -88,7 +88,7 @@ static void fileNewLine( FILE *fp )
 	fprintf( fp, "\n" );
 	fflush( fp );
 
-}  // end fileNewLine
+}
 
 // writeBufferToFile ==========================================================
 /** Write the contents of the buffer to the file */
@@ -106,7 +106,7 @@ static void writeBufferToFile( FILE *fp, char *buffer )
 	//
 	fflush( fp );
 
-}  // end writeBufferToFile
+}
 
 // clearBufferToSpaces ========================================================
 /** Clear the buffer to all spaces */
@@ -118,7 +118,7 @@ static void clearBufferToSpaces( void )
 	for( i = 0; i < BUFFER_SIZE; i++ )
 		buffer[ i ] = ' ';
 
-}  // end clearBufferToSpaces
+}
 
 // saveType ===================================================================
 /** Save type of window */
@@ -159,7 +159,7 @@ static Bool saveType( GameWindow *window, FILE *fp, Int dataIndent )
 
 	return TRUE;
 
-}  // end saveType
+}
 
 // savePosition ===============================================================
 /** Save window position data */
@@ -192,7 +192,7 @@ static Bool savePosition( GameWindow *window, FILE *fp, Int dataIndent )
 
 	return TRUE;
 
-}  // end savePosition
+}
 
 // saveName ===================================================================
 // Save name */
@@ -207,7 +207,7 @@ static Bool saveName( GameWindow *window, FILE *fp, Int dataIndent )
 
 	return TRUE;
 
-}  // end saveName
+}
 
 // saveStatus =================================================================
 /** Save status information */
@@ -236,10 +236,10 @@ static Bool saveStatus( GameWindow *window, FILE *fp, Int dataIndent )
 			strcat( buffer, WindowStatusNames[ i ] );
 			bitWritten = TRUE;
 
-		}  // end
+		}
 		i++;
 
-	}  // end while
+	}
 
 	// if no bits written write NONE in the file
 	if( bitWritten == FALSE )
@@ -251,7 +251,7 @@ static Bool saveStatus( GameWindow *window, FILE *fp, Int dataIndent )
 
 	return TRUE;
 
-}  // end saveStatus
+}
 
 // saveStyle ==================================================================
 /** Save style information */
@@ -280,10 +280,10 @@ static Bool saveStyle( GameWindow *window, FILE *fp, Int dataIndent )
 			strcat( buffer, WindowStyleNames[ i ] );
 			bitWritten = TRUE;
 
-		}  // end
+		}
 		i++;
 
-	}  // end while
+	}
 
 	// if no bits written write NONE in the file
 	if( bitWritten == FALSE )
@@ -295,7 +295,7 @@ static Bool saveStyle( GameWindow *window, FILE *fp, Int dataIndent )
 
 	return TRUE;
 
-}  // end saveStyle
+}
 
 // saveCallbacks ==============================================================
 /** Save string representations of the window function callbacks into
@@ -341,7 +341,7 @@ static Bool saveCallbacks( GameWindow *window, FILE *fp, Int dataIndent )
 
 	return TRUE;
 
-}  // end saveCallbacks
+}
 
 // saveHeaderTemplate =========================================================
 /** Save HeaderTemplate for a window */
@@ -376,7 +376,7 @@ static Bool saveFont( GameWindow *window, FILE *fp, Int dataIndent )
 
 	return TRUE;
 
-}  // end saveFont
+}
 
 // saveTooltipText ===================================================================
 /** Save the text for a window */
@@ -391,11 +391,11 @@ static Bool saveTooltipText( GameWindow *window, FILE *fp, Int dataIndent )
 		sprintf( &buffer[ dataIndent ], "TOOLTIPTEXT = \"%s\";\n", instData->m_tooltipString.str() );
 		writeBufferToFile( fp, buffer );
 
-	}  // end if
+	}
 
 	return TRUE;
 
-}  // end saveTooltipText
+}
 
 // saveTooltipDelay ===================================================================
 /** Save the delay for a window */
@@ -414,7 +414,7 @@ static Bool saveTooltipDelay( GameWindow *window, FILE *fp, Int dataIndent )
 
 	return TRUE;
 
-}  // end saveTooltipText
+}
 
 // saveText ===================================================================
 /** Save the text for a window */
@@ -430,11 +430,11 @@ static Bool saveText( GameWindow *window, FILE *fp, Int dataIndent )
 		sprintf( &buffer[ dataIndent ], "TEXT = \"%s\";\n", instData->m_textLabelString.str() );
 		writeBufferToFile( fp, buffer );
 
-	}  // end if
+	}
 
 	return TRUE;
 
-}  // end saveText
+}
 
 // saveTextColor ==============================================================
 /** Save the text colors for enabled, disable, and hilite with
@@ -477,11 +477,11 @@ static Bool saveTextColor( GameWindow *window, FILE *fp, Int dataIndent )
 							 r, g, b, a, br, bg, bb, ba );
 		writeBufferToFile( fp, buffer );
 
-	}  // end for i
+	}
 
 	return TRUE;
 
-}  // end saveTextColor
+}
 
 // tokenIsEnabledData =========================================================
 /** Token refers to enabled draw data */
@@ -502,7 +502,7 @@ static Bool tokenIsEnabledData( const char *token )
 
 	return FALSE;
 
-}  // end tokenIsEnabledData
+}
 
 // tokenIsDisabledData ========================================================
 /** Token refers to Disabled draw data */
@@ -522,7 +522,7 @@ static Bool tokenIsDisabledData( const char *token )
 
 	return FALSE;
 
-}  // end tokenIsDisabledData
+}
 
 // tokenIsHiliteData ==========================================================
 /** Token refers to Hilite draw data */
@@ -542,7 +542,7 @@ static Bool tokenIsHiliteData( const char *token )
 
 	return FALSE;
 
-}  // end tokenIsHiliteData
+}
 
 // saveDrawData ===============================================================
 /** Save the draw data array */
@@ -581,7 +581,7 @@ static Bool saveDrawData( const char *token, GameWindow *window,
 			assert( 0 );
 			return FALSE;
 
-		}  // end else
+		}
 
 		image = drawData->image;
 		GameGetColorComponents( drawData->color, &r, &g, &b, &a );
@@ -599,11 +599,11 @@ static Bool saveDrawData( const char *token, GameWindow *window,
 
 		writeBufferToFile( fp, buffer );
 
-	}  // end for i
+	}
 
 	return TRUE;
 
-}  // end saveDrawData
+}
 
 // saveListboxData ============================================================
 /** Save listbox data to the file */
@@ -621,7 +621,7 @@ static Bool saveListboxData( GameWindow *window, FILE *fp, Int dataIndent )
 		assert( 0 );
 		return FALSE;
 
-	}  // end if
+	}
 
 	sprintf( &buffer[ dataIndent ], "LISTBOXDATA = LENGTH: %d,\n", listData->listLength );
 	writeBufferToFile( fp, buffer );
@@ -656,7 +656,7 @@ static Bool saveListboxData( GameWindow *window, FILE *fp, Int dataIndent )
 		saveDrawData( "LISTBOXDISABLEDUPBUTTONDRAWDATA", listData->upButton, fp, dataIndent );
 		saveDrawData( "LISTBOXHILITEUPBUTTONDRAWDATA", listData->upButton, fp, dataIndent );
 
-	}  // end if
+	}
 
 	// save down button draw data for listbox
 	if( listData->downButton )
@@ -666,7 +666,7 @@ static Bool saveListboxData( GameWindow *window, FILE *fp, Int dataIndent )
 		saveDrawData( "LISTBOXDISABLEDDOWNBUTTONDRAWDATA", listData->downButton, fp, dataIndent );
 		saveDrawData( "LISTBOXHILITEDOWNBUTTONDRAWDATA", listData->downButton, fp, dataIndent );
 
-	}  // end if
+	}
 
 	// save the slider draw data on the listbox
 	if( listData->slider )
@@ -683,13 +683,13 @@ static Bool saveListboxData( GameWindow *window, FILE *fp, Int dataIndent )
 			saveDrawData( "SLIDERTHUMBDISABLEDDRAWDATA", thumb, fp, dataIndent );
 			saveDrawData( "SLIDERTHUMBHILITEDRAWDATA", thumb, fp, dataIndent );
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	return TRUE;
 
-}  // end saveListboxData
+}
 
 // saveComboBoxData ============================================================
 /** Save Combo Box data to the file */
@@ -707,7 +707,7 @@ static Bool saveComboBoxData( GameWindow *window, FILE *fp, Int dataIndent )
 		assert( 0 );
 		return FALSE;
 
-	}  // end if
+	}
 
 	sprintf( &buffer[ dataIndent ], "COMBOBOXDATA = ISEDITABLE: %d,\n", comboData->isEditable );
 	writeBufferToFile( fp, buffer );
@@ -728,7 +728,7 @@ static Bool saveComboBoxData( GameWindow *window, FILE *fp, Int dataIndent )
 		saveDrawData( "COMBOBOXDROPDOWNBUTTONDISABLEDDRAWDATA", comboData->dropDownButton, fp, dataIndent );
 		saveDrawData( "COMBOBOXDROPDOWNBUTTONHILITEDRAWDATA", comboData->dropDownButton, fp, dataIndent );
 
-	}  // end if
+	}
 
 	if( comboData->editBox )
 	{
@@ -737,7 +737,7 @@ static Bool saveComboBoxData( GameWindow *window, FILE *fp, Int dataIndent )
 		saveDrawData( "COMBOBOXEDITBOXDISABLEDDRAWDATA", comboData->editBox, fp, dataIndent );
 		saveDrawData( "COMBOBOXEDITBOXHILITEDRAWDATA", comboData->editBox, fp, dataIndent );
 
-	}  // end if
+	}
 
 	if(comboData->listBox)
 	{
@@ -755,7 +755,7 @@ static Bool saveComboBoxData( GameWindow *window, FILE *fp, Int dataIndent )
 			saveDrawData( "LISTBOXDISABLEDUPBUTTONDRAWDATA", listData->upButton, fp, dataIndent );
 			saveDrawData( "LISTBOXHILITEUPBUTTONDRAWDATA", listData->upButton, fp, dataIndent );
 
-		}  // end if
+		}
 
 		// save down button draw data for listbox
 		if( listData->downButton )
@@ -765,7 +765,7 @@ static Bool saveComboBoxData( GameWindow *window, FILE *fp, Int dataIndent )
 			saveDrawData( "LISTBOXDISABLEDDOWNBUTTONDRAWDATA", listData->downButton, fp, dataIndent );
 			saveDrawData( "LISTBOXHILITEDOWNBUTTONDRAWDATA", listData->downButton, fp, dataIndent );
 
-		}  // end if
+		}
 
 		// save the slider draw data on the listbox
 		if( listData->slider )
@@ -782,13 +782,13 @@ static Bool saveComboBoxData( GameWindow *window, FILE *fp, Int dataIndent )
 				saveDrawData( "SLIDERTHUMBDISABLEDDRAWDATA", thumb, fp, dataIndent );
 				saveDrawData( "SLIDERTHUMBHILITEDRAWDATA", thumb, fp, dataIndent );
 
-			}  // end if
+			}
 
-		}  // end if
-	}// end if
+		}
+	}
 	return TRUE;
 
-}  // end saveComboBoxData
+}
 
 
 // saveRadioButtonData ========================================================
@@ -807,14 +807,14 @@ static Bool saveRadioButtonData( GameWindow *window, FILE *fp, Int dataIndent )
 		assert( 0 );
 		return FALSE;
 
-	}  // end if
+	}
 
 	sprintf( &buffer[ dataIndent ], "RADIOBUTTONDATA = GROUP: %d;\n", radioData->group );
 	writeBufferToFile( fp, buffer );
 
 	return TRUE;
 
-}  // end saveRadioButtonData
+}
 
 // saveSliderData =============================================================
 /** Save slider specific data */
@@ -832,7 +832,7 @@ static Bool saveSliderData( GameWindow *window, FILE *fp, Int dataIndent )
 		assert( 0 );
 		return FALSE;
 
-	}  // end if
+	}
 
 	sprintf( &buffer[ dataIndent ], "SLIDERDATA = MINVALUE: %d,\n", sliderData->minVal );
 	writeBufferToFile( fp, buffer );
@@ -848,11 +848,11 @@ static Bool saveSliderData( GameWindow *window, FILE *fp, Int dataIndent )
 		saveDrawData( "SLIDERTHUMBDISABLEDDRAWDATA", thumb, fp, dataIndent );
 		saveDrawData( "SLIDERTHUMBHILITEDRAWDATA", thumb, fp, dataIndent );
 
-	}  // end if
+	}
 
 	return TRUE;
 
-}  // end saveSliderData
+}
 
 // saveStaticTextData =========================================================
 /** Save static text data entry */
@@ -870,14 +870,14 @@ static Bool saveStaticTextData( GameWindow *window, FILE *fp, Int dataIndent )
 		assert( 0 );
 		return FALSE;
 
-	}  // end if
+	}
 
 	sprintf( &buffer[ dataIndent ], "STATICTEXTDATA = CENTERED: %d;\n", textData->centered );
 	writeBufferToFile( fp, buffer );
 
 	return TRUE;
 
-}  // end saveStaticTextData
+}
 
 // saveTextEntryData ==========================================================
 /** Save static text data entry */
@@ -895,7 +895,7 @@ static Bool saveTextEntryData( GameWindow *window, FILE *fp, Int dataIndent )
 		assert( 0 );
 		return FALSE;
 
-	}  // end if
+	}
 
 	sprintf( &buffer[ dataIndent ], "TEXTENTRYDATA = MAXLEN: %d,\n", entryData->maxTextLen );
 	writeBufferToFile( fp, buffer );
@@ -910,7 +910,7 @@ static Bool saveTextEntryData( GameWindow *window, FILE *fp, Int dataIndent )
 
 	return TRUE;
 
-}  // end saveTextEntryData
+}
 
 // saveTabControlData ==========================================================
 /** Save tab control entry */
@@ -928,7 +928,7 @@ static Bool saveTabControlData( GameWindow *window, FILE *fp, Int dataIndent )
 		assert( 0 );
 		return FALSE;
 
-	}  // end if
+	}
 
 	sprintf( &buffer[ dataIndent ], "TABCONTROLDATA = TABORIENTATION: %d,\n", tabControlData->tabOrientation );
 	writeBufferToFile( fp, buffer );
@@ -982,7 +982,7 @@ static Bool saveGadgetData( GameWindow *window, FILE *fp, Int dataIndent )
 
 	return TRUE;
 
-}  // end saveGadgetData
+}
 
 // saveWindow =================================================================
 /** Save a single window and any of its child windows.  Note that child
@@ -1058,22 +1058,22 @@ static Bool saveWindow( FILE *fp, GameWindow *window, Int indent )
 				// previous child
 				child = child->winGetPrev();
 
-			}  // end while
+			}
 
 			// all children saved
 			sprintf( &buffer[ dataIndent ], "ENDALLCHILDREN\n" );
 			writeBufferToFile( fp, buffer );
 
-		}  // end if, children present
+		}
 
-	}  // end if
+	}
 	else
 	{
 
 		// save specific gadget data
 		saveGadgetData( window, fp, dataIndent );
 
-	}  // end else
+	}
 
 	// end of window definition
 	sprintf( &buffer[ indent ], "END\n" );
@@ -1081,7 +1081,7 @@ static Bool saveWindow( FILE *fp, GameWindow *window, Int indent )
 
 	return success;
 
-}  // end saveWindow
+}
 
 // GUIEdit::validateNames =====================================================
 /** Stored in the m_decorated field for each window is a name given
@@ -1108,7 +1108,7 @@ void GUIEdit::validateNames( GameWindow *root, char *filename, Bool *valid )
 		*valid = FALSE;
 		return;
 
-	}  // end if
+	}
 
 	// check this name for too long
 	WinInstanceData *instData = root->winGetInstanceData();
@@ -1122,7 +1122,7 @@ void GUIEdit::validateNames( GameWindow *root, char *filename, Bool *valid )
 		strcat( offendingNames, "\n");
 		*valid = FALSE;
 
-	}  // end if
+	}
 
 	// check for a duplicate filename
 	if( TheEditor->isNameDuplicate( TheWindowManager->winGetWindowList(),
@@ -1136,7 +1136,7 @@ void GUIEdit::validateNames( GameWindow *root, char *filename, Bool *valid )
 		strcat( offendingNames, "\n" );
 		*valid = FALSE;
 
-	}  // end if
+	}
 
 	//You only call this on the first child since the call right after it will handle siblings (depth first)
 	GameWindow *child = root->winGetChild();
@@ -1145,7 +1145,7 @@ void GUIEdit::validateNames( GameWindow *root, char *filename, Bool *valid )
 	// onto the next window
 	validateNames( root->winGetNext(), filename, valid );
 
-}  // end validateNames
+}
 
 // GUIEdit::updateRadioScreenIdentifiers ======================================
 /** update all radio button screen identifiers with the new identifier */
@@ -1164,7 +1164,7 @@ void GUIEdit::updateRadioScreenIdentifiers( GameWindow *window, Int screenID )
 
 		GadgetRadioSetGroup( window, radioData->group, screenID );
 
-	}  // end if
+	}
 
 	// check our children
 	GameWindow *child;
@@ -1174,7 +1174,7 @@ void GUIEdit::updateRadioScreenIdentifiers( GameWindow *window, Int screenID )
 	// check the next one
 	updateRadioScreenIdentifiers( window->winGetNext(), screenID );
 
-}  // end updateRadioScreenIdentifiers
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Write layout block for a window file */
@@ -1193,7 +1193,7 @@ static void writeLayoutBlock( FILE *fp )
 	// end marker
 	fprintf( fp, "ENDLAYOUTBLOCK\n" );
 
-}  // end writeLayoutBlock
+}
 
 // GUIEdit::saveData ==========================================================
 /** Save all our data to the file specified in filePath, which is a full
@@ -1232,7 +1232,7 @@ Bool GUIEdit::saveData( char *filePathAndFilename, char *filename )
 		MessageBox( TheEditor->getWindowHandle(), offendingNames, "Window Name Error", MB_OK );
 		return FALSE;
 
-	}  // end if
+	}
 
 	// update all radio button screen identifiers with the filename
 	updateRadioScreenIdentifiers( TheWindowManager->winGetWindowList(),
@@ -1270,14 +1270,14 @@ Bool GUIEdit::saveData( char *filePathAndFilename, char *filename )
 			break;
 		window = window->winGetPrev();
 
-	}  // end while
+	}
 
 	// close the file
 	fclose( fp );
 
 	return success;
 
-}  // end saveData
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////

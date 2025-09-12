@@ -86,7 +86,7 @@ void WOLLocaleSelectInit( WindowLayout *layout, void *userData )
 	// Set Keyboard to Main Parent
 	TheWindowManager->winSetFocus( parentLocaleSelect );
 	TheWindowManager->winSetModal( parentLocaleSelect );
-} // WOLLocaleSelectInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu shutdown method */
@@ -100,7 +100,7 @@ void WOLLocaleSelectShutdown( WindowLayout *layout, void *userData )
 	// our shutdown is complete
 	TheShell->shutdownComplete( layout );
 
-}  // WOLLocaleSelectShutdown
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ void WOLLocaleSelectShutdown( WindowLayout *layout, void *userData )
 void WOLLocaleSelectUpdate( WindowLayout * layout, void *userData)
 {
 
-}// WOLLocaleSelectUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu input callback */
@@ -129,10 +129,10 @@ WindowMsgHandledType WOLLocaleSelectInput( GameWindow *window, UnsignedInt msg,
 			// ----------------------------------------------------------------------------------------
 			// don't let key fall through anywhere else
 			return MSG_HANDLED;
-		}  // end char
-	}  // end switch( msg )
+		}
+	}
 	return MSG_IGNORED;
-}// WOLLocaleSelectInput
+}
 
 //Int getRegistryNicknameOffset(AsciiString nick); /// @todo: mdc remove this once we can save ini pref files
 //-------------------------------------------------------------------------------------------------
@@ -151,12 +151,12 @@ WindowMsgHandledType WOLLocaleSelectSystem( GameWindow *window, UnsignedInt msg,
 			{
 
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
 			{
@@ -165,7 +165,7 @@ WindowMsgHandledType WOLLocaleSelectSystem( GameWindow *window, UnsignedInt msg,
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 
 		case GBM_SELECTED:
 			{
@@ -213,9 +213,9 @@ WindowMsgHandledType WOLLocaleSelectSystem( GameWindow *window, UnsignedInt msg,
 						TheGameSpyPSMessageQueue->addResponse(newResp);
 					}
 					CheckReOpenPlayerInfo();
-				} //if ( controlID == buttonDisconnect )
+				}
 				break;
-			}// case GBM_SELECTED:
+			}
 
 		case GEM_EDIT_DONE:
 			{
@@ -224,7 +224,7 @@ WindowMsgHandledType WOLLocaleSelectSystem( GameWindow *window, UnsignedInt msg,
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// WOLLocaleSelectSystem
+}

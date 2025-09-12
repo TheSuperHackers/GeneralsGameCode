@@ -100,12 +100,12 @@ static Object *validUnderCursor( const ICoord2D *mouse, const CommandButton *com
 		if (!command->isValidObjectTarget(player, pickObj))
 				pickObj = NULL;
 
-	}  // end if
+	}
 
 
 	return pickObj;
 
-}  // end validUnderCursor
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 		// get object id
 		sourceID = draw->getObject()->getID();
 
-	}  // end if
+	}
 
 	// create message and send to the logic
 	GameMessage *msg;
@@ -155,7 +155,7 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 		msg->appendObjectIDArgument( targetID );
 
 
-	}  // end if
+	}
 	else if( BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
 	{
 
@@ -180,9 +180,9 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 			msg->appendObjectIDArgument( target->getID() );
 			msg->appendIntegerArgument( command->getMaxShotsToFire() );
 
-		}  // end if
+		}
 
-	}  // end else
+	}
 	else
 	{
 		msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_WEAPON );
@@ -195,11 +195,11 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 		//											command->m_name.str()) );
 		//return COMMAND_COMPLETE;
 
-	}  // end else
+	}
 
 	return COMMAND_COMPLETE;
 
-}  // end fire weapon
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -325,7 +325,7 @@ static CommandStatus doSetRallyPointCommand( const CommandButton *command, const
 
 	return COMMAND_COMPLETE;
 
-}  // end doSetRallyPointCommand
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Do the beacon placement command */
@@ -347,7 +347,7 @@ static CommandStatus doPlaceBeacon( const CommandButton *command, const ICoord2D
 
 	return COMMAND_COMPLETE;
 
-}  // end doPlaceBeacon
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -378,7 +378,7 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 
 			break;
 
-		}  // end left mouse down
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_MOUSE_LEFT_DOUBLE_CLICK:
@@ -405,7 +405,7 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 	 					pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_DO_WEAPON_AT_LOCATION, &info );
 						break;
 
-					}  // end fire weapon command
+					}
 
 
 					//---------------------------------------------------------------------------------------
@@ -456,7 +456,7 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 						return KEEP_MESSAGE;
 						break;
 
-					}  // end special power
+					}
 
 					case GUI_COMMAND_ATTACK_MOVE:
 					{
@@ -470,7 +470,7 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 						commandStatus = doSetRallyPointCommand( command, &mouse );
 						break;
 
-					}  // end set rally point
+					}
 
 					//---------------------------------------------------------------------------------------
 					case GUICOMMANDMODE_PLACE_BEACON:
@@ -478,9 +478,9 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 						commandStatus = doPlaceBeacon( command, &mouse );
 						break;
 
-					}  // end set rally point
+					}
 
-				}  // end switch
+				}
 
 				// used the input
 				disp = DESTROY_MESSAGE;
@@ -491,13 +491,13 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 					TheInGameUI->setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( TRUE );
 					TheInGameUI->setGUICommand( NULL );
 				}
-			}  // end if
+			}
 
 			break;
 
-		}  // end left mouse up
+		}
 
-	}  // end switch
+	}
 
 	// If we're destroying the message, it means we used it. Therefore, destroy the current
 	// attack move instruction as well.
@@ -507,6 +507,6 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 
 	return disp;
 
-}  // end translateMessage
+}
 
 

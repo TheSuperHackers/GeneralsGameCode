@@ -77,7 +77,7 @@ public:
 
 		p.add( dataFieldParse );
 
-	}  // end buildFieldParse
+	}
 
 	TemplateNameList m_carriageTemplateNameData;
 	AsciiString m_pathPrefixName;		///< prefix to use for waypont start and end points we'll look for

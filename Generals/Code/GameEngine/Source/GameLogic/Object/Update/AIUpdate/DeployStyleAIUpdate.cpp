@@ -465,7 +465,7 @@ void DeployStyleAIUpdate::crc( Xfer *xfer )
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -512,7 +512,7 @@ void DeployStyleAIUpdate::xfer( Xfer *xfer )
 		obsolete.doXfer(xfer);
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -521,5 +521,5 @@ void DeployStyleAIUpdate::loadPostProcess( void )
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+}
 

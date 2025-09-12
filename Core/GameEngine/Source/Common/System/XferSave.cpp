@@ -59,7 +59,7 @@ XferSave::XferSave( void )
 	m_fileFP = NULL;
 	m_blockStack = NULL;
 
-}  // end XferSave
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ XferSave::~XferSave( void )
 		DEBUG_CRASH(( "Warning: Xfer file '%s' was left open", m_identifier.str() ));
 		close();
 
-	}  // end if
+	}
 
 	//
 	// the block stack should be empty, if it's not that means we started blocks but never
@@ -94,11 +94,11 @@ XferSave::~XferSave( void )
 			deleteInstance(m_blockStack);
 			m_blockStack = next;
 
-		}  // end while
+		}
 
-	}  // end if
+	}
 
-}  // end ~XferSave
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Open file 'identifier' for writing */
@@ -114,7 +114,7 @@ void XferSave::open( AsciiString identifier )
 									identifier.str(), m_identifier.str() ));
 		throw XFER_FILE_ALREADY_OPEN;
 
-	}  // end if
+	}
 
 	// call base class
 	Xfer::open( identifier );
@@ -127,9 +127,9 @@ void XferSave::open( AsciiString identifier )
 		DEBUG_CRASH(( "File '%s' not found", identifier.str() ));
 		throw XFER_FILE_NOT_FOUND;
 
-	}  // end if
+	}
 
-}  // end open
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Close our current file */
@@ -144,7 +144,7 @@ void XferSave::close( void )
 		DEBUG_CRASH(( "Xfer close called, but no file was open" ));
 		throw XFER_FILE_NOT_OPEN;
 
-	}  // end if
+	}
 
 	// close the file
 	fclose( m_fileFP );
@@ -153,7 +153,7 @@ void XferSave::close( void )
 	// erase the filename
 	m_identifier.clear();
 
-}  // end close
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Write a placeholder at the current location in the file and store this location
@@ -181,7 +181,7 @@ Int XferSave::beginBlock( void )
 									m_identifier.str() ));
 		return XFER_WRITE_ERROR;
 
-	}  // end if
+	}
 
 	// save this block position on the top of the "stack"
 	XferBlockData *top = newInstance(XferBlockData);
@@ -200,7 +200,7 @@ Int XferSave::beginBlock( void )
 
 	return XFER_OK;
 
-}  // end beginBlock
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Do the tail end as described in beginBlock above.  Back up to the last begin block,
@@ -221,7 +221,7 @@ void XferSave::endBlock( void )
 		DEBUG_CRASH(( "Xfer end block called, but no matching begin block was found" ));
 		throw XFER_BEGIN_END_MISMATCH;
 
-	}  // end if
+	}
 
 	// save our current file position
 	XferFilePos currentFilePos = ftell( m_fileFP );
@@ -241,7 +241,7 @@ void XferSave::endBlock( void )
 		DEBUG_CRASH(( "Error writing block size to file '%s'", m_identifier.str() ));
 		throw XFER_WRITE_ERROR;
 
-	}  // end if
+	}
 
 	// place the file pointer back to the current position
 	fseek( m_fileFP, currentFilePos, SEEK_SET );
@@ -249,7 +249,7 @@ void XferSave::endBlock( void )
 	// delete the block data as it's all used up now
 	deleteInstance(top);
 
-}  // end endBlock
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Skip forward 'dataSize' bytes in the file */
@@ -265,7 +265,7 @@ void XferSave::skip( Int dataSize )
 	// skip forward dataSize bytes
 	fseek( m_fileFP, dataSize, SEEK_CUR );
 
-}  // end skip
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Entry point for xfering a snapshot */
@@ -279,12 +279,12 @@ void XferSave::xferSnapshot( Snapshot *snapshot )
 		DEBUG_CRASH(( "XferSave::xferSnapshot - Invalid parameters" ));
 		throw XFER_INVALID_PARAMETERS;
 
-	}  // end if
+	}
 
 	// run the xfer function of the snapshot
 	snapshot->xfer( this );
 
-}  // end xferSnapshot
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Save ascii string */
@@ -299,7 +299,7 @@ void XferSave::xferAsciiString( AsciiString *asciiStringData )
 		DEBUG_CRASH(( "XferSave cannot save this unicode string because it's too long.  Change the size of the length header (but be sure to preserve save file compatability" ));
 		throw XFER_STRING_ERROR;
 
-	}  // end if
+	}
 
 	// save length of string to follow
 	UnsignedByte len = asciiStringData->getLength();
@@ -309,7 +309,7 @@ void XferSave::xferAsciiString( AsciiString *asciiStringData )
 	if( len > 0 )
 		xferUser( (void *)asciiStringData->str(), sizeof( Byte ) * len );
 
-}  // end xferAsciiString
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Save unicodee string */
@@ -324,7 +324,7 @@ void XferSave::xferUnicodeString( UnicodeString *unicodeStringData )
 		DEBUG_CRASH(( "XferSave cannot save this unicode string because it's too long.  Change the size of the length header (but be sure to preserve save file compatability" ));
 		throw XFER_STRING_ERROR;
 
-	}  // end if
+	}
 
 	// save length of string to follow
 	UnsignedByte len = unicodeStringData->getLength();
@@ -334,7 +334,7 @@ void XferSave::xferUnicodeString( UnicodeString *unicodeStringData )
 	if( len > 0 )
 		xferUser( (void *)unicodeStringData->str(), sizeof( WideChar ) * len );
 
-}  // end xferUnicodeString
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Perform the write operation */
@@ -353,6 +353,6 @@ void XferSave::xferImplementation( void *data, Int dataSize )
 		DEBUG_CRASH(( "XferSave - Error writing to file '%s'", m_identifier.str() ));
 		throw XFER_WRITE_ERROR;
 
-	}  // end if
+	}
 
-}  // end xferImplementation
+}

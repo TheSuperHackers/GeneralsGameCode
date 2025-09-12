@@ -59,7 +59,7 @@ void DirectInputMouse::openMouse( void )
 		closeMouse();
 		return;
 
-	}  // end if
+	}
 
 	// create a device for the system mouse
 	hr = m_pDirectInput->CreateDevice( GUID_SysMouse,
@@ -73,7 +73,7 @@ void DirectInputMouse::openMouse( void )
 			closeMouse();
 			return;
 
-	}  // end if
+	}
 
 	// set the data format for the mouse
 	hr = m_pMouseDevice->SetDataFormat( &c_dfDIMouse );
@@ -85,7 +85,7 @@ void DirectInputMouse::openMouse( void )
 		closeMouse();
 		return;
 
-	}  // end if
+	}
 
 	// set the mouse cooperative level
 	hr = m_pMouseDevice->SetCooperativeLevel( ApplicationHWnd,
@@ -99,7 +99,7 @@ void DirectInputMouse::openMouse( void )
 		closeMouse();
 		return;
 
-	}  // end if
+	}
 
 	// set the mouse buffer size
 	DIPROPDWORD prop;
@@ -117,7 +117,7 @@ void DirectInputMouse::openMouse( void )
 		closeMouse();
 		return;
 
-	}  // end if
+	}
 
 	// acquire the mouse
 	hr = m_pMouseDevice->Acquire();
@@ -129,7 +129,7 @@ void DirectInputMouse::openMouse( void )
 		closeMouse();
 		return;
 
-	}  // end if
+	}
 
 	// get some information about the mouse
 	DIDEVCAPS diDevCaps;
@@ -141,7 +141,7 @@ void DirectInputMouse::openMouse( void )
 
 		DEBUG_LOG(( "WARNING - openMouse: Cann't get capabilities of mouse for button setup" ));
 
-	}  // end if
+	}
 	else
 	{
 
@@ -153,11 +153,11 @@ void DirectInputMouse::openMouse( void )
 		DEBUG_LOG(( "OK - Mouse info: Buttons = '%d', Force Feedback = '%s', Axes = '%d'",
 						 m_numButtons, m_forceFeedback ? "Yes" : "No", m_numAxes ));
 
-	}  // end else
+	}
 
 	DEBUG_LOG(( "OK - Mouse initialized successfully" ));
 
-}  // end openMouse
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Release any resources for our direct input mouse */
@@ -174,7 +174,7 @@ void DirectInputMouse::closeMouse( void )
 		m_pMouseDevice = NULL;
 		DEBUG_LOG(( "OK - Mouse device closed" ));
 
-	}  // end if
+	}
 
 	// release our direct input interface for the mouse
 	if( m_pDirectInput )
@@ -184,11 +184,11 @@ void DirectInputMouse::closeMouse( void )
 		m_pDirectInput = NULL;
 		DEBUG_LOG(( "OK - Mouse direct input interface closed" ));
 
-	}  // end if
+	}
 
 	DEBUG_LOG(( "OK - Mouse shutdown complete" ));
 
-}  // end closeMouse
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Get a single mouse event from the device */
@@ -254,7 +254,7 @@ UnsignedByte DirectInputMouse::getMouseEvent( MouseIO *result, Bool flush )
 					default:
 						break;
 
-				}  // end switch
+				}
 
 				break;
 			}
@@ -264,13 +264,13 @@ UnsignedByte DirectInputMouse::getMouseEvent( MouseIO *result, Bool flush )
 //				DBGPRINTF(("GetMouseEvent: GetDeviceData Error: %X.\r\n", hr ));
 				break;
 
-		}  // end switch
+		}
 
-	}  // end if
+	}
 
 	return mouseResult;
 
-}  // end getMouseEvent
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Map the direct input codes to our own mouse format */
@@ -312,7 +312,7 @@ void DirectInputMouse::mapDirectInputMouse( MouseIO *mouse,
 			break;
 	}
 
-}  // end mapDirectInputMouse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
@@ -326,7 +326,7 @@ DirectInputMouse::DirectInputMouse( void )
 	m_pDirectInput = NULL;
 	m_pMouseDevice = NULL;
 
-}  // end DirectInputMouse
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -337,7 +337,7 @@ DirectInputMouse::~DirectInputMouse( void )
 	closeMouse();
 //	ShowCursor( TRUE );
 
-}  // end ~DirectInputMouse
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the direct input mouse device */
@@ -359,7 +359,7 @@ void DirectInputMouse::init( void )
 	SetCursorPos( p.x, p.y );
 //	ShowCursor( FALSE );
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset direct input mouse */
@@ -370,7 +370,7 @@ void DirectInputMouse::reset( void )
 	// extend
 	Mouse::reset();
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update the mouse position and button data, this is called once per
@@ -396,7 +396,7 @@ void DirectInputMouse::update( void )
 	ScreenToClient( ApplicationHWnd, &p );
 	moveMouse( p.x, p.y, MOUSE_MOVE_ABSOLUTE );
 
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Set the limits which the mouse is allowed to move around in.  We
@@ -428,9 +428,9 @@ void DirectInputMouse::setMouseLimits( void )
 		// keep the cursor clipped to these coords when running windowed
 		ClipCursor( &windowRect );
 
-	}  // end if
+	}
 
-}  // end setMouseLimits
+}
 
 //-------------------------------------------------------------------------------------------------
 /** set the cursor position for windows OS */
@@ -450,7 +450,7 @@ void DirectInputMouse::setPosition( Int x, Int y )
 	// set the window mouse
 	SetCursorPos( p.x, p.y );
 
-}  // end setPosition
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Super basic simplistic cursor */
@@ -485,12 +485,12 @@ void DirectInputMouse::setCursor( MouseCursor cursor )
 			SetCursor( LoadCursor( NULL, IDC_CROSS ) );
 			break;
 
-	}  // end switch
+	}
 
 	// save current cursor
 	m_currentCursor = cursor;
 
-}  // end setCursor
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Capture the mouse to our application */
@@ -500,7 +500,7 @@ void DirectInputMouse::capture( void )
 
 	SetCapture( ApplicationHWnd );
 
-}  // end capture
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Release the mouse capture for our app window */
@@ -510,4 +510,4 @@ void DirectInputMouse::releaseCapture( void )
 
 	ReleaseCapture();
 
-}  // end releaseCapture
+}

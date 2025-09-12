@@ -173,7 +173,7 @@ BOOL PickUnitDialog::OnInitDialog()
 		pMap = newInstance(MapObject)( loc, tTemplate->getName(), 0.0f, 0, NULL, tTemplate );
 		pMap->setNextMap( m_objectsList );
 		m_objectsList = pMap;
-	}  // end for tTemplate
+	}
 
 	CWnd *pWnd = GetDlgItem(IDC_OBJECT_HEIGHT_EDIT);
 	if (pWnd) {
@@ -323,9 +323,9 @@ void PickUnitDialog::addObject( MapObject *mapObject, const char *pPath, Int ind
 				parent = findOrAdd( parent, EditorSortingNames[ i ] );
 				break;  // exit for
 
-			}  // end if
+			}
 
-		}  // end for i
+		}
 
 		if( i == ES_NUM_SORTING_TYPES )
 			parent = findOrAdd( parent, "UNSORTED" );
@@ -333,7 +333,7 @@ void PickUnitDialog::addObject( MapObject *mapObject, const char *pPath, Int ind
 		// the leaf name is the name of the template
 		leafName = thingTemplate->getName().str();
 
-	}  // end if
+	}
 	else
 	{
 
@@ -359,9 +359,9 @@ void PickUnitDialog::addObject( MapObject *mapObject, const char *pPath, Int ind
 			buffer[ i ] = 0;
 			leafName = buffer;
 
-		}  // end if
+		}
 
-	}  // end else if
+	}
 
 	// add to the tree view
 	if( leafName )

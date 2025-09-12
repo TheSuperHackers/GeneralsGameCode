@@ -324,7 +324,7 @@ WeaponTemplate::~WeaponTemplate()
 void WeaponTemplate::reset( void )
 {
 	m_historicDamage.clear();
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /*static*/ void WeaponTemplate::parseWeaponBonusSet( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ )
@@ -434,7 +434,7 @@ void WeaponTemplate::postProcessLoad()
 		m_projectileDetonationOCLNames[i].clear();
 	}
 
-}  // end postProcessLoad
+}
 
 //-------------------------------------------------------------------------------------------------
 Real WeaponTemplate::getAttackRange(const WeaponBonus& bonus) const
@@ -1173,9 +1173,9 @@ void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, co
 			// add AFTER checking for historic stuff
 			m_historicDamage.push_back( HistoricWeaponDamageInfo(frameNow, *pos) );
 
-		}  // end else
+		}
 
-	} // if historic bonuses
+	}
 
 //DEBUG_LOG(("WeaponTemplate::dealDamageInternal: dealing damage %s at frame %d",m_name.str(),TheGameLogic->getFrame()));
 
@@ -1529,7 +1529,7 @@ void WeaponStore::postProcessLoad()
 			wt->postProcessLoad();
 	}
 
-}  // end postProcessLoad
+}
 
 //-------------------------------------------------------------------------------------------------
 /*static*/ void WeaponStore::parseWeaponTemplateDefinition(INI* ini)
@@ -3077,7 +3077,7 @@ void Weapon::crc( Xfer *xfer )
 		}
 #endif // DEBUG_CRC
 
-	}  // end for, it
+	}
 
 	// pitch limited
 	xfer->xferBool( &m_pitchLimited );
@@ -3107,7 +3107,7 @@ void Weapon::crc( Xfer *xfer )
 	}
 #endif // DEBUG_CRC
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer
@@ -3190,9 +3190,9 @@ void Weapon::xfer( Xfer *xfer )
 			intData = *it;
 			xfer->xferInt( &intData );
 
-		}  // end for, it
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -3205,9 +3205,9 @@ void Weapon::xfer( Xfer *xfer )
 			xfer->xferInt( &intData );
 			m_scatterTargetsUnused.push_back( intData );
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
 	// pitch limited
 	xfer->xferBool( &m_pitchLimited );
@@ -3215,7 +3215,7 @@ void Weapon::xfer( Xfer *xfer )
 	// leech weapon range active
 	xfer->xferBool( &m_leechWeaponRangeActive );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */

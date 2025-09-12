@@ -210,7 +210,7 @@ void GrantStealthBehavior::crc( Xfer *xfer )
 	UpdateModule::crc( xfer );
 
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -235,7 +235,7 @@ void GrantStealthBehavior::xfer( Xfer *xfer )
 	// Timer safety
 	xfer->xferReal( &m_currentScanRadius );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -247,4 +247,4 @@ void GrantStealthBehavior::loadPostProcess( void )
 	UpdateModule::loadPostProcess();
 
 
-}  // end loadPostProcess
+}

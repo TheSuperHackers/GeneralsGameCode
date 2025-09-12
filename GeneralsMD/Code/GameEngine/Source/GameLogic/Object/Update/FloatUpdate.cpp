@@ -49,7 +49,7 @@ FloatUpdateModuleData::FloatUpdateModuleData( void )
 
 	m_enabled = FALSE;
 
-}  // end FloatUpdateModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ FloatUpdateModuleData::FloatUpdateModuleData( void )
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,14 +80,14 @@ FloatUpdate::FloatUpdate( Thing *thing, const ModuleData *moduleData )
 	// save our initial enabled status based on INI settings
 	m_enabled = ((FloatUpdateModuleData *)moduleData)->m_enabled;
 
-}  // end FloatUpdate
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 FloatUpdate::~FloatUpdate( void )
 {
 
-}  // end ~FloatUpdate
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -134,7 +134,7 @@ UpdateSleepTime FloatUpdate::update( void )
 	}
 
 	return UPDATE_SLEEP_NONE;
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -145,7 +145,7 @@ void FloatUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -166,7 +166,7 @@ void FloatUpdate::xfer( Xfer *xfer )
 	// enabled
 	xfer->xferBool( &m_enabled );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -177,4 +177,4 @@ void FloatUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

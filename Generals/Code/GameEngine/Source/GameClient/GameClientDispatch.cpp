@@ -53,4 +53,4 @@ GameMessageDisposition GameClientMessageDispatcher::translateGameMessage(const G
 		//((GameMessage *)msg)->getCommandAsString(), TheGameClient->getFrame()));
 
 	return DESTROY_MESSAGE;
-}  // end clientMessageDispatcher
+}

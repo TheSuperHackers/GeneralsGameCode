@@ -880,7 +880,7 @@ void GameEngine::init()
 	resetSubsystems();
 
 	HideControlBar();
-}  // end init
+}
 
 /** -----------------------------------------------------------------------------------------------
 	* Reset all necessary parts of the game engine to be ready to accept new game data
@@ -1037,7 +1037,7 @@ void GameEngine::update( void )
 			// for scripted camera movements while the time is frozen.
 			TheScriptEngine->UPDATE();
 		}
-	}	// end perfGather
+	}
 }
 
 // Horrible reference, but we really, really need to know if we are windowed.
@@ -1116,8 +1116,8 @@ void GameEngine::execute( void )
 					{
 					}
 					RELEASE_CRASH(("Uncaught Exception in GameEngine::update"));
-				}	// catch
-			}	// perf
+				}
+			}
 
 			{
 				{
@@ -1147,7 +1147,7 @@ void GameEngine::execute( void )
 				}
 			}
 
-		}	// perfgather for execute_loop
+		}
 
 #ifdef PERF_TIMERS
 		if (!m_quitting && TheGameLogic->isInGame() && !TheGameLogic->isInShellGame() && !TheGameLogic->isGamePaused())

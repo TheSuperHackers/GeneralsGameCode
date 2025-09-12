@@ -1820,7 +1820,7 @@ void SpecialAbilityUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1883,7 +1883,7 @@ void SpecialAbilityUpdate::xfer( Xfer *xfer )
   // capture flash phase
   xfer->xferReal( &m_captureFlashPhase );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1894,4 +1894,4 @@ void SpecialAbilityUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

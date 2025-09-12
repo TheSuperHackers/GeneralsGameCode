@@ -111,7 +111,7 @@ void Money::triggerAudioEvent(const AudioEventRTS& audioEvent)
 void Money::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -129,7 +129,7 @@ void Money::xfer( Xfer *xfer )
 	// money value
 	xfer->xferUnsignedInt( &m_money );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -137,7 +137,7 @@ void Money::xfer( Xfer *xfer )
 void Money::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 
 // ------------------------------------------------------------------------------------------------

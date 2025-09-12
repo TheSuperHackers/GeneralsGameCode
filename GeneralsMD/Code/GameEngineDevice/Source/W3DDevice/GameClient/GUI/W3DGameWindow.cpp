@@ -253,7 +253,7 @@ void W3DGameWindow::blitBorderRect( Int x, Int y, Int width, Int height )
 	TheDisplay->drawImage( borderPieces[ BORDER_CORNER_LR ],
 												 x, y, x + size, y + size );
 
-}  // end blitBorderRect
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -272,14 +272,14 @@ W3DGameWindow::W3DGameWindow( void )
 	m_needPolyDraw = FALSE;
 	m_newTextPos = FALSE;
 
-}  // end W3DGameWindow
+}
 
 // W3DGameWindow::~W3DGameWindow ==============================================
 //=============================================================================
 W3DGameWindow::~W3DGameWindow( void )
 {
 
-}  // end ~W3DGameWindow
+}
 
 // W3DGameWinDefaultDraw ======================================================
 /** The default redraw callback.  Draws the background using either
@@ -330,9 +330,9 @@ void W3DGameWinDefaultDraw( GameWindow *window, WinInstanceData *instData )
 			end.y = start.y + size.y;
 			TheWindowManager->winDrawImage( image, start.x, start.y, end.x, end.y );
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 	else
 	{
 		Color color, borderColor;
@@ -344,21 +344,21 @@ void W3DGameWinDefaultDraw( GameWindow *window, WinInstanceData *instData )
 			color				= window->winGetDisabledColor( 0 );
 			borderColor = window->winGetDisabledBorderColor( 0 );
 
-		}  // end if
+		}
 		else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 		{
 
 			color				= window->winGetHiliteColor( 0 );
 			borderColor = window->winGetHiliteBorderColor( 0 );
 
-		}  // end else if
+		}
 		else
 		{
 
 			color				= window->winGetEnabledColor( 0 );
 			borderColor = window->winGetEnabledBorderColor( 0 );
 
-		}  // end else
+		}
 
 		//
 		// draw the border at the edges
@@ -376,7 +376,7 @@ void W3DGameWinDefaultDraw( GameWindow *window, WinInstanceData *instData )
 																		 origin.x + size.x - borderWidth,
 																		 origin.y + size.y - borderWidth );
 
-	}  // end else
+	}
 
 	// if we have a video buffer, draw the video buffer
 	if ( instData->m_videoBuffer )
@@ -388,7 +388,7 @@ void W3DGameWinDefaultDraw( GameWindow *window, WinInstanceData *instData )
 		TheDisplay->drawVideoBuffer( instData->m_videoBuffer, pos.x, pos.y, pos.x + size.x, pos.y + size.y );
 	}
 
-}  // end W3DGameWinDefaultDraw
+}
 
 // W3DGameWindow::winDrawBorder ===============================================
 //=============================================================================
@@ -486,7 +486,7 @@ void W3DGameWindow::winDrawBorder( void )
 						child->winGetSize( &size.x, &size.y );
 						sliderAdjustment = size.y;
 
-					}  // end if
+					}
 
 					if( m_instData.getTextLength() )
 						labelAdjustment = 4;
@@ -511,13 +511,13 @@ void W3DGameWindow::winDrawBorder( void )
 					found = TRUE;
 					break;
 
-			}  // end switch
+			}
 
-		}  // end if
+		}
 
-	}  // end for i
+	}
 
-}  // end WinDrawBorder
+}
 
 // W3DGameWindow::winSetFont ==================================================
 /** Set the font for a widow */
@@ -534,7 +534,7 @@ void W3DGameWindow::winSetFont( GameFont *font )
 	// this is a visual change
 	m_needPolyDraw = TRUE;
 
-}  // end WinSetFont
+}
 
 // W3DGameWindow::winSetText ==================================================
 /** Set the text for window */
@@ -553,7 +553,7 @@ Int W3DGameWindow::winSetText( UnicodeString newText )
 
 	return WIN_ERR_OK;
 
-}  // end WinSetText
+}
 
 // W3DGameWindow::winSetPosition ==============================================
 /** Set window position */
@@ -576,7 +576,7 @@ Int W3DGameWindow::winSetPosition( Int x, Int y )
 
 	return WIN_ERR_OK;
 
-}  // end WinSetPosition
+}
 
 // W3DGameWindow::getTextSize =================================================
 /** Get the size of the text in our inst data */
@@ -590,7 +590,7 @@ void W3DGameWindow::getTextSize( Int *width, Int *height )
 	if( height )
 		*height = extents.Y;
 
-}  // end getTextSize
+}
 
 // W3DGameWindow::getTextLoc ==================================================
 // Set our text rendering location */
@@ -611,9 +611,9 @@ void W3DGameWindow::setTextLoc( Int x, Int y )
 		m_textPos.y = y;
 		m_newTextPos = TRUE;
 
-	}  // end if
+	}
 
-}  // end setTextLoc
+}
 
 // W3DGameWindow::drawText ====================================================
 /** Draw the text in our 2d sentence renderer */
@@ -629,7 +629,7 @@ void W3DGameWindow::drawText( Color color )
 		m_newTextPos = FALSE;
 		needDraw = TRUE;
 
-	}  // end if
+	}
 
 	// if color switch, set new color
 	if( m_currTextColor != color )
@@ -638,7 +638,7 @@ void W3DGameWindow::drawText( Color color )
 		m_currTextColor = color;
 		needDraw = TRUE;
 
-	}  // end if
+	}
 
 	// draw the quads if needed
 	if( needDraw || m_needPolyDraw )
@@ -654,10 +654,10 @@ void W3DGameWindow::drawText( Color color )
 
 		m_needPolyDraw = FALSE;
 
-	}  // end if
+	}
 
 	// do the render
 	m_textRenderer.Render();
 
-}  // end drawText
+}
 

@@ -96,7 +96,7 @@ Bool W3DFontLibrary::loadFontData( GameFont *font )
 		DEBUG_ASSERTCRASH(fontChar, ("Missing or Corrupted Font.  Pleas see log for details"));
 		return FALSE;
 
-	}  // end if
+	}
 
 	// assign font data
 	font->fontData = fontChar;
@@ -122,7 +122,7 @@ Bool W3DFontLibrary::loadFontData( GameFont *font )
 	// all done and loaded
 	return TRUE;
 
-}  // end loadFont
+}
 
 // W3DFontLibrary::releaseFontData ============================================
 /** Release font data */
@@ -141,7 +141,7 @@ void W3DFontLibrary::releaseFontData( GameFont *font )
 		font->fontData = NULL;
 	}
 
-}  // end releaseFontData
+}
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 

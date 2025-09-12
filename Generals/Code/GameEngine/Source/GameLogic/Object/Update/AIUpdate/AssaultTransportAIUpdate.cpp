@@ -485,7 +485,7 @@ void AssaultTransportAIUpdate::crc( Xfer *xfer )
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -521,7 +521,7 @@ void AssaultTransportAIUpdate::xfer( Xfer *xfer )
 	xfer->xferBool( &m_isAttackMove );
 	xfer->xferBool( &m_isAttackObject );
 
-}  // end xfer
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -530,5 +530,5 @@ void AssaultTransportAIUpdate::loadPostProcess( void )
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+}
 

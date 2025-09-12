@@ -110,7 +110,7 @@ WindowMsgHandledType GadgetStaticTextInput( GameWindow *window, UnsignedInt msg,
 	return MSG_HANDLED;
 
 
-}  // end GadgetStaticTextInput
+}
 
 // GadgetStaticTextSystem =====================================================
 /** Handle system messages for text field */
@@ -130,7 +130,7 @@ WindowMsgHandledType GadgetStaticTextSystem( GameWindow *window, UnsignedInt msg
 				*(UnicodeString*)mData2 = tData->text->getText();
 			break;
 
-		}  // end get label
+		}
 
 		// ------------------------------------------------------------------------
 		case GGM_SET_LABEL:
@@ -144,7 +144,7 @@ WindowMsgHandledType GadgetStaticTextSystem( GameWindow *window, UnsignedInt msg
 
       break;
 
-		}  // end set label
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_CREATE:
@@ -164,15 +164,15 @@ WindowMsgHandledType GadgetStaticTextSystem( GameWindow *window, UnsignedInt msg
 
       break;
 
-		}  // end destroy
+		}
 
 		default:
 			return MSG_IGNORED;
 
-  }  // end switch( msg )
+  }
 
 	return MSG_HANDLED;
-}  // end GadgetStaticTextSystem
+}
 
 // GadgetStaticTextSetText ====================================================
 /** Set the text for a static text control */
@@ -183,7 +183,7 @@ void GadgetStaticTextSetText( GameWindow *window, UnicodeString text )
 		return;
 	TheWindowManager->winSendSystemMsg( window, GGM_SET_LABEL, (WindowMsgData)&text, 0 );
 
-}  // end GadgetStaticTextSetText
+}
 
 UnicodeString GadgetStaticTextGetText( GameWindow *window )
 {
@@ -221,6 +221,6 @@ void GadgetStaticTextSetFont( GameWindow *g, GameFont *font )
 		if( dString )
 			dString->setFont( font );
 
-	}  // end if
+	}
 
-}  // end GadgetStaticTextSetFont
+}

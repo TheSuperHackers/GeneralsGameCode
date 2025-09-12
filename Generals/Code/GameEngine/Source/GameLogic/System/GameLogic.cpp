@@ -314,7 +314,7 @@ void GameLogic::destroyAllObjectsImmediate()
 	processDestroyList();
 	DEBUG_ASSERTCRASH( m_objList == NULL, ("destroyAllObjectsImmediate: Object list not cleared") );
 
-}  // end destroyAllObjectsImmediate
+}
 
 //-------------------------------------------------------------------------------------------------
 /**GameLogic class destructor, the destruction order should mirror the
@@ -497,7 +497,7 @@ void GameLogic::reset( void )
 	TheWaterTransparency = (WaterTransparencySetting*) wt->deleteOverrides();
 
 	m_rankPointsToAddAtGameStart = 0;
-}  // end reset
+}
 
 static Object * placeObjectAtPosition(Int slotNum, AsciiString objectTemplateName, Coord3D& pos, Player *pPlayer,
 																	const PlayerTemplate *pTemplate)
@@ -966,7 +966,7 @@ void GameLogic::updateLoadProgress( Int progress )
 	if( m_loadScreen )
 		m_loadScreen->update( progress );
 
-}  // end updateLoadProgress
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Delete the load screen */
@@ -980,9 +980,9 @@ void GameLogic::deleteLoadScreen( void )
 		delete m_loadScreen;
 		m_loadScreen = NULL;
 
-	}  // end if
+	}
 
-}  // end deleteLoadScreen
+}
 
 void GameLogic::setGameLoading( Bool loading )
 {
@@ -1037,7 +1037,7 @@ void GameLogic::startNewGame( Bool saveGame )
 
 			DEBUG_CRASH(( "FATAL SAVE/LOAD ERROR! - Setting a pristine map name that refers to a map in the save directory.  The pristine map should always refer to the ORIGINAL map in the Maps directory, if the pristine map string is corrupt then map.ini files will not load correctly." ));
 
-		}  // end if
+		}
 
 		if( m_startNewGame == FALSE )
 		{
@@ -1067,7 +1067,7 @@ void GameLogic::startNewGame( Bool saveGame )
 
 		}
 
-	}  // end if
+	}
 
 	m_rankLevelLimit = 1000;	// this is reset every game.
 	setDefaults( saveGame );
@@ -1594,9 +1594,9 @@ void GameLogic::startNewGame( Bool saveGame )
 			// in the map object properties.
 			// update this object instance with properties from the map object
 			obj->updateObjValuesFromMapProperties( pMapObj->getProperties() );
-		}  // end if
+		}
 
-	}	// for, loading bridge map objects
+	}
 
 	// update the loadscreen
 	updateLoadProgress(LOAD_PROGRESS_POST_BRIDGE_LOAD);
@@ -1734,7 +1734,7 @@ void GameLogic::startNewGame( Bool saveGame )
 				team->setActive();
 				TheAI->pathfinder()->addObjectToPathfindMap( obj );
 
-			}  // end if
+			}
 
 			if(timeGetTime() > timer + 500)
 			{
@@ -1744,9 +1744,9 @@ void GameLogic::startNewGame( Bool saveGame )
 				timer = timeGetTime();
 			}
 
-		}	// for, loading map objects
+		}
 
-	}  // end if, not loading save game
+	}
 
 	#ifdef DUMP_PERF_STATS
 	GetPrecisionTimer(&endTime64);
@@ -2107,7 +2107,7 @@ void GameLogic::startNewGame( Bool saveGame )
   }
 
 
-}  // end startNewGame
+}
 
 //-----------------------------------------------------------------------------------------
 static void findAndSelectCommandCenter(Object *obj, void* alreadyFound)
@@ -2346,7 +2346,7 @@ void GameLogic::processCommandList( CommandList *list )
 		}
 	}
 
-}  // end processCommandList
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -3383,7 +3383,7 @@ void GameLogic::addObjectToLookupTable( Object *obj )
 	// add to lookup
 	m_objHash[ obj->getID() ] = obj;
 
-}  // end addObjectToLookupTable
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Remove object from the ID lookup table */
@@ -3398,7 +3398,7 @@ void GameLogic::removeObjectFromLookupTable( Object *obj )
 	// remove from lookup table
 	m_objHash.erase( obj->getID() );
 
-}  // end removeObjectFromLookupTable
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Given an object, register it with the GameLogic and give it a unique ID. */
@@ -3513,7 +3513,7 @@ void GameLogic::destroyObject( Object *obj )
 	if( obj->isKindOf( KINDOF_WALK_ON_TOP_OF_WALL ) )
 		TheAI->pathfinder()->removeWallPiece( obj );
 
-}  // end destroyObject
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -4071,7 +4071,7 @@ void GameLogic::getAIMetricsStatistics( UnsignedInt *numAI, UnsignedInt *numMovi
 void GameLogic::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Given a string name, find the object TOC entry (if any) associated with it */
@@ -4085,7 +4085,7 @@ GameLogic::ObjectTOCEntry *GameLogic::findTOCEntryByName( AsciiString name )
 
 	return NULL;
 
-}  // end findTOCEntryByname
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Given a object TOC identifier, find the object TOC if any */
@@ -4099,7 +4099,7 @@ GameLogic::ObjectTOCEntry *GameLogic::findTOCEntryById( UnsignedShort id )
 
 	return NULL;
 
-}  // end findTOCEntryById
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Add an object TOC entry */
@@ -4112,7 +4112,7 @@ void GameLogic::addTOCEntry( AsciiString name, UnsignedShort id )
 	tocEntry.id = id;
 	m_objectTOC.push_back( tocEntry );
 
-}  // end addTOCEntry
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer object table of contents */
@@ -4148,7 +4148,7 @@ void GameLogic::xferObjectTOC( Xfer *xfer )
 			// add this entry to the TOC
 			addTOCEntry( obj->getTemplate()->getName(), ++tocCount );
 
-		}  // end for obj
+		}
 
 		// xfer entries in the TOC
 		xfer->xferUnsignedInt( &tocCount );
@@ -4168,9 +4168,9 @@ void GameLogic::xferObjectTOC( Xfer *xfer )
 			// xfer the paired id
 			xfer->xferUnsignedShort( &tocEntry->id );
 
-		}  // end for
+		}
 
-	}  // end if
+	}
 	else
 	{
 		AsciiString templateName;
@@ -4192,11 +4192,11 @@ void GameLogic::xferObjectTOC( Xfer *xfer )
 			// add this to the TOC
 			addTOCEntry( templateName, id );
 
-		}  // end for i
+		}
 
-	}  // end else
+	}
 
-}  // end xferObjectTOC
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -4243,21 +4243,21 @@ void GameLogic::prepareLogicForObjectLoad( void )
 					destroyObject( oldTower );
 				}
 
-			}  // end for, i
+			}
 
 			// destroy the old bridge object
 			destroyObject( oldObject );
 
-		}  // end if, bridge
+		}
 		else if( obj->isKindOf( KINDOF_WALK_ON_TOP_OF_WALL ) )
 		{
 
 			// destroy walk on top of wall things too
 			destroyObject( obj );
 
-		}  // end else if
+		}
 
-	}  // end for, obj
+	}
 
 	// process the destruction of these objects immediately before we proceed with the load process
 	processDestroyList();
@@ -4267,7 +4267,7 @@ void GameLogic::prepareLogicForObjectLoad( void )
 										 ("GameLogic::prepareLogicForObjectLoad - There are still objects loaded in the engine, but it should be empty (Top is '%s')",
 										 getFirstObject()->getTemplate()->getName().str()) );
 
-}  // end prepareLogicForObjectLoad
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load/Save game logic to xfer
@@ -4330,7 +4330,7 @@ void GameLogic::xfer( Xfer *xfer )
 				DEBUG_CRASH(( "GameLogic::xfer - Object TOC entry not found for '%s'", obj->getTemplate()->getName().str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
 			// transfer TOC id entry
 			xfer->xferUnsignedShort( &tocEntry->id );
@@ -4344,9 +4344,9 @@ void GameLogic::xfer( Xfer *xfer )
 			// end a block of data
 			xfer->endBlock();
 
-		}  // end for
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 		Team *defaultTeam = ThePlayerList->getNeutralPlayer()->getDefaultTeam();
@@ -4370,7 +4370,7 @@ void GameLogic::xfer( Xfer *xfer )
 				DEBUG_CRASH(( "GameLogic::xfer - No TOC entry match for id '%d'", tocID ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
 			// a block of data has begun
 			objectDataSize = xfer->beginBlock();
@@ -4385,7 +4385,7 @@ void GameLogic::xfer( Xfer *xfer )
 				xfer->skip( objectDataSize );
 				continue;
 
-			}  // end if
+			}
 
 			// create new object
 			obj = TheThingFactory->newObject( thingTemplate, defaultTeam );
@@ -4400,9 +4400,9 @@ void GameLogic::xfer( Xfer *xfer )
 			if( obj->isKindOf( KINDOF_WALK_ON_TOP_OF_WALL ) )
 				TheAI->pathfinder()->addWallPiece( obj );
 
-		}  // end for, i
+		}
 
-	}  // end else
+	}
 
 	// campaign info
 	xfer->xferSnapshot( TheCampaignManager );
@@ -4441,7 +4441,7 @@ void GameLogic::xfer( Xfer *xfer )
 										sanityTriggerCount, triggerCount ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// xfer each of the polygon triggers
 		if( xfer->getXferMode() == XFER_SAVE )
@@ -4458,9 +4458,9 @@ void GameLogic::xfer( Xfer *xfer )
 				// xfer polygon data
 				xfer->xferSnapshot( poly );
 
-			}  // end for, poly
+			}
 
-		}  // end if, save
+		}
 		else
 		{
 			Int triggerID;
@@ -4483,12 +4483,12 @@ void GameLogic::xfer( Xfer *xfer )
 												triggerID ));
 					throw SC_INVALID_DATA;
 
-				}  // end if
+				}
 
 				// xfer polygon data
 				xfer->xferSnapshot( poly );
 
-			}  // end for, i
+			}
 
 			//
 			// force a recalculation of the pathfinding cause some of these polygon triggers
@@ -4497,9 +4497,9 @@ void GameLogic::xfer( Xfer *xfer )
 			//
 			TheAI->pathfinder()->newMap();
 
-		}  // end else, load
+		}
 
-	}	 // end if, version >= 3
+	}
 
 	// note that version=4 is the same as version=3
 	if (version >= 5)
@@ -4598,7 +4598,7 @@ void GameLogic::xfer( Xfer *xfer )
 		xfer->xferInt(&m_rankPointsToAddAtGameStart);
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process entry point */
@@ -4671,13 +4671,13 @@ void GameLogic::loadPostProcess( void )
 				u->friend_setIndexInLogic(m_sleepyUpdates.size() - 1);
 			}
 
-		}  // end for, u
+		}
 
-	}  // end for, obj
+	}
 
 	// re-sort the priority queue all at once now that all modules are on it
 	remakeSleepyUpdate();
 
-}  // end loadPostProcess
+}
 
 

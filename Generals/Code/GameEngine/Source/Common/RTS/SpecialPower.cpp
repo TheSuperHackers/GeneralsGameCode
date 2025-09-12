@@ -193,14 +193,14 @@ SpecialPowerTemplate::SpecialPowerTemplate()
 	m_radiusCursorRadius = 0;
 	m_shortcutPower = FALSE;
 
-}  // end SpecialPowerTemplate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SpecialPowerTemplate::~SpecialPowerTemplate()
 {
 
-}  // end ~SpecialPowerTemplate
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -213,7 +213,7 @@ SpecialPowerStore::SpecialPowerStore( void )
 
 	m_nextSpecialPowerID = 0;
 
-}  // end SpecialPowerStore
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -230,7 +230,7 @@ SpecialPowerStore::~SpecialPowerStore( void )
 	// set our count to zero
 	m_nextSpecialPowerID = 0;
 
-}  // end ~SpecialPowerStore
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -272,7 +272,7 @@ const SpecialPowerTemplate *SpecialPowerStore::getSpecialPowerTemplateByIndex( U
 
 	return NULL;  // not found
 
-}  // end getSpecialPowerTemplateByIndex
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return the size of the store (WB) */
@@ -282,7 +282,7 @@ Int SpecialPowerStore::getNumSpecialPowers( void )
 
 	return m_specialPowerTemplates.size();
 
-}  // end getNumSpecialPowers
+}
 
 //-------------------------------------------------------------------------------------------------
 /** does the object (and therefore the player) meet all the requirements to use this power */
@@ -315,7 +315,7 @@ Bool SpecialPowerStore::canUseSpecialPower( Object *obj, const SpecialPowerTempl
 		if( player->hasScience( requiredScience ) == FALSE )
 			return FALSE;
 
-	}  // end if
+	}
 
 
 	// I THINK THIS IS WHERE WE BAIL OUT IF A DIFFERENT CONYARD IS ALREADY CHARGIN THIS SPECIAL RIGHT NOW //LORENZEN
@@ -324,7 +324,7 @@ Bool SpecialPowerStore::canUseSpecialPower( Object *obj, const SpecialPowerTempl
 	// all is well
 	return TRUE;
 
-}  // end canUseSpecialPower
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset */
@@ -344,4 +344,4 @@ void SpecialPowerStore::reset( void )
 			++it;
 		}
 	}
-}  // end reset
+}

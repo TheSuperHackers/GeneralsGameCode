@@ -907,7 +907,7 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 			transformed_loc[i].Z=result.Z;
 		}
 		current_loc = &transformed_loc[0];
-	} // if transform
+	}
 
 	// Update the arrays with the offsets.
 	int vnum, pnum;
@@ -973,7 +973,7 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 				*(Vector2*)(vb+fvfinfo.Get_Tex_Offset(0))=VertexUV[i];
 				vb+=fvfinfo.Get_FVF_Size();
 			}
-		} // copy
+		}
 
 		DX8Wrapper::Set_Index_Buffer (indexbuffer, 0);
 		DX8Wrapper::Set_Vertex_Buffer (PointVerts);
@@ -988,7 +988,7 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 		}
 
 		current+=delta;
-	} // loop while (current<vnum)
+	}
 
 	// restore the matrices
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
@@ -1810,7 +1810,7 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 				transformed_loc[i].Z=result.Z;
 			}
 			current_loc = &transformed_loc[0];
-		} // if transform
+		}
 
 		// Update the arrays with the offsets.
 		int vnum, pnum;
@@ -1887,7 +1887,7 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 					*(Vector2*)(vb+fvfinfo.Get_Tex_Offset(0))=VertexUV[i];
 					vb+=fvfinfo.Get_FVF_Size();
 				}
-			} // copy
+			}
 
 			DX8Wrapper::Set_Index_Buffer (indexbuffer, 0);
 			DX8Wrapper::Set_Vertex_Buffer (PointVerts);
@@ -1902,11 +1902,11 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 
 
 			current+=delta;
-		} // loop while (current<vnum)
+		}
 
 
 
-	}// next volume layer
+	}
 
 
 

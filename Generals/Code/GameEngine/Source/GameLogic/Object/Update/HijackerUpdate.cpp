@@ -146,14 +146,14 @@ UpdateSleepTime HijackerUpdate::update( void )
 				}
 
 
-			}// end if (! hostVehicleHasEjection)
+			}
 
 			setTargetObject( NULL );
 			setIsInVehicle( FALSE );
 			setUpdate( FALSE );
 			m_wasTargetAirborne = false;
 
-		}// end if( target )
+		}
 
 	}
 	else	// not in vehicle
@@ -210,7 +210,7 @@ void HijackerUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -243,7 +243,7 @@ void HijackerUpdate::xfer( Xfer *xfer )
 	// was target airborne
 	xfer->xferBool( &m_wasTargetAirborne );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -258,4 +258,4 @@ void HijackerUpdate::loadPostProcess( void )
 	Object *obj = TheGameLogic->findObjectByID( m_targetID );
 	setTargetObject( obj );
 
-}  // end loadPostProcess
+}

@@ -138,7 +138,7 @@ void W3DRenderObjectSnapshot::update(RenderObjClass *robj, DrawableInfo *drawInf
 			HAnimClass *hanim=((HLodClass *)robj)->Peek_Animation_And_Info(frame,numFrames,mode,mult);
 			m_robj->Set_Animation(hanim,frame);
 			disableUVAnimations(m_robj);
-		}	//HLOD
+		}
 	}
 	else
 		m_robj=robj;
@@ -171,7 +171,7 @@ W3DRenderObjectSnapshot::W3DRenderObjectSnapshot(RenderObjClass *robj, DrawableI
 void W3DRenderObjectSnapshot::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -220,7 +220,7 @@ void W3DRenderObjectSnapshot::xfer( Xfer *xfer )
 			subObjectName.set( subObject->Get_Name() );
 			xfer->xferAsciiString( &subObjectName );
 
-		}  // end if, save
+		}
 		else
 		{
 
@@ -230,7 +230,7 @@ void W3DRenderObjectSnapshot::xfer( Xfer *xfer )
 			// find this sub object on the object
 			subObject = m_robj->Get_Sub_Object_By_Name( subObjectName.str() );
 
-		}  // end else load
+		}
 
 		//
 		// NOTE that the remainder of this xfer code works on a sub object only *if*
@@ -263,18 +263,18 @@ void W3DRenderObjectSnapshot::xfer( Xfer *xfer )
 			if( subObject->Class_ID() == RenderObjClass::CLASSID_HLOD )
 				((HLodClass *)subObject)->Friend_Set_Hierarchy_Valid( TRUE );
 
-		}  // end if
+		}
 
 		// release reference to sub object
 		if( subObject )
 			REF_PTR_RELEASE( subObject );
 
-	}  // end for, i
+	}
 
 	// tell W3D that the transforms for our sub objects are all OK cause we've done them ourselves
 	m_robj->Set_Sub_Object_Transforms_Dirty( FALSE );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -282,7 +282,7 @@ void W3DRenderObjectSnapshot::xfer( Xfer *xfer )
 void W3DRenderObjectSnapshot::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -601,7 +601,7 @@ void W3DGhostObject::crc( Xfer *xfer )
 	// extend base class
 	GhostObject::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -638,7 +638,7 @@ void W3DGhostObject::xfer( Xfer *xfer )
 		if( drawableID != INVALID_DRAWABLE_ID && m_drawableInfo.m_drawable == NULL )
 			DEBUG_CRASH(( "W3DGhostObject::xfer - Unable to find drawable for ghost object" ));
 
-	}  // end if
+	}
 
 	//
 	// no need to mess with this "circular" back into itself pointer to the ghost object
@@ -663,7 +663,7 @@ void W3DGhostObject::xfer( Xfer *xfer )
 			// on to the next snapshot
 			objectSnapshot = objectSnapshot->m_next;
 
-		}  // end while
+		}
 
 		// xfer the snapshot count at this index
 		xfer->xferUnsignedByte( &snapshotCount );
@@ -678,7 +678,7 @@ void W3DGhostObject::xfer( Xfer *xfer )
 			DEBUG_CRASH(( "W3DGhostObject::xfer - m_parentShapshots[ %d ] has data present but the count from the xfer stream is empty", i ));
 			throw INI_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// xfer each of the snapshots at this index
 		Real scale;
@@ -710,9 +710,9 @@ void W3DGhostObject::xfer( Xfer *xfer )
 				// onto the next
 				objectSnapshot = objectSnapshot->m_next;
 
-			}  // end while
+			}
 
-		}  // end if, save
+		}
 		else
 		{
 			RenderObjClass *renderObject;
@@ -750,11 +750,11 @@ void W3DGhostObject::xfer( Xfer *xfer )
 				// add snapshot to the scene
 				objectSnapshot->addToScene();
 
-			}  // end for, j
+			}
 
-		}  // end else, load
+		}
 
-	}  // end for, i
+	}
 
 	//
 	// since there is a snapshot for this object, there cannot be a regular object/drawable
@@ -797,11 +797,11 @@ void W3DGhostObject::xfer( Xfer *xfer )
 				status = m_partitionData->friend_getShroudednessPrevious( playerIndex );
 				xfer->xferUser( &status, sizeof( ObjectShroudStatus ) );
 
-			}  // end if, snapshot list here exists
+			}
 
-		}  // end for, i
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 		UnsignedByte i;
@@ -821,11 +821,11 @@ void W3DGhostObject::xfer( Xfer *xfer )
 			xfer->xferUser( &status, sizeof( ObjectShroudStatus ) );
 			m_partitionData->friend_setShroudednessPrevious( playerIndex, status );
 
-		}  // end for, i
+		}
 
-	}  // end else load
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -836,7 +836,7 @@ void W3DGhostObject::loadPostProcess( void )
 	// extend base class
 	GhostObject::loadPostProcess();
 
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -945,9 +945,9 @@ GhostObject *W3DGhostObjectManager::addGhostObject(Object *object, PartitionData
 												 ("W3DGhostObjectManager::addGhostObject - Duplicate ghost object detected\n") );
 			sanity = sanity->m_nextSystem;
 
-		}  // end while
+		}
 
-	}  // end if
+	}
 #endif
 
 	W3DGhostObject *mod = m_freeModules;
@@ -1133,7 +1133,7 @@ void W3DGhostObjectManager::crc( Xfer *xfer )
 	// extend base class
 	GhostObjectManager::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method
@@ -1179,9 +1179,9 @@ void W3DGhostObjectManager::xfer( Xfer *xfer )
 			// write out ghost object data
 			xfer->xferSnapshot( w3dGhostObject );
 
-		}  // end for, ghostObject
+		}
 
-	}  // end if, saving
+	}
 	else
 	{
 
@@ -1224,7 +1224,7 @@ void W3DGhostObjectManager::xfer( Xfer *xfer )
 													  object->getTemplate()->getName().str()) );
 				object->friend_getPartitionData()->friend_setGhostObject( ghostObject );
 
-			}  // end if
+			}
 			else
 			{
 
@@ -1234,16 +1234,16 @@ void W3DGhostObjectManager::xfer( Xfer *xfer )
 				// register ghost object object with partition system and fill out partition data
 				ThePartitionManager->registerGhostObject( ghostObject );
 
-			}  // end else
+			}
 
 			// read ghost object data
 			xfer->xferSnapshot( ghostObject );
 
-		}  // end for, i
+		}
 
-	}  // end else, loading
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1254,4 +1254,4 @@ void W3DGhostObjectManager::loadPostProcess( void )
 	// extend base class
 	GhostObjectManager::loadPostProcess();
 
-}  // end loadPostProcess
+}

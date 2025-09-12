@@ -67,11 +67,11 @@ NeutronMissileSlowDeathBehaviorModuleData::NeutronMissileSlowDeathBehaviorModule
 		m_blastInfo[ i ].toppleSpeed = 0.0f;
 		m_blastInfo[ i ].pushForceMag = 0.0f;
 
-	}  // end for i
+	}
 	m_scorchSize = 0.0f;
 	m_fxList		 = NULL;
 
-}  // end NeutronMissileSlowDeathBehaviorModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -180,7 +180,7 @@ NeutronMissileSlowDeathBehaviorModuleData::NeutronMissileSlowDeathBehaviorModule
 
   p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -201,16 +201,16 @@ NeutronMissileSlowDeathBehavior::NeutronMissileSlowDeathBehavior( Thing *thing, 
 		m_completedBlasts[ i ] = FALSE;
 		m_completedScorchBlasts[ i ] = FALSE;
 
-	}  // end for i
+	}
 
-}  // end NeutronMissileSlowDeathBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 NeutronMissileSlowDeathBehavior::~NeutronMissileSlowDeathBehavior( void )
 {
 
-}  // end ~NeutronMissileSlowDeathBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -245,7 +245,7 @@ UpdateSleepTime NeutronMissileSlowDeathBehavior::update( void )
 		m_activationFrame = currFrame;
 
 		FXList::doFXPos( modData->m_fxList, &pos );
-	}  // end if
+	}
 
 	// see if it's time for any explosions
 	for( Int i = 0; i < MAX_NEUTRON_BLASTS; i++ )
@@ -266,7 +266,7 @@ UpdateSleepTime NeutronMissileSlowDeathBehavior::update( void )
 			// mark this blast as complete now
 			m_completedBlasts[ i ] = TRUE;
 
-		}  // end if
+		}
 
 		// has the time for a scorch blast come
 		if( m_completedScorchBlasts[ i ] == FALSE &&
@@ -279,13 +279,13 @@ UpdateSleepTime NeutronMissileSlowDeathBehavior::update( void )
 			// mark this scorch blast as complete now
 			m_completedScorchBlasts[ i ] = TRUE;
 
-		}  // end if
+		}
 
-	}  // end for i
+	}
 
 	return UPDATE_SLEEP_NONE;
 
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Do a single blast for the bomb */
@@ -356,7 +356,7 @@ void NeutronMissileSlowDeathBehavior::doBlast( const BlastInfo *blastInfo )
 				if( damageInfo.in.m_amount < blastInfo->minDamage )
 					damageInfo.in.m_amount = blastInfo->minDamage;
 
-			}  // end else
+			}
 
 			// do actual damage
 			if( damageInfo.in.m_amount )
@@ -372,9 +372,9 @@ void NeutronMissileSlowDeathBehavior::doBlast( const BlastInfo *blastInfo )
 					TheGameClient->addScorch( missilePos, modData->m_scorchSize, SCORCH_1 );
 					m_scorchPlaced = TRUE;
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 
 /*
 			// apply a small force to the object from the shockwave center
@@ -397,14 +397,14 @@ void NeutronMissileSlowDeathBehavior::doBlast( const BlastInfo *blastInfo )
 				// apply the force
 				physics->applyForce( &physicsForce );
 
-			}  // end if, physics
+			}
 */
 
-		}  // end for, other
+		}
 
-	}  // end if, an outer radius exists
+	}
 
-}  // end doBlast
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Do a scorch blast event ... this doesn't do actual damage, but it "scorches" things */
@@ -453,13 +453,13 @@ void NeutronMissileSlowDeathBehavior::doScorchBlast( const BlastInfo *blastInfo 
 				if( draw )
 					draw->setShadowsEnabled( FALSE );
 
-			}  // end if
+			}
 
-		}  // end for, other
+		}
 
-	}  // end if, outer radius exists
+	}
 
-}  // end doScorchBlast
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -470,7 +470,7 @@ void NeutronMissileSlowDeathBehavior::crc( Xfer *xfer )
 	// extend base class
 	SlowDeathBehavior::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -500,7 +500,7 @@ void NeutronMissileSlowDeathBehavior::xfer( Xfer *xfer )
 		DEBUG_CRASH(( "NeutronMissileSlowDeathBehavior::xfer - Size of MAX_NEUTRON_BLASTS has changed, you must version this xfer code and then you can remove this error message" ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// completed blasts
 	UnsignedByte i;
@@ -514,7 +514,7 @@ void NeutronMissileSlowDeathBehavior::xfer( Xfer *xfer )
 	// scorch placed
 	xfer->xferBool( &m_scorchPlaced );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -525,4 +525,4 @@ void NeutronMissileSlowDeathBehavior::loadPostProcess( void )
 	// extend base class
 	SlowDeathBehavior::loadPostProcess();
 
-}  // end loadPostProcess
+}

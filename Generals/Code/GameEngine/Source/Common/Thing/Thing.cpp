@@ -60,7 +60,7 @@ Thing::Thing( const ThingTemplate *thingTemplate )
 		DEBUG_CRASH(( "no template" ));
 		return;
 
-	}  // end if
+	}
 
 	m_template = thingTemplate;
 #if defined(RTS_DEBUG)
@@ -384,4 +384,4 @@ void Thing::transformPoint( const Coord3D *in, Coord3D *out )
 	out->y = vectorOut.Y;
 	out->z = vectorOut.Z;
 
-}  // end transformPoint
+}

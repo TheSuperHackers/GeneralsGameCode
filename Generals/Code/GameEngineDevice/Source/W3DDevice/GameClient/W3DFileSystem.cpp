@@ -174,14 +174,14 @@ char const * GameFileClass::Set_Name( char const *filename )
 		strcpy( m_filePath, W3D_DIR_PATH );
 		strcat( m_filePath, filename );
 
-	}  // end if
+	}
 	else if( isImageFileType(fileType) )
 	{
 
 		strcpy( m_filePath, TGA_DIR_PATH );
 		strcat( m_filePath, filename );
 
-	}  // end else if
+	}
 	else
 		strcpy( m_filePath, filename );
 
@@ -199,19 +199,19 @@ char const * GameFileClass::Set_Name( char const *filename )
 			strcpy( m_filePath, LEGACY_W3D_DIR_PATH );
 			strcat( m_filePath, filename );
 
-		}  // end if
+		}
 		else if( isImageFileType(fileType) )
 		{
 
 			strcpy( m_filePath, LEGACY_TGA_DIR_PATH );
 			strcat( m_filePath, filename );
 
-		}  // end else if
+		}
 
 		// see if the file exists
 		m_fileExists = TheFileSystem->doesFileExist( m_filePath );
 
-	}  // end if
+	}
 	#endif
 
 	// if file is still not found, try the test art folders
@@ -225,19 +225,19 @@ char const * GameFileClass::Set_Name( char const *filename )
 			strcpy( m_filePath, TEST_W3D_DIR_PATH );
 			strcat( m_filePath, filename );
 
-		}  // end if
+		}
 		else if( isImageFileType(fileType) )
 		{
 
 			strcpy( m_filePath, TEST_TGA_DIR_PATH );
 			strcat( m_filePath, filename );
 
-		}  // end else if
+		}
 
 		// see if the file exists
 		m_fileExists = TheFileSystem->doesFileExist( m_filePath );
 
-	}  // end if
+	}
 	#endif
 
 	// We allow the user to load their own images for various assets (like the control bar)
@@ -249,19 +249,19 @@ char const * GameFileClass::Set_Name( char const *filename )
 			//strcpy( m_filePath, USER_W3D_DIR_PATH );
 			strcat( m_filePath, filename );
 
-		}  // end if
+		}
 		if( isImageFileType(fileType) )
 		{
 			sprintf(m_filePath,USER_TGA_DIR_PATH, TheGlobalData->getPath_UserData().str());
 			//strcpy( m_filePath, USER_TGA_DIR_PATH );
 			strcat( m_filePath, filename );
 
-		}  // end else if
+		}
 
 		// see if the file exists
 		m_fileExists = TheFileSystem->doesFileExist( m_filePath );
 
-	}  // end if
+	}
 
 
 	// We Need to be able to "temporarily copy over the map preview for whichever directory it came from
@@ -273,12 +273,12 @@ char const * GameFileClass::Set_Name( char const *filename )
 			//strcpy( m_filePath, USER_TGA_DIR_PATH );
 			strcat( m_filePath, filename );
 
-		}  // end else if
+		}
 
 		// see if the file exists
 		m_fileExists = TheFileSystem->doesFileExist( m_filePath );
 
-	}  // end if
+	}
 
 	// We need to be able to grab images from a localization dir, because Art has a fetish for baked-in text.  Munkee.
 	if( m_fileExists == FALSE )
@@ -289,12 +289,12 @@ char const * GameFileClass::Set_Name( char const *filename )
 			sprintf(m_filePath,localizedPathFormat, GetRegistryLanguage().str());
 			strcat( m_filePath, filename );
 
-		}  // end else if
+		}
 
 		// see if the file exists
 		m_fileExists = TheFileSystem->doesFileExist( m_filePath );
 
-	}  // end if
+	}
 
 
 

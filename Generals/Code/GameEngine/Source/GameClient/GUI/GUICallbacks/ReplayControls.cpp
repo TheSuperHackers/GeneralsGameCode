@@ -43,7 +43,7 @@ WindowMsgHandledType ReplayControlInput( GameWindow *window, UnsignedInt msg,
 
 	return MSG_IGNORED;
 
-}  // end MapSelectMenuInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** System callback for the control bar parent */
@@ -60,15 +60,15 @@ WindowMsgHandledType ReplayControlSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end button selected
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end ControlBarSystem
+}
 

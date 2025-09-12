@@ -149,7 +149,7 @@ void Energy::objectEnteringInfluence( Object *obj )
 										 ("Energy - Negative Energy numbers, Produce=%d Consume=%d\n",
 										 m_energyProduction, m_energyConsumption) );
 
-}  // end objectEnteringInfluence
+}
 
 //-------------------------------------------------------------------------------------------------
 /** 'obj' will now no longer add/subtrack from this energy construct */
@@ -214,7 +214,7 @@ void Energy::removePowerBonus( Object *obj )
 										 ("Energy - Negative Energy numbers, Produce=%d Consume=%d\n",
 										 m_energyProduction, m_energyConsumption) );
 
-}  // end removePowerBonus
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -249,7 +249,7 @@ void Energy::addConsumption(Int amt)
 void Energy::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -288,7 +288,7 @@ void Energy::xfer( Xfer *xfer )
 		xfer->xferUnsignedInt( &m_powerSabotagedTillFrame );
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -296,4 +296,4 @@ void Energy::xfer( Xfer *xfer )
 void Energy::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

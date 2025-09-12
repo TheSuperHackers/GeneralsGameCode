@@ -42,14 +42,14 @@
 BoneFXDamage::BoneFXDamage( Thing *thing, const ModuleData* moduleData )
 																		  : DamageModule( thing, moduleData )
 {
-}  // end BoneFXDamage
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 BoneFXDamage::~BoneFXDamage( void )
 {
 
-}  // end ~BoneFXDamage
+}
 
 //-------------------------------------------------------------------------------------------------
 void BoneFXDamage::onObjectCreated()
@@ -75,7 +75,7 @@ void BoneFXDamage::onBodyDamageStateChange( const DamageInfo *damageInfo,
 	if (bfxu)
 		bfxu->changeBodyDamageState(oldState, newState);
 
-}  // end onBodyDamageStateChange
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -86,7 +86,7 @@ void BoneFXDamage::crc( Xfer *xfer )
 	// extend base class
 	DamageModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -104,7 +104,7 @@ void BoneFXDamage::xfer( Xfer *xfer )
 	// extend base class
 	DamageModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -115,4 +115,4 @@ void BoneFXDamage::loadPostProcess( void )
 	// extend base class
 	DamageModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

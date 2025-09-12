@@ -288,12 +288,12 @@ UpdateSleepTime WorkerAIUpdate::update( void )
 			if( invalidTask == TRUE )
 				cancelTask( currentTask );
 
-		}  // end if
+		}
 
 		// update dozer behavior
 		m_dozerMachine->updateStateMachine();
 
-	}  // end if
+	}
 	else
 	{
 		m_supplyTruckStateMachine->updateStateMachine();
@@ -360,7 +360,7 @@ Object *WorkerAIUpdate::construct( const ThingTemplate *what,
 																										 getObject(), NULL ) != LBC_OK )
 				return NULL;
 
-		}  // end if
+		}
 		else
 		{
 
@@ -377,9 +377,9 @@ Object *WorkerAIUpdate::construct( const ThingTemplate *what,
 																										 getObject(), NULL ) != LBC_OK )
 				return NULL;
 
-		}  // end else
+		}
 
-	}  // end if
+	}
 
 	// what will our initial status bits
 	ObjectStatusMaskType statusBits = MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNDER_CONSTRUCTION );
@@ -403,7 +403,7 @@ Object *WorkerAIUpdate::construct( const ThingTemplate *what,
 
 		money->withdraw( what->calcCostToBuild( owningPlayer ) );
 
-	}  // end if
+	}
 
 	//
 	// set a bit that this object is under construction, it is important to do this early
@@ -511,20 +511,20 @@ Bool WorkerAIUpdate::canAcceptNewRepair( Object *obj )
 				DEBUG_CRASH(( "Unable to find bridge tower interface on object" ));
 				return FALSE;
 
-			}  // end if
+			}
 
 			// if they are part of the same bridge, ignore this repair command
 			if( currentTowerInterface->getBridgeID() == newTowerInterface->getBridgeID() )
 				return FALSE;
 
-		}  // end if
+		}
 
-	}  // end if, currentRepair object exists
+	}
 
 	// all is well
 	return TRUE;
 
-}  // end canAcceptNewRepair
+}
 
 //----------------------------------------------------------------------------------------
 void WorkerAIUpdate::privateIdle(CommandSourceType cmdSource)
@@ -579,7 +579,7 @@ void WorkerAIUpdate::privateRepair( Object *obj, CommandSourceType cmdSource )
 	// start the new task
 	newTask( DOZER_TASK_REPAIR, obj );
 
-}  // end privateRepair
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Resume construction on a building */
@@ -598,7 +598,7 @@ void WorkerAIUpdate::privateResumeConstruction( Object *obj, CommandSourceType c
 	// start the new task for construction
 	newTask( DOZER_TASK_BUILD, obj );
 
-}  // end privateResumeConstruction
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Issue and order to the dozer */
@@ -652,7 +652,7 @@ void WorkerAIUpdate::newTask( DozerTask task, Object* target )
 		m_dockPoint[ task ][ DOZER_DOCK_POINT_END ].valid				= TRUE;
 		m_dockPoint[ task ][ DOZER_DOCK_POINT_END ].location		= position;
 
-	}  // end if, build task
+	}
 
 	// set the new task target and the frame in which we got this order
 	m_task[ task ].m_targetObjectID = target->getID();
@@ -806,7 +806,7 @@ void WorkerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
 
 			break;  // do nothing, this is really no task
 
-		}  // end invalid
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case DOZER_TASK_BUILD:
@@ -825,7 +825,7 @@ void WorkerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
 //			}
 			break;
 
-		}  // end build
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case DOZER_TASK_REPAIR:
@@ -844,11 +844,11 @@ void WorkerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
  				if( obj->isKindOf( KINDOF_BRIDGE_TOWER ) )
  					removeBridgeScaffolding( obj );
 
-			}  // end if
+			}
 
 			break;
 
-		}  // end repair
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case DOZER_TASK_FORTIFY:
@@ -856,7 +856,7 @@ void WorkerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
 
 			break;
 
-		}  // end fortify
+		}
 
 		// --------------------------------------------------------------------------------------------
 		default:
@@ -865,9 +865,9 @@ void WorkerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
 			DEBUG_CRASH(( "internalTaskCompleteOrCancelled: Unknown Dozer task '%d'", task ));
 			break;
 
-		}  // end default
+		}
 
-	}  // end switch( task )
+	}
 
 }
 
@@ -885,7 +885,7 @@ void WorkerAIUpdate::onDelete( void )
 		if( isTaskPending( (DozerTask)i ) )
 			cancelTask( (DozerTask)i );
 
-	}  // end for i
+	}
 
 	for( i = 0; i < DOZER_NUM_TASKS; i++ )
 	{
@@ -940,7 +940,7 @@ const Coord3D* WorkerAIUpdate::getDockPoint( DozerTask task, DozerDockPoint poin
 	// no valid point has been set for this dock point on this task
 	return NULL;
 
-}  // end getDockPoint
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -980,7 +980,7 @@ void WorkerAIUpdate::aiDoCommand(const AICommandParms* parms)
 			privateRepair(parms->m_obj, parms->m_cmdSource);
 			break;
 
-		}  // end repair
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case AICMD_RESUME_CONSTRUCTION:
@@ -994,7 +994,7 @@ void WorkerAIUpdate::aiDoCommand(const AICommandParms* parms)
 			privateResumeConstruction( parms->m_obj, parms->m_cmdSource );
 			break;
 
-		}  // end resume construction
+		}
 
 		// --------------------------------------------------------------------------------------------
 		default:
@@ -1012,9 +1012,9 @@ void WorkerAIUpdate::aiDoCommand(const AICommandParms* parms)
 				m_dozerMachine->resetToDefaultState();
 			break;
 
-		}  // end default
+		}
 
-	}  // end switch
+	}
 
 	if (isClearingMines() && m_numberBoxes > 0 )
 	{
@@ -1198,7 +1198,7 @@ WorkerStateMachine::~WorkerStateMachine()
 void WorkerStateMachine::crc( Xfer *xfer )
 {
 	StateMachine::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -1210,7 +1210,7 @@ void WorkerStateMachine::xfer( Xfer *xfer )
 	xfer->xferVersion( &v, cv );
 
 	StateMachine::xfer(xfer);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1218,7 +1218,7 @@ void WorkerStateMachine::xfer( Xfer *xfer )
 void WorkerStateMachine::loadPostProcess( void )
 {
 	StateMachine::loadPostProcess();
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -1344,7 +1344,7 @@ void WorkerAIUpdate::createBridgeScaffolding( Object *bridgeTower )
 	// tell the bridge to create scaffolding if necessary
 	bbi->createScaffolding();
 
-}  // end createBridgeScaffolding
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Remove the bridge scaffolding from the bridge object that is attached to this tower */
@@ -1370,7 +1370,7 @@ void WorkerAIUpdate::removeBridgeScaffolding( Object *bridgeTower )
 	// tell the bridge to end any scaffolding from repairing
 	bbi->removeScaffolding();
 
-}  // end removeBridgeScaffolding
+}
 
 //------------------------------------------------------------------------------------------------
 void WorkerAIUpdate::startBuildingSound( const AudioEventRTS *sound, ObjectID constructionSiteID )
@@ -1406,7 +1406,7 @@ void WorkerAIUpdate::crc( Xfer *xfer )
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1463,7 +1463,7 @@ void WorkerAIUpdate::xfer( Xfer *xfer )
 	//-------------------------- xfer Worker info
 	xfer->xferSnapshot(m_workerMachine);
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1472,4 +1472,4 @@ void WorkerAIUpdate::loadPostProcess( void )
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+}

@@ -211,7 +211,7 @@ protected:
 	Int m_buildPositionSize;				///< number of elements in the build position array
 	ObjectSellList m_sellList;			///< list of objects currently going through the "sell process"
 
-};  // end BuildAssistant
+};
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
 extern BuildAssistant *TheBuildAssistant;

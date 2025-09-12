@@ -255,7 +255,7 @@ void GameSpyInfo::addChat( PlayerInfo p, UnicodeString msg, Bool isPublic, Bool 
 			if( TheAudio )
 			{
 				TheAudio->addAudioEvent( &privMsgAudio );
-			}  // end if
+			}
 		}
 	}
 

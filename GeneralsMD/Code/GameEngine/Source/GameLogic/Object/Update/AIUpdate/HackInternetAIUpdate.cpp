@@ -207,7 +207,7 @@ void HackInternetAIUpdate::crc( Xfer *xfer )
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -227,7 +227,7 @@ void HackInternetAIUpdate::xfer( Xfer *xfer )
 	if (m_hasPendingCommand) {
 		m_pendingCommand.doXfer(xfer);
 	}
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -236,7 +236,7 @@ void HackInternetAIUpdate::loadPostProcess( void )
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -264,7 +264,7 @@ HackInternetStateMachine::~HackInternetStateMachine()
 // ------------------------------------------------------------------------------------------------
 void UnpackingState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -277,14 +277,14 @@ void UnpackingState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_framesRemaining);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void UnpackingState::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 StateReturnType UnpackingState::onEnter()
@@ -353,7 +353,7 @@ void UnpackingState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 void PackingState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -366,14 +366,14 @@ void PackingState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_framesRemaining);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void PackingState::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 StateReturnType PackingState::onEnter()
@@ -429,7 +429,7 @@ void PackingState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 void HackInternetState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -442,14 +442,14 @@ void HackInternetState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_framesRemaining);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void HackInternetState::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 StateReturnType HackInternetState::onEnter()

@@ -141,6 +141,6 @@ protected:
 	Int		m_batchStart;			///< start of unused vertices in vertex buffer
 	Real	m_level;				///< water level
 	void releaseTrack( WaterTracksObj *mod );	///<returns track object to free store.
-};  // end class WaterTracksRenderObjClassSystem
+};
 
 #endif  //__W3DWaterTracks_H_

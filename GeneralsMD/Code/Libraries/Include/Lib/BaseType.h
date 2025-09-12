@@ -216,7 +216,7 @@ inline Real Coord2D::toAngle( void ) const
 		c = 1.0f;
 
 	return y < 0.0f ? -ACos(c) : ACos(c);
-}  // end toAngle
+}
 
 struct ICoord2D
 {

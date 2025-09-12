@@ -104,7 +104,7 @@ W3DMouse::W3DMouse( void )
 	m_camera = NULL;
 	m_drawing = FALSE;
 
-}  // end Win32Mouse
+}
 
 W3DMouse::~W3DMouse( void )
 {
@@ -121,7 +121,7 @@ W3DMouse::~W3DMouse( void )
 
 	thread.Stop();
 
-}  // end Win32Mouse
+}
 
 void W3DMouse::initPolygonAssets(void)
 {
@@ -343,7 +343,7 @@ void W3DMouse::init( void )
 		thread.Execute();
 	thread.Set_Priority(0);
 
-}  // end int
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset */
@@ -354,7 +354,7 @@ void W3DMouse::reset( void )
 	// extend
 	Win32Mouse::reset();
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Super basic simplistic cursor */
@@ -468,7 +468,7 @@ void W3DMouse::setCursor( MouseCursor cursor )
 	// save current cursor
 	m_currentCursor = cursor;
 
-}  // end setCursor
+}
 
 extern HWND ApplicationHWnd;
 

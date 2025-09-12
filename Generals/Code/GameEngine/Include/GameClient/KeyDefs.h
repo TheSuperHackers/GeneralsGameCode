@@ -229,7 +229,7 @@ enum KeyDefType CPP_11(: Int)
 	KEY_NONE								= 0x00,		///< to report end of key stream
 	KEY_LOST								= 0xFF		///< to report lost keyboard focus
 
-};	// end KeyDefType
+};
 
 // state for keyboard IO ------------------------------------------------------
 enum
@@ -252,7 +252,7 @@ enum
 	KEY_STATE_SHIFT			= (KEY_STATE_LSHIFT | KEY_STATE_RSHIFT | KEY_STATE_SHIFT2 ),
 	KEY_STATE_ALT				= (KEY_STATE_LALT | KEY_STATE_RALT)
 
-};	// end KeyStateType
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////
 

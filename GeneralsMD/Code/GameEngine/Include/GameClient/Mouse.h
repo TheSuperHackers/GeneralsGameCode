@@ -422,7 +422,7 @@ protected:
 	CursorCaptureMode m_cursorCaptureMode;
 	CursorCaptureBlockReasonInt m_captureBlockReasonBits;
 
-};  // end class Mouse
+};
 
 // TheSuperHackers @feature helmutbuhler 17/05/2025
 // Mouse that does nothing. Used for Headless Mode.

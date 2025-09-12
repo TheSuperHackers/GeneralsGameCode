@@ -1943,7 +1943,7 @@ void W3DTreeBuffer::updateTopplingTree(TTree *tree)
 void W3DTreeBuffer::crc( Xfer *xfer )
 {
 	// empty. jba [8/11/2003]
-}  // end CRC
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer
@@ -2034,7 +2034,7 @@ void W3DTreeBuffer::xfer( Xfer *xfer )
 		}
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -2042,7 +2042,7 @@ void W3DTreeBuffer::xfer( Xfer *xfer )
 void W3DTreeBuffer::loadPostProcess( void )
 {
 	// empty. jba [8/11/2003]
-}  // end loadPostProcess
+}
 
 
 

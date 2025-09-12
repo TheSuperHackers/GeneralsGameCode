@@ -161,7 +161,7 @@ BOOL FenceOptions::OnInitDialog()
 		Color cc = tTemplate->getDisplayColor();
 		pMap->setColor(cc);
 
-	}  // end for tTemplate
+	}
 
 
 	CWnd *pWnd = GetDlgItem(IDC_OBJECT_HEIGHT_EDIT);
@@ -278,9 +278,9 @@ void FenceOptions::addObject( MapObject *mapObject, const char *pPath, const cha
 				parent = findOrAdd( parent, EditorSortingNames[ i ] );
 				break;  // exit for
 
-			}  // end if
+			}
 
-		}  // end for i
+		}
 
 		if( i == ES_NUM_SORTING_TYPES )
 			parent = findOrAdd( parent, "UNSORTED" );
@@ -288,7 +288,7 @@ void FenceOptions::addObject( MapObject *mapObject, const char *pPath, const cha
 		// the leaf name is the name of the template
 		leafName = thingTemplate->getName().str();
 
-	}  // end if
+	}
 
 	// add to the tree view
 	if( leafName )

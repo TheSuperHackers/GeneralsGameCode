@@ -88,7 +88,7 @@ TensileFormationUpdateModuleData::TensileFormationUpdateModuleData( void )
 
 	m_enabled = FALSE;
 
-}  // end TensileFormationUpdateModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -105,7 +105,7 @@ TensileFormationUpdateModuleData::TensileFormationUpdateModuleData( void )
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,14 +149,14 @@ TensileFormationUpdate::TensileFormationUpdate( Thing *thing, const ModuleData *
 
 
 
-}  // end TensileFormationUpdate
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 TensileFormationUpdate::~TensileFormationUpdate( void )
 {
 
-}  // end ~TensileFormationUpdate
+}
 
 
 
@@ -374,7 +374,7 @@ UpdateSleepTime TensileFormationUpdate::update( void )
 
 
 	return UPDATE_SLEEP_NONE;
-}  // end update
+}
 
 
 
@@ -440,7 +440,7 @@ void TensileFormationUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -461,7 +461,7 @@ void TensileFormationUpdate::xfer( Xfer *xfer )
 	// enabled
 	xfer->xferBool( &m_enabled );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -472,4 +472,4 @@ void TensileFormationUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

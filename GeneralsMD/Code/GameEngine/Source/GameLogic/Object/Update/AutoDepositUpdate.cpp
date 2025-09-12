@@ -97,7 +97,7 @@ void parseUpgradePair( INI *ini, void *instance, void *store, const void *userDa
 	std::list<upgradePair> * theList = (std::list<upgradePair>*)store;
 	theList->push_back(info);
 
-}  // end parseFactionObjectCreationList
+}
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -250,7 +250,7 @@ void AutoDepositUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -277,7 +277,7 @@ void AutoDepositUpdate::xfer( Xfer *xfer )
 		xfer->xferBool(&m_initialized);
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -288,4 +288,4 @@ void AutoDepositUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

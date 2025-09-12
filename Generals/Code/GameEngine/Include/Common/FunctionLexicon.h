@@ -125,7 +125,7 @@ protected:
 
 	TableEntry *m_tables[ MAX_FUNCTION_TABLES ];  ///< the lookup tables
 
-};  // end class FunctionLexicon
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // INLINING

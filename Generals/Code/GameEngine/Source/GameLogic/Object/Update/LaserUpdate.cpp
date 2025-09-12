@@ -354,7 +354,7 @@ void LaserUpdate::crc( Xfer *xfer )
 	// extend base class
 	ClientUpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -389,7 +389,7 @@ void LaserUpdate::xfer( Xfer *xfer )
 
 	m_laserRadius.xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -400,4 +400,4 @@ void LaserUpdate::loadPostProcess( void )
 	// extend base class
 	ClientUpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

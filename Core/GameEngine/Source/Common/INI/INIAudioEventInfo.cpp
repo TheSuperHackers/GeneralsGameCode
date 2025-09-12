@@ -65,7 +65,7 @@ void INI::parseMusicTrackDefinition( INI* ini )
 
 	// parse the ini definition
 	ini->initFromINI( track, track->getFieldParse() );
-}  // end parseMusicTrackDefinition
+}
 
 //-------------------------------------------------------------------------------------------------
 void INI::parseAudioEventDefinition( INI* ini )
@@ -92,7 +92,7 @@ void INI::parseAudioEventDefinition( INI* ini )
 
 	// parse the ini definition
 	ini->initFromINI( track, track->getFieldParse() );
-}  // end parseAudioEventDefinition
+}
 
 //-------------------------------------------------------------------------------------------------
 void INI::parseDialogDefinition( INI* ini )
@@ -119,7 +119,7 @@ void INI::parseDialogDefinition( INI* ini )
 
 	// parse the ini definition
 	ini->initFromINI( track, track->getFieldParse() );
-}  // end parseAudioEventDefinition
+}
 
 
 //-------------------------------------------------------------------------------------------------

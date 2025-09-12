@@ -421,7 +421,7 @@ void DeployStyleAIUpdate::crc( Xfer *xfer )
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -485,7 +485,7 @@ void DeployStyleAIUpdate::xfer( Xfer *xfer )
 		m_state = READY_TO_MOVE;
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -494,5 +494,5 @@ void DeployStyleAIUpdate::loadPostProcess( void )
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+}
 

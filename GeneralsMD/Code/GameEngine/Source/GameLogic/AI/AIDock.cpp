@@ -92,7 +92,7 @@ void AIDockMachine::halt()
 void AIDockMachine::crc( Xfer *xfer )
 {
 	StateMachine::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -105,7 +105,7 @@ void AIDockMachine::xfer( Xfer *xfer )
 
 	StateMachine::xfer(xfer);
 	xfer->xferInt(&m_approachPosition);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -113,7 +113,7 @@ void AIDockMachine::xfer( Xfer *xfer )
 void AIDockMachine::loadPostProcess( void )
 {
 	StateMachine::loadPostProcess();
-}  // end loadPostProcess
+}
 
 // State transition conditions ----------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ void AIDockApproachState::xfer( Xfer *xfer )
 		AIInternalMoveToState::xfer(xfer);
 	}
 
-}  // end xfer
+}
 
 //----------------------------------------------------------------------------------------------
 /**

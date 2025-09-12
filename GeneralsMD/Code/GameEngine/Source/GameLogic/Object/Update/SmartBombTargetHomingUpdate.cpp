@@ -119,7 +119,7 @@ void SmartBombTargetHomingUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -138,7 +138,7 @@ void SmartBombTargetHomingUpdate::xfer( Xfer *xfer )
 	UpdateModule::xfer( xfer );
 
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -149,4 +149,4 @@ void SmartBombTargetHomingUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

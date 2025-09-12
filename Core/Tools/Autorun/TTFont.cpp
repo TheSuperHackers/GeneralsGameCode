@@ -1148,7 +1148,7 @@ int TTFontClass::Find_Text_VLength( HDC hdc, char *str, int width )
 					//--------------------------------------------------------------
 					wspc += Char_Pixel_Width( localDC, ' ' );
 				}
-			} // end-of-for
+			}
 
 			//--------------------------------------------------------------------
 			//
@@ -1173,7 +1173,7 @@ int TTFontClass::Find_Text_VLength( HDC hdc, char *str, int width )
 			}
 			letter += n;
 
-		} // end-of-while
+		}
 
 		//-----------------------------------------------------------------------
 		// Left over, add a line.

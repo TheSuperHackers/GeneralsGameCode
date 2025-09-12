@@ -166,7 +166,7 @@ void NeutronBlastBehavior::crc( Xfer *xfer )
 	UpdateModule::crc( xfer );
 
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -184,7 +184,7 @@ void NeutronBlastBehavior::xfer( Xfer *xfer )
 	// extend base class
 	UpdateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -196,4 +196,4 @@ void NeutronBlastBehavior::loadPostProcess( void )
 	UpdateModule::loadPostProcess();
 
 
-}  // end loadPostProcess
+}

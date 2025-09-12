@@ -219,7 +219,7 @@ static void WrapHTTP( const std::string& hostname, std::string& results )
 	char szHdr[256];
 	snprintf( szHdr, 256, HEADER, hostname.c_str(), results.length() );
 	results = szHdr + results;
-} //WrapHTTP
+}
 
 
 //-------------------------------------------------------------------------

@@ -373,7 +373,7 @@ protected:
 	} m_waterToUpdate[ MAX_DYNAMIC_WATER ];  ///< water tables to dynamicall update
 	Int m_numWaterToUpdate;						///< how many valid entries are in m_waterToUpdate
 
-};  // end class TerrainLogic
+};
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern TerrainLogic *TheTerrainLogic;   ///< singleton definition

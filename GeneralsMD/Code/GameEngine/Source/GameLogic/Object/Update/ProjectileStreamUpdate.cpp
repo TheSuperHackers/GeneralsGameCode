@@ -216,7 +216,7 @@ void ProjectileStreamUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -254,7 +254,7 @@ void ProjectileStreamUpdate::xfer( Xfer *xfer )
 		xfer->xferCoord3D( &m_targetPosition );
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -265,4 +265,4 @@ void ProjectileStreamUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -139,7 +139,7 @@ protected:
 	Int m_numNonOccluderOrOccludee;
 
 	CameraClass *m_camera;
-};  // end class RTS3DScene
+};
 
 //-----------------------------------------------------------------------------
 // RTS2DScene
@@ -166,7 +166,7 @@ protected:
 	RenderObjClass *m_status;
 	CameraClass *m_camera;
 
-};  // end class RTS2DScene
+};
 
 //-----------------------------------------------------------------------------
 // RTS3DInterfaceScene
@@ -187,6 +187,6 @@ public:
 
 protected:
 
-};  // end class RTS3DInterfaceScene
+};
 
 #endif  // end __W3DSCENE_H_

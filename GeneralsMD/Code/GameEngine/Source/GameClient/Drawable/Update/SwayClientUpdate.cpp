@@ -145,7 +145,7 @@ void SwayClientUpdate::crc( Xfer *xfer )
 	// extend base class
 	ClientUpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -184,7 +184,7 @@ void SwayClientUpdate::xfer( Xfer *xfer )
 	// swaying
 	xfer->xferBool( &m_swaying );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -197,4 +197,4 @@ void SwayClientUpdate::loadPostProcess( void )
 
 	updateSway();
 
-}  // end loadPostProcess
+}

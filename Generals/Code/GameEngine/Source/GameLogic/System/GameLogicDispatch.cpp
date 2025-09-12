@@ -164,11 +164,11 @@ static void doSetRallyPoint( Object *obj, const Coord3D& pos )
 			rallyNotSet.setPlayerIndex(obj->getControllingPlayer()->getPlayerIndex());
 			TheAudio->addAudioEvent(&rallyNotSet);
 
-		}  // end if
+		}
 
 		return;
 
-	}  // end if
+	}
 
 	// feedback to the player
 	if( isLocalPlayer )
@@ -191,7 +191,7 @@ static void doSetRallyPoint( Object *obj, const Coord3D& pos )
 		if( draw && draw->isSelected() )
 			TheControlBar->markUIDirty();
 
-	}  // end if
+	}
 
 	// if this object has a ProductionExitUpdate interface, we are setting a rally point
 	ExitInterface *exitInterface = obj->getObjectExitInterface();
@@ -329,7 +329,7 @@ void GameLogic::prepareNewGame( GameMode gameMode, GameDifficulty diff, Int rank
 
 	m_startNewGame = FALSE;
 
-}  // end prepareNewGame
+}
 
 //-------------------------------------------------------------------------------------------------
 /** This message handles dispatches object command messages to the
@@ -439,7 +439,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end new game
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_CLEAR_GAME_DATA:
@@ -462,7 +462,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			TheGameLogic->clearGameData();
 			break;
 
-		}  // end clear game data
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_BEGIN_PATH_BUILD:
@@ -552,7 +552,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end GameMessage::MSG_COMBATDROP_AT_OBJECT
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_COMBATDROP_AT_LOCATION:
@@ -575,7 +575,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end GameMessage::MSG_COMBATDROP_AT_LOCATION
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DO_WEAPON_AT_OBJECT:
@@ -597,10 +597,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 					// lock it just till the weapon is empty or the attack is "done"
 				if (currentlySelectedGroup->setWeaponLockForGroup( weaponSlot, LOCKED_TEMPORARILY ))
 					currentlySelectedGroup->groupAttackObject( targetObject, maxShotsToFire, CMD_FROM_PLAYER );
-			}  // end if, command for group
+			}
 			break;
 
-		}  // end do weapon at object
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_SWITCH_WEAPONS:
@@ -638,11 +638,11 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
  					currentlySelectedGroup->groupAttackPosition( &targetLoc, maxShotsToFire, CMD_FROM_PLAYER );
 
 
-			}  // end if, command for group
+			}
 
 			break;
 
-		}  //end do weapon at location
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DO_SPECIAL_POWER:
@@ -678,7 +678,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			}
 			break;
 
-		}  // end do special
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DO_SPECIAL_POWER_AT_LOCATION:
@@ -720,7 +720,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			}
 			break;
 
-		}  // end do special at location
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DO_SPECIAL_POWER_AT_OBJECT:
@@ -762,7 +762,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			}
 			break;
 
-		}  // end do special at object
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DO_ATTACKMOVETO:
@@ -988,7 +988,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end GameMessage::MSG_ENTER
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_EXIT:
@@ -1023,7 +1023,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end GameMessage::MSG_EXIT
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_EVACUATE:
@@ -1050,11 +1050,11 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 // no, this is bad, don't do here, do when POSTING message
 //			pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_EVACUATE );
 
-			}  // end if, command for group
+			}
 
 			break;
 
-		}  // end GameMessage::MSG_EVACUATE
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_EXECUTE_RAILED_TRANSPORT:
@@ -1066,7 +1066,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end GameMessage::MSG_EXECUTE_RAILED_TRANSPORT
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_INTERNET_HACK:
@@ -1095,7 +1095,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end get repaired
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DOCK:
@@ -1112,7 +1112,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end get repaired
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_GET_HEALED:
@@ -1129,7 +1129,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end get repaired
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DO_REPAIR:
@@ -1149,7 +1149,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end get repaired
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_RESUME_CONSTRUCTION:
@@ -1173,7 +1173,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end resume construction
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DO_SPECIAL_POWER_OVERRIDE_DESTINATION:
@@ -1204,7 +1204,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end GameMessage::MSG_DO_SPECIAL_POWER_OVERRIDE_DESTINATION
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DO_ATTACK_OBJECT:
@@ -1226,7 +1226,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end GameMessage::MSG_DO_ATTACK_OBJECT
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DO_FORCE_ATTACK_OBJECT:
@@ -1246,7 +1246,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end GameMessage::MSG_DO_FORCE_ATTACK_OBJECT
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DO_FORCE_ATTACK_GROUND:
@@ -1285,7 +1285,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end GameMessage::MSG_DO_FORCE_ATTACK_GROUND
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_QUEUE_UPGRADE:
@@ -1299,7 +1299,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end queue upgrade
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_CANCEL_UPGRADE:
@@ -1329,7 +1329,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end cancel upgrade
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_QUEUE_UNIT_CREATE:
@@ -1359,14 +1359,14 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 															producer->getTemplate()->getName().str()) );
 				break;
 
-			}  // end if
+			}
 
 			// queue the build
 			pu->queueCreateUnit( whatToCreate, productionID );
 
 			break;
 
-		}  // end GameMessage::MSG_QUEUE_UNIT_CREATE
+		}
 
 		//-------------------------------------------------------------------------------------------------
 		case GameMessage::MSG_CANCEL_UNIT_CREATE:
@@ -1396,7 +1396,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end GameMessage::MSG_CANCEL_UNIT_CREATE
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DOZER_CONSTRUCT:
@@ -1425,7 +1425,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				TheBuildAssistant->buildObjectNow( constructorObject, place, &loc, angle,
 																					 constructorObject->getControllingPlayer() );
 
-			}  // end if
+			}
 			else
 			{
 				Coord3D locEnd;
@@ -1437,7 +1437,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				TheBuildAssistant->buildObjectLineNow( constructorObject, place, &loc, &locEnd, angle,
 																							 constructorObject->getControllingPlayer() );
 
-			}  // end else
+			}
 
 			// place the sound for putting a building down
 
@@ -1451,7 +1451,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end build start
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DOZER_CANCEL_CONSTRUCT:
@@ -1491,7 +1491,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end cancel dozer construction
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_SELL:
@@ -1503,7 +1503,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end sell
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_TOGGLE_OVERCHARGE:
@@ -1515,7 +1515,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end toggle overcharge
+		}
 
 #ifdef ALLOW_SURRENDER
 		// --------------------------------------------------------------------------------------------
@@ -1530,11 +1530,11 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				if( currentlySelectedGroup )
 					currentlySelectedGroup->groupPickUpPrisoner( prisoner, CMD_FROM_PLAYER );
 
-			}  // end if
+			}
 
 			break;
 
-		}  // end pick up prisoner
+		}
 #endif
 
 #ifdef ALLOW_SURRENDER
@@ -1548,7 +1548,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end return to prison
+		}
 #endif
 
 		//---------------------------------------------------------------------------------------------
@@ -1578,7 +1578,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end build start
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_REMOVE_FROM_SELECTED_GROUP:
@@ -1602,7 +1602,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end MSG_REMOVE_FROM_SELECTED_GROUP
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DESTROY_SELECTED_GROUP:
@@ -1615,7 +1615,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end build start
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_SELECTED_GROUP_COMMAND:
@@ -1623,7 +1623,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end selected group command
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_PLACE_BEACON:
@@ -1718,7 +1718,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				TheAudio->addAudioEvent(&aSound);
 			}
 			break;
-		} // end beacon placement
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_REMOVE_BEACON:
@@ -1783,7 +1783,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 #endif
 			}
 			break;
-		} // end beacon removal
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_SET_BEACON_TEXT:
@@ -1814,7 +1814,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				}
 			}
 			break;
-		} // end beacon text
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_SELF_DESTRUCT:
@@ -1883,7 +1883,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				}
 			}
 			break;
-		} // end beacon text
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_CREATE_TEAM0:
@@ -1906,7 +1906,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				player->processCreateTeamGameMessage(msg->getType() - GameMessage::MSG_CREATE_TEAM0, msg);
 
 			break;
-		} // end create team command
+		}
 
 		case GameMessage::MSG_SELECT_TEAM0:
 		case GameMessage::MSG_SELECT_TEAM1:
@@ -2004,7 +2004,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			}
 			break;
 
-		}  // end CRC message
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_PURCHASE_SCIENCE:
@@ -2019,9 +2019,9 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end pick specialized science
+		}
 
-	}  // end switch
+	}
 
 #if RETAIL_COMPATIBLE_AIGROUP
 	// TheSuperHackers @bugfix xezon 28/06/2025 This hack avoids crashing when players are selected during Replay playback.
@@ -2058,4 +2058,4 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 #endif
 	}
 
-}  // end logicMessageDispatches
+}

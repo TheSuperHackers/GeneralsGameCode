@@ -114,7 +114,7 @@ Bool DecompressFile		(char *infile, char *outfile)
 		DbgFree(inBlock);
 		DbgFree(outBlock);
 		return success;
-	} // End of if fileptr
+	}
 
 	return FALSE;
 }

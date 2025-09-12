@@ -196,7 +196,7 @@ inline Real Coord2D::toAngle( void )
 
 	return value;
 
-}  // end toAngle
+}
 
 struct ICoord2D
 {

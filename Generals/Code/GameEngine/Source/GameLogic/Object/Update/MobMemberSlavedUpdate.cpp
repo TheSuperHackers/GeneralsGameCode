@@ -410,7 +410,7 @@ void MobMemberSlavedUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -452,7 +452,7 @@ void MobMemberSlavedUpdate::xfer( Xfer *xfer )
 	// catch up crisis timer
   xfer->xferUnsignedInt( &m_catchUpCrisisTimer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -463,4 +463,4 @@ void MobMemberSlavedUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

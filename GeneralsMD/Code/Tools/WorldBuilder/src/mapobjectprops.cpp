@@ -606,7 +606,7 @@ void MapObjectProps::GetPopSliderInfo(const long sliderID, long *pMin, long *pMa
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 }
 
 /// Slider control
@@ -654,7 +654,7 @@ void MapObjectProps::PopSliderChanged(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 }
 
 /// Slider control
@@ -678,7 +678,7 @@ void MapObjectProps::PopSliderFinished(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 
 }
 
@@ -1733,7 +1733,7 @@ void MapObjectProps::InitSound(void)
     soundComboBox->InsertString( 1, NO_SOUND_STRING );
   }
 
-} // end InitSound
+}
 
 
 // Adds a series of Undoable's to the given MultipleUndoable which clears the

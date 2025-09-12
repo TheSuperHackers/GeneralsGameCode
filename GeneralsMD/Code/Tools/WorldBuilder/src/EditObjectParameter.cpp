@@ -87,7 +87,7 @@ BOOL EditObjectParameter::OnInitDialog()
 	{
 		addObject(tTemplate);
 
-	}  // end for tTemplate
+	}
 
 
 	addObjectLists();
@@ -137,9 +137,9 @@ void EditObjectParameter::addObject( const ThingTemplate *thingTemplate  )
 				parent = findOrAdd( parent, EditorSortingNames[ i ] );
 				break;  // exit for
 
-			}  // end if
+			}
 
-		}  // end for i
+		}
 
 		if( i == ES_NUM_SORTING_TYPES )
 			parent = findOrAdd( parent, "UNSORTED" );
@@ -147,7 +147,7 @@ void EditObjectParameter::addObject( const ThingTemplate *thingTemplate  )
 		// the leaf name is the name of the template
 		leafName = thingTemplate->getName().str();
 
-	}  // end if
+	}
 
 	// add to the tree view
 	if( leafName )

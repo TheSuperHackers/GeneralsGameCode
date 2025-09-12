@@ -399,7 +399,7 @@ Int ScoreKeeper::getTotalUnitsDestroyed( void )
 void ScoreKeeper::crc( Xfer *xfer )
 {
 
-}  // end ScoreKeeper
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer of an object count map
@@ -416,7 +416,7 @@ void ScoreKeeper::xferObjectCountMap( Xfer *xfer, ObjectCountMap *map )
 		DEBUG_CRASH(( "xferObjectCountMap - Invalid map parameter" ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// version info
 	XferVersion currentVersion = 1;
@@ -448,9 +448,9 @@ void ScoreKeeper::xferObjectCountMap( Xfer *xfer, ObjectCountMap *map )
 			count = it->second;
 			xfer->xferInt( &count );
 
-		}  // end for, it
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -467,7 +467,7 @@ void ScoreKeeper::xferObjectCountMap( Xfer *xfer, ObjectCountMap *map )
 				DEBUG_CRASH(( "xferObjectCountMap - Unknown thing template '%s'", thingTemplateName.str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
 			// read count
 			xfer->xferInt( &count );
@@ -475,11 +475,11 @@ void ScoreKeeper::xferObjectCountMap( Xfer *xfer, ObjectCountMap *map )
 			// add to map
 			(*map)[ thingTemplate ] = count;
 
-		}  // end for, i
+		}
 
-	}  // end else
+	}
 
-}  // end xferObjectCountMap
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -542,14 +542,14 @@ void ScoreKeeper::xfer( Xfer *xfer )
 		DEBUG_CRASH(( "ScoreKeeper::xfer - size of objects destroyed array has changed" ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 	for( UnsignedShort i = 0; i < destroyedArraySize; ++i )
 	{
 
 		// xfer map data
 		xferObjectCountMap( xfer, &m_objectsDestroyed[ i ] );
 
-	}  // end for i
+	}
 
 	// objects lost
 	xferObjectCountMap( xfer, &m_objectsLost );
@@ -557,7 +557,7 @@ void ScoreKeeper::xfer( Xfer *xfer )
 	// objects captured
 	xferObjectCountMap( xfer, &m_objectsCaptured );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -565,4 +565,4 @@ void ScoreKeeper::xfer( Xfer *xfer )
 void ScoreKeeper::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

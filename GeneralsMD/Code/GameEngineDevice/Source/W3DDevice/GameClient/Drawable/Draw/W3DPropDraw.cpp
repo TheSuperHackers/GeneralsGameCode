@@ -72,7 +72,7 @@ W3DPropDraw::W3DPropDraw( Thing *thing, const ModuleData* moduleData ) : DrawMod
 m_propAdded(false)
 {
 
-}  // end W3DPropDraw
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ void W3DPropDraw::crc( Xfer *xfer )
 	// extend base class
 	DrawModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -142,7 +142,7 @@ void W3DPropDraw::xfer( Xfer *xfer )
 
 	// no data to save here, nobody will ever notice
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -153,4 +153,4 @@ void W3DPropDraw::loadPostProcess( void )
 	// extend base class
 	DrawModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

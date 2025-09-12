@@ -522,7 +522,7 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 //	//TheShell->registerWithAnimateManager(buttonOptions, WIN_ANIMATION_SLIDE_LEFT, TRUE, 1);
 //	TheShell->registerWithAnimateManager(buttonBack, WIN_ANIMATION_SLIDE_RIGHT, TRUE, 1);
 
-} // GameLobbyMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** This is called when a shutdown is complete for this menu */
@@ -545,7 +545,7 @@ static void shutdownComplete( WindowLayout *layout )
 
 	LANnextScreen = NULL;
 
-}  // end if
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Lan Lobby menu shutdown method */
@@ -582,13 +582,13 @@ void LanLobbyMenuShutdown( WindowLayout *layout, void *userData )
 		shutdownComplete( layout );
 		return;
 
-	}  //end if
+	}
 
 	TheShell->reverseAnimatewindow();
 	TheTransitionHandler->reverse("LanLobbyFade");
 	//if(	shellmapOn)
 //		TheShell->showShellMap(TRUE);
-}  // LanLobbyMenuShutdown
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -630,7 +630,7 @@ void LanLobbyMenuUpdate( WindowLayout * layout, void *userData)
 	}
 
 
-}// LanLobbyMenuUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Lan Lobby menu input callback */
@@ -665,21 +665,21 @@ WindowMsgHandledType LanLobbyMenuInput( GameWindow *window, UnsignedInt msg,
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonBack, buttonBackID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// LanLobbyMenuInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Lan Lobby menu window system callback */
@@ -697,13 +697,13 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 			{
 				SignalUIInteraction(SHELL_SCRIPT_HOOK_LAN_OPENED);
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				SignalUIInteraction(SHELL_SCRIPT_HOOK_LAN_CLOSED);
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
 			{
@@ -712,7 +712,7 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 		case GLM_DOUBLE_CLICKED:
 			{
 				if (LANbuttonPushed)
@@ -774,12 +774,12 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					TheLAN = NULL;
 					//TheTransitionHandler->reverse("LanLobbyFade");
 
-				} //if ( controlID == buttonBack )
+				}
 				else if ( controlID == buttonHostID )
 				{
 					TheLAN->RequestGameCreate( UnicodeString(L""), FALSE);
 
-				}//else if ( controlID == buttonHostID )
+				}
 				else if ( controlID == buttonClearID )
 				{
 					GadgetTextEntrySetText(textEntryPlayerName, UnicodeString::TheEmptyString);
@@ -810,7 +810,7 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 						GadgetListBoxAddEntryText(listboxChatWindow, TheGameText->fetch("LAN:ErrorNoGameSelected") , chatSystemColor, -1, 0);
 					}
 
-				} //else if ( controlID == buttonJoinID )
+				}
 				else if ( controlID == buttonEmoteID )
 				{
 					// read the user's input
@@ -824,7 +824,7 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 //						TheLAN->RequestChat(txtInput, LANAPIInterface::LANCHAT_EMOTE);
 						TheLAN->RequestChat(txtInput, LANAPIInterface::LANCHAT_NORMAL);
 					}
-				} //if ( controlID == buttonEmote )
+				}
 				else if (controlID == buttonDirectConnectID)
 				{
 					TheLAN->RequestLobbyLeave( false );
@@ -832,7 +832,7 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 				}
 
 				break;
-			}// case GBM_SELECTED:
+			}
 
 		case GEM_UPDATE_TEXT:
 			{
@@ -878,9 +878,9 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					// Put the whitespace-free version in the box
 					GadgetTextEntrySetText( textEntryPlayerName, txtInput );
 
-				}// if ( controlID == textEntryPlayerNameID )
+				}
 				break;
-			}//case GEM_UPDATE_TEXT:
+			}
 		case GEM_EDIT_DONE:
 			{
 				if (LANbuttonPushed)
@@ -905,7 +905,7 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					if (!txtInput.isEmpty())
 						TheLAN->RequestChat(txtInput, LANAPIInterface::LANCHAT_NORMAL);
 
-				}// if ( controlID == textEntryChatID )
+				}
 				/*
 				else if ( controlID == textEntryPlayerNameID )
 				{
@@ -922,14 +922,14 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					// Put the whitespace-free version in the box
 					GadgetTextEntrySetText( textEntryPlayerName, txtInput );
 
-				}// if ( controlID == textEntryPlayerNameID )
+				}
 				*/
 				break;
 			}
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// LanLobbyMenuSystem
+}

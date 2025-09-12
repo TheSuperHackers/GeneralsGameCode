@@ -195,14 +195,14 @@ INI::INI( void )
 	m_curBlockStart[0]	= 0;
 #endif
 
-}  // end INI
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 INI::~INI( void )
 {
 
-}  // end ~INI
+}
 
 //-------------------------------------------------------------------------------------------------
 UnsignedInt INI::loadFileDirectory( AsciiString fileDirName, INILoadType loadType, Xfer *pXfer, Bool subdirs )
@@ -306,7 +306,7 @@ void INI::prepFile( AsciiString filename, INILoadType loadType )
 		DEBUG_CRASH(( "INI::load, cannot open file '%s', file already open", filename.str() ));
 		throw INI_FILE_ALREADY_OPEN;
 
-	}  // end if
+	}
 
 	// open the file
 	m_file = TheFileSystem->openFile(filename.str(), File::READ);
@@ -316,7 +316,7 @@ void INI::prepFile( AsciiString filename, INILoadType loadType )
 		DEBUG_CRASH(( "INI::load, cannot open file '%s'", filename.str() ));
 		throw INI_CANT_OPEN_FILE;
 
-	}  // end if
+	}
 
 	m_file = m_file->convertToRAMFile();
 
@@ -434,9 +434,9 @@ UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 					throw INI_UNKNOWN_TOKEN;
 				}
 
-			}  // end if
+			}
 
-		}  // end while
+		}
 	}
 	catch (...)
 	{
@@ -513,7 +513,7 @@ void INI::readLine( void )
 			DEBUG_ASSERTCRASH( 0, ("Buffer too small (%d) and was truncated, increase INI_MAX_CHARS_PER_LINE",
 														 INI_MAX_CHARS_PER_LINE) );
 
-		}  // end if
+		}
   }
 
 	if (s_xfer)
@@ -857,7 +857,7 @@ void INI::parseAndTranslateLabel( INI* ini, void * /*instance*/, void *store, co
 	UnicodeString *theString = (UnicodeString *)store;
 	theString->set( translated.str() );
 
-}  // end parseAndTranslateLabel
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse a string label assumed as an image as part of the image collection.  Translate
@@ -879,7 +879,7 @@ void INI::parseMappedImage( INI *ini, void * /*instance*/, void *store, const vo
 	//else
 	//	throw INI_UNKNOWN_ERROR;
 
-}  // end parseMappedImage
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Parse a string label assumed as a Anim2D template name.  Translate that name to an
@@ -893,16 +893,16 @@ void INI::parseMappedImage( INI *ini, void * /*instance*/, void *store, const vo
 	{
 		Anim2DTemplate **anim2DTemplate = (Anim2DTemplate **)store;
 		*anim2DTemplate = TheAnim2DCollection->findTemplate( AsciiString( token ) );
-	}  // end if
+	}
 	else
 	{
 
 		DEBUG_CRASH(( "INI::parseAnim2DTemplate - TheAnim2DCollection is NULL" ));
 		throw INI_UNKNOWN_ERROR;
 
-	}  // end else
+	}
 
-}  // end parseAnim2DTemplate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse a percent in int or real form such as "23%" or "95.4%" and assign
@@ -914,7 +914,7 @@ void INI::parsePercentToReal( INI* ini, void * /*instance*/, void *store, const 
 	Real *theReal = (Real *)store;
 	*theReal = scanPercentToReal(token);
 
-}  // end parsePercentToReal
+}
 
 //-------------------------------------------------------------------------------------------------
 /** 'store' points to an 32 bit unsigned integer.  We will zero that integer, parse each token
@@ -1083,7 +1083,7 @@ void INI::parseRGBAColorInt( INI* ini, void * /*instance*/, void *store, const v
 	theColor->blue	= colors[ 2 ];
 	theColor->alpha = colors[ 3 ];
 
-}  // end parseRGBAColorInt
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse a color in the form of
@@ -1132,7 +1132,7 @@ void INI::parseColorInt( INI* ini, void * /*instance*/, void *store, const void*
 	Color *theColor = (Color *)store;
 	*theColor = GameMakeColor(colors[0], colors[1], colors[2], colors[3]);
 
-}  // end parseColorInt
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse a 3D coordinate of reals in the form of:
@@ -1146,7 +1146,7 @@ void INI::parseCoord3D( INI* ini, void * /*instance*/, void *store, const void* 
 	theCoord->y = scanReal(ini->getNextSubToken("Y"));
 	theCoord->z = scanReal(ini->getNextSubToken("Z"));
 
-}  // end parseCoord3D
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse a 2D coordinate of reals in the form of:
@@ -1159,7 +1159,7 @@ void INI::parseCoord2D( INI* ini, void * /*instance*/, void *store, const void* 
 	theCoord->x = scanReal(ini->getNextSubToken("X"));
 	theCoord->y = scanReal(ini->getNextSubToken("Y"));
 
-}  // end parseCoord2D
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse a 2D coordinate of Ints in the form of:
@@ -1172,7 +1172,7 @@ void INI::parseICoord2D( INI* ini, void * /*instance*/, void *store, const void*
 	theCoord->x = scanInt(ini->getNextSubToken("X"));
 	theCoord->y = scanInt(ini->getNextSubToken("Y"));
 
-}  // end parseICoord2D
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse an audio event and assign to the 'AudioEventRTS*' at store */
@@ -1319,7 +1319,7 @@ void INI::parseParticleSystemTemplate( INI *ini, void * /*instance*/, void *stor
 
 	*theParticleSystemTemplate = pSystemT;
 
-}  // end parseParticleSystemTemplate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse an DamageFX and assign to the 'DamageFX *' at store */
@@ -1570,9 +1570,9 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 														 INI::getLineNum(), INI::getFilename().str(), field, m_curBlockStart) );
 				}
 
-			}  // end else
+			}
 
-		}  // end if
+		}
 
 		// sanity check for reaching end of file with no closing end token
 		if( done == FALSE && INI::isEOF() == TRUE )
@@ -1583,9 +1583,9 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 												 m_curBlockStart, getFilename().str(), m_blockEndToken) );
 			throw INI_MISSING_END_TOKEN;
 
-		}  // end if
+		}
 
-	}  // end while
+	}
 
 }
 

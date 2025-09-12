@@ -119,7 +119,7 @@ HSVColorReal rgbToHSV( RGBColorReal rgbColor )
   // calculate hue
   if (saturation == 0)  {
     hue = 0;  // hue is really undefined
-  }  // end if
+  }
   else  {  // chromatic case, determine hue
     Real delta = max - min;
 
@@ -134,7 +134,7 @@ HSVColorReal rgbToHSV( RGBColorReal rgbColor )
     if (hue < 0)
       hue += 360;  // make sure hue is non negative
 
-  }  // end else, chromatic case, determine hue
+  }
 
   // set and return an HSVColor
   hsvColor.hue        = hue;
@@ -155,7 +155,7 @@ HSVColorReal rgbToHSV( RGBColorReal rgbColor )
 
   return hsvColor;
 
-}  // end rgbToHSV
+}
 
 // hsvToRGB ===================================================================
 // Converts the HSV colors passed in to RGB values
@@ -181,13 +181,13 @@ RGBColorReal hsvToRGB( HSVColorReal hsvColor )
     if( hue == 0.0f )
 		{  // achromatic color ... there is no hue
       red = green = blue = value;
-    }  // end if, achromatic color .. there is no hue
+    }
     else
 		{
       DEBUG_LOG(( "HSVToRGB error, hue should be undefined" ));
-    }  // end else
+    }
 
-  }  // end if
+  }
   else
 	{
 
@@ -230,9 +230,9 @@ RGBColorReal hsvToRGB( HSVColorReal hsvColor )
         green = p;
         blue = q;
         break;
-    }  // end switch (i)
+    }
 
-  }  // end else, chromatic case
+  }
 
   // store and return and RGB color
   rgbColor.red   = red;
@@ -242,7 +242,7 @@ RGBColorReal hsvToRGB( HSVColorReal hsvColor )
 
   return rgbColor;
 
-}  // end hsvToRGB
+}
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////
 BOOL CALLBACK SelectColorDlgProc( HWND hWnd, UINT uMsg,
@@ -278,7 +278,7 @@ RGBColorInt *SelectColor( Int red, Int green, Int blue, Int alpha,
   else
     return NULL;
 
-}  // end SelectColor
+}
 
 // SelectColorDlgProc =========================================================
 /** Dialog procedure for color selector dialog */
@@ -345,7 +345,7 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
 				SetDlgItemInt (hWndDlg, LABEL_ALPHA,
 											 (Int) hsvColor.alpha, FALSE);
 
-      }  // end if
+      }
       else
 			{
 
@@ -367,7 +367,7 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
         SetDlgItemInt (hWndDlg, LABEL_ALPHA,
                        selectedColor.alpha, FALSE);
 
-      }  // end else
+      }
 
 			//
 			// move the window to the display position, but keep the whole
@@ -377,7 +377,7 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
 
       return TRUE;
 
-    }  // end case WM_INITDIALOG
+    }
 
     // ------------------------------------------------------------------------
     case WM_DRAWITEM:  {
@@ -411,7 +411,7 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
                                                     NULL, FALSE);
             rgbColor.blue =  (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR3,
                                                     NULL, FALSE);
-          }  // end if
+          }
           else  {
             hsvColor.hue        = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR1,
                                                          NULL, FALSE);
@@ -427,7 +427,7 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
             rgbColor.red   *= 255;
             rgbColor.green *= 255;
             rgbColor.blue  *= 255;
-          }  // end else
+          }
 
           // create a new brush and select it into DC
           hBrushNew = CreateSolidBrush (RGB ((BYTE) rgbColor.red,
@@ -448,7 +448,7 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
 
           break;
 
-        }  // end case BUTTON_PREVIEW
+        }
 
         // --------------------------------------------------------------------
         // Draw the bar of either HUE or RED next to the scroll bar
@@ -476,12 +476,12 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
             rgbColor.red   *= 255.0f;
             rgbColor.green *= 255.0f;
             rgbColor.blue  *= 255.0f;
-          }  // end if
+          }
           else  {
             rgbColor.red = 0;
             rgbColor.green = 0;
             rgbColor.blue = 0;
-          }  // end else
+          }
 
           // loop through each horizontal line available in the bar drawing
           // the correct color there
@@ -500,16 +500,16 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
               rgbColor.red   *= 255;
               rgbColor.green *= 255;
               rgbColor.blue  *= 255;
-            }  // end if
+            }
             else  {
               rgbColor.red += step;
-            }  // end else
+            }
 
-          }  // end for i
+          }
 
           break;
 
-        }  // end case BUTTON_COLORBAR1
+        }
 
         // --------------------------------------------------------------------
         // Draw the bar of either SATURATION or GREEN next to the scroll bar
@@ -538,12 +538,12 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
             rgbColor.red   *= 255;
             rgbColor.green *= 255;
             rgbColor.blue  *= 255;
-          }  // end if
+          }
           else  {
             rgbColor.red = 0;
             rgbColor.green = 0;
             rgbColor.blue = 0;
-          }  // end else
+          }
 
           // loop through each horizontal line available in the bar drawing
           // the correct color there
@@ -562,16 +562,16 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
               rgbColor.red   *= 255;
               rgbColor.green *= 255;
               rgbColor.blue  *= 255;
-            }  // end if
+            }
             else  {
               rgbColor.green += step;
-            }  // end else
+            }
 
-          }  // end for i
+          }
 
           break;
 
-        }  // end case BUTTON_COLORBAR2
+        }
 
         // --------------------------------------------------------------------
         // Draw the bar of either VALUE or BLUE next to the scroll bar
@@ -601,12 +601,12 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
             rgbColor.red   *= 255.0f;
             rgbColor.green *= 255.0f;
             rgbColor.blue  *= 255.0f;
-          }  // end if
+          }
           else  {
             rgbColor.red = 0;
             rgbColor.green = 0;
             rgbColor.blue = 0;
-          }  // end else
+          }
 
           // loop through each horizontal line available in the bar drawing
           // the correct color there
@@ -625,22 +625,22 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
               rgbColor.red   *= 255;
               rgbColor.green *= 255;
               rgbColor.blue  *= 255;
-            }  // end if
+            }
             else  {
               rgbColor.blue += step;
-            }  // end else
+            }
 
-          }  // end for i
+          }
 
           break;
 
-        }  // end case BUTTON_COLORBAR3
+        }
 
-      }  // end switch
+      }
 
       return TRUE;
 
-    }  // end case WM_DRAWITEM
+    }
 
     // ------------------------------------------------------------------------
     // horizontal scrolling on the color bars
@@ -676,34 +676,34 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
           if (thumbPos > minPos)
             thumbPos--;
           break;
-        }  // end case SB_LINELEFT
+        }
         case SB_PAGELEFT:  {
           if (thumbPos - 45 >= minPos)
             thumbPos -= 45;
           else
             thumbPos = minPos;
           break;
-        }  // end case SB_PAGELEFT
+        }
         case SB_LINERIGHT:  {
           if (thumbPos < maxPos)
             thumbPos++;
           break;
-        }  // end case SB_LINERIGHT
+        }
         case SB_PAGERIGHT:  {
           if (thumbPos + 45 < maxPos)
             thumbPos += 45;
           else
             thumbPos = maxPos;
           break;
-        }  // end case SB_PAGERIGHT
+        }
         case SB_THUMBTRACK:  {
           thumbPos = nPos;
           break;
-        }  // end case SB_THUBTRACK
+        }
         default:  {
           return 0;
-        }  // end default
-      }  // end switch nScrollCode
+        }
+      }
 
       // set the new scrollbar position and the text with it
       SendMessage (hWndScroll, SBM_SETPOS, (WPARAM) thumbPos, (LPARAM) TRUE);
@@ -730,7 +730,7 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
 					rgbColor.alpha = (Real) GetDlgItemInt( hWndDlg, LABEL_ALPHA,
 																								  NULL, FALSE );
 
-        }  // end if
+        }
         else  {
           hsvColor.hue        = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR1,
                                                        NULL, FALSE);
@@ -749,7 +749,7 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
           rgbColor.red   *= 255;
           rgbColor.green *= 255;
           rgbColor.blue  *= 255;
-        }  // end else
+        }
 
         // store the color
         selectedColor.red   = (Int) rgbColor.red;
@@ -770,11 +770,11 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
         UpdateWindow (hWndColorBar2);
         UpdateWindow (hWndColorBar3);
 
-      }  // end if, color bar scroll message
+      }
 
       return 0;
 
-    }  // end case WM_HSCROLL
+    }
 
     // ------------------------------------------------------------------------
     case WM_COMMAND:  {
@@ -792,7 +792,7 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
           EndDialog( hWndDlg, TRUE );  // color selected
           break;
 
-        }  // end case IDOK
+        }
 
         // --------------------------------------------------------------------
         case IDCANCEL:  {
@@ -800,7 +800,7 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
           EndDialog( hWndDlg, FALSE );  // selection cancelled
           break;
 
-        }  // end case IDCANCEL
+        }
 
         // --------------------------------------------------------------------
         // Change from RGB mode to HSV mode and vice versa
@@ -847,7 +847,7 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
             SetWindowText (GetDlgItem (hWndDlg, BUTTON_RGB_HSV),
                            "Switch to RGB");
 
-          }  // end if, switch to HSV
+          }
           else  {  // switch to RGB
             hsvColor.hue = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR1, NULL, FALSE);
             hsvColor.saturation = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR2, NULL, FALSE);
@@ -885,20 +885,20 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
 
             mode = MODE_RGB;
 
-          }  // end else, switch to RGB
+          }
 
           // invalidate all the vertical color bars so they are redrawn
           InvalidateRect (hWndColorBar1, NULL, TRUE);
           InvalidateRect (hWndColorBar2, NULL, TRUE);
           InvalidateRect (hWndColorBar3, NULL, TRUE);
 
-        }  // end case BUTTON_RGB_HSV
+        }
 
-      }  // end switch (LOWORD (wParam))
+      }
 
       return 0;
 
-    } // end case WM_COMMAND
+    }
 
     // ------------------------------------------------------------------------
     // Only hide the window on a close rather than destroy it since it will
@@ -911,6 +911,6 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
     default:
       return 0;  // for all messages that are not processed
 
-  }  // end of switch (uMsg)
+  }
 
-}  // End of SelectColor
+}

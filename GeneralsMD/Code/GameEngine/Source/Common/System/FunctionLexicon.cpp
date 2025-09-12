@@ -400,12 +400,12 @@ void FunctionLexicon::loadTable( TableEntry *table,
 		// next table entry please
 		entry++;
 
-	}  // end while
+	}
 
 	// assign table to the index specified
 	m_tables[ tableIndex ] = table;
 
-}  // end loadTable
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Search the provided table for a function matching the key */
@@ -426,11 +426,11 @@ void *FunctionLexicon::keyToFunc( NameKeyType key, TableEntry *table )
 			return entry->func;
 		entry++;
 
-	}  // end if
+	}
 
 	return NULL;  // not found
 
-}  // end keyToFunc
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Search tables for the function given this key, if the index parameter
@@ -457,21 +457,21 @@ void *FunctionLexicon::findFunction( NameKeyType key, TableIndex index )
 			if( func )
 				break;  // exit for i
 
-		}  // end for i
+		}
 
-	}  // end if
+	}
 	else
 	{
 
 		// do NOT search all tables, just the one specified by the parameter
 		func = keyToFunc( key, m_tables[ index ] );
 
-	}  // end else
+	}
 
 	// return function, if found
 	return func;
 
-}  // end findFunction
+}
 
 #ifdef NOT_IN_USE
 //-------------------------------------------------------------------------------------------------
@@ -496,11 +496,11 @@ const char *FunctionLexicon::funcToName( void *func, TableEntry *table )
 		// not it, check next
 		entry++;
 
-	}  // end while
+	}
 
 	return NULL;  // not found
 
-}  // end funcToName
+}
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -517,14 +517,14 @@ FunctionLexicon::FunctionLexicon( void )
 	for( i = 0; i < MAX_FUNCTION_TABLES; i++ )
 		m_tables[ i ] = NULL;
 
-}  // end FunctionLexicon
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 FunctionLexicon::~FunctionLexicon( void )
 {
 
-}  // end ~FunctionLexicon
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize our dictionary of funtion pointers and symbols */
@@ -546,7 +546,7 @@ void FunctionLexicon::init( void )
 
 	validate();
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** reset */
@@ -562,7 +562,7 @@ void FunctionLexicon::reset( void )
 	// nothing dynamically loaded, just reinit the tables
 	init();
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update */
@@ -570,7 +570,7 @@ void FunctionLexicon::reset( void )
 void FunctionLexicon::update( void )
 {
 
-}  // end update
+}
 
 /*
 // !NOTE! We can not have this function, see the header for
@@ -596,11 +596,11 @@ char *FunctionLexicon::functionToName( void *func )
 		if( name )
 			return name;
 
-	}  // end for i
+	}
 
 	return NULL;  // not found
 
-}  // end functionToName
+}
 */
 
 //-------------------------------------------------------------------------------------------------
@@ -653,28 +653,28 @@ Bool FunctionLexicon::validate( void )
 														sourceEntry->name, lookAtEntry->name ));
 								valid = FALSE;
 
-							}  // end if
+							}
 
 						// next entry in this target table
 						lookAtEntry++;
 
-					}  // end while
+					}
 
-				}  // end for j
+				}
 
-			}  // end if
+			}
 
 			// next source entry
 			sourceEntry++;
 
-		}  // end while
+		}
 
-	}  // end for i
+	}
 
 	// return the valid state of our tables
 	return valid;
 
-}  // end validate
+}
 
 //============================================================================
 // FunctionLexicon::gameWinDrawFunc

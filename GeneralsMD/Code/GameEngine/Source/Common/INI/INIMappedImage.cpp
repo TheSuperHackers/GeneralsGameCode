@@ -72,9 +72,9 @@ void INI::parseMappedImageDefinition( INI* ini )
 		DEBUG_ASSERTCRASH( image, ("parseMappedImage: unable to allocate image for '%s'",
 															name.str()) );
 
-	}  // end if
+	}
 
 	// parse the ini definition
 	ini->initFromINI( image, image->getFieldParse());
 
-}  // end parseMappedImage
+}

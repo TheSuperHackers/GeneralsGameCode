@@ -271,7 +271,7 @@ UnsignedInt getPickTypesForContext( Bool forceAttackMode )
 
 	return types;
 
-}  // end getPickTypesForContext
+}
 
 //-------------------------------------------------------------------------------------------------
 UnsignedInt getPickTypesForCurrentSelection( Bool forceAttackMode )

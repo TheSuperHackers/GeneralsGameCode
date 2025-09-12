@@ -129,7 +129,7 @@ void MapPreview::interpolateColorForHeight( RGBColor *color,
 		colorTarget.green = color->green + (1.0f - color->green) * howBright;
 		colorTarget.blue = color->blue + (1.0f - color->blue) * howBright;
 
-	}  // end if
+	}
 	else  // interpolate darker
 	{
 
@@ -141,7 +141,7 @@ void MapPreview::interpolateColorForHeight( RGBColor *color,
 		colorTarget.green = color->green + (0.0f - color->green) * howDark;
 		colorTarget.blue = color->blue + (0.0f - color->blue) * howDark;
 
-	}  // end else
+	}
 
 	// interpolate toward the target color
 	color->red = color->red + (colorTarget.red - color->red) * t;
@@ -162,7 +162,7 @@ void MapPreview::interpolateColorForHeight( RGBColor *color,
 	if( color->blue > 1.0f )
 		color->blue = 1.0f;
 
-}  // end interpolateColorForHeight
+}
 
 Bool MapPreview::mapPreviewToWorld(const ICoord2D *radar, Coord3D *world)
 {
@@ -317,15 +317,15 @@ void MapPreview::buildMapPreviewTexture( CString tgaName )
 									sampleColor.blue += color.blue;
 									samples++;
 
-								}  // end if
+								}
 
-							}  // end if
+							}
 
-						}  // end for i
+						}
 
-					}  // end if
+					}
 
-				}  // end for j
+				}
 
 				// prevent divide by zeros
 				if( samples == 0 )
@@ -336,7 +336,7 @@ void MapPreview::buildMapPreviewTexture( CString tgaName )
 				color.green = sampleColor.green / (Real)samples;
 				color.blue = sampleColor.blue / (Real)samples;
 
-			}  // end if
+			}
 			else  // regular terrain ...
 			{
 				const Int samplesAway = 1;  // how many "tiles" from the center tile we will sample away
@@ -378,13 +378,13 @@ void MapPreview::buildMapPreviewTexture( CString tgaName )
 								sampleColor.blue += color.blue;
 								samples++;
 
-							}  // end if
+							}
 
-						}  // end for i
+						}
 
-					}  // end if
+					}
 
-				}  // end for j
+				}
 
 				// prevent divide by zeros
 				if( samples == 0 )
@@ -395,7 +395,7 @@ void MapPreview::buildMapPreviewTexture( CString tgaName )
 				color.green = sampleColor.green / (Real)samples;
 				color.blue = sampleColor.blue / (Real)samples;
 
-			}  // end else
+			}
 
 			//
 			// draw the pixel for the terrain at this point, note that because of the orientation
@@ -408,9 +408,9 @@ void MapPreview::buildMapPreviewTexture( CString tgaName )
 			//
 			m_pixelBuffer[y][x]= 255 | (REAL_TO_INT(color.red *255) << 8) | (REAL_TO_INT(color.green *255) << 16) | REAL_TO_INT(color.blue * 255)<< 24;
 
-		}  // end for x
+		}
 
-	}  // end for y
+	}
 	{
 		Targa tga;
 		tga.Header.Width = MAP_PREVIEW_WIDTH;
@@ -421,7 +421,7 @@ void MapPreview::buildMapPreviewTexture( CString tgaName )
 		tga.Save(tgaName,TGAF_IMAGE, FALSE);
 	}
 
-}  // end buildTerrainTexture
+}
 
 
 

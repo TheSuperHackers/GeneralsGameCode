@@ -197,6 +197,6 @@ protected:
 
 
 
-};  // end class W3DTerrainVisual
+};
 
 #endif  // end __W3DTERRAINVISUAL_H_

@@ -47,14 +47,14 @@ InactiveBody::InactiveBody( Thing *thing, const ModuleData* moduleData )
 						: BodyModule( thing, moduleData ), m_dieCalled(false)
 {
 	getObject()->setEffectivelyDead(true);
-}  // end InactiveBody
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 InactiveBody::~InactiveBody( void )
 {
 
-}  // end ~InactiveBody
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -146,7 +146,7 @@ Real InactiveBody::getHealth() const
 	// Inactive bodies have no health to get
 	return 0.0f;
 
-}  // end getHealth
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -171,7 +171,7 @@ void InactiveBody::crc( Xfer *xfer )
 	// extend base class
 	BodyModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -189,7 +189,7 @@ void InactiveBody::xfer( Xfer *xfer )
 	// base class
 	BodyModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -200,6 +200,6 @@ void InactiveBody::loadPostProcess( void )
 	// extend base class
 	BodyModule::loadPostProcess();
 
-}  // end loadPostProcess
+}
 
 

@@ -153,7 +153,7 @@ char *GUIEdit::saveAsDialog( void )
 	else
 		return NULL;
 
-}  // end saveAsDialog
+}
 
 // GUIEdit::openDialog ========================================================
 /** Bring up the standard windows browser open dialog and return
@@ -195,7 +195,7 @@ char *GUIEdit::openDialog( void )
 	else
 		return NULL;
 
-}  // end openDialog
+}
 
 // GUIEdit::setUnsaved ========================================================
 /** Set the current contents of the editor as either saved or unsaved,
@@ -224,7 +224,7 @@ void GUIEdit::setUnsaved( Bool unsaved )
 		sprintf( title, "GUIEdit:  %s  *", filename );
 		SetWindowText( m_appHWnd, title );
 
-	}  // end if
+	}
 	//else if( m_unsaved == TRUE && unsaved == FALSE )
 	else
 	{
@@ -234,12 +234,12 @@ void GUIEdit::setUnsaved( Bool unsaved )
 		sprintf( title, "GUIEdit:  %s", filename );
 		SetWindowText( m_appHWnd, title );
 
-	}  // end else
+	}
 
 	// save the new state we're in
 	m_unsaved = unsaved;
 
-}  // end setUnsaved
+}
 
 // GUIEdit::setSaveFile =======================================================
 /** Set our member variables for the full path and filename passed in
@@ -260,7 +260,7 @@ void GUIEdit::setSaveFile( const char *fullPathAndFilename )
 	ptr = strrchr( fullPathAndFilename, '\\' ) + 1;
 	strcpy( m_saveFilename, ptr );
 
-}  // end setSaveFile
+}
 
 // GUIEdit::validateParentForCreate ===========================================
 /** This method is used when creating new windows and gadgets, if a
@@ -283,11 +283,11 @@ Bool GUIEdit::validateParentForCreate( GameWindow *parent )
 								"Illegal Parent", MB_OK );
 		return FALSE;
 
-	}  // end if
+	}
 
 	return TRUE;  // ok
 
-}  // end validateParentForCreate
+}
 
 // GUIEdit::findSelectionEntry ================================================
 /** Find selection entry for this window */
@@ -311,11 +311,11 @@ WindowSelectionEntry *GUIEdit::findSelectionEntry( GameWindow *window )
 		// next entry
 		entry = entry->next;
 
-	}  // end while
+	}
 
 	return NULL;  // not found
 
-}  // end findSelectionEntry
+}
 
 // GUIEdit::normalizeRegion ===================================================
 /** Normalize the region so that lo and hi are actually lo and hi */
@@ -334,7 +334,7 @@ void GUIEdit::normalizeRegion( IRegion2D *region )
 			region->hi = region->lo;
 			region->lo = temp;
 
-		}  // end if
+		}
 		else
 		{
 
@@ -342,9 +342,9 @@ void GUIEdit::normalizeRegion( IRegion2D *region )
 			region->hi.x = region->lo.x;
 			region->lo.x = temp.x;
 
-		}  // end else
+		}
 
-	}  // end if
+	}
 	else if( region->hi.y < region->lo.y )
 	{
 
@@ -352,9 +352,9 @@ void GUIEdit::normalizeRegion( IRegion2D *region )
 		region->hi.y = region->lo.y;
 		region->lo.y = temp.y;
 
-	}  // end if
+	}
 
-}  // end normalizeRegion
+}
 
 // GUIEdit::selectWindowsInRegion =============================================
 /** Select all the windows that are fully in the region */
@@ -393,14 +393,14 @@ void GUIEdit::selectWindowsInRegion( IRegion2D *region )
 			// add to selection list
 			selectWindow( window );
 
-		}  // end if
+		}
 
 		// go to next window
 		window = window->winGetNext();
 
-	}  // end while
+	}
 
-}  // end selectWindowsInRegion
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -438,7 +438,7 @@ GUIEdit::GUIEdit( void )
 	m_layoutInitString = GUIEDIT_NONE_STRING;
 	m_layoutUpdateString = GUIEDIT_NONE_STRING;
 	m_layoutShutdownString = GUIEDIT_NONE_STRING;
-}  // end GUIEdit
+}
 
 // GUIEdit::~GUIEdit ==========================================================
 /** */
@@ -468,7 +468,7 @@ GUIEdit::~GUIEdit( void )
 	// all the shutdown routine
 	shutdown();
 
-}  // end ~GUIEdit
+}
 
 // GUIEdit::init ==============================================================
 /** Initialize all the GUI edit data */
@@ -618,7 +618,7 @@ void GUIEdit::init( void )
 //	{
 //		TheIMEManager->init();
 //	}
-}  // end init
+}
 
 // GUIEdit::shutdown ==========================================================
 /** Shutdown our GUI edit application */
@@ -713,7 +713,7 @@ void GUIEdit::shutdown( void )
 	TheKeyboard = NULL;
 
 
-}  // end shutdown
+}
 
 // GUIEdit::update ============================================================
 /** Update method for our GUI edit application */
@@ -733,7 +733,7 @@ void GUIEdit::update( void )
 		TheMessageStream->propagateMessages();
 		TheCommandList->reset();
 
-	}  // end if
+	}
 
 	// update the window manager itself
 	TheWindowManager->update();
@@ -741,7 +741,7 @@ void GUIEdit::update( void )
 	// draw the edit window
 	TheEditWindow->draw();
 
-}  // end update
+}
 
 // GUIEdit::writeConfigFile ===================================================
 /** Write the guiedit config file */
@@ -759,7 +759,7 @@ Bool GUIEdit::writeConfigFile( const char *filename )
 		assert( 0 );
 		return FALSE;
 
-	}  // end if
+	}
 
 	// version
 	fprintf( fp, "GUIEdit Config file version '%d'\n", GUIEDIT_CONFIG_VERSION );
@@ -796,7 +796,7 @@ Bool GUIEdit::writeConfigFile( const char *filename )
 
 	return TRUE;
 
-}  // end writeConfigFile
+}
 
 // GUIEdit::readConfigFile ====================================================
 /** Read the guiedit config file */
@@ -861,7 +861,7 @@ Bool GUIEdit::readConfigFile( const char *filename )
 
 	return TRUE;
 
-}  // end readConfigFile
+}
 
 // GUIEdit::readFontFile ======================================================
 /** Read the font file defintitions and load them */
@@ -904,7 +904,7 @@ void GUIEdit::readFontFile( const char *filename )
 			fontBuffer[ index++ ] = c;
 			c = fgetc( fp );
 
-		}  // end while
+		}
 		fontBuffer[ index ] = '\0';
 		c = fgetc( fp );  // the end quite itself
 
@@ -921,14 +921,14 @@ void GUIEdit::readFontFile( const char *filename )
 							 fontBuffer, size, bold );
 			MessageBox( m_appHWnd, buffer, "Cannot Load Font", MB_OK );
 
-		}  // end if
+		}
 
-	}  // end for i
+	}
 
 	// close the file
 	fclose( fp );
 
-}  // end readFontFile
+}
 
 // GUIEdit::writeFontFile =====================================================
 /** If we can, write a file containing a definition of all the fonts
@@ -958,12 +958,12 @@ void GUIEdit::writeFontFile( const char *filename )
 	{
 		fprintf( fp, "AVAILABLEFONT = \"%s\" Size: %d Bold: %d\n",
 						 font->nameString.str(), font->pointSize, font->bold );
-	}  // end for
+	}
 
 	// close the file
 	fclose( fp );
 
-}  // end writeFontFile
+}
 
 // GUIEdit::setMode ===========================================================
 /** Set a new mode for the editor */
@@ -983,7 +983,7 @@ void GUIEdit::setMode( EditMode mode )
 		TheMessageStream->removeTranslator( transID );
 		transID = 0;
 
-	}  // end if
+	}
 
 	// assign new mode
 	m_mode = mode;
@@ -1072,9 +1072,9 @@ void GUIEdit::setMode( EditMode mode )
 			statusMessage( STATUS_MODE, "Drag right to resize" );
 			break;
 
-	}  // end switch
+	}
 
-}  // end setMode
+}
 
 // GUIEdit::setCursor =========================================================
 /** Set the cursor to the specified type */
@@ -1121,12 +1121,12 @@ void GUIEdit::setCursor( CursorType type )
 			identifier = IDC_WAIT;
 			break;
 
-	}  // end switchType
+	}
 
 	// set the new cursor
 	SetCursor( LoadCursor( NULL, identifier ) );
 
-}  // end setCursor
+}
 
 // pointInChild ===============================================================
 /** Given a mouse position, get the topmost window at that location. We needed
@@ -1155,19 +1155,19 @@ static GameWindow *pointInChild( Int x, Int y , GameWindow *win)
 			origin.y += tempRegion.lo.y;
 			parent = parent->winGetParent();
 
-		}  // end while
+		}
 		child->winGetSize(&tempX,&tempY);
 		if( x >= origin.x && x <= origin.x + tempX &&
 				y >= origin.y && y <= origin.y + tempY &&
 				BitIsSet( child->winGetStatus(), WIN_STATUS_HIDDEN ) == FALSE)
 			return child->winPointInChild( x, y );
 
-	}  // end for child
+	}
 
 	// not in any children, must be in parent
 	return win;
 
-}  // end pointInChild
+}
 
 // pointInAnyChild ============================================================
 /** Given a mouse position, get the topmost window at that location. We needed
@@ -1196,7 +1196,7 @@ static GameWindow *pointInAnyChild( Int x, Int y, Bool ignoreHidden, GameWindow 
 			origin.y += tempRegion.lo.y;
 			parent = parent->winGetParent();
 
-		}  // end while
+		}
 		child->winGetSize(&tempX,&tempY);
 		if( x >= origin.x && x <= origin.x + tempX &&
 				y >= origin.y && y <= origin.y + tempY )
@@ -1205,14 +1205,14 @@ static GameWindow *pointInAnyChild( Int x, Int y, Bool ignoreHidden, GameWindow 
 			if( !(ignoreHidden == TRUE &&	BitIsSet( child->winGetStatus(), WIN_STATUS_HIDDEN )) )
 				return pointInChild( x, y , child);
 
-		}  // end if
+		}
 
-	}  // end for child
+	}
 
 	// not in any children, must be in parent
 	return win;
 
-}  // end pointInAnyChild
+}
 
 // GUIEdit::getWindowAtPos ====================================================
 /** Given a mouse position, get the topmost window at that location */
@@ -1238,9 +1238,9 @@ GameWindow *GUIEdit::getWindowAtPos( Int x, Int y )
 			pick = pointInAnyChild( x, y, FALSE, window );
 			break;  // exit for
 
-		}  // end if
+		}
 
-	}  // end for
+	}
 
 	//
 	// gadget controls are just composed of generic windows and buttons,
@@ -1287,7 +1287,7 @@ GameWindow *GUIEdit::getWindowAtPos( Int x, Int y )
 																			GWS_SCROLL_LISTBOX ) )
 						pick = grandParent;
 
-				}  // end if
+				}
 
 				//must check to see of the parent of a scroll box is a combo box
 				if(BitIsSet(pick->winGetStyle(), GWS_SCROLL_LISTBOX))
@@ -1296,15 +1296,15 @@ GameWindow *GUIEdit::getWindowAtPos( Int x, Int y )
 					if( grandParent && BitIsSet( grandParent->winGetStyle(), GWS_COMBO_BOX))
 						pick = grandParent;
 				}
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	return pick;
 
-}  // end getWindowAtPos
+}
 
 // GUIEdit::clipCreationParamsToParent ========================================
 /** when creating child windows we don't want them to exist outside the
@@ -1362,7 +1362,7 @@ void GUIEdit::clipCreationParamsToParent( GameWindow *parent,
 	*width = newWidth;
 	*height= newHeight;
 
-}  // end clipcreationParamsToParent
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -1383,9 +1383,9 @@ void GUIEdit::deleteAllWindows( void )
 		deleteWindow( window );
 		window = next;
 
-	}  // end while
+	}
 
-}  // end deleteAllWindows
+}
 
 // GUIEdit::removeWindowCleanup ===============================================
 /** This is called on each window before it is deleted or removed from
@@ -1423,7 +1423,7 @@ void GUIEdit::removeWindowCleanup( GameWindow *window )
 	for( child = window->winGetChild(); child; child = child->winGetNext() )
 		removeWindowCleanup( child );
 
-}  // end removeWindowCleanup
+}
 
 // GUIEdit::deleteWindow ======================================================
 /** Delete the window from the editor */
@@ -1440,7 +1440,7 @@ void GUIEdit::deleteWindow( GameWindow *window )
 	// we've changed contents
 	setUnsaved( TRUE );
 
-}  // end deleteWindow
+}
 
 // GUIEdit::newWindow =========================================================
 /** Create a new window of the specified type.  This is the single creation
@@ -1523,11 +1523,11 @@ GameWindow *GUIEdit::newWindow( UnsignedInt windowStyle,
 									MB_OK | MB_ICONERROR );
 			break;
 
-	}  // end switch
+	}
 
 	return window;
 
-}  // end newWindow
+}
 
 // GUIEdit::newUserWindow =====================================================
 /** Create a new window at the given location */
@@ -1585,7 +1585,7 @@ GameWindow *GUIEdit::newUserWindow( GameWindow *parent, Int x, Int y,
 
 	return window;
 
-}  // end newUserWindow
+}
 
 // GUIEdit::newPushButton =====================================================
 /** Create a new push button */
@@ -1667,7 +1667,7 @@ GameWindow *GUIEdit::newPushButton( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -1677,7 +1677,7 @@ GameWindow *GUIEdit::newPushButton( GameWindow *parent,
 
 	return window;
 
-}  // end newPushButton
+}
 
 // GUIEdit::newCheckBox =======================================================
 /** Create a new check box */
@@ -1772,7 +1772,7 @@ GameWindow *GUIEdit::newCheckBox( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -1782,7 +1782,7 @@ GameWindow *GUIEdit::newCheckBox( GameWindow *parent,
 
 	return window;
 
-}  // end newCheckBox
+}
 
 // GUIEdit::newRadioButton ====================================================
 /** Create a new radio button */
@@ -1880,7 +1880,7 @@ GameWindow *GUIEdit::newRadioButton( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -1890,7 +1890,7 @@ GameWindow *GUIEdit::newRadioButton( GameWindow *parent,
 
 	return window;
 
-}  // end newRadioButton
+}
 
 // GUIEdit::newTabControl ====================================================
 /** Create a tab control gadget */
@@ -2078,7 +2078,7 @@ GameWindow *GUIEdit::newTabControl( GameWindow *parent,
 		GadgetTabControlSetHiliteColorBackground( window, info->color );
 		GadgetTabControlSetHiliteBorderColorBackground( window, info->borderColor );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -2088,7 +2088,7 @@ GameWindow *GUIEdit::newTabControl( GameWindow *parent,
 
 	return window;
 
-}  // end newTabControl
+}
 
 // GUIEdit::newHorizontalSlider ===============================================
 /** Create a new horizontal slider*/
@@ -2199,7 +2199,7 @@ GameWindow *GUIEdit::newHorizontalSlider( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -2209,7 +2209,7 @@ GameWindow *GUIEdit::newHorizontalSlider( GameWindow *parent,
 
 	return window;
 
-}  // end newHorizontalSlider
+}
 
 // GUIEdit::newVerticlaSlider =================================================
 /** Create a new vertical slider */
@@ -2320,7 +2320,7 @@ GameWindow *GUIEdit::newVerticalSlider( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -2330,7 +2330,7 @@ GameWindow *GUIEdit::newVerticalSlider( GameWindow *parent,
 
 	return window;
 
-}  // end newVerticalSlider
+}
 
 // GUIEdit::newProgressBar ====================================================
 /** Create a new progress bar */
@@ -2455,7 +2455,7 @@ GameWindow *GUIEdit::newProgressBar( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -2465,7 +2465,7 @@ GameWindow *GUIEdit::newProgressBar( GameWindow *parent,
 
 	return window;
 
-}  // end newProgressBar
+}
 
 // GUIEdit::newListbox ========================================================
 /** Create a new list box */
@@ -2709,7 +2709,7 @@ GameWindow *GUIEdit::newComboBox( GameWindow *parent,
 				GadgetButtonSetHiliteSelectedColor( upButton, info->color );
 				GadgetButtonSetHiliteSelectedBorderColor( upButton, info->borderColor );
 
-			}  // end if
+			}
 
 			GameWindow *downButton = GadgetListBoxGetDownButton( listBox );
 			if( downButton )
@@ -2742,7 +2742,7 @@ GameWindow *GUIEdit::newComboBox( GameWindow *parent,
 				GadgetButtonSetHiliteSelectedColor( downButton, info->color );
 				GadgetButtonSetHiliteSelectedBorderColor( downButton, info->borderColor );
 
-			}  // end if
+			}
 
 			GameWindow *slider = GadgetListBoxGetSlider( listBox );
 			if( slider )
@@ -2814,7 +2814,7 @@ GameWindow *GUIEdit::newComboBox( GameWindow *parent,
 				GadgetSliderSetHiliteSelectedThumbBorderColor( slider, info->borderColor );
 
 				}
-		} //end listbox if
+		}
 		GameWindow *dropDownButton = GadgetComboBoxGetDropDownButton( window );
 		if( dropDownButton )
 		{
@@ -2846,7 +2846,7 @@ GameWindow *GUIEdit::newComboBox( GameWindow *parent,
 			GadgetButtonSetHiliteSelectedColor( dropDownButton, info->color );
 			GadgetButtonSetHiliteSelectedBorderColor( dropDownButton, info->borderColor );
 
-		}  // end if
+		}
 
 		Color color, border;
 
@@ -2869,7 +2869,7 @@ GameWindow *GUIEdit::newComboBox( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}// end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -2880,7 +2880,7 @@ GameWindow *GUIEdit::newComboBox( GameWindow *parent,
 	return window;
 
 
-} // end newComboBox
+}
 
 // GUIEdit::newListbox ========================================================
 /** Create a new list box */
@@ -3010,7 +3010,7 @@ GameWindow *GUIEdit::newListbox( GameWindow *parent,
 			GadgetButtonSetHiliteSelectedColor( upButton, info->color );
 			GadgetButtonSetHiliteSelectedBorderColor( upButton, info->borderColor );
 
-		}  // end if
+		}
 
 		GameWindow *downButton = GadgetListBoxGetDownButton( window );
 		if( downButton )
@@ -3043,7 +3043,7 @@ GameWindow *GUIEdit::newListbox( GameWindow *parent,
 			GadgetButtonSetHiliteSelectedColor( downButton, info->color );
 			GadgetButtonSetHiliteSelectedBorderColor( downButton, info->borderColor );
 
-		}  // end if
+		}
 
 		GameWindow *slider = GadgetListBoxGetSlider( window );
 		if( slider )
@@ -3114,7 +3114,7 @@ GameWindow *GUIEdit::newListbox( GameWindow *parent,
 			GadgetSliderSetHiliteSelectedThumbColor( slider, info->color );
 			GadgetSliderSetHiliteSelectedThumbBorderColor( slider, info->borderColor );
 
-		}  // end if, slider
+		}
 
 		Color color, border;
 
@@ -3133,7 +3133,7 @@ GameWindow *GUIEdit::newListbox( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -3143,7 +3143,7 @@ GameWindow *GUIEdit::newListbox( GameWindow *parent,
 
 	return window;
 
-}	 // end newListbox
+}
 
 // GUIEdit::newTextEntry ======================================================
 /** Create a new text entry */
@@ -3239,7 +3239,7 @@ GameWindow *GUIEdit::newTextEntry( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -3249,7 +3249,7 @@ GameWindow *GUIEdit::newTextEntry( GameWindow *parent,
 
 	return window;
 
-}  // end newTextEntry
+}
 
 // GUIEdit::newStaticText =====================================================
 /** Create a new static text*/
@@ -3327,7 +3327,7 @@ GameWindow *GUIEdit::newStaticText( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -3337,7 +3337,7 @@ GameWindow *GUIEdit::newStaticText( GameWindow *parent,
 
 	return window;
 
-}  // end newStaticText
+}
 
 // GUIEdit::createStatusBar ===================================================
 /** Create a status bar at the bottom of the editor */
@@ -3371,11 +3371,11 @@ void GUIEdit::createStatusBar( void )
 
 		sizes[ i ] = (i + 1) * (width / STATUS_NUM_PARTS);
 
-	}  // end for i
+	}
 	sizes[ STATUS_NUM_PARTS - 1 ] = -1;  // right edge
   SendMessage( m_statusBarHWnd, SB_SETPARTS, STATUS_NUM_PARTS, (LPARAM)sizes );
 
-}  // end createStatusBar
+}
 
 // GUIEdit::statusMessage =====================================================
 /** Set a message in the status bar */
@@ -3391,12 +3391,12 @@ void GUIEdit::statusMessage( StatusPart part, const char *message )
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	if( m_statusBarHWnd )
 		SendMessage( m_statusBarHWnd, SB_SETTEXT, part, (LPARAM)message );
 
-}  // end statusMessage
+}
 
 // GUIEdit::createToolbar =====================================================
 /** Create the toolbar for the editor */
@@ -3404,7 +3404,7 @@ void GUIEdit::statusMessage( StatusPart part, const char *message )
 void GUIEdit::createToolbar( void )
 {
 
-}  // end createToolbar
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -3429,7 +3429,7 @@ Bool GUIEdit::newLayout( void )
 
 	return TRUE;
 
-}  // end newLayout
+}
 
 // GUIEdit::menuExit ==========================================================
 /** The user clicked on exit in the menu and wishes to exit the editor */
@@ -3465,9 +3465,9 @@ Bool GUIEdit::menuExit( void )
 										"File not saved.  If you continue to exit all data will be LOST!",
 										"File Not Saved", MB_OK );
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// ask them if they really want to quit
 	result = MessageBox( m_appHWnd, "Exit GUIEdit?", "Really Quit?", MB_YESNO );
@@ -3476,7 +3476,7 @@ Bool GUIEdit::menuExit( void )
 
 	return TRUE;
 
-}  // end menuExit
+}
 
 // GUIEdit::menuNew ===========================================================
 /** file->new menu option */
@@ -3516,11 +3516,11 @@ Bool GUIEdit::menuNew( void )
 				if( result == IDNO )
 					return TRUE;  // they chose to proceed anyway, no error
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// reset the layout in the editor
 	strcpy( m_savePathAndFilename, "" );
@@ -3530,7 +3530,7 @@ Bool GUIEdit::menuNew( void )
 
 	return TRUE;
 
-}  // end menuNew
+}
 
 // GUIEdit::stripNameDecorations ==============================================
 /** Strip name decorations of the entire tree of windows */
@@ -3564,9 +3564,9 @@ void GUIEdit::stripNameDecorations( GameWindow *root )
 			// put the name only in the decoration field
 			instData->m_decoratedNameString = nameOnly;
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// strip from children
 	GameWindow *child;
@@ -3576,7 +3576,7 @@ void GUIEdit::stripNameDecorations( GameWindow *root )
 	// onto the next
 	stripNameDecorations( root->winGetNext() );
 
-}  // end stripNameDecorations
+}
 
 //=============================================================================
 /** After a load, we will restore default callbacks to all user windows
@@ -3598,7 +3598,7 @@ void GUIEdit::revertDefaultCallbacks( GameWindow *root )
 		root->winSetTooltipFunc( TheWindowManager->getDefaultTooltip() );
 		root->winSetDrawFunc( TheWindowManager->getDefaultDraw() );
 
-	}  // end if
+	}
 
 	// do the children
 	revertDefaultCallbacks( root->winGetChild() );
@@ -3606,7 +3606,7 @@ void GUIEdit::revertDefaultCallbacks( GameWindow *root )
 	// do the next window
 	revertDefaultCallbacks( root->winGetNext() );
 
-}  // end revertDefaultCallbacks
+}
 
 // GUIEdit::menuOpen ==========================================================
 /** User has clicked on file->open */
@@ -3647,11 +3647,11 @@ Bool GUIEdit::menuOpen( void )
 				if( result == IDNO )
 					return TRUE;  // they chose to proceed anyway, no error
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// open the standard window file browser
 	filePath = openDialog();
@@ -3706,7 +3706,7 @@ Bool GUIEdit::menuOpen( void )
 
 	return TRUE;
 
-}  // end menuOpen
+}
 
 // GUIEdit::menuSave ==========================================================
 /** file->save menu option */
@@ -3727,17 +3727,17 @@ Bool GUIEdit::menuSave( void )
 		// our contents are now considered "unchanged"
 		setUnsaved( FALSE );
 
-	}  // end if
+	}
 	else
 	{
 
 		MessageBox( m_appHWnd, "Layout not saved!", "Error", MB_OK );
 
-	}  // end else
+	}
 
 	return success;
 
-}  // end menuSave
+}
 
 // GUIEdit::menuSaveAs ========================================================
 /** file->saveAs menu option */
@@ -3765,17 +3765,17 @@ Bool GUIEdit::menuSaveAs( void )
 		// our contents are now considered "unchanged"
 		setUnsaved( FALSE );
 
-	}  // end if
+	}
 	else
 	{
 
 		MessageBox( m_appHWnd, "Layout not saved!", "Error", MB_OK );
 
-	}  // end else
+	}
 
 	return success;
 
-}  // end menuSaveAs
+}
 
 // GUIEdit::menuCopy ==========================================================
 /** Copy selected windows into clipboard */
@@ -3793,7 +3793,7 @@ Bool GUIEdit::menuCopy( void )
 								"No Windows Selected", MB_OK );
 		return TRUE;
 
-	}  // end if
+	}
 
 	//
 	// cut the selected windows out of the current window system, and
@@ -3803,7 +3803,7 @@ Bool GUIEdit::menuCopy( void )
 
 	return TRUE;
 
-}  // end menuCopy
+}
 
 // GUIEdit::menuPaste =========================================================
 /** Paste contents of clipboard into current layout */
@@ -3814,7 +3814,7 @@ Bool GUIEdit::menuPaste( void )
 	TheGUIEditWindowManager->pasteClipboard();
 	return TRUE;
 
-}  // end menuPaste
+}
 
 // GUIEdit::menuCut ===========================================================
 /** Cut selected windows into the clipboard */
@@ -3832,7 +3832,7 @@ Bool GUIEdit::menuCut( void )
 								"No Windows Selected", MB_OK );
 		return TRUE;
 
-	}  // end if
+	}
 
 	//
 	// cut the selected windows out of the current window system, and
@@ -3842,7 +3842,7 @@ Bool GUIEdit::menuCut( void )
 
 	return TRUE;
 
-}  // end menuCut
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -3866,7 +3866,7 @@ Bool GUIEdit::isWindowSelected( GameWindow *window )
 	else
 		return FALSE;
 
-}  // end isWindowSelected
+}
 
 // GUIEdit::selectWindow ======================================================
 /** Add window to selection list */
@@ -3892,7 +3892,7 @@ void GUIEdit::selectWindow( GameWindow *window )
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	// fill out information and tie to head of list
 	entry->window = window;
@@ -3906,7 +3906,7 @@ void GUIEdit::selectWindow( GameWindow *window )
 	if( selectionCount() == 1 )
 		TheHierarchyView->selectWindow( window );
 
-}  // end selectWindow
+}
 
 // GUIEdit::unSelectWindow ====================================================
 /** Remove window from the selection list */
@@ -3935,9 +3935,9 @@ void GUIEdit::unSelectWindow( GameWindow *window )
 		// delete the entry
 		delete entry;
 
-	}  // end if
+	}
 
-}  // end unSelectWindow
+}
 
 // GUIEdit::clearSelections ===================================================
 /** Clear the entire selection list */
@@ -3948,7 +3948,7 @@ void GUIEdit::clearSelections( void )
 	while( m_selectList )
 		unSelectWindow( m_selectList->window );
 
-}  // end clearSelections
+}
 
 // GUIEdit::selectionCount ====================================================
 /** How many items are selected */
@@ -3965,11 +3965,11 @@ Int GUIEdit::selectionCount( void )
 		count++;
 		select = select->next;
 
-	}  // end while
+	}
 
 	return count;
 
-}  // end selectionCount
+}
 
 // GUIEdit::notifyNewWindow ===================================================
 /** The passed in window has just been added into the GUI layout.  It
@@ -4003,9 +4003,9 @@ void GUIEdit::notifyNewWindow( GameWindow *window )
 		for( child = window->winGetChild(); child; child = child->winGetNext() )
 			notifyNewWindow( child );
 
-	}  // end if
+	}
 
-}  // end notifyNewWindow
+}
 
 // GUIEdit::deleteSelected ====================================================
 /** Delete the windows in the selection list */
@@ -4031,7 +4031,7 @@ void GUIEdit::deleteSelected( void )
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	// fill out the delete list
 	for( i = 0, select = m_selectList; i < count; i++, select = select->next )
@@ -4044,7 +4044,7 @@ void GUIEdit::deleteSelected( void )
 	// free memory for the delete list
 	delete [] deleteList;
 
-}  // end deleteSelected
+}
 
 // GUIEdit::bringSelectedToTop ================================================
 /** Bring the selected windows to the top so they draw on top of
@@ -4074,7 +4074,7 @@ void GUIEdit::bringSelectedToTop( void )
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	// take the snapshot
 	Int i;
@@ -4092,12 +4092,12 @@ void GUIEdit::bringSelectedToTop( void )
 		// update the hierarchy to have the new window on the top
 		TheHierarchyView->bringWindowToTop( snapshot[ i ] );
 
-	}  // end for i
+	}
 
 	// delete the snapshot list
 	delete [] snapshot;
 
-}  // end bringSelectedToTop
+}
 
 // GUIEdit::dragMoveSelectedWindows ===========================================
 /** Move all the windows in the selection list from a drag move, note
@@ -4142,10 +4142,10 @@ void GUIEdit::dragMoveSelectedWindows( ICoord2D *dragOrigin,
 		// goto next selected window
 		select = select->next;
 
-	}  // end while
+	}
 
 
-}  // end dragMoveSelectedWindows
+}
 
 // GUIEdit::getSelectList =====================================================
 /** Return the selection list */
@@ -4155,7 +4155,7 @@ WindowSelectionEntry *GUIEdit::getSelectList( void )
 
 	return m_selectList;
 
-}  // end getSelectList
+}
 
 // GUIEdit::getFirstSelected ==================================================
 /** Get the first GameWindow * from the selection list */
@@ -4168,7 +4168,7 @@ GameWindow *GUIEdit::getFirstSelected( void )
 
 	return NULL;
 
-}  // end getFirstSelected
+}
 
 // GUIEdit::computeSafeLocation ===============================================
 /** If we attempt to move the window to the given (x,y) it may result
@@ -4215,7 +4215,7 @@ void GUIEdit::computeSafeLocation( GameWindow *window,
 		else if( region.hi.y + dy > parentSize.y )
 			dy = parentSize.y - region.hi.y;
 
-	}  // end else if, parent
+	}
 
 	// Move the window, but keep it completely visible within screen boundaries
 	IRegion2D newRegion;
@@ -4246,7 +4246,7 @@ void GUIEdit::computeSafeLocation( GameWindow *window,
 	*safeX = newRegion.lo.x;
 	*safeY = newRegion.lo.y;
 
-}  // end computeSafeLocation
+}
 
 // GUIEdit::computeSafeSizeLocation ===========================================
 /** Like the method computeSafeLocation, this method also takes into
@@ -4281,7 +4281,7 @@ void GUIEdit::computeSafeSizeLocation( GameWindow *window,
 		parent->winGetScreenPosition( &parentLoc.x, &parentLoc.y );
 		parent->winGetSize( &parentSize.x, &parentSize.y );
 
-	}  // end if
+	}
 
 	// upper left corner must be in screen or in parent
 	topLeftLimit.x = 0;  // screen top left
@@ -4309,7 +4309,7 @@ void GUIEdit::computeSafeSizeLocation( GameWindow *window,
 		bottomRightLimit.x = parentLoc.x + parentSize.x;
 		bottomRightLimit.y = parentLoc.y + parentSize.y;
 
-	}  // end if
+	}
 	if( newX + newWidth > bottomRightLimit.x )
 		newWidth = bottomRightLimit.x - newX;
 	if( newY + newHeight > bottomRightLimit.y )
@@ -4326,7 +4326,7 @@ void GUIEdit::computeSafeSizeLocation( GameWindow *window,
 		*safeY = *safeY - parentLoc.y;
 	}
 
-}  // end computeSafeSizeLocation
+}
 
 // GUIEdit::computeResizeLocation =============================================
 /** Given the current resize drag mode, the selected window to resize,
@@ -4513,7 +4513,7 @@ void GUIEdit::computeResizeLocation( EditMode resizeMode,
 
 			break;
 
-	}  // end switch( resizeMode )
+	}
 
 	// to finalize the size we must now clip to any parent or the screen
 	computeSafeSizeLocation( window,
@@ -4522,7 +4522,7 @@ void GUIEdit::computeResizeLocation( EditMode resizeMode,
 													 &resultLoc->x, &resultLoc->y,
 													 &resultSize->x, &resultSize->y );
 
-}  // end computeResizeLocation
+}
 
 // GUIEdit::moveWindowTo ======================================================
 /** Move the window passed into the the absolute position (x,y),
@@ -4537,7 +4537,7 @@ void GUIEdit::moveWindowTo( GameWindow *window, Int x, Int y )
 	// we've now made a change
 	TheEditor->setUnsaved( TRUE );
 
-}  // end moveWindowTo
+}
 
 // GUIEdit::windowIsGadget ====================================================
 /** Return TRUE if this window is one of our predefined gadtet types */
@@ -4551,7 +4551,7 @@ Bool GUIEdit::windowIsGadget( GameWindow *window )
 
 	return BitIsSet( window->winGetStyle(), GWS_GADGET_WINDOW );
 
-}  // end windowIsGadget
+}
 
 // GUIEdit::gridSnapLocation ==================================================
 /** Given the source input point, return in 'snapped' the closest grid
@@ -4567,7 +4567,7 @@ void GUIEdit::gridSnapLocation( ICoord2D *source, ICoord2D *snapped )
 	snapped->x = (source->x / m_gridResolution) * m_gridResolution;
 	snapped->y = (source->y / m_gridResolution) * m_gridResolution;
 
-}  // end gridSnapLocation
+}
 
 // GUIEdit::checkMenuItem =====================================================
 /** Check the menu item from the guiedit main menu */
@@ -4583,7 +4583,7 @@ void GUIEdit::checkMenuItem( Int item )
 	// check it
 	CheckMenuItem( menu, item, MF_CHECKED );
 
-}  // end checkMenuItem
+}
 
 // GUIEdit::unCheckMenuItem ===================================================
 /** Un-check the menu item from the guiedit main menu */
@@ -4599,7 +4599,7 @@ void GUIEdit::unCheckMenuItem( Int item )
 	// check it
 	CheckMenuItem( menu, item, MF_UNCHECKED );
 
-}  // end unCheckMenuItem
+}
 
 // GUIEdit::isNameDuplicate ===================================================
 /** Is the name passed in found as the name of any window in in the
@@ -4630,7 +4630,7 @@ Bool GUIEdit::isNameDuplicate( GameWindow *root, GameWindow *ignore, AsciiString
 	// check the next window in the list
 	return isNameDuplicate( root->winGetNext(), ignore, name );
 
-}  // end isNameDuplicate
+}
 
 // GUIEdit::loadGUIEditFontLibrary ============================================
 /** Load the set of fonts that we will make available to users in
@@ -4653,7 +4653,7 @@ void GUIEdit::loadGUIEditFontLibrary( FontLibrary *library )
 	library->getFont( times, 10, FALSE );
 	library->getFont( times, 10, TRUE );
 
-}  // end loadGUIEditFontLibrary
+}
 
 // GUIEdit::setShowHiddenOutlines =============================================
 //=============================================================================
@@ -4667,7 +4667,7 @@ void GUIEdit::setShowHiddenOutlines( Bool show )
 	else
 		CheckMenuItem( GetMenu( m_appHWnd ), MENU_SHOW_HIDDEN_OUTLINES, MF_UNCHECKED );
 
-}  // end setShowHiddenOutlines
+}
 
 // GUIEdit::setShowSeeThruOutlines ============================================
 //=============================================================================
@@ -4681,5 +4681,5 @@ void GUIEdit::setShowSeeThruOutlines( Bool show )
 	else
 		CheckMenuItem( GetMenu( m_appHWnd ), MENU_SHOW_SEE_THRU_OUTLINES, MF_UNCHECKED );
 
-}  // end setShowSeeThruOutlines
+}
 

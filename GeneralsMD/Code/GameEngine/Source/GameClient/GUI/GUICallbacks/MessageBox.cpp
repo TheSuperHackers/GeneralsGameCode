@@ -113,7 +113,7 @@ WindowMsgHandledType MessageBoxSystem( GameWindow *window, UnsignedInt msg,
 			window->winSetUserData( NULL );
 			break;
 
-		}  // end case
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -125,7 +125,7 @@ WindowMsgHandledType MessageBoxSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end input
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -146,39 +146,39 @@ WindowMsgHandledType MessageBoxSystem( GameWindow *window, UnsignedInt msg,
 
 				TheWindowManager->winDestroy(window);
 
-			}  // end if
+			}
 			else if( controlID == buttonYesID )
 			{
 				if (MsgBoxCallbacks->yesCallback)
 					MsgBoxCallbacks->yesCallback();
 				TheWindowManager->winDestroy(window);
-			}  // end else if
+			}
 			else if( controlID == buttonNoID )
 			{
 				if (MsgBoxCallbacks->noCallback)
 					MsgBoxCallbacks->noCallback();
 				TheWindowManager->winDestroy(window);
-			}  // end else if
+			}
 			else if( controlID == buttonCancelID )
 			{
 				if (MsgBoxCallbacks->cancelCallback)
 					MsgBoxCallbacks->cancelCallback();
 				TheWindowManager->winDestroy(window);
-			}  // end else if
+			}
 
 			break;
 
-		}  // end selected
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-}  // end MessageBoxSystem
+}
 //-------------------------------------------------------------------------------------------------
 /** Message Box window system callback */
 //-------------------------------------------------------------------------------------------------
@@ -197,7 +197,7 @@ WindowMsgHandledType QuitMessageBoxSystem( GameWindow *window, UnsignedInt msg,
 			window->winSetUserData( NULL );
 			break;
 
-		}  // end case
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -209,7 +209,7 @@ WindowMsgHandledType QuitMessageBoxSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end input
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -230,36 +230,36 @@ WindowMsgHandledType QuitMessageBoxSystem( GameWindow *window, UnsignedInt msg,
 
 				TheWindowManager->winDestroy(window);
 
-			}  // end if
+			}
 			else if( controlID == buttonYesID )
 			{
 				if (MsgBoxCallbacks->yesCallback)
 					MsgBoxCallbacks->yesCallback();
 				TheWindowManager->winDestroy(window);
-			}  // end else if
+			}
 			else if( controlID == buttonNoID )
 			{
 				if (MsgBoxCallbacks->noCallback)
 					MsgBoxCallbacks->noCallback();
 				TheWindowManager->winDestroy(window);
-			}  // end else if
+			}
 			else if( controlID == buttonCancelID )
 			{
 				if (MsgBoxCallbacks->cancelCallback)
 					MsgBoxCallbacks->cancelCallback();
 				TheWindowManager->winDestroy(window);
-			}  // end else if
+			}
 
 			break;
 
-		}  // end selected
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-}  // end MessageBoxSystem
+}

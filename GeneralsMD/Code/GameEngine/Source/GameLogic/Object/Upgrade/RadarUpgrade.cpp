@@ -58,14 +58,14 @@ RadarUpgrade::RadarUpgrade( Thing *thing, const ModuleData* moduleData ) :
 							UpgradeModule( thing, moduleData )
 {
 
-}  // end RadarUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 RadarUpgrade::~RadarUpgrade( void )
 {
 
-}  // end ~RadarUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ void RadarUpgrade::onDelete( void )
 	// this upgrade module is now "not upgraded"
 	setUpgradeExecuted(FALSE);
 
-}  // end onDelete
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -112,16 +112,16 @@ void RadarUpgrade::onCapture( Player *oldOwner, Player *newOwner )
 		oldOwner->removeRadar( md->m_isDisableProof );
 		setUpgradeExecuted(FALSE);
 
-	}  // end if
+	}
 	if( newOwner )
 	{
 
 		newOwner->addRadar( md->m_isDisableProof );
 		setUpgradeExecuted(TRUE);
 
-	}  // end if
+	}
 
-}  // end onCapture
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -140,7 +140,7 @@ void RadarUpgrade::upgradeImplementation( void )
 	if( radarUpdate )
 		radarUpdate->extendRadar();
 
-}  // end upgradeImplementation
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -151,7 +151,7 @@ void RadarUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -169,7 +169,7 @@ void RadarUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -180,4 +180,4 @@ void RadarUpgrade::loadPostProcess( void )
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

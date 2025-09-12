@@ -74,7 +74,7 @@ void ThingFactory::freeDatabase( void )
 
 	m_templateHashMap.clear();
 
-}  // end freeDatabase
+}
 
 //-------------------------------------------------------------------------------------------------
 /** add the thing template passed in, into the databse */
@@ -93,7 +93,7 @@ void ThingFactory::addTemplate( ThingTemplate *tmplate )
 
 	// Add it to the hash table.
 	m_templateHashMap[tmplate->getName()] = tmplate;
-}  // end addTemplate
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC METHODS
@@ -111,7 +111,7 @@ ThingFactory::ThingFactory()
 #else
 	m_templateHashMap.reserve( TEMPLATE_HASH_SIZE );
 #endif
-}  // end ThingFactory
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ ThingFactory::~ThingFactory()
 	// free all the template data
 	freeDatabase();
 
-}  // end ~ThingFactory
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Create a new template with name 'name' and add to our template list */
@@ -142,7 +142,7 @@ ThingTemplate *ThingFactory::newTemplate( const AsciiString& name )
 		*newTemplate = *defaultT;
 		newTemplate->setCopiedFromDefault();
 
-	}  // end if
+	}
 
 	// give template a unique identifier
 	newTemplate->friend_setTemplateID( m_nextTemplateID++ );
@@ -192,7 +192,7 @@ ThingTemplate* ThingFactory::newOverride( ThingTemplate *thingTemplate )
 	// return the newly created override for us to set values with etc
 	return newTemplate;
 
-}  // end newOverride
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Init */
@@ -200,7 +200,7 @@ ThingTemplate* ThingFactory::newOverride( ThingTemplate *thingTemplate )
 void ThingFactory::init( void )
 {
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset */
@@ -238,7 +238,7 @@ void ThingFactory::reset( void )
 
 		t = nextT;
 	}
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update */
@@ -246,7 +246,7 @@ void ThingFactory::reset( void )
 void ThingFactory::update( void )
 {
 
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return the template with the matching database name */
@@ -298,7 +298,7 @@ ThingTemplate *ThingFactory::findTemplateInternal( const AsciiString& name, Bool
 	}
 	return NULL;
 
-}  // end getTemplate
+}
 
 //=============================================================================
 Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, ObjectStatusMaskType statusBits )
@@ -359,7 +359,7 @@ Drawable *ThingFactory::newDrawable(const ThingTemplate *tmplate, DrawableStatus
 
 	return draw;
 
-}  // end newDrawableByType
+}
 
 #if defined(RTS_DEBUG) || defined(DEBUG_CRASHING)
 AsciiString TheThingTemplateBeingParsedName;
@@ -540,10 +540,10 @@ void ThingFactory::postProcessLoad()
 		}
 #endif
 
-	}  // end for
+	}
 
 #ifdef CHECK_THING_NAMES
 	dumpMissingStringNames();
 	exit(0);
 #endif
-}  // end postProcess
+}

@@ -1756,7 +1756,7 @@ Int TerrainShader2Stage::set(Int pass)
 
 				DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
 				DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
-			} //ST_TERRAIN_BASE_NOISE12
+			}
 			else
 			{	//only 1 noise or cloud texture
 				// Now setup the texture pipeline.
@@ -2476,7 +2476,7 @@ Int RoadShader2Stage::set(Int pass)
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_COLOROP,   D3DTOP_DISABLE );
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_ALPHAOP,   D3DTOP_DISABLE );
 		}
-	}	//pass 0
+	}
 	else
 	{	//pass 1, apply additional noise pass
 		Matrix4x4 curView;
@@ -2993,7 +2993,7 @@ ChipsetType W3DShaderManager::getChipset( void )
 			if (maxTextures >= 8 && pixelShaderVersion >= 2.0f)
 				chip=DC_GENERIC_PIXEL_SHADER_2_0;
 		}
-	}	//D3D8 interface and device exist.
+	}
 
 	return chip;
 }
@@ -3432,7 +3432,7 @@ Int FlatTerrainShader2Stage::set(Int pass)
 				DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
 				DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
 				DX8Wrapper::_Get_D3D_Device8()->SetTexture(1, W3DShaderManager::getShaderTexture(3)->Peek_D3D_Texture());
-			} //ST_TERRAIN_BASE_NOISE12
+			}
 			else
 			{	//only 1 noise or cloud texture
 				// Now setup the texture pipeline.

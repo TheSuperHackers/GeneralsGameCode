@@ -69,9 +69,9 @@ TransitionDamageFXModuleData::TransitionDamageFXModuleData( void )
 			m_particleSystem[ i ][ j ].locInfo.locType = FX_DAMAGE_LOC_TYPE_COORD;
 			m_particleSystem[ i ][ j ].locInfo.randomBone = FALSE;
 
-		}  // end for j
+		}
 
-	}  // end for i
+	}
 
 	m_damageFXTypes = DAMAGE_TYPE_FLAGS_NONE;
 	m_damageFXTypes.flip();
@@ -80,7 +80,7 @@ TransitionDamageFXModuleData::TransitionDamageFXModuleData( void )
 	m_damageParticleTypes = DAMAGE_TYPE_FLAGS_NONE;
 	m_damageParticleTypes.flip();
 
-}  // end TransitionDamageFXModuleData
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse fx location info ... that is a named bone or a coord3d position */
@@ -108,12 +108,12 @@ static void parseFXLocInfo( INI *ini, void *instance, FXLocInfo *locInfo )
 			DEBUG_CRASH(( "parseFXLocInfo: Bone name not followed by RandomBone specifier\nPress IGNORE to see which INI file and line # is incorrect." ));
 			throw INI_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// parse the Bool definition
 		ini->parseBool( ini, instance, &locInfo->randomBone, NULL );
 
-	}  // end if
+	}
 	else if( stricmp( token, "loc" ) == 0 )
 	{
 
@@ -123,16 +123,16 @@ static void parseFXLocInfo( INI *ini, void *instance, FXLocInfo *locInfo )
 		locInfo->loc.z = ini->scanReal( ini->getNextSubToken("Z") );
 		locInfo->locType = FX_DAMAGE_LOC_TYPE_COORD;
 
-	}  // end else
+	}
 	else
 	{
 
 		// error
 		throw INI_INVALID_DATA;
 
-	}  // end else
+	}
 
-}  // end parseFXLocInfo
+}
 
 //-------------------------------------------------------------------------------------------------
 /** In the form of:
@@ -155,12 +155,12 @@ void TransitionDamageFXModuleData::parseFXList( INI *ini, void *instance,
 		// error
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// parse the fx list name
 	ini->parseFXList( ini, instance, &info->fx, NULL );
 
-}  // end parseFXList
+}
 
 //-------------------------------------------------------------------------------------------------
 /** In the form of:
@@ -183,12 +183,12 @@ void TransitionDamageFXModuleData::parseObjectCreationList( INI *ini, void *inst
 		// error
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// parse the ocl name
 	ini->parseObjectCreationList( ini, instance, store, &info->ocl );
 
-}  // end parseObjectCreationList
+}
 
 //-------------------------------------------------------------------------------------------------
 /** In the form of:
@@ -211,12 +211,12 @@ void TransitionDamageFXModuleData::parseParticleSystem( INI *ini, void *instance
 		// error
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// parse the particle system name
 	ini->parseParticleSystemTemplate( ini, instance, store, &info->particleSysTemplate );
 
-}  // end parseParticleSystem
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -229,14 +229,14 @@ TransitionDamageFX::TransitionDamageFX( Thing *thing, const ModuleData* moduleDa
 		for( j = 0; j < DAMAGE_MODULE_MAX_FX; j++ )
 			m_particleSystemID[ i ][ j ] = INVALID_PARTICLE_SYSTEM_ID;
 
-}  // end TransitionDamageFX
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 TransitionDamageFX::~TransitionDamageFX( void )
 {
 
-}  // end ~TransitionDamageFX
+}
 
 /*
 //-------------------------------------------------------------------------------------------------
@@ -249,7 +249,7 @@ void TransitionDamageFX::onDelete( void )
 	// particle system will automatically delete itself when the object is destroyed
 	//
 
-}  // end onDelete
+}
 */
 
 //-------------------------------------------------------------------------------------------------
@@ -278,7 +278,7 @@ static Coord3D getLocalEffectPos( const FXLocInfo *locInfo, Drawable *draw )
 			// return the position retrieved
 			return pos;
 
-		}  // end if
+		}
 		else
 		{
 		  const Int MAX_BONES = 32;
@@ -296,13 +296,13 @@ static Coord3D getLocalEffectPos( const FXLocInfo *locInfo, Drawable *draw )
 			Int pick = GameLogicRandomValue( 0, boneCount - 1 );
 			return positions[ pick ];
 
-		}  // end else
+		}
 
-	}  // end if
+	}
 	else
 		return locInfo->loc;
 
-}  // end getLocalEffectPos
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Switching damage states */
@@ -330,9 +330,9 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 			TheParticleSystemManager->destroyParticleSystemByID( m_particleSystemID[ oldState ][ i ] );
 			m_particleSystemID[ oldState ][ i ] = INVALID_PARTICLE_SYSTEM_ID;
 
-		}  // end if
+		}
 
-	}  // end for i
+	}
 
 	//
 	// when we are transitioning to a "worse" state we will play a set of effects for that
@@ -361,9 +361,9 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 					getObject()->convertBonePosToWorldPos( &pos, NULL, &pos, NULL );
 					FXList::doFXPos( modData->m_fxList[ newState ][ i ].fx, &pos );
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 
 			// do any object creation list for our new state
 			if( damageSource && modData->m_OCL[ newState ][ i ].ocl )
@@ -378,9 +378,9 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 					ObjectCreationList::create( modData->m_OCL[ newState ][ i ].ocl,
 																			getObject(), &pos, damageSource->getPosition(), INVALID_ANGLE );
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 
 			// get the template of the system to create
 			pSystemT = modData->m_particleSystem[ newState ][ i ].particleSysTemplate;
@@ -413,17 +413,17 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 						// save the id of this particle system so we can remove it later if it still exists
 						m_particleSystemID[ newState ][ i ] = pSystem->getSystemID();
 
-					}  // end if
+					}
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 
-		}  // end for i
+		}
 
-	}  // end if
+	}
 
-}  // end onBodyDamageStateChange
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -434,7 +434,7 @@ void TransitionDamageFX::crc( Xfer *xfer )
 	// extend base class
 	DamageModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -455,7 +455,7 @@ void TransitionDamageFX::xfer( Xfer *xfer )
 	// particle systems ids
 	xfer->xferUser( m_particleSystemID, sizeof( ParticleSystemID ) * BODYDAMAGETYPE_COUNT * DAMAGE_MODULE_MAX_FX );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -466,4 +466,4 @@ void TransitionDamageFX::loadPostProcess( void )
 	// extend base class
 	DamageModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -95,7 +95,7 @@ protected:
 	LPDIRECTINPUT8 m_pDirectInput;  ///< pointer to direct input interface
 	LPDIRECTINPUTDEVICE8 m_pMouseDevice;  ///< pointer to mouse device
 
-};  // end class DirectInputMouse
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////
 

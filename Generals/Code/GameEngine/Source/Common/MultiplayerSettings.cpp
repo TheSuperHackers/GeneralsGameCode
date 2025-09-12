@@ -91,7 +91,7 @@ MultiplayerSettings::MultiplayerSettings()
 
 	m_observerColor;
 	m_randomColor;
-}  // end MultiplayerSettings
+}
 
 MultiplayerColorDefinition::MultiplayerColorDefinition()
 {

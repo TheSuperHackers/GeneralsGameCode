@@ -45,14 +45,14 @@ PowerPlantUpgrade::PowerPlantUpgrade( Thing *thing, const ModuleData* moduleData
 							UpgradeModule( thing, moduleData )
 {
 
-}  // end PowerPlantUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 PowerPlantUpgrade::~PowerPlantUpgrade( void )
 {
 
-}  // end ~PowerPlantUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ void PowerPlantUpgrade::onDelete( void )
 	// this upgrade module is now "not upgraded"
 	setUpgradeExecuted(FALSE);
 
-}  // end onDelete
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -103,7 +103,7 @@ void PowerPlantUpgrade::onCapture( Player *oldOwner, Player *newOwner )
 
 	}
 
-}  // end onCapture
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -125,7 +125,7 @@ void PowerPlantUpgrade::upgradeImplementation( void )
 			ppui->extendRods(TRUE);
 	}
 
-}  // end upgradeImplementation
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -136,7 +136,7 @@ void PowerPlantUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -154,7 +154,7 @@ void PowerPlantUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -176,4 +176,4 @@ void PowerPlantUpgrade::loadPostProcess( void )
 			player->addPowerBonus(getObject());
 	}
 
-}  // end loadPostProcess
+}

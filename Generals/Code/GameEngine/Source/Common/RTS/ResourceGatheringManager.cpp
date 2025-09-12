@@ -258,7 +258,7 @@ Object *ResourceGatheringManager::findBestSupplyCenter( Object *queryObject )
 void ResourceGatheringManager::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -279,7 +279,7 @@ void ResourceGatheringManager::xfer( Xfer *xfer )
 	// supply centers
 	xfer->xferSTLObjectIDList( &m_supplyCenters );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -287,5 +287,5 @@ void ResourceGatheringManager::xfer( Xfer *xfer )
 void ResourceGatheringManager::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 

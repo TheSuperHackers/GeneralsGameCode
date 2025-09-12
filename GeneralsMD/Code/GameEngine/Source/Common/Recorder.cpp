@@ -1245,7 +1245,7 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 
 	Int rankPoints = 0;
 	m_file->read(&rankPoints, sizeof(rankPoints));
-	
+
 	Int maxFPS = 0;
 	m_file->read(&maxFPS, sizeof(maxFPS));
 

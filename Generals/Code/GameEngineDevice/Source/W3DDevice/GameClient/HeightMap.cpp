@@ -4221,13 +4221,13 @@ void HeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 
 			DX8Wrapper::Set_Index_Buffer(ib_access,0);
 			DX8Wrapper::Set_Vertex_Buffer(vb_access);
-		}//lock and fill ib/vb
+		}
 
 		if (indexCount > 0 && vertexCount > 0)
 			DX8Wrapper::Draw_Triangles(	0,indexCount/3, 0,	vertexCount);	//draw a quad, 2 triangles, 4 verts
 		vertexCount=0;
 		indexCount=0;
-	}//for all shore tiles
+	}
 
 	//Disable writes to destination alpha
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_BLUE|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_RED);
@@ -4420,9 +4420,9 @@ void HeightMapRenderObjClass::renderExtraBlendTiles(void)
 				ib += 6;
 				vertexCount +=4;
 				indexCount +=6;
-			}//tile has 3rd blend layer and is visible
-		}	//for all extre blend tiles
-	}//unlock vertex buffer
+			}
+		}
+	}
 
 	if (vertexCount)
 	{

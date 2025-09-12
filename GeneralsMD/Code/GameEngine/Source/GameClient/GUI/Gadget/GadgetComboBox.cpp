@@ -122,11 +122,11 @@ WindowMsgHandledType GadgetComboBoxInput( GameWindow *window, UnsignedInt msg,
 				default:
 					return TheWindowManager->winSendInputMsg( editBox, GWM_CHAR, mData1, mData2 );
 
-			}  // end switch( mData1 )
+			}
 
 			break;
 
-		}  // end case char
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_WHEEL_DOWN:
@@ -134,14 +134,14 @@ WindowMsgHandledType GadgetComboBoxInput( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end wheel down
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_WHEEL_UP:
 		{
 			break;
 
-		}  // end wheel up
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_LEFT_UP:
@@ -158,7 +158,7 @@ WindowMsgHandledType GadgetComboBoxInput( GameWindow *window, UnsignedInt msg,
 				if( TheAudio )
 				{
 					TheAudio->addAudioEvent( &buttonClick );
-				}  // end if
+				}
 
 				GameWindow *listBox = GadgetComboBoxGetListBox(window);
 				if (listBox)
@@ -212,14 +212,14 @@ WindowMsgHandledType GadgetComboBoxInput( GameWindow *window, UnsignedInt msg,
 					}
 				}			break;
 
-		}  // end left click, left up
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_RIGHT_UP:
 		{
 			break;
 
-		}  // end right up, right click
+		}
 
 /*
 		// ------------------------------------------------------------------------
@@ -236,11 +236,11 @@ WindowMsgHandledType GadgetComboBoxInput( GameWindow *window, UnsignedInt msg,
 																						0 );
 				TheWindowManager->winSetFocus( window );
 
-			}  // end if
+			}
 
 			break;
 
-		}  //  end mouse entering
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_MOUSE_LEAVING:
@@ -254,11 +254,11 @@ WindowMsgHandledType GadgetComboBoxInput( GameWindow *window, UnsignedInt msg,
 																						GBM_MOUSE_LEAVING,
 																						(WindowMsgData)window,
 																						0 );
-			}  // end if
+			}
 
 			break;
 
-		}  // end mouse leaving
+		}
 */
 
 		// ------------------------------------------------------------------------
@@ -281,11 +281,11 @@ WindowMsgHandledType GadgetComboBoxInput( GameWindow *window, UnsignedInt msg,
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch msg
+	}
 
 	return MSG_HANDLED;
 
-}  // end GadgetComboBoxInput
+}
 
 // HideListBox ================================================================
 /** Called to close the listbox if it is opened */
@@ -325,7 +325,7 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 			instData->setText(*(UnicodeString*)mData1);
 			break;
 
-		}  // end set lavel
+		}
 
 		// ------------------------------------------------------------------------
 		case GCM_GET_TEXT:
@@ -333,7 +333,7 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 			if(comboData->editBox)
 				*(UnicodeString*)mData2 = GadgetTextEntryGetText(comboData->editBox);
 			break;
-		} // end Get text
+		}
 
 		// ------------------------------------------------------------------------
 		case GCM_SET_TEXT:
@@ -342,7 +342,7 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 				GadgetTextEntrySetText(comboData->editBox,*(const UnicodeString*)mData1);
 			break;
 
-		}  // end set text
+		}
 
 		case GEM_UPDATE_TEXT:
 		{
@@ -399,7 +399,7 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 				*(Int *)mData2 = -1;
 			}
 			break;
-		} //case GCM_GET_SELECTION:
+		}
 		// ------------------------------------------------------------------------
 		// Set the User Data for the specified listbox element
 		case GCM_SET_ITEM_DATA:
@@ -463,7 +463,7 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end left drag
+		}
 
 		// ------------------------------------------------------------------------
 		case GCM_DEL_ALL:
@@ -476,7 +476,7 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 			//HideListBox(window);
 			break;
 
-		}  // end delete all
+		}
 
 		// ------------------------------------------------------------------------
 		case GCM_DEL_ENTRY:
@@ -484,14 +484,14 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end delete entry
+		}
 		// ------------------------------------------------------------------------
 		case GGM_CLOSE:
 		{
 			HideListBox(window);
 			break;
 
-		}  // end delete entry
+		}
 
 		// ------------------------------------------------------------------------
 		case GCM_ADD_ENTRY:
@@ -550,7 +550,7 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 			}
 
 			return( (WindowMsgHandledType) addedIndex );
-		}  // end add entry
+		}
 
 
 		// ------------------------------------------------------------------------
@@ -587,7 +587,7 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 			}
 			break;
 
-		}  // end resized
+		}
 
 		// ------------------------------------------------------------------------
 
@@ -599,7 +599,7 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 			window->winSetUserData(NULL);
 			comboData = NULL;
 			break;
-		}  // end destroy
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -628,7 +628,7 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 			*(Bool*)mData2 = TRUE;
 			break;
 
-		}  // end input focus
+		}
 
 
 		case GBM_SELECTED:
@@ -699,11 +699,11 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end GadgetListBoxSystem
+}
 
 // GadgetComboBoxSetColors ====================================================
 /** Set the colors for a Combo box, note that this will also automatically
@@ -800,7 +800,7 @@ void GadgetComboBoxSetColors( GameWindow *comboBox,
 													hiliteSelectedItemColor,
 													hiliteSelectedItemBorderColor );
 	}
-}  // end GadgetComboBoxSetColors
+}
 
 // GadgetComboBoxSetIsEditable ================================================
 /** Sets up the Text Entry gadget as editable or not */
@@ -830,7 +830,7 @@ void GadgetComboBoxSetIsEditable(GameWindow *comboBox, Bool isEditable  )
 //		BitSet(status, WIN_STATUS_NO_FOCUS);
 		editBox->winSetStatus(status);
 	}
-}//void GadgetComboBoxSetIsEditable(GameWindow *comboBox, Int maxChars )
+}
 
 // GadgetComboBoxSetIsAsciiOnly ==================================================
 /** Get the text the Combo Box */
@@ -877,7 +877,7 @@ void GadgetComboBoxSetMaxChars( GameWindow *comboBox, Int maxChars )
 	comboData->maxChars = maxChars;
 	comboData->entryData->maxTextLen = maxChars;
 
-}//void GadgetComboBoxSetMaxChars( GameWindow *comboBox, Int maxChars )
+}
 
 // GadgetComboBoxSetMaxDisplay ================================================
 /** Sets the MaxDisplay variable to the new Max Display */
@@ -887,7 +887,7 @@ void GadgetComboBoxSetMaxDisplay( GameWindow *comboBox, Int maxDisplay )
 	ComboBoxData *comboData = (ComboBoxData *)comboBox->winGetUserData();
 	comboData->maxDisplay = maxDisplay;
 
-}//void GadgetComboBoxSetMaxDisplay( GameWindow *comboBox, Int maxDisplay );
+}
 
 // GadgetComboBoxGetText =======================================================
 /** Get the text the Combo Box */
@@ -1103,5 +1103,5 @@ Int GadgetComboBoxGetLength( GameWindow *combobox )
 		return comboboxData->entryCount;
 
 	return 0;
-}  // end GadgetListBoxGetListLength
+}
 

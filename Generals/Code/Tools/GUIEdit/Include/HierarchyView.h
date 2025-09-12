@@ -136,7 +136,7 @@ protected:
 	GameWindow *m_dragTarget;  ///< target for drag and drop operations while mouse is moving
 	GameWindow *m_popupTarget;  ///< the target for right mouse popup menus
 
-};  // end HierarchyView
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 // INLINING ///////////////////////////////////////////////////////////////////

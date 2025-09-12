@@ -241,7 +241,7 @@ void W3DProjectedShadowManager::reset( void )
 
 	m_W3DShadowTextureManager->freeAllTextures();
 
-}  // end Reset
+}
 
 Bool W3DProjectedShadowManager::init( void )
 {
@@ -1415,17 +1415,17 @@ Int W3DProjectedShadowManager::renderShadows(RenderInfoClass & rinfo)
 												rinfo.Pop_Material_Pass();
 												projectionCount++;	//keep track of number of shadow projections
 											}
-									}//robj
-								}//di
-							}	// end for drawmodule
-					}  // end for obj
+									}
+								}
+							}
+					}
 				}
-			}//shadow is enabled
+			}
 		}
 
 		flushDecals(lastShadowDecalTexture,lastShadowType);	//make sure there are not any unrendered decals left over.
 		TheDX8MeshRenderer.Flush();	//draw all the shadow receiving objects
-	}//rendering shadows
+	}
 	if (m_decalList)
 	{
 		//keep track of active decal texture so we can render all decals at once.
@@ -1453,7 +1453,7 @@ Int W3DProjectedShadowManager::renderShadows(RenderInfoClass & rinfo)
 					queueDecal(shadow);	//only draw shadow if casting object is visible
 					projectionCount++;
 				}
-			}//shadow is enabled
+			}
 		}
 
 		flushDecals(lastShadowDecalTexture,lastShadowType);	//make sure there are not any unrendered decals left over.
@@ -1806,7 +1806,7 @@ W3DProjectedShadow* W3DProjectedShadowManager::addShadow(RenderObjClass *robj, S
 						return NULL;	//could not create the shadow texture
 				}
 				shadowType=SHADOW_PROJECTION;
-		}//SHADOW_PROJECTION
+		}
 	}
 	else
 	{	//no shadow info, assume user wants a projected shadow
@@ -2042,7 +2042,7 @@ void W3DProjectedShadowManager::removeShadow (W3DProjectedShadow *shadow)
 				delete shadow;
 				return;
 			}
-		}  // end for
+		}
 	}
 
 	//search for this shadow
@@ -2068,7 +2068,7 @@ void W3DProjectedShadowManager::removeShadow (W3DProjectedShadow *shadow)
 			delete shadow;
 			return;
 		}
-	}  // end for
+	}
 }
 
 void W3DProjectedShadowManager::removeAllShadows(void)
@@ -2086,7 +2086,7 @@ void W3DProjectedShadowManager::removeAllShadows(void)
 		next_shadow = cur_shadow->m_next;
 		cur_shadow->m_next = NULL;
 		delete cur_shadow;
-	}  // end for
+	}
 
 	next_shadow=m_decalList;
 	cur_shadow=NULL;
@@ -2096,7 +2096,7 @@ void W3DProjectedShadowManager::removeAllShadows(void)
 		next_shadow = cur_shadow->m_next;
 		cur_shadow->m_next = NULL;
 		delete cur_shadow;
-	}  // end for
+	}
 }
 
 #if defined(RTS_DEBUG)

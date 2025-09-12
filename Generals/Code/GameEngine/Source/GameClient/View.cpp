@@ -247,7 +247,7 @@ void View::getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
 	screenToWorldAtZ( &screenBottomLeft, bottomLeft, z );
 	screenToWorldAtZ( &screenBottomRight, bottomRight, z );
 
-}  // end getScreenCornerWorldPointsAtZ
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method for a view */
@@ -273,4 +273,4 @@ void View::xfer( Xfer *xfer )
 	xfer->xferReal( &viewPos.z );
 	lookAt( &viewPos );
 
-}  // end xfer
+}

@@ -1351,7 +1351,7 @@ void EditParameter::readFontFile( const char *filename )
 			fontBuffer[ index++ ] = c;
 			fp->read(&c, 1);
 
-		}  // end while
+		}
 		fontBuffer[ index ] = '\0';
 		fp->read(&c, 1);
 
@@ -1372,15 +1372,15 @@ void EditParameter::readFontFile( const char *filename )
 							 fontBuffer, size, bold );
 			//MessageBox( m_appHWnd, buffer, "Cannot Load Font", MB_OK );
 
-		}  // end if
+		}
 
-	}  // end for i
+	}
 
 	// close the file
 	fp->close();
 	fp = NULL;
 
-}  // end readFontFile
+}
 
 Bool EditParameter::loadWaypoints(CComboBox *pCombo, AsciiString match)
 {

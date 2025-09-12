@@ -56,7 +56,7 @@ void INI::parseTerrainDefinition( INI* ini )
 	// parse the ini definition
 	ini->initFromINI( terrainType, terrainType->getFieldParse() );
 
-}  // end parseTerrain
+}
 
 
 

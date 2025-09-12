@@ -193,7 +193,7 @@ void BattlePlanUpdate::onDelete()
 		obj = TheGameLogic->findObjectByID( m_visionObjectID );
 		if( obj )
 			TheGameLogic->destroyObject( obj );
-	}  // end if
+	}
 
 	// If we get destroyed, then make sure we remove our bonus!
 	// srj sez: we can't do this in the dtor because our team
@@ -436,9 +436,9 @@ void BattlePlanUpdate::createVisionObject()
 		// set the shroud clearing range
 		visionObject->setShroudClearingRange( obj->getGeometryInfo().getBoundingSphereRadius() );
 
-	}  // end if
+	}
 
-}  // end createVisionObject
+}
 
 //-------------------------------------------------------------------------------------------------
 void BattlePlanUpdate::setStatus( TransitionStatus newStatus )
@@ -869,7 +869,7 @@ void BattlePlanUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 //------------------------------------------------------------------------------------------------
 // Xfer method
@@ -923,7 +923,7 @@ void BattlePlanUpdate::xfer( Xfer *xfer )
 	// vision object data
 	xfer->xferObjectID( &m_visionObjectID );
 
-}  // end xfer
+}
 
 //------------------------------------------------------------------------------------------------
 void BattlePlanUpdate::loadPostProcess( void )
@@ -932,4 +932,4 @@ void BattlePlanUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

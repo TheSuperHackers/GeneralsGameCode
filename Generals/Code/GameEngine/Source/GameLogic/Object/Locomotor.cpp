@@ -584,7 +584,7 @@ LocomotorTemplate *LocomotorStore::newOverride( LocomotorTemplate *locoTemplate 
 	// return the newly created override for us to set values with etc
 	return newTemplate;
 
-}  // end newOverride
+}
 
 //-------------------------------------------------------------------------------------------------
 /*static*/ void LocomotorStore::parseLocomotorTemplateDefinition(INI* ini)
@@ -719,7 +719,7 @@ Locomotor::~Locomotor()
 void Locomotor::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -754,7 +754,7 @@ void Locomotor::xfer( Xfer *xfer )
 	xfer->xferReal(&m_angleOffset);
 	xfer->xferReal(&m_offsetIncrement);
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -762,7 +762,7 @@ void Locomotor::xfer( Xfer *xfer )
 void Locomotor::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 void Locomotor::startMove(void)
@@ -2609,7 +2609,7 @@ LocomotorSet::~LocomotorSet()
 void LocomotorSet::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -2676,7 +2676,7 @@ void LocomotorSet::xfer( Xfer *xfer )
 void LocomotorSet::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 void LocomotorSet::xferSelfAndCurLocoPtr(Xfer *xfer, Locomotor** loco)

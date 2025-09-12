@@ -318,7 +318,7 @@ void CleanupHazardUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -357,7 +357,7 @@ void CleanupHazardUpdate::xfer( Xfer *xfer )
 	// move range
 	xfer->xferReal( &m_moveRange );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -368,4 +368,4 @@ void CleanupHazardUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

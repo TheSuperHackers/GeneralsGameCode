@@ -84,7 +84,7 @@ void WOLCustomScoreScreenInit( WindowLayout *layout, void *userData )
 
 	// Set Keyboard to Main Parent
 	TheWindowManager->winSetFocus( parentWOLCustomScore );
-} // WOLCustomScoreScreenInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu shutdown method */
@@ -96,7 +96,7 @@ void WOLCustomScoreScreenShutdown( WindowLayout *layout, void *userData )
 
 	// our shutdown is complete
 	TheShell->shutdownComplete( layout );
-}  // WOLCustomScoreScreenShutdown
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ void WOLCustomScoreScreenUpdate( WindowLayout * layout, void *userData)
 	if (WOL::TheWOL)
 		WOL::TheWOL->update();
 	*/
-}// WOLCustomScoreScreenUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu input callback */
@@ -141,21 +141,21 @@ WindowMsgHandledType WOLCustomScoreScreenInput( GameWindow *window, UnsignedInt 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonDisconnect, buttonDisconnectID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// WOLCustomScoreScreenInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu window system callback */
@@ -172,12 +172,12 @@ WindowMsgHandledType WOLCustomScoreScreenSystem( GameWindow *window, UnsignedInt
 			{
 
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
 			{
@@ -186,7 +186,7 @@ WindowMsgHandledType WOLCustomScoreScreenSystem( GameWindow *window, UnsignedInt
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 
 		case GBM_SELECTED:
 			{
@@ -201,7 +201,7 @@ WindowMsgHandledType WOLCustomScoreScreenSystem( GameWindow *window, UnsignedInt
 						WOL::TheWOL->addCommand( WOL::WOLCOMMAND_RESET );  // don't display an error, log out, or anything
 					}
 
-				} //if ( controlID == buttonDisconnect )
+				}
 				else if ( controlID == buttonLobbyID )
 				{
 					if (WOL::TheWOL->getState() != WOL::WOLAPI_FATAL_ERROR)
@@ -214,10 +214,10 @@ WindowMsgHandledType WOLCustomScoreScreenSystem( GameWindow *window, UnsignedInt
 					else
 					{
 					}
-				} //if ( controlID == buttonDisconnect )
+				}
 				*/
 				break;
-			}// case GBM_SELECTED:
+			}
 
 		case GEM_EDIT_DONE:
 			{
@@ -226,7 +226,7 @@ WindowMsgHandledType WOLCustomScoreScreenSystem( GameWindow *window, UnsignedInt
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// WOLCustomScoreScreenSystem
+}

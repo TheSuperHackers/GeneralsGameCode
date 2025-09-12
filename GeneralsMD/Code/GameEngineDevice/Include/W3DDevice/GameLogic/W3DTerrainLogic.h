@@ -80,6 +80,6 @@ protected:
 	Real m_mapMinZ;	///< Minimum terrain z value.
 	Real m_mapMaxZ;	///< Maximum terrain z value.
 
-};  // end W3DTerrainLogic
+};
 
 #endif  // end __W3DTERRAINLOGIC_H_

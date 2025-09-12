@@ -587,13 +587,13 @@ void DX8FVFCategoryContainer::Change_Polygon_Renderer_Texture(
 					prl.Add(rem);
 				}
 				poly_it.Next();
-			} // while
-		} //if src_texture==texture
+			}
+		}
 		else
 			// quit loop if we've got a texture change
 			if (foundtexture) break;
 		src_it.Next();
-	} // while
+	}
 
 	PolyRemoverListIterator prli(&prl);
 
@@ -678,12 +678,12 @@ void DX8FVFCategoryContainer::Change_Polygon_Renderer_Material(
 					prl.Add(rem);
 				}
 				poly_it.Next();
-			} // while
-		} // if
+			}
+		}
 		else
 			if (foundtexture) break;
 		src_it.Next();
-	} // while
+	}
 
 	PolyRemoverListIterator prli(&prl);
 
@@ -1405,8 +1405,8 @@ void DX8SkinFVFCategoryContainer::Render(void)
 				renderedVertexCount += mesh_vertex_count;
 
 				mesh = mesh->Peek_Next_Visible_Skin();
-			}	//while
-		}//lock
+			}
+		}
 
 		SNAPSHOT_SAY(("Set vb: %x ib: %x",&vb.FVF_Info(),index_buffer));
 
@@ -1425,7 +1425,7 @@ void DX8SkinFVFCategoryContainer::Render(void)
 		}
 
 		Render_Procedural_Material_Passes();
-	}//while
+	}
 
 	//remove all the rendered data from queues
 	for (unsigned pass=0;pass<passes;++pass) {
@@ -1940,7 +1940,7 @@ void DX8TextureCategoryClass::Render(void)
 
 
 
-        } // (gth) non-tabbed to aviod per-force merge problems...
+        }
 
 		/*
 		** Move to the next render task.  Note that the delete should be fast because prt's are pooled

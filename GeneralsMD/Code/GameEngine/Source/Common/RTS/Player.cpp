@@ -205,7 +205,7 @@ void dumpBattlePlanBonuses(const BattlePlanBonuses *b, AsciiString name, const P
 PlayerRelationMap::PlayerRelationMap( void )
 {
 
-}  // end PlayerRelationMap
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -215,7 +215,7 @@ PlayerRelationMap::~PlayerRelationMap( void )
 	// make sure the data is cleared
 	m_map.clear();
 
-}  // end ~PlayerRelationmap
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -223,7 +223,7 @@ PlayerRelationMap::~PlayerRelationMap( void )
 void PlayerRelationMap::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -262,9 +262,9 @@ void PlayerRelationMap::xfer( Xfer *xfer )
 			r = (*playerRelationIt).second;
 			xfer->xferUser( &r, sizeof( Relationship ) );
 
-		}  // end for, playerRelationIt
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -280,11 +280,11 @@ void PlayerRelationMap::xfer( Xfer *xfer )
 			// assign relationship
 			m_map[ playerIndex ] = r;
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -292,7 +292,7 @@ void PlayerRelationMap::xfer( Xfer *xfer )
 void PlayerRelationMap::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 //=============================================================================
 Player::Player( Int playerIndex )
@@ -1015,7 +1015,7 @@ void Player::becomingTeamMember(Object *obj, Bool yes)
 	if( !obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 	{
 		obj->friend_adjustPowerForPlayer(yes);
-	}  // end if
+	}
 
 	// when we capture a building, we need to see if there's an AutoDepositUpdate hooked to it,
 	// if so, award the cash bonus
@@ -1548,7 +1548,7 @@ void Player::onUnitCreated( Object *factory, Object *unit )
 	// ai notification callback
 	if( m_ai )
 		m_ai->onUnitProduced( factory, unit );
-}  // end onUnitCreated
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -1560,7 +1560,7 @@ Bool Player::isSupplySourceSafe( Int minSupplies )
 	if( m_ai )
 		return m_ai->isSupplySourceSafe( minSupplies );
 	return true;
-}  // isSupplySourceSafe
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Is a supply source attacked? */
@@ -1571,7 +1571,7 @@ Bool Player::isSupplySourceAttacked( void )
 	if( m_ai )
 		return m_ai->isSupplySourceAttacked( );
 	return false;
-}  // isSupplySourceSafe
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Set delay between team production */
@@ -1581,7 +1581,7 @@ void Player::setTeamDelaySeconds(Int delay  )
 	// ai action
 	if( m_ai )
 		m_ai->setTeamDelaySeconds( delay );
-}  // guardSupplyCenter
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Guard supply center */
@@ -1591,7 +1591,7 @@ void Player::guardSupplyCenter( Team *team, Int minSupplies  )
 	// ai action
 	if( m_ai )
 		m_ai->guardSupplyCenter( team, minSupplies );
-}  // guardSupplyCenter
+}
 
 //-------------------------------------------------------------------------------------------------
 /** A team is about to be destroyed */
@@ -1605,7 +1605,7 @@ void Player::preTeamDestroy( const Team *team )
 	// TheSuperHackers @bugfix Mauller/Xezon 03/05/2025 Clear the default team to prevent dangling pointer usage
 	if( m_defaultTeam == team )
 		m_defaultTeam = NULL;
-}  // preTeamDestroy
+}
 
 //-------------------------------------------------------------------------------------------------
 /// a structuer was just created, but is under construction
@@ -1613,7 +1613,7 @@ void Player::preTeamDestroy( const Team *team )
 void Player::onStructureCreated( Object *builder, Object *structure )
 {
 
-}  // end onStructureCreated
+}
 
 //-------------------------------------------------------------------------------------------------
 /// a structure that was under construction has become completed
@@ -1702,13 +1702,13 @@ void Player::onStructureConstructionComplete( Object *builder, Object *structure
       TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_ScudStorm);
     }
   }
-}  // end onStructureConstructionComplete
+}
 
 //=============================================================================
 void Player::onStructureUndone(Object *structure)
 {
 	m_scoreKeeper.removeObjectBuilt(structure);
-} // end onStructureUndone
+}
 
 //=============================================================================
 void Player::addTeamToList(TeamPrototype* team)
@@ -2853,9 +2853,9 @@ static void countExisting( Object *obj, void *userData )
     {
       // add the count of this type that are in the queue
       typeCountData->count += pui->countUnitTypeInQueue( typeCountData->type );
-    }  // end if
+    }
   }
-}  // end countInProduction
+}
 
 //=============================================================================
 // Make sure that building another of this unit/structure/object won't exceed MaxSimultaneousOfType()
@@ -2956,13 +2956,13 @@ void Player::deleteUpgradeList( void )
 		deleteInstance(m_upgradeList);
 		m_upgradeList = next;
 
-	}  // end while
+	}
 
 	// This doesn't call removeUpgrade, so clear these ourselves.
 	m_upgradesInProgress.clear();
 	m_upgradesCompleted.clear();
 
-}  // end deleteUpgradeList
+}
 
 //=================================================================================================
 /** Find an upgrade in our list of upgrades with matching name key */
@@ -2977,7 +2977,7 @@ Upgrade *Player::findUpgrade( const UpgradeTemplate *upgradeTemplate )
 
 	return NULL;
 
-}  // end findUpgrade
+}
 
 //=================================================================================================
 /** Does the player have this completed upgrade */
@@ -3028,7 +3028,7 @@ Upgrade *Player::addUpgrade( const UpgradeTemplate *upgradeTemplate, UpgradeStat
 			m_upgradeList->friend_setPrev( u );
 		m_upgradeList = u;
 
-	}  // end if
+	}
 
 	// set the new status for the upgrade
 	u->setStatus( status );
@@ -3053,7 +3053,7 @@ Upgrade *Player::addUpgrade( const UpgradeTemplate *upgradeTemplate, UpgradeStat
 
 	return u;
 
-}  // end addUpgrade
+}
 
 //=================================================================================================
 /**
@@ -3117,9 +3117,9 @@ void Player::removeUpgrade( const UpgradeTemplate *upgradeTemplate )
 		TheControlBar->markUIDirty();
 	}
 
-	}  // end if
+	}
 
-}  // end removeUpgrade
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -3154,7 +3154,7 @@ void Player::addRadar( Bool disableProof )
 		soundToPlay.setPlayerIndex(getPlayerIndex());
 		TheAudio->addAudioEvent(&soundToPlay);
 	}
-}  // end addRadar
+}
 
 //-------------------------------------------------------------------------------------------------
 /** The parameter object has is taking its radar away from the player */
@@ -3177,7 +3177,7 @@ void Player::removeRadar( Bool disableProof )
 		soundToPlay.setPlayerIndex(getPlayerIndex());
 		TheAudio->addAudioEvent(&soundToPlay);
 	}
-}  // end removeRadar
+}
 
 //-------------------------------------------------------------------------------------------------
 void Player::disableRadar()
@@ -3938,7 +3938,7 @@ Bool Player::isPlayableSide( void ) const
 
 	return m_playerTemplate ? m_playerTemplate->isPlayableSide() : FALSE;
 
-}  // end isPlayableSide
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -3964,7 +3964,7 @@ void Player::crc( Xfer *xfer )
 	xfer->xferInt( &m_skillPoints );
 	xfer->xferInt( &m_sciencePurchasePoints );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method
@@ -4024,9 +4024,9 @@ void Player::xfer( Xfer *xfer )
 			// xfer upgrade data
 			xfer->xferSnapshot( upgrade );
 
-		}  // end for, upgrade
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 		const UpgradeTemplate *upgradeTemplate;
@@ -4047,7 +4047,7 @@ void Player::xfer( Xfer *xfer )
 				DEBUG_CRASH(( "Player::xfer - Unable to find upgrade '%s'", upgradeName.str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
 			// add upgrade to player, the status is invalid, but that's OK cause we're about to xfer it
 			upgrade = addUpgrade( upgradeTemplate, UPGRADE_STATUS_INVALID );
@@ -4055,9 +4055,9 @@ void Player::xfer( Xfer *xfer )
 			// xfer upgrade data
 			xfer->xferSnapshot( upgrade );
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
 	// radar info
 	xfer->xferInt( &m_radarCount );
@@ -4093,9 +4093,9 @@ void Player::xfer( Xfer *xfer )
 			prototypeID = prototype->getID();
 			xfer->xferUser( &prototypeID, sizeof( TeamPrototypeID ) );
 
-		}  // end for
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -4119,14 +4119,14 @@ void Player::xfer( Xfer *xfer )
 				DEBUG_CRASH(( "Player::xfer - Unable to find team prototype by id" ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
 			// put in list
 			m_playerTeamPrototypes.push_back( prototype );
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
 	// build list info
 	UnsignedShort buildListInfoCount = 0;
@@ -4141,7 +4141,7 @@ void Player::xfer( Xfer *xfer )
 		for( buildListInfo = m_pBuildList; buildListInfo; buildListInfo = buildListInfo->getNext() )
 			xfer->xferSnapshot( buildListInfo );
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -4172,14 +4172,14 @@ void Player::xfer( Xfer *xfer )
 
 				last->setNextBuildList( buildListInfo );
 
-			}  // end else
+			}
 
 			// xfer data
 			xfer->xferSnapshot( buildListInfo );
 
-		}  // end for,i
+		}
 
-	}  // end else, load
+	}
 
 	// ai player data
 	Bool aiPlayerPresent = m_ai ? TRUE : FALSE;
@@ -4190,7 +4190,7 @@ void Player::xfer( Xfer *xfer )
 		DEBUG_CRASH(( "Player::xfer - m_ai present/missing mismatch" ));
 		throw SC_INVALID_DATA;;
 
-	}  // end if
+	}
 	if( m_ai )
 		xfer->xferSnapshot( m_ai );
 
@@ -4204,7 +4204,7 @@ void Player::xfer( Xfer *xfer )
 		DEBUG_CRASH(( "Player::xfer - m_resourceGatheringManager present/missing mismatch" ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 	if( m_resourceGatheringManager )
 		xfer->xferSnapshot( m_resourceGatheringManager );
 
@@ -4218,7 +4218,7 @@ void Player::xfer( Xfer *xfer )
 		DEBUG_CRASH(( "Player::xfer - m_tunnelSystem present/missing mismatch" ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 	if( m_tunnelSystem )
 		xfer->xferSnapshot( m_tunnelSystem );
 
@@ -4357,9 +4357,9 @@ void Player::xfer( Xfer *xfer )
 			// ref
 			xfer->xferUnsignedInt( &entry->m_ref );
 
-		}  // end for
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -4370,7 +4370,7 @@ void Player::xfer( Xfer *xfer )
 			DEBUG_CRASH(( "Player::xfer - m_kindOfPercentProductionChangeList should be empty but is not" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// read each entry
 		for( UnsignedInt i = 0; i < percentProductionChangeCount; ++i )
@@ -4387,9 +4387,9 @@ void Player::xfer( Xfer *xfer )
 			// put at end of list
 			m_kindOfPercentProductionChangeList.push_back( entry );
 
-		}  // end for i
+		}
 
-	}  // end else, load
+	}
 
 
 
@@ -4421,7 +4421,7 @@ void Player::xfer( Xfer *xfer )
 			{
 				DEBUG_CRASH(( "Player::xfer - m_specialPowerReadyTimerList should be empty but is not" ));
 				throw SC_INVALID_DATA;
-			}  // end if
+			}
 
 			// read each entry
 			for( UnsignedInt i = 0; i < timerListSize; ++i )
@@ -4435,7 +4435,7 @@ void Player::xfer( Xfer *xfer )
 				// put at end of list
 				m_specialPowerReadyTimerList.push_back( timer );
 
-			}  // end for i
+			}
 		}
 	}
 	///////////////////////////////////////////////////////////////////////////
@@ -4452,7 +4452,7 @@ void Player::xfer( Xfer *xfer )
 		DEBUG_CRASH(( "Player::xfer - size of m_squadCount array has changed" ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 	for( UnsignedShort i = 0; i < squadCount; ++i )
 	{
 
@@ -4462,11 +4462,11 @@ void Player::xfer( Xfer *xfer )
 			DEBUG_CRASH(( "Player::xfer - NULL squad at index '%d'", i ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		xfer->xferSnapshot( m_squads[ i ] );
 
-	}  // end for, i
+	}
 
 	// current squad selection
 	Bool currentSelectionPresent = m_currentSelection ? TRUE : FALSE;
@@ -4481,7 +4481,7 @@ void Player::xfer( Xfer *xfer )
 		// xfer
 		xfer->xferSnapshot( m_currentSelection );
 
-	}  // end if
+	}
 
 	// Player battle plan bonuses
 	Bool battlePlanBonus = m_battlePlanBonuses != NULL;
@@ -4517,7 +4517,7 @@ void Player::xfer( Xfer *xfer )
 	else
 		m_unitsShouldHunt = FALSE;
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -4525,5 +4525,5 @@ void Player::xfer( Xfer *xfer )
 void Player::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 

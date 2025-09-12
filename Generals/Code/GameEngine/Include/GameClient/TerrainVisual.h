@@ -169,7 +169,7 @@ protected:
 
 	AsciiString m_filenameString;							///< file with terrain data
 
-};  // end class TerrainVisual
+};
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern TerrainVisual *TheTerrainVisual;  ///< singleton extern

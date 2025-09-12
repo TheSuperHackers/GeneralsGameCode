@@ -168,18 +168,18 @@ WindowMsgHandledType InGamePopupMessageInput( GameWindow *window, UnsignedInt ms
 							TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)buttonOk, buttonOkID );
 
-						}  // end if
+						}
 
 						// don't let key fall through anywhere else
 						return MSG_HANDLED;
 
-					}  // end escape
+					}
 
-				}  // end switch( key )
+				}
 
-			}  // end char
+			}
 
-		}  // end switch( msg )
+		}
 		return MSG_IGNORED;
 
 
@@ -200,14 +200,14 @@ WindowMsgHandledType InGamePopupMessageSystem( GameWindow *window, UnsignedInt m
 
 			break;
 
-		}  // end create
+		}
     //---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
 
 			break;
 
-		}  // end case
+		}
 
     //----------------------------------------------------------------------------------------------
     case GWM_INPUT_FOCUS:
@@ -219,7 +219,7 @@ WindowMsgHandledType InGamePopupMessageSystem( GameWindow *window, UnsignedInt m
 
 			break;
 
-		}  // end input
+		}
     //---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
@@ -238,7 +238,7 @@ WindowMsgHandledType InGamePopupMessageSystem( GameWindow *window, UnsignedInt m
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 
 	return MSG_HANDLED;

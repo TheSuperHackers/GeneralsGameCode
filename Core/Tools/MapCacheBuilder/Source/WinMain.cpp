@@ -329,4 +329,4 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	// all done
 	return 0;
 
-}  // end WinMain
+}

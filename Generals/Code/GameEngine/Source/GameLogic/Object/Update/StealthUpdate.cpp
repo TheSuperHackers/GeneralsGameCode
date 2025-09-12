@@ -365,7 +365,7 @@ UpdateSleepTime StealthUpdate::update( void )
 		if( wasHidden && draw )
 			draw->setDrawableHidden( TRUE );
 
-	}  // end if
+	}
 
 	Object *self = getObject();
 	UnsignedInt now = TheGameLogic->getFrame();
@@ -828,7 +828,7 @@ void StealthUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -881,11 +881,11 @@ void StealthUpdate::xfer( Xfer *xfer )
 				DEBUG_CRASH(( "StealthUpdate::xfer - Unknown template '%s'", name.str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// disguise transition frames
 	xfer->xferUnsignedInt( &m_disguiseTransitionFrames );
@@ -899,7 +899,7 @@ void StealthUpdate::xfer( Xfer *xfer )
 	// disguised
 	xfer->xferBool( &m_disguised );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -920,4 +920,4 @@ void StealthUpdate::loadPostProcess( void )
 	if( isDisguised() )
 		m_xferRestoreDisguise = TRUE;
 
-}  // end loadPostProcess
+}

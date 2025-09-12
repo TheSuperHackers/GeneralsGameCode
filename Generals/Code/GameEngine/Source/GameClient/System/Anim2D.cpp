@@ -59,7 +59,7 @@ Anim2DTemplate::Anim2DTemplate( AsciiString name )
 	m_randomizeStartFrame = FALSE;
 	m_nextTemplate = NULL;
 
-}  // end Anim2DTemplate
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ Anim2DTemplate::~Anim2DTemplate( void )
 	if( m_images )
 		delete [] m_images;
 
-}  // end ~Anim2DTemplate
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Field parse table for 2D animation templates */
@@ -110,12 +110,12 @@ void Anim2DTemplate::parseNumImages( INI *ini, void *instance, void *store, cons
 									 animTemplate->getName().str(), minimumFrames ));
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// allocate the image array
 	animTemplate->allocateImages( (UnsignedShort)numFrames );
 
-}  // end parseNumImages
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Allocate the image array for an animation template and store the number of frames we have */
@@ -133,7 +133,7 @@ void Anim2DTemplate::allocateImages( UnsignedShort numFrames )
 	for( Int i = 0; i < m_numFrames; ++i )
 		m_images[ i ] = NULL;
 
-}  // end allocateImages
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Parsing a single image definition for an animation */
@@ -153,7 +153,7 @@ void Anim2DTemplate::parseImage( INI *ini, void *instance, void *store, const vo
 		//DEBUG_CRASH(( "Anim2DTemplate::parseImage - Image not found" ));
 		//throw INI_INVALID_DATA;
 
-	}  // end if
+	}
 
 	//
 	// assign the image to the animation template list of images ... note since we've pre-allocated
@@ -165,7 +165,7 @@ void Anim2DTemplate::parseImage( INI *ini, void *instance, void *store, const vo
 	Anim2DTemplate *animTemplate = (Anim2DTemplate *)instance;
 	animTemplate->storeImage( image );
 
-}  // end parseImage
+}
 
 // ------------------------------------------------------------------------------------------------
 /** This will parse the image sequence of an animation.  You can use this as a shortcut to
@@ -193,7 +193,7 @@ void Anim2DTemplate::parseImage( INI *ini, void *instance, void *store, const vo
 									animTemplate->getName().str() ));
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	}
 
 	//
 	// the image storage has already been allocated, all we have to do now is count from
@@ -219,14 +219,14 @@ void Anim2DTemplate::parseImage( INI *ini, void *instance, void *store, const vo
 										imageName.str(), animTemplate->getName().str() ));
 			throw INI_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// store the image in the next free frame
 		animTemplate->storeImage( image );
 
-	}  // end if
+	}
 
-}  // end parseImageSequence
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Store the image at the next open image slot for the animation */
@@ -248,16 +248,16 @@ void Anim2DTemplate::storeImage( const Image *image )
 			m_images[ i ] = image;
 			return;
 
-		}  // end if
+		}
 
-	}  // end for i
+	}
 
 	// if we got here we tried to store an image in an array that was too small
 	DEBUG_CRASH(( "Anim2DTemplate::storeImage - Unable to store image '%s' into animation '%s' because the animation is setup to only support '%d' image frames",
 								image->getName().str(), getName().str(), m_numFrames ));
 	throw INI_INVALID_DATA;
 
-}  // end storeImage
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Return the Image* for the frame number requested */
@@ -278,16 +278,16 @@ const Image* Anim2DTemplate::getFrame( UnsignedShort frameNumber ) const
 									frameNumber, getName().str() ));
 		return NULL;
 
-	}  // end if
+	}
 	else
 	{
 
 		// return the image frame
 		return m_images[ frameNumber ];
 
-	}  // end else
+	}
 
-}  // end getFrame
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -339,7 +339,7 @@ Anim2D::Anim2D( Anim2DTemplate *animTemplate, Anim2DCollection *collectionSystem
 		m_collectionSystem->registerAnimation( this );
 
 
-}  // end Anim2D
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -350,7 +350,7 @@ Anim2D::~Anim2D( void )
 	if( m_collectionSystem )
 		m_collectionSystem->unRegisterAnimation( this );
 
-}  // end ~Anim2D
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Set the current animation frame */
@@ -377,7 +377,7 @@ void Anim2D::setCurrentFrame( UnsignedShort frame )
 	// record the frame of this update to our current frame
 	m_lastUpdateFrame = TheGameLogic->getFrame();
 
-}  // end setCurrentFrame
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Randomize the current frame */
@@ -391,7 +391,7 @@ void Anim2D::randomizeCurrentFrame( void )
 	// set the current frame to a random frame
 	setCurrentFrame( GameClientRandomValue( 0, m_template->getNumFrames() - 1 ) );
 
-}  // end randomizeCurrentFrame
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Reset this animation instance to the "start" of the animation */
@@ -425,9 +425,9 @@ void Anim2D::reset( void )
 										m_template->getAnimMode(), m_template->getName().str() ));
 			break;
 
-	}  // end switch, animation mode
+	}
 
-}  // end reset
+}
 
 // ------------------------------------------------------------------------------------------------
 /** This is called after we are drawn ... if sufficient time has passed since our last
@@ -458,7 +458,7 @@ void Anim2D::tryNextFrame( void )
 					setStatus( ANIM_2D_STATUS_COMPLETE );
 				break;
 
-			}  // end once
+			}
 
 			// -------------------------------------------------------------------------------------------
 			case ANIM_2D_ONCE_BACKWARDS:
@@ -470,7 +470,7 @@ void Anim2D::tryNextFrame( void )
 					setStatus( ANIM_2D_STATUS_COMPLETE );
 				break;
 
-			}  // end once backwards
+			}
 
 			// -------------------------------------------------------------------------------------------
 			case ANIM_2D_LOOP:
@@ -482,7 +482,7 @@ void Anim2D::tryNextFrame( void )
 					setCurrentFrame( m_currentFrame + 1 );
 				break;
 
-			}  // end loop
+			}
 
 			// -------------------------------------------------------------------------------------------
 			case ANIM_2D_LOOP_BACKWARDS:
@@ -494,7 +494,7 @@ void Anim2D::tryNextFrame( void )
 					setCurrentFrame( m_maxFrame );
 				break;
 
-			}  // end loop backwards
+			}
 
 			// -------------------------------------------------------------------------------------------
 			case ANIM_2D_PING_PONG:
@@ -513,15 +513,15 @@ void Anim2D::tryNextFrame( void )
 						setCurrentFrame( m_currentFrame + 1 );
 						clearStatus( ANIM_2D_STATUS_REVERSED );
 
-					}  // end if
+					}
 					else
 					{
 
 						setCurrentFrame( m_currentFrame - 1 );
 
-					}  // end else
+					}
 
-				}  // end if
+				}
 				else
 				{
 
@@ -535,19 +535,19 @@ void Anim2D::tryNextFrame( void )
 						setCurrentFrame( m_currentFrame - 1 );
 						setStatus( ANIM_2D_STATUS_REVERSED );
 
-					}  // end if
+					}
 					else
 					{
 
 						setCurrentFrame( m_currentFrame + 1 );
 
-					}  // end else
+					}
 
-				}  // end else
+				}
 
 				break;
 
-			}  // end ping pong / ping pong backwards
+			}
 
 			// -------------------------------------------------------------------------------------------
 			default:
@@ -557,13 +557,13 @@ void Anim2D::tryNextFrame( void )
 											m_template->getAnimMode(), m_template->getName().str() ));
 				break;
 
-			}  // end default
+			}
 
-		}  // end switch
+		}
 
-	}  // end if
+	}
 
-}  // end tryNextFrame
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Set status bit */
@@ -574,7 +574,7 @@ void Anim2D::setStatus( UnsignedByte statusBits )
 	// set the bits
 	BitSet( m_status, statusBits );
 
-}  // end setStatus
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Clear status bit */
@@ -585,7 +585,7 @@ void Anim2D::clearStatus( UnsignedByte statusBits )
 	// clear bits
 	BitClear( m_status, statusBits );
 
-}  // end clearStatus
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Return the "natural" width of the image for our current frame */
@@ -599,7 +599,7 @@ UnsignedInt Anim2D::getCurrentFrameWidth( void ) const
 
 	return 0;
 
-}  // end getCurrentFrameWidth
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Return the "natural" height of the image for our current frame */
@@ -613,7 +613,7 @@ UnsignedInt Anim2D::getCurrentFrameHeight( void ) const
 
 	return 0;
 
-}  // end getCurrentFrameHeight
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Draw an Anim2D using the natural width and height of the image data */
@@ -643,7 +643,7 @@ void Anim2D::draw( Int x, Int y )
  	if( m_collectionSystem == NULL && BitIsSet( m_status, ANIM_2D_STATUS_FROZEN ) == FALSE )
 		tryNextFrame();
 
-}  // end draw
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Drawing an Anim2D using a forced width and height */
@@ -671,7 +671,7 @@ void Anim2D::draw( Int x, Int y, Int width, Int height )
  	if( m_collectionSystem == NULL && BitIsSet( m_status, ANIM_2D_STATUS_FROZEN ) == FALSE )
 		tryNextFrame();
 
-}  // end draw
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method
@@ -707,7 +707,7 @@ void Anim2D::xfer( Xfer *xfer )
 	// alpha
 	xfer->xferReal( &m_alpha );
 
-}  // end xfer
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -720,7 +720,7 @@ Anim2DCollection::Anim2DCollection( void )
 
 	m_templateList = NULL;
 	m_instanceList = NULL;
-}  // end Anim2DCollection
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -744,9 +744,9 @@ Anim2DCollection::~Anim2DCollection( void )
 		// set the head of our list to the next template
 		m_templateList = nextTemplate;
 
-	}  // end while
+	}
 
-}  // end ~Anim2DCollection
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Initialize 2D animation collection */
@@ -757,7 +757,7 @@ void Anim2DCollection::init( void )
 
 	ini.loadFileDirectory( "Data\\INI\\Animation2D", INI_LOAD_OVERWRITE, NULL );
 
-}  // end init
+}
 
 // ------------------------------------------------------------------------------------------------
 /** System update phase */
@@ -774,9 +774,9 @@ void Anim2DCollection::update( void )
 		if( BitIsSet( anim->getStatus(), ANIM_2D_STATUS_FROZEN ) == FALSE )
 			anim->tryNextFrame();
 
-	}  // end for, anim
+	}
 
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Search the template list for a template with a matching name */
@@ -793,11 +793,11 @@ Anim2DTemplate *Anim2DCollection::findTemplate( const AsciiString& name )
 		if( animTemplate->getName() == name )
 			return animTemplate;
 
-	}  // end for
+	}
 
 	return NULL;  // template not found
 
-}  // end findTemplate
+}
 
 //-------------------------------------------------------------------------------------------------
 Anim2DTemplate* Anim2DCollection::getNextTemplate( Anim2DTemplate *animTemplate ) const
@@ -825,7 +825,7 @@ Anim2DTemplate *Anim2DCollection::newTemplate( const AsciiString& name )
 	// return the new template
 	return animTemplate;
 
-}  // end newTemplate
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Register animation instance with us.  When an animation instance is registered it can
@@ -851,7 +851,7 @@ void Anim2DCollection::registerAnimation( Anim2D *anim )
 		m_instanceList->m_collectionSystemPrev = anim;
 	m_instanceList = anim;
 
-}  // end registerAnimation
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -874,5 +874,5 @@ void Anim2DCollection::unRegisterAnimation( Anim2D *anim )
 	else
 		m_instanceList = anim->m_collectionSystemNext;
 
-}  // end unRegisterAnimation
+}
 

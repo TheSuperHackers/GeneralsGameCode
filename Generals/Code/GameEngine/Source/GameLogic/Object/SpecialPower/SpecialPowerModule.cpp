@@ -64,7 +64,7 @@ SpecialPowerModuleData::SpecialPowerModuleData()
 	m_updateModuleStartsAttack = false;
 	m_startsPaused = FALSE;
 
-}  // end SpecialPowerModuleData
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ SpecialPowerModuleData::SpecialPowerModuleData()
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -140,7 +140,7 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 	}
 
 
-}  // end SpecialPowerModule
+}
 
 //-------------------------------------------------------------------------------------------------
 const AudioEventRTS& SpecialPowerModule::getInitiateSound() const
@@ -160,7 +160,7 @@ SpecialPowerModule::~SpecialPowerModule()
 																		getObject()->getID(),
 																		getSpecialPowerModuleData()->m_specialPowerTemplate );
 
-}  // end ~SpecialPowerModule
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -229,7 +229,7 @@ ScienceType SpecialPowerModule::getRequiredScience( void ) const
 {
 
 	return getSpecialPowerModuleData()->m_specialPowerTemplate->getRequiredScience();
-}  // end ~SpecialPowerModule
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -237,7 +237,7 @@ const SpecialPowerTemplate * SpecialPowerModule::getSpecialPowerTemplate( void )
 {
 
 	return getSpecialPowerModuleData()->m_specialPowerTemplate;
-}  // end ~SpecialPowerModule
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -245,7 +245,7 @@ AsciiString SpecialPowerModule::getPowerName( void ) const
 {
 
 	return getSpecialPowerModuleData()->m_specialPowerTemplate->getName();
-}  // end ~SpecialPowerModule
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Is this module designed for the power identier template passed in? */
@@ -262,7 +262,7 @@ Bool SpecialPowerModule::isModuleForPower( const SpecialPowerTemplate *specialPo
 	//
 	return modData->m_specialPowerTemplate == specialPowerTemplate;
 
-}  // end canExecutePower
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Is this special power ready to use */
@@ -290,7 +290,7 @@ Bool SpecialPowerModule::isReady() const
 
 	return (m_pausedCount == 0) && (TheGameLogic->getFrame() >= m_availableOnFrame);
 
-}  // end isReady
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Get the percentage ready a special power is to use
@@ -521,7 +521,7 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
 		soundAtLocation.setPlayerIndex(getObject()->getControllingPlayer()->getPlayerIndex());
 		TheAudio->addAudioEvent( &soundAtLocation );
 
-	}  // end if
+	}
 
 }
 
@@ -643,7 +643,7 @@ void SpecialPowerModule::pauseCountdown( Bool pause )
 			m_availableOnFrame += (TheGameLogic->getFrame() - m_pausedOnFrame);
 		}
 	}
-}  // end pauseCountdown
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -680,7 +680,7 @@ void SpecialPowerModule::crc( Xfer *xfer )
 	// extend base class
 	BehaviorModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -710,7 +710,7 @@ void SpecialPowerModule::xfer( Xfer *xfer )
 	// paused percent
 	xfer->xferReal( &m_pausedPercent );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -744,4 +744,4 @@ void SpecialPowerModule::loadPostProcess( void )
 
 
 
-}  // end loadPostProcess
+}

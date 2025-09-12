@@ -183,7 +183,7 @@ Bool HotKeyManager::executeHotKey( const AsciiString& keyIn )
  			if( TheAudio )
  			{
  				TheAudio->addAudioEvent( &buttonClick );
- 			}  // end if
+ 			}
 			return TRUE;
  		}
 

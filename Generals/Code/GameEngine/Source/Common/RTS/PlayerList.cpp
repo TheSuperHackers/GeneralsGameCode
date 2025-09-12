@@ -249,7 +249,7 @@ void PlayerList::update()
 	for( Int i = 0; i < MAX_PLAYER_COUNT; i++ )
 	{
 		m_players[i]->update();
-	}  // end for i
+	}
 
 }
 
@@ -260,7 +260,7 @@ void PlayerList::newMap()
 	for( Int i = 0; i < MAX_PLAYER_COUNT; i++ )
 	{
 		m_players[i]->newMap();
-	}  // end for i
+	}
 
 }
 
@@ -280,7 +280,7 @@ void PlayerList::updateTeamStates(void)
 	for( Int i = 0; i < MAX_PLAYER_COUNT; i++ )
 	{
 		m_players[i]->updateTeamStates();
-	}  // end for i
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -354,12 +354,12 @@ Player *PlayerList::getPlayerFromMask( PlayerMaskType mask )
 		if( player && player->getPlayerMask() == mask )
 			return player;
 
-	}  // end for i
+	}
 
 	DEBUG_CRASH( ("Player does not exist for mask") );
 	return NULL; // mask not found
 
-}  // end getPlayerFromMask
+}
 
 //-----------------------------------------------------------------------------
 Player *PlayerList::getEachPlayerFromMask( PlayerMaskType& maskToAdjust )
@@ -376,7 +376,7 @@ Player *PlayerList::getEachPlayerFromMask( PlayerMaskType& maskToAdjust )
 			maskToAdjust &= (~player->getPlayerMask());
 			return player;
 		}
-	}  // end for i
+	}
 
 	DEBUG_CRASH( ("No players found that contain any matching masks.") );
 	maskToAdjust = 0;
@@ -466,13 +466,13 @@ void PlayerList::xfer( Xfer *xfer )
 		DEBUG_CRASH(( "Invalid player count '%d', should be '%d'", playerCount, m_playerCount ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// xfer each of the player data
 	for( Int i = 0; i < playerCount; ++i )
 		xfer->xferSnapshot( m_players[ i ] );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -480,5 +480,5 @@ void PlayerList::xfer( Xfer *xfer )
 void PlayerList::loadPostProcess( void )
 {
 
-}  // end postProcessLoad
+}
 

@@ -832,7 +832,7 @@ validate_team_names:
 void SidesList::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -856,7 +856,7 @@ void SidesList::xfer( Xfer *xfer )
 		DEBUG_CRASH(( "SidesList::xfer - The sides list size has changed, this was not supposed to happen, you must version this method and figure out how to translate between old and new versions now" ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// side data
 	ScriptList *scriptList;
@@ -875,13 +875,13 @@ void SidesList::xfer( Xfer *xfer )
 			DEBUG_CRASH(( "SidesList::xfer - script list missing/present mismatch" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 		if( scriptListPresent )
 			xfer->xferSnapshot( scriptList );
 
-	}  // end for i
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -889,7 +889,7 @@ void SidesList::xfer( Xfer *xfer )
 void SidesList::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 /* ********* BuildListInfo class ****************************/
 /**
@@ -1000,7 +1000,7 @@ BuildListInfo *BuildListInfo::duplicate(void)
 void BuildListInfo::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1042,7 +1042,7 @@ void BuildListInfo::xfer( Xfer *xfer )
 		xfer->xferInt(&m_currentGatherers);
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1050,7 +1050,7 @@ void BuildListInfo::xfer( Xfer *xfer )
 void BuildListInfo::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 /* ********* TeamsInfoRec class ****************************/
 TeamsInfoRec::TeamsInfoRec() :

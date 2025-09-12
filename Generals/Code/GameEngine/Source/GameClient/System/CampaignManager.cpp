@@ -104,7 +104,7 @@ void INI::parseCampaignDefinition( INI *ini )
 	// parse the ini definition
 	ini->initFromINI( campaign, TheCampaignManager->getFieldParse() );
 
-}  // end parseCampaignDefinition
+}
 
 //-----------------------------------------------------------------------------
 Campaign::Campaign( void )
@@ -438,7 +438,7 @@ void CampaignManager::xfer( Xfer *xfer )
 	if( xfer->getXferMode() == XFER_LOAD )
 		setCampaignAndMission( currentCampaign, currentMission );
 
-}  // end xfer
+}
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////

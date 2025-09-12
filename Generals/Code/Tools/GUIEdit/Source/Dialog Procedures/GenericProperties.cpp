@@ -136,11 +136,11 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
 				// we have taken care of it
 				return TRUE;
 
-			}  // end if
+			}
 
 			return FALSE;
 
-		}  // end draw item
+		}
 
 		// ------------------------------------------------------------------------
     case WM_COMMAND:
@@ -182,13 +182,13 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
 							SetControlColor( controlID, newGameColor );
 							InvalidateRect( hWndControl, NULL, TRUE );
 
-						}  // end if
+						}
 
-					}  // end if
+					}
 
 					break;
 
-				}  // end color buttons
+				}
 
 				// --------------------------------------------------------------------
         case IDOK:
@@ -239,12 +239,12 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
 						color = GameMakeColor( rgbColor->red, rgbColor->green, rgbColor->blue, rgbColor->alpha );
 						window->winSetHiliteBorderColor( 0, color );
 
-					}  // end if
+					}
 
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end OK
+				}
 
 				// --------------------------------------------------------------------
         case IDCANCEL:
@@ -253,13 +253,13 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end cancel
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
     case WM_CLOSE:
@@ -268,15 +268,15 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
       DestroyWindow( hWndDialog );
       return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end genericPropertiesCallback
+}
 
 // InitCallbackCombos =========================================================
 /** load the callbacks combo boxes with the functions that the user cal
@@ -300,7 +300,7 @@ void InitCallbackCombos( HWND dialog, GameWindow *window )
 	{
 		SendMessage( combo, CB_ADDSTRING, 0, (LPARAM)entry->name );
 		entry++;
-	}  // end while
+	}
 	SendMessage( combo, CB_INSERTSTRING, 0, (LPARAM)GUIEDIT_NONE_STRING );
 
 	// select the current function of the window in the combo if present
@@ -318,7 +318,7 @@ void InitCallbackCombos( HWND dialog, GameWindow *window )
 	{
 		SendMessage( combo, CB_ADDSTRING, 0, (LPARAM)entry->name );
 		entry++;
-	}  // end while
+	}
 	SendMessage( combo, CB_INSERTSTRING, 0, (LPARAM)GUIEDIT_NONE_STRING );
 
 	// select the current function of the window in the combo if present
@@ -336,7 +336,7 @@ void InitCallbackCombos( HWND dialog, GameWindow *window )
 	{
 		SendMessage( combo, CB_ADDSTRING, 0, (LPARAM)entry->name );
 		entry++;
-	}  // end while
+	}
 	SendMessage( combo, CB_INSERTSTRING, 0, (LPARAM)GUIEDIT_NONE_STRING );
 
 	// select the current function of the window in the combo if present
@@ -354,13 +354,13 @@ void InitCallbackCombos( HWND dialog, GameWindow *window )
 	{
 		SendMessage( combo, CB_ADDSTRING, 0, (LPARAM)entry->name );
 		entry++;
-	}  // end while
+	}
 	entry = TheFunctionLexicon->getTable( FunctionLexicon::TABLE_GAME_WIN_DEVICEDRAW );
 	while( entry && entry ->key != NAMEKEY_INVALID )
 	{
 		SendMessage( combo, CB_ADDSTRING, 0, (LPARAM)entry->name );
 		entry++;
-	}  // end while
+	}
 	SendMessage( combo, CB_INSERTSTRING, 0, (LPARAM)GUIEDIT_NONE_STRING );
 
 	// select the current function of the window in the combo if present
@@ -417,7 +417,7 @@ void InitCallbackCombos( HWND dialog, GameWindow *window )
 	name = TheEditor->getLayoutShutdown();
 	SendMessage( combo, CB_SELECTSTRING, -1, (LPARAM)name.str() );
 
-}  // end InitCallbackCombos
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -479,7 +479,7 @@ HWND InitUserWinPropertiesDialog( GameWindow *window )
 
 	return dialog;
 
-}  // end InitUserWinPropertiesDialog
+}
 
 
 

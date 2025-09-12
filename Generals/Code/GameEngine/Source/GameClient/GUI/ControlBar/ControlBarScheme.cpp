@@ -678,7 +678,7 @@ void ControlBarScheme::addAnimation( ControlBarSchemeAnimation *schemeAnim )
 		return;
 	}
 	m_animations.push_back( schemeAnim );
-}// addAnimation
+}
 
 //
 // Add an image to the proper layer list
@@ -700,7 +700,7 @@ void ControlBarScheme::addImage( ControlBarSchemeImage *schemeImage )
 	}
 
 	m_layer[schemeImage->m_layer].push_back(schemeImage);
-}// addImage
+}
 
 //
 // Update the position of the image that's animating

@@ -251,7 +251,7 @@ void SupplyTruckAIUpdate::crc( Xfer *xfer )
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -272,7 +272,7 @@ void SupplyTruckAIUpdate::xfer( Xfer *xfer )
 	xfer->xferInt(&m_numberBoxes);
 	xfer->xferBool(&m_forcePending);
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -281,7 +281,7 @@ void SupplyTruckAIUpdate::loadPostProcess( void )
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+}
 
 //----------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------
@@ -448,7 +448,7 @@ SupplyTruckStateMachine::~SupplyTruckStateMachine()
 void SupplyTruckStateMachine::crc( Xfer *xfer )
 {
 	StateMachine::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -460,7 +460,7 @@ void SupplyTruckStateMachine::xfer( Xfer *xfer )
 	xfer->xferVersion( &v, cv );
 
 	StateMachine::xfer(xfer);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -468,7 +468,7 @@ void SupplyTruckStateMachine::xfer( Xfer *xfer )
 void SupplyTruckStateMachine::loadPostProcess( void )
 {
 	StateMachine::loadPostProcess();
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

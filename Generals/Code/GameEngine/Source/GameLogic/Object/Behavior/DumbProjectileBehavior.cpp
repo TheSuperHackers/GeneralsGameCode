@@ -493,8 +493,8 @@ Bool DumbProjectileBehavior::projectileHandleCollision( Object *other )
 							thingToKill->kill();
 							++numKilled;
 						}
-					} // next contained item
-				} // if items
+					}
+				}
 
 				if (numKilled > 0)
 				{
@@ -506,7 +506,7 @@ Bool DumbProjectileBehavior::projectileHandleCollision( Object *other )
 
 					return true;
 				}
-			}	// if a garrisonable thing
+			}
 		}
 
 	}
@@ -691,7 +691,7 @@ void DumbProjectileBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -744,16 +744,16 @@ void DumbProjectileBehavior::xfer( Xfer *xfer )
 											weaponTemplateName.str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
-		}  // end else
+		}
 
-	}  // end if
+	}
 
 	// lifespan frame
 	xfer->xferUnsignedInt( &m_lifespanFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -764,4 +764,4 @@ void DumbProjectileBehavior::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

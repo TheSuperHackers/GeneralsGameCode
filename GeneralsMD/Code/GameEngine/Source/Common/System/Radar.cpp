@@ -83,7 +83,7 @@ void Radar::deleteListResources( void )
 		// set head of the list to the next object
 		m_localObjectList = nextObject;
 
-	}  // end while
+	}
 
 	// delete entries from the regular object list
 	while( m_objectList )
@@ -101,7 +101,7 @@ void Radar::deleteListResources( void )
 		// set head of the list to the next object
 		m_objectList = nextObject;
 
-	}  // end while
+	}
 
 	Object *obj;
 	for( obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject() )
@@ -111,7 +111,7 @@ void Radar::deleteListResources( void )
 
 	}
 
-}  // end deleteListResources
+}
 
 // PUBLIC METHODS /////////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
@@ -156,7 +156,7 @@ Bool RadarObject::isTemporarilyHidden(const Object* obj)
 void RadarObject::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -185,17 +185,17 @@ void RadarObject::xfer( Xfer *xfer )
 			DEBUG_CRASH(( "RadarObject::xfer - Unable to find object for radar data" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// tell the object we now have some radar data
 		m_object->friend_setRadarData( this );
 
-	}  // end if
+	}
 
 	// color
 	xfer->xferColor( &m_color );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -203,7 +203,7 @@ void RadarObject::xfer( Xfer *xfer )
 void RadarObject::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -230,7 +230,7 @@ Radar::Radar( void )
 	// clear the radar events
 	clearAllEvents();
 
-}  // end Radar
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -240,7 +240,7 @@ Radar::~Radar( void )
 	// delete list resources
 	deleteListResources();
 
-}  // end ~Radar
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Clear all radar events */
@@ -274,9 +274,9 @@ void Radar::clearAllEvents( void )
 		m_event[ i ].radarLoc.y = 0;
 		m_event[ i ].soundPlayed = FALSE;
 
-	}  // end for i
+	}
 
-}  // end clearAllEvents
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset radar data */
@@ -293,7 +293,7 @@ void Radar::reset( void )
 	// stop forcing the radar on
 	m_radarForceOn = false;
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Radar per frame update */
@@ -315,7 +315,7 @@ void Radar::update( void )
 				thisFrame > m_event[ i ].dieFrame )
 			m_event[ i ].active = FALSE;
 
-	}  // end for i
+	}
 
 	// see if we should refresh the terrain
 	if( m_queueTerrainRefreshFrame != 0 &&
@@ -325,9 +325,9 @@ void Radar::update( void )
 		// refresh the terrain
 		refreshTerrain( TheTerrainLogic );
 
-	}  // end if
+	}
 
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset the radar for the new map data being given to it */
@@ -380,7 +380,7 @@ void Radar::newMap( TerrainLogic *terrain )
 				terrainSamples++;
 			}
 
-		}  // end for x
+		}
   }
 
 	// avoid divide by zeros
@@ -393,7 +393,7 @@ void Radar::newMap( TerrainLogic *terrain )
 	m_terrainAverageZ = m_terrainAverageZ / INT_TO_REAL( terrainSamples );
 	m_waterAverageZ = m_waterAverageZ / INT_TO_REAL( waterSamples );
 
-}  // end newMap
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Add an object to the radar list.  The object will be sorted in the list to be grouped
@@ -525,7 +525,7 @@ RadarObjectType Radar::addObject( Object *obj )
 					// the previous one next now points to the new entry
 					prevObject->friend_setNext( newObj );
 
-				}  // end if
+				}
 				else
 				{
 
@@ -535,29 +535,29 @@ RadarObjectType Radar::addObject( Object *obj )
 					// new list head is now newObj
 					*list = newObj;
 
-				}  // end else
+				}
 
 				break;  // exit for, stop the insert
 
-			}  // end if
+			}
 			else if( nextObject == NULL )
 			{
 
 				// at the end of the list, put object here
 				currObject->friend_setNext( newObj );
 
-			}  // end else if
+			}
 
 			// our current object is now the previous object
 			prevObject = currObject;
 			prevPriority = currPriority;
 
-		}  // end if
+		}
 
-	}  // end else
+	}
 
 	return objectType;
-}  // end addObject
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Try to delete an object from a specific list */
@@ -588,17 +588,17 @@ Bool Radar::deleteFromList( Object *obj, RadarObject **list )
 			// all done, object found and deleted
 			return TRUE;
 
-		}  // end if
+		}
 
 		// save this object as previous one encountered in the list
 		prevObject = radarObject;
 
-	}  // end for, radarObject
+	}
 
 	// object was not found in this list
 	return FALSE;
 
-}  // end deleteFromList
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Remove an object from the radar, the object may reside in any list */
@@ -621,9 +621,9 @@ RadarObjectType Radar::removeObject( Object *obj )
 		DEBUG_ASSERTCRASH( 0, ("Radar: Tried to remove object '%s' which was not found",
 											 obj->getTemplate()->getName().str()) );
 		return RadarObjectType_None;
-	}  // end else
+	}
 
-}  // end removeObject
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Translate a 2D spot on the radar (from (0,0) to (RADAR_CELL_WIDTH,RADAR_CELL_HEIGHT)
@@ -675,7 +675,7 @@ Bool Radar::radarToWorld( const ICoord2D *radar, Coord3D *world )
 
 	return TRUE;  // valid translation
 
-}  // end radarToWorld
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Translate a point in the world to the 2D radar (x,y)
@@ -715,7 +715,7 @@ Bool Radar::worldToRadar( const Coord3D *world, ICoord2D *radar )
 
 	return TRUE;  // valid translation
 
-}  // end worldToRadar
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Translate an actual pixel location (relative pixel with (0,0) being the top left of
@@ -767,7 +767,7 @@ Bool Radar::localPixelToRadar( const ICoord2D *pixel, ICoord2D *radar )
 		radar->y = (size.y - radar->y) * RADAR_CELL_HEIGHT / size.y;
 
 
-	}  // end if
+	}
 	else
 	{
 
@@ -783,11 +783,11 @@ Bool Radar::localPixelToRadar( const ICoord2D *pixel, ICoord2D *radar )
 		//
 		radar->y = (size.y - pixel->y) * RADAR_CELL_HEIGHT / size.y;
 
-	}  // end else
+	}
 
 	return TRUE;
 
-}  // end localPixelToRadar
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Translate a screen mouse position to world coords if the screen position is within
@@ -819,7 +819,7 @@ Bool Radar::screenPixelToWorld( const ICoord2D *pixel, Coord3D *world )
 	// translate radar to world
 	return radarToWorld( &radar, world );
 
-}  // end screenPixelToWorld
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Given the pixel coordinates, see if there is an object that is exactly in this
@@ -855,7 +855,7 @@ Object *Radar::objectUnderRadarPixel( const ICoord2D *pixel )
 	// return the object found (if any)
 	return obj;
 
-}  // end objectUnderRadarPixel
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Search the object list for an object that maps to the given logical radar coords */
@@ -883,7 +883,7 @@ Object *Radar::searchListForRadarLocationMatch( RadarObject *listHead, ICoord2D 
 			DEBUG_CRASH(( "Radar::searchListForRadarLocationMatch - NULL object encountered in list" ));
 			continue;
 
-		}  // end if
+		}
 
 		// convert object position to logical radar
 		worldToRadar( obj->getPosition(), &radar );
@@ -895,12 +895,12 @@ Object *Radar::searchListForRadarLocationMatch( RadarObject *listHead, ICoord2D 
 				radar.y <= radarMatch->y + 1 )
 			return obj;
 
-	}  // end for, radarObject
+	}
 
 	// no match found
 	return NULL;
 
-}  // end searchListForRadarLocationMatch
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Given the RELATIVE SCREEN start X and Y, the width and height of the area to draw the whole
@@ -957,7 +957,7 @@ void Radar::findDrawPositions( Int startX, Int startY, Int width, Int height,
 		lr->x = width;
 		lr->y = height - ul->y;
 
-	}  // end if
+	}
 	else if(  m_mapExtent.height() > m_mapExtent.width() )
 	{
 
@@ -978,7 +978,7 @@ void Radar::findDrawPositions( Int startX, Int startY, Int width, Int height,
 		lr->x = width - ul->x;
 		lr->y = height;
 
-	}  // end else
+	}
 	else
 	{
 
@@ -987,7 +987,7 @@ void Radar::findDrawPositions( Int startX, Int startY, Int width, Int height,
 		lr->x = width;
 		lr->y = height;
 
-	}  // end else
+	}
 */
 
 	// make them pixel positions
@@ -996,7 +996,7 @@ void Radar::findDrawPositions( Int startX, Int startY, Int width, Int height,
 	lr->x += startX;
 	lr->y += startY;
 
-}  // end findDrawPositions
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Radar color lookup table */
@@ -1046,9 +1046,9 @@ void Radar::createEvent( const Coord3D *world, RadarEventType type, Real seconds
 			color[ 1 ] = radarColorLookupTable[ i ].color2;
 			break;
 
-		}  // end if
+		}
 
-	}  // end while
+	}
 
 	// check for no match found in color table
 	if( radarColorLookupTable[ i ].event == RADAR_EVENT_INVALID )
@@ -1060,12 +1060,12 @@ void Radar::createEvent( const Coord3D *world, RadarEventType type, Real seconds
 		color[ 0 ] = color1;
 		color[ 1 ] = color2;
 
-	}  // end if
+	}
 
 	// call the internal method to create the event with these colors
 	internalCreateEvent( world, type, secondsToLive, &color[ 0 ], &color[ 1 ] );
 
-}  // end createEvent
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Create radar event using a specific colors from the player */
@@ -1107,7 +1107,7 @@ void Radar::createPlayerEvent( Player *player, const Coord3D *world,
 	// create the events using these colors
 	internalCreateEvent( world, type, secondsToLive, &color[ 0 ], &color[ 1 ] );
 
-}  // end createPlayerEvent
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Create a new radar event */
@@ -1149,7 +1149,7 @@ void Radar::internalCreateEvent( const Coord3D *world, RadarEventType type, Real
 	if( m_nextFreeRadarEvent >= MAX_RADAR_EVENTS )
 		m_nextFreeRadarEvent = 0;
 
-}  // end createEvent
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Get the last event position, if any.
@@ -1167,11 +1167,11 @@ Bool Radar::getLastEventLoc( Coord3D *eventPos )
 			*eventPos = m_event[ m_lastRadarEvent ].worldLoc;
 		return TRUE;
 
-	}  // end if
+	}
 
 	return FALSE;  // no last event
 
-}  // end getLastEventLoc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Try to create a radar event for "we're under attack".  This will be called every time
@@ -1225,7 +1225,7 @@ void Radar::tryUnderAttackEvent( const Object *obj )
 			unitAttackSound.setPlayerIndex(player->getPlayerIndex());
 			TheAudio->addAudioEvent( &unitAttackSound );
 
-		}  // end if
+		}
 		else if( obj->isKindOf( KINDOF_STRUCTURE ) && obj->isKindOf( KINDOF_MP_COUNT_FOR_VICTORY ) )
 		{
 			// play EVA. If its our object, play Base under attack.
@@ -1242,7 +1242,7 @@ void Radar::tryUnderAttackEvent( const Object *obj )
 			structureAttackSound.setPlayerIndex(player->getPlayerIndex());
 			TheAudio->addAudioEvent( &structureAttackSound );
 
-		}  // end else if
+		}
 		else
 		{
 
@@ -1254,11 +1254,11 @@ void Radar::tryUnderAttackEvent( const Object *obj )
 			underAttackSound.setPlayerIndex(player->getPlayerIndex());
 			TheAudio->addAudioEvent( &underAttackSound );
 
-		}  // end else
+		}
 
-	}  // end if
+	}
 
-}  // end tryUnderAttackEvent
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Try to create a radar event for "infiltration".
@@ -1297,7 +1297,7 @@ void Radar::tryInfiltrationEvent( const Object *obj )
 	infiltrationWarningSound.setPlayerIndex(player->getPlayerIndex());
 	TheAudio->addAudioEvent( &infiltrationWarningSound );
 
-}  // end tryInfiltrationEvent
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -1335,11 +1335,11 @@ Bool Radar::tryEvent( RadarEventType event, const Coord3D *pos )
 				if( currentFrame - m_event[ i ].createFrame < framesBetweenEvents )
 					return FALSE;  // reject it
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end for i
+	}
 
 	// if we got here then we want to create a new event
 	createEvent( pos, event );
@@ -1347,7 +1347,7 @@ Bool Radar::tryEvent( RadarEventType event, const Coord3D *pos )
 	// return TRUE for successfully created event
 	return TRUE;
 
-}  // end tryEvent
+}
 
 
 // ------------------------------------------------------------------------------------------------
@@ -1358,7 +1358,7 @@ void Radar::refreshTerrain( TerrainLogic *terrain )
 	// no future queue is valid now
 	m_queueTerrainRefreshFrame = 0;
 
-}  // end refreshTerrain
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Queue a refresh of the radar terrain, we have this so that if there is code that
@@ -1379,7 +1379,7 @@ void Radar::queueTerrainRefresh( void )
 	//
 	m_queueTerrainRefreshFrame = TheGameLogic->getFrame();
 
-}  // end queueTerrainRefresh
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -1387,7 +1387,7 @@ void Radar::queueTerrainRefresh( void )
 void Radar::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer a radar object list given the head pointer as a parameter
@@ -1423,9 +1423,9 @@ static void xferRadarObjectList( Xfer *xfer, RadarObject **head )
 			// save this object
 			xfer->xferSnapshot( radarObject );
 
-		}  // end for, radarObject
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -1448,7 +1448,7 @@ static void xferRadarObjectList( Xfer *xfer, RadarObject **head )
 			DEBUG_CRASH(( "xferRadarObjectList - List head should be NULL, but isn't" ));
 			throw SC_INVALID_DATA;
 #endif
-		}  // end if
+		}
 
 		// read each element
 		for( UnsignedShort i = 0; i < count; ++i )
@@ -1466,21 +1466,21 @@ static void xferRadarObjectList( Xfer *xfer, RadarObject **head )
 				RadarObject *other;
 				for( other = *head; other->friend_getNext() != NULL; other = other->friend_getNext() )
 				{
-				}  // end for, other
+				}
 
 				// set the end of the list to point to the new object
 				other->friend_setNext( radarObject );
 
-			}  // end else
+			}
 
 			// load the data
 			xfer->xferSnapshot( radarObject );
 
-		}  // end for i
+		}
 
-	}  // end else, load
+	}
 
-}  // end xferRadarObjectList
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method
@@ -1518,7 +1518,7 @@ void Radar::xfer( Xfer *xfer )
 									eventCount, eventCountVerify ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 	for( UnsignedShort i = 0; i < eventCount; ++i )
 	{
 
@@ -1534,7 +1534,7 @@ void Radar::xfer( Xfer *xfer )
 		xfer->xferICoord2D( &m_event[ i ].radarLoc );
 		xfer->xferBool( &m_event[ i ].soundPlayed );
 
-	}  // end for i
+	}
 
 	// next event index
 	xfer->xferInt( &m_nextFreeRadarEvent );
@@ -1542,7 +1542,7 @@ void Radar::xfer( Xfer *xfer )
 	// last event index
 	xfer->xferInt( &m_lastRadarEvent );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1556,7 +1556,7 @@ void Radar::loadPostProcess( void )
 	//
 	refreshTerrain( TheTerrainLogic );
 
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Is the priority type passed in a "visible" one that can show up on the radar */
@@ -1574,6 +1574,6 @@ Bool Radar::isPriorityVisible( RadarPriorityType priority )
 		default:
 			return TRUE;
 
-	}  // end switch
+	}
 
-}  // end isPriorityVisible
+}

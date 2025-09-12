@@ -2281,7 +2281,7 @@ void JetAIUpdate::crc( Xfer *xfer )
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -2344,7 +2344,7 @@ void JetAIUpdate::xfer( Xfer *xfer )
 		}
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -2364,4 +2364,4 @@ void JetAIUpdate::loadPostProcess( void )
 
 	// extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+}

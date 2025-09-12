@@ -190,7 +190,7 @@ void PilotFindVehicleUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -211,7 +211,7 @@ void PilotFindVehicleUpdate::xfer( Xfer *xfer )
 	// did move to base
 	xfer->xferBool( &m_didMoveToBase );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -222,4 +222,4 @@ void PilotFindVehicleUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -212,7 +212,7 @@ void MoundOptions::GetPopSliderInfo(const long sliderID, long *pMin, long *pMax,
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 }
 
 void MoundOptions::PopSliderChanged(const long sliderID, long theVal)
@@ -249,7 +249,7 @@ void MoundOptions::PopSliderChanged(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 }
 
 void MoundOptions::PopSliderFinished(const long sliderID, long theVal)
@@ -266,7 +266,7 @@ void MoundOptions::PopSliderFinished(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 
 }
 

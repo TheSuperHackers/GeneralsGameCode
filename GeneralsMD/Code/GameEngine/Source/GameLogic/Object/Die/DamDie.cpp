@@ -48,7 +48,7 @@
 DamDieModuleData::DamDieModuleData( void )
 {
 
-}  // end DamDieModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ DamDieModuleData::DamDieModuleData( void )
 //
 //  p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -76,14 +76,14 @@ DamDie::DamDie( Thing *thing, const ModuleData *moduleData )
 			 :DieModule( thing, moduleData )
 {
 
-}  // end DamDie
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 DamDie::~DamDie( void )
 {
 
-}  // end ~DamDie
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -104,9 +104,9 @@ void DamDie::onDie( const DamageInfo *damageInfo )
 		// clear any disabled status of the water wave
 		obj->clearDisabled( DISABLED_DEFAULT );
 
-	}  // end for, obj
+	}
 
-}  // end onDie
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -117,7 +117,7 @@ void DamDie::crc( Xfer *xfer )
 	// extend base class
 	DieModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -135,7 +135,7 @@ void DamDie::xfer( Xfer *xfer )
 	// extend base class
 	DieModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -146,4 +146,4 @@ void DamDie::loadPostProcess( void )
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

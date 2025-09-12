@@ -244,3 +244,4 @@ template<typename Type> inline void letoh_ref(Type &value) { value = Endian::let
 #endif // _MSC_VER < 1300
 
 #endif // ENDIAN_COMPAT_H
+

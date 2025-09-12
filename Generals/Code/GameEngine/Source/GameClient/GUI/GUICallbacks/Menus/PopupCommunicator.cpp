@@ -72,7 +72,7 @@ void PopupCommunicatorInit( WindowLayout *layout, void *userData )
 	buttonOkID = TheNameKeyGenerator->nameToKey( AsciiString("PopupCommunicator.wnd:ButtonOk") );
 	buttonOk = TheWindowManager->winGetWindowFromId( parent, buttonOkID );
 
-}  // end PopupCommunicatorInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Popup Communicator shutdown method */
@@ -80,7 +80,7 @@ void PopupCommunicatorInit( WindowLayout *layout, void *userData )
 void PopupCommunicatorShutdown( WindowLayout *layout, void *userData )
 {
 
-}  // end PopupCommunicatorShutdown
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Popup Communicator update method */
@@ -88,7 +88,7 @@ void PopupCommunicatorShutdown( WindowLayout *layout, void *userData )
 void PopupcommunicatorUpdate( WindowLayout *layout, void *userData )
 {
 
-}  // end PopupCommunicatorUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Popup Communicator input callback */
@@ -123,22 +123,22 @@ WindowMsgHandledType PopupCommunicatorInput( GameWindow *window, UnsignedInt msg
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)buttonOk, buttonOkID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
 
-}  // end PopupCommunicatorInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Popup Communicator window system callback */
@@ -156,14 +156,14 @@ WindowMsgHandledType PopupCommunicatorSystem( GameWindow *window, UnsignedInt ms
 
 			break;
 
-		}  // end create
+		}
     //---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
 
 			break;
 
-		}  // end case
+		}
 
     //----------------------------------------------------------------------------------------------
     case GWM_INPUT_FOCUS:
@@ -175,7 +175,7 @@ WindowMsgHandledType PopupCommunicatorSystem( GameWindow *window, UnsignedInt ms
 
 			break;
 
-		}  // end input
+		}
     //---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
@@ -191,16 +191,16 @@ WindowMsgHandledType PopupCommunicatorSystem( GameWindow *window, UnsignedInt ms
 					deleteInstance(popupCommunicatorLayout);
 					popupCommunicatorLayout = NULL;
 				}
-			}  // end if
+			}
 
 			break;
 
-		}  // end selected
+		}
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 

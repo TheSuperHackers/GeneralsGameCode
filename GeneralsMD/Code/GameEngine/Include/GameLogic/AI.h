@@ -330,7 +330,7 @@ enum AttitudeType CPP_11(: Int)
 	ATTITUDE_ALERT=1,
 	ATTITUDE_AGGRESSIVE=2,
 	ATTITUDE_INVALID=3
-};		///< AI "attitude" behavior modifiers
+};
 
 enum CommandSourceType CPP_11(: Int);
 

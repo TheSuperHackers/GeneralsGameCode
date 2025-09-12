@@ -78,6 +78,6 @@ UnsignedInt CRC::get( void )
 	UnsignedInt tcrc = crc;
 	return tcrc;
 
-}  // end skip
+}
 
 #endif

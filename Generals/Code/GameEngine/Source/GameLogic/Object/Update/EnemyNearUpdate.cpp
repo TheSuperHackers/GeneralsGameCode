@@ -115,7 +115,7 @@ void EnemyNearUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -139,7 +139,7 @@ void EnemyNearUpdate::xfer( Xfer *xfer )
 	// enemy near
 	xfer->xferBool( &m_enemyNear );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -150,4 +150,4 @@ void EnemyNearUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

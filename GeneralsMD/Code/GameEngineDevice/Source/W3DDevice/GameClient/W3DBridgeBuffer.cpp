@@ -867,7 +867,7 @@ static RenderObjClass* createTower( SimpleSceneClass *scene,
 		case BRIDGE_TOWER_TO_RIGHT:		towerPos = bridgeInfo->toRight;			break;
 		default: return NULL;
 
-	}  // end switch
+	}
 
 	// set the Z position to that of the terrain
 	towerPos.z = TheTerrainRenderObject->getHeightMapHeight( towerPos.x, towerPos.y, NULL);
@@ -952,7 +952,7 @@ static void updateTowerPos( RenderObjClass* tower,
 		case BRIDGE_TOWER_TO_RIGHT:		towerPos = bridgeInfo->toRight;			break;
 		default: return;
 
-	}  // end switch
+	}
 
 	// set the position of the tower render object to the position in the world
 	Matrix3D transform;
@@ -1033,7 +1033,7 @@ void W3DBridgeBuffer::worldBuilderUpdateBridgeTowers( W3DAssetManager *assetMana
 							towerRenderObj = createTower( scene, assetManager, pMapObj, (BridgeTowerType)j, &bridgeInfo );
 							created = TRUE;
 
-						}  // end if
+						}
 
 						// sanity
 						DEBUG_ASSERTCRASH( towerRenderObj != NULL, ("worldBuilderUpdateBridgeTowers: unable to create tower for bridge '%s'",
@@ -1046,11 +1046,11 @@ void W3DBridgeBuffer::worldBuilderUpdateBridgeTowers( W3DAssetManager *assetMana
 						if( created )
 							REF_PTR_RELEASE( towerRenderObj );
 
-					}  // end for j
+					}
 
-				}  // end if
+				}
 
-			}  // end for i
+			}
 
 			// skip the 2nd map object representing the second half of the bridgef
 			pMapObj = pMapObj2;

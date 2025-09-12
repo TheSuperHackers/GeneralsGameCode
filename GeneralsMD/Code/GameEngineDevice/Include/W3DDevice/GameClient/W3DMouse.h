@@ -105,7 +105,7 @@ private:
 
 	void setCursorDirection(MouseCursor cursor);	///figure out direction for oriented 2D cursors.
 
-};  // end Win32Mouse
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////
 

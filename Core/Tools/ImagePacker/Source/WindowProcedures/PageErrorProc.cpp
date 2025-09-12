@@ -118,16 +118,16 @@ BOOL CALLBACK PageErrorProc( HWND hWndDialog, UINT message,
 
 					SendMessage( list, LB_INSERTSTRING, -1, (LPARAM)buffer );
 
-				}  // end if
+				}
 
-			}  // end for i
+			}
 
 			// set the extents for the horizontal scroll bar in the listbox
 			SendMessage( list, LB_SETHORIZONTALEXTENT, 1280, 0 );
 
 			return TRUE;
 
-		}  // end init
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_COMMAND:
@@ -146,18 +146,18 @@ BOOL CALLBACK PageErrorProc( HWND hWndDialog, UINT message,
 					EndDialog( hWndDialog, TRUE );
 					break;
 
-				}  // end proceed
+				}
 
-			}  // end switch
+			}
 
 			break;
 
-		}  // end command
+		}
 
-	}  // end switch message
+	}
 
 	return 0;
 
-}  // end PageErrorProc
+}
 
 

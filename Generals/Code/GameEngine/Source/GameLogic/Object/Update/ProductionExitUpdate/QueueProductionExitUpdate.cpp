@@ -306,7 +306,7 @@ void QueueProductionExitUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -339,7 +339,7 @@ void QueueProductionExitUpdate::xfer( Xfer *xfer )
 	// current burst count
 	xfer->xferUnsignedInt( &m_currentBurstCount );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -350,4 +350,4 @@ void QueueProductionExitUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

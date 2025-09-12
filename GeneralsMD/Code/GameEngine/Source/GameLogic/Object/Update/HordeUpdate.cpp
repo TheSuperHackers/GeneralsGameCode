@@ -213,7 +213,7 @@ void HordeUpdate::joinOrLeaveHorde(SimpleObjectIterator *iter, Bool join)
 					else
 						DEBUG_CRASH(( "HordeUpdate::joinOrLeaveHorde - We (%s) must have an AI to benefit from horde",
 													getObject()->getTemplate()->getName().str() ));
-				}  // end if
+				}
 
 			}
 			break;
@@ -398,7 +398,7 @@ void HordeUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -422,7 +422,7 @@ void HordeUpdate::xfer( Xfer *xfer )
 	// has flag
 	xfer->xferBool( &m_hasFlag );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -433,4 +433,4 @@ void HordeUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

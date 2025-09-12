@@ -337,7 +337,7 @@ void DynamicShroudClearingRangeUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -378,7 +378,7 @@ void DynamicShroudClearingRangeUpdate::xfer( Xfer *xfer )
 	xfer->xferReal( &m_nativeClearingRange );
 	xfer->xferReal( &m_currentClearingRange );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -389,4 +389,4 @@ void DynamicShroudClearingRangeUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

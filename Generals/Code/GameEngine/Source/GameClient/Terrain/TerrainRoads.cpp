@@ -115,7 +115,7 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 		DEBUG_CRASH(( "Expected Damage/Repair transition keyword" ));
 		throw INI_INVALID_DATA;
 
-	}  // end else
+	}
 
 	// get body damage state
 	token = ini->getNextSubToken( "ToState" );
@@ -135,7 +135,7 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 		DEBUG_CRASH(( "Effect number max on bridge transitions is '%d'", MAX_BRIDGE_BODY_FX ));
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// read the string
 	token = ini->getNextSubToken( "OCL" );
@@ -144,7 +144,7 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 	else
 		theInstance->friend_setRepairedToOCLString( state, effectNum, AsciiString( token ) );
 
-}  // end parseTransitionToOCL
+}
 
 // ------------------------------------------------------------------------------------------------
 /** In the form of
@@ -171,7 +171,7 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 		DEBUG_CRASH(( "Expected Damage/Repair transition keyword" ));
 		throw INI_INVALID_DATA;
 
-	}  // end else
+	}
 
 	// get body damage state
 	token = ini->getNextSubToken( "ToState" );
@@ -191,7 +191,7 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 		DEBUG_CRASH(( "Effect number max on bridge transitions is '%d'", MAX_BRIDGE_BODY_FX ));
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// read the string
 	token = ini->getNextSubToken( "FX" );
@@ -200,7 +200,7 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 	else
 		theInstance->friend_setRepairedToFXString( state, effectNum, AsciiString( token ) );
 
-}  // end parseTransitionToFX
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -219,14 +219,14 @@ TerrainRoadType::TerrainRoadType( void )
 	m_transitionEffectsHeight = 0.0f;
 	m_numFXPerType = 0;
 
-}  // end TerrainRoadType
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 TerrainRoadType::~TerrainRoadType( void )
 {
 
-}  // end ~TerrainRoadType
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -242,7 +242,7 @@ TerrainRoadCollection::TerrainRoadCollection( void )
 
 	m_idCounter = 1;   ///< MUST start this at 1.
 
-}  // end TerrainRoadCollection
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -263,7 +263,7 @@ TerrainRoadCollection::~TerrainRoadCollection( void )
 		// set the new head of the list
 		m_roadList = temp;
 
-	}  // end while
+	}
 
 	// delete all bridges in the list
 	while( m_bridgeList )
@@ -278,9 +278,9 @@ TerrainRoadCollection::~TerrainRoadCollection( void )
 		// set the new head of the list
 		m_bridgeList = temp;
 
-	}  // end while
+	}
 
-}  // end ~TerrainRoadCollection
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Find road with matching name */
@@ -295,12 +295,12 @@ TerrainRoadType *TerrainRoadCollection::findRoad( AsciiString name )
 		if( road->getName() == name )
 			return road;
 
-	}  // end for road
+	}
 
 	// not found
 	return NULL;
 
-}  // end findRoad
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Find bridge with matching name */
@@ -315,12 +315,12 @@ TerrainRoadType *TerrainRoadCollection::findBridge( AsciiString name )
 		if( bridge->getName() == name )
 			return bridge;
 
-	}  // end for bridge
+	}
 
 	// not found
 	return NULL;
 
-}  // end findBridge
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Search the roads AND bridge lists for the name */
@@ -334,7 +334,7 @@ TerrainRoadType *TerrainRoadCollection::findRoadOrBridge( AsciiString name )
 	else
 		return findBridge( name );
 
-}  // end findRoadOrBridge
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Allocate a new road, set the name, and link to the road list */
@@ -361,7 +361,7 @@ TerrainRoadType *TerrainRoadCollection::newRoad( AsciiString name )
 		road->friend_setRoadWidth( defaultRoad->getRoadWidth() );
 		road->friend_setRoadWidthInTexture( defaultRoad->getRoadWidthInTexture() );
 
-	}  // end if
+	}
 
 	// link to list
 	road->friend_setNext( m_roadList );
@@ -370,7 +370,7 @@ TerrainRoadType *TerrainRoadCollection::newRoad( AsciiString name )
 	// return the new road
 	return road;
 
-}  // end newRoad
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Allocate a new bridge */
@@ -419,11 +419,11 @@ TerrainRoadType *TerrainRoadCollection::newBridge( AsciiString name )
 				bridge->friend_setRepairedToOCLString( (BodyDamageType)state, i, bridge->getDamageToOCLString( (BodyDamageType)state, i ) );
 				bridge->friend_setRepairedToFXString( (BodyDamageType)state, i, bridge->getDamageToOCLString( (BodyDamageType)state, i ) );
 
-			}  // end for i
+			}
 
-		}  // end for
+		}
 
-	}  // end if
+	}
 
 	// link to list
 	bridge->friend_setNext( m_bridgeList );
@@ -432,7 +432,7 @@ TerrainRoadType *TerrainRoadCollection::newBridge( AsciiString name )
 	// return the new bridge
 	return bridge;
 
-}  // end newBridge
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return next road in list */
@@ -443,7 +443,7 @@ TerrainRoadType *TerrainRoadCollection::nextRoad( TerrainRoadType *road )
 	DEBUG_ASSERTCRASH( road->isBridge() == FALSE, ("nextRoad: road not a road") );
 	return road->friend_getNext();
 
-}  // end nextRoad
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return next bridge in list */
@@ -454,5 +454,5 @@ TerrainRoadType *TerrainRoadCollection::nextBridge( TerrainRoadType *bridge )
 	DEBUG_ASSERTCRASH( bridge->isBridge() == TRUE, ("nextBridge, bridge is not a bridge") );
 	return bridge->friend_getNext();
 
-}  // end nextBridge
+}
 

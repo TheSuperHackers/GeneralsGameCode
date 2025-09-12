@@ -74,7 +74,7 @@ static void parseCashHackUpgradePair( INI* ini, void * /*instance*/, void *store
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,14 +86,14 @@ CashHackSpecialPower::CashHackSpecialPower( Thing *thing, const ModuleData *modu
 												: SpecialPowerModule( thing, moduleData )
 {
 
-}  // end CashHackSpecialPower
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 CashHackSpecialPower::~CashHackSpecialPower( void )
 {
 
-}  // end ~CashHackSpecialPower
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -187,7 +187,7 @@ void CashHackSpecialPower::crc( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -205,7 +205,7 @@ void CashHackSpecialPower::xfer( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -216,4 +216,4 @@ void CashHackSpecialPower::loadPostProcess( void )
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

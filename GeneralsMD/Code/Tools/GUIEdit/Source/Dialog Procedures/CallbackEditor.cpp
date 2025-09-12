@@ -115,7 +115,7 @@ void SaveCallbacks( GameWindow *window, HWND dialog )
 	if( window )
 		TheEditor->setUnsaved( TRUE );
 
-}  // end SaveCallbacks
+}
 
 // setCurrentWindow ===========================================================
 /** Set the window passed in as the active window for editing */
@@ -196,10 +196,10 @@ static void setCurrentWindow( GameWindow *window, HWND dialog )
 		else
 			name = noNameWindowString;
 
-	}  // end if
+	}
 	SetWindowText( GetDlgItem( dialog, STATIC_WINDOW ), name.str() );
 
-}  // end setCurrentWindow
+}
 
 // loadUserWindows ============================================================
 /** Given the window list passed in, load the list box passed with the
@@ -235,12 +235,12 @@ static void loadUserWindows( HWND listbox, GameWindow *root )
 		// check the children
 		loadUserWindows( listbox, root->winGetChild() );
 
-	}  // end if
+	}
 
 	// check the rest of the list
 	loadUserWindows( listbox, root->winGetNext() );
 
-}  // end loadUserWindows
+}
 
 //-------------------------------------------------------------------------------------------------
 /** save the layout callbacks */
@@ -265,7 +265,7 @@ static void saveLayoutCallbacks( HWND dialog )
 	SendDlgItemMessage( dialog, COMBO_SHUTDOWN, CB_GETLBTEXT, sel, (LPARAM)buffer );
 	TheEditor->setLayoutShutdown( AsciiString(buffer) );
 
-}  // end saveLayoutCallbacks
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -303,7 +303,7 @@ BOOL CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message,
 
 			return TRUE;
 
-		}  // end init dialog
+		}
 
 		// ------------------------------------------------------------------------
     case WM_COMMAND:
@@ -347,13 +347,13 @@ BOOL CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message,
 
 							break;
 
-						}  // end case selection change
+						}
 
-					}  // end switch
+					}
 
 					break;
 
-				}  // end window listbox
+				}
 
 				// --------------------------------------------------------------------
         case IDOK:
@@ -371,20 +371,20 @@ BOOL CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message,
 
           break;
 
-				}  // end ok
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end CallbackEditorDialogProc
+}
 
 

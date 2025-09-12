@@ -46,14 +46,14 @@ XferCRC::XferCRC( void )
 	//Initialization(s) inserted
 	m_crc = 0;
 	//
-}  // end XferCRC
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 XferCRC::~XferCRC( void )
 {
 
-}  // end ~XferCRC
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Open file 'identifier' for writing */
@@ -67,7 +67,7 @@ void XferCRC::open( AsciiString identifier )
 	// initialize CRC to brand new one at zero
 	m_crc = 0;
 
-}  // end open
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Close our current file */
@@ -75,7 +75,7 @@ void XferCRC::open( AsciiString identifier )
 void XferCRC::close( void )
 {
 
-}  // end close
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -84,14 +84,14 @@ Int XferCRC::beginBlock( void )
 
 	return 0;
 
-}  // end beginBlock
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void XferCRC::endBlock( void )
 {
 
-}  // end endBlock
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ void XferCRC::addCRC( UnsignedInt val )
 
 	m_crc = (m_crc << 1) + htobe(val) + ((m_crc >> 31) & 0x01);
 
-}  // end addCRC
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Entry point for xfering a snapshot */
@@ -113,12 +113,12 @@ void XferCRC::xferSnapshot( Snapshot *snapshot )
 
 		return;
 
-	}  // end if
+	}
 
 	// run the crc function of the snapshot
 	snapshot->crc( this );
 
-}  // end xferSnapshot
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Perform a single CRC operation on the data passed in */
@@ -154,14 +154,14 @@ void XferCRC::xferImplementation( void *data, Int dataSize )
 		break;
 	}
 
-}  // end xferImplementation
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void XferCRC::skip( Int dataSize )
 {
 
-}  // end skip
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -170,7 +170,7 @@ UnsignedInt XferCRC::getCRC( void )
 
 	return htobe(m_crc);
 
-}  // end skip
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -181,7 +181,7 @@ XferDeepCRC::XferDeepCRC( void )
 	m_xferMode = XFER_SAVE;
 	m_fileFP = NULL;
 
-}  // end XferCRC
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -195,9 +195,9 @@ XferDeepCRC::~XferDeepCRC( void )
 		DEBUG_CRASH(( "Warning: Xfer file '%s' was left open", m_identifier.str() ));
 		close();
 
-	}  // end if
+	}
 
-}  // end ~XferCRC
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Open file 'identifier' for writing */
@@ -215,7 +215,7 @@ void XferDeepCRC::open( AsciiString identifier )
 									identifier.str(), m_identifier.str() ));
 		throw XFER_FILE_ALREADY_OPEN;
 
-	}  // end if
+	}
 
 	// call base class
 	Xfer::open( identifier );
@@ -228,12 +228,12 @@ void XferDeepCRC::open( AsciiString identifier )
 		DEBUG_CRASH(( "File '%s' not found", identifier.str() ));
 		throw XFER_FILE_NOT_FOUND;
 
-	}  // end if
+	}
 
 	// initialize CRC to brand new one at zero
 	m_crc = 0;
 
-}  // end open
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Close our current file */
@@ -248,7 +248,7 @@ void XferDeepCRC::close( void )
 		DEBUG_CRASH(( "Xfer close called, but no file was open" ));
 		throw XFER_FILE_NOT_OPEN;
 
-	}  // end if
+	}
 
 	// close the file
 	fclose( m_fileFP );
@@ -257,7 +257,7 @@ void XferDeepCRC::close( void )
 	// erase the filename
 	m_identifier.clear();
 
-}  // end close
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Perform a single CRC operation on the data passed in */
@@ -281,11 +281,11 @@ void XferDeepCRC::xferImplementation( void *data, Int dataSize )
 		DEBUG_CRASH(( "XferSave - Error writing to file '%s'", m_identifier.str() ));
 		throw XFER_WRITE_ERROR;
 
-	}  // end if
+	}
 
 	XferCRC::xferImplementation( data, dataSize );
 
-}  // end xferImplementation
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Save ascii string */
@@ -293,7 +293,7 @@ void XferDeepCRC::xferImplementation( void *data, Int dataSize )
 void XferDeepCRC::xferMarkerLabel( AsciiString asciiStringData )
 {
 
-}  // end xferAsciiString
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Save ascii string */
@@ -308,7 +308,7 @@ void XferDeepCRC::xferAsciiString( AsciiString *asciiStringData )
 		DEBUG_CRASH(( "XferSave cannot save this ascii string because it's too long.  Change the size of the length header (but be sure to preserve save file compatability" ));
 		throw XFER_STRING_ERROR;
 
-	}  // end if
+	}
 
 	// save length of string to follow
 	UnsignedShort len = asciiStringData->getLength();
@@ -318,7 +318,7 @@ void XferDeepCRC::xferAsciiString( AsciiString *asciiStringData )
 	if( len > 0 )
 		xferUser( (void *)asciiStringData->str(), sizeof( Byte ) * len );
 
-}  // end xferAsciiString
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Save unicodee string */
@@ -333,7 +333,7 @@ void XferDeepCRC::xferUnicodeString( UnicodeString *unicodeStringData )
 		DEBUG_CRASH(( "XferSave cannot save this unicode string because it's too long.  Change the size of the length header (but be sure to preserve save file compatability" ));
 		throw XFER_STRING_ERROR;
 
-	}  // end if
+	}
 
 	// save length of string to follow
 	Byte len = unicodeStringData->getLength();
@@ -343,4 +343,4 @@ void XferDeepCRC::xferUnicodeString( UnicodeString *unicodeStringData )
 	if( len > 0 )
 		xferUser( (void *)unicodeStringData->str(), sizeof( WideChar ) * len );
 
-}  // end xferUnicodeString
+}

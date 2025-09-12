@@ -56,6 +56,6 @@ void INI::parseVideoDefinition( INI* ini )
 	TheVideoPlayer->addVideo(&video);
 
 
-}  // end parseVideoDefinition
+}
 
 

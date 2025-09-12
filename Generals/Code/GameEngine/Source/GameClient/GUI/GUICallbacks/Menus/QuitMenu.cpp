@@ -445,7 +445,7 @@ void ToggleQuitMenu()
 
 	TheInGameUI->setQuitMenuVisible(isVisible);
 
-}  // end ToggleQuitMenu
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Quit menu window system callback */
@@ -462,7 +462,7 @@ WindowMsgHandledType QuitMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end create
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
@@ -470,7 +470,7 @@ WindowMsgHandledType QuitMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end case
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -509,14 +509,14 @@ WindowMsgHandledType QuitMenuSystem( GameWindow *window, UnsignedInt msg,
 			else if( controlID == buttonExit )
 			{
         quitConfirmationWindow = QuitMessageBoxYesNo(TheGameText->fetch("GUI:QuitPopupTitle"), TheGameText->fetch("GUI:QuitPopupMessage"),/*quitCallback*/exitQuitMenu,noExitQuitMenu);
-			}  // end if
+			}
 			else if( controlID == buttonReturn )
 			{
 
 				// hide this menu
 				ToggleQuitMenu();
 
-			}  // end else if
+			}
 			else if( buttonOptions == controlID )
 			{
 				WindowLayout *optLayout = TheShell->getOptionsLayout(TRUE);
@@ -546,17 +546,17 @@ WindowMsgHandledType QuitMenuSystem( GameWindow *window, UnsignedInt msg,
 																			TheGameText->fetch("GUI:RestartConfirmation"),
 																			/*quitCallback*/restartMissionMenu,noExitQuitMenu);
 				}
-			}  // end else if
+			}
 
 			break;
 
-		}  // end selected
+		}
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-}  // end QuitMenuSystem
+}

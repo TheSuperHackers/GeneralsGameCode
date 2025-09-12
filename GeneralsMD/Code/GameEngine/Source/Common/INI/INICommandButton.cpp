@@ -61,7 +61,7 @@ void ControlBar::parseCommandButtonDefinition( INI *ini )
 		{
 			button->markAsOverride();
 		}
-	}  // end if
+	}
 	else if( ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES )
 	{
 		DEBUG_CRASH(( "[LINE: %d in '%s'] Duplicate commandbutton %s found!", ini->getLineNum(), ini->getFilename().str(), name.str() ));
@@ -89,6 +89,6 @@ void ControlBar::parseCommandButtonDefinition( INI *ini )
 			ini->getLineNum(), ini->getFilename().str(), name.str() ) );
 	}
 
-}  // end parseCommandButtonDefinition
+}
 
 

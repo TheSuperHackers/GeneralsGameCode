@@ -79,7 +79,7 @@ struct KeyboardIO
 	UnsignedShort	state;									// KEY_STATE_* in KeyDefs.h
 	UnsignedInt		sequence;								// sequence info from DirectX used for order
 
-};  // end KeyboardIO
+};
 
 // class Keyboard =============================================================
 /** Keyboard singleton to interface with the keyboard */
@@ -162,7 +162,7 @@ protected:
 	} m_keyNames[ KEY_NAMES_COUNT ];
 	UnsignedInt m_inputFrame;  ///< frame input was gathered on
 
-};  // end Keyboard
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////
 

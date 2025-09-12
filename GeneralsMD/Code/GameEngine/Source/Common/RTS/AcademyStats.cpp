@@ -1106,7 +1106,7 @@ Bool AcademyStats::calculateAcademyAdvice( AcademyAdviceInfo *info )
 void AcademyStats::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 //------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1253,7 +1253,7 @@ void AcademyStats::xfer( Xfer *xfer )
 	//35) Did the player ever create a "Firestorm" with his MiGs or Inferno Cannons?
 	xfer->xferUnsignedInt( &m_firestormsCreated );
 
-}  // end xfer
+}
 
 //------------------------------------------------------------------------------------------------
 // Load post process
@@ -1261,4 +1261,4 @@ void AcademyStats::xfer( Xfer *xfer )
 void AcademyStats::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

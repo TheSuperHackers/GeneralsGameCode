@@ -296,9 +296,9 @@ inline bool Cast_Semi_Infinite_Axis_Aligned_Ray_To_Triangle(const Vector3 &tri_p
 						flags |= TRI_RAYCAST_FLAG_START_IN_TRI;
 					}
 				}
-			}	// if (result == 0.0f)
-		}	// else (result < 0.0f)
-	}	// if Point_In_Triangle_2D()
+			}
+		}
+	}
 
 	return retval;
 }

@@ -700,7 +700,7 @@ void ParachuteContain::crc( Xfer *xfer )
 	// extend base class
 	OpenContain::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -772,7 +772,7 @@ void ParachuteContain::xfer( Xfer *xfer )
 	// opened
 	xfer->xferBool( &m_opened );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -783,4 +783,4 @@ void ParachuteContain::loadPostProcess( void )
 	// extend base class
 	OpenContain::loadPostProcess();
 
-}  // end loadPostProcess
+}

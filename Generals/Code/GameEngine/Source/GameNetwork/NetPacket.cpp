@@ -362,7 +362,7 @@ UnsignedInt NetPacket::GetGameCommandSize(NetCommandMsg *msg) {
 		GameMessageArgumentDataType type = arg->getType();
 
 		switch (type) {
-		
+
 		case ARGUMENTDATATYPE_INTEGER:
 			msglen += arg->getArgCount() * sizeof(Int);
 			break;

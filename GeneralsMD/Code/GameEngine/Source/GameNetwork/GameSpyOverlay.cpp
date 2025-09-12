@@ -214,7 +214,7 @@ void GameSpyOpenOverlay( GSOverlayType overlay )
 		if( TheAudio )
 		{
 			TheAudio->addAudioEvent( &buttonClick );
-		}  // end if
+		}
 	}
 	if (overlayLayouts[overlay])
 	{

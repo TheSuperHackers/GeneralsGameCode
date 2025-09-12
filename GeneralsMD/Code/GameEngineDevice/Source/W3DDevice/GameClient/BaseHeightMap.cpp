@@ -2602,7 +2602,7 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 					indexCount +=6;
 				}
 			}
-		}//lock and fill ib/vb
+		}
 
 		if (indexCount > 0 && vertexCount > 0)
 		{
@@ -2614,7 +2614,7 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 
 		vertexCount=0;
 		indexCount=0;
-	}//for all shore tiles
+	}
 
 	//Disable writes to destination alpha
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_BLUE|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_RED);
@@ -2814,9 +2814,9 @@ void BaseHeightMapRenderObjClass::renderShoreLinesSorted(CameraClass *pCamera)
 						vertexCount +=4;
 						indexCount +=6;
 						shoreInfo++;	//advance to next tile.
-					}//looping over tiles in column
+					}
 					lastRenderedTile=0;
-				}//looping over all visible columns.
+				}
 flushVertexBuffer0:
 				drawStartX = x;	//record how far we've moved so far
 				isDone = x >= drawEdgeX;
@@ -2935,14 +2935,14 @@ flushVertexBuffer0:
 						vertexCount +=4;
 						indexCount +=6;
 						shoreInfo++;	//advance to next tile.
-					}//looping over tiles in row
+					}
 					lastRenderedTile=0;
-				}//looping over all visible rows.
+				}
 flushVertexBuffer1:
 				drawStartY = y;	//record how far we've moved so far
 				isDone = y >= drawEdgeY;
 			}
-		}//lock and fill ib/vb
+		}
 
 		if (indexCount > 0 && vertexCount > 0)
 		{
@@ -2954,7 +2954,7 @@ flushVertexBuffer1:
 
 		vertexCount=0;
 		indexCount=0;
-	}//for all shore tiles
+	}
 
 	//Disable writes to destination alpha
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_BLUE|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_RED);
@@ -2992,7 +2992,7 @@ void BaseHeightMapRenderObjClass::renderTrees(CameraClass * camera)
 void BaseHeightMapRenderObjClass::crc( Xfer *xfer )
 {
 	// empty. jba [8/11/2003]
-}  // end CRC
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer
@@ -3011,7 +3011,7 @@ void BaseHeightMapRenderObjClass::xfer( Xfer *xfer )
 	xfer->xferSnapshot( m_propBuffer );
 
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -3019,5 +3019,5 @@ void BaseHeightMapRenderObjClass::xfer( Xfer *xfer )
 void BaseHeightMapRenderObjClass::loadPostProcess( void )
 {
 	// empty. jba [8/11/2003]
-}  // end loadPostProcess
+}
 

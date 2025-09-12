@@ -70,7 +70,7 @@ BattleBusSlowDeathBehaviorModuleData::BattleBusSlowDeathBehaviorModuleData( void
 	m_percentDamageToPassengers = 0.0f;
 	m_emptyHulkDestructionDelay = 0;
 
-}  // end BattleBusSlowDeathBehaviorModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -97,7 +97,7 @@ BattleBusSlowDeathBehaviorModuleData::BattleBusSlowDeathBehaviorModuleData( void
 
   p.add( dataFieldParse );
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,14 +113,14 @@ BattleBusSlowDeathBehavior::BattleBusSlowDeathBehavior( Thing *thing, const Modu
 	m_isInFirstDeath = FALSE;
 	m_groundCheckFrame = 0;
 	m_penaltyDeathFrame = 0;
-}  // end BattleBusSlowDeathBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 BattleBusSlowDeathBehavior::~BattleBusSlowDeathBehavior( void )
 {
 
-}  // end ~BattleBusSlowDeathBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -130,7 +130,7 @@ void BattleBusSlowDeathBehavior::onDie( const DamageInfo *damageInfo )
 	m_isInFirstDeath = FALSE; // and clear this incase we died while in the alternate death
 
 	SlowDeathBehavior::onDie(damageInfo);
-}  // end onDie
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -181,7 +181,7 @@ void BattleBusSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 		SlowDeathBehavior::beginSlowDeath( damageInfo );
 	}
 
-}  // end beginSlowDeath
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -270,7 +270,7 @@ UpdateSleepTime BattleBusSlowDeathBehavior::update( void )
 			return UPDATE_SLEEP(EMPTY_HULK_CHECK_DELAY);// Stay awake regardless
 		}
 	}
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -281,7 +281,7 @@ void BattleBusSlowDeathBehavior::crc( Xfer *xfer )
 	// extend base class
 	SlowDeathBehavior::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -307,7 +307,7 @@ void BattleBusSlowDeathBehavior::xfer( Xfer *xfer )
 
 	xfer->xferUnsignedInt( &m_penaltyDeathFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -318,4 +318,4 @@ void BattleBusSlowDeathBehavior::loadPostProcess( void )
 	// extend base class
 	SlowDeathBehavior::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -54,7 +54,7 @@ DemoralizeSpecialPowerModuleData::DemoralizeSpecialPowerModuleData( void )
 	m_maxDurationInFrames = 0;
 	m_fxList = NULL;
 
-}  // end DemoralizeSpecialPowerModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ void DemoralizeSpecialPowerModuleData::buildFieldParse( MultiIniFieldParse &p )
 	};
 	p.add( dataFieldParse );
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,14 +87,14 @@ DemoralizeSpecialPower::DemoralizeSpecialPower( Thing *thing, const ModuleData *
 												: SpecialPowerModule( thing, moduleData )
 {
 
-}  // end DemoralizeSpecialPower
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 DemoralizeSpecialPower::~DemoralizeSpecialPower( void )
 {
 
-}  // end ~DemoralizeSpecialPower
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -140,7 +140,7 @@ void DemoralizeSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real 
 		if( range > modData->m_maxRange )
 			range = modData->m_maxRange;
 
-	}  // end if
+	}
 
 	// scan the objects in the area range and demoralize them
 	PartitionFilterRelationship filter1( source, PartitionFilterRelationship::ALLOW_ENEMIES |
@@ -164,7 +164,7 @@ void DemoralizeSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real 
 		if( ai )
 			ai->setDemoralized( duration );
 
-	}  // end for obj
+	}
 
 	// play an effect at the destination location
 	if( modData->m_fxList )
@@ -173,9 +173,9 @@ void DemoralizeSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real 
 		// execute FX
 		FXList::doFXPos( modData->m_fxList, loc );
 
-	}  // end if
+	}
 
-}    // end doSpecialPowerAtLocation
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -187,7 +187,7 @@ void DemoralizeSpecialPower::doSpecialPowerAtObject( const Object *obj, Real ang
 	if( obj )
 		doSpecialPowerAtLocation( obj->getPosition(), angle, commandOptions );
 
-}  // end doSpecialPowerAtObject
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -198,7 +198,7 @@ void DemoralizeSpecialPower::crc( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -216,7 +216,7 @@ void DemoralizeSpecialPower::xfer( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -227,7 +227,7 @@ void DemoralizeSpecialPower::loadPostProcess( void )
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+}
 
 #endif	// #ifdef ALLOW_DEMORALIZE
 

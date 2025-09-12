@@ -120,13 +120,13 @@ void ShowDisconnectWindow( void )
 		// show it
 		disconnectMenuLayout->hide( FALSE );
 
-	}  // end if
+	}
 	else
 	{
 
 		disconnectMenuLayout->hide( FALSE );
 
-	}  // end else
+	}
 
 	// Disallow voting for 2-player games.  Cheating punk.
 	if ( TheGameInfo && TheGameInfo->getNumPlayers() < 3 )
@@ -156,7 +156,7 @@ void ShowDisconnectWindow( void )
 	GadgetListBoxAddEntryText(textDisplayWindow, TheGameText->fetch("GUI:InternetDisconnectionMenuBody1"),
 		GameMakeColor(255,255,255,255), -1);
 
-}  // end ToggleQuitMenu
+}
 
 //------------------------------------------------------
 /** Hide the Disconnect Screen */
@@ -177,15 +177,15 @@ void HideDisconnectWindow( void )
 		// show it
 		disconnectMenuLayout->hide( TRUE );
 
-	}  // end if
+	}
 	else
 	{
 
 		disconnectMenuLayout->hide( TRUE );
 
-	}  // end else
+	}
 
-}  // end ToggleQuitMenu
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Input callback for the control bar parent */
@@ -196,7 +196,7 @@ WindowMsgHandledType DisconnectControlInput( GameWindow *window, UnsignedInt msg
 
 	return MSG_IGNORED;
 
-} // end DisconnectControlInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** System callback for the control bar parent */
@@ -242,7 +242,7 @@ WindowMsgHandledType DisconnectControlSystem( GameWindow *window, UnsignedInt ms
 
 			break;
 
-		}  // end button selected
+		}
 
 		case GEM_EDIT_DONE:
 		{
@@ -270,7 +270,7 @@ WindowMsgHandledType DisconnectControlSystem( GameWindow *window, UnsignedInt ms
 					TheDisconnectMenu->sendChat(txtInput);
 				}
 
-			}// if ( controlID == textEntryChatID )
+			}
 			break;
 		}
 
@@ -278,9 +278,9 @@ WindowMsgHandledType DisconnectControlSystem( GameWindow *window, UnsignedInt ms
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end ControlBarSystem
+}
 

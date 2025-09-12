@@ -330,7 +330,7 @@ UpdateSleepTime ToppleUpdate::update()
 					obj->setOrientation(obj->getOrientation());
 
 				}
-			} // if kill when toppled
+			}
 
 			if (d->m_killStumpWhenToppled)
 			{
@@ -403,7 +403,7 @@ void ToppleUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -451,7 +451,7 @@ void ToppleUpdate::xfer( Xfer *xfer )
 	// stump id
 	xfer->xferObjectID( &m_stumpID );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -462,4 +462,4 @@ void ToppleUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

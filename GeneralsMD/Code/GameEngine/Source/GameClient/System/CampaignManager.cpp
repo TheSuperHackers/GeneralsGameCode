@@ -110,7 +110,7 @@ void INI::parseCampaignDefinition( INI *ini )
 	// parse the ini definition
 	ini->initFromINI( campaign, TheCampaignManager->getFieldParse() );
 
-}  // end parseCampaignDefinition
+}
 
 //-----------------------------------------------------------------------------
 Campaign::Campaign( void ):
@@ -489,7 +489,7 @@ void CampaignManager::xfer( Xfer *xfer )
 		m_xferChallengeGeneralsPlayerTemplateNum = playerTemplateNum;
 	}
 
-}  // end xfer
+}
 
 void CampaignManager::loadPostProcess( void )
 {

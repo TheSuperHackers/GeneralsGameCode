@@ -45,7 +45,7 @@ ObjectCreationUpgradeModuleData::ObjectCreationUpgradeModuleData( void )
 
 	m_ocl = NULL;
 
-}  // end SpecialPowerModuleData
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ ObjectCreationUpgradeModuleData::ObjectCreationUpgradeModuleData( void )
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,20 +72,20 @@ ObjectCreationUpgrade::ObjectCreationUpgrade( Thing *thing, const ModuleData* mo
 							UpgradeModule( thing, moduleData )
 {
 
-}  // end ObjectCreationUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ObjectCreationUpgrade::~ObjectCreationUpgrade( void )
 {
 
-}  // end ~ObjectCreationUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void ObjectCreationUpgrade::onDelete( void )
 {
-}  // end onDelete
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ void ObjectCreationUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -125,7 +125,7 @@ void ObjectCreationUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -136,4 +136,4 @@ void ObjectCreationUpgrade::loadPostProcess( void )
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

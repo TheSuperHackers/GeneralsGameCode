@@ -143,7 +143,7 @@ StateReturnType TurretStateMachine::setState(StateID newStateID)
 // ------------------------------------------------------------------------------------------------
 void TurretStateMachine::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -154,14 +154,14 @@ void TurretStateMachine::xfer( Xfer *xfer )
 	XferVersion v = cv;
 	xfer->xferVersion( &v, cv );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void TurretStateMachine::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 //----------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------
@@ -329,7 +329,7 @@ TurretAI::~TurretAI()
 // ------------------------------------------------------------------------------------------------
 void TurretAI::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -369,7 +369,7 @@ void TurretAI::xfer( Xfer *xfer )
 	if (version >= 2)
 		xfer->xferUnsignedInt(&m_sleepUntil);
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -380,7 +380,7 @@ void TurretAI::loadPostProcess( void )
 	if (victim) {
 		m_victimInitialTeam = victim->getTeam();
 	}
-}  // end loadPostProcess
+}
 
 //----------------------------------------------------------------------------------------------------------
 Bool TurretAI::friend_turnTowardsAngle(Real desiredAngle, Real rateModifier, Real relThresh)
@@ -721,7 +721,7 @@ UpdateSleepTime TurretAI::updateTurretAI()
 			subMachineSleep = UPDATE_SLEEP_NONE;
 		}
 
-	}	// if enabled or recentering
+	}
 
 	m_sleepUntil = now + subMachineSleep;
 
@@ -1231,7 +1231,7 @@ void TurretAIRecenterTurretState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 void TurretAIIdleState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -1244,14 +1244,14 @@ void TurretAIIdleState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_nextIdleScan);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void TurretAIIdleState::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 //----------------------------------------------------------------------------------------------------------
 void TurretAIIdleState::resetIdleScan()
@@ -1265,7 +1265,6 @@ void TurretAIIdleState::resetIdleScan()
 StateReturnType TurretAIIdleState::onEnter()
 {
 	AIUpdateInterface *ai = getMachineOwner()->getAIUpdateInterface();
-	// ai doesn't exist if the object was just created this frame.
 	if (ai)
 	{
 		ai->resetNextMoodCheckTime();
@@ -1309,7 +1308,7 @@ StateReturnType TurretAIIdleState::update()
 // ------------------------------------------------------------------------------------------------
 void TurretAIIdleScanState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -1322,14 +1321,14 @@ void TurretAIIdleScanState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferReal(&m_desiredAngle);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void TurretAIIdleScanState::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 //----------------------------------------------------------------------------------------------------------
 StateReturnType TurretAIIdleScanState::onEnter()
@@ -1381,7 +1380,7 @@ void TurretAIIdleScanState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 void TurretAIHoldTurretState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -1394,14 +1393,14 @@ void TurretAIHoldTurretState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_timestamp);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void TurretAIHoldTurretState::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 //----------------------------------------------------------------------------------------------------------
 StateReturnType TurretAIHoldTurretState::onEnter()

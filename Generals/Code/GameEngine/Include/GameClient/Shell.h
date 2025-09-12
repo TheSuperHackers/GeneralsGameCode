@@ -200,7 +200,7 @@ protected:
 	WindowLayout *m_popupReplayLayout;											///< replay save menu layout
 	WindowLayout *m_optionsLayout;													///< options menu layout
 
-};  // end class Shell
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
 

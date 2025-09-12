@@ -1982,7 +1982,7 @@ int CBabylonDlg::UpdateDB(TransDB *source, TransDB *destination, int update )
 				source->ClearChanges ();
 			}
 		}
-	}	// update
+	}
 
 
 	Ready ();

@@ -171,9 +171,9 @@ private:
 					curBestMatchStr = it->getDescription();
 	#endif
 				}
-			}	// end for i
+			}
 
-		}	// end for it
+		}
 
 #ifdef SPARSEMATCH_DEBUG
 		if (numDupMatches > 0)

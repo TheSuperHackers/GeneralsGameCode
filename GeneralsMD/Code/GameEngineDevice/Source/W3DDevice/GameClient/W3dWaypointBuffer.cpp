@@ -524,7 +524,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 					m_line->Set_Points( numPoints, points );
 					m_line->Render( localRinfo );
 
-				}// end if exit interface
+				}
 
 			}
 		}

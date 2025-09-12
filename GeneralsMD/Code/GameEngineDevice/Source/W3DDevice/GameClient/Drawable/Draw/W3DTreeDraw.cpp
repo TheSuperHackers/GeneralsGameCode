@@ -113,7 +113,7 @@ W3DTreeDraw::W3DTreeDraw( Thing *thing, const ModuleData* moduleData ) : DrawMod
 m_treeAdded(false)
 {
 
-}  // end W3DTreeDraw
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -165,7 +165,7 @@ void W3DTreeDraw::crc( Xfer *xfer )
 	// extend base class
 	DrawModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -185,7 +185,7 @@ void W3DTreeDraw::xfer( Xfer *xfer )
 
 	// no data to save here, nobody will ever notice
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -196,5 +196,5 @@ void W3DTreeDraw::loadPostProcess( void )
 	// extend base class
 	DrawModule::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

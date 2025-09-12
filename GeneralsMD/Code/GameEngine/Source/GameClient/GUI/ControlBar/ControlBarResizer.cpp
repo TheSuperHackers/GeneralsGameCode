@@ -236,7 +236,7 @@ void INI::parseControlBarResizerDefinition( INI* ini )
 //	// parse the ini definition
 //	ini->initFromINI( rWin, resizer->getFieldParse());
 //
-}  // end parseMappedImage
+}
 
 
 //-----------------------------------------------------------------------------

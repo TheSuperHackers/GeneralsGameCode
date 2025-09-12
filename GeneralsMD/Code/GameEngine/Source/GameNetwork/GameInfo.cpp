@@ -211,7 +211,7 @@ void GameSlot::setState( SlotState state, UnicodeString name, UnsignedInt IP )
 		reset();
 		m_state = state;
 		m_name = name;
-	}// state == SLOT_PLAYER
+	}
 	else
 	{
 		m_state = state;
@@ -1306,7 +1306,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 							}
 							newSlot[i].setNATBehavior(NATType);
 							DEBUG_LOG(("ParseAsciiStringToGameInfo - NAT behavior is %X", NATType));
-						}// case 'H':
+						}
 						break;
 						case 'C':
 						{
@@ -1347,7 +1347,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 									DEBUG_LOG(("ParseAsciiStringToGameInfo - Unknown AI, quitting"));
 								}
 								break;
-							}//switch(*rawSlot.str()+1)
+							}
 
 							//Read color index
 							slotValue = strtok_r(NULL,",",&slotPos);
@@ -1433,19 +1433,19 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 							newSlot[i].setTeamNumber(team);
 							//DEBUG_LOG(("ParseAsciiStringToGameInfo - team number is %d", team));
 
-						}//case 'C':
+						}
 						break;
 						case 'O':
 						{
 							newSlot[i].setState( SLOT_OPEN );
 							//DEBUG_LOG(("ParseAsciiStringToGameInfo - Slot is open"));
-						}// case 'O':
+						}
 						break;
 						case 'X':
 						{
 							newSlot[i].setState( SLOT_CLOSED );
 							//DEBUG_LOG(("ParseAsciiStringToGameInfo - Slot is closed"));
-						}// case 'X':
+						}
 						break;
 						default:
 						{
@@ -1510,7 +1510,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 // ------------------------------------------------------------------------------------------------
 void SkirmishGameInfo::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -1615,13 +1615,13 @@ void SkirmishGameInfo::xfer( Xfer *xfer )
     m_startingCash = TheGlobalData->m_defaultStartingCash;
   }
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void SkirmishGameInfo::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 

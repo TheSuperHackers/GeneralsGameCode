@@ -53,7 +53,7 @@ m_partitionData(NULL)
 {
 	m_parentPosition.zero();
 	// End Initializations
-}  // end Object
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ GhostObject::~GhostObject()
 void GhostObject::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method
@@ -101,9 +101,9 @@ void GhostObject::xfer( Xfer *xfer )
 			DEBUG_CRASH(( "GhostObject::xfer - Unable to connect m_parentObject" ));
 			throw INI_INVALID_DATA;
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// parent geometry type
 	xfer->xferUser( &m_parentGeometryType, sizeof( GeometryType ) );
@@ -127,7 +127,7 @@ void GhostObject::xfer( Xfer *xfer )
 	///@todo write me ---> !!!!!
 	// PartitionData	*m_partitionData;	///< our PartitionData
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -135,7 +135,7 @@ void GhostObject::xfer( Xfer *xfer )
 void GhostObject::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ void GhostObjectManager::restorePartitionData(void)
 void GhostObjectManager::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method:
@@ -216,7 +216,7 @@ void GhostObjectManager::xfer( Xfer *xfer )
 	// local player
 	xfer->xferInt( &m_localPlayer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -224,4 +224,4 @@ void GhostObjectManager::xfer( Xfer *xfer )
 void GhostObjectManager::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

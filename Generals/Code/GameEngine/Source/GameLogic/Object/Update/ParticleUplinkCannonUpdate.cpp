@@ -1305,7 +1305,7 @@ void ParticleUplinkCannonUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1427,7 +1427,7 @@ void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 		m_orbitToTargetLaserRadius.xfer( xfer );
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1461,4 +1461,4 @@ void ParticleUplinkCannonUpdate::loadPostProcess( void )
 	}
 #endif
 
-}  // end loadPostProcess
+}

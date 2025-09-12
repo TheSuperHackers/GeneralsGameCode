@@ -594,7 +594,7 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 
 		}
 
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
@@ -613,7 +613,7 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 
 		}
 
-	}  // end else if, hilited and enabled
+	}
 	else
 	{
 
@@ -632,7 +632,7 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 
 		}
 
-	}  // end else, enabled only
+	}
 
 	// sanity, we need to have these images to make it look right
 	if( leftImage == NULL || rightImage == NULL ||
@@ -696,7 +696,7 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 																			end.x, end.y );
 			start.x += centerImage->getImageWidth();
 
-		}  // end for i
+		}
 
 		// we will draw the image but clip the parts we don't want to show
 		IRegion2D reg;
@@ -772,7 +772,7 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 	}
 
 //	TheDisplay->enableClipping(FALSE);
-}  // end W3DGadgetPushButtonImageDraw
+}
 
 
 // drawButtonText =============================================================
@@ -801,17 +801,17 @@ static void drawText( GameWindow *window, WinInstanceData *instData )
 	{
 		textColor = window->winGetDisabledTextColor();
 		dropColor = window->winGetDisabledTextBorderColor();
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		textColor = window->winGetHiliteTextColor();
 		dropColor = window->winGetHiliteTextBorderColor();
-	}  // end else if, hilited
+	}
 	else
 	{
 		textColor = window->winGetEnabledTextColor();
 		dropColor = window->winGetEnabledTextBorderColor();
-	}  // end enabled only
+	}
 
 	// set our font to that of our parent if not the same
 	if( text->getFont() != window->winGetFont() )
@@ -827,7 +827,7 @@ static void drawText( GameWindow *window, WinInstanceData *instData )
 	// draw it
 	text->draw( textPos.x, textPos.y, textColor, dropColor );
 
-}  // end drawButtonText
+}
 
 // W3DMainMenuRandomTextDraw ==================================================
 /** Specialized drawing function for the random text */
@@ -887,7 +887,7 @@ void W3DThinBorderDraw( GameWindow *window, WinInstanceData *instData )
 		end.y = begin.y + size.y;
 		TheWindowManager->winDrawImage( image, begin.x, begin.y, end.x, end.y );
 
-	}  // end if
+	}
 	// get window position
 
 //	TheDisplay->drawOpenRect(start.x - 1, start.y - 1, size.x + 2, size.y + 2, 1, BrownishColor);

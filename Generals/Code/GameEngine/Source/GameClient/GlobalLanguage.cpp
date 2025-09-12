@@ -103,7 +103,7 @@ void INI::parseLanguageDefinition( INI *ini )
 	{
 		DEBUG_ASSERTCRASH(TheGlobalLanguageData, ("INI::parseLanguageDefinition - TheGlobalLanguage Data is not around, please create it before trying to parse the ini file."));
 		return;
-	}  // end if
+	}
 	// parse the ini weapon definition
 	ini->initFromINI( TheGlobalLanguageData, TheGlobalLanguageDataFieldParseTable );
 }

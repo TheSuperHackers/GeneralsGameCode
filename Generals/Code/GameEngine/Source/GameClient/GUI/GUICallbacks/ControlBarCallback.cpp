@@ -128,7 +128,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 				// Groovy
 				TheMouse->setCursor(cur);
 
-			}  // end if
+			}
 
 			return MSG_HANDLED;
 		}
@@ -187,7 +187,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 					else
 						TheMouse->setCursor( Mouse::CROSS );
 
-				}  // end if
+				}
 				else
 				{
 					// Else we are not super targeting, so we have to try to refresh the move cursor.
@@ -212,11 +212,11 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 					TheMouse->setCursor(cur);
 				}
 
-			}  // end if
+			}
 
 			break;
 
-		}  // end case mouse position
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_RIGHT_UP:// Here to eat
@@ -284,7 +284,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 					// do the command
 					TheGameClient->evaluateContextCommand( NULL, &world, CommandTranslator::DO_COMMAND );
 
-				}  // end if
+				}
 				else if( command && command->getCommandType() == GUI_COMMAND_ATTACK_MOVE)
 				{
 					// Attack move has changed from a modifier to a command, so it moves up here.
@@ -316,25 +316,25 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 					// Play the unit voice response
 					pickAndPlayUnitVoiceResponse(drawableList, GameMessage::MSG_DO_MOVETO);
 
-				}  // end else
+				}
 
 			}
 
 
 	break;
 
-		}  // end left down
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	TheInGameUI->clearAttackMoveToMode();
 	return MSG_HANDLED;
 
-}  // end LeftHUDInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Input procedure for the control bar */
@@ -345,7 +345,7 @@ WindowMsgHandledType ControlBarInput( GameWindow *window, UnsignedInt msg,
 
 	return MSG_IGNORED;
 
-}  // end ControlBarInput
+}
 void ToggleQuitMenu(void);
 //-------------------------------------------------------------------------------------------------
 /** System callback for the control bar parent */
@@ -367,7 +367,7 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end create
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_MOUSE_ENTERING:
@@ -455,7 +455,7 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 			}
 			break;
 
-		}  // end button selected
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GEM_EDIT_DONE:
@@ -480,17 +480,17 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 				}
 			}
 			break;
-		} // end edit done
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end ControlBarSystem
+}
 
 extern void showReplayControls( void );
 extern void hideReplayControls( void );

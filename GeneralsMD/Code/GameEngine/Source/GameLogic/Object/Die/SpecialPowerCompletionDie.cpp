@@ -93,7 +93,7 @@ void SpecialPowerCompletionDie::crc( Xfer *xfer )
 	// extend base class
 	DieModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -117,7 +117,7 @@ void SpecialPowerCompletionDie::xfer( Xfer *xfer )
 	// creator set
 	xfer->xferBool( &m_creatorSet );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -128,4 +128,4 @@ void SpecialPowerCompletionDie::loadPostProcess( void )
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

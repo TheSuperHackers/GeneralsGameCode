@@ -812,7 +812,7 @@ private:
 	Bool													m_singleUseCommandUsed;
 	Bool													m_isReceivingDifficultyBonus;
 
-};  // end class Object
+};
 
 // deleteInstance is not meant to be used with Object in order to require the use of TheGameLogic->destroyObject()
 void deleteInstance(Object* object) CPP_11(= delete);

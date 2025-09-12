@@ -121,16 +121,16 @@ BOOL CALLBACK ImageErrorProc( HWND hWndDialog, UINT message,
 
 					SendMessage( list, LB_INSERTSTRING, -1, (LPARAM)buffer );
 
-				}  // end if
+				}
 
-			}  // end for i
+			}
 
 			// set the extents for the horizontal scroll bar in the listbox
 			SendMessage( list, LB_SETHORIZONTALEXTENT, 1280, 0 );
 
 			return TRUE;
 
-		}  // end init
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_COMMAND:
@@ -149,7 +149,7 @@ BOOL CALLBACK ImageErrorProc( HWND hWndDialog, UINT message,
 					EndDialog( hWndDialog, TRUE );
 					break;
 
-				}  // end proceed
+				}
 
 				// --------------------------------------------------------------------
 				case BUTTON_CANCEL:
@@ -158,18 +158,18 @@ BOOL CALLBACK ImageErrorProc( HWND hWndDialog, UINT message,
 					EndDialog( hWndDialog, FALSE );
 					break;
 
-				}  // end cancel
+				}
 
-			}  // end switch
+			}
 
 			break;
 
-		}  // end command
+		}
 
-	}  // end switch message
+	}
 
 	return 0;
 
-}  // end ImageErrorProc
+}
 
 

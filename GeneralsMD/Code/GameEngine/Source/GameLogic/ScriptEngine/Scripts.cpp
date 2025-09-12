@@ -260,7 +260,7 @@ void ScriptList::xfer( Xfer *xfer )
 		DEBUG_CRASH(( "ScriptList::xfer - Script list count has changed, attempting to recover."));
 		// throw SC_INVALID_DATA; try to recover. jba.
 
-	}  // end if
+	}
 
 	// all script data here
 	for( script = getScript(); script; script = script->getNext() )	{
@@ -289,7 +289,7 @@ void ScriptList::xfer( Xfer *xfer )
 
 		DEBUG_CRASH(( "ScriptList::xfer - Script group count has changed, attempting to recover."));
 
-	}  // end if
+	}
 
 	// all script group data
 	for( scriptGroup = getScriptGroup(); scriptGroup; scriptGroup = scriptGroup->getNext() ) {
@@ -670,7 +670,7 @@ ScriptGroup::~ScriptGroup(void)
 void ScriptGroup::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -703,7 +703,7 @@ void ScriptGroup::xfer( Xfer *xfer )
 		DEBUG_CRASH(( "ScriptGroup::xfer - Script list count has changed, attempting to recover."));
 		// throw SC_INVALID_DATA; try to recover. jba.
 
-	}  // end if
+	}
 
 	// xfer script data
 	for( script = getScript(); script; script = script->getNext() )	{
@@ -720,7 +720,7 @@ void ScriptGroup::xfer( Xfer *xfer )
 		}
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -728,7 +728,7 @@ void ScriptGroup::xfer( Xfer *xfer )
 void ScriptGroup::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 /**
   ScriptGroup::duplicate - Creates a full, "deep" copy of ScriptGroup.
@@ -948,7 +948,7 @@ Script::~Script(void)
 void Script::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -968,7 +968,7 @@ void Script::xfer( Xfer *xfer )
 	xfer->xferBool( &active );
 	setActive( active );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -976,7 +976,7 @@ void Script::xfer( Xfer *xfer )
 void Script::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 /**
   Script::duplicate - Creates a full, "deep" copy of script. Condition list and action

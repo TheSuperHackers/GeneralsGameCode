@@ -310,7 +310,7 @@ Bool AIGuardMachine::lookForInnerTarget(void)
 // ------------------------------------------------------------------------------------------------
 void AIGuardMachine::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -340,14 +340,14 @@ void AIGuardMachine::xfer( Xfer *xfer )
 		}
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void AIGuardMachine::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 //-- AIGuardInnerState ----------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -355,7 +355,7 @@ void AIGuardMachine::loadPostProcess( void )
 // ------------------------------------------------------------------------------------------------
 void AIGuardInnerState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -367,7 +367,7 @@ void AIGuardInnerState::xfer( Xfer *xfer )
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -375,7 +375,7 @@ void AIGuardInnerState::xfer( Xfer *xfer )
 void AIGuardInnerState::loadPostProcess( void )
 {
 	onEnter();
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 AIGuardInnerState::~AIGuardInnerState(void)
@@ -486,7 +486,7 @@ void AIGuardInnerState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 void AIGuardOuterState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -498,7 +498,7 @@ void AIGuardOuterState::xfer( Xfer *xfer )
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -506,7 +506,7 @@ void AIGuardOuterState::xfer( Xfer *xfer )
 void AIGuardOuterState::loadPostProcess( void )
 {						 AIGuardOuterState
 	onEnter();
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 AIGuardOuterState::~AIGuardOuterState(void)
@@ -609,7 +609,7 @@ void AIGuardOuterState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 void AIGuardReturnState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -622,14 +622,14 @@ void AIGuardReturnState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_nextReturnScanTime);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void AIGuardReturnState::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 //--------------------------------------------------------------------------------------
 StateReturnType AIGuardReturnState::onEnter( void )
@@ -685,7 +685,7 @@ void AIGuardReturnState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 void AIGuardIdleState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -698,14 +698,14 @@ void AIGuardIdleState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_nextEnemyScanTime);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void AIGuardIdleState::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 //--------------------------------------------------------------------------------------
 StateReturnType AIGuardIdleState::onEnter( void )

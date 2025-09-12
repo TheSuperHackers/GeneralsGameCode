@@ -431,7 +431,7 @@ protected:
 	// vector of window transitions that have a relation to the current GameWindow
 	std::vector<TransitionWindow*> m_transitionWindows;
 
-};  // end class GameWindow
+};
 
 // TheSuperHackers @feature helmutbuhler 24/04/2025
 // GameWindow that does nothing. Used for Headless Mode.

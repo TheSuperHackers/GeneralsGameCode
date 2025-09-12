@@ -75,7 +75,7 @@ JetSlowDeathBehaviorModuleData::JetSlowDeathBehaviorModuleData( void )
 	m_pitchRate = 0.0f;
 	m_fallHowFast = 0.0f;
 
-}  // end JetSlowDeathBehaviorModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ JetSlowDeathBehaviorModuleData::JetSlowDeathBehaviorModuleData( void )
 
   p.add( dataFieldParse );
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -133,14 +133,14 @@ JetSlowDeathBehavior::JetSlowDeathBehavior( Thing *thing, const ModuleData *modu
 	m_timerOnGroundFrame = 0;
 	m_rollRate = 0.0f;
 
-}  // end JetSlowDeathBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 JetSlowDeathBehavior::~JetSlowDeathBehavior( void )
 {
 
-}  // end ~JetSlowDeathBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -162,16 +162,16 @@ void JetSlowDeathBehavior::onDie( const DamageInfo *damageInfo )
 		// destroy object
 		TheGameLogic->destroyObject( us );
 
-	}  // end if
+	}
 	else
 	{
 
 		// extend base class for slow death and begin the slow death behavior
 		SlowDeathBehavior::onDie( damageInfo );
 
-	}  // end else
+	}
 
-}  // end onDie
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -200,7 +200,7 @@ void JetSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 		m_deathLoopSound.setObjectID( us->getID() );
 		m_deathLoopSound.setPlayingHandle( TheAudio->addAudioEvent( &m_deathLoopSound ) );
 
-	}  // end if
+	}
 
 	// initialize our roll rate to that defined as the initial value in the module data
 	m_rollRate = modData->m_rollRate;
@@ -212,7 +212,7 @@ void JetSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 	// do not allow the jet to turn anymore
 	locomotor->setMaxTurnRate( 0.0f );
 
-}  // end beginSlowDeath
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -298,7 +298,7 @@ UpdateSleepTime JetSlowDeathBehavior::update( void )
 			if( physics )
 				physics->setPitchRate( modData->m_pitchRate );
 
-		}  // end if
+		}
 
 		// timers for the secondary effect
 		if( m_timerDeathFrame != 0 &&
@@ -312,9 +312,9 @@ UpdateSleepTime JetSlowDeathBehavior::update( void )
 			// clear the death frame timer since we've already executed the event now
 			m_timerDeathFrame = 0;
 
-		}  //end if
+		}
 
-	}  // end if
+	}
 	else
 	{
 		// we are on the ground, pay attention to the final explosion timers
@@ -328,13 +328,13 @@ UpdateSleepTime JetSlowDeathBehavior::update( void )
 			// we're all done now
 			TheGameLogic->destroyObject( us );
 
-		}  // end if
+		}
 
-	}  // end else
+	}
 
 	return UPDATE_SLEEP_NONE;
 
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -345,7 +345,7 @@ void JetSlowDeathBehavior::crc( Xfer *xfer )
 	// extend base class
 	SlowDeathBehavior::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -372,7 +372,7 @@ void JetSlowDeathBehavior::xfer( Xfer *xfer )
 	// roll rate
 	xfer->xferReal( &m_rollRate );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -383,4 +383,4 @@ void JetSlowDeathBehavior::loadPostProcess( void )
 	// extend base class
 	SlowDeathBehavior::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -212,7 +212,7 @@ void BrushOptions::GetPopSliderInfo(const long sliderID, long *pMin, long *pMax,
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 }
 
 void BrushOptions::PopSliderChanged(const long sliderID, long theVal)
@@ -249,7 +249,7 @@ void BrushOptions::PopSliderChanged(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 }
 
 void BrushOptions::PopSliderFinished(const long sliderID, long theVal)
@@ -266,7 +266,7 @@ void BrushOptions::PopSliderFinished(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 
 }
 

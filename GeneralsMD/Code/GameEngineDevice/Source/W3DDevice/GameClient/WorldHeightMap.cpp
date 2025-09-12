@@ -2492,7 +2492,7 @@ void WorldHeightMap::setupAlphaTiles(void)
 			case K_RDIAG : blendInfo.rightDiagonal = true; break;
 			case K_LLDIAG : blendInfo.leftDiagonal = true; blendInfo.longDiagonal = true; break;
 			case K_LRDIAG : blendInfo.rightDiagonal = true; blendInfo.longDiagonal = true; break;
-		} // end of case.
+		}
 		m_alphaTiles[k] = new TileData;
 		TileData *pTile = m_alphaTiles[k];
 

@@ -491,11 +491,11 @@ TerrainTracksRenderObjClass *TerrainTracksRenderObjClassSystem::bindTrack( Rende
 		mod->init(computeTrackSpacing(renderObject),length,texturename);
 		mod->m_bound=true;
 		m_TerrainTracksScene->Add_Render_Object( mod);
-	}  // end if
+	}
 
 	return mod;
 
-}  //end bindTrack
+}
 
 //=============================================================================
 //TerrainTracksRenderObjClassSystem::unbindTrack
@@ -658,7 +658,7 @@ void TerrainTracksRenderObjClassSystem::init( SceneClass *TerrainTracksScene )
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	// allocate our modules for this system
 	for( i = 0; i < numModules; i++ )
@@ -673,7 +673,7 @@ void TerrainTracksRenderObjClassSystem::init( SceneClass *TerrainTracksScene )
 			assert( 0 );
 			return;
 
-		}  // end if
+		}
 
 		mod->m_prevSystem = NULL;
 		mod->m_nextSystem = m_freeModules;
@@ -681,9 +681,9 @@ void TerrainTracksRenderObjClassSystem::init( SceneClass *TerrainTracksScene )
 			m_freeModules->m_prevSystem = mod;
 		m_freeModules = mod;
 
-	}  // end for i
+	}
 
-}  // end init
+}
 
 //=============================================================================
 // TerrainTracksRenderObjClassSystem::shutdown
@@ -705,7 +705,7 @@ void TerrainTracksRenderObjClassSystem::shutdown( void )
 			releaseTrack(mod);
 
 		mod = nextMod;
-	}  // end while
+	}
 
 
 	// free all attached things and used modules
@@ -719,13 +719,13 @@ void TerrainTracksRenderObjClassSystem::shutdown( void )
 		REF_PTR_RELEASE (m_freeModules);
 		m_freeModules = nextMod;
 
-	}  // end while
+	}
 
 	REF_PTR_RELEASE(m_indexBuffer);
 	REF_PTR_RELEASE(m_vertexMaterialClass);
 	REF_PTR_RELEASE(m_vertexBuffer);
 
-}  // end shutdown
+}
 
 //=============================================================================
 // TerrainTracksRenderObjClassSystem::update
@@ -778,7 +778,7 @@ void TerrainTracksRenderObjClassSystem::update()
 				releaseTrack(mod);
 		}
 		mod = nextMod;
-	}  // end while
+	}
 }
 
 
@@ -878,13 +878,12 @@ Try improving the fit to vertical surfaces like cliffs.
 
 					verts->diffuse=diffuseLight | ( REAL_TO_INT(distanceFade*255.0f) <<24);
 					verts++;
-				}//for
-			}// mod has edges to render
+				}
+			}
 			mod = mod->m_nextSystem;
-		}	//while (mod)
-	}//edges to flush
+		}
+	}
 
-	//there are some edges to render in pool.
 	//draw the filled vertex buffers
 	if (m_edgesToFlush >= 2)
 	{
@@ -927,7 +926,7 @@ void TerrainTracksRenderObjClassSystem::Reset(void)
 		releaseTrack(mod);
 
 		mod = nextMod;
-	}  // end while
+	}
 
 
 	// free all attached things and used modules
@@ -951,7 +950,7 @@ void TerrainTracksRenderObjClassSystem::clearTracks(void)
 		mod->m_totalEdgesAdded=0;
 
 		mod = mod->m_nextSystem;
-	}  // end while
+	}
 
 	m_edgesToFlush=0;
 }

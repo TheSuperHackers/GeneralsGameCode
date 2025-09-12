@@ -121,7 +121,7 @@ static void updateMenuActions( void )
 	GameWindow *buttonDelete = TheWindowManager->winGetWindowFromId( NULL, buttonDeleteKey );
 	buttonDelete->winEnable( selectedGameInfo != NULL );
 
-}  // end updateMenuActions
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the SaveLoad menu */
@@ -180,7 +180,7 @@ void SaveLoadMenuInit( WindowLayout *layout, void *userData )
 	// update the availability of the menu buttons
 	updateMenuActions();
 
-}  // end SaveLoadMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the SaveLoad menu */
@@ -249,7 +249,7 @@ void SaveLoadMenuFullScreenInit( WindowLayout *layout, void *userData )
 	if(parent)
 		parent->winHide(TRUE);
 	isShuttingDown = false;
-}  // end SaveLoadMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** SaveLoad menu shutdown method */
@@ -265,12 +265,12 @@ void SaveLoadMenuShutdown( WindowLayout *layout, void *userData )
 		TheShell->shutdownComplete( layout );
 		return;
 
-	}  //end if
+	}
 
 	// our shutdown is complete
 	TheTransitionHandler->reverse("SaveLoadMenuFade");
 	isShuttingDown = TRUE;
-}  // end SaveLoadMenuShutdown
+}
 
 //-------------------------------------------------------------------------------------------------
 /** SaveLoad menu update method */
@@ -301,7 +301,7 @@ void SaveLoadMenuUpdate( WindowLayout *layout, void *userData )
 	if(isShuttingDown && TheShell->isAnimFinished()&& TheTransitionHandler->isFinished())
 		TheShell->shutdownComplete( layout );
 
-}  // end SaveLoadMenuUpdate
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -333,18 +333,18 @@ WindowMsgHandledType SaveLoadMenuInput( GameWindow *window, UnsignedInt msg, Win
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)button, buttonBackKey );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
 }
@@ -369,7 +369,7 @@ static AvailableGameInfo *getSelectedSaveFileInfo( GameWindow *window )
 
 	return selectedGameInfo;
 
-}  // end getSelectedSaveFileInfo
+}
 
 // ---------------------------------------------------con------------------------------------------
 // ------------------------------------------------------------------------------------------------				// close the save/load menu
@@ -412,7 +412,7 @@ static void doLoadGame( void )
 		TheShell->showShell(TRUE);
 	}
 
-}  // end doLoadGame
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Close the save/load menu */
@@ -429,7 +429,7 @@ static void closeSaveMenu( GameWindow *window )
 	else
 		TheShell->hideShell();
 
-}  // end closeSaveMenu
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -456,12 +456,12 @@ static void setEditDescription( GameWindow *editControl )
 		else
 			defaultDesc.format( L"%S", TheGlobalData->m_mapName.str() );
 
-	}  // end else
+	}
 
 	// set into edit control
 	GadgetTextEntrySetText( editControl, defaultDesc );
 
-}  // end setEditDescription
+}
 
 //----------------------------------------------------------------------------------------------
 static void processLoadButtonPress(GameWindow *window)
@@ -482,7 +482,7 @@ static void processLoadButtonPress(GameWindow *window)
 			closeSaveMenu( window );
 			doLoadGame();
 
-		}  // end if
+		}
 		else
 		{
 
@@ -497,9 +497,9 @@ static void processLoadButtonPress(GameWindow *window)
 			// show the load confirm dialog
 			loadConfirm->winHide( FALSE );
 
-		}  // end else
+		}
 
-	}  // end if
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -518,14 +518,14 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end create
+		}
     //---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
 
 			break;
 
-		}  // end case
+		}
 
     //----------------------------------------------------------------------------------------------
     case GWM_INPUT_FOCUS:
@@ -537,7 +537,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end input
+		}
 
     //----------------------------------------------------------------------------------------------
 		case GLM_DOUBLE_CLICKED:
@@ -575,7 +575,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end selected
+		}
 
     //---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -586,7 +586,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
       if( controlID == buttonLoadKey )
       {
 				processLoadButtonPress(window);
-      }  // end if
+      }
       else if( controlID == buttonSaveKey )
       {
 
@@ -621,7 +621,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 
 					TheWindowManager->winSetFocus(editDesc);
 
-				}  // end if
+				}
 				else
 				{
 
@@ -637,7 +637,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 					//GameWindow *overwriteConfirm  = TheWindowManager->winGetWindowFromId( parent, NAMEKEY( "PopupSaveLoad.wnd:OverwriteConfirmParent" ) );
 					overwriteConfirm->winHide( FALSE );
 
-				}  // end else
+				}
 
       }
 			else if( controlID == buttonDeleteKey )
@@ -665,9 +665,9 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 					//GameWindow *deleteConfirm = TheWindowManager->winGetWindowFromId( parent, NAMEKEY( "PopupSaveLoad.wnd:DeleteConfirmParent" ) );
 					deleteConfirm->winHide( FALSE );
 
-				}  // end if
+				}
 
-			}  // end else if
+			}
 			else if( controlID == buttonBackKey )
 			{
 				if(isPopup)
@@ -680,7 +680,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 					TheShell->pop();
 				}
 
-			}  // end if
+			}
 			else if( controlID == buttonDeleteConfirm || controlID == buttonDeleteCancel )
 			{
 				//GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( parent, NAMEKEY( "PopupSaveLoad.wnd:ListboxGames" ) );
@@ -704,7 +704,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 					// repopulate the listbox
 					TheGameState->populateSaveGameListbox( listboxGames, currentLayoutType );
 
-				}  // end if
+				}
 
 				// hide the confirm dialog
 				//GameWindow *deleteConfirm = TheWindowManager->winGetWindowFromId( parent, NAMEKEY( "PopupSaveLoad.wnd:DeleteConfirmParent" ) );
@@ -718,7 +718,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 				buttonFrame->winEnable( TRUE );
 				updateMenuActions();
 
-			}  // end if
+			}
 			else if( controlID == buttonOverwriteCancel || controlID == buttonOverwriteConfirm )
 			{
 				//GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( parent, NAMEKEY( "PopupSaveLoad.wnd:ListboxGames" ) );
@@ -780,7 +780,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 					GameWindow *editDesc = TheWindowManager->winGetWindowFromId( saveDesc, NAMEKEY( "PopupSaveLoad.wnd:EntryDesc" ) );
 					setEditDescription( editDesc );
 */
-				}  // end if
+				}
 				else if( controlID == buttonOverwriteCancel )
 				{
 					//GameWindow *buttonFrame  = TheWindowManager->winGetWindowFromId( parent, NAMEKEY( "PopupSaveLoad.wnd:MenuButtonFrame" ) );
@@ -790,9 +790,9 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 					updateMenuActions();
 					listboxGames->winEnable( TRUE );
 
-				}  // end else if
+				}
 
-			}  // end else if
+			}
 			else if( controlID == buttonSaveDescConfirm )
 			{
 
@@ -839,7 +839,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 					filename = selectedGameInfo->filename;
 				TheGameState->saveGame( filename, desc, fileType );
 
-			}  // end else if
+			}
 			else if( controlID == buttonSaveDescCancel )
 			{
 
@@ -856,7 +856,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 				buttonFrame->winEnable( TRUE );
 				updateMenuActions();
 
-			}  // end else if
+			}
 			else if( controlID == buttonLoadConfirm || controlID == buttonLoadCancel )
 			{
 
@@ -886,16 +886,16 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 					doLoadGame();
 				}
 
-			}  // end else if
+			}
 
 			break;
 
-		}  // end selected
+		}
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 

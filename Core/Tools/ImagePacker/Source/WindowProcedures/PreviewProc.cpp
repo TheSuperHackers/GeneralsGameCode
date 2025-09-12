@@ -127,11 +127,11 @@ LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 							// delete the created pen
 							DeleteObject( pen );
 
-						}  // end for x
+						}
 
-					}  // end for y
+					}
 
-				}  // end if
+				}
 				else
 				{
 
@@ -149,22 +149,22 @@ LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 						rect.bottom = image->m_pagePos.hi.y + 1;  // FillRect not inclusive
 						FillRect( hdc, &rect, whiteBrush );
 
-					}  // end for image
+					}
 
-				}  // end else
+				}
 
-			}  // end for page
+			}
 
 			EndPaint( hWnd, &ps );
 			break;
 
-		}  // end paint
+		}
 
-	}  // end switch
+	}
 
 	return DefWindowProc( hWnd, message, wParam, lParam );
 
-}  // end PreviewProc
+}
 
 // MakePreviewDisplay =========================================================
 /** */
@@ -213,7 +213,7 @@ HWND MakePreviewDisplay( void )
 
 	return hWnd;
 
-}  // end MakePreviewDisplay
+}
 
 // UpdatePreviewWindow ========================================================
 /** Update the preview window, if present */
@@ -264,4 +264,4 @@ void UpdatePreviewWindow( void )
 	// invalidate the client area for redraw
 	InvalidateRect( preview, NULL, TRUE );
 
-}  // end UpdatePreviewWindow
+}

@@ -49,7 +49,7 @@ struct RayEffectData
 	Coord3D startLoc;  ///< start location for ray
 	Coord3D endLoc;  ///< end location for ray
 
-};  // end RayEffectData
+};
 
 //-------------------------------------------------------------------------------------------------
 /** This class maintains all the ray effects visible in the world */
@@ -87,7 +87,7 @@ protected:
 	};
 	RayEffectData m_effectData[ MAX_RAY_EFFECTS ];  ///< all the ray effects
 
-};  // end RayEffectSystem
+};
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
 extern RayEffectSystem *TheRayEffects;  ///< the ray effects singleton external

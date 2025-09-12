@@ -211,7 +211,7 @@ void MeshMoldOptions::GetPopSliderInfo(const long sliderID, long *pMin, long *pM
 			// uh-oh!
 			DEBUG_CRASH(("Missing ID."));
 			break;
-	}	// switch
+	}
 }
 
 void MeshMoldOptions::PopSliderChanged(const long sliderID, long theVal)
@@ -246,7 +246,7 @@ void MeshMoldOptions::PopSliderChanged(const long sliderID, long theVal)
 		default:
 			DEBUG_CRASH(("Missing ID."));
 			break;
-	}	// switch
+	}
 }
 
 void MeshMoldOptions::PopSliderFinished(const long sliderID, long theVal)
@@ -262,7 +262,7 @@ void MeshMoldOptions::PopSliderFinished(const long sliderID, long theVal)
 		default:
 			DEBUG_CRASH(("Missing ID."));
 			break;
-	}	// switch
+	}
 
 }
 

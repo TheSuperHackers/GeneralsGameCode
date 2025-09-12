@@ -101,7 +101,7 @@ void StatusDamageHelper::crc( Xfer *xfer )
 	// object helper crc
 	ObjectHelper::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -122,7 +122,7 @@ void StatusDamageHelper::xfer( Xfer *xfer )
 	xfer->xferUser( &m_statusToHeal, sizeof(ObjectStatusTypes) );// an enum
 	xfer->xferUnsignedInt( &m_frameToHeal );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -133,5 +133,5 @@ void StatusDamageHelper::loadPostProcess( void )
 	// object helper base class
 	ObjectHelper::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

@@ -188,7 +188,7 @@ void CaveContain::onRemoving( Object *obj )
 			draw->clearModelConditionState( MODELCONDITION_GARRISONED );
 		}
 
-	}  // end if
+	}
 }
 
 Bool CaveContain::isValidContainerFor(const Object* obj, Bool checkCapacity) const
@@ -374,7 +374,7 @@ void CaveContain::crc( Xfer *xfer )
 	// extend base class
 	OpenContain::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -414,15 +414,15 @@ void CaveContain::xfer( Xfer *xfer )
 				DEBUG_CRASH(( "CaveContain::xfer - Unable to find original team by id" ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 		else
 			m_originalTeam = NULL;
 
-	}  // end if
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -433,4 +433,4 @@ void CaveContain::loadPostProcess( void )
 	// extend base class
 	OpenContain::loadPostProcess();
 
-}  // end loadPostProcess
+}

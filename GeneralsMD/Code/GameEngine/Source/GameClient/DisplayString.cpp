@@ -79,7 +79,7 @@ DisplayString::DisplayString( void )
 	m_next = NULL;
 	m_prev = NULL;
 
-}  // end DisplayString
+}
 
 // DisplayString::~DisplayString ==============================================
 /** */
@@ -90,7 +90,7 @@ DisplayString::~DisplayString( void )
 	// free any data
 	reset();
 
-}  // end ~DisplayString
+}
 
 // DisplayString::setText =====================================================
 /** Copy the text to this instance */
@@ -105,7 +105,7 @@ void DisplayString::setText( UnicodeString text )
 	// our text has now changed
 	notifyTextChanged();
 
-}  // end setText
+}
 
 // DisplayString::reset =======================================================
 /** Free and reset all the data for this string, effectively making this
@@ -119,7 +119,7 @@ void DisplayString::reset( void )
 	// no font
 	m_font = NULL;
 
-}  // end reset
+}
 
 // DisplayString::removeLastChar ==============================================
 /** Remove the last character from the string text */
@@ -131,7 +131,7 @@ void DisplayString::removeLastChar( void )
 	// our text has now changed
 	notifyTextChanged();
 
-}  // end removeLastChar
+}
 
 // DisplayString::truncateBy ==================================================
 /** Remove the last charCount characters from the string text */
@@ -143,7 +143,7 @@ void DisplayString::truncateBy( const Int charCount )
 	// our text has now changed
 	notifyTextChanged();
 
-}  // end truncateBy
+}
 
 // DisplayString::truncateTo ==================================================
 /** Remove the last characters from the string text so it's at the most
@@ -156,7 +156,7 @@ void DisplayString::truncateTo( const Int maxLength )
 	// our text has now changed
 	notifyTextChanged();
 
-}  // end truncateTo
+}
 
 // DisplayString::appendChar ==================================================
 /** Append character to the end of the string */
@@ -168,5 +168,5 @@ void DisplayString::appendChar( WideChar c )
 	// text has now changed
 	notifyTextChanged();
 
-}  // end appendchar
+}
 

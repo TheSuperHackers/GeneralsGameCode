@@ -172,7 +172,7 @@ void FeatherOptions::GetPopSliderInfo(const long sliderID, long *pMin, long *pMa
 		default:
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 }
 
 void FeatherOptions::PopSliderChanged(const long sliderID, long theVal)
@@ -207,7 +207,7 @@ void FeatherOptions::PopSliderChanged(const long sliderID, long theVal)
 
 		default:
 			break;
-	}	// switch
+	}
 }
 
 void FeatherOptions::PopSliderFinished(const long sliderID, long theVal)
@@ -221,7 +221,7 @@ void FeatherOptions::PopSliderFinished(const long sliderID, long theVal)
 		default:
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 
 }
 

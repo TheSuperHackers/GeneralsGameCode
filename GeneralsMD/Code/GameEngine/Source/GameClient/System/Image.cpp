@@ -88,12 +88,12 @@ void Image::parseImageCoords( INI* ini, void *instance, void *store, const void*
 	{
 		uvCoords.lo.x /= (Real)textureSize->x;
 		uvCoords.hi.x /= (Real)textureSize->x;
-	}  // end if
+	}
 	if( textureSize->y )
 	{
 		uvCoords.lo.y /= (Real)textureSize->y;
 		uvCoords.hi.y /= (Real)textureSize->y;
-	}  // end if
+	}
 
 	// store the uv coords
 	theImage->setUV( &uvCoords );
@@ -104,7 +104,7 @@ void Image::parseImageCoords( INI* ini, void *instance, void *store, const void*
 	imageSize.y = bottom - top;
 	theImage->setImageSize( &imageSize );
 
-}  // end parseImageCoord
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse the image status line */
@@ -129,9 +129,9 @@ void Image::parseImageStatus( INI* ini, void *instance, void *store, const void*
 		imageSize.y = theImage->getImageWidth();   // note it's width not height
 		theImage->setImageSize( &imageSize );
 
-	}  // end if
+	}
 
-}  // end parseImageStatus
+}
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 ImageCollection *TheMappedImageCollection = NULL;  ///< mapped images
@@ -155,14 +155,14 @@ Image::Image( void )
 	m_rawTextureData = NULL;
 	m_status = IMAGE_STATUS_NONE;
 
-}  // end Image
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 Image::~Image( void )
 {
 
-}  // end ~Image
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Set a status bit into the existing status, return the previous status
@@ -175,7 +175,7 @@ UnsignedInt Image::setStatus( UnsignedInt bit )
 	BitSet( m_status, bit );
 	return prevStatus;
 
-}  // end setStatus
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Clear a status bit from the existing status, return the previous
@@ -188,7 +188,7 @@ UnsignedInt Image::clearStatus( UnsignedInt bit )
 	BitClear( m_status, bit );
 	return prevStatus;
 
-}  // end clearStatus
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -198,7 +198,7 @@ UnsignedInt Image::clearStatus( UnsignedInt bit )
 //-------------------------------------------------------------------------------------------------
 ImageCollection::ImageCollection( void )
 {
-}  // end ImageCollection
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -206,7 +206,7 @@ ImageCollection::~ImageCollection( void )
 {
   for (std::map<unsigned,Image *>::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
     deleteInstance(i->second);
-}  // end ~ImageCollection
+}
 
 //-------------------------------------------------------------------------------------------------
 /** adds the given image to the collection, transfers ownership to this object */
@@ -214,7 +214,7 @@ ImageCollection::~ImageCollection( void )
 void ImageCollection::addImage( Image *image )
 {
   m_imageMap[TheNameKeyGenerator->nameToLowercaseKey(image->getName())]=image;
-}  // end newImage
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Find an image given the image name */
@@ -223,7 +223,7 @@ const Image *ImageCollection::findImageByName( const AsciiString& name )
 {
   std::map<unsigned,Image *>::iterator i=m_imageMap.find(TheNameKeyGenerator->nameToLowercaseKey(name));
   return i==m_imageMap.end()?NULL:i->second;
-}  // end findImageByName
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Load this image collection with all the images specified in the INI files
@@ -256,4 +256,4 @@ void ImageCollection::load( Int textureSize )
 	ini.loadDirectory("Data\\INI\\MappedImages\\HandCreated", INI_LOAD_OVERWRITE, NULL );
 
 
-}  // end load
+}

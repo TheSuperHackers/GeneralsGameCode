@@ -342,7 +342,7 @@ void MetalMapManagerClass::Update_Textures(void)
 		}
 		metal_map_surface->Unlock();
 		REF_PTR_RELEASE(metal_map_surface);
-	} // for i
+	}
 }
 
 /***********************************************************************************************

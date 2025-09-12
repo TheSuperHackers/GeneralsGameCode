@@ -96,7 +96,7 @@ protected:
 	LPDIRECTINPUT8 m_pDirectInput;  ///< pointer to direct input interface
 	LPDIRECTINPUTDEVICE8 m_pKeyboardDevice;  ///< pointer to keyboard device
 
-};  // end class DirectInputKeyboard
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////
 

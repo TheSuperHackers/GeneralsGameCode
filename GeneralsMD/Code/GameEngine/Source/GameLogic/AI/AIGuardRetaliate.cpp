@@ -303,7 +303,7 @@ Bool AIGuardRetaliateMachine::lookForInnerTarget(void)
 // ------------------------------------------------------------------------------------------------
 void AIGuardRetaliateMachine::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -322,14 +322,14 @@ void AIGuardRetaliateMachine::xfer( Xfer *xfer )
 	xfer->xferObjectID(&m_nemesisToAttack);
 	xfer->xferCoord3D(&m_positionToGuard);
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void AIGuardRetaliateMachine::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 //-- AIGuardRetaliateInnerState ----------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -337,7 +337,7 @@ void AIGuardRetaliateMachine::loadPostProcess( void )
 // ------------------------------------------------------------------------------------------------
 void AIGuardRetaliateInnerState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -349,7 +349,7 @@ void AIGuardRetaliateInnerState::xfer( Xfer *xfer )
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -357,7 +357,7 @@ void AIGuardRetaliateInnerState::xfer( Xfer *xfer )
 void AIGuardRetaliateInnerState::loadPostProcess( void )
 {
 	onEnter();
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 AIGuardRetaliateInnerState::~AIGuardRetaliateInnerState(void)
@@ -460,7 +460,7 @@ void AIGuardRetaliateInnerState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 void AIGuardRetaliateOuterState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -472,7 +472,7 @@ void AIGuardRetaliateOuterState::xfer( Xfer *xfer )
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -480,7 +480,7 @@ void AIGuardRetaliateOuterState::xfer( Xfer *xfer )
 void AIGuardRetaliateOuterState::loadPostProcess( void )
 {						 AIGuardRetaliateOuterState
 	onEnter();
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 AIGuardRetaliateOuterState::~AIGuardRetaliateOuterState(void)
@@ -568,7 +568,7 @@ void AIGuardRetaliateOuterState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 void AIGuardRetaliateReturnState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -581,14 +581,14 @@ void AIGuardRetaliateReturnState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_nextReturnScanTime);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void AIGuardRetaliateReturnState::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 //--------------------------------------------------------------------------------------
 StateReturnType AIGuardRetaliateReturnState::onEnter( void )
@@ -638,7 +638,7 @@ void AIGuardRetaliateReturnState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 void AIGuardRetaliateIdleState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -651,14 +651,14 @@ void AIGuardRetaliateIdleState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_nextEnemyScanTime);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void AIGuardRetaliateIdleState::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 //--------------------------------------------------------------------------------------
 StateReturnType AIGuardRetaliateIdleState::onEnter( void )

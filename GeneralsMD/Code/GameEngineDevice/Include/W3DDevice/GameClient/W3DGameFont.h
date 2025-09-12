@@ -75,7 +75,7 @@ protected:
 	/// release the font data pointer
 	void releaseFontData( GameFont *font );
 
-};  // end W3DFontLibrary
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////
 

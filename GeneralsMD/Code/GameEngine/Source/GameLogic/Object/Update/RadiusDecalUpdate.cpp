@@ -90,7 +90,7 @@ void RadiusDecalUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -113,7 +113,7 @@ void RadiusDecalUpdate::xfer( Xfer *xfer )
 
 	xfer->xferBool(&m_killWhenNoLongerAttacking);
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -124,4 +124,4 @@ void RadiusDecalUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

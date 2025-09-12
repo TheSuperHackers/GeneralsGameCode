@@ -156,9 +156,9 @@ void CaveSystem::xfer( Xfer *xfer )
 			tracker = *it;
 			xfer->xferSnapshot( tracker );
 
-		}  // end
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -169,7 +169,7 @@ void CaveSystem::xfer( Xfer *xfer )
 			DEBUG_CRASH(( "CaveSystem::xfer - m_tunnelTrackerVector should be empty but is not" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// read each item
 		for( UnsignedShort i = 0; i < count; ++i )
@@ -184,10 +184,10 @@ void CaveSystem::xfer( Xfer *xfer )
 			// put in vector
 			m_tunnelTrackerVector.push_back( tracker );
 
-		}  // end for, i
+		}
 
-	}  // end else, laod
+	}
 
-}  // end xfer
+}
 
 

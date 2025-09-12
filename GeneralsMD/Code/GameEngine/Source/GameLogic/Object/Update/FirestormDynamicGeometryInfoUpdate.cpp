@@ -155,9 +155,9 @@ UpdateSleepTime FirestormDynamicGeometryInfoUpdate::update( void )
 				sys->setPosition( &pos );
 				m_myParticleSystemID[ i ] = sys->getSystemID();
 
-			}  // end if
+			}
 
-		}  // end for i
+		}
 
 		// do the FX list
 		FXList::doFXObj( modData->m_fxList, getObject() );
@@ -189,18 +189,18 @@ UpdateSleepTime FirestormDynamicGeometryInfoUpdate::update( void )
 				else if( type == ParticleSystemInfo::EmissionVolumeType::CYLINDER )
 					sys->setEmissionVolumeCylinderRadius( getObject()->getGeometryInfo().getMajorRadius() );
 
-			}  // end if
+			}
 			else
 			{
 
 				// this system not found (it probably died)... stop trying to find it in the future
 				m_myParticleSystemID[ i ] = INVALID_PARTICLE_SYSTEM_ID;
 
-			}  // end else
+			}
 
-		}  // end if
+		}
 
-	}  // end for, i
+	}
 
 	// when we first start running backward ... make a scorch mark
 	if( m_switchedDirections == TRUE && m_scorchPlaced == FALSE )
@@ -209,7 +209,7 @@ UpdateSleepTime FirestormDynamicGeometryInfoUpdate::update( void )
 		TheGameClient->addScorch( getObject()->getPosition(), modData->m_scorchSize, SCORCH_1 );
 		m_scorchPlaced = TRUE;
 
-	}  // end if
+	}
 
 	// scan and do some damage every once in a while
 	if( TheGameLogic->getFrame() - m_lastDamageFrame >= modData->m_delayBetweenDamageFrames )
@@ -218,7 +218,7 @@ UpdateSleepTime FirestormDynamicGeometryInfoUpdate::update( void )
 		doDamageScan();
 		m_lastDamageFrame = TheGameLogic->getFrame();
 
-	}  // end if
+	}
 
 	return UPDATE_SLEEP_NONE;
 }
@@ -263,11 +263,11 @@ void FirestormDynamicGeometryInfoUpdate::doDamageScan( void )
 			// do damage
 			other->attemptDamage( &damageInfo );
 
-		}  // end for, other
+		}
 
-	}  // end if, an boundingCircle radius exists
+	}
 
-}  // end doDamageScan
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -278,7 +278,7 @@ void FirestormDynamicGeometryInfoUpdate::crc( Xfer *xfer )
 	// extend base class
 	DynamicGeometryInfoUpdate::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -308,7 +308,7 @@ void FirestormDynamicGeometryInfoUpdate::xfer( Xfer *xfer )
 	// last damage frame
 	xfer->xferUnsignedInt( &m_lastDamageFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -319,4 +319,4 @@ void FirestormDynamicGeometryInfoUpdate::loadPostProcess( void )
 	// extend base class
 	DynamicGeometryInfoUpdate::loadPostProcess();
 
-}  // end loadPostProcess
+}

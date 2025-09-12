@@ -194,7 +194,7 @@ Bool ConvertToHijackedVehicleCrateCollide::executeCrateBehavior( Object *other )
 			targetCanEject = TRUE;
 			break;
 		}
-	}  // end for dmi
+	}
 
 	if ( ! targetCanEject )
 	{
@@ -251,7 +251,7 @@ void ConvertToHijackedVehicleCrateCollide::crc( Xfer *xfer )
 	// extend base class
 	CrateCollide::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -269,7 +269,7 @@ void ConvertToHijackedVehicleCrateCollide::xfer( Xfer *xfer )
 	// extend base class
 	CrateCollide::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -280,4 +280,4 @@ void ConvertToHijackedVehicleCrateCollide::loadPostProcess( void )
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+}

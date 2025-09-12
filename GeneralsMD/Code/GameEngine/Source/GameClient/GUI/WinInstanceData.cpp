@@ -79,7 +79,7 @@ WinInstanceData::WinInstanceData( void )
 	m_videoBuffer = NULL;
 	init();
 
-}  // end WinInstanceData
+}
 
 // WinInstanceData::~WinInstanceData ==========================================
 //=============================================================================
@@ -94,7 +94,7 @@ WinInstanceData::~WinInstanceData( void )
 
 	m_videoBuffer = NULL; //Video Buffer needs to be clean up by the control that is in charge of the video.
 
-}  // end ~WinInstanceData
+}
 
 // WinInstanceData::init ======================================================
 /** Set initial values for instance data if desired */
@@ -119,7 +119,7 @@ void WinInstanceData::init( void )
 		m_hiliteDrawData[ i ].color = WIN_COLOR_UNDEFINED;
 		m_hiliteDrawData[ i ].borderColor = WIN_COLOR_UNDEFINED;
 
-	}  // end for i
+	}
 
 	// initialize text colors
 	m_enabledText.color					= WIN_COLOR_UNDEFINED;
@@ -150,19 +150,19 @@ void WinInstanceData::init( void )
 		TheDisplayStringManager->freeDisplayString( m_text );
 		m_text = NULL;
 
-	}  // end if
+	}
 	if( m_tooltip )
 	{
 
 		TheDisplayStringManager->freeDisplayString( m_tooltip );
 		m_tooltip = NULL;
 
-	}  // end if
+	}
 
 	m_videoBuffer = NULL;
 
 
-}  // end init
+}
 
 // WinInstanceData::setTooltipText ============================================
 //=============================================================================
@@ -177,7 +177,7 @@ void WinInstanceData::setTooltipText( UnicodeString tip )
 	// set text
 	m_tooltip->setText( tip );
 
-}  // end setTooltipText
+}
 
 // WinInstanceData:setText ====================================================
 /** Set the text for this window instance data */
@@ -193,7 +193,7 @@ void WinInstanceData::setText( UnicodeString text )
 	// set the text
 	m_text->setText( text );
 
-}  // end set text
+}
 
 // WinInstanceData:setText ====================================================
 /** Set the text for this window instance data */

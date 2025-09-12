@@ -124,7 +124,7 @@ WindowMsgHandledType GadgetTabControlInput( GameWindow *tabControl, UnsignedInt 
 
 	return MSG_HANDLED;
 
-}  // end GadgetTabControlInput
+}
 
 // GadgetTabControlSystem ====================================================
 /** Handle system messages for TabControl */
@@ -147,7 +147,7 @@ WindowMsgHandledType GadgetTabControlSystem( GameWindow *tabControl, UnsignedInt
 
 			break;
 
-		}  // end destroy
+		}
 
 		case GGM_RESIZED:
 		{//On resize, we need to upkeep the pane sizes and tabs since they are bound to us
@@ -170,11 +170,11 @@ WindowMsgHandledType GadgetTabControlSystem( GameWindow *tabControl, UnsignedInt
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end GadgetTabControlSystem
+}
 
 void GadgetTabControlComputeTabRegion( GameWindow *tabControl )///< Recalc the tab positions based on userData
 {

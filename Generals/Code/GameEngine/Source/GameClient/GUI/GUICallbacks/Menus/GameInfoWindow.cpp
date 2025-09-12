@@ -234,7 +234,7 @@ void GameInfoWindowInit( WindowLayout *layout, void *userData )
 	GadgetStaticTextSetText(staticTextMapName,UnicodeString::TheEmptyString);
 	GadgetListBoxReset(listBoxPlayers);
 
-}  // end MapSelectMenuInit
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -256,7 +256,7 @@ WindowMsgHandledType GameInfoWindowSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end create
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
@@ -264,7 +264,7 @@ WindowMsgHandledType GameInfoWindowSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end case
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -276,15 +276,15 @@ WindowMsgHandledType GameInfoWindowSystem( GameWindow *window, UnsignedInt msg,
 
 			return MSG_HANDLED;
 
-		}  // end input
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-}  // end MapSelectMenuSystem
+}
 

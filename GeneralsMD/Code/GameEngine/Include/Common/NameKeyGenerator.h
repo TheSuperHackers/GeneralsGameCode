@@ -133,7 +133,7 @@ private:
 	Bucket*				m_sockets[SOCKET_COUNT];			///< Catalog of all Buckets already generated
 	UnsignedInt		m_nextID;											///< Next available ID
 
-};  // end class NameKeyGenerator
+};
 
 //-------------------------------------------------------------------------------------------------
 //           Externals

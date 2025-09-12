@@ -364,7 +364,7 @@ static void shutdownComplete( WindowLayout *layout )
 
 	nextScreen = NULL;
 
-}  // end if
+}
 
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -726,7 +726,7 @@ void WOLLoginMenuInit( WindowLayout *layout, void *userData )
 	}
 	TheTransitionHandler->setGroup("GameSpyLoginProfileFade");
 
-} // WOLLoginMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Login Menu shutdown method */
@@ -754,12 +754,12 @@ void WOLLoginMenuShutdown( WindowLayout *layout, void *userData )
 		shutdownComplete( layout );
 		return;
 
-	}  //end if
+	}
 
 	TheShell->reverseAnimatewindow();
 	TheTransitionHandler->reverse("GameSpyLoginProfileFade");
 
-}  // WOLLoginMenuShutdown
+}
 
 
 // this is used to check if we've got all the pings
@@ -899,7 +899,7 @@ void WOLLoginMenuUpdate( WindowLayout * layout, void *userData)
 		SetUpGameSpy( motd.str(), config.str() );
 	}
 
-}// WOLLoginMenuUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Login Menu input callback */
@@ -934,21 +934,21 @@ WindowMsgHandledType WOLLoginMenuInput( GameWindow *window, UnsignedInt msg,
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonBack, buttonBackID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// WOLLoginMenuInput
+}
 
 static Bool isNickOkay(UnicodeString nick)
 {
@@ -1034,12 +1034,12 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 		case GWM_CREATE:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
 			{
@@ -1048,7 +1048,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 
 		// someone typed in a combo box.  Clear password (or fill it in if the typed name matches a known login name)
 		case GCM_UPDATE_TEXT:
@@ -1215,7 +1215,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 					buttonPushed = true;
 					TearDownGameSpy();
 					TheShell->pop();
-				} //if ( controlID == buttonBack )
+				}
 #ifdef ALLOW_NON_PROFILED_LOGIN
 				else if ( controlID == buttonUseAccountID )
 				{
@@ -1223,14 +1223,14 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 					nextScreen = "Menus/GameSpyLoginProfile.wnd";
 					TheShell->pop();
 					//TheShell->push( "Menus/GameSpyLoginProfile.wnd" );
-				} //if ( controlID == buttonUseAccount )
+				}
 				else if ( controlID == buttonDontUseAccountID )
 				{
 					buttonPushed = true;
 					nextScreen = "Menus/GameSpyLoginQuick.wnd";
 					TheShell->pop();
 					//TheShell->push( "Menus/GameSpyLoginQuick.wnd" );
-				} //if ( controlID == buttonDontUseAccount )
+				}
 #endif // ALLOW_NON_PROFILED_LOGIN
 				else if ( controlID == buttonCreateAccountID )
 				{
@@ -1320,7 +1320,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 						TheShell->pop();
 					}
 #endif // ALLOW_NON_PROFILED_LOGIN
-				} //if ( controlID == buttonCreateAccount )
+				}
 				else if ( controlID == buttonLoginID )
 				{
 					AsciiString login, password, email;
@@ -1428,7 +1428,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 					}
 #endif // ALLOW_NON_PROFILED_LOGIN
 
-				} //if ( controlID == buttonLogin )
+				}
 				else if ( controlID == buttonTOSID )
 				{
 					parentTOS->winHide(FALSE);
@@ -1500,7 +1500,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 					buttonBack->winEnable(TRUE);
 				}
 				break;
-			}// case GBM_SELECTED:
+			}
 
 		case GEM_EDIT_DONE:
 			{
@@ -1522,16 +1522,16 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 						munkee.removeLastChar();
 						GadgetTextEntrySetText( textEntryLoginName, munkee );
 					}
-				}// if ( controlID == textEntryLoginNameID )
+				}
 				break;
-			}//case GEM_UPDATE_TEXT:
+			}
 			*/
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// WOLLoginMenuSystem
+}
 
 

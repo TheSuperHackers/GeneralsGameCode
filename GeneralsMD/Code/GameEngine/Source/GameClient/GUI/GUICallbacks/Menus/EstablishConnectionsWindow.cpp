@@ -189,6 +189,6 @@ WindowMsgHandledType EstablishConnectionsControlSystem(GameWindow *window, Unsig
 				}
 				break;
 			}
-	} // end switch
+	}
 	return MSG_HANDLED;
 }

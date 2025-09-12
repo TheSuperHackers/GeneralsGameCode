@@ -74,7 +74,7 @@ WaveGuideUpdateModuleData::WaveGuideUpdateModuleData( void )
 	m_damageAmount = 0.0f;
 	m_toppleForce = 0.0f;
 
-}  // end WaveGuideUpdateModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ WaveGuideUpdateModuleData::WaveGuideUpdateModuleData( void )
 
   p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,16 +138,16 @@ WaveGuideUpdate::WaveGuideUpdate( Thing *thing, const ModuleData *moduleData )
 		for( Int j = 0; j < MAX_SHAPE_EFFECTS; j++ )
 			m_shapeEffects[ i ][ j ] = INVALID_PARTICLE_SYSTEM_ID;
 
-	}  // end for i
+	}
 
-}  // end WaveGuideUpdate
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 WaveGuideUpdate::~WaveGuideUpdate( void )
 {
 
-}  // end ~WaveGuideUpdate
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Start the waveguide moving along its waypoint path, bringing water destruction and havok
@@ -182,7 +182,7 @@ Bool WaveGuideUpdate::startMoving( void )
 				DEBUG_CRASH(( "WaveGuideUpdate::startMoving - The waypoint path cannot have multiple link choices at any node" ));
 				return FALSE;
 
-			}  // end if
+			}
 
 			// set our destination location to this waypoint position
 			m_finalDestination = *verify->getLocation();
@@ -190,7 +190,7 @@ Bool WaveGuideUpdate::startMoving( void )
 			// on to the next
 			verify = verify->getLink( 0 );
 
-		}  // end while
+		}
 
 		// there must be at least one link
 		Waypoint *next = waypoint->getLink( 0 );
@@ -200,7 +200,7 @@ Bool WaveGuideUpdate::startMoving( void )
 			DEBUG_CRASH(( "WaveGuideUpdate:startMoving - There must be a linked waypoint path to follow" ));
 			return FALSE;
 
-		}  // end if
+		}
 
 		// get vector from next waypoint to first waypoint
 		Coord2D v;
@@ -234,13 +234,13 @@ Bool WaveGuideUpdate::startMoving( void )
 			//
 			ai->setPathExtraDistance( PATH_EXTRA_DISTANCE );
 
-		}  // end if
+		}
 
-	}  // endif
+	}
 
 	return TRUE;  // all is well
 
-}  // end startMoving
+}
 
 // ------------------------------------------------------------------------------------------------
 /** The wave guide has started moving ... this is called once */
@@ -273,7 +273,7 @@ Bool WaveGuideUpdate::initWaveGuide( void )
 			particleSys->attachToObject( getObject() );
 			m_shapeEffects[ i ][ 0 ] = particleSys->getSystemID();
 
-		}  // end if
+		}
 
 		// create spray 2 effect
 		particleSys = TheParticleSystemManager->createParticleSystem( wave2 );
@@ -284,7 +284,7 @@ Bool WaveGuideUpdate::initWaveGuide( void )
 			particleSys->attachToObject( getObject() );
 			m_shapeEffects[ i ][ 1 ] = particleSys->getSystemID();
 
-		}  // end if
+		}
 
 		// create spray 3 every few points across the wave
 		if( i % 5  == 0 )
@@ -298,15 +298,15 @@ Bool WaveGuideUpdate::initWaveGuide( void )
 				particleSys->attachToObject( getObject() );
 				m_shapeEffects[ i ][ 2 ] = particleSys->getSystemID();
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	return TRUE;  // all is well
 
-}  // end initWaveGuide
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -342,9 +342,9 @@ void WaveGuideUpdate::computeWaveShapePoints( void )
 		m_shapePoints[ m_shapePointCount ].z = 0.0f;
 		m_shapePointCount++;
 
-	}  // end for width
+	}
 
-}  // end computeWaveShapePoints
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Given the current position and orientation of the wave guide, transform all the wave
@@ -365,9 +365,9 @@ void WaveGuideUpdate::transformWaveShape( void )
 		m_transformedShapePoints[ i ].z = TheTerrainLogic->getGroundHeight( m_transformedShapePoints[ i ].x,
 																																	m_transformedShapePoints[ i ].y );
 
-	}  // end for i
+	}
 
-}  // end transformWaveShape
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Update phase for the effects that make up the front shape of the wave */
@@ -406,15 +406,15 @@ void WaveGuideUpdate::doShapeEffects( void )
 					pos.z = m_transformedShapePoints[ i ].z;
 					particleSys->setPosition( &pos );
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 
-		}  // end for j
+		}
 
-	}  // end for i
+	}
 
-}  // end doShapeEffects
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Given all our sample points, make the wave go */
@@ -439,9 +439,9 @@ void WaveGuideUpdate::doWaterMotion( void )
 																				modData->m_preferredHeight );
 
 
-	}  // end for i
+	}
 
-}  // end doWaterMotion
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Any points in our wave that are on the shoreline that are close enough to the effect
@@ -476,7 +476,7 @@ void WaveGuideUpdate::doShoreEffects( void )
 		// transform the point
 		waveGuide->transformPoint( &effectPoints[ i ], &effectPoints[ i ] );
 
-	}  // end for i
+	}
 
 	//
 	// go across the shape of our wave ... when we detect a transition from underground to
@@ -513,12 +513,12 @@ void WaveGuideUpdate::doShoreEffects( void )
 				if( particleSystem )
 					particleSystem->setPosition( prevPoint );
 
-			}  // end if
+			}
 
 			// we are now 'above'
 			underWater = FALSE;
 
-		}  // end if
+		}
 		else
 		{
 
@@ -533,16 +533,16 @@ void WaveGuideUpdate::doShoreEffects( void )
 				if( particleSystem )
 					particleSystem->setPosition( point );
 
-			}  // end if
+			}
 
 			// we are now 'under'
 			underWater = TRUE;
 
-		}  // end else
+		}
 
-	}  // end for i
+	}
 
-}  // end doShoreEffects
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Do damage to things that have fallen victim in the path of this enourmous wave */
@@ -638,7 +638,7 @@ void WaveGuideUpdate::doDamage( void )
 						particleSystem->setPosition( &pos );
 						particleSystem->attachToObject( waveGuide );
 
-					}  // end if
+					}
 
 					// this object is now wet
 					obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_WET ) );
@@ -671,7 +671,7 @@ void WaveGuideUpdate::doDamage( void )
 						draw->setModelConditionState( MODELCONDITION_FLOODED );
 						draw->setShadowsEnabled( FALSE );
 
-					}  // end if
+					}
 
 					//
 					// Temp demo hack, replace bridges destroyed with the special destroyed bridge art
@@ -700,7 +700,7 @@ void WaveGuideUpdate::doDamage( void )
 								v.y = bridgeInfo.to.y - bridgeInfo.from.y;
 								angle = v.toAngle();
 
-							}  // end if
+							}
 
 							// put new bridge looking object in the world
 							newBridge->setPosition( obj->getPosition() );
@@ -734,24 +734,24 @@ void WaveGuideUpdate::doDamage( void )
 
 								particleSystem->setLocalTransform( &transform );
 
-							}  // end if
+							}
 
 							// destroy the old bridge and bridge object
 							TheTerrainLogic->deleteBridge( oldBridge );
 
-						}  // end if
+						}
 
-					}  // end if
+					}
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 
-		}  // end for obj
+		}
 
-	}  // end for i
+	}
 
-}  // end doDamage
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -797,12 +797,12 @@ UpdateSleepTime WaveGuideUpdate::update( void )
 			TheGameLogic->destroyObject( getObject() );
 			return UPDATE_SLEEP_NONE;
 
-		}  // end if
+		}
 
 		// we are now in motion
 		m_initialized = TRUE;
 
-	}  // end if
+	}
 
 	// every half second we try to play a random spash sound
 	if( TheGameLogic->getFrame() - m_splashSoundFrame > LOGICFRAMES_PER_SECOND / 2.0f )
@@ -817,8 +817,8 @@ UpdateSleepTime WaveGuideUpdate::update( void )
 			AudioEventRTS randomSplash(modData->m_randomSplashSound);
 			randomSplash.setObjectID(waveGuide->getID());
 			TheAudio->addAudioEvent(&randomSplash);
-		}  // end if
-	}  // end if
+		}
+	}
 
 	//
 	// transform the wave shape points once for the current position ... we have this array
@@ -850,7 +850,7 @@ UpdateSleepTime WaveGuideUpdate::update( void )
 
 		return UPDATE_SLEEP_NONE;
 
-	}  // end if
+	}
 
 	// do wavefront effects
 	doShapeEffects();
@@ -866,7 +866,7 @@ UpdateSleepTime WaveGuideUpdate::update( void )
 
 	return UPDATE_SLEEP_NONE;
 
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -877,7 +877,7 @@ void WaveGuideUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -922,7 +922,7 @@ void WaveGuideUpdate::xfer( Xfer *xfer )
 	// final destination
 	xfer->xferCoord3D( &m_finalDestination );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -933,4 +933,4 @@ void WaveGuideUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

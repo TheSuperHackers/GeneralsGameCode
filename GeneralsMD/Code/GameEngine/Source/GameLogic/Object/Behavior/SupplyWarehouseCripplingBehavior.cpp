@@ -146,7 +146,7 @@ void SupplyWarehouseCripplingBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -170,7 +170,7 @@ void SupplyWarehouseCripplingBehavior::xfer( Xfer *xfer )
 	// next healing frame
 	xfer->xferUnsignedInt( &m_nextHealingFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -181,4 +181,4 @@ void SupplyWarehouseCripplingBehavior::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

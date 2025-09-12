@@ -201,7 +201,7 @@ void BlendMaterial::addTerrain(const char *pPath, Int terrainNdx, HTREEITEM pare
 		parent = findOrAdd( parent, "**EVAL**" );
 		strcpy(buffer, pPath);
 		doAdd = true;
-	}  // end if
+	}
 
 //	Int tilesPerRow = TEXTURE_WIDTH/(2*TILE_PIXEL_EXTENT+TILE_OFFSET);
 //	Int availableTiles = 4 * tilesPerRow * tilesPerRow;

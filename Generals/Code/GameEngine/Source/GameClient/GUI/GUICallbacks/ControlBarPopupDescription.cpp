@@ -321,7 +321,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 							}
 						}
 					}
-				} //End overcharge special case
+				}
 
 				//Special case: When building units, the CanMakeType determines reasons for not being able to buy stuff.
 				else if( thingTemplate )

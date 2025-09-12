@@ -338,7 +338,7 @@ Real SuperweaponInfo::getHeight() const
 void InGameUI::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -505,7 +505,7 @@ void InGameUI::xfer( Xfer *xfer )
 void InGameUI::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -934,7 +934,7 @@ InGameUI::InGameUI()
 		m_moveHint[ i ].sourceID = 0;
 		m_moveHint[ i ].frame = 0;
 
-	}  //  end for i
+	}
 
 	for( i = 0; i < MAX_BUILD_PROGRESS; i++ )
 	{
@@ -943,7 +943,7 @@ InGameUI::InGameUI()
 		m_buildProgress[ i ].m_percentComplete = 0.0f;
 		m_buildProgress[ i ].m_control = NULL;
 
-	}  // end for i
+	}
 
 	m_pendingGUICommand = NULL;
 
@@ -972,7 +972,7 @@ InGameUI::InGameUI()
 		m_uiMessages[ i ].timestamp = 0;
 		m_uiMessages[ i ].color = 0;
 
-	}  // end for i
+	}
 
 	m_replayWindow = NULL;
 	m_messagesOn = TRUE;
@@ -1056,7 +1056,7 @@ InGameUI::InGameUI()
 
 	m_soloNexusSelectedDrawableID = INVALID_DRAWABLE_ID;
 
-}  // end InGameUI
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -1189,7 +1189,7 @@ void InGameUI::init( void )
 	setDrawRMBScrollAnchor(TheGlobalData->m_drawScrollAnchor);
 	setMoveRMBScrollAnchor(TheGlobalData->m_moveScrollAnchor);
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -1370,7 +1370,7 @@ void InGameUI::evaluateSoloNexus( Drawable *newlyAddedDrawable )
 			return;
 		}
 
-	}  // end for
+	}
 
 
 }
@@ -1422,9 +1422,9 @@ void InGameUI::handleBuildPlacements( void )
 					const Real snapRadians = DEG_TO_RADF(45);
 					angle = WWMath::Round(angle / snapRadians) * snapRadians;
 				}
-			}  // end if
+			}
 
-		}  // end if
+		}
 		else
 		{
 			const MouseIO *mouseIO = TheMouse->getMouseStatus();
@@ -1432,7 +1432,7 @@ void InGameUI::handleBuildPlacements( void )
 			// location is the mouse position
 			loc = mouseIO->pos;
 
-		}  // end else
+		}
 
 		// set the location and angle of the place icon
 		/**@todo this whole orientation vector thing is LAME! Must replace, all I want to
@@ -1482,7 +1482,7 @@ void InGameUI::handleBuildPlacements( void )
 			} else {
 				TheTerrainVisual->removeFactionBibDrawable(m_placeIcon[0]);
 			}
-		}  // end if
+		}
 
 
 
@@ -1531,7 +1531,7 @@ void InGameUI::handleBuildPlacements( void )
 					m_placeIcon[ i ] = TheThingFactory->newDrawable( m_pendingPlaceType,
 																													 DRAWABLE_STATUS_NO_STATE_PARTICLES );
 
-			}  // end for i
+			}
 
 			//
 			// destroy any drawables that we're not using anymore because a previous
@@ -1544,7 +1544,7 @@ void InGameUI::handleBuildPlacements( void )
 					TheGameClient->destroyDrawable( m_placeIcon[ i ] );
 				m_placeIcon[ i ] = NULL;
 
-			}  // end for i
+			}
 
 			//
 			// march down each drawable and set the position based on its position in the
@@ -1562,13 +1562,13 @@ void InGameUI::handleBuildPlacements( void )
 				// set the drawable angle
 				m_placeIcon[ i ]->setOrientation( angle );
 
-			}  // end for i
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
-}  // end handleBuildPlacements
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Pre-draw phase of the in game ui */
@@ -1588,7 +1588,7 @@ void InGameUI::preDraw( void )
 	// draw world animations
 	updateAndDrawWorldAnimations();
 
-}  // end preDraw
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update the in game user interface */
@@ -1661,9 +1661,9 @@ void InGameUI::update( void )
 			if( a == 0 )
 				removeMessageAtIndex( i );
 
-		}  // end if
+		}
 
-	}  // end for i
+	}
 
 	//
 	// Update the Military Subtitle display
@@ -1805,7 +1805,7 @@ void InGameUI::update( void )
 			GadgetStaticTextSetText( moneyWin, buffer );
 			lastMoney = currentMoney;
 
-		}  // end if
+		}
 		moneyWin->winHide(FALSE);
 		powerWin->winHide(FALSE);
 	}
@@ -1857,7 +1857,7 @@ void InGameUI::update( void )
 	}
 
 
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 void InGameUI::registerWindowLayout( WindowLayout *layout )
@@ -1951,7 +1951,7 @@ void InGameUI::reset( void )
 		m_moveHint[ i ].sourceID = 0;
 		m_moveHint[ i ].frame = 0;
 
-	}  //  end for i
+	}
 
 	m_waypointMode			= false;
 	m_forceAttackMode		= false;
@@ -1965,7 +1965,7 @@ void InGameUI::reset( void )
 	m_tooltipsDisabledUntil = 0;
 
 	UpdateDiplomacyBriefingText(AsciiString::TheEmptyString, TRUE);
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Free any resources we used for our messages */
@@ -1989,9 +1989,9 @@ void InGameUI::freeMessageResources( void )
 		// set timestamp to zero
 		m_uiMessages[ i ].timestamp = 0;
 
-	}  // end for i
+	}
 
-}  // end freeMessageResources
+}
 
 void InGameUI::freeCustomUiResources( void )
 {
@@ -2033,7 +2033,7 @@ void InGameUI::message( AsciiString stringManagerLabel, ... )
 	{
 		DEBUG_CRASH(("InGameUI::message failed with code:%d", result));
 	}
-}  // end
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -2074,7 +2074,7 @@ void InGameUI::message( UnicodeString format, ... )
 	{
 		DEBUG_CRASH(("InGameUI::message failed with code:%d", result));
 	}
-}  // end message
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Interface for display text messages to the user */
@@ -2101,7 +2101,7 @@ void InGameUI::messageColor( const RGBColor *rgbColor, UnicodeString format, ...
 	{
 		DEBUG_CRASH(("InGameUI::messageColor failed with code:%d", result));
 	}
-}  // end message
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -2149,7 +2149,7 @@ void InGameUI::addMessageText( const UnicodeString& formattedMessage, const RGBC
 	else
 		m_uiMessages[ 0 ].color = color2;
 
-}  // end addFormattedMessage
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Remove the message on screen at index i */
@@ -2163,7 +2163,7 @@ void InGameUI::removeMessageAtIndex( Int i )
 	m_uiMessages[ i ].displayString = NULL;
 	m_uiMessages[ i ].timestamp = 0;
 
-}  // end removeMessageAtIndex
+}
 
 //-------------------------------------------------------------------------------------------------
 /** An area selection is occurring, start graphical "hint". */
@@ -2902,11 +2902,11 @@ void InGameUI::setGUICommand( const CommandButton *command )
 			m_mouseMode = MOUSEMODE_DEFAULT;
 			return;
 
-		}  // end if
+		}
 
 		m_mouseMode = MOUSEMODE_GUI_COMMAND;
 
-	}  // end if
+	}
 	else
 	{
 		m_mouseMode = MOUSEMODE_DEFAULT;
@@ -2937,7 +2937,7 @@ void InGameUI::setGUICommand( const CommandButton *command )
 
 	m_mouseModeCursor = TheMouse->getMouseCursor();
 
-}  // end setGUICommand
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Get the pending gui command */
@@ -2966,10 +2966,10 @@ void InGameUI::destroyPlacementIcons( void )
 		}
 		m_placeIcon[ i ] = NULL;
 
-	}  // end for i
+	}
 	TheTerrainVisual->removeAllBibs();
 
-}  // end destroyPlacementIcons
+}
 
 //-------------------------------------------------------------------------------------------------
 /** User has clicked on a built item that requires placement in the world.  We will
@@ -3063,7 +3063,7 @@ void InGameUI::placeBuildAvailable( const ThingTemplate *build, Drawable *buildD
 			DEBUG_ASSERTCRASH( m_placeIcon[ 0 ] == NULL, ("placeBuildAvailable, build icon array is not empty!") );
 			m_placeIcon[ 0 ] = draw;
 
-		}  // end if
+		}
 		else
 		{
 			if (m_mouseMode == MOUSEMODE_BUILD_PLACE)
@@ -3078,11 +3078,11 @@ void InGameUI::placeBuildAvailable( const ThingTemplate *build, Drawable *buildD
 			// if we have a place icons destroy them
 			destroyPlacementIcons();
 
-		}  // end else
+		}
 
-	}  // end if
+	}
 
-}  // end placeBuildAvailable
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return the thing we're attempting to place */
@@ -3099,7 +3099,7 @@ ObjectID InGameUI::getPendingPlaceSourceObjectID( void )
 
 	return m_pendingPlaceSourceObjectID;
 
-}  // end getPendingPlaceSourceObjectID
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Start the angle selection interface for selecting building angles when placing them */
@@ -3115,11 +3115,11 @@ void InGameUI::setPlacementStart( const ICoord2D *start )
 		m_placeAnchorEnd = *start;
 		m_placeAnchorInProgress = TRUE;
 
-	}  // end if
+	}
 	else
 		m_placeAnchorInProgress = FALSE;
 
-}  // end setPlacementStart
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Set the end anchor for the angle build interface */
@@ -3130,7 +3130,7 @@ void InGameUI::setPlacementEnd( const ICoord2D *end )
 	if( end )
 		m_placeAnchorEnd = *end;
 
-}  // end setPlacementEnd
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Is the angle selection interface for placing building at angles up? */
@@ -3140,7 +3140,7 @@ Bool InGameUI::isPlacementAnchored( void )
 
 	return m_placeAnchorInProgress;
 
-}  // end isPlacementAnchored
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Get the start and end anchor points for the building angle selection interface */
@@ -3153,7 +3153,7 @@ void InGameUI::getPlacementPoints( ICoord2D *start, ICoord2D *end )
 	if( end )
 		*end = m_placeAnchorEnd;
 
-}  // end getPlacementPoints
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return the angle of the drawable at the cursor if any */
@@ -3166,7 +3166,7 @@ Real InGameUI::getPlacementAngle( void )
 
 	return 0.0f;
 
-}  // end getPlacementAngle
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Mark given Drawable as "selected". */
@@ -3194,9 +3194,9 @@ void InGameUI::selectDrawable( Drawable *draw )
 		// the control needs to update its context sensitive display now
 		TheControlBar->onDrawableSelected( draw );
 
-	}  // end if
+	}
 
-}  // end selectDrawable
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Clear "selected" status of Drawable. */
@@ -3233,9 +3233,9 @@ void InGameUI::deselectDrawable( Drawable *draw )
 		// the control needs to update its context sensitive display now
 		TheControlBar->onDrawableDeselected( draw );
 
-	}  // end if
+	}
 
-}  // end deselectDrawable
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Clear all drawables' "select" status */
@@ -3254,7 +3254,7 @@ void InGameUI::deselectAllDrawables( Bool postMsg )
 		// do the deselection
 		TheInGameUI->deselectDrawable( draw );
 
-	}  // end while
+	}
 
 	// keep our list all tidy
 	m_selectedDrawables.clear();
@@ -3315,7 +3315,7 @@ Drawable *InGameUI::getFirstSelectedDrawable( void )
 
 	return m_selectedDrawables.front();
 
-}  // end getFirstSelectedDrawable
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return true if the selected ID is in the drawable list */
@@ -3329,11 +3329,11 @@ Bool InGameUI::isDrawableSelected( DrawableID idToCheck ) const
 		if( (*it)->getID() == idToCheck )
 			return TRUE;
 
-	}  // end for
+	}
 
 	return FALSE;
 
-}  // end isDrawableSelected
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return true if all of the given objects are selected */
@@ -3348,7 +3348,7 @@ Bool InGameUI::areAllObjectsSelected(const std::vector<Object*>& objectsToCheck)
 
 	return TRUE;
 
-}  // end areAllObjectsSelected
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -3368,11 +3368,11 @@ Bool InGameUI::isAnySelectedKindOf( KindOfType kindOf ) const
 		if( draw && draw->isKindOf( kindOf ) )
 			return TRUE;
 
-	}  // end for, it
+	}
 
 	return FALSE;  // no selected objects are of the kind of type
 
-}  // end isAnySelectedKindOf
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -3392,11 +3392,11 @@ Bool InGameUI::isAllSelectedKindOf( KindOfType kindOf ) const
 		if( draw && draw->isKindOf( kindOf ) == FALSE )
 			return FALSE;  // not all objects are of the kind of type
 
-	}  // end for, it
+	}
 
 	return TRUE;  // all objects have this kindof bit set in them
 
-}  // end isAllSelectedKindOf
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Set the input enabled/disabled */
@@ -3490,11 +3490,11 @@ void InGameUI::postDraw( void )
 				GameFont *font = m_uiMessages[ i ].displayString->getFont();
 				y += font->height;
 
-			}  //end if
+			}
 
-		}  // end for i
+		}
 
-	}  // end if
+	}
 
 	if( m_militarySubtitle )
 	{
@@ -3779,7 +3779,7 @@ void InGameUI::postDraw( void )
 			TheDisplay->drawFillRect( anchor->x-w, anchor->y-h*r, w*2+1, h*2*r+1, mainColor );
 		}
 	}
-}  // end postDraw
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Expire a hint of the specified type with the corresponding hint index */
@@ -3797,7 +3797,7 @@ void InGameUI::expireHint( HintType type, UnsignedInt hintIndex )
 		m_moveHint[ hintIndex ].sourceID = 0;
 		m_moveHint[ hintIndex ].frame = 0;
 
-	}  // end if
+	}
 	else
 	{
 
@@ -3805,9 +3805,9 @@ void InGameUI::expireHint( HintType type, UnsignedInt hintIndex )
 		DEBUG_CRASH(("undefined hint type"));
 		return;
 
-	}  // end else
+	}
 
-}  // end expireHint
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Create the control user interface GUI */
@@ -3824,7 +3824,7 @@ void InGameUI::createControlBar( void )
 		window->winHide( TRUE );
 */
 
-}  // end createControlBar
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Create the replay control GUI */
@@ -3841,7 +3841,7 @@ void InGameUI::createReplayControl( void )
 		window->winHide( TRUE );
 */
 
-}  // end createReplayControl
+}
 
 // ------------------------------------------------------------------------------------------------
 // InGameUI::playMovie
@@ -4003,9 +4003,9 @@ void InGameUI::displayCantBuildMessage( LegalBuildCode lbc )
 			TheInGameUI->message( "GUI:CantBuildThere" );
 			break;
 
-	}  // end switch
+	}
 
-}  // end displayCantBuildMessage
+}
 
 // ------------------------------------------------------------------------------------------------
 // InGameUI::militarySubtitle
@@ -4208,7 +4208,7 @@ CanAttackResult InGameUI::getCanSelectedObjectsAttack( ActionType action, const 
 
 		}
 
-	}  // end for
+	}
 
 	if( count > 0 )
 	{
@@ -4347,7 +4347,7 @@ Bool InGameUI::canSelectedObjectsDoAction( ActionType action, const Object *obje
 
 			++qualify;
 		}
-	}  // end for
+	}
 
 	//If the rule is all must qualify, do the check now and return success
 	//only if all the selected units qualified.
@@ -5205,7 +5205,7 @@ WorldAnimationData::WorldAnimationData( void )
 	m_options = WORLD_ANIM_NO_OPTIONS;
 	m_zRisePerSecond = 0.0f;
 
-}  // end WorldAnimationData
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Add a 2D animation at a spot in the world */
@@ -5240,7 +5240,7 @@ void InGameUI::addWorldAnimation( Anim2DTemplate *animTemplate,
 	// add to list
 	m_worldAnimationList.push_front( wad );
 
-}  // end addWorldAnimation
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Delete all world animations */
@@ -5262,9 +5262,9 @@ void InGameUI::clearWorldAnimations( void )
 
 		it = m_worldAnimationList.erase( it );
 
-	}  // end for
+	}
 
-}  // end clearWorldAnimations
+}
 
 static const UnsignedInt FRAMES_BEFORE_EXPIRE_TO_FADE = LOGICFRAMES_PER_SECOND * 1;
 // ------------------------------------------------------------------------------------------------
@@ -5299,13 +5299,13 @@ void InGameUI::updateAndDrawWorldAnimations( void )
 				it = m_worldAnimationList.erase( it );
 				continue;
 
-			}  // end if
+			}
 
 			// update the Z value
 			if( wad->m_zRisePerSecond )
 				wad->m_worldPos.z += wad->m_zRisePerSecond / LOGICFRAMES_PER_SECOND;
 
-		}  // end if
+		}
 
 		//
 		// don't bother going forward with the draw process if this location is shrouded for
@@ -5318,7 +5318,7 @@ void InGameUI::updateAndDrawWorldAnimations( void )
 			++it;
 			continue;
 
-		}  // end if
+		}
 
 		// update translucency value
 		if( BitIsSet( wad->m_options, WORLD_ANIM_FADE_ON_EXPIRE ) )
@@ -5333,9 +5333,9 @@ void InGameUI::updateAndDrawWorldAnimations( void )
 				Real alpha = INT_TO_REAL( framesTillExpire ) / INT_TO_REAL( FRAMES_BEFORE_EXPIRE_TO_FADE );
 				wad->m_anim->setAlpha( alpha );
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
 		// project the point to screen space
 		ICoord2D screen;
@@ -5356,14 +5356,14 @@ void InGameUI::updateAndDrawWorldAnimations( void )
 			// draw the animation
 			wad->m_anim->draw( screen.x, screen.y, width, height );
 
-		}  // end if
+		}
 
 		// go to the next element in the list
 		++it;
 
-	}  // end for
+	}
 
-}  // end updateAndDrawWorldAnimations
+}
 
 
 Object *InGameUI::findIdleWorker( Object *obj)
@@ -5677,13 +5677,13 @@ WindowMsgHandledType IdleWorkerSystem( GameWindow *window, UnsignedInt msg,
 			}
 			break;
 
-		}  // end button selected
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 

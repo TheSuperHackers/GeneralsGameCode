@@ -288,10 +288,8 @@ void GameLODManager::init(void)
 	if ((Real)(m_numRAM)/(Real)(256*1024*1024) >= PROFILE_ERROR_LIMIT)
 		m_memPassed=TRUE;	//check if they have at least 256 MB
 
-	//find data needed to determine m_idealDetailLevel
 	if (m_idealDetailLevel == STATIC_GAME_LOD_UNKNOWN || TheGlobalData->m_forceBenchmark)
 	{
-		//find equivalent CPU to unknown cpu.
 		if (m_cpuType == XX || TheGlobalData->m_forceBenchmark)
 		{
 			//need to run the benchmark

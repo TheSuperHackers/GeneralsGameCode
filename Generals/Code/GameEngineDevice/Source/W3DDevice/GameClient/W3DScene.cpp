@@ -177,7 +177,7 @@ RTS3DScene::RTS3DScene()
 			m_occludedMaterialPass[i]=NULL;
 #endif
 
-}  // end RTS3DScene
+}
 
 //=============================================================================
 // RTS3DScene::~RTS3DScene
@@ -219,7 +219,7 @@ RTS3DScene::~RTS3DScene()
 	{	REF_PTR_RELEASE(m_occludedMaterialPass[i]);
 	}
 
-}  // end ~RTS3DScene
+}
 
 
 void	RTS3DScene::setGlobalLight(LightClass *pLight, Int lightIndex)
@@ -663,7 +663,7 @@ void RTS3DScene::renderOneObject(RenderInfoClass &rinfo, RenderObjClass *robj, I
 				lightEnv.Add_Light(*sceneLights[globalLightIndex]);
 				sceneLights[globalLightIndex]->Set_Diffuse( restore );
 
-			} // next light
+			}
 
 			temp = lightEnv.Get_Equivalent_Ambient();
 			Vector3::Add(sumTint, temp, &temp );
@@ -777,12 +777,12 @@ void RTS3DScene::renderOneObject(RenderInfoClass &rinfo, RenderObjClass *robj, I
 				rinfo.Pop_Override_Flags();
 				rinfo.Pop_Material_Pass();
 			}
-		}//drawInfo exists so rendering a drawable.
+		}
 		else
 		{
 			robj->Render(rinfo);
 		}
-	}//drawable or robj is not hidden
+	}
 
 	rinfo.light_environment = NULL;
 	if (doExtraMaterialPop)	//check if there is an extra material on the stack from the heatvision effect.
@@ -1139,7 +1139,7 @@ void RTS3DScene::Customized_Render( RenderInfoClass &rinfo )
 	{	TheParticleSystemManager->queueParticleRender();
 	}
 
-}  // end Customized_Renderer
+}
 
 /**Convert a player index to a color index, we use this because color indices are
 assigned in left-right binary flipped fashion so as not to occupy lower bits unless
@@ -1264,7 +1264,7 @@ void renderStenciledPlayerColor( UnsignedInt color, UnsignedInt stencilRef, Bool
 	if (oldColorWriteEnable != 0x12345678)
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,oldColorWriteEnable);
 
-}  // end renderStencilShadows
+}
 
 #define MAX_VISIBLE_OCCLUDED_PLAYER_OBJECTS	512 //maximum number of occluded objects permitted per player
 void RTS3DScene::flushOccludedObjectsIntoStencil(RenderInfoClass & rinfo)
@@ -1645,7 +1645,7 @@ void RTS3DScene::doRender( CameraClass * cam )
 	DRAW();
 	m_camera = NULL;
 
-}  // end Customized_Render
+}
 
 //=============================================================================
 // RTS3DScene::draw
@@ -1662,7 +1662,7 @@ void RTS3DScene::draw( )
 	WW3D::Render( this, m_camera );
 
 
-}  // end Customized_Render
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1679,7 +1679,7 @@ RTS2DScene::RTS2DScene()
 	setName("RTS2DScene");
 	m_status = NEW_REF( W3DStatusCircle, () );
 	Add_Render_Object( m_status );
-}  // end RTS2DScene
+}
 
 //=============================================================================
 // RTS2DScene::~RTS2DScene
@@ -1690,7 +1690,7 @@ RTS2DScene::~RTS2DScene()
 {
 	this->Remove_Render_Object(m_status);
 	REF_PTR_RELEASE(m_status);
-}  // end ~RTS2DScene
+}
 
 //=============================================================================
 // RTS2DScene::Custimized_Render
@@ -1703,7 +1703,7 @@ void RTS2DScene::Customized_Render( RenderInfoClass &rinfo )
 	// call simple scene class renderer
 	SimpleSceneClass::Customized_Render( rinfo );
 
-}  // end Customized_Render
+}
 
 //=============================================================================
 // RTS2DScene::doRender
@@ -1717,7 +1717,7 @@ void RTS2DScene::doRender( CameraClass * cam )
 	DRAW();
 	m_camera = NULL;
 
-}  // end Customized_Render
+}
 
 //=============================================================================
 // RTS2DScene::draw
@@ -1734,7 +1734,7 @@ void RTS2DScene::draw( )
 	WW3D::Render( this, m_camera );
 
 
-}  // end Customized_Render
+}
 
 
 
@@ -1749,7 +1749,7 @@ void RTS2DScene::draw( )
 //=============================================================================
 RTS3DInterfaceScene::RTS3DInterfaceScene()
 {
-}  // end RTS3DInterfaceScene
+}
 
 //=============================================================================
 // RTS3DInterfaceScene::~RTS3DInterfaceScene
@@ -1758,7 +1758,7 @@ RTS3DInterfaceScene::RTS3DInterfaceScene()
 //=============================================================================
 RTS3DInterfaceScene::~RTS3DInterfaceScene()
 {
-}  // end ~RTS3DInterfaceScene
+}
 
 //=============================================================================
 // RTS3DInterfaceScene::Custimized_Render
@@ -1771,7 +1771,7 @@ void RTS3DInterfaceScene::Customized_Render( RenderInfoClass &rinfo )
 	// call simple scene class renderer
 	SimpleSceneClass::Customized_Render( rinfo );
 
-}  // end Customized_Render
+}
 
 
 

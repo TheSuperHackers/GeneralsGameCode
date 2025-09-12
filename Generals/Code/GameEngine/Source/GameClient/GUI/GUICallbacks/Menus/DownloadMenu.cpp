@@ -268,7 +268,7 @@ void DownloadMenuInit( WindowLayout *layout, void *userData )
 	}
 	TheDownloadManager = NEW DownloadManagerMunkee;
 
-}  // end DownloadMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** menu shutdown method */
@@ -289,7 +289,7 @@ void DownloadMenuShutdown( WindowLayout *layout, void *userData )
 	progressBarMunkee = NULL;
 	parent = NULL;
 
-}  // end DownloadMenuShutdown
+}
 
 //-------------------------------------------------------------------------------------------------
 /** menu update method */
@@ -322,7 +322,7 @@ void DownloadMenuUpdate( WindowLayout *layout, void *userData )
 		GadgetStaticTextSetText(staticTextTime, timeString);
 	}
 
-}  // end DownloadMenuUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** menu input callback */
@@ -360,22 +360,22 @@ WindowMsgHandledType DownloadMenuInput( GameWindow *window, UnsignedInt msg,
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)button, buttonID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
 
-}  // end DownloadMenuInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** menu window system callback */
@@ -393,14 +393,14 @@ WindowMsgHandledType DownloadMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end create
+		}
     //---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
 
 			break;
 
-		}  // end case
+		}
 
     //----------------------------------------------------------------------------------------------
     case GWM_INPUT_FOCUS:
@@ -412,7 +412,7 @@ WindowMsgHandledType DownloadMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end input
+		}
     //---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
@@ -423,17 +423,17 @@ WindowMsgHandledType DownloadMenuSystem( GameWindow *window, UnsignedInt msg,
 			{
 				HandleCanceledDownload();
 				closeDownloadWindow();
-			}  // end if
+			}
 
 			break;
 
-		}  // end selected
+		}
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-} // end DownloadMenuSystem
+}

@@ -193,7 +193,7 @@ void Squad::aiGroupFromSquad(AIGroup* aiGroupToFill)
 void Squad::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -226,9 +226,9 @@ void Squad::xfer( Xfer *xfer )
 			objectID = *it;
 			xfer->xferObjectID( &objectID );
 
-		}  // end for, it
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -239,7 +239,7 @@ void Squad::xfer( Xfer *xfer )
 			DEBUG_CRASH(( "Squad::xfer - m_objectsCached should be emtpy, but is not" ));
 			throw SC_INVALID_DATA;
 
-		}  // end of
+		}
 
 		// read all items
 		for( UnsignedShort i = 0; i < objectCount; ++i )
@@ -251,11 +251,11 @@ void Squad::xfer( Xfer *xfer )
 			// put on list
 			m_objectIDs.push_back( objectID );
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -263,4 +263,4 @@ void Squad::xfer( Xfer *xfer )
 void Squad::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

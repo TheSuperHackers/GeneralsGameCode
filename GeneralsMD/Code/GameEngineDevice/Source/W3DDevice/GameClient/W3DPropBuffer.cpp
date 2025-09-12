@@ -392,7 +392,7 @@ void W3DPropBuffer::drawProps(RenderInfoClass &rinfo)
 void W3DPropBuffer::crc( Xfer *xfer )
 {
 	// empty. jba [8/11/2003]
-}  // end CRC
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer
@@ -408,7 +408,7 @@ void W3DPropBuffer::xfer( Xfer *xfer )
 	xfer->xferVersion( &version, currentVersion );
 
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -416,5 +416,5 @@ void W3DPropBuffer::xfer( Xfer *xfer )
 void W3DPropBuffer::loadPostProcess( void )
 {
 	// empty. jba [8/11/2003]
-}  // end loadPostProcess
+}
 

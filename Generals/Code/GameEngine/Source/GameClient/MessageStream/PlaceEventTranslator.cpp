@@ -87,7 +87,7 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 					TheInGameUI->placeBuildAvailable( NULL, NULL );
 					break;
 
-				}  // end if
+				}
 
 				// set this location as the placement anchor
 				TheInGameUI->setPlacementStart( &mouse );
@@ -124,14 +124,14 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 					// display a message to the user as to why you can't build there
 					TheInGameUI->displayCantBuildMessage( lbc );
 
-				}  // end if
+				}
 				else
 				{
 
 					// start placement anchor
 					TheInGameUI->setPlacementStart(&mouse);
 
-				}  // end else
+				}
 */
 
 				// used the input
@@ -240,14 +240,14 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 						TheTacticalView->screenToTerrain( &anchorEnd, &worldEnd );
 						placeMsg->appendLocationArgument( worldEnd );
 
-					}  // end if
+					}
 
 					pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), placeMsg->getType() );
 
 					// get out of pending placement mode, this will also clear the arrow anchor status
 					TheInGameUI->placeBuildAvailable( NULL, NULL );
 
-				}  // end if, location legal to build at
+				}
 				else
 				{
 					// can't place, display why
@@ -265,7 +265,7 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 					// unhook the anchor so they can try again
 					TheInGameUI->setPlacementStart( NULL );
 
-				}  // end else
+				}
 
 				// used the input
 				disp = DESTROY_MESSAGE;
@@ -305,7 +305,7 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 					TheInGameUI->setPlacementEnd(&mouse);
 					disp = DESTROY_MESSAGE;
 
-				}  // end if
+				}
 
 			}
 			break;

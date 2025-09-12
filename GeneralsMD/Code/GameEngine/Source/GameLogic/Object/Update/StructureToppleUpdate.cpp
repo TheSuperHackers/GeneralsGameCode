@@ -571,7 +571,7 @@ void StructureToppleUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -616,7 +616,7 @@ void StructureToppleUpdate::xfer( Xfer *xfer )
 	// delay burst location
 	xfer->xferCoord3D( &m_delayBurstLocation );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -627,4 +627,4 @@ void StructureToppleUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

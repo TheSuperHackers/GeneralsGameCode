@@ -135,7 +135,7 @@ void W3DOverlordAircraftDraw::crc( Xfer *xfer )
 	// extend base class
 	W3DModelDraw::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -153,7 +153,7 @@ void W3DOverlordAircraftDraw::xfer( Xfer *xfer )
 	// extend base class
 	W3DModelDraw::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -164,4 +164,4 @@ void W3DOverlordAircraftDraw::loadPostProcess( void )
 	// extend base class
 	W3DModelDraw::loadPostProcess();
 
-}  // end loadPostProcess
+}

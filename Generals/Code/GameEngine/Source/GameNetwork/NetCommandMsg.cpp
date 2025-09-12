@@ -161,7 +161,7 @@ static Int indexFromMask(UnsignedInt mask)
 		player = ThePlayerList->getNthPlayer( i );
 		if( player && player->getPlayerMask() == mask )
 			return i;
-	}  // end for i
+	}
 
 	return -1;
 }

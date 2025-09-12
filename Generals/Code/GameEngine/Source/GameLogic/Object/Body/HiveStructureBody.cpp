@@ -113,7 +113,7 @@ void HiveStructureBody::crc( Xfer *xfer )
 	// extend parent class
 	StructureBody::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method

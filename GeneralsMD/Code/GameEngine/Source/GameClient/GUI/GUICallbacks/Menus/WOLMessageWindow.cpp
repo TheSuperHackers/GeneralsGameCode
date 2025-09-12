@@ -71,7 +71,7 @@ void WOLMessageWindowInit( WindowLayout *layout, void *userData )
 	// Set Keyboard to Main Parent
 	TheWindowManager->winSetFocus( parentWOLMessageWindow );
 
-} // WOLMessageWindowInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOLMessage Window shutdown method */
@@ -84,7 +84,7 @@ void WOLMessageWindowShutdown( WindowLayout *layout, void *userData )
 
 	// our shutdown is complete
 	TheShell->shutdownComplete( layout );
-}  // WOLMessageWindowShutdown
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -97,7 +97,7 @@ void WOLMessageWindowUpdate( WindowLayout * layout, void *userData)
 		WOL::TheWOL->update();
 	*/
 
-}// WOLMessageWindowUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOLMessage Window input callback */
@@ -130,21 +130,21 @@ WindowMsgHandledType WOLMessageWindowInput( GameWindow *window, UnsignedInt msg,
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonCancel, buttonCancelID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// WOLMessageWindowInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOLMessage Window window system callback */
@@ -162,12 +162,12 @@ WindowMsgHandledType WOLMessageWindowSystem( GameWindow *window, UnsignedInt msg
 			{
 
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
 			{
@@ -176,12 +176,12 @@ WindowMsgHandledType WOLMessageWindowSystem( GameWindow *window, UnsignedInt msg
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 
 		case GBM_SELECTED:
 			{
 				break;
-			}// case GBM_SELECTED:
+			}
 
 		case GEM_EDIT_DONE:
 			{
@@ -190,7 +190,7 @@ WindowMsgHandledType WOLMessageWindowSystem( GameWindow *window, UnsignedInt msg
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// WOLMessageWindowSystem
+}

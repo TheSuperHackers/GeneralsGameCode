@@ -486,7 +486,7 @@ protected:
 #endif
 #endif
 
-};  // end class ScriptEngine
+};
 
 extern ScriptEngine *TheScriptEngine;   ///< singleton definition
 

@@ -125,7 +125,7 @@ void FireWeaponWhenDeadBehavior::crc( Xfer *xfer )
 	// extend upgrade mux
 	UpgradeMux::upgradeMuxCRC( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -146,7 +146,7 @@ void FireWeaponWhenDeadBehavior::xfer( Xfer *xfer )
 	// extend upgrade mux
 	UpgradeMux::upgradeMuxXfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -160,4 +160,4 @@ void FireWeaponWhenDeadBehavior::loadPostProcess( void )
 	// extend upgrade mux
 	UpgradeMux::upgradeMuxLoadPostProcess();
 
-}  // end loadPostProcess
+}

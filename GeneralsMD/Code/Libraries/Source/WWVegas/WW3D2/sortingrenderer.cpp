@@ -113,11 +113,9 @@ void Sort(TempIndexStruct *begin, TempIndexStruct *end)
 			std::swap(begin[1], end[-1]);
 		}
 		if (begin[0] > end[-1]) {
-			// end[-1] has the largest element
 			std::swap(begin[0], end[-1]);
 		}
 		if (begin[1] > begin[0]) {
-			// begin[0] has the middle element and begin[1] has the smallest element
 			std::swap(begin[1], begin[0]);
 		}
 

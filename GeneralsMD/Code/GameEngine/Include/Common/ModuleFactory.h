@@ -122,7 +122,7 @@ protected:
 	ModuleTemplateMap			m_moduleTemplateMap;
 	ModuleDataList				m_moduleDataList;
 
-};  // end class ModuleFactory
+};
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
 extern ModuleFactory *TheModuleFactory;  ///< singleton definition

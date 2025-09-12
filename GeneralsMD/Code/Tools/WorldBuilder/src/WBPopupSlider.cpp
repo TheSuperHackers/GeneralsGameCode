@@ -261,7 +261,7 @@ void PopupSlider::New(CWnd *pParentWnd, long kind,
 			pPopupSlider = NULL;
 		}
 
-	}	// catch
+	}
 
 	gPopupSlider = pPopupSlider;
 	// gPopupSlider will be deleted when its PostNcDestroy method is called
@@ -386,7 +386,7 @@ BOOL PopupSlider::Create(const RECT& rect, CWnd* pParentWnd)
 	} catch (...) {
 		// don't rethrow
 		retVal = FALSE;
-	}	// catch
+	}
 
 	return retVal;
 }
@@ -579,7 +579,7 @@ void PopupSlider::OnMouseMove(UINT nFlags, CPoint point)
 			if (mSliderOwner) {
 				mSliderOwner->PopSliderChanged(mSliderID, m_curValue);
 			}
-		}	// if (PtInRect)
+		}
 	}
 }
 

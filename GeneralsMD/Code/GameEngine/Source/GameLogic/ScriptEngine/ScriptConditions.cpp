@@ -124,14 +124,14 @@ static TransportStatus *s_transportStatuses;
 ScriptConditions::ScriptConditions()
 {
 
-}  // end ScriptConditions
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ScriptConditions::~ScriptConditions()
 {
 	reset(); // just in case.
-}  // end ~ScriptConditions
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Init */
@@ -141,7 +141,7 @@ void ScriptConditions::init( void )
 
 	reset();
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset */
@@ -152,7 +152,7 @@ void ScriptConditions::reset( void )
 	deleteInstance(s_transportStatuses);
 	s_transportStatuses = NULL;
 	// Empty for now.  jba.
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update */
@@ -161,7 +161,7 @@ void ScriptConditions::update( void )
 {
 
 	// Empty for now. jba
-}  // end update
+}
 
 
 //-------------------------------------------------------------------------------------------------

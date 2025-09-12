@@ -1175,7 +1175,7 @@ void WW3D::Add_Frame_Time(float milliseconds)
 		return;
 	}
 #endif
-	
+
 	FractionalSyncMs -= integralSyncMs;
 	Sync(SyncTime + integralSyncMs);
 }

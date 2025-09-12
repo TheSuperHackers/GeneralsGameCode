@@ -185,7 +185,7 @@ void Display::setWidth( UnsignedInt width )
 	if( TheMouse )
 		TheMouse->setMouseLimits();
 
-}  // end setWidth
+}
 
 // Display::setHeight =========================================================
 /** Set the height of the display */
@@ -200,7 +200,7 @@ void Display::setHeight( UnsignedInt height )
 	if( TheMouse )
 		TheMouse->setMouseLimits();
 
-}  // end setHeight
+}
 
 //============================================================================
 // Display::playLogoMovie

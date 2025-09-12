@@ -243,7 +243,7 @@ Bool Transport::doSend() {
 				//DEBUG_LOG(("Transport::doSend returning FALSE"));
 			}
 		}
-	} // for (i=0; i<MAX_MESSAGES; ++i)
+	}
 
 #if defined(RTS_DEBUG)
 	// Latency simulation - deliver anything we're holding on to that is ready

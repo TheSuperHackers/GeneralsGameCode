@@ -138,7 +138,7 @@ void SquishCollide::crc( Xfer *xfer )
 	// extend base class
 	CollideModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -156,7 +156,7 @@ void SquishCollide::xfer( Xfer *xfer )
 	// extend base class
 	CollideModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -167,4 +167,4 @@ void SquishCollide::loadPostProcess( void )
 	// extend base class
 	CollideModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

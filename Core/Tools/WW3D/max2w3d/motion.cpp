@@ -496,7 +496,7 @@ void MotionClass::compute_frame_motion(int frame)
 
 			set_binary_movement(bindex, frame, binary_move);
 
-		} // if(bindex!=-1)
+		}
 	}
 
 	/*

@@ -221,7 +221,7 @@ void MobNexusContain::onContaining( Object *rider, Bool wasSelected )
 		if( draw )
 			draw->setModelConditionState( MODELCONDITION_LOADED );
 
-	}  // end if
+	}
 
 }
 
@@ -289,7 +289,7 @@ void MobNexusContain::onRemoving( Object *rider )
 		if( draw )
 			draw->clearModelConditionState( MODELCONDITION_LOADED );
 
-	}  // end if
+	}
 
 	if (getObject()->isAboveTerrain())
 	{
@@ -462,7 +462,7 @@ void MobNexusContain::crc( Xfer *xfer )
 	// extend base class
 	OpenContain::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -483,7 +483,7 @@ void MobNexusContain::xfer( Xfer *xfer )
 	// extra slots in use
 	xfer->xferInt( &m_extraSlotsInUse );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -494,4 +494,4 @@ void MobNexusContain::loadPostProcess( void )
 	// extend base class
 	OpenContain::loadPostProcess();
 
-}  // end loadPostProcess
+}

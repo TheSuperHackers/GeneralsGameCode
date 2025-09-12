@@ -62,7 +62,7 @@ void ControlBar::updateConstructionTextDisplay( Object *obj )
 	// record this as the last percentage displayed
 	m_displayedConstructPercent = obj->getConstructionPercent();
 
-}  // end updateConstructionTextDisplay
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Populate the interface for an under construction context. */
@@ -99,7 +99,7 @@ void ControlBar::populateUnderConstruction( Object *objectUnderConstruction )
 		showRallyPoint( exit->getRallyPoint() );
 
 
-}  // end populateUnderConstruction
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -114,10 +114,10 @@ void ControlBar::updateContextUnderConstruction( void )
 		evaluateContextUI();
 		return;
 
-	}  // end if
+	}
 
 	// if the construction percent has changed since what was last shown to the user update the text
 	if( m_displayedConstructPercent != obj->getConstructionPercent() )
 		updateConstructionTextDisplay( obj );
 
-}  // end updatecontextUnderConstruction
+}

@@ -547,7 +547,7 @@ void HandleBuddyResponses( void )
 					if( TheAudio )
 					{
 						TheAudio->addAudioEvent( &buddyMsgAudio );
-					}  // end if
+					}
 
 					UnicodeString snippet = message.m_message;
 					snippet.truncateTo(11);
@@ -678,7 +678,7 @@ void showNotificationBox( AsciiString nick, UnicodeString message)
 	if( TheAudio )
 	{
 		TheAudio->addAudioEvent( &buttonClick );
-	}  // end if
+	}
 
 }
 
@@ -760,7 +760,7 @@ void WOLBuddyOverlayInit( WindowLayout *layout, void *userData )
 	isOverlayActive = true;
 	updateBuddyInfo();
 
-} // WOLBuddyOverlayInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Buddy Overlay shutdown method */
@@ -779,7 +779,7 @@ void WOLBuddyOverlayShutdown( WindowLayout *layout, void *userData )
 
 	InitBuddyControls(BUDDY_RESETALL_CRAP);
 
-}  // WOLBuddyOverlayShutdown
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -789,7 +789,7 @@ void WOLBuddyOverlayUpdate( WindowLayout * layout, void *userData)
 {
 	if (!TheGameSpyBuddyMessageQueue || !TheGameSpyBuddyMessageQueue->isConnected())
 		GameSpyCloseOverlay(GSOVERLAY_BUDDY);
-}// WOLBuddyOverlayUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Buddy Overlay input callback */
@@ -822,21 +822,21 @@ WindowMsgHandledType WOLBuddyOverlayInput( GameWindow *window, UnsignedInt msg,
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonHide, buttonHideID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// WOLBuddyOverlayInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Buddy Overlay window system callback */
@@ -857,12 +857,12 @@ WindowMsgHandledType WOLBuddyOverlaySystem( GameWindow *window, UnsignedInt msg,
 			{
 
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
 			{
@@ -871,7 +871,7 @@ WindowMsgHandledType WOLBuddyOverlaySystem( GameWindow *window, UnsignedInt msg,
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 		case GLM_RIGHT_CLICKED:
 			{
 				GameWindow *control = (GameWindow *)mData1;
@@ -984,7 +984,7 @@ WindowMsgHandledType WOLBuddyOverlaySystem( GameWindow *window, UnsignedInt msg,
 					*/
 				}
 				break;
-			}// case GBM_SELECTED:
+			}
 		case GLM_DOUBLE_CLICKED:
 			{
 				/*
@@ -1092,10 +1092,10 @@ WindowMsgHandledType WOLBuddyOverlaySystem( GameWindow *window, UnsignedInt msg,
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// WOLBuddyOverlaySystem
+}
 
 WindowMsgHandledType PopupBuddyNotificationSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
@@ -1105,12 +1105,12 @@ WindowMsgHandledType PopupBuddyNotificationSystem( GameWindow *window, UnsignedI
 		case GWM_CREATE:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GBM_SELECTED:
 			{
@@ -1127,10 +1127,10 @@ WindowMsgHandledType PopupBuddyNotificationSystem( GameWindow *window, UnsignedI
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// PopupBuddyNotificationSystem
+}
 
 /*
 static NameKeyType buttonAcceptBuddyID = NAMEKEY_INVALID;
@@ -1221,7 +1221,7 @@ void RequestBuddyAdd(Int profileID, AsciiString nick)
 	if( TheAudio )
 	{
 		TheAudio->addAudioEvent( &buddyMsgAudio );
-	}  // end if
+	}
 
 	lastNotificationWasStatus = FALSE;
 	numOnlineInNotification = 0;
@@ -1238,13 +1238,13 @@ WindowMsgHandledType WOLBuddyOverlayRCMenuSystem( GameWindow *window, UnsignedIn
 			{
 
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				rcMenu = NULL;
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GGM_CLOSE:
 			{
@@ -1387,7 +1387,7 @@ WindowMsgHandledType WOLBuddyOverlayRCMenuSystem( GameWindow *window, UnsignedIn
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 	return MSG_HANDLED;
 }
 

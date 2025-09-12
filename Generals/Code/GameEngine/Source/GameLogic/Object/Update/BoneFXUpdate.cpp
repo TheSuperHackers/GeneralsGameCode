@@ -124,16 +124,16 @@ static void parseFXLocInfo( INI *ini, void *instance, BoneLocInfo *locInfo )
 		// save bone name and location type
 		locInfo->boneName = ini->getNextToken();
 
-	}  // end if
+	}
 	else
 	{
 
 		// error
 		throw INI_INVALID_DATA;
 
-	}  // end else
+	}
 
-}  // end parseFXLocInfo
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse a random delay.  This is a number pair, where the numbers are a min and max time in miliseconds. */
@@ -177,7 +177,7 @@ void BoneFXUpdateModuleData::parseFXList( INI *ini, void *instance,
 		// error
 		throw INI_INVALID_DATA;
 
-	} // end if
+	}
 
 	ini->parseBool( ini, instance, &info->onlyOnce, NULL);
 
@@ -191,12 +191,12 @@ void BoneFXUpdateModuleData::parseFXList( INI *ini, void *instance,
 		// error
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// parse the fx list name
 	ini->parseFXList( ini, instance, &info->fx, NULL );
 
-}  // end parseFXList
+}
 
 //-------------------------------------------------------------------------------------------------
 /** In the form of:
@@ -219,7 +219,7 @@ void BoneFXUpdateModuleData::parseObjectCreationList( INI *ini, void *instance,
 		// error
 		throw INI_INVALID_DATA;
 
-	} // end if
+	}
 
 	ini->parseBool( ini, instance, &info->onlyOnce, NULL );
 
@@ -233,12 +233,12 @@ void BoneFXUpdateModuleData::parseObjectCreationList( INI *ini, void *instance,
 		// error
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// parse the ocl name
 	ini->parseObjectCreationList( ini, instance, &info->ocl, NULL );
 
-}  // end parseObjectCreationList
+}
 
 //-------------------------------------------------------------------------------------------------
 /** In the form of:
@@ -261,7 +261,7 @@ void BoneFXUpdateModuleData::parseParticleSystem( INI *ini, void *instance,
 		// error
 		throw INI_INVALID_DATA;
 
-	} // end if
+	}
 
 	ini->parseBool( ini, instance, &info->onlyOnce, NULL );
 
@@ -275,12 +275,12 @@ void BoneFXUpdateModuleData::parseParticleSystem( INI *ini, void *instance,
 		// error
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// parse the particle system name
 	ini->parseParticleSystemTemplate( ini, instance, &info->particleSysTemplate, NULL );
 
-}  // end parseParticleSystem
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -556,7 +556,7 @@ void BoneFXUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -588,9 +588,9 @@ void BoneFXUpdate::xfer( Xfer *xfer )
 			systemID = *it;
 			xfer->xferUser( &systemID, sizeof( ParticleSystemID ) );
 
-		}  // end for
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -601,7 +601,7 @@ void BoneFXUpdate::xfer( Xfer *xfer )
 			DEBUG_CRASH(( "BoneFXUpdate::xfer - m_particleSystemIDs should be empty but is not" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// read all data
 		for( UnsignedShort i = 0; i < particleSystemCount; ++i )
@@ -613,9 +613,9 @@ void BoneFXUpdate::xfer( Xfer *xfer )
 			// put at end of vector
 			m_particleSystemIDs.push_back( systemID );
 
-		}  // end for, i
+		}
 
-	}  // end else
+	}
 
 	// next fx frame
 	xfer->xferUser( m_nextFXFrame, sizeof( Int ) * BODYDAMAGETYPE_COUNT * BONE_FX_MAX_BONES );
@@ -644,7 +644,7 @@ void BoneFXUpdate::xfer( Xfer *xfer )
 	// active
 	xfer->xferBool( &m_active );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -655,4 +655,4 @@ void BoneFXUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

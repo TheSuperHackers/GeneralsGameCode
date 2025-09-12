@@ -297,15 +297,15 @@ void TerrainMaterial::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 				parent = findOrAdd( parent, terrainTypeNames[ i ] );
 				break;  // exit for
 
-			}  // end if
+			}
 
-		}  // end for i
+		}
 
 		// set the name in the tree view to that of the entry
 		strcpy( buffer, terrain->getName().str() );
 
 		doAdd = TRUE;
-	}  // end if
+	}
  	else if (!WorldHeightMapEdit::getTexClassIsBlendEdge(terrainNdx))
 	{
 
@@ -329,7 +329,7 @@ void TerrainMaterial::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 			doAdd = TRUE;
 			i++;
 		}
-	}  // end else
+	}
 
 	Int tilesPerRow = TEXTURE_WIDTH/(2*TILE_PIXEL_EXTENT+TILE_OFFSET);
 	Int availableTiles = 4 * tilesPerRow * tilesPerRow;
@@ -425,7 +425,7 @@ void TerrainMaterial::GetPopSliderInfo(const long sliderID, long *pMin, long *pM
 			break;
 		default:
 			break;
-	}	// switch
+	}
 }
 
 
@@ -445,7 +445,7 @@ void TerrainMaterial::PopSliderChanged(const long sliderID, long theVal)
 
 		default:
 			break;
-	}	// switch
+	}
 }
 
 void TerrainMaterial::PopSliderFinished(const long sliderID, long theVal)
@@ -456,7 +456,7 @@ void TerrainMaterial::PopSliderFinished(const long sliderID, long theVal)
 
 		default:
 			break;
-	}	// switch
+	}
 
 }
 

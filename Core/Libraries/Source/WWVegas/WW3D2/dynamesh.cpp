@@ -225,7 +225,7 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 			vertices += fvf_info.Get_FVF_Size();
 		}
 
-	} // end scope for lock
+	}
 
 	/*
 	** Write index data to index buffers
@@ -244,7 +244,7 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 			indices[i*3 + 2] = (unsigned short)tris[i][2];
 		}
 
-	} // end scope for lock
+	}
 
 	/*
 	** Set vertex and index buffers
@@ -390,9 +390,9 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 
 			cur_tri_idx = next_tri_idx;
 
-		}	// while (!done)
+		}
 
-	}	// for (pass)
+	}
 
 }
 

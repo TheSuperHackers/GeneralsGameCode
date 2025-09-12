@@ -46,7 +46,7 @@ PowerPlantUpdateModuleData::PowerPlantUpdateModuleData( void )
 
 	m_rodsExtendTime = 0;
 
-}  // end PowerPlantUpdateModuleData
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,14 +61,14 @@ PowerPlantUpdate::PowerPlantUpdate( Thing *thing, const ModuleData *moduleData )
 	m_extended = FALSE;
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 
-}  // end PowerPlantUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 PowerPlantUpdate::~PowerPlantUpdate( void )
 {
 
-}  // end PowerPlantUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -101,7 +101,7 @@ void PowerPlantUpdate::extendRods( Bool extend )
 		setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 	}
 
-}  // end PowerPlantUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ UpdateSleepTime PowerPlantUpdate::update( void )
 
 	m_extended = TRUE;
 	return UPDATE_SLEEP_FOREVER;
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -126,7 +126,7 @@ void PowerPlantUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -147,7 +147,7 @@ void PowerPlantUpdate::xfer( Xfer *xfer )
 	// extend complete
 	xfer->xferBool( &m_extended );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -158,4 +158,4 @@ void PowerPlantUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

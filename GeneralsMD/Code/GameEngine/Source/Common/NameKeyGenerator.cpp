@@ -42,7 +42,7 @@ NameKeyGenerator::NameKeyGenerator()
 	for (Int i = 0; i < SOCKET_COUNT; ++i)
 		m_sockets[i] = NULL;
 
-}  // end NameKeyGenerator
+}
 
 //-------------------------------------------------------------------------------------------------
 NameKeyGenerator::~NameKeyGenerator()
@@ -51,7 +51,7 @@ NameKeyGenerator::~NameKeyGenerator()
 	// free all system data
 	freeSockets();
 
-}  // end ~NameKeyGenerator
+}
 
 //-------------------------------------------------------------------------------------------------
 void NameKeyGenerator::init()
@@ -62,7 +62,7 @@ void NameKeyGenerator::init()
 	freeSockets();
 	m_nextID = 1;
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 void NameKeyGenerator::reset()
@@ -70,7 +70,7 @@ void NameKeyGenerator::reset()
 	freeSockets();
 	m_nextID = 1;
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 void NameKeyGenerator::freeSockets()
@@ -86,7 +86,7 @@ void NameKeyGenerator::freeSockets()
 		m_sockets[i] = NULL;
 	}
 
-}  // end freeSockets
+}
 
 /* ------------------------------------------------------------------------ */
 inline UnsignedInt calcHashForString(const char* p)
@@ -209,7 +209,7 @@ NameKeyType NameKeyGenerator::nameToKeyImpl(const char* nameString)
 
 	return result;
 
-}  // end nameToKey
+}
 
 //-------------------------------------------------------------------------------------------------
 NameKeyType NameKeyGenerator::nameToLowercaseKeyImpl(const char* nameString)
@@ -257,7 +257,7 @@ NameKeyType NameKeyGenerator::nameToLowercaseKeyImpl(const char* nameString)
 
 	return result;
 
-}  // end nameToLowercaseKey
+}
 
 //-------------------------------------------------------------------------------------------------
 // Get a string out of the INI. Store it into a NameKeyType

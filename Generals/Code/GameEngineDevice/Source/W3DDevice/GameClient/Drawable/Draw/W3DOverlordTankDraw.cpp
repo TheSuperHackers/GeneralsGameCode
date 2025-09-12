@@ -119,7 +119,7 @@ void W3DOverlordTankDraw::crc( Xfer *xfer )
 	// extend base class
 	W3DTankDraw::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -137,7 +137,7 @@ void W3DOverlordTankDraw::xfer( Xfer *xfer )
 	// extend base class
 	W3DTankDraw::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -148,4 +148,4 @@ void W3DOverlordTankDraw::loadPostProcess( void )
 	// extend base class
 	W3DTankDraw::loadPostProcess();
 
-}  // end loadPostProcess
+}

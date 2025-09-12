@@ -120,7 +120,7 @@ DisplayString *W3DDisplayStringManager::newDisplayString( void )
 		assert( 0 );
 		return NULL;
 
-	}  // end if
+	}
 
 	// assign a default font
 	if (TheGlobalLanguageData && TheGlobalLanguageData->m_defaultDisplayStringFont.name.isNotEmpty())
@@ -139,7 +139,7 @@ DisplayString *W3DDisplayStringManager::newDisplayString( void )
 	// return our new string
 	return newString;
 
-}  // end newDisplayString
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Remove a display string from the master list and delete the data */
@@ -162,7 +162,7 @@ void W3DDisplayStringManager::freeDisplayString( DisplayString *string )
 	// free data
 	deleteInstance(string);
 
-}  // end freeDisplayString
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update method for our display string Manager ... if it's been too
@@ -217,16 +217,16 @@ void W3DDisplayStringManager::update( void )
 			//
 			string->m_lastResourceFrame = 0;
 
-		}  // end if
+		}
 
 		// move to next string
 		string = static_cast<W3DDisplayString *>(string->next());
 
-	}  // end while
+	}
 
 	// reset the starting point for our next search
 	m_currentCheckpoint = string;
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 DisplayString *W3DDisplayStringManager::getGroupNumeralString( Int numeral )

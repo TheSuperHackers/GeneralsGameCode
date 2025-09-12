@@ -265,7 +265,7 @@ void AISkirmishPlayer::processBaseBuilding( void )
 				}
 				m_frameLastBuildingBuilt = TheGameLogic->getFrame();
 				// only build one building per delay loop
-			} // bldg built
+			}
 
 #else
 			// force delay between rebuilds
@@ -300,9 +300,9 @@ void AISkirmishPlayer::processBaseBuilding( void )
 						m_frameLastBuildingBuilt = TheGameLogic->getFrame();
 						// only build one building per delay loop
 						break;
-					} // bldg built
-				} // have money
-			} // rebuild delay ok
+					}
+				}
+			}
 #endif
 		}
 	}
@@ -339,7 +339,7 @@ Bool AISkirmishPlayer::startTraining( WorkOrder *order, Bool busyOK, AsciiString
 			}
 			return true;
 		}
-	}  // end if
+	}
 
 	return FALSE;
 
@@ -1182,7 +1182,7 @@ Bool AISkirmishPlayer::computeSuperweaponTarget(const SpecialPowerTemplate *powe
 void AISkirmishPlayer::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1224,7 +1224,7 @@ void AISkirmishPlayer::xfer( Xfer *xfer )
 	// right flank right defense angle
 	xfer->xferReal( &m_curRightFlankRightDefenseAngle );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1232,5 +1232,5 @@ void AISkirmishPlayer::xfer( Xfer *xfer )
 void AISkirmishPlayer::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 

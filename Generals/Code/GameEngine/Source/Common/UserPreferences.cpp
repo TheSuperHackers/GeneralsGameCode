@@ -142,7 +142,7 @@ Bool UserPreferences::load(AsciiString fname)
 				continue;
 
 			(*this)[key] = val;
-		}  // end while
+		}
 		fclose(fp);
 		return true;
 	}

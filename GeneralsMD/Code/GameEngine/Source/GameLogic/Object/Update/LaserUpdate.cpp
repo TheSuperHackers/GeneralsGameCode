@@ -465,7 +465,7 @@ void LaserUpdate::crc( Xfer *xfer )
 	// extend base class
 	ClientUpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -505,7 +505,7 @@ void LaserUpdate::xfer( Xfer *xfer )
 
 	xfer->xferAsciiString(&m_parentBoneName);
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -516,4 +516,4 @@ void LaserUpdate::loadPostProcess( void )
 	// extend base class
 	ClientUpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -110,7 +110,7 @@ static void parseBountyUpgradePair( INI* ini, void * /*instance*/, void *store, 
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,14 +121,14 @@ static void parseBountyUpgradePair( INI* ini, void * /*instance*/, void *store, 
 CashBountyPower::CashBountyPower( Thing *thing, const ModuleData* moduleData ) :
 							SpecialPowerModule( thing, moduleData )
 {
-}  // end CashBountyPower
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 CashBountyPower::~CashBountyPower()
 {
 
-}  // end ~CashBountyPower
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -188,7 +188,7 @@ void CashBountyPower::crc( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -206,7 +206,7 @@ void CashBountyPower::xfer( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -217,4 +217,4 @@ void CashBountyPower::loadPostProcess( void )
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

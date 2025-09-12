@@ -242,9 +242,9 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
  						// ui msg
  						TheInGameUI->message( TheGameText->fetch( "MESSAGE:StealthDiscovered" ) );
 
-					}  // end if
+					}
 
-				}  // end if
+				}
 
 				// for the unit being revealed, do some UI feedback
 				if( ThePlayerList->getLocalPlayer() == them->getControllingPlayer() &&
@@ -272,11 +272,11 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
  						// ui msg
  						TheInGameUI->message( TheGameText->fetch( "MESSAGE:StealthNeutralized" ) );
 
-					}  // end if
+					}
 
-				}  // end if
+				}
 
-			}  // end if, them was not previously detected
+			}
 
 			// updateRate PLUS 1 is necessary to ensure it stays detected 'till we are called again...
 			stealth->markAsDetected(data->m_updateRate + 1);
@@ -307,7 +307,7 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 				}
 			}
 
-		}//end if them has stealthupdate
+		}
 		else // perhaps they are garrisoning something stealthy, eh?
 		{
 			ContainModuleInterface *contain = them->getContain();
@@ -387,7 +387,7 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 		IRPingSound.setObjectID( self->getID() );
 		TheAudio->addAudioEvent(&IRPingSound);
 
-	} // end if doIRFX
+	}
 
 
 	return UPDATE_SLEEP(data->m_updateRate);
@@ -403,7 +403,7 @@ void StealthDetectorUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -424,7 +424,7 @@ void StealthDetectorUpdate::xfer( Xfer *xfer )
 	// enabled
 	xfer->xferBool( &m_enabled );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -435,4 +435,4 @@ void StealthDetectorUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

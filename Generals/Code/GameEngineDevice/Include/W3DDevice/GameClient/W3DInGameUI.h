@@ -84,6 +84,6 @@ protected:
 	RenderObjClass *m_buildingPlacementAnchor;
 	RenderObjClass *m_buildingPlacementArrow;
 
-};  // end class W3DInGameUI
+};
 
 #endif  // end __W3DINGAMEUI_H_

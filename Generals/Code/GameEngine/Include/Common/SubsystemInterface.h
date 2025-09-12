@@ -136,7 +136,7 @@ public:
 	AsciiString getName(void) {return m_name;}
 	void setName(AsciiString name) {m_name = name;}
 
-};  // end SubsystemInterface
+};
 
 //-------------------------------------------------------------------------------------------------
 class SubsystemInterfaceList

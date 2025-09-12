@@ -67,7 +67,7 @@ struct RGBColorInt
 	Int green;
 	Int blue;
 	Int alpha;
-};  // end RGBColorInt
+};
 
 // RGBColorReal ---------------------------------------------------------------
 /** Colors using 0.0 to 1.0 reals */
@@ -78,7 +78,7 @@ struct RGBColorReal
 	Real green;
 	Real blue;
 	Real alpha;
-};  // end RGBColorReal
+};
 
 // HSVColorReal ---------------------------------------------------------------
 /** Colors using hue, saturation, value using 0.0 to 1.0 reals */
@@ -89,7 +89,7 @@ struct HSVColorReal
   Real saturation;
   Real value;
 	Real alpha;
-};  // end HSVReal
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////
 

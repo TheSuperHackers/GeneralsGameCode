@@ -51,7 +51,7 @@ static RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface
 
 	return rtdui;
 
-}  // end getRailedTransportDockUpdateInterface
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -59,14 +59,14 @@ RailedTransportContain::RailedTransportContain( Thing *thing, const ModuleData *
 											: TransportContain( thing, moduleData )
 {
 
-}  // end RailedTransportContain
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 RailedTransportContain::~RailedTransportContain( void )
 {
 
-}  // end ~RailedTransportContain
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -83,9 +83,9 @@ void RailedTransportContain::onRemoving( Object *obj )
 		if( dui )
 			dui->setDockOpen( TRUE );
 
-	}  // end if
+	}
 
-}  // end onRemoving
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -101,7 +101,7 @@ Bool RailedTransportContain::isSpecificRiderFreeToExit( Object *obj )
 	// we can now exit, note we're not extending the base class cause *we* handle it all
 	return TRUE;
 
-}  // end isSpecificRiderFreeToExit
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ void RailedTransportContain::exitObjectViaDoor( Object *newObj, ExitDoorType exi
 	// tell the railed dock to exit ONE object, this one
 	rtdui->unloadSingleObject( newObj );
 
-}  // end exitObjectViaDoor
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -126,7 +126,7 @@ void RailedTransportContain::crc( Xfer *xfer )
 	// extend base class
 	TransportContain::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -144,7 +144,7 @@ void RailedTransportContain::xfer( Xfer *xfer )
 	// extend base class
 	TransportContain::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -155,4 +155,4 @@ void RailedTransportContain::loadPostProcess( void )
 	// extend base class
 	TransportContain::loadPostProcess();
 
-}  // end loadPostProcess
+}

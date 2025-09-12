@@ -85,7 +85,7 @@ PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData( void )
 	m_upgradedPulseFX = NULL;
 	m_affectsSelf = FALSE;
 
-}  // end PropagandaTowerBehaviorModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData( void )
 
   p.add( dataFieldParse );
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -126,14 +126,14 @@ PropagandaTowerBehavior::PropagandaTowerBehavior( Thing *thing, const ModuleData
 	m_insideList = NULL;
 	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
 
-}  // end PropagandaTowerBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 PropagandaTowerBehavior::~PropagandaTowerBehavior( void )
 {
 
-}  // end ~PropagandaTowerBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Module is being deleted */
@@ -144,7 +144,7 @@ void PropagandaTowerBehavior::onDelete( void )
 	// remove any benefits from anybody in our area of influence
 	removeAllInfluence();
 
-}  // end onDelete
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Resolve */
@@ -156,7 +156,7 @@ void PropagandaTowerBehavior::onObjectCreated( void )
 	// convert module upgrade name to a pointer
 	m_upgradeRequired = TheUpgradeCenter->findUpgrade( modData->m_upgradeRequired );
 
-}  // end onObjectCreated
+}
 
 // ------------------------------------------------------------------------------------------------
 void PropagandaTowerBehavior::onCapture( Player *oldOwner, Player *newOwner )
@@ -225,7 +225,7 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 		doScan();
 		m_lastScanFrame = currentFrame;
 
-	}  // end if
+	}
 
 	// go through any objects in our area of influence and do the effect logic on them
 	Object *obj;
@@ -248,7 +248,7 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 			// record this element as the previous one found in the list
 			prev = curr;
 
-		}  // end if
+		}
 		else
 		{
 
@@ -262,13 +262,13 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 				m_insideList = curr->next;
 			deleteInstance(curr);
 
-		}  // end else
+		}
 
-	}  // end for, curr
+	}
 
 	return UPDATE_SLEEP_NONE;
 
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** The death callback */
@@ -279,7 +279,7 @@ void PropagandaTowerBehavior::onDie( const DamageInfo *damageInfo )
 	// remove any benefits from anybody in our area of influence
 	removeAllInfluence();
 
-}  // end onDie
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -308,7 +308,7 @@ void PropagandaTowerBehavior::effectLogic( Object *obj, Bool giving,
 					obj->setWeaponBonusCondition( WEAPONBONUSCONDITION_SUBLIMINAL );
 			}
 
-		} // hasdamageweapon
+		}
 
 
 		// grant health to this object as well
@@ -331,9 +331,9 @@ void PropagandaTowerBehavior::effectLogic( Object *obj, Bool giving,
 //		obj->attemptHealing(amount, getObject()); // the regular way to give healing...
 			obj->attemptHealingFromSoleBenefactor( amount, getObject(), modData->m_scanDelayInFrames );//the non-stacking way
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 	else
 	{
 
@@ -341,9 +341,9 @@ void PropagandaTowerBehavior::effectLogic( Object *obj, Bool giving,
 		obj->clearWeaponBonusCondition( WEAPONBONUSCONDITION_ENTHUSIASTIC );
 		obj->clearWeaponBonusCondition( WEAPONBONUSCONDITION_SUBLIMINAL );
 
-	}	  // end else
+	}
 
-}  // end effectLogic
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Remove all influence from objects we've given bonuses to */
@@ -361,7 +361,7 @@ void PropagandaTowerBehavior::removeAllInfluence( void )
 		if( obj )
 			effectLogic( obj, FALSE, getPropagandaTowerBehaviorModuleData() );
 
-	}  // end for
+	}
 
 	// delete the list of objects under our influence
 	while( m_insideList )
@@ -371,9 +371,9 @@ void PropagandaTowerBehavior::removeAllInfluence( void )
 		deleteInstance(m_insideList);
 		m_insideList = o;
 
-	}  // end while
+	}
 
-}  // end removeAllInfluence
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Do a scan */
@@ -401,7 +401,7 @@ void PropagandaTowerBehavior::doScan( void )
 				upgradePresent = player->hasUpgradeComplete( m_upgradeRequired );
 				break;
 
-			}  // end player upgrade
+			}
 
 			// ------------------------------------------------------------------------------------------
 			case UPGRADE_TYPE_OBJECT:
@@ -410,7 +410,7 @@ void PropagandaTowerBehavior::doScan( void )
 				upgradePresent = us->hasUpgrade( m_upgradeRequired );
 				break;
 
-			}  // end object upgrade
+			}
 
 			// ------------------------------------------------------------------------------------------
 			default:
@@ -420,11 +420,11 @@ void PropagandaTowerBehavior::doScan( void )
 											m_upgradeRequired->getUpgradeType() ));
 				break;
 
-			}  // end default
+			}
 
-		}  // end switch
+		}
 
-	}  // end if
+	}
 
 
   Bool doFX = TRUE;
@@ -508,7 +508,7 @@ void PropagandaTowerBehavior::doScan( void )
 		newEntry->next = newInsideList;
 		newInsideList = newEntry;
 
-	}  // end for obj
+	}
 
 	//
 	// now that we have a list of objects that are in our area of influence, look through
@@ -533,9 +533,9 @@ void PropagandaTowerBehavior::doScan( void )
 			if( obj )
 				effectLogic( obj, FALSE, modData );
 
-		}  // end if
+		}
 
-	}  // end for
+	}
 
 	// delete the inside list we have recoreded
 	ObjectTracker *next;
@@ -546,12 +546,12 @@ void PropagandaTowerBehavior::doScan( void )
 		deleteInstance(m_insideList);
 		m_insideList = next;
 
-	}  // end while
+	}
 
 	// set the new inside list to the one we're recording
 	m_insideList = newInsideList;
 
-}  // end doScan
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -562,7 +562,7 @@ void PropagandaTowerBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -599,9 +599,9 @@ void PropagandaTowerBehavior::xfer( Xfer *xfer )
 			// object id
 			xfer->xferObjectID( &trackerEntry->objectID );
 
-		}  // end for
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -612,7 +612,7 @@ void PropagandaTowerBehavior::xfer( Xfer *xfer )
 			DEBUG_CRASH(( "PropagandaTowerBehavior::xfer - m_insideList should be empty but is not" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// read all entries
 		for( UnsignedShort i = 0; i < insideCount; ++i )
@@ -626,11 +626,11 @@ void PropagandaTowerBehavior::xfer( Xfer *xfer )
 			// read object id
 			xfer->xferObjectID( &trackerEntry->objectID );
 
-		}  // end for i
+		}
 
-	}  // end else, load
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -641,4 +641,4 @@ void PropagandaTowerBehavior::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

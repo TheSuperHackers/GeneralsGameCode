@@ -45,12 +45,12 @@ void INI::parseMultiplayerSettingsDefinition( INI* ini )
 		{
 			DEBUG_ASSERTCRASH(false, ("Creating an override of MultiplayerSettings!"));
 		}
-	}  // end if
+	}
 	else
 	{
 		// we don't have any multiplayer settings instance at all yet, create one
 		TheMultiplayerSettings = NEW MultiplayerSettings;
-	}  // end else
+	}
 
 	// parse the ini definition
 	ini->initFromINI( TheMultiplayerSettings, TheMultiplayerSettings->getFieldParse() );
