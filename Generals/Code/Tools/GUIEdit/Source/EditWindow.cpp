@@ -500,6 +500,7 @@ void EditWindow::shutdown( void )
 	// delete asset manager
 	m_assetManager->Free_Assets();
 	delete m_assetManager;
+	m_assetManager = NULL;
 
 	// shutdown WW3D
 	WW3D::Shutdown();
