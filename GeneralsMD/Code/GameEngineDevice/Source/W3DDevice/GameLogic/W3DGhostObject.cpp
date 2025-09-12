@@ -480,25 +480,9 @@ void W3DGhostObject::freeAllSnapShots(void)
 #else
 	playerIndex = TheGhostObjectManager->getLocalPlayerIndex();
 #endif
-		if (m_parentSnapshots[playerIndex])
-		{
-			//if we have a snapshot for this object, remove it from
-			//scene.
-			removeFromScene(playerIndex);
-
-			//Restore actual objects assuming they are still alive.
-			restoreParentObject();
-
-			W3DRenderObjectSnapshot *snap = m_parentSnapshots[playerIndex];
-			W3DRenderObjectSnapshot *nextSnap;
-			while (snap)
-			{
-				nextSnap = snap->m_next;
-				delete snap;
-				snap = nextSnap;
-			}
-			m_parentSnapshots[playerIndex] = NULL;
-		}
+	{
+		freeSnapShot(playerIndex);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -506,11 +490,6 @@ void W3DGhostObject::freeAllSnapShots(void)
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObject::freeSnapShot(int playerIndex)
 {
-#ifndef DEBUG_FOG_MEMORY
-	if (playerIndex != TheGhostObjectManager->getLocalPlayerIndex())
-		return;	//we only snapshot things for the local player
-#endif
-
 	if (m_parentSnapshots[playerIndex])
 	{
 		//if we have a snapshot for this object, remove it from
