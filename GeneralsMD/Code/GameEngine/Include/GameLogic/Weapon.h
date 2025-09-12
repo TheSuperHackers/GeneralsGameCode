@@ -459,6 +459,8 @@ public:
 	inline const AudioEventRTS& getFireSound() const { return m_fireSound; }
 	inline UnsignedInt getFireSoundLoopTime() const { return m_fireSoundLoopTime; }
 	inline UnsignedInt getContinuousLaserLoopTime() const { return m_continuousLaserLoopTime; }
+	inline Real getLaserGroundUnitTargetHeight() const { return m_laserGroundUnitTargetHeight; }
+	inline Real getLaserGroundTargetHeight() const { return m_laserGroundTargetHeight; }
 	inline UnsignedInt getScatterTargetResetTime() const { return m_scatterTargetResetTime; }
 	inline const std::vector<Coord2D>& getScatterTargetsVector() const { return m_scatterTargets; }
 	inline const WeaponBonusSet* getExtraBonus() const { return m_extraBonus; }
@@ -587,6 +589,9 @@ private:
 	UnsignedInt m_preAttackFXDelay;						///< Delay after starting a preattackFX before we can play it again (default = 200 ms)
 
 	UnsignedInt m_continuousLaserLoopTime;  ///< time between shots the continuos laser object is kept alive instead of creating a new one
+
+	Real m_laserGroundTargetHeight;     ///< when targeting the ground with a laser weapon, aim this much above
+	Real m_laserGroundUnitTargetHeight;   ///< when targeting ground units with a laser weapon, aim this much above
 
 	Bool m_scatterTargetAligned;		///< if the scatter target pattern is aligned to the shooter
 	Bool m_scatterTargetRandom;		///< if the scatter target pattern is fired in a random order

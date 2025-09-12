@@ -810,8 +810,8 @@ Bool ActiveBody::shouldRetaliate(Object *obj)
 	if (obj->isKindOf( KINDOF_IMMOBILE )) {
 		return false;
 	}
-	// Drones never retaliate. [8/25/2003]
-	if (obj->isKindOf(KINDOF_DRONE)) {
+	// Drones never retaliate [8/25/2003] except when they do [2025/09/07]
+	if (obj->isKindOf(KINDOF_DRONE) && !obj->isKindOf(KINDOF_CAN_RETALIATE)) {
 		return false;
 	}
 	// Any unit that isn't idle won't retaliate. [8/25/2003]

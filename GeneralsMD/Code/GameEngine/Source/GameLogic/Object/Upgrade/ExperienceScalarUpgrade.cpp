@@ -39,6 +39,7 @@
 //-------------------------------------------------------------------------------------------------
 ExperienceScalarUpgradeModuleData::ExperienceScalarUpgradeModuleData( void )
 {
+	m_initiallyActive = false;
 	m_addXPScalar = 0.0f;
 	m_addXPValueScalar = 0.0f;
 }
@@ -52,6 +53,7 @@ void ExperienceScalarUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
+		{ "StartsActive",	INI::parseBool, NULL, offsetof(ExperienceScalarUpgradeModuleData, m_initiallyActive) },
 		{ "AddXPScalar",	INI::parseReal,		NULL, offsetof( ExperienceScalarUpgradeModuleData, m_addXPScalar ) },
 		{ "AddXPValueScalar",	INI::parseReal,		NULL, offsetof( ExperienceScalarUpgradeModuleData, m_addXPValueScalar ) },
 		{ 0, 0, 0, 0 }
@@ -65,6 +67,10 @@ void ExperienceScalarUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 //-------------------------------------------------------------------------------------------------
 ExperienceScalarUpgrade::ExperienceScalarUpgrade( Thing *thing, const ModuleData* moduleData ) : UpgradeModule( thing, moduleData )
 {
+	if (getExperienceScalarUpgradeModuleData()->m_initiallyActive)
+	{
+		giveSelfUpgrade();
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
