@@ -278,7 +278,7 @@ enum TerrainDecalType CPP_11(: Int)
 
 //-----------------------------------------------------------------------------
 
-CONSTEXPR const UnsignedInt InvalidShroudClearFrame = ~0u;
+constexpr const UnsignedInt InvalidShroudClearFrame = ~0u;
 
 const Int DRAWABLE_FRAMES_PER_FLASH = LOGICFRAMES_PER_SECOND / 2;
 

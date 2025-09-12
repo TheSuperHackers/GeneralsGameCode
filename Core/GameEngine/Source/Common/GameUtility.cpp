@@ -43,6 +43,7 @@ static void changePlayerCommon(Player* player)
 	ThePartitionManager->refreshShroudForLocalPlayer();
 	TheGhostObjectManager->setLocalPlayerIndex(player->getPlayerIndex());
 	TheGameClient->updateFakeDrawables();
+	TheRadar->refreshObjects();
 	TheInGameUI->deselectAllDrawables();
 }
 
