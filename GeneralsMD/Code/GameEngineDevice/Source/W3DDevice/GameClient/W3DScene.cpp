@@ -36,6 +36,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
+#include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
@@ -536,7 +537,7 @@ void RTS3DScene::renderSpecificDrawables(RenderInfoClass &rinfo, Int numDrawable
 #ifdef DIRTY_CONDITION_FLAGS
 	StDrawableDirtyStuffLocker lockDirtyStuff;
 #endif
-	Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
+	const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
 	RefRenderObjListIterator it(&UpdateList);
 	// loop through all render objects in the list:
 	for (it.First(&RenderList); !it.Is_Done();)
@@ -1088,7 +1089,7 @@ void RTS3DScene::Customized_Render( RenderInfoClass &rinfo )
 	m_translucentObjectsCount = 0;	//start of new frame so no translucent objects
 	m_occludedObjectsCount = 0;
 
-	Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
+	const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
 
 #define USE_LIGHT_ENV 1
 
@@ -1338,7 +1339,7 @@ void RTS3DScene::flushOccludedObjectsIntoStencil(RenderInfoClass & rinfo)
 	//Assume no player colors are visible and all stencil bits are free for use by shadows.
 	TheW3DShadowManager->setStencilShadowMask(0);
 
-	Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
+	const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
 
 	if (m_numPotentialOccludees && m_numPotentialOccluders)
 	{
@@ -1532,7 +1533,7 @@ void RTS3DScene::flushOccludedObjects(RenderInfoClass & rinfo)
 
 	if (m_occludedObjectsCount)
 	{
-		Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
+		const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
 
 		if (DX8Wrapper::Has_Stencil())	//just in case we have shadows, disable them over occluded pixels.
 		{
@@ -1602,7 +1603,7 @@ void RTS3DScene::flushTranslucentObjects(RenderInfoClass & rinfo)
 
 	if (m_translucentObjectsCount)
 	{
-		Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
+		const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
 
 		for (Int i=0; i<m_translucentObjectsCount; i++)
 		{

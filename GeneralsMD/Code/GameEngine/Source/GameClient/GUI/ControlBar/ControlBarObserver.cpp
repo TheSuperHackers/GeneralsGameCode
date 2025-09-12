@@ -52,6 +52,7 @@
 //-----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
+#include "Common/GameUtility.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
@@ -97,6 +98,8 @@ static GameWindow *staticTextNumberOfUnitsKilled = NULL;
 static GameWindow *staticTextNumberOfUnitsLost = NULL;
 static GameWindow *staticTextPlayerName = NULL;
 
+static NameKeyType s_replayObserverNameKey = NAMEKEY_INVALID;
+
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -128,6 +131,36 @@ void ControlBar::initObserverControls( void )
 	buttonIdleWorker = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonIdleWorker"));
 
 	buttonCancelID = TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonCancel");
+
+	s_replayObserverNameKey = TheNameKeyGenerator->nameToKey("ReplayObserver");
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControlBar::setObserverLookAtPlayer(Player *player)
+{
+	if (player == ThePlayerList->findPlayerWithNameKey(s_replayObserverNameKey))
+	{
+		// Looking at the observer. Treat as not looking at player.
+		m_observerLookAtPlayer = NULL;
+	}
+	else
+	{
+		m_observerLookAtPlayer = player;
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControlBar::setObservedPlayer(Player *player)
+{
+	if (player == ThePlayerList->findPlayerWithNameKey(s_replayObserverNameKey))
+	{
+		// Looking at the observer. Treat as not observing player.
+		m_observedPlayer = NULL;
+	}
+	else
+	{
+		m_observedPlayer = player;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -163,22 +196,42 @@ WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt m
 			Int controlID = control->winGetWindowId();
 			if( controlID == buttonCancelID)
 			{
-				TheControlBar->setObserverLookAtPlayer(NULL);
+				if (TheGlobalData->m_enablePlayerObserver || TheControlBar->getObservedPlayer() != NULL)
+				{
+					Player* observerPlayer = ThePlayerList->findPlayerWithNameKey(s_replayObserverNameKey);
+					rts::changeObservedPlayer(observerPlayer);
+				}
+				else
+				{
+					TheControlBar->setObserverLookAtPlayer(NULL);
+				}
+
 				ObserverPlayerInfoWindow->winHide(TRUE);
 				ObserverPlayerListWindow->winHide(FALSE);
 				buttonIdleWorker->winHide(TRUE);
 				TheControlBar->populateObserverList();
-
 			}
+
 			for(Int i = 0; i <MAX_BUTTONS; ++i)
 			{
 				if( controlID == buttonPlayerID[i])
 				{
 					ObserverPlayerInfoWindow->winHide(FALSE);
 					ObserverPlayerListWindow->winHide(TRUE);
-					TheControlBar->setObserverLookAtPlayer((Player *) GadgetButtonGetData( buttonPlayer[i]));
+					Player* player = reinterpret_cast<Player*>(GadgetButtonGetData(buttonPlayer[i]));
+
+					if (TheGlobalData->m_enablePlayerObserver)
+					{
+						rts::changeObservedPlayer(player);
+					}
+					else
+					{
+						TheControlBar->setObserverLookAtPlayer(player);
+					}
+
 					if(TheControlBar->getObserverLookAtPlayer())
 						TheControlBar->populateObserverInfoWindow();
+
 					return MSG_HANDLED;
 				}
 			}

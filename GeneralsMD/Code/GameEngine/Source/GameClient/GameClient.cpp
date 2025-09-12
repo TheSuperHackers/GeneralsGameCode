@@ -35,6 +35,7 @@
 #include "Common/ActionManager.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
@@ -638,7 +639,8 @@ void GameClient::update( void )
 	}
 
 	const Bool freezeTime = TheGameEngine->isTimeFrozen() || TheGameEngine->isGameHalted();
-	Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
+
+	const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
 
 	if (!freezeTime)
 	{
@@ -818,7 +820,7 @@ void GameClient::updateFakeDrawables(void)
 
 		if( object && object->isKindOf( KINDOF_FS_FAKE ) )
 		{
-			Relationship rel=ThePlayerList->getLocalPlayer()->getRelationship(object->getTeam());
+			Relationship rel = rts::getObservedOrLocalPlayer()->getRelationship(object->getTeam());
 			if (rel == ALLIES || rel == NEUTRAL)
 				draw->setTerrainDecal(TERRAIN_DECAL_SHADOW_TEXTURE);
 			else

@@ -21,12 +21,32 @@
 #include "Common/GameUtility.h"
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
+#include "Common/Radar.h"
+
+#include "GameClient/ControlBar.h"
+#include "GameClient/GameClient.h"
+#include "GameClient/InGameUI.h"
+#include "GameClient/ParticleSys.h"
 
 #include "GameLogic/GameLogic.h"
-
+#include "GameLogic/GhostObject.h"
+#include "GameLogic/PartitionManager.h"
 
 namespace rts
 {
+
+namespace detail
+{
+static void changePlayerCommon(Player* player)
+{
+	TheParticleSystemManager->setLocalPlayerIndex(player->getPlayerIndex());
+	ThePartitionManager->refreshShroudForLocalPlayer();
+	TheGhostObjectManager->setLocalPlayerIndex(player->getPlayerIndex());
+	TheGameClient->updateFakeDrawables();
+	TheInGameUI->deselectAllDrawables();
+}
+
+} // namespace detail
 
 Bool localPlayerIsObserving()
 {
@@ -37,6 +57,31 @@ Bool localPlayerIsObserving()
 		return true;
 
 	return false;
+}
+
+Player* getObservedOrLocalPlayer()
+{
+	Player* player = TheControlBar->getObservedPlayer();
+	if (player == NULL)
+		player = ThePlayerList->getLocalPlayer();
+	return player;
+}
+
+void changeLocalPlayer(Player* player)
+{
+	ThePlayerList->setLocalPlayer(player);
+	TheControlBar->setControlBarSchemeByPlayer(player);
+	TheControlBar->initSpecialPowershortcutBar(player);
+
+	detail::changePlayerCommon(player);
+}
+
+void changeObservedPlayer(Player* player)
+{
+	TheControlBar->setObserverLookAtPlayer(player);
+	TheControlBar->setObservedPlayer(player);
+
+	detail::changePlayerCommon(player);
 }
 
 } // namespace rts
