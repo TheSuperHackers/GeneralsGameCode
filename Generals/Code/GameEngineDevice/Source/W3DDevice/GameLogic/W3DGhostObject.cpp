@@ -63,8 +63,8 @@ class W3DRenderObjectSnapshot : public Snapshot
 	~W3DRenderObjectSnapshot() {REF_PTR_RELEASE(m_robj);}
 
 	inline void update(RenderObjClass *robj, DrawableInfo *drawInfo, Bool cloneParentRobj = TRUE);	///<refresh the current snapshot with latest state
-	inline void addToScene(void); ///< add this fogged render object to the scene.
-	inline void removeFromScene(); ///< remove this fogged render object from the scene.
+	inline Bool addToScene(void); ///< add this fogged render object to the scene.
+	inline Bool removeFromScene(); ///< remove this fogged render object from the scene.
 
 protected:
 
@@ -151,17 +151,21 @@ void W3DRenderObjectSnapshot::update(RenderObjClass *robj, DrawableInfo *drawInf
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DRenderObjectSnapshot::addToScene(void)
+Bool W3DRenderObjectSnapshot::addToScene(void)
 {
 	if (!m_robj->Is_In_Scene())
+	{
 		W3DDisplay::m_3DScene->Add_Render_Object(m_robj);
+		return true;
+	}
+	return false;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void W3DRenderObjectSnapshot::removeFromScene()
+Bool W3DRenderObjectSnapshot::removeFromScene()
 {
-	m_robj->Remove();
+	return m_robj->Remove();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -531,29 +535,37 @@ void W3DGhostObject::updateParentObject(Object *object, PartitionData *mod)
 // ------------------------------------------------------------------------------------------------
 /**Remove the dummy render objects from scene that belong to given player*/
 // ------------------------------------------------------------------------------------------------
-void W3DGhostObject::removeFromScene(int playerIndex)
+Bool W3DGhostObject::removeFromScene(int playerIndex)
 {
 	W3DRenderObjectSnapshot *snap = m_parentSnapshots[playerIndex];
 
+	Bool removed = false;
+
 	while (snap)
 	{
-		snap->removeFromScene();
+		removed |= snap->removeFromScene();
 		snap = snap->m_next;
 	}
+
+	return removed;
 }
 
 // ------------------------------------------------------------------------------------------------
 /**Add the dummy render objects to scene so player sees the correct version within the fog*/
 // ------------------------------------------------------------------------------------------------
-void W3DGhostObject::addToScene(int playerIndex)
+Bool W3DGhostObject::addToScene(int playerIndex)
 {
 	W3DRenderObjectSnapshot *snap = m_parentSnapshots[playerIndex];
 
+	Bool added = false;
+
 	while (snap)
 	{
-		snap->addToScene();
+		added |= snap->addToScene();
 		snap = snap->m_next;
 	}
+
+	return added;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -923,38 +935,57 @@ GhostObject *W3DGhostObjectManager::addGhostObject(Object *object, PartitionData
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObjectManager::setLocalPlayerIndex(int playerIndex)
 {
+	const int oldPlayerIndex = getLocalPlayerIndex();
+
+	if (playerIndex == oldPlayerIndex)
+		return;
+
+	GhostObjectManager::setLocalPlayerIndex(playerIndex);
+
 	//Whenever we switch local players, we need to remove all ghost objects belonging
 	//to another player from the map.  We then insert the current local player's
 	//ghost objects into the map.
+	// TheSuperHackers @bugfix xezon 06/09/2025 This function now properly
+	// updates ghost objects and real objects when changing players.
 
 	W3DGhostObject *mod = m_usedModules;
 
 	while (mod)
 	{
-		mod->removeFromScene(m_localPlayer);
+		const Bool oldGhostRemoved = mod->removeFromScene(oldPlayerIndex);
+		const ObjectShroudStatus newShroudStatus = mod->getShroudStatus(playerIndex);
+		Bool newGhostAdded = false;
 
-		if (mod->m_parentSnapshots[playerIndex])
+		if (newShroudStatus >= OBJECTSHROUD_FOGGED)
 		{
-			//new player has his own snapshot
-			if (!mod->m_parentSnapshots[m_localPlayer])
-			{
-				//previous player didn't have a snapshot so real object must
-				//have been in the scene.  Replace it with our snapshot.
-				mod->removeParentObject();
-			}
-			mod->addToScene(playerIndex);
+			newGhostAdded = mod->addToScene(playerIndex);
 		}
-		else if (mod->m_parentSnapshots[m_localPlayer])
+
+		if (oldGhostRemoved && !newGhostAdded)
 		{
-			//new player doesn't have a snapshot which means restore original object
-			//if it was replaced by a snapshot by the previous player.
 			mod->restoreParentObject();
+		}
+		else if (!oldGhostRemoved && newGhostAdded)
+		{
+			mod->removeParentObject();
 		}
 
 		mod = mod->m_nextSystem;
 	}
 
-	GhostObjectManager::setLocalPlayerIndex(playerIndex);
+	// TheSuperHackers @bugfix xezon 06/09/2025 This function now properly updates
+	// all real objects when changing players without waiting for another logic step.
+	// This is particularly noticeable when changing the player while the game is paused.
+	for (Drawable* draw = TheGameClient->firstDrawable(); draw != NULL; draw = draw->getNextDrawable())
+	{
+		Object* obj = draw->getObject();
+		if (obj == NULL)
+			continue;
+
+		const ObjectShroudStatus shroudStatus = obj->getShroudedStatus(playerIndex);
+		const Bool shrouded = shroudStatus >= OBJECTSHROUD_FOGGED;
+		draw->setFullyObscuredByShroud(shrouded);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------

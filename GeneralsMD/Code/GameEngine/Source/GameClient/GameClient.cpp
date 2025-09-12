@@ -693,11 +693,16 @@ void GameClient::update( void )
 				{
 					if (TheGhostObjectManager->trackAllPlayers())
 					{
-						Int *playerIndex = nonLocalPlayerIndices;
-						Int *const playerIndexEnd = nonLocalPlayerIndices + numNonLocalPlayers;
-						for (; playerIndex < playerIndexEnd; ++playerIndex)
+						// TheSuperHackers @info Update the shrouded status for all objects
+						// that own a ghost object for all non local players. This is costly.
+						if (object->hasGhostObject())
 						{
-							object->getShroudedStatus(*playerIndex);
+							Int *playerIndex = nonLocalPlayerIndices;
+							Int *const playerIndexEnd = nonLocalPlayerIndices + numNonLocalPlayers;
+							for (; playerIndex < playerIndexEnd; ++playerIndex)
+							{
+								object->getShroudedStatus(*playerIndex);
+							}
 						}
 					}
 

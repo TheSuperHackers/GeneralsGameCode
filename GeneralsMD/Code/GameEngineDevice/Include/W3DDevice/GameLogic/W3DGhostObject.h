@@ -59,8 +59,8 @@ protected:
 	virtual void loadPostProcess( void );
 	void removeParentObject(void);
 	void restoreParentObject(void);	///< restore the original non-ghosted object to scene.
-	void addToScene(int playerIndex);
-	void removeFromScene(int playerIndex);
+	Bool addToScene(int playerIndex);
+	Bool removeFromScene(int playerIndex);
 	ObjectShroudStatus getShroudStatus(int playerIndex);	///< used to get the partition manager to update ghost objects without parent objects.
 	void freeAllSnapShots(void);				///< used to free all snapshots from all players.
 
