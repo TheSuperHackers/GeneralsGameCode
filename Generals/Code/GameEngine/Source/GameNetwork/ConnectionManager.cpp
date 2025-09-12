@@ -1971,10 +1971,8 @@ void ConnectionManager::parseUserList(const GameInfo *game)
 		return;
 	}
 
-	if (list != NULL) {
-		free(list); // from the strdup above.
-		list = NULL;
-	}
+	free(list); // from the strdup above.
+	list = NULL;
 	*/
 }
 

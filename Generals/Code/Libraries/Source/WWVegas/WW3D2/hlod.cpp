@@ -337,15 +337,11 @@ HLodDefClass::~HLodDefClass(void)
  *=============================================================================================*/
 void HLodDefClass::Free(void)
 {
-	if (Name) {
-		::free(Name);
-		Name = NULL;
-	}
+	::free(Name);
+	Name = NULL;
 
-	if (HierarchyTreeName) {
-		::free(HierarchyTreeName);
-		HierarchyTreeName = NULL;
-	}
+	::free(HierarchyTreeName);
+	HierarchyTreeName = NULL;
 
 	if (Lod) {
 		delete[] Lod;

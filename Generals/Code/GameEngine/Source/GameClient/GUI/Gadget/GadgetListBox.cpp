@@ -1724,8 +1724,8 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 					{
 						if( cells[j].cellType == LISTBOX_TEXT && cells[j].data )
 							TheDisplayStringManager->freeDisplayString((DisplayString *) cells[j].data );
-//						if (cells[i].userData)
-//							free(cells[i].userData);
+
+//						free(cells[i].userData);
 						cells[j].data = NULL;
 						cells[j].userData = NULL;
 						cells[j].color = 0;
@@ -1957,8 +1957,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 							TheDisplayStringManager->freeDisplayString((DisplayString *) cells[j].data );
 						}
 					}
-//					if ( cells[j].userData )
-//						free(cells[j].userData);
+//					free(cells[j].userData);
 
 					// Null out the data pointers so they're not destroyed when we free up this listdata
 					cells[j].userData = NULL;
@@ -2546,8 +2545,7 @@ void GadgetListBoxSetListLength( GameWindow *listbox, Int newLength )
 						TheDisplayStringManager->freeDisplayString((DisplayString *) cells[j].data );
 					}
 				}
-//			if ( cells[j].userData )
-//					free(cells[j].userData);
+//				free(cells[j].userData);
 			}
 		}
 		if (i >= newLength) {
