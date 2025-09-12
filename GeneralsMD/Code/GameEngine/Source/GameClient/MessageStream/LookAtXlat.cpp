@@ -73,8 +73,8 @@ static Bool scrollDir[4] = { false, false, false, false };
 // The multiplier of 2 was logically chosen because originally the Scroll Factor did practically not affect the RMB scroll speed
 // and because the default Scroll Factor is/was 0.5, it needs to be doubled to get to a neutral 1x multiplier.
 
-CONSTEXPR const Real SCROLL_MULTIPLIER = 2.0f;
-CONSTEXPR const Real SCROLL_AMT = 100.0f * SCROLL_MULTIPLIER;
+constexpr const Real SCROLL_MULTIPLIER = 2.0f;
+constexpr const Real SCROLL_AMT = 100.0f * SCROLL_MULTIPLIER;
 
 static const Int edgeScrollSize = 3;
 

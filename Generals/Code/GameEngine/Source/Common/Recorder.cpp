@@ -47,8 +47,8 @@
 #include "Common/CRCDebug.h"
 #include "Common/version.h"
 
-CONSTEXPR const char s_genrep[] = "GENREP";
-CONSTEXPR const UnsignedInt replayBufferBytes = 8192;
+constexpr const char s_genrep[] = "GENREP";
+constexpr const UnsignedInt replayBufferBytes = 8192;
 
 Int REPLAY_CRC_INTERVAL = 100;
 

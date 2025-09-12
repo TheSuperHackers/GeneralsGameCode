@@ -1820,7 +1820,7 @@ void W3DView::scrollBy( Coord2D *delta )
 	// if we haven't moved, ignore
 	if( delta && (delta->x != 0 || delta->y != 0) )
 	{
-		CONSTEXPR const Real SCROLL_RESOLUTION = 250.0f;
+		constexpr const Real SCROLL_RESOLUTION = 250.0f;
 
 		Vector3 world, worldStart, worldEnd;
 		Vector2 start, end;

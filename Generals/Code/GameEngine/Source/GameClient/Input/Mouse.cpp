@@ -1072,7 +1072,7 @@ void Mouse::initCapture()
 // ------------------------------------------------------------------------------------------------
 Bool Mouse::canCapture() const
 {
-	CONSTEXPR const CursorCaptureBlockReasonInt noGameBits = CursorCaptureBlockReason_NoGame | CursorCaptureBlockReason_Paused;
+	constexpr const CursorCaptureBlockReasonInt noGameBits = CursorCaptureBlockReason_NoGame | CursorCaptureBlockReason_Paused;
 
 	switch (m_cursorCaptureMode)
 	{

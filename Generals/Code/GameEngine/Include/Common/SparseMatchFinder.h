@@ -202,7 +202,7 @@ public:
 	//-------------------------------------------------------------------------------------------------
 	SparseMatchFinder& operator=(const SparseMatchFinder& other)
 	{
-		if CONSTEXPR ((FLAGS & SparseMatchFinderFlags_NoCopy) == 0)
+		if constexpr ((FLAGS & SparseMatchFinderFlags_NoCopy) == 0)
 		{
 			if (this != &other)
 			{
