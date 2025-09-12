@@ -79,9 +79,15 @@ void changeLocalPlayer(Player* player)
 void changeObservedPlayer(Player* player)
 {
 	TheControlBar->setObserverLookAtPlayer(player);
-	TheControlBar->setObservedPlayer(player);
 
-	detail::changePlayerCommon(player);
+	const Bool canBeginObservePlayer = TheGlobalData->m_enablePlayerObserver && TheGhostObjectManager->trackAllPlayers();
+	const Bool canEndObservePlayer = TheControlBar->getObservedPlayer() != NULL && TheControlBar->getObserverLookAtPlayer() == NULL;
+
+	if (canBeginObservePlayer || canEndObservePlayer)
+	{
+		TheControlBar->setObservedPlayer(player);
+		detail::changePlayerCommon(player);
+	}
 }
 
 } // namespace rts

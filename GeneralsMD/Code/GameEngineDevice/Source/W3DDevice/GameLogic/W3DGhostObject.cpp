@@ -309,13 +309,18 @@ W3DGhostObject::W3DGhostObject()
 // ------------------------------------------------------------------------------------------------
 W3DGhostObject::~W3DGhostObject()
 {
-#ifdef DEBUG_FOG_MEMORY
-	for (Int i=0; i < MAX_PLAYER_COUNT; i++)
+#ifdef DEBUG_CRASHING
+	if (TheGhostObjectManager->trackAllPlayers())
 	{
-		DEBUG_ASSERTCRASH(m_parentSnapshots[i] == NULL, ("Delete of non-empty GhostObject"));
+		for (Int i = 0; i < MAX_PLAYER_COUNT; i++)
+		{
+			DEBUG_ASSERTCRASH(m_parentSnapshots[i] == NULL, ("Delete of non-empty GhostObject"));
+		}
 	}
-#else
-	DEBUG_ASSERTCRASH(m_parentSnapshots[TheGhostObjectManager->getLocalPlayerIndex()] == NULL, ("Delete of non-empty GhostObject"));
+	else
+	{
+		DEBUG_ASSERTCRASH(m_parentSnapshots[TheGhostObjectManager->getLocalPlayerIndex()] == NULL, ("Delete of non-empty GhostObject"));
+	}
 #endif
 }
 
@@ -326,10 +331,8 @@ Should only be called when object enters the fogged state.*/
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObject::snapShot(int playerIndex)
 {
-#ifndef DEBUG_FOG_MEMORY
-	if (playerIndex != TheGhostObjectManager->getLocalPlayerIndex())
-		return;	//we only snapshot things for the initial local player because local player can't change in non-debug game.
-#endif
+	DEBUG_ASSERTCRASH(TheGhostObjectManager->trackAllPlayers() || playerIndex == TheGhostObjectManager->getLocalPlayerIndex(),
+		("We are supposed to only snapshot things for the initial local player because local player can't change in non-debug game."));
 
 	Drawable *draw = m_parentObject->getDrawable();
 
@@ -473,15 +476,14 @@ void W3DGhostObject::restoreParentObject(void)
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObject::freeAllSnapShots(void)
 {
-	Int playerIndex;
-
-#ifdef DEBUG_FOG_MEMORY
-	for (playerIndex = 0; playerIndex < MAX_PLAYER_COUNT; playerIndex++)
-#else
-	playerIndex = TheGhostObjectManager->getLocalPlayerIndex();
-#endif
+	if (TheGhostObjectManager->trackAllPlayers())
 	{
-		freeSnapShot(playerIndex);
+		for (Int playerIndex = 0; playerIndex < MAX_PLAYER_COUNT; playerIndex++)
+			freeSnapShot(playerIndex);
+	}
+	else
+	{
+		freeSnapShot(TheGhostObjectManager->getLocalPlayerIndex());
 	}
 }
 
@@ -808,6 +810,8 @@ W3DGhostObjectManager::~W3DGhostObjectManager()
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObjectManager::reset(void)
 {
+	GhostObjectManager::reset();
+
 	W3DGhostObject *mod = m_usedModules;
 	W3DGhostObject *nextmod;
 
@@ -870,7 +874,7 @@ GhostObject *W3DGhostObjectManager::addGhostObject(Object *object, PartitionData
 	if (m_lockGhostObjects || m_saveLockGhostObjects )
 		return NULL;
 
-#ifdef DEBUG_FOG_MEMORY
+#if defined(DEBUG_FOG_MEMORY) && defined(DEBUG_CRASHING)
 	// sanity
 	if( object != NULL )
 	{
@@ -973,16 +977,18 @@ void W3DGhostObjectManager::updateOrphanedObjects(int *playerIndexList, int play
 		{
 			numStoredSnapshots = 0;
 
-#ifdef DEBUG_FOG_MEMORY
-			for (int i=0; i<playerIndexCount; i++, playerIndexList++)
+			if (playerIndexList != NULL && playerIndexCount > 0)
 			{
-				if (mod->m_parentSnapshots[*playerIndexList])
-					mod->getShroudStatus(*playerIndexList);
+				for (int i=0; i<playerIndexCount; i++, playerIndexList++)
+				{
+					if (mod->m_parentSnapshots[*playerIndexList])
+						mod->getShroudStatus(*playerIndexList);
 
-				if (mod->m_parentSnapshots[*playerIndexList])
-					numStoredSnapshots++;
+					if (mod->m_parentSnapshots[*playerIndexList])
+						numStoredSnapshots++;
+				}
 			}
-#endif
+
 			mod->getShroudStatus(m_localPlayer);
 
 			if (mod->m_parentSnapshots[m_localPlayer])
