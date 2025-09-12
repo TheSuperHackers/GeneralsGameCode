@@ -3478,13 +3478,7 @@ DrawModule** Drawable::getDrawModules()
 		}
 		else
 		{
-			for (DrawModule** dm2 = dm; *dm2; ++dm2)
-			{
-				ObjectDrawInterface* di = (*dm2)->getObjectDrawInterface();
-				if (di)
-					di->replaceModelConditionState( m_conditionState );
-			}
-			m_isModelDirty = false;
+			replaceModelConditionStateInDrawable();
 		}
 	}
 #endif
@@ -3510,14 +3504,7 @@ DrawModule const** Drawable::getDrawModules() const
 		}
 		else
 		{
-			// yeah, yeah, yeah... I know (srj)
-			for (DrawModule** dm2 = (DrawModule**)dm; *dm2; ++dm2)
-			{
-				ObjectDrawInterface* di = (*dm2)->getObjectDrawInterface();
-				if (di)
-					di->replaceModelConditionState( m_conditionState );
-			}
-			m_isModelDirty = false;
+			const_cast<Drawable*>(this)->replaceModelConditionStateInDrawable();
 		}
 	}
 #endif
@@ -3540,12 +3527,7 @@ void Drawable::clearAndSetModelConditionFlags(const ModelConditionFlags& clr, co
 #ifdef DIRTY_CONDITION_FLAGS
 	m_isModelDirty = true;
 #else
-	for (DrawModule** dm = getDrawModules(); *dm; ++dm)
-	{
-		ObjectDrawInterface* di = (*dm)->getObjectDrawInterface();
-		if (di)
-			di->replaceModelConditionState( m_conditionState );
-	}
+	replaceModelConditionStateInDrawable();
 #endif
 }
 
@@ -3567,24 +3549,37 @@ void Drawable::replaceModelConditionFlags( const ModelConditionFlags &flags, Boo
 	// when forcing a replace we won't use dirty flags, we will immediately do an update now
 	if( forceReplace == TRUE )
 	{
-		for (DrawModule** dm = getDrawModules(); *dm; ++dm)
-		{
-			ObjectDrawInterface* di = (*dm)->getObjectDrawInterface();
-			if (di)
-				di->replaceModelConditionState( m_conditionState );
-		}
-		m_isModelDirty = false;
+		replaceModelConditionStateInDrawable();
 	}
 	else
+	{
 		m_isModelDirty = true;
+	}
 #else
+	replaceModelConditionStateInDrawable();
+#endif
+}
+
+//-------------------------------------------------------------------------------------------------
+void Drawable::replaceModelConditionStateInDrawable()
+{
+	// TheSuperHackers @info Set not dirty early to avoid recursive calls from within getDrawModules().
+	m_isModelDirty = false;
+
+	// TheSuperHackers @bugfix Remove and re-add the terrain decal before processing the individual draw
+	// modules, because the terrain decal is applied to the first draw module only, and the new first
+	// draw module may be different than before.
+	const TerrainDecalType terrainDecalType = getTerrainDecalType();
+	setTerrainDecal(TERRAIN_DECAL_NONE);
+
 	for (DrawModule** dm = getDrawModules(); *dm; ++dm)
 	{
 		ObjectDrawInterface* di = (*dm)->getObjectDrawInterface();
 		if (di)
 			di->replaceModelConditionState( m_conditionState );
 	}
-#endif
+
+	setTerrainDecal(terrainDecalType);
 }
 
 //-------------------------------------------------------------------------------------------------

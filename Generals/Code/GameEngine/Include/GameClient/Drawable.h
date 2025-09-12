@@ -603,6 +603,8 @@ protected:
 	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle);
 	void updateHiddenStatus();
 
+	void replaceModelConditionStateInDrawable();
+
 private:
 
 	const Locomotor* getLocomotor() const;
@@ -686,7 +688,7 @@ private:
 	Bool m_instanceIsIdentity;	///< If true, instance matrix can be skipped
 	Bool m_drawableFullyObscuredByShroud;	///<drawable is hidden by shroud/fog
 #ifdef DIRTY_CONDITION_FLAGS
-	mutable Bool m_isModelDirty;				///< if true, must call replaceModelConditionState() before drawing or accessing drawmodule info
+	Bool m_isModelDirty;				///< if true, must call replaceModelConditionState() before drawing or accessing drawmodule info
 #endif
 
 	//*******************************************
