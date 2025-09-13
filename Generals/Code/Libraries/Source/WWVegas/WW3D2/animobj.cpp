@@ -941,18 +941,20 @@ float Animatable3DObjClass::Compute_Current_Frame(float *newDirection) const
 				//
 				//	Wrap the frame
 				//
+				const int numFrames = ModeAnim.Motion->Get_Num_Frames() - 1;
+
 				switch (ModeAnim.AnimMode)
 				{
 					case ANIM_MODE_ONCE:
-						if (frame >= ModeAnim.Motion->Get_Num_Frames() - 1) {
-							frame = ModeAnim.Motion->Get_Num_Frames() - 1;
+						if (frame >= numFrames) {
+							frame = numFrames;
 						}
 						break;
 					case ANIM_MODE_LOOP:
-						if ( frame >= ModeAnim.Motion->Get_Num_Frames() - 1 ) {
-							frame -= ModeAnim.Motion->Get_Num_Frames() - 1;
+						if ( frame >= numFrames ) {
+							frame -= numFrames;
 							// If it is still too far out, reset
-							if ( frame >= ModeAnim.Motion->Get_Num_Frames() - 1 ) {
+							if ( frame >= numFrames ) {
 								frame = 0;
 							}
 						}
@@ -964,22 +966,22 @@ float Animatable3DObjClass::Compute_Current_Frame(float *newDirection) const
 						break;
 					case ANIM_MODE_LOOP_BACKWARDS:	//play animation backwards in a loop
 						if ( frame < 0 ) {
-							frame += ModeAnim.Motion->Get_Num_Frames() - 1;
+							frame += numFrames;
 							// If it is still too far out, reset
 							if ( frame < 0 ) {
-								frame = ModeAnim.Motion->Get_Num_Frames() - 1;
+								frame = numFrames;
 							}
 						}
 						break;
 					case ANIM_MODE_LOOP_PINGPONG:
 						if (ModeAnim.animDirection >= 1.0f)
 						{	//playing forwards, reverse direction
-							if (frame >= (ModeAnim.Motion->Get_Num_Frames() - 1))
+							if (frame >= numFrames)
 							{	//step backwards in animation by excess time
-								frame = (ModeAnim.Motion->Get_Num_Frames() - 1)*2 - frame;
+								frame = numFrames * 2 - frame;
 								// If it is still too far out, reset
-								if ( frame >= ModeAnim.Motion->Get_Num_Frames() - 1 )
-									frame = (ModeAnim.Motion->Get_Num_Frames() - 1);
+								if ( frame >= numFrames - 1 )
+									frame = numFrames;
 								direction = ModeAnim.animDirection * -1.0f;
 							}
 						}
@@ -989,7 +991,7 @@ float Animatable3DObjClass::Compute_Current_Frame(float *newDirection) const
 							{	//step forwards in animation by excess time
 								frame = -frame;
 								// If it is still too far out, reset
-								if ( frame >= ModeAnim.Motion->Get_Num_Frames() - 1 )
+								if ( frame >= numFrames )
 										frame = 0;
 								direction = ModeAnim.animDirection * -1.0f;
 							}
