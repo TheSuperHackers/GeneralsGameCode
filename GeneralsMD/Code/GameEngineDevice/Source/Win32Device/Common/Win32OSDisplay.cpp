@@ -123,3 +123,16 @@ OSDisplayButtonType OSDisplayWarningBox(AsciiString p, AsciiString m, UnsignedIn
 
 	return OSDBT_CANCEL;
 }
+
+//-------------------------------------------------------------------------------------------------
+void OSDisplaySetBusyState(Bool busy)
+{
+	if (busy)
+	{
+		::SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
+	}
+	else
+	{
+		::SetThreadExecutionState(ES_CONTINUOUS);
+	}
+}
