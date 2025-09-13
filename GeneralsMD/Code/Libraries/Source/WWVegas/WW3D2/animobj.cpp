@@ -289,12 +289,6 @@ void Animatable3DObjClass::Render(RenderInfoClass & rinfo)
 		return;
 	}
 
-	if ( CurMotionMode == SINGLE_ANIM ) {
-		if ( ModeAnim.AnimMode != ANIM_MODE_MANUAL ) {
-			Single_Anim_Progress();
-		}
-	}
-
 	if (!Is_Hierarchy_Valid() || Are_Sub_Object_Transforms_Dirty()) {
 		Update_Sub_Object_Transforms();
 	}
@@ -315,12 +309,6 @@ void Animatable3DObjClass::Render(RenderInfoClass & rinfo)
 void Animatable3DObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 {
 	if (HTree == NULL) return;
-
-	if ( CurMotionMode == SINGLE_ANIM ) {
-		if ( ModeAnim.AnimMode != ANIM_MODE_MANUAL ) {
-			Single_Anim_Progress();
-		}
-	}
 
 	if (!Is_Hierarchy_Valid()) {
 		Update_Sub_Object_Transforms();
@@ -1051,19 +1039,12 @@ void Animatable3DObjClass::Single_Anim_Progress (void)
 		//
 		// Update the frame number and sync time
 		//
-		float oldprev = ModeAnim.PrevFrame;
 		ModeAnim.PrevFrame		= ModeAnim.Frame;
 		ModeAnim.Frame				= Compute_Current_Frame(&ModeAnim.animDirection);
 		ModeAnim.LastSyncTime	= WW3D::Get_Sync_Time();
 
-		if (ModeAnim.Frame == ModeAnim.PrevFrame) {
-			// This function was somehow called twice per frame.
-			// Since ModeAnim.Frame hasn't changed, reset the ModeAnim.PrevFrame.
-			// If you don't do this sounds won't be triggered properly because Frame and PrevFrame will be the same.
-			ModeAnim.PrevFrame = oldprev;
-		}
 		//
-		// Force the heirarchy to be recalculated
+		// Force the hierarchy to be recalculated
 		//
 		Set_Hierarchy_Valid (false);
 	}
