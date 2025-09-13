@@ -319,6 +319,38 @@ public:
 	virtual const char* debugGetName() { return "PartitionFilterLiveMapEnemies"; }
 #endif
 };
+
+class PartitionFilterLiveMapAirEnemies : public PartitionFilter
+{
+private:
+  const Object* m_obj;
+public:
+  PartitionFilterLiveMapAirEnemies(const Object* obj) : m_obj(obj) {}
+
+  virtual Bool allow(Object* objOther)
+  {
+    // this is way fast (bit test) so do it first.
+    if (objOther->isEffectivelyDead())
+      return false;
+
+    // this is also way fast (bit test) so do it next.
+    if (objOther->isOffMap() != m_obj->isOffMap())
+      return false;
+
+    Relationship r = m_obj->getRelationship(objOther);
+    if (r != ENEMIES)
+      return false;
+
+    if (!objOther->isAirborneTarget()) {
+      return false;
+    }
+    return true;
+  }
+
+#if defined(RTS_DEBUG)
+  virtual const char* debugGetName() { return "PartitionFilterLiveMapAirEnemies"; }
+#endif
+};
 //-----------------------------------------------------------------------------
 
 
@@ -362,52 +394,12 @@ UpdateSleepTime KodiakUpdate::update()
 
       if ( m_status == GUNSHIP_STATUS_INSERTING || m_status == GUNSHIP_STATUS_ORBITING )
       {
+        Coord3D pos = *gunship->getPosition();
+        pos.sub( &m_initialTargetPosition );
+        pos.z = zero;
+        Real distanceToTarget = pos.length();
 
-
-  //   init'l    apogee
-  //   target *<-------->*
-  //    posi  ^\         /
-  //          | \      /
-  //  perigee |  \   /
-  //          |   */ declination
-  //          |  / \
-  //          v/    * m_satelliteposition
-  //          *
-  //          |
-  //          |
-  //          |
-  //          |
-  //          |
-  //          * gunship->getPosition()
-
-        //perigee is the point in the orbital arc nearest the satellite being captured
-        Coord3D perigee = *gunship->getPosition();
-        perigee.sub( &m_initialTargetPosition );
-        perigee.z = zero;
-        Real distanceToTarget = perigee.length();
-        perigee.normalize();
-
-        //apogee is the anteclockwise point fathest from the perigee line
-        Coord3D apogee;
-        apogee.z = zero;
-        apogee.x = -perigee.y;
-        apogee.y =  perigee.x;
-
-        // declination intersects line [p][a], given an attack slope of n1/n2
-        Coord3D declination;
-        Real n1 = min( ORBIT_INSERTION_SLOPE_MAX, max(ORBIT_INSERTION_SLOPE_MIN, data->m_orbitInsertionSlope) );
-        Real n2 = ONE - n1;
-        declination.z = zero;
-        declination.x = ( perigee.x * n1 ) + ( apogee.x * n2 );
-        declination.y = ( perigee.y * n1 ) + ( apogee.y * n2 );
-
-        //scale out to the orbital radius
         Real orbitalRadius = data->m_gunshipOrbitRadius;
-        declination.x *= orbitalRadius;
-        declination.y *= orbitalRadius;
-
-        //m_satellitePosition.x = m_initialTargetPosition.x + declination.x;
-        //m_satellitePosition.y = m_initialTargetPosition.y + declination.y;
 
         Coord3D zero_pos;
         zero_pos.zero();
@@ -416,7 +408,6 @@ UpdateSleepTime KodiakUpdate::update()
           Coord3D direction = m_initialTargetPosition;
           direction.sub(gunship->getPosition());
           direction.z = zero;
-          //Real distanceToTarget = direction.length();
           direction.normalize();
 
           m_satellitePosition = direction;
@@ -433,7 +424,6 @@ UpdateSleepTime KodiakUpdate::update()
         
         if ( shipAI)
         {
-           //shipAI->aiMoveToPosition( &m_satellitePosition, CMD_FROM_AI );
            shipAI->aiMoveToPosition( &target_move_location, CMD_FROM_AI );
         }
 
@@ -576,45 +566,214 @@ UpdateSleepTime KodiakUpdate::update()
 
 
             //lets keep a constant barrage of gattling bullets on the current aim location
-				    if( gattlingAI )
+				    /*if (gattlingAI)
 				    {
               if ( validTargetObject )// either in the reticle or the targeting area
                 gattlingAI->aiAttackObject( validTargetObject, LOTS_OF_SHOTS, CMD_FROM_AI );
               else
   					    gattlingAI->aiAttackPosition( &m_gattlingTargetPosition, LOTS_OF_SHOTS, CMD_FROM_AI );
-				    }
-
-
-
+				    }*/
 
             // IF THE GATTLING GUN HAS BEEN PLINKING THE TARGET LONG ENOUGH, LETS FOLLOW WITH A VOLLEY OF HOWITZER FIRE
             if ( m_okToFireHowitzerCounter > data->m_howitzerFollowLag )
             {
-              WeaponTemplate *wt = data->m_howitzerWeaponTemplate;
-              if( wt )
-              {
-                Coord3D attackPositionWithRandomOffset;
-                Real offs = data->m_randomOffsetForHowitzer;
-                attackPositionWithRandomOffset.x = m_gattlingTargetPosition.x + GameLogicRandomValue( -offs, offs );
-                attackPositionWithRandomOffset.y = m_gattlingTargetPosition.y + GameLogicRandomValue( -offs, offs );
-                attackPositionWithRandomOffset.z = m_gattlingTargetPosition.z;
-	              TheWeaponStore->createAndFireTempWeapon( wt, gunship, &attackPositionWithRandomOffset );
+              ContainModuleInterface* cmi = getObject()->getContain();
+              if (cmi != nullptr) {
+                ContainedItemsList* addOns = cmi->getAddOnList();
+                size_t turret_id = 0U;
+                for (ContainedItemsList::iterator it = addOns->begin(); it != addOns->end(); it++) {
 
-                m_howitzerFireSound.setObjectID(gunship->getID());
-                TheAudio->addAudioEvent( &m_howitzerFireSound );
+                  if (turret_id == 0U || turret_id == 1U) {
+                    //DEBUG_LOG(("Attacking Position %f,%f,%f", m_gattlingTargetPosition.x, m_gattlingTargetPosition.y, m_gattlingTargetPosition.z));
+                    AIUpdateInterface* ai = (*it)->getAI();
+                    if (ai != nullptr) {
+                      ai->aiAttackPosition(&m_gattlingTargetPosition, LOTS_OF_SHOTS, CMD_FROM_AI);
+                    }
+                  }
 
+                  turret_id++;
+                }
               }
             }
 
 
           }//endif frame modulator
 
+          /* Auto Acquire Targets with side Turrets */
+          // ONLY EVERY FEW FRAMES DO WE RE_EVALUATE THE TARGET OBJECT
+          if (TheGameLogic->getFrame() % data->m_howitzerFiringRate < ONE) // TODO own param
+          {
+            //DEBUG_LOG(("Check for small turret targets"));
+
+            //m_positionToShootAt = m_overrideTargetDestination; // unless we get a hit, below
+
+            PartitionFilterLiveMapEnemies filterObvious(gunship);
+            PartitionFilterStealthedAndUndetected filterStealth(gunship, false);
+            PartitionFilterPossibleToAttack filterAttack(ATTACK_NEW_TARGET, gunship, CMD_FROM_AI);
+            PartitionFilterFreeOfFog filterFogged(gunship->getControllingPlayer()->getPlayerIndex());
+            PartitionFilter* filters[6];
+            Int numFilters = 0;
+            filters[numFilters++] = &filterObvious;
+            filters[numFilters++] = &filterStealth;
+            filters[numFilters++] = &filterAttack;
+            filters[numFilters++] = &filterFogged;
+            filters[numFilters] = NULL;
+
+            Object* validTargetObjectSide1 = NULL;
+            Object* validTargetObjectSide2 = NULL;
+
+            // THIS WILL FIND A VALID TARGET WITHIN THE TARGETING RETICLE
+            ObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(gunship->getPosition(),
+              data->m_gunshipOrbitRadius,
+              FROM_BOUNDINGSPHERE_2D,
+              filters,
+              ITER_SORTED_CHEAP_TO_EXPENSIVE);
+            MemoryPoolObjectHolder holder(iter);
+            for (Object* theEnemy = iter->first(); theEnemy; theEnemy = iter->next())
+            {
+              if (theEnemy) // && isFairDistanceFromShip(theEnemy, 1.25f))
+              {
+                validTargetObjectSide2 = validTargetObjectSide1;
+                validTargetObjectSide1 = theEnemy;
+
+                if (validTargetObjectSide1 != NULL && validTargetObjectSide2 != NULL) {
+                  break;
+                }
+              }
+            }
+            if (validTargetObjectSide2 == nullptr) {
+              //Both shoot on 1 target
+              validTargetObjectSide2 = validTargetObjectSide1;
+            }
+
+            if (validTargetObjectSide1 != NULL && validTargetObjectSide2 != NULL) {
+              ContainModuleInterface* cmi = getObject()->getContain();
+              if (cmi != nullptr) {
+                ContainedItemsList* addOns = cmi->getAddOnList();
+                size_t turret_id = 0U;
+                for (ContainedItemsList::iterator it = addOns->begin(); it != addOns->end(); it++) {
+
+                  if (turret_id == 2U && validTargetObjectSide1 != nullptr) {
+                    AIUpdateInterface* ai = (*it)->getAI();
+                    if (ai != nullptr) {
+                      //ai->aiForceAttackObject(validTargetObjectSide1, LOTS_OF_SHOTS, CMD_FROM_AI);
+                      ai->aiAttackPosition(validTargetObjectSide1->getPosition(), LOTS_OF_SHOTS, CMD_FROM_AI);
+                    }
+                  }
+                  else if (turret_id == 3U && validTargetObjectSide2 != nullptr) {
+                    AIUpdateInterface* ai = (*it)->getAI();
+                    if (ai != nullptr) {
+                      //ai->aiForceAttackObject(validTargetObjectSide2, LOTS_OF_SHOTS, CMD_FROM_AI);
+                      ai->aiAttackPosition(validTargetObjectSide2->getPosition(), LOTS_OF_SHOTS, CMD_FROM_AI);
+                    }
+                  }
+
+                  turret_id++;
+                }
+              }
+            }
+            
+            
+          }
+
+          //AA TURRET TARGETING
+          if (TheGameLogic->getFrame() % data->m_howitzerFiringRate < ONE) // TODO own param
+          {
+            DEBUG_LOG(("Check for AA turret targets"));
+            Object* turretAA1 = nullptr;
+            Object* turretAA2 = nullptr;
+
+            ContainModuleInterface* cmi = getObject()->getContain();
+            if (cmi != nullptr) {
+              ContainedItemsList* addOns = cmi->getAddOnList();
+              size_t turret_id = 0U;
 
 
+              for (ContainedItemsList::iterator it = addOns->begin(); it != addOns->end(); it++) {
 
+                if (turret_id == 4U) {
+                  turretAA1 = (*it);
+                }
+                else if (turret_id == 5U) {
+                  turretAA2 = (*it);
+                }
+
+                turret_id++;
+              }
+            }
+
+            //m_positionToShootAt = m_overrideTargetDestination; // unless we get a hit, below
+            if (turretAA1 != nullptr) {
+              PartitionFilterLiveMapAirEnemies filterObvious(gunship);
+              PartitionFilterStealthedAndUndetected filterStealth(gunship, false);
+              PartitionFilterPossibleToAttack filterAttack(ATTACK_NEW_TARGET, turretAA1, CMD_FROM_AI);
+              PartitionFilterFreeOfFog filterFogged(gunship->getControllingPlayer()->getPlayerIndex());
+              PartitionFilter* filters[6];
+              Int numFilters = 0;
+              filters[numFilters++] = &filterObvious;
+              filters[numFilters++] = &filterStealth;
+              filters[numFilters++] = &filterAttack;
+              filters[numFilters++] = &filterFogged;
+              filters[numFilters] = NULL;
+
+              Object* validTargetObject1 = NULL;
+              Object* validTargetObject2 = NULL;
+
+              // THIS WILL FIND A VALID TARGET WITHIN THE TARGETING RETICLE
+              ObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(gunship->getPosition(),
+                data->m_gunshipOrbitRadius,
+                FROM_BOUNDINGSPHERE_2D,
+                filters,
+                ITER_SORTED_CHEAP_TO_EXPENSIVE);
+              MemoryPoolObjectHolder holder(iter);
+              for (Object* theEnemy = iter->first(); theEnemy; theEnemy = iter->next())
+              {
+                if (theEnemy) // && isFairDistanceFromShip(theEnemy, 1.25f))
+                {
+                  validTargetObject2 = validTargetObject1;
+                  validTargetObject1 = theEnemy;
+
+                  if (validTargetObject1 != NULL && validTargetObject2 != NULL) {
+                    DEBUG_LOG(("Found Air Targets"));
+                    break;
+                  }
+                }
+              }
+              if (validTargetObject2 == nullptr) {
+                //Both shoot on 1 target
+                validTargetObject2 = validTargetObject1;
+                DEBUG_LOG(("Focus on Air Target 1"));
+              }
+
+              if (validTargetObject1 != nullptr && validTargetObject2 != nullptr) {
+
+                DEBUG_LOG(("Attacking Air Targets1"));
+
+                if (turretAA1 != nullptr) {
+                  AIUpdateInterface* ai = turretAA1->getAI();
+                  if (ai != nullptr) {
+                    //ai->aiAttackObject(validTargetObject1, LOTS_OF_SHOTS, CMD_FROM_AI);
+                    DEBUG_LOG(("Attacking AA1"));
+                    ai->aiAttackPosition(validTargetObject1->getPosition(), LOTS_OF_SHOTS, CMD_FROM_AI);
+                  }
+                }
+                if (turretAA2 != nullptr) {
+                  AIUpdateInterface* ai = turretAA2->getAI();
+                  if (ai != nullptr) {
+                    //ai->aiAttackObject(validTargetObject1, LOTS_OF_SHOTS, CMD_FROM_AI);
+                    DEBUG_LOG(("Attacking AA2"));
+                    ai->aiAttackPosition(validTargetObject2->getPosition(), LOTS_OF_SHOTS, CMD_FROM_AI);
+                  }
+                }
+
+               
+              }
+            }
+
+          }
 
           // GATTLING TARGETING LOGIC------------------------------------------
-				  const ParticleSystemTemplate *tmp = data->m_gattlingStrafeFXParticleSystem;
+				  /*const ParticleSystemTemplate* tmp = data->m_gattlingStrafeFXParticleSystem;
 				  if (tmp && gattling && gattling->testStatus( OBJECT_STATUS_IS_FIRING_WEAPON) )
 				  {
 
@@ -638,29 +797,23 @@ UpdateSleepTime KodiakUpdate::update()
               delta.normalize();
               delta.scale( data->m_strafingIncrement );
               m_gattlingTargetPosition.add( &delta );
-            }
-
-
-			const Player *localPlayer = ThePlayerList->getLocalPlayer();
-
-			//Make sure the gunship is visible to the player before drawing effects.
-			if ( gunship->getShroudedStatus( localPlayer->getPlayerIndex() ) <= OBJECTSHROUD_PARTIAL_CLEAR )
-			{
-
-				// This makes the client smoke effects of the gattling cannon strafing the ground toward the attack position
-						  ParticleSystem *sys = TheParticleSystemManager->createParticleSystem(tmp);
-						  if (sys)
-				{
-				  Coord3D impactPosition;
-				  impactPosition.x = m_gattlingTargetPosition.x + GameClientRandomValueReal( -5.0f, 5.0f );
-				  impactPosition.y = m_gattlingTargetPosition.y + GameClientRandomValueReal( -5.0f, 5.0f );
-				  impactPosition.z = TheTerrainLogic->getGroundHeight( impactPosition.x, impactPosition.y );
-							  sys->setPosition( &impactPosition );
-
-				}
-			}
-
+            }*/
+          Coord3D delta = m_positionToShootAt;
+          delta.sub(&m_gattlingTargetPosition);
+          Real dist = delta.length();
+          if (dist < data->m_strafingIncrement)
+          {
+            m_gattlingTargetPosition = m_positionToShootAt;
+            ++m_okToFireHowitzerCounter;
           }
+          else
+          {
+            m_okToFireHowitzerCounter = ZERO;
+            delta.normalize();
+            delta.scale(data->m_strafingIncrement);
+            m_gattlingTargetPosition.add(&delta);
+          }
+
         }// end else
 
 
@@ -746,7 +899,7 @@ Bool KodiakUpdate::isFairDistanceFromShip( Object *target )
   shipToTargetDelta.y = gunshipPosition->y - targetPosition->y;
   shipToTargetDelta.z = 0.0f;
 
-  return (shipToTargetDelta.length() > getKodiakUpdateModuleData()->m_gunshipOrbitRadius * 0.75f );
+  return (shipToTargetDelta.length() > getKodiakUpdateModuleData()->m_gunshipOrbitRadius);
 
 }
 
@@ -800,10 +953,19 @@ void KodiakUpdate::disengageAndDepartAO( Object *gunship )
 
   }
 
+  //Disable all turrets
+  ContainModuleInterface* cmi = getObject()->getContain();
+  if (cmi != nullptr) {
+    ContainedItemsList* addOns = cmi->getAddOnList();
+    for (ContainedItemsList::iterator it = addOns->begin(); it != addOns->end(); it++) {
+      (*it)->setDisabled(DISABLED_PARALYZED);
+    }
+  }
 
-    Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
-    if ( gattling )
-      gattling->setDisabled ( DISABLED_PARALYZED );
+
+    //Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
+    //if ( gattling )
+    //  gattling->setDisabled ( DISABLED_PARALYZED );
 
 
     if ( shipAI)
