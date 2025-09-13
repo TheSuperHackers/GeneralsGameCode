@@ -1317,7 +1317,7 @@ void TexProjectClass::Pre_Render_Update(const Matrix3D & camera)
 	/*
 	** update the current intensity by iterating it towards the desired intensity
 	*/
-	float frame_time = (float)WW3D::Get_Frame_Time() / 1000.0f;
+	float frame_time = (float)WW3D::Get_Sync_Frame_Time() / 1000.0f;
 	float intensity_delta = DesiredIntensity - Intensity;
 	float max_intensity_delta = INTENSITY_RATE_OF_CHANGE * frame_time;
 

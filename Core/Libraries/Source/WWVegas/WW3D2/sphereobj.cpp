@@ -1108,7 +1108,7 @@ void SphereRenderObjClass::animate (void)
 			// Convert from milliseconds to seconds and normalize the time
 			//
 			if (AnimDuration > 0) {
-				float	frametime = WW3D::Get_Frame_Time();
+				float	frametime = WW3D::Get_Sync_Frame_Time();
 				frametime = (frametime * 0.001F) / AnimDuration;
 				anim_time += frametime;
 			} else {
