@@ -261,8 +261,8 @@ inline void Animatable3DObjClass::Anim_Update(const Matrix3D & root,HAnimClass *
 	** Apply motion to the base pose
 	*/
 	if ((motion) && (HTree)) {
-		if (ModeAnim.Motion->Class_ID() == HAnimClass::CLASSID_HRAWANIM)
-			HTree->Anim_Update(Transform,(HRawAnimClass*)ModeAnim.Motion,ModeAnim.Frame);
+		if (motion->Class_ID() == HAnimClass::CLASSID_HRAWANIM)
+			HTree->Anim_Update(root,(HRawAnimClass*)motion,frame);
 		else
 			HTree->Anim_Update(root,motion,frame);
 	}
