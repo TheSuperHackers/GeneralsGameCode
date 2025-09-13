@@ -615,6 +615,20 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				break;
 			}
 
+#if !RTS_GENERALS && RETAIL_COMPATIBLE_BUG
+			// TheSuperHackers @info
+			// This fixes the hack in addDrawableToList that restores the exploit that prevents cargo
+			// units from being properly selected when drag-selecting for non-alternate mouse mode where
+			// the same input is used for both selection and issuing enter commands.
+			if (isPoint && drawablesThatWillSelect.size() == 2)
+			{
+				DrawableListIt it = drawablesThatWillSelect.begin();
+
+				if (*it == *(++it))
+					drawablesThatWillSelect.pop_back();
+			}
+#endif
+
 			// if there were drawables in the region, then we should determine if there is a context
 			// sensitive command that should take place. If there is, then this isn't a selection thing
 			const DrawableList *currentList = TheInGameUI->getAllSelectedDrawables();
