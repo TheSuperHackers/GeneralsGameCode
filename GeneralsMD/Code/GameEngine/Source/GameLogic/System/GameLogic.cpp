@@ -237,6 +237,7 @@ GameLogic::GameLogic( void )
 	//
 
 	m_frame = 0;
+	m_hasUpdated = FALSE;
 	m_frameObjectsChangedTriggerAreas = 0;
 	m_width = 0;
 	m_height = 0;
@@ -271,6 +272,7 @@ GameLogic::GameLogic( void )
 void GameLogic::setDefaults( Bool loadingSaveGame )
 {
 	m_frame = 0;
+	m_hasUpdated = FALSE;
 	m_width = DEFAULT_WORLD_WIDTH;
 	m_height = DEFAULT_WORLD_HEIGHT;
 	m_objList = NULL;
@@ -1157,6 +1159,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 
 	// reset the frame counter
 	m_frame = 0;
+	m_hasUpdated = FALSE;
 
 #ifdef DEBUG_CRC
 	// TheSuperHackers @info helmutbuhler 04/09/2025
@@ -3863,6 +3866,7 @@ void GameLogic::update( void )
 	if (!m_startNewGame)
 	{
 		m_frame++;
+		m_hasUpdated = TRUE;
 	}
 }
 
@@ -3870,6 +3874,8 @@ void GameLogic::update( void )
 // ------------------------------------------------------------------------------------------------
 void GameLogic::preUpdate()
 {
+	m_hasUpdated = FALSE;
+
 	if (m_pauseFrame == m_frame && m_pauseFrame != 0)
 	{
 		m_pauseFrame = 0;

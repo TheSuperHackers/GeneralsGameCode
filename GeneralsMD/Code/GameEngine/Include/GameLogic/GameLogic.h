@@ -138,6 +138,7 @@ public:
 	Real getHeight( void );													///< Returns the height of the world
 
 	Bool isInGameLogicUpdate( void ) const { return m_isInUpdate; }
+	Bool hasUpdated() const { return m_hasUpdated; } ///< Returns true if the logic frame has advanced in the current client/render update
 	UnsignedInt getFrame( void );										///< Returns the current simulation frame number
 	UnsignedInt getCRC( Int mode = CRC_CACHED, AsciiString deepCRCFileName = AsciiString::TheEmptyString );		///< Returns the CRC
 
@@ -324,6 +325,7 @@ private:
 	Bool m_clearingGameData;
 
 	Bool m_isInUpdate;
+	Bool m_hasUpdated;
 
 	Int m_rankPointsToAddAtGameStart;
 

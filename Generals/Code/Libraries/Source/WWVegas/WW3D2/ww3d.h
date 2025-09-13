@@ -163,14 +163,14 @@ public:
 	static void Flip_To_Primary(void);
 
 	// TheSuperHackers @info Add amount of milliseconds that the simulation has advanced in this render frame.
-	// This can be a fraction of a logic step. It will call Sync on its own once an appropriate amount of time has passed.
+	// This can be a fraction of a logic step.
 	static void Update_Logic_Frame_Time(float milliseconds);
 	/*
 	** Timing
 	** By calling the Sync function, the application can move the ww3d library time forward.  This
 	** will control things like animated uv-offset mappers and render object animations.
 	*/
-	static void						Sync( unsigned int sync_time );
+	static void						Sync(bool step);
 	static unsigned int		Get_Sync_Time(void) { return SyncTime; }
 	static unsigned int		Get_Sync_Frame_Time(void) { return SyncTime - PreviousSyncTime; }
 	static float					Get_Logic_Frame_Time_Milliseconds() { return LogicFrameTimeMs; }

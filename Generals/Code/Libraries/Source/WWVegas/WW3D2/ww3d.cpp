@@ -1173,18 +1173,6 @@ void WW3D::Update_Logic_Frame_Time(float milliseconds)
 {
 	LogicFrameTimeMs = milliseconds;
 	FractionalSyncMs += milliseconds;
-	unsigned int integralSyncMs = (unsigned int)FractionalSyncMs;
-
-#if MSEC_PER_WWSYNC_FRAME
-	if (integralSyncMs < MSEC_PER_WWSYNC_FRAME)
-	{
-		Sync(SyncTime);
-		return;
-	}
-#endif
-
-	FractionalSyncMs -= integralSyncMs;
-	Sync(SyncTime + integralSyncMs);
 }
 
 
@@ -1200,12 +1188,17 @@ void WW3D::Update_Logic_Frame_Time(float milliseconds)
  * HISTORY:                                                                                    *
  *   3/24/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void WW3D::Sync(unsigned int sync_time)
+void WW3D::Sync(bool step)
 {
 	PreviousSyncTime = SyncTime;
-   SyncTime = sync_time;
-}
 
+	if (step)
+	{
+		unsigned int integralSyncMs = (unsigned int)FractionalSyncMs;
+		FractionalSyncMs -= integralSyncMs;
+		SyncTime += integralSyncMs;
+	}
+}
 
 /***********************************************************************************************
  * WW3D::Set_Ext_Swap_Interval -- Sets the swap interval the device should aim sync for.       *

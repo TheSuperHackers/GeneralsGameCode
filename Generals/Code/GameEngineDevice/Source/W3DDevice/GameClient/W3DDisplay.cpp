@@ -1733,6 +1733,10 @@ AGAIN:
 
 	WW3D::Update_Logic_Frame_Time(TheGameEngine->getLogicTimeStepMilliseconds());
 
+	// TheSuperHackers @info This binds the WW3D update to the logic update. This was originally 33 ms, ~30 fps, integer.
+	// Changing this will require tweaking all Drawable code that concerns the ww3d time step, including locomotion physics.
+	WW3D::Sync(TheGameLogic->hasUpdated());
+
 	static Int now;
 	now=timeGetTime();
 
