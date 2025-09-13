@@ -170,10 +170,10 @@ public:
 	** By calling the Sync function, the application can move the ww3d library time forward.  This
 	** will control things like animated uv-offset mappers and render object animations.
 	*/
-	static void					Sync( unsigned int sync_time );
+	static void						Sync( unsigned int sync_time );
 	static unsigned int		Get_Sync_Time(void) { return SyncTime; }
-   static unsigned int     Get_Frame_Time(void) { return SyncTime - PreviousSyncTime; }
-   static unsigned int     Get_Frame_Count(void) { return FrameCount; }
+	static unsigned int		Get_Sync_Frame_Time(void) { return SyncTime - PreviousSyncTime; }
+	static unsigned int		Get_Frame_Count(void) { return FrameCount; }
 	static unsigned int		Get_Last_Frame_Poly_Count(void);
 	static unsigned int		Get_Last_Frame_Vertex_Count(void);
 
@@ -326,16 +326,16 @@ private:
 	static float FractionalSyncMs;
 
 	// Timing info:
-   // The absolute synchronized frame time (in milliseconds) supplied by the
-   // application at the start of every frame. Note that wraparound cases
-   // etc. need to be considered.
-	static unsigned int				SyncTime;
+	// The absolute synchronized frame time (in milliseconds) supplied by the
+	// application at the start of every frame. Note that wraparound cases
+	// etc. need to be considered.
+	static unsigned int SyncTime;
 
-   // The previously set absolute sync time - this is used to get the interval between
-   // the most recently set sync time and the previous one. Assuming the
-   // application sets sync time at the start of every frame, this represents
-   // the frame interval.
-   static unsigned int           PreviousSyncTime;
+	// The previously set absolute sync time - this is used to get the interval between
+	// the most recently set sync time and the previous one. Assuming the
+	// application sets sync time at the start of every frame, this represents
+	// the frame interval.
+	static unsigned int PreviousSyncTime;
 
 	static float						PixelCenterX;
 	static float						PixelCenterY;

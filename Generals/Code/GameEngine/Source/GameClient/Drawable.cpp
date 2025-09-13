@@ -1264,7 +1264,7 @@ void Drawable::applyPhysicsXform(Matrix3D* mtx)
 	{
 		// TheSuperHackers @tweak Update the physics transform on every WW Sync only.
 		// All calculations are originally catered to a 30 fps logic step.
-		if (WW3D::Get_Frame_Time() != 0)
+		if (WW3D::Get_Sync_Frame_Time() != 0)
 		{
 			calcPhysicsXform(*m_physicsXform);
 		}

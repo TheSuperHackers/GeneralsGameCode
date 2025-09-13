@@ -549,7 +549,7 @@ void ParticleEmitterClass::Create_New_Particles(const Quaternion & curr_quat, co
 	// the previous interval when the last particle was emitted) is added to
 	// the size of the current frame to yield the time currently available
 	// for emitting particles.
-	unsigned int frametime = WW3D::Get_Frame_Time();
+	unsigned int frametime = WW3D::Get_Sync_Frame_Time();
 	// Since the particles are written into a wraparound buffer, we can take the time modulo a time
 	// constant which represents the time it takes to fill up the entire buffer with new particles.
 	// We will do this so we don't run into performance problems with very large frame times.

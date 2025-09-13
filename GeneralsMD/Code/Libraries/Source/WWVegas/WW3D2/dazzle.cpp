@@ -975,7 +975,7 @@ void DazzleRenderObjClass::Render(RenderInfoClass & rinfo)
 			const DazzleTypeClass* params=types[type];
 			params->Calculate_Intensities(dazzle_intensity,dazzle_size,current_halo_intensity,camera_dir,current_dir,dir,current_distance);
 
-			unsigned time_ms=WW3D::Get_Frame_Time();
+			unsigned time_ms=WW3D::Get_Sync_Frame_Time();
 			if (time_ms==0) time_ms=1;
 			float weight=pow(params->ic.history_weight,time_ms);
 
@@ -1047,9 +1047,6 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 	else {
 		screen_x_scale=h/w;
 	}
-
-//	unsigned time_ms=WW3D::Get_Frame_Time();
-//	if (time_ms==0) time_ms=1;
 
 	// Do NOT scale halo by current scale
 	// because it uses screen parallel primitives
@@ -1587,7 +1584,7 @@ void DazzleLayerClass::Render(CameraClass* camera)
 
 	camera->Apply();
 
-	unsigned time_ms=WW3D::Get_Frame_Time();
+	unsigned time_ms=WW3D::Get_Sync_Frame_Time();
 	if (time_ms==0) time_ms=1;
 
 	DX8Wrapper::Set_Material(NULL);
