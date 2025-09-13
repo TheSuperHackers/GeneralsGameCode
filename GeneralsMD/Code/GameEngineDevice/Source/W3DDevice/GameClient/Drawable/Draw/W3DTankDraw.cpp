@@ -310,6 +310,8 @@ void W3DTankDraw::onRenderObjRecreated(void)
 //-------------------------------------------------------------------------------------------------
 void W3DTankDraw::doDrawModule(const Matrix3D* transformMtx)
 {
+	W3DModelDraw::doDrawModule(transformMtx);
+
 	// TheSuperHackers @tweak Update the draw on every WW Sync only.
 	// All calculations are originally catered to a 30 fps logic step.
 	if (WW3D::Get_Sync_Frame_Time() == 0)
@@ -405,8 +407,6 @@ void W3DTankDraw::doDrawModule(const Matrix3D* transformMtx)
 			}
 		}
 	}
-
-	W3DModelDraw::doDrawModule(transformMtx);
 }
 
 // ------------------------------------------------------------------------------------------------
