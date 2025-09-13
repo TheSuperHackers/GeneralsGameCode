@@ -4360,8 +4360,8 @@ void Pathfinder::internal_classifyObjectFootprint( Object *obj, Bool insert )
 						if (l<m_extent.lo.y || l> m_extent.hi.y) continue;
 						if ((k==i) && (l==j)) continue;
 						if ((k!=i) && (l!=j)) continue;
-						if (m_map[k][l].getType()!=PathfindCell::CELL_CLEAR)) {
-							objectAdjacent = true;
+						if (m_map[k][l].getType()!=PathfindCell::CELL_CLEAR) {
+							obstacleAdjacent = true;
 							break;
 						}
 
