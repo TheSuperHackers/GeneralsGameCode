@@ -1731,7 +1731,7 @@ AGAIN:
 		}
 	}
 
-	WW3D::Add_Frame_Time(TheGameEngine->getLogicTimeStepMilliseconds());
+	WW3D::Update_Logic_Frame_Time(TheGameEngine->getLogicTimeStepMilliseconds());
 
 	static Int now;
 	now=timeGetTime();

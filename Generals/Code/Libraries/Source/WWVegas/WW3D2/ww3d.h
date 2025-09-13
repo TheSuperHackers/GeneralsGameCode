@@ -162,9 +162,9 @@ public:
 
 	static void Flip_To_Primary(void);
 
-	// TheSuperHackers @info Call this function to accumulate fractional render time.
-	// It will then call Sync with a new time on its own once an appropriate amount of time has passed.
-	static void Add_Frame_Time(float milliseconds);
+	// TheSuperHackers @info Add amount of milliseconds that the simulation has advanced in this render frame.
+	// This can be a fraction of a logic step. It will call Sync on its own once an appropriate amount of time has passed.
+	static void Update_Logic_Frame_Time(float milliseconds);
 	/*
 	** Timing
 	** By calling the Sync function, the application can move the ww3d library time forward.  This
@@ -173,6 +173,8 @@ public:
 	static void						Sync( unsigned int sync_time );
 	static unsigned int		Get_Sync_Time(void) { return SyncTime; }
 	static unsigned int		Get_Sync_Frame_Time(void) { return SyncTime - PreviousSyncTime; }
+	static float					Get_Logic_Frame_Time_Milliseconds() { return LogicFrameTimeMs; }
+	static float					Get_Logic_Frame_Time_Seconds() { return LogicFrameTimeMs * 0.001f; }
 	static unsigned int		Get_Frame_Count(void) { return FrameCount; }
 	static unsigned int		Get_Last_Frame_Poly_Count(void);
 	static unsigned int		Get_Last_Frame_Vertex_Count(void);
@@ -323,6 +325,10 @@ private:
 	static void					Allocate_Debug_Resources(void);
 	static void					Release_Debug_Resources(void);
 
+	// Logic frame time, in milliseconds
+	static float LogicFrameTimeMs;
+
+	// Accumulated synchronized frame time in milliseconds
 	static float FractionalSyncMs;
 
 	// Timing info:

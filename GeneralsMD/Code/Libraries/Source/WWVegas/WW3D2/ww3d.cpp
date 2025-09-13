@@ -166,6 +166,7 @@ const char* DAZZLE_INI_FILENAME="DAZZLE.INI";
 **
 ***********************************************************************************/
 
+float														WW3D::LogicFrameTimeMs = 33.33f;
 float															WW3D::FractionalSyncMs = 0.0f;
 unsigned int											WW3D::SyncTime = 0;
 unsigned int											WW3D::PreviousSyncTime = 0;
@@ -1163,8 +1164,9 @@ unsigned int WW3D::Get_Last_Frame_Vertex_Count(void)
 	return Debug_Statistics::Get_DX8_Vertices();
 }
 
-void WW3D::Add_Frame_Time(float milliseconds)
+void WW3D::Update_Logic_Frame_Time(float milliseconds)
 {
+	LogicFrameTimeMs = milliseconds;
 	FractionalSyncMs += milliseconds;
 	unsigned int integralSyncMs = (unsigned int)FractionalSyncMs;
 

@@ -156,8 +156,8 @@ void W3DSnowManager::reset( void )
 
 void W3DSnowManager::update(void)
 {
-
-	m_time += WW3D::Get_Sync_Frame_Time() / 1000.0f;
+	// TheSuperHackers @tweak The snow render update is now decoupled from the logic step.
+	m_time += WW3D::Get_Logic_Frame_Time_Seconds();
 
 	//find current time offset, adjusting for overflow
 	m_time=fmod(m_time,m_fullTimePeriod);
