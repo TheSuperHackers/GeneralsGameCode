@@ -41,6 +41,7 @@
 #include "Common/LatchRestore.h"
 #include "Common/MapObject.h"
 #include "Common/MultiplayerSettings.h"
+#include "Common/OSDisplay.h"
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -1126,6 +1127,8 @@ void GameLogic::setGameMode( GameMode mode )
 	m_gameMode = mode;
 
 	TheMouse->onGameModeChanged(prev, mode);
+
+	OSDisplaySetBusyState(isInInteractiveGame() && !isGamePaused());
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -4288,6 +4291,8 @@ void GameLogic::setGamePaused( Bool paused, Bool pauseMusic, Bool pauseInput )
 	pauseGameSound(paused);
 	pauseGameMusic(paused && pauseMusic);
 	pauseGameInput(paused && pauseInput);
+
+	OSDisplaySetBusyState(isInInteractiveGame() && !paused);
 }
 
 // ------------------------------------------------------------------------------------------------
