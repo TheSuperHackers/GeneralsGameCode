@@ -1146,13 +1146,9 @@ void RingRenderObjClass::animate()
 				InnerScaleChannel.Get_Key_Count () > 0 ||
 				OuterScaleChannel.Get_Key_Count () > 0)
 		{
-			//
-			// Convert from milliseconds to seconds and normalize the time
-			//
 			if (AnimDuration > 0) {
-				float	frametime = WW3D::Get_Sync_Frame_Time();
-				frametime = (frametime * 0.001F) / AnimDuration;
-				anim_time += frametime;
+				float frametime = WW3D::Get_Logic_Frame_Time_Seconds();
+				anim_time += frametime / AnimDuration;
 			} else {
 				anim_time = 1.0F;
 			}
