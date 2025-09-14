@@ -253,7 +253,7 @@ GameEngine::GameEngine( void )
 	// initialize to non garbage values
 	m_maxFPS = BaseFps;
 	m_logicTimeScaleFPS = LOGICFRAMES_PER_SECOND;
-	m_updateTime = 0.0f;
+	m_updateTime = 1.0f / BaseFps; // initialized to something to avoid division by zero on first use
 	m_logicTimeAccumulator = 0.0f;
 	m_quitting = FALSE;
 	m_isActive = FALSE;

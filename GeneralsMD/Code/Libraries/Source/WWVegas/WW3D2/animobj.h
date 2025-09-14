@@ -261,9 +261,11 @@ inline void Animatable3DObjClass::Anim_Update(const Matrix3D & root,HAnimClass *
 	** Apply motion to the base pose
 	*/
 	if ((motion) && (HTree)) {
+#if !WW3D_ENABLE_RAW_ANIM_INTERPOLATION
 		if (motion->Class_ID() == HAnimClass::CLASSID_HRAWANIM)
-			HTree->Anim_Update(root,(HRawAnimClass*)motion,frame);
+			HTree->Anim_Update_Without_Interpolation(root,(HRawAnimClass*)motion,frame);
 		else
+#endif
 			HTree->Anim_Update(root,motion,frame);
 	}
 	Set_Hierarchy_Valid(true);
