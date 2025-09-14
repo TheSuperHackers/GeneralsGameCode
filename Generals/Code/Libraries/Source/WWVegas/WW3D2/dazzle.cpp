@@ -940,8 +940,7 @@ void DazzleRenderObjClass::Render(RenderInfoClass & rinfo)
 			const DazzleTypeClass* params=types[type];
 			params->Calculate_Intensities(dazzle_intensity,dazzle_size,current_halo_intensity,camera_dir,current_dir,current_distance);
 
-			unsigned time_ms=WW3D::Get_Sync_Frame_Time();
-			if (time_ms==0) time_ms=1;
+			float time_ms=WW3D::Get_Logic_Frame_Time_Milliseconds();
 			float weight=pow(params->ic.history_weight,time_ms);
 
 			if (dazzle_intensity>0.0f) {
@@ -1477,9 +1476,6 @@ void DazzleLayerClass::Render(CameraClass* camera)
 	if (!camera) return;
 
 	camera->Apply();
-
-	unsigned time_ms=WW3D::Get_Sync_Frame_Time();
-	if (time_ms==0) time_ms=1;
 
 	DX8Wrapper::Set_Material(NULL);
 
