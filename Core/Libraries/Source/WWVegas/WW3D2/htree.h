@@ -100,7 +100,7 @@ public:
 	void					Anim_Update(		const Matrix3D &		root,
 													HAnimClass *			motion,
 													float						frame);
-	void					Anim_Update(const Matrix3D & root,HRawAnimClass * motion,float frame);
+	void					Anim_Update_Without_Interpolation(const Matrix3D & root,HRawAnimClass * motion,float frame);
 
 	void					Blend_Update(		const Matrix3D &		root,
 													HAnimClass *			motion0,

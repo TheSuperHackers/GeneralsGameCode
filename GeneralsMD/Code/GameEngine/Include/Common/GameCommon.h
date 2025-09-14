@@ -72,7 +72,7 @@
 enum
 {
 	BaseFps = 30, // The historic base frame rate for this game. This value must never change.
-	LOGICFRAMES_PER_SECOND = 30,
+	LOGICFRAMES_PER_SECOND = WWSyncPerSecond,
 	MSEC_PER_SECOND = 1000
 };
 const Real LOGICFRAMES_PER_MSEC_REAL = (((Real)LOGICFRAMES_PER_SECOND) / ((Real)MSEC_PER_SECOND));
