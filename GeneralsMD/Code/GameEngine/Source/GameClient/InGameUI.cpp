@@ -91,8 +91,17 @@
 
 
 // ------------------------------------------------------------------------------------------------
-static const Real placementOpacity = 0.45f;
-static const RGBColor illegalBuildColor = { 1.0, 0.0, 0.0 };
+
+// TheSuperHackers @info Note that the placement objects no longer draw shadows after a bug was
+// fixed in the drawable. If you want shadows, add it here, but beware that shadows on translucent
+// models may look a bit odd.
+static const UnsignedInt PlacementDrawableStatus = DRAWABLE_STATUS_NO_STATE_PARTICLES;
+
+// TheSuperHackers @tweak Changes the placement object opacity from 0.45 to increase its visibility
+// because they no longer cast dark shadows and are less visible that way.
+static const Real PlacementOpacity = 0.60f;
+
+static const RGBColor IllegalBuildColor = { 1.0, 0.0, 0.0 };
 
 //-------------------------------------------------------------------------------------------------
 /// The InGameUI singleton instance.
@@ -1523,8 +1532,9 @@ void InGameUI::handleBuildPlacements( void )
 																											 BuildAssistant::IGNORE_STEALTHED,
 																											 builderObject,
 																											 NULL );
+
 			if( lbc != LBC_OK )
-				m_placeIcon[ 0 ]->colorTint( &illegalBuildColor );
+				m_placeIcon[ 0 ]->colorTint( &IllegalBuildColor );
 			else
 				m_placeIcon[ 0 ]->colorTint( NULL );
 
@@ -1585,7 +1595,7 @@ void InGameUI::handleBuildPlacements( void )
 
 				if( m_placeIcon[ i ] == NULL )
 					m_placeIcon[ i ] = TheThingFactory->newDrawable( m_pendingPlaceType,
-																													 DRAWABLE_STATUS_NO_STATE_PARTICLES );
+																													 PlacementDrawableStatus );
 
 			}
 
@@ -1613,7 +1623,7 @@ void InGameUI::handleBuildPlacements( void )
 				m_placeIcon[ i ]->setPosition( &tileBuildInfo->positions[ i ] );
 
 				// set opacity for the drawble
-				m_placeIcon[ i ]->setDrawableOpacity( placementOpacity );
+				m_placeIcon[ i ]->setDrawableOpacity( PlacementOpacity );
 
 				// set the drawable angle
 				m_placeIcon[ i ]->setOrientation( angle );
@@ -3111,7 +3121,7 @@ void InGameUI::placeBuildAvailable( const ThingTemplate *build, Drawable *buildD
 //			TheInGameUI->deselectAllDrawables();
 
 			// create a drawble of what we are building to be "attached" at the cursor
-			draw = TheThingFactory->newDrawable( build, DRAWABLE_STATUS_NO_STATE_PARTICLES );
+			draw = TheThingFactory->newDrawable( build, PlacementDrawableStatus );
 			if (sourceObject)
 			{
 				if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
@@ -3136,7 +3146,7 @@ void InGameUI::placeBuildAvailable( const ThingTemplate *build, Drawable *buildD
 			draw->setOrientation( angle );
 
 			// set the build icon attached to the cursor to be "see-thru"
-			draw->setDrawableOpacity( placementOpacity );
+			draw->setDrawableOpacity( PlacementOpacity );
 
 			// set the "icon" in the icon array at the first index
 			DEBUG_ASSERTCRASH( m_placeIcon[ 0 ] == NULL, ("placeBuildAvailable, build icon array is not empty!") );
