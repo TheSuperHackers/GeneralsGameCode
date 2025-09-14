@@ -160,6 +160,8 @@ protected:
 
 	virtual void applyChronoParticleSystems(void);
 
+	inline const Armor getCurrentArmor() const { return m_curArmor; }
+
 private:
 
 	Real									m_currentHealth;				///< health of the object

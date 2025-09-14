@@ -737,7 +737,7 @@ private:
 
 	UnsignedInt		m_smcUntil;
 
-	enum { NUM_SLEEP_HELPERS = 8 };
+	enum { NUM_SLEEP_HELPERS = 9 };
 	ObjectRepulsorHelper*					m_repulsorHelper;
 	ObjectSMCHelper*							m_smcHelper;
 	ObjectWeaponStatusHelper*			m_wsHelper;
