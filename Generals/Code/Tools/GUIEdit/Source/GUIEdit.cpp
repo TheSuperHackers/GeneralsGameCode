@@ -486,8 +486,6 @@ void GUIEdit::init( void )
 	TheArchiveFileSystem = new Win32BIGFileSystem;
 	TheFileSystem->init();
 
-	TheGlobalLanguageData = new GlobalLanguage;
-	TheGlobalLanguageData->init();
 	//---------------------------------------------------------------------------
 	// GUI tool specific initializations ----------------------------------------
 	//---------------------------------------------------------------------------
@@ -510,9 +508,13 @@ void GUIEdit::init( void )
 	// Game engine specific initializations -------------------------------------
 	//---------------------------------------------------------------------------
 
-	// create the name key generator
+	// create the global data
 	TheWritableGlobalData = new GlobalData;
 	TheWritableGlobalData->init();
+
+	// TheSuperHackers @info global language relies on global data being initialized
+	TheGlobalLanguageData = new GlobalLanguage;
+	TheGlobalLanguageData->init();
 
 	// create the message stream
 	TheMessageStream = new MessageStream;
