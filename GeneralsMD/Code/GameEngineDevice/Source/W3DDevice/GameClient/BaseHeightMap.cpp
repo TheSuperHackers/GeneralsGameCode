@@ -2379,6 +2379,12 @@ void BaseHeightMapRenderObjClass::setTimeOfDay( TimeOfDay tod )
 }
 
 //=============================================================================
+Bool BaseHeightMapRenderObjClass::useCloud()
+{
+	return TheGlobalData->m_useCloudMap && TheGlobalData->m_timeOfDay != TIME_OF_DAY_NIGHT;
+}
+
+//=============================================================================
 // BaseHeightMapRenderObjClass::Notify_Added
 //=============================================================================
 /** W3D render object method, we use it to add ourselves to tthe update

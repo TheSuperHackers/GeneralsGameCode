@@ -81,9 +81,6 @@ public:
 	virtual Int freeMapResources(void);	///< free resources used to render heightmap
 	virtual void updateCenter(CameraClass *camera, RefRenderObjListIterator *pLightsIterator);
 
-	void renderExtraBlendTiles(void);			///< render 3-way blend tiles that have blend of 3 textures.
-
-
 	virtual void staticLightingChanged(void);
 	virtual	void adjustTerrainLOD(Int adj);
 	virtual void reset(void);
@@ -94,6 +91,8 @@ public:
 	virtual int updateBlock(Int x0, Int y0, Int x1, Int y1, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator);
 
 protected:
+	void renderExtraBlendTiles(void);			///< render 3-way blend tiles that have blend of 3 textures.
+
 	Int *m_extraBlendTilePositions;	///<array holding x,y tile positions of all extra blend tiles. (used for 3 textures per tile).
 	Int m_numExtraBlendTiles;		///<number of blend tiles in m_extraBlendTilePositions.
 	Int	m_numVisibleExtraBlendTiles; ///<number rendered last frame.
