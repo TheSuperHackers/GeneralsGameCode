@@ -341,15 +341,18 @@ Bool MultiAddOnContain::isPassengerAllowedToFire(ObjectID id) const
     return FALSE;
 
   //if (id == INVALID_ID && m_addOnList.size() > 0) {
-  //  return TRUE;  // This handles cases where we just check if we can attack at all.
+  // return TRUE; // This handles cases where we just check if we can attack at all.
   //}
 
-  // Wait, the portable structures aren't actually contained, so we skip this
-  //for (std::vector<AddOnSlotData>::iterator it = m_addOnSlots.begin(); it != m_addOnSlots.end(); ) {
-  //  if (*it->portableID == id && id != INVALID_ID) {
-  //    return TRUE;  // Portable structures can always fire
-  //  }
-  //}
+  // Wait, the portable structures aren't actually contained, so we skip this -- no we don't!
+  if (id != INVALID_ID)
+  {
+    for (Object* addOn : m_addOnList) {
+      if (addOn->getID() == id) {
+        return TRUE;
+      }
+    }
+  }
 
   return TransportContain::isPassengerAllowedToFire(id); //extend for everything else
 }

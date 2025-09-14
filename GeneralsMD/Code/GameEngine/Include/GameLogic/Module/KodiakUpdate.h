@@ -33,27 +33,33 @@ class KodiakUpdateModuleData : public ModuleData
 {
 public:
 	SpecialPowerTemplate *m_specialPowerTemplate;
-	WeaponTemplate	      *m_howitzerWeaponTemplate;
-//  AsciiString           m_gunshipTemplateName;
-  AsciiString           m_gattlingTemplateName;
-//  AsciiString           m_howitzerTemplateName;
+
   RadiusDecalTemplate   m_attackAreaDecalTemplate;
   RadiusDecalTemplate   m_targetingReticleDecalTemplate;
   UnsignedInt           m_orbitFrames;
-  UnsignedInt           m_howitzerFiringRate;
-  UnsignedInt           m_howitzerFollowLag;
+  UnsignedInt           m_mainTargetingRate;
+	UnsignedInt           m_sideTargetingRate;
+	UnsignedInt           m_aaTargetingRate;
+
   Real                  m_attackAreaRadius;
+	Real                  m_sideAttackAreaRadius;
+	Real                  m_aaAttackAreaRadius;
   Real                  m_targetingReticleRadius;
   Real                  m_gunshipOrbitRadius;
-  Real                  m_strafingIncrement;
-  Real                  m_orbitInsertionSlope;
-  Real                  m_randomOffsetForHowitzer;
+	Real									m_missileLockRadius;
+	UnsignedInt           m_numMainTurrets;
+	UnsignedInt           m_numSideTurrets;
+	UnsignedInt           m_numAATurrets;
 
-	const ParticleSystemTemplate * m_gattlingStrafeFXParticleSystem;
+	std::vector<Coord2D> m_scatterTargets;	///< targets for missile attack, amount of targets should match clip size of primary weapon
+
+	//const ParticleSystemTemplate * m_gattlingStrafeFXParticleSystem;
 
 	KodiakUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
+
+	static void parseScatterTarget(INI* ini, void* instance, void* /*store*/, const void* /*userData*/);
 private:
 
 };
@@ -102,7 +108,7 @@ public:
 
 	// Disabled conditions to process (termination conditions!)
 	virtual DisabledMaskType getDisabledTypesToProcess() const { return MAKE_DISABLED_MASK4( DISABLED_SUBDUED, DISABLED_UNDERPOWERED, DISABLED_EMP, DISABLED_HACKED ); }
-
+	static void parseScatterTarget(INI* ini, void* instance, void* /*store*/, const void* /*userData*/);
 protected:
 
   void setLogicalStatus( GunshipStatus newStatus ) { m_status = newStatus; }
@@ -130,16 +136,12 @@ protected:
   UnsignedInt     m_okToFireHowitzerCounter;
   UnsignedInt     m_orbitEscapeFrame;
 
-
 //  ObjectID        m_howitzerID;
   ObjectID        m_gattlingID;
 
 
 	RadiusDecal			m_attackAreaDecal;
 	RadiusDecal			m_targetingReticleDecal;
-
-
-
 
 #if defined TRACKERS
   RadiusDecal			m_howitzerTrackerDecal;
