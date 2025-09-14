@@ -3815,7 +3815,14 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 
 	Int i,j,devicePasses;
 	W3DShaderManager::ShaderTypes st;
-	Bool doCloud = TheGlobalData->m_useCloudMap;
+	const Bool doCloud = useCloud();
+
+	if (doCloud)
+	{
+		// TheSuperHackers @tweak Updates the cloud movement before applying it to the world.
+		// Is now decoupled from logic step.
+		W3DShaderManager::updateCloud();
+	}
 
 	Matrix3D tm(Transform);
 #if 0 // There is some weirdness sometimes with the dx8 static buffers.
@@ -3905,10 +3912,6 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	{
 		DX8Wrapper::Set_Material(m_vertexMaterialClass);
 		DX8Wrapper::Set_Shader(m_shaderClass);
-
-		if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT) {
-			doCloud = false;
-		}
 
  		st=W3DShaderManager::ST_TERRAIN_BASE; //set default shader
 
@@ -4454,10 +4457,7 @@ void HeightMapRenderObjClass::renderExtraBlendTiles(void)
 
 			W3DShaderManager::ShaderTypes st = W3DShaderManager::ST_ROAD_BASE;
 
-			Bool doCloud = TheGlobalData->m_useCloudMap;
-			if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT) {
-				doCloud = false;
-			}
+			const Bool doCloud = useCloud();
 
 			if (TheGlobalData->m_useLightMap && doCloud)
  			{
@@ -4485,4 +4485,10 @@ void HeightMapRenderObjClass::renderExtraBlendTiles(void)
 			W3DShaderManager::resetShader(st);
 		}
   }
+}
+
+//=============================================================================
+Bool HeightMapRenderObjClass::useCloud()
+{
+	return TheGlobalData->m_useCloudMap && TheGlobalData->m_timeOfDay != TIME_OF_DAY_NIGHT;
 }

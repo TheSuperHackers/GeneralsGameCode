@@ -328,6 +328,8 @@ protected:
 	void initDestAlphaLUT(void);	///<initialize water depth LUT stored in m_destAlphaTexture
 	void renderShoreLines(CameraClass *pCamera);	///<re-render parts of terrain that need custom blending into water edge
 	void renderShoreLinesSorted(CameraClass *pCamera);	///<optimized version for game usage.
+
+	static Bool useCloud();
 };
 
 extern BaseHeightMapRenderObjClass *TheTerrainRenderObject;

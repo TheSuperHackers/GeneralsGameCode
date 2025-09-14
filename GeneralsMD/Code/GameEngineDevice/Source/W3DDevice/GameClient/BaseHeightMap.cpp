@@ -3009,3 +3009,8 @@ void BaseHeightMapRenderObjClass::loadPostProcess( void )
 	// empty. jba [8/11/2003]
 }
 
+//=============================================================================
+Bool BaseHeightMapRenderObjClass::useCloud()
+{
+	return TheGlobalData->m_useCloudMap && TheGlobalData->m_timeOfDay != TIME_OF_DAY_NIGHT;
+}

@@ -1248,12 +1248,14 @@ class TerrainShader2Stage : public W3DShaderInterface
 public:
 	float m_xSlidePerSecond ;	 ///< How far the clouds move per second.
 	float m_ySlidePerSecond ;	 ///< How far the clouds move per second.
-	int	  m_curTick;
 	float m_xOffset;
 	float m_yOffset;
+
 	virtual Int set(Int pass);		///<setup shader for the specified rendering pass.
 	virtual Int init(void);			///<perform any one time initialization and validation
 	virtual void reset(void);		///<do any custom resetting necessary to bring W3D in sync.
+
+	void updateCloud();
 	void updateNoise1 (D3DXMATRIX *destMatrix,D3DXMATRIX *curViewInverse, Bool doUpdate=true);	///<generate the uv coordinates for Noise1 (i.e clouds)
 	void updateNoise2 (D3DXMATRIX *destMatrix,D3DXMATRIX *curViewInverse, Bool doUpdate=true);	///<generate the uv coordinates for Noise2 (i.e lightmap)
 } terrainShader2Stage;
@@ -1296,8 +1298,6 @@ Int TerrainShader2Stage::init( void )
 	//initialize settings for uv animated clouds
 	m_xSlidePerSecond = -0.02f;
 	m_ySlidePerSecond =  1.50f * m_xSlidePerSecond;
-	m_curTick = 0;
-	m_curTick = WW3D::Get_Sync_Time();//::GetTickCount();
 	m_xOffset = 0;
 	m_yOffset = 0;
 
@@ -1330,6 +1330,18 @@ void TerrainShader2Stage::reset(void)
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_PASSTHRU|1);
 }
 
+void TerrainShader2Stage::updateCloud()
+{
+	const float frame_time = WW3D::Get_Logic_Frame_Time_Seconds();
+	m_xOffset += m_xSlidePerSecond * frame_time;
+	m_yOffset += m_ySlidePerSecond * frame_time;
+
+	while (m_xOffset > 1) m_xOffset -= 1;
+	while (m_yOffset > 1) m_yOffset -= 1;
+	while (m_xOffset < -1) m_xOffset += 1;
+	while (m_yOffset < -1) m_yOffset += 1;
+}
+
 void TerrainShader2Stage::updateNoise1(D3DXMATRIX *destMatrix,D3DXMATRIX *curViewInverse, Bool doUpdate)
 {
 	#define STRETCH_FACTOR ((float)(1/(63.0*MAP_XY_FACTOR/2))) /* covers 63/2 tiles */
@@ -1340,26 +1352,6 @@ void TerrainShader2Stage::updateNoise1(D3DXMATRIX *destMatrix,D3DXMATRIX *curVie
 	*destMatrix = *curViewInverse * scale;
 
 	D3DXMATRIX offset;
-
-	Int delta = m_curTick;
-	m_curTick = WW3D::Get_Sync_Time();//::GetTickCount();
-	delta = m_curTick-delta;
-	m_xOffset += m_xSlidePerSecond*delta/1000;
-	m_yOffset += m_ySlidePerSecond*delta/1000;
-
-
-	//m_xOffset += m_xSlidePerSecond*delta/500;
-	//m_yOffset += m_ySlidePerSecond*delta/500;
-
-
-	//m_yOffset = sinf( (float)m_curTick * 0.0001f );
-	//m_xOffset = cosf( (float)m_curTick * 0.0001f );
-
-	if (m_xOffset > 1) m_xOffset -= 1;
-	if (m_yOffset > 1) m_yOffset -= 1;
-	if (m_xOffset < -1) m_xOffset += 1;
-	if (m_yOffset < -1) m_yOffset += 1;
-
 	D3DXMatrixTranslation(&offset, m_xOffset, m_yOffset,0);
 	*destMatrix *= offset;
 }
@@ -2445,6 +2437,12 @@ void W3DShaderManager::shutdown(void)
  			W3DFilters[i]->shutdown();
  		}
 	}
+}
+
+//=============================================================================
+void W3DShaderManager::updateCloud()
+{
+	terrainShader2Stage.updateCloud();
 }
 
 // W3DShaderManager::getShaderPasses =======================================================

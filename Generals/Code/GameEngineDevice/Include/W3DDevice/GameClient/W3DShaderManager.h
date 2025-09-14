@@ -75,6 +75,8 @@ public:
 	W3DShaderManager(void);	///<constructor
 	static void init( void );	///<determine optimal shaders for current device.
 	static void shutdown(void);	///<release resources used by shaders
+	static void updateCloud();	///<update the cloud position once every render frame.
+
 	static ChipsetType getChipset(void);	///<return current device chipset.
 	static Int getShaderPasses(ShaderTypes shader);	///<rendering passes required for shader
 	static Int setShader(ShaderTypes shader, Int pass);	///<enable specific shader pass.
