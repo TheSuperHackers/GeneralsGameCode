@@ -171,7 +171,7 @@ public:
 	TintEnvelope(void);
 	void update(void);  ///< does all the work
 	void play(const RGBColor *peak,
-						UnsignedInt atackFrames = DEF_ATTACK_FRAMES,
+						UnsignedInt attackFrames = DEF_ATTACK_FRAMES,
 						UnsignedInt decayFrames = DEF_DECAY_FRAMES,
 						UnsignedInt sustainAtPeak = DEF_SUSTAIN_FRAMES ); // ask MLorenzen
 	void sustain(void) { m_envState = ENVELOPE_STATE_SUSTAIN; }
@@ -234,7 +234,6 @@ enum DrawableStatus CPP_11(: DrawableStatusBits)
 	DRAWABLE_STATUS_NONE									= 0x00000000,		///< no status
 	DRAWABLE_STATUS_DRAWS_IN_MIRROR				=	0x00000001,		///< drawable can reflect
 	DRAWABLE_STATUS_SHADOWS								=	0x00000002,		///< use setShadowsEnabled() access method
-	DRAWABLE_STATUS_TINT_COLOR_LOCKED			=	0x00000004,		///< drawable tint color is "locked" and won't fade to normal
 	DRAWABLE_STATUS_NO_STATE_PARTICLES		= 0x00000008,		///< do *not* auto-create particle systems based on model condition
 	DRAWABLE_STATUS_NO_SAVE								= 0x00000010,		///< do *not* save this drawable (UI fluff only). ignored (error, actually) if attached to an object
 
@@ -388,7 +387,7 @@ public:
 
 	Bool getDrawsInMirror() const { return BitIsSet(m_status, DRAWABLE_STATUS_DRAWS_IN_MIRROR) || isKindOf(KINDOF_CAN_CAST_REFLECTIONS); }
 
-	void colorFlash( const RGBColor *color, UnsignedInt decayFrames = DEF_DECAY_FRAMES, UnsignedInt attackFrames = 0, UnsignedInt sustainAtPeak = FALSE );  ///< flash a drawable in the color specified for a short time
+	void colorFlash( const RGBColor *color, UnsignedInt decayFrames = DEF_DECAY_FRAMES, UnsignedInt attackFrames = 0, UnsignedInt sustainAtPeak = 0 );  ///< flash a drawable in the color specified for a short time
 	void colorTint( const RGBColor *color );	 ///< tint this drawable the color specified
 	void setTintEnvelope( const RGBColor *color, Real attack, Real decay );	 ///< how to transition color
 	void flashAsSelected( const RGBColor *color = NULL ); ///< drawable takes care of the details if you spec no color

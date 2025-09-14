@@ -149,7 +149,7 @@ UpdateSleepTime EMPUpdate::update( void )
 	{
 		RGBColor end = data->m_endColor;
 		saturateRGB( end, 5 );
-		dr->colorFlash( &end, 9999, m_tintEnvFadeFrames, TRUE );
+		dr->colorFlash( &end, 0, m_tintEnvFadeFrames, ~0u );
 		doDisableAttack();
 	}
 
