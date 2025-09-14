@@ -1849,7 +1849,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 			if (thingTemplate->isKindOf(KINDOF_OPTIMIZED_TREE)) {
 				// Opt trees and props just get drawables to tell the client about it, then deleted. jba [6/5/2003]
 				// This way there is no logic object to slow down partition manager and core logic stuff.
-				Drawable *draw = TheThingFactory->newDrawable(thingTemplate, DRAWABLE_STATUS_NONE);
+				Drawable *draw = TheThingFactory->newDrawable(thingTemplate);
 				if (draw) {
 					draw->setOrientation(angle);
 					draw->setPosition( &pos );
@@ -1900,8 +1900,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 			if (thingTemplate->isKindOf(KINDOF_OPTIMIZED_TREE)) {
 				// Opt trees and props just get drawables to tell the client about it, then deleted. jba [6/5/2003]
 				// This way there is no logic object to slow down partition manager and core logic stuff.
-
-				Drawable *draw = TheThingFactory->newDrawable(thingTemplate, DRAWABLE_STATUS_NONE);
+				Drawable *draw = TheThingFactory->newDrawable(thingTemplate);
 				if (draw) {
 					draw->setOrientation(angle);
 					draw->setPosition( &pos );
