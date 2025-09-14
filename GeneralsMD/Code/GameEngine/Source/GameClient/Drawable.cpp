@@ -340,7 +340,7 @@ void Drawable::saturateRGB(RGBColor& color, Real factor)
  * graphical side of a logical object, whereas GameLogic objects encapsulate
  * behaviors and physics.  */
 //-------------------------------------------------------------------------------------------------
-Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBits )
+Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatusInt statusBits )
 				: Thing( thingTemplate )
 {
 
@@ -491,6 +491,13 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 	{
 		for (Module** m = m_modules[i]; m && *m; ++m)
 			(*m)->onObjectCreated();
+	}
+
+	// TheSuperHackers @bugfix Match the shadow states of all draw modules with this drawable.
+	const Bool shadowsEnabled = getShadowsEnabled();
+	for (DrawModule** dm = getDrawModules(); *dm; ++dm)
+	{
+		(*dm)->setShadowsEnabled(shadowsEnabled);
 	}
 
 	m_groupNumber = NULL;

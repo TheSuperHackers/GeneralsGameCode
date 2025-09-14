@@ -228,7 +228,8 @@ enum StealthLookType CPP_11(: Int)
 // ------------------------------------------------------------------------------------------------
 /** Drawable status bits */
 // ------------------------------------------------------------------------------------------------
-enum DrawableStatus CPP_11(: Int)
+typedef UnsignedInt DrawableStatusInt;
+enum DrawableStatus CPP_11(: DrawableStatusInt)
 {
 	DRAWABLE_STATUS_NONE									= 0x00000000,		///< no status
 	DRAWABLE_STATUS_DRAWS_IN_MIRROR				=	0x00000001,		///< drawable can reflect
@@ -236,6 +237,8 @@ enum DrawableStatus CPP_11(: Int)
 	DRAWABLE_STATUS_TINT_COLOR_LOCKED			=	0x00000004,		///< drawable tint color is "locked" and won't fade to normal
 	DRAWABLE_STATUS_NO_STATE_PARTICLES		= 0x00000008,		///< do *not* auto-create particle systems based on model condition
 	DRAWABLE_STATUS_NO_SAVE								= 0x00000010,		///< do *not* save this drawable (UI fluff only). ignored (error, actually) if attached to an object
+
+	DRAWABLE_STATUS_DEFAULT = DRAWABLE_STATUS_SHADOWS,
 };
 
 enum TintStatus CPP_11(: Int)
@@ -291,7 +294,7 @@ class Drawable : public Thing,
 
 public:
 
-	Drawable( const ThingTemplate *thing, DrawableStatus statusBits = DRAWABLE_STATUS_NONE );
+	Drawable( const ThingTemplate *thing, DrawableStatusInt statusBits = DRAWABLE_STATUS_DEFAULT );
 
 	void onDestroy( void );																							///< run from GameClient::destroyDrawable
   void onLevelStart();                                                ///< run from GameLogic::startNewGame
@@ -669,7 +672,7 @@ private:
 
   DynamicAudioEventInfo *m_customSoundAmbientInfo; ///< If not NULL, info about the ambient sound to attach to this object
 
-	UnsignedInt m_status;				///< status bits (see DrawableStatus enum)
+	DrawableStatusInt m_status;			///< status bits (see DrawableStatus enum)
 	UnsignedInt m_tintStatus;				///< tint color status bits (see TintStatus enum)
 	UnsignedInt m_prevTintStatus;///< for edge testing with m_tintStatus
 
