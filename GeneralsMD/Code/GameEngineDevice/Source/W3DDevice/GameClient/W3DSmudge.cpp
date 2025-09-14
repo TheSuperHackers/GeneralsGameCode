@@ -75,6 +75,9 @@ void W3DSmudgeManager::ReleaseResources(void)
 //Make sure (SMUDGE_DRAW_SIZE * 12) < 65535 because that's the max index buffer size.
 #define SMUDGE_DRAW_SIZE	500	//draw at most 50 smudges per call. Tweak value to improve CPU/GPU parallelism.
 
+static_assert(SMUDGE_DRAW_SIZE * 12 < 65535, "Must not exceed the max index buffer size");
+
+
 void W3DSmudgeManager::ReAcquireResources(void)
 {
 	ReleaseResources();
@@ -462,12 +465,12 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 	DX8Wrapper::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);
-	DX8Wrapper::Apply_Render_State_Changes();
 
 	//Disable reading texture alpha since it's undefined.
 	//DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLOROP,D3DTOP_SELECTARG1);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAOP,D3DTOP_SELECTARG2);
 
+	Int smudgesBatchCount=0;
 	Int smudgesRemaining=count;
 	set=m_usedSmudgeSetList.Head();	//first smudge set that needs rendering.
 	Smudge	*remainingSmudgeStart=set->getUsedSmudgeList().Head();	//first smudge that needs rendering.
@@ -497,7 +500,8 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 
 					//Check if we exceeded maximum number of smudges allowed per draw call.
 					if (smudgesInRenderBatch >= count)
-					{	remainingSmudgeStart = smudge;
+					{
+						remainingSmudgeStart = smudge;
 						goto flushSmudges;
 					}
 
@@ -530,9 +534,10 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 				if (set)	//start next batch at beginning of set.
 					remainingSmudgeStart = set->getUsedSmudgeList().Head();
 			}
-flushSmudges:
-			DX8Wrapper::Set_Vertex_Buffer(vb_access);
 		}
+flushSmudges:
+		++smudgesBatchCount;
+		DX8Wrapper::Set_Vertex_Buffer(vb_access);
 
 		DX8Wrapper::Draw_Triangles(	0,smudgesInRenderBatch*4, 0, smudgesInRenderBatch*5);
 
@@ -546,6 +551,15 @@ flushSmudges:
 		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLOROP,D3DTOP_SELECTARG1);
 */
 		smudgesRemaining -= smudgesInRenderBatch;
+	}
+
+	// TheSuperHackers @bugfix xezon 15/06/2025 Draw a dummy point with the last vertex buffer
+	// to force the GPU to flush all current pipeline state and commit the previous draw call.
+	// This is required for some AMD models and drivers that refuse to flush a single draw call
+	// for the smudges. This draw call is invisible and harmless.
+	if (smudgesBatchCount == 1)
+	{
+		DX8Wrapper::_Get_D3D_Device8()->DrawPrimitive(D3DPT_POINTLIST, 0, 1);
 	}
 
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLOROP,D3DTOP_MODULATE);
