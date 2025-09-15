@@ -235,8 +235,7 @@ public:
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp == nullptr)
 		{
-			// no producer? just skip this step.
-			return STATE_SUCCESS;
+			return STATE_FAILURE;
 		}
 
 		// gotta reserve a space in order to reserve a runway
@@ -505,10 +504,9 @@ public:
 		jetAI->chooseLocomotorSet(LOCOMOTORSET_TAXIING);
 		DEBUG_ASSERTCRASH(jetAI->getCurLocomotor(), ("no loco"));
 
-		Object* airfield;
-		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID(), &airfield);
+		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp == nullptr)
-			return STATE_SUCCESS;	// no airfield? just skip this step.
+			return STATE_FAILURE;
 
 		ParkingPlaceBehaviorInterface::PPInfo ppinfo;
 		if (!pp->reserveSpace(jet->getID(), jetAI->friend_getParkingOffset(), &ppinfo))
@@ -747,7 +745,7 @@ public:
 
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp == nullptr)
-			return STATE_SUCCESS;	// no airfield? just skip this step
+			return STATE_FAILURE;
 
 		ParkingPlaceBehaviorInterface::PPInfo ppinfo;
 		if (!pp->reserveSpace(jet->getID(), jetAI->friend_getParkingOffset(), &ppinfo))
@@ -995,10 +993,9 @@ public:
 		loco->setUltraAccurate(true);
 		jetAI->ignoreObstacleID(jet->getProducerID());
 
-		Object* airfield;
-		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID(), &airfield);
+		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp == nullptr)
-			return STATE_SUCCESS;	// no airfield? just skip this step
+			return STATE_FAILURE;
 
 		Coord3D landingApproach;
 		if (jet->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
@@ -1698,19 +1695,6 @@ public:
 		setAdjustsDestination(false);		// precision is necessary
 
 		return AIInternalMoveToState::onEnter();
-	}
-
-	virtual StateReturnType update()
-	{
-		Object* jet = getMachineOwner();
-		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
-
-		if (!pp)
-		{
-			return STATE_FAILURE;
-		}
-
-		return AIInternalMoveToState::update();
 	}
 };
 EMPTY_DTOR(JetOrHeliReturnForLandingState)
