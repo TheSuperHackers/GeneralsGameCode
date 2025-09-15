@@ -63,4 +63,8 @@ enum OSDisplayOtherFlags CPP_11(: UnsignedInt)
 // This function will return the button pressed to close the dialog.
 OSDisplayButtonType OSDisplayWarningBox(AsciiString p, AsciiString m, UnsignedInt buttonFlags, UnsignedInt otherFlags);
 
+// TheSuperHackers @feature Tell the Operating System that the game is considered busy
+// and we would not like the display screen and/or system to shut off.
+void OSDisplaySetBusyState(Bool busyDisplay, Bool busySystem);
+
 #endif /* __OSDISPLAY_H__ */

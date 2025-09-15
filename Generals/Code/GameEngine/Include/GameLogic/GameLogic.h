@@ -173,6 +173,7 @@ public:
 	Bool isInInternetGame( void );
 	Bool isInShellGame( void );
 	Bool isInMultiplayerGame( void );
+	Bool isInInteractiveGame() const;
 
 	static Bool isInInteractiveGame(GameMode mode) { return mode != GAME_NONE && mode != GAME_SHELL; }
 
@@ -253,6 +254,8 @@ protected:
 	virtual void loadPostProcess( void );
 
 private:
+
+	void updateDisplayBusyState();
 
 	void pauseGameLogic(Bool paused);
 	void pauseGameSound(Bool paused);
@@ -397,6 +400,7 @@ inline GameMode GameLogic::getGameMode( void ) { return m_gameMode; }
 inline Bool GameLogic::isInLanGame( void ) { return (m_gameMode == GAME_LAN); }
 inline Bool GameLogic::isInSkirmishGame( void ) { return (m_gameMode == GAME_SKIRMISH); }
 inline Bool GameLogic::isInMultiplayerGame( void ) { return (m_gameMode == GAME_LAN) || (m_gameMode == GAME_INTERNET) ; }
+inline Bool GameLogic::isInInteractiveGame() const { return isInInteractiveGame(m_gameMode); }
 inline Bool GameLogic::isInReplayGame( void ) { return (m_gameMode == GAME_REPLAY); }
 inline Bool GameLogic::isInInternetGame( void ) { return (m_gameMode == GAME_INTERNET); }
 inline Bool GameLogic::isInShellGame( void ) { return (m_gameMode == GAME_SHELL); }
