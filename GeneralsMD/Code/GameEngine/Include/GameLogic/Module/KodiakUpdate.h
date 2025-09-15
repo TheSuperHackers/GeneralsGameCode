@@ -40,6 +40,8 @@ public:
   UnsignedInt           m_mainTargetingRate;
 	UnsignedInt           m_sideTargetingRate;
 	UnsignedInt           m_aaTargetingRate;
+	UnsignedInt						m_turretRecenterFramesBeforeExit;
+	UnsignedInt						m_initialAttackDelayFrames;
 
   Real                  m_attackAreaRadius;
 	Real                  m_sideAttackAreaRadius;
@@ -51,6 +53,7 @@ public:
 	UnsignedInt           m_numSideTurrets;
 	UnsignedInt           m_numAATurrets;
 
+	Real								 m_missileScatterRadius;
 	std::vector<Coord2D> m_scatterTargets;	///< targets for missile attack, amount of targets should match clip size of primary weapon
 
 	//const ParticleSystemTemplate * m_gattlingStrafeFXParticleSystem;
@@ -63,15 +66,6 @@ public:
 private:
 
 };
-
-//enum GunshipStatus CPP_11(: Int)
-//{
-//   GUNSHIP_STATUS_INSERTING,
-//   GUNSHIP_STATUS_ORBITING,
-//   GUNSHIP_STATUS_DEPARTING,
-//   GUNSHIP_STATUS_IDLE,
-//};
-
 
 //-------------------------------------------------------------------------------------------------
 /** The default	update module */
@@ -126,19 +120,13 @@ protected:
 
   Coord3D				m_initialTargetPosition;
 	Coord3D				m_overrideTargetDestination;
-  Coord3D       m_satellitePosition;
-  Coord3D       m_gattlingTargetPosition;
+  Coord3D       m_movementPosition;
   Coord3D       m_positionToShootAt;
 
 
 	GunshipStatus		m_status;
 
-  UnsignedInt     m_okToFireHowitzerCounter;
   UnsignedInt     m_orbitEscapeFrame;
-
-//  ObjectID        m_howitzerID;
-  ObjectID        m_gattlingID;
-
 
 	RadiusDecal			m_attackAreaDecal;
 	RadiusDecal			m_targetingReticleDecal;
@@ -148,10 +136,9 @@ protected:
 #endif
 
   AudioEventRTS m_afterburnerSound;
-  AudioEventRTS m_howitzerFireSound;
 
 };
 
 
-#endif // __SPECTRE_GUNSHIP_UPDATE_H_
+#endif // __KODIAK_UPDATE_H_
 

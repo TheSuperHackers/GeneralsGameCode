@@ -71,10 +71,13 @@ KodiakUpdateModuleData::KodiakUpdateModuleData()
   m_attackAreaRadius = 250.0f;
   m_sideAttackAreaRadius = 250.0f;
   m_aaAttackAreaRadius = 250.0f;
+  m_missileScatterRadius = 250.0f;
 
   m_numMainTurrets = 1;
   m_numSideTurrets = 0;
   m_numAATurrets = 0;
+  m_turretRecenterFramesBeforeExit = 0;
+  m_initialAttackDelayFrames = 0;
 }
 
 static Real zero = 0.0f;
@@ -98,10 +101,13 @@ static Real zero = 0.0f;
     { "MissileLockRadius",	            INI::parseReal,				            NULL, offsetof( KodiakUpdateModuleData, m_missileLockRadius) },
 		{ "AttackAreaDecal",		            RadiusDecalTemplate::parseRadiusDecalTemplate,	NULL, offsetof( KodiakUpdateModuleData, m_attackAreaDecalTemplate ) },
 		{ "TargetingReticleDecal",		      RadiusDecalTemplate::parseRadiusDecalTemplate,	NULL, offsetof( KodiakUpdateModuleData, m_targetingReticleDecalTemplate ) },
-    {"ScatterTarget",						KodiakUpdateModuleData::parseScatterTarget,			NULL,							0 },
+    { "ScatterTarget",						KodiakUpdateModuleData::parseScatterTarget,			NULL,							0 },
     { "MainTurrets",	                    INI::parseUnsignedInt,		NULL, offsetof(KodiakUpdateModuleData, m_numMainTurrets) },
     { "SideTurrets",	                    INI::parseUnsignedInt,		NULL, offsetof(KodiakUpdateModuleData, m_numSideTurrets) },
     { "AATurrets",	                    INI::parseUnsignedInt,		NULL, offsetof(KodiakUpdateModuleData, m_numAATurrets) },
+    { "MissileScatterRadius",	        INI::parseReal,		NULL, offsetof(KodiakUpdateModuleData, m_missileScatterRadius) },
+    { "TurretRecenterTimeBeforeExit", INI::parseDurationUnsignedInt,		NULL, offsetof(KodiakUpdateModuleData, m_turretRecenterFramesBeforeExit) },
+    { "InitialAttackDelay",           INI::parseDurationUnsignedInt,		NULL, offsetof(KodiakUpdateModuleData, m_initialAttackDelayFrames) },
 
 
     { 0, 0, 0, 0 }
@@ -126,19 +132,14 @@ static Real zero = 0.0f;
 KodiakUpdate::KodiakUpdate( Thing *thing, const ModuleData* moduleData ) : SpecialPowerUpdateModule( thing, moduleData )
 {
 	m_specialPowerModule = NULL;
-  m_gattlingID = INVALID_ID;
 	m_status = GUNSHIP_STATUS_IDLE;
 	m_initialTargetPosition.zero();
 	m_overrideTargetDestination.zero();
-  m_gattlingTargetPosition.zero();
   m_positionToShootAt.zero();
 	m_attackAreaDecal.clear();
 	m_targetingReticleDecal.clear();
   m_orbitEscapeFrame = 0;
 	m_afterburnerSound = *(getObject()->getTemplate()->getPerUnitSound("Afterburner"));
-	m_howitzerFireSound = *(getObject()->getTemplate()->getPerUnitSound("HowitzerFire"));
-
-  m_okToFireHowitzerCounter = 0;
 
 #if defined TRACKERS
 m_howitzerTrackerDecal.clear();
@@ -173,8 +174,7 @@ void KodiakUpdate::onObjectCreated()
 	}
 
 	m_specialPowerModule = obj->getSpecialPowerModule( data->m_specialPowerTemplate );
-  //m_satellitePosition.set( obj->getPosition() );
-  m_satellitePosition = Coord3D(0, 0, 0); // This is now the movement direction
+  m_movementPosition = Coord3D(0, 0, 0);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -192,7 +192,6 @@ Bool KodiakUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemplate *sp
 	{
 		m_initialTargetPosition.set( targetPos );
 		m_overrideTargetDestination.set( targetPos );
-    m_gattlingTargetPosition.set( targetPos );
 	}
 	else
 	{
@@ -372,13 +371,6 @@ UpdateSleepTime KodiakUpdate::update()
 #endif
 
       AIUpdateInterface *shipAI = gunship->getAIUpdateInterface();
-      AIUpdateInterface *gattlingAI = NULL;
-
-      Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
-      if ( gattling )
-      {
-				gattlingAI = gattling->getAIUpdateInterface();
-      }
 
       // get the turrets
       std::vector<Object*> turrets;
@@ -405,19 +397,19 @@ UpdateSleepTime KodiakUpdate::update()
 
         Coord3D zero_pos;
         zero_pos.zero();
-        if (m_satellitePosition.equals(zero_pos)) {
+        if (m_movementPosition.equals(zero_pos)) {
           // set the direction
           Coord3D direction = m_initialTargetPosition;
           direction.sub(gunship->getPosition());
           direction.z = zero;
           direction.normalize();
 
-          m_satellitePosition = direction;
-          m_satellitePosition.scale(200.0f);
+          m_movementPosition = direction;
+          m_movementPosition.scale(200.0f);
         }
 
         Coord3D target_move_location = *gunship->getPosition();
-        target_move_location.add(&m_satellitePosition);
+        target_move_location.add(&m_movementPosition);
         
         if ( shipAI)
         {
@@ -472,7 +464,7 @@ UpdateSleepTime KodiakUpdate::update()
       } // endif status == ORBITING || INSERTING
 
 
-      if ( m_status == GUNSHIP_STATUS_ORBITING )
+      if ( m_status == GUNSHIP_STATUS_ORBITING && TheGameLogic->getFrame() >= (m_orbitEscapeFrame - data->m_orbitFrames + data->m_initialAttackDelayFrames) ) // delay until attack
       {
         Object *validTargetObject = NULL;
 
@@ -487,6 +479,16 @@ UpdateSleepTime KodiakUpdate::update()
 
 
         }//endif escapeframe
+        else if (TheGameLogic->getFrame() >= m_orbitEscapeFrame - data->m_turretRecenterFramesBeforeExit) { 
+          for (auto& turret : turrets) {
+            AIUpdateInterface* ai = turret->getAI();
+            if (ai != nullptr) {
+              //ai->setTurretEnabled(WhichTurretType::TURRET_MAIN, false);
+              ai->aiAttackPosition(&m_initialTargetPosition, 0, CMD_FROM_AI);
+              ai->recenterTurret(WhichTurretType::TURRET_MAIN);
+            }
+          }
+        }
         else
         {
 
@@ -559,7 +561,7 @@ UpdateSleepTime KodiakUpdate::update()
             for (UnsignedInt i = 0; i < data->m_numMainTurrets; i++) {
               AIUpdateInterface* ai = turrets.at(i)->getAI();
               if (ai != nullptr) {
-                ai->aiAttackPosition(&m_overrideTargetDestination, LOTS_OF_SHOTS, CMD_FROM_AI);
+                ai->aiAttackPosition(&m_positionToShootAt, LOTS_OF_SHOTS, CMD_FROM_AI);
               }
             }
 
@@ -628,8 +630,6 @@ UpdateSleepTime KodiakUpdate::update()
             std::vector<Object*> targets;
             targets.reserve(data->m_numAATurrets);
 
-
-            // THIS WILL FIND A VALID TARGET WITHIN THE TARGETING RETICLE
             ObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(gunship->getPosition(),
               data->m_aaAttackAreaRadius,
               FROM_BOUNDINGSPHERE_2D,
@@ -669,13 +669,11 @@ UpdateSleepTime KodiakUpdate::update()
               if (!data->m_scatterTargets.empty()) {
                 size_t target_idx = shot_index % data->m_scatterTargets.size();
                 Coord2D scatterOffset = data->m_scatterTargets.at(target_idx);
-                DEBUG_LOG(("Shot Index: %d @ %f, %f", shot_index, scatterOffset.x, scatterOffset.y));
                 Coord3D targetPos = m_initialTargetPosition;
                 //Calculate Target from Scatter
 
-                //TODO IndividualScalar?
-                scatterOffset.x *= data->m_attackAreaRadius;
-                scatterOffset.y *= data->m_attackAreaRadius;
+                scatterOffset.x *= data->m_missileScatterRadius;
+                scatterOffset.y *= data->m_missileScatterRadius;
 
                 const Coord3D srcPos = *getObject()->getPosition();  
                 Real angle = 0.0f; // getObject()->getOrientation();
@@ -724,7 +722,6 @@ UpdateSleepTime KodiakUpdate::update()
 
                 if (targetLock != nullptr) {
                   weap->fireWeapon(getObject(), targetLock);
-                  //DEBUG_LOG(("TargetUnit: %s", targetLock->getTemplate()->getName().str()));
                 }
                 else {
                   weap->fireWeapon(getObject(), &targetPos);
@@ -830,11 +827,6 @@ void KodiakUpdate::cleanUp()
   m_attackAreaDecal.clear();
   m_targetingReticleDecal.clear();
 
-
-  Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
-  if ( gattling )
-    TheGameLogic->destroyObject( gattling );
-
 #if defined TRACKERS
 	 m_howitzerTrackerDecal.clear();
 #endif
@@ -867,21 +859,6 @@ void KodiakUpdate::disengageAndDepartAO( Object *gunship )
 
 
   }
-
-  //Disable all turrets
-  ContainModuleInterface* cmi = getObject()->getContain();
-  if (cmi != nullptr) {
-    ContainedItemsList* addOns = cmi->getAddOnList();
-    for (ContainedItemsList::iterator it = addOns->begin(); it != addOns->end(); it++) {
-      (*it)->setDisabled(DISABLED_PARALYZED);
-    }
-  }
-
-
-    //Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
-    //if ( gattling )
-    //  gattling->setDisabled ( DISABLED_PARALYZED );
-
 
     if ( shipAI)
     {
@@ -950,7 +927,7 @@ void KodiakUpdate::xfer( Xfer *xfer )
 	// The manual override target destination.
 	xfer->xferCoord3D( &m_overrideTargetDestination );
 	// The current move-to point of the gunship.
-	xfer->xferCoord3D( &m_satellitePosition );
+	xfer->xferCoord3D( &m_movementPosition );
 	// status
 	xfer->xferUser( &m_status, sizeof( GunshipStatus ) );
 
@@ -968,10 +945,7 @@ void KodiakUpdate::xfer( Xfer *xfer )
 
 	if( version >= 2 )
 	{
-		xfer->xferCoord3D( &m_gattlingTargetPosition );
 		xfer->xferCoord3D( &m_positionToShootAt );
-	  xfer->xferUnsignedInt( &m_okToFireHowitzerCounter );
-		xfer->xferObjectID( &m_gattlingID );
 	}
 
 }  // end xfer
