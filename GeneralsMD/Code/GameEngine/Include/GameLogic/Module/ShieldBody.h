@@ -47,11 +47,11 @@ public:
 
 	Bool m_startsActive;  ///< Initially active without upgrade;
 	Real m_shieldMaxHealth;  ///< MaxHealth of the shield
-	//Real m_shieldMaxHealthPercent;  ///< MaxHealth as percentage of activeBody MaxHealth (takes priority)
+	Real m_shieldMaxHealthPercent;  ///< MaxHealth as percentage of activeBody MaxHealth (takes priority)
 
-	UnsignedInt m_shieldRechargeDelay;  ///< frames of no damage taken until shield recharges
-	UnsignedInt m_shieldRechargeRate;   ///< every this often, we heal the shield ...
-	Real m_shieldRechargeAmount;					///< by this much.
+	//UnsignedInt m_shieldRechargeDelay;  ///< frames of no damage taken until shield recharges
+	//UnsignedInt m_shieldRechargeRate;   ///< every this often, we heal the shield ...
+	//Real m_shieldRechargeAmount;					///< by this much.
 	//Real m_shieldRechargeAmountPercent;		///< Same as above but percentage of shieldMaxHealth (takes priority)
 
 	DamageTypeFlags m_damageTypesToPassThrough;
@@ -91,6 +91,12 @@ public:
 	//void setConstructorObject( Object *obj );
 	//ObjectID getConstructorObjectID( void ) { return m_constructorObjectID; }
 
+	inline Real getShieldMaxHealth() const { return getShieldBodyModuleData()->m_shieldMaxHealth; }
+	inline Real getShieldCurrentHealth() const { return m_currentShieldHealth; }
+	Bool rechargeShieldHealth(Real amount);  ///< returns True if on full health;
+
+	Bool getShieldPercent(Real& percentage);
+
 protected:
 
 	virtual void attemptDamage(DamageInfo* damageInfo);		///< try to damage this object
@@ -99,7 +105,10 @@ protected:
 
 private:
 	Real									m_currentShieldHealth;
-	UnsignedInt           m_healingStepCountdown;
+
+	EnergyShieldBehavior* m_shieldBehaviorModule;
+
+	//UnsignedInt           m_healingStepCountdown;
 
 };
 

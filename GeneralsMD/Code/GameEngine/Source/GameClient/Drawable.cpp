@@ -2876,6 +2876,8 @@ void Drawable::drawIconUI( void )
 		//Moved this to last so that it shows up over contained and ammo icons.
 		drawVeterancy( healthBarRegion );
 
+		drawProgress( healthBarRegion );
+
 #ifdef KRIS_BRUTAL_HACK_FOR_AIRCRAFT_CARRIER_DEBUGGING
 		drawUIText();
 #endif
@@ -3098,6 +3100,54 @@ void Drawable::drawAmmo( const IRegion2D *healthBarRegion )
 
 		return;
 	}
+	}
+
+}
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void Drawable::drawProgress( const IRegion2D *healthBarRegion )
+{
+	if (!healthBarRegion)
+		return;
+
+	const Object* obj = getObject();
+
+	if (!(
+				TheGlobalData->m_showObjectHealth &&
+				(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) &&
+				// obj->getControllingPlayer() == ThePlayerList->getLocalPlayer()   // Shields are visible for all
+			))
+		return;
+
+	Real progress;
+	Int type;  //not used yet
+	if (!obj->getProgressBarShowingInfo(progress, type))
+		return;
+
+
+	Color color, outlineColor;
+
+	color = GameMakeColor(255, 255, 255, 255);  // white bar
+	outlineColor = GameMakeColor(255, 255, 255, 255);  // white outline
+
+
+	Real healthBoxWidth = healthBarRegion->hi.x - healthBarRegion->lo.x;
+
+	Real healthBoxHeight = max(3, healthBarRegion->hi.y - healthBarRegion->lo.y) * 1.5f;
+	Real healthBoxOutlineSize = 1.0f;
+
+	Real yOffset = 5;
+
+	// draw the health (actually ammo) box outline
+	TheDisplay->drawOpenRect(healthBarRegion->lo.x, healthBarRegion->lo.y + yOffset, healthBoxWidth, healthBoxHeight,
+		healthBoxOutlineSize, outlineColor);
+
+	if (progress > 0) {
+
+		// draw a filled bar for the ammo count
+		TheDisplay->drawFillRect(healthBarRegion->lo.x + 1, healthBarRegion->lo.y + yOffset + 1,
+			(healthBoxWidth - 2) * progress, healthBoxHeight - 2,
+			color);
 	}
 
 }

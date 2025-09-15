@@ -98,6 +98,7 @@
 #include "GameLogic/Module/ToppleUpdate.h"
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/UpgradeModule.h"
+#include "GameLogic/Module/EnergyShieldBehavior.h"
 
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
@@ -1501,6 +1502,30 @@ Bool Object::getAmmoPipShowingInfo(Int& numTotal, Int& numFull) const
 	{
 		return false;
 	}
+}
+
+//=============================================================================
+Bool Object::getProgressBarShowingInfo(Real& progress, Int& type) const
+{
+	// We put every case of Progress bars here.
+	// Maybe we should require a KindOf for performance?
+
+	type = 0;  // TODO
+
+	// Energy Shields
+	// TODO: This is kinda bad, there should be a better way to do this, if we have multiple shield sources.
+	// This should come from the Body?
+	EnergyShieldBehaviorInterface* esbi = NULL;
+
+	for (BehaviorModule** u = m_behaviors; *u; ++u)
+	{
+		if ((esbi = (*u)->getEnergyShieldBehaviorInterface()) != NULL) {
+			return esbi->getShieldPercent(progress);
+		}
+	}
+
+	return false;
+	
 }
 
 //=============================================================================

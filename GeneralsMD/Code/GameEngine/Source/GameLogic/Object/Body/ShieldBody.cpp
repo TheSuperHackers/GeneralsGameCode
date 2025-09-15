@@ -34,6 +34,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Damage.h"
 #include "GameLogic/Module/ShieldBody.h"
+#include "GameLogic/Module/EnergyShieldBehavior.h"
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
@@ -64,10 +65,10 @@ void ShieldBodyModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "ShieldMaxHealth",						INI::parseReal,						NULL,		offsetof(ShieldBodyModuleData, m_shieldMaxHealth) },
 		{ "ShieldMaxHealthPercent",				parseShieldHealthPercent,						NULL,	  0}, //	offsetof(ShieldBodyModuleData, m_shieldMaxHealthPercent) },
 
-		{ "ShieldRechargeDelay",		INI::parseDurationUnsignedInt,	NULL,		offsetof(ShieldBodyModuleData, m_shieldRechargeDelay) },
-		{ "ShieldRechargeRate",		INI::parseDurationUnsignedInt,	NULL,		offsetof(ShieldBodyModuleData, m_shieldRechargeRate) },
-		{ "ShieldRechargeAmount",	INI::parseReal,									NULL,		offsetof(ShieldBodyModuleData, m_shieldRechargeAmount) },
-		{ "ShieldRechargeAmountPercent",	parseShieldRechargeAmountPercent,	 NULL,		0}, //offsetof(ShieldBodyModuleData, m_shieldRechargeAmountPercent) },
+		//{ "ShieldRechargeDelay",		INI::parseDurationUnsignedInt,	NULL,		offsetof(ShieldBodyModuleData, m_shieldRechargeDelay) },
+		//{ "ShieldRechargeRate",		INI::parseDurationUnsignedInt,	NULL,		offsetof(ShieldBodyModuleData, m_shieldRechargeRate) },
+		//{ "ShieldRechargeAmount",	INI::parseReal,									NULL,		offsetof(ShieldBodyModuleData, m_shieldRechargeAmount) },
+		//{ "ShieldRechargeAmountPercent",	parseShieldRechargeAmountPercent,	 NULL,		0}, //offsetof(ShieldBodyModuleData, m_shieldRechargeAmountPercent) },
 
 		{ "DamageTypesToPassThroughShield",   INI::parseDamageTypeFlags, NULL, offsetof(ShieldBodyModuleData, m_damageTypesToPassThrough) },
 		{ 0, 0, 0, 0 }
@@ -84,22 +85,20 @@ void ShieldBodyModuleData::parseShieldHealthPercent(INI* ini, void* instance, vo
 	self->m_shieldMaxHealth = self->m_maxHealth * healthPercent;
 }
 //-------------------------------------------------------------------------------------------------
-void ShieldBodyModuleData::parseShieldRechargeAmountPercent(INI* ini, void* instance, void* store, const void* /*userData*/)
-{
-	ShieldBodyModuleData* self = (ShieldBodyModuleData*)instance;
-	Real amountPercent = INI::scanPercentToReal(ini->getNextToken());
-	self->m_shieldMaxHealth = self->m_shieldMaxHealth * amountPercent;
-}
+//void ShieldBodyModuleData::parseShieldRechargeAmountPercent(INI* ini, void* instance, void* store, const void* /*userData*/)
+//{
+//	ShieldBodyModuleData* self = (ShieldBodyModuleData*)instance;
+//	Real amountPercent = INI::scanPercentToReal(ini->getNextToken());
+//	self->m_shieldMaxHealth = self->m_shieldMaxHealth * amountPercent;
+//}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ShieldBody::ShieldBody( Thing *thing, const ModuleData* moduleData ) : ActiveBody( thing, moduleData )
 {
-	const ShieldBodyModuleData* data = getShieldBodyModuleData();
-	m_currentShieldHealth = data->m_shieldMaxHealth;
-	//m_constructorObjectID = INVALID_ID;
+	/*const ShieldBodyModuleData* data = getShieldBodyModuleData();
+	m_currentShieldHealth = data->m_shieldMaxHealth;*/
 
-	//setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 }  // end ShieldBody
 
 //-------------------------------------------------------------------------------------------------
@@ -139,6 +138,26 @@ ShieldBody::~ShieldBody( void )
 //}  // end update
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
+Bool ShieldBody::getShieldPercent(Real& percentage)
+{
+	// TODO:
+	//if (isActive()) {
+		const ShieldBodyModuleData* data = getShieldBodyModuleData();
+		percentage = m_currentShieldHealth / data->m_shieldMaxHealth;
+		return TRUE;
+	//}
+		//return FALSE;
+}
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+Bool ShieldBody::rechargeShieldHealth(Real amount)
+{
+	const ShieldBodyModuleData* data = getShieldBodyModuleData();
+	m_currentShieldHealth = MIN(data->m_shieldMaxHealth, m_currentShieldHealth + amount);
+	return m_currentShieldHealth >= data->m_shieldMaxHealth;
+}
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 void ShieldBody::attemptDamage(DamageInfo* damageInfo)
 {
 	validateArmorAndDamageFX();
@@ -158,17 +177,21 @@ void ShieldBody::attemptDamage(DamageInfo* damageInfo)
 	}
 
 	// Calculate Shield damage:
+	// TODO: If we have other ways to use the shield, we could add some conditions
+	EnergyShieldBehaviorInterface* esbi = getEnergyShieldBehaviorInterface();
+	if (!esbi) {
+		DEBUG_LOG(("ShieldBody::attemptDamage - Warning, no EnergyShieldBehaviorModule found."));
+		ActiveBody::attemptDamage(damageInfo);
+		return;
+	}
 	
 	Real damageToShield = getCurrentArmor().adjustDamage(damageInfo->in.m_damageType, damageInfo->in.m_amount);
 
 	Real remainingShieldHealth = m_currentShieldHealth - damageToShield;
 	m_currentShieldHealth = MAX(0, remainingShieldHealth);
 
-	if (remainingShieldHealth < data->m_shieldMaxHealth)
-	{
-		m_healingStepCountdown = data->m_shieldRechargeDelay;
-		//setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
-	}
+	// Apply  Damage to shield and Stop shield recharge - Notify shield behavior
+	esbi->applyDamage(MAX(0, damageToShield));
 
 	if (remainingShieldHealth < 0) {
 
@@ -213,7 +236,7 @@ void ShieldBody::xfer( Xfer *xfer )
 
 	// current shield health
 	xfer->xferReal(&m_currentShieldHealth);
-	xfer->xferUnsignedInt(&m_healingStepCountdown);
+	//xfer->xferUnsignedInt(&m_healingStepCountdown);
 
 	// constructor object id
 	//xfer->xferObjectID( &m_constructorObjectID );

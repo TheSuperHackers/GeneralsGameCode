@@ -51,6 +51,7 @@
 #include "GameLogic/Module/BridgeTowerBehavior.h"
 #include "GameLogic/Module/CountermeasuresBehavior.h"
 #include "GameLogic/Module/BattlePlanBonusBehavior.h"
+#include "GameLogic/Module/EnergyShieldBehavior.h"
 #include "GameLogic/Module/DumbProjectileBehavior.h"
 #include "GameLogic/Module/FreeFallProjectileBehavior.h"
 #include "GameLogic/Module/InstantDeathBehavior.h"
@@ -344,6 +345,7 @@ void ModuleFactory::init( void )
 	addModule( BridgeTowerBehavior );
 	addModule( CountermeasuresBehavior );
 	addModule( BattlePlanBonusBehavior );
+	addModule( EnergyShieldBehavior );
 	addModule( DumbProjectileBehavior );
 	addModule( FreeFallProjectileBehavior );
 	addModule( PhysicsBehavior );
