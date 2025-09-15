@@ -125,14 +125,11 @@ OSDisplayButtonType OSDisplayWarningBox(AsciiString p, AsciiString m, UnsignedIn
 }
 
 //-------------------------------------------------------------------------------------------------
-void OSDisplaySetBusyState(Bool busy)
+void OSDisplaySetBusyState(Bool busyDisplay, Bool busySystem)
 {
-	if (busy)
-	{
-		::SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
-	}
-	else
-	{
-		::SetThreadExecutionState(ES_CONTINUOUS);
-	}
+	EXECUTION_STATE state = ES_CONTINUOUS;
+	state |= busyDisplay ? ES_DISPLAY_REQUIRED : 0;
+	state |= busySystem ? ES_SYSTEM_REQUIRED : 0;
+
+	::SetThreadExecutionState(state);
 }

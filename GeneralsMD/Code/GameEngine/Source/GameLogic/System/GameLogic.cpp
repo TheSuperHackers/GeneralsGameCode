@@ -1121,6 +1121,16 @@ void GameLogic::deleteLoadScreen( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
+void GameLogic::updateDisplayBusyState()
+{
+	const Bool busySystem = isInInteractiveGame() && !isGamePaused();
+	const Bool busyDisplay = busySystem && !TheGlobalData->m_headless;
+
+	OSDisplaySetBusyState(busyDisplay, busySystem);
+}
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 void GameLogic::setGameMode( GameMode mode )
 {
 	GameMode prev = m_gameMode;
@@ -1128,7 +1138,7 @@ void GameLogic::setGameMode( GameMode mode )
 
 	TheMouse->onGameModeChanged(prev, mode);
 
-	OSDisplaySetBusyState(isInInteractiveGame() && !isGamePaused());
+	updateDisplayBusyState();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -4292,7 +4302,7 @@ void GameLogic::setGamePaused( Bool paused, Bool pauseMusic, Bool pauseInput )
 	pauseGameMusic(paused && pauseMusic);
 	pauseGameInput(paused && pauseInput);
 
-	OSDisplaySetBusyState(isInInteractiveGame() && !paused);
+	updateDisplayBusyState();
 }
 
 // ------------------------------------------------------------------------------------------------

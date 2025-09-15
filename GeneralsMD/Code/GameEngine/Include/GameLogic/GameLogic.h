@@ -273,6 +273,8 @@ protected:
 
 private:
 
+	void updateDisplayBusyState();
+
 	void pauseGameLogic(Bool paused);
 	void pauseGameSound(Bool paused);
 	void pauseGameMusic(Bool paused);
