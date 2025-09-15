@@ -903,7 +903,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			//added a preparse step for this flag because it affects window creation style
 			if (stricmp(token,"-win")==0)
 				ApplicationIsWindowed=true;
-			if(stricmp(token,"-noborder")==0)
+			if (stricmp(token,"-noborder")==0)
 				ApplicationIsBorderless=true;
 			token = nextParam(NULL, "\" ");	   
 		}
