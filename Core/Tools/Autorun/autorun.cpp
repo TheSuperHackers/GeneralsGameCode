@@ -252,7 +252,7 @@ enum
 	IDS_MAIN_WINDOW,
 
 
-	IDS_COUNT // keep this last
+	IDS_COUNT
 };
 */
 

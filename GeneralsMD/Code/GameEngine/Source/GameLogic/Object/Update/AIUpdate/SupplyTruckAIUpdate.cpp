@@ -396,7 +396,7 @@ SupplyTruckStateMachine::SupplyTruckStateMachine( Object *owner ) : StateMachine
 	{
 		StateConditionInfo(ownerIdle, ST_IDLE, NULL),
 		StateConditionInfo(ownerDocking, ST_DOCKING, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	static const StateConditionInfo idleConditions[] =
@@ -405,20 +405,20 @@ SupplyTruckStateMachine::SupplyTruckStateMachine( Object *owner ) : StateMachine
 		StateConditionInfo(isForcedIntoWantingState, ST_WANTING, NULL),
 		StateConditionInfo(ownerDocking, ST_DOCKING, NULL),
 		StateConditionInfo(ownerNotDockingOrIdle, ST_BUSY, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	static const StateConditionInfo wantingConditions[] =
 	{
 		StateConditionInfo(ownerDocking, ST_DOCKING, NULL),
 		StateConditionInfo(ownerNotDockingOrIdle, ST_BUSY, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	static const StateConditionInfo regroupingConditions[] =
 	{
 		StateConditionInfo(ownerPlayerCommanded, ST_BUSY, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	static const StateConditionInfo dockingConditions[] =
@@ -426,7 +426,7 @@ SupplyTruckStateMachine::SupplyTruckStateMachine( Object *owner ) : StateMachine
 		StateConditionInfo(isForcedIntoBusyState, ST_BUSY, NULL),
 		StateConditionInfo(ownerAvailableForSupplying, ST_WANTING, NULL),
 		StateConditionInfo(ownerNotDockingOrIdle, ST_BUSY, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	// order matters: first state is the default state.

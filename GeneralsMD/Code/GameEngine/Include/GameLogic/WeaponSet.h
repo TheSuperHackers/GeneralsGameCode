@@ -69,7 +69,7 @@ static const LookupListRec TheWeaponSlotTypeNamesLookupList[] =
 	{ "SECONDARY",	SECONDARY_WEAPON },
 	{ "TERTIARY",		TERTIARY_WEAPON },
 
-	{ NULL, 0	}// keep this last!
+	{ NULL, 0	}
 };
 
 #endif

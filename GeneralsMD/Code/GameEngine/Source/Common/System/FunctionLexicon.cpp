@@ -284,7 +284,7 @@ static FunctionLexicon::TableEntry winLayoutInitTable[] =
 	{ NAMEKEY_INVALID, "DifficultySelectInit",          DifficultySelectInit },
 	{ NAMEKEY_INVALID, "PopupReplayInit",							  PopupReplayInit },
 
-	{ NAMEKEY_INVALID, NULL,														NULL }  // keep this last
+	{ NAMEKEY_INVALID, NULL,														NULL }
 
 };
 
@@ -325,7 +325,7 @@ static FunctionLexicon::TableEntry winLayoutUpdateTable[] =
 	{ NAMEKEY_INVALID, "ScoreScreenUpdate",							ScoreScreenUpdate },
 	{ NAMEKEY_INVALID, "DownloadMenuUpdate",						DownloadMenuUpdate },
 	{ NAMEKEY_INVALID, "PopupReplayUpdate",							PopupReplayUpdate },
-	{ NAMEKEY_INVALID, NULL,														NULL }  // keep this last
+	{ NAMEKEY_INVALID, NULL,														NULL }
 
 };
 
@@ -366,7 +366,7 @@ static FunctionLexicon::TableEntry winLayoutShutdownTable[] =
 	{ NAMEKEY_INVALID, "ScoreScreenShutdown",						ScoreScreenShutdown },
 	{ NAMEKEY_INVALID, "DownloadMenuShutdown",          DownloadMenuShutdown },
 	{ NAMEKEY_INVALID, "PopupReplayShutdown",	          PopupReplayShutdown },
-	{ NAMEKEY_INVALID, NULL,														NULL }  // keep this last
+	{ NAMEKEY_INVALID, NULL,														NULL }
 
 };
 

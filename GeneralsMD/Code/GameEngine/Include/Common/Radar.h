@@ -76,7 +76,7 @@ enum RadarEventType CPP_11(: Int)
 	RADAR_EVENT_FAKE,					//Internally creates a radar event, but doesn't notify the player (unit lost
 														//for example, so we can use the spacebar to jump to the event).
 
- 	RADAR_EVENT_NUM_EVENTS  // keep this last
+ 	RADAR_EVENT_NUM_EVENTS
 
 };
 
@@ -142,7 +142,7 @@ enum RadarPriorityType CPP_11(: Int)
 	RADAR_PRIORITY_UNIT,						// unit level drawing priority
 	RADAR_PRIORITY_LOCAL_UNIT_ONLY,	// unit priority, but only on the radar if controlled by the local player
 
-	RADAR_PRIORITY_NUM_PRIORITIES		// keep this last
+	RADAR_PRIORITY_NUM_PRIORITIES
 };
 #ifdef DEFINE_RADAR_PRIORITY_NAMES
 static const char *RadarPriorityNames[] =
@@ -153,7 +153,7 @@ static const char *RadarPriorityNames[] =
 	"UNIT",													// unit level drawing priority
 	"LOCAL_UNIT_ONLY",							// unit priority, but only on the radar if controlled by the local player
 
-	NULL														// keep this last
+	NULL
 };
 #endif  // DEFINE_RADAR_PRIOTITY_NAMES
 

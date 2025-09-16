@@ -119,7 +119,7 @@ const FieldParse CommandButton::s_commandButtonFieldParseTable[] =
 	{ "RadiusCursorType",			INI::parseIndexList,				 TheRadiusCursorNames, offsetof( CommandButton, m_radiusCursor ) },
 	{ "UnitSpecificSound",		INI::parseAudioEventRTS,		 NULL, offsetof( CommandButton, m_unitSpecificSound ) },
 
-	{ NULL,						NULL,												 NULL, 0 }  // keep this last
+	{ NULL,						NULL,												 NULL, 0 }
 
 };
 static void commandButtonTooltip(GameWindow *window,
@@ -740,7 +740,7 @@ const FieldParse CommandSet::m_commandSetFieldParseTable[] =
 	{ "16",			CommandSet::parseCommandButton, (void *)15,		offsetof( CommandSet, m_command ) },
 	{ "17",			CommandSet::parseCommandButton, (void *)16,		offsetof( CommandSet, m_command ) },
 	{ "18",			CommandSet::parseCommandButton, (void *)17,		offsetof( CommandSet, m_command ) },
-	{ NULL,			NULL,														 NULL,				0	}  // keep this last
+	{ NULL,			NULL,														 NULL,				0	}
 
 };
 

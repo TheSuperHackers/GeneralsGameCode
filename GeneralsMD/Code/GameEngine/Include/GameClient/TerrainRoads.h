@@ -52,7 +52,8 @@ enum BridgeTowerType CPP_11(: Int)
 	BRIDGE_TOWER_FROM_RIGHT,
 	BRIDGE_TOWER_TO_LEFT,
 	BRIDGE_TOWER_TO_RIGHT,
-	BRIDGE_MAX_TOWERS				///< keep this last
+
+	BRIDGE_MAX_TOWERS
 };
 
 // ------------------------------------------------------------------------------------------------

@@ -68,7 +68,7 @@ enum XferMode CPP_11(: Int)
 	XFER_LOAD,
 	XFER_CRC,
 
-	NUM_XFER_TYPES  // please keep this last
+	NUM_XFER_TYPES
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -96,7 +96,7 @@ enum XferStatus CPP_11(: Int)
 
 	XFER_ERROR_UNKNOWN,									///< unknown error (isn't that useful!)
 
-	NUM_XFER_STATUS  // please keep this last
+	NUM_XFER_STATUS
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ enum XferOptions CPP_11(: UnsignedInt)
 	XO_NONE										= 0x00000000,
 	XO_NO_POST_PROCESSING			= 0x00000001,
 
-	XO_ALL										= 0xFFFFFFFF  // keep this last please
+	XO_ALL										= 0xFFFFFFFF
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

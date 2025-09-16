@@ -76,7 +76,7 @@ const FieldParse CreditsManager::m_creditsFieldParseTable[] =
 	{ "Blank",							CreditsManager::parseBlank,					NULL,	NULL  },
 	{ "Text",								CreditsManager::parseText,					NULL,	NULL  },
 
-	{ NULL,										NULL,													NULL, 0 }  // keep this last
+	{ NULL,										NULL,													NULL, 0 }
 
 };
 

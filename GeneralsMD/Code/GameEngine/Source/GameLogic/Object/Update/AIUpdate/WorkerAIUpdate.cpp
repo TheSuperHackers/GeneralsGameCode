@@ -1172,13 +1172,13 @@ WorkerStateMachine::WorkerStateMachine( Object *owner ) : StateMachine( owner, "
 	static const StateConditionInfo asDozerConditions[] =
 	{
 		StateConditionInfo(supplyTruckSubMachineWantsToEnter, AS_SUPPLY_TRUCK, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	static const StateConditionInfo asTruckConditions[] =
 	{
 		StateConditionInfo(supplyTruckSubMachineReadyToLeave, AS_DOZER, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	// order matters: first state is the default state.

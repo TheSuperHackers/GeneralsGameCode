@@ -104,7 +104,7 @@ enum RadiusCursorType CPP_11(: Int)
 	RADIUSCURSOR_AMBULANCE,
 
 
-	RADIUSCURSOR_COUNT	// keep last
+	RADIUSCURSOR_COUNT
 };
 
 #ifdef DEFINE_RADIUSCURSOR_NAMES
@@ -360,7 +360,6 @@ public:  // ********************************************************************
 		ACTIONTYPE_COMBATDROP_INTO,
 		ACTIONTYPE_SABOTAGE_BUILDING,
 
-		//Keep last.
 		NUM_ACTIONTYPES
 	};
 

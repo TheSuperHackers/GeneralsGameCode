@@ -177,7 +177,7 @@ AIGuardRetaliateMachine::AIGuardRetaliateMachine( Object *owner ) :
 	static const StateConditionInfo attackAggressors[] =
 	{
 		StateConditionInfo(hasAttackedMeAndICanReturnFire, AI_GUARD_RETALIATE_ATTACK_AGGRESSOR, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	// order matters: first state is the default state.

@@ -95,7 +95,7 @@ ColorControl colorControlTable[] =
 	{ BUTTON_COLOR, 0, },
 	{ BUTTON_BORDER_COLOR, 0 },
 
-	{ 0, { 0, 0, 0, 0 } }  // keep this last!
+	{ 0, { 0, 0, 0, 0 } }
 };
 
 ImageAndColorInfo imageAndColorTable[] =
@@ -373,7 +373,7 @@ ImageAndColorInfo imageAndColorTable[] =
 	{ GWS_USER_WINDOW, GENERIC_DISABLED, "[User]Disabled Surface", NULL, 0, 0 },
 	{ GWS_USER_WINDOW, GENERIC_HILITE, "[User]Hilite Surface", NULL, 0, 0 },
 
-	{ 0, IDENTIFIER_INVALID, NULL, NULL, 0, 0 }  // keep this last!
+	{ 0, IDENTIFIER_INVALID, NULL, NULL, 0, 0 }
 
 };
 

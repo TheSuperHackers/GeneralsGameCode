@@ -63,7 +63,7 @@ const FieldParse ControlBarResizer::m_controlBarResizerParseTable[] =
 {
 	{ "AltPosition",		INI::parseICoord2D,						NULL, offsetof( ResizerWindow, m_altPos ) },
 	{ "AltSize",				INI::parseICoord2D,						NULL, offsetof( ResizerWindow, m_altSize ) },
-	{ NULL,										NULL,													NULL, 0 }  // keep this last
+	{ NULL,										NULL,													NULL, 0 }
 
 };
 //-----------------------------------------------------------------------------

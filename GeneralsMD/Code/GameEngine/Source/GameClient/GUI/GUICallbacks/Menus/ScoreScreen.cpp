@@ -2115,7 +2115,8 @@ enum
 	USA_ENEMY,		// Keep friends with friends, enemys with enemys
 	CHINA_ENEMY,
 	GLA_ENEMY,
-	MAX_RELATIONS // keep me last
+
+	MAX_RELATIONS
 };
 /**	Grab the single player info */
 //-------------------------------------------------------------------------------------------------

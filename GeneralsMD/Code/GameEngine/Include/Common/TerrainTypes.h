@@ -89,8 +89,7 @@ typedef enum
 	TERRAIN_ACCENT_ROCK,
 	TERRAIN_URBAN,
 
-
-	TERRAIN_NUM_CLASSES  // keep this last
+	TERRAIN_NUM_CLASSES
 
 } TerrainClass;
 #ifdef DEFINE_TERRAIN_TYPE_NAMES

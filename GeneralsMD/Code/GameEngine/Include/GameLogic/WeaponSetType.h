@@ -59,7 +59,7 @@ enum WeaponSetType CPP_11(: Int)
 	WEAPONSET_RIDER7,
 	WEAPONSET_RIDER8,
 
-	WEAPONSET_COUNT			///< keep last, please
+	WEAPONSET_COUNT
 };
 
 #endif /* __WEAPONSETTYPE_H__ */

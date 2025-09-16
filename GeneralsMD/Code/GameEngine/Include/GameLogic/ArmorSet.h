@@ -55,7 +55,7 @@ enum ArmorSetType CPP_11(: Int)
 	ARMORSET_CRATE_UPGRADE_ONE, ///< Just like weaponset type from salvage.
 	ARMORSET_CRATE_UPGRADE_TWO,
 
-	ARMORSET_COUNT			///< keep last, please
+	ARMORSET_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------

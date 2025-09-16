@@ -51,7 +51,7 @@ enum NeutronBlast CPP_11(: Int)
 	NEUTRON_BLAST_8,
 	NEUTRON_BLAST_9,
 
-	MAX_NEUTRON_BLASTS  // keep this last
+	MAX_NEUTRON_BLASTS
 };
 
 // ------------------------------------------------------------------------------------------------

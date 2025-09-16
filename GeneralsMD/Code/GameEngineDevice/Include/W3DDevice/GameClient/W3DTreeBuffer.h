@@ -83,7 +83,7 @@ enum W3DToppleState CPP_11(: Int)
 	TOPPLE_UPRIGHT = 0,
 	TOPPLE_FALLING,
 	TOPPLE_FOGGED,
-	TOPPPLE_SHROUDED,
+	TOPPLE_SHROUDED, // unused
 	TOPPLE_DOWN
 };
 /// The individual data for a tree.

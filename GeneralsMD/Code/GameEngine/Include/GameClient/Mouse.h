@@ -249,7 +249,7 @@ public:
 
 
 		// ***** dont forget to update CursorININames[] *****
-		NUM_MOUSE_CURSORS  // keep this last
+		NUM_MOUSE_CURSORS
 
 	};
 
@@ -261,7 +261,7 @@ public:
 		RM_POLYGON,		//alpha blended polygon tied to frame rate.
 		RM_DX8,			//hardware cursor independent of frame rate.
 
-		RM_MAX	// keep this last.
+		RM_MAX
 	};
 
 	static const char *const CursorCaptureBlockReasonNames[];

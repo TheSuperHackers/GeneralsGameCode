@@ -225,7 +225,7 @@ private:
 		GARRISON_POINT_DAMAGED,
 		GARRISON_POINT_REALLY_DAMAGED,
 
-		MAX_GARRISON_POINT_CONDITIONS				///< leave this last
+		MAX_GARRISON_POINT_CONDITIONS
 	};
 
 	Team *							m_originalTeam;																///< our original team before we were garrisoned

@@ -203,7 +203,7 @@ void SpecialPowerStore::parseSpecialPowerDefinition( INI *ini )
 	{ "RadiusCursorRadius",				INI::parseReal,										NULL,	offsetof( SpecialPowerTemplate, m_radiusCursorRadius ) },
 	{ "ShortcutPower",						INI::parseBool,										NULL, offsetof( SpecialPowerTemplate, m_shortcutPower ) },
 	{ "AcademyClassify",					INI::parseIndexList,			TheAcademyClassificationTypeNames, offsetof( SpecialPowerTemplate, m_academyClassificationType ) },
-	{ NULL,	NULL, NULL,	0 }  // keep this last
+	{ NULL,	NULL, NULL,	0 }
 
 };
 

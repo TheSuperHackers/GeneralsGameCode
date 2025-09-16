@@ -52,7 +52,7 @@ enum EditorSortingType CPP_11(: Int)
 	ES_ROAD,						// road objects...should never actually be in the object panel.
 	ES_WAYPOINT,					// waypoint objects...should never actually be in the object panel.
 
-	ES_NUM_SORTING_TYPES      // keep this last
+	ES_NUM_SORTING_TYPES
 
 };
 #ifdef DEFINE_EDITOR_SORTING_NAMES

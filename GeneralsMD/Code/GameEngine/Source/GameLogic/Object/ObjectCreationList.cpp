@@ -1507,7 +1507,7 @@ static const FieldParse TheObjectCreationListFieldParse[] =
 	{ "DeliverPayload",		DeliverPayloadNugget::parse, 0, 0},
 	{ "FireWeapon",				FireWeaponNugget::parse, 0, 0},
 	{ "Attack",						AttackNugget::parse, 0, 0},
-	{ NULL, NULL, 0, 0 }  // keep this last
+	{ NULL, NULL, 0, 0 }
 };
 
 //-------------------------------------------------------------------------------------------------

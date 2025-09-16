@@ -271,7 +271,7 @@ AttackStateMachine::AttackStateMachine( Object *obj, AIAttackState* att, AsciiSt
 		StateConditionInfo(outOfWeaponRangeObject, AttackStateMachine::CHASE_TARGET, NULL),
 		StateConditionInfo(wantToSquishTarget, AttackStateMachine::CHASE_TARGET, NULL),
 		StateConditionInfo(cannotPossiblyAttackObject, EXIT_MACHINE_WITH_FAILURE, (void*)ATTACK_CONTINUED_TARGET),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	// we want to use the CONTINUE mode (not NEW) since we already have acquired the target.
@@ -280,7 +280,7 @@ AttackStateMachine::AttackStateMachine( Object *obj, AIAttackState* att, AsciiSt
 		StateConditionInfo(outOfWeaponRangeObject, AttackStateMachine::CHASE_TARGET, NULL),
 		StateConditionInfo(cannotPossiblyAttackObject, EXIT_MACHINE_WITH_FAILURE, (void*)ATTACK_CONTINUED_TARGET_FORCED),
 		StateConditionInfo(wantToSquishTarget, AttackStateMachine::CHASE_TARGET, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	const StateConditionInfo* objectConditions = forceAttacking ? objectConditionsForced : objectConditionsNormal;
@@ -288,7 +288,7 @@ AttackStateMachine::AttackStateMachine( Object *obj, AIAttackState* att, AsciiSt
 	static const StateConditionInfo positionConditions[] =
 	{
 		StateConditionInfo(outOfWeaponRangePosition, AttackStateMachine::CHASE_TARGET, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 #ifdef STATE_MACHINE_DEBUG
@@ -332,7 +332,7 @@ AttackStateMachine::AttackStateMachine( Object *obj, AIAttackState* att, AsciiSt
 			static const StateConditionInfo portableStructureChaseConditions[] =
 			{
 				StateConditionInfo(inWeaponRangeObject, AttackStateMachine::AIM_AT_TARGET, NULL),
-				StateConditionInfo(NULL, NULL, NULL)	// keep last
+				StateConditionInfo(NULL, NULL, NULL)
 			};
 
 			/* we're a rider on a mobile object, so we can't control our motion.

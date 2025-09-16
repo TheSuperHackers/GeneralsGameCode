@@ -356,7 +356,7 @@ static const FieldParse TheTemplateFieldParseTable[] =
 	{ "UIName",				INI::parseAsciiString,NULL,		offsetof( Template, m_uiName ) },
 	{ "UIName2",			INI::parseAsciiString,NULL,		offsetof( Template, m_uiName2 ) },
 	{ "HelpText",			INI::parseAsciiString,NULL,		offsetof( Template, m_helpText ) },
-	{ NULL,						NULL,									NULL, 0 }  // keep this last
+	{ NULL,						NULL,									NULL, 0 }
 };
 
 //-------------------------------------------------------------------------------------------------

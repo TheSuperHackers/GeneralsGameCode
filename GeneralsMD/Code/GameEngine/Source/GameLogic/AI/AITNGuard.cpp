@@ -152,7 +152,7 @@ AITNGuardMachine::AITNGuardMachine( Object *owner ) :
 	static const StateConditionInfo attackAggressors[] =
 	{
 		StateConditionInfo(hasAttackedMeAndICanReturnFire, AI_TN_GUARD_ATTACK_AGGRESSOR, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	// order matters: first state is the default state.

@@ -38,7 +38,7 @@ enum WeaponStatus CPP_11(: Int)
 	RELOADING_CLIP,
 	PRE_ATTACK,
 
-	WEAPON_STATUS_COUNT	// keep last
+	WEAPON_STATUS_COUNT
 };
 
 #endif /* __WEAPONSTATUS_H__ */

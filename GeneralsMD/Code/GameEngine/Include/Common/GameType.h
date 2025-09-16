@@ -74,7 +74,7 @@ enum TimeOfDay CPP_11(: Int)
 	TIME_OF_DAY_EVENING,
 	TIME_OF_DAY_NIGHT,
 
-	TIME_OF_DAY_COUNT					// keep this last
+	TIME_OF_DAY_COUNT
 };
 
 extern const char *TimeOfDayNames[];
@@ -86,7 +86,7 @@ enum Weather CPP_11(: Int)
 	WEATHER_NORMAL = 0,
 	WEATHER_SNOWY = 1,
 
-	WEATHER_COUNT					// keep this last
+	WEATHER_COUNT
 };
 
 extern const char *WeatherNames[];
@@ -176,7 +176,7 @@ enum WeaponSlotType CPP_11(: Int)
 	SECONDARY_WEAPON,
 	TERTIARY_WEAPON,
 
-	WEAPONSLOT_COUNT	// keep last
+	WEAPONSLOT_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------

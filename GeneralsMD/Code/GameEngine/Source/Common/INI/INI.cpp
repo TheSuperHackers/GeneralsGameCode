@@ -141,7 +141,7 @@ static const BlockParse theTypeTable[] =
 	{	"ScriptAction",				ScriptEngine::parseScriptAction },
 	{	"ScriptCondition",		ScriptEngine::parseScriptCondition },
 
-	{ NULL,									NULL },		// keep this last!
+	{ NULL,									NULL },
 };
 
 

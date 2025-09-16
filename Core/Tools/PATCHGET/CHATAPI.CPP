@@ -49,7 +49,8 @@ enum EVENT_TYPES
 {
   NOUPDATE_EVENT=0,    // don't need to update
   ABORT_EVENT,
-  NUM_EVENTS       // keep last
+
+  NUM_EVENTS
 };
 
 #if RTS_GENERALS

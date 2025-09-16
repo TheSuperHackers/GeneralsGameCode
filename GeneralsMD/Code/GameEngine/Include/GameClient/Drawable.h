@@ -103,7 +103,7 @@ enum DrawableIconType CPP_11(: Int)
 	ICON_ENTHUSIASTIC_SUBLIMINAL,
 	ICON_CARBOMB,
 
-	MAX_ICONS									///< keep this last
+	MAX_ICONS
 };
 
 //-----------------------------------------------------------------------------
@@ -271,7 +271,7 @@ enum TerrainDecalType CPP_11(: Int)
 	TERRAIN_DECAL_NONE,
 	TERRAIN_DECAL_SHADOW_TEXTURE,	//use the shadow texture as the terrain decal.
 
-	TERRAIN_DECAL_MAX	///< keep this last
+	TERRAIN_DECAL_MAX
 };
 
 //-----------------------------------------------------------------------------

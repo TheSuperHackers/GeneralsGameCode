@@ -197,7 +197,7 @@ static const FieldParse TheAIFieldParseTable[] =
  	{ "RetaliationFriendsRadius",	INI::parseReal,NULL,			offsetof( TAiData, m_retaliateFriendsRadius ) },
 
 
-	{ NULL,					NULL,						NULL,						0 }  // keep this last
+	{ NULL,					NULL,						NULL,						0 }
 
 };
 
@@ -217,7 +217,7 @@ void AI::parseSideInfo(INI *ini, void *instance, void* /*store*/, const void* /*
 			{ "SkillSet3",										AI::parseSkillSet,				NULL, offsetof( AISideInfo, m_skillSet3 ) },
 			{ "SkillSet4",										AI::parseSkillSet,				NULL, offsetof( AISideInfo, m_skillSet4 ) },
 			{ "SkillSet5",										AI::parseSkillSet,				NULL, offsetof( AISideInfo, m_skillSet5 ) },
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 
 	AISideInfo *resourceInfo = ((TAiData*)instance)->m_sideInfo;
@@ -242,7 +242,7 @@ void AI::parseSkillSet(INI *ini, void *instance, void* store, const void* /*user
 	static const FieldParse myFieldParse[] =
 		{
 			{ "Science",											AI::parseScience,					NULL, NULL },
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 
 	TSkillSet *skillset = ((TSkillSet*)store);
@@ -281,7 +281,7 @@ void AI::parseSkirmishBuildList(INI *ini, void *instance, void* /*store*/, const
 	static const FieldParse myFieldParse[] =
 		{
 			{ "Structure",			BuildListInfo::parseStructure,			NULL, NULL },
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 
 	AISideBuildList *build = newInstance(AISideBuildList)(faction);

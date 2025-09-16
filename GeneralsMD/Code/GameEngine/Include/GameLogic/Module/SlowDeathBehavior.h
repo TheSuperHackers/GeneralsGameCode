@@ -54,7 +54,7 @@ enum SlowDeathPhaseType CPP_11(: Int)
 	SDPHASE_MIDPOINT,
 	SDPHASE_FINAL,
 
-	SD_PHASE_COUNT	// keep last
+	SD_PHASE_COUNT
 };
 
 #ifdef DEFINE_SLOWDEATHPHASE_NAMES
