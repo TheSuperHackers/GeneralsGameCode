@@ -352,7 +352,7 @@ DEBUG_LOG(( "%d: GetGameAudioRandomValueReal = %f, %s line %d",
 
 /*static*/ const char *GameClientRandomVariable::DistributionTypeNames[] =
 {
-	"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS"
+	"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS", NULL
 };
 
 /**
@@ -397,7 +397,7 @@ Real GameClientRandomVariable::getValue( void ) const
 
 /*static*/ const char *GameLogicRandomVariable::DistributionTypeNames[] =
 {
-	"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS"
+	"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS", NULL
 };
 
 /**

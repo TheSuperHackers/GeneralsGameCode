@@ -713,6 +713,7 @@ static const char* DebrisDispositionNames[] =
 	"FLOATING",
 	"INHERIT_VELOCITY",
 	"WHIRLING",
+	NULL
 };
 
 std::vector<AsciiString>	debrisModelNamesGlobalHack;
