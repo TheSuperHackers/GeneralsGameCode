@@ -168,7 +168,6 @@ enum GameSpyBuddyStatus CPP_11(: Int) {
 	BUDDY_LOADING,
 	BUDDY_PLAYING,
 	BUDDY_MATCHING,
-	BUDDY_MAX
 };
 
 // ---------------------------------------------------

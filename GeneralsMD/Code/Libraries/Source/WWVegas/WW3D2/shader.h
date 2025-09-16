@@ -44,10 +44,6 @@
 
 #include "always.h"
 
-#if defined (SR_OS_SOLARIS)
-#undef PASS_MAX
-#endif
-
 class DX8Wrapper;
 struct W3dMaterial3Struct;
 class StringClass;
@@ -95,7 +91,6 @@ public:
 	{
 		ALPHATEST_DISABLE= 0,// disable alpha testing (default)
 		ALPHATEST_ENABLE,		// enable alpha testing
-		ALPHATEST_MAX			// end of enumeration
 	};
 
 	enum DepthCompareType
@@ -108,21 +103,18 @@ public:
 		PASS_NOTEQUAL,       // pass if incoming not equal to stored
 		PASS_GEQUAL,			// pass if incoming greater than or equal to stored
 		PASS_ALWAYS,			// pass always
-		PASS_MAX					// end of enumeration
 	};
 
 	enum DepthMaskType
 	{
 		DEPTH_WRITE_DISABLE=0,	// disable depth buffer writes
 		DEPTH_WRITE_ENABLE,		// enable depth buffer writes		(default)
-		DEPTH_WRITE_MAX			// end of enumeration
 	};
 
 	enum ColorMaskType
 	{
 		COLOR_WRITE_DISABLE=0,	// disable color buffer writes
 		COLOR_WRITE_ENABLE,		// enable color buffer writes		(default)
-		COLOR_WRITE_MAX			// end of enumeration
 	};
 
  	enum DetailAlphaFuncType
@@ -131,7 +123,6 @@ public:
 		DETAILALPHA_DETAIL,		// other
 		DETAILALPHA_SCALE,		// local * other
 		DETAILALPHA_INVSCALE,	// ~(~local * ~other) = local + (1-local)*other
-		DETAILALPHA_MAX			// end of enumeration
 	};
 
 	enum DetailColorFuncType
@@ -149,22 +140,18 @@ public:
 		DETAILCOLOR_ADDSIGNED2X,	// 1010	(local + other - 0.5) * 2
 		DETAILCOLOR_SCALE2X,			// 1011	local * other * 2
 		DETAILCOLOR_MODALPHAADDCOLOR,	// 1100 local + localAlpha * other
-
-		DETAILCOLOR_MAX				//			end of enumeration
 	};
 
 	enum CullModeType
 	{
 		CULL_MODE_DISABLE=0,
 		CULL_MODE_ENABLE,
-		CULL_MODE_MAX
 	};
 
 	enum NPatchEnableType
 	{
 		NPATCH_DISABLE=0,
 		NPATCH_ENABLE,
-		NPATCH_TYPE_MAX
 	};
 
   	enum DstBlendFuncType
@@ -184,7 +171,6 @@ public:
  		FOG_ENABLE,        	// apply fog, f*fogColor + (1-f)*fragment
  		FOG_SCALE_FRAGMENT,  // fog scalar value multiplies fragment, (1-f)*fragment
  		FOG_WHITE,				// fog scalar value replaces fragment, f*fogColor
-		FOG_MAX					// end of enumeration
  	};
 
  	enum PriGradientType
@@ -195,14 +181,12 @@ public:
 		GRADIENT_BUMPENVMAP,				// 011	environment-mapped bump mapping
 		GRADIENT_BUMPENVMAPLUMINANCE,	// 100	environment-mapped bump mapping with luminance control
 		GRADIENT_MODULATE2X,				// 101	modulate fragment ARGB by gradient ARGB and multiply RGB by 2
-		GRADIENT_MAX						// end of enumeration
  	};
 
 	enum SecGradientType
 	{
 		SECONDARY_GRADIENT_DISABLE=0,	// don't draw secondary gradient (default)
 		SECONDARY_GRADIENT_ENABLE,    // add secondary gradient RGB to fragment RGB
-		SECONDARY_GRADIENT_MAX			// end of enumeration
 	};
 
 	enum SrcBlendFuncType
@@ -218,7 +202,6 @@ public:
 	{
 		TEXTURING_DISABLE=0, // no texturing (treat fragment initial color as 1,1,1,1)
 		TEXTURING_ENABLE,    // enable texturing
-		TEXTURING_MAX			// end of enumeration
 	};
 
 	enum StaticSortCategoryType

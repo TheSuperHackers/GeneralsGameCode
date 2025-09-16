@@ -53,7 +53,6 @@ public:
 		BUDDYREQUEST_DENYADD,			// don't allow someone to add you to their buddy list
 		BUDDYREQUEST_SETSTATUS,		// Set our status
 		BUDDYREQUEST_DELETEACCT,	// Delete our account
-		BUDDYREQUEST_MAX
 	} buddyRequestType;
 
 	union
@@ -106,7 +105,6 @@ public:
 		BUDDYRESPONSE_MESSAGE,
 		BUDDYRESPONSE_REQUEST,
 		BUDDYRESPONSE_STATUS,
-		BUDDYRESPONSE_MAX
 	} buddyResponseType;
 
 	GPProfile profile;

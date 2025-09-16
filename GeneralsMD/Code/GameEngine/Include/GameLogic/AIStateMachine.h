@@ -106,8 +106,6 @@ enum AIStateType CPP_11(: Int)
 	AI_BUSY,																	///< This is a state that things will be in when they are busy doing random stuff that doesn't require AI interaction.
 	AI_EXIT_INSTANTLY,												///< exit this obj, without waiting -- do it in the onEnter! This frame!
 	AI_GUARD_RETALIATE,												///< attacks attacker but with restrictions (hybrid of attack and guard).
-
-	NUM_AI_STATES
 };
 
 //-----------------------------------------------------------------------------------------------------------
@@ -202,7 +200,6 @@ enum StateType CPP_11(: Int)
 		APPROACH_TARGET,											///< Approach a non-moving target.
 		AIM_AT_TARGET,												///< rotate to face GoalObject or GoalPosition
 		FIRE_WEAPON,													///< fire the machine owner's current weapon
-		NUM_ATTACK_STATES
 	};
 	AttackStateMachine( Object *owner, AIAttackState* att, AsciiString name, Bool follow, Bool attackingObject, Bool forceAttacking );
 

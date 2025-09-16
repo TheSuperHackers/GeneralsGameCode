@@ -75,7 +75,6 @@ public:
 		LANCHAT_NORMAL = 0,
 		LANCHAT_EMOTE,
 		LANCHAT_SYSTEM,
-		LANCHAT_MAX
 	};
 
 	// Request functions generate network traffic
@@ -110,7 +109,6 @@ public:
 		RET_GAME_GONE,			// OnGameJoin
 		RET_BUSY,						// OnGameCreate/Join/etc if another action is in progress
 		RET_UNKNOWN,				// Default message for oddity
-		RET_MAX
 	};
 	UnicodeString getErrorStringFromReturnType( ReturnType ret );
 
@@ -220,7 +218,6 @@ protected:
 		ACT_JOIN,
 		ACT_JOINDIRECTCONNECT,
 		ACT_LEAVE,
-		ACT_MAX
 	};
 
 	static const UnsignedInt s_resendDelta; // in ms
@@ -319,8 +316,6 @@ struct LANMessage
 		MSG_INACTIVE,						///< I've alt-tabbed out.  Unaccept me cause I'm a poo-flinging monkey.
 
 		MSG_REQUEST_GAME_INFO,	///< For direct connect, get the game info from a specific IP Address
-
-		MSG_MAX
 	} LANMessageType;
 
 	WideChar name[g_lanPlayerNameLength+1]; ///< My name, for convenience

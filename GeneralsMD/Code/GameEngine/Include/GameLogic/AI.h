@@ -413,8 +413,6 @@ enum AICommandType CPP_11(: Int)	// Stored in save file, do not reorder/renumber
 	AICMD_EVACUATE_INSTANTLY,
 	AICMD_EXIT_INSTANTLY,
 	AICMD_GUARD_RETALIATE,
-
-	AICMD_NUM_COMMANDS	// keep last
 };
 
 struct AICommandParms

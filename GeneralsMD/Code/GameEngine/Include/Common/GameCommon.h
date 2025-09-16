@@ -166,8 +166,6 @@ enum CellShroudStatus CPP_11(: Int)
 	CELLSHROUD_CLEAR,
 	CELLSHROUD_FOGGED,
 	CELLSHROUD_SHROUDED,
-
-	CELLSHROUD_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -180,8 +178,6 @@ enum ObjectShroudStatus CPP_11(: Int)
 	OBJECTSHROUD_FOGGED,				///< object is completely fogged
 	OBJECTSHROUD_SHROUDED,			///< object is completely shrouded
 	OBJECTSHROUD_INVALID_BUT_PREVIOUS_VALID,			///< indeterminate state, will recompute, BUT previous status is valid, don't reset (used for save/load)
-
-	OBJECTSHROUD_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------

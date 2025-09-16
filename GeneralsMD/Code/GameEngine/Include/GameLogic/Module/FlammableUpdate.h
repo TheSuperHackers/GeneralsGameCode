@@ -45,8 +45,6 @@ enum FlammabilityStatusType CPP_11(: Int)
 	FS_NORMAL = 0,
 	FS_AFLAME,
 	FS_BURNED,
-
-	FS_NORMAL_COUNT	// keep last
 };
 
 //-------------------------------------------------------------------------------------------------
