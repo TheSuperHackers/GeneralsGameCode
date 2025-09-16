@@ -90,7 +90,7 @@ static Int lookAtPlayerID = 0;
 static std::string lookAtPlayerName;
 
 
-static const char *rankNames[] = {
+static const char *const rankNames[] = {
 	"Private",
 	"Corporal",
 	"Sergeant",
@@ -102,6 +102,7 @@ static const char *rankNames[] = {
 	"Brigadier",
 	"Commander",
 };
+static_assert(ARRAY_SIZE(rankNames) == MAX_RANKS, "Incorrect array size");
 
 
 static const Image* lookupRankImage(AsciiString side, Int rank)

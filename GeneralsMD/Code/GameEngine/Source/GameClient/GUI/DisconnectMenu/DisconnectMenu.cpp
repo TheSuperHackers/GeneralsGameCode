@@ -34,7 +34,7 @@
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkInterface.h"
 
-const char *DisconnectMenu::m_playerNameTextControlNames[] = {
+const char *const DisconnectMenu::m_playerNameTextControlNames[] = {
 	"DisconnectScreen.wnd:StaticPlayer1Name",
 	"DisconnectScreen.wnd:StaticPlayer2Name",
 	"DisconnectScreen.wnd:StaticPlayer3Name",
@@ -45,7 +45,7 @@ const char *DisconnectMenu::m_playerNameTextControlNames[] = {
 	NULL
 };
 
-const char *DisconnectMenu::m_playerTimeoutTextControlNames[] = {
+const char *const DisconnectMenu::m_playerTimeoutTextControlNames[] = {
 	"DisconnectScreen.wnd:StaticPlayer1Timeout",
 	"DisconnectScreen.wnd:StaticPlayer2Timeout",
 	"DisconnectScreen.wnd:StaticPlayer3Timeout",
@@ -56,7 +56,7 @@ const char *DisconnectMenu::m_playerTimeoutTextControlNames[] = {
 	NULL
 };
 
-const char *DisconnectMenu::m_playerVoteButtonControlNames[] = {
+const char *const DisconnectMenu::m_playerVoteButtonControlNames[] = {
 	"DisconnectScreen.wnd:ButtonKickPlayer1",
 	"DisconnectScreen.wnd:ButtonKickPlayer2",
 	"DisconnectScreen.wnd:ButtonKickPlayer3",
@@ -67,7 +67,7 @@ const char *DisconnectMenu::m_playerVoteButtonControlNames[] = {
 	NULL
 };
 
-const char *DisconnectMenu::m_playerVoteCountControlNames[] = {
+const char *const DisconnectMenu::m_playerVoteCountControlNames[] = {
 	"DisconnectScreen.wnd:StaticPlayer1Votes",
 	"DisconnectScreen.wnd:StaticPlayer2Votes",
 	"DisconnectScreen.wnd:StaticPlayer3Votes",
@@ -78,9 +78,9 @@ const char *DisconnectMenu::m_playerVoteCountControlNames[] = {
 	NULL
 };
 
-const char *DisconnectMenu::m_packetRouterTimeoutControlName = "DisconnectScreen.wnd:StaticPacketRouterTimeout";
-const char *DisconnectMenu::m_packetRouterTimeoutLabelControlName = "DisconnectScreen.wnd:StaticPacketRouterTimeoutLabel";
-const char *DisconnectMenu::m_textDisplayControlName = "DisconnectScreen.wnd:ListboxTextDisplay";
+const char *const DisconnectMenu::m_packetRouterTimeoutControlName = "DisconnectScreen.wnd:StaticPacketRouterTimeout";
+const char *const DisconnectMenu::m_packetRouterTimeoutLabelControlName = "DisconnectScreen.wnd:StaticPacketRouterTimeoutLabel";
+const char *const DisconnectMenu::m_textDisplayControlName = "DisconnectScreen.wnd:ListboxTextDisplay";
 
 static const Color chatNormalColor =  GameMakeColor(255,0,0,255);
 

@@ -46,6 +46,8 @@ public:
 		ANIM_MODE_LOOP_PINGPONG,
 		ANIM_MODE_LOOP_BACKWARDS,	//make sure only backwards playing animations after this one
 		ANIM_MODE_ONCE_BACKWARDS,
+
+		ANIM_MODE_COUNT
 	};
 };
 

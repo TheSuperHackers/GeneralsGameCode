@@ -83,9 +83,10 @@ static const LookupListRec CreditStyleNames[] =
 	{ "MINORTITLE",				CREDIT_STYLE_POSITION },
 	{ "NORMAL",			CREDIT_STYLE_NORMAL },
 	{ "COLUMN",				CREDIT_STYLE_COLUMN },
-
+	// CREDIT_STYLE_BLANK
 	{ NULL, 0	}
 };
+static_assert(ARRAY_SIZE(CreditStyleNames) == MAX_CREDIT_STYLES, "Incorrect array size");
 
 
 class CreditsLine

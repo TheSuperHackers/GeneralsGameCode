@@ -179,7 +179,7 @@ static void parsePitchShift( INI* ini, void *instance, void *store, const void* 
 
 // STATIC DEFINIITIONS ////////////////////////////////////////////////////////////////////////////
 
-const char *theAudioPriorityNames[] =
+const char *const theAudioPriorityNames[] =
 {
 	"LOWEST",
 	"LOW",
@@ -188,8 +188,9 @@ const char *theAudioPriorityNames[] =
 	"CRITICAL",
 	NULL
 };
+static_assert(ARRAY_SIZE(theAudioPriorityNames) == AP_COUNT + 1, "Incorrect array size");
 
-const char *theSoundTypeNames[] =
+const char *const theSoundTypeNames[] =
 {
 	"UI",
 	"WORLD",
@@ -203,7 +204,7 @@ const char *theSoundTypeNames[] =
 	NULL
 };
 
-const char *theAudioControlNames[] =
+const char *const theAudioControlNames[] =
 {
 	"LOOP",
 	"RANDOM",

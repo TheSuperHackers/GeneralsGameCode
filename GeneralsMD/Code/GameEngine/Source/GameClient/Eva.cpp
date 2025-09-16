@@ -34,7 +34,7 @@
 
 
 //-------------------------------------------------------------------------------------------------
-const char *TheEvaMessageNames[] =
+static const char *const TheEvaMessageNames[] =
 {
 	"LOWPOWER",
 	"INSUFFICIENTFUNDS",
@@ -96,6 +96,7 @@ const char *TheEvaMessageNames[] =
 
 	"EVA_INVALID",
 };
+static_assert(ARRAY_SIZE(TheEvaMessageNames) == EVA_COUNT + 1, "Incorrect array size");
 
 //-------------------------------------------------------------------------------------------------
 const ShouldPlayFunc Eva::s_shouldPlayFuncs[] =
@@ -415,7 +416,7 @@ Bool Eva::messageShouldPlay(EvaMessage messageToTest, UnsignedInt currentFrame) 
 		return FALSE;
 	}
 
-  DEBUG_ASSERTCRASH( ARRAY_SIZE( s_shouldPlayFuncs ) == EVA_COUNT + 1, ("Eva::s_shouldPlayFuncs out of sync" ) );
+	static_assert(ARRAY_SIZE(s_shouldPlayFuncs) == EVA_COUNT + 1, "Incorrect array size");
   DEBUG_ASSERTCRASH( s_shouldPlayFuncs[ EVA_COUNT ] == NULL, ("Eva::s_shouldPlayFuncs out of sync" ) );
   DEBUG_ASSERTCRASH( s_shouldPlayFuncs[ EVA_COUNT - 1] != NULL, ("Eva::s_shouldPlayFuncs out of sync" ) );
 

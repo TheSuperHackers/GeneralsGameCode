@@ -423,6 +423,8 @@ protected:
 			{ "CINE_INSANE",  View::SHAKE_CINE_INSANE },
 			{ 0, 0 }
 		};
+		static_assert(ARRAY_SIZE(shakeTypeNames) == View::SHAKE_COUNT + 1, "Incorrect array size");
+
 		*(Int *)store = INI::scanLookupList(ini->getNextToken(), shakeTypeNames);
 	}
 
@@ -487,6 +489,8 @@ protected:
 			{ "RANDOM",					-1 },
 			{ 0, 0 }
 		};
+		static_assert(ARRAY_SIZE(scorchTypeNames) == SCORCH_COUNT + 2, "Incorrect array size");
+
 		*(Int *)store = INI::scanLookupList(ini->getNextToken(), scorchTypeNames);
 	}
 

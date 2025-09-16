@@ -63,13 +63,14 @@
 #include "GameLogic/Module/ContainModule.h"
 
 
-const char *TheAcademyClassificationTypeNames[] =
+const char *const TheAcademyClassificationTypeNames[] =
 {
 	"ACT_NONE",
 	"ACT_UPGRADE_RADAR",
 	"ACT_SUPERPOWER",
 	NULL
 };
+static_assert(ARRAY_SIZE(TheAcademyClassificationTypeNames) == ACT_COUNT + 1, "Incorrect array size");
 
 #define FRAMES_BETWEEN_UPDATES 30
 

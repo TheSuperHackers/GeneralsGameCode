@@ -254,13 +254,6 @@ template <class T> T max(T a,T b)
 	#define	NULL		0
 #endif
 
-/**********************************************************************
-**	This macro serves as a general way to determine the number of elements
-**	within an array.
-*/
-#ifndef ARRAY_SIZE
-#define	ARRAY_SIZE(x)		int(sizeof(x)/sizeof(x[0]))
-#endif
 
 #ifndef size_of
 #define size_of(typ,id) sizeof(((typ*)0)->id)

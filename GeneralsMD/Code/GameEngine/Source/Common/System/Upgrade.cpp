@@ -38,12 +38,13 @@
 #include "GameClient/Image.h"
 
 
-const char *TheUpgradeTypeNames[] =
+const char *const TheUpgradeTypeNames[] =
 {
 	"PLAYER",
 	"OBJECT",
 	NULL
 };
+static_assert(ARRAY_SIZE(TheUpgradeTypeNames) == NUM_UPGRADE_TYPES + 1, "Incorrect array size");
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 class UpgradeCenter *TheUpgradeCenter = NULL;

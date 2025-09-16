@@ -47,7 +47,7 @@ static union
 #undef DBGHELP
 
 #define DBGHELP(name,ret,par) #name,
-static char const *DebughelpFunctionNames[] =
+static char const *const DebughelpFunctionNames[] =
 {
 #include "debug_stack.inl"
 	NULL

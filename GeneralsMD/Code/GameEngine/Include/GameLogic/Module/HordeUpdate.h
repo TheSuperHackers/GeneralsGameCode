@@ -52,11 +52,12 @@ enum HordeActionType CPP_11(: Int)
 };
 
 #ifdef DEFINE_HORDEACTION_NAMES
-static const char *TheHordeActionTypeNames[] =
+static const char *const TheHordeActionTypeNames[] =
 {
 	"HORDE",
 	NULL
 };
+static_assert(ARRAY_SIZE(TheHordeActionTypeNames) == HORDEACTION_COUNT + 1, "Incorrect array size");
 #endif
 
 //-------------------------------------------------------------------------------------------------

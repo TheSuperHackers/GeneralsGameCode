@@ -108,7 +108,7 @@ enum RadiusCursorType CPP_11(: Int)
 };
 
 #ifdef DEFINE_RADIUSCURSOR_NAMES
-static const char *TheRadiusCursorNames[] =
+static const char *const TheRadiusCursorNames[] =
 {
 	"NONE",
 	"ATTACK_DAMAGE_AREA",
@@ -147,6 +147,7 @@ static const char *TheRadiusCursorNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheRadiusCursorNames) == RADIUSCURSOR_COUNT + 1, "Incorrect array size");
 #endif
 
 // ------------------------------------------------------------------------------------------------

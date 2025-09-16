@@ -203,7 +203,7 @@ enum BuildCompletionType CPP_11(: Int)
 	BC_NUM_TYPES
 };
 #ifdef DEFINE_BUILD_COMPLETION_NAMES
-static const char *BuildCompletionNames[] =
+static const char *const BuildCompletionNames[] =
 {
 	"INVALID",
 	"APPEARS_AT_RALLY_POINT",
@@ -211,6 +211,7 @@ static const char *BuildCompletionNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(BuildCompletionNames) == BC_NUM_TYPES + 1, "Incorrect array size");
 #endif  // end DEFINE_BUILD_COMPLETION_NAMES
 
 enum BuildableStatus CPP_11(: Int)
@@ -225,7 +226,7 @@ enum BuildableStatus CPP_11(: Int)
 };
 
 #ifdef DEFINE_BUILDABLE_STATUS_NAMES
-static const char *BuildableStatusNames[] =
+static const char *const BuildableStatusNames[] =
 {
 	"Yes",
 	"Ignore_Prerequisites",
@@ -233,6 +234,7 @@ static const char *BuildableStatusNames[] =
 	"Only_By_AI",
 	NULL
 };
+static_assert(ARRAY_SIZE(BuildableStatusNames) == BSTATUS_NUM_TYPES + 1, "Incorrect array size");
 #endif	// end DEFINE_BUILDABLE_STATUS_NAMES
 
 //-------------------------------------------------------------------------------------------------

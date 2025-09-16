@@ -44,8 +44,8 @@
 enum KindOfType CPP_11(: Int)
 {
 	KINDOF_INVALID = -1,
-	KINDOF_FIRST = 0,
-	KINDOF_OBSTACLE = KINDOF_FIRST,	///< an obstacle to land-based pathfinders
+	
+	KINDOF_OBSTACLE,								///< an obstacle to land-based pathfinders
 	KINDOF_SELECTABLE,							///< Actually means MOUSE-INTERACTABLE (doesn't mean you can select it!)
 	KINDOF_IMMOBILE,								///< fixed in location
 	KINDOF_CAN_ATTACK,							///< can attack
@@ -171,8 +171,8 @@ enum KindOfType CPP_11(: Int)
 	KINDOF_CONSERVATIVE_BUILDING,		///< Conservative structures aren't considered part of your base for sneak attack boundary calculations...
 	KINDOF_IGNORE_DOCKING_BONES,		///< Structure will not look up docking bones. Patch 1.03 hack.
 
-	KINDOF_COUNT										// total number of kindofs
-
+	KINDOF_COUNT,										// total number of kindofs
+	KINDOF_FIRST = 0,
 };
 
 typedef BitFlags<KINDOF_COUNT>	KindOfMaskType;

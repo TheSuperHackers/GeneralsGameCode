@@ -269,7 +269,9 @@ enum MappableKeyTransition CPP_11(: Int)
 {
 	DOWN,
 	UP,
-	DOUBLEDOWN	// if a key transition is repeated immediately, we generate this.
+	DOUBLEDOWN,	// if a key transition is repeated immediately, we generate this.
+
+	MAPPABLE_KEY_TRANSITION_COUNT
 };
 
 static const LookupListRec TransitionNames[] =
@@ -279,6 +281,7 @@ static const LookupListRec TransitionNames[] =
 	{ "DOUBLEDOWN",	DOUBLEDOWN },
 	{ NULL, 0	}
 };
+static_assert(ARRAY_SIZE(TransitionNames) == MAPPABLE_KEY_TRANSITION_COUNT + 1, "Incorrect array size");
 
 // -------------------------------------------------------------------------------
 // an easier-to-type subset of the KEY_STATE stuff.
@@ -322,7 +325,7 @@ enum CommandUsableInType CPP_11(: Int)
 	COMMANDUSABLE_EVERYWHERE = ~0,
 };
 
-static const char* TheCommandUsableInNames[] =
+static const char* const TheCommandUsableInNames[] =
 {
 	"SHELL",
 	"GAME",

@@ -50,7 +50,7 @@ const Int MAX_IDX = 32;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-static const char *TheStructureCollapsePhaseNames[] =
+static const char *const TheStructureCollapsePhaseNames[] =
 {
 	"INITIAL",
 	"DELAY",
@@ -59,6 +59,7 @@ static const char *TheStructureCollapsePhaseNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheStructureCollapsePhaseNames) == SC_PHASE_COUNT + 1, "Wrong array size");
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

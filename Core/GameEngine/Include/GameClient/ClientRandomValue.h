@@ -68,10 +68,11 @@ public:
 	 */
 	enum DistributionType
 	{
-		CONSTANT, UNIFORM, GAUSSIAN, TRIANGULAR, LOW_BIAS, HIGH_BIAS
+		CONSTANT, UNIFORM, GAUSSIAN, TRIANGULAR, LOW_BIAS, HIGH_BIAS,
+		DISTRIBUTION_COUNT
 	};
 
-	static const char *DistributionTypeNames[];
+	static const char *const DistributionTypeNames[];
 
 	/// define the range of random values, and the distribution of values
 	void setRange( Real low, Real high, DistributionType type = UNIFORM );

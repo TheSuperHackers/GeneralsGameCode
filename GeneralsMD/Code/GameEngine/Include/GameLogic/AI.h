@@ -337,7 +337,7 @@ enum CommandSourceType CPP_11(: Int);
 typedef UnsignedInt CommandSourceMask;
 
 #ifdef DEFINE_COMMANDSOURCEMASK_NAMES
-static const char *TheCommandSourceMaskNames[] =
+static const char *const TheCommandSourceMaskNames[] =
 {
 	"FROM_PLAYER",
 	"FROM_SCRIPT",
@@ -347,6 +347,7 @@ static const char *TheCommandSourceMaskNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheCommandSourceMaskNames) == COMMAND_SOURCE_TYPE_COUNT + 1, "Incorrect array size");
 #endif
 
 //------------------------------------------------------------------------------------------------------------

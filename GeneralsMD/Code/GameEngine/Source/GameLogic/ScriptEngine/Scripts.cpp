@@ -76,7 +76,7 @@ static ScriptGroup *s_mtGroup = NULL;
 // These strings must be in the same order as they are in their definitions
 // (See SHELL_SCRIPT_HOOK_* )
 //
-const char *TheShellHookNames[]=
+static const char *const TheShellHookNames[]=
 {
 	"ShellMainMenuCampaignPushed", //SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_SELECTED,
 	"ShellMainMenuCampaignHighlighted", //SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_HIGHLIGHTED,
@@ -117,6 +117,8 @@ const char *TheShellHookNames[]=
 	"ShellLANClosed", //SHELL_SCRIPT_HOOK_LAN_CLOSED,
 	"ShellLANEnteredFromGame", //SHELL_SCRIPT_HOOK_LAN_ENTERED_FROM_GAME,
 };
+static_assert(ARRAY_SIZE(TheShellHookNames) == SHELL_SCRIPT_HOOK_TOTAL, "Incorrect array size");
+
 void SignalUIInteraction(Int interaction)
 {
 	if (TheScriptEngine)
@@ -2169,7 +2171,7 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 	if (pParm->getParameterType() == KIND_OF_PARAM)
   {
 		// Need to change the string to an integer
-		const char** kindofNames = KindOfMaskType::getBitNames();
+		const char* const* kindofNames = KindOfMaskType::getBitNames();
 		if (!pParm->m_string.isEmpty())
     {
 			Bool found = false;
@@ -2671,10 +2673,10 @@ Bool ScriptAction::ParseActionFalseDataChunk(DataChunkInput &file, DataChunkInfo
 	return true;
 }
 
-// NOTE: Changing these or adding ot TheOBjectFlagNames requires changes to
+// NOTE: Changing these or adding to TheObjectFlagsNames requires changes to
 // ScriptActions::changeObjectPanelFlagForSingleObject
 // THEY SHOULD STAY IN SYNC.
-const char* TheObjectFlagsNames[] =
+const char* const TheObjectFlagsNames[] =
 {
 	"Enabled",
 	"Powered",
@@ -2683,5 +2685,4 @@ const char* TheObjectFlagsNames[] =
 	"Selectable",
 	"AI Recruitable",
 	"Player Targetable",
-	NULL,
 };

@@ -53,9 +53,10 @@ class BitFlags
 {
 private:
 	std::bitset<NUMBITS>				m_bits;
-	static const char*					s_bitNameList[];
 
 public:
+	CPP_11(static constexpr size_t NumBits = NUMBITS);
+	static const char* const s_bitNameList[];
 
 	/*
 		just a little syntactic sugar so that there is no "foo = 0" compatible constructor
@@ -261,7 +262,7 @@ public:
 		return true;
 	}
 
-  static const char** getBitNames()
+  static const char* const* getBitNames()
   {
     return s_bitNameList;
   }
@@ -274,7 +275,7 @@ public:
   static Int getSingleBitFromName(const char* token)
   {
     Int i = 0;
-	  for(const char** name = s_bitNameList; *name; ++name, ++i )
+	  for(const char* const* name = s_bitNameList; *name; ++name, ++i )
 	  {
 		  if( stricmp( *name, token ) == 0 )
 		  {

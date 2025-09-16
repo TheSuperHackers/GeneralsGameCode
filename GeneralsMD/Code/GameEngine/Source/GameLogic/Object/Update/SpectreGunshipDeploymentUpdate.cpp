@@ -77,7 +77,7 @@ SpectreGunshipDeploymentUpdateModuleData::SpectreGunshipDeploymentUpdateModuleDa
 }
 
 
-static const char* TheGunshipCreateLocTypeNames[] =
+static const char* const TheGunshipCreateLocTypeNames[] =
 {
 	"CREATE_AT_EDGE_NEAR_SOURCE",
   "CREATE_AT_EDGE_FARTHEST_FROM_SOURCE",
@@ -85,7 +85,7 @@ static const char* TheGunshipCreateLocTypeNames[] =
 	"CREATE_AT_EDGE_FARTHEST_FROM_TARGET",
 	NULL
 };
-
+static_assert(ARRAY_SIZE(TheGunshipCreateLocTypeNames) == GUNSHIP_CREATE_LOC_COUNT + 1, "Wrong array size");
 
 
 static Real zero = 0.0f;

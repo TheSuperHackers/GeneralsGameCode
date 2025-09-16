@@ -26,7 +26,7 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-const char *TimeOfDayNames[] =
+const char *const TimeOfDayNames[] =
 {
 	"NONE",
 	"MORNING",
@@ -36,11 +36,13 @@ const char *TimeOfDayNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TimeOfDayNames) == TIME_OF_DAY_COUNT + 1, "Incorrect array size");
 
-const char *WeatherNames[] =
+const char *const WeatherNames[] =
 {
 	"NORMAL",
 	"SNOWY",
 
 	NULL
 };
+static_assert(ARRAY_SIZE(WeatherNames) == WEATHER_COUNT + 1, "Incorrect array size");

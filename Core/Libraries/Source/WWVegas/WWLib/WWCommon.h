@@ -20,6 +20,13 @@
 
 #include "stringex.h"
 
+
+// This macro serves as a general way to determine the number of elements within an array.
+#ifndef ARRAY_SIZE
+#define ARRAY_SIZE(x) int(sizeof(x)/sizeof(x[0]))
+#endif
+
+
 #if defined(_MSC_VER) && _MSC_VER < 1300
 typedef unsigned MemValueType;
 #else

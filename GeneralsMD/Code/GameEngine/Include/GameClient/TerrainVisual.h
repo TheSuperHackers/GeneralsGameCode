@@ -172,22 +172,22 @@ class DomeStyleSeismicFilter : public SeismicSimulationFilterBase
 //-------------------------------------------------------------------------------------------------
 typedef enum _TerrainLOD CPP_11(: Int)
 {
-	TERRAIN_LOD_INVALID								= 0,
-	TERRAIN_LOD_MIN										= 1,  // note that this is less than max
-	TERRAIN_LOD_STRETCH_NO_CLOUDS			= 2,
-	TERRAIN_LOD_HALF_CLOUDS						= 3,
-	TERRAIN_LOD_NO_CLOUDS							= 4,
-	TERRAIN_LOD_STRETCH_CLOUDS				= 5,
-	TERRAIN_LOD_NO_WATER							= 6,
-	TERRAIN_LOD_MAX										= 7,  // note that this is larger than min
-	TERRAIN_LOD_AUTOMATIC							= 8,
-	TERRAIN_LOD_DISABLE								= 9,
+	TERRAIN_LOD_INVALID,
+	TERRAIN_LOD_MIN,  // note that this is less than max
+	TERRAIN_LOD_STRETCH_NO_CLOUDS,
+	TERRAIN_LOD_HALF_CLOUDS,
+	TERRAIN_LOD_NO_CLOUDS,
+	TERRAIN_LOD_STRETCH_CLOUDS,
+	TERRAIN_LOD_NO_WATER,
+	TERRAIN_LOD_MAX,  // note that this is larger than min
+	TERRAIN_LOD_AUTOMATIC,
+	TERRAIN_LOD_DISABLE,
 
 	TERRAIN_LOD_NUM_TYPES
 
 } TerrainLOD;
 #ifdef DEFINE_TERRAIN_LOD_NAMES
-static const char * TerrainLODNames[] =
+static const char *const TerrainLODNames[] =
 {
 	"NONE",
 	"MIN",
@@ -202,6 +202,7 @@ static const char * TerrainLODNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TerrainLODNames) == TERRAIN_LOD_NUM_TYPES + 1, "Incorrect array size");
 #endif  // end DEFINE_TERRAIN_LOD_NAMES
 
 //-------------------------------------------------------------------------------------------------

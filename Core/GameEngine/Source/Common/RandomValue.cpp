@@ -350,10 +350,11 @@ DEBUG_LOG(( "%d: GetGameAudioRandomValueReal = %f, %s line %d",
 // GameClientRandomVariable
 //
 
-/*static*/ const char *GameClientRandomVariable::DistributionTypeNames[] =
+const char *const GameClientRandomVariable::DistributionTypeNames[] =
 {
 	"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS", NULL
 };
+static_assert(ARRAY_SIZE(GameClientRandomVariable::DistributionTypeNames) == GameClientRandomVariable::DISTRIBUTION_COUNT + 1, "Incorrect array size");
 
 /**
 	define the range of random values, and the distribution of values
@@ -395,10 +396,11 @@ Real GameClientRandomVariable::getValue( void ) const
 // GameLogicRandomVariable
 //
 
-/*static*/ const char *GameLogicRandomVariable::DistributionTypeNames[] =
+const char *const GameLogicRandomVariable::DistributionTypeNames[] =
 {
 	"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS", NULL
 };
+static_assert(ARRAY_SIZE(GameLogicRandomVariable::DistributionTypeNames) == GameLogicRandomVariable::DISTRIBUTION_COUNT + 1, "Incorrect array size");
 
 /**
 	define the range of random values, and the distribution of values

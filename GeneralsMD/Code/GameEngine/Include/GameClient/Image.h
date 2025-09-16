@@ -52,7 +52,7 @@ typedef enum
 
 } ImageStatus;
 #ifdef DEFINE_IMAGE_STATUS_NAMES
-static const char *imageStatusNames[] =
+static const char *const imageStatusNames[] =
 {
 	"ROTATED_90_CLOCKWISE",
 	"RAW_TEXTURE",

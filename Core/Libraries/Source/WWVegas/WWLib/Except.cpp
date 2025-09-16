@@ -138,7 +138,7 @@ static StackWalkType								_StackWalk = NULL;
 static SymFunctionTableAccessType	_SymFunctionTableAccess = NULL;
 static SymGetModuleBaseType				_SymGetModuleBase = NULL;
 
-static char const *ImagehelpFunctionNames[] =
+static char const *const ImagehelpFunctionNames[] =
 {
 	"SymCleanup",
 	"SymGetSymFromAddr",

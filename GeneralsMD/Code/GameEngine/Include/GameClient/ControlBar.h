@@ -102,12 +102,10 @@ enum CommandOption CPP_11(: Int)
 	USES_MINE_CLEARING_WEAPONSET= 0x00200000,	// uses the special mine-clearing weaponset, even if not current
 	CAN_USE_WAYPOINTS						= 0x00400000, // button has option to use a waypoint path
 	MUST_BE_STOPPED							= 0x00800000, // Unit must be stopped in order to be able to use button.
-
-	NUM_COMMAND_OPTIONS
 };
 
 #ifdef DEFINE_COMMAND_OPTION_NAMES
-static const char *TheCommandOptionNames[] =
+static const char *const TheCommandOptionNames[] =
 {
 	"NEED_TARGET_ENEMY_OBJECT",
 	"NEED_TARGET_NEUTRAL_OBJECT",
@@ -222,7 +220,7 @@ enum GUICommandType CPP_11(: Int)
 };
 
 #ifdef DEFINE_GUI_COMMMAND_NAMES
-static const char *TheGuiCommandNames[] =
+static const char *const TheGuiCommandNames[] =
 {
 	"NONE",
 	"DOZER_CONSTRUCT",
@@ -268,6 +266,7 @@ static const char *TheGuiCommandNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheGuiCommandNames) == GUI_COMMAND_NUM_COMMANDS + 1, "Incorrect array size");
 #endif  // end DEFINE_GUI_COMMAND_NAMES
 
 enum CommandButtonMappedBorderType CPP_11(: Int)
@@ -291,6 +290,7 @@ static const LookupListRec CommandButtonMappedBorderTypeNames[] =
 
 	{ NULL, 0	}
 };
+static_assert(ARRAY_SIZE(CommandButtonMappedBorderTypeNames) == COMMAND_BUTTON_BORDER_COUNT + 1, "Incorrect array size");
 //-------------------------------------------------------------------------------------------------
 /** Command buttons are used to load the buttons we place on throughout the command bar
 	* interface in different context sensitive windows depending on the situation and

@@ -89,7 +89,7 @@
 #define VERY_TRANSPARENT_MATERIAL_PASS_OPACITY (0.001f)
 #define MATERIAL_PASS_OPACITY_FADE_SCALAR (0.8f)
 
-static const char *TheDrawableIconNames[] =
+static const char *const TheDrawableIconNames[] =
 {
 	"DefaultHeal",
 	"StructureHeal",
@@ -111,6 +111,7 @@ static const char *TheDrawableIconNames[] =
 	"CarBomb",
 	NULL
 };
+static_assert(ARRAY_SIZE(TheDrawableIconNames) == MAX_ICONS + 1, "Incorrect array size");
 
 
 /**

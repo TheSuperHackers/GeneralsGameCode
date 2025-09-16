@@ -199,7 +199,7 @@ enum DeathType CPP_11(: Int)
 };
 
 #ifdef DEFINE_DEATH_NAMES
-static const char *TheDeathNames[] =
+static const char *const TheDeathNames[] =
 {
 	"NORMAL",
 	"NONE",
@@ -225,6 +225,7 @@ static const char *TheDeathNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheDeathNames) == DEATH_NUM_TYPES + 1, "Incorrect array size");
 #endif // end DEFINE_DEATH_NAMES
 
 

@@ -82,9 +82,8 @@ enum DrawableIconType CPP_11(: Int)
 /** NOTE: This enum MUST appear in the same order as TheDrawableIconNames array to be
 	* indexed correctly using that array */
 	ICON_INVALID = -1,
-	ICON_FIRST = 0,
 
-	ICON_DEFAULT_HEAL = ICON_FIRST,
+	ICON_DEFAULT_HEAL,
 	ICON_STRUCTURE_HEAL,
 	ICON_VEHICLE_HEAL,
 #ifdef ALLOW_DEMORALIZE
@@ -103,7 +102,8 @@ enum DrawableIconType CPP_11(: Int)
 	ICON_ENTHUSIASTIC_SUBLIMINAL,
 	ICON_CARBOMB,
 
-	MAX_ICONS
+	MAX_ICONS,
+	ICON_FIRST = 0,
 };
 
 //-----------------------------------------------------------------------------

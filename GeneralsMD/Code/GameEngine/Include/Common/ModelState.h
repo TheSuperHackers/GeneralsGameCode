@@ -94,13 +94,11 @@ enum ModelConditionFlagType CPP_11(: Int)
 {
 	MODELCONDITION_INVALID = -1,
 
-	MODELCONDITION_FIRST = 0,
-
 //
 // Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
 // existing values!
 //
-	MODELCONDITION_TOPPLED = MODELCONDITION_FIRST,
+	MODELCONDITION_TOPPLED,
 	MODELCONDITION_FRONTCRUSHED,
 	MODELCONDITION_BACKCRUSHED,
 	MODELCONDITION_DAMAGED,
@@ -242,7 +240,8 @@ enum ModelConditionFlagType CPP_11(: Int)
 // existing values!
 //
 
-	MODELCONDITION_COUNT
+	MODELCONDITION_COUNT,
+	MODELCONDITION_FIRST = 0,
 };
 
 //-------------------------------------------------------------------------------------------------

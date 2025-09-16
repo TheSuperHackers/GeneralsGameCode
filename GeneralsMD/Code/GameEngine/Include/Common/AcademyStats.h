@@ -74,8 +74,10 @@ enum AcademyClassificationType CPP_11(: Int)
 	ACT_NONE,
 	ACT_UPGRADE_RADAR,
 	ACT_SUPERPOWER,
+
+	ACT_COUNT
 };
-extern const char *TheAcademyClassificationTypeNames[]; //Change above, change this!
+extern const char *const TheAcademyClassificationTypeNames[]; //Change above, change this!
 
 
 // ----------------------------------------------------------------------------------------------

@@ -56,7 +56,7 @@ enum Anim2DMode CPP_11(: Int)
 
 };
 #ifdef DEFINE_ANIM_2D_MODE_NAMES
-static const char *Anim2DModeNames[] =
+static const char *const Anim2DModeNames[] =
 {
 	"NONE",
 	"ONCE",
@@ -67,6 +67,7 @@ static const char *Anim2DModeNames[] =
 	"PING_PONG_BACKWARDS",
 	NULL
 };
+static_assert(ARRAY_SIZE(Anim2DModeNames) == ANIM_2D_NUM_MODES + 1, "Incorrect array size");
 #endif
 
 // ------------------------------------------------------------------------------------------------

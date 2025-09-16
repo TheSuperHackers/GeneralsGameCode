@@ -40,7 +40,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<>
-const char* DamageTypeFlags::s_bitNameList[] =
+const char* const DamageTypeFlags::s_bitNameList[] =
 {
 	"EXPLOSION",
 	"CRUSH",
@@ -83,6 +83,7 @@ const char* DamageTypeFlags::s_bitNameList[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(DamageTypeFlags::s_bitNameList) == DamageTypeFlags::NumBits + 1);
 
 DamageTypeFlags DAMAGE_TYPE_FLAGS_NONE; 	// inits to all zeroes
 DamageTypeFlags DAMAGE_TYPE_FLAGS_ALL;

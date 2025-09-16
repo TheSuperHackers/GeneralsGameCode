@@ -95,7 +95,7 @@ static unsigned FreeCount;
 ** Name for each memory category.  I'm padding the array with some "undefined" strings in case
 ** someone forgets to set the name when adding a new category.
 */
-static const char * _MemoryCategoryNames[] =
+static const char *const _MemoryCategoryNames[] =
 {
 	"UNKNOWN",
 	"Geometry",

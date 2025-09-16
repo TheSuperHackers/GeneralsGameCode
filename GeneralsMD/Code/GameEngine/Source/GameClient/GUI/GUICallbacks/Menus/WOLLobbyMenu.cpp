@@ -366,7 +366,7 @@ static void populateGroupRoomListbox(GameWindow *lb)
 	GadgetComboBoxSetSelectedPos(lb, indexToSelect);
 }
 
-static const char *rankNames[] = {
+static const char *const rankNames[] = {
 	"Private",
 	"Corporal",
 	"Sergeant",
@@ -378,6 +378,8 @@ static const char *rankNames[] = {
 	"Brigadier",
 	"Commander",
 };
+static_assert(ARRAY_SIZE(rankNames) == MAX_RANKS, "Incorrect array size");
+
 
 const Image* LookupSmallRankImage(Int side, Int rankPoints)
 {

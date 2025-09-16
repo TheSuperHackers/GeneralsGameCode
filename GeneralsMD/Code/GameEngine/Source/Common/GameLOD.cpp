@@ -72,13 +72,14 @@ static const FieldParse TheStaticGameLODFieldParseTable[] =
 	{ "TextureReductionFactor",		INI::parseInt,					NULL,	offsetof( StaticGameLODInfo, m_textureReduction ) },
 };
 
-static const char *StaticGameLODNames[]=
+static const char *const StaticGameLODNames[]=
 {
 	"Low",
 	"Medium",
 	"High",
 	"Custom"
 };
+static_assert(ARRAY_SIZE(StaticGameLODNames) == STATIC_GAME_LOD_COUNT, "Incorrect array size");
 
 StaticGameLODInfo::StaticGameLODInfo(void)
 {
@@ -117,13 +118,14 @@ static const FieldParse TheDynamicGameLODFieldParseTable[] =
 	{ "MinParticleSkipPriority",		INI::parseIndexList, ParticlePriorityNames,	offsetof( DynamicGameLODInfo, m_minDynamicParticleSkipPriority)},
 };
 
-static const char *DynamicGameLODNames[]=
+static const char *const DynamicGameLODNames[]=
 {
 	"Low",
 	"Medium",
 	"High",
 	"VeryHigh"
 };
+static_assert(ARRAY_SIZE(DynamicGameLODNames) == DYNAMIC_GAME_LOD_COUNT, "Incorrect array size");
 
 DynamicGameLODInfo::DynamicGameLODInfo(void)
 {
@@ -136,16 +138,18 @@ DynamicGameLODInfo::DynamicGameLODInfo(void)
 };
 
 //Keep this in sync with enum in GameLOD.h
-static const char *CPUNames[] =
+static const char *const CPUNames[] =
 {
 	"XX","P3", "P4","K7", NULL
 };
+static_assert(ARRAY_SIZE(CPUNames) == CPU_MAX + 1, "Incorrect array size");
 
 //Keep this in sync with enum in GameLOD.h
-static const char *VideoNames[] =
+static const char *const VideoNames[] =
 {
 	"XX","V2","V3","V4","V5","TNT","TNT2","GF2","R100","PS11","GF3","GF4","PS14","R200","PS20","R300", NULL
 };
+static_assert(ARRAY_SIZE(VideoNames) == DC_MAX + 1, "Incorrect array size");
 
 void parseReallyLowMHz(INI* ini)
 {

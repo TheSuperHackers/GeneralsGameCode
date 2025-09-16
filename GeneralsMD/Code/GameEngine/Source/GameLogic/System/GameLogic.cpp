@@ -3476,7 +3476,7 @@ static void unitTimings(void)
 #endif
 
 
-      static char *illegalTemplateNames[] =
+      static const char *const illegalTemplateNames[] =
       {
 	      "EMPPulseBomb",
 	      "GLAAngryMobRockProjectileObject",
