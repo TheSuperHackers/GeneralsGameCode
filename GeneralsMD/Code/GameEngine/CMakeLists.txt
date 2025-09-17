@@ -491,6 +491,8 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/WeaponBonusUpgrade.h
     Include/GameLogic/Module/WeaponSetUpgrade.h
     Include/GameLogic/Module/WorkerAIUpdate.h
+    Include/GameLogic/Module/KodiakDeploymentUpdate.h
+    Include/GameLogic/Module/KodiakUpdate.h
     Include/GameLogic/Object.h
     Include/GameLogic/ObjectCreationList.h
     Include/GameLogic/ObjectIter.h
@@ -1082,6 +1084,8 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Update/WaveGuideUpdate.cpp
     Source/GameLogic/Object/Update/WeaponBonusUpdate.cpp
     Source/GameLogic/Object/Update/ArmorDamageScalarUpdate.cpp
+    Source/GameLogic/Object/Update/KodiakDeploymentUpdate.cpp
+    Source/GameLogic/Object/Update/KodiakUpdate.cpp
     Source/GameLogic/Object/Upgrade/ActiveShroudUpgrade.cpp
     Source/GameLogic/Object/Upgrade/ArmorUpgrade.cpp
     Source/GameLogic/Object/Upgrade/CommandSetUpgrade.cpp

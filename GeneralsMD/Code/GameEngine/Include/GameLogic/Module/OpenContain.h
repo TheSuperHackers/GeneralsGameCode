@@ -258,6 +258,7 @@ protected:
 	virtual short getRiderSlot(ObjectID riderID) const { return -1; }
 	virtual short getPortableSlot(ObjectID portableID) const { return -1; }
 	virtual const ContainedItemsList* getAddOnList() const { return NULL; }
+	virtual ContainedItemsList* getAddOnList() { return NULL; }
 
 	void pruneDeadWanters();
 
