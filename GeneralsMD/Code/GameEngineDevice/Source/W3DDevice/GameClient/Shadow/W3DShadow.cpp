@@ -63,6 +63,12 @@ Vector3 LightPosWorld[ MAX_SHADOW_LIGHTS ] =
 	Vector3( 94.0161f, 50.499f, 200.0f)
 };
 
+void PrepareShadows()
+{
+	if (TheW3DProjectedShadowManager)
+		TheW3DProjectedShadowManager->prepareShadows();
+}
+
 //DECLARE_PERF_TIMER(shadowsRender)
 void DoShadows(RenderInfoClass & rinfo, Bool stencilPass)
 {
