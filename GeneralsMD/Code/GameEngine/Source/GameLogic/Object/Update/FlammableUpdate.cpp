@@ -114,6 +114,7 @@ void FlammableUpdate::onDamage( DamageInfo *damageInfo )
 #if RETAIL_COMPATIBLE_CRC
 		m_flameSource = getObject()->getID();
 #else
+		// TheSuperHackers @bugfix Stubbjax 03/09/2025 Allow flame damage to award xp to the flame source.
 		m_flameSource = damageInfo->in.m_sourceID;
 #endif
 
