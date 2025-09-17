@@ -45,6 +45,8 @@
 #include "Common/BitFlagsIO.h"
 
 
+class ShieldBody;
+
 //-------------------------------------------------------------------------------------------------
 class EnergyShieldBehaviorModuleData : public UpdateModuleData
 {
@@ -58,6 +60,11 @@ public:
 	UnsignedInt m_shieldRechargeRate;   ///< every this often, we heal the shield ...
 	Real m_shieldRechargeAmount;					///< by this much.
 	Real m_shieldRechargeAmountPercent;		///< Same as above but percentage of shieldMaxHealth (takes priority)
+
+	RGBAColorInt m_barColor;
+	RGBAColorInt m_barBGColor;
+	Bool m_showBarWhenEmpty;
+	Bool m_showBarWhenUnselected;
 
 	//DamageTypeFlags m_damageTypesToPassThrough;
 
@@ -76,7 +83,10 @@ class EnergyShieldBehaviorInterface
 public:
 	virtual void applyDamage(Real amount) = 0;
 	virtual bool isActive() const = 0;
-	virtual Bool getShieldPercent(Real& percentage) const = 0;
+	virtual bool shouldShowHealthBar(bool selected) const = 0;
+	virtual Real getShieldPercent() const = 0;
+	virtual RGBAColorInt getHealthBarColor() const = 0;
+	virtual RGBAColorInt getHealthBarBackgroundColor() const = 0;
 };
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -114,14 +124,14 @@ public:
 	//EnergyShieldBehaviorInterface
 	virtual void applyDamage(Real amount);
 	virtual bool isActive() const { return isUpgradeActive(); }
-	virtual Bool getShieldPercent(Real& percentage) const;
+	virtual bool shouldShowHealthBar(bool selected) const;
+	virtual Real getShieldPercent() const;
+	virtual RGBAColorInt getHealthBarColor() const { return getEnergyShieldBehaviorModuleData()->m_barColor; }
+	virtual RGBAColorInt getHealthBarBackgroundColor() const { return getEnergyShieldBehaviorModuleData()->m_barBGColor; };
 
 protected:
 
-	virtual void upgradeImplementation()
-	{
-		setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
-	}
+	virtual void upgradeImplementation();
 
 	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const
 	{

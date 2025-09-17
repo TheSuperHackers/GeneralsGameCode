@@ -49,7 +49,15 @@
 //-------------------------------------------------------------------------------------------------
 EnergyShieldBehaviorModuleData::EnergyShieldBehaviorModuleData()
 {
-		//m_damageTypesToPassThrough = DAMAGE_TYPE_FLAGS_NONE;
+	m_barColor.red = 255;
+	m_barColor.green = 255;
+	m_barColor.blue = 255;
+	m_barColor.alpha = 255;
+
+	m_barBGColor.red = 255;
+	m_barBGColor.green = 255;
+	m_barBGColor.blue = 255;
+	m_barBGColor.alpha = 255;
 }
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -65,7 +73,12 @@ EnergyShieldBehaviorModuleData::EnergyShieldBehaviorModuleData()
 		{ "ShieldRechargeDelay",		INI::parseDurationUnsignedInt,	NULL,		offsetof(EnergyShieldBehaviorModuleData, m_shieldRechargeDelay) },
 		{ "ShieldRechargeRate",		INI::parseDurationUnsignedInt,	NULL,		offsetof(EnergyShieldBehaviorModuleData, m_shieldRechargeRate) },
 		{ "ShieldRechargeAmount",	INI::parseReal,									NULL,		offsetof(EnergyShieldBehaviorModuleData, m_shieldRechargeAmount) },
-		{ "ShieldRechargeAmountPercent",	INI::parseReal,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_shieldRechargeAmountPercent) },
+		{ "ShieldRechargeAmountPercent",	INI::parsePercentToReal,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_shieldRechargeAmountPercent) },
+
+		{ "ShieldHealthBarColor",	INI::parseRGBAColorInt,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_barColor) },
+		{ "ShieldHealthBarBackgroundColor",	INI::parseRGBAColorInt,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_barBGColor) },
+		{ "ShowHealthBarBackgroundWhenEmpty",	INI::parseBool,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_showBarWhenEmpty) },
+		{ "ShowHealthBarWhenUnselected",	INI::parseBool,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_showBarWhenUnselected) },
 
 		//{ "DamageTypesToPassThroughShield",   INI::parseDamageTypeFlags, NULL, offsetof(EnergyShieldBehaviorModuleData, m_damageTypesToPassThrough) },
 		{ 0, 0, 0, 0 }
@@ -98,7 +111,7 @@ EnergyShieldBehavior::EnergyShieldBehavior( Thing *thing, const ModuleData* modu
 {
 
 	ShieldBody* body = dynamic_cast<ShieldBody*>(getObject()->getBodyModule());
-	DEBUG_ASSERTCRASH((body != nullptr), ("EnergyShieldBehavior requires ShieldBody!"))
+	DEBUG_ASSERTCRASH((body != nullptr), ("EnergyShieldBehavior requires ShieldBody!"));
 
 	m_body = body;
 
@@ -108,10 +121,8 @@ EnergyShieldBehavior::EnergyShieldBehavior( Thing *thing, const ModuleData* modu
 	{
 		giveSelfUpgrade();
 	}
-	else
-	{
-		setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
-	}
+
+	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);  // We wake when we get attacked
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -124,6 +135,8 @@ EnergyShieldBehavior::~EnergyShieldBehavior( void )
 //-------------------------------------------------------------------------------------------------
 void EnergyShieldBehavior::applyDamage(Real amount)
 {
+	DEBUG_LOG((">>> EnergyShieldBehavior::applyDamage -  amount = %f", amount));
+
 	if (amount > 0)
 	{
 		const EnergyShieldBehaviorModuleData* data = getEnergyShieldBehaviorModuleData();
@@ -133,23 +146,49 @@ void EnergyShieldBehavior::applyDamage(Real amount)
 }
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-// This should perhaps be returned from the body instead
-Bool EnergyShieldBehavior::getShieldPercent(Real &progress) const
+Real EnergyShieldBehavior::getShieldPercent() const
 {
 	if (isActive() && m_body != NULL)
 	{
-		//return (m_body->getShieldMaxHealth() / m_body->getShieldCurrentHealth());
-		return m_body->getShieldPercent(progress);
+		return m_body->getShieldPercent();
 	}
-	return FALSE;
+	return 0.0;
 }
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+bool EnergyShieldBehavior::shouldShowHealthBar(bool selected) const
+{
+	if (!isActive() || m_body == NULL)
+		return FALSE;
+
+	const EnergyShieldBehaviorModuleData* data = getEnergyShieldBehaviorModuleData();
+
+	if (!selected && !getEnergyShieldBehaviorModuleData()->m_showBarWhenUnselected)
+		return FALSE;
+
+	if (!data->m_showBarWhenEmpty && m_body->getShieldCurrentHealth() <= 0.0f)
+		return FALSE;
+
+	return TRUE;
+}
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void EnergyShieldBehavior::upgradeImplementation()
+{
+	if (m_body) {
+		m_body->setActive(true);
+		m_body->rechargeShieldHealth(m_body->getShieldMaxHealth());
+	}
+	//setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
+}
+
 
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime EnergyShieldBehavior::update( void )
 {
-		DEBUG_LOG((">>> EnergyShieldBehavior::update -  m_healingStepCountdown = %d", m_healingStepCountdown));
+		DEBUG_LOG((">>> EnergyShieldBehavior::update1 -  m_healingStepCountdown = %d", m_healingStepCountdown));
 	
 		//UnsignedInt now = TheGameLogic->getFrame();
 		//UnsignedInt damageFrame = getLastDamageTimestamp();
@@ -172,6 +211,7 @@ UpdateSleepTime EnergyShieldBehavior::update( void )
 			}else {
 				rechargeAmount = data->m_shieldRechargeAmount;
 			}
+			DEBUG_LOG((">>> EnergyShieldBehavior::update2 -  rechargeAmount = %f", rechargeAmount));
 
 			Bool full = m_body->rechargeShieldHealth(rechargeAmount);
 			if (full)
@@ -179,6 +219,7 @@ UpdateSleepTime EnergyShieldBehavior::update( void )
 			else
 				return UPDATE_SLEEP_NONE;
 		}
+		return UPDATE_SLEEP_FOREVER;
 }
 
 // ------------------------------------------------------------------------------------------------

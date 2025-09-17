@@ -35,6 +35,9 @@
 #include "GameLogic/Damage.h"
 #include "GameLogic/Module/ShieldBody.h"
 #include "GameLogic/Module/EnergyShieldBehavior.h"
+#include "GameLogic/ArmorSet.h"
+#include "GameLogic/GameLogic.h"
+#include "Common/Player.h"
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
@@ -43,11 +46,7 @@
 ShieldBodyModuleData::ShieldBodyModuleData()
 {
 	m_damageTypesToPassThrough = DAMAGE_TYPE_FLAGS_NONE;
-	//m_maxHealth = 0;
-	//m_initialHealth = 0;
-	//m_subdualDamageCap = 0;
-	//m_subdualDamageHealRate = 0;
-	//m_subdualDamageHealAmount = 0;
+	m_shieldArmorSetFlag = ARMORSET_NONE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -64,6 +63,9 @@ void ShieldBodyModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 		{ "ShieldMaxHealth",						INI::parseReal,						NULL,		offsetof(ShieldBodyModuleData, m_shieldMaxHealth) },
 		{ "ShieldMaxHealthPercent",				parseShieldHealthPercent,						NULL,	  0}, //	offsetof(ShieldBodyModuleData, m_shieldMaxHealthPercent) },
+
+		{ "ShieldArmorSetFlag",				INI::parseIndexList,	ArmorSetFlags::getBitNames(),	  offsetof(ShieldBodyModuleData, m_shieldArmorSetFlag) },
+		//{ "ShieldUpFX",				INI::parseIndexList,	ArmorSetFlags::getBitNames(),	  offsetof(ShieldBodyModuleData, m_shieldArmorSetFlag) },
 
 		//{ "ShieldRechargeDelay",		INI::parseDurationUnsignedInt,	NULL,		offsetof(ShieldBodyModuleData, m_shieldRechargeDelay) },
 		//{ "ShieldRechargeRate",		INI::parseDurationUnsignedInt,	NULL,		offsetof(ShieldBodyModuleData, m_shieldRechargeRate) },
@@ -96,8 +98,14 @@ void ShieldBodyModuleData::parseShieldHealthPercent(INI* ini, void* instance, vo
 //-------------------------------------------------------------------------------------------------
 ShieldBody::ShieldBody( Thing *thing, const ModuleData* moduleData ) : ActiveBody( thing, moduleData )
 {
-	/*const ShieldBodyModuleData* data = getShieldBodyModuleData();
-	m_currentShieldHealth = data->m_shieldMaxHealth;*/
+	 const ShieldBodyModuleData* data = getShieldBodyModuleData();
+
+	 if (data->m_startsActive) {
+		 m_active = true;
+		 m_currentShieldHealth = data->m_shieldMaxHealth;
+		 enableShieldEffects();
+	 }
+	 
 
 }  // end ShieldBody
 
@@ -138,23 +146,76 @@ ShieldBody::~ShieldBody( void )
 //}  // end update
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool ShieldBody::getShieldPercent(Real& percentage)
+Real ShieldBody::getShieldPercent()
 {
-	// TODO:
-	//if (isActive()) {
 		const ShieldBodyModuleData* data = getShieldBodyModuleData();
-		percentage = m_currentShieldHealth / data->m_shieldMaxHealth;
-		return TRUE;
-	//}
-		//return FALSE;
+		return m_currentShieldHealth / data->m_shieldMaxHealth;
 }
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 Bool ShieldBody::rechargeShieldHealth(Real amount)
 {
 	const ShieldBodyModuleData* data = getShieldBodyModuleData();
+
+	// state before recharge
+	Bool shieldWasUp = m_currentShieldHealth > 0;
+
 	m_currentShieldHealth = MIN(data->m_shieldMaxHealth, m_currentShieldHealth + amount);
+
+	DEBUG_LOG((">>> ShieldBody::rechargeShieldHealth -  m_currentShieldHealth = %f", m_currentShieldHealth));
+
+	if (!shieldWasUp && m_currentShieldHealth > 0) {
+		enableShieldEffects();
+	}
+
 	return m_currentShieldHealth >= data->m_shieldMaxHealth;
+}
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void ShieldBody::findShieldBehaviorModule() {
+
+	EnergyShieldBehaviorInterface* esbi = NULL;
+
+	for (BehaviorModule** u = getObject()->getBehaviorModules(); *u; ++u)
+	{
+		if ((esbi = (*u)->getEnergyShieldBehaviorInterface()) != NULL) {
+			m_shieldBehaviorModule = esbi;
+			return;
+		}
+	}
+	
+}
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void ShieldBody::enableShieldEffects() {
+	const ShieldBodyModuleData* data = getShieldBodyModuleData();
+	if (data->m_shieldArmorSetFlag != ARMORSET_NONE) {
+		getObject()->setArmorSetFlag(data->m_shieldArmorSetFlag);
+		validateArmorAndDamageFX();
+	}
+}
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void ShieldBody::disableShieldEffects() {
+	const ShieldBodyModuleData* data = getShieldBodyModuleData();
+	if (data->m_shieldArmorSetFlag != ARMORSET_NONE) {
+		getObject()->clearArmorSetFlag(data->m_shieldArmorSetFlag);
+		validateArmorAndDamageFX();
+	}
+}
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void ShieldBody::doDamageFX(const DamageInfo* damageInfo)
+{
+	// If our damage is absorbed by the shield, we play the damageFX early to have the proper numbers
+	// To avoid playing the damageFX again later on, we check if our shield is still up
+	// and damage is 0, which means we got a full absorb
+
+	if (m_currentShieldHealth > 0 && damageInfo->out.m_actualDamageDealt == 0)
+		return;
+
+	ActiveBody::doDamageFX(damageInfo);
+
 }
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -162,50 +223,174 @@ void ShieldBody::attemptDamage(DamageInfo* damageInfo)
 {
 	validateArmorAndDamageFX();
 
+	// We need to do all the early return checks from ActiveBody here as well
+	// For anything that should prevent even hitting the shield
+
 	// sanity
 	if (damageInfo == NULL)
 		return;
 
-	const ShieldBodyModuleData* data = getShieldBodyModuleData();
-	//Object* obj = getObject();
+	if (isIndestructible())
+		return;
 
-	// Pass through full famage
+	// initialize these, just in case we bail out early
+	damageInfo->out.m_actualDamageDealt = 0.0f;
+	damageInfo->out.m_actualDamageClipped = 0.0f;
+
+	// we cannot damage again objects that are already dead
+	Object* obj = getObject();
+	if (obj->isEffectivelyDead())
+		return;
+
+	// Units that get disabled by Chrono damage cannot take damage:
+	if (obj->isDisabledByType(DISABLED_CHRONO) &&
+		!(damageInfo->in.m_damageType == DAMAGE_CHRONO_GUN || damageInfo->in.m_damageType == DAMAGE_CHRONO_UNRESISTABLE))
+		return;
+
+	// --
+	// BEGIN SHIELD CALCULATIONS
+	// ---
+
+	const ShieldBodyModuleData* data = getShieldBodyModuleData();
+
+	// Pass through full damage
 	if (getDamageTypeFlag(data->m_damageTypesToPassThrough, damageInfo->in.m_damageType))
 	{
+		// We need to switch our armorset for this one
+		if (data->m_shieldArmorSetFlag != ARMORSET_NONE) {
+			getObject()->clearArmorSetFlag(data->m_shieldArmorSetFlag);
+		}
+
 		ActiveBody::attemptDamage(damageInfo);
+
+		// And switch back
+		if (data->m_shieldArmorSetFlag != ARMORSET_NONE) {
+			getObject()->setArmorSetFlag(data->m_shieldArmorSetFlag);
+			//validateArmorAndDamageFX();
+		}
 		return;
 	}
 
 	// Calculate Shield damage:
 	// TODO: If we have other ways to use the shield, we could add some conditions
-	EnergyShieldBehaviorInterface* esbi = getEnergyShieldBehaviorInterface();
-	if (!esbi) {
+	if (m_shieldBehaviorModule == NULL) {
+		findShieldBehaviorModule();
+	}
+
+	if (!m_shieldBehaviorModule) {
 		DEBUG_LOG(("ShieldBody::attemptDamage - Warning, no EnergyShieldBehaviorModule found."));
 		ActiveBody::attemptDamage(damageInfo);
 		return;
 	}
-	
+
+	//Shield is already down, just pass through, but stop recovery
+	if (m_currentShieldHealth <= 0) {
+		m_shieldBehaviorModule->applyDamage(damageInfo->in.m_amount);
+		ActiveBody::attemptDamage(damageInfo);
+		return;
+	}
+
+	Real rawDamage = damageInfo->in.m_amount;
 	Real damageToShield = getCurrentArmor().adjustDamage(damageInfo->in.m_damageType, damageInfo->in.m_amount);
 
-	Real remainingShieldHealth = m_currentShieldHealth - damageToShield;
-	m_currentShieldHealth = MAX(0, remainingShieldHealth);
-
-	// Apply  Damage to shield and Stop shield recharge - Notify shield behavior
-	esbi->applyDamage(MAX(0, damageToShield));
-
-	if (remainingShieldHealth < 0) {
-
-		//TODO: Disable Shield Armor
-
-		Real overkillDamage = abs(remainingShieldHealth);
-		damageInfo->in.m_amount = overkillDamage;
+	//Note: we apply the damage scalar only to the damage to the actual shield.
+	// It's later applied again for overkill damage
+	if (damageInfo->in.m_damageType != DAMAGE_UNRESISTABLE)
+	{
+		damageToShield *= m_damageScalar;
 	}
-	else {
-		damageInfo->in.m_amount = 0.0001;
+
+	Real damageAmountToPass = 0.0;  // The damage (done to HP) we pass to the base function
+
+	Bool shieldStillUp = TRUE;
+	if (damageToShield > 0) {
+		Real remainingShieldHealth = m_currentShieldHealth - damageToShield;
+
+		shieldStillUp = remainingShieldHealth > 0;
+
+		m_currentShieldHealth = MAX(0, remainingShieldHealth);
+
+		// Apply  Damage to shield and Stop shield recharge - Notify shield behavior
+		m_shieldBehaviorModule->applyDamage(MAX(0, damageToShield));
+		DEBUG_LOG(("ShieldBody::attemptDamage - m_currentShieldHealth = %f.", m_currentShieldHealth));
+
+		  //If the shield is at 0, we still need to disable it
+		if (!shieldStillUp) {
+
+			// Disable Shield Armor
+			disableShieldEffects();
+
+			Real overkillDamage = abs(remainingShieldHealth);
+
+			// the shield overkill damage was already mitigated by shield armor
+			// so we want it's relative amount of the raw damage (i.e. we invert the armor)
+			Real relativeRawDamage = (overkillDamage / damageToShield) * rawDamage;
+
+			damageAmountToPass = relativeRawDamage;
+		}
 	}
+
+	if (shieldStillUp) {
+		// Only play the damageFX on a full absorb
+		damageInfo->out.m_actualDamageDealt = damageToShield;  //only used for damageFX
+		doDamageFX(damageInfo);
+		damageInfo->out.m_actualDamageDealt = 0;
+	}
+
+
+	damageInfo->in.m_amount = damageAmountToPass;
 
 	// extend
 	ActiveBody::attemptDamage(damageInfo);
+	DEBUG_LOG(("ShieldBody::attemptDamage - getHealth() = %f.", getHealth()));
+
+	if (shieldStillUp) {
+		// We passed on 0 damage to ActiveBody.
+		// This means we need to do a couple of things that were skipped
+
+		if (m_lastDamageTimestamp != TheGameLogic->getFrame() && m_lastDamageTimestamp != TheGameLogic->getFrame() - 1) {
+			m_lastDamageInfo = *damageInfo;
+			m_lastDamageCleared = false;
+			m_lastDamageTimestamp = TheGameLogic->getFrame();
+		}
+		else {
+			// Multiple damages applied in one/next frame.  We prefer the one that tells who the attacker is.
+			Object* srcObj1 = TheGameLogic->findObjectByID(m_lastDamageInfo.in.m_sourceID);
+			Object* srcObj2 = TheGameLogic->findObjectByID(damageInfo->in.m_sourceID);
+			if (srcObj2) {
+				if (srcObj1) {
+					if (srcObj2->isKindOf(KINDOF_VEHICLE) || srcObj2->isKindOf(KINDOF_INFANTRY) ||
+						srcObj2->isFactionStructure()) {
+						m_lastDamageInfo = *damageInfo;
+						m_lastDamageCleared = false;
+						m_lastDamageTimestamp = TheGameLogic->getFrame();
+					}
+				}
+				else {
+					m_lastDamageInfo = *damageInfo;
+					m_lastDamageCleared = false;
+					m_lastDamageTimestamp = TheGameLogic->getFrame();
+				}
+
+			}
+			else {
+				// no change.
+			}
+		}
+
+		// Notify the player that they have been attacked by this player
+		if (m_lastDamageInfo.in.m_sourceID != INVALID_ID)
+		{
+			Object* srcObj = TheGameLogic->findObjectByID(m_lastDamageInfo.in.m_sourceID);
+			if (srcObj)
+			{
+				Player* srcPlayer = srcObj->getControllingPlayer();
+				obj->getControllingPlayer()->setAttackedBy(srcPlayer->getPlayerIndex());
+			}
+		}
+
+	}
+
 }
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -237,6 +422,9 @@ void ShieldBody::xfer( Xfer *xfer )
 	// current shield health
 	xfer->xferReal(&m_currentShieldHealth);
 	//xfer->xferUnsignedInt(&m_healingStepCountdown);
+
+	// shield activation
+	xfer->xferBool(&m_active);
 
 	// constructor object id
 	//xfer->xferObjectID( &m_constructorObjectID );

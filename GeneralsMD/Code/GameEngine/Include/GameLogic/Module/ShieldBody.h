@@ -39,6 +39,7 @@
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Object;
+class EnergyShieldBehavior;
 
 //-------------------------------------------------------------------------------------------------
 class ShieldBodyModuleData : public ActiveBodyModuleData
@@ -48,6 +49,7 @@ public:
 	Bool m_startsActive;  ///< Initially active without upgrade;
 	Real m_shieldMaxHealth;  ///< MaxHealth of the shield
 	Real m_shieldMaxHealthPercent;  ///< MaxHealth as percentage of activeBody MaxHealth (takes priority)
+	ArmorSetType m_shieldArmorSetFlag; ///< armorset to use for damage absorbed by the shield
 
 	//UnsignedInt m_shieldRechargeDelay;  ///< frames of no damage taken until shield recharges
 	//UnsignedInt m_shieldRechargeRate;   ///< every this often, we heal the shield ...
@@ -95,21 +97,29 @@ public:
 	inline Real getShieldCurrentHealth() const { return m_currentShieldHealth; }
 	Bool rechargeShieldHealth(Real amount);  ///< returns True if on full health;
 
-	Bool getShieldPercent(Real& percentage);
+	inline Bool isActive() const { return m_active; }
+	inline void setActive(Bool value) { m_active = value; }
+
+	Real getShieldPercent();
 
 protected:
 
 	virtual void attemptDamage(DamageInfo* damageInfo);		///< try to damage this object
+	virtual void doDamageFX(const DamageInfo* damageInfo);
 
 	//ObjectID m_constructorObjectID;					///< object that built this structure
 
 private:
 	Real									m_currentShieldHealth;
 
-	EnergyShieldBehavior* m_shieldBehaviorModule;
+	EnergyShieldBehaviorInterface* m_shieldBehaviorModule;
 
-	//UnsignedInt           m_healingStepCountdown;
+	Bool m_active;
 
+	void enableShieldEffects();  // when the shield hp is < 0
+	void disableShieldEffects();  // when the shield hp is 0
+
+	void findShieldBehaviorModule();
 };
 
 #endif // __ShieldBody_H_

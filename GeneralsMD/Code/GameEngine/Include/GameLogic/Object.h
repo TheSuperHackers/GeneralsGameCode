@@ -505,7 +505,7 @@ public:
 	Bool getAmmoPipShowingInfo(Int& numTotal, Int& numFull) const;
 
 	// Progress bar for various things
-	Bool getProgressBarShowingInfo(Real& progress, Int& type) const;
+	Bool getProgressBarShowingInfo(bool selected, Real& progress, Int& type, RGBAColorInt& color, RGBAColorInt& colorBG) const;
 
   void notifyFiringTrackerShotFired( const Weapon* weaponFired, ObjectID victimID ) ;
 

@@ -3112,23 +3112,30 @@ void Drawable::drawProgress( const IRegion2D *healthBarRegion )
 
 	const Object* obj = getObject();
 
-	if (!(
-				TheGlobalData->m_showObjectHealth &&
-				(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) &&
-				// obj->getControllingPlayer() == ThePlayerList->getLocalPlayer()   // Shields are visible for all
-			))
+	//if (!(
+	//			TheGlobalData->m_showObjectHealth &&
+	//			(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID())))
+	//				//&& obj->getControllingPlayer() == ThePlayerList->getLocalPlayer()   // Shields are visible for all
+	//		))
+	//	return;
+	if (!TheGlobalData->m_showObjectHealth)
 		return;
+
+	Bool selected = isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()));
 
 	Real progress;
 	Int type;  //not used yet
-	if (!obj->getProgressBarShowingInfo(progress, type))
-		return;
 
+	RGBAColorInt barColor;
+	RGBAColorInt barColorBG;
+
+	if (!obj->getProgressBarShowingInfo(selected, progress, type, barColor, barColorBG))
+		return;
 
 	Color color, outlineColor;
 
-	color = GameMakeColor(255, 255, 255, 255);  // white bar
-	outlineColor = GameMakeColor(255, 255, 255, 255);  // white outline
+	color = GameMakeColor(barColor.red, barColor.green, barColor.blue, barColor.alpha);
+	outlineColor = GameMakeColor(barColorBG.red, barColorBG.green, barColorBG.blue, barColorBG.alpha);
 
 
 	Real healthBoxWidth = healthBarRegion->hi.x - healthBarRegion->lo.x;
@@ -3136,9 +3143,9 @@ void Drawable::drawProgress( const IRegion2D *healthBarRegion )
 	Real healthBoxHeight = max(3, healthBarRegion->hi.y - healthBarRegion->lo.y) * 1.5f;
 	Real healthBoxOutlineSize = 1.0f;
 
-	Real yOffset = 5;
+	Real yOffset = -5;
 
-	// draw the health (actually ammo) box outline
+	// draw the health box outline
 	TheDisplay->drawOpenRect(healthBarRegion->lo.x, healthBarRegion->lo.y + yOffset, healthBoxWidth, healthBoxHeight,
 		healthBoxOutlineSize, outlineColor);
 

@@ -1505,12 +1505,17 @@ Bool Object::getAmmoPipShowingInfo(Int& numTotal, Int& numFull) const
 }
 
 //=============================================================================
-Bool Object::getProgressBarShowingInfo(Real& progress, Int& type) const
+Bool Object::getProgressBarShowingInfo(bool selected, Real& progress, Int& type, RGBAColorInt& color, RGBAColorInt& colorBG) const
 {
+	if (!isKindOf(KINDOF_SHOW_PROGRESS_BAR))
+		return FALSE;
+
 	// We put every case of Progress bars here.
 	// Maybe we should require a KindOf for performance?
 
 	type = 0;  // TODO
+	color = { 255, 255, 255, 255 };  // Default = white
+	colorBG = { 255, 255, 255, 255 };  // Default = white
 
 	// Energy Shields
 	// TODO: This is kinda bad, there should be a better way to do this, if we have multiple shield sources.
@@ -1520,7 +1525,12 @@ Bool Object::getProgressBarShowingInfo(Real& progress, Int& type) const
 	for (BehaviorModule** u = m_behaviors; *u; ++u)
 	{
 		if ((esbi = (*u)->getEnergyShieldBehaviorInterface()) != NULL) {
-			return esbi->getShieldPercent(progress);
+			if (esbi->shouldShowHealthBar(selected)) {
+				progress = esbi->getShieldPercent();
+				color = esbi->getHealthBarColor();
+				colorBG = esbi->getHealthBarBackgroundColor();
+				return true;
+			}
 		}
 	}
 

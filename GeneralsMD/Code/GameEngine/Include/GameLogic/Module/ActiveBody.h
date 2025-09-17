@@ -143,8 +143,15 @@ public:
 
 protected:
 
+	UnsignedInt						m_nextDamageFXTime;
+	DamageType						m_lastDamageFXDone;
+	DamageInfo						m_lastDamageInfo;				///< store the last DamageInfo object that we received
+	UnsignedInt						m_lastDamageTimestamp; 	///< frame of last damage dealt
+	UnsignedInt						m_lastHealingTimestamp; ///< frame of last healing dealt
+	Bool									m_lastDamageCleared;
+
 	void validateArmorAndDamageFX() const;
-	void doDamageFX( const DamageInfo *damageInfo );
+	virtual void doDamageFX( const DamageInfo *damageInfo );
 
 	void createParticleSystems( const AsciiString &boneBaseName,
 															const ParticleSystemTemplate *systemTemplate,
@@ -172,14 +179,9 @@ private:
 	Real									m_currentChronoDamage;	///< Same as Subdual, but for CHRONO_GUN
 
 	BodyDamageType				m_curDamageState;				///< last known damage state
-	UnsignedInt						m_nextDamageFXTime;
-	DamageType						m_lastDamageFXDone;
-	DamageInfo						m_lastDamageInfo;				///< store the last DamageInfo object that we received
-	UnsignedInt						m_lastDamageTimestamp; 	///< frame of last damage dealt
-	UnsignedInt						m_lastHealingTimestamp; ///< frame of last healing dealt
+	
 	Bool									m_frontCrushed;
 	Bool									m_backCrushed;
-	Bool									m_lastDamageCleared;
 	Bool									m_indestructible;				///< is this object indestructible?
 	Bool									m_damageFXOverride;
 
