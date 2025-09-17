@@ -39,16 +39,9 @@
 #include "GameLogic/Module/ContainModule.h"
 
 
-
-
-
-#define ORBIT_INSERTION_SLOPE_MAX (0.8f)
-#define ORBIT_INSERTION_SLOPE_MIN (0.5f)
 #define ONE (1.0f)
 #define ZERO (0.0f)
 #define LOTS_OF_SHOTS (9999)
-
-
 
 
 //-------------------------------------------------------------------------------------------------
