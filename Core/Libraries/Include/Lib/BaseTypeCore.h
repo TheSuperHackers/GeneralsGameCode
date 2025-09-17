@@ -117,11 +117,6 @@
 #define FALSE false
 #endif
 
-// Elements in an array
-#ifndef ELEMENTS_OF
-#define ELEMENTS_OF( x ) ( sizeof( x ) / sizeof( x[0] ) )
-#endif
-
 //--------------------------------------------------------------------
 // Fundamental type definitions
 //--------------------------------------------------------------------

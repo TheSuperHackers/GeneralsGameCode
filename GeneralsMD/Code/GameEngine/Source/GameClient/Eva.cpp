@@ -316,7 +316,7 @@ void Eva::update()
 //-------------------------------------------------------------------------------------------------
 EvaMessage Eva::nameToMessage(const AsciiString& name)
 {
-  DEBUG_ASSERTCRASH( ELEMENTS_OF( TheEvaMessageNames ) == EVA_COUNT + 1, ("TheEvaMessageNames out of sync" ) );
+  DEBUG_ASSERTCRASH( ARRAY_SIZE( TheEvaMessageNames ) == EVA_COUNT + 1, ("TheEvaMessageNames out of sync" ) );
   DEBUG_ASSERTCRASH( stricmp( TheEvaMessageNames[ EVA_COUNT ], "EVA_INVALID" ) == 0, ("TheEvaMessageNames out of sync" ) );
   DEBUG_ASSERTCRASH( stricmp( TheEvaMessageNames[ EVA_COUNT - 1], "EVA_INVALID" ) != 0, ("TheEvaMessageNames out of sync" ) );
 
@@ -333,7 +333,7 @@ EvaMessage Eva::nameToMessage(const AsciiString& name)
 //-------------------------------------------------------------------------------------------------
 AsciiString Eva::messageToName(EvaMessage message)
 {
-  DEBUG_ASSERTCRASH( ELEMENTS_OF( TheEvaMessageNames ) == EVA_COUNT + 1, ("TheEvaMessageNames out of sync" ) );
+  DEBUG_ASSERTCRASH( ARRAY_SIZE( TheEvaMessageNames ) == EVA_COUNT + 1, ("TheEvaMessageNames out of sync" ) );
   DEBUG_ASSERTCRASH( stricmp( TheEvaMessageNames[ EVA_COUNT ], "EVA_INVALID" ) == 0, ("TheEvaMessageNames out of sync" ) );
   DEBUG_ASSERTCRASH( stricmp( TheEvaMessageNames[ EVA_COUNT - 1], "EVA_INVALID" ) != 0, ("TheEvaMessageNames out of sync" ) );
 
@@ -415,7 +415,7 @@ Bool Eva::messageShouldPlay(EvaMessage messageToTest, UnsignedInt currentFrame) 
 		return FALSE;
 	}
 
-  DEBUG_ASSERTCRASH( ELEMENTS_OF( s_shouldPlayFuncs ) == EVA_COUNT + 1, ("Eva::s_shouldPlayFuncs out of sync" ) );
+  DEBUG_ASSERTCRASH( ARRAY_SIZE( s_shouldPlayFuncs ) == EVA_COUNT + 1, ("Eva::s_shouldPlayFuncs out of sync" ) );
   DEBUG_ASSERTCRASH( s_shouldPlayFuncs[ EVA_COUNT ] == NULL, ("Eva::s_shouldPlayFuncs out of sync" ) );
   DEBUG_ASSERTCRASH( s_shouldPlayFuncs[ EVA_COUNT - 1] != NULL, ("Eva::s_shouldPlayFuncs out of sync" ) );
 
