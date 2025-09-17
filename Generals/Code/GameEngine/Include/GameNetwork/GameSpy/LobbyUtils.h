@@ -49,7 +49,6 @@ enum GameSortType CPP_11(: Int)
 	GAMESORT_ALPHA_DESCENDING,
 	GAMESORT_PING_ASCENDING,
 	GAMESORT_PING_DESCENDING,
-	GAMESORT_MAX,
 };
 
 Bool HandleSortButton( NameKeyType sortButton );

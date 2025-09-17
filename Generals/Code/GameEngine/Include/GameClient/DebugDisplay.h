@@ -83,7 +83,6 @@ class DebugDisplayInterface
 			RED,
 			GREEN,
 			BLUE,
-			NUM_COLORS
 		};
 
 		virtual ~DebugDisplayInterface() {};

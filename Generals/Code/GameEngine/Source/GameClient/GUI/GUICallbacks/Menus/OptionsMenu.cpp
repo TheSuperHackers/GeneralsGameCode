@@ -214,8 +214,6 @@ enum Detail CPP_11(: Int)
 	MEDIUMDETAIL,
 	LOWDETAIL,
 	CUSTOMDETAIL,
-
-	DETAIL,
 };
 
 

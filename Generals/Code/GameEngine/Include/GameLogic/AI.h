@@ -399,8 +399,6 @@ enum AICommandType CPP_11(: Int)	// Stored in save file, do not reorder/renumber
 	AICMD_FOLLOW_PATH_APPEND,
 	AICMD_MOVE_TO_POSITION_EVEN_IF_SLEEPING,	// same as AICMD_MOVE_TO_POSITION, but even ATTITUDE_SLEEP units respond.
 	AICMD_GUARD_TUNNEL_NETWORK,
-
-	AICMD_NUM_COMMANDS	// keep last
 };
 
 struct AICommandParms

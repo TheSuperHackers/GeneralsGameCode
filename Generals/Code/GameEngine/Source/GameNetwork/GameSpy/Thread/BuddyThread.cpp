@@ -121,7 +121,6 @@ enum CallbackType
 	CALLBACK_RECVMESSAGE,
 	CALLBACK_RECVREQUEST,
 	CALLBACK_RECVSTATUS,
-	CALLBACK_MAX
 };
 
 void callbackWrapper( GPConnection *con, void *arg, void *param )

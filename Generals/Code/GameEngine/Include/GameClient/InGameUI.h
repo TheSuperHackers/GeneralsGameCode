@@ -613,7 +613,6 @@ protected:
 #ifdef RTS_DEBUG
 		DEBUG_HINT,
 #endif
-		NUM_HINT_TYPES  // keep this one last
 	};
 
 	// mouse mode interface
@@ -622,7 +621,6 @@ protected:
 		MOUSEMODE_DEFAULT = 0,
 		MOUSEMODE_BUILD_PLACE,
 		MOUSEMODE_GUI_COMMAND,
-		MOUSEMODE_MAX
 	};
 
 	enum { MAX_MOVE_HINTS = 256 };

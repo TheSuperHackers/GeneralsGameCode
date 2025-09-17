@@ -103,7 +103,6 @@ enum ValueOrThreat CPP_11(: Int)
 {
 	VOT_CashValue = 1,
 	VOT_ThreatValue,
-	VOT_NumItems
 };
 
 // ----------------------------------------------------------------------------------------------

@@ -70,8 +70,6 @@ typedef enum
 	MODE_RESIZE_LEFT,								///< resize dragging left vertical
 	MODE_KEYBOARD_MOVE,							///< moving windows with the Keyboard
 
-	MODE_NUM_MODES									///< keep this last!
-
 } EditMode;
 
 //-------------------------------------------------------------------------------------------------
@@ -102,8 +100,6 @@ typedef enum
 	CURSOR_SIZE_NWSE,
 	CURSOR_SIZE_WE,
 	CURSOR_WAIT,
-
-	CURSOR_NUM_CURSORS  // keep last
 
 } CursorType;
 

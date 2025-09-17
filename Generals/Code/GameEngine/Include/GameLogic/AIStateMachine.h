@@ -103,7 +103,6 @@ enum AIStateType CPP_11(: Int)
 	AI_MOVE_AWAY_FROM_REPULSORS,							///< Civilians are running away from repulsors. (enemies or dead civs, usually) jba
 	AI_WANDER_IN_PLACE,												///< Civilians just wander around a spot, rather than along a path.
 	AI_BUSY,																	///< This is a state that things will be in when they are busy doing random stuff that doesn't require AI interaction.
-	NUM_AI_STATES
 };
 
 //-----------------------------------------------------------------------------------------------------------
@@ -198,7 +197,6 @@ enum StateType CPP_11(: Int)
 		APPROACH_TARGET,											///< Approach a non-moving target.
 		AIM_AT_TARGET,												///< rotate to face GoalObject or GoalPosition
 		FIRE_WEAPON,													///< fire the machine owner's current weapon
-		NUM_ATTACK_STATES
 	};
 	AttackStateMachine( Object *owner, AIAttackState* att, AsciiString name, Bool follow, Bool attackingObject, Bool forceAttacking );
 

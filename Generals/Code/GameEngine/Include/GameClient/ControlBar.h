@@ -574,8 +574,6 @@ enum ControlBarContext CPP_11(: Int)
 	CB_CONTEXT_OBSERVER_INFO,					///< for when we want to populate the player info
 	CB_CONTEXT_OBSERVER_LIST,					///< for when we want to update the observer list
 	CB_CONTEXT_OCL_TIMER,							///< Countdown for OCL spewers
-
-	NUM_CB_CONTEXTS
 };
 
 //-------------------------------------------------------------------------------------------------
