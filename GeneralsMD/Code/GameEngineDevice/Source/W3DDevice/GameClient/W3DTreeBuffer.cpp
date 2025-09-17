@@ -1604,12 +1604,12 @@ void W3DTreeBuffer::drawTrees(CameraClass * camera, RefRenderObjListIterator *pD
 			if (!m_trees[curTree].visible || !m_treeTypes[type].m_doShadow) {
 				continue;
 			}
-			Real factor = 1.0f;
+
 			if (m_trees[curTree].m_toppleState == TOPPLE_FALLING ||
 					m_trees[curTree].m_toppleState == TOPPLE_DOWN) {
 				continue;
 			}
-			m_shadow->setSize(m_treeTypes[type].m_shadowSize, -m_treeTypes[type].m_shadowSize*factor);
+			m_shadow->setSize(m_treeTypes[type].m_shadowSize, m_treeTypes[type].m_shadowSize);
 			m_shadow->setPosition(m_trees[curTree].location.X, m_trees[curTree].location.Y, m_trees[curTree].location.Z);
 			TheW3DProjectedShadowManager->queueDecal(m_shadow);
 		}
