@@ -651,7 +651,8 @@ void RTS3DScene::renderOneObject(RenderInfoClass &rinfo, RenderObjClass *robj, I
 			}
 		}
 
-		if (draw->isKindOf(KINDOF_INFANTRY))
+		if ((draw->isKindOf(KINDOF_INFANTRY) && !draw->isKindOf(KINDOF_DISABLE_INFANTRY_LIGHTING)) ||
+			  draw->isKindOf(KINDOF_ENABLE_INFANTRY_LIGHTING))
 		{	//ambient = m_infantryAmbient;  //has no effect - see comment on m_infantryAmbient
 			sceneLights = m_infantryLight;
 		}

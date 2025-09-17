@@ -158,6 +158,12 @@ const char* KindOfMaskType::s_bitNameList[] =
 	"DEMOTRAP",
 	"CONSERVATIVE_BUILDING",
 	"IGNORE_DOCKING_BONES",
+	"CAN_RETALIATE",
+
+	"NO_BATTLE_PLAN",
+
+	"ENABLE_INFANTRY_LIGHTING",
+	"DISABLE_INFANTRY_LIGHTING",
 
 	"VTOL",
 	"LARGE_AIRCRAFT",
@@ -189,6 +195,8 @@ const char* KindOfMaskType::s_bitNameList[] =
 	"EXTRA14",
 	"EXTRA15",
 	"EXTRA16",
+	"EXTRA17",
+	"EXTRA18",
 
 	NULL
 };

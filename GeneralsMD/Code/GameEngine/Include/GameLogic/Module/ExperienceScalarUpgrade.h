@@ -49,6 +49,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
+	Bool m_initiallyActive;   // Apply upgrade immediately
 	Real m_addXPScalar;   ///< Additive bonus to scalar for XP this unit gains
 	Real m_addXPValueScalar;  ///< Additive bonus to scalar for XP this unit gives when killed
 

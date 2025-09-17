@@ -52,7 +52,7 @@ class BattlePlanBonusBehaviorModuleData : public BehaviorModuleData
 public:
 	UpgradeMuxData				m_upgradeMuxData;
 
-	Bool						m_initiallyActive;   // Apply upgrade immediately (Does this make sense?)
+	Bool						m_initiallyActive;   // Apply upgrade immediately
 	Bool						m_overrideGlobal;    // Do not apply effects from global BattlePlan bonus
 	Bool						m_shouldParalyze;    // Paralyze this unit when applying BattlePlans
 
