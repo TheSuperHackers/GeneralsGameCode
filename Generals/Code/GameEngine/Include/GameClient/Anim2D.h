@@ -52,7 +52,7 @@ enum Anim2DMode CPP_11(: Int)
 	ANIM_2D_PING_PONG_BACKWARDS,
 	// dont' forget to add new animation mode names to Anim2DModeNames[] below
 
-	ANIM_2D_NUM_MODES						// keep this last please
+	ANIM_2D_NUM_MODES
 
 };
 #ifdef DEFINE_ANIM_2D_MODE_NAMES

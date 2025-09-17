@@ -72,7 +72,7 @@ const FieldParse CampaignManager::m_campaignFieldParseTable[] =
 	{ "CampaignNameLabel",	INI::parseAsciiString,							NULL, offsetof( Campaign, m_campaignNameLabel ) },
 	{ "FinalVictoryMovie",	INI::parseAsciiString,							NULL, offsetof( Campaign, m_finalMovieName ) },
 
-	{ NULL,										NULL,													NULL, 0 }  // keep this last
+	{ NULL,										NULL,													NULL, 0 }
 
 };
 
@@ -366,7 +366,7 @@ void CampaignManager::parseMissionPart( INI* ini, void *instance, void *store, c
 			{ "VoiceLength",			INI::parseInt ,								NULL, offsetof( Mission, m_voiceLength ) },
 
 
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 	AsciiString name;
 	const char* c = ini->getNextToken();

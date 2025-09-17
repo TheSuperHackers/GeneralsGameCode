@@ -158,7 +158,8 @@ public:
  		DSTBLEND_ONE_MINUS_SRC_COLOR,	// destination pixel multiplied by one minus (i.e. inverse) fragment RGB components
  		DSTBLEND_SRC_ALPHA,        	// destination pixel multiplied by fragment alpha component
  		DSTBLEND_ONE_MINUS_SRC_ALPHA, // destination pixel multiplied by fragment inverse alpha
-		DSTBLEND_MAX						// end of enumeration
+
+		DSTBLEND_MAX
   	};
 
 	enum FogFuncType
@@ -191,7 +192,8 @@ public:
   		SRCBLEND_ONE,							// fragment added unmodified to color buffer (default)
  		SRCBLEND_SRC_ALPHA,					// fragment RGB components multiplied by fragment A
  		SRCBLEND_ONE_MINUS_SRC_ALPHA,		// fragment RGB components multiplied by fragment inverse (one minus) A
-		SRCBLEND_MAX							// end of enumeration
+
+		SRCBLEND_MAX
   	};
 
 	enum TexturingType

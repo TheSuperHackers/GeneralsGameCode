@@ -240,7 +240,7 @@ const FieldParse ThingTemplate::s_objectFieldParseTable[] =
 	{ "CrusherLevel",					INI::parseUnsignedByte,			NULL, offsetof( ThingTemplate, m_crusherLevel ) },
 	{ "CrushableLevel",				INI::parseUnsignedByte,			NULL, offsetof( ThingTemplate, m_crushableLevel ) },
 
-	{ 0, 0, 0, 0 }  // keep this last
+	{ 0, 0, 0, 0 }
 
 };
 // NOTE NOTE NOTE -- s_objectFieldParseTable and s_objectReskinFieldParseTable must be updated in tandem -- see comment above
@@ -258,7 +258,7 @@ const FieldParse ThingTemplate::s_objectReskinFieldParseTable[] =
 	{ "FenceWidth",						INI::parseReal,													NULL,		offsetof( ThingTemplate, m_fenceWidth ) },
 	{ "FenceXOffset",					INI::parseReal,													NULL,		offsetof( ThingTemplate, m_fenceXOffset ) },
 
-	{ 0, 0, 0, 0 }  // keep this last
+	{ 0, 0, 0, 0 }
 
 };
 // NOTE NOTE NOTE -- s_objectFieldParseTable and s_objectReskinFieldParseTable must be updated in tandem -- see comment above

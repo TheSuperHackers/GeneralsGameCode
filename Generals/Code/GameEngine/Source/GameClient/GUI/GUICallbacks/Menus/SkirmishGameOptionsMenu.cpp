@@ -1139,7 +1139,7 @@ static const char *gadgetsToHide[] =
 	"StaticTextColor",
 	"StaticTextTeam",
 	"StaticTextFaction",
-	NULL // keep this last
+	NULL
 };
 static const char *perPlayerGadgetsToHide[] =
 {
@@ -1147,7 +1147,7 @@ static const char *perPlayerGadgetsToHide[] =
 	"ComboBoxTeam",
 	"ComboBoxColor",
 	"ComboBoxPlayerTemplate",
-	NULL // keep this last
+	NULL
 };
 
 //-------------------------------------------------------------------------------------------------

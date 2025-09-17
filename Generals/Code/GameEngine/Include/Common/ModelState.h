@@ -214,7 +214,7 @@ enum ModelConditionFlagType CPP_11(: Int)
 // existing values!
 //
 
-	MODELCONDITION_COUNT	// keep last!
+	MODELCONDITION_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------

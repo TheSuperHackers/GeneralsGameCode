@@ -65,7 +65,7 @@ const FieldParse GameWindowTransitionsHandler::m_gameWindowTransitionsFieldParse
 	{ "Window",		GameWindowTransitionsHandler::parseWindow,	NULL, NULL	},
 	{ "FireOnce",	INI::parseBool,															NULL, offsetof( TransitionGroup, m_fireOnce) 	},
 
-	{ NULL,										NULL,													NULL, 0 }  // keep this last
+	{ NULL,										NULL,													NULL, 0 }
 
 };
 
@@ -574,7 +574,7 @@ void GameWindowTransitionsHandler::parseWindow( INI* ini, void *instance, void *
 			{ "WinName",				INI::parseAsciiString,		NULL,									offsetof( TransitionWindow, m_winName ) },
       { "Style",					INI::parseLookupList,			TransitionStyleNames,	offsetof( TransitionWindow, m_style ) },
 			{ "FrameDelay",			INI::parseInt,						NULL,									offsetof( TransitionWindow, m_frameDelay ) },
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 	TransitionWindow *transWin = NEW TransitionWindow;
 	ini->initFromINI(transWin, myFieldParse);

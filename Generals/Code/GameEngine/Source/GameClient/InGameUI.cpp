@@ -853,7 +853,7 @@ const FieldParse InGameUI::s_fieldParseTable[] =
 	{ "GameTimeColor",          INI::parseColorInt,     NULL, offsetof( InGameUI, m_gameTimeColor ) },
 	{ "GameTimeDropColor",      INI::parseColorInt,     NULL, offsetof( InGameUI, m_gameTimeDropColor ) },
 
-	{ NULL,													NULL,										NULL,		0 }  // keep this last
+	{ NULL,													NULL,										NULL,		0 }
 };
 
 //-------------------------------------------------------------------------------------------------

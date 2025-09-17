@@ -88,7 +88,7 @@ enum
 	DROPDOWN_LOADREPLAY,
 	DROPDOWN_DIFFICULTY,
 
-	DROPDOWN_COUNT // keep last
+	DROPDOWN_COUNT
 };
 
 static Bool raiseMessageBoxes = TRUE;

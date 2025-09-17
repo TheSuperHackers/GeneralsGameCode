@@ -86,7 +86,7 @@ TurretStateMachine::TurretStateMachine( TurretAI* tai, Object *obj, AsciiString 
 	static const StateConditionInfo fireConditions[] =
 	{
 		StateConditionInfo(outOfWeaponRangeObject, TURRETAI_AIM, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	// order matters: first state is the default state.

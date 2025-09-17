@@ -508,7 +508,7 @@ DeliverPayloadStateMachine::DeliverPayloadStateMachine( Object *owner ) : StateM
 	static const StateConditionInfo considerConditions[] =
 	{
 		StateConditionInfo(DeliverPayloadStateMachine::isOffMap, RECOVER_FROM_OFF_MAP, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	// order matters: first state is the default state.

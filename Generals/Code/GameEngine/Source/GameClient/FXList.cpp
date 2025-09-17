@@ -772,7 +772,7 @@ static const FieldParse TheFXListFieldParse[] =
 	{ "TerrainScorch",							TerrainScorchFXNugget::parse, 0, 0},
 	{ "ParticleSystem",							ParticleSystemFXNugget::parse, 0, 0},
 	{ "FXListAtBonePos",						FXListAtBonePosFXNugget::parse, 0, 0},
-	{ NULL, NULL, 0, 0 }  // keep this last
+	{ NULL, NULL, 0, 0 }
 };
 
 //-------------------------------------------------------------------------------------------------

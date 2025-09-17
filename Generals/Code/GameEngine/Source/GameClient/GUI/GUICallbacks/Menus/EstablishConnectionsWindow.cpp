@@ -82,7 +82,7 @@ static const char *gadgetsToHide[] =
 	"ButtonSelectMap",
 	"ButtonStart",
 	"StaticTextMapPreview",
-	NULL // keep this last
+	NULL
 };
 static const char *perPlayerGadgetsToHide[] =
 {
@@ -93,7 +93,7 @@ static const char *perPlayerGadgetsToHide[] =
 	"ButtonAccept",
 	"GenericPing",
 	//"ButtonStartPosition",
-	NULL // keep this last
+	NULL
 };
 
 static const char *qmlayoutFilename = "WOLQuickMatchMenu.wnd";
@@ -107,12 +107,12 @@ static const char *qmgadgetsToHide[] =
 	"ButtonWiden",
 	"ButtonStop",
 	"ButtonStart",
-	NULL // keep this last
+	NULL
 };
 static const char *qmperPlayerGadgetsToHide[] =
 {
 	//"ButtonStartPosition",
-	NULL // keep this last
+	NULL
 };
 
 static void showGameSpyGameOptionsUnderlyingGUIElements( Bool show )

@@ -84,7 +84,7 @@ CONTROL_BAR_ARROW_TRANSITION,
 SCORE_SCALE_UP_TRANSITION,
 REVERSE_SOUND_TRANSITION,
 
-MAX_TRANSITION_WINDOW_STYLES				///< Keep this last
+MAX_TRANSITION_WINDOW_STYLES
 };
 
 static const LookupListRec TransitionStyleNames[] =
@@ -104,10 +104,7 @@ static const LookupListRec TransitionStyleNames[] =
 	{ "CONTROLBARARROW",			CONTROL_BAR_ARROW_TRANSITION },
 	{ "SCORESCALEUP",			SCORE_SCALE_UP_TRANSITION },
 	{ "REVERSESOUND",			REVERSE_SOUND_TRANSITION },
-
-
-
-	{ NULL, 0	}// keep this last!
+	{ NULL, 0	}
 };
 
 // base class for the transitions

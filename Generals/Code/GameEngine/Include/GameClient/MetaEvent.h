@@ -44,7 +44,8 @@ enum MappableKeyCategories CPP_11(: Int)
 	CATEGORY_TEAM,
 	CATEGORY_MISC,
 	CATEGORY_DEBUG,
-	CATEGORY_NUM_CATEGORIES // keep this last
+
+	CATEGORY_NUM_CATEGORIES
 };
 
 static const LookupListRec CategoryListName[] =
@@ -57,7 +58,7 @@ static const LookupListRec CategoryListName[] =
 	{"TEAM",							CATEGORY_TEAM},
 	{"MISC",							CATEGORY_MISC},
 	{"DEBUG",							CATEGORY_DEBUG},
-	{NULL, 0}// keep this last
+	{NULL, 0}
 };
 
 
@@ -260,7 +261,7 @@ static const LookupListRec KeyNames[] =
 	{ "KEY_INS", MK_INS },
 	{ "KEY_DEL", MK_DEL },
 	{ "KEY_NONE", MK_NONE },
-	{ NULL, 0	} // keep this last!
+	{ NULL, 0	}
 };
 
 // -------------------------------------------------------------------------------
@@ -276,7 +277,7 @@ static const LookupListRec TransitionNames[] =
 	{ "DOWN",				DOWN },
 	{ "UP",					UP },
 	{ "DOUBLEDOWN",	DOUBLEDOWN },
-	{ NULL, 0	}// keep this last!
+	{ NULL, 0	}
 };
 
 // -------------------------------------------------------------------------------
@@ -303,7 +304,7 @@ static const LookupListRec ModifierNames[] =
 	{ "SHIFT_CTRL",				SHIFT_CTRL },
 	{ "SHIFT_ALT",				SHIFT_ALT },
 	{ "SHIFT_ALT_CTRL" ,	SHIFT_ALT_CTRL },
-	{ NULL, 0	}// keep this last!
+	{ NULL, 0	}
 };
 
 

@@ -76,7 +76,7 @@ enum DozerTask CPP_11(: Int) // These enums are saved in the game save file, so 
 	DOZER_TASK_REPAIR = 1,											///< go repair something
 	DOZER_TASK_FORTIFY = 2,											///< go fortify something
 
-	DOZER_NUM_TASKS													// keep this last
+	DOZER_NUM_TASKS
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -86,7 +86,8 @@ enum DozerDockPoint CPP_11(: Int)	 // These enums are saved in the game save fil
 	DOZER_DOCK_POINT_START	= 0,
 	DOZER_DOCK_POINT_ACTION	= 1,
 	DOZER_DOCK_POINT_END		= 2,
-	DOZER_NUM_DOCK_POINTS  // keep this one last
+
+	DOZER_NUM_DOCK_POINTS
 };
 
 // ------------------------------------------------------------------------------------------------

@@ -103,7 +103,7 @@ enum CommandOption CPP_11(: Int)
 	CAN_USE_WAYPOINTS						= 0x00400000, // button has option to use a waypoint path
 	MUST_BE_STOPPED							= 0x00800000, // Unit must be stopped in order to be able to use button.
 
-	NUM_COMMAND_OPTIONS						// keep this last
+	NUM_COMMAND_OPTIONS
 };
 
 #ifdef DEFINE_COMMAND_OPTION_NAMES

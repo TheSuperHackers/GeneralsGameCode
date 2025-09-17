@@ -108,7 +108,7 @@ enum ParticlePriorityType CPP_11(: Int)
 	ALWAYS_RENDER,	///< used for logically important display (not just fluff), so must never be culled, regardless of particle cap, lod, etc
 	// !!! *Noting* goes here ... special is the top priority !!!
 	PARTICLE_PRIORITY_HIGHEST = ALWAYS_RENDER,
-	NUM_PARTICLE_PRIORITIES  ///< Keep this last
+	NUM_PARTICLE_PRIORITIES
 };
 
 /**

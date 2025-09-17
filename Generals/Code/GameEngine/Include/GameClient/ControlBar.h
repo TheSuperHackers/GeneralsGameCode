@@ -100,7 +100,7 @@ enum CommandOption CPP_11(: Int)
 	IGNORES_UNDERPOWERED				= 0x00100000, // this button isn't disabled if its object is merely underpowered
 	USES_MINE_CLEARING_WEAPONSET= 0x00200000,	// uses the special mine-clearing weaponset, even if not current
 
-	NUM_COMMAND_OPTIONS						// keep this last
+	NUM_COMMAND_OPTIONS
 };
 
 #ifdef DEFINE_COMMAND_OPTION_NAMES
@@ -208,7 +208,7 @@ enum GUICommandType CPP_11(: Int)
 
 	// add more commands here, don't forget to update the string command list below too ...
 
-	GUI_COMMAND_NUM_COMMANDS							// keep this last
+	GUI_COMMAND_NUM_COMMANDS
 };
 
 #ifdef DEFINE_GUI_COMMMAND_NAMES
@@ -264,7 +264,7 @@ enum CommandButtonMappedBorderType CPP_11(: Int)
 	COMMAND_BUTTON_BORDER_ACTION,
 	COMMAND_BUTTON_BORDER_SYSTEM,
 
-	COMMAND_BUTTON_BORDER_COUNT // keep this last
+	COMMAND_BUTTON_BORDER_COUNT
 };
 
 static const LookupListRec CommandButtonMappedBorderTypeNames[] =
@@ -275,7 +275,7 @@ static const LookupListRec CommandButtonMappedBorderTypeNames[] =
 	{ "ACTION",				COMMAND_BUTTON_BORDER_ACTION },
 	{ "SYSTEM",				COMMAND_BUTTON_BORDER_SYSTEM },
 
-	{ NULL, 0	}// keep this last!
+	{ NULL, 0	}
 };
 //-------------------------------------------------------------------------------------------------
 /** Command buttons are used to load the buttons we place on throughout the command bar

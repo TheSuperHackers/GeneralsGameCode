@@ -58,7 +58,7 @@ typedef enum _TerrainLOD CPP_11(: Int)
 	TERRAIN_LOD_AUTOMATIC							= 8,
 	TERRAIN_LOD_DISABLE								= 9,
 
-	TERRAIN_LOD_NUM_TYPES								// keep this last
+	TERRAIN_LOD_NUM_TYPES
 
 } TerrainLOD;
 #ifdef DEFINE_TERRAIN_LOD_NAMES

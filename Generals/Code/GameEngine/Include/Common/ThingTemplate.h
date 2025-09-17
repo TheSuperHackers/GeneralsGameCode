@@ -82,7 +82,7 @@ typedef std::map<AsciiString, const FXList*> PerUnitFXMap;
 //	INV_IMAGE_HILITE,
 //	INV_IMAGE_PUSHED,
 //
-//	INV_IMAGE_NUM_IMAGES  // keep this last
+//	INV_IMAGE_NUM_IMAGES
 //
 //};
 //-------------------------------------------------------------------------------------------------
@@ -141,7 +141,7 @@ enum ThingTemplateAudioType CPP_11(: Int)
 	TTAUDIO_voiceAttackAir,						///< Unit is ordered to attack an airborne unit
 	TTAUDIO_voiceGuard,								///< Unit is ordered to guard an area
 
-	TTAUDIO_COUNT   // keep last!
+	TTAUDIO_COUNT
 };
 
 class AudioArray
@@ -204,7 +204,7 @@ enum BuildCompletionType CPP_11(: Int)
 	BC_APPEARS_AT_RALLY_POINT,	///< unit appears at rally point of its #1 prereq
 	BC_PLACED_BY_PLAYER,				///< unit must be manually placed by player
 
-	BC_NUM_TYPES								// leave this last
+	BC_NUM_TYPES
 };
 #ifdef DEFINE_BUILD_COMPLETION_NAMES
 static const char *BuildCompletionNames[] =
@@ -225,7 +225,7 @@ enum BuildableStatus CPP_11(: Int)
 	BSTATUS_NO,
 	BSTATUS_ONLY_BY_AI,
 
-	BSTATUS_NUM_TYPES	// leave this last
+	BSTATUS_NUM_TYPES
 };
 
 #ifdef DEFINE_BUILDABLE_STATUS_NAMES

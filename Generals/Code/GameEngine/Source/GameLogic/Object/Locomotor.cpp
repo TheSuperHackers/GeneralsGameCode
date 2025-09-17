@@ -488,7 +488,7 @@ const FieldParse* LocomotorTemplate::getFieldParse() const
 		{ "WanderLengthFactor",				 INI::parseReal, NULL, offsetof(LocomotorTemplate, m_wanderLengthFactor) },
 		{ "WanderAboutPointRadius",				 INI::parseReal, NULL, offsetof(LocomotorTemplate, m_wanderAboutPointRadius) },
 
-		{ NULL, NULL, NULL, 0 }  // keep this last
+		{ NULL, NULL, NULL, 0 }
 
 	};
 	return TheFieldParse;

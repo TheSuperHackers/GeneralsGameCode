@@ -52,7 +52,7 @@ enum ArmorSetType CPP_11(: Int)
 	ARMORSET_PLAYER_UPGRADE = 3,
 	ARMORSET_WEAK_VERSUS_BASEDEFENSES = 4,
 
-	ARMORSET_COUNT			///< keep last, please
+	ARMORSET_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------

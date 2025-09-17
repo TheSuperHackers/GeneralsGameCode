@@ -77,7 +77,7 @@ enum
 	RANK_GENERAL,
 	RANK_COMMANDER_IN_CHIEF,
 
-	MAX_RANKS // keep last
+	MAX_RANKS
 };
 
 struct RankPoints

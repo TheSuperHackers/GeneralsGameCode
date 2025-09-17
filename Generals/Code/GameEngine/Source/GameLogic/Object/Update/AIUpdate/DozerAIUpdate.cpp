@@ -1276,7 +1276,7 @@ DozerPrimaryStateMachine::DozerPrimaryStateMachine( Object *owner ) : StateMachi
 		StateConditionInfo(isBuildMostImportant, DOZER_PRIMARY_BUILD, NULL),
 		StateConditionInfo(isRepairMostImportant, DOZER_PRIMARY_REPAIR, NULL),
 		StateConditionInfo(isFortifyMostImportant, DOZER_PRIMARY_FORTIFY, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	// order matters: first state is the default state.

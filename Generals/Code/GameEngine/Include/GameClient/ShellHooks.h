@@ -77,7 +77,7 @@ enum
 	SHELL_SCRIPT_HOOK_LAN_CLOSED,
 	SHELL_SCRIPT_HOOK_LAN_ENTERED_FROM_GAME,
 
-	SHELL_SCRIPT_HOOK_TOTAL			// Keep this guy last!
+	SHELL_SCRIPT_HOOK_TOTAL
 };
 
 extern const char *TheShellHookNames[];				///< Contains a list of the text representation of the shell hooks Used in WorldBuilder and in the shell.

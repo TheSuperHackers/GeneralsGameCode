@@ -122,7 +122,7 @@ const FieldParse UpgradeTemplate::m_upgradeFieldParseTable[] =
 	{ "ButtonImage",				INI::parseAsciiString,		NULL, offsetof( UpgradeTemplate, m_buttonImageName ) },
 	{ "ResearchSound",			INI::parseAudioEventRTS,	NULL, offsetof( UpgradeTemplate, m_researchSound ) },
 	{ "UnitSpecificSound",	INI::parseAudioEventRTS,	NULL, offsetof( UpgradeTemplate, m_unitSpecificSound ) },
-	{ NULL,						NULL,												 NULL, 0 }  // keep this last
+	{ NULL,						NULL,												 NULL, 0 }
 
 };
 

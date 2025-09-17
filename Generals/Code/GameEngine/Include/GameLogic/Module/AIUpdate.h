@@ -83,7 +83,7 @@ enum LocomotorSetType CPP_11(: Int)
 	LOCOMOTORSET_SUPERSONIC,	// set used for high-speed attacks
 	LOCOMOTORSET_SLUGGISH,		// set used for abnormally slow (but not damaged) speeds
 
-	LOCOMOTORSET_COUNT	///< keep last, please
+	LOCOMOTORSET_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------

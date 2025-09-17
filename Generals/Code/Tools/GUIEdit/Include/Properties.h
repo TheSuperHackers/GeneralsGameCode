@@ -347,7 +347,7 @@ typedef enum
 	GENERIC_DISABLED,
 	GENERIC_HILITE,
 
-	NUM_STATE_IDENTIFIERS  // keep this last
+	NUM_STATE_IDENTIFIERS
 
 } StateIdentifier;
 

@@ -53,7 +53,7 @@ enum StructureCollapsePhaseType CPP_11(: Int)
 	SCPHASE_BURST,
 	SCPHASE_FINAL,
 
-	SC_PHASE_COUNT	// keep last
+	SC_PHASE_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------

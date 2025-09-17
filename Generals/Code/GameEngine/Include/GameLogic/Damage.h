@@ -96,7 +96,7 @@ enum DamageType CPP_11(: Int)
 	// !!!!!!!!!!!!!!!!!!!!! NOTE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// !!!!!!!!!!!!!!!!!!!!! NOTE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	DAMAGE_NUM_TYPES			// keep this last
+	DAMAGE_NUM_TYPES
 };
 
 #ifdef DEFINE_DAMAGE_NAMES
@@ -196,7 +196,7 @@ enum DeathType CPP_11(: Int)
 	DEATH_EXTRA_7		= 18,
 	DEATH_EXTRA_8		= 19,
 
-	DEATH_NUM_TYPES			// keep this last
+	DEATH_NUM_TYPES
 };
 
 #ifdef DEFINE_DEATH_NAMES

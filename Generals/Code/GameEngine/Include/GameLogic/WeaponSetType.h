@@ -51,7 +51,7 @@ enum WeaponSetType CPP_11(: Int)
 	WEAPONSET_CARBOMB,
 	WEAPONSET_MINE_CLEARING_DETAIL,
 
-	WEAPONSET_COUNT			///< keep last, please
+	WEAPONSET_COUNT
 };
 
 #endif /* __WEAPONSETTYPE_H__ */

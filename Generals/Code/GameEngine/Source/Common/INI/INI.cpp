@@ -136,7 +136,7 @@ static const BlockParse theTypeTable[] =
 	{	"BenchProfile",				INI::parseBenchProfile },
 	{	"ReallyLowMHz",				parseReallyLowMHz },
 
-	{ NULL,									NULL },		// keep this last!
+	{ NULL,									NULL },
 };
 
 

@@ -255,7 +255,7 @@ public:
 		RATE_OF_FIRE,
 		PRE_ATTACK,
 
-		FIELD_COUNT	// keep last
+		FIELD_COUNT
 	};
 
 	WeaponBonus()

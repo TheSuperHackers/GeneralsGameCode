@@ -98,7 +98,7 @@ enum RadiusCursorType CPP_11(: Int)
 	RADIUSCURSOR_SPYDRONE,
 
 
-	RADIUSCURSOR_COUNT	// keep last
+	RADIUSCURSOR_COUNT
 };
 
 #ifdef DEFINE_RADIUSCURSOR_NAMES
@@ -345,7 +345,6 @@ public:  // ********************************************************************
 		ACTIONTYPE_SET_RALLY_POINT,
 		ACTIONTYPE_COMBATDROP_INTO,
 
-		//Keep last.
 		NUM_ACTIONTYPES
 	};
 

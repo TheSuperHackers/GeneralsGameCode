@@ -311,7 +311,7 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 #endif//DUMP_PERF_STATS
 
 
-	{ NULL, 0	}// keep this last!
+	{ NULL, 0	}
 };
 
 
@@ -329,7 +329,7 @@ static const FieldParse TheMetaMapFieldParseTable[] =
 	{ "Description",				INI::parseAndTranslateLabel,		0, offsetof( MetaMapRec, m_description ) },
 	{ "DisplayName",				INI::parseAndTranslateLabel,		0, offsetof( MetaMapRec, m_displayName ) },
 
-	{ NULL,									NULL,														0, 0 }  // keep this last
+	{ NULL,									NULL,														0, 0 }
 
 };
 

@@ -70,7 +70,7 @@ typedef enum
 	TERRAIN_WOOD,
 	TERRAIN_BLEND_EDGES,
 
-	TERRAIN_NUM_CLASSES  // keep this last
+	TERRAIN_NUM_CLASSES
 
 } TerrainClass;
 #ifdef DEFINE_TERRAIN_TYPE_NAMES

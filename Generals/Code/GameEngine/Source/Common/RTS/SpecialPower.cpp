@@ -173,7 +173,7 @@ void SpecialPowerStore::parseSpecialPowerDefinition( INI *ini )
 	{ "ViewObjectRange",					INI::parseReal,										NULL,	offsetof( SpecialPowerTemplate, m_viewObjectRange ) },
 	{ "RadiusCursorRadius",				INI::parseReal,										NULL,	offsetof( SpecialPowerTemplate, m_radiusCursorRadius ) },
 	{ "ShortcutPower",						INI::parseBool,										NULL, offsetof( SpecialPowerTemplate, m_shortcutPower ) },
-	{ NULL,	NULL, NULL,	0 }  // keep this last
+	{ NULL,	NULL, NULL,	0 }
 
 };
 

@@ -98,7 +98,7 @@ static const char *gadgetsToHide[] =
 	"ButtonStart",
 	"StaticTextMapPreview",
 
-	NULL // keep this last
+	NULL
 };
 static const char *perPlayerGadgetsToHide[] =
 {
@@ -106,7 +106,7 @@ static const char *perPlayerGadgetsToHide[] =
 	"ComboBoxColor",
 	"ComboBoxPlayerTemplate",
 	//"ButtonStartPosition",
-	NULL // keep this last
+	NULL
 };
 void positionStartSpots( AsciiString mapName, GameWindow *buttonMapStartPositions[], GameWindow *mapWindow);
 

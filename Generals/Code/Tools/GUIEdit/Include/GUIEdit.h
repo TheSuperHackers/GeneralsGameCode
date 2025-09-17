@@ -84,7 +84,7 @@ typedef enum
 	STATUS_PART4,			/// change to meaningful name when decided what goes here
 	STATUS_MOUSE_COORDS,
 
-	STATUS_NUM_PARTS  ///< keep this last!
+	STATUS_NUM_PARTS
 
 } StatusPart;
 

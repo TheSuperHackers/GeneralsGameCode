@@ -71,7 +71,8 @@ CREDIT_STYLE_POSITION,
 CREDIT_STYLE_NORMAL,
 CREDIT_STYLE_COLUMN,
 CREDIT_STYLE_BLANK,			///< Keep this second to last
-MAX_CREDIT_STYLES				///< Keep this last
+
+MAX_CREDIT_STYLES
 };
 
 enum{ CREDIT_SPACE_OFFSET = 2 };
@@ -83,7 +84,7 @@ static const LookupListRec CreditStyleNames[] =
 	{ "NORMAL",			CREDIT_STYLE_NORMAL },
 	{ "COLUMN",				CREDIT_STYLE_COLUMN },
 
-	{ NULL, 0	}// keep this last!
+	{ NULL, 0	}
 };
 
 

@@ -65,7 +65,7 @@ const FieldParse ShellMenuSchemeManager::m_shellMenuSchemeFieldParseTable[] =
 
 	{ "ImagePart",						ShellMenuSchemeManager::parseImagePart,			NULL, NULL },
 	{ "LinePart",							ShellMenuSchemeManager::parseLinePart,	NULL, NULL },
-	{ NULL,										NULL,													NULL, 0 }  // keep this last
+	{ NULL,										NULL,													NULL, 0 }
 
 };
 
@@ -225,7 +225,7 @@ void ShellMenuSchemeManager::parseImagePart(INI *ini, void *instance, void* /*st
 			{ "Position",				INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeImage, m_position ) },
 			{ "Size",						INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeImage, m_size ) },
       { "ImageName",			INI::parseMappedImage,		NULL, offsetof( ShellMenuSchemeImage, m_image ) },
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 
 	ShellMenuSchemeImage *schemeImage = NEW ShellMenuSchemeImage;
@@ -243,7 +243,7 @@ void ShellMenuSchemeManager::parseLinePart(INI *ini, void *instance, void* /*sto
       { "Color",						INI::parseColorInt,				NULL, offsetof( ShellMenuSchemeLine, m_color ) },
 			{ "Width",						INI::parseInt,						NULL, offsetof( ShellMenuSchemeLine, m_width ) },
 
-			{ NULL,								NULL,											NULL, 0 }  // keep this last
+			{ NULL,								NULL,											NULL, 0 }
 		};
 
 	ShellMenuSchemeLine *schemeLine = NEW ShellMenuSchemeLine;
