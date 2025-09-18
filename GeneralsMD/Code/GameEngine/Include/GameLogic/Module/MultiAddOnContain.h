@@ -132,6 +132,7 @@ public:
 	virtual short getRiderSlot(ObjectID riderID) const;
 	virtual short getPortableSlot(ObjectID riderID) const;
 	virtual const ContainedItemsList* getAddOnList() const { return &m_addOnList; }
+	virtual ContainedItemsList* getAddOnList() { return &m_addOnList; }
 
 private:
 	void parseAddOnEntry(INI* ini, void* instance, void* store, const void* /*userData*/);

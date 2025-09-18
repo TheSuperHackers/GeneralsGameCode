@@ -778,7 +778,7 @@ void WaitForDebugger()
 
 	// Once the debugger is attached, IsDebuggerPresent() returns true,
 	// the loop exits, and we break into the debugger.
-	__debugbreak(); // MSVC Compiler Intrinsic to cause a breakpoint.
+	//__debugbreak(); // MSVC Compiler Intrinsic to cause a breakpoint.
 	// This is often more robust than DebugBreak() as it doesn't
 	// rely on a specific SDK header for DebugBreak() itself.
 #endif // _DEBUG
@@ -804,7 +804,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 {
 	Int exitcode = 1;
 //#ifdef _DEBUG
-//	WaitForDebugger(); //in debug build, wait for debugger attachment
+ // 	WaitForDebugger(); //in debug build, wait for debugger attachment
 //#endif
 
 #ifdef RTS_PROFILE
