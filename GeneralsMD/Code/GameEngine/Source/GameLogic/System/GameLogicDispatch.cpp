@@ -1901,6 +1901,9 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 					loc.init(pos.x, pos.y, pos.z, angle, pitch, zoom);
 					TheTacticalView->setLocation( &loc );
 
+					// TheSuperHackers @fix xezon 18/09/2025 Lock the new location to avoid user input from changing the camera in this frame.
+					TheTacticalView->lockViewUntilFrame( getFrame() + 1 );
+
 					if (!TheLookAtTranslator->hasMouseMovedRecently())
 					{
 						TheMouse->setCursor( (Mouse::MouseCursor)(msg->getArgument( 4 )->integer) );
