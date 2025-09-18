@@ -202,6 +202,51 @@ void LANAPI::handleRequestGameInfo( LANMessage *msg, UnsignedInt senderIP )
 	}
 }
 
+static const Bool IsInvalidCharForPlayerName(const WideChar c)
+{
+	return c < L' ' // C0 control chars
+		|| c == L',' || c == L':' || c == L';' // chars used for strtok in ParseAsciiStringToGameInfo
+		|| (c >= L'\x007f' && c <= L'\x009f') // DEL + C1 control chars
+		|| c == L'\x2028' || c == L'\x2029' // line and paragraph separators
+		|| (c >= L'\xdc00' && c <= L'\xdfff') // low surrogate, for chars beyond the Unicode Basic Multilingual Plane
+		|| (c >= L'\xd800' && c <= L'\xdbff'); // high surrogate, for chars beyond the BMP
+}
+
+static const Bool IsSpaceCharacter(const WideChar c)
+{
+	return c == L' ' // space
+		|| c == L'\xA0' // no-break space
+		|| c == L'\x1680' // ogham space mark
+		|| (c >= L'\x2000' && c <= L'\x200A') // en/em spaces, figure, punctuation, thin, hair
+		|| c == L'\x202F' // narrow no-break space
+		|| c == L'\x205F' // medium mathematical space
+		|| c == L'\x3000'; // ideographic space
+}
+
+static const Bool ContainsInvalidChars(const WideChar* playerName)
+{
+	DEBUG_ASSERTCRASH(playerName != NULL, ("playerName is NULL"));
+	while (*playerName)
+	{
+		if (IsInvalidCharForPlayerName(*playerName++))
+			return true;
+	}
+
+	return false;
+}
+
+static const Bool ContainsAnyReadableChars(const WideChar* playerName)
+{
+	DEBUG_ASSERTCRASH(playerName != NULL, ("playerName is NULL"));
+	while (*playerName)
+	{
+		if (!IsSpaceCharacter(*playerName++))
+			return true;
+	}
+
+	return false;
+}
+
 void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 {
 	UnsignedInt responseIP = senderIP;	// need this cause the player may or may not be
@@ -290,7 +335,25 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 			}
 #endif
 
-			// We're the host, so see if he has a duplicate name
+			// TheSuperHackers @bugfix slurmlord 18/09/2025 need to validate the name of the connecting player before
+			// allowing them to join to prevent messing up the format of game state string. Commas, colons, semicolons etc.
+			// should not be in a player name. It should also not consist of only space characters.
+			if (canJoin)
+			{
+				if (ContainsInvalidChars(msg->name) || !ContainsAnyReadableChars(msg->name))
+				{
+					// Just deny with a duplicate name reason, for backwards compatibility with retail
+					reply.messageType = LANMessage::MSG_JOIN_DENY;
+					reply.GameNotJoined.reason = LANAPIInterface::RET_DUPLICATE_NAME;
+					reply.GameNotJoined.gameIP = m_localIP;
+					reply.GameNotJoined.playerIP = senderIP;
+					canJoin = false;
+
+					DEBUG_LOG(("LANAPI::handleRequestJoin - join denied because of illegal characters in the player name."));
+				}
+			}	
+
+			// Then see if the player has a duplicate name
 			for (player = 0; canJoin && player<MAX_SLOTS; ++player)
 			{
 				LANGameSlot *slot = m_currentGame->getLANSlot(player);
