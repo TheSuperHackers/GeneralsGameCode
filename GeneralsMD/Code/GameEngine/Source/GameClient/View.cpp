@@ -166,14 +166,8 @@ void View::setAngle( Real angle )
  */
 void View::setPitch( Real angle )
 {
-	m_pitchAngle = angle;
-
-	Real limit = PI/5.0f;
-
-	if (m_pitchAngle < -limit)
-		m_pitchAngle = -limit;
-	else if (m_pitchAngle > limit)
-		m_pitchAngle = limit;
+	constexpr Real limit = PI/5.0f;
+	m_pitchAngle = clamp(-limit, angle, limit);
 }
 
 /**
@@ -183,6 +177,19 @@ void View::setAngleAndPitchToDefault( void )
 {
 	m_angle = m_defaultAngle;
 	m_pitchAngle = m_defaultPitchAngle;
+}
+
+void View::setHeightAboveGround(Real z)
+{
+	// if our zoom is limited, we will stay within a predefined distance from the terrain
+	if( m_zoomLimited )
+	{
+		m_heightAboveGround = clamp(m_minHeightAboveGround, z, m_maxHeightAboveGround);
+	}
+	else
+	{
+		m_heightAboveGround = z;
+	}
 }
 
 /**
