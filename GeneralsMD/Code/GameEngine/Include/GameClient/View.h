@@ -184,12 +184,11 @@ public:
 	virtual const Coord3D& get3DCameraPosition() const = 0;							///< Returns the actual camera position
 
 	virtual Real getZoom() { return m_zoom; }
-	virtual void setZoom(Real z) { }
+	virtual void setZoom(Real z) { m_zoom = z; }
 	virtual Real getHeightAboveGround() { return m_heightAboveGround; }
 	virtual void setHeightAboveGround(Real z);
 	virtual void zoom( Real height ); ///< Zoom in/out, closer to the ground, limit to min, or farther away from the ground, limit to max
 	virtual void setZoomToDefault( void ) { m_zoom  = 1.0f; } ///< Set zoom to default value
-	virtual Real getMaxZoom( void ) { return m_maxZoom; }								///< return max zoom value
 	virtual void setOkToAdjustHeight( Bool val ) { m_okToAdjustHeight = val; }	///< Set this to adjust camera height
 
 	// for debugging
@@ -267,8 +266,6 @@ protected:
 	Real m_angle;																								///< Angle at which view has been rotated about the Z axis
 	Real m_pitchAngle;																					///< Rotation of view direction around horizontal (X) axis
 
-	Real m_maxZoom;																							///< Largest zoom value (minimum actual zoom)
-	Real m_minZoom;																							///< Smallest zoom value (maximum actual zoom)
 	Real m_maxHeightAboveGround;																///< Highest camera above ground value
 	Real m_minHeightAboveGround;																///< Lowest camera above ground value
 	Real m_zoom;																								///< Current zoom value

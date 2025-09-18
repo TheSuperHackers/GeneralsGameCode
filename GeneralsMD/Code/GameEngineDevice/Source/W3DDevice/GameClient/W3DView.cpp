@@ -1940,15 +1940,13 @@ void W3DView::setHeightAboveGround(Real z)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @bugfix xezon 18/09/2025 setZoom is no longer clamped by a min and max zoom.
+// Instead the min and max camera height will be clamped elsewhere. Clamping the zoom would cause
+// issues with camera playback in replay playback where changes in terrain elevation would not raise
+// the camera height.
 void W3DView::setZoom(Real z)
 {
-	m_zoom = z;
-
-	if (m_zoom < m_minZoom)
-		m_zoom = m_minZoom;
-
-	if (m_zoom > m_maxZoom)
-		m_zoom = m_maxZoom;
+	View::setZoom(z);
 
 	m_doingMoveCameraOnWaypointPath = false;
 	m_CameraArrivedAtWaypointOnPathFlag = false;

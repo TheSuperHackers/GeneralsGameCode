@@ -5517,7 +5517,8 @@ void InGameUI::updateAndDrawWorldAnimations( void )
 			UnsignedInt height = wad->m_anim->getCurrentFrameHeight();
 
 			// scale the width and height given the camera zoom level
-			Real zoomScale = TheTacticalView->getMaxZoom() / TheTacticalView->getZoom();
+			constexpr Real scaler = 1.3f;
+			Real zoomScale = scaler / TheTacticalView->getZoom();
 			width *= zoomScale;
 			height *= zoomScale;
 
