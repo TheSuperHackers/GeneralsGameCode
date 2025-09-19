@@ -51,19 +51,14 @@ public:
 	Real m_shieldMaxHealthPercent;  ///< MaxHealth as percentage of activeBody MaxHealth (takes priority)
 	ArmorSetType m_shieldArmorSetFlag; ///< armorset to use for damage absorbed by the shield
 
-	//UnsignedInt m_shieldRechargeDelay;  ///< frames of no damage taken until shield recharges
-	//UnsignedInt m_shieldRechargeRate;   ///< every this often, we heal the shield ...
-	//Real m_shieldRechargeAmount;					///< by this much.
-	//Real m_shieldRechargeAmountPercent;		///< Same as above but percentage of shieldMaxHealth (takes priority)
-
 	DamageTypeFlags m_damageTypesToPassThrough;
+	DamageTypeFlags m_defaultDamageTypesToPassThrough;
 
 	ShieldBodyModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 	static void parseShieldHealthPercent(INI* ini, void* instance, void* store, const void* userData);
-	static void parseShieldRechargeAmountPercent(INI* ini, void* instance, void* store, const void* userData);
 };
 
 //-------------------------------------------------------------------------------------------------

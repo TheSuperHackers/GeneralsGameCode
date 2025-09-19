@@ -46,6 +46,7 @@
 
 
 class ShieldBody;
+class FXList;
 
 //-------------------------------------------------------------------------------------------------
 class EnergyShieldBehaviorModuleData : public UpdateModuleData
@@ -65,6 +66,18 @@ public:
 	RGBAColorInt m_barBGColor;
 	Bool m_showBarWhenEmpty;
 	Bool m_showBarWhenUnselected;
+
+	ModelConditionFlagType m_shieldConditionFlag;
+	ModelConditionFlagType m_shieldHitConditionFlag;
+	AsciiString m_shieldSubObjName;
+	AsciiString m_shieldHitSubObjName;
+	UnsignedInt m_showShieldWhenHitDuration;
+	//Bool m_alwaysShowShield;
+
+	FXList* m_fxShieldUp;
+	FXList* m_fxShieldDown;
+
+
 
 	//DamageTypeFlags m_damageTypesToPassThrough;
 
@@ -164,7 +177,10 @@ private:
 	ShieldBody*           m_body;
 	//Real									m_currentShieldHealth;
 	UnsignedInt           m_healingStepCountdown;
+	UnsignedInt						m_shieldHitCountdown;
 
+	void showShield(bool show, bool isHit = false);
+	Bool alwaysShowShield() const;
 };
 
 #endif // __EnergyShieldBehavior_H_

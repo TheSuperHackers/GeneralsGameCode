@@ -47,6 +47,19 @@ ShieldBodyModuleData::ShieldBodyModuleData()
 {
 	m_damageTypesToPassThrough = DAMAGE_TYPE_FLAGS_NONE;
 	m_shieldArmorSetFlag = ARMORSET_NONE;
+
+	// Init default pass through types
+	m_defaultDamageTypesToPassThrough = DAMAGE_TYPE_FLAGS_NONE;
+	m_defaultDamageTypesToPassThrough = setDamageTypeFlag(m_defaultDamageTypesToPassThrough, DAMAGE_STATUS);
+	m_defaultDamageTypesToPassThrough = setDamageTypeFlag(m_defaultDamageTypesToPassThrough, DAMAGE_DEPLOY);
+	m_defaultDamageTypesToPassThrough = setDamageTypeFlag(m_defaultDamageTypesToPassThrough, DAMAGE_UNRESISTABLE);
+	m_defaultDamageTypesToPassThrough = setDamageTypeFlag(m_defaultDamageTypesToPassThrough, DAMAGE_HEALING);
+	m_defaultDamageTypesToPassThrough = setDamageTypeFlag(m_defaultDamageTypesToPassThrough, DAMAGE_PENALTY);
+	m_defaultDamageTypesToPassThrough = setDamageTypeFlag(m_defaultDamageTypesToPassThrough, DAMAGE_DISARM);
+	m_defaultDamageTypesToPassThrough = setDamageTypeFlag(m_defaultDamageTypesToPassThrough, DAMAGE_HAZARD_CLEANUP);
+	m_defaultDamageTypesToPassThrough = setDamageTypeFlag(m_defaultDamageTypesToPassThrough, DAMAGE_TOPPLING);
+	m_defaultDamageTypesToPassThrough = setDamageTypeFlag(m_defaultDamageTypesToPassThrough, DAMAGE_SUBDUAL_UNRESISTABLE);
+	m_defaultDamageTypesToPassThrough = setDamageTypeFlag(m_defaultDamageTypesToPassThrough, DAMAGE_CHRONO_UNRESISTABLE);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -54,25 +67,18 @@ ShieldBodyModuleData::ShieldBodyModuleData()
 void ShieldBodyModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 	ActiveBodyModuleData::buildFieldParse(p);
-	//UpdateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
-		//TODO
 		{ "StartsActive",						INI::parseBool,						NULL,		offsetof(ShieldBodyModuleData, m_startsActive) },
 
 		{ "ShieldMaxHealth",						INI::parseReal,						NULL,		offsetof(ShieldBodyModuleData, m_shieldMaxHealth) },
 		{ "ShieldMaxHealthPercent",				parseShieldHealthPercent,						NULL,	  0}, //	offsetof(ShieldBodyModuleData, m_shieldMaxHealthPercent) },
 
 		{ "ShieldArmorSetFlag",				INI::parseIndexList,	ArmorSetFlags::getBitNames(),	  offsetof(ShieldBodyModuleData, m_shieldArmorSetFlag) },
-		//{ "ShieldUpFX",				INI::parseIndexList,	ArmorSetFlags::getBitNames(),	  offsetof(ShieldBodyModuleData, m_shieldArmorSetFlag) },
 
-		//{ "ShieldRechargeDelay",		INI::parseDurationUnsignedInt,	NULL,		offsetof(ShieldBodyModuleData, m_shieldRechargeDelay) },
-		//{ "ShieldRechargeRate",		INI::parseDurationUnsignedInt,	NULL,		offsetof(ShieldBodyModuleData, m_shieldRechargeRate) },
-		//{ "ShieldRechargeAmount",	INI::parseReal,									NULL,		offsetof(ShieldBodyModuleData, m_shieldRechargeAmount) },
-		//{ "ShieldRechargeAmountPercent",	parseShieldRechargeAmountPercent,	 NULL,		0}, //offsetof(ShieldBodyModuleData, m_shieldRechargeAmountPercent) },
-
-		{ "DamageTypesToPassThroughShield",   INI::parseDamageTypeFlags, NULL, offsetof(ShieldBodyModuleData, m_damageTypesToPassThrough) },
+		{ "ShieldPassThroughDamageTypes",   INI::parseDamageTypeFlags, NULL, offsetof(ShieldBodyModuleData, m_damageTypesToPassThrough) },
+		{ "DefaultShieldPassThroughDamageTypes",   INI::parseDamageTypeFlags, NULL, offsetof(ShieldBodyModuleData, m_defaultDamageTypesToPassThrough) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
@@ -86,13 +92,6 @@ void ShieldBodyModuleData::parseShieldHealthPercent(INI* ini, void* instance, vo
 	Real healthPercent = INI::scanPercentToReal(ini->getNextToken());
 	self->m_shieldMaxHealth = self->m_maxHealth * healthPercent;
 }
-//-------------------------------------------------------------------------------------------------
-//void ShieldBodyModuleData::parseShieldRechargeAmountPercent(INI* ini, void* instance, void* store, const void* /*userData*/)
-//{
-//	ShieldBodyModuleData* self = (ShieldBodyModuleData*)instance;
-//	Real amountPercent = INI::scanPercentToReal(ini->getNextToken());
-//	self->m_shieldMaxHealth = self->m_shieldMaxHealth * amountPercent;
-//}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -254,7 +253,8 @@ void ShieldBody::attemptDamage(DamageInfo* damageInfo)
 	const ShieldBodyModuleData* data = getShieldBodyModuleData();
 
 	// Pass through full damage
-	if (getDamageTypeFlag(data->m_damageTypesToPassThrough, damageInfo->in.m_damageType))
+	if (getDamageTypeFlag(data->m_damageTypesToPassThrough, damageInfo->in.m_damageType) ||
+		getDamageTypeFlag(data->m_defaultDamageTypesToPassThrough, damageInfo->in.m_damageType))
 	{
 		// We need to switch our armorset for this one
 		if (data->m_shieldArmorSetFlag != ARMORSET_NONE) {
@@ -285,7 +285,7 @@ void ShieldBody::attemptDamage(DamageInfo* damageInfo)
 
 	//Shield is already down, just pass through, but stop recovery
 	if (m_currentShieldHealth <= 0) {
-		m_shieldBehaviorModule->applyDamage(damageInfo->in.m_amount);
+		m_shieldBehaviorModule->applyDamage(0.0f);
 		ActiveBody::attemptDamage(damageInfo);
 		return;
 	}

@@ -44,6 +44,7 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
+#include "GameClient/FXList.h"
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -58,6 +59,10 @@ EnergyShieldBehaviorModuleData::EnergyShieldBehaviorModuleData()
 	m_barBGColor.green = 255;
 	m_barBGColor.blue = 255;
 	m_barBGColor.alpha = 255;
+
+	m_shieldSubObjName.clear();
+	m_shieldConditionFlag = MODELCONDITION_INVALID;
+	m_shieldHitConditionFlag = MODELCONDITION_INVALID;
 }
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -79,6 +84,19 @@ EnergyShieldBehaviorModuleData::EnergyShieldBehaviorModuleData()
 		{ "ShieldHealthBarBackgroundColor",	INI::parseRGBAColorInt,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_barBGColor) },
 		{ "ShowHealthBarBackgroundWhenEmpty",	INI::parseBool,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_showBarWhenEmpty) },
 		{ "ShowHealthBarWhenUnselected",	INI::parseBool,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_showBarWhenUnselected) },
+
+		 { "ShieldSubObjectName",	INI::parseAsciiString,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_shieldSubObjName) },
+		 { "ShieldHitSubObjectName",	INI::parseAsciiString,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_shieldHitSubObjName) },
+		//{ "ShowShieldSubObjectWhenHitDuration",	INI::parseDurationUnsignedInt,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_shieldSubObjHitDuration) },
+		//{ "AlwaysShowShieldSubObject",	INI::parseBool,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_alwaysShowShieldSubObj) },
+
+		 { "ShieldModelCondition",	INI::parseIndexList,		ModelConditionFlags::getBitNames(),		offsetof(EnergyShieldBehaviorModuleData, m_shieldConditionFlag) },
+		 { "ShieldHitModelCondition",	INI::parseIndexList,		ModelConditionFlags::getBitNames(),		offsetof(EnergyShieldBehaviorModuleData, m_shieldHitConditionFlag) },
+		 { "ShieldHitConditionDuration",	INI::parseDurationUnsignedInt,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_showShieldWhenHitDuration) },
+		 //{ "AlwaysShowShield",	INI::parseBool,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_alwaysShowShield) },
+
+		{ "ShieldUpFX",	INI::parseFXList,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_fxShieldUp) },
+		{ "ShieldDownFX",	INI::parseFXList,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_fxShieldDown) },
 
 		//{ "DamageTypesToPassThroughShield",   INI::parseDamageTypeFlags, NULL, offsetof(EnergyShieldBehaviorModuleData, m_damageTypesToPassThrough) },
 		{ 0, 0, 0, 0 }
@@ -137,13 +155,79 @@ void EnergyShieldBehavior::applyDamage(Real amount)
 {
 	DEBUG_LOG((">>> EnergyShieldBehavior::applyDamage -  amount = %f", amount));
 
+	const EnergyShieldBehaviorModuleData* data = getEnergyShieldBehaviorModuleData();
+	m_healingStepCountdown = data->m_shieldRechargeDelay;
+	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
+
+	// amount = 0 means the shield was already down
+
 	if (amount > 0)
 	{
-		const EnergyShieldBehaviorModuleData* data = getEnergyShieldBehaviorModuleData();
-		m_healingStepCountdown = data->m_shieldRechargeDelay;
-		setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
+		// Show shield subobject
+		if (data->m_shieldSubObjName.isNotEmpty() || data->m_shieldConditionFlag != MODELCONDITION_INVALID) {
+
+			if (getShieldPercent() <= 0) { // Shield is down, hide it
+
+				showShield(false); // shield
+				showShield(false, true);  // shield hit
+
+				FXList::doFXObj(data->m_fxShieldDown, getObject());
+
+				m_shieldHitCountdown = 0;
+			}
+			else if (data->m_showShieldWhenHitDuration > 0) { // Shield took damage, show it
+				if (m_shieldHitCountdown <= 0) {  // If it's not already up, show it.
+					showShield(true, true);
+					m_shieldHitCountdown = data->m_showShieldWhenHitDuration;
+				}
+			}
+		}
 	}
 }
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void EnergyShieldBehavior::showShield(bool show, bool isHit)
+{
+	Drawable* draw = getObject()->getDrawable();
+	if (!draw)
+		return;
+
+	const EnergyShieldBehaviorModuleData* data = getEnergyShieldBehaviorModuleData();
+
+	AsciiString subObjName;
+	ModelConditionFlagType conditionFlag;
+
+	if (isHit) {
+		subObjName = data->m_shieldHitSubObjName;
+		conditionFlag = data->m_shieldHitConditionFlag;
+	}
+	else {
+		subObjName = data->m_shieldSubObjName;
+		conditionFlag = data->m_shieldConditionFlag;
+	}
+
+	if (show) {
+		if (conditionFlag != MODELCONDITION_INVALID) {
+			draw->setModelConditionState(conditionFlag);
+		}
+
+		if (subObjName.isNotEmpty()) {
+			draw->showSubObject(subObjName, true);
+			draw->updateSubObjects();
+		}
+	}
+	else {
+		if (conditionFlag != MODELCONDITION_INVALID) {
+			draw->clearModelConditionState(conditionFlag);
+		}
+
+		if (subObjName.isNotEmpty()) {
+			draw->showSubObject(subObjName, false);
+			draw->updateSubObjects();
+		}
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 Real EnergyShieldBehavior::getShieldPercent() const
@@ -173,11 +257,23 @@ bool EnergyShieldBehavior::shouldShowHealthBar(bool selected) const
 }
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
+Bool EnergyShieldBehavior::alwaysShowShield() const
+{
+	return getEnergyShieldBehaviorModuleData()->m_shieldConditionFlag != MODELCONDITION_INVALID ||
+		getEnergyShieldBehaviorModuleData()->m_shieldSubObjName.isNotEmpty();
+}
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 void EnergyShieldBehavior::upgradeImplementation()
 {
 	if (m_body) {
 		m_body->setActive(true);
 		m_body->rechargeShieldHealth(m_body->getShieldMaxHealth());
+
+		// if (alwaysShowShield()) {
+		showShield(true, false);
+		//}
+
 	}
 	//setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 }
@@ -196,30 +292,47 @@ UpdateSleepTime EnergyShieldBehavior::update( void )
 		//if (now < damageFrame + data->m_shieldRechargeDelay) {
 		//	return UPDATE_SLEEP_NONE;
 		//}
-	
-		m_healingStepCountdown--;
-		if (m_healingStepCountdown > 0)
-			return UPDATE_SLEEP_NONE;
-	
+
 		const EnergyShieldBehaviorModuleData* data = getEnergyShieldBehaviorModuleData();
-		m_healingStepCountdown = data->m_shieldRechargeRate;
 
-		if (m_body) {
-			Real rechargeAmount;
-			if (data->m_shieldRechargeAmountPercent) {
-				rechargeAmount = data->m_shieldRechargeAmountPercent * m_body->getShieldMaxHealth();
-			}else {
-				rechargeAmount = data->m_shieldRechargeAmount;
-			}
-			DEBUG_LOG((">>> EnergyShieldBehavior::update2 -  rechargeAmount = %f", rechargeAmount));
-
-			Bool full = m_body->rechargeShieldHealth(rechargeAmount);
-			if (full)
-				return UPDATE_SLEEP_FOREVER;
-			else
-				return UPDATE_SLEEP_NONE;
+		if (m_shieldHitCountdown > 0 && --m_shieldHitCountdown == 0) {
+			//if (!data->m_alwaysShowShield)
+			showShield(false, true);
 		}
-		return UPDATE_SLEEP_FOREVER;
+
+		if (m_healingStepCountdown > 0 && --m_healingStepCountdown == 0) {
+
+			if (m_body) {
+				Real rechargeAmount;
+				if (data->m_shieldRechargeAmountPercent) {
+					rechargeAmount = data->m_shieldRechargeAmountPercent * m_body->getShieldMaxHealth();
+				}
+				else {
+					rechargeAmount = data->m_shieldRechargeAmount;
+				}
+				DEBUG_LOG((">>> EnergyShieldBehavior::update2 -  rechargeAmount = %f", rechargeAmount));
+
+				if (m_body->getShieldCurrentHealth() <= 0)
+					FXList::doFXObj(data->m_fxShieldUp, getObject());
+
+				Bool full = m_body->rechargeShieldHealth(rechargeAmount);
+				showShield(true, false);
+
+				if (!full)
+					m_healingStepCountdown = data->m_shieldRechargeRate;
+
+				//Bool full = m_body->rechargeShieldHealth(rechargeAmount);
+				//if (full)
+				//	return UPDATE_SLEEP_FOREVER;
+				//else
+				//	return UPDATE_SLEEP_NONE;
+			}
+		}
+
+		if (m_healingStepCountdown == 0 && m_shieldHitCountdown == 0)
+			return UPDATE_SLEEP_FOREVER;
+		else
+			return UPDATE_SLEEP_NONE;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -258,6 +371,9 @@ void EnergyShieldBehavior::xfer( Xfer *xfer )
 	// current shield health
 	//xfer->xferReal(&m_currentShieldHealth);
 	xfer->xferUnsignedInt(&m_healingStepCountdown);
+
+	//hit frames
+	xfer->xferUnsignedInt(&m_shieldHitCountdown);
 
 }  // end xfer
 
