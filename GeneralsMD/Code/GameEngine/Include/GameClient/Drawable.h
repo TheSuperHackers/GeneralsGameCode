@@ -228,8 +228,8 @@ enum StealthLookType CPP_11(: Int)
 // ------------------------------------------------------------------------------------------------
 /** Drawable status bits */
 // ------------------------------------------------------------------------------------------------
-typedef UnsignedInt DrawableStatusInt;
-enum DrawableStatus CPP_11(: DrawableStatusInt)
+typedef UnsignedInt DrawableStatusBits;
+enum DrawableStatus CPP_11(: DrawableStatusBits)
 {
 	DRAWABLE_STATUS_NONE									= 0x00000000,		///< no status
 	DRAWABLE_STATUS_DRAWS_IN_MIRROR				=	0x00000001,		///< drawable can reflect
@@ -294,7 +294,7 @@ class Drawable : public Thing,
 
 public:
 
-	Drawable( const ThingTemplate *thing, DrawableStatusInt statusBits = DRAWABLE_STATUS_DEFAULT );
+	Drawable( const ThingTemplate *thing, DrawableStatusBits statusBits = DRAWABLE_STATUS_DEFAULT );
 
 	void onDestroy( void );																							///< run from GameClient::destroyDrawable
   void onLevelStart();                                                ///< run from GameLogic::startNewGame
@@ -673,7 +673,7 @@ private:
 
   DynamicAudioEventInfo *m_customSoundAmbientInfo; ///< If not NULL, info about the ambient sound to attach to this object
 
-	DrawableStatusInt m_status;			///< status bits (see DrawableStatus enum)
+	DrawableStatusBits m_status;			///< status bits (see DrawableStatus enum)
 	UnsignedInt m_tintStatus;				///< tint color status bits (see TintStatus enum)
 	UnsignedInt m_prevTintStatus;///< for edge testing with m_tintStatus
 
