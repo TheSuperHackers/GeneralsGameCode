@@ -64,6 +64,9 @@
 #include "BuildVersion.h"
 #include "GeneratedVersion.h"
 #include "resource.h"
+#ifdef RTS_ENABLE_CRASHDUMP
+#include "Common/MiniDumper.h"
+#endif
 
 
 // GLOBALS ////////////////////////////////////////////////////////////////////
@@ -71,6 +74,9 @@ HINSTANCE ApplicationHInstance = NULL;  ///< our application instance
 HWND ApplicationHWnd = NULL;  ///< our application window handle
 Win32Mouse *TheWin32Mouse= NULL;  ///< for the WndProc() only
 DWORD TheMessageTime = 0;	///< For getting the time that a message was posted from Windows.
+#ifdef RTS_ENABLE_CRASHDUMP
+extern MiniDumper TheMiniDumper;
+#endif
 
 const Char *g_strFile = "data\\Generals.str";
 const Char *g_csfFile = "data\\%s\\Generals.csf";
@@ -741,6 +747,15 @@ static CriticalSection critSec1, critSec2, critSec3, critSec4, critSec5;
 static LONG WINAPI UnHandledExceptionFilter( struct _EXCEPTION_POINTERS* e_info )
 {
 	DumpExceptionInfo( e_info->ExceptionRecord->ExceptionCode, e_info );
+#ifdef RTS_ENABLE_CRASHDUMP
+	if (TheMiniDumper.IsInitialized())
+	{
+		// Do dumps both with and without extended info
+		TheMiniDumper.TriggerMiniDumpForException(e_info, false);
+		TheMiniDumper.TriggerMiniDumpForException(e_info, true);
+		TheMiniDumper.ShutDown();
+	}
+#endif
 	return EXCEPTION_EXECUTE_HANDLER;
 }
 
@@ -807,6 +822,10 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 		CommandLine::parseCommandLineForStartup();
 
+#ifdef RTS_ENABLE_CRASHDUMP
+		// Initialize minidump facilities - requires TheGlobalData so performed after parseCommandLineForStartup
+		TheMiniDumper.Initialize(TheGlobalData->getPath_UserData());
+#endif
 		// register windows class and create application window
 		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
 			return exitcode;
@@ -874,6 +893,9 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	}
 
+#ifdef RTS_ENABLE_CRASHDUMP
+	TheMiniDumper.ShutDown();
+#endif
 	TheAsciiStringCriticalSection = NULL;
 	TheUnicodeStringCriticalSection = NULL;
 	TheDmaCriticalSection = NULL;
