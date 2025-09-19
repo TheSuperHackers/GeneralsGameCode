@@ -207,6 +207,9 @@ class PathfindCellInfo
 {
 	friend class PathfindCell;
 public:
+#if RETAIL_COMPATIBLE_PATHFINDING
+	static void forceCleanPathFindCellInfos(void);
+#endif
 	static void allocateCellInfos(void);
 	static void releaseCellInfos(void);
 
@@ -691,6 +694,9 @@ public:
 	Path *getDebugPath( void );
 	void setDebugPath( Path *debugpath );
 
+#if RETAIL_COMPATIBLE_PATHFINDING
+	void forceCleanCells(void);
+#endif
 	void cleanOpenAndClosedLists(void);
 
 	// Adjusts the destination to a spot near dest that is not occupied by other units.
