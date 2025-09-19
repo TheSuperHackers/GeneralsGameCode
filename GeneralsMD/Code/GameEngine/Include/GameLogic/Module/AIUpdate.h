@@ -60,6 +60,7 @@ class AssaultTransportAIInterface;
 class JetAIUpdate;
 
 enum AIStateType CPP_11(: Int);
+enum HordeActionType CPP_11(: Int);
 enum ObjectID CPP_11(: Int);
 
 
@@ -562,7 +563,8 @@ public:
 	void setAttitude( AttitudeType tude );	///< set the behavior modifier for this agent
 
 	// Common AI "status" effects -------------------------------------------------------------------
-	void evaluateMoraleBonus( void );
+	void evaluateMoraleBonus( Bool inHorde, Bool allowNationalism, HordeActionType type );
+	void evaluateMoraleBonusImpl( Bool inHorde, Bool allowNationalism, Bool classicImplementation );
 
 #ifdef ALLOW_DEMORALIZE
 	// demoralization ... what a nifty word to write.
