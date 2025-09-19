@@ -202,6 +202,26 @@ void Display::setHeight( UnsignedInt height )
 
 }
 
+// Return the ratio of the current display width relative to the default resolution
+Real Display::getWidthScale(void)
+{
+	return (Real)m_width / DEFAULT_DISPLAY_WIDTH;
+}
+
+// Return the ratio of the current display height relative to the default resolution
+Real Display::getHeightScale(void)
+{
+	return (Real)m_height / DEFAULT_DISPLAY_HEIGHT;
+}
+
+// Return the ratio of the current display aspect ratio relative to the default aspect ratio
+Real Display::getAspectRatioScale(void)
+{
+	Real baseAspectRatio = (Real)DEFAULT_DISPLAY_WIDTH / DEFAULT_DISPLAY_HEIGHT;
+	Real currentAspectRatio = (Real)m_width / m_height;
+	return currentAspectRatio / baseAspectRatio;
+}
+
 //============================================================================
 // Display::playLogoMovie
 // minMovieLength is in milliseconds
