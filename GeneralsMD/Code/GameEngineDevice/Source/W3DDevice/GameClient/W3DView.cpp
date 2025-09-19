@@ -119,18 +119,7 @@ inline Real maxf(Real a, Real b) { if (a > b) return a; else return b; }
 //-------------------------------------------------------------------------------------------------
 static void normAngle(Real &angle)
 {
-	if (angle < -10*PI) {
-		angle = 0;
-	}
-	if (angle > 10*PI) {
-		angle = 0;
-	}
-	while (angle < -PI) {
-		angle += 2*PI;
-	}
-	while (angle > PI) {
-		angle -= 2*PI;
-	}
+	angle = WWMath::Normalize_Angle(angle);
 }
 
 #define TERRAIN_SAMPLE_SIZE 40.0f
@@ -445,7 +434,8 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 						// WST 10.22.2002. Update the Listener positions used by audio system
 						//--------------------------------------------------------------------
 						Vector3 position = transform->Get_Translation();
-						Coord3D coord(position.X, position.Y, position.Z);
+						Coord3D coord;
+						coord.set(position.X, position.Y, position.Z);
 						View::setPosition(&coord);
 						break;
 					}
