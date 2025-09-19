@@ -3143,7 +3143,7 @@ void Drawable::drawProgress( const IRegion2D *healthBarRegion )
 	Real healthBoxHeight = max(3, healthBarRegion->hi.y - healthBarRegion->lo.y) * 1.5f;
 	Real healthBoxOutlineSize = 1.0f;
 
-	Real yOffset = -5;
+	Real yOffset = -6 + TheGlobalData->m_progressBarYOffset;
 
 	// draw the health box outline
 	TheDisplay->drawOpenRect(healthBarRegion->lo.x, healthBarRegion->lo.y + yOffset, healthBoxWidth, healthBoxHeight,

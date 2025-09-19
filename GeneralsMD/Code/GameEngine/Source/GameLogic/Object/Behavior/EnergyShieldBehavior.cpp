@@ -72,8 +72,6 @@ EnergyShieldBehaviorModuleData::EnergyShieldBehaviorModuleData()
 	static const FieldParse dataFieldParse[] =
 	{
 		{ "StartsActive",	INI::parseBool, NULL, offsetof(EnergyShieldBehaviorModuleData, m_initiallyActive) },
-		//{ "ShieldMaxHealth",						INI::parseReal,						NULL,		offsetof(EnergyShieldBehaviorModuleData, m_shieldMaxHealth) },
-		//{ "ShieldMaxHealthPercent",				parseShieldHealthPercent,						NULL,	  0}, //	offsetof(EnergyShieldBehaviorModuleData, m_shieldMaxHealthPercent) },
 
 		{ "ShieldRechargeDelay",		INI::parseDurationUnsignedInt,	NULL,		offsetof(EnergyShieldBehaviorModuleData, m_shieldRechargeDelay) },
 		{ "ShieldRechargeRate",		INI::parseDurationUnsignedInt,	NULL,		offsetof(EnergyShieldBehaviorModuleData, m_shieldRechargeRate) },
@@ -87,13 +85,10 @@ EnergyShieldBehaviorModuleData::EnergyShieldBehaviorModuleData()
 
 		 { "ShieldSubObjectName",	INI::parseAsciiString,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_shieldSubObjName) },
 		 { "ShieldHitSubObjectName",	INI::parseAsciiString,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_shieldHitSubObjName) },
-		//{ "ShowShieldSubObjectWhenHitDuration",	INI::parseDurationUnsignedInt,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_shieldSubObjHitDuration) },
-		//{ "AlwaysShowShieldSubObject",	INI::parseBool,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_alwaysShowShieldSubObj) },
 
 		 { "ShieldModelCondition",	INI::parseIndexList,		ModelConditionFlags::getBitNames(),		offsetof(EnergyShieldBehaviorModuleData, m_shieldConditionFlag) },
 		 { "ShieldHitModelCondition",	INI::parseIndexList,		ModelConditionFlags::getBitNames(),		offsetof(EnergyShieldBehaviorModuleData, m_shieldHitConditionFlag) },
 		 { "ShieldHitConditionDuration",	INI::parseDurationUnsignedInt,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_showShieldWhenHitDuration) },
-		 //{ "AlwaysShowShield",	INI::parseBool,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_alwaysShowShield) },
 
 		{ "ShieldUpFX",	INI::parseFXList,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_fxShieldUp) },
 		{ "ShieldDownFX",	INI::parseFXList,	 NULL,		offsetof(EnergyShieldBehaviorModuleData, m_fxShieldDown) },
@@ -106,22 +101,6 @@ EnergyShieldBehaviorModuleData::EnergyShieldBehaviorModuleData()
 	p.add(dataFieldParse);
 	p.add(UpgradeMuxData::getFieldParse(), offsetof(EnergyShieldBehaviorModuleData, m_upgradeMuxData));
 }
-
-////-------------------------------------------------------------------------------------------------
-////-------------------------------------------------------------------------------------------------
-//void EnergyShieldBehaviorModuleData::parseShieldHealthPercent(INI* ini, void* instance, void* store, const void* /*userData*/)
-//{
-//	EnergyShieldBehaviorModuleData* self = (EnergyShieldBehaviorModuleData*)instance;
-//	Real healthPercent = INI::scanPercentToReal(ini->getNextToken());
-//	self->m_shieldMaxHealth = self->m_maxHealth * healthPercent;
-//}
-////-------------------------------------------------------------------------------------------------
-//void EnergyShieldBehaviorModuleData::parseShieldRechargeAmountPercent(INI* ini, void* instance, void* store, const void* /*userData*/)
-//{
-//	EnergyShieldBehaviorModuleData* self = (EnergyShieldBehaviorModuleData*)instance;
-//	Real amountPercent = INI::scanPercentToReal(ini->getNextToken());
-//	self->m_shieldMaxHealth = self->m_shieldMaxHealth * amountPercent;
-//}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -153,7 +132,7 @@ EnergyShieldBehavior::~EnergyShieldBehavior( void )
 //-------------------------------------------------------------------------------------------------
 void EnergyShieldBehavior::applyDamage(Real amount)
 {
-	DEBUG_LOG((">>> EnergyShieldBehavior::applyDamage -  amount = %f", amount));
+	//DEBUG_LOG((">>> EnergyShieldBehavior::applyDamage -  amount = %f", amount));
 
 	const EnergyShieldBehaviorModuleData* data = getEnergyShieldBehaviorModuleData();
 	m_healingStepCountdown = data->m_shieldRechargeDelay;
@@ -284,19 +263,11 @@ void EnergyShieldBehavior::upgradeImplementation()
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime EnergyShieldBehavior::update( void )
 {
-		DEBUG_LOG((">>> EnergyShieldBehavior::update1 -  m_healingStepCountdown = %d", m_healingStepCountdown));
-	
-		//UnsignedInt now = TheGameLogic->getFrame();
-		//UnsignedInt damageFrame = getLastDamageTimestamp();
-		//const ShieldBodyModuleData* data = getShieldBodyModuleData();
-		//if (now < damageFrame + data->m_shieldRechargeDelay) {
-		//	return UPDATE_SLEEP_NONE;
-		//}
+		//DEBUG_LOG((">>> EnergyShieldBehavior::update1 -  m_healingStepCountdown = %d", m_healingStepCountdown));
 
 		const EnergyShieldBehaviorModuleData* data = getEnergyShieldBehaviorModuleData();
 
 		if (m_shieldHitCountdown > 0 && --m_shieldHitCountdown == 0) {
-			//if (!data->m_alwaysShowShield)
 			showShield(false, true);
 		}
 
@@ -310,7 +281,7 @@ UpdateSleepTime EnergyShieldBehavior::update( void )
 				else {
 					rechargeAmount = data->m_shieldRechargeAmount;
 				}
-				DEBUG_LOG((">>> EnergyShieldBehavior::update2 -  rechargeAmount = %f", rechargeAmount));
+				//DEBUG_LOG((">>> EnergyShieldBehavior::update2 -  rechargeAmount = %f", rechargeAmount));
 
 				if (m_body->getShieldCurrentHealth() <= 0)
 					FXList::doFXObj(data->m_fxShieldUp, getObject());
@@ -320,12 +291,6 @@ UpdateSleepTime EnergyShieldBehavior::update( void )
 
 				if (!full)
 					m_healingStepCountdown = data->m_shieldRechargeRate;
-
-				//Bool full = m_body->rechargeShieldHealth(rechargeAmount);
-				//if (full)
-				//	return UPDATE_SLEEP_FOREVER;
-				//else
-				//	return UPDATE_SLEEP_NONE;
 			}
 		}
 

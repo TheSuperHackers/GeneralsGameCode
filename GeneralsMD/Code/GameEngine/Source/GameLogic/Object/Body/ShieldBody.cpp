@@ -117,34 +117,6 @@ ShieldBody::~ShieldBody( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-//UpdateSleepTime ShieldBody::update(void)
-//{
-//	DEBUG_LOG((">>> ShieldBody::update - m_currentShieldHealth = %f, m_healingStepCountdown = %d", m_currentShieldHealth, m_healingStepCountdown));
-//
-//	//UnsignedInt now = TheGameLogic->getFrame();
-//	//UnsignedInt damageFrame = getLastDamageTimestamp();
-//	//const ShieldBodyModuleData* data = getShieldBodyModuleData();
-//	//if (now < damageFrame + data->m_shieldRechargeDelay) {
-//	//	return UPDATE_SLEEP_NONE;
-//	//}
-//
-//	m_healingStepCountdown--;
-//	if (m_healingStepCountdown > 0)
-//		return UPDATE_SLEEP_NONE;
-//
-//	const ShieldBodyModuleData* data = getShieldBodyModuleData();
-//	m_healingStepCountdown = data->m_shieldRechargeRate;
-//
-//	m_currentShieldHealth = MIN(data->m_shieldMaxHealth, m_currentShieldHealth + data->m_shieldRechargeAmount);
-//
-//	//if (m_currentShieldHealth < data->m_shieldMaxHealth)
-//	//	return UPDATE_SLEEP_NONE;
-//	//else
-//	//	return UPDATE_SLEEP_FOREVER;
-//	return UPDATE_SLEEP_NONE;
-//}  // end update
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
 Real ShieldBody::getShieldPercent()
 {
 		const ShieldBodyModuleData* data = getShieldBodyModuleData();
@@ -161,7 +133,7 @@ Bool ShieldBody::rechargeShieldHealth(Real amount)
 
 	m_currentShieldHealth = MIN(data->m_shieldMaxHealth, m_currentShieldHealth + amount);
 
-	DEBUG_LOG((">>> ShieldBody::rechargeShieldHealth -  m_currentShieldHealth = %f", m_currentShieldHealth));
+	//DEBUG_LOG((">>> ShieldBody::rechargeShieldHealth -  m_currentShieldHealth = %f", m_currentShieldHealth));
 
 	if (!shieldWasUp && m_currentShieldHealth > 0) {
 		enableShieldEffects();
@@ -312,7 +284,7 @@ void ShieldBody::attemptDamage(DamageInfo* damageInfo)
 
 		// Apply  Damage to shield and Stop shield recharge - Notify shield behavior
 		m_shieldBehaviorModule->applyDamage(MAX(0, damageToShield));
-		DEBUG_LOG(("ShieldBody::attemptDamage - m_currentShieldHealth = %f.", m_currentShieldHealth));
+		//DEBUG_LOG(("ShieldBody::attemptDamage - m_currentShieldHealth = %f.", m_currentShieldHealth));
 
 		  //If the shield is at 0, we still need to disable it
 		if (!shieldStillUp) {
@@ -342,7 +314,7 @@ void ShieldBody::attemptDamage(DamageInfo* damageInfo)
 
 	// extend
 	ActiveBody::attemptDamage(damageInfo);
-	DEBUG_LOG(("ShieldBody::attemptDamage - getHealth() = %f.", getHealth()));
+	//DEBUG_LOG(("ShieldBody::attemptDamage - getHealth() = %f.", getHealth()));
 
 	if (shieldStillUp) {
 		// We passed on 0 damage to ActiveBody.
