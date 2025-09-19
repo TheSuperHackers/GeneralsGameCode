@@ -407,6 +407,10 @@ public:
 	Bool m_saveCameraInReplay;
 	Bool m_useCameraInReplay;
 
+	// TheSuperHackers @feature xezon 09/09/2025 Enable the shroud and everything related for observing individual players in any game mode.
+	// Enabling this does have a performance cost because the ghost object manager must keep track of all relevant objects for all players.
+	Bool m_enablePlayerObserver;
+
 	// TheSuperHackers @feature Mauller 21/06/2025 allow the system time and game time font size to be set, a size of zero disables them
 	Int m_systemTimeFontSize;
 	Int m_gameTimeFontSize;

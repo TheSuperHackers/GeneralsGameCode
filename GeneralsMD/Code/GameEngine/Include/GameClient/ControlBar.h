@@ -737,11 +737,15 @@ public:
 
 	// Initialize the Observer controls Must be called after we've already loaded the window
 	void initObserverControls( void );
-	void setObserverLookAtPlayer (Player *p) { m_observerLookAtPlayer = p;}
-	Player *getObserverLookAtPlayer (void ) { return m_observerLookAtPlayer;}
 	void populateObserverInfoWindow ( void );
 	void populateObserverList( void );
 	Bool isObserverControlBarOn( void ) { return m_isObserverCommandBar;}
+
+	void setObserverLookAtPlayer (Player *player); ///< Sets the looked at player. Used to present information about the player.
+	Player *getObserverLookAtPlayer (void ) const { return m_observerLookAtPlayer; } ///< Returns the looked at player. Can return null.
+
+	void setObservedPlayer(Player *player); ///< Sets the observed player. Used to present the game world as if that player was the local player.
+	Player *getObservedPlayer() const { return m_observedPlayer; } ///< Return the observed player. Can return null.
 
 	/// Returns the currently viewed player. May return NULL if no player is selected while observing.
 	Player* getCurrentlyViewedPlayer();
@@ -971,11 +975,12 @@ protected:
 
 	Color m_buildUpClockColor;
 
-	Bool m_isObserverCommandBar;												///< If this is true, the command bar behaves greatly differnt
+	Bool m_isObserverCommandBar;												///< If this is true, the command bar behaves greatly different
 	Player *m_observerLookAtPlayer;											///< The current player we're looking at, Null if we're not looking at anyone.
+	Player *m_observedPlayer;														///< The current player we're observing, Null if we're not observing anyone.
 
 	WindowLayout *m_buildToolTipLayout;										///< The window that will slide on/display tooltips
-	Bool m_showBuildToolTipLayout;											///< every frame we test to see if we aregoing to continue showing this or not.
+	Bool m_showBuildToolTipLayout;											///< every frame we test to see if we are going to continue showing this or not.
 public:
 	void showBuildTooltipLayout( GameWindow *cmdButton );
 	void hideBuildTooltipLayout( void );

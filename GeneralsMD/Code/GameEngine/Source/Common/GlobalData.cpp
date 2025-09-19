@@ -933,6 +933,7 @@ GlobalData::GlobalData()
 
 	m_saveCameraInReplay = FALSE;
 	m_useCameraInReplay = FALSE;
+	m_enablePlayerObserver = FALSE;
 
 	m_systemTimeFontSize = 8;
 	m_gameTimeFontSize = 8;
@@ -1203,6 +1204,7 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 
 	TheWritableGlobalData->m_saveCameraInReplay = optionPref.saveCameraInReplays();
 	TheWritableGlobalData->m_useCameraInReplay = optionPref.useCameraInReplays();
+	TheWritableGlobalData->m_enablePlayerObserver = optionPref.getPlayerObserverEnabled();
 
 	TheWritableGlobalData->m_systemTimeFontSize = optionPref.getSystemTimeFontSize();
 	TheWritableGlobalData->m_gameTimeFontSize = optionPref.getGameTimeFontSize();

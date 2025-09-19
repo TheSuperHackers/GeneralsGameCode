@@ -276,6 +276,8 @@ enum TerrainDecalType CPP_11(: Int)
 
 //-----------------------------------------------------------------------------
 
+constexpr const UnsignedInt InvalidShroudClearFrame = ~0u;
+
 const Int DRAWABLE_FRAMES_PER_FLASH = LOGICFRAMES_PER_SECOND / 2;
 
 //-----------------------------------------------------------------------------
@@ -638,6 +640,8 @@ protected:
 	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle);
 	void updateHiddenStatus();
 
+	void replaceModelConditionStateInDrawable();
+
 private:
 
 	const Locomotor* getLocomotor() const;
@@ -725,7 +729,7 @@ private:
   Bool m_receivesDynamicLights;
 
 #ifdef DIRTY_CONDITION_FLAGS
-	mutable Bool m_isModelDirty;				///< if true, must call replaceModelConditionState() before drawing or accessing drawmodule info
+	Bool m_isModelDirty;				///< if true, must call replaceModelConditionState() before drawing or accessing drawmodule info
 #endif
 
 	//*******************************************
