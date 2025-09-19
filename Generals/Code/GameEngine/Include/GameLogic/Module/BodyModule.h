@@ -85,6 +85,7 @@ static const char* TheMaxHealthChangeTypeNames[] =
 	"SAME_CURRENTHEALTH",
 	"PRESERVE_RATIO",
 	"ADD_CURRENT_HEALTH_TOO",
+	NULL
 };
 #endif
 
