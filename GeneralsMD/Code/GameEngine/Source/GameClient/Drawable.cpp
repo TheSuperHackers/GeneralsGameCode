@@ -962,9 +962,6 @@ void Drawable::colorFlash( const RGBColor* color, UnsignedInt decayFrames, Unsig
 		white.setFromInt(0xffffffff);
 		m_colorTintEnvelope->play( &white );
 	}
-
-	// make sure the tint color is unlocked so we "fade back down" to normal
-	clearDrawableStatus( DRAWABLE_STATUS_TINT_COLOR_LOCKED );
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -975,11 +972,7 @@ void Drawable::colorTint( const RGBColor* color )
 	if( color )
 	{
 		// set the color via color flash
-		colorFlash( color, 0, 0, TRUE );
-
-		// lock the tint color so the flash never "fades back down"
-		setDrawableStatus( DRAWABLE_STATUS_TINT_COLOR_LOCKED );
-
+		colorFlash( color, 0, 0, ~0u );
 	}
 	else
 	{
@@ -988,10 +981,6 @@ void Drawable::colorTint( const RGBColor* color )
 
 		// remove the tint applied to the object
 		m_colorTintEnvelope->rest();
-
-		// set the tint as unlocked so we can flash and stuff again
-		clearDrawableStatus( DRAWABLE_STATUS_TINT_COLOR_LOCKED );
-
 	}
 
 }
@@ -1383,7 +1372,7 @@ void Drawable::applyPhysicsXform(Matrix3D* mtx)
 	{
 		// TheSuperHackers @tweak Update the physics transform on every WW Sync only.
 		// All calculations are originally catered to a 30 fps logic step.
-		if (WW3D::Get_Frame_Time() != 0)
+		if (WW3D::Get_Sync_Frame_Time() != 0)
 		{
 			calcPhysicsXform(*m_physicsXform);
 		}
@@ -5494,11 +5483,11 @@ TintEnvelope::TintEnvelope(void)
 const Real FADE_RATE_EPSILON = (0.001f);
 
 //-------------------------------------------------------------------------------------------------
-void TintEnvelope::play(const RGBColor *peak, UnsignedInt atackFrames, UnsignedInt decayFrames, UnsignedInt sustainAtPeak )
+void TintEnvelope::play(const RGBColor *peak, UnsignedInt attackFrames, UnsignedInt decayFrames, UnsignedInt sustainAtPeak )
 {
 	setPeakColor( peak );
 
-	setAttackFrames( atackFrames );
+	setAttackFrames( attackFrames );
 	setDecayFrames( decayFrames );
 
 	m_envState = ENVELOPE_STATE_ATTACK;

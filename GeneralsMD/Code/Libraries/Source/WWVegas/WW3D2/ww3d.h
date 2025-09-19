@@ -162,18 +162,20 @@ public:
 
 	static void Flip_To_Primary(void);
 
-	// TheSuperHackers @info Call this function to accumulate fractional render time.
-	// It will then call Sync with a new time on its own once an appropriate amount of time has passed.
-	static void Add_Frame_Time(float milliseconds);
+	// TheSuperHackers @info Add amount of milliseconds that the simulation has advanced in this render frame.
+	// This can be a fraction of a logic step.
+	static void Update_Logic_Frame_Time(float milliseconds);
 	/*
 	** Timing
 	** By calling the Sync function, the application can move the ww3d library time forward.  This
 	** will control things like animated uv-offset mappers and render object animations.
 	*/
-	static void					Sync( unsigned int sync_time );
+	static void						Sync(bool step);
 	static unsigned int		Get_Sync_Time(void) { return SyncTime; }
-   static unsigned int     Get_Frame_Time(void) { return SyncTime - PreviousSyncTime; }
-   static unsigned int     Get_Frame_Count(void) { return FrameCount; }
+	static unsigned int		Get_Sync_Frame_Time(void) { return SyncTime - PreviousSyncTime; }
+	static float					Get_Logic_Frame_Time_Milliseconds() { return LogicFrameTimeMs; }
+	static float					Get_Logic_Frame_Time_Seconds() { return LogicFrameTimeMs * 0.001f; }
+	static unsigned int		Get_Frame_Count(void) { return FrameCount; }
 	static unsigned int		Get_Last_Frame_Poly_Count(void);
 	static unsigned int		Get_Last_Frame_Vertex_Count(void);
 
@@ -323,19 +325,23 @@ private:
 	static void					Allocate_Debug_Resources(void);
 	static void					Release_Debug_Resources(void);
 
+	// Logic frame time, in milliseconds
+	static float LogicFrameTimeMs;
+
+	// Accumulated synchronized frame time in milliseconds
 	static float FractionalSyncMs;
 
 	// Timing info:
-   // The absolute synchronized frame time (in milliseconds) supplied by the
-   // application at the start of every frame. Note that wraparound cases
-   // etc. need to be considered.
-	static unsigned int				SyncTime;
+	// The absolute synchronized frame time (in milliseconds) supplied by the
+	// application at the start of every frame. Note that wraparound cases
+	// etc. need to be considered.
+	static unsigned int SyncTime;
 
-   // The previously set absolute sync time - this is used to get the interval between
-   // the most recently set sync time and the previous one. Assuming the
-   // application sets sync time at the start of every frame, this represents
-   // the frame interval.
-   static unsigned int           PreviousSyncTime;
+	// The previously set absolute sync time - this is used to get the interval between
+	// the most recently set sync time and the previous one. Assuming the
+	// application sets sync time at the start of every frame, this represents
+	// the frame interval.
+	static unsigned int PreviousSyncTime;
 
 	static float						PixelCenterX;
 	static float						PixelCenterY;

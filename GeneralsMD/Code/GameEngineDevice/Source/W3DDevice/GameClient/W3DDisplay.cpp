@@ -1812,7 +1812,10 @@ AGAIN:
 		}
 	}
 
-	WW3D::Add_Frame_Time(TheGameEngine->getLogicTimeStepMilliseconds());
+	WW3D::Update_Logic_Frame_Time(TheGameEngine->getLogicTimeStepMilliseconds());
+
+	// TheSuperHackers @info This binds the WW3D update to the logic update.
+	WW3D::Sync(TheGameLogic->hasUpdated());
 
 	static Int now;
 	now=timeGetTime();
