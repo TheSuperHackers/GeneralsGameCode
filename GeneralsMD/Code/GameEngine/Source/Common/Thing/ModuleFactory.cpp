@@ -125,6 +125,7 @@
 #include "GameLogic/Module/FireSpreadUpdate.h"
 #include "GameLogic/Module/FirestormDynamicGeometryInfoUpdate.h"
 #include "GameLogic/Module/FireWeaponUpdate.h"
+#include "GameLogic/Module/FireWeaponAdvancedUpdate.h"
 #include "GameLogic/Module/FlammableUpdate.h"
 #include "GameLogic/Module/FloatUpdate.h"
 #include "GameLogic/Module/TensileFormationUpdate.h"
@@ -430,6 +431,7 @@ void ModuleFactory::init( void )
 	addModule( NeutronMissileUpdate );
 	addModule( FireSpreadUpdate );
 	addModule( FireWeaponUpdate );
+	addModule( FireWeaponAdvancedUpdate );
 	addModule( FlammableUpdate );
 	addModule( FloatUpdate );
 	addModule( TensileFormationUpdate );
