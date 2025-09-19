@@ -244,6 +244,7 @@ void SidesList::clear(void)
 */
 Bool SidesList::ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
+	DEBUG_ASSERTCRASH(info->version <= K_SIDES_DATA_VERSION_3, ("Sides chunk version newer than supported."));
 	DEBUG_ASSERTCRASH(TheSidesList, ("TheSidesList is null"));
 
 	if (TheSidesList==NULL)
