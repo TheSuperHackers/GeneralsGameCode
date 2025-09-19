@@ -81,7 +81,11 @@ void UndeadBody::attemptDamage( DamageInfo *damageInfo )
 
 	if( damageInfo->in.m_damageType != DAMAGE_UNRESISTABLE
 			&& !m_isSecondLife
+#if RETAIL_COMPATIBLE_CRC
 			&& damageInfo->in.m_amount >= getHealth()
+#else
+			&& estimateDamage(damageInfo->in) >= getHealth()
+#endif
 			&& IsHealthDamagingDamage(damageInfo->in.m_damageType)
 			)
 	{
