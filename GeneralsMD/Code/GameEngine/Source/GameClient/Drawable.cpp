@@ -341,7 +341,7 @@ void Drawable::saturateRGB(RGBColor& color, Real factor)
  * graphical side of a logical object, whereas GameLogic objects encapsulate
  * behaviors and physics.  */
 //-------------------------------------------------------------------------------------------------
-Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBits )
+Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatusBits statusBits )
 				: Thing( thingTemplate )
 {
 
@@ -492,6 +492,14 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 	{
 		for (Module** m = m_modules[i]; m && *m; ++m)
 			(*m)->onObjectCreated();
+	}
+
+	const Bool shadowsEnabled = getShadowsEnabled();
+
+	// TheSuperHackers @fix xezon 14/09/2025 Match the shadow states of all draw modules with this drawable.
+	for (DrawModule** dm = (DrawModule**)getModuleList(MODULETYPE_DRAW); *dm; ++dm)
+	{
+		(*dm)->setShadowsEnabled(shadowsEnabled);
 	}
 
 	m_groupNumber = NULL;
@@ -3962,6 +3970,7 @@ void Drawable::clearAndSetModelConditionState( ModelConditionFlagType clr, Model
 DrawModule** Drawable::getDrawModulesNonDirty()
 {
 	DrawModule** dm = (DrawModule**)getModuleList(MODULETYPE_DRAW);
+	DEBUG_ASSERTCRASH(dm != NULL, ("Draw Module List is not expected NULL"));
 	return dm;
 }
 
@@ -3969,6 +3978,7 @@ DrawModule** Drawable::getDrawModulesNonDirty()
 DrawModule** Drawable::getDrawModules()
 {
 	DrawModule** dm = (DrawModule**)getModuleList(MODULETYPE_DRAW);
+
 #ifdef DIRTY_CONDITION_FLAGS
 	if (m_isModelDirty)
 	{
@@ -3991,6 +4001,8 @@ DrawModule** Drawable::getDrawModules()
 		}
 	}
 #endif
+
+	DEBUG_ASSERTCRASH(dm != NULL, ("Draw Module List is not expected NULL"));
 	return dm;
 }
 
@@ -3998,6 +4010,7 @@ DrawModule** Drawable::getDrawModules()
 DrawModule const** Drawable::getDrawModules() const
 {
 	DrawModule const** dm = (DrawModule const**)getModuleList(MODULETYPE_DRAW);
+
 #ifdef DIRTY_CONDITION_FLAGS
 	if (m_isModelDirty)
 	{
@@ -4021,6 +4034,8 @@ DrawModule const** Drawable::getDrawModules() const
 		}
 	}
 #endif
+
+	DEBUG_ASSERTCRASH(dm != NULL, ("Draw Module List is not expected NULL"));
 	return dm;
 }
 
