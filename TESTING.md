@@ -61,8 +61,14 @@ cmake --preset win32  # or vc6, unix, etc.
 # Run clang-tidy on specific files
 clang-tidy -p build/win32 Core/Libraries/Source/RTS/File.cpp
 
-# Run on multiple files with pattern
+# Run on multiple files with pattern (Unix/Linux/macOS)
 find Core/ -name "*.cpp" | xargs clang-tidy -p build/win32
+
+# Windows Command Prompt alternative
+for /r Core\ %i in (*.cpp) do clang-tidy -p build/win32 "%i"
+
+# Windows PowerShell alternative
+Get-ChildItem -Path Core\ -Recurse -Filter "*.cpp" | ForEach-Object { clang-tidy -p build/win32 $_.FullName }
 ```
 
 ### Configuration
