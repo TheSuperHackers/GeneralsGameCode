@@ -2016,6 +2016,7 @@ void InGameUI::reset( void )
 	setPreferSelectionMode(false);
 	clearAttackMoveToMode();
 
+	// TheSuperHackers @bugfix Disable all camera interactions to prevent them getting stuck after game end.
 	setScrolling(false);
 	setSelecting(false);
 	setCameraRotateLeft(false);
