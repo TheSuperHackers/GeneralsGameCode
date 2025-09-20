@@ -1529,7 +1529,7 @@ void InGameUI::handleBuildPlacements( void )
 
 				if( m_placeIcon[ i ] == NULL )
 					m_placeIcon[ i ] = TheThingFactory->newDrawable( m_pendingPlaceType,
-																													 DRAWABLE_STATUS_NO_STATE_PARTICLES );
+						DRAWABLE_STATUS_SHADOWS | DRAWABLE_STATUS_NO_STATE_PARTICLES );
 
 			}
 
@@ -3040,7 +3040,7 @@ void InGameUI::placeBuildAvailable( const ThingTemplate *build, Drawable *buildD
 //			TheInGameUI->deselectAllDrawables();
 
 			// create a drawble of what we are building to be "attached" at the cursor
-			draw = TheThingFactory->newDrawable( build, DRAWABLE_STATUS_NO_STATE_PARTICLES );
+			draw = TheThingFactory->newDrawable( build, DRAWABLE_STATUS_SHADOWS | DRAWABLE_STATUS_NO_STATE_PARTICLES );
 			if (sourceObject)
 			{
 				if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)

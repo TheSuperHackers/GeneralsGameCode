@@ -343,7 +343,7 @@ Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, Objec
 }
 
 //=============================================================================
-Drawable *ThingFactory::newDrawable(const ThingTemplate *tmplate, DrawableStatus statusBits)
+Drawable *ThingFactory::newDrawable(const ThingTemplate *tmplate, DrawableStatusBits statusBits)
 {
 	if (tmplate == NULL)
 		throw ERROR_BAD_ARG;

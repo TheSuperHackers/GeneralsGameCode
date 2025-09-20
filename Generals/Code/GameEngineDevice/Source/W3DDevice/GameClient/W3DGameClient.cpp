@@ -115,7 +115,7 @@ void W3DGameClient::reset( void )
 	* in the GameLogic and GameClient themselves */
 //-------------------------------------------------------------------------------------------------
 Drawable *W3DGameClient::friend_createDrawable( const ThingTemplate *tmplate,
-																								DrawableStatus statusBits )
+																								DrawableStatusBits statusBits )
 {
 	Drawable *draw = NULL;
 
