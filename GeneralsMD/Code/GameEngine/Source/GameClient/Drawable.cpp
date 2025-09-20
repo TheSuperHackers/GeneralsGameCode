@@ -2687,22 +2687,17 @@ static Bool computeHealthRegion( const Drawable *draw, IRegion2D& region )
 	if (!obj->getHealthBoxDimensions(healthBoxHeight, healthBoxWidth))
 		return FALSE;
 
-	// scale the health bars according to the zoom
-	Real zoom = TheTacticalView->getZoom();
-	//Real widthScale = 1.3f / zoom;
-	Real widthScale = 1.0f / zoom;
-	//Real heightScale = 0.8f / zoom;
-	Real heightScale = 1.0f;
+	// scale the health bars according to the zoom and resolution
+	Real zoomScale = 1.0f / TheTacticalView->getZoom();
 
-	healthBoxWidth *= widthScale;
-	healthBoxHeight *= heightScale;
+	healthBoxWidth *= zoomScale * TheDisplay->getWidthScale();
+	healthBoxHeight *= TheDisplay->getHeightScale() * TheDisplay->getAspectRatioScale();
 
-	// do this so health bar doesn't get too skinny or fat after scaling
-	//healthBoxHeight = max(3.0f, healthBoxHeight);
-	healthBoxHeight = 3.0f;
+	// do this so health bar doesn't get too skinny after scaling
+	healthBoxHeight = max(3.0f, healthBoxHeight);
 
 	// figure out the final region for the health box
-	region.lo.x = screenCenter.x - healthBoxWidth * 0.45f;
+	region.lo.x = screenCenter.x - healthBoxWidth * 0.5f;
 	region.lo.y = screenCenter.y - healthBoxHeight * 0.5f;
 	region.hi.x = region.lo.x + healthBoxWidth;
 	region.hi.y = region.lo.y + healthBoxHeight;
@@ -2839,10 +2834,10 @@ void Drawable::drawEmoticon( const IRegion2D *healthBarRegion )
 		if( healthBarRegion && getIconInfo()->m_keepTillFrame[ ICON_EMOTICON ] >= now )
 		{
 			//Draw the emoticon.
-			Int barWidth = healthBarRegion->hi.x - healthBarRegion->lo.x;
+			Int barWidth = healthBarRegion->width();
 			//Int barHeight = healthBarRegion.hi.y - healthBarRegion.lo.y;
-			Int frameWidth = getIconInfo()->m_icon[ ICON_EMOTICON ]->getCurrentFrameWidth();
-			Int frameHeight = getIconInfo()->m_icon[ ICON_EMOTICON ]->getCurrentFrameHeight();
+			Int frameWidth = getIconInfo()->m_icon[ ICON_EMOTICON ]->getCurrentFrameWidth() * TheDisplay->getWidthScale();
+			Int frameHeight = getIconInfo()->m_icon[ ICON_EMOTICON ]->getCurrentFrameHeight() * TheDisplay->getHeightScale() * TheDisplay->getAspectRatioScale();
 
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 			// adjust the width to be a % of the health bar region size
@@ -2893,8 +2888,8 @@ void Drawable::drawAmmo( const IRegion2D *healthBarRegion )
 	Real scale = 1.0f;
 #endif
 
-	Int boxWidth  = REAL_TO_INT(s_emptyAmmo->getImageWidth() * scale);
-	Int boxHeight = REAL_TO_INT(s_emptyAmmo->getImageHeight() * scale);
+	Int boxWidth  = s_emptyAmmo->getImageWidth() * scale * TheDisplay->getWidthScale();
+	Int boxHeight = s_emptyAmmo->getImageHeight() * scale * TheDisplay->getHeightScale() * TheDisplay->getAspectRatioScale();
 	const Int SPACING = 1;
 	//Int totalWidth = (boxWidth+SPACING)*numTotal;
 
@@ -2960,8 +2955,8 @@ void Drawable::drawContained( const IRegion2D *healthBarRegion )
 #else
 	Real scale = 1.0f;
 #endif
-	Int boxWidth  = REAL_TO_INT(s_emptyContainer->getImageWidth() * scale);
-	Int boxHeight = REAL_TO_INT(s_emptyContainer->getImageHeight() * scale);
+	Int boxWidth  = s_emptyContainer->getImageWidth() * scale * TheDisplay->getWidthScale();
+	Int boxHeight = s_emptyContainer->getImageHeight() * scale * TheDisplay->getHeightScale() * TheDisplay->getAspectRatioScale();
 	const Int SPACING = 1;
 	//Int totalWidth = (boxWidth+SPACING)*numTotal;
 
@@ -3013,8 +3008,8 @@ void Drawable::drawBattlePlans( const IRegion2D *healthBarRegion )
 				getIconInfo()->m_icon[ ICON_BATTLEPLAN_BOMBARD ] = newInstance(Anim2D)( s_animationTemplates[ ICON_BATTLEPLAN_BOMBARD ], TheAnim2DCollection );
 			}
 			//Int barHeight = healthBarRegion.hi.y - healthBarRegion.lo.y;
-			Int frameWidth = getIconInfo()->m_icon[ ICON_BATTLEPLAN_BOMBARD ]->getCurrentFrameWidth();
-			Int frameHeight = getIconInfo()->m_icon[ ICON_BATTLEPLAN_BOMBARD ]->getCurrentFrameHeight();
+			Int frameWidth = getIconInfo()->m_icon[ ICON_BATTLEPLAN_BOMBARD ]->getCurrentFrameWidth() * TheDisplay->getWidthScale();
+			Int frameHeight = getIconInfo()->m_icon[ ICON_BATTLEPLAN_BOMBARD ]->getCurrentFrameHeight() * TheDisplay->getHeightScale() * TheDisplay->getAspectRatioScale();
 
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 			// adjust the width to be a % of the health bar region size
@@ -3041,8 +3036,8 @@ void Drawable::drawBattlePlans( const IRegion2D *healthBarRegion )
 				getIconInfo()->m_icon[ ICON_BATTLEPLAN_HOLDTHELINE ] = newInstance(Anim2D)( s_animationTemplates[ ICON_BATTLEPLAN_HOLDTHELINE ], TheAnim2DCollection );
 			}
 			// draw the icon
-			Int frameWidth = getIconInfo()->m_icon[ ICON_BATTLEPLAN_HOLDTHELINE ]->getCurrentFrameWidth();
-			Int frameHeight = getIconInfo()->m_icon[ ICON_BATTLEPLAN_HOLDTHELINE ]->getCurrentFrameHeight();
+			Int frameWidth = getIconInfo()->m_icon[ ICON_BATTLEPLAN_HOLDTHELINE ]->getCurrentFrameWidth() * TheDisplay->getWidthScale();
+			Int frameHeight = getIconInfo()->m_icon[ ICON_BATTLEPLAN_HOLDTHELINE ]->getCurrentFrameHeight() * TheDisplay->getHeightScale() * TheDisplay->getAspectRatioScale();
 
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 			// adjust the width to be a % of the health bar region size
@@ -3069,8 +3064,8 @@ void Drawable::drawBattlePlans( const IRegion2D *healthBarRegion )
 				getIconInfo()->m_icon[ ICON_BATTLEPLAN_SEARCHANDDESTROY ] = newInstance(Anim2D)( s_animationTemplates[ ICON_BATTLEPLAN_SEARCHANDDESTROY ], TheAnim2DCollection );
 			}
 			// draw the icon
-			Int frameWidth = getIconInfo()->m_icon[ ICON_BATTLEPLAN_SEARCHANDDESTROY ]->getCurrentFrameWidth();
-			Int frameHeight = getIconInfo()->m_icon[ ICON_BATTLEPLAN_SEARCHANDDESTROY ]->getCurrentFrameHeight();
+			Int frameWidth = getIconInfo()->m_icon[ ICON_BATTLEPLAN_SEARCHANDDESTROY ]->getCurrentFrameWidth() * TheDisplay->getWidthScale();
+			Int frameHeight = getIconInfo()->m_icon[ ICON_BATTLEPLAN_SEARCHANDDESTROY ]->getCurrentFrameHeight() * TheDisplay->getHeightScale() * TheDisplay->getAspectRatioScale();
 
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 			// adjust the width to be a % of the health bar region size
@@ -3281,10 +3276,10 @@ void Drawable::drawHealing(const IRegion2D* healthBarRegion)
 				// we are going to draw the healing icon relative to the size of the health bar region
 				// since that region takes into account hit point size and zoom factor of the camera too
 				//
-				Int barWidth = healthBarRegion->hi.x - healthBarRegion->lo.x;
+				Int barWidth = healthBarRegion->width();
 
-				Int frameWidth = getIconInfo()->m_icon[ typeIndex ]->getCurrentFrameWidth();
-				Int frameHeight = getIconInfo()->m_icon[ typeIndex ]->getCurrentFrameHeight();
+				Int frameWidth = getIconInfo()->m_icon[ typeIndex ]->getCurrentFrameWidth() * TheDisplay->getWidthScale();
+				Int frameHeight = getIconInfo()->m_icon[ typeIndex ]->getCurrentFrameHeight() * TheDisplay->getHeightScale() * TheDisplay->getAspectRatioScale();
 
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 				// adjust the width to be a % of the health bar region size
@@ -3344,7 +3339,7 @@ void Drawable::drawEnthusiastic(const IRegion2D* healthBarRegion)
 			// we are going to draw the healing icon relative to the size of the health bar region
 			// since that region takes into account hit point size and zoom factor of the camera too
 			//
-			Int barWidth = healthBarRegion->hi.x - healthBarRegion->lo.x;// used for position
+			Int barWidth = healthBarRegion->width();// used for position
 
 			// based on our own kind of we have certain icons to display at a size scale
 			Real scale;
@@ -3355,8 +3350,8 @@ void Drawable::drawEnthusiastic(const IRegion2D* healthBarRegion)
 			else
 				scale = 0.5f;
 
-			Int frameWidth = getIconInfo()->m_icon[ iconIndex ]->getCurrentFrameWidth() * scale;
-			Int frameHeight = getIconInfo()->m_icon[ iconIndex ]->getCurrentFrameHeight() * scale;
+			Int frameWidth = getIconInfo()->m_icon[ iconIndex ]->getCurrentFrameWidth() * scale * TheDisplay->getWidthScale();
+			Int frameHeight = getIconInfo()->m_icon[ iconIndex ]->getCurrentFrameHeight() * scale * TheDisplay->getHeightScale() * TheDisplay->getAspectRatioScale();
 
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 			// adjust the width to be a % of the health bar region size
@@ -3645,10 +3640,10 @@ void Drawable::drawDisabled(const IRegion2D* healthBarRegion)
 		// draw the icon
 		if( healthBarRegion )
 		{
-			Int barHeight = healthBarRegion->hi.y - healthBarRegion->lo.y;
+			Int barHeight = healthBarRegion->height();
 
-			Int frameWidth = getIconInfo()->m_icon[ ICON_DISABLED ]->getCurrentFrameWidth();
-			Int frameHeight = getIconInfo()->m_icon[ ICON_DISABLED ]->getCurrentFrameHeight();
+			Int frameWidth = getIconInfo()->m_icon[ ICON_DISABLED ]->getCurrentFrameWidth() * TheDisplay->getWidthScale();
+			Int frameHeight = getIconInfo()->m_icon[ ICON_DISABLED ]->getCurrentFrameHeight() * TheDisplay->getHeightScale() * TheDisplay->getAspectRatioScale();
 
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 			// adjust the width to be a % of the health bar region size
@@ -3794,7 +3789,7 @@ void Drawable::drawVeterancy( const IRegion2D *healthBarRegion )
 	if (!image)
 		return;
 
-	Real scale = 1.3f/CLAMP_ICON_ZOOM_FACTOR( TheTacticalView->getZoom() );
+	//Real scale = 1.3f/CLAMP_ICON_ZOOM_FACTOR( TheTacticalView->getZoom() );
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
 	Real objScale = scale * 1.55f;
 #else
@@ -3802,11 +3797,11 @@ void Drawable::drawVeterancy( const IRegion2D *healthBarRegion )
 #endif
 
 
-	Real vetBoxWidth  = image->getImageWidth()*objScale;
-	Real vetBoxHeight = image->getImageHeight()*objScale;
+	Real vetBoxWidth  = image->getImageWidth() * objScale * TheDisplay->getWidthScale();
+	Real vetBoxHeight = image->getImageHeight() * objScale * TheDisplay->getHeightScale() * TheDisplay->getAspectRatioScale();
 
 	//
-	// take the center position of the object, go down to it's bottom extent, and project
+	// take the center position of the health region, go down to it's bottom extent, and project
 	// that point to the screen, that will be the "center" of our veterancy box
 	//
 
@@ -3816,11 +3811,7 @@ void Drawable::drawVeterancy( const IRegion2D *healthBarRegion )
 	if( !TheTacticalView->worldToScreen( &p, &screenCenter ) )
 		return;
 
-	Real healthBoxWidth, healthBoxHeight;
-	if (!obj->getHealthBoxDimensions(healthBoxHeight, healthBoxWidth))
-		return;
-
-	screenCenter.x += healthBoxWidth * scale * 0.5f;
+	screenCenter.x += healthBarRegion->width() * 0.5f;
 
 	// draw the image
 	TheDisplay->drawImage(image, screenCenter.x + 1, screenCenter.y + 1, screenCenter.x + 1 + vetBoxWidth, screenCenter.y + 1 + vetBoxHeight);
@@ -3925,13 +3916,8 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 
 		}
 
-
-
-
-///		Real scale = 1.3f / TheTacticalView->getZoom();
-		Real healthBoxWidth = healthBarRegion->hi.x - healthBarRegion->lo.x;
-
-		Real healthBoxHeight = max(3, healthBarRegion->hi.y - healthBarRegion->lo.y);
+		Real healthBoxWidth = healthBarRegion->width();
+		Real healthBoxHeight = max(3, healthBarRegion->height());
 		Real healthBoxOutlineSize = 1.0f;
 
 		// draw the health box outline
