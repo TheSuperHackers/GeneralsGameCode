@@ -190,8 +190,37 @@ void ShieldBody::doDamageFX(const DamageInfo* damageInfo)
 }
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
+void ShieldBody::onDisabledEdge(Bool nowDisabled)
+{
+	if (!isActive()) {  // If the shield isn't enabled, no need to do anything
+		return;
+	}
+
+	if (nowDisabled) {
+		m_currentShieldHealth = 0;
+		disableShieldEffects();
+
+		if (m_shieldBehaviorModule == NULL) {
+			findShieldBehaviorModule();
+		}
+
+		if (!m_shieldBehaviorModule) {
+			return;
+		}
+
+		m_shieldBehaviorModule->applyDamage(getShieldMaxHealth());
+	}
+}
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 void ShieldBody::attemptDamage(DamageInfo* damageInfo)
 {
+	// Shield is not enabled, just pass through
+	if (!isActive()) {
+		ActiveBody::attemptDamage(damageInfo);
+		return;
+	}
+
 	validateArmorAndDamageFX();
 
 	// We need to do all the early return checks from ActiveBody here as well

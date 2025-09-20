@@ -132,7 +132,7 @@ public:
 
 	// UpdateModuleInterface
 	virtual UpdateSleepTime update();
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
+	//virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
 
 	//EnergyShieldBehaviorInterface
 	virtual void applyDamage(Real amount);

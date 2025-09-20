@@ -102,6 +102,8 @@ protected:
 	virtual void attemptDamage(DamageInfo* damageInfo);		///< try to damage this object
 	virtual void doDamageFX(const DamageInfo* damageInfo);
 
+	virtual void onDisabledEdge(Bool nowDisabled);
+
 	//ObjectID m_constructorObjectID;					///< object that built this structure
 
 private:
