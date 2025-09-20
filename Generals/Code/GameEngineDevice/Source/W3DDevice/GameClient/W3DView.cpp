@@ -1178,6 +1178,7 @@ void W3DView::update(void)
 	 * scrolling), the zoom will move toward matching the desired height.
 	 */
 	// TheSuperHackers @tweak Can now also zoom when the game is paused.
+	// TheSuperHackers @tweak The camera zoom speed is now decoupled from the render update.
 	// TheSuperHackers @bugfix The camera terrain height adjustment now also works in replay playback.
 
 	m_terrainHeightUnderCamera = getHeightAroundPos(m_pos.x, m_pos.y);
