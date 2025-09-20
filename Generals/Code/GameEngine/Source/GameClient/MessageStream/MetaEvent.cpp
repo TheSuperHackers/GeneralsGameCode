@@ -506,77 +506,62 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 
 	if (t > GameMessage::MSG_RAW_MOUSE_BEGIN && t < GameMessage::MSG_RAW_MOUSE_END )
 	{
-		Int index = 0;
+		Int index = 3;
 		switch (t)
 		{
 			case GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_DOWN:
+				--index;
+				FALLTHROUGH;
 			case GameMessage::MSG_RAW_MOUSE_MIDDLE_BUTTON_DOWN:
+				--index;
+				FALLTHROUGH;
 			case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_DOWN:
 			{
-				// Fill out which the current mouse down position
-				if (t == GameMessage::MSG_RAW_MOUSE_MIDDLE_BUTTON_DOWN)
-					index = 1;
-				else if (t == GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_DOWN)
-					index = 2;
-				// else index == 0
+				--index;
 				m_mouseDownPosition[index] = msg->getArgument(0)->pixel;
 				m_nextUpShouldCreateDoubleClick[index] = FALSE;
-
 				break;
 			}
 
 			case GameMessage::MSG_RAW_MOUSE_LEFT_DOUBLE_CLICK:
+				--index;
+				FALLTHROUGH;
 			case GameMessage::MSG_RAW_MOUSE_MIDDLE_DOUBLE_CLICK:
+				--index;
+				FALLTHROUGH;
 			case GameMessage::MSG_RAW_MOUSE_RIGHT_DOUBLE_CLICK:
 			{
-				if (t == GameMessage::MSG_RAW_MOUSE_MIDDLE_DOUBLE_CLICK)
-					index = 1;
-				else if (t == GameMessage::MSG_RAW_MOUSE_RIGHT_DOUBLE_CLICK)
-					index = 2;
-				// else index == 0
-
+				--index;
 				m_nextUpShouldCreateDoubleClick[index] = TRUE;
 				break;
 			}
 
 			case GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_UP:
+				--index;
+				FALLTHROUGH;
 			case GameMessage::MSG_RAW_MOUSE_MIDDLE_BUTTON_UP:
+				--index;
+				FALLTHROUGH;
 			case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_UP:
 			{
-				ICoord2D location = msg->getArgument(0)->pixel;
+				--index;
 
-				// Fill out which the current mouse down position
-				if (t == GameMessage::MSG_RAW_MOUSE_MIDDLE_BUTTON_UP)
-					index = 1;
-				else if (t == GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_UP)
-					index = 2;
-				// else index == 0
+				constexpr const GameMessage::Type SingleClickMessages[3] =
+				{
+					GameMessage::MSG_MOUSE_LEFT_CLICK,
+					GameMessage::MSG_MOUSE_MIDDLE_CLICK,
+					GameMessage::MSG_MOUSE_RIGHT_CLICK,
+				};
+				constexpr const GameMessage::Type DoubleClickMessages[3] =
+				{
+					GameMessage::MSG_MOUSE_LEFT_DOUBLE_CLICK,
+					GameMessage::MSG_MOUSE_MIDDLE_DOUBLE_CLICK,
+					GameMessage::MSG_MOUSE_RIGHT_DOUBLE_CLICK,
+				};
 
-				GameMessage *newMessage = NULL;
-				if (t == GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_UP)
-				{
-					if (m_nextUpShouldCreateDoubleClick[index])
-						newMessage = TheMessageStream->insertMessage(GameMessage::MSG_MOUSE_LEFT_DOUBLE_CLICK, const_cast<GameMessage*>(msg));
-					else
-						newMessage = TheMessageStream->insertMessage(GameMessage::MSG_MOUSE_LEFT_CLICK, const_cast<GameMessage*>(msg));
-					m_nextUpShouldCreateDoubleClick[index] = FALSE;
-				}
-				else if (t == GameMessage::MSG_RAW_MOUSE_MIDDLE_BUTTON_UP)
-				{
-					if (m_nextUpShouldCreateDoubleClick[index])
-						newMessage = TheMessageStream->insertMessage(GameMessage::MSG_MOUSE_MIDDLE_DOUBLE_CLICK, const_cast<GameMessage*>(msg));
-					else
-						newMessage = TheMessageStream->insertMessage(GameMessage::MSG_MOUSE_MIDDLE_CLICK, const_cast<GameMessage*>(msg));
-					m_nextUpShouldCreateDoubleClick[index] = FALSE;
-				}
-				else if (t == GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_UP)
-				{
-					if (m_nextUpShouldCreateDoubleClick[index])
-						newMessage = TheMessageStream->insertMessage(GameMessage::MSG_MOUSE_RIGHT_DOUBLE_CLICK, const_cast<GameMessage*>(msg));
-					else
-						newMessage = TheMessageStream->insertMessage(GameMessage::MSG_MOUSE_RIGHT_CLICK, const_cast<GameMessage*>(msg));
-					m_nextUpShouldCreateDoubleClick[index] = FALSE;
-				}
+				const ICoord2D location = msg->getArgument(0)->pixel;
+				const GameMessage::Type messageType = m_nextUpShouldCreateDoubleClick[index] ? DoubleClickMessages[index] : SingleClickMessages[index];
+				GameMessage *newMessage = TheMessageStream->insertMessage(messageType, const_cast<GameMessage*>(msg));
 
 				IRegion2D pixelRegion;
 				buildRegion( &m_mouseDownPosition[index], &location, &pixelRegion );
@@ -591,6 +576,9 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 
 				// append the modifier keys to the message.
 				newMessage->appendIntegerArgument( msg->getArgument(1)->integer );
+
+				// append the time to the message.
+				//newMessage->appendIntegerArgument( msg->getArgument(2)->integer );
 				break;
 			}
 
