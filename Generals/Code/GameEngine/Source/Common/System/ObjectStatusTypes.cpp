@@ -33,7 +33,7 @@
 #include "Common/BitFlagsIO.h"
 
 template<>
-const char* ObjectStatusMaskType::s_bitNameList[] =
+const char* const ObjectStatusMaskType::s_bitNameList[] =
 {
 	"NONE",
 	"DESTROYED",
@@ -66,5 +66,6 @@ const char* ObjectStatusMaskType::s_bitNameList[] =
 	"IS_CARBOMB",
 	NULL
 };
+static_assert(ARRAY_SIZE(ObjectStatusMaskType::s_bitNameList) == ObjectStatusMaskType::NumBits + 1, "Incorrect array size");
 
 ObjectStatusMaskType OBJECT_STATUS_MASK_NONE;	// inits to all zeroes

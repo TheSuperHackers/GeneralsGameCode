@@ -43,8 +43,8 @@
 enum KindOfType CPP_11(: Int)
 {
 	KINDOF_INVALID = -1,
-	KINDOF_FIRST = 0,
-	KINDOF_OBSTACLE = KINDOF_FIRST,	///< an obstacle to land-based pathfinders
+
+	KINDOF_OBSTACLE,								///< an obstacle to land-based pathfinders
 	KINDOF_SELECTABLE,							///< Selectable
 	KINDOF_IMMOBILE,								///< fixed in location
 	KINDOF_CAN_ATTACK,							///< can attack
@@ -143,8 +143,8 @@ enum KindOfType CPP_11(: Int)
 	KINDOF_IGNORES_SELECT_ALL,			///< Too late to figure out intelligently if something should respond to a Select All command
 	KINDOF_DONT_AUTO_CRUSH_INFANTRY,					///< These units don't try to crush the infantry if ai.
 
-	KINDOF_COUNT										// total number of kindofs
-
+	KINDOF_COUNT,										// total number of kindofs
+	KINDOF_FIRST = 0,
 };
 
 typedef BitFlags<KINDOF_COUNT>	KindOfMaskType;

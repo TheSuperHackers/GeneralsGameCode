@@ -58,7 +58,7 @@ enum SlowDeathPhaseType CPP_11(: Int)
 };
 
 #ifdef DEFINE_SLOWDEATHPHASE_NAMES
-static const char *TheSlowDeathPhaseNames[] =
+static const char *const TheSlowDeathPhaseNames[] =
 {
 	"INITIAL",
 	"MIDPOINT",
@@ -66,6 +66,7 @@ static const char *TheSlowDeathPhaseNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheSlowDeathPhaseNames) == SD_PHASE_COUNT + 1, "Incorrect array size");
 #endif
 
 

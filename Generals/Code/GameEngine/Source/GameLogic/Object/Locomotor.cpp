@@ -59,7 +59,7 @@ LocomotorStore *TheLocomotorStore = NULL;					///< the Locomotor store definitio
 
 const Real BIGNUM = 99999.0f;
 
-static const char *TheLocomotorPriorityNames[] =
+static const char *const TheLocomotorPriorityNames[] =
 {
 	"MOVES_BACK",
 	"MOVES_MIDDLE",
@@ -67,7 +67,7 @@ static const char *TheLocomotorPriorityNames[] =
 
 	NULL
 };
-
+static_assert(ARRAY_SIZE(TheLocomotorPriorityNames) == LOCOMOTOR_PRIORITY_COUNT + 1, "Array size");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////

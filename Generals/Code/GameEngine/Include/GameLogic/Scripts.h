@@ -832,7 +832,7 @@ public:
 };
 EMPTY_DTOR(Parameter)
 
-extern const char* TheObjectFlagsNames[];
+extern const char* const TheObjectFlagsNames[];
 
 //-------------------------------------------------------------------------------------------------
 // ******************************** class Condition ***********************************************

@@ -54,7 +54,7 @@ enum {
 };
 
 
-static const char* VendorNames[]={
+static const char* const VendorNames[]={
 	"Unknown",
 	"NVidia",
 	"ATI",
@@ -67,6 +67,7 @@ static const char* VendorNames[]={
 	"CirrusLogic",
 	"Rendition"
 };
+static_assert(ARRAY_SIZE(VendorNames) == DX8Caps::VENDOR_COUNT, "Incorrect array size");
 
 DX8Caps::VendorIdType DX8Caps::Define_Vendor(unsigned vendor_id)
 {

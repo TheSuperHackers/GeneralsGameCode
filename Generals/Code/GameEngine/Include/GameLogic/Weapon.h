@@ -60,17 +60,20 @@ enum WeaponReloadType CPP_11(: Int)
 {
 	AUTO_RELOAD,
 	NO_RELOAD,
-	RETURN_TO_BASE_TO_RELOAD
+	RETURN_TO_BASE_TO_RELOAD,
+
+	WEAPON_RELOAD_COUNT
 };
 
 #ifdef DEFINE_WEAPONRELOAD_NAMES
-static const char *TheWeaponReloadNames[] =
+static const char *const TheWeaponReloadNames[] =
 {
 	"YES",
 	"NO",
 	"RETURN_TO_BASE",
 	NULL
 };
+static_assert(ARRAY_SIZE(TheWeaponReloadNames) == WEAPON_RELOAD_COUNT + 1, "Incorrect array size");
 #endif
 
 //-------------------------------------------------------------------------------------------------
@@ -84,13 +87,14 @@ enum WeaponPrefireType CPP_11(: Int)
 };
 
 #ifdef DEFINE_WEAPONPREFIRE_NAMES
-static const char *TheWeaponPrefireNames[] =
+static const char *const TheWeaponPrefireNames[] =
 {
 	"PER_SHOT",
 	"PER_ATTACK",
 	"PER_CLIP",
 	NULL
 };
+static_assert(ARRAY_SIZE(TheWeaponPrefireNames) == PREFIRE_COUNT + 1, "Incorrect array size");
 #endif
 
 //-------------------------------------------------------------------------------------------------
@@ -119,7 +123,7 @@ enum WeaponAffectsMaskType CPP_11(: Int)
 };
 
 #ifdef DEFINE_WEAPONAFFECTSMASK_NAMES
-static const char *TheWeaponAffectsMaskNames[] =
+static const char *const TheWeaponAffectsMaskNames[] =
 {
 	"SELF",
 	"ALLIES",
@@ -149,7 +153,7 @@ enum WeaponCollideMaskType CPP_11(: Int)
 };
 
 #ifdef DEFINE_WEAPONCOLLIDEMASK_NAMES
-static const char *TheWeaponCollideMaskNames[] =
+static const char *const TheWeaponCollideMaskNames[] =
 {
 	"ALLIES",
 	"ENEMIES",
@@ -204,7 +208,7 @@ enum WeaponBonusConditionType CPP_11(: Int)
 	WEAPONBONUSCONDITION_COUNT
 };
 #ifdef DEFINE_WEAPONBONUSCONDITION_NAMES
-static const char *TheWeaponBonusNames[] =
+static const char *const TheWeaponBonusNames[] =
 {
 	// This is a RHS enum (weapon.ini will have WeaponBonus = IT) so it is all caps
 	"GARRISONED",
@@ -235,6 +239,7 @@ static const char *TheWeaponBonusNames[] =
 	"SOLO_AI_HARD",
 	NULL
 };
+static_assert(ARRAY_SIZE(TheWeaponBonusNames) == WEAPONBONUSCONDITION_COUNT + 1, "Incorrect array size");
 #endif
 
 // For WeaponBonusConditionFlags
@@ -280,7 +285,7 @@ private:
 };
 
 #ifdef DEFINE_WEAPONBONUSFIELD_NAMES
-static const char *TheWeaponBonusFieldNames[] =
+static const char *const TheWeaponBonusFieldNames[] =
 {
 	"DAMAGE",
 	"RADIUS",
@@ -289,6 +294,7 @@ static const char *TheWeaponBonusFieldNames[] =
 	"PRE_ATTACK",
 	NULL
 };
+static_assert(ARRAY_SIZE(TheWeaponBonusFieldNames) == WeaponBonus::FIELD_COUNT + 1, "Incorrect array size");
 #endif
 
 

@@ -61,7 +61,7 @@ enum BodyDamageType CPP_11(: Int)
 };
 
 #ifdef DEFINE_BODYDAMAGETYPE_NAMES
-static const char* TheBodyDamageTypeNames[] =
+static const char* const TheBodyDamageTypeNames[] =
 {
 	"PRISTINE",
 	"DAMAGED",
@@ -70,6 +70,7 @@ static const char* TheBodyDamageTypeNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheBodyDamageTypeNames) == BODYDAMAGETYPE_COUNT + 1, "Incorrect array size");
 #endif
 
 enum MaxHealthChangeType CPP_11(: Int)
@@ -77,16 +78,19 @@ enum MaxHealthChangeType CPP_11(: Int)
 	SAME_CURRENTHEALTH,
 	PRESERVE_RATIO,
 	ADD_CURRENT_HEALTH_TOO,
+
+	MAX_HEALTH_CHANGE_COUNT
 };
 
 #ifdef DEFINE_MAXHEALTHCHANGETYPE_NAMES
-static const char* TheMaxHealthChangeTypeNames[] =
+static const char* const TheMaxHealthChangeTypeNames[] =
 {
 	"SAME_CURRENTHEALTH",
 	"PRESERVE_RATIO",
 	"ADD_CURRENT_HEALTH_TOO",
 	NULL
 };
+static_assert(ARRAY_SIZE(TheMaxHealthChangeTypeNames) == MAX_HEALTH_CHANGE_COUNT + 1, "Incorrect array size");
 #endif
 
 

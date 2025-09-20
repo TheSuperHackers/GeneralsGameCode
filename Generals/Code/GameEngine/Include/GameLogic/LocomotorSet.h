@@ -61,7 +61,7 @@ const LocomotorSurfaceTypeMask NO_SURFACES = (LocomotorSurfaceTypeMask)0x0000;
 const LocomotorSurfaceTypeMask ALL_SURFACES = (LocomotorSurfaceTypeMask)0xffff;
 
 #ifdef DEFINE_SURFACECATEGORY_NAMES
-static const char *TheLocomotorSurfaceTypeNames[] =
+static const char *const TheLocomotorSurfaceTypeNames[] =
 {
 	"GROUND",
 	"WATER",

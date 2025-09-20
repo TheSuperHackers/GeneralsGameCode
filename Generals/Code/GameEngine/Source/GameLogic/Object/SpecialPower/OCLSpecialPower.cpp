@@ -49,7 +49,7 @@ enum
 	CREATE_ABOVE_LOCATION_HEIGHT = 300
 };
 
-static const char* TheOCLCreateLocTypeNames[] =
+static const char* const TheOCLCreateLocTypeNames[] =
 {
 	"CREATE_AT_EDGE_NEAR_SOURCE",
 	"CREATE_AT_EDGE_NEAR_TARGET",
@@ -59,6 +59,7 @@ static const char* TheOCLCreateLocTypeNames[] =
 	"CREATE_AT_EDGE_FARTHEST_FROM_TARGET",
 	NULL
 };
+static_assert(ARRAY_SIZE(TheOCLCreateLocTypeNames) == OCL_CREATE_LOC_COUNT + 1, "Incorrect array size");
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

@@ -52,7 +52,7 @@ enum
 };
 
 #ifdef DEFINE_STEALTHLEVEL_NAMES
-static const char *TheStealthLevelNames[] =
+static const char *const TheStealthLevelNames[] =
 {
 	"ATTACKING",
 	"MOVING",

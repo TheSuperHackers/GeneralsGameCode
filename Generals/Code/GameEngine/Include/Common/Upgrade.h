@@ -151,7 +151,7 @@ enum UpgradeType CPP_11(: Int)
 
 	NUM_UPGRADE_TYPES
 };
-extern const char *TheUpgradeTypeNames[]; //Change above, change this!
+extern const char *const TheUpgradeTypeNames[]; //Change above, change this!
 
 //-------------------------------------------------------------------------------------------------
 /** A single upgrade template definition */

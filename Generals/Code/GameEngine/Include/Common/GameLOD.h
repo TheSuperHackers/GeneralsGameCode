@@ -69,6 +69,8 @@ enum CpuType CPP_11(: Int)
 	P3,
 	P4,
 	K7,
+
+	CPU_MAX
 };
 
 //Keep this in sync with VideoNames in Gamelod.cpp

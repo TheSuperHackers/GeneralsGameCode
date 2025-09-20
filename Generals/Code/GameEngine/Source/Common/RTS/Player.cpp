@@ -158,7 +158,7 @@ static void findClosestKindOf( Object *obj, void *userData )
 AsciiString kindofMaskAsAsciiString(KindOfMaskType m)
 {
 	AsciiString s;
-	const char** kindofNames = KindOfMaskType::getBitNames();
+	const char* const* kindofNames = KindOfMaskType::getBitNames();
 	for (Int i=KINDOF_FIRST; i<KINDOF_COUNT; ++i)
 	{
 		if (m.test(i))

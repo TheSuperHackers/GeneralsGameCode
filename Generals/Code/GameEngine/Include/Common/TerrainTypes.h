@@ -74,7 +74,7 @@ typedef enum
 
 } TerrainClass;
 #ifdef DEFINE_TERRAIN_TYPE_NAMES
-static const char *terrainTypeNames[] =
+static const char *const terrainTypeNames[] =
 {
 	"NONE",
 	"DESERT_1",
@@ -104,6 +104,7 @@ static const char *terrainTypeNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(terrainTypeNames) == TERRAIN_NUM_CLASSES + 1, "Incorrect array size");
 #endif  // end DEFINE_TERRAIN_TYPE_NAMES
 
 //-------------------------------------------------------------------------------------------------

@@ -91,14 +91,14 @@ enum
 /** Function typedef for parsing data block fields.
 	*
 	* buffer - the character buffer of the line from INI that we are reading and parsing
-	* instance - instance of what we're loading (for example a thingtemplate instance)
+	* instance - instance of what we're loading (for example a ThingTemplate instance)
 	* store - where to store the data parsed, this is a field in the *instance* 'instance'
 	*/
 //-------------------------------------------------------------------------------------------------
 typedef void (*INIFieldParseProc)( INI *ini, void *instance, void *store, const void* userData );
 
 //-------------------------------------------------------------------------------------------------
-typedef const char* ConstCharPtr;
+typedef const char* const ConstCharPtr;
 typedef ConstCharPtr* ConstCharPtrArray;
 
 //-------------------------------------------------------------------------------------------------

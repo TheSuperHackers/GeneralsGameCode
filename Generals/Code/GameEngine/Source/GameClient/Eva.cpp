@@ -34,7 +34,7 @@
 
 
 //-------------------------------------------------------------------------------------------------
-const char *TheEvaMessageNames[] =
+static const char *const TheEvaMessageNames[] =
 {
 	"LOWPOWER",
 	"INSUFFICIENTFUNDS",
@@ -55,8 +55,8 @@ const char *TheEvaMessageNames[] =
 	"CASHSTOLEN",
 	"UPGRADECOMPLETE",
 	"BUILDINGBEINGSTOLEN",
-	"EVA_INVALID",
 };
+static_assert(ARRAY_SIZE(TheEvaMessageNames) == EVA_COUNT, "Incorrect array size");
 
 //------------------------------------------------------------------------------ INI::parseEvaEvent
 void INI::parseEvaEvent( INI* ini )
@@ -142,7 +142,6 @@ const ShouldPlayFunc Eva::s_shouldPlayFuncs[] =
 	Eva::shouldPlayGenericHandler,
 	Eva::shouldPlayGenericHandler,
 	Eva::shouldPlayGenericHandler,
-	NULL,
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -331,6 +330,8 @@ Bool Eva::messageShouldPlay(EvaMessage messageToTest, UnsignedInt currentFrame) 
 	if (m_localPlayer == NULL) {
 		return FALSE;
 	}
+
+	static_assert(ARRAY_SIZE(s_shouldPlayFuncs) == EVA_COUNT, "Incorrect array size");
 
 	m_messageBeingTested = messageToTest;
 	return s_shouldPlayFuncs[messageToTest](m_localPlayer);

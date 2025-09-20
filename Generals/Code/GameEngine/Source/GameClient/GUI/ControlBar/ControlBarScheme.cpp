@@ -165,6 +165,7 @@ static const LookupListRec AnimTypeNames[] =
 	{ "SLIDE_RIGHT", ControlBarSchemeAnimation::CB_ANIM_SLIDE_RIGHT },
 	{ NULL, 0	}
 };
+static_assert(ARRAY_SIZE(AnimTypeNames) == ControlBarSchemeAnimation::CB_ANIM_MAX + 1, "Incorrect array size");
 
 static void animSlideRight( ControlBarSchemeAnimation *anim );
 

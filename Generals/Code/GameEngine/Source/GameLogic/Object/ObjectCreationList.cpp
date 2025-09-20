@@ -693,7 +693,7 @@ enum DebrisDisposition CPP_11(: Int)
 	WHIRLING								= 0x00000100
 };
 
-static const char* DebrisDispositionNames[] =
+static const char* const DebrisDispositionNames[] =
 {
 	"LIKE_EXISTING",
 	"ON_GROUND_ALIGNED",

@@ -137,7 +137,7 @@ static GameFont  *defFont				= NULL;
 // These strings must be in the same order as they are in their definitions
 // (see WIN_STATUS_* enums and GWS_* enums).
 //
-const char *WindowStatusNames[] = { "ACTIVE", "TOGGLE", "DRAGABLE", "ENABLED", "HIDDEN",
+const char *const WindowStatusNames[] = { "ACTIVE", "TOGGLE", "DRAGABLE", "ENABLED", "HIDDEN",
 														  "ABOVE", "BELOW", "IMAGE", "TABSTOP", "NOINPUT",
 														  "NOFOCUS", "DESTROYED", "BORDER",
 														  "SMOOTH_TEXT", "ONE_LINE", "NO_FLUSH", "SEE_THRU",
@@ -145,7 +145,7 @@ const char *WindowStatusNames[] = { "ACTIVE", "TOGGLE", "DRAGABLE", "ENABLED", "
 															"USE_OVERLAY_STATES", "NOT_READY", "FLASHING", "ALWAYS_COLOR",
 															NULL };
 
-const char *WindowStyleNames[] = { "PUSHBUTTON",	"RADIOBUTTON",	"CHECKBOX",
+const char *const WindowStyleNames[] = { "PUSHBUTTON",	"RADIOBUTTON",	"CHECKBOX",
 														 "VERTSLIDER",	"HORZSLIDER",		"SCROLLLISTBOX",
 														 "ENTRYFIELD",	"STATICTEXT",		"PROGRESSBAR",
 														 "USER",				"MOUSETRACK",		"ANIMATED",
@@ -199,9 +199,9 @@ static GameWindow *parseWindow( File *inFile, char *buffer );
 	* if successful.  Returns TRUE on success, else FALSE. */
 //=============================================================================
 static Bool parseBitFlag( const char *flagString, UnsignedInt *bits,
-													const char **flagList )
+													ConstCharPtrArray flagList )
 {
-	const char **c;
+	ConstCharPtrArray c;
 	int i;
 
 	for( i = 0, c = flagList; *c; i++, c++ )
@@ -225,7 +225,7 @@ static Bool parseBitFlag( const char *flagString, UnsignedInt *bits,
 	* argument.
 	* Note that this routine does not clear any bits, only sets them. */
 //=============================================================================
-static void parseBitString( const char *inBuffer, UnsignedInt *bits, const char **flagList )
+static void parseBitString( const char *inBuffer, UnsignedInt *bits, ConstCharPtrArray flagList )
 {
 	char buffer[256];
 	char *tok;

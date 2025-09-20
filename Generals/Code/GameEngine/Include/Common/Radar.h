@@ -145,7 +145,7 @@ enum RadarPriorityType CPP_11(: Int)
 	RADAR_PRIORITY_NUM_PRIORITIES
 };
 #ifdef DEFINE_RADAR_PRIORITY_NAMES
-static const char *RadarPriorityNames[] =
+static const char *const RadarPriorityNames[] =
 {
 	"INVALID",											// a priority that has not been set (in general it won't show up on the radar)
 	"NOT_ON_RADAR",									// object specifically forbidden from being on the radar
@@ -155,6 +155,7 @@ static const char *RadarPriorityNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(RadarPriorityNames) == RADAR_PRIORITY_NUM_PRIORITIES + 1, "Incorrect array size");
 #endif  // DEFINE_RADAR_PRIOTITY_NAMES
 
 //-------------------------------------------------------------------------------------------------

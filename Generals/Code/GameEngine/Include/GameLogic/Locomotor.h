@@ -60,18 +60,22 @@ enum LocomotorAppearance CPP_11(: Int)
 	LOCO_THRUST,
 	LOCO_WINGS,
 	LOCO_CLIMBER,			// human climber - backs down cliffs.
-	LOCO_OTHER
+	LOCO_OTHER,
+
+	LOCOMOTOR_APPEARANCE_COUNT
 };
 
 enum LocomotorPriority CPP_11(: Int)
 {
-	LOCO_MOVES_BACK=0,				// In a group, this one moves toward the back
-	LOCO_MOVES_MIDDLE=1,			// In a group, this one stays in the middle
-	LOCO_MOVES_FRONT=2				// In a group, this one moves toward the front of the group
+	LOCO_MOVES_BACK,				// In a group, this one moves toward the back
+	LOCO_MOVES_MIDDLE,			// In a group, this one stays in the middle
+	LOCO_MOVES_FRONT,				// In a group, this one moves toward the front of the group
+
+	LOCOMOTOR_PRIORITY_COUNT
 };
 
 #ifdef DEFINE_LOCO_APPEARANCE_NAMES
-static const char *TheLocomotorAppearanceNames[] =
+static const char *const TheLocomotorAppearanceNames[] =
 {
 	"TWO_LEGS",
 	"FOUR_WHEELS",
@@ -84,6 +88,7 @@ static const char *TheLocomotorAppearanceNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheLocomotorAppearanceNames) == LOCOMOTOR_APPEARANCE_COUNT + 1, "Array size");
 #endif
 
 //-------------------------------------------------------------------------------------------------
@@ -96,11 +101,13 @@ enum LocomotorBehaviorZ CPP_11(: Int)
 	Z_FIXED_SURFACE_RELATIVE_HEIGHT,		// stays fixed at surface-rel height, regardless of physics
 	Z_FIXED_ABSOLUTE_HEIGHT,						// stays fixed at absolute height, regardless of physics
 	Z_RELATIVE_TO_GROUND_AND_BUILDINGS,	// stays fixed at surface-rel height including buildings, regardless of physics
-	Z_SMOOTH_RELATIVE_TO_HIGHEST_LAYER	// try to follow a height relative to the highest layer.
+	Z_SMOOTH_RELATIVE_TO_HIGHEST_LAYER,	// try to follow a height relative to the highest layer.
+
+	LOCOMOTOR_BEHAVIOR_Z_COUNT
 };
 
 #ifdef DEFINE_LOCO_Z_NAMES
-static const char *TheLocomotorBehaviorZNames[] =
+static const char *const TheLocomotorBehaviorZNames[] =
 {
 	"NO_Z_MOTIVE_FORCE",
 	"SEA_LEVEL",
@@ -113,6 +120,7 @@ static const char *TheLocomotorBehaviorZNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheLocomotorBehaviorZNames) == LOCOMOTOR_BEHAVIOR_Z_COUNT + 1, "Array size");
 #endif
 
 //-------------------------------------------------------------------------------------------------

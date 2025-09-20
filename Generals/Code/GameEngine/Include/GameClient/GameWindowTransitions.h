@@ -48,6 +48,8 @@
 #ifndef __GAME_WINDOW_TRANSITIONS_H_
 #define __GAME_WINDOW_TRANSITIONS_H_
 
+#include "Common/GameCommon.h"
+
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -106,6 +108,7 @@ static const LookupListRec TransitionStyleNames[] =
 	{ "REVERSESOUND",			REVERSE_SOUND_TRANSITION },
 	{ NULL, 0	}
 };
+static_assert(ARRAY_SIZE(TransitionStyleNames) == MAX_TRANSITION_WINDOW_STYLES + 1, "Incorrect array size");
 
 // base class for the transitions
 // inherit off of this adding in all the values

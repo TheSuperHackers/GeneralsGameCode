@@ -107,8 +107,8 @@ enum ParticlePriorityType CPP_11(: Int)
 	CRITICAL,				///< super special top priority like a superweapon
 	ALWAYS_RENDER,	///< used for logically important display (not just fluff), so must never be culled, regardless of particle cap, lod, etc
 	// !!! *Noting* goes here ... special is the top priority !!!
-	PARTICLE_PRIORITY_HIGHEST = ALWAYS_RENDER,
-	NUM_PARTICLE_PRIORITIES
+	NUM_PARTICLE_PRIORITIES,
+	PARTICLE_PRIORITY_HIGHEST = NUM_PARTICLE_PRIORITIES - 1,
 };
 
 /**
@@ -250,46 +250,6 @@ public:
 
 };
 
-
-//--------------------------------------------------------------------------------------------------------------
-
-#ifdef DEFINE_PARTICLE_SYSTEM_NAMES
-
-/**** NOTE: These MUST be kept in sync with the enumerations below *****/
-
-static const char *ParticleShaderTypeNames[] =
-{
-	"NONE", "ADDITIVE", "ALPHA", "ALPHA_TEST", "MULTIPLY", NULL
-};
-
-static const char *ParticleTypeNames[] =
-{
-	"NONE", "PARTICLE", "DRAWABLE", "STREAK", "VOLUME_PARTICLE", NULL
-};
-
-static const char *EmissionVelocityTypeNames[] =
-{
-	"NONE", "ORTHO", "SPHERICAL", "HEMISPHERICAL", "CYLINDRICAL", "OUTWARD", NULL
-};
-
-static const char *EmissionVolumeTypeNames[] =
-{
-	"NONE", "POINT", "LINE", "BOX", "SPHERE", "CYLINDER", NULL
-};
-
-//"NONE", "FLUFF", "DEBRIS", "NATURE", "WEAPON", "DAMAGE", "SPECIAL"
-static const char *ParticlePriorityNames[] =
-{
-	"NONE", "WEAPON_EXPLOSION","SCORCHMARK","DUST_TRAIL","BUILDUP","DEBRIS_TRAIL","UNIT_DAMAGE_FX","DEATH_EXPLOSION","SEMI_CONSTANT","CONSTANT","WEAPON_TRAIL","AREA_EFFECT","CRITICAL", "ALWAYS_RENDER", NULL
-};
-
-static const char *WindMotionNames[] =
-{
-	"NONE", "Unused", "PingPong", "Circular", NULL
-};
-
-#endif
-
 /**
  * All of the properties of a particle system, used by both ParticleSystemTemplates
  * and ParticleSystem classes.
@@ -310,13 +270,15 @@ public:
 
 	enum ParticleShaderType
 	{
-		INVALID_SHADER=0, ADDITIVE, ALPHA, ALPHA_TEST, MULTIPLY
+		INVALID_SHADER=0, ADDITIVE, ALPHA, ALPHA_TEST, MULTIPLY,
+		PARTICLE_SHADER_TYPE_COUNT
 	}
 	m_shaderType;																///< how this particle is rendered
 
 	enum ParticleType
 	{
-		INVALID_TYPE=0, PARTICLE, DRAWABLE, STREAK, VOLUME_PARTICLE	 ///< is a particle a 2D-screen-facing particle, or a Drawable, or a Segment in a streak?
+		INVALID_TYPE=0, PARTICLE, DRAWABLE, STREAK, VOLUME_PARTICLE, ///< is a particle a 2D-screen-facing particle, or a Drawable, or a Segment in a streak?
+		PARTICLE_TYPE_COUNT
 	}
 	m_particleType;
 
@@ -376,7 +338,8 @@ public:
 	// The direction and speed at which particles are emitted
 	enum EmissionVelocityType
 	{
-		INVALID_VELOCITY=0, ORTHO, SPHERICAL, HEMISPHERICAL, CYLINDRICAL, OUTWARD
+		INVALID_VELOCITY=0, ORTHO, SPHERICAL, HEMISPHERICAL, CYLINDRICAL, OUTWARD,
+		EMISSION_VELOCITY_TYPE_COUNT
 	}
 	m_emissionVelocityType;
 
@@ -419,7 +382,8 @@ public:
 	// Note that the volume is relative to the system's position and orientation
 	enum EmissionVolumeType
 	{
-		INVALID_VOLUME=0, POINT, LINE, BOX, SPHERE, CYLINDER
+		INVALID_VOLUME=0, POINT, LINE, BOX, SPHERE, CYLINDER,
+		EMISSION_VOLUME_TYPE_COUNT
 	}
 	m_emissionVolumeType;												///< the type of volume where particles are created
 
@@ -468,7 +432,9 @@ public:
 		WIND_MOTION_INVALID = 0,
 		WIND_MOTION_NOT_USED,
 		WIND_MOTION_PING_PONG,
-		WIND_MOTION_CIRCULAR
+		WIND_MOTION_CIRCULAR,
+
+		WIND_MOTION_COUNT
 	};
 	WindMotion m_windMotion;				///< motion of the wind angle updating
 	Real m_windAngle;								///< angle of the "wind" associated with this system
@@ -485,6 +451,49 @@ public:
 
 };
 
+//--------------------------------------------------------------------------------------------------------------
+
+#ifdef DEFINE_PARTICLE_SYSTEM_NAMES
+
+/**** NOTE: These MUST be kept in sync with the enumerations above *****/
+
+static const char *const ParticleShaderTypeNames[] =
+{
+	"NONE", "ADDITIVE", "ALPHA", "ALPHA_TEST", "MULTIPLY", NULL
+};
+static_assert(ARRAY_SIZE(ParticleShaderTypeNames) == ParticleSystemInfo::PARTICLE_SHADER_TYPE_COUNT + 1, "Incorrect array size");
+
+static const char *const ParticleTypeNames[] =
+{
+	"NONE", "PARTICLE", "DRAWABLE", "STREAK", "VOLUME_PARTICLE", NULL
+};
+static_assert(ARRAY_SIZE(ParticleTypeNames) == ParticleSystemInfo::PARTICLE_TYPE_COUNT + 1, "Incorrect array size");
+
+static const char *const EmissionVelocityTypeNames[] =
+{
+	"NONE", "ORTHO", "SPHERICAL", "HEMISPHERICAL", "CYLINDRICAL", "OUTWARD", NULL
+};
+static_assert(ARRAY_SIZE(EmissionVelocityTypeNames) == ParticleSystemInfo::EMISSION_VELOCITY_TYPE_COUNT + 1, "Incorrect array size");
+
+static const char *const EmissionVolumeTypeNames[] =
+{
+	"NONE", "POINT", "LINE", "BOX", "SPHERE", "CYLINDER", NULL
+};
+static_assert(ARRAY_SIZE(EmissionVolumeTypeNames) == ParticleSystemInfo::EMISSION_VOLUME_TYPE_COUNT + 1, "Incorrect array size");
+
+static const char *const ParticlePriorityNames[] =
+{
+	"NONE", "WEAPON_EXPLOSION","SCORCHMARK","DUST_TRAIL","BUILDUP","DEBRIS_TRAIL","UNIT_DAMAGE_FX","DEATH_EXPLOSION","SEMI_CONSTANT","CONSTANT","WEAPON_TRAIL","AREA_EFFECT","CRITICAL", "ALWAYS_RENDER", NULL
+};
+static_assert(ARRAY_SIZE(ParticlePriorityNames) == NUM_PARTICLE_PRIORITIES + 1, "Incorrect array size");
+
+static const char *const WindMotionNames[] =
+{
+	"NONE", "Unused", "PingPong", "Circular", NULL
+};
+static_assert(ARRAY_SIZE(WindMotionNames) == ParticleSystemInfo::WIND_MOTION_COUNT + 1, "Incorrect array size");
+
+#endif
 
 /**
  * A ParticleSystemTemplate, used by the ParticleSystemManager to instantiate ParticleSystems.

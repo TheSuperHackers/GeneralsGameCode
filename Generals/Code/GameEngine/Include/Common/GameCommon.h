@@ -186,7 +186,7 @@ enum
 // NOTE NOTE NOTE: Keep TheVeterencyNames in sync with these.
 enum VeterancyLevel CPP_11(: Int)
 {
-	LEVEL_REGULAR = 0,
+	LEVEL_REGULAR,
 	LEVEL_VETERAN,
 	LEVEL_ELITE,
 	LEVEL_HEROIC,
@@ -194,12 +194,12 @@ enum VeterancyLevel CPP_11(: Int)
 	LEVEL_COUNT,
 	LEVEL_INVALID,
 
-	LEVEL_FIRST = LEVEL_REGULAR,
+	LEVEL_FIRST = 0,
 	LEVEL_LAST = LEVEL_HEROIC
 };
 
 // TheVeterancyNames is defined in GameCommon.cpp
-extern const char *TheVeterancyNames[];
+extern const char *const TheVeterancyNames[];
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -211,6 +211,7 @@ enum CommandSourceType CPP_11(: Int)
 	CMD_FROM_AI,
 	CMD_FROM_DOZER,							// Special rare command when the dozer originates a command to attack a mine. Mines are not ai-attackable, and it seems deceitful for the dozer to generate a player or script command. jba.
 
+	COMMAND_SOURCE_TYPE_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -478,14 +479,16 @@ inline Real stdAngleDiff(Real a1, Real a2)
 // NOTE NOTE NOTE: Keep TheRelationShipNames in sync with this enum
 enum Relationship CPP_11(: Int)
 {
-	ENEMIES = 0,
+	ENEMIES,
 	NEUTRAL,
-	ALLIES
+	ALLIES,
+
+	RELATIONSHIP_COUNT
 };
 
 
 // TheRelationShipNames is defined in Common/GameCommon.cpp
-extern const char *TheRelationshipNames[];
+extern const char *const TheRelationshipNames[];
 
 #endif // _GAMECOMMON_H_
 

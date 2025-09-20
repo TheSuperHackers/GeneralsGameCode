@@ -500,8 +500,8 @@ extern void GameWinDefaultTooltip( GameWindow *window,
 																	 WinInstanceData *instData,
 																	 UnsignedInt mouse );
 
-extern const char *WindowStatusNames[];
-extern const char *WindowStyleNames[];
+extern const char *const WindowStatusNames[];
+extern const char *const WindowStyleNames[];
 
 #endif // __GAMEWINDOW_H_
 

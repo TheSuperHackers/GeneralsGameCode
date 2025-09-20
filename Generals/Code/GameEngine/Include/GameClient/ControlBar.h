@@ -99,12 +99,10 @@ enum CommandOption CPP_11(: Int)
 	SCRIPT_ONLY									= 0x00080000, // Only a script can use this command (not by users)
 	IGNORES_UNDERPOWERED				= 0x00100000, // this button isn't disabled if its object is merely underpowered
 	USES_MINE_CLEARING_WEAPONSET= 0x00200000,	// uses the special mine-clearing weaponset, even if not current
-
-	NUM_COMMAND_OPTIONS
 };
 
 #ifdef DEFINE_COMMAND_OPTION_NAMES
-static const char *TheCommandOptionNames[] =
+static const char *const TheCommandOptionNames[] =
 {
 	"NEED_TARGET_ENEMY_OBJECT",
 	"NEED_TARGET_NEUTRAL_OBJECT",
@@ -212,7 +210,7 @@ enum GUICommandType CPP_11(: Int)
 };
 
 #ifdef DEFINE_GUI_COMMMAND_NAMES
-static const char *TheGuiCommandNames[] =
+static const char *const TheGuiCommandNames[] =
 {
 	"NONE",
 	"DOZER_CONSTRUCT",
@@ -254,6 +252,7 @@ static const char *TheGuiCommandNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheGuiCommandNames) == GUI_COMMAND_NUM_COMMANDS + 1, "Incorrect array size");
 #endif  // end DEFINE_GUI_COMMAND_NAMES
 
 enum CommandButtonMappedBorderType CPP_11(: Int)
@@ -277,6 +276,7 @@ static const LookupListRec CommandButtonMappedBorderTypeNames[] =
 
 	{ NULL, 0	}
 };
+static_assert(ARRAY_SIZE(CommandButtonMappedBorderTypeNames) == COMMAND_BUTTON_BORDER_COUNT + 1, "Incorrect array size");
 //-------------------------------------------------------------------------------------------------
 /** Command buttons are used to load the buttons we place on throughout the command bar
 	* interface in different context sensitive windows depending on the situation and

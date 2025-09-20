@@ -53,7 +53,7 @@ enum DamageType CPP_11(: Int);
 #include "GameLogic/WeaponSetFlags.h"
 
 #ifdef DEFINE_WEAPONSLOTTYPE_NAMES
-static const char *TheWeaponSlotTypeNames[] =
+static const char *const TheWeaponSlotTypeNames[] =
 {
 	"PRIMARY",
 	"SECONDARY",
@@ -61,6 +61,7 @@ static const char *TheWeaponSlotTypeNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheWeaponSlotTypeNames) == WEAPONSLOT_COUNT + 1, "Incorrect array size");
 
 static const LookupListRec TheWeaponSlotTypeNamesLookupList[] =
 {
@@ -70,6 +71,7 @@ static const LookupListRec TheWeaponSlotTypeNamesLookupList[] =
 
 	{ NULL, 0	}
 };
+static_assert(ARRAY_SIZE(TheWeaponSlotTypeNamesLookupList) == WEAPONSLOT_COUNT + 1, "Incorrect array size");
 
 #endif
 

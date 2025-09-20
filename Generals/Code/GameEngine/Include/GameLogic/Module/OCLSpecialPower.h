@@ -47,6 +47,8 @@ enum OCLCreateLocType CPP_11(: Int)
 	USE_OWNER_OBJECT,
 	CREATE_ABOVE_LOCATION,
 	CREATE_AT_EDGE_FARTHEST_FROM_TARGET,
+
+	OCL_CREATE_LOC_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------

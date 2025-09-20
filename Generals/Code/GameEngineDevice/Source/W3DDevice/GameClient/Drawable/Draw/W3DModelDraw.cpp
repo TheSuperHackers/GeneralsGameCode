@@ -227,9 +227,11 @@ enum ACBits CPP_11(: Int)
 	MAINTAIN_FRAME_ACROSS_STATES2,
 	MAINTAIN_FRAME_ACROSS_STATES3,
 	MAINTAIN_FRAME_ACROSS_STATES4,
+
+	AC_BITS_COUNT
 };
 
-static const char *ACBitsNames[] =
+static const char *const ACBitsNames[] =
 {
 	"RANDOMSTART",
 	"START_FRAME_FIRST",
@@ -244,6 +246,7 @@ static const char *ACBitsNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(ACBitsNames) == AC_BITS_COUNT + 1, "Incorrect array size");
 
 static const Int ALL_MAINTAIN_FRAME_FLAGS =
 	(1<<MAINTAIN_FRAME_ACROSS_STATES) |

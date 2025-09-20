@@ -48,22 +48,23 @@ class INI;
 //-------------------------------------------------------------------------------------------------
 enum GeometryType CPP_11(: Int)
 {
-	GEOMETRY_SPHERE = 0,	///< partition/collision testing as sphere. (majorRadius = radius)
+	GEOMETRY_SPHERE,			///< partition/collision testing as sphere. (majorRadius = radius)
 	GEOMETRY_CYLINDER,		///< partition/collision testing as cylinder. (majorRadius = radius, height = height)
 	GEOMETRY_BOX,					///< partition/collision testing as rectangular box (majorRadius = half len in forward dir; minorRadius = half len in side dir; height = height)
 
 	GEOMETRY_NUM_TYPES,
-	GEOMETRY_FIRST = GEOMETRY_SPHERE
+	GEOMETRY_FIRST = 0
 };
 
 #ifdef DEFINE_GEOMETRY_NAMES
-static const char *GeometryNames[] =
+static const char *const GeometryNames[] =
 {
 	"SPHERE",
 	"CYLINDER",
 	"BOX",
 	NULL
 };
+static_assert(ARRAY_SIZE(GeometryNames) == GEOMETRY_NUM_TYPES + 1, "Incorrect array size");
 #endif  // end DEFINE_GEOMETRY_NAMES
 
 //-------------------------------------------------------------------------------------------------
