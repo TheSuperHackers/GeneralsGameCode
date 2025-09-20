@@ -694,7 +694,7 @@ void InGameUI::setSuperweaponDisplayEnabledByScript(Bool enable)
 // ------------------------------------------------------------------------------------------------
 Bool InGameUI::getSuperweaponDisplayEnabledByScript(void) const
 {
-	return m_superweaponHiddenByScript;
+	return !m_superweaponHiddenByScript;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1932,13 +1932,13 @@ void InGameUI::reset( void )
 	m_namedTimers.clear();
 	m_namedTimerLastFlashFrame = 0;
 	m_namedTimerUsedFlashColor = TRUE; // so next one is false
-	m_showNamedTimers = TRUE;
+	showNamedTimerDisplay(true);
 
 	removeMilitarySubtitle();
 	clearPopupMessageData();
 	m_superweaponLastFlashFrame = 0;
 	m_superweaponUsedFlashColor = TRUE; // so next one is false
-	m_superweaponHiddenByScript = FALSE;
+	setSuperweaponDisplayEnabledByScript(true);
 
 	clearFloatingText();
 	clearWorldAnimations();
@@ -1953,12 +1953,20 @@ void InGameUI::reset( void )
 
 	}
 
-	m_waypointMode			= false;
-	m_forceAttackMode		= false;
-	m_forceMoveToMode		= false;
-	m_attackMoveToMode	= false;
-	m_preferSelection		= false;
-	m_clientQuiet    = false;
+	setClientQuiet(false);
+	setWaypointMode(false);
+	setForceMoveMode(false);
+	setForceAttackMode(false);
+	setPreferSelectionMode(false);
+	clearAttackMoveToMode();
+
+	setScrolling(false);
+	setSelecting(false);
+	setCameraRotateLeft(false);
+	setCameraRotateRight(false);
+	setCameraZoomIn(false);
+	setCameraZoomOut(false);
+	setCameraTrackingDrawable(false);
 
 	m_windowLayouts.clear();
 
