@@ -440,6 +440,8 @@ public:
 	// contained-by
 	inline Object *getContainedBy() { return m_containedBy; }
 	inline const Object *getContainedBy() const { return m_containedBy; }
+	Object *getContainedBySpecialOverlordStyle(); ///< Get parent container object if its contain module is Overlord style.
+	const Object *getContainedBySpecialOverlordStyle() const; ///< Get parent container object if its contain module is Overlord style.
 	inline UnsignedInt getContainedByFrame() const { return m_containedByFrame; }
 	inline Bool isContained() const { return m_containedBy != NULL; }
 	void onContainedBy( Object *containedBy );

@@ -598,16 +598,8 @@ Bool TransportContain::isPassengerAllowedToFire( ObjectID id ) const
   // but wait! I may be riding on an Overlord
   // This code detects the case of whether the contained passenger is in a bunker riding on an overlord, inside a helix!
   // Oh  my  God.
-  const Object *heWhoContainsMe = getObject()->getContainedBy();
-  if ( heWhoContainsMe)
-  {
-    ContainModuleInterface *hisContain = heWhoContainsMe->getContain();
-    DEBUG_ASSERTCRASH( hisContain,("TransportContain::isPassengerAllowedToFire()... CONTAINER WITHOUT A CONTAIN! AARRGH!") );
-    if ( hisContain && hisContain->isSpecialOverlordStyleContainer() )
-      return hisContain->isPassengerAllowedToFire( id );
-  }
-
-
+	if (const Object *heWhoContainsMe = getObject()->getContainedBySpecialOverlordStyle())
+		return heWhoContainsMe->getContain()->isPassengerAllowedToFire( id );
 
 	return OpenContain::isPassengerAllowedToFire();
 }

@@ -207,14 +207,25 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 		}
 	}
 
-	if( self->getContainedBy()  &&  self->getContainedBy()->getContainedBy() )
+	if (const Object *container = self->getContainedBySpecialOverlordStyle())
 	{
-		// If our container is contained, we turn the heck off.  Seems like a weird specific check, but all of
-		// attacking is guarded by the same check in isPassengersAllowedToFire.  We similarly work in a container,
-		// but not in a double container.
+		if (container->getContainedBy() != NULL)
+		{
+			// If our container is contained, we turn the heck off.  Seems like a weird specific check, but all of
+			// attacking is guarded by the same check in isPassengerAllowedToFire.  We similarly work in a container,
+			// but not in a double container.
+			removeAllInfluence();
+			return UPDATE_SLEEP_NONE;
+		}
+	}
+#if !RETAIL_COMPATIBLE_CRC
+	else if (self->getContainedBy() != NULL)
+	{
+		// TheSuperHackers @bugfix Also turn off when a non overlord styled Propaganda Tower is contained.
 		removeAllInfluence();
 		return UPDATE_SLEEP_NONE;
 	}
+#endif
 
 	// if it's not time to scan, nothing to do
 	UnsignedInt currentFrame = TheGameLogic->getFrame();
