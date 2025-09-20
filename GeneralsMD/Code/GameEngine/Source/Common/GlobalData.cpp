@@ -219,6 +219,8 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "AmmoPipScreenOffset",						INI::parseCoord2D,				NULL,			offsetof( GlobalData, m_ammoPipScreenOffset ) },
 	{ "ContainerPipScreenOffset",				INI::parseCoord2D,				NULL,			offsetof( GlobalData, m_containerPipScreenOffset ) },
 
+	{ "ProgressBarYOffset",				INI::parseReal,				NULL,			offsetof(GlobalData, m_progressBarYOffset) },
+
 	{ "HistoricDamageLimit",				INI::parseDurationUnsignedInt,				NULL,			offsetof( GlobalData, m_historicDamageLimit ) },
 
 	{ "MaxTerrainTracks",					INI::parseInt,				NULL,			offsetof( GlobalData, m_maxTerrainTracks ) },

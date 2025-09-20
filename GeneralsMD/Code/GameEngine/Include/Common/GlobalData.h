@@ -216,6 +216,8 @@ public:
 	Real m_ammoPipScaleFactor;
 	Real m_containerPipScaleFactor;
 
+	Real m_progressBarYOffset;
+
 	UnsignedInt m_historicDamageLimit;
 
 	//Settings for terrain tracks left by vehicles with treads or wheels

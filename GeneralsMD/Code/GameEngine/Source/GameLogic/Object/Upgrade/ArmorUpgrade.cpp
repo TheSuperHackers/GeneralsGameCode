@@ -120,21 +120,15 @@ void ArmorUpgrade::upgradeImplementation( )
 	// Very simple; just need to flag the Object as having the player upgrade, and the WeaponSet chooser
 	// will do the work of picking the right one from ini.  This comment is as long as the code.
 	
-	DEBUG_LOG(("ArmorUpgrade::upgradeImplementation 0\n"));
-
 	const ArmorUpgradeModuleData* data = getArmorUpgradeModuleData();
 
 	Object *obj = getObject();
 	if( !obj )
 		return;
 
-	DEBUG_LOG(("ArmorUpgrade::upgradeImplementation 1\n"));
-
 	BodyModuleInterface* body = obj->getBodyModule();
 	if (body) {
 		body->setArmorSetFlag(data->m_armorSetFlag);
-
-		DEBUG_LOG(("ArmorUpgrade::upgradeImplementation 2 - flagsToClear = %d\n", data->m_armorSetFlagsToClear));
 
 		if (data->m_armorSetFlagsToClear.any()) {
 			// We loop over each armorset type and see if we have it set.

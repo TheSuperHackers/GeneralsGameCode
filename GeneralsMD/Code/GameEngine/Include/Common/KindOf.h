@@ -179,6 +179,8 @@ enum KindOfType CPP_11(: Int)
 	KINDOF_ENABLE_INFANTRY_LIGHTING,   ///< Enable infantry-style ambient lighting for this object
 	KINDOF_DISABLE_INFANTRY_LIGHTING,  ///< Use regular lighting on this infantry object
 
+	KINDOF_SHOW_PROGRESS_BAR,  ///< Show progress bar for this unit (Shields, deploy, teleport, etc.)
+
 	KINDOF_VTOL,
 	KINDOF_LARGE_AIRCRAFT,
 	KINDOF_MEDIUM_AIRCRAFT,
@@ -209,8 +211,6 @@ enum KindOfType CPP_11(: Int)
 	KINDOF_EXTRA14,
 	KINDOF_EXTRA15,
 	KINDOF_EXTRA16,
-	KINDOF_EXTRA17,
-	KINDOF_EXTRA18,
 
 
 	KINDOF_COUNT										// total number of kindofs

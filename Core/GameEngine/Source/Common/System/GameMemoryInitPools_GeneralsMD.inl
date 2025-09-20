@@ -109,6 +109,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "NeutronBlastBehavior", 4096, 32 },
 	{ "CountermeasuresBehavior", 256, 32 },
 	{ "BattlePlanBonusBehavior", 256, 32 },
+	{ "EnergyShieldBehavior", 256, 32 },
 	{ "BaseRegenerateUpdate", 128, 32 },
 	{ "BoneFXDamage", 64, 32 },
 	{ "BoneFXUpdate", 64, 32 },
@@ -253,6 +254,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "SquishCollide", 512, 32 },
 	{ "StructureBody", 512, 64 },
 	{ "HiveStructureBody", 64, 32 }, //Stinger sites
+	{ "ShieldBody", 128, 32 },
 	{ "StructureCollapseUpdate", 32, 32 },
 	{ "StructureToppleUpdate", 32, 32 },
 	{ "SupplyCenterCreate", 32, 32 },
