@@ -3019,7 +3019,9 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 			shadowInfo.m_sizeY					= tmplate->getShadowSizeY();
 			shadowInfo.m_offsetX				= tmplate->getShadowOffsetX();
 			shadowInfo.m_offsetY				= tmplate->getShadowOffsetY();
-  			m_shadow = TheW3DShadowManager->addShadow(m_renderObject, &shadowInfo, draw);
+
+			DEBUG_ASSERTCRASH(m_shadow == NULL, ("m_shadow is not NULL"));
+			m_shadow = TheW3DShadowManager->addShadow(m_renderObject, &shadowInfo, draw);
 			if (m_shadow)
 			{	m_shadow->enableShadowInvisible(m_fullyObscuredByShroud);
 				m_shadow->enableShadowRender(m_shadowEnabled);
