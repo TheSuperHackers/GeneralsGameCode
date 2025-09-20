@@ -1975,7 +1975,6 @@ inline void applyZone(PathfindCell &targetCell, const PathfindCell &sourceCell, 
 {
 	DEBUG_ASSERTCRASH(sourceCell.getZone()!=0, ("Unset source zone."));
 	Int srcZone = zoneEquivalency[sourceCell.getZone()];
-	//DEBUG_ASSERTCRASH(srcZone!=0, ("Bad zone equivalency zone."));
 	Int targetZone = zoneEquivalency[targetCell.getZone()];
 
 	if (targetZone == 0) {
@@ -2015,11 +2014,8 @@ m_interactsWithBridge(FALSE)
 {
 	m_cellOrigin.x = 0;
 	m_cellOrigin.y = 0;
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_firstZone = 0;
 	m_markedPassable = TRUE;
-	//
 }
 
 ZoneBlock::~ZoneBlock()
@@ -2329,7 +2325,6 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 #endif
 #endif
 
-
 	m_maxZone = 1;	// we start using zone 0 as a flag.
 	const Int maxZones=24000;
 	zoneStorageType zoneEquivalency[maxZones];
@@ -2392,7 +2387,6 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 
 				}
 			}
-			//DEBUG_LOG(("Collapsed zones %d", m_maxZone));
  		}
 	}
 
@@ -2547,19 +2541,6 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 				if (crusherGround(map[i][j], map[i][j-1])) {
 					applyZone(map[i][j], map[i][j-1], m_crusherZones, m_maxZone);
 				}
-/* No diagonals.  jba.
-				if (i>globalBounds.lo.x) {
-					if (waterGround(map[i][j],map[i-1][j-1])) {
-						applyZone(map[i][j], map[i-1][j-1], m_groundWaterZones, m_maxZone);
-					}
-					if (groundCliff(map[i][j],map[i-1][j-1])) {
-						applyZone(map[i][j], map[i-1][j-1], m_groundCliffZones, m_maxZone);
-					}
-					if (terrain(map[i][j],map[i-1][j-1])) {
-						applyZone(map[i][j], map[i-1][j-1], m_terrainZones, m_maxZone);
-					}
-				}
-*/
 			}
 			DEBUG_ASSERTCRASH(map[i][j].getZone() != 0, ("Cleared the zone."));
 		}
@@ -3289,7 +3270,6 @@ PathfindCell *PathfindLayer::getCell(Int x, Int y)
 }
 
 
-
 /**
  * Classify the given map cell as clear, or not, etc.
  */
@@ -3675,48 +3655,8 @@ void Pathfinder::classifyFence( Object *obj, Bool insert )
  				else
  					m_map[cx][cy].removeObstacle(obj);
  			}
-
  		}
  	}
-
-#if 0
-	// Perhaps it would make more sense to use the iteratecellsalongpath() provided in this class,
-	// but this way works well and is very traceable
-	// neither one is true Bresenham
-	// this one assumes zero fence thickness
-
-	const Coord3D *fencePos = obj->getPosition();
-	Coord3D fenceNorm;
-	obj->getUnitDirectionVector2D( fenceNorm );
-	Coord3D halfLength = fenceNorm;
-	halfLength.scale( obj->getGeometryInfo().getMajorRadius() );
-
-	Coord3D head = *fencePos;
-	head.add( &halfLength );
-	Coord3D tail = *fencePos;
-	tail.sub( &halfLength );
-
-	Real stepLength = 1.0f / ((halfLength.length()*2.0f) / PATHFIND_CELL_SIZE_F);
-
-	for ( Real t = 0.0f; t <= 1.0f; t += stepLength )
-	{
-		Real lengthWalk_x = (head.x * t) + (tail.x * (1.0f-t));
-		Real lengthWalk_y = (head.y * t) + (tail.y * (1.0f-t));
-
-		Int cx = REAL_TO_INT_FLOOR( lengthWalk_x / PATHFIND_CELL_SIZE_F );
-		Int cy = REAL_TO_INT_FLOOR( lengthWalk_y / PATHFIND_CELL_SIZE_F );
-		if (cx >= 0 && cy >= 0 && cx < m_extent.hi.x && cy < m_extent.hi.y)
-		{
-			if (insert) {
-				ICoord2D pos = { cx, cy };
-				m_map[cx][cy].setTypeAsObstacle( obj, true, pos );
-			}
-			else
-				m_map[cx][cy].removeObstacle(obj);
-		}
-	}
-#endif
-
 }
 
 /**
@@ -3983,8 +3923,6 @@ void Pathfinder::internal_classifyObjectFootprint( Object *obj, Bool insert )
 	}
 
 	// Expand building bounds 1 cell.
-#define MARK_BORDER_PINCHED
-#ifdef MARK_BORDER_PINCHED
 	for( j=cellBounds.lo.y; j<=cellBounds.hi.y; j++ )
 	{
 		for( i=cellBounds.lo.x; i<=cellBounds.hi.x; i++ )
@@ -4011,10 +3949,6 @@ void Pathfinder::internal_classifyObjectFootprint( Object *obj, Bool insert )
 			}
 		}
 	}
-#endif
-
-
-
 }
 
 /**
@@ -4216,8 +4150,6 @@ void Pathfinder::debugShowSearch(  Bool pathFound  )
 
 	// show all explored cells for debugging
 	PathfindCell *s;
-
-
 	RGBColor color;
 	color.red = color.blue = color.green = 1;
 	if (!pathFound) {
@@ -4240,7 +4172,6 @@ void Pathfinder::debugShowSearch(  Bool pathFound  )
 
 	for( s = m_closedList; s; s=s->getNextOpen() )
 	{
-		// create objects to show path - they decay
 		// create objects to show path - they decay
 		RGBColor color;
 		color.red = color.blue = 1;
@@ -4356,30 +4287,6 @@ void Pathfinder::cleanOpenAndClosedLists(void) {
 #endif
 
 	m_cumulativeCellsAllocated += count;
-//#ifdef RTS_DEBUG
-#if 0
-	// Check for dangling cells.
-	for( int j=0; j<=m_extent.hi.y; j++ )
-		for( int i=0; i<=m_extent.hi.x; i++ )
-			if (m_map[ i ][ j ].hasInfo()) {
-				DEBUG_ASSERTCRASH((m_map[i][j].getXIndex()==i && m_map[i][j].getYIndex()==j), ("Wrong cell coordinates"));
-				Bool needInfo = (m_map[ i ][ j ].getType() == PathfindCell::CELL_OBSTACLE);
-				if (m_map[i][j].isAircraftGoal()) {
-					needInfo = true;
-				}
-				if (m_map[i][j].getFlags() != PathfindCell::NO_UNITS)  {
-					needInfo = true;
-				}
-				if (!needInfo) {
-					DEBUG_LOG(("leaked cell %d, %d", m_map[i][j].getXIndex(), m_map[i][j].getYIndex()));
-					m_map[i][j].releaseInfo();
-				}
-				DEBUG_ASSERTCRASH((needInfo), ("Minor temporary memory leak - Extra cell allocated.  Tell JBA steps if repeatable."));
-			};
-	//DEBUG_LOG(("Pathfind used %d cells.", count));
-#endif
-//#endif
-
 }
 
 
@@ -4405,49 +4312,6 @@ Bool Pathfinder::validMovementPosition( Bool isCrusher, LocomotorSurfaceTypeMask
 	LocomotorSurfaceTypeMask cellSurfaces = validLocomotorSurfacesForCellType(toCell->getType());
 	if ((cellSurfaces & acceptableSurfaces) == 0)
 		return false;
-
-#if 0
-	//
-	// For diagonal moves, check neighboring vertical and horizontal
-	// steps as well to avoid "squeezing through a crack".
-	//
-	if (fromCell)
-	{
-		ICoord2D delta;
-
-		delta.x = toCell->getXIndex() - fromCell->getXIndex();
-		delta.y = toCell->getYIndex() - fromCell->getYIndex();
-
-		if (delta.x != 0 && delta.y != 0)
-		{
-			// test vertical movement
-			PathfindCell *otherCell = getCell( toCell->getXIndex(), fromCell->getYIndex() );
-			Bool open = true;
-
-			// check if cell is on the map
-			if (otherCell == NULL)
-				open = false;
-
-			// check if we can move onto this new cell
-			if (validMovementPosition( locomotorSet, otherCell, fromCell ) == false)
-				open = false;
-
-			// test horizontal movement
-			if (open == false)
-			{
-				otherCell = getCell( fromCell->getXIndex(), toCell->getYIndex() );
-
-				// check if cell is on the map
-				if (otherCell == NULL)
-					return false;
-
-				// check if we can move onto this new cell
-				if (validMovementPosition( locomotorSet, otherCell, fromCell ) == false)
-					return false;
-			}
-		}
-	}
-#endif
 
 	return true;
 }
@@ -4707,7 +4571,6 @@ void Pathfinder::snapClosestGoalPosition(Object *obj, Coord3D *pos)
 			}
 		}
 	}
-	//DEBUG_LOG(("Couldn't find goal."));
 }
 
 /**
@@ -4877,8 +4740,6 @@ Bool Pathfinder::adjustToLandingDestination(Object *obj, Coord3D *dest)
 }
 
 
-
-
 /**
  * Find an unoccupied spot for a unit to move to.
  * Returns false if there are no spots available within a reasonable radius.
@@ -4956,8 +4817,6 @@ Bool Pathfinder::adjustDestination(Object *obj, const LocomotorSet& locomotorSet
 		// Didn't work, so just do simple adjust.
 		return(adjustDestination(obj, locomotorSet, dest, NULL));
 	}
-	//DEBUG_LOG(("adjustDestination failed, dest (%f, %f), adj dest (%f,%f), %x %s", dest->x, dest->y, adjustDest.x, adjustDest.y,
-		//obj, obj->getTemplate()->getName().str()));
 	return false;
 }
 
@@ -5333,8 +5192,6 @@ Path *Pathfinder::getAircraftPath( const Object *obj, const Coord3D *to )
 {
 	// for now, quick path objects don't pathfind, generally airborne units
 	// build a trivial one-node path containing destination, then avoid buildings.
-
-
 	Path *thePath = newInstance(Path);
 	const AIUpdateInterface *ai = obj->getAI();
 	ObjectID avoidObject = INVALID_ID;
@@ -5607,10 +5464,6 @@ struct ExamineCellsStruct
 			to->setParentCell(from) ;
 			to->setTotalCost(to->getCostSoFar() + costRemaining) ;
 
-			//DEBUG_LOG(("Cell (%d,%d), Parent cost %d, newCostSoFar %d, cost rem %d, tot %d",
-			//	to->getXIndex(), to->getYIndex(),
-			//	to->costSoFar(from), newCostSoFar, costRemaining, to->getCostSoFar() + costRemaining));
-
 			// if to was on closed list, remove it from the list
 			if (to->getClosed())
 				d->thePathfinder->m_closedList = to->removeFromClosedList( d->thePathfinder->m_closedList );
@@ -5625,8 +5478,6 @@ struct ExamineCellsStruct
 
 	return 0;	// keep going
 }
-
-
 
 
 Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *goalCell, const LocomotorSet& locomotorSet,
@@ -5670,8 +5521,6 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 		Bool neighborFlags[8] = { 0 };
 
 		UnsignedInt newCostSoFar = 0;
-
-
 
 		for( int i=0; i<numNeighbors; i++ )
 		{
@@ -5736,8 +5585,6 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 				if ( fromPos.z < toPos.z )
 					continue;
 			}
-
-
 
 			Bool movementValid = true;
 			Bool dozerHack = false;
@@ -5869,10 +5716,6 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 			}
 			newCell->setTotalCost(newCell->getCostSoFar() + costRemaining) ;
 
-			//DEBUG_LOG(("Cell (%d,%d), Parent cost %d, newCostSoFar %d, cost rem %d, tot %d",
-			//	newCell->getXIndex(), newCell->getYIndex(),
-			//	newCell->costSoFar(parentCell), newCostSoFar, costRemaining, newCell->getCostSoFar() + costRemaining));
-
 			// if newCell was on closed list, remove it from the list
 			if (newCell->getClosed())
 				m_closedList = newCell->removeFromClosedList( m_closedList );
@@ -5916,50 +5759,6 @@ Path *Pathfinder::findPath( Object *obj, const LocomotorSet& locomotorSet, const
 		return pat;
 	}
 
-/* hierarchical build path code.
-	if (pat) {
-
-		Path *path = newInstance(Path);
-		PathNode *prior = NULL;
-		for (PathNode *node = pat->getLastNode(); node; node=node->getPrevious()) {
-			Bool unobstructed = true;
-			if (prior!=NULL) {
-				unobstructed = isLinePassable( obj, locomotorSet.getValidSurfaces(),
-				prior->getLayer(), *prior->getPosition(), *node->getPosition(), false, true);
-			}
-			if (unobstructed) {
-				path->prependNode( node->getPosition(), node->getLayer() );
-				path->getFirstNode()->setCanOptimize(node->getCanOptimize());
-				path->getFirstNode()->setNextOptimized(path->getFirstNode()->getNext());
-			} else {
-				Path *linkPath = findClosestPath(obj, locomotorSet, node->getPosition(),
-					prior->getPosition(), false, 0, true);
-				if (linkPath==NULL) {
-					DEBUG_LOG(("Couldn't find path - unexpected. jba."));
-					continue;
-				}
-				PathNode *linkNode = linkPath->getLastNode();
-				if (linkNode==NULL) {
-					DEBUG_LOG(("Empty path - unexpected. jba."));
-					continue;
-				}
-				for (linkNode=linkNode->getPrevious(); linkNode; linkNode=linkNode->getPrevious()) {
-					path->prependNode( linkNode->getPosition(), linkNode->getLayer() );
-					path->getFirstNode()->setCanOptimize(linkNode->getCanOptimize());
-					path->getFirstNode()->setNextOptimized(path->getFirstNode()->getNext());
-				}
-				deleteInstance(linkPath);
-			}
-			prior = node;
-		}
-		deleteInstance(pat);
-		path->optimize(obj, locomotorSet.getValidSurfaces(), false);
-		if (TheGlobalData->m_debugAI) {
-			setDebugPath(path);
-		}
-		return path;
-	}
-*/
 	return NULL;
 }
 /**
@@ -6823,17 +6622,10 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 				if (newCell->getCostSoFar() <= newCostSoFar)
 					continue;
 			}
-			//DEBUG_LOG(("CELL(%d,%d)L%d CD%d CSF %d, CR%d // ",newCell->getXIndex(), newCell->getYIndex(),
-			//	newCell->getLayer(), clearDiameter, newCostSoFar, costRemaining));
-			//if ((cellCount&7)==0) DEBUG_LOG_RAW(("\n"));
 			newCell->setCostSoFar(newCostSoFar);
 			// keep track of path we're building - point back to cell we moved here from
 			newCell->setParentCell(parentCell) ;
 			newCell->setTotalCost(newCell->getCostSoFar() + costRemaining) ;
-
-			//DEBUG_LOG(("Cell (%d,%d), Parent cost %d, newCostSoFar %d, cost rem %d, tot %d",
-			//	newCell->getXIndex(), newCell->getYIndex(),
-			//	newCell->costSoFar(parentCell), newCostSoFar, costRemaining, newCell->getCostSoFar() + costRemaining));
 
 			// if newCell was on closed list, remove it from the list
 			if (newCell->getClosed())
@@ -6846,8 +6638,6 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 			// insert newCell in open list such that open list is sorted, smallest total path cost first
 			m_openList = newCell->putOnSortedOpenList( m_openList );
 		}
-
-
 	}
 	// failure - goal cannot be reached
 #ifdef INTENSE_DEBUG
@@ -7319,26 +7109,6 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 			show |= (TheGlobalData->m_debugAI==AI_DEBUG_GROUND_PATHS);
 			if (show)	{
 				debugShowSearch(true);
-#if 0 // Show hierarchical blocks (big blue ones.)
-				Int i, j;
-				ICoord2D extent;
-				m_zoneManager.getExtent(extent);
-				for (i=0; i<extent.x; i++) {
-					for (j=0; j<extent.y; j++) {
-						extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
- 						RGBColor color;
-						color.blue = 1;
-						color.red = color.green = 0;
-						Coord3D pos;
-						pos.x = ((i+0.5f)*PathfindZoneManager::ZONE_BLOCK_SIZE)*PATHFIND_CELL_SIZE_F ;
-						pos.y = ((j+0.5f)*PathfindZoneManager::ZONE_BLOCK_SIZE)*PATHFIND_CELL_SIZE_F ;
-						pos.z = TheTerrainLogic->getGroundHeight( pos.x, pos.y ) + 0.5f;
-						if (m_zoneManager.isPassable(i*PathfindZoneManager::ZONE_BLOCK_SIZE, j*PathfindZoneManager::ZONE_BLOCK_SIZE)) {
-							addIcon(&pos, 5*PATHFIND_CELL_SIZE_F, 300, color);
-						}
-					}
-				}
-#endif
 			}
 #endif
 #if RETAIL_COMPATIBLE_PATHFINDING
@@ -7527,32 +7297,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 		m_isTunneling = false;
 		// construct and return path
 		Path *path =  buildHierachicalPath( from, closestCell );
-#if defined(RTS_DEBUG)
-#if 0
-		if (TheGlobalData->m_debugAI)
-		{
-			debugShowSearch(true);
-			Int i, j;
-			ICoord2D extent;
-			m_zoneManager.getExtent(extent);
-			for (i=0; i<extent.x; i++) {
-				for (j=0; j<extent.y; j++) {
-					extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
- 					RGBColor color;
-					color.blue = 1;
-					color.red = color.green = 0;
-					Coord3D pos;
-					pos.x = ((i+0.5f)*PathfindZoneManager::ZONE_BLOCK_SIZE)*PATHFIND_CELL_SIZE_F ;
-					pos.y = ((j+0.5f)*PathfindZoneManager::ZONE_BLOCK_SIZE)*PATHFIND_CELL_SIZE_F ;
-					pos.z = TheTerrainLogic->getGroundHeight( pos.x, pos.y ) + 0.5f;
-					if (m_zoneManager.isPassable(i*PathfindZoneManager::ZONE_BLOCK_SIZE, j*PathfindZoneManager::ZONE_BLOCK_SIZE)) {
-						addIcon(&pos, 5*PATHFIND_CELL_SIZE_F, 300, color);
-					}
-				}
-			}
-		}
-#endif
-#endif
+
 #if RETAIL_COMPATIBLE_PATHFINDING
 		if (!s_useFixedPathfinding)
 		{
@@ -7874,8 +7619,7 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 			Int dx = IABS(goalCell->getXIndex()-parentCell->getXIndex());
 			Int dy = IABS(goalCell->getYIndex()-parentCell->getYIndex());
 			Real distSqr = dx*dx+dy*dy;
-			//Real cost = (parentCell->getCostSoFar()*(parentCell->getCostSoFar()*COST_TO_DISTANCE_FACTOR))*0.5f;
-			//distSqr += sqr(cost);
+
 			if (distSqr < closestDistanceSqr) {
 				closestCell = parentCell;
 				closestDistanceSqr = distSqr;
@@ -7983,10 +7727,6 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 			}
 
 			newCell->setTotalCost(newCell->getCostSoFar() + costRemaining) ;
-
-			//DEBUG_LOG(("Cell (%d,%d), Parent cost %d, newCostSoFar %d, cost rem %d, tot %d",
-			//	newCell->getXIndex(), newCell->getYIndex(),
-			//	newCell->costSoFar(parentCell), newCostSoFar, costRemaining, newCell->getCostSoFar() + costRemaining));
 
 			// if newCell was on closed list, remove it from the list
 			if (newCell->getClosed())
@@ -8274,10 +8014,6 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 
 			newCell->setTotalCost(newCell->getCostSoFar() + costRemaining) ;
 
-			//DEBUG_LOG(("Cell (%d,%d), Parent cost %d, newCostSoFar %d, cost rem %d, tot %d",
-			//	newCell->getXIndex(), newCell->getYIndex(),
-			//	newCell->costSoFar(parentCell), newCostSoFar, costRemaining, newCell->getCostSoFar() + costRemaining));
-
 			// if newCell was on closed list, remove it from the list
 			if (newCell->getClosed())
 				m_closedList = newCell->removeFromClosedList( m_closedList );
@@ -8318,8 +8054,6 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 	}
 	return MAX_COST;
 }
-
-
 
 
 /**
@@ -8670,8 +8404,6 @@ void Pathfinder::adjustCoordToCell(Int cellX, Int cellY, Bool centerInCell, Coor
 	}
 	pos.z = TheTerrainLogic->getLayerHeight( pos.x, pos.y, layer );
 }
-
-
 
 
 /**
@@ -9514,8 +9246,7 @@ void Pathfinder::updateGoal( Object *obj, const Coord3D *newGoalPos, PathfindLay
 				if (cell) {
 					if (warn && cell->getGoalUnit()!=INVALID_ID && cell->getGoalUnit() != obj->getID()) {
 						warn = false;
-						// jba intense debug
-						//DEBUG_LOG(, ("Units got stuck close to each other.  jba"));
+						//Units got stuck close to each other.  jba
 					}
 					cellNdx.x = i;
 					cellNdx.y = j;
@@ -9527,8 +9258,7 @@ void Pathfinder::updateGoal( Object *obj, const Coord3D *newGoalPos, PathfindLay
 				if (cell) {
 					if (warn && cell->getGoalUnit()!=INVALID_ID && cell->getGoalUnit() != obj->getID()) {
 						warn = false;
-						// jba intense debug
-						//DEBUG_LOG(, ("Units got stuck close to each other.  jba"));
+						//Units got stuck close to each other.  jba
 					}
 					cellNdx.x = i;
 					cellNdx.y = j;
@@ -10087,7 +9817,6 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 }
 
 
-
 /** Patch to the exiting path from the current position, either because we became blocked,
   or because we had to move off the path to avoid other units. */
 Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet,
@@ -10313,39 +10042,7 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from,
 		const Object *victim, const Coord3D* victimPos, const Weapon *weapon )
 {
-	/*
-	CRCDEBUG_LOG(("Pathfinder::findAttackPath() for object %d (%s)", obj->getID(), obj->getTemplate()->getName().str()));
-	XferCRC xferCRC;
-	xferCRC.open("lightCRC");
-	xferCRC.xferSnapshot((Object *)obj);
-	xferCRC.close();
-	CRCDEBUG_LOG(("obj CRC is %X", xferCRC.getCRC()));
-	if (from)
-	{
-		CRCDEBUG_LOG(("from: (%g,%g,%g) (%X,%X,%X)",
-			from->x, from->y, from->z,
-			AS_INT(from->x), AS_INT(from->y), AS_INT(from->z)));
-	}
-	if (victim)
-	{
-		CRCDEBUG_LOG(("victim is %d (%s)", victim->getID(), victim->getTemplate()->getName().str()));
-		XferCRC xferCRC;
-		xferCRC.open("lightCRC");
-		xferCRC.xferSnapshot((Object *)victim);
-		xferCRC.close();
-		CRCDEBUG_LOG(("victim CRC is %X", xferCRC.getCRC()));
-	}
-	if (victimPos)
-	{
-		CRCDEBUG_LOG(("from: (%g,%g,%g) (%X,%X,%X)",
-			victimPos->x, victimPos->y, victimPos->z,
-			AS_INT(victimPos->x), AS_INT(victimPos->y), AS_INT(victimPos->z)));
-	}
-	*/
 	if (m_isMapReady == false) return NULL; // Should always be ok.
-#if defined(RTS_DEBUG)
-//	Int startTimeMS = ::GetTickCount();
-#endif
 
 	Bool isCrusher = obj ? obj->getCrusherLevel() > 0 : false;
 	Int radius;
@@ -10392,8 +10089,6 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 			}
 		}
 	}
-
-
 
 	const Int ATTACK_CELL_LIMIT = 2500; // this is a rather expensive operation, so limit the search.
 
