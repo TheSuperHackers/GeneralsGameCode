@@ -399,19 +399,15 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 
 			Int spin = msg->getArgument( 1 )->integer;
 
-			// TheSuperHackers @tweak The camera zoom is now decoupled from the render update.
-			const Real fpsRatio = (Real)BaseFps / TheGameEngine->getUpdateFps();
-			const Real zoomHeight = (Real)View::ZoomHeightPerSecond * fpsRatio;
-
 			if (spin > 0)
 			{
 				for ( ; spin > 0; spin--)
-					TheTacticalView->zoom( -zoomHeight );
+					TheTacticalView->zoom( -View::ZoomHeightPerSecond );
 			}
 			else
 			{
 				for ( ;spin < 0; spin++ )
-					TheTacticalView->zoom( +zoomHeight );
+					TheTacticalView->zoom( +View::ZoomHeightPerSecond );
 			}
 
 			break;
