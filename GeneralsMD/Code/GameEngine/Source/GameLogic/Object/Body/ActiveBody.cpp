@@ -929,6 +929,12 @@ void ActiveBody::setMaxHealth( Real maxHealth, MaxHealthChangeType healthChangeT
 			internalChangeHealth(m_maxHealth - m_currentHealth);
 			break;
 		}
+
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix Stubbjax 20/09/2025 Prevent indefinite subdue status when internally shifting health across the threshold.
+		if (isSubdued())
+			internalAddSubdualDamage(m_maxHealth - getCurrentSubdualDamageAmount());
+#endif
 	}
 
 	//
