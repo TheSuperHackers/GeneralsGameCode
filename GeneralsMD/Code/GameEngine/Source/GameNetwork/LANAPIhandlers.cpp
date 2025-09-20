@@ -290,7 +290,28 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 			}
 #endif
 
-			// We're the host, so see if he has a duplicate name
+			// TheSuperHackers @bugfix slurmlord 18/09/2025 need to validate the name of the connecting player before
+			// allowing them to join to prevent messing up the format of game state string. Commas, colons, semicolons etc.
+			// should not be in a player name. It should also not consist of only space characters.
+			if (canJoin)
+			{
+				constexpr WideChar IllegalNameChars[] = L",:;|\f\n\r\t\v";
+				const Bool containsIllegalChars = wcscspn(msg->name, IllegalNameChars);
+				const Bool isEffectivelyEmpty = wcsspn(msg->name, L" ") == wcslen(msg->name);
+				if (containsIllegalChars || isEffectivelyEmpty)
+				{
+					// Just deny with a duplicate name reason, for backwards compatibility with retail
+					reply.LANMessageType = LANMessage::MSG_JOIN_DENY;
+					reply.GameNotJoined.reason = LANAPIInterface::RET_DUPLICATE_NAME;
+					reply.GameNotJoined.gameIP = m_localIP;
+					reply.GameNotJoined.playerIP = senderIP;
+					canJoin = false;
+
+					DEBUG_LOG(("LANAPI::handleRequestJoin - join denied because of illegal characters in the player name."));
+				}
+			}
+
+			// Then see if the player has a duplicate name
 			for (player = 0; canJoin && player<MAX_SLOTS; ++player)
 			{
 				LANGameSlot *slot = m_currentGame->getLANSlot(player);
