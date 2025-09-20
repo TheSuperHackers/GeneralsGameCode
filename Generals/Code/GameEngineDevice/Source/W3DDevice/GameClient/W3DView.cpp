@@ -1178,14 +1178,17 @@ void W3DView::update(void)
 	 * scrolling), the zoom will move toward matching the desired height.
 	 */
 	// TheSuperHackers @tweak Can now also zoom when the game is paused.
+	// TheSuperHackers @bugfix The camera terrain height adjustment now also works in replay playback.
+
 	m_terrainHeightUnderCamera = getHeightAroundPos(m_pos.x, m_pos.y);
 	m_currentHeightAboveGround = m_cameraOffset.z * m_zoom - m_terrainHeightUnderCamera;
+
 	if (TheTerrainLogic && TheGlobalData && TheInGameUI && m_okToAdjustHeight)
 	{
 		Real desiredHeight = (m_terrainHeightUnderCamera + m_heightAboveGround);
 		Real desiredZoom = desiredHeight / m_cameraOffset.z;
 
-  	if (didScriptedMovement || (TheGameLogic->isInReplayGame() && TheGlobalData->m_useCameraInReplay))
+	if (didScriptedMovement)
   	{
   		// if we are in a scripted camera movement, take its height above ground as our desired height.
   		m_heightAboveGround = m_currentHeightAboveGround;
