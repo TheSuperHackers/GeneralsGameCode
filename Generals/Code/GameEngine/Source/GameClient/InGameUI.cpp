@@ -1967,7 +1967,6 @@ void InGameUI::reset( void )
 	setCameraRotateRight(false);
 	setCameraZoomIn(false);
 	setCameraZoomOut(false);
-	setCameraTrackingDrawable(false);
 
 	m_windowLayouts.clear();
 
