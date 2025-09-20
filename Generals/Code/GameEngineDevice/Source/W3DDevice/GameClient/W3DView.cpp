@@ -117,18 +117,7 @@ inline Real maxf(Real a, Real b) { if (a > b) return a; else return b; }
 //-------------------------------------------------------------------------------------------------
 static void normAngle(Real &angle)
 {
-	if (angle < -10*PI) {
-		angle = 0;
-	}
-	if (angle > 10*PI) {
-		angle = 0;
-	}
-	while (angle < -PI) {
-		angle += 2*PI;
-	}
-	while (angle > PI) {
-		angle -= 2*PI;
-	}
+	angle = WWMath::Normalize_Angle(angle);
 }
 
 #define TERRAIN_SAMPLE_SIZE 40.0f
@@ -1753,7 +1742,7 @@ void W3DView::setAngleAndPitchToDefault( void )
 	// call our base class, we are adding functionality
 	View::setAngleAndPitchToDefault();
 
-	this->m_FXPitch = 1.0;
+	m_FXPitch = 1.0;
 
 	// set the camera
 	setCameraTransform();
@@ -1775,19 +1764,7 @@ void W3DView::setDefaultView(Real pitch, Real angle, Real maxHeight)
 //-------------------------------------------------------------------------------------------------
 void W3DView::setHeightAboveGround(Real z)
 {
-	m_heightAboveGround = z;
-
-  // if our zoom is limited, we will stay within a predefined distance from the terrain
-	if( m_zoomLimited )
-	{
-
-		if (m_heightAboveGround < m_minHeightAboveGround)
-			m_heightAboveGround = m_minHeightAboveGround;
-
-		if (m_heightAboveGround > m_maxHeightAboveGround)
-			m_heightAboveGround = m_maxHeightAboveGround;
-
-	}
+	View::setHeightAboveGround(z);
 
 	m_doingMoveCameraOnWaypointPath = false;
 	m_doingRotateCamera = false;

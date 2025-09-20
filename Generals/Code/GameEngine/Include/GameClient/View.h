@@ -182,9 +182,9 @@ public:
 	virtual Real getZoom() { return m_zoom; }
 	virtual void setZoom(Real z) { }
 	virtual Real getHeightAboveGround() { return m_heightAboveGround; }
-	virtual void setHeightAboveGround(Real z) { m_heightAboveGround = z; }
+	virtual void setHeightAboveGround(Real z);
 	virtual void zoom( Real height ); ///< Zoom in/out, closer to the ground, limit to min, or farther away from the ground, limit to max
-	virtual void setZoomToDefault( void ) { }														///< Set zoom to default value
+	virtual void setZoomToDefault( void ) { m_zoom  = 1.0f; } ///< Set zoom to default value
 	virtual Real getMaxZoom( void ) { return m_maxZoom; }								///< return max zoom value
 	virtual void setOkToAdjustHeight( Bool val ) { m_okToAdjustHeight = val; }	///< Set this to adjust camera height
 
@@ -265,8 +265,8 @@ protected:
 
 	Real m_maxZoom;																							///< Largest zoom value (minimum actual zoom)
 	Real m_minZoom;																							///< Smallest zoom value (maximum actual zoom)
-	Real m_maxHeightAboveGround;
-	Real m_minHeightAboveGround;
+	Real m_maxHeightAboveGround;																///< Highest camera above ground value
+	Real m_minHeightAboveGround;																///< Lowest camera above ground value
 	Real m_zoom;																								///< Current zoom value
 	Real m_heightAboveGround;																		///< User's desired height above ground
 	Bool m_zoomLimited;																					///< Camera restricted in zoom height
@@ -276,7 +276,7 @@ protected:
 	Real m_terrainHeightUnderCamera;														///< Cached value for debugging
 
 	ObjectID m_cameraLock;																			///< if nonzero, id of object that the camera should follow
-	Drawable *m_cameraLockDrawable;															///< if nonzero, drawble of object that camera should follow.
+	Drawable *m_cameraLockDrawable;															///< if nonzero, drawable of object that camera should follow.
 	CameraLockType m_lockType;																	///< are we following or just tethering?
 	Real m_lockDist;																						///< how far can we be when tethered?
 
@@ -286,7 +286,7 @@ protected:
 	Bool m_okToAdjustHeight;																		///< Should we attempt to adjust camera height?
 	Bool m_snapImmediate;																				///< Should we immediately snap to the object we're following?
 
-	Coord2D m_guardBandBias; ///< Exttra beefy margins so huge thins can stay "on-screen"
+	Coord2D m_guardBandBias; ///< Extra beefy margins so huge thins can stay "on-screen"
 
 };
 
