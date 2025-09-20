@@ -62,6 +62,8 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 	{
 
 		//---------------------------------------------------------------------------------------------
+		// TheSuperHackers @bugfix Prevent double-clicks from falling through to other translators during building placement
+		case GameMessage::MSG_RAW_MOUSE_LEFT_DOUBLE_CLICK:
 		case GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_DOWN:
 		{
 			// if we're in a building placement mode, do the place and send to all players
