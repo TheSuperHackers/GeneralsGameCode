@@ -61,6 +61,7 @@ BEGIN_MESSAGE_MAP(ScriptActionsFalse, CPropertyPage)
 	ON_BN_CLICKED(IDC_NEW, OnNew)
 	ON_BN_CLICKED(IDC_DELETE, OnDelete)
 	ON_BN_CLICKED(IDC_COPY, OnCopy)
+	ON_BN_CLICKED(IDC_MOVETOTRUE, OnMoveToTrue)
 	ON_BN_CLICKED(IDC_MOVE_DOWN, OnMoveDown)
 	ON_BN_CLICKED(IDC_MOVE_UP, OnMoveUp)
 	ON_EN_CHANGE(IDC_EDIT_COMMENT, OnChangeEditComment)
@@ -75,9 +76,21 @@ BOOL ScriptActionsFalse::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 	CWnd *pWnd = GetDlgItem(IDC_EDIT_COMMENT);
 	pWnd->SetWindowText(m_script->getActionComment().str());
-	loadList();
+	// loadList(); // Moved to OnSetActive so it refreshes when tab is clicked.
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+// Adriane [Deatscythe]  This is done due to the new feature called move to false in the true actions page.
+// We need the false actions page to refresh when the user clicks on it.
+BOOL ScriptActionsFalse::OnSetActive()
+{
+    // CListBox *pList = (CListBox *)GetDlgItem(IDC_ACTION_LIST);
+    // if (pList) {
+    //     pList->ResetContent();  // clear only when activating the tab
+    // }
+    loadList();  // repopulate list
+    return CPropertyPage::OnSetActive();
 }
 
 void ScriptActionsFalse::loadList(void)
@@ -107,6 +120,32 @@ void ScriptActionsFalse::loadList(void)
 	}	
 }
 
+void ScriptActionsFalse::OnMoveToTrue() {
+    if (!m_falseAction) return;
+
+    // Step 1: Duplicate only the single action
+    ScriptAction *pMove = m_falseAction->duplicate();
+    pMove->setNextAction(NULL); // important!
+
+    // Step 2: Remove from False list
+    m_script->deleteFalseAction(m_falseAction);
+
+    // Step 3: Append to True list
+    if (m_script->getAction()) {
+        ScriptAction *pTail = m_script->getAction();
+        while (pTail->getNext()) {
+            pTail = pTail->getNext();
+
+        }
+        pTail->setNextAction(pMove);
+    } else {
+        m_script->setAction(pMove);
+    }
+
+    // Step 4: Refresh True page UI
+    m_index = 0;  // reset selection to avoid out-of-range index
+    loadList();
+}
 
 void ScriptActionsFalse::OnEditAction() 
 {
@@ -134,6 +173,9 @@ void ScriptActionsFalse::enableUI()
 	pWnd = GetDlgItem(IDC_DELETE);
 	pWnd->EnableWindow(m_falseAction!=NULL);
 	
+	pWnd = GetDlgItem(IDC_MOVETOTRUE);
+	pWnd->EnableWindow(m_falseAction!=NULL);
+
 	pWnd = GetDlgItem(IDC_MOVE_DOWN);
 	pWnd->EnableWindow(m_falseAction && m_falseAction->getNext());
 

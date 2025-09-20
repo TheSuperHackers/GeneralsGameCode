@@ -301,6 +301,13 @@ BOOL CTeamsDialog::OnInitDialog()
 
 void CTeamsDialog::OnOK() 
 {
+    // Save current selection
+    std::vector<Coord3D> selectedPositions;
+    for (MapObject* pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext()) {
+        if (pObj->isSelected())
+            selectedPositions.push_back(*pObj->getLocation());
+    }
+
 	Bool modified = m_sides.validateSides();
 	(void)modified;
 	DEBUG_ASSERTLOG(!modified,("had to clean up sides in CTeamsDialog::OnOK"));
@@ -311,7 +318,19 @@ void CTeamsDialog::OnOK()
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 
 	thePrevCurTeam = m_curTeam;
-	
+
+    // Restore selection
+    for (MapObject* pObjb = MapObject::getFirstMapObject(); pObjb; pObjb = pObjb->getNext()) {
+        pObjb->setSelected(false);
+
+        for (std::vector<Coord3D>::size_type i = 0; i < selectedPositions.size(); ++i) {
+            if (*pObjb->getLocation() == selectedPositions[i]) {
+                pObjb->setSelected(true);
+                break; // no need to check the rest
+            }
+        }
+    }
+
 	CDialog::OnOK();
 }
 
@@ -572,8 +591,8 @@ void CTeamsDialog::OnCopyteam()
 void CTeamsDialog::OnSelectTeamMembers() 
 {
 	Int count = 0;
-	Dict d = *m_sides.getTeamInfo(m_curTeam)->getDict();
-	AsciiString teamName = d.getAsciiString(TheKey_teamName);
+	// Caball009's fix for selecting neutral team members
+	AsciiString teamName = (m_curTeam == -1) ? "team" : m_sides.getTeamInfo(m_curTeam)->getDict()->getAsciiString(TheKey_teamName);
 	Coord3D pos;
 	MapObject *pObj;
 	for (pObj=MapObject::getFirstMapObject(); pObj; pObj=pObj->getNext()) {

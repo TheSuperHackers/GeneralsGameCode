@@ -329,6 +329,8 @@
 #define IDC_COPY                        1140
 #define IDC_EDIT_COMMENT                1141
 #define IDC_TEAMS_TREEVIEW              1142
+#define IDC_MOVETOFALSE                 1142
+#define IDC_MOVETOTRUE                  1142
 #define IDC_TEAM_SINGLETON              1143
 #define IDC_TEAMNAME                    1144
 #define IDC_MAPOBJECT_Team              1144
@@ -396,6 +398,7 @@
 #define IDC_PLAYERDISPLAYNAME           1170
 #define IDC_CHECK4                      1170
 #define IDC_TRANSPORTS_RETURN           1170
+#define IDC_SMART_COPY                  1170
 #define IDC_PLAYER_ATTITUDE_OUT         1171
 #define IDC_CHECK5                      1171
 #define IDC_AVOID_THREATS               1171

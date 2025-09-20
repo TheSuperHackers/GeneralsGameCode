@@ -101,6 +101,8 @@ public:
 	ScriptGroup *friend_getCurGroup(void);
 
 protected:
+	Bool m_bSmartCopyEnabled;
+
 	ListType	m_curSelection;
 	CImageList m_imageList;
 	SidesList	m_sides;
@@ -153,6 +155,9 @@ protected:
 	static Bool ParseTeamsDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
 	static Bool ParsePlayersDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
 
+	AsciiString ScriptDialog::incrementStringNumber(const AsciiString& input);
+	void ScriptDialog::applySmartCopyIncrement(Script* pScr);
+
 protected:
 
 	// Generated message map functions
@@ -169,6 +174,7 @@ protected:
 	afx_msg void OnPatchGC();
 	afx_msg void OnFindNext();
 	afx_msg void OnAutoVerify();
+	afx_msg void OnSmartCopy();
 	afx_msg void OnCompress();
 	afx_msg void OnDisableDeepScan();
 	afx_msg void OnNewIcons();

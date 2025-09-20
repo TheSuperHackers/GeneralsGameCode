@@ -60,34 +60,58 @@ static const char* NEUTRAL_NAME_STR = "(neutral)";
 ScriptDialog *ScriptDialog::m_staticThis = NULL;
 
 static AsciiString formatScriptLabel(Script *pScr) {
+	int burstSeconds = pScr->getDelayEvalSeconds();
 	AsciiString fmt;
 	if (pScr->isSubroutine()) {
 		fmt.concat("[S "); 
 	} else {
-		fmt.concat("[ns "); 
+		fmt.concat("[   "); 
 	}
 	if (pScr->isActive()) {
 		fmt.concat("A "); 
 	} else {
-		fmt.concat("na "); 
+		fmt.concat("   "); 
 	}
 	if (pScr->isOneShot()) {
-		fmt.concat("D] ["); 
+		fmt.concat("D] "); 
 	} else {
-		fmt.concat("nd] ["); 
+		fmt.concat("   ] "); 
 	}
-	if (pScr->isEasy()) {
-		fmt.concat("E "); 
-	} 
-	if (pScr->isNormal()) {
-		fmt.concat("N "); 
-	} 
-	if (pScr->isHard()) {
-		fmt.concat("H]"); 
-	} else {
-		fmt.concat("]");
-	}
+
+	// Difficulty markers
+	bool easy   = pScr->isEasy();
+	bool normal = pScr->isNormal();
+	bool hard   = pScr->isHard();
+
+	if (!(easy && normal && hard)) { 
+		// Build difficulty string dynamically without trailing spaces
+		AsciiString diff;
+		diff.concat("[");
+		bool first = true;
+		if (easy) {
+			diff.concat("E");
+			first = false;
+		}
+		if (normal) {
+			if (!first) diff.concat(" ");
+			diff.concat("N");
+			first = false;
+		}
+		if (hard) {
+			if (!first) diff.concat(" ");
+			diff.concat("H");
+		}
+		diff.concat("] ");
+		fmt.concat(diff);
+}
 	fmt.concat(pScr->getName().str());
+
+	if (burstSeconds > 0) {
+        AsciiString burstFmt;
+        burstFmt.format(" <%ds>", burstSeconds);
+        fmt.concat(burstFmt);
+    }
+
 	return fmt;
 }
 
@@ -167,6 +191,7 @@ ScriptDialog::ScriptDialog(CWnd* pParent /*=NULL*/)
 	m_pOldFont = NULL; 
 	m_bCompressed = false;
 	m_bNewIcons = false;
+	m_bSmartCopyEnabled = false;
 	//{{AFX_DATA_INIT(ScriptDialog)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
@@ -204,6 +229,7 @@ BEGIN_MESSAGE_MAP(ScriptDialog, CDialog)
 	ON_BN_CLICKED(IDC_NEWICONS, OnNewIcons)
 	ON_BN_CLICKED(IDC_DEEPSCAN, OnDisableDeepScan)
 	ON_BN_CLICKED(IDC_FIND_NEXT, OnFindNext)
+	ON_BN_CLICKED(IDC_SMART_COPY, OnSmartCopy)
 	ON_BN_CLICKED(IDC_SAVE, OnSave)
 	ON_BN_CLICKED(IDC_LOAD, OnLoad)
 	ON_NOTIFY(NM_DBLCLK, IDC_SCRIPT_TREE, OnDblclkScriptTree)
@@ -290,14 +316,23 @@ void ScriptDialog::OnSelchangedScriptTree(NMHDR* pNMHDR, LRESULT* pResult)
 	pWnd = GetDlgItem(IDC_DELETE);
 	pWnd->EnableWindow(m_curSelection.m_objType != ListType::PLAYER_TYPE);
 
+	AsciiString scriptBurst;
+
 	AsciiString scriptComment;
+	AsciiString actionComment;
+	AsciiString conditionComment;
 	AsciiString scriptText;
 	if (pScript) {
+		actionComment = pScript->getActionComment();
+		conditionComment = pScript->getConditionComment();
 		scriptComment = pScript->getComment();
 		scriptText = pScript->getUiText();
 
+		Int burstSeconds = pScript->getDelayEvalSeconds();  // seconds, not frames
+		scriptBurst.format("%d", burstSeconds);  
+
 		AsciiString usedByTag;
-		usedByTag.concat("[Referenced in:");
+		usedByTag.concat("[Referenced in] :");
 
 		AsciiString targetScriptName = pScript->getName();
 		Bool foundUse = false;
@@ -391,11 +426,30 @@ void ScriptDialog::OnSelchangedScriptTree(NMHDR* pNMHDR, LRESULT* pResult)
 			}
 		}
 
-		usedByTag.concat(foundUse ? "]" : " None]");
+		usedByTag.concat(foundUse ? "" : " --");
 
 		if(!scriptComment.isEmpty()){
 			scriptComment.concat("\n\n");
 		}
+
+		if (!conditionComment.isEmpty()) {
+			scriptComment.concat("[Condition Comment] : ");
+			scriptComment.concat(conditionComment);
+			scriptComment.concat("\n\n");
+		}
+
+		if (!actionComment.isEmpty()) {
+			scriptComment.concat("[Action Comment] : ");
+			scriptComment.concat(actionComment);
+			scriptComment.concat("\n\n");
+		}
+
+		if (burstSeconds > 0) {  // Only show if non-zero (optional)
+			scriptComment.concat("[Runs every ");
+			scriptComment.concat(scriptBurst);
+			scriptComment.concat(" second(s)]\n");
+		}
+
 		scriptComment.concat(usedByTag);
 
 		scriptComment = parseLineBreaks(scriptComment);
@@ -519,10 +573,9 @@ void ScriptDialog::OnPatchGC()
 
 	}*/
 }
-
 void ScriptDialog::OnFindNext()
 {
-    UpdateData(TRUE); // Sync UI to variables if you're using DDX
+    UpdateData(TRUE);
 
     CEdit* pEdit = (CEdit*)GetDlgItem(IDC_SCRIPT_SEARCH);
     CString searchText;
@@ -530,29 +583,85 @@ void ScriptDialog::OnFindNext()
     searchText.MakeLower();
 
     CTreeCtrl* pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
-    HTREEITEM hItem = m_lastFoundItem ? pTree->GetNextItem(m_lastFoundItem, TVGN_NEXT) : pTree->GetRootItem();
+    HTREEITEM hItem = m_lastFoundItem ? 
+        pTree->GetNextItem(m_lastFoundItem, TVGN_NEXT) : 
+        pTree->GetRootItem();
 
     while (hItem)
     {
-		CString text = pTree->GetItemText(hItem);
-		text.MakeLower();
-		if (text.Find(searchText) != -1)
-		{		
+        CString text = pTree->GetItemText(hItem);
+        CString lowerText = text; lowerText.MakeLower();
+
+        bool match = (lowerText.Find(searchText) != -1);
+
+        if (!match)
+        {
+            // --- Deep search inside the script ---
+            ListType lt;
+            lt.IntToList(pTree->GetItemData(hItem));
+
+            if (lt.m_objType == ListType::SCRIPT_IN_PLAYER_TYPE ||
+                lt.m_objType == ListType::SCRIPT_IN_GROUP_TYPE)
+            {
+                m_curSelection = lt; // temporarily set selection to use getCurScript
+                Script* pScr = getCurScript();
+                if (pScr)
+                {
+                    AsciiString content = pScr->getComment();
+                    content.concat(pScr->getUiText());
+                    CString lowerContent = content.str();
+                    lowerContent.MakeLower();
+
+                    if (lowerContent.Find(searchText) != -1)
+                        match = true;
+
+                    // Optionally scan conditions & actions too:
+                    for (OrCondition* pOr = pScr->getOrCondition(); pOr && !match; pOr = pOr->getNextOrCondition())
+                    {
+                        for (Condition* c = pOr->getFirstAndCondition(); c && !match; c = c->getNext())
+                        {
+                            for (int p = 0; p < c->getNumParameters(); ++p)
+                            {
+                                Parameter* param = c->getParameter(p);
+                                CString paramStr = param->getString().str();
+                                paramStr.MakeLower();
+                                if (paramStr.Find(searchText) != -1) {
+                                    match = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    for (ScriptAction* a = pScr->getAction(); a && !match; a = a->getNext())
+                    {
+                        for (int p = 0; p < a->getNumParameters(); ++p)
+                        {
+                            Parameter* param = a->getParameter(p);
+                            CString paramStr = param->getString().str();
+                            paramStr.MakeLower();
+                            if (paramStr.Find(searchText) != -1) {
+                                match = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (match)
+        {
             m_lastFoundItem = hItem;
             pTree->SelectItem(hItem);
             pTree->EnsureVisible(hItem);
             return;
         }
 
-        // Search child if it exists
+        // Traverse to next item
         HTREEITEM hChild = pTree->GetChildItem(hItem);
         if (hChild)
-        {
             hItem = hChild;
-        }
-        else
-        {
-            // Otherwise, go to the next sibling or climb up until we find one
+        else {
             while (hItem && !pTree->GetNextSiblingItem(hItem))
                 hItem = pTree->GetParentItem(hItem);
             if (hItem)
@@ -560,7 +669,8 @@ void ScriptDialog::OnFindNext()
         }
     }
 
-    MessageBox("No more matches found.", "Search", MB_OK | MB_ICONINFORMATION);
+    // MessageBox("No more matches found.", "Search", MB_OK | MB_ICONINFORMATION);
+    MessageBeep(MB_ICONWARNING);
     m_lastFoundItem = NULL;
 }
 
@@ -597,6 +707,19 @@ void ScriptDialog::OnVerifyAll()
 {
 	updateWarnings(true);
 	updateIcons(TVI_ROOT);
+
+	// for (int i = 0; i < m_sides.getNumSides(); ++i) {
+    //     ScriptList* pSL = m_sides.getSideInfo(i)->getScriptList();
+    //     if (pSL)
+    //         reloadPlayer(i, pSL); // rebuild branch, re-applies labels
+    // }
+}
+
+void ScriptDialog::OnSmartCopy()
+{
+	CButton *pButton = (CButton*)GetDlgItem(IDC_SMART_COPY);
+	m_bSmartCopyEnabled = (pButton->GetCheck() == 1);
+	::AfxGetApp()->WriteProfileInt(SCRIPT_DIALOG_SECTION, "SmartCopy", m_bSmartCopyEnabled ? 1 : 0);
 }
 
 void ScriptDialog::OnAutoVerify()
@@ -898,8 +1021,11 @@ void ScriptDialog::SaveScriptWarningsState()
 /** Updates the warning flags in the scripts, script groups & script conditions & actions. */
 void ScriptDialog::updateWarnings(Bool forceUpdate)
 {
-	if (m_staticThis && m_staticThis->m_autoUpdateWarnings == false && forceUpdate == false)
-		return;	//user has disabled warnings to speed up the script editor
+    // Only skip if auto-update is disabled AND we're NOT forcing the update
+    if (m_staticThis && !m_staticThis->m_autoUpdateWarnings && !forceUpdate)
+        return;
+
+	MessageBeep(MB_ICONEXCLAMATION); // let user know something is happening
 
 	SidesList *sidesListP = TheSidesList;
 	Int i;
@@ -908,7 +1034,7 @@ void ScriptDialog::updateWarnings(Bool forceUpdate)
 		ScriptList *pSL = sidesListP->getSideInfo(i)->getScriptList();
 		Script *pScr;
 		for (pScr = pSL->getScript(); pScr; pScr=pScr->getNext()) {
-			if (pScr->isDirty()) {
+			if (pScr->isDirty() || forceUpdate) {
 				updateScriptWarning(pScr);
 				pScr->setDirty(false);
 			}
@@ -917,7 +1043,7 @@ void ScriptDialog::updateWarnings(Bool forceUpdate)
 		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup=pGroup->getNext()) {
 			pGroup->setWarnings(false);
 			for (pScr = pGroup->getScript(); pScr; pScr=pScr->getNext()) {
-				if (pScr->isDirty()) {
+				if (pScr->isDirty() || forceUpdate) {
 					updateScriptWarning(pScr);
 					pScr->setDirty(false);
 				}
@@ -1038,9 +1164,14 @@ BOOL ScriptDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
+	m_bSmartCopyEnabled=::AfxGetApp()->GetProfileInt(SCRIPT_DIALOG_SECTION, "SmartCopy", 0);
+
+	CButton *pButton = (CButton*)GetDlgItem(IDC_SMART_COPY);
+	pButton->SetCheck(m_bSmartCopyEnabled ? 1:0);
+
 	m_autoUpdateWarnings=::AfxGetApp()->GetProfileInt(SCRIPT_DIALOG_SECTION, "AutoVerifyScripts", 1);
 
-	CButton *pButton = (CButton*)GetDlgItem(IDC_AUTO_VERIFY);
+	pButton = (CButton*)GetDlgItem(IDC_AUTO_VERIFY);
 	pButton->SetCheck(m_autoUpdateWarnings ? 1:0);
 
 	//if user wants to check warnings manually, enable the verify button
@@ -1663,23 +1794,129 @@ void ScriptDialog::OnEditScript()
 	pDup->deleteInstance();
 }
 
+void ScriptDialog::applySmartCopyIncrement(Script* pScr)
+{
+    if (!pScr) return;
+
+    // Increment script name if it ends with a number
+    pScr->setName(incrementStringNumber(pScr->getName()));
+
+    // Increment parameters inside conditions
+    for (OrCondition* pOr = pScr->getOrCondition(); pOr; pOr = pOr->getNextOrCondition()) {
+        for (Condition* c = pOr->getFirstAndCondition(); c; c = c->getNext()) {
+            for (int i = 0; i < c->getNumParameters(); ++i) {
+                Parameter* param = c->getParameter(i);
+                if (!param) continue;
+                if (
+                    param->getParameterType() == Parameter::TEXT_STRING ||
+                    param->getParameterType() == Parameter::TEAM ||
+                    param->getParameterType() == Parameter::WAYPOINT ||
+                    param->getParameterType() == Parameter::SCRIPT ||
+                    param->getParameterType() == Parameter::UNIT ||
+                    param->getParameterType() == Parameter::REVEALNAME ||
+					param->getParameterType() == Parameter::SIDE
+                )
+                {
+                    AsciiString newVal = incrementStringNumber(param->getString());
+                    param->friend_setString(newVal);
+                }
+            }
+        }
+    }
+
+    // --- Increment parameters inside TRUE actions ---
+    for (ScriptAction* a = pScr->getAction(); a; a = a->getNext()) {
+        for (int i = 0; i < a->getNumParameters(); ++i) {
+            Parameter* param = a->getParameter(i);
+            if (!param) continue;
+            if (
+                param->getParameterType() == Parameter::TEXT_STRING ||
+                param->getParameterType() == Parameter::TEAM ||
+                param->getParameterType() == Parameter::WAYPOINT ||
+                param->getParameterType() == Parameter::SCRIPT ||
+				param->getParameterType() == Parameter::SCRIPT_SUBROUTINE ||
+                param->getParameterType() == Parameter::UNIT ||
+                param->getParameterType() == Parameter::REVEALNAME ||
+				param->getParameterType() == Parameter::SIDE
+            )
+            {
+                AsciiString newVal = incrementStringNumber(param->getString());
+                param->friend_setString(newVal);
+            }
+        }
+    }
+
+    // --- Increment parameters inside FALSE actions ---
+    for (ScriptAction* b = pScr->getFalseAction(); b; b = b->getNext()) {
+        for (int z = 0; z < b->getNumParameters(); ++z) {
+            Parameter* param = b->getParameter(z);
+            if (!param) continue;
+            if (
+                param->getParameterType() == Parameter::TEXT_STRING ||
+                param->getParameterType() == Parameter::TEAM ||
+                param->getParameterType() == Parameter::WAYPOINT ||
+                param->getParameterType() == Parameter::SCRIPT ||
+				param->getParameterType() == Parameter::SCRIPT_SUBROUTINE ||
+                param->getParameterType() == Parameter::UNIT ||
+                param->getParameterType() == Parameter::REVEALNAME ||
+				param->getParameterType() == Parameter::SIDE
+            )
+            {
+                AsciiString newVal = incrementStringNumber(param->getString());
+                param->friend_setString(newVal);
+            }
+        }
+    }
+}
+
+AsciiString ScriptDialog::incrementStringNumber(const AsciiString& input)
+{
+    const char* str = input.str();
+    int len = strlen(str);
+
+    // Find trailing number
+    int pos = len - 1;
+    while (pos >= 0 && isdigit(str[pos])) pos--;
+
+    if (pos == len - 1) {
+        // No number at end, return unchanged
+        return input;
+    }
+
+    CString prefix(str, pos + 1); // text before number
+    CString numberStr(str + pos + 1);
+    int number = atoi(numberStr);
+    number++;
+
+    CString result;
+    result.Format("%s%0*d", prefix, numberStr.GetLength(), number);
+    return AsciiString(result);
+}
+
 void ScriptDialog::OnCopyScript() 
 {
     Script *pScript = getCurScript();
     ScriptGroup *pGroup = getCurGroup();
 
-    // If a script is selected, copy just that script
-	if (pScript) {
-		Script *pDup = pScript->duplicate();
-		AsciiString newName = pDup->getName();
-		newName.concat(" C");
-		pDup->setName(newName);
-		insertScript(pDup);
-		updateIcons(TVI_ROOT);
-		return;
-	}
+    if (pScript) {
+        Script *pDup = pScript->duplicate();
 
-    // If a folder/group is selected, copy the entire group
+        // Smart copy logic
+        if (m_bSmartCopyEnabled)
+            applySmartCopyIncrement(pDup);
+
+        AsciiString newName = pDup->getName();
+		if(!m_bSmartCopyEnabled){
+			// If smart copy is disabled, just append " C" to the name
+			newName.concat(" C");
+		}
+        pDup->setName(newName);
+
+        insertScript(pDup);
+        updateIcons(TVI_ROOT);
+        return;
+    }
+
     if (pGroup && m_curSelection.m_objType == ListType::GROUP_TYPE) {
         ScriptGroup* pNewGroup = newInstance(ScriptGroup);
         AsciiString newGroupName = pGroup->getName();
@@ -1688,23 +1925,26 @@ void ScriptDialog::OnCopyScript()
         pNewGroup->setActive(pGroup->isActive());
         pNewGroup->setSubroutine(pGroup->isSubroutine());
 
-        // Copy all scripts in group, preserving order
         Int scriptIndex = 0;
         for (Script* pScr = pGroup->getScript(); pScr; pScr = pScr->getNext(), ++scriptIndex) {
             Script* pDup = pScr->duplicate();
+
+            if (m_bSmartCopyEnabled)
+                applySmartCopyIncrement(pDup);
+
             AsciiString scriptName = pDup->getName();
             scriptName.concat(" C");
             pDup->setName(scriptName);
-            pNewGroup->addScript(pDup, scriptIndex); // Indexed insert
+
+            pNewGroup->addScript(pDup, scriptIndex);
         }
 
         ScriptList *pSL = m_sides.getSideInfo(m_curSelection.m_playerIndex)->getScriptList();
         if (pSL) {
-            Int insertIndex = m_curSelection.m_groupIndex + 1; // insert after current group
+            Int insertIndex = m_curSelection.m_groupIndex + 1;
             pSL->addGroup(pNewGroup, insertIndex);
             reloadPlayer(m_curSelection.m_playerIndex, pSL);
         }
-
         updateIcons(TVI_ROOT);
     }
 }

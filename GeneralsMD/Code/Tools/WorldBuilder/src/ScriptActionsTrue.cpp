@@ -22,6 +22,7 @@
 #include "StdAfx.h"
 #include "WorldBuilder.h"
 #include "ScriptActionsTrue.h"
+#include "ScriptActionsFalse.h"
 #include "GameLogic/Scripts.h"
 #include "EditAction.h"	
 #include "ScriptDialog.h"
@@ -61,6 +62,7 @@ BEGIN_MESSAGE_MAP(ScriptActionsTrue, CPropertyPage)
 	ON_BN_CLICKED(IDC_NEW, OnNew)
 	ON_BN_CLICKED(IDC_DELETE, OnDelete)
 	ON_BN_CLICKED(IDC_COPY, OnCopy)
+	ON_BN_CLICKED(IDC_MOVETOFALSE, OnMoveToFalse)
 	ON_BN_CLICKED(IDC_MOVE_DOWN, OnMoveDown)
 	ON_BN_CLICKED(IDC_MOVE_UP, OnMoveUp)
 	ON_EN_CHANGE(IDC_EDIT_COMMENT, OnChangeEditComment)
@@ -75,9 +77,21 @@ BOOL ScriptActionsTrue::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 	CWnd *pWnd = GetDlgItem(IDC_EDIT_COMMENT);
 	pWnd->SetWindowText(m_script->getActionComment().str());
-	loadList();
+	// loadList(); // Moved to OnSetActive so it refreshes when tab is clicked.
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+// Adriane [Deatscythe]  This is done due to the new feature called move to true in the false actions page.
+// We need the true actions page to refresh when the user clicks on it.
+BOOL ScriptActionsTrue::OnSetActive()
+{
+    // CListBox *pList = (CListBox *)GetDlgItem(IDC_ACTION_LIST);
+    // if (pList) {
+    //     pList->ResetContent();  // clear only when activating the tab
+    // }
+    loadList();  // repopulate list
+    return CPropertyPage::OnSetActive();
 }
 
 void ScriptActionsTrue::loadList(void)
@@ -107,6 +121,34 @@ void ScriptActionsTrue::loadList(void)
 	}	
 }
 
+void ScriptActionsTrue::OnMoveToFalse() {
+    if (!m_action) return;
+
+    // Step 1: Duplicate only the single action
+    ScriptAction *pMove = m_action->duplicate();
+    pMove->setNextAction(NULL); // important!
+
+    // Step 2: Remove from True list
+    m_script->deleteAction(m_action);
+
+    // Step 3: Append to False list
+    if (m_script->getFalseAction()) {
+        ScriptAction *pTail = m_script->getFalseAction();
+        while (pTail->getNext()) {
+            pTail = pTail->getNext();
+						// DEBUG_LOG((pTail->getUiText().str() + "\n"));
+        }
+        pTail->setNextAction(pMove);
+    } else {
+        m_script->setFalseAction(pMove);
+    }
+
+    // Step 4: Refresh True page UI
+    m_index = 0;  // reset selection to avoid out-of-range index
+    loadList();
+}
+
+
 
 void ScriptActionsTrue::OnEditAction() 
 {
@@ -133,7 +175,10 @@ void ScriptActionsTrue::enableUI()
 
 	pWnd = GetDlgItem(IDC_DELETE);
 	pWnd->EnableWindow(m_action!=NULL);
-	
+
+	pWnd = GetDlgItem(IDC_MOVETOFALSE);
+	pWnd->EnableWindow(m_action!=NULL);
+
 	pWnd = GetDlgItem(IDC_MOVE_DOWN);
 	pWnd->EnableWindow(m_action && m_action->getNext());
 

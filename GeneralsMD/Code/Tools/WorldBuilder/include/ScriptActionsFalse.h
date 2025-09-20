@@ -78,9 +78,11 @@ protected:
 	afx_msg void OnNew();
 	afx_msg void OnDelete();
 	afx_msg void OnCopy();
+	afx_msg void OnMoveToTrue();
 	afx_msg void OnMoveDown();
 	afx_msg void OnMoveUp();
 	afx_msg void OnChangeEditComment();
+	virtual BOOL OnSetActive();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
