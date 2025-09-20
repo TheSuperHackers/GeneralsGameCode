@@ -413,6 +413,10 @@ void W3DView::setCameraTransform( void )
 {
 	if (TheGlobalData->m_headless)
 		return;
+
+	if (m_viewLockedUntilFrame > TheGameClient->getFrame())
+		return;
+
 	m_cameraHasMovedSinceRequest = true;
 	Matrix3D cameraTransform( 1 );
 

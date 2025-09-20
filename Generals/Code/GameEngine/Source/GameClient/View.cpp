@@ -43,6 +43,7 @@ View::View( void )
 {
 	//Added By Sadullah Nader
 	//Initialization(s) inserted
+	m_viewLockedUntilFrame = 0u;
 	m_currentHeightAboveGround = 0.0f;
 	m_defaultAngle = 0.0f;
 	m_defaultPitchAngle = 0.0f;
@@ -110,6 +111,8 @@ void View::reset( void )
 {
 	// Only fixing the reported bug.  Who knows what side effects resetting the rest could have.
 	m_zoomLimited = TRUE;
+
+	m_viewLockedUntilFrame = 0u;
 }
 
 /**
@@ -124,6 +127,11 @@ View *View::prependViewToList( View *list )
 void View::zoom( Real height )
 {
 	setHeightAboveGround(getHeightAboveGround() + height);
+}
+
+void View::lockViewUntilFrame(UnsignedInt frame)
+{
+	m_viewLockedUntilFrame = frame;
 }
 
 /**
