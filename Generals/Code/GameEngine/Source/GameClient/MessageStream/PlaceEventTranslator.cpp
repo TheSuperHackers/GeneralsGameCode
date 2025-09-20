@@ -62,6 +62,7 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 	{
 
 		//---------------------------------------------------------------------------------------------
+		case GameMessage::MSG_RAW_MOUSE_LEFT_DOUBLE_CLICK:
 		case GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_DOWN:
 		{
 			// if we're in a building placement mode, do the place and send to all players
