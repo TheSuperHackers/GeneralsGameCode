@@ -81,7 +81,7 @@ const char* const WeaponSetFlags::s_bitNameList[] =
 
 	NULL
 };
-static_assert(ARRAY_SIZE(WeaponSetFlags::s_bitNameList) == WeaponSetFlags::NumBits + 1);
+static_assert(ARRAY_SIZE(WeaponSetFlags::s_bitNameList) == WeaponSetFlags::NumBits + 1, "Incorrect array size");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////

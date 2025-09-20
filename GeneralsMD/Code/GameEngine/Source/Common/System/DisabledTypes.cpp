@@ -51,7 +51,7 @@ const char* const DisabledMaskType::s_bitNameList[] =
 
 	NULL
 };
-static_assert(ARRAY_SIZE(DisabledMaskType::s_bitNameList) == DisabledMaskType::NumBits + 1);
+static_assert(ARRAY_SIZE(DisabledMaskType::s_bitNameList) == DisabledMaskType::NumBits + 1, "Incorrect array size");
 
 DisabledMaskType DISABLEDMASK_NONE;	// inits to all zeroes
 DisabledMaskType DISABLEDMASK_ALL;

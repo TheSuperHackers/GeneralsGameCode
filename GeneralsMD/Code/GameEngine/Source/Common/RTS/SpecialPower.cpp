@@ -131,7 +131,7 @@ const char* const SpecialPowerMaskType::s_bitNameList[] =
 
 	NULL
 };
-static_assert(ARRAY_SIZE(SpecialPowerMaskType::s_bitNameList) == SpecialPowerMaskType::NumBits + 1);
+static_assert(ARRAY_SIZE(SpecialPowerMaskType::s_bitNameList) == SpecialPowerMaskType::NumBits + 1, "Incorrect array size");
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

@@ -174,7 +174,7 @@ const char* const ModelConditionFlags::s_bitNameList[] =
 
 	NULL
 };
-static_assert(ARRAY_SIZE(ModelConditionFlags::s_bitNameList) == ModelConditionFlags::NumBits + 1);
+static_assert(ARRAY_SIZE(ModelConditionFlags::s_bitNameList) == ModelConditionFlags::NumBits + 1, "Incorrect array size");
 
 template<>
 const char* const ArmorSetFlags::s_bitNameList[] =
@@ -190,4 +190,4 @@ const char* const ArmorSetFlags::s_bitNameList[] =
 
 	NULL
 };
-static_assert(ARRAY_SIZE(ArmorSetFlags::s_bitNameList) == ArmorSetFlags::NumBits + 1);
+static_assert(ARRAY_SIZE(ArmorSetFlags::s_bitNameList) == ArmorSetFlags::NumBits + 1, "Incorrect array size");
