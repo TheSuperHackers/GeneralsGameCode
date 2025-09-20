@@ -617,14 +617,9 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 					GameMessage::MSG_MOUSE_RIGHT_DOUBLE_CLICK,
 				};
 
-				ICoord2D location = msg->getArgument(0)->pixel;
-				GameMessage *newMessage = NULL;
-
-				if (m_nextUpShouldCreateDoubleClick[index])
-					newMessage = TheMessageStream->insertMessage(DoubleClickMessages[index], const_cast<GameMessage*>(msg));
-				else
-					newMessage = TheMessageStream->insertMessage(SingleClickMessages[index], const_cast<GameMessage*>(msg));
-				m_nextUpShouldCreateDoubleClick[index] = FALSE;
+				const ICoord2D location = msg->getArgument(0)->pixel;
+				const GameMessage::Type messageType = m_nextUpShouldCreateDoubleClick[index] ? DoubleClickMessages[index] : SingleClickMessages[index];
+				GameMessage *newMessage = TheMessageStream->insertMessage(messageType, const_cast<GameMessage*>(msg));
 
 				IRegion2D pixelRegion;
 				buildRegion( &m_mouseDownPosition[index], &location, &pixelRegion );
