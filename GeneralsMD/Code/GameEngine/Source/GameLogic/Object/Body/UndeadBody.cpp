@@ -87,14 +87,6 @@ void UndeadBody::attemptDamage( DamageInfo *damageInfo )
 	{
 		damageInfo->in.m_amount = min( damageInfo->in.m_amount, getHealth() - 1 );
 		shouldStartSecondLife = TRUE;
-
-#if !RETAIL_COMPATIBLE_CRC
-		if (isSubdued())
-		{
-			const UndeadBodyModuleData* data = getUndeadBodyModuleData();
-			internalAddSubdualDamage(data->m_secondLifeMaxHealth - getCurrentSubdualDamageAmount());
-		}
-#endif
 	}
 
 	ActiveBody::attemptDamage(damageInfo);
