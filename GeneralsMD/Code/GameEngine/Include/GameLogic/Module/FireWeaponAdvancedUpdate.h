@@ -10,6 +10,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Weapon.h"
+#include <GameClient/RadiusDecal.h>
 
 //-------------------------------------------------------------------------------------------------
 class FireWeaponAdvancedUpdateModuleData : public UpdateModuleData
@@ -21,6 +22,16 @@ public:
 	std::vector<Coord2D> m_scatterTargets;
 	Real m_scatterTargetScalar;
 	Real m_fireHeight;
+	Real m_lockOnRadius;
+	bool m_scatterOnLockedStructuresMajorRadius;
+	Real m_fireOffsetXMin;
+	Real m_fireOffsetXMax;
+	Real m_fireOffsetYMin;
+	Real m_fireOffsetYMax;
+	RadiusDecalTemplate m_decalTemplate;
+	Real m_decalRadius;
+	UnsignedInt m_decalDuration;
+	Real m_scatterRadius;
 
 	FireWeaponAdvancedUpdateModuleData();
 
@@ -50,10 +61,14 @@ protected:
 
 	Bool isOkayToFire();
 	Coord3D getNextTargetPos();
+	void adjustFireHeight(Object* targetLock, Coord3D* targetPos);
 
 	Weapon* m_weapon;
   UnsignedInt m_initialDelayFrame;
 	Coord3D m_initialPosition;
+	bool m_initialized;
+	RadiusDecal										m_deliveryDecal;
+	UnsignedInt m_radiusDecalRemoveFrame;
 };
 
 #endif
