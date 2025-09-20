@@ -291,6 +291,7 @@ set(GAMEENGINE_SRC
 #    Include/GameLogic/Module/CostModifierUpgrade.h
 #    Include/GameLogic/Module/CountermeasuresBehavior.h
 #    Include/GameLogic/Module/BattlePlanBonusBehavior.h
+#    Include/GameLogic/Module/EnergyShieldBehavior.h
 #    Include/GameLogic/Module/CrateCollide.h
 #    Include/GameLogic/Module/CreateCrateDie.h
 #    Include/GameLogic/Module/CreateModule.h
@@ -344,6 +345,7 @@ set(GAMEENGINE_SRC
 #    Include/GameLogic/Module/HighlanderBody.h
 #    Include/GameLogic/Module/HijackerUpdate.h
 #    Include/GameLogic/Module/HiveStructureBody.h
+#    Include/GameLogic/Module/ShieldBody.h
 #    Include/GameLogic/Module/HordeUpdate.h
 #    Include/GameLogic/Module/ImmortalBody.h
 #    Include/GameLogic/Module/InactiveBody.h
@@ -854,6 +856,7 @@ set(GAMEENGINE_SRC
 #    Source/GameLogic/Object/Behavior/BunkerBusterBehavior.cpp
 #    Source/GameLogic/Object/Behavior/CountermeasuresBehavior.cpp
 #    Source/GameLogic/Object/Behavior/BattlePlanBonusBehavior.cpp
+#    Source/GameLogic/Object/Behavior/EnergyShieldBehavior.cpp
 #    Source/GameLogic/Object/Behavior/DumbProjectileBehavior.cpp
 #    Source/GameLogic/Object/Behavior/FireWeaponWhenDamagedBehavior.cpp
 #    Source/GameLogic/Object/Behavior/FireWeaponWhenDeadBehavior.cpp
@@ -880,6 +883,7 @@ set(GAMEENGINE_SRC
 #    Source/GameLogic/Object/Body/BodyModule.cpp
 #    Source/GameLogic/Object/Body/HighlanderBody.cpp
 #    Source/GameLogic/Object/Body/HiveStructureBody.cpp
+#    Source/GameLogic/Object/Body/ShieldBody.cpp
 #    Source/GameLogic/Object/Body/ImmortalBody.cpp
 #    Source/GameLogic/Object/Body/InactiveBody.cpp
 #    Source/GameLogic/Object/Body/StructureBody.cpp

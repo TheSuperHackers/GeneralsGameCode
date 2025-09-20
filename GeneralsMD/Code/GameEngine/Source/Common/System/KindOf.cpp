@@ -165,6 +165,8 @@ const char* KindOfMaskType::s_bitNameList[] =
 	"ENABLE_INFANTRY_LIGHTING",
 	"DISABLE_INFANTRY_LIGHTING",
 
+	"SHOW_PROGRESS_BAR",
+
 	"VTOL",
 	"LARGE_AIRCRAFT",
 	"MEDIUM_AIRCRAFT",
@@ -195,8 +197,6 @@ const char* KindOfMaskType::s_bitNameList[] =
 	"EXTRA14",
 	"EXTRA15",
 	"EXTRA16",
-	"EXTRA17",
-	"EXTRA18",
 
 	NULL
 };

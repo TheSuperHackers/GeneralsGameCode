@@ -51,6 +51,7 @@
 #include "GameLogic/Module/BridgeTowerBehavior.h"
 #include "GameLogic/Module/CountermeasuresBehavior.h"
 #include "GameLogic/Module/BattlePlanBonusBehavior.h"
+#include "GameLogic/Module/EnergyShieldBehavior.h"
 #include "GameLogic/Module/DumbProjectileBehavior.h"
 #include "GameLogic/Module/FreeFallProjectileBehavior.h"
 #include "GameLogic/Module/InstantDeathBehavior.h"
@@ -271,6 +272,7 @@
 #include "GameLogic/Module/ImmortalBody.h"
 #include "GameLogic/Module/StructureBody.h"
 #include "GameLogic/Module/HiveStructureBody.h"
+#include "GameLogic/Module/ShieldBody.h"
 #include "GameLogic/Module/UndeadBody.h"
 
 // contain includes
@@ -346,6 +348,7 @@ void ModuleFactory::init( void )
 	addModule( BridgeTowerBehavior );
 	addModule( CountermeasuresBehavior );
 	addModule( BattlePlanBonusBehavior );
+	addModule( EnergyShieldBehavior );
 	addModule( DumbProjectileBehavior );
 	addModule( FreeFallProjectileBehavior );
 	addModule( PhysicsBehavior );
@@ -567,6 +570,7 @@ void ModuleFactory::init( void )
 	addModule( ImmortalBody );
 	addModule( StructureBody );
 	addModule( HiveStructureBody );
+	addModule( ShieldBody );
 	addModule( UndeadBody );
 
 	// contain modules

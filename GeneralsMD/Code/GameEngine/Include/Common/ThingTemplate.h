@@ -257,6 +257,28 @@ static const char* AmmoPipsStyleNames[] =
 };
 #endif  // end DEFINE_AMMO_PIPS_STYLE_NAMES
 
+// ---
+//enum ProgressBarStyle CPP_11(: Int)
+//{
+//	  PROGRESS_BAR_NONE = 0,  ///< Default. No progress bar
+//		PROGRESS_BAR_SHIELD,	///< large white bar
+//		PROGRESS_BAR_SHIELD,  ///< like default, but show a single pip only (full or empty)
+//		AMMO_PIPS_THIN,  ///< like default, but half width
+//
+//		AMMO_PIPS_NUM_TYPES								// leave this last
+//};
+//#ifdef DEFINE_PROGRESS_BAR_STYLE_NAMES
+//static const char* ProgressBarStyleNames[] =
+//{
+//	"DEFAULT",
+//	"PERCENTAGE_BAR",
+//	"SINGLE",
+//	"THIN",
+//
+//	NULL
+//};
+//#endif  // end DEFINE_PROGRESS_BAR_STYLE_NAMES
+
 //-------------------------------------------------------------------------------------------------
 enum ModuleParseMode CPP_11(: Int)
 {
