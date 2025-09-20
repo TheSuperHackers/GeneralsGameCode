@@ -3874,6 +3874,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		}
 
 		//-----------------------------------------------------------------------------
+		case GameMessage::MSG_RAW_MOUSE_RIGHT_DOUBLE_CLICK:
 		case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_DOWN:
 		{
 			// There are two ways in which we can ignore this as a deselect:
@@ -3922,8 +3923,6 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 				break;
 			}
-
-			m_mouseRightDown = m_mouseRightUp; // Allow isClick to succeed on fall through
 			FALLTHROUGH; //intentional fall through
 		}
 		case GameMessage::MSG_MOUSE_RIGHT_CLICK:
