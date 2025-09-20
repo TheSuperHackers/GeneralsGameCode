@@ -436,6 +436,9 @@ public:
 
 	AsciiString m_specialPowerViewObjectName;	///< Created when certain special powers are fired so players can watch.
 
+	Real m_objectPlacementOpacity; ///< Sets the opacity of build preview objects.
+	Bool m_objectPlacementShadows; ///< Enables or disables shadows of build preview objects.
+
 	std::vector<AsciiString> m_standardPublicBones;
 
 	Real m_standardMinefieldDensity;

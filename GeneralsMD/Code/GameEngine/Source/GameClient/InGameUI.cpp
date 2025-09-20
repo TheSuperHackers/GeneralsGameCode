@@ -91,8 +91,7 @@
 
 
 // ------------------------------------------------------------------------------------------------
-static const Real placementOpacity = 0.45f;
-static const RGBColor illegalBuildColor = { 1.0, 0.0, 0.0 };
+static const RGBColor IllegalBuildColor = { 1.0, 0.0, 0.0 };
 
 //-------------------------------------------------------------------------------------------------
 /// The InGameUI singleton instance.
@@ -1523,8 +1522,9 @@ void InGameUI::handleBuildPlacements( void )
 																											 BuildAssistant::IGNORE_STEALTHED,
 																											 builderObject,
 																											 NULL );
+
 			if( lbc != LBC_OK )
-				m_placeIcon[ 0 ]->colorTint( &illegalBuildColor );
+				m_placeIcon[ 0 ]->colorTint( &IllegalBuildColor );
 			else
 				m_placeIcon[ 0 ]->colorTint( NULL );
 
@@ -1584,8 +1584,11 @@ void InGameUI::handleBuildPlacements( void )
 			{
 
 				if( m_placeIcon[ i ] == NULL )
-					m_placeIcon[ i ] = TheThingFactory->newDrawable( m_pendingPlaceType,
-						DRAWABLE_STATUS_SHADOWS | DRAWABLE_STATUS_NO_STATE_PARTICLES );
+				{
+					UnsignedInt drawableStatus = DRAWABLE_STATUS_NO_STATE_PARTICLES;
+					drawableStatus |= TheGlobalData->m_objectPlacementShadows ? DRAWABLE_STATUS_SHADOWS : 0;
+					m_placeIcon[ i ] = TheThingFactory->newDrawable( m_pendingPlaceType, drawableStatus );
+				}
 
 			}
 
@@ -1609,11 +1612,11 @@ void InGameUI::handleBuildPlacements( void )
 			for( i = 0; i < tileBuildInfo->tilesUsed; i++ )
 			{
 
-				// set the drawble position
+				// set the drawable position
 				m_placeIcon[ i ]->setPosition( &tileBuildInfo->positions[ i ] );
 
-				// set opacity for the drawble
-				m_placeIcon[ i ]->setDrawableOpacity( placementOpacity );
+				// set opacity for the drawable
+				m_placeIcon[ i ]->setDrawableOpacity( TheGlobalData->m_objectPlacementOpacity );
 
 				// set the drawable angle
 				m_placeIcon[ i ]->setOrientation( angle );
@@ -3119,8 +3122,12 @@ void InGameUI::placeBuildAvailable( const ThingTemplate *build, Drawable *buildD
 			///@ todo when message stream order more formalized eliminate this
 //			TheInGameUI->deselectAllDrawables();
 
-			// create a drawble of what we are building to be "attached" at the cursor
-			draw = TheThingFactory->newDrawable( build, DRAWABLE_STATUS_SHADOWS | DRAWABLE_STATUS_NO_STATE_PARTICLES );
+			{
+				// create a drawable of what we are building to be "attached" at the cursor
+				UnsignedInt drawableStatus = DRAWABLE_STATUS_NO_STATE_PARTICLES;
+				drawableStatus |= TheGlobalData->m_objectPlacementShadows ? DRAWABLE_STATUS_SHADOWS : 0;
+				draw = TheThingFactory->newDrawable( build, drawableStatus );
+			}
 			if (sourceObject)
 			{
 				if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
@@ -3138,14 +3145,11 @@ void InGameUI::placeBuildAvailable( const ThingTemplate *build, Drawable *buildD
 			//
 			Real angle = build->getPlacementViewAngle();
 
-			// don't forget to take into account the current view angle
-			// angle += TheTacticalView->getAngle();	Don't do this - makes odd angled building placements.  jba.
-
 			// set the angle in the icon we just created
 			draw->setOrientation( angle );
 
 			// set the build icon attached to the cursor to be "see-thru"
-			draw->setDrawableOpacity( placementOpacity );
+			draw->setDrawableOpacity( TheGlobalData->m_objectPlacementOpacity );
 
 			// set the "icon" in the icon array at the first index
 			DEBUG_ASSERTCRASH( m_placeIcon[ 0 ] == NULL, ("placeBuildAvailable, build icon array is not empty!") );
