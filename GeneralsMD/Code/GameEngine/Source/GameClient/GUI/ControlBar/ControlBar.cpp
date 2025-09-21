@@ -717,6 +717,20 @@ const FieldParse CommandSet::m_commandSetFieldParseTable[] =
 	{ "16",			CommandSet::parseCommandButton, (void *)15,		offsetof( CommandSet, m_command ) },
 	{ "17",			CommandSet::parseCommandButton, (void *)16,		offsetof( CommandSet, m_command ) },
 	{ "18",			CommandSet::parseCommandButton, (void *)17,		offsetof( CommandSet, m_command ) },
+	{ "19",			CommandSet::parseCommandButton, (void *)18,		offsetof( CommandSet, m_command ) },
+	{ "20",			CommandSet::parseCommandButton, (void *)19,		offsetof( CommandSet, m_command ) },
+	{ "21",			CommandSet::parseCommandButton, (void *)20,		offsetof( CommandSet, m_command ) },
+	{ "22",			CommandSet::parseCommandButton, (void *)21,		offsetof( CommandSet, m_command ) },
+	{ "23",			CommandSet::parseCommandButton, (void *)22,		offsetof( CommandSet, m_command ) },
+	{ "24",			CommandSet::parseCommandButton, (void *)23,		offsetof( CommandSet, m_command ) },
+	{ "25",			CommandSet::parseCommandButton, (void *)24,		offsetof( CommandSet, m_command ) },
+	{ "26",			CommandSet::parseCommandButton, (void *)25,		offsetof( CommandSet, m_command ) },
+	{ "27",			CommandSet::parseCommandButton, (void *)26,		offsetof( CommandSet, m_command ) },
+	{ "28",			CommandSet::parseCommandButton, (void *)27,		offsetof( CommandSet, m_command ) },
+	{ "29",			CommandSet::parseCommandButton, (void *)28,		offsetof( CommandSet, m_command ) },
+	{ "30",			CommandSet::parseCommandButton, (void *)29,		offsetof( CommandSet, m_command ) },
+	{ "31",			CommandSet::parseCommandButton, (void *)30,		offsetof( CommandSet, m_command ) },
+	{ "32",			CommandSet::parseCommandButton, (void *)31,		offsetof( CommandSet, m_command ) },
 	{ NULL,			NULL,														 NULL,				0	}  // keep this last
 
 };
@@ -3263,14 +3277,18 @@ void ControlBar::initSpecialPowershortcutBar( Player *player)
 		id = TheNameKeyGenerator->nameToKey( windowName.str() );
 		m_specialPowerShortcutButtons[ i ] =
 			TheWindowManager->winGetWindowFromId( m_specialPowerShortcutParent, id );
-		m_specialPowerShortcutButtons[ i ]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
-		// Oh god... this is a total hack for shortcut buttons to handle rendering text top left corner...
-		m_specialPowerShortcutButtons[ i ]->winSetStatus( WIN_STATUS_SHORTCUT_BUTTON );
 
-		windowName.format( parentName, i+1 );
-		id = TheNameKeyGenerator->nameToKey( windowName.str() );
-		m_specialPowerShortcutButtonParents[ i ] =
-			TheWindowManager->winGetWindowFromId( m_specialPowerShortcutParent, id );
+		if (m_specialPowerShortcutButtons[i] != nullptr) {
+
+			m_specialPowerShortcutButtons[i]->winSetStatus(WIN_STATUS_USE_OVERLAY_STATES);
+			// Oh god... this is a total hack for shortcut buttons to handle rendering text top left corner...
+			m_specialPowerShortcutButtons[i]->winSetStatus(WIN_STATUS_SHORTCUT_BUTTON);
+
+			windowName.format(parentName, i + 1);
+			id = TheNameKeyGenerator->nameToKey(windowName.str());
+			m_specialPowerShortcutButtonParents[i] =
+				TheWindowManager->winGetWindowFromId(m_specialPowerShortcutParent, id);
+		}
 	}  // end for i
 
 }
@@ -3480,16 +3498,18 @@ void ControlBar::populateSpecialPowerShortcut( Player *player)
 				}
 			}
 
-			// make sure the window is not hidden
-			m_specialPowerShortcutButtons[ currentButton ]->winHide( FALSE );
-			m_specialPowerShortcutButtonParents[ currentButton ]->winHide( FALSE );
-			// enable by default
-			m_specialPowerShortcutButtons[ currentButton ]->winEnable( TRUE );
-			m_specialPowerShortcutButtonParents[ currentButton ]->winEnable( TRUE );
+			if (m_specialPowerShortcutButtons[currentButton] != nullptr) {
+				// make sure the window is not hidden
+				m_specialPowerShortcutButtons[currentButton]->winHide(FALSE);
+				m_specialPowerShortcutButtonParents[currentButton]->winHide(FALSE);
+				// enable by default
+				m_specialPowerShortcutButtons[currentButton]->winEnable(TRUE);
+				m_specialPowerShortcutButtonParents[currentButton]->winEnable(TRUE);
 
-			// populate the visible button with data from the command button
-			setControlCommand( m_specialPowerShortcutButtons[ currentButton ], commandButton );
-			GadgetButtonSetAltSound(m_specialPowerShortcutButtons[ currentButton ], "GUIGenShortcutClick");
+				// populate the visible button with data from the command button
+				setControlCommand(m_specialPowerShortcutButtons[currentButton], commandButton);
+				GadgetButtonSetAltSound(m_specialPowerShortcutButtons[currentButton], "GUIGenShortcutClick");
+			}
 			currentButton++;
 
 		}  // end else
@@ -3512,7 +3532,7 @@ Bool ControlBar::hasAnyShortcutSelection() const
 		const CommandButton *command;
 
 		win = m_specialPowerShortcutButtons[ i ];
-		if( win->winIsHidden() == TRUE )
+		if( win == nullptr || win->winIsHidden() == TRUE )
 			continue;
 
 		// get the command from the control
@@ -3574,7 +3594,7 @@ void ControlBar::updateSpecialPowerShortcut( void )
 		// get the window
 		win = m_specialPowerShortcutButtons[ i ];
 
-		if( win->winIsHidden() == TRUE )
+		if( win==nullptr || win->winIsHidden() == TRUE )
 			continue;
 		// get the command from the control
 		command = (const CommandButton *)GadgetButtonGetData(win);
@@ -3667,7 +3687,7 @@ void ControlBar::drawSpecialPowerShortcutMultiplierText()
 		// get the window
 		win = m_specialPowerShortcutButtons[ i ];
 
-		if( win->winIsHidden() == TRUE )
+		if( win == nullptr || win->winIsHidden() == TRUE )
 			continue;
 		// get the command from the control
 		command = (const CommandButton *)GadgetButtonGetData(win);
@@ -3746,7 +3766,7 @@ void ControlBar::showSpecialPowerShortcut( void )
 	Bool dontAnimate = TRUE;
 	for( Int i = 0; i < m_currentlyUsedSpecialPowersButtons; ++i )
 	{
-		if (m_specialPowerShortcutButtons[i]->winGetUserData())
+		if (m_specialPowerShortcutButtons[i] == nullptr || m_specialPowerShortcutButtons[i]->winGetUserData())
 		{
 			dontAnimate = FALSE;
 			break;
