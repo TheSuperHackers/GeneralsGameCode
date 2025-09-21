@@ -5332,44 +5332,34 @@ void Pathfinder::processPathfindQueue(void)
 
 void Pathfinder::checkChangeLayers(PathfindCell *parentCell)
 {
-		ICoord2D newCellCoord;
-		PathfindCell *newCell;
-		if (parentCell->getConnectLayer() != LAYER_INVALID) {
-			newCellCoord.x = parentCell->getXIndex();
-			newCellCoord.y = parentCell->getYIndex();
+	if (parentCell->getConnectLayer() == LAYER_INVALID)
+		return;
 
-			if (parentCell->getConnectLayer() == LAYER_GROUND) {
-				newCell = getCell(LAYER_GROUND, newCellCoord.x, newCellCoord.y );
-			}	else {
-				newCell = getCell(parentCell->getConnectLayer(), newCellCoord.x, newCellCoord.y);
-			}
-			DEBUG_ASSERTCRASH(newCell, ("Couldn't find cell."));
-			if (newCell) {
-				Bool onList = false;
-				if (newCell->hasInfo()) {
-					if (newCell->getOpen() || newCell->getClosed())
-					{
-						// already on one of the lists
-						onList = true;
-					}
-				}
-				if (!onList) {
-					if (!newCell->allocateInfo(newCellCoord)) {
-						// Out of cells for pathing...
-						return;
-					}
-					// compute cost of path thus far
-					// keep track of path we're building - point back to cell we moved here from
-					newCell->setParentCell(parentCell) ;
-					// store cost of this path
-					newCell->setCostSoFar(parentCell->getCostSoFar()); // same as parent cost
-					newCell->setTotalCost(parentCell->getTotalCost()) ;
-					// insert newCell in open list such that open list is sorted, smallest total path cost first
-					m_openList = newCell->putOnSortedOpenList( m_openList );
+	ICoord2D newCellCoord = { parentCell->getXIndex(), parentCell->getYIndex() };
+	PathfindCell *newCell = getCell(parentCell->getConnectLayer(), newCellCoord.x, newCellCoord.y );
 
-				}
-			}
-		}
+	if (!newCell) {
+		DEBUG_CRASH(("Couldn't find cell."));
+		return;
+	}
+
+	// already on one of the lists
+	if (newCell->hasInfo() && (newCell->getOpen() || newCell->getClosed())) {
+		return;
+	}
+
+	if (!newCell->allocateInfo(newCellCoord)) {
+		// Out of cells for pathing...
+		return;
+	}
+	// compute cost of path thus far
+	// keep track of path we're building - point back to cell we moved here from
+	newCell->setParentCell(parentCell) ;
+	// store cost of this path
+	newCell->setCostSoFar(parentCell->getCostSoFar()); // same as parent cost
+	newCell->setTotalCost(parentCell->getTotalCost());
+	// insert newCell in open list such that open list is sorted, smallest total path cost first
+	m_openList = newCell->putOnSortedOpenList( m_openList );
 }
 
 
