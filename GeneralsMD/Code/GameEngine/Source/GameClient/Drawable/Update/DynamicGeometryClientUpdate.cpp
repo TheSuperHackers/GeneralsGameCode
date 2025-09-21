@@ -142,6 +142,7 @@ DynamicGeometryClientUpdate::DynamicGeometryClientUpdate( Thing *thing, const Mo
 	m_startFrame = TheGameLogic->getFrame();
 	m_overrideScale = 1.0;
 	m_overrideAlpha = 1.0;
+	m_prevScale = 1.0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -194,8 +195,16 @@ void DynamicGeometryClientUpdate::clientUpdate( void )
 	Real alpha = (1.0 - progress) * alpha0 + progress * alpha1;
 	Real scale = (1.0 - progress) * scale0 + progress * scale1;
 
+	Real newScale = m_overrideScale * scale;
 
-	draw->setInstanceScale(m_overrideScale * scale);
+	Real currentScale = draw->getInstanceScale();
+	if (m_prevScale != 1.0) {
+		currentScale = currentScale / MAX(0.001, m_prevScale);
+	}
+
+	draw->setInstanceScale(currentScale * newScale);
+
+	m_prevScale = newScale;
 
 	// This doesn't work for additive!
 	draw->setDrawableOpacity(m_overrideAlpha * alpha);
