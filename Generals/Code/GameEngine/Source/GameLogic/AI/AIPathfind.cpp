@@ -1312,7 +1312,7 @@ Bool PathfindCell::allocateInfo( const ICoord2D &pos )
 /**
  * Releases an info record for a cell.
  */
-void PathfindCell::releaseInfo( void )
+void PathfindCell::releaseInfo(void)
 {
 	// TheSuperHackers @bugfix Mauller/SkyAero 05/06/2025 Parent cell links need clearing to prevent dangling pointers on starting points that can link them to an invalid parent cell.
 	// Parent cells are only cleared within Pathfinder::prependCells, so cells that do not make it onto the final path do not get their parent cell cleared.
@@ -1325,28 +1325,27 @@ void PathfindCell::releaseInfo( void )
 			m_info->m_pathParent = NULL;
 		}
 	}
-	if (m_type==PathfindCell::CELL_OBSTACLE) {
-		return;
-	}
-	if (m_flags!=NO_UNITS) {
-		return;
-	}
-	if (m_aircraftGoal) {
+
+	if (m_type == PathfindCell::CELL_OBSTACLE || m_flags != NO_UNITS || m_aircraftGoal) {
 		return;
 	}
 
-	if (m_info) {
-		DEBUG_ASSERTCRASH(m_info->m_prevOpen==NULL && m_info->m_nextOpen==NULL, ("Shouldn't be linked."));
-		DEBUG_ASSERTCRASH(m_info->m_open==NULL && m_info->m_closed==NULL, ("Shouldn't be linked."));
-		DEBUG_ASSERTCRASH(m_info->m_goalUnitID==INVALID_ID && m_info->m_posUnitID==INVALID_ID, ("Shouldn't be occupied."));
-		DEBUG_ASSERTCRASH(m_info->m_goalAircraftID==INVALID_ID , ("Shouldn't be occupied by aircraft."));
-		if (m_info->m_prevOpen || m_info->m_nextOpen || m_info->m_open || m_info->m_closed) {
-			// Bad release.  Skip for now, better leak than crash.  jba.
-			return;
-		}
-		PathfindCellInfo::releaseACellInfo(m_info);
-		m_info = NULL;
+	if (!m_info) {
+		return;
 	}
+
+	DEBUG_ASSERTCRASH(m_info->m_prevOpen==NULL && m_info->m_nextOpen==NULL, ("Shouldn't be linked."));
+	DEBUG_ASSERTCRASH(m_info->m_open==NULL && m_info->m_closed==NULL, ("Shouldn't be linked."));
+	DEBUG_ASSERTCRASH(m_info->m_goalUnitID==INVALID_ID && m_info->m_posUnitID==INVALID_ID, ("Shouldn't be occupied."));
+	DEBUG_ASSERTCRASH(m_info->m_goalAircraftID==INVALID_ID , ("Shouldn't be occupied by aircraft."));
+	if (m_info->m_prevOpen || m_info->m_nextOpen || m_info->m_open || m_info->m_closed) {
+		// Bad release.  Skip for now, better leak than crash.  jba.
+		return;
+	}
+
+	PathfindCellInfo::releaseACellInfo(m_info);
+	m_info = NULL;
+
 }
 
 /**
