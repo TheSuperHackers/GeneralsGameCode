@@ -362,10 +362,8 @@ void W3DTreeBuffer::updateSway(const BreezeInfo& info)
 		m_swayOffsets[i].Z = C - 1.0f;
 	}
 
-	Real delta				= info.m_randomness * 0.5f;
-	for	(i=0; i<m_numTrees; i++) {
-		m_trees[i].swayType = 1+GameClientRandomValue(0, MAX_SWAY_TYPES-1);
-	}
+	Real delta = info.m_randomness * 0.5f;
+
 	for (i=0; i<MAX_SWAY_TYPES; i++) {
 		m_curSwayStep[i] = NUM_SWAY_ENTRIES / (Real)info.m_breezePeriod;
 		m_curSwayStep[i]	*= GameClientRandomValueReal(1.0f-delta, 1.0f+delta);
@@ -1450,7 +1448,7 @@ void W3DTreeBuffer::addTree(DrawableID id, Coord3D location, Real scale, Real an
 	m_trees[m_numTrees].firstIndex = 0;
 	m_trees[m_numTrees].bufferNdx = -1;
 
-	m_trees[m_numTrees].swayType = GameClientRandomValue(0, MAX_SWAY_TYPES-1);
+	m_trees[m_numTrees].swayType = GameClientRandomValue(1, MAX_SWAY_TYPES);
 	m_trees[m_numTrees].pushAside = 0;
 	m_trees[m_numTrees].lastFrameUpdated = 0;
 	m_trees[m_numTrees].pushAsideSource = INVALID_ID;
