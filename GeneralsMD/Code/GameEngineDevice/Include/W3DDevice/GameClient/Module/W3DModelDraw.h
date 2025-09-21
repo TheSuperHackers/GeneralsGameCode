@@ -313,6 +313,11 @@ public:
 
   Bool                              m_ignoreAnimScaling; ///< ignore external scaling of animation speed, e.g. for PreAttack.
 
+	Bool															m_ignoreRotation;  ///< ignore all rotations for this draw module 
+
+	Bool															m_showForOwnerOnly;  ///< show this model only to the owning player 
+
+	Bool															m_autoSelectObject;  ///< show this model only to the owning player 
 
 	W3DModelDrawModuleData();
 	~W3DModelDrawModuleData();

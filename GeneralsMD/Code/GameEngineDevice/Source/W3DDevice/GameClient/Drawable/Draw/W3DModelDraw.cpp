@@ -42,6 +42,8 @@
 #include "Common/GlobalData.h"
 #include "Common/PerfTimer.h"
 #include "Common/RandomValue.h"
+#include "Common/Player.h"
+#include "Common/PlayerList.h"
 #include "Common/ThingTemplate.h"
 #include "Common/GameLOD.h"
 #include "Common/Xfer.h"
@@ -82,6 +84,8 @@ static inline Bool isValidTimeToCalcLogicStuff()
 
 #if defined(DEBUG_CRC) && defined(RTS_DEBUG)
 #include <cstdarg>
+#include <Common/PlayerList.h>
+#include <Common/PlayerList.h>
 class LogClass
 {
 public:
@@ -1218,6 +1222,8 @@ void W3DModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "IgnoreConditionStates", ModelConditionFlags::parseFromINI, NULL, offsetof(W3DModelDrawModuleData, m_ignoreConditionStates) },
 		{ "ReceivesDynamicLights", INI::parseBool, NULL, offsetof(W3DModelDrawModuleData, m_receivesDynamicLights) },
 		{ "IgnoreAnimationSpeedScaling", INI::parseBool, NULL, offsetof(W3DModelDrawModuleData, m_ignoreAnimScaling) },
+		{ "IgnoreRotation", INI::parseBool, NULL, offsetof(W3DModelDrawModuleData, m_ignoreRotation) },
+		{ "OnlyVisibleToOwningPlayer", INI::parseBool, NULL, offsetof(W3DModelDrawModuleData, m_showForOwnerOnly) },
     { 0, 0, 0, 0 }
 	};
   p.add(dataFieldParse);
@@ -2082,6 +2088,21 @@ void W3DModelDraw::adjustTransformMtx(Matrix3D& mtx) const
 //-------------------------------------------------------------------------------------------------
 void W3DModelDraw::doDrawModule(const Matrix3D* transformMtx)
 {
+	if (getW3DModelDrawModuleData()->m_showForOwnerOnly &&
+		getDrawable() && getDrawable()->getObject() && getDrawable()->getObject()->getControllingPlayer() &&
+		getDrawable()->getObject()->getControllingPlayer() != ThePlayerList->getLocalPlayer()) {
+		setHidden(TRUE);
+		return;
+	}
+
+	Matrix3D transformMtxLocal; // = Matrix3D::Identity;
+	if (getW3DModelDrawModuleData()->m_ignoreRotation) {
+		//transformMtxLocal = *transformMtx;
+		Vector3 trans;
+		transformMtx->Get_Translation(&trans);
+		transformMtxLocal.Set(trans);
+		transformMtx = &transformMtxLocal;
+	}
 
 	// update whether or not we should be animating.
 	setPauseAnimation( !getDrawable()->getShouldAnimate(getW3DModelDrawModuleData()->m_animationsRequirePower) );
