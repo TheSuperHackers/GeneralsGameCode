@@ -1846,15 +1846,9 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 			Coord3D pos = *pMapObj->getLocation();
 			pos.z += TheTerrainLogic->getGroundHeight( pos.x, pos.y );
 			Real angle = normalizeAngle(pMapObj->getAngle());
+
 			if (thingTemplate->isKindOf(KINDOF_OPTIMIZED_TREE)) {
-				// Opt trees and props just get drawables to tell the client about it, then deleted. jba [6/5/2003]
-				// This way there is no logic object to slow down partition manager and core logic stuff.
-				Drawable *draw = TheThingFactory->newDrawable(thingTemplate);
-				if (draw) {
-					draw->setOrientation(angle);
-					draw->setPosition( &pos );
-					TheGameClient->destroyDrawable(draw);
-				}
+				createOptimizedTree(thingTemplate, &pos, angle);
 			}
 		}
 	}
@@ -1884,11 +1878,11 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 			if( thingTemplate == NULL )
 				continue;
 
-			Bool isBridgeLikeObject = false;
-			if (thingTemplate->isBridge()) isBridgeLikeObject = true;
-			if (thingTemplate->isKindOf(KINDOF_WALK_ON_TOP_OF_WALL)) isBridgeLikeObject = true;
-			if (isBridgeLikeObject)
-				continue;	// bridges have to be added earlier.
+			if (thingTemplate->isBridge())
+				continue; // bridges have to be added earlier.
+
+			if (thingTemplate->isKindOf(KINDOF_WALK_ON_TOP_OF_WALL))
+				continue; // bridges have to be added earlier.
 
 			// don't create trees and shrubs if this is one and we have that option off
 			if( thingTemplate->isKindOf( KINDOF_SHRUBBERY ) && !useTrees )
@@ -1897,18 +1891,12 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 			Coord3D pos = *pMapObj->getLocation();
 			pos.z += TheTerrainLogic->getGroundHeight( pos.x, pos.y );
 			Real angle = normalizeAngle(pMapObj->getAngle());
-			if (thingTemplate->isKindOf(KINDOF_OPTIMIZED_TREE)) {
-				// Opt trees and props just get drawables to tell the client about it, then deleted. jba [6/5/2003]
-				// This way there is no logic object to slow down partition manager and core logic stuff.
-				Drawable *draw = TheThingFactory->newDrawable(thingTemplate);
-				if (draw) {
-					draw->setOrientation(angle);
-					draw->setPosition( &pos );
 
-					TheGameClient->destroyDrawable(draw);
-				}
+			if (thingTemplate->isKindOf(KINDOF_OPTIMIZED_TREE)) {
+				createOptimizedTree(thingTemplate, &pos, angle);
 				continue;
 			}
+
 #if 1
 			Bool isProp = thingTemplate->isKindOf(KINDOF_PROP);
 			Bool isFluff = false;
@@ -2426,6 +2414,20 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
   }
 
 
+}
+
+//-----------------------------------------------------------------------------------------
+void GameLogic::createOptimizedTree(const ThingTemplate *thingTemplate, Coord3D *pos, Real angle)
+{
+	// Opt trees and props just get drawables to tell the client about it, then deleted. jba [6/5/2003]
+	// This way there is no logic object to slow down partition manager and core logic stuff.
+	// TheSuperHackers @info Destroying the drawable will register the tree in the tree buffer.
+	Drawable *draw = TheThingFactory->newDrawable(thingTemplate);
+	if (draw) {
+		draw->setOrientation(angle);
+		draw->setPosition(pos);
+		TheGameClient->destroyDrawable(draw);
+	}
 }
 
 //-----------------------------------------------------------------------------------------

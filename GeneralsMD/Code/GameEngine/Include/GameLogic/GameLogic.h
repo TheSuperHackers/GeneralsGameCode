@@ -290,6 +290,8 @@ private:
 	void remakeSleepyUpdate();
 	void validateSleepyUpdate() const;
 
+	static void createOptimizedTree(const ThingTemplate *thingTemplate, Coord3D *pos, Real angle);
+
 private:
 
 	/**

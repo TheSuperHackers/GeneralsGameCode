@@ -344,10 +344,7 @@ Int W3DTreeBuffer::getPartitionBucket(const Coord3D &pos) const
 }
 
 //=============================================================================
-// W3DTreeBuffer::cull
-//=============================================================================
-/** Culls the trees, marking the visible flag.  If a tree becomes visible, it sets
-it's sortKey */
+// W3DTreeBuffer::updateSway
 //=============================================================================
 void W3DTreeBuffer::updateSway(const BreezeInfo& info)
 {
@@ -1443,7 +1440,7 @@ void W3DTreeBuffer::addTree(DrawableID id, Coord3D location, Real scale, Real an
 	m_trees[m_numTrees].bounds.Center *= m_trees[m_numTrees].scale;
 	m_trees[m_numTrees].bounds.Radius *= m_trees[m_numTrees].scale;
 	m_trees[m_numTrees].bounds.Center += m_trees[m_numTrees].location;
-	// Initially set it invisible.  cull will update it's visiblity flag.
+	// Initially set it invisible.  cull will update it's visibility flag.
 	m_trees[m_numTrees].visible = false;
 	m_trees[m_numTrees].drawableID = id;
 

@@ -24,7 +24,7 @@
 
 // FILE: W3DTreeDraw.cpp ////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, December 2001
-// Desc:   Tracer drawing
+// Desc:   Tree draw
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -109,51 +109,31 @@ void W3DTreeDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DTreeDraw::W3DTreeDraw( Thing *thing, const ModuleData* moduleData ) : DrawModule( thing, moduleData ),
-m_treeAdded(false)
+W3DTreeDraw::W3DTreeDraw( Thing *thing, const ModuleData* moduleData ) : DrawModule( thing, moduleData )
 {
-
 }
-
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 W3DTreeDraw::~W3DTreeDraw( void )
 {
+	addToTreeBuffer();
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DTreeDraw::reactToTransformChange( const Matrix3D *oldMtx,
-																							 const Coord3D *oldPos,
-																							 Real oldAngle )
+void W3DTreeDraw::addToTreeBuffer()
 {
-	Drawable *draw = getDrawable();
-	if (m_treeAdded) {
-		return;
-	}
-	if (draw->getPosition()->x==0.0f && draw->getPosition()->y == 0.0f) {
-		return;
-	}
-	m_treeAdded = true;
 	const W3DTreeDrawModuleData *moduleData = getW3DTreeDrawModuleData();
-	if (!moduleData) {
-		return;
-	}
+	const Drawable *draw = getDrawable();
+
+	DEBUG_ASSERTCRASH(draw->getPosition()->x == 0.0f && draw->getPosition()->y == 0.0f,
+		("W3DTreeDraw::addToTreeBuffer - Why place tree at x:0 y:0 ?"));
+
 	Real scale = draw->getScale();
 	Real scaleRandomness = draw->getTemplate()->getInstanceScaleFuzziness();
 	scaleRandomness = 0.0f; // We use the scale fuzziness inside WB to generate random scales, so they don't change at load time. jba. [4/22/2003]
 	TheTerrainRenderObject->addTree(draw->getID(), *draw->getPosition(),
 		scale, draw->getOrientation(), scaleRandomness, moduleData);
-
-}
-
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-void W3DTreeDraw::doDrawModule(const Matrix3D* transformMtx)
-{
-
-	return;
-
 }
 
 // ------------------------------------------------------------------------------------------------
