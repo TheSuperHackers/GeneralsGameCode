@@ -5522,7 +5522,7 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 			newCell = getCell(parentCell->getLayer(), newCellCoord.x, newCellCoord.y );
 
 			// check if cell is on the map
-			if (newCell == NULL)
+			if (!newCell)
 				continue;
 
 			Bool notZonePassable = false;
@@ -5539,18 +5539,9 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 
 			// check if this neighbor cell is already on the open (waiting to be tried)
 			// or closed (already tried) lists
-			Bool onList = false;
-			if (newCell->hasInfo()) {
-				if (newCell->getOpen() || newCell->getClosed())
-				{
-					// already on one of the lists
-					onList = true;
-				}
-			}
-			if (onList) {
-				// we have already examined this one, so continue.
+			if ( newCell->hasInfo() && (newCell->getOpen() || newCell->getClosed()) )
 				continue;
-			}
+
 			if (i>=firstDiagonal) {
 				// make sure one of the adjacent sides is open.
 				if (!neighborFlags[adjacent[i-4]] && !neighborFlags[adjacent[i-3]]) {
@@ -5575,24 +5566,20 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 					continue;
 			}
 
-			Bool movementValid = true;
+			Bool movementValid = validMovementPosition(isCrusher, locomotorSet.getValidSurfaces(), newCell, parentCell);
 			Bool dozerHack = false;
-			if (validMovementPosition( isCrusher, locomotorSet.getValidSurfaces(), newCell, parentCell )) {
-			}	else {
-				movementValid = false;
-				if (obj->isKindOf(KINDOF_DOZER)) {
-					if (newCell->getType()==PathfindCell::CELL_OBSTACLE) {
-						Object *obstacle = TheGameLogic->findObjectByID(newCell->getObstacleID());
-						if (obstacle && !(obj->getRelationship(obstacle)==ENEMIES)) {
-							movementValid = true;
-							dozerHack = true;
-						}
-					}
-				}
-				if (!movementValid && !m_isTunneling) {
-					continue;
+			if (!movementValid && obj->isKindOf(KINDOF_DOZER) && newCell->getType() == PathfindCell::CELL_OBSTACLE) {
+				Object* obstacle = TheGameLogic->findObjectByID(newCell->getObstacleID());
+				if (obstacle && !(obj->getRelationship(obstacle) == ENEMIES)) {
+					movementValid = true;
+					dozerHack = true;
 				}
 			}
+
+			if (!movementValid && !m_isTunneling) {
+				continue;
+			}
+
 			if (!dozerHack)
 				neighborFlags[i] = true;
 
@@ -5615,10 +5602,12 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 				}
 				movementValid = false;
 			}
+
 			if (movementValid && !newCell->getPinched()) {
 				//Note to self - only turn off tunneling after check for movement.jba.
 				m_isTunneling = false;
 			}
+
 			if (!newCell->hasInfo()) {
 				if (!newCell->allocateInfo(newCellCoord)) {
 					// Out of cells for pathing...
@@ -5631,6 +5620,7 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 			if (info.allyMoving && dx<10 && dy<10) {
 				newCostSoFar += 3*COST_DIAGONAL;
 			}
+
 			if (newCell->getType() == PathfindCell::CELL_CLIFF && !newCell->getPinched() ) {
 				Coord3D fromPos;
 				fromPos.x = parentCell->getXIndex() * PATHFIND_CELL_SIZE_F ;
@@ -5648,15 +5638,14 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 			} else if (newCell->getPinched()) {
 				newCostSoFar += COST_ORTHOGONAL;
 			}
+
 			newCell->setBlockedByAlly(false);
-			if (info.allyFixedCount) {
-				if (canPathThroughUnits) {
-					newCostSoFar += 3*COST_DIAGONAL*info.allyFixedCount;
-				}	else {
+			if (info.allyFixedCount>0) {
+				newCostSoFar += 3*COST_DIAGONAL*info.allyFixedCount;
+				if (!canPathThroughUnits)
 					newCell->setBlockedByAlly(true);
-					newCostSoFar += 3*COST_DIAGONAL*info.allyFixedCount;
-				}
 			}
+
 			Int costRemaining = 0;
 			if (goalCell) {
 				if (attackDistance == 0)  {
@@ -5666,7 +5655,8 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 					dy = newCellCoord.y - goalCell->getYIndex();
 					costRemaining = COST_ORTHOGONAL*sqrt(dx*dx + dy*dy);
 					costRemaining -= attackDistance/2;
-					if (costRemaining<0) costRemaining=0;
+					if (costRemaining<0)
+						costRemaining=0;
 					if (info.allyGoal) {
 						if (obj->isKindOf(KINDOF_VEHICLE)) {
 							newCostSoFar += 3*COST_ORTHOGONAL;
@@ -5677,26 +5667,21 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 					}
 				}
 			}
+
 			if (notZonePassable) {
 				newCostSoFar += 100*COST_ORTHOGONAL;
 			}
+
 			if (newCell->getType()==PathfindCell::CELL_OBSTACLE) {
 				newCostSoFar += 100*COST_ORTHOGONAL;
 			}
-			// check if this neighbor cell is already on the open (waiting to be tried)
-			// or closed (already tried) lists
-			if (onList)
-			{
-				// already on one of the lists - if existing costSoFar is less,
-				// the new cell is on a longer path, so skip it
-				if (newCell->getCostSoFar() <= newCostSoFar)
-					continue;
-			}
+
 			if (m_isTunneling) {
 				if (!validMovementPosition( isCrusher, locomotorSet.getValidSurfaces(), newCell, parentCell )) {
 					newCostSoFar += 10*COST_ORTHOGONAL;
 				}
 			}
+
 			newCell->setCostSoFar(newCostSoFar);
 			// keep track of path we're building - point back to cell we moved here from
 			newCell->setParentCell(parentCell) ;
