@@ -77,6 +77,7 @@
 #include "GameLogic/Module/DestroyModule.h"
 #include "GameLogic/Module/DieModule.h"
 #include "GameLogic/Module/DozerAIUpdate.h"
+#include "GameLogic/Module/LifeTimeUpdate.h"
 #include "GameLogic/Module/ObjectDefectionHelper.h"
 #include "GameLogic/Module/ObjectRepulsorHelper.h"
 #include "GameLogic/Module/ObjectSMCHelper.h"
@@ -1515,7 +1516,7 @@ Bool Object::getProgressBarShowingInfo(bool selected, Real& progress, Int& type,
 
 	type = 0;  // TODO
 	color = { 255, 255, 255, 255 };  // Default = white
-	colorBG = { 255, 255, 255, 255 };  // Default = white
+	colorBG = { 0, 0, 0, 255 };  // Default = black
 
 	// Energy Shields
 	// TODO: This is kinda bad, there should be a better way to do this, if we have multiple shield sources.
@@ -1532,6 +1533,15 @@ Bool Object::getProgressBarShowingInfo(bool selected, Real& progress, Int& type,
 				return true;
 			}
 		}
+		else if ((*u)->getModuleNameKey() == NAMEKEY("LifetimeUpdate")) {
+			LifetimeUpdate* ltu = (LifetimeUpdate*)(*u);
+			if (ltu->showProgressBar()) {
+				// always show healthbar or when selected?
+				progress = 1.0 - ltu->getProgress();
+				return true;
+			}
+		}
+		
 	}
 
 	return false;

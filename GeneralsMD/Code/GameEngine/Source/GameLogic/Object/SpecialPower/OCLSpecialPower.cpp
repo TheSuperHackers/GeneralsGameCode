@@ -39,6 +39,8 @@
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/TerrainLogic.h"
 #include "GameLogic/Module/OCLSpecialPower.h"
+#include <Common/MessageStream.h>
+#include <GameClient/InGameUI.h>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // MODULE DATA ////////////////////////////////////////////////////////////////////////////////////
@@ -98,6 +100,7 @@ static void parseOCLUpgradePair( INI* ini, void * /*instance*/, void *store, con
 		{ "CreateLocation", INI::parseIndexList, TheOCLCreateLocTypeNames, offsetof( OCLSpecialPowerModuleData, m_createLoc ) },
 		{ "ReferenceObject", INI::parseAsciiString, NULL, offsetof( OCLSpecialPowerModuleData, m_referenceThingName ) },
 		{ "OCLAdjustPositionToPassable", INI::parseBool, NULL, offsetof( OCLSpecialPowerModuleData, m_isOCLAdjustPositionToPassable ) },
+		{ "SelectCreatedObject", INI::parseBool, NULL, offsetof( OCLSpecialPowerModuleData, m_selectObject ) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
@@ -185,36 +188,52 @@ void OCLSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, 
 
 	// at what point will the "deliverer" come in
 	Coord3D creationCoord;
+
+	Object* createdObject = NULL;
+
 	switch (modData->m_createLoc)
 	{
 		case CREATE_AT_EDGE_NEAR_SOURCE:
 			creationCoord = TheTerrainLogic->findClosestEdgePoint( getObject()->getPosition() );
-			ObjectCreationList::create( ocl, getObject(), &creationCoord, &targetCoord, angle );
+			createdObject = ObjectCreationList::create( ocl, getObject(), &creationCoord, &targetCoord, angle );
 			break;
 		case CREATE_AT_EDGE_NEAR_TARGET:
 			creationCoord = TheTerrainLogic->findClosestEdgePoint(&targetCoord);
-			ObjectCreationList::create( ocl, getObject(), &creationCoord, &targetCoord, angle );
+			createdObject = ObjectCreationList::create( ocl, getObject(), &creationCoord, &targetCoord, angle );
 			break;
 		case CREATE_AT_EDGE_FARTHEST_FROM_TARGET:
 			creationCoord = TheTerrainLogic->findFarthestEdgePoint(&targetCoord);
 			creationCoord.z += CREATE_ABOVE_LOCATION_HEIGHT;
-			ObjectCreationList::create( ocl, getObject(), &creationCoord, &targetCoord, angle );
+			createdObject = ObjectCreationList::create( ocl, getObject(), &creationCoord, &targetCoord, angle );
 			break;
 		case CREATE_AT_LOCATION:
 			// this is the case where the special power stuff originates at the location of the mouse click
 			creationCoord = targetCoord;
-			ObjectCreationList::create( ocl, getObject(), &creationCoord, &targetCoord, angle );
+			createdObject = ObjectCreationList::create( ocl, getObject(), &creationCoord, &targetCoord, angle );
 			break;
 		case USE_OWNER_OBJECT:
 			creationCoord.set( &targetCoord );
-			ObjectCreationList::create( ocl, getObject(), &creationCoord, &targetCoord, angle, false );
+			createdObject = ObjectCreationList::create( ocl, getObject(), &creationCoord, &targetCoord, angle, false );
 			break;
 		case CREATE_ABOVE_LOCATION:
 			// this is the case where the special power stuff originates above the location of the mouse click
 			creationCoord = targetCoord;
 			creationCoord.z += CREATE_ABOVE_LOCATION_HEIGHT;
-			ObjectCreationList::create( ocl, getObject(), &creationCoord, &targetCoord, angle );
+			createdObject = ObjectCreationList::create( ocl, getObject(), &creationCoord, &targetCoord, angle );
 			break;
+	}
+
+	if (createdObject != NULL && modData->m_selectObject && createdObject->isLocallyControlled()) {
+		Drawable* draw = createdObject->getDrawable();
+		if (draw)
+		{
+			//Create the selection message
+			GameMessage* teamMsg = TheMessageStream->appendMessage(GameMessage::MSG_CREATE_SELECTED_GROUP);
+			teamMsg->appendBooleanArgument(TRUE);// we are creating a new team so pass true
+			teamMsg->appendObjectIDArgument(createdObject->getID());
+			TheInGameUI->selectDrawable(draw);
+			TheInGameUI->setDisplayedMaxWarning(FALSE);
+		}
 	}
 }
 
@@ -244,7 +263,21 @@ void OCLSpecialPower::doSpecialPower( UnsignedInt commandOptions )
 	SpecialPowerModule::doSpecialPowerAtLocation( &creationCoord, INVALID_ANGLE, commandOptions );
 
 	const ObjectCreationList* ocl = findOCL();
-	ObjectCreationList::create( ocl, getObject(), &creationCoord, &creationCoord, false );
+	Object* createdObject = ObjectCreationList::create( ocl, getObject(), &creationCoord, &creationCoord, false );
+
+	if (createdObject != NULL && getOCLSpecialPowerModuleData()->m_selectObject
+		&& createdObject->isLocallyControlled()) {
+		Drawable* draw = createdObject->getDrawable();
+		if (draw)
+		{
+			//Create the selection message
+			GameMessage* teamMsg = TheMessageStream->appendMessage(GameMessage::MSG_CREATE_SELECTED_GROUP);
+			teamMsg->appendBooleanArgument(TRUE);// we are creating a new team so pass true
+			teamMsg->appendObjectIDArgument(createdObject->getID());
+			TheInGameUI->selectDrawable(draw);
+			TheInGameUI->setDisplayedMaxWarning(FALSE);
+		}
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
