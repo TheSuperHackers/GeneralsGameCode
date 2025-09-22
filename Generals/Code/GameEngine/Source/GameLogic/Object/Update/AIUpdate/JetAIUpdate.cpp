@@ -1059,7 +1059,7 @@ protected:
 		xfer->xferVersion( &version, currentVersion );
 
 		// set on create. xfer->xferBool(&m_landing);
-		xfer->xferUnsignedInt(&m_when);
+		xfer->xferUnsignedInt(&m_whenTakeoff);
 		xfer->xferUnsignedInt(&m_whenTransfer);
 		xfer->xferBool(&m_afterburners);
 		xfer->xferBool(&m_resetTimer);
@@ -1071,7 +1071,7 @@ protected:
 	}
 
 private:
-	UnsignedInt		m_when;
+	UnsignedInt		m_whenTakeoff;
 	UnsignedInt		m_whenTransfer;
 	ObjectID			m_waitedForTaxiID;
 	Bool					m_resetTimer;
@@ -1110,7 +1110,7 @@ private:
 public:
 	JetPauseBeforeTakeoffState( StateMachine *machine ) :
 		AIFaceState(machine, false),
-		m_when(0),
+		m_whenTakeoff(0),
 		m_whenTransfer(0),
 		m_waitedForTaxiID(INVALID_ID),
 		m_resetTimer(false),
@@ -1129,7 +1129,7 @@ public:
 		jetAI->friend_setTakeoffInProgress(true);
 		jetAI->friend_setLandingInProgress(false);
 
-		m_when = 0;
+		m_whenTakeoff = 0;
 		m_whenTransfer = 0;
 		m_waitedForTaxiID = INVALID_ID;
 		m_resetTimer = false;
@@ -1165,7 +1165,7 @@ public:
 		if (!m_resetTimer)
 		{
 			// we had to wait, but now everyone else is ready, so restart our countdown.
-			m_when = now + jetAI->friend_getTakeoffPause();
+			m_whenTakeoff = now + jetAI->friend_getTakeoffPause();
 			if (m_waitedForTaxiID == INVALID_ID)
 			{
 				m_waitedForTaxiID = jet->getID();	// just so we don't pick up anyone else
@@ -1184,7 +1184,7 @@ public:
 			m_afterburners = true;
 		}
 
-		DEBUG_ASSERTCRASH(m_when != 0, ("hmm"));
+		DEBUG_ASSERTCRASH(m_whenTakeoff != 0, ("hmm"));
 		DEBUG_ASSERTCRASH(m_whenTransfer != 0, ("hmm"));
 
 			// once we start the final wait, release the runways for guys behind us, so they can start taxiing
@@ -1194,7 +1194,7 @@ public:
 			pp->transferRunwayReservationToNextInLineForTakeoff(jet->getID());
 		}
 
-		if (now >= m_when)
+		if (now >= m_whenTakeoff)
 			return superStatus;
 
 		return STATE_CONTINUE;
