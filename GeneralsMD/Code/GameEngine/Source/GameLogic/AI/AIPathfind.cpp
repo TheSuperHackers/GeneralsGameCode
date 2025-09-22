@@ -6129,30 +6129,14 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 	// to ignore obstacle cells until it reaches a cell that is no longer
 	// classified as an obstacle.  At that point, the pathfind behaves normally.
 	//
-	if (parentCell->getType() == PathfindCell::CELL_OBSTACLE)	{
-		m_isTunneling = true;
-	}
-	else {
-		m_isTunneling = false;
-	}
+	m_isTunneling = parentCell->getType() == PathfindCell::CELL_OBSTACLE;
 
 	Int zone1, zone2;
 	Bool isCrusher = obj ? obj->getCrusherLevel() > 0 : false;
 	zone1 = m_zoneManager.getEffectiveZone(locomotorSet.getValidSurfaces(), isCrusher, parentCell->getZone());
 	zone2 =  m_zoneManager.getEffectiveZone(locomotorSet.getValidSurfaces(), isCrusher, goalCell->getZone());
 
-	if (layer==LAYER_WALL && zone1 == 0) {
-#if RETAIL_COMPATIBLE_PATHFINDING
-		if (s_useFixedPathfinding)
-#endif
-		{
-			goalCell->releaseInfo();
-			parentCell->releaseInfo();
-		}
-		return NULL;
-	}
-
-	if (destinationLayer==LAYER_WALL && zone2 == 0) {
+	if ( (layer==LAYER_WALL && zone1 == 0) || (destinationLayer==LAYER_WALL && zone2 == 0) ) {
 #if RETAIL_COMPATIBLE_PATHFINDING
 		if (s_useFixedPathfinding)
 #endif
@@ -6181,7 +6165,7 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 	}
 
 	// sanity check - if destination is invalid, can't path there
-	if (validMovementPosition( isCrusher, destinationLayer, locomotorSet, to ) == false)	{
+	if (!validMovementPosition( isCrusher, destinationLayer, locomotorSet, to ))	{
 		m_isTunneling = false;
 		goalCell->releaseInfo();
 		parentCell->releaseInfo();
@@ -6189,7 +6173,7 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 	}
 
 	// sanity check - if source is invalid, we have to cheat
-	if (validMovementPosition( isCrusher, layer, locomotorSet, from ) == false)	{
+	if (!validMovementPosition( isCrusher, layer, locomotorSet, from ))	{
 		// somehow we got to an impassable location.
 		m_isTunneling = true;
 	}
