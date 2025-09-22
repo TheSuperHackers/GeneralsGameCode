@@ -4487,28 +4487,28 @@ Locomotor* Pathfinder::chooseBestLocomotorForPosition(PathfindLayerEnum layer, L
 
 /*static*/ LocomotorSurfaceTypeMask Pathfinder::validLocomotorSurfacesForCellType(PathfindCell::CellType t)
 {
-	if (t == PathfindCell::CELL_OBSTACLE) {
-		return LOCOMOTORSURFACE_AIR;
+	switch (t)
+	{
+		case PathfindCell::CELL_CLEAR:
+			return LOCOMOTORSURFACE_GROUND | LOCOMOTORSURFACE_AIR;
+
+		case PathfindCell::CELL_WATER:
+			return LOCOMOTORSURFACE_WATER | LOCOMOTORSURFACE_AIR;
+
+		case PathfindCell::CELL_CLIFF:
+			return LOCOMOTORSURFACE_CLIFF | LOCOMOTORSURFACE_AIR;
+
+		case PathfindCell::CELL_RUBBLE:
+			return LOCOMOTORSURFACE_RUBBLE | LOCOMOTORSURFACE_AIR;
+
+		case PathfindCell::CELL_OBSTACLE:
+		case PathfindCell::CELL_BRIDGE_IMPASSABLE:
+		case PathfindCell::CELL_IMPASSABLE:
+			return LOCOMOTORSURFACE_AIR;
+
+		default:
+			return NO_SURFACES;
 	}
-	if (t == PathfindCell::CELL_IMPASSABLE) {
-		return LOCOMOTORSURFACE_AIR;
-	}
-	if (t == PathfindCell::CELL_BRIDGE_IMPASSABLE) {
-		return LOCOMOTORSURFACE_AIR;
-	}
-	if (t==PathfindCell::CELL_CLEAR) {
-		return LOCOMOTORSURFACE_GROUND | LOCOMOTORSURFACE_AIR;
-	}
-	if (t == PathfindCell::CELL_WATER) {
-		return LOCOMOTORSURFACE_WATER | LOCOMOTORSURFACE_AIR;
-	}
-	if (t == PathfindCell::CELL_RUBBLE) {
-		return LOCOMOTORSURFACE_RUBBLE | LOCOMOTORSURFACE_AIR;
-	}
-	if ( t == PathfindCell::CELL_CLIFF ) {
-		return LOCOMOTORSURFACE_CLIFF | LOCOMOTORSURFACE_AIR;
-	}
-	return NO_SURFACES;
 }
 
 //
