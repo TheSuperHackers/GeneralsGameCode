@@ -140,9 +140,9 @@ public:
 	virtual Bool reserveSpace(ObjectID id, Real parkingOffset, PPInfo* info);
 	virtual void releaseSpace(ObjectID id);
 	virtual Bool reserveRunway(ObjectID id, Bool forLanding);
-	Bool postponeRunwayReservation(UnsignedInt spaceIndex, Bool forLanding);
 	virtual void releaseRunway(ObjectID id);
 	virtual void calcPPInfo( ObjectID id, PPInfo *info );
+	virtual Int getRunwayIndex(ObjectID id);
 	virtual Int getRunwayCount() const { return m_runways.size(); }
 	virtual ObjectID getRunwayReservation( Int r, RunwayReservationType type );
 	virtual void transferRunwayReservationToNextInLineForTakeoff(ObjectID id);
@@ -206,6 +206,7 @@ private:
 	UnsignedInt										m_nextHealFrame;
 	Bool													m_gotInfo;
 
+	Bool postponeRunwayReservation(UnsignedInt spaceIndex, Bool forLanding);
 	void buildInfo();
 	void purgeDead();
 	void resetWakeFrame();

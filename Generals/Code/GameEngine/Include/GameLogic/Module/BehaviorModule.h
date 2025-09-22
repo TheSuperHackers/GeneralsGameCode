@@ -202,6 +202,11 @@ protected:
 inline BehaviorModule::BehaviorModule( Thing *thing, const ModuleData* moduleData ) : ObjectModule( thing, moduleData ) { }
 inline BehaviorModule::~BehaviorModule() { }
 
+enum
+{
+	InvalidRunway = -1,
+};
+
 //-------------------------------------------------------------------------------------------------
 class ParkingPlaceBehaviorInterface
 {
@@ -224,6 +229,7 @@ public:
 	virtual void releaseSpace(ObjectID id) = 0;
 	virtual Bool reserveRunway(ObjectID id, Bool forLanding) = 0;
 	virtual void releaseRunway(ObjectID id) = 0;
+	virtual Int getRunwayIndex(ObjectID id) = 0;
 	virtual Int getRunwayCount() const = 0;
 	virtual ObjectID getRunwayReservation(Int r) = 0;
 	virtual void transferRunwayReservationToNextInLineForTakeoff(ObjectID id) = 0;

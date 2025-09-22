@@ -139,6 +139,7 @@ public:
 	virtual Bool reserveRunway(ObjectID id, Bool forLanding);
 	virtual void releaseRunway(ObjectID id);
 	virtual void calcPPInfo( ObjectID id, PPInfo *info );
+	virtual Int getRunwayIndex(ObjectID id);
 	virtual Int getRunwayCount() const { return m_runways.size(); }
 	virtual ObjectID getRunwayReservation( Int r, RunwayReservationType type );
 	virtual void transferRunwayReservationToNextInLineForTakeoff(ObjectID id);

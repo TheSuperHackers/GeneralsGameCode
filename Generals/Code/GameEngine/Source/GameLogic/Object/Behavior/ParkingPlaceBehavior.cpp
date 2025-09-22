@@ -393,6 +393,21 @@ void ParkingPlaceBehavior::releaseSpace(ObjectID id)
 }
 
 //-------------------------------------------------------------------------------------------------
+Int ParkingPlaceBehavior::getRunwayIndex(ObjectID id)
+{
+	purgeDead();
+
+	for (std::vector<ParkingPlaceInfo>::iterator it = m_spaces.begin(); it != m_spaces.end(); ++it)
+	{
+		if (it->m_objectInSpace == id)
+		{
+			return it->m_runway;
+		}
+	}
+	return InvalidRunway;
+}
+
+//-------------------------------------------------------------------------------------------------
 ObjectID ParkingPlaceBehavior::getRunwayReservation(Int runway)
 {
 	buildInfo();

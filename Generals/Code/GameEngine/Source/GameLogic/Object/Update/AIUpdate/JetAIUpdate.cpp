@@ -1054,17 +1054,37 @@ protected:
 	virtual void xfer( Xfer *xfer )
 	{
 		// version
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
 		XferVersion currentVersion = 1;
+#else
+		XferVersion currentVersion = 2;
+#endif
 		XferVersion version = currentVersion;
 		xfer->xferVersion( &version, currentVersion );
 
 		// set on create. xfer->xferBool(&m_landing);
 		xfer->xferUnsignedInt(&m_whenTakeoff);
 		xfer->xferUnsignedInt(&m_whenTransfer);
-		xfer->xferBool(&m_afterburners);
-		xfer->xferBool(&m_resetTimer);
+
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
+		if (version <= 1)
+		{
+			xfer->xferBool(&m_afterburners);
+			xfer->xferBool(&m_resetTimer);
+		}
+#else
+		if (version <= 1)
+		{
+			Bool afterburners = false;
+			Bool resetTimer = false;
+			xfer->xferBool(&afterburners);
+			xfer->xferBool(&resetTimer);
+		}
+#endif
+
 		xfer->xferObjectID(&m_waitedForTaxiID);
 	}
+
 	virtual void loadPostProcess()
 	{
 		// empty. jba.
@@ -1074,9 +1094,12 @@ private:
 	UnsignedInt		m_whenTakeoff;
 	UnsignedInt		m_whenTransfer;
 	ObjectID			m_waitedForTaxiID;
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
 	Bool					m_resetTimer;
 	Bool					m_afterburners;
+#endif
 
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
 	Bool findWaiter()
 	{
 		Object* jet = getMachineOwner();
@@ -1106,15 +1129,50 @@ private:
 		}
 		return false;
 	}
+#else
+	Object* findJetToWaitFor() const
+	{
+		const Object* thisJet = getMachineOwner();
+		ParkingPlaceBehaviorInterface* pp = getPP(getMachineOwner()->getProducerID());
+
+		if (pp != NULL)
+		{
+			const Int thisJetRunway = pp->getRunwayIndex(thisJet->getID());
+			const Int runwayCount = pp->getRunwayCount();
+
+			for (Int runway = 0; runway < runwayCount; ++runway)
+			{
+				if (runway == thisJetRunway)
+					continue;
+
+				Object* otherJet = TheGameLogic->findObjectByID(pp->getRunwayReservation(runway));
+				if (otherJet == NULL)
+					continue;
+
+				AIUpdateInterface* ai = otherJet->getAIUpdateInterface();
+				if (ai == NULL)
+					continue;
+
+				if (ai->getCurrentStateID() != TAXI_TO_TAKEOFF)
+					continue;
+
+				return otherJet;
+			}
+		}
+		return NULL;
+	}
+#endif
 
 public:
-	JetPauseBeforeTakeoffState( StateMachine *machine ) :
-		AIFaceState(machine, false),
-		m_whenTakeoff(0),
-		m_whenTransfer(0),
-		m_waitedForTaxiID(INVALID_ID),
-		m_resetTimer(false),
-		m_afterburners(false)
+	JetPauseBeforeTakeoffState( StateMachine *machine )
+		: AIFaceState(machine, false)
+		, m_whenTakeoff(0)
+		, m_whenTransfer(0)
+		, m_waitedForTaxiID(INVALID_ID)
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
+		, m_resetTimer(false)
+		, m_afterburners(false)
+#endif
 	{
 		// nothing
 	}
@@ -1132,8 +1190,10 @@ public:
 		m_whenTakeoff = 0;
 		m_whenTransfer = 0;
 		m_waitedForTaxiID = INVALID_ID;
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
 		m_resetTimer = false;
 		m_afterburners = false;
+#endif
 
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp == NULL)
@@ -1148,6 +1208,7 @@ public:
 		return AIFaceState::onEnter();
 	}
 
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
 	virtual StateReturnType update()
 	{
 		Object* jet = getMachineOwner();
@@ -1199,6 +1260,81 @@ public:
 
 		return STATE_CONTINUE;
 	}
+#else
+	// TheSuperHackers @bugfix Reimplements the update to wait for another Jet on another runway.
+	// If this must work with more than 2 runways, then this logic needs another look.
+	virtual StateReturnType update()
+	{
+		Object* jet = getMachineOwner();
+		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
+
+		if (jet->isEffectivelyDead())
+			return STATE_FAILURE;
+
+		// always call this.
+		StateReturnType superStatus = AIFaceState::update();
+
+		if (Object* otherJet = findJetToWaitFor())
+		{
+			// Found a jet on another runway to wait for.
+			if (m_waitedForTaxiID == INVALID_ID)
+			{
+				// Save the other Jet to wait for.
+				m_waitedForTaxiID = otherJet->getID();
+			}
+
+			if (m_waitedForTaxiID == otherJet->getID())
+			{
+				// Wait for the other Jet to get ready.
+				return STATE_CONTINUE;
+			}
+		}
+
+		const UnsignedInt now = TheGameLogic->getFrame();
+
+		if (m_whenTakeoff == 0)
+		{
+			// The other Jet (if any) is ready. Prepare runway transfer and takeoff.
+			// Transfer the runway after one or two frames earliest to give the other
+			// Jet a chance to update as well before the runway is transfered.
+			if (m_waitedForTaxiID == INVALID_ID)
+			{
+				// Do not wait for any other Jet from now on.
+				m_waitedForTaxiID = jet->getID();
+				m_whenTransfer = now + 1;
+			}
+			else
+			{
+				m_whenTransfer = now + 2; // 2 seems odd, but is correct
+			}
+
+			// Take off soon, but not before the runway transfer.
+			m_whenTakeoff = std::max(m_whenTransfer, now + jetAI->friend_getTakeoffPause());
+			jetAI->friend_enableAfterburners(true);
+		}
+		else
+		{
+			// once we start the final wait, release the runways for guys behind us, so they can start taxiing
+			if (now >= m_whenTransfer)
+			{
+				if (ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID()))
+				{
+					pp->transferRunwayReservationToNextInLineForTakeoff(jet->getID());
+				}
+				// Do not transfer the runway again in the next update.
+				m_whenTransfer = ~0u;
+			}
+
+			if (now >= m_whenTakeoff)
+			{
+				// Ready to take off!
+				return superStatus;
+			}
+		}
+
+		return STATE_CONTINUE;
+	}
+#endif
 
 	virtual void onExit(StateExitType status)
 	{
