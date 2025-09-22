@@ -413,6 +413,7 @@ void ParkingPlaceBehavior::calcPPInfo( ObjectID id, PPInfo *info )
 			if (it->m_inUseBy == id && it->m_wasInLine)
 			{
 				info->runwayStart = info->runwayPrep;
+				break;
 			}
 		}
 	}
@@ -434,6 +435,7 @@ void ParkingPlaceBehavior::releaseSpace(ObjectID id)
 			it->m_postponedRunwayReservationForTakeoff = false;
 			if (pu)
 				pu->setHoldDoorOpen(it->m_door, false);
+			break;
 		}
 	}
 
@@ -466,6 +468,7 @@ void ParkingPlaceBehavior::transferRunwayReservationToNextInLineForTakeoff(Objec
 			it->m_inUseBy = it->m_nextInLineForTakeoff;
 			it->m_wasInLine = true;
 			it->m_nextInLineForTakeoff = INVALID_ID;
+			break;
 		}
 	}
 }

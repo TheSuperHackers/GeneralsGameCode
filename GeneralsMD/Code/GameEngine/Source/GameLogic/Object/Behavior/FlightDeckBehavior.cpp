@@ -569,6 +569,7 @@ void FlightDeckBehavior::calcPPInfo( ObjectID id, PPInfo *info )
 			if (it->m_inUseByForTakeoff == id )
 			{
 				info->runwayStart = info->runwayPrep;
+				break;
 			}
 		}
 	}
@@ -586,6 +587,7 @@ void FlightDeckBehavior::releaseSpace(ObjectID id)
 		if (it->m_objectInSpace == id)
 		{
 			it->m_objectInSpace = INVALID_ID;
+			break;
 		}
 	}
 
