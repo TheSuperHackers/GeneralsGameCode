@@ -62,7 +62,7 @@ void LANAPI::handleRequestLocations( LANMessage *msg, UnsignedInt senderIP )
 				fillInLANMessage( &reply );
 				reply.LANMessageType = LANMessage::MSG_GAME_ANNOUNCE;
 				AsciiString gameOpts = GenerateGameOptionsString();
-				strlcpy(reply.GameInfo.options, gameOpts.str(), sizeof(reply.GameInfo.options));
+				strlcpy(reply.GameInfo.options, gameOpts.str(), ARRAY_SIZE(reply.GameInfo.options));
 				wcsncpy(reply.GameInfo.gameName, m_currentGame->getName().str(), g_lanGameNameLength);
 				reply.GameInfo.gameName[g_lanGameNameLength] = 0;
 				reply.GameInfo.inProgress = m_currentGame->isGameInProgress();
@@ -193,7 +193,7 @@ void LANAPI::handleRequestGameInfo( LANMessage *msg, UnsignedInt senderIP )
 			reply.LANMessageType = LANMessage::MSG_GAME_ANNOUNCE;
 
 			AsciiString gameOpts = GameInfoToAsciiString(m_currentGame);
-			strlcpy(reply.GameInfo.options,gameOpts.str(),sizeof(reply.GameInfo.options));
+			strlcpy(reply.GameInfo.options,gameOpts.str(), ARRAY_SIZE(reply.GameInfo.options));
 			wcsncpy(reply.GameInfo.gameName, m_currentGame->getName().str(), g_lanGameNameLength);
 			reply.GameInfo.gameName[g_lanGameNameLength] = 0;
 			reply.GameInfo.inProgress = m_currentGame->isGameInProgress();
