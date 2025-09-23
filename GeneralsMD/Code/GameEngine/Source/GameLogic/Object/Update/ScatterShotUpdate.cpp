@@ -88,6 +88,7 @@ ScatterShotUpdateModuleData::ScatterShotUpdateModuleData()
 		{ "PreferSimilarTargets", INI::parseBool, NULL, offsetof(ScatterShotUpdateModuleData, m_preferSimilarTargets) },
 		{ "PreferNearestTargets", INI::parseBool, NULL, offsetof(ScatterShotUpdateModuleData, m_preferNearestTargets) },
 		{ "NoTargetsScatterRadius", INI::parseReal, NULL, offsetof(ScatterShotUpdateModuleData, m_noTargetsScatterRadius) },
+		{ "NoTargetsScatterMinRadius", INI::parseReal, NULL, offsetof(ScatterShotUpdateModuleData, m_noTargetsScatterMinRadius) },
 		{ "AttackGroundWhenNoTargets", INI::parseBool, NULL, offsetof(ScatterShotUpdateModuleData, m_attackGroundWhenNoTargets) },
 
 		{ "TriggerDistanceToTarget", INI::parseReal, NULL, offsetof(ScatterShotUpdateModuleData, m_triggerDistanceToTarget) },
@@ -96,7 +97,11 @@ ScatterShotUpdateModuleData::ScatterShotUpdateModuleData()
 		{ "TriggerLifetime", INI::parseDurationUnsignedInt, NULL, offsetof(ScatterShotUpdateModuleData, m_triggerLifetime) },
 		{ "TriggerOnImpact", INI::parseBool, NULL, offsetof(ScatterShotUpdateModuleData, m_triggerOnImpact) },
 		{ "TriggerInstantly", INI::parseBool, NULL, offsetof(ScatterShotUpdateModuleData, m_triggerInstantly) },
+
 		{ "StayAliveAfterTrigger", INI::parseBool, NULL, offsetof(ScatterShotUpdateModuleData, m_stayAliveAfterTrigger) },
+
+		{ "AvoidOriginalTargetObject", INI::parseBool, NULL, offsetof(ScatterShotUpdateModuleData, m_avoidOriginalTarget) },
+		{ "AvoidPreviousTargetWhenChain", INI::parseBool, NULL, offsetof(ScatterShotUpdateModuleData, m_avoidPrevTarget) },
 
 		{ "TriggeredDeathType", INI::parseIndexList, TheDeathNames, offsetof(ScatterShotUpdateModuleData, m_triggerDeathType) },
 		{ "ScatterFX", INI::parseFXList, NULL, offsetof(ScatterShotUpdateModuleData, m_scatterFX) },
@@ -177,6 +182,23 @@ UpdateSleepTime ScatterShotUpdate::update(void)
 					// Copy weapon bonus flags from the launcher to this projectile
 					WeaponBonusConditionFlags bonusFlags = launcher->getWeaponBonusCondition();
 					getObject()->setWeaponBonusConditionFlags(bonusFlags);
+
+					// Special Chain Scattershot case:
+					if (data->m_avoidPrevTarget) {
+						static NameKeyType ssu_key = NAMEKEY("ScatterShotUpdate");
+
+						Module* mod = mod = launcher->findUpdateModule(ssu_key);
+						if (mod) {
+							ScatterShotUpdate* ssu = (ScatterShotUpdate*)mod;
+							if (ssu->m_goalObj != NULL) {
+								m_prevTargetID = ssu->m_goalObj->getID();
+								DEBUG_LOG((">>> SSU CHAIN GET PREV TARGET = %d", m_prevTargetID));
+							}
+							else {
+								DEBUG_LOG((">>> SSU CHAIN GET PREV TARGET IS NULL!"));
+							}
+						}
+					}
 				}
 				if (data->m_triggerDistancePercent > 0) {
 					m_totalTargetDistance = getTargetDistance();
@@ -293,21 +315,26 @@ void ScatterShotUpdate::triggerScatterShot(void)
 
 	// DEBUG_LOG((">>> SSU - triggerScatterShot 3\n"));
 
-	// We always try to fire at the Original weapon's target first
 	bool mainTargetShot = FALSE;
-	if (shotsLeftPerTarget > 0 && shotsLeft > 0 && data->m_targetMinRadius <= 0) {
-		if ((m_goalObj) && isValidTarget(m_goalObj)) {
-			// DEBUG_LOG((">>> SSU - fireWeapon at target Obj\n"));
-			m_weapon->fireWeapon(getObject(), m_goalObj);
-			// Bool status = m_weapon->fireWeapon(getObject(), m_goalObj);
-			// DEBUG_LOG((">>> SSU - fireWeapon success = %s\n", status ? "true" : "false"));
-			//m_weapon->loadAmmoNow(getObject());
-			//weaponSet.reloadAllAmmo(getObject(), true);
-			shotsLeft--;
-			mainTargetShot = TRUE;
+	if (!data->m_avoidOriginalTarget) {
+		// We always try to fire at the Original weapon's target first
+		if (shotsLeftPerTarget > 0 && shotsLeft > 0 && data->m_targetMinRadius <= 0) {
+			if ((m_goalObj) && isValidTarget(m_goalObj)) {
+				// DEBUG_LOG((">>> SSU - fireWeapon at target Obj\n"));
+				m_weapon->fireWeapon(getObject(), m_goalObj);
+				// Bool status = m_weapon->fireWeapon(getObject(), m_goalObj);
+				// DEBUG_LOG((">>> SSU - fireWeapon success = %s\n", status ? "true" : "false"));
+				//m_weapon->loadAmmoNow(getObject());
+				//weaponSet.reloadAllAmmo(getObject(), true);
+				shotsLeft--;
+				mainTargetShot = TRUE;
+			}
 		}
 	}
-
+	else {
+		mainTargetShot = TRUE;
+	}
+	
 	// If we have shots left (and shots per target), look for targets in range
 	if (shotsLeftPerTarget > 0 && shotsLeft > 0 && data->m_targetSearchRadius > 0) {
 		IterOrderType orderType = ITER_FASTEST;
@@ -348,6 +375,8 @@ void ScatterShotUpdate::triggerScatterShot(void)
 
 				if (obj == m_goalObj && mainTargetShot) continue;
 
+				if (data->m_avoidPrevTarget && m_prevTargetID != INVALID_ID && m_prevTargetID == obj->getID()) continue;
+
 				if (data->m_targetMinRadius > 0 && sqrt(ThePartitionManager->getDistanceSquared(getObject(), obj->getPosition(), FROM_CENTER_3D)) <= data->m_targetMinRadius) continue;
 
 				if (isValidTarget(obj)) {
@@ -373,7 +402,7 @@ void ScatterShotUpdate::triggerScatterShot(void)
 		targetPos.x = pos->x;
 		targetPos.y = pos->y;
 
-		Real scatterRadius = GameLogicRandomValueReal(data->m_targetMinRadius, data->m_noTargetsScatterRadius);
+		Real scatterRadius = GameLogicRandomValueReal(MAX(data->m_noTargetsScatterMinRadius, data->m_targetMinRadius), data->m_noTargetsScatterRadius);
 		Real scatterAngleRadian = GameLogicRandomValueReal(0, 2 * PI);
 
 		Coord3D firingOffset;
@@ -483,15 +512,26 @@ static Int getVictimAntiMask(const Object* victim)
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 
+void  ScatterShotUpdate::onDie(const DamageInfo* damageInfo)
+{
+	const ScatterShotUpdateModuleData* data = getScatterShotUpdateModuleData();
+	if (data->m_triggerOnImpact && damageInfo->in.m_deathType == DEATH_DETONATED) {
+		triggerScatterShot();
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+
 Bool ScatterShotUpdate::isValidTarget(const Object* victim) const
 {
 	const Object* source = getObject();
 	// basic sanity checks.
 	if (!source ||
 		!victim ||
-		source->isEffectivelyDead() ||
+		//source->isEffectivelyDead() ||  // if we trigger on impact, source is dead
 		victim->isEffectivelyDead() ||
-		source->isDestroyed() ||
+		//source->isDestroyed() ||
 		victim->isDestroyed() ||
 		victim == source)
 		return FALSE;
@@ -606,6 +646,19 @@ void ScatterShotUpdate::xfer(Xfer* xfer)
 		xfer->xferObjectID(&targetID);
 		m_goalObj = TheGameLogic->findObjectByID(targetID);
 	}
+
+	// prev target obj
+	xfer->xferObjectID(&m_prevTargetID);
+	//if (xfer->getXferMode() == XFER_SAVE)
+	//{
+	//	ObjectID prevTargetID = m_prevGoalObj->getID();
+	//	xfer->xferObjectID(&prevTargetID);
+	//}
+	//else {
+	//	ObjectID prevTargetID;
+	//	xfer->xferObjectID(&prevTargetID);
+	//	m_prevGoalObj = TheGameLogic->findObjectByID(prevTargetID);
+	//}
 
 }  // end xfer
 
