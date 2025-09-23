@@ -1469,16 +1469,22 @@ public:
 
 		if (m_whenTakeoff == 0)
 		{
-			// The other Jet is ready. Prepare runway transfer and takeoff.
-			// Transfer the runway in the next frame earliest to give the other
+			// The other Jet (if any) is ready. Prepare runway transfer and takeoff.
+			// Transfer the runway after one or two frames earliest to give the other
 			// Jet a chance to update as well before the runway is transfered.
-			m_whenTransfer = now + 1;
+			if (m_waitedForTaxiID == INVALID_ID)
+			{
+				// Do not wait for any other Jet from now on.
+				m_waitedForTaxiID = jet->getID();
+				m_whenTransfer = now + 1;
+			}
+			else
+			{
+				m_whenTransfer = now + 2; // 2 seems odd, but is correct
+			}
 
 			// Take off soon, but not before the runway transfer.
 			m_whenTakeoff = std::max(m_whenTransfer, now + jetAI->friend_getTakeoffPause());
-
-			// Do not wait for any other Jet from now on.
-			m_waitedForTaxiID = jet->getID();
 		}
 
 		if (!m_afterburners)
