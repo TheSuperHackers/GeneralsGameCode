@@ -4339,49 +4339,63 @@ Bool Pathfinder::checkDestination(const Object *obj, Int cellX, Int cellY, Pathf
 	for (i=cellX-iRadius; i<cellX+numCellsAbove; i++) {
 		for (j=cellY-iRadius; j<cellY+numCellsAbove; j++) {
 			PathfindCell	*cell = getCell(layer, i, j);
-			if (cell) {
-				if (checkForAircraft) {
-					if (!cell->isAircraftGoal()) continue;
-					if (cell->getGoalAircraft()==objID) continue;
-					return false;
-				}
-				if (cell->getType()==PathfindCell::CELL_OBSTACLE) {
-					if (cell->isObstaclePresent( ignoreId ))
-						continue;
-					return false;
-				}
-				if (cell->getFlags() == PathfindCell::NO_UNITS) {
-					continue;  // Nobody is here, so it's ok.
-				}
-				ObjectID goalUnitID = cell->getGoalUnit();
-				if (goalUnitID==objID) {
-					continue; // we got it.
-				} else if (ignoreId==goalUnitID) {
-					continue; // we are ignoring it.
-				} else if (goalUnitID!=INVALID_ID) {
-					if (obj==NULL) {
-						return false;
-					}
-					Object *unit = TheGameLogic->findObjectByID(goalUnitID);
-					if (unit) {
-						// order matters: we want to know if I consider it to be an ally, not vice versa
-						if (obj->getRelationship(unit) == ALLIES) {
-							return false; 	// Don't usurp your allies goals.  jba.
-						}
-						if (cell->getFlags()==PathfindCell::UNIT_PRESENT_FIXED) {
-							Bool canCrush = obj->canCrushOrSquish(unit, TEST_CRUSH_OR_SQUISH);
-							if (!canCrush) {
-								return false; // Don't move to an occupied cell.
-							}
-						}
-					}
-				}
-			} else {
+			if (!cell) {
 				return false; // off the map, so can't place here.
+			}
+
+			if (checkForAircraft) {
+				if (!cell->isAircraftGoal()) {
+					continue;
+				}
+				if (cell->getGoalAircraft() == objID) {
+					continue;
+				}
+				return false;
+			}
+
+			if (cell->getType()==PathfindCell::CELL_OBSTACLE) {
+				if (cell->isObstaclePresent( ignoreId ))
+					continue;
+				return false;
+			}
+
+			if (cell->getFlags() == PathfindCell::NO_UNITS) {
+				continue;  // Nobody is here, so it's ok.
+			}
+
+			ObjectID goalUnitID = cell->getGoalUnit();
+			if (goalUnitID == objID) {
+				continue; // we got it.
+			}
+
+			if (goalUnitID == ignoreId) {
+				continue; // we are ignoring it.
+			}
+
+			if (goalUnitID == INVALID_ID) {
+				continue;
+			}
+
+			if (!obj) {
+				return false;
+			}
+			Object *unit = TheGameLogic->findObjectByID(goalUnitID);
+			if (!unit) {
+				continue;
+			}
+
+			// order matters: we want to know if I consider it to be an ally, not vice versa
+			if (obj->getRelationship(unit) == ALLIES) {
+				return false; 	// Don't usurp your allies goals.  jba.
+			}
+			if (cell->getFlags()==PathfindCell::UNIT_PRESENT_FIXED) {
+				Bool canCrush = obj->canCrushOrSquish(unit, TEST_CRUSH_OR_SQUISH);
+				if (!canCrush) {
+					return false; // Don't move to an occupied cell.
+				}
 			}
 		}
 	}
-
 	return true;
 }
 
