@@ -1477,8 +1477,7 @@ Shadow* W3DProjectedShadowManager::addDecal(Shadow::ShadowTypeInfo *shadowInfo)
 	Real	decalSizeY=0.0f;
 
 	Bool	allowSunDirection=FALSE;
-	Char	texture_name[64];
-	Int nameLen;
+	Char texture_name[ARRAY_SIZE(shadowInfo->m_ShadowName)];
 
 	if (!shadowInfo)
 		return NULL;	//right now we require hardware render-to-texture support
@@ -1486,9 +1485,8 @@ Shadow* W3DProjectedShadowManager::addDecal(Shadow::ShadowTypeInfo *shadowInfo)
 	//simple decal using the premade texture specified.
 	//can be always perpendicular to model's z-axis or projected
 	//onto world geometry.
-	nameLen=strlen(shadowInfo->m_ShadowName);
-	strlcpy(texture_name,shadowInfo->m_ShadowName,nameLen + 1);
-	strcpy(texture_name+nameLen,".tga");	//append texture extension
+	strcpy(texture_name, shadowInfo->m_ShadowName);
+	strlcpy(texture_name, ".tga", ARRAY_SIZE(texture_name));
 
 	//Check if we previously added a decal using this texture
 	st=m_W3DShadowTextureManager->getTexture(texture_name);
@@ -1583,8 +1581,7 @@ Shadow* W3DProjectedShadowManager::addDecal(RenderObjClass *robj, Shadow::Shadow
 	Real	decalOffsetY=0.0f;
 
 	Bool	allowSunDirection=FALSE;
-	Char	texture_name[64];
-	Int nameLen;
+	Char texture_name[ARRAY_SIZE(shadowInfo->m_ShadowName)];
 
 	if (!robj || !shadowInfo)
 		return NULL;	//right now we require hardware render-to-texture support
@@ -1592,9 +1589,8 @@ Shadow* W3DProjectedShadowManager::addDecal(RenderObjClass *robj, Shadow::Shadow
 	//simple decal using the premade texture specified.
 	//can be always perpendicular to model's z-axis or projected
 	//onto world geometry.
-	nameLen=strlen(shadowInfo->m_ShadowName);
-	strlcpy(texture_name,shadowInfo->m_ShadowName,nameLen + 1);
-	strcpy(texture_name+nameLen,".tga");	//append texture extension
+	strcpy(texture_name, shadowInfo->m_ShadowName);
+	strlcpy(texture_name, ".tga", ARRAY_SIZE(texture_name));
 
 	//Check if we previously added a decal using this texture
 	st=m_W3DShadowTextureManager->getTexture(texture_name);
@@ -1706,8 +1702,7 @@ W3DProjectedShadow* W3DProjectedShadowManager::addShadow(RenderObjClass *robj, S
 	Real	decalOffsetY=0.0f;
 
 	Bool	allowSunDirection=FALSE;
-	Char	texture_name[64];
-	Int nameLen;
+	Char texture_name[ARRAY_SIZE(shadowInfo->m_ShadowName)];
 
 
 	if (!m_dynamicRenderTarget || !robj || !TheGlobalData->m_useShadowDecals)
@@ -1721,13 +1716,14 @@ W3DProjectedShadow* W3DProjectedShadowManager::addShadow(RenderObjClass *robj, S
 		{		//simple decal using the premade texture specified.
 				//can be always perpendicular to model's z-axis or projected
 				//onto world geometry.
-				nameLen=strlen(shadowInfo->m_ShadowName);
-				if (nameLen <= 1)	//no texture name given, use same as object
-				{	strcpy(texture_name,defaultDecalName);
+				if (strlen(shadowInfo->m_ShadowName) <= 1)	//no texture name given, use same as object
+				{
+					strcpy(texture_name, defaultDecalName);
 				}
 				else
-				{	strlcpy(texture_name,shadowInfo->m_ShadowName,nameLen + 1);
-					strcpy(texture_name+nameLen,".tga");	//append texture extension
+				{
+					strcpy(texture_name, shadowInfo->m_ShadowName);
+					strlcpy(texture_name, ".tga", ARRAY_SIZE(texture_name));
 				}
 
 				st=m_W3DShadowTextureManager->getTexture(texture_name);
@@ -1891,20 +1887,19 @@ W3DProjectedShadow* W3DProjectedShadowManager::createDecalShadow(Shadow::ShadowT
 	Real	decalOffsetX=0.0f;
 	Real	decalOffsetY=0.0f;
 	const Real defaultWidth = 10.0f;
-
-	Char	texture_name[64];
-	Int nameLen;
+	Char texture_name[ARRAY_SIZE(shadowInfo->m_ShadowName)];
 
 	//simple decal using the premade texture specified.
 	//can be always perpendicular to model's z-axis or projected
 	//onto world geometry.
-	nameLen=strlen(shadowInfo->m_ShadowName);
-	if (nameLen <= 1)	//no texture name given, use same as object
-	{	strcpy(texture_name,defaultDecalName);
+	if (strlen(shadowInfo->m_ShadowName) <= 1)	//no texture name given, use same as object
+	{
+		strcpy(texture_name,defaultDecalName);
 	}
 	else
-	{	strlcpy(texture_name,shadowInfo->m_ShadowName,nameLen + 1);
-		strcpy(texture_name+nameLen,".tga");	//append texture extension
+	{
+		strcpy(texture_name, shadowInfo->m_ShadowName);
+		strlcpy(texture_name, ".tga", ARRAY_SIZE(texture_name));
 	}
 
 	st=m_W3DShadowTextureManager->getTexture(texture_name);
