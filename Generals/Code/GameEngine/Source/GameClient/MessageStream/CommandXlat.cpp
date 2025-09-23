@@ -3533,9 +3533,13 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		}
 
 		//-----------------------------------------------------------------------------
- 		case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_DOWN:
- 		{
- 			// There are two ways in which we can ignore this as a deselect:
+		// TheSuperHackers @bugfix Treat the raw double click event identical to the raw button down event
+		// because it implicitly is a raw button down event as well. Failing to do so would mess with the
+		// button timings in later events on button up.
+		case GameMessage::MSG_RAW_MOUSE_RIGHT_DOUBLE_CLICK:
+		case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_DOWN:
+		{
+			// There are two ways in which we can ignore this as a deselect:
  			// 1) 2-D position on screen
  			// 2) Time has exceeded the time which we allow for this to be a click.
  			m_mouseRightDragAnchor = msg->getArgument( 0 )->pixel;
