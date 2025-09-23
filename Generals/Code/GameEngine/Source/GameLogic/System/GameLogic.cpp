@@ -1565,14 +1565,7 @@ void GameLogic::startNewGame( Bool saveGame )
 		if( thingTemplate == NULL )
 			continue;
 
-		Bool isBridgeLikeObject = false;
-
-		if (thingTemplate->isBridge())
-			isBridgeLikeObject = true;
-		if (thingTemplate->isKindOf(KINDOF_WALK_ON_TOP_OF_WALL))
-			isBridgeLikeObject = true;
-
-		if (!isBridgeLikeObject)
+		if (!thingTemplate->isBridgeLike())
 			continue;
 
 		Team *team = ThePlayerList->getNeutralPlayer()->getDefaultTeam();
@@ -1679,11 +1672,8 @@ void GameLogic::startNewGame( Bool saveGame )
 			if( thingTemplate == NULL )
 				continue;
 
-			Bool isBridgeLikeObject = false;
-			if (thingTemplate->isBridge()) isBridgeLikeObject = true;
-			if (thingTemplate->isKindOf(KINDOF_WALK_ON_TOP_OF_WALL)) isBridgeLikeObject = true;
-			if (isBridgeLikeObject)
-				continue;	// bridges have to be added earlier.
+			if (thingTemplate->isBridgeLike())
+				continue; // bridges have to be added earlier.
 
 			Bool useTrees = TheGlobalData->m_useTrees;
 			if (TheRecorder && TheRecorder->isMultiplayer()) {
