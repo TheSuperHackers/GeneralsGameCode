@@ -1727,14 +1727,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		if( thingTemplate == NULL )
 			continue;
 
-		Bool isBridgeLikeObject = false;
-
-		if (thingTemplate->isBridge())
-			isBridgeLikeObject = true;
-		if (thingTemplate->isKindOf(KINDOF_WALK_ON_TOP_OF_WALL))
-			isBridgeLikeObject = true;
-
-		if (!isBridgeLikeObject)
+		if (!thingTemplate->isBridgeLike())
 			continue;
 
 		Team *team = ThePlayerList->getNeutralPlayer()->getDefaultTeam();
@@ -1878,10 +1871,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 			if( thingTemplate == NULL )
 				continue;
 
-			if (thingTemplate->isBridge())
-				continue; // bridges have to be added earlier.
-
-			if (thingTemplate->isKindOf(KINDOF_WALK_ON_TOP_OF_WALL))
+			if (thingTemplate->isBridgeLike())
 				continue; // bridges have to be added earlier.
 
 			// don't create trees and shrubs if this is one and we have that option off
