@@ -656,7 +656,8 @@ void BuildAssistant::iterateFootprint( const ThingTemplate *build,
 
 
 //-------------------------------------------------------------------------------------------------
-/** Check for objects preventing building at this location.  */
+/** Check for objects preventing building at this location.
+  * TheSuperHackers @tweak Stubbjax 05/09/2025 Return LBC_SHROUD for shrouded objects. */
 //-------------------------------------------------------------------------------------------------
 LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 																											 const ThingTemplate *build,
