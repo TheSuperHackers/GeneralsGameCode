@@ -3885,7 +3885,9 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 		//
 
 		Color color, outlineColor;
-		if( obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) || (obj->isDisabled() && !obj->isDisabledByType(DISABLED_HELD)) )
+		DisabledMaskType mask = obj->getDisabledFlags();
+
+		if (obj->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION) || (mask.clear(MAKE_DISABLED_MASK(DISABLED_HELD)), DISABLEDMASK_ANY_SET(mask)))
 		{
 			color = GameMakeColor( 0, healthRatio * 255.0f, 255, 255 );//blue to cyan
 			outlineColor = GameMakeColor( 0, healthRatio * 128.0f, 128, 255 );//dark blue to dark cyan
