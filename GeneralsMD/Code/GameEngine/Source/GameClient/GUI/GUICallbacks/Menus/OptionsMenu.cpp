@@ -966,6 +966,8 @@ static OptionPreferences *pref = NULL;
 
 static void setDefaults( void )
 {
+	constexpr const Bool ModifyDisplaySettings = FALSE;
+
 	//-------------------------------------------------------------------------------------------------
 	// provider type
 //	GadgetCheckBoxSetChecked(checkAudioHardware, FALSE);
@@ -982,6 +984,8 @@ static void setDefaults( void )
 	// send Delay
 	GadgetCheckBoxSetChecked(checkSendDelay, FALSE);
 
+	if constexpr (ModifyDisplaySettings)
+	{
 	//-------------------------------------------------------------------------------------------------
 	// LOD
 	if ((TheGameLogic->isInGame() == FALSE) || (TheGameLogic->isInShellGame() == TRUE))
@@ -1005,7 +1009,7 @@ static void setDefaults( void )
 		}
 		GadgetComboBoxSetSelectedPos( comboBoxResolution, defaultResIndex );	//should be 800x600 (our lowest supported mode)
 	}
-
+	}
 
 	//-------------------------------------------------------------------------------------------------
 	// Mouse Mode
@@ -1042,12 +1046,13 @@ static void setDefaults( void )
  	GadgetSliderGetMinMax(sliderGamma,&valMin, &valMax);
  	GadgetSliderSetPosition(sliderGamma, ((valMax - valMin) / 2 + valMin));
 
-	//-------------------------------------------------------------------------------------------------
- 	// Texture resolution slider
-	//
-
+	if constexpr (ModifyDisplaySettings)
+	{
 	if ((TheGameLogic->isInGame() == FALSE) || (TheGameLogic->isInShellGame() == TRUE))
 	{
+		//-------------------------------------------------------------------------------------------------
+		// Texture resolution slider
+		//
 		Int	txtFact=TheGameLODManager->getRecommendedTextureReduction();
 
 		GadgetSliderSetPosition( sliderTextureResolution, 2-txtFact);
@@ -1111,6 +1116,7 @@ static void setDefaults( void )
  		// Trees and Shrubs
 		//
 		GadgetCheckBoxSetChecked( checkProps, TheGlobalData->m_useTrees);
+	}
 	}
 }
 
