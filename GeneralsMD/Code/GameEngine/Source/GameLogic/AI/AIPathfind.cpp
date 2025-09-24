@@ -4832,37 +4832,33 @@ void Pathfinder::snapClosestGoalPosition(Object *obj, Coord3D *pos)
 
 	// Try adjusting by 1.
 	Int i,j;
-	for (i=cell.x-1; i<cell.x+2; i++) {
-		for (j=cell.y-1; j<cell.y+2; j++) {
+	for (i = cell.x - 1; i < cell.x + 2; i++) {
+		for (j = cell.y - 1; j < cell.y + 2; j++) {
 			if (checkDestination(obj, i, j, layer, iRadius, center)) {
-				adjustCoordToCell(i, j,  center, *pos, layer);
+				adjustCoordToCell(i, j, center, *pos, layer);
 				return;
 			}
 		}
 	}
-	if (iRadius==0) {
-		// Try to find an unoccupied cell.
-		for (i=cell.x-1; i<cell.x+2; i++) {
-			for (j=cell.y-1; j<cell.y+2; j++) {
-				PathfindCell	*newCell = getCell(layer,i, j);
-				if (newCell) {
-					if (newCell->getGoalUnit()==INVALID_ID || newCell->getGoalUnit()==obj->getID()) {
-						adjustCoordToCell(i, j,  center, *pos, layer);
-						return;
-					}
-				}
+
+	if (iRadius > 0)
+		return;
+
+	for (i = cell.x - 1; i < cell.x + 2; i++) {
+		for (j = cell.y - 1; j < cell.y + 2; j++) {
+			// Try to find an unoccupied cell.
+			PathfindCell	*newCell = getCell(layer,i, j);
+			if (!newCell)
+				continue;
+
+			if (newCell->getGoalUnit() == INVALID_ID || newCell->getGoalUnit() == obj->getID()) {
+				adjustCoordToCell(i, j, center, *pos, layer);
+				return;
 			}
-		}
-		// Try to find an unoccupied cell.
-		for (i=cell.x-1; i<cell.x+2; i++) {
-			for (j=cell.y-1; j<cell.y+2; j++) {
-				PathfindCell	*newCell = getCell(layer,i, j);
-				if (newCell) {
-					if (newCell->getFlags()!=PathfindCell::UNIT_PRESENT_FIXED) {
-						adjustCoordToCell(i, j,  center, *pos, layer);
-						return;
-					}
-				}
+
+			if (newCell->getFlags()!=PathfindCell::UNIT_PRESENT_FIXED) {
+				adjustCoordToCell(i, j,  center, *pos, layer);
+				return;
 			}
 		}
 	}
