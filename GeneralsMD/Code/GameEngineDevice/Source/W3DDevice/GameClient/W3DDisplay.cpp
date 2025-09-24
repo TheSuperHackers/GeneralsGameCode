@@ -791,7 +791,9 @@ void W3DDisplay::init( void )
 
 		//Check if level was never set and default to setting most suitable for system.
 		if (TheGameLODManager->getStaticLODLevel() == STATIC_GAME_LOD_UNKNOWN)
-			TheGameLODManager->setStaticLODLevel(TheGameLODManager->findStaticLODLevel());
+		{
+			TheGameLODManager->setStaticLODLevel(TheGameLODManager->getRecommendedStaticLODLevel());
+		}
 		else
 		{	//Static LOD level was applied during GameLOD manager init except for texture reduction
 			//which needs to be applied here.

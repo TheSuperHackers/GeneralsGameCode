@@ -900,7 +900,7 @@ void finishSinglePlayerInit( void )
 						if (!TheGameLODManager->didMemPass()) {
 							useLowRes = TRUE;
 						}
-						if (TheGameLODManager->findStaticLODLevel()==STATIC_GAME_LOD_LOW) {
+						if (TheGameLODManager->getRecommendedStaticLODLevel()==STATIC_GAME_LOD_LOW) {
 							useLowRes = TRUE;
 						}
 						if (TheGameLODManager->getStaticLODLevel()==STATIC_GAME_LOD_LOW) {
@@ -1980,7 +1980,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 					stats.surrenders[ptIdx] += TheGameInfo->haveWeSurrendered()  || !TheVictoryConditions->getEndFrame();
 
 					AsciiString systemSpec;
-					systemSpec.format("LOD%d", TheGameLODManager->findStaticLODLevel());
+					systemSpec.format("LOD%d", TheGameLODManager->getRecommendedStaticLODLevel());
 					stats.systemSpec = systemSpec.str();
 
 					stats.techCaptured[ptIdx] += s->getTotalTechBuildingsCaptured();
