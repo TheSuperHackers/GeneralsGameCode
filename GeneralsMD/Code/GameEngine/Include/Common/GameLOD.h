@@ -204,6 +204,7 @@ protected:
 	void applyStaticLODLevel(StaticGameLODLevel level);
 	void applyDynamicLODLevel(DynamicGameLODLevel level);
 	void refreshCustomStaticLODLevel(void);	///<grabs current globaldata values and makes them the custom detail setting.
+	StaticGameLODLevel getRecommendedTextureLODLevel();
 
 	static const FieldParse m_staticGameLODFieldParseTable[];
 	StaticGameLODLevel m_currentStaticLOD;		///< current value of static LOD.
