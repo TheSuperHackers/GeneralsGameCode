@@ -1915,6 +1915,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	GadgetComboBoxAddEntry(comboBoxDetail, TheGameText->FETCH_OR_SUBSTITUTE("GUI:VeryHigh", L"Very High"), color);
 	GadgetComboBoxAddEntry(comboBoxDetail, TheGameText->fetch("GUI:Custom"), color);
 	static_assert(STATIC_GAME_LOD_COUNT == 5, "Wrong combo box count");
+	static_assert(STATIC_GAME_LOD_COUNT == 4, "Wrong combo box count");
 
 	//Check if level was never set and default to setting most suitable for system.
 	if (TheGameLODManager->getStaticLODLevel() == STATIC_GAME_LOD_UNKNOWN)
