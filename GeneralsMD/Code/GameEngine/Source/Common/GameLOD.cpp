@@ -77,6 +77,7 @@ static const char *const StaticGameLODNames[]=
 	"Low",
 	"Medium",
 	"High",
+	"VeryHigh",
 	"Custom"
 };
 static_assert(ARRAY_SIZE(StaticGameLODNames) == STATIC_GAME_LOD_COUNT, "Incorrect array size");
@@ -233,11 +234,42 @@ GameLODManager::GameLODManager(void)
 
 	for (Int i=0; i<STATIC_GAME_LOD_CUSTOM; i++)
 		m_numLevelPresets[i]=0;
+
+	initStaticLODLevels();
 };
 
 GameLODManager::~GameLODManager()
 {
 
+}
+
+void GameLODManager::initStaticLODLevels()
+{
+	// TheSuperHackers @info Initialize new system specs in this function when we cannot rely on new edits to GameLOD.ini.
+
+	StaticGameLODInfo& veryhigh = m_staticGameLODInfo[STATIC_GAME_LOD_VERY_HIGH];
+	veryhigh.m_minFPS = 55;
+	veryhigh.m_minProcessorFPS = 59;
+	veryhigh.m_sampleCount2D = 6;
+	veryhigh.m_sampleCount3D = 24;
+	veryhigh.m_streamCount = 2;
+	veryhigh.m_maxParticleCount = 5000;
+	veryhigh.m_useShadowVolumes = TRUE;
+	veryhigh.m_useShadowDecals = TRUE;
+	veryhigh.m_useCloudMap = TRUE;
+	veryhigh.m_useLightMap = TRUE;
+	veryhigh.m_showSoftWaterEdge = TRUE;
+	veryhigh.m_maxTankTrackEdges = 100;
+	veryhigh.m_maxTankTrackOpaqueEdges = 25;
+	veryhigh.m_maxTankTrackFadeDelay = 60000;
+	veryhigh.m_useBuildupScaffolds = TRUE;
+	veryhigh.m_useTreeSway = TRUE;
+	veryhigh.m_useEmissiveNightMaterials = TRUE;
+	veryhigh.m_useHeatEffects = TRUE;
+	veryhigh.m_textureReduction = 0;
+	veryhigh.m_useFpsLimit = TRUE;
+	veryhigh.m_enableDynamicLOD = TRUE;
+	veryhigh.m_useTrees = TRUE;
 }
 
 BenchProfile *GameLODManager::newBenchProfile(void)
@@ -322,7 +354,7 @@ void GameLODManager::init(void)
 				//Check if we're within 5% of the performance of this cpu profile.
 				if (m_intBenchIndex/prof->m_intBenchIndex >= PROFILE_ERROR_LIMIT && m_floatBenchIndex/prof->m_floatBenchIndex >= PROFILE_ERROR_LIMIT && m_memBenchIndex/prof->m_memBenchIndex >= PROFILE_ERROR_LIMIT)
 				{
-					for (Int i=STATIC_GAME_LOD_HIGH; i >= STATIC_GAME_LOD_LOW; i--)
+					for (Int i=STATIC_GAME_LOD_LAST; i >= STATIC_GAME_LOD_FIRST; i--)
 					{
 						LODPresetInfo *preset=&m_lodPresets[i][0];	//pointer to first preset at this LOD level.
 						for (Int j=0; j<m_numLevelPresets[i]; j++)
@@ -460,7 +492,7 @@ StaticGameLODLevel GameLODManager::getRecommendedStaticLODLevel(void)
 
 		Int numMBRam=m_numRAM/(1024*1024);
 
-		for (Int i=STATIC_GAME_LOD_HIGH; i >= STATIC_GAME_LOD_LOW; i--)
+		for (Int i=STATIC_GAME_LOD_LAST; i >= STATIC_GAME_LOD_FIRST; i--)
 		{
 				LODPresetInfo *preset=&m_lodPresets[i][0];	//pointer to first preset at this LOD level.
 				for (Int j=0; j<m_numLevelPresets[i]; j++)
