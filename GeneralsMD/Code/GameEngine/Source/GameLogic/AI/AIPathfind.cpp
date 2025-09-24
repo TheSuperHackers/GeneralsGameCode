@@ -3567,20 +3567,23 @@ void PathfindLayer::classifyLayerMapCell( Int i, Int j , PathfindCell *cell, Bri
 	Coord3D center = topLeftCorner;
 	center.x += PATHFIND_CELL_SIZE/2;
 	center.y += PATHFIND_CELL_SIZE/2;
-	if (cell->getType()!=PathfindCell::CELL_IMPASSABLE) {
-		if (!(cell->getConnectLayer()==LAYER_GROUND) ) {
-			// Check for bridge clearance.  If the ground isn't 1 pathfind cells below, mark impassable.
-			Real groundHeight = TheTerrainLogic->getLayerHeight( center.x, center.y, LAYER_GROUND );
-			Real bridgeHeight = theBridge->getBridgeHeight( &center, NULL );
-			if (groundHeight+LAYER_Z_CLOSE_ENOUGH_F > bridgeHeight) {
-				PathfindCell *groundCell = TheAI->pathfinder()->getCell(LAYER_GROUND,i, j);
-				if (!(groundCell->getType()==PathfindCell::CELL_OBSTACLE)) {
-					groundCell->setType(PathfindCell::CELL_BRIDGE_IMPASSABLE);
-				}
-			}
+	if (cell->getType() == PathfindCell::CELL_IMPASSABLE) {
+		return;
+	}
+
+	if (cell->getConnectLayer() == LAYER_GROUND) {
+		return;
+	}
+
+	// Check for bridge clearance.  If the ground isn't 1 pathfind cells below, mark impassable.
+	Real groundHeight = TheTerrainLogic->getLayerHeight( center.x, center.y, LAYER_GROUND );
+	Real bridgeHeight = theBridge->getBridgeHeight( &center, NULL );
+	if (groundHeight+LAYER_Z_CLOSE_ENOUGH_F > bridgeHeight) {
+		PathfindCell *groundCell = TheAI->pathfinder()->getCell(LAYER_GROUND, i, j);
+		if (groundCell->getType() != PathfindCell::CELL_OBSTACLE) {
+			groundCell->setType(PathfindCell::CELL_BRIDGE_IMPASSABLE);
 		}
 	}
-	return;
 }
 
 
