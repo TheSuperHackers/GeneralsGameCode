@@ -40,6 +40,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Weapon.h"
+#include "GameLogic/Module/ContainModule.h"
 #include "GameLogic/Module/PropagandaTowerBehavior.h"
 #include "GameLogic/Module/BodyModule.h"
 
@@ -208,9 +209,12 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 #if RETAIL_COMPATIBLE_CRC
 	Bool contained = self->getContainedBy() && self->getContainedBy()->getContainedBy();
 #else
-	Bool contained = (self->isKindOf(KINDOF_PORTABLE_STRUCTURE)) ?
-		self->getContainedBy() && self->getContainedBy()->getContainedBy() :
-		self->getContainedBy() != NULL;
+	Object* container = self->getContainedBy();
+
+	while (container && container->getContainedBy())
+		container = container->getContainedBy();
+
+	Bool contained = (container && container->getContain()->isEnclosingContainerFor(self));
 #endif
 
 	if (contained)
