@@ -58,6 +58,7 @@ public:
 	Bool canGainExpForLevel(Int levelsToGain) const;															///< return same value as gainExpForLevel, but don't change anything
 	void setExperienceAndLevel(Int experienceIn, Bool provideFeedback = TRUE );
 	void setExperienceSink( ObjectID sink );											///< My experience actually goes to this person (loose couple)
+	ObjectID getExperienceSink() const;
 
 	Real getExperienceScalar() const { return m_experienceScalar; }
 	void setExperienceScalar( Real scalar ) { m_experienceScalar = scalar; }
