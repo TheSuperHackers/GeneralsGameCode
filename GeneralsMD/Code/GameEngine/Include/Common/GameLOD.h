@@ -177,8 +177,6 @@ public:
 	Bool setDynamicLODLevel(DynamicGameLODLevel level);	///< set the current dynamic LOD level.
 	DynamicGameLODLevel getDynamicLODLevel(void) { return m_currentDynamicLOD;}
 	void init(void);	///<initialize tables of preset LOD's.
-	void setCurrentTextureReduction(Int val) {m_currentTextureReduction = val;}
-	Int getCurrentTextureReduction(void) {return m_currentTextureReduction;}
 	Int getStaticGameLODIndex(AsciiString name);
 	Int getDynamicGameLODIndex(AsciiString name);
 	inline Bool isParticleSkipped(void);
@@ -230,7 +228,6 @@ protected:
 	Real m_floatBenchIndex;
 	Real m_memBenchIndex;
 	Real m_compositeBenchIndex;
-	Int m_currentTextureReduction;
 	Int m_reallyLowMHz;
 };
 

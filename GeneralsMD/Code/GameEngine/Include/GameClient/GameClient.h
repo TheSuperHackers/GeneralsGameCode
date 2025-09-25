@@ -143,7 +143,8 @@ public:
 
 	//---------------------------------------------------------------------------
 	virtual void setTeamColor( Int red, Int green, Int blue ) = 0;  ///< @todo superhack for demo, remove!!!
-	virtual void adjustLOD( Int adj ) = 0; ///< @todo hack for evaluation, remove.
+
+	virtual void setTextureLOD( Int level ) = 0;
 
 	virtual void releaseShadows(void);	///< frees all shadow resources used by this module - used by Options screen.
 	virtual void allocateShadows(void); ///< create shadow resources if not already present. Used by Options screen.

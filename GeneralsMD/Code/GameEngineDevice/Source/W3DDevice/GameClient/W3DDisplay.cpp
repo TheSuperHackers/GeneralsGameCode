@@ -795,14 +795,10 @@ void W3DDisplay::init( void )
 			TheGameLODManager->setStaticLODLevel(TheGameLODManager->getRecommendedStaticLODLevel());
 		}
 		else
-		{	//Static LOD level was applied during GameLOD manager init except for texture reduction
+		{
+			//Static LOD level was applied during GameLOD manager init except for texture reduction
 			//which needs to be applied here.
-			Int txtReduction=TheWritableGlobalData->m_textureReductionFactor;
-			if (txtReduction > 0)
-			{		WW3D::Set_Texture_Reduction(txtReduction,32);
-					//Tell LOD manager that texture reduction was applied.
-					TheGameLODManager->setCurrentTextureReduction(txtReduction);
-			}
+			TheGameClient->setTextureLOD(TheWritableGlobalData->m_textureReductionFactor);
 		}
 
 		if (TheGlobalData->m_displayGamma != 1.0f)
