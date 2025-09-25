@@ -84,6 +84,7 @@ private:
 	std::list< ObjectID > m_xferContainList;///< for loading of m_containList during post processing
 	Int m_containListSize;									///< size of the contain list
 	UnsignedInt m_tunnelCount;							///< How many tunnels have registered so we know when we should kill our contain list
+	UnsignedInt m_lastHealFrame;						///< Ensure we don't heal more than once per frame
 
 	ObjectID		m_curNemesisID;							///< If we have team(s) guarding a tunnel network system, this is one of the current targets.
 	UnsignedInt m_nemesisTimestamp;					///< We only keep nemesis for a couple of seconds.

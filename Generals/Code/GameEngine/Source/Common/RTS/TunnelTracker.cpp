@@ -254,7 +254,13 @@ void TunnelTracker::destroyObject( Object *obj, void * )
 	// heal all the objects within the tunnel system using the iterateContained function
 void TunnelTracker::healObjects(Real frames)
 {
+#if !RETAIL_COMPATIBLE_CRC
+	if (m_lastHealFrame == TheGameLogic->getFrame())
+		return; // Only heal objects once per frame.
+#endif
+
 	iterateContained(healObject, &frames, FALSE);
+	m_lastHealFrame = TheGameLogic->getFrame();
 }
 
 // ------------------------------------------------------------------------
