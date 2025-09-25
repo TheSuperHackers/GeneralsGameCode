@@ -550,7 +550,8 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
 	// Let EVA do her thing
 	SpecialPowerType type = getSpecialPowerModuleData()->m_specialPowerTemplate->getSpecialPowerType();
 
-  Player *localPlayer = ThePlayerList->getLocalPlayer();
+	Player *localPlayer = TheControlBar->getCurrentlyViewedPlayer();
+	Relationship relationship = TheControlBar->getCurrentlyViewedPlayerRelationship(getObject()->getTeam());
 
   // Only play the EVA sounds if this is not the local player, and the local player doesn't consider the
 	// person an enemy.
@@ -564,7 +565,7 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
       {
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_ParticleCannon);
       }
-      else if ( localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES )
+      else if (relationship != ENEMIES)
       {
         // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_ParticleCannon);
@@ -580,7 +581,7 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
       {
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_Nuke);
       }
-      else if ( localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES )
+      else if (relationship != ENEMIES)
       {
         // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_Nuke);
@@ -596,7 +597,7 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
       {
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_ScudStorm);
       }
-      else if ( localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES )
+      else if (relationship != ENEMIES)
       {
         // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_ScudStorm);
@@ -614,7 +615,7 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
       {
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_GPS_Scrambler);
       }
-      else if ( localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES )
+      else if (relationship != ENEMIES)
       {
         // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_GPS_Scrambler);
@@ -630,7 +631,7 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
       {
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_Sneak_Attack);
       }
-      else if ( localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES )
+      else if (relationship != ENEMIES)
       {
         // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_Sneak_Attack);
