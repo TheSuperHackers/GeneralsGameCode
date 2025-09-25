@@ -105,10 +105,6 @@ void TunnelContain::removeFromContain( Object *obj, Bool exposeStealthUnits )
 		return;
 
 	owningPlayer->getTunnelSystem()->removeFromContain( obj, exposeStealthUnits );
-
-#if !RETAIL_COMPATIBLE_CRC
-	addOrRemoveObjFromWorld(obj, TRUE);
-#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -176,6 +172,10 @@ void TunnelContain::onRemoving( Object *obj )
 	}
 
 	doUnloadSound();
+
+#if !RETAIL_COMPATIBLE_CRC
+	addOrRemoveObjFromWorld(obj, TRUE);
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
