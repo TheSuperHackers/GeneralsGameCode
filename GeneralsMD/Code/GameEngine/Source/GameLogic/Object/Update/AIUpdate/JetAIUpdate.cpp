@@ -1253,8 +1253,8 @@ protected:
 		// set on create. xfer->xferBool(&m_landing);
 		xfer->xferUnsignedInt(&m_whenTakeoff);
 		xfer->xferUnsignedInt(&m_whenTransfer);
-		xfer->xferBool(&m_afterburners);
 #if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
+		xfer->xferBool(&m_afterburners);
 		xfer->xferBool(&m_resetTimer);
 #endif
 		xfer->xferObjectID(&m_waitedForTaxiID);
@@ -1271,8 +1271,8 @@ private:
 	ObjectID			m_waitedForTaxiID;
 #if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
 	Bool					m_resetTimer;
-#endif
 	Bool					m_afterburners;
+#endif
 
 #if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
 	Bool findWaiter()
@@ -1339,15 +1339,15 @@ private:
 #endif
 
 public:
-	JetPauseBeforeTakeoffState( StateMachine *machine ) :
-		AIFaceState(machine, false),
-		m_whenTakeoff(0),
-		m_whenTransfer(0),
-		m_waitedForTaxiID(INVALID_ID),
+	JetPauseBeforeTakeoffState( StateMachine *machine )
+		: AIFaceState(machine, false)
+		, m_whenTakeoff(0)
+		, m_whenTransfer(0)
+		, m_waitedForTaxiID(INVALID_ID)
 #if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
-		m_resetTimer(false),
+		, m_resetTimer(false)
+		, m_afterburners(false)
 #endif
-		m_afterburners(false)
 	{
 		// nothing
 	}
@@ -1367,8 +1367,8 @@ public:
 		m_waitedForTaxiID = INVALID_ID;
 #if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
 		m_resetTimer = false;
-#endif
 		m_afterburners = false;
+#endif
 
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp == NULL)
@@ -1485,12 +1485,7 @@ public:
 
 			// Take off soon, but not before the runway transfer.
 			m_whenTakeoff = std::max(m_whenTransfer, now + jetAI->friend_getTakeoffPause());
-		}
-
-		if (!m_afterburners)
-		{
 			jetAI->friend_enableAfterburners(true);
-			m_afterburners = true;
 		}
 
 		DEBUG_ASSERTCRASH(m_whenTakeoff != 0, ("hmm"));
