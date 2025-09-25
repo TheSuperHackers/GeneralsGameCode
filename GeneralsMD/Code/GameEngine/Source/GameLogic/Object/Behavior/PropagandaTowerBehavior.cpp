@@ -229,9 +229,7 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 
 	if (contained)
 	{
-		// If our container is contained, we turn the heck off.  Seems like a weird specific check, but all of
-		// attacking is guarded by the same check in isPassengersAllowedToFire.  We similarly work in a container,
-		// but not in a double container.
+		// If our container or any parent containers are an enclosing container, we turn the heck off.
 		removeAllInfluence();
 		return UPDATE_SLEEP_NONE;
 	}
