@@ -212,11 +212,19 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 	Bool contained = self->getContainedBy() && self->getContainedBy()->getContainedBy();
 #else
 	Object* container = self->getContainedBy();
+	Bool contained = false;
 
-	while (container && container->getContainedBy())
+	while (container)
+	{
+		ContainModuleInterface* containModule = container->getContain();
+		if (containModule && containModule->isEnclosingContainerFor(self))
+		{
+			contained = true;
+			break;
+		}
+
 		container = container->getContainedBy();
-
-	Bool contained = (container && container->getContain()->isEnclosingContainerFor(self));
+	}
 #endif
 
 	if (contained)
