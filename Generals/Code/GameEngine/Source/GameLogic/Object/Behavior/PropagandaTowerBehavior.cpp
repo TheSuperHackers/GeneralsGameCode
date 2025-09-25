@@ -209,19 +209,16 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 #if RETAIL_COMPATIBLE_CRC
 	Bool contained = self->getContainedBy() && self->getContainedBy()->getContainedBy();
 #else
-	Object* container = self->getContainedBy();
 	Bool contained = false;
 
-	while (container)
+	for (Object* child = self, *container = self->getContainedBy(); container; child = container, container = container->getContainedBy())
 	{
 		ContainModuleInterface* containModule = container->getContain();
-		if (containModule && containModule->isEnclosingContainerFor(self))
+		if (containModule && containModule->isEnclosingContainerFor(child))
 		{
 			contained = true;
 			break;
 		}
-
-		container = container->getContainedBy();
 	}
 #endif
 
