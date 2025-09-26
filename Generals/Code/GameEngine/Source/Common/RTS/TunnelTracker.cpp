@@ -334,13 +334,10 @@ void TunnelTracker::updateFullHealTime()
 		const ContainModuleInterface* contain = tunnelObj->getContain();
 		DEBUG_ASSERTCRASH(contain != NULL, ("Contain module is NULL"));
 
-		if (!contain || !contain->isTunnelContain())
+		if (!contain->isTunnelContain())
 			continue;
 
 		const TunnelContain* tunnelContain = static_cast<const TunnelContain*>(contain);
-		if (!tunnelContain)
-			continue;
-
 		const UnsignedInt framesForFullHeal = tunnelContain->getFullTimeForHeal();
 		if (framesForFullHeal < minFrames)
 			minFrames = framesForFullHeal;
