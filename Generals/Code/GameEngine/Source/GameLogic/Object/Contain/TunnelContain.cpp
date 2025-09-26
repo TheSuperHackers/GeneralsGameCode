@@ -163,12 +163,16 @@ void TunnelContain::onRemoving( Object *obj )
 	obj->clearDisabled( DISABLED_HELD );
 
 	/// place the object in the world at position of the container m_object
+#if RETAIL_COMPATIBLE_CRC
 	ThePartitionManager->registerObject( obj );
+#endif
 	obj->setPosition( getObject()->getPosition() );
 	if( obj->getDrawable() )
 	{
 		obj->setSafeOcclusionFrame(TheGameLogic->getFrame()+obj->getTemplate()->getOcclusionDelay());
+#if RETAIL_COMPATIBLE_CRC
 		obj->getDrawable()->setDrawableHidden( false );
+#endif
 	}
 
 	doUnloadSound();
