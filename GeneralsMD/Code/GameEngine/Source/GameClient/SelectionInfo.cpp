@@ -382,8 +382,11 @@ Bool addDrawableToList( Drawable *draw, void *userData )
 	// enemy selection logic to exit early (only 1 enemy unit can be selected at a time). Some players
 	// exploit this bug to determine if a transport contains passengers and consider this an important
 	// feature and an advanced skill to pull off, so we must leave the exploit.
-	if (draw->getObject() && draw->getObject()->getContain() && draw->getObject()->getContain()->getContainCount() > 0)
-		pds->drawableListToFill->push_back(draw); // Just add the unit twice to prevent enemy selections
+	const Object *obj = draw->getObject();
+	if (obj)
+		if (obj->getControllingPlayer() != ThePlayerList->getLocalPlayer())
+			if (obj->getContain() && draw->getObject()->getContain()->getContainCount() > 0)
+				return FALSE;
 #endif
 
 	pds->drawableListToFill->push_back(draw);
