@@ -55,7 +55,7 @@ TunnelTracker::TunnelTracker()
 	m_curNemesisID = INVALID_ID;
 	m_nemesisTimestamp = 0;
 	m_framesForFullHeal = 0;
-	m_needsFullHealTimeUpdate = true;
+	m_needsFullHealTimeUpdate = false;
 }
 
 // ------------------------------------------------------------------------
@@ -403,6 +403,7 @@ void TunnelTracker::xfer( Xfer *xfer )
 
 		}
 
+		m_needsFullHealTimeUpdate = true;
 	}
 
 	// tunnel count
