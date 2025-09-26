@@ -172,6 +172,7 @@ void TunnelContain::onRemoving( Object *obj )
 		obj->getDrawable()->setDrawableHidden( false );
 	}
 #else
+	// TheSuperHackers @bugfix Now correctly adds the objects to the world without issues with shrouded portable structures.
 	obj->setPosition(getObject()->getPosition());
 	obj->setSafeOcclusionFrame(TheGameLogic->getFrame() + obj->getTemplate()->getOcclusionDelay());
 	addOrRemoveObjFromWorld(obj, TRUE);
