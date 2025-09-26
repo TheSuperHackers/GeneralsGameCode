@@ -242,21 +242,19 @@ void TunnelContain::onRemoving( Object *obj )
 	/// place the object in the world at position of the container m_object
 #if RETAIL_COMPATIBLE_CRC
 	ThePartitionManager->registerObject( obj );
-#endif
 	obj->setPosition( getObject()->getPosition() );
 	if( obj->getDrawable() )
 	{
 		obj->setSafeOcclusionFrame(TheGameLogic->getFrame()+obj->getTemplate()->getOcclusionDelay());
-#if RETAIL_COMPATIBLE_CRC
 		obj->getDrawable()->setDrawableHidden( false );
-#endif
 	}
-
-	doUnloadSound();
-
-#if !RETAIL_COMPATIBLE_CRC
+#else
+	obj->setPosition(getObject()->getPosition());
+	obj->setSafeOcclusionFrame(TheGameLogic->getFrame() + obj->getTemplate()->getOcclusionDelay());
 	addOrRemoveObjFromWorld(obj, TRUE);
 #endif
+
+	doUnloadSound();
 }
 
 //-------------------------------------------------------------------------------------------------
