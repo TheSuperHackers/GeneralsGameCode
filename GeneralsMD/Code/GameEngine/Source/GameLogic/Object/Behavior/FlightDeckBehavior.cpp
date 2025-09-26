@@ -600,6 +600,21 @@ void FlightDeckBehavior::releaseSpace(ObjectID id)
 }
 
 //-------------------------------------------------------------------------------------------------
+Int FlightDeckBehavior::getRunwayIndex(ObjectID id)
+{
+	purgeDead();
+
+	for (std::vector<FlightDeckInfo>::iterator it = m_spaces.begin(); it != m_spaces.end(); ++it)
+	{
+		if (it->m_objectInSpace == id)
+		{
+			return it->m_runway;
+		}
+	}
+	return InvalidRunway;
+}
+
+//-------------------------------------------------------------------------------------------------
 ObjectID FlightDeckBehavior::getRunwayReservation( Int runway, RunwayReservationType type )
 {
 	buildInfo();
