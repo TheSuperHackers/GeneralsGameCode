@@ -372,21 +372,61 @@ Bool OptionPreferences::getMoveScrollAnchor(void)
 	return FALSE;
 }
 
+Bool OptionPreferences::getCursorCaptureEnabledInWindowedGame() const
+{
+	OptionPreferences::const_iterator it = find("CursorCaptureEnabledInWindowedGame");
+	if (it == end())
+		return (CursorCaptureMode_Default & CursorCaptureMode_EnabledInWindowedGame) != 0;
+
+	if (stricmp(it->second.str(), "yes") == 0)
+		return TRUE;
+
+	return FALSE;
+}
+
+Bool OptionPreferences::getCursorCaptureEnabledInWindowedMenu() const
+{
+	OptionPreferences::const_iterator it = find("CursorCaptureEnabledInWindowedMenu");
+	if (it == end())
+		return (CursorCaptureMode_Default & CursorCaptureMode_EnabledInWindowedMenu) != 0;
+
+	if (stricmp(it->second.str(), "yes") == 0)
+		return TRUE;
+
+	return FALSE;
+}
+
+Bool OptionPreferences::getCursorCaptureEnabledInFullscreenGame() const
+{
+	OptionPreferences::const_iterator it = find("CursorCaptureEnabledInFullscreenGame");
+	if (it == end())
+		return (CursorCaptureMode_Default & CursorCaptureMode_EnabledInFullscreenGame) != 0;
+
+	if (stricmp(it->second.str(), "yes") == 0)
+		return TRUE;
+
+	return FALSE;
+}
+
+Bool OptionPreferences::getCursorCaptureEnabledInFullscreenMenu() const
+{
+	OptionPreferences::const_iterator it = find("CursorCaptureEnabledInFullscreenMenu");
+	if (it == end())
+		return (CursorCaptureMode_Default & CursorCaptureMode_EnabledInFullscreenMenu) != 0;
+
+	if (stricmp(it->second.str(), "yes") == 0)
+		return TRUE;
+
+	return FALSE;
+}
+
 CursorCaptureMode OptionPreferences::getCursorCaptureMode() const
 {
-	CursorCaptureMode mode = CursorCaptureMode_Default;
-	OptionPreferences::const_iterator it = find("CursorCaptureMode");
-	if (it != end())
-	{
-		for (Int i = 0; i < CursorCaptureMode_Count; ++i)
-		{
-			if (stricmp(it->second.str(), TheCursorCaptureModeNames[i]) == 0)
-			{
-				mode = static_cast<CursorCaptureMode>(i);
-				break;
-			}
-		}
-	}
+	CursorCaptureMode mode = 0;
+	mode |= getCursorCaptureEnabledInWindowedGame() ? CursorCaptureMode_EnabledInWindowedGame : 0;
+	mode |= getCursorCaptureEnabledInWindowedMenu() ? CursorCaptureMode_EnabledInWindowedMenu : 0;
+	mode |= getCursorCaptureEnabledInFullscreenGame() ? CursorCaptureMode_EnabledInFullscreenGame : 0;
+	mode |= getCursorCaptureEnabledInFullscreenMenu() ? CursorCaptureMode_EnabledInFullscreenMenu : 0;
 	return mode;
 }
 
@@ -1233,7 +1273,10 @@ static void saveOptions( void )
 	// TheSuperHackers @todo Add combo box ?
 	{
 		CursorCaptureMode mode = pref->getCursorCaptureMode();
-		(*pref)["CursorCaptureMode"] = TheCursorCaptureModeNames[mode];
+		(*pref)["CursorCaptureEnabledInWindowedGame"] = (mode & CursorCaptureMode_EnabledInWindowedGame) ? "yes" : "no";
+		(*pref)["CursorCaptureEnabledInWindowedMenu"] = (mode & CursorCaptureMode_EnabledInWindowedMenu) ? "yes" : "no";
+		(*pref)["CursorCaptureEnabledInFullscreenGame"] = (mode & CursorCaptureMode_EnabledInFullscreenGame) ? "yes" : "no";
+		(*pref)["CursorCaptureEnabledInFullscreenMenu"] = (mode & CursorCaptureMode_EnabledInFullscreenMenu) ? "yes" : "no";
 		TheMouse->setCursorCaptureMode(mode);
 	}
 

@@ -38,7 +38,7 @@
 //-----------------------------------------------------------------------------
 #include "Common/STLTypedefs.h"
 
-enum CursorCaptureMode CPP_11(: Int);
+typedef UnsignedInt CursorCaptureMode;
 typedef UnsignedInt ScreenEdgeScrollMode;
 
 //-----------------------------------------------------------------------------
@@ -95,6 +95,10 @@ public:
 	Real getScrollFactor(void);								// convenience function
 	Bool getDrawScrollAnchor(void);
 	Bool getMoveScrollAnchor(void);
+	Bool getCursorCaptureEnabledInWindowedGame() const;
+	Bool getCursorCaptureEnabledInWindowedMenu() const;
+	Bool getCursorCaptureEnabledInFullscreenGame() const;
+	Bool getCursorCaptureEnabledInFullscreenMenu() const;
 	CursorCaptureMode getCursorCaptureMode() const;
 	Bool getScreenEdgeScrollEnabledInWindowedApp() const;
 	Bool getScreenEdgeScrollEnabledInFullscreenApp() const;

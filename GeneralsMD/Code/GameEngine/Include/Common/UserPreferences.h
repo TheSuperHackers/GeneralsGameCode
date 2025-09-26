@@ -39,8 +39,8 @@
 #include "Common/STLTypedefs.h"
 
 class Money;
-typedef UnsignedInt ScreenEdgeScrollMode;
 typedef UnsignedInt CursorCaptureMode;
+typedef UnsignedInt ScreenEdgeScrollMode;
 
 //-----------------------------------------------------------------------------
 // PUBLIC TYPES ///////////////////////////////////////////////////////////////

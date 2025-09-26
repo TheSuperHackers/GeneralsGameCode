@@ -53,14 +53,6 @@
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 Mouse *TheMouse = NULL;
 
-const char* const TheCursorCaptureModeNames[] = {
-	"None",
-	"InGame",
-	"Always",
-	"Auto",
-};
-static_assert(ARRAY_SIZE(TheCursorCaptureModeNames) == CursorCaptureMode_Count, "Incorrect array size");
-
 const char *const Mouse::RedrawModeName[] = {
 	"Mouse:Windows",
 	"Mouse:W3D",
@@ -70,7 +62,6 @@ const char *const Mouse::RedrawModeName[] = {
 
 const char *const Mouse::CursorCaptureBlockReasonNames[] = {
 	"CursorCaptureBlockReason_NoInit",
-	"CursorCaptureBlockReason_NoGame",
 	"CursorCaptureBlockReason_Paused",
 	"CursorCaptureBlockReason_Unfocused",
 };
@@ -552,8 +543,8 @@ Mouse::Mouse( void )
 
 	m_cursorCaptureMode = CursorCaptureMode_Default;
 
-	m_captureBlockReasonBits = (1 << CursorCaptureBlockReason_NoInit) | (1 << CursorCaptureBlockReason_NoGame);
-	DEBUG_LOG(("Mouse::Mouse: m_blockCaptureReason=CursorCaptureBlockReason_NoInit|CursorCaptureBlockReason_NoGame"));
+	m_captureBlockReasonBits = (1 << CursorCaptureBlockReason_NoInit);
+	DEBUG_LOG(("Mouse::Mouse: m_blockCaptureReason=CursorCaptureBlockReason_NoInit"));
 
 }
 
@@ -653,17 +644,7 @@ void Mouse::mouseNotifyResolutionChange( void )
 //-------------------------------------------------------------------------------------------------
 void Mouse::onGameModeChanged(GameMode prev, GameMode next)
 {
-	const Bool wasInteractiveGame = GameLogic::isInInteractiveGame(prev);
-	const Bool isInteractiveGame = GameLogic::isInInteractiveGame(next);
-
-	if (wasInteractiveGame && !isInteractiveGame)
-	{
-		blockCapture(CursorCaptureBlockReason_NoGame);
-	}
-	else if (!wasInteractiveGame && isInteractiveGame)
-	{
-		unblockCapture(CursorCaptureBlockReason_NoGame);
-	}
+	refreshCursorCapture();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1072,23 +1053,40 @@ void Mouse::initCapture()
 // ------------------------------------------------------------------------------------------------
 Bool Mouse::canCapture() const
 {
-	constexpr const CursorCaptureBlockReasonInt noGameBits = CursorCaptureBlockReason_NoGame | CursorCaptureBlockReason_Paused;
-
-	switch (m_cursorCaptureMode)
-	{
-	case CursorCaptureMode_None:
+	if (m_captureBlockReasonBits != 0)
 		return false;
-	case CursorCaptureMode_InGame:
-		return (m_captureBlockReasonBits == 0);
-	case CursorCaptureMode_Always:
-		return (m_captureBlockReasonBits & ~noGameBits) == 0;
-	case CursorCaptureMode_Auto:
-	default:
-		if (TheDisplay == NULL || TheDisplay->getWindowed())
-			return (m_captureBlockReasonBits == 0);
+
+	DEBUG_ASSERTCRASH(TheDisplay != NULL, ("The Display is NULL"));
+	const Bool inInteractiveGame = TheGameLogic && TheGameLogic->isInInteractiveGame();
+
+	if (TheDisplay->getWindowed())
+	{
+		if (inInteractiveGame)
+		{
+			if ((m_cursorCaptureMode & CursorCaptureMode_EnabledInWindowedGame) == 0)
+				return false;
+		}
 		else
-			return (m_captureBlockReasonBits & ~noGameBits) == 0;
+		{
+			if ((m_cursorCaptureMode & CursorCaptureMode_EnabledInWindowedMenu) == 0)
+				return false;
+		}
 	}
+	else
+	{
+		if (inInteractiveGame)
+		{
+			if ((m_cursorCaptureMode & CursorCaptureMode_EnabledInFullscreenGame) == 0)
+				return false;
+		}
+		else
+		{
+			if ((m_cursorCaptureMode & CursorCaptureMode_EnabledInFullscreenMenu) == 0)
+				return false;
+		}
+	}
+
+	return true;
 }
 
 // ------------------------------------------------------------------------------------------------
