@@ -63,12 +63,8 @@ SelectionInfo::SelectionInfo() :
 { }
 
 //-------------------------------------------------------------------------------------------------
-PickDrawableStruct::PickDrawableStruct() : drawableListToFill(NULL)
+PickDrawableStruct::PickDrawableStruct() : drawableListToFill(NULL), isPointSelection(FALSE)
 {
-	//Added By Sadullah Nader
-	//Initializations inserted
-	drawableListToFill = FALSE;
-	//
 	forceAttackMode = TheInGameUI->isInForceAttackMode();
 	UnsignedInt pickType = getPickTypesForContext(forceAttackMode);
 	translatePickTypesToKindof(pickType, kindofsToMatch);
@@ -365,7 +361,7 @@ Bool addDrawableToList( Drawable *draw, void *userData )
     const Object *obj = draw->getObject();
     if ( obj && obj->getContainedBy() )//hmm, interesting... he is not selectable but he is contained
     {// What we are after here is to propagate the selection the selection ti the container
-      // if the cobtainer is non-enclosing... see also selectionxlat, in the left_click case
+      // if the container is non-enclosing... see also SelectionXlat, in the left_click case
 
       ContainModuleInterface *contain = obj->getContainedBy()->getContain();
       Drawable *containDraw = obj->getContainedBy()->getDrawable();
@@ -382,11 +378,14 @@ Bool addDrawableToList( Drawable *draw, void *userData )
 	// enemy selection logic to exit early (only 1 enemy unit can be selected at a time). Some players
 	// exploit this bug to determine if a transport contains passengers and consider this an important
 	// feature and an advanced skill to pull off, so we must leave the exploit.
-	const Object *obj = draw->getObject();
-	if (obj)
-		if (obj->getControllingPlayer() != ThePlayerList->getLocalPlayer())
-			if (obj->getContain() && draw->getObject()->getContain()->getContainCount() > 0)
-				return FALSE;
+	if (!pds->isPointSelection)
+	{
+		const Object *obj = draw->getObject();
+		if (obj)
+			if (obj->getControllingPlayer() != ThePlayerList->getLocalPlayer())
+				if (obj->getContain() && draw->getObject()->getContain()->getContainCount() > 0)
+					return FALSE;
+	}
 #endif
 
 	pds->drawableListToFill->push_back(draw);

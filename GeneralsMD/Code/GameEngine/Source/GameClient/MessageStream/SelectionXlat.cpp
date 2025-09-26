@@ -608,6 +608,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			DrawableList drawablesThatWillSelect;
 			PickDrawableStruct pds;
 			pds.drawableListToFill = &drawablesThatWillSelect;
+			pds.isPointSelection = isPoint;
 			TheTacticalView->iterateDrawablesInRegion(&selectionRegion, addDrawableToList, &pds);
 
 			if (drawablesThatWillSelect.empty())
