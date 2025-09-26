@@ -333,10 +333,12 @@ void TunnelTracker::updateFullHealTime()
 			continue;
 
 		const ContainModuleInterface* contain = tunnelObj->getContain();
-		if (!contain->isTunnelContain())
+		DEBUG_ASSERTCRASH(contain != NULL, ("Contain module is NULL"));
+
+		if (!contain || !contain->isTunnelContain())
 			continue;
 
-		const TunnelContain* tunnelContain = static_cast<const TunnelContain*>(contain); // Downcast is not ideal
+		const TunnelContain* tunnelContain = static_cast<const TunnelContain*>(contain);
 		if (!tunnelContain)
 			continue;
 
