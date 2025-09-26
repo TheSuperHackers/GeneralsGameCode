@@ -86,6 +86,7 @@ public:
 	virtual Bool isGarrisonable() const = 0;
 	virtual Bool isSpecialZeroSlotContainer() const = 0;
 	virtual Bool isHealContain() const = 0;
+	virtual Bool isTunnelContain() const = 0;
 	virtual Bool isImmuneToClearBuildingAttacks() const = 0;
 
 
