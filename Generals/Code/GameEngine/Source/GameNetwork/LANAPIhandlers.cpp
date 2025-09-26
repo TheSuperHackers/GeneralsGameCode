@@ -307,6 +307,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 				}
 			}
 
+			// TheSuperHackers @bugfix Stubbjax 26/09/2025 Players can now join open slots regardless of starting spots on the map.
 			for (player = 0; canJoin && player<MAX_SLOTS; ++player)
 			{
 				if (m_currentGame->getLANSlot(player)->isOpen())
