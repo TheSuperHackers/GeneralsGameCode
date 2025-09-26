@@ -53,6 +53,7 @@ public:
 	Bool m_preferNearestTargets;
 	Real m_noTargetsScatterRadius;
 	Real m_noTargetsScatterMinRadius;
+	Real m_noTargetsScatterMaxAngle;
 	Bool m_attackGroundWhenNoTargets;
 
 	Real m_triggerDistanceToTarget;

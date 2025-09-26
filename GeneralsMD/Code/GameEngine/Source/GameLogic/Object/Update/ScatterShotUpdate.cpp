@@ -89,6 +89,7 @@ ScatterShotUpdateModuleData::ScatterShotUpdateModuleData()
 		{ "PreferNearestTargets", INI::parseBool, NULL, offsetof(ScatterShotUpdateModuleData, m_preferNearestTargets) },
 		{ "NoTargetsScatterRadius", INI::parseReal, NULL, offsetof(ScatterShotUpdateModuleData, m_noTargetsScatterRadius) },
 		{ "NoTargetsScatterMinRadius", INI::parseReal, NULL, offsetof(ScatterShotUpdateModuleData, m_noTargetsScatterMinRadius) },
+		{ "NoTargetsScatterMaxAngle", INI::parseAngleReal, NULL, offsetof(ScatterShotUpdateModuleData, m_noTargetsScatterMaxAngle) },
 		{ "AttackGroundWhenNoTargets", INI::parseBool, NULL, offsetof(ScatterShotUpdateModuleData, m_attackGroundWhenNoTargets) },
 
 		{ "TriggerDistanceToTarget", INI::parseReal, NULL, offsetof(ScatterShotUpdateModuleData, m_triggerDistanceToTarget) },
@@ -403,7 +404,16 @@ void ScatterShotUpdate::triggerScatterShot(void)
 		targetPos.y = pos->y;
 
 		Real scatterRadius = GameLogicRandomValueReal(MAX(data->m_noTargetsScatterMinRadius, data->m_targetMinRadius), data->m_noTargetsScatterRadius);
-		Real scatterAngleRadian = GameLogicRandomValueReal(0, 2 * PI);
+
+		Real scatterAngleRadian;
+		if (data->m_noTargetsScatterMaxAngle > 0) {
+			Real orientation = getObject()->getOrientation();
+			scatterAngleRadian = normalizeAngle(GameLogicRandomValueReal(orientation - data->m_noTargetsScatterMaxAngle, orientation + data->m_noTargetsScatterMaxAngle));
+		}
+		else
+		{
+			scatterAngleRadian = GameLogicRandomValueReal(0, 2 * PI);
+		} 
 
 		Coord3D firingOffset;
 		firingOffset.zero();
