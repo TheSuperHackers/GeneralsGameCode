@@ -54,6 +54,8 @@ TunnelTracker::TunnelTracker()
 	m_containListSize = 0;
 	m_curNemesisID = INVALID_ID;
 	m_nemesisTimestamp = 0;
+	m_framesForFullHeal = 0;
+	m_needsFullHealTimeUpdate = false;
 }
 
 // ------------------------------------------------------------------------
@@ -211,6 +213,7 @@ void TunnelTracker::onTunnelCreated( const Object *newTunnel )
 {
 	m_tunnelCount++;
 	m_tunnelIDs.push_back( newTunnel->getID() );
+	m_needsFullHealTimeUpdate = true;
 }
 
 // ------------------------------------------------------------------------
@@ -218,6 +221,7 @@ void TunnelTracker::onTunnelDestroyed( const Object *deadTunnel )
 {
 	m_tunnelCount--;
 	m_tunnelIDs.remove( deadTunnel->getID() );
+	m_needsFullHealTimeUpdate = true;
 
 	if( m_tunnelCount == 0 )
 	{
@@ -252,16 +256,23 @@ void TunnelTracker::destroyObject( Object *obj, void * )
 
 // ------------------------------------------------------------------------
 	// heal all the objects within the tunnel system using the iterateContained function
+#if RETAIL_COMPATIBLE_CRC
 void TunnelTracker::healObjects(Real frames)
 {
-#if !RETAIL_COMPATIBLE_CRC
-	if (m_lastHealFrame == TheGameLogic->getFrame())
-		return; // Only heal objects once per frame.
-#endif
-
 	iterateContained(healObject, &frames, FALSE);
-	m_lastHealFrame = TheGameLogic->getFrame();
 }
+#else
+void TunnelTracker::healObjects()
+{
+	if (m_needsFullHealTimeUpdate)
+	{
+		updateFullHealTime();
+		m_needsFullHealTimeUpdate = false;
+	}
+
+	iterateContained(healObject, &m_framesForFullHeal, FALSE);
+}
+#endif
 
 // ------------------------------------------------------------------------
 	// heal one object within the tunnel network system
@@ -269,7 +280,11 @@ void TunnelTracker::healObject( Object *obj, void *frames)
 {
 
 	//get the number of frames to heal
+#if RETAIL_COMPATIBLE_CRC
 	Real *framesForFullHeal = (Real*)frames;
+#else
+	UnsignedInt* framesForFullHeal = (UnsignedInt*)frames;
+#endif
 
 	// setup the healing damageInfo structure with all but the amount
 	DamageInfo healInfo;
@@ -304,6 +319,29 @@ void TunnelTracker::healObject( Object *obj, void *frames)
 		body->attemptHealing( &healInfo );
 
 	}
+}
+
+void TunnelTracker::updateFullHealTime()
+{
+	UnsignedInt minFrames = 0;
+
+	for (std::list<ObjectID>::const_iterator it = m_tunnelIDs.begin(); it != m_tunnelIDs.end(); ++it)
+	{
+		const Object* tunnelObj = TheGameLogic->findObjectByID(*it);
+		if (!tunnelObj)
+			continue;
+
+		const ContainModuleInterface* contain = tunnelObj->getContain();
+		const TunnelContain* tunnelContain = dynamic_cast<const TunnelContain*>(contain); // Downcast is not ideal
+		if (!tunnelContain)
+			continue;
+
+		const UnsignedInt framesForFullHeal = tunnelContain->getFullTimeForHeal();
+		if (minFrames == 0 || framesForFullHeal < minFrames)
+			minFrames = framesForFullHeal;
+	}
+
+	m_framesForFullHeal = minFrames;
 }
 
 // ------------------------------------------------------------------------------------------------

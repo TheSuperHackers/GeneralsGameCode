@@ -716,6 +716,12 @@ void Player::update()
 			}
 		}
 	}
+
+#if !RETAIL_COMPATIBLE_CRC
+	TunnelTracker* tunnelSystem = getTunnelSystem();
+	if (tunnelSystem)
+		tunnelSystem->healObjects();
+#endif
 }
 
 //=============================================================================

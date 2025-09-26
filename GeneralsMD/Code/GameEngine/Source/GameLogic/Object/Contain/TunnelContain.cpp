@@ -321,7 +321,11 @@ const ContainedItemsList* TunnelContain::getContainedItemsList() const
 	return NULL;
 }
 
-
+UnsignedInt TunnelContain::getFullTimeForHeal(void) const
+{
+	const TunnelContainModuleData* modData = getTunnelContainModuleData();
+	return modData->m_framesForFullHeal;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
@@ -521,7 +525,6 @@ UpdateSleepTime TunnelContain::update( void )
 {
 	// extending functionality to heal the units within the tunnel system
 	OpenContain::update();
-	const TunnelContainModuleData *modData = getTunnelContainModuleData();
 
 	Object *obj = getObject();
 	Player *controllingPlayer = NULL;
@@ -532,10 +535,13 @@ UpdateSleepTime TunnelContain::update( void )
 	if (controllingPlayer)
 	{
 		TunnelTracker *tunnelSystem = controllingPlayer->getTunnelSystem();
+#if RETAIL_COMPATIBLE_CRC
 		if (tunnelSystem)
 		{
+			const TunnelContainModuleData* modData = getTunnelContainModuleData();
 			tunnelSystem->healObjects(modData->m_framesForFullHeal);
 		}
+#endif
 
 		// check for attacked.
 		BodyModuleInterface *body = obj->getBodyModule();

@@ -666,6 +666,12 @@ void Player::update()
 			team->updateGenericScripts();
 		}
 	}
+
+#if !RETAIL_COMPATIBLE_CRC
+	TunnelTracker* tunnelSystem = getTunnelSystem();
+	if (tunnelSystem)
+		tunnelSystem->healObjects();
+#endif
 }
 
 //=============================================================================
