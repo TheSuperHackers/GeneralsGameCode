@@ -408,7 +408,7 @@ Bool OptionPreferences::getCursorCaptureEnabledInWindowedGame() const
 {
 	OptionPreferences::const_iterator it = find("CursorCaptureEnabledInWindowedGame");
 	if (it == end())
-		return (CursorCaptureMode_Default & CursorCaptureMode_EnabledInWindowedGame);
+		return (CursorCaptureMode_Default & CursorCaptureMode_EnabledInWindowedGame) != 0;
 
 	if (stricmp(it->second.str(), "yes") == 0)
 		return TRUE;
@@ -420,7 +420,7 @@ Bool OptionPreferences::getCursorCaptureEnabledInWindowedMenu() const
 {
 	OptionPreferences::const_iterator it = find("CursorCaptureEnabledInWindowedMenu");
 	if (it == end())
-		return (CursorCaptureMode_Default & CursorCaptureMode_EnabledInWindowedMenu);
+		return (CursorCaptureMode_Default & CursorCaptureMode_EnabledInWindowedMenu) != 0;
 
 	if (stricmp(it->second.str(), "yes") == 0)
 		return TRUE;
@@ -432,7 +432,7 @@ Bool OptionPreferences::getCursorCaptureEnabledInFullscreenGame() const
 {
 	OptionPreferences::const_iterator it = find("CursorCaptureEnabledInFullscreenGame");
 	if (it == end())
-		return (CursorCaptureMode_Default & CursorCaptureMode_EnabledInFullscreenGame);
+		return (CursorCaptureMode_Default & CursorCaptureMode_EnabledInFullscreenGame) != 0;
 
 	if (stricmp(it->second.str(), "yes") == 0)
 		return TRUE;
@@ -444,7 +444,7 @@ Bool OptionPreferences::getCursorCaptureEnabledInFullscreenMenu() const
 {
 	OptionPreferences::const_iterator it = find("CursorCaptureEnabledInFullscreenMenu");
 	if (it == end())
-		return (CursorCaptureMode_Default & CursorCaptureMode_EnabledInFullscreenMenu);
+		return (CursorCaptureMode_Default & CursorCaptureMode_EnabledInFullscreenMenu) != 0;
 
 	if (stricmp(it->second.str(), "yes") == 0)
 		return TRUE;
