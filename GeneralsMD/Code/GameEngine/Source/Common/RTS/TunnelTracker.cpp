@@ -324,7 +324,7 @@ void TunnelTracker::healObject( Object *obj, void *frames)
 
 void TunnelTracker::updateFullHealTime()
 {
-	UnsignedInt minFrames = 0;
+	UnsignedInt minFrames = ~0u;
 
 	for (std::list<ObjectID>::const_iterator it = m_tunnelIDs.begin(); it != m_tunnelIDs.end(); ++it)
 	{
@@ -338,7 +338,7 @@ void TunnelTracker::updateFullHealTime()
 			continue;
 
 		const UnsignedInt framesForFullHeal = tunnelContain->getFullTimeForHeal();
-		if (minFrames == 0 || framesForFullHeal < minFrames)
+		if (framesForFullHeal < minFrames)
 			minFrames = framesForFullHeal;
 	}
 
