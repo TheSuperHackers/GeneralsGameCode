@@ -234,7 +234,7 @@ void TerrainModal::updateTextures(void)
 		}
 		const char *tName = WorldHeightMapEdit::getTexClassName(i).str();
 		char path[_MAX_PATH];
-		strncpy(path, tName, _MAX_PATH-2);
+		strlcpy(path, tName, _MAX_PATH);
 		addTerrain(path, i, TVI_ROOT);
 	}
 	setTerrainTreeViewSelection(TVI_ROOT, m_currentFgTexture);

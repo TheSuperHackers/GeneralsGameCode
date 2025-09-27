@@ -46,6 +46,7 @@
 #include <assert.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
+#include "stringex.h"
 #include "Common/Debug.h"
 #include "WWLib/TARGA.H"
 #include "Resource.h"
@@ -844,8 +845,7 @@ void ImagePacker::addImage( char *path )
 	strcpy( info->m_filenameOnly, c );
 
 	info->m_filenameOnlyNoExt = new char[ nameLen - 4 + 1 ];
-	strncpy( info->m_filenameOnlyNoExt, c, nameLen - 4 );
-	info->m_filenameOnlyNoExt[ nameLen - 4 ] = '\0';
+	strlcpy( info->m_filenameOnlyNoExt, c, nameLen - 4 + 1 );
 
 	// assign to array
 	m_imageList[ m_imageCount++ ] = info;
