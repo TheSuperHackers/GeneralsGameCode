@@ -590,15 +590,20 @@ void	Render2DClass::Add_Outline( const RectClass & rect, float width, unsigned l
 
 void	Render2DClass::Add_Outline( const RectClass & rect, float width, const RectClass & uv, unsigned long color )
 {
-	//
-	//	Pretty straight forward, simply add the four side of the rectangle as lines.
-	//
-	/** @todo colin, I had to tweak these to get precise line drawing, as we want
-	the UV bias on, but it just isn't lining up */
-	Add_Line (Vector2 (rect.Left + 1, rect.Bottom),	Vector2 (rect.Left + 1, rect.Top + 1),		width, color);
-	Add_Line (Vector2 (rect.Left, rect.Top + 1),		Vector2 (rect.Right - 1, rect.Top + 1),			width, color);
-	Add_Line (Vector2 (rect.Right, rect.Top),		Vector2 (rect.Right, rect.Bottom - 1),		width, color);
-	Add_Line (Vector2 (rect.Right, rect.Bottom),	Vector2 (rect.Left + 1, rect.Bottom),	width, color);
+	//	Pretty straight forward, add the four side of the rectangle as lines.
+	float lineWidthOffset = (width / 2);
+
+	// TheSuperHackers @bugfix fixed the lines so they overlap eachother in the corners making a full rectangle
+	// Also offset the lines by half of their thickness so the border grows into the center of the rectangle
+
+	// Draw left
+	Add_Line (Vector2 (rect.Left + lineWidthOffset, rect.Bottom), Vector2 (rect.Left + lineWidthOffset, rect.Top), width, color);
+	// Draw top
+	Add_Line (Vector2 (rect.Left, rect.Top + lineWidthOffset), Vector2 (rect.Right, rect.Top + lineWidthOffset), width, color);
+	// Draw right
+	Add_Line (Vector2 (rect.Right - lineWidthOffset, rect.Top), Vector2 (rect.Right - lineWidthOffset, rect.Bottom), width, color);
+	// Draw bottom
+	Add_Line (Vector2 (rect.Right, rect.Bottom - lineWidthOffset), Vector2 (rect.Left, rect.Bottom - lineWidthOffset), width, color);
 }
 
 void Render2DClass::Render(void)
