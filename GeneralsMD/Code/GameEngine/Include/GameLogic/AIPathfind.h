@@ -833,6 +833,8 @@ protected:
 
 	void checkChangeLayers(PathfindCell *parentCell);
 
+	bool checkCellOutisdeExtents(ICoord2D* cell);
+
 #if defined(RTS_DEBUG)
 	void doDebugIcons(void) ;
 #endif
