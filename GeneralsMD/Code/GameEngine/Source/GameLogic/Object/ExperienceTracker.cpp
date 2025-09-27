@@ -81,6 +81,12 @@ void ExperienceTracker::setExperienceSink( ObjectID sink )
 }
 
 //-------------------------------------------------------------------------------------------------
+ObjectID ExperienceTracker::getExperienceSink() const
+{
+	return m_experienceSink;
+}
+
+//-------------------------------------------------------------------------------------------------
 // Set Level to AT LEAST this... if we are already >= this level, do nothing.
 void ExperienceTracker::setMinVeterancyLevel( VeterancyLevel newLevel, Bool provideFeedback )
 {
