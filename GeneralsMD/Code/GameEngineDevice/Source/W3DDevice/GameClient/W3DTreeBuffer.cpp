@@ -189,8 +189,8 @@ int W3DTreeBuffer::W3DTreeTextureClass::update(W3DTreeBuffer *buffer)
 	DX8_ErrorCode(surface_level->UnlockRect());
 	surface_level->Release();
 	DX8_ErrorCode(D3DXFilterTexture(Peek_D3D_Texture(), NULL, (UINT)0, D3DX_FILTER_BOX));
-	if (TheWritableGlobalData->m_textureReductionFactor) {
-		DX8_ErrorCode(Peek_D3D_Texture()->SetLOD((DWORD)TheWritableGlobalData->m_textureReductionFactor));
+	if (WW3D::Get_Texture_Reduction()) {
+		DX8_ErrorCode(Peek_D3D_Texture()->SetLOD((DWORD)WW3D::Get_Texture_Reduction()));
 	}
 	return(surface_desc.Height);
 }
