@@ -217,18 +217,19 @@ void Connection::clearCommandsExceptFrom( Int playerIndex )
 	NetCommandRef *tmp = m_netCommandList->getFirstMessage();
 	while (tmp)
 	{
+		NetCommandRef *next = tmp->getNext();
 		NetCommandMsg *msg = tmp->getCommand();
+
 		if (msg->getPlayerID() != playerIndex)
 		{
-			DEBUG_LOG(("Connection::clearCommandsExceptFrom(%d) - clearing a command from %d for frame %d",
+			DEBUG_LOG(("Connection::clearCommandsExceptFrom(%d) - clearing a command from player %d for frame %d",
 				playerIndex, tmp->getCommand()->getPlayerID(), tmp->getCommand()->getExecutionFrame()));
+
 			m_netCommandList->removeMessage(tmp);
-			NetCommandRef *toDelete = tmp;
-			tmp = tmp->getNext();
-			deleteInstance(toDelete);
-		} else {
-			tmp = tmp->getNext();
+			deleteInstance(tmp);
 		}
+
+		tmp = next;
 	}
 }
 
