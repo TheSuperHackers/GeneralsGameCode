@@ -135,6 +135,8 @@ public:
 	Int	 getCampaignDifficulty(void);
 	void setCampaignDifficulty( Int diff );
 
+	Int getNetworkLatencyFontSize(void);
+	Int getRenderFpsFontSize(void);
 	Int getSystemTimeFontSize(void);
 	Int getGameTimeFontSize(void);
 

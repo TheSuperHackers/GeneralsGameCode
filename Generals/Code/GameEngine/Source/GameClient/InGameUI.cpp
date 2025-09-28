@@ -46,6 +46,7 @@
 #include "Common/BuildAssistant.h"
 #include "Common/Recorder.h"
 #include "Common/SpecialPower.h"
+#include "Common/FrameRateLimit.h"
 
 #include "GameClient/Anim2D.h"
 #include "GameClient/ControlBar.h"
@@ -71,6 +72,7 @@
 #include "GameClient/SelectionXlat.h"
 #include "GameClient/Shadow.h"
 #include "GameClient/GlobalLanguage.h"
+#include "GameClient/Display.h"
 
 #include "GameLogic/AIGuard.h"
 #include "GameLogic/Weapon.h"
@@ -83,6 +85,8 @@
 #include "GameLogic/Module/StealthUpdate.h"
 #include "GameLogic/Module/SupplyWarehouseDockUpdate.h"
 #include "GameLogic/Module/MobMemberSlavedUpdate.h"//ML
+
+#include "GameNetwork/NetworkInterface.h"
 
 
 
@@ -840,6 +844,20 @@ const FieldParse InGameUI::s_fieldParseTable[] =
 	{ "SpyDroneRadiusCursor",				RadiusDecalTemplate::parseRadiusDecalTemplate, NULL, offsetof( InGameUI, m_radiusCursors[ RADIUSCURSOR_SPYDRONE] ) },
 
 	// TheSuperHackers @info ui enhancement configuration
+	{ "NetworkLatencyFont",      INI::parseAsciiString,  NULL, offsetof( InGameUI, m_networkLatencyFont ) },
+	{ "NetworkLatencyBold",      INI::parseBool,         NULL, offsetof( InGameUI, m_networkLatencyBold ) },
+	{ "NetworkLatencyPosition",  INI::parseCoord2D,      NULL, offsetof( InGameUI, m_networkLatencyPosition ) },
+	{ "NetworkLatencyColor",     INI::parseColorInt,     NULL, offsetof( InGameUI, m_networkLatencyColor ) },
+	{ "NetworkLatencyDropColor", INI::parseColorInt,     NULL, offsetof( InGameUI, m_networkLatencyDropColor ) },
+
+	{ "RenderFpsFont",          INI::parseAsciiString,  NULL, offsetof( InGameUI, m_renderFpsFont ) },
+	{ "RenderFpsBold",          INI::parseBool,         NULL, offsetof( InGameUI, m_renderFpsBold ) },
+	{ "RenderFpsPosition",      INI::parseCoord2D,      NULL, offsetof( InGameUI, m_renderFpsPosition ) },
+	{ "RenderFpsColor",         INI::parseColorInt,     NULL, offsetof( InGameUI, m_renderFpsColor ) },
+	{ "RenderFpsLimitColor",    INI::parseColorInt,     NULL, offsetof( InGameUI, m_renderFpsLimitColor ) },
+	{ "RenderFpsDropColor",     INI::parseColorInt,     NULL, offsetof( InGameUI, m_renderFpsDropColor ) },
+	{ "RenderFpsRefreshMs",     INI::parseUnsignedInt,  NULL, offsetof( InGameUI, m_renderFpsRefreshMs ) },
+
 	{ "SystemTimeFont",         INI::parseAsciiString,  NULL, offsetof( InGameUI, m_systemTimeFont ) },
 	{ "SystemTimeBold",         INI::parseBool,         NULL, offsetof( InGameUI, m_systemTimeBold ) },
 	{ "SystemTimePosition",     INI::parseCoord2D,      NULL, offsetof( InGameUI, m_systemTimePosition ) },
@@ -865,6 +883,16 @@ void INI::parseInGameUIDefinition( INI* ini )
 		// parse the ini weapon definition
 		ini->initFromINI( TheInGameUI, TheInGameUI->getFieldParse() );
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+namespace
+{
+	// helpers for inline counters
+	constexpr const Int kHudAnchorX = 3;
+	constexpr const Int kHudAnchorY = -1;
+	constexpr const Int kHudGapPx = 6;
+	inline Bool isAtHudAnchorPos(const Coord2D &p) { return p.x == kHudAnchorX && p.y == kHudAnchorY; }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -976,13 +1004,38 @@ InGameUI::InGameUI()
 	m_replayWindow = NULL;
 	m_messagesOn = TRUE;
 
-	// TheSuperHackers @info the default font, size and positions of the system and game times were chosen based on GenTools implementation
+	// TheSuperHackers @info the default font, size and positions of the various counters were chosen based on GenTools implementation
+	m_networkLatencyString = NULL;
+	m_networkLatencyFont = "Tahoma";
+	m_networkLatencyPointSize = TheGlobalData->m_networkLatencyFontSize;
+	m_networkLatencyBold = TRUE;
+	m_networkLatencyPosition.x = kHudAnchorX;
+	m_networkLatencyPosition.y = kHudAnchorY;
+	m_networkLatencyColor = GameMakeColor( 173, 216, 255, 255 );
+	m_networkLatencyDropColor = GameMakeColor( 0, 0, 0, 255 );
+	m_lastNetworkLatencyFrames = ~0u;
+
+	m_renderFpsString = NULL;
+	m_renderFpsLimitString = NULL;
+	m_renderFpsFont = "Tahoma";
+	m_renderFpsPointSize = TheGlobalData->m_renderFpsFontSize;
+	m_renderFpsBold = TRUE;
+	m_renderFpsPosition.x = kHudAnchorX;
+	m_renderFpsPosition.y = kHudAnchorY;
+	m_renderFpsColor = GameMakeColor( 255, 255, 0, 255 );
+	m_renderFpsLimitColor = GameMakeColor(119, 119, 119, 255);
+	m_renderFpsDropColor = GameMakeColor( 0, 0, 0, 255 );
+	m_renderFpsRefreshMs = 1000;
+	m_lastRenderFps = ~0u;
+	m_lastRenderFpsLimit = ~0u;
+	m_lastRenderFpsUpdateMs = 0u;
+
 	m_systemTimeString = NULL;
 	m_systemTimeFont = "Tahoma";
 	m_systemTimePointSize = TheGlobalData->m_systemTimeFontSize;
 	m_systemTimeBold = TRUE;
-	m_systemTimePosition.x = 3; // TheSuperHackers @info relative to the left of the screen
-	m_systemTimePosition.y = -1;
+	m_systemTimePosition.x = kHudAnchorX; // TheSuperHackers @info relative to the left of the screen
+	m_systemTimePosition.y = kHudAnchorY;
 	m_systemTimeColor = GameMakeColor( 255, 255, 255, 255 );
 	m_systemTimeDropColor = GameMakeColor( 0, 0, 0, 255 );
 
@@ -991,8 +1044,8 @@ InGameUI::InGameUI()
 	m_gameTimeFont = "Tahoma";
 	m_gameTimePointSize = TheGlobalData->m_gameTimeFontSize;
 	m_gameTimeBold = TRUE;
-	m_gameTimePosition.x = 3; // TheSuperHackers @info relative to the right of the screen
-	m_gameTimePosition.y = -1;
+	m_gameTimePosition.x = kHudAnchorX; // TheSuperHackers @info relative to the right of the screen
+	m_gameTimePosition.y = kHudAnchorY;
 	m_gameTimeColor = GameMakeColor( 255, 255, 255, 255 );
 	m_gameTimeDropColor = GameMakeColor( 0, 0, 0, 255 );
 
@@ -2006,6 +2059,12 @@ void InGameUI::freeMessageResources( void )
 
 void InGameUI::freeCustomUiResources( void )
 {
+	TheDisplayStringManager->freeDisplayString(m_networkLatencyString);
+	m_networkLatencyString = NULL;
+	TheDisplayStringManager->freeDisplayString(m_renderFpsString);
+	m_renderFpsString = NULL;
+	TheDisplayStringManager->freeDisplayString(m_renderFpsLimitString);
+	m_renderFpsLimitString = NULL;
 	TheDisplayStringManager->freeDisplayString(m_systemTimeString);
 	m_systemTimeString = NULL;
 	TheDisplayStringManager->freeDisplayString(m_gameTimeString);
@@ -3459,9 +3518,22 @@ void InGameUI::disregardDrawable( Drawable *draw )
 //-------------------------------------------------------------------------------------------------
 void InGameUI::postWindowDraw( void )
 {
+	Int hudOffsetX = 0;
+	Int hudOffsetY = 0;
+
+	if (m_networkLatencyPointSize > 0 && TheGameLogic->isInMultiplayerGame())
+	{
+		drawNetworkLatency(hudOffsetX, hudOffsetY);
+	}
+
+	if (m_renderFpsPointSize > 0)
+	{
+		drawRenderFps(hudOffsetX, hudOffsetY);
+	}
+
 	if (m_systemTimePointSize > 0)
 	{
-		drawSystemTime();
+		drawSystemTime(hudOffsetX, hudOffsetY);
 	}
 
 	if ( (m_gameTimePointSize > 0) && !TheGameLogic->isInShellGame() && TheGameLogic->isInGame() )
@@ -5613,8 +5685,47 @@ void InGameUI::recreateControlBar( void )
 
 void InGameUI::refreshCustomUiResources(void)
 {
+	refreshNetworkLatencyResources();
+	refreshRenderFpsResources();
 	refreshSystemTimeResources();
 	refreshGameTimeResources();
+}
+
+void InGameUI::refreshNetworkLatencyResources(void)
+{
+	if (!m_networkLatencyString)
+	{
+		m_networkLatencyString = TheDisplayStringManager->newDisplayString();
+		m_lastNetworkLatencyFrames = ~0u;
+	}
+
+	m_networkLatencyPointSize = TheGlobalData->m_networkLatencyFontSize;
+	Int adjustedNetworkLatencyFontSize = TheGlobalLanguageData->adjustFontSize(m_networkLatencyPointSize);
+	GameFont* latencyFont = TheWindowManager->winFindFont(m_networkLatencyFont, adjustedNetworkLatencyFontSize, m_networkLatencyBold);
+	m_networkLatencyString->setFont(latencyFont);
+}
+
+void InGameUI::refreshRenderFpsResources(void)
+{
+	if (!m_renderFpsString)
+	{
+		m_renderFpsString = TheDisplayStringManager->newDisplayString();
+		m_lastRenderFps = ~0u;
+		m_lastRenderFpsUpdateMs = 0u;
+		updateRenderFpsString();
+	}
+
+	if (!m_renderFpsLimitString)
+	{
+		m_renderFpsLimitString = TheDisplayStringManager->newDisplayString();
+		m_lastRenderFpsLimit = ~0u;
+	}
+
+	m_renderFpsPointSize = TheGlobalData->m_renderFpsFontSize;
+	Int adjustedRenderFpsFontSize = TheGlobalLanguageData->adjustFontSize(m_renderFpsPointSize);
+	GameFont *fpsFont = TheWindowManager->winFindFont(m_renderFpsFont, adjustedRenderFpsFontSize, m_renderFpsBold);
+	m_renderFpsString->setFont(fpsFont);
+	m_renderFpsLimitString->setFont(fpsFont);
 }
 
 void InGameUI::refreshSystemTimeResources(void)
@@ -5703,17 +5814,114 @@ WindowMsgHandledType IdleWorkerSystem( GameWindow *window, UnsignedInt msg,
 
 }
 
-void InGameUI::drawSystemTime()
+
+void InGameUI::updateRenderFpsString()
+{
+	const UnsignedInt renderFps = (UnsignedInt)(TheDisplay->getAverageFPS() + 0.5f);
+	if (renderFps != m_lastRenderFps)
+	{
+		UnicodeString fpsStr;
+		fpsStr.format(L"%u", renderFps);
+		m_renderFpsString->setText(fpsStr);
+		m_lastRenderFps = renderFps;
+	}
+}
+
+void InGameUI::drawNetworkLatency(Int &x, Int &y)
+{
+	const UnsignedInt networkLatencyFrames = TheNetwork->getRunAhead();
+
+	if (networkLatencyFrames != m_lastNetworkLatencyFrames)
+	{
+		UnicodeString latencyStr;
+		latencyStr.format(L"%u", networkLatencyFrames);
+		m_networkLatencyString->setText(latencyStr);
+		m_lastNetworkLatencyFrames = networkLatencyFrames;
+	}
+
+	// TheSuperHackers @info at the HUD anchor this draws inline and advances x otherwise uses configured position
+	if (isAtHudAnchorPos(m_networkLatencyPosition))
+	{
+		m_networkLatencyString->draw(kHudAnchorX + x, kHudAnchorY + y, m_networkLatencyColor, m_networkLatencyDropColor);
+		x += m_networkLatencyString->getWidth() + kHudGapPx;
+	}
+	else
+	{
+		m_networkLatencyString->draw(m_networkLatencyPosition.x, m_networkLatencyPosition.y, m_networkLatencyColor, m_networkLatencyDropColor);
+	}
+}
+
+void InGameUI::drawRenderFps(Int &x, Int &y)
+{
+	if (m_renderFpsRefreshMs > 0u)
+	{
+		const UnsignedInt nowMs = timeGetTime();
+		const UnsignedInt deltaMs = nowMs - m_lastRenderFpsUpdateMs;
+		if (deltaMs >= m_renderFpsRefreshMs)
+		{
+			m_lastRenderFpsUpdateMs = nowMs;
+			updateRenderFpsString();
+		}
+	}
+	else
+	{
+		updateRenderFpsString();
+	}
+
+	UnsignedInt renderFpsLimit = 0u;
+	if (TheGlobalData->m_useFpsLimit)
+	{
+		renderFpsLimit = (UnsignedInt)TheGameEngine->getFramesPerSecondLimit();
+		if (renderFpsLimit == RenderFpsPreset::UncappedFpsValue)
+		{
+			renderFpsLimit = 0u;
+		}
+	}
+	if (renderFpsLimit != m_lastRenderFpsLimit)
+	{
+		UnicodeString fpsLimitStr;
+		fpsLimitStr.format(L"[%u]", renderFpsLimit);
+		m_renderFpsLimitString->setText(fpsLimitStr);
+		m_lastRenderFpsLimit = renderFpsLimit;
+	}
+
+	// TheSuperHackers @info at the HUD anchor this draws inline and advances x otherwise uses configured position
+	if (isAtHudAnchorPos(m_renderFpsPosition))
+	{
+		const Int drawY = kHudAnchorY + y;
+
+		m_renderFpsString->draw(kHudAnchorX + x, drawY, m_renderFpsColor, m_renderFpsDropColor);
+		x += m_renderFpsString->getWidth();
+		m_renderFpsLimitString->draw(kHudAnchorX + x, drawY, m_renderFpsLimitColor, m_renderFpsDropColor);
+		x += m_renderFpsLimitString->getWidth() + kHudGapPx;
+	}
+	else
+	{
+		m_renderFpsString->draw(m_renderFpsPosition.x, m_renderFpsPosition.y, m_renderFpsColor, m_renderFpsDropColor);
+		m_renderFpsLimitString->draw(m_renderFpsPosition.x + m_renderFpsString->getWidth(), m_renderFpsPosition.y, m_renderFpsLimitColor, m_renderFpsDropColor);
+	}
+}
+
+void InGameUI::drawSystemTime(Int &x, Int &y)
 {
 	// current system time
 	SYSTEMTIME systemTime;
 	GetLocalTime( &systemTime );
 
-    UnicodeString TimeString;
-    TimeString.format(L"%2.2d:%2.2d:%2.2d", systemTime.wHour, systemTime.wMinute, systemTime.wSecond);
-    m_systemTimeString->setText(TimeString);
+	UnicodeString TimeString;
+	TimeString.format(L"%2.2d:%2.2d:%2.2d", systemTime.wHour, systemTime.wMinute, systemTime.wSecond);
+	m_systemTimeString->setText(TimeString);
 
-	m_systemTimeString->draw(m_systemTimePosition.x, m_systemTimePosition.y, m_systemTimeColor, m_systemTimeDropColor);
+	// TheSuperHackers @info at the HUD anchor this draws inline and advances x otherwise uses configured position
+	if (isAtHudAnchorPos(m_systemTimePosition))
+	{
+		m_systemTimeString->draw(kHudAnchorX + x, kHudAnchorY + y, m_systemTimeColor, m_systemTimeDropColor);
+		x += m_systemTimeString->getWidth() + kHudGapPx;
+	}
+	else
+	{
+		m_systemTimeString->draw(m_systemTimePosition.x, m_systemTimePosition.y, m_systemTimeColor, m_systemTimeDropColor);
+	}
 }
 
 void InGameUI::drawGameTime()
