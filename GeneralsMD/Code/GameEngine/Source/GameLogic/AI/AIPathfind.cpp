@@ -4703,7 +4703,10 @@ Bool Pathfinder::checkForMovement(const Object *obj, TCheckMovementInfo &info)
 	ObjectID		allies[maxAlly];
 	Int					numAlly = 0;
 
-	if (!obj) return true; // not object can move there.
+	if (!obj) {
+		return true; // not object can move there.
+	}
+
 	ObjectID ignoreId = INVALID_ID;
 	if (obj->getAIUpdateInterface()) {
 		ignoreId =  obj->getAIUpdateInterface()->getIgnoredObstacleID();
@@ -4716,78 +4719,83 @@ Bool Pathfinder::checkForMovement(const Object *obj, TCheckMovementInfo &info)
 	for (i=info.cell.x-info.radius; i<info.cell.x+numCellsAbove; i++) {
 		for (j=info.cell.y-info.radius; j<info.cell.y+numCellsAbove; j++) {
 			PathfindCell	*cell = getCell(info.layer,i, j);
-			if (cell) {
-				enum PathfindCell::CellFlags flags = cell->getFlags();
-				ObjectID posUnit = cell->getPosUnit();
-				if ((flags == PathfindCell::UNIT_GOAL) || (flags == PathfindCell::UNIT_GOAL_OTHER_MOVING)) {
-					info.allyGoal = true;
+			if (!cell) {
+				return false; // off the map, so can't move here.
+			}
+
+			PathfindCell::CellFlags flags = cell->getFlags();
+			if ((flags == PathfindCell::UNIT_GOAL) || (flags == PathfindCell::UNIT_GOAL_OTHER_MOVING)) {
+				info.allyGoal = true;
+			} else if (flags == PathfindCell::NO_UNITS) {
+				continue;  // Nobody is here, so it's ok.
+			}
+
+			ObjectID posUnit = cell->getPosUnit();
+			if (posUnit == obj->getID()) {
+				continue; // we got it.
+			}
+
+			if (posUnit == ignoreId) {
+				continue; // we are ignoring this one.
+			}
+
+			Bool check = false;
+			Object *unit = NULL;
+			if (flags == PathfindCell::UNIT_PRESENT_MOVING || flags == PathfindCell::UNIT_GOAL_OTHER_MOVING) {
+				unit = TheGameLogic->findObjectByID(posUnit);
+				// order matters: we want to know if I consider it to be an ally, not vice versa
+				if (unit && obj->getRelationship(unit) == ALLIES) {
+					info.allyMoving = true;
 				}
-				if (flags == PathfindCell::NO_UNITS) {
-					continue;  // Nobody is here, so it's ok.
-				} else if (posUnit==obj->getID()) {
-					continue; // we got it.
-				} else if (posUnit==ignoreId) {
-					continue; // we are ignoring this one.
-				}	else {
-					Bool check = false;
-					Object *unit = NULL;
-					if (flags==PathfindCell::UNIT_PRESENT_MOVING || flags==PathfindCell::UNIT_GOAL_OTHER_MOVING) {
-						unit = TheGameLogic->findObjectByID(posUnit);
-						// order matters: we want to know if I consider it to be an ally, not vice versa
-						if (unit && obj->getRelationship(unit) == ALLIES) {
-							info.allyMoving = true;
-						}
-						if (info.considerTransient) {
-							check = true;
-						}
-					}
-					if (flags == PathfindCell::UNIT_PRESENT_FIXED) {
-						check = true;
-						unit = TheGameLogic->findObjectByID(posUnit);
-					}
-					if (check && unit!=NULL) {
-						if (obj->getAIUpdateInterface() && obj->getAIUpdateInterface()->getIgnoredObstacleID()==unit->getID()) {
-							// Don't check if it's the ignored obstacle.
-							check = false;
-						}
-					}
-					if (check && unit) {
+				if (info.considerTransient) {
+					check = true;
+				}
+			}
+			if (flags == PathfindCell::UNIT_PRESENT_FIXED) {
+				check = true;
+				unit = TheGameLogic->findObjectByID(posUnit);
+			}
+			if (check && unit!=NULL) {
+				if (obj->getAIUpdateInterface() && obj->getAIUpdateInterface()->getIgnoredObstacleID()==unit->getID()) {
+					// Don't check if it's the ignored obstacle.
+					check = false;
+				}
+			}
+			if (!check || !unit) {
+				continue;
+			}
+
 #ifdef INFANTRY_MOVES_THROUGH_INFANTRY
-						if (obj->isKindOf(KINDOF_INFANTRY) && unit->isKindOf(KINDOF_INFANTRY)) {
-							// Infantry can run through infantry.
-							continue; //
-						}
+			if (obj->isKindOf(KINDOF_INFANTRY) && unit->isKindOf(KINDOF_INFANTRY)) {
+				// Infantry can run through infantry.
+				continue; //
+			}
 #endif
-						// See if it is an ally.
-						// order matters: we want to know if I consider it to be an ally, not vice versa
-						if (obj->getRelationship(unit) == ALLIES) {
-							if (!unit->getAIUpdateInterface()) {
-								return false; // can't path through not-idle units.
-							}
-							Bool found = false;
-							Int k;
-							for (k=0; k<numAlly; k++) {
-								if (allies[k] == unit->getID()) {
-									found = true;
-								}
-							}
-							if (!found) {
-								info.allyFixedCount++;
-								if (numAlly < maxAlly) {
-									allies[numAlly] = unit->getID();
-									numAlly++;
-								}
-							}
-						}	else {
-							Bool canCrush = obj->canCrushOrSquish( unit, TEST_CRUSH_OR_SQUISH );
-							if (!canCrush) {
-								info.enemyFixed = true;
-							}
-						}
+			// See if it is an ally.
+			// order matters: we want to know if I consider it to be an ally, not vice versa
+			if (obj->getRelationship(unit) == ALLIES) {
+				if (!unit->getAIUpdateInterface()) {
+					return false; // can't path through not-idle units.
+				}
+				Bool found = false;
+				Int k;
+				for (k=0; k<numAlly; k++) {
+					if (allies[k] == unit->getID()) {
+						found = true;
+					}
+				}
+				if (!found) {
+					info.allyFixedCount++;
+					if (numAlly < maxAlly) {
+						allies[numAlly] = unit->getID();
+						numAlly++;
 					}
 				}
 			} else {
-				return false; // off the map, so can't place here.
+				Bool canCrush = obj->canCrushOrSquish( unit, TEST_CRUSH_OR_SQUISH );
+				if (!canCrush) {
+					info.enemyFixed = true;
+				}
 			}
 		}
 	}
