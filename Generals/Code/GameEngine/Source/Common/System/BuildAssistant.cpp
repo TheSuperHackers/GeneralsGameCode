@@ -670,11 +670,6 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 	MemoryPoolObjectHolder hold(iter);
 	for( them = iter->first(); them; them = iter->next() )
 	{
-#if !RETAIL_COMPATIBLE_CRC
-		if (builderObject && them->getShroudedStatus(builderObject->getControllingPlayer()->getPlayerIndex()) >= OBJECTSHROUD_FOGGED)
-			return false;
-#endif
-
 		// ignore any kind of class of objects that we will "remove" for building
 		if( isRemovableForConstruction( them ) == TRUE )
 			continue;
@@ -687,6 +682,9 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 		// same story for inert things: ie, radiation fields, pings, and projectile streams (!)...
 		if (them->isKindOf(KINDOF_INERT))
 			continue;
+
+		if (builderObject && them->getShroudedStatus(builderObject->getControllingPlayer()->getPlayerIndex()) >= OBJECTSHROUD_FOGGED)
+			return LBC_SHROUD;
 
 		// an immobile object may obstruct our building depending on flags.
 		if( them->isKindOf( KINDOF_IMMOBILE ) )	{

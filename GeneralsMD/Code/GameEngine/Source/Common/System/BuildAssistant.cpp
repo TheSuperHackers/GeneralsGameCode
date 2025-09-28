@@ -670,11 +670,6 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 	MemoryPoolObjectHolder hold(iter);
 	for( them = iter->first(); them; them = iter->next() )
 	{
-#if !RETAIL_COMPATIBLE_CRC
-		if (builderObject && them->getShroudedStatus(builderObject->getControllingPlayer()->getPlayerIndex()) >= OBJECTSHROUD_FOGGED)
-			return LBC_SHROUD;
-#endif
-
 		Bool feedbackWithFailure = TRUE;
 		Relationship rel = builderObject ? builderObject->getRelationship( them ) : NEUTRAL;
 
@@ -697,16 +692,6 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 			}
 		}
 
-		//Kris: Patch 1.01 - November 5, 2003
-		//Prevent busy units (black lotus hacking from being moved by trying to place a building -- exploit).
-		if( rel == ALLIES )
-		{
-			if( them->testStatus( OBJECT_STATUS_IS_USING_ABILITY ) || them->getAI() && them->getAI()->isBusy() )
-			{
-				return LBC_OBJECTS_IN_THE_WAY;
-			}
-		}
-
 		// ignore any kind of class of objects that we will "remove" for building
 		if( isRemovableForConstruction( them ) == TRUE )
 			continue;
@@ -719,6 +704,19 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 		// same story for inert things: ie, radiation fields, pings, and projectile streams (!)...
 		if (them->isKindOf(KINDOF_INERT))
 			continue;
+
+		if (builderObject && them->getShroudedStatus(builderObject->getControllingPlayer()->getPlayerIndex()) >= OBJECTSHROUD_FOGGED)
+			return LBC_SHROUD;
+
+		//Kris: Patch 1.01 - November 5, 2003
+		//Prevent busy units (black lotus hacking from being moved by trying to place a building -- exploit).
+		if (rel == ALLIES)
+		{
+			if (them->testStatus(OBJECT_STATUS_IS_USING_ABILITY) || them->getAI() && them->getAI()->isBusy())
+			{
+				return LBC_OBJECTS_IN_THE_WAY;
+			}
+		}
 
 		// an immobile object may obstruct our building depending on flags.
 		if( them->isKindOf( KINDOF_IMMOBILE ) )
