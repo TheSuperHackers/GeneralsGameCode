@@ -5712,14 +5712,7 @@ struct ExamineCellsStruct
 			if ( (to->getLayer() == LAYER_GROUND) && !d->thePathfinder->m_zoneManager.isPassable(to_x, to_y) ) {
 				return 1;
 			}
-			Bool onList = false;
-			if (to->hasInfo()) {
-				if (to->getOpen() || to->getClosed())
-				{
-					// already on one of the lists
-					onList = true;
-				}
-			}
+
 			if (to->getPinched()) {
 				return 1; // abort.
 			}
@@ -5738,25 +5731,26 @@ struct ExamineCellsStruct
 			info.radius = d->radius;
 			info.considerTransient = false;
 			info.acceptableSurfaces = d->theLoco->getValidSurfaces();
-			if (!d->thePathfinder->checkForMovement(d->obj, info) || info.enemyFixed) {
+			if (!d->thePathfinder->checkForMovement(d->obj, info)) {
 				return 1; //abort.
 			}
+
 			if (info.enemyFixed) {
 				return 1; //abort.
 			}
-			ICoord2D newCellCoord;
-			newCellCoord.x = to_x;
-			newCellCoord.y = to_y;
+
+			if (info.allyFixedCount) {
+				return 1; //abort.
+			}
 
 			UnsignedInt newCostSoFar = from->getCostSoFar( ) + 0.5f*COST_ORTHOGONAL;
 			if (to->getType() == PathfindCell::CELL_CLIFF ) {
 				return 1;
 			}
-			if (info.allyFixedCount) {
-				return 1;
-			} else if (info.enemyFixed) {
-				return 1;
-			}
+
+			ICoord2D newCellCoord;
+			newCellCoord.x = to_x;
+			newCellCoord.y = to_y;
 
 			if (!to->allocateInfo(newCellCoord)) {
 				// Out of cells for pathing...
@@ -5765,15 +5759,17 @@ struct ExamineCellsStruct
 			to->setBlockedByAlly(false);
 			Int costRemaining = 0;
 			costRemaining = to->costToGoal( d->goalCell );
+
 			// check if this neighbor cell is already on the open (waiting to be tried)
 			// or closed (already tried) lists
-			if (onList)
+			if ( to->hasInfo() && (to->getOpen() || to->getClosed()) )
 			{
 				// already on one of the lists - if existing costSoFar is less,
 				// the new cell is on a longer path, so skip it
 				if (to->getCostSoFar() <= newCostSoFar)
 					return 0; // keep going.
 			}
+
 			to->setCostSoFar(newCostSoFar);
 			// keep track of path we're building - point back to cell we moved here from
 			to->setParentCell(from) ;
