@@ -62,8 +62,6 @@
 #include "assetmgr.h"
 #include "WW3D2/dx8wrapper.h"
 
-//#pragma optimize("", off)
-
 //#define ALLOW_WATER_TRACK_EDIT
 
 //number of vertex pages allocated - allows double buffering of vertex updates.

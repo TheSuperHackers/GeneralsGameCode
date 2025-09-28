@@ -62,9 +62,6 @@
 #include "bitmaphandler.h"
 #include "wwprofile.h"
 
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-
 bool TextureLoader::TextureLoadSuspended;
 int TextureLoader::TextureInactiveOverrideTime = 0;
 

@@ -58,9 +58,6 @@
 #include "wwmemlog.h"
 #include "assetmgr.h"
 
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-
 RectClass							Render2DClass::ScreenResolution( 0,0,0,0 );
 
 

@@ -59,9 +59,6 @@
 #include "texturethumbnail.h"
 #include "wwprofile.h"
 
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-
 const unsigned DEFAULT_INACTIVATION_TIME=20000;
 
 /*
