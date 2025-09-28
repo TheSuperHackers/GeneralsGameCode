@@ -670,7 +670,7 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 	MemoryPoolObjectHolder hold(iter);
 	for( them = iter->first(); them; them = iter->next() )
 	{
-		if (them->getDrawable() && them->getDrawable()->getFullyObscuredByShroud())
+		if (them->getShroudedStatus(builderObject->getControllingPlayer()->getPlayerIndex()) == OBJECTSHROUD_SHROUDED)
 			return LBC_SHROUD;
 
 		Bool feedbackWithFailure = TRUE;
@@ -869,7 +869,7 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 
 		// an immobile object will obstruct our building no matter what team it's on
 		if ( them->isKindOf( KINDOF_IMMOBILE ) )	{
-			Bool shrouded = them->getDrawable() && them->getDrawable()->getFullyObscuredByShroud();
+			Bool shrouded = them->getShroudedStatus(builderObject->getControllingPlayer()->getPlayerIndex()) == OBJECTSHROUD_SHROUDED;
 			/* Check for overlap of my exit rectangle to his geom info. */
 			if (checkMyExit && ThePartitionManager->geomCollidesWithGeom(them->getPosition(), hisBounds, them->getOrientation(),
 				&myExitPos, myGeom, angle)) {
