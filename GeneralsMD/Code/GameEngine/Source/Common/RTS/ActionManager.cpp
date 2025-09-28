@@ -1528,7 +1528,7 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 		if (behaviorType >= SPECIAL_ION_CANNON) { //first custom SP
 			behaviorType = spTemplate->getSpecialPowerBehaviorType();
 			if (behaviorType == SPECIAL_INVALID) {
-				behaviorType = SPECIAL_NEUTRON_MISSILE; // Default to behave like neutron missile, common behavior
+				behaviorType = getFallbackBehaviorType(spTemplate->getSpecialPowerType()); // use predefined fallbacks
 			}
 		} 
 
@@ -1679,7 +1679,7 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 		if (behaviorType >= SPECIAL_ION_CANNON) { //first custom SP
 			behaviorType = spTemplate->getSpecialPowerBehaviorType();
 			if (behaviorType == SPECIAL_INVALID) {
-				behaviorType == SPECIAL_NEUTRON_MISSILE; // Default to behave like neutron missile, common behavior
+				behaviorType = getFallbackBehaviorType(spTemplate->getSpecialPowerType()); // use predefined fallbacks
 			}
 		}
 
@@ -1913,6 +1913,115 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 	return false;
 }
 
+SpecialPowerType ActionManager::getFallbackBehaviorType(SpecialPowerType type) {
+	/*For newly defined special power types a default fallback enum for same behavior can be defined here*/
+	switch (type) {
+	case AIRF_SPECIAL_PARADROP_AMERICA:
+	case SOCOM_SPECIAL_SUPPLY_DROP:
+	case SOCOM_SPECIAL_TANK_PARADROP:
+	case TANK_SPECIAL_TANK_PARADROP:
+	case TANK_SPECIAL_PARADROP:
+	case SUPW_SPECIAL_PARADROP_AMERICA:
+	case SUPW_SPECIAL_TANK_PARADROP:
+		return SPECIAL_PARADROP_AMERICA;
+
+	case SECW_SPECIAL_HUNTER_SEEKER:
+		return SPECIAL_CIA_INTELLIGENCE;
+
+	case CHINA_SPECIAL_SPY_SATELLITE:
+	case SECW_SPECIAL_SPY_SATELLITE:
+	case LAZR_SPECIAL_SPY_SATELLITE:
+		return SPECIAL_SPY_SATELLITE;
+
+	case AIRF_SPECIAL_SUPERSONIC_AIRSTRIKE:
+	case AIRF_SPECIAL_HEAVY_AIRSTRIKE:
+	case SOCOM_SPECIAL_COASTAL_BOMBARDEMENT:
+	case TANK_SPECIAL_NAPALM_BOMB:
+	case TANK_SPECIAL_CHINA_CARPET_BOMB:
+	case NUKE_SPECIAL_NUCLEAR_AIRSTRIKE:
+	case NUKE_SPECIAL_CHINA_CARPET_BOMB:
+	case NUKE_SPECIAL_BALLISTIC_MISSILE:
+	case SECW_SPECIAL_SYSTEM_HACK:
+	case DEMO_SPECIAL_SUICIDE_PLANE:
+	case DEMO_SPECIAL_CARPET_BOMB:
+	case CHEM_SPECIAL_CARPET_BOMB:
+	case CHEM_SPECIAL_AIRSTRIKE:
+	case FORT_SPECIAL_AIRSTRIKE:
+	case FORT_SPECIAL_CARPET_BOMB:
+	case LAZR_SPECIAL_DAISY_CUTTER:
+	case LAZR_SPECIAL_AIRSTRIKE:
+	case SUPW_SPECIAL_AIRSTRIKE:
+		return SPECIAL_CARPET_BOMB;
+
+	case AIRF_SPECIAL_HELICOPTER_AMBUSH:
+	case DEMO_SPECIAL_AMBUSH:
+	case CHEM_SPECIAL_AMBUSH:
+	case LAZR_SPECIAL_AMBUSH:
+		return SPECIAL_AMBUSH;
+
+	case AIRF_SPECIAL_HOLO_PLANES:
+	case TANK_SPECIAL_FRENZY:
+	case NUKE_SPECIAL_FRENZY:
+	case DEMO_SPECIAL_FRENZY:
+	case CHEM_SPECIAL_FRENZY:
+	case FORT_SPECIAL_FRENZY:
+		return SPECIAL_FRENZY;
+
+	case TANK_SPECIAL_CLUSTER_MINES:
+		return SPECIAL_CLUSTER_MINES;
+
+	case TANK_SPECIAL_REPAIR_VEHICLES:
+	case NUKE_SPECIAL_REPAIR_VEHICLES:
+	case DEMO_SPECIAL_REPAIR_VEHICLES:
+	case CHEM_SPECIAL_REPAIR_VEHICLES:
+	case FORT_SPECIAL_REPAIR_VEHICLES:
+	case LAZR_SPECIAL_NANO_SWARM:
+	case SUPW_SPECIAL_FORCEFIELD:
+		return SPECIAL_REPAIR_VEHICLES;
+
+	case TANK_SPECIAL_EMP_PULSE:
+	case NUKE_SPECIAL_NEUTRON_BOMB:
+	case SECW_SPECIAL_EMP_HACK:
+		return SPECIAL_EMP_PULSE;
+
+	case TANK_SPECIAL_ARTILLERY_BARRAGE:
+	case NUKE_SPECIAL_ARTILLERY_BARRAGE:
+	case DEMO_SPECIAL_ARTILLERY_BARRAGE:
+	case FORT_SPECIAL_ARTILLERY_BARRAGE:
+	case LAZR_SPECIAL_ORBITAL_STRIKE:
+	case SUPW_SPECIAL_ORBITAL_STRIKE:
+		return SPECIAL_ARTILLERY_BARRAGE;
+
+	case NUKE_SPECIAL_CASH_HACK:
+		return SPECIAL_CASH_HACK;
+
+	case SECW_SPECIAL_DRONE_GUNSHIP:
+	case LAZR_SPECIAL_SPECTRE_GUNSHIP:
+	case SUPW_SPECIAL_SPECTRE_GUNSHIP:
+		return SPECIAL_SPECTRE_GUNSHIP;
+
+	case DEMO_SPECIAL_SNEAK_ATTACK:
+	case CHEM_SPECIAL_SNEAK_ATTACK:
+		return SPECIAL_SNEAK_ATTACK;
+
+	case DEMO_SPECIAL_GPS_SCRAMBLER:
+	case CHEM_SPECIAL_GPS_SCRAMBLER:
+	case FORT_SPECIAL_GPS_SCRAMBLER:
+		return SPECIAL_GPS_SCRAMBLER;
+
+	case DEMO_SPECIAL_ANTHRAX_BOMB:
+	case CHEM_SPECIAL_ANTHRAX_BOMB:
+		return SPECIAL_ANTHRAX_BOMB;
+
+	case CHEM_SPECIAL_VIRUS:
+	case SUPW_SPECIAL_CRYOBOMB:
+		return SPECIAL_LEAFLET_DROP;
+
+	default:
+		return SPECIAL_NEUTRON_MISSILE;
+	}
+}
+
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 Bool ActionManager::canDoSpecialPower( const Object *obj, const SpecialPowerTemplate *spTemplate, CommandSourceType commandSource, UnsignedInt commandOptions, Bool checkSourceRequirements )
@@ -1943,7 +2052,7 @@ Bool ActionManager::canDoSpecialPower( const Object *obj, const SpecialPowerTemp
 		if (behaviorType >= SPECIAL_ION_CANNON) { //first custom SP
 			behaviorType = spTemplate->getSpecialPowerBehaviorType();
 			if (behaviorType == SPECIAL_INVALID) {
-				behaviorType = SPECIAL_NEUTRON_MISSILE; // Default to behave like neutron missile, common behavior
+				behaviorType = getFallbackBehaviorType(spTemplate->getSpecialPowerType()); // use predefined fallbacks
 			}
 		}
 

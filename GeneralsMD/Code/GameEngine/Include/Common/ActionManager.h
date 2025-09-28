@@ -106,7 +106,8 @@ public:
 	Bool canPlayerGarrison( const Player *player, const Object *target, CommandSourceType commandSource );
 
 protected:
-
+	//used to assign behaviour types for new special power enums
+	SpecialPowerType getFallbackBehaviorType(SpecialPowerType type);
 };
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
