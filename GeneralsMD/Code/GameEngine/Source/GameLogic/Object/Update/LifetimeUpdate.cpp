@@ -45,6 +45,7 @@ LifetimeUpdate::LifetimeUpdate( Thing *thing, const ModuleData* moduleData ) : U
 	// Added By Sadullah Nader
 	// Initializations needed
 	m_dieFrame = 0;
+	m_startDieFrame = 0;
 	//
 	UnsignedInt delay;
 	if( getObject()->isKindOf( KINDOF_HULK ) && TheGameLogic->getHulkMaxLifetimeOverride() != -1 )
@@ -88,10 +89,19 @@ UnsignedInt LifetimeUpdate::calcSleepDelay(UnsignedInt minFrames, UnsignedInt ma
 {
 	UnsignedInt delay = GameLogicRandomValue( minFrames, maxFrames );
 	if (delay < 1) delay = 1;
-	m_dieFrame = TheGameLogic->getFrame() + delay;
+	m_startDieFrame = TheGameLogic->getFrame();
+	m_dieFrame = m_startDieFrame + delay;
 	return delay;
 }
 
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+Real LifetimeUpdate::getProgress(void) {
+	if (m_dieFrame > 0 && m_startDieFrame > 0) {
+		return INT_TO_REAL(TheGameLogic->getFrame() - m_startDieFrame) / INT_TO_REAL(m_dieFrame - m_startDieFrame);
+	}
+	return 0.0f;
+}
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime LifetimeUpdate::update( void )
@@ -130,6 +140,9 @@ void LifetimeUpdate::xfer( Xfer *xfer )
 
 	// die frame
 	xfer->xferUnsignedInt( &m_dieFrame );
+
+	// start die frame
+	xfer->xferUnsignedInt( &m_startDieFrame);
 
 }  // end xfer
 

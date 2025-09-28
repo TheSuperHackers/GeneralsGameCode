@@ -83,6 +83,8 @@ protected:
 	UnsignedInt m_startFrame;
 	Real m_overrideScale;
 	Real m_overrideAlpha;
+
+	Real m_prevScale;
 };
 
 #endif // __DynamicGeometryClientUpdate_H_

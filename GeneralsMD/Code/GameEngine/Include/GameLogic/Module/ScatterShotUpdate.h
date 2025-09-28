@@ -35,6 +35,7 @@
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Weapon.h"
+#include "GameLogic/Module/DieModule.h"
 
 class FXList;
 enum DeathType;
@@ -51,6 +52,8 @@ public:
 	Bool m_preferSimilarTargets;
 	Bool m_preferNearestTargets;
 	Real m_noTargetsScatterRadius;
+	Real m_noTargetsScatterMinRadius;
+	Real m_noTargetsScatterMaxAngle;
 	Bool m_attackGroundWhenNoTargets;
 
 	Real m_triggerDistanceToTarget;
@@ -61,6 +64,8 @@ public:
 	Bool m_triggerInstantly;
 
 	Bool m_stayAliveAfterTrigger;
+	Bool m_avoidOriginalTarget;
+	Bool m_avoidPrevTarget;
 
 	DeathType m_triggerDeathType;
 	const FXList* m_scatterFX;
@@ -76,7 +81,7 @@ private:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class ScatterShotUpdate : public UpdateModule
+class ScatterShotUpdate : public UpdateModule, public DieModuleInterface
 {
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ScatterShotUpdate, "ScatterShotUpdate")
@@ -89,6 +94,13 @@ public:
 
 	virtual UpdateSleepTime update();
 
+	static Int getInterfaceMask() { return MODULEINTERFACE_DIE; }
+
+	// BehaviorModule
+	virtual DieModuleInterface* getDie() { return this; }
+
+	void onDie(const DamageInfo* damageInfo);
+
 protected:
 
 	Weapon* m_weapon;
@@ -98,6 +110,7 @@ protected:
 
 	Coord3D m_goalPos;
 	Object* m_goalObj;
+	ObjectID m_prevTargetID;  //< target of previous attack. only used for special case when chaining multiple targets
 
 	Real m_totalTargetDistance;
 
