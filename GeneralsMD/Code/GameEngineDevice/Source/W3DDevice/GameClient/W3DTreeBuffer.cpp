@@ -63,6 +63,7 @@ enum
 #include "Common/MapReaderWriterInfo.h"
 #include "Common/FileSystem.h"
 #include "Common/file.h"
+#include "Common/GameEngine.h"
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -1274,8 +1275,6 @@ void W3DTreeBuffer::clearAllTrees(void)
 		m_areaPartition[i] = END_OF_PARTITION;
 	}
 	m_numTreeTypes = 0;
-
-	m_lastLogicFrame = 0;
 }
 
 //=============================================================================
@@ -1535,36 +1534,22 @@ void W3DTreeBuffer::drawTrees(CameraClass * camera, RefRenderObjListIterator *pD
 	}
 
 	// if breeze changes, always process the full update, even if not visible,
-	// so that things offscreen won't 'pop' when first viewed
+	// so that things off screen won't 'pop' when first viewed
 	const BreezeInfo& info = TheScriptEngine->getBreezeInfo();
-	Bool pause = TheScriptEngine->isTimeFrozenScript() || TheScriptEngine->isTimeFrozenDebug();
-	if (TheGameLogic && TheGameLogic->isGamePaused()) {
-		pause = true;
+	if (info.m_breezeVersion != m_curSwayVersion)
+	{
+		updateSway(info);
 	}
 
-	// TheSuperHackers @bugfix Mauller 04/07/2025 decouple the tree sway position updates from the client fps
-	if (TheGameLogic) {
-		UnsignedInt currentFrame = TheGameLogic->getFrame();
-		if (m_lastLogicFrame == currentFrame) {
-			pause = true;
-		}
-		m_lastLogicFrame = currentFrame;
-	}
-
-	Int i;
-	if (!pause) {
-		if (info.m_breezeVersion != m_curSwayVersion)
-		{
-			updateSway(info);
-		}
-	}
+	// TheSuperHackers @tweak The tree sway, topple and sink time steps are now decoupled from the render update.
+	const Real timeScale = TheGameEngine->getActualLogicTimeScaleOverFpsRatio();
 	Vector3 swayFactor[MAX_SWAY_TYPES];
-	for (i=0; i<MAX_SWAY_TYPES; i++) {
-		if (!pause) {
-			m_curSwayOffset[i] += m_curSwayStep[i];
-			if (m_curSwayOffset[i] > NUM_SWAY_ENTRIES-1) {
-				m_curSwayOffset[i] -= NUM_SWAY_ENTRIES-1;
-			}
+	Int i;
+	for (i=0; i<MAX_SWAY_TYPES; i++)
+	{
+		m_curSwayOffset[i] += m_curSwayStep[i] * timeScale;
+		if (m_curSwayOffset[i] > NUM_SWAY_ENTRIES-1) {
+			m_curSwayOffset[i] -= NUM_SWAY_ENTRIES-1;
 		}
 		Int minOffset = REAL_TO_INT_FLOOR(m_curSwayOffset[i]);
 		if (minOffset>=0 && minOffset+1<NUM_SWAY_ENTRIES) {
@@ -1613,30 +1598,29 @@ void W3DTreeBuffer::drawTrees(CameraClass * camera, RefRenderObjListIterator *pD
 
 	// Update pushed aside and toppling trees.
 	for (curTree=0; curTree<m_numTrees; curTree++) {
-		if (pause) {
-			break;
-		}
 		Int type = m_trees[curTree].treeType;
 		if (type<0) { // deleted.
 			continue;
 		}
+		const W3DTreeDrawModuleData *moduleData = m_treeTypes[type].m_data;
 		if(m_trees[curTree].m_toppleState == TOPPLE_FALLING ||
 			 m_trees[curTree].m_toppleState == TOPPLE_FOGGED) {
-			updateTopplingTree(m_trees+curTree);
+			updateTopplingTree(m_trees+curTree, timeScale);
 		} else if(m_trees[curTree].m_toppleState == TOPPLE_DOWN) {
-			if (m_treeTypes[type].m_data->m_killWhenToppled) {
-				if (m_trees[curTree].m_sinkFramesLeft==0) {
+			if (moduleData->m_killWhenToppled) {
+				if (m_trees[curTree].m_sinkFramesLeft <= 0.0f) {
 					m_trees[curTree].treeType = DELETED_TREE_TYPE; // delete it. [7/11/2003]
 					m_anythingChanged = true; // need to regenerate trees. [7/11/2003]
 				}
-				m_trees[curTree].m_sinkFramesLeft--;
-				m_trees[curTree].location.Z -= m_treeTypes[type].m_data->m_sinkDistance/m_treeTypes[type].m_data->m_sinkFrames;
+				const Real sinkDistancePerFrame = moduleData->m_sinkDistance / moduleData->m_sinkFrames;
+				m_trees[curTree].m_sinkFramesLeft -= timeScale;
+				m_trees[curTree].location.Z -= sinkDistancePerFrame * timeScale;
 				m_trees[curTree].m_mtx.Set_Translation(m_trees[curTree].location);
 			}
 		} else if (m_trees[curTree].pushAsideDelta!=0.0f) {
 			m_trees[curTree].pushAside += m_trees[curTree].pushAsideDelta;
 			if (m_trees[curTree].pushAside>=1.0f) {
-				m_trees[curTree].pushAsideDelta = -1.0/(Real)m_treeTypes[type].m_data->m_framesToMoveInward;
+				m_trees[curTree].pushAsideDelta = -1.0f/(Real)moduleData->m_framesToMoveInward;
 			} else if (m_trees[curTree].pushAside<=0.0f) {
 				m_trees[curTree].pushAsideDelta = 0.0f;
 				m_trees[curTree].pushAside = 0.0f;
@@ -1856,7 +1840,7 @@ static const Real ANGULAR_LIMIT = PI/2 - PI/64;
 //-------------------------------------------------------------------------------------------------
 ///< Keep track of rotational fall distance, bounce and/or stop when needed.
 //-------------------------------------------------------------------------------------------------
-void W3DTreeBuffer::updateTopplingTree(TTree *tree)
+void W3DTreeBuffer::updateTopplingTree(TTree *tree, Real timeScale)
 {
 	//DLOG(Debug::Format("updating W3DTreeBuffer %08lx\n",this));
 	DEBUG_ASSERTCRASH(tree->m_toppleState != TOPPLE_UPRIGHT, ("hmm, we should be sleeping here"));
@@ -1880,20 +1864,19 @@ void W3DTreeBuffer::updateTopplingTree(TTree *tree)
 		tree->m_mtx.In_Place_Pre_Rotate_Y(ANGULAR_LIMIT * tree->m_toppleDirection.x);
 		if (d->m_killWhenToppled) {
 			// If got killed in the fog, just remove. jba [8/11/2003]
-			tree->m_sinkFramesLeft = 0;
+			tree->m_sinkFramesLeft = 0.0f;
 		}
 		return;
 	}
 	const Real VELOCITY_BOUNCE_LIMIT = 0.01f;				// if the velocity after a bounce will be this or lower, just stop at zero
 	const Real VELOCITY_BOUNCE_SOUND_LIMIT = 0.03f;	// and if this low, then skip the bounce sound
 
-	Real curVelToUse = tree->m_angularVelocity;
+	Real curVelToUse = tree->m_angularVelocity * timeScale;
 	if (tree->m_angularAccumulation + curVelToUse > ANGULAR_LIMIT)
 		curVelToUse = ANGULAR_LIMIT - tree->m_angularAccumulation;
 
 	tree->m_mtx.In_Place_Pre_Rotate_X(-curVelToUse * tree->m_toppleDirection.y);
 	tree->m_mtx.In_Place_Pre_Rotate_Y(curVelToUse * tree->m_toppleDirection.x);
-
 
 	tree->m_angularAccumulation += curVelToUse;
 	if ((tree->m_angularAccumulation >= ANGULAR_LIMIT) && (tree->m_angularVelocity > 0))
@@ -1926,7 +1909,7 @@ void W3DTreeBuffer::updateTopplingTree(TTree *tree)
 	}
 	else
 	{
-		tree->m_angularVelocity += tree->m_angularAcceleration;
+		tree->m_angularVelocity += tree->m_angularAcceleration * timeScale;
 	}
 
 }
@@ -1948,7 +1931,11 @@ void W3DTreeBuffer::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
+#else
+	XferVersion currentVersion = 2;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -2008,7 +1995,17 @@ void W3DTreeBuffer::xfer( Xfer *xfer )
 		xfer->xferReal(&tree.m_angularAccumulation);	///< How much have I rotated so I know when to bounce.
 		xfer->xferUnsignedInt(&tree.m_options);	///< topple options
 		xfer->xferMatrix3D(&tree.m_mtx);
-		xfer->xferUnsignedInt(&tree.m_sinkFramesLeft);	///< Toppled trees sink into the terrain & disappear, how many frames left.
+
+		if (version <= 1)
+		{
+			UnsignedInt sinkFramesLeft = (UnsignedInt)tree.m_sinkFramesLeft;
+			xfer->xferUnsignedInt(&sinkFramesLeft);	///< Toppled trees sink into the terrain & disappear, how many frames left.
+			tree.m_sinkFramesLeft = (Real)sinkFramesLeft;
+		}
+		else
+		{
+			xfer->xferReal(&tree.m_sinkFramesLeft);	///< Toppled trees sink into the terrain & disappear, how many frames left.
+		}
 
 		if (xfer->getXferMode() == XFER_LOAD && treeType != DELETED_TREE_TYPE && treeType < m_numTreeTypes) {
 			Coord3D pos;

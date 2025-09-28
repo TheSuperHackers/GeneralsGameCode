@@ -121,7 +121,7 @@ typedef struct {
 	Real					m_angularAccumulation;		///< How much have I rotated so I know when to bounce.
 	UnsignedInt		m_options;								///< topple options
 	Matrix3D			m_mtx;
-	UnsignedInt		m_sinkFramesLeft;					///< Toppled trees sink into the terrain & disappear, how many frames left.
+	Real					m_sinkFramesLeft;					///< Toppled trees sink into the terrain & disappear, how many frames left.
 
 } TTree;
 
@@ -256,7 +256,6 @@ private:
 	Real		m_curSwayOffset[MAX_SWAY_TYPES];
 	Real		m_curSwayStep[MAX_SWAY_TYPES];
 	Real		m_curSwayFactor[MAX_SWAY_TYPES];
-	Int			m_lastLogicFrame;
 
 	W3DProjectedShadow *m_shadow;
 
@@ -282,7 +281,7 @@ protected:
 
 	Int  getPartitionBucket(const Coord3D &pos) const;
 
-	void updateTopplingTree(TTree *tree);
+	void updateTopplingTree(TTree *tree, Real timeScale);
 	void applyTopplingForce( TTree *tree, const Coord3D* toppleDirection, Real toppleSpeed,
 																			 UnsignedInt options );
 
