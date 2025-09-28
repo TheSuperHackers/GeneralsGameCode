@@ -670,8 +670,10 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 	MemoryPoolObjectHolder hold(iter);
 	for( them = iter->first(); them; them = iter->next() )
 	{
+#if !RETAIL_COMPATIBLE_CRC
 		if (builderObject && them->getShroudedStatus(builderObject->getControllingPlayer()->getPlayerIndex()) >= OBJECTSHROUD_FOGGED)
 			return LBC_SHROUD;
+#endif
 
 		Bool feedbackWithFailure = TRUE;
 		Relationship rel = builderObject ? builderObject->getRelationship( them ) : NEUTRAL;
