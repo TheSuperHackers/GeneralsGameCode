@@ -684,7 +684,7 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 			continue;
 
 		if (builderObject && them->getShroudedStatus(builderObject->getControllingPlayer()->getPlayerIndex()) >= OBJECTSHROUD_FOGGED)
-			return LBC_SHROUD;
+			return false;
 
 		// an immobile object may obstruct our building depending on flags.
 		if( them->isKindOf( KINDOF_IMMOBILE ) )	{
