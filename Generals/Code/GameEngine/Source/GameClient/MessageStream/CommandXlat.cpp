@@ -4672,8 +4672,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_NO_DRAW:
 		{
-			const Bool isZero = TheGlobalData->m_noDraw == 0;
-			TheWritableGlobalData->m_noDraw = isZero ? 0x80000000 : 0;
+			const Bool isZero = TheGlobalData->m_noDraw == 0u;
+			TheWritableGlobalData->m_noDraw = isZero ? ~0u : 0u;
 			disp = DESTROY_MESSAGE;
 			break;
 		}
