@@ -169,12 +169,28 @@ public:
 	** will control things like animated uv-offset mappers and render object animations.
 	*/
 	static void						Sync(bool step);
+
+	// Total sync time in milliseconds. Advances in full logic time steps only.
 	static unsigned int		Get_Sync_Time(void) { return SyncTime; }
+
+	// Current sync frame time in milliseconds. Can be zero when the logic has not stepped forward in the current render update.
 	static unsigned int		Get_Sync_Frame_Time(void) { return SyncTime - PreviousSyncTime; }
-	static unsigned int		Get_Fractional_Sync_Milliseconds() { return FractionalSyncMs; }
+
+	// Fractional sync frame time. Accumulates for as long as the sync frame is not stepped forward.
+	static unsigned int		Get_Fractional_Sync_Milliseconds() { return (unsigned int)FractionalSyncMs; }
+
+	// Total logic time in milliseconds. Can include fractions of a logic step. Is rounded to integer.
+	static unsigned int		Get_Logic_Time_Milliseconds() { return SyncTime + (unsigned int)FractionalSyncMs; }
+
+	// Logic time step in milliseconds. Can be a fraction of a logic step.
 	static float					Get_Logic_Frame_Time_Milliseconds() { return LogicFrameTimeMs; }
+
+	// Logic time step in seconds. Can be a fraction of a logic step.
 	static float					Get_Logic_Frame_Time_Seconds() { return LogicFrameTimeMs * 0.001f; }
+
+	// Returns the render frame count.
 	static unsigned int		Get_Frame_Count(void) { return FrameCount; }
+
 	static unsigned int		Get_Last_Frame_Poly_Count(void);
 	static unsigned int		Get_Last_Frame_Vertex_Count(void);
 
