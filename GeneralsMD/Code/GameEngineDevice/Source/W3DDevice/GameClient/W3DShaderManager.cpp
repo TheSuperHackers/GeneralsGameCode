@@ -1601,10 +1601,14 @@ void TerrainShader2Stage::updateCloud()
 	m_xOffset += m_xSlidePerSecond * frame_time;
 	m_yOffset += m_ySlidePerSecond * frame_time;
 
-	while (m_xOffset > 1) m_xOffset -= 1;
-	while (m_yOffset > 1) m_yOffset -= 1;
-	while (m_xOffset < -1) m_xOffset += 1;
-	while (m_yOffset < -1) m_yOffset += 1;
+	if (m_xOffset > 1.0f)
+		m_xOffset -= (Int)m_xOffset;
+	if (m_yOffset > 1.0f)
+		m_yOffset -= (Int)m_yOffset;
+	if (m_xOffset < -1.0f)
+		m_xOffset += (Int)-m_xOffset;
+	if (m_yOffset < -1.0f)
+		m_yOffset += (Int)-m_yOffset;
 }
 
 void TerrainShader2Stage::updateNoise1(D3DXMATRIX *destMatrix,D3DXMATRIX *curViewInverse, Bool doUpdate)
