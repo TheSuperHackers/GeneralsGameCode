@@ -207,6 +207,7 @@ protected:
 	__int64 m_nextFrameTime;														///< When did we execute the last frame?  For slugging the GameLogic...
 
 	Bool m_frameDataReady;																		///< Is the frame data for the next frame ready to be executed by TheGameLogic?
+	Bool m_isStalling;
 
 	// CRC info
 	Bool m_checkCRCsThisFrame;
@@ -269,6 +270,7 @@ Network::Network()
 	m_checkCRCsThisFrame = FALSE;
 	m_didSelfSlug = FALSE;
 	m_frameDataReady = FALSE;
+	m_isStalling = FALSE;
 	m_sawCRCMismatch = FALSE;
 	//
 
@@ -334,6 +336,7 @@ void Network::init()
 	m_lastExecutionFrame = m_runAhead - 1; // subtract 1 since we're starting on frame 0
 	m_lastFrameCompleted = m_runAhead - 1; // subtract 1 since we're starting on frame 0
 	m_frameDataReady = FALSE;
+	m_isStalling = FALSE;
 	m_didSelfSlug = FALSE;
 
 	m_localStatus = NETLOCALSTATUS_PREGAME;
@@ -692,6 +695,7 @@ void Network::update( void )
 // 4. If all commands are there, put that frame's commands on TheCommandList.
 //
 	m_frameDataReady = FALSE;
+	m_isStalling = FALSE;
 
 #if defined(RTS_DEBUG)
 	if (m_networkOn == FALSE) {
@@ -722,6 +726,11 @@ void Network::update( void )
 			RelayCommandsToCommandList(TheGameLogic->getFrame());	// Put the commands for the next frame on TheCommandList.
 			m_frameDataReady = TRUE; // Tell the GameEngine to run the commands for the new frame.
 		}
+	}
+	else {
+		__int64 curTime;
+		QueryPerformanceCounter((LARGE_INTEGER *)&curTime);
+		m_isStalling = curTime >= m_nextFrameTime;
 	}
 }
 
@@ -812,9 +821,7 @@ Bool Network::isFrameDataReady() {
 
 Bool Network::isStalling()
 {
-	__int64 curTime;
-	QueryPerformanceCounter((LARGE_INTEGER *)&curTime);
-	return curTime >= m_nextFrameTime;
+	return m_isStalling;
 }
 
 /**
