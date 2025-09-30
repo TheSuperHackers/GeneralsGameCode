@@ -5837,13 +5837,9 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 				notZonePassable = true;
 			}
 
-			if (isHuman) {
-				// check if new cell is in logical map.	(computer can move off logical map)
-				if (newCellCoord.x < m_logicalExtent.lo.x) continue;
-				if (newCellCoord.y < m_logicalExtent.lo.y) continue;
-				if (newCellCoord.x > m_logicalExtent.hi.x) continue;
-				if (newCellCoord.y > m_logicalExtent.hi.y) continue;
-			}
+			// check if new cell is in logical map.	(computer can move off logical map)
+			if (isHuman && checkCellOutsideExtents(newCellCoord))
+				continue;
 
 			// check if this neighbor cell is already on the open (waiting to be tried)
 			// or closed (already tried) lists
@@ -7166,9 +7162,10 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 
 	// determine goal cell
 	PathfindCell *goalCell = getCell( destinationLayer, cell.x, cell.y );
-	if (goalCell == NULL) {
+	if (!goalCell) {
 		return NULL;
 	}
+
 	if (!goalCell->allocateInfo(cell)) {
 		return NULL;
 	}
@@ -7177,9 +7174,10 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 	ICoord2D startCellNdx;
 	PathfindLayerEnum layer = TheTerrainLogic->getLayerForDestination(from);
 	PathfindCell *parentCell = getClippedCell( layer,&clipFrom );
-	if (parentCell == NULL) {
+	if (!parentCell) {
 		return NULL;
 	}
+
 	if (parentCell!=goalCell) {
 		worldToCell(&clipFrom, &startCellNdx);
 		if (!parentCell->allocateInfo(startCellNdx)) {
@@ -7220,11 +7218,10 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 		goalBlockNdx.y = -1;
 	}
 
-	if (parentCell->getLayer()==LAYER_GROUND) {
-		// initialize "open" list to contain start cell
-		m_openList = parentCell;
-	}	else {
-		m_openList = parentCell;
+	// initialize "open" list to contain start cell
+	m_openList = parentCell;
+
+	if (parentCell->getLayer()!=LAYER_GROUND) {
 		PathfindLayerEnum layer = parentCell->getLayer();
 		// We're starting on a bridge, so link to land at the bridge end points.
 		ICoord2D ndx;
@@ -7356,12 +7353,16 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 						break;
 					}
  					PathfindCell *cell = getCell(LAYER_GROUND, toNdx.x, toNdx.y);
-					if (cell==NULL) continue;
-					if (cell->hasInfo() && (cell->getClosed() || cell->getOpen())) {
+					if (!cell)
 						continue;
-					}
+
+					if (cell->hasInfo() && (cell->getClosed() || cell->getOpen()))
+						continue;
+
 					PathfindCell *startCell = getCell(LAYER_GROUND, ndx.x, ndx.y);
-					if (startCell==NULL) continue;
+					if (!startCell)
+						continue;
+
 					if (startCell != parentCell) {
 						if(!startCell->allocateInfo(ndx)) {
 							// TheSuperHackers @info We need to forcefully cleanup dangling pathfinding cells if this failure condition is hit in retail
@@ -7497,20 +7498,19 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 				ICoord2D delta;
 				delta.x = -1; // left side moves -1.
 				delta.y = 0;
+
 				PathfindCell *cell = getCell(LAYER_GROUND, scanCell.x, scanCell.y);
-				if (cell==NULL) continue;
-				if (cell->hasInfo() && (cell->getClosed() || cell->getOpen())) {
-					if (parentZone == m_zoneManager.getBlockZone(locomotorSurface,
-						crusher, scanCell.x, scanCell.y, m_map)) {
+				if (!cell)
+					continue;
+
+				if ( cell->hasInfo() && (cell->getClosed() || cell->getOpen()) ) {
+					if (parentZone == m_zoneManager.getBlockZone(locomotorSurface, crusher, scanCell.x, scanCell.y, m_map))
 						break;
-					}
 				}
-				if (isHuman) {
-					if (scanCell.x < m_logicalExtent.lo.x || scanCell.x > m_logicalExtent.hi.x ||
-							scanCell.y < m_logicalExtent.lo.y || scanCell.y > m_logicalExtent.hi.y) {
-						continue;
-					}
-				}
+
+				if (isHuman && checkCellOutsideExtents(scanCell))
+					continue;
+
 				processHierarchicalCell(scanCell, delta, parentCell,
 					goalCell, parentZone, examinedZones, numExZones, crusher, cellCount);
 			}
@@ -7530,20 +7530,19 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 				ICoord2D delta;
 				delta.x = 1; // right side moves +1.
 				delta.y = 0;
+
 				PathfindCell *cell = getCell(LAYER_GROUND, scanCell.x, scanCell.y);
-				if (cell==NULL) continue;
-				if (cell->hasInfo() && (cell->getClosed() || cell->getOpen())) {
-					if (parentZone == m_zoneManager.getBlockZone(locomotorSurface,
-						crusher, scanCell.x, scanCell.y, m_map)) {
+				if (!cell)
+					continue;
+
+				if ( cell->hasInfo() && (cell->getClosed() || cell->getOpen()) ) {
+					if (parentZone == m_zoneManager.getBlockZone(locomotorSurface, crusher, scanCell.x, scanCell.y, m_map))
 						break;
-					}
 				}
-				if (isHuman) {
-					if (scanCell.x < m_logicalExtent.lo.x || scanCell.x > m_logicalExtent.hi.x ||
-							scanCell.y < m_logicalExtent.lo.y || scanCell.y > m_logicalExtent.hi.y) {
-						continue;
-					}
-				}
+
+				if (isHuman && checkCellOutsideExtents(scanCell))
+					continue;
+
 				processHierarchicalCell(scanCell, delta, parentCell,
 					goalCell, parentZone, examinedZones, numExZones, crusher, cellCount);
 			}
@@ -7562,20 +7561,19 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 				ICoord2D delta;
 				delta.x = 0;
 				delta.y = -1;	// Top side moves -1.
+
 				PathfindCell *cell = getCell(LAYER_GROUND, scanCell.x, scanCell.y);
-				if (cell==NULL) continue;
-				if (cell->hasInfo() && (cell->getClosed() || cell->getOpen())) {
-					if (parentZone == m_zoneManager.getBlockZone(locomotorSurface,
-						crusher, scanCell.x, scanCell.y, m_map)) {
+				if (!cell)
+					continue;
+
+				if ( cell->hasInfo() && (cell->getClosed() || cell->getOpen()) ) {
+					if (parentZone == m_zoneManager.getBlockZone(locomotorSurface, crusher, scanCell.x, scanCell.y, m_map))
 						break;
-					}
 				}
-				if (isHuman) {
-					if (scanCell.x < m_logicalExtent.lo.x || scanCell.x > m_logicalExtent.hi.x ||
-							scanCell.y < m_logicalExtent.lo.y || scanCell.y > m_logicalExtent.hi.y) {
-						continue;
-					}
-				}
+
+				if (isHuman && checkCellOutsideExtents(scanCell))
+					continue;
+
 				processHierarchicalCell(scanCell, delta, parentCell,
 					goalCell, parentZone, examinedZones, numExZones, crusher, cellCount);
 			}
@@ -7595,20 +7593,19 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 				ICoord2D delta;
 				delta.x = 0;
 				delta.y = 1; // Top side moves +1.
+
 				PathfindCell *cell = getCell(LAYER_GROUND, scanCell.x, scanCell.y);
-				if (cell==NULL) continue;
-				if (cell->hasInfo() && (cell->getClosed() || cell->getOpen())) {
-					if (parentZone == m_zoneManager.getBlockZone(locomotorSurface,
-						crusher, scanCell.x, scanCell.y, m_map)) {
+				if (!cell)
+					continue;
+
+				if ( cell->hasInfo() && (cell->getClosed() || cell->getOpen()) ) {
+					if (parentZone == m_zoneManager.getBlockZone(locomotorSurface, crusher, scanCell.x, scanCell.y, m_map))
 						break;
-					}
 				}
-				if (isHuman) {
-					if (scanCell.x < m_logicalExtent.lo.x || scanCell.x > m_logicalExtent.hi.x ||
-							scanCell.y < m_logicalExtent.lo.y || scanCell.y > m_logicalExtent.hi.y) {
-						continue;
-					}
-				}
+
+				if (isHuman && checkCellOutsideExtents(scanCell))
+					continue;
+
 				processHierarchicalCell(scanCell, delta, parentCell,
 					goalCell, parentZone, examinedZones, numExZones, crusher, cellCount);
 			}
