@@ -9967,10 +9967,14 @@ if (g_UT_startTiming) return false;
 #endif
 	if (!obj->isKindOf(KINDOF_DOZER) && !obj->isKindOf(KINDOF_HARVESTER)) {
 		// Harvesters & dozers want a clear path.
-		if (!path->getBlockedByAlly()) return FALSE; // Only move units if it is required.
+		if (!path->getBlockedByAlly()) {
+			return FALSE; // Only move units if it is required.
+		}
 	}
 	LatchRestore<Int> recursiveDepth(m_moveAlliesDepth, m_moveAlliesDepth+1);
-	if (m_moveAlliesDepth > 2) return false;
+	if (m_moveAlliesDepth > 2) {
+		return false;
+	}
 
 	Bool centerInCell;
 	Int radius;
@@ -9989,46 +9993,58 @@ if (g_UT_startTiming) return false;
 		for (i=curCell.x-radius; i<curCell.x+numCellsAbove; i++) {
 			for (j=curCell.y-radius; j<curCell.y+numCellsAbove; j++) {
 				PathfindCell	*cell = getCell(node->getLayer(), i, j);
-				if (cell) {
-					if (cell->getPosUnit()==INVALID_ID) {
+				if (!cell) {
+					continue; // Cell is not on the pathfinding grid
+				}
+
+				ObjectID unitId = cell->getPosUnit();
+				if (unitId==INVALID_ID) {
+					continue;
+				}
+
+				if (unitId==obj->getID()) {
+					continue;	// It's us.
+				}
+
+				if (unitId==ignoreId) {
+					continue;	 // It's the one we are ignoring.
+				}
+
+				Object *otherObj = TheGameLogic->findObjectByID(unitId);
+				if (!otherObj) {
+					continue;
+				}
+
+				if (obj->getRelationship(otherObj)!=ALLIES) {
+					continue;  // Only move allies.
+				}
+
+				if (obj->isKindOf(KINDOF_INFANTRY) && otherObj->isKindOf(KINDOF_INFANTRY)) {
+					continue;  // infantry can walk through other infantry, so just let them.
+				}
+				if (obj->isKindOf(KINDOF_INFANTRY) && !otherObj->isKindOf(KINDOF_INFANTRY)) {
+					// If this is a general clear operation, don't let infantry push vehicles.
+					if (!path->getBlockedByAlly()) {
 						continue;
 					}
-					if (cell->getPosUnit()==obj->getID()) {
-						continue;	// It's us.
-					}
-					if (cell->getPosUnit()==ignoreId) {
-						continue;	 // It's the one we are ignoring.
-					}
-					Object *otherObj = TheGameLogic->findObjectByID(cell->getPosUnit());
-					if (obj->getRelationship(otherObj)!=ALLIES) {
-						continue;  // Only move allies.
-					}
-					if (otherObj==NULL) continue;
-					if (obj->isKindOf(KINDOF_INFANTRY) && otherObj->isKindOf(KINDOF_INFANTRY)) {
-						continue;  // infantry can walk through other infantry, so just let them.
-					}
-					if (obj->isKindOf(KINDOF_INFANTRY) && !otherObj->isKindOf(KINDOF_INFANTRY)) {
-						// If this is a general clear operation, don't let infantry push vehicles.
-						if (!path->getBlockedByAlly()) continue;
-					}
-					if( otherObj && otherObj->getAI() && !otherObj->getAI()->isMoving() )
-					{
-						if( otherObj->getAI()->isAttacking() )
-						{
-							continue; // Don't move units that are attacking. [8/14/2003]
-						}
-
-						//Kris: Patch 1.01 November 3, 2003
-						//Black Lotus exploit fix -- moving while hacking.
-						if( otherObj->testStatus( OBJECT_STATUS_IS_USING_ABILITY ) || otherObj->getAI()->isBusy() )
-						{
-							continue; // Packing or unpacking objects for example
-						}
-
-						//DEBUG_LOG(("Moving ally"));
-						otherObj->getAI()->aiMoveAwayFromUnit(obj, CMD_FROM_AI);
-					}
 				}
+
+				if (!otherObj->getAI() || otherObj->getAI()->isMoving()) {
+					continue;
+				}
+
+				if (otherObj->getAI()->isAttacking()) {
+					continue; // Don't move units that are attacking. [8/14/2003]
+				}
+
+				//Kris: Patch 1.01 November 3, 2003
+				//Black Lotus exploit fix -- moving while hacking.
+				if( otherObj->testStatus( OBJECT_STATUS_IS_USING_ABILITY ) || otherObj->getAI()->isBusy() ) {
+					continue; // Packing or unpacking objects for example
+				}
+
+				//DEBUG_LOG(("Moving ally"));
+				otherObj->getAI()->aiMoveAwayFromUnit(obj, CMD_FROM_AI);
 			}
 		}
 	}
