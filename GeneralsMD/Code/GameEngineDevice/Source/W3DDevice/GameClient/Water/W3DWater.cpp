@@ -1219,11 +1219,9 @@ void WaterRenderObjClass::update( void )
 		m_riverXOffset += (Real)(MagicOffset * timeScale);
 		m_riverYOffset += (Real)(2 * MagicOffset * timeScale);
 
-		if (m_riverXOffset > 1.0f)
-			m_riverXOffset -= (Int)m_riverXOffset;
-
-		if (m_riverYOffset > 1.0f)
-			m_riverYOffset -= (Int)m_riverYOffset;
+		// This moves offsets towards zero when smaller -1.0 or larger 1.0
+		m_riverXOffset -= (Int)m_riverXOffset;
+		m_riverYOffset -= (Int)m_riverYOffset;
 
 		m_fBumpFrame += timeScale;
 		if (m_fBumpFrame >= NUM_BUMP_FRAMES)
