@@ -169,14 +169,14 @@ void DynamicGeometryClientUpdate::clientUpdate( void )
 	UnsignedInt now = TheGameLogic->getFrame();
 
 	Real alpha0, alpha1, scale0, scale1, progress;
-	if (now < m_startFrame + data->m_midpointFrames) {
+	if (now <= m_startFrame + data->m_midpointFrames) {
 		alpha0 = data->m_alphaInitial;
 		alpha1 = data->m_alphaMidpoint;
 		scale0 = data->m_scaleInitial;
 		scale1 = data->m_scaleMidpoint;
 		progress = INT_TO_REAL(now - m_startFrame) / INT_TO_REAL(data->m_midpointFrames);
 	}
-	else if (now < m_startFrame + data->m_totalFrames) {
+	else if (now <= m_startFrame + data->m_totalFrames) {
 		alpha0 = data->m_alphaMidpoint;
 		alpha1 = data->m_alphaFinal;
 		scale0 = data->m_scaleMidpoint;
@@ -203,6 +203,9 @@ void DynamicGeometryClientUpdate::clientUpdate( void )
 	}
 
 	draw->setInstanceScale(currentScale * newScale);
+
+	DEBUG_LOG((">>> DGCU: currentScale = %f, newScale = %f, m_prevScale = %f, instanceScale = %f",
+		currentScale, newScale, m_prevScale, currentScale * newScale));
 
 	m_prevScale = newScale;
 
