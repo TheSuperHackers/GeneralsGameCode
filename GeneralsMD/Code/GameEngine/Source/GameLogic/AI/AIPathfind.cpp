@@ -5662,6 +5662,13 @@ void Pathfinder::checkChangeLayers(PathfindCell *parentCell)
 	m_openList = newCell->putOnSortedOpenList( m_openList );
 }
 
+bool Pathfinder::checkCellOutsideExtents(ICoord2D& cell) {
+	return 	cell.x < m_logicalExtent.lo.x ||
+					cell.x > m_logicalExtent.hi.x ||
+					cell.y < m_logicalExtent.lo.y ||
+					cell.y > m_logicalExtent.hi.y;
+}
+
 
 struct ExamineCellsStruct
 {
