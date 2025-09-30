@@ -65,7 +65,8 @@ AsciiString UnicodeStringToQuotedPrintable(UnicodeString original)
 			dest[i++] = MAGIC_CHAR;
 			dest[i++] = intToHexDigit((*src)>>4);
 			dest[i++] = intToHexDigit((*src)&0xf);
-		} else
+		}
+		else
 		{
 			dest[i++] = *src;
 		}
@@ -100,7 +101,8 @@ AsciiString AsciiStringToQuotedPrintable(AsciiString original)
 			dest[i++] = MAGIC_CHAR;
 			dest[i++] = intToHexDigit((*src)>>4);
 			dest[i++] = intToHexDigit((*src)&0xf);
-		} else
+		}
+		else
 		{
 			dest[i++] = *src;
 		}
@@ -117,8 +119,8 @@ UnicodeString QuotedPrintableToUnicodeString(AsciiString original)
 	static WideChar dest[1024];
 	int i=0;
 
-	unsigned char *c = (unsigned char *)dest;
-	const unsigned char *src = (const unsigned char *)original.str();
+	unsigned char *c = reinterpret_cast<unsigned char *>(dest);
+	const unsigned char *src = reinterpret_cast<const unsigned char *>(original.str());
 
 	while (*src && i<1023)
 	{
@@ -159,18 +161,17 @@ UnicodeString QuotedPrintableToUnicodeString(AsciiString original)
 
 	*c = 0;
 
-	UnicodeString out(dest);
-	return out;
+	return dest;
 }
 
 // Convert ascii quoted-printable strings into ascii strings
 AsciiString QuotedPrintableToAsciiString(AsciiString original)
 {
-	static unsigned char dest[1024];
+	static char dest[1024];
 	int i=0;
 
-	unsigned char *c = (unsigned char *)dest;
-	const unsigned char *src = (const unsigned char *)original.str();
+	unsigned char *c = reinterpret_cast<unsigned char *>(dest);
+	const unsigned char *src = reinterpret_cast<const unsigned char *>(original.str());
 
 	while (*src && i<1023)
 	{
@@ -200,6 +201,6 @@ AsciiString QuotedPrintableToAsciiString(AsciiString original)
 
 	*c = 0;
 
-	return AsciiString((const char *)dest);
+	return dest;
 }
 
