@@ -683,14 +683,17 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 		if (them->isKindOf(KINDOF_INERT))
 			continue;
 
+		if (them->isKindOf(KINDOF_IMMOBILE)) {
+			if (onlyCheckEnemies && builderObject && builderObject->getRelationship(them) != ENEMIES) {
+				continue;
+			}
+		}
+
 		if (builderObject && them->getShroudedStatus(builderObject->getControllingPlayer()->getPlayerIndex()) >= OBJECTSHROUD_FOGGED)
 			return false;
 
 		// an immobile object may obstruct our building depending on flags.
 		if( them->isKindOf( KINDOF_IMMOBILE ) )	{
-			if (onlyCheckEnemies && builderObject && builderObject->getRelationship( them ) != ENEMIES )	{
-				continue;
-			}
 			TheTerrainVisual->addFactionBib(them, true);
 			return false;
 		}
