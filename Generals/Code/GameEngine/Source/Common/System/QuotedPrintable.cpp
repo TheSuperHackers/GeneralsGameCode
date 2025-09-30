@@ -56,7 +56,7 @@ static int hexDigitToInt(char c)
 AsciiString UnicodeStringToQuotedPrintable(UnicodeString original)
 {
 	static char dest[1024];
-	const char *src = (const char *)original.str();
+	const unsigned char *src = reinterpret_cast<const unsigned char *>(original.str());
 	int i=0;
 	while ( !(src[0]=='\0' && src[1]=='\0') && i<1021 )
 	{
@@ -91,7 +91,7 @@ AsciiString UnicodeStringToQuotedPrintable(UnicodeString original)
 AsciiString AsciiStringToQuotedPrintable(AsciiString original)
 {
 	static char dest[1024];
-	const char *src = (const char *)original.str();
+	const unsigned char *src = reinterpret_cast<const unsigned char *>(original.str());
 	int i=0;
 	while ( src[0]!='\0' && i<1021 )
 	{
