@@ -47,6 +47,7 @@
 #include "W3DDevice/GameClient/W3DWaterTracks.h"
 #include "GameClient/InGameUI.h"
 #include "GameLogic/TerrainLogic.h"
+#include "Common/GameEngine.h"
 #include "Common/GlobalData.h"
 #include "Common/UnicodeString.h"
 #include "Common/file.h"
@@ -58,8 +59,6 @@
 #include "camera.h"
 #include "assetmgr.h"
 #include "WW3D2/dx8wrapper.h"
-
-//#define ALLOW_WATER_TRACK_EDIT
 
 //number of vertex pages allocated - allows double buffering of vertex updates.
 //while one is being rendered, another is being updated.  Improves HW parallelism.
@@ -278,18 +277,6 @@ void WaterTracksObj::init( Real width, const Vector2 &start, const Vector2 &end,
 //=============================================================================
 Int WaterTracksObj::update(Int msElapsed)
 {
-#ifdef	ALLOW_WATER_TRACK_EDIT
-//	if (pauseWaves)
-//		m_elapsedMs = m_timeToReachBeach+m_timeToStop;
-//	else
-#endif
-
-	//nothing to do here...most of the work is done on render.
-	m_elapsedMs += msElapsed;	//advance time for this update
-
-	///@todo: Should check in here if we are done with this object are return FALSE to free it.
-	//	return FALSE;
-
 	return TRUE;	//assume we had an update
 }
 
@@ -305,6 +292,9 @@ Int WaterTracksObj::update(Int msElapsed)
 
 Int WaterTracksObj::render(DX8VertexBufferClass	*vertexBuffer, Int batchStart)
 {
+	// TheSuperHackers @tweak The wave movement time step is now decoupled from the render update.
+	m_elapsedMs += TheGameEngine->getLogicTimeStepMilliseconds();
+
 	VertexFormatXYZDUV1 *vb;
 	Vector2	waveTailOrigin,waveFrontOrigin;
 	Real	ooWaveDirLen=1.0f/m_waveDir.Length();	//one over length
