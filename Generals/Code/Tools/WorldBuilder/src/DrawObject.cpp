@@ -1622,12 +1622,6 @@ void DrawObject::setRampFeedbackParms(const Coord3D *start, const Coord3D *end, 
 }
 
 
-// This routine fails to draw poly triggers in some cases when optimized.
-// So just shut it off for now.  The failure case was new doc, add a poly trigger.
-// Adding any other object fixed the problem.	jba
-
-#pragma optimize("", off)
-
 /** Render draws into the current 3d context. */
 void DrawObject::Render(RenderInfoClass & rinfo)
 {
@@ -1933,7 +1927,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 	}
 
 }
-#pragma optimize("", on)
+
 
 void BuildRectFromSegmentAndWidth(const Coord3D* start, const Coord3D* end, Real width,
 																	Coord3D* outBL, Coord3D* outTL, Coord3D* outBR, Coord3D* outTR)
