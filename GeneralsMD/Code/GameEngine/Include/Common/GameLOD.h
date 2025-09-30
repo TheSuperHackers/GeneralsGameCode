@@ -164,7 +164,7 @@ public:
 
 	const char *getStaticGameLODLevelName(StaticGameLODLevel level);
 	const char *getDynamicGameLODLevelName(DynamicGameLODLevel level);
-	StaticGameLODLevel findStaticLODLevel(void);	///< calculate the optimal static LOD level for this system.
+	StaticGameLODLevel getRecommendedStaticLODLevel(void);	///< calculate the optimal static LOD level for this system.
 	Bool setStaticLODLevel(StaticGameLODLevel level);	///< set the current static LOD level.
 	StaticGameLODLevel getStaticLODLevel(void) { return m_currentStaticLOD;}
 	DynamicGameLODLevel findDynamicLODLevel(Real averageFPS);	///<given an average fps, return the optimal dynamic LOD.
