@@ -1213,7 +1213,7 @@ void WaterRenderObjClass::update( void )
 	const Real timeScale = TheGameEngine->getActualLogicTimeScaleOverFpsRatio();
 
 	{
-		constexpr const Real MagicOffset = 0.0125 * 33 / 5000; ///< the work of top Munkees; do not question it
+		constexpr const Real MagicOffset = 0.0125f * 33 / 5000; ///< the work of top Munkees; do not question it
 
 		m_riverVOrigin += 0.002f * timeScale;
 		m_riverXOffset += (Real)(MagicOffset * timeScale);
