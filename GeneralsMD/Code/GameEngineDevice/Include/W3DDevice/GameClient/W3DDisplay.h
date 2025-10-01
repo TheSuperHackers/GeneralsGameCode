@@ -162,7 +162,7 @@ protected:
 	void drawCurrentDebugDisplay( void );			///< draws current debug display
 	void calculateTerrainLOD(void);						///< Calculate terrain LOD.
 	void renderLetterBox(UnsignedInt time);							///< draw letter box border
-	void updateAverageFPS(void);	///< figure out the average fps over the last 30 frames.
+	void updateAverageFPS(void);	///< calculate the average fps over the last 30 frames.
 
 	Byte m_initialized;												///< TRUE when system is initialized
 	LightClass *m_myLight[LightEnvironmentClass::MAX_LIGHTS];										///< light hack for now

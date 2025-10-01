@@ -78,7 +78,7 @@ public:
 
 	virtual void setFramesPerSecondLimit( Int fps ); ///< Set the max render and engine update fps.
 	virtual Int getFramesPerSecondLimit( void ); ///< Get the max render and engine update fps.
-	Real getUpdateTime(); ///< Get the last engine update delta time.
+	Real getUpdateTime(); ///< Get the last engine update delta time in seconds.
 	Real getUpdateFps(); ///< Get the last engine update fps.
 
 	static Bool isTimeFrozen(); ///< Returns true if a script has frozen time.
@@ -127,7 +127,7 @@ protected:
 	Int m_maxFPS; ///< Maximum frames per second for rendering
 	Int m_logicTimeScaleFPS; ///< Maximum frames per second for logic time scale
 
-	Real m_updateTime; ///< Last engine update delta time
+	Real m_updateTime; ///< Last engine update delta time in seconds
 	Real m_logicTimeAccumulator; ///< Frame time accumulated towards submitting a new logic frame
 
 	Bool m_quitting; ///< true when we need to quit the game
