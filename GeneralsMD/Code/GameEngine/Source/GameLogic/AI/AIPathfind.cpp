@@ -3567,20 +3567,23 @@ void PathfindLayer::classifyLayerMapCell( Int i, Int j , PathfindCell *cell, Bri
 	Coord3D center = topLeftCorner;
 	center.x += PATHFIND_CELL_SIZE/2;
 	center.y += PATHFIND_CELL_SIZE/2;
-	if (cell->getType()!=PathfindCell::CELL_IMPASSABLE) {
-		if (!(cell->getConnectLayer()==LAYER_GROUND) ) {
-			// Check for bridge clearance.  If the ground isn't 1 pathfind cells below, mark impassable.
-			Real groundHeight = TheTerrainLogic->getLayerHeight( center.x, center.y, LAYER_GROUND );
-			Real bridgeHeight = theBridge->getBridgeHeight( &center, NULL );
-			if (groundHeight+LAYER_Z_CLOSE_ENOUGH_F > bridgeHeight) {
-				PathfindCell *groundCell = TheAI->pathfinder()->getCell(LAYER_GROUND,i, j);
-				if (!(groundCell->getType()==PathfindCell::CELL_OBSTACLE)) {
-					groundCell->setType(PathfindCell::CELL_BRIDGE_IMPASSABLE);
-				}
-			}
+	if (cell->getType() == PathfindCell::CELL_IMPASSABLE) {
+		return;
+	}
+
+	if (cell->getConnectLayer() == LAYER_GROUND) {
+		return;
+	}
+
+	// Check for bridge clearance.  If the ground isn't 1 pathfind cells below, mark impassable.
+	Real groundHeight = TheTerrainLogic->getLayerHeight( center.x, center.y, LAYER_GROUND );
+	Real bridgeHeight = theBridge->getBridgeHeight( &center, NULL );
+	if (groundHeight+LAYER_Z_CLOSE_ENOUGH_F > bridgeHeight) {
+		PathfindCell *groundCell = TheAI->pathfinder()->getCell(LAYER_GROUND, i, j);
+		if (groundCell->getType() != PathfindCell::CELL_OBSTACLE) {
+			groundCell->setType(PathfindCell::CELL_BRIDGE_IMPASSABLE);
 		}
 	}
-	return;
 }
 
 
@@ -4623,52 +4626,59 @@ Bool Pathfinder::checkDestination(const Object *obj, Int cellX, Int cellY, Pathf
 	for (i=cellX-iRadius; i<cellX+numCellsAbove; i++) {
 		for (j=cellY-iRadius; j<cellY+numCellsAbove; j++) {
 			PathfindCell	*cell = getCell(layer, i, j);
-			if (cell) {
-				if (checkForAircraft) {
-					if (!cell->isAircraftGoal()) continue;
-					if (cell->getGoalAircraft()==objID) continue;
-					return false;
-				}
-				if (cell->getType()==PathfindCell::CELL_OBSTACLE) {
-					if (cell->isObstaclePresent( ignoreId ))
-						continue;
-					return false;
-				}
-				if (IS_IMPASSABLE(cell->getType())) {
-					return false;
-				}
-				if (cell->getFlags() == PathfindCell::NO_UNITS) {
-					continue;  // Nobody is here, so it's ok.
-				}
-				ObjectID goalUnitID = cell->getGoalUnit();
-				if (goalUnitID==objID) {
-					continue; // we got it.
-				} else if (ignoreId==goalUnitID) {
-					continue; // we are ignoring it.
-				} else if (goalUnitID!=INVALID_ID) {
-					if (obj==NULL) {
-						return false;
-					}
-					Object *unit = TheGameLogic->findObjectByID(goalUnitID);
-					if (unit) {
-						// order matters: we want to know if I consider it to be an ally, not vice versa
-						if (obj->getRelationship(unit) == ALLIES) {
-							return false; 	// Don't usurp your allies goals.  jba.
-						}
-						if (cell->getFlags()==PathfindCell::UNIT_PRESENT_FIXED) {
-							Bool canCrush = obj->canCrushOrSquish(unit, TEST_CRUSH_OR_SQUISH);
-							if (!canCrush) {
-								return false; // Don't move to an occupied cell.
-							}
-						}
-					}
-				}
-			} else {
+			if (!cell) {
 				return false; // off the map, so can't place here.
+			}
+
+			if (checkForAircraft) {
+				if (!cell->isAircraftGoal()) continue;
+				if (cell->getGoalAircraft()==objID) continue;
+				return false;
+			}
+			if (cell->getType()==PathfindCell::CELL_OBSTACLE) {
+				if (cell->isObstaclePresent( ignoreId ))
+					continue;
+				return false;
+			}
+			if (IS_IMPASSABLE(cell->getType())) {
+				return false;
+			}
+			if (cell->getFlags() == PathfindCell::NO_UNITS) {
+				continue;  // Nobody is here, so it's ok.
+			}
+			ObjectID goalUnitID = cell->getGoalUnit();
+			if (goalUnitID == objID) {
+				continue; // we got it.
+			}
+
+			if (ignoreId == goalUnitID) {
+				continue; // we are ignoring it.
+			}
+
+			if (goalUnitID == INVALID_ID) {
+				continue;
+			}
+
+			if (!obj) {
+				return false;
+			}
+			Object *unit = TheGameLogic->findObjectByID(goalUnitID);
+			if (!unit) {
+				continue;
+			}
+
+			// order matters: we want to know if I consider it to be an ally, not vice versa
+			if (obj->getRelationship(unit) == ALLIES) {
+				return false; 	// Don't usurp your allies goals.  jba.
+			}
+			if (cell->getFlags()==PathfindCell::UNIT_PRESENT_FIXED) {
+				Bool canCrush = obj->canCrushOrSquish(unit, TEST_CRUSH_OR_SQUISH);
+				if (!canCrush) {
+					return false; // Don't move to an occupied cell.
+				}
 			}
 		}
 	}
-
 	return true;
 }
 
@@ -4688,7 +4698,10 @@ Bool Pathfinder::checkForMovement(const Object *obj, TCheckMovementInfo &info)
 	ObjectID		allies[maxAlly];
 	Int					numAlly = 0;
 
-	if (!obj) return true; // not object can move there.
+	if (!obj) {
+		return true; // not object can move there.
+	}
+
 	ObjectID ignoreId = INVALID_ID;
 	if (obj->getAIUpdateInterface()) {
 		ignoreId =  obj->getAIUpdateInterface()->getIgnoredObstacleID();
@@ -4701,78 +4714,85 @@ Bool Pathfinder::checkForMovement(const Object *obj, TCheckMovementInfo &info)
 	for (i=info.cell.x-info.radius; i<info.cell.x+numCellsAbove; i++) {
 		for (j=info.cell.y-info.radius; j<info.cell.y+numCellsAbove; j++) {
 			PathfindCell	*cell = getCell(info.layer,i, j);
-			if (cell) {
-				enum PathfindCell::CellFlags flags = cell->getFlags();
-				ObjectID posUnit = cell->getPosUnit();
-				if ((flags == PathfindCell::UNIT_GOAL) || (flags == PathfindCell::UNIT_GOAL_OTHER_MOVING)) {
-					info.allyGoal = true;
+			if (!cell) {
+				return false; // off the map, so can't move here.
+			}
+
+			PathfindCell::CellFlags flags = cell->getFlags();
+			if ((flags == PathfindCell::UNIT_GOAL) || (flags == PathfindCell::UNIT_GOAL_OTHER_MOVING)) {
+				info.allyGoal = true;
+			}
+
+			if (flags == PathfindCell::NO_UNITS) {
+				continue;  // Nobody is here, so it's ok.
+			}
+
+			ObjectID posUnit = cell->getPosUnit();
+			if (posUnit == obj->getID()) {
+				continue; // we got it.
+			}
+
+			if (posUnit == ignoreId) {
+				continue; // we are ignoring this one.
+			}
+
+			Bool check = false;
+			Object *unit = NULL;
+			if (flags == PathfindCell::UNIT_PRESENT_MOVING || flags == PathfindCell::UNIT_GOAL_OTHER_MOVING) {
+				unit = TheGameLogic->findObjectByID(posUnit);
+				// order matters: we want to know if I consider it to be an ally, not vice versa
+				if (unit && obj->getRelationship(unit) == ALLIES) {
+					info.allyMoving = true;
 				}
-				if (flags == PathfindCell::NO_UNITS) {
-					continue;  // Nobody is here, so it's ok.
-				} else if (posUnit==obj->getID()) {
-					continue; // we got it.
-				} else if (posUnit==ignoreId) {
-					continue; // we are ignoring this one.
-				}	else {
-					Bool check = false;
-					Object *unit = NULL;
-					if (flags==PathfindCell::UNIT_PRESENT_MOVING || flags==PathfindCell::UNIT_GOAL_OTHER_MOVING) {
-						unit = TheGameLogic->findObjectByID(posUnit);
-						// order matters: we want to know if I consider it to be an ally, not vice versa
-						if (unit && obj->getRelationship(unit) == ALLIES) {
-							info.allyMoving = true;
-						}
-						if (info.considerTransient) {
-							check = true;
-						}
-					}
-					if (flags == PathfindCell::UNIT_PRESENT_FIXED) {
-						check = true;
-						unit = TheGameLogic->findObjectByID(posUnit);
-					}
-					if (check && unit!=NULL) {
-						if (obj->getAIUpdateInterface() && obj->getAIUpdateInterface()->getIgnoredObstacleID()==unit->getID()) {
-							// Don't check if it's the ignored obstacle.
-							check = false;
-						}
-					}
-					if (check && unit) {
+				if (info.considerTransient) {
+					check = true;
+				}
+			}
+			if (flags == PathfindCell::UNIT_PRESENT_FIXED) {
+				check = true;
+				unit = TheGameLogic->findObjectByID(posUnit);
+			}
+			if (check && unit!=NULL) {
+				if (obj->getAIUpdateInterface() && obj->getAIUpdateInterface()->getIgnoredObstacleID()==unit->getID()) {
+					// Don't check if it's the ignored obstacle.
+					check = false;
+				}
+			}
+			if (!check || !unit) {
+				continue;
+			}
+
 #ifdef INFANTRY_MOVES_THROUGH_INFANTRY
-						if (obj->isKindOf(KINDOF_INFANTRY) && unit->isKindOf(KINDOF_INFANTRY)) {
-							// Infantry can run through infantry.
-							continue; //
-						}
+			if (obj->isKindOf(KINDOF_INFANTRY) && unit->isKindOf(KINDOF_INFANTRY)) {
+				// Infantry can run through infantry.
+				continue; //
+			}
 #endif
-						// See if it is an ally.
-						// order matters: we want to know if I consider it to be an ally, not vice versa
-						if (obj->getRelationship(unit) == ALLIES) {
-							if (!unit->getAIUpdateInterface()) {
-								return false; // can't path through not-idle units.
-							}
-							Bool found = false;
-							Int k;
-							for (k=0; k<numAlly; k++) {
-								if (allies[k] == unit->getID()) {
-									found = true;
-								}
-							}
-							if (!found) {
-								info.allyFixedCount++;
-								if (numAlly < maxAlly) {
-									allies[numAlly] = unit->getID();
-									numAlly++;
-								}
-							}
-						}	else {
-							Bool canCrush = obj->canCrushOrSquish( unit, TEST_CRUSH_OR_SQUISH );
-							if (!canCrush) {
-								info.enemyFixed = true;
-							}
-						}
+			// See if it is an ally.
+			// order matters: we want to know if I consider it to be an ally, not vice versa
+			if (obj->getRelationship(unit) == ALLIES) {
+				if (!unit->getAIUpdateInterface()) {
+					return false; // can't path through not-idle units.
+				}
+				Bool found = false;
+				Int k;
+				for (k=0; k<numAlly; k++) {
+					if (allies[k] == unit->getID()) {
+						found = true;
+					}
+				}
+				if (!found) {
+					info.allyFixedCount++;
+					if (numAlly < maxAlly) {
+						allies[numAlly] = unit->getID();
+						numAlly++;
 					}
 				}
 			} else {
-				return false; // off the map, so can't place here.
+				Bool canCrush = obj->canCrushOrSquish( unit, TEST_CRUSH_OR_SQUISH );
+				if (!canCrush) {
+					info.enemyFixed = true;
+				}
 			}
 		}
 	}
@@ -4822,37 +4842,33 @@ void Pathfinder::snapClosestGoalPosition(Object *obj, Coord3D *pos)
 
 	// Try adjusting by 1.
 	Int i,j;
-	for (i=cell.x-1; i<cell.x+2; i++) {
-		for (j=cell.y-1; j<cell.y+2; j++) {
+	for (i = cell.x - 1; i < cell.x + 2; i++) {
+		for (j = cell.y - 1; j < cell.y + 2; j++) {
 			if (checkDestination(obj, i, j, layer, iRadius, center)) {
-				adjustCoordToCell(i, j,  center, *pos, layer);
+				adjustCoordToCell(i, j, center, *pos, layer);
 				return;
 			}
 		}
 	}
-	if (iRadius==0) {
-		// Try to find an unoccupied cell.
-		for (i=cell.x-1; i<cell.x+2; i++) {
-			for (j=cell.y-1; j<cell.y+2; j++) {
-				PathfindCell	*newCell = getCell(layer,i, j);
-				if (newCell) {
-					if (newCell->getGoalUnit()==INVALID_ID || newCell->getGoalUnit()==obj->getID()) {
-						adjustCoordToCell(i, j,  center, *pos, layer);
-						return;
-					}
-				}
+
+	if (iRadius > 0)
+		return;
+
+	for (i = cell.x - 1; i < cell.x + 2; i++) {
+		for (j = cell.y - 1; j < cell.y + 2; j++) {
+			// Try to find an unoccupied cell.
+			PathfindCell	*newCell = getCell(layer,i, j);
+			if (!newCell)
+				continue;
+
+			if (newCell->getGoalUnit() == INVALID_ID || newCell->getGoalUnit() == obj->getID()) {
+				adjustCoordToCell(i, j, center, *pos, layer);
+				return;
 			}
-		}
-		// Try to find an unoccupied cell.
-		for (i=cell.x-1; i<cell.x+2; i++) {
-			for (j=cell.y-1; j<cell.y+2; j++) {
-				PathfindCell	*newCell = getCell(layer,i, j);
-				if (newCell) {
-					if (newCell->getFlags()!=PathfindCell::UNIT_PRESENT_FIXED) {
-						adjustCoordToCell(i, j,  center, *pos, layer);
-						return;
-					}
-				}
+
+			if (newCell->getFlags()!=PathfindCell::UNIT_PRESENT_FIXED) {
+				adjustCoordToCell(i, j,  center, *pos, layer);
+				return;
 			}
 		}
 	}
@@ -5693,14 +5709,7 @@ struct ExamineCellsStruct
 			if ( (to->getLayer() == LAYER_GROUND) && !d->thePathfinder->m_zoneManager.isPassable(to_x, to_y) ) {
 				return 1;
 			}
-			Bool onList = false;
-			if (to->hasInfo()) {
-				if (to->getOpen() || to->getClosed())
-				{
-					// already on one of the lists
-					onList = true;
-				}
-			}
+
 			if (to->getPinched()) {
 				return 1; // abort.
 			}
@@ -5719,25 +5728,26 @@ struct ExamineCellsStruct
 			info.radius = d->radius;
 			info.considerTransient = false;
 			info.acceptableSurfaces = d->theLoco->getValidSurfaces();
-			if (!d->thePathfinder->checkForMovement(d->obj, info) || info.enemyFixed) {
+			if (!d->thePathfinder->checkForMovement(d->obj, info)) {
 				return 1; //abort.
 			}
+
 			if (info.enemyFixed) {
 				return 1; //abort.
 			}
-			ICoord2D newCellCoord;
-			newCellCoord.x = to_x;
-			newCellCoord.y = to_y;
+
+			if (info.allyFixedCount) {
+				return 1; //abort.
+			}
 
 			UnsignedInt newCostSoFar = from->getCostSoFar( ) + 0.5f*COST_ORTHOGONAL;
 			if (to->getType() == PathfindCell::CELL_CLIFF ) {
 				return 1;
 			}
-			if (info.allyFixedCount) {
-				return 1;
-			} else if (info.enemyFixed) {
-				return 1;
-			}
+
+			ICoord2D newCellCoord;
+			newCellCoord.x = to_x;
+			newCellCoord.y = to_y;
 
 			if (!to->allocateInfo(newCellCoord)) {
 				// Out of cells for pathing...
@@ -5746,15 +5756,17 @@ struct ExamineCellsStruct
 			to->setBlockedByAlly(false);
 			Int costRemaining = 0;
 			costRemaining = to->costToGoal( d->goalCell );
+
 			// check if this neighbor cell is already on the open (waiting to be tried)
 			// or closed (already tried) lists
-			if (onList)
+			if ( to->hasInfo() && (to->getOpen() || to->getClosed()) )
 			{
 				// already on one of the lists - if existing costSoFar is less,
 				// the new cell is on a longer path, so skip it
 				if (to->getCostSoFar() <= newCostSoFar)
 					return 0; // keep going.
 			}
+
 			to->setCostSoFar(newCostSoFar);
 			// keep track of path we're building - point back to cell we moved here from
 			to->setParentCell(from) ;
@@ -9944,10 +9956,14 @@ if (g_UT_startTiming) return false;
 #endif
 	if (!obj->isKindOf(KINDOF_DOZER) && !obj->isKindOf(KINDOF_HARVESTER)) {
 		// Harvesters & dozers want a clear path.
-		if (!path->getBlockedByAlly()) return FALSE; // Only move units if it is required.
+		if (!path->getBlockedByAlly()) {
+			return FALSE; // Only move units if it is required.
+		}
 	}
 	LatchRestore<Int> recursiveDepth(m_moveAlliesDepth, m_moveAlliesDepth+1);
-	if (m_moveAlliesDepth > 2) return false;
+	if (m_moveAlliesDepth > 2) {
+		return false;
+	}
 
 	Bool centerInCell;
 	Int radius;
@@ -9966,46 +9982,58 @@ if (g_UT_startTiming) return false;
 		for (i=curCell.x-radius; i<curCell.x+numCellsAbove; i++) {
 			for (j=curCell.y-radius; j<curCell.y+numCellsAbove; j++) {
 				PathfindCell	*cell = getCell(node->getLayer(), i, j);
-				if (cell) {
-					if (cell->getPosUnit()==INVALID_ID) {
+				if (!cell) {
+					continue; // Cell is not on the pathfinding grid
+				}
+
+				ObjectID unitId = cell->getPosUnit();
+				if (unitId==INVALID_ID) {
+					continue;
+				}
+
+				if (unitId==obj->getID()) {
+					continue;	// It's us.
+				}
+
+				if (unitId==ignoreId) {
+					continue;	 // It's the one we are ignoring.
+				}
+
+				Object *otherObj = TheGameLogic->findObjectByID(unitId);
+				if (!otherObj) {
+					continue;
+				}
+
+				if (obj->getRelationship(otherObj)!=ALLIES) {
+					continue;  // Only move allies.
+				}
+
+				if (obj->isKindOf(KINDOF_INFANTRY) && otherObj->isKindOf(KINDOF_INFANTRY)) {
+					continue;  // infantry can walk through other infantry, so just let them.
+				}
+				if (obj->isKindOf(KINDOF_INFANTRY) && !otherObj->isKindOf(KINDOF_INFANTRY)) {
+					// If this is a general clear operation, don't let infantry push vehicles.
+					if (!path->getBlockedByAlly()) {
 						continue;
 					}
-					if (cell->getPosUnit()==obj->getID()) {
-						continue;	// It's us.
-					}
-					if (cell->getPosUnit()==ignoreId) {
-						continue;	 // It's the one we are ignoring.
-					}
-					Object *otherObj = TheGameLogic->findObjectByID(cell->getPosUnit());
-					if (obj->getRelationship(otherObj)!=ALLIES) {
-						continue;  // Only move allies.
-					}
-					if (otherObj==NULL) continue;
-					if (obj->isKindOf(KINDOF_INFANTRY) && otherObj->isKindOf(KINDOF_INFANTRY)) {
-						continue;  // infantry can walk through other infantry, so just let them.
-					}
-					if (obj->isKindOf(KINDOF_INFANTRY) && !otherObj->isKindOf(KINDOF_INFANTRY)) {
-						// If this is a general clear operation, don't let infantry push vehicles.
-						if (!path->getBlockedByAlly()) continue;
-					}
-					if( otherObj && otherObj->getAI() && !otherObj->getAI()->isMoving() )
-					{
-						if( otherObj->getAI()->isAttacking() )
-						{
-							continue; // Don't move units that are attacking. [8/14/2003]
-						}
-
-						//Kris: Patch 1.01 November 3, 2003
-						//Black Lotus exploit fix -- moving while hacking.
-						if( otherObj->testStatus( OBJECT_STATUS_IS_USING_ABILITY ) || otherObj->getAI()->isBusy() )
-						{
-							continue; // Packing or unpacking objects for example
-						}
-
-						//DEBUG_LOG(("Moving ally"));
-						otherObj->getAI()->aiMoveAwayFromUnit(obj, CMD_FROM_AI);
-					}
 				}
+
+				if (!otherObj->getAI() || otherObj->getAI()->isMoving()) {
+					continue;
+				}
+
+				if (otherObj->getAI()->isAttacking()) {
+					continue; // Don't move units that are attacking. [8/14/2003]
+				}
+
+				//Kris: Patch 1.01 November 3, 2003
+				//Black Lotus exploit fix -- moving while hacking.
+				if( otherObj->testStatus( OBJECT_STATUS_IS_USING_ABILITY ) || otherObj->getAI()->isBusy() ) {
+					continue; // Packing or unpacking objects for example
+				}
+
+				//DEBUG_LOG(("Moving ally"));
+				otherObj->getAI()->aiMoveAwayFromUnit(obj, CMD_FROM_AI);
 			}
 		}
 	}
