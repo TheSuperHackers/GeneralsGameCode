@@ -126,7 +126,7 @@ void W3DTreeDraw::addToTreeBuffer()
 	const W3DTreeDrawModuleData *moduleData = getW3DTreeDrawModuleData();
 	const Drawable *draw = getDrawable();
 
-	DEBUG_ASSERTCRASH(draw->getPosition()->x == 0.0f && draw->getPosition()->y == 0.0f,
+	DEBUG_ASSERTCRASH(!(draw->getPosition()->x == 0.0f && draw->getPosition()->y == 0.0f),
 		("W3DTreeDraw::addToTreeBuffer - Why place tree at x:0 y:0 ?"));
 
 	Real scale = draw->getScale();
