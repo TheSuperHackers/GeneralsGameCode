@@ -126,8 +126,7 @@ Bool W3DTerrainLogic::loadMap( AsciiString filename , Bool query )
 	length = strlen( tempBuf );
 	if( length >= 4 )
 	{
-		memset( filenameBuf, '\0', _MAX_PATH);
-		strncpy( filenameBuf, tempBuf, length - 4);
+		strlcpy( filenameBuf, tempBuf, length - 4 + 1);
 	}
 
 //	const char *fname = filename.reverseFind('\\');
