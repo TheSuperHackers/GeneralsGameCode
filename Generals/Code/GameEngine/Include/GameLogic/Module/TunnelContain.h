@@ -110,6 +110,7 @@ public:
 	virtual UnsignedInt getContainCount() const;
 	virtual Int getContainMax( void ) const;
 	virtual const ContainedItemsList* getContainedItemsList() const;
+	virtual UnsignedInt getFullTimeForHeal(void) const; ///< Returns the time in frames until a contained object becomes fully healed
 	virtual Bool isDisplayedOnControlBar() const { return TRUE; } ///< Does this container display its contents on the ControlBar?
 	virtual Bool isKickOutOnCapture(){ return FALSE; }///< Caves and Tunnels don't kick out on capture.
 

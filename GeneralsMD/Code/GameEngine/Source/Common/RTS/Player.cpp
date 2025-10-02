@@ -716,6 +716,14 @@ void Player::update()
 			}
 		}
 	}
+
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix Stubbjax 26/09/2025 The Tunnel System now heals
+	// all units once per frame instead of once per frame per Tunnel Network.
+	TunnelTracker* tunnelSystem = getTunnelSystem();
+	if (tunnelSystem)
+		tunnelSystem->healObjects();
+#endif
 }
 
 //=============================================================================
