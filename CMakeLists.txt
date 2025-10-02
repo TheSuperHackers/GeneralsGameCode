@@ -57,6 +57,19 @@ include(cmake/config.cmake)
 include(cmake/gamespy.cmake)
 include(cmake/lzhl.cmake)
 
+# TheSuperHackers: Add wxWidgets support for cross-platform GUI tools
+option(BUILD_TOOLS "Build developer/debug tools" OFF)
+
+# Try and find wxWidgets which is used for some GUI tools.
+if(BUILD_TOOLS)
+    find_package(wxWidgets COMPONENTS core base xrc xml html adv)
+    
+    if(NOT wxWidgets_FOUND)
+        message(WARNING "Debug tools are enabled, but wxWidgets was not found.")
+        message(WARNING "GUI tools will not be built.")
+    endif()
+endif()
+
 if (IS_VS6_BUILD)
     # The original max sdk does not compile against a modern compiler.
     # If there is a desire to make this work, then a fixed max sdk needs to be created.
