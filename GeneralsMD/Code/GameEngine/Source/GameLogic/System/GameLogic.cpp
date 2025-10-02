@@ -1813,7 +1813,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 
 	// If forceFluffToProp == true, removable objects get created on client only. [7/14/2003]
 	// If static lod is HIGH, we don't do force fluff to client side only (create logic side props, more expensive. jba)
-	Bool forceFluffToProp = TheGameLODManager->getStaticLODLevel() != STATIC_GAME_LOD_HIGH;
+	Bool forceFluffToProp = TheGameLODManager->getStaticLODLevel() < STATIC_GAME_LOD_HIGH;
 	if (TheGameLODManager->getStaticLODLevel() == STATIC_GAME_LOD_CUSTOM &&
 			TheGlobalData->m_useShadowVolumes) {
 		// Custom LOD, and volumetric shadows turned on - very high detail.  So use logic props too. jba. [7/14/2003]
