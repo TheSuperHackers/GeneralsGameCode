@@ -70,6 +70,11 @@
 #if defined(DEBUG_STACKTRACE) || defined(IG_DEBUG_STACKTRACE)
 	#include "Common/StackDump.h"
 #endif
+#ifdef RTS_ENABLE_CRASHDUMP
+#include "Common/MiniDumper.h"
+
+MiniDumper TheMiniDumper = MiniDumper();
+#endif
 
 // Horrible reference, but we really, really need to know if we are windowed.
 extern bool DX8Wrapper_IsWindowed;
@@ -729,6 +734,16 @@ void ReleaseCrash(const char *reason)
 		}
 	}
 
+#ifdef RTS_ENABLE_CRASHDUMP
+	if (TheMiniDumper.IsInitialized())
+	{
+		// Do dumps both with and without extended info
+		TheMiniDumper.TriggerMiniDump(false);
+		TheMiniDumper.TriggerMiniDump(true);
+		TheMiniDumper.ShutDown();
+	}
+#endif
+
 	char prevbuf[ _MAX_PATH ];
 	char curbuf[ _MAX_PATH ];
 
@@ -793,6 +808,16 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		// This won't ever return
 		return;
 	}
+
+#ifdef RTS_ENABLE_CRASHDUMP
+	if (TheMiniDumper.IsInitialized())
+	{
+		// Do dumps both with and without extended info
+		TheMiniDumper.TriggerMiniDump(false);
+		TheMiniDumper.TriggerMiniDump(true);
+		TheMiniDumper.ShutDown();
+	}
+#endif
 
 	UnicodeString prompt = TheGameText->fetch(p);
 	UnicodeString mesg = TheGameText->fetch(m);
