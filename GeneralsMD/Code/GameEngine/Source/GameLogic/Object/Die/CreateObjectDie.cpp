@@ -38,7 +38,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ObjectCreationList.h"
 #include "GameLogic/Module/BodyModule.h"
-
+#include "GameClient/InGameUI.h"
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ CreateObjectDieModuleData::CreateObjectDieModuleData()
 
 	m_ocl = NULL;
 	m_transferPreviousHealth = FALSE;
-
+	m_transferSelection = FALSE;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -60,6 +60,7 @@ CreateObjectDieModuleData::CreateObjectDieModuleData()
 	{
 		{ "CreationList",	INI::parseObjectCreationList,		NULL,											offsetof( CreateObjectDieModuleData, m_ocl ) },
 		{ "TransferPreviousHealth", INI::parseBool, NULL	,offsetof( CreateObjectDieModuleData, m_transferPreviousHealth ) },
+		{ "TransferSelection", INI::parseBool, NULL	,offsetof( CreateObjectDieModuleData, m_transferSelection ) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
@@ -95,11 +96,13 @@ void CreateObjectDie::onDie( const DamageInfo * damageInfo )
 	Object *damageDealer = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
 
 	Object *newObject = ObjectCreationList::create( data->m_ocl, getObject(), damageDealer );
+	if (!newObject)
+		return;
 
 	//If we're transferring previous health, we're transfering the last known
 	//health before we died. In the case of the sneak attack tunnel network, it
 	//is killed after the lifetime update expires.
-	if( newObject && data->m_transferPreviousHealth )
+	if( data->m_transferPreviousHealth )
 	{
 		//Convert old health to new health.
 		Object *oldObject = getObject();
@@ -140,7 +143,20 @@ void CreateObjectDie::onDie( const DamageInfo * damageInfo )
 		}
 	}
 
+	if (data->m_transferSelection)
+	{
+		Object* oldObject = getObject();
+		Drawable* selectedDrawable = TheInGameUI->getFirstSelectedDrawable();
+		Bool oldObjectSelected = selectedDrawable && selectedDrawable->getID() == oldObject->getDrawable()->getID();
 
+		if (oldObjectSelected)
+		{
+			GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_CREATE_SELECTED_GROUP_NO_SOUND);
+			msg->appendBooleanArgument(TRUE);
+			msg->appendObjectIDArgument(newObject->getID());
+			TheInGameUI->selectDrawable(newObject->getDrawable());
+		}
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
