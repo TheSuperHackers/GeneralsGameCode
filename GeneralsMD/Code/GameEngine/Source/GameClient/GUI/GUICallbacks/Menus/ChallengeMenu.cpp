@@ -144,8 +144,9 @@ void setEnabledButtons()
 {
 	for (Int i = 0; i < NUM_GENERALS; i++)
 	{
-		if (!buttonGeneralPosition[i]) // TheSuperHackers @tweak DayV 21/09/2025 Increase number of challenge generals.
+		if (!buttonGeneralPosition[i])
 			continue;
+	
 		const GeneralPersona* generals = TheChallengeGenerals->getChallengeGenerals();
 		buttonGeneralPosition[i]->winEnable(generals[i].isStartingEnabled());
 		buttonGeneralPosition[i]->winHide(! generals[i].isStartingEnabled());
@@ -240,7 +241,6 @@ void updateButtonSequence(Int stepsPerUpdate)
 	{
 		// selected look
 		Int pos = buttonSequenceStep;
-		// TheSuperHackers @tweak DayV 21/09/2025 Increase number of challenge generals.
 		if (pos < NUM_GENERALS && buttonGeneralPosition[pos] && !buttonGeneralPosition[pos]->winIsHidden())
 		{
 			Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[pos].getPlayerTemplateName());
@@ -368,10 +368,11 @@ void ChallengeMenuInit( WindowLayout *layout, void *userData )
 		strButtonName.format("ChallengeMenu.wnd:GeneralPosition%d", i);
 		buttonGeneralPositionID[i] = TheNameKeyGenerator->nameToKey( strButtonName );
 		buttonGeneralPosition[i] = TheWindowManager->winGetWindowFromId( parentMenu, buttonGeneralPositionID[i] );
-		// TheSuperHackers @tweak DayV 21/09/2025 Increase number of challenge generals.
 		if (buttonGeneralPosition[i])
+		{
 			// start all buttons hidden, then expose them later if there is a general for this spot
 			buttonGeneralPosition[i]->winHide( TRUE );
+		}
 	}
 
 	// set defaults
