@@ -5798,7 +5798,7 @@ NetCommandMsg * NetPacket::readFileMessage(UnsignedByte *data, Int &i) {
 	char filename[_MAX_PATH];
 	char *c = filename;
 
-	while (data[i] != 0) {
+	for (Int l = 0; l < _MAX_PATH-1 && data[i] != 0; l++) {
 		*c = data[i];
 		++c;
 		++i;
@@ -5825,7 +5825,7 @@ NetCommandMsg * NetPacket::readFileAnnounceMessage(UnsignedByte *data, Int &i) {
 	char filename[_MAX_PATH];
 	char *c = filename;
 
-	while (data[i] != 0) {
+	for (Int l = 0; l < _MAX_PATH-1 && data[i] != 0; l++) {
 		*c = data[i];
 		++c;
 		++i;
