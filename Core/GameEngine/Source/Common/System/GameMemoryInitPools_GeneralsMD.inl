@@ -143,6 +143,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "FireSpreadUpdate", 2048, 128 },
 	{ "FirestormDynamicGeometryInfoUpdate", 16, 16 },
 	{ "FireWeaponCollide", 2048, 32 },
+	{ "AdvancedCollide", 512, 32 },
 	{ "FireWeaponUpdate", 32, 32 },
 	{ "FireWeaponAdvancedUpdate", 32, 32 },
 	{ "FlammableUpdate", 512, 256 },

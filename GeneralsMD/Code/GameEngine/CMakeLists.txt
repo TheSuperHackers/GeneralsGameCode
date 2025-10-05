@@ -326,6 +326,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/FireSpreadUpdate.h
     Include/GameLogic/Module/FirestormDynamicGeometryInfoUpdate.h
     Include/GameLogic/Module/FireWeaponCollide.h
+    Include/GameLogic/Module/AdvancedCollide.h
     Include/GameLogic/Module/FireWeaponPower.h
     Include/GameLogic/Module/FireWeaponUpdate.h
     Include/GameLogic/Module/FireWeaponAdvancedUpdate.h
@@ -929,6 +930,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Collide/CrateCollide/UnitCrateCollide.cpp
     Source/GameLogic/Object/Collide/CrateCollide/VeterancyCrateCollide.cpp
     Source/GameLogic/Object/Collide/FireWeaponCollide.cpp
+    Source/GameLogic/Object/Collide/AdvancedCollide.cpp
     Source/GameLogic/Object/Collide/SquishCollide.cpp
     Source/GameLogic/Object/Contain/CaveContain.cpp
     Source/GameLogic/Object/Contain/GarrisonContain.cpp

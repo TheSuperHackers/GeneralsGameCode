@@ -245,6 +245,7 @@
 
 // collide includes
 #include "GameLogic/Module/FireWeaponCollide.h"
+#include "GameLogic/Module/AdvancedCollide.h"
 #include "GameLogic/Module/SquishCollide.h"
 
 #include "GameLogic/Module/ConvertToCarBombCrateCollide.h"
@@ -543,6 +544,7 @@ void ModuleFactory::init( void )
 
 	// collide modules
 	addModule( FireWeaponCollide );
+	addModule( AdvancedCollide );
 	addModule( SquishCollide );
 
 	addModule( HealCrateCollide );
