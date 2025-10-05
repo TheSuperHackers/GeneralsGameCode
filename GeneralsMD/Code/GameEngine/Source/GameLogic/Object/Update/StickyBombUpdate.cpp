@@ -52,6 +52,25 @@
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
+void StickyBombUpdateModuleData::parseAnimBaseName(INI* ini, void* instance, void* store, const void* /*userData*/)
+{
+	StickyBombUpdateModuleData* self = (StickyBombUpdateModuleData*)instance;
+	self->m_animBaseTemplate = ini->getNextAsciiString();
+	if (stricmp(self->m_animBaseTemplate.str(), "NONE") == 0) {
+		self->m_hideAnimBase = TRUE;
+	}
+}
+//-------------------------------------------------------------------------------------------------
+void StickyBombUpdateModuleData::parseAnimTimedName(INI* ini, void* instance, void* store, const void* /*userData*/)
+{
+	StickyBombUpdateModuleData* self = (StickyBombUpdateModuleData*)instance;
+	self->m_animTimedTemplate = ini->getNextAsciiString();
+	if (stricmp(self->m_animTimedTemplate.str(), "NONE") == 0) {
+		self->m_hideAnimTimed = TRUE;
+	}
+}
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 StickyBombUpdate::StickyBombUpdate( Thing *thing, const ModuleData *moduleData ) : UpdateModule( thing, moduleData )
 {
 	m_targetID		= INVALID_ID;

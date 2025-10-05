@@ -48,7 +48,11 @@ void AdvancedCollideModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "CollideWeapon",		INI::parseWeaponTemplate,				NULL, offsetof( AdvancedCollideModuleData, m_collideWeaponTemplate ) },
 		{ "OCL",	            INI::parseObjectCreationList,		NULL,	offsetof(AdvancedCollideModuleData, m_ocl) },
 		{ "FX",							  INI::parseFXList,		            NULL, offsetof(AdvancedCollideModuleData, m_fxlist) },
+
 		{ "FireOnce",					INI::parseBool,											NULL, offsetof( AdvancedCollideModuleData, m_fireOnce ) },
+		{ "CollideWithGround",					INI::parseBool,											NULL, offsetof( AdvancedCollideModuleData, m_collideWithGround) },
+		{ "CollideWithObjects",					INI::parseBool,											NULL, offsetof( AdvancedCollideModuleData, m_collideWithObjects) },
+
 		{ "RequiredStatus",		ObjectStatusMaskType::parseFromINI,	NULL, offsetof( AdvancedCollideModuleData, m_requiredStatus ) },
 		{ "ForbiddenStatus",	ObjectStatusMaskType::parseFromINI,	NULL, offsetof( AdvancedCollideModuleData, m_forbiddenStatus ) },
 		{ "TargetRequiredStatus",		ObjectStatusMaskType::parseFromINI,	NULL, offsetof(AdvancedCollideModuleData, m_targetRequiredStatus) },
