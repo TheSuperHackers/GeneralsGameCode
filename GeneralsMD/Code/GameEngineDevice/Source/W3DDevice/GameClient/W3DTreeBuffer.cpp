@@ -1534,7 +1534,7 @@ void W3DTreeBuffer::drawTrees(CameraClass * camera, RefRenderObjListIterator *pD
 	}
 
 	// if breeze changes, always process the full update, even if not visible,
-	// so that things off screen won't 'pop' when first viewed
+	// so that things offscreen won't 'pop' when first viewed
 	const BreezeInfo& info = TheScriptEngine->getBreezeInfo();
 	if (info.m_breezeVersion != m_curSwayVersion)
 	{
