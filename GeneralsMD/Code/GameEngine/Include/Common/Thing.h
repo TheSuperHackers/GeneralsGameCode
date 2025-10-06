@@ -121,6 +121,9 @@ public:
 
 	inline const Coord3D *getPosition() const { return &m_cachedPos; }
 	inline Real getOrientation() const { return m_cachedAngle; }
+
+	Bool isPositioned() const;
+
 	const Coord3D *getUnitDirectionVector2D() const;
 	void getUnitDirectionVector2D(Coord3D& dir) const;
 	void getUnitDirectionVector3D(Coord3D& dir) const;

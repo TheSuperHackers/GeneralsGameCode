@@ -47,6 +47,9 @@
 #include "GameLogic/TerrainLogic.h"
 
 
+static constexpr const Real InitialThingPosX = 0.0f;
+static constexpr const Real InitialThingPosY = 0.0f;
+
 //=============================================================================
 /** Constructor */
 //=============================================================================
@@ -67,7 +70,9 @@ Thing::Thing( const ThingTemplate *thingTemplate )
 	m_templateName = thingTemplate->getName();
 #endif
 	m_transform.Make_Identity();
-	m_cachedPos.zero();
+	m_cachedPos.x = InitialThingPosX;
+	m_cachedPos.y = InitialThingPosY;
+	m_cachedPos.z = 0.0f;
 	m_cachedAngle = 0.0f;
 	m_cachedDirVector.zero();
 	m_cachedAltitudeAboveTerrain = 0;
@@ -89,6 +94,12 @@ Thing::~Thing()
 const ThingTemplate *Thing::getTemplate() const
 {
 	return m_template;
+}
+
+//=============================================================================
+Bool Thing::isPositioned() const
+{
+	return m_cachedPos.x != InitialThingPosX || m_cachedPos.y != InitialThingPosY;
 }
 
 //=============================================================================

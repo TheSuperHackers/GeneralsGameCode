@@ -123,17 +123,15 @@ W3DTreeDraw::~W3DTreeDraw( void )
 //-------------------------------------------------------------------------------------------------
 void W3DTreeDraw::addToTreeBuffer()
 {
+	DEBUG_ASSERTCRASH(isPositioned(), ("W3DTreeDraw::addToTreeBuffer - This tree was not positioned!"));
+
 	const W3DTreeDrawModuleData *moduleData = getW3DTreeDrawModuleData();
 	const Drawable *draw = getDrawable();
-
-	DEBUG_ASSERTCRASH(!(draw->getPosition()->x == 0.0f && draw->getPosition()->y == 0.0f),
-		("W3DTreeDraw::addToTreeBuffer - Why place tree at x:0 y:0 ?"));
 
 	Real scale = draw->getScale();
 	Real scaleRandomness = draw->getTemplate()->getInstanceScaleFuzziness();
 	scaleRandomness = 0.0f; // We use the scale fuzziness inside WB to generate random scales, so they don't change at load time. jba. [4/22/2003]
-	TheTerrainRenderObject->addTree(draw->getID(), *draw->getPosition(),
-		scale, draw->getOrientation(), scaleRandomness, moduleData);
+	TheTerrainRenderObject->addTree(draw->getID(), *draw->getPosition(), scale, draw->getOrientation(), scaleRandomness, moduleData);
 }
 
 // ------------------------------------------------------------------------------------------------
