@@ -123,10 +123,10 @@ W3DTreeDraw::~W3DTreeDraw( void )
 //-------------------------------------------------------------------------------------------------
 void W3DTreeDraw::addToTreeBuffer()
 {
-	DEBUG_ASSERTCRASH(isPositioned(), ("W3DTreeDraw::addToTreeBuffer - This tree was not positioned!"));
-
 	const W3DTreeDrawModuleData *moduleData = getW3DTreeDrawModuleData();
 	const Drawable *draw = getDrawable();
+
+	DEBUG_ASSERTCRASH(draw->isPositioned(), ("W3DTreeDraw::addToTreeBuffer - This tree was not positioned!"));
 
 	Real scale = draw->getScale();
 	Real scaleRandomness = draw->getTemplate()->getInstanceScaleFuzziness();
