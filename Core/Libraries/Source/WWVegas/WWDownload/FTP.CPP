@@ -1831,8 +1831,7 @@ bool Prepare_Directories(const char *rootdir, const char *filename)
 	const char *cptr=filename;
 	while(cptr=strchr(cptr,'\\'))
 	{
-		memset(tempstr,0,256);
-		strlcpy(tempstr,filename,cptr-filename);
+		strlcpy(tempstr,filename,cptr-filename + 1);
 		sprintf(newdir,"%s\\%s",rootdir, tempstr);
 		if (!CreateDirectory(newdir, NULL))
 			return false;

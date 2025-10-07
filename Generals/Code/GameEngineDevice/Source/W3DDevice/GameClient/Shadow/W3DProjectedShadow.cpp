@@ -1485,8 +1485,8 @@ Shadow* W3DProjectedShadowManager::addDecal(Shadow::ShadowTypeInfo *shadowInfo)
 	//simple decal using the premade texture specified.
 	//can be always perpendicular to model's z-axis or projected
 	//onto world geometry.
-	strcpy(texture_name, shadowInfo->m_ShadowName);
-	strlcpy(texture_name, ".tga", ARRAY_SIZE(texture_name));
+	strlcpy(texture_name, shadowInfo->m_ShadowName, ARRAY_SIZE(texture_name));
+	strlcat(texture_name, ".tga", ARRAY_SIZE(texture_name));
 
 	//Check if we previously added a decal using this texture
 	st=m_W3DShadowTextureManager->getTexture(texture_name);
@@ -1589,8 +1589,8 @@ Shadow* W3DProjectedShadowManager::addDecal(RenderObjClass *robj, Shadow::Shadow
 	//simple decal using the premade texture specified.
 	//can be always perpendicular to model's z-axis or projected
 	//onto world geometry.
-	strcpy(texture_name, shadowInfo->m_ShadowName);
-	strlcpy(texture_name, ".tga", ARRAY_SIZE(texture_name));
+	strlcpy(texture_name, shadowInfo->m_ShadowName, ARRAY_SIZE(texture_name));
+	strlcat(texture_name, ".tga", ARRAY_SIZE(texture_name));
 
 	//Check if we previously added a decal using this texture
 	st=m_W3DShadowTextureManager->getTexture(texture_name);
@@ -1722,8 +1722,8 @@ W3DProjectedShadow* W3DProjectedShadowManager::addShadow(RenderObjClass *robj, S
 				}
 				else
 				{
-					strcpy(texture_name, shadowInfo->m_ShadowName);
-					strlcpy(texture_name, ".tga", ARRAY_SIZE(texture_name));
+					strlcpy(texture_name, shadowInfo->m_ShadowName, ARRAY_SIZE(texture_name));
+					strlcat(texture_name, ".tga", ARRAY_SIZE(texture_name));
 				}
 
 				st=m_W3DShadowTextureManager->getTexture(texture_name);
@@ -1898,8 +1898,8 @@ W3DProjectedShadow* W3DProjectedShadowManager::createDecalShadow(Shadow::ShadowT
 	}
 	else
 	{
-		strcpy(texture_name, shadowInfo->m_ShadowName);
-		strlcpy(texture_name, ".tga", ARRAY_SIZE(texture_name));
+		strlcpy(texture_name, shadowInfo->m_ShadowName, ARRAY_SIZE(texture_name));
+		strlcat(texture_name, ".tga", ARRAY_SIZE(texture_name));
 	}
 
 	st=m_W3DShadowTextureManager->getTexture(texture_name);
