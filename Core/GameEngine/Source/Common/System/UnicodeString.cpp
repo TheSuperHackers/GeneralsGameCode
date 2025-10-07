@@ -116,8 +116,7 @@ void UnicodeString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveDa
 	if (strToCopy)
 	{
 		DEBUG_ASSERTCRASH(usableNumChars <= wcslen(strToCopy), ("strToCopy is too small"));
-		wcsncpy(newData->peek(), strToCopy, usableNumChars);
-		newData->peek()[usableNumChars] = 0;
+		wcslcpy(newData->peek(), strToCopy, usableNumChars + 1);
 	}
 	if (strToCat)
 		wcscat(newData->peek(), strToCat);

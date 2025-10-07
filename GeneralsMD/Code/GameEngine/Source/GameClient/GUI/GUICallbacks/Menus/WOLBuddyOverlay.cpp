@@ -304,8 +304,7 @@ WindowMsgHandledType BuddyControlSystem( GameWindow *window, UnsignedInt msg,
 						// Send the message
 						BuddyRequest req;
 						req.buddyRequestType = BuddyRequest::BUDDYREQUEST_MESSAGE;
-						wcsncpy(req.arg.message.text, txtInput.str(), MAX_BUDDY_CHAT_LEN);
-						req.arg.message.text[MAX_BUDDY_CHAT_LEN-1] = 0;
+						wcslcpy(req.arg.message.text, txtInput.str(), MAX_BUDDY_CHAT_LEN);
 						req.arg.message.recipient = selectedProfile;
 						TheGameSpyBuddyMessageQueue->addRequest(req);
 
@@ -1185,8 +1184,7 @@ void RequestBuddyAdd(Int profileID, AsciiString nick)
 	req.arg.addbuddy.id = profileID;
 	UnicodeString buddyAddstr;
 	buddyAddstr = TheGameText->fetch("GUI:BuddyAddReq");
-	wcsncpy(req.arg.addbuddy.text, buddyAddstr.str(), MAX_BUDDY_CHAT_LEN);
-	req.arg.addbuddy.text[MAX_BUDDY_CHAT_LEN-1] = 0;
+	wcslcpy(req.arg.addbuddy.text, buddyAddstr.str(), MAX_BUDDY_CHAT_LEN);
 	TheGameSpyBuddyMessageQueue->addRequest(req);
 
 	UnicodeString s;
