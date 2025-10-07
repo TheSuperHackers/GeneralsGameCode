@@ -78,7 +78,6 @@ typedef enum
 #define GameStrcpy wcscpy
 #define GameStrncpy wcsncpy
 #define GameStrlen wcslen
-#define GameStrcat wcscat
 #define GameStrcmp wcscmp
 #define GameStrncmp wcsncmp
 #define GameStricmp wcsicmp

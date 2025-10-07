@@ -91,7 +91,7 @@ void UnicodeString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveDa
 			m_data->peek()[usableNumChars] = 0;
 		}
 		if (strToCat)
-			wcscat(m_data->peek(), strToCat);
+			wcslcat(m_data->peek(), strToCat, usableNumChars + 1);
 		return;
 	}
 
@@ -120,7 +120,7 @@ void UnicodeString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveDa
 		newData->peek()[usableNumChars] = 0;
 	}
 	if (strToCat)
-		wcscat(newData->peek(), strToCat);
+		wcslcat(newData->peek(), strToCat, usableNumChars + 1);
 
 	releaseBuffer();
 	m_data = newData;
