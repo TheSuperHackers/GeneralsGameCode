@@ -60,7 +60,7 @@ CreateObjectDieModuleData::CreateObjectDieModuleData()
 	{
 		{ "CreationList",	INI::parseObjectCreationList,		NULL,											offsetof( CreateObjectDieModuleData, m_ocl ) },
 		{ "TransferPreviousHealth", INI::parseBool, NULL	,offsetof( CreateObjectDieModuleData, m_transferPreviousHealth ) },
-		{ "TransferSelection", INI::parseBool, NULL	,offsetof( CreateObjectDieModuleData, m_transferSelection ) },
+		{ "TransferSelection", INI::parseBool, NULL, offsetof( CreateObjectDieModuleData, m_transferSelection ) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
