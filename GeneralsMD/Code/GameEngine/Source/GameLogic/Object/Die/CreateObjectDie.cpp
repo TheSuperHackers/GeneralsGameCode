@@ -143,6 +143,8 @@ void CreateObjectDie::onDie( const DamageInfo * damageInfo )
 		}
 	}
 
+	// TheSuperHackers @bugfix Stubbjax 02/10/2025 If the old object was selected, select the new one.
+	// This is important for the Sneak Attack, which is spawned via a CreateObjectDie module.
 	if (data->m_transferSelection)
 	{
 		Object* oldObject = getObject();
