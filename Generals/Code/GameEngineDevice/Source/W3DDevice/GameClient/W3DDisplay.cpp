@@ -34,6 +34,7 @@
 static void drawFramerateBar(void);
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
+#include <numeric>
 #include <stdlib.h>
 #include <windows.h>
 #include <io.h>
@@ -835,21 +836,16 @@ void W3DDisplay::reset( void )
 
 const UnsignedInt START_CUMU_FRAME = LOGICFRAMES_PER_SECOND / 2;	// skip first half-sec
 
-/** Update a moving average of the last 30 fps measurements.  Also try to filter out temporary spikes.
-	This code is designed to be used by the GameLOD sytems to determine the correct dynamic LOD setting.
-*/
 void W3DDisplay::updateAverageFPS(void)
 {
-	const Real MaximumFrameTimeCutoff = 0.5f;	//largest frame interval (seconds) we accept before ignoring it as a momentary "spike"
-	const Int FPS_HISTORY_SIZE = 30;	//keep track of the last 30 frames
+	constexpr const Int FPS_HISTORY_SIZE = 30;
 
 	static Int64 lastUpdateTime64 = 0;
 	static Int historyOffset = 0;
-	static Int numSamples = 0;
-	static double fpsHistory[FPS_HISTORY_SIZE];
+	static Real fpsHistory[FPS_HISTORY_SIZE] = {0};
 
-	Int64 freq64 = getPerformanceCounterFrequency();
-	Int64 time64 = getPerformanceCounter();
+	const Int64 freq64 = getPerformanceCounterFrequency();
+	const Int64 time64 = getPerformanceCounter();
 
 #if defined(RTS_DEBUG)
 	if (TheGameLogic->getFrame() == START_CUMU_FRAME)
@@ -858,37 +854,21 @@ void W3DDisplay::updateAverageFPS(void)
 	}
 #endif
 
-	Int64 timeDiff = time64 - lastUpdateTime64;
+	const Int64 timeDiff = time64 - lastUpdateTime64;
 
 	// convert elapsed time to seconds
-	double elapsedSeconds = (double)timeDiff/(double)(freq64);
+	Real elapsedSeconds = (Real)timeDiff/(Real)freq64;
 
-	if (elapsedSeconds <= MaximumFrameTimeCutoff)	//make sure it's not a spike
-	{
-		// append new sameple to fps history.
-		if (historyOffset >= FPS_HISTORY_SIZE)
-			historyOffset = 0;
+	// append new sample to fps history.
+	if (historyOffset >= FPS_HISTORY_SIZE)
+		historyOffset = 0;
 
-		m_currentFPS = 1.0/elapsedSeconds;
-		fpsHistory[historyOffset++] = m_currentFPS;
-		numSamples++;
-		if (numSamples > FPS_HISTORY_SIZE)
-			numSamples = FPS_HISTORY_SIZE;
-	}
+	m_currentFPS = 1.0f/elapsedSeconds;
+	fpsHistory[historyOffset++] = m_currentFPS;
 
-	if (numSamples)
-	{
-		// determine average frame rate over our past history.
-		Real average=0;
-		for (Int i=0,j=historyOffset-1; i<numSamples; i++,j--)
-		{
-			if (j < 0)
-				j=FPS_HISTORY_SIZE-1;	// wrap around to front of buffer
-			average += fpsHistory[j];
-		}
-
-		m_averageFPS = average / (Real)numSamples;
-	}
+	// determine average frame rate over our past history.
+	const Real sum = std::accumulate(fpsHistory, fpsHistory + FPS_HISTORY_SIZE, 0.0f);
+	m_averageFPS = sum / FPS_HISTORY_SIZE;
 
 	lastUpdateTime64 = time64;
 }
