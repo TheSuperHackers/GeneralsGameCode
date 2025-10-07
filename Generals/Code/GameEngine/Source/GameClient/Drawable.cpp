@@ -4784,6 +4784,9 @@ void TintEnvelope::setDecayFrames( UnsignedInt frames )
 //-------------------------------------------------------------------------------------------------
 void TintEnvelope::update(void)
 {
+	// TheSuperHackers @tweak The tint time step is now decoupled from the render update.
+	const Real timeScale = TheGameEngine->getActualLogicTimeScaleOverFpsRatio();
+
 	switch ( m_envState )
 	{
 		case ( ENVELOPE_STATE_REST ) : //most likely case
@@ -4794,25 +4797,31 @@ void TintEnvelope::update(void)
 		}
 		case ( ENVELOPE_STATE_DECAY ) : // much more likely than attack
 		{
-			if (m_decayRate.Length() > m_currentColor.Length() || m_currentColor.Length() <= FADE_RATE_EPSILON) //we are at rest
+			const Vector3 decayRate = m_decayRate * timeScale;
+
+			if (decayRate.Length() > m_currentColor.Length() || m_currentColor.Length() <= FADE_RATE_EPSILON)
 			{
+				// We are at rest
 				m_envState = ENVELOPE_STATE_REST;
 				m_affect = FALSE;
 			}
 			else
 			{
-				Vector3::Add( m_decayRate, m_currentColor, &m_currentColor );//Add the decayRate to the current color;
+				// Add the decayRate to the current color
+				Vector3::Add( decayRate, m_currentColor, &m_currentColor );
 				m_affect = TRUE;
 			}
 			break;
 		}
 		case ( ENVELOPE_STATE_ATTACK ) :
 		{
+			const Vector3 attackRate = m_attackRate * timeScale;
 			Vector3 delta;
 			Vector3::Subtract(m_currentColor, m_peakColor, &delta);
 
-			if (m_attackRate.Length() > delta.Length() || delta.Length() <= FADE_RATE_EPSILON) //we are at the peak
+			if (attackRate.Length() > delta.Length() || delta.Length() <= FADE_RATE_EPSILON)
 			{
+				// We are at the peak
 				if ( m_sustainCounter )
 				{
 					m_envState = ENVELOPE_STATE_SUSTAIN;
@@ -4821,11 +4830,11 @@ void TintEnvelope::update(void)
 				{
 					m_envState = ENVELOPE_STATE_DECAY;
 				}
-
 			}
 			else
 			{
-				Vector3::Add( m_attackRate, m_currentColor, &m_currentColor );//Add the attackRate to the current color;
+				// Add the attackRate to the current color
+				Vector3::Add( attackRate, m_currentColor, &m_currentColor );
 				m_affect = TRUE;
 			}
 
@@ -4833,8 +4842,8 @@ void TintEnvelope::update(void)
 		}
 		case ( ENVELOPE_STATE_SUSTAIN ) :
 		{
-			if ( m_sustainCounter > 0 )
-				--m_sustainCounter;
+			if ( m_sustainCounter > 0.0f )
+				m_sustainCounter -= timeScale;
 			else
 				release();
 
@@ -4867,7 +4876,11 @@ void TintEnvelope::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
+#else
+	XferVersion currentVersion = 2;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -4884,7 +4897,16 @@ void TintEnvelope::xfer( Xfer *xfer )
 	xfer->xferUser( &m_currentColor, sizeof( Vector3 ) );
 
 	// sustain counter
-	xfer->xferUnsignedInt( &m_sustainCounter );
+	if (version <= 1)
+	{
+		UnsignedInt sustainCounter = (UnsignedInt)m_sustainCounter;
+		xfer->xferUnsignedInt( &sustainCounter );
+		m_sustainCounter = (Real)sustainCounter;
+	}
+	else
+	{
+		xfer->xferReal( &m_sustainCounter );
+	}
 
 	// affect
 	xfer->xferBool( &m_affect );
