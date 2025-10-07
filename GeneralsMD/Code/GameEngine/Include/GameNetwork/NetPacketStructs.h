@@ -332,12 +332,11 @@ struct NetPacketGameCommandHeader {
 };
 
 // Progress message packet
-// Fields: T + type, R + relay, P + playerID, C + commandID, D + percentage
+// Fields: T + type, R + relay, P + playerID, D + percentage
 struct NetPacketProgressMessage {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
-	NetPacketCommandIdField commandId;
 	NetPacketDataFieldHeader dataHeader;
 	UnsignedByte percentage;
 };
