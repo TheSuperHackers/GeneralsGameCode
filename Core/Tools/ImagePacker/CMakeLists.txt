@@ -27,6 +27,7 @@ target_include_directories(corei_imagepacker INTERFACE
 
 target_link_libraries(corei_imagepacker INTERFACE
     comctl32
+    core_wwcommon
     core_debug
     core_profile
     dbghelplib

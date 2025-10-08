@@ -60,7 +60,7 @@ public:
 protected:
 	void		FillListControl (void);
 	int		FindItem (const char *item_name);
-	void		MakeChannelStr (int bone_idx, HAnimClass *hanim, char *channels);
+	void		MakeChannelStr (int bone_idx, HAnimClass *hanim, char *channels, int channelSize);
 
 	CAdvancedAnimSheet *m_Sheet;
 

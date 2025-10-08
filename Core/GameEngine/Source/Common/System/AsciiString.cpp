@@ -140,7 +140,7 @@ void AsciiString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData
 			m_data->peek()[usableNumChars] = 0;
 		}
 		if (strToCat)
-			strcat(m_data->peek(), strToCat);
+			strlcat(m_data->peek(), strToCat, usableNumChars + 1);
 		return;
 	}
 
@@ -169,7 +169,7 @@ void AsciiString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData
 		newData->peek()[usableNumChars] = 0;
 	}
 	if (strToCat)
-		strcat(newData->peek(), strToCat);
+		strlcat(newData->peek(), strToCat, usableNumChars + 1);
 
 	releaseBuffer();
 	m_data = newData;
