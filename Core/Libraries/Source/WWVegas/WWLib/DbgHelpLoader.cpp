@@ -143,12 +143,16 @@ BOOL DbgHelpLoader::symInitialize(
 		return FALSE;
 
 	if (Inst->m_initializedProcesses.find(hProcess) != Inst->m_initializedProcesses.end())
-		return FALSE;
+	{
+		// Was already initialized.
+		return TRUE;
+	}
 
 	if (Inst->m_symInitialize)
 	{
 		if (Inst->m_symInitialize(hProcess, UserSearchPath, fInvadeProcess) != FALSE)
 		{
+			// Is now initialized.
 			Inst->m_initializedProcesses.insert(hProcess);
 			return TRUE;
 		}
@@ -163,10 +167,13 @@ BOOL DbgHelpLoader::symCleanup(
 	if (Inst == NULL)
 		return FALSE;
 
-	stl::find_and_erase(Inst->m_initializedProcesses, hProcess);
-
-	if (Inst->m_symCleanup)
-		return Inst->m_symCleanup(hProcess);
+	if (stl::find_and_erase(Inst->m_initializedProcesses, hProcess))
+	{
+		if (Inst->m_symCleanup)
+		{
+			return Inst->m_symCleanup(hProcess);
+		}
+	}
 
 	return FALSE;
 }
