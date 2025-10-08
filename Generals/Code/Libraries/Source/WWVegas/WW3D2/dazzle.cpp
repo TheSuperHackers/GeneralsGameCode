@@ -1395,7 +1395,7 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 	*/
 	if (new_obj == NULL) {
 		static int count = 0;
-		if ( ++count < 10 ) {
+		if ( count++ < 10 ) {
 			WWDEBUG_SAY(("DazzlePersistFactory failed to create dazzle of type: %s!!",dazzle_type));
 			WWDEBUG_SAY(("Replacing it with a NULL render object!"));
 		}

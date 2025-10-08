@@ -1243,7 +1243,7 @@ PersistClass *	RenderObjPersistFactoryClass::Load(ChunkLoadClass & cload) const
 	// if the object we saved didn't have a name, replace it with null
 	if (strlen(name) == 0) {
 		static int count = 0;
-		if ( ++count < 10 ) {
+		if ( count++ < 10 ) {
 			WWDEBUG_SAY(("RenderObjPersistFactory attempted to load an un-named render object!"));
 			WWDEBUG_SAY(("Replacing it with a NULL render object!"));
 		}
@@ -1254,7 +1254,7 @@ PersistClass *	RenderObjPersistFactoryClass::Load(ChunkLoadClass & cload) const
 
 	if (new_obj == NULL) {
 		static int count = 0;
-		if ( ++count < 10 ) {
+		if ( count++ < 10 ) {
 			WWDEBUG_SAY(("RenderObjPersistFactory failed to create object: %s!!",name));
 			WWDEBUG_SAY(("Either the asset for this object is gone or you tried to save a procedural object."));
 			WWDEBUG_SAY(("Replacing it with a NULL render object!"));

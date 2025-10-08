@@ -372,7 +372,7 @@ WWAudioClass::Get_Sound_Buffer (const char *filename, bool is_3d)
 			buffer = Create_Sound_Buffer (*file, filename, is_3d);
 		} else {
 			static int count = 0;
-			if ( ++count < 10 ) {
+			if ( count++ < 10 ) {
 				WWDEBUG_SAY(( "Sound \"%s\" not found", filename ));
 			}
 		}
@@ -807,7 +807,7 @@ WWAudioClass::Create_3D_Sound
 				sound_obj->Set_Buffer (buffer);
 			} else {
 				static int count = 0;
-				if ( ++count < 10 ) {
+				if ( count++ < 10 ) {
 					WWDEBUG_SAY(( "Sound File not Found \"%s\"", filename ));
 				}
 			}
