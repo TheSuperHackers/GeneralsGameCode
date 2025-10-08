@@ -610,7 +610,7 @@ bool DX8Wrapper::Create_Device(void)
 			_Hwnd,
 			Vertex_Processing_Behavior,
 			&_PresentParameters,
-			&D3DDevice 
+			&D3DDevice
 		);
 	}
 
