@@ -2286,6 +2286,8 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		{
 
 			ThePlayerList->setLocalPlayer(ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey("ReplayObserver")));
+			// TheSuperHackers @bugfix L3-M 03/09/2025 fix supply dock shadowed in replay playback
+			TheGhostObjectManager->setLocalPlayerIndex(ThePlayerList->getLocalPlayer()->getPlayerIndex());
 			TheRadar->forceOn(TRUE);
 			ThePartitionManager->refreshShroudForLocalPlayer();
 			TheControlBar->setControlBarSchemeByPlayer( ThePlayerList->getLocalPlayer());
