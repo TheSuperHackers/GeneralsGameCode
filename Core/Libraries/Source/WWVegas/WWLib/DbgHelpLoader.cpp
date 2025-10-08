@@ -163,10 +163,7 @@ BOOL DbgHelpLoader::symCleanup(
 	if (Inst == NULL)
 		return FALSE;
 
-	// @todo stl::find_and_erase
-	Processes::iterator it = Inst->m_initializedProcesses.find(hProcess);
-	if (it != Inst->m_initializedProcesses.end())
-		Inst->m_initializedProcesses.erase(it);
+	stl::find_and_erase(Inst->m_initializedProcesses, hProcess);
 
 	if (Inst->m_symCleanup)
 		return Inst->m_symCleanup(hProcess);
