@@ -33,148 +33,148 @@ class DbgHelpLoader
 {
 private:
 
-  static DbgHelpLoader* Inst; // Is singleton class
+	static DbgHelpLoader* Inst; // Is singleton class
 
-  DbgHelpLoader();
-  ~DbgHelpLoader();
+	DbgHelpLoader();
+	~DbgHelpLoader();
 
 public:
 
-  // Returns whether dbghelp.dll is loaded
-  static bool isLoaded();
+	// Returns whether dbghelp.dll is loaded
+	static bool isLoaded();
 
-  // Returns whether dbghelp.dll is loaded from the system directory
-  static bool isLoadedFromSystem();
+	// Returns whether dbghelp.dll is loaded from the system directory
+	static bool isLoadedFromSystem();
 
-  static bool load();
-  static bool reload();
-  static void unload();
+	static bool load();
+	static bool reload();
+	static void unload();
 
-  static BOOL WINAPI symInitialize(
-    HANDLE hProcess,
-    LPSTR UserSearchPath,
-    BOOL fInvadeProcess);
+	static BOOL WINAPI symInitialize(
+		HANDLE hProcess,
+		LPSTR UserSearchPath,
+		BOOL fInvadeProcess);
 
-  static BOOL WINAPI symCleanup(
-    HANDLE hProcess);
+	static BOOL WINAPI symCleanup(
+		HANDLE hProcess);
 
-  static BOOL WINAPI symLoadModule(
-    HANDLE hProcess,
-    HANDLE hFile,
-    LPSTR ImageName,
-    LPSTR ModuleName,
-    DWORD BaseOfDll,
-    DWORD SizeOfDll);
+	static BOOL WINAPI symLoadModule(
+		HANDLE hProcess,
+		HANDLE hFile,
+		LPSTR ImageName,
+		LPSTR ModuleName,
+		DWORD BaseOfDll,
+		DWORD SizeOfDll);
 
-  static DWORD WINAPI symGetModuleBase(
-    HANDLE hProcess,
-    DWORD dwAddr);
+	static DWORD WINAPI symGetModuleBase(
+		HANDLE hProcess,
+		DWORD dwAddr);
 
-  static BOOL WINAPI symUnloadModule(
-    HANDLE hProcess,
-    DWORD BaseOfDll);
+	static BOOL WINAPI symUnloadModule(
+		HANDLE hProcess,
+		DWORD BaseOfDll);
 
-  static BOOL WINAPI symGetSymFromAddr(
-    HANDLE hProcess,
-    DWORD Address,
-    LPDWORD Displacement,
-    PIMAGEHLP_SYMBOL Symbol);
+	static BOOL WINAPI symGetSymFromAddr(
+		HANDLE hProcess,
+		DWORD Address,
+		LPDWORD Displacement,
+		PIMAGEHLP_SYMBOL Symbol);
 
-  static BOOL WINAPI symGetLineFromAddr(
-    HANDLE hProcess,
-    DWORD dwAddr,
-    PDWORD pdwDisplacement,
-    PIMAGEHLP_LINE Line);
+	static BOOL WINAPI symGetLineFromAddr(
+		HANDLE hProcess,
+		DWORD dwAddr,
+		PDWORD pdwDisplacement,
+		PIMAGEHLP_LINE Line);
 
-  static DWORD WINAPI symSetOptions(
-    DWORD SymOptions);
+	static DWORD WINAPI symSetOptions(
+		DWORD SymOptions);
 
-  static LPVOID WINAPI symFunctionTableAccess(
-    HANDLE hProcess,
-    DWORD AddrBase);
+	static LPVOID WINAPI symFunctionTableAccess(
+		HANDLE hProcess,
+		DWORD AddrBase);
 
-  static BOOL WINAPI stackWalk(
-    DWORD MachineType,
-    HANDLE hProcess,
-    HANDLE hThread,
-    LPSTACKFRAME StackFrame,
-    LPVOID ContextRecord,
-    PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine,
-    PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine,
-    PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
-    PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
+	static BOOL WINAPI stackWalk(
+		DWORD MachineType,
+		HANDLE hProcess,
+		HANDLE hThread,
+		LPSTACKFRAME StackFrame,
+		LPVOID ContextRecord,
+		PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine,
+		PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine,
+		PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
+		PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
 
 private:
 
-  typedef BOOL (WINAPI *SymInitialize_t) (
-    HANDLE hProcess,
-    LPSTR UserSearchPath,
-    BOOL fInvadeProcess);
+	typedef BOOL (WINAPI *SymInitialize_t) (
+		HANDLE hProcess,
+		LPSTR UserSearchPath,
+		BOOL fInvadeProcess);
 
-  typedef BOOL (WINAPI *SymCleanup_t) (
-    HANDLE hProcess);
+	typedef BOOL (WINAPI *SymCleanup_t) (
+		HANDLE hProcess);
 
-  typedef BOOL (WINAPI *SymLoadModule_t) (
-    HANDLE hProcess,
-    HANDLE hFile,
-    LPSTR ImageName,
-    LPSTR ModuleName,
-    DWORD BaseOfDll,
-    DWORD SizeOfDll);
+	typedef BOOL (WINAPI *SymLoadModule_t) (
+		HANDLE hProcess,
+		HANDLE hFile,
+		LPSTR ImageName,
+		LPSTR ModuleName,
+		DWORD BaseOfDll,
+		DWORD SizeOfDll);
 
-  typedef DWORD (WINAPI *SymGetModuleBase_t) (
-    HANDLE hProcess,
-    DWORD dwAddr);
+	typedef DWORD (WINAPI *SymGetModuleBase_t) (
+		HANDLE hProcess,
+		DWORD dwAddr);
 
-  typedef BOOL (WINAPI *SymUnloadModule_t) (
-    HANDLE hProcess,
-    DWORD BaseOfDll);
+	typedef BOOL (WINAPI *SymUnloadModule_t) (
+		HANDLE hProcess,
+		DWORD BaseOfDll);
 
-  typedef BOOL (WINAPI *SymGetSymFromAddr_t) (
-    HANDLE hProcess,
-    DWORD Address,
-    LPDWORD Displacement,
-    PIMAGEHLP_SYMBOL Symbol);
+	typedef BOOL (WINAPI *SymGetSymFromAddr_t) (
+		HANDLE hProcess,
+		DWORD Address,
+		LPDWORD Displacement,
+		PIMAGEHLP_SYMBOL Symbol);
 
-  typedef BOOL (WINAPI* SymGetLineFromAddr_t) (
-    HANDLE hProcess,
-    DWORD dwAddr,
-    PDWORD pdwDisplacement,
-    PIMAGEHLP_LINE Line);
+	typedef BOOL (WINAPI* SymGetLineFromAddr_t) (
+		HANDLE hProcess,
+		DWORD dwAddr,
+		PDWORD pdwDisplacement,
+		PIMAGEHLP_LINE Line);
 
-  typedef DWORD (WINAPI *SymSetOptions_t) (
-    DWORD SymOptions);
+	typedef DWORD (WINAPI *SymSetOptions_t) (
+		DWORD SymOptions);
 
-  typedef LPVOID (WINAPI *SymFunctionTableAccess_t) (
-    HANDLE hProcess,
-    DWORD AddrBase);
+	typedef LPVOID (WINAPI *SymFunctionTableAccess_t) (
+		HANDLE hProcess,
+		DWORD AddrBase);
 
-  typedef BOOL (WINAPI *StackWalk_t) (
-    DWORD MachineType,
-    HANDLE hProcess,
-    HANDLE hThread,
-    LPSTACKFRAME StackFrame,
-    LPVOID ContextRecord,
-    PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine,
-    PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine,
-    PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
-    PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
+	typedef BOOL (WINAPI *StackWalk_t) (
+		DWORD MachineType,
+		HANDLE hProcess,
+		HANDLE hThread,
+		LPSTACKFRAME StackFrame,
+		LPVOID ContextRecord,
+		PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine,
+		PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine,
+		PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
+		PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
 
-  SymInitialize_t m_symInitialize;
-  SymCleanup_t m_symCleanup;
-  SymLoadModule_t m_symLoadModule;
-  SymUnloadModule_t m_symUnloadModule;
-  SymGetModuleBase_t m_symGetModuleBase;
-  SymGetSymFromAddr_t m_symGetSymFromAddr;
-  SymGetLineFromAddr_t m_symGetLineFromAddr;
-  SymSetOptions_t m_symSetOptions;
-  SymFunctionTableAccess_t m_symFunctionTableAccess;
-  StackWalk_t m_stackWalk;
+	SymInitialize_t m_symInitialize;
+	SymCleanup_t m_symCleanup;
+	SymLoadModule_t m_symLoadModule;
+	SymUnloadModule_t m_symUnloadModule;
+	SymGetModuleBase_t m_symGetModuleBase;
+	SymGetSymFromAddr_t m_symGetSymFromAddr;
+	SymGetLineFromAddr_t m_symGetLineFromAddr;
+	SymSetOptions_t m_symSetOptions;
+	SymFunctionTableAccess_t m_symFunctionTableAccess;
+	StackWalk_t m_stackWalk;
 
-  typedef std::set<HANDLE, std::less<HANDLE>, stl::malloc_allocator<HANDLE> > Processes;
+	typedef std::set<HANDLE, std::less<HANDLE>, stl::malloc_allocator<HANDLE> > Processes;
 
-  Processes m_initializedProcesses;
-  HMODULE m_dllModule;
-  bool m_failed;
-  bool m_loadedFromSystem;
+	Processes m_initializedProcesses;
+	HMODULE m_dllModule;
+	bool m_failed;
+	bool m_loadedFromSystem;
 };

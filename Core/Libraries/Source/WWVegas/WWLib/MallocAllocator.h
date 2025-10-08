@@ -33,75 +33,75 @@ class malloc_allocator
 {
 public:
 
-  typedef T value_type;
-  typedef T* pointer;
-  typedef const T* const_pointer;
-  typedef T& reference;
-  typedef const T& const_reference;
-  typedef std::size_t size_type;
-  typedef std::ptrdiff_t difference_type;
+	typedef T value_type;
+	typedef T* pointer;
+	typedef const T* const_pointer;
+	typedef T& reference;
+	typedef const T& const_reference;
+	typedef std::size_t size_type;
+	typedef std::ptrdiff_t difference_type;
 
-  template <typename U>
-  struct rebind
-  {
-    typedef malloc_allocator<U> other;
-  };
+	template <typename U>
+	struct rebind
+	{
+		typedef malloc_allocator<U> other;
+	};
 
-  malloc_allocator() throw() {}
+	malloc_allocator() throw() {}
 
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
-  malloc_allocator(const malloc_allocator&) throw() {}
+	malloc_allocator(const malloc_allocator&) throw() {}
 #endif
 
-  template <typename U>
-  malloc_allocator(const malloc_allocator<U>&) throw() {}
+	template <typename U>
+	malloc_allocator(const malloc_allocator<U>&) throw() {}
 
-  ~malloc_allocator() throw() {}
+	~malloc_allocator() throw() {}
 
-  pointer address(reference x) const { return &x; }
-  const_pointer address(const_reference x) const { return &x; }
+	pointer address(reference x) const { return &x; }
+	const_pointer address(const_reference x) const { return &x; }
 
-  pointer allocate(size_type n, const void* = 0)
-  {
-    if (n > max_size())
-      throw std::bad_alloc();
+	pointer allocate(size_type n, const void* = 0)
+	{
+		if (n > max_size())
+			throw std::bad_alloc();
 
-    void* p = ::malloc(n * sizeof(T));
-    if (!p)
-      throw std::bad_alloc();
-    return static_cast<pointer>(p);
-  }
+		void* p = ::malloc(n * sizeof(T));
+		if (!p)
+			throw std::bad_alloc();
+		return static_cast<pointer>(p);
+	}
 
-  void deallocate(pointer p, size_type)
-  {
-    ::free(p);
-  }
+	void deallocate(pointer p, size_type)
+	{
+		::free(p);
+	}
 
-  void construct(pointer p, const T& val)
-  {
-    new (static_cast<void*>(p)) T(val);
-  }
+	void construct(pointer p, const T& val)
+	{
+		new (static_cast<void*>(p)) T(val);
+	}
 
-  void destroy(pointer p)
-  {
-    p->~T();
-  }
+	void destroy(pointer p)
+	{
+		p->~T();
+	}
 
-  size_type max_size() const throw()
-  {
-    return ~size_type(0) / sizeof(T);
-  }
+	size_type max_size() const throw()
+	{
+		return ~size_type(0) / sizeof(T);
+	}
 };
 
 // Allocators of same type are always equal
 template <typename T1, typename T2>
 bool operator==(const malloc_allocator<T1>&, const malloc_allocator<T2>&) throw() {
-  return true;
+	return true;
 }
 
 template <typename T1, typename T2>
 bool operator!=(const malloc_allocator<T1>&, const malloc_allocator<T2>&) throw() {
-  return false;
+	return false;
 }
 
 } // namespace stl
@@ -112,18 +112,18 @@ bool operator!=(const malloc_allocator<T1>&, const malloc_allocator<T2>&) throw(
 // This tells STLport how to rebind malloc_allocator
 namespace std
 {
-  template <class _Tp1, class _Tp2>
-  struct __stl_alloc_rebind_helper;
+	template <class _Tp1, class _Tp2>
+	struct __stl_alloc_rebind_helper;
 
-  template <class Tp1, class Tp2>
-  inline stl::malloc_allocator<Tp2>& __stl_alloc_rebind(stl::malloc_allocator<Tp1>& a, const Tp2*) {
-    return *reinterpret_cast<stl::malloc_allocator<Tp2>*>(&a);
-  }
+	template <class Tp1, class Tp2>
+	inline stl::malloc_allocator<Tp2>& __stl_alloc_rebind(stl::malloc_allocator<Tp1>& a, const Tp2*) {
+		return *reinterpret_cast<stl::malloc_allocator<Tp2>*>(&a);
+	}
 
-  template <class Tp1, class Tp2>
-  inline const stl::malloc_allocator<Tp2>& __stl_alloc_rebind(const stl::malloc_allocator<Tp1>& a, const Tp2*) {
-    return *reinterpret_cast<const stl::malloc_allocator<Tp2>*>(&a);
-  }
+	template <class Tp1, class Tp2>
+	inline const stl::malloc_allocator<Tp2>& __stl_alloc_rebind(const stl::malloc_allocator<Tp1>& a, const Tp2*) {
+		return *reinterpret_cast<const stl::malloc_allocator<Tp2>*>(&a);
+	}
 }
 
 #endif
