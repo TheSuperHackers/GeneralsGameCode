@@ -817,11 +817,11 @@ bool RenderObjClass::Remove(void)
 			Scene->Remove_Render_Object(this);
 			return true;
 		}
+		return false;
 	} else {
 		Container->Remove_Sub_Object(this);
 		return true;
 	}
-	return false;
 #else
 	if (!Scene)
 		return false;
