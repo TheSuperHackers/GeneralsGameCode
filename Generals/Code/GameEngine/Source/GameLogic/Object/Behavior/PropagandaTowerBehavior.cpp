@@ -207,23 +207,11 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 	}
 
 #if RETAIL_COMPATIBLE_CRC
-	Bool contained = self->getContainedBy() && self->getContainedBy()->getContainedBy();
+	if (self->getContainedBy() && self->getContainedBy()->getContainedBy())
 #else
 	// If our container or any parent containers are enclosing, we turn the heck off.
-	Bool contained = false;
-
-	for (Object* child = self, *container = self->getContainedBy(); container; child = container, container = container->getContainedBy())
-	{
-		ContainModuleInterface* containModule = container->getContain();
-		if (containModule && containModule->isEnclosingContainerFor(child))
-		{
-			contained = true;
-			break;
-		}
-	}
+	if (self->getEnclosingContain())
 #endif
-
-	if (contained)
 	{
 		removeAllInfluence();
 		return UPDATE_SLEEP_NONE;

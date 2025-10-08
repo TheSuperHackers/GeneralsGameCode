@@ -731,6 +731,18 @@ Int Object::getTransportSlotCount() const
 	return count;
 }
 
+ContainModuleInterface* Object::getEnclosingContain()
+{
+	for (Object* child = this, *container = getContainedBy(); container; child = container, container = container->getContainedBy())
+	{
+		ContainModuleInterface* containModule = container->getContain();
+		if (containModule && containModule->isEnclosingContainerFor(child))
+			return containModule;
+	}
+
+	return NULL;
+}
+
 //-------------------------------------------------------------------------------------------------
 /** Run from GameLogic::destroyObject */
 //-------------------------------------------------------------------------------------------------
