@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "STLUtils.h"
 #include "stringex.h"
 
 

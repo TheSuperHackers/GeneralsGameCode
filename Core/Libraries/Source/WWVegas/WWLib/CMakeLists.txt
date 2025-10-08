@@ -106,6 +106,7 @@ set(WWLIB_SRC
     SLNODE.H
     stimer.cpp
     stimer.h
+    STLUtils.h
     straw.cpp
     STRAW.H
     stringex.h
