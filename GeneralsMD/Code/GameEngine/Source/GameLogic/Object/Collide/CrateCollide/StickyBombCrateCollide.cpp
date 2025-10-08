@@ -25,43 +25,28 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //	
 // FILE: StickyBombCrateCollide.cpp 
-// Author: Kris Morness, June 2003
-// Desc:   A crate (actually a saboteur - mobile crate) that resets the timer on the target supply dropzone.
+// Author: Andi W - Sept 2025
+// Desc:   Creates a Sticks Bomb on the object we collide with
 //	
 ///////////////////////////////////////////////////////////////////////////////////////////////////
  
 
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-// #include "Common/GameAudio.h"
-// #include "Common/MiscAudio.h"
 #include "Common/Player.h"
-// #include "Common/PlayerList.h"
 #include "Common/Radar.h"
-// #include "Common/SpecialPower.h"
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
 
-// #include "GameClient/Drawable.h"
 #include "GameClient/Eva.h"
-// #include "GameClient/InGameUI.h"  // useful for printing quick debug strings when we need to
 
-//#include "GameLogic/ExperienceTracker.h"
 #include "GameLogic/Object.h"
-//#include "GameLogic/PartitionManager.h"
-//#include "GameLogic/ScriptEngine.h"
 
 #include "GameLogic/Module/AIUpdate.h"
-//#include "GameLogic/Module/ContainModule.h"
-//#include "GameLogic/Module/DozerAIUpdate.h"
-//#include "GameLogic/Module/HijackerUpdate.h"
-//#include "GameLogic/Module/OCLUpdate.h"
 #include "GameLogic/Module/StickyBombCrateCollide.h"
 #include "GameLogic/Module/StickyBombUpdate.h"
-//#include "GameLogic/Module/SpecialPowerModule.h"
 
 
 
@@ -79,29 +64,29 @@ StickyBombCrateCollide::~StickyBombCrateCollide( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Bool StickyBombCrateCollide::isValidToExecute( const Object *other ) const
-{
-	if( !CrateCollide::isValidToExecute(other) )
-	{
-		if (other != NULL)
-			DEBUG_LOG(("StickyBombCrateCollide::isValidToExecute >>> target '%s' Not Valid.", other->getTemplate()->getName().str()));
-		else
-			DEBUG_LOG(("StickyBombCrateCollide::isValidToExecute >>> collide with ground!"));
-		//Extend functionality.
-		return FALSE;
-	}
-
-	// Do we need anything here?
-	DEBUG_LOG(("StickyBombCrateCollide::isValidToExecute >>> target '%s' Valid!", other->getTemplate()->getName().str()));
-	return TRUE;
-}
+//Bool StickyBombCrateCollide::isValidToExecute( const Object *other ) const
+//{
+//	if( !CrateCollide::isValidToExecute(other) )
+//	{
+//		if (other != NULL)
+//			DEBUG_LOG(("StickyBombCrateCollide::isValidToExecute >>> target '%s' Not Valid.", other->getTemplate()->getName().str()));
+//		else
+//			DEBUG_LOG(("StickyBombCrateCollide::isValidToExecute >>> collide with ground!"));
+//		//Extend functionality.
+//		return FALSE;
+//	}
+//
+//	// Do we need anything here?
+//	DEBUG_LOG(("StickyBombCrateCollide::isValidToExecute >>> target '%s' Valid!", other->getTemplate()->getName().str()));
+//	return TRUE;
+//}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 Bool StickyBombCrateCollide::executeCrateBehavior( Object *other )
 {
 
-	DEBUG_LOG(("StickyBombCrateCollide::executeCrateBehavior 0"));
+	//DEBUG_LOG(("StickyBombCrateCollide::executeCrateBehavior 0"));
 	const StickyBombCrateCollideModuleData* md = getStickyBombCrateCollideModuleData();
 
 	if (m_hasCollided && !md->m_allowMultiCollide)
@@ -129,6 +114,12 @@ Bool StickyBombCrateCollide::executeCrateBehavior( Object *other )
 			}
 		}
 
+	}
+
+	Real randomNumber = GameLogicRandomValueReal(0, 1);
+	if (randomNumber > md->m_triggerChance) {
+		m_hasCollided = TRUE;
+		return false;
 	}
 
 	if (md->m_showInfiltrationEvent)

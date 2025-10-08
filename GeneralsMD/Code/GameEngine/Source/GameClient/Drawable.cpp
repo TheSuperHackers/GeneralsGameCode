@@ -3744,8 +3744,8 @@ void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 		{
 			if( update->isTimedBomb() )
 			{
-				//Timed bomb
-				if( !getIconInfo()->m_icon[ ICON_BOMB_TIMED ] )
+				//Timed bomb - Base layer
+				if (!getIconInfo()->m_icon[ICON_BOMB_REMOTE] && update->showAnimBaseTemplate())
 				{
 					Anim2DTemplate* templ = update->getAnimBaseTemplate();
 
@@ -3754,7 +3754,11 @@ void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 
 					getIconInfo()->m_icon[ICON_BOMB_REMOTE] = newInstance(Anim2D)(templ, TheAnim2DCollection);
 
-					templ = update->getAnimTimedTemplate();
+				}
+				//Timed bomb - Timer
+				if( !getIconInfo()->m_icon[ ICON_BOMB_TIMED ] && update->showAnimTimedTemplate())
+				{
+					Anim2DTemplate* templ = update->getAnimTimedTemplate();
 
 					if (templ == NULL)  // Default icon
 						templ = s_animationTemplates[ICON_BOMB_TIMED];
@@ -3785,7 +3789,9 @@ void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 					getIconInfo()->m_icon[ ICON_BOMB_TIMED ]->setMinFrame(numFrames - seconds - 1);
 					getIconInfo()->m_icon[ ICON_BOMB_TIMED ]->reset();
 				}
-				if( getIconInfo()->m_icon[ ICON_BOMB_TIMED ] )
+				Bool showTimedAnim = (getIconInfo()->m_icon[ICON_BOMB_TIMED]) != NULL;
+				Bool showBaseAnim = (getIconInfo()->m_icon[ICON_BOMB_REMOTE]) != NULL;
+				if( showTimedAnim || showBaseAnim)
 				{
 					//
 					// we are going to draw the healing icon relative to the size of the health bar region
@@ -3796,8 +3802,15 @@ void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 						Int barWidth = healthBarRegion->hi.x - healthBarRegion->lo.x;
 						Int barHeight = healthBarRegion->hi.y - healthBarRegion->lo.y;
 
-						Int frameWidth = getIconInfo()->m_icon[ ICON_BOMB_TIMED ]->getCurrentFrameWidth();
-						Int frameHeight = getIconInfo()->m_icon[ ICON_BOMB_TIMED ]->getCurrentFrameHeight();
+						Int frameWidth, frameHeight;
+						if (showTimedAnim) {
+							frameWidth = getIconInfo()->m_icon[ICON_BOMB_TIMED]->getCurrentFrameWidth();
+							frameHeight = getIconInfo()->m_icon[ICON_BOMB_TIMED]->getCurrentFrameHeight();
+						}
+						else {
+							frameWidth = getIconInfo()->m_icon[ICON_BOMB_REMOTE]->getCurrentFrameWidth();
+							frameHeight = getIconInfo()->m_icon[ICON_BOMB_REMOTE]->getCurrentFrameHeight();
+						}
 
 						// adjust the width to be a % of the health bar region size
 						Int size = REAL_TO_INT( barWidth * 0.65f );
@@ -3809,18 +3822,21 @@ void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 						screen.x = REAL_TO_INT( healthBarRegion->lo.x + (barWidth * 0.5f) - (frameWidth * 0.5f) );
 						screen.y = REAL_TO_INT( healthBarRegion->lo.y + barHeight * 0.5f ) + BOMB_ICON_EXTRA_OFFSET;
 
-						getIconInfo()->m_icon[ ICON_BOMB_REMOTE ]->draw( screen.x, screen.y, frameWidth, frameHeight );
-						getIconInfo()->m_keepTillFrame[ ICON_BOMB_REMOTE ] = now + 1;
-						getIconInfo()->m_icon[ ICON_BOMB_TIMED ]->draw( screen.x, screen.y, frameWidth, frameHeight );
-						getIconInfo()->m_keepTillFrame[ ICON_BOMB_TIMED ] = now + 1;
+						if (showBaseAnim) {
+							getIconInfo()->m_icon[ICON_BOMB_REMOTE]->draw(screen.x, screen.y, frameWidth, frameHeight);
+							getIconInfo()->m_keepTillFrame[ICON_BOMB_REMOTE] = now + 1;
+						}
+						if (showTimedAnim) {
+							getIconInfo()->m_icon[ICON_BOMB_TIMED]->draw(screen.x, screen.y, frameWidth, frameHeight);
+							getIconInfo()->m_keepTillFrame[ICON_BOMB_TIMED] = now + 1;
+						}
 					}
 				}
 			}
 			else
 			{
 				//Remote charge
-				//Timed bomb
-				if( !getIconInfo()->m_icon[ ICON_BOMB_REMOTE ] )
+				if( !getIconInfo()->m_icon[ ICON_BOMB_REMOTE ] && update->showAnimBaseTemplate())
 				{
 					Anim2DTemplate* templ = update->getAnimBaseTemplate();
 

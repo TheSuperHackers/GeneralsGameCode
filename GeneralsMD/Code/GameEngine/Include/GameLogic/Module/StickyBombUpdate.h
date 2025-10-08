@@ -50,7 +50,10 @@ public:
 
 	AsciiString m_animBaseTemplate;
 	AsciiString m_animTimedTemplate;
-	Bool m_showTimer;
+	Bool m_showTimer;     ///< if this is disabled, only use animBase for timed bombs
+
+	Bool m_hideAnimBase;      ///< will be set automatically if String is Null
+	Bool m_hideAnimTimed;      ///< will be set automatically if String is Null
 
 	StickyBombUpdateModuleData()
 	{
@@ -62,6 +65,9 @@ public:
 		m_showTimer = TRUE;
 	}
 
+	static void parseAnimBaseName(INI* ini, void* instance, void* store, const void* userData);
+	static void parseAnimTimedName(INI* ini, void* instance, void* store, const void* userData);
+
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
@@ -71,8 +77,8 @@ public:
 			{ "OffsetZ",									INI::parseReal,						NULL, offsetof( StickyBombUpdateModuleData, m_offsetZ ) },
 			{ "GeometryBasedDamageWeapon",INI::parseWeaponTemplate, NULL, offsetof( StickyBombUpdateModuleData, m_geometryBasedDamageWeaponTemplate ) },
 			{ "GeometryBasedDamageFX",		INI::parseFXList,					NULL, offsetof( StickyBombUpdateModuleData, m_geometryBasedDamageFX ) },
-			{ "Animation2DBase",		INI::parseAsciiString,					NULL, offsetof( StickyBombUpdateModuleData, m_animBaseTemplate) },
-			{ "Animation2DTimed",		INI::parseAsciiString,					NULL, offsetof( StickyBombUpdateModuleData, m_animTimedTemplate) },
+			{ "Animation2DBase",		parseAnimBaseName,					NULL, 0 },
+			{ "Animation2DTimed",		parseAnimTimedName,					NULL, 0 },
 			{ "ShowTimer",		INI::parseBool,					NULL, offsetof( StickyBombUpdateModuleData, m_showTimer) },
 			{ 0, 0, 0, 0 }
 		};
@@ -108,6 +114,9 @@ public:
 
 	Anim2DTemplate* getAnimBaseTemplate();
 	Anim2DTemplate* getAnimTimedTemplate();
+
+	inline Bool showAnimBaseTemplate() { return !getStickyBombUpdateModuleData()->m_hideAnimBase; }
+	inline Bool showAnimTimedTemplate() { return !getStickyBombUpdateModuleData()->m_hideAnimTimed; }
 
 private:
 

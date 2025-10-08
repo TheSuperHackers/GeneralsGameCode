@@ -51,6 +51,7 @@ public:
 	Bool m_allowMultiCollide;  ///< if we are a crate, allow spawning multiple sticky bombs, or just single use
 	Bool m_showInfiltrationEvent;   ///< show an infiltration map event for the target player
 	AsciiString m_stickyBombObjectName;  ///< the object to create
+	Real m_triggerChance;  ///< chance to create the bomb when triggering the module
 
 	StickyBombCrateCollideModuleData()
 	{
@@ -58,6 +59,7 @@ public:
 		m_allowMultiCollide = FALSE;
 		m_showInfiltrationEvent = FALSE;
 		m_stickyBombObjectName = AsciiString::TheEmptyString;
+		m_triggerChance = 1.0;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p) 
@@ -70,6 +72,7 @@ public:
 			{ "AllowMultiCollide", INI::parseBool, NULL, offsetof(StickyBombCrateCollideModuleData, m_allowMultiCollide) },
 			{ "ShowInfiltrationEvent", INI::parseBool, NULL, offsetof(StickyBombCrateCollideModuleData, m_showInfiltrationEvent) },
 			{ "StickyBombObject", INI::parseAsciiString, NULL, offsetof(StickyBombCrateCollideModuleData, m_stickyBombObjectName) },
+			{ "ChanceToTriggerPercent", INI::parsePercentToReal, NULL, offsetof(StickyBombCrateCollideModuleData, m_triggerChance) },
 			{ 0, 0, 0, 0 }
 		};
 		p.add( dataFieldParse );
@@ -92,7 +95,7 @@ public:
 protected:
 
 	/// This allows specific vetoes to certain types of crates and their data
-	virtual Bool isValidToExecute( const Object *other ) const;
+	// virtual Bool isValidToExecute( const Object *other ) const;
 
 	/// This is the game logic execution function that all real CrateCollides will implement
 	virtual Bool executeCrateBehavior( Object *other );
