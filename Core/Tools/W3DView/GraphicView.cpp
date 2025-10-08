@@ -1327,7 +1327,7 @@ CGraphicView::Load_Default_Dat (void)
 	}
 
 	// Concat the default.dat filename onto the path
-	::strcat (filename, "\\default.dat");
+	strlcat(filename, "\\default.dat", MAX_PATH);
 
 	// Does the file exist in the directory?
 	if (::GetFileAttributes (filename) != 0xFFFFFFFF) {

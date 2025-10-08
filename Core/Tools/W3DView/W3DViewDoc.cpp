@@ -1532,7 +1532,7 @@ CW3DViewDoc::SaveSettings
             if (szPath[::lstrlen (szPath)-1] != '\\')
             {
                 // Ensure the path is directory delimited
-                ::strcat (szPath, "\\");
+                strlcat(szPath, "\\", ARRAY_SIZE(szPath));
             }
 
             // Prepend the filename with its new path

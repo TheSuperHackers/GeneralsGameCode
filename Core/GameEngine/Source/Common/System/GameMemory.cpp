@@ -2974,9 +2974,10 @@ void MemoryPoolFactory::memoryPoolUsageReport( const char* filename, FILE *appen
 
 	if( !appendToFileInstead )
 	{
-		char tmp[256];
+		const int tmpSize = 256;
+		char tmp[tmpSize];
 		strcpy(tmp,filename);
-		strcat(tmp,".csv");
+		strlcat(tmp,".csv", tmpSize);
 		perfStatsFile = fopen(tmp, "w");
 	}
 	else
@@ -3201,12 +3202,13 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 		DEBUG_LOG(("------------------------------------------"));
 		DEBUG_LOG(("Begin Block Report for %s", nm));
 		DEBUG_LOG(("------------------------------------------"));
-		char buf[256] = "";
-		if (flags & _REPORT_CP_ALLOCATED_BEFORE) strcat(buf, "AllocBefore ");
-		if (flags & _REPORT_CP_ALLOCATED_BETWEEN) strcat(buf, "AllocBetween ");
-		if (flags & _REPORT_CP_FREED_BEFORE) strcat(buf, "FreedBefore ");
-		if (flags & _REPORT_CP_FREED_BETWEEN) strcat(buf, "FreedBetween ");
-		if (flags & _REPORT_CP_FREED_NEVER) strcat(buf, "StillExisting ");
+		const int bufSize = 256;
+		char buf[bufSize] = "";
+		if (flags & _REPORT_CP_ALLOCATED_BEFORE) strlcat(buf, "AllocBefore ", bufSize);
+		if (flags & _REPORT_CP_ALLOCATED_BETWEEN) strlcat(buf, "AllocBetween ", bufSize);
+		if (flags & _REPORT_CP_FREED_BEFORE) strlcat(buf, "FreedBefore ", bufSize);
+		if (flags & _REPORT_CP_FREED_BETWEEN) strlcat(buf, "FreedBetween ", bufSize);
+		if (flags & _REPORT_CP_FREED_NEVER) strlcat(buf, "StillExisting ", bufSize);
 		DEBUG_LOG(("Options: Between checkpoints %d and %d, report on (%s)",startCheckpoint,endCheckpoint,buf));
 		DEBUG_LOG(("------------------------------------------"));
 

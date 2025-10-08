@@ -234,8 +234,8 @@ bool HModelDefClass::read_connection(ChunkLoadClass & cload,HmdlNodeDefStruct * 
 	}
 
 	strcpy(node->RenderObjName,ModelName);
-	strcat(node->RenderObjName,".");
-	strcat(node->RenderObjName,con.RenderObjName);
+	strlcat(node->RenderObjName,".", ARRAY_SIZE(node->RenderObjName));
+	strlcat(node->RenderObjName, con.RenderObjName, ARRAY_SIZE(node->RenderObjName));
 
 	if (pre30) {
 		if (con.PivotIdx == 65535) {

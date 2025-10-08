@@ -29,6 +29,7 @@
 #include "_pch.h"
 #include "stringex.h"
 #include <stdlib.h>
+#include <stringex.h>
 #include <new>      // needed for placement new prototype
 
 DebugIOFlat::OutputStream::OutputStream(const char *filename, unsigned maxSize):
@@ -94,7 +95,7 @@ void DebugIOFlat::OutputStream::Delete(const char *path)
       if (++run)
         wsprintf(help+strlen(help),"(%i)%s",run,ext);
       else
-        strcat(help,ext);
+        strlcat(help, ext, sizeof(help));
       if (CopyFile(m_fileName,help,TRUE))
         break;
       if (GetLastError()!=ERROR_FILE_EXISTS)

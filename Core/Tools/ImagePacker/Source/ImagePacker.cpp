@@ -44,6 +44,7 @@
 #include <stdio.h>
 #include <io.h>
 #include <assert.h>
+#include <stringex.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "stringex.h"
@@ -1186,8 +1187,8 @@ Bool ImagePacker::process( void )
 	CreateDirectory( m_outputDirectory, NULL );
 
 	// subdir of output directory based on output image name
-	strcat( m_outputDirectory, m_outputFile );
-	strcat( m_outputDirectory, "\\" );
+	strlcat(m_outputDirectory, m_outputFile, sizeof(m_outputDirectory));
+	strlcat(m_outputDirectory, "\\", sizeof(m_outputDirectory));
 
 	//
 	// check for existing images in the output directory ... if we have

@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <Utility/stdio_adapter.h>
 #include <string.h>
+#include <stringex.h>
 #include <new>      // needed for placement new prototype
 
 // a little dummy variable that makes the linker actually include
@@ -347,7 +348,7 @@ bool Debug::AssertDone(void)
                         "time being (stops logging this assertion as well).";
     char *help=(char *)DebugAllocMemory(ioBuffer[curType].used+strlen(addInfo)+1);
     strcpy(help,ioBuffer[curType].buffer+82);
-    strcat(help,addInfo);
+    strlcat(help,addInfo, sizeof(help));
 
     // First hit? Then do a stack trace
     if (curFrameEntry->hits==1)
@@ -611,7 +612,7 @@ bool Debug::CrashDone(bool die)
 #endif
     char *help=(char *)DebugAllocMemory(ioBuffer[curType].used+strlen(addInfo)+1);
     strcpy(help,ioBuffer[curType].buffer+82);
-    strcat(help,addInfo);
+    strlcat(help,addInfo, sizeof(help));
 
     // First hit? Then do a stack trace
     if (curFrameEntry->hits==1)

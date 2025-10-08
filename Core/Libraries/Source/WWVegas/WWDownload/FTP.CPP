@@ -36,6 +36,7 @@
 #include <time.h>
 #include <direct.h>
 #include <errno.h>
+#include <stringex.h>
 //#include "wlib/wstring.h"
 
 #include "stringex.h"
@@ -679,7 +680,7 @@ HRESULT  Cftp::FindFile( LPCSTR szRemoteFileName, int * piSize )
 	_splitpath( szRemoteFileName, NULL, m_szRemoteFilePath+strlen(m_szRemoteFilePath),
 		m_szRemoteFileName, ext );
 
-	strcat( m_szRemoteFileName, ext );
+	strlcat(m_szRemoteFileName, ext, sizeof(m_szRemoteFileName));
 
 	for( i = 0; i < (int)strlen( m_szRemoteFilePath ); i++ )
 	{
@@ -1709,7 +1710,8 @@ HRESULT  Cftp::FileRecoveryPosition( LPCSTR szLocalFileName, LPCSTR szRegistryRo
 	FILE * testfp;
 	HKEY hkey;
 	unsigned char regfilename[ 256 ];
-	char regkey[ 512 ];
+	const int regkeySize = 512;
+	char regkey[ regkeySize ];
 	unsigned long t1, t2;
 
 	if( ( szRegistryRoot == NULL ) || ( szLocalFileName == NULL ) )
@@ -1723,11 +1725,11 @@ HRESULT  Cftp::FileRecoveryPosition( LPCSTR szLocalFileName, LPCSTR szRegistryRo
 	strcpy( regkey, szRegistryRoot );
 	if( regkey[ strlen( regkey ) - 1 ] != '\\' )
 	{
-		strcat( regkey, "\\Download" );
+		strlcat( regkey, "\\Download", regkeySize);
 	}
 	else
 	{
-		strcat( regkey, "Download" );
+		strlcat( regkey, "Download", regkeySize);
 	}
 
 	if( RegOpenKeyEx( HKEY_LOCAL_MACHINE, (LPCTSTR)regkey,

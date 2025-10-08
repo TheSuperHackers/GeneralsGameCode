@@ -210,14 +210,14 @@ static const char *getCurrentTickString(void)
 	Empty the buffer passed in, then optionally prepend the current TickCount
 	value in string form, depending on the setting of theDebugFlags.
 */
-static void prepBuffer(char *buffer)
+static void prepBuffer(char *buffer, int size)
 {
 	buffer[0] = 0;
 #ifdef ALLOW_DEBUG_UTILS
 	if (theDebugFlags & DEBUG_FLAG_PREPEND_TIME)
 	{
 		strcpy(buffer, getCurrentTickString());
-		strcat(buffer, " ");
+		strlcat(buffer, " ", size);
 	}
 #endif
 }
@@ -388,24 +388,24 @@ void DebugInit(int flags)
 		}
 
 		strcpy(theLogFileNamePrev, dirbuf);
-		strcat(theLogFileNamePrev, gAppPrefix);
-		strcat(theLogFileNamePrev, DEBUG_FILE_NAME_PREV);
+		strlcat(theLogFileNamePrev, gAppPrefix, ARRAY_SIZE(theLogFileNamePrev));
+		strlcat(theLogFileNamePrev, DEBUG_FILE_NAME_PREV, ARRAY_SIZE(theLogFileNamePrev));
 		if (rts::ClientInstance::getInstanceId() > 1u)
 		{
 			size_t offset = strlen(theLogFileNamePrev);
 			snprintf(theLogFileNamePrev + offset, ARRAY_SIZE(theLogFileNamePrev) - offset, "_Instance%.2u", rts::ClientInstance::getInstanceId());
 		}
-		strcat(theLogFileNamePrev, ".txt");
+		strlcat(theLogFileNamePrev, ".txt", ARRAY_SIZE(theLogFileNamePrev));
 
 		strcpy(theLogFileName, dirbuf);
-		strcat(theLogFileName, gAppPrefix);
-		strcat(theLogFileName, DEBUG_FILE_NAME);
+		strlcat(theLogFileName, gAppPrefix, ARRAY_SIZE(theLogFileNamePrev));
+		strlcat(theLogFileName, DEBUG_FILE_NAME, ARRAY_SIZE(theLogFileNamePrev));
 		if (rts::ClientInstance::getInstanceId() > 1u)
 		{
 			size_t offset = strlen(theLogFileName);
 			snprintf(theLogFileName + offset, ARRAY_SIZE(theLogFileName) - offset, "_Instance%.2u", rts::ClientInstance::getInstanceId());
 		}
-		strcat(theLogFileName, ".txt");
+		strlcat(theLogFileName, ".txt", ARRAY_SIZE(theLogFileNamePrev));
 
 		remove(theLogFileNamePrev);
 		rename(theLogFileName, theLogFileNamePrev);
@@ -436,7 +436,7 @@ void DebugLog(const char *format, ...)
 	if (theDebugFlags == 0)
 		MessageBoxWrapper("DebugLog - Debug not inited properly", "", MB_OK|MB_TASKMODAL);
 
-	prepBuffer(theBuffer);
+	prepBuffer(theBuffer, ARRAY_SIZE(theBuffer));
 
 	va_list args;
 	va_start(args, format);
@@ -508,8 +508,8 @@ void DebugCrash(const char *format, ...)
 	// make it big to avoid weird overflow bugs in debug mode
 	char theCrashBuffer[ LARGE_BUFFER ];
 
-	prepBuffer(theCrashBuffer);
-	strcat(theCrashBuffer, "ASSERTION FAILURE: ");
+	prepBuffer(theCrashBuffer, LARGE_BUFFER);
+	strlcat(theCrashBuffer, "ASSERTION FAILURE: ", LARGE_BUFFER);
 
 	va_list arg;
 	va_start(arg, format);
@@ -538,7 +538,7 @@ void DebugCrash(const char *format, ...)
 #endif
 	}
 
-	strcat(theCrashBuffer, "\n\nAbort->exception; Retry->debugger; Ignore->continue");
+	strlcat(theCrashBuffer, "\n\nAbort->exception; Retry->debugger; Ignore->continue", LARGE_BUFFER);
 
 	const int result = doCrashBox(theCrashBuffer, useLogging);
 
@@ -737,9 +737,9 @@ void ReleaseCrash(const char *reason)
 	}
 
 	strcpy(prevbuf, TheGlobalData->getPath_UserData().str());
-	strcat(prevbuf, RELEASECRASH_FILE_NAME_PREV);
+	strlcat(prevbuf, RELEASECRASH_FILE_NAME_PREV, _MAX_PATH);
 	strcpy(curbuf, TheGlobalData->getPath_UserData().str());
-	strcat(curbuf, RELEASECRASH_FILE_NAME);
+	strlcat(curbuf, RELEASECRASH_FILE_NAME, _MAX_PATH);
 
  	remove(prevbuf);
 	rename(curbuf, prevbuf);
@@ -826,9 +826,9 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 	char curbuf[ _MAX_PATH ];
 
 	strcpy(prevbuf, TheGlobalData->getPath_UserData().str());
-	strcat(prevbuf, RELEASECRASH_FILE_NAME_PREV);
+	strlcat(prevbuf, RELEASECRASH_FILE_NAME_PREV, _MAX_PATH);
 	strcpy(curbuf, TheGlobalData->getPath_UserData().str());
-	strcat(curbuf, RELEASECRASH_FILE_NAME);
+	strlcat(curbuf, RELEASECRASH_FILE_NAME, _MAX_PATH);
 
  	remove(prevbuf);
 	rename(curbuf, prevbuf);
