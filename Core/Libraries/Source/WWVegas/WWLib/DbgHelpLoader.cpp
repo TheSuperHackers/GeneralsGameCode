@@ -66,14 +66,10 @@ bool DbgHelpLoader::load()
 		return false;
 
 	// Try load dbghelp.dll from the system directory first.
-	char dllFilename[MAX_PATH];
-	::GetSystemDirectoryA(dllFilename, ARRAY_SIZE(dllFilename));
-	strlcat(dllFilename, "\\dbghelp.dll", ARRAY_SIZE(dllFilename));
-
-	Inst->m_dllModule = ::LoadLibraryA(dllFilename);
+	Inst->m_dllModule = ::LoadLibraryExA("dbghelp.dll", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
 	if (Inst->m_dllModule == HMODULE(0))
 	{
-		// Not found. Try load dbghelp.dll from the work directory.
+		// Not found. Try load dbghelp.dll from the work directory or wherever else it will be looking.
 		Inst->m_dllModule = ::LoadLibraryA("dbghelp.dll");
 		if (Inst->m_dllModule == HMODULE(0))
 		{
