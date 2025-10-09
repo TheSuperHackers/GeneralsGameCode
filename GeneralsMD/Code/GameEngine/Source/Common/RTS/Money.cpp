@@ -51,6 +51,7 @@
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Xfer.h"
+#include "GameLogic/GameLogic.h"
 
 // ------------------------------------------------------------------------------------------------
 UnsignedInt Money::withdraw(UnsignedInt amountToWithdraw, Bool playSound)
@@ -86,6 +87,7 @@ void Money::deposit(UnsignedInt amountToDeposit, Bool playSound)
 	if (playSound)
 	{
 		triggerAudioEvent(TheAudio->getMiscAudio()->m_moneyDepositSound);
+		m_incomeBuckets[m_currentBucket] += amountToDeposit;
 	}
 
 	m_money += amountToDeposit;
@@ -98,6 +100,35 @@ void Money::deposit(UnsignedInt amountToDeposit, Bool playSound)
 			player->getAcademyStats()->recordIncome();
 		}
 	}
+}
+
+// ------------------------------------------------------------------------------------------------
+void Money::setStartingCash(UnsignedInt amount)
+{
+	m_money = amount;
+	m_currentBucket = 0;
+	std::fill(m_incomeBuckets, m_incomeBuckets + ARRAY_SIZE(m_incomeBuckets), 0u);
+	m_cashPerMinute = 0u;
+}
+
+// ------------------------------------------------------------------------------------------------
+void Money::updateIncomeBucket()
+{
+	UnsignedInt frame = TheGameLogic->getFrame();
+	UnsignedInt nextBucket = (frame / LOGICFRAMES_PER_SECOND) % ARRAY_SIZE(m_incomeBuckets);
+	if (nextBucket != m_currentBucket)
+	{
+		m_cashPerMinute += m_incomeBuckets[m_currentBucket];
+		m_cashPerMinute -= m_incomeBuckets[nextBucket];
+		m_currentBucket = nextBucket;
+		m_incomeBuckets[m_currentBucket] = 0u;
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+UnsignedInt Money::getCashPerMinute() const
+{
+	return m_cashPerMinute;
 }
 
 void Money::triggerAudioEvent(const AudioEventRTS& audioEvent)
@@ -131,12 +162,25 @@ void Money::xfer( Xfer *xfer )
 {
 
 	// version
-	XferVersion currentVersion = 1;
+	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
 	// money value
 	xfer->xferUnsignedInt( &m_money );
+
+	if (version >= 2)
+	{
+		xfer->xferUnsignedInt(&m_currentBucket);
+		xfer->xferUser(m_incomeBuckets, sizeof(m_incomeBuckets));
+
+		m_cashPerMinute = 0u;
+		for (UnsignedInt i = 0; i < ARRAY_SIZE(m_incomeBuckets); ++i)
+		{
+			if (i != m_currentBucket)
+				m_cashPerMinute += m_incomeBuckets[i];
+		}
+	}
 
 }
 
@@ -156,5 +200,7 @@ void Money::parseMoneyAmount( INI *ini, void *instance, void *store, const void*
 {
   // Someday, maybe, have mulitple fields like Gold:10000 Wood:1000 Tiberian:10
   Money * money = (Money *)store;
-  INI::parseUnsignedInt( ini, instance, &money->m_money, userData );
+	UnsignedInt moneyAmount;
+	INI::parseUnsignedInt( ini, instance, &moneyAmount, userData );
+	money->setStartingCash(moneyAmount);
 }
