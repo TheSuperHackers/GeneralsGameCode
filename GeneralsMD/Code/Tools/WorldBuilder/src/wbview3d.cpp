@@ -19,6 +19,7 @@
 // wbview3d.cpp : implementation file
 //
 
+// #include "Common/GameLOD.h"
 #include "StdAfx.h"
 #include "resource.h"
 #include "wwmath.h"
@@ -115,7 +116,7 @@ class SkeletonSceneClass;
 #define MAX_LOADSTRING			100
 #define WINDOW_WIDTH				640
 #define WINDOW_HEIGHT				480
-#define UPDATE_TIME					100  /* 10 frames a second */
+#define UPDATE_TIME					16  /* 10 frames a second */
 #define MOUSE_WHEEL_FACTOR	32
 
 #define ICON_COLOR_SECTION "EntityIconColor"
@@ -415,6 +416,12 @@ void WbView3d::setObjTracking(MapObject *pMapObj,  Coord3D pos, Real angle, Bool
 	if (!show) return;
 	Real scale;
 	AsciiString modelName = getModelNameAndScale(pMapObj, &scale, BODY_PRISTINE);
+
+	// Adriane [Deathscythe] The worldbuilder's scale change is very off for infantry -- adjust properly
+	if (scale > 1.0 && pMapObj->getThingTemplate()->isKindOf(KINDOF_INFANTRY)) {
+		scale *= 3.5f;  // scale up to 350% 
+	}
+
 	if (modelName != m_objectToolTrackingModelName) {
 		m_objectToolTrackingModelName = modelName;
 		REF_PTR_RELEASE(m_objectToolTrackingObj);
@@ -525,7 +532,7 @@ void WbView3d::setObjTracking(MapObject *pMapObj,  Coord3D pos, Real angle, Bool
 
 				if (bridgeBuffer) {
 					info = bridgeBuffer->getBridgeInfoFromMapObject(prevBridge, cur);
-					DEBUG_LOG(("Bridge Width: %.0f", info.bridgeWidth));
+					// DEBUG_LOG(("Bridge Width: %.0f", info.bridgeWidth));
 				}
 
 				const float maxBridgeHalfWidth = info.bridgeWidth * 0.5f;
@@ -623,6 +630,10 @@ WbView3d::WbView3d() :
 	TheTacticalView = &bogusTacticalView;  
 	m_actualWinSize.x = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "Width", THREE_D_VIEW_WIDTH);
 	m_actualWinSize.y = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "Height", THREE_D_VIEW_HEIGHT);
+
+	
+	m_lod = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "LODMode", 2);
+
 	m_cameraOffset.x = m_cameraOffset.y = m_cameraOffset.z = 1;
 
 	for (Int i=0; i<MAX_GLOBAL_LIGHTS; i++)
@@ -748,7 +759,7 @@ void WbView3d::ReAcquireResources(void)
 	if (TheTerrainRenderObject) {
 		TheTerrainRenderObject->ReAcquireResources();
 		TheTerrainRenderObject->loadRoadsAndBridges(NULL,FALSE);
-		TheTerrainRenderObject->worldBuilderUpdateBridgeTowers( m_assetManager, m_scene );
+		// TheTerrainRenderObject->worldBuilderUpdateBridgeTowers( m_assetManager, m_scene );
 	}
 	m_drawObject->initData();
 	IDirect3DDevice8* pDev = DX8Wrapper::_Get_D3D_Device8();
@@ -1048,6 +1059,7 @@ void WbView3d::resetRenderObjects()
 	while (pMapObj) 
 	{
 		pMapObj->setRenderObj(NULL);
+		pMapObj->setShadowObj(NULL);
 		pMapObj = pMapObj->getNext();
 	}
 
@@ -1615,6 +1627,56 @@ AsciiString WbView3d::getModelNameAndScale(MapObject *pMapObj, Real *scale, Body
 	return modelName;
 }
 
+static AsciiString CleanSubObjName(const AsciiString& in)
+{
+    const char* raw = in.str();
+    if (!raw) return AsciiString::TheEmptyString;
+
+    // Trim leading whitespace
+    while (*raw && isspace((unsigned char)*raw)) raw++;
+
+    // Trim trailing whitespace
+    const char* end = raw + strlen(raw);
+    while (end > raw && isspace((unsigned char)*(end - 1))) end--;
+
+    // Copy into a buffer we can edit
+    int len = (int)(end - raw);
+    if (len <= 0) return AsciiString::TheEmptyString;
+
+    char buf[256]; // plenty big for subobject names
+    if (len >= sizeof(buf)) len = sizeof(buf) - 1;
+
+    strncpy(buf, raw, len);
+    buf[len] = '\0';
+
+    // Normalize to uppercase
+    for (int i = 0; i < len; i++) {
+        buf[i] = toupper((unsigned char)buf[i]);
+    }
+
+    return AsciiString(buf);
+}
+
+
+static void DumpSubObjects(RenderObjClass* obj, const char* modelName)
+{
+    if (!obj) return;
+
+    int count = obj->Get_Num_Sub_Objects();
+    DEBUG_LOG(("--- SubObjects for %s (count=%d) ---\n", modelName, count));
+
+    for (int i = 0; i < count; i++) {
+        RenderObjClass* sub = obj->Get_Sub_Object(i);
+        const char* subName = sub ? sub->Get_Name() : NULL; // <-- use Get_Name()
+        if (subName && *subName) {
+            DEBUG_LOG(("   [%d] '%s'\n", i, subName));
+        } else {
+            DEBUG_LOG(("   [%d] (no name)\n", i));
+        }
+    }
+}
+
+
 // ----------------------------------------------------------------------------
 void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 {
@@ -1744,6 +1806,11 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 				}
 				
 				scale = tTemplate->getAssetScale();
+
+				// Adriane [Deathscythe] The worldbuilder's scale change is very off for infantry -- adjust properly
+				if (scale > 1.0 && pMapObj->getThingTemplate()->isKindOf(KINDOF_INFANTRY)) {
+					scale *= 3.5f;  // scale up to 350% 
+				}
 		
 				// Setup model condition flags from the current damage state
 				ModelConditionFlags state;
@@ -1822,6 +1889,51 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 								// Create the sub-model render object
 								RenderObjClass* subRenderObj = m_assetManager->Create_Render_Obj(modelName.str(), scale, playerColor);
 								if (subRenderObj) {
+
+									// DumpSubObjects(subRenderObj, modelName.str()); // <-- dump list once
+
+									const ModelConditionInfo* info = md->findBestInfo(state);
+									if (info && !info->m_hideShowVec.empty()) {
+										for (size_t i = 0; i < info->m_hideShowVec.size(); ++i) {
+											const ModelConditionInfo::HideShowSubObjInfo& h = info->m_hideShowVec[i];
+
+											// AsciiString cleanName = CleanSubObjName(h.subObjName);
+											AsciiString cleanName = h.subObjName;
+											Int objIndex;
+											RenderObjClass* subObj = subRenderObj->Get_Sub_Object_By_Name(cleanName.str(), &objIndex);
+											if (subObj) {
+												// DEBUG_LOG(("*** SubObject to clean: '%s'\n", cleanName.str()));
+												subObj->Set_Hidden(h.hide);
+												subObj->Release_Ref();
+											} 
+											// else {
+												// DEBUG_LOG(("*** ASSET ERROR: SubObject '%s' not found in %s!\n",
+												// 		cleanName.str(), modelName.str()));
+												// DumpSubObjects(subRenderObj, modelName.str()); // <-- dump list once
+											// }
+										}
+									}
+
+									Bool isNight = state.test(MODELCONDITION_NIGHT);
+
+									for (Int subIndex = 0; subIndex < subRenderObj->Get_Num_Sub_Objects(); ++subIndex)
+									{
+										RenderObjClass* test = subRenderObj->Get_Sub_Object(subIndex);
+										if (!test) continue;
+
+										const char* name = test->Get_Name();
+										if (!name) continue;
+
+										if (strstr(name, "HEADLIGHT") && !isNight)
+											test->Set_Hidden(true);
+
+										if (strstr(name, "MUZZLE") || strstr(name, "TURRETFX") || strstr(name, "WARHEAD"))
+											test->Set_Hidden(true);
+
+										test->Release_Ref();
+									}
+									
+
 									// Handle shadow for each sub model
 									if (m_showShadows) {
 										Shadow::ShadowTypeInfo shadowInfo;
@@ -1837,10 +1949,10 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 											shadowInfo.m_offsetX = tTemplate->getShadowOffsetX();
 											shadowInfo.m_offsetY = tTemplate->getShadowOffsetY();
 											// DEBUG_LOG(("processing shadow"));
-											TheW3DShadowManager->addShadow(subRenderObj, &shadowInfo);
+											shadowObj = TheW3DShadowManager->addShadow(subRenderObj, &shadowInfo); // <-- CAPTURE
 										} else {
 											shadowInfo.m_type = (ShadowType)SHADOW_VOLUME;
-											TheW3DShadowManager->addShadow(subRenderObj, &shadowInfo);
+											shadowObj = TheW3DShadowManager->addShadow(subRenderObj, &shadowInfo); // <-- CAPTURE
 										}
 									}
 		
@@ -1860,7 +1972,10 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 		}
 		if (renderObj && !(pMapObj->getFlags() & FLAG_DONT_RENDER)) {
 			pMapObj->setRenderObj(renderObj);
-			pMapObj->setShadowObj(shadowObj);
+
+			if (pMapObj->getShadowObj() == NULL) {
+				pMapObj->setShadowObj(shadowObj);
+			}
 
 			// set item's position to loc, and get scale from item and apply it.
 
@@ -2517,7 +2632,7 @@ void WbView3d::redraw(void)
 		m_drawObject->setWaypointIconColor(waypointIconColor);
 		Int unitIconColor  = parseHexColorFromProfile(ICON_COLOR_SECTION, "Units", "FF00FF");
 		m_drawObject->setUnitIconColor(unitIconColor);
-		Int treeIconColor  = parseHexColorFromProfile(ICON_COLOR_SECTION, "Tree", "00FF00");
+		Int treeIconColor  = parseHexColorFromProfile(ICON_COLOR_SECTION, "Trees", "00FF00");
 		m_drawObject->setTreeIconColor(treeIconColor);
 
 		Int defaultIconColor  = parseHexColorFromProfile(ICON_COLOR_SECTION, "Default", "00FFFF");
@@ -2566,6 +2681,91 @@ void WbView3d::render()
 		}
 		m_scene->Set_Polygon_Mode(SceneClass::FILL);
 		// Render 3D scene
+
+		try {
+			// === Per-frame MapObject-based culling ===
+			if ((m_showModels || m_showShadows) &&
+				m_scene && m_heightMapRenderObj && m_camera && TheW3DShadowManager && m_lod != 3)
+			{
+				MapObject *pObj = MapObject::getFirstMapObject();
+				Vector3 camPos = m_camera->Get_Position();
+				
+				// Default
+				float generalCullDistance;
+				float maxShadowDist;
+				float propCullDistance;
+
+				if (m_lod == 1) {
+					generalCullDistance = 2000.0f;
+					maxShadowDist       = 1500.0f;
+					propCullDistance    = 1500.0f;
+				} else {
+					generalCullDistance = 2500.0f;
+					maxShadowDist       = 2500.0f;
+					propCullDistance    = 2000.0f;
+				}
+
+				
+				const float generalCullDistSq = generalCullDistance * generalCullDistance;
+				const float propCullDistSq    = propCullDistance * propCullDistance;
+				const float maxShadowDistSq   = maxShadowDist * maxShadowDist;
+
+				while (pObj)
+				{
+					const ThingTemplate *t = pObj->getThingTemplate();
+					if (!t) { 
+						pObj = pObj->getNext();
+						continue; 
+					}
+
+					Coord3D loc = *pObj->getLocation();
+					loc.z += m_heightMapRenderObj->getHeightMapHeight(loc.x, loc.y, NULL);
+
+					float radius = max(max(t->getTemplateGeometryInfo().getMajorRadius(),
+										t->getTemplateGeometryInfo().getMinorRadius()), 20.0f);
+
+					SphereClass bounds(Vector3(loc.x, loc.y, loc.z), radius);
+					bool culled = m_camera->Cull_Sphere(bounds);
+
+					// === Global distance culling (applies to everything) ===
+					float dx = camPos.X - loc.x;
+					float dy = camPos.Y - loc.y;
+					float dz = camPos.Z - loc.z;
+					float distSq = dx*dx + dy*dy + dz*dz;
+
+					if (!culled && distSq > generalCullDistSq) {
+						culled = true;
+					}
+
+					// === Extra distance-based culling for misc props ===
+					if (!culled && t->getEditorSorting() == ES_MISC_MAN_MADE || t->getEditorSorting() == ES_MISC_NATURAL) {
+						if (distSq > propCullDistSq) {
+							culled = true;
+						}
+					}
+
+					if (RenderObjClass *robj = pObj->getRenderObj()) {
+						// bool farLOD = (distSq > (doodooDistance * doodooDistance)); // or whatever threshold
+						// robj->Force_Degraded_Render(farLOD);
+						robj->Set_Hidden(culled);
+					}
+
+					if (m_showShadows) {
+						if (Shadow *shadow = pObj->getShadowObj()) {
+							if (shadow) {
+								shadow->enableShadowRender(distSq <= maxShadowDistSq && !culled);
+							}
+						}
+					}
+
+					pObj = pObj->getNext();
+				}
+			}
+		}
+		catch (...) {
+			DEBUG_LOG(("Culling pass threw an exception — skipping this frame.\n"));
+		}
+
 		WW3D::Render(m_scene,m_camera);	
 		Vector3 amb = m_baseBuildScene->Get_Ambient_Light();
 		Vector3 newAmb(amb);
@@ -2683,8 +2883,16 @@ BEGIN_MESSAGE_MAP(WbView3d, WbView)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWTRACINGOVERLAY, OnUpdateViewShowTracingOverlay)
 	ON_COMMAND(ID_VIEW_SHOWAMBIENTSOUNDS, OnViewShowAmbientSounds)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWAMBIENTSOUNDS, OnUpdateViewShowAmbientSounds)
-  ON_COMMAND(ID_VIEW_SHOW_SOUND_CIRCLES, OnViewShowSoundCircles)
-  ON_UPDATE_COMMAND_UI(ID_VIEW_SHOW_SOUND_CIRCLES, OnUpdateViewShowSoundCircles)
+	ON_COMMAND(ID_VIEW_SHOW_SOUND_CIRCLES, OnViewShowSoundCircles)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOW_SOUND_CIRCLES, OnUpdateViewShowSoundCircles)
+
+
+	ON_COMMAND(ID_LOD_MODE_1, OnWindowLODMode1)
+	ON_UPDATE_COMMAND_UI(ID_LOD_MODE_1, OnUpdateOnWindowLODMode1)
+	ON_COMMAND(ID_LOD_MODE_2, OnWindowLODMode2)
+	ON_UPDATE_COMMAND_UI(ID_LOD_MODE_2, OnUpdateOnWindowLODMode2)
+	ON_COMMAND(ID_LOD_MODE_3, OnWindowLODMode3)
+	ON_UPDATE_COMMAND_UI(ID_LOD_MODE_3, OnUpdateOnWindowLODMode3)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -2794,7 +3002,7 @@ void WbView3d::initWW3D()
 		TheWritableGlobalData->m_useShadowDecals = true;
 		// TheWritableGlobalData->m_useTreeSway = false;
 		TheWritableGlobalData->m_enableBehindBuildingMarkers = false;	//this is only for the game.
-		// TheWritableGlobalData->m_textureReductionFactor = 4;
+		TheWritableGlobalData->m_textureReductionFactor = 0;
 		if (TheW3DShadowManager==NULL)
 		{	TheW3DShadowManager = new W3DShadowManager;
  			TheW3DShadowManager->init();			
@@ -4083,3 +4291,81 @@ void WbView3d::OnUpdateViewShowSoundCircles(CCmdUI* pCmdUI)
   pCmdUI->SetCheck(m_showSoundCircles ? 1 : 0);
 }
 
+void WbView3d::OnWindowLODMode1() 
+{
+    m_lod = 1;
+	m_showObjectsSelected = true;
+	m_showObjects = false;
+	// TheWritableGlobalData->m_textureReductionFactor = 4;
+	// if (WW3D::Get_Texture_Reduction() != TheWritableGlobalData->m_textureReductionFactor)
+	// {	WW3D::Set_Texture_Reduction(TheWritableGlobalData->m_textureReductionFactor,32);
+	// 	// TheGameLODManager->setCurrentTextureReduction(TheWritableGlobalData->m_textureReductionFactor);
+	// 	if( TheTerrainRenderObject ) 
+  	// 		TheTerrainRenderObject->setTextureLOD( TheWritableGlobalData->m_textureReductionFactor );
+	// }
+	// ReleaseResources();       // Optional: free current resources first
+	// ReAcquireResources();     // Re-load all textures with the new reduction factor
+
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIconsSelected", m_showObjectsSelected?1:0);
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIcons", m_showObjects?1:0);
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "LODMode", 1);
+	resetRenderObjects();
+	invalObjectInView(NULL);
+}
+
+void WbView3d::OnUpdateOnWindowLODMode1(CCmdUI* pCmdUI) 
+{
+    pCmdUI->SetCheck(m_lod == 1);
+}
+
+void WbView3d::OnWindowLODMode2() 
+{
+    m_lod = 2; 
+	m_showObjectsSelected = true;
+	m_showObjects = false;
+	// TheWritableGlobalData->m_textureReductionFactor = 1;
+	// if (WW3D::Get_Texture_Reduction() != TheWritableGlobalData->m_textureReductionFactor)
+	// {	WW3D::Set_Texture_Reduction(TheWritableGlobalData->m_textureReductionFactor,32);
+	// 	// TheGameLODManager->setCurrentTextureReduction(TheWritableGlobalData->m_textureReductionFactor);
+	// 	if( TheTerrainRenderObject ) 
+  	// 		TheTerrainRenderObject->setTextureLOD( TheWritableGlobalData->m_textureReductionFactor );
+	// }
+	// ReleaseResources();       // Optional: free current resources first
+	// ReAcquireResources();     // Re-load all textures with the new reduction factor
+
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIconsSelected", m_showObjectsSelected?1:0);
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIcons", m_showObjects?1:0);
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "LODMode", 2);
+	resetRenderObjects();
+	invalObjectInView(NULL);
+}
+
+void WbView3d::OnUpdateOnWindowLODMode2(CCmdUI* pCmdUI) 
+{
+    pCmdUI->SetCheck(m_lod == 2);
+}
+
+void WbView3d::OnWindowLODMode3() 
+{
+    m_lod = 3; 
+	// m_showObjectsSelected = false;
+	// m_showObjects = true;
+	// TheWritableGlobalData->m_textureReductionFactor = 0;
+	// if (WW3D::Get_Texture_Reduction() != TheWritableGlobalData->m_textureReductionFactor)
+	// {	WW3D::Set_Texture_Reduction(TheWritableGlobalData->m_textureReductionFactor,32);
+	// 	// TheGameLODManager->setCurrentTextureReduction(TheWritableGlobalData->m_textureReductionFactor);
+	// 	if( TheTerrainRenderObject ) 
+  	// 		TheTerrainRenderObject->setTextureLOD( TheWritableGlobalData->m_textureReductionFactor );
+	// }
+	// ReleaseResources();       // Optional: free current resources first
+	// ReAcquireResources();     // Re-load all textures with the new reduction factor
+	
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "LODMode", 3);
+	resetRenderObjects();
+	invalObjectInView(NULL);
+}
+
+void WbView3d::OnUpdateOnWindowLODMode3(CCmdUI* pCmdUI) 
+{
+    pCmdUI->SetCheck(m_lod == 3);
+}

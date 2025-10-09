@@ -142,6 +142,9 @@ void FeatherTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 	Coord3D cpt;
 	pView->viewToDocCoords(viewPt, &cpt);
 	DrawObject::setFeedbackPos(cpt);
+	
+	pView->Invalidate();  
+	pDoc->updateAllViews();
 	if (m != TRACK_L) return;
 
 	int brushWidth = m_feather;

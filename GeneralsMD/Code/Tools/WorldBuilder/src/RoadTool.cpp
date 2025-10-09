@@ -303,10 +303,16 @@ void RoadTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 		pNew3->setSelected(true);
 	}
 
+	// ::MessageBeep(MB_OK);
+	// pView->Invalidate();  
+	// pDoc->updateAllViews();
 }
 /** Move the end of the road segment. */
 void RoadTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
+	pView->Invalidate();  
+	pDoc->updateAllViews();   
+
 	if (m != TRACK_L) return;
 
 	Coord3D loc1 ;

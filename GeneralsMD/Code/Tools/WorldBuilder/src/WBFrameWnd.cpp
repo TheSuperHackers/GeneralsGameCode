@@ -26,7 +26,7 @@
 #include "WorldBuilderDoc.h"
 #include "WHeightMapEdit.h"
 #include "wbview3d.h"
-
+#include "ToastDialog.h"
 /////////////////////////////////////////////////////////////////////////////
 // CWBFrameWnd
 
@@ -146,12 +146,95 @@ void CWB3dFrameWnd::OnMove(int x, int y)
 	}
 }
 
+BOOL CWB3dFrameWnd::PreTranslateMessage(MSG* pMsg)
+{
+    if (pMsg->message == WM_KEYDOWN)
+    {
+        if (pMsg->wParam == VK_ESCAPE)
+        {
+            ExitFullScreen();
+            return TRUE; // handled
+        }
+    }
+    return CFrameWnd::PreTranslateMessage(pMsg);
+}
+
+void CWB3dFrameWnd::ExitFullScreen()
+{
+    // Restore previous window style (border, caption, etc.)
+    LONG style = WS_OVERLAPPEDWINDOW;
+    ::SetWindowLong(m_hWnd, GWL_STYLE, style);
+
+    // Get usable work area (screen minus taskbar)
+    RECT workArea;
+    ::SystemParametersInfo(SPI_GETWORKAREA, 0, &workArea, 0);
+
+    int borderspace = 100;
+
+    // Calculate desired window size: use work area but leave border space
+    int availableWidth  = (workArea.right - workArea.left) - (borderspace * 2);
+    int availableHeight = (workArea.bottom - workArea.top) - (borderspace * 2);
+
+    // Option 1: Use full available area minus borderspace
+    int width  = availableWidth;
+    int height = availableHeight;
+
+    // Option 2: Use a fixed size smaller than available area
+    // int width  = min(availableWidth, 1280);
+    // int height = min(availableHeight, 720);
+
+    // Center the window in the work area
+    int left = workArea.left + ((workArea.right - workArea.left) - width) / 2;
+    int top  = workArea.top  + ((workArea.bottom - workArea.top) - height) / 2;
+
+    ::SetWindowPos(m_hWnd, HWND_TOP, left, top, width, height,
+                   SWP_SHOWWINDOW | SWP_FRAMECHANGED);
+}
+
 /**
  * Adriane [Deathscythe] :  Much better resize option support
  */
 void CWB3dFrameWnd::OnSize(UINT nType, int cx, int cy)
 {
     CFrameWnd::OnSize(nType, cx, cy);
+
+	switch (nType)
+	{
+		case SIZE_MAXIMIZED:
+		{
+			::MessageBeep(MB_OK);
+
+			CToastDialog* pToast = new CToastDialog(_T("Click Escape to exit full screen"), 10000, false);
+			pToast->Create(CToastDialog::IDD);
+			pToast->ShowWindow(SW_SHOWNOACTIVATE);
+
+			// Get the full screen size, including taskbar
+			int screenWidth = ::GetSystemMetrics(SM_CXSCREEN);
+			int screenHeight = ::GetSystemMetrics(SM_CYSCREEN);
+
+			// Remove overlapped window styles that may prevent full coverage
+			LONG style = ::GetWindowLong(m_hWnd, GWL_STYLE);
+			style &= ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU);
+			::SetWindowLong(m_hWnd, GWL_STYLE, style);
+
+			::SetWindowPos(m_hWnd, HWND_TOP, 0, 0, screenWidth, screenHeight,
+						SWP_SHOWWINDOW | SWP_FRAMECHANGED);
+			break;
+		}
+		case SIZE_RESTORED:
+		{
+			
+			// // CRect rect;
+			// int top = ::AfxGetApp()->GetProfileInt(OPTIONS_PANEL_SECTION, "Top", 10);
+			// int left = ::AfxGetApp()->GetProfileInt(OPTIONS_PANEL_SECTION, "Left", 10);
+			// int right = ::AfxGetApp()->GetProfileInt(OPTIONS_PANEL_SECTION, "Right", 800);
+			// int bottom = ::AfxGetApp()->GetProfileInt(OPTIONS_PANEL_SECTION, "Bottom", 600);
+			// ::SetWindowPos(m_hWnd, HWND_TOP, left, top, right - left, bottom - top,
+			// 			SWP_SHOWWINDOW | SWP_FRAMECHANGED);
+			// ScheduleAdjustViewAfterResize();
+			break;
+		}
+	}
 
     if (nType == SIZE_MINIMIZED) return;
 // DEBUG_LOG(("Ignored resize? %s\n", m_disableOnSize ? "Yes" : "No"));

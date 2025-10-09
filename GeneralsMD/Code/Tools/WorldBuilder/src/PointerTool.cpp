@@ -244,6 +244,11 @@ Bool PointerTool::allowPick(MapObject* pMapObj, WbView* pView)
     //     return true;
     // }
 
+	// Early reject roads if showRoads = false
+    if (pMapObj->getFlag(FLAG_ROAD_FLAGS) && !pView->getShowRoads()) {
+        return false;
+    }
+
 	if ((tt && !pView->getShowModels()) || (pMapObj->getFlags() & FLAG_DONT_RENDER)) {
 		return false;
 	}
@@ -258,7 +263,11 @@ Bool PointerTool::allowPick(MapObject* pMapObj, WbView* pView)
 				sort = ES_WAYPOINT;
 			}
 			if (pMapObj->getFlag(FLAG_ROAD_FLAGS)) {
-				sort = ES_ROAD;
+				if(!pView->getShowRoads()){
+					return false;
+				} else {
+					sort = ES_ROAD;
+				}
 			}
 		}
 		if (sort != ES_NONE && sort != pView->GetPickConstraint()) {
@@ -367,7 +376,7 @@ void PointerTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 	}
 
 	// Grab both ends of a road.
-	if (pView->GetPickConstraint() == ES_NONE || pView->GetPickConstraint() == ES_ROAD) {
+	if ((pView->GetPickConstraint() == ES_NONE || pView->GetPickConstraint() == ES_ROAD) && pView->getShowRoads()) {
 		if (!shiftKey && pClosestPicked && (pClosestPicked->getFlags()&FLAG_ROAD_FLAGS) ) {
 			for (pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext()) {
 				if (pObj->getFlags()&FLAG_ROAD_FLAGS) {
@@ -419,6 +428,7 @@ float m_startGroupAngle = 0.0f;
 
 std::map<MapObject*, Coord3D> m_originalPositions;
 std::map<MapObject*, Real> m_originalAngles;
+std::vector<MapObject*> m_tempDeselectedRoads;
 void PointerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) {
     Coord3D cpt;
     pView->viewToDocCoords(viewPt, &cpt, false);
@@ -426,6 +436,7 @@ void PointerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 	m_rotateObjectsWithGroup = ::AfxGetApp()->GetProfileInt("MainFrame", "ToggleObjectRotationWithGroup", 1);
 	m_useFarthestObjectPivot = ::AfxGetApp()->GetProfileInt("MainFrame", "TogglePivotFarthest", 1);
 
+	// ::MessageBeep(MB_OK); // BEEP BOOP
     if (m == TRACK_NONE) {
         MapObject *pObj = MapObject::getFirstMapObject();
         m_mouseUpRotate = false;
@@ -448,6 +459,12 @@ void PointerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
                 m_mouseUpRotate = false;
             }
         }
+
+		// Call this ridiculously expensive redraw function every time the mouse moves
+		// Greatly smooths the framerate when just moving the mouse around, with or without any selection
+		// At the cost of your GPU usage 
+		pView->Invalidate();
+		pDoc->updateAllViews();
         return;
     }
 
@@ -467,6 +484,7 @@ void PointerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
         box.NormalizeRect();
         pView->doRectFeedback(true, box);
         pView->Invalidate();
+		pDoc->updateAllViews();
         return;
     }
 
@@ -532,13 +550,13 @@ void PointerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
     }
     if (!m_moving || !m_modifyUndoable) return;
 
-    MapObject *curMapObj = MapObject::getFirstMapObject();
-    while (curMapObj) {
-        if (curMapObj->isSelected()) {
-            pView->invalObjectInView(curMapObj);
-        }
-        curMapObj = curMapObj->getNext();
-    }
+    // MapObject *curMapObj = MapObject::getFirstMapObject();
+    // while (curMapObj) {
+    //     if (curMapObj->isSelected()) {
+    //         pView->invalObjectInView(curMapObj);
+    //     }
+    //     curMapObj = curMapObj->getNext();
+    // }
 
     CString text;
     if (m_rotating) {
@@ -604,6 +622,17 @@ void PointerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
             m_lastPointerInfo = text;
         } else {
             // --- NORMAL ROTATION ---
+			// // Deselect roads temporarily
+			// m_tempDeselectedRoads.clear();
+			// MapObject* obj = MapObject::getFirstMapObject();
+			// while (obj) {
+			// 	if (obj->isSelected() && obj->getFlag(FLAG_ROAD_FLAGS)) {
+			// 		obj->setSelected(false);
+			// 		m_tempDeselectedRoads.push_back(obj);
+			// 	}
+			// 	obj = obj->getNext();
+			// }
+			
             Coord3D center = *m_curObject->getLocation();
             float angleDeg;
             pView->snapPoint(&cpt);
@@ -628,14 +657,16 @@ void PointerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
         m_lastPointerInfo = text;
     }
 
-    curMapObj = MapObject::getFirstMapObject();
-    while (curMapObj) {
-        if (curMapObj->isSelected()) {
-            pView->invalObjectInView(curMapObj);
-        }
-        curMapObj = curMapObj->getNext();
-    }
+    // curMapObj = MapObject::getFirstMapObject();
+    // while (curMapObj) {
+    //     if (curMapObj->isSelected()) {
+    //         pView->invalObjectInView(curMapObj);
+    //     }
+    //     curMapObj = curMapObj->getNext();
+    // }
 
+
+	pView->Invalidate();  
     pDoc->updateAllViews();
 }
 
@@ -643,6 +674,17 @@ void PointerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 else update the selection. */
 void PointerTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
 {
+
+	// if (!m_tempDeselectedRoads.empty()) {
+	// 	for (std::vector<MapObject*>::iterator it = m_tempDeselectedRoads.begin();
+	// 		it != m_tempDeselectedRoads.end();
+	// 		++it)
+	// 	{
+	// 		(*it)->setSelected(true);
+	// 	}
+	// 	m_tempDeselectedRoads.clear();
+	// }
+
 	if (m != TRACK_L) return;
 
 	if (m_doPolyTool) {

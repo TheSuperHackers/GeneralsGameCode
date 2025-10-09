@@ -214,3 +214,54 @@ XXX
 == Script Editor ==
 - Conditions list now supports horizontal scrolling.
 - Map.str script edits no longer require restarting WorldBuilder — simply close and reopen the dropdown for map strings.
+
+20/09/2025
+======================================================
+== Script Editor == 
+- Move to true button added
+- Move to false button added
+- Smart Copy feature
+- Comments will have their action comments added
+- Comments will have their condition comments added
+- SAD text alignment
+- Time evaluation in script name
+
+== Teams Tab == 
+- Deselection on ok after selecting team member fixed
+- Crash on selecting team members of neutral objects fixed
+
+
+09/10/2025
+======================================================
+== System ==
+- Disable Map Preview Generation
+- Fullscreen support 
+- LOD menu added
+- Script editor coordinates bug fixed
+- Decreased the triangles of object icons
+- Waypoint line culling when out of view
+- Aggresive object and shadow culling
+
+== Map.ini loader support ==
+- Parser check
+- Select new objects
+- Display default edited models
+
+==  Mouse drag lag bug fixed on: ==
+- Border tool
+- Waypoint tool
+- Feather tool
+- Brush tool
+- Mold tool
+- Mound tool
+- Pointer tool
+- Trigger tool
+- Water tool
+- Ramp tool
+- Road tool
+- Tile tool
+- Waypoint tool
+
+== Team Editor ==
+- Missing units now displays error 
+- Missing scripts now displays error

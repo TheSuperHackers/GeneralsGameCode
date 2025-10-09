@@ -123,7 +123,11 @@ void TeamGeneric::_dictToScripts()
 		if (exists) {
 			Int selNdx = pCombo->FindStringExact(-1, scriptString.str());
 			if (selNdx == LB_ERR) {
-				pCombo->SetCurSel(0);
+				CString missingStr;
+				missingStr.Format("[???] %s", scriptString.str()); 
+				int insertAt = 1; 
+				pCombo->InsertString(insertAt, missingStr);
+				pCombo->SetCurSel(insertAt);
 			} else {
 				pCombo->SetCurSel(selNdx);
 			}

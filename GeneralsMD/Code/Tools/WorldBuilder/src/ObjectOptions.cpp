@@ -887,6 +887,47 @@ void ObjectOptions::OnOK()
     OnSearch(); 
 }
 
+// Adriane [Deathscythe] : This function is mainly used for loading new objects from map.ini
+void ObjectOptions::reprocessObjectList()
+{
+	if (!m_staticThis)
+		return;
+
+	// Clear current tree
+	m_staticThis->m_objectTreeView.DeleteAllItems(); 
+	m_staticThis->m_objectsList = NULL;
+	
+	const ThingTemplate *tTemplate;
+	for (tTemplate = TheThingFactory->firstTemplate();
+		tTemplate;
+		tTemplate = tTemplate->friend_getNextTemplate())
+	{
+		Coord3D loc = { 0, 0, 0 };
+		MapObject *pMap;
+
+		DEBUG_LOG(("Adding Object to ObjectList: '%s'\n", tTemplate->getName().str()));
+
+		// create new map object
+		pMap = newInstance(MapObject)(loc, tTemplate->getName(), 0.0f, 0, NULL, tTemplate);
+		pMap->setNextMap(m_staticThis->m_objectsList);
+		m_staticThis->m_objectsList = pMap;
+
+		// get display color for the editor
+		Color cc = tTemplate->getDisplayColor();
+		pMap->setColor(cc);
+	}
+
+	// Repopulate list
+	MapObject* pMap = m_staticThis->m_objectsList;
+	Int index = 0;
+	while (pMap)
+	{
+		m_staticThis->addObject(pMap, pMap->getName().str(), index, TVI_ROOT);
+		index++;
+		pMap = pMap->getNext();
+	}
+}
+
 // Add the function that handles the search button click
 void ObjectOptions::OnReset()
 {

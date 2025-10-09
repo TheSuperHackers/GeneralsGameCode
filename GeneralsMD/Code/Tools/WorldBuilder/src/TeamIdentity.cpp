@@ -131,6 +131,10 @@ BOOL TeamIdentity::OnInitDialog()
 		Int ndx = pCombo->FindStringExact(-1, homeWaypoint.str());
 		if (ndx != CB_ERR) {
 			stringNdx = ndx;
+		} else {
+			CString badName;
+			badName.Format("[???] %s", homeWaypoint.str());
+			stringNdx = pCombo->AddString(badName);
 		}
 	}
 	pCombo->SetCurSel(stringNdx);
@@ -213,6 +217,10 @@ BOOL TeamIdentity::OnInitDialog()
 		Int ndx = pCombo->FindStringExact(-1, script.str());
 		if (ndx != CB_ERR) {
 			stringNdx = ndx;
+		} else {
+			CString badName;
+			badName.Format("[???] %s", script.str());
+			stringNdx = pCombo->AddString(badName);
 		}
 	}
 	pCombo->SetCurSel(stringNdx);
@@ -396,7 +404,14 @@ void TeamIdentity::loadUnitsInfo(int idcMinUnit, NameKeyType keyMinUnit,
 			}
 		}
 		Int ndx = pCombo->AddString(NONE_STRING);
-		if (!found) {
+		if (!found && exists && !type.isEmpty()) {
+			// Insert placeholder showing what was expected but missing
+			CString badName;
+			badName.Format("[???] %s", type.str());
+			int badNdx = pCombo->AddString(badName);
+			pCombo->SetCurSel(badNdx);
+		} else if (!found) {
+			// Truly no value set → just <none>
 			pCombo->SetCurSel(ndx);
 		}
 	pCombo->SetRedraw(TRUE);

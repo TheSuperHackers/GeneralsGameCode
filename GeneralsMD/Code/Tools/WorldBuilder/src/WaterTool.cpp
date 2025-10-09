@@ -180,6 +180,7 @@ void WaterTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		iDocPt.z = 0;
 		m_poly_moveUndoable->SetOffset(iDocPt);
 		pView->Invalidate();
+		pDoc->updateAllViews();
 		return;
 	}
 	if (m_poly_dragPointNdx >= 0 && m_poly_curSelectedPolygon) {
@@ -189,6 +190,7 @@ void WaterTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		iDocPt.z = m_currentZ;
 		m_poly_curSelectedPolygon->setPoint(iDocPt, m_poly_dragPointNdx);
 		pView->Invalidate();
+		pDoc->updateAllViews();
 	}
 }
 

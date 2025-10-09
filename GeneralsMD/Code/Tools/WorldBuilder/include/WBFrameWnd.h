@@ -76,6 +76,8 @@ public:
 				DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,
 				CWnd* pParentWnd = NULL,
 				CCreateContext* pContext = NULL);
+	
+	void ExitFullScreen();
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWB3dFrameWnd)
 	public:
@@ -97,6 +99,7 @@ protected:
 	afx_msg void OnWindowPreview800x600();
 	afx_msg void OnUpdateWindowPreview800x600(CCmdUI* pCmdUI);
 	afx_msg void OnPaint();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

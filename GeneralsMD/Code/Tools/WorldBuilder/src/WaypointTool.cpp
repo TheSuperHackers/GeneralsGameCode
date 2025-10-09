@@ -151,6 +151,7 @@ void WaypointTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWo
 	}
 	DrawObject::setWaypointDragFeedback(m_mouseDownPt, docPt);
 	pView->Invalidate();
+	pDoc->updateAllViews();
 }
 
 /** Execute the tool on mouse up - Place an object. */

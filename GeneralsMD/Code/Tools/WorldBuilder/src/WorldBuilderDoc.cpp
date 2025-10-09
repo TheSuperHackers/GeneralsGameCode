@@ -113,6 +113,10 @@ BEGIN_MESSAGE_MAP(CWorldBuilderDoc, CDocument)
 	ON_COMMAND(ID_FILE_GENERATE_MAPSTRNINI, OnGenerateMapStrAndIni)
 	ON_COMMAND(ID_FILE_WBSETTINGS, OnOpenWorldbuilderSettings)
 	ON_COMMAND(ID_FILE_JUMPTOFOLDER, OnJumpToFolder)
+	
+	ON_COMMAND(ID_DISABLEMAPPREVGENERATE, OnViewDisableMapPrevGen)
+	// ON_UPDATE_COMMAND_UI(ID_DISABLEMAPPREVGENERATE, OnUpdateDisableMapPrevGen)
+
 	ON_COMMAND(ID_FILE_JUMPTOGAME, OnJumpToGameWithDebug)
 	ON_COMMAND(ID_FILE_JUMPTOGAME_WD, OnJumpToGameWithoutDebug)
 	ON_COMMAND(ID_FILE_JUMPTOGAME_WM, OnJumpToGameWithWaveEdit)
@@ -152,8 +156,26 @@ CWorldBuilderDoc::CWorldBuilderDoc() :
 	m_curWaypointID(0),
 	m_numWaypointLinks(0),
 	m_waypointTableNeedsUpdate(true),
-	m_linkCenters(true)
+	m_linkCenters(true),
+	m_disableMapPrevGeneration(false)
 {
+    // Attempt to read AdrianeMapSettings.ini here
+    if (!m_strPathName.IsEmpty()) {
+        char folderPath[_MAX_PATH];
+        strcpy(folderPath, m_strPathName);
+
+        char* lastSlash = strrchr(folderPath, '\\');
+        if (lastSlash)
+            *lastSlash = '\0';
+
+        CString individualMapSettings = CString(folderPath) + "\\AdrianeMapSettings.ini";
+
+        if (PathFileExists(individualMapSettings)) {
+            char buffer[8] = {0};
+            GetPrivateProfileString("MapSettings", "disableMapPreview", "0", buffer, sizeof(buffer), individualMapSettings);
+            m_disableMapPrevGeneration = (atoi(buffer) != 0);
+        }
+    }
 }
 
 CWorldBuilderDoc::~CWorldBuilderDoc()
@@ -293,6 +315,46 @@ public:
 	}
 };
 
+void CWorldBuilderDoc::OnViewDisableMapPrevGen() 
+{
+	m_disableMapPrevGeneration = !m_disableMapPrevGeneration;
+
+	if(m_disableMapPrevGeneration){
+		AfxMessageBox(
+			_T("Warning: Map preview generation has been disabled for this map.\n\n"
+			"You can re-enable it anytime by clicking the toggle button again.\n"
+			"This setting is saved with the map and will persist when reopening.\n\n"
+			"If you regret this decision, you can always delete the AdrianeMapSettings.ini "
+			"file from your map folder... assuming you can actually find it, you caveman."),
+		MB_OK | MB_ICONWARNING);
+	} else {
+		AfxMessageBox(
+			_T("Map preview generation has been re-enabled for this map."),
+		MB_OK | MB_ICONEXCLAMATION);
+	}
+
+	// Build INI path based on current document path
+    if (!m_strPathName.IsEmpty()) {
+		
+        char folderPath[_MAX_PATH];
+        strcpy(folderPath, m_strPathName);
+        char* lastSlash = strrchr(folderPath, '\\');
+        if (lastSlash) *lastSlash = '\0';
+
+        CString individualMapSettings = CString(folderPath) + "\\AdrianeMapSettings.ini";
+
+        if (m_disableMapPrevGeneration) {
+            WritePrivateProfileString("MapSettings", "disableMapPreview", "1", individualMapSettings);
+        } else {
+            WritePrivateProfileString("MapSettings", "disableMapPreview", NULL, individualMapSettings);
+        }
+    }
+}
+
+void CWorldBuilderDoc::OnUpdateDisableMapPrevGen(CCmdUI* pCmdUI) 
+{
+	pCmdUI->SetCheck(m_disableMapPrevGeneration?1:0);
+}
 
 void CWorldBuilderDoc::Serialize(CArchive& ar)
 {
@@ -303,7 +365,46 @@ void CWorldBuilderDoc::Serialize(CArchive& ar)
 		try {
 			Int i;
 			MapPreview mPreview;
-			mPreview.save(ar.GetFile()->GetFilePath());
+
+			char folderPath[_MAX_PATH];
+			strcpy(folderPath, m_strPathName);
+
+			// Remove the filename to get the map folder
+			char* lastSlash = strrchr(folderPath, '\\');
+			if (lastSlash) {
+				*lastSlash = '\0';
+			}
+
+			DWORD attr = GetFileAttributes(folderPath);
+			if (attr == (DWORD)-1 || !(attr & FILE_ATTRIBUTE_DIRECTORY)) {
+				CreateDirectory(folderPath, NULL); // create folder if missing
+			}
+
+			CString individualMapSettings = CString(folderPath) + "\\AdrianeMapSettings.ini";
+			bool perMapDisablePreview = false;
+
+			if (PathFileExists(individualMapSettings)) {
+				// File exists → read value
+				char buffer[8] = {0};
+				GetPrivateProfileString("MapSettings", "disableMapPreview", "0", buffer, sizeof(buffer), individualMapSettings);
+				perMapDisablePreview = (atoi(buffer) != 0);
+
+				// If user changed state and it's now enabled, clear the key
+				if (!perMapDisablePreview) {
+					WritePrivateProfileString("MapSettings", "disableMapPreview", NULL, individualMapSettings);
+				}
+			} 
+			else {
+				// File doesn't exist → create only if disabling preview
+				if (perMapDisablePreview) {
+					WritePrivateProfileString("MapSettings", "disableMapPreview", "1", individualMapSettings);
+				}
+			}
+
+			// Generate preview only if not disabled
+			if (!perMapDisablePreview) {
+				mPreview.save(ar.GetFile()->GetFilePath());
+			}
 
 			CompressedCachedMFCFileOutputStream theStream(ar.GetFile());
 			DataChunkOutput *chunkWriter = new DataChunkOutput(&theStream);
@@ -1690,18 +1791,42 @@ BOOL CWorldBuilderDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	// TODO: this dude brick the texures when host textures are not in the map...
 	// TileTool::clearCopiedTiles();
 	// TerrainMaterial::OnImportFavoritesFromMapFolder();
-
-	// // use same logic to construct map.ini path -- doesnt work -- look like the worldbuilder doesnt have the parser for map inis
-	// AsciiString iniPath = lpszPathName;
-	// while (iniPath.getLength() && iniPath.getCharAt(iniPath.getLength()-1) != '\\')
-	// 	iniPath.removeLastChar();
-	// iniPath.concat("map.ini");
 	
-	// if (TheFileSystem->doesFileExist(iniPath.str())) {
-	// 	DEBUG_LOG(("Loading map.ini from [%s]\n", iniPath.str()));
-	// 	INI ini;
-	// 	ini.load(iniPath, INI_LOAD_CREATE_OVERRIDES, NULL);
-	// }
+
+	// Adriane [Deathscythe] : Map.ini loader support
+	AsciiString iniPath = lpszPathName;
+	while (iniPath.getLength() && iniPath.getCharAt(iniPath.getLength()-1) != '\\')
+		iniPath.removeLastChar();
+	iniPath.concat("map.ini");
+	
+	if (TheFileSystem->doesFileExist(iniPath.str())) {
+		DEBUG_LOG(("Map.ini file detected at [%s]\n", iniPath.str()));
+
+		MessageBeep(MB_ICONWARNING);
+		
+		int res = MessageBox(
+			NULL,
+			"A Map.ini file has been detected!\n\n"
+			"Do you want to load it?\n\n"
+			"Warning: This feature is currently in beta. The parser logic is taken directly from the game, "
+			"which may contain its own bugs. The loaded data will remain in memory until World Builder is restarted.",
+			"Map.ini Loader (Beta)",
+			MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON1
+		);
+
+		if (res == IDYES) {
+			DEBUG_LOG(("Loading map.ini from [%s]\n", iniPath.str()));
+
+			INI ini;
+			// ini.loadObjectsOnly(iniPath, NULL);
+			ini.loadWB(iniPath, INI_LOAD_CREATE_OVERRIDES, NULL);
+
+			ObjectOptions::reprocessObjectList();
+		}
+		else {
+			DEBUG_LOG(("User chose not to load map.ini\n"));
+		}
+	}
 
 	WbApp()->setCurrentDirectory(AsciiString(buf));
 	::GetModuleFileName(NULL, buf, sizeof(buf));

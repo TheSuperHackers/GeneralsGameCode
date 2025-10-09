@@ -248,6 +248,8 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Edit Teams...",               ID_EDIT_TEAMLIST
         MENUITEM "Edit Player List...",         ID_EDIT_PLAYERLIST
+        MENUITEM SEPARATOR
+        MENUITEM "Toggle Disable Map Preview Generation",  ID_DISABLEMAPPREVGENERATE
     END
     POPUP "&View"
     BEGIN
@@ -315,6 +317,12 @@ BEGIN
         MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
         MENUITEM "Layers List",                 ID_VIEW_LAYERS_LIST
         MENUITEM SEPARATOR
+    END
+    POPUP "&Level Of Detail"
+    BEGIN
+        MENUITEM "Save My Potato!",                     ID_LOD_MODE_1
+        MENUITEM "My shit is average",                     ID_LOD_MODE_2
+        MENUITEM "Lets lag the whole worldbuilder | NASA PC Required!",                    ID_LOD_MODE_3
     END
     POPUP "&Window"
     BEGIN
@@ -3070,7 +3078,7 @@ BEGIN
     IDS_CONFIRM_REMOVE_CLIFF_MAPPING 
                             "Remove all cliff mapping in the entire map?"
     IDS_NUM_SELECTED_ON_TEAM "For team %s, %d units selected."
-    IDS_MAX_OBJECTS         "The object count has exceeded %d. Please reduce the number of objects in this map or performance will suffer. I shit you not — you will not see this message again. There's a high chance you'll softlock this motherfucker when loading a map with this many objects. Don't say we didn't warn you."
+    IDS_MAX_OBJECTS         "The object count has exceeded %d. Please reduce the number of objects in this map or performance will suffer. \n\n I shit you not - you will not see this message again. There's a high chance you'll softlock this motherfucker when loading a map with this many objects. Don't say we didn't warn you."
     IDS_REPLACEOWNER        "Team %s has an invalid owner. Please select a valid owner from the list below:"
 END
 

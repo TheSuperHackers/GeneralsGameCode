@@ -159,8 +159,14 @@ protected:
 	afx_msg void OnUpdateViewShowTracingOverlay(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowAmbientSounds();
 	afx_msg void OnUpdateViewShowAmbientSounds(CCmdUI* pCmdUI);
-  afx_msg void OnViewShowSoundCircles();
-  afx_msg void OnUpdateViewShowSoundCircles(CCmdUI* pCmdUI);
+	afx_msg void OnViewShowSoundCircles();
+	afx_msg void OnUpdateViewShowSoundCircles(CCmdUI* pCmdUI);
+	afx_msg void OnWindowLODMode1();
+	afx_msg void OnUpdateOnWindowLODMode1(CCmdUI* pCmdUI);
+	afx_msg void OnWindowLODMode2();
+	afx_msg void OnUpdateOnWindowLODMode2(CCmdUI* pCmdUI);
+	afx_msg void OnWindowLODMode3();
+	afx_msg void OnUpdateOnWindowLODMode3(CCmdUI* pCmdUI);
   //}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -226,6 +232,7 @@ private:
 	Bool										m_showTracingOverlay; ///< Flag whether to show the tracing overlay or not
 
 	Bool m_showBuildZoneFeedback;
+	Int m_lod;
 
 
 	ID3DXFont*							m3DFont;

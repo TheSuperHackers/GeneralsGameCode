@@ -88,6 +88,9 @@ void RampTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 	}
 
 	drawFeedback(&mEndPoint);
+
+	pView->Invalidate();
+	pDoc->updateAllViews();
 }
 
 void RampTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)

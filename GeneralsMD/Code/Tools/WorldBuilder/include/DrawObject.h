@@ -203,7 +203,7 @@ protected:
 	void updateFeedbackVB(void);
 	void updateMeshVB(void);
 	void updateRampVB(void);
-	void updateWaypointVB(void);
+	void updateWaypointVB(RenderInfoClass & rinfo);
 	void updateForWater(void);
 	void updateBoundaryVB(void);
 	void updateGridVB(void);

@@ -163,6 +163,9 @@ void BorderTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 
 		pDoc->changeBoundary(m_modifyBorderNdx, &currentBorder);
 	}
+
+	pView->Invalidate();
+	pDoc->updateAllViews();
 }
 
 void BorderTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)

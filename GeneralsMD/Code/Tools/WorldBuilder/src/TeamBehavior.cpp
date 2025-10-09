@@ -95,9 +95,9 @@ void TeamBehavior::setupScript(NameKeyType keyScript, int idcScript)
 		if (ndx != CB_ERR) {
 			stringNdx = ndx;
 		}	else {
-			AsciiString badName = "*";
-			badName.concat(script);
-			stringNdx = pCombo->AddString(badName.str());
+			CString badName;
+            badName.Format("[???] %s", script.str());
+            stringNdx = pCombo->AddString(badName);
 		}
 	}
 	pCombo->SetCurSel(stringNdx);

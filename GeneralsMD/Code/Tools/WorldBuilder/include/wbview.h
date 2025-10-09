@@ -157,6 +157,7 @@ public:
 	Bool isNamesVisible(void) {return m_showNames;};
 	void setShowModels(Bool show) {m_showModels = show;}
 	Bool getShowModels(void) { return m_showModels;}
+	Bool getShowRoads(void) {return m_showRoads;}
 	Bool getShowTerrain(void) { return m_showTerrain;}
 	Bool isLockedAngle(void) {return m_lockAngle;}
 

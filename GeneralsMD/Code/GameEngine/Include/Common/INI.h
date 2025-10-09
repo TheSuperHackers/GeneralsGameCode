@@ -177,6 +177,8 @@ public:
 
 	void loadDirectory( AsciiString dirName, Bool subdirs, INILoadType loadType, Xfer *pXfer );  ///< load directory of INI files
 	void load( AsciiString filename, INILoadType loadType, Xfer *pXfer );		///< load INI file
+	void loadObjectsOnly(AsciiString filename, Xfer* pXfer);
+	void loadWB(AsciiString filename, INILoadType loadType, Xfer* pXfer);  ///< Adriane[Deathscythe] : for loading map.ini under wb directly
 
 	static Bool isDeclarationOfType( AsciiString blockType, AsciiString blockName, char *bufferToCheck );
 	static Bool isEndOfBlock( char *bufferToCheck );

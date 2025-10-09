@@ -116,6 +116,7 @@ public:
 	static Real getCurObjectHeight(void);
 	static void update();
 	static AsciiString getCurGdfName(void);
+	static void reprocessObjectList();
 }; 
 
 //{{AFX_INSERT_LOCATION}}

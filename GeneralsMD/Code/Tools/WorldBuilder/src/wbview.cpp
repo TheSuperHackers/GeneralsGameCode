@@ -232,6 +232,7 @@ void WbView::mouseMove(TTrackingMode m, CPoint viewPt)
 		}
 	}
 	if (CMainFrame::GetMainFrame()->isAutoSaving()) {
+		SetCursor(AfxGetApp()->LoadStandardCursor(IDC_WAIT));
 		return;
 	}
 
@@ -641,6 +642,7 @@ void WbView::OnViewShowObjects()
 		pView->Invalidate(!m_showObjects);
 	}
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIcons", m_showObjects?1:0);
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIconsSelected", m_showObjectsSelected?1:0);
 }
 
 /** Sets the check in the menu to match the show objects flag. */
@@ -664,6 +666,7 @@ void WbView::OnViewShowObjectsSelected()
 		pView->Invalidate(!m_showObjectsSelected);
 	}
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIconsSelected", m_showObjectsSelected?1:0);
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIcons", m_showObjects?1:0);
 }
 
 /** Sets the check in the menu to match the show objects flag. */

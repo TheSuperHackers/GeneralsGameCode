@@ -255,12 +255,12 @@ Int DrawObject::freeMapResources(void)
 	return 0;
 }
 
-// Total number of triangles
-#define NUM_TRI 26	 
+// Total number of triangles // Responsible for the middle point
+#define NUM_TRI 16	 // 18 is octagon // 26 is original
 // Number of triangles in the arrow.
 #define NUM_ARROW_TRI 4
-// Number of triangles in the selection pyramid.
-#define NUM_SELECT_TRI 16
+// Number of triangles in the selection pyramid. // The selection circle
+#define NUM_SELECT_TRI 6
 // Height of selection pyramid.
 #define SELECT_PYRAMID_HEIGHT (1.0f)
 
@@ -1096,7 +1096,7 @@ void DrawObject::updateAmbientSoundVB(void)
 
 /** updateMeshVB puts waypoint path triangles into m_vertexFeedback. */
 
-void DrawObject::updateWaypointVB(void)
+void DrawObject::updateWaypointVB(RenderInfoClass & rinfo)
 {
 	m_feedbackVertexCount = 0;
 	m_feedbackIndexCount = 0;
@@ -1161,6 +1161,25 @@ void DrawObject::updateWaypointVB(void)
 			}
 
 			if (gotLocation) {
+				//
+                // ✅ Cull the waypoint segment before adding vertices
+                //
+                Vector3 center(
+                    (loc1.x + loc2.x) * 0.5f,
+                    (loc1.y + loc2.y) * 0.5f,
+                    (loc1.z + loc2.z) * 0.5f
+                );
+                float radius = sqrtf(
+                    (loc2.x - loc1.x) * (loc2.x - loc1.x) +
+                    (loc2.y - loc1.y) * (loc2.y - loc1.y) +
+                    (loc2.z - loc1.z) * (loc2.z - loc1.z)
+                ) * 0.5f;
+
+                SphereClass bounds(center, radius);
+                if (rinfo.Camera.Cull_Sphere(bounds)) {
+                    continue; // completely outside view, skip this segment
+                }
+
 				// Get group label and assign color
 				AsciiString groupLabel = "default";
 				MapObject* pWay1 = pDoc->getWaypointByID(waypointID1);
@@ -2508,13 +2527,10 @@ if (_skip_drawobject_render) {
 			}
 
 			// DEBUG!
-			if (pMapObj->isSelected()) {
-				Transform.Get_Translation();
-			}
-			Coord3D loc = *pMapObj->getLocation();
-			if (TheTerrainRenderObject) {
-				loc.z += TheTerrainRenderObject->getHeightMapHeight(loc.x, loc.y, NULL);
-			}
+			// if (pMapObj->isSelected()) {
+			// 	Transform.Get_Translation();
+			// }
+
 			/**
 			 * Adriane [Deathscythe] -- this check already existed, not sure why they commented it out.
 			 * It actually works too -- significantly reduces lag when rendering object icons
@@ -2522,10 +2538,17 @@ if (_skip_drawobject_render) {
 			 *
 			 * Cull the mfs
 			 */
+			Coord3D loc = *pMapObj->getLocation();
+
 			SphereClass bounds(Vector3(loc.x, loc.y, loc.z), THE_RADIUS); 
 			if (rinfo.Camera.Cull_Sphere(bounds)) {
 				continue;
 			}
+
+			if (TheTerrainRenderObject) {
+				loc.z += TheTerrainRenderObject->getHeightMapHeight(loc.x, loc.y, NULL);
+			}
+
 			Bool doArrow = true;
 			if (pMapObj->getFlag(FLAG_ROAD_FLAGS) || pMapObj->getFlag(FLAG_BRIDGE_FLAGS) || pMapObj->isWaypoint()) 
 			{
@@ -2569,7 +2592,8 @@ if (_skip_drawobject_render) {
 				}
 			}
 
-			Bool isTree = false;
+			// Makes the icons look 3d -- we set it to true by default since it looks cool -- Adriane
+			Bool isTree = true;
 
 			int settingColor;
 			
@@ -2614,7 +2638,11 @@ if (_skip_drawobject_render) {
 			Vector3 vec(loc.x, loc.y, loc.z);
 			Matrix3D tm(Transform);
 			Matrix3x3 rot(true);
-			rot.Rotate_Z(pMapObj->getAngle());
+			if (!(pMapObj->getFlag(FLAG_ROAD_FLAGS) || 
+				pMapObj->getFlag(FLAG_BRIDGE_FLAGS))) 
+			{
+				rot.Rotate_Z(pMapObj->getAngle());
+			}
 
 			tm.Set_Translation(vec);
 			tm.Set_Rotation(rot);
@@ -2750,7 +2778,7 @@ if (_skip_drawobject_render) {
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,tmReset);
 
 	if (m_drawWaypoints) {
-		updateWaypointVB();
+		updateWaypointVB(rinfo);
 		if (m_feedbackIndexCount>0) {
  			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
 			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);

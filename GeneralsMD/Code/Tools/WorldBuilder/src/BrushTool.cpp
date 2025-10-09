@@ -142,6 +142,8 @@ void BrushTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 	pView->viewToDocCoords(viewPt, &cpt);
 	DrawObject::setFeedbackPos(cpt);
 
+	pView->Invalidate();
+	pDoc->updateAllViews();
 	if (m != TRACK_L) return;
 
 	pView->viewToDocCoords(viewPt, &cpt);

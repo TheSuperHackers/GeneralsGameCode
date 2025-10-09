@@ -60,6 +60,7 @@ protected:
 	Bool								m_linkCenters;				///< Flag whether the centers of the 2d and 3d views track together.
  	Bool								m_needAutosave;			///< True if changes have been made since last autosave.
 	Int									m_curWaypointID;
+	Bool							    m_disableMapPrevGeneration;
 
 protected:
 	std::vector<ICoord2D> m_boundaries;
@@ -197,6 +198,9 @@ protected:
 	afx_msg void OnJumpToGameWithoutDebug();
 	afx_msg void OnJumpToGameWithDebug();
 	afx_msg void OnJumpToGameWithWaveEdit();
+
+	afx_msg void OnViewDisableMapPrevGen();
+	afx_msg void OnUpdateDisableMapPrevGen(CCmdUI* pCmdUI);
 
 	afx_msg void OnTsRemap();
 	afx_msg void OnEditLinkCenters();

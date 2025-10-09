@@ -459,6 +459,8 @@ void PolygonTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 		m_poly_curSelectedPolygon->setPoint(iDocPt, m_poly_dragPointNdx);
 		pView->Invalidate();
 	}
+
+	pDoc->updateAllViews();
 }
 
 /** Mouse up - not much. */

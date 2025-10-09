@@ -26,6 +26,7 @@
 //
 
 #define  CAMERA_OPTIONS_PANEL_SECTION "CameraOptionsWindow"
+#define  SCRIPT_DIALOG_SECTION "ScriptDialog"
 #include "WBPopupSlider.h"
 
 /////////////////////////////////////////////////////////////////////////////

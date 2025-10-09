@@ -542,6 +542,8 @@ void CMainFrame::onEditScripts()
 	CRect frameRect;
 	GetWindowRect(&frameRect);
 
+	frameRect.top = ::AfxGetApp()->GetProfileInt(SCRIPT_DIALOG_SECTION, "Top", frameRect.top);
+	frameRect.left =::AfxGetApp()->GetProfileInt(SCRIPT_DIALOG_SECTION, "Left", frameRect.left);
 	// Setup the Script Dialog.
 	// This needs to be recreated each time so that it will have the current data.
 	m_scriptDialog = new ScriptDialog(this);

@@ -634,6 +634,7 @@
 #define ID_FILE_WBSETTINGS              1389
 #define ID_FILE_GENERATE_MAPSTRNINI     1390
 #define ID_FILE_JUMPTOGAME_WM           1391
+#define ID_DISABLEMAPPREVGENERATE       1392
 #define ID_BRUSH_TOOL                   32771
 #define IDM_ShowGrid                    32772
 #define ID_FEATHERTOOL                  32791
@@ -788,6 +789,9 @@
 #define IDC_LAUNCH_ONSTARTUP            33350
 #define IDC_Grove_Settings              33350
 #define ID_VIEW_SHOWTRACINGOVERLAY      33351
+#define ID_LOD_MODE_1                   33352
+#define ID_LOD_MODE_2                   33353
+#define ID_LOD_MODE_3                   33354
 #define IDS_NEW                         61446
 #define IDS_RESIZE                      61447
 #define IDS_REMOVING_INUSE_TEAM         61448
