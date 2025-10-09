@@ -707,7 +707,7 @@ void LANAPI::RequestGameAnnounce( void )
 			reply.LANMessageType = LANMessage::MSG_GAME_ANNOUNCE;
 
 			AsciiString gameOpts = GameInfoToAsciiString(m_currentGame);
-			strncpy(reply.GameInfo.options,gameOpts.str(),m_lanMaxOptionsLength);
+			strncpy(reply.GameInfo.options,gameOpts.str(),ARRAY_SIZE(reply.GameInfo.options));
 			wcsncpy(reply.GameInfo.gameName, m_currentGame->getName().str(), g_lanGameNameLength);
 			reply.GameInfo.gameName[g_lanGameNameLength] = 0;
 			reply.GameInfo.inProgress = m_currentGame->isGameInProgress();
@@ -831,7 +831,7 @@ void LANAPI::RequestGameStartTimer( Int seconds )
 
 void LANAPI::RequestGameOptions( AsciiString gameOptions, Bool isPublic, UnsignedInt ip /* = 0 */ )
 {
-	DEBUG_ASSERTCRASH(gameOptions.getLength() < m_lanMaxOptionsLength, ("Game options string is too long!"));
+	DEBUG_ASSERTCRASH(gameOptions.getLength() <= m_lanMaxOptionsLength, ("Game options string is too long!"));
 
 	if (!m_currentGame)
 		return;
@@ -839,8 +839,7 @@ void LANAPI::RequestGameOptions( AsciiString gameOptions, Bool isPublic, Unsigne
 	LANMessage msg;
 	fillInLANMessage( &msg );
 	msg.LANMessageType = LANMessage::MSG_GAME_OPTIONS;
-	strncpy(msg.GameOptions.options, gameOptions.str(), m_lanMaxOptionsLength);
-	msg.GameOptions.options[m_lanMaxOptionsLength] = 0;
+	strncpy(msg.GameOptions.options, gameOptions.str(), ARRAY_SIZE(msg.GameOptions.options));
 	sendMessage(&msg, ip);
 
 	m_lastGameopt = gameOptions;
