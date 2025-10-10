@@ -558,8 +558,7 @@ static const char * Make_W3D_Filename (const char *w3d_name)
 
 	// Copy the w3d name into a static buffer, turn it into lowercase
 	// letters, and append a ".w3d" file extension. That's the filename.
-	static const int bufferSize = 64;
-	static char buffer[bufferSize];
+	static char buffer[64];
 	if (*w3d_name == 0)
 	{
 		// Empty W3D name case.
@@ -571,6 +570,6 @@ static const char * Make_W3D_Filename (const char *w3d_name)
 	if (dot)
 		*dot = 0;
 	strlwr(buffer);
-	strlcat(buffer, ".w3d", bufferSize);
+	strlcat(buffer, ".w3d", ARRAY_SIZE(buffer));
 	return buffer;
 }

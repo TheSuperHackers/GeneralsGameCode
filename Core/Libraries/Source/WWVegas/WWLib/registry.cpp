@@ -367,8 +367,7 @@ void RegistryClass::Save_Registry_Values(HKEY key, char *path, INIClass *ini)
 {
 	int index = 0;
 	long result = ERROR_SUCCESS;
-	const int saveNameSize = 512;
-	char save_name[saveNameSize];
+	char save_name[512];
 
 	while (result == ERROR_SUCCESS) {
 		unsigned long type = 0;
@@ -387,7 +386,7 @@ void RegistryClass::Save_Registry_Values(HKEY key, char *path, INIClass *ini)
 				*/
 				case REG_DWORD:
 					strcpy(save_name, "DWORD_");
-					strlcat(save_name, value_name, saveNameSize);
+					strlcat(save_name, value_name, ARRAY_SIZE(save_name));
 					ini->Put_Int(path, save_name, *((unsigned long*)data));
 					break;
 
@@ -396,7 +395,7 @@ void RegistryClass::Save_Registry_Values(HKEY key, char *path, INIClass *ini)
 				*/
 				case REG_SZ:
 					strcpy(save_name, "STRING_");
-					strlcat(save_name, value_name, saveNameSize);
+					strlcat(save_name, value_name, ARRAY_SIZE(save_name));
 					ini->Put_String(path, save_name, (char*)data);
 					break;
 
@@ -405,7 +404,7 @@ void RegistryClass::Save_Registry_Values(HKEY key, char *path, INIClass *ini)
 				*/
 				case REG_BINARY:
 					strcpy(save_name, "BIN_");
-					strlcat(save_name, value_name, saveNameSize);
+					strlcat(save_name, value_name, ARRAY_SIZE(save_name));
 					ini->Put_UUBlock(path, save_name, (char*)data, data_size);
 					break;
 
@@ -470,11 +469,10 @@ void RegistryClass::Save_Registry_Tree(char *path, INIClass *ini)
 				/*
 				** See if there are sub keys.
 				*/
-				const int newKeyPathSize = 512;
-				char new_key_path[newKeyPathSize];
+				char new_key_path[512];
 				strcpy(new_key_path, path);
-				strlcat(new_key_path, "\\", newKeyPathSize);
-				strlcat(new_key_path, name, newKeyPathSize);
+				strlcat(new_key_path, "\\", ARRAY_SIZE(new_key_path));
+				strlcat(new_key_path, name, ARRAY_SIZE(new_key_path));
 
 				unsigned long num_subs = 0;
 				unsigned long num_values = 0;
@@ -553,8 +551,7 @@ void RegistryClass::Load_Registry(const char *filename, char *old_path, char *ne
 		ini.Load(file);
 
 		int old_path_len = strlen(old_path);
-		const int pathSize = 1024;
-		char path[pathSize];
+		char path[1024];
 		char string[1024];
 		unsigned char buffer[8192];
 
@@ -570,7 +567,7 @@ void RegistryClass::Load_Registry(const char *filename, char *old_path, char *ne
 			strcpy(path, new_path);
 			char *cut = strstr(section_name, old_path);
 			if (cut) {
-				strlcat(path, cut + old_path_len, pathSize);
+				strlcat(path, cut + old_path_len, ARRAY_SIZE(path));
 			}
 
 			/*
@@ -695,11 +692,10 @@ void RegistryClass::Delete_Registry_Tree(char *path)
 					/*
 					** See if there are sub keys.
 					*/
-					const int newKeyPathSize = 512;
-					char new_key_path[newKeyPathSize];
+					char new_key_path[512];
 					strcpy(new_key_path, path);
-					strlcat(new_key_path, "\\", newKeyPathSize);
-					strlcat(new_key_path, name, newKeyPathSize);
+					strlcat(new_key_path, "\\", ARRAY_SIZE(new_key_path));
+					strlcat(new_key_path, name, ARRAY_SIZE(new_key_path));
 
 					unsigned long num_subs = 0;
 					unsigned long num_values = 0;

@@ -1710,8 +1710,7 @@ HRESULT  Cftp::FileRecoveryPosition( LPCSTR szLocalFileName, LPCSTR szRegistryRo
 	FILE * testfp;
 	HKEY hkey;
 	unsigned char regfilename[ 256 ];
-	const int regkeySize = 512;
-	char regkey[ regkeySize ];
+	char regkey[ 512 ];
 	unsigned long t1, t2;
 
 	if( ( szRegistryRoot == NULL ) || ( szLocalFileName == NULL ) )
@@ -1725,11 +1724,11 @@ HRESULT  Cftp::FileRecoveryPosition( LPCSTR szLocalFileName, LPCSTR szRegistryRo
 	strcpy( regkey, szRegistryRoot );
 	if( regkey[ strlen( regkey ) - 1 ] != '\\' )
 	{
-		strlcat( regkey, "\\Download", regkeySize);
+		strlcat(regkey, "\\Download", ARRAY_SIZE(regkey));
 	}
 	else
 	{
-		strlcat( regkey, "Download", regkeySize);
+		strlcat(regkey, "Download", ARRAY_SIZE(regkey));
 	}
 
 	if( RegOpenKeyEx( HKEY_LOCAL_MACHINE, (LPCTSTR)regkey,
