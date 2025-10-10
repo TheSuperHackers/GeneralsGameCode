@@ -392,10 +392,24 @@ Bool ConnectionManager::processNetCommand(NetCommandRef *ref) {
 	NetCommandMsg *msg = ref->getCommand();
 	NetCommandType cmdType = msg->getNetCommandType();
 
+	// Handle ACK commands first (before connection validation)
+	if ((cmdType == NETCOMMANDTYPE_ACKSTAGE1) ||
+			(cmdType == NETCOMMANDTYPE_ACKSTAGE2) ||
+			(cmdType == NETCOMMANDTYPE_ACKBOTH)) {
+		processAck(msg);
+		return FALSE;
+	}
+
 	// Early validation checks
 	if ((m_connections[msg->getPlayerID()] == NULL) && (msg->getPlayerID() != m_localSlot)) {
 		// if this is from a player that is no longer in the game, then ignore them.
 		return TRUE;
+	}
+
+	// Handle WRAPPER commands (before second connection validation)
+	if (cmdType == NETCOMMANDTYPE_WRAPPER) {
+		processWrapper(ref); // need to send the NetCommandRef since we have to construct the relay for the wrapped command.
+		return FALSE;
 	}
 
 	if ((msg->getPlayerID() >= 0) && (msg->getPlayerID() < MAX_SLOTS) && (msg->getPlayerID() != m_localSlot)) {
@@ -424,15 +438,6 @@ Bool ConnectionManager::processNetCommand(NetCommandRef *ref) {
 
 	// Process command by type
 	switch (cmdType) {
-		case NETCOMMANDTYPE_ACKSTAGE1:
-		case NETCOMMANDTYPE_ACKSTAGE2:
-		case NETCOMMANDTYPE_ACKBOTH:
-			processAck(msg);
-			return FALSE;
-
-		case NETCOMMANDTYPE_WRAPPER:
-			processWrapper(ref); // need to send the NetCommandRef since we have to construct the relay for the wrapped command.
-			return FALSE;
 
 		case NETCOMMANDTYPE_FRAMEINFO: {
 			processFrameInfo((NetFrameCommandMsg *)msg);
