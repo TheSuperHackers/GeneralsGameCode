@@ -181,6 +181,7 @@
 
 #endif // MEMORYPOOL_DEBUG
 
+extern Int theTotalSystemAllocationInBytes;
 extern Int thePeakSystemAllocationInBytes;
 
 // TheSuperHackers @tweak The system allocator functions are now global.

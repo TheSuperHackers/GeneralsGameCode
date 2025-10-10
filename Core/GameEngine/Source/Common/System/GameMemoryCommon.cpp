@@ -23,7 +23,7 @@
 
 #ifdef MEMORYPOOL_DEBUG
 
-static Int theTotalSystemAllocationInBytes = 0;
+Int theTotalSystemAllocationInBytes = 0;
 Int thePeakSystemAllocationInBytes = 0;
 
 constexpr const Int GARBAGE_FILL_VALUE = 0xdeadbeef;
