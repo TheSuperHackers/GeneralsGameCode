@@ -204,47 +204,40 @@ Bool FirewallHelperClass::detectFirewall(void)
 
 Bool FirewallHelperClass::behaviorDetectionUpdate()
 {
-	if (m_currentState == DETECTIONSTATE_IDLE) {
-		return FALSE;
+	switch (m_currentState) {
+		case DETECTIONSTATE_IDLE:
+			return FALSE;
+			
+		case DETECTIONSTATE_DONE:
+			return TRUE;
+			
+		case DETECTIONSTATE_BEGIN:
+			return detectionBeginUpdate();
+			
+		case DETECTIONSTATE_TEST1:
+			return detectionTest1Update();
+			
+		case DETECTIONSTATE_TEST2:
+			return detectionTest2Update();
+			
+		case DETECTIONSTATE_TEST3:
+			return detectionTest3Update();
+			
+		case DETECTIONSTATE_TEST3_WAITFORRESPONSES:
+			return detectionTest3WaitForResponsesUpdate();
+			
+		case DETECTIONSTATE_TEST4_1:
+			return detectionTest4Stage1Update();
+			
+		case DETECTIONSTATE_TEST4_2:
+			return detectionTest4Stage2Update();
+			
+		case DETECTIONSTATE_TEST5:
+			return detectionTest5Update();
+			
+		default:
+			return TRUE;
 	}
-
-	if (m_currentState == DETECTIONSTATE_DONE) {
-		return TRUE;
-	}
-
-	if (m_currentState == DETECTIONSTATE_BEGIN) {
-		return detectionBeginUpdate();
-	}
-
-	if (m_currentState == DETECTIONSTATE_TEST1) {
-		return detectionTest1Update();
-	}
-
-	if (m_currentState == DETECTIONSTATE_TEST2) {
-		return detectionTest2Update();
-	}
-
-	if (m_currentState == DETECTIONSTATE_TEST3) {
-		return detectionTest3Update();
-	}
-
-	if (m_currentState == DETECTIONSTATE_TEST3_WAITFORRESPONSES) {
-		return detectionTest3WaitForResponsesUpdate();
-	}
-
-	if (m_currentState == DETECTIONSTATE_TEST4_1) {
-		return detectionTest4Stage1Update();
-	}
-
-	if (m_currentState == DETECTIONSTATE_TEST4_2) {
-		return detectionTest4Stage2Update();
-	}
-
-	if (m_currentState == DETECTIONSTATE_TEST5) {
-		return detectionTest5Update();
-	}
-
-	return TRUE;
 }
 
 /***********************************************************************************************
