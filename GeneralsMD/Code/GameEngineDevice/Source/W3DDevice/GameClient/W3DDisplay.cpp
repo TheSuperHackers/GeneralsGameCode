@@ -3019,7 +3019,7 @@ void W3DDisplay::takeScreenShot(void)
 		sprintf( leafname, "%s%.3d.bmp", "sshot", frame_number++);
 #endif
 		strcpy(pathname, TheGlobalData->getPath_UserData().str());
-		strcat(pathname, leafname);
+		strlcat(pathname, leafname, ARRAY_SIZE(pathname));
 		if (_access( pathname, 0 ) == -1)
 			done = true;
 	}

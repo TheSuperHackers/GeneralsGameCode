@@ -274,8 +274,8 @@ BOOL RoadOptions::OnInitDialog()
 					continue;
 				}
 				strcpy(fileBuf, TEST_STRING);
-				strcat(fileBuf, "\\");
-				strcat(fileBuf, filename.str());
+				strlcat(fileBuf, "\\", _MAX_PATH);
+				strlcat(fileBuf, filename.str(), _MAX_PATH);
 				addRoad(fileBuf, index, TVI_ROOT);
 				index++;
 				m_numberOfRoads++;

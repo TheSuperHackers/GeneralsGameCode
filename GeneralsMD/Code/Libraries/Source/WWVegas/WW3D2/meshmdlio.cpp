@@ -275,9 +275,9 @@ WW3DErrorType MeshModelClass::Load_W3D(ChunkLoadClass & cload)
 
 	if (strlen(context->Header.ContainerName) > 0) {
 		strcpy(tmpname,context->Header.ContainerName);
-		strcat(tmpname,".");
+		strlcat(tmpname, ".", namelen);
 	}
-	strcat(tmpname,context->Header.MeshName);
+	strlcat(tmpname, context->Header.MeshName, namelen);
 
 	Set_Name(tmpname);
 
