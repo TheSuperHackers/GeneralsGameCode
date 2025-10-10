@@ -70,7 +70,6 @@ set(WWLIB_SRC
     #lzostraw.cpp
     #lzostraw.h
     #lzo_conf.h
-    MallocAllocator.h
     #md5.cpp
     #md5.h
     mempool.h
@@ -118,6 +117,7 @@ set(WWLIB_SRC
     strtok_r.cpp
     strtok_r.h
     #swap.h
+    SystemAllocator.h
     systimer.cpp
     systimer.h
     TARGA.CPP

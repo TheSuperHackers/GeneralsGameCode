@@ -24,7 +24,7 @@
 #include <imagehlp.h> // Must be included after Windows.h
 #include <set>
 
-#include "MallocAllocator.h"
+#include "SystemAllocator.h"
 
 // This static class can load and unload dbghelp.dll
 // Internally it must not use new and delete because it can be created during game memory initialization.
@@ -171,7 +171,7 @@ private:
 	SymFunctionTableAccess_t m_symFunctionTableAccess;
 	StackWalk_t m_stackWalk;
 
-	typedef std::set<HANDLE, std::less<HANDLE>, stl::malloc_allocator<HANDLE> > Processes;
+	typedef std::set<HANDLE, std::less<HANDLE>, stl::system_allocator<HANDLE> > Processes;
 
 	Processes m_initializedProcesses;
 	HMODULE m_dllModule;
