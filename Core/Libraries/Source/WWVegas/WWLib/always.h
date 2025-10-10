@@ -79,9 +79,6 @@
 #endif	//_MSC_VER
 #endif	//RTS_DEBUG
 
-extern void* sysAllocateDoNotZero(size_t numBytes);
-extern void sysFree(void* p);
-
 #if !defined(DISABLE_GAMEMEMORY) // (gth) killing the Generals Memory Manager!
 
 #ifndef _OPERATOR_NEW_DEFINED_

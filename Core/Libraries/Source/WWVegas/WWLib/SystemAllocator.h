@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include <cstdlib> // malloc, free
 #include <cstddef> // std::size_t, std::ptrdiff_t
 #include <new> // std::bad_alloc
 
@@ -66,7 +65,7 @@ public:
 		if (n > max_size())
 			throw std::bad_alloc();
 
-		void* p = sysAllocateDoNotZero(n * sizeof(T));
+		void* p = GlobalAlloc(GMEM_FIXED, n * sizeof(T));
 		if (!p)
 			throw std::bad_alloc();
 		return static_cast<pointer>(p);
@@ -74,7 +73,7 @@ public:
 
 	void deallocate(pointer p, size_type)
 	{
-		sysFree(p);
+		GlobalFree(p);
 	}
 
 	void construct(pointer p, const T& val)
