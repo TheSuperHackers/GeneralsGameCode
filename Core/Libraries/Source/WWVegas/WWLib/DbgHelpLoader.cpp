@@ -57,7 +57,7 @@ bool DbgHelpLoader::load()
 	if (Inst == NULL)
 	{
 		// Cannot use new/delete here when this is loaded during game memory initialization.
-		void* p = ::malloc(sizeof(DbgHelpLoader));
+		void* p = sysAllocateDoNotZero(sizeof(DbgHelpLoader));
 		Inst = new (p) DbgHelpLoader();
 	}
 
@@ -126,7 +126,7 @@ void DbgHelpLoader::unload()
 	}
 
 	Inst->~DbgHelpLoader();
-	::free(Inst);
+	sysFree(Inst);
 	Inst = NULL;
 }
 

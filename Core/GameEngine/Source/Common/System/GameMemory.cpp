@@ -114,21 +114,7 @@ DECLARE_PERF_TIMER(MemoryPoolInitFilling)
 		#define MEMORYPOOL_SINGLEBLOCK_GETS_STACKTRACE
 	#endif
 
-	#define USE_FILLER_VALUE
-
 	const Int MAX_INIT_FILLER_COUNT = 8;
-	#ifdef USE_FILLER_VALUE
-		static UnsignedInt s_initFillerValue = 0xf00dcafe; // will be replaced, should never be this value at runtime
-		static void calcFillerValue(Int index)
-		{
-			s_initFillerValue = (index & 3) << 1;
-			s_initFillerValue |= 0x01;
-			s_initFillerValue |= (~(s_initFillerValue << 4)) & 0xf0;
-			s_initFillerValue |= (s_initFillerValue << 8);
-			s_initFillerValue |= (s_initFillerValue << 16);
-			//DEBUG_LOG(("Setting MemoryPool initFillerValue to %08x (index %d)",s_initFillerValue,index));
-		}
-	#endif
 
 #endif
 
@@ -169,8 +155,6 @@ DECLARE_PERF_TIMER(MemoryPoolInitFilling)
 
 #ifdef MEMORYPOOL_DEBUG
 
-	static Int theTotalSystemAllocationInBytes = 0;
-	static Int thePeakSystemAllocationInBytes = 0;
 	static Int theTotalLargeBlocks = 0;
 	static Int thePeakLargeBlocks = 0;
 	Int theTotalDMA = 0;
@@ -203,9 +187,7 @@ static Bool theMainInitFlag = false;
 #define MEM_BOUND_ALIGNMENT 4
 
 static Int roundUpMemBound(Int i);
-static void *sysAllocateDoNotZero(Int numBytes);
-static void sysFree(void* p);
-static void memset32(void* ptr, Int value, Int bytesToFill);
+
 #ifdef MEMORYPOOL_STACKTRACE
 static void doStackDumpOutput(const char* m);
 static void doStackDump(void **stacktrace, int size);
@@ -223,73 +205,6 @@ static Int roundUpMemBound(Int i)
 	return (i + (MEM_BOUND_ALIGNMENT-1)) & ~(MEM_BOUND_ALIGNMENT-1);
 }
 
-//-----------------------------------------------------------------------------
-/**
-	this is the low-level allocator that we use to request memory from the OS.
-	all (repeat, all) memory allocations in this module should ultimately
-	go thru this routine (or sysAllocate).
-
-	note: throws ERROR_OUT_OF_MEMORY on failure; never returns null
-*/
-static void* sysAllocateDoNotZero(Int numBytes)
-{
-	void* p = ::GlobalAlloc(GMEM_FIXED, numBytes);
-	if (!p)
-		throw ERROR_OUT_OF_MEMORY;
-#ifdef MEMORYPOOL_DEBUG
-	{
-		USE_PERF_TIMER(MemoryPoolDebugging)
-		#ifdef USE_FILLER_VALUE
-		{
-			USE_PERF_TIMER(MemoryPoolInitFilling)
-			::memset32(p, s_initFillerValue, ::GlobalSize(p));
-		}
-		#endif
-		theTotalSystemAllocationInBytes += ::GlobalSize(p);
-		if (thePeakSystemAllocationInBytes < theTotalSystemAllocationInBytes)
-			thePeakSystemAllocationInBytes = theTotalSystemAllocationInBytes;
-	}
-#endif
-	return p;
-}
-
-//-----------------------------------------------------------------------------
-/**
-	the counterpart to sysAllocate / sysAllocateDoNotZero; used to free blocks
-	allocated by them. it is OK to pass null here (it will just be ignored).
-*/
-static void sysFree(void* p)
-{
-	if (p)
-	{
-#ifdef MEMORYPOOL_DEBUG
-		{
-			USE_PERF_TIMER(MemoryPoolDebugging)
-			::memset32(p, GARBAGE_FILL_VALUE, ::GlobalSize(p));
-			theTotalSystemAllocationInBytes -= ::GlobalSize(p);
-		}
-#endif
-		::GlobalFree(p);
-	}
-}
-
-// ----------------------------------------------------------------------------
-/**
-	fills memory with a 32-bit value (note: assumes the ptr is 4-byte-aligned)
-*/
-static void memset32(void* ptr, Int value, Int bytesToFill)
-{
-	Int wordsToFill = bytesToFill>>2;
-	bytesToFill -= (wordsToFill<<2);
-
-	Int *p = (Int*)ptr;
-	for (++wordsToFill; --wordsToFill; )
-		*p++ = value;
-
-	Byte *b = (Byte *)p;
-	for (++bytesToFill; --bytesToFill; )
-		*b++ = (Byte)value;
-}
 
 #ifdef MEMORYPOOL_STACKTRACE
 // ----------------------------------------------------------------------------
@@ -1633,7 +1548,7 @@ void* MemoryPool::allocateBlockDoNotZeroImplementation(DECLARE_LITERALSTRING_ARG
 	if (m_firstBlobWithFreeBlocks != NULL && !m_firstBlobWithFreeBlocks->hasAnyFreeBlocks())
 	{
 		// hmm... the current 'free' blob has nothing available. look and see if there
-		// are any other existing blobs with freespace.
+		// are any other existing blobs with free space.
 		MemoryPoolBlob *blob = m_firstBlob;
 		for (; blob != NULL; blob = blob->getNextInList())
 		{
@@ -1641,12 +1556,12 @@ void* MemoryPool::allocateBlockDoNotZeroImplementation(DECLARE_LITERALSTRING_ARG
 			 	break;
 		}
 
-		// note that if we walk thru the list without finding anything, this will
-		// reset m_firstBlobWithFreeBlocks to null and fall thru.
+		// note that if we walk through the list without finding anything, this will
+		// reset m_firstBlobWithFreeBlocks to null and fall through.
 	 	m_firstBlobWithFreeBlocks = blob;
 	}
 
-	// OK, if we are here then we have no blobs with freespace... darn.
+	// OK, if we are here then we have no blobs with free space... darn.
 	// allocate an overflow block.
 	if (m_firstBlobWithFreeBlocks == NULL)
 	{

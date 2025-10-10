@@ -26,10 +26,10 @@
 namespace stl
 {
 
-// STL allocator that uses malloc and free. Useful if allocations are meant to bypass new and delete.
+// STL allocator that uses the Operating System allocator functions. Useful if allocations are meant to bypass new and delete, malloc and free.
 
 template <typename T>
-class malloc_allocator
+class system_allocator
 {
 public:
 
@@ -44,19 +44,19 @@ public:
 	template <typename U>
 	struct rebind
 	{
-		typedef malloc_allocator<U> other;
+		typedef system_allocator<U> other;
 	};
 
-	malloc_allocator() throw() {}
+	system_allocator() throw() {}
 
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
-	malloc_allocator(const malloc_allocator&) throw() {}
+	system_allocator(const system_allocator&) throw() {}
 #endif
 
 	template <typename U>
-	malloc_allocator(const malloc_allocator<U>&) throw() {}
+	system_allocator(const system_allocator<U>&) throw() {}
 
-	~malloc_allocator() throw() {}
+	~system_allocator() throw() {}
 
 	pointer address(reference x) const { return &x; }
 	const_pointer address(const_reference x) const { return &x; }
@@ -66,7 +66,7 @@ public:
 		if (n > max_size())
 			throw std::bad_alloc();
 
-		void* p = ::malloc(n * sizeof(T));
+		void* p = sysAllocateDoNotZero(n * sizeof(T));
 		if (!p)
 			throw std::bad_alloc();
 		return static_cast<pointer>(p);
@@ -74,7 +74,7 @@ public:
 
 	void deallocate(pointer p, size_type)
 	{
-		::free(p);
+		sysFree(p);
 	}
 
 	void construct(pointer p, const T& val)
@@ -95,12 +95,12 @@ public:
 
 // Allocators of same type are always equal
 template <typename T1, typename T2>
-bool operator==(const malloc_allocator<T1>&, const malloc_allocator<T2>&) throw() {
+bool operator==(const system_allocator<T1>&, const system_allocator<T2>&) throw() {
 	return true;
 }
 
 template <typename T1, typename T2>
-bool operator!=(const malloc_allocator<T1>&, const malloc_allocator<T2>&) throw() {
+bool operator!=(const system_allocator<T1>&, const system_allocator<T2>&) throw() {
 	return false;
 }
 
@@ -109,20 +109,20 @@ bool operator!=(const malloc_allocator<T1>&, const malloc_allocator<T2>&) throw(
 
 #if defined(USING_STLPORT)
 
-// This tells STLport how to rebind malloc_allocator
+// This tells STLport how to rebind system_allocator
 namespace std
 {
 	template <class _Tp1, class _Tp2>
 	struct __stl_alloc_rebind_helper;
 
 	template <class Tp1, class Tp2>
-	inline stl::malloc_allocator<Tp2>& __stl_alloc_rebind(stl::malloc_allocator<Tp1>& a, const Tp2*) {
-		return *reinterpret_cast<stl::malloc_allocator<Tp2>*>(&a);
+	inline stl::system_allocator<Tp2>& __stl_alloc_rebind(stl::system_allocator<Tp1>& a, const Tp2*) {
+		return *reinterpret_cast<stl::system_allocator<Tp2>*>(&a);
 	}
 
 	template <class Tp1, class Tp2>
-	inline const stl::malloc_allocator<Tp2>& __stl_alloc_rebind(const stl::malloc_allocator<Tp1>& a, const Tp2*) {
-		return *reinterpret_cast<const stl::malloc_allocator<Tp2>*>(&a);
+	inline const stl::system_allocator<Tp2>& __stl_alloc_rebind(const stl::system_allocator<Tp1>& a, const Tp2*) {
+		return *reinterpret_cast<const stl::system_allocator<Tp2>*>(&a);
 	}
 }
 

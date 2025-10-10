@@ -177,7 +177,22 @@
 
 	};
 
+#define USE_FILLER_VALUE
+
 #endif // MEMORYPOOL_DEBUG
+
+extern Int thePeakSystemAllocationInBytes;
+
+// TheSuperHackers @tweak The system allocator functions are now global.
+// Use this to bypass Game Memory Pools in exceptional circumstances.
+extern void* sysAllocateDoNotZero(size_t numBytes);
+extern void sysFree(void* p);
+extern void memset32(void* ptr, Int value, size_t bytesToFill);
+
+#ifdef USE_FILLER_VALUE
+extern UnsignedInt s_initFillerValue;
+extern void calcFillerValue(Int index);
+#endif
 
 // TheSuperHackers @build xezon 30/03/2025 Define DISABLE_GAMEMEMORY to use a null implementations for Game Memory.
 // Useful for address sanitizer checks and other investigations.
