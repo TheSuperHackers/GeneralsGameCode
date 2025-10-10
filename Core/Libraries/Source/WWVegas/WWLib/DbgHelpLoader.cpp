@@ -57,7 +57,7 @@ bool DbgHelpLoader::load()
 	if (Inst == NULL)
 	{
 		// Cannot use new/delete here when this is loaded during game memory initialization.
-		void* p = sysAllocateDoNotZero(sizeof(DbgHelpLoader));
+		void* p = GlobalAlloc(GMEM_FIXED, sizeof(DbgHelpLoader));
 		Inst = new (p) DbgHelpLoader();
 	}
 
@@ -130,7 +130,7 @@ void DbgHelpLoader::unload()
 	}
 
 	Inst->~DbgHelpLoader();
-	sysFree(Inst);
+	GlobalFree(Inst);
 	Inst = NULL;
 }
 
