@@ -948,8 +948,8 @@ HWND InitListboxPropertiesDialog( GameWindow *window )
 		sprintf(percentages,"%d",listData->columnWidthPercentage[0]);
 		for(Int i = 1; i < listData->columns; i++ )
 		{
-			strcat(percentages,",");
-			strcat(percentages,itoa(listData->columnWidthPercentage[i],tempStr,10));
+			strlcat(percentages, ",", ARRAY_SIZE(percentages));
+			strlcat(percentages, itoa(listData->columnWidthPercentage[i],tempStr,10), ARRAY_SIZE(percentages));
 		}
 		SetDlgItemText(dialog,EDIT_COLUMN_PERCENT,percentages);
 

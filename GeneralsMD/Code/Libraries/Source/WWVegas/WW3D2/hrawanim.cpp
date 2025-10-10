@@ -212,8 +212,8 @@ int HRawAnimClass::Load_W3D(ChunkLoadClass & cload)
 	}
 
 	strcpy(Name,aheader.HierarchyName);
-	strcat(Name,".");
-	strcat(Name,aheader.Name);
+	strlcat(Name, ".", ARRAY_SIZE(Name));
+	strlcat(Name, aheader.Name, ARRAY_SIZE(Name));
 
 	// TSS chasing crash bug 05/26/99
    WWASSERT(HierarchyName != NULL);
