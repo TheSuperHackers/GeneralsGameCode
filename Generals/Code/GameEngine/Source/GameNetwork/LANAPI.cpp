@@ -632,8 +632,7 @@ void LANAPI::RequestGameJoin( LANGameInfo *game, UnsignedInt ip /* = 0 */ )
 
 	AsciiString s = "";
 	GetStringFromRegistry("\\ergc", "", s);
-	strncpy(msg.GameToJoin.serial, s.str(), g_maxSerialLength);
-	msg.GameToJoin.serial[g_maxSerialLength-1] = '\0';
+	strlcpy(msg.GameToJoin.serial, s.str(), ARRAY_SIZE(msg.GameToJoin.serial));
 
 	sendMessage(&msg, ip);
 
@@ -707,7 +706,7 @@ void LANAPI::RequestGameAnnounce( void )
 			reply.LANMessageType = LANMessage::MSG_GAME_ANNOUNCE;
 
 			AsciiString gameOpts = GameInfoToAsciiString(m_currentGame);
-			strncpy(reply.GameInfo.options,gameOpts.str(),m_lanMaxOptionsLength);
+			strlcpy(reply.GameInfo.options,gameOpts.str(), ARRAY_SIZE(reply.GameInfo.options));
 			wcsncpy(reply.GameInfo.gameName, m_currentGame->getName().str(), g_lanGameNameLength);
 			reply.GameInfo.gameName[g_lanGameNameLength] = 0;
 			reply.GameInfo.inProgress = m_currentGame->isGameInProgress();
@@ -839,7 +838,7 @@ void LANAPI::RequestGameOptions( AsciiString gameOptions, Bool isPublic, Unsigne
 	LANMessage msg;
 	fillInLANMessage( &msg );
 	msg.LANMessageType = LANMessage::MSG_GAME_OPTIONS;
-	strncpy(msg.GameOptions.options, gameOptions.str(), m_lanMaxOptionsLength);
+	strlcpy(msg.GameOptions.options, gameOptions.str(), ARRAY_SIZE(msg.GameOptions.options));
 	msg.GameOptions.options[m_lanMaxOptionsLength] = 0;
 	sendMessage(&msg, ip);
 
@@ -1075,10 +1074,8 @@ void LANAPI::fillInLANMessage( LANMessage *msg )
 
 	wcsncpy(msg->name, m_name.str(), g_lanPlayerNameLength);
 	msg->name[g_lanPlayerNameLength] = 0;
-	strncpy(msg->userName, m_userName.str(), g_lanLoginNameLength);
-	msg->userName[g_lanLoginNameLength] = 0;
-	strncpy(msg->hostName, m_hostName.str(), g_lanHostNameLength);
-	msg->hostName[g_lanHostNameLength] = 0;
+	strlcpy(msg->userName, m_userName.str(), ARRAY_SIZE(msg->userName));
+	strlcpy(msg->hostName, m_hostName.str(), ARRAY_SIZE(msg->hostName));
 }
 
 void LANAPI::RequestLobbyLeave( Bool forced )

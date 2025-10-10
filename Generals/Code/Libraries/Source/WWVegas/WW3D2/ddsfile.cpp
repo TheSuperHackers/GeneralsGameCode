@@ -47,7 +47,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	DateTime(0),
 	CubeFaceSize(0)
 {
-	strncpy(Name,name,sizeof(Name));
+	strlcpy(Name,name,sizeof(Name));
 	// The name could be given in .tga or .dds format, so ensure we're opening .dds...
 	int len=strlen(Name);
 	Name[len-3]='d';

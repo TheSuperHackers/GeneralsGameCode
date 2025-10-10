@@ -369,7 +369,7 @@ void TerrainMaterial::updateTextures(WorldHeightMapEdit *pMap)
 		for (i=0; i<pMap->getNumTexClasses(); i++) {
 			char path[_MAX_PATH];
 			AsciiString uiName = pMap->getTexClassUiName(i);
-			strncpy(path, uiName.str(), _MAX_PATH-2);
+			strlcpy(path, uiName.str(), _MAX_PATH);
 			m_staticThis->addTerrain(path, i, TVI_ROOT);
 		}
 		m_staticThis->m_updating = false;
