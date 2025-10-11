@@ -190,6 +190,7 @@ protected:
 			float		  				Frame;
 			float						PrevFrame;
 			int						AnimMode;
+			int								LastSyncTime;
 			float							animDirection;
 			float							frameRateMultiplier;	// 020607 srj -- added
 		} ModeAnim;
