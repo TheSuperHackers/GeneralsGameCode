@@ -681,6 +681,29 @@ Object::~Object()
 }
 
 //-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+Object *Object::getContainedBySpecialOverlordStyle()
+{
+	if (Object *containedBy = getContainedBy())
+	{
+		ContainModuleInterface *contain = containedBy->getContain();
+		DEBUG_ASSERTCRASH(contain, ("Object::getContainedBySpecialOverlordStyle()... CONTAINER WITHOUT A CONTAIN! AARRGH!"));
+		if (contain->isSpecialOverlordStyleContainer())
+		{
+			return containedBy;
+		}
+	}
+	return NULL;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+const Object *Object::getContainedBySpecialOverlordStyle() const
+{
+	return const_cast<Object*>(this)->getContainedBySpecialOverlordStyle();
+}
+
+//-------------------------------------------------------------------------------------------------
 /// this object now contained in "containedBy"
 //-------------------------------------------------------------------------------------------------
 void Object::onContainedBy( Object *containedBy )
