@@ -265,7 +265,7 @@ public:
 	// as small as possible
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	virtual void					Add(SceneClass * scene);
-	virtual void					Remove(void);
+	virtual bool					Remove(void);
 	virtual SceneClass *			Get_Scene(void);
 	virtual SceneClass *			Peek_Scene(void)																{ return Scene; }
 	virtual void					Set_Container(RenderObjClass * con);

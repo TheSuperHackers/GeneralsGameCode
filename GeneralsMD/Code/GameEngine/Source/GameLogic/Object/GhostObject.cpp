@@ -34,7 +34,7 @@
 #include "GameLogic/GhostObject.h"
 #include "GameLogic/Object.h"
 
-GhostObjectManager *TheGhostObjectManager=NULL;
+GhostObjectManager *TheGhostObjectManager = NULL;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -52,14 +52,12 @@ m_parentObject(NULL),
 m_partitionData(NULL)
 {
 	m_parentPosition.zero();
-	// End Initializations
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 GhostObject::~GhostObject()
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -67,7 +65,6 @@ GhostObject::~GhostObject()
 // ------------------------------------------------------------------------------------------------
 void GhostObject::crc( Xfer *xfer )
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -77,7 +74,6 @@ void GhostObject::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void GhostObject::xfer( Xfer *xfer )
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
@@ -90,19 +86,15 @@ void GhostObject::xfer( Xfer *xfer )
 	xfer->xferObjectID( &parentObjectID );
 	if( xfer->getXferMode() == XFER_LOAD )
 	{
-
 		// tie up parent object pointer
 		m_parentObject = TheGameLogic->findObjectByID( parentObjectID );
 
 		// sanity
 		if( parentObjectID != INVALID_ID && m_parentObject == NULL )
 		{
-
 			DEBUG_CRASH(( "GhostObject::xfer - Unable to connect m_parentObject" ));
 			throw INI_INVALID_DATA;
-
 		}
-
 	}
 
 	// parent geometry type
@@ -126,7 +118,6 @@ void GhostObject::xfer( Xfer *xfer )
 	// partition data
 	///@todo write me ---> !!!!!
 	// PartitionData	*m_partitionData;	///< our PartitionData
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -134,7 +125,6 @@ void GhostObject::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void GhostObject::loadPostProcess( void )
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -143,6 +133,7 @@ GhostObjectManager::GhostObjectManager(void)
 {
 	m_lockGhostObjects = FALSE;
 	m_saveLockGhostObjects = FALSE;
+	m_trackAllPlayers = TheGlobalData->m_enablePlayerObserver;
 	m_localPlayer = 0;
 }
 
@@ -150,14 +141,13 @@ GhostObjectManager::GhostObjectManager(void)
 // ------------------------------------------------------------------------------------------------
 GhostObjectManager::~GhostObjectManager()
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void GhostObjectManager::reset(void)
 {
-
+	m_trackAllPlayers = TheGlobalData->m_enablePlayerObserver;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -171,14 +161,12 @@ GhostObject *GhostObjectManager::addGhostObject(Object *object, PartitionData *p
 // ------------------------------------------------------------------------------------------------
 void GhostObjectManager::removeGhostObject(GhostObject *mod)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GhostObjectManager::updateOrphanedObjects(int *playerIndexList, int numNonLocalPlayers)
+void GhostObjectManager::updateOrphanedObjects(int *playerIndexList, int playerIndexCount)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -197,7 +185,6 @@ void GhostObjectManager::restorePartitionData(void)
 // ------------------------------------------------------------------------------------------------
 void GhostObjectManager::crc( Xfer *xfer )
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -207,7 +194,6 @@ void GhostObjectManager::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void GhostObjectManager::xfer( Xfer *xfer )
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
@@ -215,7 +201,6 @@ void GhostObjectManager::xfer( Xfer *xfer )
 
 	// local player
 	xfer->xferInt( &m_localPlayer );
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -223,5 +208,4 @@ void GhostObjectManager::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void GhostObjectManager::loadPostProcess( void )
 {
-
 }

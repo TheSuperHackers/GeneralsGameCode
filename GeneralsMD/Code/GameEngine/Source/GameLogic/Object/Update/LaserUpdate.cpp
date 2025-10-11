@@ -30,6 +30,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
+#include "Common/GameUtility.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Xfer.h"
@@ -349,7 +350,7 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 	//PLEASE NOTE You cannot check an ID for NULL.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
 	if( !m_particleSystemID )
 	{
-		const Player *localPlayer = ThePlayerList->getLocalPlayer();
+		const Player *localPlayer = rts::getObservedOrLocalPlayer();
 
 		//Make sure the laser flare is visible to the player. If no parent, assume laser owner will handle it.
 		if (!parent || parent->getShroudedStatus( localPlayer->getPlayerIndex() ) <= OBJECTSHROUD_PARTIAL_CLEAR )

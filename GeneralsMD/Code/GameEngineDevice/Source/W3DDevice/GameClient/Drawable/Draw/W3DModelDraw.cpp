@@ -3141,8 +3141,6 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 			// tie in our drawable as the user data pointer in the render object
 			m_renderObject->Set_User_Data(draw->getDrawableInfo());
 
-			setTerrainDecal(draw->getTerrainDecalType());
-
 			//We created a new render object so we need to preserve the visibility state
 			//of the previous render object.
 			if (draw->isDrawableEffectivelyHidden())
