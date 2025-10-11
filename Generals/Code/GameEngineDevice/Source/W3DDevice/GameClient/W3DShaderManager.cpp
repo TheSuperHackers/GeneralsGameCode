@@ -2855,7 +2855,7 @@ StaticGameLODLevel W3DShaderManager::getGPUPerformanceIndex(void)
 		if (chipType >=	DC_GEFORCE2)
 			detailSetting=STATIC_GAME_LOD_LOW;	//these cards need multiple terrain passes.
 		if (chipType >= DC_GENERIC_PIXEL_SHADER_1_1)	//these cards can do terrain in single pass.
-			detailSetting=STATIC_GAME_LOD_HIGH;
+			detailSetting=STATIC_GAME_LOD_VERY_HIGH;
 	}
 
 	return detailSetting;

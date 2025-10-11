@@ -38,18 +38,24 @@
 
 enum ParticlePriorityType CPP_11(: Int);
 
-#define MAX_LOD_PRESETS_PER_LEVEL	32	//number of hardware configs preset for each low,medium,high
+#define MAX_LOD_PRESETS_PER_LEVEL	32	//number of hardware configs preset for each low,medium,high,veryhigh
 #define MAX_BENCH_PROFILES	16
 
 //Make sure this enum stays in sync with GameLODNames[]
 enum StaticGameLODLevel CPP_11(: Int)
 {
 	STATIC_GAME_LOD_UNKNOWN=-1,
+
 	STATIC_GAME_LOD_LOW,
 	STATIC_GAME_LOD_MEDIUM,
 	STATIC_GAME_LOD_HIGH,
+	STATIC_GAME_LOD_VERY_HIGH,
+
 	STATIC_GAME_LOD_CUSTOM,	//make sure this remains last!
-	STATIC_GAME_LOD_COUNT
+
+	STATIC_GAME_LOD_COUNT,
+	STATIC_GAME_LOD_FIRST = 0,
+	STATIC_GAME_LOD_LAST = STATIC_GAME_LOD_CUSTOM - 1,
 };
 
 enum DynamicGameLODLevel CPP_11(: Int)
@@ -193,6 +199,7 @@ public:
 	BenchProfile m_benchProfiles[MAX_BENCH_PROFILES];
 
 protected:
+	void initStaticLODLevels();
 	void applyStaticLODLevel(StaticGameLODLevel level);
 	void applyDynamicLODLevel(DynamicGameLODLevel level);
 	void refreshCustomStaticLODLevel(void);	///<grabs current globaldata values and makes them the custom detail setting.
