@@ -632,8 +632,7 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 						req.arg.addbuddy.id = playerID;
 						UnicodeString buddyAddstr;
 						buddyAddstr = TheGameText->fetch("GUI:BuddyAddReq");
-						wcsncpy(req.arg.addbuddy.text, buddyAddstr.str(), MAX_BUDDY_CHAT_LEN);
-						req.arg.addbuddy.text[MAX_BUDDY_CHAT_LEN-1] = 0;
+						wcslcpy(req.arg.addbuddy.text, buddyAddstr.str(), MAX_BUDDY_CHAT_LEN);
 						TheGameSpyBuddyMessageQueue->addRequest(req);
 					}
 				}
