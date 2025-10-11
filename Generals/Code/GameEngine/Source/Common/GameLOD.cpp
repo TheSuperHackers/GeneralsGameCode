@@ -555,16 +555,23 @@ void GameLODManager::applyStaticLODLevel(StaticGameLODLevel level)
 	StaticGameLODInfo *lodInfo=&m_staticGameLODInfo[level];
 	StaticGameLODInfo *prevLodInfo=&prevLodBackup;
 
-	Int requestedTextureReduction = 0;
-	Bool requestedTrees = m_memPassed;	//only use trees if memory requirement passed.
+	Int requestedTextureReduction;
+	Bool requestedTrees;
 	if (level == STATIC_GAME_LOD_CUSTOM)
-	{	requestedTextureReduction = lodInfo->m_textureReduction;
+	{
+		requestedTextureReduction = lodInfo->m_textureReduction;
 		requestedTrees = lodInfo->m_useTrees;
 	}
 	else
-	if (level >= STATIC_GAME_LOD_LOW)
-	{	//normal non-custom level gets texture reduction based on recommendation
-		requestedTextureReduction = getRecommendedTextureReduction();
+	{
+		//normal non-custom level gets texture reduction based on recommendation
+		StaticGameLODLevel textureLevel = getRecommendedTextureLODLevel();
+		if (textureLevel == STATIC_GAME_LOD_UNKNOWN)
+			textureLevel = level;
+		requestedTextureReduction = getLevelTextureReduction(textureLevel);
+
+		//only use trees if memory requirement passed.
+		requestedTrees = m_memPassed;
 	}
 
 	if (TheGlobalData)
@@ -717,16 +724,36 @@ void GameLODManager::applyDynamicLODLevel(DynamicGameLODLevel level)
 
 Int GameLODManager::getRecommendedTextureReduction(void)
 {
-	if (m_idealDetailLevel == STATIC_GAME_LOD_UNKNOWN)
-		getRecommendedStaticLODLevel();	//it was never tested, so test now.
+	StaticGameLODLevel level = getRecommendedTextureLODLevel();
 
-	if (!m_memPassed)	//if they have < 256 MB, force them to low res textures.
-		return getLevelTextureReduction(STATIC_GAME_LOD_LOW);
+	if (level == STATIC_GAME_LOD_UNKNOWN)
+	{
+		level = getStaticLODLevel();
+	}
+	return getLevelTextureReduction(level);
+}
 
-	if (m_idealDetailLevel < 0 || m_idealDetailLevel >= STATIC_GAME_LOD_COUNT)
-		return getLevelTextureReduction(STATIC_GAME_LOD_LOW);
+StaticGameLODLevel GameLODManager::getRecommendedTextureLODLevel()
+{
+	// TheSuperHackers @bugfix xezon 24/09/2025 Disables the recommended static LOD level for texture reduction
+	// because the benchmark code always generates a low level for it. Can revisit if the benchmarking is changed.
+	constexpr const Bool UseRecommendedStaticLODLevel = FALSE;
 
-	return getLevelTextureReduction(m_idealDetailLevel);
+	StaticGameLODLevel level = STATIC_GAME_LOD_LOW;
+
+	// Force low res textures if user has less than 256 MB.
+	if (m_memPassed)
+	{
+		if constexpr (UseRecommendedStaticLODLevel)
+		{
+			level = getRecommendedStaticLODLevel();
+		}
+		else
+		{
+			level = STATIC_GAME_LOD_UNKNOWN;
+		}
+	}
+	return level;
 }
 
 Int GameLODManager::getLevelTextureReduction(StaticGameLODLevel level)
