@@ -2214,8 +2214,8 @@ TextureClass *WorldHeightMap::getEdgeTerrainTexture(void)
 
 TerrainTextureClass *WorldHeightMap::getFlatTexture(Int xCell, Int yCell, Int cellWidth, Int pixelsPerCell)
 {
-	if (TheWritableGlobalData->m_textureReductionFactor) {
-		if (TheWritableGlobalData->m_textureReductionFactor>1) {
+	if (WW3D::Get_Texture_Reduction()) {
+		if (WW3D::Get_Texture_Reduction()>1) {
 			pixelsPerCell /= 4;
 		} else {
 			pixelsPerCell /= 2;
