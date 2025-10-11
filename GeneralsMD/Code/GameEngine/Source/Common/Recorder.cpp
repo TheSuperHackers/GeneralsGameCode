@@ -289,7 +289,7 @@ void RecorderClass::cleanUpReplayFile( void )
 	{
 		char fname[_MAX_PATH+1];
 		strncpy(fname, TheGlobalData->m_baseStatsDir.str(), _MAX_PATH);
-		strncat(fname, m_fileName.str(), _MAX_PATH - strlen(fname));
+		strlcat(fname, m_fileName.str(), ARRAY_SIZE(fname));
 		DEBUG_LOG(("Saving replay to %s", fname));
 		AsciiString oldFname;
 		oldFname.format("%s%s", getReplayDir().str(), m_fileName.str());
