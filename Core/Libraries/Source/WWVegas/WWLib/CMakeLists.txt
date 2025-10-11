@@ -32,6 +32,10 @@ set(WWLIB_SRC
     #crcstraw.h
     cstraw.cpp
     cstraw.h
+    DbgHelpGuard.cpp
+    DbgHelpGuard.h
+    DbgHelpLoader.cpp
+    DbgHelpLoader.h
     Except.cpp
     Except.h
     FastAllocator.cpp
@@ -113,6 +117,7 @@ set(WWLIB_SRC
     strtok_r.cpp
     strtok_r.h
     #swap.h
+    SystemAllocator.h
     systimer.cpp
     systimer.h
     TARGA.CPP
