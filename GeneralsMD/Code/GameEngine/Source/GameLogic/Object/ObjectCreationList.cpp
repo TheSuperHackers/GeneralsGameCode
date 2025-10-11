@@ -1421,6 +1421,11 @@ protected:
 			}
 		}
 
+#if !RETAIL_COMPATIBLE_CRC
+		ObjectID sinkID = sourceObj->getExperienceTracker()->getExperienceSink();
+		firstObject->getExperienceTracker()->setExperienceSink(sinkID != INVALID_ID ? sinkID : sourceObj->getID());
+#endif
+
 		if (container)
 			doStuffToObj( container, AsciiString::TheEmptyString, pos, mtx, orientation, sourceObj, lifetimeFrames );
 
