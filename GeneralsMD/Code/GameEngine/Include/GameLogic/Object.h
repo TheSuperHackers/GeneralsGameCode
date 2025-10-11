@@ -155,6 +155,7 @@ enum CrushSquishTestType CPP_11(: Int)
 	TEST_CRUSH_OR_SQUISH
 };
 
+const Real defaultHealthBoxHeight = 3.0f;
 
 // ---------------------------------------------------
 /**
