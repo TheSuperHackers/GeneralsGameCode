@@ -131,19 +131,19 @@
             }
         },
         {
-            "name": "win32-vcpkg-profile",
-            "inherits": "win32-vcpkg",
-            "displayName": "Windows 32bit VCPKG Profile",
+            "name": "win32-dx9",
+            "inherits": "win32",
+            "displayName": "Windows 32bit DirectX 9 Release",
             "cacheVariables": {
-                "RTS_BUILD_OPTION_PROFILE": "ON"
+                "RTS_BUILD_DIRECTX9": "ON"
             }
         },
         {
-            "name": "win32-vcpkg-debug",
-            "inherits": "win32-vcpkg",
-            "displayName": "Windows 32bit VCPKG Debug",
+            "name": "win32-dx9",
+            "inherits": "win32",
+            "displayName": "Windows 32bit DirectX 9 Release",
             "cacheVariables": {
-                "RTS_BUILD_OPTION_DEBUG": "ON"
+                "RTS_BUILD_DIRECTX9": "ON"
             }
         },
         {
@@ -207,18 +207,18 @@
             "configuration": "Release"
         },
         {
-            "name": "win32-vcpkg-profile",
-            "configurePreset": "win32-vcpkg-profile",
-            "displayName": "Build Windows 32bit VCPKG Profile",
-            "description": "Build Windows 32bit VCPKG Profile",
+            "name": "win32-dx9",
+            "configurePreset": "win32-dx9",
+            "displayName": "Build Windows 32bit DirectX 9 Release",
+            "description": "Build Windows 32bit DirectX 9 Release",
             "configuration": "Release"
         },
         {
-            "name": "win32-vcpkg-debug",
-            "configurePreset": "win32-vcpkg-debug",
-            "displayName": "Build Windows 32bit VCPKG Debug",
-            "description": "Build Windows 32bit VCPKG Debug",
-            "configuration": "Debug"
+            "name": "win32-dx9",
+            "configurePreset": "win32-dx9",
+            "displayName": "Build Windows 32bit DirectX 9 Release",
+            "description": "Build Windows 32bit DirectX 9 Release",
+            "configuration": "Release"
         },
         {
             "name": "unix",
@@ -334,28 +334,28 @@
             ]
         },
         {
-            "name": "win32-vcpkg-profile",
+            "name": "win32-dx9",
             "steps": [
                 {
                     "type": "configure",
-                    "name": "win32-vcpkg-profile"
+                    "name": "win32-dx9"
                 },
                 {
                     "type": "build",
-                    "name": "win32-vcpkg-profile"
+                    "name": "win32-dx9"
                 }
             ]
         },
         {
-            "name": "win32-vcpkg-debug",
+            "name": "win32-dx9",
             "steps": [
                 {
                     "type": "configure",
-                    "name": "win32-vcpkg-debug"
+                    "name": "win32-dx9"
                 },
                 {
                     "type": "build",
-                    "name": "win32-vcpkg-debug"
+                    "name": "win32-dx9"
                 }
             ]
         },
