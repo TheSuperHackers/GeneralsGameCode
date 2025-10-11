@@ -263,7 +263,6 @@ void GameLODManager::initStaticLODLevels()
 	veryhigh.m_useBuildupScaffolds = TRUE;
 	veryhigh.m_useTreeSway = TRUE;
 	veryhigh.m_useEmissiveNightMaterials = TRUE;
-	veryhigh.m_useHeatEffects = TRUE;
 	veryhigh.m_textureReduction = 0;
 	veryhigh.m_useFpsLimit = TRUE;
 	veryhigh.m_enableDynamicLOD = TRUE;
