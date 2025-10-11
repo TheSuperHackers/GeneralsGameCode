@@ -224,8 +224,8 @@ char const * Last_Error_Text(void)
  *=============================================================================================*/
 static void Add_Txt (char const *txt)
 {
-	if (strlen(ExceptionText) + strlen(txt) < 65535) {
-		strcat(ExceptionText, txt);
+	if (strlen(ExceptionText) + strlen(txt) < ARRAY_SIZE(ExceptionText) - 1) {
+		strlcat(ExceptionText, txt, ARRAY_SIZE(ExceptionText));
 	}
 #if (0)
 	/*
@@ -653,15 +653,15 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 
 	for (int c = 0 ; c < 32 ; c++) {
 		if (IsBadReadPtr(eip_ptr, 1)) {
-			strcat(scrap, "?? ");
+			strlcat(scrap, "?? ", ARRAY_SIZE(scrap));
 		} else {
 			sprintf(bytestr, "%02X ", *eip_ptr);
-			strcat(scrap, bytestr);
+			strlcat(scrap, bytestr, ARRAY_SIZE(scrap));
 		}
 		eip_ptr++;
 	}
 
-	strcat(scrap, "\r\n\r\n");
+	strlcat(scrap, "\r\n\r\n", ARRAY_SIZE(scrap));
 	Add_Txt(scrap);
 
 	/*
@@ -677,14 +677,14 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 			** The stack contents cannot be read so just print up question marks.
 			*/
 			sprintf(scrap, "%p: ", static_cast<void*>(stackptr));
-			strcat(scrap, "????????\r\n");
+			strlcat(scrap, "????????\r\n", ARRAY_SIZE(scrap));
 		} else {
 			/*
 			** If this stack address is in our memory space then try to match it with a code symbol.
 			*/
 			if (IsBadCodePtr((FARPROC)*stackptr)) {
 				sprintf(scrap, "%p: %08lX ", static_cast<void*>(stackptr), *stackptr);
-				strcat(scrap, "DATA_PTR\r\n");
+				strlcat(scrap, "DATA_PTR\r\n", ARRAY_SIZE(scrap));
 			} else {
 				sprintf(scrap, "%p: %08lX", static_cast<void*>(stackptr), *stackptr);
 
@@ -697,12 +697,12 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 					if (_SymGetSymFromAddr != NULL && _SymGetSymFromAddr (GetCurrentProcess(), *stackptr, &displacement, symptr)) {
 						char symbuf[256];
 						sprintf(symbuf, " - %s + %08X", symptr->Name, displacement);
-						strcat(scrap, symbuf);
+						strlcat(scrap, symbuf, ARRAY_SIZE(scrap));
 					}
 				} else {
-					strcat (scrap, " *");
+					strlcat(scrap, " *", ARRAY_SIZE(scrap));
 				}
-				strcat (scrap, "\r\n");
+				strlcat(scrap, "\r\n", ARRAY_SIZE(scrap));
 			}
 		}
 		Add_Txt(scrap);

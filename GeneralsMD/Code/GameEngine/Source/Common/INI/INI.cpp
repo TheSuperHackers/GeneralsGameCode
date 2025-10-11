@@ -782,8 +782,8 @@ AsciiString INI::getNextQuotedAsciiString()
 
 				if (strlen(token) > 1 && token[1] != '\t')
 				{
-					strcat(buff, " ");
-					strcat(buff, token);
+					strlcat(buff, " ", INI_MAX_CHARS_PER_LINE);
+					strlcat(buff, token, INI_MAX_CHARS_PER_LINE);
 				}
 				else
 				{	Int buflen=strlen(buff);
@@ -824,9 +824,9 @@ AsciiString INI::getNextAsciiString()
 			if (token) {
 				if (strlen(token) > 1 && token[1] != '\t')
 				{
-					strcat(buff, " ");
+					strlcat(buff, " ", INI_MAX_CHARS_PER_LINE);
 				}
-				strcat(buff, token);
+				strlcat(buff, token, INI_MAX_CHARS_PER_LINE);
 				result.set(buff);
 			} else {
 				Int len = strlen(buff);

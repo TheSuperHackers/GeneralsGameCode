@@ -164,7 +164,7 @@ void CAnimReportPage::FillListControl()
 				// Add motion channel info to the appropriate column.
 				char channels[6];	// strlen("XYZQV")+1
 				ZeroMemory(channels, sizeof(channels));
-				MakeChannelStr(j, pAnim, channels);
+				MakeChannelStr(j, pAnim, channels, sizeof(channels));
 				m_AnimReport.SetItem(idx, i+1, LVIF_TEXT, channels, 0,0,0,0);
 			}
 		}
@@ -187,18 +187,18 @@ int CAnimReportPage::FindItem (const char *item_name)
 	return m_AnimReport.FindItem(&lvfi);
 }
 
-void CAnimReportPage::MakeChannelStr (int bone_idx, HAnimClass *hanim, char *channels)
+void CAnimReportPage::MakeChannelStr (int bone_idx, HAnimClass *hanim, char *channels, int channelSize)
 {
 	if (hanim->Has_X_Translation(bone_idx))
-		strcat(channels, "X");
+		strlcat(channels, "X", channelSize);
 	if (hanim->Has_Y_Translation(bone_idx))
-		strcat(channels, "Y");
+		strlcat(channels, "Y", channelSize);
 	if (hanim->Has_Z_Translation(bone_idx))
-		strcat(channels, "Z");
+		strlcat(channels, "Z", channelSize);
 	if (hanim->Has_Rotation(bone_idx))
-		strcat(channels, "Q");
+		strlcat(channels, "Q", channelSize);
 	if (hanim->Has_Visibility(bone_idx))
-		strcat(channels, "V");
+		strlcat(channels, "V", channelSize);
 }
 
 BOOL CAnimReportPage::OnSetActive()

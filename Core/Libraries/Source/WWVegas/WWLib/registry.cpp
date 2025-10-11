@@ -386,7 +386,7 @@ void RegistryClass::Save_Registry_Values(HKEY key, char *path, INIClass *ini)
 				*/
 				case REG_DWORD:
 					strcpy(save_name, "DWORD_");
-					strcat(save_name, value_name);
+					strlcat(save_name, value_name, ARRAY_SIZE(save_name));
 					ini->Put_Int(path, save_name, *((unsigned long*)data));
 					break;
 
@@ -395,7 +395,7 @@ void RegistryClass::Save_Registry_Values(HKEY key, char *path, INIClass *ini)
 				*/
 				case REG_SZ:
 					strcpy(save_name, "STRING_");
-					strcat(save_name, value_name);
+					strlcat(save_name, value_name, ARRAY_SIZE(save_name));
 					ini->Put_String(path, save_name, (char*)data);
 					break;
 
@@ -404,7 +404,7 @@ void RegistryClass::Save_Registry_Values(HKEY key, char *path, INIClass *ini)
 				*/
 				case REG_BINARY:
 					strcpy(save_name, "BIN_");
-					strcat(save_name, value_name);
+					strlcat(save_name, value_name, ARRAY_SIZE(save_name));
 					ini->Put_UUBlock(path, save_name, (char*)data, data_size);
 					break;
 
@@ -471,8 +471,8 @@ void RegistryClass::Save_Registry_Tree(char *path, INIClass *ini)
 				*/
 				char new_key_path[512];
 				strcpy(new_key_path, path);
-				strcat(new_key_path, "\\");
-				strcat(new_key_path, name);
+				strlcat(new_key_path, "\\", ARRAY_SIZE(new_key_path));
+				strlcat(new_key_path, name, ARRAY_SIZE(new_key_path));
 
 				unsigned long num_subs = 0;
 				unsigned long num_values = 0;
@@ -567,7 +567,7 @@ void RegistryClass::Load_Registry(const char *filename, char *old_path, char *ne
 			strcpy(path, new_path);
 			char *cut = strstr(section_name, old_path);
 			if (cut) {
-				strcat(path, cut + old_path_len);
+				strlcat(path, cut + old_path_len, ARRAY_SIZE(path));
 			}
 
 			/*
@@ -694,8 +694,8 @@ void RegistryClass::Delete_Registry_Tree(char *path)
 					*/
 					char new_key_path[512];
 					strcpy(new_key_path, path);
-					strcat(new_key_path, "\\");
-					strcat(new_key_path, name);
+					strlcat(new_key_path, "\\", ARRAY_SIZE(new_key_path));
+					strlcat(new_key_path, name, ARRAY_SIZE(new_key_path));
 
 					unsigned long num_subs = 0;
 					unsigned long num_values = 0;

@@ -570,6 +570,6 @@ static const char * Make_W3D_Filename (const char *w3d_name)
 	if (dot)
 		*dot = 0;
 	strlwr(buffer);
-	strcat(buffer, ".w3d");
+	strlcat(buffer, ".w3d", ARRAY_SIZE(buffer));
 	return buffer;
 }

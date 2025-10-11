@@ -28,6 +28,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "_pch.h"
 #include <new>
+#include <stringex.h>
 #include <Utility/stdio_adapter.h>
 
 // our own fast critical section
@@ -93,7 +94,7 @@ ProfileHighLevel::Block::Block(const char *name)
   char help[256];
   strncpy(help,name,sizeof(help));
   help[sizeof(help)-1-2]=0;
-  strcat(help,".c");
+  strlcat(help,".c", sizeof(help));
   AddProfile(help,NULL,"calls",6,0).Increment();
 
   ProfileGetTime(m_start);
