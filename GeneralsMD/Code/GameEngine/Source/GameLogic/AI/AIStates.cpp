@@ -5509,9 +5509,16 @@ StateReturnType AIAttackFireWeaponState::update()
 		Weapon* weapon = obj->getWeaponInWeaponSlot((WeaponSlotType)slot);
 		if (weapon)
 		{
-			if (weapon->fireWeapon(obj, getMachineGoalPosition())) { //fire() returns 'reloaded'
-				obj->releaseWeaponLock(LOCKED_TEMPORARILY);// unlock, 'cause we're loaded
-				// DEBUG_LOG((">> On firing Weapon in slot %d: fire synced weapon slot %d. Shot Fired!\n", wslot, slot));
+			if (m_att->isAttackingObject()) {
+				if (weapon->fireWeapon(obj, victim)) { //fire() returns 'reloaded'
+					obj->releaseWeaponLock(LOCKED_TEMPORARILY);// unlock, 'cause we're loaded
+				}
+			}
+			else {
+				if (weapon->fireWeapon(obj, getMachineGoalPosition())) { //fire() returns 'reloaded'
+					obj->releaseWeaponLock(LOCKED_TEMPORARILY);// unlock, 'cause we're loaded
+					// DEBUG_LOG((">> On firing Weapon in slot %d: fire synced weapon slot %d. Shot Fired!\n", wslot, slot));
+				}
 			}
 
 			obj->notifyFiringTrackerShotFired(weapon, INVALID_ID);
