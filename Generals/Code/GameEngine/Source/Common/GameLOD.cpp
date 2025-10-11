@@ -441,7 +441,7 @@ const char *GameLODManager::getStaticGameLODLevelName(StaticGameLODLevel level)
 
 /**Function which calculates the recommended LOD level for current hardware
 configuration.*/
-StaticGameLODLevel GameLODManager::findStaticLODLevel(void)
+StaticGameLODLevel GameLODManager::getRecommendedStaticLODLevel(void)
 {
 	//Check if we have never done the test on current system
 	if (m_idealDetailLevel == STATIC_GAME_LOD_UNKNOWN)
@@ -687,15 +687,15 @@ void GameLODManager::applyDynamicLODLevel(DynamicGameLODLevel level)
 Int GameLODManager::getRecommendedTextureReduction(void)
 {
 	if (m_idealDetailLevel == STATIC_GAME_LOD_UNKNOWN)
-		findStaticLODLevel();	//it was never tested, so test now.
+		getRecommendedStaticLODLevel();	//it was never tested, so test now.
 
 	if (!m_memPassed)	//if they have < 256 MB, force them to low res textures.
-		return m_staticGameLODInfo[STATIC_GAME_LOD_LOW].m_textureReduction;
+		return getLevelTextureReduction(STATIC_GAME_LOD_LOW);
 
 	if (m_idealDetailLevel < 0 || m_idealDetailLevel >= STATIC_GAME_LOD_COUNT)
-		return m_staticGameLODInfo[STATIC_GAME_LOD_LOW].m_textureReduction;
+		return getLevelTextureReduction(STATIC_GAME_LOD_LOW);
 
-	return m_staticGameLODInfo[m_idealDetailLevel].m_textureReduction;
+	return getLevelTextureReduction(m_idealDetailLevel);
 }
 
 Int GameLODManager::getLevelTextureReduction(StaticGameLODLevel level)
