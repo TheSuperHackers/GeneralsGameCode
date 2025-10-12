@@ -114,7 +114,7 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 		initCountdown();
 #else
 		// The Special Power will not be available until construction is done.
-		m_availableOnFrame = UINT_MAX;
+		m_availableOnFrame = ~0u;
 #endif
 	}
 
@@ -400,7 +400,7 @@ Bool SpecialPowerModule::isScriptOnly() const
 void SpecialPowerModule::onConstructionCompleted()
 {
 #if !RETAIL_COMPATIBLE_CRC
-	DEBUG_ASSERTCRASH(m_availableOnFrame == UINT_MAX,
+	DEBUG_ASSERTCRASH(m_availableOnFrame == ~0u,
 		("Unexpected state. Function must be called only after OBJECT_STATUS_UNDER_CONSTRUCTION was completed"));
 
 	m_availableOnFrame = 0;
@@ -483,7 +483,7 @@ Bool SpecialPowerModule::initiateIntentToDoSpecialPower( const Object *targetObj
 
 #if RETAIL_COMPATIBLE_CRC
 	// TheSuperHackers @info we need to leave early if we are in the MissileLauncherBuildingUpdate crash fix codepath
-	if (m_availableOnFrame == 0xFFFFFFFF)
+	if (m_availableOnFrame == ~0u)
 	{
 		DEBUG_ASSERTCRASH(!valid, ("Using MissileLauncherBuildingUpdate escape path when valid is set to true"));
 		return false;
@@ -752,7 +752,7 @@ void SpecialPowerModule::doSpecialPowerAtLocation( const Coord3D *loc, Real angl
 
 #if RETAIL_COMPATIBLE_CRC
 	// TheSuperHackers @info we need to leave early if we are in the MissileLauncherBuildingUpdate crash fix codepath
-	if (m_availableOnFrame == 0xFFFFFFFF)
+	if (m_availableOnFrame == ~0u)
 		return;
 #endif
 
