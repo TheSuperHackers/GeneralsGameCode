@@ -227,7 +227,6 @@ GameLODManager::GameLODManager(void)
 	m_memBenchIndex=0;
 	m_compositeBenchIndex=0;
 	m_numBenchProfiles=0;
-	m_currentTextureReduction=0;
 	m_reallyLowMHz = 400;
 
 	for (Int i=0; i<STATIC_GAME_LOD_CUSTOM; i++)
@@ -580,13 +579,7 @@ void GameLODManager::applyStaticLODLevel(StaticGameLODLevel level)
 		TheWritableGlobalData->m_useShadowVolumes=lodInfo->m_useShadowVolumes;
 		TheWritableGlobalData->m_useShadowDecals=lodInfo->m_useShadowDecals;
 
-		//Check if texture resolution changed.  No need to apply when current is unknown because display will do it
-		if (requestedTextureReduction != m_currentTextureReduction)
-		{
-				TheWritableGlobalData->m_textureReductionFactor = requestedTextureReduction;
-				if (TheGameClient)
-					TheGameClient->adjustLOD(0);	//apply the new setting stored in globaldata
-		}
+		TheWritableGlobalData->m_textureReductionFactor = requestedTextureReduction;
 
 		//Check if shadow state changed
 		if (m_currentStaticLOD == STATIC_GAME_LOD_UNKNOWN	||
@@ -623,9 +616,12 @@ void GameLODManager::applyStaticLODLevel(StaticGameLODLevel level)
 			TheWritableGlobalData->m_shellMapOn = false;
 		}
 	}
+
 	if (TheTerrainVisual)
 		TheTerrainVisual->setTerrainTracksDetail();
 
+	if (TheGameClient)
+		TheGameClient->setTextureLOD(requestedTextureReduction);
 }
 
 /**Parse a description of all the LOD settings for a given detail level*/

@@ -187,8 +187,8 @@ int TerrainTextureClass::update(WorldHeightMap *htMap)
 	surface_level->UnlockRect();
 	surface_level->Release();
 	DX8_ErrorCode(D3DXFilterTexture(Peek_D3D_Texture(), NULL, 0, D3DX_FILTER_BOX));
-	if (TheWritableGlobalData->m_textureReductionFactor) {
-		Peek_D3D_Texture()->SetLOD(TheWritableGlobalData->m_textureReductionFactor);
+	if (WW3D::Get_Texture_Reduction()) {
+		Peek_D3D_Texture()->SetLOD(WW3D::Get_Texture_Reduction());
 	}
 	return(surface_desc.Height);
 }

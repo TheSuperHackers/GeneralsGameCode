@@ -75,6 +75,8 @@
 //used to access a messagebox that does "ok" and "cancel"
 #include "GameClient/MessageBox.h"
 
+#include "ww3d.h"
+
 // This is for non-RC builds only!!!
 #define VERBOSE_VERSION L"Release"
 
@@ -1112,18 +1114,14 @@ static void saveOptions( void )
  		//-------------------------------------------------------------------------------------------------
  		// Texture resolution slider
 		{
+				val = 2 - GadgetSliderGetPosition(sliderTextureResolution);
+
 				AsciiString prefString;
-
-		 		val = GadgetSliderGetPosition(sliderTextureResolution);
-				val = 2-val;
-
 				prefString.format("%d",val);
 				(*pref)["TextureReduction"] = prefString;
 
-				if (TheGlobalData->m_textureReductionFactor != val)
-				{
-					TheGameClient->adjustLOD(val-TheGlobalData->m_textureReductionFactor);	//apply the new setting
-				}
+				TheWritableGlobalData->m_textureReductionFactor = val;
+				TheGameClient->setTextureLOD(val);
 		}
 
 		TheWritableGlobalData->m_useShadowVolumes = GadgetCheckBoxIsChecked( check3DShadows );
@@ -1855,10 +1853,9 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 		TheGameLODManager->setStaticLODLevel(TheGameLODManager->getRecommendedStaticLODLevel());
 	}
 
-	Int txtFact=TheGameLODManager->getCurrentTextureReduction();
 	GadgetComboBoxSetSelectedPos(comboBoxDetail, (Int)TheGameLODManager->getStaticLODLevel());
 
-	GadgetSliderSetPosition( sliderTextureResolution, 2-txtFact);
+	GadgetSliderSetPosition( sliderTextureResolution, 2-WW3D::Get_Texture_Reduction());
 
 	GadgetCheckBoxSetChecked( check3DShadows, TheGlobalData->m_useShadowVolumes);
 

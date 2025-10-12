@@ -88,6 +88,7 @@
 #include "GameNetwork/GameSpyOverlay.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
 
+#include "ww3d.h"
 
 
 #if defined(RTS_DEBUG)
@@ -3785,7 +3786,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_LOD_DECREASE:
 		{
-			TheGameClient->adjustLOD(-1);
+			const Int level = clamp(0, WW3D::Get_Texture_Reduction() - 1, 4);
+			TheGameClient->setTextureLOD(level);
 			TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:DebugDecreaseLOD", L"Decrease LOD") );
 			disp = DESTROY_MESSAGE;
 			break;
@@ -3795,7 +3797,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_LOD_INCREASE:
 		{
-			TheGameClient->adjustLOD(1);
+			const Int level = clamp(0, WW3D::Get_Texture_Reduction() + 1, 4);
+			TheGameClient->setTextureLOD(level);
 			TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:DebugIncreaseLOD", L"Increase LOD") );
 			disp = DESTROY_MESSAGE;
 			break;

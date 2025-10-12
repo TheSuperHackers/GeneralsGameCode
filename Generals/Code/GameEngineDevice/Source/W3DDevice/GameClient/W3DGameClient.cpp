@@ -196,29 +196,16 @@ void W3DGameClient::setTeamColor(Int red, Int green, Int blue)
 }
 
 //-------------------------------------------------------------------------------------------------
-/** temporary entry point for adjusting LOD for development testing. */
 //-------------------------------------------------------------------------------------------------
-void W3DGameClient::adjustLOD( Int adj )
+void W3DGameClient::setTextureLOD( Int level )
 {
-	if (TheGlobalData == NULL)
-		return;
+	if (WW3D::Get_Texture_Reduction() != level)
+	{
+		WW3D::Set_Texture_Reduction(level, 6);
 
-	TheWritableGlobalData->m_textureReductionFactor += adj;
-
-	if (TheWritableGlobalData->m_textureReductionFactor > 4)
-		TheWritableGlobalData->m_textureReductionFactor = 4;	//16x less resolution is probably enough.
-	if (TheWritableGlobalData->m_textureReductionFactor < 0)
-		TheWritableGlobalData->m_textureReductionFactor = 0;
-
-	if (WW3D::Get_Texture_Reduction() != TheWritableGlobalData->m_textureReductionFactor)
-	{	WW3D::Set_Texture_Reduction(TheWritableGlobalData->m_textureReductionFactor,6);
-		TheGameLODManager->setCurrentTextureReduction(TheWritableGlobalData->m_textureReductionFactor);
+		//I commented this out because we're no longer using terrain LOD.  So I
+		//stole this function and keys to adjust the texture resolution instead. -MW
+		//if( TheTerrainRenderObject )
+		//	TheTerrainRenderObject->setTextureLOD(level);
 	}
-
-//I commented this out because we're no longer using terrain LOD.  So I
-//stole this function and keys to adjust the texture resolution instead. -MW
-
-//	if( TheTerrainRenderObject )
-//		TheTerrainRenderObject->adjustTerrainLOD( adj );
-
 }
