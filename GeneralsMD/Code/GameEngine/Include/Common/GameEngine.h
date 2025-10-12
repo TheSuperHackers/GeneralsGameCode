@@ -80,6 +80,7 @@ public:
 	virtual Int getFramesPerSecondLimit( void ); ///< Get the max render and engine update fps.
 	Real getUpdateTime(); ///< Get the last engine update delta time in seconds.
 	Real getUpdateFps(); ///< Get the last engine update fps.
+	Real getBaseOverUpdateFpsRatio(Real minUpdateFps = 5.0f); ///< Get the last engine base over update fps ratio. Used to scale user inputs to a frame rate independent speed.
 
 	static Bool isTimeFrozen(); ///< Returns true if a script has frozen time.
 	static Bool isGameHalted(); ///< Returns true if the game is paused or the network is stalling.

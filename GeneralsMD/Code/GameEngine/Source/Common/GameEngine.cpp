@@ -339,6 +339,14 @@ Real GameEngine::getUpdateFps()
 }
 
 //-------------------------------------------------------------------------------------------------
+Real GameEngine::getBaseOverUpdateFpsRatio(Real minUpdateFps)
+{
+	// TheSuperHackers @info Update fps is floored to default 5 fps, 200 ms.
+	// Useful to prevent insane ratios on frame spikes/stalls.
+	return (Real)BaseFps / std::max(getUpdateFps(), minUpdateFps);
+}
+
+//-------------------------------------------------------------------------------------------------
 Bool GameEngine::isTimeFrozen()
 {
 	// TheSuperHackers @fix The time can no longer be frozen in Network games. It would disconnect the player.
