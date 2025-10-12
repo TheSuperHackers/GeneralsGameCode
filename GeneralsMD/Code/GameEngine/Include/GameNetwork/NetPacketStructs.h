@@ -34,11 +34,6 @@
 // Common packet field structures
 ////////////////////////////////////////////////////////////////////////////////
 
-// Field header: 1-byte type identifier followed by data
-struct NetPacketFieldHeader {
-	char fieldType;  // 'T', 'R', 'P', 'F', 'C', or 'D'
-};
-
 // Command Type field: 'T' + UnsignedByte
 struct NetPacketCommandTypeField {
 	char header;              // 'T'
