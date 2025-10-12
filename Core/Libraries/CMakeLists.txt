@@ -10,3 +10,8 @@ add_subdirectory(Source/debug)
 add_subdirectory(Source/EABrowserDispatch)
 add_subdirectory(Source/EABrowserEngine)
 add_subdirectory(Source/Compression)
+
+target_include_directories(corei_libraries_include INTERFACE
+    Include
+    Include/Lib
+)

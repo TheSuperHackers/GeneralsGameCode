@@ -10,11 +10,17 @@ endif()
 target_link_libraries(g_generals PRIVATE
     binkstub
     comctl32
-    d3d8
-    d3dx8
     dbghelplib
     dinput8
     dxguid
+    # Conditionally link DirectX 9 libraries
+    if(RTS_BUILD_DIRECTX9)
+        d3d9
+        d3dx9
+    else()
+        d3d8
+        d3dx8
+    endif()
     g_gameengine
     g_gameenginedevice
     gi_always
@@ -61,7 +67,17 @@ target_include_directories(g_generals PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/Code/Libraries
+    ${CMAKE_CURRENT_SOURCE_DIR}/../Libraries/Source/WWVegas/WW3D2
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/GameEngineDevice/Include/MilesAudioDevice
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Libraries/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/GameEngine/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/GameEngine/Include/Common
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/GameEngineDevice/Include/Win32Device/Common
 )
+
+if(RTS_BUILD_DIRECTX9)
+    target_include_directories(g_generals PRIVATE ${DIRECTX_INCLUDE_DIR})
+endif()
 
 target_sources(g_generals PRIVATE
     WinMain.cpp

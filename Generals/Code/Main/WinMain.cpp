@@ -43,6 +43,7 @@
 #include "WinMain.h"
 #include "Lib/BaseType.h"
 #include "Common/CommandLine.h"
+#include "Libraries/Source/WWVegas/WW3D2/dx9wrapper.h" // Include DX9Wrapper
 #include "Common/CriticalSection.h"
 #include "Common/GlobalData.h"
 #include "Common/GameEngine.h"

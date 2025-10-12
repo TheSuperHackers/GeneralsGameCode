@@ -50,8 +50,10 @@
 #include "wwstring.h"
 #include "texturefilter.h"
 
-struct IDirect3DBaseTexture8;
-struct IDirect3DTexture8;
+#include <d3d9.h> // Include DirectX 9 headers
+
+struct IDirect3DBaseTexture9;
+struct IDirect3DTexture9;
 
 class DX8Wrapper;
 class TextureLoader;
@@ -115,7 +117,7 @@ class TextureClass : public W3DMPO, public RefCountClass
 			SurfaceClass *surface,
 			MipCountType mip_level_count=MIP_LEVELS_ALL);
 
-		TextureClass(IDirect3DTexture8* d3d_texture);
+		TextureClass(IDirect3DTexture9* d3d_texture);
 
 		virtual TexAssetType Get_Asset_Type() const { return TEX_REGULAR; }
 
@@ -176,11 +178,11 @@ class TextureClass : public W3DMPO, public RefCountClass
 		// This utility function processes the texture reduction (used during rendering)
 		void Invalidate();
 
-		IDirect3DTexture8 *Peek_D3D_Texture() const { return (IDirect3DTexture8 *)Peek_D3D_Base_Texture(); }
+		IDirect3DTexture9 *Peek_D3D_Texture() const { return (IDirect3DTexture9 *)Peek_D3D_Base_Texture(); }
 
-		// texture accessors (dx8)
-		IDirect3DBaseTexture8 *Peek_D3D_Base_Texture() const;
-		void Set_D3D_Base_Texture(IDirect3DBaseTexture8* tex);
+		// texture accessors (dx9)
+		IDirect3DBaseTexture9 *Peek_D3D_Base_Texture() const;
+		void Set_D3D_Base_Texture(IDirect3DBaseTexture9* tex);
 
 		PoolType Get_Pool() const { return Pool; }
 
@@ -196,7 +198,7 @@ class TextureClass : public W3DMPO, public RefCountClass
 		bool Is_Compression_Allowed() const { return IsCompressionAllowed; }
 
 	protected:
-		void Poke_Texture(IDirect3DBaseTexture8* tex) { D3DTexture = tex; }
+		void Poke_Texture(IDirect3DBaseTexture9* tex) { D3DTexture = tex; }
 
 		// Apply this texture's settings into D3D
 		virtual void Apply(unsigned int stage);
@@ -211,7 +213,7 @@ class TextureClass : public W3DMPO, public RefCountClass
 		TextureFilterClass Filter;
 
 		// Direct3D texture object
-		IDirect3DBaseTexture8 *D3DTexture;
+		IDirect3DBaseTexture9 *D3DTexture;
 		bool Initialized;
 
 		// Name

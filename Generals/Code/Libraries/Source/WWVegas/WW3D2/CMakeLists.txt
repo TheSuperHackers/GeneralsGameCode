@@ -233,7 +233,20 @@ set_target_properties(g_ww3d2 PROPERTIES OUTPUT_NAME ww3d2)
 
 target_sources(g_ww3d2 PRIVATE ${WW3D2_SRC})
 
+target_include_directories(g_ww3d2 PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Include/Lib
+)
+
 target_link_libraries(g_ww3d2 PRIVATE
     corei_ww3d2
     g_wwcommon
 )
+
+if(RTS_BUILD_DIRECTX9)
+    target_include_directories(g_ww3d2 PRIVATE ${DIRECTX_INCLUDE_DIR})
+endif()
+
+if(RTS_BUILD_DIRECTX9)
+    target_include_directories(g_ww3d2 PRIVATE ${DIRECTX_INCLUDE_DIR})
+endif()

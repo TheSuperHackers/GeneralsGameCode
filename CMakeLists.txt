@@ -33,17 +33,26 @@ endif()
 # Top level project, doesn't really affect anything.
 project(genzh LANGUAGES C CXX)
 
+# Define HAVE_STRLCPY, HAVE_STRLCAT, HAVE_WCSLCPY, and HAVE_WCSLCAT to prevent redefinition errors with modern GCC
+add_compile_definitions(HAVE_STRLCPY HAVE_STRLCAT HAVE_WCSLCPY HAVE_WCSLCAT)
+
 # This file handles extra settings wanted/needed for different compilers.
 include(cmake/compilers.cmake)
 
 include(FetchContent)
 
 # Find/Add build dependencies and stubs shared by all projects
+option(RTS_BUILD_DIRECTX9 "Build with DirectX 9 support" ON)
+
 if((WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows") AND ${CMAKE_SIZEOF_VOID_P} EQUAL 4)
     include(cmake/miles.cmake)
     include(cmake/bink.cmake)
-    include(cmake/dx8.cmake)
     include(cmake/dbghelp.cmake)
+    if(RTS_BUILD_DIRECTX9)
+        include(cmake/dx9.cmake)
+    else()
+        include(cmake/dx8.cmake)
+    endif()
 endif()
 
 # Define a dummy stlport target when not on VC6.

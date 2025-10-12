@@ -204,8 +204,8 @@ set(WW3D2_SRC
     #texproject.h
     #textdraw.cpp # unused
     textdraw.h
-    #texture.cpp
-    #texture.h
+    texture.cpp
+    texture.h
     #texturefilter.cpp
     #texturefilter.h
     #textureloader.cpp

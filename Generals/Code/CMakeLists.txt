@@ -21,6 +21,10 @@ target_link_libraries(gi_always INTERFACE
     corei_libraries_include
 )
 
+if(RTS_BUILD_DIRECTX9)
+    target_include_directories(gi_always INTERFACE ${DIRECTX_INCLUDE_DIR})
+endif()
+
 # Contains internal libraries
 add_subdirectory(Libraries)
 

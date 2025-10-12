@@ -217,17 +217,31 @@ target_include_directories(corei_gameenginedevice_public INTERFACE
     Include
 )
 
+if(RTS_BUILD_DIRECTX9)
+    target_include_directories(corei_gameenginedevice_public INTERFACE ${DIRECTX_INCLUDE_DIR})
+endif()
+
 target_link_libraries(corei_gameenginedevice_private INTERFACE
     corei_always
     corei_main
 )
 
+if(RTS_BUILD_DIRECTX9)
+    target_include_directories(corei_gameenginedevice_private INTERFACE ${DIRECTX_INCLUDE_DIR})
+endif()
+
 target_link_libraries(corei_gameenginedevice_public INTERFACE
     binkstub
     corei_gameengine_public
-    d3d8lib
     milesstub
 )
+
+if(RTS_BUILD_DIRECTX9)
+    add_subdirectory(Source/DX9Device)
+    target_link_libraries(corei_gameenginedevice_public INTERFACE dx9)
+else()
+    target_link_libraries(corei_gameenginedevice_public INTERFACE dx8)
+endif()
 
 if(RTS_BUILD_OPTION_FFMPEG)
     find_package(FFMPEG REQUIRED)

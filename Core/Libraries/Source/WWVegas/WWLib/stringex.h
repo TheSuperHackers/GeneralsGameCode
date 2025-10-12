@@ -123,12 +123,8 @@ template<typename T> size_t strlcat_t(T *dst, const T *src, size_t dstsize)
 	return dstlen + srclen; // length tried to create
 }
 
-#ifndef HAVE_STRLCPY
 inline size_t strlcpy(char *dst, const char *src, size_t dstsize) { return strlcpy_t(dst, src, dstsize); }
-#endif
-#ifndef HAVE_STRLCAT
 inline size_t strlcat(char *dst, const char *src, size_t dstsize) { return strlcat_t(dst, src, dstsize); }
-#endif
 inline size_t wcslcpy(wchar_t *dst, const wchar_t *src, size_t dstsize) { return strlcpy_t(dst, src, dstsize); }
 inline size_t wcslcat(wchar_t *dst, const wchar_t *src, size_t dstsize) { return strlcat_t(dst, src, dstsize); }
 
