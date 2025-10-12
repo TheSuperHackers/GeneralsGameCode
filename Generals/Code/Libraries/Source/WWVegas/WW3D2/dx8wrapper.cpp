@@ -82,6 +82,40 @@
 #include "bound.h"
 #include "dx8webbrowser.h"
 
+#include "shdlib.h"
+
+class ZTextureClass : public TextureBaseClass
+{
+public:
+	// Create a z texture with desired height, width and format
+	ZTextureClass
+	(
+		unsigned width,
+		unsigned height,
+		WW3DZFormat zformat,
+		MipCountType mip_level_count = MIP_LEVELS_ALL,
+		PoolType pool = POOL_MANAGED
+	);
+
+	WW3DZFormat Get_Texture_Format() const { return DepthStencilTextureFormat; }
+
+	virtual TexAssetType Get_Asset_Type() const { return TEX_REGULAR; }
+
+	virtual void Init() {}
+
+	// Background texture loader will call this when texture has been loaded
+	virtual void Apply_New_Surface(IDirect3DBaseTexture8* tex, bool initialized, bool disable_auto_invalidation = false);	// If the parameter is true, the texture will be flagged as initialised
+
+	virtual void Apply(unsigned int stage);
+
+	IDirect3DSurface8* Get_D3D_Surface_Level(unsigned int level = 0);
+	virtual unsigned Get_Texture_Memory_Usage() const;
+
+private:
+
+	WW3DZFormat DepthStencilTextureFormat;
+};
+
 
 const int DEFAULT_RESOLUTION_WIDTH = 640;
 const int DEFAULT_RESOLUTION_HEIGHT = 480;
@@ -126,8 +160,11 @@ LightEnvironmentClass*		DX8Wrapper::Light_Environment							= NULL;
 RenderInfoClass*				DX8Wrapper::Render_Info									= NULL;
 
 DWORD								DX8Wrapper::Vertex_Processing_Behavior				= 0;
+ZTextureClass*					DX8Wrapper::Shadow_Map[MAX_SHADOW_MAPS];
+
 Vector3							DX8Wrapper::Ambient_Color;
 // shader system additions KJM ^
+
 bool								DX8Wrapper::world_identity;
 unsigned							DX8Wrapper::RenderStates[256];
 unsigned							DX8Wrapper::TextureStageStates[MAX_TEXTURE_STAGES][32];
@@ -262,8 +299,15 @@ bool DX8Wrapper::Init(void * hwnd, bool lite)
 {
 	WWASSERT(!IsInitted);
 
+	// zero memory
+	memset(Textures,0,sizeof(IDirect3DBaseTexture8*)*MAX_TEXTURE_STAGES);
+	memset(RenderStates,0,sizeof(unsigned)*256);
+	memset(TextureStageStates,0,sizeof(unsigned)*32*MAX_TEXTURE_STAGES);
 	memset(Vertex_Shader_Constants,0,sizeof(Vector4)*MAX_VERTEX_SHADER_CONSTANTS);
 	memset(Pixel_Shader_Constants,0,sizeof(Vector4)*MAX_PIXEL_SHADER_CONSTANTS);
+	memset(&render_state,0,sizeof(RenderStateStruct));
+	memset(Shadow_Map,0,sizeof(ZTextureClass*)*MAX_SHADOW_MAPS);
+
 	/*
 	** Initialize all variables!
 	*/
@@ -276,7 +320,7 @@ bool DX8Wrapper::Init(void * hwnd, bool lite)
 	// Initialize Render2DClass Screen Resolution
 	Render2DClass::Set_Screen_Resolution( RectClass( 0, 0, ResolutionWidth, ResolutionHeight ) );
 	BitDepth = DEFAULT_BIT_DEPTH;
-	IsWindowed = false;
+	IsWindowed = false;	
 	DX8Wrapper_IsWindowed = false;
 
 	for (int light=0;light<4;++light) CurrentDX8LightEnables[light]=false;
@@ -346,9 +390,9 @@ void DX8Wrapper::Shutdown(void)
 	if (CurrentCaps)
 	{
 		int max=CurrentCaps->Get_Max_Textures_Per_Pass();
-		for (int i = 0; i < max; i++)
+		for (int i = 0; i < max; i++) 
 		{
-			if (Textures[i])
+			if (Textures[i]) 
 			{
 				Textures[i]->Release();
 				Textures[i] = NULL;
@@ -368,7 +412,7 @@ void DX8Wrapper::Shutdown(void)
 
 	_RenderDeviceNameTable.Clear();		 // note - Delete_All() resizes the vector, causing a reallocation.  Clear is better. jba.
 	_RenderDeviceShortNameTable.Clear();
-	_RenderDeviceDescriptionTable.Clear();
+	_RenderDeviceDescriptionTable.Clear();	
 
 	DX8Caps::Shutdown();
 	IsInitted = false;		// 010803 srj
@@ -385,8 +429,9 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Inits(void)
 	** Initalize any other subsystems inside of WW3D
 	*/
 	MissingTexture::_Init();
-	TextureFilterClass::_Init_Filters();
+	TextureFilterClass::_Init_Filters((TextureFilterClass::TextureFilterMode)WW3D::Get_Texture_Filter());
 	TheDX8MeshRenderer.Init();
+	SHD_INIT;
 	BoxRenderObjClass::Init();
 	VertexMaterialClass::Init();
 	PointGroupClass::_Init(); // This needs the VertexMaterialClass to be initted
@@ -474,8 +519,10 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Shutdowns(void)
 	** Shutdown ww3d systems
 	*/
 	int i;
-	if (render_state.vertex_buffer) render_state.vertex_buffer->Release_Engine_Ref();
-	REF_PTR_RELEASE(render_state.vertex_buffer);
+	for (i=0;i<MAX_VERTEX_STREAMS;++i) {
+		if (render_state.vertex_buffers[i]) render_state.vertex_buffers[i]->Release_Engine_Ref();
+		REF_PTR_RELEASE(render_state.vertex_buffers[i]);
+	}
 	if (render_state.index_buffer) render_state.index_buffer->Release_Engine_Ref();
 	REF_PTR_RELEASE(render_state.index_buffer);
 	REF_PTR_RELEASE(render_state.material);
@@ -490,6 +537,7 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Shutdowns(void)
 	PointGroupClass::_Shutdown();
 	VertexMaterialClass::Shutdown();
 	BoxRenderObjClass::Shutdown();
+	SHD_SHUTDOWN;
 	TheDX8MeshRenderer.Shutdown();
 	MissingTexture::_Deinit();
 
@@ -639,8 +687,11 @@ void DX8Wrapper::Release_Device(void)
 		/*
 		** Release the current vertex and index buffers
 		*/
-		if (render_state.vertex_buffer) render_state.vertex_buffer->Release_Engine_Ref();
-		REF_PTR_RELEASE(render_state.vertex_buffer);
+		for (unsigned i=0;i<MAX_VERTEX_STREAMS;++i) 
+		{
+			if (render_state.vertex_buffers[i]) render_state.vertex_buffers[i]->Release_Engine_Ref();
+			REF_PTR_RELEASE(render_state.vertex_buffers[i]);
+		}
 		if (render_state.index_buffer) render_state.index_buffer->Release_Engine_Ref();
 		REF_PTR_RELEASE(render_state.index_buffer);
 
@@ -830,7 +881,7 @@ void DX8Wrapper::Resize_And_Position_Window()
 	// Is the window the correct size for this resolution?
 	if ((rect.right-rect.left) != ResolutionWidth ||
 			(rect.bottom-rect.top) != ResolutionHeight) {
-
+			
 		// Calculate what the main window's bounding rectangle should be to
 		// accommodate this resolution
 		rect.left = 0;
@@ -1711,20 +1762,20 @@ void DX8Wrapper::Set_Viewport(CONST D3DVIEWPORT8* pViewport)
 //
 // ----------------------------------------------------------------------------
 
-void DX8Wrapper::Set_Vertex_Buffer(const VertexBufferClass* vb)
+void DX8Wrapper::Set_Vertex_Buffer(const VertexBufferClass* vb, unsigned stream)
 {
 	render_state.vba_offset=0;
 	render_state.vba_count=0;
-	if (render_state.vertex_buffer) {
-		render_state.vertex_buffer->Release_Engine_Ref();
+	if (render_state.vertex_buffers[stream]) {
+		render_state.vertex_buffers[stream]->Release_Engine_Ref();
 	}
-	REF_PTR_SET(render_state.vertex_buffer,const_cast<VertexBufferClass*>(vb));
+	REF_PTR_SET(render_state.vertex_buffers[stream], const_cast<VertexBufferClass*>(vb));
 	if (vb) {
 		vb->Add_Engine_Ref();
-		render_state.vertex_buffer_type=vb->Type();
+		render_state.vertex_buffer_types[stream]=vb->Type();
 	}
 	else {
-		render_state.index_buffer_type=BUFFER_TYPE_INVALID;
+		render_state.vertex_buffer_types[stream]=BUFFER_TYPE_INVALID;
 	}
 	render_state_changed|=VERTEX_BUFFER_CHANGED;
 }
@@ -1763,14 +1814,18 @@ void DX8Wrapper::Set_Index_Buffer(const IndexBufferClass* ib,unsigned short inde
 
 void DX8Wrapper::Set_Vertex_Buffer(const DynamicVBAccessClass& vba_)
 {
-	if (render_state.vertex_buffer) render_state.vertex_buffer->Release_Engine_Ref();
+	// Release all streams (only one stream allowed in the legacy pipeline)
+	for (int i=1;i<MAX_VERTEX_STREAMS;++i) {
+		DX8Wrapper::Set_Vertex_Buffer(NULL, i);
+	}
 
+	if (render_state.vertex_buffers[0]) render_state.vertex_buffers[0]->Release_Engine_Ref();
 	DynamicVBAccessClass& vba=const_cast<DynamicVBAccessClass&>(vba_);
-	render_state.vertex_buffer_type=vba.Get_Type();
+	render_state.vertex_buffer_types[0]=vba.Get_Type();
 	render_state.vba_offset=vba.VertexBufferOffset;
 	render_state.vba_count=vba.Get_Vertex_Count();
-	REF_PTR_SET(render_state.vertex_buffer,vba.VertexBuffer);
-	render_state.vertex_buffer->Add_Engine_Ref();
+	REF_PTR_SET(render_state.vertex_buffers[0],vba.VertexBuffer);
+	render_state.vertex_buffers[0]->Add_Engine_Ref();
 	render_state_changed|=VERTEX_BUFFER_CHANGED;
 	render_state_changed|=INDEX_BUFFER_CHANGED;		// vba_offset changes so index buffer needs to be reset as well.
 }
@@ -1808,14 +1863,14 @@ void DX8Wrapper::Draw_Sorting_IB_VB(
 	unsigned short min_vertex_index,
 	unsigned short vertex_count)
 {
-	WWASSERT(render_state.vertex_buffer_type==BUFFER_TYPE_SORTING || render_state.vertex_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING);
+	WWASSERT(render_state.vertex_buffer_types[0]==BUFFER_TYPE_SORTING || render_state.vertex_buffer_types[0]==BUFFER_TYPE_DYNAMIC_SORTING);
 	WWASSERT(render_state.index_buffer_type==BUFFER_TYPE_SORTING || render_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING);
 
 	// Fill dynamic vertex buffer with sorting vertex buffer vertices
 	DynamicVBAccessClass dyn_vb_access(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,vertex_count);
 	{
 		DynamicVBAccessClass::WriteLockClass lock(&dyn_vb_access);
-		VertexFormatXYZNDUV2* src = static_cast<SortingVertexBufferClass*>(render_state.vertex_buffer)->VertexBuffer;
+		VertexFormatXYZNDUV2* src = static_cast<SortingVertexBufferClass*>(render_state.vertex_buffers[0])->VertexBuffer;
 		VertexFormatXYZNDUV2* dest= lock.Get_Formatted_Vertex_Array();
 		src += render_state.vba_offset + render_state.index_base_offset + min_vertex_index;
 		unsigned  size = dyn_vb_access.FVF_Info().Get_FVF_Size()*vertex_count/sizeof(unsigned);
@@ -1831,7 +1886,11 @@ void DX8Wrapper::Draw_Sorting_IB_VB(
 		0,
 		static_cast<DX8VertexBufferClass*>(dyn_vb_access.VertexBuffer)->Get_DX8_Vertex_Buffer(),
 		dyn_vb_access.FVF_Info().Get_FVF_Size()));
-	DX8CALL(SetVertexShader(dyn_vb_access.FVF_Info().Get_FVF()));
+	// If using FVF format VB, set the FVF as vertex shader (may not be needed here KM)
+	unsigned fvf=dyn_vb_access.FVF_Info().Get_FVF();
+	if (fvf!=0) {
+		DX8CALL(SetVertexShader(fvf));
+	}
 	DX8_RECORD_VERTEX_BUFFER_CHANGE();
 
 	unsigned index_count=0;
@@ -1953,10 +2012,10 @@ void DX8Wrapper::Draw(
 
 	if (vertex_count<3) {
 		min_vertex_index=0;
-		switch (render_state.vertex_buffer_type) {
+		switch (render_state.vertex_buffer_types[0]) {
 		case BUFFER_TYPE_DX8:
 		case BUFFER_TYPE_SORTING:
-			vertex_count=render_state.vertex_buffer->Get_Vertex_Count()-render_state.index_base_offset-render_state.vba_offset-min_vertex_index;
+			vertex_count=render_state.vertex_buffers[0]->Get_Vertex_Count()-render_state.index_base_offset-render_state.vba_offset-min_vertex_index;
 			break;
 		case BUFFER_TYPE_DYNAMIC_DX8:
 		case BUFFER_TYPE_DYNAMIC_SORTING:
@@ -1965,7 +2024,7 @@ void DX8Wrapper::Draw(
 		}
 	}
 
-	switch (render_state.vertex_buffer_type) {
+	switch (render_state.vertex_buffer_types[0]) {
 	case BUFFER_TYPE_DX8:
 	case BUFFER_TYPE_DYNAMIC_DX8:
 		switch (render_state.index_buffer_type) {
@@ -2159,26 +2218,34 @@ void DX8Wrapper::Apply_Render_State_Changes()
 	}
 	if (render_state_changed&VERTEX_BUFFER_CHANGED) {
 		SNAPSHOT_SAY(("DX8 - apply vb change"));
-		if (render_state.vertex_buffer) {
-			switch (render_state.vertex_buffer_type) {//->Type()) {
-			case BUFFER_TYPE_DX8:
-			case BUFFER_TYPE_DYNAMIC_DX8:
-				DX8CALL(SetStreamSource(
-					0,
-					static_cast<DX8VertexBufferClass*>(render_state.vertex_buffer)->Get_DX8_Vertex_Buffer(),
-					render_state.vertex_buffer->FVF_Info().Get_FVF_Size()));
+		for (i=0;i<MAX_VERTEX_STREAMS;++i) {
+			if (render_state.vertex_buffers[i]) {
+				switch (render_state.vertex_buffer_types[i]) {//->Type()) {
+				case BUFFER_TYPE_DX8:
+				case BUFFER_TYPE_DYNAMIC_DX8:
+					DX8CALL(SetStreamSource(
+						i,
+						static_cast<DX8VertexBufferClass*>(render_state.vertex_buffers[i])->Get_DX8_Vertex_Buffer(),
+						render_state.vertex_buffers[i]->FVF_Info().Get_FVF_Size()));
+					DX8_RECORD_VERTEX_BUFFER_CHANGE();
+					{
+						// If the VB format is FVF, set the FVF as a vertex shader
+						unsigned fvf=render_state.vertex_buffers[i]->FVF_Info().Get_FVF();
+						if (fvf!=0) {
+							Set_Vertex_Shader(fvf);
+						}
+					}
+					break;
+				case BUFFER_TYPE_SORTING:
+				case BUFFER_TYPE_DYNAMIC_SORTING:
+					break;
+				default:
+					WWASSERT(0);
+				}
+			} else {
+				DX8CALL(SetStreamSource(i,NULL,0));
 				DX8_RECORD_VERTEX_BUFFER_CHANGE();
-				DX8CALL(SetVertexShader(render_state.vertex_buffer->FVF_Info().Get_FVF()));
-				break;
-			case BUFFER_TYPE_SORTING:
-			case BUFFER_TYPE_DYNAMIC_SORTING:
-				break;
-			default:
-				WWASSERT(0);
 			}
-		} else {
-			DX8CALL(SetStreamSource(0,NULL,0));
-			DX8_RECORD_VERTEX_BUFFER_CHANGE();
 		}
 	}
 	if (render_state_changed&INDEX_BUFFER_CHANGED) {
@@ -2404,7 +2471,7 @@ IDirect3DSurface8 * DX8Wrapper::_Create_DX8_Surface(const char *filename_)
 			strncpy(compressed_name,filename_, ARRAY_SIZE(compressed_name));
 			compressed_name[ARRAY_SIZE(compressed_name)-1] = '\0';
 			char *ext = strstr(compressed_name, ".");
-			if ( ext && (strlen(ext)==4) &&
+			if ( ext && (strlen(ext)==4) && 
 				  ( (ext[1] == 't') || (ext[1] == 'T') ) &&
 				  ( (ext[2] == 'g') || (ext[2] == 'G') ) &&
 				  ( (ext[3] == 'a') || (ext[3] == 'A') ) ) {
