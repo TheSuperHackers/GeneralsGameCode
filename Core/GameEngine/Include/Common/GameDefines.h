@@ -86,6 +86,14 @@
 #define ENABLE_GUI_HACKS (1)
 #endif
 
+// Tell our computer identity in the LAN lobby. Disable for privacy.
+// Was enabled in the retail game and exposed the computer login and host names.
+#ifdef RTS_DEBUG
+#ifndef TELL_COMPUTER_IDENTITY_IN_LAN_LOBBY
+#define TELL_COMPUTER_IDENTITY_IN_LAN_LOBBY (1)
+#endif
+#endif
+
 #define MIN_DISPLAY_BIT_DEPTH       16
 #define DEFAULT_DISPLAY_BIT_DEPTH   32
 #define DEFAULT_DISPLAY_WIDTH      800 // The standard resolution this game was designed for
