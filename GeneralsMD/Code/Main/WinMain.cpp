@@ -804,7 +804,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 {
 	Int exitcode = 1;
 //#ifdef _DEBUG
- // 	WaitForDebugger(); //in debug build, wait for debugger attachment
+//	WaitForDebugger(); //in debug build, wait for debugger attachment
 //#endif
 
 #ifdef RTS_PROFILE
