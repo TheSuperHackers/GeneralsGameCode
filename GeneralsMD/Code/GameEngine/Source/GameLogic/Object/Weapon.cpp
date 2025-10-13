@@ -245,6 +245,7 @@ const FieldParse WeaponTemplate::TheWeaponTemplateFieldParseTable[] =
 	{ "ScatterTargetMinScalar", INI::parseReal, NULL, offsetof(WeaponTemplate, m_scatterTargetMinScalar) },
 	{ "ScatterTargetCenteredAtShooter", INI::parseBool, NULL, offsetof(WeaponTemplate, m_scatterTargetCenteredAtShooter) },
 	{ "ScatterTargetResetTime", INI::parseDurationUnsignedInt, NULL, offsetof(WeaponTemplate, m_scatterTargetResetTime) },
+	{ "ScatterTargetResetRecenter", INI::parseBool, NULL, offsetof(WeaponTemplate, m_scatterTargetResetRecenter) },
 	{ "PreAttackFX", parseAllVetLevelsFXList, NULL,	offsetof(WeaponTemplate, m_preAttackFXs) },
 	{ "VeterancyPreAttackFX", parsePerVetLevelFXList, NULL, offsetof(WeaponTemplate, m_preAttackFXs) },
 	{ "PreAttackFXDelay",						INI::parseDurationUnsignedInt,					NULL,							offsetof(WeaponTemplate, m_preAttackFXDelay) },
@@ -2017,15 +2018,29 @@ void Weapon::setClipPercentFull(Real percent, Bool allowReduction)
 }
 
 //-------------------------------------------------------------------------------------------------
-void Weapon::rebuildScatterTargets()
+void Weapon::rebuildScatterTargets(Bool recenter/* = false*/)
 {
 	m_scatterTargetsUnused.clear();
 	Int scatterTargetsCount = m_template->getScatterTargetsVector().size();
 	if (scatterTargetsCount)
 	{
-		// When I reload, I need to rebuild the list of ScatterTargets to shoot at.
-		for (Int targetIndex = scatterTargetsCount - 1; targetIndex >= 0; targetIndex--)
-			m_scatterTargetsUnused.push_back(targetIndex);
+		if (recenter && m_ammoInClip > 0 && m_ammoInClip < m_template->getClipSize() && m_template->getClipSize() > 0) {
+			// Recenter case is relevant when we have "sweep" target set up in a line around the target.
+			// When we reset, we want to keep the next shots around the target, which would be the
+			// indices in the center of the list.
+			UnsignedInt startIndex = REAL_TO_INT_FLOOR((m_template->getClipSize() - m_ammoInClip) / 2);
+			for (Int targetIndex = startIndex + m_ammoInClip - 1; targetIndex >= startIndex; targetIndex--) {
+				m_scatterTargetsUnused.push_back(targetIndex);
+			}
+			// TODO: Crash
+			// Is there any need to fill up the rest of the targets?
+		}
+		else {
+			// When I reload, I need to rebuild the list of ScatterTargets to shoot at.
+			for (Int targetIndex = scatterTargetsCount - 1; targetIndex >= 0; targetIndex--)
+				m_scatterTargetsUnused.push_back(targetIndex);
+		}
+
 
 		if (m_template->isScatterTargetRandomAngle()) {
 			m_scatterTargetsAngle = GameLogicRandomValueReal(0, PI * 2);
@@ -2805,7 +2820,7 @@ Bool Weapon::privateFireWeapon(
 			if (m_template->getScatterTargetResetTime() > 0) {
 				UnsignedInt frameNow = TheGameLogic->getFrame();
 				if (m_lastFireFrame + m_template->getScatterTargetResetTime() < frameNow) {
-					rebuildScatterTargets();
+					rebuildScatterTargets(m_template->isScatterTargetResetRecenter());
 				}
 			}
 
