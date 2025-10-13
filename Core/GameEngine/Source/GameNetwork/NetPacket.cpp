@@ -364,10 +364,10 @@ UnsignedInt NetPacket::GetGameCommandSize(NetCommandMsg *msg) {
 
 	msglen += sizeof(GameMessage::Type);
 	msglen += sizeof(UnsignedByte);
-	
+
 	GameMessageParserArgumentType *arg = parser->getFirstArgumentType();
 	while (arg != NULL) {
-		msglen += 2 * sizeof(UnsignedByte); // type and count
+		msglen += 2 * sizeof(UnsignedByte); // for the type and number of args of that type declaration.
 		GameMessageArgumentDataType type = arg->getType();
 
 		switch (type) {
@@ -476,8 +476,7 @@ UnsignedInt NetPacket::GetDisconnectVoteCommandSize(NetCommandMsg *msg) {
 
 UnsignedInt NetPacket::GetChatCommandSize(NetCommandMsg *msg) {
 	NetChatCommandMsg *cmdMsg = static_cast<NetChatCommandMsg*>(msg);
-	UnsignedByte textmsglen = cmdMsg->getText().getLength();
-	return sizeof(NetPacketChatCommandHeader) + (textmsglen * sizeof(UnsignedShort)) + sizeof(Int);
+	return sizeof(NetPacketChatCommandHeader) + cmdMsg->getByteCount();
 }
 
 UnsignedInt NetPacket::GetProgressMessageSize(NetCommandMsg *msg) {
@@ -499,17 +498,17 @@ UnsignedInt NetPacket::GetWrapperCommandSize(NetCommandMsg *msg) {
 UnsignedInt NetPacket::GetFileCommandSize(NetCommandMsg *msg) {
 	NetFileCommandMsg *filemsg = (NetFileCommandMsg *)msg;
 	return sizeof(NetPacketFileCommandHeader) 
-		+ filemsg->getPortableFilename().getLength() + 1  // filename + null terminator
-		+ sizeof(UnsignedInt)  // file data length field
-		+ filemsg->getFileLength();  // actual file data
+		+ filemsg->getPortableFilename().getLength() + 1  // PORTABLE filename and the terminating 0
+		+ sizeof(UnsignedInt)  // file data length
+		+ filemsg->getFileLength();  // the file data
 }
 
 UnsignedInt NetPacket::GetFileAnnounceCommandSize(NetCommandMsg *msg) {
 	NetFileAnnounceCommandMsg *filemsg = (NetFileAnnounceCommandMsg *)msg;
 	return sizeof(NetPacketFileAnnounceCommandHeader)
-		+ filemsg->getPortableFilename().getLength() + 1  // filename + null terminator
-		+ sizeof(UnsignedShort)  // file ID
-		+ sizeof(UnsignedByte);  // player mask
+		+ filemsg->getPortableFilename().getLength() + 1  // PORTABLE filename and the terminating 0
+		+ sizeof(UnsignedShort)  // m_fileID
+		+ sizeof(UnsignedByte);  // m_playerMask
 }
 
 UnsignedInt NetPacket::GetFileProgressCommandSize(NetCommandMsg *msg) {
@@ -2279,7 +2278,7 @@ Bool NetPacket::isRoomForFileMessage(NetCommandRef *msg) {
 		len += sizeof(UnsignedByte) + sizeof(UnsignedShort);
 	}
 
-	++len; // NetPacketFieldTypes::Data
+	++len; // for NetPacketFieldTypes::Data
 	len += cmdMsg->getPortableFilename().getLength() + 1; // PORTABLE filename + the terminating 0
 	len += sizeof(UnsignedInt); // filedata length
 	len += cmdMsg->getFileLength();
@@ -2386,7 +2385,7 @@ Bool NetPacket::isRoomForFileAnnounceMessage(NetCommandRef *msg) {
 		len += sizeof(UnsignedByte) + sizeof(UnsignedShort);
 	}
 
-	++len; // NetPacketFieldTypes::Data
+	++len; // for NetPacketFieldTypes::Data
 	len += cmdMsg->getPortableFilename().getLength() + 1; // PORTABLE filename + the terminating 0
 	len += sizeof(UnsignedShort); // m_fileID
 	len += sizeof(UnsignedByte); // m_playerMask
@@ -2486,7 +2485,7 @@ Bool NetPacket::isRoomForFileProgressMessage(NetCommandRef *msg) {
 		len += sizeof(UnsignedByte) + sizeof(UnsignedShort);
 	}
 
-	++len; // NetPacketFieldTypes::Data
+	++len; // for NetPacketFieldTypes::Data
 	len += sizeof(UnsignedShort); // m_fileID
 	len += sizeof(Int); // m_progress
 
@@ -2616,7 +2615,7 @@ Bool NetPacket::isRoomForWrapperMessage(NetCommandRef *msg) {
 		len += sizeof(UnsignedByte) + sizeof(UnsignedShort);
 	}
 
-	++len; // NetPacketFieldTypes::Data
+	++len; // for NetPacketFieldTypes::Data
 	len += sizeof(UnsignedShort); // wrapped command ID
 	len += sizeof(UnsignedInt); // chunk number
 	len += sizeof(UnsignedInt); // number of chunks
@@ -2715,7 +2714,7 @@ Bool NetPacket::isRoomForTimeOutGameStartMessage(NetCommandRef *msg) {
 		len += sizeof(UnsignedByte);
 	}
 
-	++len; // For the NetPacketFieldTypes::Data
+	++len; // for NetPacketFieldTypes::Data
 	if ((len + m_packetLen) > MAX_PACKET_SIZE) {
 		return FALSE;
 	}
@@ -2807,7 +2806,7 @@ Bool NetPacket::isRoomForLoadCompleteMessage(NetCommandRef *msg) {
 		len += sizeof(UnsignedByte);
 	}
 
-	++len; // For the NetPacketFieldTypes::Data
+	++len; // for NetPacketFieldTypes::Data
 	if ((len + m_packetLen) > MAX_PACKET_SIZE) {
 		return FALSE;
 	}
@@ -2891,7 +2890,7 @@ Bool NetPacket::isRoomForProgressMessage(NetCommandRef *msg) {
 		len += sizeof(UnsignedByte);
 	}
 
-	++len; // For the NetPacketFieldTypes::Data
+	++len; // for NetPacketFieldTypes::Data
 	++len; // percentage
 	if ((len + m_packetLen) > MAX_PACKET_SIZE) {
 		return FALSE;
@@ -3002,7 +3001,7 @@ Bool NetPacket::isRoomForDisconnectVoteMessage(NetCommandRef *msg) {
 		len += sizeof(UnsignedShort) + sizeof(UnsignedByte);
 	}
 
-	++len; // the NetPacketFieldTypes::Data
+	++len; // for NetPacketFieldTypes::Data
 	len += sizeof(UnsignedByte); // slot number
 	len += sizeof(UnsignedInt); // vote frame
 
@@ -3091,7 +3090,7 @@ Bool NetPacket::isRoomForDisconnectChatMessage(NetCommandRef *msg) {
 		len += sizeof(UnsignedByte);
 	}
 
-	++len; // the NetPacketFieldTypes::Data
+	++len; // for NetPacketFieldTypes::Data
 	len += sizeof(UnsignedByte); // string length
 	UnsignedByte textLen = cmdMsg->getText().getLength();
 	len += textLen * sizeof(UnsignedShort);
@@ -3214,7 +3213,7 @@ Bool NetPacket::isRoomForChatMessage(NetCommandRef *msg) {
 		len += sizeof(UnsignedShort) + sizeof(UnsignedByte);
 	}
 
-	++len; // the NetPacketFieldTypes::Data
+	++len; // for NetPacketFieldTypes::Data
 	len += sizeof(UnsignedByte); // string length
 	UnsignedByte textLen = cmdMsg->getText().getLength();
 	len += textLen * sizeof(UnsignedShort);
@@ -3298,7 +3297,7 @@ Bool NetPacket::isRoomForPacketRouterAckMessage(NetCommandRef *msg) {
 		len += sizeof(UnsignedByte);
 	}
 
-	++len; // the NetPacketFieldTypes::Data
+	++len; // for NetPacketFieldTypes::Data
 	if ((len + m_packetLen) > MAX_PACKET_SIZE) {
 		return FALSE;
 	}
@@ -3378,7 +3377,7 @@ Bool NetPacket::isRoomForPacketRouterQueryMessage(NetCommandRef *msg) {
 		len += sizeof(UnsignedByte);
 	}
 
-	++len; // the NetPacketFieldTypes::Data
+	++len; // for NetPacketFieldTypes::Data
 	if ((len + m_packetLen) > MAX_PACKET_SIZE) {
 		return FALSE;
 	}
@@ -3486,7 +3485,7 @@ Bool NetPacket::isRoomForDisconnectPlayerMessage(NetCommandRef *msg) {
 		len += sizeof(UnsignedShort) + sizeof(UnsignedByte);
 	}
 
-	++len; // the NetPacketFieldTypes::Data
+	++len; // for NetPacketFieldTypes::Data
 	len += sizeof(UnsignedByte); // slot number
 	len += sizeof(UnsignedInt);	// disconnectFrame
 	if ((len + m_packetLen) > MAX_PACKET_SIZE) {
@@ -3567,7 +3566,7 @@ Bool NetPacket::isRoomForDisconnectKeepAliveMessage(NetCommandRef *msg) {
 		len += sizeof(UnsignedByte);
 	}
 
-	++len; // For the NetPacketFieldTypes::Data
+	++len; // for NetPacketFieldTypes::Data
 	if ((len + m_packetLen) > MAX_PACKET_SIZE) {
 		return FALSE;
 	}
@@ -3645,7 +3644,7 @@ Bool NetPacket::isRoomForKeepAliveMessage(NetCommandRef *msg) {
 		len += sizeof(UnsignedByte);
 	}
 
-	++len; // For the NetPacketFieldTypes::Data
+	++len; // for NetPacketFieldTypes::Data
 	if ((len + m_packetLen) > MAX_PACKET_SIZE) {
 		return FALSE;
 	}
@@ -3994,7 +3993,7 @@ Bool NetPacket::isRoomForRunAheadMetricsMessage(NetCommandRef *msg) {
 		len += sizeof(UnsignedShort) + sizeof(UnsignedByte);
 	}
 
-	++len; // NetPacketFieldTypes::Data
+	++len; // for NetPacketFieldTypes::Data
 	len += sizeof(UnsignedShort);
 	len += sizeof(Real);
 	if ((len + m_packetLen) > MAX_PACKET_SIZE) {
