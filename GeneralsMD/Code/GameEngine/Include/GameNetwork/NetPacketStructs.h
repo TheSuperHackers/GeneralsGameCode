@@ -30,43 +30,67 @@
 // Ensure structs are packed to 1-byte alignment for network protocol compatibility
 #pragma pack(push, 1)
 
+// Network packet field type definitions
+typedef UnsignedByte NetPacketFieldType;
+
+namespace NetPacketFieldTypes {
+	constexpr const NetPacketFieldType CommandType = 'T';		// NetCommandType field
+	constexpr const NetPacketFieldType Relay = 'R';				// Relay field
+	constexpr const NetPacketFieldType PlayerId = 'P';			// Player ID field
+	constexpr const NetPacketFieldType CommandId = 'C';			// Command ID field
+	constexpr const NetPacketFieldType Frame = 'F';				// Frame field
+	constexpr const NetPacketFieldType Data = 'D';				// Data payload field
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Common packet field structures
 ////////////////////////////////////////////////////////////////////////////////
 
 // Command Type field: 'T' + UnsignedByte
 struct NetPacketCommandTypeField {
-	char header;              // 'T'
+	const NetPacketFieldType type;    // 'T'
 	UnsignedByte commandType;
+
+	NetPacketCommandTypeField() : type(NetPacketFieldTypes::CommandType) {}
 };
 
 // Relay field: 'R' + UnsignedByte
 struct NetPacketRelayField {
-	char header;              // 'R'
+	const NetPacketFieldType type;    // 'R'
 	UnsignedByte relay;
+
+	NetPacketRelayField() : type(NetPacketFieldTypes::Relay) {}
 };
 
 // Player ID field: 'P' + UnsignedByte
 struct NetPacketPlayerIdField {
-	char header;              // 'P'
+	const NetPacketFieldType type;    // 'P'
 	UnsignedByte playerId;
+
+	NetPacketPlayerIdField() : type(NetPacketFieldTypes::PlayerId) {}
 };
 
 // Frame field: 'F' + UnsignedInt
 struct NetPacketFrameField {
-	char header;              // 'F'
+	const NetPacketFieldType type;    // 'F'
 	UnsignedInt frame;
+
+	NetPacketFrameField() : type(NetPacketFieldTypes::Frame) {}
 };
 
 // Command ID field: 'C' + UnsignedShort
 struct NetPacketCommandIdField {
-	char header;              // 'C'
+	const NetPacketFieldType type;    // 'C'
 	UnsignedShort commandId;
+
+	NetPacketCommandIdField() : type(NetPacketFieldTypes::CommandId) {}
 };
 
 // Data field header: 'D' (followed by variable-length data)
 struct NetPacketDataFieldHeader {
-	char header;              // 'D'
+	const NetPacketFieldType type;    // 'D'
+
+	NetPacketDataFieldHeader() : type(NetPacketFieldTypes::Data) {}
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -372,4 +396,86 @@ struct NetPacketFrameResendRequestCommand {
 
 // Restore normal struct packing
 #pragma pack(pop)
+
+////////////////////////////////////////////////////////////////////////////////
+// Static Assert Tests - Verify struct sizes match original manual calculations
+// These tests ensure the refactor maintains exact compatibility
+////////////////////////////////////////////////////////////////////////////////
+
+// Test function for Frame Resend Request Command
+constexpr UnsignedInt GetFrameResendRequestCommandSize()
+{
+	UnsignedInt msglen = 0;
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::CommandType and command type
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::PlayerId and player ID
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedShort); // NetPacketFieldTypes::CommandId and command ID
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::Relay and relay
+
+	++msglen; // NetPacketFieldTypes::Data
+	msglen += sizeof(UnsignedInt); // frame to resend
+
+	return msglen;
+}
+
+// Test function for ACK Command
+constexpr UnsignedInt GetAckCommandSize()
+{
+	UnsignedInt msglen = 0;
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::CommandType and command type
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::PlayerId and player ID
+	++msglen; // NetPacketFieldTypes::Data
+	msglen += sizeof(UnsignedShort); // command ID being acknowledged
+	msglen += sizeof(UnsignedByte);  // original player ID
+
+	return msglen;
+}
+
+// Test function for Frame Command
+constexpr UnsignedInt GetFrameCommandSize()
+{
+	UnsignedInt msglen = 0;
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::CommandType and command type
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::Relay and relay
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedInt);	// NetPacketFieldTypes::Frame and frame
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::PlayerId and player ID
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedShort); // NetPacketFieldTypes::CommandId and command ID
+	++msglen; // NetPacketFieldTypes::Data
+	msglen += sizeof(UnsignedShort); // command count
+
+	return msglen;
+}
+
+// Test function for Player Leave Command
+constexpr UnsignedInt GetPlayerLeaveCommandSize()
+{
+	UnsignedInt msglen = 0;
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::CommandType and command type
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::Relay and relay
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedInt);	// NetPacketFieldTypes::Frame and frame
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::PlayerId and player ID
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedShort); // NetPacketFieldTypes::CommandId and command ID
+	++msglen; // NetPacketFieldTypes::Data
+	msglen += sizeof(UnsignedByte); // leaving player ID
+
+	return msglen;
+}
+
+// Test function for Keep Alive Command
+constexpr UnsignedInt GetKeepAliveCommandSize()
+{
+	UnsignedInt msglen = 0;
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::CommandType and command type
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::Relay and relay
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::PlayerId and player ID
+	++msglen; // NetPacketFieldTypes::Data
+
+	return msglen;
+}
+
+// Static assertions to verify sizes match
+static_assert(GetFrameResendRequestCommandSize() == sizeof(NetPacketFrameResendRequestCommand), "FrameResendRequestCommand size mismatch");
+static_assert(GetAckCommandSize() == sizeof(NetPacketAckCommand), "AckCommand size mismatch");
+static_assert(GetFrameCommandSize() == sizeof(NetPacketFrameCommand), "FrameCommand size mismatch");
+static_assert(GetPlayerLeaveCommandSize() == sizeof(NetPacketPlayerLeaveCommand), "PlayerLeaveCommand size mismatch");
+static_assert(GetKeepAliveCommandSize() == sizeof(NetPacketKeepAliveCommand), "KeepAliveCommand size mismatch");
 
