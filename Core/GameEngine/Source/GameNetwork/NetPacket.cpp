@@ -465,7 +465,7 @@ UnsignedInt NetPacket::GetPacketRouterAckCommandSize(NetCommandMsg *msg) {
 }
 
 UnsignedInt NetPacket::GetDisconnectChatCommandSize(NetCommandMsg *msg) {
-	NetDisconnectChatCommandMsg *cmdMsg = (NetDisconnectChatCommandMsg *)(msg);
+	NetDisconnectChatCommandMsg *cmdMsg = static_cast<NetDisconnectChatCommandMsg*>(msg);
 	UnsignedByte textmsglen = cmdMsg->getText().getLength();
 	return sizeof(NetPacketDisconnectChatCommandHeader) + (textmsglen * sizeof(UnsignedShort));
 }
@@ -475,7 +475,7 @@ UnsignedInt NetPacket::GetDisconnectVoteCommandSize(NetCommandMsg *msg) {
 }
 
 UnsignedInt NetPacket::GetChatCommandSize(NetCommandMsg *msg) {
-	NetChatCommandMsg *cmdMsg = (NetChatCommandMsg *)(msg);
+	NetChatCommandMsg *cmdMsg = static_cast<NetChatCommandMsg*>(msg);
 	UnsignedByte textmsglen = cmdMsg->getText().getLength();
 	return sizeof(NetPacketChatCommandHeader) + (textmsglen * sizeof(UnsignedShort)) + sizeof(Int);
 }
