@@ -466,8 +466,7 @@ UnsignedInt NetPacket::GetPacketRouterAckCommandSize(NetCommandMsg *msg) {
 
 UnsignedInt NetPacket::GetDisconnectChatCommandSize(NetCommandMsg *msg) {
 	NetDisconnectChatCommandMsg *cmdMsg = static_cast<NetDisconnectChatCommandMsg*>(msg);
-	UnsignedByte textmsglen = cmdMsg->getText().getLength();
-	return sizeof(NetPacketDisconnectChatCommandHeader) + (textmsglen * sizeof(UnsignedShort));
+	return sizeof(NetPacketDisconnectChatCommandHeader) + cmdMsg->getByteCount();
 }
 
 UnsignedInt NetPacket::GetDisconnectVoteCommandSize(NetCommandMsg *msg) {
@@ -497,18 +496,12 @@ UnsignedInt NetPacket::GetWrapperCommandSize(NetCommandMsg *msg) {
 
 UnsignedInt NetPacket::GetFileCommandSize(NetCommandMsg *msg) {
 	NetFileCommandMsg *filemsg = (NetFileCommandMsg *)msg;
-	return sizeof(NetPacketFileCommandHeader) 
-		+ filemsg->getPortableFilename().getLength() + 1  // PORTABLE filename and the terminating 0
-		+ sizeof(UnsignedInt)  // file data length
-		+ filemsg->getFileLength();  // the file data
+	return sizeof(NetPacketFileCommandHeader) + filemsg->getByteCount();
 }
 
 UnsignedInt NetPacket::GetFileAnnounceCommandSize(NetCommandMsg *msg) {
 	NetFileAnnounceCommandMsg *filemsg = (NetFileAnnounceCommandMsg *)msg;
-	return sizeof(NetPacketFileAnnounceCommandHeader)
-		+ filemsg->getPortableFilename().getLength() + 1  // PORTABLE filename and the terminating 0
-		+ sizeof(UnsignedShort)  // m_fileID
-		+ sizeof(UnsignedByte);  // m_playerMask
+	return sizeof(NetPacketFileAnnounceCommandHeader) + filemsg->getByteCount();
 }
 
 UnsignedInt NetPacket::GetFileProgressCommandSize(NetCommandMsg *msg) {

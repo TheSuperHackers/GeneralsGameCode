@@ -307,6 +307,8 @@ public:
 	UnicodeString getText();
 	void setText(UnicodeString text);
 
+	size_t getByteCount() const;
+
 protected:
 	UnicodeString m_text;
 };
@@ -423,6 +425,8 @@ public:
 	UnsignedByte * getFileData();
 	void setFileData(UnsignedByte *data, UnsignedInt dataLength);
 
+	size_t getByteCount() const;
+
 protected:
 	AsciiString m_portableFilename;
 
@@ -449,6 +453,8 @@ public:
 
 	UnsignedByte getPlayerMask(void);
 	void setPlayerMask(UnsignedByte playerMask);
+
+	size_t getByteCount() const;
 
 protected:
 	AsciiString m_portableFilename;

@@ -757,6 +757,17 @@ size_t NetChatCommandMsg::getByteCount() const
 }
 
 //-------------------------
+// NetDisconnectChatCommandMsg
+//-------------------------
+/**
+ * Get the byte count for this disconnect chat message.
+ */
+size_t NetDisconnectChatCommandMsg::getByteCount() const
+{
+	return m_text.getLength() * sizeof(UnsignedShort);
+}
+
+//-------------------------
 // NetDisconnectVoteCommandMsg
 //-------------------------
 /**
@@ -937,6 +948,16 @@ void NetFileCommandMsg::setFileData(UnsignedByte *data, UnsignedInt dataLength)
 	memcpy(m_data, data, dataLength);
 }
 
+/**
+ * Get the byte count for this file command message.
+ */
+size_t NetFileCommandMsg::getByteCount() const
+{
+	return m_portableFilename.getLength() + 1  // filename + null terminator
+		+ sizeof(UnsignedInt)  // file data length
+		+ m_dataLength;  // the file data
+}
+
 //-------------------------
 // NetFileAnnounceCommandMsg
 //-------------------------
@@ -976,6 +997,15 @@ void NetFileAnnounceCommandMsg::setPlayerMask(UnsignedByte playerMask) {
 	m_playerMask = playerMask;
 }
 
+/**
+ * Get the byte count for this file announce command message.
+ */
+size_t NetFileAnnounceCommandMsg::getByteCount() const
+{
+	return m_portableFilename.getLength() + 1  // filename + null terminator
+		+ sizeof(m_fileID)  // file ID
+		+ sizeof(m_playerMask);  // player mask
+}
 
 //-------------------------
 // NetFileProgressCommandMsg
