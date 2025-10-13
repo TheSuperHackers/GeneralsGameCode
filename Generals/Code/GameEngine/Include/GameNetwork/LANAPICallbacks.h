@@ -74,7 +74,7 @@ extern const Color acceptFalseColor;
 
 void lanUpdateSlotList( void );
 void updateGameOptions( void );
-
+void setLANPlayerTooltip(LANPlayer* player);
 
 //Enum is used for the utility function so other windows do not need
 //to know about controls on LanGameOptions window.

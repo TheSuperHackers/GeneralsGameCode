@@ -112,21 +112,27 @@ void LANAPI::init( void )
 
 	m_lastGameopt = "";
 
-	unsigned long bufSize = UNLEN + 1;
 	char userName[UNLEN + 1];
-	if (!GetUserName(userName, &bufSize))
+	DWORD bufSize = ARRAY_SIZE(userName);
+	if (GetUserNameA(userName, &bufSize))
 	{
-		strcpy(userName, "unknown");
+		m_userName.set(userName, bufSize);
 	}
-	m_userName = userName;
+	else
+	{
+		m_userName = "unknown";
+	}
 
-	bufSize = MAX_COMPUTERNAME_LENGTH + 1;
 	char computerName[MAX_COMPUTERNAME_LENGTH + 1];
-	if (!GetComputerName(computerName, &bufSize))
+	bufSize = ARRAY_SIZE(computerName);
+	if (GetComputerNameA(computerName, &bufSize))
 	{
-		strcpy(computerName, "unknown");
+		m_hostName.set(computerName, bufSize);
 	}
-	m_hostName = computerName;
+	else
+	{
+		m_hostName = "unknown";
+	}
 }
 
 void LANAPI::reset( void )

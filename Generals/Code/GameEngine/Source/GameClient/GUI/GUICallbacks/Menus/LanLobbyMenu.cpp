@@ -310,14 +310,8 @@ static void playerTooltip(GameWindow *window,
 		//TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:LobbyPlayers") );
 		return;
 	}
-	UnicodeString tooltip;
-	tooltip.format(TheGameText->fetch("TOOLTIP:LANPlayer"), player->getLogin().str(), player->getHost().str());
-#if defined(RTS_DEBUG)
-	UnicodeString ip;
-	ip.format(L" - %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(player->getIP()));
-	tooltip.concat(ip);
-#endif
-	TheMouse->setCursorTooltip( tooltip );
+
+	setLANPlayerTooltip(player);
 }
 
 
