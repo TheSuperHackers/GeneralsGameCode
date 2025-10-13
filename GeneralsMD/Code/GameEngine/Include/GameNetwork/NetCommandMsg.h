@@ -328,6 +328,8 @@ public:
 	Int getPlayerMask( void );
 	void setPlayerMask( Int playerMask );
 
+	size_t getByteCount() const;
+
 protected:
 	UnicodeString m_text;
 	Int m_playerMask;

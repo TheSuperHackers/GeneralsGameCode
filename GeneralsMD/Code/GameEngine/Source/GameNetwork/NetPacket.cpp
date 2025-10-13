@@ -476,8 +476,7 @@ UnsignedInt NetPacket::GetDisconnectVoteCommandSize(NetCommandMsg *msg) {
 
 UnsignedInt NetPacket::GetChatCommandSize(NetCommandMsg *msg) {
 	NetChatCommandMsg *cmdMsg = static_cast<NetChatCommandMsg*>(msg);
-	UnsignedByte textmsglen = cmdMsg->getText().getLength();
-	return sizeof(NetPacketChatCommandHeader) + (textmsglen * sizeof(UnsignedShort)) + sizeof(Int);
+	return sizeof(NetPacketChatCommandHeader) + cmdMsg->getByteCount();
 }
 
 UnsignedInt NetPacket::GetProgressMessageSize(NetCommandMsg *msg) {
