@@ -748,6 +748,14 @@ void NetChatCommandMsg::setPlayerMask( Int playerMask )
 	m_playerMask = playerMask;
 }
 
+/**
+ * Get the byte count for this chat message.
+ */
+size_t NetChatCommandMsg::getByteCount() const
+{
+	return m_text.getLength() * sizeof(UnsignedShort) + sizeof(m_playerMask);
+}
+
 //-------------------------
 // NetDisconnectVoteCommandMsg
 //-------------------------
