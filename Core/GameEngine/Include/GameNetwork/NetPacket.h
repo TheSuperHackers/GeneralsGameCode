@@ -101,10 +101,6 @@ protected:
 	static UnsignedInt GetDisconnectScreenOffCommandSize(NetCommandMsg *msg);
 	static UnsignedInt GetFrameResendRequestCommandSize(NetCommandMsg *msg);
 
-#ifdef _DEBUG
-	// Testing function - remove before merging to main
-	static void TestPacketSizes();
-#endif
 
 	static void FillBufferWithGameCommand(UnsignedByte *buffer, NetCommandRef *msg);
 	static void FillBufferWithAckCommand(UnsignedByte *buffer, NetCommandRef *msg);
