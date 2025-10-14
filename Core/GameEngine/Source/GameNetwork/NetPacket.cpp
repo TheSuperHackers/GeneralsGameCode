@@ -509,29 +509,6 @@ UnsignedInt NetPacket::GetFrameResendRequestCommandSize(NetCommandMsg *msg) {
 	return sizeof(NetPacketFrameResendRequestCommand);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// TESTING FUNCTIONS - Remove these before merging to main
-// These functions help verify packet serialization works correctly
-////////////////////////////////////////////////////////////////////////////////
-
-#ifdef _DEBUG
-// Test function to verify packet struct sizes match expectations
-void NetPacket::TestPacketSizes() {
-	// This function will be called during debug builds to verify sizes
-	// Set a breakpoint here to inspect the values
-	
-	UnsignedInt frameResendSize = sizeof(NetPacketFrameResendRequestCommand);
-	UnsignedInt ackSize = sizeof(NetPacketAckCommand);
-	UnsignedInt frameSize = sizeof(NetPacketFrameCommand);
-	UnsignedInt playerLeaveSize = sizeof(NetPacketPlayerLeaveCommand);
-	UnsignedInt keepAliveSize = sizeof(NetPacketKeepAliveCommand);
-	
-	// These should match the original manual calculations
-	// Set breakpoints here to verify the values are correct
-	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("TestPacketSizes: FrameResend=%d, Ack=%d, Frame=%d, PlayerLeave=%d, KeepAlive=%d", 
-		frameResendSize, ackSize, frameSize, playerLeaveSize, keepAliveSize));
-}
-#endif
 
 // this function assumes that buffer is already the correct size.
 void NetPacket::FillBufferWithCommand(UnsignedByte *buffer, NetCommandRef *ref) {
