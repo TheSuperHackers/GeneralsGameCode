@@ -72,10 +72,10 @@ void W3DSmudgeManager::ReleaseResources(void)
 	REF_PTR_RELEASE(m_indexBuffer);
 }
 
-//Make sure (SMUDGE_DRAW_SIZE * 12) < 65535 because that's the max index buffer size.
+
 #define SMUDGE_DRAW_SIZE	500	//draw at most 50 smudges per call. Tweak value to improve CPU/GPU parallelism.
 
-static_assert(SMUDGE_DRAW_SIZE * 12 < 65535, "Must not exceed the max index buffer size");
+static_assert(SMUDGE_DRAW_SIZE * 5 < 0x10000, "Vertex index exceeds 16-bit limit");
 
 
 void W3DSmudgeManager::ReAcquireResources(void)
