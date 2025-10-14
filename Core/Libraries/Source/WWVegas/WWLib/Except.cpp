@@ -225,7 +225,7 @@ char const * Last_Error_Text(void)
 static void Add_Txt (char const *txt)
 {
 	if (strlen(ExceptionText) + strlen(txt) < ARRAY_SIZE(ExceptionText) - 1) {
-		strlcat(ExceptionText, txt, ARRAY_SIZE(ExceptionText));
+		strcat(ExceptionText, txt);
 	}
 #if (0)
 	/*

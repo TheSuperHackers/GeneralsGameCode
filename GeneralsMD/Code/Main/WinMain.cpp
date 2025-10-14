@@ -837,7 +837,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		const char *fileName = "Install_Final.bmp";
 		static const char *localizedPathFormat = "Data/%s/";
 		sprintf(filePath,localizedPathFormat, GetRegistryLanguage().str());
-		strlcat(filePath, fileName, _MAX_PATH);
+		strlcat(filePath, fileName, ARRAY_SIZE(filePath));
 		FILE *fileImage = fopen(filePath, "r");
 		if (fileImage) {
 			fclose(fileImage);

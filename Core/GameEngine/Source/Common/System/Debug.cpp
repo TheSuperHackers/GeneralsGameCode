@@ -210,14 +210,14 @@ static const char *getCurrentTickString(void)
 	Empty the buffer passed in, then optionally prepend the current TickCount
 	value in string form, depending on the setting of theDebugFlags.
 */
-static void prepBuffer(char *buffer, int size)
+static void prepBuffer(char *buffer)
 {
 	buffer[0] = 0;
 #ifdef ALLOW_DEBUG_UTILS
 	if (theDebugFlags & DEBUG_FLAG_PREPEND_TIME)
 	{
 		strcpy(buffer, getCurrentTickString());
-		strlcat(buffer, " ", size);
+		strcat(buffer, " ");
 	}
 #endif
 }
@@ -436,7 +436,7 @@ void DebugLog(const char *format, ...)
 	if (theDebugFlags == 0)
 		MessageBoxWrapper("DebugLog - Debug not inited properly", "", MB_OK|MB_TASKMODAL);
 
-	prepBuffer(theBuffer, ARRAY_SIZE(theBuffer));
+	prepBuffer(theBuffer);
 
 	va_list args;
 	va_start(args, format);
@@ -508,8 +508,8 @@ void DebugCrash(const char *format, ...)
 	// make it big to avoid weird overflow bugs in debug mode
 	char theCrashBuffer[ LARGE_BUFFER ];
 
-	prepBuffer(theCrashBuffer, LARGE_BUFFER);
-	strlcat(theCrashBuffer, "ASSERTION FAILURE: ", LARGE_BUFFER);
+	prepBuffer(theCrashBuffer);
+	strlcat(theCrashBuffer, "ASSERTION FAILURE: ", ARRAY_SIZE(theCrashBuffer));
 
 	va_list arg;
 	va_start(arg, format);
@@ -538,7 +538,7 @@ void DebugCrash(const char *format, ...)
 #endif
 	}
 
-	strlcat(theCrashBuffer, "\n\nAbort->exception; Retry->debugger; Ignore->continue", LARGE_BUFFER);
+	strlcat(theCrashBuffer, "\n\nAbort->exception; Retry->debugger; Ignore->continue", ARRAY_SIZE(theCrashBuffer));
 
 	const int result = doCrashBox(theCrashBuffer, useLogging);
 
@@ -737,9 +737,9 @@ void ReleaseCrash(const char *reason)
 	}
 
 	strcpy(prevbuf, TheGlobalData->getPath_UserData().str());
-	strlcat(prevbuf, RELEASECRASH_FILE_NAME_PREV, _MAX_PATH);
+	strlcat(prevbuf, RELEASECRASH_FILE_NAME_PREV, ARRAY_SIZE(prevbuf));
 	strcpy(curbuf, TheGlobalData->getPath_UserData().str());
-	strlcat(curbuf, RELEASECRASH_FILE_NAME, _MAX_PATH);
+	strlcat(curbuf, RELEASECRASH_FILE_NAME, ARRAY_SIZE(curbuf));
 
  	remove(prevbuf);
 	rename(curbuf, prevbuf);
@@ -826,9 +826,9 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 	char curbuf[ _MAX_PATH ];
 
 	strcpy(prevbuf, TheGlobalData->getPath_UserData().str());
-	strlcat(prevbuf, RELEASECRASH_FILE_NAME_PREV, _MAX_PATH);
+	strlcat(prevbuf, RELEASECRASH_FILE_NAME_PREV, ARRAY_SIZE(prevbuf));
 	strcpy(curbuf, TheGlobalData->getPath_UserData().str());
-	strlcat(curbuf, RELEASECRASH_FILE_NAME, _MAX_PATH);
+	strlcat(curbuf, RELEASECRASH_FILE_NAME, ARRAY_SIZE(curbuf));
 
  	remove(prevbuf);
 	rename(curbuf, prevbuf);

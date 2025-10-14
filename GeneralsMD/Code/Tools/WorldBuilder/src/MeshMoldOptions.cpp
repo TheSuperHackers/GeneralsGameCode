@@ -93,7 +93,7 @@ BOOL MeshMoldOptions::OnInitDialog()
 			dirBuf[len] = 0;
 		}
 		strcpy(findBuf, dirBuf);
-		strlcat(findBuf, "*.w3d", _MAX_PATH);
+		strlcat(findBuf, "*.w3d", ARRAY_SIZE(findBuf));
 
 		FilenameList filenameList;
 		TheFileSystem->getFileListInDirectory(AsciiString(dirBuf), AsciiString("*.w3d"), filenameList, FALSE);

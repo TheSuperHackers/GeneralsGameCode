@@ -36,7 +36,7 @@
 #include <time.h>
 #include <direct.h>
 #include <errno.h>
-#include <stringex.h>
+#include <WWCommon.h>
 //#include "wlib/wstring.h"
 
 #include "stringex.h"
@@ -680,7 +680,7 @@ HRESULT  Cftp::FindFile( LPCSTR szRemoteFileName, int * piSize )
 	_splitpath( szRemoteFileName, NULL, m_szRemoteFilePath+strlen(m_szRemoteFilePath),
 		m_szRemoteFileName, ext );
 
-	strlcat(m_szRemoteFileName, ext, sizeof(m_szRemoteFileName));
+	strlcat(m_szRemoteFileName, ext, ARRAY_SIZE(m_szRemoteFileName));
 
 	for( i = 0; i < (int)strlen( m_szRemoteFilePath ); i++ )
 	{

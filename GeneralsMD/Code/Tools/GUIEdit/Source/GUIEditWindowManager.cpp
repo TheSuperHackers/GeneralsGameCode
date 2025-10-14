@@ -515,7 +515,7 @@ void GUIEditWindowManager::incrementName( GameWindow *window )
 	if( len == 0 )
 	{
 
-		strlcat(name, "1", MAX_WINDOW_NAME_LEN);
+		strlcat(name, "1", ARRAY_SIZE(name));
 		goto cleanup;
 
 	}
@@ -586,7 +586,7 @@ void GUIEditWindowManager::incrementName( GameWindow *window )
 	{
 
 		// no number at end, easy ... just append a number '1'
-		strlcat(name, "1", MAX_WINDOW_NAME_LEN);
+		strlcat(name, "1", ARRAY_SIZE(name));
 
 	}
 

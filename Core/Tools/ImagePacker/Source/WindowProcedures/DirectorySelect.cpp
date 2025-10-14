@@ -40,7 +40,7 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <windows.h>
 #include <stdio.h>
-#include <stringex.h>
+#include <WWCommon.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "ImagePacker.h"
@@ -128,7 +128,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 			// set the current directory in the top label
 			GetCurrentDirectory( _MAX_PATH, buffer );
 			if( buffer[ strlen( buffer ) - 1 ] != '\\' )
-				strlcat(buffer, "\\", sizeof(buffer));
+				strlcat(buffer, "\\", ARRAY_SIZE(buffer));
 			SetDlgItemText( hWndDialog, STATIC_CURRENT_DIR, buffer );
 
 			// load the drive box
@@ -263,7 +263,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 							// construct new direcotry name and update status text
 							GetCurrentDirectory( _MAX_PATH, buffer );
 							if( buffer[ strlen( buffer ) - 1 ] != '\\' )
-								strlcat(buffer, "\\", sizeof(buffer));
+								strlcat(buffer, "\\", ARRAY_SIZE(buffer));
 							SetDlgItemText( hWndDialog, STATIC_CURRENT_DIR, buffer );
 							EnableWindow( GetDlgItem( hWndDialog, BUTTON_ADD ), FALSE );
 
@@ -354,7 +354,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 						// construct new direcotry name and update status text
 						GetCurrentDirectory( _MAX_PATH, buffer );
 						if( buffer[ strlen( buffer ) - 1 ] != '\\' )
-							strlcat(buffer, "\\", sizeof(buffer));
+							strlcat(buffer, "\\", ARRAY_SIZE(buffer));
 						SetDlgItemText( hWndDialog, STATIC_CURRENT_DIR, buffer );
 						EnableWindow( GetDlgItem( hWndDialog, BUTTON_ADD ), FALSE );
 

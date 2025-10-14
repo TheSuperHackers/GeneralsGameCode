@@ -237,11 +237,11 @@ Bool W3DBridge::load(BodyDamageType curDamageState)
 	char right[_MAX_PATH];
 
 	strcpy(left, modelName);
-	strlcat(left, ".BRIDGE_LEFT", _MAX_PATH);
+	strlcat(left, ".BRIDGE_LEFT", ARRAY_SIZE(left));
 	strcpy(section, modelName);
-	strlcat(section, ".BRIDGE_SPAN", _MAX_PATH);
+	strlcat(section, ".BRIDGE_SPAN", ARRAY_SIZE(section));
 	strcpy(right, modelName);
-	strlcat(right, ".BRIDGE_RIGHT", _MAX_PATH);
+	strlcat(right, ".BRIDGE_RIGHT", ARRAY_SIZE(right));
 
 	m_bridgeTexture = pMgr->Get_Texture(textureFile,  MIP_LEVELS_3);
 	m_leftMtx.Make_Identity();

@@ -29,7 +29,7 @@
 #include "_pch.h"
 #include "stringex.h"
 #include <new>
-#include <stringex.h>
+#include <WWCommon.h>
 #include <Utility/stdio_adapter.h>
 
 // our own fast critical section

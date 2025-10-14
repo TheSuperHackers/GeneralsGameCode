@@ -2976,7 +2976,7 @@ void MemoryPoolFactory::memoryPoolUsageReport( const char* filename, FILE *appen
 	{
 		char tmp[256];
 		strcpy(tmp,filename);
-		strlcat(tmp,".csv", ARRAY_SIZE(tmp));
+		strlcat(tmp, ".csv", ARRAY_SIZE(tmp));
 		perfStatsFile = fopen(tmp, "w");
 	}
 	else

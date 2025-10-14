@@ -123,7 +123,7 @@ void userMemoryManagerInitPools()
 		}
 		--pEnd;
 	}
-	strlcat(buf, "\\Data\\INI\\MemoryPools.ini", _MAX_PATH);
+	strlcat(buf, "\\Data\\INI\\MemoryPools.ini", ARRAY_SIZE(buf));
 
 	FILE* fp = fopen(buf, "r");
 	if (fp)

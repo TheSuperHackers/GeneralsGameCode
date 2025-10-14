@@ -234,7 +234,7 @@ bool HModelDefClass::read_connection(ChunkLoadClass & cload,HmdlNodeDefStruct * 
 	}
 
 	strcpy(node->RenderObjName,ModelName);
-	strlcat(node->RenderObjName,".", ARRAY_SIZE(node->RenderObjName));
+	strlcat(node->RenderObjName, ".", ARRAY_SIZE(node->RenderObjName));
 	strlcat(node->RenderObjName, con.RenderObjName, ARRAY_SIZE(node->RenderObjName));
 
 	if (pre30) {
