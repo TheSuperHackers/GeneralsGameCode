@@ -394,18 +394,8 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 				Vector2 &thisUV=verts[i].uv;
 
 				//Clamp coordinates so we're not referencing texels outside the view.
-				if (thisUV.X > texClampX)
-					smudge->m_offset.X = 0;
-				else
-				if (thisUV.X < 0)
-					smudge->m_offset.X = 0;
-
-				if (thisUV.Y > texClampY)
-					smudge->m_offset.Y = 0;
-				else
-				if (thisUV.Y < 0)
-					smudge->m_offset.Y = 0;
-
+				WWMath::Clamp(thisUV.X, 0, texClampX);
+				WWMath::Clamp(thisUV.Y, 0, texClampY);
 			}
 
 			//Finish center vertex
