@@ -2329,7 +2329,7 @@ WW3DErrorType MeshModelClass::write_header(ChunkSaveClass & csave,MeshSaveContex
 			hierarchy_name_len = (int)mesh_name - (int)name;
 			mesh_name++;
 		}
-		assert( hierarchy_name_len <= W3D_NAME_LEN);
+		assert( hierarchy_name_len < W3D_NAME_LEN);
 		strlcpy( header.MeshName, mesh_name, W3D_NAME_LEN);
 		strlcpy( header.ContainerName, name, hierarchy_name_len + 1);
 	} else {

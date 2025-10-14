@@ -92,7 +92,7 @@ ProfileHighLevel::Block::Block(const char *name)
   m_idTime=AddProfile(name,NULL,"msec",6,-4);
 
   char help[256];
-  strlcpy(help, name, sizeof(help) - 3);
+  strlcpy(help, name, sizeof(help) - 2);
   strlcat(help, ".c", sizeof(help));
   AddProfile(help,NULL,"calls",6,0).Increment();
 

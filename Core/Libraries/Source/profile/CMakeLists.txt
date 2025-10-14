@@ -27,7 +27,7 @@ target_include_directories(core_profile INTERFACE
 )
 
 target_link_libraries(core_profile PRIVATE
-    core_wwcommon
     core_config
+    core_wwcommon
     corei_always
 )
