@@ -239,16 +239,20 @@ Bool W3DSmudgeManager::testHardwareSupport(void)
 
 		//bottom right
 		v[0].p = Vector4( BLOCK_SIZE-0.5f, BLOCK_SIZE-0.5f, 0.0f, 1.0f );
-		v[0].u = BLOCK_SIZE/(Real)TheDisplay->getWidth();	v[0].v = BLOCK_SIZE/(Real)TheDisplay->getHeight();
+		v[0].u = BLOCK_SIZE/(Real)TheDisplay->getWidth();
+		v[0].v = BLOCK_SIZE/(Real)TheDisplay->getHeight();
 		//top right
 		v[1].p = Vector4( BLOCK_SIZE-0.5f, 0-0.5f, 0.0f, 1.0f );
-		v[1].u = BLOCK_SIZE/(Real)TheDisplay->getWidth();	v[1].v = 0;
+		v[1].u = BLOCK_SIZE/(Real)TheDisplay->getWidth();
+		v[1].v = 0;
 		//bottom left
 		v[2].p = Vector4(  0-0.5f, BLOCK_SIZE-0.5f, 0.0f, 1.0f );
-		v[2].u = 0;	v[2].v = BLOCK_SIZE/(Real)TheDisplay->getHeight();
+		v[2].u = 0;
+		v[2].v = BLOCK_SIZE/(Real)TheDisplay->getHeight();
 		//top left
 		v[3].p = Vector4(  0-0.5f,  0-0.5f, 0.0f, 1.0f );
-		v[3].u = 0;	v[3].v = 0;
+		v[3].u = 0;
+		v[3].v = 0;
 
 		v[0].color = UNIQUE_COLOR;
 		v[1].color = UNIQUE_COLOR;
