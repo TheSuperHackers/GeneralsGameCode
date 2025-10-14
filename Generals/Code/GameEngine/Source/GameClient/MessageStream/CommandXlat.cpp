@@ -32,7 +32,7 @@
 
 #include "Common/AudioAffect.h"
 #include "Common/ActionManager.h"
-#include "Common/FrameRateLimit.h"
+#include "Common/FramePacer.h"
 #include "Common/GameAudio.h"
 #include "Common/GameEngine.h"
 #include "Common/GameType.h"
@@ -187,10 +187,10 @@ Bool hasThingsInProduction(PlayerType playerType)
 
 bool changeMaxRenderFps(FpsValueChange change)
 {
-	UnsignedInt maxRenderFps = TheGameEngine->getFramesPerSecondLimit();
+	UnsignedInt maxRenderFps = TheFramePacer->getFramesPerSecondLimit();
 	maxRenderFps = RenderFpsPreset::changeFpsValue(maxRenderFps, change);
 
-	TheGameEngine->setFramesPerSecondLimit(maxRenderFps);
+	TheFramePacer->setFramesPerSecondLimit(maxRenderFps);
 	TheWritableGlobalData->m_useFpsLimit = (maxRenderFps != RenderFpsPreset::UncappedFpsValue);
 
 	UnicodeString message;
@@ -214,16 +214,16 @@ bool changeLogicTimeScale(FpsValueChange change)
 	if (TheNetwork != NULL)
 		return false;
 
-	const UnsignedInt maxRenderFps = TheGameEngine->getFramesPerSecondLimit();
+	const UnsignedInt maxRenderFps = TheFramePacer->getFramesPerSecondLimit();
 	UnsignedInt maxRenderRemainder = LogicTimeScaleFpsPreset::StepFpsValue;
 	maxRenderRemainder -= maxRenderFps % LogicTimeScaleFpsPreset::StepFpsValue;
 	maxRenderRemainder %= LogicTimeScaleFpsPreset::StepFpsValue;
 
-	UnsignedInt logicTimeScaleFps = TheGameEngine->getLogicTimeScaleFps();
+	UnsignedInt logicTimeScaleFps = TheFramePacer->getLogicTimeScaleFps();
 	// Set the value to the max render fps value plus a bit when time scale is
 	// disabled. This ensures that the time scale does not re-enable with a
 	// 'surprise' value.
-	if (!TheGameEngine->isLogicTimeScaleEnabled())
+	if (!TheFramePacer->isLogicTimeScaleEnabled())
 	{
 		logicTimeScaleFps = maxRenderFps + maxRenderRemainder;
 	}
@@ -234,26 +234,26 @@ bool changeLogicTimeScale(FpsValueChange change)
 	logicTimeScaleFps = LogicTimeScaleFpsPreset::changeFpsValue(logicTimeScaleFps, change);
 
 	// Set value before potentially disabling it.
-	if (TheGameEngine->isLogicTimeScaleEnabled())
+	if (TheFramePacer->isLogicTimeScaleEnabled())
 	{
-		TheGameEngine->setLogicTimeScaleFps(logicTimeScaleFps);
+		TheFramePacer->setLogicTimeScaleFps(logicTimeScaleFps);
 	}
 
-	TheGameEngine->enableLogicTimeScale(logicTimeScaleFps < maxRenderFps);
+	TheFramePacer->enableLogicTimeScale(logicTimeScaleFps < maxRenderFps);
 
 	// Set value after potentially enabling it.
-	if (TheGameEngine->isLogicTimeScaleEnabled())
+	if (TheFramePacer->isLogicTimeScaleEnabled())
 	{
-		TheGameEngine->setLogicTimeScaleFps(logicTimeScaleFps);
+		TheFramePacer->setLogicTimeScaleFps(logicTimeScaleFps);
 	}
 
-	logicTimeScaleFps = TheGameEngine->getLogicTimeScaleFps();
-	const UnsignedInt actualLogicTimeScaleFps = TheGameEngine->getActualLogicTimeScaleFps();
-	const Real actualLogicTimeScaleRatio = TheGameEngine->getActualLogicTimeScaleRatio();
+	logicTimeScaleFps = TheFramePacer->getLogicTimeScaleFps();
+	const UnsignedInt actualLogicTimeScaleFps = TheFramePacer->getActualLogicTimeScaleFps();
+	const Real actualLogicTimeScaleRatio = TheFramePacer->getActualLogicTimeScaleRatio();
 
 	UnicodeString message;
 
-	if (TheGameEngine->isLogicTimeScaleEnabled())
+	if (TheFramePacer->isLogicTimeScaleEnabled())
 	{
 		message = TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:SetLogicTimeScaleFps", L"Logic Time Scale FPS is %u (actual %u, ratio %.02f)",
 			logicTimeScaleFps, actualLogicTimeScaleFps, actualLogicTimeScaleRatio);

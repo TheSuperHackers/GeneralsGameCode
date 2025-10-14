@@ -31,7 +31,7 @@
 #include "Common/DataChunk.h"
 #include "Common/file.h"
 #include "Common/FileSystem.h"
-#include "Common/GameEngine.h"
+#include "Common/FramePacer.h"
 #include "Common/GameState.h"
 #include "Common/LatchRestore.h"
 #include "Common/MessageStream.h"
@@ -4530,8 +4530,8 @@ void ScriptEngine::init( void )
 void ScriptEngine::reset( void )
 {
 	// setting FPS limit in case a script had changed it
-	if (TheGameEngine && TheGlobalData)
-		TheGameEngine->setFramesPerSecondLimit(TheGlobalData->m_framesPerSecondLimit);
+	if (TheFramePacer && TheGlobalData)
+		TheFramePacer->setFramesPerSecondLimit(TheGlobalData->m_framesPerSecondLimit);
 
 	if (TheScriptActions) {
 		TheScriptActions->reset();

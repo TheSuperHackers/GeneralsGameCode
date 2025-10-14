@@ -33,6 +33,7 @@
 #include "Common/AudioHandleSpecialValues.h"
 #include "Common/BuildAssistant.h"
 #include "Common/CRCDebug.h"
+#include "Common/FramePacer.h"
 #include "Common/GameAudio.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
@@ -3718,8 +3719,8 @@ void GameLogic::setGamePausedInFrame( UnsignedInt frame, Bool disableLogicTimeSc
 
 		if (disableLogicTimeScale)
 		{
-			m_logicTimeScaleEnabledMemory = TheGameEngine->isLogicTimeScaleEnabled();
-			TheGameEngine->enableLogicTimeScale(FALSE);
+			m_logicTimeScaleEnabledMemory = TheFramePacer->isLogicTimeScaleEnabled();
+			TheFramePacer->enableLogicTimeScale(FALSE);
 		}
 	}
 }
@@ -3758,7 +3759,7 @@ void GameLogic::pauseGameLogic(Bool paused)
 	if (!paused && m_logicTimeScaleEnabledMemory)
 	{
 		m_logicTimeScaleEnabledMemory = FALSE;
-		TheGameEngine->enableLogicTimeScale(TRUE);
+		TheFramePacer->enableLogicTimeScale(TRUE);
 	}
 }
 

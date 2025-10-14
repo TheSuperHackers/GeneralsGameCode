@@ -32,8 +32,8 @@
 #define DEFINE_SHADOW_NAMES
 
 #include "Common/ActionManager.h"
+#include "Common/FramePacer.h"
 #include "Common/GameAudio.h"
-#include "Common/GameEngine.h"
 #include "Common/GameType.h"
 #include "Common/MessageStream.h"
 #include "Common/PerfTimer.h"
@@ -46,7 +46,6 @@
 #include "Common/BuildAssistant.h"
 #include "Common/Recorder.h"
 #include "Common/SpecialPower.h"
-#include "Common/FrameRateLimit.h"
 
 #include "GameClient/Anim2D.h"
 #include "GameClient/ControlBar.h"
@@ -1889,7 +1888,7 @@ void InGameUI::update( void )
 	if (m_cameraRotatingLeft || m_cameraRotatingRight || m_cameraZoomingIn || m_cameraZoomingOut)
 	{
 		// TheSuperHackers @tweak The camera rotation and zoom are now decoupled from the render update.
-		const Real fpsRatio = (Real)BaseFps / TheGameEngine->getUpdateFps();
+		const Real fpsRatio = (Real)BaseFps / TheFramePacer->getUpdateFps();
 		const Real rotateAngle = TheGlobalData->m_keyboardCameraRotateSpeed * fpsRatio;
 		const Real zoomHeight = (Real)View::ZoomHeightPerSecond * fpsRatio;
 
@@ -5871,7 +5870,7 @@ void InGameUI::drawRenderFps(Int &x, Int &y)
 	UnsignedInt renderFpsLimit = 0u;
 	if (TheGlobalData->m_useFpsLimit)
 	{
-		renderFpsLimit = (UnsignedInt)TheGameEngine->getFramesPerSecondLimit();
+		renderFpsLimit = (UnsignedInt)TheFramePacer->getFramesPerSecondLimit();
 		if (renderFpsLimit == RenderFpsPreset::UncappedFpsValue)
 		{
 			renderFpsLimit = 0u;

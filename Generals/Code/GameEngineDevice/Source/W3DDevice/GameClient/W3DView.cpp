@@ -38,7 +38,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/BuildAssistant.h"
-#include "Common/GameEngine.h"
+#include "Common/FramePacer.h"
 #include "Common/GlobalData.h"
 #include "Common/Module.h"
 #include "Common/RandomValue.h"
@@ -905,7 +905,7 @@ Bool W3DView::updateCameraMovements()
 		m_previousLookAtPosition = *getPosition();
 		// TheSuperHackers @tweak The scripted camera movement is now decoupled from the render update.
 		// The scripted camera will still move when the time is frozen, but not when the game is halted.
-		moveAlongWaypointPath(TheGameEngine->getLogicTimeStepMilliseconds(GameEngine::IgnoreFrozenTime));
+		moveAlongWaypointPath(TheFramePacer->getLogicTimeStepMilliseconds(FramePacer::IgnoreFrozenTime));
 		didUpdate = true;
 	}
 	if (m_doingScriptedCameraLock)
@@ -1206,7 +1206,7 @@ void W3DView::update(void)
 			// if scrolling, only adjust if we're too close or too far
 			if (m_scrollAmount.length() < m_scrollAmountCutoff || (m_currentHeightAboveGround < m_minHeightAboveGround) || (TheGlobalData->m_enforceMaxCameraHeight && m_currentHeightAboveGround > m_maxHeightAboveGround))
 			{
-				const Real fpsRatio = (Real)BaseFps / TheGameEngine->getUpdateFps();
+				const Real fpsRatio = (Real)BaseFps / TheFramePacer->getUpdateFps();
 				const Real zoomAdj = (desiredZoom - m_zoom) * TheGlobalData->m_cameraAdjustSpeed * fpsRatio;
 				if (fabs(zoomAdj) >= 0.0001f)	// only do positive
 				{
@@ -1218,7 +1218,7 @@ void W3DView::update(void)
 		else if (!didScriptedMovement)
 		{
 			// we're not scrolling; settle toward desired height above ground
-			const Real fpsRatio = (Real)BaseFps / TheGameEngine->getUpdateFps();
+			const Real fpsRatio = (Real)BaseFps / TheFramePacer->getUpdateFps();
 			const Real zoomAdj = (m_zoom - desiredZoom) * TheGlobalData->m_cameraAdjustSpeed * fpsRatio;
 			if (fabs(zoomAdj) >= 0.0001f)
 			{

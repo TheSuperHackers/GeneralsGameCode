@@ -35,8 +35,8 @@
 #include "Common/BuildAssistant.h"
 #include "Common/ClientUpdateModule.h"
 #include "Common/DrawModule.h"
+#include "Common/FramePacer.h"
 #include "Common/GameAudio.h"
-#include "Common/GameEngine.h"
 #include "Common/GameLOD.h"
 #include "Common/GameState.h"
 #include "Common/GlobalData.h"
@@ -4785,7 +4785,7 @@ void TintEnvelope::setDecayFrames( UnsignedInt frames )
 void TintEnvelope::update(void)
 {
 	// TheSuperHackers @tweak The tint time step is now decoupled from the render update.
-	const Real timeScale = TheGameEngine->getActualLogicTimeScaleOverFpsRatio();
+	const Real timeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
 
 	switch ( m_envState )
 	{

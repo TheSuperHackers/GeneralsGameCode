@@ -28,8 +28,8 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
+#include "Common/FramePacer.h"
 #include "Common/GameType.h"
-#include "Common/GameEngine.h"
 #include "Common/MessageStream.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -439,7 +439,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			{
 
 				// TheSuperHackers @bugfix Mauller 07/06/2025 The camera scrolling is now decoupled from the render update.
-				const Real fpsRatio = (Real)BaseFps / TheGameEngine->getUpdateFps();
+				const Real fpsRatio = (Real)BaseFps / TheFramePacer->getUpdateFps();
 
 				switch (m_scrollType)
 				{

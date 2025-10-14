@@ -41,8 +41,8 @@ static void drawFramerateBar(void);
 #include <time.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
+#include "Common/FramePacer.h"
 #include "Common/ThingFactory.h"
-#include "Common/GameEngine.h"
 #include "Common/GlobalData.h"
 #include "Common/PerfTimer.h"
 #include "Common/FileSystem.h"
@@ -975,7 +975,7 @@ void W3DDisplay::gatherDebugStats( void )
 		//Int LOD = TheGlobalData->m_terrainLOD;
 		//unibuffer.format( L"FPS: %.2f, %.2fms mapLOD=%d [cumu FPS=%.2f] draws: %.2f sort: %.2f", fps, ms, LOD, cumuFPS, drawsPerFrame,sortPolysPerFrame);
 		if (TheGlobalData->m_useFpsLimit)
-				unibuffer.format( L"%.2f/%d FPS, ", fps, TheGameEngine->getFramesPerSecondLimit());
+				unibuffer.format( L"%.2f/%d FPS, ", fps, TheFramePacer->getFramesPerSecondLimit());
 		else
 				unibuffer.format( L"%.2f FPS, ", fps);
 
@@ -1673,7 +1673,7 @@ AGAIN:
   	//
 	//PredictiveLODOptimizerClass::Optimize_LODs( 5000 );
 
-	Bool freezeTime = TheGameEngine->isTimeFrozen() || TheGameEngine->isGameHalted();
+	Bool freezeTime = TheFramePacer->isTimeFrozen() || TheFramePacer->isGameHalted();
 
 	/// @todo: I'm assuming the first view is our main 3D view.
 	W3DView *primaryW3DView=(W3DView *)getFirstView();
@@ -1709,7 +1709,7 @@ AGAIN:
 		}
 	}
 
-	WW3D::Update_Logic_Frame_Time(TheGameEngine->getLogicTimeStepMilliseconds());
+	WW3D::Update_Logic_Frame_Time(TheFramePacer->getLogicTimeStepMilliseconds());
 
 	// TheSuperHackers @info This binds the WW3D update to the logic update.
 	WW3D::Sync(TheGameLogic->hasUpdated());

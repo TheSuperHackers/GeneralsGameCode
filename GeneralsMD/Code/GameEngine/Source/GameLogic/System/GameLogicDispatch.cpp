@@ -31,6 +31,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/CRCDebug.h"
+#include "Common/FramePacer.h"
 #include "Common/GameAudio.h"
 #include "Common/GameEngine.h"
 #include "Common/GlobalData.h"
@@ -436,7 +437,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				if (maxFPS < 1 || maxFPS > 1000)
 					maxFPS = TheGlobalData->m_framesPerSecondLimit;
 				DEBUG_LOG(("Setting max FPS limit to %d FPS", maxFPS));
-				TheGameEngine->setFramesPerSecondLimit(maxFPS);
+				TheFramePacer->setFramesPerSecondLimit(maxFPS);
 				TheWritableGlobalData->m_useFpsLimit = true;
 			}
 

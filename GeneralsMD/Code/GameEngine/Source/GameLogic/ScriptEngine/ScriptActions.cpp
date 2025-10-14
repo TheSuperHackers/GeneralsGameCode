@@ -31,8 +31,8 @@
 
 #include "Common/AudioAffect.h"
 #include "Common/AudioHandleSpecialValues.h"
+#include "Common/FramePacer.h"
 #include "Common/GameAudio.h"
-#include "Common/GameEngine.h"
 #include "Common/MapObject.h"							// For MAP_XY_FACTOR
 #include "Common/PartitionSolver.h"
 #include "Common/Player.h"
@@ -7129,11 +7129,11 @@ void ScriptActions::executeAction( ScriptAction *pAction )
 		case ScriptAction::SET_FPS_LIMIT:
 			if (!pAction->getParameter(0)->getInt())
 			{
-				TheGameEngine->setFramesPerSecondLimit(TheGlobalData->m_framesPerSecondLimit);
+				TheFramePacer->setFramesPerSecondLimit(TheGlobalData->m_framesPerSecondLimit);
 			}
 			else
 			{
-				TheGameEngine->setFramesPerSecondLimit(pAction->getParameter(0)->getInt());
+				TheFramePacer->setFramesPerSecondLimit(pAction->getParameter(0)->getInt());
 			}
 			// Setting the fps limit doesn't do much good if we don't use it.  jba.
 			TheWritableGlobalData->m_useFpsLimit = true;

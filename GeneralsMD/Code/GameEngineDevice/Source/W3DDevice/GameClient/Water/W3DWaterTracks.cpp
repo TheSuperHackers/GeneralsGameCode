@@ -50,7 +50,7 @@
 #include "GameClient/InGameUI.h"
 #include "GameClient/Water.h"
 #include "GameLogic/TerrainLogic.h"
-#include "Common/GameEngine.h"
+#include "Common/FramePacer.h"
 #include "Common/GlobalData.h"
 #include "Common/UnicodeString.h"
 #include "Common/file.h"
@@ -296,7 +296,7 @@ Int WaterTracksObj::update(Int msElapsed)
 Int WaterTracksObj::render(DX8VertexBufferClass	*vertexBuffer, Int batchStart)
 {
 	// TheSuperHackers @tweak The wave movement time step is now decoupled from the render update.
-	m_elapsedMs += TheGameEngine->getLogicTimeStepMilliseconds();
+	m_elapsedMs += TheFramePacer->getLogicTimeStepMilliseconds();
 
 	VertexFormatXYZDUV1 *vb;
 	Vector2	waveTailOrigin,waveFrontOrigin;
