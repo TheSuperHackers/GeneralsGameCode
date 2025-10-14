@@ -472,10 +472,185 @@ constexpr UnsignedInt GetKeepAliveCommandSize()
 	return msglen;
 }
 
-// Static assertions to verify sizes match
+// Test functions for additional packet types
+constexpr UnsignedInt GetRunAheadMetricsCommandSize()
+{
+	UnsignedInt msglen = 0;
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::CommandType and command type
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::Relay and relay
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::PlayerId and player ID
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedShort); // NetPacketFieldTypes::CommandId and command ID
+	++msglen; // NetPacketFieldTypes::Data
+	msglen += sizeof(Real); // average latency
+	msglen += sizeof(UnsignedShort); // average fps
+
+	return msglen;
+}
+
+constexpr UnsignedInt GetRunAheadCommandSize()
+{
+	UnsignedInt msglen = 0;
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::CommandType and command type
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::Relay and relay
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedInt);	// NetPacketFieldTypes::Frame and frame
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::PlayerId and player ID
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedShort); // NetPacketFieldTypes::CommandId and command ID
+	++msglen; // NetPacketFieldTypes::Data
+	msglen += sizeof(UnsignedShort); // run ahead
+	msglen += sizeof(UnsignedByte);  // frame rate
+
+	return msglen;
+}
+
+constexpr UnsignedInt GetDestroyPlayerCommandSize()
+{
+	UnsignedInt msglen = 0;
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::CommandType and command type
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::Relay and relay
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedInt);	// NetPacketFieldTypes::Frame and frame
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::PlayerId and player ID
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedShort); // NetPacketFieldTypes::CommandId and command ID
+	++msglen; // NetPacketFieldTypes::Data
+	msglen += sizeof(UnsignedInt); // player index
+
+	return msglen;
+}
+
+constexpr UnsignedInt GetDisconnectKeepAliveCommandSize()
+{
+	UnsignedInt msglen = 0;
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::CommandType and command type
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::Relay and relay
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::PlayerId and player ID
+	++msglen; // NetPacketFieldTypes::Data
+
+	return msglen;
+}
+
+constexpr UnsignedInt GetDisconnectPlayerCommandSize()
+{
+	UnsignedInt msglen = 0;
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::CommandType and command type
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::Relay and relay
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::PlayerId and player ID
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedShort); // NetPacketFieldTypes::CommandId and command ID
+	++msglen; // NetPacketFieldTypes::Data
+	msglen += sizeof(UnsignedByte); // slot
+	msglen += sizeof(UnsignedInt);  // disconnect frame
+
+	return msglen;
+}
+
+constexpr UnsignedInt GetRouterQueryCommandSize()
+{
+	UnsignedInt msglen = 0;
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::CommandType and command type
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::Relay and relay
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::PlayerId and player ID
+	++msglen; // NetPacketFieldTypes::Data
+
+	return msglen;
+}
+
+constexpr UnsignedInt GetRouterAckCommandSize()
+{
+	UnsignedInt msglen = 0;
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::CommandType and command type
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::Relay and relay
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::PlayerId and player ID
+	++msglen; // NetPacketFieldTypes::Data
+
+	return msglen;
+}
+
+constexpr UnsignedInt GetDisconnectVoteCommandSize()
+{
+	UnsignedInt msglen = 0;
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::CommandType and command type
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::Relay and relay
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::PlayerId and player ID
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedShort); // NetPacketFieldTypes::CommandId and command ID
+	++msglen; // NetPacketFieldTypes::Data
+	msglen += sizeof(UnsignedByte); // slot
+	msglen += sizeof(UnsignedInt);  // vote frame
+
+	return msglen;
+}
+
+constexpr UnsignedInt GetWrapperCommandSize()
+{
+	UnsignedInt msglen = 0;
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::CommandType and command type
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::PlayerId and player ID
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedShort); // NetPacketFieldTypes::CommandId and command ID
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::Relay and relay
+	++msglen; // NetPacketFieldTypes::Data
+	msglen += sizeof(UnsignedShort); // wrapped command ID
+	msglen += sizeof(UnsignedInt);   // chunk number
+	msglen += sizeof(UnsignedInt);   // num chunks
+	msglen += sizeof(UnsignedInt);   // total data length
+	msglen += sizeof(UnsignedInt);   // data length
+	msglen += sizeof(UnsignedInt);   // data offset
+
+	return msglen;
+}
+
+constexpr UnsignedInt GetFileProgressCommandSize()
+{
+	UnsignedInt msglen = 0;
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::CommandType and command type
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::Relay and relay
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::PlayerId and player ID
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedShort); // NetPacketFieldTypes::CommandId and command ID
+	++msglen; // NetPacketFieldTypes::Data
+	msglen += sizeof(UnsignedShort); // file ID
+	msglen += sizeof(Int);           // progress
+
+	return msglen;
+}
+
+constexpr UnsignedInt GetDisconnectFrameCommandSize()
+{
+	UnsignedInt msglen = 0;
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::CommandType and command type
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::Relay and relay
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::PlayerId and player ID
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedShort); // NetPacketFieldTypes::CommandId and command ID
+	++msglen; // NetPacketFieldTypes::Data
+	msglen += sizeof(UnsignedInt); // disconnect frame
+
+	return msglen;
+}
+
+constexpr UnsignedInt GetDisconnectScreenOffCommandSize()
+{
+	UnsignedInt msglen = 0;
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::CommandType and command type
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::Relay and relay
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedByte);	// NetPacketFieldTypes::PlayerId and player ID
+	msglen += sizeof(UnsignedByte) + sizeof(UnsignedShort); // NetPacketFieldTypes::CommandId and command ID
+	++msglen; // NetPacketFieldTypes::Data
+	msglen += sizeof(UnsignedInt); // new frame
+
+	return msglen;
+}
+
+// Static assertions to verify sizes match - ALL 17 packet types
 static_assert(GetFrameResendRequestCommandSize() == sizeof(NetPacketFrameResendRequestCommand), "FrameResendRequestCommand size mismatch");
 static_assert(GetAckCommandSize() == sizeof(NetPacketAckCommand), "AckCommand size mismatch");
 static_assert(GetFrameCommandSize() == sizeof(NetPacketFrameCommand), "FrameCommand size mismatch");
 static_assert(GetPlayerLeaveCommandSize() == sizeof(NetPacketPlayerLeaveCommand), "PlayerLeaveCommand size mismatch");
 static_assert(GetKeepAliveCommandSize() == sizeof(NetPacketKeepAliveCommand), "KeepAliveCommand size mismatch");
+static_assert(GetRunAheadMetricsCommandSize() == sizeof(NetPacketRunAheadMetricsCommand), "RunAheadMetricsCommand size mismatch");
+static_assert(GetRunAheadCommandSize() == sizeof(NetPacketRunAheadCommand), "RunAheadCommand size mismatch");
+static_assert(GetDestroyPlayerCommandSize() == sizeof(NetPacketDestroyPlayerCommand), "DestroyPlayerCommand size mismatch");
+static_assert(GetDisconnectKeepAliveCommandSize() == sizeof(NetPacketDisconnectKeepAliveCommand), "DisconnectKeepAliveCommand size mismatch");
+static_assert(GetDisconnectPlayerCommandSize() == sizeof(NetPacketDisconnectPlayerCommand), "DisconnectPlayerCommand size mismatch");
+static_assert(GetRouterQueryCommandSize() == sizeof(NetPacketRouterQueryCommand), "RouterQueryCommand size mismatch");
+static_assert(GetRouterAckCommandSize() == sizeof(NetPacketRouterAckCommand), "RouterAckCommand size mismatch");
+static_assert(GetDisconnectVoteCommandSize() == sizeof(NetPacketDisconnectVoteCommand), "DisconnectVoteCommand size mismatch");
+static_assert(GetWrapperCommandSize() == sizeof(NetPacketWrapperCommand), "WrapperCommand size mismatch");
+static_assert(GetFileProgressCommandSize() == sizeof(NetPacketFileProgressCommand), "FileProgressCommand size mismatch");
+static_assert(GetDisconnectFrameCommandSize() == sizeof(NetPacketDisconnectFrameCommand), "DisconnectFrameCommand size mismatch");
+static_assert(GetDisconnectScreenOffCommandSize() == sizeof(NetPacketDisconnectScreenOffCommand), "DisconnectScreenOffCommand size mismatch");
 
