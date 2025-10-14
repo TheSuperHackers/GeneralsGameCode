@@ -60,10 +60,10 @@ enum
 #include <string.h>
 #include <assetmgr.h>
 #include <texture.h>
+#include "Common/FramePacer.h"
 #include "Common/MapReaderWriterInfo.h"
 #include "Common/FileSystem.h"
 #include "Common/file.h"
-#include "Common/GameEngine.h"
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -1542,7 +1542,7 @@ void W3DTreeBuffer::drawTrees(CameraClass * camera, RefRenderObjListIterator *pD
 	}
 
 	// TheSuperHackers @tweak The tree sway, topple and sink time steps are now decoupled from the render update.
-	const Real timeScale = TheGameEngine->getActualLogicTimeScaleOverFpsRatio();
+	const Real timeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
 	Vector3 swayFactor[MAX_SWAY_TYPES];
 	Int i;
 	for (i=0; i<MAX_SWAY_TYPES; i++)
