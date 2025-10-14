@@ -436,7 +436,8 @@ CGraphicView::RepaintView
 	//	Simple check to avoid re-entrance
 	//
 	static bool _already_painting = false;
-	if (_already_painting) return;
+	if (_already_painting)
+		return;
 	_already_painting = true;
 
 	 //
@@ -452,10 +453,15 @@ CGraphicView::RepaintView
 		m_dwLastFrameUpdate = cur_ticks;
 
 		// Update the W3D frame times according to our elapsed tick count
-		if (ticks_to_use == 0) {
-			WW3D::Sync (WW3D::Get_Sync_Time() + (ticks_elapsed * m_animationSpeed));
-		} else {
-			WW3D::Sync (WW3D::Get_Sync_Time() + ticks_to_use);
+		if (ticks_to_use == 0)
+		{
+			WW3D::Update_Logic_Frame_Time(ticks_elapsed * m_animationSpeed);
+			WW3D::Sync(WW3D::Get_Fractional_Sync_Milliseconds() >= WWSyncMilliseconds);
+		}
+		else
+		{
+			WW3D::Update_Logic_Frame_Time(ticks_to_use);
+			WW3D::Sync(true);
 		}
 
 		// Do we need to update the current animation?

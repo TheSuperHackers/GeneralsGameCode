@@ -37,7 +37,8 @@ FramePacer::FramePacer()
 
 	m_maxFPS = BaseFps;
 	m_logicTimeScaleFPS = LOGICFRAMES_PER_SECOND;
-	m_updateTime = 1.0f / BaseFps; // initialized to something to avoid division by zero on first use
+	m_updateTime = 1.0f / (Real)BaseFps; // initialized to something to avoid division by zero on first use
+	m_enableFpsLimit = FALSE;
 	m_enableLogicTimeScale = FALSE;
 	m_isTimeFrozen = FALSE;
 	m_isGameHalted = FALSE;
@@ -51,25 +52,9 @@ FramePacer::~FramePacer()
 
 void FramePacer::update()
 {
-	Bool allowFpsLimit = TheTacticalView->getTimeMultiplier()<=1 && !TheScriptEngine->isTimeFast();
-
-	// I'm disabling this in debug because many people need alt-tab capability.  If you happen to be
-	// doing performance tuning, please just change this on your local system. -MDC
-#if defined(RTS_DEBUG)
-	if (allowFpsLimit)
-		::Sleep(1); // give everyone else a tiny time slice.
-#endif
-
-#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
-	allowFpsLimit &= !(!TheGameLogic->isGamePaused() && TheGlobalData->m_TiVOFastMode);
-#else	//always allow this cheat key if we're in a replay game.
-	allowFpsLimit &= !(!TheGameLogic->isGamePaused() && TheGlobalData->m_TiVOFastMode && TheGameLogic->isInReplayGame());
-#endif
-
 	// TheSuperHackers @bugfix xezon 05/08/2025 Re-implements the frame rate limiter
 	// with higher resolution counters to cap the frame rate more accurately to the desired limit.
-	allowFpsLimit &= TheGlobalData->m_useFpsLimit;
-	const UnsignedInt maxFps = allowFpsLimit ? getFramesPerSecondLimit() : RenderFpsPreset::UncappedFpsValue;
+	const UnsignedInt maxFps = getActualFramesPerSecondLimit();// allowFpsLimit ? getFramesPerSecondLimit() : RenderFpsPreset::UncappedFpsValue;
 	m_updateTime = m_frameRateLimit.wait(maxFps);
 }
 
@@ -82,6 +67,45 @@ void FramePacer::setFramesPerSecondLimit( Int fps )
 Int FramePacer::getFramesPerSecondLimit()  const
 {
 	return m_maxFPS;
+}
+
+void FramePacer::enableFramesPerSecondLimit( Bool enable )
+{
+	m_enableFpsLimit = enable;
+}
+
+Bool FramePacer::isFramesPerSecondLimitEnabled() const
+{
+	return m_enableFpsLimit;
+}
+
+Bool FramePacer::isActualFramesPerSecondLimitEnabled() const
+{
+	Bool allowFpsLimit = true;
+
+	if (TheTacticalView != NULL)
+	{
+		allowFpsLimit &= TheTacticalView->getTimeMultiplier()<=1 && !TheScriptEngine->isTimeFast();
+	}
+
+	if (TheGameLogic != NULL)
+	{
+#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+		allowFpsLimit &= !(!TheGameLogic->isGamePaused() && TheGlobalData->m_TiVOFastMode);
+#else	//always allow this cheat key if we're in a replay game.
+		allowFpsLimit &= !(!TheGameLogic->isGamePaused() && TheGlobalData->m_TiVOFastMode && TheGameLogic->isInReplayGame());
+#endif
+	}
+
+	allowFpsLimit &= TheGlobalData->m_useFpsLimit;
+	allowFpsLimit &= isFramesPerSecondLimitEnabled();
+
+	return allowFpsLimit;
+}
+
+Int FramePacer::getActualFramesPerSecondLimit() const
+{
+	return isActualFramesPerSecondLimitEnabled() ? getFramesPerSecondLimit() : RenderFpsPreset::UncappedFpsValue;
 }
 
 Real FramePacer::getUpdateTime()  const
@@ -153,10 +177,11 @@ Int FramePacer::getActualLogicTimeScaleFps(LogicTimeQueryFlags flags) const
 
 	if (isLogicTimeScaleEnabled())
 	{
-		return min(getLogicTimeScaleFps(), getFramesPerSecondLimit());
+		return getLogicTimeScaleFps();
 	}
 
-	return getFramesPerSecondLimit();
+	// Returns uncapped value to align with the render update as per the original game behavior.
+	return RenderFpsPreset::UncappedFpsValue;
 }
 
 Real FramePacer::getActualLogicTimeScaleRatio(LogicTimeQueryFlags flags) const

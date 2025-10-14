@@ -49,6 +49,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Debug.h"
+#include "Common/FramePacer.h"
 #include "GameClient/Display.h"
 #include "GameClient/GameWindowManager.h"
 #include "W3DDevice/GameClient/W3DFileSystem.h"
@@ -1470,13 +1471,9 @@ void EditWindow::drawGrid( void )
 //=============================================================================
 void EditWindow::draw( void )
 {
-	static UnsignedInt syncTime = 0;
-
 	// allow W3D to update its internals
-	WW3D::Sync( syncTime );
-
-	// for now, use constant time steps to avoid animations running independent of framerate
-	syncTime += 50;
+	WW3D::Update_Logic_Frame_Time(TheFramePacer->getLogicTimeStepMilliseconds());
+	WW3D::Sync(WW3D::Get_Fractional_Sync_Milliseconds() >= WWSyncMilliseconds);
 
 	// start render block
 	WW3D::Begin_Render( true, true, Vector3( m_backgroundColor.red,
@@ -1493,6 +1490,7 @@ void EditWindow::draw( void )
 	// render is all done!
 	WW3D::End_Render();
 
+	TheFramePacer->update();
 }
 
 // EditWindow::setSize ========================================================

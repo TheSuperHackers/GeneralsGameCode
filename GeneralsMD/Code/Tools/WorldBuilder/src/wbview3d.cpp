@@ -31,7 +31,6 @@
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 #include "agg_def.h"
 #include "part_ldr.h"
-#include "rendobj.h"
 #include "hanim.h"
 #include "dx8wrapper.h"
 #include "dx8indexbuffer.h"
@@ -78,6 +77,7 @@
 #include "WorldBuilder.h"
 #include "wbview3d.h"
 #include "Common/Debug.h"
+#include "Common/FramePacer.h"
 #include "Common/ThingFactory.h"
 #include "GameClient/Water.h"
 #include "Common/WellKnownKeys.h"
@@ -2058,12 +2058,18 @@ void WbView3d::redraw(void)
       m_showBoundingBoxes, m_showSightRanges, m_showWeaponRanges, m_showSoundCircles, m_highlightTestArt, m_showLetterbox);
 	}
 
-	WW3D::Sync( GetTickCount() );
+	WW3D::Update_Logic_Frame_Time(TheFramePacer->getLogicTimeStepMilliseconds());
+	WW3D::Sync(WW3D::Get_Fractional_Sync_Milliseconds() >= WWSyncMilliseconds);
+
 	m_buildRedMultiplier += (GetTickCount()-m_time)/500.0f;
 	if (m_buildRedMultiplier>4.0f || m_buildRedMultiplier<0) {
 		m_buildRedMultiplier = 0;
 	}
+
 	render();
+
+	TheFramePacer->update();
+
 	m_time = ::GetTickCount();
 }
 

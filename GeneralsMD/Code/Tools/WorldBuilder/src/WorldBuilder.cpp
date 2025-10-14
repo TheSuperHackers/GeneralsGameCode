@@ -33,6 +33,7 @@
 
 //#include <wsys/StdFileSystem.h>
 #include "W3DDevice/GameClient/W3DFileSystem.h"
+#include "Common/FramePacer.h"
 #include "Common/GlobalData.h"
 #include "WHeightMapEdit.h"
 //#include "Common/GameFileSystem.h"
@@ -350,6 +351,8 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	initSubsystem(TheWritableGlobalData, new GlobalData(), "Data\\INI\\Default\\GameData", "Data\\INI\\GameData");
 
+	TheFramePacer = new FramePacer();
+
 #if defined(RTS_DEBUG)
 	ini.loadFileDirectory( AsciiString( "Data\\INI\\GameDataDebug" ), INI_LOAD_MULTIFILE, NULL );
 #endif
@@ -653,6 +656,9 @@ int CWorldBuilderApp::ExitInstance()
 	TheSubsystemListRecord.shutdownAll();
 
 	WorldHeightMapEdit::shutdown();
+
+	delete TheFramePacer;
+	TheFramePacer = NULL;
 
 	delete TheFileSystem;
 	TheFileSystem = NULL;

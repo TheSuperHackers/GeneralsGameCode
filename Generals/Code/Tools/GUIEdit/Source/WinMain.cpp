@@ -50,8 +50,8 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Debug.h"
+#include "Common/FramePacer.h"
 #include "Common/GameMemory.h"
-#include "Common/GameEngine.h"
 #include "GameClient/GameWindowManager.h"
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "resource.h"
@@ -224,6 +224,8 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 		return FALSE;
 	TheEditor->init();
 
+	TheFramePacer = new FramePacer();
+
 	//
 	// see if we have any messages to process, a NULL window handle tells the
 	// OS to look at the main window associated with the calling thread, us!
@@ -262,7 +264,7 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 		else
 		{
 
-			// udpate our universe
+			// update our universe
 			TheEditor->update();
 			Sleep(1);
 
@@ -271,6 +273,9 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 	}
 
 	// shutdown GUIEdit data
+	delete TheFramePacer;
+	TheFramePacer = NULL;
+
 	delete TheEditor;
 	TheEditor = NULL;
 

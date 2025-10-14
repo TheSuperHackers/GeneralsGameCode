@@ -173,6 +173,7 @@ public:
 	static void						Sync(bool step);
 	static unsigned int		Get_Sync_Time(void) { return SyncTime; }
 	static unsigned int		Get_Sync_Frame_Time(void) { return SyncTime - PreviousSyncTime; }
+	static unsigned int		Get_Fractional_Sync_Milliseconds() { return FractionalSyncMs; }
 	static float					Get_Logic_Frame_Time_Milliseconds() { return LogicFrameTimeMs; }
 	static float					Get_Logic_Frame_Time_Seconds() { return LogicFrameTimeMs * 0.001f; }
 	static unsigned int		Get_Frame_Count(void) { return FrameCount; }
