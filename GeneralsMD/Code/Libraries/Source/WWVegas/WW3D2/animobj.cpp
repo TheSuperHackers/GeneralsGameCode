@@ -286,7 +286,12 @@ void Animatable3DObjClass::Render(RenderInfoClass & rinfo)
 		return;
 	}
 
-	if (!Is_Hierarchy_Valid() || Are_Sub_Object_Transforms_Dirty()) {
+	//
+	// Force the hierarchy to be recalculated for single animations.
+	//
+	const bool isSingleAnim = CurMotionMode == SINGLE_ANIM && ModeAnim.AnimMode != ANIM_MODE_MANUAL;
+
+	if (isSingleAnim || !Is_Hierarchy_Valid() || Are_Sub_Object_Transforms_Dirty()) {
 		Update_Sub_Object_Transforms();
 	}
 }
@@ -307,7 +312,12 @@ void Animatable3DObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 {
 	if (HTree == NULL) return;
 
-	if (!Is_Hierarchy_Valid()) {
+	//
+	// Force the hierarchy to be recalculated for single animations.
+	//
+	const bool isSingleAnim = CurMotionMode == SINGLE_ANIM && ModeAnim.AnimMode != ANIM_MODE_MANUAL;
+
+	if (isSingleAnim || !Is_Hierarchy_Valid()) {
 		Update_Sub_Object_Transforms();
 	}
 }
@@ -804,7 +814,7 @@ void Animatable3DObjClass::Update_Sub_Object_Transforms(void)
 				ModeInterp.PrevFrame1 = AnimatedSoundMgrClass::Trigger_Sound(ModeInterp.Motion1, ModeInterp.PrevFrame1, ModeInterp.Frame1, HTree->Get_Transform(ModeInterp.Motion1->Get_Embedded_Sound_Bone_Index()));
 			}
 
-  			break;
+			break;
 
 		case MULTIPLE_ANIM:
 		{
@@ -1033,19 +1043,13 @@ void Animatable3DObjClass::Single_Anim_Progress (void)
 	//
 	//	Update the current frame (only works in "SINGLE_ANIM" mode!)
 	//
-	if (CurMotionMode == SINGLE_ANIM) {
+	WWASSERT(CurMotionMode == SINGLE_ANIM);
 
-		//
-		// Update the frame number and sync time
-		//
-		ModeAnim.PrevFrame		= ModeAnim.Frame;
-		ModeAnim.Frame				= Compute_Current_Frame(&ModeAnim.animDirection);
-
-		//
-		// Force the hierarchy to be recalculated
-		//
-		Set_Hierarchy_Valid (false);
-	}
+	//
+	// Update the frame number and sync time
+	//
+	ModeAnim.PrevFrame		= ModeAnim.Frame;
+	ModeAnim.Frame				= Compute_Current_Frame(&ModeAnim.animDirection);
 }
 
 
