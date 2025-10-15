@@ -2294,12 +2294,6 @@ void hideWindows( Int pos )
 		DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 		win->winHide(TRUE);
 
-		// set the total BuildingsDestroyed
-		winName.format("ScoreScreen.wnd:StaticTextBuildingsDestroyed%d", i);
-		win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
-		DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-		win->winHide(TRUE);
-
 		// set the total Resources
 		winName.format("ScoreScreen.wnd:StaticTextResources%d", i);
 		win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
@@ -2382,12 +2376,6 @@ void setObserverWindows( Player *player, Int i )
 
 	// set the total BuildingsLost
 	winName.format("ScoreScreen.wnd:StaticTextBuildingsLost%d", i);
-	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
-	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	win->winHide(TRUE);
-
-	// set the total BuildingsDestroyed
-	winName.format("ScoreScreen.wnd:StaticTextBuildingsDestroyed%d", i);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 	win->winHide(TRUE);
