@@ -190,15 +190,15 @@ int CAnimReportPage::FindItem (const char *item_name)
 void CAnimReportPage::MakeChannelStr (int bone_idx, HAnimClass *hanim, char channels[6])
 {
 	if (hanim->Has_X_Translation(bone_idx))
-		strlcat(channels, "X", ARRAY_SIZE(channels));
+		strcat(channels, "X");
 	if (hanim->Has_Y_Translation(bone_idx))
-		strlcat(channels, "Y", ARRAY_SIZE(channels));
+		strcat(channels, "Y");
 	if (hanim->Has_Z_Translation(bone_idx))
-		strlcat(channels, "Z", ARRAY_SIZE(channels));
+		strcat(channels, "Z");
 	if (hanim->Has_Rotation(bone_idx))
-		strlcat(channels, "Q", ARRAY_SIZE(channels));
+		strcat(channels, "Q");
 	if (hanim->Has_Visibility(bone_idx))
-		strlcat(channels, "V", ARRAY_SIZE(channels));
+		strcat(channels, "V");
 }
 
 BOOL CAnimReportPage::OnSetActive()
