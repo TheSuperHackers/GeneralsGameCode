@@ -4678,56 +4678,39 @@ setTmpValue(now);
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void AIUpdateInterface::evaluateMoraleBonus( void )
+void AIUpdateInterface::evaluateMoraleBonusImpl( Bool inHorde, Bool allowNationalism, Bool classicImplementation )
 {
 	Object *us = getObject();
-#ifdef ALLOW_DEMORALIZE
-	Bool demoralized = isDemoralized();
-#endif
-	Bool horde = FALSE;
-	Bool nationalism = FALSE;
-	Bool fanaticism = FALSE;
-
-	// do we have nationalism
-	///@todo Find a better way to represent nationalism without hardcoding here (CBD)
-	static const UpgradeTemplate *nationalismTemplate = TheUpgradeCenter->findUpgrade( "Upgrade_Nationalism" );
-	DEBUG_ASSERTCRASH( nationalismTemplate != NULL, ("AIUpdateInterface::evaluateMoraleBonus - Nationalism upgrade not found") );
-	Player *player = us->getControllingPlayer();
-	if( player && player->hasUpgradeComplete( nationalismTemplate ) )
-		nationalism = TRUE;
-
-	// do we have fanaticism
-	///@todo Find a better way to represent fanaticism without hardcoding here (MAL)
-	static const UpgradeTemplate *fanaticismTemplate = TheUpgradeCenter->findUpgrade( "Upgrade_Fanaticism" );
-	DEBUG_ASSERTCRASH( fanaticismTemplate != NULL, ("AIUpdateInterface::evaluateMoraleBonus - Fanaticism upgrade not found") );
-	if( player && player->hasUpgradeComplete( fanaticismTemplate ) )
-		fanaticism = TRUE;
-
-	// are we in a horde
-	HordeUpdateInterface *hui;
-	for( BehaviorModule** u = us->getBehaviorModules(); *u; ++u )
-	{
-
-		hui = (*u)->getHordeUpdateInterface();
-		if( hui && hui->isInHorde() )
-		{
-			horde = TRUE;
-
-			if( !hui->isAllowedNationalism() )
-			{
-				// Sorry CBD and MAL, but the cancer has spread to the lymph nodes.  After Alpha, just pump full of painkillers.
-				nationalism = FALSE;
-				fanaticism = FALSE;
-			}
-		}
-
-	}
 
 #ifdef ALLOW_DEMORALIZE
 	// if we are are not demoralized we can have horde and nationalism effects
-	if( demoralized == FALSE )
+	if( !isDemoralized() )
 #endif
 	{
+		Player *player = us->getControllingPlayer();
+
+		Bool nationalism;
+		Bool fanaticism;
+
+		if (player && allowNationalism)
+		{
+			// do we have nationalism
+			///@todo Find a better way to represent nationalism without hard coding here (CBD)
+			static const UpgradeTemplate *nationalismTemplate = TheUpgradeCenter->findUpgrade( "Upgrade_Nationalism" );
+			DEBUG_ASSERTCRASH( nationalismTemplate != NULL, ("AIUpdateInterface::evaluateMoraleBonusImpl - Nationalism upgrade not found") );
+			nationalism = player->hasUpgradeComplete( nationalismTemplate );
+
+			// do we have fanaticism
+			///@todo Find a better way to represent fanaticism without hard coding here (MAL)
+			static const UpgradeTemplate *fanaticismTemplate = TheUpgradeCenter->findUpgrade( "Upgrade_Fanaticism" );
+			DEBUG_ASSERTCRASH( fanaticismTemplate != NULL, ("AIUpdateInterface::evaluateMoraleBonusImpl - Fanaticism upgrade not found") );
+			fanaticism = player->hasUpgradeComplete( fanaticismTemplate );
+		}
+		else
+		{
+			nationalism = FALSE;
+			fanaticism = FALSE;
+		}
 
 #ifdef ALLOW_DEMORALIZE
 		// demoralized
@@ -4739,29 +4722,61 @@ void AIUpdateInterface::evaluateMoraleBonus( void )
 		//if ( draw && !us->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
 		//	draw->setTerrainDecal(TERRAIN_DECAL_NONE);
 
-		// horde
-		if( horde )
+		if (classicImplementation)
 		{
-			us->setWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
+			// TheSuperHackers @info The classic implementation.
+			// Is not great, because Nationalism and Fanaticism bonuses are not disabled when leaving the horde.
 
+			if( inHorde )
+			{
+				us->setWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
+			}
+			else
+			{
+				us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
+			}
+
+			if( nationalism )
+			{
+				us->setWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
+
+				if ( fanaticism )
+					us->setWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
+				else
+					us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
+			}
+			else
+			{
+				us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
+			}
 		}
 		else
-			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
+		{
+			// TheSuperHackers @bugfix The fixed implementation.
+			// Nationalism and Fanaticism are now tied to the horde status.
+			// And Fanaticism is no longer dependent on Nationalism.
 
-		// nationalism
-		if( nationalism )
-    {
-			us->setWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
-      // fanaticism
-      if ( fanaticism )
-        us->setWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );// FOR THE NEW GC INFANTRY GENERAL
-      else
-        us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
-    }
-		else
-			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
+			if( inHorde )
+			{
+				us->setWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
 
+				if( nationalism )
+				{
+					us->setWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
+				}
 
+				if( fanaticism )
+				{
+					us->setWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
+				}
+			}
+			else
+			{
+				us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
+				us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
+				us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
+			}
+		}
 
 	}
 #ifdef ALLOW_DEMORALIZE
@@ -4771,28 +4786,37 @@ void AIUpdateInterface::evaluateMoraleBonus( void )
 		// demoralized
 		us->setWeaponBonusCondition( WEAPONBONUSCONDITION_DEMORALIZED );
 
-		// we cannot have horde bonus condition
+		// we cannot have horde bonuses
 		us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
+		us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
+		us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
+
 		Drawable *draw = us->getDrawable();
 		if( draw && !us->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
 		{
 			draw->setTerrainDecal(TERRAIN_DECAL_DEMORALIZED);
 		}
 
-		// we cannot have nationalism bonus condition
-		us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
-    us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
-
 	}
 #endif
 
-/*
-	UnicodeString msg;
-	msg.format( L"'%S' Horde=%d,Nationalism=%d,Demoralized=%d",
-							us->getTemplate()->getName().str(), horde, nationalism, demoralized );
-	TheInGameUI->message( msg );
-*/
+}
 
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void AIUpdateInterface::evaluateMoraleBonus( Bool inHorde, Bool allowNationalism, HordeActionType type )
+{
+	switch (type)
+	{
+	case HORDEACTION_HORDE:
+		evaluateMoraleBonusImpl(inHorde, allowNationalism, TRUE);
+		break;
+
+	default:
+	case HORDEACTION_HORDE_FIXED:
+		evaluateMoraleBonusImpl(inHorde, allowNationalism, FALSE);
+		break;
+	}
 }
 
 #ifdef ALLOW_DEMORALIZE
@@ -4809,12 +4833,16 @@ void AIUpdateInterface::setDemoralized( UnsignedInt durationInFrames )
 	if( (prevDemoralizedFrames == 0 && m_demoralizedFramesLeft > 0) ||
 			(prevDemoralizedFrames > 0 && m_demoralizedFramesLeft == 0) )
 	{
-
 		// evaluate demoralization, nationalism, and horde effect as they are all intertwined
-		evaluateMoraleBonus();
-
+		Object *us = getObject();
+		for( BehaviorModule** u = us->getBehaviorModules(); *u; ++u )
+		{
+			if ( HordeUpdateInterface *hui = (*u)->getHordeUpdateInterface() )
+			{
+				evaluateMoraleBonus( hui->isInHorde(), hui->isAllowedNationalism(), hui->getHordeActionType() );
+			}
+		}
 	}
-
 }
 #endif
 
