@@ -142,7 +142,7 @@ static bool Use_Non_Blocking_Mode(void)
 	if ((regRetval!=ERROR_SUCCESS) || (type != REG_DWORD))
 		return(TRUE);
 
-	return(bool(value));
+	return bool(value);
 }
 
 
