@@ -555,9 +555,7 @@ StateReturnType DozerActionDoActionState::update( void )
 				if( goalObject->getConstructionPercent() >= 100.0f )
 				{
 
-					// clear the under construction status
-					goalObject->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNDER_CONSTRUCTION ) );
-					goalObject->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_RECONSTRUCTING ) );
+					goalObject->onConstructionCompleted();
 
 					// stop playing the construction sound!
 					dozerAI->finishBuildingSound();

@@ -4494,6 +4494,35 @@ void Object::removeUpgrade( const UpgradeTemplate *upgradeT )
 	}
 }
 
+void Object::onConstructionCompleted()
+{
+	if (!testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+	{
+		// Was already signaled completed.
+		DEBUG_ASSERTCRASH(!testStatus(OBJECT_STATUS_RECONSTRUCTING), ("Unexpected status"));
+		return;
+	}
+
+	DEBUG_ASSERTCRASH(
+		getConstructionPercent() == (Real)CONSTRUCTION_COMPLETE ||
+		getConstructionPercent() >= 100.0f,
+		("Is the construction really completed yet?"));
+
+	// clear the under construction status
+	clearStatus(MAKE_OBJECT_STATUS_MASK2(
+		OBJECT_STATUS_UNDER_CONSTRUCTION,
+		OBJECT_STATUS_RECONSTRUCTING
+	));
+
+	// tell all special powers that the construction has completed
+	for(BehaviorModule** m = getBehaviorModules(); *m; ++m)
+	{
+		SpecialPowerModuleInterface* sp = (*m)->getSpecialPower();
+		if (sp)
+			sp->onConstructionCompleted();
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 /** Central point for onCapture logic */
 //-------------------------------------------------------------------------------------------------
