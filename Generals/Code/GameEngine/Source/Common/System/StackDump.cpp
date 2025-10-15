@@ -616,7 +616,7 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 		else
 		{
 			sprintf (bytestr, "%02X ", *eip_ptr);
-			strcat (scrap, bytestr);
+			strlcat(scrap, bytestr, ARRAY_SIZE(scrap));
 		}
 		eip_ptr++;
 	}

@@ -426,7 +426,7 @@ AsciiString ConvertName(AsciiString name)
 	char newName[256];
 	strcpy(oldName, name.str());
 	strcpy(newName, "GLA");
-	strcat(newName, oldName+strlen("Fundamentalist"));
+	strlcat(newName, oldName+strlen("Fundamentalist"), ARRAY_SIZE(newName));
 	AsciiString swapName;
 	swapName.set(newName);
 	const ThingTemplate *tt = TheThingFactory->findTemplate(swapName);
@@ -442,7 +442,7 @@ AsciiString ConvertFaction(AsciiString name)
 	char newName[256];
 	strcpy(oldName, name.str());
 	strcpy(newName, "FactionGLA");
-	strcat(newName, oldName+strlen("FactionFundamentalist"));
+	strlcat(newName, oldName+strlen("FactionFundamentalist"), ARRAY_SIZE(newName));
 	AsciiString swapName;
 	swapName.set(newName);
 	const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(swapName));
@@ -2119,8 +2119,8 @@ void CWorldBuilderDoc::OnDumpDocToText(void)
 		char curbuf[ _MAX_PATH ];
 
 		strcpy(curbuf, dirbuf);
-		strcat(curbuf, m_strTitle);
-		strcat(curbuf, ".txt");
+		strlcat(curbuf, m_strTitle, ARRAY_SIZE(curbuf));
+		strlcat(curbuf, ".txt", ARRAY_SIZE(curbuf));
 
 		theLogFile = fopen(curbuf, "w");
 		if (theLogFile == NULL)

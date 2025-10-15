@@ -756,9 +756,9 @@ void BuildList::OnExport()
 		SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide);
 		Dict *d = TheSidesList->getSideInfo(m_curSide)->getDict();
 		AsciiString name = d->getAsciiString(TheKey_playerName);
-		strcat(curbuf, name.str());
-		strcat(curbuf, "_BuildList");
-		strcat(curbuf, ".ini");
+		strlcat(curbuf, name.str(), ARRAY_SIZE(curbuf));
+		strlcat(curbuf, "_BuildList", ARRAY_SIZE(curbuf));
+		strlcat(curbuf, ".ini", ARRAY_SIZE(curbuf));
 
 		theLogFile = fopen(curbuf, "w");
 		if (theLogFile == NULL)

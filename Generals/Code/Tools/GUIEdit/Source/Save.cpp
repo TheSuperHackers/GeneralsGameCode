@@ -230,10 +230,10 @@ static Bool saveStatus( GameWindow *window, FILE *fp, Int dataIndent )
 
 			// if this is an additional bit add a +
 			if( bitWritten == TRUE )
-				strcat( buffer, "+");
+				strlcat(buffer, "+", ARRAY_SIZE(buffer));
 
 			// add status name
-			strcat( buffer, WindowStatusNames[ i ] );
+			strlcat(buffer, WindowStatusNames[ i ], ARRAY_SIZE(buffer));
 			bitWritten = TRUE;
 
 		}
@@ -243,10 +243,10 @@ static Bool saveStatus( GameWindow *window, FILE *fp, Int dataIndent )
 
 	// if no bits written write NONE in the file
 	if( bitWritten == FALSE )
-		strcat( buffer, "NONE" );
+		strlcat(buffer, "NONE", ARRAY_SIZE(buffer));
 
 	// complete line and write
-	strcat( buffer, ";\n" );
+	strlcat(buffer, ";\n", ARRAY_SIZE(buffer));
 	writeBufferToFile( fp, buffer );
 
 	return TRUE;
@@ -274,10 +274,10 @@ static Bool saveStyle( GameWindow *window, FILE *fp, Int dataIndent )
 
 			// if this is an additional bit add a +
 			if( bitWritten == TRUE )
-				strcat( buffer, "+");
+				strlcat(buffer, "+", ARRAY_SIZE(buffer));
 
 			// add status name
-			strcat( buffer, WindowStyleNames[ i ] );
+			strlcat(buffer, WindowStyleNames[ i ], ARRAY_SIZE(buffer));
 			bitWritten = TRUE;
 
 		}
@@ -287,10 +287,10 @@ static Bool saveStyle( GameWindow *window, FILE *fp, Int dataIndent )
 
 	// if no bits written write NONE in the file
 	if( bitWritten == FALSE )
-		strcat( buffer, "NONE" );
+		strlcat(buffer, "NONE", ARRAY_SIZE(buffer));
 
 	// complete line and write
-	strcat( buffer, ";\n" );
+	strlcat(buffer, ";\n", ARRAY_SIZE(buffer));
 	writeBufferToFile( fp, buffer );
 
 	return TRUE;
@@ -1115,11 +1115,11 @@ void GUIEdit::validateNames( GameWindow *root, char *filename, Bool *valid )
 	if( strlen( filename ) + instData->m_decoratedNameString.getLength() >= MAX_WINDOW_NAME_LEN )
 	{
 
-		strcat( offendingNames, "[Too Long] " );
-		strcat( offendingNames, filename );
-		strcat( offendingNames, ":" );
-		strcat( offendingNames, instData->m_decoratedNameString.str() );
-		strcat( offendingNames, "\n");
+		strlcat(offendingNames, "[Too Long] ", ARRAY_SIZE(offendingNames));
+		strlcat(offendingNames, filename, ARRAY_SIZE(offendingNames));
+		strlcat(offendingNames, ":", ARRAY_SIZE(offendingNames));
+		strlcat(offendingNames, instData->m_decoratedNameString.str(), ARRAY_SIZE(offendingNames));
+		strlcat(offendingNames, "\n", ARRAY_SIZE(offendingNames));
 		*valid = FALSE;
 
 	}
@@ -1129,11 +1129,11 @@ void GUIEdit::validateNames( GameWindow *root, char *filename, Bool *valid )
 																	root, instData->m_decoratedNameString ) )
 	{
 
-		strcat( offendingNames, "[Duplicate] " );
-		strcat( offendingNames, filename );
-		strcat( offendingNames, ":" );
-		strcat( offendingNames, instData->m_decoratedNameString.str() );
-		strcat( offendingNames, "\n" );
+		strlcat(offendingNames, "[Duplicate] ", ARRAY_SIZE(offendingNames));
+		strlcat(offendingNames, filename, ARRAY_SIZE(offendingNames));
+		strlcat(offendingNames, ":", ARRAY_SIZE(offendingNames));
+		strlcat(offendingNames, instData->m_decoratedNameString.str(), ARRAY_SIZE(offendingNames));
+		strlcat(offendingNames, "\n", ARRAY_SIZE(offendingNames));
 		*valid = FALSE;
 
 	}

@@ -353,10 +353,10 @@ BOOL CWorldBuilderApp::InitInstance()
 	// srj sez: put INI into our user data folder, not the ap dir
 	free((void*)m_pszProfileName);
 	strcpy(buf, TheGlobalData->getPath_UserData().str());
-	strcat(buf, "WorldBuilder.ini");
+	strlcat(buf, "WorldBuilder.ini", ARRAY_SIZE(buf));
 #else
-	strcat(buf, "//");
-	strcat(buf, m_pszProfileName);
+	strlcat(buf, "//", ARRAY_SIZE(buf));
+	strlcat(buf, m_pszProfileName, ARRAY_SIZE(buf));
 	free((void*)m_pszProfileName);
 #endif
 	m_pszProfileName = (const char *)malloc(strlen(buf)+2);

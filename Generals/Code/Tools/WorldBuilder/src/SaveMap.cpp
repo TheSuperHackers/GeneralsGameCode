@@ -139,7 +139,7 @@ void SaveMap::populateMapListbox( Bool systemMaps )
 	if (pList == NULL) return;
 	pList->ResetContent();
 	strcpy(findBuf, dirBuf);
-	strcat(findBuf, "*.*");
+	strlcat(findBuf, "*.*", ARRAY_SIZE(findBuf));
 
 	hFindFile = FindFirstFile(findBuf, &findData);
 	if (hFindFile != INVALID_HANDLE_VALUE) {
@@ -150,10 +150,10 @@ void SaveMap::populateMapListbox( Bool systemMaps )
 				continue;
 			}
 			strcpy(fileBuf, dirBuf);
-			strcat(fileBuf, findData.cFileName);
-			strcat(fileBuf, "\\");
-			strcat(fileBuf, findData.cFileName);
-			strcat(fileBuf, ".map");
+			strlcat(fileBuf, findData.cFileName, ARRAY_SIZE(fileBuf));
+			strlcat(fileBuf, "\\", ARRAY_SIZE(fileBuf));
+			strlcat(fileBuf, findData.cFileName, ARRAY_SIZE(fileBuf));
+			strlcat(fileBuf, ".map", ARRAY_SIZE(fileBuf));
 			try {
 				CFileStatus status;
 				if (CFile::GetStatus(fileBuf, status)) {

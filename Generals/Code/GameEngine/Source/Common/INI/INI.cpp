@@ -790,8 +790,8 @@ AsciiString INI::getNextQuotedAsciiString()
 
 				if (strlen(token) > 1 && token[1] != '\t')
 				{
-					strcat(buff, " ");
-					strcat(buff, token);
+					strlcat(buff, " ", ARRAY_SIZE(buff));
+					strlcat(buff, token, ARRAY_SIZE(buff));
 				}
 				else
 				{	Int buflen=strlen(buff);
@@ -832,9 +832,9 @@ AsciiString INI::getNextAsciiString()
 
 			if (strlen(token) > 1 && token[1] != '\t')
 			{
-				strcat(buff, " ");
+				strlcat(buff, " ", ARRAY_SIZE(buff));
 			}
-			strcat(buff, token);
+			strlcat(buff, token, ARRAY_SIZE(buff));
 			result.set(buff);
 		}
 	}

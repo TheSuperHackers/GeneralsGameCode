@@ -290,7 +290,7 @@ BOOL ObjectOptions::OnInitDialog()
 			dirBuf[len] = 0;
 		}
 		strcpy(findBuf, dirBuf);
-		strcat(findBuf, "*.*");
+		strlcat(findBuf, "*.*", ARRAY_SIZE(findBuf));
 
 		FilenameList filenameList;
 		TheFileSystem->getFileListInDirectory(AsciiString(dirBuf), AsciiString("*.w3d"), filenameList, FALSE);
@@ -310,8 +310,8 @@ BOOL ObjectOptions::OnInitDialog()
 				}
 
 				strcpy(fileBuf, TEST_STRING);
-				strcat(fileBuf, "/");
-				strcat(fileBuf, token.str());
+				strlcat(fileBuf, "/", ARRAY_SIZE(findBuf));
+				strlcat(fileBuf, token.str(), ARRAY_SIZE(findBuf));
 				for (i=strlen(fileBuf)-1; i>0; i--) {
 					if (fileBuf[i] == '.') {
 						// strip off .w3d file extension.

@@ -2063,7 +2063,7 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 			char newName[256];
 			strcpy(oldName, pParm->m_string.str());
 			strcpy(newName, "GLA");
-			strcat(newName, oldName+strlen("Fundamentalist"));
+			strlcat(newName, oldName+strlen("Fundamentalist"), ARRAY_SIZE(newName));
 			pParm->m_string.set(newName);
 			DEBUG_LOG(("Changing Script Ref from %s to %s", oldName, newName));
 		}
