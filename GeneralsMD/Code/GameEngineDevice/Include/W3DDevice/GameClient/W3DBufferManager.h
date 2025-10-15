@@ -48,9 +48,10 @@
 // TheSuperHackers @info The number of slots corresponds to number of meshes casting shadows in the scene.
 // The more meshes there are, the larger the slots needs to be.
 // TheSuperHackers @tweak Double the original sizes to allow for twice as many shadows to be created in the scene.
-#define MAX_NUMBER_SLOTS (4096 * 2) //maximum number of slots that can be allocated.
-#define MAX_VERTEX_BUFFERS_CREATED (32 * 2) //maximum number of D3D vertex buffers allowed to create per vertex type.
-#define MAX_INDEX_BUFFERS_CREATED (32 * 2)
+#define SLOTS_MULTIPLIER 2
+#define MAX_NUMBER_SLOTS (4096 * SLOTS_MULTIPLIER) //maximum number of slots that can be allocated.
+#define MAX_VERTEX_BUFFERS_CREATED (32 * SLOTS_MULTIPLIER) //maximum number of D3D vertex buffers allowed to create per vertex type.
+#define MAX_INDEX_BUFFERS_CREATED (32 * SLOTS_MULTIPLIER)
 
 #define DEFAULT_VERTEX_BUFFER_SIZE 8192 //this size ends up generating VB's of about 256Kbytes
 #define DEFAULT_INDEX_BUFFER_SIZE 32768
