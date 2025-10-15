@@ -32,6 +32,7 @@
 
 #include "GameClient/Drawable.h"
 #include "GameClient/Module/SwayClientUpdate.h"
+#include "Common/FramePacer.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/ThingFactory.h"
@@ -114,7 +115,10 @@ void SwayClientUpdate::clientUpdate( void )
 			return;
 	}
 
-	m_curValue += m_curDelta;
+	// TheSuperHackers @tweak The tree sway time step is now decoupled from the render update.
+	const Real timeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+
+	m_curValue += m_curDelta * timeScale;
 	if (m_curValue > 2*PI)
 		m_curValue -= 2*PI;
 	Real cosine = Cos(m_curValue);
