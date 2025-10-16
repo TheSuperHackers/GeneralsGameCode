@@ -487,6 +487,11 @@ void W3DFileSystem::reprioritizeTexturesBySize()
 }
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @info This function moves the largest texture of its name to the front of the
+// directory info. The algorithm only prioritizes the first item in the multimap, because this is
+// what we currently need:
+// Before: A(256kb) B(128kb) C(512kb)
+// After:  C(512kb) B(128kb) A(256kb)
 //-------------------------------------------------------------------------------------------------
 void W3DFileSystem::reprioritizeTexturesBySize(ArchivedDirectoryInfo& dirInfo)
 {
@@ -500,7 +505,6 @@ void W3DFileSystem::reprioritizeTexturesBySize(ArchivedDirectoryInfo& dirInfo)
 		++it1;
 	}
 
-	// This algorithm only prioritizes the first item in the multimap.
 	for (; it1 != end; ++it1)
 	{
 		const AsciiString& file0 = it0->first;
