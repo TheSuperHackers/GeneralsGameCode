@@ -201,7 +201,7 @@ File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize
 				}
 				else
 				{
-					m_fileExist.insert(it, std::make_pair(rts::string_key<AsciiString>(filename), FileExistData()));
+					m_fileExist[filename];
 				}
 			}
 #endif
@@ -244,8 +244,7 @@ Bool FileSystem::doesFileExist(const Char *filename, FileInstance instance) cons
 		if (instance == 0)
 		{
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
-			FileExistMap::mapped_type& value = m_fileExist[filename];
-			value.instanceExists = max(value.instanceExists, instance);
+			m_fileExist[filename];
 #endif
 			return TRUE;
 		}
