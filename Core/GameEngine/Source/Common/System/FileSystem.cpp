@@ -192,9 +192,17 @@ File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
 			if (file != NULL && (file->getAccess() & File::CREATE))
 			{
-				FileExistMap::mapped_type& value = m_fileExist[filename];
-				value.instanceExists = max(value.instanceExists, instance);
-				value.instanceDoesNotExist = max(value.instanceDoesNotExist, instance + 1);
+				FileExistMap::iterator it = m_fileExist.find(FileExistMap::key_type::temporary(filename));
+				if (it != m_fileExist.end())
+				{
+					++it->second.instanceExists;
+					if (it->second.instanceDoesNotExist != ~0u)
+						++it->second.instanceDoesNotExist;
+				}
+				else
+				{
+					m_fileExist.insert(it, std::make_pair(rts::string_key<AsciiString>(filename), FileExistData()));
+				}
 			}
 #endif
 		}
