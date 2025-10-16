@@ -80,6 +80,8 @@ public:
 	void addArgument(const GameMessageArgumentDataType type, GameMessageArgumentType arg);
 	void setGameMessageType(GameMessage::Type type);
 
+	size_t getByteCount() const;
+
 protected:
 	Int m_numArgs;
 	Int m_argSize;
