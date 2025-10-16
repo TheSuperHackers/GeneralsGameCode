@@ -824,7 +824,7 @@ void NetChatCommandMsg::setPlayerMask( Int playerMask )
  */
 size_t NetChatCommandMsg::getByteCount() const
 {
-	return m_text.getLength() * sizeof(UnsignedShort) + sizeof(m_playerMask);
+	return m_text.getByteCount() + sizeof(m_playerMask);
 }
 
 //-------------------------
