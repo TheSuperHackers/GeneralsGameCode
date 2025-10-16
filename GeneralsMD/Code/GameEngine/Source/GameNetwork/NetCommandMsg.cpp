@@ -775,7 +775,7 @@ size_t NetChatCommandMsg::getByteCount() const
  */
 size_t NetDisconnectChatCommandMsg::getByteCount() const
 {
-	return m_text.getLength() * sizeof(UnsignedShort);
+	return m_text.getByteCount();
 }
 
 //-------------------------
