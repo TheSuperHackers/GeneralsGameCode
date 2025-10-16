@@ -46,49 +46,43 @@ namespace NetPacketFieldTypes {
 // Common packet field structures
 ////////////////////////////////////////////////////////////////////////////////
 
-// Command Type field: 'T' + UnsignedByte
 struct NetPacketCommandTypeField {
-	const NetPacketFieldType type;    // 'T'
+	const NetPacketFieldType type;
 	UnsignedByte commandType;
 
 	NetPacketCommandTypeField() : type(NetPacketFieldTypes::CommandType) {}
 };
 
-// Relay field: 'R' + UnsignedByte
 struct NetPacketRelayField {
-	const NetPacketFieldType type;    // 'R'
+	const NetPacketFieldType type;
 	UnsignedByte relay;
 
 	NetPacketRelayField() : type(NetPacketFieldTypes::Relay) {}
 };
 
-// Player ID field: 'P' + UnsignedByte
 struct NetPacketPlayerIdField {
-	const NetPacketFieldType type;    // 'P'
+	const NetPacketFieldType type;
 	UnsignedByte playerId;
 
 	NetPacketPlayerIdField() : type(NetPacketFieldTypes::PlayerId) {}
 };
 
-// Frame field: 'F' + UnsignedInt
 struct NetPacketFrameField {
-	const NetPacketFieldType type;    // 'F'
+	const NetPacketFieldType type;
 	UnsignedInt frame;
 
 	NetPacketFrameField() : type(NetPacketFieldTypes::Frame) {}
 };
 
-// Command ID field: 'C' + UnsignedShort
 struct NetPacketCommandIdField {
-	const NetPacketFieldType type;    // 'C'
+	const NetPacketFieldType type;
 	UnsignedShort commandId;
 
 	NetPacketCommandIdField() : type(NetPacketFieldTypes::CommandId) {}
 };
 
-// Data field header: 'D' (followed by variable-length data)
 struct NetPacketDataFieldHeader {
-	const NetPacketFieldType type;    // 'D'
+	const NetPacketFieldType type;
 
 	NetPacketDataFieldHeader() : type(NetPacketFieldTypes::Data) {}
 };
@@ -97,20 +91,18 @@ struct NetPacketDataFieldHeader {
 // Acknowledgment Command Packets
 ////////////////////////////////////////////////////////////////////////////////
 
-// ACK command packet structure
 struct NetPacketAckCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketPlayerIdField playerId;
 	NetPacketDataFieldHeader dataHeader;
-	UnsignedShort commandId;           // Command ID being acknowledged
-	UnsignedByte originalPlayerId;     // Original player who sent the command
+	UnsignedShort commandId;
+	UnsignedByte originalPlayerId;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // Frame Info Command Packet
 ////////////////////////////////////////////////////////////////////////////////
 
-// Frame info command packet structure
 struct NetPacketFrameCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
@@ -125,7 +117,6 @@ struct NetPacketFrameCommand {
 // Player Leave Command Packet
 ////////////////////////////////////////////////////////////////////////////////
 
-// Player leave command packet structure
 struct NetPacketPlayerLeaveCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
@@ -140,7 +131,6 @@ struct NetPacketPlayerLeaveCommand {
 // Run Ahead Metrics Command Packet
 ////////////////////////////////////////////////////////////////////////////////
 
-// Run ahead metrics command packet structure  
 struct NetPacketRunAheadMetricsCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
@@ -155,7 +145,6 @@ struct NetPacketRunAheadMetricsCommand {
 // Run Ahead Command Packet
 ////////////////////////////////////////////////////////////////////////////////
 
-// Run ahead command packet structure
 struct NetPacketRunAheadCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
@@ -171,7 +160,6 @@ struct NetPacketRunAheadCommand {
 // Destroy Player Command Packet
 ////////////////////////////////////////////////////////////////////////////////
 
-// Destroy player command packet structure
 struct NetPacketDestroyPlayerCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
@@ -186,7 +174,6 @@ struct NetPacketDestroyPlayerCommand {
 // Keep Alive Command Packet
 ////////////////////////////////////////////////////////////////////////////////
 
-// Keep alive command packet structure
 struct NetPacketKeepAliveCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
@@ -198,7 +185,6 @@ struct NetPacketKeepAliveCommand {
 // Disconnect Keep Alive Command Packet
 ////////////////////////////////////////////////////////////////////////////////
 
-// Disconnect keep alive command packet structure
 struct NetPacketDisconnectKeepAliveCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
@@ -210,7 +196,6 @@ struct NetPacketDisconnectKeepAliveCommand {
 // Disconnect Player Command Packet
 ////////////////////////////////////////////////////////////////////////////////
 
-// Disconnect player command packet structure
 struct NetPacketDisconnectPlayerCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
@@ -258,8 +243,6 @@ struct NetPacketChatCommandHeader {
 	UnsignedByte textLength;
 };
 
-// Disconnect chat command header (variable: text follows)
-// Variable: WideChar text[textLength]
 struct NetPacketDisconnectChatCommandHeader {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
@@ -268,7 +251,6 @@ struct NetPacketDisconnectChatCommandHeader {
 	UnsignedByte textLength;
 };
 
-// Disconnect vote command header (variable: none after fixed portion)
 struct NetPacketDisconnectVoteCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
@@ -279,7 +261,6 @@ struct NetPacketDisconnectVoteCommand {
 	UnsignedInt voteFrame;
 };
 
-// Wrapper command packet (fixed size - contains metadata about wrapped command)
 struct NetPacketWrapperCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketPlayerIdField playerId;
