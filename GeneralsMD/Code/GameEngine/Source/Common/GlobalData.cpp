@@ -929,6 +929,7 @@ GlobalData::GlobalData()
 	m_standardPublicBones.clear();
 
 	m_antiAliasBoxValue = 0;
+	m_archiveReplays = false;
 
 //	m_languageFilterPref = false;
 	m_languageFilterPref = true;
@@ -1200,6 +1201,7 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 
 	// override INI values with user preferences
 	OptionPreferences optionPref;
+	TheWritableGlobalData->m_archiveReplays = optionPref.getArchiveReplaysEnabled();
 	TheWritableGlobalData->m_useAlternateMouse = optionPref.getAlternateMouseModeEnabled();
 	TheWritableGlobalData->m_clientRetaliationModeEnabled = optionPref.getRetaliationModeEnabled();
 	TheWritableGlobalData->m_doubleClickAttackMove = optionPref.getDoubleClickAttackMoveEnabled();
