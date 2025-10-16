@@ -26,6 +26,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameNetwork/NetCommandMsg.h"
+#include "GameNetwork/NetPacketStructs.h"
 #include "Common/GameState.h"
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
@@ -220,6 +221,75 @@ GameMessage *NetGameCommandMsg::constructGameMessage()
  */
 void NetGameCommandMsg::setGameMessageType(GameMessage::Type type) {
 	m_type = type;
+}
+
+/**
+ * Get the byte count for this game command message.
+ */
+size_t NetGameCommandMsg::getByteCount() const {
+	// Fixed header portion
+	UnsignedShort msglen = sizeof(NetPacketGameCommandHeader);
+
+	// Variable data portion
+	GameMessage *gmsg = const_cast<NetGameCommandMsg*>(this)->constructGameMessage();
+	GameMessageParser *parser = newInstance(GameMessageParser)(gmsg);
+
+	msglen += sizeof(GameMessage::Type);
+	msglen += sizeof(UnsignedByte);
+
+	GameMessageParserArgumentType *arg = parser->getFirstArgumentType();
+	while (arg != NULL) {
+		msglen += 2 * sizeof(UnsignedByte); // for the type and number of args of that type declaration.
+		GameMessageArgumentDataType type = arg->getType();
+
+		switch (type) {
+
+		case ARGUMENTDATATYPE_INTEGER:
+			msglen += arg->getArgCount() * sizeof(Int);
+			break;
+		case ARGUMENTDATATYPE_REAL:
+			msglen += arg->getArgCount() * sizeof(Real);
+			break;
+		case ARGUMENTDATATYPE_BOOLEAN:
+			msglen += arg->getArgCount() * sizeof(Bool);
+			break;
+		case ARGUMENTDATATYPE_OBJECTID:
+			msglen += arg->getArgCount() * sizeof(ObjectID);
+			break;
+		case ARGUMENTDATATYPE_DRAWABLEID:
+			msglen += arg->getArgCount() * sizeof(DrawableID);
+			break;
+		case ARGUMENTDATATYPE_TEAMID:
+			msglen += arg->getArgCount() * sizeof(UnsignedInt);
+			break;
+		case ARGUMENTDATATYPE_LOCATION:
+			msglen += arg->getArgCount() * sizeof(Coord3D);
+			break;
+		case ARGUMENTDATATYPE_PIXEL:
+			msglen += arg->getArgCount() * sizeof(ICoord2D);
+			break;
+		case ARGUMENTDATATYPE_PIXELREGION:
+			msglen += arg->getArgCount() * sizeof(IRegion2D);
+			break;
+		case ARGUMENTDATATYPE_TIMESTAMP:
+			msglen += arg->getArgCount() * sizeof(UnsignedInt);
+			break;
+		case ARGUMENTDATATYPE_WIDECHAR:
+			msglen += arg->getArgCount() * sizeof(WideChar);
+			break;
+
+		}
+
+		arg = arg->getNext();
+	}
+
+	deleteInstance(parser);
+	parser = NULL;
+
+	deleteInstance(gmsg);
+	gmsg = NULL;
+
+	return msglen;
 }
 
 //-------------------------
