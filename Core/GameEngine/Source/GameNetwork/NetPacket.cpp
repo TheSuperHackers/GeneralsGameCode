@@ -484,12 +484,12 @@ UnsignedInt NetPacket::GetWrapperCommandSize(NetCommandMsg *msg) {
 }
 
 UnsignedInt NetPacket::GetFileCommandSize(NetCommandMsg *msg) {
-	NetFileCommandMsg *filemsg = (NetFileCommandMsg *)msg;
+	NetFileCommandMsg *filemsg = static_cast<NetFileCommandMsg *>(msg);
 	return sizeof(NetPacketFileCommandHeader) + filemsg->getByteCount();
 }
 
 UnsignedInt NetPacket::GetFileAnnounceCommandSize(NetCommandMsg *msg) {
-	NetFileAnnounceCommandMsg *filemsg = (NetFileAnnounceCommandMsg *)msg;
+	NetFileAnnounceCommandMsg *filemsg = static_cast<NetFileAnnounceCommandMsg *>(msg);
 	return sizeof(NetPacketFileAnnounceCommandHeader) + filemsg->getByteCount();
 }
 
