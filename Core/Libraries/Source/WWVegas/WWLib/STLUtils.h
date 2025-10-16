@@ -18,10 +18,11 @@
 
 #pragma once
 
-#include <Utility/CppMacros.h>
-#include <utility>
 #include <algorithm>
+#include <cstddef>
 #include <map>
+#include <utility>
+#include <Utility/CppMacros.h>
 
 namespace stl
 {
