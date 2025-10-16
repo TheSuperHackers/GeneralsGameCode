@@ -27,6 +27,7 @@
 
 #include "GameNetwork/NetCommandMsg.h"
 #include "GameNetwork/NetPacketStructs.h"
+#include "GameNetwork/GameMessageParser.h"
 #include "Common/GameState.h"
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
