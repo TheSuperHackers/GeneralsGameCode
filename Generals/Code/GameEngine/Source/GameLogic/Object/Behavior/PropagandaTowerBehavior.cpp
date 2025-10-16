@@ -210,7 +210,7 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 	if (self->getContainedBy() && self->getContainedBy()->getContainedBy())
 #else
 	// If our container or any parent containers are enclosing, we turn the heck off.
-	if (self->getEnclosingContain())
+	if (self->getEnclosingContainedBy())
 #endif
 	{
 		removeAllInfluence();
