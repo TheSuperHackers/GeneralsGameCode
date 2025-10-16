@@ -76,7 +76,6 @@ typedef enum
 } LanguageID;
 
 #define GameStrcpy wcscpy
-#define GameStrncpy wcsncpy
 #define GameStrlen wcslen
 #define GameStrcat wcscat
 #define GameStrcmp wcscmp
