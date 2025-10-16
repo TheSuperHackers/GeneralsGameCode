@@ -421,7 +421,7 @@ public:
 	void onRemovedFrom( Object *removedFrom );
 	Int getTransportSlotCount() const;
 	void friend_setContainedBy( Object *containedBy ) { m_containedBy = containedBy; }
-	Object* getEnclosingContainedBy(); // <<< Find the first enclosing container in the containment chain.
+	Object* getEnclosingContainedBy(); ///< Find the first enclosing container in the containment chain.
 
 	// Special Powers -------------------------------------------------------------------------------
 	SpecialPowerModuleInterface *getSpecialPowerModule( const SpecialPowerTemplate *specialPowerTemplate ) const;
