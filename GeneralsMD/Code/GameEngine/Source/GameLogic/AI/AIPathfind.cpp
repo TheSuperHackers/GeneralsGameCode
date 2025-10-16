@@ -52,8 +52,6 @@
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
 
-#include "Utility/CppMacros.h"
-
 #define no_INTENSE_DEBUG
 
 #define DEBUG_QPF

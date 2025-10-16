@@ -19,7 +19,6 @@
 // This file contains macros to help with endian conversions between different endian systems.
 #pragma once
 
-// VC6 does not support pragma once
 #ifndef ENDIAN_COMPAT_H
 #define ENDIAN_COMPAT_H
 

@@ -31,7 +31,6 @@
 #include "GameNetwork/NetworkDefs.h"
 #include "GameNetwork/networkutil.h"
 #include "GameNetwork/GameMessageParser.h"
-#include <Utility/CppMacros.h>
 
 // TheSuperHackers @refactor BobTista 10/06/2025 Extract magic character literals into named constants for improved readability
 typedef UnsignedByte NetPacketFieldType;

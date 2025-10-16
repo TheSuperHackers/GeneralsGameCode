@@ -40,7 +40,6 @@
 #include "camera.h"
 #include "scene.h"
 #include "intersec.inl"
-#include "Utility/CppMacros.h"
 
 
 //////////////////////////////////////////////////////////////////////
