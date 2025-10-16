@@ -117,7 +117,7 @@ void LANAPI::init( void )
 	DWORD bufSize = ARRAY_SIZE(userName);
 	if (GetUserNameA(userName, &bufSize))
 	{
-		m_userName.set(userName, bufSize);
+		m_userName.set(userName, bufSize - 1);
 	}
 	else
 	{
@@ -128,7 +128,7 @@ void LANAPI::init( void )
 	bufSize = ARRAY_SIZE(computerName);
 	if (GetComputerNameA(computerName, &bufSize))
 	{
-		m_hostName.set(computerName, bufSize);
+		m_hostName.set(computerName, bufSize - 1);
 	}
 	else
 	{
