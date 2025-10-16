@@ -101,7 +101,6 @@ protected:
 	static UnsignedInt GetDisconnectScreenOffCommandSize(NetCommandMsg *msg);
 	static UnsignedInt GetFrameResendRequestCommandSize(NetCommandMsg *msg);
 
-
 	static void FillBufferWithGameCommand(UnsignedByte *buffer, NetCommandRef *msg);
 	static void FillBufferWithAckCommand(UnsignedByte *buffer, NetCommandRef *msg);
 	static void FillBufferWithFrameCommand(UnsignedByte *buffer, NetCommandRef *msg);
