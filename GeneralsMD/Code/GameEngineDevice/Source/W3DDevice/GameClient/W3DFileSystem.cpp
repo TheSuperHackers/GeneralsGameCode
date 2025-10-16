@@ -126,30 +126,18 @@ inline static Bool isImageFileType( GameFileType fileType )
 //-------------------------------------------------------------------------------------------------
 static GameFileType getFileType( char const *filename )
 {
-	const Int EXT_LEN = 32;
-	char extension[EXT_LEN];
-	extension[0] = 0;
-	Int i = strlen(filename);
-	i--;
-	Int extLen = 1;
-	while(i>0 && extLen < EXT_LEN) {
-		if (filename[i] == '.') {
-			strcpy(extension, filename+i);
-			break;
-		}
-		i--;
-		extLen++;
+	if (char const *extension = strrchr( filename, '.' ))
+	{
+		// test the extension to recognize a few key file types
+		if( stricmp( extension, ".w3d" ) == 0 )
+			return FILE_TYPE_W3D;
+		else if( stricmp( extension, ".tga" ) == 0 )
+			return FILE_TYPE_TGA;
+		else if( stricmp( extension, ".dds" ) == 0 )
+			return FILE_TYPE_DDS;
 	}
 
-	// test the extension to recognize a few key file types
-	if( stricmp( extension, ".w3d" ) == 0 )
-		return FILE_TYPE_W3D;
-	else if( stricmp( extension, ".tga" ) == 0 )
-		return FILE_TYPE_TGA;
-	else if( stricmp( extension, ".dds" ) == 0 )
-		return FILE_TYPE_DDS;
-	else
-		return FILE_TYPE_COMPLETELY_UNKNOWN;  // MBL FILE_TYPE_UNKNOWN change due to compile error
+	return FILE_TYPE_COMPLETELY_UNKNOWN;  // MBL FILE_TYPE_UNKNOWN change due to compile error
 }
 
 //-------------------------------------------------------------------------------------------------
