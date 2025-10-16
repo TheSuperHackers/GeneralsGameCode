@@ -113,7 +113,7 @@ public:
 
 	//
 	//	Simple bone evaluation methods for when the caller doesn't want
-	// to update the heirarchy, but needs to know the transform of
+	// to update the hierarchy, but needs to know the transform of
 	// a bone at a given frame.
 	//
 	virtual bool					Simple_Evaluate_Bone(int boneindex, Matrix3D *tm) const;
@@ -153,14 +153,14 @@ protected:
 	void								Combo_Update(	const Matrix3D & root,
 															HAnimComboClass *anim);
 
-	// flag to kep track of whether the hierarchy tree transforms are currently valid
+	// flag to keep track of whether the hierarchy tree transforms are currently valid
 	bool								Is_Hierarchy_Valid(void) const				{ return IsTreeValid; }
 	void								Set_Hierarchy_Valid(bool onoff) const  	{ IsTreeValid = onoff; }
 
-	// Progress anims for single anim (loop and once)
+	// Progress animations for single anim (loop and once)
 	void								Single_Anim_Progress( void );
 
-	// Release any anims
+	// Release any animations
 	void								Release( void );
 
 protected:
