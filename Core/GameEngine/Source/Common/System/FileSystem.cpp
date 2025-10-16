@@ -171,7 +171,7 @@ void		FileSystem::reset( void )
 // FileSystem::open
 //============================================================================
 
-File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize, UnsignedInt instance )
+File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize, FileInstance instance )
 {
 	USE_PERF_TIMER(FileSystem)
 	File *file = NULL;
@@ -196,7 +196,7 @@ File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize
 				if (it != m_fileExist.end())
 				{
 					++it->second.instanceExists;
-					if (it->second.instanceDoesNotExist != ~0u)
+					if (it->second.instanceDoesNotExist != ~FileInstance(0))
 						++it->second.instanceDoesNotExist;
 				}
 				else
@@ -221,7 +221,7 @@ File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize
 // FileSystem::doesFileExist
 //============================================================================
 
-Bool FileSystem::doesFileExist(const Char *filename, UnsignedInt instance) const
+Bool FileSystem::doesFileExist(const Char *filename, FileInstance instance) const
 {
 	USE_PERF_TIMER(FileSystem)
 
@@ -282,7 +282,7 @@ void FileSystem::getFileListInDirectory(const AsciiString& directory, const Asci
 //============================================================================
 // FileSystem::getFileInfo
 //============================================================================
-Bool FileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo, UnsignedInt instance) const
+Bool FileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo, FileInstance instance) const
 {
 	USE_PERF_TIMER(FileSystem)
 

@@ -238,7 +238,7 @@ void ArchiveFileSystem::loadMods()
 	}
 }
 
-Bool ArchiveFileSystem::doesFileExist(const Char *filename, UnsignedInt instance) const
+Bool ArchiveFileSystem::doesFileExist(const Char *filename, FileInstance instance) const
 {
 	ArchivedDirectoryInfoResult result = const_cast<ArchiveFileSystem*>(this)->getArchivedDirectoryInfo(filename);
 
@@ -289,7 +289,7 @@ ArchiveFileSystem::ArchivedDirectoryInfoResult ArchiveFileSystem::getArchivedDir
 	return result;
 }
 
-File * ArchiveFileSystem::openFile(const Char *filename, Int access, UnsignedInt instance)
+File * ArchiveFileSystem::openFile(const Char *filename, Int access, FileInstance instance)
 {
 	ArchiveFile* archive = getArchiveFile(filename, instance);
 
@@ -299,7 +299,7 @@ File * ArchiveFileSystem::openFile(const Char *filename, Int access, UnsignedInt
 	return archive->openFile(filename, access);
 }
 
-Bool ArchiveFileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo, UnsignedInt instance) const
+Bool ArchiveFileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo, FileInstance instance) const
 {
 	if (fileInfo == NULL) {
 		return FALSE;
@@ -317,7 +317,7 @@ Bool ArchiveFileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileI
 	return archive->getFileInfo(filename, fileInfo);
 }
 
-ArchiveFile* ArchiveFileSystem::getArchiveFile(const AsciiString& filename, UnsignedInt instance) const
+ArchiveFile* ArchiveFileSystem::getArchiveFile(const AsciiString& filename, FileInstance instance) const
 {
 	ArchivedDirectoryInfoResult result = const_cast<ArchiveFileSystem*>(this)->getArchivedDirectoryInfo(filename.str());
 

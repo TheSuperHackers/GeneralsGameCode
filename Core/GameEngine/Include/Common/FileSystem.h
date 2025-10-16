@@ -66,6 +66,7 @@
 
 typedef std::set<AsciiString, rts::less_than_nocase<AsciiString> > FilenameList;
 typedef FilenameList::iterator FilenameListIter;
+typedef UnsignedByte FileInstance;
 
 //----------------------------------------------------------------------------
 //           Type Defines
@@ -80,7 +81,7 @@ typedef FilenameList::iterator FilenameListIter;
 #define USER_W3D_DIR_PATH "%sW3D/"					///< .w3d files live here
 #define USER_TGA_DIR_PATH "%sTextures/"		///< User .tga texture files live here
 
-// the following defines are only to be used while maintaining legacy compatability
+// the following defines are only to be used while maintaining legacy compatibility
 // with old files until they are completely gone and in the regular art set
 #ifdef MAINTAIN_LEGACY_FILES
 #define LEGACY_W3D_DIR_PATH "../LegacyArt/W3D/"				///< .w3d files live here
@@ -144,10 +145,10 @@ public:
 	void reset();
 	void update();
 
-	File* openFile( const Char *filename, Int access = File::NONE, size_t bufferSize = File::BUFFERSIZE, UnsignedInt instance = 0 ); ///< opens a File interface to the specified file
-	Bool doesFileExist(const Char *filename, UnsignedInt instance = 0) const; ///< returns TRUE if the file exists.  filename should have no directory.
+	File* openFile( const Char *filename, Int access = File::NONE, size_t bufferSize = File::BUFFERSIZE, FileInstance instance = 0 ); ///< opens a File interface to the specified file
+	Bool doesFileExist(const Char *filename, FileInstance instance = 0) const; ///< returns TRUE if the file exists.  filename should have no directory.
 	void getFileListInDirectory(const AsciiString& directory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const; ///< search the given directory for files matching the searchName (egs. *.ini, *.rep).  Possibly search subdirectories.
-	Bool getFileInfo(const AsciiString& filename, FileInfo *fileInfo, UnsignedInt instance = 0) const; ///< fills in the FileInfo struct for the file given. returns TRUE if successful.
+	Bool getFileInfo(const AsciiString& filename, FileInfo *fileInfo, FileInstance instance = 0) const; ///< fills in the FileInfo struct for the file given. returns TRUE if successful.
 
 	Bool createDirectory(AsciiString directory); ///< create a directory of the given name.
 
@@ -162,9 +163,9 @@ protected:
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
 	struct FileExistData
 	{
-		FileExistData() : instanceExists(0), instanceDoesNotExist(~0u) {}
-		UnsignedInt instanceExists;
-		UnsignedInt instanceDoesNotExist;
+		FileExistData() : instanceExists(0), instanceDoesNotExist(~FileInstance(0)) {}
+		FileInstance instanceExists;
+		FileInstance instanceDoesNotExist;
 	};
 	typedef std::hash_map<
 		rts::string_key<AsciiString>, FileExistData,
