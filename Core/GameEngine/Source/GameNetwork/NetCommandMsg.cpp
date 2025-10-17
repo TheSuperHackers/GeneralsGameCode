@@ -236,8 +236,7 @@ void NetGameCommandMsg::setGameMessageType(GameMessage::Type type) {
  * Get the byte count for this game command message.
  */
 size_t NetGameCommandMsg::getByteCount() const {
-	// Fixed header portion
-	UnsignedShort msglen = sizeof(NetPacketGameCommandHeader);
+	UnsignedShort msglen = sizeof(PackedNetGameCommandMsg);
 
 	// Variable data portion
 	GameMessage *gmsg = const_cast<NetGameCommandMsg*>(this)->constructGameMessage();
@@ -1036,7 +1035,7 @@ void NetFileCommandMsg::setFileData(UnsignedByte *data, UnsignedInt dataLength)
  */
 size_t NetFileCommandMsg::getByteCount() const
 {
-	return m_portableFilename.getLength() + 1  // filename + null terminator
+	return sizeof(PackedNetFileCommandMsg) + m_portableFilename.getLength() + 1  // filename + null terminator
 		+ sizeof(UnsignedInt)  // file data length
 		+ m_dataLength;  // the file data
 }
@@ -1085,7 +1084,7 @@ void NetFileAnnounceCommandMsg::setPlayerMask(UnsignedByte playerMask) {
  */
 size_t NetFileAnnounceCommandMsg::getByteCount() const
 {
-	return m_portableFilename.getLength() + 1  // filename + null terminator
+	return sizeof(PackedNetFileAnnounceCommandMsg) + m_portableFilename.getLength() + 1  // filename + null terminator
 		+ sizeof(m_fileID)  // file ID
 		+ sizeof(m_playerMask);  // player mask
 }
