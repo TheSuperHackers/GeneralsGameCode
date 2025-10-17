@@ -1199,50 +1199,50 @@ size_t NetRunAheadMetricsCommandMsg::getPackedByteCount() {
 	return sizeof(NetPacketRunAheadMetricsCommand);
 }
 
-size_t NetRunAheadCommandMsg::getPackedByteCount() const {
+size_t NetRunAheadCommandMsg::getPackedByteCount() {
 	return sizeof(NetPacketRunAheadCommand);
 }
 
-size_t NetDestroyPlayerCommandMsg::getPackedByteCount() const {
+size_t NetDestroyPlayerCommandMsg::getPackedByteCount() {
 	return sizeof(NetPacketDestroyPlayerCommand);
 }
 
-size_t NetDisconnectKeepAliveCommandMsg::getPackedByteCount() const {
+size_t NetDisconnectKeepAliveCommandMsg::getPackedByteCount() {
 	return sizeof(NetPacketDisconnectKeepAliveCommand);
 }
 
-size_t NetDisconnectPlayerCommandMsg::getPackedByteCount() const {
+size_t NetDisconnectPlayerCommandMsg::getPackedByteCount() {
 	return sizeof(NetPacketDisconnectPlayerCommand);
 }
 
-size_t NetPacketRouterQueryCommandMsg::getPackedByteCount() const {
+size_t NetPacketRouterQueryCommandMsg::getPackedByteCount() {
 	return sizeof(NetPacketRouterQueryCommand);
 }
 
-size_t NetPacketRouterAckCommandMsg::getPackedByteCount() const {
+size_t NetPacketRouterAckCommandMsg::getPackedByteCount() {
 	return sizeof(NetPacketRouterAckCommand);
 }
 
-size_t NetDisconnectVoteCommandMsg::getPackedByteCount() const {
+size_t NetDisconnectVoteCommandMsg::getPackedByteCount() {
 	return sizeof(NetPacketDisconnectVoteCommand);
 }
 
-size_t NetProgressCommandMsg::getPackedByteCount() const {
+size_t NetProgressCommandMsg::getPackedByteCount() {
 	return sizeof(NetPacketProgressMessage);
 }
 
-size_t NetFileProgressCommandMsg::getPackedByteCount() const {
+size_t NetFileProgressCommandMsg::getPackedByteCount() {
 	return sizeof(NetPacketFileProgressCommand);
 }
 
-size_t NetDisconnectFrameCommandMsg::getPackedByteCount() const {
+size_t NetDisconnectFrameCommandMsg::getPackedByteCount() {
 	return sizeof(NetPacketDisconnectFrameCommand);
 }
 
-size_t NetDisconnectScreenOffCommandMsg::getPackedByteCount() const {
+size_t NetDisconnectScreenOffCommandMsg::getPackedByteCount() {
 	return sizeof(NetPacketDisconnectScreenOffCommand);
 }
 
-size_t NetFrameResendRequestCommandMsg::getPackedByteCount() const {
+size_t NetFrameResendRequestCommandMsg::getPackedByteCount() {
 	return sizeof(NetPacketFrameResendRequestCommand);
 }
