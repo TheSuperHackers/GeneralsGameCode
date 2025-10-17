@@ -80,7 +80,7 @@ public:
 	void addArgument(const GameMessageArgumentDataType type, GameMessageArgumentType arg);
 	void setGameMessageType(GameMessage::Type type);
 
-	size_t getByteCount() const;
+	size_t getPackedByteCount() const;
 
 protected:
 	Int m_numArgs;
@@ -108,7 +108,7 @@ public:
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
 	virtual Int getSortNumber();
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 
 protected:
 	UnsignedShort m_commandID;
@@ -134,7 +134,7 @@ public:
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
 	virtual Int getSortNumber();
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 
 protected:
 	UnsignedShort m_commandID;
@@ -160,7 +160,7 @@ public:
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
 	virtual Int getSortNumber();
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 
 protected:
 	UnsignedShort m_commandID;
@@ -178,7 +178,7 @@ public:
 	void setCommandCount(UnsignedShort commandCount);
 	UnsignedShort getCommandCount();
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 
 protected:
 	UnsignedShort m_commandCount;
@@ -195,7 +195,7 @@ public:
 	UnsignedByte getLeavingPlayerID();
 	void setLeavingPlayerID(UnsignedByte id);
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 
 protected:
 	UnsignedByte m_leavingPlayerID;
@@ -214,7 +214,7 @@ public:
 	Int  getAverageFps();
 	void setAverageFps(Int fps);
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 
 protected:
 	Real m_averageLatency;
@@ -235,7 +235,7 @@ public:
 	UnsignedByte getFrameRate();
 	void setFrameRate(UnsignedByte frameRate);
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 
 protected:
 	UnsignedShort m_runAhead;
@@ -253,7 +253,7 @@ public:
 	UnsignedInt getPlayerIndex();
 	void setPlayerIndex(UnsignedInt playerIndex);
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 
 protected:
 	UnsignedInt m_playerIndex;
@@ -267,7 +267,7 @@ public:
 	NetKeepAliveCommandMsg();
 	//virtual ~NetKeepAliveCommandMsg();
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 };
 
 //-----------------------------------------------------------------------------
@@ -278,7 +278,7 @@ public:
 	NetDisconnectKeepAliveCommandMsg();
 	//virtual ~NetDisconnectKeepAliveCommandMsg();
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 };
 
 //-----------------------------------------------------------------------------
@@ -295,7 +295,7 @@ public:
 	UnsignedInt getDisconnectFrame();
 	void setDisconnectFrame(UnsignedInt frame);
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 
 protected:
 	UnsignedByte m_disconnectSlot;
@@ -310,7 +310,7 @@ public:
 	NetPacketRouterQueryCommandMsg();
 	//virtual ~NetPacketRouterQueryCommandMsg();
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 };
 
 //-----------------------------------------------------------------------------
@@ -321,7 +321,7 @@ public:
 	NetPacketRouterAckCommandMsg();
 	//virtual ~NetPacketRouterAckCommandMsg();
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 };
 
 //-----------------------------------------------------------------------------
@@ -335,7 +335,7 @@ public:
 	UnicodeString getText();
 	void setText(UnicodeString text);
 
-	size_t getByteCount() const;
+	size_t getPackedByteCount() const;
 
 protected:
 	UnicodeString m_text;
@@ -355,7 +355,7 @@ public:
 	Int getPlayerMask( void );
 	void setPlayerMask( Int playerMask );
 
-	size_t getByteCount() const;
+	size_t getPackedByteCount() const;
 
 protected:
 	UnicodeString m_text;
@@ -376,7 +376,7 @@ public:
 	UnsignedInt getVoteFrame();
 	void setVoteFrame(UnsignedInt voteFrame);
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 
 protected:
 	UnsignedByte m_slot;
@@ -394,7 +394,7 @@ public:
 	UnsignedByte getPercentage();
 	void setPercentage( UnsignedByte percent );
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 protected:
 	UnsignedByte m_percent;
 };
@@ -410,7 +410,7 @@ public:
 	UnsignedByte * getData();
 	void setData(UnsignedByte *data, UnsignedInt dataLength);
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 
 	UnsignedInt getChunkNumber();
 	void setChunkNumber(UnsignedInt chunkNumber);
@@ -459,7 +459,7 @@ public:
 	UnsignedByte * getFileData();
 	void setFileData(UnsignedByte *data, UnsignedInt dataLength);
 
-	size_t getByteCount() const;
+	size_t getPackedByteCount() const;
 
 protected:
 	AsciiString m_portableFilename;
@@ -488,7 +488,7 @@ public:
 	UnsignedByte getPlayerMask(void);
 	void setPlayerMask(UnsignedByte playerMask);
 
-	size_t getByteCount() const;
+	size_t getPackedByteCount() const;
 
 protected:
 	AsciiString m_portableFilename;
@@ -510,7 +510,7 @@ public:
 	Int getProgress();
 	void setProgress(Int val);
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 
 protected:
 	UnsignedShort m_fileID;
@@ -527,7 +527,7 @@ public:
 	UnsignedInt getDisconnectFrame();
 	void setDisconnectFrame(UnsignedInt disconnectFrame);
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 
 protected:
 	UnsignedInt m_disconnectFrame;
@@ -543,7 +543,7 @@ public:
 	UnsignedInt getNewFrame();
 	void setNewFrame(UnsignedInt newFrame);
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 
 protected:
 	UnsignedInt m_newFrame;
@@ -559,7 +559,7 @@ public:
 	UnsignedInt getFrameToResend();
 	void setFrameToResend(UnsignedInt frame);
 	
-	static size_t getByteCount();
+	static size_t getPackedByteCount();
 
 protected:
 	UnsignedInt m_frameToResend;
