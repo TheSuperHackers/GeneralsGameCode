@@ -4582,7 +4582,8 @@ Bool NetPacket::isRoomForGameMessage(NetCommandRef *msg, GameMessage *gmsg) {
 //	Int numTypes = parser->getNumTypes();
 	GameMessageParserArgumentType *arg = parser->getFirstArgumentType();
 	while (arg != NULL) {
-		msglen += 2 * sizeof(UnsignedByte); // for the type and number of args of that type declaration.
+		msglen += sizeof(UnsignedByte); // argument type
+		msglen += sizeof(UnsignedByte); // argument count
 		GameMessageArgumentDataType type = arg->getType();
 
 		switch (type) {
