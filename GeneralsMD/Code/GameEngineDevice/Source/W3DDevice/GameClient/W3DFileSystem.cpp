@@ -50,7 +50,6 @@
 #include "W3DDevice/GameClient/W3DFileSystem.h"
 
 #include <io.h>
-#include <Utility/stdio_adapter.h>
 
 // DEFINES ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -437,7 +436,7 @@ W3DFileSystem::W3DFileSystem(void)
 {
 	_TheFileFactory = this; // override the w3d file factory.
 
-#if PRIORITIZE_TEXTURES_BY_SIZE
+#if RTS_ZEROHOUR && PRIORITIZE_TEXTURES_BY_SIZE
 	reprioritizeTexturesBySize();
 #endif
 }
@@ -471,18 +470,10 @@ void W3DFileSystem::Return_File( FileClass *file )
 //-------------------------------------------------------------------------------------------------
 void W3DFileSystem::reprioritizeTexturesBySize()
 {
+	ArchivedDirectoryInfo* dirInfo = TheArchiveFileSystem->friend_getArchivedDirectoryInfo(TGA_DIR_PATH);
+	if (dirInfo != NULL)
 	{
-		ArchivedDirectoryInfo* dirInfo = TheArchiveFileSystem->friend_getArchivedDirectoryInfo(TGA_DIR_PATH);
-		if (dirInfo != NULL)
-			reprioritizeTexturesBySize(*dirInfo);
-	}
-
-	{
-		char path[_MAX_PATH];
-		snprintf(path, ARRAY_SIZE(path), "Data/%s/Art/Textures/", GetRegistryLanguage().str());
-		ArchivedDirectoryInfo* dirInfo = TheArchiveFileSystem->friend_getArchivedDirectoryInfo(path);
-		if (dirInfo != NULL)
-			reprioritizeTexturesBySize(*dirInfo);
+		reprioritizeTexturesBySize(*dirInfo);
 	}
 }
 
@@ -492,9 +483,15 @@ void W3DFileSystem::reprioritizeTexturesBySize()
 // what we currently need:
 // Before: A(256kb) B(128kb) C(512kb)
 // After:  C(512kb) B(128kb) A(256kb)
+// 
+// Catered to specific game archives only. This ensures that non user created archives are not
+// affected by the re-prioritization.
 //-------------------------------------------------------------------------------------------------
 void W3DFileSystem::reprioritizeTexturesBySize(ArchivedDirectoryInfo& dirInfo)
 {
+	const char* const superiorArchive = "Textures.big";
+	const char* const inferiorArchive = "TexturesZH.big";
+
 	ArchivedFileLocationMap::iterator it0;
 	ArchivedFileLocationMap::iterator it1 = dirInfo.m_files.begin();
 	ArchivedFileLocationMap::iterator end = dirInfo.m_files.end();
@@ -524,7 +521,9 @@ void W3DFileSystem::reprioritizeTexturesBySize(ArchivedDirectoryInfo& dirInfo)
 
 				if (archive0->getFileInfo(filepath, &info0) && archive1->getFileInfo(filepath, &info1))
 				{
-					if (info0.size() < info1.size())
+					if (info0.size() < info1.size()
+						&& archive0->getName().endsWithNoCase(inferiorArchive)
+						&& archive1->getName().endsWithNoCase(superiorArchive))
 					{
 						std::swap(it0->second, it1->second);
 
