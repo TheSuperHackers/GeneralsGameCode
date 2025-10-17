@@ -269,6 +269,22 @@ struct PackedNetChatCommandMsg : public PackedNetCommandMsg {
 struct PackedNetDisconnectChatCommandMsg : public PackedNetCommandMsg {
 };
 
+// Game command packed struct (variable: game message data follows)
+struct PackedNetGameCommandMsg : public PackedNetCommandMsg {
+	NetPacketFrameField frame;
+	NetPacketCommandIdField commandId;
+};
+
+// File command packed struct (variable: filename and file data follow)
+struct PackedNetFileCommandMsg : public PackedNetCommandMsg {
+	NetPacketCommandIdField commandId;
+};
+
+// File announce command packed struct (variable: filename and metadata follow)
+struct PackedNetFileAnnounceCommandMsg : public PackedNetCommandMsg {
+	NetPacketCommandIdField commandId;
+};
+
 struct NetPacketDisconnectVoteCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
