@@ -223,10 +223,23 @@ struct NetPacketRouterAckCommand {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+// Base Packed Struct for All Command Messages
+// Contains the minimum common fields that all command messages share
+////////////////////////////////////////////////////////////////////////////////
+
+struct PackedNetCommandMsg {
+	NetPacketCommandTypeField commandType;
+	NetPacketRelayField relay;
+	NetPacketPlayerIdField playerId;
+	NetPacketDataFieldHeader dataHeader;
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // Variable-Length Packet Headers
 // These structs represent the fixed portion of packets with variable data
 ////////////////////////////////////////////////////////////////////////////////
 
+// Chat command header (variable: text follows)
 struct NetPacketChatCommandHeader {
 	NetPacketCommandTypeField commandType;
 	NetPacketFrameField frame;
@@ -241,6 +254,19 @@ struct NetPacketDisconnectChatCommandHeader {
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
 	NetPacketDataFieldHeader dataHeader;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Derived Packed Structs for getByteCount() calculations
+// These structs inherit from PackedNetCommandMsg and add command-specific fields
+////////////////////////////////////////////////////////////////////////////////
+
+struct PackedNetChatCommandMsg : public PackedNetCommandMsg {
+	NetPacketFrameField frame;
+	NetPacketCommandIdField commandId;
+};
+
+struct PackedNetDisconnectChatCommandMsg : public PackedNetCommandMsg {
 };
 
 struct NetPacketDisconnectVoteCommand {
