@@ -42,10 +42,6 @@ namespace NetPacketFieldTypes {
 	constexpr const NetPacketFieldType Data = 'D';				// Data payload field
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Common packet field structures
-////////////////////////////////////////////////////////////////////////////////
-
 struct NetPacketCommandTypeField {
 	const NetPacketFieldType type;
 	UnsignedByte commandType;
@@ -231,8 +227,6 @@ struct NetPacketRouterAckCommand {
 // These structs represent the fixed portion of packets with variable data
 ////////////////////////////////////////////////////////////////////////////////
 
-// Chat command header (variable: text follows)
-// Variable: WideChar text[textLength] + Int playerMask
 struct NetPacketChatCommandHeader {
 	NetPacketCommandTypeField commandType;
 	NetPacketFrameField frame;
@@ -240,7 +234,6 @@ struct NetPacketChatCommandHeader {
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
 	NetPacketDataFieldHeader dataHeader;
-	UnsignedByte textLength;
 };
 
 struct NetPacketDisconnectChatCommandHeader {
@@ -248,7 +241,6 @@ struct NetPacketDisconnectChatCommandHeader {
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
 	NetPacketDataFieldHeader dataHeader;
-	UnsignedByte textLength;
 };
 
 struct NetPacketDisconnectVoteCommand {
