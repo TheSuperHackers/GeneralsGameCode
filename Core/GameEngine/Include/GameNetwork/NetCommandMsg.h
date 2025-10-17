@@ -108,7 +108,7 @@ public:
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
 	virtual Int getSortNumber();
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 
 protected:
 	UnsignedShort m_commandID;
@@ -134,7 +134,7 @@ public:
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
 	virtual Int getSortNumber();
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 
 protected:
 	UnsignedShort m_commandID;
@@ -160,7 +160,7 @@ public:
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
 	virtual Int getSortNumber();
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 
 protected:
 	UnsignedShort m_commandID;
@@ -178,7 +178,7 @@ public:
 	void setCommandCount(UnsignedShort commandCount);
 	UnsignedShort getCommandCount();
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 
 protected:
 	UnsignedShort m_commandCount;
@@ -195,7 +195,7 @@ public:
 	UnsignedByte getLeavingPlayerID();
 	void setLeavingPlayerID(UnsignedByte id);
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 
 protected:
 	UnsignedByte m_leavingPlayerID;
@@ -214,7 +214,7 @@ public:
 	Int  getAverageFps();
 	void setAverageFps(Int fps);
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 
 protected:
 	Real m_averageLatency;
@@ -235,7 +235,7 @@ public:
 	UnsignedByte getFrameRate();
 	void setFrameRate(UnsignedByte frameRate);
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 
 protected:
 	UnsignedShort m_runAhead;
@@ -253,7 +253,7 @@ public:
 	UnsignedInt getPlayerIndex();
 	void setPlayerIndex(UnsignedInt playerIndex);
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 
 protected:
 	UnsignedInt m_playerIndex;
@@ -267,7 +267,7 @@ public:
 	NetKeepAliveCommandMsg();
 	//virtual ~NetKeepAliveCommandMsg();
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 };
 
 //-----------------------------------------------------------------------------
@@ -278,7 +278,7 @@ public:
 	NetDisconnectKeepAliveCommandMsg();
 	//virtual ~NetDisconnectKeepAliveCommandMsg();
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 };
 
 //-----------------------------------------------------------------------------
@@ -295,7 +295,7 @@ public:
 	UnsignedInt getDisconnectFrame();
 	void setDisconnectFrame(UnsignedInt frame);
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 
 protected:
 	UnsignedByte m_disconnectSlot;
@@ -310,7 +310,7 @@ public:
 	NetPacketRouterQueryCommandMsg();
 	//virtual ~NetPacketRouterQueryCommandMsg();
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 };
 
 //-----------------------------------------------------------------------------
@@ -321,7 +321,7 @@ public:
 	NetPacketRouterAckCommandMsg();
 	//virtual ~NetPacketRouterAckCommandMsg();
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 };
 
 //-----------------------------------------------------------------------------
@@ -376,7 +376,7 @@ public:
 	UnsignedInt getVoteFrame();
 	void setVoteFrame(UnsignedInt voteFrame);
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 
 protected:
 	UnsignedByte m_slot;
@@ -394,7 +394,7 @@ public:
 	UnsignedByte getPercentage();
 	void setPercentage( UnsignedByte percent );
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 protected:
 	UnsignedByte m_percent;
 };
@@ -410,7 +410,7 @@ public:
 	UnsignedByte * getData();
 	void setData(UnsignedByte *data, UnsignedInt dataLength);
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 
 	UnsignedInt getChunkNumber();
 	void setChunkNumber(UnsignedInt chunkNumber);
@@ -510,7 +510,7 @@ public:
 	Int getProgress();
 	void setProgress(Int val);
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 
 protected:
 	UnsignedShort m_fileID;
@@ -527,7 +527,7 @@ public:
 	UnsignedInt getDisconnectFrame();
 	void setDisconnectFrame(UnsignedInt disconnectFrame);
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 
 protected:
 	UnsignedInt m_disconnectFrame;
@@ -543,7 +543,7 @@ public:
 	UnsignedInt getNewFrame();
 	void setNewFrame(UnsignedInt newFrame);
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 
 protected:
 	UnsignedInt m_newFrame;
@@ -559,7 +559,7 @@ public:
 	UnsignedInt getFrameToResend();
 	void setFrameToResend(UnsignedInt frame);
 	
-	size_t getByteCount() const;
+	static size_t getByteCount();
 
 protected:
 	UnsignedInt m_frameToResend;
