@@ -1167,35 +1167,35 @@ void NetFrameResendRequestCommandMsg::setFrameToResend(UnsignedInt frame) {
 // getByteCount() implementations for fixed-size command messages
 //-------------------------
 
-size_t NetAckBothCommandMsg::getByteCount() const {
+size_t NetAckBothCommandMsg::getByteCount() {
 	return sizeof(NetPacketAckCommand);
 }
 
-size_t NetFrameCommandMsg::getByteCount() const {
+size_t NetFrameCommandMsg::getByteCount() {
 	return sizeof(NetPacketFrameCommand);
 }
 
-size_t NetKeepAliveCommandMsg::getByteCount() const {
+size_t NetKeepAliveCommandMsg::getByteCount() {
 	return sizeof(NetPacketKeepAliveCommand);
 }
 
-size_t NetWrapperCommandMsg::getByteCount() const {
+size_t NetWrapperCommandMsg::getByteCount() {
 	return sizeof(NetPacketWrapperCommand);
 }
 
-size_t NetAckStage1CommandMsg::getByteCount() const {
+size_t NetAckStage1CommandMsg::getByteCount() {
 	return sizeof(NetPacketAckCommand);
 }
 
-size_t NetAckStage2CommandMsg::getByteCount() const {
+size_t NetAckStage2CommandMsg::getByteCount() {
 	return sizeof(NetPacketAckCommand);
 }
 
-size_t NetPlayerLeaveCommandMsg::getByteCount() const {
+size_t NetPlayerLeaveCommandMsg::getByteCount() {
 	return sizeof(NetPacketPlayerLeaveCommand);
 }
 
-size_t NetRunAheadMetricsCommandMsg::getByteCount() const {
+size_t NetRunAheadMetricsCommandMsg::getByteCount() {
 	return sizeof(NetPacketRunAheadMetricsCommand);
 }
 
