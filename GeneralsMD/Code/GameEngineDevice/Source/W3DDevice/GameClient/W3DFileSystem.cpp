@@ -484,8 +484,8 @@ void W3DFileSystem::reprioritizeTexturesBySize()
 // Before: A(256kb) B(128kb) C(512kb)
 // After:  C(512kb) B(128kb) A(256kb)
 // 
-// Catered to specific game archives only. This ensures that non user created archives are not
-// affected by the re-prioritization.
+// Catered to specific game archives only. This ensures that user created archives are not included
+// for the re-prioritization of textures.
 //-------------------------------------------------------------------------------------------------
 void W3DFileSystem::reprioritizeTexturesBySize(ArchivedDirectoryInfo& dirInfo)
 {
