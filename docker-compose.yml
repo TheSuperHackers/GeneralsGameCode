@@ -1,0 +1,7 @@
+services:
+  builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - "./:/build/cnc"
