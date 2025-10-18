@@ -199,8 +199,7 @@ public:
 
 	virtual void setHeightAboveGround(Real z);
 	virtual void setZoom(Real z);
-	virtual void setZoomToDefault( void );									///< Set zoom to default value
-
+	virtual void setZoomToDefault( Bool softReset = false );									///< Set zoom to default value
 	virtual void setFieldOfView( Real angle );							///< Set the horizontal field of view angle
 
   virtual WorldToScreenReturn worldToScreenTriReturn( const Coord3D *w, ICoord2D *s );	///< Transform world coordinate "w" into screen coordinate "s"

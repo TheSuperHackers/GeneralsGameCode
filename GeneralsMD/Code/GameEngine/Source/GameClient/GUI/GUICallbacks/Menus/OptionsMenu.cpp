@@ -1560,6 +1560,11 @@ static void saveOptions( void )
 
 				TheInGameUI->recreateControlBar();
 				TheInGameUI->refreshCustomUiResources();
+
+				// TheSuperHackers @info Only update the default view and soft reset the zoom otherwise it throws off the scripted camera in the shellmap
+				// The view gets reset at game start, this is here so the shell map looks correct once the resolution is adjusted
+				TheTacticalView->setDefaultView(0.0f, 0.0f, 1.0f);
+				TheTacticalView->setZoomToDefault(true);
 			}
 		}
 	}
