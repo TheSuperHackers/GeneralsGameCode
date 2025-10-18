@@ -32,7 +32,6 @@
 #include "GameNetwork/NetworkDefs.h"
 #include "Common/UnicodeString.h"
 
-//-----------------------------------------------------------------------------
 class NetCommandMsg : public MemoryPoolObject
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetCommandMsg, "NetCommandMsg")
@@ -65,10 +64,6 @@ protected:
 };
 
 
-//-----------------------------------------------------------------------------
-/**
- * The NetGameCommandMsg is the NetCommandMsg representation of a GameMessage
- */
 class NetGameCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetGameCommandMsg, "NetGameCommandMsg")
@@ -81,7 +76,7 @@ public:
 	void addArgument(const GameMessageArgumentDataType type, GameMessageArgumentType arg);
 	void setGameMessageType(GameMessage::Type type);
 
-	size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	Int m_numArgs;
@@ -90,11 +85,6 @@ protected:
 	GameMessageArgument *m_argList, *m_argTail;
 };
 
-//-----------------------------------------------------------------------------
-/**
- * The NetAckBothCommandMsg is the NetCommandMsg representation of the combination of a
- * stage 1 ack and a stage 2 ack.
- */
 class NetAckBothCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetAckBothCommandMsg, "NetAckBothCommandMsg")
@@ -108,19 +98,14 @@ public:
 	UnsignedByte getOriginalPlayerID();
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
 	virtual Int getSortNumber();
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnsignedShort m_commandID;
 	UnsignedByte m_originalPlayerID;
 };
 
-//-----------------------------------------------------------------------------
-/**
- * The NetAckStage1CommandMsg is the NetCommandMsg representation of an ack message for the initial
- * recipient.
- */
 class NetAckStage1CommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetAckStage1CommandMsg, "NetAckStage1CommandMsg")
@@ -134,19 +119,14 @@ public:
 	UnsignedByte getOriginalPlayerID();
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
 	virtual Int getSortNumber();
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnsignedShort m_commandID;
 	UnsignedByte m_originalPlayerID;
 };
 
-//-----------------------------------------------------------------------------
-/**
- * The NetAckStage2CommandMsg is the NetCommandMsg representation of an ack message for all eventual
- * recipients. (when this is returned, all the players in the relay mask have received the packet)
- */
 class NetAckStage2CommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetAckStage2CommandMsg, "NetAckStage2CommandMsg")
@@ -160,15 +140,14 @@ public:
 	UnsignedByte getOriginalPlayerID();
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
 	virtual Int getSortNumber();
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnsignedShort m_commandID;
 	UnsignedByte m_originalPlayerID;
 };
 
-//-----------------------------------------------------------------------------
 class NetFrameCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetFrameCommandMsg, "NetFrameCommandMsg")
@@ -178,14 +157,13 @@ public:
 
 	void setCommandCount(UnsignedShort commandCount);
 	UnsignedShort getCommandCount();
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnsignedShort m_commandCount;
 };
 
-//-----------------------------------------------------------------------------
 class NetPlayerLeaveCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetPlayerLeaveCommandMsg, "NetPlayerLeaveCommandMsg")
@@ -195,14 +173,13 @@ public:
 
 	UnsignedByte getLeavingPlayerID();
 	void setLeavingPlayerID(UnsignedByte id);
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnsignedByte m_leavingPlayerID;
 };
 
-//-----------------------------------------------------------------------------
 class NetRunAheadMetricsCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetRunAheadMetricsCommandMsg, "NetRunAheadMetricsCommandMsg")
@@ -214,15 +191,14 @@ public:
 	void setAverageLatency(Real avgLat);
 	Int  getAverageFps();
 	void setAverageFps(Int fps);
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	Real m_averageLatency;
 	Int  m_averageFps;
 };
 
-//-----------------------------------------------------------------------------
 class NetRunAheadCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetRunAheadCommandMsg, "NetRunAheadCommandMsg")
@@ -235,15 +211,14 @@ public:
 
 	UnsignedByte getFrameRate();
 	void setFrameRate(UnsignedByte frameRate);
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnsignedShort m_runAhead;
 	UnsignedByte m_frameRate;
 };
 
-//-----------------------------------------------------------------------------
 class NetDestroyPlayerCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetDestroyPlayerCommandMsg, "NetDestroyPlayerCommandMsg")
@@ -253,36 +228,33 @@ public:
 
 	UnsignedInt getPlayerIndex();
 	void setPlayerIndex(UnsignedInt playerIndex);
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnsignedInt m_playerIndex;
 };
 
-//-----------------------------------------------------------------------------
 class NetKeepAliveCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetKeepAliveCommandMsg, "NetKeepAliveCommandMsg")
 public:
 	NetKeepAliveCommandMsg();
 	//virtual ~NetKeepAliveCommandMsg();
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 };
 
-//-----------------------------------------------------------------------------
 class NetDisconnectKeepAliveCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetDisconnectKeepAliveCommandMsg, "NetDisconnectKeepAliveCommandMsg")
 public:
 	NetDisconnectKeepAliveCommandMsg();
 	//virtual ~NetDisconnectKeepAliveCommandMsg();
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 };
 
-//-----------------------------------------------------------------------------
 class NetDisconnectPlayerCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetDisconnectPlayerCommandMsg, "NetDisconnectPlayerCommandMsg")
@@ -295,37 +267,34 @@ public:
 
 	UnsignedInt getDisconnectFrame();
 	void setDisconnectFrame(UnsignedInt frame);
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnsignedByte m_disconnectSlot;
 	UnsignedInt m_disconnectFrame;
 };
 
-//-----------------------------------------------------------------------------
 class NetPacketRouterQueryCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetPacketRouterQueryCommandMsg, "NetPacketRouterQueryCommandMsg")
 public:
 	NetPacketRouterQueryCommandMsg();
 	//virtual ~NetPacketRouterQueryCommandMsg();
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 };
 
-//-----------------------------------------------------------------------------
 class NetPacketRouterAckCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetPacketRouterAckCommandMsg, "NetPacketRouterAckCommandMsg")
 public:
 	NetPacketRouterAckCommandMsg();
 	//virtual ~NetPacketRouterAckCommandMsg();
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 };
 
-//-----------------------------------------------------------------------------
 class NetDisconnectChatCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetDisconnectChatCommandMsg, "NetDisconnectChatCommandMsg")
@@ -336,13 +305,12 @@ public:
 	UnicodeString getText();
 	void setText(UnicodeString text);
 
-	size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnicodeString m_text;
 };
 
-//-----------------------------------------------------------------------------
 class NetChatCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetChatCommandMsg, "NetChatCommandMsg")
@@ -356,14 +324,13 @@ public:
 	Int getPlayerMask( void );
 	void setPlayerMask( Int playerMask );
 
-	size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnicodeString m_text;
 	Int m_playerMask;
 };
 
-//-----------------------------------------------------------------------------
 class NetDisconnectVoteCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetDisconnectVoteCommandMsg, "NetDisconnectVoteCommandMsg")
@@ -376,15 +343,14 @@ public:
 
 	UnsignedInt getVoteFrame();
 	void setVoteFrame(UnsignedInt voteFrame);
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnsignedByte m_slot;
 	UnsignedInt m_voteFrame;
 };
 
-//-----------------------------------------------------------------------------
 class NetProgressCommandMsg: public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetProgressCommandMsg, "NetProgressCommandMsg")
@@ -394,13 +360,12 @@ public:
 
 	UnsignedByte getPercentage();
 	void setPercentage( UnsignedByte percent );
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 protected:
 	UnsignedByte m_percent;
 };
 
-//-----------------------------------------------------------------------------
 class NetWrapperCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetWrapperCommandMsg, "NetWrapperCommandMsg")
@@ -410,8 +375,8 @@ public:
 
 	UnsignedByte * getData();
 	void setData(UnsignedByte *data, UnsignedInt dataLength);
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 
 	UnsignedInt getChunkNumber();
 	void setChunkNumber(UnsignedInt chunkNumber);
@@ -441,7 +406,6 @@ private:
 	UnsignedShort m_wrappedCommandID;
 };
 
-//-----------------------------------------------------------------------------
 class NetFileCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetFileCommandMsg, "NetFileCommandMsg")
@@ -460,7 +424,7 @@ public:
 	UnsignedByte * getFileData();
 	void setFileData(UnsignedByte *data, UnsignedInt dataLength);
 
-	size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	AsciiString m_portableFilename;
@@ -469,7 +433,6 @@ protected:
 	UnsignedInt m_dataLength;
 };
 
-//-----------------------------------------------------------------------------
 class NetFileAnnounceCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetFileAnnounceCommandMsg, "NetFileAnnounceCommandMsg")
@@ -489,7 +452,7 @@ public:
 	UnsignedByte getPlayerMask(void);
 	void setPlayerMask(UnsignedByte playerMask);
 
-	size_t getPackedByteCount() const;
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	AsciiString m_portableFilename;
@@ -497,7 +460,6 @@ protected:
 	UnsignedByte m_playerMask;
 };
 
-//-----------------------------------------------------------------------------
 class NetFileProgressCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetFileProgressCommandMsg, "NetFileProgressCommandMsg")
@@ -510,15 +472,14 @@ public:
 
 	Int getProgress();
 	void setProgress(Int val);
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnsignedShort m_fileID;
 	Int m_progress;
 };
 
-//-----------------------------------------------------------------------------
 class NetDisconnectFrameCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetDisconnectFrameCommandMsg, "NetDisconnectFrameCommandMsg")
@@ -527,14 +488,13 @@ public:
 
 	UnsignedInt getDisconnectFrame();
 	void setDisconnectFrame(UnsignedInt disconnectFrame);
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnsignedInt m_disconnectFrame;
 };
 
-//-----------------------------------------------------------------------------
 class NetDisconnectScreenOffCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetDisconnectScreenOffCommandMsg, "NetDisconnectScreenOffCommandMsg")
@@ -543,14 +503,13 @@ public:
 
 	UnsignedInt getNewFrame();
 	void setNewFrame(UnsignedInt newFrame);
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnsignedInt m_newFrame;
 };
 
-//-----------------------------------------------------------------------------
 class NetFrameResendRequestCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetFrameResendRequestCommandMsg, "NetFrameResendRequestCommandMsg")
@@ -559,35 +518,29 @@ public:
 
 	UnsignedInt getFrameToResend();
 	void setFrameToResend(UnsignedInt frame);
-	
-	size_t getPackedByteCount() const;
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnsignedInt m_frameToResend;
 };
 
-//-----------------------------------------------------------------------------
-/**
- * The NetLoadCompleteCommandMsg is a simple command message for load complete notifications
- */
 class NetLoadCompleteCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetLoadCompleteCommandMsg, "NetLoadCompleteCommandMsg")
 public:
 	NetLoadCompleteCommandMsg();
-	
-	size_t getPackedByteCount() const;
+	//virtual ~NetLoadCompleteCommandMsg();
+
+	virtual size_t getPackedByteCount() const;
 };
 
-//-----------------------------------------------------------------------------
-/**
- * The NetTimeOutGameStartCommandMsg is a simple command message for timeout game start notifications
- */
 class NetTimeOutGameStartCommandMsg : public NetCommandMsg
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetTimeOutGameStartCommandMsg, "NetTimeOutGameStartCommandMsg")
 public:
 	NetTimeOutGameStartCommandMsg();
-	
-	size_t getPackedByteCount() const;
+	//virtual ~NetTimeOutGameStartCommandMsg();
+
+	virtual size_t getPackedByteCount() const;
 };
