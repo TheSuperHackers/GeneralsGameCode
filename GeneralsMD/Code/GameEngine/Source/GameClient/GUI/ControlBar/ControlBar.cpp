@@ -1204,7 +1204,9 @@ void ControlBar::init( void )
 			id = TheNameKeyGenerator->nameToKey( windowName.str() );
 			m_rightHUDUpgradeCameos[ i ] =
 				TheWindowManager->winGetWindowFromId( m_rightHUDWindow, id );
-			m_rightHUDUpgradeCameos[ i ]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
+			if (m_rightHUDUpgradeCameos[i] != nullptr) {
+				m_rightHUDUpgradeCameos[i]->winSetStatus(WIN_STATUS_USE_OVERLAY_STATES);
+			}
 		}
 
 //		m_transitionHandler = NEW GameWindowTransitionsHandler;
@@ -2664,6 +2666,9 @@ void ControlBar::setPortraitByObject( Object *obj )
 
 		for(Int i = 0; i < MAX_UPGRADE_CAMEO_UPGRADES; ++i)
 		{
+			if (m_rightHUDUpgradeCameos[i] == nullptr)
+				continue;
+
 			AsciiString upgradeName = thing->getUpgradeCameoName(i);
 			if(upgradeName.isEmpty())
 			{
@@ -2704,7 +2709,8 @@ void ControlBar::setPortraitByObject( Object *obj )
 		m_rightHUDWindow->winSetStatus( WIN_STATUS_IMAGE );
 		m_rightHUDCameoWindow->winClearStatus( WIN_STATUS_IMAGE );
 		for(Int i = 0; i < MAX_UPGRADE_CAMEO_UPGRADES; ++i)
-			m_rightHUDUpgradeCameos[i]->winHide(TRUE);
+			if (m_rightHUDUpgradeCameos[i] != nullptr)
+				m_rightHUDUpgradeCameos[i]->winHide(TRUE);
 
 		//Clear any overlay the portrait had on it.
 		GadgetButtonDrawOverlayImage( m_rightHUDCameoWindow, NULL );
