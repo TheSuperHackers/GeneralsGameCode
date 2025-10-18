@@ -1243,3 +1243,25 @@ size_t NetFrameResendRequestCommandMsg::getPackedByteCount() const {
 	return sizeof(NetPacketFrameResendRequestCommand);
 }
 
+//-------------------------
+// NetLoadCompleteCommandMsg
+//-------------------------
+NetLoadCompleteCommandMsg::NetLoadCompleteCommandMsg() : NetCommandMsg() {
+	m_commandType = NETCOMMANDTYPE_LOADCOMPLETE;
+}
+
+size_t NetLoadCompleteCommandMsg::getPackedByteCount() const {
+	return sizeof(NetPacketLoadCompleteMessage);
+}
+
+//-------------------------
+// NetTimeOutGameStartCommandMsg
+//-------------------------
+NetTimeOutGameStartCommandMsg::NetTimeOutGameStartCommandMsg() : NetCommandMsg() {
+	m_commandType = NETCOMMANDTYPE_TIMEOUTSTART;
+}
+
+size_t NetTimeOutGameStartCommandMsg::getPackedByteCount() const {
+	return sizeof(NetPacketTimeOutGameStartMessage);
+}
+
