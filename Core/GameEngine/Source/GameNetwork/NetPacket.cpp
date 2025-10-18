@@ -278,64 +278,15 @@ UnsignedInt NetPacket::GetBufferSizeNeededForCommand(NetCommandMsg *msg) {
 	if (msg == NULL) {
 		return TRUE; // There was nothing to add, so it was successful.
 	}
-
+// Handle special cases that don't have corresponding command message classes
 	switch(msg->getNetCommandType())
 	{
-		case NETCOMMANDTYPE_GAMECOMMAND:
-			return static_cast<NetGameCommandMsg*>(msg)->getPackedByteCount();
-		case NETCOMMANDTYPE_ACKSTAGE1:
-		case NETCOMMANDTYPE_ACKSTAGE2:
-		case NETCOMMANDTYPE_ACKBOTH:
-			return NetAckBothCommandMsg::getPackedByteCount();
-		case NETCOMMANDTYPE_FRAMEINFO:
-			return NetFrameCommandMsg::getPackedByteCount();
-		case NETCOMMANDTYPE_PLAYERLEAVE:
-			return NetPlayerLeaveCommandMsg::getPackedByteCount();
-		case NETCOMMANDTYPE_RUNAHEADMETRICS:
-			return NetRunAheadMetricsCommandMsg::getPackedByteCount();
-		case NETCOMMANDTYPE_RUNAHEAD:
-			return NetRunAheadCommandMsg::getPackedByteCount();
-		case NETCOMMANDTYPE_DESTROYPLAYER:
-			return NetDestroyPlayerCommandMsg::getPackedByteCount();
-		case NETCOMMANDTYPE_KEEPALIVE:
-			return NetKeepAliveCommandMsg::getPackedByteCount();
-		case NETCOMMANDTYPE_DISCONNECTKEEPALIVE:
-			return NetDisconnectKeepAliveCommandMsg::getPackedByteCount();
-		case NETCOMMANDTYPE_DISCONNECTPLAYER:
-			return NetDisconnectPlayerCommandMsg::getPackedByteCount();
-		case NETCOMMANDTYPE_PACKETROUTERQUERY:
-			return NetPacketRouterQueryCommandMsg::getPackedByteCount();
-		case NETCOMMANDTYPE_PACKETROUTERACK:
-			return NetPacketRouterAckCommandMsg::getPackedByteCount();
-		case NETCOMMANDTYPE_DISCONNECTCHAT:
-			return static_cast<NetDisconnectChatCommandMsg*>(msg)->getPackedByteCount();
-		case NETCOMMANDTYPE_DISCONNECTVOTE:
-			return NetDisconnectVoteCommandMsg::getPackedByteCount();
-		case NETCOMMANDTYPE_CHAT:
-			return static_cast<NetChatCommandMsg*>(msg)->getPackedByteCount();
-		case NETCOMMANDTYPE_PROGRESS:
-			return NetProgressCommandMsg::getPackedByteCount();
 		case NETCOMMANDTYPE_LOADCOMPLETE:
 			return sizeof(NetPacketLoadCompleteMessage);
 		case NETCOMMANDTYPE_TIMEOUTSTART:
 			return sizeof(NetPacketTimeOutGameStartMessage);
-		case NETCOMMANDTYPE_WRAPPER:
-			return NetWrapperCommandMsg::getPackedByteCount();
-		case NETCOMMANDTYPE_FILE:
-			return static_cast<NetFileCommandMsg*>(msg)->getPackedByteCount();
-		case NETCOMMANDTYPE_FILEANNOUNCE:
-			return static_cast<NetFileAnnounceCommandMsg*>(msg)->getPackedByteCount();
-		case NETCOMMANDTYPE_FILEPROGRESS:
-			return NetFileProgressCommandMsg::getPackedByteCount();
-		case NETCOMMANDTYPE_DISCONNECTFRAME:
-			return NetDisconnectFrameCommandMsg::getPackedByteCount();
-		case NETCOMMANDTYPE_DISCONNECTSCREENOFF:
-			return NetDisconnectScreenOffCommandMsg::getPackedByteCount();
-		case NETCOMMANDTYPE_FRAMERESENDREQUEST:
-			return NetFrameResendRequestCommandMsg::getPackedByteCount();
 		default:
-			DEBUG_CRASH(("Unknown NETCOMMANDTYPE %d", msg->getNetCommandType()));
-			break;
+			return msg->getPackedByteCount();
 	}
 
 	return 0;
