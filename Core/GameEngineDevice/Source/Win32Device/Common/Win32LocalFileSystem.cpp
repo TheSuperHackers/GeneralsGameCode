@@ -132,7 +132,7 @@ void Win32LocalFileSystem::getFileListInDirectory(const AsciiString& currentDire
 	asciisearch = originalDirectory;
 	asciisearch.concat(currentDirectory);
 	asciisearch.concat(searchName);
-	strcpy(search, asciisearch.str());
+	strlcpy(search, asciisearch.str(), ARRAY_SIZE(search));
 
 	Bool done = FALSE;
 

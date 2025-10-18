@@ -255,7 +255,7 @@ int HCompressedAnimClass::Load_W3D(ChunkLoadClass & cload)
 
 	cload.Close_Chunk();
 
-	strcpy(Name,aheader.HierarchyName);
+	strlcpy(Name, aheader.HierarchyName, ARRAY_SIZE(Name));
 	strlcat(Name, ".", ARRAY_SIZE(Name));
 	strlcat(Name, aheader.Name, ARRAY_SIZE(Name));
 

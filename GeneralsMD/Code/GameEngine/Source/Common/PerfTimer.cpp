@@ -349,10 +349,10 @@ void PerfGather::reset()
 {
 	PerfGather::termPerfDump();
 
-	strcpy(s_buf, fname);
+	strlcpy(s_buf, fname, _MAX_PATH);
 
 	char tmp[256];
-	strcpy(tmp, s_buf);
+	strlcpy(tmp, s_buf, _MAX_PATH);
 	strlcat(tmp, ".csv", ARRAY_SIZE(tmp));
 
 	s_perfStatsFile = fopen(tmp, "w");

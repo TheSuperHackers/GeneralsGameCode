@@ -94,7 +94,7 @@ BOOL MeshMoldOptions::OnInitDialog()
 
 				int len = filename.getLength();
 				if (len<5) continue;
-				strcpy(fileBuf, filename.str());
+				strlcpy(fileBuf, filename.str(), ARRAY_SIZE(fileBuf));
 				for (i=strlen(fileBuf)-1; i>0; i--) {
 					if (fileBuf[i] == '.') {
 						// strip off .w3d file extension.

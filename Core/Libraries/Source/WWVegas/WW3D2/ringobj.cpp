@@ -1206,7 +1206,7 @@ RingPrototypeClass::RingPrototypeClass (void)
 RingPrototypeClass::RingPrototypeClass(RingRenderObjClass *ring)
 {
 	::memset (&Definition, 0, sizeof (Definition));
-	::strcpy (Definition.Name, ring->Get_Name ());
+	strlcpy(Definition.Name, ring->Get_Name(), ARRAY_SIZE(Definition.Name));
 
 	Definition.AnimDuration			= ring->AnimDuration;
 	Definition.Attributes			= ring->Get_Flags ();
@@ -1237,7 +1237,7 @@ RingPrototypeClass::RingPrototypeClass(RingRenderObjClass *ring)
 			filename = name;
 		}
 
-		::strcpy (Definition.TextureName, filename);
+		strlcpy(Definition.TextureName, filename, ARRAY_SIZE(Definition.TextureName));
 	}
 
 	//

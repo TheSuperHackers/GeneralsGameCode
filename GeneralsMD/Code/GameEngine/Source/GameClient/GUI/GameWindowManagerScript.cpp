@@ -232,7 +232,7 @@ static void parseBitString( const char *inBuffer, UnsignedInt *bits, ConstCharPt
 	char *tok;
 
 	// do not modify the inBuffer argument
-	strcpy( buffer, inBuffer );
+	strlcpy(buffer, inBuffer, ARRAY_SIZE(buffer));
 
 	if( strncmp( buffer, "NULL", 4 ) )
 	{
@@ -605,7 +605,7 @@ static Bool parseFont( const char *token, WinInstanceData *instData,
 		ptr++;
 	ptr++;  // skip the "
 	c = strtok( ptr, stringSeps );  // value
-	strcpy( fontName, c );
+	strlcpy(fontName, c, ARRAY_SIZE(fontName));
 
 	// "SIZE"
 	c = strtok( NULL, seps );  // label
@@ -1649,7 +1649,7 @@ static GameWindow *createGadget( char *type,
 		// filename the radio button was saved in
 		//
 
-		strcpy( filename, instData->m_decoratedNameString.str() );
+		strlcpy(filename, instData->m_decoratedNameString.str(), ARRAY_SIZE(filename));
 		c = strchr( filename, ':' );
 		if( c )
 			*c = 0;  // terminate after filename (format is filename:gadgetname)
@@ -2373,7 +2373,7 @@ static GameWindow *parseWindow( File *inFile, char *buffer )
 	c = strtok( buffer, seps );
 	assert( strcmp( c, "WINDOWTYPE" ) == 0 );
 	c = strtok( NULL, seps );  // get data to right of = sign
-	strcpy( type, c );
+	strlcpy(type, c, ARRAY_SIZE(type));
 
 	//
 	// based on the window type get a pointer for any specific data
@@ -2402,7 +2402,7 @@ static GameWindow *parseWindow( File *inFile, char *buffer )
 			if (asciibuf.compare(parse->name) == 0)
 			{
 
-				strcpy( token, asciibuf.str() );
+				strlcpy(token, asciibuf.str(), ARRAY_SIZE(token));
 
 				// eat '='
 				inFile->scanString(asciibuf);
@@ -2618,7 +2618,7 @@ Bool parseLayoutBlock( File *inFile, char *buffer, UnsignedInt version, WindowLa
 				// eat equals separator " = "
 				c = strtok( buffer, " =" );
 
-				strcpy(token, asciitoken.str());
+				strlcpy(token, asciitoken.str(), ARRAY_SIZE(token));
 
 				// parse it
 				if( parse->parse( token, c, version, info ) == FALSE )
@@ -2727,7 +2727,7 @@ GameWindow *GameWindowManager::winCreateFromScript( AsciiString filenameString,
 	if( strchr( filename, '\\' ) == NULL )
 		sprintf( filepath, "Window\\%s", filename );
 	else
-		strcpy( filepath, filename );
+		strlcpy(filepath, filename, ARRAY_SIZE(filepath));
 
   // Open the input file
 	inFile = TheFileSystem->openFile(filepath, File::READ);

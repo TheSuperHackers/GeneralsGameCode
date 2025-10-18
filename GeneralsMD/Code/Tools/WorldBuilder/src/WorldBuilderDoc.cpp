@@ -2164,7 +2164,7 @@ void CWorldBuilderDoc::OnDumpDocToText(void)
 
 		char curbuf[ _MAX_PATH ];
 
-		strcpy(curbuf, dirbuf);
+		strlcpy(curbuf, dirbuf, ARRAY_SIZE(curbuf));
 		strlcat(curbuf, m_strTitle, ARRAY_SIZE(curbuf));
 		strlcat(curbuf, ".txt", ARRAY_SIZE(curbuf));
 
