@@ -1261,6 +1261,9 @@ NetLoadCompleteCommandMsg::NetLoadCompleteCommandMsg() : NetCommandMsg() {
 	m_commandType = NETCOMMANDTYPE_LOADCOMPLETE;
 }
 
+NetLoadCompleteCommandMsg::~NetLoadCompleteCommandMsg() {
+}
+
 size_t NetLoadCompleteCommandMsg::getPackedByteCount() const {
 	return sizeof(NetPacketLoadCompleteMessage);
 }
@@ -1270,6 +1273,9 @@ size_t NetLoadCompleteCommandMsg::getPackedByteCount() const {
 //-------------------------
 NetTimeOutGameStartCommandMsg::NetTimeOutGameStartCommandMsg() : NetCommandMsg() {
 	m_commandType = NETCOMMANDTYPE_TIMEOUTSTART;
+}
+
+NetTimeOutGameStartCommandMsg::~NetTimeOutGameStartCommandMsg() {
 }
 
 size_t NetTimeOutGameStartCommandMsg::getPackedByteCount() const {
