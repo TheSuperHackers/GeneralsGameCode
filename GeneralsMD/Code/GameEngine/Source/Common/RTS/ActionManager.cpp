@@ -1431,6 +1431,13 @@ Bool ActionManager::canSnipeVehicle( const Object *obj, const Object *objectToSn
 			return FALSE;
 		}
 
+		// TheSuperHackers @bugfix Caball009 04/09/2025 Disabled bikes may not have a rider to snipe.
+		ContainModuleInterface* contain = objectToSnipe->getContain();
+		if ( contain && contain->isRiderChangeContain() && contain->getContainedItemsList()->empty() )
+		{
+			return FALSE;
+		}
+
 		return TRUE;
 	}
 
