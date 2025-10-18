@@ -5229,12 +5229,12 @@ NetCommandMsg * NetPacket::readProgressMessage(UnsignedByte *data, Int &i) {
 }
 
 NetCommandMsg * NetPacket::readLoadCompleteMessage(UnsignedByte *data, Int &i) {
-	NetCommandMsg *msg = newInstance(NetCommandMsg);
+	NetLoadCompleteCommandMsg *msg = newInstance(NetLoadCompleteCommandMsg);
 	return msg;
 }
 
 NetCommandMsg * NetPacket::readTimeOutGameStartMessage(UnsignedByte *data, Int &i) {
-	NetCommandMsg *msg = newInstance(NetCommandMsg);
+	NetTimeOutGameStartCommandMsg *msg = newInstance(NetTimeOutGameStartCommandMsg);
 	return msg;
 }
 
