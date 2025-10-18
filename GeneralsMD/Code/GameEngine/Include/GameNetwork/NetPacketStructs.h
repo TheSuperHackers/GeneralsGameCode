@@ -250,7 +250,7 @@ struct NetPacketDisconnectChatCommandHeader {
 // These structs represent the fixed portion of variable-length command messages
 ////////////////////////////////////////////////////////////////////////////////
 
-struct PackedNetChatCommandMsg {
+struct NetPacketChatCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
@@ -259,7 +259,7 @@ struct PackedNetChatCommandMsg {
 	NetPacketCommandIdField commandId;
 };
 
-struct PackedNetDisconnectChatCommandMsg {
+struct NetPacketDisconnectChatCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
@@ -267,7 +267,7 @@ struct PackedNetDisconnectChatCommandMsg {
 };
 
 // Game command packed struct (variable: game message data follows)
-struct PackedNetGameCommandMsg {
+struct NetPacketGameCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
@@ -277,7 +277,7 @@ struct PackedNetGameCommandMsg {
 };
 
 // File command packed struct (variable: filename and file data follow)
-struct PackedNetFileCommandMsg {
+struct NetPacketFileCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
@@ -286,7 +286,7 @@ struct PackedNetFileCommandMsg {
 };
 
 // File announce command packed struct (variable: filename and metadata follow)
-struct PackedNetFileAnnounceCommandMsg {
+struct NetPacketFileAnnounceCommand {
 	NetPacketCommandTypeField commandType;
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
