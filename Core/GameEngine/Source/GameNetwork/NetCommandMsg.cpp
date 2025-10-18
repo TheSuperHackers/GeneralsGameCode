@@ -228,7 +228,7 @@ void NetGameCommandMsg::setGameMessageType(GameMessage::Type type) {
  * Get the byte count for this game command message.
  */
 size_t NetGameCommandMsg::getPackedByteCount() const {
-	UnsignedShort msglen = sizeof(PackedNetGameCommandMsg);
+	UnsignedShort msglen = sizeof(NetPacketGameCommand);
 
 	// Variable data portion
 	GameMessage *gmsg = const_cast<NetGameCommandMsg*>(this)->constructGameMessage();
@@ -350,6 +350,10 @@ Int NetAckBothCommandMsg::getSortNumber() {
 	return m_commandID;
 }
 
+size_t NetAckBothCommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketAckCommand);
+}
+
 //-------------------------
 // NetAckStage1CommandMsg
 //-------------------------
@@ -405,6 +409,10 @@ void NetAckStage1CommandMsg::setOriginalPlayerID(UnsignedByte originalPlayerID) 
 
 Int NetAckStage1CommandMsg::getSortNumber() {
 	return m_commandID;
+}
+
+size_t NetAckStage1CommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketAckCommand);
 }
 
 //-------------------------
@@ -464,6 +472,10 @@ Int NetAckStage2CommandMsg::getSortNumber() {
 	return m_commandID;
 }
 
+size_t NetAckStage2CommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketAckCommand);
+}
+
 //-------------------------
 // NetFrameCommandMsg
 //-------------------------
@@ -495,6 +507,10 @@ UnsignedShort NetFrameCommandMsg::getCommandCount() {
 	return m_commandCount;
 }
 
+size_t NetFrameCommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketFrameCommand);
+}
+
 //-------------------------
 // NetPlayerLeaveCommandMsg
 //-------------------------
@@ -524,6 +540,10 @@ UnsignedByte NetPlayerLeaveCommandMsg::getLeavingPlayerID() {
  */
 void NetPlayerLeaveCommandMsg::setLeavingPlayerID(UnsignedByte id) {
 	m_leavingPlayerID = id;
+}
+
+size_t NetPlayerLeaveCommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketPlayerLeaveCommand);
 }
 
 //-------------------------
@@ -572,6 +592,10 @@ Int NetRunAheadMetricsCommandMsg::getAverageFps() {
 	return m_averageFps;
 }
 
+size_t NetRunAheadMetricsCommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketRunAheadMetricsCommand);
+}
+
 //-------------------------
 // NetRunAheadCommandMsg
 //-------------------------
@@ -598,6 +622,10 @@ UnsignedByte NetRunAheadCommandMsg::getFrameRate() {
 
 void NetRunAheadCommandMsg::setFrameRate(UnsignedByte frameRate) {
 	m_frameRate = frameRate;
+}
+
+size_t NetRunAheadCommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketRunAheadCommand);
 }
 
 //-------------------------
@@ -635,6 +663,10 @@ UnsignedInt NetDestroyPlayerCommandMsg::getPlayerIndex( void )
 	return m_playerIndex;
 }
 
+size_t NetDestroyPlayerCommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketDestroyPlayerCommand);
+}
+
 //-------------------------
 // NetKeepAliveCommandMsg
 //-------------------------
@@ -648,6 +680,10 @@ NetKeepAliveCommandMsg::NetKeepAliveCommandMsg() : NetCommandMsg() {
 NetKeepAliveCommandMsg::~NetKeepAliveCommandMsg() {
 }
 
+size_t NetKeepAliveCommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketKeepAliveCommand);
+}
+
 //-------------------------
 // NetDisconnectKeepAliveCommandMsg
 //-------------------------
@@ -659,6 +695,10 @@ NetDisconnectKeepAliveCommandMsg::NetDisconnectKeepAliveCommandMsg() : NetComman
 }
 
 NetDisconnectKeepAliveCommandMsg::~NetDisconnectKeepAliveCommandMsg() {
+}
+
+size_t NetDisconnectKeepAliveCommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketDisconnectKeepAliveCommand);
 }
 
 //-------------------------
@@ -706,6 +746,10 @@ UnsignedInt NetDisconnectPlayerCommandMsg::getDisconnectFrame() {
 	return m_disconnectFrame;
 }
 
+size_t NetDisconnectPlayerCommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketDisconnectPlayerCommand);
+}
+
 //-------------------------
 // NetPacketRouterQueryCommandMsg
 //-------------------------
@@ -722,6 +766,10 @@ NetPacketRouterQueryCommandMsg::NetPacketRouterQueryCommandMsg() : NetCommandMsg
 NetPacketRouterQueryCommandMsg::~NetPacketRouterQueryCommandMsg() {
 }
 
+size_t NetPacketRouterQueryCommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketRouterQueryCommand);
+}
+
 //-------------------------
 // NetPacketRouterAckCommandMsg
 //-------------------------
@@ -736,6 +784,10 @@ NetPacketRouterAckCommandMsg::NetPacketRouterAckCommandMsg() : NetCommandMsg() {
  * Destructor
  */
 NetPacketRouterAckCommandMsg::~NetPacketRouterAckCommandMsg() {
+}
+
+size_t NetPacketRouterAckCommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketRouterAckCommand);
 }
 
 //-------------------------
@@ -824,7 +876,7 @@ void NetChatCommandMsg::setPlayerMask( Int playerMask )
  */
 size_t NetChatCommandMsg::getPackedByteCount() const
 {
-	return sizeof(PackedNetChatCommandMsg) + sizeof(UnsignedByte) + m_text.getByteCount() + sizeof(m_playerMask);
+	return sizeof(NetPacketChatCommand) + sizeof(UnsignedByte) + m_text.getByteCount() + sizeof(m_playerMask);
 }
 
 //-------------------------
@@ -835,7 +887,7 @@ size_t NetChatCommandMsg::getPackedByteCount() const
  */
 size_t NetDisconnectChatCommandMsg::getPackedByteCount() const
 {
-	return sizeof(PackedNetDisconnectChatCommandMsg) + sizeof(UnsignedByte) + m_text.getByteCount();
+	return sizeof(NetPacketDisconnectChatCommand) + sizeof(UnsignedByte) + m_text.getByteCount();
 }
 
 //-------------------------
@@ -883,6 +935,10 @@ void NetDisconnectVoteCommandMsg::setVoteFrame(UnsignedInt voteFrame) {
 	m_voteFrame = voteFrame;
 }
 
+size_t NetDisconnectVoteCommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketDisconnectVoteCommand);
+}
+
 //-------------------------
 // NetProgressCommandMsg
 //-------------------------
@@ -902,6 +958,10 @@ UnsignedByte NetProgressCommandMsg::getPercentage()
 void NetProgressCommandMsg::setPercentage( UnsignedByte percent )
 {
 	m_percent = percent;
+}
+
+size_t NetProgressCommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketProgressMessage);
 }
 
 //-------------------------
@@ -979,6 +1039,10 @@ void NetWrapperCommandMsg::setWrappedCommandID(UnsignedShort wrappedCommandID) {
 	m_wrappedCommandID = wrappedCommandID;
 }
 
+size_t NetWrapperCommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketWrapperCommand);
+}
+
 //-------------------------
 // NetFileCommandMsg
 //-------------------------
@@ -1024,7 +1088,7 @@ void NetFileCommandMsg::setFileData(UnsignedByte *data, UnsignedInt dataLength)
  */
 size_t NetFileCommandMsg::getPackedByteCount() const
 {
-	return sizeof(PackedNetFileCommandMsg) + m_portableFilename.getLength() + 1  // filename + null terminator
+	return sizeof(NetPacketFileCommand) + m_portableFilename.getLength() + 1  // filename + null terminator
 		+ sizeof(UnsignedInt)  // file data length
 		+ m_dataLength;  // the file data
 }
@@ -1073,7 +1137,7 @@ void NetFileAnnounceCommandMsg::setPlayerMask(UnsignedByte playerMask) {
  */
 size_t NetFileAnnounceCommandMsg::getPackedByteCount() const
 {
-	return sizeof(PackedNetFileAnnounceCommandMsg) + m_portableFilename.getLength() + 1  // filename + null terminator
+	return sizeof(NetPacketFileAnnounceCommand) + m_portableFilename.getLength() + 1  // filename + null terminator
 		+ sizeof(m_fileID)  // file ID
 		+ sizeof(m_playerMask);  // player mask
 }
@@ -1106,6 +1170,10 @@ void NetFileProgressCommandMsg::setProgress(Int val) {
 	m_progress = val;
 }
 
+size_t NetFileProgressCommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketFileProgressCommand);
+}
+
 //-------------------------
 // NetDisconnectFrameCommandMsg
 //-------------------------
@@ -1123,6 +1191,10 @@ UnsignedInt NetDisconnectFrameCommandMsg::getDisconnectFrame() {
 
 void NetDisconnectFrameCommandMsg::setDisconnectFrame(UnsignedInt disconnectFrame) {
 	m_disconnectFrame = disconnectFrame;
+}
+
+size_t NetDisconnectFrameCommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketDisconnectFrameCommand);
 }
 
 //-------------------------
@@ -1144,6 +1216,10 @@ void NetDisconnectScreenOffCommandMsg::setNewFrame(UnsignedInt newFrame) {
 	m_newFrame = newFrame;
 }
 
+size_t NetDisconnectScreenOffCommandMsg::getPackedByteCount() {
+	return sizeof(NetPacketDisconnectScreenOffCommand);
+}
+
 //-------------------------
 // NetFrameResendRequestCommandMsg
 //-------------------------
@@ -1163,86 +1239,7 @@ void NetFrameResendRequestCommandMsg::setFrameToResend(UnsignedInt frame) {
 	m_frameToResend = frame;
 }
 
-//-------------------------
-// getPackedByteCount() implementations for fixed-size command messages
-//-------------------------
-
-size_t NetAckBothCommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketAckCommand);
-}
-
-size_t NetFrameCommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketFrameCommand);
-}
-
-size_t NetKeepAliveCommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketKeepAliveCommand);
-}
-
-size_t NetWrapperCommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketWrapperCommand);
-}
-
-size_t NetAckStage1CommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketAckCommand);
-}
-
-size_t NetAckStage2CommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketAckCommand);
-}
-
-size_t NetPlayerLeaveCommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketPlayerLeaveCommand);
-}
-
-size_t NetRunAheadMetricsCommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketRunAheadMetricsCommand);
-}
-
-size_t NetRunAheadCommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketRunAheadCommand);
-}
-
-size_t NetDestroyPlayerCommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketDestroyPlayerCommand);
-}
-
-size_t NetDisconnectKeepAliveCommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketDisconnectKeepAliveCommand);
-}
-
-size_t NetDisconnectPlayerCommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketDisconnectPlayerCommand);
-}
-
-size_t NetPacketRouterQueryCommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketRouterQueryCommand);
-}
-
-size_t NetPacketRouterAckCommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketRouterAckCommand);
-}
-
-size_t NetDisconnectVoteCommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketDisconnectVoteCommand);
-}
-
-size_t NetProgressCommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketProgressMessage);
-}
-
-size_t NetFileProgressCommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketFileProgressCommand);
-}
-
-size_t NetDisconnectFrameCommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketDisconnectFrameCommand);
-}
-
-size_t NetDisconnectScreenOffCommandMsg::getPackedByteCount() {
-	return sizeof(NetPacketDisconnectScreenOffCommand);
-}
-
 size_t NetFrameResendRequestCommandMsg::getPackedByteCount() {
 	return sizeof(NetPacketFrameResendRequestCommand);
 }
+
