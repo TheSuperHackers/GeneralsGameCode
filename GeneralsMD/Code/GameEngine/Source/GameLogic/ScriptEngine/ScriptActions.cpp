@@ -4081,8 +4081,8 @@ void ScriptActions::doSetMoney(const AsciiString& playerName, Int money)
 	if (!m)
 		return;
 
-	m->withdraw(m->countMoney());
-	m->deposit(money);
+	m->withdraw(m->countMoney(), FALSE);
+	m->deposit(money, FALSE);
 }
 
 //-------------------------------------------------------------------------------------------------
