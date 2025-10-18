@@ -565,7 +565,7 @@ static const char * Make_W3D_Filename (const char *w3d_name)
 		buffer[0] = 0;
 		return buffer;
 	}
-	strcpy(buffer, w3d_name);
+	strlcpy(buffer, w3d_name, ARRAY_SIZE(buffer));
 	char *dot = strchr(buffer, '.');
 	if (dot)
 		*dot = 0;

@@ -35,7 +35,7 @@ ThreadClass::ThreadClass(const char *thread_name, ExceptionHandlerType exception
 {
 	if (thread_name) {
 		assert(strlen(thread_name) < sizeof(ThreadName) - 1);
-		strcpy(ThreadName, thread_name);
+		strlcpy(ThreadName, thread_name, ARRAY_SIZE(ThreadName));
 	} else {
 		strcpy(ThreadName, "No name");;
 	}

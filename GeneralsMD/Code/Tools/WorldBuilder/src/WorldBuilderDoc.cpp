@@ -436,8 +436,8 @@ AsciiString ConvertToNonGCName(AsciiString name, Bool checkTemplate=true)
 {
 	char oldName[256];
 	char newName[256];
-	strcpy(oldName, name.str());
-	strcpy(newName, oldName+strlen("GC_"));
+	strlcpy(oldName, name.str(), ARRAY_SIZE(oldName));
+	strlcpy(newName, oldName+strlen("GC_"), ARRAY_SIZE(newName));
 	AsciiString swapName;
 	swapName.set(newName);
 	if (checkTemplate)
@@ -455,8 +455,8 @@ AsciiString ConvertName(AsciiString name)
 {
 	char oldName[256];
 	char newName[256];
-	strcpy(oldName, name.str());
-	strcpy(newName, "GLA");
+	strlcpy(oldName, name.str(), ARRAY_SIZE(oldName));
+	strlcpy(newName, "GLA", ARRAY_SIZE(newName));
 	strlcat(newName, oldName+strlen("Fundamentalist"), ARRAY_SIZE(newName));
 	AsciiString swapName;
 	swapName.set(newName);
@@ -471,7 +471,7 @@ AsciiString ConvertFaction(AsciiString name)
 {
 	char oldName[256];
 	char newName[256];
-	strcpy(oldName, name.str());
+	strlcpy(oldName, name.str(), ARRAY_SIZE(oldName));
 	strcpy(newName, "FactionGLA");
 	strlcat(newName, oldName+strlen("FactionFundamentalist"), ARRAY_SIZE(newName));
 	AsciiString swapName;
@@ -2175,7 +2175,7 @@ void CWorldBuilderDoc::OnDumpDocToText(void)
 
 		char curbuf[ _MAX_PATH ];
 
-		strcpy(curbuf, dirbuf);
+		strlcpy(curbuf, dirbuf, ARRAY_SIZE(curbuf));
 		strlcat(curbuf, m_strTitle, ARRAY_SIZE(curbuf));
 		strlcat(curbuf, ".txt", ARRAY_SIZE(curbuf));
 

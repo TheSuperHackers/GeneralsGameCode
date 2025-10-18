@@ -282,14 +282,14 @@ BOOL ObjectOptions::OnInitDialog()
 		char				fileBuf[_MAX_PATH];
 		Int					i;
 
-		strcpy(dirBuf, TEST_W3D_DIR_PATH);
+		strlcpy(dirBuf, TEST_W3D_DIR_PATH, ARRAY_SIZE(dirBuf));
 		int len = strlen(dirBuf);
 
 		if (len > 0 && dirBuf[len - 1] != '\\' && dirBuf[len-1] != '/') {
 			dirBuf[len++] = '\\';
 			dirBuf[len] = 0;
 		}
-		strcpy(findBuf, dirBuf);
+		strlcpy(findBuf, dirBuf, ARRAY_SIZE(findBuf));
 		strlcat(findBuf, "*.*", ARRAY_SIZE(findBuf));
 
 		FilenameList filenameList;
@@ -309,7 +309,7 @@ BOOL ObjectOptions::OnInitDialog()
 					filename.nextToken(&token, "\\/");
 				}
 
-				strcpy(fileBuf, TEST_STRING);
+				strlcpy(fileBuf, TEST_STRING, ARRAY_SIZE(fileBuf));
 				strlcat(fileBuf, "/", ARRAY_SIZE(findBuf));
 				strlcat(fileBuf, token.str(), ARRAY_SIZE(findBuf));
 				for (i=strlen(fileBuf)-1; i>0; i--) {
@@ -480,7 +480,7 @@ void ObjectOptions::addObject( MapObject *mapObject, const char *pPath,
 		// first sort by side, either create or find the tree item with matching side name
 		AsciiString side = thingTemplate->getDefaultOwningSide();
 		DEBUG_ASSERTCRASH( !side.isEmpty(), ("NULL default side in template") );
-		strcpy( buffer, side.str() );
+		strlcpy(buffer, side.str(), ARRAY_SIZE(buffer));
 		parent = findOrAdd( parent, buffer );
 
 		// next tier uses the editor sorting that design can specify in the INI
@@ -573,7 +573,7 @@ Bool ObjectOptions::setObjectTreeViewSelection(HTREEITEM parent, Int selection)
 		}
 		if (setObjectTreeViewSelection(child, selection))
 		{
-			strcpy(m_currentObjectName, buffer);
+			strlcpy(m_currentObjectName, buffer, ARRAY_SIZE(m_currentObjectName));
 			updateLabel();
 			return(true);
 		}
@@ -612,9 +612,9 @@ BOOL ObjectOptions::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			m_objectTreeView.GetItem(&item);
 			if (item.lParam >= 0) {
 				m_currentObjectIndex = item.lParam;
-				strcpy(m_currentObjectName, buffer);
+				strlcpy(m_currentObjectName, buffer, ARRAY_SIZE(m_currentObjectName));
 			}	else if (m_objectTreeView.ItemHasChildren(item.hItem)) {
-				strcpy(m_currentObjectName, "No Selection");
+				strlcpy(m_currentObjectName, "No Selection", ARRAY_SIZE(m_currentObjectName));
 				m_currentObjectIndex = -1;
 			}
 			updateLabel();
@@ -829,7 +829,7 @@ void ObjectOptions::selectObject(const MapObject* pObj)
 
 		if (m_staticThis->m_objectTreeView.SelectItem(objToSel)) {
 			m_staticThis->m_currentObjectIndex = item.lParam;
-			strcpy(m_staticThis->m_currentObjectName, buffer);
+			strlcpy(m_staticThis->m_currentObjectName, buffer, ARRAY_SIZE(m_staticThis->m_currentObjectName));
 		}
 	}
 }

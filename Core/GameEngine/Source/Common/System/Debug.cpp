@@ -387,7 +387,7 @@ void DebugInit(int flags)
 			pEnd--;
 		}
 
-		strcpy(theLogFileNamePrev, dirbuf);
+		strlcpy(theLogFileNamePrev, dirbuf, ARRAY_SIZE(theLogFileNamePrev));
 		strlcat(theLogFileNamePrev, gAppPrefix, ARRAY_SIZE(theLogFileNamePrev));
 		strlcat(theLogFileNamePrev, DEBUG_FILE_NAME_PREV, ARRAY_SIZE(theLogFileNamePrev));
 		if (rts::ClientInstance::getInstanceId() > 1u)
@@ -397,7 +397,7 @@ void DebugInit(int flags)
 		}
 		strlcat(theLogFileNamePrev, ".txt", ARRAY_SIZE(theLogFileNamePrev));
 
-		strcpy(theLogFileName, dirbuf);
+		strlcpy(theLogFileName, dirbuf, ARRAY_SIZE(theLogFileNamePrev));
 		strlcat(theLogFileName, gAppPrefix, ARRAY_SIZE(theLogFileNamePrev));
 		strlcat(theLogFileName, DEBUG_FILE_NAME, ARRAY_SIZE(theLogFileNamePrev));
 		if (rts::ClientInstance::getInstanceId() > 1u)
@@ -736,9 +736,9 @@ void ReleaseCrash(const char *reason)
 		return; // We are shutting down, and TheGlobalData has been freed.  jba. [4/15/2003]
 	}
 
-	strcpy(prevbuf, TheGlobalData->getPath_UserData().str());
+	strlcpy(prevbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(prevbuf));
 	strlcat(prevbuf, RELEASECRASH_FILE_NAME_PREV, ARRAY_SIZE(prevbuf));
-	strcpy(curbuf, TheGlobalData->getPath_UserData().str());
+	strlcpy(curbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(curbuf));
 	strlcat(curbuf, RELEASECRASH_FILE_NAME, ARRAY_SIZE(curbuf));
 
  	remove(prevbuf);
@@ -825,9 +825,9 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 	char prevbuf[ _MAX_PATH ];
 	char curbuf[ _MAX_PATH ];
 
-	strcpy(prevbuf, TheGlobalData->getPath_UserData().str());
+	strlcpy(prevbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(prevbuf));
 	strlcat(prevbuf, RELEASECRASH_FILE_NAME_PREV, ARRAY_SIZE(prevbuf));
-	strcpy(curbuf, TheGlobalData->getPath_UserData().str());
+	strlcpy(curbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(curbuf));
 	strlcat(curbuf, RELEASECRASH_FILE_NAME, ARRAY_SIZE(curbuf));
 
  	remove(prevbuf);

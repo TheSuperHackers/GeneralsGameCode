@@ -2466,8 +2466,7 @@ void GameLogic::loadMapINI( AsciiString mapName )
 	char filename[_MAX_PATH];
 	char fullFledgeFilename[_MAX_PATH];
 
-	memset(filename, 0, _MAX_PATH);
-	strcpy(filename, mapName.str());
+	strlcpy(filename, mapName.str(), ARRAY_SIZE(filename));
 
 	//
 	// if map name begins with a "SAVE_DIRECTORY\", then the map refers to a map
@@ -2476,7 +2475,7 @@ void GameLogic::loadMapINI( AsciiString mapName )
 	// for that map from it's original location
 	//
 	if (TheGameState->isInSaveDirectory(filename))
-		strcpy( filename, TheGameState->getSaveGameInfo()->pristineMapName.str() );
+		strlcpy(filename, TheGameState->getSaveGameInfo()->pristineMapName.str(), ARRAY_SIZE(filename));
 
 	// sanity
 	int length = strlen(filename);

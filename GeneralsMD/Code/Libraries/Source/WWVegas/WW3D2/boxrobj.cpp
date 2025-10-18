@@ -308,7 +308,7 @@ void BoxRenderObjClass::Set_Name(const char * name)
 {
 	WWASSERT(name != NULL);
 	WWASSERT(strlen(name) < 2*W3D_NAME_LEN);
-	strcpy(Name,name);
+	strlcpy(Name, name, ARRAY_SIZE(name));
 }
 
 

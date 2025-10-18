@@ -680,7 +680,7 @@ Bool FirewallHelperClass::detectionBeginUpdate() {
 		** Do the lookup.
 		*/
 		char temp_name[256];
-		strcpy(temp_name, mangler_name_ptr);
+		strlcpy(temp_name, mangler_name_ptr, ARRAY_SIZE(temp_name));
 		struct hostent *host_info = gethostbyname(temp_name);
 
 		if (!host_info) {

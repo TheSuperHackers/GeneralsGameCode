@@ -960,7 +960,7 @@ void WaterTracksRenderSystem::saveTracks(void)
 	AsciiString fileName=TheTerrainLogic->getSourceFilename();
 	char path[256];
 
-	strcpy(path,fileName.str());
+	strlcpy(path, fileName.str(), ARRAY_SIZE(path));
 	Int len=strlen(path);
 
 	strcpy(path+len-4,".wak");
@@ -998,7 +998,7 @@ void WaterTracksRenderSystem::loadTracks(void)
 	AsciiString fileName=TheTerrainLogic->getSourceFilename();
 	char path[256];
 
-	strcpy(path,fileName.str());
+	strlcpy(path, fileName.str(), ARRAY_SIZE(path));
 	Int len=strlen(path);
 
 	strcpy(path+len-4,".wak");

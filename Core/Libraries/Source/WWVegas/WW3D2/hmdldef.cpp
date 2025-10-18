@@ -150,7 +150,7 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 	*/
 	strlcpy(ModelName,header.Name,W3D_NAME_LEN);
 	strlcpy(BasePoseName,header.HierarchyName,W3D_NAME_LEN);
-	strcpy(Name,ModelName);
+	strlcpy(Name, ModelName, ARRAY_SIZE(Name));
 
 	/*
 	** Just allocate a node for the number of sub objects we're expecting
@@ -232,7 +232,7 @@ bool HModelDefClass::read_connection(ChunkLoadClass & cload,HmdlNodeDefStruct * 
 		return false;
 	}
 
-	strcpy(node->RenderObjName,ModelName);
+	strlcpy(node->RenderObjName, ModelName, ARRAY_SIZE(node->RenderObjName));
 	strlcat(node->RenderObjName, ".", ARRAY_SIZE(node->RenderObjName));
 	strlcat(node->RenderObjName, con.RenderObjName, ARRAY_SIZE(node->RenderObjName));
 

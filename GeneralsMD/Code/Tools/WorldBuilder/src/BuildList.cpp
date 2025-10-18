@@ -752,7 +752,7 @@ void BuildList::OnExport()
 
 		char curbuf[ _MAX_PATH ];
 
-		strcpy(curbuf, dirbuf);
+		strlcpy(curbuf, dirbuf, ARRAY_SIZE(curbuf));
 		SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide);
 		Dict *d = TheSidesList->getSideInfo(m_curSide)->getDict();
 		AsciiString name = d->getAsciiString(TheKey_playerName);

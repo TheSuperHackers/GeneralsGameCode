@@ -2136,7 +2136,7 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 		{
 			char oldName[256];
 			char newName[256];
-			strcpy(oldName, pParm->m_string.str());
+			strlcpy(oldName, pParm->m_string.str(), ARRAY_SIZE(oldName));
 			strcpy(newName, "GLA");
 			strlcat(newName, oldName+strlen("Fundamentalist"), ARRAY_SIZE(newName));
 			pParm->m_string.set(newName);

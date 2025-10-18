@@ -45,17 +45,17 @@ NullLoaderClass _NullLoader;
 
 Null3DObjClass::Null3DObjClass(const char * name)
 {
-	strcpy(Name, name);
+	strlcpy(Name, name, ARRAY_SIZE(Name));
 }
 
 Null3DObjClass::Null3DObjClass(const Null3DObjClass & src)
 {
-	strcpy(Name, src.Name);
+	strlcpy(Name, src.Name, ARRAY_SIZE(Name));
 }
 
 Null3DObjClass & Null3DObjClass::operator = (const Null3DObjClass & that)
 {
-	strcpy(Name, that.Name);
+	strlcpy(Name, that.Name, ARRAY_SIZE(Name));
 
 	RenderObjClass::operator = (that); return *this;
 }

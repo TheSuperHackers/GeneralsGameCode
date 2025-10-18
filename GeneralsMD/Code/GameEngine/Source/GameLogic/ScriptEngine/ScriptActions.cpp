@@ -2629,7 +2629,7 @@ void ScriptActions::doDisplayCinematicText(const AsciiString& displayText, const
 	AsciiString fontName = AsciiString::TheEmptyString;
 	char buf[256];
 	char *c;
-	strcpy(buf, fontType.str());
+	strlcpy(buf, fontType.str(), ARRAY_SIZE(buf));
 	// TheSuperHackers @fix xezon 16/03/2025 Fixes potential buffer overrun via prior c!='\0' test.
 	for( c = buf; *c != '\0'; c++ )
 	{

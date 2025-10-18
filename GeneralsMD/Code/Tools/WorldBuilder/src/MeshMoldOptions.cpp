@@ -85,14 +85,8 @@ BOOL MeshMoldOptions::OnInitDialog()
 		char				fileBuf[_MAX_PATH];
 		Int					i;
 
-		strcpy(dirBuf, ".\\data\\Editor\\Molds");
-		int len = strlen(dirBuf);
-
-		if (len > 0 && dirBuf[len - 1] != '\\') {
-			dirBuf[len++] = '\\';
-			dirBuf[len] = 0;
-		}
-		strcpy(findBuf, dirBuf);
+		strlcpy(dirBuf, ".\\data\\Editor\\Molds\\", ARRAY_SIZE(dirBuf));
+		strlcpy(findBuf, dirBuf, ARRAY_SIZE(findBuf));
 		strlcat(findBuf, "*.w3d", ARRAY_SIZE(findBuf));
 
 		FilenameList filenameList;
@@ -104,9 +98,9 @@ BOOL MeshMoldOptions::OnInitDialog()
 			do {
 				AsciiString filename = *it;
 
-				len = filename.getLength();
+				int len = filename.getLength();
 				if (len<5) continue;
-				strcpy(fileBuf, filename.str());
+				strlcpy(fileBuf, filename.str(), ARRAY_SIZE(fileBuf));
 				for (i=strlen(fileBuf)-1; i>0; i--) {
 					if (fileBuf[i] == '.') {
 						// strip off .w3d file extension.

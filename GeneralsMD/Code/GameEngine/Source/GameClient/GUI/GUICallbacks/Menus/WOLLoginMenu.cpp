@@ -1260,9 +1260,9 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 							loginAttemptTime = timeGetTime();
 							BuddyRequest req;
 							req.buddyRequestType = BuddyRequest::BUDDYREQUEST_LOGINNEW;
-							strcpy(req.arg.login.nick, login.str());
-							strcpy(req.arg.login.email, email.str());
-							strcpy(req.arg.login.password, password.str());
+							strlcpy(req.arg.login.nick, login.str(), ARRAY_SIZE(req.arg.login.nick));
+							strlcpy(req.arg.login.email, email.str(), ARRAY_SIZE(req.arg.login.email));
+							strlcpy(req.arg.login.password, password.str(), ARRAY_SIZE(req.arg.login.password));
 							req.arg.login.hasFirewall = TRUE;
 
 							TheGameSpyInfo->setLocalBaseName( login );
@@ -1349,9 +1349,9 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 							loginAttemptTime = timeGetTime();
 							BuddyRequest req;
 							req.buddyRequestType = BuddyRequest::BUDDYREQUEST_LOGIN;
-							strcpy(req.arg.login.nick, login.str());
-							strcpy(req.arg.login.email, email.str());
-							strcpy(req.arg.login.password, password.str());
+							strlcpy(req.arg.login.nick, login.str(), ARRAY_SIZE(req.arg.login.nick));
+							strlcpy(req.arg.login.email, email.str(), ARRAY_SIZE(req.arg.login.email));
+							strlcpy(req.arg.login.password, password.str(), ARRAY_SIZE(req.arg.login.password));
 							req.arg.login.hasFirewall = true;
 
 							TheGameSpyInfo->setLocalBaseName( login );

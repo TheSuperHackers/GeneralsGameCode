@@ -134,7 +134,7 @@ Int UDP::Bind(const char *Host,UnsignedShort port)
   if (isdigit(Host[0]))
     return ( Bind( ntohl(inet_addr(Host)), port) );
 
-  strcpy(hostName, Host);
+  strlcpy(hostName, Host, ARRAY_SIZE(hostName));
 
   hostStruct = gethostbyname(Host);
   if (hostStruct == NULL)

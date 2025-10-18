@@ -246,10 +246,10 @@ BOOL RoadOptions::OnInitDialog()
 		char				findBuf[_MAX_PATH];
 		char				fileBuf[_MAX_PATH];
 
-		strcpy(dirBuf, ROAD_DIRECTORY);
+		strlcpy(dirBuf, ROAD_DIRECTORY, ARRAY_SIZE(dirBuf));
 		int len = strlen(dirBuf);
 
-		strcpy(findBuf, dirBuf);
+		strlcpy(findBuf, dirBuf, ARRAY_SIZE(dirBuf));
 
 		FilenameList filenameList;
 		TheFileSystem->getFileListInDirectory(AsciiString(findBuf), AsciiString("*.tga"), filenameList, FALSE);
@@ -273,7 +273,7 @@ BOOL RoadOptions::OnInitDialog()
 					++it;
 					continue;
 				}
-				strcpy(fileBuf, TEST_STRING);
+				strlcpy(fileBuf, TEST_STRING, ARRAY_SIZE(fileBuf));
 				strlcat(fileBuf, "\\", ARRAY_SIZE(fileBuf));
 				strlcat(fileBuf, filename.str(), ARRAY_SIZE(fileBuf));
 				addRoad(fileBuf, index, TVI_ROOT);
@@ -387,7 +387,7 @@ void RoadOptions::addRoad(char *pPath, Int terrainNdx, HTREEITEM parent)
 			parent = findOrAdd( parent, "Roads" );
 
 		// set the name to place as the name of the road entry in INI
-		strcpy( buffer, road->getName().str() );
+		strlcpy(buffer, road->getName().str(), ARRAY_SIZE(buffer));
 
 		// do the add
 		doAdd = TRUE;
@@ -397,7 +397,7 @@ void RoadOptions::addRoad(char *pPath, Int terrainNdx, HTREEITEM parent)
 #ifdef LOAD_TEST_ASSETS
 	if (!doAdd && !strncmp(TEST_STRING, pPath, strlen(TEST_STRING))) {
 		parent = findOrAdd(parent, TEST_STRING);
-		strcpy(buffer, pPath + strlen(TEST_STRING) + 1);
+		strlcpy(buffer, pPath + strlen(TEST_STRING) + 1, ARRAY_SIZE(buffer));
 		doAdd = true;
 	}
 #endif

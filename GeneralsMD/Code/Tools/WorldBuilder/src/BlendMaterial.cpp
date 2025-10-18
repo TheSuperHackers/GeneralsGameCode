@@ -191,15 +191,15 @@ void BlendMaterial::addTerrain(const char *pPath, Int terrainNdx, HTREEITEM pare
 		}
 
 		// set the name in the tree view to that of the entry
-		strcpy( buffer, terrain->getName().str() );
+		strlcpy(buffer, terrain->getName().str(), ARRAY_SIZE(buffer));
 
 		doAdd = TRUE;
 	} else if (terrainNdx==-1) {
-		strcpy(buffer, pPath);
+		strlcpy(buffer, pPath, ARRAY_SIZE(buffer));
 		doAdd = true;
 	} else if (WorldHeightMapEdit::getTexClassIsBlendEdge(terrainNdx)) {
 		parent = findOrAdd( parent, "**EVAL**" );
-		strcpy(buffer, pPath);
+		strlcpy(buffer, pPath, ARRAY_SIZE(buffer));
 		doAdd = true;
 	}
 

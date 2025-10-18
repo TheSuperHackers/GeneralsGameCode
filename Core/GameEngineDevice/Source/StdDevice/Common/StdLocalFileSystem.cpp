@@ -227,7 +227,7 @@ void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirect
 	std::replace(fixedDirectory.begin(), fixedDirectory.end(), '\\', '/');
 #endif
 
-	strcpy(search, fixedDirectory.c_str());
+	strlcpy(search, fixedDirectory.c_str(), ARRAY_SIZE(search));
 
 	Bool done = FALSE;
 	std::error_code ec;
