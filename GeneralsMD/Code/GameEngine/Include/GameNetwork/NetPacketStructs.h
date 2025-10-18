@@ -222,17 +222,6 @@ struct NetPacketRouterAckCommand {
 	NetPacketDataFieldHeader dataHeader;
 };
 
-////////////////////////////////////////////////////////////////////////////////
-// Base Packed Struct for All Command Messages
-// Contains the minimum common fields that all command messages share
-////////////////////////////////////////////////////////////////////////////////
-
-struct PackedNetCommandMsg {
-	NetPacketCommandTypeField commandType;
-	NetPacketRelayField relay;
-	NetPacketPlayerIdField playerId;
-	NetPacketDataFieldHeader dataHeader;
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Variable-Length Packet Headers
@@ -257,31 +246,51 @@ struct NetPacketDisconnectChatCommandHeader {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// Derived Packed Structs for getByteCount() calculations
-// These structs inherit from PackedNetCommandMsg and add command-specific fields
+// Packed Structs for getPackedByteCount() calculations
+// These structs represent the fixed portion of variable-length command messages
 ////////////////////////////////////////////////////////////////////////////////
 
-struct PackedNetChatCommandMsg : public PackedNetCommandMsg {
+struct PackedNetChatCommandMsg {
+	NetPacketCommandTypeField commandType;
+	NetPacketRelayField relay;
+	NetPacketPlayerIdField playerId;
+	NetPacketDataFieldHeader dataHeader;
 	NetPacketFrameField frame;
 	NetPacketCommandIdField commandId;
 };
 
-struct PackedNetDisconnectChatCommandMsg : public PackedNetCommandMsg {
+struct PackedNetDisconnectChatCommandMsg {
+	NetPacketCommandTypeField commandType;
+	NetPacketRelayField relay;
+	NetPacketPlayerIdField playerId;
+	NetPacketDataFieldHeader dataHeader;
 };
 
 // Game command packed struct (variable: game message data follows)
-struct PackedNetGameCommandMsg : public PackedNetCommandMsg {
+struct PackedNetGameCommandMsg {
+	NetPacketCommandTypeField commandType;
+	NetPacketRelayField relay;
+	NetPacketPlayerIdField playerId;
+	NetPacketDataFieldHeader dataHeader;
 	NetPacketFrameField frame;
 	NetPacketCommandIdField commandId;
 };
 
 // File command packed struct (variable: filename and file data follow)
-struct PackedNetFileCommandMsg : public PackedNetCommandMsg {
+struct PackedNetFileCommandMsg {
+	NetPacketCommandTypeField commandType;
+	NetPacketRelayField relay;
+	NetPacketPlayerIdField playerId;
+	NetPacketDataFieldHeader dataHeader;
 	NetPacketCommandIdField commandId;
 };
 
 // File announce command packed struct (variable: filename and metadata follow)
-struct PackedNetFileAnnounceCommandMsg : public PackedNetCommandMsg {
+struct PackedNetFileAnnounceCommandMsg {
+	NetPacketCommandTypeField commandType;
+	NetPacketRelayField relay;
+	NetPacketPlayerIdField playerId;
+	NetPacketDataFieldHeader dataHeader;
 	NetPacketCommandIdField commandId;
 };
 
