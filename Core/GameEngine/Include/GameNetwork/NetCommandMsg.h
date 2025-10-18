@@ -81,7 +81,7 @@ public:
 	void addArgument(const GameMessageArgumentDataType type, GameMessageArgumentType arg);
 	void setGameMessageType(GameMessage::Type type);
 
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	Int m_numArgs;
@@ -109,7 +109,7 @@ public:
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
 	virtual Int getSortNumber();
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	UnsignedShort m_commandID;
@@ -135,7 +135,7 @@ public:
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
 	virtual Int getSortNumber();
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	UnsignedShort m_commandID;
@@ -161,7 +161,7 @@ public:
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
 	virtual Int getSortNumber();
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	UnsignedShort m_commandID;
@@ -179,7 +179,7 @@ public:
 	void setCommandCount(UnsignedShort commandCount);
 	UnsignedShort getCommandCount();
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	UnsignedShort m_commandCount;
@@ -196,7 +196,7 @@ public:
 	UnsignedByte getLeavingPlayerID();
 	void setLeavingPlayerID(UnsignedByte id);
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	UnsignedByte m_leavingPlayerID;
@@ -215,7 +215,7 @@ public:
 	Int  getAverageFps();
 	void setAverageFps(Int fps);
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	Real m_averageLatency;
@@ -236,7 +236,7 @@ public:
 	UnsignedByte getFrameRate();
 	void setFrameRate(UnsignedByte frameRate);
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	UnsignedShort m_runAhead;
@@ -254,7 +254,7 @@ public:
 	UnsignedInt getPlayerIndex();
 	void setPlayerIndex(UnsignedInt playerIndex);
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	UnsignedInt m_playerIndex;
@@ -268,7 +268,7 @@ public:
 	NetKeepAliveCommandMsg();
 	//virtual ~NetKeepAliveCommandMsg();
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 };
 
 //-----------------------------------------------------------------------------
@@ -279,7 +279,7 @@ public:
 	NetDisconnectKeepAliveCommandMsg();
 	//virtual ~NetDisconnectKeepAliveCommandMsg();
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 };
 
 //-----------------------------------------------------------------------------
@@ -296,7 +296,7 @@ public:
 	UnsignedInt getDisconnectFrame();
 	void setDisconnectFrame(UnsignedInt frame);
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	UnsignedByte m_disconnectSlot;
@@ -311,7 +311,7 @@ public:
 	NetPacketRouterQueryCommandMsg();
 	//virtual ~NetPacketRouterQueryCommandMsg();
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 };
 
 //-----------------------------------------------------------------------------
@@ -322,7 +322,7 @@ public:
 	NetPacketRouterAckCommandMsg();
 	//virtual ~NetPacketRouterAckCommandMsg();
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 };
 
 //-----------------------------------------------------------------------------
@@ -336,7 +336,7 @@ public:
 	UnicodeString getText();
 	void setText(UnicodeString text);
 
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	UnicodeString m_text;
@@ -356,7 +356,7 @@ public:
 	Int getPlayerMask( void );
 	void setPlayerMask( Int playerMask );
 
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	UnicodeString m_text;
@@ -377,7 +377,7 @@ public:
 	UnsignedInt getVoteFrame();
 	void setVoteFrame(UnsignedInt voteFrame);
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	UnsignedByte m_slot;
@@ -395,7 +395,7 @@ public:
 	UnsignedByte getPercentage();
 	void setPercentage( UnsignedByte percent );
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 protected:
 	UnsignedByte m_percent;
 };
@@ -411,7 +411,7 @@ public:
 	UnsignedByte * getData();
 	void setData(UnsignedByte *data, UnsignedInt dataLength);
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 	UnsignedInt getChunkNumber();
 	void setChunkNumber(UnsignedInt chunkNumber);
@@ -460,7 +460,7 @@ public:
 	UnsignedByte * getFileData();
 	void setFileData(UnsignedByte *data, UnsignedInt dataLength);
 
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	AsciiString m_portableFilename;
@@ -489,7 +489,7 @@ public:
 	UnsignedByte getPlayerMask(void);
 	void setPlayerMask(UnsignedByte playerMask);
 
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	AsciiString m_portableFilename;
@@ -511,7 +511,7 @@ public:
 	Int getProgress();
 	void setProgress(Int val);
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	UnsignedShort m_fileID;
@@ -528,7 +528,7 @@ public:
 	UnsignedInt getDisconnectFrame();
 	void setDisconnectFrame(UnsignedInt disconnectFrame);
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	UnsignedInt m_disconnectFrame;
@@ -544,7 +544,7 @@ public:
 	UnsignedInt getNewFrame();
 	void setNewFrame(UnsignedInt newFrame);
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	UnsignedInt m_newFrame;
@@ -560,7 +560,7 @@ public:
 	UnsignedInt getFrameToResend();
 	void setFrameToResend(UnsignedInt frame);
 	
-	size_t getPackedByteCount() const override;
+	size_t getPackedByteCount() const;
 
 protected:
 	UnsignedInt m_frameToResend;
