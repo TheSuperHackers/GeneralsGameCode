@@ -236,7 +236,7 @@ void NetGameCommandMsg::setGameMessageType(GameMessage::Type type) {
  * Get the byte count for this game command message.
  */
 size_t NetGameCommandMsg::getPackedByteCount() const {
-	UnsignedShort msglen = sizeof(PackedNetGameCommandMsg);
+	UnsignedShort msglen = sizeof(NetPacketGameCommand);
 
 	// Variable data portion
 	GameMessage *gmsg = const_cast<NetGameCommandMsg*>(this)->constructGameMessage();
@@ -835,7 +835,7 @@ void NetChatCommandMsg::setPlayerMask( Int playerMask )
  */
 size_t NetChatCommandMsg::getPackedByteCount() const
 {
-	return sizeof(PackedNetChatCommandMsg) + sizeof(UnsignedByte) + m_text.getByteCount() + sizeof(m_playerMask);
+	return sizeof(NetPacketChatCommand) + sizeof(UnsignedByte) + m_text.getByteCount() + sizeof(m_playerMask);
 }
 
 //-------------------------
@@ -846,7 +846,7 @@ size_t NetChatCommandMsg::getPackedByteCount() const
  */
 size_t NetDisconnectChatCommandMsg::getPackedByteCount() const
 {
-	return sizeof(PackedNetDisconnectChatCommandMsg) + sizeof(UnsignedByte) + m_text.getByteCount();
+	return sizeof(NetPacketDisconnectChatCommand) + sizeof(UnsignedByte) + m_text.getByteCount();
 }
 
 //-------------------------
@@ -1035,7 +1035,7 @@ void NetFileCommandMsg::setFileData(UnsignedByte *data, UnsignedInt dataLength)
  */
 size_t NetFileCommandMsg::getPackedByteCount() const
 {
-	return sizeof(PackedNetFileCommandMsg) + m_portableFilename.getLength() + 1  // filename + null terminator
+	return sizeof(NetPacketFileCommand) + m_portableFilename.getLength() + 1  // filename + null terminator
 		+ sizeof(UnsignedInt)  // file data length
 		+ m_dataLength;  // the file data
 }
@@ -1084,7 +1084,7 @@ void NetFileAnnounceCommandMsg::setPlayerMask(UnsignedByte playerMask) {
  */
 size_t NetFileAnnounceCommandMsg::getPackedByteCount() const
 {
-	return sizeof(PackedNetFileAnnounceCommandMsg) + m_portableFilename.getLength() + 1  // filename + null terminator
+	return sizeof(NetPacketFileAnnounceCommand) + m_portableFilename.getLength() + 1  // filename + null terminator
 		+ sizeof(m_fileID)  // file ID
 		+ sizeof(m_playerMask);  // player mask
 }
