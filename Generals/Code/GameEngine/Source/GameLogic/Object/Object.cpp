@@ -4199,6 +4199,15 @@ void Object::adjustModelConditionForWeaponStatus()
 }
 
 //-------------------------------------------------------------------------------------------------
+Bool Object::hasGhostObject() const
+{
+	if (m_partitionData == NULL)
+		return false;
+
+	return m_partitionData->getGhostObject() != NULL;
+}
+
+//-------------------------------------------------------------------------------------------------
 /// We have moved a 'significant' amount, so do maintenence that can be considered 'cell-based'
 void Object::onPartitionCellChange()
 {

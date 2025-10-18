@@ -492,6 +492,18 @@ Bool OptionPreferences::useCameraInReplays(void)
 	return FALSE;
 }
 
+Bool OptionPreferences::getPlayerObserverEnabled() const
+{
+	OptionPreferences::const_iterator it = find("PlayerObserverEnabled");
+	if (it == end())
+		return TRUE;
+
+	if (stricmp(it->second.str(), "yes") == 0)
+		return TRUE;
+
+	return FALSE;
+}
+
 Int OptionPreferences::getIdealStaticGameDetail(void)
 {
 	OptionPreferences::const_iterator it = find("IdealStaticGameLOD");
@@ -1275,6 +1287,13 @@ static void saveOptions( void )
 		(*pref)["ScreenEdgeScrollEnabledInWindowedApp"] = (mode & ScreenEdgeScrollMode_EnabledInWindowedApp) ? "yes" : "no";
 		(*pref)["ScreenEdgeScrollEnabledInFullscreenApp"] = (mode & ScreenEdgeScrollMode_EnabledInFullscreenApp) ? "yes" : "no";
 		TheLookAtTranslator->setScreenEdgeScrollMode(mode);
+	}
+
+	// TheSuperHackers @todo Add checkbox ?
+	{
+		Bool enabled = pref->getPlayerObserverEnabled();
+		(*pref)["PlayerObserverEnabled"] = enabled ? "yes" : "no";
+		TheWritableGlobalData->m_enablePlayerObserver = enabled;
 	}
 
 	//-------------------------------------------------------------------------------------------------

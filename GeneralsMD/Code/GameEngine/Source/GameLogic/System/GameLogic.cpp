@@ -38,6 +38,7 @@
 #include "Common/GameEngine.h"
 #include "Common/GameLOD.h"
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/INI.h"
 #include "Common/LatchRestore.h"
 #include "Common/MapObject.h"
@@ -74,7 +75,6 @@
 #include "GameClient/ParticleSys.h"
 #include "GameClient/TerrainVisual.h"
 #include "GameClient/View.h"
-#include "GameClient/ControlBar.h"
 #include "GameClient/CampaignManager.h"
 #include "GameClient/GameWindowTransitions.h"
 
@@ -2285,15 +2285,17 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		// explicitly set the Control bar to Observer Mode
 		if(m_gameMode == GAME_REPLAY )
 		{
-
-			ThePlayerList->setLocalPlayer(ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey("ReplayObserver")));
+			Player* observerPlayer = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey("ReplayObserver"));
+			rts::changeLocalPlayer(observerPlayer);
 			TheRadar->forceOn(TRUE);
-			ThePartitionManager->refreshShroudForLocalPlayer();
-			TheControlBar->setControlBarSchemeByPlayer( ThePlayerList->getLocalPlayer());
+
 			DEBUG_LOG(("Start of a replay game %ls, %d",ThePlayerList->getLocalPlayer()->getPlayerDisplayName().str(), ThePlayerList->getLocalPlayer()->getPlayerIndex()));
 		}
 		else
+		{
 			TheControlBar->setControlBarSchemeByPlayer(ThePlayerList->getLocalPlayer());
+			TheControlBar->initSpecialPowershortcutBar(ThePlayerList->getLocalPlayer());
+		}
 //		ShowControlBar();
 
 	}
@@ -2344,7 +2346,6 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 			}
 		}
 	}
-	TheControlBar->initSpecialPowershortcutBar(ThePlayerList->getLocalPlayer());
 
 	if(m_gameMode == GAME_SHELL)
 	{

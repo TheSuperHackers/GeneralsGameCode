@@ -32,6 +32,7 @@
 
 #include "Common/GameAudio.h"
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/MiscAudio.h"
 #include "Common/Radar.h"
 #include "Common/Player.h"
@@ -421,6 +422,7 @@ RadarObjectType Radar::addObject( Object *obj )
 
 	// set color for this object on the radar
 	const Player *player = obj->getControllingPlayer();
+	Player *clientPlayer = rts::getObservedOrLocalPlayer();
 	Bool useIndicatorColor = true;
 
 	if( obj->isKindOf( KINDOF_DISGUISER ) )
@@ -433,7 +435,6 @@ RadarObjectType Radar::addObject( Object *obj )
 		{
 			if( update->isDisguised() )
 			{
-				Player *clientPlayer = ThePlayerList->getLocalPlayer();
 				Player *disguisedPlayer = ThePlayerList->getNthPlayer( update->getDisguisedPlayerIndex() );
 				if( player->getRelationship( clientPlayer->getDefaultTeam() ) != ALLIES && clientPlayer->isPlayerActive() )
 				{
@@ -451,7 +452,7 @@ RadarObjectType Radar::addObject( Object *obj )
 	{
 		// To handle Stealth garrison, ask containers what color they are drawing with to the local player.
 		// Local is okay because radar display is not synced.
-		player = obj->getContain()->getApparentControllingPlayer( ThePlayerList->getLocalPlayer() );
+		player = obj->getContain()->getApparentControllingPlayer( clientPlayer );
 		if( player )
 			useIndicatorColor = false;
 	}
@@ -1197,7 +1198,7 @@ void Radar::tryUnderAttackEvent( const Object *obj )
 		// UI feedback for being under attack (note that we display these messages and audio
 		// queues even if we don't have a radar)
 		//
-		Player *player = ThePlayerList->getLocalPlayer();
+		Player *player = rts::getObservedOrLocalPlayer();
 
 		// create a message for the attack event
 		if( obj->isKindOf( KINDOF_INFANTRY ) || obj->isKindOf( KINDOF_VEHICLE ) )
@@ -1228,7 +1229,7 @@ void Radar::tryUnderAttackEvent( const Object *obj )
 			// play EVA. If its our object, play Base under attack.
 			if (obj->getControllingPlayer()->isLocalPlayer())
 				TheEva->setShouldPlay(EVA_BaseUnderAttack);
-			else if (ThePlayerList->getLocalPlayer()->getRelationship(obj->getTeam()) == ALLIES)
+			else if (player->getRelationship(obj->getTeam()) == ALLIES)
 				TheEva->setShouldPlay(EVA_AllyUnderAttack);
 
 			// display message
@@ -1271,8 +1272,10 @@ void Radar::tryInfiltrationEvent( const Object *obj )
 		return;
 	}
 
+	Player *player = rts::getObservedOrLocalPlayer();
+
 	// We should only be warned against infiltrations that are taking place against us.
-	if( obj->getControllingPlayer() != ThePlayerList->getLocalPlayer() )
+	if( obj->getControllingPlayer() != player )
 		return;
 
 	// create the radar event
@@ -1284,7 +1287,6 @@ void Radar::tryInfiltrationEvent( const Object *obj )
 	// UI feedback for being under attack (note that we display these messages and audio
 	// queues even if we don't have a radar)
 	//
-	Player *player = ThePlayerList->getLocalPlayer();
 
 	// display message
 	TheInGameUI->message( "RADAR:Infiltration" );

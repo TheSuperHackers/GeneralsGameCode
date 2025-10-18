@@ -32,6 +32,7 @@
 #define DEFINE_STEALTHLEVEL_NAMES
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
+#include "Common/GameUtility.h"
 #include "Common/MiscAudio.h"
 #include "Common/Radar.h"
 #include "Common/ThingTemplate.h"
@@ -217,7 +218,7 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 			{
 
 				// for the player revealing the stealth unit do some UI feedback
-				if( ThePlayerList->getLocalPlayer() == self->getControllingPlayer() &&
+				if( rts::getObservedOrLocalPlayer() == self->getControllingPlayer() &&
 						self->getRelationship( them ) != ALLIES )
 				{
 					Bool doFeedback = TRUE;
@@ -247,7 +248,7 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 				}
 
 				// for the unit being revealed, do some UI feedback
-				if( ThePlayerList->getLocalPlayer() == them->getControllingPlayer() &&
+				if( rts::getObservedOrLocalPlayer() == them->getControllingPlayer() &&
 						self->getRelationship( them ) != ALLIES )
 				{
  					Bool doFeedback = TRUE;
@@ -334,8 +335,11 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 		}
 	}
 
+
+  const Player *localPlayer = rts::getObservedOrLocalPlayer();
+
 	//Make sure the detector is visible to the local player before we add effects or sounds.
-	if (data->m_IRGridParticleSysTmpl && self->getShroudedStatus(ThePlayerList->getLocalPlayer()->getPlayerIndex()) <= OBJECTSHROUD_PARTIAL_CLEAR)
+	if (data->m_IRGridParticleSysTmpl && self->getShroudedStatus(localPlayer->getPlayerIndex()) <= OBJECTSHROUD_PARTIAL_CLEAR)
 	{
 		Drawable *myDraw = self->getDrawable();
 		Coord3D bonePosition = {-1.66f,5.5f,15};//@todo use bone position

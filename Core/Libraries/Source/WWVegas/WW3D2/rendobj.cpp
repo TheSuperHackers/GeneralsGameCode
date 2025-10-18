@@ -807,7 +807,7 @@ void RenderObjClass::Add(SceneClass * scene)
  *   11/04/1997 GH  : Created.                                                                 *
  *   2/25/99    GTH : moved to the base RenderObjClass                                         *
  *=============================================================================================*/
-void RenderObjClass::Remove(void)
+bool RenderObjClass::Remove(void)
 {
 	// All render objects have their scene pointers set.  To check if this is a "top level"
 	// object, (i.e. directly in the scene) you see if its Container pointer is NULL.
@@ -815,16 +815,19 @@ void RenderObjClass::Remove(void)
 	if (Container == NULL) {
 		if (Scene != NULL) {
 			Scene->Remove_Render_Object(this);
-			return;
+			return true;
 		}
+		return false;
 	} else {
 		Container->Remove_Sub_Object(this);
-		return;
+		return true;
 	}
 #else
-	if (!Scene) return;
+	if (!Scene)
+		return false;
 	Scene->Remove_Render_Object(this);
 	Scene = NULL;
+	return true;
 #endif
 }
 

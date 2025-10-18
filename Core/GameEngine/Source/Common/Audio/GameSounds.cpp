@@ -50,6 +50,7 @@
 #include "Common/AudioEventInfo.h"
 #include "Common/AudioEventRTS.h"
 #include "Common/AudioRequest.h"
+#include "Common/GameUtility.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 
@@ -228,9 +229,10 @@ Bool SoundManager::canPlayNow( AudioEventRTS *event )
 				return false;
 			}
 
-			Int localPlayerNdx = ThePlayerList->getLocalPlayer()->getPlayerIndex();
+			const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
+
 			if( (event->getAudioEventInfo()->m_type & ST_SHROUDED) &&
-					 ThePartitionManager->getShroudStatusForPlayer(localPlayerNdx, pos) != CELLSHROUD_CLEAR )
+					 ThePartitionManager->getShroudStatusForPlayer(localPlayerIndex, pos) != CELLSHROUD_CLEAR )
 			{
 #ifdef INTENSIVE_AUDIO_DEBUG
 				DEBUG_LOG(("- culled due to shroud."));

@@ -31,6 +31,7 @@
 #include "Common/ActionManager.h"
 #include "Common/DrawModule.h"
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/RandomValue.h"
 #include "Common/Team.h"

@@ -39,6 +39,7 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/BuildAssistant.h"
 #include "Common/FramePacer.h"
+#include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/Module.h"
 #include "Common/RandomValue.h"
@@ -838,7 +839,7 @@ static void drawablePostDraw( Drawable *draw, void *userData )
 		return;
 
 	Object* obj = draw->getObject();
-	Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
+	const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
 #if ENABLE_CONFIGURABLE_SHROUD
 	ObjectShroudStatus ss = (!obj || !TheGlobalData->m_shroudOn) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
 #else
