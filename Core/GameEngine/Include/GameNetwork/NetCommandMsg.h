@@ -565,3 +565,29 @@ public:
 protected:
 	UnsignedInt m_frameToResend;
 };
+
+//-----------------------------------------------------------------------------
+/**
+ * The NetLoadCompleteCommandMsg is a simple command message for load complete notifications
+ */
+class NetLoadCompleteCommandMsg : public NetCommandMsg
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetLoadCompleteCommandMsg, "NetLoadCompleteCommandMsg")
+public:
+	NetLoadCompleteCommandMsg();
+	
+	size_t getPackedByteCount() const;
+};
+
+//-----------------------------------------------------------------------------
+/**
+ * The NetTimeOutGameStartCommandMsg is a simple command message for timeout game start notifications
+ */
+class NetTimeOutGameStartCommandMsg : public NetCommandMsg
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetTimeOutGameStartCommandMsg, "NetTimeOutGameStartCommandMsg")
+public:
+	NetTimeOutGameStartCommandMsg();
+	
+	size_t getPackedByteCount() const;
+};

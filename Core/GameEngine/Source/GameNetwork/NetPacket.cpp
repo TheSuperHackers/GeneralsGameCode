@@ -278,18 +278,8 @@ UnsignedInt NetPacket::GetBufferSizeNeededForCommand(NetCommandMsg *msg) {
 	if (msg == NULL) {
 		return TRUE; // There was nothing to add, so it was successful.
 	}
-// Handle special cases that don't have corresponding command message classes
-	switch(msg->getNetCommandType())
-	{
-		case NETCOMMANDTYPE_LOADCOMPLETE:
-			return sizeof(NetPacketLoadCompleteMessage);
-		case NETCOMMANDTYPE_TIMEOUTSTART:
-			return sizeof(NetPacketTimeOutGameStartMessage);
-		default:
-			return msg->getPackedByteCount();
-	}
-
-	return 0;
+	// Use the virtual function for all command message types
+	return msg->getPackedByteCount();
 }
 
 
