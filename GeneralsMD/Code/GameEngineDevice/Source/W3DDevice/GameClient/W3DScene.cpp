@@ -1411,6 +1411,7 @@ void RTS3DScene::flushOccludedObjectsIntoStencil(RenderInfoClass & rinfo)
 					DrawableInfo *drawInfo=((DrawableInfo *)(*renderList)->Get_User_Data());
 					if (drawInfo->m_flags & DrawableInfo::ERF_IS_TRANSLUCENT)
 					{
+						// TheSuperHackers @info This only draws the occlusion of translucent objects.
 						TheDX8MeshRenderer.Flush();	//render all the submitted meshes using current stencil function
 						SHD_FLUSH;
 						//Disable writing to color buffer since translucent objects are rendered at end of frame.
@@ -1497,7 +1498,13 @@ void RTS3DScene::flushOccludedObjectsIntoStencil(RenderInfoClass & rinfo)
 		Int k=0;
 		for (; k<m_numPotentialOccludees; k++)
 		{
-			renderOneObject(rinfo, (*occludeeList), localPlayerIndex);
+			// TheSuperHackers @bugfix xezon 18/10/2025 No longer draws translucent objects
+			// as non-translucent ones here. They are drawn in another pass.
+			DrawableInfo *drawInfo = static_cast<DrawableInfo *>((*occludeeList)->Get_User_Data());
+			if ((drawInfo->m_flags & DrawableInfo::ERF_IS_TRANSLUCENT) == 0)
+			{
+				renderOneObject(rinfo, (*occludeeList), localPlayerIndex);
+			}
 			occludeeList++;	//advance to next one
 		}
 
