@@ -43,6 +43,7 @@
 #include "WW3D2/rinfo.h"
 #include "WW3D2/coltest.h"
 #include "WW3D2/lightenvironment.h"
+
 ///////////////////////////////////////////////////////////////////////////////
 // PROTOTYPES /////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -64,7 +65,7 @@ class RTS3DScene : public SimpleSceneClass, public SubsystemInterface
 public:
 
 	RTS3DScene();  ///< RTSScene constructor
-	~RTS3DScene();  ///< RTSScene desctructor
+	~RTS3DScene();  ///< RTSScene destructor
 
 	/// ray picking against objects in scene
 	Bool castRay(RayCollisionTestClass & raytest, Bool testAll, Int collisionType);
@@ -85,13 +86,13 @@ public:
 	void renderSpecificDrawables(RenderInfoClass &rinfo, Int numDrawables, Drawable **theDrawables) ;
 
 	/// Lighting methods
-	void				addDynamicLight(W3DDynamicLight * obj);
-	void				removeDynamicLight(W3DDynamicLight * obj);
-	RefRenderObjListIterator *		createLightsIterator(void);
-	void					destroyLightsIterator(RefRenderObjListIterator * it);
-	RefRenderObjListClass				*getDynamicLights(void) {return &m_dynamicLightList;};
+	void addDynamicLight(W3DDynamicLight * obj);
+	void removeDynamicLight(W3DDynamicLight * obj);
+	RefRenderObjListIterator *createLightsIterator(void);
+	void destroyLightsIterator(RefRenderObjListIterator * it);
+	RefRenderObjListClass *getDynamicLights(void) {return &m_dynamicLightList;};
 	W3DDynamicLight *getADynamicLight(void);
-	void				setGlobalLight(LightClass *pLight,Int lightIndex=0);
+	void setGlobalLight(LightClass *pLight,Int lightIndex=0);
 	LightEnvironmentClass &getDefaultLightEnv(void) {return m_defaultLightEnv;}
 
 	void init() {}
@@ -101,8 +102,8 @@ public:
 	void doRender(CameraClass * cam);
 
 protected:
-	void	renderOneObject(RenderInfoClass &rinfo, RenderObjClass *robj, Int localPlayerIndex);
-	void	updateFixedLightEnvironments(RenderInfoClass & rinfo);
+	void renderOneObject(RenderInfoClass &rinfo, RenderObjClass *robj, Int localPlayerIndex);
+	void updateFixedLightEnvironments(RenderInfoClass & rinfo);
 	void flushTranslucentObjects(RenderInfoClass & rinfo);
 	void flushOccludedObjects(RenderInfoClass & rinfo);
 	void flagOccludedObjects(CameraClass * camera);
@@ -147,7 +148,6 @@ protected:
 //-----------------------------------------------------------------------------
 class RTS2DScene : public SimpleSceneClass, public SubsystemInterface
 {
-
 public:
 
 	RTS2DScene();
@@ -162,9 +162,9 @@ public:
 	void doRender(CameraClass * cam);
 
 protected:
+
 	RenderObjClass *m_status;
 	CameraClass *m_camera;
-
 };
 
 //-----------------------------------------------------------------------------
@@ -173,9 +173,7 @@ protected:
 /** Scene management for 3D interface overlay on top of 3D scene */
 //-----------------------------------------------------------------------------
 class RTS3DInterfaceScene : public SimpleSceneClass
-
 {
-
 public:
 
 	RTS3DInterfaceScene();
@@ -183,9 +181,6 @@ public:
 
 	/// customizable renderer for the RTS3DInterfaceScene
 	virtual void Customized_Render( RenderInfoClass &rinfo );
-
-protected:
-
 };
 
 #endif  // end __W3DSCENE_H_
