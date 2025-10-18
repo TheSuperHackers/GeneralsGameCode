@@ -728,8 +728,38 @@ void RecorderClass::stopRecording() {
 	if (m_file != NULL) {
 		m_file->close();
 		m_file = NULL;
+
+		if (TheGlobalData->m_archiveReplays)
+			archiveReplay(m_fileName);
 	}
 	m_fileName.clear();
+}
+
+/**
+ * Copy the replay file to the archive directory and rename it using the current timestamp.
+ */
+void RecorderClass::archiveReplay(AsciiString fileName)
+{
+	SYSTEMTIME st;
+	GetLocalTime(&st);
+
+	AsciiString archiveFileName;
+	// Use a standard YYYYMMDD_HHMMSS format for simplicity and to avoid conflicts.
+	archiveFileName.format("%04d%02d%02d_%02d%02d%02d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+
+	AsciiString sourcePath = getReplayDir();
+	sourcePath.concat(fileName);
+
+	if (!sourcePath.endsWith(getReplayExtention()))
+		sourcePath.concat(getReplayExtention());
+
+	AsciiString destPath = getReplayArchiveDir();
+	destPath.concat(archiveFileName);
+	destPath.concat(getReplayExtention());
+
+	TheFileSystem->createDirectory(getReplayArchiveDir().str());
+	if (!CopyFile(sourcePath.str(), destPath.str(), FALSE))
+		DEBUG_LOG(("RecorderClass::archiveReplay: Failed to copy %s to %s", sourcePath.str(), destPath.str()));
 }
 
 /**
@@ -1599,6 +1629,18 @@ RecorderClass::CullBadCommandsResult RecorderClass::cullBadCommands() {
 AsciiString RecorderClass::getReplayDir()
 {
 	const char* replayDir = "Replays\\";
+
+	AsciiString tmp = TheGlobalData->getPath_UserData();
+	tmp.concat(replayDir);
+	return tmp;
+}
+
+/**
+ * returns the directory that holds the archived replay files.
+ */
+AsciiString RecorderClass::getReplayArchiveDir()
+{
+	const char* replayDir = "ArchivedReplays\\";
 
 	AsciiString tmp = TheGlobalData->getPath_UserData();
 	tmp.concat(replayDir);
