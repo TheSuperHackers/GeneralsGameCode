@@ -31,7 +31,6 @@
 #include "GameNetwork/NetworkDefs.h"
 #include "GameNetwork/networkutil.h"
 #include "GameNetwork/GameMessageParser.h"
-#include <Utility/CppMacros.h>
 #include "GameNetwork/NetPacketStructs.h"
 
 

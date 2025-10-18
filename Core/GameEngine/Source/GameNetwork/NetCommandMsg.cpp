@@ -876,7 +876,7 @@ void NetChatCommandMsg::setPlayerMask( Int playerMask )
  */
 size_t NetChatCommandMsg::getPackedByteCount() const
 {
-	return sizeof(NetPacketChatCommand) + sizeof(UnsignedByte) + m_text.getByteCount() + sizeof(m_playerMask);
+	return sizeof(NetPacketChatCommand) + sizeof(UnsignedByte) /* text length byte */ + m_text.getByteCount() + sizeof(m_playerMask);
 }
 
 //-------------------------
@@ -887,7 +887,7 @@ size_t NetChatCommandMsg::getPackedByteCount() const
  */
 size_t NetDisconnectChatCommandMsg::getPackedByteCount() const
 {
-	return sizeof(NetPacketDisconnectChatCommand) + sizeof(UnsignedByte) + m_text.getByteCount();
+	return sizeof(NetPacketDisconnectChatCommand) + sizeof(UnsignedByte) /* text length byte */ + m_text.getByteCount();
 }
 
 //-------------------------
@@ -1137,7 +1137,8 @@ void NetFileAnnounceCommandMsg::setPlayerMask(UnsignedByte playerMask) {
  */
 size_t NetFileAnnounceCommandMsg::getPackedByteCount() const
 {
-	return sizeof(NetPacketFileAnnounceCommand) + m_portableFilename.getLength() + 1  // filename + null terminator
+	return sizeof(NetPacketFileAnnounceCommand)
+		+ m_portableFilename.getLength() + 1  // filename + null terminator
 		+ sizeof(m_fileID)  // file ID
 		+ sizeof(m_playerMask);  // player mask
 }
