@@ -268,20 +268,38 @@ void DisconnectManager::updateWaitForPacketRouter(ConnectionManager *conMgr) {
 
 void DisconnectManager::processDisconnectCommand(NetCommandRef *ref, ConnectionManager *conMgr) {
 	NetCommandMsg *msg = ref->getCommand();
-	if (msg->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTKEEPALIVE) {
-		processDisconnectKeepAlive(msg, conMgr);
-	} else if (msg->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTPLAYER) {
-		processDisconnectPlayer(msg, conMgr);
-	} else if (msg->getNetCommandType() == NETCOMMANDTYPE_PACKETROUTERQUERY) {
-		processPacketRouterQuery(msg, conMgr);
-	} else if (msg->getNetCommandType() == NETCOMMANDTYPE_PACKETROUTERACK) {
-		processPacketRouterAck(msg, conMgr);
-	} else if (msg->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTVOTE) {
-		processDisconnectVote(msg, conMgr);
-	} else if (msg->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTFRAME) {
-		processDisconnectFrame(msg, conMgr);
-	} else if (msg->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTSCREENOFF) {
-		processDisconnectScreenOff(msg, conMgr);
+	
+	switch (msg->getNetCommandType()) {
+		case NETCOMMANDTYPE_DISCONNECTKEEPALIVE:
+			processDisconnectKeepAlive(msg, conMgr);
+			break;
+			
+		case NETCOMMANDTYPE_DISCONNECTPLAYER:
+			processDisconnectPlayer(msg, conMgr);
+			break;
+			
+		case NETCOMMANDTYPE_PACKETROUTERQUERY:
+			processPacketRouterQuery(msg, conMgr);
+			break;
+			
+		case NETCOMMANDTYPE_PACKETROUTERACK:
+			processPacketRouterAck(msg, conMgr);
+			break;
+			
+		case NETCOMMANDTYPE_DISCONNECTVOTE:
+			processDisconnectVote(msg, conMgr);
+			break;
+			
+		case NETCOMMANDTYPE_DISCONNECTFRAME:
+			processDisconnectFrame(msg, conMgr);
+			break;
+			
+		case NETCOMMANDTYPE_DISCONNECTSCREENOFF:
+			processDisconnectScreenOff(msg, conMgr);
+			break;
+			
+		default:
+			break;
 	}
 }
 
