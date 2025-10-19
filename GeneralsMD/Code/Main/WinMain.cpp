@@ -803,9 +803,9 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
                       LPSTR lpCmdLine, Int nCmdShow )
 {
 	Int exitcode = 1;
-//#ifdef _DEBUG
-//	WaitForDebugger(); //in debug build, wait for debugger attachment
-//#endif
+#ifdef _DEBUG
+	//WaitForDebugger(); //in debug build, wait for debugger attachment
+#endif
 
 #ifdef RTS_PROFILE
   Profile::StartRange("init");
