@@ -3389,6 +3389,28 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		}
 
 		//-----------------------------------------------------------------------------------------
+		case GameMessage::MSG_META_TOGGLE_PLAYER_OBSERVER:
+		{
+			if (Player *lookAtPlayer = TheControlBar->getObserverLookAtPlayer())
+			{
+				if (Player *observedPlayer = TheControlBar->getObservedPlayer())
+				{
+					// Set no observed player.
+					rts::changeObservedPlayer(NULL);
+					// But keep the look-at player.
+					TheControlBar->setObserverLookAtPlayer(lookAtPlayer);
+				}
+				else
+				{
+					// Set observed player to look-at player.
+					rts::changeObservedPlayer(lookAtPlayer);
+				}
+				disp = DESTROY_MESSAGE;
+			}
+			break;
+		}
+
+		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_TOGGLE_ATTACKMOVE:
 			TheInGameUI->toggleAttackMoveToMode( );
 			break;
