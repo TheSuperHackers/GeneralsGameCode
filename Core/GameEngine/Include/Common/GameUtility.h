@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "Lib/BaseType.h"
+
 // For miscellaneous game utility functions.
 
 class Player;
@@ -26,7 +28,8 @@ typedef Int PlayerIndex;
 namespace rts
 {
 
-Bool localPlayerIsObserving();
+bool localPlayerIsObserving();
+bool localPlayerHasRadar();
 Player* getObservedOrLocalPlayer(); ///< Get the current observed or local player. Is never null.
 Player* getObservedOrLocalPlayer_Safe(); ///< Get the current observed or local player. Is never null, except when the application does not have players.
 PlayerIndex getObservedOrLocalPlayerIndex_Safe(); ///< Get the current observed or local player index. Returns 0 when the application does not have players.

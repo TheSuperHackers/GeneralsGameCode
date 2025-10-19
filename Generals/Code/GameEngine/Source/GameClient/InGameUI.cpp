@@ -1356,13 +1356,7 @@ void InGameUI::handleRadiusCursor()
 		// from screen to world
 		// But only if the radar is on.
 		//
-		Bool radarOn = TheRadar->isRadarForced()
-									|| ( !TheRadar->isRadarHidden()
-												&& ThePlayerList->getLocalPlayer()
-												&& ThePlayerList->getLocalPlayer()->hasRadar()
-											);
-
-		if( !radarOn  ||  (TheRadar->screenPixelToWorld( &mouseIO->pos, &pos ) == FALSE) )// if radar off, or point not on radar
+		if( !rts::localPlayerHasRadar()  ||  (TheRadar->screenPixelToWorld( &mouseIO->pos, &pos ) == FALSE) )// if radar off, or point not on radar
 			TheTacticalView->screenToTerrain( &mouseIO->pos, &pos );
 
 		m_curRadiusCursor.setPosition(pos);	//world space position of center of decal
@@ -2693,10 +2687,7 @@ void InGameUI::createCommandHint( const GameMessage *msg )
 							setMouseCursor( Mouse::GENERIC_INVALID );
 						else if( drawSelectable && obj->isLocallyControlled() && !obj->isKindOf(KINDOF_MINE))
 							setMouseCursor( Mouse::SELECTING );
-						else if( TheRadar->isRadarWindow( window ) &&
-										 TheRadar->isRadarForced() == FALSE &&
-										 (TheRadar->isRadarHidden() ||
-										 ThePlayerList->getLocalPlayer()->hasRadar() == FALSE) )
+						else if( TheRadar->isRadarWindow( window ) && !rts::localPlayerHasRadar() )
 							setMouseCursor( Mouse::ARROW );
 						else
 							setMouseCursor( Mouse::MOVETO );

@@ -32,6 +32,7 @@
 #include "Common/GameAudio.h"
 #include "Common/GameCommon.h"
 #include "Common/GameEngine.h"
+#include "Common/GameUtility.h"
 #include "Common/KindOf.h"
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
@@ -140,7 +141,7 @@ void VictoryConditions::reset( void )
 //-------------------------------------------------------------------------------------------------
 void VictoryConditions::update( void )
 {
-	if (!TheRecorder->isMultiplayer() || (m_localSlotNum == -1 && !m_isObserver))
+	if (!TheRecorder->isMultiplayer() || (m_localSlotNum < 0 && !m_isObserver))
 		return;
 
 	// Check for a single winning alliance
@@ -226,7 +227,7 @@ void VictoryConditions::update( void )
 				//MessageBoxOk(TheGameText->fetch("GUI:Defeat"), TheGameText->fetch("GUI:LocalDefeat"), NULL);
 			}
 			m_localPlayerDefeated = true;	// don't check again
-			TheRadar->forceOn(TRUE);
+			TheRadar->forceOn(localPlayer->getPlayerIndex(), TRUE);
 			SetInGameChatType( INGAME_CHAT_EVERYONE ); // can't chat to allies after death.  Only to other observers.
 		}
 	}
@@ -326,8 +327,6 @@ void VictoryConditions::cachePlayerPtrs( void )
 	if (m_localSlotNum < 0)
 	{
 		m_localPlayerDefeated = true;	// if we have no local player, don't check for defeat
-		DEBUG_ASSERTCRASH(TheRadar, ("No Radar!"));
-		TheRadar->forceOn(TRUE);
 		m_isObserver = true;
 	}
 }

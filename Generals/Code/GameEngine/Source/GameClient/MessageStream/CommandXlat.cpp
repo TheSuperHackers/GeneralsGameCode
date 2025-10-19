@@ -2876,18 +2876,11 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_VIEW_LAST_RADAR_EVENT:
 		{
-//			Player *player = ThePlayerList->getLocalPlayer();
+			// You don't need radar for the space bar. That's silly.
+			Coord3D lastEvent;
 
-			// if the local player has a radar, center on last event (if any)
-			// Excuse me?  You don't need radar for the spacebar.  That's silly.
-//			if( TheRadar->isRadarForced() || ( TheRadar->isRadarHidden() == false && player->hasRadar() ) )
-			{
-				Coord3D lastEvent;
-
-				if( TheRadar->getLastEventLoc( &lastEvent ) )
-					TheTacticalView->lookAt( &lastEvent );
-
-			}
+			if( TheRadar->getLastEventLoc( &lastEvent ) )
+				TheTacticalView->lookAt( &lastEvent );
 
 			disp = DESTROY_MESSAGE;
 			break;

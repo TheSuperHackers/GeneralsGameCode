@@ -1397,10 +1397,8 @@ void W3DRadar::setShroudLevel(Int shroudX, Int shroudY, CellShroudStatus setting
 //-------------------------------------------------------------------------------------------------
 void W3DRadar::draw( Int pixelX, Int pixelY, Int width, Int height )
 {
-
 	// if the local player does not have a radar then we can't draw anything
-	Player *player = rts::getObservedOrLocalPlayer();
-	if( !player->hasRadar() && !TheRadar->isRadarForced() )
+	if( !rts::localPlayerHasRadar() )
 		return;
 
 	//

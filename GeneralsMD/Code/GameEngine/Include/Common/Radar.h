@@ -180,9 +180,9 @@ public:
 	Bool radarToWorld( const ICoord2D *radar, Coord3D *world );		///< radar point to world point on terrain
 	Bool radarToWorld2D( const ICoord2D *radar, Coord3D *world );		///< radar point to world point (x,y only!)
 	Bool worldToRadar( const Coord3D *world, ICoord2D *radar );		///< translate world point to radar (x,y)
-	Bool localPixelToRadar( const ICoord2D *pixel, ICoord2D *radar );	///< translate pixel (with UL of radar being (0,0)) to logical radar coords
+	Bool localPixelToRadar( const ICoord2D *pixel, ICoord2D *radar );	///< translate pixel (with UL of radar being (0,0)) to logical radar coordinates
 	Bool screenPixelToWorld( const ICoord2D *pixel, Coord3D *world ); ///< translate pixel (with UL of the screen being (0,0)) to world position in the world
-	Object *objectUnderRadarPixel( const ICoord2D *pixel );				///< return the object (if any) represented by the pixel coords passed in
+	Object *objectUnderRadarPixel( const ICoord2D *pixel );				///< return the object (if any) represented by the pixel coordinates passed in
 	void findDrawPositions( Int startX, Int startY, Int width, Int height,
 													ICoord2D *ul, ICoord2D *lr );					///< make translation for screen area of radar square to scaled aspect ratio preserving points inside the radar area
 
@@ -203,14 +203,14 @@ public:
 	virtual RadarObjectType removeObject( Object *obj );								///< remove object from radar
 
 	// radar options
-	void hide( Bool hide ) { m_radarHidden = hide; }				///< hide/unhide the radar
-	Bool isRadarHidden( void ) { return m_radarHidden; }		///< is radar hidden
+	void hide( Int playerIndex, Bool hide ) { m_radarHidden[playerIndex] = hide; } ///< hide/show the radar
+	Bool isRadarHidden( Int playerIndex ) { return m_radarHidden[playerIndex]; } ///< is radar hidden
 	// other radar option methods here like the ability to show a certain
 	// team, show buildings, show units at all, etc
 
 	// forcing the radar on/off regardless of player situation
-	void forceOn( Bool force ) { m_radarForceOn = force; }				///< force the radar to be on
-	Bool isRadarForced( void ) { return m_radarForceOn; }		///< is radar forced on?
+	void forceOn( Int playerIndex, Bool force ) { m_radarForceOn[playerIndex] = force; } ///< force the radar to be on
+	Bool isRadarForced( Int playerIndex ) { return m_radarForceOn[playerIndex]; } ///< is radar forced on?
 
 	/// refresh the water values for the radar
 	virtual void refreshTerrain( TerrainLogic *terrain );
@@ -218,7 +218,7 @@ public:
 	/// refresh the radar when the state of world objects changes drastically
 	virtual void refreshObjects() {};
 
-	/// queue a refresh of the terran at the next available time
+	/// queue a refresh of the terrain at the next available time
 	virtual void queueTerrainRefresh( void );
 
 	virtual void newMap( TerrainLogic *terrain );	///< reset radar for new map
@@ -252,11 +252,11 @@ protected:
 
 	void clearAllEvents( void );					///< remove all radar events in progress
 
-	// search the object list for an object that maps to the given logical radar coords
+	// search the object list for an object that maps to the given logical radar coordinates
 	Object *searchListForRadarLocationMatch( RadarObject *listHead, ICoord2D *radarMatch );
 
-	Bool m_radarHidden;										///< true when radar is not visible
-	Bool m_radarForceOn;									///< true when radar is forced to be on
+	Bool m_radarHidden[MAX_PLAYER_COUNT]; ///< true when radar is not visible
+	Bool m_radarForceOn[MAX_PLAYER_COUNT]; ///< true when radar is forced to be on
 	RadarObject *m_objectList;						///< list of objects in the radar
 	RadarObject *m_localObjectList;				/** list of objects for the local player, sorted
 																					* in exactly the same priority as the regular

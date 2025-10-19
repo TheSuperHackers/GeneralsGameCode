@@ -2874,7 +2874,7 @@ void ScriptActions::doTeamRadarCreateEvent(const AsciiString& teamName, Int even
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doRadarDisable(void)
 {
-	TheRadar->hide(true);
+	TheRadar->hide(ThePlayerList->getLocalPlayer()->getPlayerIndex(), true);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2882,7 +2882,7 @@ void ScriptActions::doRadarDisable(void)
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doRadarEnable(void)
 {
-	TheRadar->hide(false);
+	TheRadar->hide(ThePlayerList->getLocalPlayer()->getPlayerIndex(), false);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4789,7 +4789,7 @@ void ScriptActions::doDestroyAllContained(const AsciiString& unitName, Int damag
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doRadarForceEnable(void)
 {
-	TheRadar->forceOn(true);
+	TheRadar->forceOn(ThePlayerList->getLocalPlayer()->getPlayerIndex(), true);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4797,7 +4797,7 @@ void ScriptActions::doRadarForceEnable(void)
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doRadarRevertNormal(void)
 {
-	TheRadar->forceOn(false);
+	TheRadar->forceOn(ThePlayerList->getLocalPlayer()->getPlayerIndex(), false);
 }
 
 //-------------------------------------------------------------------------------------------------

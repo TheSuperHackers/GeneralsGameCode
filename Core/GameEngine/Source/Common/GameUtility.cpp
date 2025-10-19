@@ -49,12 +49,28 @@ static void changePlayerCommon(Player* player)
 
 } // namespace detail
 
-Bool localPlayerIsObserving()
+bool localPlayerIsObserving()
 {
 	if (TheGameLogic->isInReplayGame() || TheGameLogic->isInShellGame())
 		return true;
 
 	if (ThePlayerList->getLocalPlayer()->isPlayerObserver())
+		return true;
+
+	return false;
+}
+
+bool localPlayerHasRadar()
+{
+	// Using "local" instead of "observed or local" player because as an observer we prefer
+	// the radar to be turned on when observing a player that has no radar.
+	const Player* player = ThePlayerList->getLocalPlayer();
+	const PlayerIndex index = player->getPlayerIndex();
+
+	if (TheRadar->isRadarForced(index))
+		return true;
+
+	if (!TheRadar->isRadarHidden(index) && player->hasRadar())
 		return true;
 
 	return false;

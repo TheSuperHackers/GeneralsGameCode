@@ -26,6 +26,7 @@
 // Author: Colin Day
 // Desc: Control bar callbacks
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+#include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/Radar.h"
 #include "Common/Player.h"
@@ -60,8 +61,6 @@ void W3DCameoMovieDraw( GameWindow *window, WinInstanceData *instData )
 void W3DLeftHUDDraw( GameWindow *window, WinInstanceData *instData )
 {
 	// draw the default stuff
-//
-	Player *player = ThePlayerList->getLocalPlayer();
 	// draw video buffer
 	VideoBuffer *video = TheInGameUI->videoBuffer();
 	if ( video )
@@ -72,7 +71,7 @@ void W3DLeftHUDDraw( GameWindow *window, WinInstanceData *instData )
 
 		TheDisplay->drawVideoBuffer( video, pos.x, pos.y, pos.x + size.x, pos.y + size.y );
 	}
-	else if( TheRadar->isRadarForced() || ( TheRadar->isRadarHidden() == false && player->hasRadar() ) )
+	else if( rts::localPlayerHasRadar() )
 	{
 		ICoord2D pos, size;
 		//W3DGameWinDefaultDraw( window, instData );
@@ -84,8 +83,6 @@ void W3DLeftHUDDraw( GameWindow *window, WinInstanceData *instData )
 		TheRadar->draw( pos.x + 1, pos.y + 1, size.x - 2, size.y - 2 );
 
 	}
-
-
 }
 
 //-------------------------------------------------------------------------------------------------
