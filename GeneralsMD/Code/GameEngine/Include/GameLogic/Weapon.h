@@ -719,6 +719,8 @@ public:
 	//Transfer the reload times and status from the passed in weapon.
 	void transferNextShotStatsFrom( const Weapon &weapon );
 
+	void transferReloadStateFrom( const Weapon &weapon, Real clipPercentage = 0.0);
+
 	// we must pass the source object for these (and for ANY FUTURE ADDITIONS)
 	// so that we can take the source's weapon bonuses, if any, into account.
 	// Also note: you should RARELY need to call getAttackRange. If what you want is to

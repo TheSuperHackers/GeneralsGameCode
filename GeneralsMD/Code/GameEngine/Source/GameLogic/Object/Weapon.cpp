@@ -2078,6 +2078,7 @@ void Weapon::reloadWithBonus(const Object *sourceObj, const WeaponBonus& bonus, 
 			if (weapon)
 			{
 				weapon->setPossibleNextShotFrame(m_whenWeCanFireAgain);
+				weapon->setLastReloadStartedFrame(m_whenLastReloadStarted);  // This might actually be right to use here
 				//CRCDEBUG_LOG(("Just set m_whenWeCanFireAgain to %d in Weapon::reloadWithBonus 2", m_whenWeCanFireAgain));
 				weapon->setStatus(RELOADING_CLIP);
 			}
@@ -3472,6 +3473,37 @@ void Weapon::transferNextShotStatsFrom( const Weapon &weapon )
 	m_whenWeCanFireAgain = weapon.getPossibleNextShotFrame();
 	m_whenLastReloadStarted = weapon.getLastReloadStartedFrame();
 	m_status = weapon.getStatus();
+}
+
+//-------------------------------------------------------------------------------------------------
+// Used for WeaponReloadSharedAcrossSets
+//-------------------------------------------------------------------------------------------------
+void Weapon::transferReloadStateFrom(const Weapon& weapon, Real clipPercentage/*=0.0*/)
+{
+	// A) Weapon is reloading (clip size > 0)
+	// B) Weapon is between firing shots (any clip size)
+	// C) Weapon is ready to fire, but clip is not full (
+
+	if (weapon.getClipSize() == 0) {
+		m_ammoInClip = 0x7fffffff;	// 0 == unlimited (or effectively so)
+	}
+	else {
+		if (weapon.getStatus() == RELOADING_CLIP) {
+			m_ammoInClip = weapon.getClipSize();  //Reloading means we actually are at max clip size
+		}
+		else {
+			Int ammo = REAL_TO_INT_FLOOR(m_template->getClipSize() * clipPercentage);
+			m_ammoInClip = ammo;
+		}	
+		//rebuildScatterTargets();
+	}
+
+	m_whenWeCanFireAgain = weapon.getPossibleNextShotFrame();
+	m_whenLastReloadStarted = weapon.getLastReloadStartedFrame();
+	m_status = weapon.getStatus();
+
+
+	DEBUG_LOG(("Weapon::transferReloadStateFrom (now = %d): m_whenWeCanFireAgain = %d, m_whenLastReloadStarted = %d, m_status = %d", TheGameLogic->getFrame(), m_whenWeCanFireAgain, m_whenLastReloadStarted, m_status));
 }
 
 

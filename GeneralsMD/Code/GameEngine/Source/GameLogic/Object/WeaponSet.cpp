@@ -322,20 +322,86 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 		m_totalDamageTypeMask.clear();
 		m_hasPitchLimit = false;
 		m_hasDamageWeapon = false;
+
 		for (Int i = WEAPONSLOT_COUNT - 1; i >= PRIMARY_WEAPON; --i)
 		{
 			if (set->isWeaponReloadSharedAcrossSets() && (m_weapons[i] != NULL)) {  //This is a bit of redundant code, but it keeps it cleaner overall.
 
+				// if shareReloadTime, use first prevWeapon for all slots
+				// TODO: this is shit
+				// if (i == 0 || !set->isSharedReloadTime())
 				Weapon* prevWeapon = m_weapons[i];
 
 				if (set->getNth((WeaponSlotType)i))
 				{
 					m_weapons[i] = TheWeaponStore->allocateNewWeapon(set->getNth((WeaponSlotType)i), (WeaponSlotType)i);
 
-					Real clipPercentage = prevWeapon->getClipSize() > 0 ? (Real)(prevWeapon->getRemainingAmmo()) / (Real)(prevWeapon->getClipSize()) : 0.0f;
 
-					m_weapons[i]->transferNextShotStatsFrom(*prevWeapon);
-					m_weapons[i]->setClipPercentFull(clipPercentage, false);
+					DEBUG_LOG(("WeaponSet::updateWeaponSet (slot = %d): -- currentFrame = %d", i, TheGameLogic->getFrame()));
+					DEBUG_LOG(("-- prev remainingAmmo = %d", prevWeapon->getRemainingAmmo()));
+					DEBUG_LOG(("-- prev getPossibleNextShotFrame = %d", prevWeapon->getPossibleNextShotFrame()));
+					DEBUG_LOG(("-- prev getLastReloadStartedFrame = %d", prevWeapon->getLastReloadStartedFrame()));
+					DEBUG_LOG(("-- prev remainingReloadTime = %d", prevWeapon->getPossibleNextShotFrame() - TheGameLogic->getFrame()));
+					Real clipPercentage = prevWeapon->getClipSize() > 0 ? (Real)(prevWeapon->getRemainingAmmo()) / (Real)(prevWeapon->getClipSize()) : 1.0f;
+					DEBUG_LOG(("-- prev clipPercentage = %f", clipPercentage));
+					DEBUG_LOG(("-- prev status = %d", prevWeapon->getStatus()));
+					DEBUG_LOG(("------"));
+
+					// Real clipPercentage = prevWeapon->getClipSize() > 0 ? (Real)(prevWeapon->getRemainingAmmo()) / (Real)(prevWeapon->getClipSize()) : 1.0f;
+
+					//m_weapons[i]->transferNextShotStatsFrom(*prevWeapon);
+
+					// TODO: handle case with ShareReloadTime and multiple weapons
+					// run loadAmmoNow, but consider shareReloadTime and apply frames to other slots. Or do we?
+					// we also should consider scatterTargets and recenter maybe.
+					// Can we just use transferNextShotStatsFrom, but if ShareReload do it on all slots?
+					// But why did the 0 clip size case need loadAmmoNow then? Maybe need to set m_AmmoInClip?!
+
+					if (m_weapons[i]->getClipSize() > 0) {
+						/*DEBUG_LOG(("WeaponSet::updateWeaponSet (slot = %d): clipSize = %d, prev remainingAmmo = %d",
+							i, m_weapons[i]->getClipSize(),
+							prevWeapon->getRemainingAmmo()
+							));*/
+						//m_weapons[i]->loadAmmoNow(obj);
+
+						Real clipPercentage = (Real)(prevWeapon->getRemainingAmmo()) / (Real)(prevWeapon->getClipSize());
+
+						m_weapons[i]->transferReloadStateFrom(*prevWeapon, clipPercentage);
+						//m_weapons[i]->setClipPercentFull(clipPercentage, true);
+
+						//m_weapons[i]->setPossibleNextShotFrame(prevWeapon->getPossibleNextShotFrame());
+						//m_weapons[i]->setLastReloadStartedFrame(prevWeapon->getLastReloadStartedFrame());
+
+						/*DEBUG_LOG(("WeaponSet::updateWeaponSet: remainingAmmo = %d, nextShotFrame = %d, lastReloadStartedFrame = %d",
+							m_weapons[i]->getRemainingAmmo(),
+							m_weapons[i]->getPossibleNextShotFrame(),
+							m_weapons[i]->getLastReloadStartedFrame()
+							));*/
+
+					}
+					else {
+						//DEBUG_LOG(("WeaponSet::updateWeaponSet: no clip size"));
+						//m_weapons[i]->loadAmmoNow(obj);
+						// 
+						//TODO: set m_ammoInClip
+						m_weapons[i]->transferReloadStateFrom(*prevWeapon);
+
+						//m_weapons[i]->setPossibleNextShotFrame(prevWeapon->getPossibleNextShotFrame());
+						//m_weapons[i]->setLastReloadStartedFrame(prevWeapon->getLastReloadStartedFrame());
+					}
+					//m_weapons[i]->setStatus(prevWeapon->getStatus());
+
+
+					DEBUG_LOG(("WeaponSet::updateWeaponSet (slot = %d): -- currentFrame = %d", i, TheGameLogic->getFrame()));
+					DEBUG_LOG(("-- new remainingAmmo = %d", m_weapons[i]->getRemainingAmmo()));
+					DEBUG_LOG(("-- new getPossibleNextShotFrame = %d", m_weapons[i]->getPossibleNextShotFrame()));
+					DEBUG_LOG(("-- new getLastReloadStartedFrame = %d", m_weapons[i]->getLastReloadStartedFrame()));
+					DEBUG_LOG(("-- new remainingReloadTime = %d", m_weapons[i]->getPossibleNextShotFrame() - TheGameLogic->getFrame()));
+					clipPercentage = m_weapons[i]->getClipSize() > 0 ? (Real)(m_weapons[i]->getRemainingAmmo()) / (Real)(m_weapons[i]->getClipSize()) : 1.0f;
+					DEBUG_LOG(("-- new clipPercentage = %f", clipPercentage));
+					DEBUG_LOG(("-- new status = %d", m_weapons[i]->getStatus()));
+					DEBUG_LOG(("------"));
+
 
 					m_filledWeaponSlotMask |= (1 << i);
 					m_totalAntiMask |= m_weapons[i]->getAntiMask();

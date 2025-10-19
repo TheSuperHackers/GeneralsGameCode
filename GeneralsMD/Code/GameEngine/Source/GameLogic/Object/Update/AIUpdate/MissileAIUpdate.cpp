@@ -286,7 +286,7 @@ void MissileAIUpdate::projectileFireAtObjectOrPosition( const Object *victim, co
 		dir.Normalize();
 	}
 
-	DEBUG_LOG((">>> MissileAI FIREPROJ - dir = (%f/%f/%f)\n", dir.X, dir.Y, dir.Z));
+	//DEBUG_LOG((">>> MissileAI FIREPROJ - dir = (%f/%f/%f)\n", dir.X, dir.Y, dir.Z));
 	
 	PhysicsBehavior* physics = getObject()->getPhysics();
 	if (physics && initialVelToUse > 0)
@@ -300,7 +300,7 @@ void MissileAIUpdate::projectileFireAtObjectOrPosition( const Object *victim, co
 
 		physics->applyMotiveForce( &force );
 
-		DEBUG_LOG((">>> MissileAI FIREPROJ - force = (%f/%f/%f)\n", force.x, force.y, force.z));
+		//DEBUG_LOG((">>> MissileAI FIREPROJ - force = (%f/%f/%f)\n", force.x, force.y, force.z));
 	}
 
 	Vector3 objPos(obj->getPosition()->x, obj->getPosition()->y, obj->getPosition()->z);
@@ -642,7 +642,7 @@ void MissileAIUpdate::doAttackState(Bool turnOK, Bool randomPath)
 			diveDistanceSquared *= diveDistanceSquared;
 			if (distanceToTargetSquared < diveDistanceSquared) {
 				curLoco->setUsePreciseZPos(true);
-				DEBUG_LOG((">>> MissileAI - AttackState - DIVE - distanceToTarget = %f\n", sqrt(distanceToTargetSquared)));
+				//DEBUG_LOG((">>> MissileAI - AttackState - DIVE - distanceToTarget = %f\n", sqrt(distanceToTargetSquared)));
 			}
 
 		}
@@ -674,7 +674,7 @@ void MissileAIUpdate::doAttackState(Bool turnOK, Bool randomPath)
 			Vector3 curDir(targetPos.x - objPos.X, targetPos.y - objPos.Y, targetPos.y - objPos.Y);
 			m_randomPathDistLeft = curDir.Length() * 0.5;
 
-			DEBUG_LOG((">>> MissileAI - StartRandomPath: m_randomPathDistLeft = %f\n", m_randomPathDistLeft));
+			//DEBUG_LOG((">>> MissileAI - StartRandomPath: m_randomPathDistLeft = %f\n", m_randomPathDistLeft));
 
 			curDir.Normalize();	// buildTransformMatrix wants it this way
 			Matrix3D mtx;
