@@ -113,6 +113,8 @@ PlayerIndex getObservedOrLocalPlayerIndex_Safe()
 void changeLocalPlayer(Player* player)
 {
 	ThePlayerList->setLocalPlayer(player);
+	TheControlBar->setObserverLookAtPlayer(NULL);
+	TheControlBar->setObservedPlayer(NULL);
 	TheControlBar->setControlBarSchemeByPlayer(player);
 	TheControlBar->initSpecialPowershortcutBar(player);
 
