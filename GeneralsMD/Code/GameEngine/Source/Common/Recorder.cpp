@@ -1628,10 +1628,8 @@ RecorderClass::CullBadCommandsResult RecorderClass::cullBadCommands() {
  */
 AsciiString RecorderClass::getReplayDir()
 {
-	const char* replayDir = "Replays\\";
-
 	AsciiString tmp = TheGlobalData->getPath_UserData();
-	tmp.concat(replayDir);
+	tmp.concat("Replays\\");
 	return tmp;
 }
 
@@ -1640,10 +1638,8 @@ AsciiString RecorderClass::getReplayDir()
  */
 AsciiString RecorderClass::getReplayArchiveDir()
 {
-	const char* replayDir = "ArchivedReplays\\";
-
 	AsciiString tmp = TheGlobalData->getPath_UserData();
-	tmp.concat(replayDir);
+	tmp.concat("ArchivedReplays\\");
 	return tmp;
 }
 
