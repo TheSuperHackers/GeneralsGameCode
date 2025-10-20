@@ -957,9 +957,10 @@ float Animatable3DObjClass::Compute_Current_Frame(float *newDirection) const
 				//	TheSuperHackers @info Is using elapsed time because frame computation is not guaranteed to be called every render frame!
 				//
 				// TheSuperHackers @tweak The animation render update is now decoupled from the logic step.
-				const float timeDiff = WW3D::Get_Logic_Time_Milliseconds() - ModeAnim.LastSyncTime;
-				const float delta = ModeAnim.Motion->Get_Frame_Rate() * ModeAnim.frameRateMultiplier * ModeAnim.animDirection * timeDiff * 0.001f;
-				frame += delta;
+				const float syncMilliseconds = WW3D::Get_Logic_Time_Milliseconds() - ModeAnim.LastSyncTime;
+				const float animMilliseconds = ModeAnim.Motion->Get_Frame_Rate() * ModeAnim.frameRateMultiplier * ModeAnim.animDirection * syncMilliseconds;
+				const float animSeconds = animMilliseconds * 0.001f;
+				frame += animSeconds;
 
 				//
 				//	Wrap the frame
