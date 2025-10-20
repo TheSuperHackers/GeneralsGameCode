@@ -651,7 +651,6 @@ set(GAMEENGINE_SRC
 #    Source/Common/System/FunctionLexicon.cpp
 #    Source/Common/System/GameCommon.cpp
     #Source/Common/System/GameMemory.cpp # is conditionally appended
-    Source/Common/System/GameMemoryCommon.cpp
     #Source/Common/System/GameMemoryInit.cpp # is conditionally appended
 #    Source/Common/System/GameType.cpp
 #    Source/Common/System/Geometry.cpp
