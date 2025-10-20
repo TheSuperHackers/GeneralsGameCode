@@ -282,7 +282,7 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 				Int mins = (totalSeconds % 3600) / 60;
 				Int secs = totalSeconds % 60;
 				Real fps = header.frameCount / totalSeconds;
-				extraStr.format(L"%02d:%02d:%02d (%g fps) %hs", hours, mins, secs, fps, header.desyncGame ? "OOS " : "");
+				extraStr.format(L"%02d:%02d:%02d (%g fps)", hours, mins, secs, fps);
 
 				for (Int i=0; i<MAX_SLOTS; ++i)
 				{
@@ -290,8 +290,6 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 					if (slot && slot->isHuman())
 					{
 						extraStr.concat(L"\n");
-						if (header.playerDiscons[i])
-							extraStr.concat(L'*');
 						extraStr.concat(info.getConstSlot(i)->getName());
 					}
 				}
