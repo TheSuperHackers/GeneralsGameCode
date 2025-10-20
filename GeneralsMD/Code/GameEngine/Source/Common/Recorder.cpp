@@ -747,17 +747,18 @@ void RecorderClass::archiveReplay(AsciiString fileName)
 	// Use a standard YYYYMMDD_HHMMSS format for simplicity and to avoid conflicts.
 	archiveFileName.format("%04d%02d%02d_%02d%02d%02d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 
+	AsciiString extension = getReplayExtention();
 	AsciiString sourcePath = getReplayDir();
 	sourcePath.concat(fileName);
 
-	if (!sourcePath.endsWith(getReplayExtention()))
-		sourcePath.concat(getReplayExtention());
+	if (!sourcePath.endsWith(extension))
+		sourcePath.concat(extension);
 
 	AsciiString destPath = getReplayArchiveDir();
 	TheFileSystem->createDirectory(destPath.str());
 
 	destPath.concat(archiveFileName);
-	destPath.concat(getReplayExtention());
+	destPath.concat(extension);
 
 	if (!CopyFile(sourcePath.str(), destPath.str(), FALSE))
 		DEBUG_LOG(("RecorderClass::archiveReplay: Failed to copy %s to %s", sourcePath.str(), destPath.str()));
