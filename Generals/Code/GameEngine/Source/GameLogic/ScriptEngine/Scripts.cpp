@@ -2508,4 +2508,5 @@ const char* const TheObjectFlagsNames[] =
 	"Selectable",
 	"AI Recruitable",
 	"Player Targetable",
+	NULL,
 };
