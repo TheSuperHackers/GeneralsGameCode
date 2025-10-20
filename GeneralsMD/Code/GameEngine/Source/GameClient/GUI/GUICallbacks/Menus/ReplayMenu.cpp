@@ -45,9 +45,18 @@
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/MessageBox.h"
 #include "GameClient/MapUtil.h"
+#include "GameClient/Mouse.h"
 #include "GameClient/GameText.h"
 #include "GameClient/GameWindowTransitions.h"
 
+struct ReplayInfoCacheEntry
+{
+	RecorderClass::ReplayHeader header;
+	ReplayGameInfo info;
+	UnicodeString extraStr;
+};
+
+static std::map<AsciiString, ReplayInfoCacheEntry> replayInfoCache;
 
 // window ids -------------------------------------------------------------------------------------
 static NameKeyType parentReplayMenuID = NAMEKEY_INVALID;
@@ -167,10 +176,39 @@ static UnicodeString createMapName(const AsciiString& filename, const ReplayGame
 }
 
 //-------------------------------------------------------------------------------------------------
+
+static void replayTooltip(GameWindow* window, WinInstanceData* instData, UnsignedInt mouse)
+{
+	Int x, y, row, col;
+	x = LOLONGTOSHORT(mouse);
+	y = HILONGTOSHORT(mouse);
+
+	GadgetListBoxGetEntryBasedOnXY(window, x, y, row, col);
+
+	if (row == -1 || col == -1)
+	{
+		TheMouse->setCursorTooltip(UnicodeString::TheEmptyString);
+		return;
+	}
+
+	UnicodeString replayFileName = GetReplayFilenameFromListbox(window, row);
+	AsciiString replayFileNameAscii;
+	replayFileNameAscii.translate(replayFileName);
+
+	std::map<AsciiString, ReplayInfoCacheEntry>::const_iterator it = replayInfoCache.find(replayFileNameAscii);
+	if (it != replayInfoCache.end())
+		TheMouse->setCursorTooltip(it->second.extraStr, -1, NULL, 1.5f);
+	else
+		TheMouse->setCursorTooltip(UnicodeString::TheEmptyString);
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Populate the listbox with the names of the available replay files */
 //-------------------------------------------------------------------------------------------------
 void PopulateReplayFileListbox(GameWindow *listbox)
 {
+	replayInfoCache.clear();
+
 	if (!TheMapCache)
 		return;
 
@@ -234,41 +272,46 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 			// map
 			UnicodeString mapStr = createMapName(asciistr, info, mapData);
 
-//			// extra
-//			UnicodeString extraStr;
-//			if (header.localPlayerIndex >= 0)
-//			{
-//				// MP game
-//				time_t totalSeconds = header.endTime - header.startTime;
-//				Int hours = totalSeconds / 3600;
-//				Int mins = (totalSeconds % 3600) / 60;
-//				Int secs = totalSeconds % 60;
-//				Real fps = header.frameCount / totalSeconds;
-//				extraStr.format(L"%02d:%02d:%02d (%g fps) %hs", hours, mins, secs, fps, header.desyncGame ? "OOS " : "");
-//
-//				for (Int i=0; i<MAX_SLOTS; ++i)
-//				{
-//					const GameSlot *slot = info.getConstSlot(i);
-//					if (slot && slot->isHuman())
-//					{
-//						if (i)
-//							extraStr.concat(L", ");
-//						if (header.playerDiscons[i])
-//							extraStr.concat(L'*');
-//						extraStr.concat(info.getConstSlot(i)->getName());
-//					}
-//				}
-//			}
-//			else
-//			{
-//				// solo game
-//				time_t totalSeconds = header.endTime - header.startTime;
-//				Int hours = totalSeconds / 3600;
-//				Int mins = (totalSeconds % 3600) / 60;
-//				Int secs = totalSeconds % 60;
-//				Real fps = header.frameCount / totalSeconds;
-//				extraStr.format(L"%02d:%02d:%02d (%g fps)", hours, mins, secs, fps);
-//			}
+			// extra
+			UnicodeString extraStr;
+			if (header.localPlayerIndex >= 0)
+			{
+				// MP game
+				time_t totalSeconds = header.endTime - header.startTime;
+				Int hours = totalSeconds / 3600;
+				Int mins = (totalSeconds % 3600) / 60;
+				Int secs = totalSeconds % 60;
+				Real fps = header.frameCount / totalSeconds;
+				extraStr.format(L"%02d:%02d:%02d (%g fps) %hs", hours, mins, secs, fps, header.desyncGame ? "OOS " : "");
+
+				for (Int i=0; i<MAX_SLOTS; ++i)
+				{
+					const GameSlot *slot = info.getConstSlot(i);
+					if (slot && slot->isHuman())
+					{
+						extraStr.concat(L"\n");
+						if (header.playerDiscons[i])
+							extraStr.concat(L'*');
+						extraStr.concat(info.getConstSlot(i)->getName());
+					}
+				}
+			}
+			else
+			{
+				// solo game
+				time_t totalSeconds = header.endTime - header.startTime;
+				Int hours = totalSeconds / 3600;
+				Int mins = (totalSeconds % 3600) / 60;
+				Int secs = totalSeconds % 60;
+				Real fps = header.frameCount / totalSeconds;
+				extraStr.format(L"%02d:%02d:%02d (%g fps)", hours, mins, secs, fps);
+			}
+
+			ReplayInfoCacheEntry entry;
+			entry.header = header;
+			entry.info = info;
+			entry.extraStr = extraStr;
+			replayInfoCache[asciistr] = entry;
 
 			// pick a color
 			Color color;
@@ -348,6 +391,7 @@ void ReplayMenuInit( WindowLayout *layout, void *userData )
 	buttonLoad = TheWindowManager->winGetWindowFromId( parentReplayMenu, buttonLoadID );
 	buttonBack = TheWindowManager->winGetWindowFromId( parentReplayMenu, buttonBackID );
 	listboxReplayFiles = TheWindowManager->winGetWindowFromId( parentReplayMenu, listboxReplayFilesID );
+	listboxReplayFiles->winSetTooltipFunc(replayTooltip);
 	buttonDelete = TheWindowManager->winGetWindowFromId( parentReplayMenu, buttonDeleteID );
 	buttonCopy = TheWindowManager->winGetWindowFromId( parentReplayMenu, buttonCopyID );
 
