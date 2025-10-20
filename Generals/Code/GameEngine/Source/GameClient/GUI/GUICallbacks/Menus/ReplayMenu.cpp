@@ -240,10 +240,11 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 //			{
 //				// MP game
 //				time_t totalSeconds = header.endTime - header.startTime;
-//				Int mins = totalSeconds/60;
-//				Int secs = totalSeconds%60;
-//				Real fps = header.frameCount/totalSeconds;
-//				extraStr.format(L"%d:%d (%g fps) %hs", mins, secs, fps, header.desyncGame?"OOS ":"");
+//				Int hours = totalSeconds / 3600;
+//				Int mins = (totalSeconds % 3600) / 60;
+//				Int secs = totalSeconds % 60;
+//				Real fps = header.frameCount / totalSeconds;
+//				extraStr.format(L"%02d:%02d:%02d (%g fps) %hs", hours, mins, secs, fps, header.desyncGame ? "OOS " : "");
 //
 //				for (Int i=0; i<MAX_SLOTS; ++i)
 //				{
@@ -262,10 +263,11 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 //			{
 //				// solo game
 //				time_t totalSeconds = header.endTime - header.startTime;
-//				Int mins = totalSeconds/60;
-//				Int secs = totalSeconds%60;
-//				Real fps = header.frameCount/totalSeconds;
-//				extraStr.format(L"%d:%d (%g fps)", mins, secs, fps);
+//				Int hours = totalSeconds / 3600;
+//				Int mins = (totalSeconds % 3600) / 60;
+//				Int secs = totalSeconds % 60;
+//				Real fps = header.frameCount / totalSeconds;
+//				extraStr.format(L"%02d:%02d:%02d (%g fps)", hours, mins, secs, fps);
 //			}
 
 			// pick a color
