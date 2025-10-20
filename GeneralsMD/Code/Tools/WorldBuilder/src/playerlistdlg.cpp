@@ -568,11 +568,11 @@ void PlayerListDlg::updateTheUI(void)
 		pname = playerNameForUI(m_sides, i);
 
 		rstr = calcRelationStr(m_sides, m_curPlayerIdx, i);
-		sprintf(buffer, "%s: %s",pname.str(),rstr);
+		snprintf(buffer, ARRAY_SIZE(buffer), "%s: %s",pname.str(),rstr);
 		regardOthers->AddString(buffer);
 
 		rstr = calcRelationStr(m_sides, i, m_curPlayerIdx);
-		sprintf(buffer, "%s: %s",pname.str(),rstr);
+		snprintf(buffer, ARRAY_SIZE(buffer), "%s: %s",pname.str(),rstr);
 		regardMe->AddString(buffer);
 	}
 

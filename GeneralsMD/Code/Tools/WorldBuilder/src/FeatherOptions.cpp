@@ -134,7 +134,7 @@ void FeatherOptions::OnChangeSizeEdit()
 			if (1==sscanf(buffer, "%d", &width)) {
 				m_currentFeather = width;
 				FeatherTool::setFeather(m_currentFeather);
-				sprintf(buffer, "%.1f FEET.", m_currentFeather*MAP_XY_FACTOR);
+				snprintf(buffer, ARRAY_SIZE(buffer), "%.1f FEET.", m_currentFeather*MAP_XY_FACTOR);
 				pEdit = m_staticThis->GetDlgItem(IDC_WIDTH_LABEL);
 				if (pEdit) pEdit->SetWindowText(buffer);
 			}

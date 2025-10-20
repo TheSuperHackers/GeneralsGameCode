@@ -376,7 +376,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	strcpy((char*)m_pszProfileName, buf);
 
 	// ensure the user maps dir exists
-	sprintf(buf, "%sMaps\\", TheGlobalData->getPath_UserData().str());
+	snprintf(buf, ARRAY_SIZE(buf), "%sMaps\\", TheGlobalData->getPath_UserData().str());
 	CreateDirectory(buf, NULL);
 
 	// read the water settings from INI (must do prior to initing GameClient, apparently)

@@ -472,9 +472,9 @@ void MapObjectProps::_ScaleToDict(void)
 void MapObjectProps::ShowZOffset(MapObject *pMapObj)
 {
   const Coord3D *loc = pMapObj->getLocation();
-  static char buff[12];
+  static char buff[64];
   m_height = loc->z;
-  sprintf(buff, "%0.2f", loc->z);
+  snprintf(buff, ARRAY_SIZE(buff), "%0.2f", loc->z);
   CWnd* edit = GetDlgItem(IDC_MAPOBJECT_ZOffset);
   edit->SetWindowText(buff);
 }
@@ -504,8 +504,8 @@ void MapObjectProps::SetZOffset(void)
 void MapObjectProps::ShowAngle(MapObject *pMapObj)
 {
   m_angle = pMapObj->getAngle() * 180 / PI;
-  static char buff[12];
-  sprintf(buff, "%0.2f", m_angle);
+  static char buff[64];
+  snprintf(buff, ARRAY_SIZE(buff), "%0.2f", m_angle);
   CWnd* edit = GetDlgItem(IDC_MAPOBJECT_Angle);
   edit->SetWindowText(buff);
   m_angle = atof(buff);
@@ -515,8 +515,8 @@ void MapObjectProps::ShowAngle(MapObject *pMapObj)
 void MapObjectProps::ShowPosition(MapObject *pMapObj)
 {
   m_position = *pMapObj->getLocation();
-  static char buff[12];
-  sprintf(buff, "%0.2f, %0.2f", m_position.x, m_position.y);
+  static char buff[128];
+  snprintf(buff, ARRAY_SIZE(buff), "%0.2f, %0.2f", m_position.x, m_position.y);
   CWnd* edit = GetDlgItem(IDC_MAPOBJECT_XYPosition);
   edit->SetWindowText(buff);
   sscanf(buff, "%f,%f", &m_position.x, &m_position.y);
@@ -617,7 +617,7 @@ void MapObjectProps::PopSliderChanged(const long sliderID, long theVal)
     return;
 
 	CWnd* edit;
-	static char buff[36];
+	static char buff[64];
 	switch (sliderID) {
 		case IDC_HEIGHT_POPUP:
 			if (!m_posUndoable) {
@@ -626,7 +626,7 @@ void MapObjectProps::PopSliderChanged(const long sliderID, long theVal)
 			}
 			m_posUndoable->SetZOffset(theVal);
 			m_height = theVal;
-			sprintf(buff, "%0.2f", m_height);
+			snprintf(buff, ARRAY_SIZE(buff), "%0.2f", m_height);
 			edit = GetDlgItem(IDC_MAPOBJECT_ZOffset);
 			edit->SetWindowText(buff);
 			break;
@@ -638,14 +638,14 @@ void MapObjectProps::PopSliderChanged(const long sliderID, long theVal)
 			}
 			m_posUndoable->RotateTo(theVal * PI/180);
 			m_angle = theVal;
-			sprintf(buff, "%0.2f", m_angle);
+			snprintf(buff, ARRAY_SIZE(buff), "%0.2f", m_angle);
 			edit = GetDlgItem(IDC_MAPOBJECT_Angle);
 			edit->SetWindowText(buff);
 			break;
 
 		case IDC_SCALE_POPUP:
 			m_scale = theVal/100.0f;
-			sprintf(buff, "%0.2f", m_scale);
+			snprintf(buff, ARRAY_SIZE(buff), "%0.2f", m_scale);
 			edit = GetDlgItem(IDC_MAPOBJECT_Scale);
 			edit->SetWindowText(buff);
 			break;
@@ -885,7 +885,7 @@ void MapObjectProps::_DictToHealth(void)
 		} else {
 			pItem->SelectString(-1, "Other");
 			static char buff[12];
-			sprintf(buff, "%d", value);
+			snprintf(buff, ARRAY_SIZE(buff), "%d", value);
 			pItem2->SetWindowText(buff);
 			pItem2->EnableWindow(TRUE);
 		}
@@ -1035,7 +1035,7 @@ void MapObjectProps::_DictToVisibilityRange(void)
 	CWnd* pItem = GetDlgItem(IDC_MAPOBJECT_VisionDistance);
 	if (pItem) {
 		static char buff[12];
-		sprintf(buff, "%d", distance);
+		snprintf(buff, ARRAY_SIZE(buff), "%d", distance);
 		if (distance == 0) {
 			pItem->SetWindowText("");
 		} else {
@@ -1071,7 +1071,7 @@ void MapObjectProps::_DictToShroudClearingDistance(void)
 	CWnd* pItem = GetDlgItem(IDC_MAPOBJECT_ShroudClearingDistance);
 	if (pItem) {
 		static char buff[12];
-		sprintf(buff, "%d", distance);
+		snprintf(buff, ARRAY_SIZE(buff), "%d", distance);
 		if (distance == 0) {
 			pItem->SetWindowText("");
 		} else {
@@ -1124,8 +1124,8 @@ void MapObjectProps::_DictToStoppingDistance(void)
 
 	CWnd* pItem = GetDlgItem(IDC_MAPOBJECT_StoppingDistance);
 	if (pItem) {
-		static char buff[12];
-		sprintf(buff, "%g", stoppingDistance);
+		static char buff[64];
+		snprintf(buff, ARRAY_SIZE(buff), "%g", stoppingDistance);
 		pItem->SetWindowText(buff);
 	}
 }

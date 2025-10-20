@@ -146,7 +146,7 @@ void TeamObjectProperties::_DictToHealth(void)
 		} else {
 			pItem->SelectString(-1, "Other");
 			static char buff[12];
-			sprintf(buff, "%d", value);
+			snprintf(buff, ARRAY_SIZE(buff), "%d", value);
 			pItem2->SetWindowText(buff);
 			pItem2->EnableWindow(TRUE);
 		}
@@ -270,7 +270,7 @@ void TeamObjectProperties::_DictToVisibilityRange(void)
 	CWnd* pItem = GetDlgItem(IDC_MAPOBJECT_VisionDistance);
 	if (pItem) {
 		static char buff[12];
-		sprintf(buff, "%d", distance);
+		snprintf(buff, ARRAY_SIZE(buff), "%d", distance);
 		if (distance == 0) {
 			pItem->SetWindowText("");
 		} else {
@@ -332,7 +332,7 @@ void TeamObjectProperties::_DictToShroudClearingDistance(void)
 	CWnd* pItem = GetDlgItem(IDC_MAPOBJECT_ShroudClearingDistance);
 	if (pItem) {
 		static char buff[12];
-		sprintf(buff, "%d", distance);
+		snprintf(buff, ARRAY_SIZE(buff), "%d", distance);
 		if (distance == 0) {
 			pItem->SetWindowText("");
 		} else {
@@ -379,8 +379,8 @@ void TeamObjectProperties::_DictToStoppingDistance(void)
 
 	CWnd* pItem = GetDlgItem(IDC_MAPOBJECT_StoppingDistance);
 	if (pItem) {
-		static char buff[12];
-		sprintf(buff, "%g", stoppingDistance);
+		static char buff[64];
+		sprintf(buff, ARRAY_SIZE(buff), "%g", stoppingDistance);
 		if (stoppingDistance == 0) {
 			pItem->SetWindowText("");
 		} else {

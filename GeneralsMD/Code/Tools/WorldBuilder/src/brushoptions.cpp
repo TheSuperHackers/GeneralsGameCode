@@ -78,8 +78,8 @@ void BrushOptions::setWidth(Int width)
 
 void BrushOptions::setHeight(Int height)
 {
-	char buffer[50];
-	sprintf(buffer, "%d", height);
+	char buffer[12];
+	snprintf(buffer, ARRAY_SIZE(buffer), "%d", height);
 	m_currentHeight = height;
 	if (m_staticThis && !m_staticThis->m_updating) {
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_HEIGHT_EDIT);
@@ -129,7 +129,7 @@ void BrushOptions::OnChangeFeatherEdit()
 			if (1==sscanf(buffer, "%d", &feather)) {
 				m_currentFeather = feather;
 				BrushTool::setFeather(m_currentFeather);
-				sprintf(buffer, "%.1f FEET.", m_currentFeather*MAP_XY_FACTOR);
+				snprintf(buffer, ARRAY_SIZE(buffer), "%.1f FEET.", m_currentFeather*MAP_XY_FACTOR);
 				pEdit = m_staticThis->GetDlgItem(IDC_FEATHER_LABEL);
 				if (pEdit) pEdit->SetWindowText(buffer);
 			}
@@ -152,7 +152,7 @@ void BrushOptions::OnChangeSizeEdit()
 			if (1==sscanf(buffer, "%d", &width)) {
 				m_currentWidth = width;
 				BrushTool::setWidth(m_currentWidth);
-				sprintf(buffer, "%.1f FEET.", m_currentWidth*MAP_XY_FACTOR);
+				snprintf(buffer, ARRAY_SIZE(buffer), "%.1f FEET.", m_currentWidth*MAP_XY_FACTOR);
 				pEdit = m_staticThis->GetDlgItem(IDC_WIDTH_LABEL);
 				if (pEdit) pEdit->SetWindowText(buffer);
 			}
@@ -175,7 +175,7 @@ void BrushOptions::OnChangeHeightEdit()
 			if (1==sscanf(buffer, "%d", &height)) {
 				m_currentHeight = height;
 				BrushTool::setHeight(m_currentHeight);
-				sprintf(buffer, "%.1f FEET.", m_currentHeight*MAP_HEIGHT_SCALE);
+				snprintf(buffer, ARRAY_SIZE(buffer), "%.1f FEET.", m_currentHeight*MAP_HEIGHT_SCALE);
 				pEdit = m_staticThis->GetDlgItem(IDC_HEIGHT_LABEL);
 				if (pEdit) pEdit->SetWindowText(buffer);
 			}
