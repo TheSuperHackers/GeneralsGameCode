@@ -274,16 +274,17 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 
 			// extra
 			UnicodeString extraStr;
+
+			time_t totalSeconds = header.endTime - header.startTime;
+			Int hours = totalSeconds / 3600;
+			Int mins = (totalSeconds % 3600) / 60;
+			Int secs = totalSeconds % 60;
+			Real fps = header.frameCount / totalSeconds;
+			extraStr.format(L"%02d:%02d:%02d (%g fps)", hours, mins, secs, fps);
+
 			if (header.localPlayerIndex >= 0)
 			{
 				// MP game
-				time_t totalSeconds = header.endTime - header.startTime;
-				Int hours = totalSeconds / 3600;
-				Int mins = (totalSeconds % 3600) / 60;
-				Int secs = totalSeconds % 60;
-				Real fps = header.frameCount / totalSeconds;
-				extraStr.format(L"%02d:%02d:%02d (%g fps)", hours, mins, secs, fps);
-
 				for (Int i=0; i<MAX_SLOTS; ++i)
 				{
 					const GameSlot *slot = info.getConstSlot(i);
@@ -293,16 +294,6 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 						extraStr.concat(info.getConstSlot(i)->getName());
 					}
 				}
-			}
-			else
-			{
-				// solo game
-				time_t totalSeconds = header.endTime - header.startTime;
-				Int hours = totalSeconds / 3600;
-				Int mins = (totalSeconds % 3600) / 60;
-				Int secs = totalSeconds % 60;
-				Real fps = header.frameCount / totalSeconds;
-				extraStr.format(L"%02d:%02d:%02d (%g fps)", hours, mins, secs, fps);
 			}
 
 			ReplayInfoCacheEntry entry;
