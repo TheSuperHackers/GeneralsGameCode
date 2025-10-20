@@ -21,12 +21,15 @@
 // For miscellaneous game utility functions.
 
 class Player;
+typedef Int PlayerIndex;
 
 namespace rts
 {
 
 Bool localPlayerIsObserving();
 Player* getObservedOrLocalPlayer(); ///< Get the current observed or local player. Is never null.
+Player* getObservedOrLocalPlayer_Safe(); ///< Get the current observed or local player. Is never null, except when the application does not have players.
+PlayerIndex getObservedOrLocalPlayerIndex_Safe(); ///< Get the current observed or local player index. Returns 0 when the application does not have players.
 
 void changeLocalPlayer(Player* player); //< Change local player during game
 void changeObservedPlayer(Player* player); ///< Change observed player during game

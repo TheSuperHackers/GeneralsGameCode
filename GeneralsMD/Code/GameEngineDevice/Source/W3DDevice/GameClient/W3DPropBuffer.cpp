@@ -365,7 +365,7 @@ void W3DPropBuffer::drawProps(RenderInfoClass &rinfo)
 			m_props[i].ss = OBJECTSHROUD_CLEAR;
 		}
 		if (m_props[i].ss == OBJECTSHROUD_INVALID) {
-			const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
+			const Int localPlayerIndex = rts::getObservedOrLocalPlayerIndex_Safe();
 			m_props[i].ss = ThePartitionManager->getPropShroudStatusForPlayer(localPlayerIndex, &m_props[i].location);
 		}
 		if (m_props[i].ss >= OBJECTSHROUD_SHROUDED) {

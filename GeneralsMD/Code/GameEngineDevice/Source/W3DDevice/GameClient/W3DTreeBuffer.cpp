@@ -1849,7 +1849,7 @@ void W3DTreeBuffer::updateTopplingTree(TTree *tree, Real timeScale)
 		return;
 
 	const W3DTreeDrawModuleData* d = m_treeTypes[tree->treeType].m_data;
-	const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
+	const Int localPlayerIndex = rts::getObservedOrLocalPlayerIndex_Safe();
 	Coord3D pos;
 	pos.set(tree->location.X, tree->location.Y, tree->location.Z);
 	ObjectShroudStatus ss = ThePartitionManager->getPropShroudStatusForPlayer(localPlayerIndex, &pos);

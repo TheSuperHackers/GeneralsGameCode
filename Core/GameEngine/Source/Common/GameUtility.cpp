@@ -62,10 +62,42 @@ Bool localPlayerIsObserving()
 
 Player* getObservedOrLocalPlayer()
 {
+	DEBUG_ASSERTCRASH(TheControlBar != NULL, ("TheControlBar is NULL"));
 	Player* player = TheControlBar->getObservedPlayer();
 	if (player == NULL)
+	{
+		DEBUG_ASSERTCRASH(ThePlayerList != NULL, ("ThePlayerList is NULL"));
 		player = ThePlayerList->getLocalPlayer();
+	}
 	return player;
+}
+
+Player* getObservedOrLocalPlayer_Safe()
+{
+	Player* player = NULL;
+
+	if (TheControlBar != NULL)
+	{
+		player = TheControlBar->getObservedPlayer();
+	}
+
+	if (player == NULL)
+	{
+		if (ThePlayerList != NULL)
+		{
+			player = ThePlayerList->getLocalPlayer();
+		}
+	}
+	return player;
+}
+
+PlayerIndex getObservedOrLocalPlayerIndex_Safe()
+{
+	if (Player* player = getObservedOrLocalPlayer_Safe())
+	{
+		return player->getPlayerIndex();
+	}
+	return 0;
 }
 
 void changeLocalPlayer(Player* player)
