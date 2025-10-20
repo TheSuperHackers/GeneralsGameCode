@@ -118,10 +118,10 @@ public:
 	Bool isPlaybackMode() const { return m_mode == RECORDERMODETYPE_PLAYBACK || m_mode == RECORDERMODETYPE_SIMULATION_PLAYBACK; }
 	void initControls();															///< Show or Hide the Replay controls
 
-	AsciiString getReplayDir();												///< Returns the directory that holds the replay files.
-	AsciiString getReplayArchiveDir();								///< Returns the directory that holds the archived replay files.
-	static AsciiString getReplayExtention();									///< Returns the file extention for replay files.
-	AsciiString getLastReplayFileName();							///< Returns the filename used for the default replay.
+	static AsciiString getReplayDir();								///< Returns the directory that holds the replay files.
+	static AsciiString getReplayArchiveDir();					///< Returns the directory that holds the archived replay files.
+	static AsciiString getReplayExtention();					///< Returns the file extention for replay files.
+	static AsciiString getLastReplayFileName();				///< Returns the filename used for the default replay.
 
 	GameInfo *getGameInfo( void ) { return &m_gameInfo; }	///< Returns the slot list for playback game start
 
