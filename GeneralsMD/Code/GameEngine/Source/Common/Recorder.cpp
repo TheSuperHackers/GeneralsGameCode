@@ -754,10 +754,11 @@ void RecorderClass::archiveReplay(AsciiString fileName)
 		sourcePath.concat(getReplayExtention());
 
 	AsciiString destPath = getReplayArchiveDir();
+	TheFileSystem->createDirectory(destPath.str());
+
 	destPath.concat(archiveFileName);
 	destPath.concat(getReplayExtention());
 
-	TheFileSystem->createDirectory(getReplayArchiveDir().str());
 	if (!CopyFile(sourcePath.str(), destPath.str(), FALSE))
 		DEBUG_LOG(("RecorderClass::archiveReplay: Failed to copy %s to %s", sourcePath.str(), destPath.str()));
 }
