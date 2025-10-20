@@ -310,7 +310,7 @@ void OptionPreferences::setOnlineIPAddress( UnsignedInt IP )
 	(*this)["GameSpyIPAddress"] = tmp;
 }
 
-Bool OptionPreferences::getArchiveReplaysEnabled()
+const Bool OptionPreferences::getArchiveReplaysEnabled()
 {
 	OptionPreferences::const_iterator it = find("ArchiveReplays");
 	if (it == end())
