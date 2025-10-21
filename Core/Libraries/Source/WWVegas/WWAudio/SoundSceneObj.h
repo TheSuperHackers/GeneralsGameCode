@@ -32,9 +32,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #ifndef __SOUND_SCENE_OBJ_H
 #define __SOUND_SCENE_OBJ_H

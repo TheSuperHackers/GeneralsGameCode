@@ -52,9 +52,7 @@
  *   AABoxClass::Init -- Init from a line segment                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #ifndef AABOX_H
 #define AABOX_H

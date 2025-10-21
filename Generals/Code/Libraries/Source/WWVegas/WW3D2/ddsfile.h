@@ -21,9 +21,7 @@
 #ifndef DDSFILE_H
 #define DDSFILE_H
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #include "always.h"
 #include "ww3dformat.h"

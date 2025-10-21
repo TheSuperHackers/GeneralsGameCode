@@ -16,9 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #ifndef BITMAPHANDLER_H
 #define BITMAPHANDLER_H

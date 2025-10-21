@@ -39,9 +39,7 @@
  * Color_to_Vector4 - converts a color in the format described in format to a Vector4          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #ifndef WW3DFORMAT_H
 #define WW3DFORMAT_H

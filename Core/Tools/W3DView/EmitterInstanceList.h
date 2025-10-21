@@ -30,9 +30,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #ifndef __EMITTER_INSTANCE_LIST_H
 #define __EMITTER_INSTANCE_LIST_H

@@ -37,9 +37,7 @@
 // MBL Update for CNC3 INCURSION - 10.23.2002 - Expanded param handling, Added STOP command
 //
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #ifndef __ANIMATEDSOUNDMGR_H
 #define __ANIMATEDSOUNDMGR_H

@@ -33,9 +33,7 @@
  *-------------------------------------------------------------------------*
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #ifndef PART_BUF_H
 #define PART_BUF_H

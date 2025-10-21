@@ -19,9 +19,7 @@
 #ifndef WW3D_STATISTICS_H
 #define WW3D_STATISTICS_H
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #include "always.h"
 //#include "wwstring.h"

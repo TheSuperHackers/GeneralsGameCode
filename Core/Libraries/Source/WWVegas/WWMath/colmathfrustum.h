@@ -37,9 +37,7 @@
  *   CollisionMath::Overlap_Test -- test a frustum and an AABox for overlap                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #ifndef COLMATHFRUSTUM_H
 #define COLMATHFRUSTUM_H

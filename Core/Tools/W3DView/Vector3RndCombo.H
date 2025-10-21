@@ -31,9 +31,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #ifndef __VECTOR3RND_COMBO_H
 #define __VECTOR3RND_COMBO_H

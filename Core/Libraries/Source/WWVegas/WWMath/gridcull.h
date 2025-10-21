@@ -51,9 +51,7 @@
  *   GridCullSystemClass::VolumeStruct::Split -- split this volume                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #include "cullsys.h"
 #include "mempool.h"

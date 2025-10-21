@@ -44,9 +44,7 @@
  *   Vector4::Is_Valid -- Vector4::Is_Valid                                *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #ifndef VECTOR4_H
 #define VECTOR4_H

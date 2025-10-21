@@ -16,9 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #ifndef WW3D_ASSET_STATUS_H
 #define WW3D_ASSET_STATUS_H

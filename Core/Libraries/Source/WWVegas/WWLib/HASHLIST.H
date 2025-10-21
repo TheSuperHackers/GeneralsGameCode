@@ -42,9 +42,7 @@
  *   HashListClass::Move_To -- Move nodes from one list to another.                           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #ifndef HASHLIST_H
 #define HASHLIST_H

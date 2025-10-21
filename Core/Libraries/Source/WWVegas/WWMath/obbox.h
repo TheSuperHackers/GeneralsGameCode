@@ -41,9 +41,7 @@
  *   OBBoxClass::Compute_Axis_Aligned_Extent -- computes extent of an AABox enclosing this box *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #ifndef OBBOX_H
 #define OBBOX_H

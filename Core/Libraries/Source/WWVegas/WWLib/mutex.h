@@ -19,9 +19,7 @@
 #ifndef MUTEX_H
 #define MUTEX_H
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #include "always.h"
 #include "thread.h"

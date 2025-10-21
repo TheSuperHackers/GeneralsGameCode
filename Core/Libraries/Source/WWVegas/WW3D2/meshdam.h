@@ -36,9 +36,7 @@
 
 #if 0
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #ifndef MESHDAM_H
 #define MESHDAM_H

@@ -41,9 +41,7 @@
 #ifndef TEXTURELOADER_H
 #define TEXTURELOADER_H
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #include "always.h"
 #include "texture.h"

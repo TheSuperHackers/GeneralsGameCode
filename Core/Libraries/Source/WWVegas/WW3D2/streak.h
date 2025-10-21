@@ -34,9 +34,7 @@
  * Functions:                                                                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #ifndef STREAK_H
 #define STREAK_H
