@@ -39,7 +39,6 @@
 
 #include "bwrender.h"
 #include "vp.h"
-#include <string.h>
 
 
 BWRenderClass::Buffer::Buffer(unsigned char* buffer_, int scale_)

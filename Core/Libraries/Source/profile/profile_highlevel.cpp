@@ -27,7 +27,6 @@
 // High level profiling
 //////////////////////////////////////////////////////////////////////////////
 #include "_pch.h"
-#include "stringex.h"
 #include <new>
 #include <WWCommon.h>
 

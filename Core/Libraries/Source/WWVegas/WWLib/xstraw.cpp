@@ -40,7 +40,6 @@
 #include	"always.h"
 #include	"XSTRAW.H"
 #include	<stddef.h>
-#include	<string.h>
 
 //---------------------------------------------------------------------------------------------------------
 // BufferStraw

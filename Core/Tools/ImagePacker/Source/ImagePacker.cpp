@@ -46,7 +46,6 @@
 #include <WWCommon.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#include "stringex.h"
 #include "Common/Debug.h"
 #include "WWLib/TARGA.H"
 #include "Resource.h"

@@ -56,7 +56,6 @@
 #include	"RAWFILE.H"
 #include	<stddef.h>
 #include	<stdlib.h>
-#include	<string.h>
 #include	<limits.h>
 #include	<errno.h>
 #include <sys/types.h>

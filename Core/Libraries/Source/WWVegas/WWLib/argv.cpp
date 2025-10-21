@@ -44,7 +44,6 @@
 #include <assert.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <string.h>
 #include "ffactory.h"
 #include "RAWFILE.H"
 int   	 ArgvClass::Argc = 0;

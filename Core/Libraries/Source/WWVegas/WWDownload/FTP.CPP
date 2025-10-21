@@ -38,7 +38,6 @@
 #include <WWCommon.h>
 //#include "wlib/wstring.h"
 
-#include "stringex.h"
 #include "DownloadDebug.h"
 
 // umm... what?? BGC 3/27/03

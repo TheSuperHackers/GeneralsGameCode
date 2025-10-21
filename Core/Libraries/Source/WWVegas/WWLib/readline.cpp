@@ -42,8 +42,6 @@
 #include	"trim.h"
 #include	"WWFILE.H"
 #include	"XSTRAW.H"
-//#include	<ctype.h>
-#include	<string.h>
 
 
 #if !defined(__BORLANDC__) && !defined(_MSC_VER)

@@ -27,9 +27,7 @@
 // Debug class implementation
 //////////////////////////////////////////////////////////////////////////////
 #include "_pch.h"
-#include <stringex.h>
 #include <stdlib.h>
-#include <string.h>
 #include <WWCommon.h>
 #include <new>      // needed for placement new prototype
 

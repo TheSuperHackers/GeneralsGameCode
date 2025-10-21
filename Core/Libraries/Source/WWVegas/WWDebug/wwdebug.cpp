@@ -48,7 +48,6 @@
 #include <stdarg.h>
 #include <Utility/stdio_adapter.h>
 #include <assert.h>
-#include <string.h>
 #include <signal.h>
 #include "Except.h"
 

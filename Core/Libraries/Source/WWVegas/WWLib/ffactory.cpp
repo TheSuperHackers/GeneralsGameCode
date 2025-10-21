@@ -39,7 +39,6 @@
 #include "realcrc.h"
 #include <stdlib.h>
 #include	<assert.h>
-#include <string.h>
 
 /*
 ** Statics

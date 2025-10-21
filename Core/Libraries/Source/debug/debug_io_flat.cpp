@@ -27,7 +27,6 @@
 // Debug I/O class flat (flat or split log file)
 //////////////////////////////////////////////////////////////////////////////
 #include "_pch.h"
-#include "stringex.h"
 #include <stdlib.h>
 #include <WWCommon.h>
 #include <new>      // needed for placement new prototype

@@ -39,7 +39,6 @@
 #pragma once
 
 #include "always.h"
-#include <string.h>
 #include <stdlib.h>
 #include "parametertypes.h"
 #include "Vector.H"

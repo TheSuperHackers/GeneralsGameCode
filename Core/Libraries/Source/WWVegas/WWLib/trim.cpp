@@ -36,7 +36,6 @@
 
 #include	"always.h"
 #include	"trim.h"
-#include	<string.h>
 
 #ifdef _UNIX
 #include	<wctype.h>

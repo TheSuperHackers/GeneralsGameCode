@@ -39,8 +39,6 @@
 #include "wwdebug.h"
 #include "realcrc.h"
 
-#include <string.h>
-
 /*
 ** HashTableClass
 */

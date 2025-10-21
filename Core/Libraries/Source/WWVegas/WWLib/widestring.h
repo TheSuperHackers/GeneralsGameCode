@@ -36,7 +36,6 @@
 
 #pragma once
 
-#include <string.h>
 #include <stdarg.h>
 #include "always.h"
 #include "wwdebug.h"

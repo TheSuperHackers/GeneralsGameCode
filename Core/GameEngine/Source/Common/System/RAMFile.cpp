@@ -49,7 +49,6 @@
 
 #include <fcntl.h>
 #include <io.h>
-#include <string.h>
 #include <sys/stat.h>
 
 #include "Common/AsciiString.h"
