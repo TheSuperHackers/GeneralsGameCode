@@ -53,7 +53,6 @@
 #include "missingtexture.h"
 #include "TARGA.H"
 #include <d3dx8tex.h>
-#include <cstdio>
 #include "wwmemlog.h"
 #include "texture.h"
 #include "formconv.h"

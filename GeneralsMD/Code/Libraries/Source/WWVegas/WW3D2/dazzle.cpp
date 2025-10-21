@@ -65,7 +65,6 @@
 #include "scene.h"
 #include "wwprofile.h"
 #include "visrasterizer.h"
-#include <cstdio>
 #include <limits.h>
 #include <wwprofile.h>
 

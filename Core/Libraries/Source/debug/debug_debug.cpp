@@ -29,7 +29,6 @@
 #include "_pch.h"
 #include <stringex.h>
 #include <stdlib.h>
-#include <Utility/stdio_adapter.h>
 #include <string.h>
 #include <WWCommon.h>
 #include <new>      // needed for placement new prototype

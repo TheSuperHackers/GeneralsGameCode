@@ -38,7 +38,6 @@
 
 #include "widestring.h"
 #include "win.h"
-#include <Utility/stdio_adapter.h>
 
 
 ///////////////////////////////////////////////////////////////////

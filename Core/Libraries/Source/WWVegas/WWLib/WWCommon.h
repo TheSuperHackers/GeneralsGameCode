@@ -20,6 +20,7 @@
 
 #include "STLUtils.h"
 #include "stringex.h"
+#include <Utility/stdio_adapter.h>
 
 
 // This macro serves as a general way to determine the number of elements within an array.
