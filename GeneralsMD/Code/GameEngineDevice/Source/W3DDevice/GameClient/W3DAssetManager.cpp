@@ -65,7 +65,6 @@
 #include "ffactory.h"
 #include "font3d.h"
 #include "render2dsentence.h"
-#include <stdio.h>
 #include "Common/PerfTimer.h"
 #include "Common/GlobalData.h"
 #include "Common/GameCommon.h"

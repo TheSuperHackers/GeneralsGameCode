@@ -54,7 +54,6 @@
 #include "matrix4.h"
 #include "wwmath.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>

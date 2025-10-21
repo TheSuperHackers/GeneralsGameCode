@@ -43,7 +43,6 @@
 #include "inisup.h"
 #include "ffactory.h"
 #include "WWFILE.H"
-#include <stdio.h>
 #include "definition.h"
 #include "definitionmgr.h"
 #include "definitionclassids.h"

@@ -119,7 +119,6 @@
 #include "visrasterizer.h"
 #include "wwmemlog.h"
 #include "dx8rendererdebugger.h"
-#include <stdio.h>
 #include <wwprofile.h>
 
 static unsigned MeshDebugIdCount;

@@ -47,7 +47,6 @@
 #include "XSTRAW.H"
 #include "dx8wrapper.h"
 
-#include <stdio.h>
 #include <string.h>
 
 static unsigned int unique=1;

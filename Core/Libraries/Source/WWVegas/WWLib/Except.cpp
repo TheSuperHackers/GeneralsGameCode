@@ -64,7 +64,6 @@
 #include	<conio.h>
 #include	<imagehlp.h>
 #include <crtdbg.h>
-#include	<stdio.h>
 
 #ifdef WWDEBUG
 #define DebugString 	WWDebug_Printf

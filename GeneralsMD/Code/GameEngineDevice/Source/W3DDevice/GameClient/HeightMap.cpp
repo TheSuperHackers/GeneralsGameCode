@@ -51,7 +51,6 @@
 
 #ifndef USE_FLAT_HEIGHT_MAP // Flat height map uses flattened textures. jba. [3/20/2003]
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assetmgr.h>

@@ -28,7 +28,6 @@
 
 #pragma once
 
-#include <stdio.h>
 #include "Common/SubsystemInterface.h"
 #include "View.h"
 #include "GameClient/Color.h"

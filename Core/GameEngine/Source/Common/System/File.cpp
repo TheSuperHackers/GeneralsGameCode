@@ -50,7 +50,6 @@
 #include <assert.h>
 #include <string.h>
 #include <stdarg.h>
-#include <stdio.h>
 
 
 #include "Common/file.h"

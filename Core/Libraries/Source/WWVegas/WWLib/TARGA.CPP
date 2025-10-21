@@ -62,7 +62,7 @@
 
 #include "TARGA.H"
 #ifndef TGA_USES_WWLIB_FILE_CLASSES
-#include <stdio.h>
+#include "WWDebug/wwdebug.h"
 #endif
 #include <malloc.h>
 #include <memory.h>

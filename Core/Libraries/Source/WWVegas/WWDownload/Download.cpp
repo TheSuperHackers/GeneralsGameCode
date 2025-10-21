@@ -24,7 +24,6 @@
 #include <assert.h>
 #include <direct.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <sys/stat.h>
 
 /////////////////////////////////////////////////////////////////////////////

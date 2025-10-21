@@ -60,7 +60,6 @@
 #include "simplevec.h"
 #include "cpudetect.h"
 #include "hashtemplate.h"
-#include <stdio.h>
 #include <Utility/intrin_compat.h>
 
 static SimpleDynVecClass<WWProfileHierachyNodeClass*> ProfileCollectVector;

@@ -20,7 +20,7 @@
 #include "wwdebug.h"
 #include <stdarg.h>
 #include <stdlib.h>
-#include <stdio.h>
+#include <Utility/stdio_adapter.h>
 
 char* TheCurrentIgnoreCrashPtr = NULL;
 

@@ -53,7 +53,6 @@
 #include <vp.h>
 #include <INI.H>
 #include <Point.h>
-#include <stdio.h>
 #include <hashtemplate.h>
 #include <wwstring.h>
 #include <wwmath.h>

@@ -342,8 +342,6 @@ static BOOL CALLBACK ExceptionDlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
   return TRUE;
 }
 
-#include <stdio.h>
-
 LONG __stdcall DebugExceptionhandler::ExceptionFilter(struct _EXCEPTION_POINTERS* pExPtrs)
 {
   // we should not be calling ourselves!

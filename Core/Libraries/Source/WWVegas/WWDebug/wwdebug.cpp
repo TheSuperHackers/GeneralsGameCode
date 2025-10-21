@@ -46,7 +46,7 @@
 //#include "win.h" can use this if allowed to see wwlib
 #include <stdlib.h>
 #include <stdarg.h>
-#include <stdio.h>
+#include <Utility/stdio_adapter.h>
 #include <assert.h>
 #include <string.h>
 #include <signal.h>
