@@ -30,7 +30,6 @@
 #pragma once
 
 #include <math.h>
-#include <string.h>
 // TheSuperHackers @build feliwir 07/04/2025 Adds utility macros for cross-platform compatibility
 #include <Utility/compat.h>
 #include <Utility/CppMacros.h>

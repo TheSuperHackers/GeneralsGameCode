@@ -46,6 +46,7 @@
 #pragma once
 
 #include <stdarg.h>
+#include <string.h>
 #include "Lib/BaseType.h"
 #include "Common/Debug.h"
 #include "Common/Errors.h"
