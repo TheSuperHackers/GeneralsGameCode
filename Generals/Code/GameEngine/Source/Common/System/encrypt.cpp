@@ -28,7 +28,6 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include <string.h>
 #include "Common/encrypt.h"
 
 #define MAX_CHARS 65

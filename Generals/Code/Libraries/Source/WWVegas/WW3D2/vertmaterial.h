@@ -46,8 +46,6 @@
 #include "mapper.h"
 #include "wwstring.h"
 
-#include <string.h>
-
 class ChunkLoadClass;
 class ChunkSaveClass;
 

@@ -61,7 +61,6 @@
 #include "chunkio.h"
 #include "w3d_file.h"
 #include <stdlib.h>
-#include <string.h>
 #include <assert.h>
 
 #undef WWASSERT

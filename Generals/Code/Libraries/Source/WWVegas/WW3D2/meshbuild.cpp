@@ -61,7 +61,6 @@
 #include "meshbuild.h"
 #include "uarray.h"
 #include <stdlib.h>
-#include <string.h>
 #include <assert.h>
 
 
