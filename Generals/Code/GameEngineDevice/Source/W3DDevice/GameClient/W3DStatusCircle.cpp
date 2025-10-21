@@ -24,7 +24,6 @@
 
 #include "W3DDevice/GameClient/W3DStatusCircle.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assetmgr.h>

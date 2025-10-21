@@ -90,8 +90,6 @@
 #include "realcrc.h"
 #include "dx8wrapper.h"
 
-#include <stdio.h>
-
 #ifdef _UNIX
 #include "osdep/osdep.h"
 #endif

@@ -118,7 +118,6 @@
 #include "dx8renderer.h"
 #include "visrasterizer.h"
 #include "wwmemlog.h"
-#include <stdio.h>
 #include <wwprofile.h>
 
 

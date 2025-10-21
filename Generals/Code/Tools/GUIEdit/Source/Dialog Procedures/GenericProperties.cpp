@@ -48,7 +48,6 @@
 #include <assert.h>
 #include <windows.h>
 #include <commctrl.h>
-#include <stdio.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Debug.h"

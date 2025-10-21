@@ -68,7 +68,6 @@ class STLSpecialAlloc;
 #include <snmp.h>
 #include <stdarg.h>
 #include <stddef.h>
-#include <Utility/stdio_adapter.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>

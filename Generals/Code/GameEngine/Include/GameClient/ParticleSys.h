@@ -29,7 +29,6 @@
 
 #pragma once
 
-#include <stdio.h>
 #include "Common/AsciiString.h"
 #include "Common/GameMemory.h"
 #include "Common/GameType.h"

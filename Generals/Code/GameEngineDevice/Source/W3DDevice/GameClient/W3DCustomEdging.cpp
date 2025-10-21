@@ -47,7 +47,6 @@
 //-----------------------------------------------------------------------------
 #include "W3DDevice/GameClient/W3DCustomEdging.h"
 
-#include <stdio.h>
 #include <string.h>
 #include <assetmgr.h>
 #include <texture.h>

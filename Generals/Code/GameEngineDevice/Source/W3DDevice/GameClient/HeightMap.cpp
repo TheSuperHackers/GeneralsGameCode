@@ -47,7 +47,6 @@
 //-----------------------------------------------------------------------------
 #include "W3DDevice/GameClient/HeightMap.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assetmgr.h>

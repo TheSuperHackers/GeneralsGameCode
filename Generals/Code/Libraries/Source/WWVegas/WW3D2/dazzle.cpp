@@ -64,7 +64,6 @@
 #include "texture.h"
 #include "scene.h"
 #include "wwprofile.h"
-#include <cstdio>
 #include <limits.h>
 
 

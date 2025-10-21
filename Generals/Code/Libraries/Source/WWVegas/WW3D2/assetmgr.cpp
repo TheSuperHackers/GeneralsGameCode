@@ -107,7 +107,6 @@
 #include "w3dexclusionlist.h"
 #include <INI.H>
 #include <windows.h>
-#include <stdio.h>
 #include <d3dx8core.h>
 #include "texture.h"
 #include "wwprofile.h"

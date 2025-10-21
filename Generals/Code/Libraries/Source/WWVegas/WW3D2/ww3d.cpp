@@ -108,7 +108,6 @@
 #include "bound.h"
 #include "rddesc.h"
 #include "Vector3i.h"
-#include <cstdio>
 #include "dx8wrapper.h"
 #include "TARGA.H"
 #include "sortingrenderer.h"

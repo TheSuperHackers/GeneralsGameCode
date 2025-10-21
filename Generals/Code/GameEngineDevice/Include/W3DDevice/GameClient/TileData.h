@@ -28,8 +28,6 @@
 
 #pragma once
 
-#include <stdio.h>
-
 #include "Lib/BaseType.h"
 #include "WWLib/refcount.h"
 #include "Common/AsciiString.h"
