@@ -19,9 +19,7 @@
 #if !defined(AFX_TEAMIDENTITY_H__B37DB2FD_297F_4D0E_AACD_193BE30C6C85__INCLUDED_)
 #define AFX_TEAMIDENTITY_H__B37DB2FD_297F_4D0E_AACD_193BE30C6C85__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 // TeamIdentity.h : header file
 //
 class Dict;

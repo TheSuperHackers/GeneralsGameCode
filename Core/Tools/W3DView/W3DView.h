@@ -22,9 +22,7 @@
 #if !defined(AFX_W3DVIEW_H__2BB39E2B_5D3A_11D2_9FC6_00104B791122__INCLUDED_)
 #define AFX_W3DVIEW_H__2BB39E2B_5D3A_11D2_9FC6_00104B791122__INCLUDED_
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 #ifndef __AFXWIN_H__
 	#error include 'stdafx.h' before including this file for PCH

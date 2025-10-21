@@ -19,9 +19,7 @@
 #if !defined(AFX_SHADOWOPTIONS_H__25CB23E2_9E42_44D4_BE83_4B89F87746DE__INCLUDED_)
 #define AFX_SHADOWOPTIONS_H__25CB23E2_9E42_44D4_BE83_4B89F87746DE__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 // ShadowOptions.h : header file
 //
 

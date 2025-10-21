@@ -19,9 +19,7 @@
 #if !defined(AFX_MESHPROPPAGE_H__FB40246F_5DFB_11D2_9FC7_00104B791122__INCLUDED_)
 #define AFX_MESHPROPPAGE_H__FB40246F_5DFB_11D2_9FC7_00104B791122__INCLUDED_
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 // MeshPropPage.h : header file
 //
 

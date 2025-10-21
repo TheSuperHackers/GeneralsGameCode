@@ -19,9 +19,7 @@
 #if !defined(AFX_EXPORTDLG_H__DDA81307_4F1A_11D3_B9DA_006097B90D93__INCLUDED_)
 #define AFX_EXPORTDLG_H__DDA81307_4F1A_11D3_B9DA_006097B90D93__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 // ExportDlg.h : header file
 //
 

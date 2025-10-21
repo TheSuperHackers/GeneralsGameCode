@@ -19,9 +19,7 @@
 #if !defined(AFX_SCRIPTPROPERTIES_H__CE62125B_9FAB_4EF0_A8B5_36DD5393A2B0__INCLUDED_)
 #define AFX_SCRIPTPROPERTIES_H__CE62125B_9FAB_4EF0_A8B5_36DD5393A2B0__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 // ScriptProperties.h : header file
 //
 class Script;

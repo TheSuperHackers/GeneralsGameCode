@@ -19,9 +19,7 @@
 #if !defined(AFX_COLORBAR_H__D1243F40_D4D2_11D2_8DDF_00104B6FD9E3__INCLUDED_)
 #define AFX_COLORBAR_H__D1243F40_D4D2_11D2_8DDF_00104B6FD9E3__INCLUDED_
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 // ColorBar.h : header file
 //
 

@@ -26,9 +26,8 @@
 //
 // Debug command interface
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
+#pragma once
+
 #ifndef DEBUG_CMD_H // Include guard
 #define DEBUG_CMD_H
 

@@ -50,9 +50,7 @@
  *   DynamicVectorClass<T>::Uninitialized_Add -- Add an empty place to the vector.             *
  *   DynamicVectorClass<T>::Insert -- insert an object at the desired index                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 #ifndef VECTOR_H
 #define VECTOR_H

@@ -19,9 +19,7 @@
 #if !defined(AFX_WBPopupSliderButton_H__8B217F41_937B_11D1_8CA3_00A024CDC039__INCLUDED_)
 #define AFX_WBPopupSliderButton_H__8B217F41_937B_11D1_8CA3_00A024CDC039__INCLUDED_
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 // WBPopupSliderButton.h : header file
 //
 

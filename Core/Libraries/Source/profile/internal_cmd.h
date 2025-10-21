@@ -26,9 +26,8 @@
 //
 // Profile module command interface
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
+#pragma once
+
 #ifndef INTERNAL_CMD_H // Include guard
 #define INTERNAL_CMD_H
 

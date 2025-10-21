@@ -19,9 +19,7 @@
 #if !defined(AFX_GAMMADIALOG_H__DA25161A_E783_44DE_8398_B311C20C3BE9__INCLUDED_)
 #define AFX_GAMMADIALOG_H__DA25161A_E783_44DE_8398_B311C20C3BE9__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 // GammaDialog.h : header file
 //
 

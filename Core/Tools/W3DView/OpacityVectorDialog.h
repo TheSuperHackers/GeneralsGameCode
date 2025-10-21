@@ -19,9 +19,7 @@
 #if !defined(AFX_OPACITYVECTORDIALOG_H__E86BBE8C_F527_11D3_A08F_00104B791122__INCLUDED_)
 #define AFX_OPACITYVECTORDIALOG_H__E86BBE8C_F527_11D3_A08F_00104B791122__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "resource.h"
 #include "sphereobj.h"

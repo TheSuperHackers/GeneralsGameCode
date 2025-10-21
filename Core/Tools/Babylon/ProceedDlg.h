@@ -19,9 +19,7 @@
 #if !defined(AFX_PROCEEDDLG_H__35C33E24_5AD8_11D3_B9DA_006097B90D93__INCLUDED_)
 #define AFX_PROCEEDDLG_H__35C33E24_5AD8_11D3_B9DA_006097B90D93__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 // ProceedDlg.h : header file
 //
 #define IDALWAYS		101

@@ -26,9 +26,8 @@
 //
 // additional Doxygen module documentation
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
+#pragma once
+
 #ifndef DEBUG_DOC_H // Include guard
 #define DEBUG_DOC_H
 

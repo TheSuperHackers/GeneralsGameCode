@@ -19,9 +19,7 @@
 #if !defined(AFX_MoundOptions_H__6B56E20C_582E_4132_A251_879097C8852C__INCLUDED_)
 #define AFX_MoundOptions_H__6B56E20C_582E_4132_A251_879097C8852C__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 // MoundOptions.h : header file
 //
 #include "WBPopupSlider.h"

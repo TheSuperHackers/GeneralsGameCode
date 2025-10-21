@@ -26,9 +26,8 @@
 //
 // High level profiling (internal header)
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
+#pragma once
+
 #ifndef INTERNAL_HIGHLEVEL_H // Include guard
 #define INTERNAL_HIGHLEVEL_H
 

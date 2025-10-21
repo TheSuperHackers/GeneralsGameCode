@@ -19,9 +19,7 @@
 #if !defined(AFX_SAVEMAP_H__BCE93FF1_DA04_4F63_A483_D89BF1F49E32__INCLUDED_)
 #define AFX_SAVEMAP_H__BCE93FF1_DA04_4F63_A483_D89BF1F49E32__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 // SaveMap.h : header file
 //
 

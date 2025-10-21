@@ -26,9 +26,8 @@
 //
 // Internal result functions
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
+#pragma once
+
 #ifndef INTERNAL_RESULT_H // Include guard
 #define INTERNAL_RESULT_H
 

@@ -26,9 +26,8 @@
 //
 // Stack walker
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
+#pragma once
+
 #ifndef DEBUG_STACK_H // Include guard
 #define DEBUG_STACK_H
 

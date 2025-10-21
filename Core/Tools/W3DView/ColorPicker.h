@@ -19,9 +19,7 @@
 #if !defined(AFX_COLORPICKER_H__C943A7EC_CAA3_11D2_8DDF_00104B6FD9E3__INCLUDED_)
 #define AFX_COLORPICKER_H__C943A7EC_CAA3_11D2_8DDF_00104B6FD9E3__INCLUDED_
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 // ColorPicker.h : header file
 //
 

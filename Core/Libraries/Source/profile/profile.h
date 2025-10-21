@@ -26,9 +26,8 @@
 //
 // Profiling module
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
+#pragma once
+
 #ifndef PROFILE_H // Include guard
 #define PROFILE_H
 

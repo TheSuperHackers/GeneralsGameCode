@@ -26,9 +26,8 @@
 //
 // Internal header
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
+#pragma once
+
 #ifndef INTERNAL_H // Include guard
 #define INTERNAL_H
 

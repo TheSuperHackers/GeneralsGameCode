@@ -19,9 +19,7 @@
 #if !defined(AFX_CELLWIDTH_H__E4023BA4_28DE_11D5_8CE0_00010297BBAC__INCLUDED_)
 #define AFX_CELLWIDTH_H__E4023BA4_28DE_11D5_8CE0_00010297BBAC__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 // CellWidth.h : header file
 //
 

@@ -19,9 +19,7 @@
 #if !defined(AFX_VERIFYDLG_H__88E9C121_599B_11D3_B9DA_006097B90D93__INCLUDED_)
 #define AFX_VERIFYDLG_H__88E9C121_599B_11D3_B9DA_006097B90D93__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 // VerifyDlg.h : header file
 //
 

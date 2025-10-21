@@ -26,9 +26,8 @@
 //
 // Result function interface and result functions
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
+#pragma once
+
 #ifndef PROFILE_RESULT_H // Include guard
 #define PROFILE_RESULT_H
 

@@ -1,24 +1,40 @@
 #!/usr/bin/env python3
 """
-Remove the MSC_VER guard around '#pragma once', specifically deleting:
-  - the '#if defined(_MSC_VER)' line,
-  - any blank lines immediately after that '#if',
-  - any blank lines immediately after '#pragma once',
-  - the matching '#endif' line.
+Remove MSVC-only guards around '#pragma once' in .h files, preserving surrounding blank lines.
 
-Critically, this *does not* remove blank lines that precede the guard or follow the '#endif'.
+Recognised guard forms:
+  #if defined(_MSC_VER)
+  #ifdef _MSC_VER
+  #if _MSC_VER >= 1000
+
+Removes only:
+  - the '#if...' line,
+  - any blank lines immediately after it,
+  - any blank lines immediately after '#pragma once',
+  - the matching '#endif' line (optionally with trailing comment).
 
 Usage:
-  python unguard_pragma_once_exact.py /path/to/dir
+  python unguard_pragma_once_universal.py /path/to/dir
 """
 
 import sys
 import re
 from pathlib import Path
 
-RE_IF     = re.compile(r'^\s*#\s*if\s+defined\s*\(\s*_MSC_VER\s*\)\s*(?://.*)?\r?\n?$')
-RE_PRAGMA = re.compile(r'^\s*#\s*pragma\s+once\s*\r?\n?$')
-RE_ENDIF  = re.compile(r'^\s*#\s*endif\b.*\r?\n?$')
+# Match any of the IF guard forms. No VERBOSE flag; escape literal '#'.
+RE_IF = re.compile(
+    r'^\s*\#\s*'
+    r'(?:'
+      r'if\s+defined\s*\(\s*_MSC_VER\s*\)'         # #if defined(_MSC_VER)
+      r'|ifdef\s+_MSC_VER'                         # #ifdef _MSC_VER
+      r'|if\s+_MSC_VER(?:\s*[<>!=]=?\s*\d+)?'      # #if _MSC_VER [op num]
+    r')'
+    r'\s*(?://.*)?\r?\n?$',                        # optional end-of-line comment
+    re.IGNORECASE
+)
+
+RE_PRAGMA = re.compile(r'^\s*\#\s*pragma\s+once\s*\r?\n?$', re.IGNORECASE)
+RE_ENDIF  = re.compile(r'^\s*\#\s*endif\b.*\r?\n?$', re.IGNORECASE)
 RE_BLANK  = re.compile(r'^[ \t]*\r?\n?$')
 
 def read_text_with_fallback(p: Path) -> str:
@@ -29,15 +45,7 @@ def read_text_with_fallback(p: Path) -> str:
             continue
     return p.read_bytes().decode("latin-1", errors="replace")
 
-def unguard_one(text: str) -> tuple[str, bool]:
-    """
-    Remove:
-      IF line,
-      blanks immediately after IF,
-      blanks immediately after PRAGMA,
-      ENDIF line.
-    Preserve everything else.
-    """
+def unguard_msc_pragma_once(text: str) -> tuple[str, bool]:
     lines = text.splitlines(keepends=True)
     i = 0
     changed = False
@@ -50,52 +58,46 @@ def unguard_one(text: str) -> tuple[str, bool]:
         if_idx = i
         j = i + 1
 
-        # blanks immediately after #if (remove these)
+        # remove blanks immediately after #if
         while j < len(lines) and RE_BLANK.match(lines[j]):
             j += 1
-        blanks_after_if_start = i + 1
-        blanks_after_if_end   = j  # [start, end) will be removed
 
-        # must have #pragma once next
+        # require #pragma once next
         if j >= len(lines) or not RE_PRAGMA.match(lines[j]):
             i += 1
             continue
+
         pragma_idx = j
         j += 1
 
-        # blanks immediately after pragma (remove these if ENDIF follows)
-        blanks_after_pragma_start = j
+        # remove blanks immediately after pragma
         while j < len(lines) and RE_BLANK.match(lines[j]):
             j += 1
-        blanks_after_pragma_end = j  # [start, end) will be removed if ENDIF matches
 
-        # must have #endif next
+        # require #endif next
         if j >= len(lines) or not RE_ENDIF.match(lines[j]):
             i += 1
             continue
+
         endif_idx = j
 
-        # Build new slice: keep everything except:
-        # - IF line
-        # - blanks after IF
-        # - blanks after PRAGMA
-        # - ENDIF line
-        keep = []
-        keep.extend(lines[:if_idx])                                # before IF (preserves "line 1")
-        keep.extend(lines[pragma_idx:pragma_idx+1])                # keep the pragma line itself
-        keep.extend(lines[endif_idx+1:])                           # after ENDIF (preserves "line 7")
+        # Keep: everything before IF, the pragma line itself, everything after ENDIF
+        new_lines = []
+        new_lines.extend(lines[:if_idx])            # preserves any blank lines before the block
+        new_lines.append(lines[pragma_idx])         # keep '#pragma once'
+        new_lines.extend(lines[endif_idx + 1:])     # preserves any blank lines after the block
 
-        lines = keep
+        lines = new_lines
         changed = True
 
-        # Restart scan near where we spliced (safe to restart from max(0, pragma_idx-1) in new array)
-        i = max(0, (pragma_idx - 1))  # conservative restart
+        # Resume scanning near the pragma location in the new list
+        i = max(0, if_idx - 1)
 
     return "".join(lines), changed
 
 def main():
     if len(sys.argv) != 2:
-        print("Usage: python unguard_pragma_once_exact.py /path/to/dir", file=sys.stderr)
+        print("Usage: python unguard_pragma_once_universal.py /path/to/dir", file=sys.stderr)
         sys.exit(2)
 
     root = Path(sys.argv[1])
@@ -105,13 +107,13 @@ def main():
 
     total = 0
     changed_count = 0
+
     for p in root.rglob("*.h"):
         total += 1
         try:
             original = read_text_with_fallback(p)
-            updated, changed = unguard_one(original)
+            updated, changed = unguard_msc_pragma_once(original)
             if changed:
-                # Write back; per-line original EOLs are preserved in 'updated'
                 p.write_text(updated, encoding="utf-8", newline="")
                 changed_count += 1
         except Exception as ex:

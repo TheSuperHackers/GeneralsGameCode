@@ -26,9 +26,8 @@
 //
 // Internal header: I/O classes
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
+#pragma once
+
 #ifndef INTERNAL_IO_H // Include guard
 #define INTERNAL_IO_H
 

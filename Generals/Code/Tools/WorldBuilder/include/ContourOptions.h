@@ -19,9 +19,7 @@
 #if !defined(AFX_ContourOptions_H__7B56E24C_582E_4530_A451_873397C8852D__INCLUDED_)
 #define AFX_ContourOptions_H__7B56E24C_582E_4530_A451_873397C8852D__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 // ContourOptions.h : header file
 //
 

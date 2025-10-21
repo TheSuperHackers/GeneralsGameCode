@@ -19,9 +19,7 @@
 #if !defined(AFX_DATATREEVIEW_H__2BB39E40_5D3A_11D2_9FC6_00104B791122__INCLUDED_)
 #define AFX_DATATREEVIEW_H__2BB39E40_5D3A_11D2_9FC6_00104B791122__INCLUDED_
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 // DataTreeView.h : header file
 //
 

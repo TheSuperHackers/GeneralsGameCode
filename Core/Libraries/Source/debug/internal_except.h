@@ -26,9 +26,8 @@
 //
 // Unhandled exception handler
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
+#pragma once
+
 #ifndef INTERNAL_EXCEPT_H // Include guard
 #define INTERNAL_EXCEPT_H
 

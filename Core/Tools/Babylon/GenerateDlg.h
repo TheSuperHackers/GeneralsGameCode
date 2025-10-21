@@ -19,9 +19,7 @@
 #if !defined(AFX_GENERATEDLG_H__959D0D41_50A5_11D3_B9DA_006097B90D93__INCLUDED_)
 #define AFX_GENERATEDLG_H__959D0D41_50A5_11D3_B9DA_006097B90D93__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 // GenerateDlg.h : header file
 //
 

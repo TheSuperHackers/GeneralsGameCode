@@ -26,9 +26,8 @@
 //
 // High level profiling
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
+#pragma once
+
 #ifndef PROFILE_HIGHLEVEL_H // Include guard
 #define PROFILE_HIGHLEVEL_H
 

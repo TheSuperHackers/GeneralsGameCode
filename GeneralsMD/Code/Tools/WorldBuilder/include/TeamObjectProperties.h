@@ -25,9 +25,7 @@
 #ifndef TEAM_OBJECT_PROPERTIES_H
 #define TEAM_OBJECT_PROPERTIES_H
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "resource.h"
 

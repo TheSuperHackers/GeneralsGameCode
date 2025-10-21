@@ -34,9 +34,7 @@
  * Functions:                                                                                  *
  *   Pick_Random_Number -- Picks a random number between two values (inclusive).               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 #ifndef RANDOM_H
 #define RANDOM_H

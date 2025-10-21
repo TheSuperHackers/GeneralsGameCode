@@ -26,9 +26,8 @@
 //
 // Debugging module
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
+#pragma once
+
 #ifndef DEBUG_H // Include guard
 #define DEBUG_H
 

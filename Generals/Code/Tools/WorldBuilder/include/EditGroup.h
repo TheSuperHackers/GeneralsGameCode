@@ -19,9 +19,7 @@
 #if !defined(AFX_EDITGROUP_H__712F9978_4300_4625_9364_39E903FA3284__INCLUDED_)
 #define AFX_EDITGROUP_H__712F9978_4300_4625_9364_39E903FA3284__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 // EditGroup.h : header file
 //
 

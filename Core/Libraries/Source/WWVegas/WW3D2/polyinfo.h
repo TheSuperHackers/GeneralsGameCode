@@ -38,9 +38,8 @@
 #ifndef POLYINFO_H
 #define POLYINFO_H
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
+
 
 class TextureClass;
 class VertexMaterialClass;

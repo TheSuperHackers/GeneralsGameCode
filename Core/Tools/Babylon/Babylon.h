@@ -22,9 +22,7 @@
 #if !defined(AFX_BABYLON_H__2BF3124B_3BA1_11D3_B9DA_006097B90D93__INCLUDED_)
 #define AFX_BABYLON_H__2BF3124B_3BA1_11D3_B9DA_006097B90D93__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #ifndef __AFXWIN_H__
 	#error include 'stdafx.h' before including this file for PCH

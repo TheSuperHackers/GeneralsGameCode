@@ -19,9 +19,7 @@
 #if !defined(AFX_REPORT_H__47F98BA1_70E3_11D3_B9DA_006097B90D93__INCLUDED_)
 #define AFX_REPORT_H__47F98BA1_70E3_11D3_B9DA_006097B90D93__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 // Report.h : header file
 //
 

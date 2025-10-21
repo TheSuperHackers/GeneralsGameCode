@@ -19,9 +19,7 @@
 #if !defined(AFX_MATCHDLG_H__FA868061_4EA7_11D3_B9DA_006097B90D93__INCLUDED_)
 #define AFX_MATCHDLG_H__FA868061_4EA7_11D3_B9DA_006097B90D93__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 // MatchDlg.h : header file
 //
 

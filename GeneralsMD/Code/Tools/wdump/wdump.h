@@ -22,9 +22,7 @@
 #if !defined(AFX_WDUMP_H__41C157E7_5631_11D1_8CDB_006097C6A583__INCLUDED_)
 #define AFX_WDUMP_H__41C157E7_5631_11D1_8CDB_006097C6A583__INCLUDED_
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 #ifndef __AFXWIN_H__
 	#error include 'stdafx.h' before including this file for PCH

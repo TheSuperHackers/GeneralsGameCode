@@ -22,9 +22,7 @@
 #if !defined(AFX_DEBUGWINDOW_H__018E1800_6E59_4527_BA0C_8731EBF22953__INCLUDED_)
 #define AFX_DEBUGWINDOW_H__018E1800_6E59_4527_BA0C_8731EBF22953__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #ifndef __AFXWIN_H__
 	#error include 'stdafx.h' before including this file for PCH

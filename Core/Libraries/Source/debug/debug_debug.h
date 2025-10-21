@@ -26,9 +26,8 @@
 //
 // main Debug object (singleton)
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
+#pragma once
+
 #ifndef DEBUG_DEBUG_H // Include guard
 #define DEBUG_DEBUG_H
 

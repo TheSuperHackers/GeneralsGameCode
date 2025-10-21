@@ -19,9 +19,7 @@
 #if !defined(AFX_EDITCONDITION_H__64465BA2_AD81_4EFD_BAB4_93F66C90ECD1__INCLUDED_)
 #define AFX_EDITCONDITION_H__64465BA2_AD81_4EFD_BAB4_93F66C90ECD1__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 // EditCondition.h : header file
 //
 

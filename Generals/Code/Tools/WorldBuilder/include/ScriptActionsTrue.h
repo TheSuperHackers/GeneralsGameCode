@@ -19,9 +19,7 @@
 #if !defined(AFX_SCRIPTACTIONSTRUE_H__D8CAEC29_8B71_461C_B1B8_DF55624330AA__INCLUDED_)
 #define AFX_SCRIPTACTIONSTRUE_H__D8CAEC29_8B71_461C_B1B8_DF55624330AA__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 // ScriptActionsTrue.h : header file
 //
 class Script;

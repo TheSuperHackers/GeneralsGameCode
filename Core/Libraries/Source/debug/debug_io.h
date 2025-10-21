@@ -26,9 +26,8 @@
 //
 // Debug I/O interface
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
+#pragma once
+
 #ifndef DEBUG_IO_H // Include guard
 #define DEBUG_IO_H
 

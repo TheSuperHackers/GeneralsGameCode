@@ -26,9 +26,8 @@
 //
 // Debugging macros
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
+#pragma once
+
 #ifndef DEBUG_MACRO_H // Include guard
 #define DEBUG_MACRO_H
 

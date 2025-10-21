@@ -22,9 +22,7 @@
 #if !defined(AFX_BABYLONDLG_H__2BF3124D_3BA1_11D3_B9DA_006097B90D93__INCLUDED_)
 #define AFX_BABYLONDLG_H__2BF3124D_3BA1_11D3_B9DA_006097B90D93__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "resource.h"
 #include "TransDB.h"
