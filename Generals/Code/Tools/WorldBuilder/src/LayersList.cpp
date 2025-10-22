@@ -588,7 +588,7 @@ void LayersList::OnNewLayer()
 	}
 
 	static char buffer[1024];
-	sprintf(buffer, "%s %d", TheDefaultNewLayerName.c_str(), newLayerNum);
+	snprintf(buffer, ARRAY_SIZE(buffer), "%s %d", TheDefaultNewLayerName.c_str(), newLayerNum);
 	addLayerNamed(buffer);
 
 	HTREEITEM newItem = pTree->InsertItem(buffer, 0, 0);

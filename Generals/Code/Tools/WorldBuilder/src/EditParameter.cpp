@@ -1332,7 +1332,7 @@ void EditParameter::readFontFile( const char *filename )
 		{
 			char buffer[ 1024 ];
 
-			sprintf( buffer, "Warning: The font '%s' Size: '%d' Bold: '%d', specified in the config file could not be loaded.  Does that font exist?",
+			snprintf( buffer, ARRAY_SIZE(buffer), "Warning: The font '%s' Size: '%d' Bold: '%d', specified in the config file could not be loaded.  Does that font exist?",
 							 fontBuffer, size, bold );
 			//MessageBox( m_appHWnd, buffer, "Cannot Load Font", MB_OK );
 

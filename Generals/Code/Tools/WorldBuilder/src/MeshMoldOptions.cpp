@@ -142,8 +142,8 @@ BOOL MeshMoldOptions::OnInitDialog()
 
 void MeshMoldOptions::setHeight(Real height)
 {
-	char buffer[50];
-	sprintf(buffer, "%.2f", height);
+	char buffer[32];
+	snprintf(buffer, ARRAY_SIZE(buffer), "%.2f", height);
 	m_currentHeight = height;
 	if (m_staticThis && !m_staticThis->m_updating) {
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_HEIGHT_EDIT);
@@ -154,8 +154,8 @@ void MeshMoldOptions::setHeight(Real height)
 
 void MeshMoldOptions::setScale(Real scale)
 {
-	char buffer[50];
-	sprintf(buffer, "%d", (int)floor(scale*100));
+	char buffer[12];
+	snprintf(buffer, ARRAY_SIZE(buffer), "%d", (int)floor(scale*100));
 	m_currentScale = scale;
 	if (m_staticThis && !m_staticThis->m_updating) {
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_SCALE_EDIT);
@@ -166,8 +166,8 @@ void MeshMoldOptions::setScale(Real scale)
 
 void MeshMoldOptions::setAngle(Int angle)
 {
-	char buffer[50];
-	sprintf(buffer, "%d", angle);
+	char buffer[12];
+	snprintf(buffer, ARRAY_SIZE(buffer), "%d", angle);
 	m_currentAngle = angle;
 	if (m_staticThis && !m_staticThis->m_updating) {
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_ANGLE_EDIT);

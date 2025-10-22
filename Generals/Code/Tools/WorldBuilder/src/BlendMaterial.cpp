@@ -208,7 +208,7 @@ void BlendMaterial::addTerrain(const char *pPath, Int terrainNdx, HTREEITEM pare
 //	Int percent = (WorldHeightMapEdit::getTexClassNumTiles(terrainNdx)*100 + availableTiles/2) / availableTiles;
 
 	char label[_MAX_PATH];
-	sprintf(label, "%s", buffer);
+	snprintf(label, ARRAY_SIZE(label), "%s", buffer);
 
 
 	if( doAdd )

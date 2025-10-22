@@ -128,7 +128,7 @@ void SaveMap::populateMapListbox( Bool systemMaps )
 	if (systemMaps)
 		strcpy(dirBuf, ".\\Maps\\");
 	else
-		sprintf(dirBuf, "%sMaps\\", TheGlobalData->getPath_UserData().str());
+		snprintf(dirBuf, ARRAY_SIZE(dirBuf), "%sMaps\\", TheGlobalData->getPath_UserData().str());
 	int len = strlen(dirBuf);
 
 	if (len > 0 && dirBuf[len - 1] != '\\') {

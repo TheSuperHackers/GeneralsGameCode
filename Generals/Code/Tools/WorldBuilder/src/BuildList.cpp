@@ -449,16 +449,16 @@ void BuildList::OnSelchangeBuildList()
 	PointerTool::clearSelection(); // unselect other stuff.
 	if (pBuildInfo) {
 		CWnd *edit;
-		static char buff[12];
+		static char buff[32];
 		pBuildInfo->setSelected(true);
 
 		m_angle = pBuildInfo->getAngle() * 180/PI;
-		sprintf(buff, "%0.2f", m_angle);
+		snprintf(buff, ARRAY_SIZE(buff), "%0.2f", m_angle);
 		edit = GetDlgItem(IDC_MAPOBJECT_Angle);
 		edit->SetWindowText(buff);
 
 		m_height = pBuildInfo->getLocation()->z;
-		sprintf(buff, "%0.2f", m_height);
+		snprintf(buff, ARRAY_SIZE(buff), "%0.2f", m_height);
 		edit = GetDlgItem(IDC_MAPOBJECT_ZOffset);
 		edit->SetWindowText(buff);
 
@@ -638,11 +638,11 @@ void BuildList::PopSliderChanged(const long sliderID, long theVal)
 {
 //	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	CWnd* edit;
-	static char buff[12];
+	static char buff[32];
 	switch (sliderID) {
 		case IDC_HEIGHT_POPUP:
 			m_height = theVal;
-			sprintf(buff, "%0.2f", m_height);
+			snprintf(buff, ARRAY_SIZE(buff), "%0.2f", m_height);
 			edit = GetDlgItem(IDC_MAPOBJECT_ZOffset);
 			edit->SetWindowText(buff);
 			OnChangeZOffset();
@@ -650,7 +650,7 @@ void BuildList::PopSliderChanged(const long sliderID, long theVal)
 
 		case IDC_ANGLE_POPUP:
 			m_angle = theVal;
-			sprintf(buff, "%0.2f", m_angle);
+			snprintf(buff, ARRAY_SIZE(buff), "%0.2f", m_angle);
 			edit = GetDlgItem(IDC_MAPOBJECT_Angle);
 			edit->SetWindowText(buff);
 			break;

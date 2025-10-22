@@ -2433,7 +2433,7 @@ void WbView3d::drawLabels(HDC hdc)
 
 			if (m_lightFeedbackMesh[lIndex] == NULL)
 			{	char nameBuf[64];
-				sprintf(nameBuf,"WB_LIGHT%d",lIndex+1);
+				snprintf(nameBuf, ARRAY_SIZE(nameBuf), "WB_LIGHT%d", lIndex+1);
 				m_lightFeedbackMesh[lIndex]=WW3DAssetManager::Get_Instance()->Create_Render_Obj(nameBuf);
 			}
 			if (m_lightFeedbackMesh[lIndex]==NULL) {
