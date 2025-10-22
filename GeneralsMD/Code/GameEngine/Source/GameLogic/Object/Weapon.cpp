@@ -1199,16 +1199,8 @@ static Bool is2DDistSquaredLessThan(const Coord3D& a, const Coord3D& b, Real dis
 }
 
 //-------------------------------------------------------------------------------------------------
-void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, const Coord3D *pos, const WeaponBonus& bonus, Bool isProjectileDetonation) const
+void WeaponTemplate::processHistoricDamage(const Object* source, const Coord3D* pos) const
 {
-	if (sourceID == 0)	// must have a source
-		return;
-
-	if (victimID == 0 && pos == NULL)	// must have some sort of destination
-		return;
-
-	Object *source = TheGameLogic->findObjectByID(sourceID);	// might be null...
-
 	//
 	/** @todo We need to rewrite the historic stuff ... if you fire 5 missiles, and the 5th,
 	// one creates a firestorm ... and then half a second later another volley of 5 missiles
@@ -1254,6 +1246,20 @@ void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, co
 		}
 
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, const Coord3D *pos, const WeaponBonus& bonus, Bool isProjectileDetonation) const
+{
+	if (sourceID == 0)	// must have a source
+		return;
+
+	if (victimID == 0 && pos == NULL)	// must have some sort of destination
+		return;
+
+	Object *source = TheGameLogic->findObjectByID(sourceID);	// might be null...
+
+	processHistoricDamage(source, pos);
 
 //DEBUG_LOG(("WeaponTemplate::dealDamageInternal: dealing damage %s at frame %d",m_name.str(),TheGameLogic->getFrame()));
 
