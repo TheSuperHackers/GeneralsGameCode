@@ -3,6 +3,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/ActionManager.h
     Include/Common/AddonCompat.h
     Include/Common/ArchiveFile.h
+    Include/GameNetwork/NetPacketStructs.h
     Include/Common/ArchiveFileSystem.h
     Include/Common/AsciiString.h
     Include/Common/AudioAffect.h
@@ -546,7 +547,6 @@ set(GAMEENGINE_SRC
     Include/GameNetwork/NetCommandRef.h
     Include/GameNetwork/NetCommandWrapperList.h
     Include/GameNetwork/NetPacket.h
-    Include/GameNetwork/NetPacketStructs.h
     Include/GameNetwork/NetworkDefs.h
     Include/GameNetwork/NetworkInterface.h
     Include/GameNetwork/networkutil.h
