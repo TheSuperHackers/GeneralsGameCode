@@ -138,7 +138,7 @@ void ControlBar::initObserverControls( void )
 //-------------------------------------------------------------------------------------------------
 void ControlBar::setObserverLookAtPlayer(Player *player)
 {
-	if (player == ThePlayerList->findPlayerWithNameKey(s_replayObserverNameKey))
+	if (player != NULL && player == ThePlayerList->findPlayerWithNameKey(s_replayObserverNameKey))
 	{
 		// Looking at the observer. Treat as not looking at player.
 		m_observerLookAtPlayer = NULL;
@@ -152,7 +152,7 @@ void ControlBar::setObserverLookAtPlayer(Player *player)
 //-------------------------------------------------------------------------------------------------
 void ControlBar::setObservedPlayer(Player *player)
 {
-	if (player == ThePlayerList->findPlayerWithNameKey(s_replayObserverNameKey))
+	if (player != NULL && player == ThePlayerList->findPlayerWithNameKey(s_replayObserverNameKey))
 	{
 		// Looking at the observer. Treat as not observing player.
 		m_observedPlayer = NULL;
@@ -196,8 +196,7 @@ WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt m
 			Int controlID = control->winGetWindowId();
 			if( controlID == buttonCancelID)
 			{
-				Player* observerPlayer = ThePlayerList->findPlayerWithNameKey(s_replayObserverNameKey);
-				rts::changeObservedPlayer(observerPlayer);
+				rts::changeObservedPlayer(NULL);
 
 				ObserverPlayerInfoWindow->winHide(TRUE);
 				ObserverPlayerListWindow->winHide(FALSE);
@@ -209,7 +208,7 @@ WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt m
 			{
 				if( controlID == buttonPlayerID[i])
 				{
-					Player* player = reinterpret_cast<Player*>(GadgetButtonGetData(buttonPlayer[i]));
+					Player* player = static_cast<Player*>(GadgetButtonGetData(buttonPlayer[i]));
 					rts::changeObservedPlayer(player);
 
 					ObserverPlayerInfoWindow->winHide(FALSE);
