@@ -176,6 +176,7 @@ static UnicodeString createMapName(const AsciiString& filename, const ReplayGame
 }
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature Stubbjax 21/10/2025 Show extra info tooltip when hovering over a replay.
 
 static void replayTooltip(GameWindow* window, WinInstanceData* instData, UnsignedInt mouse)
 {
