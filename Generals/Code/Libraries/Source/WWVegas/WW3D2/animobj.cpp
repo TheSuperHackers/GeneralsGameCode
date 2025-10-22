@@ -89,6 +89,7 @@ Animatable3DObjClass::Animatable3DObjClass(const char * htree_name) :
   ModeAnim.Motion=NULL;
 	ModeAnim.Frame=0.0f;
 	ModeAnim.PrevFrame=0.0f;
+	ModeAnim.LastSyncTime=WW3D::Get_Logic_Time_Milliseconds();
 	ModeAnim.frameRateMultiplier=1.0;	// 020607 srj -- added
 	ModeAnim.animDirection=1.0;	// 020607 srj -- added
 	ModeInterp.Motion0=NULL;
@@ -144,6 +145,7 @@ Animatable3DObjClass::Animatable3DObjClass(const Animatable3DObjClass & src) :
 	ModeAnim.Motion=NULL;
 	ModeAnim.Frame=0.0f;
 	ModeAnim.PrevFrame=0.0f;
+	ModeAnim.LastSyncTime=WW3D::Get_Logic_Time_Milliseconds();
 	ModeAnim.frameRateMultiplier=1.0;	// 020607 srj -- added
 	ModeAnim.animDirection=1.0;	// 020607 srj -- added
 	ModeInterp.Motion0=NULL;
@@ -203,6 +205,7 @@ Animatable3DObjClass & Animatable3DObjClass::operator = (const Animatable3DObjCl
 		ModeAnim.Motion = NULL;
 		ModeAnim.Frame = 0.0f;
 		ModeAnim.PrevFrame = 0.0f;
+		ModeAnim.LastSyncTime = WW3D::Get_Logic_Time_Milliseconds();
 		ModeAnim.frameRateMultiplier=1.0;	// 020607 srj -- added
 		ModeAnim.animDirection=1.0;	// 020607 srj -- added
 		ModeInterp.Motion0 = NULL;
@@ -471,6 +474,7 @@ void Animatable3DObjClass::Set_Animation(HAnimClass * motion, float frame, int m
 		ModeAnim.Motion = motion;
 		ModeAnim.PrevFrame = ModeAnim.Frame;
 		ModeAnim.Frame = frame;
+		ModeAnim.LastSyncTime = WW3D::Get_Logic_Time_Milliseconds();
 		ModeAnim.frameRateMultiplier=1.0;	// 020607 srj -- added
 		ModeAnim.animDirection=1.0;	// 020607 srj -- added
 
@@ -939,14 +943,16 @@ float Animatable3DObjClass::Compute_Current_Frame(float *newDirection) const
 		{
 			frame = ModeAnim.Frame;
 
-			//
-			//	Compute the current frame based on elapsed time.
-			//
 			if (ModeAnim.AnimMode != ANIM_MODE_MANUAL) {
+				//
+				//	Compute the current frame based on elapsed time.
+				//	TheSuperHackers @info Is using elapsed time because frame computation is not guaranteed to be called every render frame!
+				//
 				// TheSuperHackers @tweak The animation render update is now decoupled from the logic step.
-				const float frametime = WW3D::Get_Logic_Frame_Time_Seconds();
-				const float delta = ModeAnim.Motion->Get_Frame_Rate() * ModeAnim.frameRateMultiplier * ModeAnim.animDirection * frametime;
-				frame += delta;
+				const float syncMilliseconds = WW3D::Get_Logic_Time_Milliseconds() - ModeAnim.LastSyncTime;
+				const float animMilliseconds = ModeAnim.Motion->Get_Frame_Rate() * ModeAnim.frameRateMultiplier * ModeAnim.animDirection * syncMilliseconds;
+				const float animSeconds = animMilliseconds * 0.001f;
+				frame += animSeconds;
 
 				//
 				//	Wrap the frame
@@ -1042,6 +1048,7 @@ void Animatable3DObjClass::Single_Anim_Progress (void)
 	//
 	ModeAnim.PrevFrame		= ModeAnim.Frame;
 	ModeAnim.Frame				= Compute_Current_Frame(&ModeAnim.animDirection);
+	ModeAnim.LastSyncTime	= WW3D::Get_Logic_Time_Milliseconds();
 }
 
 
