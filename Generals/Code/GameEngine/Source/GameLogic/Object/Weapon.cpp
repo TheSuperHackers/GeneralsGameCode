@@ -1130,10 +1130,10 @@ void WeaponTemplate::processHistoricDamage(const Object* source, const Coord3D* 
 	// firestorms (CBD) */
 	//
 
-	trimOldHistoricDamage();
-
 	if( m_historicBonusCount > 0 && m_historicBonusWeapon != this )
 	{
+		trimOldHistoricDamage();
+
 		Real radSqr = m_historicBonusRadius * m_historicBonusRadius;
 		Int count = 0;
 		UnsignedInt frameNow = TheGameLogic->getFrame();
