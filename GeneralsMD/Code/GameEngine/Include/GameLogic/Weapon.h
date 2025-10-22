@@ -331,10 +331,12 @@ struct HistoricWeaponDamageInfo
 	// The time and location this weapon was fired
 	UnsignedInt						frame;
 	Coord3D								location;
+	Bool									triggered;
 
 	HistoricWeaponDamageInfo(UnsignedInt f, const Coord3D& l) :
 		frame(f), location(l)
 	{
+		triggered = false;
 	}
 };
 

@@ -1171,6 +1171,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 }
 
 //-------------------------------------------------------------------------------------------------
+#if RETAIL_COMPATIBLE_CRC
 void WeaponTemplate::trimOldHistoricDamage() const
 {
 	UnsignedInt expirationDate = TheGameLogic->getFrame() - TheGlobalData->m_historicDamageLimit;
@@ -1190,6 +1191,21 @@ void WeaponTemplate::trimOldHistoricDamage() const
 		}
 	}
 }
+#else
+void WeaponTemplate::trimOldHistoricDamage() const
+{
+	HistoricWeaponDamageList::iterator it = m_historicDamage.begin();
+
+	while (it != m_historicDamage.end())
+	{
+		UnsignedInt expirationDate = it->frame + m_historicBonusTime;
+		if (TheGameLogic->getFrame() > expirationDate || it->triggered)
+			it = m_historicDamage.erase(it);
+		else
+			++it;
+	}
+}
+#endif
 
 //-------------------------------------------------------------------------------------------------
 static Bool is2DDistSquaredLessThan(const Coord3D& a, const Coord3D& b, Real distSqr)
@@ -1199,6 +1215,7 @@ static Bool is2DDistSquaredLessThan(const Coord3D& a, const Coord3D& b, Real dis
 }
 
 //-------------------------------------------------------------------------------------------------
+#if RETAIL_COMPATIBLE_CRC
 void WeaponTemplate::processHistoricDamage(const Object* source, const Coord3D* pos) const
 {
 	//
@@ -1247,6 +1264,39 @@ void WeaponTemplate::processHistoricDamage(const Object* source, const Coord3D* 
 
 	}
 }
+#else
+void WeaponTemplate::processHistoricDamage(const Object* source, const Coord3D* pos) const
+{
+	if (m_historicBonusCount > 0 && m_historicBonusWeapon != this)
+	{
+		trimOldHistoricDamage();
+
+		Real radSqr = m_historicBonusRadius * m_historicBonusRadius;
+		Int count = 0;
+		for (HistoricWeaponDamageList::iterator it = m_historicDamage.begin(); it != m_historicDamage.end(); ++it)
+		{
+			if (is2DDistSquaredLessThan(*pos, it->location, radSqr))
+			{
+				// This one is close enough in time and distance, so count it. This is tracked by template since it applies
+				// across units, so don't try to clear historicDamage on success in here.
+				(*it).triggered = true;
+				++count;
+			}
+		}
+
+		if (count >= m_historicBonusCount - 1)	// minus 1 since we include ourselves implicitly
+			TheWeaponStore->createAndFireTempWeapon(m_historicBonusWeapon, source, pos);
+		else
+		{
+			for (HistoricWeaponDamageList::iterator it = m_historicDamage.begin(); it != m_historicDamage.end(); ++it)
+				(*it).triggered = false;
+
+			// add AFTER checking for historic stuff
+			m_historicDamage.push_back(HistoricWeaponDamageInfo(TheGameLogic->getFrame(), *pos));
+		}
+	}
+}
+#endif
 
 //-------------------------------------------------------------------------------------------------
 void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, const Coord3D *pos, const WeaponBonus& bonus, Bool isProjectileDetonation) const
