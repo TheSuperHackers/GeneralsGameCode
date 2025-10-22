@@ -449,7 +449,7 @@ void BuildList::OnSelchangeBuildList()
 	PointerTool::clearSelection(); // unselect other stuff.
 	if (pBuildInfo) {
 		CWnd *edit;
-		static char buff[64];
+		static char buff[32];
 		pBuildInfo->setSelected(true);
 
 		m_angle = pBuildInfo->getAngle() * 180/PI;
@@ -638,7 +638,7 @@ void BuildList::PopSliderChanged(const long sliderID, long theVal)
 {
 //	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	CWnd* edit;
-	static char buff[64];
+	static char buff[32];
 	switch (sliderID) {
 		case IDC_HEIGHT_POPUP:
 			m_height = theVal;

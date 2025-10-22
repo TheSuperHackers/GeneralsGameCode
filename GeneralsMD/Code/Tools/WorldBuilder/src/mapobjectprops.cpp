@@ -472,7 +472,7 @@ void MapObjectProps::_ScaleToDict(void)
 void MapObjectProps::ShowZOffset(MapObject *pMapObj)
 {
   const Coord3D *loc = pMapObj->getLocation();
-  static char buff[64];
+  static char buff[32];
   m_height = loc->z;
   snprintf(buff, ARRAY_SIZE(buff), "%0.2f", loc->z);
   CWnd* edit = GetDlgItem(IDC_MAPOBJECT_ZOffset);
@@ -504,7 +504,7 @@ void MapObjectProps::SetZOffset(void)
 void MapObjectProps::ShowAngle(MapObject *pMapObj)
 {
   m_angle = pMapObj->getAngle() * 180 / PI;
-  static char buff[64];
+  static char buff[32];
   snprintf(buff, ARRAY_SIZE(buff), "%0.2f", m_angle);
   CWnd* edit = GetDlgItem(IDC_MAPOBJECT_Angle);
   edit->SetWindowText(buff);
@@ -515,7 +515,7 @@ void MapObjectProps::ShowAngle(MapObject *pMapObj)
 void MapObjectProps::ShowPosition(MapObject *pMapObj)
 {
   m_position = *pMapObj->getLocation();
-  static char buff[128];
+  static char buff[64];
   snprintf(buff, ARRAY_SIZE(buff), "%0.2f, %0.2f", m_position.x, m_position.y);
   CWnd* edit = GetDlgItem(IDC_MAPOBJECT_XYPosition);
   edit->SetWindowText(buff);
@@ -617,7 +617,7 @@ void MapObjectProps::PopSliderChanged(const long sliderID, long theVal)
     return;
 
 	CWnd* edit;
-	static char buff[64];
+	static char buff[32];
 	switch (sliderID) {
 		case IDC_HEIGHT_POPUP:
 			if (!m_posUndoable) {
@@ -1124,7 +1124,7 @@ void MapObjectProps::_DictToStoppingDistance(void)
 
 	CWnd* pItem = GetDlgItem(IDC_MAPOBJECT_StoppingDistance);
 	if (pItem) {
-		static char buff[64];
+		static char buff[32];
 		snprintf(buff, ARRAY_SIZE(buff), "%g", stoppingDistance);
 		pItem->SetWindowText(buff);
 	}

@@ -148,7 +148,7 @@ BOOL MeshMoldOptions::OnInitDialog()
 
 void MeshMoldOptions::setHeight(Real height)
 {
-	char buffer[64];
+	char buffer[32];
 	snprintf(buffer, ARRAY_SIZE(buffer), "%.2f", height);
 	m_currentHeight = height;
 	if (m_staticThis && !m_staticThis->m_updating) {
