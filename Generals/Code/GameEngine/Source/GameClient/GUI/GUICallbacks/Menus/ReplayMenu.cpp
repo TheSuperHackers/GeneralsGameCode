@@ -56,7 +56,7 @@ struct ReplayInfoCacheEntry
 	UnicodeString extraStr;
 };
 
-static std::map<AsciiString, ReplayInfoCacheEntry> replayInfoCache;
+static std::map<UnicodeString, ReplayInfoCacheEntry> replayInfoCache;
 
 // window ids -------------------------------------------------------------------------------------
 static NameKeyType parentReplayMenuID = NAMEKEY_INVALID;
@@ -192,10 +192,8 @@ static void replayTooltip(GameWindow* window, WinInstanceData* instData, Unsigne
 	}
 
 	UnicodeString replayFileName = GetReplayFilenameFromListbox(window, row);
-	AsciiString replayFileNameAscii;
-	replayFileNameAscii.translate(replayFileName);
 
-	std::map<AsciiString, ReplayInfoCacheEntry>::const_iterator it = replayInfoCache.find(replayFileNameAscii);
+	std::map<UnicodeString, ReplayInfoCacheEntry>::const_iterator it = replayInfoCache.find(replayFileName);
 	if (it != replayInfoCache.end())
 		TheMouse->setCursorTooltip(it->second.extraStr, -1, NULL, 1.5f);
 	else
@@ -300,7 +298,10 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 			entry.header = header;
 			entry.info = info;
 			entry.extraStr = extraStr;
-			replayInfoCache[asciistr] = entry;
+
+			UnicodeString key;
+			key.translate(asciistr);
+			replayInfoCache[key] = entry;
 
 			// pick a color
 			Color color;
