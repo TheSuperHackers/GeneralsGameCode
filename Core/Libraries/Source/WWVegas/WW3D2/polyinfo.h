@@ -40,7 +40,6 @@
 
 #pragma once
 
-
 class TextureClass;
 class VertexMaterialClass;
 class ShaderClass;
