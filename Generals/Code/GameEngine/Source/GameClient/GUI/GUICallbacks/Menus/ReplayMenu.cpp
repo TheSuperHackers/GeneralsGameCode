@@ -274,11 +274,14 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 			// extra
 			UnicodeString extraStr;
 
+			if (header.endTime < header.startTime)
+				header.startTime = 0;
+
 			time_t totalSeconds = header.endTime - header.startTime;
 			UnsignedInt hours = totalSeconds / 3600;
 			UnsignedInt mins = (totalSeconds % 3600) / 60;
 			UnsignedInt secs = totalSeconds % 60;
-			Real fps = header.frameCount / totalSeconds;
+			Real fps = totalSeconds > 0 ? header.frameCount / totalSeconds : 0;
 			extraStr.format(L"%02u:%02u:%02u (%g fps)", hours, mins, secs, fps);
 
 			if (header.localPlayerIndex >= 0)
