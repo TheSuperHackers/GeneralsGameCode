@@ -1282,4 +1282,3 @@ NetTimeOutGameStartCommandMsg::~NetTimeOutGameStartCommandMsg() {
 size_t NetTimeOutGameStartCommandMsg::getPackedByteCount() const {
 	return sizeof(NetPacketTimeOutGameStartMessage);
 }
-

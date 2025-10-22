@@ -31,13 +31,24 @@
 #pragma pack(push, 1)
 
 ////////////////////////////////////////////////////////////////////////////////
-// Common packet field structures
+// Network packet field type definitions
 ////////////////////////////////////////////////////////////////////////////////
 
-// Field header: 1-byte type identifier followed by data
-struct NetPacketFieldHeader {
-	char fieldType;  // 'T', 'R', 'P', 'F', 'C', or 'D'
-};
+// Network packet field type definitions
+typedef UnsignedByte NetPacketFieldType;
+
+namespace NetPacketFieldTypes {
+	constexpr const NetPacketFieldType CommandType = 'T';		// NetCommandType field
+	constexpr const NetPacketFieldType Relay = 'R';				// Relay field
+	constexpr const NetPacketFieldType PlayerId = 'P';			// Player ID field
+	constexpr const NetPacketFieldType CommandId = 'C';			// Command ID field
+	constexpr const NetPacketFieldType Frame = 'F';				// Frame field
+	constexpr const NetPacketFieldType Data = 'D';				// Data payload field
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Common packet field structures
+////////////////////////////////////////////////////////////////////////////////
 
 // Command Type field: 'T' + UnsignedByte
 struct NetPacketCommandTypeField {
@@ -274,6 +285,37 @@ struct NetPacketDisconnectVoteCommand {
 	UnsignedInt voteFrame;
 };
 
+////////////////////////////////////////////////////////////////////////////////
+// Packed Structs for getPackedByteCount() calculations
+// These structs represent the fixed portion of variable-length command messages
+////////////////////////////////////////////////////////////////////////////////
+
+struct NetPacketChatCommand {
+	NetPacketCommandTypeField commandType;
+	NetPacketRelayField relay;
+	NetPacketPlayerIdField playerId;
+	NetPacketDataFieldHeader dataHeader;
+	NetPacketFrameField frame;
+	NetPacketCommandIdField commandId;
+};
+
+struct NetPacketDisconnectChatCommand {
+	NetPacketCommandTypeField commandType;
+	NetPacketRelayField relay;
+	NetPacketPlayerIdField playerId;
+	NetPacketDataFieldHeader dataHeader;
+};
+
+// Game command packed struct (variable: game message data follows)
+struct NetPacketGameCommand {
+	NetPacketCommandTypeField commandType;
+	NetPacketRelayField relay;
+	NetPacketPlayerIdField playerId;
+	NetPacketDataFieldHeader dataHeader;
+	NetPacketFrameField frame;
+	NetPacketCommandIdField commandId;
+};
+
 // Wrapper command packet (fixed size - contains metadata about wrapped command)
 // Fields: T + type, P + playerID, C + commandID, R + relay, D + metadata
 struct NetPacketWrapperCommand {
@@ -301,6 +343,15 @@ struct NetPacketFileCommandHeader {
 	NetPacketDataFieldHeader dataHeader;
 };
 
+// File command packed struct (variable: filename and file data follow)
+struct NetPacketFileCommand {
+	NetPacketCommandTypeField commandType;
+	NetPacketRelayField relay;
+	NetPacketPlayerIdField playerId;
+	NetPacketDataFieldHeader dataHeader;
+	NetPacketCommandIdField commandId;
+};
+
 // File announce command header (variable: filename and metadata follow)
 // Fixed fields: T + type, R + relay, P + playerID, C + commandID, D
 // Variable: null-terminated filename + UnsignedShort fileID + UnsignedByte playerMask
@@ -310,6 +361,15 @@ struct NetPacketFileAnnounceCommandHeader {
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
 	NetPacketDataFieldHeader dataHeader;
+};
+
+// File announce command packed struct (variable: filename and metadata follow)
+struct NetPacketFileAnnounceCommand {
+	NetPacketCommandTypeField commandType;
+	NetPacketRelayField relay;
+	NetPacketPlayerIdField playerId;
+	NetPacketDataFieldHeader dataHeader;
+	NetPacketCommandIdField commandId;
 };
 
 // File progress command packet
@@ -402,4 +462,3 @@ struct NetPacketFrameResendRequestCommand {
 
 // Restore normal struct packing
 #pragma pack(pop)
-
