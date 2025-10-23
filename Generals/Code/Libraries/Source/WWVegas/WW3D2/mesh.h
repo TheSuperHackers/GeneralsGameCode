@@ -35,8 +35,8 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #pragma once
+
 #include "always.h"
 #include "rendobj.h"
 #include "bittype.h"

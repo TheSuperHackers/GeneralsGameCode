@@ -34,8 +34,8 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #pragma once
+
 #include "saveloadsubsystem.h"
 #include "Vector.H"
 #include "bittype.h"

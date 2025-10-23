@@ -33,7 +33,9 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #pragma once
+
 #include	<stdlib.h>
 
 // TheSuperHackers @build feliwir 17/04/2025 include _ltrotl macros

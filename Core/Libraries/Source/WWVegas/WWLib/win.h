@@ -33,7 +33,9 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #pragma once
+
 /*
 **	This header file includes the Windows headers. If there are any special pragmas that need
 **	to occur around this process, they are performed here. Typically, certain warnings will need

@@ -27,6 +27,7 @@
 // Author: JohnM And MattC, August 13, 2002
 
 #pragma once
+
 #include "Common/PerfTimer.h"
 
 #ifdef PERF_TIMERS

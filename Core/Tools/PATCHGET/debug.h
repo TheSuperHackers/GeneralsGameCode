@@ -19,7 +19,9 @@
 // FILE: debug.h //////////////////////////////////////////////////////////////
 // Minimal debug info
 // Author: Matthew D. Campbell, Sept 2002
+
 #pragma once
+
 namespace patchget
 {
 

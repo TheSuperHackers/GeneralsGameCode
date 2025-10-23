@@ -26,7 +26,9 @@
 //
 // Profile module command interface
 //////////////////////////////////////////////////////////////////////////////
+
 #pragma once
+
 class ProfileCmdInterface: public DebugCmdInterface
 {
   struct Factory

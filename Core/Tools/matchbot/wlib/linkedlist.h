@@ -32,7 +32,9 @@ Copies of the data are stored instead of a pointer to the original.
 
 If you want to store pointers then the template should be of a pointer type.
 \****************************************************************************/
+
 #pragma once
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

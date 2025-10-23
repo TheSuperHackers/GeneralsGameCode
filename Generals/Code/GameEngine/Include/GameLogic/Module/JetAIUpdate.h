@@ -26,6 +26,7 @@
 // Author: Steven Johnson, June 2002
 
 #pragma once
+
 #include "Common/STLTypedefs.h"
 #include "Common/GameMemory.h"
 #include "GameLogic/AIStateMachine.h"

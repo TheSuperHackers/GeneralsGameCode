@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, February 2002
 
 #pragma once
+
 #include "Common/GameMemory.h"
 #include "GameLogic/AIStateMachine.h"
 

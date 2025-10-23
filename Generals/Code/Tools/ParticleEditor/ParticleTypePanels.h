@@ -32,6 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
+
 #include "Resource.h"
 #include "ISwapablePanel.h"
 

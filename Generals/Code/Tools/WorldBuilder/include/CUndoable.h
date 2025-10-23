@@ -21,6 +21,7 @@
 // Author: John Ahlquist, April 2001
 
 #pragma once
+
 #include "Lib/BaseType.h"
 #include "../../GameEngine/Include/Common/MapObject.h"
 #include "../../GameEngine/Include/Common/GameCommon.h"

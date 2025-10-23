@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, March 2001
 
 #pragma once
+
 #include "Common/GameType.h"
 #include "Common/MessageStream.h"		// for GameMessageTranslator
 #include "Common/Snapshot.h"

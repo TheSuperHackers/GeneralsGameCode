@@ -30,8 +30,8 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #pragma once
+
 // Forward declarations
 class Vector3Randomizer;
 class Vector3;

@@ -26,7 +26,9 @@
 //
 // Result function interface and result functions
 //////////////////////////////////////////////////////////////////////////////
+
 #pragma once
+
 /**
   \brief Result function class.
 

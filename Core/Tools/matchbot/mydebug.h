@@ -49,7 +49,9 @@ This won't compile, read the code until you figure it out.  Only then
 will you be ready to leave grasshopper.
 
 \*****************************************************************************/
+
 #pragma once
+
 #define USE_SEM
 
 #include "wstypes.h"

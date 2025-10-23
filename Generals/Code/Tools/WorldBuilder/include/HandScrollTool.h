@@ -21,6 +21,7 @@
 // Author: John Ahlquist, May 2001
 
 #pragma once
+
 #include "Tool.h"
 /**************************************************************************
                             HandScrollTool

@@ -27,6 +27,7 @@
 // Do Not Distribute
 
 #pragma once
+
 // For load timings
 enum { PERFMETRICS_LOAD_STARTFRAME = 0 };
 enum { PERFMETRICS_LOAD_STOPFRAME = 1 };

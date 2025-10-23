@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, March 2002
 
 #pragma once
+
 #include "gamespy/gp/gp.h"
 
 void GPRecvBuddyRequestCallback(GPConnection * connection, GPRecvBuddyRequestArg * arg, void * param);

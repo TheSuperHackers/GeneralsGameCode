@@ -21,7 +21,9 @@
 /* ABSTRACT
 gimex.h - Graphics IMport EXport (GIMEX) v2.26
 @ */
+
 #pragma once
+
 #ifdef __cplusplus
 extern "C" {
 #endif

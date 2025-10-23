@@ -20,7 +20,9 @@
 // fast trig functions
 // Author: Sondra Iverson, March 1998
 // Converted to Generals by Matthew D. Campbell, February 2002
+
 #pragma once
+
 Real Sin(Real);
 Real Cos(Real);
 Real Tan(Real);

@@ -37,8 +37,8 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #pragma once
+
 #include "always.h"
 #include "multilist.h"
 

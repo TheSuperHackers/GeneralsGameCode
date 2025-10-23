@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, March 2001
 
 #pragma once
+
 #include <stdio.h>
 #include "Common/SubsystemInterface.h"
 #include "View.h"

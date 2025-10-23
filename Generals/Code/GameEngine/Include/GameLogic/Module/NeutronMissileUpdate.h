@@ -27,6 +27,7 @@
 // Desc:		Missile behavior
 
 #pragma once
+
 #include "GameClient/RadiusDecal.h"
 #include "Common/GameType.h"
 #include "Common/GlobalData.h"

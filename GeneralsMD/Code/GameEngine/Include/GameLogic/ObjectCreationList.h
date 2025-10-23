@@ -31,6 +31,7 @@
 // All OCLs return the first object that is created (or NULL if not applicable).
 
 #pragma once
+
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
 

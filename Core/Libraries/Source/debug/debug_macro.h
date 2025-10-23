@@ -26,7 +26,9 @@
 //
 // Debugging macros
 //////////////////////////////////////////////////////////////////////////////
+
 #pragma once
+
 // I'm putting the documentation for the following macros
 // here because Doxygen otherwise includes the values of each macro
 // in the documentation. I don't want that (it would expose some

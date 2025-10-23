@@ -27,4 +27,5 @@
 // JKMCD Aug 2002
 
 #pragma once
+
 typedef UnsignedInt WeaponBonusConditionFlags;

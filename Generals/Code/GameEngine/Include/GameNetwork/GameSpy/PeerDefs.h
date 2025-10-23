@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, June 2002
 
 #pragma once
+
 #include "gamespy/peer/peer.h"
 #include "gamespy/gp/gp.h"
 

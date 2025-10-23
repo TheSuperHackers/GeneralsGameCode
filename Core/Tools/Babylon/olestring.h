@@ -19,7 +19,9 @@
 //
 // OLEString
 //
+
 #pragma once
+
 const unsigned int OLESTRING_DEFAULT_SIZE = 256;
 
 class OLEString

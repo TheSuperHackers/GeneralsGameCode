@@ -28,6 +28,7 @@
 // Author: John Ahlquist, April 2001
 
 #pragma once
+
 #include "Common/Dict.h"
 #include "Common/GameMemory.h"
 #include "GameClient/TerrainRoads.h"

@@ -28,6 +28,7 @@
 // Author: John Ahlquist, April 2001
 
 #pragma once
+
 #include "Lib/BaseType.h"
 #include "WWLib/refcount.h"
 #include "WWMath/vector3.h"

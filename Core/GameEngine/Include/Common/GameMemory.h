@@ -44,6 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
 // Turn off memory pool checkpointing for now.
 #ifndef DISABLE_MEMORYPOOL_CHECKPOINTING
 	#define DISABLE_MEMORYPOOL_CHECKPOINTING 1

@@ -22,8 +22,8 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
+
 #include "Lib/BaseType.h"
 #include "Common/MessageStream.h"
 

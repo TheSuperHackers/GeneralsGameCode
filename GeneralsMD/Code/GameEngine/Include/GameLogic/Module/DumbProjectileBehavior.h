@@ -27,6 +27,7 @@
 // Desc:
 
 #pragma once
+
 #include "Common/GameType.h"
 #include "Common/GlobalData.h"
 #include "Common/STLTypedefs.h"

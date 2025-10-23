@@ -25,7 +25,9 @@ Author      : Neal Kettler
 Start Date  : June 1, 1997
 Last Update : June 17, 1997
 \****************************************************************************/
+
 #pragma once
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "wstypes.h"

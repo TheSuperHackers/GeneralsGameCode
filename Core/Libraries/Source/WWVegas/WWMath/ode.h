@@ -35,8 +35,8 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #pragma once
+
 #include "always.h"
 #include "Vector.H"
 #include "wwdebug.h"

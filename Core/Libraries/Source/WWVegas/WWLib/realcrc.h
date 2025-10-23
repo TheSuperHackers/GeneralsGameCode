@@ -33,6 +33,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #pragma once
 
 unsigned long	CRC_Memory( const unsigned char *data, unsigned long length, unsigned long crc = 0 );

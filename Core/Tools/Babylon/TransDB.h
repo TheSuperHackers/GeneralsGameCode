@@ -20,7 +20,9 @@
 //	ParseStr.h
 //
 //
+
 #pragma once
+
 #include "olestring.h"
 #include "list.h"
 #include "bin.h"

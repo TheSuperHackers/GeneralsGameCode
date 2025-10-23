@@ -32,6 +32,7 @@
 // Author: John Ahlquist, November 2001
 
 #pragma once
+
 #include "Common/GameMemory.h"
 #include "Common/Snapshot.h"
 #include "Common/STLTypedefs.h"

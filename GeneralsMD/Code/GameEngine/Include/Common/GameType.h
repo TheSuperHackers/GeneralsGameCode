@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, April 2001
 
 #pragma once
+
 #include "Lib/BaseType.h"
 
 // the default size of the world map

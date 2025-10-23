@@ -27,6 +27,7 @@
 //////////////////////////////////////////////////
 
 #pragma once
+
 #include "Common/LocalFile.h"
 
 class StdLocalFile : public LocalFile

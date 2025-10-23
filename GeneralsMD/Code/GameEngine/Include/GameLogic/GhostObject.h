@@ -28,6 +28,7 @@
 // Author: Mark Wilczynski, August 2002
 
 #pragma once
+
 #include "Lib/BaseType.h"
 #include "Common/Snapshot.h"
 

@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, December 2001
 
 #pragma once
+
 #include "GameNetwork/GameInfo.h"
 #include "GameNetwork/LANPlayer.h"
 

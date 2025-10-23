@@ -18,6 +18,7 @@
 
 // DebugWindow.h : main header file for the DEBUGWINDOW DLL
 //
+
 #pragma once
 
 #ifndef __AFXWIN_H__

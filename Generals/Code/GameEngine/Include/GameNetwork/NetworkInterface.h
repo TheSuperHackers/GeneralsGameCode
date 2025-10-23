@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, July 2001
 
 #pragma once
+
 #include "Common/MessageStream.h"
 #include "GameNetwork/ConnectionManager.h"
 #include "GameNetwork/User.h"

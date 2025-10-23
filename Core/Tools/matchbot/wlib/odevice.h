@@ -15,7 +15,9 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 #pragma once
+
 // This virtual base class provides an interface for output devices
 //  that can be used for the debugging package.
 class OutputDevice

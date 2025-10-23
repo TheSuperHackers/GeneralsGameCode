@@ -36,8 +36,8 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #pragma once
+
 #define LOG_MEMORY	// Comment this out to disable memlog compiling in
 
 class MemLogClass;

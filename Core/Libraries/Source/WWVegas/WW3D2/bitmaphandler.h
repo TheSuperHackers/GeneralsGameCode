@@ -17,6 +17,7 @@
 */
 
 #pragma once
+
 #include "always.h"
 #include "ww3dformat.h"
 #include "vector3.h"

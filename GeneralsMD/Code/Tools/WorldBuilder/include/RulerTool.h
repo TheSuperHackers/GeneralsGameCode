@@ -20,6 +20,7 @@
 // Author: Mike Lytle, January 2003
 
 #pragma once
+
 #include "Tool.h"
 
 class RulerTool : public Tool

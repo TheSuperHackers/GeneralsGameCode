@@ -26,7 +26,9 @@
 //
 // Internal result functions
 //////////////////////////////////////////////////////////////////////////////
+
 #pragma once
+
 /// \brief Simple CSV format flat file result function, for all threads.
 class ProfileResultFileCSV: public ProfileResultInterface
 {

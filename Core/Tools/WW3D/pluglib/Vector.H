@@ -49,7 +49,9 @@
  *   DynamicVectorClass<T>::ID -- Find matching value in the dynamic vector.                   *
  *   DynamicVectorClass<T>::Uninitialized_Add -- Add an empty place to the vector.             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #pragma once
+
 #include	"noinit.h"
 #include	<assert.h>
 #include	<new.h>

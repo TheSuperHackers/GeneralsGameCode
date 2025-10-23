@@ -17,6 +17,7 @@
 */
 
 #pragma once
+
 #include "always.h"
 
 struct IDirect3DTexture8;

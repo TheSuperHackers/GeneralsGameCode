@@ -27,6 +27,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
 void PopulateInGameDiplomacyPopup( void );
 void UpdateDiplomacyBriefingText(AsciiString newText, Bool clear);
 

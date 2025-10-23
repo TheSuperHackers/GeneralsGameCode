@@ -22,7 +22,9 @@
 // Creation Date: 9/13/2002
 // Description: Key/value pair template expansion class
 // ---------------------------------------------------------------------------
+
 #pragma once
+
 #include <map>
 #include <Utility/hash_map_adapter.h>
 #include <string>

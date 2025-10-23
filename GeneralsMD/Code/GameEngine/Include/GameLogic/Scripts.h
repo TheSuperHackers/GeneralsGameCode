@@ -28,6 +28,7 @@
 // Author: John Ahlquist, November 2001
 
 #pragma once
+
 #include "Common/Snapshot.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "Common/ObjectStatusTypes.h"

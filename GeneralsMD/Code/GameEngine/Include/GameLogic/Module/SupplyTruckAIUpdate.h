@@ -27,6 +27,7 @@
 // Desc:   State machine that controls when and with who a Truck docks
 
 #pragma once
+
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 

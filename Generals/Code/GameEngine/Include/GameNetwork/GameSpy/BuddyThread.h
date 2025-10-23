@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, June 2002
 
 #pragma once
+
 #include "gamespy/gp/gp.h"
 
 #define MAX_BUDDY_CHAT_LEN 128

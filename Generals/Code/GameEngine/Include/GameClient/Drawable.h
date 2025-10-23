@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, March 2001
 
 #pragma once
+
 #include "Common/AudioEventRTS.h"
 #include "Common/GameType.h"
 #include "Common/ModelState.h"

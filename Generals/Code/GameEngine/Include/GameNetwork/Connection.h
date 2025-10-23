@@ -34,6 +34,7 @@
  */
 
 #pragma once
+
 #include "GameNetwork/NetCommandList.h"
 #include "GameNetwork/User.h"
 #include "GameNetwork/Transport.h"

@@ -25,7 +25,9 @@
 // EA Pacific
 // John McDonald, Jr
 // Do not distribute
+
 #pragma once
+
 #include <Lib/BaseType.h>
 
 // if it is set by the options panel, use the system setting parameter. Otherwise, this will be

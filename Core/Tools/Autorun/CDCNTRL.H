@@ -36,7 +36,6 @@
 
 #pragma once
 
-
 //#include	"always.h"
 //#include	<winmin.h>
 #define  STRICT

@@ -25,6 +25,7 @@
 // ArmorSet.h
 
 #pragma once
+
 #include "Lib/BaseType.h"
 #include "Common/GameType.h"
 #include "Common/SparseMatchFinder.h"

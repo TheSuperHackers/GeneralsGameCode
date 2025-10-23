@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, September 2001
 
 #pragma once
+
 class CommandLine
 {
 public:

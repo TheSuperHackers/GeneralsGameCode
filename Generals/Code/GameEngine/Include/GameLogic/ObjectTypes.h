@@ -28,6 +28,7 @@
 // DO NOT DISTRIBUTE
 
 #pragma once
+
 #include "Common/AsciiString.h"
 #include "Common/Snapshot.h"
 

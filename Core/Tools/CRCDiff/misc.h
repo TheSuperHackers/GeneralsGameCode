@@ -22,7 +22,9 @@
 // Creation Date: 9/12/2002
 // Description: misc utils
 // ---------------------------------------------------------------------------
+
 #pragma once
+
 #include <string>
 
 std::string intToString(int val);

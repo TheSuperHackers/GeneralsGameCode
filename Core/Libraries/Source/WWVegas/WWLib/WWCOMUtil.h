@@ -33,7 +33,9 @@
 *     $Modtime: 8/02/01 3:00p $
 *
 ******************************************************************************/
+
 #pragma once
+
 #include <oaidl.h>
 
 //! Invoke PropertyGet on IDispatch interface.

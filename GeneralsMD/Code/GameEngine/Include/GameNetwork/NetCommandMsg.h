@@ -27,6 +27,7 @@
 // are queued up to execute at a later time
 
 #pragma once
+
 #include "Lib/BaseType.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "Common/UnicodeString.h"

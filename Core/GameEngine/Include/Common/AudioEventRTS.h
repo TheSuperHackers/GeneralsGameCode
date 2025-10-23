@@ -27,6 +27,7 @@
 // Author: John K. McDonald, March 2002
 
 #pragma once
+
 #include "Common/AsciiString.h"
 #include "Common/GameAudio.h"
 #include "Common/GameMemory.h"

@@ -22,8 +22,8 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
+
 #include "GameNetwork/NetworkDefs.h"
 #include "GameNetwork/FrameData.h"
 

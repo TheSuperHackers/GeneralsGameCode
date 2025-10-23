@@ -31,6 +31,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
+
 #include "Vector.H"
 #include "part_ldr.h"
 #include "part_emt.h"

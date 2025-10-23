@@ -22,8 +22,8 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
+
 #include "GameNetwork/NetCommandRef.h"
 #include "Lib/BaseType.h"
 //#include "GameNetwork/ConnectionManager.h"

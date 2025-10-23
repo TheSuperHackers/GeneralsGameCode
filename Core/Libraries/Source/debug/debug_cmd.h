@@ -26,7 +26,9 @@
 //
 // Debug command interface
 //////////////////////////////////////////////////////////////////////////////
+
 #pragma once
+
 /**
   \interface DebugCmdInterface debug.h <rts/debug.h>
 

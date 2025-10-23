@@ -27,5 +27,6 @@
 // Author: Matthew D. Campbell, July 2002
 
 #pragma once
+
 void HandleBuddyResponses(void);
 void PopulateOldBuddyMessages(void);

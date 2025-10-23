@@ -27,6 +27,7 @@
 // Author: John K. McDonald, March 2002
 
 #pragma once
+
 struct DrawGroupInfo
 {
 	AsciiString m_fontName;

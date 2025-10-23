@@ -26,6 +26,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // tell the compiler to only load this file once
+
 #pragma once
 
 #include "Lib/BaseTypeCore.h"

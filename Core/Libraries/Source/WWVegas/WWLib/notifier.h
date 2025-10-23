@@ -34,7 +34,9 @@
 *
 * 06/28/02 KM Notify name change to avoid MAX conflicts                                       *
 ******************************************************************************/
+
 #pragma once
+
 // Reduce warning level for STL
 #if defined(_MSC_VER)
 #pragma warning(push, 3)

@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, August 2002
 
 #pragma once
+
 #include "Common/UnicodeString.h"
 #include "Common/AsciiString.h"
 #include "Common/STLTypedefs.h"

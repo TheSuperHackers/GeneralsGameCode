@@ -24,7 +24,9 @@ we are now in.  It even accounts for daylight savings!  One caveat is that it
 only tells you info about what the daylight savings info is now, not 5 minutes
 from now, not 2 hours ago.  Oh well.
 \****************************************************************************/
+
 #pragma once
+
 // Just fill in both the timezone description and its offset from GMT
 void GetTimezoneInfo(const char * &timezone_str, int &timezone_offset);
 

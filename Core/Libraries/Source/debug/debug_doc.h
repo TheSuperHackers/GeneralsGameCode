@@ -26,7 +26,9 @@
 //
 // additional Doxygen module documentation
 //////////////////////////////////////////////////////////////////////////////
+
 #pragma once
+
 // This generates a small main page for Doxygen if a module only
 // documentation is built.
 #ifndef DOXYGEN_GLOBAL_DOC

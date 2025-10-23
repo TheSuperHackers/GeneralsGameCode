@@ -62,6 +62,7 @@ gimex.h - Primary header file for the GIMEX API.
 /*    3.46 021205 FB about firstextension                           */
 /*                                                                  */
 /*------------------------------------------------------------------*/
+
 #pragma once
 
 #if defined(_MSC_VER)

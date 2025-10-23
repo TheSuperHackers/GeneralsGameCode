@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, October 2000
 
 #pragma once
+
 #include "Lib/BaseType.h"
 #include "ref_ptr.h"
 

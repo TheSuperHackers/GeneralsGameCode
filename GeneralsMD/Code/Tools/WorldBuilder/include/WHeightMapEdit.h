@@ -21,6 +21,7 @@
 // Author: John Ahlquist, April 2001
 
 #pragma once
+
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 
 class DataChunkOutput;

@@ -25,7 +25,9 @@ Author      : Neal Kettler
 Start Date  : June 9, 1997
 Last Update : May 13, 1999
 \***************************************************************************/
+
 #pragma once
+
 #include "wstypes.h"
 #include "dictionary.h"
 #include "wstring.h"

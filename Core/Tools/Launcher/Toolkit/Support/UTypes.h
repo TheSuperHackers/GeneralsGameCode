@@ -33,7 +33,9 @@
 *     $Revision:  $
 *
 ******************************************************************************/
+
 #pragma once
+
 //! Signed integer value
 typedef int Int;
 

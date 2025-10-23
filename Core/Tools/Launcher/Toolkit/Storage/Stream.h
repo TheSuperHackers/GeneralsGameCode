@@ -33,7 +33,9 @@
 *     $Revision:  $
 *
 ****************************************************************************/
+
 #pragma once
+
 #include <Support/UTypes.h>
 
 class Stream

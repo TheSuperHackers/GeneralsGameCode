@@ -27,6 +27,7 @@
 // Author: Steven Johnson, September 2001
 
 #pragma once
+
 #include "Common/GameType.h"
 #include "Common/GameMemory.h"
 

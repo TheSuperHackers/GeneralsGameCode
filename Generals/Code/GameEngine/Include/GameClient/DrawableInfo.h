@@ -27,6 +27,7 @@
 // Author: Mark Wilczynski, August 2002
 
 #pragma once
+
 #include "Common/GameType.h"
 
 class Drawable;

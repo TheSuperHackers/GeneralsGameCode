@@ -38,6 +38,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
+
 #include "refcount.h"
 #include "w3d_file.h"
 #include "w3derr.h"

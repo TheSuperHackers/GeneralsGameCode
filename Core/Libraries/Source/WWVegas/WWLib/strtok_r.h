@@ -35,6 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
+
 #ifndef _UNIX
 char *strtok_r(char *strptr, const char *delimiters, char **lasts);
 #endif

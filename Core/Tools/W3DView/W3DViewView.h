@@ -19,6 +19,7 @@
 // W3DViewView.h : interface of the CW3DViewView class
 //
 /////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 
 class CW3DViewView : public CView

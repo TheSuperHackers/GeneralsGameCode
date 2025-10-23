@@ -27,6 +27,7 @@
 ///////////////////////////////////////////////////////////
 
 #pragma once
+
 #include "Common/ArchiveFile.h"
 #include "Common/AsciiString.h"
 #include "Common/List.h"

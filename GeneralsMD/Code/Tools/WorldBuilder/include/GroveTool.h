@@ -20,6 +20,7 @@
 // Author: John Ahlquist, May 2001
 
 #pragma once
+
 #include "Lib/BaseType.h"
 #include "Tool.h"
 #include "Common/MapObject.h"

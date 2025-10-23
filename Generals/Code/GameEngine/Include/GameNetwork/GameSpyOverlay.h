@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, March 2002
 
 #pragma once
+
 #include "Common/NameKeyGenerator.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"

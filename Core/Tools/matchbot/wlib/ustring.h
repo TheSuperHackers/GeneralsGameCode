@@ -15,7 +15,9 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 #pragma once
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <Utility/iostream_adapter.h>

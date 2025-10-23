@@ -17,7 +17,9 @@
 */
 
 // Download.h : Declaration of the CDownload
+
 #pragma once
+
 //#include "../resource.h"       // main symbols
 #include "WWDownload/ftp.h"
 #include "WWDownload/downloaddefs.h"

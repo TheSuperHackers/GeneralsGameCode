@@ -17,6 +17,7 @@
 */
 
 #pragma once
+
 class SplashScreen : public CDialog
 {
 	protected:

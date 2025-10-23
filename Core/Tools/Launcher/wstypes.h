@@ -27,7 +27,9 @@ Last Update : June 17, 1997
 
 Standard type definitions for the sake of portability and readability.
 \***************************************************************************/
+
 #pragma once
+
 #ifndef TRUE
 #define TRUE               1
 #endif

@@ -36,7 +36,9 @@
  *   UniqueArrayClass<T>::~UniqueArrayClass -- destructor                                      *
  *   UniqueArrayClass<T>::Add -- Add an item to the array                                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #pragma once
+
 #ifndef HASHCALC_H
 #include "hashcalc.h"
 #endif

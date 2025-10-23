@@ -28,6 +28,7 @@
 // DO NOT DISTRIBUTE
 
 #pragma once
+
 #include <d3dx8math.h>
 #include "Common/STLTypedefs.h"
 

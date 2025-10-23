@@ -21,6 +21,7 @@
 // Author: John Ahlquist, Oct. 2001
 
 #pragma once
+
 #include "Tool.h"
 class WorldHeightMapEdit;
 /*************************************************************************/

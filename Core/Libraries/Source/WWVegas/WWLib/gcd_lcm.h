@@ -33,7 +33,9 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #pragma once
+
 #include "always.h"
 
 // The greatest common divisor (GCD) is the greatest integer which is a

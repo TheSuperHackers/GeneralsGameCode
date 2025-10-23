@@ -33,7 +33,9 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #pragma once
+
 #pragma message ("(gth) disabling TGAtoDXTClass temporarily so I can test the WW libs merge...")
 #if 0
 

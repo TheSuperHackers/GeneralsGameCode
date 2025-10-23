@@ -32,6 +32,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
 #include "WW3D2/texture.h"
 enum FilterTypes CPP_11(: Int);
 enum FilterModes CPP_11(: Int);

@@ -28,6 +28,7 @@
 // DO NOT DISTRIBUTE
 
 #pragma once
+
 //-------------------------------------------------------------------------------------------------
 /**
 	One horizontal line of the circle we are going to generate, the points drawn should be from

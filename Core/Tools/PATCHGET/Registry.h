@@ -21,6 +21,7 @@
 // Author: Matthew D. Campbell, December 2001
 
 #pragma once
+
 #include <string>
 
 namespace patchget

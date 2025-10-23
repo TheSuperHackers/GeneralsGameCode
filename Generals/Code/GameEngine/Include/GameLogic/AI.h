@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, November 2000
 
 #pragma once
+
 #include "Common/Snapshot.h"
 #include "Common/SubsystemInterface.h"
 #include "Common/GameMemory.h"

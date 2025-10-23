@@ -30,7 +30,9 @@
  *																		*
  * 	         Last Update : October 5, 2000   [MML]            			*
  *----------------------------------------------------------------------*/
+
 #pragma once
+
 #include <tchar.h>
 #include <stdlib.h>
 #include "TTFont.h"

@@ -27,6 +27,7 @@
 // Author: John Ahlquist, October 2001
 
 #pragma once
+
 #define K_HEIGHT_MAP_VERSION_1	1	// Height map cell = 5.0
 #define K_HEIGHT_MAP_VERSION_2	2	// Height map cell = 10.0
 #define K_HEIGHT_MAP_VERSION_3	3	// Added m_borderSize

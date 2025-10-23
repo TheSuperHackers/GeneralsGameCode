@@ -27,7 +27,9 @@ Last Update : June 17, 1997
 
 Standard type definitions for the sake of portability and readability.
 \***************************************************************************/
+
 #pragma once
+
 #ifdef _REENTRANT   // reentrant = threaded
 // Headers with non threadsafe libs need to come before my hacky
 //  threadsafe.h otherwise they won't compile

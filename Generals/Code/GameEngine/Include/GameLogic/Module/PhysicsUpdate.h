@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, November 2001
 
 #pragma once
+
 #include "Common/AudioEventRTS.h"
 #include "Common/GameAudio.h"
 #include "GameLogic/Module/BehaviorModule.h"

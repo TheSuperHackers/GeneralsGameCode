@@ -28,6 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
 void HTTPThinkWrapper( void );
 void StopAsyncDNSCheck( void );
 void StartPatchCheck( void );

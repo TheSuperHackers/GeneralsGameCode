@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, August 2002
 
 #pragma once
+
 #include "Common/SubsystemInterface.h"
 
 // this class encapsulates a request for the thread

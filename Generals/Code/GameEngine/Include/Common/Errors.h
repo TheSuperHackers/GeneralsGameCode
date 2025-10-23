@@ -44,6 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
 /**
 	An ErrorCode is the repository for failure modes. In almost all situations,
 	these values will  be THROWN, not returned as error codes. Feel free

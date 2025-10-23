@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, April 2001
 
 #pragma once
+
 #include "Lib/BaseType.h"
 #include "Common/INI.h"
 #include "Common/BitFlags.h"

@@ -35,6 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
+
 // This file contains the classes which support predictive LOD management
 // similar to that outlined in "Adaptive Display Algorithm for Interactive
 // Frame Rates During Visualization of Complex Virtual Environments",

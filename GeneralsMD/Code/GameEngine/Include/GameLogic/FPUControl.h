@@ -28,6 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
 /**
   * setFPMode sets the FPU internal precision and rounding mode.  As DirectX is not guaranteed to
 	* leave the FPU in a good state, we must call this at the start of GameLogic::update() and

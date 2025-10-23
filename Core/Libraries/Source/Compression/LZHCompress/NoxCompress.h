@@ -21,6 +21,7 @@
 // Author: Jeff Brown, January 1999
 
 #pragma once
+
 #define MAP_EXTENSION ".map"
 #define LZH_EXTENSION ".nxz"
 #define RUL_EXTENSION ".rul"

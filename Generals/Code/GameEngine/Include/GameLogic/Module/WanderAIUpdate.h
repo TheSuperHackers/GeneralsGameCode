@@ -27,6 +27,7 @@
 // Author: Graham Smallwood, April 2002
 
 #pragma once
+
 #include "GameLogic/Module/AIUpdate.h"
 
 //-------------------------------------------------------------------------------------------------

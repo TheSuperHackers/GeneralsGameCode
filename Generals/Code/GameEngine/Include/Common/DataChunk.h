@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, October 2000
 
 #pragma once
+
 #include "Common/GameMemory.h"
 #include "Common/Dict.h"
 #include "Common/MapReaderWriterInfo.h"

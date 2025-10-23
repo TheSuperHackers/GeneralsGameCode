@@ -21,6 +21,7 @@
 // Author: John Ahlquist, Nov 2001
 
 #pragma once
+
 #include "Tool.h"
 #include "Common/AsciiString.h"
 #include "PickUnitDialog.h"

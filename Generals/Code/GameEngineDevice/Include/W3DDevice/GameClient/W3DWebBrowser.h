@@ -26,6 +26,7 @@
 // July 2002, Bryan Cleveland
 
 #pragma once
+
 #include "GameNetwork/WOLBrowser/WebBrowser.h"
 
 class TextureClass;

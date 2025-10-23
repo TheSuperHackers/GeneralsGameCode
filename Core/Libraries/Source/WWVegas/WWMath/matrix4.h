@@ -56,7 +56,6 @@
  *   Matrix4x4::operator /= -- "divide equals" operator                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #pragma once
 
 #include "always.h"

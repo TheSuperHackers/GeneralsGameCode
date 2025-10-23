@@ -27,6 +27,7 @@
 // Author: Anonymous
 
 #pragma once
+
 // This routine is non-reentrant, as it returns a static buffer!!!
 // Valid input is 4-8 characters, and can contain letters and numbers and '.' and '/'
 

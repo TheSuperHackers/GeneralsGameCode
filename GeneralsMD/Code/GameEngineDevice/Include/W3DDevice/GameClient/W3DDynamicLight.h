@@ -27,6 +27,7 @@
 // Author: John Ahlquist, April 2001
 
 #pragma once
+
 #include "WW3D2/light.h"
 #include "Lib/BaseType.h"
 class HeightMapRenderObjClass;

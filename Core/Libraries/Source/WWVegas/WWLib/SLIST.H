@@ -50,7 +50,9 @@
  *   SList<T>::Add_Tail -- Adds a list to the tail of the list             *
  *   *SList<T>::Find_Node -- returns first node in list matching the input *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #pragma once
+
 #include "SLNODE.H"
 
 #ifndef NULL

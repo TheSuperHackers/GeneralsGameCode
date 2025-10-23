@@ -36,6 +36,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
+
 #include "rawfile.h"	// have to include this before Max.h
 #include <max.h>
 #include "BITTYPE.H"

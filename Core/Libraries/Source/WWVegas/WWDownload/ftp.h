@@ -17,6 +17,7 @@
 */
 
 // ftp.h : Declaration of the Cftp
+
 #pragma once
 
 //#include "../resource.h"       // main symbols

@@ -29,6 +29,7 @@
 //------------------------------------------
 
 #pragma once
+
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameClient/ParticleSys.h"
 #include "GameLogic/Module/BehaviorModule.h"

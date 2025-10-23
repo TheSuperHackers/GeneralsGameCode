@@ -26,6 +26,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
 #include "GameClient/ParticleSys.h"
 #include "WW3D2/pointgr.h"
 #include "WW3D2/streak.h"

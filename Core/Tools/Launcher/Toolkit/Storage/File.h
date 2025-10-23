@@ -33,7 +33,9 @@
 *     $Revision:  $
 *
 ****************************************************************************/
+
 #pragma once
+
 #include <Support/UTypes.h>
 #include "Stream.h"
 #include "Rights.h"

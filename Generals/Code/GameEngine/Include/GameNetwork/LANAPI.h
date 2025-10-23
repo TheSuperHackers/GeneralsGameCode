@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, October 2001
 
 #pragma once
+
 #include "GameNetwork/Transport.h"
 #include "GameNetwork/NetworkInterface.h"
 #include "GameNetwork/NetworkDefs.h"

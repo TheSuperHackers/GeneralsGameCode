@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, March 2002
 
 #pragma once
+
 class GameSpyPlayerInfoInterface : public SubsystemInterface
 {
 public:

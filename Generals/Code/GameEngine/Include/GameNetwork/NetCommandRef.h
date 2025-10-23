@@ -22,8 +22,8 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
+
 #include "GameNetwork/NetCommandMsg.h"
 #include "Common/GameMemory.h"
 

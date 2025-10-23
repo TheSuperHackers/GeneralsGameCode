@@ -35,6 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
+
 /*
 ** FORCE_LINK is a hack to force a module in a lib to be linked into the EXE.
 */

@@ -31,6 +31,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
+
 #include "SoundSceneObj.h"
 #include "bittype.h"
 #include "vector3.h"

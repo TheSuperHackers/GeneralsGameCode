@@ -26,6 +26,7 @@
 // Bryan Cleveland
 
 #pragma once
+
 #include "GameNetwork/NetCommandList.h"
 
 class NetCommandWrapperListNode : public MemoryPoolObject

@@ -21,6 +21,7 @@
 //
 
 #pragma once
+
 #include "list.h"
 #include "olestring.h"
 

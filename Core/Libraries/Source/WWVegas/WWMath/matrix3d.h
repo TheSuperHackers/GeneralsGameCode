@@ -79,6 +79,7 @@
 #define NO_ALLOW_TEMPORARIES
 
 #pragma once
+
 #ifdef _UNIX
 #include "osdep.h"
 #endif

@@ -20,7 +20,9 @@
 //	XLStuff.h
 //
 //
+
 #pragma once
+
 #include "BabylonDlg.h"
 typedef enum {
     xlAll = -4104,

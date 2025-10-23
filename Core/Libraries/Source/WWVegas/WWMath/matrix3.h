@@ -56,8 +56,8 @@
  *   Matrix3x3::Rotate_Z -- Post-multiplies the matrix with a rotation about Z                   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #pragma once
+
 #include "always.h"
 #include "vector3.h"
 #include "wwdebug.h"

@@ -20,7 +20,9 @@
 // WbView3d.h
 // Class to encapsulate height map.
 // Author: Steven Johnson, Aug 2001
+
 #pragma once
+
 // wbview3d.h : header file
 //
 

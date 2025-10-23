@@ -32,8 +32,8 @@
  *                                                                         *
  *-------------------------------------------------------------------------*/
 
-
 #pragma once
+
 #include "meshgeometry.h"
 #include "meshmatdesc.h"
 #include "matinfo.h"

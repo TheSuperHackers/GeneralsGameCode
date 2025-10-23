@@ -48,7 +48,9 @@
  *   IndexClass<T>::~IndexClass -- Destructor for index handler object.                        *
  *   compfunc -- Support function for bsearch and bsort.                                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #pragma once
+
 #include	"BSEARCH.H"
 
 #if !defined(__BORLANDC__) || !defined(_USERENTRY)

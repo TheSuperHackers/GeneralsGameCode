@@ -36,7 +36,9 @@
  *   Intersect -- Find the intersection between two rectangles.                                *
  *   Intersect -- Simple intersect between two rectangles.                                     *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #pragma once
+
 #include	<stddef.h>
 #include	"POINT.h"
 

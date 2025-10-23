@@ -60,6 +60,7 @@
  */
 
 #pragma once
+
 #define LZO_VERSION             0x0200
 #define LZO_VERSION_STRING      "0.20"
 #define LZO_VERSION_DATE        "11 Aug 1996"

@@ -28,6 +28,7 @@
 // Author: John Ahlquist, November 2001
 
 #pragma once
+
 #include "Common/Dict.h"
 #include "Common/Errors.h"
 #include "Common/GameType.h"

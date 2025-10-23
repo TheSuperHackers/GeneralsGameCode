@@ -37,6 +37,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
+
 #include "colmathaabox.h"
 #include "colmathfrustum.h"
 #include "colmathline.h"

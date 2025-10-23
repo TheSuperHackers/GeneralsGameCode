@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, January 2002
 
 #pragma once
+
 #include "Common/GameMemory.h"
 #include "Common/GameType.h"
 #include "Common/ModelState.h"

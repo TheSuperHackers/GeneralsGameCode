@@ -19,6 +19,7 @@
 // FILE: W3DSmudge.h /////////////////////////////////////////////////////////
 
 #pragma once
+
 #include "GameClient/Smudge.h"
 #include "sharebuf.h"
 

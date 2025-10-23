@@ -34,10 +34,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-
 #pragma once
+
 class GameMtl;
+
 class GameMtlPassDlg;
 
 

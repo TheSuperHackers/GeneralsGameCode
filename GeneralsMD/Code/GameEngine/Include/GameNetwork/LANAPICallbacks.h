@@ -27,7 +27,9 @@
 // Author: Chris Huybregts, October 2001
 // Description: LAN API Callbacks header
 ///////////////////////////////////////////////////////////////////////////////////////
+
 #pragma once
+
 #include "Common/NameKeyGenerator.h"
 #include "GameClient/Shell.h"
 #include "GameClient/GadgetListBox.h"

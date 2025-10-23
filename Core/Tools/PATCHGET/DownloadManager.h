@@ -21,6 +21,7 @@
 // Author: Matthew D. Campbell, July 2002
 
 #pragma once
+
 #include "WWDownload/downloaddefs.h"
 #include "WWDownload/Download.h"
 #include <string>

@@ -34,7 +34,9 @@
  * Functions:                                                                                  *
  *   Pick_Random_Number -- Picks a random number between two values (inclusive).               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #pragma once
+
 // "unreferenced inline function has been removed" Yea, so what?
 #pragma warning(disable : 4514)
 

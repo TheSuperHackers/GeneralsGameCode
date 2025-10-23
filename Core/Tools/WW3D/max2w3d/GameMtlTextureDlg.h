@@ -34,10 +34,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-
 #pragma once
+
 #include <max.h>
+
 #include "GameMtlForm.h"
 
 class GameMtl;

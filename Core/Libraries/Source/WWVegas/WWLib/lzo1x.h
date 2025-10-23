@@ -60,6 +60,7 @@
  */
 
 #pragma once
+
 #include	"lzoconf.h"
 
 //#ifdef __cplusplus

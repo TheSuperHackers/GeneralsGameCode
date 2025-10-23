@@ -30,7 +30,9 @@
 //
 
 #ifdef _REENTRANT
+
 #pragma once
+
 #define strtok		("strtok() is not MT-SAFE!")
 #define ascctime	("asctime() is not MT-SAFE!")
 // Can't just do ctime, as Windows' objidl.h uses it as a FILETIME thingie

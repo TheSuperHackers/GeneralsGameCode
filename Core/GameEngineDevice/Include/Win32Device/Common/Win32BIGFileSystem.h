@@ -27,6 +27,7 @@
 /////////////////////////////////////////////////////////////
 
 #pragma once
+
 #include "Common/ArchiveFileSystem.h"
 
 class Win32BIGFileSystem : public ArchiveFileSystem

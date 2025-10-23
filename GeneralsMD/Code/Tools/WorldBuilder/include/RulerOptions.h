@@ -17,6 +17,7 @@
 */
 
 #pragma once
+
 // RulerOptions.h : header file
 //
 #include "OptionsPanel.h"

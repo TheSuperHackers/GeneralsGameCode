@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, July 2002
 
 #pragma once
+
 #include "gamespy/gstats/gpersist.h"
 
 #define MAX_BUDDY_CHAT_LEN 128

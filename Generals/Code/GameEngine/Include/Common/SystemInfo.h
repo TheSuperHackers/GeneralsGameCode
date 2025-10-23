@@ -27,4 +27,5 @@
 // Author: John K. McDonald, December 2002
 
 #pragma once
+
 extern const Bool TheSystemIsUnicode;

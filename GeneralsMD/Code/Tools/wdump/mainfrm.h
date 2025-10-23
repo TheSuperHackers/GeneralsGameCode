@@ -19,6 +19,7 @@
 // MainFrm.h : interface of the CMainFrame class
 //
 /////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 
 class CMainFrame : public CFrameWnd

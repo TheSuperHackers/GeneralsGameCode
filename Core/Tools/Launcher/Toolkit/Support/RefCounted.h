@@ -36,7 +36,9 @@
 *     $Revision:  $
 *
 ******************************************************************************/
+
 #pragma once
+
 #include <assert.h>
 
 class RefCounted

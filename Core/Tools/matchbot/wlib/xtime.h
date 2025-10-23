@@ -28,6 +28,7 @@ The call to update the current time will break in 2038.
 Hopefully by then somebody will replace the lame time()
 function :-)
 \****************************************************************************/
+
 #pragma once
 
 #include <stdio.h>

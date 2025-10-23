@@ -33,7 +33,9 @@
  *-------------------------------------------------------------------------*
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #pragma once
+
 #include "rendobj.h"
 #include "pointgr.h"
 #include "seglinerenderer.h"

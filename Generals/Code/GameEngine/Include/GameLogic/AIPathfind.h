@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, October 2001
 
 #pragma once
+
 #include "Common/GameType.h"
 #include "Common/GameMemory.h"
 #include "Common/Snapshot.h"

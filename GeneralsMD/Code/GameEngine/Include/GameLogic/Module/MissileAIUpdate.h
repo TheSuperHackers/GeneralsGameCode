@@ -27,6 +27,7 @@
 // Desc:		Missile behavior
 
 #pragma once
+
 #include "Common/GameType.h"
 #include "Common/GlobalData.h"
 #include "GameLogic/Module/AIUpdate.h"

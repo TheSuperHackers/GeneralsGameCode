@@ -21,6 +21,7 @@
 // Author: John Ahlquist, April 2001
 
 #pragma once
+
 #include "PolygonTool.h"
 class WorldHeightMapEdit;
 #include "../../GameEngine/Include/Common/MapObject.h"

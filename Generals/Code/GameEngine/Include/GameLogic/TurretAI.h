@@ -27,6 +27,7 @@
 // Simple turret behavior
 
 #pragma once
+
 #include "Common/StateMachine.h"
 #include "Common/GameMemory.h"
 

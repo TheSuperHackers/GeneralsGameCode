@@ -26,8 +26,8 @@
 // Macros/functions/etc to help logging values for tracking down sync errors
 // Author: Matthew D. Campbell, June 2002
 
-// no #pragma once - we want to be able to conditionally define NO_DEBUG_CRC in indiv .cpp files
 #pragma once
+
 #include "Common/Debug.h"
 
 #ifndef NO_DEBUG_CRC

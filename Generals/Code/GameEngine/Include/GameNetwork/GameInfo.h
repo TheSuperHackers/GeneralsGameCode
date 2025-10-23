@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, December 2001
 
 #pragma once
+
 #include "Common/Snapshot.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "GameNetwork/FirewallHelper.h"

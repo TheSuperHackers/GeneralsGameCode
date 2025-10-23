@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, January 2002
 
 #pragma once
+
 #include "Lib/BaseType.h"
 
 #include "Common/AudioEventRTS.h"

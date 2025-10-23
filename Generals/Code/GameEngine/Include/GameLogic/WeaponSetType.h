@@ -27,6 +27,7 @@
 // JKMCD Aug 2002
 
 #pragma once
+
 //-------------------------------------------------------------------------------------------------
 // IMPORTANT NOTE: you should endeavor to set up states such that the most "normal"
 // state is defined by the bit being off. That is, the typical "normal" condition

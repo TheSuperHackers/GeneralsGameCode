@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, July 2002
 
 #pragma once
+
 enum LocaleType CPP_11(: Int)
 {
     LOC_UNKNOWN = 0,

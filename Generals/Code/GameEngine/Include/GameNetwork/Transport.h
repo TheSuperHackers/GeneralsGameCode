@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, July 2001
 
 #pragma once
+
 #include "GameNetwork/udp.h"
 #include "GameNetwork/NetworkDefs.h"
 

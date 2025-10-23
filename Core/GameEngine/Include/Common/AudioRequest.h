@@ -27,6 +27,7 @@
 // Do not distribute
 
 #pragma once
+
 #include "Common/GameAudio.h"
 #include "Common/GameMemory.h"
 

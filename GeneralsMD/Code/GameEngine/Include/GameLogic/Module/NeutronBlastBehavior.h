@@ -28,6 +28,7 @@
 //------------------------------------------
 
 #pragma once
+
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/DieModule.h"
 #include "GameLogic/Module/UpdateModule.h"

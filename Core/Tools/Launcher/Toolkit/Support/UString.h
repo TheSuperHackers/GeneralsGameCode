@@ -33,7 +33,9 @@
 *     $Revision:  $
 *
 ******************************************************************************/
+
 #pragma once
+
 #include "UTypes.h"
 #include "RefCounted.h"
 

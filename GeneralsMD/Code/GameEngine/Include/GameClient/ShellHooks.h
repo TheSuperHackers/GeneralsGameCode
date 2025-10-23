@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, October 2002
 
 #pragma once
+
 //
 // This enumeration holds all the shell script hooks that we currently have, If you are going to
 // add more, it's important to keep the enum lined up with the names in TheShellHookNames located

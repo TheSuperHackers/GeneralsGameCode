@@ -35,6 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
+
 #include "dynamesh.h"
 
 class Bitmap2DObjClass : public DynamicScreenMeshClass

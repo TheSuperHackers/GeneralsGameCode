@@ -33,7 +33,9 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #pragma once
+
 unsigned long Get_CPU_Clock(unsigned long & high);
 unsigned long Get_CPU_Rate(unsigned long & high);
 

@@ -33,7 +33,9 @@
 *     $Revision:  $
 *
 ******************************************************************************/
+
 #pragma once
+
 #if defined(_MSC_VER)
 
 // "unreferenced inline function has been removed"

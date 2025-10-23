@@ -37,6 +37,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
+
 /**
 ** WWSaveLoad
 ** The Init and Shutdown functions should be called once by the App.

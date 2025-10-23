@@ -38,6 +38,7 @@
 //
 
 #pragma once
+
 #include "simplevec.h"
 #include "Vector.H"
 #include "hashtemplate.h"

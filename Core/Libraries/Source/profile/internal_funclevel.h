@@ -26,7 +26,9 @@
 //
 // Function level profiling (internal header)
 //////////////////////////////////////////////////////////////////////////////
+
 #pragma once
+
 class ProfileFuncLevelTracer
 {
   friend class ProfileCmdInterface;

@@ -28,6 +28,7 @@
  */
 
 #pragma once
+
 #include "GameNetwork/Connection.h"
 #include "GameNetwork/NetCommandList.h"
 #include "GameNetwork/Transport.h"

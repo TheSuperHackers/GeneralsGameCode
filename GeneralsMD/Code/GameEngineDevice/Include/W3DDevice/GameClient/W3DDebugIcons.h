@@ -22,8 +22,8 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
+
 #include "always.h"
 #include "rendobj.h"
 #include "vertmaterial.h"

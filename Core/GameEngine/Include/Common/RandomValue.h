@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, January 1998
 
 #pragma once
+
 #include "Lib/BaseType.h"
 
 extern void InitRandom( void );

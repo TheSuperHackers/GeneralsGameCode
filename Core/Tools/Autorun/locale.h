@@ -21,7 +21,9 @@
 /* ABSTRACT
 locale.h - REAL fonts
 @ */
+
 #pragma once
+
 //#ifdef __cplusplus
 //extern "C" {
 //#endif

@@ -19,7 +19,9 @@
 //
 // File IO support
 //
+
 #pragma once
+
 static const int FA_NOFILE = 0;
 static const int 	FA_READONLY = 0x00000001;
 static const int 	FA_DIRECTORY = 0x00000002;

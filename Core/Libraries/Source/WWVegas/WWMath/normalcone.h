@@ -42,7 +42,9 @@
 **	The term 'NormalCone' is a bit of a misnomer; it is really a circular portion of a sphere.
 ** -ehc
 */
+
 #pragma once
+
 #include "vector3.h"
 #include "matrix3.h"
 

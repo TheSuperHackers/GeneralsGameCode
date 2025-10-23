@@ -26,7 +26,9 @@
 //
 // High level profiling (internal header)
 //////////////////////////////////////////////////////////////////////////////
+
 #pragma once
+
 /// an internal high level profile ID
 class ProfileId
 {

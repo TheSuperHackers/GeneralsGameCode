@@ -18,6 +18,7 @@
 
 // DlgProxy.h : header file
 //
+
 #pragma once
 
 class CBabylonDlg;

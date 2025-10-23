@@ -15,7 +15,9 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 #pragma once
+
 void Build_Packet_CRC(unsigned char *buf, int len); // len includes 4-byte CRC at head
 bool Passes_CRC_Check(unsigned char *buf, int len); // len includes 4-byte CRC at head
 void Add_CRC(unsigned long *crc, unsigned long val);

@@ -22,7 +22,9 @@
 //
 //  Module containing usefull misc. utility functions
 //
+
 #pragma once
+
 #include "Vector.H"
 
 // Forward declarations

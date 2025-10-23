@@ -36,7 +36,9 @@
 *     $Revision: 4 $
 *
 ******************************************************************************/
+
 #pragma once
+
 template<typename T> class Signaler
 	{
 	public:

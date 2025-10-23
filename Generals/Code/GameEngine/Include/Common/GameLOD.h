@@ -32,6 +32,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
 enum ParticlePriorityType CPP_11(: Int);
 
 #define MAX_LOD_PRESETS_PER_LEVEL	32	//number of hardware configs preset for each low,medium,high,veryhigh

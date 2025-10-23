@@ -48,7 +48,9 @@
  *   IndexClass<T>::~IndexClass -- Destructor for index handler object.                        *
  *   compfunc -- Support function for bsearch and bsort.                                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #pragma once
+
 /*
 **	The "bool" integral type was defined by the C++ comittee in
 **	November of '94. Until the compiler supports this, use the following

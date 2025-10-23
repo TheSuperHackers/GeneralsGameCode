@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, April 2001
 
 #pragma once
+
 #include "Common/SubsystemInterface.h"
 #include "Common/GameType.h"
 

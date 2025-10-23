@@ -34,9 +34,8 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-
 #pragma once
+
 #include <max.h>
 
 class GameMtl;

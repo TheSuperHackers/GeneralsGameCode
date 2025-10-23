@@ -22,8 +22,8 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
+
 #include "GameNetwork/DisconnectManager.h"
 
 enum DisconnectMenuStateType CPP_11(: Int) {

@@ -27,6 +27,7 @@
 //////////////////////////////////////////////////
 
 #pragma once
+
 #include "Common/LocalFile.h"
 
 class Win32LocalFile : public LocalFile

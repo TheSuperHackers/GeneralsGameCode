@@ -34,8 +34,8 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #pragma once
+
 #include "SphereColorPropPage.h"
 #include "SphereGeneralPropPage.h"
 #include "SphereSizePropPage.h"

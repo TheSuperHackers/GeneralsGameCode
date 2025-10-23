@@ -27,6 +27,7 @@
  */
 
 #pragma once
+
 #include "GameNetwork/NetworkDefs.h"
 #include "Common/UnicodeString.h"
 

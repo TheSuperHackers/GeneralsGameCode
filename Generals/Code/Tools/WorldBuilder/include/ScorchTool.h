@@ -20,6 +20,7 @@
 // Author: Dennis Griffin, April 2002
 
 #pragma once
+
 #include "Tool.h"
 class WorldHeightMapEdit;
 class MapObject;

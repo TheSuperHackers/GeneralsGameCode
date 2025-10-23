@@ -21,6 +21,7 @@
 // Author: John Ahlquist, June 2001
 
 #pragma once
+
 #include "Tool.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 class WorldHeightMapEdit;

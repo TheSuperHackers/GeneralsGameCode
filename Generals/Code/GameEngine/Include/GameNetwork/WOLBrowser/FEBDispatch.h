@@ -26,7 +26,9 @@
 // FEBDispatch class is a template class which, when inherited from, can implement the
 // IDispatch for a COM object with a type library.
 //
+
 #pragma once
+
 #include <atlbase.h>
 extern CComModule _Module;
 #include <atlcom.h>

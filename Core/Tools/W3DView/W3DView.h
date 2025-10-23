@@ -18,6 +18,7 @@
 
 // W3DView.h : main header file for the W3DVIEW application
 //
+
 #pragma once
 
 #ifndef __AFXWIN_H__

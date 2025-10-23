@@ -26,6 +26,7 @@
 // Author: Matthew D. Campbell, Sept 2002
 
 #pragma once
+
 class GameWindow;
 class GameInfo;
 

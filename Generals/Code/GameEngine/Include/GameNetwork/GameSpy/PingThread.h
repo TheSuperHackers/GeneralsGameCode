@@ -28,6 +28,7 @@
 // Note: adapted from WOLAPI
 
 #pragma once
+
 // this class encapsulates a request for the thread
 class PingRequest
 {

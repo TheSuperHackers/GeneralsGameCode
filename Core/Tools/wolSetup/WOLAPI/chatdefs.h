@@ -15,7 +15,9 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 #pragma once
+
 // gks 11/3/1999: version numbers for SetClientVersion
 // GMU 01/12/01 : bumped CHAT_VERSION_MINOR to 15
 // BGC 6/7/01: now version 16

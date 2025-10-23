@@ -29,6 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
 #include "Common/SubsystemInterface.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/GameMemory.h"

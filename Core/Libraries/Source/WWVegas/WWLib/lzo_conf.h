@@ -66,6 +66,7 @@
  */
 
 #pragma once
+
 #ifndef __LZOCONF_H
 #  include "lzoconf.h"
 #endif

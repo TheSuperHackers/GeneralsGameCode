@@ -32,8 +32,8 @@
  *                                                                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #pragma once
+
 #include "proto.h"
 #include "rendobj.h"
 #include "w3d_file.h"

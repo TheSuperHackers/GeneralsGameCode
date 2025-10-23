@@ -27,6 +27,7 @@
 // July 2002
 
 #pragma once
+
 #include "Utility/intrin_compat.h"
 
 #if defined(RTS_DEBUG)

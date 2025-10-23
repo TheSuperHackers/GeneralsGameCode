@@ -19,6 +19,7 @@
 // wdumpView.h : interface of the CWdumpView class
 //
 /////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 
 class CWdumpView : public CView

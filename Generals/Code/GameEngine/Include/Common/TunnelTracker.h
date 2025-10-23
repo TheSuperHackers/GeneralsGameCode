@@ -28,6 +28,7 @@
 // Author: Graham Smallwood, March, 2002
 
 #pragma once
+
 #include "Common/GameType.h"
 #include "Common/GameMemory.h"
 #include "Common/Snapshot.h"

@@ -27,6 +27,7 @@
 // Author: John McDonald, Jr, October 2002
 
 #pragma once
+
 #include "GameClient/InGameUI.h"
 
 // This structure gives you a rough idea about the counts of the kinds of guys in the

@@ -35,4 +35,5 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
+
 char * nstrdup(const char *str);

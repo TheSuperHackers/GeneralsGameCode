@@ -33,7 +33,9 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #pragma once
+
 /*
 **	A "push through" pipe interface abstract class used for such purposes as compression
 **	and translation of data. In STL terms, this is functionally similar to an output

@@ -18,6 +18,7 @@
 
 // wdump.h : main header file for the WDUMP application
 //
+
 #pragma once
 
 #ifndef __AFXWIN_H__

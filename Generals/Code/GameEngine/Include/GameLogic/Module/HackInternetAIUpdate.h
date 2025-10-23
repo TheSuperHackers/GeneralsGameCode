@@ -27,6 +27,7 @@
 // Desc:   State machine that allows hacking cash from the internet (free money).
 
 #pragma once
+
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 

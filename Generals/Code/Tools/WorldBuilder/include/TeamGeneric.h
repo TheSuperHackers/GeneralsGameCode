@@ -17,6 +17,7 @@
 */
 
 #pragma once
+
 class Dict;
 
 class TeamGeneric : public CPropertyPage

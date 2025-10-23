@@ -41,6 +41,7 @@
 ******************************************************************************/
 
 #pragma once
+
 #include "Common/SubsystemInterface.h"
 #include <atlbase.h>
 #include <windows.h>

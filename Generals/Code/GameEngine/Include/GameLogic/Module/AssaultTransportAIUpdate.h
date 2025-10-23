@@ -29,6 +29,7 @@
 //         injured troops to return to the transport for healing purposes.
 
 #pragma once
+
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 

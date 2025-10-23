@@ -32,10 +32,10 @@ for the data, but at least that wouldn't be repeating code, that would
 be specialized code.
 */
 
-
-
 #pragma once
+
 #include "NetworkDefs.h"
+
 #include "GameNetwork/NetCommandList.h"
 #include "Common/MessageStream.h"
 #include "Common/GameMemory.h"

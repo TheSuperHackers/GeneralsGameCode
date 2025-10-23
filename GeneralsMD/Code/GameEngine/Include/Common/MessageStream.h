@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, February 2001
 
 #pragma once
+
 #include "Common/GameCommon.h"	// ensure we get DUMP_PERF_STATS, or not
 #include "Common/SubsystemInterface.h"
 #include "Lib/BaseType.h"

@@ -18,7 +18,9 @@
 
 // FILE: wolSetup.h //////////////////////////////////////////////////////
 // Author: Matthew D. Campbell, December 2001
+
 #pragma once
+
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif

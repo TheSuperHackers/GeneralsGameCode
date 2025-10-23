@@ -17,6 +17,7 @@
 */
 
 #pragma once
+
 #include "Lib/BaseType.h"
 
 class CButtonShowColor : public CButton

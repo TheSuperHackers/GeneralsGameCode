@@ -42,8 +42,8 @@
  *   AutoPoolClass::operator delete -- overriden delete which calls the internal ObjectPool    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #pragma once
+
 #include "bittype.h"
 #include "wwdebug.h"
 #include "mutex.h"

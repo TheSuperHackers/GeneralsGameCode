@@ -26,6 +26,7 @@
 // Author: Steven Johnson, Dec 2001
 
 #pragma once
+
 #include "GameClient/InGameUI.h"
 
 enum GUICommandType CPP_11(: Int);

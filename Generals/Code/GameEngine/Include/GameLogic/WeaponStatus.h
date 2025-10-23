@@ -27,6 +27,7 @@
 // JKMCD Aug 2002
 
 #pragma once
+
 enum WeaponStatus CPP_11(: Int)
 {
 	READY_TO_FIRE,

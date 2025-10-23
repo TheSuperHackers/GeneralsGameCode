@@ -19,6 +19,7 @@
 // WorldBuilderDoc.h : interface of the CWorldBuilderDoc class
 //
 /////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 
 #include "Lib/BaseType.h"

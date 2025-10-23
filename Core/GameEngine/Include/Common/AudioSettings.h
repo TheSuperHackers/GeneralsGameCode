@@ -27,6 +27,7 @@
 // Do not distribute
 
 #pragma once
+
 #include "Common/AsciiString.h"
 
 enum { MAX_HW_PROVIDERS = 4 };

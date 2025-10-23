@@ -43,6 +43,7 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
+
 #include "Common/Debug.h"
 #include "Common/Energy.h"
 #include "Common/GameType.h"

@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, Sept 2002
 
 #pragma once
+
 #include "GameNetwork/GameSpy/PeerDefs.h"
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
 

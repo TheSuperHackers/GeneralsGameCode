@@ -17,5 +17,7 @@
 */
 
 // DownloadDebug.h
+
 #pragma once
+
 #include "Common/Debug.h"

@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
 UnicodeString QuotedPrintableToUnicodeString(AsciiString original);
 AsciiString UnicodeStringToQuotedPrintable(UnicodeString original);
 

@@ -17,6 +17,7 @@
 */
 
 #pragma once
+
 #define	MakeID(a,b,c,d)		( (int) ( ( (int) (a) ) << 24 | ( (int) (b) ) << 16 |	\
 								( (int) (c) ) << 8 | ( (int) (d) ) ) )
 

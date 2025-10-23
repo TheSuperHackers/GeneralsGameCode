@@ -19,7 +19,9 @@
 //
 // Platform independent thread creation (Win32 & POSIX)
 //
+
 #pragma once
+
 #ifdef _WIN32
   #include <process.h>
 #endif

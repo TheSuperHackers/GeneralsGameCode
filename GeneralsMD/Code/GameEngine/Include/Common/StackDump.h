@@ -23,6 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
 #ifndef IG_DEGBUG_STACKTRACE
 #define IG_DEBUG_STACKTRACE	1
 #endif // Unsure about this one -ML 3/25/03

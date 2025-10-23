@@ -29,6 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
 /*
 	The purpose of the LatchRestore class is to allow you to override member variables for the scope
 	of a function. Here's the code that this saves:

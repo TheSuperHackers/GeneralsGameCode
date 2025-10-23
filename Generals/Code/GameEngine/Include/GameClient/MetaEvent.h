@@ -26,6 +26,7 @@
 // Author: Steven Johnson, Dec 2001
 
 #pragma once
+
 #include "Common/SubsystemInterface.h"
 #include "GameClient/InGameUI.h"
 

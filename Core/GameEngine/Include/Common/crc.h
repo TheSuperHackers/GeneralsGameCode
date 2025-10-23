@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, October 2001
 
 #pragma once
+
 #include "Lib/BaseType.h"
 
 #ifdef RTS_DEBUG

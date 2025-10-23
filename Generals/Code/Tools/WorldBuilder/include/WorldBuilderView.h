@@ -19,6 +19,7 @@
 // WorldBuilderView.h : interface of the CWorldBuilderView class
 //
 /////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 
 #include "Lib/BaseType.h"

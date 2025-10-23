@@ -17,6 +17,7 @@
 */
 
 #pragma once
+
 HRESULT MakeEscapedURL( LPWSTR pszInURL, LPWSTR *ppszOutURL );
 
 HRESULT LaunchURL( LPCWSTR pszURL );

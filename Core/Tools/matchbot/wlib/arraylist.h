@@ -43,7 +43,9 @@ for!  A good copy constructor is one that won't blindly duplicate pointers
 that don't belong to them, etc...
 
 \****************************************************************************/
+
 #pragma once
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

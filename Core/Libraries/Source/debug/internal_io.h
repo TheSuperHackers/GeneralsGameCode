@@ -26,7 +26,9 @@
 //
 // Internal header: I/O classes
 //////////////////////////////////////////////////////////////////////////////
+
 #pragma once
+
 /// \internal \brief con debug I/O class
 class DebugIOCon: public DebugIOInterface
 {

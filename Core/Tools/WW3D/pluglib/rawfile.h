@@ -37,7 +37,9 @@
  *   RawFileClass::~RawFileClass -- Default deconstructor for a file object.                   *
  *   RawFileClass::Is_Open -- Checks to see if the file is open or not.                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #pragma once
+
 //#include	<errno.h>
 
 // #include	"win.h"

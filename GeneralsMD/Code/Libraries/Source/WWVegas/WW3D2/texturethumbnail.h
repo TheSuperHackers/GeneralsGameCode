@@ -17,6 +17,7 @@
 */
 
 // 08/07/02 KM Texture class redesign (revisited)
+
 #pragma once
 
 #include "always.h"

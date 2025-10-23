@@ -26,7 +26,9 @@
 //
 // Unhandled exception handler
 //////////////////////////////////////////////////////////////////////////////
+
 #pragma once
+
 /// \internal exception handler
 class DebugExceptionhandler
 {

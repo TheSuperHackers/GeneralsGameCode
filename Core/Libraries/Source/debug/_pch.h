@@ -26,7 +26,9 @@
 //
 // Precompiled header (module internal)
 //////////////////////////////////////////////////////////////////////////////
+
 #pragma once
+
 #include "debug.h"
 
 // we need windows.h at too many places...

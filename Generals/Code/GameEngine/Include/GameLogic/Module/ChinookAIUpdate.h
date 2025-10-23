@@ -26,6 +26,7 @@
 // Author: Steven Johnson, June 2002
 
 #pragma once
+
 #include "GameLogic/AIStateMachine.h"
 #include "GameLogic/Module/SupplyTruckAIUpdate.h"
 

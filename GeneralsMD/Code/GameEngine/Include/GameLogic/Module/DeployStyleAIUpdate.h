@@ -28,6 +28,7 @@
 //         When deployed, you can't move, when undeployed, you can't attack.
 
 #pragma once
+
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 

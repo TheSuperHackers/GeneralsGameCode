@@ -26,6 +26,7 @@
 // This file is for miscellaneous sound hooks that don't have another happy home.
 
 #pragma once
+
 #include "Common/AudioEventRTS.h"
 
 struct MiscAudio

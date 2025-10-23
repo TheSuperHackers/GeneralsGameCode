@@ -28,6 +28,7 @@
 // Author: Mark Wilczynski, August 2002
 
 #pragma once
+
 #include "GameLogic/GhostObject.h"
 #include "Lib/BaseType.h"
 #include "Common/GameCommon.h"

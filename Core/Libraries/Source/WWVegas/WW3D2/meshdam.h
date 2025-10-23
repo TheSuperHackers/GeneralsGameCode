@@ -37,6 +37,7 @@
 #if 0
 
 #pragma once
+
 #include "always.h"
 #include "vector3.h"
 #include "bittype.h"

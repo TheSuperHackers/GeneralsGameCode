@@ -17,7 +17,9 @@
 */
 
 // FILE: W3DSnow.h /////////////////////////////////////////////////////////
+
 #pragma once
+
 #include "GameClient/Snow.h"
 
 class DX8IndexBufferClass;

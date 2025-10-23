@@ -25,7 +25,9 @@
 // This file contains all the header files that shouldn't change frequently.
 // Be careful what you stick in here, because putting files that change often in here will
 // tend to cheese people's goats.
+
 #pragma once
+
 //-----------------------------------------------------------------------------
 // srj sez: this must come first, first, first.
 #define _STLP_USE_NEWALLOC					1

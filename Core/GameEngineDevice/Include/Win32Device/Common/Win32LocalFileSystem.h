@@ -27,6 +27,7 @@
 ///////////////////////////////////////////////////////////////
 
 #pragma once
+
 #include "Common/LocalFileSystem.h"
 
 class Win32LocalFileSystem : public LocalFileSystem

@@ -19,6 +19,7 @@
 //
 // transcs.h Translate char set
 //
+
 #pragma once
 
 void CreateTranslationTable ( void );

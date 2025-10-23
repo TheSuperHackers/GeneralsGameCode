@@ -43,6 +43,7 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
+
 #include "Common/AcademyStats.h"
 #include "Common/Debug.h"
 #include "Common/Energy.h"

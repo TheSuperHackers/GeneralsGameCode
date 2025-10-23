@@ -35,6 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
+
 // TheSuperHackers @todo Recover WWDEBUG?
 #ifdef WWDEBUG
 #include <Utility/intrin_compat.h>

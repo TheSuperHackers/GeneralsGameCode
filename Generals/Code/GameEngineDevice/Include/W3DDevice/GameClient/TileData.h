@@ -27,6 +27,7 @@
 // Author: John Ahlquist, April 2001
 
 #pragma once
+
 #include <stdio.h>
 
 #include "Lib/BaseType.h"

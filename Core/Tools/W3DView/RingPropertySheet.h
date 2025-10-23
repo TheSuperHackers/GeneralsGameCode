@@ -34,8 +34,8 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #pragma once
+
 #include "RingColorPropPage.h"
 #include "RingGeneralPropPage.h"
 #include "RingSizePropPage.h"

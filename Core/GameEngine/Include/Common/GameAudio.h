@@ -40,6 +40,7 @@
 //----------------------------------------------------------------------------
 
 #pragma once
+
 // Includes
 #include "Lib/BaseType.h"
 #include "Common/STLTypedefs.h"

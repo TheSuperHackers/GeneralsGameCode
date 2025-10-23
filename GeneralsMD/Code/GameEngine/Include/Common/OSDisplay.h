@@ -27,6 +27,7 @@
 // Do Not Distribute
 
 #pragma once
+
 #include "Lib/BaseType.h"
 
 class AsciiString;

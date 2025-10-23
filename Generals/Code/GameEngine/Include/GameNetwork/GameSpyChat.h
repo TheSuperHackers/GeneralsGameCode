@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, February 2002
 
 #pragma once
+
 #include "gamespy/peer/peer.h"
 
 class GameWindow;

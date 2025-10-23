@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, 2001-2002
 
 #pragma once
+
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/AI.h"
 #include "GameLogic/AIStateMachine.h"

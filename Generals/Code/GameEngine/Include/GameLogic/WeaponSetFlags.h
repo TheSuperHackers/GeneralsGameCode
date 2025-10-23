@@ -27,6 +27,7 @@
 // JKMCD Aug 2002
 
 #pragma once
+
 #include "GameLogic/WeaponSetType.h"
 
 typedef BitFlags<WEAPONSET_COUNT> WeaponSetFlags;
