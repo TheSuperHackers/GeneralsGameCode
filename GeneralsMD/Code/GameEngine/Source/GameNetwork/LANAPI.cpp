@@ -681,7 +681,7 @@ void LANAPI::RequestGameLeave( void )
 	LANMessage msg;
 	msg.LANMessageType = LANMessage::MSG_REQUEST_GAME_LEAVE;
 	fillInLANMessage( &msg );
-	wcslcpy(msg.GameToLeave.gameName, (m_currentGame)?m_currentGame->getName().str():L"", ARRAY_SIZE(msg.GameToLeave.gameName));
+	wcslcpy(msg.PlayerInfo.playerName, m_name.str(), ARRAY_SIZE(msg.PlayerInfo.playerName));
 	sendMessage(&msg);
 	m_transport->update();  // Send immediately, before OnPlayerLeave below resets everything.
 
@@ -712,7 +712,7 @@ void LANAPI::RequestGameAnnounce( void )
 			reply.LANMessageType = LANMessage::MSG_GAME_ANNOUNCE;
 
 			AsciiString gameOpts = GameInfoToAsciiString(m_currentGame);
-			strlcpy(reply.GameInfo.options,gameOpts.str(), ARRAY_SIZE(reply.GameOptions.options));
+			strlcpy(reply.GameInfo.options,gameOpts.str(), ARRAY_SIZE(reply.GameInfo.options));
 			wcslcpy(reply.GameInfo.gameName, m_currentGame->getName().str(), ARRAY_SIZE(reply.GameInfo.gameName));
 			reply.GameInfo.inProgress = m_currentGame->isGameInProgress();
 			reply.GameInfo.isDirectConnect = m_currentGame->getIsDirectConnect();
@@ -781,7 +781,7 @@ void LANAPI::RequestChat( UnicodeString message, ChatType format )
 {
 	LANMessage msg;
 	fillInLANMessage( &msg );
-	wcslcpy(msg.Chat.gameName, (m_currentGame)?m_currentGame->getName().str():L"", ARRAY_SIZE(msg.Chat.gameName));
+	wcslcpy(msg.Chat.gameName, (m_currentGame) ? m_currentGame->getName().str() : L"", ARRAY_SIZE(msg.Chat.gameName));
 	msg.LANMessageType = LANMessage::MSG_CHAT;
 	msg.Chat.chatType = format;
 	wcslcpy(msg.Chat.message, message.str(), ARRAY_SIZE(msg.Chat.message));

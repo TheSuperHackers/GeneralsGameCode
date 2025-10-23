@@ -671,6 +671,88 @@ void CustomMatchPreferences::setPreferredMap(AsciiString val)
 	(*this)["Map"] = AsciiStringToQuotedPrintable(val);
 }
 
+
+static const char superweaponRestrictionKey[] = "SuperweaponRestrict";
+
+Bool CustomMatchPreferences::getSuperweaponRestricted(void) const
+{
+  const_iterator it = find(superweaponRestrictionKey);
+  if (it == end())
+  {
+    return false;
+  }
+
+  return ( it->second.compareNoCase( "yes" ) == 0 );
+}
+
+void CustomMatchPreferences::setSuperweaponRestricted( Bool superweaponRestricted )
+{
+  (*this)[superweaponRestrictionKey] = superweaponRestricted ? "Yes" : "No";
+}
+
+static const char startingCashKey[] = "StartingCash";
+Money CustomMatchPreferences::getStartingCash(void) const
+{
+  const_iterator it = find(startingCashKey);
+  if (it == end())
+  {
+    return TheMultiplayerSettings->getDefaultStartingMoney();
+  }
+
+  Money money;
+  money.deposit( strtoul( it->second.str(), NULL, 10 ), FALSE  );
+
+  return money;
+}
+
+void CustomMatchPreferences::setStartingCash( const Money & startingCash )
+{
+  AsciiString option;
+
+  option.format( "%d", startingCash.countMoney() );
+
+  (*this)[startingCashKey] = option;
+}
+
+
+static const char limitFactionsKey[] = "LimitArmies";
+
+// Prefers to only use the original 3 sides, not USA Air Force General, GLA Toxin General, et al
+Bool CustomMatchPreferences::getFactionsLimited(void) const
+{
+  const_iterator it = find(limitFactionsKey);
+  if (it == end())
+  {
+    return false; // The default
+  }
+
+  return ( it->second.compareNoCase( "yes" ) == 0 );
+}
+
+void CustomMatchPreferences::setFactionsLimited( Bool factionsLimited )
+{
+  (*this)[limitFactionsKey] = factionsLimited ? "Yes" : "No";
+}
+
+
+static const char useStatsKey[] = "UseStats";
+
+Bool CustomMatchPreferences::getUseStats(void) const
+{
+  const_iterator it = find(useStatsKey);
+  if (it == end())
+  {
+    return true; // The default
+  }
+
+  return ( it->second.compareNoCase( "yes" ) == 0 );
+}
+
+void CustomMatchPreferences::setUseStats( Bool useStats )
+{
+  (*this)[useStatsKey] = useStats ? "Yes" : "No";
+}
+
 //-----------------------------------------------------------------------------
 // GameSpyMiscPreferences base class
 //-----------------------------------------------------------------------------

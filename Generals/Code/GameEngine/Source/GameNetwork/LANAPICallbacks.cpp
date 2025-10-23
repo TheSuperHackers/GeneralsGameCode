@@ -196,7 +196,11 @@ void LANAPI::OnGameStart( void )
 		option.format("%d", m_currentGame->getLANSlot( m_currentGame->getLocalSlotNum() )->getColor());
 		pref["Color"] = option;
 		if (m_currentGame->amIHost())
-			pref["Map"] = AsciiStringToQuotedPrintable(m_currentGame->getMap());
+    {
+    	pref["Map"] = AsciiStringToQuotedPrintable(m_currentGame->getMap());
+      pref.setSuperweaponRestricted( m_currentGame->getSuperweaponRestriction() > 0 );
+      pref.setStartingCash( m_currentGame->getStartingCash() );
+    }
 		pref.write();
 
 		m_isInLANMenu = FALSE;

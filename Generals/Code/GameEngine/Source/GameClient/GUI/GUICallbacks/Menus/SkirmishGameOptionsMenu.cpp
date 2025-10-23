@@ -294,6 +294,50 @@ AsciiString SkirmishPreferences::getPreferredMap(void)
 	return ret;
 }
 
+static const char superweaponRestrictionKey[] = "SuperweaponRestrict";
+
+Bool SkirmishPreferences::getSuperweaponRestricted(void) const
+{
+  const_iterator it = find(superweaponRestrictionKey);
+  if (it == end())
+  {
+    return false;
+  }
+
+  return ( it->second.compareNoCase( "yes" ) == 0 );
+}
+
+void SkirmishPreferences::setSuperweaponRestricted( Bool superweaponRestricted )
+{
+  (*this)[superweaponRestrictionKey] = superweaponRestricted ? "Yes" : "No";
+}
+
+static const char startingCashKey[] = "StartingCash";
+Money SkirmishPreferences::getStartingCash(void) const
+{
+  const_iterator it = find(startingCashKey);
+  if (it == end())
+  {
+    return TheMultiplayerSettings->getDefaultStartingMoney();
+  }
+
+  Money money;
+  money.deposit( strtoul( it->second.str(), NULL, 10 ), FALSE  );
+
+  return money;
+}
+
+void SkirmishPreferences::setStartingCash( const Money & startingCash )
+{
+  AsciiString option;
+
+  option.format( "%d", startingCash.countMoney() );
+
+  (*this)[startingCashKey] = option;
+}
+
+
+
 Bool SkirmishPreferences::write(void)
 {
 	if (!TheSkirmishGameInfo)

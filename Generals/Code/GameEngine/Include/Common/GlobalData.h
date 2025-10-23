@@ -36,6 +36,7 @@
 #include "Common/SubsystemInterface.h"
 #include "GameClient/Color.h"
 #include "Common/STLTypedefs.h"
+#include "Common/Money.h"
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 struct FieldParse;
@@ -438,8 +439,8 @@ public:
 	Real m_standardMinefieldDistance;
 
 
-	Bool m_showMetrics;								///< whether or not to show the metrics.
-	Int m_defaultStartingCash;				///< The amount of cash a player starts with by default.
+	Bool  m_showMetrics;								///< whether or not to show the metrics.
+	Money m_defaultStartingCash;				///< The amount of cash a player starts with by default.
 
 	Bool m_debugShowGraphicalFramerate;		///< Whether or not to show the graphical framerate bar.
 

@@ -62,7 +62,7 @@ void LANAPI::handleRequestLocations( LANMessage *msg, UnsignedInt senderIP )
 				fillInLANMessage( &reply );
 				reply.LANMessageType = LANMessage::MSG_GAME_ANNOUNCE;
 				AsciiString gameOpts = GenerateGameOptionsString();
-				strlcpy(reply.GameInfo.options,gameOpts.str(), ARRAY_SIZE(reply.GameInfo.options));
+				strlcpy(reply.GameInfo.options, gameOpts.str(), ARRAY_SIZE(reply.GameInfo.options));
 				wcslcpy(reply.GameInfo.gameName, m_currentGame->getName().str(), ARRAY_SIZE(reply.GameInfo.gameName));
 				reply.GameInfo.inProgress = m_currentGame->isGameInProgress();
 
@@ -232,7 +232,9 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 #if defined(RTS_DEBUG)
 			if (TheGlobalData->m_netMinPlayers > 0) {
 #endif
-/*			if (msg->GameToJoin.iniCRC != TheGlobalData->m_iniCRC ||
+// TheSuperHackers @todo Enable CRC checks!
+#if !RTS_ZEROHOUR
+			if (msg->GameToJoin.iniCRC != TheGlobalData->m_iniCRC ||
 					msg->GameToJoin.exeCRC != TheGlobalData->m_exeCRC)
 			{
 				DEBUG_LOG(("LANAPI::handleRequestJoin - join denied because of CRC mismatch. CRCs are them/us INI:%X/%X exe:%X/%X",
@@ -244,7 +246,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 				reply.GameNotJoined.playerIP = senderIP;
 				canJoin = false;
 			}
-*/
+#endif
 #if defined(RTS_DEBUG)
 			}
 #endif

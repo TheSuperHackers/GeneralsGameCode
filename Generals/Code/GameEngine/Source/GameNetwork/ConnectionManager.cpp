@@ -1753,6 +1753,7 @@ void ConnectionManager::quitGame() {
 
 	disconnectMsg->detach();
 
+#if RTS_GENERALS
 	// if we get here, we hit Quit on the disconnect screen.  Mark everyone as having disconnected from us
 	// so the online stats can give us appropriate feedback.
 	if (TheGameInfo)
@@ -1766,6 +1767,7 @@ void ConnectionManager::quitGame() {
 			}
 		}
 	}
+#endif
 
 	disconnectLocalPlayer();
 }

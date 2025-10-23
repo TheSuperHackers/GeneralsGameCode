@@ -922,9 +922,14 @@ AsciiString GameInfoToAsciiString( const GameInfo *game )
 	}
 
 	AsciiString optionsString;
+#if RTS_GENERALS
+	optionsString.format("M=%2.2x%s;MC=%X;MS=%d;SD=%d;C=%d;", game->getMapContentsMask(), newMapName.str(),
+		game->getMapCRC(), game->getMapSize(), game->getSeed(), game->getCRCInterval());
+#else
 	optionsString.format("US=%d;M=%2.2x%s;MC=%X;MS=%d;SD=%d;C=%d;SR=%u;SC=%u;O=%c;", game->getUseStats(), game->getMapContentsMask(), newMapName.str(),
 		game->getMapCRC(), game->getMapSize(), game->getSeed(), game->getCRCInterval(), game->getSuperweaponRestriction(),
 		game->getStartingCash().countMoney(), game->oldFactionsOnly() ? 'Y' : 'N' );
+#endif
 
 	//add player info for each slot
 	optionsString.concat(slotListID);
@@ -1517,7 +1522,11 @@ void SkirmishGameInfo::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void SkirmishGameInfo::xfer( Xfer *xfer )
 {
+#if RTS_GENERALS
+	const XferVersion currentVersion = 2;
+#else
 	const XferVersion currentVersion = 4;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 

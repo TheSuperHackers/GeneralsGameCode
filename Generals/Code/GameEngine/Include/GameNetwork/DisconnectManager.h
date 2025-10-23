@@ -119,7 +119,6 @@ protected:
 	Bool m_haveNotifiedOtherPlayersOfCurrentFrame;
 
 	time_t m_timeOfDisconnectScreenOn;
-
 	Int m_pingsSent;
 	Int m_pingsRecieved;
 	UnsignedInt m_pingFrame;

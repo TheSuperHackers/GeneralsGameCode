@@ -464,8 +464,8 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "ObjectPlacementShadows", INI::parseBool, NULL, offsetof( GlobalData, m_objectPlacementShadows ) },
 
 	{ "StandardPublicBone", INI::parseAsciiStringVectorAppend, NULL, offsetof(GlobalData, m_standardPublicBones) },
-	{ "ShowMetrics",								INI::parseBool,				NULL,			offsetof( GlobalData, m_showMetrics ) },
-	{ "DefaultStartingCash",				INI::parseUnsignedInt, NULL,		offsetof( GlobalData, m_defaultStartingCash ) },
+	{ "ShowMetrics",								INI::parseBool,				   NULL,		offsetof( GlobalData, m_showMetrics ) },
+  { "DefaultStartingCash",				Money::parseMoneyAmount, NULL,		offsetof( GlobalData, m_defaultStartingCash ) },
 
 // NOTE: m_doubleClickTimeMS is still in use, but we disallow setting it from the GameData.ini file. It is now set in the constructor according to the windows parameter.
 //	{ "DoubleClickTimeMS",									INI::parseUnsignedInt,			NULL, offsetof( GlobalData, m_doubleClickTimeMS ) },

@@ -304,13 +304,18 @@ void GameInfo::reset( void )
 	m_mapName = AsciiString("NOMAP");
 	m_mapMask = 0;
 	m_seed = GetTickCount(); //GameClientRandomValue(0, INT_MAX - 1);
+	m_useStats = TRUE;
 	m_surrendered = FALSE;
+  m_oldFactionsOnly = FALSE;
 	// Added By Sadullah Nader
 	// Initializations missing and needed
 //	m_localIP = 0; // BGC - actually we don't want this to be reset since the m_localIP is
 										// set properly in the constructor of LANGameInfo which uses this as a base class.
 	m_mapCRC = 0;
 	m_mapSize = 0;
+  m_superweaponRestriction = 0;
+  m_startingCash = TheGlobalData->m_defaultStartingCash;
+
 	//
 
 	for (Int i=0; i<MAX_SLOTS; ++i)
@@ -689,6 +694,16 @@ void GameInfo::setSlotPointer( Int index, GameSlot *slot )
 	m_slot[index] = slot;
 }
 
+void GameInfo::setSuperweaponRestriction( UnsignedShort restriction )
+{
+  m_superweaponRestriction = restriction;
+}
+
+void GameInfo::setStartingCash( const Money & startingCash )
+{
+  m_startingCash = startingCash;
+}
+
 Bool GameInfo::isColorTaken(Int colorIdx, Int slotToIgnore ) const
 {
 	for (Int i=0; i<MAX_SLOTS; ++i)
@@ -907,25 +922,42 @@ AsciiString GameInfoToAsciiString( const GameInfo *game )
 	}
 
 	AsciiString optionsString;
+#if RTS_GENERALS
 	optionsString.format("M=%2.2x%s;MC=%X;MS=%d;SD=%d;C=%d;", game->getMapContentsMask(), newMapName.str(),
 		game->getMapCRC(), game->getMapSize(), game->getSeed(), game->getCRCInterval());
+#else
+	optionsString.format("US=%d;M=%2.2x%s;MC=%X;MS=%d;SD=%d;C=%d;SR=%u;SC=%u;O=%c;", game->getUseStats(), game->getMapContentsMask(), newMapName.str(),
+		game->getMapCRC(), game->getMapSize(), game->getSeed(), game->getCRCInterval(), game->getSuperweaponRestriction(),
+		game->getStartingCash().countMoney(), game->oldFactionsOnly() ? 'Y' : 'N' );
+#endif
+
+	//add player info for each slot
 	optionsString.concat(slotListID);
 	optionsString.concat('=');
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
 		const GameSlot *slot = game->getConstSlot(i);
+
 		AsciiString str;
 		if (slot && slot->isHuman())
 		{
-			AsciiString name = WideCharStringToMultiByte(slot->getName().str()).c_str();
-
-			str.format( "H%s,%X,%d,%c%c,%d,%d,%d,%d,%d:",
-				name.str(), slot->getIP(), slot->getPort(),
+			AsciiString tmp;  //all this data goes after name
+			tmp.format( ",%X,%d,%c%c,%d,%d,%d,%d,%d:",
+				slot->getIP(), slot->getPort(),
 				(slot->isAccepted()?'T':'F'),
 				(slot->hasMap()?'T':'F'),
 				slot->getColor(), slot->getPlayerTemplate(),
 				slot->getStartPos(), slot->getTeamNumber(),
 				slot->getNATBehavior() );
+			//make sure name doesn't cause overflow of m_lanMaxOptionsLength
+			int lenCur = tmp.getLength() + optionsString.getLength() + 2;  //+2 for H and trailing ;
+			int lenRem = m_lanMaxOptionsLength - lenCur;  //length remaining before overflowing
+			int lenMax = lenRem / (MAX_SLOTS-i);  //share lenRem with all remaining slots
+			AsciiString name = WideCharStringToMultiByte(slot->getName().str()).c_str();
+			while( name.getLength() > lenMax )
+				name.removeLastChar();  //what a horrible way to truncate.  I hate AsciiString.
+
+			str.format( "H%s%s", name.str(), tmp.str() );
 		}
 		else if (slot && slot->isAI())
 		{
@@ -986,9 +1018,13 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 	Int seed = 0;
 	Int crc = 100;
 	Bool sawCRC = FALSE;
+  Bool oldFactionsOnly = FALSE;
+	Int useStats = TRUE;
+  Money startingCash = TheGlobalData->m_defaultStartingCash;
+  UnsignedShort restriction = 0; // Always the default
 
-	Bool sawMap, sawMapCRC, sawMapSize, sawSeed, sawSlotlist;
-	sawMap = sawMapCRC = sawMapSize = sawSeed = sawSlotlist = FALSE;
+	Bool sawMap, sawMapCRC, sawMapSize, sawSeed, sawSlotlist, sawUseStats, sawSuperweaponRestriction, sawStartingCash, sawOldFactions;
+	sawMap = sawMapCRC = sawMapSize = sawSeed = sawSlotlist = sawUseStats = sawSuperweaponRestriction = sawStartingCash = sawOldFactions = FALSE;
 
 	//DEBUG_LOG(("Saw options of %s", options.str()));
 	DEBUG_LOG(("ParseAsciiStringToGameInfo - parsing [%s]", options.str()));
@@ -1015,6 +1051,12 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 			break;
 		}
 
+		if (key.compare("US") == 0)
+		{
+			useStats = atoi(val.str());
+			sawUseStats = true;
+		}
+		else
 		if (key.compare("M") == 0)
 		{
 			if (val.getLength() < 3)
@@ -1075,6 +1117,23 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 			crc = atoi(val.str());
 			sawCRC = TRUE;
 		}
+    else if (key.compare("SR") == 0 )
+    {
+      restriction = (UnsignedShort)atoi(val.str());
+      sawSuperweaponRestriction = TRUE;
+    }
+    else if (key.compare("SC") == 0 )
+    {
+      UnsignedInt startingCashAmount = strtoul( val.str(), NULL, 10 );
+      startingCash.init();
+      startingCash.deposit( startingCashAmount, FALSE );
+      sawStartingCash = TRUE;
+    }
+    else if (key.compare("O") == 0 )
+    {
+      oldFactionsOnly = ( val.compareNoCase( "Y" ) == 0 );
+      sawOldFactions = TRUE;
+    }
 		else if (key.getLength() == 1 && *key.str() == slotListID)
 		{
 			sawSlotlist = true;
@@ -1106,7 +1165,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 								break;
 							}
 							UnicodeString name;
-              name.set(MultiByteToWideCharSingleLine(slotValue.str() +1).c_str());
+              				name.set(MultiByteToWideCharSingleLine(slotValue.str() +1).c_str());
 
 							//DEBUG_LOG(("ParseAsciiStringToGameInfo - name is %s", slotValue.str()+1));
 
@@ -1414,7 +1473,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 	free(buf);
 
 	//DEBUG_LOG(("Options were ok == %d", optionsOk));
-	if (optionsOk && sawMap && sawMapCRC && sawMapSize && sawSeed && sawSlotlist && sawCRC)
+	if (optionsOk && sawMap && sawMapCRC && sawMapSize && sawSeed && sawSlotlist && sawCRC && sawUseStats && sawSuperweaponRestriction && sawStartingCash && sawOldFactions )
 	{
 		// We were setting the Global Data directly here, but Instead, I'm now
 		// first setting the data in game.  We'll set the global data when
@@ -1433,6 +1492,10 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 		game->setMapContentsMask(mapContentsMask);
 		game->setSeed(seed);
 		game->setCRCInterval(crc);
+		game->setUseStats(useStats);
+    game->setSuperweaponRestriction(restriction);
+    game->setStartingCash( startingCash );
+    game->setOldFactionsOnly( oldFactionsOnly );
 
 		return true;
 	}
@@ -1459,7 +1522,11 @@ void SkirmishGameInfo::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void SkirmishGameInfo::xfer( Xfer *xfer )
 {
+#if RTS_GENERALS
 	const XferVersion currentVersion = 2;
+#else
+	const XferVersion currentVersion = 4;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -1538,6 +1605,24 @@ void SkirmishGameInfo::xfer( Xfer *xfer )
 	xfer->xferInt(&m_mapMask);
 	xfer->xferInt(&m_seed);
 
+  if ( version >= 3 )
+  {
+    xfer->xferUnsignedShort( &m_superweaponRestriction );
+
+    if ( version == 3 )
+    {
+      // Version 3 had a bool which is now gone
+      Bool obsoleteBool;
+      xfer->xferBool( &obsoleteBool );
+    }
+
+    xfer->xferSnapshot( &m_startingCash );
+  }
+  else if ( xfer->getXferMode() == XFER_LOAD )
+  {
+    m_superweaponRestriction = 0;
+    m_startingCash = TheGlobalData->m_defaultStartingCash;
+  }
 
 }
 

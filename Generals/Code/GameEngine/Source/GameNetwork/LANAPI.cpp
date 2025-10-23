@@ -840,7 +840,6 @@ void LANAPI::RequestGameOptions( AsciiString gameOptions, Bool isPublic, Unsigne
 	fillInLANMessage( &msg );
 	msg.LANMessageType = LANMessage::MSG_GAME_OPTIONS;
 	strlcpy(msg.GameOptions.options, gameOptions.str(), ARRAY_SIZE(msg.GameOptions.options));
-	msg.GameOptions.options[m_lanMaxOptionsLength] = 0;
 	sendMessage(&msg, ip);
 
 	m_lastGameopt = gameOptions;

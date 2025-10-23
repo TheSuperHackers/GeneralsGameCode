@@ -232,6 +232,8 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 #if defined(RTS_DEBUG)
 			if (TheGlobalData->m_netMinPlayers > 0) {
 #endif
+// TheSuperHackers @todo Enable CRC checks!
+#if !RTS_ZEROHOUR
 			if (msg->GameToJoin.iniCRC != TheGlobalData->m_iniCRC ||
 					msg->GameToJoin.exeCRC != TheGlobalData->m_exeCRC)
 			{
@@ -244,6 +246,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 				reply.GameNotJoined.playerIP = senderIP;
 				canJoin = false;
 			}
+#endif
 #if defined(RTS_DEBUG)
 			}
 #endif

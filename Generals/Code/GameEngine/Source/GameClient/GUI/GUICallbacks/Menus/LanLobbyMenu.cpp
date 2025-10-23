@@ -243,6 +243,48 @@ UnicodeString LANPreferences::getRemoteIPEntry(Int i)
 	return ret;
 }
 
+static const char superweaponRestrictionKey[] = "SuperweaponRestrict";
+
+Bool LANPreferences::getSuperweaponRestricted(void) const
+{
+  LANPreferences::const_iterator it = find(superweaponRestrictionKey);
+  if (it == end())
+  {
+    return false;
+  }
+
+  return ( it->second.compareNoCase( "yes" ) == 0 );
+}
+
+void LANPreferences::setSuperweaponRestricted( Bool superweaponRestricted )
+{
+  (*this)[superweaponRestrictionKey] = superweaponRestricted ? "Yes" : "No";
+}
+
+static const char startingCashKey[] = "StartingCash";
+Money LANPreferences::getStartingCash(void) const
+{
+  LANPreferences::const_iterator it = find(startingCashKey);
+  if (it == end())
+  {
+    return TheMultiplayerSettings->getDefaultStartingMoney();
+  }
+
+  Money money;
+  money.deposit( strtoul( it->second.str(), NULL, 10 ), FALSE  );
+
+  return money;
+}
+
+void LANPreferences::setStartingCash( const Money & startingCash )
+{
+  AsciiString option;
+
+  option.format( "%d", startingCash.countMoney() );
+
+  (*this)[startingCashKey] = option;
+}
+
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 
 

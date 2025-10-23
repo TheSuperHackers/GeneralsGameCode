@@ -946,6 +946,12 @@ void Network::quitGame() {
 		m_conMgr->quitGame();
 	}
 
+#if !RTS_GENERALS || !RETAIL_COMPATIBLE_CRC
+	// Blow up / Transfer your units when you quit.  Like a normal quit menu quit.
+	GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_SELF_DESTRUCT);
+	msg->appendBooleanArgument(TRUE);
+#endif
+
 	TheGameLogic->exitGame();
 	m_localStatus = NETLOCALSTATUS_POSTGAME;
 	DEBUG_LOG(("Network::quitGame - quitting game..."));

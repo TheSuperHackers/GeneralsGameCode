@@ -30,6 +30,7 @@
 #pragma once
 
 #include "GameClient/Color.h"
+#include "Common/Money.h"
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 struct FieldParse;
@@ -66,6 +67,9 @@ private:
 typedef std::map<Int, MultiplayerColorDefinition> MultiplayerColorList;
 typedef std::map<Int, MultiplayerColorDefinition>::iterator MultiplayerColorIter;
 
+// A list of values to display in the starting money dropdown
+typedef std::vector< Money > MultiplayerStartingMoneyList;
+
 //-------------------------------------------------------------------------------------------------
 /** Multiplayer Settings container class
   *	Defines multiplayer settings */
@@ -88,8 +92,6 @@ public:
 	MultiplayerColorDefinition * findMultiplayerColorDefinitionByName(AsciiString name);
 	MultiplayerColorDefinition * newMultiplayerColorDefinition(AsciiString name);
 
-	inline Int getInitialCreditsMin( void ) { return m_initialCreditsMin; }
-	inline Int getInitialCreditsMax( void ) { return m_initialCreditsMax; }
 	inline Int getStartCountdownTimerSeconds( void ) { return m_startCountdownTimerSeconds; }
 	inline Int getMaxBeaconsPerPlayer( void ) { return m_maxBeaconsPerPlayer; }
 	inline Bool isShroudInMultiplayer( void ) { return m_isShroudInMultiplayer; }
@@ -106,6 +108,17 @@ public:
 	}
 	MultiplayerColorDefinition * getColor(Int which);
 
+
+  const Money & getDefaultStartingMoney() const
+  {
+    DEBUG_ASSERTCRASH( m_gotDefaultStartingMoney, ("You must specify a default starting money amount in multiplayer.ini") );
+    return m_defaultStartingMoney;
+  }
+
+  const MultiplayerStartingMoneyList & getStartingMoneyList() const { return m_startingMoneyList; }
+
+  void addStartingMoneyChoice( const Money & money, Bool isDefault );
+
 private:
 	Int m_initialCreditsMin;
 	Int m_initialCreditsMax;
@@ -120,6 +133,9 @@ private:
 	Int m_numColors;
 	MultiplayerColorDefinition m_observerColor;
 	MultiplayerColorDefinition m_randomColor;
+  MultiplayerStartingMoneyList      m_startingMoneyList;
+  Money                             m_defaultStartingMoney;
+  Bool                              m_gotDefaultStartingMoney;
 };
 
 // singleton
