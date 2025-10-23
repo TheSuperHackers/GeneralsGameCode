@@ -77,4 +77,4 @@ SimpleDefinitionFactoryClass<T, class_id, name>::Get_Class_ID (void) const
 
 #define DECLARE_DEFINITION_FACTORY(_class, _id, _name)		\
 char _class ## Name[] = _name;										\
-SimpleDefinitionFactoryClass<_class, _id, _class ## Name>	\
+SimpleDefinitionFactoryClass<_class, _id, _class ## Name>
