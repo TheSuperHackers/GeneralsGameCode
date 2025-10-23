@@ -134,6 +134,7 @@ public:
 	Bool sawCRCMismatch() const;
 	void cleanUpReplayFile( void );										///< after a crash, send replay/debug info to a central repository
 
+	void setArchiveEnabled(Bool enable) { m_archiveReplays = enable; } ///< Enable or disable replay archiving.
 	void stopRecording();															///< Stop recording and close m_file.
 protected:
 	void startRecording(GameDifficulty diff, Int originalGameMode, Int rankPoints, Int maxFPS);					///< Start recording to m_file.
