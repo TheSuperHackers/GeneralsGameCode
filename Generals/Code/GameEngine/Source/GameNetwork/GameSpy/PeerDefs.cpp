@@ -48,7 +48,7 @@
 
 
 GameSpyInfoInterface *TheGameSpyInfo = NULL;
-GameSpyStagingRoom *TheGameSpyGame = NULL;
+extern GameSpyStagingRoom *TheGameSpyGame = NULL;
 void deleteNotificationBox( void );
 
 bool AsciiComparator::operator()(AsciiString s1, AsciiString s2) const
@@ -190,10 +190,6 @@ void GameSpyInfo::setGameOptions( void )
 			newMapName.concat('/');
 	}
 	req.gameOptsMapName = newMapName.str();
-
-	//const MapMetaData *md = TheMapCache->findMap(mapName);
-	//if (!md)
-		//return; // there really isn't any need to send info like this...
 
 	req.gameOptions.numPlayers = 0;
 	req.gameOptions.numObservers = 0;
@@ -528,9 +524,20 @@ void GameSpyInfo::markAsStagingRoomHost( void )
 {
 	m_localStagingRoomID = 0;
 	m_joinedStagingRoom = FALSE; m_isHosting = TRUE;
-	m_localStagingRoom.reset();
+
+  // There are a few options we don't want to reset when we are hosting (they carry over
+  // from the the create game dialog).
+  // Interesting fact: oldFactionsOnly will be carried over correctly if I remove these
+  // lines. UseStats won't be. I have no idea why.
+  Int useStats = m_localStagingRoom.getUseStats();
+  Bool oldFactionsOnly = m_localStagingRoom.oldFactionsOnly();
+
+  m_localStagingRoom.reset();
 	m_localStagingRoom.enterGame();
 	m_localStagingRoom.setSeed(GetTickCount());
+
+  m_localStagingRoom.setUseStats( useStats );
+  m_localStagingRoom.setOldFactionsOnly( oldFactionsOnly );
 
 	GameSlot newSlot;
 	UnicodeString uName;
@@ -841,7 +848,7 @@ seems like the only secure way to handle this issue since users can abort the pr
 before we can detect/log disconnections.*/
 void GameSpyInfo::updateAdditionalGameSpyDisconnections(Int count)
 {
-	if (TheRecorder->isMultiplayer() && TheGameLogic->isInInternetGame())
+	if (TheRecorder->isMultiplayer() && TheGameLogic->isInInternetGame() && TheGameSpyGame && TheGameSpyGame->getUseStats())
 	{
 		Int localID = TheGameSpyInfo->getLocalProfileID();
 		PSPlayerStats stats = TheGameSpyPSMessageQueue->findPlayerStatsByID(localID);

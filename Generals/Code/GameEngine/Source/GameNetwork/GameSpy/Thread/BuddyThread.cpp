@@ -260,7 +260,12 @@ void BuddyThreadClass::Thread_Function()
 	try {
 	GPConnection gpCon;
 	GPConnection *con = &gpCon;
-	gpInitialize( con, 675, 0, GP_PARTNERID_GAMESPY );
+#if RTS_GENERALS
+	const int productID = 675;
+#elif RTS_ZEROHOUR
+	const int productID = 823;
+#endif
+	gpInitialize( con, productID, 0, GP_PARTNERID_GAMESPY );
 	m_isConnected = m_isConnecting = false;
 
 	gpSetCallback( con, GP_ERROR,								callbackWrapper,	(void *)CALLBACK_ERROR );

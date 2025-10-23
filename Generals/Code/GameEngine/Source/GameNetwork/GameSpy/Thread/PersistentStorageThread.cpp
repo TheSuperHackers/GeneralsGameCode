@@ -34,6 +34,7 @@
 #include "Common/UserPreferences.h"
 #include "Common/PlayerTemplate.h"
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
+#include "GameNetwork/GameSpy/PeerDefs.h"
 
 #include "mutex.h"
 #include "thread.h"
@@ -588,25 +589,10 @@ Bool PSThreadClass::tryConnect( void )
 	// this may block for 1-2 seconds (according to GS) so it's nice we're not in the UI thread :)
 	result = InitStatsConnection(0);
 
-#ifdef DEBUG_LOGGING
-	static const char *retValStrings[6] = {
-		"GE_NOERROR",
-		"GE_NOSOCKET",
-		"GE_NODNS",
-		"GE_NOCONNECT",
-		"GE_BUSY",
-		"GE_DATAERROR"
-	};
-#endif // DEBUG_LOGGING
-
 	if (result != GE_NOERROR)
 	{
-		DEBUG_LOG(("InitStatsConnection() returned %d (%s)", result, retValStrings[result]));
+		DEBUG_LOG(("InitStatsConnection() returned %d", result));
 		return false;
-	}
-	else
-	{
-		DEBUG_LOG(("InitStatsConnection() succeeded"));
 	}
 
 	return true;
@@ -672,7 +658,6 @@ static void getPersistentDataCallback(int localid, int profileid, persisttype_t 
 		if (!t->getOpCount() && !t->sawLocalPlayerData())
 		{
 			// we haven't gotten stats for ourselves - try again
-			DEBUG_LOG(("Requesting retry for reading local player's stats"));
 			PSRequest req;
 			req.requestType = PSRequest::PSREQUEST_READPLAYERSTATS;
 			req.player.id = MESSAGE_QUEUE->getLocalPlayerID();
@@ -681,7 +666,7 @@ static void getPersistentDataCallback(int localid, int profileid, persisttype_t 
 		return;
 	}
 
-	if (profileid == MESSAGE_QUEUE->getLocalPlayerID())
+	if (profileid == MESSAGE_QUEUE->getLocalPlayerID() && TheGameSpyGame && TheGameSpyGame->getUseStats())
 	{
 		t->gotLocalPlayerData();
 		DEBUG_LOG(("getPersistentDataCallback() - got local player info"));
@@ -824,11 +809,19 @@ void PSThreadClass::Thread_Function()
 	/*********
 	First step, set our game authentication info
 	We could do:
+	Generals:
 		strcpy(gcd_gamename,"ccgenerals");
 		strcpy(gcd_secret_key,"h5T2f6");
+	ZeroHour:
+		strcpy(gcd_gamename,"ccgenzh");
+		strcpy(gcd_secret_key,"D6s9k3");
 	or
+	Generals:
 		strcpy(gcd_gamename,"ccgeneralsb");
 		strcpy(gcd_secret_key,"g3T9s2");
+	ZeroHour:
+		strcpy(gcd_gamename,"ccgeneralsb");
+		strcpy(gcd_secret_key,"whatever the key is");
 	...but this is more secure:
 	**********/
 	/**
@@ -838,11 +831,18 @@ void PSThreadClass::Thread_Function()
 	gcd_secret_key[0]='g';gcd_secret_key[1]='3';gcd_secret_key[2]='T';gcd_secret_key[3]='9';
 	gcd_secret_key[4]='s';gcd_secret_key[5]='2';gcd_secret_key[6]='\0';
 	/**/
+#if RTS_GENERALS
 	gcd_gamename[0]='c';gcd_gamename[1]='c';gcd_gamename[2]='g';gcd_gamename[3]='e';
 	gcd_gamename[4]='n';gcd_gamename[5]='e';gcd_gamename[6]='r';gcd_gamename[7]='a';
 	gcd_gamename[8]='l';gcd_gamename[9]='s';gcd_gamename[10]='\0';
 	gcd_secret_key[0]='h';gcd_secret_key[1]='5';gcd_secret_key[2]='T';gcd_secret_key[3]='2';
 	gcd_secret_key[4]='f';gcd_secret_key[5]='6';gcd_secret_key[6]='\0';
+#elif RTS_ZEROHOUR
+	gcd_gamename[0]='c';gcd_gamename[1]='c';gcd_gamename[2]='g';gcd_gamename[3]='e';
+	gcd_gamename[4]='n';gcd_gamename[5]='z';gcd_gamename[6]='h';gcd_gamename[7]='\0';
+	gcd_secret_key[0]='D';gcd_secret_key[1]='6';gcd_secret_key[2]='s';gcd_secret_key[3]='9';
+	gcd_secret_key[4]='k';gcd_secret_key[5]='3';gcd_secret_key[6]='\0';
+#endif
 	/**/
 
 	//strcpy(StatsServerHostname, "sdkdev.gamespy.com");
@@ -871,7 +871,6 @@ void PSThreadClass::Thread_Function()
 				break;
 			case PSRequest::PSREQUEST_READPLAYERSTATS:
 				{
-					Bool initialConnection = FALSE;
 					if (!MESSAGE_QUEUE->getLocalPlayerID())
 					{
 						MESSAGE_QUEUE->setLocalPlayerID(req.player.id); // first request is for ourselves
@@ -879,32 +878,13 @@ void PSThreadClass::Thread_Function()
 						MESSAGE_QUEUE->setNick(req.nick);
 						MESSAGE_QUEUE->setPassword(req.password);
 						DEBUG_LOG(("Setting email/nick/password = %s/%s/%s", req.email.c_str(), req.nick.c_str(), req.password.c_str()));
-						initialConnection = TRUE;
 					}
 					DEBUG_LOG(("Processing PSRequest::PSREQUEST_READPLAYERSTATS"));
 					if (tryConnect())
 					{
-						DEBUG_LOG(("Successful login"));
 						incrOpCount();
 						gsi_char keys[] = "";
 						GetPersistDataValues(0, req.player.id, pd_public_rw, 0, keys, getPersistentDataCallback, this);
-					}
-					else
-					{
-						DEBUG_LOG(("Unsuccessful login - retry=%d", initialConnection));
-						PSResponse resp;
-						resp.responseType = PSResponse::PSRESPONSE_COULDNOTCONNECT;
-						resp.player.id = req.player.id;
-						TheGameSpyPSMessageQueue->addResponse(resp);
-						if (initialConnection)
-						{
-							// we haven't gotten stats for ourselves - try again
-							DEBUG_LOG(("Requesting retry for reading local player's stats"));
-							PSRequest req;
-							req.requestType = PSRequest::PSREQUEST_READPLAYERSTATS;
-							req.player.id = MESSAGE_QUEUE->getLocalPlayerID();
-							TheGameSpyPSMessageQueue->addRequest(req);
-						}
 					}
 				}
 				break;
@@ -1332,6 +1312,8 @@ PSPlayerStats GameSpyPSMessageQueueInterface::parsePlayerKVPairs( std::string kv
 		s.append(kvbuf); \
 	} \
 }
+
+#include "Common/PlayerTemplate.h"
 
 std::string GameSpyPSMessageQueueInterface::formatPlayerKVPairs( PSPlayerStats stats )
 {

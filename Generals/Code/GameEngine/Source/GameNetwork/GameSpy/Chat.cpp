@@ -89,12 +89,20 @@ Color GameSpyColor[GSCOLOR_MAX] =
 	GameMakeColor(128,128,0,255),		// GSCOLOR_GAME
 	GameMakeColor(128,128,128,255),	// GSCOLOR_GAME_FULL
 	GameMakeColor(128,128,128,255),	// GSCOLOR_GAME_CRCMISMATCH
+#if RTS_GENERALS
 	GameMakeColor(255,  0,  0,255),	// GSCOLOR_PLAYER_NORMAL
+#else
+	GameMakeColor(255,255,255,255),	// GSCOLOR_PLAYER_NORMAL
+#endif
 	GameMakeColor(255,  0,255,255),	// GSCOLOR_PLAYER_OWNER
 	GameMakeColor(255,  0,128,255),	// GSCOLOR_PLAYER_BUDDY
 	GameMakeColor(255,  0,  0,255),	// GSCOLOR_PLAYER_SELF
 	GameMakeColor(128,128,128,255),	// GSCOLOR_PLAYER_IGNORED
+#if RTS_GENERALS
 	GameMakeColor(255,0,0,255),			// GSCOLOR_CHAT_NORMAL
+#else
+	GameMakeColor(255,255,255,255),		// GSCOLOR_CHAT_NORMAL
+#endif
 	GameMakeColor(255,128,0,255),		// GSCOLOR_CHAT_EMOTE,
 	GameMakeColor(255,255,0,255),		// GSCOLOR_CHAT_OWNER,
 	GameMakeColor(128,255,0,255),		// GSCOLOR_CHAT_OWNER_EMOTE,
@@ -114,6 +122,8 @@ Color GameSpyColor[GSCOLOR_MAX] =
 
 Bool GameSpyInfo::sendChat( UnicodeString message, Bool isAction, GameWindow *playerListbox )
 {
+	static UnicodeString s_prevMsg = UnicodeString::TheEmptyString;  //stop spam before it happens
+
 	RoomType roomType = StagingRoom;
 	if (getCurrentGroupRoom())
 		roomType = GroupRoom;
@@ -126,11 +136,14 @@ Bool GameSpyInfo::sendChat( UnicodeString message, Bool isAction, GameWindow *pl
 	if (!message.isEmpty())
 	{
 		if (!playerListbox)
-		{
-			// Public message
-			req.message.isAction = isAction;
-			req.peerRequestType = PeerRequest::PEERREQUEST_MESSAGEROOM;
-			TheGameSpyPeerMessageQueue->addRequest(req);
+		{	// Public message
+			if( isAction  ||  message.compare(s_prevMsg) != 0 )  //don't send duplicate messages
+			{
+				req.message.isAction = isAction;
+				req.peerRequestType = PeerRequest::PEERREQUEST_MESSAGEROOM;
+				TheGameSpyPeerMessageQueue->addRequest(req);
+				s_prevMsg = message;
+			}
 			return false;
 		}
 
@@ -140,11 +153,14 @@ Bool GameSpyInfo::sendChat( UnicodeString message, Bool isAction, GameWindow *pl
 		GadgetListBoxGetSelected(playerListbox, (Int *)&selections);
 
 		if (selections[0] == -1)
-		{
-			// Public message
-			req.message.isAction = isAction;
-			req.peerRequestType = PeerRequest::PEERREQUEST_MESSAGEROOM;
-			TheGameSpyPeerMessageQueue->addRequest(req);
+		{	// Public message
+			if( isAction  ||  message.compare(s_prevMsg) != 0 )  //don't send duplicate messages
+			{
+				req.message.isAction = isAction;
+				req.peerRequestType = PeerRequest::PEERREQUEST_MESSAGEROOM;
+				TheGameSpyPeerMessageQueue->addRequest(req);
+				s_prevMsg = message;
+			}
 			return false;
 		}
 		else
@@ -180,10 +196,11 @@ Bool GameSpyInfo::sendChat( UnicodeString message, Bool isAction, GameWindow *pl
 				req.peerRequestType = PeerRequest::PEERREQUEST_MESSAGEPLAYER;
 				TheGameSpyPeerMessageQueue->addRequest(req);
 			}
-
+			s_prevMsg = message;
 			return true;
 		}
 	}
+	s_prevMsg = message;
 	return false;
 }
 

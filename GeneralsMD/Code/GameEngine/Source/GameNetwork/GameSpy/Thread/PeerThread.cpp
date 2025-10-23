@@ -92,7 +92,9 @@ enum
 	INICRC_KEY,
 	PW_KEY,
 	OBS_KEY,
+#if !RTS_GENERALS
   USE_STATS_KEY,
+#endif
 	LADIP_KEY,
 	LADPORT_KEY,
 	PINGSTR_KEY,
@@ -803,9 +805,11 @@ static void QRServerKeyCallback
 	case OBS_KEY:
 		ADDINT(t->allowObservers());
 		break;
+#if !RTS_GENERALS
   case USE_STATS_KEY:
     ADDINT(t->useStats());
     break;
+#endif
 	case LADIP_KEY:
 		ADD(t->ladderIP().c_str());
 		break;
@@ -950,7 +954,9 @@ static void QRKeyListCallback
 		qr2_keybuffer_add(keyBuffer, INICRC_KEY);
 		qr2_keybuffer_add(keyBuffer, PW_KEY);
 		qr2_keybuffer_add(keyBuffer, OBS_KEY);
+#if !RTS_GENERALS
     qr2_keybuffer_add(keyBuffer, USE_STATS_KEY);
+#endif
 		qr2_keybuffer_add(keyBuffer, LADIP_KEY);
 		qr2_keybuffer_add(keyBuffer, LADPORT_KEY);
 		qr2_keybuffer_add(keyBuffer, PINGSTR_KEY);
@@ -1200,7 +1206,9 @@ void PeerThreadClass::Thread_Function()
 	qr2_register_key(INICRC_KEY, INICRC_STR);
 	qr2_register_key(PW_KEY, PW_STR);
 	qr2_register_key(OBS_KEY, OBS_STR);
+#if !RTS_GENERALS
   qr2_register_key(USE_STATS_KEY, USE_STATS_STR);
+#endif
 	qr2_register_key(LADIP_KEY, LADIP_STR);
 	qr2_register_key(LADPORT_KEY, LADPORT_STR);
 	qr2_register_key(PINGSTR_KEY, PINGSTR_STR);
@@ -1213,7 +1221,11 @@ void PeerThreadClass::Thread_Function()
 	qr2_register_key(FACTION__KEY, FACTION__STR "_");
 	qr2_register_key(COLOR__KEY, COLOR__STR "_");
 
+#if RTS_GENERALS
+	const Int NumKeys = 14;
+#else
 	const Int NumKeys = 15;
+#endif
 	unsigned char allKeysArray[NumKeys] = {
 		/*
 		PID__KEY,
@@ -1230,7 +1242,9 @@ void PeerThreadClass::Thread_Function()
 		INICRC_KEY,
 		PW_KEY,
 		OBS_KEY,
+#if !RTS_GENERALS
     USE_STATS_KEY,
+#endif
 		LADIP_KEY,
 		LADPORT_KEY,
 		PINGSTR_KEY,
@@ -1238,7 +1252,7 @@ void PeerThreadClass::Thread_Function()
 		NUMPLAYER_KEY,
 		MAXPLAYER_KEY,
 		HOSTNAME_KEY
-  };
+	};
 
 	/*
 	const char *allKeys = "\\pid_\\mapname\\gamever\\gamename" \
@@ -1272,9 +1286,17 @@ void PeerThreadClass::Thread_Function()
 	/*********
 	First step, set our game authentication info
 	We could do:
+	Generals:
+		strcpy(gcd_gamename,"ccgenerals");
+		strcpy(gcd_secret_key,"h5T2f6");
+	ZeroHour:
 		strcpy(gcd_gamename,"ccgenzh");
 		strcpy(gcd_secret_key,"D6s9k3");
 	or
+	Generals:
+		strcpy(gcd_gamename,"ccgeneralsb");
+		strcpy(gcd_secret_key,"g3T9s2");
+	ZeroHour:
 		strcpy(gcd_gamename,"ccgeneralsb");
 		strcpy(gcd_secret_key,"whatever the key is");
 	...but this is more secure:
@@ -1288,10 +1310,18 @@ void PeerThreadClass::Thread_Function()
 	secretKey[0]='g';secretKey[1]='3';secretKey[2]='T';secretKey[3]='9';
 	secretKey[4]='s';secretKey[5]='2';secretKey[6]='\0';
 	/**/
+#if RTS_GENERALS
+	gameName[0]='c';gameName[1]='c';gameName[2]='g';gameName[3]='e';
+	gameName[4]='n';gameName[5]='e';gameName[6]='r';gameName[7]='a';
+	gameName[8]='l';gameName[9]='s';gameName[10]='\0';
+	secretKey[0]='h';secretKey[1]='5';secretKey[2]='T';secretKey[3]='2';
+	secretKey[4]='f';secretKey[5]='6';secretKey[6]='\0';
+#elif RTS_ZEROHOUR
 	gameName[0]='c';gameName[1]='c';gameName[2]='g';gameName[3]='e';
 	gameName[4]='n';gameName[5]='z';gameName[6]='h';gameName[7]='\0';
 	secretKey[0]='D';secretKey[1]='6';secretKey[2]='s';secretKey[3]='9';
 	secretKey[4]='k';secretKey[5]='3';secretKey[6]='\0';
+#endif
 	/**/
 
 	// Set the title.
@@ -2681,8 +2711,6 @@ void playerLeftCallback(PEER peer, RoomType roomType, const char * nick, const c
 		roomType, resp.player.flags);
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 
-//	PeerThreadClass *t = (PeerThreadClass *)param;
-//	DEBUG_ASSERTCRASH(t, ("No Peer thread!"));
 	if (t->getQMStatus() != QM_IDLE && t->getQMStatus() != QM_STOPPED)
 	{
 		if (!stricmp(t->getQMBotName().c_str(), nick))
@@ -2824,7 +2852,11 @@ static void listingGamesCallback(PEER peer, PEERBool success, const char * name,
 	{
 		DEBUG_LOG(("Game name is '%s'", name));
 		const char *newname = SBServerGetStringValue(server, "gamename", (char *)name);
+#if RTS_GENERALS
+		if (strcmp(newname, "ccgenerals"))
+#elif RTS_ZEROHOUR
 		if (strcmp(newname, "ccgenzh"))
+#endif
 			name = newname;
 		DEBUG_LOG(("Game name is now '%s'", name));
 	}

@@ -336,7 +336,7 @@ m_qmChannel(0)
 			// German2 is missing some maps because of content.  But, we need the m_qmMaps
 			// to contain same number of strings as the Retail version so that the
 			// QM Bot thinks that they have the same number of maps.
-			#if 1
+			#if RTS_GENERALS
 			m_qmMaps.push_back(mapName);
 			#else
 			const MapMetaData *md = TheMapCache->findMap(mapName);

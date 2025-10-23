@@ -582,7 +582,79 @@ static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result,
 		return GHTTPTrue;
 	}
 
+#if RTS_GENERALS
+	OverallStats USA, China, GLA;
+	AsciiString message = buffer;
+
+	Int state = STATS_MAX; // STATS_MAX == none
+	AsciiString line;
+	OverallStats *stats = NULL;
+	while (message.nextToken(&line, "\n"))
+	{
+		line.trim();
+		line.toLower();
+		if (strstr(line.str(), "today"))
+		{
+			state = STATS_TODAY;
+		}
+		else if (strstr(line.str(), "yesterday"))
+		{
+			state = STATS_YESTERDAY;
+		}
+		else if (strstr(line.str(), "all time"))
+		{
+			state = STATS_ALLTIME;
+		}
+		else if (strstr(line.str(), "last week"))
+		{
+			state = STATS_LASTWEEK;
+		}
+		else if (state != STATS_MAX && strstr(line.str(), "usa"))
+		{
+			stats = &USA;
+		}
+		else if (state != STATS_MAX && strstr(line.str(), "china"))
+		{
+			stats = &China;
+		}
+		else if (state != STATS_MAX && strstr(line.str(), "gla"))
+		{
+			stats = &GLA;
+		}
+
+		if (stats)
+		{
+			AsciiString totalLine, winsLine, lossesLine;
+			message.nextToken(&totalLine, "\n");
+			message.nextToken(&winsLine, "\n");
+			message.nextToken(&lossesLine, "\n");
+			while (totalLine.isNotEmpty() && !isdigit(totalLine.getCharAt(0)))
+			{
+				totalLine = totalLine.str()+1;
+			}
+			while (winsLine.isNotEmpty() && !isdigit(winsLine.getCharAt(0)))
+			{
+				winsLine = winsLine.str()+1;
+			}
+			while (lossesLine.isNotEmpty() && !isdigit(lossesLine.getCharAt(0)))
+			{
+				lossesLine = lossesLine.str()+1;
+			}
+			if (totalLine.isNotEmpty() && winsLine.isNotEmpty() && lossesLine.isNotEmpty())
+			{
+				stats->wins[state] = atoi(winsLine.str());
+				stats->losses[state] = atoi(lossesLine.str());
+			}
+
+			stats = NULL;
+		}
+	}
+
+	HandleOverallStats(USA, China, GLA);
+#elif RTS_ZEROHOUR
 	HandleOverallStats( buffer, bufferLen );
+#endif
+
 	return GHTTPTrue;
 }
 
@@ -617,16 +689,24 @@ static GHTTPBool numPlayersOnlineCallback( GHTTPRequest request, GHTTPResult res
 
 void CheckOverallStats( void )
 {
-	ghttpGet("http://gamestats.gamespy.com/ccgenzh/display.html",
-		GHTTPFalse, overallStatsCallback, NULL);
+#if RTS_GENERALS
+	const char *const url = "http://gamestats.gamespy.com/ccgenerals/display.html";
+#elif RTS_ZEROHOUR
+	const char *const url = "http://gamestats.gamespy.com/ccgenzh/display.html";
+#endif
+	ghttpGet(url, GHTTPFalse, overallStatsCallback, NULL);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 void CheckNumPlayersOnline( void )
 {
-	ghttpGet("http://launch.gamespyarcade.com/software/launch/arcadecount2.dll?svcname=ccgenzh",
-		GHTTPFalse, numPlayersOnlineCallback, NULL);
+#if RTS_GENERALS
+	const char *const url = "http://launch.gamespyarcade.com/software/launch/arcadecount2.dll?svcname=ccgenerals";
+#elif RTS_ZEROHOUR
+	const char *const url = "http://launch.gamespyarcade.com/software/launch/arcadecount2.dll?svcname=ccgenzh";
+#endif
+	ghttpGet(url, GHTTPFalse, numPlayersOnlineCallback, NULL);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////

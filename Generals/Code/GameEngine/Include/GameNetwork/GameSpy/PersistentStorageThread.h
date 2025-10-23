@@ -44,7 +44,7 @@ public:
 	Int id;
 	PerGeneralMap wins;
 	PerGeneralMap losses;
-	PerGeneralMap games;
+	PerGeneralMap games;              //first: playerTemplate #,  second: #games played (see also gamesAsRandom)
 	PerGeneralMap duration;
 	PerGeneralMap unitsKilled;
 	PerGeneralMap unitsLost;

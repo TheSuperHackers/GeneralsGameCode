@@ -166,9 +166,17 @@ static LadderInfo *parseLadder(AsciiString raw)
 				if (lad->validFactions.size() == 0)
 				{
 					DEBUG_LOG(("No factions specified.  Using all."));
-					lad->validFactions.push_back("America");
-					lad->validFactions.push_back("China");
-					lad->validFactions.push_back("GLA");
+					lad->validFactions.clear();
+					Int numTemplates = ThePlayerTemplateStore->getPlayerTemplateCount();
+					for ( Int i = 0; i < numTemplates; ++i )
+					{
+						const PlayerTemplate *pt = ThePlayerTemplateStore->getNthPlayerTemplate(i);
+						if (!pt)
+							continue;
+
+						if (pt->isPlayableSide()  &&  pt->getSide().compare("Boss") != 0 )
+							lad->validFactions.push_back(pt->getSide());
+					}
 				}
 				else
 				{

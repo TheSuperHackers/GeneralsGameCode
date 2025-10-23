@@ -726,7 +726,7 @@ AsciiString GameSpyStagingRoom::generateLadderGameResultsPacket( void )
 		endFrame, numPlayers, m_isQM, TheGameState->realMapPathToPortableMapPath(getMap()).str());
 
 	AsciiString tempStr;
-	tempStr.format("ladderIP=%s,ladderPort=%d", getLadderIP().str(), getLadderPort());
+	tempStr.format(",ladderIP=%s,ladderPort=%d", getLadderIP().str(), getLadderPort());
 	results.concat(tempStr);
 
 	Int playerID = 0;
@@ -762,8 +762,13 @@ AsciiString GameSpyStagingRoom::generateLadderGameResultsPacket( void )
 			playerStr.format(",buildingsKilled%d=%d,buildingsLost%d=%d,buildingsBuilt%d=%d",
 				playerID, buildingsKilled, playerID, buildingsLost, playerID, buildingsBuilt);
 			results.concat(playerStr);
+#if RTS_GENERALS
+			playerStr.format(",fps%d=%d,cash%d=%d,capturedTech%d=%d,discon%d=%d,side%d=%s,team%d=%d",
+				playerID, fps, playerID, earnings, playerID, techCaptured, playerID, disconnected, playerID, p[i]->getPlayerTemplate()->getSide().str(), playerID, slot->getTeamNumber());
+#elif RTS_ZEROHOUR
 			playerStr.format(",fps%d=%d,cash%d=%d,capturedTech%d=%d,discon%d=%d,side%d=%s",
 				playerID, fps, playerID, earnings, playerID, techCaptured, playerID, disconnected, playerID, p[i]->getPlayerTemplate()->getSide().str());
+#endif
 			results.concat(playerStr);
 
 			++playerID;

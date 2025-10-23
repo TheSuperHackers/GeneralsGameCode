@@ -582,6 +582,7 @@ static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result,
 		return GHTTPTrue;
 	}
 
+#if RTS_GENERALS
 	OverallStats USA, China, GLA;
 	AsciiString message = buffer;
 
@@ -650,6 +651,9 @@ static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result,
 	}
 
 	HandleOverallStats(USA, China, GLA);
+#elif RTS_ZEROHOUR
+	HandleOverallStats( buffer, bufferLen );
+#endif
 
 	return GHTTPTrue;
 }
@@ -685,16 +689,24 @@ static GHTTPBool numPlayersOnlineCallback( GHTTPRequest request, GHTTPResult res
 
 void CheckOverallStats( void )
 {
-	ghttpGet("http://gamestats.gamespy.com/ccgenerals/display.html",
-		GHTTPFalse, overallStatsCallback, NULL);
+#if RTS_GENERALS
+	const char *const url = "http://gamestats.gamespy.com/ccgenerals/display.html";
+#elif RTS_ZEROHOUR
+	const char *const url = "http://gamestats.gamespy.com/ccgenzh/display.html";
+#endif
+	ghttpGet(url, GHTTPFalse, overallStatsCallback, NULL);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 void CheckNumPlayersOnline( void )
 {
-	ghttpGet("http://launch.gamespyarcade.com/software/launch/arcadecount2.dll?svcname=ccgenerals",
-		GHTTPFalse, numPlayersOnlineCallback, NULL);
+#if RTS_GENERALS
+	const char *const url = "http://launch.gamespyarcade.com/software/launch/arcadecount2.dll?svcname=ccgenerals";
+#elif RTS_ZEROHOUR
+	const char *const url = "http://launch.gamespyarcade.com/software/launch/arcadecount2.dll?svcname=ccgenzh";
+#endif
+	ghttpGet(url, GHTTPFalse, numPlayersOnlineCallback, NULL);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////

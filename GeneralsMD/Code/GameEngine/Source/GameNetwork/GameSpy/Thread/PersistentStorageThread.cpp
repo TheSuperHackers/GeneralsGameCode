@@ -809,9 +809,17 @@ void PSThreadClass::Thread_Function()
 	/*********
 	First step, set our game authentication info
 	We could do:
+	Generals:
+		strcpy(gcd_gamename,"ccgenerals");
+		strcpy(gcd_secret_key,"h5T2f6");
+	ZeroHour:
 		strcpy(gcd_gamename,"ccgenzh");
 		strcpy(gcd_secret_key,"D6s9k3");
 	or
+	Generals:
+		strcpy(gcd_gamename,"ccgeneralsb");
+		strcpy(gcd_secret_key,"g3T9s2");
+	ZeroHour:
 		strcpy(gcd_gamename,"ccgeneralsb");
 		strcpy(gcd_secret_key,"whatever the key is");
 	...but this is more secure:
@@ -823,10 +831,18 @@ void PSThreadClass::Thread_Function()
 	gcd_secret_key[0]='g';gcd_secret_key[1]='3';gcd_secret_key[2]='T';gcd_secret_key[3]='9';
 	gcd_secret_key[4]='s';gcd_secret_key[5]='2';gcd_secret_key[6]='\0';
 	/**/
+#if RTS_GENERALS
+	gcd_gamename[0]='c';gcd_gamename[1]='c';gcd_gamename[2]='g';gcd_gamename[3]='e';
+	gcd_gamename[4]='n';gcd_gamename[5]='e';gcd_gamename[6]='r';gcd_gamename[7]='a';
+	gcd_gamename[8]='l';gcd_gamename[9]='s';gcd_gamename[10]='\0';
+	gcd_secret_key[0]='h';gcd_secret_key[1]='5';gcd_secret_key[2]='T';gcd_secret_key[3]='2';
+	gcd_secret_key[4]='f';gcd_secret_key[5]='6';gcd_secret_key[6]='\0';
+#elif RTS_ZEROHOUR
 	gcd_gamename[0]='c';gcd_gamename[1]='c';gcd_gamename[2]='g';gcd_gamename[3]='e';
 	gcd_gamename[4]='n';gcd_gamename[5]='z';gcd_gamename[6]='h';gcd_gamename[7]='\0';
 	gcd_secret_key[0]='D';gcd_secret_key[1]='6';gcd_secret_key[2]='s';gcd_secret_key[3]='9';
 	gcd_secret_key[4]='k';gcd_secret_key[5]='3';gcd_secret_key[6]='\0';
+#endif
 	/**/
 
 	//strcpy(StatsServerHostname, "sdkdev.gamespy.com");

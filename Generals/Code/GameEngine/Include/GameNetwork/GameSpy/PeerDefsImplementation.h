@@ -61,7 +61,6 @@ public:
 	virtual void setLocalPassword( AsciiString passwd ) { m_localPasswd = passwd;	}
 	virtual void setLocalBaseName( AsciiString name ) { m_localBaseName = name; }
 	virtual AsciiString getLocalBaseName( void ){ return m_localBaseName; }
-
 	virtual void setCachedLocalPlayerStats( PSPlayerStats stats ) {m_cachedLocalPlayerStats = stats;	}
 	virtual PSPlayerStats getCachedLocalPlayerStats( void ){ return m_cachedLocalPlayerStats;	}
 
@@ -174,6 +173,5 @@ private:
 	std::set<GameWindow *> m_textWindows;
 
 	std::set<Int> m_preorderPlayers;
-
 	Int m_additionalDisconnects;
 };

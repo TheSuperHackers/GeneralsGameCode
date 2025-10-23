@@ -72,7 +72,9 @@ enum {
 	COLUMN_NUMPLAYERS,
 	COLUMN_PASSWORD,
 	COLUMN_OBSERVER,
+#if !RTS_GENERALS
   COLUMN_USE_STATS,
+#endif
 	COLUMN_PING,
 };
 
@@ -247,6 +249,7 @@ static void gameTooltip(GameWindow *window,
 			TheMouse->setCursorTooltip( UnicodeString::TheEmptyString );
 		return;
 	}
+#if !RTS_GENERALS
   if (col == COLUMN_USE_STATS)
   {
     if ( room->getUseStats() )
@@ -259,6 +262,7 @@ static void gameTooltip(GameWindow *window,
     }
     return;
   }
+#endif
 
 	UnicodeString tooltip;
 
@@ -642,14 +646,17 @@ static Int insertGame( GameWindow *win, GameSpyStagingRoom *game, Bool showMap )
 		GadgetListBoxAddEntryText(win, UnicodeString(L" "), gameColor, index, COLUMN_OBSERVER);
 	}
 
+#if !RTS_GENERALS
   {
     if (game->getUseStats())
     {
-      const Image *img = TheMappedImageCollection->findImageByName("GoodStatsIcon");
-      GadgetListBoxAddEntryImage(win, img, index, COLUMN_USE_STATS, img->getImageHeight(), img->getImageWidth());
-	}
-
+      if (const Image *img = TheMappedImageCollection->findImageByName("GoodStatsIcon"))
+      {
+        GadgetListBoxAddEntryImage(win, img, index, COLUMN_USE_STATS, img->getImageHeight(), img->getImageWidth());
+      }
+    }
   }
+#endif
 
 	s.format(L"%d", game->getPingAsInt());
 	GadgetListBoxAddEntryText(win, s, gameColor, index, COLUMN_PING);
