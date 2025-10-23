@@ -392,7 +392,6 @@ public:
 																			 smaller area within the rectangle to order the gather. */
 
 	Int m_antiAliasBoxValue;          ///< value of selected antialias from combo box in options menu
-	Bool m_archiveReplays;						///< if true, each replay is archived to the replay archive folder after recording
 	Bool m_languageFilterPref;        ///< Bool if user wants to filter language
 	Bool m_loadScreenDemo;						///< Bool if true, run the loadscreen demo movie
 	Bool m_disableRender;							///< if true, no rendering!

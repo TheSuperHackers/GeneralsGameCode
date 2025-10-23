@@ -169,6 +169,7 @@ protected:
 	Bool m_wasDesync;
 
 	Bool m_doingAnalysis;
+	Bool m_archiveReplays;														///< if true, each replay is archived to the replay archive folder after recording
 
 	Int m_originalGameMode; // valid in replays
 

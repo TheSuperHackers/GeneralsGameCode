@@ -45,6 +45,7 @@
 #include "GameLogic/GameLogic.h"
 #include "Common/RandomValue.h"
 #include "Common/CRCDebug.h"
+#include "Common/UserPreferences.h"
 #include "Common/version.h"
 
 constexpr const char s_genrep[] = "GENREP";
@@ -370,6 +371,7 @@ RecorderClass::RecorderClass()
 	//Added By Sadullah Nader
 	//Initializtion(s) inserted
 	m_doingAnalysis = FALSE;
+	m_archiveReplays = FALSE;
 	m_nextFrame = 0;
 	m_wasDesync = FALSE;
 	//
@@ -406,6 +408,9 @@ void RecorderClass::init() {
 	m_wasDesync = FALSE;
 	m_doingAnalysis = FALSE;
 	m_playbackFrameCount = 0;
+
+	OptionPreferences optionPref;
+	m_archiveReplays = optionPref.getArchiveReplaysEnabled();
 }
 
 /**
@@ -727,7 +732,7 @@ void RecorderClass::stopRecording() {
 		m_file->close();
 		m_file = NULL;
 
-		if (TheGlobalData->m_archiveReplays)
+		if (m_archiveReplays)
 			archiveReplay(m_fileName);
 	}
 	m_fileName.clear();

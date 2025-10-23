@@ -314,7 +314,7 @@ Bool OptionPreferences::getArchiveReplaysEnabled() const
 {
 	OptionPreferences::const_iterator it = find("ArchiveReplays");
 	if (it == end())
-		return TheGlobalData->m_archiveReplays;
+		return FALSE;
 
 	if (stricmp(it->second.str(), "yes") == 0) {
 		return TRUE;
