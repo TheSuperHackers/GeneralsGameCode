@@ -26,7 +26,8 @@
 //
 // Result function interface and result functions
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+#include "profile.h"
+#include "internal.h"
 #include <new>
 #include <stdlib.h>
 #include <Utility/stdio_adapter.h>

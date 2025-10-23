@@ -26,7 +26,8 @@
 //
 // High level profiling
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+#include "profile.h"
+#include "internal.h"
 #include <new>
 #include <WWCommon.h>
 

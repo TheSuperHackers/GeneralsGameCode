@@ -26,7 +26,9 @@
 //
 // Unhandled exception handler
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+#include "debug.h"
+#include "internal_except.h"
+#include <windows.h>
 #include <commctrl.h>
 
 DebugExceptionhandler::DebugExceptionhandler(void)

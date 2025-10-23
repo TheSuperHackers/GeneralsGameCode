@@ -29,6 +29,8 @@
 
 #pragma once
 
+#include <windows.h>
+
 class ProfileFuncLevelTracer
 {
   friend class ProfileCmdInterface;

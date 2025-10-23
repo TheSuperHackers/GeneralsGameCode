@@ -26,7 +26,9 @@
 //
 // Stack walker
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+#include "debug.h"
+#include "debug_stack.h"
+#include <windows.h>
 #include "stringex.h"
 #include <imagehlp.h>
 

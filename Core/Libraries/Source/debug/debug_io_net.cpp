@@ -26,7 +26,10 @@
 //
 // Debug I/O class net (Network destination via named pipe)
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+#include "debug.h"
+#include "internal.h"
+#include "internal_io.h"
+#include <windows.h>
 #include <new>      // needed for placement new prototype
 
 DebugIONet::DebugIONet(void)

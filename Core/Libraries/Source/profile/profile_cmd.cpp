@@ -26,7 +26,8 @@
 //
 // Profile module command interface
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+#include "profile.h"
+#include "internal.h"
 
 unsigned ProfileCmdInterface::numResIf;
 ProfileCmdInterface::Factory *ProfileCmdInterface::resIf;

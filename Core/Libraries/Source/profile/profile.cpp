@@ -26,7 +26,8 @@
 //
 // Profile module main code
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+#include "profile.h"
+#include "internal.h"
 #include <new>
 #include "mmsystem.h"
 

@@ -1,6 +1,4 @@
 set(PROFILE_SRC
-    "_pch.cpp"
-    "_pch.h"
     "internal_cmd.h"
     "internal_funclevel.h"
     "internal_highlevel.h"
@@ -24,6 +22,12 @@ target_sources(core_profile PRIVATE ${PROFILE_SRC})
 
 target_include_directories(core_profile INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_precompile_headers(core_profile PRIVATE
+    "profile.h"
+    "internal.h"
+    <windows.h>
 )
 
 target_link_libraries(core_profile PRIVATE

@@ -26,7 +26,10 @@
 //
 // Debug command group 'debug'
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+#include "debug.h"
+#include "debug_cmd.h"
+#include "internal.h"
+#include <windows.h>
 #include <process.h>
 
 bool DebugCmdInterfaceDebug::Execute(class Debug& dbg, const char *cmd,
