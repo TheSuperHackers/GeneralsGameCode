@@ -43,10 +43,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef HASHLIST_H
-#define HASHLIST_H
-
 #pragma warning (push)
 #pragma warning (disable: 4786)
 
@@ -628,23 +624,3 @@ void HashListClass<T, U, NumHashValues>::Move_To(HashListClass<T,U> *newlist)
 }
 
 #pragma warning (pop)
-
-#endif // HASHLIST_H
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __MAINMENUUTILS_H__
-#define __MAINMENUUTILS_H__
-
 void HTTPThinkWrapper( void );
 void StopAsyncDNSCheck( void );
 void StartPatchCheck( void );
@@ -60,5 +56,3 @@ void HandleOverallStats( const OverallStats& USA, const OverallStats& China, con
 
 void CheckNumPlayersOnline( void );
 void HandleNumPlayersOnline( Int numPlayersOnline );
-
-#endif // __MAINMENUUTILS_H__

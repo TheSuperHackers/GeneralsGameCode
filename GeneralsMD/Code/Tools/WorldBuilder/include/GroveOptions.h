@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef GROVEOPTIONS_H
-#define GROVEOPTIONS_H
-
 #pragma once
 
 #include <map>
@@ -78,5 +74,3 @@ class GroveOptions : public COptionsPanel
 };
 
 extern GroveOptions *TheGroveOptions;
-
-#endif

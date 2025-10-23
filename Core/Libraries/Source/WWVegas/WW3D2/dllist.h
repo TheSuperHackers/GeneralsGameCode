@@ -38,10 +38,6 @@
 
 #pragma once
 
-#ifndef DLLIST_H
-#define DLLIST_H
-
-
 template <class T> class DLNodeClass;
 
 template <class T>
@@ -205,5 +201,3 @@ inline void DLListClass<T>::Remove_Tail()
 	else tail->succ=0;
 	n->Remove();
 }
-
-#endif //DLLIST_H

@@ -30,10 +30,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __OVERCHARGE_BEHAVIOR_H_
-#define __OVERCHARGE_BEHAVIOR_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DamageModule.h"
@@ -114,5 +110,3 @@ protected:
 	Bool m_overchargeActive;				///< Overcharge is currently on/off for this object
 
 };
-
-#endif  // end __OVERCHARGE_BEHAVIOR_H_

@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_PARTICLEROTATIONKEYDIALOG_H__2B0B9CFD_19BC_4910_8AB2_813120740C69__INCLUDED_)
-#define AFX_PARTICLEROTATIONKEYDIALOG_H__2B0B9CFD_19BC_4910_8AB2_813120740C69__INCLUDED_
-
 #pragma once
 // ParticleRotationKeyDialog.h : header file
 //
@@ -75,5 +71,3 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_PARTICLEROTATIONKEYDIALOG_H__2B0B9CFD_19BC_4910_8AB2_813120740C69__INCLUDED_)

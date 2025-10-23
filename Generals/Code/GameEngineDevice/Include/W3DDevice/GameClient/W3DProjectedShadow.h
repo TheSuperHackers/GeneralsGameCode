@@ -31,10 +31,6 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 #pragma once
-
-#ifndef __W3D_PROJECTED_SHADOW_H_
-#define __W3D_PROJECTED_SHADOW_H_
-
 #include "GameClient/Shadow.h"
 
 class W3DShadowTexture;	//forward reference
@@ -136,5 +132,3 @@ class W3DProjectedShadow	: public Shadow
 		Int		m_flags;			/// custom rendering flags
 		virtual void release(void)	{TheW3DProjectedShadowManager->removeShadow(this);}	///<release shadow from manager
 };
-
-#endif	//__W3D_PROJECTED_SHADOW_H_

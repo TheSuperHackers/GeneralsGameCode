@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __DISPLAYSTRINGMANAGER_H_
-#define __DISPLAYSTRINGMANAGER_H_
-
 #include "Common/SubsystemInterface.h"
 #include "GameClient/DisplayString.h"
 
@@ -66,6 +62,3 @@ protected:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern DisplayStringManager *TheDisplayStringManager;  ///< singleton extern
-
-#endif // __DISPLAYSTRINGMANAGER_H_
-

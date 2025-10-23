@@ -24,10 +24,6 @@
 
 
 #pragma once
-
-#ifndef __W3DWaterTracks_H_
-#define __W3DWaterTracks_H_
-
 enum waveType CPP_11(: Int);	//forward reference
 
 /// Custom render object that draws animated tracks/waves on the water.
@@ -142,5 +138,3 @@ protected:
 	Real	m_level;				///< water level
 	void releaseTrack( WaterTracksObj *mod );	///<returns track object to free store.
 };
-
-#endif  //__W3DWaterTracks_H_

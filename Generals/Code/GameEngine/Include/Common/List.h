@@ -43,10 +43,6 @@
 
 #pragma once
 
-
-#ifndef	__WSYS_LIST_H
-#define	__WSYS_LIST_H
-
 //----------------------------------------------------------------------------
 //           Includes
 //----------------------------------------------------------------------------
@@ -177,5 +173,3 @@ inline		LListNode*		LList::lastNode( void ) { return m_head.prev();} ;
 inline		void					LList::setSortMode( SortMode new_mode ) { m_sortMode = new_mode; };
 inline		Bool					LList::isEmpty( void ) { return !m_head.inList(); };
 inline		void					LList::destroy( void ) { clear();};
-
-#endif	//	__GDF_LIST_H_

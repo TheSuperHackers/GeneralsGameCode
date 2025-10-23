@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef _MissileLauncherBuildingUpdate_H_
-#define _MissileLauncherBuildingUpdate_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/INI.h"
@@ -135,5 +131,3 @@ private:
 	UnsignedInt													m_timeoutFrame;
 	AudioEventRTS												m_openIdleAudio;
 };
-
-#endif // _MissileLauncherBuildingUpdate_H_

@@ -36,10 +36,6 @@
 
 
 #pragma once
-
-#ifndef HERMITE_H
-#define HERMITE_H
-
 #include "curve.h"
 
 /*
@@ -136,6 +132,3 @@ protected:
 	bool											TangentsDirty;
 	DynamicVectorClass<TangentsClass>	Tangents;
 };
-
-
-#endif

@@ -27,10 +27,6 @@
 // Do Not Distribute
 
 #pragma once
-
-#ifndef _OVERRIDE_H_
-#define _OVERRIDE_H_
-
 #include "Common/Overridable.h"
 
 /*
@@ -136,6 +132,3 @@ OVERRIDE<T>::operator const T*( ) const
 {
 	return operator*();
 }
-
-#endif /* _OVERRIDE_H_ */
-

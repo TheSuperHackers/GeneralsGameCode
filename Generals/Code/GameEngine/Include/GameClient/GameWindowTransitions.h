@@ -44,10 +44,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __GAME_WINDOW_TRANSITIONS_H_
-#define __GAME_WINDOW_TRANSITIONS_H_
-
 #include "Common/GameCommon.h"
 
 //-----------------------------------------------------------------------------
@@ -696,5 +692,3 @@ void PushButtonImageDrawThree(GameWindow *window, Int alpha );
 // EXTERNALS //////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 extern GameWindowTransitionsHandler *TheTransitionHandler;
-#endif // __GAME_WINDOW_TRANSITIONS_H_
-

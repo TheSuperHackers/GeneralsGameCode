@@ -44,10 +44,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef CAMERA_H
-#define CAMERA_H
-
 #include "always.h"
 #include "rendobj.h"
 #include "plane.h"
@@ -449,6 +445,3 @@ inline const Vector3 * CameraClass::Get_View_Space_Frustum_Corners(void) const
 	const FrustumClass & frustum = Get_View_Space_Frustum();
 	return frustum.Corners;
 }
-
-
-#endif

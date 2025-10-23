@@ -39,10 +39,6 @@
 
 
 
-
-#ifndef __SIMPLE_PARAMETER_H
-#define __SIMPLE_PARAMETER_H
-
 #include "always.h"
 #include "parameter.h"
 #include "vector2.h"
@@ -240,6 +236,3 @@ public:
 		:	RangedParameterClass<float, ParameterClass::TYPE_ANGLE> (data, name)
 			{ Set_Range (0.0F,  6.283185307F); }
 };
-
-#endif //__SIMPLE_PARAMETER_H
-

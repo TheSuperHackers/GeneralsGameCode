@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __WATER_H_
-#define __WATER_H_
-
 // INLCLUDES //////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameType.h"
 #include "Common/Overridable.h"
@@ -125,6 +121,3 @@ EMPTY_DTOR(WaterTransparencySetting)
 extern WaterSetting WaterSettings[ TIME_OF_DAY_COUNT ];
 
 extern OVERRIDE<WaterTransparencySetting> TheWaterTransparency;
-
-#endif // __WATER_H_
-

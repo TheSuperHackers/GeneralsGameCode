@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_CAMERAOPTIONS_H__4EF4F775_1290_47AE_817F_9340BA3A898C__INCLUDED_)
-#define AFX_CAMERAOPTIONS_H__4EF4F775_1290_47AE_817F_9340BA3A898C__INCLUDED_
-
 #pragma once
 // CameraOptions.h : header file
 //
@@ -88,5 +84,3 @@ public:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_CAMERAOPTIONS_H__4EF4F775_1290_47AE_817F_9340BA3A898C__INCLUDED_)

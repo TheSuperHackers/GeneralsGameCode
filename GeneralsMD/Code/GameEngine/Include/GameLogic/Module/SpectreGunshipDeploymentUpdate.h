@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __SPECTRE_GUNSHIP_DEPLOYMENT_UPDATE_H_
-#define __SPECTRE_GUNSHIP_DEPLOYMENT_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
@@ -147,7 +143,3 @@ protected:
 
 
 };
-
-
-#endif // __SPECTRE_GUNSHIP_DEPLOYMENT_UPDATE_H_
-

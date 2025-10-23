@@ -35,10 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef BOXROBJ_H
-#define BOXROBJ_H
-
 #include "always.h"
 #include "rendobj.h"
 #include "w3d_file.h"
@@ -257,9 +253,3 @@ private:
 ** Instance of the loader which the asset manager installs
 */
 extern BoxLoaderClass			_BoxLoader;
-
-
-
-
-#endif
-

@@ -28,10 +28,6 @@
 // Split out into separate Logic/Client/Audio headers by MDC Sept 2002
 
 #pragma once
-
-#ifndef _CLIENT_RANDOM_VALUE_H_
-#define _CLIENT_RANDOM_VALUE_H_
-
 #include "Lib/BaseType.h"
 
 // do NOT use these functions directly, rather use the macros below
@@ -92,5 +88,3 @@ protected:
 };
 
 //--------------------------------------------------------------------------------------------------------------
-
-#endif // _CLIENT_RANDOM_VALUE_H_

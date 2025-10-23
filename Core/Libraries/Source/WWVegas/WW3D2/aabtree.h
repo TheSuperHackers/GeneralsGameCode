@@ -38,10 +38,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef AABTREE_H
-#define AABTREE_H
-
 #include "always.h"
 #include "refcount.h"
 #include "simplevec.h"
@@ -348,5 +344,3 @@ inline void AABTreeClass::CullNodeStruct::Set_Poly_Count(uint32 count)
 	WWASSERT(count < 0x7FFFFFFF);
 	BackOrPolyCount = count;
 }
-
-#endif

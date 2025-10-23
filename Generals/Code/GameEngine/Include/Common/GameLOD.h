@@ -32,10 +32,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef _GAME_LOD_H_
-#define _GAME_LOD_H_
-
 enum ParticlePriorityType CPP_11(: Int);
 
 #define MAX_LOD_PRESETS_PER_LEVEL	32	//number of hardware configs preset for each low,medium,high,veryhigh
@@ -256,4 +252,3 @@ ParticlePriorityType GameLODManager::getMinDynamicParticleSkipPriority(void)
 }
 
 extern GameLODManager *TheGameLODManager;
-#endif // _GAME_LOD_H_

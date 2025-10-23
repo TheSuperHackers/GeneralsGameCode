@@ -28,10 +28,6 @@
 // Author: John Ahlquist, April 2001
 
 #pragma once
-
-#ifndef MapObject_H
-#define MapObject_H
-
 #include "Common/Dict.h"
 #include "Common/GameMemory.h"
 #include "GameClient/TerrainRoads.h"
@@ -170,6 +166,3 @@ public:
 	static Dict* getWorldDict() { return &TheWorldDict; }
 	static Int countMapObjectsWithOwner(const AsciiString& n);
 };
-
-#endif
-

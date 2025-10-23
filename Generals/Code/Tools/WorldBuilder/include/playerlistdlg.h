@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_PLAYERLISTDLG_H__103B4125_78ED_48A8_9DBB_289DDC6B0208__INCLUDED_)
-#define AFX_PLAYERLISTDLG_H__103B4125_78ED_48A8_9DBB_289DDC6B0208__INCLUDED_
-
 #pragma once
 // playerlistdlg.h : header file
 //
@@ -86,5 +82,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_PLAYERLISTDLG_H__103B4125_78ED_48A8_9DBB_289DDC6B0208__INCLUDED_)

@@ -43,10 +43,6 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
-
-#ifndef __W3DTREE_BUFFER_H_
-#define __W3DTREE_BUFFER_H_
-
 //-----------------------------------------------------------------------------
 //           Includes
 //-----------------------------------------------------------------------------
@@ -145,5 +141,3 @@ protected:
 	void freeTreeBuffers(void);									 ///< Frees the index and vertex buffers.
 	void sort( Int iterations );								 ///< Performs partial bubble sort.
 };
-
-#endif  // end __W3DTREE_BUFFER_H_

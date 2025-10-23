@@ -44,10 +44,6 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
-
-#ifndef __ACADEMY_STATS_H
-#define __ACADEMY_STATS_H
-
 #include "Lib/BaseType.h"
 #include "Common/Debug.h"
 #include "Common/Snapshot.h"
@@ -277,6 +273,3 @@ private:
 	//35) Did the player ever create a "Firestorm" with his MiGs or Inferno Cannons?
 	UnsignedInt m_firestormsCreated;
 };
-
-#endif // __ACADEMY_STATS_H
-

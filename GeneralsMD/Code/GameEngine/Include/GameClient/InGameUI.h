@@ -29,10 +29,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef _IN_GAME_UI_H_
-#define _IN_GAME_UI_H_
-
 #include "Common/GameCommon.h"
 #include "Common/GameType.h"
 #include "Common/MessageStream.h"		// for GameMessageTranslator
@@ -931,5 +927,3 @@ protected:
 
 // the singleton
 extern InGameUI *TheInGameUI;
-
-#endif // _IN_GAME_UI_H_

@@ -27,10 +27,6 @@
 // Internal header
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
-
-#ifndef INTERNAL_H // Include guard
-#define INTERNAL_H
-
 #include "../debug/debug.h"
 #include "internal_funclevel.h"
 #include "internal_highlevel.h"
@@ -153,5 +149,3 @@ __forceinline void ProfileGetTime(__int64 &t)
   t = static_cast<__int64>(_rdtsc());
 #endif
 }
-
-#endif // INTERNAL_H

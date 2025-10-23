@@ -38,10 +38,6 @@
 
 
 #pragma once
-
-#ifndef DX8_RENDERER_DEBUGGER_H
-#define DX8_RENDERER_DEBUGGER_H
-
 #include "always.h"
 
 class StringClass;
@@ -69,5 +65,3 @@ public:
 	static void Disable_All();
 	static void Enable_All();
 };
-
-#endif

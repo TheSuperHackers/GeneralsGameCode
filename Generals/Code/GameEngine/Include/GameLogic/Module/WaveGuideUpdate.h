@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __WATERWAVE_H_
-#define __WATERWAVE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -111,5 +107,3 @@ protected:
 	Coord3D m_finalDestination;						///< the final destination of the waveguide path
 
 };
-
-#endif  // end __WATERWAVE_H_

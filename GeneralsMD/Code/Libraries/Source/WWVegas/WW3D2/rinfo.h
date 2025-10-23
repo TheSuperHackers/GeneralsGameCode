@@ -40,10 +40,6 @@
 
 #pragma once
 
-#ifndef RINFO_H
-#define RINFO_H
-
-
 #include "always.h"
 #include "bittype.h"
 #include "ww3d.h"
@@ -161,7 +157,3 @@ private:
 	SpecialRenderInfoClass & operator = (const RenderInfoClass &);
 
 };
-
-
-
-#endif

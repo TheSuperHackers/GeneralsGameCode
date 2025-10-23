@@ -27,10 +27,6 @@
 ///////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __WIN32BIGFILE_H
-#define __WIN32BIGFILE_H
-
 #include "Common/ArchiveFile.h"
 #include "Common/AsciiString.h"
 #include "Common/List.h"
@@ -54,5 +50,3 @@ class Win32BIGFile : public ArchiveFile
 		AsciiString		m_name;		///< BIG file name
 		AsciiString		m_path;		///< BIG file path
 };
-
-#endif // __WIN32BIGFILE_H

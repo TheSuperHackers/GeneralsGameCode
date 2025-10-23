@@ -35,10 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef __LISTENERHANDLE_H
-#define __LISTENERHANDLE_H
-
 #include "sound3dhandle.h"
 
 
@@ -95,6 +91,3 @@ protected:
 	//	Protected member data
 	///////////////////////////////////////////////////////////////////
 };
-
-
-#endif //__LISTENERHANDLE_H

@@ -27,9 +27,6 @@
 // Author: John K. McDonald, March 2002
 
 #pragma once
-#ifndef _H_AUDIOEVENTRTS_
-#define _H_AUDIOEVENTRTS_
-
 #include "Common/AsciiString.h"
 #include "Common/GameAudio.h"
 #include "Common/GameMemory.h"
@@ -212,6 +209,3 @@ public:
 	AudioEventRTS	m_event;
 };
 EMPTY_DTOR(DynamicAudioEventRTS)
-
-#endif /* _H_AUDIOEVENTRTS_ */
-

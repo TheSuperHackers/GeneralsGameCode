@@ -34,10 +34,6 @@
  */
 
 #pragma once
-
-#ifndef __CONNECTION_H
-#define __CONNECTION_H
-
 #include "GameNetwork/NetCommandList.h"
 #include "GameNetwork/User.h"
 #include "GameNetwork/Transport.h"
@@ -102,5 +98,3 @@ protected:
 	Int m_numRetries;							///< The number of retries for the last second.
 	time_t m_retryMetricsTime;		///< The start time of the current retry metrics thing.
 };
-
-#endif

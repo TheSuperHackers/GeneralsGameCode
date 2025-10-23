@@ -51,10 +51,6 @@
  *   *SList<T>::Find_Node -- returns first node in list matching the input *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #pragma once
-
-#ifndef __SLIST_H__
-#define __SLIST_H__
-
 #include "SLNODE.H"
 
 #ifndef NULL
@@ -539,5 +535,3 @@ inline SLNode<T> *SList<T>::Find_Node(T * data) const
 
 	return cur;
 }
-
-#endif

@@ -19,10 +19,6 @@
 // FILE: Smudge.h /////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef _SMUDGE_H_
-#define _SMUDGE_H_
-
 #include "WW3D2/dllist.h"
 #include "WWMath/vector2.h"
 #include "WWMath/vector3.h"
@@ -97,5 +93,3 @@ protected:
 };
 
 extern SmudgeManager *TheSmudgeManager;	///<singleton
-
-#endif	//_SMUDGE_H_

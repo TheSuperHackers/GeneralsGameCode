@@ -49,10 +49,6 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
-
-#ifndef __W3D_WAYPOINT_BUFFER_H
-#define __W3D_WAYPOINT_BUFFER_H
-
 //-----------------------------------------------------------------------------
 //           Includes
 //-----------------------------------------------------------------------------
@@ -87,5 +83,3 @@ private:
 	SegmentedLineClass *m_line;
 	TextureClass *m_texture;
 };
-
-#endif  // end __W3D_WAYPOINT_BUFFER_H

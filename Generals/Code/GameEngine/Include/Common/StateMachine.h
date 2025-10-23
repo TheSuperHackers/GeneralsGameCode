@@ -27,10 +27,6 @@
 // Author: Michael S. Booth, January 2002
 
 #pragma once
-
-#ifndef _STATE_MACHINE_H_
-#define _STATE_MACHINE_H_
-
 #include "Common/GameMemory.h"
 #include "Common/GameType.h"
 #include "Common/ModelState.h"
@@ -486,6 +482,3 @@ inline void deleteInstance(StateMachine* machine)
 	if (machine != NULL)
 		machine->Release_Ref();
 }
-
-
-#endif // _STATE_MACHINE_H_

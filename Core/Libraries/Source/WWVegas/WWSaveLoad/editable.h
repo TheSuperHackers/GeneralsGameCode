@@ -45,10 +45,6 @@
 #pragma once
 
 
-#ifndef __EDITABLE_H
-#define __EDITABLE_H
-
-
 #include "always.h"
 #include "persist.h"
 #include "parameter.h"
@@ -329,9 +325,3 @@ EditableClass::Unlock_Parameter (int i)
 	#define GENERIC_DEFID_PARAM(_class, data, root_class_id)
 
 #endif //PARAM_EDITING_ON
-
-
-#endif //__EDITABLE_H
-
-
-

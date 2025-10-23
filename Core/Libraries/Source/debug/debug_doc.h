@@ -27,10 +27,6 @@
 // additional Doxygen module documentation
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
-
-#ifndef DEBUG_DOC_H // Include guard
-#define DEBUG_DOC_H
-
 // This generates a small main page for Doxygen if a module only
 // documentation is built.
 #ifndef DOXYGEN_GLOBAL_DOC
@@ -704,5 +700,3 @@ void test(const Point2D &val)
 
   </tr></table>
 */
-
-#endif // DEBUG_DOC_H

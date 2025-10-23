@@ -24,10 +24,6 @@
 
 
 #pragma once
-
-#ifndef __STATUS_CIRCLE_H_
-#define __STATUS_CIRCLE_H_
-
 #include "always.h"
 #include "rendobj.h"
 #include "w3d_file.h"
@@ -98,5 +94,3 @@ protected:
 	Int updateCircleVB(void);
 	Int updateScreenVB(Int diffuse);
 };
-
-#endif  // end __DRAW_OBJECT_H_

@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __FLIGHT_DECK_BEHAVIOR_H
-#define __FLIGHT_DECK_BEHAVIOR_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -229,6 +225,3 @@ private:
 	Bool													m_rampUp[ MAX_RUNWAYS ];
 
 };
-
-#endif // __FLIGHT_DECK_BEHAVIOR_H
-

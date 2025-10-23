@@ -36,10 +36,6 @@
 
 
 #pragma once
-
-#ifndef SNAPPOINTS_H
-#define SNAPPOINTS_H
-
 #include "max.h"
 
 class ChunkSaveClass;
@@ -55,5 +51,3 @@ class SnapPointsClass
 public:
 	static void Export_Points(INode * scene_root,TimeValue time,ChunkSaveClass & csave);
 };
-
-#endif

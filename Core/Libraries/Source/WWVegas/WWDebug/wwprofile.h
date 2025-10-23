@@ -37,10 +37,6 @@
 #pragma once
 
 //#define ENABLE_TIME_AND_MEMORY_LOG
-
-#ifndef WWPROFILE_H
-#define WWPROFILE_H
-
 #include "wwstring.h"
 
 #ifdef _UNIX
@@ -336,5 +332,3 @@ struct WWMemoryAndTimeLog
 	~WWMemoryAndTimeLog();
 	void Log_Intermediate(const char* text);
 };
-
-#endif	// WWPROFILE_H

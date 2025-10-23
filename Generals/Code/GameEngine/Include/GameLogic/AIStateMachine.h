@@ -27,10 +27,6 @@
 // Author: Michael S. Booth, January 2002
 
 #pragma once
-
-#ifndef _AI_STATE_MACHINE_H_
-#define _AI_STATE_MACHINE_H_
-
 #include "Lib/BaseType.h"
 
 #include "Common/AudioEventRTS.h"
@@ -1263,5 +1259,3 @@ protected:
 	Bool m_canTurnInPlace;
 };
 EMPTY_DTOR(AIFaceState)
-
-#endif

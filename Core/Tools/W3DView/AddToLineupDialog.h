@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_ADDTOLINEUPDIALOG_H__AD8B92C5_25CB_11D4_8A1D_0090272E6F90__INCLUDED_)
-#define AFX_ADDTOLINEUPDIALOG_H__AD8B92C5_25CB_11D4_8A1D_0090272E6F90__INCLUDED_
-
 #pragma once
 // AddToLineupDialog.h : header file
 //
@@ -63,5 +59,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_ADDTOLINEUPDIALOG_H__AD8B92C5_25CB_11D4_8A1D_0090272E6F90__INCLUDED_)

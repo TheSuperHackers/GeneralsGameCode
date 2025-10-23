@@ -36,10 +36,6 @@
 
 
 #pragma once
-
-#ifndef WWMATH_H
-#define WWMATH_H
-
 #include "always.h"
 #include <math.h>
 #include <assert.h>
@@ -251,5 +247,3 @@ inline bool WWMath::Is_Valid_Double(double x)
 	}
 	return true;
 }
-
-#endif

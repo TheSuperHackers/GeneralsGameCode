@@ -34,10 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #pragma once
-
-#ifndef PALETTE_H
-#define PALETTE_H
-
 #include	"rgb.h"
 
 /*
@@ -74,6 +70,3 @@ class PaletteClass
 	protected:
 		RGBClass Palette[COLOR_COUNT];
 };
-
-
-#endif

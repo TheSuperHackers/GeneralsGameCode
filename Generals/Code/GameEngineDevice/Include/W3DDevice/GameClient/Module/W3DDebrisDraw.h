@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3D_DEBRIS_DRAW_H_
-#define __W3D_DEBRIS_DRAW_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameType.h"
 #include "Common/DrawModule.h"
@@ -98,6 +94,3 @@ private:
 	Shadow*										m_shadow;													///< Updates/Renders shadows of this object
 
 };
-
-#endif // __W3D_DEBRIS_DRAW_H_
-

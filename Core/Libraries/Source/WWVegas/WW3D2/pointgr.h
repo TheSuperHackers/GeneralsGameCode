@@ -35,10 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef POINTGR_H
-#define POINTGR_H
-
 #include "sharebuf.h"
 #include "shader.h"
 #include "vector4.h"
@@ -234,7 +230,3 @@ public:
 	virtual ~SegmentGroupClass(void);
 
 };
-
-
-
-#endif

@@ -29,10 +29,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __FUNCTIONLEXICON_H_
-#define __FUNCTIONLEXICON_H_
-
 #include "Common/SubsystemInterface.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/GameMemory.h"
@@ -149,6 +145,3 @@ inline WindowLayoutShutdownFunc FunctionLexicon::winLayoutShutdownFunc( NameKeyT
 // EXTERNALS
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 extern FunctionLexicon *TheFunctionLexicon;  ///< function dictionary external
-
-#endif // end __FUNCTIONLEXICON_H_
-

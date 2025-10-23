@@ -27,10 +27,6 @@
 //////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __LOCALFILESYSTEM_H
-#define __LOCALFILESYSTEM_H
-
 #include "Common/SubsystemInterface.h"
 #include "FileSystem.h" // for typedefs, etc.
 
@@ -54,5 +50,3 @@ protected:
 };
 
 extern LocalFileSystem *TheLocalFileSystem;
-
-#endif // __LOCALFILESYSTEM_H

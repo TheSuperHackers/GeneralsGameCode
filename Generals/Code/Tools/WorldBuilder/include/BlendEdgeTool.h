@@ -21,10 +21,6 @@
 // Author: John Ahlquist, April 2001
 
 #pragma once
-
-#ifndef BLEND_EDGE_TOOL_H
-#define BLEND_EDGE_TOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 /*************************************************************************/
@@ -47,6 +43,3 @@ public:
 	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
 
 };
-
-
-#endif //TOOL_H

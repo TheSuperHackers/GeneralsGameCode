@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_WBPopupSliderButton_H__8B217F41_937B_11D1_8CA3_00A024CDC039__INCLUDED_)
-#define AFX_WBPopupSliderButton_H__8B217F41_937B_11D1_8CA3_00A024CDC039__INCLUDED_
-
 #pragma once
 // WBPopupSliderButton.h : header file
 //
@@ -178,5 +174,3 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_WBPopupSliderButton_H__8B217F41_937B_11D1_8CA3_00A024CDC039__INCLUDED_)

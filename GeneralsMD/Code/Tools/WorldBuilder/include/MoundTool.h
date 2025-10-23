@@ -21,10 +21,6 @@
 // Author: John Ahlquist, April 2001
 
 #pragma once
-
-#ifndef MOUND_TOOL_H
-#define MOUND_TOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 /*************************************************************************
@@ -72,4 +68,3 @@ public:
 	DigTool(void);
 
 };
-#endif //MoundTool_H

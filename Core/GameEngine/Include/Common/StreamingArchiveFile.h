@@ -43,10 +43,6 @@
 
 #pragma once
 
-#ifndef __STREAMINGARCHIVEFILE_H
-#define __STREAMINGARCHIVEFILE_H
-
-
 
 //----------------------------------------------------------------------------
 //           Includes
@@ -114,6 +110,3 @@ class StreamingArchiveFile : public RAMFile
 //----------------------------------------------------------------------------
 //           Inlining
 //----------------------------------------------------------------------------
-
-
-#endif // __STREAMINGARCHIVEFILE_H

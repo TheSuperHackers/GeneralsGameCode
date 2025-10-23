@@ -26,10 +26,6 @@
 // Author: Steven Johnson, Dec 2001
 
 #pragma once
-
-#ifndef _H_MetaEvent
-#define _H_MetaEvent
-
 #include "Common/SubsystemInterface.h"
 #include "GameClient/InGameUI.h"
 
@@ -402,5 +398,3 @@ public:
 };
 
 extern MetaMap *TheMetaMap;
-
-#endif

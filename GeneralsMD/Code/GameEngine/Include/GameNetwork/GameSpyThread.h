@@ -27,10 +27,6 @@
 // Author: Matthew D. Campbell, March 2002
 
 #pragma once
-
-#ifndef __GAMESPYTHREAD_H__
-#define __GAMESPYTHREAD_H__
-
 #include "mutex.h"
 #include "thread.h"
 
@@ -63,5 +59,3 @@ private:
 
 extern GameSpyThreadClass *TheGameSpyThread;
 extern MutexClass TheGameSpyMutex;
-
-#endif // __GAMESPYTHREAD_H__

@@ -43,10 +43,6 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
-
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
-
 #include "Common/Debug.h"
 #include "Common/Energy.h"
 #include "Common/GameType.h"
@@ -793,5 +789,3 @@ private:
 
 	Bool									m_isPlayerDead;
 };
-
-#endif // _PLAYER_H_

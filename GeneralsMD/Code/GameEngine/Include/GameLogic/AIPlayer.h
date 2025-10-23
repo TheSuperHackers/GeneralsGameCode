@@ -27,10 +27,6 @@
 // Author: Michael S. Booth, January 2002
 
 #pragma once
-
-#ifndef _AI_PLAYER_H_
-#define _AI_PLAYER_H_
-
 #include "Common/GameMemory.h"
 #include "Common/Snapshot.h"
 
@@ -297,8 +293,3 @@ protected:
 
 	ObjectID m_curWarehouseID;
 };
-
-#endif // _AI_PLAYER_H_
-
-
-

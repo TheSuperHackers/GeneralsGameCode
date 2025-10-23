@@ -36,10 +36,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef HTREE_H
-#define HTREE_H
-
 #include "always.h"
 #include "pivot.h"
 #include "quat.h"
@@ -204,7 +200,3 @@ WWINLINE const Matrix3D & HTreeClass::Get_Transform(int pivot) const
 
 	return Pivot[pivot].Transform;
 }
-
-
-
-#endif

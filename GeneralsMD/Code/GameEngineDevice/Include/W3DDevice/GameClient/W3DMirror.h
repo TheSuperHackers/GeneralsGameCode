@@ -24,10 +24,6 @@
 
 
 #pragma once
-
-#ifndef __W3DMirror_H_
-#define __W3DMirror_H_
-
 #include "always.h"
 #include "rendobj.h"
 #include "w3d_file.h"
@@ -115,5 +111,3 @@ protected:
 	void renderWater(void);
 	void renderWaterMesh(void);
 };
-
-#endif  // end __W3DMirror_H_

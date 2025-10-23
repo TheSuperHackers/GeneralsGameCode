@@ -47,10 +47,6 @@
 
 #pragma once
 
-#ifndef _GAMECOMMON_H_
-#define _GAMECOMMON_H_
-
-
 
 #define DONT_ALLOW_DEBUG_CHEATS_IN_RELEASE ///< Take of the DONT to get cheats back in to release
 
@@ -508,6 +504,3 @@ enum Relationship CPP_11(: Int)
 
 // TheRelationShipNames is defined in Common/GameCommon.cpp
 extern const char *const TheRelationshipNames[];
-
-#endif // _GAMECOMMON_H_
-

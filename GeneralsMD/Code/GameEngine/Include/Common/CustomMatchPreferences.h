@@ -29,10 +29,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __CUSTOMMATCHPREFERENCES_H__
-#define __CUSTOMMATCHPREFERENCES_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -90,5 +86,3 @@ public:
   Bool getUseStats( void ) const;
   void setUseStats( Bool useStats );
 };
-
-#endif // __CUSTOMMATCHPREFERENCES_H__

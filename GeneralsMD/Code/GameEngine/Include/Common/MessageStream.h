@@ -27,10 +27,6 @@
 // Author: Michael S. Booth, February 2001
 
 #pragma once
-
-#ifndef _MESSAGE_STREAM_H_
-#define _MESSAGE_STREAM_H_
-
 #include "Common/GameCommon.h"	// ensure we get DUMP_PERF_STATS, or not
 #include "Common/SubsystemInterface.h"
 #include "Lib/BaseType.h"
@@ -840,5 +836,3 @@ extern CommandList *TheCommandList;
  * construct a valid 2D bounding region.
  */
 extern void buildRegion( const ICoord2D *anchor, const ICoord2D *dest, IRegion2D *region );
-
-#endif // _MESSAGE_STREAM_H_

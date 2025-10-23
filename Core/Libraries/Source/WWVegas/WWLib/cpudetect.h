@@ -37,10 +37,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef WWLIB_CPU_DETECT_H__
-#define WWLIB_CPU_DETECT_H__
-
 #include "always.h"
 #include "wwstring.h"
 
@@ -320,6 +316,3 @@ struct CPUIDStruct
 		CPUDetectClass::CPUID(Eax,Ebx,Ecx,Edx,cpuid_type);
 	}
 };
-
-
-#endif // WWLIB_CPU_DETECT_H__

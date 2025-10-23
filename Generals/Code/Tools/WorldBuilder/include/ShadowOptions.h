@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_SHADOWOPTIONS_H__25CB23E2_9E42_44D4_BE83_4B89F87746DE__INCLUDED_)
-#define AFX_SHADOWOPTIONS_H__25CB23E2_9E42_44D4_BE83_4B89F87746DE__INCLUDED_
-
 #pragma once
 // ShadowOptions.h : header file
 //
@@ -69,5 +65,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SHADOWOPTIONS_H__25CB23E2_9E42_44D4_BE83_4B89F87746DE__INCLUDED_)

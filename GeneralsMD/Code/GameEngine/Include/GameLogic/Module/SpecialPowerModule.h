@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __SPECIALPOWERMODULE_H_
-#define __SPECIALPOWERMODULE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/Module.h"
@@ -179,6 +175,3 @@ protected:
 	Real m_pausedPercent;
 
 };
-
-#endif  // end __SPECIALPOWERMODULE_H_
-

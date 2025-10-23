@@ -27,10 +27,6 @@
 ///////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __STDBIGFILE_H
-#define __STDBIGFILE_H
-
 #include "Common/ArchiveFile.h"
 #include "Common/AsciiString.h"
 #include "Common/List.h"
@@ -54,5 +50,3 @@ class StdBIGFile : public ArchiveFile
 		AsciiString		m_name;		///< BIG file name
 		AsciiString		m_path;		///< BIG file path
 };
-
-#endif // __STDBIGFILE_H

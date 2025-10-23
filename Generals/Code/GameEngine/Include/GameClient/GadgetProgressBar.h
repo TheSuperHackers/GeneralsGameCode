@@ -44,10 +44,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __GADGETPROGRESSBAR_H_
-#define __GADGETPROGRESSBAR_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -141,6 +137,3 @@ inline const Image * GadgetProgressBarGetHiliteBarImageCenter( GameWindow *g )		
 inline const Image * GadgetProgressBarGetHiliteBarImageSmallCenter( GameWindow *g )	{ return g->winGetHiliteImage( 7 ); }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GADGETPROGRESSBAR_H_
-

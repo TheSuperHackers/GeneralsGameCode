@@ -35,10 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef W3DMTL_H
-#define W3DMTL_H
-
 #include "always.h"
 #include "w3d_file.h"
 #include "Vector.H"
@@ -305,7 +301,3 @@ private:
 	DynamicVectorClass < TexClass >							Textures;
 
 };
-
-
-
-#endif

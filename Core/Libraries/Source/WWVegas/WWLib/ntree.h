@@ -37,10 +37,6 @@
 
 #pragma once
 
-#ifndef __NTREE_H
-#define __NTREE_H
-
-
 #include "refcount.h"
 #include "wwstring.h"
 
@@ -562,5 +558,3 @@ void SortedNTreeLeafClass<T>::Insertion_Sort (SortedNTreeLeafClass<T> *start, So
 
 	return ;
 }
-
-#endif //__NTREE_H

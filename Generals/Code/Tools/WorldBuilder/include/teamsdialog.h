@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_TEAMSDIALOG_H__1410F415_1597_4EAF_AE0B_42DACDEB35B9__INCLUDED_)
-#define AFX_TEAMSDIALOG_H__1410F415_1597_4EAF_AE0B_42DACDEB35B9__INCLUDED_
-
 #pragma once
 // teamsdialog.h : header file
 //
@@ -95,5 +91,3 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_TEAMSDIALOG_H__1410F415_1597_4EAF_AE0B_42DACDEB35B9__INCLUDED_)

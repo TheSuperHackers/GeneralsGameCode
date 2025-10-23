@@ -27,10 +27,6 @@
 // Author: Matthew D. Campbell, March 2002
 
 #pragma once
-
-#ifndef __GAMESPYOVERLAY_H__
-#define __GAMESPYOVERLAY_H__
-
 #include "Common/NameKeyGenerator.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
@@ -66,4 +62,3 @@ void GameSpyToggleOverlay( GSOverlayType );
 void GameSpyUpdateOverlays( void );
 void ReOpenPlayerInfo( void );
 void CheckReOpenPlayerInfo(void );
-#endif // __GAMESPYOVERLAY_H__

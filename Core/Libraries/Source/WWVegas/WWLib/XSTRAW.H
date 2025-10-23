@@ -34,10 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #pragma once
-
-#ifndef XSTRAW_H
-#define XSTRAW_H
-
 #include	"BUFF.H"
 #include	"STRAW.H"
 #include	"WWFILE.H"
@@ -85,6 +81,3 @@ class FileStraw : public Straw
 		FileStraw(FileStraw & rvalue);
 		FileStraw & operator = (FileStraw const & pipe);
 };
-
-
-#endif

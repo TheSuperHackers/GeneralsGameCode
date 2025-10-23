@@ -27,15 +27,9 @@
 // Precompiled header (module internal)
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
-
-#ifndef _PCH_H // Include guard
-#define _PCH_H
-
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
 #include <windows.h>
 
 #include "profile.h"
 #include "internal.h"
-
-#endif // _PCH_H

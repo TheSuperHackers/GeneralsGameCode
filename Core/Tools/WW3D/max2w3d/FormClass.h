@@ -36,10 +36,6 @@
 
 
 #pragma once
-
-#ifndef __FORMCLASS_H
-#define __FORMCLASS_H
-
 #include <max.h>
 
 
@@ -66,5 +62,3 @@ class FormClass : public ParamDlg
 		HWND						m_hWnd;
 		RECT						m_FormRect;
 };
-
-#endif //__FORMCLASS_H

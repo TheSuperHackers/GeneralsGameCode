@@ -26,10 +26,6 @@
 // John McDonald, Jr
 // Do not distribute
 #pragma once
-
-#ifndef _AUDIOAFFECT_H_
-#define _AUDIOAFFECT_H_
-
 #include <Lib/BaseType.h>
 
 // if it is set by the options panel, use the system setting parameter. Otherwise, this will be
@@ -44,5 +40,3 @@ enum AudioAffect CPP_11(: Int)
 
 	AudioAffect_SystemSetting = 0x10,
 };
-
-#endif // _AUDIOAFFECT_H_

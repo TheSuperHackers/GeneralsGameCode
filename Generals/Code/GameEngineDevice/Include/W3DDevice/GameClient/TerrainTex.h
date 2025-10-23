@@ -27,10 +27,6 @@
 // Author: John Ahlquist, April 2001
 
 #pragma once
-
-#ifndef TERRAINTEX_H
-#define TERRAINTEX_H
-
 //#define DO_8STAGE_TERRAIN_PASS		//optimized terrain rendering for Nvidia based cards
 
 #include "WW3D2/texture.h"
@@ -141,7 +137,3 @@ public:
 
 		void restore(void);
 };
-
-
-
-#endif //TEXTURE_H

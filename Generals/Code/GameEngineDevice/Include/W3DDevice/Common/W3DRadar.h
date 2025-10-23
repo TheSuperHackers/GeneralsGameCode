@@ -30,10 +30,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DRADAR_H_
-#define __W3DRADAR_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Radar.h"
 #include "WW3D2/ww3dformat.h"
@@ -127,6 +123,3 @@ protected:
 
 	std::vector<const Object *> m_cachedHeroObjectList; //< cache of hero objects for drawing icons in radar overlay
 };
-
-
-#endif // __W3DRADAR_H_

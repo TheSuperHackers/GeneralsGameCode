@@ -32,10 +32,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DDISPLAY_H_
-#define __W3DDISPLAY_H_
-
 #include "GameClient/Display.h"
 #include "WW3D2/lightenvironment.h"
 
@@ -202,5 +198,3 @@ protected:
 	W3DDebugDisplay *m_nativeDebugDisplay;		///< W3D specific debug display interface
 
 };
-
-#endif  // end __W3DDISPLAY_H_

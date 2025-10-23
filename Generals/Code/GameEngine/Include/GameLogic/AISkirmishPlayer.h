@@ -27,10 +27,6 @@
 // Author: Michael S. Booth, January 2002
 
 #pragma once
-
-#ifndef _AI_SKIRMISH_PLAYER_H_
-#define _AI_SKIRMISH_PLAYER_H_
-
 #include "Common/GameMemory.h"
 #include "GameLogic/AIPlayer.h"
 
@@ -118,8 +114,3 @@ protected:
 	Player			*m_currentEnemy;
 
 };
-
-#endif // _AI_SKIRMISH_PLAYER_H_
-
-
-

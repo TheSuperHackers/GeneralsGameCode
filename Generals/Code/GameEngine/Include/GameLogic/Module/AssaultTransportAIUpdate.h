@@ -29,10 +29,6 @@
 //         injured troops to return to the transport for healing purposes.
 
 #pragma once
-
-#ifndef __ASSAULT_TRANSPORT_AI_UPDATE_H
-#define __ASSAULT_TRANSPORT_AI_UPDATE_H
-
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 
@@ -123,6 +119,3 @@ protected:
 	Bool							m_isAttackObject;
 	Bool							m_newOccupantsAreNewMembers;
 };
-
-#endif
-

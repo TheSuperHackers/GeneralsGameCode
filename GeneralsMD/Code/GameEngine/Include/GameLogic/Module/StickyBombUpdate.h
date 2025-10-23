@@ -29,10 +29,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __STICK_BOMB_UPDATE_H
-#define __STICK_BOMB_UPDATE_H
-
 #include "GameLogic/Module/UpdateModule.h"
 
 class WeaponTemplate;
@@ -98,6 +94,3 @@ private:
 	UnsignedInt		m_dieFrame;
 	UnsignedInt   m_nextPingFrame;
 };
-
-#endif // __STICK_BOMB_UPDATE_H
-

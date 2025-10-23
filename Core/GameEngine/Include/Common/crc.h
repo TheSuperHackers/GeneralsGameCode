@@ -27,10 +27,6 @@
 // Author: Matthew D. Campbell, October 2001
 
 #pragma once
-
-#ifndef _CRC_H_
-#define _CRC_H_
-
 #include "Lib/BaseType.h"
 
 #ifdef RTS_DEBUG
@@ -139,5 +135,3 @@ private:
 };
 
 #endif
-
-#endif // _CRC_H_

@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_EMITTERROTATIONPROPPAGE_H__35F8A2F6_C91C_4750_BF06_100433C1ECBB__INCLUDED_)
-#define AFX_EMITTERROTATIONPROPPAGE_H__35F8A2F6_C91C_4750_BF06_100433C1ECBB__INCLUDED_
-
 #pragma once
 // EmitterRotationPropPage.h : header file
 //
@@ -137,5 +133,3 @@ inline float EmitterRotationPropPageClass::Denormalize_Rotation(float normalized
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_EMITTERROTATIONPROPPAGE_H__35F8A2F6_C91C_4750_BF06_100433C1ECBB__INCLUDED_)

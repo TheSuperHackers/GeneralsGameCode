@@ -34,10 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #pragma once
-
-#ifndef XPIPE_H
-#define XPIPE_H
-
 #include	"BUFF.H"
 #include	"PIPE.H"
 #include	"WWFILE.H"
@@ -88,5 +84,3 @@ class FilePipe : public Pipe
 		FilePipe & operator = (FilePipe const & pipe);
 
 };
-
-#endif

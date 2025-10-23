@@ -35,10 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef __SOUNDOBJ_H
-#define __SOUNDOBJ_H
-
 #pragma warning (push, 3)
 #include "mss.h"
 #pragma warning (pop)
@@ -457,6 +453,3 @@ protected:
 	// Misc UI info
 	Vector3				m_AttenuationSphereColor;
 };
-
-
-#endif //__SOUNDOBJ_H

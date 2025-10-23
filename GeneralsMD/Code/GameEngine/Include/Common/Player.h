@@ -43,10 +43,6 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
-
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
-
 #include "Common/AcademyStats.h"
 #include "Common/Debug.h"
 #include "Common/Energy.h"
@@ -832,5 +828,3 @@ private:
 	Bool									m_isPlayerDead;
 	Bool									m_logicalRetaliationModeEnabled;
 };
-
-#endif // _PLAYER_H_

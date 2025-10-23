@@ -35,10 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef COLLECT_H
-#define COLLECT_H
-
 #include "rendobj.h"
 #include "composite.h"
 #include "Vector.H"
@@ -143,5 +139,3 @@ public:
 };
 
 extern CollectionLoaderClass _CollectionLoader;
-
-#endif

@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __KINDOF_H_
-#define __KINDOF_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
 #include "Common/BitFlags.h"
@@ -189,6 +185,3 @@ inline void FLIP_KINDOFMASK(KindOfMaskType& m)
 
 // defined in Common/System/Kindof.cpp
 extern KindOfMaskType KINDOFMASK_NONE;	// inits to all zeroes
-
-#endif	// __KINDOF_H_
-

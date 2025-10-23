@@ -17,10 +17,6 @@
 */
 
 #pragma once
-
-#ifndef _H_CBUTTONSHOWCOLOR_
-#define _H_CBUTTONSHOWCOLOR_
-
 #include "Lib/BaseType.h"
 
 class CButtonShowColor : public CButton
@@ -44,5 +40,3 @@ class CButtonShowColor : public CButton
 
 	DECLARE_MESSAGE_MAP();
 };
-
-#endif /* _H_CBUTTONSHOWCOLOR_ */

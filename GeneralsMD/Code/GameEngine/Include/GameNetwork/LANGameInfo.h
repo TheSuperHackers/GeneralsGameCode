@@ -27,10 +27,6 @@
 // Author: Matthew D. Campbell, December 2001
 
 #pragma once
-
-#ifndef __LANGAMEINFO_H__
-#define __LANGAMEINFO_H__
-
 #include "GameNetwork/GameInfo.h"
 #include "GameNetwork/LANPlayer.h"
 
@@ -180,6 +176,3 @@ void LANDisplayGameOptions( void );	///< Displays the game options according to 
 
 AsciiString GenerateGameOptionsString( void );
 Bool ParseGameOptionsString(LANGameInfo *game, AsciiString options);
-
-
-#endif // __LANGAMEINFO_H__

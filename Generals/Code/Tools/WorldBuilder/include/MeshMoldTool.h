@@ -21,10 +21,6 @@
 // Author: John Ahlquist, Oct. 2001
 
 #pragma once
-
-#ifndef MESHMOLDTOOL_H
-#define MESHMOLDTOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 /*************************************************************************/
@@ -65,6 +61,3 @@ public:	// Methods specific to MeshMoldTool.
 	static void updateMeshLocation(Bool changePreview);
 
 };
-
-
-#endif //MESHMOLDTOOL_H

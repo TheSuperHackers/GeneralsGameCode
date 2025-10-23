@@ -29,10 +29,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __SKIRMISHBATTLEHONORS_H__
-#define __SKIRMISHBATTLEHONORS_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -96,5 +92,3 @@ void InsertBattleHonor(GameWindow *list, const Image *image, Bool enabled, Int i
 void BattleHonorTooltip(GameWindow *window,
 												WinInstanceData *instData,
 												UnsignedInt mouse);
-
-#endif // __SKIRMISHBATTLEHONORS_H__

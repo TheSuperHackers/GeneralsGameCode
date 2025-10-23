@@ -37,10 +37,6 @@
 
 #pragma once
 
-
-#ifndef __ASSET_INFO_H
-#define __ASSET_INFO_H
-
 #include "rendobj.h"
 #include "Utils.h"
 #include "AssetTypes.h"
@@ -125,7 +121,3 @@ class AssetInfoClass
 		DWORD					m_dwUserData;
 		RenderObjClass *	m_pRenderObj;
 };
-
-
-
-#endif //__ASSET_INFO_H

@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __RADAR_H_
-#define __RADAR_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
 #include "Common/SubsystemInterface.h"
@@ -313,8 +309,3 @@ public:
 	virtual void clearShroud() { }
 	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting) { }
 };
-
-#endif  // __RADAR_H_
-
-
-

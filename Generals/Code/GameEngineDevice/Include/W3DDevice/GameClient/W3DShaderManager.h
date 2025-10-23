@@ -32,10 +32,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DSHADERMANAGER_H_
-#define __W3DSHADERMANAGER_H_
-
 #include "WW3D2/texture.h"
 enum FilterTypes CPP_11(: Int);
 enum FilterModes CPP_11(: Int);
@@ -242,5 +238,3 @@ protected:
 	static Bool m_skipRender;
 	static TextureClass *m_fadePatternTexture;	///<shape/pattern of the fade
 };
-
-#endif //__W3DSHADERMANAGER_H_

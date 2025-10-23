@@ -35,10 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef __WWAUDIO_H
-#define __WWAUDIO_H
-
 #include "always.h"
 #pragma warning (push, 3)
 #include "mss.h"
@@ -579,6 +575,3 @@ private:
 	float													m_EffectsLevel;
 	int													m_ReverbRoomType;
 };
-
-
-#endif //__WWAUDIO_H

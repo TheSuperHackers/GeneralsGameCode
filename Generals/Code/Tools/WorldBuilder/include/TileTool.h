@@ -21,10 +21,6 @@
 // Author: John Ahlquist, April 2001
 
 #pragma once
-
-#ifndef TILETOOL_H
-#define TILETOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 /*************************************************************************
@@ -69,4 +65,3 @@ public:
 	virtual Int getWidth(void) {return m_currentWidth;};
 
 };
-#endif //TOOL_H

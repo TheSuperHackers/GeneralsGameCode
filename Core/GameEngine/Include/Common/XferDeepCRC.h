@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __XFERDEEPCRC_H_
-#define __XFERDEEPCRC_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/Xfer.h"
 #include "Common/XferCRC.h"
@@ -64,6 +60,3 @@ protected:
 
 	FILE * m_fileFP;																			///< pointer to file
 };
-
-#endif // __XFERDEEPCRC_H_
-

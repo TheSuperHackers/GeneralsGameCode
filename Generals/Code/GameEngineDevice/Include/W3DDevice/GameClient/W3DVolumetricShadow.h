@@ -24,10 +24,6 @@
 
 
 #pragma once
-
-#ifndef __W3DVOLUMETRICSHADOW_H_
-#define __W3DVOLUMETRICSHADOW_H_
-
 #include "matrix4.h"
 #include "W3DDevice/GameClient/W3DBufferManager.h"
 #include "GameClient/Shadow.h"
@@ -190,5 +186,3 @@ class W3DVolumetricShadow	: public Shadow
 		Int	  m_numIndicesPerMesh[MAX_SHADOW_CASTER_MESHES];	///<silhouette indices from each mesh.
 
 };
-
-#endif	//__W3DVOLUMETRICSHADOW_H_

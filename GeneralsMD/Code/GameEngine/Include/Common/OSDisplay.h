@@ -27,10 +27,6 @@
 // Do Not Distribute
 
 #pragma once
-
-#ifndef __OSDISPLAY_H__
-#define __OSDISPLAY_H__
-
 #include "Lib/BaseType.h"
 
 class AsciiString;
@@ -66,5 +62,3 @@ OSDisplayButtonType OSDisplayWarningBox(AsciiString p, AsciiString m, UnsignedIn
 // TheSuperHackers @feature Tell the Operating System that the game is considered busy
 // and we would not like the display screen and/or system to shut off.
 void OSDisplaySetBusyState(Bool busyDisplay, Bool busySystem);
-
-#endif /* __OSDISPLAY_H__ */

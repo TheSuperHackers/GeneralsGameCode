@@ -27,10 +27,6 @@
 // Author: Michael S. Booth, April 2001
 
 #pragma once
-
-#ifndef _GAME_ENGINE_H_
-#define _GAME_ENGINE_H_
-
 #include "Common/SubsystemInterface.h"
 #include "Common/GameType.h"
 
@@ -117,5 +113,3 @@ extern GameEngine *CreateGameEngine( void );
 
 /// The entry point for the game system
 extern Int GameMain();
-
-#endif // _GAME_ENGINE_H_

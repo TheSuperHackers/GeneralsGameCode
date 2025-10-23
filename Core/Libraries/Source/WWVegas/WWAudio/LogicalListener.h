@@ -31,10 +31,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef __LOGICAL_LISTENER_H
-#define __LOGICAL_LISTENER_H
-
 #include "SoundSceneObj.h"
 #include "bittype.h"
 #include "vector3.h"
@@ -145,7 +141,3 @@ class LogicalListenerClass : public SoundSceneObjClass
 		static uint32			m_OldestTimestamp;
 		static uint32			m_NewestTimestamp;
 };
-
-
-#endif //__LOGICAL_LISTENER_H
-

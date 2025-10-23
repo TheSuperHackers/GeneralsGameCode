@@ -35,10 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef SPHEREOBJ_H
-#define SPHEREOBJ_H
-
 #include "always.h"
 #include "rendobj.h"
 #include "w3d_file.h"
@@ -470,8 +466,4 @@ private:
 */
 extern SphereLoaderClass			_SphereLoader;
 
-#endif // SPHEREOBJ_H
-
 // EOF - sphereobj,h
-
-

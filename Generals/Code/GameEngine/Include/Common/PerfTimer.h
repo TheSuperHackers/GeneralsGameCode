@@ -27,10 +27,6 @@
 // July 2002
 
 #pragma once
-
-#ifndef __PERFTIMER_H__
-#define __PERFTIMER_H__
-
 #include "Utility/intrin_compat.h"
 
 #if defined(RTS_DEBUG)
@@ -315,5 +311,3 @@ extern void StatMetricsDisplay( DebugDisplayInterface *dd, void *, FILE *fp );
 	#define IGNORE_PERF_TIMER(id)
 
 #endif	// PERF_TIMERS
-
-#endif /* __PERFTIMER_H__ */

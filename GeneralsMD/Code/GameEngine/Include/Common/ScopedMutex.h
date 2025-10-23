@@ -22,10 +22,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __SCOPEDMUTEX_H__
-#define __SCOPEDMUTEX_H__
-
 class ScopedMutex
 {
 	private:
@@ -45,5 +41,3 @@ class ScopedMutex
 			ReleaseMutex(m_mutex);
 		}
 };
-
-#endif /* __SCOPEDMUTEX_H__ */

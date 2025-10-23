@@ -17,10 +17,6 @@
 */
 
 // 08/06/02 KM Added cube map and volume texture support
-
-#ifndef DDSFILE_H
-#define DDSFILE_H
-
 #pragma once
 
 #include "always.h"
@@ -277,5 +273,3 @@ public:
 };
 
 // ----------------------------------------------------------------------------
-
-#endif

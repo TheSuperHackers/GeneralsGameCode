@@ -32,10 +32,6 @@
 // Author: John Ahlquist, November 2001
 
 #pragma once
-
-#ifndef PolygonTrigger_H
-#define PolygonTrigger_H
-
 #include "Common/GameMemory.h"
 #include "Common/Snapshot.h"
 #include "Common/STLTypedefs.h"
@@ -141,5 +137,3 @@ public:
 	const WaterHandle* getWaterHandle(void) const;
 	Bool isValid(void) const;
 };
-
-#endif

@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DTERRAINVISUAL_H_
-#define __W3DTERRAINVISUAL_H_
-
 #include "GameClient/TerrainVisual.h"
 #include "W3DDevice/GameClient/W3DWater.h"
 
@@ -134,5 +130,3 @@ protected:
 	AsciiString m_initialSkyboxTexNames[NumSkyboxTextures];	///<store starting texture/default skybox textures.
 
 };
-
-#endif  // end __W3DTERRAINVISUAL_H_

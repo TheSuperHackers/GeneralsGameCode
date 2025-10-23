@@ -29,10 +29,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef CONVERT_TO_CAR_BOMB_CRATE_COLLIDE_H_
-#define CONVERT_TO_CAR_BOMB_CRATE_COLLIDE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
 #include "GameLogic/Module/CrateCollide.h"
@@ -89,5 +85,3 @@ protected:
 	virtual Bool isRailroad() const { return FALSE;};
 	virtual Bool isCarBombCrateCollide() const { return TRUE; }
 };
-
-#endif

@@ -29,10 +29,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef _DEFAULT_PRODUCTION_EXIT_UPDATE_H
-#define _DEFAULT_PRODUCTION_EXIT_UPDATE_H
-
 #include "GameLogic/Module/UpdateModule.h"
 #include "Common/INI.h"
 #include "Lib/BaseType.h"
@@ -114,5 +110,3 @@ inline const Coord3D *DefaultProductionExitUpdate::getRallyPoint( void ) const
 
 	return NULL;
 }
-
-#endif

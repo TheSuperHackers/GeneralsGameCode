@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __TempWeaponBonusHelper_H_
-#define __TempWeaponBonusHelper_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/ObjectHelper.h"
 
@@ -67,6 +63,3 @@ protected:
 	UnsignedInt m_frameToRemove;
 	void clearTempWeaponBonus();
 };
-
-
-#endif  // end __TempWeaponBonusHelper_H_

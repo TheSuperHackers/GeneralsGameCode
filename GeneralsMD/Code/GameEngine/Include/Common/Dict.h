@@ -44,10 +44,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef Dict_H
-#define Dict_H
-
 #include "Common/Errors.h"
 #include "Common/NameKeyGenerator.h"
 
@@ -362,7 +358,3 @@ inline Dict::DataType Dict::getNthType(Int n) const
 		return DICT_NONE;
 	return m_data->peek()[n].getType();
 }
-
-#endif // Dict_H
-
-

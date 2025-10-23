@@ -17,10 +17,6 @@
 */
 
 #pragma once
-
-#ifndef __SPLASHSCREEN_H__
-#define __SPLASHSCREEN_H__
-
 class SplashScreen : public CDialog
 {
 	protected:
@@ -40,5 +36,3 @@ class SplashScreen : public CDialog
 
 		DECLARE_MESSAGE_MAP()
 };
-
-#endif /* __SPLASHSCREEN_H__ */

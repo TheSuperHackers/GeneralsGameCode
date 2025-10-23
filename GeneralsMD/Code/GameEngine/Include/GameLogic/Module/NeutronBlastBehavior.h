@@ -28,10 +28,6 @@
 //------------------------------------------
 
 #pragma once
-
-#ifndef __NeutronBlastBehavior_H_
-#define __NeutronBlastBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/DieModule.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -94,6 +90,3 @@ private:
 
 	void neutronBlastToObject( Object *obj );
 };
-
-#endif // __NeutronBlastBehavior_H_
-

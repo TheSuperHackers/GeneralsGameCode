@@ -24,10 +24,6 @@
 
 
 #pragma once
-
-#ifndef __FRAMEDATAMANAGER_H
-#define __FRAMEDATAMANAGER_H
-
 #include "GameNetwork/NetworkDefs.h"
 #include "GameNetwork/FrameData.h"
 
@@ -63,5 +59,3 @@ protected:
 	Bool m_isQuitting;
 	UnsignedInt m_quitFrame;
 };
-
-#endif

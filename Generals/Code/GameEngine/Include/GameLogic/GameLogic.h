@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef _GAME_LOGIC_H_
-#define _GAME_LOGIC_H_
-
 #include "Common/GameCommon.h"	// ensure we get DUMP_PERF_STATS, or not
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
@@ -425,6 +421,3 @@ inline Object* GameLogic::findObjectByID( ObjectID id )
 
 // the singleton
 extern GameLogic *TheGameLogic;
-
-#endif // _GAME_LOGIC_H_
-

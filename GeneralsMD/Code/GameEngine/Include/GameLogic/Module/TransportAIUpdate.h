@@ -27,10 +27,6 @@
 // Author: Graham Smallwood, July 2002
 
 #pragma once
-
-#ifndef _TRANSPORT_AI_UPDATE_H_
-#define _TRANSPORT_AI_UPDATE_H_
-
 #include "GameLogic/Module/AIUpdate.h"
 
 //-------------------------------------------------------------------------------------------------
@@ -65,6 +61,3 @@ protected:
 	virtual void privateAttackPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource );///< Extension.  Also tell occupants to attackPosition
 	virtual void privateForceAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource );///< Extension.  Also tell occupants to forceAttackObject
 };
-
-#endif
-

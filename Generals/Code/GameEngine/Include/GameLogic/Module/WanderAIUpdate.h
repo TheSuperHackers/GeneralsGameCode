@@ -27,10 +27,6 @@
 // Author: Graham Smallwood, April 2002
 
 #pragma once
-
-#ifndef _WANDER_AI_UPDATE_H_
-#define _WANDER_AI_UPDATE_H_
-
 #include "GameLogic/Module/AIUpdate.h"
 
 //-------------------------------------------------------------------------------------------------
@@ -63,6 +59,3 @@ protected:
 	virtual AIStateMachine* makeStateMachine();
 
 };
-
-#endif
-

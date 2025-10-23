@@ -37,10 +37,6 @@
 
 
 #pragma once
-
-#ifndef MOTCHAN_H
-#define MOTCHAN_H
-
 #include "always.h"
 #include "bittype.h"
 #include "w3d_file.h"
@@ -328,6 +324,3 @@ private:
 
 	friend class HCompressedAnimClass;
 };
-
-
-#endif

@@ -36,10 +36,6 @@
 
 
 #pragma once
-
-#ifndef __AABTREESOUNDCULLCLASS_H
-#define __AABTREESOUNDCULLCLASS_H
-
 #include "aabtreecull.h"
 
 
@@ -76,6 +72,3 @@ class AABTreeSoundCullClass : public AABTreeCullClass
 		virtual void	Save_Node_Contents (AABTreeNodeClass * node,ChunkSaveClass & csave)	{ };
 
 };
-
-#endif //__AABTREESOUNDCULLCLASS_H
-

@@ -36,10 +36,6 @@
 
 
 #pragma once
-
-#ifndef VERTMATERIAL_H
-#define VERTMATERIAL_H
-
 #include "always.h"
 
 #include "refcount.h"
@@ -315,6 +311,3 @@ inline bool VertexMaterialClass::Are_Mappers_Time_Variant(void) const
 	}
 	return false;
 }
-
-#endif //VERTMATERIAL_H
-

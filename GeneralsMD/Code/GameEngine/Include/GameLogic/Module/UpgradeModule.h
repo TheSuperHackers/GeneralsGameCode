@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __UPGRADE_MODULE_H_
-#define __UPGRADE_MODULE_H_
-
 #include "Common/Module.h"
 #include "Common/STLTypedefs.h"
 #include "Common/Upgrade.h"
@@ -213,6 +209,3 @@ protected:
 };
 inline UpgradeModule::UpgradeModule( Thing *thing, const ModuleData* moduleData ) : BehaviorModule( thing, moduleData ) { }
 inline UpgradeModule::~UpgradeModule() { }
-
-
-#endif

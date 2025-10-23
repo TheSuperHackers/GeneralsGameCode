@@ -36,10 +36,6 @@
 
 
 #pragma once
-
-#ifndef CATMULLROMSPLINE_H
-#define CATMULLROMSPLINE_H
-
 #include "hermitespline.h"
 
 /**
@@ -72,5 +68,3 @@ public:
 	virtual bool								Save(ChunkSaveClass &csave);
 	virtual bool								Load(ChunkLoadClass &cload);
 };
-
-#endif

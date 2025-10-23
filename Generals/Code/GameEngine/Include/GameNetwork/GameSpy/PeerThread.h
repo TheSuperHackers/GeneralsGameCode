@@ -27,10 +27,6 @@
 // Author: Matthew D. Campbell, June 2002
 
 #pragma once
-
-#ifndef __PEERTHREAD_H__
-#define __PEERTHREAD_H__
-
 #include "gamespy/peer/peer.h"
 #include "GameNetwork/NetworkDefs.h"
 
@@ -385,5 +381,3 @@ public:
 };
 
 extern GameSpyPeerMessageQueueInterface *TheGameSpyPeerMessageQueue;
-
-#endif // __PEERTHREAD_H__

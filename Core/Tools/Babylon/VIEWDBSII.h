@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_VIEWDBSII_H__AC697EE4_6D37_4F29_ACC7_8B260A33DA2E__INCLUDED_)
-#define AFX_VIEWDBSII_H__AC697EE4_6D37_4F29_ACC7_8B260A33DA2E__INCLUDED_
-
 #pragma once
 // VIEWDBSII.h : header file
 //
@@ -64,5 +60,3 @@ protected:
 extern int ViewChanges;
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_VIEWDBSII_H__AC697EE4_6D37_4F29_ACC7_8B260A33DA2E__INCLUDED_)

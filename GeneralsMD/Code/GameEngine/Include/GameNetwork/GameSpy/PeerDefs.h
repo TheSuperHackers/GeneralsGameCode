@@ -27,10 +27,6 @@
 // Author: Matthew D. Campbell, June 2002
 
 #pragma once
-
-#ifndef __PEERDEFS_H__
-#define __PEERDEFS_H__
-
 #include "gamespy/peer/peer.h"
 #include "gamespy/gp/gp.h"
 
@@ -298,5 +294,3 @@ extern Int GetAdditionalDisconnectsFromUserFile(Int playerID);
 
 void SetUpGameSpy( const char *motdBuffer, const char *configBuffer );
 void TearDownGameSpy( void );
-
-#endif // __PEERDEFS_H__

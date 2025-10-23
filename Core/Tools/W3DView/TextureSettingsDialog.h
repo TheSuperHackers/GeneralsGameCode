@@ -29,10 +29,6 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#if !defined(AFX_TEXTURESETTINGSDIALOG_H__362C7398_D199_11D2_9FFD_00104B791122__INCLUDED_)
-#define AFX_TEXTURESETTINGSDIALOG_H__362C7398_D199_11D2_9FFD_00104B791122__INCLUDED_
-
 #pragma once
 
 #ifdef WW3D_DX8
@@ -123,5 +119,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_TEXTURESETTINGSDIALOG_H__362C7398_D199_11D2_9FFD_00104B791122__INCLUDED_)

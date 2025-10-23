@@ -43,10 +43,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef W3DASSETMANAGER_H
-#define W3DASSETMANAGER_H
-
 #include "assetmgr.h"
 #include "Lib/BaseType.h"
 
@@ -113,6 +109,3 @@ private:
 	void Recolor_ParticleEmitter(RenderObjClass *robj, const Vector3 &hsv_shift);
 	void Recolor_Asset(RenderObjClass *robj, const Vector3 &hsv_shift);*/
 };
-
-#endif
-

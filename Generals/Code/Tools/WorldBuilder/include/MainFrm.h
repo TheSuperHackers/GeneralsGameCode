@@ -19,10 +19,6 @@
 // MainFrm.h : interface of the CMainFrame class
 //
 /////////////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_MAINFRM_H__371EC7AB_29D3_11D5_8CE0_00010297BBAC__INCLUDED_)
-#define AFX_MAINFRM_H__371EC7AB_29D3_11D5_8CE0_00010297BBAC__INCLUDED_
-
 #pragma once
 
 #include "Lib/BaseType.h"
@@ -153,5 +149,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_MAINFRM_H__371EC7AB_29D3_11D5_8CE0_00010297BBAC__INCLUDED_)

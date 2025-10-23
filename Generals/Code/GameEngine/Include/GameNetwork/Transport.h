@@ -27,10 +27,6 @@
 // Author: Matthew D. Campbell, July 2001
 
 #pragma once
-
-#ifndef _TRANSPORT_H_
-#define _TRANSPORT_H_
-
 #include "GameNetwork/udp.h"
 #include "GameNetwork/NetworkDefs.h"
 
@@ -101,5 +97,3 @@ private:
 
 	Bool isGeneralsPacket( TransportMessage *msg );
 };
-
-#endif // _TRANSPORT_H_

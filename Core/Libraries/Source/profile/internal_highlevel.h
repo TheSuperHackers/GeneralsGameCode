@@ -27,10 +27,6 @@
 // High level profiling (internal header)
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
-
-#ifndef INTERNAL_HIGHLEVEL_H // Include guard
-#define INTERNAL_HIGHLEVEL_H
-
 /// an internal high level profile ID
 class ProfileId
 {
@@ -242,5 +238,3 @@ private:
   /// next unused char in string buffer
   static unsigned stringBufUnused;
 };
-
-#endif // INTERNAL_HIGHLEVEL_H

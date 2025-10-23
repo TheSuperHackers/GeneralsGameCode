@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __GEOMETRY_H_
-#define __GEOMETRY_H_
-
 #include "Lib/BaseType.h"
 #include "Common/AsciiString.h"
 #include "Common/Snapshot.h"
@@ -195,6 +191,3 @@ public:
 #endif
 
 };
-
-#endif
-

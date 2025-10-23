@@ -36,10 +36,6 @@
 
 
 #pragma once
-
-#ifndef __VEHICLE_CURVE_H
-#define __VEHICLE_CURVE_H
-
 #include "curve.h"
 #include "Vector.H"
 
@@ -202,7 +198,3 @@ VehicleCurveClass::Clear_Keys (void)
 	Curve3DClass::Clear_Keys ();
 	return ;
 }
-
-
-#endif //__VEHICLE_CURVE_H
-

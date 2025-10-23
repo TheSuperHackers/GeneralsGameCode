@@ -20,10 +20,6 @@
 // Author: Mike Lytle, January 2003
 
 #pragma once
-
-#ifndef RULER_TOOL_H
-#define RULER_TOOL_H
-
 #include "Tool.h"
 
 class RulerTool : public Tool
@@ -56,6 +52,3 @@ public:
 	static Real getLength(void);
 
 };
-
-#endif //RULER_TOOL_H
-

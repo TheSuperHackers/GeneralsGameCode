@@ -29,10 +29,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __FIRE_OCL_AFTER_WEAPON_COOLDOWN_UPDATE_H
-#define __FIRE_OCL_AFTER_WEAPON_COOLDOWN_UPDATE_H
-
 class UpgradeMuxData;
 
 #include "GameLogic/Module/UpdateModule.h"
@@ -107,6 +103,3 @@ private:
 	UnsignedInt m_startFrame;
 
 };
-
-#endif // __FIRE_OCL_AFTER_WEAPON_COOLDOWN_UPDATE_H
-

@@ -38,9 +38,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_W3DASSETMANAGEREXPOSED_
-#define _H_W3DASSETMANAGEREXPOSED_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////
 // DEFINES ////////////////////////////////////////////////////////////////////
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
@@ -52,5 +49,3 @@
 // so this function is here. It should only be called by the particle editor,
 // @todo Remove this function when we are no longer editing particles.
 void ReloadAllTextures(void);
-
-#endif /* _H_W3DASSETMANAGEREXPOSED_ */

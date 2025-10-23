@@ -28,10 +28,6 @@
 // Author: Mark Wilczynski, August 2002
 
 #pragma once
-
-#ifndef _W3DGHOSTOBJECT_H_
-#define _W3DGHOSTOBJECT_H_
-
 #include "GameLogic/GhostObject.h"
 #include "Lib/BaseType.h"
 #include "Common/GameCommon.h"
@@ -94,5 +90,3 @@ protected:
 	W3DGhostObject	*m_freeModules;
 	W3DGhostObject	*m_usedModules;
 };
-
-#endif // _W3DGHOSTOBJECT_H_

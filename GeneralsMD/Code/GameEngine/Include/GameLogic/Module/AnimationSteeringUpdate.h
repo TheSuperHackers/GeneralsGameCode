@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __ANIMATION_STEERING_UPDATE_H
-#define __ANIMATION_STEERING_UPDATE_H
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -83,5 +79,3 @@ protected:
   ModelConditionFlagType m_currentTurnAnim;
 	UnsignedInt m_nextTransitionFrame;
 };
-
-#endif  // end __ANIMATION_STEERING_UPDATE_H

@@ -26,10 +26,6 @@
 // Author: Steven Johnson, Dec 2001
 
 #pragma once
-
-#ifndef _H_CommandXlat
-#define _H_CommandXlat
-
 #include "GameClient/InGameUI.h"
 
 enum GUICommandType CPP_11(: Int);
@@ -124,5 +120,3 @@ public:
 };
 
 extern void pickAndPlayUnitVoiceResponse( const DrawableList *list, GameMessage::Type msgType, PickAndPlayInfo *info = NULL );
-
-#endif

@@ -27,9 +27,6 @@
 // Author: John K. McDonald, March 2002
 
 #pragma once
-#ifndef _H_AUDIOEVENTINFO_
-#define _H_AUDIOEVENTINFO_
-
 #include "Common/AsciiString.h"
 #include "Common/GameMemory.h"
 #include "Common/STLTypedefs.h"
@@ -135,5 +132,3 @@ public:
 	static const FieldParse m_audioEventInfo[];		///< the parse table for INI definition
 	const FieldParse *getFieldParse( void ) const { return m_audioEventInfo; }
 };
-
-#endif /* _H_AUDIOEVENTINFO_ */

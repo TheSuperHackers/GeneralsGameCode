@@ -27,10 +27,6 @@
 //////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __STDLOCALFILE_H
-#define __STDLOCALFILE_H
-
 #include "Common/LocalFile.h"
 
 class StdLocalFile : public LocalFile
@@ -42,5 +38,3 @@ public:
 
 protected:
 };
-
-#endif // __STDLOCALFILE_H

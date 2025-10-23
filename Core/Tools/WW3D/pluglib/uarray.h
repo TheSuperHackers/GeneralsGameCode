@@ -37,10 +37,6 @@
  *   UniqueArrayClass<T>::Add -- Add an item to the array                                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #pragma once
-
-#ifndef UARRAY_H
-#define UARRAY_H
-
 #ifndef HASHCALC_H
 #include "hashcalc.h"
 #endif
@@ -220,7 +216,3 @@ inline int UniqueArrayClass<T>::Add(const T & new_item)
 
 	return index;
 }
-
-
-#endif // UARRAY_H
-

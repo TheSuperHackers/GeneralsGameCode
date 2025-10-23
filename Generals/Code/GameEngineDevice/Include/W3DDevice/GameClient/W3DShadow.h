@@ -24,10 +24,6 @@
 
 
 #pragma once
-
-#ifndef __W3DSHADOW_H_
-#define __W3DSHADOW_H_
-
 #include "matrix4.h"
 #include "GameClient/Shadow.h"
 
@@ -72,5 +68,3 @@ protected:
 };
 
 extern W3DShadowManager *TheW3DShadowManager;
-
-#endif	//__W3DSHADOW_H_

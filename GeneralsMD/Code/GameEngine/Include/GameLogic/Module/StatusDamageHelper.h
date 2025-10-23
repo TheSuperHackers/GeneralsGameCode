@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __StatusDamageHelper_H_
-#define __StatusDamageHelper_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/ObjectHelper.h"
 
@@ -65,6 +61,3 @@ protected:
 	UnsignedInt m_frameToHeal;
 	void clearStatusCondition();
 };
-
-
-#endif  // end __StatusDamageHelper_H_

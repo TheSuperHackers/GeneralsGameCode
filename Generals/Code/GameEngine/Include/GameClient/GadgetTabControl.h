@@ -43,10 +43,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __GADGETTABCONTROL_H_
-#define __GADGETTABCONTROL_H_
-
 enum
 {
 	GTC_BACKGROUND = 0,
@@ -274,6 +270,3 @@ inline Color GadgetTabControlGetHiliteBorderColorBackground( GameWindow *g )				
 
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GADGETTABCONTROL_H_
-

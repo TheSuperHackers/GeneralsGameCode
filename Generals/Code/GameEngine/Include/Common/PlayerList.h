@@ -43,10 +43,6 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
-
-#ifndef _PLAYERLIST_H_
-#define _PLAYERLIST_H_
-
 #include "Common/SubsystemInterface.h"
 #include "Common/GameCommon.h"
 #include "Common/NameKeyGenerator.h"
@@ -171,5 +167,3 @@ private:
 
 // ----------------------------------------------------------------------------------------------
 extern PlayerList *ThePlayerList;	///< singleton instance of PlayerList
-
-#endif // _PLAYERLIST_H_

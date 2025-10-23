@@ -29,10 +29,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef _SPAWN_BEHAVIOR_H_
-#define _SPAWN_BEHAVIOR_H_
-
 const Int SPAWN_UPDATE_RATE = LOGICFRAMES_PER_SECOND/2; ///< This is a low priority module that only needs to be called every this many frames
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -210,5 +206,3 @@ private:
 	std::vector<AsciiString>::const_iterator m_templateNameIterator;
 
 };
-
-#endif

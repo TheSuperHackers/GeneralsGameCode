@@ -39,10 +39,6 @@
 
 
 #pragma once
-
-#ifndef DX8_RENDERER_H
-#define DX8_RENDERER_H
-
 #include "always.h"
 #include "wwstring.h"
 #include "simplevec.h"
@@ -354,5 +350,3 @@ protected:
 };
 
 extern DX8MeshRendererClass TheDX8MeshRenderer;
-
-#endif

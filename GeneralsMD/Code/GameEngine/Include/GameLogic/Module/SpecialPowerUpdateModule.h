@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __SPECIAL_POWER_UPDATE_MODULE_H
-#define __SPECIAL_POWER_UPDATE_MODULE_H
-
 #include "Common/Module.h"
 #include "Common/GameType.h"
 
@@ -81,5 +77,3 @@ public:
 	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const = 0;
 
 };
-
-#endif

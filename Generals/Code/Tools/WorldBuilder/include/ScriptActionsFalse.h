@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_SCRIPTACTIONSFALSE_H__227F217F_458B_4020_B6E9_6EB25E228FD5__INCLUDED_)
-#define AFX_SCRIPTACTIONSFALSE_H__227F217F_458B_4020_B6E9_6EB25E228FD5__INCLUDED_
-
 #pragma once
 // ScriptActionsFalse.h : header file
 //
@@ -86,5 +82,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SCRIPTACTIONSFALSE_H__227F217F_458B_4020_B6E9_6EB25E228FD5__INCLUDED_)

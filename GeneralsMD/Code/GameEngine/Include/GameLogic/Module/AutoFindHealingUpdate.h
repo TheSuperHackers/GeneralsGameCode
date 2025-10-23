@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __AUTO_FIND_HEALING_UPDATE_H_
-#define __AUTO_FIND_HEALING_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -80,7 +76,3 @@ public:
 protected:
 	Int m_nextScanFrames;
 };
-
-
-#endif
-

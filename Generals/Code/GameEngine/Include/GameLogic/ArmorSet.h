@@ -25,10 +25,6 @@
 // ArmorSet.h
 
 #pragma once
-
-#ifndef _ArmorSet_H_
-#define _ArmorSet_H_
-
 #include "Lib/BaseType.h"
 #include "Common/GameType.h"
 #include "Common/SparseMatchFinder.h"
@@ -93,5 +89,3 @@ public:
 
 //-------------------------------------------------------------------------------------------------
 typedef std::vector<ArmorTemplateSet> ArmorTemplateSetVector;
-
-#endif	// _ArmorSet_H_

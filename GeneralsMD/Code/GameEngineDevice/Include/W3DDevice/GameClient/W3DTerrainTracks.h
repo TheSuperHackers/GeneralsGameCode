@@ -23,10 +23,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DTERRAINTRACKS_H_
-#define __W3DTERRAINTRACKS_H_
-
 #include "always.h"
 #include "rendobj.h"
 #include "w3d_file.h"
@@ -156,5 +152,3 @@ protected:
 };
 
 extern TerrainTracksRenderObjClassSystem *TheTerrainTracksRenderObjClassSystem; ///< singleton for track drawing system.
-
-#endif  // end __W3DTERRAINTRACKS_H_

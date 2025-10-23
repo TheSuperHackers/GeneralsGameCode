@@ -39,10 +39,6 @@
 
 
 #pragma once
-
-#ifndef DX8LIST_H
-#define DX8LIST_H
-
 #include "always.h"
 #include "multilist.h"
 
@@ -66,7 +62,3 @@ typedef MultiListIterator<DX8PolygonRendererClass>		DX8PolygonRendererListIterat
 class TextureTrackerClass;
 typedef MultiListClass<TextureTrackerClass>				TextureTrackerList;
 typedef MultiListIterator<TextureTrackerClass>			TextureTrackerListIterator;
-
-
-#endif //DX8LIST_H
-

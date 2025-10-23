@@ -27,10 +27,6 @@
 // Author: Steven Johnson, September 2001
 
 #pragma once
-
-#ifndef _OBJECT_ITER_H_
-#define _OBJECT_ITER_H_
-
 #include "Common/GameType.h"
 #include "Common/GameMemory.h"
 
@@ -155,7 +151,3 @@ public:
 	*/
 	Int getCount() { return m_clumpCount; }
 };
-
-
-#endif // _OBJECT_ITER_H_
-

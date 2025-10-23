@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __RAILED_TRANSPORT_CONTAIN_H_
-#define __RAILED_TRANSPORT_CONTAIN_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/TransportContain.h"
 
@@ -57,5 +53,3 @@ protected:
 	virtual Bool isSpecificRiderFreeToExit( Object *obj );
 
 };
-
-#endif  // end __RAILED_TRANSPORT_CONTAIN_H_

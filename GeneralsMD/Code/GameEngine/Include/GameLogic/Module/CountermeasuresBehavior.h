@@ -29,10 +29,6 @@
 //------------------------------------------
 
 #pragma once
-
-#ifndef __COUNTERMEASURES_BEHAVIOR_H
-#define __COUNTERMEASURES_BEHAVIOR_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameClient/ParticleSys.h"
 #include "GameLogic/Module/BehaviorModule.h"
@@ -192,6 +188,3 @@ private:
 	UnsignedInt m_nextVolleyFrame;					//Frame the next volley is fired.
 	UnsignedInt m_reloadFrame;							//The frame countermeasures will be ready to use again.
 };
-
-#endif // __COUNTERMEASURES_BEHAVIOR_H
-

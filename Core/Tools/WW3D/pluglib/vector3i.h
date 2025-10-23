@@ -36,10 +36,6 @@
 
 
 #pragma once
-
-#ifndef VECTOR3I_H
-#define VECTOR3I_H
-
 #include "always.h"
 
 class Vector3i
@@ -88,5 +84,3 @@ WWINLINE int& Vector3i::operator[] (int n)
 {
 	return ((int*)this)[n];
 }
-
-#endif

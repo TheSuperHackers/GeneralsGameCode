@@ -34,10 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #pragma once
-
-#ifndef CSTRAW_H
-#define CSTRAW_H
-
 #include	"BUFF.H"
 #include	"STRAW.H"
 
@@ -63,8 +59,3 @@ class CacheStraw : public Straw
 		CacheStraw(CacheStraw & rvalue);
 		CacheStraw & operator = (CacheStraw const & pipe);
 };
-
-
-
-#endif
-

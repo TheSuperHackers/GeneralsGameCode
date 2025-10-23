@@ -27,10 +27,6 @@
 // Result function interface and result functions
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
-
-#ifndef PROFILE_RESULT_H // Include guard
-#define PROFILE_RESULT_H
-
 /**
   \brief Result function class.
 
@@ -61,5 +57,3 @@ public:
 protected:
   ProfileResultInterface(void) {}
 };
-
-#endif // PROFILE_RESULT_H

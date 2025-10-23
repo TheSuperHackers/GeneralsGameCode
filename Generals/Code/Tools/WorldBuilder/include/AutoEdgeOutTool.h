@@ -21,10 +21,6 @@
 // Author: John Ahlquist, April 2001
 
 #pragma once
-
-#ifndef AUTOEDGEOUTTOOL_H
-#define AUTOEDGEOUTTOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 /*************************************************************************/
@@ -43,6 +39,3 @@ public:
 	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
 	virtual void activate(); ///< Become the current tool.
 };
-
-
-#endif //TOOL_H

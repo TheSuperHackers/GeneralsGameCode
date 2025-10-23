@@ -43,10 +43,6 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
-
-#ifndef __STLTYPEDEFS_H__
-#define __STLTYPEDEFS_H__
-
 //-----------------------------------------------------------------------------
 // srj sez: this must come first, first, first.
 #define _STLP_USE_NEWALLOC					1
@@ -297,5 +293,3 @@ namespace rts
 	};
 
 } // namespace rts
-
-#endif /* __STLTYPEDEFS_H__ */

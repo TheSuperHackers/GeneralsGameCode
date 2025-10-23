@@ -37,10 +37,6 @@
 
 #pragma once
 
-#ifndef W3D_OBSOLETE_H
-#define W3D_OBSOLETE_H
-
-
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Obsolete chunk id's
 // At one point in time I was using the 'O' prefix to mean obsolete.  Now we just move stuff
@@ -326,6 +322,3 @@ struct W3dHModelAuxDataStruct
 	float32					LODMax;
 	uint32					FutureUse[32];
 };
-
-
-#endif // W3D_OBSOLETE_H

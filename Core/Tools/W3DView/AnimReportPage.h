@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_ANIMREPORTPAGE_H__67C01723_7C0D_11D3_9A3A_0090272E6F90__INCLUDED_)
-#define AFX_ANIMREPORTPAGE_H__67C01723_7C0D_11D3_9A3A_0090272E6F90__INCLUDED_
-
 #pragma once
 // AnimReportPage.h : header file
 //
@@ -72,5 +68,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_ANIMREPORTPAGE_H__67C01723_7C0D_11D3_9A3A_0090272E6F90__INCLUDED_)

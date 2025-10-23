@@ -51,10 +51,6 @@
  *   DynamicVectorClass<T>::Insert -- insert an object at the desired index                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #pragma once
-
-#ifndef VECTOR_H
-#define VECTOR_H
-
 #include "always.h"
 #include	<assert.h>
 #include	<stdlib.h>
@@ -1117,6 +1113,4 @@ bool Pointer_Vector_Remove(T const * ptr, VectorClass<T *> & vec)
 
 #ifdef _MSC_VER
 #pragma warning (default : 4702) // unreachable code, happens with some uses of these templates
-#endif
-
 #endif

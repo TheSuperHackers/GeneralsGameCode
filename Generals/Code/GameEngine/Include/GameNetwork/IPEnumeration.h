@@ -27,10 +27,6 @@
 // Author: Matthew D. Campbell, October 2001
 
 #pragma once
-
-#ifndef _IPENUMERATION_H_
-#define _IPENUMERATION_H_
-
 #include "GameNetwork/Transport.h"
 
 /**
@@ -78,6 +74,3 @@ protected:
 	EnumeratedIP *m_IPlist;
 	Bool m_isWinsockInitialized;
 };
-
-
-#endif // _IPENUMERATION_H_

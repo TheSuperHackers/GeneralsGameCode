@@ -34,10 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #pragma once
-
-#ifndef WWFILE_Hx
-#define WWFILE_Hx
-
 #define YEAR(dt)	(((dt & 0xFE000000) >> (9 + 16)) + 1980)
 #define MONTH(dt)	 ((dt & 0x01E00000) >> (5 + 16))
 #define DAY(dt)	 ((dt & 0x001F0000) >> (0 + 16))
@@ -103,5 +99,3 @@ class FileClass
 		int Printf_Indented(unsigned depth, char *str, ...);
 
 };
-
-#endif

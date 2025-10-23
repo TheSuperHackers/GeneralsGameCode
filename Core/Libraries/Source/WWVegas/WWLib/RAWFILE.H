@@ -38,10 +38,6 @@
  *   RawFileClass::Is_Open -- Checks to see if the file is open or not.                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #pragma once
-
-#ifndef RAWFILE_Hx
-#define RAWFILE_Hx
-
 //#include	<errno.h>
 
 // #include	"win.h"
@@ -150,5 +146,3 @@ class RawFileClass : public FileClass
 		unsigned short Date;
 		unsigned short Time;
 };
-
-#endif

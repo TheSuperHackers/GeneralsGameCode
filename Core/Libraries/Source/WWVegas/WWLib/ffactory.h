@@ -35,10 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef FFACTORY_H
-#define FFACTORY_H
-
 #ifndef ALWAYS_H
 #include "always.h"
 #endif
@@ -157,5 +153,3 @@ extern RawFileFactoryClass	*	_TheWritingFileFactory;
 // No simple file factory.  jba.
 // (gth) re-enabling this because w3d view uses it
 extern SimpleFileFactoryClass	*	_TheSimpleFileFactory;
-
-#endif

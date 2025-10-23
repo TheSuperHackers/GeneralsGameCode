@@ -27,10 +27,6 @@
 // Author: John Ahlquist, April 2001
 
 #pragma once
-
-#ifndef TileData_H
-#define TileData_H
-
 #include <stdio.h>
 
 #include "Lib/BaseType.h"
@@ -104,5 +100,3 @@ public:
 	Bool hasRGBDataForWidth(Int width);
 	UnsignedByte *getRGBDataForWidth(Int width);
 };
-
-#endif

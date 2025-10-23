@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __RAILROADGUIDE_AI_UPDATE_H_
-#define __RAILROADGUIDE_AI_UPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
@@ -302,7 +298,3 @@ protected:
 
 
 };
-
-
-#endif  // end __RAILROAD_GUIDE_AI_UPDATE_H_
-

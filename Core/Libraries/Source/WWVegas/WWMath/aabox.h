@@ -53,10 +53,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef AABOX_H
-#define AABOX_H
-
 #include "always.h"
 #include "matrix3d.h"
 #include "lineseg.h"
@@ -672,6 +668,3 @@ WWINLINE void MinMaxAABoxClass::Translate(const Vector3 & pos)
 	MinCorner+=pos;
 	MaxCorner+=pos;
 }
-
-
-#endif

@@ -37,10 +37,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef SURFACECLASS_H
-#define SURFACECLASS_H
-
 #include "ww3dformat.h"
 #include "refcount.h"
 
@@ -146,7 +142,3 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 		WW3DFormat SurfaceFormat;
 	friend class TextureClass;
 };
-
-#endif
-
-

@@ -27,10 +27,6 @@
 /////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __STDBIGFILESYSTEM_H
-#define __STDBIGFILESYSTEM_H
-
 #include "Common/ArchiveFileSystem.h"
 
 class StdBIGFileSystem : public ArchiveFileSystem
@@ -56,5 +52,3 @@ public:
 protected:
 
 };
-
-#endif // __STDBIGFILESYSTEM_H

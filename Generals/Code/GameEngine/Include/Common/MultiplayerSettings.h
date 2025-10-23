@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef _MULTIPLAYERSETTINGS_H_
-#define _MULTIPLAYERSETTINGS_H_
-
 #include "GameClient/Color.h"
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
@@ -127,5 +123,3 @@ private:
 
 // singleton
 extern MultiplayerSettings *TheMultiplayerSettings;
-
-#endif

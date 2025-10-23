@@ -34,10 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #pragma once
-
-#ifndef WWFILE_Hx
-#define WWFILE_Hx
-
 #ifdef _UNIX
 #include "osdep.h"
 #endif
@@ -106,5 +102,3 @@ class FileClass
 		int Printf_Indented(unsigned depth, char *str, ...);
 
 };
-
-#endif

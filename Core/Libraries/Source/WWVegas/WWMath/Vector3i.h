@@ -36,10 +36,6 @@
 
 
 #pragma once
-
-#ifndef VECTOR3I_H
-#define VECTOR3I_H
-
 #include "always.h"
 
 class Vector3i
@@ -137,5 +133,3 @@ WWINLINE unsigned short & Vector3i16::operator[] (int n)
 {
 	return ((unsigned short *)this)[n];
 }
-
-#endif

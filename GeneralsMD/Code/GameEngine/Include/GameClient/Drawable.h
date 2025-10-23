@@ -27,9 +27,6 @@
 // Author: Michael S. Booth, March 2001
 
 #pragma once
-#ifndef _DRAWABLE_H_
-#define _DRAWABLE_H_
-
 #include "Common/AudioEventRTS.h"
 #include "Common/GameType.h"
 #include "Common/ModelState.h"
@@ -804,5 +801,3 @@ public:
 	}
 };
 #endif
-
-#endif // _DRAWABLE_H_

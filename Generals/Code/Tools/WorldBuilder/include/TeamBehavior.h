@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_TEAMBEHAVIOR_H__40A707E0_08CB_4544_9FF1_AF0DACAB02A6__INCLUDED_)
-#define AFX_TEAMBEHAVIOR_H__40A707E0_08CB_4544_9FF1_AF0DACAB02A6__INCLUDED_
-
 #pragma once
 // TeamBehavior.h : header file
 //
@@ -78,5 +74,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_TEAMBEHAVIOR_H__40A707E0_08CB_4544_9FF1_AF0DACAB02A6__INCLUDED_)

@@ -36,10 +36,6 @@
 
 
 #pragma once
-
-#ifndef AABTREECULL_H
-#define AABTREECULL_H
-
 #include "cullsys.h"
 #include "aaplane.h"
 #include "wwmath.h"
@@ -335,8 +331,3 @@ public:
 	AABTreeNodeClass *				Node;					// partition node containing this object
 	CullableClass *					NextObject;			// next object in the node
 };
-
-
-
-
-#endif // AABTREECULL_H

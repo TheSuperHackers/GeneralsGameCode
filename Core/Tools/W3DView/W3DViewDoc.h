@@ -19,10 +19,6 @@
 // W3DViewDoc.h : interface of the CW3DViewDoc class
 //
 /////////////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_W3DVIEWDOC_H__2BB39E31_5D3A_11D2_9FC6_00104B791122__INCLUDED_)
-#define AFX_W3DVIEWDOC_H__2BB39E31_5D3A_11D2_9FC6_00104B791122__INCLUDED_
-
 #pragma once
 
 #include "scene.h"
@@ -335,7 +331,3 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_W3DVIEWDOC_H__2BB39E31_5D3A_11D2_9FC6_00104B791122__INCLUDED_)
-
-

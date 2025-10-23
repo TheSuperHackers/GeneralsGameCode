@@ -24,9 +24,6 @@
 
 
 #pragma once
-#ifndef __NETWORKUTIL_H
-#define __NETWORKUTIL_H
-
 #include "GameNetwork/NetworkDefs.h"
 #include "GameNetwork/NetworkInterface.h"
 
@@ -55,5 +52,3 @@ inline UnsignedInt AssembleIp(UnsignedByte a, UnsignedByte b, UnsignedByte c, Un
            ((UnsignedInt)(c) << 8) |
            ((UnsignedInt)(d));
 }
-
-#endif

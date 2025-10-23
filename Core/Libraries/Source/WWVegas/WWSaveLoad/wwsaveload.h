@@ -37,10 +37,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef WWSAVELOAD_H
-#define WWSAVELOAD_H
-
 /**
 ** WWSaveLoad
 ** The Init and Shutdown functions should be called once by the App.
@@ -52,7 +48,3 @@ public:
 	static void		Init(void);
 	static void		Shutdown(void);
 };
-
-
-#endif
-

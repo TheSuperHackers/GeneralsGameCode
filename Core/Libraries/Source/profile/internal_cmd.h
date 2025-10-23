@@ -27,10 +27,6 @@
 // Profile module command interface
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
-
-#ifndef INTERNAL_CMD_H // Include guard
-#define INTERNAL_CMD_H
-
 class ProfileCmdInterface: public DebugCmdInterface
 {
   struct Factory
@@ -56,5 +52,3 @@ public:
                        unsigned argn, const char * const * argv);
   virtual void Delete(void) {}
 };
-
-#endif // INTERNAL_CMD_H

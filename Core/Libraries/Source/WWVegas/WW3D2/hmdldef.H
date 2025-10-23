@@ -36,10 +36,6 @@
 
 
 #pragma once
-
-#ifndef HMDLDEF_H
-#define HMDLDEF_H
-
 #include "always.h"
 #include "w3d_file.h"
 
@@ -106,5 +102,3 @@ private:
 	friend class HModelClass;
 	friend class HLodClass;
 };
-
-#endif

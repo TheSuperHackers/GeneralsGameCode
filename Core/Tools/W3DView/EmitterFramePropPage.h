@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_EMITTERFRAMEPROPPAGE_H__6F068804_EAD5_4A19_BE03_C9C7B534E6E8__INCLUDED_)
-#define AFX_EMITTERFRAMEPROPPAGE_H__6F068804_EAD5_4A19_BE03_C9C7B534E6E8__INCLUDED_
-
 #pragma once
 // EmitterFramePropPage.h : header file
 //
@@ -128,5 +124,3 @@ inline float EmitterFramePropPageClass::Denormalize_Frame(float normalized_val)
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_EMITTERFRAMEPROPPAGE_H__6F068804_EAD5_4A19_BE03_C9C7B534E6E8__INCLUDED_)

@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_TERRAINMODAL_H__F013E9EF_2DE1_4084_97A8_5B87466535FC__INCLUDED_)
-#define AFX_TERRAINMODAL_H__F013E9EF_2DE1_4084_97A8_5B87466535FC__INCLUDED_
-
 #pragma once
 // TerrainModal.h : header file
 //
@@ -80,5 +76,3 @@ public:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_TERRAINMODAL_H__F013E9EF_2DE1_4084_97A8_5B87466535FC__INCLUDED_)

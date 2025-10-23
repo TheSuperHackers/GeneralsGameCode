@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __DestroyModule_H_
-#define __DestroyModule_H_
-
 #include "Common/Module.h"
 #include "GameLogic/Module/BehaviorModule.h"
 
@@ -66,5 +62,3 @@ public:
 protected:
 
 };
-
-#endif

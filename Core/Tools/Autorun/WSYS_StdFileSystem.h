@@ -37,10 +37,6 @@
 
 #pragma once
 
-#ifndef __WSYS_STDFILESYSTEM_H
-#define __WSYS_STDFILESYSTEM_H
-
-
 
 //----------------------------------------------------------------------------
 //           Includes
@@ -86,7 +82,3 @@ class StdFileSystem	: public FileSystem
 //----------------------------------------------------------------------------
 //           Inlining
 //----------------------------------------------------------------------------
-
-
-
-#endif // __WSYS_STDFILESYSTEM_H

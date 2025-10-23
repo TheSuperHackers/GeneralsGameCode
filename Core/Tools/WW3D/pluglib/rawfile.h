@@ -38,10 +38,6 @@
  *   RawFileClass::Is_Open -- Checks to see if the file is open or not.                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #pragma once
-
-#ifndef RAWFILE_Hx
-#define RAWFILE_Hx
-
 //#include	<errno.h>
 
 // #include	"win.h"
@@ -197,7 +193,3 @@ inline char const * RawFileClass::File_Name(void) const
 {
 	return(Filename);
 }
-
-
-
-#endif

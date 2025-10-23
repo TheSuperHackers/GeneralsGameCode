@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef EXPERIENCE_TRACKER_H
-#define EXPERIENCE_TRACKER_H
-
 #include "Common/GameCommon.h"
 #include "Common/GameType.h"
 #include "Common/GameMemory.h"
@@ -75,5 +71,3 @@ private:
 	ObjectID					m_experienceSink;										///< ID of object I have pledged my experience point gains to
 	Real							m_experienceScalar;									///< Scales any experience gained by this multiplier.
 };
-
-#endif

@@ -27,10 +27,6 @@
 // Internal result functions
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
-
-#ifndef INTERNAL_RESULT_H // Include guard
-#define INTERNAL_RESULT_H
-
 /// \brief Simple CSV format flat file result function, for all threads.
 class ProfileResultFileCSV: public ProfileResultInterface
 {
@@ -97,5 +93,3 @@ private:
   char *m_frameName;
   int m_foldThreshold;
 };
-
-#endif // INTERNAL_RESULT_H

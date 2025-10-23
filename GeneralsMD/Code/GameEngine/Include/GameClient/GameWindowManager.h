@@ -31,10 +31,6 @@
 
 #pragma once
 
-#ifndef __GAMEWINDOWMANAGER_H_
-#define __GAMEWINDOWMANAGER_H_
-
-
 #include "Common/STLTypedefs.h"
 #include "Common/SubsystemInterface.h"
 #include "GameClient/WindowLayout.h"
@@ -416,6 +412,3 @@ public:
 	virtual GameWinDrawFunc getTextEntryImageDrawFunc() { return NULL; }
 	virtual GameWinDrawFunc getTextEntryDrawFunc() { return NULL; }
 };
-
-#endif // __GAMEWINDOWMANAGER_H_
-

@@ -29,10 +29,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __IMAGE_H_
-#define __IMAGE_H_
-
 #include "Common/AsciiString.h"
 #include "Common/GameMemory.h"
 #include "Common/SubsystemInterface.h"
@@ -167,6 +163,3 @@ inline UnsignedInt Image::getStatus( void ) const { return m_status; }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern ImageCollection *TheMappedImageCollection;  ///< mapped images
-
-#endif // __IMAGE_H_
-

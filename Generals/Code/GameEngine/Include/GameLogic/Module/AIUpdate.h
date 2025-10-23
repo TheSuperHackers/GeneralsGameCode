@@ -27,10 +27,6 @@
 // Author: Michael S. Booth, 2001-2002
 
 #pragma once
-
-#ifndef _AI_UPDATE_H_
-#define _AI_UPDATE_H_
-
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/AI.h"
 #include "GameLogic/AIStateMachine.h"
@@ -787,6 +783,3 @@ private:
 //------------------------------------------------------------------------------------------------------------
 // Inlines
 //
-
-#endif // _AI_UPDATE_H_
-

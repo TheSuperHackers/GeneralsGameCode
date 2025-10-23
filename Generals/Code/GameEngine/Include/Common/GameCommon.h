@@ -46,10 +46,6 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
-
-#ifndef _GAMECOMMON_H_
-#define _GAMECOMMON_H_
-
 // ----------------------------------------------------------------------------------------------
 #include "Lib/BaseType.h"
 #include "WWCommon.h"
@@ -489,6 +485,3 @@ enum Relationship CPP_11(: Int)
 
 // TheRelationShipNames is defined in Common/GameCommon.cpp
 extern const char *const TheRelationshipNames[];
-
-#endif // _GAMECOMMON_H_
-

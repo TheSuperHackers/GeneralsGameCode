@@ -37,10 +37,6 @@
 #pragma once
 
 
-#ifndef _CDCNTRL
-#define _CDCNTRL
-
-
 //#include	"always.h"
 //#include	<winmin.h>
 #define  STRICT
@@ -149,8 +145,3 @@ typedef struct _PARAMBLOCK {
 } PARAMBLOCK, *PPARAMBLOCK;
 
 #pragma pack()
-
-
-
-#endif	//_CDCNTRL
-

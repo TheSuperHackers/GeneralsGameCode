@@ -21,10 +21,6 @@
 // Author: John Ahlquist, April 2001
 
 #pragma once
-
-#ifndef FEATHERTOOL_H
-#define FEATHERTOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 /**************************************************************************/
@@ -56,6 +52,3 @@ public:
 	virtual WorldHeightMapEdit *getHeightMap(void) {return m_htMapEditCopy;};
 	virtual void activate(); ///< Become the current tool.
 };
-
-
-#endif //FEATHERTOOL_H

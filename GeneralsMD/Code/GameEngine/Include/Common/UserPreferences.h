@@ -29,10 +29,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __USERPREFERENCES_H__
-#define __USERPREFERENCES_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -176,5 +172,3 @@ public:
   void setSuperweaponRestricted( Bool superweaponRestricted);
   void setStartingCash( const Money & startingCash );
 };
-
-#endif // __USERPREFERENCES_H__

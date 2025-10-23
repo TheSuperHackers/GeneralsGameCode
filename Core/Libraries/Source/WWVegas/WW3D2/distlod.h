@@ -36,10 +36,6 @@
 
 
 #pragma once
-
-#ifndef DISTLOD_H
-#define DISTLOD_H
-
 #include "proto.h"
 #include "rendobj.h"
 #include "composite.h"
@@ -240,5 +236,3 @@ private:
 ** Instance of the loaders which the asset manager install
 */
 extern DistLODLoaderClass			_DistLODLoader;
-
-#endif

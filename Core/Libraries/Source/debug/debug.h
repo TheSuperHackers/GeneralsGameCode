@@ -27,10 +27,6 @@
 // Debugging module
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
-
-#ifndef DEBUG_H // Include guard
-#define DEBUG_H
-
 /**
   \page lib_var Library variants
 
@@ -103,5 +99,3 @@
 #include "debug_cmd.h"
 #include "debug_stack.h"
 #include "debug_debug.h"
-
-#endif // DEBUG_H

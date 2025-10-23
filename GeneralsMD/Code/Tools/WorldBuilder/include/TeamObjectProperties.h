@@ -21,10 +21,6 @@
 // January, 2003
 // (c) Electronic Arts 2003
 
-
-#ifndef TEAM_OBJECT_PROPERTIES_H
-#define TEAM_OBJECT_PROPERTIES_H
-
 #pragma once
 
 #include "resource.h"
@@ -108,4 +104,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-#endif //TEAM_OBJECT_PROPERTIES_H

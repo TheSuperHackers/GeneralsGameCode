@@ -31,10 +31,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef __EMITTER_INSTANCE_LIST_H
-#define __EMITTER_INSTANCE_LIST_H
-
 #include "Vector.H"
 #include "part_ldr.h"
 #include "part_emt.h"
@@ -108,5 +104,3 @@ class EmitterInstanceListClass : public ParticleEmitterDefClass
 
 		DynamicVectorClass<ParticleEmitterClass *>	m_List;
 };
-
-#endif //__EMITTER_INSTANCE_LIST_H

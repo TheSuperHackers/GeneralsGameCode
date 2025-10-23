@@ -34,10 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #pragma once
-
-#ifndef REFCOUNT_H
-#define REFCOUNT_H
-
 #ifndef ALWAYS_H
 #include "always.h"
 #endif
@@ -327,6 +323,3 @@ private:
 
 	mutable IntegerType NumRefs;
 };
-
-
-#endif // REFCOUNT_H

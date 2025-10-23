@@ -34,10 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef POLYINFO_H
-#define POLYINFO_H
-
 #pragma once
 
 class TextureClass;
@@ -87,6 +83,3 @@ protected:
 	VertexMaterialClass *VertexMaterial;
 	ShaderClass *Shader;
 };
-
-#endif
-

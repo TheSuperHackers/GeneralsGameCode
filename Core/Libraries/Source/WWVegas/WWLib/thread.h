@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef THREAD_H
-#define THREAD_H
-
 #pragma once
 
 #include "always.h"
@@ -97,5 +93,3 @@ private:
 	volatile unsigned long handle;
 	int thread_priority;
 };
-
-#endif

@@ -43,10 +43,6 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
-
-#ifndef _PLAYERTEMPLATE_H_
-#define _PLAYERTEMPLATE_H_
-
 #include "Common/SubsystemInterface.h"
 #include "Common/GameMemory.h"
 #include "Common/Debug.h"
@@ -214,5 +210,3 @@ private:
 
 // ----------------------------------------------------------------------------------------------
 extern PlayerTemplateStore *ThePlayerTemplateStore;	///< singleton instance of PlayerTemplateStore
-
-#endif // _PLAYERTEMPLATE_H_

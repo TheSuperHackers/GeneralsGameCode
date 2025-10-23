@@ -32,10 +32,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __AutoHealBehavior_H_
-#define __AutoHealBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameClient/ParticleSys.h"
 #include "GameLogic/Module/BehaviorModule.h"
@@ -189,6 +185,3 @@ private:
 	Bool m_stopped;
 
 };
-
-#endif // __AutoHealBehavior_H_
-

@@ -37,10 +37,6 @@
 
 
 #pragma once
-
-#ifndef HANIM_H
-#define HANIM_H
-
 #include "always.h"
 #include "quat.h"
 #include "refcount.h"
@@ -263,5 +259,3 @@ protected:
 	DynamicVectorClass<HAnimComboDataClass *> HAnimComboData;
 
 };
-
-#endif

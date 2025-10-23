@@ -27,10 +27,6 @@
 // Author: Matthew D. Campbell, August 2002
 
 #pragma once
-
-#ifndef __LADDERDEFS_H__
-#define __LADDERDEFS_H__
-
 #include "Common/UnicodeString.h"
 #include "Common/AsciiString.h"
 #include "Common/STLTypedefs.h"
@@ -84,5 +80,3 @@ private:
 };
 
 extern LadderList *TheLadderList;
-
-#endif // __LADDERDEFS_H__

@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __OBJECT_STATUS_TYPES_H
-#define __OBJECT_STATUS_TYPES_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
 #include "Common/BitFlags.h"
@@ -141,5 +137,3 @@ inline void FLIP_OBJECT_STATUS_MASK( ObjectStatusMaskType& m )
 
 // defined in Common/System/ObjectStatusTypes.cpp
 extern ObjectStatusMaskType OBJECT_STATUS_MASK_NONE;	// inits to all zeroes
-
-#endif /* __OBJECT_STATUS_TYPES_H */

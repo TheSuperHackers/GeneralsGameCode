@@ -28,10 +28,6 @@
 // tell the compiler to only load this file once
 #pragma once
 
-
-#ifndef _BASE_TYPE_CORE_H_
-#define _BASE_TYPE_CORE_H_
-
 #include <math.h>
 #include <string.h>
 // TheSuperHackers @build feliwir 07/04/2025 Adds utility macros for cross-platform compatibility
@@ -132,5 +128,3 @@ typedef bool						Bool;					//
 // note, the types below should use "long long", but MSVC doesn't support it yet
 typedef int64_t						Int64;						// 8 bytes
 typedef uint64_t					UnsignedInt64;	  	        // 8 bytes
-
-#endif // _BASE_TYPE_CORE_H_

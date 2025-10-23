@@ -27,10 +27,6 @@
 // Profiling module
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
-
-#ifndef PROFILE_H // Include guard
-#define PROFILE_H
-
 // include all our public header files (use double quotes here)
 #include "profile_doc.h"
 #include "profile_highlevel.h"
@@ -205,5 +201,3 @@ private:
   /// CPU clock cycles/second
   static _int64 m_clockCycles;
 };
-
-#endif // PROFILE_H

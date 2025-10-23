@@ -24,10 +24,6 @@
 
 
 #pragma once
-
-#ifndef UDP_HEADER
-#define UDP_HEADER
-
 #ifdef _UNIX
 #include <errno.h>
 #endif
@@ -126,6 +122,4 @@ class UDP
 
 #ifdef DEBUG_LOGGING
 AsciiString GetWSAErrorString( Int error );
-#endif
-
 #endif

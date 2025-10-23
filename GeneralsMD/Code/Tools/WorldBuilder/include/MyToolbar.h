@@ -22,10 +22,6 @@
 
 #pragma once
 
-#ifndef MYTOOLBAR_H
-#define MYTOOLBAR_H
-
-
 
 /*************************************************************************
 **                             CellSizeToolBar
@@ -47,7 +43,3 @@ public:
 	static void CellSizeChanged(Int cellSize);
 
 };
-
-
-
-#endif //MYTOOLBAR_H

@@ -39,10 +39,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef BUFFFILE_H
-#define BUFFFILE_H
-
 #include	"RAWFILE.H"
 
 
@@ -79,5 +75,3 @@ class BufferedFileClass : public RawFileClass
 		int					BufferOffset;		// The data already given out
 		static	int		_DesiredBufferSize;
 };
-
-#endif

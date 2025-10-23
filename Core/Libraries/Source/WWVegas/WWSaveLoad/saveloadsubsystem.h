@@ -38,10 +38,6 @@
 #pragma once
 
 
-#ifndef SAVELOADSUBSYSTEM_H
-#define SAVELOADSUBSYSTEM_H
-
-
 #include "always.h"
 #include "bittype.h"
 #include "postloadable.h"
@@ -87,7 +83,3 @@ private:
 
 	friend class SaveLoadSystemClass;
 };
-
-
-
-#endif

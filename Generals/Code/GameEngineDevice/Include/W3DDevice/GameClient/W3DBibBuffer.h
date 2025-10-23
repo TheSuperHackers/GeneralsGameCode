@@ -43,10 +43,6 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
-
-#ifndef __W3DBIB_BUFFER_H_
-#define __W3DBIB_BUFFER_H_
-
 //-----------------------------------------------------------------------------
 //           Includes
 //-----------------------------------------------------------------------------
@@ -131,5 +127,3 @@ protected:
 	void allocateBibBuffers(void);							 ///< Allocates the buffers.
 	void freeBibBuffers(void);									 ///< Frees the index and vertex buffers.
 };
-
-#endif  // end __W3DBIB_BUFFER_H_

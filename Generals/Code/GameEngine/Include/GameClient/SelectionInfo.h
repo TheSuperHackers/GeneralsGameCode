@@ -27,10 +27,6 @@
 // Author: John McDonald, Jr, October 2002
 
 #pragma once
-
-#ifndef __SELECTIONINFO_H__
-#define __SELECTIONINFO_H__
-
 #include "GameClient/InGameUI.h"
 
 // This structure gives you a rough idea about the counts of the kinds of guys in the
@@ -100,6 +96,3 @@ extern void translatePickTypesToKindof(UnsignedInt pickTypes, KindOfMaskType& ou
 // userData should be a pointer to a PickDrawableStruct, which is defined in
 // above.
 extern Bool addDrawableToList( Drawable *draw, void *userData );
-
-
-#endif /* __SELECTIONINFO_H__ */

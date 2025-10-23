@@ -37,10 +37,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef LINEGRP_H
-#define LINEGRP_H
-
 #include "shader.h"
 #include "vector4.h"
 #include "vector3.h"
@@ -128,5 +124,3 @@ protected:
 	Vector4					DefaultTailDiffuse;	// Tail diffuse RGBA
 	LineModeType			LineMode;
 };
-
-#endif

@@ -37,10 +37,6 @@
 
 #pragma once
 
-#ifndef NULLSAVE_H
-#define NULLSAVE_H
-
-
 #include <max.h>
 #include "w3d_file.h"
 #include "chunkio.h"
@@ -72,8 +68,3 @@ private:
 	W3dNullObjectStruct		NullData;
 
 };
-
-
-
-
-#endif //NULLSAVE_H

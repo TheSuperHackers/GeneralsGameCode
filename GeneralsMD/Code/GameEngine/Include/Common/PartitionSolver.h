@@ -38,9 +38,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_PARTITIONSOLVER_
-#define _H_PARTITIONSOLVER_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////
 
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -83,5 +80,3 @@ class PartitionSolver
 		void solve(void);
 		const SolutionVec& getSolution( void ) const;
 };
-
-#endif /* _H_PARTITIONSOLVER_ */

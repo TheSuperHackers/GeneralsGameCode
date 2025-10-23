@@ -27,10 +27,6 @@
 // Do not distribute
 
 #pragma once
-
-#ifndef _AUDIOREQUEST_H_
-#define _AUDIOREQUEST_H_
-
 #include "Common/GameAudio.h"
 #include "Common/GameMemory.h"
 
@@ -57,5 +53,3 @@ public:
 	Bool m_usePendingEvent;
 	Bool m_requiresCheckForSample;
 };
-
-#endif // _AUDIOREQUEST_H_

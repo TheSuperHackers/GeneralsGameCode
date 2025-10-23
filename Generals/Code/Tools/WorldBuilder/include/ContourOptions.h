@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_ContourOptions_H__7B56E24C_582E_4530_A451_873397C8852D__INCLUDED_)
-#define AFX_ContourOptions_H__7B56E24C_582E_4530_A451_873397C8852D__INCLUDED_
-
 #pragma once
 // ContourOptions.h : header file
 //
@@ -84,5 +80,3 @@ public:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_ContourOptions_H__6B56E20C_582E_4030_A251_879097C8853C__INCLUDED_)

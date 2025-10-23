@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __MAINMENUUTILS_H__
-#define __MAINMENUUTILS_H__
-
 void HTTPThinkWrapper( void );
 void StopAsyncDNSCheck( void );
 void StartPatchCheck( void );
@@ -44,5 +40,3 @@ void HandleOverallStats( const char* szHTTPStats, unsigned len );
 
 void CheckNumPlayersOnline( void );
 void HandleNumPlayersOnline( Int numPlayersOnline );
-
-#endif // __MAINMENUUTILS_H__

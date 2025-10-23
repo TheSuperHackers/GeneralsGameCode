@@ -44,10 +44,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __BAIKONUR_LAUNCH_POWER_H_
-#define __BAIKONUR_LAUNCH_POWER_H_
-
 #include "GameLogic/Module/SpecialPowerModule.h"
 
 class Object;
@@ -85,5 +81,3 @@ public:
 protected:
 
 };
-
-#endif // __BAIKONUR_LAUNCH_POWER_H_

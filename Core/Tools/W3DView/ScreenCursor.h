@@ -33,10 +33,6 @@
 
 #pragma once
 
-
-#ifndef __SCREENCURSOR_H
-#define __SCREENCURSOR_H
-
 #include "resource.h"
 #include "rendobj.h"
 #include "Vector3i.h"
@@ -109,6 +105,3 @@ class ScreenCursorClass : public RenderObjClass
 		int 						m_Width;
 		int						m_Height;
 };
-
-
-#endif //__SCREENCURSOR_H

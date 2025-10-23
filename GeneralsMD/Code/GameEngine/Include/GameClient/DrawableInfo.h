@@ -27,9 +27,6 @@
 // Author: Mark Wilczynski, August 2002
 
 #pragma once
-#ifndef _DRAWABLEINFO_H_
-#define _DRAWABLEINFO_H_
-
 #include "Common/GameType.h"
 
 class Drawable;
@@ -55,5 +52,3 @@ struct DrawableInfo
 	GhostObject *m_ghostObject;	///<pointer to ghostObject for this drawable used for fogged versions.
 	Int m_flags;	///<extra render settings flags that are tied to render objects with drawables.
 };
-
-#endif // _DRAWABLEINFO_H_

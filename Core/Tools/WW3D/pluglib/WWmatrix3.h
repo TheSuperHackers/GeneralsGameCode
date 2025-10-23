@@ -55,10 +55,6 @@
 
 
 #pragma once
-
-#ifndef Matrix3_H
-#define Matrix3_H
-
 #include "always.h"
 #include "vector3.h"
 //#include "wwdebug.h"
@@ -1005,5 +1001,3 @@ inline void Matrix3::Transpose_Rotate_Vector(const Matrix3 & A,const Vector3 & i
 	out->Y = (A[0][1] * v->X + A[1][1] * v->Y + A[2][1] * v->Z);
 	out->Z = (A[0][2] * v->X + A[1][2] * v->Y + A[2][2] * v->Z);
 }
-
-#endif /*Matrix3_H*/

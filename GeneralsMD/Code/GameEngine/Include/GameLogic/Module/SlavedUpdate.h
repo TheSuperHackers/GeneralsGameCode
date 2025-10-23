@@ -30,10 +30,6 @@
 //				can use any or all features, some of which are specialized.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
-
-#ifndef _SLAVED_UPDATE_H_
-#define _SLAVED_UPDATE_H_
-
 const Int SLAVED_UPDATE_RATE = LOGICFRAMES_PER_SECOND/4; ///< This is a low priority module that only needs to be called every this many frames
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -177,5 +173,3 @@ private:
 	RepairStates m_repairState;
 	Bool m_repairing;
 };
-
-#endif

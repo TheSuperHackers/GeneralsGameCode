@@ -37,10 +37,6 @@
 
 
 #pragma once
-
-#ifndef HASH_H
-#define HASH_H
-
 #include "always.h"
 
 class HashTableIteratorClass;
@@ -113,6 +109,3 @@ private:
 
 	void					Advance_Next( void );
 };
-
-
-#endif	// HASH_H

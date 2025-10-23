@@ -37,10 +37,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef SHATTERSYSTEM_H
-#define SHATTERSYSTEM_H
-
 #include "always.h"
 
 
@@ -94,8 +90,3 @@ protected:
 
 
 };
-
-
-#endif
-
-

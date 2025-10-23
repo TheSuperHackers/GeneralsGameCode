@@ -35,10 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef IOSTRUCT_H
-#define IOSTRUCT_H
-
 #ifndef BITTYPE_H
 #include "bittype.h"
 #endif
@@ -72,8 +68,3 @@ struct IOQuaternionStruct
 {
 	float32		Q[4];
 };
-
-
-
-#endif
-

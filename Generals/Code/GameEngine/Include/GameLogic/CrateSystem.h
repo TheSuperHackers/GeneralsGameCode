@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef CRATE_SYSTEM_H
-#define CRATE_SYSTEM_H
-
 #include "Common/INI.h"
 #include "Common/Overridable.h"
 #include "Common/Override.h"
@@ -113,4 +109,3 @@ private:
 };
 
 extern CrateSystem *TheCrateSystem;
-#endif

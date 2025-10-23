@@ -27,10 +27,6 @@
 // Author: Michael S. Booth, March 2001
 
 #pragma once
-
-#ifndef _GAME_INTERFACE_H_
-#define _GAME_INTERFACE_H_
-
 #include "Common/GameType.h"
 #include "Common/MessageStream.h"		// for GameMessageTranslator
 #include "Common/Snapshot.h"
@@ -306,5 +302,3 @@ extern GameClient *TheGameClient;
 //					m_roadBuffer = NULL
 //					m_shroud = NULL
 //		TheRadar = RadarDummy
-
-#endif // _GAME_INTERFACE_H_

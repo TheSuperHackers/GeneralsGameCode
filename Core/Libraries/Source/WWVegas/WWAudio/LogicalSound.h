@@ -31,10 +31,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef __LOGICAL_SOUND_H
-#define __LOGICAL_SOUND_H
-
 #include "SoundSceneObj.h"
 #include "bittype.h"
 #include "vector3.h"
@@ -145,7 +141,3 @@ class LogicalSoundClass : public SoundSceneObjClass
 		uint32					m_NotifyDelayInMS;
 		uint32					m_LastNotification;
 };
-
-
-#endif //__LOGICAL_SOUND_H
-

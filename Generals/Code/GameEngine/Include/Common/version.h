@@ -27,10 +27,6 @@
 // Author: Matthew D. Campbell, November 2001
 
 #pragma once
-
-#ifndef __VERSION_H__
-#define __VERSION_H__
-
 #include <time.h>
 
 /**
@@ -120,5 +116,3 @@ private:
 };
 
 extern Version *TheVersion;
-
-#endif // __VERSION_H__

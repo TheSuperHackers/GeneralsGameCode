@@ -26,10 +26,6 @@
 // Author: Steven Johnson, Dec 2001
 
 #pragma once
-
-#ifndef _H_WindowXlat
-#define _H_WindowXlat
-
 #include "GameClient/InGameUI.h"
 
 //-----------------------------------------------------------------------------
@@ -42,5 +38,3 @@ public:
 	~WindowTranslator();
 	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
 };
-
-#endif

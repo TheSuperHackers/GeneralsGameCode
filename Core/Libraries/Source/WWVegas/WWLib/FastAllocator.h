@@ -27,10 +27,6 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-
-#ifndef FASTALLOCATOR_H
-#define FASTALLOCATOR_H
-
 #pragma once
 
 //#define MEMORY_OVERWRITE_TEST
@@ -724,16 +720,3 @@ void main(){
    getchar();
 }
 */
-
-
-
-#endif //sentry
-
-
-
-
-
-
-
-
-

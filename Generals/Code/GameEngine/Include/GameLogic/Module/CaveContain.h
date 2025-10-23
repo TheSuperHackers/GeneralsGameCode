@@ -30,10 +30,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __CAVE_CONTAIN_H_
-#define __CAVE_CONTAIN_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/CreateModule.h"
 #include "GameLogic/Module/OpenContain.h"
@@ -126,5 +122,3 @@ protected:
 	Team *m_originalTeam;												///< our original team before we were garrisoned
 
 };
-
-#endif  // end __CAVE_CONTAIN_H_

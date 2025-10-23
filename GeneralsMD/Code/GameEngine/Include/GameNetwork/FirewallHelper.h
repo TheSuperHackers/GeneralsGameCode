@@ -47,10 +47,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef __FIREWALLHELPER_H
-#define __FIREWALLHELPER_H
-
 class UDP;
 
 #define NUM_TEST_PORTS 4
@@ -308,7 +304,3 @@ class FirewallHelperClass {
 
 extern FirewallHelperClass *TheFirewallHelper;
 FirewallHelperClass * createFirewallHelper();
-
-
-#endif	// __FIREWALLHELPER_H
-

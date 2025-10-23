@@ -34,10 +34,6 @@
 
 
 #pragma once
-
-#ifndef CLASSID_H
-#define CLASSID_H
-
 #include "always.h"
 
 /*
@@ -58,6 +54,3 @@ enum
 	ID_STREAMING_TEXTURE_CLASS,				// StreamingTextureClass				"texture.h"
 	ID_STREAMING_TEXTURE_INSTANCE_CLASS,	// StreamingTextureInstanceClass		"texture.h"
 };
-
-
-#endif

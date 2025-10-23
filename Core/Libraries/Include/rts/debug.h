@@ -27,9 +27,4 @@
 // Proxy header for debug module
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
-#ifndef PROXY_DEBUG_H // Include guard
-#define PROXY_DEBUG_H
-
 #include "../../Source/debug/debug.h"
-
-#endif // PROXY_DEBUG_H

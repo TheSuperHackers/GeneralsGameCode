@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_SPHERECOLORPROPPAGE_H__E86BBE86_F527_11D3_A08F_00104B791122__INCLUDED_)
-#define AFX_SPHERECOLORPROPPAGE_H__E86BBE86_F527_11D3_A08F_00104B791122__INCLUDED_
-
 #pragma once
 // SphereColorPropPage.h : header file
 //
@@ -120,6 +116,3 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SPHERECOLORPROPPAGE_H__E86BBE86_F527_11D3_A08F_00104B791122__INCLUDED_)
-

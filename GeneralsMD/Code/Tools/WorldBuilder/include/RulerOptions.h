@@ -16,10 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-#ifndef __RULEROPTIONS_H_
-#define __RULEROPTIONS_H_
-
 #pragma once
 // RulerOptions.h : header file
 //
@@ -74,5 +70,3 @@ public:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // __RULEROPTIONS_H_

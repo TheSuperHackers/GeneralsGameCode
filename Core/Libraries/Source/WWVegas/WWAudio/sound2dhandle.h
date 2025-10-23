@@ -35,10 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef __SOUND2DHANDLE_H
-#define __SOUND2DHANDLE_H
-
 #include "soundhandle.h"
 
 
@@ -100,6 +96,3 @@ protected:
 	///////////////////////////////////////////////////////////////////
 	HSAMPLE		SampleHandle;
 };
-
-
-#endif //__SOUND2DHANDLE_H

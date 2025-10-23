@@ -37,10 +37,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef TEXTURELOADER_H
-#define TEXTURELOADER_H
-
 #pragma once
 
 #include "always.h"
@@ -328,5 +324,3 @@ private:
 
 	unsigned int		Depth;
 };
-
-#endif

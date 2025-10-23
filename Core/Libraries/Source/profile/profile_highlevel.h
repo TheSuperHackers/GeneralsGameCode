@@ -27,10 +27,6 @@
 // High level profiling
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
-
-#ifndef PROFILE_HIGHLEVEL_H // Include guard
-#define PROFILE_HIGHLEVEL_H
-
 /// \internal internal Id representation
 class ProfileId;
 
@@ -236,5 +232,3 @@ private:
   */
   static ProfileHighLevel Instance;
 };
-
-#endif // PROFILE_HIGHLEVEL_H

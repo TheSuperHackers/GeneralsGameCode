@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __TRANSITIONDAMAGEFX_H_
-#define __TRANSITIONDAMAGEFX_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameClient/ParticleSys.h"
 #include "GameLogic/Module/DamageModule.h"
@@ -263,5 +259,3 @@ protected:
 	ParticleSystemID m_particleSystemID[ BODYDAMAGETYPE_COUNT ][ DAMAGE_MODULE_MAX_FX ];
 
 };
-
-#endif  // end __TRANSITIONDAMAGEFX

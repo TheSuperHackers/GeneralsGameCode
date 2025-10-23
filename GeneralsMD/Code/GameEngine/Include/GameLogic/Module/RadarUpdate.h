@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __RADARUPDATE_H_
-#define __RADARUPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -88,5 +84,3 @@ protected:
 	Bool m_radarActive;												 ///< TRUE when radar is actually online and generating radar information.
 
 };
-
-#endif  // end __RADARUPDATE_H_

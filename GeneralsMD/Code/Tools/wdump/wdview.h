@@ -19,10 +19,6 @@
 // wdumpView.h : interface of the CWdumpView class
 //
 /////////////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_WDUMPVIEW_H__41C157EF_5631_11D1_8CDB_006097C6A583__INCLUDED_)
-#define AFX_WDUMPVIEW_H__41C157EF_5631_11D1_8CDB_006097C6A583__INCLUDED_
-
 #pragma once
 
 class CWdumpView : public CView
@@ -75,5 +71,3 @@ inline CWdumpDoc* CWdumpView::GetDocument()
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_WDUMPVIEW_H__41C157EF_5631_11D1_8CDB_006097C6A583__INCLUDED_)

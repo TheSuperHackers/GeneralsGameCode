@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __TERRAINVISUAL_H_
-#define __TERRAINVISUAL_H_
-
 #include "Common/Terrain.h"
 #include "Common/Snapshot.h"
 
@@ -174,5 +170,3 @@ protected:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern TerrainVisual *TheTerrainVisual;  ///< singleton extern
-
-#endif  // end __TERRAINVISUAL_H_

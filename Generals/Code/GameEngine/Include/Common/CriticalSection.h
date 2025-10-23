@@ -27,10 +27,6 @@
 // Author: JohnM And MattC, August 13, 2002
 
 #pragma once
-
-#ifndef __CRITICALSECTION_H__
-#define __CRITICALSECTION_H__
-
 #include "Common/PerfTimer.h"
 
 #ifdef PERF_TIMERS
@@ -102,5 +98,3 @@ extern CriticalSection *TheUnicodeStringCriticalSection;
 extern CriticalSection *TheDmaCriticalSection;
 extern CriticalSection *TheMemoryPoolCriticalSection;
 extern CriticalSection *TheDebugLogCriticalSection;
-
-#endif /* __CRITICALSECTION_H__ */

@@ -26,10 +26,6 @@
 // Author: Steven Johnson, June 2002
 
 #pragma once
-
-#ifndef _JET_AI_UPDATE_H_
-#define _JET_AI_UPDATE_H_
-
 #include "Common/STLTypedefs.h"
 #include "Common/GameMemory.h"
 #include "GameLogic/AIStateMachine.h"
@@ -170,6 +166,3 @@ private:
 	inline Bool getFlag(FlagType f) const { return (m_flags & (1<<f)) != 0; }
 	inline void setFlag(FlagType f, Bool v) { if (v) m_flags |= (1<<f); else m_flags &= ~(1<<f); }
 };
-
-#endif
-

@@ -35,10 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef __SPHERE_UTILS
-#define __SPHERE_UTILS
-
 #include "sphereobj.h"
 
 /////////////////////////////////////////////////////////////
@@ -89,7 +85,3 @@ private:
 	int								m_KeyCount;
 	int								m_MaxKeys;
 };
-
-
-#endif //__SPHERE_UTILS
-

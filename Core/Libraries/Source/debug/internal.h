@@ -27,10 +27,6 @@
 // Internal header
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
-
-#ifndef INTERNAL_H // Include guard
-#define INTERNAL_H
-
 // make sure we're not omitting the frame pointer
 #pragma optimize("y",off)
 
@@ -96,5 +92,3 @@ public:
     DebugFreeMemory(this);
   }
 };
-
-#endif // INTERNAL_H

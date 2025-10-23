@@ -29,10 +29,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DGUICALLBACKS_H_
-#define __W3DGUICALLBACKS_H_
-
 class GameWindow;
 class WindowLayout;
 class WinInstanceData;
@@ -67,6 +63,3 @@ extern void W3DNoDraw( GameWindow *window, WinInstanceData *instData );
 extern void W3DDrawMapPreview( GameWindow *window, WinInstanceData *instData );
 
 void W3DMainMenuInit( WindowLayout *layout, void *userData );
-
-#endif // __W3DGUICALLBACKS_H_
-

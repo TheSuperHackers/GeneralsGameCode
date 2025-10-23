@@ -38,10 +38,6 @@
 
 
 #pragma once
-
-#ifndef AABTREEBUILDER_H
-#define AABTREEBUILDER_H
-
 #include "always.h"
 #include "vector3.h"
 #include "vector3i.h"
@@ -199,9 +195,3 @@ private:
 
 	friend class AABTreeClass;
 };
-
-
-
-
-#endif //AABTREEBUILDER_H
-

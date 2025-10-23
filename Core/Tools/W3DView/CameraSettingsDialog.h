@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_CAMERASETTINGSDIALOG_H__7E43F424_8191_11D3_A064_00104B791122__INCLUDED_)
-#define AFX_CAMERASETTINGSDIALOG_H__7E43F424_8191_11D3_A064_00104B791122__INCLUDED_
-
 #pragma once
 // CameraSettingsDialog.h : header file
 //
@@ -76,5 +72,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_CAMERASETTINGSDIALOG_H__7E43F424_8191_11D3_A064_00104B791122__INCLUDED_)

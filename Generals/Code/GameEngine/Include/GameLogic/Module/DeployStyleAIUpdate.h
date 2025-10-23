@@ -28,10 +28,6 @@
 //         When deployed, you can't move, when undeployed, you can't attack.
 
 #pragma once
-
-#ifndef __DEPLOY_STYLE_AI_UPDATE_H
-#define __DEPLOY_STYLE_AI_UPDATE_H
-
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 
@@ -125,6 +121,3 @@ protected:
 	Bool										m_isGuardingPosition;
 	Bool										m_overriddenAttack;
 };
-
-#endif
-

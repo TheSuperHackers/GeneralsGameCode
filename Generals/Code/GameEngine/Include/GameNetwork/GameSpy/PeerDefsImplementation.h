@@ -27,10 +27,6 @@
 // Author: Matthew D. Campbell, Sept 2002
 
 #pragma once
-
-#ifndef __PEERDEFSIMPLEMENTATION_H__
-#define __PEERDEFSIMPLEMENTATION_H__
-
 #include "GameNetwork/GameSpy/PeerDefs.h"
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
 
@@ -180,5 +176,3 @@ private:
 
 	Int m_additionalDisconnects;
 };
-
-#endif // __PEERDEFS_H__

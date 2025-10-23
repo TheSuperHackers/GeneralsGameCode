@@ -38,10 +38,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __WINDOWPROC_H_
-#define __WINDOWPROC_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -69,6 +65,3 @@ extern BOOL CALLBACK PageErrorProc( HWND hWndDialog, UINT message,
 
 extern BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 																					WPARAM wParam, LPARAM lParam );
-
-#endif // __WINDOWPROC_H_
-

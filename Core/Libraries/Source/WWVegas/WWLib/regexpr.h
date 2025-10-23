@@ -20,10 +20,6 @@
 
 #pragma once
 
-#ifndef REGEXPR_H
-#define REGEXPR_H
-
-
 /*
 ** RegularExpressionClass - This class encapsulates regular expression
 ** evaluation. It provides a nice and simple wrapper around the
@@ -74,7 +70,3 @@ private:
 	struct DataStruct;
 	DataStruct	*Data;
 };
-
-
-#endif
-

@@ -37,10 +37,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef DECALMSH_H
-#define DECALMSH_H
-
 #include "always.h"
 #include "bittype.h"
 #include "simplevec.h"
@@ -286,7 +282,3 @@ inline uint32 SkinDecalMeshClass::Get_Decal_ID(int decal_index)
 {
 	return Decals[decal_index].DecalID;
 }
-
-
-#endif //DECALMSH_H
-

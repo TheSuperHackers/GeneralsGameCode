@@ -36,9 +36,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef __AI_GUARD_RETALIATION_H
-#define __AI_GUARD_RETALIATION_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
 #include "GameLogic/AIStateMachine.h"
@@ -257,5 +254,3 @@ private:
 };
 
 //--------------------------------------------------------------------------------------
-
-#endif

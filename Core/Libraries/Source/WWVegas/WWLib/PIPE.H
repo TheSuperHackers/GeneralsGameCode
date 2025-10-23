@@ -34,10 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #pragma once
-
-#ifndef PIPE_H
-#define PIPE_H
-
 /*
 **	A "push through" pipe interface abstract class used for such purposes as compression
 **	and translation of data. In STL terms, this is functionally similar to an output
@@ -71,5 +67,3 @@ class Pipe
 		Pipe(Pipe & rvalue);
 		Pipe & operator = (Pipe const & pipe);
 };
-
-#endif

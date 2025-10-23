@@ -28,10 +28,6 @@
 // DO NOT DISTRIBUTE
 
 #pragma once
-
-#ifndef __DISCRETECIRCLE_H__
-#define __DISCRETECIRCLE_H__
-
 //-------------------------------------------------------------------------------------------------
 /**
 	One horizontal line of the circle we are going to generate, the points drawn should be from
@@ -74,6 +70,3 @@ class DiscreteCircle
 		void generateEdgePairs(Int xCenter, Int yCenter, Int radius);
 		void removeDuplicates();
 };
-
-#endif /* __DISCRETECIRCLE_H__ */
-

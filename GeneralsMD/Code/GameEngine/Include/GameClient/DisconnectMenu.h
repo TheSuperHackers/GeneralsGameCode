@@ -24,10 +24,6 @@
 
 
 #pragma once
-
-#ifndef __DISCONNECTDIALOG_H
-#define __DISCONNECTDIALOG_H
-
 #include "GameNetwork/DisconnectManager.h"
 
 enum DisconnectMenuStateType CPP_11(: Int) {
@@ -79,5 +75,3 @@ protected:
 };
 
 extern DisconnectMenu *TheDisconnectMenu;
-
-#endif // #ifndef __DISCONNECTDIALOG_H

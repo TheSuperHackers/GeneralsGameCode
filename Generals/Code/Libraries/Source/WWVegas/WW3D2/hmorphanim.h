@@ -37,10 +37,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef HMORPHANIM_H
-#define HMORPHANIM_H
-
 #include "always.h"
 #include "hanim.h"
 #include "simplevec.h"
@@ -180,9 +176,3 @@ private:
 
 	friend class HMorphAnimClass;
 };
-
-
-
-#endif
-
-

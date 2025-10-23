@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_TEAMIDENTITY_H__B37DB2FD_297F_4D0E_AACD_193BE30C6C85__INCLUDED_)
-#define AFX_TEAMIDENTITY_H__B37DB2FD_297F_4D0E_AACD_193BE30C6C85__INCLUDED_
-
 #pragma once
 // TeamIdentity.h : header file
 //
@@ -96,5 +92,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_TEAMIDENTITY_H__B37DB2FD_297F_4D0E_AACD_193BE30C6C85__INCLUDED_)

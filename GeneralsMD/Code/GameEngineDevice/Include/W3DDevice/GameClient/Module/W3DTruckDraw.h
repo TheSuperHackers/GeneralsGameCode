@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef _W3D_TRUCK_DRAW_H_
-#define _W3D_TRUCK_DRAW_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DrawModule.h"
 #include "Common/AudioEventRTS.h"
@@ -141,6 +137,3 @@ protected:
 	void enableEmitters( Bool enable );						///< stop creating debris from the tank treads
 	void updateBones( void );
 };
-
-#endif // _W3D_TRUCK_DRAW_H_
-

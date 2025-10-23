@@ -35,10 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef WWDEBUG_H
-#define WWDEBUG_H
-
 // TheSuperHackers @todo Recover WWDEBUG?
 #ifdef WWDEBUG
 #include <Utility/intrin_compat.h>
@@ -174,6 +170,4 @@ void					WWDebug_DBWin32_Message_Handler( const char * message);
 #else
 #define WWDEBUG_PROFILE_START(x)
 #define WWDEBUG_PROFILE_STOP(x)
-#endif
-
 #endif

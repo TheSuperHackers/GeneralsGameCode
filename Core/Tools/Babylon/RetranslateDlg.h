@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_RETRANSLATEDLG_H__19E25401_0ECB_11D4_B9DB_006097B90D93__INCLUDED_)
-#define AFX_RETRANSLATEDLG_H__19E25401_0ECB_11D4_B9DB_006097B90D93__INCLUDED_
-
 #pragma once
 // RetranslateDlg.h : header file
 //
@@ -69,5 +65,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_RETRANSLATEDLG_H__19E25401_0ECB_11D4_B9DB_006097B90D93__INCLUDED_)

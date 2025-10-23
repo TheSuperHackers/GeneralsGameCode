@@ -50,10 +50,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef VECTOR2_H
-#define VECTOR2_H
-
 #include "always.h"
 #include "wwmath.h"
 #include <math.h>
@@ -663,7 +659,3 @@ WWINLINE void Vector2::Lerp(const Vector2 & a,const Vector2 & b,float t,Vector2 
 	set_result->X = (a.X + (b.X - a.X)*t);
    set_result->Y = (a.Y + (b.Y - a.Y)*t);
 }
-
-
-#endif /* VECTOR2_H */
-

@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __OCLSPECIALPOWER_H_
-#define __OCLSPECIALPOWER_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/SpecialPowerModule.h"
 #include "Common/Science.h"
@@ -106,5 +102,3 @@ protected:
 
 	const ObjectCreationList* findOCL() const;
 };
-
-#endif  // end __OCLSPECIALPOWER_H_

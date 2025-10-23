@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __DOZERAIUPDATE_H_
-#define __DOZERAIUPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/AIUpdate.h"
 
@@ -305,7 +301,3 @@ private:
 	void createMachines( void );		///< create our behavior machines we need
 
 };
-
-
-#endif // __DOZERAIUPDATE_H_
-

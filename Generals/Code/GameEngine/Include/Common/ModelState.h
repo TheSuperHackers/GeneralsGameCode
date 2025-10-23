@@ -27,10 +27,6 @@
 // Author: Michael S. Booth, April 2001
 
 #pragma once
-
-#ifndef _ModelState_H_
-#define _ModelState_H_
-
 #include "Lib/BaseType.h"
 #include "Common/INI.h"
 #include "Common/BitFlags.h"
@@ -232,6 +228,3 @@ typedef BitFlags<MODELCONDITION_COUNT> ModelConditionFlags;
 //-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-
-#endif // _ModelState_H_
-

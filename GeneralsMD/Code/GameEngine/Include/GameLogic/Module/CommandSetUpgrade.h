@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef _COMMAND_SET_UPGRADE_H
-#define _COMMAND_SET_UPGRADE_H
-
 #include "GameLogic/Module/UpgradeModule.h"
 
 //-----------------------------------------------------------------------------
@@ -69,6 +65,3 @@ protected:
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 };
-#endif // _COMMAND_SET_UPGRADE_H
-
-

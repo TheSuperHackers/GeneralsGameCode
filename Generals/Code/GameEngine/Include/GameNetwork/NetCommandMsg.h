@@ -27,10 +27,6 @@
 // are queued up to execute at a later time
 
 #pragma once
-
-#ifndef __NETCOMMANDMSG_H
-#define __NETCOMMANDMSG_H
-
 #include "Lib/BaseType.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "Common/UnicodeString.h"
@@ -517,4 +513,3 @@ public:
 protected:
 	UnsignedInt m_frameToResend;
 };
-#endif

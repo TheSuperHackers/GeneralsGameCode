@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef _W3D_VERTEX_BUFFER_MANAGER
-#define _W3D_VERTEX_BUFFER_MANAGER
-
 #include "Lib/BaseType.h"
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
@@ -185,5 +181,3 @@ protected:
 };
 
 extern W3DBufferManager *TheW3DBufferManager;	//singleton
-
-#endif //_W3D_VERTEX_BUFFER_MANAGER

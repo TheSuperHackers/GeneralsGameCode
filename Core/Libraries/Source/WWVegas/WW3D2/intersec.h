@@ -48,10 +48,6 @@
 */
 
 #pragma once
-
-#ifndef INTERSEC_H
-#define INTERSEC_H
-
 #include "always.h"
 #include "matrix3d.h"
 #include "layer.h"
@@ -397,6 +393,3 @@ protected:
 	static Vector3 _RayLocation, _RayDirection, _IntersectionNormal;
 
 };
-
-
-#endif

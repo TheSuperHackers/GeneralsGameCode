@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef _SUPPLY_WAREHOUSE_CRIPPLING_BEHAVIOR_H
-#define _SUPPLY_WAREHOUSE_CRIPPLING_BEHAVIOR_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DamageModule.h"
@@ -90,6 +86,3 @@ private:
 	UnsignedInt		m_healingSupressedUntilFrame;
 	UnsignedInt		m_nextHealingFrame;
 };
-
-#endif
-

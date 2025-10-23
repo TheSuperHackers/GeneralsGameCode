@@ -27,10 +27,6 @@
 // Desc:   State machine that controls when and with who a Truck docks
 
 #pragma once
-
-#ifndef _SUPPLY_TRUCK_AI_UPDATE_H_
-#define _SUPPLY_TRUCK_AI_UPDATE_H_
-
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 
@@ -238,5 +234,3 @@ private:
  	AudioEventRTS m_suppliesDepletedVoice;						///< Sound played when I take the last box.
 
 };
-
-#endif

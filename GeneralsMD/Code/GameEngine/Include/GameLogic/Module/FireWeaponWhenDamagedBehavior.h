@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __FireWeaponWhenDamagedBehavior_H_
-#define __FireWeaponWhenDamagedBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/UpgradeModule.h"
@@ -173,6 +169,3 @@ private:
 	Weapon *m_continuousWeaponRubble;
 
 };
-
-#endif // __FireWeaponWhenDamagedBehavior_H_
-

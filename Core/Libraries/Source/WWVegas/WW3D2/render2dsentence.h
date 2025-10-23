@@ -35,10 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef RENDER2DSENTENCE_H
-#define RENDER2DSENTENCE_H
-
 #include "render2d.h"
 #include "refcount.h"
 #include "Vector.H"
@@ -270,5 +266,3 @@ private:
 	TextureClass *							CurTexture;
 	ShaderClass									Shader;
 };
-
-#endif	// RENDER2DSENTENCE_H

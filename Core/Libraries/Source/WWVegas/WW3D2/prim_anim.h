@@ -36,10 +36,6 @@
 
 #pragma once
 
-#ifndef __PRIM_ANIM_H
-#define __PRIM_ANIM_H
-
-
 #include "simplevec.h"
 #include "chunkio.h"
 
@@ -385,5 +381,3 @@ LERPAnimationChannelClass<T>::Evaluate (float time)
 
 	return value;
 }
-
-#endif //__PRIM_ANIM_H

@@ -36,10 +36,6 @@
 
 
 #pragma once
-
-#ifndef PERSIST_H
-#define PERSIST_H
-
 #include "always.h"
 #include "refcount.h"
 #include "postloadable.h"
@@ -69,7 +65,3 @@ public:
 	virtual bool								Load (ChunkLoadClass &cload)		{ return true; }
 
 };
-
-
-
-#endif

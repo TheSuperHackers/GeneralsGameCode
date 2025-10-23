@@ -32,10 +32,6 @@
  *	Functions:																					*
  *	- - -	- - -	- - -	- - -	- - -	- - -	- - -	- - -	- - -	- - -	- - -	- - -	*/
 #pragma once
-
-#ifndef __SLNODE_H__
-#define __SLNODE_H__
-
 #ifndef ALWAYS_H
 #include "always.h"
 #endif
@@ -115,5 +111,3 @@ class	SLNode : public GenericSLNode
 	private:
 		SLNode(void) {};
 };
-
-#endif

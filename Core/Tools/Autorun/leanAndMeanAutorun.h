@@ -22,10 +22,4 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#ifndef __LEANANDMEANAUTORUN_H_
-#define __LEANANDMEANAUTORUN_H_
-
-
 #define LEAN_AND_MEAN
-
-#endif //__LEANANDMEANAUTORUN_H_

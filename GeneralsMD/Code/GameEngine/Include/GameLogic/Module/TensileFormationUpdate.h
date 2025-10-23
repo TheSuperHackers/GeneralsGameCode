@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __TENSILEFORMATIONUPDATE_H_
-#define __TENSILEFORMATIONUPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -90,5 +86,3 @@ protected:
 	AudioEventRTS				m_crackSound;
 
 };
-
-#endif  // end __TENSILEFORMATIONUPDATE_H_

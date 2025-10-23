@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __HEALCONTAIN_H_
-#define __HEALCONTAIN_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/OpenContain.h"
 
@@ -73,5 +69,3 @@ protected:
 	Bool doHeal( Object *obj, UnsignedInt framesForFullHeal );		///< do the heal on an object
 
 };
-
-#endif  // end __HEALCONTAIN_H_

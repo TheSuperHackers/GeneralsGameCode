@@ -26,10 +26,6 @@
 // July 2002, Bryan Cleveland
 
 #pragma once
-
-#ifndef W3DWEBBROWSER_H
-#define W3DWEBBROWSER_H
-
 #include "GameNetwork/WOLBrowser/WebBrowser.h"
 
 class TextureClass;
@@ -45,5 +41,3 @@ class W3DWebBrowser : public WebBrowser
 		virtual void closeBrowserWindow(GameWindow *win);
 
 };
-
-#endif // #ifndef W3DWEBBROWSER_H

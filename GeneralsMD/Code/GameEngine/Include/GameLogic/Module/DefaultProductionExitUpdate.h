@@ -29,10 +29,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef _DEFAULT_PRODUCTION_EXIT_UPDATE_H
-#define _DEFAULT_PRODUCTION_EXIT_UPDATE_H
-
 #include "GameLogic/Module/UpdateModule.h"
 #include "Common/INI.h"
 #include "Lib/BaseType.h"
@@ -129,5 +125,3 @@ inline Bool DefaultProductionExitUpdate::useSpawnRallyPoint( void ) const
 	else
 		return FALSE;
 }
-
-#endif

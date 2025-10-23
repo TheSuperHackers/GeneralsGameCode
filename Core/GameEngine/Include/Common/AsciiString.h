@@ -44,10 +44,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef ASCIISTRING_H
-#define ASCIISTRING_H
-
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -599,5 +595,3 @@ inline Bool operator>=(const AsciiString& s1, const char* s2)
 {
 	return strcmp(s1.str(), s2) >= 0;
 }
-
-#endif // ASCIISTRING_H

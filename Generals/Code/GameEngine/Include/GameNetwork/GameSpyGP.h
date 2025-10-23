@@ -27,10 +27,6 @@
 // Author: Matthew D. Campbell, March 2002
 
 #pragma once
-
-#ifndef __GAMESPYGP_H__
-#define __GAMESPYGP_H__
-
 #include "gamespy/gp/gp.h"
 
 void GPRecvBuddyRequestCallback(GPConnection * connection, GPRecvBuddyRequestArg * arg, void * param);
@@ -43,5 +39,3 @@ void GameSpyUpdateBuddyOverlay(void);
 extern GPConnection *TheGPConnection;
 
 Bool IsGameSpyBuddy(GPProfile id);
-
-#endif // __GAMESPYGP_H__

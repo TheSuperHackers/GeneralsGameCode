@@ -27,10 +27,6 @@
 // Author: Michael S. Booth, April 2001
 
 #pragma once
-
-#ifndef _GAME_TYPE_H_
-#define _GAME_TYPE_H_
-
 #include "Lib/BaseType.h"
 
 // the default size of the world map
@@ -192,6 +188,3 @@ enum WeaponSlotType CPP_11(: Int)
 enum PathfindLayerEnum CPP_11(: Int) {LAYER_INVALID = 0, LAYER_GROUND = 1, LAYER_WALL = 15, LAYER_LAST=15};
 
 //-------------------------------------------------------------------------------------------------
-
-#endif // _GAME_TYPE_H_
-

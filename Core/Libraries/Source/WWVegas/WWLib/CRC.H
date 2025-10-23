@@ -34,10 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #pragma once
-
-#ifndef CRC_H
-#define CRC_H
-
 #include	<stdlib.h>
 
 // TheSuperHackers @build feliwir 17/04/2025 include _ltrotl macros
@@ -127,6 +123,3 @@ public:
 	// get the CRC of a null-terminated string
 	static unsigned long	String( const char *string, unsigned long crc = 0 );
 };
-
-#endif
-

@@ -19,10 +19,6 @@
 // WorldBuilderView.h : interface of the CWorldBuilderView class
 //
 /////////////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_WORLDBUILDERVIEW_H__FBA4134F_2826_11D5_8CE0_00010297BBAC__INCLUDED_)
-#define AFX_WORLDBUILDERVIEW_H__FBA4134F_2826_11D5_8CE0_00010297BBAC__INCLUDED_
-
 #pragma once
 
 #include "Lib/BaseType.h"
@@ -159,5 +155,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_WORLDBUILDERVIEW_H__FBA4134F_2826_11D5_8CE0_00010297BBAC__INCLUDED_)

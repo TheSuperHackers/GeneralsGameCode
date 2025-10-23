@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef _PARTICLE_SYS_H_
-#define _PARTICLE_SYS_H_
-
 #include <stdio.h>
 #include "Common/AsciiString.h"
 #include "Common/GameMemory.h"
@@ -829,6 +825,3 @@ extern ParticleSystemManager *TheParticleSystemManager;
 
 class DebugDisplayInterface;
 extern void ParticleSystemDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp = NULL );
-
-
-#endif // _PARTICLE_SYS_H_

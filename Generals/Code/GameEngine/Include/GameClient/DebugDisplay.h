@@ -43,10 +43,6 @@
 
 #pragma once
 
-#ifndef __GAMECLIENT_DEBUGDISPLAY_H
-#define __GAMECLIENT_DEBUGDISPLAY_H
-
-
 //----------------------------------------------------------------------------
 //           Includes
 //----------------------------------------------------------------------------
@@ -149,7 +145,3 @@ extern void AudioDebugDisplay( DebugDisplayInterface *debugDisplay, void *userDa
 //----------------------------------------------------------------------------
 //           Inlining
 //----------------------------------------------------------------------------
-
-
-
-#endif // __GAMECLIENT_DEBUGDISPLAY_H

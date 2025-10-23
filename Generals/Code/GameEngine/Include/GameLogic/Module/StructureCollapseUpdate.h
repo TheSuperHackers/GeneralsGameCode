@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __StructureCollapseUpdate_H_
-#define __StructureCollapseUpdate_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -149,6 +145,3 @@ protected:
 	Real												m_currentHeight;
 
 };
-
-#endif // __StructureCollapseUpdate_H_
-

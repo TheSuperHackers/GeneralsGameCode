@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __OBJECT_DEFECTION_HELPER_H_
-#define __OBJECT_DEFECTION_HELPER_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/ObjectHelper.h"
 
@@ -83,6 +79,3 @@ public:
 	void startDefectionTimer(UnsignedInt numFrames, Bool withDefectorFX = TRUE);
 
 };
-
-
-#endif  // end __OBJECT_DEFECTION_HELPER_H_

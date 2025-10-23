@@ -27,10 +27,6 @@
 //////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __WIN32LOCALFILE_H
-#define __WIN32LOCALFILE_H
-
 #include "Common/LocalFile.h"
 
 class Win32LocalFile : public LocalFile
@@ -42,5 +38,3 @@ public:
 
 protected:
 };
-
-#endif // __WIN32LOCALFILE_H

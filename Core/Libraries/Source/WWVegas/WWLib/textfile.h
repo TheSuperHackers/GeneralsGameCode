@@ -34,10 +34,6 @@
 
 #pragma once
 
-#ifndef __TEXT_FILE_H
-#define __TEXT_FILE_H
-
-
 #include "RAWFILE.H"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -77,7 +73,3 @@ public:
 	bool			Read_Line (StringClass &string);
 	bool			Write_Line (const StringClass &string);
 };
-
-
-#endif //__TEXT_FILE_H
-

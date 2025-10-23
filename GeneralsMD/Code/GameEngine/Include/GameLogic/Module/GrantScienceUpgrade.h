@@ -44,10 +44,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __GRANT_SCIENCE_UPGRADE_H
-#define __GRANT_SCIENCE_UPGRADE_H
-
 #include "GameLogic/Module/UpgradeModule.h"
 
 //-----------------------------------------------------------------------------
@@ -82,6 +78,3 @@ private:
 	ScienceType m_scienceType;
 
 };
-#endif // _COMMAND_SET_UPGRADE_H
-
-

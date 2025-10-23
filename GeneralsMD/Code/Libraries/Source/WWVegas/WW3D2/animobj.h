@@ -39,10 +39,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef ANIMOBJ_H
-#define ANIMOBJ_H
-
 #include "always.h"
 #include "composite.h"
 #include "htree.h"
@@ -321,7 +317,3 @@ inline void Animatable3DObjClass::Combo_Update( const Matrix3D & root, HAnimComb
 	}
 	Set_Hierarchy_Valid(true);
 }
-
-
-
-#endif //ANIMOBJ_H

@@ -28,10 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __BASE_REGENERATE_UPDATE_H_
-#define __BASE_REGENERATE_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/DamageModule.h"
@@ -81,5 +77,3 @@ public:
 private:
 
 };
-
-#endif  // end __BASE_REGENERATE_UPDATE_H_

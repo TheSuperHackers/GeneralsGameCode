@@ -28,10 +28,6 @@
 // Author: John Ahlquist, November 2001
 
 #pragma once
-
-#ifndef SCRIPTS_H
-#define SCRIPTS_H
-
 #include "Common/Snapshot.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "Common/ObjectStatusTypes.h"
@@ -1136,6 +1132,3 @@ public:
 	/// are read, and the caller is responsible for deleting the scripts.
 	static Int getReadScripts(ScriptList *scriptLists[MAX_PLAYER_COUNT]);
 };
-
-#endif
-

@@ -29,10 +29,6 @@
 
 #pragma once
 
-#ifndef __CHALLENGEGENERALS_H_
-#define __CHALLENGEGENERALS_H_
-
-
 // INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameType.h"
 #include "Common/Overridable.h"
@@ -156,5 +152,3 @@ protected:
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern ChallengeGenerals *TheChallengeGenerals;
 extern ChallengeGenerals *createChallengeGenerals( void );
-
-#endif  // end __CHALLENGEGENERALS_H_

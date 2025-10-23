@@ -15,10 +15,6 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#if !defined(AFX_SAVEMAP_H__BCE93FF1_DA04_4F63_A483_D89BF1F49E32__INCLUDED_)
-#define AFX_SAVEMAP_H__BCE93FF1_DA04_4F63_A483_D89BF1F49E32__INCLUDED_
-
 #pragma once
 // SaveMap.h : header file
 //
@@ -76,5 +72,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SAVEMAP_H__BCE93FF1_DA04_4F63_A483_D89BF1F49E32__INCLUDED_)

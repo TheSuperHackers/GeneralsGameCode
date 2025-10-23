@@ -36,10 +36,6 @@
 
 
 #pragma once
-
-#ifndef PROTO_H
-#define PROTO_H
-
 #include "always.h"
 #include <stdlib.h>
 #include "w3d_file.h"
@@ -175,7 +171,3 @@ public:
 */
 extern MeshLoaderClass			_MeshLoader;
 extern HModelLoaderClass		_HModelLoader;
-
-
-
-#endif

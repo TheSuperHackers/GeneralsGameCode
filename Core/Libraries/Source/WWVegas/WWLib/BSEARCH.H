@@ -19,10 +19,6 @@
 
 #pragma once
 
-#ifndef BSEARCH_H
-#define BSEARCH_H
-
-
 /*
 **	Binary searching template. It can be faster than the built in C library
 **	version since the comparison function can be inlined. If the comparison
@@ -71,6 +67,3 @@ T * Binary_Search(T * A, int n, T const & target)
    }
    return (NULL);
 }
-
-
-#endif

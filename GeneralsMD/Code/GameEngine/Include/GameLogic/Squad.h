@@ -38,9 +38,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_SQAUD_
-#define _H_SQAUD_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "Common/Snapshot.h"
 #include "Common/GameMemory.h"
@@ -96,5 +93,3 @@ public:
 	void aiGroupFromSquad(AIGroup* aiGroupToFill);
 };
 EMPTY_DTOR(Squad)
-
-#endif /* _H_SQAUD_ */

@@ -27,10 +27,6 @@
 // Simple turret behavior
 
 #pragma once
-
-#ifndef _TURRETAI_H_
-#define _TURRETAI_H_
-
 #include "Common/StateMachine.h"
 #include "Common/GameMemory.h"
 
@@ -373,6 +369,3 @@ private:
 	mutable Bool						m_targetWasSetByIdleMood : 1;
 
 };
-
-#endif // end _TURRETAI_H_
-

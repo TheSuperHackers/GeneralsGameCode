@@ -35,10 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-#ifndef RINGOBJ_H
-#define RINGOBJ_H
-
 #include "always.h"
 #include "rendobj.h"
 #include "w3d_file.h"
@@ -361,8 +357,4 @@ private:
 extern RingLoaderClass			_RingLoader;
 
 
-#endif // RINGOBJ_H
-
 // EOF - ringobj,h
-
-

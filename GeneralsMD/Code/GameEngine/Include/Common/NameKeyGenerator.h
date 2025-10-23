@@ -29,10 +29,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __NAMEKEYGENERATOR_H_
-#define __NAMEKEYGENERATOR_H_
-
 #include "Lib/BaseType.h"
 #include "Common/SubsystemInterface.h"
 #include "Common/GameMemory.h"
@@ -158,6 +154,3 @@ public:
 	// ugh, this is a little hokey, but lets us pretend that a StaticNameKey == NameKeyType
 	inline operator NameKeyType() const { return key(); }
 };
-
-#endif // __NAMEKEYGENERATOR_H_
-

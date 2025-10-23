@@ -24,10 +24,6 @@
 
 
 #pragma once
-
-#ifndef __NETWORKDEFS_H
-#define __NETWORKDEFS_H
-
 #include "Lib/BaseType.h"
 #include "Common/MessageStream.h"
 
@@ -212,5 +208,3 @@ class NetworkInterface;
 extern NetworkInterface *TheNetwork;
 
 #define PRINTF_IP_AS_4_INTS(ip) ((ip) >> 24) & 0xff, ((ip) >> 16) & 0xff, ((ip) >> 8 ) & 0xff, (ip) & 0xff
-
-#endif
