@@ -37,8 +37,6 @@
 /*                                                                  */
 /*------------------------------------------------------------------*/
 
-#ifndef __CODEX_H
-#define __CODEX_H 1
 
 #pragma once
 
@@ -116,6 +114,5 @@ int GCALL CODEX_encode(void *dest, const void *source, int sourcesize, int *opts
 
 #ifdef __cplusplus
 }
-#endif
 #endif
 
