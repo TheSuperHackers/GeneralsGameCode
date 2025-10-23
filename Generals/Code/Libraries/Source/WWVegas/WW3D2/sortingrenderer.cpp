@@ -25,6 +25,7 @@
 #include "d3d8.h"
 #include "d3dx8math.h"
 #include "statistics.h"
+#include <wwprofile.h>
 
 bool SortingRendererClass::_EnableTriangleDraw=true;
 unsigned DEFAULT_SORTING_POLY_COUNT = 16384;	// (count * 3) must be less than 65536
@@ -338,7 +339,7 @@ void SortingRendererClass::Insert_Triangles(
 
  	WWASSERT(
 		((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
-		(state->sorting_state.vertex_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING)));
+		(state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_DYNAMIC_SORTING)));
 
 
 	state->bounding_sphere=bounding_sphere;
@@ -347,7 +348,7 @@ void SortingRendererClass::Insert_Triangles(
 	state->min_vertex_index=min_vertex_index;
 	state->vertex_count=vertex_count;
 
-	SortingVertexBufferClass* vertex_buffer=static_cast<SortingVertexBufferClass*>(state->sorting_state.vertex_buffer);
+	SortingVertexBufferClass* vertex_buffer=static_cast<SortingVertexBufferClass*>(state->sorting_state.vertex_buffers[0]);
 	WWASSERT(vertex_buffer);
 	WWASSERT(state->vertex_count<=vertex_buffer->Get_Vertex_Count());
 
@@ -421,7 +422,9 @@ void SortingRendererClass::Insert_Triangles(
 void Release_Refs(SortingNodeStruct* state)
 {
 	int i;
-	REF_PTR_RELEASE(state->sorting_state.vertex_buffer);
+	for (i=0;i<MAX_VERTEX_STREAMS;++i) {
+		REF_PTR_RELEASE(state->sorting_state.vertex_buffers[i]);
+	}
 	REF_PTR_RELEASE(state->sorting_state.index_buffer);
 	REF_PTR_RELEASE(state->sorting_state.material);
 	for (i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i)
@@ -544,7 +547,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			float* vertex_z_array=Get_Vertex_Z_Array(state->vertex_count);
 
 			VertexFormatXYZNDUV2* src_verts=NULL;
-			SortingVertexBufferClass* vertex_buffer=static_cast<SortingVertexBufferClass*>(state->sorting_state.vertex_buffer);
+			SortingVertexBufferClass* vertex_buffer=static_cast<SortingVertexBufferClass*>(state->sorting_state.vertex_buffers[0]);
 			WWASSERT(vertex_buffer);
 			src_verts=vertex_buffer->VertexBuffer;
 			WWASSERT(src_verts);
@@ -696,6 +699,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 
 void SortingRendererClass::Flush()
 {
+	WWPROFILE("SortingRenderer::Flush");
 	Matrix4x4 old_view;
 	Matrix4x4 old_world;
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,old_view);
@@ -703,9 +707,9 @@ void SortingRendererClass::Flush()
 
 	while (SortingNodeStruct* state=sorted_list.Head()) {
 		state->Remove();
-
+		
 		if ((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
-			(state->sorting_state.vertex_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING)) {
+			(state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_DYNAMIC_SORTING)) {
 			Insert_To_Sorting_Pool(state);
 		}
 		else {
@@ -717,7 +721,10 @@ void SortingRendererClass::Flush()
 		}
 	}
 
+	bool old_enable=DX8Wrapper::_Is_Triangle_Draw_Enabled();
+	DX8Wrapper::_Enable_Triangle_Draw(_EnableTriangleDraw);
 	Flush_Sorting_Pool();
+	DX8Wrapper::_Enable_Triangle_Draw(old_enable);
 
 	DX8Wrapper::Set_Index_Buffer(0,0);
 	DX8Wrapper::Set_Vertex_Buffer(0);
@@ -731,6 +738,7 @@ void SortingRendererClass::Flush()
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,old_world);
 
 }
+
 
 // ----------------------------------------------------------------------------
 
@@ -803,7 +811,7 @@ void SortingRendererClass::Insert_VolumeParticle(
 
 	WWASSERT(
 		((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
-		(state->sorting_state.vertex_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING)));
+		(state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_DYNAMIC_SORTING)));
 
 	state->bounding_sphere=bounding_sphere;
 	state->start_index=start_index;
@@ -811,7 +819,7 @@ void SortingRendererClass::Insert_VolumeParticle(
 	state->polygon_count=polygon_count * layerCount;//THIS IS VOLUME_PARTICLE SPECIFIC
 	state->vertex_count=vertex_count * layerCount;//THIS IS VOLUME_PARTICLE SPECIFIC
 
-	SortingVertexBufferClass* vertex_buffer=static_cast<SortingVertexBufferClass*>(state->sorting_state.vertex_buffer);
+	SortingVertexBufferClass* vertex_buffer=static_cast<SortingVertexBufferClass*>(state->sorting_state.vertex_buffers[0]);
 	WWASSERT(vertex_buffer);
 	WWASSERT(state->vertex_count<=vertex_buffer->Get_Vertex_Count());
 
