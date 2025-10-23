@@ -15,10 +15,7 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef _DOWNLOADDEFS_H
-#define _DOWNLOADDEFS_H
-
+#pragma once
 // CDownload statuses
 
 #define DOWNLOADSTATUS_NONE				0
@@ -56,5 +53,3 @@
 #define DOWNLOADEVENT_LOCALFILEOPENFAILED	5
 #define DOWNLOADEVENT_TCPERROR				6
 #define DOWNLOADEVENT_DISCONNECTERROR		7
-
-#endif

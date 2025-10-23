@@ -34,10 +34,7 @@
 *
 *************************************************************************************************/
 
-
-#ifndef  AUTORUN_H
-#define  AUTORUN_H
-
+#pragma once
 #include <tchar.h>
 #include <string.h>
 #include <stdio.h>
@@ -250,7 +247,3 @@ class MainWindow : public Window
 		unsigned int	Run_OpenFile						(int cd_drive, const char *filename, bool wait = false);
 		LRESULT			Window_Proc		  		( HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam );
 };
-
-
-#endif
-

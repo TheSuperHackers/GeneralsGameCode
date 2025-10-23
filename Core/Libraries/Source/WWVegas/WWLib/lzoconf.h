@@ -59,10 +59,7 @@
    markus.oberhumer@jk.uni-linz.ac.at
  */
 
-
-#ifndef __LZOCONF_H
-#define __LZOCONF_H
-
+#pragma once
 #define LZO_VERSION             0x0200
 #define LZO_VERSION_STRING      "0.20"
 #define LZO_VERSION_DATE        "11 Aug 1996"
@@ -227,8 +224,6 @@ LZO_EXTERN(int) _lzo_config_check(void);
 //#ifdef __cplusplus
 //} /* extern "C" */
 //#endif
-
-#endif /* already included */
 
 /*
 vi:ts=4

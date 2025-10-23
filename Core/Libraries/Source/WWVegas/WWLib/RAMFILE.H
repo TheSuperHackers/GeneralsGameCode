@@ -33,10 +33,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef RAMFILE_H
-#define RAMFILE_H
-
+#pragma once
 #include	"WWFILE.H"
 
 
@@ -104,8 +101,3 @@ class RAMFileClass : public FileClass
 		*/
 		bool IsAllocated;
 };
-
-
-
-
-#endif

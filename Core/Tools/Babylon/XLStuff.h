@@ -20,10 +20,7 @@
 //	XLStuff.h
 //
 //
-
-#ifndef XLSTUFF_H
-#define XLSTUFF_H
-
+#pragma once
 #include "BabylonDlg.h"
 typedef enum {
     xlAll = -4104,
@@ -256,7 +253,3 @@ int PutSection ( int row, const OLECHAR *title );
 void SelectActiveSheet ( void );
 int GetInt ( int row, int cell );
 int GetString ( int row, int cell, OLECHAR *buffer );
-
-
-
-#endif // XLSTUFF_H

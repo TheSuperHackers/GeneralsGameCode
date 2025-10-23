@@ -33,10 +33,7 @@
 *     $Revision:  $
 *
 ****************************************************************************/
-
-#ifndef RIGHTS_H
-#define RIGHTS_H
-
+#pragma once
 // Access rights
 typedef enum
 	{
@@ -44,5 +41,3 @@ typedef enum
 	Rights_WriteOnly,
 	Rights_ReadWrite,
 	} ERights;
-
-#endif // RIGHTS_H

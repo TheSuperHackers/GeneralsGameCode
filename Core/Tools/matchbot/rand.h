@@ -15,10 +15,7 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef __RAND_H__
-#define __RAND_H__
-
+#pragma once
 #include <cstdlib>
 
 class RandClass
@@ -40,6 +37,3 @@ private:
 	unsigned int seed[6];
 
 };
-
-#endif /* __RAND_H__ */
-

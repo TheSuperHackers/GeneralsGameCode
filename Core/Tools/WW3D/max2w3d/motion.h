@@ -35,10 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef MOTION_H
-#define MOTION_H
-
+#pragma once
 
 #ifndef ALWAYS_H
 #include "always.h"
@@ -159,6 +156,3 @@ private:
 	void			init(void);
 
 };
-
-
-#endif /*MOTION_H*/

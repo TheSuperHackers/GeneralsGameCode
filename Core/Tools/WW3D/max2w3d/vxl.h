@@ -35,10 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef VXL_H
-#define VXL_H
-
+#pragma once
 #ifndef ALWAYS_H
 #include "always.h"
 #endif
@@ -139,6 +136,3 @@ private:
 	// returns the position of the center of voxel(i,j,k)
 	Point3 Voxel_Position(int i,int j,int k);
 };
-
-
-#endif /*VXL_H*/

@@ -36,10 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef __PRESET_EXPORT_OPTIONS_DIALOG_H
-#define __PRESET_EXPORT_OPTIONS_DIALOG_H
-
+#pragma once
 #include <windows.h>
 #include <max.h>
 #include "w3dutil.h"
@@ -118,7 +115,3 @@ private:
 	HWND								PaneWnds[PANE_MAX];
 	int								CurrentPane;
 };
-
-
-#endif //__PRESET_EXPORT_OPTIONS_DIALOG_H
-

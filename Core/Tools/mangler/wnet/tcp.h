@@ -20,10 +20,7 @@
 TCP                   Neal Kettler        neal@westwood.com
 
 \****************************************************************************/
-
-#ifndef TCP_HEADER
-#define TCP_HEADER
-
+#pragma once
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -195,5 +192,3 @@ public:
   bit8    SetOutputDelay(sint32 delay) { outputDelay=delay; return(TRUE); };
 
 };
-
-#endif

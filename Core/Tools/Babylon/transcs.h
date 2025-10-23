@@ -19,11 +19,6 @@
 //
 // transcs.h Translate char set
 //
-
-#ifndef _TRANSCS_H
-#define _TRANSCS_H
-
+#pragma once
 
 void CreateTranslationTable ( void );
-
-#endif // _TRANSCS_H

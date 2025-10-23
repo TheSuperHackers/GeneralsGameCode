@@ -35,10 +35,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef MAXWORLDINFO_H
-#define MAXWORLDINFO_H
-
+#pragma once
 
 #include <max.h>
 #include "meshbuild.h"
@@ -87,7 +84,3 @@ class MaxWorldInfoClass : public WorldInfoClass
 		Matrix3				ExportTrans;
 		bool					SmoothBetweenMeshes;
 };
-
-
-
-#endif

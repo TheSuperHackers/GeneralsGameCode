@@ -36,10 +36,7 @@
 *     $Revision:  $
 *
 ******************************************************************************/
-
-#ifndef REFCOUNTED_H
-#define REFCOUNTED_H
-
+#pragma once
 #include <assert.h>
 
 class RefCounted
@@ -82,5 +79,3 @@ class RefCounted
 
 		unsigned int mRefCount;
 	};
-
-#endif // REFCOUNTED_H

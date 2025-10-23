@@ -35,10 +35,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef MESHMATDESC_H
-#define MESHMATDESC_H
-
+#pragma once
 #include "always.h"
 #include "vector2.h"
 #include "vector3.h"
@@ -490,6 +487,3 @@ inline void MeshMatDescClass::Disable_Backface_Culling(void)
 		}
 	}
 }
-
-#endif //MESHMATDESC_H
-

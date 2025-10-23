@@ -34,10 +34,7 @@ linked list at the slot the hashing function specifies.  If everything
 is working well, this is much faster than a linked list, but only if
 your hashing function is good.
 \****************************************************************************/
-
-#ifndef DICTIONARY_HEADER
-#define DICTIONARY_HEADER
-
+#pragma once
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -582,5 +579,3 @@ void Dictionary<K,V>::expand(void)
   }
   delete[](oldtable);
 }
-
-#endif

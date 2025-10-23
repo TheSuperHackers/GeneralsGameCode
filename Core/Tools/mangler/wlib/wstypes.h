@@ -27,10 +27,7 @@ Last Update : June 17, 1997
 
 Standard type definitions for the sake of portability and readability.
 \***************************************************************************/
-
-#ifndef WSTYPES_HEADER
-#define WSTYPES_HEADER
-
+#pragma once
 #ifdef _REENTRANT   // reentrant = threaded
 // Headers with non threadsafe libs need to come before my hacky
 //  threadsafe.h otherwise they won't compile
@@ -113,6 +110,4 @@ typedef double             float64;
 #ifdef _WINDOWS
 #define strncasecmp _strnicmp
 #define strcasecmp  _stricmp
-#endif
-
 #endif

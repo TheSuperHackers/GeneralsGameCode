@@ -15,10 +15,7 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef __DRAW_OBJECT_H_
-#define __DRAW_OBJECT_H_
-
+#pragma once
 #include "always.h"
 #include "rendobj.h"
 #include "w3d_file.h"
@@ -171,5 +168,3 @@ protected:
 
 void BuildRectFromSegmentAndWidth(const Coord3D* b, const Coord3D* t, Real width,
 																	Coord3D* outBL, Coord3D* outTL, Coord3D* outBR, Coord3D* outTR);
-
-#endif  // end __DRAW_OBJECT_H_

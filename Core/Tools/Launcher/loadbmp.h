@@ -15,10 +15,7 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef LOADBMP_HEADER
-#define LOADBMP_HEADER
-
+#pragma once
 #include<stdlib.h>
 #include<stdio.h>
 #include "wstypes.h"
@@ -41,6 +38,3 @@ class LoadBmp
    HPALETTE       PalHandle_;
    HWND           WindowHandle_;
 };
-
-
-#endif

@@ -34,10 +34,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef NAMEDSEL_H
-#define NAMEDSEL_H
-
+#pragma once
 
 #include "max.h"
 
@@ -78,6 +75,3 @@ public:
 		NAMED_SEL_NAME_CHUNK =	0x0023
 	};
 };
-
-
-#endif /*NAMEDSEL_H*/

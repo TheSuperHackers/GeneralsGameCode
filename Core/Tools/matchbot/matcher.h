@@ -15,10 +15,7 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef __MATCHER_H__
-#define __MATCHER_H__
-
+#pragma once
 #ifdef _WIN32
 #include <process.h>
 #endif
@@ -88,6 +85,3 @@ protected:
 	time_t m_lastRotation;
 
 };
-
-#endif /* __MATCHER_H__ */
-

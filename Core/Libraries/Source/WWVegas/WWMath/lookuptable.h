@@ -36,10 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef LOOKUPTABLE_H
-#define LOOKUPTABLE_H
-
+#pragma once
 #include "always.h"
 #include "simplevec.h"
 #include "wwstring.h"
@@ -156,6 +153,3 @@ protected:
 	static RefMultiListClass<LookupTableClass>	Tables;
 
 };
-
-
-#endif // LOOKUPTABLE_H

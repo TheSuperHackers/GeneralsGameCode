@@ -33,10 +33,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef LZOPIPE_H
-#define LZOPIPE_H
-
+#pragma once
 #include	"PIPE.H"
 
 
@@ -97,6 +94,3 @@ class LZOPipe : public Pipe
 		LZOPipe(LZOPipe & rvalue);
 		LZOPipe & operator = (LZOPipe const & pipe);
 };
-
-
-#endif

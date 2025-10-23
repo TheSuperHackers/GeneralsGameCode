@@ -21,10 +21,7 @@
 //	ColorUtils.H
 //
 //
-
-#ifndef __COLORUTILS_H
-#define __COLORUTILS_H
-
+#pragma once
 /////////////////////////////////////////////////////////////////////////////
 //	Callbacks
 /////////////////////////////////////////////////////////////////////////////
@@ -46,6 +43,3 @@ BOOL		Set_Form_Original_Color (HWND form_wnd, int red, int green, int blue);
 BOOL		Set_Update_Callback (HWND form_wnd, WWCTRL_COLORCALLBACK callback, void *arg=NULL);
 void		RegisterColorPicker (HINSTANCE hinst);
 void		RegisterColorBar (HINSTANCE hinst);
-
-
-#endif //__COLORUTILS_H

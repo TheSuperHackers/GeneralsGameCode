@@ -34,10 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef __LODDEFS_H
-#define __LODDEFS_H
-
+#pragma once
 
 ////////////////////////////////////////////////////////////////////////////
 //
@@ -102,7 +99,3 @@ __inline bool Is_Model_Part_of_LOD (LPCTSTR name, LPCTSTR base, LOD_NAMING_TYPE 
 	// Return the true/false result ccde
 	return retval;
 }
-
-
-#endif //__LODDEFS_H
-

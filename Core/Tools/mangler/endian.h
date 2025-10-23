@@ -15,10 +15,7 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef __ENDIAN_H__
-#define __ENDIAN_H__
-
+#pragma once
 
 
 /*
@@ -59,7 +56,3 @@ template<class T> inline T Endian(T val)
 
 	return (retval);
 }
-
-
-#endif	//__ENDIAN_H__
-

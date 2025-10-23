@@ -36,10 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef FLOATERDIALOG_H
-#define FLOATERDIALOG_H
-
+#pragma once
 #include <windows.h>
 
 class Interface;
@@ -68,8 +65,3 @@ private:
 	DLGPROC	ChildDialogProc;
 
 };
-
-
-
-#endif //FLOATERDIALOG_H
-

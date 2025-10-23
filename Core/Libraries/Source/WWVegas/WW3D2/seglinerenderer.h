@@ -35,10 +35,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef SEGLINERENDERER_H
-#define SEGLINERENDERER_H
-
+#pragma once
 #include "always.h"
 #include "shader.h"
 #include "texture.h"
@@ -206,7 +203,3 @@ inline void SegLineRendererClass::Set_UV_Offset_Rate(const Vector2 &rate)
 {
 	UVOffsetDeltaPerMS = rate * 0.001f;
 }
-
-
-#endif //SEGLINERENDERER_H
-

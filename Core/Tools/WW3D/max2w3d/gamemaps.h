@@ -35,10 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef GAMEMAPS_H
-#define GAMEMAPS_H
-
+#pragma once
 #include <max.h>
 #include "stdmat.h"
 
@@ -110,6 +107,3 @@ public:
 	IOResult				Save(ISave * isave);
 	IOResult				Load(ILoad * iload);
 };
-
-
-#endif /*GAMEMAPS_H*/

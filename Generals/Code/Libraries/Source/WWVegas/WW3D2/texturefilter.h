@@ -36,10 +36,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef TEXTUREFILTER_H
-#define TEXTUREFILTER_H
-
+#pragma once
 #ifndef DX8_WRAPPER_H
 //#include "dx8wrapper.h"
 #endif
@@ -129,5 +126,3 @@ private:
 	TxtAddrMode UAddressMode;
 	TxtAddrMode VAddressMode;
 };
-
-#endif

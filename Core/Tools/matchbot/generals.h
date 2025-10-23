@@ -15,10 +15,7 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef __GENERALS_H__
-#define __GENERALS_H__
-
+#pragma once
 #ifdef _WIN32
 #include <process.h>
 #endif
@@ -189,6 +186,3 @@ public:
 private:
 }
 ;
-
-#endif /* __GENERALS_H__ */
-

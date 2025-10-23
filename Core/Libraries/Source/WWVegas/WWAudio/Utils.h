@@ -34,10 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef __UTILS_H
-#define __UTILS_H
-
+#pragma once
 #pragma warning (push, 3)
 #include "mss.h"
 #pragma warning (pop)
@@ -88,6 +85,3 @@ Get_Filename_From_Path (LPCTSTR path)
 	// Return the filename part of the path
 	return filename;
 }
-
-
-#endif //__UTILS_H

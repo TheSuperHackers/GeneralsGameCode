@@ -35,10 +35,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef WWMATHIDS_H
-#define WWMATHIDS_H
-
+#pragma once
 #include "saveloadids.h"
 
 /*
@@ -59,8 +56,3 @@ enum
 	WWMATH_CHUNKID_TCBSPLINE3D,
 	WWMATH_CHUNKID_VEHICLECURVE
 };
-
-
-
-#endif //WWMATHIDS_H
-

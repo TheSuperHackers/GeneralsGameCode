@@ -35,10 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-
-#ifndef GAMEMTLFORM_H
-#define GAMEMTLFORM_H
-
+#pragma once
 #include "FormClass.h"
 
 class GameMtl;
@@ -60,5 +57,3 @@ protected:
 	GameMtl *			TheMtl;			// current mtl being edited.
 	int					PassIndex;		// material pass that this form edits
 };
-
-#endif

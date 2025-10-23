@@ -34,10 +34,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef PROGRESS_H
-#define PROGRESS_H
-
+#pragma once
 #include "always.h"
 
 class Progress_Meter_Class
@@ -121,5 +118,3 @@ private:
 
 	BOOL Cancel_Requested;
 };
-
-#endif /* PROGRESS_H */

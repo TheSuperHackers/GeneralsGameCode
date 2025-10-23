@@ -33,10 +33,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef _LZO_H
-#define _LZO_H
-
+#pragma once
 #include	"lzoconf.h"
 #include "lzo1x.h"
 
@@ -100,7 +97,3 @@ private:
 	static lzo_byte WorkBuffer[LZO1X_MEM_COMPRESS + 1];
 	static lzo_byte * EOWorkBuffer;
 };
-
-
-
-#endif

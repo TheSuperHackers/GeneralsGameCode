@@ -35,10 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef BPICK_H
-#define BPICK_H
-
+#pragma once
 #include "max.h"
 //#include "dllmain.h"
 //#include "resource.h"
@@ -124,6 +121,3 @@ protected:
 };
 
 extern BonePickerClass TheBonePicker;
-
-
-#endif

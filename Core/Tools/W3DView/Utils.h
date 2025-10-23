@@ -22,10 +22,7 @@
 //
 //  Module containing usefull misc. utility functions
 //
-
-#ifndef __UTILS_H
-#define __UTILS_H
-
+#pragma once
 #include "Vector.H"
 
 // Forward declarations
@@ -158,5 +155,3 @@ bool						Is_Real_LOD (const char *asset_name);
 
 // Prototype routines
 void						Rename_Aggregate_Prototype (const char *old_name, const char *new_name);
-
-#endif //__UTILS_H

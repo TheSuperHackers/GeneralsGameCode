@@ -33,10 +33,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef __MESH_DEFORM_DEFS_H
-#define __MESH_DEFORM_DEFS_H
-
+#pragma once
 #include <max.h>
 #include "Vector.H"
 
@@ -94,7 +91,3 @@ typedef struct _VERT_INFO
 //
 ///////////////////////////////////////////////////////////////////////////
 typedef DynamicVectorClass<VERT_INFO> DEFORM_LIST;
-
-
-#endif //__MESH_DEFORM_DEFS_H
-

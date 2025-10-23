@@ -35,10 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef NODEFILT_H
-#define NODEFILT_H
-
+#pragma once
 #include "always.h"
 #include <max.h>
 
@@ -172,7 +169,3 @@ class VisibleSelectedINodeFilter : public INodeFilterClass
 public:
 	virtual BOOL Accept_Node(INode * node, TimeValue time);
 };
-
-
-
-#endif /*NODEFILT_H*/

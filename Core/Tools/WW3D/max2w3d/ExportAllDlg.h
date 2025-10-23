@@ -34,10 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef EXPORTALLDLG_H
-#define EXPORTALLDLG_H
-
+#pragma once
 #include "dllmain.h"
 #include "resource.h"
 
@@ -76,6 +73,3 @@ protected:
 	void OnBrowse (void);
 	BOOL OnOK (void);		// TRUE if ok to close dialog
 };
-
-
-#endif

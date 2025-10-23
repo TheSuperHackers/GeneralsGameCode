@@ -33,10 +33,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef __MESH_DEFORM_SAVE_DEFS_H
-#define __MESH_DEFORM_SAVE_DEFS_H
-
+#pragma once
 #include <max.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -109,6 +106,3 @@ struct DeformDataChunk
 	Point3					Value;
 	uint32					reserved[2];
 };
-
-
-#endif //__MESH_DEFORM_SAVE_DEFS_H

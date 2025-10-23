@@ -49,10 +49,7 @@ This won't compile, read the code until you figure it out.  Only then
 will you be ready to leave grasshopper.
 
 \*****************************************************************************/
-
-#ifndef MYDEBUG_HEADER
-#define MYDEBUG_HEADER
-
+#pragma once
 #define USE_SEM
 
 #include "wstypes.h"
@@ -130,5 +127,3 @@ public:
 
 	static ostream            *paranoidStream(void);
 };
-
-#endif

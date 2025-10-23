@@ -34,10 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef BCHANNEL_H
-#define BCHANNEL_H
-
+#pragma once
 #ifndef ALWAYS_H
 #include "always.h"
 #endif
@@ -98,6 +95,3 @@ private:
 
 
 };
-
-
-#endif

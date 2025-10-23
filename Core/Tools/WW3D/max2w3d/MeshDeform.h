@@ -35,10 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef __MESH_DEFORM_H
-#define __MESH_DEFORM_H
-
+#pragma once
 #include <max.h>
 #include "Vector.H"
 
@@ -196,6 +193,3 @@ class MeshDeformClass : public OSModifier
 		// Information
 		CStr							m_OperationName;
 };
-
-
-#endif //__MESH_DEFORM_H

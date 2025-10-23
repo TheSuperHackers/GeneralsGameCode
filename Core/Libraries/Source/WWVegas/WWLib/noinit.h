@@ -33,10 +33,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef NOINIT_H
-#define NOINIT_H
-
+#pragma once
 /**********************************************************************
 **	This class is solely used as a parameter to a constructor that does
 **	absolutely no initialization to the object being constructed. By using
@@ -51,7 +48,4 @@ class NoInitClass {
 	public:
 		void operator () (void) const {};
 };
-#endif
-
-
 #endif

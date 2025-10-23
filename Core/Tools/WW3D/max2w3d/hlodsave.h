@@ -34,10 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef HLODSAVE_H
-#define HLODSAVE_H
-
+#pragma once
 #include "always.h"
 
 #include <max.h>
@@ -123,7 +120,3 @@ protected:
 	HLodArrayEntry							aggregate_array;
 	HLodArrayEntry							proxy_array;
 };
-
-
-
-#endif

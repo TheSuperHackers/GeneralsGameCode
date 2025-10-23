@@ -36,10 +36,7 @@
 
 
 
-
-#ifndef GAMEMTLTEXTUREDLG_H
-#define GAMEMTLTEXTUREDLG_H
-
+#pragma once
 #include <max.h>
 #include "GameMtlForm.h"
 
@@ -81,10 +78,3 @@ private:
 	ICustButton *		Stage0DisplayButton;
 	ICustButton *		Stage1DisplayButton;
 };
-
-
-
-
-#endif
-
-

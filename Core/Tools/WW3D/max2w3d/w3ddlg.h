@@ -35,10 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef W3DDLG_H
-#define W3DDLG_H
-
+#pragma once
 #include "always.h"
 #include <max.h>
 #include "w3dutil.h"
@@ -102,6 +99,3 @@ private:
 	int								UnitsType;
 	float								UnitsScale;
 };
-
-
-#endif

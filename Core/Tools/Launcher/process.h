@@ -15,10 +15,7 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef PROCESS_HEADER
-#define PROCESS_HEADER
-
+#pragma once
 #include <windows.h>
 #include "wstypes.h"
 #include "wdebug.h"
@@ -41,6 +38,3 @@ class Process
 bit8 Read_Process_Info(ConfigFile &config,OUT Process &info, IN const char *key = NULL);
 bit8 Create_Process(Process &process);
 bit8 Wait_Process(Process &process, DWORD *exit_code=NULL);
-
-
-#endif

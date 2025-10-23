@@ -36,10 +36,7 @@
 
 
 
-
-#ifndef GAMEMTLPASSDLG_H
-#define GAMEMTLPASSDLG_H
-
+#pragma once
 #include <max.h>
 
 class GameMtl;
@@ -93,5 +90,3 @@ public:
 
 	GameMtlFormClass*	Page[PAGE_COUNT];
 };
-
-#endif

@@ -15,10 +15,7 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef MBOXD_HEADER
-#define MBOXD_HEADER
-
+#pragma once
 #include "odevice.h"
 
 class MboxD : public OutputDevice
@@ -36,5 +33,3 @@ class MboxD : public OutputDevice
    }
 
 };
-
-#endif

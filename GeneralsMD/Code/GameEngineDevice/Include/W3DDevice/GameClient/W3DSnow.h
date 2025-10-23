@@ -17,10 +17,7 @@
 */
 
 // FILE: W3DSnow.h /////////////////////////////////////////////////////////
-
-#ifndef _W3DSNOW_H_
-#define _W3DSNOW_H_
-
+#pragma once
 #include "GameClient/Snow.h"
 
 class DX8IndexBufferClass;
@@ -59,6 +56,3 @@ class W3DSnowManager : public SnowManager
 	Int m_totalRendered;	///<total number of snow particles rendered this frame - only for profiling.
 	Real m_cullOverscan;	///<how much extra padding to put on the sides of AABoxes when view culling.
 };
-
-#endif // _W3DSNOW_H_
-

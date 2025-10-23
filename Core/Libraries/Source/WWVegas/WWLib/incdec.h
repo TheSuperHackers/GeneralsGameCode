@@ -33,10 +33,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef INCDEC_H
-#define INCDEC_H
-
+#pragma once
 /*
 **	These templates allow enumeration types to have simple bitwise
 **	arithmatic performed. The operators must be instatiated for the
@@ -64,5 +61,3 @@ template<class T> inline T operator --(T & a, int)
 	a = (T)((int)a - (int)1);
 	return(aa);
 }
-
-#endif

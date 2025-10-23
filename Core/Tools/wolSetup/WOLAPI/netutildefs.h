@@ -15,10 +15,7 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef NETUTILDEFS_HEADER
-#define NETUTILDEFS_HEADER
-
+#pragma once
 
 #define NETUTIL_E_ERROR       MAKE_HRESULT( SEVERITY_ERROR, FACILITY_ITF, 100)
 #define NETUTIL_E_BUSY        MAKE_HRESULT( SEVERITY_ERROR, FACILITY_ITF, 101)
@@ -28,5 +25,3 @@
 #define NETUTIL_E_CANTVERIFY    MAKE_HRESULT( SEVERITY_ERROR, FACILITY_ITF, 257)
 
 #define NETUTIL_S_FINISHED    MAKE_HRESULT( SEVERITY_SUCCESS, FACILITY_ITF, 500)
-
-#endif

@@ -35,10 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef UTIL_H
-#define UTIL_H
-
+#pragma once
 #ifndef ALWAYS_H
 #include "always.h"
 #endif
@@ -112,6 +109,3 @@ INode *Find_Named_Node (char *nodename, INode *root);
 				delete [] pobject;				\
 				pobject = NULL;					\
 			}											\
-
-
-#endif

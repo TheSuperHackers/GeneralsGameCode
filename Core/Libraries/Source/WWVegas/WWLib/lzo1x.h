@@ -59,10 +59,7 @@
    markus.oberhumer@jk.uni-linz.ac.at
  */
 
-
-#ifndef __LZO1X_H
-#define __LZO1X_H
-
+#pragma once
 #include	"lzoconf.h"
 
 //#ifdef __cplusplus
@@ -120,8 +117,6 @@ lzo1x_999_compress      ( const lzo_byte *src, lzo_uint  src_len,
 //#ifdef __cplusplus
 //} /* extern "C" */
 //#endif
-
-#endif /* already included */
 
 /*
 vi:ts=4

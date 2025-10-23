@@ -35,10 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef BONEICON_H
-#define BONEICON_H
-
+#pragma once
 struct VertexStruct
 {
 	float X,Y,Z;
@@ -53,5 +50,3 @@ extern const int NumBoneIconVerts;
 extern const int NumBoneIconFaces;
 extern VertexStruct BoneIconVerts[];
 extern FaceStruct BoneIconFaces[];
-
-#endif

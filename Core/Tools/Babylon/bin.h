@@ -20,10 +20,7 @@
 // Bin.h
 //
 
-
-#ifndef __BIN_H
-#define __BIN_H
-
+#pragma once
 #include "list.h"
 #include "olestring.h"
 
@@ -103,6 +100,3 @@ class BinID
 
 
 };
-
-
-#endif // __BIN_H

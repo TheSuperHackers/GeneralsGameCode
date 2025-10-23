@@ -32,10 +32,7 @@ Copies of the data are stored instead of a pointer to the original.
 
 If you want to store pointers then the template should be of a pointer type.
 \****************************************************************************/
-
-#ifndef LINKEDLIST_HEADER
-#define LINKEDLIST_HEADER
-
+#pragma once
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -491,5 +488,3 @@ template <class T>
 sint32 LinkedList<T>::length(void) {
   return(Entries);
 }
-
-#endif

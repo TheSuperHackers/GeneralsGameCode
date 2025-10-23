@@ -34,10 +34,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef __MESH_DEFORM_SAVE_H
-#define __MESH_DEFORM_SAVE_H
-
+#pragma once
 #include <max.h>
 #include "Vector.H"
 
@@ -106,5 +103,3 @@ class MeshDeformSaveClass
 		DEFORM_SAVE_LIST	m_DeformSets;
 		unsigned int		m_AlphaPasses;
 };
-
-#endif //__MESH_DEFORM_SAVE_H

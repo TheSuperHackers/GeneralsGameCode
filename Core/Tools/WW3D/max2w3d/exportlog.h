@@ -36,10 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef EXPORTLOG_H
-#define EXPORTLOG_H
-
+#pragma once
 #include <windows.h>
 
 /**
@@ -56,7 +53,3 @@ public:
 	static void rprintf(const char *, ...);
 	static void	updatebar(float position, float total);
 };
-
-
-#endif //EXPORTLOG_H
-

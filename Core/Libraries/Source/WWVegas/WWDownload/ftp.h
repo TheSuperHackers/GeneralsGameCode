@@ -17,10 +17,7 @@
 */
 
 // ftp.h : Declaration of the Cftp
-
-#ifndef __FTP_H_
-#define __FTP_H_
-
+#pragma once
 
 //#include "../resource.h"       // main symbols
 
@@ -113,5 +110,3 @@ public:
 	HRESULT SendCommand( LPCSTR pCommand, int iSize );
 
 };
-
-#endif //__FTP_H_

@@ -35,10 +35,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef CAMERASHAKESYSTEM_H
-#define CAMERASHAKESYSTEM_H
-
+#pragma once
 
 #include "always.h"
 #include "vector3.h"
@@ -107,7 +104,3 @@ protected:
 };
 
 extern CameraShakeSystemClass CameraShakerSystem; //WST 11/12/2002 This is the new Camera Shaker system upgrade
-
-
-#endif //CAMERASHAKESYSTEM_H
-

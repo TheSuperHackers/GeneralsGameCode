@@ -17,10 +17,7 @@
 */
 
 
-
-#ifndef __SIMPLE_DEFINITION_FACTORY_H
-#define __SIMPLE_DEFINITION_FACTORY_H
-
+#pragma once
 #include "definitionfactory.h"
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -81,6 +78,3 @@ SimpleDefinitionFactoryClass<T, class_id, name>::Get_Class_ID (void) const
 #define DECLARE_DEFINITION_FACTORY(_class, _id, _name)		\
 char _class ## Name[] = _name;										\
 SimpleDefinitionFactoryClass<_class, _id, _class ## Name>	\
-
-#endif //__SIMPLE_DEFINITION_FACTORY_H
-

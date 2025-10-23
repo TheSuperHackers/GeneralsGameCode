@@ -49,10 +49,7 @@ This won't compile, read the code until you figure it out.  Only then
 will you be ready to leave grasshopper.
 
 \*****************************************************************************/
-
-#ifndef WDEBUG_HEADER
-#define WDEBUG_HEADER
-
+#pragma once
 #define USE_DEBUG_SEM
 
 #include "wstypes.h"
@@ -314,5 +311,3 @@ class MsgManager
    static ostream            *warnStream(void);
    static ostream            *errorStream(void);
 };
-
-#endif

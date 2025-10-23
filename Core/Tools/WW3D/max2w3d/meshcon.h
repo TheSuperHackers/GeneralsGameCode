@@ -35,10 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef MESHCON_H
-#define MESHCON_H
-
+#pragma once
 
 #ifndef ALWAYS_H
 #include "always.h"
@@ -144,6 +141,3 @@ private:
 
 
 };
-
-
-#endif /*MESHCON_H*/

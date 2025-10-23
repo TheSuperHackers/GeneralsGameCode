@@ -15,10 +15,7 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef USTRING_HEADER
-#define USTRING_HEADER
-
+#pragma once
 #include <stdlib.h>
 #include <stdio.h>
 #include <Utility/iostream_adapter.h>
@@ -57,5 +54,3 @@ class UstringT : public basic_string<charT, string_char_traits<charT> >
 };
 
 typedef UstringT<char> Ustring;
-
-#endif

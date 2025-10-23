@@ -17,10 +17,7 @@
 */
 
 // Download.h : Declaration of the CDownload
-
-#ifndef __DOWNLOAD_H_
-#define __DOWNLOAD_H_
-
+#pragma once
 //#include "../resource.h"       // main symbols
 #include "WWDownload/ftp.h"
 #include "WWDownload/downloaddefs.h"
@@ -95,5 +92,3 @@ private:
 	Cftp			*m_Ftp;
 	IDownload	*Listener;
 };
-
-#endif //__DOWNLOAD_H_

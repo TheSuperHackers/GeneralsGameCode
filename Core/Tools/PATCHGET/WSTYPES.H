@@ -27,10 +27,7 @@ Last Update : June 17, 1997
 
 Standard type definitions for the sake of portability and readability.
 \***************************************************************************/
-
-#ifndef WTYPES_HEADER
-#define WTYPES_HEADER
-
+#pragma once
 #ifndef TRUE
 #define TRUE 1
 #endif
@@ -69,6 +66,4 @@ typedef unsigned int       uint32;
 #ifdef _WIN32
 #define strncasecmp _strnicmp
 #define strcasecmp  _stricmp
-#endif
-
 #endif

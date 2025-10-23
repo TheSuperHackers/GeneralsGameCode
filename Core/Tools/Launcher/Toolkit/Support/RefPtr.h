@@ -64,10 +64,7 @@
 *     $Revision:  $
 *
 ******************************************************************************/
-
-#ifndef REFPTR_H
-#define REFPTR_H
-
+#pragma once
 #include "Visualc.h"
 #include "RefCounted.h"
 #include <stddef.h>
@@ -357,5 +354,3 @@ RefPtr<Type> Const_Cast(RefPtrConst<Type>& rhs)
 	object.Attach(rhs.ReferencedObject());
 	return object;
 	}
-
-#endif // RC_PTR_H

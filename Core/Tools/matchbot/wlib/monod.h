@@ -15,10 +15,7 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef MONOD_HEADER
-#define MONOD_HEADER
-
+#pragma once
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -70,5 +67,3 @@ class MonoD : public OutputDevice
      HANDLE handle;
    #endif
 };
-
-#endif

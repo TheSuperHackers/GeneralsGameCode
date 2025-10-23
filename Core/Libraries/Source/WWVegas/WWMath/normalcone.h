@@ -42,10 +42,7 @@
 **	The term 'NormalCone' is a bit of a misnomer; it is really a circular portion of a sphere.
 ** -ehc
 */
-
-#ifndef NORMALCONE_H
-#define NORMALCONE_H
-
+#pragma once
 #include "vector3.h"
 #include "matrix3.h"
 
@@ -239,5 +236,3 @@ inline float NormalCone::Smallest_Dot_Product(const Vector3 & Input)
 		return dot1;
 	return dot2;
 }
-
-#endif

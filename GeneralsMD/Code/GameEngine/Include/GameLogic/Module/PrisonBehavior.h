@@ -26,10 +26,7 @@
 // Author: Colin Day, August 2002
 // Desc:   Prison Behaviors
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-#ifndef __PRISON_BEHAVIOR_H_
-#define __PRISON_BEHAVIOR_H_
-
+#pragma once
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/OpenContain.h"
 
@@ -85,5 +82,3 @@ protected:
 };
 
 #endif
-
-#endif  // end __PRISON_BEHAVIOR_H_

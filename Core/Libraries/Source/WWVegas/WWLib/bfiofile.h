@@ -33,10 +33,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef BFIOFILE_H
-#define BFIOFILE_H
-
+#pragma once
 #include	"RAWFILE.H"
 
 /*
@@ -92,5 +89,3 @@ class BufferIOFileClass : public RawFileClass
 		long FilePos;
 		long TrueFileStart;
 };
-
-#endif

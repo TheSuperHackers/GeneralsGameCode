@@ -33,10 +33,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef CRCPIPE_H
-#define CRCPIPE_H
-
+#pragma once
 #include	"CRC.H"
 #include	"PIPE.H"
 
@@ -60,5 +57,3 @@ class CRCPipe : public Pipe
 		CRCPipe(CRCPipe & rvalue);
 		CRCPipe & operator = (CRCPipe const & pipe);
 };
-
-#endif

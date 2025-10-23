@@ -35,10 +35,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef GEOMETRYEXPORTTASK_H
-#define GEOMETRYEXPORTTASK_H
-
+#pragma once
 #include <string.h>
 #include <max.h>
 #include "w3d_file.h"
@@ -148,8 +145,3 @@ protected:
 	TimeValue			CurTime;
 	INode *				Node;
 };
-
-
-
-#endif //GEOMETRYEXPORTTASK_H
-

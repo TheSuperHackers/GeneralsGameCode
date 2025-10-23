@@ -33,10 +33,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#ifndef BFISH_H
-#define BFISH_H
-
+#pragma once
 #include	<limits.h>
 
 
@@ -100,6 +97,3 @@ class BlowfishEngine {
 		*/
 		unsigned long bf_S[4][UCHAR_MAX+1];
 };
-
-#endif
-

@@ -15,10 +15,7 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef CHATAPI_HEADER
-#define CHATAPI_HEADER
-
+#pragma once
 #include "COMINIT.H"
 #include <stdio.h>
 #include <windows.h>
@@ -46,5 +43,3 @@ void Update_If_Required(void);
 char const * Fetch_String(int id);
 
 } // namespace patchget
-
-#endif
