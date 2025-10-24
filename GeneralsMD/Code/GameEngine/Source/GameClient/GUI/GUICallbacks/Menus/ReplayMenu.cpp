@@ -275,7 +275,7 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 			UnicodeString extraStr;
 
 			if (header.endTime < header.startTime)
-				header.startTime = 0;
+				header.startTime = header.endTime;
 
 			time_t totalSeconds = header.endTime - header.startTime;
 			UnsignedInt hours = totalSeconds / 3600;
