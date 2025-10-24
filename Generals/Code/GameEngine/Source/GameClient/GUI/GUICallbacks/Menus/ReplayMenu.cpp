@@ -49,14 +49,7 @@
 #include "GameClient/GameText.h"
 #include "GameClient/GameWindowTransitions.h"
 
-struct ReplayInfoCacheEntry
-{
-	RecorderClass::ReplayHeader header;
-	ReplayGameInfo info;
-	UnicodeString extraStr;
-};
-
-static std::map<UnicodeString, ReplayInfoCacheEntry> replayInfoCache;
+static std::map<UnicodeString, UnicodeString> replayInfoCache;
 
 // window ids -------------------------------------------------------------------------------------
 static NameKeyType parentReplayMenuID = NAMEKEY_INVALID;
@@ -194,9 +187,9 @@ static void showReplayTooltip(GameWindow* window, WinInstanceData* instData, Uns
 
 	UnicodeString replayFileName = GetReplayFilenameFromListbox(window, row);
 
-	std::map<UnicodeString, ReplayInfoCacheEntry>::const_iterator it = replayInfoCache.find(replayFileName);
+	std::map<UnicodeString, UnicodeString>::const_iterator it = replayInfoCache.find(replayFileName);
 	if (it != replayInfoCache.end())
-		TheMouse->setCursorTooltip(it->second.extraStr, -1, NULL, 1.5f);
+		TheMouse->setCursorTooltip(it->second, -1, NULL, 1.5f);
 	else
 		TheMouse->setCursorTooltip(UnicodeString::TheEmptyString);
 }
@@ -305,14 +298,9 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 			// extra
 			UnicodeString extraStr = buildReplayTooltip(header, info);
 
-			ReplayInfoCacheEntry entry;
-			entry.header = header;
-			entry.info = info;
-			entry.extraStr = extraStr;
-
 			UnicodeString key;
 			key.translate(asciistr);
-			replayInfoCache[key] = entry;
+			replayInfoCache[key] = extraStr;
 
 			// pick a color
 			Color color;
