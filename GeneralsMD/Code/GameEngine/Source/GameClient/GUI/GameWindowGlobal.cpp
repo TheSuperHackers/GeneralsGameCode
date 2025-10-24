@@ -48,7 +48,6 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#include "Common/Language.h"
 #include "GameClient/Image.h"
 #include "GameClient/Display.h"
 #include "GameClient/GameWindowManager.h"
@@ -196,7 +195,7 @@ Int GameWindowManager::winFontHeight( GameFont *font )
 Int GameWindowManager::winIsDigit( Int c )
 {
 
-	return GameIsDigit( c );
+	return iswdigit( c );
 
 }
 
@@ -206,7 +205,7 @@ Int GameWindowManager::winIsDigit( Int c )
 Int GameWindowManager::winIsAscii( Int c )
 {
 
-	return GameIsAscii( c );
+	return iswascii( c );
 
 }
 
@@ -216,7 +215,7 @@ Int GameWindowManager::winIsAscii( Int c )
 Int GameWindowManager::winIsAlNum( Int c )
 {
 
-	return GameIsAlNum( c );
+	return iswalnum( c );
 
 }
 

@@ -1130,7 +1130,7 @@ void IMEManager::updateCompositionString( void )
 				else
 				{
 					m_compositionCursorPos = (ImmGetCompositionString( m_context, GCS_CURSORPOS, NULL, 0) & 0xffff );
-					convRes = GameStrlen ( m_compositionString );
+					convRes = wcslen( m_compositionString );
 				}
 
 				// m_compositionCursorPos is in DBCS characters, need to convert it to Wide characters
