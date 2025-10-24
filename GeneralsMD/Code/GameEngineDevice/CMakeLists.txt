@@ -202,6 +202,14 @@ target_include_directories(z_gameenginedevice PUBLIC
     Include
 )
 
+target_precompile_headers(z_gameenginedevice PRIVATE
+    [["Common/STLTypedefs.h"]]
+    [["Common/SubsystemInterface.h"]]
+    [["INI.h"]]
+    <windows.h>
+    [["WWCommon.h"]]
+)
+
 target_link_libraries(z_gameenginedevice PRIVATE
     corei_gameenginedevice_private
     zi_always

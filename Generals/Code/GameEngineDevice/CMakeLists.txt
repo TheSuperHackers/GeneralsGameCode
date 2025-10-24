@@ -189,6 +189,14 @@ target_include_directories(g_gameenginedevice PUBLIC
     Include
 )
 
+target_precompile_headers(g_gameenginedevice PRIVATE
+    [["Common/STLTypedefs.h"]]
+    [["Common/SubsystemInterface.h"]]
+    [["INI.h"]]
+    <windows.h>
+    [["WWCommon.h"]]
+)
+
 target_link_libraries(g_gameenginedevice PRIVATE
     corei_gameenginedevice_private
     gi_always    
