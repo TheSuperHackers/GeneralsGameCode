@@ -36,9 +36,7 @@
 
 #pragma once
 
-#ifndef BITTYPE_H
 #include "bittype.h"
-#endif
 
 /*
 ** Some useful structures for writing/writing (safe from changes).

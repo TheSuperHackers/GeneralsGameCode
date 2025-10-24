@@ -36,17 +36,9 @@
 
 #pragma once
 
-#ifndef ALWAYS_H
 #include "always.h"
-#endif
-
-#ifndef MULTILIST_H
 #include "multilist.h"
-#endif
-
-#ifndef WWDEBUG_H
 #include "wwdebug.h"
-#endif
 
 class RenderObjClass;
 

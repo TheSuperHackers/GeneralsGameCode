@@ -37,22 +37,10 @@
 
 #pragma once
 
-#ifndef ALWAYS_H
 #include "always.h"
-#endif
-
-#ifndef BITTYPE_H
 #include "bittype.h"
-#endif
-
-#ifndef WWFILE_H
 #include "WWFILE.H"
-#endif
-
-#ifndef IOSTRUCT_H
 #include "iostruct.h"
-#endif
-
 
 /************************************************************************************
 

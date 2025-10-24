@@ -34,10 +34,7 @@
 
 #pragma once
 
-#ifndef ALWAYS_H
 #include "always.h"
-#endif
-
 #include "mempool.h"
 
 #ifndef NULL

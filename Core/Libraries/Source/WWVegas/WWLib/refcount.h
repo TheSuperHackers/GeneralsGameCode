@@ -36,14 +36,8 @@
 
 #pragma once
 
-#ifndef ALWAYS_H
 #include "always.h"
-#endif
-
-#ifndef LISTNODE_H
 #include "LISTNODE.H"
-#endif
-
 #include "wwdebug.h"
 
 class RefCountClass;

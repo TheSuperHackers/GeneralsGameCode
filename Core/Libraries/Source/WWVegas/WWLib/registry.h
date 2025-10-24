@@ -35,10 +35,7 @@
 
 #pragma once
 
-#ifndef ALWAYS_H
 #include "always.h"
-#endif
-
 #include "Vector.H"
 #include "wwstring.h"
 #include "widestring.h"

@@ -39,18 +39,9 @@
 
 #pragma once
 
-#ifndef REFCOUNT_H
 #include "refcount.h"
-#endif
-
-#ifndef SHADER_H
 #include "shader.h"
-#endif
-
-#ifndef WWDEBUG_H
 #include "wwdebug.h"
-#endif
-
 
 class TextureClass;
 class VertexMaterialClass;

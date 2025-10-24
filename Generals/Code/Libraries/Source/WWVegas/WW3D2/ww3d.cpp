@@ -118,11 +118,7 @@
 #include "formconv.h"
 #include "animatedsoundmgr.h"
 #include "static_sort_list.h"
-
-
-#ifndef _UNIX
 #include "framgrab.h"
-#endif
 
 
 const char* DAZZLE_INI_FILENAME="DAZZLE.INI";

@@ -36,10 +36,7 @@
 
 #pragma once
 
-#ifndef RENDOBJ_H
 #include "rendobj.h"
-#endif
-
 #include "proto.h"
 
 class Null3DObjClass : public RenderObjClass

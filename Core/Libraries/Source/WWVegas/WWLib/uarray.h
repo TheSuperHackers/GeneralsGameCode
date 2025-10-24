@@ -39,14 +39,8 @@
 
 #pragma once
 
-#ifndef HASHCALC_H
 #include "hashcalc.h"
-#endif
-
-#ifndef VECTOR_H
 #include "Vector.H"
-#endif
-
 
 /*
 ** UniqueArrayClass
