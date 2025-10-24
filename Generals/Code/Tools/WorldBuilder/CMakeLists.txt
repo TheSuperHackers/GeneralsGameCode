@@ -204,6 +204,13 @@ target_include_directories(g_worldbuilder PRIVATE
 
 target_compile_definitions(g_worldbuilder PRIVATE _AFXDLL)
 
+target_precompile_headers(g_worldbuilder PRIVATE
+    [["always.h"]]
+    [["Common/STLTypedefs.h"]]
+    [["StdAfx.h"]]
+    [["WWCommon.h"]]
+)
+
 target_link_libraries(g_worldbuilder PRIVATE
     d3d8lib
     dbghelplib
