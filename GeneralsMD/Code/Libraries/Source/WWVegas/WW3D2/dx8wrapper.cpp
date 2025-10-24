@@ -45,7 +45,7 @@
 //#define CREATE_DX8_FPU_PRESERVE
 #define WW3D_DEVTYPE D3DDEVTYPE_HAL
 
-#if defined(_MSC_VER) && _MSC_VER < 1300
+#if !defined(WINVER) || WINVER < 0x0500
 #undef WINVER
 #define WINVER 0x0500 // Required to access GetMonitorInfo in VC6.
 #endif
