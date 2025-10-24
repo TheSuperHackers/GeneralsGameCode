@@ -170,6 +170,13 @@ add_library(corei_w3dview INTERFACE)
 
 target_sources(corei_w3dview INTERFACE ${W3DVIEW_SRC})
 
+target_precompile_headers(corei_w3dview INTERFACE
+    [["always.h"]]
+    "StdAfx.h"
+    [["STLUtils.h"]]
+    [["WWCommon.h"]]
+)
+
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
     target_sources(corei_w3dview INTERFACE W3DView.rc)
 endif()
