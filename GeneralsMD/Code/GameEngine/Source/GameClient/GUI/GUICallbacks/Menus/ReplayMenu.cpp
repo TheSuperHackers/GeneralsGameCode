@@ -178,7 +178,7 @@ static UnicodeString createMapName(const AsciiString& filename, const ReplayGame
 //-------------------------------------------------------------------------------------------------
 // TheSuperHackers @feature Stubbjax 21/10/2025 Show extra info tooltip when hovering over a replay.
 
-static void replayTooltip(GameWindow* window, WinInstanceData* instData, UnsignedInt mouse)
+static void showReplayTooltip(GameWindow* window, WinInstanceData* instData, UnsignedInt mouse)
 {
 	Int x, y, row, col;
 	x = LOLONGTOSHORT(mouse);
@@ -199,6 +199,37 @@ static void replayTooltip(GameWindow* window, WinInstanceData* instData, Unsigne
 		TheMouse->setCursorTooltip(it->second.extraStr, -1, NULL, 1.5f);
 	else
 		TheMouse->setCursorTooltip(UnicodeString::TheEmptyString);
+}
+
+static UnicodeString buildReplayTooltip(RecorderClass::ReplayHeader header, ReplayGameInfo info)
+{
+	UnicodeString extraStr;
+
+	if (header.endTime < header.startTime)
+		header.startTime = header.endTime;
+
+	time_t totalSeconds = header.endTime - header.startTime;
+	UnsignedInt hours = totalSeconds / 3600;
+	UnsignedInt mins = (totalSeconds % 3600) / 60;
+	UnsignedInt secs = totalSeconds % 60;
+	Real fps = totalSeconds > 0 ? header.frameCount / totalSeconds : 0;
+	extraStr.format(L"%02u:%02u:%02u (%g fps)", hours, mins, secs, fps);
+
+	if (header.localPlayerIndex >= 0)
+	{
+		// MP game
+		for (Int i = 0; i < MAX_SLOTS; ++i)
+		{
+			const GameSlot* slot = info.getConstSlot(i);
+			if (slot && slot->isHuman())
+			{
+				extraStr.concat(L"\n");
+				extraStr.concat(info.getConstSlot(i)->getName());
+			}
+		}
+	}
+
+	return extraStr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -272,31 +303,7 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 			UnicodeString mapStr = createMapName(asciistr, info, mapData);
 
 			// extra
-			UnicodeString extraStr;
-
-			if (header.endTime < header.startTime)
-				header.startTime = header.endTime;
-
-			time_t totalSeconds = header.endTime - header.startTime;
-			UnsignedInt hours = totalSeconds / 3600;
-			UnsignedInt mins = (totalSeconds % 3600) / 60;
-			UnsignedInt secs = totalSeconds % 60;
-			Real fps = totalSeconds > 0 ? header.frameCount / totalSeconds : 0;
-			extraStr.format(L"%02u:%02u:%02u (%g fps)", hours, mins, secs, fps);
-
-			if (header.localPlayerIndex >= 0)
-			{
-				// MP game
-				for (Int i=0; i<MAX_SLOTS; ++i)
-				{
-					const GameSlot *slot = info.getConstSlot(i);
-					if (slot && slot->isHuman())
-					{
-						extraStr.concat(L"\n");
-						extraStr.concat(info.getConstSlot(i)->getName());
-					}
-				}
-			}
+			UnicodeString extraStr = buildReplayTooltip(header, info);
 
 			ReplayInfoCacheEntry entry;
 			entry.header = header;
@@ -385,7 +392,7 @@ void ReplayMenuInit( WindowLayout *layout, void *userData )
 	buttonLoad = TheWindowManager->winGetWindowFromId( parentReplayMenu, buttonLoadID );
 	buttonBack = TheWindowManager->winGetWindowFromId( parentReplayMenu, buttonBackID );
 	listboxReplayFiles = TheWindowManager->winGetWindowFromId( parentReplayMenu, listboxReplayFilesID );
-	listboxReplayFiles->winSetTooltipFunc(replayTooltip);
+	listboxReplayFiles->winSetTooltipFunc(showReplayTooltip);
 	buttonDelete = TheWindowManager->winGetWindowFromId( parentReplayMenu, buttonDeleteID );
 	buttonCopy = TheWindowManager->winGetWindowFromId( parentReplayMenu, buttonCopyID );
 
