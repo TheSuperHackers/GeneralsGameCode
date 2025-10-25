@@ -48,6 +48,7 @@
 #include "Common/GameEngine.h"
 #include "Common/GameSounds.h"
 #include "Common/Debug.h"
+#include "Common/CRCDebug.h"
 #include "Common/GameMemory.h"
 #include "Common/StackDump.h"
 #include "Common/MessageStream.h"
@@ -853,6 +854,32 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif
 
 		CommandLine::parseCommandLineForStartup();
+
+		if(!TheGlobalData->m_headless)
+		{
+#if defined(DEBUG_LOGGING) && defined(DEBUG_CRC)
+			extern FILE *theLogFile;
+			if (theLogFile == NULL || NET_CRC_INTERVAL != 1)
+			{
+				MessageBoxW(NULL, L"This is a special build of the game that helps debugging mismatches.\n"
+					L"This version requires write permission on the game folder. To fix this, you can start the game as admin or copy the game folder into a user folder and run the game from there.",
+					L"Super Hackers Build", MB_ICONERROR);
+				return 1;
+			}
+
+			MessageBoxW(NULL, L"This is a special build of the game that helps debugging mismatches.\n\n"
+				L"Some info about this:\n"
+				L" - This version might run a bit slower.\n"
+				L" - If a mismatch occurs, a log file 00000000.txt appears next to the replay. The devs will need both the replay and the log file.\n"
+				L" - This version is still compatible with the 1.04 retail game. But to debug mismatches with this, the devs will need the replays and log files of two players who got a mismatch with each other.\n"
+				L"\nThanks for testing!",
+				L"Super Hackers Build", 0);
+#else
+			MessageBoxW(NULL, L"You downloaded the wrong exe!",
+				L"Super Hackers Build", MB_ICONERROR);
+			return 1;
+#endif
+		}
 
 		// register windows class and create application window
 		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)

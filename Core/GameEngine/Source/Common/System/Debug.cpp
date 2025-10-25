@@ -104,7 +104,7 @@ extern const char *gAppPrefix; /// So WB can have a different log file name.
 // TheSuperHackers @info Must not use static RAII types when set in DebugInit,
 // because DebugInit can be called during static module initialization before the main function is called.
 #ifdef DEBUG_LOGGING
-static FILE *theLogFile = NULL;
+FILE *theLogFile = NULL;
 static char theLogFileName[ _MAX_PATH ];
 static char theLogFileNamePrev[ _MAX_PATH ];
 #endif
