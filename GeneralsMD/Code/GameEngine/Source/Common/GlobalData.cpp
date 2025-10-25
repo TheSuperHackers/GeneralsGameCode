@@ -603,7 +603,7 @@ GlobalData::GlobalData()
 #endif
 
 #ifdef DEBUG_CRASHING
-	m_debugIgnoreAsserts = FALSE;
+	m_debugIgnoreAsserts = TRUE;
 #endif
 
 #ifdef DEBUG_STACKTRACE

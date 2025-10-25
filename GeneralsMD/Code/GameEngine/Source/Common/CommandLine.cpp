@@ -44,7 +44,7 @@ Bool TheDebugIgnoreSyncErrors = FALSE;
 extern Int DX8Wrapper_PreserveFPU;
 
 #ifdef DEBUG_CRC
-Int TheCRCFirstFrameToLog = -1;
+Int TheCRCFirstFrameToLog = 0;//-1;
 UnsignedInt TheCRCLastFrameToLog = 0xffffffff;
 Bool g_keepCRCSaves = FALSE;
 Bool g_saveDebugCRCPerFrame = FALSE;
@@ -53,7 +53,7 @@ Bool g_crcModuleDataFromLogic = FALSE;
 Bool g_crcModuleDataFromClient = FALSE;
 Bool g_verifyClientCRC = FALSE; // verify that GameLogic CRC doesn't change from client
 Bool g_clientDeepCRC = FALSE;
-Bool g_logObjectCRCs = FALSE;
+Bool g_logObjectCRCs = TRUE;//FALSE;
 #endif
 
 #if defined(RTS_DEBUG)
