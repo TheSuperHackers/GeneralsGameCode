@@ -517,7 +517,11 @@ int HMorphAnimClass::Create_New_Morph(const int channels, HAnimClass *anim[])
 	// set up info
 	//	FrameCount = anim[0]->Get_Num_Frames();
 	FrameCount = 0;
+#if RTS_GENERALS
+	FrameRate = 30.0f;
+#elif RTS_ZEROHOUR
 	FrameRate = anim[0]->Get_Frame_Rate();
+#endif
 	NumNodes = anim[0]->Get_Num_Pivots();
 
 	// Set up the anim data for all the channels

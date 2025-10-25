@@ -43,7 +43,6 @@
 #include "w3derr.h"
 #include "proxy.h"
 
-
 class DistLODClass;
 class HModelClass;
 class HLodDefClass;

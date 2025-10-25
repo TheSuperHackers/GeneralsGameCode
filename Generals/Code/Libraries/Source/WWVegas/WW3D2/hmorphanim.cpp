@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -26,11 +26,11 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Jani_p                                                      $*
+ *                      $Author:: Byon_g                                                      $*
  *                                                                                             *
- *                     $Modtime:: 6/27/01 7:50p                                               $*
+ *                     $Modtime:: 1/16/02 6:39p                                               $*
  *                                                                                             *
- *                    $Revision:: 5                                                           $*
+ *                    $Revision:: 7                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -343,7 +343,7 @@ bool HMorphAnimClass::Import(const char *hierarchy_name, TextFileClass &text_des
 	//
 	// Copy the hierarchy name into a class variable
 	//
-	::strlcpy(HierarchyName, hierarchy_name, W3D_NAME_LEN);
+	strlcpy (HierarchyName, hierarchy_name, W3D_NAME_LEN);
 
 	//
 	// Attempt to load the new base pose
@@ -516,9 +516,12 @@ int HMorphAnimClass::Create_New_Morph(const int channels, HAnimClass *anim[])
 
 	// set up info
 	//	FrameCount = anim[0]->Get_Num_Frames();
-	//	FrameRate = anim[0]->Get_Frame_Rate();
 	FrameCount = 0;
+#if RTS_GENERALS
 	FrameRate = 30.0f;
+#elif RTS_ZEROHOUR
+	FrameRate = anim[0]->Get_Frame_Rate();
+#endif
 	NumNodes = anim[0]->Get_Num_Pivots();
 
 	// Set up the anim data for all the channels

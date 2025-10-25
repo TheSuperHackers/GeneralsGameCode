@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -3510,6 +3510,14 @@ void HLodClass::Update_Obj_Space_Bounding_Volumes(void)
 void HLodClass::Add_Lod_Model(int lod, RenderObjClass * robj, int boneindex)
 {
 	WWASSERT(robj != NULL);
+
+	// (gth) survive the case where the skeleton for this object no longer has
+	// the bone that we're trying to use.  This happens when a skeleton is re-exported
+	// but the models that depend on it aren't re-exported...
+	if (boneindex >= HTree->Num_Pivots()) {
+		WWDEBUG_SAY(("ERROR: Model %s tried to use bone %d in skeleton %s.  Please re-export!",Get_Name(),boneindex,HTree->Get_Name()));
+		boneindex = 0;
+	}
 
 	ModelNodeClass newnode;
 	newnode.Model = robj;

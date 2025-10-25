@@ -19,6 +19,10 @@ add_subdirectory(WWAudio)
 add_subdirectory(WW3D2)
 add_subdirectory(WWDownload)
 
+target_link_libraries(g_ww3d2 PRIVATE
+    gi_always
+)
+
 # Helpful interface to bundle the ww modules together.
 add_library(g_wwvegas INTERFACE)
 

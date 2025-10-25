@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* $Header: /Commando/Code/ww3d2/motchan.h 2     6/29/01 6:41p Jani_p $ */
+/* $Header: /Commando/Code/ww3d2/motchan.h 5     11/29/01 1:07p Jani_p $ */
 /***********************************************************************************************
  ***                            Confidential - Westwood Studios                              ***
  ***********************************************************************************************
@@ -27,9 +27,9 @@
  *                                                                                             *
  *                      $Author:: Jani_p                                                      $*
  *                                                                                             *
- *                     $Modtime:: 6/27/01 6:29p                                               $*
+ *                     $Modtime:: 11/28/01 5:43p                                              $*
  *                                                                                             *
- *                    $Revision:: 2                                                           $*
+ *                    $Revision:: 5                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -44,7 +44,6 @@
 
 class ChunkLoadClass;
 class Quaternion;
-
 
 /******************************************************************************
 
@@ -61,6 +60,8 @@ class MotionChannelClass : public W3DMPO
 	W3DMPO_GLUE(MotionChannelClass)
 
 public:
+	void Do_Data_Compression(int datasize);
+	void Get_Vector(int frame,float * setvec) const;
 
 	MotionChannelClass(void);
 	~MotionChannelClass(void);
@@ -68,7 +69,7 @@ public:
 	bool	Load_W3D(ChunkLoadClass & cload);
 	WWINLINE int Get_Type(void) const { return Type; }
 	WWINLINE int Get_Pivot(void) const { return PivotIdx; }
-	WWINLINE void Get_Vector(int frame,float * setvec) const;
+	WWINLINE void Set_Pivot(int idx) { PivotIdx=idx; }
 
 #define SPECIAL_GETVEC_AS_QUAT
 #ifdef SPECIAL_GETVEC_AS_QUAT
@@ -81,14 +82,18 @@ private:
 	uint32	Type;					// what type of channel is this
 	int		VectorLen;			// size of each individual vector
 
+	float		ValueOffset;
+	float		ValueScale;
+	unsigned short* CompressedData;
+
 	float	*	Data;					// pointer to the raw floating point data
 	int		FirstFrame;			// first frame which was non-identity
 	int		LastFrame;			// last frame which was non-identity
-
 	void Free(void);
 	WWINLINE void set_identity(float * setvec) const;
 
-	friend class HRawAnimClass;
+//	friend class HRawAnimClass;
+
 };
 
 WWINLINE void MotionChannelClass::set_identity(float * setvec) const

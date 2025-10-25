@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* $Header: /Commando/Code/ww3d2/hanimmgr.cpp 1     1/22/01 3:36p Greg_h $ */
+/* $Header: /Commando/Code/ww3d2/hanimmgr.cpp 3     1/16/02 9:51a Jani_p $ */
 /***********************************************************************************************
  ***                            Confidential - Westwood Studios                              ***
  ***********************************************************************************************
@@ -27,9 +27,9 @@
  *                                                                                             *
  *                       Author:: Greg_h                                                       *
  *                                                                                             *
- *                     $Modtime:: 1/08/01 10:04a                                              $*
+ *                     $Modtime:: 1/16/02 9:49a                                               $*
  *                                                                                             *
- *                    $Revision:: 1                                                           $*
+ *                    $Revision:: 3                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -92,6 +92,7 @@ HAnimManagerClass::HAnimManagerClass(void)
 HAnimManagerClass::~HAnimManagerClass(void)
 {
 	Free_All_Anims();
+	Reset_Missing();	// Jani: Deleting missing animations as well
 
 	delete AnimPtrTable;
 	AnimPtrTable = NULL;

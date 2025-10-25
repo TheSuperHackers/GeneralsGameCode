@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -26,12 +26,13 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Greg_h                                                      $*
+ *                       Author : Kenny Mitchell                                               *
  *                                                                                             *
- *                     $Modtime:: 5/13/01 11:25a                                              $*
+ *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
- *                    $Revision:: 5                                                           $*
+ *                    $Revision:: 6                                                           $*
  *                                                                                             *
+ * 06/27/02 KM Texture class abstraction																			*
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -41,7 +42,6 @@
 #include "refcount.h"
 #include "shader.h"
 #include "wwdebug.h"
-
 
 class TextureClass;
 class VertexMaterialClass;
@@ -94,7 +94,11 @@ public:
 
 protected:
 
+#if RTS_GENERALS
 	enum { MAX_TEX_STAGES = 2 };
+#elif RTS_ZEROHOUR
+	enum { MAX_TEX_STAGES = 8 };
+#endif
 
 	TextureClass *				Texture[MAX_TEX_STAGES];
 	ShaderClass					Shader;

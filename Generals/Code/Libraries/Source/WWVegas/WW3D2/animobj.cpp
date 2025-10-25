@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -26,9 +26,9 @@
  *                                                                                             *
  *                       Author:: Greg_h                                                       *
  *                                                                                             *
- *                     $Modtime:: 8/28/01 12:12p                                              $*
+ *                     $Modtime:: 12/13/01 6:56p                                              $*
  *                                                                                             *
- *                    $Revision:: 7                                                           $*
+ *                    $Revision:: 10                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -498,7 +498,6 @@ void Animatable3DObjClass::Set_Animation(HAnimClass * motion, float frame, int m
 	Set_Hierarchy_Valid(false);
 }
 
-
 /***********************************************************************************************
  * Animatable3DObjClass::Set_Animation -- set the animation state to a blend of two anims      *
  *                                                                                             *
@@ -869,8 +868,10 @@ bool Animatable3DObjClass::Simple_Evaluate_Bone(int boneindex, Matrix3D *tm) con
 	//
 	//	Only do this for simple animations
 	//
-	if (CurMotionMode == SINGLE_ANIM) {
-
+	if (	CurMotionMode == NONE ||
+			CurMotionMode == BASE_POSE ||
+			CurMotionMode == SINGLE_ANIM)
+	{
 		//
 		//	Determine which frame we should be on, then use this
 		// information to determine the bone's transform.
@@ -880,7 +881,8 @@ bool Animatable3DObjClass::Simple_Evaluate_Bone(int boneindex, Matrix3D *tm) con
 
 	} else {
 
-		*tm = Transform;
+		const_cast <Animatable3DObjClass *>(this)->Update_Sub_Object_Transforms();
+		*tm = HTree->Get_Transform(boneindex);
 
 	}
 
@@ -909,9 +911,15 @@ bool Animatable3DObjClass::Simple_Evaluate_Bone(int boneindex, float frame, Matr
 	//	Only do this for simple animations
 	//
 	if (HTree != NULL) {
+
 		if (CurMotionMode == SINGLE_ANIM) {
 			retval = HTree->Simple_Evaluate_Pivot (ModeAnim.Motion, boneindex, frame, Get_Transform (), tm);
+		} else if (CurMotionMode == NONE || CurMotionMode == BASE_POSE) {
+			retval = HTree->Simple_Evaluate_Pivot (boneindex, Get_Transform (), tm);
+		} else {
+			*tm = Transform;
 		}
+
 	} else {
 		*tm = Transform;
 	}

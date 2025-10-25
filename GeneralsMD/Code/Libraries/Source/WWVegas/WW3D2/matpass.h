@@ -94,7 +94,11 @@ public:
 
 protected:
 
+#if RTS_GENERALS
+	enum { MAX_TEX_STAGES = 2 };
+#elif RTS_ZEROHOUR
 	enum { MAX_TEX_STAGES = 8 };
+#endif
 
 	TextureClass *				Texture[MAX_TEX_STAGES];
 	ShaderClass					Shader;

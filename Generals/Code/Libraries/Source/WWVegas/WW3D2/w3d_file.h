@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -396,10 +396,10 @@ enum {
 				W3D_CHUNK_DEFORM_KEYFRAME				=0x0000005A,	// a keyframe of deform information in the set
 					W3D_CHUNK_DEFORM_DATA				=0x0000005B,	// deform information about a single vertex
 
-		W3D_CHUNK_PS2_SHADERS							=0x00000080,	// Shader info specific to the Playstation 2.
-
 		W3D_CHUNK_VERTEX_TANGENTS = 0x00000060,         // array of tangents (array of W3dVectorStruct's)
 		W3D_CHUNK_VERTEX_BINORMALS = 0x00000061,         // array of binormals (array of W3dVectorStruct's)
+
+		W3D_CHUNK_PS2_SHADERS							=0x00000080,	// Shader info specific to the Playstation 2.
 
 		W3D_CHUNK_AABTREE									=0x00000090,	// Axis-Aligned Box Tree for hierarchical polygon culling
 			W3D_CHUNK_AABTREE_HEADER,										// catalog of the contents of the AABTree
@@ -1225,9 +1225,9 @@ const char * const SURFACE_TYPE_STRINGS[SURFACE_TYPE_MAX] =
 // boundary values for W3dMeshHeaderStruct::SortLevel
 #define SORT_LEVEL_NONE						0
 #define MAX_SORT_LEVEL						32
-#define SORT_LEVEL_BIN1						10
+#define SORT_LEVEL_BIN1						20
 #define SORT_LEVEL_BIN2						15
-#define SORT_LEVEL_BIN3						20
+#define SORT_LEVEL_BIN3						10
 
 struct W3dMeshHeader3Struct
 {
