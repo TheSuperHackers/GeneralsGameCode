@@ -198,10 +198,10 @@ void RecorderClass::logCRCMismatch( void )
 	m_file->seek(fileSize, File::seekMode::START);
 	DEBUG_ASSERTCRASH(res == fileSize, ("Could not seek to end of file!"));
 
+	m_wasDesync = TRUE;
 #if defined(RTS_DEBUG)
 	if (TheGlobalData->m_saveStats)
 	{
-		m_wasDesync = TRUE;
 		unsigned long bufSize = MAX_COMPUTERNAME_LENGTH + 1;
 		char computerName[MAX_COMPUTERNAME_LENGTH + 1];
 		if (!GetComputerName(computerName, &bufSize))
@@ -350,6 +350,18 @@ void RecorderClass::cleanUpReplayFile( void )
 #endif // DEBUG_LOGGING
 	}
 #endif
+#ifdef DEBUG_LOGGING
+	const char* logFileName = DebugGetLogFileName();
+	if (logFileName[0] == '\0')
+		return;
+
+	AsciiString targetFilepath = getReplayDir();
+	targetFilepath.concat(getLastReplayFileName());
+	targetFilepath.concat(".txt");
+
+	DEBUG_LOG(("Copy log to replayfolder to %s", targetFilepath.str()));
+	CopyFile(logFileName, targetFilepath.str(), FALSE);
+#endif // DEBUG_LOGGING
 }
 
 /**
@@ -552,6 +564,14 @@ void RecorderClass::startRecording(GameDifficulty diff, Int originalGameMode, In
 
 	// We have to make sure the replay dir exists.
 	TheFileSystem->createDirectory(filepath);
+
+#ifdef DEBUG_LOGGING
+	// Delete old logfile next to replay
+	m_fileName = getReplayDir();
+	m_fileName.concat(getLastReplayFileName());
+	m_fileName.concat(".txt");
+	DeleteFileA(m_fileName.str());
+#endif
 
 	m_fileName = getLastReplayFileName();
 	m_fileName.concat(getReplayExtention());
