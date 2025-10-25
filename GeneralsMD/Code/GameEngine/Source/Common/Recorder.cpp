@@ -1136,18 +1136,17 @@ Bool RecorderClass::replayMatchesGameVersion(AsciiString filename)
 
 Bool RecorderClass::replayMatchesGameVersion(const ReplayHeader& header)
 {
-	Bool versionStringDiff = header.versionString != TheVersion->getUnicodeVersion();
-	Bool versionTimeStringDiff = header.versionTimeString != TheVersion->getUnicodeBuildTime();
-	Bool versionNumberDiff = header.versionNumber != TheVersion->getVersionNumber();
-	Bool exeCRCDiff = header.exeCRC != TheGlobalData->m_exeCRC;
-	Bool exeDifferent = versionStringDiff || versionTimeStringDiff || versionNumberDiff || exeCRCDiff;
-	Bool iniDifferent = header.iniCRC != TheGlobalData->m_iniCRC;
-
-	if(exeDifferent || iniDifferent)
-	{
-		return FALSE;
-	}
-	return TRUE;
+	if (header.versionString != TheVersion->getUnicodeVersion())
+		return false;
+	if (header.versionTimeString != TheVersion->getUnicodeBuildTime())
+		return false;
+	if (header.versionNumber != TheVersion->getVersionNumber())
+		return false;
+	if (header.exeCRC != TheGlobalData->m_exeCRC)
+		return false;
+	if (header.iniCRC != TheGlobalData->m_iniCRC)
+		return false;
+	return true;
 }
 
 /**
