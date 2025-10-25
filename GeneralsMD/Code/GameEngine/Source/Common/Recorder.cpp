@@ -1138,8 +1138,11 @@ Bool RecorderClass::replayMatchesGameVersion(const ReplayHeader& header)
 {
 	if (header.versionString != TheVersion->getUnicodeVersion())
 		return false;
-	if (header.versionTimeString != TheVersion->getUnicodeBuildTime())
-		return false;
+
+	// TheSuperHackers @fix Don't check build time. Otherwise SH build will show warning when opening
+	// retail replays, even though it's compatible.
+	//if (header.versionTimeString != TheVersion->getUnicodeBuildTime())
+	//	return false;
 	if (header.versionNumber != TheVersion->getVersionNumber())
 		return false;
 	if (header.exeCRC != TheGlobalData->m_exeCRC)
