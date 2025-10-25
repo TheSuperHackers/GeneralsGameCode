@@ -36,15 +36,15 @@
 
 #pragma once
 
-#include "always.h"
-#include "windows.h"
-#include "windowsx.h"
-#include "vfw.h"
-
 #if defined (_MSC_VER)
 #pragma warning (push, 3)	// (gth) system headers complain at warning level 4...
 #pragma warning (pop)
 #endif
+
+#include "always.h"
+#include "windows.h"
+#include "windowsx.h"
+#include "vfw.h"
 
 // FramGrab.h: interface for the FrameGrabClass class.
 //
