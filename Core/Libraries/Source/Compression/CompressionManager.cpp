@@ -32,8 +32,6 @@
 #include "EAC/huffcodex.h"
 #include "EAC/refcodex.h"
 
-#include <string.h>
-
 
 // TheSuperHackers @todo Recover debug logging in this file?
 #define DEBUG_LOG(x) {}
