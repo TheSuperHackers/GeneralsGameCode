@@ -3866,8 +3866,11 @@ void Pathfinder::classifyFence( Object *obj, Bool insert )
 	cellBounds.lo.x = REAL_TO_INT_FLOOR((pos->x + 0.5f)/PATHFIND_CELL_SIZE_F);
 	cellBounds.lo.y = REAL_TO_INT_FLOOR((pos->y + 0.5f)/PATHFIND_CELL_SIZE_F);
 	// TheSuperHackers @fix Mauller 16/06/2025 Fixes uninitialized variables.
-	// To keep retail compatibility they need to be uninitialized in VC6 builds.
-#if !(defined(_MSC_VER) && _MSC_VER < 1300)
+	// To keep retail compatibility they need to be set to 0 in VC6 builds.
+#if RETAIL_COMPATIBLE_CRC
+	cellBounds.hi.x = 0;
+	cellBounds.hi.y = 0;
+#else
 	cellBounds.hi.x = REAL_TO_INT_CEIL((pos->x + 0.5f)/PATHFIND_CELL_SIZE_F);
 	cellBounds.hi.y = REAL_TO_INT_CEIL((pos->y + 0.5f)/PATHFIND_CELL_SIZE_F);
 #endif
