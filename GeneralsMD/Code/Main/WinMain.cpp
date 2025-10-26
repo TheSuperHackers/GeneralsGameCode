@@ -857,7 +857,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 		if(!TheGlobalData->m_headless)
 		{
-#if defined(DEBUG_LOGGING) && defined(DEBUG_CRC)
+#if defined(DEBUG_LOGGING) && defined(DEBUG_CRC) && (defined(_MSC_VER) && _MSC_VER < 1300) && RETAIL_COMPATIBLE_CRC
 			extern FILE *theLogFile;
 			if (theLogFile == NULL || NET_CRC_INTERVAL != 1)
 			{
