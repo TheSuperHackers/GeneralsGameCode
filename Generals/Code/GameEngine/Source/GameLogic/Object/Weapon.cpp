@@ -1120,8 +1120,8 @@ void WeaponTemplate::trimOldHistoricDamage() const
 
 	while (it != m_historicDamage.end())
 	{
-		UnsignedInt expirationDate = it->frame + m_historicBonusTime;
-		if (TheGameLogic->getFrame() > expirationDate || it->triggered)
+		UnsignedInt expirationFrame = it->frame + m_historicBonusTime;
+		if (TheGameLogic->getFrame() > expirationFrame || it->triggered)
 			it = m_historicDamage.erase(it);
 		else
 			++it;
