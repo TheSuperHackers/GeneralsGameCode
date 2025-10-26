@@ -1281,19 +1281,20 @@ void WeaponTemplate::processHistoricDamage(const Object* source, const Coord3D* 
 				// across units, so don't try to clear historicDamage on success in here.
 				(*it).triggered = true;
 				++count;
+
+				if (count >= m_historicBonusCount - 1)	// minus 1 since we include ourselves implicitly
+				{
+					TheWeaponStore->createAndFireTempWeapon(m_historicBonusWeapon, source, pos);
+					return;
+				}
 			}
 		}
 
-		if (count >= m_historicBonusCount - 1)	// minus 1 since we include ourselves implicitly
-			TheWeaponStore->createAndFireTempWeapon(m_historicBonusWeapon, source, pos);
-		else
-		{
-			for (HistoricWeaponDamageList::iterator it = m_historicDamage.begin(); it != m_historicDamage.end(); ++it)
-				(*it).triggered = false;
+		for (HistoricWeaponDamageList::iterator it = m_historicDamage.begin(); it != m_historicDamage.end(); ++it)
+			(*it).triggered = false;
 
-			// add AFTER checking for historic stuff
-			m_historicDamage.push_back(HistoricWeaponDamageInfo(TheGameLogic->getFrame(), *pos));
-		}
+		// add AFTER checking for historic stuff
+		m_historicDamage.push_back(HistoricWeaponDamageInfo(TheGameLogic->getFrame(), *pos));
 	}
 }
 #endif
