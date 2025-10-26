@@ -11,32 +11,32 @@ set(GAMEENGINE_SRC
 #    Include/Common/AudioRequest.h
 #    Include/Common/AudioSettings.h
     Include/Common/BattleHonors.h
-    Include/Common/BezFwdIterator.h
-    Include/Common/BezierSegment.h
-    Include/Common/BitFlags.h
+    #Include/Common/BezFwdIterator.h
+    #Include/Common/BezierSegment.h
+Include/Common/BitFlags.h
     Include/Common/BitFlagsIO.h
     Include/Common/BuildAssistant.h
-    Include/Common/CDManager.h
-    Include/Common/ClientUpdateModule.h
+    #Include/Common/CDManager.h
+    #Include/Common/ClientUpdateModule.h
     Include/Common/CommandLine.h
 #    Include/Common/crc.h
 #    Include/Common/CRCDebug.h
     Include/Common/CriticalSection.h
     Include/Common/CustomMatchPreferences.h
-    Include/Common/DamageFX.h
+Include/Common/DamageFX.h
     Include/Common/DataChunk.h
 #    Include/Common/Debug.h
-    Include/Common/Dict.h
-    Include/Common/Directory.h
+    #Include/Common/Dict.h
+    #Include/Common/Directory.h
     Include/Common/DisabledTypes.h
-    Include/Common/DiscreteCircle.h
+    #Include/Common/DiscreteCircle.h
     Include/Common/DrawModule.h
-    Include/Common/encrypt.h
+    #Include/Common/encrypt.h
     Include/Common/Energy.h
-    Include/Common/Errors.h
+    #Include/Common/Errors.h
 #    Include/Common/file.h
 #    Include/Common/FileSystem.h
-    Include/Common/FunctionLexicon.h
+    #Include/Common/FunctionLexicon.h
 #    Include/Common/GameAudio.h
     Include/Common/GameCommon.h
 #    Include/Common/GameDefines.h
@@ -45,84 +45,84 @@ set(GAMEENGINE_SRC
 #    Include/Common/GameMemory.h
 #    Include/Common/GameMusic.h
 #    Include/Common/GameSounds.h
-    Include/Common/GameSpyMiscPreferences.h
-    Include/Common/GameState.h
-    Include/Common/GameStateMap.h
+    #Include/Common/GameSpyMiscPreferences.h
+    #Include/Common/GameState.h
+    #Include/Common/GameStateMap.h
     Include/Common/GameType.h
-    Include/Common/Geometry.h
+    #Include/Common/Geometry.h
     Include/Common/GlobalData.h
-    Include/Common/Handicap.h
-    Include/Common/IgnorePreferences.h
+    #Include/Common/Handicap.h
+    #Include/Common/IgnorePreferences.h
     Include/Common/INI.h
-    Include/Common/INIException.h
+    #Include/Common/INIException.h
     Include/Common/KindOf.h
-    Include/Common/LadderPreferences.h
-    Include/Common/Language.h
-    Include/Common/LatchRestore.h
+    #Include/Common/LadderPreferences.h
+    #Include/Common/Language.h
+    #Include/Common/LatchRestore.h
     Include/Common/List.h
 #    Include/Common/LocalFile.h
 #    Include/Common/LocalFileSystem.h
     Include/Common/MapObject.h
     Include/Common/MapReaderWriterInfo.h
     Include/Common/MessageStream.h
-    Include/Common/MiniLog.h
+    #Include/Common/MiniLog.h
 #    Include/Common/MiscAudio.h
-    Include/Common/MissionStats.h
+Include/Common/MissionStats.h
     Include/Common/ModelState.h
     Include/Common/Module.h
-    Include/Common/ModuleFactory.h
+    #Include/Common/ModuleFactory.h
     Include/Common/Money.h
     Include/Common/MultiplayerSettings.h
     Include/Common/NameKeyGenerator.h
     Include/Common/ObjectStatusTypes.h
-    Include/Common/OSDisplay.h
-    Include/Common/Overridable.h
-    Include/Common/Override.h
-    Include/Common/PartitionSolver.h
-    Include/Common/PerfMetrics.h
+    #Include/Common/OSDisplay.h
+    #Include/Common/Overridable.h
+    #Include/Common/Override.h
+    #Include/Common/PartitionSolver.h
+    #Include/Common/PerfMetrics.h
     Include/Common/PerfTimer.h
     Include/Common/Player.h
-    Include/Common/PlayerList.h
+Include/Common/PlayerList.h
     Include/Common/PlayerTemplate.h
-    Include/Common/ProductionPrerequisite.h
-    Include/Common/QuickmatchPreferences.h
-    Include/Common/QuotedPrintable.h
+Include/Common/ProductionPrerequisite.h
+    #Include/Common/QuickmatchPreferences.h
+    #Include/Common/QuotedPrintable.h
     Include/Common/Radar.h
 #    Include/Common/RAMFile.h
 #    Include/Common/RandomValue.h
     Include/Common/Recorder.h
 #    Include/Common/ReplaySimulation.h
     Include/Common/Registry.h
-    Include/Common/ResourceGatheringManager.h
-    Include/Common/Science.h
-    Include/Common/ScoreKeeper.h
+    #Include/Common/ResourceGatheringManager.h
+    #Include/Common/Science.h
+    #Include/Common/ScoreKeeper.h
     Include/Common/SkirmishBattleHonors.h
     Include/Common/SkirmishPreferences.h
-    Include/Common/Snapshot.h
+    #Include/Common/Snapshot.h
     Include/Common/SparseMatchFinder.h
     Include/Common/SpecialPower.h
     Include/Common/SpecialPowerMaskType.h
     Include/Common/SpecialPowerType.h
     Include/Common/StackDump.h
     Include/Common/StateMachine.h
-    Include/Common/StatsCollector.h
-    Include/Common/STLTypedefs.h
+    #Include/Common/StatsCollector.h
+Include/Common/STLTypedefs.h
 #    Include/Common/StreamingArchiveFile.h
     Include/Common/SubsystemInterface.h
-    Include/Common/SystemInfo.h
+    #Include/Common/SystemInfo.h
     Include/Common/Team.h
-    Include/Common/Terrain.h
+    #Include/Common/Terrain.h
     Include/Common/TerrainTypes.h
-    Include/Common/Thing.h
+    #Include/Common/Thing.h
     Include/Common/ThingFactory.h
-    Include/Common/ThingSort.h
+Include/Common/ThingSort.h
     Include/Common/ThingTemplate.h
-    Include/Common/TunnelTracker.h
+    #Include/Common/TunnelTracker.h
 #    Include/Common/UnicodeString.h
     Include/Common/UnitTimings.h
     Include/Common/Upgrade.h
     Include/Common/UserPreferences.h
-    Include/Common/version.h
+    #Include/Common/version.h
     Include/Common/WellKnownKeys.h
 #    Include/Common/WorkerProcess.h
 #    Include/Common/Xfer.h
@@ -519,124 +519,124 @@ set(GAMEENGINE_SRC
 #    Source/Common/Audio/GameSounds.cpp
     #Source/Common/Audio/simpleplayer.cpp # unused
     #Source/Common/Audio/urllaunch.cpp # unused
-    Source/Common/Bezier/BezFwdIterator.cpp
-    Source/Common/Bezier/BezierSegment.cpp
+    #Source/Common/Bezier/BezFwdIterator.cpp
+    #Source/Common/Bezier/BezierSegment.cpp
     Source/Common/BitFlags.cpp
     Source/Common/CommandLine.cpp
 #    Source/Common/crc.cpp
 #    Source/Common/CRCDebug.cpp
     Source/Common/DamageFX.cpp
-    Source/Common/Dict.cpp
-    Source/Common/DiscreteCircle.cpp
+    #Source/Common/Dict.cpp
+    #Source/Common/DiscreteCircle.cpp
     Source/Common/GameEngine.cpp
     Source/Common/GameLOD.cpp
-    Source/Common/GameMain.cpp
+    #Source/Common/GameMain.cpp
     Source/Common/GlobalData.cpp
     Source/Common/INI/INI.cpp
-    Source/Common/INI/INIAiData.cpp
-    Source/Common/INI/INIAnimation.cpp
+    #Source/Common/INI/INIAiData.cpp
+    #Source/Common/INI/INIAnimation.cpp
 #    Source/Common/INI/INIAudioEventInfo.cpp
-    Source/Common/INI/INICommandButton.cpp
-    Source/Common/INI/INICommandSet.cpp
-    Source/Common/INI/INIControlBarScheme.cpp
-    Source/Common/INI/INICrate.cpp
-    Source/Common/INI/INIDamageFX.cpp
-    Source/Common/INI/INIDrawGroupInfo.cpp
-    Source/Common/INI/INIGameData.cpp
+    #Source/Common/INI/INICommandButton.cpp
+    #Source/Common/INI/INICommandSet.cpp
+    #Source/Common/INI/INIControlBarScheme.cpp
+    #Source/Common/INI/INICrate.cpp
+Source/Common/INI/INIDamageFX.cpp
+    #Source/Common/INI/INIDrawGroupInfo.cpp
+    #Source/Common/INI/INIGameData.cpp
     Source/Common/INI/INIMapCache.cpp
-    Source/Common/INI/INIMapData.cpp
+    #Source/Common/INI/INIMapData.cpp
     Source/Common/INI/INIMappedImage.cpp
 #    Source/Common/INI/INIMiscAudio.cpp
-    Source/Common/INI/INIModel.cpp
+    #Source/Common/INI/INIModel.cpp
     Source/Common/INI/INIMultiplayer.cpp
-    Source/Common/INI/INIObject.cpp
-    Source/Common/INI/INIParticleSys.cpp
-    Source/Common/INI/INISpecialPower.cpp
-    Source/Common/INI/INITerrain.cpp
-    Source/Common/INI/INITerrainBridge.cpp
-    Source/Common/INI/INITerrainRoad.cpp
-    Source/Common/INI/INIUpgrade.cpp
+    #Source/Common/INI/INIObject.cpp
+    #Source/Common/INI/INIParticleSys.cpp
+    #Source/Common/INI/INISpecialPower.cpp
+    #Source/Common/INI/INITerrain.cpp
+    #Source/Common/INI/INITerrainBridge.cpp
+    #Source/Common/INI/INITerrainRoad.cpp
+    #Source/Common/INI/INIUpgrade.cpp
 #    Source/Common/INI/INIVideo.cpp
-    Source/Common/INI/INIWater.cpp
-    Source/Common/INI/INIWeapon.cpp
-    Source/Common/INI/INIWebpageURL.cpp
-    Source/Common/Language.cpp
+    #Source/Common/INI/INIWater.cpp
+    #Source/Common/INI/INIWeapon.cpp
+    #Source/Common/INI/INIWebpageURL.cpp
+    #Source/Common/Language.cpp
     Source/Common/MessageStream.cpp
-    Source/Common/MiniLog.cpp
+    #Source/Common/MiniLog.cpp
     Source/Common/MultiplayerSettings.cpp
     Source/Common/NameKeyGenerator.cpp
-    Source/Common/PartitionSolver.cpp
+    #Source/Common/PartitionSolver.cpp
     Source/Common/PerfTimer.cpp
 #    Source/Common/RandomValue.cpp
     Source/Common/Recorder.cpp
     Source/Common/RTS/ActionManager.cpp
     Source/Common/RTS/Energy.cpp
-    Source/Common/RTS/Handicap.cpp
-    Source/Common/RTS/MissionStats.cpp
+    #Source/Common/RTS/Handicap.cpp
+Source/Common/RTS/MissionStats.cpp
     Source/Common/RTS/Money.cpp
     Source/Common/RTS/Player.cpp
-    Source/Common/RTS/PlayerList.cpp
+Source/Common/RTS/PlayerList.cpp
     Source/Common/RTS/PlayerTemplate.cpp
     Source/Common/RTS/ProductionPrerequisite.cpp
-    Source/Common/RTS/ResourceGatheringManager.cpp
-    Source/Common/RTS/Science.cpp
-    Source/Common/RTS/ScoreKeeper.cpp
+    #Source/Common/RTS/ResourceGatheringManager.cpp
+    #Source/Common/RTS/Science.cpp
+    #Source/Common/RTS/ScoreKeeper.cpp
     Source/Common/RTS/SpecialPower.cpp
     Source/Common/RTS/Team.cpp
     Source/Common/RTS/TunnelTracker.cpp
     Source/Common/SkirmishBattleHonors.cpp
     Source/Common/StateMachine.cpp
-    Source/Common/StatsCollector.cpp
+    #Source/Common/StatsCollector.cpp
 #    Source/Common/System/ArchiveFile.cpp
 #    Source/Common/System/ArchiveFileSystem.cpp
 #    Source/Common/System/AsciiString.cpp
     Source/Common/System/BuildAssistant.cpp
-    Source/Common/System/CDManager.cpp
-    Source/Common/System/CriticalSection.cpp
-    Source/Common/System/DataChunk.cpp
+    #Source/Common/System/CDManager.cpp
+    #Source/Common/System/CriticalSection.cpp
+    #Source/Common/System/DataChunk.cpp
 #    Source/Common/System/Debug.cpp
-    Source/Common/System/Directory.cpp
+    #Source/Common/System/Directory.cpp
     Source/Common/System/DisabledTypes.cpp
-    Source/Common/System/encrypt.cpp
+    #Source/Common/System/encrypt.cpp
 #    Source/Common/System/File.cpp
 #    Source/Common/System/FileSystem.cpp
     Source/Common/System/FunctionLexicon.cpp
     Source/Common/System/GameCommon.cpp
     #Source/Common/System/GameMemory.cpp
-    Source/Common/System/GameType.cpp
-    Source/Common/System/Geometry.cpp
+    #Source/Common/System/GameType.cpp
+    #Source/Common/System/Geometry.cpp
     Source/Common/System/KindOf.cpp
-    Source/Common/System/List.cpp
+    #Source/Common/System/List.cpp
 #    Source/Common/System/LocalFile.cpp
 #    Source/Common/System/LocalFileSystem.cpp
     #Source/Common/System/MemoryInit.cpp
     Source/Common/System/ObjectStatusTypes.cpp
-    Source/Common/System/QuotedPrintable.cpp
+    #Source/Common/System/QuotedPrintable.cpp
     Source/Common/System/Radar.cpp
 #    Source/Common/System/RAMFile.cpp
     Source/Common/System/registry.cpp
     Source/Common/System/SaveGame/GameState.cpp
     Source/Common/System/SaveGame/GameStateMap.cpp
-    Source/Common/System/Snapshot.cpp
+    #Source/Common/System/Snapshot.cpp
     Source/Common/System/StackDump.cpp
 #    Source/Common/System/StreamingArchiveFile.cpp
     Source/Common/System/SubsystemInterface.cpp
-    Source/Common/System/Trig.cpp
+    #Source/Common/System/Trig.cpp
 #    Source/Common/System/UnicodeString.cpp
     Source/Common/System/Upgrade.cpp
 #    Source/Common/System/Xfer.cpp
 #    Source/Common/System/XferCRC.cpp
 #    Source/Common/System/XferLoad.cpp
 #    Source/Common/System/XferSave.cpp
-    Source/Common/TerrainTypes.cpp
-    Source/Common/Thing/DrawModule.cpp
+Source/Common/TerrainTypes.cpp
+    #Source/Common/Thing/DrawModule.cpp
     Source/Common/Thing/Module.cpp
     Source/Common/Thing/ModuleFactory.cpp
-    Source/Common/Thing/Thing.cpp
+Source/Common/Thing/Thing.cpp
     Source/Common/Thing/ThingFactory.cpp
     Source/Common/Thing/ThingTemplate.cpp
     Source/Common/UserPreferences.cpp
-    Source/Common/version.cpp
+    #Source/Common/version.cpp
 #    Source/Common/WorkerProcess.cpp
     Source/GameClient/ClientInstance.cpp
     Source/GameClient/Color.cpp
