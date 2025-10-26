@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef CARDINALSPLINE_H
-#define CARDINALSPLINE_H
 
 #include "hermitespline.h"
 
@@ -66,8 +60,8 @@ public:
 	virtual bool								Save(ChunkSaveClass &csave);
 	virtual bool								Load(ChunkLoadClass &cload);
 
-protected:	
-	
+protected:
+
 	DynamicVectorClass<float>	Tightness;
 };
 
@@ -94,11 +88,7 @@ public:
 	virtual bool								Save(ChunkSaveClass &csave);
 	virtual bool								Load(ChunkLoadClass &cload);
 
-protected:	
-	
+protected:
+
 	DynamicVectorClass<float>	Tightness;
 };
-
-
-#endif
-

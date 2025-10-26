@@ -22,11 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef __W3DWaterTracks_H_
-#define __W3DWaterTracks_H_
 
 enum waveType CPP_11(: Int);	//forward reference
 
@@ -36,7 +32,7 @@ enum waveType CPP_11(: Int);	//forward reference
 	to be managed/accessed only by the WaterTracksRenderObjClassSystem
 */
 class WaterTracksObj
-{	
+{
 	friend class WaterTracksRenderSystem;
 
 public:
@@ -141,6 +137,4 @@ protected:
 	Int		m_batchStart;			///< start of unused vertices in vertex buffer
 	Real	m_level;				///< water level
 	void releaseTrack( WaterTracksObj *mod );	///<returns track object to free store.
-};  // end class WaterTracksRenderObjClassSystem
-
-#endif  //__W3DWaterTracks_H_
+};

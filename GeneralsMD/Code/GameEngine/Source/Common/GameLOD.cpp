@@ -41,20 +41,15 @@
 #define DEFINE_PARTICLE_SYSTEM_NAMES
 #include "GameClient/ParticleSys.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #define PROFILE_ERROR_LIMIT	0.94f	//fraction of profiled result needed to get a match.  Allows some room for error/fluctuation.
 
 //Hack to get access to a static method on the W3DDevice side. -MW
-extern Bool testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType, Int *cpuFreq, Int *numRAM, Real *intBenchIndex, Real *floatBenchIndex, Real *memBenchIndex);
+extern Bool testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType, Int *cpuFreq, MemValueType *numRAM, Real *intBenchIndex, Real *floatBenchIndex, Real *memBenchIndex);
 
 GameLODManager *TheGameLODManager=NULL;
 
-static const FieldParse TheStaticGameLODFieldParseTable[] = 
+static const FieldParse TheStaticGameLODFieldParseTable[] =
 {
 	{ "MinimumFPS",						INI::parseInt,					NULL,	offsetof( StaticGameLODInfo, m_minFPS)},
 	{ "MinimumProcessorFps",			INI::parseInt,					NULL,	offsetof( StaticGameLODInfo, m_minProcessorFPS)},
@@ -77,13 +72,15 @@ static const FieldParse TheStaticGameLODFieldParseTable[] =
 	{ "TextureReductionFactor",		INI::parseInt,					NULL,	offsetof( StaticGameLODInfo, m_textureReduction ) },
 };
 
-static const char *StaticGameLODNames[]=
+static const char *const StaticGameLODNames[]=
 {
 	"Low",
 	"Medium",
 	"High",
+	"VeryHigh",
 	"Custom"
 };
+static_assert(ARRAY_SIZE(StaticGameLODNames) == STATIC_GAME_LOD_COUNT, "Incorrect array size");
 
 StaticGameLODInfo::StaticGameLODInfo(void)
 {
@@ -112,7 +109,7 @@ StaticGameLODInfo::StaticGameLODInfo(void)
 	m_useTrees = TRUE;
 }
 
-static const FieldParse TheDynamicGameLODFieldParseTable[] = 
+static const FieldParse TheDynamicGameLODFieldParseTable[] =
 {
 	{ "MinimumFPS",						INI::parseInt,					NULL,	offsetof( DynamicGameLODInfo, m_minFPS)},
 	{ "ParticleSkipMask",				INI::parseInt,					NULL,	offsetof( DynamicGameLODInfo, m_dynamicParticleSkipMask)},
@@ -122,13 +119,14 @@ static const FieldParse TheDynamicGameLODFieldParseTable[] =
 	{ "MinParticleSkipPriority",		INI::parseIndexList, ParticlePriorityNames,	offsetof( DynamicGameLODInfo, m_minDynamicParticleSkipPriority)},
 };
 
-static const char *DynamicGameLODNames[]=
+static const char *const DynamicGameLODNames[]=
 {
 	"Low",
 	"Medium",
 	"High",
 	"VeryHigh"
 };
+static_assert(ARRAY_SIZE(DynamicGameLODNames) == DYNAMIC_GAME_LOD_COUNT, "Incorrect array size");
 
 DynamicGameLODInfo::DynamicGameLODInfo(void)
 {
@@ -141,16 +139,18 @@ DynamicGameLODInfo::DynamicGameLODInfo(void)
 };
 
 //Keep this in sync with enum in GameLOD.h
-static const char *CPUNames[] = 
+static const char *const CPUNames[] =
 {
 	"XX","P3", "P4","K7", NULL
 };
+static_assert(ARRAY_SIZE(CPUNames) == CPU_MAX + 1, "Incorrect array size");
 
 //Keep this in sync with enum in GameLOD.h
-static const char *VideoNames[] = 
+static const char *const VideoNames[] =
 {
 	"XX","V2","V3","V4","V5","TNT","TNT2","GF2","R100","PS11","GF3","GF4","PS14","R200","PS20","R300", NULL
 };
+static_assert(ARRAY_SIZE(VideoNames) == DC_MAX + 1, "Incorrect array size");
 
 void parseReallyLowMHz(INI* ini)
 {
@@ -229,11 +229,12 @@ GameLODManager::GameLODManager(void)
 	m_memBenchIndex=0;
 	m_compositeBenchIndex=0;
 	m_numBenchProfiles=0;
-	m_currentTextureReduction=0;
 	m_reallyLowMHz = 400;
-	
+
 	for (Int i=0; i<STATIC_GAME_LOD_CUSTOM; i++)
 		m_numLevelPresets[i]=0;
+
+	initStaticLODLevels();
 };
 
 GameLODManager::~GameLODManager()
@@ -241,27 +242,60 @@ GameLODManager::~GameLODManager()
 
 }
 
+void GameLODManager::initStaticLODLevels()
+{
+	// TheSuperHackers @info Initialize new system specs in this function when we cannot rely on new edits to GameLOD.ini.
+
+	StaticGameLODInfo& veryhigh = m_staticGameLODInfo[STATIC_GAME_LOD_VERY_HIGH];
+	veryhigh.m_minFPS = 55;
+	veryhigh.m_minProcessorFPS = 59;
+	veryhigh.m_sampleCount2D = 6;
+	veryhigh.m_sampleCount3D = 24;
+	veryhigh.m_streamCount = 2;
+	veryhigh.m_maxParticleCount = 5000;
+	veryhigh.m_useShadowVolumes = TRUE;
+	veryhigh.m_useShadowDecals = TRUE;
+	veryhigh.m_useCloudMap = TRUE;
+	veryhigh.m_useLightMap = TRUE;
+	veryhigh.m_showSoftWaterEdge = TRUE;
+	veryhigh.m_maxTankTrackEdges = 100;
+	veryhigh.m_maxTankTrackOpaqueEdges = 25;
+	veryhigh.m_maxTankTrackFadeDelay = 60000;
+	veryhigh.m_useBuildupScaffolds = TRUE;
+	veryhigh.m_useTreeSway = TRUE;
+	veryhigh.m_useEmissiveNightMaterials = TRUE;
+	veryhigh.m_useHeatEffects = TRUE;
+	veryhigh.m_textureReduction = 0;
+	veryhigh.m_useFpsLimit = TRUE;
+	veryhigh.m_enableDynamicLOD = TRUE;
+	veryhigh.m_useTrees = TRUE;
+}
+
 BenchProfile *GameLODManager::newBenchProfile(void)
 {
 	if (m_numBenchProfiles < MAX_BENCH_PROFILES)
-	{	
+	{
 		m_numBenchProfiles++;
 		return &m_benchProfiles[m_numBenchProfiles-1];
 	}
 
-	DEBUG_CRASH(( "GameLODManager::newBenchProfile - Too many profiles defined\n"));
+	DEBUG_CRASH(( "GameLODManager::newBenchProfile - Too many profiles defined"));
 	return NULL;
 }
 
 LODPresetInfo *GameLODManager::newLODPreset(StaticGameLODLevel index)
 {
-	if (m_numLevelPresets[index] < MAX_LOD_PRESETS_PER_LEVEL)
-	{	
-		m_numLevelPresets[index]++;
-		return &m_lodPresets[index][m_numLevelPresets[index]-1];
+	if (index >= 0 && index < STATIC_GAME_LOD_COUNT)
+	{
+		if (m_numLevelPresets[index] < MAX_LOD_PRESETS_PER_LEVEL)
+		{
+			m_numLevelPresets[index]++;
+			return &m_lodPresets[index][m_numLevelPresets[index]-1];
+		}
+
+		DEBUG_CRASH(( "GameLODManager::newLODPreset - Too many presets defined for '%s'", TheGameLODManager->getStaticGameLODLevelName(index)));
 	}
 
-	DEBUG_CRASH(( "GameLODManager::newLODPreset - Too many presets defined for '%s'\n", TheGameLODManager->getStaticGameLODLevelName(index)));
 	return NULL;
 }
 
@@ -269,10 +303,10 @@ void GameLODManager::init(void)
 {
 	INI ini;
 	//Get Presets for each LOD level.
-	ini.load( AsciiString( "Data\\INI\\GameLOD.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\GameLOD" ), INI_LOAD_OVERWRITE, NULL );
 
 	//Get presets for each known hardware configuration
-	ini.load( AsciiString( "Data\\INI\\GameLODPresets.ini"), INI_LOAD_OVERWRITE, NULL);
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\GameLODPresets"), INI_LOAD_OVERWRITE, NULL);
 
 	//Get Presets for custom LOD level by pulling them out of initial globaldata (which should
 	//have all settings already applied).
@@ -297,7 +331,7 @@ void GameLODManager::init(void)
 		{
 			//need to run the benchmark
 			testMinimumRequirements(NULL,NULL,NULL,NULL,&m_intBenchIndex,&m_floatBenchIndex,&m_memBenchIndex);
-			
+
 			if (TheGlobalData->m_forceBenchmark)
 			{	//we want to see the numbers.  So dump them to a logfile.
 				FILE *fp=fopen("Benchmark.txt","w");
@@ -318,8 +352,8 @@ void GameLODManager::init(void)
 			{
 				//Check if we're within 5% of the performance of this cpu profile.
 				if (m_intBenchIndex/prof->m_intBenchIndex >= PROFILE_ERROR_LIMIT && m_floatBenchIndex/prof->m_floatBenchIndex >= PROFILE_ERROR_LIMIT && m_memBenchIndex/prof->m_memBenchIndex >= PROFILE_ERROR_LIMIT)
-				{	
-					for (Int i=STATIC_GAME_LOD_HIGH; i >= STATIC_GAME_LOD_LOW; i--)
+				{
+					for (Int i=STATIC_GAME_LOD_LAST; i >= STATIC_GAME_LOD_FIRST; i--)
 					{
 						LODPresetInfo *preset=&m_lodPresets[i][0];	//pointer to first preset at this LOD level.
 						for (Int j=0; j<m_numLevelPresets[i]; j++)
@@ -338,8 +372,8 @@ void GameLODManager::init(void)
 				}
 				prof++;
 			}
-		}	//finding equivalent CPU to unkown cpu.
-	}	//find data needed to determine m_idealDetailLevel
+		}
+	}
 
 	if (userSetDetail == STATIC_GAME_LOD_CUSTOM)
 	{
@@ -394,7 +428,7 @@ Int GameLODManager::getStaticGameLODIndex(AsciiString name)
 			return i;
 	}
 
-	DEBUG_CRASH(( "GameLODManager::getGameLODIndex - Invalid LOD name '%s'\n", name.str() ));
+	DEBUG_CRASH(( "GameLODManager::getGameLODIndex - Invalid LOD name '%s'", name.str() ));
 	return STATIC_GAME_LOD_UNKNOWN;
 }
 
@@ -406,7 +440,7 @@ void INI::parseStaticGameLODDefinition( INI* ini )
 
 	// read the name
 	c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	if( TheGameLODManager )
 	{
@@ -431,7 +465,7 @@ void INI::parseStaticGameLODLevel( INI* ini, void * , void *store, const void*)
 			return;
 		}
 
-	DEBUG_CRASH(("invalid GameLODLevel token %s -- expected LOW/MEDIUM/HIGH\n",tok));
+	DEBUG_CRASH(("invalid GameLODLevel token %s -- expected LOW/MEDIUM/HIGH",tok));
 	throw INI_INVALID_DATA;
 }
 
@@ -442,7 +476,7 @@ const char *GameLODManager::getStaticGameLODLevelName(StaticGameLODLevel level)
 
 /**Function which calculates the recommended LOD level for current hardware
 configuration.*/
-StaticGameLODLevel GameLODManager::findStaticLODLevel(void)
+StaticGameLODLevel GameLODManager::getRecommendedStaticLODLevel(void)
 {
 	//Check if we have never done the test on current system
 	if (m_idealDetailLevel == STATIC_GAME_LOD_UNKNOWN)
@@ -457,7 +491,7 @@ StaticGameLODLevel GameLODManager::findStaticLODLevel(void)
 
 		Int numMBRam=m_numRAM/(1024*1024);
 
-		for (Int i=STATIC_GAME_LOD_HIGH; i >= STATIC_GAME_LOD_LOW; i--)
+		for (Int i=STATIC_GAME_LOD_LAST; i >= STATIC_GAME_LOD_FIRST; i--)
 		{
 				LODPresetInfo *preset=&m_lodPresets[i][0];	//pointer to first preset at this LOD level.
 				for (Int j=0; j<m_numLevelPresets[i]; j++)
@@ -493,7 +527,7 @@ StaticGameLODLevel GameLODManager::findStaticLODLevel(void)
 Bool GameLODManager::setStaticLODLevel(StaticGameLODLevel level)
 {
 	if (!TheGlobalData->m_enableStaticLOD)
-	{	m_currentStaticLOD = STATIC_GAME_LOD_CUSTOM; 
+	{	m_currentStaticLOD = STATIC_GAME_LOD_CUSTOM;
 		return FALSE;
 	}
 
@@ -525,16 +559,23 @@ void GameLODManager::applyStaticLODLevel(StaticGameLODLevel level)
 	StaticGameLODInfo *lodInfo=&m_staticGameLODInfo[level];
 	StaticGameLODInfo *prevLodInfo=&prevLodBackup;
 
-	Int requestedTextureReduction = 0;
-	Bool requestedTrees = m_memPassed;	//only use trees if memory requirement passed.
+	Int requestedTextureReduction;
+	Bool requestedTrees;
 	if (level == STATIC_GAME_LOD_CUSTOM)
-	{	requestedTextureReduction = lodInfo->m_textureReduction;
+	{
+		requestedTextureReduction = lodInfo->m_textureReduction;
 		requestedTrees = lodInfo->m_useTrees;
 	}
 	else
-	if (level >= STATIC_GAME_LOD_LOW)
-	{	//normal non-custom level gets texture reduction based on recommendation
-		requestedTextureReduction = getRecommendedTextureReduction();
+	{
+		//normal non-custom level gets texture reduction based on recommendation
+		StaticGameLODLevel textureLevel = getRecommendedTextureLODLevel();
+		if (textureLevel == STATIC_GAME_LOD_UNKNOWN)
+			textureLevel = level;
+		requestedTextureReduction = getLevelTextureReduction(textureLevel);
+
+		//only use trees if memory requirement passed.
+		requestedTrees = m_memPassed;
 	}
 
 	if (TheGlobalData)
@@ -543,13 +584,7 @@ void GameLODManager::applyStaticLODLevel(StaticGameLODLevel level)
 		TheWritableGlobalData->m_useShadowVolumes=lodInfo->m_useShadowVolumes;
 		TheWritableGlobalData->m_useShadowDecals=lodInfo->m_useShadowDecals;
 
-		//Check if texture resolution changed.  No need to apply when current is unknown because display will do it
-		if (requestedTextureReduction != m_currentTextureReduction)
-		{
-				TheWritableGlobalData->m_textureReductionFactor = requestedTextureReduction;
-				if (TheGameClient)
-					TheGameClient->adjustLOD(0);	//apply the new setting stored in globaldata
-		}
+		TheWritableGlobalData->m_textureReductionFactor = requestedTextureReduction;
 
 		//Check if shadow state changed
 		if (m_currentStaticLOD == STATIC_GAME_LOD_UNKNOWN	||
@@ -582,13 +617,17 @@ void GameLODManager::applyStaticLODLevel(StaticGameLODLevel level)
 		TheWritableGlobalData->m_enableDynamicLOD = lodInfo->m_enableDynamicLOD;
 		TheWritableGlobalData->m_useFpsLimit = lodInfo->m_useFpsLimit;
 		TheWritableGlobalData->m_useTrees = requestedTrees;
+
+		if (!m_memPassed || isReallyLowMHz()) {
+			TheWritableGlobalData->m_shellMapOn = false;
+		}
 	}
-	if (!m_memPassed || isReallyLowMHz()) {
-		TheWritableGlobalData->m_shellMapOn = false;
-	}
+
 	if (TheTerrainVisual)
 		TheTerrainVisual->setTerrainTracksDetail();
 
+	if (TheGameClient)
+		TheGameClient->setTextureLOD(requestedTextureReduction);
 }
 
 /**Parse a description of all the LOD settings for a given detail level*/
@@ -599,7 +638,7 @@ void INI::parseDynamicGameLODDefinition( INI* ini )
 
 	// read the name
 	c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	if( TheGameLODManager )
 	{
@@ -624,7 +663,7 @@ void INI::parseDynamicGameLODLevel( INI* ini, void * , void *store, const void*)
 			return;
 		}
 
-	DEBUG_CRASH(("invalid GameLODLevel token %s -- expected LOW/MEDIUM/HIGH\n",tok));
+	DEBUG_CRASH(("invalid GameLODLevel token %s -- expected LOW/MEDIUM/HIGH",tok));
 	throw INI_INVALID_DATA;
 }
 
@@ -637,7 +676,7 @@ Int GameLODManager::getDynamicGameLODIndex(AsciiString name)
 			return i;
 	}
 
-	DEBUG_CRASH(( "GameLODManager::getGameLODIndex - Invalid LOD name '%s'\n", name.str() ));
+	DEBUG_CRASH(( "GameLODManager::getGameLODIndex - Invalid LOD name '%s'", name.str() ));
 	return STATIC_GAME_LOD_UNKNOWN;
 }
 
@@ -687,13 +726,36 @@ void GameLODManager::applyDynamicLODLevel(DynamicGameLODLevel level)
 
 Int GameLODManager::getRecommendedTextureReduction(void)
 {
-	if (m_idealDetailLevel == STATIC_GAME_LOD_UNKNOWN)
-		findStaticLODLevel();	//it was never tested, so test now.
+	StaticGameLODLevel level = getRecommendedTextureLODLevel();
 
-	if (!m_memPassed)	//if they have < 256 MB, force them to low res textures.
-		return m_staticGameLODInfo[STATIC_GAME_LOD_LOW].m_textureReduction;
+	if (level == STATIC_GAME_LOD_UNKNOWN)
+	{
+		level = getStaticLODLevel();
+	}
+	return getLevelTextureReduction(level);
+}
 
-	return m_staticGameLODInfo[m_idealDetailLevel].m_textureReduction;
+StaticGameLODLevel GameLODManager::getRecommendedTextureLODLevel()
+{
+	// TheSuperHackers @bugfix xezon 24/09/2025 Disables the recommended static LOD level for texture reduction
+	// because the benchmark code always generates a low level for it. Can revisit if the benchmarking is changed.
+	constexpr const Bool UseRecommendedStaticLODLevel = FALSE;
+
+	StaticGameLODLevel level = STATIC_GAME_LOD_LOW;
+
+	// Force low res textures if user has less than 256 MB.
+	if (m_memPassed)
+	{
+		if constexpr (UseRecommendedStaticLODLevel)
+		{
+			level = getRecommendedStaticLODLevel();
+		}
+		else
+		{
+			level = STATIC_GAME_LOD_UNKNOWN;
+		}
+	}
+	return level;
 }
 
 Int GameLODManager::getLevelTextureReduction(StaticGameLODLevel level)
@@ -702,6 +764,6 @@ Int GameLODManager::getLevelTextureReduction(StaticGameLODLevel level)
 }
 
 Bool GameLODManager::didMemPass( void )
-{ 
-	return m_memPassed;	
+{
+	return m_memPassed;
 }

@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __PEERTHREAD_H__
-#define __PEERTHREAD_H__
-
 #include "gamespy/peer/peer.h"
 #include "GameNetwork/NetworkDefs.h"
 
@@ -76,7 +73,7 @@ public:
 	std::string password;
 	std::string email;
 	std::string id;
-	
+
 	// gameopts
 	std::string options; // full string for UTMs
 	std::string ladderIP;
@@ -97,7 +94,7 @@ public:
 		{
 			Int id;
 		} groupRoom;
-		
+
 		struct
 		{
 			Bool restrictGameList;
@@ -196,7 +193,6 @@ enum DisconnectReason CPP_11(: Int)
 	DISCONNECT_GP_NEWUSER_BAD_PASSWORD,
 	DISCONNECT_GP_NEWPROFILE_BAD_NICK,
 	DISCONNECT_GP_NEWPROFILE_BAD_OLD_NICK,
-	DISCONNECT_MAX,
 };
 
 enum QMStatus CPP_11(: Int)
@@ -289,12 +285,12 @@ public:
 			Int id;
 			Bool ok;
 		} joinGroupRoom;
-		
+
 		struct
 		{
 			Int result;
 		} createStagingRoom;
-		
+
 		struct
 		{
 			Int id;
@@ -302,7 +298,7 @@ public:
 			Bool isHostPresent;
 			Int result; // for failures
 		} joinStagingRoom;
-		
+
 		struct
 		{
 			Bool isPrivate;
@@ -386,5 +382,3 @@ public:
 };
 
 extern GameSpyPeerMessageQueueInterface *TheGameSpyPeerMessageQueue;
-
-#endif // __PEERTHREAD_H__

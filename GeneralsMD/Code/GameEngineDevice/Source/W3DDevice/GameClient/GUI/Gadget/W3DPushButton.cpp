@@ -25,12 +25,12 @@
 
 // FILE: W3DPushButton.cpp ////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -58,11 +58,6 @@
 #include "W3DDevice/GameClient/W3DGadget.h"
 
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off) 
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -106,17 +101,17 @@ static void drawButtonText( GameWindow *window, WinInstanceData *instData )
 	{
 		textColor = window->winGetDisabledTextColor();
 		dropColor = window->winGetDisabledTextBorderColor();
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		textColor = window->winGetHiliteTextColor();
 		dropColor = window->winGetHiliteTextBorderColor();
-	}  // end else if, hilited
+	}
 	else
 	{
 		textColor = window->winGetEnabledTextColor();
 		dropColor = window->winGetEnabledTextBorderColor();
-	}  // end enabled only
+	}
 
 	// set our font to that of our parent if not the same
 	if( text->getFont() != window->winGetFont() )
@@ -141,7 +136,7 @@ static void drawButtonText( GameWindow *window, WinInstanceData *instData )
 	// draw it
 	text->draw( textPos.x, textPos.y, textColor, dropColor );
 
-}  // end drawButtonText
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -177,7 +172,7 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 			border		= GadgetButtonGetDisabledBorderColor( window );
 		}
 
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
@@ -192,7 +187,7 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 			border		= GadgetButtonGetHiliteBorderColor( window );
 		}
 
-	}  // end else if, hilited and enabled
+	}
 	else
 	{
 
@@ -207,7 +202,7 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 			border		= GadgetButtonGetEnabledBorderColor( window );
 		}
 
-	}  // end else, enabled only
+	}
 
 	// compute draw position
 	start.x = origin.x;
@@ -222,7 +217,7 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 		TheWindowManager->winOpenRect( border, WIN_DRAW_LINE_WIDTH,
 																	 start.x, start.y, end.x, end.y );
 
-	}  // end if
+	}
 
 	if( color != WIN_COLOR_UNDEFINED )
 	{
@@ -235,7 +230,7 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 		TheWindowManager->winFillRect( color, WIN_DRAW_LINE_WIDTH,
 																	 start.x, start.y, end.x, end.y );
 
-	}  // end if
+	}
 
 	// draw the button text
 	if( instData->getTextLength() )
@@ -246,7 +241,7 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 	{
 		TheDisplay->drawVideoBuffer( instData->m_videoBuffer, origin.x, origin.y, origin.x + size.x, origin.y + size.y );
 	}
-	
+
 	PushButtonData *pData = (PushButtonData *)window->winGetUserData();
 	if( pData )
 	{
@@ -269,14 +264,14 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 			pData->drawClock = NO_CLOCK;
 			window->winSetUserData(pData);
 		}
-		
+
 		if( pData->drawBorder && pData->colorBorder != GAME_COLOR_UNDEFINED )
 		{
 			TheDisplay->drawOpenRect(origin.x -1, origin.y - 1, size.x + 2, size.y + 2,1 , pData->colorBorder);
 		}
 	}
 
-}  // end W3DGadgetPushButtonDraw
+}
 
 
 
@@ -284,12 +279,12 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 // W3DGadgetPushButtonImageDraw ===============================================
 /** Draw pushbutton with user supplied images */
 //=============================================================================
-void W3DGadgetPushButtonImageDraw( GameWindow *window, 
+void W3DGadgetPushButtonImageDraw( GameWindow *window,
 																	 WinInstanceData *instData )
 {
 	// if we return NULL then we'll call the one picture drawing code, if we return a value
 	// then we'll call the 3 picture drawing code
-	if( GadgetButtonGetMiddleEnabledImage( window ) ) 
+	if( GadgetButtonGetMiddleEnabledImage( window ) )
 	{
 		if( BitIsSet( instData->getState(), WIN_STATUS_USE_OVERLAY_STATES ) )
 		{
@@ -315,7 +310,7 @@ void W3DGadgetPushButtonImageDraw( GameWindow *window,
 	}
 }
 
-void W3DGadgetPushButtonImageDrawOne( GameWindow *window, 
+void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 																	 WinInstanceData *instData )
 {
 	const Image *image = NULL;
@@ -339,7 +334,7 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 			else
 				image			= GadgetButtonGetDisabledImage( window );
 
-		}  // end if, disabled
+		}
 		else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 		{
 
@@ -348,13 +343,13 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 			else
 				image			= GadgetButtonGetHiliteImage( window );
 
-		}  // end else if, hilited and enabled
+		}
 		else
 		{
 
 			if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 				image			= GadgetButtonGetHiliteSelectedImage( window );
-		}  // end else, enabled only
+		}
 	}
 
 
@@ -379,7 +374,7 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 		Int colorMultiplier = 0xffffffff;
 
 		if(BitIsSet( window->winGetStatus(), WIN_STATUS_USE_OVERLAY_STATES ) )
-		{	
+		{
 			//we're using a new drawing system which does "grayscale" disabled buttons using original color artwork.
 			if( !BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) )
 			{
@@ -399,7 +394,7 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 			}
 		}
 		TheDisplay->drawImage( image, start.x, start.y, end.x, end.y, colorMultiplier, drawMode );
-	}  // end if
+	}
 
 	// draw the button text
 	if( instData->getTextLength() )
@@ -424,7 +419,7 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 			//Render the overlay image now.
 			TheDisplay->drawImage( pData->overlayImage, start.x, start.y, start.x + size.x, start.y + size.y );
 		}
-		
+
 		if( pData->drawClock )
 		{
 			if( pData->drawClock == NORMAL_CLOCK )
@@ -438,10 +433,10 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 			pData->drawClock = NO_CLOCK;
 			window->winSetUserData(pData);
 		}
-		
+
 		if( pData->drawBorder && pData->colorBorder != GAME_COLOR_UNDEFINED )
 		{
-			
+
 			TheDisplay->drawOpenRect(start.x - 1, start.y - 1, size.x + 2, size.y + 2, 1, pData->colorBorder);
 
 		}
@@ -455,7 +450,7 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 		static const Image *hilitedOverlayIcon = TheMappedImageCollection->findImageByName( "Cameo_push" );
 		TheDisplay->drawImage( hilitedOverlayIcon, start.x, start.y, start.x + size.x, start.y + size.y );
 	}
-	
+
 	if( BitIsSet( window->winGetStatus(), WIN_STATUS_USE_OVERLAY_STATES ) )
 	{
 		image = NULL;
@@ -486,7 +481,7 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 			}
 		}
 	}
-}  // end W3DGadgetPushButtonImageDraw
+}
 
 
 void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *instData )
@@ -528,7 +523,7 @@ void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *inst
 
 		}
 
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
@@ -547,7 +542,7 @@ void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *inst
 
 		}
 
-	}  // end else if, hilited and enabled
+	}
 	else
 	{
 
@@ -566,10 +561,10 @@ void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *inst
 
 		}
 
-	}  // end else, enabled only
+	}
 
 	// sanity, we need to have these images to make it look right
-	if( leftImage == NULL || rightImage == NULL || 
+	if( leftImage == NULL || rightImage == NULL ||
 			centerImage == NULL )
 		return;
 
@@ -592,7 +587,7 @@ void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *inst
 
 	// get width we have to draw our repeating center in
 	centerWidth = rightStart.x - leftEnd.x;
-	
+
 	if( centerWidth <= 0)
 	{
 		// draw left end
@@ -611,7 +606,7 @@ void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *inst
 	}
 	else
 	{
-		
+
 		// how many whole repeating pieces will fit in that width
 		pieces = centerWidth / centerImage->getImageWidth();
 
@@ -623,12 +618,12 @@ void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *inst
 		{
 
 			end.x = start.x + centerImage->getImageWidth();
-			TheWindowManager->winDrawImage( centerImage, 
+			TheWindowManager->winDrawImage( centerImage,
 																			start.x, start.y,
 																			end.x, end.y );
 			start.x += centerImage->getImageWidth();
 
-		}  // end for i
+		}
 
 		// we will draw the image but clip the parts we don't want to show
 		IRegion2D reg;
@@ -659,7 +654,7 @@ void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *inst
 		end.y = start.y + size.y;
 		TheWindowManager->winDrawImage(rightImage, start.x, start.y, end.x, end.y);
 	}
-	
+
 	// draw the button text
 	if( instData->getTextLength() )
 		drawButtonText( window, instData );
@@ -697,7 +692,7 @@ void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *inst
 			pData->drawClock = NO_CLOCK;
 			window->winSetUserData(pData);
 		}
-		
+
 		if( pData->drawBorder && pData->colorBorder != GAME_COLOR_UNDEFINED )
 		{
 			TheDisplay->drawOpenRect(start.x - 1, start.y - 1, size.x + 2, size.y + 2, 1, pData->colorBorder);

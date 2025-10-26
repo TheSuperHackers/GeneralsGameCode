@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __GameSpy_H__
-#define __GameSpy_H__
-
 #include "gamespy/peer/peer.h"
 
 #include "GameClient/Color.h"
@@ -143,6 +140,3 @@ enum GameSpyColors CPP_11(: Int) {
 };
 
 extern const Color GameSpyColor[GSCOLOR_MAX];
-
-
-#endif // __GameSpy_H__

@@ -47,10 +47,7 @@ CrateSystem::~CrateSystem()
 	for( Int templateIndex = 0; templateIndex < count; templateIndex ++ )
 	{
 		CrateTemplate *currentTemplate = m_crateTemplateVector[templateIndex];
-		if( currentTemplate )
-		{
-			currentTemplate->deleteInstance();
-		}
+		deleteInstance(currentTemplate);
 	}
 	m_crateTemplateVector.clear();
 }
@@ -93,7 +90,7 @@ void CrateSystem::parseCrateTemplateDefinition(INI* ini)
 
 	// read the crateTemplate name
 	const char* c = ini->getNextToken();
-	name.set(c);	
+	name.set(c);
 
 	CrateTemplate *crateTemplate = TheCrateSystem->friend_findCrateTemplate(name);
 	if (crateTemplate == NULL) {
@@ -152,12 +149,12 @@ CrateTemplate *CrateSystem::newCrateTemplateOverride( CrateTemplate *crateToOver
 const CrateTemplate *CrateSystem::findCrateTemplate(AsciiString name) const
 {
 	// search weapon list for name
-	for (Int i = 0; i < m_crateTemplateVector.size(); i++)
+	for (size_t i = 0; i < m_crateTemplateVector.size(); i++)
 		if(m_crateTemplateVector[i]->getName() == name) {
 			CrateTemplateOverride overridable(m_crateTemplateVector[i]);
 			return overridable;
 		}
-		
+
 
 	return NULL;
 }
@@ -165,7 +162,7 @@ const CrateTemplate *CrateSystem::findCrateTemplate(AsciiString name) const
 CrateTemplate *CrateSystem::friend_findCrateTemplate(AsciiString name)
 {
 	// search weapon list for name
-	for (Int i = 0; i < m_crateTemplateVector.size(); i++)
+	for (size_t i = 0; i < m_crateTemplateVector.size(); i++)
 		if(m_crateTemplateVector[i]->getName() == name) {
 			CrateTemplateOverride overridable(m_crateTemplateVector[i]);
 			return const_cast<CrateTemplate*>((const CrateTemplate *)overridable);
@@ -180,7 +177,7 @@ CrateTemplate *CrateSystem::friend_findCrateTemplate(AsciiString name)
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
-const FieldParse CrateTemplate::TheCrateTemplateFieldParseTable[] = 
+const FieldParse CrateTemplate::TheCrateTemplateFieldParseTable[] =
 {
 	{ "CreationChance",		INI::parseReal,													NULL,									offsetof( CrateTemplate, m_creationChance ) },
 	{ "VeterancyLevel",		INI::parseIndexList,										TheVeterancyNames,		offsetof( CrateTemplate, m_veterancyLevel ) },
@@ -188,7 +185,7 @@ const FieldParse CrateTemplate::TheCrateTemplateFieldParseTable[] =
 	{ "CrateObject",			CrateTemplate::parseCrateCreationEntry,	NULL,									NULL },
 	{ "KillerScience",		INI::parseScience,											NULL,									offsetof( CrateTemplate, m_killerScience) },
 	{ "OwnedByMaker",			INI::parseBool,													NULL,									offsetof( CrateTemplate, m_isOwnedByMaker) },
-	{ NULL,								NULL,																		NULL,									NULL },		// keep this last!
+	{ NULL,								NULL,																		NULL,									NULL },
 };
 
 CrateTemplate::CrateTemplate()

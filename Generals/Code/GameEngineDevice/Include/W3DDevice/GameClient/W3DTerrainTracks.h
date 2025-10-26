@@ -24,9 +24,6 @@
 
 #pragma once
 
-#ifndef __W3DTERRAINTRACKS_H_
-#define __W3DTERRAINTRACKS_H_
-
 #include "always.h"
 #include "rendobj.h"
 #include "w3d_file.h"
@@ -48,7 +45,7 @@ class Drawable;
 This render object handles drawing tracks left by objects moving on the terrain.
 */
 class TerrainTracksRenderObjClass : public W3DMPO, public RenderObjClass
-{	
+{
 	W3DMPO_GLUE(TerrainTracksRenderObjClass)
 
 	friend class TerrainTracksRenderObjClassSystem;
@@ -81,7 +78,7 @@ protected:
 	Int			m_activeEdgeCount;			///<number of active edges in segment list
 	Int			m_totalEdgesAdded;		///<number of edges ever added to this track
 	const Drawable	*m_ownerDrawable;	///<logical object that's laying down tread marks.
-	
+
 	struct edgeInfo{
 		Vector3	endPointPos[2];			///<the 2 endpoints on the edge
 		Vector2	endPointUV[2];			///< uv coordinates at each end point
@@ -153,8 +150,6 @@ protected:
 	Int m_maxTankTrackOpaqueEdges;	///<maximum length of tank track before it starts fading.
 	Int m_maxTankTrackFadeDelay;	///<maximum amount of time a tank track segment remains visible.
 
-};  // end class TerrainTracksRenderObjClassSystem
+};
 
 extern TerrainTracksRenderObjClassSystem *TheTerrainTracksRenderObjClassSystem; ///< singleton for track drawing system.
-
-#endif  // end __W3DTERRAINTRACKS_H_

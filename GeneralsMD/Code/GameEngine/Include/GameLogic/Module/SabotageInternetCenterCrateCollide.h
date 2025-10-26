@@ -23,17 +23,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: SabotageInternetCenterCrateCollide.h 
+//
+// FILE: SabotageInternetCenterCrateCollide.h
 // Author: Kris Morness, July 2003
 // Desc:   A crate (actually a saboteur - mobile crate) that temporarily disables an internet center
-//	
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef SABOTAGE_INTERNET_CENTER_CRATE_COLLIDE_H_
-#define SABOTAGE_INTERNET_CENTER_CRATE_COLLIDE_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
@@ -53,11 +50,11 @@ public:
 		m_sabotageFrames = 0;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     CrateCollideModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "SabotageDuration", INI::parseDurationUnsignedInt, NULL, offsetof( SabotageInternetCenterCrateCollideModuleData, m_sabotageFrames ) },
 			{ 0, 0, 0, 0 }
@@ -90,5 +87,3 @@ protected:
 	virtual Bool isSabotageBuildingCrateCollide() const { return TRUE; }
 
 };
-
-#endif

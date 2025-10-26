@@ -33,8 +33,7 @@
 *
 ******************************************************************************/
 
-#ifndef CALLBACKHOOK_H
-#define CALLBACKHOOK_H
+#pragma once
 
 class CallbackHook
 	{
@@ -44,7 +43,7 @@ class CallbackHook
 
 		virtual ~CallbackHook()
 			{}
-		
+
 		virtual bool DoCallback(void) const
 			{return false;}
 
@@ -81,5 +80,3 @@ template<class T> class Callback : public CallbackHook
 		bool (*mCallback)(T);
 		T mUserData;
 	};
-
-#endif // CALLBACKHOOK_H

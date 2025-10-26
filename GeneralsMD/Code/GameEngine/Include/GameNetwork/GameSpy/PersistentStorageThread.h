@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __PERSISTENTSTORAGETHREAD_H__
-#define __PERSISTENTSTORAGETHREAD_H__
-
 #include "gamespy/gstats/gpersist.h"
 
 #define MAX_BUDDY_CHAT_LEN 128
@@ -182,6 +179,3 @@ public:
 };
 
 extern GameSpyPSMessageQueueInterface *TheGameSpyPSMessageQueue;
-
-
-#endif // __PERSISTENTSTORAGETHREAD_H__

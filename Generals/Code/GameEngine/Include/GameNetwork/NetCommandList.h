@@ -22,11 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef __NETCOMMANDLIST_H
-#define __NETCOMMANDLIST_H
 
 #include "Common/GameMemory.h"
 #include "GameNetwork/NetCommandRef.h"
@@ -46,7 +42,7 @@
 
 class NetCommandList : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetCommandList, "NetCommandList")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetCommandList, "NetCommandList")
 public:
 	NetCommandList();
 	//virtual ~NetCommandList();
@@ -70,5 +66,3 @@ protected:
 	NetCommandRef *m_last;							///< Tail of the list.
 	NetCommandRef *m_lastMessageInserted;			///< The last message that was inserted to this list.
 };
-
-#endif

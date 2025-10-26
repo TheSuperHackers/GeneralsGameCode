@@ -47,39 +47,39 @@ struct ErrorLookup
 	HRESULT error;
 	const char *string;
 };
-static ErrorLookup errorLookup[] = 
+static ErrorLookup errorLookup[] =
 {
-{ DIERR_ACQUIRED, "DIERR_ACQUIRED" },
-{ DIERR_ALREADYINITIALIZED, "DIERR_ALREADYINITIALIZED" },
-{ DIERR_BADDRIVERVER, "DIERR_BADDRIVERVER" },
-{ DIERR_BETADIRECTINPUTVERSION, "DIERR_BETADIRECTINPUTVERSION" },
-{ DIERR_DEVICEFULL, "DIERR_DEVICEFULL" },
-{ DIERR_DEVICENOTREG, "DIERR_DEVICENOTREG" },
-{ DIERR_EFFECTPLAYING, "DIERR_EFFECTPLAYING" },
-{ DIERR_GENERIC, "DIERR_GENERIC" },
-{ DIERR_HANDLEEXISTS, "DIERR_HANDLEEXISTS" },
-{ DIERR_HASEFFECTS, "DIERR_HASEFFECTS" },
-{ DIERR_INCOMPLETEEFFECT, "DIERR_INCOMPLETEEFFECT" },
-{ DIERR_INPUTLOST, "DIERR_INPUTLOST" },
-{ DIERR_INVALIDPARAM, "DIERR_INVALIDPARAM" },
-{ DIERR_MAPFILEFAIL, "DIERR_MAPFILEFAIL" },
-{ DIERR_MOREDATA, "DIERR_MOREDATA" },
-{ DIERR_NOAGGREGATION, "DIERR_NOAGGREGATION" },
-{ DIERR_NOINTERFACE, "DIERR_NOINTERFACE" },
-{ DIERR_NOTACQUIRED, "DIERR_NOTACQUIRED" },
-{ DIERR_NOTBUFFERED, "DIERR_NOTBUFFERED" },
-{ DIERR_NOTDOWNLOADED, "DIERR_NOTDOWNLOADED" },
-{ DIERR_NOTEXCLUSIVEACQUIRED, "DIERR_NOTEXCLUSIVEACQUIRED" },
-{ DIERR_NOTFOUND, "DIERR_NOTFOUND" },
-{ DIERR_NOTINITIALIZED, "DIERR_NOTINITIALIZED" },
-{ DIERR_OBJECTNOTFOUND, "DIERR_OBJECTNOTFOUND" },
-{ DIERR_OLDDIRECTINPUTVERSION, "DIERR_OLDDIRECTINPUTVERSION" }, 
-{ DIERR_OTHERAPPHASPRIO, "DIERR_OTHERAPPHASPRIO" },
-{ DIERR_OUTOFMEMORY, "DIERR_OUTOFMEMORY" },
-{ DIERR_READONLY, "DIERR_READONLY" },
-{ DIERR_REPORTFULL, "DIERR_REPORTFULL" },
-{ DIERR_UNPLUGGED, "DIERR_UNPLUGGED" },
-{ DIERR_UNSUPPORTED, "DIERR_UNSUPPORTED" },
+{ (HRESULT)DIERR_ACQUIRED, "DIERR_ACQUIRED" },
+{ (HRESULT)DIERR_ALREADYINITIALIZED, "DIERR_ALREADYINITIALIZED" },
+{ (HRESULT)DIERR_BADDRIVERVER, "DIERR_BADDRIVERVER" },
+{ (HRESULT)DIERR_BETADIRECTINPUTVERSION, "DIERR_BETADIRECTINPUTVERSION" },
+{ (HRESULT)DIERR_DEVICEFULL, "DIERR_DEVICEFULL" },
+{ (HRESULT)DIERR_DEVICENOTREG, "DIERR_DEVICENOTREG" },
+{ (HRESULT)DIERR_EFFECTPLAYING, "DIERR_EFFECTPLAYING" },
+{ (HRESULT)DIERR_GENERIC, "DIERR_GENERIC" },
+{ (HRESULT)DIERR_HANDLEEXISTS, "DIERR_HANDLEEXISTS" },
+{ (HRESULT)DIERR_HASEFFECTS, "DIERR_HASEFFECTS" },
+{ (HRESULT)DIERR_INCOMPLETEEFFECT, "DIERR_INCOMPLETEEFFECT" },
+{ (HRESULT)DIERR_INPUTLOST, "DIERR_INPUTLOST" },
+{ (HRESULT)DIERR_INVALIDPARAM, "DIERR_INVALIDPARAM" },
+{ (HRESULT)DIERR_MAPFILEFAIL, "DIERR_MAPFILEFAIL" },
+{ (HRESULT)DIERR_MOREDATA, "DIERR_MOREDATA" },
+{ (HRESULT)DIERR_NOAGGREGATION, "DIERR_NOAGGREGATION" },
+{ (HRESULT)DIERR_NOINTERFACE, "DIERR_NOINTERFACE" },
+{ (HRESULT)DIERR_NOTACQUIRED, "DIERR_NOTACQUIRED" },
+{ (HRESULT)DIERR_NOTBUFFERED, "DIERR_NOTBUFFERED" },
+{ (HRESULT)DIERR_NOTDOWNLOADED, "DIERR_NOTDOWNLOADED" },
+{ (HRESULT)DIERR_NOTEXCLUSIVEACQUIRED, "DIERR_NOTEXCLUSIVEACQUIRED" },
+{ (HRESULT)DIERR_NOTFOUND, "DIERR_NOTFOUND" },
+{ (HRESULT)DIERR_NOTINITIALIZED, "DIERR_NOTINITIALIZED" },
+{ (HRESULT)DIERR_OBJECTNOTFOUND, "DIERR_OBJECTNOTFOUND" },
+{ (HRESULT)DIERR_OLDDIRECTINPUTVERSION, "DIERR_OLDDIRECTINPUTVERSION" },
+{ (HRESULT)DIERR_OTHERAPPHASPRIO, "DIERR_OTHERAPPHASPRIO" },
+{ (HRESULT)DIERR_OUTOFMEMORY, "DIERR_OUTOFMEMORY" },
+{ (HRESULT)DIERR_READONLY, "DIERR_READONLY" },
+{ (HRESULT)DIERR_REPORTFULL, "DIERR_REPORTFULL" },
+{ (HRESULT)DIERR_UNPLUGGED, "DIERR_UNPLUGGED" },
+{ (HRESULT)DIERR_UNSUPPORTED, "DIERR_UNSUPPORTED" },
 { 0, NULL }
 };
 
@@ -100,14 +100,14 @@ static void printReturnCode( char *label, HRESULT hr )
 
 		if( error->error == hr )
 		{
-			DEBUG_LOG(( "%s: '%s' - '0x%08x'\n", label, error->string, hr ));
+			DEBUG_LOG(( "%s: '%s' - '0x%08x'", label, error->string, hr ));
 			break;
 		}
 		error++;
 
 	}
 
-}  // end printReturnCode
+}
 
 //-------------------------------------------------------------------------------------------------
 /** create our interface to the direct input keybard */
@@ -119,18 +119,18 @@ void DirectInputKeyboard::openKeyboard( void )
 	// create our interface to direct input
 	hr = DirectInput8Create( ApplicationHInstance,
 													 DIRECTINPUT_VERSION,
-													 IID_IDirectInput8, 
+													 IID_IDirectInput8,
 													 (void **)&m_pDirectInput,
 													 NULL );
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openKeyboard: DirectInputCreate failed\r\n" ));
+		DEBUG_LOG(( "ERROR - openKeyboard: DirectInputCreate failed" ));
 		assert( 0 );
 		closeKeyboard();
 		return;
 
-	}  // end if
+	}
 
 	// obtain an interface to the system keyboard device
 	hr = m_pDirectInput->CreateDevice( GUID_SysKeyboard,
@@ -139,42 +139,42 @@ void DirectInputKeyboard::openKeyboard( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openKeyboard: Unabled to create keyboard device\n" ));
+		DEBUG_LOG(( "ERROR - openKeyboard: Unabled to create keyboard device" ));
 		assert( 0 );
 		closeKeyboard();
 		return;
 
-	}  // end if
+	}
 
 	// set the data format for the keyboard
 	hr = m_pKeyboardDevice->SetDataFormat( &c_dfDIKeyboard );
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openKeyboard: Unabled to set data format for keyboard\n" ));
+		DEBUG_LOG(( "ERROR - openKeyboard: Unabled to set data format for keyboard" ));
 		assert( 0 );
 		closeKeyboard();
 		return;
 
-	}  // end if
+	}
 
 	/// @todo Check the cooperative level of keyboard for NT, 2000, DX8 etc ...
 	// set the cooperative level for the keyboard, must be non-exclusive for
 	// NT support, but we should check with the latest versions of DirectX
 	// on 2000 etc
 	//
-	hr = m_pKeyboardDevice->SetCooperativeLevel( ApplicationHWnd, 
-																							 DISCL_FOREGROUND | 
+	hr = m_pKeyboardDevice->SetCooperativeLevel( ApplicationHWnd,
+																							 DISCL_FOREGROUND |
 																							 DISCL_NONEXCLUSIVE );
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openKeyboard: Unabled to set cooperative level\n" ));
+		DEBUG_LOG(( "ERROR - openKeyboard: Unabled to set cooperative level" ));
 		assert( 0 );
 		closeKeyboard();
 		return;
 
-	}  // end if
+	}
 
   // set the keyboard buffer size
 	DIPROPDWORD prop;
@@ -187,29 +187,29 @@ void DirectInputKeyboard::openKeyboard( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openKeyboard: Unable to set keyboard buffer size property\n" ));
+		DEBUG_LOG(( "ERROR - openKeyboard: Unable to set keyboard buffer size property" ));
 		assert( 0 );
 		closeKeyboard();
 		return;
 
-	}  // end if
+	}
 
 	// acquire the keyboard
 	hr = m_pKeyboardDevice->Acquire();
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openKeyboard: Unable to acquire keyboard device\n" ));
-		// Note - This can happen in windowed mode, and we can re-acquire later.  So don't 
+		DEBUG_LOG(( "ERROR - openKeyboard: Unable to acquire keyboard device" ));
+		// Note - This can happen in windowed mode, and we can re-acquire later.  So don't
 		// close the keyboard. jba.
 		// closeKeyboard();
 		return;
 
-	}  // end if
+	}
 
-	DEBUG_LOG(( "OK - Keyboard initialized successfully.\n" ));
+	DEBUG_LOG(( "OK - Keyboard initialized successfully." ));
 
-}  // end openKeyboard
+}
 
 //-------------------------------------------------------------------------------------------------
 /** close the direct input keyboard */
@@ -223,21 +223,21 @@ void DirectInputKeyboard::closeKeyboard( void )
 		m_pKeyboardDevice->Unacquire();
 		m_pKeyboardDevice->Release();
 		m_pKeyboardDevice = NULL;
-		DEBUG_LOG(( "OK - Keyboard deviced closed\n" ));
+		DEBUG_LOG(( "OK - Keyboard deviced closed" ));
 
-	}  // end if
+	}
 	if( m_pDirectInput )
 	{
 
 		m_pDirectInput->Release();
 		m_pDirectInput = NULL;
-		DEBUG_LOG(( "OK - Keyboard direct input interface closed\n" ));
+		DEBUG_LOG(( "OK - Keyboard direct input interface closed" ));
 
-	}  // end if
+	}
 
-	DEBUG_LOG(( "OK - Keyboard shutdown complete\n" ));
+	DEBUG_LOG(( "OK - Keyboard shutdown complete" ));
 
-}  // end closeKeyboard
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Get a single keyboard event from direct input */
@@ -296,9 +296,9 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 
 						break;
 
-					}  // end, got the keyboard back OK
+					}
 
-				}  // end switch
+				}
 
 				return;
 
@@ -306,7 +306,7 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 			default:
 				return;
 
-		}  // end switch( hr )
+		}
 
 		// no keys returned
 		if( num == 0 )
@@ -328,9 +328,9 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 		// set status as unused (unprocessed)
 		key->status = KeyboardIO::STATUS_UNUSED;
 
-	}  // end if, we have a DI keyboard device
+	}
 
-}  // end getKey
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -354,7 +354,7 @@ DirectInputKeyboard::DirectInputKeyboard( void )
 		m_modifiers &= ~KEY_STATE_CAPSLOCK;
 	}
 
-}  // end DirectInputKeyboard
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -364,7 +364,7 @@ DirectInputKeyboard::~DirectInputKeyboard( void )
 	// close keyboard and release all resource
 	closeKeyboard();
 
-}  // end ~DirectInputKeyboard
+}
 
 //-------------------------------------------------------------------------------------------------
 /** initialize the keyboard */
@@ -378,7 +378,7 @@ void DirectInputKeyboard::init( void )
 	// open the direct input keyboard
 	openKeyboard();
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset keyboard system */
@@ -389,7 +389,7 @@ void DirectInputKeyboard::reset( void )
 	// extend functionality
 	Keyboard::reset();
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** called once per frame to update the keyboard state */
@@ -409,10 +409,10 @@ void DirectInputKeyboard::update( void )
 		m_pKeyboardDevice->GetDeviceData( sizeof( DIDEVICEOBJECTDATA ),
 																			NULL, &items, 0 );
 
-	}  // end if
+	}
 */
 
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return TRUE if the caps lock key is down/hilighted */
@@ -422,4 +422,4 @@ Bool DirectInputKeyboard::getCapsState( void )
 
 	return BitIsSet( GetKeyState( VK_CAPITAL ), 0X01);
 
-}  // end getCapsState
+}

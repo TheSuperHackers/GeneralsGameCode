@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __NETCOMMANDMSG_H
-#define __NETCOMMANDMSG_H
-
 #include "Lib/BaseType.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "Common/UnicodeString.h"
@@ -38,7 +35,7 @@
 //-----------------------------------------------------------------------------
 class NetCommandMsg : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetCommandMsg, "NetCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetCommandMsg, "NetCommandMsg")
 public:
 	NetCommandMsg();
 	//virtual ~NetCommandMsg();
@@ -56,9 +53,6 @@ public:
 	void attach();
 	void detach();
 
-	// For debugging purposes
-	virtual AsciiString getContentsAsAsciiString(void) { return AsciiString::TheEmptyString; }
-
 protected:
 	UnsignedInt m_timestamp;
 	UnsignedInt m_executionFrame;
@@ -74,9 +68,9 @@ protected:
 /**
  * The NetGameCommandMsg is the NetCommandMsg representation of a GameMessage
  */
-class NetGameCommandMsg : public NetCommandMsg 
+class NetGameCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetGameCommandMsg, "NetGameCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetGameCommandMsg, "NetGameCommandMsg")
 public:
 	NetGameCommandMsg();
 	NetGameCommandMsg(GameMessage *msg);
@@ -85,9 +79,6 @@ public:
 	GameMessage *constructGameMessage();
 	void addArgument(const GameMessageArgumentDataType type, GameMessageArgumentType arg);
 	void setGameMessageType(GameMessage::Type type);
-
-	// For debugging purposes
-	virtual AsciiString getContentsAsAsciiString(void);
 
 protected:
 	Int m_numArgs;
@@ -101,9 +92,9 @@ protected:
  * The NetAckBothCommandMsg is the NetCommandMsg representation of the combination of a
  * stage 1 ack and a stage 2 ack.
  */
-class NetAckBothCommandMsg : public NetCommandMsg 
+class NetAckBothCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetAckBothCommandMsg, "NetAckBothCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetAckBothCommandMsg, "NetAckBothCommandMsg")
 public:
 	NetAckBothCommandMsg(NetCommandMsg *msg);
 	NetAckBothCommandMsg();
@@ -125,9 +116,9 @@ protected:
  * The NetAckStage1CommandMsg is the NetCommandMsg representation of an ack message for the initial
  * recipient.
  */
-class NetAckStage1CommandMsg : public NetCommandMsg 
+class NetAckStage1CommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetAckStage1CommandMsg, "NetAckStage1CommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetAckStage1CommandMsg, "NetAckStage1CommandMsg")
 public:
 	NetAckStage1CommandMsg(NetCommandMsg *msg);
 	NetAckStage1CommandMsg();
@@ -149,9 +140,9 @@ protected:
  * The NetAckStage2CommandMsg is the NetCommandMsg representation of an ack message for all eventual
  * recipients. (when this is returned, all the players in the relay mask have received the packet)
  */
-class NetAckStage2CommandMsg : public NetCommandMsg 
+class NetAckStage2CommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetAckStage2CommandMsg, "NetAckStage2CommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetAckStage2CommandMsg, "NetAckStage2CommandMsg")
 public:
 	NetAckStage2CommandMsg(NetCommandMsg *msg);
 	NetAckStage2CommandMsg();
@@ -169,9 +160,9 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-class NetFrameCommandMsg : public NetCommandMsg 
+class NetFrameCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetFrameCommandMsg, "NetFrameCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetFrameCommandMsg, "NetFrameCommandMsg")
 public:
 	NetFrameCommandMsg();
 	//virtual ~NetFrameCommandMsg();
@@ -184,9 +175,9 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-class NetPlayerLeaveCommandMsg : public NetCommandMsg 
+class NetPlayerLeaveCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetPlayerLeaveCommandMsg, "NetPlayerLeaveCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetPlayerLeaveCommandMsg, "NetPlayerLeaveCommandMsg")
 public:
 	NetPlayerLeaveCommandMsg();
 	//virtual ~NetPlayerLeaveCommandMsg();
@@ -199,9 +190,9 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-class NetRunAheadMetricsCommandMsg : public NetCommandMsg 
+class NetRunAheadMetricsCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetRunAheadMetricsCommandMsg, "NetRunAheadMetricsCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetRunAheadMetricsCommandMsg, "NetRunAheadMetricsCommandMsg")
 public:
 	NetRunAheadMetricsCommandMsg();
 	//virtual ~NetRunAheadMetricsCommandMsg();
@@ -217,9 +208,9 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-class NetRunAheadCommandMsg : public NetCommandMsg 
+class NetRunAheadCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetRunAheadCommandMsg, "NetRunAheadCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetRunAheadCommandMsg, "NetRunAheadCommandMsg")
 public:
 	NetRunAheadCommandMsg();
 	//virtual ~NetRunAheadCommandMsg();
@@ -236,9 +227,9 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-class NetDestroyPlayerCommandMsg : public NetCommandMsg 
+class NetDestroyPlayerCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetDestroyPlayerCommandMsg, "NetDestroyPlayerCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetDestroyPlayerCommandMsg, "NetDestroyPlayerCommandMsg")
 public:
 	NetDestroyPlayerCommandMsg();
 	//virtual ~NetDestroyPlayerCommandMsg();
@@ -251,27 +242,27 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-class NetKeepAliveCommandMsg : public NetCommandMsg 
+class NetKeepAliveCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetKeepAliveCommandMsg, "NetKeepAliveCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetKeepAliveCommandMsg, "NetKeepAliveCommandMsg")
 public:
 	NetKeepAliveCommandMsg();
 	//virtual ~NetKeepAliveCommandMsg();
 };
 
 //-----------------------------------------------------------------------------
-class NetDisconnectKeepAliveCommandMsg : public NetCommandMsg 
+class NetDisconnectKeepAliveCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetDisconnectKeepAliveCommandMsg, "NetDisconnectKeepAliveCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetDisconnectKeepAliveCommandMsg, "NetDisconnectKeepAliveCommandMsg")
 public:
 	NetDisconnectKeepAliveCommandMsg();
 	//virtual ~NetDisconnectKeepAliveCommandMsg();
 };
 
 //-----------------------------------------------------------------------------
-class NetDisconnectPlayerCommandMsg : public NetCommandMsg 
+class NetDisconnectPlayerCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetDisconnectPlayerCommandMsg, "NetDisconnectPlayerCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetDisconnectPlayerCommandMsg, "NetDisconnectPlayerCommandMsg")
 public:
 	NetDisconnectPlayerCommandMsg();
 	//virtual ~NetDisconnectPlayerCommandMsg();
@@ -288,27 +279,27 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-class NetPacketRouterQueryCommandMsg : public NetCommandMsg 
+class NetPacketRouterQueryCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetPacketRouterQueryCommandMsg, "NetPacketRouterQueryCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetPacketRouterQueryCommandMsg, "NetPacketRouterQueryCommandMsg")
 public:
 	NetPacketRouterQueryCommandMsg();
 	//virtual ~NetPacketRouterQueryCommandMsg();
 };
 
 //-----------------------------------------------------------------------------
-class NetPacketRouterAckCommandMsg : public NetCommandMsg 
+class NetPacketRouterAckCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetPacketRouterAckCommandMsg, "NetPacketRouterAckCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetPacketRouterAckCommandMsg, "NetPacketRouterAckCommandMsg")
 public:
 	NetPacketRouterAckCommandMsg();
 	//virtual ~NetPacketRouterAckCommandMsg();
 };
 
 //-----------------------------------------------------------------------------
-class NetDisconnectChatCommandMsg : public NetCommandMsg 
+class NetDisconnectChatCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetDisconnectChatCommandMsg, "NetDisconnectChatCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetDisconnectChatCommandMsg, "NetDisconnectChatCommandMsg")
 public:
 	NetDisconnectChatCommandMsg();
 	//virtual ~NetDisconnectChatCommandMsg();
@@ -321,9 +312,9 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-class NetChatCommandMsg : public NetCommandMsg 
+class NetChatCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetChatCommandMsg, "NetChatCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetChatCommandMsg, "NetChatCommandMsg")
 public:
 	NetChatCommandMsg();
 	//virtual ~NetChatCommandMsg();
@@ -340,9 +331,9 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-class NetDisconnectVoteCommandMsg : public NetCommandMsg 
+class NetDisconnectVoteCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetDisconnectVoteCommandMsg, "NetDisconnectVoteCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetDisconnectVoteCommandMsg, "NetDisconnectVoteCommandMsg")
 public:
 	NetDisconnectVoteCommandMsg();
 	//virtual ~NetDisconnectVoteCommandMsg();
@@ -359,13 +350,13 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-class NetProgressCommandMsg: public NetCommandMsg 
+class NetProgressCommandMsg: public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetProgressCommandMsg, "NetProgressCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetProgressCommandMsg, "NetProgressCommandMsg")
 public:
 	NetProgressCommandMsg( void );
 	//virtual ~NetProgressCommandMsg( void );
-		
+
 	UnsignedByte getPercentage();
 	void setPercentage( UnsignedByte percent );
 protected:
@@ -375,14 +366,14 @@ protected:
 //-----------------------------------------------------------------------------
 class NetWrapperCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetWrapperCommandMsg, "NetWrapperCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetWrapperCommandMsg, "NetWrapperCommandMsg")
 public:
 	NetWrapperCommandMsg( void );
 	//virtual ~NetWrapperCommandMsg();
 
 	UnsignedByte * getData();
 	void setData(UnsignedByte *data, UnsignedInt dataLength);
-	
+
 	UnsignedInt getChunkNumber();
 	void setChunkNumber(UnsignedInt chunkNumber);
 
@@ -414,7 +405,7 @@ private:
 //-----------------------------------------------------------------------------
 class NetFileCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetFileCommandMsg, "NetFileCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetFileCommandMsg, "NetFileCommandMsg")
 public:
 	NetFileCommandMsg();
 	//virtual ~NetFileCommandMsg();
@@ -440,7 +431,7 @@ protected:
 //-----------------------------------------------------------------------------
 class NetFileAnnounceCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetFileAnnounceCommandMsg, "NetFileAnnounceCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetFileAnnounceCommandMsg, "NetFileAnnounceCommandMsg")
 public:
 	NetFileAnnounceCommandMsg();
 	//virtual ~NetFileAnnounceCommandMsg();
@@ -466,7 +457,7 @@ protected:
 //-----------------------------------------------------------------------------
 class NetFileProgressCommandMsg : public NetCommandMsg
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetFileProgressCommandMsg, "NetFileProgressCommandMsg")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetFileProgressCommandMsg, "NetFileProgressCommandMsg")
 public:
 	NetFileProgressCommandMsg();
 	//virtual ~NetFileProgressCommandMsg();
@@ -516,11 +507,10 @@ class NetFrameResendRequestCommandMsg : public NetCommandMsg
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetFrameResendRequestCommandMsg, "NetFrameResendRequestCommandMsg")
 public:
 	NetFrameResendRequestCommandMsg();
-	
+
 	UnsignedInt getFrameToResend();
 	void setFrameToResend(UnsignedInt frame);
-	
+
 protected:
-	UnsignedInt m_frameToResend;	
+	UnsignedInt m_frameToResend;
 };
-#endif

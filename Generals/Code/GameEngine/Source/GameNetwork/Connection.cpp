@@ -58,15 +58,11 @@ Connection::Connection() {
  * The destructor.
  */
 Connection::~Connection() {
-	if (m_user != NULL) {
-		m_user->deleteInstance();
-		m_user = NULL;
-	}
+	deleteInstance(m_user);
+	m_user = NULL;
 
-	if (m_netCommandList != NULL) {
-		m_netCommandList->deleteInstance();
-		m_netCommandList = NULL;
-	}
+	deleteInstance(m_netCommandList);
+	m_netCommandList = NULL;
 }
 
 /**
@@ -75,10 +71,8 @@ Connection::~Connection() {
 void Connection::init() {
 	m_transport = NULL;
 
-	if (m_user != NULL) {
-		m_user->deleteInstance();
-		m_user = NULL;
-	}
+	deleteInstance(m_user);
+	m_user = NULL;
 
 	if (m_netCommandList == NULL) {
 		m_netCommandList = newInstance(NetCommandList);
@@ -123,10 +117,7 @@ void Connection::attachTransport(Transport *transport) {
  * Assign this connection a user.  This is the user to whome we send all our packetized goodies.
  */
 void Connection::setUser(User *user) {
-	if (m_user != NULL) {
-		m_user->deleteInstance();
-	}
-
+	deleteInstance(m_user);
 	m_user = user;
 }
 
@@ -156,7 +147,7 @@ void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay) {
 
 	if (m_netCommandList != NULL) {
 		// check to see if this command will fit in a packet.  If not, we need to split it up.
-		// we are splitting up the command here so that the retry logic will not try to 
+		// we are splitting up the command here so that the retry logic will not try to
 		// resend the ENTIRE command (i.e. multiple packets work of data) and only do the retry
 		// one wrapper command at a time.
 		packet->reset();
@@ -164,7 +155,7 @@ void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay) {
 		NetCommandRef *tempref = NEW_NETCOMMANDREF(msg);
 
 		Bool msgFits = packet->addCommand(tempref);
-		tempref->deleteInstance(); // delete the temporary reference.
+		deleteInstance(tempref); // delete the temporary reference.
 		tempref = NULL;
 
 		if (!msgFits) {
@@ -186,15 +177,15 @@ void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay) {
 					ref1 = ref1->getNext();
 				}
 
-				tempPacket->deleteInstance();
+				deleteInstance(tempPacket);
 				tempPacket = NULL;
 				++tempPacketPtr;
 
-				list->deleteInstance();
+				deleteInstance(list);
 				list = NULL;
 			}
 
-			origref->deleteInstance();
+			deleteInstance(origref);
 			origref = NULL;
 
 			return;
@@ -206,14 +197,14 @@ void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay) {
 		if (ref != NULL) {
 
 /*
-#if ((defined(_DEBUG)) || (defined(_INTERNAL)))
+#if defined(RTS_DEBUG)
 			if (msg->getNetCommandType() == NETCOMMANDTYPE_GAMECOMMAND) {
-				DEBUG_LOG(("Connection::sendNetCommandMsg - added game command %d to net command list for frame %d.\n",
+				DEBUG_LOG(("Connection::sendNetCommandMsg - added game command %d to net command list for frame %d.",
 					msg->getID(), msg->getExecutionFrame()));
 			} else if (msg->getNetCommandType() == NETCOMMANDTYPE_FRAMEINFO) {
-				DEBUG_LOG(("Connection::sendNetCommandMsg - added frame info for frame %d\n", msg->getExecutionFrame()));
+				DEBUG_LOG(("Connection::sendNetCommandMsg - added frame info for frame %d", msg->getExecutionFrame()));
 			}
-#endif // _DEBUG || _INTERNAL
+#endif // RTS_DEBUG
 */
 
 			ref->setRelay(relay);
@@ -226,18 +217,19 @@ void Connection::clearCommandsExceptFrom( Int playerIndex )
 	NetCommandRef *tmp = m_netCommandList->getFirstMessage();
 	while (tmp)
 	{
+		NetCommandRef *next = tmp->getNext();
 		NetCommandMsg *msg = tmp->getCommand();
+
 		if (msg->getPlayerID() != playerIndex)
 		{
-			DEBUG_LOG(("Connection::clearCommandsExceptFrom(%d) - clearing a command from %d for frame %d\n",
+			DEBUG_LOG(("Connection::clearCommandsExceptFrom(%d) - clearing a command from player %d for frame %d",
 				playerIndex, tmp->getCommand()->getPlayerID(), tmp->getCommand()->getExecutionFrame()));
+
 			m_netCommandList->removeMessage(tmp);
-			NetCommandRef *toDelete = tmp;
-			tmp = tmp->getNext();
-			toDelete->deleteInstance();
-		} else {
-			tmp = tmp->getNext();
+			deleteInstance(tmp);
 		}
+
+		tmp = next;
 	}
 }
 
@@ -252,7 +244,7 @@ void Connection::setQuitting( void )
 {
 	m_isQuitting = TRUE;
 	m_quitTime = timeGetTime();
-	DEBUG_LOG(("Connection::setQuitting() at time %d\n", m_quitTime));
+	DEBUG_LOG(("Connection::setQuitting() at time %d", m_quitTime));
 }
 
 /**
@@ -267,16 +259,16 @@ UnsignedInt Connection::doSend() {
 	// Do this check first, since it's an important fail-safe
 	if (m_isQuitting && curtime > m_quitTime + MaxQuitFlushTime)
 	{
-		DEBUG_LOG(("Timed out a quitting connection.  Deleting all %d messages\n", m_netCommandList->length()));
+		DEBUG_LOG(("Timed out a quitting connection.  Deleting all %d messages", m_netCommandList->length()));
 		m_netCommandList->reset();
 		return 0;
 	}
 
 	if ((curtime - m_lastTimeSent) < m_frameGrouping) {
-//		DEBUG_LOG(("not sending packet, time = %d, m_lastFrameSent = %d, m_frameGrouping = %d\n", curtime, m_lastTimeSent, m_frameGrouping));
+//		DEBUG_LOG(("not sending packet, time = %d, m_lastFrameSent = %d, m_frameGrouping = %d", curtime, m_lastTimeSent, m_frameGrouping));
 		return 0;
 	}
-	
+
 	// iterate through all the messages and put them into a packet(s).
 	NetCommandRef *msg = m_netCommandList->getFirstMessage();
 
@@ -305,7 +297,7 @@ UnsignedInt Connection::doSend() {
 						msg->setTimeLastSent(curtime);
 					} else {
 						m_netCommandList->removeMessage(msg);
-						msg->deleteInstance();
+						deleteInstance(msg);
 					}
 				}
 			}
@@ -313,7 +305,7 @@ UnsignedInt Connection::doSend() {
 		}
 
 		if (msg != NULL) {
-			DEBUG_LOG(("didn't finish sending all commands in connection\n"));
+			DEBUG_LOG(("didn't finish sending all commands in connection"));
 		}
 
 		++numpackets;
@@ -325,9 +317,8 @@ UnsignedInt Connection::doSend() {
 			couldQueue = m_transport->queueSend(packet->getAddr(), packet->getPort(), packet->getData(), packet->getLength());
 			m_lastTimeSent = curtime;
 		}
-		if (packet != NULL) {
-			packet->deleteInstance(); // delete the packet now that we're done with it.
-		}
+
+		deleteInstance(packet); // delete the packet now that we're done with it.
 	}
 
 	return numpackets;
@@ -371,7 +362,7 @@ NetCommandRef * Connection::processAck(UnsignedShort commandID, UnsignedByte ori
 		return NULL;
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	Bool doDebug = FALSE;
 	if (temp->getCommand()->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTFRAME) {
 		doDebug = TRUE;
@@ -384,9 +375,9 @@ NetCommandRef * Connection::processAck(UnsignedShort commandID, UnsignedByte ori
 	m_averageLatency += lat / CONNECTION_LATENCY_HISTORY_LENGTH;
 	m_latencies[index] = lat;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (doDebug == TRUE) {
-		DEBUG_LOG(("Connection::processAck - disconnect frame command %d found, removing from command list.\n", commandID));
+		DEBUG_LOG(("Connection::processAck - disconnect frame command %d found, removing from command list.", commandID));
 	}
 #endif
 	m_netCommandList->removeMessage(temp);
@@ -405,18 +396,18 @@ void Connection::doRetryMetrics() {
 	if ((curTime - m_retryMetricsTime) > 10000) {
 		m_retryMetricsTime = curTime;
 		++numSeconds;
-//		DEBUG_LOG(("Retries in the last 10 seconds = %d, average latency = %fms\n", m_numRetries, m_averageLatency));
+//		DEBUG_LOG(("Retries in the last 10 seconds = %d, average latency = %fms", m_numRetries, m_averageLatency));
 		m_numRetries = 0;
 //		m_retryTime = m_averageLatency * 1.5;
 	}
 }
 
-#if defined(_DEBUG) || (_INTERNAL)
+#if defined(RTS_DEBUG)
 void Connection::debugPrintCommands() {
 	NetCommandRef *ref = m_netCommandList->getFirstMessage();
 	while (ref != NULL) {
-		DEBUG_LOG(("Connection::debugPrintCommands - ID: %d\tType: %s\tRelay: 0x%X for frame %d\n",
-			ref->getCommand()->getID(), GetAsciiNetCommandType(ref->getCommand()->getNetCommandType()).str(),
+		DEBUG_LOG(("Connection::debugPrintCommands - ID: %d\tType: %s\tRelay: 0x%X for frame %d",
+			ref->getCommand()->getID(), GetNetCommandTypeAsString(ref->getCommand()->getNetCommandType()),
 			ref->getRelay(), ref->getCommand()->getExecutionFrame()));
 		ref = ref->getNext();
 	}

@@ -18,12 +18,12 @@
 
 // FILE: ImageDirectory.h /////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -39,9 +39,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __IMAGEDIRECTORY_H_
-#define __IMAGEDIRECTORY_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -73,15 +70,12 @@ public:
 // INLINING ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 inline ImageDirectory::~ImageDirectory( void ) { delete m_path; }
-inline ImageDirectory::ImageDirectory( void ) 
-{ 
-	m_path = NULL; 
-	m_next = NULL; 
-	m_prev = NULL; 
+inline ImageDirectory::ImageDirectory( void )
+{
+	m_path = NULL;
+	m_next = NULL;
+	m_prev = NULL;
 	m_imageCount = 0;
 }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __IMAGEDIRECTORY_H_
-

@@ -40,11 +40,6 @@
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameClient/Drawable.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -67,7 +62,7 @@ void NeutronBlastBehavior::onDie( const DamageInfo *damageInfo )
 {
 	// On death, perform the Neutron Blast!!
 	Object *self = getObject();
-	if (!self) 
+	if (!self)
 		return;
 
 	const NeutronBlastBehaviorModuleData *data = getNeutronBlastBehaviorModuleData();
@@ -82,7 +77,7 @@ void NeutronBlastBehavior::onDie( const DamageInfo *damageInfo )
 	// scan objects in our region
 	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( self->getPosition(), blastRadius, FROM_CENTER_2D, filters );
 	MemoryPoolObjectHolder hold( iter );
-	
+
 	// Apply neutron blast to object
 	for( Object *obj = iter->first(); obj; obj = iter->next() )
 	{
@@ -102,13 +97,13 @@ UpdateSleepTime NeutronBlastBehavior::update( void )
 {
 	return UPDATE_SLEEP_FOREVER;
 }
- 
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void NeutronBlastBehavior::neutronBlastToObject( Object *obj )
 {
 	// early exit check
-  if ( !obj || obj == getObject() )	
+  if ( !obj || obj == getObject() )
 		return;
 
 	// Check for allies and quick exit if we are not suppose to hurt our own.
@@ -137,7 +132,7 @@ void NeutronBlastBehavior::neutronBlastToObject( Object *obj )
 		// If the vehicle is a combat bike, kill the whole thing
 		if ( obj->isKindOf( KINDOF_CLIFF_JUMPER ) )
 		{
-			obj->kill(); 
+			obj->kill();
 		}
 		// Just kill the pilot of the vehicle
 		else
@@ -147,7 +142,7 @@ void NeutronBlastBehavior::neutronBlastToObject( Object *obj )
 
       if ( obj->getAI() )
         obj->getAI()->aiIdle( CMD_FROM_AI );
-      
+
 			TheGameLogic->deselectObject(obj, PLAYERMASK_ALL, TRUE);
 
 			// Clear any terrain decals here
@@ -171,7 +166,7 @@ void NeutronBlastBehavior::crc( Xfer *xfer )
 	UpdateModule::crc( xfer );
 
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -189,7 +184,7 @@ void NeutronBlastBehavior::xfer( Xfer *xfer )
 	// extend base class
 	UpdateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -201,4 +196,4 @@ void NeutronBlastBehavior::loadPostProcess( void )
 	UpdateModule::loadPostProcess();
 
 
-}  // end loadPostProcess
+}

@@ -22,11 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef __STATUS_CIRCLE_H_
-#define __STATUS_CIRCLE_H_
 
 #include "always.h"
 #include "rendobj.h"
@@ -43,7 +39,7 @@
 //
 //
 class W3DStatusCircle : public RenderObjClass
-{	
+{
 
 public:
 
@@ -53,13 +49,13 @@ public:
 	~W3DStatusCircle(void);
 
 	/////////////////////////////////////////////////////////////////////////////
-	// Render Object Interface 
+	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
 	virtual RenderObjClass *	Clone(void) const;
 	virtual int						Class_ID(void) const;
 	virtual void					Render(RenderInfoClass & rinfo);
 //	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
-//	virtual void 					Set_Transform(const Matrix3D &m); 
+//	virtual void 					Set_Transform(const Matrix3D &m);
 //	virtual void 					Set_Position(const Vector3 &v);
 //TODO: MW: do these later - only needed for collision detection
 	virtual bool					Cast_Ray(RayCollisionTestClass & raytest);
@@ -84,7 +80,7 @@ public:
 	Int freeMapResources(void);
 	void static setColor(Int r, Int g, Int b) {m_needUpdate = true; m_diffuse = (b) + (g<<8) + (r<<16);};
 protected:
-	Int	m_numTriangles;	//dimensions of list 
+	Int	m_numTriangles;	//dimensions of list
 	static Int m_diffuse;
 	static Bool			 m_needUpdate;
 
@@ -98,5 +94,3 @@ protected:
 	Int updateCircleVB(void);
 	Int updateScreenVB(Int diffuse);
 };
-
-#endif  // end __DRAW_OBJECT_H_

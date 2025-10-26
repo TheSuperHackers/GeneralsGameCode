@@ -18,12 +18,12 @@
 
 // FILE: ImageErrorProc.cpp ///////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -81,7 +81,7 @@ BOOL CALLBACK ImageErrorProc( HWND hWndDialog, UINT message,
 			// load the listbox with images that could not be processed
 			// and the reasons for it
 			//
-			
+
 			// sanity
 			if( TheImagePacker == NULL )
 				return TRUE;
@@ -101,13 +101,13 @@ BOOL CALLBACK ImageErrorProc( HWND hWndDialog, UINT message,
 				image = TheImagePacker->getImage( i );
 
 				// sanity
-				if( image == NULL )	
+				if( image == NULL )
 					continue;
 
 				// if image can't be processed find out why
 				if( BitIsSet( image->m_status, ImageInfo::CANTPROCESS ) )
 				{
-					
+
 					if( BitIsSet( image->m_status, ImageInfo::TOOBIG ) )
 						sprintf( reason, "Too Big" );
 					else if( BitIsSet( image->m_status, ImageInfo::INVALIDCOLORDEPTH ) )
@@ -121,16 +121,16 @@ BOOL CALLBACK ImageErrorProc( HWND hWndDialog, UINT message,
 
 					SendMessage( list, LB_INSERTSTRING, -1, (LPARAM)buffer );
 
-				}  // end if
+				}
 
-			}  // end for i
+			}
 
 			// set the extents for the horizontal scroll bar in the listbox
 			SendMessage( list, LB_SETHORIZONTALEXTENT, 1280, 0 );
 
 			return TRUE;
 
-		}  // end init
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_COMMAND:
@@ -149,7 +149,7 @@ BOOL CALLBACK ImageErrorProc( HWND hWndDialog, UINT message,
 					EndDialog( hWndDialog, TRUE );
 					break;
 
-				}  // end proceed
+				}
 
 				// --------------------------------------------------------------------
 				case BUTTON_CANCEL:
@@ -158,18 +158,18 @@ BOOL CALLBACK ImageErrorProc( HWND hWndDialog, UINT message,
 					EndDialog( hWndDialog, FALSE );
 					break;
 
-				}  // end cancel
+				}
 
-			}  // end switch
+			}
 
 			break;
 
-		}  // end command
+		}
 
-	}  // end switch message
+	}
 
 	return 0;
 
-}  // end ImageErrorProc
+}
 
 

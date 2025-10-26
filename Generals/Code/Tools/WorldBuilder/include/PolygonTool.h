@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef POLYGONTOOL_H
-#define POLYGONTOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 class MapObject;
@@ -32,10 +29,10 @@ class PolygonTrigger;
 class MovePolygonUndoable;
 /*************************************************************************/
 /**                             PolygonTool
-	 Does the add/select polygon operation. 
+	 Does the add/select polygon operation.
 ***************************************************************************/
 ///  Select tile tool.
-class PolygonTool : public Tool 
+class PolygonTool : public Tool
 {
 public:
 	PolygonTool(void);
@@ -51,7 +48,7 @@ protected:
 	HCURSOR m_poly_plusCursor;
 	Bool m_poly_mouseUpMove;///< True if we are over the "move" hotspot.
 	HCURSOR m_poly_moveCursor;
-					
+
 	MovePolygonUndoable *m_poly_moveUndoable;
 
 	static Bool		m_poly_isAdding;
@@ -59,7 +56,7 @@ protected:
 	static Bool		m_poly_isActive;
 	static PolygonTrigger *m_poly_curSelectedPolygon;
 
-protected: 
+protected:
 	static Int poly_pickPoint(PolygonTrigger *pTrig, CPoint viewPt, WbView* pView);
 	static Int poly_getInsertIndex(PolygonTrigger *pTrig, Coord3D loc);
 	Bool poly_snapToPoly(Coord3D *pLoc);
@@ -84,7 +81,3 @@ public:
 	virtual void activate(); ///< Become the current tool.
 	virtual void deactivate(); ///< Become not the current tool.
 };
-
-
-#endif //POLYGONTOOL_H
-

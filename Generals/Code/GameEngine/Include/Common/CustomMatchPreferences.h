@@ -30,16 +30,13 @@
 
 #pragma once
 
-#ifndef __CUSTOMMATCHPREFERENCES_H__
-#define __CUSTOMMATCHPREFERENCES_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "Common/UserPreferences.h"
 
 //-----------------------------------------------------------------------------
-// CustomMatchPreferences base class 
+// CustomMatchPreferences base class
 //-----------------------------------------------------------------------------
 class CustomMatchPreferences : public UserPreferences
 {
@@ -79,5 +76,3 @@ public:
 	void setDisallowNonAsianText( Bool val );
 
 };
-
-#endif // __CUSTOMMATCHPREFERENCES_H__

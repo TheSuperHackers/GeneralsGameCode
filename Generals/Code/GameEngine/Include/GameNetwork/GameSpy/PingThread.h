@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __PINGTHREAD_H__
-#define __PINGTHREAD_H__
-
 // this class encapsulates a request for the thread
 class PingRequest
 {
@@ -78,6 +75,3 @@ public:
 };
 
 extern PingerInterface *ThePinger;
-
-
-#endif // __PINGTHREAD_H__

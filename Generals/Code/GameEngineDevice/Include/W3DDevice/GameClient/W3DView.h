@@ -25,7 +25,7 @@
 // FILE: W3DView.h ////////////////////////////////////////////////////////////////////////////////
 //
 // W3D implementation of the game view window.  View windows are literally
-// a window into the game world that have width, height, and camera 
+// a window into the game world that have width, height, and camera
 // controls for what to look at
 //
 // Author: Colin Day, April 2001
@@ -33,9 +33,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DVIEW_H_
-#define __W3DVIEW_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////////////////////////
 
@@ -52,7 +49,7 @@ enum {MAX_WAYPOINTS=25};
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-typedef struct 
+typedef struct
 {
 	Int			numWaypoints;
 	Coord3D	waypoints[MAX_WAYPOINTS+2];		// We pad first & last for interpolation.
@@ -62,8 +59,8 @@ typedef struct
 	Real		cameraZoom[MAX_WAYPOINTS+2];	// Camera Zoom;
 	Int			timeMultiplier[MAX_WAYPOINTS+2];	// Time speedup factor.
 	Real		groundHeight[MAX_WAYPOINTS+1];	// Ground height.
-	Int			totalTimeMilliseconds;					// Num of ms to do this movement.
-	Int			elapsedTimeMilliseconds;				// Time since start.
+	Real		totalTimeMilliseconds;					// Num of ms to do this movement.
+	Real		elapsedTimeMilliseconds;				// Time since start.
 	Real		totalDistance;								// Total length of paths.
 	Real		curSegDistance;								// How far we are along the current seg.
 	Int			shutter;
@@ -74,7 +71,7 @@ typedef struct
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-typedef struct 
+typedef struct
 {
 	Int			numFrames;						///< Number of frames to rotate.
 	Int			curFrame;							///< Current frame.
@@ -93,7 +90,7 @@ typedef struct
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-typedef struct 
+typedef struct
 {
 	Int			numFrames;						///< Number of frames to pitch.
 	Int			curFrame;							///< Current frame.
@@ -106,7 +103,7 @@ typedef struct
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-typedef struct 
+typedef struct
 {
 	Int			numFrames;						///< Number of frames to zoom.
 	Int			curFrame;							///< Current frame.
@@ -132,6 +129,7 @@ public:
 	virtual void reset( void );
 	virtual void drawView( void );  ///< draw this view
 	virtual void updateView(void);	///<called once per frame to determine the final camera and object transforms
+	virtual void stepView(); ///< Update view for every fixed time step
 
 	virtual void draw( );  ///< draw this view
 	virtual void update( );	///<called once per frame to determine the final camera and object transforms
@@ -145,7 +143,7 @@ public:
 
 	virtual void setWidth( Int width );
 	virtual void setHeight( Int height );
-	virtual void setOrigin( Int x, Int y);			///< Sets location of top-left view corner on display 
+	virtual void setOrigin( Int x, Int y);			///< Sets location of top-left view corner on display
 
 	virtual void scrollBy( Coord2D *delta );  ///< Shift the view by the given delta
 
@@ -153,7 +151,7 @@ public:
 
 	virtual void setAngle( Real angle );										///< Rotate the view around the up axis by the given angle
 	virtual void setPitch( Real angle );											///< Rotate the view around the horizontal axis to the given angle
-	virtual void setAngleAndPitchToDefault( void );							///< Set the view angle back to default 
+	virtual void setAngleAndPitchToDefault( void );							///< Set the view angle back to default
 
 	virtual void lookAt( const Coord3D *o );											///< Center the view on the given coordinate
 	virtual void initHeightForMap( void );												///<  Init the camera height for the map at the current position.
@@ -186,13 +184,13 @@ public:
 
 	virtual void setFieldOfView( Real angle );							///< Set the horizontal field of view angle
 
-	virtual Bool worldToScreen( const Coord3D *w, ICoord2D *s );	///< Transform world coordinate "w" into screen coordinate "s"
+  virtual WorldToScreenReturn worldToScreenTriReturn( const Coord3D *w, ICoord2D *s );	///< Transform world coordinate "w" into screen coordinate "s"
 	virtual void screenToWorld( const ICoord2D *s, Coord3D *w );	///< Transform screen coordinate "s" into world coordinate "w"
 	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world );  ///< transform screen coord to a point on the 3D terrain
 	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z );  ///< transform screen point to world point at the specified world Z value
 
 	CameraClass *get3DCamera() const { return m_3DCamera; }
-	
+
 	virtual const Coord3D& get3DCameraPosition() const;
 
 	virtual void setCameraLock(ObjectID id);
@@ -200,18 +198,18 @@ public:
 
 	/// Add an impulse force to shake the camera
 	virtual void shake( const Coord3D *epicenter, CameraShakeType shakeType );
-	
+
 	virtual Real getFXPitch( void ) const { return m_FXPitch; }					///< returns the FX pitch angle
 
-	virtual Bool setViewFilterMode(enum FilterModes filterMode);			///< Turns on viewport special effect (black & white mode)
-	virtual Bool setViewFilter(enum FilterTypes filter);			///< Turns on viewport special effect (black & white mode)
+	virtual Bool setViewFilterMode(FilterModes filterMode);			///< Turns on viewport special effect (black & white mode)
+	virtual Bool setViewFilter(FilterTypes filter);			///< Turns on viewport special effect (black & white mode)
 	virtual void setViewFilterPos(const Coord3D *pos);			///<  Passes a position to the special effect filter.
-	virtual enum FilterModes getViewFilterMode(void) {return m_viewFilterMode;}			///< Turns on viewport special effect (black & white mode)
-	virtual enum FilterTypes getViewFilterType(void) {return m_viewFilter;}			///< Turns on viewport special effect (black & white mode)
+	virtual FilterModes getViewFilterMode(void) {return m_viewFilterMode;}			///< Turns on viewport special effect (black & white mode)
+	virtual FilterTypes getViewFilterType(void) {return m_viewFilter;}			///< Turns on viewport special effect (black & white mode)
 	virtual void setFadeParameters(Int fadeFrames, Int direction);
 	virtual void set3DWireFrameMode(Bool enable);	///<enables custom wireframe rendering of 3D viewport
 
-	Bool updateCameraMovements(void); 
+	Bool updateCameraMovements(void);
 	virtual void forceCameraConstraintRecalc(void) { calcCameraConstraints(); }
 
 	virtual void setGuardBandBias( const Coord2D *gb ) { m_guardBandBias.x = gb->x; m_guardBandBias.y = gb->y; }
@@ -221,8 +219,8 @@ private:
 
 	CameraClass *m_3DCamera;												///< camera representation for 3D scene
 	CameraClass *m_2DCamera;												///< camera for UI overlayed on top of 3D scene
-	enum FilterModes m_viewFilterMode;
-	enum FilterTypes m_viewFilter;
+	FilterModes m_viewFilterMode;
+	FilterTypes m_viewFilter;
 	Bool m_isWireFrameEnabled;
 	Bool m_nextWireFrameEnabled;											///< used to delay wireframe changes by 1 frame (needed for transitions).
 
@@ -240,7 +238,7 @@ private:
 	Bool m_doingPitchCamera;
 	TZoomCameraInfo m_zcInfo;
 	Bool m_doingZoomCamera;
-	
+
 	Bool m_doingScriptedCameraLock;									///< True if we are following a unit via script
 
 	Real		m_FXPitch;															///< Camera effects pitch.  0 = flat, infinite = look down, 1 = normal.
@@ -260,14 +258,14 @@ private:
 	Real m_scrollAmountCutoff;											///< scroll speed at which we do not adjust height
 
 	Real m_groundLevel;															///< height of ground.
-	
+
 	Region2D m_cameraConstraint;										///< m_pos should be constrained to be within this area
 	Bool m_cameraConstraintValid;										///< if f, recalc cam constraints
 
 	void setCameraTransform( void );								///< set the transform matrix of m_3DCamera, based on m_pos & m_angle
 	void buildCameraTransform( Matrix3D *transform ) ;			///< calculate (but do not set) the transform matrix of m_3DCamera, based on m_pos & m_angle
 	void calcCameraConstraints() ;			///< recalc m_cameraConstraint
-	void moveAlongWaypointPath(Int milliseconds); ///< Move camera along path.
+	void moveAlongWaypointPath(Real milliseconds); ///< Move camera along path.
 	void getPickRay(const ICoord2D *screen, Vector3 *rayStart, Vector3 *rayEnd);	///<returns a line segment (ray) originating at the given screen position
 	void setupWaypointPath(Bool orient);					///< Calculates distances & angles for moving along a waypoint path.
 	void rotateCameraOneFrame(void);							///< Do one frame of a rotate camera movement.
@@ -276,9 +274,7 @@ private:
 	void getAxisAlignedViewRegion(Region3D &axisAlignedRegion);	///< Find 3D Region enclosing all possible drawables.
 	void calcDeltaScroll(Coord2D &screenDelta);
 
-};  // end class W3DView
+};
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
-extern Int TheW3DFrameLengthInMsec;	// default is 33msec/frame == 30fps. but we may change it depending on sys config.
-
-#endif  // end __W3DVIEW_H_
+extern Real TheW3DFrameLengthInMsec;

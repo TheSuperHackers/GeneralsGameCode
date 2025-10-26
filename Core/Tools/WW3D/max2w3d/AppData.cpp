@@ -144,7 +144,7 @@ Value * copy_app_data_cf (Value **arg_list, int count)
 		dest_node->AddAppDataChunk(W3DUtilityClassID, UTILITY_CLASS_ID, W3D_DAZZLE_APPDATA,
 											sizeof(W3DDazzleAppDataStruct), copy_dazzle_data);
 	}
-	
+
 	return &ok;
 }
 

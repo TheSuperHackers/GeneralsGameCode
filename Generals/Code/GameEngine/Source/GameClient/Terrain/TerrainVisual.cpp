@@ -31,6 +31,10 @@
 #include "Common/Xfer.h"
 #include "GameClient/TerrainVisual.h"
 
+
+
+
+
 // GLOBALS ////////////////////////////////////////////////////////////////////////////////////////
 TerrainVisual *TheTerrainVisual = NULL;
 
@@ -43,14 +47,14 @@ TerrainVisual *TheTerrainVisual = NULL;
 TerrainVisual::TerrainVisual()
 {
 
-}  // end TerrainVisual
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 TerrainVisual::~TerrainVisual()
 {
 
-}  // end ~TerrainVisual
+}
 
 //-------------------------------------------------------------------------------------------------
 /** initialize the device independent functionality of the visual terrain */
@@ -58,17 +62,17 @@ TerrainVisual::~TerrainVisual()
 void TerrainVisual::init( void )
 {
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
-/** Reset */ 
+/** Reset */
 //-------------------------------------------------------------------------------------------------
 void TerrainVisual::reset( void )
 {
 
 	m_filenameString.clear();
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update */
@@ -76,7 +80,7 @@ void TerrainVisual::reset( void )
 void TerrainVisual::update( void )
 {
 	// All the interesting stuff happens in load.  jba.
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 /** device independent implementation for common terrain visual systems */
@@ -92,7 +96,7 @@ Bool TerrainVisual::load( AsciiString filename )
 
 	return TRUE;;  // success
 
-}  // end load
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -100,7 +104,7 @@ Bool TerrainVisual::load( AsciiString filename )
 void TerrainVisual::crc( Xfer *xfer )
 {
 
-}  // end CRC
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer
@@ -115,7 +119,7 @@ void TerrainVisual::xfer( Xfer *xfer )
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -123,4 +127,4 @@ void TerrainVisual::xfer( Xfer *xfer )
 void TerrainVisual::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

@@ -23,9 +23,6 @@
 
 #pragma once
 
-#ifndef __SCOPEDMUTEX_H__
-#define __SCOPEDMUTEX_H__
-
 class ScopedMutex
 {
 	private:
@@ -36,7 +33,7 @@ class ScopedMutex
 		{
 			DWORD status = WaitForSingleObject(m_mutex, 500);
 			if (status != WAIT_OBJECT_0) {
-				DEBUG_LOG(("ScopedMutex WaitForSingleObject timed out - status %d\n", status));
+				DEBUG_LOG(("ScopedMutex WaitForSingleObject timed out - status %d", status));
 			}
 		}
 
@@ -45,5 +42,3 @@ class ScopedMutex
 			ReleaseMutex(m_mutex);
 		}
 };
-
-#endif /* __SCOPEDMUTEX_H__ */

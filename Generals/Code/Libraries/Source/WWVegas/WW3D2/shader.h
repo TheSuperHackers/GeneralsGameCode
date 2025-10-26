@@ -34,19 +34,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef SHADER_H
-#define SHADER_H
 
 #include "always.h"
-
-#if defined (SR_OS_SOLARIS)
-#undef PASS_MAX
-#endif
 
 class DX8Wrapper;
 struct W3dMaterial3Struct;
@@ -90,12 +80,11 @@ class ShaderClass
 
 	void	Apply();
 public:
-	
+
 	enum AlphaTestType
 	{
 		ALPHATEST_DISABLE= 0,// disable alpha testing (default)
 		ALPHATEST_ENABLE,		// enable alpha testing
-		ALPHATEST_MAX			// end of enumeration
 	};
 
 	enum DepthCompareType
@@ -104,25 +93,22 @@ public:
 		PASS_LESS,        	// pass if incoming less than stored
 		PASS_EQUAL,        	// pass if incoming equal to stored
 		PASS_LEQUAL,			// pass if incoming less than or equal to stored (default)
-		PASS_GREATER,        // pass if incoming greater than stored	
+		PASS_GREATER,        // pass if incoming greater than stored
 		PASS_NOTEQUAL,       // pass if incoming not equal to stored
 		PASS_GEQUAL,			// pass if incoming greater than or equal to stored
 		PASS_ALWAYS,			// pass always
-		PASS_MAX					// end of enumeration
 	};
 
 	enum DepthMaskType
 	{
-		DEPTH_WRITE_DISABLE=0,	// disable depth buffer writes 
+		DEPTH_WRITE_DISABLE=0,	// disable depth buffer writes
 		DEPTH_WRITE_ENABLE,		// enable depth buffer writes		(default)
-		DEPTH_WRITE_MAX			// end of enumeration
 	};
 
 	enum ColorMaskType
 	{
-		COLOR_WRITE_DISABLE=0,	// disable color buffer writes 
+		COLOR_WRITE_DISABLE=0,	// disable color buffer writes
 		COLOR_WRITE_ENABLE,		// enable color buffer writes		(default)
-		COLOR_WRITE_MAX			// end of enumeration
 	};
 
  	enum DetailAlphaFuncType
@@ -131,7 +117,6 @@ public:
 		DETAILALPHA_DETAIL,		// other
 		DETAILALPHA_SCALE,		// local * other
 		DETAILALPHA_INVSCALE,	// ~(~local * ~other) = local + (1-local)*other
-		DETAILALPHA_MAX			// end of enumeration
 	};
 
 	enum DetailColorFuncType
@@ -145,22 +130,18 @@ public:
 		DETAILCOLOR_SUBR,				// 0110	other - local
 		DETAILCOLOR_BLEND,			// 0111	(localAlpha)*local + (~localAlpha)*other
 		DETAILCOLOR_DETAILBLEND,	//	1000	(otherAlpha)*local + (~otherAlpha)*other
-
-		DETAILCOLOR_MAX				//			end of enumeration
 	};
 
 	enum CullModeType
 	{
 		CULL_MODE_DISABLE=0,
 		CULL_MODE_ENABLE,
-		CULL_MODE_MAX
 	};
 
 	enum NPatchEnableType
 	{
 		NPATCH_DISABLE=0,
 		NPATCH_ENABLE,
-		NPATCH_TYPE_MAX
 	};
 
   	enum DstBlendFuncType
@@ -171,7 +152,8 @@ public:
  		DSTBLEND_ONE_MINUS_SRC_COLOR,	// destination pixel multiplied by one minus (i.e. inverse) fragment RGB components
  		DSTBLEND_SRC_ALPHA,        	// destination pixel multiplied by fragment alpha component
  		DSTBLEND_ONE_MINUS_SRC_ALPHA, // destination pixel multiplied by fragment inverse alpha
-		DSTBLEND_MAX						// end of enumeration
+
+		DSTBLEND_MAX
   	};
 
 	enum FogFuncType
@@ -180,7 +162,6 @@ public:
  		FOG_ENABLE,        	// apply fog, f*fogColor + (1-f)*fragment
  		FOG_SCALE_FRAGMENT,  // fog scalar value multiplies fragment, (1-f)*fragment
  		FOG_WHITE,				// fog scalar value replaces fragment, f*fogColor
-		FOG_MAX					// end of enumeration
  	};
 
  	enum PriGradientType
@@ -191,30 +172,28 @@ public:
 		GRADIENT_BUMPENVMAP,	// 011
 		GRADIENT_BUMPENVMAPLUMINANCE,	// 100
 		GRADIENT_DOTPRODUCT3,	// 101
-		GRADIENT_MAX			// end of enumeration
  	};
 
 	enum SecGradientType
 	{
 		SECONDARY_GRADIENT_DISABLE=0,	// don't draw secondary gradient (default)
-		SECONDARY_GRADIENT_ENABLE,    // add secondary gradient RGB to fragment RGB 
-		SECONDARY_GRADIENT_MAX			// end of enumeration
+		SECONDARY_GRADIENT_ENABLE,    // add secondary gradient RGB to fragment RGB
 	};
 
-	enum SrcBlendFuncType	
+	enum SrcBlendFuncType
   	{
   		SRCBLEND_ZERO=0,						// fragment not added to color buffer
   		SRCBLEND_ONE,							// fragment added unmodified to color buffer (default)
  		SRCBLEND_SRC_ALPHA,					// fragment RGB components multiplied by fragment A
  		SRCBLEND_ONE_MINUS_SRC_ALPHA,		// fragment RGB components multiplied by fragment inverse (one minus) A
-		SRCBLEND_MAX							// end of enumeration
+
+		SRCBLEND_MAX
   	};
 
 	enum TexturingType
 	{
 		TEXTURING_DISABLE=0, // no texturing (treat fragment initial color as 1,1,1,1)
 		TEXTURING_ENABLE,    // enable texturing
-		TEXTURING_MAX			// end of enumeration
 	};
 
 	enum StaticSortCategoryType
@@ -225,7 +204,7 @@ public:
 		SSCAT_OTHER
 	};
 
-	enum														
+	enum
 	{
 		MASK_DEPTHCOMPARE			= (7<<0),			// mask for depth comparison setting
 		MASK_DEPTHMASK				= (1<<3),			// mask for depth mask setting
@@ -297,7 +276,7 @@ public:
 		return false;
 		return ((Get_Post_Detail_Color_Func() != DETAILCOLOR_DISABLE) || (Get_Post_Detail_Alpha_Func() != DETAILALPHA_DISABLE));
 	}
-	
+
 	inline void	Reset(void);
 
 	inline DepthCompareType		Get_Depth_Compare(void)	const								{ return (DepthCompareType)(ShaderBits&MASK_DEPTHCOMPARE>>SHIFT_DEPTHCOMPARE); }
@@ -339,12 +318,12 @@ public:
 
 	// DX 8 state management routines
 	static inline void	Invalidate() { ShaderDirty=true; }
-	
+
 	// Global backface culling invert.  This interface can be used to globally invert all backface
-	// culling.  This is a global setting and will affect everything being rendered.  Typically it 
-	// should be left alone at the default setting.  Renegade uses this feature to render the entire 
-	// scene's backfacing polygons only; this is used in a VIS-debugging process.  In order for this 
-	// to work, you will have to ww3d::Flush all rendering before changing the setting back.  
+	// culling.  This is a global setting and will affect everything being rendered.  Typically it
+	// should be left alone at the default setting.  Renegade uses this feature to render the entire
+	// scene's backfacing polygons only; this is used in a VIS-debugging process.  In order for this
+	// to work, you will have to ww3d::Flush all rendering before changing the setting back.
 	// NORMAL USERS SHOULD NEVER CALL THESE FUNCTIONS!
 	static void				Invert_Backface_Culling(bool onoff);
 	static bool				Is_Backface_Culling_Inverted(void);
@@ -370,7 +349,7 @@ public:
 
 	// Texturing, zbuffer, primary gradient, multiplicative blending
 	static ShaderClass _PresetMultiplicativeShader;
-	
+
 	// Texturing, no zbuffer reading/writing, no gradients, no blending, no
 	// fogging - mostly for opaque 2D objects.
 	static ShaderClass _PresetOpaque2DShader;
@@ -477,5 +456,3 @@ inline void ShaderClass::Reset()
 	Set_Post_Detail_Alpha_Func(DETAILALPHA_DISABLE);
 	Set_NPatch_Enable(NPATCH_DISABLE);
 }
-
-#endif //SHADER_H

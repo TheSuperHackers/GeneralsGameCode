@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef RECT_H
-#define RECT_H
 
 #include "vector2.h"
 
@@ -59,7 +53,7 @@ public:
 	RectClass( const Vector2 & top_left, const Vector2 & bottom_right )	{ Left = top_left.X; Top = top_left.Y; Right = bottom_right.X; Bottom = bottom_right.Y; }
 
 	// Assignment
-	RectClass & operator = (const RectClass & r) { Left = r.Left; Top = r.Top; Right = r.Right; Bottom = r.Bottom; return *this; }	
+	RectClass & operator = (const RectClass & r) { Left = r.Left; Top = r.Top; Right = r.Right; Bottom = r.Bottom; return *this; }
 	void	Set(float left, float top, float right, float bottom) { Left = left; Top = top; Right = right; Bottom = bottom; }
 	void	Set( const Vector2 & top_left, const Vector2 & bottom_right )	{ Left = top_left.X; Top = top_left.Y; Right = bottom_right.X; Bottom = bottom_right.Y; }
 	void	Set(const RectClass & r) { Left = r.Left; Top = r.Top; Right = r.Right; Bottom = r.Bottom; }
@@ -103,6 +97,3 @@ public:
 	void	Snap_To_Units( const Vector2 & u ) { Left = (int)(Left / u.X + 0.5f) * u.X; Right = (int)(Right / u.X + 0.5f) * u.X; Top = (int)(Top / u.Y + 0.5f) * u.Y; Bottom = (int)(Bottom / u.Y + 0.5f) * u.Y; }
 
 };
-
-#endif
-

@@ -24,13 +24,10 @@
 
 // FILE: BitFlagsIO.h /////////////////////////////////////////////////////////////////////////////
 // Author: Steven Johnson, March 2002
-// Desc:   
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __BitFlagsIO_H_
-#define __BitFlagsIO_H_
 
 #include "Common/BitFlags.h"
 #include "Common/INI.h"
@@ -44,7 +41,7 @@ void BitFlags<NUMBITS>::buildDescription( AsciiString* str ) const
 {
 	if ( str == NULL )
 		return;//sanity
- 
+
 	for( Int i = 0; i < size(); ++i )
 	{
 		const char* bitName = getBitNameIfSet(i);
@@ -54,8 +51,8 @@ void BitFlags<NUMBITS>::buildDescription( AsciiString* str ) const
 			str->concat( bitName );
 			str->concat( ",\n");
 		}
-	}  
-} 
+	}
+}
 */
 
 //-------------------------------------------------------------------------------------------------
@@ -139,6 +136,18 @@ template <size_t NUMBITS>
 }
 
 //-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+template <size_t NUMBITS>
+/*static*/ void BitFlags<NUMBITS>::parseSingleBitFromINI(INI* ini, void* /*instance*/, void *store, const void* /*userData*/)
+{
+	const char *token = ini->getNextToken();
+	Int bitIndex = INI::scanIndexList(token, s_bitNameList);	// this throws if the token is not found
+
+	Int *storeAsInt = (Int*)store;
+	*storeAsInt = bitIndex;
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
 	* 1: Initial version */
@@ -170,9 +179,9 @@ void BitFlags<NUMBITS>::xfer(Xfer* xfer)
 			AsciiString bitNameA = bitName;
 			xfer->xferAsciiString( &bitNameA );
 
-		}  // end for i
+		}
 
-	}  // end if, save
+	}
 	else if( xfer->getXferMode() == XFER_LOAD )
 	{
   	// clear the kind of mask data
@@ -198,24 +207,22 @@ void BitFlags<NUMBITS>::xfer(Xfer* xfer)
 				throw XFER_READ_ERROR;
 			}
 
-		}  // end for, i
+		}
 
-	}  // end else if, load
+	}
 	else if( xfer->getXferMode() == XFER_CRC )
 	{
 
 		// just call the xfer implementation on the data values
 		xfer->xferUser( this, sizeof( this ) );
 
-	}  // end else if, crc
+	}
 	else
 	{
 
-		DEBUG_CRASH(( "BitFlagsXfer - Unknown xfer mode '%d'\n", xfer->getXferMode() ));
+		DEBUG_CRASH(( "BitFlagsXfer - Unknown xfer mode '%d'", xfer->getXferMode() ));
 		throw XFER_MODE_UNKNOWN;
 
-	}  // end else
+	}
 
-}  // end xfer
-
-#endif
+}

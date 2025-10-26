@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __VICTORYCONDITIONS_H__
-#define __VICTORYCONDITIONS_H__
-
 #include "Common/SubsystemInterface.h"
 #include "Lib/BaseType.h"
 
@@ -53,7 +50,7 @@ class VictoryConditionsInterface : public SubsystemInterface
 {
 public:
 	VictoryConditionsInterface() { m_victoryConditions = 0; }
-	
+
 	virtual void init( void ) = 0;
 	virtual void reset( void ) = 0;
 	virtual void update( void ) = 0;
@@ -79,5 +76,3 @@ protected:
 VictoryConditionsInterface * createVictoryConditions( void );
 
 extern VictoryConditionsInterface *TheVictoryConditions;
-
-#endif // __VICTORYCONDITIONS_H__

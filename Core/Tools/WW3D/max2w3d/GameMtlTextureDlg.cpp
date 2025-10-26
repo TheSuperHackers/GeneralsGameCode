@@ -68,8 +68,8 @@
  *=============================================================================================*/
 GameMtlTextureDlg::GameMtlTextureDlg
 (
-	HWND				parent, 
-	IMtlParams *	imp, 
+	HWND				parent,
+	IMtlParams *	imp,
 	GameMtl *		mtl,
 	int				pass
 ) :
@@ -151,13 +151,13 @@ GameMtlTextureDlg::~GameMtlTextureDlg()
  *   11/23/98   GTH : Created.                                                                 *
  *   10/6/1999 MLL: Turned off the display button when the texture is turned off.              *
  *=============================================================================================*/
-BOOL GameMtlTextureDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam) 
-{ 
+BOOL GameMtlTextureDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam)
+{
 	int cursel;
 	int id = LOWORD(wparam);
 	int code = HIWORD(wparam);
 
-	switch (message) 
+	switch (message)
 	{
 		case WM_INITDIALOG:
 		{
@@ -166,20 +166,20 @@ BOOL GameMtlTextureDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, 
 															IDC_STAGE0_FRAMES_EDIT,
 															1,999,
 															TheMtl->Get_Texture_Frame_Count(PassIndex,0) );
-			
+
 			Stage0RateSpin = SetupFloatSpinner(	dlg_wnd,
 															IDC_STAGE0_RATE_SPIN,
 															IDC_STAGE0_RATE_EDIT,
 															0.0f,60.0f,
 															TheMtl->Get_Texture_Frame_Rate(PassIndex,0),
 															1.0f );
-			
+
 			Stage1FramesSpin = SetupIntSpinner(	dlg_wnd,
 															IDC_STAGE1_FRAMES_SPIN,
 															IDC_STAGE1_FRAMES_EDIT,
 															1,999,
 															TheMtl->Get_Texture_Frame_Count(PassIndex,1) );
-			
+
 			Stage1RateSpin = SetupFloatSpinner(	dlg_wnd,
 															IDC_STAGE1_RATE_SPIN,
 															IDC_STAGE1_RATE_EDIT,
@@ -190,61 +190,61 @@ BOOL GameMtlTextureDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, 
 			Stage0PublishButton = GetICustButton(GetDlgItem(dlg_wnd, IDC_STAGE0_PUBLISH_BUTTON));
 			Stage0PublishButton->SetType(CBT_CHECK);
 			Stage0PublishButton->SetHighlightColor(GREEN_WASH);
-			Stage0PublishButton->SetCheck(TheMtl->Get_Texture_Publish(PassIndex,0));				
+			Stage0PublishButton->SetCheck(TheMtl->Get_Texture_Publish(PassIndex,0));
 			Stage0PublishButton->SetText(Get_String(IDS_PUBLISH));
 
 			Stage1PublishButton = GetICustButton(GetDlgItem(dlg_wnd, IDC_STAGE1_PUBLISH_BUTTON));
 			Stage1PublishButton->SetType(CBT_CHECK);
 			Stage1PublishButton->SetHighlightColor(GREEN_WASH);
-			Stage1PublishButton->SetCheck(TheMtl->Get_Texture_Publish(PassIndex,1));				
+			Stage1PublishButton->SetCheck(TheMtl->Get_Texture_Publish(PassIndex,1));
 			Stage1PublishButton->SetText(Get_String(IDS_PUBLISH));
 
 			Stage0ClampUButton = GetICustButton(GetDlgItem(dlg_wnd, IDC_STAGE0_CLAMP_U_BUTTON));
 			Stage0ClampUButton->SetType(CBT_CHECK);
 			Stage0ClampUButton->SetHighlightColor(GREEN_WASH);
-			Stage0ClampUButton->SetCheck(TheMtl->Get_Texture_Clamp_U(PassIndex,0));				
+			Stage0ClampUButton->SetCheck(TheMtl->Get_Texture_Clamp_U(PassIndex,0));
 			Stage0ClampUButton->SetText(Get_String(IDS_CLAMP_U));
 
 			Stage1ClampUButton = GetICustButton(GetDlgItem(dlg_wnd, IDC_STAGE1_CLAMP_U_BUTTON));
 			Stage1ClampUButton->SetType(CBT_CHECK);
 			Stage1ClampUButton->SetHighlightColor(GREEN_WASH);
-			Stage1ClampUButton->SetCheck(TheMtl->Get_Texture_Clamp_U(PassIndex,1));				
+			Stage1ClampUButton->SetCheck(TheMtl->Get_Texture_Clamp_U(PassIndex,1));
 			Stage1ClampUButton->SetText(Get_String(IDS_CLAMP_U));
 
 			Stage0ClampVButton = GetICustButton(GetDlgItem(dlg_wnd, IDC_STAGE0_CLAMP_V_BUTTON));
 			Stage0ClampVButton->SetType(CBT_CHECK);
 			Stage0ClampVButton->SetHighlightColor(GREEN_WASH);
-			Stage0ClampVButton->SetCheck(TheMtl->Get_Texture_Clamp_V(PassIndex,0));				
+			Stage0ClampVButton->SetCheck(TheMtl->Get_Texture_Clamp_V(PassIndex,0));
 			Stage0ClampVButton->SetText(Get_String(IDS_CLAMP_V));
 
 			Stage1ClampVButton = GetICustButton(GetDlgItem(dlg_wnd, IDC_STAGE1_CLAMP_V_BUTTON));
 			Stage1ClampVButton->SetType(CBT_CHECK);
 			Stage1ClampVButton->SetHighlightColor(GREEN_WASH);
-			Stage1ClampVButton->SetCheck(TheMtl->Get_Texture_Clamp_V(PassIndex,1));				
+			Stage1ClampVButton->SetCheck(TheMtl->Get_Texture_Clamp_V(PassIndex,1));
 			Stage1ClampVButton->SetText(Get_String(IDS_CLAMP_V));
 
 			Stage0NoLODButton = GetICustButton(GetDlgItem(dlg_wnd, IDC_STAGE0_NOLOD_BUTTON));
 			Stage0NoLODButton->SetType(CBT_CHECK);
 			Stage0NoLODButton->SetHighlightColor(GREEN_WASH);
-			Stage0NoLODButton->SetCheck(TheMtl->Get_Texture_No_LOD(PassIndex,0));				
+			Stage0NoLODButton->SetCheck(TheMtl->Get_Texture_No_LOD(PassIndex,0));
 			Stage0NoLODButton->SetText(Get_String(IDS_NO_LOD));
 
 			Stage1NoLODButton = GetICustButton(GetDlgItem(dlg_wnd, IDC_STAGE1_NOLOD_BUTTON));
 			Stage1NoLODButton->SetType(CBT_CHECK);
 			Stage1NoLODButton->SetHighlightColor(GREEN_WASH);
-			Stage1NoLODButton->SetCheck(TheMtl->Get_Texture_No_LOD(PassIndex,0));				
+			Stage1NoLODButton->SetCheck(TheMtl->Get_Texture_No_LOD(PassIndex,0));
 			Stage1NoLODButton->SetText(Get_String(IDS_NO_LOD));
-			
+
 			Stage0AlphaBitmapButton = GetICustButton(GetDlgItem(dlg_wnd, IDC_STAGE0_ALPHA_BITMAP_BUTTON));
 			Stage0AlphaBitmapButton->SetType(CBT_CHECK);
 			Stage0AlphaBitmapButton->SetHighlightColor(GREEN_WASH);
-			Stage0AlphaBitmapButton->SetCheck(TheMtl->Get_Texture_Alpha_Bitmap(PassIndex,0));				
+			Stage0AlphaBitmapButton->SetCheck(TheMtl->Get_Texture_Alpha_Bitmap(PassIndex,0));
 			Stage0AlphaBitmapButton->SetText(Get_String(IDS_ALPHA_BITMAP));
 
 			Stage1AlphaBitmapButton = GetICustButton(GetDlgItem(dlg_wnd, IDC_STAGE1_ALPHA_BITMAP_BUTTON));
 			Stage1AlphaBitmapButton->SetType(CBT_CHECK);
 			Stage1AlphaBitmapButton->SetHighlightColor(GREEN_WASH);
-			Stage1AlphaBitmapButton->SetCheck(TheMtl->Get_Texture_Alpha_Bitmap(PassIndex,1));				
+			Stage1AlphaBitmapButton->SetCheck(TheMtl->Get_Texture_Alpha_Bitmap(PassIndex,1));
 			Stage1AlphaBitmapButton->SetText(Get_String(IDS_ALPHA_BITMAP));
 
 			Stage0DisplayButton = GetICustButton(GetDlgItem(dlg_wnd, IDC_STAGE0_DISPLAY_BUTTON));
@@ -269,11 +269,11 @@ BOOL GameMtlTextureDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, 
 			return FALSE;
 		}
 
-		case CC_SPINNER_CHANGE:    
+		case CC_SPINNER_CHANGE:
 		{
 			TheMtl->Set_Texture_Frame_Count(	PassIndex, 0,
 														Stage0FramesSpin->GetIVal());
-			
+
 			TheMtl->Set_Texture_Frame_Rate(	PassIndex, 0,
 														Stage0RateSpin->GetFVal());
 
@@ -285,15 +285,15 @@ BOOL GameMtlTextureDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, 
 			break;
 		}
 
-		case CC_SPINNER_BUTTONUP: 
+		case CC_SPINNER_BUTTONUP:
 		{
 			TheMtl->Notify_Changed();
 			break;
 		}
 
-		case WM_COMMAND: 
+		case WM_COMMAND:
 		{
-			switch (id) 
+			switch (id)
 			{
 				case IDC_STAGE0_BUTTON:
 				{
@@ -331,7 +331,7 @@ BOOL GameMtlTextureDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, 
 					if (TheManager->SelectFileInput(&bmi, m_hWnd)) {
 						texture = NewDefaultBitmapTex();
 						if (texture) {
-							
+
 							BOOL disp = TheMtl->Get_Texture_Display(PassIndex,1);
 							if (disp) {
 								TheMtl->Set_Texture_Display(PassIndex,1,FALSE);
@@ -342,7 +342,7 @@ BOOL GameMtlTextureDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, 
 							TheMtl->SetSubTexmap(texmap_index,texture);
 							Update_Texture_Buttons();
 							TheMtl->Notify_Changed();
-							
+
 							if (disp) {
 								TheMtl->Set_Texture_Display(PassIndex,1,TRUE);
 								TheMtl->Notify_Changed();
@@ -505,40 +505,40 @@ void GameMtlTextureDlg::ReloadDialog(void)
 	Stage1FramesSpin->SetValue(TheMtl->Get_Texture_Frame_Count(PassIndex,1),FALSE);
 	Stage0RateSpin->SetValue(TheMtl->Get_Texture_Frame_Rate(PassIndex,0),FALSE);
 	Stage1RateSpin->SetValue(TheMtl->Get_Texture_Frame_Rate(PassIndex,1),FALSE);
-	
-	SendDlgItemMessage(	m_hWnd, 
-								IDC_STAGE0_ANIM_COMBO, 
-								CB_SETCURSEL, 
+
+	SendDlgItemMessage(	m_hWnd,
+								IDC_STAGE0_ANIM_COMBO,
+								CB_SETCURSEL,
 								TheMtl->Get_Texture_Anim_Type(PassIndex,0), 0 );
 
-	SendDlgItemMessage(	m_hWnd, 
-								IDC_STAGE1_ANIM_COMBO, 
-								CB_SETCURSEL, 
+	SendDlgItemMessage(	m_hWnd,
+								IDC_STAGE1_ANIM_COMBO,
+								CB_SETCURSEL,
 								TheMtl->Get_Texture_Anim_Type(PassIndex,1), 0 );
 
-	SendDlgItemMessage(	m_hWnd, 
-								IDC_STAGE0_HINT_COMBO, 
-								CB_SETCURSEL, 
+	SendDlgItemMessage(	m_hWnd,
+								IDC_STAGE0_HINT_COMBO,
+								CB_SETCURSEL,
 								TheMtl->Get_Texture_Hint(PassIndex,0), 0 );
 
-	SendDlgItemMessage(	m_hWnd, 
-								IDC_STAGE1_HINT_COMBO, 
-								CB_SETCURSEL, 
+	SendDlgItemMessage(	m_hWnd,
+								IDC_STAGE1_HINT_COMBO,
+								CB_SETCURSEL,
 								TheMtl->Get_Texture_Hint(PassIndex,1), 0 );
 
 	SetCheckBox(m_hWnd,IDC_STAGE0_ENABLE, TheMtl->Get_Texture_Enable(PassIndex,0));
 	SetCheckBox(m_hWnd,IDC_STAGE1_ENABLE, TheMtl->Get_Texture_Enable(PassIndex,1));
 
-	Stage0PublishButton->SetCheck(TheMtl->Get_Texture_Publish(PassIndex,0));				
-	Stage1PublishButton->SetCheck(TheMtl->Get_Texture_Publish(PassIndex,1));				
-	Stage0ClampUButton->SetCheck(TheMtl->Get_Texture_Clamp_U(PassIndex,0));				
-	Stage1ClampUButton->SetCheck(TheMtl->Get_Texture_Clamp_U(PassIndex,1));				
-	Stage0ClampVButton->SetCheck(TheMtl->Get_Texture_Clamp_V(PassIndex,0));				
-	Stage1ClampVButton->SetCheck(TheMtl->Get_Texture_Clamp_V(PassIndex,1));				
-	Stage0NoLODButton->SetCheck(TheMtl->Get_Texture_No_LOD(PassIndex,0));				
-	Stage1NoLODButton->SetCheck(TheMtl->Get_Texture_No_LOD(PassIndex,1));				
-	Stage0AlphaBitmapButton->SetCheck(TheMtl->Get_Texture_Alpha_Bitmap(PassIndex,0));				
-	Stage1AlphaBitmapButton->SetCheck(TheMtl->Get_Texture_Alpha_Bitmap(PassIndex,1));				
+	Stage0PublishButton->SetCheck(TheMtl->Get_Texture_Publish(PassIndex,0));
+	Stage1PublishButton->SetCheck(TheMtl->Get_Texture_Publish(PassIndex,1));
+	Stage0ClampUButton->SetCheck(TheMtl->Get_Texture_Clamp_U(PassIndex,0));
+	Stage1ClampUButton->SetCheck(TheMtl->Get_Texture_Clamp_U(PassIndex,1));
+	Stage0ClampVButton->SetCheck(TheMtl->Get_Texture_Clamp_V(PassIndex,0));
+	Stage1ClampVButton->SetCheck(TheMtl->Get_Texture_Clamp_V(PassIndex,1));
+	Stage0NoLODButton->SetCheck(TheMtl->Get_Texture_No_LOD(PassIndex,0));
+	Stage1NoLODButton->SetCheck(TheMtl->Get_Texture_No_LOD(PassIndex,1));
+	Stage0AlphaBitmapButton->SetCheck(TheMtl->Get_Texture_Alpha_Bitmap(PassIndex,0));
+	Stage1AlphaBitmapButton->SetCheck(TheMtl->Get_Texture_Alpha_Bitmap(PassIndex,1));
 	Stage0DisplayButton->SetCheck(TheMtl->Get_Texture_Display(PassIndex,0));
 	Stage1DisplayButton->SetCheck(TheMtl->Get_Texture_Display(PassIndex,1));
 
@@ -583,9 +583,9 @@ void GameMtlTextureDlg::Enable_Stage(int stage,BOOL onoff)
 {
 	assert((stage >= 0) && (stage < W3dMaterialClass::MAX_STAGES));
 	TheMtl->Set_Texture_Enable(PassIndex,stage,(onoff == TRUE ? true : false));
-		
+
 	if (stage == 0) {
-		
+
 		EnableWindow(GetDlgItem(m_hWnd,IDC_STAGE0_BUTTON),onoff);
 
 		// Turn these off if it is a playstation 2 shader.
@@ -611,7 +611,7 @@ void GameMtlTextureDlg::Enable_Stage(int stage,BOOL onoff)
 		EnableWindow(GetDlgItem(m_hWnd,IDC_STAGE0_ALPHA_BITMAP_BUTTON),onoff);
 		EnableWindow(GetDlgItem(m_hWnd,IDC_STAGE0_DISPLAY_BUTTON),onoff);
 		EnableWindow(GetDlgItem(m_hWnd,IDC_STAGE0_HINT_COMBO),onoff);
-	  		
+
 	} else {
 
 		EnableWindow(GetDlgItem(m_hWnd,IDC_STAGE1_BUTTON),onoff);

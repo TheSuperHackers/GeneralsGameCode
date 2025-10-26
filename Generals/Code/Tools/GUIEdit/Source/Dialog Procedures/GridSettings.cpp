@@ -24,12 +24,12 @@
 
 // FILE: GridSettings.cpp /////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -78,10 +78,10 @@ static void initGridSettings( HWND hWndDialog )
 {
 
 	// set resolution
-	SetDlgItemInt( hWndDialog, EDIT_RESOLUTION, 
+	SetDlgItemInt( hWndDialog, EDIT_RESOLUTION,
 								 TheEditor->getGridResolution(), FALSE );
 
-	// check box for on/off 
+	// check box for on/off
 	if( TheEditor->isGridVisible() == TRUE )
 		CheckDlgButton( hWndDialog, CHECK_VISIBLE, BST_CHECKED );
 
@@ -96,12 +96,12 @@ static void initGridSettings( HWND hWndDialog )
 	RGBColorInt *color = TheEditor->getGridColor();
 	gridColor = *color;
 
-}  // end initGridSettings
+}
 
 // GridSettingsDialogProc =====================================================
 /** Dialog procedure for grid settings dialog */
 //=============================================================================
-BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message, 
+BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 																			WPARAM wParam, LPARAM lParam )
 {
 
@@ -116,13 +116,13 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 			initGridSettings( hWndDialog );
 			return TRUE;
 
-		}  // end init dialog
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_DRAWITEM:
 		{
-      UINT controlID = (UINT)wParam;  // control identifier 
-      LPDRAWITEMSTRUCT drawItem = (LPDRAWITEMSTRUCT)lParam; // item drawing 
+      UINT controlID = (UINT)wParam;  // control identifier
+      LPDRAWITEMSTRUCT drawItem = (LPDRAWITEMSTRUCT)lParam; // item drawing
 			RGBColorInt *color = &gridColor;
 
 			// we only care about color button controls
@@ -158,11 +158,11 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 				// we have taken care of it
 				return TRUE;
 
-			}  // end if
+			}
 
 			return FALSE;
 
-		}  // end draw item
+		}
 
 		// ------------------------------------------------------------------------
     case WM_COMMAND:
@@ -184,9 +184,9 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 					{
 						RGBColorInt *newColor;
 						POINT mouse;
-						
+
 						GetCursorPos( &mouse );
-						newColor = SelectColor( currColor->red, currColor->green, 
+						newColor = SelectColor( currColor->red, currColor->green,
 																		currColor->blue, currColor->alpha,
 																		mouse.x, mouse.y );
 
@@ -196,13 +196,13 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 							gridColor = *newColor;
 							InvalidateRect( hWndControl, NULL, TRUE );
 
-						}  // end if
+						}
 
-					}  // end if
+					}
 
 					break;
 
-				}  // end color buttons
+				}
 
 				// --------------------------------------------------------------------
         case IDOK:
@@ -229,7 +229,7 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 
           break;
 
-				}  // end ok
+				}
 
 				// --------------------------------------------------------------------
         case IDCANCEL:
@@ -238,13 +238,13 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 					EndDialog( hWndDialog, FALSE );
           break;
 
-				}  // end cancel
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
     case WM_CLOSE:
@@ -253,13 +253,13 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 			EndDialog( hWndDialog, FALSE );
       return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end GridSettingsDialogProc
+}
 

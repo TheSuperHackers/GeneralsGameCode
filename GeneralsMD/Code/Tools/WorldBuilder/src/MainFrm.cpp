@@ -77,14 +77,11 @@ CMainFrame::CMainFrame()
 
 CMainFrame::~CMainFrame()
 {
-	if (m_layersList) {
-		delete m_layersList;
-	}
+	delete m_layersList;
+	m_layersList = NULL;
 
-	if (m_scriptDialog) {
-		delete m_scriptDialog;
-		m_scriptDialog = NULL;
-	}
+	delete m_scriptDialog;
+	m_scriptDialog = NULL;
 
 	SaveBarState("MainFrame");
 	TheMainFrame = NULL;
@@ -127,12 +124,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 #undef WRAP
 	CPoint pos(frameRect.left,frameRect.top+60);
 	this->FloatControlBar(&m_floatingToolBar, pos, CBRS_ALIGN_LEFT);
-	m_floatingToolBar.EnableDocking(CBRS_ALIGN_TOP); 
+	m_floatingToolBar.EnableDocking(CBRS_ALIGN_TOP);
 #endif
 
 	if (!m_wndStatusBar.Create(this) || !m_wndStatusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT)))
 	{
-		DEBUG_CRASH(("Failed to create status bar\n"));
+		DEBUG_CRASH(("Failed to create status bar"));
 	}
 
 	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP
@@ -168,7 +165,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_noOptions.GetWindowRect(&frameRect);
 	if (m_optionsPanelWidth < frameRect.Width()) m_optionsPanelWidth = frameRect.Width();
 	if (m_optionsPanelHeight < frameRect.Height()) m_optionsPanelHeight = frameRect.Height();
-	
+
 	m_terrainMaterial.Create(IDD_TERRAIN_MATERIAL, this);
 	m_terrainMaterial.SetWindowPos(NULL, frameRect.left, frameRect.top,	0, 0, SWP_NOZORDER|SWP_NOSIZE);
 	m_terrainMaterial.GetWindowRect(&frameRect);
@@ -282,23 +279,23 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_cameraOptions.Create(IDD_CAMERA_OPTIONS, this);
 	m_cameraOptions.SetWindowPos(NULL, frameRect.left, frameRect.top, 0, 0, SWP_NOZORDER|SWP_NOSIZE);
  	m_cameraOptions.GetWindowRect(&frameRect);
-	
+
 	// now, setup the Layers Panel
 	m_layersList = new LayersList(LayersList::IDD, this);
 	m_layersList->Create(LayersList::IDD, this);
 	m_layersList->ShowWindow(::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowLayersList", 0) ? SW_SHOW : SW_HIDE);
-	
+
 	CRect optionsRect;
 	m_globalLightOptions.GetWindowRect(&optionsRect);
 	m_layersList->SetWindowPos(NULL, optionsRect.left, optionsRect.bottom + 100, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
-  
+
 	Int sbf = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowBrushFeedback", 1);
 	if (sbf != 0) {
 		DrawObject::enableFeedback();
 	} else {
 		DrawObject::disableFeedback();
 	}
-	
+
 	Int autoSave = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "AutoSave", 1);
 	m_autoSave = autoSave != 0;
 	autoSave = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "AutoSaveIntervalSeconds", 120);
@@ -325,7 +322,7 @@ void CMainFrame::adjustWindowSize(void)
 //	Int borderY = ::GetSystemMetrics(SM_CYEDGE);
 	Int viewWidth = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "Width", THREE_D_VIEW_WIDTH);
 	Int viewHeight = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "Height", THREE_D_VIEW_HEIGHT);
-	WbView3d * pView = CWorldBuilderDoc::GetActive3DView();	
+	WbView3d * pView = CWorldBuilderDoc::GetActive3DView();
 	if (pView) {
 		pView->GetClientRect(&client);
 	}	else {
@@ -336,7 +333,7 @@ void CMainFrame::adjustWindowSize(void)
 		int heightDelta = client.Height() - (viewHeight);
 		this->GetWindowRect(window);
 		Int newWidth = window.Width()-widthDelta;
-		Int newHeight = window.Height()-heightDelta; 
+		Int newHeight = window.Height()-heightDelta;
 	this->SetWindowPos(NULL, 0,
 	0, newWidth, newHeight,
 	SWP_NOMOVE|SWP_NOZORDER); // MainFrm.cpp sets the top and left.
@@ -393,22 +390,22 @@ void CMainFrame::showOptionsDialog(Int dialogID)
 		case IDD_MESHMOLD_OPTIONS:newOptions  = &m_meshMoldOptions; break;
 		case IDD_WAYPOINT_OPTIONS:newOptions  = &m_waypointOptions; break;
 		case IDD_WATER_OPTIONS:newOptions  = &m_waterOptions; break;
-		case IDD_LIGHT_OPTIONS:newOptions  = &m_lightOptions; break;		
-		case IDD_BUILD_LIST_PANEL:newOptions  = &m_buildListOptions; break;		
+		case IDD_LIGHT_OPTIONS:newOptions  = &m_lightOptions; break;
+		case IDD_BUILD_LIST_PANEL:newOptions  = &m_buildListOptions; break;
 		case IDD_GROVE_OPTIONS:newOptions = &m_groveOptions; break;
 		case IDD_RAMP_OPTIONS:newOptions = &m_rampOptions; break;
 		case IDD_SCORCH_OPTIONS:newOptions = &m_scorchOptions; break;
 		case IDD_NO_OPTIONS:newOptions  = &m_noOptions; break;
-		default : break;												 
-	}																						 
+		default : break;
+	}
 	CRect frameRect;
 	if (newOptions && newOptions != m_curOptions) {
 		newOptions->GetWindowRect(&frameRect);
 		if (m_curOptions) {
 			m_curOptions->GetWindowRect(&frameRect);
 		}
-		newOptions->SetWindowPos(m_curOptions, frameRect.left, frameRect.top, 
-			m_optionsPanelWidth, m_optionsPanelHeight, 
+		newOptions->SetWindowPos(m_curOptions, frameRect.left, frameRect.top,
+			m_optionsPanelWidth, m_optionsPanelHeight,
 			SWP_NOZORDER | SWP_NOACTIVATE );
 		::AfxGetApp()->WriteProfileInt(OPTIONS_PANEL_SECTION, "Top", frameRect.top);
 		::AfxGetApp()->WriteProfileInt(OPTIONS_PANEL_SECTION, "Left", frameRect.left);
@@ -420,17 +417,14 @@ void CMainFrame::showOptionsDialog(Int dialogID)
 	}
 }
 
-void CMainFrame::OnEditGloballightoptions() 
+void CMainFrame::OnEditGloballightoptions()
 {
 	m_globalLightOptions.ShowWindow(SW_SHOWNA);
 }
 
 void CMainFrame::onEditScripts()
 {
-	if (m_scriptDialog) {
-		// Delete the old one since it is no longer valid.
-		delete m_scriptDialog;
-	}
+	delete m_scriptDialog;
 
 	CRect frameRect;
 	GetWindowRect(&frameRect);
@@ -447,7 +441,7 @@ void CMainFrame::onEditScripts()
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void CMainFrame::AssertValid() const
 {
 	CFrameWnd::AssertValid();
@@ -458,21 +452,21 @@ void CMainFrame::Dump(CDumpContext& dc) const
 	CFrameWnd::Dump(dc);
 }
 
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame message handlers
 
 
 #if DEAD
-	void CMainFrame::OnEditContouroptions() 
+	void CMainFrame::OnEditContouroptions()
 	{
-		ContourOptions contourOptsDialog(this);	
+		ContourOptions contourOptsDialog(this);
 		contourOptsDialog.DoModal();
 	}
 #endif
 
-void CMainFrame::OnMove(int x, int y) 
+void CMainFrame::OnMove(int x, int y)
 {
 	CFrameWnd::OnMove(x, y);
 	if (this->IsWindowVisible() && !this->IsIconic()) {
@@ -483,7 +477,7 @@ void CMainFrame::OnMove(int x, int y)
 	}
 }
 
-void CMainFrame::OnViewBrushfeedback() 
+void CMainFrame::OnViewBrushfeedback()
 {
 	if (DrawObject::isFeedbackEnabled()) {
 		DrawObject::disableFeedback();
@@ -494,12 +488,12 @@ void CMainFrame::OnViewBrushfeedback()
 	}
 }
 
-void CMainFrame::OnUpdateViewBrushfeedback(CCmdUI* pCmdUI) 
+void CMainFrame::OnUpdateViewBrushfeedback(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(DrawObject::isFeedbackEnabled()?1:0);
 }
 
-void CMainFrame::OnDestroy() 
+void CMainFrame::OnDestroy()
 {
 	if (m_hAutoSaveTimer) {
 		KillTimer(m_hAutoSaveTimer);
@@ -508,7 +502,7 @@ void CMainFrame::OnDestroy()
 	CFrameWnd::OnDestroy();
 }
 
-void CMainFrame::OnTimer(UINT nIDEvent) 
+void CMainFrame::OnTimer(UINT nIDEvent)
 {
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
 	if (pDoc && pDoc->needAutoSave()) {
@@ -522,7 +516,7 @@ void CMainFrame::OnTimer(UINT nIDEvent)
 	}
 }
 
-void CMainFrame::OnEditCameraoptions() 
+void CMainFrame::OnEditCameraoptions()
 {
 	m_cameraOptions.ShowWindow(SW_SHOWNA);
 }

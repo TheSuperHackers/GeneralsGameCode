@@ -62,15 +62,10 @@
 
 #include "Common/STLTypedefs.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 // Note: if you add more columns, you must modify the .wnd files and change the listbox properties (yuck!)
-static enum {
+enum {
 	COLUMN_NAME = 0,
 	COLUMN_MAP,
 	COLUMN_LADDER,
@@ -313,7 +308,7 @@ static void gameTooltip(GameWindow *window,
 		GameSpyGameSlot *slot = room->getGameSpySlot(i);
 		if (i == 0 && (!slot || !slot->isHuman()))
 		{
-			DEBUG_CRASH(("About to tooltip a non-hosted game!\n"));
+			DEBUG_CRASH(("About to tooltip a non-hosted game!"));
 		}
 		if (slot && slot->isHuman())
 		{
@@ -341,7 +336,7 @@ static void gameTooltip(GameWindow *window,
 			}
 		}
 	}
-	DEBUG_ASSERTCRASH(numPlayers, ("Tooltipping a 0-player game!\n"));
+	DEBUG_ASSERTCRASH(numPlayers, ("Tooltipping a 0-player game!"));
 
 	TheMouse->setCursorTooltip( tooltip, 10, NULL, 2.0f ); // the text and width are the only params used.  the others are the default values.
 }
@@ -466,8 +461,7 @@ static void populateBuddyGames(void)
 
 static void clearBuddyGames(void)
 {
-	if (theBuddyGames)
-		delete theBuddyGames;
+	delete theBuddyGames;
 	theBuddyGames = NULL;
 }
 
@@ -541,11 +535,11 @@ static Int insertGame( GameWindow *win, GameSpyStagingRoom *game, Bool showMap )
 		gameColor = GameSpyColor[GSCOLOR_GAME_CRCMISMATCH];
 	}
 	UnicodeString gameName = game->getGameName();
-	
+
 	if(TheGameSpyInfo->getDisallowAsianText())
 	{
 		const WideChar *buff = gameName.str();
-		Int length =  gameName.getLength();	
+		Int length =  gameName.getLength();
 		for(Int i = 0; i < length; ++i)
 		{
 			if(buff[i] >= 256)
@@ -555,7 +549,7 @@ static Int insertGame( GameWindow *win, GameSpyStagingRoom *game, Bool showMap )
 	else if(TheGameSpyInfo->getDisallowNonAsianText())
 	{
 		const WideChar *buff = gameName.str();
-		Int length =  gameName.getLength();	
+		Int length =  gameName.getLength();
 		Bool hasUnicode = FALSE;
 		for(Int i = 0; i < length; ++i)
 		{
@@ -654,9 +648,9 @@ static Int insertGame( GameWindow *win, GameSpyStagingRoom *game, Bool showMap )
       const Image *img = TheMappedImageCollection->findImageByName("GoodStatsIcon");
       GadgetListBoxAddEntryImage(win, img, index, COLUMN_USE_STATS, img->getImageHeight(), img->getImageWidth());
 	}
-    
+
   }
-  
+
 	s.format(L"%d", game->getPingAsInt());
 	GadgetListBoxAddEntryText(win, s, gameColor, index, COLUMN_PING);
 	Int ping = game->getPingAsInt();

@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __DEFINITION_CLASS_ID_H
-#define __DEFINITION_CLASS_ID_H
 
 #include "always.h"
 #include "bittype.h"
@@ -59,9 +53,9 @@ const int	DEF_CLASSID_RANGE			= 0x00001000;
 //
 //	DefinitionClassID
 //
-//	Note:  The following enum should contain ALL of the class ids for 
+//	Note:  The following enum should contain ALL of the class ids for
 // definitions in the entire system (to guarantee they are unique).  Each
-// super-class is allocated a range of class ids.  Use the 
+// super-class is allocated a range of class ids.  Use the
 // SuperClassID_From_ClassID function to determine which super class
 //	a particular class id belongs to.
 //
@@ -102,7 +96,3 @@ SuperClassID_From_ClassID (uint32 class_id)
 
 	return DEF_CLASSID_START + (num_ranges * DEF_CLASSID_RANGE);
 }
-
-
-#endif //__DEFINITION_CLASS_ID_H
-

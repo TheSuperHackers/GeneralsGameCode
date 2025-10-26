@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __RankInfo_H_
-#define __RankInfo_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Science.h"
 #include "Common/UnicodeString.h"
@@ -76,7 +73,3 @@ private:
 };
 
 extern RankInfoStore* TheRankInfoStore;
-
-
-#endif // __RankInfo_H_
-

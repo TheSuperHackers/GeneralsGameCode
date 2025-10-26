@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: vss_sync                                                   *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 2                                                           $*
@@ -37,13 +37,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef TEXTURELOADER_H
-#define TEXTURELOADER_H
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #include "always.h"
 #include "texture.h"
@@ -125,7 +119,7 @@ class TextureLoadTaskListNodeClass
 
 class TextureLoadTaskListClass
 {
-	// This class implements an unsynchronized, double-linked list of TextureLoadTaskClass 
+	// This class implements an unsynchronized, double-linked list of TextureLoadTaskClass
 	// objects, using an embedded list node.
 
 	public:
@@ -177,7 +171,7 @@ class SynchronizedTextureLoadTaskListClass : public TextureLoadTaskListClass
 ** (gth) The allocation system we're using for TextureLoadTaskClass has gotten a little
 ** complicated since Kenny added the new task types for Cube and Volume textures.  The
 ** ::Destroy member is used to return a task to the pool now and must be over-ridden in
-** each derived class to put the task back into the correct free list.  
+** each derived class to put the task back into the correct free list.
 */
 
 
@@ -240,7 +234,7 @@ class TextureLoadTaskClass : public TextureLoadTaskListNodeClass
 		bool						Load							(void);
 		void						End_Load						(void);
 		void						Finish_Load					(void);
-		void						Apply_Missing_Texture	(void);						
+		void						Apply_Missing_Texture	(void);
 
 	protected:
 		virtual bool			Begin_Compressed_Load	(void);
@@ -253,7 +247,7 @@ class TextureLoadTaskClass : public TextureLoadTaskListNodeClass
 		virtual void			Unlock_Surfaces			(void);
 
 		void						Apply							(bool initialize);
-		
+
 		TextureBaseClass*		Texture;
 		IDirect3DBaseTexture8*	D3DTexture;
 		WW3DFormat				Format;
@@ -330,5 +324,3 @@ private:
 
 	unsigned int		Depth;
 };
-
-#endif

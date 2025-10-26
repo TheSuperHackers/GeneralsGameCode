@@ -35,11 +35,6 @@
 
 ScienceStore* TheScienceStore = NULL;
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 void ScienceStore::init()
@@ -59,9 +54,7 @@ ScienceStore::~ScienceStore()
 	{
 		ScienceInfo* si = *it;
 		++it;
-		if (si) {
-			si->deleteInstance();
-		}
+		deleteInstance(si);
 	}
 }
 
@@ -168,7 +161,7 @@ const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
 	if (TheScienceStore)
 	{
 
-		static const FieldParse myFieldParse[] = 
+		static const FieldParse myFieldParse[] =
 		{
 			{ "PrerequisiteSciences", INI::parseScienceVector, NULL, offsetof( ScienceInfo, m_prereqSciences ) },
 			{ "SciencePurchasePointCost", INI::parseInt, NULL, offsetof( ScienceInfo, m_sciencePurchasePointCost ) },
@@ -191,10 +184,10 @@ const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
 			}
 		}
 
-		if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES) 
+		if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
 		{
 			ScienceInfo* newInfo = newInstance(ScienceInfo);
-			
+
 			if (info == NULL)
 			{
 				// only add if it's not overriding an existing one.
@@ -215,12 +208,12 @@ const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
 				info = newInfo;
 				//TheScienceStore->m_sciences.push_back(info);	// NO, BAD, WRONG -- don't add in this case.
 			}
-		} 
+		}
 		else
 		{
 			if (info != NULL)
 			{
-				DEBUG_CRASH(("duplicate science %s!\n",c));
+				DEBUG_CRASH(("duplicate science %s!",c));
 				throw INI_INVALID_DATA;
 			}
 			info = newInstance(ScienceInfo);
@@ -320,7 +313,7 @@ Bool ScienceStore::playerHasRootPrereqsForScience(const Player* player, ScienceT
 }
 
 //-----------------------------------------------------------------------------
-/** return a list of the sciences the given player can purchase now, and a list he might be able to purchase in the future, 
+/** return a list of the sciences the given player can purchase now, and a list he might be able to purchase in the future,
 	but currently lacks prereqs or points for. (either might be an empty list) */
 void ScienceStore::getPurchasableSciences(const Player* player, ScienceVec& purchasable, ScienceVec& potentiallyPurchasable) const
 {
@@ -329,7 +322,7 @@ void ScienceStore::getPurchasableSciences(const Player* player, ScienceVec& purc
 	for (ScienceInfoVec::const_iterator it = m_sciences.begin(); it != m_sciences.end(); ++it)
 	{
 		const ScienceInfo* si = (const ScienceInfo*)(*it)->getFinalOverride();
-		
+
 		if (si->m_sciencePurchasePointCost == 0)
 		{
 			// 0 means "cannot be purchased"

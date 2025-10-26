@@ -35,6 +35,7 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/DestroyDie.h"
 
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 DestroyDie::DestroyDie( Thing *thing, const ModuleData* moduleData ) : DieModule( thing, moduleData )
@@ -66,7 +67,7 @@ void DestroyDie::crc( Xfer *xfer )
 	// extend base class
 	DieModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -84,7 +85,7 @@ void DestroyDie::xfer( Xfer *xfer )
 	// extend base class
 	DieModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -95,4 +96,4 @@ void DestroyDie::loadPostProcess( void )
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

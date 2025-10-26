@@ -100,7 +100,7 @@ void AnimatedParticleSysBoneClientUpdate::crc( Xfer *xfer )
 	// extend base class
 	ClientUpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -119,7 +119,7 @@ void AnimatedParticleSysBoneClientUpdate::xfer( Xfer *xfer )
 	ClientUpdateModule::xfer( xfer );
 
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -130,4 +130,4 @@ void AnimatedParticleSysBoneClientUpdate::loadPostProcess( void )
 	// extend base class
 	ClientUpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

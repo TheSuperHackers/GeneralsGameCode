@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DELAYED_WEAPON_SET_UPGRADE_UPDATE_H_
-#define __DELAYED_WEAPON_SET_UPGRADE_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -67,7 +64,5 @@ public:
 	virtual UpdateSleepTime update();
 
 protected:
-	
-};
 
-#endif
+};

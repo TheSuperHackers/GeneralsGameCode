@@ -65,7 +65,7 @@ AutoFindHealingUpdateModuleData::AutoFindHealingUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "ScanRate",							INI::parseDurationUnsignedInt,	NULL, offsetof( AutoFindHealingUpdateModuleData, m_scanFrames ) },
 		{ "ScanRange",						INI::parseReal,									NULL, offsetof( AutoFindHealingUpdateModuleData, m_scanRange ) },
@@ -80,7 +80,7 @@ AutoFindHealingUpdateModuleData::AutoFindHealingUpdateModuleData()
 AutoFindHealingUpdate::AutoFindHealingUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
 	m_nextScanFrames						= 0;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -93,14 +93,14 @@ AutoFindHealingUpdate::~AutoFindHealingUpdate( void )
 //-------------------------------------------------------------------------------------------------
 void AutoFindHealingUpdate::onObjectCreated()
 {
-	
+
 }
 
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime AutoFindHealingUpdate::update()
-{	
+{
 /// @todo srj use SLEEPY_UPDATE here
 	Object *obj = getObject();
 	if (obj->getControllingPlayer()->getPlayerType() == PLAYER_HUMAN) {
@@ -179,7 +179,7 @@ Object* AutoFindHealingUpdate::scanClosestTarget()
 			closestDistSqr = fDistSqr;
 			continue;
 		}
-	}  // end for, other
+	}
 
 	return bestTarget;
 }
@@ -193,7 +193,7 @@ void AutoFindHealingUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -214,7 +214,7 @@ void AutoFindHealingUpdate::xfer( Xfer *xfer )
 	// next scan frames
 	xfer->xferInt( &m_nextScanFrames );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -225,4 +225,4 @@ void AutoFindHealingUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -48,7 +48,7 @@ SupplyCenterCreate::SupplyCenterCreate( Thing *thing, const ModuleData* moduleDa
 SupplyCenterCreate::~SupplyCenterCreate( void )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 void SupplyCenterCreate::onCreate( void )
@@ -76,7 +76,7 @@ void SupplyCenterCreate::onBuildComplete( void )
 			continue;
 		manager->addSupplyCenter( getObject() );
 	}
-} 
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -87,7 +87,7 @@ void SupplyCenterCreate::crc( Xfer *xfer )
 	// extend base class
 	CreateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -105,7 +105,7 @@ void SupplyCenterCreate::xfer( Xfer *xfer )
 	// extend base class
 	CreateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -116,4 +116,4 @@ void SupplyCenterCreate::loadPostProcess( void )
 	// extend base class
 	CreateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

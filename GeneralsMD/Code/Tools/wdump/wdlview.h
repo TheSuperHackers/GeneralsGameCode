@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_WDLVIEW_H__6C0D7C07_56CD_11D1_8CDC_006097C6A583__INCLUDED_)
-#define AFX_WDLVIEW_H__6C0D7C07_56CD_11D1_8CDC_006097C6A583__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
+
 // WDLView.h : header file
 //
 
@@ -53,7 +49,7 @@ public:
 // Implementation
 protected:
 	virtual ~CWDumpListView();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
@@ -70,5 +66,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_WDLVIEW_H__6C0D7C07_56CD_11D1_8CDC_006097C6A583__INCLUDED_)

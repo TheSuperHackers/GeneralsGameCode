@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _LOADSCREEN_H_
-#define _LOADSCREEN_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -83,9 +80,9 @@ public:
 	virtual void init( GameInfo *game );		///< Init the loadscreen
 	virtual void reset( void );		///< Reset the system
 	virtual void update( void )
-	{	
+	{
 		DEBUG_CRASH(("Call update(Int) instead.  This update isn't supported"));
-	}; 
+	};
 	virtual void update(Int percent);		 ///< Update the state of the progress bar
 	virtual void processProgress(Int playerId, Int percentage)
 	{
@@ -102,12 +99,12 @@ private:
 	GameWindow *m_objectiveLines[MAX_OBJECTIVE_LINES];
 	GameWindow *m_unitDesc[MAX_DISPLAYED_UNITS];
 	GameWindow *m_location;
-	
+
 	Int m_currentObjectiveLine;
 	Int m_currentObjectiveLineCharacter;
 	Int m_currentObjectiveWidthOffset;
 	Bool m_finishedObjectiveText;
-	
+
 	UnicodeString m_unicodeObjectiveLines[MAX_OBJECTIVE_LINES];
 
 	VideoBuffer *m_videoBuffer;
@@ -132,9 +129,9 @@ public:
 	virtual void init( GameInfo *game );		///< Init the loadscreen
 	virtual void reset( void );		///< Reset the system
 	virtual void update( void )
-	{	
+	{
 		DEBUG_CRASH(("Call update(Int) instead.  This update isn't supported"));
-	}; 
+	};
 	virtual void update(Int percent);		 ///< Update the state of the progress bar
 	virtual void processProgress(Int playerId, Int percentage)
 	{
@@ -160,9 +157,9 @@ public:
 	virtual void init( GameInfo *game );		///< Init the loadscreen
 	virtual void reset( void );		///< Reset the system
 	virtual void update( void )
-	{	
+	{
 		DEBUG_CRASH(("Call update(Int) instead.  This update isn't supported"));
-	}; 
+	};
 	virtual void update(Int percent);		 ///< Update the state of the progress bar
 	void processProgress(Int playerId, Int percentage);
 	virtual void setProgressRange( Int min, Int max ) { }
@@ -188,9 +185,9 @@ public:
 	virtual void init( GameInfo *game );		///< Init the loadscreen
 	virtual void reset( void );		///< Reset the system
 	virtual void update( void )
-	{	
+	{
 		DEBUG_CRASH(("Call update(Int) instead.  This update isn't supported"));
-	}; 
+	};
 	virtual void update(Int percent);		 ///< Update the state of the progress bar
 	void processProgress(Int playerId, Int percentage);
 	virtual void setProgressRange( Int min, Int max ) { }
@@ -222,9 +219,9 @@ public:
 	virtual void init( GameInfo *game );		///< Init the loadscreen
 	virtual void reset( void );							///< Reset the system
 	virtual void update( void )
-	{	
+	{
 		DEBUG_CRASH(("Call update(Int) instead.  This update isn't supported"));
-	}; 
+	};
 	virtual void update(Int percent);				///< Update the state of the progress bar
 	virtual void processProgress(Int playerId, Int percentage)
 	{
@@ -244,5 +241,3 @@ private:
 	GameWindow *m_timeoutText;
 	Int m_oldTimeout;												///< old val, so we can call processTimeout() every frame and not touch the GUI
 };
-
-#endif //_LOADSCREEN_H_

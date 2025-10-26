@@ -48,17 +48,12 @@
 #include "GameNetwork/NAT.h"
 #include "GameNetwork/NetworkInterface.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // GameSpyGameSlot -------------------------------------------
 
 GameSpyGameSlot::GameSpyGameSlot()
+	: GameSlot()
 {
-	GameSlot();
 	m_gameSpyLogin.clear();
 	m_gameSpyLocale.clear();
 	m_profileID = 0;
@@ -90,10 +85,6 @@ typedef struct tConnInfoStruct {
 	unsigned long RemoteIP;
 	unsigned short RemotePort;
 } ConnInfoStruct;
-
-#ifndef ARRAY_SIZE
-#define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))
-#endif
 
 /***********************************************************************************************
  * Get_Local_Chat_Connection_Address -- Which address are we using to talk to the chat server? *
@@ -174,18 +165,18 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 		"DELETE_TCB"
 	};
 
-	DEBUG_LOG(("Finding local address used to talk to the chat server\n"));
-	DEBUG_LOG(("Current chat server name is %s\n", serverName.str()));
-	DEBUG_LOG(("Chat server port is %d\n", serverPort));
+	DEBUG_LOG(("Finding local address used to talk to the chat server"));
+	DEBUG_LOG(("Current chat server name is %s", serverName.str()));
+	DEBUG_LOG(("Chat server port is %d", serverPort));
 
 	/*
 	** Get the address of the chat server.
 	*/
-	DEBUG_LOG( ("About to call gethostbyname\n"));
+	DEBUG_LOG( ("About to call gethostbyname"));
 	struct hostent *host_info = gethostbyname(serverName.str());
 
 	if (!host_info) {
-		DEBUG_LOG( ("gethostbyname failed! Error code %d\n", WSAGetLastError()));
+		DEBUG_LOG( ("gethostbyname failed! Error code %d", WSAGetLastError()));
 		return(false);
 	}
 
@@ -194,24 +185,24 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	temp = ntohl(temp);
 	*((unsigned long*)(&serverAddress[0])) = temp;
 
-	DEBUG_LOG(("Host address is %d.%d.%d.%d\n", serverAddress[3], serverAddress[2], serverAddress[1], serverAddress[0]));
+	DEBUG_LOG(("Host address is %d.%d.%d.%d", serverAddress[3], serverAddress[2], serverAddress[1], serverAddress[0]));
 
 	/*
 	** Load the MIB-II SNMP DLL.
 	*/
-	DEBUG_LOG(("About to load INETMIB1.DLL\n"));
+	DEBUG_LOG(("About to load INETMIB1.DLL"));
 
 	HINSTANCE mib_ii_dll = LoadLibrary("inetmib1.dll");
 	if (mib_ii_dll == NULL) {
-		DEBUG_LOG(("Failed to load INETMIB1.DLL\n"));
+		DEBUG_LOG(("Failed to load INETMIB1.DLL"));
 		return(false);
 	}
 
-	DEBUG_LOG(("About to load SNMPAPI.DLL\n"));
+	DEBUG_LOG(("About to load SNMPAPI.DLL"));
 
 	HINSTANCE snmpapi_dll = LoadLibrary("snmpapi.dll");
 	if (snmpapi_dll == NULL) {
-		DEBUG_LOG(("Failed to load SNMPAPI.DLL\n"));
+		DEBUG_LOG(("Failed to load SNMPAPI.DLL"));
 		FreeLibrary(mib_ii_dll);
 		return(false);
 	}
@@ -224,7 +215,7 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	SnmpUtilMemAllocPtr = (void *(__stdcall *)(unsigned long)) GetProcAddress(snmpapi_dll, "SnmpUtilMemAlloc");
 	SnmpUtilMemFreePtr = (void (__stdcall *)(void *)) GetProcAddress(snmpapi_dll, "SnmpUtilMemFree");
 	if (SnmpExtensionInitPtr == NULL || SnmpExtensionQueryPtr == NULL || SnmpUtilMemAllocPtr == NULL || SnmpUtilMemFreePtr == NULL) {
-		DEBUG_LOG(("Failed to get proc addresses for linked functions\n"));
+		DEBUG_LOG(("Failed to get proc addresses for linked functions"));
 		FreeLibrary(snmpapi_dll);
 		FreeLibrary(mib_ii_dll);
 		return(false);
@@ -237,14 +228,14 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	/*
 	** OK, here we go. Try to initialise the .dll
 	*/
-	DEBUG_LOG(("About to init INETMIB1.DLL\n"));
+	DEBUG_LOG(("About to init INETMIB1.DLL"));
 	int ok = SnmpExtensionInitPtr(GetCurrentTime(), &trap_handle, &first_supported_region);
 
 	if (!ok) {
 		/*
 		** Aw crap.
 		*/
-		DEBUG_LOG(("Failed to init the .dll\n"));
+		DEBUG_LOG(("Failed to init the .dll"));
 		SnmpUtilMemFreePtr(bind_list_ptr);
 		SnmpUtilMemFreePtr(bind_ptr);
 		FreeLibrary(snmpapi_dll);
@@ -293,7 +284,7 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 
 		if (!SnmpExtensionQueryPtr(SNMP_PDU_GETNEXT, bind_list_ptr, &error_status, &error_index)) {
 		//if (!SnmpExtensionQueryPtr(ASN_RFC1157_GETNEXTREQUEST, bind_list_ptr, &error_status, &error_index)) {
-			DEBUG_LOG(("SnmpExtensionQuery returned false\n"));
+			DEBUG_LOG(("SnmpExtensionQuery returned false"));
 			SnmpUtilMemFreePtr(bind_list_ptr);
 			SnmpUtilMemFreePtr(bind_ptr);
 			FreeLibrary(snmpapi_dll);
@@ -397,14 +388,14 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	SnmpUtilMemFreePtr(bind_ptr);
 	SnmpUtilMemFreePtr(mib_ii_name_ptr);
 
-	DEBUG_LOG(("Got %d connections in list, parsing...\n", connectionVector.size()));
+	DEBUG_LOG(("Got %d connections in list, parsing...", connectionVector.size()));
 
 	/*
 	** Right, we got the lot. Lets see if any of them have the same address as the chat
 	** server we think we are talking to.
 	*/
 	found = false;
-	for (Int i=0; i<connectionVector.size(); ++i) {
+	for (size_t i=0; i<connectionVector.size(); ++i) {
 		ConnInfoStruct connection = connectionVector[i];
 
 		temp = ntohl(connection.RemoteIP);
@@ -414,29 +405,29 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 		** See if this connection has the same address as our server.
 		*/
 		if (!found && memcmp(remoteAddress, serverAddress, 4) == 0) {
-			DEBUG_LOG(("Found connection with same remote address as server\n"));
+			DEBUG_LOG(("Found connection with same remote address as server"));
 
 			if (serverPort == 0 || serverPort == (unsigned int)connection.RemotePort) {
 
-				DEBUG_LOG(("Connection has same port\n"));
+				DEBUG_LOG(("Connection has same port"));
 				/*
 				** Make sure the connection is current.
 				*/
 				if (connection.State == ESTABLISHED) {
-					DEBUG_LOG(("Connection is ESTABLISHED\n"));
+					DEBUG_LOG(("Connection is ESTABLISHED"));
 					localIP = connection.LocalIP;
 					found = true;
 				} else {
-					DEBUG_LOG(("Connection is not ESTABLISHED - skipping\n"));
+					DEBUG_LOG(("Connection is not ESTABLISHED - skipping"));
 				}
 			} else {
-				DEBUG_LOG(("Connection has different port. Port is %d, looking for %d\n", connection.RemotePort, serverPort));
+				DEBUG_LOG(("Connection has different port. Port is %d, looking for %d", connection.RemotePort, serverPort));
 			}
 		}
 	}
 
 	if (found) {
-		DEBUG_LOG(("Using address 0x%8.8X to talk to chat server\n", localIP));
+		DEBUG_LOG(("Using address 0x%8.8X to talk to chat server", localIP));
 	}
 
 	FreeLibrary(snmpapi_dll);
@@ -476,7 +467,7 @@ void GameSpyStagingRoom::cleanUpSlotPointers( void )
 GameSpyGameSlot * GameSpyStagingRoom::getGameSpySlot( Int index )
 {
 	GameSlot *slot = getSlot(index);
-	DEBUG_ASSERTCRASH(slot && (slot == &(m_GameSpySlot[index])), ("Bad game slot pointer\n"));
+	DEBUG_ASSERTCRASH(slot && (slot == &(m_GameSpySlot[index])), ("Bad game slot pointer"));
 	return (GameSpyGameSlot *)slot;
 }
 
@@ -509,7 +500,7 @@ void GameSpyStagingRoom::resetAccepted( void )
 		/*
 		peerStateChanged(TheGameSpyChat->getPeer());
 		m_hasBeenQueried = false;
-		DEBUG_LOG(("resetAccepted() called peerStateChange()\n"));
+		DEBUG_LOG(("resetAccepted() called peerStateChange()"));
 		*/
 	}
 }
@@ -537,17 +528,15 @@ Int GameSpyStagingRoom::getLocalSlotNum( void ) const
 void GameSpyStagingRoom::startGame(Int gameID)
 {
 	DEBUG_ASSERTCRASH(m_inGame, ("Starting a game while not in game"));
-	DEBUG_LOG(("GameSpyStagingRoom::startGame - game id = %d\n", gameID));
+	DEBUG_LOG(("GameSpyStagingRoom::startGame - game id = %d", gameID));
 	DEBUG_ASSERTCRASH(m_transport == NULL, ("m_transport is not NULL when it should be"));
 	DEBUG_ASSERTCRASH(TheNAT == NULL, ("TheNAT is not NULL when it should be"));
 
 	UnsignedInt localIP = TheGameSpyInfo->getInternalIP();
 	setLocalIP(localIP);
 
-	if (TheNAT != NULL) {
-		delete TheNAT;
-		TheNAT = NULL;
-	}
+	delete TheNAT;
+	TheNAT = NULL;
 
 	// fill in GS-specific info
 	Int numHumans = 0;
@@ -584,7 +573,7 @@ void GameSpyStagingRoom::startGame(Int gameID)
 		}
 	}
 
-//#if defined(_DEBUG) || defined(_INTERNAL)
+//#if defined(RTS_DEBUG)
 	if (numHumans < 2)
 	{
 		launchGame();
@@ -592,7 +581,7 @@ void GameSpyStagingRoom::startGame(Int gameID)
 			TheGameSpyInfo->leaveStagingRoom();
 	}
 	else
-//#endif // defined(_DEBUG) || defined(_INTERNAL)
+//#endif // defined(RTS_DEBUG)
 	{
 		TheNAT = NEW NAT();
 		TheNAT->attachSlotList(m_slot, getLocalSlotNum(), m_localIP);
@@ -794,7 +783,7 @@ AsciiString GameSpyStagingRoom::generateLadderGameResultsPacket( void )
 void GameSpyStagingRoom::launchGame( void )
 {
 	setGameInProgress(TRUE);
-	
+
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
 		const GameSpyGameSlot *slot = getGameSpySlot(i);
@@ -810,15 +799,13 @@ void GameSpyStagingRoom::launchGame( void )
 	AsciiString userList;
 	DEBUG_ASSERTCRASH(TheNetwork == NULL, ("For some reason TheNetwork isn't NULL at the start of this game.  Better look into that."));
 
-	if (TheNetwork != NULL) {
-		delete TheNetwork;
-		TheNetwork = NULL;
-	}
+	delete TheNetwork;
+	TheNetwork = NULL;
 
 	// Time to initialize TheNetwork for this game.
 	TheNetwork = NetworkInterface::createNetwork();
 	TheNetwork->init();
-	
+
 	TheNetwork->setLocalAddress(getLocalIP(), (TheNAT)?TheNAT->getSlotPort(getLocalSlotNum()):8888);
 	if (TheNAT)
 		TheNetwork->attachTransport(TheNAT->getTransport());
@@ -838,11 +825,11 @@ void GameSpyStagingRoom::launchGame( void )
 	TheMapCache->updateCache();
 	if (!filesOk || TheMapCache->findMap(getMap()) == NULL)
 	{
-		DEBUG_LOG(("After transfer, we didn't really have the map.  Bailing...\n"));
-		if (TheNetwork != NULL) {
-			delete TheNetwork;
-			TheNetwork = NULL;
-		}
+		DEBUG_LOG(("After transfer, we didn't really have the map.  Bailing..."));
+
+		delete TheNetwork;
+		TheNetwork = NULL;
+
 		GSMessageBoxOk(TheGameText->fetch("GUI:Error"), TheGameText->fetch("GUI:CouldNotTransferMap"));
 
 		void PopBackToLobby( void );
@@ -864,7 +851,7 @@ void GameSpyStagingRoom::launchGame( void )
 
 	// Set the random seed
 	InitGameLogicRandom( getSeed() );
-	DEBUG_LOG(("InitGameLogicRandom( %d )\n", getSeed()));
+	DEBUG_LOG(("InitGameLogicRandom( %d )", getSeed()));
 
 	// mark us as "Loading" in the buddy list
 	BuddyRequest req;
@@ -874,10 +861,8 @@ void GameSpyStagingRoom::launchGame( void )
 	sprintf(req.arg.status.locationString, "%s", WideCharStringToMultiByte(TheGameSpyGame->getGameName().str()).c_str());
 	TheGameSpyBuddyMessageQueue->addRequest(req);
 
-	if (TheNAT != NULL) {
-		delete TheNAT;
-		TheNAT = NULL;
-	}
+	delete TheNAT;
+	TheNAT = NULL;
 }
 
 void GameSpyStagingRoom::reset(void)
@@ -888,7 +873,7 @@ void GameSpyStagingRoom::reset(void)
 		WindowLayout *theLayout = TheShell->findScreenByFilename("Menus/GameSpyGameOptionsMenu.wnd");
 		if (theLayout)
 		{
-			DEBUG_LOG(("Resetting TheGameSpyGame on the game options menu!\n"));
+			DEBUG_LOG(("Resetting TheGameSpyGame on the game options menu!"));
 		}
 	}
 #endif

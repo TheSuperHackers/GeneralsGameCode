@@ -17,27 +17,25 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/vxldbg.h 3     10/28/97 6:08p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Engine                                       * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/vxldbg.h                       $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/14/97 3:07p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 3                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Engine                                       *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/vxldbg.h                       $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/14/97 3:07p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 3                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef VXLDBG_H
-#define VXLDBG_H
+#pragma once
 
 #ifndef ALWAYS_H
 #include "always.h"
@@ -73,10 +71,6 @@ private:
 	HWND						WindowHWND;
 	HWND						ViewportHWND;
 	ISpinnerControl *		LayerSpin;
- 
+
 	void update_display(void);
 };
-
-
-
-#endif

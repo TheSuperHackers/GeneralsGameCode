@@ -24,12 +24,12 @@
 
 // FILE: W3DWaterTracks.cpp ////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -47,6 +47,7 @@
 #include "W3DDevice/GameClient/W3DWaterTracks.h"
 #include "GameClient/InGameUI.h"
 #include "GameLogic/TerrainLogic.h"
+#include "Common/FramePacer.h"
 #include "Common/GlobalData.h"
 #include "Common/UnicodeString.h"
 #include "Common/file.h"
@@ -59,15 +60,11 @@
 #include "assetmgr.h"
 #include "WW3D2/dx8wrapper.h"
 
-//#pragma optimize("", off)
-
-//#define ALLOW_WATER_TRACK_EDIT
-
 //number of vertex pages allocated - allows double buffering of vertex updates.
 //while one is being rendered, another is being updated.  Improves HW parallelism.
 #define WATER_VB_PAGES	1000
 #define WATER_STRIP_X	2		//vertex resolution of each strip
-#define WATER_STRIP_Y	2		
+#define WATER_STRIP_Y	2
 #define SYNC_WAVES			//all the waves are in sync - movement resets at same time.
 //#define DEFAULT_FINAL_WAVE_WIDTH	28.0f
 //#define DEFAULT_FINAL_WAVE_HEIGHT	18.0f
@@ -176,7 +173,7 @@ Int WaterTracksObj::freeWaterTracksResources(void)
  */
 //=============================================================================
 void WaterTracksObj::init( Real width, Real length, const Vector2 &start, const Vector2 &end, const Char *texturename, Int waveTimeOffset)
-{	
+{
 	freeWaterTracksResources();	//free old resources used by this track
 
 	//save original settings used to create this wave
@@ -248,7 +245,7 @@ void WaterTracksObj::init( Real width, Real length, const Vector2 &start, const 
  */
 //=============================================================================
 void WaterTracksObj::init( Real width, const Vector2 &start, const Vector2 &end, const Char *texturename)
-{	
+{
 	freeWaterTracksResources();	//free old resources used by this track
 	m_boundingSphere.Init(Vector3(0,0,0),400);
 	m_boundingBox.Center.Set(0.0f, 0.0f, 0.0f);
@@ -280,18 +277,6 @@ void WaterTracksObj::init( Real width, const Vector2 &start, const Vector2 &end,
 //=============================================================================
 Int WaterTracksObj::update(Int msElapsed)
 {
-#ifdef	ALLOW_WATER_TRACK_EDIT
-//	if (pauseWaves)
-//		m_elapsedMs = m_timeToReachBeach+m_timeToStop;
-//	else
-#endif
-
-	//nothing to do here...most of the work is done on render.
-	m_elapsedMs += msElapsed;	//advance time for this update
-
-	///@todo: Should check in here if we are done with this object are return FALSE to free it.
-	//	return FALSE;
-
 	return TRUE;	//assume we had an update
 }
 
@@ -307,6 +292,9 @@ Int WaterTracksObj::update(Int msElapsed)
 
 Int WaterTracksObj::render(DX8VertexBufferClass	*vertexBuffer, Int batchStart)
 {
+	// TheSuperHackers @tweak The wave movement time step is now decoupled from the render update.
+	m_elapsedMs += TheFramePacer->getLogicTimeStepMilliseconds();
+
 	VertexFormatXYZDUV1 *vb;
 	Vector2	waveTailOrigin,waveFrontOrigin;
 	Real	ooWaveDirLen=1.0f/m_waveDir.Length();	//one over length
@@ -356,7 +344,7 @@ Int WaterTracksObj::render(DX8VertexBufferClass	*vertexBuffer, Int batchStart)
 		else
 		if (m_elapsedMs > (m_timeToReachBeach + m_timeToStop - 1000))
 		{	//start fading up
-			
+
 			waveAlpha = m_elapsedMs-(m_timeToReachBeach + m_timeToStop - 1000);//(m_totalMs-m_timeToRetreat -m_fadeMs - m_elapsedMs)/m_fadeMs;
 			waveAlpha = waveAlpha / m_fadeMs;
 			if (waveAlpha > 1.0f)
@@ -385,7 +373,7 @@ Int WaterTracksObj::render(DX8VertexBufferClass	*vertexBuffer, Int batchStart)
 			//Get position of wave when it hit the beach
 			waveFrontOrigin = m_startPos + m_initialVelocity*m_timeToReachBeach*ooWaveDirLen*m_waveDir;
 			waveTailOrigin = waveFrontOrigin;	//store position for calculating tail position
-			//Add movement after it hit the beach	
+			//Add movement after it hit the beach
 			Real elapsedMs=m_elapsedMs - m_timeToReachBeach;
 			waveFrontOrigin += (m_initialVelocity*elapsedMs+0.5f*m_frontSlowDownAcc*elapsedMs*elapsedMs)*ooWaveDirLen*m_waveDir;
 			waveFrontOrigin -= m_perpDir*m_waveFinalWidth*0.5f*widthFrac;	//offset to left edge of wave
@@ -438,10 +426,10 @@ Int WaterTracksObj::render(DX8VertexBufferClass	*vertexBuffer, Int batchStart)
 	vb->z=waterHeight+1.5f;
 	vb->diffuse=(REAL_TO_INT(waveAlpha*255.0f)<<24) |0xffffff;
 	if (m_flipU)
-		vb->u1=1;	
+		vb->u1=1;
 	else
-		vb->u1=0;	
-	vb->v1=0;	
+		vb->u1=0;
+	vb->v1=0;
 	vb++;
 	testPoint.Set(waveTailOrigin + m_perpDir*m_waveFinalWidth*widthFrac);
 	vb->x=	testPoint.X;
@@ -539,9 +527,9 @@ WaterTracksObj *WaterTracksRenderSystem::bindTrack(waveType type)
 				m_usedModules->m_prevSystem=mod;
 			m_usedModules = mod;
 		}
-	
+
 		mod->m_bound=true;
-	}  // end if
+	}
 
 	#ifdef SYNC_WAVES
 	nextmod=m_usedModules;
@@ -550,11 +538,11 @@ WaterTracksObj *WaterTracksRenderSystem::bindTrack(waveType type)
 	{
 		nextmod->m_elapsedMs=nextmod->m_initTimeOffset;
 		nextmod=nextmod->m_nextSystem;
-	}  // end while
+	}
 	#endif
 
 	return mod;
-}  //end bindTrack
+}
 
 //=============================================================================
 //WaterTracksRenderSystem::unbindTrack
@@ -581,7 +569,7 @@ void WaterTracksRenderSystem::releaseTrack( WaterTracksObj *mod )
 {
 	if (mod==NULL)
 		return;
-	
+
 	assert(mod->m_bound == false);
 
 	// remove module from used list
@@ -660,7 +648,7 @@ void WaterTracksRenderSystem::ReAcquireResources(void)
 	{
 		DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexBuffer);
 		UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
-		
+
 		for (i=0,j=0,k=0; i<idxCount; j++)
 		{
 			for (;k<(m_stripSizeX*(j+1)); k++,i+=2)
@@ -728,7 +716,7 @@ void WaterTracksRenderSystem::init(void)
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	// allocate our modules for this system
 	for( i = 0; i < numModules; i++ )
@@ -743,7 +731,7 @@ void WaterTracksRenderSystem::init(void)
 			assert( 0 );
 			return;
 
-		}  // end if
+		}
 
 		mod->m_prevSystem = NULL;
 		mod->m_nextSystem = m_freeModules;
@@ -751,9 +739,9 @@ void WaterTracksRenderSystem::init(void)
 			m_freeModules->m_prevSystem = mod;
 		m_freeModules = mod;
 
-	}  // end for i
+	}
 
-}  // end init
+}
 
 void WaterTracksRenderSystem::reset(void)
 {
@@ -769,7 +757,7 @@ void WaterTracksRenderSystem::reset(void)
 		releaseTrack(mod);
 
 		mod = nextMod;
-	}  // end while
+	}
 
 
 	// free all attached things and used modules
@@ -796,7 +784,7 @@ void WaterTracksRenderSystem::shutdown( void )
 			releaseTrack(mod);
 
 		mod = nextMod;
-	}  // end while
+	}
 
 
 	// free all attached things and used modules
@@ -810,13 +798,13 @@ void WaterTracksRenderSystem::shutdown( void )
 		delete m_freeModules;
 		m_freeModules = nextMod;
 
-	}  // end while
+	}
 
 	REF_PTR_RELEASE(m_indexBuffer);
 	REF_PTR_RELEASE(m_vertexMaterialClass);
 	REF_PTR_RELEASE(m_vertexBuffer);
 
-}  // end shutdown
+}
 
 //=============================================================================
 // WaterTracksRenderSystem::update
@@ -832,9 +820,6 @@ void WaterTracksRenderSystem::update()
 	Int timeDiff = timeGetTime()-iLastTime;
 	iLastTime += timeDiff;
 
-	//Lock framerate to 30 fps
-	timeDiff = 1.0f/30.0f*1000.0f;
-
 	//first update all the tracks
 	while( mod )
 	{
@@ -846,7 +831,7 @@ void WaterTracksRenderSystem::update()
 		}
 
 		mod = nextMod;
-	}  // end while
+	}
 }
 
 
@@ -917,7 +902,7 @@ Try improving the fit to vertical surfaces like cliffs.
 		m_batchStart = vertsRendered;	//advance past vertices already in buffer
 
 		mod = mod->m_nextSystem;
-	}	//while (mod)
+	}
 
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZBIAS,0);
 }
@@ -933,7 +918,7 @@ WaterTracksObj *WaterTracksRenderSystem::findTrack(Vector2 &start, Vector2 &end,
 			mod->m_type == type)
 			return mod;
 		mod = mod->m_nextSystem;
-	}	//while (mod)
+	}
 	return NULL;
 }
 void WaterTracksRenderSystem::saveTracks(void)
@@ -968,7 +953,7 @@ void WaterTracksRenderSystem::saveTracks(void)
 				trackCount++;
 			}
 			umod=umod->m_nextSystem;
-		}  // end while
+		}
 		fwrite(&trackCount,sizeof(trackCount),1,fp);
 		fclose(fp);
 	}
@@ -1110,7 +1095,7 @@ static void TestWaterUpdate(void)
 	}
 
 	if (GetAsyncKeyState(VK_F5) & 0x8001)	//check if F5 pressed since last call
-	{	
+	{
 		if (trackEditModeReset)
 		{
 			if (trackEditMode)

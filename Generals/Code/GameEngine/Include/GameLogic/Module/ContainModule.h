@@ -24,13 +24,10 @@
 
 // FILE: ContainModule.h /////////////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, September 2001
-// Desc:	 
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __ContainModule_H_
-#define __ContainModule_H_
 
 #include "Common/Module.h"
 
@@ -68,7 +65,7 @@ typedef void (*ContainIterateFunc)( Object *obj, void *userData );		///< callbac
 class ContainModuleInterface
 {
 public:
-	
+
 	// we have a two basic container types that it is convenient to query and use
 	virtual OpenContain *asOpenContain() = 0;
 
@@ -86,12 +83,13 @@ public:
 	virtual Bool isGarrisonable() const = 0;
 	virtual Bool isSpecialZeroSlotContainer() const = 0;
 	virtual Bool isHealContain() const = 0;
+	virtual Bool isTunnelContain() const = 0;
 	virtual Bool isImmuneToClearBuildingAttacks() const = 0;
 
-	
+
 	///< if my object gets selected, then my visible passengers should, too
 	///< this gets called from
-	virtual void clientVisibleContainedFlashAsSelected() = 0; 
+	virtual void clientVisibleContainedFlashAsSelected() = 0;
 
 
 
@@ -126,7 +124,7 @@ public:
 	virtual Int getContainMax() const = 0; ///< The max needs to be virtual, but only two inheritors care.  -1 means "I don't care".
 
 	virtual ExitInterface* getContainExitInterface() = 0;
-	
+
 	virtual void orderAllPassengersToExit( CommandSourceType ) = 0; ///< All of the smarts of exiting are in the passenger's AIExit. removeAllFrommContain is a last ditch system call, this is the game Evacuate
 	virtual void markAllPassengersDetected() = 0;										///< Cool game stuff got added to the system calls since this layer didn't exist, so this regains that functionality
 
@@ -134,8 +132,8 @@ public:
 	// interface for containing objects inside of objects.  Objects that are
 	// contained remove their drawable representations entirely from the client
 	//
-	/** 
-		can this container contain this kind of object? 
+	/**
+		can this container contain this kind of object?
 		and, if checkCapacity is TRUE, does this container have enough space left to hold the given unit?
 	*/
 	virtual Bool isValidContainerFor(const Object* obj, Bool checkCapacity) const = 0;
@@ -157,7 +155,7 @@ public:
 	virtual const Object *friend_getRider() const = 0; ///< Damn.  The draw order dependency bug for riders means that our draw module needs to cheat to get around it.
 	virtual Real getContainedItemsMass() const = 0;
 	virtual UnsignedInt getStealthUnitsContained() const = 0;
-	
+
 	virtual Bool calcBestGarrisonPosition( Coord3D *sourcePos, const Coord3D *targetPos ) = 0;
 	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, Object *victim ) = 0;
 	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, const Coord3D *targetPos ) = 0;
@@ -182,5 +180,3 @@ public:
 	}
 };
 //-------------------------------------------------------------------------------------------------
-
-#endif

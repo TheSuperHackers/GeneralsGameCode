@@ -48,15 +48,15 @@
 POWTruckBehaviorModuleData::POWTruckBehaviorModuleData( void )
 {
 
-}  // end POWTruckBehaviorModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void POWTruckBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p ) 
+/*static*/ void POWTruckBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
   OpenContainModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 
 		{ 0, 0, 0, 0 }
@@ -65,7 +65,7 @@ POWTruckBehaviorModuleData::POWTruckBehaviorModuleData( void )
 
   p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,18 +73,18 @@ POWTruckBehaviorModuleData::POWTruckBehaviorModuleData( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-POWTruckBehavior::POWTruckBehavior( Thing *thing, const ModuleData *moduleData ) 
+POWTruckBehavior::POWTruckBehavior( Thing *thing, const ModuleData *moduleData )
 								: OpenContain( thing, moduleData )
 {
 
-}  // end POWTruckBehavior
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 POWTruckBehavior::~POWTruckBehavior( void )
 {
 
-}  // end ~POWTruckBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -103,16 +103,16 @@ void POWTruckBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 
 	// get our AI info
 	AIUpdateInterface *ourAI = us->getAIUpdateInterface();
-	DEBUG_ASSERTCRASH( ourAI, ("POWTruckBehavior::onCollide - '%s' has no AI\n",
+	DEBUG_ASSERTCRASH( ourAI, ("POWTruckBehavior::onCollide - '%s' has no AI",
 														us->getTemplate()->getName().str()) );
 	POWTruckAIUpdateInterface *powTruckAI = ourAI->getPOWTruckAIUpdateInterface();
-	DEBUG_ASSERTCRASH( powTruckAI, ("POWTruckBehavior::onCollide - '%s' has no POWTruckAI\n",
+	DEBUG_ASSERTCRASH( powTruckAI, ("POWTruckBehavior::onCollide - '%s' has no POWTruckAI",
 																 us->getTemplate()->getName().str()) );
 
 	// pick up the prisoner
 	powTruckAI->loadPrisoner( other );
 
-}  // end onCollide
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -123,7 +123,7 @@ void POWTruckBehavior::crc( Xfer *xfer )
 	// extend base class
 	OpenContain::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -141,7 +141,7 @@ void POWTruckBehavior::xfer( Xfer *xfer )
 	// extend base class
 	OpenContain::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -152,6 +152,6 @@ void POWTruckBehavior::loadPostProcess( void )
 	// extend base class
 	OpenContain::loadPostProcess();
 
-}  // end loadPostProcess
+}
 
 #endif

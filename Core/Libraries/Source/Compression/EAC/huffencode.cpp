@@ -167,8 +167,8 @@ static void HUFF_maketree(struct HuffEncodeContext *EC)
 /* registers vars usage
     i  - code index/temp
     i1 - number of unjoined codes
-    i2 - 
-    i3 - 
+    i2 -
+    i3 -
 */
 
 	if (i1>2)
@@ -571,8 +571,8 @@ static void HUFF_analysis(struct HuffEncodeContext *EC,
 /* registers vars usage
     i  - clues
     i1 - minrep
-    i2 - 
-    i3 - 
+    i2 -
+    i3 -
 */
 
 	if (EC->clues>1)
@@ -778,8 +778,8 @@ static void HUFF_analysis(struct HuffEncodeContext *EC,
 /* registers vars usage
     i  - code
     i1 - 8
-    i2 - 
-    i3 - 
+    i2 -
+    i3 -
 */
 
 	if ((~opt) & 8)
@@ -793,8 +793,8 @@ static void HUFF_analysis(struct HuffEncodeContext *EC,
 
 /* registers vars usage
     i  - code/bits
-    i1 - 
-    i2 - 
+    i1 -
+    i2 -
     i3 -
 */
 

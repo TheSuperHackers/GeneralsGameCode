@@ -78,12 +78,21 @@ unsigned CPUDetectClass::L1InstructionCacheSetAssociative;
 unsigned CPUDetectClass::L1InstructionTraceCacheSize;
 unsigned CPUDetectClass::L1InstructionTraceCacheSetAssociative;
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
 unsigned CPUDetectClass::TotalPhysicalMemory;
 unsigned CPUDetectClass::AvailablePhysicalMemory;
 unsigned CPUDetectClass::TotalPageMemory;
 unsigned CPUDetectClass::AvailablePageMemory;
 unsigned CPUDetectClass::TotalVirtualMemory;
 unsigned CPUDetectClass::AvailableVirtualMemory;
+#else
+unsigned long long CPUDetectClass::TotalPhysicalMemory;
+unsigned long long CPUDetectClass::AvailablePhysicalMemory;
+unsigned long long CPUDetectClass::TotalPageMemory;
+unsigned long long CPUDetectClass::AvailablePageMemory;
+unsigned long long CPUDetectClass::TotalVirtualMemory;
+unsigned long long CPUDetectClass::AvailableVirtualMemory;
+#endif
 
 unsigned CPUDetectClass::OSVersionNumberMajor;
 unsigned CPUDetectClass::OSVersionNumberMinor;
@@ -111,7 +120,7 @@ char CPUDetectClass::ProcessorString[48];
 
 const char* CPUDetectClass::Get_Processor_Manufacturer_Name()
 {
-	static const char* ManufacturerNames[] = {
+	static const char* const ManufacturerNames[] = {
 		"<Unknown>",
 		"Intel",
 		"UMC",
@@ -122,6 +131,7 @@ const char* CPUDetectClass::Get_Processor_Manufacturer_Name()
 		"Rise",
 		"Transmeta"
 	};
+	static_assert(ARRAY_SIZE(ManufacturerNames) == MANUFACTURER_COUNT, "Incorrect array size");
 
 	return ManufacturerNames[ProcessorManufacturer];
 }
@@ -792,7 +802,7 @@ void CPUDetectClass::Init_Processor_String()
 			case INTEL_PROCESSOR_PENTIUM4:						str+="Pentium4"; break;
 			}
 		}
-		strncpy(ProcessorString,str.Peek_Buffer(),sizeof(ProcessorString));
+		strlcpy(ProcessorString,str.str(),sizeof(ProcessorString));
 	}
 
 }
@@ -885,6 +895,7 @@ void CPUDetectClass::Init_Memory()
 {
 #ifdef WIN32
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	MEMORYSTATUS mem;
    GlobalMemoryStatus(&mem);
 
@@ -894,14 +905,32 @@ void CPUDetectClass::Init_Memory()
    AvailablePageMemory     = mem.dwAvailPageFile;
    TotalVirtualMemory      = mem.dwTotalVirtual;
    AvailableVirtualMemory  = mem.dwAvailVirtual;
-#elif defined(_UNIX)
+#else
+	MEMORYSTATUSEX mem;
+	mem.dwLength = sizeof(mem);
+   GlobalMemoryStatusEx(&mem);
+
+   TotalPhysicalMemory     = mem.ullTotalPhys;
+   AvailablePhysicalMemory = mem.ullAvailPhys;
+   TotalPageMemory         = mem.ullTotalPageFile;
+   AvailablePageMemory     = mem.ullAvailPageFile;
+   TotalVirtualMemory      = mem.ullTotalVirtual;
+   AvailableVirtualMemory  = mem.ullAvailVirtual;
+#endif // defined(_MSC_VER) && _MSC_VER < 1300
+
+#else
 #warning FIX Init_Memory()
-#endif
+#endif // WIN32
 }
 
 void CPUDetectClass::Init_OS()
 {
 #ifdef WIN32
+
+// TheSuperHackers @fix OmniBlade 30/07/2025
+// GetVersionEx only returns the version of Windows it was manifested for since Windows 8.
+// RtlGetVersion returns the correct information at least at the time of writing.
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	OSVERSIONINFO os;
    os.dwOSVersionInfoSize = sizeof(os);
 	GetVersionEx(&os);
@@ -911,7 +940,33 @@ void CPUDetectClass::Init_OS()
    OSVersionBuildNumber = os.dwBuildNumber;
    OSVersionPlatformId  = os.dwPlatformId;
    OSVersionExtraInfo   = os.szCSDVersion;
-#elif defined(_UNIX)
+#else
+	typedef LONG(WINAPI * RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
+    HMODULE ntdll = LoadLibraryExA("ntdll", NULL, 0);
+    if (ntdll != nullptr) {
+        RtlGetVersionPtr RtlGetVersion = (RtlGetVersionPtr)::GetProcAddress(ntdll, "RtlGetVersion");
+
+        if (RtlGetVersion != nullptr) {
+            RTL_OSVERSIONINFOW os = {0};
+            os.dwOSVersionInfoSize = sizeof(os);
+            RtlGetVersion(&os);
+            OSVersionNumberMajor = os.dwMajorVersion;
+            OSVersionNumberMinor = os.dwMinorVersion;
+            OSVersionBuildNumber = os.dwBuildNumber;
+            OSVersionPlatformId = os.dwPlatformId;
+            OSVersionExtraInfo = os.szCSDVersion;
+            return;
+        }
+    }
+
+	// GetVersionEx will return this info if no manifest is present so seems a safe fallback.
+    OSVersionNumberMajor = 6;
+    OSVersionNumberMinor = 2;
+    OSVersionBuildNumber = 0;
+    OSVersionPlatformId = 2;
+    OSVersionExtraInfo = "";
+#endif // defined(_MSC_VER) && _MSC_VER < 1300
+#else
 #warning FIX Init_OS()
 #endif
 }
@@ -956,11 +1011,7 @@ void CPUDetectClass::Init_Processor_Log()
 		(OSVersionBuildNumber&0xff000000)>>24,
 		(OSVersionBuildNumber&0xff0000)>>16,
 		(OSVersionBuildNumber&0xffff)));
-#ifdef WIN32
-   SYSLOG(("OS-Info: %s\r\n", OSVersionExtraInfo));
-#elif defined(_UNIX)
-   SYSLOG(("OS-Info: %s\r\n", OSVersionExtraInfo.Peek_Buffer()));
-#endif
+	SYSLOG(("OS-Info: %s\r\n", OSVersionExtraInfo.str()));
 
 	SYSLOG(("Processor: %s\r\n",CPUDetectClass::Get_Processor_String()));
 	SYSLOG(("Clock speed: ~%dMHz\r\n",CPUDetectClass::Get_Processor_Speed()));
@@ -971,11 +1022,7 @@ void CPUDetectClass::Init_Processor_Log()
 	case 2: cpu_type="Dual"; break;
 	case 3: cpu_type="*Intel Reserved*"; break;
 	}
-#ifdef WIN32
-   SYSLOG(("Processor type: %s\r\n", cpu_type));
-#elif defined(_UNIX)
-   SYSLOG(("Processor type: %s\r\n", cpu_type.Peek_Buffer()));
-#endif
+	SYSLOG(("Processor type: %s\r\n", cpu_type.str()));
 
 	SYSLOG(("\r\n"));
 

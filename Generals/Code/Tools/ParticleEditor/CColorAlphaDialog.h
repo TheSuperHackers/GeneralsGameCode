@@ -23,7 +23,7 @@
 
 class CColorAlphaDialog : public CDialog
 {
-	protected:	
+	protected:
 		DWORD m_customColors[16];
 		CButtonShowColor m_colorButton[MAX_KEYFRAMES];
 
@@ -34,9 +34,9 @@ class CColorAlphaDialog : public CDialog
 
 		void InitPanel( void );
 
-		// if true, updates the UI from the Particle System. 
+		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );	
+		void performUpdate( IN Bool toUI );
 
 
 	protected:

@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef TCBSPLINE_H
-#define TCBSPLINE_H
 
 #include "hermitespline.h"
 
@@ -66,7 +60,7 @@ public:
 	virtual bool								Save(ChunkSaveClass &csave);
 	virtual bool								Load(ChunkLoadClass &cload);
 
-protected:	
+protected:
 
 	class TCBClass
 	{
@@ -80,7 +74,3 @@ protected:
 
 	DynamicVectorClass<TCBClass> Params;
 };
-
-
-#endif
-

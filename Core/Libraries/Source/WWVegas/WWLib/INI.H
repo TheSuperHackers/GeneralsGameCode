@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
-
-#ifndef INI_H
-#define INI_H
 
 #include <wchar.h>
 
@@ -242,5 +237,3 @@ class INIClass {
 		*/
 		static bool KeepBlankEntries;
 };
-
-#endif

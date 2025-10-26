@@ -21,9 +21,9 @@
 
 #include "stdafx.h"
 #include "wdump.h"
-#include "WDLView.h"
-#include "WDumpDoc.h"
-#ifdef _DEBUG
+#include "wdlview.h"
+#include "wdumpdoc.h"
+#ifdef RTS_DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -61,7 +61,7 @@ void CWDumpListView::OnDraw(CDC* pDC)
 /////////////////////////////////////////////////////////////////////////////
 // CWDumpListView diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void CWDumpListView::AssertValid() const
 {
 	CListView::AssertValid();
@@ -71,17 +71,17 @@ void CWDumpListView::Dump(CDumpContext& dc) const
 {
 	CListView::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CWDumpListView message handlers
 
-void CWDumpListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) 
+void CWDumpListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	CListCtrl &list = GetListCtrl();
 	CWdumpDoc *doc= (CWdumpDoc *) GetDocument();
 	ChunkItem *item = doc->m_ChunkItem;
-	list.DeleteAllItems();	
+	list.DeleteAllItems();
 
 
 	if((item != 0) && (item->Type != 0) && (item->Type->Callback != 0)) {
@@ -89,10 +89,10 @@ void CWDumpListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 }
 
-void CWDumpListView::OnInitialUpdate() 
+void CWDumpListView::OnInitialUpdate()
 {
 	CListView::OnInitialUpdate();
-	
+
 	CListCtrl &list = GetListCtrl();
 	long flags = list.GetStyle();
 	flags |= LVS_REPORT;

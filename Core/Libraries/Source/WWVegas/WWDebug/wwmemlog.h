@@ -36,13 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif
-
-#ifndef WWMEMLOG_H
-#define WWMEMLOG_H
 
 #define LOG_MEMORY	// Comment this out to disable memlog compiling in
 
@@ -182,10 +176,3 @@ public:
 #else
 #define	WWMEMLOG( category )
 #endif
-
-
-
-
-
-
-#endif //WWMEMLOG_H

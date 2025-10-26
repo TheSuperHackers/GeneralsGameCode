@@ -17,27 +17,25 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/vxl.h 4     10/28/97 6:08p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - W3D export                                  * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/vxl.h                          $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/26/97 1:35p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 4                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - W3D export                                  *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/vxl.h                          $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/26/97 1:35p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 4                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef VXL_H
-#define VXL_H
+#pragma once
 
 #ifndef ALWAYS_H
 #include "always.h"
@@ -89,8 +87,8 @@ public:
 	uint8		Is_Solid(int i,int j,int k);
 
 	void		Compute_Physical_Properties(double Volume[1],double CM[3],double I[9]);
-	
-private:	
+
+private:
 
 	int		XDim;
 	int		YDim;
@@ -104,10 +102,10 @@ private:
 
 	float				Resolution;			// resolution of the voxel grid
 	TimeValue		CurTime;
-	Point3			Offset;				
+	Point3			Offset;
 	Point3			Size;
 	Point3			Scale;				// three scale values to fit the meshes into the desired grid
-	
+
 	Point3			BoxCorner[8];		// World-Space corners of the bounding box of the voxel space
 	Matrix3			ParentTM;			// coordinate system of the parent of this object.
 
@@ -129,16 +127,13 @@ private:
 		VoxelLayerClass &		layer,
 		uint32					z
 	);
-	
+
 	// compute the bounding box
 	void Compute_Bounding_Box(Point3 size,Point3 offset);
-	
+
 	// 3D visibility
 	void Compute_Visiblity(Progress_Meter_Class & meter);
 
 	// returns the position of the center of voxel(i,j,k)
 	Point3 Voxel_Position(int i,int j,int k);
 };
-
-
-#endif /*VXL_H*/

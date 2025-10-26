@@ -24,12 +24,12 @@
 
 // FILE: GadgetCheckBox.h /////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -61,9 +61,6 @@
 
 #pragma once
 
-#ifndef __GADGETCHECKBOX_H_
-#define __GADGETCHECKBOX_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -80,6 +77,7 @@
 extern void GadgetCheckBoxSetText( GameWindow *g, UnicodeString text );
 extern Bool GadgetCheckBoxIsChecked( GameWindow *g );
 extern void GadgetCheckBoxSetChecked( GameWindow *g, Bool isChecked);
+extern void GadgetCheckBoxToggle( GameWindow *g);
 
 inline void GadgetCheckBoxSetEnabledImage( GameWindow *g, const Image *image )						{ g->winSetEnabledImage( 0, image ); }
 inline void GadgetCheckBoxSetEnabledColor( GameWindow *g, Color color )								{ g->winSetEnabledColor( 0, color ); }
@@ -139,6 +137,3 @@ inline Color		 GadgetCheckBoxGetHiliteCheckedBoxColor( GameWindow *g )						{ re
 inline Color		 GadgetCheckBoxGetHiliteCheckedBoxBorderColor( GameWindow *g )			{ return g->winGetHiliteBorderColor( 2 ); }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GADGETCHECKBOX_H_
-

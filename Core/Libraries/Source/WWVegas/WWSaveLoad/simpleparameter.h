@@ -34,16 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-
-
-
-#ifndef __SIMPLE_PARAMETER_H
-#define __SIMPLE_PARAMETER_H
 
 #include "always.h"
 #include "parameter.h"
@@ -63,7 +54,7 @@ template <class T, ParameterClass::Type type>
 class SimpleParameterClass : public ParameterClass
 {
 public:
-	
+
 	///////////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////////////////
@@ -144,7 +135,7 @@ SimpleParameterClass<T, type>::Set_Value (const T &new_value)
 //////////////////////////////////////////////////////////////////////////////////
 template <class T, ParameterClass::Type type> inline ParameterClass::Type
 SimpleParameterClass<T, type>::Get_Type (void) const
-{	
+{
 	return type;
 }
 
@@ -178,7 +169,7 @@ typedef SimpleParameterClass<int,		ParameterClass::TYPE_STRINGSDB_ID>	StringsDBE
 
 //////////////////////////////////////////////////////////////////////////////////
 //
-//	RangedParameterClass 
+//	RangedParameterClass
 //
 //		Extends simple paramter types so they can have minimum/maximum values.
 //
@@ -211,7 +202,7 @@ private:
 
 
 //////////////////////////////////////////////////////////////////////////////////
-//	IntParameterClass 
+//	IntParameterClass
 //////////////////////////////////////////////////////////////////////////////////
 class IntParameterClass : public RangedParameterClass<int, ParameterClass::TYPE_INT>
 {
@@ -222,7 +213,7 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////////
-//	FloatParameterClass 
+//	FloatParameterClass
 //////////////////////////////////////////////////////////////////////////////////
 class FloatParameterClass  : public RangedParameterClass<float, ParameterClass::TYPE_FLOAT>
 {
@@ -233,7 +224,7 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////////
-//	AngleParameterClass 
+//	AngleParameterClass
 //////////////////////////////////////////////////////////////////////////////////
 class AngleParameterClass   : public RangedParameterClass<float, ParameterClass::TYPE_ANGLE>
 {
@@ -242,6 +233,3 @@ public:
 		:	RangedParameterClass<float, ParameterClass::TYPE_ANGLE> (data, name)
 			{ Set_Range (0.0F,  6.283185307F); }
 };
-
-#endif //__SIMPLE_PARAMETER_H
-

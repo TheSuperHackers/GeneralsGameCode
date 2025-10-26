@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __WINDOWLAYOUT_H_
-#define __WINDOWLAYOUT_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
 #include "GameClient/GameWindow.h"
@@ -62,17 +59,17 @@ public:
 	// ~WindowLayout( void );												///< defined by memory pool glue
 
 	// manipulating screen properties ---------------------------------------------------------------
-	AsciiString getFilename( void );											///< return source window filename
-	Bool load( AsciiString filename );										///< create windows and load from .wnd file
-	void hide( Bool hide );													///< hide/unhide all windows on this screen
-	Bool isHidden( void );													///< return visible state of screen
+	AsciiString getFilename( void ) const;					///< return source window filename
+	Bool load( AsciiString filename );							///< create windows and load from .wnd file
+	void hide( Bool hide );													///< hide/show all windows on this screen
+	Bool isHidden( void ) const;										///< return visible state of screen
 	void bringForward( void );											///< bring all windows in this screen forward
 
 	// manipulating window lists --------------------------------------------------------------------
 	void addWindow( GameWindow *window );						///< add window to screen
 	void removeWindow( GameWindow *window );				///< remove window from screen
 	void destroyWindows( void );										///< destroy all windows in this screen
-	GameWindow *getFirstWindow( void );							///< get first window in list for screen
+	GameWindow *getFirstWindow( void ) const;				///< get first window in list for screen
 
 	// accessing layout callbacks  ------------------------------------------------------------------
 	void runInit( void *userData = NULL );									///< run the init method if available
@@ -98,7 +95,7 @@ protected:
 	Bool m_hidden;																	///< visible state of this screen
 
 	//
-	// These are callbacks you can attach to a "layout file" ... they are not 
+	// These are callbacks you can attach to a "layout file" ... they are not
 	// automatically called when using the WindowManager to load and create
 	// the layout.  You can incorporate when and where init, shutdown and update should
 	// be called for any system or code that is uses these window layouts
@@ -107,12 +104,12 @@ protected:
 	WindowLayoutUpdateFunc	 m_update;							///< update callback
 	WindowLayoutShutdownFunc m_shutdown;						///< shutdown callback
 
-};  // end class WindowLayout
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
-inline AsciiString WindowLayout::getFilename( void ) { return m_filenameString; }
-inline GameWindow *WindowLayout::getFirstWindow( void ) { return m_windowList; }
-inline Bool WindowLayout::isHidden( void ) { return m_hidden; }
+inline AsciiString WindowLayout::getFilename( void ) const { return m_filenameString; }
+inline GameWindow *WindowLayout::getFirstWindow( void ) const { return m_windowList; }
+inline Bool WindowLayout::isHidden( void ) const { return m_hidden; }
 
 inline void WindowLayout::runInit( void *userData ) { if( m_init ) m_init( this, userData ); }
 inline void WindowLayout::runUpdate( void *userData ) { if( m_update ) m_update( this, userData ); }
@@ -121,6 +118,3 @@ inline void WindowLayout::runShutdown( void *userData ) { if( m_shutdown ) m_shu
 inline void WindowLayout::setInit( WindowLayoutInitFunc init ) { m_init = init; }
 inline void WindowLayout::setUpdate( WindowLayoutUpdateFunc update ) { m_update = update; }
 inline void WindowLayout::setShutdown( WindowLayoutShutdownFunc shutdown ) {m_shutdown = shutdown;}
-
-#endif // __WINDOWLAYOUT_H_
-

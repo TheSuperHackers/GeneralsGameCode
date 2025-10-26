@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 2                                                           $*
@@ -50,11 +50,6 @@
 #include <wwprofile.h>
 #include <algorithm>
 
-#ifdef _INTERNAL
-// for occasional debugging...
-// #pragma optimize("", off)
-// #pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 bool SortingRendererClass::_EnableTriangleDraw=true;
 static unsigned DEFAULT_SORTING_POLY_COUNT = 16384;	// (count * 3) must be less than 65536
@@ -119,10 +114,10 @@ void Sort(TempIndexStruct *begin, TempIndexStruct *end)
 		}
 		if (begin[0] > end[-1]) {
 			std::swap(begin[0], end[-1]);
-		}																// end[-1] has the largest element
+		}
 		if (begin[1] > begin[0]) {
 			std::swap(begin[1], begin[0]);
-		}																// begin[0] has the middle element and begin[1] has the smallest element
+		}
 
 		// *begin is now the partitioning element
 		TempIndexStruct *begin1 = begin + 1;	// TODO: Temp fix until I find out who is passing me NaN
@@ -216,7 +211,7 @@ static TempIndexStruct* Get_Temp_Index_Array(unsigned count)
 
 void SortingRendererClass::Insert_Triangles(
 	const SphereClass& bounding_sphere,
-	unsigned short start_index, 
+	unsigned short start_index,
 	unsigned short polygon_count,
 	unsigned short min_vertex_index,
 	unsigned short vertex_count)
@@ -226,7 +221,7 @@ void SortingRendererClass::Insert_Triangles(
 		return;
 	}
 
-	SNAPSHOT_SAY(("SortingRenderer::Insert(start_i: %d, polygons : %d, min_vi: %d, vertex_count: %d)\n",
+	SNAPSHOT_SAY(("SortingRenderer::Insert(start_i: %d, polygons : %d, min_vi: %d, vertex_count: %d)",
 		start_index,polygon_count,min_vertex_index,vertex_count));
 
 
@@ -257,10 +252,10 @@ void SortingRendererClass::Insert_Triangles(
 	D3DXVec3Transform(
 		&transformed_vec,
 		&vec,
-		&mtx); 
+		&mtx);
 	state->transformed_center=Vector3(transformed_vec[0],transformed_vec[1],transformed_vec[2]);
 
-	
+
 	/// @todo lorenzen sez use a bucket sort here... and stop copying so much data so many times
 
 	SortingNodeStruct* node=sorted_list.Head();
@@ -303,7 +298,7 @@ void SortingRendererClass::Insert_Triangles(
 // ----------------------------------------------------------------------------
 
 void SortingRendererClass::Insert_Triangles(
-	unsigned short start_index, 
+	unsigned short start_index,
 	unsigned short polygon_count,
 	unsigned short min_vertex_index,
 	unsigned short vertex_count)
@@ -326,7 +321,7 @@ void Release_Refs(SortingNodeStruct* state)
 	}
 	REF_PTR_RELEASE(state->sorting_state.index_buffer);
 	REF_PTR_RELEASE(state->sorting_state.material);
-	for (i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i) 
+	for (i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i)
 	{
 		REF_PTR_RELEASE(state->sorting_state.Textures[i]);
 	}
@@ -344,6 +339,7 @@ void SortingRendererClass::Insert_To_Sorting_Pool(SortingNodeStruct* state)
 {
 	if (overlapping_node_count>=MAX_OVERLAPPING_NODES) {
 		Release_Refs(state);
+		delete state;
 		WWASSERT(0);
 		return;
 	}
@@ -363,7 +359,7 @@ static void Apply_Render_State(RenderStateStruct& render_state)
 
 	DX8Wrapper::Set_Material(render_state.material);
 
-	for (int i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i) 
+	for (int i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i)
 	{
 		DX8Wrapper::Set_Texture(i,render_state.Textures[i]);
 	}
@@ -410,7 +406,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 {
 	if (!overlapping_node_count) return;
 
-	SNAPSHOT_SAY(("SortingSystem - Flush \n"));
+	SNAPSHOT_SAY(("SortingSystem - Flush"));
 
 	// Fill dynamic index buffer with sorting index buffer vertices
 	TempIndexStruct* tis=Get_Temp_Index_Array(overlapping_polygon_count);
@@ -595,7 +591,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 	overlapping_polygon_count=0;
 	overlapping_vertex_count=0;
 
-	SNAPSHOT_SAY(("SortingSystem - Done flushing\n"));
+	SNAPSHOT_SAY(("SortingSystem - Done flushing"));
 
 }
 
@@ -611,7 +607,7 @@ void SortingRendererClass::Flush()
 
 	while (SortingNodeStruct* state=sorted_list.Head()) {
 		state->Remove();
-		
+
 		if ((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
 			(state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_DYNAMIC_SORTING)) {
 			Insert_To_Sorting_Pool(state);
@@ -679,7 +675,7 @@ void SortingRendererClass::Deinit()
 
 void SortingRendererClass::Insert_VolumeParticle(
 	const SphereClass& bounding_sphere,
-	unsigned short start_index, 
+	unsigned short start_index,
 	unsigned short polygon_count,
 	unsigned short min_vertex_index,
 	unsigned short vertex_count,
@@ -719,14 +715,14 @@ void SortingRendererClass::Insert_VolumeParticle(
 	D3DXVec3Transform(
 		&transformed_vec,
 		&vec,
-		&mtx); 
+		&mtx);
 	state->transformed_center=Vector3(transformed_vec[0],transformed_vec[1],transformed_vec[2]);
 
 
 	// BUT WHAT IS THE DEAL WITH THE VERTCOUNT AND POLYCOUNT BEING N BUT TRANSFORMED CENTER COUNT == 1
 
 	//THE TRANSFORMED CENTER[2] IS THE ZBUFFER DEPTH
-	
+
 	/// @todo lorenzen sez use a bucket sort here... and stop copying so much data so many times
 
 	SortingNodeStruct* node=sorted_list.Head();

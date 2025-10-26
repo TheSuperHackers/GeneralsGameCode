@@ -30,13 +30,12 @@
 
 #pragma once
 
-#ifndef _IN_GAME_UI_H_
-#define _IN_GAME_UI_H_
-
 #include "Common/GameCommon.h"
 #include "Common/GameType.h"
 #include "Common/MessageStream.h"		// for GameMessageTranslator
+#include "Common/KindOf.h"
 #include "Common/SpecialPowerType.h"
+#include "Common/Snapshot.h"
 #include "Common/STLTypedefs.h"
 #include "Common/SubsystemInterface.h"
 #include "Common/UnicodeString.h"
@@ -44,7 +43,6 @@
 #include "GameClient/Mouse.h"
 #include "GameClient/RadiusDecal.h"
 #include "GameClient/View.h"
-#include "Common/Snapshot.h"
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 class Drawable;
@@ -76,32 +74,32 @@ enum RadiusCursorType CPP_11(: Int)
 	RADIUSCURSOR_FRIENDLY_SPECIALPOWER,
 	RADIUSCURSOR_OFFENSIVE_SPECIALPOWER,
 	RADIUSCURSOR_SUPERWEAPON_SCATTER_AREA,
-	
-	RADIUSCURSOR_PARTICLECANNON, 
+
+	RADIUSCURSOR_PARTICLECANNON,
 	RADIUSCURSOR_A10STRIKE,
 	RADIUSCURSOR_CARPETBOMB,
 	RADIUSCURSOR_DAISYCUTTER,
 	RADIUSCURSOR_PARADROP,
-	RADIUSCURSOR_SPYSATELLITE, 
+	RADIUSCURSOR_SPYSATELLITE,
 
-	RADIUSCURSOR_NUCLEARMISSILE, 
+	RADIUSCURSOR_NUCLEARMISSILE,
 	RADIUSCURSOR_EMPPULSE,
 	RADIUSCURSOR_ARTILLERYBARRAGE,
 	RADIUSCURSOR_NAPALMSTRIKE,
 	RADIUSCURSOR_CLUSTERMINES,
 
-	RADIUSCURSOR_SCUDSTORM, 
+	RADIUSCURSOR_SCUDSTORM,
 	RADIUSCURSOR_ANTHRAXBOMB,
-	RADIUSCURSOR_AMBUSH, 
+	RADIUSCURSOR_AMBUSH,
 	RADIUSCURSOR_RADAR,
 	RADIUSCURSOR_SPYDRONE,
 
 
-	RADIUSCURSOR_COUNT	// keep last
+	RADIUSCURSOR_COUNT
 };
 
 #ifdef DEFINE_RADIUSCURSOR_NAMES
-static const char *TheRadiusCursorNames[] = 
+static const char *const TheRadiusCursorNames[] =
 {
 	"NONE",
 	"ATTACK_DAMAGE_AREA",
@@ -113,27 +111,28 @@ static const char *TheRadiusCursorNames[] =
 	"OFFENSIVE_SPECIALPOWER", //red
 	"SUPERWEAPON_SCATTER_AREA",//red
 
-	"PARTICLECANNON", 
+	"PARTICLECANNON",
 	"A10STRIKE",
 	"CARPETBOMB",
 	"DAISYCUTTER",
 	"PARADROP",
-	"SPYSATELLITE", 
+	"SPYSATELLITE",
 
-	"NUCLEARMISSILE", 
+	"NUCLEARMISSILE",
 	"EMPPULSE",
 	"ARTILLERYBARRAGE",
 	"NAPALMSTRIKE",
 	"CLUSTERMINES",
 
-	"SCUDSTORM", 
+	"SCUDSTORM",
 	"ANTHRAXBOMB",
-	"AMBUSH", 
+	"AMBUSH",
 	"RADAR",
 	"SPYDRONE",
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheRadiusCursorNames) == RADIUSCURSOR_COUNT + 1, "Incorrect array size");
 #endif
 
 // ------------------------------------------------------------------------------------------------
@@ -158,7 +157,7 @@ typedef std::list<Drawable *>::const_iterator DrawableListCIt;
 // ------------------------------------------------------------------------------------------------
 class SuperweaponInfo : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SuperweaponInfo, "SuperweaponInfo")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SuperweaponInfo, "SuperweaponInfo")
 
 private:
 // not saved
@@ -175,10 +174,10 @@ public:
 		Bool hiddenByScript,
 		Bool hiddenByScience,
 		Bool ready,
-		const AsciiString& superweaponNormalFont, 
-		Int superweaponNormalPointSize, 
+		const AsciiString& superweaponNormalFont,
+		Int superweaponNormalPointSize,
 		Bool superweaponNormalBold,
-		Color c, 
+		Color c,
 		const SpecialPowerTemplate* spt
 	);
 
@@ -209,7 +208,7 @@ typedef std::map<AsciiString, SuperweaponList> SuperweaponMap;
 // Popup message box
 class PopupMessageData : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PopupMessageData, "PopupMessageData")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PopupMessageData, "PopupMessageData")
 public:
 	UnicodeString		message;
 	Int							x;
@@ -225,7 +224,7 @@ EMPTY_DTOR(PopupMessageData)
 // ------------------------------------------------------------------------------------------------
 class NamedTimerInfo : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NamedTimerInfo, "NamedTimerInfo")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NamedTimerInfo, "NamedTimerInfo")
 public:
 	AsciiString			m_timerName;							///< Timer name, needed on Load to reconstruct Map.
 	UnicodeString		timerText;								///< timer text
@@ -247,7 +246,7 @@ enum {MAX_SUBTITLE_LINES = 4};							///< The maximum number of lines a subtitle
 // Floating Text Data
 class FloatingTextData : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FloatingTextData, "FloatingTextData")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FloatingTextData, "FloatingTextData")
 public:
 	FloatingTextData(void);
 	//~FloatingTextData(void);
@@ -263,7 +262,7 @@ public:
 typedef std::list<FloatingTextData *> FloatingTextList;
 typedef FloatingTextList::iterator	FloatingTextListIt;
 
-enum 
+enum
 {
 	DEFAULT_FLOATING_TEXT_TIMEOUT = LOGICFRAMES_PER_SECOND/3,
 };
@@ -303,12 +302,17 @@ typedef WorldAnimationList::iterator WorldAnimationListIterator;
 
 // ------------------------------------------------------------------------------------------------
 /** Basic functionality common to all in-game user interfaces */
-// ------------------------------------------------------------------------------------------------ 
+// ------------------------------------------------------------------------------------------------
 class InGameUI : public SubsystemInterface, public Snapshot
 {
-	
+
 friend class Drawable;	// for selection/deselection transactions
-		
+
+protected:
+
+	typedef std::list<Object*> ObjectList;
+	typedef std::list<Object*>::iterator ObjectListIt;
+
 public:  // ***************************************************************************************
 
 	enum SelectionRules
@@ -339,13 +343,12 @@ public:  // ********************************************************************
 		ACTIONTYPE_SET_RALLY_POINT,
 		ACTIONTYPE_COMBATDROP_INTO,
 
-		//Keep last.
 		NUM_ACTIONTYPES
 	};
 
 	InGameUI( void );
 	virtual ~InGameUI( void );
-	
+
 	// Inherited from subsystem interface -----------------------------------------------------------
 	virtual	void init( void );															///< Initialize the in-game user interface
 	virtual void update( void );														///< Update the UI by calling preDraw(), draw(), and postDraw()
@@ -361,17 +364,20 @@ public:  // ********************************************************************
 	// interface for messages to the user
 	// srj sez: passing as const-ref screws up varargs for some reason. dunno why. just pass by value.
 	virtual void messageColor( const RGBColor *rgbColor, UnicodeString format, ... );	///< display a colored message to the user
+	virtual void messageNoFormat( const UnicodeString& message ); ///< display a message to the user
+	virtual void messageNoFormat( const RGBColor *rgbColor, const UnicodeString& message ); ///< display a colored message to the user
 	virtual void message( UnicodeString format, ... );				  ///< display a message to the user
 	virtual void message( AsciiString stringManagerLabel, ... );///< display a message to the user
 	virtual void toggleMessages( void ) { m_messagesOn = 1 - m_messagesOn; }	///< toggle messages on/off
 	virtual Bool isMessagesOn( void ) { return m_messagesOn; }	///< are the display messages on
 	void freeMessageResources( void );				///< free resources for the ui messages
+	void freeCustomUiResources( void );				///< free resources for custom ui elements
 	Color getMessageColor(Bool altColor) { return (altColor)?m_messageColor2:m_messageColor1; }
-	
+
 	// interface for military style messages
 	virtual void militarySubtitle( const AsciiString& label, Int duration );			// time in milliseconds
 	virtual void removeMilitarySubtitle( void );
-	
+
 	// for can't build messages
 	virtual void displayCantBuildMessage( LegalBuildCode lbc ); ///< display message to use as to why they can't build here
 
@@ -385,7 +391,7 @@ public:  // ********************************************************************
 	virtual void createMouseoverHint( const GameMessage *msg );	///< An object is mouse hovered over, start hint if any
 	virtual void createCommandHint( const GameMessage *msg );		///< Used by HintSpy. Someone is selected so generate the right Cursor for the potential action
 	virtual void createGarrisonHint( const GameMessage *msg );  ///< A garrison command has occurred, start graphical "hint"
-	
+
 	virtual void addSuperweapon(Int playerIndex, const AsciiString& powerName, ObjectID id, const SpecialPowerTemplate *powerTemplate);
 	virtual Bool removeSuperweapon(Int playerIndex, const AsciiString& powerName, ObjectID id, const SpecialPowerTemplate *powerTemplate);
 	virtual void objectChangedTeam(const Object *obj, Int oldPlayerIndex, Int newPlayerIndex);	// notification for superweapons, etc
@@ -415,7 +421,9 @@ public:  // ********************************************************************
 	// build interface
 	virtual void placeBuildAvailable( const ThingTemplate *build, Drawable *buildDrawable );				///< built thing being placed
 	virtual const ThingTemplate *getPendingPlaceType( void );					///< get item we're trying to place
-	virtual const ObjectID getPendingPlaceSourceObjectID( void );			///< get producing object
+	virtual ObjectID getPendingPlaceSourceObjectID( void );			///< get producing object
+	virtual Bool getPreventLeftClickDeselectionInAlternateMouseModeForOneClick() const { return m_preventLeftClickDeselectionInAlternateMouseModeForOneClick; }
+	virtual void setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( Bool set ) { m_preventLeftClickDeselectionInAlternateMouseModeForOneClick = set; }
 	virtual void setPlacementStart( const ICoord2D *start );					///< placement anchor point (for choosing angles)
 	virtual void setPlacementEnd( const ICoord2D *end );							///< set target placement point (for choosing angles)
 	virtual Bool isPlacementAnchored( void );													///< is placement arrow anchor set
@@ -432,9 +440,10 @@ public:  // ********************************************************************
 	virtual const DrawableList *getAllSelectedDrawables( void ) const;	///< Return the list of all the currently selected Drawable IDs.
 	virtual const DrawableList *getAllSelectedLocalDrawables( void );		///< Return the list of all the currently selected Drawable IDs owned by the current player.
 	virtual Drawable *getFirstSelectedDrawable( void );							///< get the first selected drawable (if any)
-	virtual DrawableID getSoloNexusSelectedDrawableID( void ) { return m_soloNexusSelectedDrawableID; }  ///< Return the one drawable of the nexus if only 1 angry mob is selected 
+	virtual DrawableID getSoloNexusSelectedDrawableID( void ) { return m_soloNexusSelectedDrawableID; }  ///< Return the one drawable of the nexus if only 1 angry mob is selected
 	virtual Bool isDrawableSelected( DrawableID idToCheck ) const;	///< Return true if the selected ID is in the drawable list
-	virtual Bool isAnySelectedKindOf( KindOfType kindOf ) const;		///< is any selected object a kind of 
+	virtual Bool areAllObjectsSelected(const std::vector<Object*>& objectsToCheck) const;	///< Return true if all of the selected objects are in the drawable list
+	virtual Bool isAnySelectedKindOf( KindOfType kindOf ) const;		///< is any selected object a kind of
 	virtual Bool isAllSelectedKindOf( KindOfType kindOf ) const;		///< are all selected objects a kind of
 
 	virtual void setRadiusCursor(RadiusCursorType r, const SpecialPowerTemplate* sp, WeaponSlotType wslot);
@@ -448,20 +457,21 @@ public:  // ********************************************************************
 	virtual void preDraw( void );														///< Logic which needs to occur before the UI renders
 	virtual void draw( void ) = 0;													///< Render the in-game user interface
 	virtual void postDraw( void );													///< Logic which needs to occur after the UI renders
+	virtual void postWindowDraw( void );											///< Logic which needs to occur after the WindowManager has repainted the menus
 
-	/// Ingame video playback 
+	/// Ingame video playback
 	virtual void playMovie( const AsciiString& movieName );
 	virtual void stopMovie( void );
 	virtual VideoBuffer* videoBuffer( void );
 
-	/// Ingame cameo video playback 
+	/// Ingame cameo video playback
 	virtual void playCameoMovie( const AsciiString& movieName );
 	virtual void stopCameoMovie( void );
 	virtual VideoBuffer* cameoVideoBuffer( void );
 
-  // mouse over information	
+  // mouse over information
 	virtual DrawableID getMousedOverDrawableID( void ) const;	///< Get drawble ID of drawable under cursor
-	
+
 	/// Set the ingame flag as to if we have the Quit menu up or not
 	virtual void setQuitMenuVisible( Bool t ) { m_isQuitMenuVisible = t; }
 	virtual Bool isQuitMenuVisible( void ) const { return m_isQuitMenuVisible; }
@@ -482,10 +492,16 @@ public:  // ********************************************************************
 	Bool canSelectedObjectsOverrideSpecialPowerDestination( const Coord3D *loc, SelectionRules rule, SpecialPowerType spType = SPECIAL_INVALID ) const;
 
 	// Selection Methods
-	virtual Int selectMatchingUnits();                        ///< selects matching units
-	virtual Int selectAcrossScreen();                         ///< selects matching units across screen
-	virtual Int selectAcrossMap();                            ///< selects matching units across map
-	virtual Int selectAcrossRegion( IRegion2D *region );			// -1 = no locally-owned selection, 0+ = # of units selected
+	virtual Int selectUnitsMatchingCurrentSelection();                        ///< selects matching units
+	virtual Int selectMatchingAcrossScreen();                         ///< selects matching units across screen
+	virtual Int selectMatchingAcrossMap();                            ///< selects matching units across map
+	virtual Int selectMatchingAcrossRegion( IRegion2D *region );			// -1 = no locally-owned selection, 0+ = # of units selected
+
+	virtual Int selectAllUnitsByType(KindOfMaskType mustBeSet, KindOfMaskType mustBeClear);
+	virtual Int selectAllUnitsByTypeAcrossScreen(KindOfMaskType mustBeSet, KindOfMaskType mustBeClear);
+	virtual Int selectAllUnitsByTypeAcrossMap(KindOfMaskType mustBeSet, KindOfMaskType mustBeClear);
+	virtual Int selectAllUnitsByTypeAcrossRegion( IRegion2D *region, KindOfMaskType mustBeSet, KindOfMaskType mustBeClear );
+
 	virtual void buildRegion( const ICoord2D *anchor, const ICoord2D *dest, IRegion2D *region );  ///< builds a region around the specified coordinates
 
 	virtual Bool getDisplayedMaxWarning( void ) { return m_displayedMaxWarning; }
@@ -513,11 +529,11 @@ public:  // ********************************************************************
 	void setForceMoveMode( Bool enabled )		{ m_forceMoveToMode = enabled; }
 	void setForceAttackMode( Bool enabled )		{ m_forceAttackMode = enabled; }
 	void setPreferSelectionMode( Bool enabled )		{ m_preferSelection = enabled; }
-	
+
 	void toggleAttackMoveToMode( void )				{ m_attackMoveToMode = !m_attackMoveToMode; }
 	Bool isInAttackMoveToMode( void ) const		{ return m_attackMoveToMode; }
 	void clearAttackMoveToMode( void )				{ m_attackMoveToMode = FALSE; }
-	
+
 	void setCameraRotateLeft( Bool set )		{ m_cameraRotatingLeft = set; }
 	void setCameraRotateRight( Bool set )		{ m_cameraRotatingRight = set; }
 	void setCameraZoomIn( Bool set )				{ m_cameraZoomingIn = set; }
@@ -531,8 +547,14 @@ public:  // ********************************************************************
 	virtual void addIdleWorker( Object *obj );
 	virtual void removeIdleWorker( Object *obj, Int playerNumber );
 	virtual void selectNextIdleWorker( void );
+	static std::vector<Object*> getUniqueIdleWorkers(const ObjectList& idleWorkers);
 
 	virtual void recreateControlBar( void );
+	virtual void refreshCustomUiResources( void );
+	virtual void refreshNetworkLatencyResources(void);
+	virtual void refreshRenderFpsResources(void);
+	virtual void refreshSystemTimeResources( void );
+	virtual void refreshGameTimeResources( void );
 
 	virtual void disableTooltipsUntil(UnsignedInt frameNum);
 	virtual void clearTooltipsDisabled();
@@ -552,19 +574,25 @@ private:
 	virtual void updateIdleWorker( void );
 	virtual void resetIdleWorker( void );
 
+	void updateRenderFpsString();
+	void drawNetworkLatency(Int &x, Int &y);
+	void drawRenderFps(Int &x, Int &y);
+	void drawSystemTime(Int &x, Int &y);
+	void drawGameTime();
+
 public:
 	void registerWindowLayout(WindowLayout *layout); // register a layout for updates
 	void unregisterWindowLayout(WindowLayout *layout); // stop updates for this layout
 
 public:
 	// World 2D animation methods
-	void addWorldAnimation( Anim2DTemplate *animTemplate, 
+	void addWorldAnimation( Anim2DTemplate *animTemplate,
 													const Coord3D *pos,
 													WorldAnimationOptions options,
 													Real durationInSeconds,
 													Real zRisePerSecond );
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual void DEBUG_addFloatingText(const AsciiString& text,const Coord3D * pos, Color color);
 #endif
 
@@ -574,7 +602,7 @@ protected:
 	virtual void xfer( Xfer *xfer );
 	virtual void loadPostProcess( void );
 
-protected: 
+protected:
 
 	// ----------------------------------------------------------------------------------------------
 	// Protected Types ------------------------------------------------------------------------------
@@ -584,19 +612,17 @@ protected:
 	{
 		MOVE_HINT = 0,
 		ATTACK_HINT,
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		DEBUG_HINT,
 #endif
-		NUM_HINT_TYPES  // keep this one last
 	};
 
 	// mouse mode interface
-	enum MouseMode 
+	enum MouseMode
 	{
 		MOUSEMODE_DEFAULT = 0,
 		MOUSEMODE_BUILD_PLACE,
 		MOUSEMODE_GUI_COMMAND,
-		MOUSEMODE_MAX
 	};
 
 	enum { MAX_MOVE_HINTS = 256 };
@@ -631,9 +657,6 @@ protected:
 		Color color;															///< what color should we display the military subtitles
 	};
 
-	typedef std::list<Object *> ObjectList;
-	typedef std::list<Object *>::iterator ObjectListIt;
-	
 	// ----------------------------------------------------------------------------------------------
 	// Protected Methods ----------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------------------------
@@ -655,7 +678,7 @@ protected:
 
 	void setMouseCursor(Mouse::MouseCursor c);
 
-	
+
 	void addMessageText( const UnicodeString& formattedMessage, const RGBColor *rgbColor = NULL );  ///< internal workhorse for adding plain text for messages
 	void removeMessageAtIndex( Int i );				///< remove the message at index i
 
@@ -692,6 +715,7 @@ protected:
 	BuildProgress								m_buildProgress[ MAX_BUILD_PROGRESS ];	///< progress for building units
 	const ThingTemplate *				m_pendingPlaceType;											///< type of built thing we're trying to place
 	ObjectID										m_pendingPlaceSourceObjectID;						///< source object of the thing constructing the item
+	Bool										m_preventLeftClickDeselectionInAlternateMouseModeForOneClick;
 	Drawable **									m_placeIcon;														///< array for drawables to appear at the cursor when building in the world
 	Bool												m_placeAnchorInProgress;								///< is place angle interface for placement active
 	ICoord2D										m_placeAnchorStart;											///< place angle anchor start
@@ -709,6 +733,50 @@ protected:
 	VideoBuffer*								m_cameoVideoBuffer;///< video playback buffer
 	VideoStreamInterface*				m_cameoVideoStream;///< Video stream;
 
+	// Network Latency Counter
+	DisplayString *							m_networkLatencyString;
+	AsciiString									m_networkLatencyFont;
+	Int													m_networkLatencyPointSize;
+	Bool												m_networkLatencyBold;
+	Coord2D											m_networkLatencyPosition;
+	Color												m_networkLatencyColor;
+	Color												m_networkLatencyDropColor;
+	UnsignedInt									m_lastNetworkLatencyFrames;
+
+	// Render FPS Counter
+	DisplayString *							m_renderFpsString;
+	DisplayString *							m_renderFpsLimitString;
+	AsciiString									m_renderFpsFont;
+	Int													m_renderFpsPointSize;
+	Bool												m_renderFpsBold;
+	Coord2D											m_renderFpsPosition;
+	Color												m_renderFpsColor;
+	Color												m_renderFpsLimitColor;
+	Color												m_renderFpsDropColor;
+	UnsignedInt									m_renderFpsRefreshMs;
+	UnsignedInt									m_lastRenderFps;
+	UnsignedInt									m_lastRenderFpsLimit;
+	UnsignedInt									m_lastRenderFpsUpdateMs;
+
+	// System Time
+	DisplayString *										m_systemTimeString;
+	AsciiString											m_systemTimeFont;
+	Int													m_systemTimePointSize;
+	Bool												m_systemTimeBold;
+	Coord2D												m_systemTimePosition;
+	Color												m_systemTimeColor;
+	Color												m_systemTimeDropColor;
+
+	// Game Time
+	DisplayString *										m_gameTimeString;
+	DisplayString *										m_gameTimeFrameString;
+	AsciiString											m_gameTimeFont;
+	Int													m_gameTimePointSize;
+	Bool												m_gameTimeBold;
+	Coord2D												m_gameTimePosition;
+	Color												m_gameTimeColor;
+	Color												m_gameTimeDropColor;
+
 	// message data
 	UIMessage										m_uiMessages[ MAX_UI_MESSAGES ];/**< messages to display to the user, the
 																						array is organized with newer messages at
@@ -717,7 +785,7 @@ protected:
 	SuperweaponMap							m_superweapons[MAX_PLAYER_COUNT];
 	Coord2D											m_superweaponPosition;
 	Real												m_superweaponFlashDuration;
-	
+
 	// superweapon timer font info
 	AsciiString									m_superweaponNormalFont;
 	Int													m_superweaponNormalPointSize;
@@ -801,21 +869,21 @@ protected:
 
 	PopupMessageData *					m_popupMessageData;
 	Color												m_popupMessageColor;
-	
+
  	Bool												m_waypointMode;			///< are we in waypoint plotting mode?
 	Bool												m_forceAttackMode;		///< are we in force attack mode?
 	Bool												m_forceMoveToMode;		///< are we in force move mode?
 	Bool												m_attackMoveToMode;	///< are we in attack move mode?
 	Bool												m_preferSelection;		///< the shift key has been depressed.
 
-	Bool												m_cameraRotatingLeft; 
+	Bool												m_cameraRotatingLeft;
 	Bool 												m_cameraRotatingRight;
 	Bool 												m_cameraZoomingIn;
 	Bool 												m_cameraZoomingOut;
-	
+
 	Bool												m_drawRMBScrollAnchor;
 	Bool												m_moveRMBScrollAnchor;
-	Bool												m_clientQuiet;         ///< When the user clicks exit,restart, etc. this is set true 
+	Bool												m_clientQuiet;         ///< When the user clicks exit,restart, etc. this is set true
 																												///< to skip some client sounds/fx during shutdown
 
 	// World Animation Data
@@ -838,5 +906,3 @@ protected:
 
 // the singleton
 extern InGameUI *TheInGameUI;
-
-#endif // _IN_GAME_UI_H_

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __UPGRADEDIE_H
-#define __UPGRADEDIE_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "GameLogic/Module/DieModule.h"
@@ -48,12 +45,12 @@ public:
 
 	UpgradeDieModuleData(){}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    
+
 		DieModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "UpgradeToRemove",					INI::parseAsciiString,		NULL, offsetof( UpgradeDieModuleData, m_upgradeName ) },
 			{ 0, 0, 0, 0 }
@@ -75,9 +72,6 @@ public:
 	UpgradeDie( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDie( const DamageInfo *damageInfo ); 
+	virtual void onDie( const DamageInfo *damageInfo );
 
 };
-
-#endif // __UPGRADEDIE_H
-

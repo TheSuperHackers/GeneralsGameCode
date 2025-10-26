@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef TEXTURE_H
-#define TEXTURE_H
 
 #include "always.h"
 #include "refcount.h"
@@ -71,6 +65,8 @@ class TextureClass : public W3DMPO, public RefCountClass
 {
 	W3DMPO_GLUE(TextureClass)
 
+	friend class DX8TextureTrackerClass;  //(gth) so it can call Poke_Texture,
+
 	friend DX8Wrapper;
 	friend TextureLoader;
 	friend LoaderThreadClass;
@@ -91,8 +87,8 @@ class TextureClass : public W3DMPO, public RefCountClass
 
 		// Create texture with desired height, width and format.
 		TextureClass(
-			unsigned width, 
-			unsigned height, 
+			unsigned width,
+			unsigned height,
 			WW3DFormat format,
 			MipCountType mip_level_count=MIP_LEVELS_ALL,
 			PoolType pool=POOL_MANAGED,
@@ -110,8 +106,8 @@ class TextureClass : public W3DMPO, public RefCountClass
 
 		// Create texture from a surface.
 		TextureClass(
-			SurfaceClass *surface, 
-			MipCountType mip_level_count=MIP_LEVELS_ALL);		
+			SurfaceClass *surface,
+			MipCountType mip_level_count=MIP_LEVELS_ALL);
 
 		TextureClass(IDirect3DTexture8* d3d_texture);
 
@@ -122,14 +118,14 @@ class TextureClass : public W3DMPO, public RefCountClass
 		// Names
 		void	Set_Texture_Name(const char * name);
 		void	Set_Full_Path(const char * path)			{ FullPath = path; }
-		const char * Get_Texture_Name(void) const		{ return Name; }
-		const char * Get_Full_Path(void) const			{ if (FullPath.Is_Empty ()) return Name; return FullPath; }
+		const StringClass& Get_Texture_Name(void) const		{ return Name; }
+		const StringClass& Get_Full_Path(void) const			{ if (FullPath.Is_Empty ()) return Name; return FullPath; }
 
 		unsigned Get_ID() const { return texture_id; }	// Each textrure has a unique id
 
 		// The number of Mip levels in the texture
 		unsigned int Get_Mip_Level_Count(void);
-	
+
 		// Note! Width and Height may be zero and may change if texture uses mipmaps
 		int Get_Width() const
 		{
@@ -137,7 +133,7 @@ class TextureClass : public W3DMPO, public RefCountClass
 		}
 		int Get_Height() const
 		{
-			return Height; 
+			return Height;
 		}
 
 		// Get surface description of a Mip level (defaults to the highest-resolution one)
@@ -186,6 +182,7 @@ class TextureClass : public W3DMPO, public RefCountClass
 
 		// Support for self managed textures
 		bool Is_Dirty() { WWASSERT(Pool==POOL_DEFAULT); return Dirty; };
+		void Set_Dirty() { WWASSERT(Pool==POOL_DEFAULT); Dirty=true; }
 		void Clean() { Dirty=false; };
 
 		unsigned Get_Reduction() const;
@@ -193,6 +190,8 @@ class TextureClass : public W3DMPO, public RefCountClass
 		bool Is_Compression_Allowed() const { return IsCompressionAllowed; }
 
 	protected:
+		void Poke_Texture(IDirect3DBaseTexture8* tex) { D3DTexture = tex; }
+
 		// Apply this texture's settings into D3D
 		virtual void Apply(unsigned int stage);
 		void Load_Locked_Surface();
@@ -259,5 +258,3 @@ void Save_Texture(TextureClass * texture, ChunkSaveClass & csave);
 
 // TheSuperHackers @todo TextureBaseClass abstraction
 typedef TextureClass TextureBaseClass;
-
-#endif //TEXTURE_H

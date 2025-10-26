@@ -28,13 +28,8 @@
 
 #pragma once
 
-#ifndef _GAME_ENGINE_H_
-#define _GAME_ENGINE_H_
-
 #include "Common/SubsystemInterface.h"
 #include "Common/GameType.h"
-
-#define DEFAULT_MAX_FPS		45
 
 // forward declarations
 class AudioManager;
@@ -55,26 +50,23 @@ class Radar;
 class WebBrowser;
 class ParticleSystemManager;
 
-/**
- * The implementation of the game engine
- */
 class GameEngine : public SubsystemInterface
 {
-
 public:
 
 	GameEngine( void );
 	virtual ~GameEngine();
 
 	virtual void init( void );								///< Init engine by creating client and logic
-	virtual void init( int argc, char *argv[] );			///< Init engine by creating client and logic
 	virtual void reset( void );								///< reset system to starting state
 	virtual void update( void );							///< per frame update
 
 	virtual void execute( void );											/**< The "main loop" of the game engine.
 																								 It will not return until the game exits. */
-	virtual void setFramesPerSecondLimit( Int fps );	///< Set the maximum rate engine updates are allowed to occur
-	virtual Int  getFramesPerSecondLimit( void );			///< Get maxFPS.  Not inline since it is called from another lib.
+
+	static Bool isTimeFrozen(); ///< Returns true if a script has frozen time.
+	static Bool isGameHalted(); ///< Returns true if the game is paused or the network is stalling.
+
 	virtual void setQuitting( Bool quitting );				///< set quitting status
 	virtual Bool getQuitting(void);						///< is app getting ready to quit.
 
@@ -85,6 +77,12 @@ public:
 	virtual void checkAbnormalQuitting(void);	///< check if user is quitting at an unusual time - as in cheating!
 
 protected:
+
+	virtual void resetSubsystems( void );
+
+	Bool canUpdateGameLogic();
+	Bool canUpdateNetworkGameLogic();
+	Bool canUpdateRegularGameLogic();
 
 	virtual FileSystem *createFileSystem( void );								///< Factory for FileSystem classes
 	virtual LocalFileSystem *createLocalFileSystem( void ) = 0;	///< Factory for LocalFileSystem classes
@@ -100,11 +98,12 @@ protected:
 	virtual ParticleSystemManager* createParticleSystemManager( void ) = 0;
 	virtual AudioManager *createAudioManager( void ) = 0;				///< Factory for Audio Manager
 
-	Int m_maxFPS;																									///< Maximum frames per second allowed
-  Bool m_quitting;  ///< true when we need to quit the game
-	Bool m_isActive;	///< app has OS focus.
+	Real m_logicTimeAccumulator; ///< Frame time accumulated towards submitting a new logic frame
 
+	Bool m_quitting; ///< true when we need to quit the game
+	Bool m_isActive; ///< app has OS focus.
 };
+
 inline void GameEngine::setQuitting( Bool quitting ) { m_quitting = quitting; }
 inline Bool GameEngine::getQuitting(void) { return m_quitting; }
 
@@ -115,6 +114,4 @@ extern GameEngine *TheGameEngine;
 extern GameEngine *CreateGameEngine( void );
 
 /// The entry point for the game system
-extern void GameMain( int argc, char *argv[] );
-
-#endif // _GAME_ENGINE_H_
+extern Int GameMain();

@@ -37,14 +37,9 @@
 #include "GameNetwork/GameSpy/PeerDefsImplementation.h"
 #include "GameNetwork/GameSpy/PeerThread.h"
 #include "GameClient/InGameUI.h"
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #define OFFSET(x) (sizeof(Int) * (x))
-static const FieldParse GameSpyColorFieldParse[] = 
+static const FieldParse GameSpyColorFieldParse[] =
 {
 
 	{ "Default",						INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_DEFAULT) },
@@ -75,7 +70,7 @@ static const FieldParse GameSpyColorFieldParse[] =
 	{ "MOTD",								INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_MOTD) },
 	{ "MOTDHeading",				INI::parseColorInt,	NULL,	OFFSET(GSCOLOR_MOTD_HEADING) },
 
-	{ NULL,					NULL,						NULL,						0 }  // keep this last
+	{ NULL,					NULL,						NULL,						0 }
 
 };
 
@@ -218,7 +213,7 @@ void GameSpyInfo::addChat( PlayerInfo p, UnicodeString msg, Bool isPublic, Bool 
 	Int style;
 	if(isSavedIgnored(p.m_profileID) || isIgnored(p.m_name))
 		return;
-	
+
 	Bool isOwner = p.m_flags & PEER_FLAG_OP;
 	Bool isBuddy = getBuddyMap()->find(p.m_profileID) != getBuddyMap()->end();
 
@@ -229,7 +224,7 @@ void GameSpyInfo::addChat( PlayerInfo p, UnicodeString msg, Bool isPublic, Bool 
 		if(m_disallowAsainText)
 		{
 			const WideChar *buff = msg.str();
-			Int length =  msg.getLength();	
+			Int length =  msg.getLength();
 			for(Int i = 0; i < length; ++i)
 			{
 				if(buff[i] >= 256)
@@ -239,7 +234,7 @@ void GameSpyInfo::addChat( PlayerInfo p, UnicodeString msg, Bool isPublic, Bool 
 		else if(m_disallowNonAsianText)
 		{
 			const WideChar *buff = msg.str();
-			Int length =  msg.getLength();	
+			Int length =  msg.getLength();
 			Bool hasUnicode = FALSE;
 			for(Int i = 0; i < length; ++i)
 			{
@@ -260,7 +255,7 @@ void GameSpyInfo::addChat( PlayerInfo p, UnicodeString msg, Bool isPublic, Bool 
 			if( TheAudio )
 			{
 				TheAudio->addAudioEvent( &privMsgAudio );
-			}  // end if
+			}
 		}
 	}
 

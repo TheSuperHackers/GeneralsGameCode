@@ -34,7 +34,6 @@
 #include "mutex.h"
 #include "thread.h"
 
-#include "Common/StackDump.h"
 #include "Common/SubsystemInterface.h"
 
 //-------------------------------------------------------------------------
@@ -131,11 +130,8 @@ void Pinger::endThreads( void )
 {
 	for (Int i=0; i<NumWorkerThreads; ++i)
 	{
-		if (m_workerThreads[i])
-		{
-			delete m_workerThreads[i];
-			m_workerThreads[i] = NULL;
-		}
+		delete m_workerThreads[i];
+		m_workerThreads[i] = NULL;
 	}
 }
 
@@ -248,7 +244,6 @@ AsciiString Pinger::getPingString( Int timeout )
 void PingThreadClass::Thread_Function()
 {
 	try {
-	_set_se_translator( DumpExceptionInfo ); // Hook that allows stack trace.
 	PingRequest req;
 
 	WSADATA wsaData;
@@ -270,7 +265,7 @@ void PingThreadClass::Thread_Function()
 				IP = inet_addr(hostnameBuffer);
 				in_addr hostNode;
 				hostNode.s_addr = IP;
-				DEBUG_LOG(("pinging %s - IP = %s\n", hostnameBuffer, inet_ntoa(hostNode) ));
+				DEBUG_LOG(("pinging %s - IP = %s", hostnameBuffer, inet_ntoa(hostNode) ));
 			}
 			else
 			{
@@ -279,15 +274,18 @@ void PingThreadClass::Thread_Function()
 				hostStruct = gethostbyname(hostnameBuffer);
 				if (hostStruct == NULL)
 				{
-					DEBUG_LOG(("pinging %s - host lookup failed\n", hostnameBuffer));
-					
+					DEBUG_LOG(("pinging %s - host lookup failed", hostnameBuffer));
+
 					// Even though this failed to resolve IP, still need to send a
 					//   callback.
 					IP = 0xFFFFFFFF;   // flag for IP resolve failed
 				}
-				hostNode = (in_addr *) hostStruct->h_addr;
-				IP = hostNode->s_addr;
-				DEBUG_LOG(("pinging %s IP = %s\n", hostnameBuffer, inet_ntoa(*hostNode) ));
+				else
+				{
+					hostNode = (in_addr *) hostStruct->h_addr;
+					IP = hostNode->s_addr;
+					DEBUG_LOG(("pinging %s IP = %s", hostnameBuffer, inet_ntoa(*hostNode) ));
+				}
 			}
 
 			// do ping
@@ -339,7 +337,7 @@ HANDLE WINAPI IcmpCreateFile(VOID); /* INVALID_HANDLE_VALUE on error */
 BOOL WINAPI IcmpCloseHandle(HANDLE IcmpHandle); /* FALSE on error */
 
 /* Note 2: For the most part, you can refer to RFC 791 for detials
- * on how to fill in values for the IP option information structure. 
+ * on how to fill in values for the IP option information structure.
  */
 typedef struct ip_option_information
 {
@@ -355,7 +353,7 @@ IPINFO, *PIPINFO, FAR *LPIPINFO;
 /* Note 1: The Reply Buffer will have an array of ICMP_ECHO_REPLY
  * structures, followed by options and the data in ICMP echo reply
  * datagram received. You must have room for at least one ICMP
- * echo reply structure, plus 8 bytes for an ICMP header. 
+ * echo reply structure, plus 8 bytes for an ICMP header.
  */
 typedef struct icmp_echo_reply
 {
@@ -419,7 +417,7 @@ DWORD WINAPI IcmpSendEcho(
 Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
 {
    /*
-    * Initialize default settings 
+    * Initialize default settings
     */
 
    IPINFO stIPInfo, *lpstIPInfo;
@@ -456,7 +454,7 @@ Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
    hICMP_DLL = LoadLibrary("ICMP.DLL");
    if (hICMP_DLL == 0)
    {
-      DEBUG_LOG(("LoadLibrary() failed: Unable to locate ICMP.DLL!\n"));
+      DEBUG_LOG(("LoadLibrary() failed: Unable to locate ICMP.DLL!"));
       goto cleanup;
    }
 
@@ -472,7 +470,7 @@ Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
          (!lpfnIcmpCloseHandle) ||
          (!lpfnIcmpSendEcho))
    {
-      DEBUG_LOG(("GetProcAddr() failed for at least one function.\n"));
+      DEBUG_LOG(("GetProcAddr() failed for at least one function."));
       goto cleanup;
    }
 
@@ -488,7 +486,7 @@ Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
    }
 
    /*
-    * Init data buffer printable ASCII 
+    * Init data buffer printable ASCII
     *  32 (space) through 126 (tilde)
     */
    for (j = 0, i = 32; j < nDataLen; j++, i++)
@@ -538,13 +536,13 @@ Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
       dwStatus = *(DWORD *) & (achRepData[4]);
       if (dwStatus != IP_SUCCESS)
       {
-         DEBUG_LOG(("ICMPERR: %d\n", dwStatus));
+         DEBUG_LOG(("ICMPERR: %d", dwStatus));
       }
 
    }
    else
    {
-      DEBUG_LOG(("IcmpSendEcho() failed: %d\n", dwReplyCount));
+      DEBUG_LOG(("IcmpSendEcho() failed: %d", dwReplyCount));
       // Ok we didn't get a packet, just say everything's OK
       //  and the time was -1
       pingTime = -1;
@@ -558,7 +556,7 @@ Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
    fRet = lpfnIcmpCloseHandle(hICMP);
    if (fRet == FALSE)
    {
-      DEBUG_LOG(("Error closing ICMP handle\n"));
+      DEBUG_LOG(("Error closing ICMP handle"));
    }
 
    // Say what you will about goto's but it's handy for stuff like this

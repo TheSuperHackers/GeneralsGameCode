@@ -53,12 +53,12 @@ void MeshMoldOptions::DoDataExchange(CDataExchange* pDX)
 }
 
 /// Dialog UI initialization.
-/** Creates the slider controls, and sets the initial values for 
+/** Creates the slider controls, and sets the initial values for
 width and feather in the ui controls. */
-BOOL MeshMoldOptions::OnInitDialog() 
+BOOL MeshMoldOptions::OnInitDialog()
 {
 	COptionsPanel::OnInitDialog();
-	
+
 	m_updating = true;
 	m_anglePopup.SetupPopSliderButton(this, IDC_ANGLE_POPUP, this);
 	m_scalePopup.SetupPopSliderButton(this, IDC_SCALE_POPUP, this);
@@ -93,7 +93,7 @@ BOOL MeshMoldOptions::OnInitDialog()
 			dirBuf[len] = 0;
 		}
 		strcpy(findBuf, dirBuf);
-		strcat(findBuf, "*.w3d");
+		strlcat(findBuf, "*.w3d", ARRAY_SIZE(findBuf));
 
 		FilenameList filenameList;
 		TheFileSystem->getFileListInDirectory(AsciiString(dirBuf), AsciiString("*.w3d"), filenameList, FALSE);
@@ -122,7 +122,7 @@ BOOL MeshMoldOptions::OnInitDialog()
 				ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 				ins.item.lParam = -1;
 				ins.item.pszText = fileBuf;
-				ins.item.cchTextMax = strlen(fileBuf);				
+				ins.item.cchTextMax = strlen(fileBuf);
 				child = m_moldTreeView.InsertItem(&ins);
 
 				++it;
@@ -140,10 +140,10 @@ BOOL MeshMoldOptions::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void MeshMoldOptions::setHeight(Real height) 
-{ 
-	char buffer[50];
-	sprintf(buffer, "%.2f", height);
+void MeshMoldOptions::setHeight(Real height)
+{
+	char buffer[32];
+	snprintf(buffer, ARRAY_SIZE(buffer), "%.2f", height);
 	m_currentHeight = height;
 	if (m_staticThis && !m_staticThis->m_updating) {
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_HEIGHT_EDIT);
@@ -152,10 +152,10 @@ void MeshMoldOptions::setHeight(Real height)
 	MeshMoldTool::updateMeshLocation(false);
 }
 
-void MeshMoldOptions::setScale(Real scale) 
-{ 
-	char buffer[50];
-	sprintf(buffer, "%d", (int)floor(scale*100));
+void MeshMoldOptions::setScale(Real scale)
+{
+	char buffer[12];
+	snprintf(buffer, ARRAY_SIZE(buffer), "%d", (int)floor(scale*100));
 	m_currentScale = scale;
 	if (m_staticThis && !m_staticThis->m_updating) {
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_SCALE_EDIT);
@@ -164,10 +164,10 @@ void MeshMoldOptions::setScale(Real scale)
 	MeshMoldTool::updateMeshLocation(false);
 }
 
-void MeshMoldOptions::setAngle(Int angle) 
-{ 
-	char buffer[50];
-	sprintf(buffer, "%d", angle);
+void MeshMoldOptions::setAngle(Int angle)
+{
+	char buffer[12];
+	snprintf(buffer, ARRAY_SIZE(buffer), "%d", angle);
 	m_currentAngle = angle;
 	if (m_staticThis && !m_staticThis->m_updating) {
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_ANGLE_EDIT);
@@ -205,7 +205,7 @@ void MeshMoldOptions::GetPopSliderInfo(const long sliderID, long *pMin, long *pM
 			// uh-oh!
 			DEBUG_CRASH(("Missing ID."));
 			break;
-	}	// switch
+	}
 }
 
 void MeshMoldOptions::PopSliderChanged(const long sliderID, long theVal)
@@ -240,7 +240,7 @@ void MeshMoldOptions::PopSliderChanged(const long sliderID, long theVal)
 		default:
 			DEBUG_CRASH(("Missing ID."));
 			break;
-	}	// switch
+	}
 }
 
 void MeshMoldOptions::PopSliderFinished(const long sliderID, long theVal)
@@ -256,7 +256,7 @@ void MeshMoldOptions::PopSliderFinished(const long sliderID, long theVal)
 		default:
 			DEBUG_CRASH(("Missing ID."));
 			break;
-	}	// switch
+	}
 
 }
 
@@ -276,19 +276,19 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // MeshMoldOptions message handlers
 
-void MeshMoldOptions::OnPreview() 
+void MeshMoldOptions::OnPreview()
 {
 	CButton *pButton = (CButton*)this->GetDlgItem(IDC_PREVIEW);
 	m_doingPreview = (pButton->GetCheck() == 1);
 	MeshMoldTool::updateMeshLocation(true);
 }
 
-void MeshMoldOptions::OnApplyMesh() 
+void MeshMoldOptions::OnApplyMesh()
 {
 	MeshMoldTool::apply(CWorldBuilderDoc::GetActiveDoc());
 }
 
-void MeshMoldOptions::OnChangeScaleEdit() 
+void MeshMoldOptions::OnChangeScaleEdit()
 {
 		if (m_updating) return;
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_SCALE_EDIT);
@@ -305,7 +305,7 @@ void MeshMoldOptions::OnChangeScaleEdit()
 		}
 }
 
-void MeshMoldOptions::OnChangeHeightEdit() 
+void MeshMoldOptions::OnChangeHeightEdit()
 {
 		if (m_updating) return;
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_HEIGHT_EDIT);
@@ -322,7 +322,7 @@ void MeshMoldOptions::OnChangeHeightEdit()
 		}
 }
 
-void MeshMoldOptions::OnChangeAngleEdit() 
+void MeshMoldOptions::OnChangeAngleEdit()
 {
 		if (m_updating) return;
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_ANGLE_EDIT);
@@ -340,7 +340,7 @@ void MeshMoldOptions::OnChangeAngleEdit()
 }
 
 
-BOOL MeshMoldOptions::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
+BOOL MeshMoldOptions::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	NMTREEVIEW *pHdr = (NMTREEVIEW *)lParam;
 	if (pHdr->hdr.hwndFrom == m_moldTreeView.m_hWnd) {
@@ -353,19 +353,19 @@ BOOL MeshMoldOptions::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
 			item.hItem = hItem;
 			item.pszText = buffer;
-			item.cchTextMax = sizeof(buffer)-2;				
+			item.cchTextMax = sizeof(buffer)-2;
 			m_moldTreeView.GetItem(&item);
 			m_meshModelName = AsciiString(buffer);
 			if (m_doingPreview) {
 				MeshMoldTool::updateMeshLocation(false);
 			}
 		}
-	}	
+	}
 	return COptionsPanel::OnNotify(wParam, lParam, pResult);
 }
 
 
-void MeshMoldOptions::OnRaise() 
+void MeshMoldOptions::OnRaise()
 {
 	m_raiseOnly = true;
 	m_lowerOnly = false;
@@ -374,7 +374,7 @@ void MeshMoldOptions::OnRaise()
 	}
 }
 
-void MeshMoldOptions::OnRaiseLower() 
+void MeshMoldOptions::OnRaiseLower()
 {
 	m_raiseOnly = false;
 	m_lowerOnly = false;
@@ -383,7 +383,7 @@ void MeshMoldOptions::OnRaiseLower()
 	}
 }
 
-void MeshMoldOptions::OnLower() 
+void MeshMoldOptions::OnLower()
 {
 	m_raiseOnly = false;
 	m_lowerOnly = true;

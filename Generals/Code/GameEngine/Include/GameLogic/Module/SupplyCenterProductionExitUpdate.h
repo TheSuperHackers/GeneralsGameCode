@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef _SUPPLY_CENTER_PRODUCTION_EXIT_UPDATE_H
-#define _SUPPLY_CENTER_PRODUCTION_EXIT_UPDATE_H
-
 #include "GameLogic/Module/UpdateModule.h"
 
 class Object;
@@ -50,10 +47,10 @@ public:
 		m_naturalRallyPoint.zero();
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "UnitCreatePoint",		INI::parseCoord3D,		NULL, offsetof( SupplyCenterProductionExitUpdateModuleData, m_unitCreatePoint ) },
 			{ "NaturalRallyPoint",  INI::parseCoord3D,		NULL, offsetof( SupplyCenterProductionExitUpdateModuleData, m_naturalRallyPoint ) },
@@ -112,6 +109,3 @@ inline const Coord3D *SupplyCenterProductionExitUpdate::getRallyPoint( void ) co
 
 	return NULL;
 }
-
-
-#endif

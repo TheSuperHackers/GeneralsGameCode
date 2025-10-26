@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __MAPUTIL_H__
-#define __MAPUTIL_H__
-
 #include "Common/AsciiString.h"
 #include "Common/UnicodeString.h"
 
@@ -132,4 +129,3 @@ Bool parseMapPreviewChunk(DataChunkInput &file, DataChunkInfo *info, void *userD
 void findDrawPositions( Int startX, Int startY, Int width, Int height, Region3D extent,
 															 ICoord2D *ul, ICoord2D *lr );
 Bool WouldMapTransfer( const AsciiString& mapName );
-#endif // __MAPUTIL_H__

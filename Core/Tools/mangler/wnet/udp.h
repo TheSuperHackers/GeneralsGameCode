@@ -16,8 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef UDP_HEADER
-#define UDP_HEADER
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -57,11 +56,11 @@ class UDP
 {
  // DATA
  private:
-  sint32       fd; 
+  sint32       fd;
   uint32       myIP;
   uint16       myPort;
   struct       sockaddr_in  addr;
-  
+
   // These defines specify a system independent way to
   //   get error codes for socket services.
   enum sockStat
@@ -104,11 +103,9 @@ class UDP
 
   bit8             getLocalAddr(uint32 &ip, uint16 &port);
   sint32           getFD(void) { return(fd); }
- 
+
   bit8             SetInputBuffer(uint32 bytes);
   bit8             SetOutputBuffer(uint32 bytes);
   int              GetInputBuffer(void);
   int              GetOutputBuffer(void);
 };
-
-#endif

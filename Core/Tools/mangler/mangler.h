@@ -16,8 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __MANGLER_H__
-#define __MANGLER_H__
+#pragma once
 
 // Packet should consist of a GlobalHeaderType followed by a GlobalPacketType with the fields set as
 // indicated.
@@ -75,5 +74,3 @@ struct ManglerData {
 #if !defined(__GNUC__)
 #pragma pack(pop)
 #endif
-
-#endif // __MANGLER_H__

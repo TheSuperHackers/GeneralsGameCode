@@ -22,11 +22,11 @@
 #include "CButtonShowColor.h"
 
 // CButtonShowColor ///////////////////////////////////////////////////////////////////////////////
-void CButtonShowColor::OnPaint() 
+void CButtonShowColor::OnPaint()
 {
 	try {
 		CPaintDC paintDC(this);
-	
+
 		CPen pen(PS_SOLID, 1, 0xFFFFFF00);
 		CBrush brush(RGBtoBGR(m_color.getAsInt()));
 		// Select my stuff
@@ -45,7 +45,7 @@ void CButtonShowColor::OnPaint()
 
 		// Restore the states.
 		paintDC.SelectObject(oldPen);
- 
+
 	} catch (...) {
 		// Unlikely, but possible.
 		return;

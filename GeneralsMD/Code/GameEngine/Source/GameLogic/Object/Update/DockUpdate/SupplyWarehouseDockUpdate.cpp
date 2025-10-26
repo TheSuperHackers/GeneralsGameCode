@@ -38,11 +38,6 @@
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/AIPathfind.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 SupplyWarehouseDockUpdateModuleData::SupplyWarehouseDockUpdateModuleData( void )
@@ -58,7 +53,7 @@ SupplyWarehouseDockUpdateModuleData::SupplyWarehouseDockUpdateModuleData( void )
 
 	DockUpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "StartingBoxes",	INI::parseInt,	NULL, offsetof( SupplyWarehouseDockUpdateModuleData, m_startingBoxesData ) },
 		{ "DeleteWhenEmpty",	INI::parseBool,	NULL, offsetof( SupplyWarehouseDockUpdateModuleData, m_deleteWhenEmpty ) },
@@ -67,7 +62,7 @@ SupplyWarehouseDockUpdateModuleData::SupplyWarehouseDockUpdateModuleData( void )
 
   p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 
 // ------------------------------------------------------------------------------------------------
@@ -100,7 +95,7 @@ Bool SupplyWarehouseDockUpdate::action( Object* docker, Object *drone )
 	Real closeEnoughSqr = sqr(docker->getGeometryInfo().getBoundingCircleRadius()*2);
 	Real curDistSqr = ThePartitionManager->getDistanceSquared(docker, getObject(), FROM_BOUNDINGSPHERE_2D);
 	if (curDistSqr > closeEnoughSqr) {
-		DEBUG_LOG(("Failing dock, dist %f, not close enough(%f).\n", sqrt(curDistSqr), sqrt(closeEnoughSqr)));
+		DEBUG_LOG(("Failing dock, dist %f, not close enough(%f).", sqrt(curDistSqr), sqrt(closeEnoughSqr)));
 		// Make it twitch a little.
 		Coord3D newPos = *docker->getPosition();
 		Real range = 0.4*PATHFIND_CELL_SIZE_F;
@@ -109,7 +104,7 @@ Bool SupplyWarehouseDockUpdate::action( Object* docker, Object *drone )
 		docker->setPosition(&newPos);
 		return FALSE;  //not close enough.
 	}
-	
+
 	--m_boxesStored;// so the docker sees that I am shy by one box (or empty) from within his gainOneBox()
 
 	SupplyTruckAIInterface *ai = docker->getAIUpdateInterface()->getSupplyTruckAIInterface();
@@ -131,7 +126,7 @@ Bool SupplyWarehouseDockUpdate::action( Object* docker, Object *drone )
 
 		return TRUE;
 	}
-	else 
+	else
 		++m_boxesStored; //take it back, since there was noone to gain the box
   									 //this is important so that I have one less boxes as perceived by the docker when he gains one
 
@@ -192,7 +187,7 @@ void SupplyWarehouseDockUpdate::crc( Xfer *xfer )
 	// extend base class
 	DockUpdate::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -213,7 +208,7 @@ void SupplyWarehouseDockUpdate::xfer( Xfer *xfer )
 	// boxes stored
 	xfer->xferInt( &m_boxesStored );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -231,4 +226,4 @@ void SupplyWarehouseDockUpdate::loadPostProcess( void )
 	if( draw )
 		draw->updateDrawableSupplyStatus( modData->m_startingBoxesData, m_boxesStored );
 
-}  // end loadPostProcess
+}

@@ -60,11 +60,6 @@
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetPushButton.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 static GameWindow *commandWindows[ MAX_COMMANDS_PER_SET ];
@@ -99,15 +94,15 @@ void ControlBar::populateInvDataCallback( Object *obj, void *userData )
 	if( data->currIndex > data->maxIndex )
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("There is not enough GUI slots to hold the # of items inside a '%s'\n", 
+		DEBUG_ASSERTCRASH( 0, ("There is not enough GUI slots to hold the # of items inside a '%s'",
 													data->transport->getTemplate()->getName().str()) );
 		return;
 
-	}  // end if
+	}
 
 	// get the window control that we're going to put our smiling faces in
 	GameWindow *control = data->controls[ data->currIndex ];
-	DEBUG_ASSERTCRASH( control, ("populateInvDataCallback: Control not found\n") );
+	DEBUG_ASSERTCRASH( control, ("populateInvDataCallback: Control not found") );
 
 	// assign our control and object id to the transport data
 	m_containData[ data->currIndex ].control = control;
@@ -132,7 +127,7 @@ void ControlBar::populateInvDataCallback( Object *obj, void *userData )
 	// enable the control
 	control->winEnable( TRUE );
 
-}  // end populateInvDataCallback
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Transports have an extra special manipulation of the user interface.  They get to look
@@ -149,14 +144,14 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
 {
 /// @todo srj -- remove hard-coding here, please
 	//static const CommandButton *exitCommand = findCommandButton( "Command_TransportExit" );
-		
+
 	// sanity
 	if( transport == NULL || commandSet == NULL )
 		return;
 
 	// get the transport contain module
 	ContainModuleInterface *contain = transport->getContain();
-	
+
 	// sanity
 	if( contain == NULL )
 		return;
@@ -209,14 +204,14 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
 
 			//Clear any potential veterancy rank, or else we'll see it when it's empty!
 			GadgetButtonDrawOverlayImage( m_commandWindows[ i ], NULL );
-			
+
 			//Unmanned vehicles don't have any commands available -- in fact they are hidden!
  			if( transport->isDisabledByType( DISABLED_UNMANNED ) )
  			{
  				m_commandWindows[ i ]->winHide( TRUE );
  			}
 
-      
+
      //  is this where we set the cameos disabled when container is subdued?
 
 			// if we've counted more UI spots than the transport can hold, hide this command window
@@ -229,10 +224,10 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
 			//
 			setControlCommand( m_commandWindows[ i ], commandButton );
 
-		}  // end if
+		}
 
-	}  // end for i
-	
+	}
+
 	// After Every change to the m_commandWIndows, we need to show fill in the missing blanks with the images
 	// removed from multiplayer branch
 	//showCommandMarkers();
@@ -252,7 +247,7 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
 		data.transport = transport;
 		contain->iterateContained( populateInvDataCallback, &data, FALSE );
 
-	}  // end if
+	}
 
 	//
 	// save the last recorded inventory count so we know when we have to redo the gui when
@@ -260,7 +255,7 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
 	//
 	m_lastRecordedInventoryCount = contain->getContainCount();
 
-}  // end doTransportInventoryUI
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -293,7 +288,7 @@ void ControlBar::populateCommand( Object *obj )
 		// nothing left to do
 		return;
 
-	}  // end if
+	}
 
 	// transports do extra special things with the user interface buttons
 	if( obj->getContain()  &&  obj->getContain()->isDisplayedOnControlBar() )
@@ -316,7 +311,7 @@ void ControlBar::populateCommand( Object *obj )
 			// hide window on interface
 			m_commandWindows[ i ]->winHide( TRUE );
 
-		}  // end if
+		}
 		else
 		{
 
@@ -353,7 +348,7 @@ void ControlBar::populateCommand( Object *obj )
 
 					if( power && power->getRequiredScience() != SCIENCE_INVALID )
 					{
-						if( commandButton->getCommandType() != GUI_COMMAND_PURCHASE_SCIENCE && 
+						if( commandButton->getCommandType() != GUI_COMMAND_PURCHASE_SCIENCE &&
 								commandButton->getCommandType() != GUI_COMMAND_PLAYER_UPGRADE &&
 								commandButton->getCommandType() != GUI_COMMAND_OBJECT_UPGRADE )
 						{
@@ -369,10 +364,10 @@ void ControlBar::populateCommand( Object *obj )
 								//button specifying a vector of sciences in the command button.
 								Int bestIndex = -1;
 								ScienceType science;
-								for( Int scienceIndex = 0; scienceIndex < commandButton->getScienceVec().size(); ++scienceIndex )
+								for( size_t scienceIndex = 0; scienceIndex < commandButton->getScienceVec().size(); ++scienceIndex )
 								{
 									science = commandButton->getScienceVec()[ scienceIndex ];
-									
+
 									//Keep going until we reach the end or don't have the required science!
 									if( player->hasScience( science ) )
 									{
@@ -395,16 +390,16 @@ void ControlBar::populateCommand( Object *obj )
 									Int i;
 
 									// get command set
-									if( !player || !player->getPlayerTemplate() 
+									if( !player || !player->getPlayerTemplate()
 											|| player->getPlayerTemplate()->getPurchaseScienceCommandSetRank1().isEmpty()
 											|| player->getPlayerTemplate()->getPurchaseScienceCommandSetRank3().isEmpty()
 											|| player->getPlayerTemplate()->getPurchaseScienceCommandSetRank8().isEmpty() )
 									{
 										continue;
 									}
-									commandSet1 = TheControlBar->findCommandSet( player->getPlayerTemplate()->getPurchaseScienceCommandSetRank1() ); 
-									commandSet3 = TheControlBar->findCommandSet( player->getPlayerTemplate()->getPurchaseScienceCommandSetRank3() ); 
-									commandSet8 = TheControlBar->findCommandSet( player->getPlayerTemplate()->getPurchaseScienceCommandSetRank8() ); 
+									commandSet1 = TheControlBar->findCommandSet( player->getPlayerTemplate()->getPurchaseScienceCommandSetRank1() );
+									commandSet3 = TheControlBar->findCommandSet( player->getPlayerTemplate()->getPurchaseScienceCommandSetRank3() );
+									commandSet8 = TheControlBar->findCommandSet( player->getPlayerTemplate()->getPurchaseScienceCommandSetRank8() );
 
 									if( !commandSet1 || !commandSet3 || !commandSet8 )
 									{
@@ -474,13 +469,13 @@ void ControlBar::populateCommand( Object *obj )
 						}
 					}
 
-				}  // end if			
-						
-			}  // end else
+				}
 
-		}  // end else
+			}
 
-	}  // end for i
+		}
+
+	}
 
 	// After Every change to the m_commandWIndows, we need to show fill in the missing blanks with the images
 	// removed from multiplayer branch
@@ -497,11 +492,11 @@ void ControlBar::populateCommand( Object *obj )
 
 		//
 		// if a rally point is set, show the rally point, if we don't have it set hide any rally
-		// point we might have visible 
+		// point we might have visible
 		//
 		showRallyPoint( exit->getRallyPoint() );
 
-	}  // end if
+	}
 
 	//
 	// to avoid a one frame delay where windows may become enabled/disabled, run the update
@@ -509,7 +504,7 @@ void ControlBar::populateCommand( Object *obj )
 	//
 	updateContextCommand();
 
-}  // end populateCommand
+}
 
 //-------------------------------------------------------------------------------------------------
 /** reset transport data */
@@ -524,9 +519,9 @@ void ControlBar::resetContainData( void )
 		m_containData[ i ].control = NULL;
 		m_containData[ i ].objectID = INVALID_ID;
 
-	}  // end for i
+	}
 
-}  // end resetTransportData
+}
 
 //-------------------------------------------------------------------------------------------------
 /** reset the build queue data we use to die queue entires to control */
@@ -543,9 +538,9 @@ void ControlBar::resetBuildQueueData( void )
 		m_queueData[ i ].productionID = PRODUCTIONID_INVALID;
 		m_queueData[ i ].upgradeToResearch = NULL;
 
-	}  // end for i
+	}
 
-}  // end resetBuildQueue
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -569,15 +564,15 @@ void ControlBar::populateBuildQueue( Object *producer )
 
 		for( i = 0; i < MAX_BUILD_QUEUE_BUTTONS; i++ )
 		{
-			
+
 			buttonName.format( "ControlBar.wnd:ButtonQueue%02d", i + 1 );
 			buildQueueIDs[ i ] = TheNameKeyGenerator->nameToKey( buttonName );
 
-		}  // end for i
+		}
 
 		idsInitialized = TRUE;
 
-	}  // end if
+	}
 
 	// get window pointers to all the buttons for the build queue
 	for( i = 0; i < MAX_BUILD_QUEUE_BUTTONS; i++ )
@@ -600,7 +595,7 @@ void ControlBar::populateBuildQueue( Object *producer )
 		//Clear any potential veterancy rank, or else we'll see it when it's empty!
 		GadgetButtonDrawOverlayImage( m_queueData[ i ].control, NULL );
 
-	}  // end for i
+	}
 
 	// step through each object being built and set the image data for the buttons
 	ProductionUpdateInterface *pu = producer->getProductionUpdateInterface();
@@ -609,7 +604,7 @@ void ControlBar::populateBuildQueue( Object *producer )
 	const ProductionEntry *production;
 	Int windowIndex = 0;
 	const Image *image;
-	for( production = pu->firstProduction();	
+	for( production = pu->firstProduction();
 			 production;
 			 production = pu->nextProduction( production ) )
 	{
@@ -632,7 +627,7 @@ void ControlBar::populateBuildQueue( Object *producer )
 			m_queueData[ windowIndex ].control->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
 			image = production->getProductionObject()->getButtonImage();
 			GadgetButtonSetEnabledImage( m_queueData[ windowIndex ].control, image );
-			
+
 			//No longer used.
 			//image = TheMappedImageCollection->findImageByName( production->getProductionObject()->getInventoryImageName( INV_IMAGE_HILITE ) );
 			//GadgetButtonSetHiliteSelectedImage( m_queueData[ windowIndex ].control, image );
@@ -650,7 +645,7 @@ void ControlBar::populateBuildQueue( Object *producer )
 	//		image = TheMappedImageCollection->findImageByName( production->getProductionObject()->getInventoryImageName( INV_IMAGE_DISABLED ) );
 	//		GadgetButtonSetDisabledImage( m_queueData[ windowIndex ].control, image );
 
-		}  // end if
+		}
 		else
 		{
 			const UpgradeTemplate *ut = production->getProductionUpgrade();
@@ -665,7 +660,7 @@ void ControlBar::populateBuildQueue( Object *producer )
 			m_queueData[ windowIndex ].control->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
 			image = ut->getButtonImage();
 			GadgetButtonSetEnabledImage( m_queueData[ windowIndex ].control, image );
-			
+
 			//No longer used
 			//image = TheMappedImageCollection->findImageByName( ut->getQueueImageName( UpgradeTemplate::UPGRADE_HILITE ) );
 			//GadgetButtonSetHiliteSelectedImage( m_queueData[ windowIndex ].control, image );
@@ -679,12 +674,12 @@ void ControlBar::populateBuildQueue( Object *producer )
 	//		image = TheMappedImageCollection->findImageByName( ut->getQueueImageName( UpgradeTemplate::UPGRADE_DISABLED ) );
 	//		GadgetButtonSetDisabledImage( m_queueData[ windowIndex ].control, image );
 
-		}  // end else
+		}
 
 		// we have filled up this window now
 		windowIndex++;
 
-	}  // end for
+	}
 
 	//
 	// save the count of things being produced in the build queue, when it changes we will
@@ -692,7 +687,7 @@ void ControlBar::populateBuildQueue( Object *producer )
 	//
 	m_displayedQueueCount = pu->getProductionCount();
 
-}  // end populateBuildQueue
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -710,7 +705,7 @@ void ControlBar::updateContextCommand( void )
 	// we always to update the UI
 	//
 	ContainModuleInterface *contain = obj ? obj->getContain() : NULL;
-	if( contain && contain->getContainMax() > 0 && 
+	if( contain && contain->getContainMax() > 0 &&
 			m_lastRecordedInventoryCount != contain->getContainCount() )
 	{
 
@@ -719,8 +714,8 @@ void ControlBar::updateContextCommand( void )
 
 		// re-evaluate the UI because something has changed
 		evaluateContextUI();
-					
-	}  // end if, transport
+
+	}
 
 	// get production update for those objects that have one
 	ProductionUpdateInterface *pu = obj ? obj->getProductionUpdateInterface() : NULL;
@@ -744,9 +739,9 @@ void ControlBar::updateContextCommand( void )
 			m_contextParent[ CP_BUILD_QUEUE ]->winHide( FALSE );
 			populateBuildQueue( obj );
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 	else
 	{
 
@@ -759,9 +754,9 @@ void ControlBar::updateContextCommand( void )
 			// show the portrait image
 			setPortraitByObject( obj );
 
-		}  // end if
+		}
 
-	}  // end else
+	}
 
 	// update a visible production queue
 	if( m_contextParent[ CP_BUILD_QUEUE ]->winIsHidden() == FALSE )
@@ -777,7 +772,7 @@ void ControlBar::updateContextCommand( void )
 		//
 		if( pu )
 		{
-		
+
 			// update the whole queue as necessary
 			if( pu->getProductionCount() != m_displayedQueueCount )
 				populateBuildQueue( obj );
@@ -791,20 +786,20 @@ void ControlBar::updateContextCommand( void )
 			{
 				static NameKeyType winID = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonQueue01" );
 				GameWindow *win = TheWindowManager->winGetWindowFromId( m_contextParent[ CP_BUILD_QUEUE ], winID );
-				
-				DEBUG_ASSERTCRASH( win, ("updateContextCommand: Unable to find first build queue button\n") );
+
+				DEBUG_ASSERTCRASH( win, ("updateContextCommand: Unable to find first build queue button") );
 				//				UnicodeString text;
 				//
 				//				text.format( L"%.0f%%", produce->getPercentComplete() );
 				//				GadgetButtonSetText( win, text );
-				
+
 				GadgetButtonDrawInverseClock(win,produce->getPercentComplete(), m_buildUpClockColor);
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// evaluate each command on whether or not it should be enabled
 	for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
@@ -819,7 +814,7 @@ void ControlBar::updateContextCommand( void )
 		win = m_commandWindows[ i ];
 
 		// only consider commands for windows that are actually shown
-		//`tbd: fix the bug here, that is that if we don't change the unit, we won't attempt to show 
+		//`tbd: fix the bug here, that is that if we don't change the unit, we won't attempt to show
 		// these.
 		if( win->winIsHidden() == TRUE )
 			continue;
@@ -832,7 +827,7 @@ void ControlBar::updateContextCommand( void )
 
 
 // LORENZEN COMMENTED THIS OUT 8/11
-    // Reason: ExitCameos can be greyed out when the container object gets subdued 
+    // Reason: ExitCameos can be greyed out when the container object gets subdued
 
 //		// ignore transport/structure inventory commands, they are handled elsewhere
 //		if( command->getCommandType() == GUI_COMMAND_EXIT_CONTAINER )
@@ -870,7 +865,7 @@ void ControlBar::updateContextCommand( void )
 				win->winEnable( TRUE );
 				break;
 		}
-  
+
 		//Determine by the production type of this button, whether or not the created object
 		//will have a veterancy rank
 		if( command->getCommandType() != GUI_COMMAND_EXIT_CONTAINER )
@@ -879,7 +874,7 @@ void ControlBar::updateContextCommand( void )
 			const Image *image = calculateVeterancyOverlayForThing( command->getThingTemplate() );
 			GadgetButtonDrawOverlayImage( win, image );
 		}
-    
+
 		//
 		// for check-like commands we will keep the push button "pushed" or "unpushed" depending
 		// on the current running status of the command
@@ -888,8 +883,8 @@ void ControlBar::updateContextCommand( void )
 		{
 
 			// sanity, check like commands should have windows that are check like as well
-			DEBUG_ASSERTCRASH( BitIsSet( win->winGetStatus(), WIN_STATUS_CHECK_LIKE ),	
-												 ("updateContextCommand: Error, gadget window for command '%s' is not check-like!\n",
+			DEBUG_ASSERTCRASH( BitIsSet( win->winGetStatus(), WIN_STATUS_CHECK_LIKE ),
+												 ("updateContextCommand: Error, gadget window for command '%s' is not check-like!",
 												 command->getName().str()) );
 
 			if( availability == COMMAND_ACTIVE )
@@ -897,18 +892,18 @@ void ControlBar::updateContextCommand( void )
 			else
 				GadgetCheckLikeButtonSetVisualCheck( win, FALSE );
 
-		}  // end if
+		}
 
-	}  // end for i
-	
+	}
+
 	// After Every change to the m_commandWIndows, we need to show fill in the missing blanks with the images
 	// removed from multiplayer branch
 	//showCommandMarkers();
 
 //	// if we have a build tooltip layout, update it with the new data.
-//	repopulateBuildTooltipLayout(); 
+//	repopulateBuildTooltipLayout();
 
-}  // end updatecontextCommand
+}
 
 //-------------------------------------------------------------------------------------------------
 const Image* ControlBar::calculateVeterancyOverlayForThing( const ThingTemplate *thingTemplate )
@@ -940,7 +935,7 @@ const Image* ControlBar::calculateVeterancyOverlayForThing( const ThingTemplate 
 
 			//It does, so see if the player has that upgrade
 			if( data )
-			{ 
+			{
 				//If no science is specified, he gets it automatically (or check the science).
 				if( data->m_scienceRequired == SCIENCE_INVALID || player->hasScience( data->m_scienceRequired ) )
 				{
@@ -1011,13 +1006,13 @@ static Int getRappellerCount(Object* obj)
 /** What's the status between 'obj' and the 'command' at present.  Can we do it?  Are
 	* we already doing it?  Can ya dig it? */
 //-------------------------------------------------------------------------------------------------
-CommandAvailability ControlBar::getCommandAvailability( const CommandButton *command, 
-																												Object *obj, 
+CommandAvailability ControlBar::getCommandAvailability( const CommandButton *command,
+																												Object *obj,
 																												GameWindow *win,
 																												GameWindow *applyToWin,
 																												Bool forceDisabledEvaluation ) const
 {
-	if(	command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT 
+	if(	command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT
 			|| command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT )
 	{
 		if (ThePlayerList && ThePlayerList->getLocalPlayer())
@@ -1043,7 +1038,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 		// if the object status is disabled or unpowered, you cannot do anything to it.
 		return COMMAND_HIDDEN;
 	}
-	
+
 	//Unmanned vehicles don't have any commands available -- in fact they are hidden!
  	if( obj->isDisabledByType( DISABLED_UNMANNED ) )
  	{
@@ -1055,7 +1050,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 	{
 		return COMMAND_RESTRICTED;
 	}
-	
+
 	if( BitIsSet( command->getOptions(), MUST_BE_STOPPED ) )
 	{
 		//This button can only be activated when the unit isn't moving!
@@ -1065,13 +1060,13 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			return COMMAND_RESTRICTED;
 		}
 	}
- 
+
 	//Other disabled objects are unable to use buttons -- so gray them out.
 	Bool disabled = obj->isDisabled();
-	
+
 	// if we are only disabled by being underpowered, and this button doesn't care, well, fix it
 	if (disabled
-			&& BitIsSet(command->getOptions(), IGNORES_UNDERPOWERED) 
+			&& BitIsSet(command->getOptions(), IGNORES_UNDERPOWERED)
 			&& obj->getDisabledFlags().test(DISABLED_UNDERPOWERED)
 			&& obj->getDisabledFlags().count() == 1)
 	{
@@ -1082,12 +1077,12 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
  	{
 
 		GUICommandType commandType = command->getCommandType();
-		if( commandType != GUI_COMMAND_SELL && 
+		if( commandType != GUI_COMMAND_SELL &&
 				commandType != GUI_COMMAND_EVACUATE &&
-				commandType != GUI_COMMAND_EXIT_CONTAINER && 
-				commandType != GUI_COMMAND_BEACON_DELETE && 
-				commandType != GUI_COMMAND_SET_RALLY_POINT && 
-				commandType != GUI_COMMAND_STOP && 
+				commandType != GUI_COMMAND_EXIT_CONTAINER &&
+				commandType != GUI_COMMAND_BEACON_DELETE &&
+				commandType != GUI_COMMAND_SET_RALLY_POINT &&
+				commandType != GUI_COMMAND_STOP &&
 				commandType != GUI_COMMAND_SWITCH_WEAPON )
 		{
 			if( getCommandAvailability( command, obj, win, applyToWin, TRUE ) == COMMAND_HIDDEN )
@@ -1110,7 +1105,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 				if( player->hasUpgradeComplete( upgradeT ) == FALSE )
 					return COMMAND_RESTRICTED;
 			}
-			else if( upgradeT->getUpgradeType() == UPGRADE_TYPE_OBJECT && 
+			else if( upgradeT->getUpgradeType() == UPGRADE_TYPE_OBJECT &&
 							 obj->hasUpgrade( upgradeT ) == FALSE )
 			{
 				return COMMAND_RESTRICTED;
@@ -1160,7 +1155,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			// if building anything at all right now we can't build another
 			if( dozerAI->isTaskPending( DOZER_TASK_BUILD ) == TRUE )
 				return COMMAND_RESTRICTED;
-			
+
 			// return whether or not the player can build this thing
 			if( player->canBuild( whatToBuild ) == FALSE )
 				return COMMAND_RESTRICTED;
@@ -1169,10 +1164,10 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			{
 				return COMMAND_RESTRICTED;//COMMAND_CANT_AFFORD;
 			}
-      
+
 
 			break;
-		}  
+		}
 
 		case GUI_COMMAND_SELL:
 		{
@@ -1220,7 +1215,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			}
 
 			break;
-		}  
+		}
 
 		case GUI_COMMAND_PLAYER_UPGRADE:
 		{
@@ -1237,7 +1232,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			if( TheUpgradeCenter->canAffordUpgrade( player, command->getUpgradeTemplate() ) == FALSE )
 				return COMMAND_RESTRICTED;//COMMAND_CANT_AFFORD;
 
-			for( Int i = 0; i < command->getScienceVec().size(); i++ )
+			for( size_t i = 0; i < command->getScienceVec().size(); i++ )
 			{
 				ScienceType st = command->getScienceVec()[ i ];
 				if( !player->hasScience( st ) )
@@ -1246,7 +1241,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 				}
 			}
 			break;
-		} 
+		}
 
 		case GUI_COMMAND_OBJECT_UPGRADE:
 		{
@@ -1273,7 +1268,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			if( TheUpgradeCenter->canAffordUpgrade( player, command->getUpgradeTemplate() ) == FALSE )
 				return COMMAND_RESTRICTED;//COMMAND_CANT_AFFORD;
 
-			for( Int i = 0; i < command->getScienceVec().size(); i++ )
+			for( size_t i = 0; i < command->getScienceVec().size(); i++ )
 			{
 				ScienceType st = command->getScienceVec()[ i ];
 				if( !player->hasScience( st ) )
@@ -1282,7 +1277,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 				}
 			}
 			break;
-		} 
+		}
 
 		case GUI_COMMAND_FIRE_WEAPON:
 		{
@@ -1297,9 +1292,9 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 
 			// changed this to Log rather than Crash, because this can legitimately happen now for
 			// dozers and workers with mine-clearing stuff... (srj)
-			//DEBUG_ASSERTLOG( w, ("Unit %s's CommandButton %s is trying to access weaponslot %d, but doesn't have a weapon there in its FactionUnit ini entry.\n", 
+			//DEBUG_ASSERTLOG( w, ("Unit %s's CommandButton %s is trying to access weaponslot %d, but doesn't have a weapon there in its FactionUnit ini entry.",
 			//	obj->getTemplate()->getName().str(), command->getName().str(), (Int)command->getWeaponSlot() ) );
-			
+
 			UnsignedInt now = TheGameLogic->getFrame();
 
 			/// @Kris -- We need to show the button as always available for anything with a 0 clip reload time.
@@ -1314,9 +1309,9 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 /// @todo srj -- not sure why this next check is necessary, but the Comanche missile buttons will flicker without it. figure out someday.
 /// @todo ml  -- and note: that the "now-1" below causes zero-clip-reload weapons to never be ready, so I added this
 /// If you make changes to this code, make sure that the DragonTank's firewall weapon can be retargeted while active,
-/// that is, while the tank is squirting out flames all over the floor, you can click the firewall button (or "F"), 
-/// and re-target the firewall without having to stop or move in-betwen.. Thanks for reading 
-				|| (w->getPossibleNextShotFrame()==now-1) 	
+/// that is, while the tank is squirting out flames all over the floor, you can click the firewall button (or "F"),
+/// and re-target the firewall without having to stop or move in-betwen.. Thanks for reading
+				|| (w->getPossibleNextShotFrame()==now-1)
 				)
 			{
 				if ( w != NULL )
@@ -1344,7 +1339,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 					// no weapon in the slot means "gray me out"
 					return COMMAND_RESTRICTED;
 				}
-			} 
+			}
 
 			break;
 		}
@@ -1353,7 +1348,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 		case GUI_COMMAND_GUARD_WITHOUT_PURSUIT:
 		case GUI_COMMAND_GUARD_FLYING_UNITS_ONLY:
 			// always available
-			break;	
+			break;
 
 		case GUI_COMMAND_COMBATDROP:
 		{
@@ -1364,7 +1359,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 
 		case GUI_COMMAND_EXIT_CONTAINER:
 		{
-			
+
 			//
 			// this method is really used as a per frame update to see if we should enable
 			// disable a control ... inventory of objects shows as buttons have that enable
@@ -1377,7 +1372,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
         return COMMAND_RESTRICTED;
 
 			break;
-		} 
+		}
 
 		case GUI_COMMAND_EVACUATE:
 		{
@@ -1391,7 +1386,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 
 
 			break;
-		}  
+		}
 
 		case GUI_COMMAND_EXECUTE_RAILED_TRANSPORT:
 		{
@@ -1401,7 +1396,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			if( dui == NULL || dui->isDockOpen() == FALSE )
 				return COMMAND_RESTRICTED;
 			break;
-		}  
+		}
 
 		case GUI_COMMAND_SPECIAL_POWER:
 		case GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT:
@@ -1410,7 +1405,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 		{
 			// sanity
 			DEBUG_ASSERTCRASH( command->getSpecialPowerTemplate() != NULL,
-												 ("The special power in the command '%s' is NULL\n", command->getName().str()) );
+												 ("The special power in the command '%s' is NULL", command->getName().str()) );
 			// get special power module from the object to execute it
 			SpecialPowerModuleInterface *mod = obj->getSpecialPowerModule( command->getSpecialPowerTemplate() );
 
@@ -1418,9 +1413,9 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			{
 				// sanity ... we must have a module for the special power, if we don't somebody probably
 				// forgot to put it in the object
-				DEBUG_CRASH(( "Object %s does not contain special power module (%s) to execute.  Did you forget to add it to the object INI?\n",
+				DEBUG_CRASH(( "Object %s does not contain special power module (%s) to execute.  Did you forget to add it to the object INI?",
 											obj->getTemplate()->getName().str(), command->getSpecialPowerTemplate()->getName().str() ));
-			} 
+			}
 			else if( mod->isReady() == FALSE )
 			{
 				Int percent =  mod->getPercentReady() * 100;
@@ -1446,7 +1441,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			}
 
 			break;
-		}  
+		}
 
 		case GUI_COMMAND_TOGGLE_OVERCHARGE:
 		{
@@ -1460,10 +1455,10 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 				{
 					if( obi->isOverchargeActive() )
 						return COMMAND_ACTIVE;
-				} 
-			}  
+				}
+			}
 			break;
-		} 
+		}
 
 		// switch weapon command
 		case GUI_COMMAND_SWITCH_WEAPON:
@@ -1471,9 +1466,9 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			// ask the ai which weapon is in the current slot
 			const Weapon* w = obj->getWeaponInWeaponSlot( command->getWeaponSlot() );
 
-			DEBUG_ASSERTCRASH( w, ("Unit %s's CommandButton %s is trying to access weaponslot %d, but doesn't have a weapon there in its FactionUnit ini entry.", 
+			DEBUG_ASSERTCRASH( w, ("Unit %s's CommandButton %s is trying to access weaponslot %d, but doesn't have a weapon there in its FactionUnit ini entry.",
 				obj->getTemplate()->getName().str(), command->getName().str(), (Int)command->getWeaponSlot() ) );
-			
+
 			if( w == NULL)
 				return COMMAND_RESTRICTED;
 
@@ -1488,10 +1483,10 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 						return COMMAND_AVAILABLE;
 				}
 			}
-			
+
 			return COMMAND_ACTIVE;
 		}
-		
+
 		case GUI_COMMAND_HACK_INTERNET:
 		{
 			AIUpdateInterface *ai = obj->getAI();
@@ -1505,7 +1500,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			}
 			return COMMAND_AVAILABLE;
 		}
-		
+
 		case GUI_COMMAND_STOP:
 		{
 			if( !BitIsSet( command->getOptions(), OPTION_ONE ) )
@@ -1523,16 +1518,16 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			}
 			return COMMAND_AVAILABLE;
 		}
-		
+
 		case GUI_COMMAND_SELECT_ALL_UNITS_OF_TYPE:
 		{
 			//We can *always* select a unit :)
 			return COMMAND_AVAILABLE;
 		}
 	}
-	
+
 	// all is well with the command
 	return COMMAND_AVAILABLE;
 
-}  // end getCommandAvailability
+}
 

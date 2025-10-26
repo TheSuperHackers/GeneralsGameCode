@@ -24,26 +24,29 @@
 
 // FILE: SparseMatchFinder.h /////////////////////////////////////////////////////////////////////////
 // Author: Steven Johnson, March 2002
-// Desc:   
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __SparseMatchFinder_H_
-#define __SparseMatchFinder_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/BitFlags.h"
 #include "Common/STLTypedefs.h"
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	#define SPARSEMATCH_DEBUG
 #else
 	#undef SPARSEMATCH_DEBUG
 #endif
 
+typedef UnsignedInt SparseMatchFinderFlags;
+enum SparseMatchFinderFlags_ CPP_11(: SparseMatchFinderFlags)
+{
+	SparseMatchFinderFlags_NoCopy = 1<<0,
+};
+
 //-------------------------------------------------------------------------------------------------
-template<class MATCHABLE, class BITSET>
+template<class MATCHABLE, class BITSET, SparseMatchFinderFlags FLAGS = 0>
 class SparseMatchFinder
 {
 private:
@@ -72,13 +75,33 @@ private:
 		}
 	};
 
+	struct MapHelper
+	{
+		bool operator()(const BITSET& a, const BITSET& b) const
+		{
+			int i;
+			if (a.size() < b.size()) {
+				return true;
+			}
+			for (i = 0; i < a.size(); ++i) {
+				bool aVal = a.test(i);
+				bool bVal = b.test(i);
+				if (aVal && bVal) continue;
+				if (!aVal && !bVal) continue;
+				if (!aVal) return true;
+				return false;
+			}
+			return false; // all bits match.
+		}
+	};
+
 	//-------------------------------------------------------------------------------------------------
 	typedef std::hash_map< BITSET, const MATCHABLE*, HashMapHelper, HashMapHelper > MatchMap;
 
 	//-------------------------------------------------------------------------------------------------
 	// MEMBER VARS
 	//-------------------------------------------------------------------------------------------------
-	
+
 	mutable MatchMap m_bestMatches;
 
 	//-------------------------------------------------------------------------------------------------
@@ -89,13 +112,13 @@ private:
 	inline static Int countConditionIntersection(const BITSET& a, const BITSET& b)
 	{
 		return a.countIntersection(b);
-	} 
+	}
 
 	//-------------------------------------------------------------------------------------------------
 	inline static Int countConditionInverseIntersection(const BITSET& a, const BITSET& b)
 	{
 		return a.countInverseIntersection(b);
-	} 
+	}
 
 	//-------------------------------------------------------------------------------------------------
 	const MATCHABLE* findBestInfoSlow(const std::vector<MATCHABLE>& v, const BITSET& bits) const
@@ -104,8 +127,8 @@ private:
 		Int bestYesMatch = 0;							// want to maximize this
 		Int bestYesExtraneousBits = 999;	// want to minimize this
 
-	#ifdef SPARSEMATCH_DEBUG 
-		Int numDupMatches = 0; 
+	#ifdef SPARSEMATCH_DEBUG
+		Int numDupMatches = 0;
 		AsciiString curBestMatchStr, dupMatchStr;
 	#endif
 
@@ -124,7 +147,7 @@ private:
 				Int yesExtraneousBits = countConditionInverseIntersection(bits, yesFlags);
 
 	#ifdef SPARSEMATCH_DEBUG
-				if (yesMatch == bestYesMatch && 
+				if (yesMatch == bestYesMatch &&
 						yesExtraneousBits == bestYesExtraneousBits)
 				{
 					++numDupMatches;
@@ -143,16 +166,16 @@ private:
 					curBestMatchStr = it->getDescription();
 	#endif
 				}
-			}	// end for i
+			}
 
-		}	// end for it
+		}
 
 #ifdef SPARSEMATCH_DEBUG
 		if (numDupMatches > 0)
 		{
 			AsciiString curConditionStr;
-			bits.buildDescription(&curConditionStr); 
-			DEBUG_CRASH(("ambiguous model match in findBestInfoSlow \n\nbetween \n(%s)\n<and>\n(%s)\n\n(%d extra matches found)\n\ncurrent bits are (\n%s)\n",
+			bits.buildDescription(&curConditionStr);
+			DEBUG_CRASH(("ambiguous model match in findBestInfoSlow \n\nbetween \n(%s)\n<and>\n(%s)\n\n(%d extra matches found)\n\ncurrent bits are (\n%s)",
 					curBestMatchStr.str(),
 					dupMatchStr.str(),
 					numDupMatches,
@@ -163,8 +186,28 @@ private:
 		return result;
 	}
 
-	//-------------------------------------------------------------------------------------------------
 public:
+
+
+	//-------------------------------------------------------------------------------------------------
+	SparseMatchFinder() {}
+	SparseMatchFinder(const SparseMatchFinder& other)
+	{
+		*this = other;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	SparseMatchFinder& operator=(const SparseMatchFinder& other)
+	{
+		if constexpr ((FLAGS & SparseMatchFinderFlags_NoCopy) == 0)
+		{
+			if (this != &other)
+			{
+				m_bestMatches = other.m_bestMatches;
+			}
+		}
+		return *this;
+	}
 
 	//-------------------------------------------------------------------------------------------------
 	void clear()
@@ -185,10 +228,10 @@ public:
 		if (first != NULL) {
 			return first;
 		}
-		
+
 		const MATCHABLE* info = findBestInfoSlow(v, bits);
 
-		DEBUG_ASSERTCRASH(info != NULL, ("no suitable match for criteria was found!\n"));
+		DEBUG_ASSERTCRASH(info != NULL, ("no suitable match for criteria was found!"));
 		if (info != NULL) {
 			m_bestMatches[bits] = info;
 		}
@@ -197,6 +240,3 @@ public:
 	}
 
 };
-
-#endif // __SparseMatchFinder_H_
-

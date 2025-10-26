@@ -52,7 +52,7 @@ TechBuildingBehaviorModuleData::TechBuildingBehaviorModuleData( void )
 {
   UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "PulseFX",								INI::parseFXList,								NULL,	offsetof( TechBuildingBehaviorModuleData, m_pulseFX ) },
 		{ "PulseFXRate",						INI::parseDurationUnsignedInt,	NULL,	offsetof( TechBuildingBehaviorModuleData, m_pulseFXRate ) },
@@ -61,7 +61,7 @@ TechBuildingBehaviorModuleData::TechBuildingBehaviorModuleData( void )
 
   p.add( dataFieldParse );
 
-}  // end buildFieldParse
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ UpdateSleepTime TechBuildingBehavior::update( void )
 	Object *us = getObject();
 	const TechBuildingBehaviorModuleData* d = getTechBuildingBehaviorModuleData();
 	Bool captured = false;
-	
+
 	// update our model condition for the captured status
 	Player *player = us->getControllingPlayer();
 	if( player && player->isPlayableSide() )
@@ -129,7 +129,7 @@ void TechBuildingBehavior::onDie( const DamageInfo *damageInfo )
 	us->clearModelConditionState( MODELCONDITION_CAPTURED );
 	us->setTeam( ThePlayerList->getNeutralPlayer()->getDefaultTeam() );
 
-}  // end onDie
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -142,7 +142,7 @@ void TechBuildingBehavior::onCapture( Player *oldOwner, Player *newOwner )
 	// wake up next frame so we can re-evaluate our captured status
 	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
 
-}  // end onCapture
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ void TechBuildingBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -163,11 +163,11 @@ void TechBuildingBehavior::xfer( Xfer *xfer )
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
-	
+
 	// extend base class
 	UpdateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -177,5 +177,5 @@ void TechBuildingBehavior::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

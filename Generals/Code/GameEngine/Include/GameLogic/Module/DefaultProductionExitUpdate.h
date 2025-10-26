@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef _DEFAULT_PRODUCTION_EXIT_UPDATE_H
-#define _DEFAULT_PRODUCTION_EXIT_UPDATE_H
-
 #include "GameLogic/Module/UpdateModule.h"
 #include "Common/INI.h"
 #include "Lib/BaseType.h"
@@ -52,10 +49,10 @@ public:
 		m_naturalRallyPoint.zero();
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "UnitCreatePoint",		INI::parseCoord3D,		NULL, offsetof( DefaultProductionExitUpdateModuleData, m_unitCreatePoint ) },
 			{ "NaturalRallyPoint",  INI::parseCoord3D,		NULL, offsetof( DefaultProductionExitUpdateModuleData, m_naturalRallyPoint ) },
@@ -114,5 +111,3 @@ inline const Coord3D *DefaultProductionExitUpdate::getRallyPoint( void ) const
 
 	return NULL;
 }
-
-#endif

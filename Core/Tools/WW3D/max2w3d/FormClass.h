@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __FORMCLASS_H
-#define __FORMCLASS_H
 
 #include <max.h>
 
@@ -48,7 +42,7 @@
 class FormClass : public ParamDlg
 {
 	public:
-		FormClass (void) 
+		FormClass (void)
 			: m_hWnd (NULL) {}
 		~FormClass (void) {}
 
@@ -59,7 +53,7 @@ class FormClass : public ParamDlg
 		virtual void			Invalidate(void) { InvalidateRect(m_hWnd,NULL,0); }
 
 	protected:
-		
+
 		BOOL						ExecuteDlgInit(LPVOID lpResource);
 		BOOL						ExecuteDlgInit(LPCTSTR lpszResourceName);
 
@@ -68,5 +62,3 @@ class FormClass : public ParamDlg
 		HWND						m_hWnd;
 		RECT						m_FormRect;
 };
-
-#endif //__FORMCLASS_H

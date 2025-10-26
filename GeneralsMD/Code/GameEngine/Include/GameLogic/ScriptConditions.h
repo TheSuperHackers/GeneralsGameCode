@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SCRIPTCONDITIONS_H_
-#define __SCRIPTCONDITIONS_H_
-
 class Condition;
 class ObjectTypes;
 class Parameter;
@@ -57,7 +54,7 @@ public:
 	virtual Bool evaluateSkirmishCommandButtonIsReady( Parameter *pSkirmishPlayerParm, Parameter *pTeamParm, Parameter *pCommandButtonParm, Bool allReady ) = 0;
 	virtual Bool evaluateTeamIsContained(Parameter *pTeamParm, Bool allContained) = 0;
 
-};  // end class ScriptConditionsInterface
+};
 extern ScriptConditionsInterface *TheScriptConditions;   ///< singleton definition
 
 
@@ -95,7 +92,7 @@ protected:
 	Bool evaluateNamedUnitDying(Parameter *pUnitParm);
 	Bool evaluateNamedUnitTotallyDead(Parameter *pUnitParm);
 	Bool evaluateHasUnits(Parameter *pTeamParm);
-	
+
 	Bool evaluateTeamEnteredAreaEntirely(Parameter *pTeamParm, Parameter *pTriggerParm, Parameter *pTypeParm);
 	Bool evaluateTeamEnteredAreaPartially(Parameter *pTeamParm, Parameter *pTriggerParm, Parameter *pTypeParm);
 	Bool evaluateTeamExitedAreaEntirely(Parameter *pTeamParm, Parameter *pTriggerParm, Parameter *pTypeParm);
@@ -108,7 +105,7 @@ protected:
 	Bool evaluateNamedExitedArea(Parameter *pUnitParm, Parameter *pTriggerParm);
 	Bool evaluateNamedInsideArea(Parameter *pUnitParm, Parameter *pTriggerParm);
 	Bool evaluateNamedOutsideArea(Parameter *pUnitParm, Parameter *pTriggerParm);
-	
+
 	Bool evaluateTeamStateIs(Parameter *pTeamParm, Parameter *pStateParm);
 	Bool evaluateTeamStateIsNot(Parameter *pTeamParm, Parameter *pStateParm);
 	Bool evaluatePlayerHasCredits(Parameter *pCreditsParm, Parameter* pComparisonParm, Parameter *pPlayerParm);
@@ -161,7 +158,7 @@ protected:
 	Bool evaluateMusicHasCompleted(Parameter *pMusicParm, Parameter *pIntParm);
 	Bool evaluatePlayerLostObjectType(Parameter *pPlayerParm, Parameter *pTypeParm);
 
-	// Skirmish Scripts. Please note that ALL Skirmish conditions should first pass a pSkirmishPlayerParm to 
+	// Skirmish Scripts. Please note that ALL Skirmish conditions should first pass a pSkirmishPlayerParm to
 	// prevent the necessity of having to write additional scripts for other players / skirmish types later.
 	Bool evaluateSkirmishSpecialPowerIsReady(Parameter *pSkirmishPlayerParm, Parameter *pPower);
 	Bool evaluateSkirmishValueInArea(Condition *pCondition, Parameter *pSkirmishPlayerParm, Parameter *pComparisonParm, Parameter *pMoneyParm, Parameter *pTriggerParm);
@@ -182,12 +179,9 @@ protected:
 	Bool evaluateSkirmishSupplySourceAttacked(Parameter *pSkirmishPlayerParm );
 	Bool evaluateSkirmishStartPosition(Parameter *pSkirmishPlayerParm, Parameter *startNdx );
 
-	
+
 	// Stubs
 	Bool evaluateMissionAttempts(Parameter *pPlayerParm, Parameter *pComparisonParm, Parameter *pAttemptsParm);
 
 
-};  // end class ScriptConditions
-
-
-#endif  // end __SCRIPTCONDITIONS_H_
+};

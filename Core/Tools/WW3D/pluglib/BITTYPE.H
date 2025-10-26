@@ -28,8 +28,7 @@
 *
 *****************************************************************/
 
-#ifndef BITTYPE_H
-#define BITTYPE_H
+#pragma once
 
 typedef unsigned char	uint8;
 typedef unsigned short	uint16;
@@ -41,6 +40,3 @@ typedef signed long		sint32;
 
 typedef float			float32;
 typedef double			float64;
-
-
-#endif //BITTYPE_H

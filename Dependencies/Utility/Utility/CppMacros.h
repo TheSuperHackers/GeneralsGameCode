@@ -21,8 +21,12 @@
 
 #if __cplusplus >= 201703L
 #define NOEXCEPT_17 noexcept
+#define REGISTER
+#define FALLTHROUGH [[fallthrough]]
 #else
 #define NOEXCEPT_17
+#define REGISTER register
+#define FALLTHROUGH
 #endif
 
 // noexcept for methods of IUNKNOWN interface
@@ -33,7 +37,9 @@
 #endif
 
 #if __cplusplus >= 201103L
-    #define CPP_11(code) code
+  #define CPP_11(code) code
 #else
-    #define CPP_11(code)
+  #define CPP_11(code)
+  #define static_assert(expr, msg)
+  #define constexpr
 #endif

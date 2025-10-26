@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __CASHHACKSPECIALPOWER_H_
-#define __CASHHACKSPECIALPOWER_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/SpecialPowerModule.h"
 
@@ -78,13 +75,10 @@ public:
 	// virtual destructor provided by memory pool object
 
 	virtual void doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, UnsignedInt commandOptions );
+	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions );
 
 protected:
 
 	Int findAmountToSteal() const;
 
 };
-
-#endif  // end __CASHHACKSPECIALPOWER_H_
-

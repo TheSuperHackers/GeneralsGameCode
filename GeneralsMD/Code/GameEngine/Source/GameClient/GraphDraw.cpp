@@ -24,12 +24,12 @@
 
 // FILE: GraphDraw.cpp ////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Aug 2002
@@ -37,8 +37,8 @@
 //	Filename: 	GraphDraw.cpp
 //
 //	author:		John McDonald
-//	
-//	purpose:	Contains the functions to queue up and display a single graph for 
+//
+//	purpose:	Contains the functions to queue up and display a single graph for
 //						each frame
 //
 //-----------------------------------------------------------------------------
@@ -91,18 +91,18 @@ void GraphDraw::render()
 	Int height = TheDisplay->getHeight();
 
 	Int totalCount = m_graphEntries.size();
-	DEBUG_ASSERTCRASH(totalCount < MAX_GRAPH_VALUES, ("MAX_GRAPH_VALUES must be increased, not all labels will appear (max %d, cur %d).\n",MAX_GRAPH_VALUES,totalCount));
-	DEBUG_ASSERTCRASH(BAR_HEIGHT * totalCount < height, ("BAR_HEIGHT must be reduced, as bars are being drawn off-screen.\n"));
+	DEBUG_ASSERTCRASH(totalCount < MAX_GRAPH_VALUES, ("MAX_GRAPH_VALUES must be increased, not all labels will appear (max %d, cur %d).",MAX_GRAPH_VALUES,totalCount));
+	DEBUG_ASSERTCRASH(BAR_HEIGHT * totalCount < height, ("BAR_HEIGHT must be reduced, as bars are being drawn off-screen."));
 	VecGraphEntriesIt it;
 
 	Int count = 0;
 	for (it = m_graphEntries.begin(); it != m_graphEntries.end(); ++it) {
-		
+
 		if (count < MAX_GRAPH_VALUES) {
 			// draw the label.
 			UnicodeString uniStr;
 			uniStr.translate(it->first);
-		
+
 			m_displayStrings[count]->setText(uniStr);
 			m_displayStrings[count]->draw(5, count * BAR_HEIGHT, 0xFFFFFFFF, 0x00000000, 1, 1);
 		}

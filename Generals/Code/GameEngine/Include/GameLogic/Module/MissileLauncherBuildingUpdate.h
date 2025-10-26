@@ -29,13 +29,10 @@
 
 #pragma once
 
-#ifndef _MissileLauncherBuildingUpdate_H_
-#define _MissileLauncherBuildingUpdate_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/INI.h"
-#include "GameLogic/Module/UpdateModule.h"
+#include "GameLogic/Module/SpecialPowerUpdateModule.h"
 class DamageInfo;
 class SpecialPowerTemplate;
 class SpecialPowerModule;
@@ -67,11 +64,11 @@ public:
 		m_openingFX = m_openFX = m_waitingToCloseFX = m_closingFX = m_closedFX = NULL;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "SpecialPowerTemplate",	INI::parseSpecialPowerTemplate,					NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_specialPowerTemplate ) },
 			{ "DoorOpenTime",					INI::parseDurationUnsignedInt,	NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_doorOpenTime ) },
@@ -102,12 +99,13 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	//SpecialPowerUpdateInterface pure virtual implementations
-	virtual void initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, UnsignedInt commandOptions, Int locationCount );
+	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions );
 	virtual Bool isSpecialAbility() const { return false; }
 	virtual Bool isSpecialPower() const { return true; }
 	virtual Bool isActive() const { return m_doorState != m_timeoutState; }
 	SpecialPowerTemplate* getTemplate() const;
-	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const { return false; }
+	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const { return false; } //Is it active now?
+	virtual Bool doesSpecialPowerHaveOverridableDestination() const { return false; }	//Does it have it, even if it's not active?
 	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) {}
 
 	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() { return this; }
@@ -125,7 +123,7 @@ private:
 		DOOR_WAITING_TO_CLOSE,
 		DOOR_CLOSING,
 	};
-	
+
 	void switchToState(DoorStateType dst);
 
 	const SpecialPowerModuleInterface*	m_specialPowerModule;
@@ -134,5 +132,3 @@ private:
 	UnsignedInt													m_timeoutFrame;
 	AudioEventRTS												m_openIdleAudio;
 };
-
-#endif // _MissileLauncherBuildingUpdate_H_

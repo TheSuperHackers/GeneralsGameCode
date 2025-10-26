@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __LocomotorSet_H_
-#define __LocomotorSet_H_
-
 // no, please do NOT include this.
 //#include "GameLogic/Locomotor.h"
 #include "Common/GameCommon.h"
@@ -61,7 +58,7 @@ const LocomotorSurfaceTypeMask NO_SURFACES = (LocomotorSurfaceTypeMask)0x0000;
 const LocomotorSurfaceTypeMask ALL_SURFACES = (LocomotorSurfaceTypeMask)0xffff;
 
 #ifdef DEFINE_SURFACECATEGORY_NAMES
-static const char *TheLocomotorSurfaceTypeNames[] = 
+static const char *const TheLocomotorSurfaceTypeNames[] =
 {
 	"GROUND",
 	"WATER",
@@ -83,7 +80,7 @@ private:
 	LocomotorVector						m_locomotors;
 	LocomotorSurfaceTypeMask	m_validLocomotorSurfaces;
 	Bool											m_downhillOnly;
-	
+
 	LocomotorSet(const LocomotorSet& that);
 	LocomotorSet& operator=(const LocomotorSet& that);
 
@@ -103,12 +100,10 @@ public:
 	void addLocomotor(const LocomotorTemplate* lt);
 
 	Locomotor* findLocomotor(LocomotorSurfaceTypeMask t);
-	
+
 	void xferSelfAndCurLocoPtr(Xfer *xfer, Locomotor** loco);
 
 	inline LocomotorSurfaceTypeMask getValidSurfaces() const { return m_validLocomotorSurfaces; }
 	inline Bool isDownhillOnly( void ) const { return m_downhillOnly; };
 
 };
-
-#endif

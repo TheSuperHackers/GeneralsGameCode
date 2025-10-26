@@ -27,10 +27,8 @@
 // Author: Chris Huybregts, October 2001
 // Description: LAN API Callbacks header
 ///////////////////////////////////////////////////////////////////////////////////////
-#pragma once
 
-#ifndef _LANAPI_CALLBACKS_H_
-#define _LANAPI_CALLBACKS_H_
+#pragma once
 
 #include "Common/NameKeyGenerator.h"
 #include "GameClient/Shell.h"
@@ -74,7 +72,7 @@ extern const Color acceptFalseColor;
 
 void lanUpdateSlotList( void );
 void updateGameOptions( void );
-
+void setLANPlayerTooltip(LANPlayer* player);
 
 //Enum is used for the utility function so other windows do not need
 //to know about controls on LanGameOptions window.
@@ -83,7 +81,3 @@ enum PostToLanGameType CPP_11(: Int){ SEND_GAME_OPTS = 0,
 												POST_TO_LAN_GAME_TYPE_COUNT };
 //the utility function mentioned above
 void PostToLanGameOptions(PostToLanGameType post);
-
-												
-
-#endif //_LANAPI_CALLBACKS_H_

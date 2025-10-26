@@ -22,11 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef UDP_HEADER
-#define UDP_HEADER
 
 #ifdef _UNIX
 #include <errno.h>
@@ -66,11 +62,11 @@ class UDP
 {
  // DATA
  private:
-  Int       fd; 
+  Int       fd;
   UnsignedInt       myIP;
   UnsignedShort       myPort;
   struct       sockaddr_in  addr;
-  
+
  public:
   // These defines specify a system independent way to
   //   get error codes for socket services.
@@ -99,7 +95,7 @@ class UDP
 // CODE
  private:
   Int           SetBlocking(Int block);
-	
+
 	Int m_lastError;
 
  public:
@@ -116,7 +112,7 @@ class UDP
 
   Int             getLocalAddr(UnsignedInt &ip, UnsignedShort &port);
   Int           getFD(void) { return(fd); }
- 
+
   Int             SetInputBuffer(UnsignedInt bytes);
   Int             SetOutputBuffer(UnsignedInt bytes);
   int              GetInputBuffer(void);
@@ -126,6 +122,4 @@ class UDP
 
 #ifdef DEBUG_LOGGING
 AsciiString GetWSAErrorString( Int error );
-#endif
-
 #endif

@@ -35,11 +35,6 @@
 //#include "GameNetwork/NetworkInterface.h"
 #include "GameNetwork/udp.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------
 
@@ -115,7 +110,7 @@ AsciiString GetWSAErrorString( Int error )
 
 #undef CASE
 
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG)
 
 //-------------------------------------------------------------------------
 
@@ -186,7 +181,7 @@ Int UDP::Bind(UnsignedInt IP,UnsignedShort Port)
   }
 
   int namelen=sizeof(addr);
-  getsockname(fd, (struct sockaddr *)&addr, &namelen); 
+  getsockname(fd, (struct sockaddr *)&addr, &namelen);
 
   myIP=ntohl(addr.sin_addr.s_addr);
   myPort=ntohs(addr.sin_port);
@@ -260,10 +255,10 @@ Int UDP::Write(const unsigned char *msg,UnsignedInt len,UnsignedInt IP,UnsignedS
 #ifdef DEBUG_LOGGING
 		static Int errCount = 0;
 #endif
-		DEBUG_ASSERTLOG(errCount++ > 100, ("UDP::Write() - WSA error is %s\n", GetWSAErrorString(WSAGetLastError()).str()));
+		DEBUG_ASSERTLOG(errCount++ > 100, ("UDP::Write() - WSA error is %s", GetWSAErrorString(WSAGetLastError()).str()));
 	}
   #endif
-  
+
   return(retval);
 }
 
@@ -285,7 +280,7 @@ Int UDP::Read(unsigned char *msg,UnsignedInt len,sockaddr_in *from)
 #ifdef DEBUG_LOGGING
 				static Int errCount = 0;
 #endif
-				DEBUG_ASSERTLOG(errCount++ > 100, ("UDP::Read() - WSA error is %s\n", GetWSAErrorString(WSAGetLastError()).str()));
+				DEBUG_ASSERTLOG(errCount++ > 100, ("UDP::Read() - WSA error is %s", GetWSAErrorString(WSAGetLastError()).str()));
 				retval = -1;
 			} else {
 				retval = 0;
@@ -306,7 +301,7 @@ Int UDP::Read(unsigned char *msg,UnsignedInt len,sockaddr_in *from)
 #ifdef DEBUG_LOGGING
 				static Int errCount = 0;
 #endif
-				DEBUG_ASSERTLOG(errCount++ > 100, ("UDP::Read() - WSA error is %s\n", GetWSAErrorString(WSAGetLastError()).str()));
+				DEBUG_ASSERTLOG(errCount++ > 100, ("UDP::Read() - WSA error is %s", GetWSAErrorString(WSAGetLastError()).str()));
 				retval = -1;
 			} else {
 				retval = 0;
@@ -371,10 +366,10 @@ UDP::sockStat UDP::GetStatus(void)
 int UDP::Wait(Int sec,Int usec,fd_set &returnSet)
 {
   fd_set inputSet;
- 
+
   FD_ZERO(&inputSet);
   FD_SET(fd,&inputSet);
- 
+
   return(Wait(sec,usec,inputSet,returnSet));
 }
 */
@@ -390,17 +385,17 @@ int UDP::Wait(Int sec,Int usec,fd_set &givenSet,fd_set &returnSet)
   int          retval=0,done,givenMax;
   Bool         noTimeout=FALSE;
   timeval      tv;
- 
+
   returnSet=givenSet;
   backupSet=returnSet;
- 
+
   if ((sec==-1)&&(usec==-1))
     noTimeout=TRUE;
- 
+
   timeout.SetSec(sec);
   timeout.SetUsec(usec);
   timethen+=timeout;
- 
+
   givenMax=fd;
   for (UnsignedInt i=0; i<(sizeof(fd_set)*8); i++)   // i=maxFD+1
   {
@@ -408,7 +403,7 @@ int UDP::Wait(Int sec,Int usec,fd_set &givenSet,fd_set &returnSet)
       givenMax=i;
   }
   ///DBGMSG("WAIT  fd="<<fd<<"  givenMax="<<givenMax);
- 
+
   done=0;
   while( ! done)
   {
@@ -419,7 +414,7 @@ int UDP::Wait(Int sec,Int usec,fd_set &givenSet,fd_set &returnSet)
       timeout.GetTimevalMT(tv);
       retval=select(givenMax+1,&returnSet,0,0,&tv);
     }
- 
+
     if (retval>=0)
       done=1;
 
@@ -480,7 +475,7 @@ Int UDP::SetOutputBuffer(UnsignedInt bytes)
      return(FALSE);
 }
 
-// Get the system buffer sizes 
+// Get the system buffer sizes
 
 int UDP::GetInputBuffer(void)
 {

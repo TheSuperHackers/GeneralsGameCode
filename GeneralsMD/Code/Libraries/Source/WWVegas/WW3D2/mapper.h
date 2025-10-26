@@ -16,33 +16,28 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : G                                        * 
- *                                                                         * 
- *                     $Archive:: /Commando/Code/ww3d2/mapper.h           $* 
- *                                                                         * 
- *                     $Org Author:: Greg_h                                  $* 
- *                                                                         * 
- *                       $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : G                                        *
+ *                                                                         *
+ *                     $Archive:: /Commando/Code/ww3d2/mapper.h           $*
+ *                                                                         *
+ *                     $Org Author:: Greg_h                                  $*
+ *                                                                         *
+ *                       $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
- *                                                                         * 
- *                    $Revision:: 26                                      $* 
- *                                                                         * 
+ *                                                                         *
+ *                    $Revision:: 26                                      $*
+ *                                                                         *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef VERTEXMAPPER_H
-#define VERTEXMAPPER_H
 
 #include "refcount.h"
 #include "w3d_file.h"
@@ -120,7 +115,7 @@ class TextureMapperClass : public W3DMPO, public RefCountClass
 class ScaleTextureMapperClass : public TextureMapperClass
 {
 	W3DMPO_GLUE(ScaleTextureMapperClass)
-public:	
+public:
 	ScaleTextureMapperClass(const Vector2 &scale, unsigned int stage);
 	ScaleTextureMapperClass(const INIClass &ini, const char *section, unsigned int stage);
 	ScaleTextureMapperClass(const ScaleTextureMapperClass & src);
@@ -170,7 +165,7 @@ public:
 	}
 	void Set_LastUsedSyncTime(unsigned int time) { LastUsedSyncTime = time;}
 	unsigned int Get_LastUsedSyncTime() { return LastUsedSyncTime;}
-	
+
 protected:
 	Vector2			CurrentUVOffset;		// Current UV offset
 	Vector2			UVOffsetDeltaPerMS;	// Amount to increase offset each millisec
@@ -202,8 +197,8 @@ public:
 
 	void Set_Frame(unsigned int frame) { CurrentFrame=frame; }
 	void Set_Frame_Per_Second(float fps);
-	
-protected:	
+
+protected:
 	// Utility functions
 	void initialize(float fps, unsigned int gridwidth_log2);
 	void update_temporal_state(void);
@@ -398,7 +393,7 @@ public:
 	WSEnvMapperClass(const INIClass &ini, const char *section, unsigned int stage);
 	virtual bool Needs_Normals(void) { return true; }
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
-protected:	
+protected:
 	AxisType		Axis;
 };
 
@@ -411,7 +406,7 @@ public:
 	WSClassicEnvironmentMapperClass(const INIClass &ini, const char *section, unsigned int stage) : WSEnvMapperClass(ini, section, stage) { }
 	virtual int	Mapper_ID(void) const { return MAPPER_ID_WS_CLASSIC_ENVIRONMENT;}
 	virtual TextureMapperClass* Clone() const { return NEW_REF( WSClassicEnvironmentMapperClass, (*this)); }
-	virtual void Apply(int uv_array_index);		
+	virtual void Apply(int uv_array_index);
 };
 
 class WSEnvironmentMapperClass : public WSEnvMapperClass
@@ -423,7 +418,7 @@ public:
 	WSEnvironmentMapperClass(const INIClass &ini, const char *section, unsigned int stage) : WSEnvMapperClass(ini, section, stage) { }
 	virtual int	Mapper_ID(void) const { return MAPPER_ID_WS_ENVIRONMENT;}
 	virtual TextureMapperClass* Clone() const { return NEW_REF( WSEnvironmentMapperClass, (*this)); }
-	virtual void Apply(int uv_array_index);	
+	virtual void Apply(int uv_array_index);
 };
 
 class GridClassicEnvironmentMapperClass : public GridTextureMapperClass
@@ -443,7 +438,7 @@ public:
 class GridEnvironmentMapperClass : public GridTextureMapperClass
 {
 	W3DMPO_GLUE(GridEnvironmentMapperClass)
-public:	
+public:
 	GridEnvironmentMapperClass(float fps, unsigned int gridwidth_log2, unsigned int last_frame, unsigned int offset, unsigned int stage) : GridTextureMapperClass(fps, gridwidth_log2, last_frame, offset, stage) { }
 	GridEnvironmentMapperClass(const INIClass &ini, const char *section, unsigned int stage) : GridTextureMapperClass(ini, section, stage) { }
 	GridEnvironmentMapperClass(const GridTextureMapperClass & src) : GridTextureMapperClass(src) { }
@@ -538,10 +533,10 @@ public:
 	enum AxisType { AXISTYPE_X=0, AXISTYPE_Y=1, AXISTYPE_Z=2 };
 	GridWSEnvMapperClass(float fps, unsigned int gridwidth_log2, unsigned int last_frame, unsigned int offset, AxisType axis, unsigned int stage);
 	GridWSEnvMapperClass(const GridWSEnvMapperClass & src);
-	GridWSEnvMapperClass(const INIClass &ini, const char *section, unsigned int stage);	
+	GridWSEnvMapperClass(const INIClass &ini, const char *section, unsigned int stage);
 	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
 	virtual bool Needs_Normals(void) { return true; }
-protected:	
+protected:
 	AxisType		Axis;
 };
 
@@ -553,18 +548,18 @@ public:
 	GridWSClassicEnvironmentMapperClass(const GridWSEnvMapperClass & src);
 	virtual int	Mapper_ID(void) const { return MAPPER_ID_GRID_WS_CLASSIC_ENVIRONMENT;}
 	virtual TextureMapperClass* Clone() const { return NEW_REF( GridWSClassicEnvironmentMapperClass, (*this)); }
-	virtual void Apply(int uv_array_index);	
+	virtual void Apply(int uv_array_index);
 };
 
 class GridWSEnvironmentMapperClass : public GridWSEnvMapperClass
 {
-public:	
+public:
 	GridWSEnvironmentMapperClass(float fps, unsigned int gridwidth_log2, unsigned int last_frame, unsigned int offset, AxisType axis, unsigned int stage);
 	GridWSEnvironmentMapperClass(const INIClass &ini, const char *section, unsigned int stage);
 	GridWSEnvironmentMapperClass(const GridWSEnvMapperClass & src);
 	virtual int	Mapper_ID(void) const { return MAPPER_ID_GRID_WS_ENVIRONMENT;}
 	virtual TextureMapperClass* Clone() const { return NEW_REF( GridWSEnvironmentMapperClass, (*this)); }
-	virtual void Apply(int uv_array_index);	
+	virtual void Apply(int uv_array_index);
 };
 
 
@@ -572,5 +567,3 @@ public:
 ** Utility functions
 */
 void Reset_All_Texture_Mappers(RenderObjClass *robj, bool make_unique);
-
-#endif

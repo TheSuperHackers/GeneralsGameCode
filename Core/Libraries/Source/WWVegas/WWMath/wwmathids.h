@@ -36,15 +36,14 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef WWMATHIDS_H
-#define WWMATHIDS_H
+#pragma once
 
 #include "saveloadids.h"
 
 /*
 ** Persist Factory ID's for WWMATH
 */
-enum 
+enum
 {
 	WWMATH_CHUNKID_LINEARCURVE1D	= CHUNKID_WWMATH_BEGIN,
 	WWMATH_CHUNKID_HERMITESPLINE1D,
@@ -59,8 +58,3 @@ enum
 	WWMATH_CHUNKID_TCBSPLINE3D,
 	WWMATH_CHUNKID_VEHICLECURVE
 };
-
-
-
-#endif //WWMATHIDS_H
-

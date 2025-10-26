@@ -24,13 +24,10 @@
 
 // FILE: TerrainRoads.h ///////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, December 2001
-// Desc:   Terrain road descriptions	
+// Desc:   Terrain road descriptions
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __TERRAINROADS_H_
-#define __TERRAINROADS_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
@@ -52,7 +49,8 @@ enum BridgeTowerType CPP_11(: Int)
 	BRIDGE_TOWER_FROM_RIGHT,
 	BRIDGE_TOWER_TO_LEFT,
 	BRIDGE_TOWER_TO_RIGHT,
-	BRIDGE_MAX_TOWERS				///< keep this last
+
+	BRIDGE_MAX_TOWERS
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -104,10 +102,10 @@ public:
 	inline void friend_setName( AsciiString name ) { m_name = name; }
 	inline void friend_setTexture( AsciiString texture ) { m_texture = texture; }
 	inline void friend_setBridge( Bool isBridge ) { m_isBridge = isBridge; }
-	inline void friend_setID( UnsignedInt id ) { m_id = id; }							
+	inline void friend_setID( UnsignedInt id ) { m_id = id; }
 	inline void friend_setNext( TerrainRoadType *next ) { m_next = next; }
-	inline TerrainRoadType *friend_getNext( void ) { return m_next; }			
-	inline void friend_setRoadWidth( Real width ) { m_roadWidth = width; }	
+	inline TerrainRoadType *friend_getNext( void ) { return m_next; }
+	inline void friend_setRoadWidth( Real width ) { m_roadWidth = width; }
 	inline void friend_setRoadWidthInTexture( Real width ) { m_roadWidthInTexture = width; }
 	inline void friend_setBridgeScale( Real scale ) { m_bridgeScale = scale; }
 	inline void friend_setScaffoldObjectName( AsciiString name ) { m_scaffoldObjectName = name; }
@@ -147,7 +145,7 @@ protected:
 	static void parseTransitionToFX( INI *ini, void *instance, void *store, const void *userData );
 
 	//
-	// *note* I would union the road and bridge data, but unions can't have a copy 
+	// *note* I would union the road and bridge data, but unions can't have a copy
 	// constructor such as the AsciiString does
 	//
 
@@ -178,7 +176,7 @@ protected:
 	AsciiString m_towerObjectName[ BRIDGE_MAX_TOWERS ];	///< object names for the targetable towers on the bridge
 
 	//
-	// the following strings are for repair/damage transition events, what sounds to 
+	// the following strings are for repair/damage transition events, what sounds to
 	// play and a collection of OCL and FX lists to play over the bridge area
 	//
 	AsciiString m_damageToSoundString[ BODYDAMAGETYPE_COUNT ];
@@ -199,7 +197,7 @@ class TerrainRoadCollection : public SubsystemInterface
 {
 
 public:
-	
+
 	TerrainRoadCollection( void );
 	~TerrainRoadCollection( void );
 
@@ -229,5 +227,3 @@ protected:
 
 // EXTERNAL ////////////////////////////////////////////////////////////////////////////////////////
 extern TerrainRoadCollection *TheTerrainRoads;
-
-#endif // __TERRAINROADS_H_

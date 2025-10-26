@@ -48,9 +48,9 @@
 
 /*
 ** Structure used in the line->box test.  There was a lot of common code between the axis-
-** aligned and oriented box tests so I package all of the truely relevant information into 
-** this struct and pass it into a function local to this module.  In the case of oriented 
-** boxes, the ray must be transformed into the box's coordinate system prior to the call 
+** aligned and oriented box tests so I package all of the truely relevant information into
+** this struct and pass it into a function local to this module.  In the case of oriented
+** boxes, the ray must be transformed into the box's coordinate system prior to the call
 ** and the normal is calculated slightly differently.
 */
 struct BoxTestStruct
@@ -81,7 +81,7 @@ enum BoxSideType {
 ** Table of normals for an axis aligned box.
 ** access like this:
 **
-** _box_normal[AXIS][SIDE] 
+** _box_normal[AXIS][SIDE]
 **
 ** <AXIS> is 0,1,2 meaning x,y,z
 ** <SIDE> is BOX_SIDE_NEGATIVE or BOX_SIDE_POSITIVE
@@ -201,7 +201,7 @@ bool CollisionMath::Collide(const LineSegClass & line,const TriClass & tri,CastR
 	float num,den,t;
 
 	den = Vector3::Dot_Product(plane.N,line.Get_DP());
-	
+
 	/*
 	** If the denominator is zero, the ray is parallel to the plane
 	*/
@@ -265,7 +265,7 @@ bool CollisionMath::Collide(const LineSegClass & line,const SphereClass & sphere
 			Vector3 p = line.Get_P0() + (clen - d)*line.Get_Dir();
 			Vector3 norm = p - sphere.Center;
 			norm /= sphere.Radius;
-			
+
 			res->Normal = norm;
 			if (res->ComputeContactPoint) {
 				res->ContactPoint = line.Get_P0() + res->Fraction * line.Get_DP();
@@ -292,8 +292,8 @@ bool CollisionMath::Collide(const LineSegClass & line,const AABoxClass & box,Cas
 
 	// if ray starts inside the box, note that fact and bail.
 	if (test.Inside) {
-		res->StartBad = true;	
-		return true;	
+		res->StartBad = true;
+		return true;
 	}
 
 	// Now, if this intersection is before any current intersection
@@ -327,7 +327,7 @@ bool CollisionMath::Collide(const LineSegClass & line,const OBBoxClass & box,Cas
 
 	// if ray starts inside the box, don't collide
 	if (test.Inside) {
-		result->StartBad = true;	
+		result->StartBad = true;
 		return true;
 	}
 
@@ -336,7 +336,7 @@ bool CollisionMath::Collide(const LineSegClass & line,const OBBoxClass & box,Cas
 	if (test.Fraction < result->Fraction) {
 		result->Fraction = test.Fraction;
 		assert(test.Side != BOX_SIDE_MIDDLE);
-		
+
 		switch (test.Axis) {
 			case 0:
 				result->Normal.Set(box.Basis[0][0],box.Basis[1][0],box.Basis[2][0]);
@@ -380,7 +380,7 @@ inline bool Test_Aligned_Box(BoxTestStruct * test)
 {
 	int i;
 
-	// candidate intersection plane distance for each axis 
+	// candidate intersection plane distance for each axis
 	float candidateplane[3];
 
 	// t value along the ray for each axis
@@ -406,7 +406,7 @@ inline bool Test_Aligned_Box(BoxTestStruct * test)
 			quadrant[i] = BOX_SIDE_MIDDLE;
 		}
 	}
-	
+
 	/*
 	** Ray started out inside the box...
 	*/
@@ -431,7 +431,7 @@ inline bool Test_Aligned_Box(BoxTestStruct * test)
 	** Get the largest of the maxt's for the final choice of intersection
 	*/
 	int intersection_plane = 0;
-	
+
 	for (i=1; i<3; i++) {
 		if (maxt[i] > maxt[intersection_plane]) {
 			intersection_plane = i;
@@ -451,16 +451,16 @@ inline bool Test_Aligned_Box(BoxTestStruct * test)
 	** be between the min and max of the box.
 	*/
 	for (i=0; i<3; i++) {
-		
+
 		if (intersection_plane != i) {
-		
+
 			coord[i] = test->P0[i] + maxt[intersection_plane] * test->DP[i];
-			
+
 			if ((coord[i] < test->Min[i]) || (coord[i] > test->Max[i])) {
 
 				return false;		// ray is outside the box
-			
-			} 
+
+			}
 
 		} else {
 

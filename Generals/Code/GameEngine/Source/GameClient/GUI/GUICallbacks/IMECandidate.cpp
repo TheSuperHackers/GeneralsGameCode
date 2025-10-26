@@ -51,15 +51,15 @@ WindowMsgHandledType IMECandidateWindowInput( GameWindow *window, UnsignedInt ms
 
 	return MSG_HANDLED;
 
-}  // end IMECandidateInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** System callback for the IME Candidate widnow */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType IMECandidateWindowSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType IMECandidateWindowSystem( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 		case GWM_CREATE:
 			if ( Dstring == NULL )
@@ -81,11 +81,11 @@ WindowMsgHandledType IMECandidateWindowSystem( GameWindow *window, UnsignedInt m
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end IMECandidateWidnowSystem
+}
 
 // IMECandidateDraw ================================================================
 /** Draw function for the IME candidate window */
@@ -94,9 +94,9 @@ void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
 {
 	// set up for rendering
 	ICoord2D origin, size, start, end;
-	Color		textColor, 
-					textBorder, 
-					textSelectColor, 
+	Color		textColor,
+					textBorder,
+					textSelectColor,
 					textSelectBorder;
 	IRegion2D textRegion;
 	Color black = GameMakeColor( 0, 0, 0, 255);
@@ -120,7 +120,7 @@ void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
 		textColor		= window->winGetDisabledTextColor();
 		textBorder	= window->winGetDisabledTextBorderColor();
 
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
@@ -129,7 +129,7 @@ void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
 		textSelectColor		= window->winGetHiliteTextColor();
 		textSelectBorder	= window->winGetHiliteTextBorderColor();
 
-	}  // end else if, hilited
+	}
 	else
 	{
 
@@ -138,12 +138,12 @@ void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
 		textColor		= window->winGetEnabledTextColor();
 		textBorder	= window->winGetEnabledTextBorderColor();
 
-	}  // end else, just enabled
+	}
 
 
 	{
 		Real borderWidth = 1.0f;
-	
+
 		start.x = origin.x;
 		start.y = origin.y;
 		end.x = start.x + size.x;
@@ -204,7 +204,7 @@ void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
 	{
 		UnicodeString *candidate = ime->getCandidate( first + i );
 		Int tcolor, bcolor;
-		
+
 		if ( i == selected )
 		{
 			tcolor = textSelectColor;
@@ -215,8 +215,8 @@ void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
 			tcolor = textColor;
 			bcolor = textBorder;
 		}
-		
-		// draw number tab first	
+
+		// draw number tab first
 		number.format( L"%d:", i + ime->getIndexBase());
 		Dstring->setText( number );
 		width = Dstring->getWidth();
@@ -225,7 +225,7 @@ void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
 		// draw candidate
 		Dstring->setText( *candidate );
 		Dstring->draw( leftEdge, y, tcolor, black );
-	}	
+	}
 }
 
 // IMECandidateDraw ================================================================
@@ -235,7 +235,7 @@ void IMECandidateMainDraw( GameWindow *window, WinInstanceData *instData )
 {
 	// set up for rendering
 	ICoord2D origin, size, start, end;
-	Color		backColor, 
+	Color		backColor,
 					backBorder;
 	Real borderWidth = 1.0f;
 
@@ -250,33 +250,33 @@ void IMECandidateMainDraw( GameWindow *window, WinInstanceData *instData )
 		backColor		= window->winGetDisabledColor( 0 );
 		backBorder	= window->winGetDisabledBorderColor( 0 );
 
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
 		backColor		= window->winGetHiliteColor( 0 );
 		backBorder	= window->winGetHiliteBorderColor( 0 );
 
-	}  // end else if, hilited
+	}
 	else
 	{
 
 		backColor		= window->winGetEnabledColor( 0 );
 		backBorder	= window->winGetEnabledBorderColor( 0 );
 
-	}  // end else, just enabled
+	}
 
 	// draw the back border
 	if( backBorder != WIN_COLOR_UNDEFINED )
 	{
-	
+
 		start.x = origin.x;
 		start.y = origin.y;
 		end.x = start.x + size.x;
 		end.y = start.y + size.y;
 		TheWindowManager->winOpenRect( backBorder, borderWidth,
 																	 start.x, start.y, end.x, end.y );
-	}  // end if
+	}
 
 	// draw the filled back
 	if( backColor != WIN_COLOR_UNDEFINED )
@@ -288,6 +288,6 @@ void IMECandidateMainDraw( GameWindow *window, WinInstanceData *instData )
 		end.y = start.y + size.y - 2;
 		TheWindowManager->winFillRect( backColor, 0, start.x, start.y, end.x, end.y );
 
-	}  // end if
+	}
 }
 

@@ -24,12 +24,12 @@
 
 // FILE: W3DPropBuffer.cpp ////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -43,13 +43,14 @@
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //-----------------------------------------------------------------------------
 #include "W3DDevice/GameClient/W3DPropBuffer.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <assetmgr.h>
+#include "Common/GameUtility.h"
 #include "Common/Geometry.h"
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
@@ -64,17 +65,12 @@
 #include "W3DDevice/GameClient/BaseHeightMap.h"
 #include "GameLogic/PartitionManager.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 
 
 //-----------------------------------------------------------------------------
-//         Private Functions                                               
+//         Private Functions
 //-----------------------------------------------------------------------------
 
 //=============================================================================
@@ -96,7 +92,7 @@ void W3DPropBuffer::cull(CameraClass * camera)
 
 
 //-----------------------------------------------------------------------------
-//         Public Functions                                                
+//         Public Functions
 //-----------------------------------------------------------------------------
 
 //=============================================================================
@@ -106,10 +102,7 @@ void W3DPropBuffer::cull(CameraClass * camera)
 //=============================================================================
 W3DPropBuffer::~W3DPropBuffer(void)
 {
-	Int i;
-	for (i=0; i<MAX_TYPES; i++) {
-		REF_PTR_RELEASE(m_propTypes[i].m_robj);
-	}
+	clearAllProps();
 	REF_PTR_RELEASE(m_light);
 	REF_PTR_RELEASE(m_propShroudMaterialPass);
 }
@@ -122,9 +115,9 @@ for the props. */
 //=============================================================================
 W3DPropBuffer::W3DPropBuffer(void)
 {
-	memset(this, sizeof(W3DPropBuffer), 0);
 	m_initialized = false;
-	clearAllProps();
+	m_numProps = 0;
+	m_numPropTypes = 0;
 	m_light = NEW_REF( LightClass, (LightClass::DIRECTIONAL) );
 	m_propShroudMaterialPass = NEW_REF(W3DShroudMaterialPassClass,());
 	m_initialized = true;
@@ -141,13 +134,16 @@ W3DPropBuffer::W3DPropBuffer(void)
 //=============================================================================
 void W3DPropBuffer::clearAllProps(void)
 {
-	m_numProps=0;
 	Int i;
-	for (i=0; i<MAX_TYPES; i++) {
+	for (i=0; i<m_numPropTypes; i++) {
 		REF_PTR_RELEASE(m_propTypes[i].m_robj);
 		m_propTypes[i].m_robjName.clear();
 	}
+	for (i=0; i<m_numProps; i++) {
+		REF_PTR_RELEASE(m_props[i].m_robj);
+	}
 	m_numPropTypes = 0;
+	m_numProps = 0;
 }
 
 //=============================================================================
@@ -158,17 +154,17 @@ void W3DPropBuffer::clearAllProps(void)
 Int W3DPropBuffer::addPropType(const AsciiString &modelName)
 {
 	if (m_numPropTypes>=MAX_TYPES) {
-		DEBUG_CRASH(("Too many kinds of props in map.  Reduce kinds of props, or raise prop limit. jba.")); 
+		DEBUG_CRASH(("Too many kinds of props in map.  Reduce kinds of props, or raise prop limit. jba."));
 		return 0;
 	}
 
 	m_propTypes[m_numPropTypes].m_robj = WW3DAssetManager::Get_Instance()->Create_Render_Obj(modelName.str());
 	if (m_propTypes[m_numPropTypes].m_robj==NULL) {
-		DEBUG_CRASH(("Unable to find model for prop %s\n", modelName.str()));
+		DEBUG_CRASH(("Unable to find model for prop %s", modelName.str()));
 		return -1;
 	}
 	m_propTypes[m_numPropTypes].m_robjName = modelName;
-	
+
 	SphereClass bounds = m_propTypes[m_numPropTypes].m_robj->Get_Bounding_Sphere();
 	m_propTypes[m_numPropTypes].m_bounds = bounds;
 	m_numPropTypes++;
@@ -184,10 +180,10 @@ ALPINE, DECIDUOUS and SHRUB. */
 void W3DPropBuffer::addProp(Int id, Coord3D location, Real angle,Real scale, const AsciiString &modelName)
 {
 	if (m_numProps >= MAX_PROPS) {
-		return;  
+		return;
 	}
 	if (!m_initialized) {
-		return;  
+		return;
 	}
 	Int propType = -1;
 	Int i;
@@ -282,7 +278,7 @@ void W3DPropBuffer::removePropsForConstruction(const Coord3D* pos, const Geometr
 {
 	// Just iterate all trees, as even non-collidable ones get removed. jba. [7/11/2003]
 	Int i;
-	for (i=0; i<m_numProps; i++) {				
+	for (i=0; i<m_numProps; i++) {
 		if (m_props[i].m_robj == NULL) {
 			continue; // already deleted.
 		}
@@ -297,7 +293,7 @@ void W3DPropBuffer::removePropsForConstruction(const Coord3D* pos, const Geometr
 			m_props[i].bounds.Center = Vector3(0,0,0);
 			m_props[i].bounds.Radius = 1;
 			m_anythingChanged = true;
-		} 
+		}
 	}
 }
 
@@ -355,7 +351,7 @@ void W3DPropBuffer::drawProps(RenderInfoClass &rinfo)
 			m_light->Set_Transform(mtx);
 			lightEnv.Add_Light(*m_light);
 	}
-	
+
 	rinfo.light_environment = &lightEnv;
 	for	(i=0; i<m_numProps; i++) {
 		if (!m_props[i].visible) {
@@ -369,7 +365,7 @@ void W3DPropBuffer::drawProps(RenderInfoClass &rinfo)
 			m_props[i].ss = OBJECTSHROUD_CLEAR;
 		}
 		if (m_props[i].ss == OBJECTSHROUD_INVALID) {
-			Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
+			const Int localPlayerIndex = rts::getObservedOrLocalPlayerIndex_Safe();
 			m_props[i].ss = ThePartitionManager->getPropShroudStatusForPlayer(localPlayerIndex, &m_props[i].location);
 		}
 		if (m_props[i].ss >= OBJECTSHROUD_SHROUDED) {
@@ -396,8 +392,8 @@ void W3DPropBuffer::drawProps(RenderInfoClass &rinfo)
 // ------------------------------------------------------------------------------------------------
 void W3DPropBuffer::crc( Xfer *xfer )
 {
-	// empty. jba [8/11/2003]	
-}  // end CRC
+	// empty. jba [8/11/2003]
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer
@@ -413,13 +409,13 @@ void W3DPropBuffer::xfer( Xfer *xfer )
 	xfer->xferVersion( &version, currentVersion );
 
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void W3DPropBuffer::loadPostProcess( void )
 {
-	// empty. jba [8/11/2003]	
-}  // end loadPostProcess
+	// empty. jba [8/11/2003]
+}
 

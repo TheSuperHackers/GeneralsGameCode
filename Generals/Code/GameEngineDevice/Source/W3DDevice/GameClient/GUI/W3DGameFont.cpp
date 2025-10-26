@@ -24,12 +24,12 @@
 
 // FILE: W3DGameFont.cpp //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -91,12 +91,12 @@ Bool W3DFontLibrary::loadFontData( GameFont *font )
 	if( fontChar == NULL )
 	{
 
-		DEBUG_LOG(( "W3D load font: unable to find font '%s' from asset manager\n",
+		DEBUG_LOG(( "W3D load font: unable to find font '%s' from asset manager",
 						 font->nameString.str() ));
 		DEBUG_ASSERTCRASH(fontChar, ("Missing or Corrupted Font.  Pleas see log for details"));
 		return FALSE;
 
-	}  // end if
+	}
 
 	// assign font data
 	font->fontData = fontChar;
@@ -122,7 +122,7 @@ Bool W3DFontLibrary::loadFontData( GameFont *font )
 	// all done and loaded
 	return TRUE;
 
-}  // end loadFont
+}
 
 // W3DFontLibrary::releaseFontData ============================================
 /** Release font data */
@@ -137,10 +137,11 @@ void W3DFontLibrary::releaseFontData( GameFont *font )
 		if(((FontCharsClass *)(font->fontData))->AlternateUnicodeFont)
 			((FontCharsClass *)(font->fontData))->AlternateUnicodeFont->Release_Ref();
 		((FontCharsClass *)(font->fontData))->Release_Ref();
+
+		font->fontData = NULL;
 	}
-	font->fontData = NULL;
-	
-}  // end releaseFont
+
+}
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 

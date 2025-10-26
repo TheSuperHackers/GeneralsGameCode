@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __WATER_H_
-#define __WATER_H_
-
 // INLCLUDES //////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameType.h"
 #include "Common/Overridable.h"
@@ -65,7 +62,7 @@ public:
 	RGBAColorInt m_vertex01Diffuse;
 	RGBAColorInt m_waterDiffuseColor;
 	RGBAColorInt m_transparentWaterDiffuse;
-	Real m_uScrollPerMs;		
+	Real m_uScrollPerMs;
 	Real m_vScrollPerMs;
 
 };
@@ -81,7 +78,11 @@ class WaterTransparencySetting : public Overridable
 	public:
 		Real m_transparentWaterDepth;
 		Real m_minWaterOpacity;
-		
+		RGBColor m_standingWaterColor;
+		RGBColor m_radarColor;
+		Bool m_additiveBlend;
+		AsciiString m_standingWaterTexture;
+
 		AsciiString m_skyboxTextureN;
 		AsciiString m_skyboxTextureE;
 		AsciiString m_skyboxTextureS;
@@ -93,6 +94,15 @@ class WaterTransparencySetting : public Overridable
 		{
 			m_transparentWaterDepth = 3.0f;
 			m_minWaterOpacity = 1.0f;
+			m_standingWaterColor.red = 1.0f;
+			m_standingWaterColor.green = 1.0f;
+			m_standingWaterColor.blue = 1.0f;
+			m_radarColor.red = 0.55f;
+			m_radarColor.green = 0.55f;
+			m_radarColor.blue = 1.0f;
+			m_standingWaterTexture = "TWWater01.tga";
+			m_additiveBlend = FALSE;
+
 			m_skyboxTextureN = "TSMorningN.tga";
 			m_skyboxTextureE = "TSMorningE.tga";
 			m_skyboxTextureS = "TSMorningS.tga";
@@ -112,6 +122,3 @@ EMPTY_DTOR(WaterTransparencySetting)
 extern WaterSetting WaterSettings[ TIME_OF_DAY_COUNT ];
 
 extern OVERRIDE<WaterTransparencySetting> TheWaterTransparency;
-
-#endif // __WATER_H_
-

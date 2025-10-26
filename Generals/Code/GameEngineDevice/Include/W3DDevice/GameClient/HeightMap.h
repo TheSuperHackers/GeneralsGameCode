@@ -22,11 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef __HEIGHTMAP_H_
-#define __HEIGHTMAP_H_
 
 #include "always.h"
 #include "rendobj.h"
@@ -66,7 +62,7 @@ typedef struct {
 
 #define VERTEX_BUFFER_TILE_LENGTH	32		//tiles of side length 32 (grid of 33x33 vertices).
 
-class LightMapTerrainTextureClass; 
+class LightMapTerrainTextureClass;
 class CloudMapTerrainTextureClass;
 class W3DDynamicLight;
 
@@ -103,7 +99,7 @@ virtually everything to do with the terrain, including: drawing, lighting,
 scorchmarks and intersection tests.
 */
 class HeightMapRenderObjClass : public RenderObjClass, public DX8_CleanupHook
-{	
+{
 
 public:
 
@@ -132,7 +128,7 @@ public:
 	virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
 
 
-	virtual void					On_Frame_Update(void); 
+	virtual void					On_Frame_Update(void);
 	virtual void					Notify_Added(SceneClass * scene);
 
 	///allocate resources needed to render heightmap
@@ -143,14 +139,14 @@ public:
 		Int xextent = m_map->getXExtent() - 1;
 		Int yextent = m_map->getYExtent() - 1;
 
-		if (x < 0) 
-			x = 0; 
-		else if (x > xextent) 
+		if (x < 0)
+			x = 0;
+		else if (x > xextent)
 			x = xextent;
 
-		if (y < 0) 
-			y = 0; 
-		else if (y > yextent) 
+		if (y < 0)
+			y = 0;
+		else if (y > yextent)
 			y = yextent;
 
 		return m_map->getDataPtr()[x + y*m_map->getXExtent()];
@@ -166,21 +162,20 @@ public:
 	void addTree(Coord3D location, Real scale, Real angle, AsciiString name, Bool visibleInMirror);
 	void renderTrees(CameraClass * camera); ///< renders the tree buffer.
 
-	/// Add a bib at location.  
+	/// Add a bib at location.
 	void addTerrainBib(Vector3 corners[4], ObjectID id, Bool highlight);
 	void addTerrainBibDrawable(Vector3 corners[4], DrawableID id, Bool highlight);
-	/// Remove a bib.  
+	/// Remove a bib.
 	void removeTerrainBib(ObjectID id);
 	void removeTerrainBibDrawable(DrawableID id);
 
-	/// Removes all bibs.  
+	/// Removes all bibs.
 	void removeAllTerrainBibs(void);
-	/// Remove all highlighting.  
+	/// Remove all highlighting.
 	void removeTerrainBibHighlighting(void);
 
 	void renderTerrainPass(CameraClass *pCamera);	///< renders additional terrain pass.
 	W3DShroud *getShroud()	{return m_shroud;}
-	void renderExtraBlendTiles(void);			///< render 3-way blend tiles that have blend of 3 textures.
 	void updateShorelineTiles(Int minX, Int minY, Int maxX, Int maxY, WorldHeightMap *pMap);	///<figure out which tiles on this map cross water plane
 	void updateViewImpassableAreas(Bool partial = FALSE, Int minX = 0, Int maxX = 0, Int minY = 0, Int maxY = 0);
 	void clearAllScorches(void);
@@ -209,20 +204,20 @@ public:
 	void setShowImpassableAreas(Bool show) {m_showImpassableAreas = show;}
 
 	Bool showAsVisibleCliff(Int xIndex, Int yIndex) const;
-	
+
 	Bool evaluateAsVisibleCliff(Int xIndex, Int yIndex, Real valuesGreaterThanRad);
 
 	void oversizeTerrain(Int tilesToOversize);
 
 	Real getViewImpassableAreaSlope(void) const { return m_curImpassableSlope; }
 	void setViewImpassableAreaSlope(Real viewSlope) { m_curImpassableSlope = viewSlope; }
-	
+
 	Bool doesNeedFullUpdate(void) {return m_needFullUpdate;}
 
 protected:
 #ifdef DO_SCORCH
-	enum { MAX_SCORCH_VERTEX=8194, 
-					MAX_SCORCH_INDEX=6*8194, 
+	enum { MAX_SCORCH_VERTEX=8194,
+					MAX_SCORCH_INDEX=6*8194,
 					MAX_SCORCH_MARKS=500,
 					SCORCH_MARKS_IN_TEXTURE=9,
 					SCORCH_PER_ROW = 3};
@@ -235,7 +230,7 @@ protected:
 	Int			m_numScorches;
 
 	Int			m_scorchesInBuffer;		///< how many are in the buffers.  If less than numScorches, we need to update
-	
+
 	// NOTE: This argument (contrary to most of the rest of the engine), is in degrees, not radians.
 	Real		m_curImpassableSlope;
 
@@ -245,7 +240,7 @@ protected:
 	void drawScorches(void);		///< Draws the scorch mark polygons in m_vertexScorch.
 #endif
 	WorldHeightMap *m_map;
-	Int	m_x;	///< dimensions of heightmap 
+	Int	m_x;	///< dimensions of heightmap
 	Int	m_y;	///< dimensions of heightmap
 	Int m_originX; ///<  Origin point in the grid.  Slides around.
 	Int m_originY; ///< Origin point in the grid.  Slides around.
@@ -258,7 +253,7 @@ protected:
 	Bool m_doXNextTime; ///< True if we updated y scroll, and need to do x scroll next frame.
 	Real	m_minHeight;	///<minimum value of height samples in heightmap
 	Real	m_maxHeight;	///<maximum value of height samples in heightmap
-	Int	m_numVBTilesX;	///<dimensions of array containing all the vertex buffers 
+	Int	m_numVBTilesX;	///<dimensions of array containing all the vertex buffers
 	Int	m_numVBTilesY;	///<dimensions of array containing all the vertex buffers
 	Int m_numVertexBufferTiles;	///<number of vertex buffers needed to store this heightmap
 	Int	m_numBlockColumnsInLastVB;///<a VB tile may be partially filled, this indicates how many 2x2 vertex blocks are filled.
@@ -320,7 +315,9 @@ protected:
 	AABoxClass & getTileBoundingBox(AABoxClass *aabox, Int x, Int y);	///<Vertex buffer bounding box
 	void initDestAlphaLUT(void);	///<initialize water depth LUT stored in m_destAlphaTexture
 	void renderShoreLines(CameraClass *pCamera);	///<re-render parts of terrain that need custom blending into water edge
+	void renderExtraBlendTiles(void);	///< render 3-way blend tiles that have blend of 3 textures.
+
+	static Bool useCloud();
 };
 
 extern HeightMapRenderObjClass *TheTerrainRenderObject;
-#endif  // end __HEIGHTMAP_H_

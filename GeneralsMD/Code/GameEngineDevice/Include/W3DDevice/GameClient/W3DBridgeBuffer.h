@@ -24,12 +24,12 @@
 
 // FILE: W3DBridgeBuffer.h //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -44,11 +44,8 @@
 
 #pragma once
 
-#ifndef __W3DBRIDGE_BUFFER_H_
-#define __W3DBRIDGE_BUFFER_H_
-
 //-----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //-----------------------------------------------------------------------------
 #include "always.h"
 #include "rendobj.h"
@@ -65,23 +62,24 @@
 //-----------------------------------------------------------------------------
 //           Forward References
 //-----------------------------------------------------------------------------
-class MeshClass; 
+class MeshClass;
 class W3DTerrainLogic;
 class W3DAssetManager;
 class SimpleSceneClass;
+enum BodyDamageType CPP_11(: Int);
 
 //-----------------------------------------------------------------------------
 //           Type Defines
 //-----------------------------------------------------------------------------
 
 typedef enum {
-	FIXED_BRIDGE = 0, 
-	SECTIONAL_BRIDGE = 1 
+	FIXED_BRIDGE = 0,
+	SECTIONAL_BRIDGE = 1
 } TBridgeType;
 
 class BridgeInfo;
 /// The individual data for a bridge.
-class W3DBridge 
+class W3DBridge
 {
 protected:
 	Vector3 m_start;						///< Drawing location
@@ -111,15 +109,15 @@ protected:
 	Int				m_numPolygons;		///< Number of polygons to draw.
 	Bool			m_visible;
 	AsciiString m_templateName;					///< Name of the bridge type.
-	enum BodyDamageType m_curDamageState;
+	BodyDamageType m_curDamageState;
 	Bool			m_enabled;
 
 protected:
 	Int getModelVerticesFixed(VertexFormatXYZNDUV1 *destination_vb, Int curVertex, const Matrix3D &mtx, MeshClass *pMesh, RefRenderObjListIterator *pLightsIterator);
 	Int getModelIndices(UnsignedShort *destination_ib, Int curIndex, Int vertexOffset, MeshClass *pMesh);
 	Int getModelVertices(VertexFormatXYZNDUV1 *destination_vb, Int curVertex,  Real xOffset,
-																Vector3 &vec, Vector3 &vecNormal, Vector3 &vecZ, Vector3 &offset, 
-																const Matrix3D &mtx, 
+																Vector3 &vec, Vector3 &vecNormal, Vector3 &vecZ, Vector3 &offset,
+																const Matrix3D &mtx,
 																MeshClass *pMesh, RefRenderObjListIterator *pLightsIterator);
 
 public:
@@ -130,9 +128,9 @@ public:
 	AsciiString getTemplateName(void) {return m_templateName;}
 	const Vector3* getStart(void) const {return &m_start;}
 	const Vector3* getEnd(void) const { return &m_end;}
-	Bool load(enum BodyDamageType curDamageState);
-	enum BodyDamageType getDamageState(void) {return m_curDamageState;};
-	void setDamageState(enum BodyDamageType state) { m_curDamageState = state;};
+	Bool load(BodyDamageType curDamageState);
+	BodyDamageType getDamageState(void) {return m_curDamageState;};
+	void setDamageState(BodyDamageType state) { m_curDamageState = state;};
 	void getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatXYZNDUV1 *destination_vb, Int *curIndexP, Int *curVertexP, RefRenderObjListIterator *pLightsIterator);
 	Bool cullBridge(CameraClass * camera);						 ///< Culls the bridges.  Returns true if visibility changed.
 	void clearBridge(void);		///< Frees all objects associated with a bridge.
@@ -147,8 +145,8 @@ public:
 // W3DBridgeBuffer: Draw buffer for the bridges.
 //
 //
-class W3DBridgeBuffer 
-{	
+class W3DBridgeBuffer
+{
 friend class BaseHeightMapRenderObjClass;
 public:
 
@@ -165,7 +163,7 @@ public:
 	void worldBuilderUpdateBridgeTowers( W3DAssetManager *assetManager, SimpleSceneClass *scene );			///< for the editor and showing visual bridge towers
 	void updateCenter(CameraClass *camera, RefRenderObjListIterator *pLightsIterator);
 	enum { MAX_BRIDGE_VERTEX=12000, //make sure it stays under 65535
-					MAX_BRIDGE_INDEX=2*MAX_BRIDGE_VERTEX,	//make sure it stays under 65535 
+					MAX_BRIDGE_INDEX=2*MAX_BRIDGE_VERTEX,	//make sure it stays under 65535
 					MAX_BRIDGES=200};
 protected:
 	DX8VertexBufferClass	*m_vertexBridge;	///<Bridge vertex buffer.
@@ -186,5 +184,3 @@ protected:
 	void cull(CameraClass * camera);						 ///< Culls the bridges.
 	void freeBridgeBuffers(void);									 ///< Frees the index and vertex buffers.
 };
-
-#endif  // end __W3DBRIDGE_BUFFER_H_

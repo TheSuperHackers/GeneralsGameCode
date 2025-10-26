@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -43,9 +43,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __GADGETTABCONTROL_H_
-#define __GADGETTABCONTROL_H_
 
 enum
 {
@@ -274,6 +271,3 @@ inline Color GadgetTabControlGetHiliteBorderColorBackground( GameWindow *g )				
 
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GADGETTABCONTROL_H_
-

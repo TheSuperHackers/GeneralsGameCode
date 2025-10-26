@@ -18,12 +18,12 @@
 
 // FILE: PreviewProc.cpp //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -67,7 +67,7 @@
 // PreviewProc ================================================================
 /** */
 //=============================================================================
-LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message, 
+LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 														  WPARAM wParam, LPARAM lParam )
 {
 
@@ -87,7 +87,7 @@ LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 			// find the target texture page
 			TexturePage *page;
 			for( page = TheImagePacker->getFirstTexturePage();
-					 page; 
+					 page;
 					 page = page->m_next )
 			{
 
@@ -112,26 +112,26 @@ LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 							page->getPixel( x, y, &r, &g, &b );
 
 							// create a new pen of the right color
-							pen = CreatePen( 1, 1, RGB( r, g, b, ) );
-							
+							pen = CreatePen( 1, 1, RGB( r, g, b ) );
+
 							// select pen into hdc
 							prevPen = (HPEN)SelectObject( hdc, pen );
-							
+
 							// draw ... what is the Win32 put pixel function???
 							MoveToEx( hdc, x, y, NULL );
 							LineTo( hdc, x + 1, y );
 
 							// put the old pen back
 							SelectObject( hdc, prevPen );
-							
+
 							// delete the created pen
 							DeleteObject( pen );
-									
-						}  // end for x
 
-					}  // end for y
+						}
 
-				}  // end if
+					}
+
+				}
 				else
 				{
 
@@ -149,22 +149,22 @@ LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 						rect.bottom = image->m_pagePos.hi.y + 1;  // FillRect not inclusive
 						FillRect( hdc, &rect, whiteBrush );
 
-					}  // end for image
-				
-				}  // end else
+					}
 
-			}  // end for page
+				}
+
+			}
 
 			EndPaint( hWnd, &ps );
 			break;
 
-		}  // end paint
+		}
 
-	}  // end switch
+	}
 
 	return DefWindowProc( hWnd, message, wParam, lParam );
 
-}  // end PreviewProc
+}
 
 // MakePreviewDisplay =========================================================
 /** */
@@ -175,7 +175,7 @@ HWND MakePreviewDisplay( void )
 	const char *className = "PreviewDisplay";
 	HWND hWnd;
 
-	wcex.cbSize = sizeof( WNDCLASSEX ); 
+	wcex.cbSize = sizeof( WNDCLASSEX );
 
 	wcex.style					= CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc		= (WNDPROC)PreviewProc;
@@ -213,7 +213,7 @@ HWND MakePreviewDisplay( void )
 
 	return hWnd;
 
-}  // end MakePreviewDisplay
+}
 
 // UpdatePreviewWindow ========================================================
 /** Update the preview window, if present */
@@ -237,8 +237,8 @@ void UpdatePreviewWindow( void )
 	char title[ 256 ];
 
 	// construct title
-	sprintf( title, "Page #%d of %d", 
-					 TheImagePacker->getTargetPreviewPage(), 
+	sprintf( title, "Page #%d of %d",
+					 TheImagePacker->getTargetPreviewPage(),
 					 TheImagePacker->getPageCount() );
 	SetWindowText( preview, title );
 
@@ -255,7 +255,7 @@ void UpdatePreviewWindow( void )
 	clientRect.bottom = clientRect.top + TheImagePacker->getTargetHeight();
 	AdjustWindowRect( &clientRect, PREVIEW_STYLE, FALSE );
 	MoveWindow( preview,
-							clientRect.left, 
+							clientRect.left,
 							clientRect.top,
 							clientRect.right - clientRect.left,
 							clientRect.bottom - clientRect.top,
@@ -264,4 +264,4 @@ void UpdatePreviewWindow( void )
 	// invalidate the client area for redraw
 	InvalidateRect( preview, NULL, TRUE );
 
-}  // end UpdatePreviewWindow
+}

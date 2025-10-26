@@ -56,7 +56,7 @@ Vector3 MaxWorldInfoClass::Get_Shared_Vertex_Normal (Vector3 pos, int smgroup)
 	for(unsigned int index = 0; index < MeshList.Count(); index ++) {
 		GeometryExportTaskClass * task = MeshList[index];
 		if (task != CurrentTask) {
-			normal += task->Get_Shared_Vertex_Normal(world_pos,smgroup);			
+			normal += task->Get_Shared_Vertex_Normal(world_pos,smgroup);
 		}
 	}
 

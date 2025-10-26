@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __PILOT_FIND_VEHICLE_UPDATE_H_
-#define __PILOT_FIND_VEHICLE_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -53,7 +50,7 @@ public:
 	PilotFindVehicleUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -79,7 +76,3 @@ public:
 protected:
 	Bool		m_didMoveToBase;
 };
-
-
-#endif
-

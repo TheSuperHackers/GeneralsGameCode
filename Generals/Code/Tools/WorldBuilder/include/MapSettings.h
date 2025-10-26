@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_MAPSETTINGS_H__21749744_4DF4_462C_8DD4_FEEC1003DCFE__INCLUDED_)
-#define AFX_MAPSETTINGS_H__21749744_4DF4_462C_8DD4_FEEC1003DCFE__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // MapSettings.h : header file
 //
 
@@ -65,5 +61,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_MAPSETTINGS_H__21749744_4DF4_462C_8DD4_FEEC1003DCFE__INCLUDED_)

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef MONEY_CRATE_COLLIDE_H_
-#define MONEY_CRATE_COLLIDE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
 #include "GameLogic/Module/CrateCollide.h"
@@ -53,11 +50,11 @@ public:
 		m_upgradeBoost.clear();
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     CrateCollideModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "MoneyProvided",	INI::parseUnsignedInt,	NULL, offsetof( MoneyCrateCollideModuleData, m_moneyProvided ) },
 			{ "UpgradedBoost",	parseUpgradePair,		NULL, offsetof( MoneyCrateCollideModuleData, m_upgradeBoost ) },
@@ -89,5 +86,3 @@ protected:
 	Int getUpgradedSupplyBoost( Object *other ) const;
 
 };
-
-#endif

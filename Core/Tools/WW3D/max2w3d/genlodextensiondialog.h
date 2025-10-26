@@ -36,8 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef GENLODEXTENSIONDIALOG_H
-#define GENLODEXTENSIONDIALOG_H
+#pragma once
 
 #include <windows.h>
 
@@ -55,23 +54,23 @@ public:
 
 	GenLodExtensionDialogClass(Interface * maxinterface);
 	~GenLodExtensionDialogClass();
-	
+
 	struct OptionsStruct
 	{
 		OptionsStruct(void) : LodIndex(0)
-		{ 
+		{
 		}
-		
+
 		// name options
 		int		LodIndex;
 	};
 
 	bool Get_Options(OptionsStruct * options);
 	bool Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM);
-		
+
 private:
 
-	enum 
+	enum
 	{
 		MIN_LOD_INDEX				= 0,
 		MAX_LOD_INDEX				= 99,
@@ -87,8 +86,3 @@ private:
 	friend BOOL CALLBACK			_gen_lod_ext_dialog_proc(HWND Hwnd,UINT message,WPARAM wParam,LPARAM lParam);
 
 };
-
-
-
-
-#endif //GENLODEXTENSIONDIALOG_H

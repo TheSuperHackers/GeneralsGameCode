@@ -22,14 +22,14 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: Dict.cpp 
+// FILE: Dict.cpp
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -107,7 +107,7 @@ void Dict::DictPair::setNameAndType(NameKeyType key, Dict::DataType type)
 }
 
 // -----------------------------------------------------
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void Dict::validate() const
 {
 	if (!m_data) return;
@@ -130,7 +130,7 @@ Dict::DictPair* Dict::findPairByKey(NameKeyType key) const
 	DictPair* base = m_data->peek();
 	Int minIdx = 0;
 	Int maxIdx = m_data->m_numPairsUsed;
-	while (minIdx < maxIdx) 
+	while (minIdx < maxIdx)
 	{
 		Int midIdx = (((minIdx + maxIdx) - 1) >> 1);
 		DictPair* mid = base + midIdx;
@@ -157,16 +157,15 @@ Dict::DictPair *Dict::ensureUnique(int numPairsNeeded, Bool preserveData, DictPa
 		return pairToTranslate;
 	}
 
-	if (numPairsNeeded > MAX_LEN)
-		throw ERROR_OUT_OF_MEMORY;
-
 	Dict::DictPairData* newData = NULL;
 	if (numPairsNeeded > 0)
 	{
+		DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("Cannot use dynamic memory allocator before its initialization. Check static initialization order."));
+		DEBUG_ASSERTCRASH(numPairsNeeded <= MAX_LEN, ("Dict::ensureUnique exceeds max pairs length %d with requested length %d", MAX_LEN, numPairsNeeded));
 		int minBytes = sizeof(Dict::DictPairData) + numPairsNeeded*sizeof(Dict::DictPair);
 		int actualBytes = TheDynamicMemoryAllocator->getActualAllocationSize(minBytes);
 		// note: be certain to alloc with zero; we'll take advantage of the fact that all-zero
-		// is a bit-pattern that happens to init all our pairs to legal values: 
+		// is a bit-pattern that happens to init all our pairs to legal values:
 		// type BOOL, key INVALID, value FALSE.
 		newData = (Dict::DictPairData*)TheDynamicMemoryAllocator->allocateBytes(actualBytes, "Dict::ensureUnique");
 		newData->m_refCount = 1;
@@ -183,7 +182,7 @@ Dict::DictPair *Dict::ensureUnique(int numPairsNeeded, Bool preserveData, DictPa
 		}
 	}
 
-	Int delta;
+	Int delta = 0;
 	if (pairToTranslate && m_data)
 		delta = pairToTranslate - m_data->peek();
 
@@ -275,7 +274,7 @@ Bool Dict::getBool(NameKeyType key, Bool *exists/*=NULL*/) const
 		if (exists) *exists = true;
 		return *pair->asBool();
 	}
-	DEBUG_ASSERTCRASH(exists != NULL, ("dict key missing, or of wrong type\n"));	// only assert if they didn't check result
+	DEBUG_ASSERTCRASH(exists != NULL, ("dict key missing, or of wrong type"));	// only assert if they didn't check result
 	if (exists) *exists = false;
 	return false;
 }
@@ -290,7 +289,7 @@ Int Dict::getInt(NameKeyType key, Bool *exists/*=NULL*/) const
 		if (exists) *exists = true;
 		return *pair->asInt();
 	}
-	DEBUG_ASSERTCRASH(exists != NULL,("dict key missing, or of wrong type\n"));	// only assert if they didn't check result
+	DEBUG_ASSERTCRASH(exists != NULL,("dict key missing, or of wrong type"));	// only assert if they didn't check result
 	if (exists) *exists = false;
 	return 0;
 }
@@ -305,7 +304,7 @@ Real Dict::getReal(NameKeyType key, Bool *exists/*=NULL*/) const
 		if (exists) *exists = true;
 		return *pair->asReal();
 	}
-	DEBUG_ASSERTCRASH(exists != NULL,("dict key missing, or of wrong type\n"));	// only assert if they didn't check result
+	DEBUG_ASSERTCRASH(exists != NULL,("dict key missing, or of wrong type"));	// only assert if they didn't check result
 	if (exists) *exists = false;
 	return 0.0f;
 }
@@ -320,7 +319,7 @@ AsciiString Dict::getAsciiString(NameKeyType key, Bool *exists/*=NULL*/) const
 		if (exists) *exists = true;
 		return *pair->asAsciiString();
 	}
-	DEBUG_ASSERTCRASH(exists != NULL,("dict key missing, or of wrong type\n"));	// only assert if they didn't check result
+	DEBUG_ASSERTCRASH(exists != NULL,("dict key missing, or of wrong type"));	// only assert if they didn't check result
 	if (exists) *exists = false;
 	return AsciiString::TheEmptyString;
 }
@@ -335,7 +334,7 @@ UnicodeString Dict::getUnicodeString(NameKeyType key, Bool *exists/*=NULL*/) con
 		if (exists) *exists = true;
 		return *pair->asUnicodeString();
 	}
-	DEBUG_ASSERTCRASH(exists != NULL,("dict key missing, or of wrong type\n"));	// only assert if they didn't check result
+	DEBUG_ASSERTCRASH(exists != NULL,("dict key missing, or of wrong type"));	// only assert if they didn't check result
 	if (exists) *exists = false;
 	return UnicodeString::TheEmptyString;
 }
@@ -344,14 +343,14 @@ UnicodeString Dict::getUnicodeString(NameKeyType key, Bool *exists/*=NULL*/) con
 Bool Dict::getNthBool(Int n) const
 {
 	validate();
-	DEBUG_ASSERTCRASH(n >= 0 && n < getPairCount(), ("n out of range\n"));
+	DEBUG_ASSERTCRASH(n >= 0 && n < getPairCount(), ("n out of range"));
 	if (m_data)
 	{
 		DictPair* pair = &m_data->peek()[n];
 		if (pair && pair->getType() == DICT_BOOL)
 			return *pair->asBool();
 	}
-	DEBUG_CRASH(("dict key missing, or of wrong type\n"));
+	DEBUG_CRASH(("dict key missing, or of wrong type"));
 	return false;
 }
 
@@ -359,14 +358,14 @@ Bool Dict::getNthBool(Int n) const
 Int Dict::getNthInt(Int n) const
 {
 	validate();
-	DEBUG_ASSERTCRASH(n >= 0 && n < getPairCount(), ("n out of range\n"));
+	DEBUG_ASSERTCRASH(n >= 0 && n < getPairCount(), ("n out of range"));
 	if (m_data)
 	{
 		DictPair* pair = &m_data->peek()[n];
 		if (pair && pair->getType() == DICT_INT)
 			return *pair->asInt();
 	}
-	DEBUG_CRASH(("dict key missing, or of wrong type\n"));
+	DEBUG_CRASH(("dict key missing, or of wrong type"));
 	return 0;
 }
 
@@ -374,14 +373,14 @@ Int Dict::getNthInt(Int n) const
 Real Dict::getNthReal(Int n) const
 {
 	validate();
-	DEBUG_ASSERTCRASH(n >= 0 && n < getPairCount(), ("n out of range\n"));
+	DEBUG_ASSERTCRASH(n >= 0 && n < getPairCount(), ("n out of range"));
 	if (m_data)
 	{
 		DictPair* pair = &m_data->peek()[n];
 		if (pair && pair->getType() == DICT_REAL)
 			return *pair->asReal();
 	}
-	DEBUG_CRASH(("dict key missing, or of wrong type\n"));
+	DEBUG_CRASH(("dict key missing, or of wrong type"));
 	return 0.0f;
 }
 
@@ -389,14 +388,14 @@ Real Dict::getNthReal(Int n) const
 AsciiString Dict::getNthAsciiString(Int n) const
 {
 	validate();
-	DEBUG_ASSERTCRASH(n >= 0 && n < getPairCount(), ("n out of range\n"));
+	DEBUG_ASSERTCRASH(n >= 0 && n < getPairCount(), ("n out of range"));
 	if (m_data)
 	{
 		DictPair* pair = &m_data->peek()[n];
 		if (pair && pair->getType() == DICT_ASCIISTRING)
 			return *pair->asAsciiString();
 	}
-	DEBUG_CRASH(("dict key missing, or of wrong type\n"));
+	DEBUG_CRASH(("dict key missing, or of wrong type"));
 	return AsciiString::TheEmptyString;
 }
 
@@ -404,14 +403,14 @@ AsciiString Dict::getNthAsciiString(Int n) const
 UnicodeString Dict::getNthUnicodeString(Int n) const
 {
 	validate();
-	DEBUG_ASSERTCRASH(n >= 0 && n < getPairCount(), ("n out of range\n"));
+	DEBUG_ASSERTCRASH(n >= 0 && n < getPairCount(), ("n out of range"));
 	if (m_data)
 	{
 		DictPair* pair = &m_data->peek()[n];
 		if (pair && pair->getType() == DICT_UNICODESTRING)
 			return *pair->asUnicodeString();
 	}
-	DEBUG_CRASH(("dict key missing, or of wrong type\n"));
+	DEBUG_CRASH(("dict key missing, or of wrong type"));
 	return UnicodeString::TheEmptyString;
 }
 
@@ -422,7 +421,7 @@ Dict::DictPair *Dict::setPrep(NameKeyType key, Dict::DataType type)
 	Int pairsNeeded = getPairCount();
 	if (!pair)
 		++pairsNeeded;
-	pair = ensureUnique(pairsNeeded, true, pair);	
+	pair = ensureUnique(pairsNeeded, true, pair);
 	if (!pair)
 	{
 		pair = &m_data->peek()[m_data->m_numPairsUsed++];
@@ -439,21 +438,21 @@ void Dict::sortPairs()
 		return;
 
 	// yer basic shellsort.
-	for (Int gap = m_data->m_numPairsUsed >> 1; gap > 0; gap >>= 1) 
+	for (Int gap = m_data->m_numPairsUsed >> 1; gap > 0; gap >>= 1)
 	{
-		for (Int i = gap; i < m_data->m_numPairsUsed; i++) 
+		for (Int i = gap; i < m_data->m_numPairsUsed; i++)
 		{
-			for (Int j = i - gap; j >= 0; j -= gap) 
+			for (Int j = i - gap; j >= 0; j -= gap)
 			{
 				DictPair* a = m_data->peek() + j;
 				DictPair* b = m_data->peek() + j + gap;
-				if (a->getName() > b->getName()) 
+				if (a->getName() > b->getName())
 				{
 					DictPair tmp = *a;
 					*a = *b;
 					*b = tmp;
-				} 
-				else 
+				}
+				else
 				{
 					break;
 				}
@@ -519,14 +518,14 @@ Bool Dict::remove(NameKeyType key)
 	DictPair* pair = findPairByKey(key);
 	if (pair)
 	{
-		pair = ensureUnique(m_data->m_numPairsUsed, true, pair);	
+		pair = ensureUnique(m_data->m_numPairsUsed, true, pair);
 		pair->setNameAndType((NameKeyType)0x7fffffff, DICT_BOOL);
 		sortPairs();
 		--m_data->m_numPairsUsed;
 		validate();
 		return true;
 	}
-	DEBUG_CRASH(("dict key missing in remove\n"));
+	DEBUG_CRASH(("dict key missing in remove"));
 	return false;
 }
 

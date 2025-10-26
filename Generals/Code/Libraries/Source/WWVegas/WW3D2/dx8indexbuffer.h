@@ -36,12 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DX8INDEXBUFFER_H
-#define DX8INDEXBUFFER_H
 
 #include "always.h"
 #include "wwdebug.h"
@@ -119,7 +114,7 @@ class DynamicIBAccessClass : public W3DMPO
 	friend SortingRendererClass;
 
 	unsigned Type;
-	unsigned short IndexCount;	
+	unsigned short IndexCount;
 	unsigned short IndexBufferOffset;
 	IndexBufferClass* IndexBuffer;
 
@@ -144,7 +139,7 @@ public:
 	class WriteLockClass
 	{
 		DynamicIBAccessClass* DynamicIBAccess;
-		unsigned short* Indices;		
+		unsigned short* Indices;
 	public:
 		WriteLockClass(DynamicIBAccessClass* ib_access);
 		~WriteLockClass();
@@ -180,7 +175,7 @@ public:
 	void Copy(unsigned short* indices,unsigned start_index,unsigned index_count);
 
 	inline IDirect3DIndexBuffer8* Get_DX8_Index_Buffer()	{ return index_buffer; }
-	
+
 private:
 	IDirect3DIndexBuffer8*	index_buffer;		// actual dx8 index buffer
 };
@@ -203,6 +198,3 @@ public:
 protected:
 	unsigned short* index_buffer;
 };
-
-#endif //DX8INDEXBUFFER_H
-

@@ -129,14 +129,14 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 				while (!feof(filePtr))
 				{
 					fread(buffer, 256, 1, filePtr);
-					if ((stringPtr = strstr(buffer, VERSION_STRING)) != NULL) 
+					if ((stringPtr = strstr(buffer, VERSION_STRING)) != NULL)
 					{
 						char *ptr;
 
 						// Looking for '#define VERSION "x.y.z"'
 						ptr = strtok(stringPtr, " ");	// The VERSION
 						ptr = strtok(NULL, "\n");			// The remainder
-						
+
 						if (*ptr == '\"')
 						{
 							ptr++; // Inc past the first "
@@ -152,9 +152,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 						{
 							printf ("Local build is 0. Oops, didn't find a string of the format: '#define VERSION \"x.y.z\"'");
 						}
-					} // End if if (strstr
-				} // End of while
-			} // End of if filePtr
+					}
+				}
+			}
 			else
 			{
 				// Didn't find the file, write a new one

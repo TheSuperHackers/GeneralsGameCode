@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: ParticleTypePanels.cpp 
+// FILE: ParticleTypePanels.cpp
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -51,12 +51,12 @@ ParticlePanelParticle::ParticlePanelParticle(UINT nIDTemplate, CWnd* pParentWnd)
 void ParticlePanelParticle::InitPanel( void )
 {
 	CFileFind finder;
-	
+
 	CComboBox *pWnd = (CComboBox*) GetDlgItem(IDC_PSEd_ParticleTypeParticle);
 	if (!pWnd) {
 		return;
 	}
-	
+
 	// first, clear out any items.
 	pWnd->ResetContent();
 
@@ -64,7 +64,7 @@ void ParticlePanelParticle::InitPanel( void )
 	findString = PATH;
 	findString += PREFIX;
 	findString += POSTFIX;
-//	DEBUG_LOG(("ParticlePanedParticle::InitPanel - looking for textures, search string is '%s'\n", findString.begin()));
+//	DEBUG_LOG(("ParticlePanedParticle::InitPanel - looking for textures, search string is '%s'", findString.begin()));
 	BOOL bWorkin = finder.FindFile(findString.c_str());
 	while (bWorkin) {
 		bWorkin = finder.FindNextFile();
@@ -107,7 +107,7 @@ void ParticlePanelParticle::OnParticleSystemEdit()
 	if (!pParent) {
 		return;
 	}
-	
+
 	pParent->signalParticleSystemEdit();
 }
 
@@ -168,7 +168,7 @@ void ParticlePanelDrawable::OnParticleSystemEdit()
 	if (!pParent) {
 		return;
 	}
-	
+
 	pParent->signalParticleSystemEdit();
 }
 

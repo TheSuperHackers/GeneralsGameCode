@@ -33,10 +33,8 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
+#pragma once
 
 /*
 **	This header defines generally unused member structures used by the INI class.
@@ -74,7 +72,7 @@ struct INISection : public Node<INISection *> {
 //		~INISection(void) {free(Section);Section = 0;EntryList.Delete();}
 		INIEntry * Find_Entry(char const * entry) const;
 //		int Index_ID(void) const {return(CRCEngine()(Section, strlen(Section)));};
-		int Index_ID(void) const { return CRC::String(Section); }; 
+		int Index_ID(void) const { return CRC::String(Section); };
 
 		char * Section;
 		List<INIEntry *> EntryList;

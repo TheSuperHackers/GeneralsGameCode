@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __GAMEINFO_H__
-#define __GAMEINFO_H__
-
 #include "Common/Snapshot.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "GameNetwork/FirewallHelper.h"
@@ -80,7 +77,7 @@ public:
 	void setStartPos( Int startPos ) { m_startPos = startPos; }
 	Int getStartPos( void ) const { return m_startPos; }
 
-	void setPlayerTemplate( Int playerTemplate ) 
+	void setPlayerTemplate( Int playerTemplate )
 	{ m_playerTemplate = playerTemplate;
 		if (playerTemplate <= PLAYERTEMPLATE_MIN)
 			m_startPos = -1;
@@ -101,7 +98,7 @@ public:
 
 	inline void setNATBehavior( FirewallHelperClass::FirewallBehaviorType NATBehavior) { m_NATBehavior = NATBehavior; }
 	inline FirewallHelperClass::FirewallBehaviorType getNATBehavior() const { return m_NATBehavior; }
-	
+
 	void saveOffOriginalInfo( void );
 	inline Int getOriginalPlayerTemplate( void ) const	{ return m_origPlayerTemplate; }
 	inline Int getOriginalColor( void ) const						{ return m_origColor; }
@@ -155,7 +152,7 @@ class GameInfo
 {
 public:
 	GameInfo();
-	
+
 	void init( void );
 	virtual void reset( void );
 
@@ -211,14 +208,14 @@ public:
 	// CRC checking hack
 	void setCRCInterval( Int val ) { m_crcInterval = (val<100)?val:100; }
 	inline Int getCRCInterval( void ) const { return m_crcInterval; }
-	
+
 	Bool haveWeSurrendered(void) { return m_surrendered; }
 	void markAsSurrendered(void) { m_surrendered = TRUE; }
 
 	Bool isSkirmish(void); // TRUE if 1 human & 1+ AI are present && !isSandbox()
 	Bool isMultiPlayer(void); // TRUE if 2+ human are present
 	Bool isSandbox(void); // TRUE if everybody is on the same team
-	
+
 	Bool isPlayerPreorder(Int index);
 	void markPlayerAsPreorder(Int index);
 
@@ -284,5 +281,3 @@ public:
 };
 
 extern SkirmishGameInfo *TheSkirmishGameInfo;
-
-#endif // __GAMEINFO_H__

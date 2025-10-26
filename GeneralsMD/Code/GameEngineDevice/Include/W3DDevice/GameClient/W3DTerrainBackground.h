@@ -24,12 +24,12 @@
 
 // FILE: W3DTerrainBackground.h //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -44,11 +44,8 @@
 
 #pragma once
 
-#ifndef __W3DTERRAIN_BUFFER_H_
-#define __W3DTERRAIN_BUFFER_H_
-
 //-----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //-----------------------------------------------------------------------------
 #include "always.h"
 #include "rendobj.h"
@@ -64,7 +61,7 @@
 //-----------------------------------------------------------------------------
 //           Forward References
 //-----------------------------------------------------------------------------
-class MeshClass; 
+class MeshClass;
 class WorldHeightMap;
 class TerrainTextureClass;
 
@@ -76,14 +73,14 @@ class TerrainTextureClass;
 // W3DTerrainBackground: Draw buffer for the bibs.
 //
 //
-class W3DTerrainBackground 
-{	
+class W3DTerrainBackground
+{
 friend class HeightMapRenderObjClass;
 public:
 
 	W3DTerrainBackground(void);
 	~W3DTerrainBackground(void);
-	/// Draws the terrain.  
+	/// Draws the terrain.
 	void drawVisiblePolys(RenderInfoClass & rinfo, Bool disableTextures);
 	void setFlip(WorldHeightMap *htMap); ///< Sets the flip bit for required vertices.
 	void doPartialUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, Bool doTextures );
@@ -124,5 +121,3 @@ protected:
 	Bool advanceLeft(ICoord2D &left, Int xOffset, Int yOffset, Int width);
 	Bool advanceRight(ICoord2D &left, Int xOffset, Int yOffset, Int width);
 };
-
-#endif  // end __W3DTERRAIN_BUFFER_H_

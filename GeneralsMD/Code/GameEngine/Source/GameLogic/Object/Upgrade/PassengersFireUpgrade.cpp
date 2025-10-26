@@ -53,11 +53,11 @@ void PassengersFireUpgrade::upgradeImplementation( )
 {
 	// Just need to flag the containmodule having the passengersallowedtofire true, .
 
-  
+
   Object *obj = getObject();
 //	obj->setWeaponSetFlag( WEAPONSET_PLAYER_UPGRADE );
 
-  ContainModuleInterface *contain = obj->getContain();  
+  ContainModuleInterface *contain = obj->getContain();
   if ( contain )
   {
     contain->setPassengerAllowedToFire( TRUE );
@@ -74,7 +74,7 @@ void PassengersFireUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -92,7 +92,7 @@ void PassengersFireUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -103,4 +103,4 @@ void PassengersFireUpgrade::loadPostProcess( void )
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -41,18 +41,18 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-PowerPlantUpgrade::PowerPlantUpgrade( Thing *thing, const ModuleData* moduleData ) : 
+PowerPlantUpgrade::PowerPlantUpgrade( Thing *thing, const ModuleData* moduleData ) :
 							UpgradeModule( thing, moduleData )
 {
 
-}  // end PowerPlantUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 PowerPlantUpgrade::~PowerPlantUpgrade( void )
 {
 
-}  // end ~PowerPlantUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ void PowerPlantUpgrade::onDelete( void )
 	// this upgrade module is now "not upgraded"
 	setUpgradeExecuted(FALSE);
 
-}  // end onDelete
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ void PowerPlantUpgrade::onCapture( Player *oldOwner, Player *newOwner )
 	// do nothing if we haven't upgraded yet
 	if( isAlreadyUpgraded() == FALSE )
 		return;
-	
+
 	if (getObject()->isDisabled())
 		return;
 
@@ -103,7 +103,7 @@ void PowerPlantUpgrade::onCapture( Player *oldOwner, Player *newOwner )
 
 	}
 
-}  // end onCapture
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -111,7 +111,7 @@ void PowerPlantUpgrade::upgradeImplementation( void )
 {
 
 	Player *player = getObject()->getControllingPlayer();
-	
+
 	// add the new power production to the object
 	if( player )
 		player->addPowerBonus(getObject());
@@ -124,8 +124,8 @@ void PowerPlantUpgrade::upgradeImplementation( void )
 		if( ppui )
 			ppui->extendRods(TRUE);
 	}
-	
-}  // end upgradeImplementation
+
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -136,7 +136,7 @@ void PowerPlantUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -154,7 +154,7 @@ void PowerPlantUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -164,16 +164,16 @@ void PowerPlantUpgrade::loadPostProcess( void )
 
 	// extend base class
 	UpgradeModule::loadPostProcess();
-	
+
 	// Most upgrade modules have state change effects that are themselves saved.  This one is a fire and forget.
 	// So we need to re-fire on load if we are turned on.
 	if( isAlreadyUpgraded() )
 	{
 		Player *player = getObject()->getControllingPlayer();
-		
+
 		// add the new power production to the object
 		if( player )
 			player->addPowerBonus(getObject());
 	}
 
-}  // end loadPostProcess
+}

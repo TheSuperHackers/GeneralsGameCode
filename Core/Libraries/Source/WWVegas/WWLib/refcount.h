@@ -33,12 +33,8 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
+
 #pragma once
-#endif // _MSC_VER >= 1000
- 
-#ifndef REFCOUNT_H
-#define REFCOUNT_H
 
 #ifndef ALWAYS_H
 #include "always.h"
@@ -47,6 +43,8 @@
 #ifndef LISTNODE_H
 #include "LISTNODE.H"
 #endif
+
+#include "wwdebug.h"
 
 class RefCountClass;
 
@@ -101,10 +99,14 @@ struct ActiveRefStruct
 typedef DataNode<RefCountClass *>	RefCountNodeClass;
 typedef List<RefCountNodeClass *>	RefCountListClass;
 
+/*
+** Note that Add_Ref and Release_Ref are always const, because copying, destroying and reference
+** counting const objects is meant to work.
+*/
 class RefCountClass
 {
 public:
-	
+
 	RefCountClass(void) :
 		NumRefs(1)
 		#ifndef NDEBUG
@@ -117,17 +119,22 @@ public:
 		#endif
 	}
 
-	RefCountClass(const RefCountClass & ) : 
-		NumRefs(1)		
+	/*
+	** The reference counter value cannot be copied.
+	*/
+	RefCountClass(const RefCountClass & ) :
+		NumRefs(1)
 		#ifndef NDEBUG
 		,ActiveRefNode(this)
 		#endif
-	{ 		
+	{
 		#ifndef NDEBUG
 		Add_Active_Ref(this);
 		Inc_Total_Refs(this);
 		#endif
 	}
+
+	RefCountClass& operator=(const RefCountClass&) { return *this; }
 
 	/*
 	** Add_Ref, call this function if you are going to keep a pointer
@@ -143,18 +150,18 @@ public:
 	** Release_Ref, call this function when you no longer need the pointer
 	** to this object.
 	*/
-	WWINLINE void		Release_Ref(void) const					{ 
+	WWINLINE void		Release_Ref(void) const					{
 																				#ifndef NDEBUG
 																				Dec_Total_Refs(this);
 																				#endif
-																				NumRefs--; 
-																				assert(NumRefs >= 0); 
-																				if (NumRefs == 0) const_cast<RefCountClass*>(this)->Delete_This(); 
+																				NumRefs--;
+																				WWASSERT(NumRefs >= 0);
+																				if (NumRefs == 0) const_cast<RefCountClass*>(this)->Delete_This();
 																			}
 
 
 	/*
-	** Check the number of references to this object.  
+	** Check the number of references to this object.
 	*/
 	int					Num_Refs(void) const						{ return NumRefs; }
 
@@ -168,7 +175,7 @@ public:
 	/*
 	** Total_Refs - This static function can be used to get the total number
 	** of references that have been made.  Once you've released all of your
-	** objects, it should go to zero.  
+	** objects, it should go to zero.
 	*/
 	static int			Total_Refs(void)							{ return TotalRefs; }
 
@@ -180,9 +187,9 @@ protected:
 	virtual ~RefCountClass(void)
 	{
 		#ifndef NDEBUG
-		Remove_Active_Ref(this);	
+		Remove_Active_Ref(this);
 		#endif
-		assert(NumRefs == 0);
+		WWASSERT(NumRefs == 0);
 	}
 
 private:
@@ -202,31 +209,31 @@ private:
 	** increments the total reference count
 	*/
 	static void			Inc_Total_Refs(const RefCountClass *);
-	
+
 	/*
 	** decrements the total reference count
 	*/
 	static void			Dec_Total_Refs(const RefCountClass *);
 
 public:
-	
+
 #ifndef NDEBUG // Debugging stuff
 
 	/*
 	** Node in the Active Refs List
 	*/
 	RefCountNodeClass					ActiveRefNode;
-	
+
 	/*
 	** Auxiliary Active Ref Data
 	*/
-	ActiveRefStruct					ActiveRefInfo;	
+	ActiveRefStruct					ActiveRefInfo;
 
 	/*
 	** List of the active referenced objects
 	*/
 	static RefCountListClass		ActiveRefList;
-	
+
 	/*
 	** Adds the ref obj pointer to the active ref list
 	*/
@@ -247,10 +254,74 @@ public:
 	*/
 	static bool							Validate_Active_Ref(RefCountClass * obj);
 
-#endif
+#endif // NDEBUG
 
 };
 
 
+/*
+** This template class is meant to be used as a class member for compact reference counter placements.
+** A 1 byte reference counter can be alright if the counter is not reaching the value limits.
+*
+** Note that Add_Ref and Release_Ref are always const, because copying, destroying and reference
+** counting const objects is meant to work.
+*/
+template <typename IntegerType>
+class RefCountValue
+{
+public:
 
-#endif
+	RefCountValue(void)
+		: NumRefs(1)
+	{
+	}
+
+	~RefCountValue(void)
+	{
+		WWASSERT(NumRefs == IntegerType(0));
+	}
+
+	/*
+	** The reference counter value cannot be copied.
+	*/
+	RefCountValue(const RefCountValue&) : NumRefs(1) {}
+	RefCountValue& operator=(const RefCountValue&) { return *this; }
+
+	/*
+	** Add_Ref, call this function if you are going to keep a pointer to this object.
+	*/
+	void Add_Ref(void) const
+	{
+		WWASSERT(NumRefs != ~IntegerType(0));
+		++NumRefs;
+	}
+
+	/*
+	** Release_Ref, call this function when you no longer need the pointer to this object.
+	** You can pass a static function of type void(*)(DeleteType*) or 'operator delete'.
+	**
+	** Note that this function takes a const ObjectType*, because this function is expected
+	** to be called from within a const function as well.
+	*/
+	template <typename DeleteFunction, typename ObjectType>
+	void Release_Ref(DeleteFunction deleteFunction, const ObjectType* objectToDelete) const
+	{
+		WWASSERT(NumRefs != IntegerType(0));
+		if (--NumRefs == IntegerType(0))
+		{
+			deleteFunction(const_cast<ObjectType*>(objectToDelete));
+		}
+	}
+
+	/*
+	** Check the number of references to this object.
+	*/
+	IntegerType Num_Refs(void) const
+	{
+		return NumRefs;
+	}
+
+private:
+
+	mutable IntegerType NumRefs;
+};

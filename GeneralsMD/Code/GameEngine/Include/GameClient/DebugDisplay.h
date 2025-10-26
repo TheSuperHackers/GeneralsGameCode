@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    Generals
@@ -43,12 +43,8 @@
 
 #pragma once
 
-#ifndef __GAMECLIENT_DEBUGDISPLAY_H
-#define __GAMECLIENT_DEBUGDISPLAY_H
-
-
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #include "Lib/BaseType.h"
@@ -67,7 +63,7 @@
 
 
 //===============================
-// DebugDisplayInterface 
+// DebugDisplayInterface
 //===============================
 
 class DebugDisplayInterface
@@ -83,7 +79,6 @@ class DebugDisplayInterface
 			RED,
 			GREEN,
 			BLUE,
-			NUM_COLORS
 		};
 
 		virtual ~DebugDisplayInterface() {};
@@ -106,7 +101,7 @@ class DebugDisplayInterface
 
 
 //===============================
-// DebugDisplay 
+// DebugDisplay
 //===============================
 
 class DebugDisplay : public DebugDisplayInterface
@@ -142,15 +137,11 @@ class DebugDisplay : public DebugDisplayInterface
 
 // displayers
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 extern void AudioDebugDisplay( DebugDisplayInterface *debugDisplay, void *userData, FILE *fp );
 #endif
 
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
-
-
-
-#endif // __GAMECLIENT_DEBUGDISPLAY_H

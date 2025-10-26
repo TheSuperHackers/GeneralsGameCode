@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __BUDDYTHREAD_H__
-#define __BUDDYTHREAD_H__
-
 #include "gamespy/gp/gp.h"
 
 #define MAX_BUDDY_CHAT_LEN 128
@@ -53,7 +50,6 @@ public:
 		BUDDYREQUEST_DENYADD,			// don't allow someone to add you to their buddy list
 		BUDDYREQUEST_SETSTATUS,		// Set our status
 		BUDDYREQUEST_DELETEACCT,	// Delete our account
-		BUDDYREQUEST_MAX
 	} buddyRequestType;
 
 	union
@@ -106,7 +102,6 @@ public:
 		BUDDYRESPONSE_MESSAGE,
 		BUDDYRESPONSE_REQUEST,
 		BUDDYRESPONSE_STATUS,
-		BUDDYRESPONSE_MAX
 	} buddyResponseType;
 
 	GPProfile profile;
@@ -174,6 +169,3 @@ public:
 };
 
 extern GameSpyBuddyMessageQueueInterface *TheGameSpyBuddyMessageQueue;
-
-
-#endif // __BUDDYTHREAD_H__

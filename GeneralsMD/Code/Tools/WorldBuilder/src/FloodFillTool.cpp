@@ -20,7 +20,7 @@
 // Texture tiling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 #include "resource.h"
 
 #include "FloodFillTool.h"
@@ -43,9 +43,9 @@ FloodFillTool::FloodFillTool(void) :
 	m_cliffCursor(NULL)
 {
 }
-	
+
 /// Destructor
-FloodFillTool::~FloodFillTool(void) 
+FloodFillTool::~FloodFillTool(void)
 {
 	if (m_cliffCursor) {
 		::DestroyCursor(m_cliffCursor);
@@ -54,7 +54,7 @@ FloodFillTool::~FloodFillTool(void)
 
 
 /// Shows the terrain materials options panel.
-void FloodFillTool::activate() 
+void FloodFillTool::activate()
 {
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_TERRAIN_MATERIAL);
 	TerrainMaterial::setToolOptions(true);
@@ -63,7 +63,7 @@ void FloodFillTool::activate()
 }
 
 /** Set the cursor. */
-void FloodFillTool::setCursor(void)   
+void FloodFillTool::setCursor(void)
 {
 	if (m_adjustCliffTextures) {
 		if (m_cliffCursor == NULL) {
@@ -82,7 +82,7 @@ void FloodFillTool::setCursor(void)
 /** Creates a copy of the height map, flood fills it at pt with m_textureClassToDraw which
 has been set by the calling routine.  Then builds
 the command, and passes it to the doc. */
-void FloodFillTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void FloodFillTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	Coord3D cpt;
 	pView->viewToDocCoords(viewPt, &cpt);
@@ -94,7 +94,7 @@ void FloodFillTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 
 	if (m == TRACK_L)
 		m_textureClassToDraw = TerrainMaterial::getFgTexClass();
-	else 
+	else
 		m_textureClassToDraw = TerrainMaterial::getBgTexClass();
 
 //	WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
@@ -113,7 +113,7 @@ void FloodFillTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 		WBDocUndoable *pUndo = new WBDocUndoable(pDoc, htMapEditCopy);
 		pDoc->AddAndDoUndoable(pUndo);
 		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-	} 
+	}
 	REF_PTR_RELEASE(htMapEditCopy);
 }
 

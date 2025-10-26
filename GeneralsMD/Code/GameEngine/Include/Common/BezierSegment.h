@@ -28,8 +28,6 @@
 // DO NOT DISTRIBUTE
 
 #pragma once
-#ifndef __BEZIERSEGMENT_H__
-#define __BEZIERSEGMENT_H__
 
 #include <d3dx8math.h>
 #include "Common/STLTypedefs.h"
@@ -49,12 +47,12 @@ class BezierSegment
 									Real x2, Real y2, Real z2,
 									Real x3, Real y3, Real z3);
 
-		BezierSegment(Real cp[16]);
+		BezierSegment(Real cp[12]);
 
 
-		BezierSegment(const Coord3D& cp0, 
-									const Coord3D& cp1, 
-									const Coord3D& cp2, 
+		BezierSegment(const Coord3D& cp0,
+									const Coord3D& cp1,
+									const Coord3D& cp2,
 									const Coord3D& cp3);
 
 		BezierSegment(Coord3D cp[4]);
@@ -69,5 +67,3 @@ class BezierSegment
 	public:	// He get's friendly access.
 		friend class BezFwdIterator;
 };
-
-#endif /* __BEZIERSEGMENT_H__ */

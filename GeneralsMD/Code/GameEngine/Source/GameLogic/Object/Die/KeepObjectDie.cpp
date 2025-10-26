@@ -70,7 +70,7 @@ void KeepObjectDie::crc( Xfer *xfer )
 	// extend base class
 	DieModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -88,7 +88,7 @@ void KeepObjectDie::xfer( Xfer *xfer )
 	// extend base class
 	DieModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -99,4 +99,4 @@ void KeepObjectDie::loadPostProcess( void )
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

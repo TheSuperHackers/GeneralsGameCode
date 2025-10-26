@@ -34,7 +34,6 @@
 #include "mutex.h"
 #include "thread.h"
 
-#include "Common/StackDump.h"
 #include "Common/SubsystemInterface.h"
 
 //-------------------------------------------------------------------------
@@ -131,11 +130,8 @@ void GameResultsQueue::endThreads( void )
 {
 	for (Int i=0; i<NumWorkerThreads; ++i)
 	{
-		if (m_workerThreads[i])
-		{
-			delete m_workerThreads[i];
-			m_workerThreads[i] = NULL;
-		}
+		delete m_workerThreads[i];
+		m_workerThreads[i] = NULL;
 	}
 }
 
@@ -217,10 +213,10 @@ static void WrapHTTP( const std::string& hostname, std::string& results )
 		"Content-Length: %d\r\n"
 		"\r\n";
 
-	char szHdr[256] = {0};
-	_snprintf( szHdr, 255, HEADER, hostname.c_str(), results.length() );
+	char szHdr[256];
+	snprintf( szHdr, 256, HEADER, hostname.c_str(), results.length() );
 	results = szHdr + results;
-} //WrapHTTP
+}
 
 
 //-------------------------------------------------------------------------
@@ -228,7 +224,6 @@ static void WrapHTTP( const std::string& hostname, std::string& results )
 void GameResultsThreadClass::Thread_Function()
 {
 	try {
-	_set_se_translator( DumpExceptionInfo ); // Hook that allows stack trace.
 	GameResultsRequest req;
 
 	WSADATA wsaData;
@@ -250,7 +245,7 @@ void GameResultsThreadClass::Thread_Function()
 				IP = inet_addr(hostnameBuffer);
 				in_addr hostNode;
 				hostNode.s_addr = IP;
-				DEBUG_LOG(("sending game results to %s - IP = %s\n", hostnameBuffer, inet_ntoa(hostNode) ));
+				DEBUG_LOG(("sending game results to %s - IP = %s", hostnameBuffer, inet_ntoa(hostNode) ));
 			}
 			else
 			{
@@ -259,15 +254,18 @@ void GameResultsThreadClass::Thread_Function()
 				hostStruct = gethostbyname(hostnameBuffer);
 				if (hostStruct == NULL)
 				{
-					DEBUG_LOG(("sending game results to %s - host lookup failed\n", hostnameBuffer));
-					
+					DEBUG_LOG(("sending game results to %s - host lookup failed", hostnameBuffer));
+
 					// Even though this failed to resolve IP, still need to send a
 					//   callback.
 					IP = 0xFFFFFFFF;   // flag for IP resolve failed
 				}
-				hostNode = (in_addr *) hostStruct->h_addr;
-				IP = hostNode->s_addr;
-				DEBUG_LOG(("sending game results to %s IP = %s\n", hostnameBuffer, inet_ntoa(*hostNode) ));
+				else
+				{
+					hostNode = (in_addr *) hostStruct->h_addr;
+					IP = hostNode->s_addr;
+					DEBUG_LOG(("sending game results to %s IP = %s", hostnameBuffer, inet_ntoa(*hostNode) ));
+				}
 			}
 
 			int result = sendGameResults( IP, req.port, req.results );
@@ -365,7 +363,7 @@ Int GameResultsThreadClass::sendGameResults( UnsignedInt IP, UnsignedShort port,
 	Int sock = socket( AF_INET, SOCK_STREAM, 0 );
 	if (sock < 0)
 	{
-		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - socket() returned %d(%s)\n", sock, getWSAErrorString(sock)));
+		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - socket() returned %d(%s)", sock, getWSAErrorString(sock)));
 		return sock;
 	}
 
@@ -380,7 +378,7 @@ Int GameResultsThreadClass::sendGameResults( UnsignedInt IP, UnsignedShort port,
 	if( connect( sock, (struct sockaddr *)&sockAddr, sizeof( sockAddr ) ) == -1 )
 	{
 		error = WSAGetLastError();
-		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - connect() returned %d(%s)\n", error, getWSAErrorString(error)));
+		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - connect() returned %d(%s)", error, getWSAErrorString(error)));
 		if( ( error == WSAEWOULDBLOCK ) || ( error == WSAEINVAL ) || ( error == WSAEALREADY ) )
 		{
 			return( -1 );
@@ -396,7 +394,7 @@ Int GameResultsThreadClass::sendGameResults( UnsignedInt IP, UnsignedShort port,
 	if (send( sock, results.c_str(), results.length(), 0 ) == SOCKET_ERROR)
 	{
 		error = WSAGetLastError();
-		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - send() returned %d(%s)\n", error, getWSAErrorString(error)));
+		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - send() returned %d(%s)", error, getWSAErrorString(error)));
 		closesocket(sock);
 		return WSAGetLastError();
 	}

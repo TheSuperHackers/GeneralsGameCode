@@ -24,19 +24,19 @@
 
 // FILE: CleanupAreaPower.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	Created:	September 2002
 //
 //	Author:		Kris Morness
-//	
-//  Makes use of the cleanup hazard update by augmenting the cleanup range 
+//
+//  Makes use of the cleanup hazard update by augmenting the cleanup range
 //  until there is nothing left to cleanup at which time it goes idle.
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -55,21 +55,21 @@
 CleanupAreaPowerModuleData::CleanupAreaPowerModuleData()
 {
 	m_cleanupMoveRange = 0.0;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 void CleanupAreaPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 	SpecialPowerModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "MaxMoveDistanceFromLocation",			INI::parseReal, NULL, offsetof( CleanupAreaPowerModuleData, m_cleanupMoveRange ) },
-		{ 0, 0, 0, 0 } 
+		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 //-------------------------------------------------------------------------------------------------
 CleanupAreaPower::CleanupAreaPower( Thing *thing, const ModuleData* moduleData ) : SpecialPowerModule( thing, moduleData )
@@ -113,12 +113,12 @@ void CleanupAreaPower::crc( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::crc( xfer );
 
-}  // end crc
+}
 
 //-------------------------------------------------------------------------------------------------
 // Xfer method
 // Version Info:
-// 1: Initial version 
+// 1: Initial version
 //-------------------------------------------------------------------------------------------------
 void CleanupAreaPower::xfer( Xfer *xfer )
 {
@@ -131,7 +131,7 @@ void CleanupAreaPower::xfer( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::xfer( xfer );
 
-}  // end xfer
+}
 
 //-------------------------------------------------------------------------------------------------
 void CleanupAreaPower::loadPostProcess( void )
@@ -140,4 +140,4 @@ void CleanupAreaPower::loadPostProcess( void )
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -17,28 +17,25 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/meshcon.h 26    10/27/00 4:11p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G Tools                                           * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/meshcon.h                      $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/27/00 10:31a                                             $* 
- *                                                                                             * 
- *                    $Revision:: 26                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G Tools                                           *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/meshcon.h                      $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/27/00 10:31a                                             $*
+ *                                                                                             *
+ *                    $Revision:: 26                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef MESHCON_H
-#define MESHCON_H
-
+#pragma once
 
 #ifndef ALWAYS_H
 #include "always.h"
@@ -69,11 +66,11 @@ class GeometryExportTaskClass;
 class GeometryExportContextClass;
 
 
-struct ConnectionStruct 
+struct ConnectionStruct
 {
 	ConnectionStruct(void) : BoneIndex(0),MeshINode(NULL)
-	{ 
-		memset(ObjectName,0,sizeof(ObjectName)); 
+	{
+		memset(ObjectName,0,sizeof(ObjectName));
 	}
 
 	int							BoneIndex;
@@ -101,7 +98,7 @@ public:
 	~MeshConnectionsClass(void);
 
 	/*
-	** Get the name of the mesh connections object (will be 
+	** Get the name of the mesh connections object (will be
 	** the name of the runtime HierarchyModel that this
 	** object is describing.
 	*/
@@ -131,7 +128,7 @@ public:
 	INode * Get_Origin (void) const				{ return Origin; }
 
 private:
-	
+
 	TimeValue							CurTime;
 	INode *								Origin;
 
@@ -144,6 +141,3 @@ private:
 
 
 };
-
-
-#endif /*MESHCON_H*/

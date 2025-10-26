@@ -16,8 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _TARGA_H_
-#define _TARGA_H_
+#pragma once
+
 /****************************************************************************
 *
 *         C O N F I D E N T I A L --- W E S T W O O D   S T U D I O S
@@ -26,7 +26,7 @@
 *
 * FILE
 *     Targa.h
-* 
+*
 * DESCRIPTION
 *     Targa image file class definitions.
 *
@@ -270,16 +270,16 @@ class Targa
 		long Load(const char* name, char* palette, char* image,bool invert_image=true);
 		long Load(const char* name, long flags, bool invert_image=true);
 		long Save(const char* name, long flags, bool addextension = false);
-		
+
 		void XFlip(void);
 		void YFlip(void);
 
 		char* SetImage(char* buffer);
 		char* GetImage(void) const {return (mImage);}
-		
+
 		char* SetPalette(char* buffer);
 		char* GetPalette(void) const {return (mPalette);}
-		
+
 		bool IsCompressed(void);
 
 		TGA2Extension* GetExtension(void);
@@ -315,6 +315,3 @@ class Targa
 		int File_Read(void *buffer, int size);
 		int File_Write(void *buffer, int size);
 	};
-
-#endif /* _TARGA_H_ */
-

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __RADARUPDATE_H_
-#define __RADARUPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -44,11 +41,11 @@ public:
 
 	RadarUpdateModuleData( void );
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse( p );
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 
 			{ "RadarExtendTime", INI::parseDurationReal, NULL, offsetof( RadarUpdateModuleData, m_radarExtendTime ) },
@@ -88,5 +85,3 @@ protected:
 	Bool m_radarActive;												 ///< TRUE when radar is actually online and generating radar information.
 
 };
-
-#endif  // end __RADARUPDATE_H_

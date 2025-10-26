@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_EDITCOORDPARAMETER_H__465E4002_6405_47E3_97BA_D46A8C108600__INCLUDED_)
-#define AFX_EDITCOORDPARAMETER_H__465E4002_6405_47E3_97BA_D46A8C108600__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // EditCoordParameter.h : header file
 //
 #include "GameLogic/Scripts.h"
@@ -72,5 +68,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_EDITCOORDPARAMETER_H__465E4002_6405_47E3_97BA_D46A8C108600__INCLUDED_)

@@ -20,9 +20,6 @@
 
 #pragma once
 
-#ifndef _SMUDGE_H_
-#define _SMUDGE_H_
-
 #include "WW3D2/dllist.h"
 #include "WWMath/vector2.h"
 #include "WWMath/vector3.h"
@@ -82,7 +79,7 @@ public:
 	SmudgeSet *addSmudgeSet(void);
 	void removeSmudgeSet(SmudgeSet &mySmudge);
 	inline Int getSmudgeCountLastFrame(void) {return m_smudgeCountLastFrame;} ///<return number of smudges submitted last frame.
-	inline void setSmudgeCountLastFrame(Int count) { m_smudgeCountLastFrame = count;} 
+	inline void setSmudgeCountLastFrame(Int count) { m_smudgeCountLastFrame = count;}
 	inline Bool getHardwareSupport(void) { return m_hardwareSupportStatus != SMUDGE_SUPPORT_NO;}
 
 protected:
@@ -97,5 +94,3 @@ protected:
 };
 
 extern SmudgeManager *TheSmudgeManager;	///<singleton
-
-#endif	//_SMUDGE_H_

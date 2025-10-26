@@ -29,11 +29,8 @@
 
 #pragma once
 
-#ifndef __SUBSYSTEMINTERFACE_H_
-#define __SUBSYSTEMINTERFACE_H_
-
 #include "Common/INI.h"
-#include "Common/STLTypedefs.h"	
+#include "Common/STLTypedefs.h"
 
 class Xfer;
 
@@ -44,7 +41,7 @@ class Xfer;
 	*
 	* Nothing about the subsystems is automatic, this interface does not wrap up automated
 	* functions, it is only here to provide a basic interface and rules for behavior
-	* all subsystems 
+	* all subsystems
 	*/
 class SubsystemInterface
 {
@@ -61,7 +58,7 @@ public:
 
 	//-----------------------------------------------------------------------------------------------
 	/** - Free any resources allocated for this class.
-		* 
+		*
 		* - DO NOT throw exceptions during any destruction ever, and do not call other
 		*		methods that have the possibility of throwing exceptions.  Try to keep it
 		*		simple and keep as much work actually inside the destructor as possible.
@@ -91,7 +88,7 @@ public:
 		*		re-initialize the resources already allocated.
 		*
 		*	- After a reset, the system does not need to be in EXACTLY the same state as a
-		*		fresh instantiation.  If there are persistent state information for the 
+		*		fresh instantiation.  If there are persistent state information for the
 		*		system make sure you maintain it while restoring or re-initializing other
 		*		transient parts.
 		*/
@@ -103,7 +100,7 @@ public:
 		*		to service the system.
 		*
 		*	- Note that currently the GameClient and GameLogic will be updating
-		*		at different rates where the logic is running real time, and the 
+		*		at different rates where the logic is running real time, and the
 		*		client will adjust how many loops can be done during one server
 		*		time slice in order to improve performance on low end machines.
 		*/
@@ -124,33 +121,33 @@ public:
 protected:
 	static Real s_msConsumed;
 	Real m_startTimeConsumed;
-	Real m_curUpdateTime;	
+	Real m_curUpdateTime;
 
 	Real m_startDrawTimeConsumed;
 	Real m_curDrawTime;
 	Bool m_dumpUpdate;
 	Bool m_dumpDraw;
-#else 
+#else
 	inline void UPDATE(void) {update();}
 	inline void DRAW(void) {draw();}
 #endif
 protected:
-	AsciiString m_name;	
+	AsciiString m_name;
 public:
 	AsciiString getName(void) {return m_name;}
 	void setName(AsciiString name) {m_name = name;}
 
-};  // end SubsystemInterface
+};
 
 //-------------------------------------------------------------------------------------------------
 class SubsystemInterfaceList
 {
 public:
-	
+
 	SubsystemInterfaceList();
 	~SubsystemInterfaceList();
 
-	void initSubsystem(SubsystemInterface* sys, const char* path1, const char* path2, const char* dirpath, Xfer *pXfer, AsciiString name="");
+	void initSubsystem(SubsystemInterface* sys, const char* path1, const char* path2, Xfer *pXfer, AsciiString name="");
 	void addSubsystem(SubsystemInterface* sys);
 	void removeSubsystem(SubsystemInterface* sys);
 	void postProcessLoadAll();
@@ -169,6 +166,3 @@ private:
 };
 
 extern SubsystemInterfaceList* TheSubsystemList;
-
-#endif // __SUBSYSTEMINTERFACE_H_
-

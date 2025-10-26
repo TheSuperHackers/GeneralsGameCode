@@ -27,8 +27,7 @@
 // Desc:   Railed transport dock update
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __RAILED_TRANSPORT_DOCK_UPDATE_H_
-#define __RAILED_TRANSPORT_DOCK_UPDATE_H_
+#pragma once
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/DockUpdate.h"
@@ -44,7 +43,7 @@ public:
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
-	UnsignedInt m_pullInsideDurationInFrames;		/**< how long it takes to pull object inside 
+	UnsignedInt m_pullInsideDurationInFrames;		/**< how long it takes to pull object inside
 																									 once they're at the dock action point */
 	UnsignedInt m_pushOutsideDurationInFrames;	/**< how long it takes to push object outside
 																									 when we're unloading */
@@ -109,5 +108,3 @@ protected:
 	Int m_unloadCount;												///< count used to govern unloading 1 or all objects
 
 };
-
-#endif  // end __RAILED_TRANSPORT_DOCK_UPDATE_H_

@@ -46,7 +46,7 @@
 **
 ***********************************************************************************************/
 RenderInfoClass::RenderInfoClass(CameraClass & cam) :
-	Camera(cam), 
+	Camera(cam),
 	fog_start(0.0f),
 	fog_end(0.0f),
 	fog_scale(0.0f),
@@ -58,7 +58,7 @@ RenderInfoClass::RenderInfoClass(CameraClass & cam) :
 	alphaOverride(1.0f),
 	materialPassAlphaOverride(1.0f),
 	materialPassEmissiveOverride(1.0f)
-{ 
+{
 	// Need to have one entry in the override flags stack, initialize it to default values.
 	OverrideFlag[OverrideFlagLevel]=RINFO_OVERRIDE_DEFAULT;
 }
@@ -101,7 +101,7 @@ MaterialPassClass * RenderInfoClass::Peek_Additional_Pass(int i)
 void RenderInfoClass::Push_Override_Flags(RINFO_OVERRIDE_FLAGS flg)
 {
 	// copy to the end of the array
-	WWASSERT(OverrideFlagLevel<MAX_OVERRIDE_FLAG_LEVEL);
+	WWASSERT(OverrideFlagLevel<MAX_OVERRIDE_FLAG_LEVEL - 1);
 	OverrideFlagLevel++;
 	OverrideFlag[OverrideFlagLevel]=flg;
 }

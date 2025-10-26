@@ -29,12 +29,9 @@
 
 #pragma once
 
-#ifndef __BATTLE_PLAN_UPDATE_H_
-#define __BATTLE_PLAN_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
-#include "GameLogic/Module/UpdateModule.h"
+#include "GameLogic/Module/SpecialPowerUpdateModule.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class SpecialPowerModule;
@@ -86,7 +83,7 @@ public:
 	BattlePlanUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -108,7 +105,7 @@ enum BattlePlanStatus CPP_11(: Int)
 
 class BattlePlanBonuses : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BattlePlanBonuses, "BattlePlanBonuses")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BattlePlanBonuses, "BattlePlanBonuses")
 public:
 	Real						m_armorScalar;
 	Int							m_bombardment;				//Represents having weapon bonuses for bombardment plan
@@ -137,12 +134,13 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// SpecialPowerUpdateInterface
-	virtual void initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, UnsignedInt commandOptions, Int locationCount );
+	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions );
 	virtual Bool isSpecialAbility() const { return false; }
 	virtual Bool isSpecialPower() const { return true; }
 	virtual Bool isActive() const {return m_status != TRANSITIONSTATUS_IDLE;}
 	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() { return this; }
-	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const { return false; }
+	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const { return false; } //Is it active now?
+	virtual Bool doesSpecialPowerHaveOverridableDestination() const { return false; }	//Does it have it, even if it's not active?
 	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) {}
 	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const;
 
@@ -161,13 +159,13 @@ protected:
 	void recenterTurret();
 	Bool isTurretInNaturalPosition();
 	void setBattlePlan( BattlePlanStatus plan );
-	void createVisionObject();	
+	void createVisionObject();
 
 	BattlePlanStatus m_currentPlan;	//The current battle plan displayed by the building (includes packing & unpacking)
 	BattlePlanStatus m_desiredPlan; //The user desired battle plan
 	BattlePlanStatus m_planAffectingArmy; //The current battle plan that is affecting troops!
 	TransitionStatus m_status;
-	
+
 	UnsignedInt m_nextReadyFrame;
 	SpecialPowerModuleInterface *m_specialPowerModule;
 	Bool				m_invalidSettings;
@@ -189,7 +187,3 @@ protected:
 	ObjectID m_visionObjectID;
 
 };
-
-
-#endif
-

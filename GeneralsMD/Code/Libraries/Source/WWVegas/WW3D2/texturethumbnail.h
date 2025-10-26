@@ -17,12 +17,8 @@
 */
 
 // 08/07/02 KM Texture class redesign (revisited)
-#ifndef TEXTURETHUMBNAIL_H
-#define TEXTURETHUMBNAIL_H
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #include "always.h"
 #include "wwstring.h"
@@ -54,12 +50,12 @@ class ThumbnailClass
 
 	ThumbnailClass(
 		ThumbnailManagerClass* manager,
-		const char* name, 
-		unsigned char* bitmap, 
-		unsigned w, 
-		unsigned h, 
-		unsigned original_w, 
-		unsigned original_h, 
+		const char* name,
+		unsigned char* bitmap,
+		unsigned w,
+		unsigned h,
+		unsigned original_w,
+		unsigned original_h,
 		unsigned original_mip_level_count,
 		WW3DFormat original_format,
 		bool allocated,
@@ -126,5 +122,3 @@ public:
 };
 
 // ----------------------------------------------------------------------------
-
-#endif

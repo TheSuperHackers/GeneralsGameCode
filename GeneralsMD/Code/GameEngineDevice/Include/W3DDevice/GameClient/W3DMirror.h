@@ -22,11 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef __W3DMirror_H_
-#define __W3DMirror_H_
 
 #include "always.h"
 #include "rendobj.h"
@@ -46,7 +42,7 @@ Since skies are only visible in reflections, this code will also
 render clouds and sky bodies.
 */
 class MirrorRenderObjClass : public RenderObjClass
-{	
+{
 
 public:
 
@@ -54,7 +50,7 @@ public:
 	~MirrorRenderObjClass(void);
 
 	/////////////////////////////////////////////////////////////////////////////
-	// Render Object Interface (W3D methods) 
+	// Render Object Interface (W3D methods)
 	/////////////////////////////////////////////////////////////////////////////
 	virtual RenderObjClass *	Clone(void) const;
 	virtual int						Class_ID(void) const;
@@ -100,12 +96,12 @@ protected:
 		TextureClass	*waterTexture;
 		Int				waterRepeatCount;
 		Int				skyRepeatCount;
-		DWORD			vertex00Diffuse;		
-		DWORD			vertex10Diffuse;		
-		DWORD			vertex11Diffuse;		
+		DWORD			vertex00Diffuse;
+		DWORD			vertex10Diffuse;
+		DWORD			vertex11Diffuse;
 		DWORD			vertex01Diffuse;
 		DWORD			waterDiffuse;
-		Real			uScrollPerMs;		
+		Real			uScrollPerMs;
 		Real			vScrollPerMs;
 	};
 
@@ -115,5 +111,3 @@ protected:
 	void renderWater(void);
 	void renderWaterMesh(void);
 };
-
-#endif  // end __W3DMirror_H_

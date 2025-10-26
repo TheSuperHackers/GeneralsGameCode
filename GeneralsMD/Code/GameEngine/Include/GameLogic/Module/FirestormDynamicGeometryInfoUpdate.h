@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FIRESTORM_DYNAMIC_GEOMETRY_INFO_UPDATE_H_
-#define __FIRESTORM_DYNAMIC_GEOMETRY_INFO_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Geometry.h"
 #include "GameLogic/Module/DynamicGeometryInfoUpdate.h"
@@ -84,7 +81,3 @@ protected:
 	Bool m_scorchPlaced;							///< TRUE once we have placed the scorch mark
 	UnsignedInt m_lastDamageFrame;		///< frame we last did damage on
 };
-
-
-#endif
-

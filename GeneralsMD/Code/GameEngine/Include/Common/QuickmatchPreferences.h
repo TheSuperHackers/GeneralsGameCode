@@ -30,16 +30,13 @@
 
 #pragma once
 
-#ifndef __QUICKMATCHPREFERENCES_H__
-#define __QUICKMATCHPREFERENCES_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "Common/UserPreferences.h"
 
 //-----------------------------------------------------------------------------
-// QuickMatchPreferences base class 
+// QuickMatchPreferences base class
 //-----------------------------------------------------------------------------
 class QuickMatchPreferences : public UserPreferences
 {
@@ -78,5 +75,3 @@ public:
 	void setSide(Int val);
 	Int getSide( void );
 };
-
-#endif // __QUICKMATCHPREFERENCES_H__

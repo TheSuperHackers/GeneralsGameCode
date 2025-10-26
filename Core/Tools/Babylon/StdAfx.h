@@ -21,16 +21,11 @@
 //      are changed infrequently
 //
 
-#if !defined(AFX_STDAFX_H__2BF31252_3BA1_11D3_B9DA_006097B90D93__INCLUDED_)
-#define AFX_STDAFX_H__2BF31252_3BA1_11D3_B9DA_006097B90D93__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 
-// TheSuperHackers @compile xezon 24/03/2025 Prevent afxwin.h from loading d3d9types.h, colliding with our own DirectX library.
+// TheSuperHackers @build xezon 24/03/2025 Prevent afxwin.h from loading d3d9types.h, colliding with our own DirectX library.
 #define _d3d9TYPES_H_
 
 #include <afxwin.h>         // MFC core and standard components
@@ -60,4 +55,3 @@ extern char AppTitle[];
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-#endif // !defined(AFX_STDAFX_H__2BF31252_3BA1_11D3_B9DA_006097B90D93__INCLUDED_)

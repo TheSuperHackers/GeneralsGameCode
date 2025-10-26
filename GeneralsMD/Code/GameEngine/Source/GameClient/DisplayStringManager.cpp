@@ -46,7 +46,7 @@ DisplayStringManager::DisplayStringManager( void )
 	m_stringList = NULL;
 	m_currentCheckpoint = NULL;
 
-}  // end DisplayStringManager
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ DisplayStringManager::~DisplayStringManager( void )
 	//
 	assert( m_stringList == NULL );
 
-}  // end ~DisplayStringManager
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Link a display string to the master list */
@@ -77,7 +77,7 @@ void DisplayStringManager::link( DisplayString *string )
 
 	m_stringList = string;
 
-}  // end link
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Unlink a display string from the master list */
@@ -98,6 +98,6 @@ void DisplayStringManager::unLink( DisplayString *string )
 		assert( string == m_stringList );
 		m_stringList = string->m_next;
 
-	}  // end else
+	}
 
-}  // end unLink
+}

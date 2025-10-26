@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_PROCEEDDLG_H__35C33E24_5AD8_11D3_B9DA_006097B90D93__INCLUDED_)
-#define AFX_PROCEEDDLG_H__35C33E24_5AD8_11D3_B9DA_006097B90D93__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // ProceedDlg.h : header file
 //
 #define IDALWAYS		101
@@ -66,5 +62,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_PROCEEDDLG_H__35C33E24_5AD8_11D3_B9DA_006097B90D93__INCLUDED_)

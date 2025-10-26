@@ -26,8 +26,8 @@
  *                                                                                             *
  *                  $Org Author:: Kenny Mitchell                                              $*
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 08/05/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 1                                                          $*
@@ -37,14 +37,13 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef TEXTUREFILTER_H
-#define TEXTUREFILTER_H
+#pragma once
 
 #ifndef DX8_WRAPPER_H
 //#include "dx8wrapper.h"
 #endif
 
-enum MipCountType 
+enum MipCountType
 {
 	MIP_LEVELS_ALL=0,		// generate all mipmap levels down to 1x1 size
 	MIP_LEVELS_1,			// no mipmapping at all (just one mip level)
@@ -74,7 +73,7 @@ class TextureFilterClass
 {
 public:
 
-	enum FilterType 
+	enum FilterType
 	{
 		FILTER_TYPE_NONE,
 		FILTER_TYPE_FAST,
@@ -96,7 +95,7 @@ public:
 		TEXTURE_ADDRESS_CLAMP
 	};
 
-	TextureFilterClass(MipCountType mip_level_count);
+	TextureFilterClass(MipCountType mip_level_count=MIP_LEVELS_1);
 
 	void Apply(unsigned int stage);
 
@@ -129,5 +128,3 @@ private:
 	TxtAddrMode UAddressMode;
 	TxtAddrMode VAddressMode;
 };
-
-#endif

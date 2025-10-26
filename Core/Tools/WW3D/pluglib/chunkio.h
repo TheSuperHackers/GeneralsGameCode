@@ -17,29 +17,25 @@
 */
 
 /* $Header: /Commando/Code/wwlib/chunkio.h 21    7/31/01 6:41p Patrick $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Tiberian Sun / Commando / G Library                          * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/chunkio.h                              $* 
- *                                                                                             * 
- *                      $Author:: Patrick                                                     $* 
- *                                                                                             * 
- *                     $Modtime:: 7/27/01 2:47p                                               $* 
- *                                                                                             * 
- *                    $Revision:: 21                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Tiberian Sun / Commando / G Library                          *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/chunkio.h                              $*
+ *                                                                                             *
+ *                      $Author:: Patrick                                                     $*
+ *                                                                                             *
+ *                     $Modtime:: 7/27/01 2:47p                                               $*
+ *                                                                                             *
+ *                    $Revision:: 21                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef CHUNKIO_H
-#define CHUNKIO_H
+#pragma once
 
 #ifndef ALWAYS_H
 #include "always.h"
@@ -374,7 +370,3 @@ private:
 */
 #define OBSOLETE_MICRO_CHUNK(id) \
 	case (id): break;
-
-
-
-#endif // CHUNKIO_H

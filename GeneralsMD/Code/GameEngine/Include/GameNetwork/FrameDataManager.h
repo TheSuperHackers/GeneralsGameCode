@@ -22,18 +22,14 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef __FRAMEDATAMANAGER_H
-#define __FRAMEDATAMANAGER_H
 
 #include "GameNetwork/NetworkDefs.h"
 #include "GameNetwork/FrameData.h"
 
 class FrameDataManager : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FrameDataManager, "FrameDataManager")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FrameDataManager, "FrameDataManager")
 public:
 	FrameDataManager(Bool isLocal);
 	//virtual ~FrameDataManager();
@@ -63,5 +59,3 @@ protected:
 	Bool m_isQuitting;
 	UnsignedInt m_quitFrame;
 };
-
-#endif

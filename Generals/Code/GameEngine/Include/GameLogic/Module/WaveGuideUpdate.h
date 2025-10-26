@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __WATERWAVE_H_
-#define __WATERWAVE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -97,7 +94,7 @@ protected:
 	void doDamage( void );								///< do damage to things that have crossed our path
 
 	UnsignedInt m_activeFrame;						///< frame we became active on
-	Bool m_needDisable;									
+	Bool m_needDisable;
 	Bool m_initialized;										///< set to TRUE after we're enabled and in motion
 
 	enum { MAX_WAVEGUIDE_SHAPE_POINTS = 64 };
@@ -111,5 +108,3 @@ protected:
 	Coord3D m_finalDestination;						///< the final destination of the waveguide path
 
 };
-
-#endif  // end __WATERWAVE_H_

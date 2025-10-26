@@ -16,36 +16,32 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/win.h                                  $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/win.h                                  $*
+ *                                                                                             *
  *                      $Author:: Denzil_l                                                    $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 6/26/01 1:59p                                               $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 10                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef WIN_H
-#define WIN_H
+#pragma once
 
 /*
 **	This header file includes the Windows headers. If there are any special pragmas that need
 **	to occur around this process, they are performed here. Typically, certain warnings will need
 **	to be disabled since the Windows headers are repleat with illegal and dangerous constructs.
 **
-**	Within the windows headers themselves, Microsoft has disabled the warnings 4290, 4514, 
+**	Within the windows headers themselves, Microsoft has disabled the warnings 4290, 4514,
 **	4069, 4200, 4237, 4103, 4001, 4035, 4164. Makes you wonder, eh?
 */
 
@@ -74,18 +70,16 @@ extern HINSTANCE	ProgramInstance;
 extern HWND			MainWindow;
 extern bool GameInFocus;
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 
 void __cdecl Print_Win32Error(unsigned long win32Error);
 
-#else // _DEBUG
+#else // RTS_DEBUG
 
 #define Print_Win32Error
 
-#endif // _DEBUG
+#endif // RTS_DEBUG
 
 #else // _WINDOWS
 #include <unistd.h>
 #endif // _WINDOWS
-
-#endif // WIN_H

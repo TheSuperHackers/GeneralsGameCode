@@ -31,6 +31,7 @@
 #include "Common/ActionManager.h"
 #include "Common/DrawModule.h"
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/RandomValue.h"
 #include "Common/Team.h"
@@ -48,11 +49,6 @@
 
 const Real BIGNUM = 99999.0f;
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 enum ChinookAIStateType CPP_11(: Int)
@@ -64,17 +60,17 @@ enum ChinookAIStateType CPP_11(: Int)
 	LANDING,
 
 	MOVE_TO_AND_LAND,
-	
+
 	MOVE_TO_AND_EVAC,
 	LAND_AND_EVAC,
 	EVAC_AND_TAKEOFF,
-	
+
 	MOVE_TO_AND_EVAC_AND_EXIT,
 	LAND_AND_EVAC_AND_EXIT,
 	EVAC_AND_EXIT,
 	TAKEOFF_AND_EXIT,
 	HEAD_OFF_MAP,
-	
+
 	MOVE_TO_COMBAT_DROP,
 	DO_COMBAT_DROP
 };
@@ -109,9 +105,9 @@ static Object* getPotentialRappeller(Object* obj)
 }
 
 //----------------------------------------------------------------------------------------------------------
-class ChinookEvacuateState : public State 
+class ChinookEvacuateState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ChinookEvacuateState, "ChinookEvacuateState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ChinookEvacuateState, "ChinookEvacuateState")
 protected:
 	// snapshot interface	STUBBED - no member vars to save. jba.
 	virtual void crc( Xfer *xfer ){};
@@ -141,7 +137,7 @@ EMPTY_DTOR(ChinookEvacuateState)
 //-------------------------------------------------------------------------------------------------
 class ChinookHeadOffMapState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ChinookHeadOffMapState, "ChinookHeadOffMapState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ChinookHeadOffMapState, "ChinookHeadOffMapState")
 	//I'm outta here
 protected:
 	// snapshot interface	STUBBED - no member vars to save. jba.
@@ -192,9 +188,9 @@ public:
 EMPTY_DTOR(ChinookHeadOffMapState)
 
 //-------------------------------------------------------------------------------------------------
-class ChinookTakeoffOrLandingState : public State 
+class ChinookTakeoffOrLandingState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ChinookTakeoffOrLandingState, "ChinookTakeoffOrLandingState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ChinookTakeoffOrLandingState, "ChinookTakeoffOrLandingState")
 private:
 	Coord3D		m_destLoc;
 	Bool			m_landing;
@@ -223,7 +219,7 @@ protected:
 	}
 
 public:
-	ChinookTakeoffOrLandingState( StateMachine *machine, Bool landing ) : m_landing(landing), State( machine, "ChinookTakeoffOrLandingState" ) 
+	ChinookTakeoffOrLandingState( StateMachine *machine, Bool landing ) : m_landing(landing), State( machine, "ChinookTakeoffOrLandingState" )
 	{
 		m_destLoc.zero();
 	}
@@ -258,7 +254,7 @@ public:
 			Coord3D tmp;
 			FindPositionOptions options;
 			options.maxRadius = obj->getGeometryInfo().getBoundingCircleRadius() * 100.0f;
-			if (ThePartitionManager->findPositionAround(&m_destLoc, &options, &tmp)) 
+			if (ThePartitionManager->findPositionAround(&m_destLoc, &options, &tmp))
 			{
 				m_destLoc = tmp;
 				TheAI->pathfinder()->adjustToLandingDestination(obj, &m_destLoc);
@@ -310,7 +306,7 @@ public:
 
 		ai->friend_setFlightStatus(m_landing ? CHINOOK_LANDED : CHINOOK_FLYING);
 
-		// Paranoia checks - sometimes onExit is called when we are 
+		// Paranoia checks - sometimes onExit is called when we are
 		// shutting down, and not all pieces are valid.  CurLocomotor
 		// is definitely null in some cases. jba.
 		Locomotor* loco = ai->getCurLocomotor();
@@ -339,9 +335,9 @@ public:
 EMPTY_DTOR(ChinookTakeoffOrLandingState)
 
 //-------------------------------------------------------------------------------------------------
-class ChinookCombatDropState : public State 
+class ChinookCombatDropState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ChinookCombatDropState, "ChinookCombatDropState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ChinookCombatDropState, "ChinookCombatDropState")
 
 private:
 
@@ -365,7 +361,11 @@ private:
 			for (std::list<ObjectID>::iterator oit = it->rappellerIDs.begin(); oit != it->rappellerIDs.end(); )
 			{
 				Object* rappeller = TheGameLogic->findObjectByID(*oit);
+#if RETAIL_COMPATIBLE_CRC
 				if (rappeller == NULL || rappeller->isEffectivelyDead() || !rappeller->isAboveTerrain())
+#else
+				if (rappeller == NULL || rappeller->isEffectivelyDead() || !rappeller->isAboveTerrain() || rappeller->isContained())
+#endif
 				{
 					oit = it->rappellerIDs.erase(oit);
 				}
@@ -436,12 +436,12 @@ protected:
 			{
 				if (!m_ropes.empty())
 				{
-					DEBUG_CRASH(( "ChinookCombatDropState - ropes should be empty\n" ));
+					DEBUG_CRASH(( "ChinookCombatDropState - ropes should be empty" ));
 					throw SC_INVALID_DATA;
 				}
 				m_ropes.resize(numRopes);
 			}
-			
+
 			for (Int i = 0; i < numRopes; ++i)
 			{
 				RopeInfo info;
@@ -500,7 +500,7 @@ public:
 		UnsignedInt now = TheGameLogic->getFrame();
 
 		const ThingTemplate* ropeTmpl = TheThingFactory->findTemplate(d->m_ropeName);
-		
+
 		const Int MAX_BONES = 32;
     Coord3D ropePos[MAX_BONES];
     Matrix3D dropMtx[MAX_BONES];
@@ -520,7 +520,7 @@ public:
 			RopeInfo info;
 
 			obj->convertBonePosToWorldPos( NULL, &dropMtx[i], NULL, &info.dropStartMtx );
-			
+
 			info.ropeDrawable = ropeTmpl ? TheThingFactory->newDrawable(ropeTmpl) : NULL;
 			if (info.ropeDrawable)
 			{
@@ -552,7 +552,7 @@ public:
 		Object* obj = getMachineOwner();
 		ChinookAIUpdate* ai = (ChinookAIUpdate*)obj->getAIUpdateInterface();
 		const ChinookAIUpdateModuleData* d = ai->friend_getData();
-		
+
 		if (obj->isEffectivelyDead())
 		{
 			return STATE_FAILURE;
@@ -656,7 +656,7 @@ public:
 		}
 
 		UnsignedInt now = TheGameLogic->getFrame();
-		for (Int i = 0; i < m_ropes.size(); ++i)
+		for (size_t i = 0; i < m_ropes.size(); ++i)
 		{
 			if (m_ropes[i].ropeDrawable)
 			{
@@ -680,7 +680,7 @@ EMPTY_DTOR(ChinookCombatDropState)
  */
 class ChinookMoveToBldgState : public AIMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ChinookMoveToBldgState, "ChinookMoveToBldgState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ChinookMoveToBldgState, "ChinookMoveToBldgState")
 private:
 	Real m_oldPreferredHeight;
 	Real m_newPreferredHeight;
@@ -837,11 +837,11 @@ ChinookAIUpdateModuleData::ChinookAIUpdateModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void ChinookAIUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void ChinookAIUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   SupplyTruckAIUpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "RappelSpeed", INI::parseVelocityReal, 0, offsetof(ChinookAIUpdateModuleData, m_rappelSpeed) },
 		{ "RopeDropSpeed", INI::parseVelocityReal, 0, offsetof(ChinookAIUpdateModuleData, m_ropeDropSpeed) },
@@ -875,7 +875,7 @@ AIStateMachine* ChinookAIUpdate::makeStateMachine()
 //-------------------------------------------------------------------------------------------------
 ChinookAIUpdate::ChinookAIUpdate( Thing *thing, const ModuleData* moduleData ) : SupplyTruckAIUpdate( thing, moduleData )
 {
-	m_hasPendingCommand = false;	
+	m_hasPendingCommand = false;
 	m_flightStatus = CHINOOK_FLYING;	// yep, that's right, even if we start "on ground"
 	m_airfieldForHealing = INVALID_ID;
 }
@@ -963,13 +963,13 @@ Bool ChinookAIUpdate::isAllowedToAdjustDestination() const
 {
 	 if (m_flightStatus == CHINOOK_LANDED)
 		return false;
-	
-	return SupplyTruckAIUpdate::isAllowedToAdjustDestination(); 
+
+	return SupplyTruckAIUpdate::isAllowedToAdjustDestination();
 }
 
 //-------------------------------------------------------------------------------------------------
-ObjectID ChinookAIUpdate::getBuildingToNotPathAround() const 
-{ 
+ObjectID ChinookAIUpdate::getBuildingToNotPathAround() const
+{
 	if (getAIStateType() == MOVE_TO_COMBAT_DROP || getAIStateType() == DO_COMBAT_DROP)
 	{
 		const Object* goalObj = getStateMachine()->getGoalObject();
@@ -977,17 +977,17 @@ ObjectID ChinookAIUpdate::getBuildingToNotPathAround() const
 			return goalObj->getID();
 	}
 
-	return INVALID_ID; 
+	return INVALID_ID;
 }
 
 //-------------------------------------------------------------------------------------------------
-AIFreeToExitType ChinookAIUpdate::getAiFreeToExit(const Object* exiter) const 
-{ 
-	 if (m_flightStatus == CHINOOK_LANDED 
+AIFreeToExitType ChinookAIUpdate::getAiFreeToExit(const Object* exiter) const
+{
+	 if (m_flightStatus == CHINOOK_LANDED
 				|| (m_flightStatus == CHINOOK_DOING_COMBAT_DROP && exiter->isKindOf(KINDOF_CAN_RAPPEL)))
 		return FREE_TO_EXIT;
-	
-	return WAIT_TO_EXIT; 
+
+	return WAIT_TO_EXIT;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1004,7 +1004,7 @@ UpdateSleepTime ChinookAIUpdate::update()
 	ParkingPlaceBehaviorInterface* pp = getPP(m_airfieldForHealing);
 	if (pp != NULL)
 	{
-		if (m_flightStatus == CHINOOK_LANDED && 
+		if (m_flightStatus == CHINOOK_LANDED &&
 				!m_hasPendingCommand &&
 				getObject()->getBodyModule()->getHealth() == getObject()->getBodyModule()->getMaxHealth())
 		{
@@ -1096,7 +1096,7 @@ void ChinookAIUpdate::privateCombatDrop( Object* target, const Coord3D& pos, Com
 	// when there is a target present, we must verify that we can logically do the action when
 	// we get commands from players (we'll assume AI knows what its doing)
 	//
-	if( target != NULL && cmdSource == CMD_FROM_PLAYER && 
+	if( target != NULL && cmdSource == CMD_FROM_PLAYER &&
 			TheActionManager->canEnterObject( getObject(), target, cmdSource, COMBATDROP_INTO ) == FALSE )
 		return;
 
@@ -1129,8 +1129,8 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 	if (!isAllowedToRespondToAiCommands(parms))
 		return;
 
-	if (m_flightStatus == CHINOOK_TAKING_OFF || 
-				m_flightStatus == CHINOOK_LANDING || 
+	if (m_flightStatus == CHINOOK_TAKING_OFF ||
+				m_flightStatus == CHINOOK_LANDING ||
 				m_flightStatus == CHINOOK_DOING_COMBAT_DROP)
 	{
 		// have to wait for takeoff or landing (or rappel) to complete, just store the sucker.
@@ -1156,7 +1156,7 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 		{
 			const Real THRESH = 3.0f;
 			const Real THRESH_SQR = THRESH*THRESH;
-			if (calcDistSqr(*getObject()->getPosition(), parms->m_pos) > THRESH_SQR && 
+			if (calcDistSqr(*getObject()->getPosition(), parms->m_pos) > THRESH_SQR &&
 					m_flightStatus == CHINOOK_LANDED)
 			{
 				// gotta take off first!
@@ -1170,7 +1170,7 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 			{
 				// do this INSTEAD of the standard stuff
 				setMyState(
-					(parms->m_cmd == AICMD_MOVE_TO_POSITION_AND_EVACUATE) ? MOVE_TO_AND_EVAC : MOVE_TO_AND_EVAC_AND_EXIT, 
+					(parms->m_cmd == AICMD_MOVE_TO_POSITION_AND_EVACUATE) ? MOVE_TO_AND_EVAC : MOVE_TO_AND_EVAC_AND_EXIT,
 					NULL, &parms->m_pos, CMD_FROM_AI);
 				passItThru = false;
 			}
@@ -1220,7 +1220,7 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 void ChinookAIUpdate::crc( Xfer *xfer )
 {
 	SupplyTruckAIUpdate::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1243,7 +1243,7 @@ void ChinookAIUpdate::xfer( Xfer *xfer )
 	xfer->xferUser(&m_flightStatus, sizeof(m_flightStatus));
 	xfer->xferObjectID(&m_airfieldForHealing);
  // extend base class
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1251,4 +1251,4 @@ void ChinookAIUpdate::xfer( Xfer *xfer )
 void ChinookAIUpdate::loadPostProcess( void )
 {
 	SupplyTruckAIUpdate::loadPostProcess();
-}  // end loadPostProcess
+}

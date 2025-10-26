@@ -24,12 +24,12 @@
 
 // FILE: HeaderTemplate.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Aug 2002
@@ -37,7 +37,7 @@
 //	Filename: 	HeaderTemplate.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	The header template system is used to maintain a unified look across
 //						windows.  It also allows Localization to customize the looks based
 //						on language fonts.
@@ -60,11 +60,6 @@
 #include "GameClient/HeaderTemplate.h"
 #include "GameClient/GameFont.h"
 #include "GameClient/GlobalLanguage.h"
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -87,7 +82,7 @@ void INI::parseHeaderTemplateDefinition( INI *ini )
 
 	// read the name
 	const char* c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	// find existing item if present
 	hTemplate = TheHeaderTemplateManager->findHeaderTemplate( name );
@@ -97,7 +92,7 @@ void INI::parseHeaderTemplateDefinition( INI *ini )
 		// allocate a new item
 		hTemplate = TheHeaderTemplateManager->newHeaderTemplate( name );
 
-	}  // end if
+	}
 	else
 	{
 		DEBUG_CRASH(( "[LINE: %d in '%s'] Duplicate header Template %s found!", ini->getLineNum(), ini->getFilename().str(), name.str() ));
@@ -105,7 +100,7 @@ void INI::parseHeaderTemplateDefinition( INI *ini )
 	// parse the ini definition
 	ini->initFromINI( hTemplate, TheHeaderTemplateManager->getFieldParse() );
 
-}  // end parseCommandButtonDefinition
+}
 
 HeaderTemplate::HeaderTemplate( void ) :
 m_font(NULL),
@@ -113,7 +108,7 @@ m_point(0),
 m_bold(FALSE)
 {
 	//Added By Sadullah Nader
-	//Initializations missing and needed 
+	//Initializations missing and needed
 	m_fontName.clear();
 	m_name.clear();
 }
@@ -129,11 +124,7 @@ HeaderTemplateManager::~HeaderTemplateManager( void )
 	while(it != m_headerTemplateList.end())
 	{
 		HeaderTemplate *hTemplate = *it;
-		if(hTemplate)
-		{
-			hTemplate->m_font = NULL;
-			delete hTemplate;
-		}
+		delete hTemplate;
 		it = m_headerTemplateList.erase(it);
 
 	}
@@ -141,22 +132,14 @@ HeaderTemplateManager::~HeaderTemplateManager( void )
 
 void HeaderTemplateManager::init( void )
 {
-	INI ini;
-	AsciiString fname;
-	fname.format("Data\\%s\\HeaderTemplate.ini", GetRegistryLanguage().str());
-	OSVERSIONINFO	osvi;
-	osvi.dwOSVersionInfoSize=sizeof(OSVERSIONINFO);
-	if (GetVersionEx(&osvi))
-	{	//check if we're running Win9x variant since they may need different fonts
-		if (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
-		{	AsciiString tempName;
+	{
+		AsciiString fname;
+		fname.format("Data\\%s\\HeaderTemplate", GetRegistryLanguage().str());
 
-			tempName.format("Data\\%s\\HeaderTemplate9x.ini", GetRegistryLanguage().str());
-			if (TheFileSystem->doesFileExist(tempName.str()))
-				fname = tempName;
-		}
+		INI ini;
+		ini.loadFileDirectory( fname, INI_LOAD_OVERWRITE, NULL );
 	}
-	ini.load( fname, INI_LOAD_OVERWRITE, NULL );
+
 	populateGameFonts();
 }
 
@@ -179,7 +162,7 @@ HeaderTemplate *HeaderTemplateManager::newHeaderTemplate( AsciiString name )
 	DEBUG_ASSERTCRASH(newHTemplate, ("Unable to create a new Header Template in HeaderTemplateManager::newHeaderTemplate"));
 	if(!newHTemplate)
 		return NULL;
-	
+
 	newHTemplate->m_name = name;
 	m_headerTemplateList.push_front(newHTemplate);
 	return newHTemplate;
@@ -191,10 +174,10 @@ GameFont *HeaderTemplateManager::getFontFromTemplate( AsciiString name )
 	HeaderTemplate *ht = findHeaderTemplate( name );
 	if(!ht)
 	{
-		//DEBUG_LOG(("HeaderTemplateManager::getFontFromTemplate - Could not find header %s\n", name.str()));
+		//DEBUG_LOG(("HeaderTemplateManager::getFontFromTemplate - Could not find header %s", name.str()));
 		return NULL;
 	}
-	
+
 	return ht->m_font;
 }
 
@@ -241,10 +224,10 @@ void HeaderTemplateManager::populateGameFonts( void )
 		HeaderTemplate *hTemplate = *it;
 		Real pointSize = TheGlobalLanguageData->adjustFontSize(hTemplate->m_point);
 		GameFont *font = TheFontLibrary->getFont(hTemplate->m_fontName, pointSize,hTemplate->m_bold);
-		DEBUG_ASSERTCRASH(font,("HeaderTemplateManager::populateGameFonts - Could not find font %s %d",hTemplate->m_fontName, hTemplate->m_point));
+		DEBUG_ASSERTCRASH(font,("HeaderTemplateManager::populateGameFonts - Could not find font %s %d",hTemplate->m_fontName.str(), hTemplate->m_point));
 
 		hTemplate->m_font = font;
-		
+
 		++it;
 	}
 }

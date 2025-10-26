@@ -34,13 +34,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-
-
-#ifndef GAMEMTLTEXTUREDLG_H
-#define GAMEMTLTEXTUREDLG_H
+#pragma once
 
 #include <max.h>
+
 #include "GameMtlForm.h"
 
 class GameMtl;
@@ -58,7 +55,7 @@ public:
 	void					ReloadDialog(void);
 
 private:
-	
+
 	void					Enable_Stage(int stage,BOOL onoff);
 	void					Update_Texture_Buttons(void);
 
@@ -81,10 +78,3 @@ private:
 	ICustButton *		Stage0DisplayButton;
 	ICustButton *		Stage1DisplayButton;
 };
-
-
-
-
-#endif
-
-

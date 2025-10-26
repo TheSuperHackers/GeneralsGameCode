@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GEOMETRY_H_
-#define __GEOMETRY_H_
-
 #include "Lib/BaseType.h"
 #include "Common/AsciiString.h"
 #include "Common/Snapshot.h"
@@ -42,32 +39,33 @@ class INI;
 /** Geometry type descriptions, keep this in the same order as GeometryNames[] below
 	*
 	* NOTE: Do *NOT* change the order of these defines unless you update the
-	* partition manager ... in particular theCollideTestProcs depend on the 
+	* partition manager ... in particular theCollideTestProcs depend on the
 	* order of this geometry and the fact that the values start at 1
 	*/
 //-------------------------------------------------------------------------------------------------
 enum GeometryType CPP_11(: Int)
 {
-	GEOMETRY_SPHERE = 0,	///< partition/collision testing as sphere. (majorRadius = radius)
+	GEOMETRY_SPHERE,			///< partition/collision testing as sphere. (majorRadius = radius)
 	GEOMETRY_CYLINDER,		///< partition/collision testing as cylinder. (majorRadius = radius, height = height)
 	GEOMETRY_BOX,					///< partition/collision testing as rectangular box (majorRadius = half len in forward dir; minorRadius = half len in side dir; height = height)
 
-	GEOMETRY_NUM_TYPES,  // keep this last
-	GEOMETRY_FIRST = GEOMETRY_SPHERE
+	GEOMETRY_NUM_TYPES,
+	GEOMETRY_FIRST = 0
 };
 
 #ifdef DEFINE_GEOMETRY_NAMES
-static const char *GeometryNames[] = 
+static const char *const GeometryNames[] =
 {
-	"SPHERE",		
-	"CYLINDER",	
-	"BOX",			
+	"SPHERE",
+	"CYLINDER",
+	"BOX",
 	NULL
 };
+static_assert(ARRAY_SIZE(GeometryNames) == GEOMETRY_NUM_TYPES + 1, "Incorrect array size");
 #endif  // end DEFINE_GEOMETRY_NAMES
 
 //-------------------------------------------------------------------------------------------------
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 enum ExtentModType CPP_11(: Int)
 {
 	EXTENTMOD_INVALID = 0,
@@ -90,21 +88,21 @@ private:
 	Real m_height;
 	Real m_majorRadius;
 	Real m_minorRadius;
-	
+
 	Real m_boundingCircleRadius;	///< not in INI file -- size of bounding circle (2d)
 	Real m_boundingSphereRadius;	///< not in INI -- size of bounding sphere (3d)
 
 	void calcBoundingStuff();
 
 protected:
-	
+
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
 	virtual void loadPostProcess( void );
 
 public:
-	
+
 	static void parseGeometryType( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ );
 	static void parseGeometryIsSmall( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ );
 	static void parseGeometryHeight( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ );
@@ -142,8 +140,8 @@ public:
 	inline Bool getIsSmall() const { return m_isSmall; }
 	inline Real getMajorRadius() const { return m_majorRadius; }	// x-axis
 	inline Real getMinorRadius() const { return m_minorRadius; }	// y-axis
-	
-	// this has been removed and should never need to be called... 
+
+	// this has been removed and should never need to be called...
 	// you should generally call getMaxHeightAbovePosition() instead. (srj)
 	//inline Real getGeomHeight() const { return m_height; }				// z-axis
 
@@ -179,6 +177,7 @@ public:
 
 	/// note that the pt is generated using game logic random, not game client random!
 	void makeRandomOffsetWithinFootprint(Coord3D& pt) const;
+	void makeRandomOffsetOnPerimeter(Coord3D& pt) const; //Chooses a random point on the extent border.
 
 	void clipPointToFootprint(const Coord3D& geomCenter, Coord3D& ptToClip) const;
 
@@ -187,12 +186,9 @@ public:
 	// given an object with this geom, SET how far above the object's canonical position its max z should extend.
 	void setMaxHeightAbovePosition(Real z);
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	void tweakExtents(ExtentModType extentModType, Real extentModAmount);
 	AsciiString getDescriptiveString() const;
 #endif
 
 };
-
-#endif 
-

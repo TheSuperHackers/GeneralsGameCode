@@ -60,10 +60,10 @@
 //
 //		- Init() [OPTIONAL]
 //			This is called as a result of a push or pop operation (see above for more info)
-//			The window layout is loaded from disk and then this Init() 
-//			method is run.  All shell layout Init() methods should show 
+//			The window layout is loaded from disk and then this Init()
+//			method is run.  All shell layout Init() methods should show
 //			the layout windows.  At this point you could move windows
-//			to starting positions, set a state that the Update() method looks at to 
+//			to starting positions, set a state that the Update() method looks at to
 //			"animate" the windows to the desired positions.
 //
 //		- Update() [OPTIONAL]
@@ -77,7 +77,7 @@
 //		- Shutdown() [REQUIRED]
 //			This is called when a layout is popped off the stack, or when a new layout
 //			is pushed on top of this one (see above for more detail on what happens
-//			during the push/pop process).  You can switch into a "shutdown" state and 
+//			during the push/pop process).  You can switch into a "shutdown" state and
 //			animate the layout appropriately in the Update() method for the layout.
 //			When shutdown is actually complete you should hide the all windows in
 //			the layout and then you are REQUIRED to notify the shell by calling
@@ -93,9 +93,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __SHELL_H_
-#define __SHELL_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -120,10 +117,12 @@ public:
 	~Shell( void );
 
 	// Inhertited from subsystem ====================================================================
-	virtual void init( void );			
-	virtual void reset( void );			
-	virtual void update( void );		
+	virtual void init( void );
+	virtual void reset( void );
+	virtual void update( void );
 	//===============================================================================================
+
+	void recreateWindowLayouts( void );
 
 	void showShellMap(Bool useShellMap );										///< access function to turn on and off the shell map
 
@@ -136,13 +135,11 @@ public:
 	void showShell( Bool runInit = TRUE );									///< init the top of stack
 	void hideShell( void );																	///< shutdown the top of stack
 	WindowLayout *top( void );															///< return top layout
-	
+
 	void shutdownComplete( WindowLayout *layout, Bool impendingPush = FALSE );	///< layout has completed shutdown
 
 	WindowLayout *findScreenByFilename( AsciiString filename );		///< find screen
 	inline Bool isShellActive( void ) { return m_isShellActive; }  ///<	Returns true if the shell is active
-	
-	inline Int getScreenCount(void) { return m_screenCount; }			///< Return the current number of screens
 
 	void registerWithAnimateManager( GameWindow *win, AnimTypes animType, Bool needsToFinish, UnsignedInt delayMS = 0);
 	Bool isAnimFinished( void );
@@ -152,12 +149,18 @@ public:
 	void loadScheme( AsciiString name );
 	ShellMenuSchemeManager *getShellMenuSchemeManager( void ) { return m_schemeManager;	}
 
+	Int getScreenCount( void ) const { return m_screenCount; } ///< Return the current number of screens
+	WindowLayout *getScreenLayout( Int index ) const;
+
 	WindowLayout *getSaveLoadMenuLayout( void );		///< create if necessary and return layout for save load menu
 	WindowLayout *getPopupReplayLayout( void );			///< create if necessary and return layout for replay save menu
 	WindowLayout *getOptionsLayout( Bool create );	///< return layout for options menu, create if necessary and we are allowed to.
 	void destroyOptionsLayout( void );							///< destroy the shell's options layout.
 
 protected:
+
+	void construct( void );
+	void deconstruct( void );
 
 	void linkScreen( WindowLayout *screen );								///< link screen to list
 	void unlinkScreen( WindowLayout *screen );							///< remove screen from list
@@ -194,12 +197,9 @@ protected:
 	WindowLayout *m_popupReplayLayout;											///< replay save menu layout
 	WindowLayout *m_optionsLayout;													///< options menu layout
 
-};  // end class Shell
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern Shell *TheShell;  ///< the shell external interface
-
-#endif // __SHELL_H_
-

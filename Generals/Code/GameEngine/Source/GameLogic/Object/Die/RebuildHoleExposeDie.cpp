@@ -45,11 +45,6 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ScriptEngine.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -66,7 +61,7 @@ RebuildHoleExposeDieModuleData::RebuildHoleExposeDieModuleData()
 {
 	DieModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "HoleName", INI::parseAsciiString, NULL, offsetof( RebuildHoleExposeDieModuleData, m_holeName ) },
 		{ "HoleMaxHealth", INI::parseReal, NULL, offsetof( RebuildHoleExposeDieModuleData, m_holeMaxHealth ) },
@@ -76,7 +71,7 @@ RebuildHoleExposeDieModuleData::RebuildHoleExposeDieModuleData()
 
 	p.add( dataFieldParse );
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,14 +83,14 @@ RebuildHoleExposeDie::RebuildHoleExposeDie( Thing *thing, const ModuleData* modu
 										: DieModule( thing, moduleData )
 {
 
-}  // end RebuildHoleExposeDie
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 RebuildHoleExposeDie::~RebuildHoleExposeDie( void )
 {
 
-}  // end ~RebuildHoleExposeDie
+}
 
 //-------------------------------------------------------------------------------------------------
 /** The die callback. */
@@ -111,8 +106,8 @@ void RebuildHoleExposeDie::onDie( const DamageInfo *damageInfo )
 	// if we are being constructed from either the first time or from a hole reconstruction
 	// we do not "spawn" a hole object
 	//
-	if( us->getControllingPlayer() != ThePlayerList->getNeutralPlayer() 
-		  && us->getControllingPlayer()->isPlayerActive() 
+	if( us->getControllingPlayer() != ThePlayerList->getNeutralPlayer()
+		  && us->getControllingPlayer()->isPlayerActive()
 			&& !us->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 	{
 		Object *hole;
@@ -150,7 +145,7 @@ void RebuildHoleExposeDie::onDie( const DamageInfo *damageInfo )
 		RebuildHoleBehaviorInterface *rhbi = RebuildHoleBehavior::getRebuildHoleBehaviorInterfaceFromObject( hole );
 
 		// sanity
-		DEBUG_ASSERTCRASH( rhbi, ("RebuildHoleExposeDie: No Rebuild Hole Behavior interface on hole\n") );
+		DEBUG_ASSERTCRASH( rhbi, ("RebuildHoleExposeDie: No Rebuild Hole Behavior interface on hole") );
 
 		// start the rebuild process
 		if( rhbi )
@@ -168,9 +163,9 @@ void RebuildHoleExposeDie::onDie( const DamageInfo *damageInfo )
 			}
 		}
 
-	}  // end if
+	}
 
-}  // end onDie
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -181,7 +176,7 @@ void RebuildHoleExposeDie::crc( Xfer *xfer )
 	// extend base class
 	DieModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -199,7 +194,7 @@ void RebuildHoleExposeDie::xfer( Xfer *xfer )
 	// extend base class
 	DieModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -210,4 +205,4 @@ void RebuildHoleExposeDie::loadPostProcess( void )
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

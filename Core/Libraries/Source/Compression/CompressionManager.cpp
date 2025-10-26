@@ -23,20 +23,15 @@
 
 #include "Compression.h"
 #include "LZHCompress/NoxCompress.h"
-#ifdef RTS_HAS_ZLIB
+
 #define __MACTYPES__
 #include <zlib.h>
-#endif
+
 #include "EAC/codex.h"
 #include "EAC/btreecodex.h"
 #include "EAC/huffcodex.h"
 #include "EAC/refcodex.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // TheSuperHackers @todo Recover debug logging in this file?
 #define DEBUG_LOG(x) {}
@@ -47,7 +42,6 @@ const char *CompressionManager::getCompressionNameByType( CompressionType compTy
 		"No compression",
 		"RefPack",
 		"LZHL",
-#ifdef RTS_HAS_ZLIB
 		"ZLib 1 (fast)",
 		"ZLib 2",
 		"ZLib 3",
@@ -57,7 +51,6 @@ const char *CompressionManager::getCompressionNameByType( CompressionType compTy
 		"ZLib 7",
 		"ZLib 8",
 		"ZLib 9 (slow)",
-#endif
 		"BTree",
 		"Huff",
 	};
@@ -71,7 +64,6 @@ const char *CompressionManager::getDecompressionNameByType( CompressionType comp
 		"d_None",
 		"d_RefPack",
 		"d_NoxLZW",
-#ifdef RTS_HAS_ZLIB
 		"d_ZLib1",
 		"d_ZLib2",
 		"d_ZLib3",
@@ -81,7 +73,6 @@ const char *CompressionManager::getDecompressionNameByType( CompressionType comp
 		"d_ZLib7",
 		"d_ZLib8",
 		"d_ZLib9",
-#endif
 		"d_BTree",
 		"d_Huff",
 	};
@@ -109,7 +100,6 @@ CompressionType CompressionManager::getCompressionType( const void *mem, Int len
 
 	if ( memcmp( mem, "NOX\0", 4 ) == 0 )
 		return COMPRESSION_NOXLZH;
-#ifdef RTS_HAS_ZLIB
 	if ( memcmp( mem, "ZL1\0", 4 ) == 0 )
 		return COMPRESSION_ZLIB1;
 	if ( memcmp( mem, "ZL2\0", 4 ) == 0 )
@@ -128,7 +118,6 @@ CompressionType CompressionManager::getCompressionType( const void *mem, Int len
 		return COMPRESSION_ZLIB8;
 	if ( memcmp( mem, "ZL9\0", 4 ) == 0 )
 		return COMPRESSION_ZLIB9;
-#endif
 	if ( memcmp( mem, "EAB\0", 4 ) == 0 )
 		return COMPRESSION_BTREE;
 	if ( memcmp( mem, "EAH\0", 4 ) == 0 )
@@ -150,7 +139,6 @@ Int CompressionManager::getMaxCompressedSize( Int uncompressedLen, CompressionTy
 		case COMPRESSION_HUFF:    // guessing here
 		case COMPRESSION_REFPACK: // guessing here
 			return uncompressedLen + 8;
-#ifdef RTS_HAS_ZLIB
 		case COMPRESSION_ZLIB1:
 		case COMPRESSION_ZLIB2:
 		case COMPRESSION_ZLIB3:
@@ -161,7 +149,6 @@ Int CompressionManager::getMaxCompressedSize( Int uncompressedLen, CompressionTy
 		case COMPRESSION_ZLIB8:
 		case COMPRESSION_ZLIB9:
 			return (Int)(ceil(uncompressedLen * 1.1 + 12 + 8));
-#endif
 	}
 
 	return 0;
@@ -176,7 +163,6 @@ Int CompressionManager::getUncompressedSize( const void *mem, Int len )
 	switch (compType)
 	{
 		case COMPRESSION_NOXLZH:
-#ifdef RTS_HAS_ZLIB
 		case COMPRESSION_ZLIB1:
 		case COMPRESSION_ZLIB2:
 		case COMPRESSION_ZLIB3:
@@ -186,7 +172,6 @@ Int CompressionManager::getUncompressedSize( const void *mem, Int len )
 		case COMPRESSION_ZLIB7:
 		case COMPRESSION_ZLIB8:
 		case COMPRESSION_ZLIB9:
-#endif
 		case COMPRESSION_BTREE:
 		case COMPRESSION_HUFF:
 		case COMPRESSION_REFPACK:
@@ -260,7 +245,6 @@ Int CompressionManager::compressData( CompressionType compType, void *srcVoid, I
 			return 0;
 	}
 
-#ifdef RTS_HAS_ZLIB
 	if (compType >= COMPRESSION_ZLIB1 && compType <= COMPRESSION_ZLIB9)
 	{
 		Int level = compType - COMPRESSION_ZLIB1 + 1; // 1-9
@@ -278,11 +262,10 @@ Int CompressionManager::compressData( CompressionType compType, void *srcVoid, I
 		}
 		else
 		{
-			DEBUG_LOG(("ZLib compression error (level is %d, src len is %d) %d\n", level, srcLen, err));
+			DEBUG_LOG(("ZLib compression error (level is %d, src len is %d) %d", level, srcLen, err));
 			return 0;
 		}
 	}
-#endif
 
 	return 0;
 }
@@ -334,7 +317,6 @@ Int CompressionManager::decompressData( void *srcVoid, Int srcLen, void *destVoi
 			return 0;
 	}
 
-#ifdef RTS_HAS_ZLIB
 	if (compType >= COMPRESSION_ZLIB1 && compType <= COMPRESSION_ZLIB9)
 	{
 		unsigned long outLen = destLen;
@@ -345,12 +327,11 @@ Int CompressionManager::decompressData( void *srcVoid, Int srcLen, void *destVoi
 		}
 		else
 		{
-			DEBUG_LOG(("ZLib decompression error (src is level %d, %d bytes long) %d\n",
+			DEBUG_LOG(("ZLib decompression error (src is level %d, %d bytes long) %d",
 				compType - COMPRESSION_ZLIB1 + 1 /* 1-9 */, srcLen, err));
 			return 0;
 		}
 	}
-#endif
 
 	return 0;
 }
@@ -379,7 +360,7 @@ public:
 
 void DoCompressTest( void )
 {
-	
+
 	Int i;
 
 	PerfGather *s_compressGathers[COMPRESSION_MAX+1];
@@ -406,7 +387,7 @@ void DoCompressTest( void )
 		File *f = TheFileSystem->openFile(it->first.str());
 		if (f)
 		{
-			DEBUG_LOG(("***************************\nTesting '%s'\n\n", it->first.str()));
+			DEBUG_LOG(("***************************\nTesting '%s'\n", it->first.str()));
 			Int origSize = f->size();
 			UnsignedByte *buf = (UnsignedByte *)f->readEntireAndClose();
 			UnsignedByte *uncompressedBuf = NEW UnsignedByte[origSize];
@@ -417,11 +398,11 @@ void DoCompressTest( void )
 
 			for (i=COMPRESSION_MIN; i<=COMPRESSION_MAX; ++i)
 			{
-				DEBUG_LOG(("=================================================\n"));
-				DEBUG_LOG(("Compression Test %d\n", i));
+				DEBUG_LOG(("================================================="));
+				DEBUG_LOG(("Compression Test %d", i));
 
 				Int maxCompressedSize = CompressionManager::getMaxCompressedSize( origSize, (CompressionType)i );
-				DEBUG_LOG(("Orig size is %d, max compressed size is %d bytes\n", origSize, maxCompressedSize));
+				DEBUG_LOG(("Orig size is %d, max compressed size is %d bytes", origSize, maxCompressedSize));
 
 				UnsignedByte *compressedBuf = NEW UnsignedByte[maxCompressedSize];
 				memset(compressedBuf, 0, maxCompressedSize);
@@ -429,7 +410,7 @@ void DoCompressTest( void )
 
 				Int compressedLen, decompressedLen;
 
-				for (Int j=0; j < NUM_TIMES; ++j) 
+				for (Int j=0; j < NUM_TIMES; ++j)
 				{
 					s_compressGathers[i]->startTimer();
 					compressedLen = CompressionManager::compressData((CompressionType)i, buf, origSize, compressedBuf, maxCompressedSize);
@@ -439,17 +420,17 @@ void DoCompressTest( void )
 					s_decompressGathers[i]->stopTimer();
 				}
 				d.compressedSize[i] = compressedLen;
-				DEBUG_LOG(("Compressed len is %d (%g%% of original size)\n", compressedLen, (double)compressedLen/(double)origSize*100.0));
-				DEBUG_ASSERTCRASH(compressedLen, ("Failed to compress\n"));
-				DEBUG_LOG(("Decompressed len is %d (%g%% of original size)\n", decompressedLen, (double)decompressedLen/(double)origSize*100.0));
+				DEBUG_LOG(("Compressed len is %d (%g%% of original size)", compressedLen, (double)compressedLen/(double)origSize*100.0));
+				DEBUG_ASSERTCRASH(compressedLen, ("Failed to compress"));
+				DEBUG_LOG(("Decompressed len is %d (%g%% of original size)", decompressedLen, (double)decompressedLen/(double)origSize*100.0));
 
-				DEBUG_ASSERTCRASH(decompressedLen == origSize, ("orig size does not match compressed+uncompressed output\n"));
+				DEBUG_ASSERTCRASH(decompressedLen == origSize, ("orig size does not match compressed+uncompressed output"));
 				if (decompressedLen == origSize)
 				{
 					Int ret = memcmp(buf, uncompressedBuf, origSize);
 					if (ret != 0)
 					{
-						DEBUG_CRASH(("orig buffer does not match compressed+uncompressed output - ret was %d\n", ret));
+						DEBUG_CRASH(("orig buffer does not match compressed+uncompressed output - ret was %d", ret));
 					}
 				}
 
@@ -457,9 +438,9 @@ void DoCompressTest( void )
 				compressedBuf = NULL;
 			}
 
-			DEBUG_LOG(("d = %d -> %d\n", d.origSize, d.compressedSize[i]));
+			DEBUG_LOG(("d = %d -> %d", d.origSize, d.compressedSize[i]));
 			s_sizes[it->first] = d;
-			DEBUG_LOG(("s_sizes[%s] = %d -> %d\n", it->first.str(), s_sizes[it->first].origSize, s_sizes[it->first].compressedSize[i]));
+			DEBUG_LOG(("s_sizes[%s] = %d -> %d", it->first.str(), s_sizes[it->first].origSize, s_sizes[it->first].compressedSize[i]));
 
 			delete[] buf;
 			buf = NULL;
@@ -488,13 +469,13 @@ void DoCompressTest( void )
 			totalUncompressedBytes += d.origSize;
 			totalCompressedBytes += d.compressedSize[i];
 		}
-		DEBUG_LOG(("***************************************************\n"));
-		DEBUG_LOG(("Compression method %s:\n", CompressionManager::getCompressionNameByType((CompressionType)i)));
-		DEBUG_LOG(("%d bytes compressed to %d (%g%%)\n", totalUncompressedBytes, totalCompressedBytes,
+		DEBUG_LOG(("***************************************************"));
+		DEBUG_LOG(("Compression method %s:", CompressionManager::getCompressionNameByType((CompressionType)i)));
+		DEBUG_LOG(("%d bytes compressed to %d (%g%%)", totalUncompressedBytes, totalCompressedBytes,
 			totalCompressedBytes/(Real)totalUncompressedBytes*100.0f));
-		DEBUG_LOG(("Min ratio: %g%%, Max ratio: %g%%\n",
+		DEBUG_LOG(("Min ratio: %g%%, Max ratio: %g%%",
 			minCompression*100.0f, maxCompression*100.0f));
-		DEBUG_LOG(("\n"));
+		DEBUG_LOG((""));
 	}
 
 	PerfGather::dumpAll(10000);
@@ -502,7 +483,7 @@ void DoCompressTest( void )
 	PerfGather::resetAll();
 	CopyFile( "AAAPerfStats.csv", "AAACompressPerfStats.csv", FALSE );
 
-	for (i = 0; i < COMPRESSION_MAX+1; ++i) 
+	for (i = 0; i < COMPRESSION_MAX+1; ++i)
 	{
 		delete s_compressGathers[i];
 		s_compressGathers[i] = NULL;

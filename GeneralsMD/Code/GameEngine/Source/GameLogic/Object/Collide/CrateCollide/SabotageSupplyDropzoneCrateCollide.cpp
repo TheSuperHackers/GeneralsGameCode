@@ -23,13 +23,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: SabotageSupplyDropzoneCrateCollide.cpp 
+//
+// FILE: SabotageSupplyDropzoneCrateCollide.cpp
 // Author: Kris Morness, June 2003
 // Desc:   A crate (actually a saboteur - mobile crate) that resets the timer on the target supply dropzone.
-//	
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
- 
+
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -61,23 +61,18 @@
 #include "GameLogic/Module/SabotageSupplyDropzoneCrateCollide.h"
 
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SabotageSupplyDropzoneCrateCollide::SabotageSupplyDropzoneCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SabotageSupplyDropzoneCrateCollide::~SabotageSupplyDropzoneCrateCollide( void )
 {
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -100,6 +95,14 @@ Bool SabotageSupplyDropzoneCrateCollide::isValidToExecute( const Object *other )
 		//We can only sabotage supply dropzones.
 		return FALSE;
 	}
+
+#if !RETAIL_COMPATIBLE_CRC
+	if (other->getStatusBits().testForAny(MAKE_OBJECT_STATUS_MASK2(OBJECT_STATUS_UNDER_CONSTRUCTION, OBJECT_STATUS_SOLD)))
+	{
+		// TheSuperHackers @bugfix Stubbjax 03/08/2025 Can't enter something being sold or under construction.
+		return FALSE;
+	}
+#endif
 
 	Relationship r = getObject()->getRelationship( other );
 	if( r != ENEMIES )
@@ -130,7 +133,7 @@ Bool SabotageSupplyDropzoneCrateCollide::executeCrateBehavior( Object *other )
 
   doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_DROP_ZONE );
 
-	//Reset the timer on the dropzone. Um... only the dropzone has an OCLUpdate and one, so 
+	//Reset the timer on the dropzone. Um... only the dropzone has an OCLUpdate and one, so
 	//we can "assume" it's going to be safe. Otherwise, we'll have to write code to search for
 	//a specific OCLUpdate.
 	static NameKeyType key_ocl = NAMEKEY( "OCLUpdate" );
@@ -159,7 +162,7 @@ Bool SabotageSupplyDropzoneCrateCollide::executeCrateBehavior( Object *other )
 				controller->getScoreKeeper()->addMoneyEarned( cash );
 
 			//Play the "cash stolen" EVA event if the local player is the victim!
-			if( other && other->isLocallyControlled() )
+			if( other->isLocallyControlled() )
 			{
 				TheEva->setShouldPlay( EVA_CashStolen );
 			}
@@ -171,7 +174,7 @@ Bool SabotageSupplyDropzoneCrateCollide::executeCrateBehavior( Object *other )
 			pos.set( obj->getPosition() );
 			pos.z += 20.0f; //add a little z to make it show up above the unit.
 			TheInGameUI->addFloatingText( moneyString, &pos, GameMakeColor( 0, 255, 0, 255 ) );
-		
+
 			//Display cash lost floating over the target
 			moneyString.format( TheGameText->fetch( "GUI:LoseCash" ), cash );
 			pos.set( other->getPosition() );
@@ -200,7 +203,7 @@ void SabotageSupplyDropzoneCrateCollide::crc( Xfer *xfer )
 	// extend base class
 	CrateCollide::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -218,7 +221,7 @@ void SabotageSupplyDropzoneCrateCollide::xfer( Xfer *xfer )
 	// extend base class
 	CrateCollide::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -229,4 +232,4 @@ void SabotageSupplyDropzoneCrateCollide::loadPostProcess( void )
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+}

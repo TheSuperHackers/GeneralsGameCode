@@ -16,7 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #pragma once
 
 #include "Lib/BaseType.h"
@@ -31,9 +30,9 @@ class CSwitchesDialog : public CDialog
 
 		void InitPanel( void );
 
-		// if true, updates the UI from the Particle System. 
+		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );	
+		void performUpdate( IN Bool toUI );
 		DebugWindowDialog* GetDWDParent(void) { return (DebugWindowDialog*) GetParent(); }
 
 	protected:

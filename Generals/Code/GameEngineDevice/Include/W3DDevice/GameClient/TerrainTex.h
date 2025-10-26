@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef TERRAINTEX_H
-#define TERRAINTEX_H
-
 //#define DO_8STAGE_TERRAIN_PASS		//optimized terrain rendering for Nvidia based cards
 
 #include "WW3D2/texture.h"
@@ -103,7 +100,7 @@ public:
 		// Create texture from a height map.
 		LightMapTerrainTextureClass( AsciiString name, MipCountType mipLevelCount = MIP_LEVELS_ALL );
 
-		// just use default destructor. 
+		// just use default destructor.
 };
 
 class ScorchTextureClass : public TextureClass
@@ -141,7 +138,3 @@ public:
 
 		void restore(void);
 };
-
-
-
-#endif //TEXTURE_H

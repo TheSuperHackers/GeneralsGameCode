@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef __COMPRESSION_H__
-#define __COMPRESSION_H__
-
 #include "Lib/BaseTypeCore.h"
 
 enum CompressionType
@@ -33,7 +30,6 @@ enum CompressionType
 	COMPRESSION_NONE = COMPRESSION_MIN,
 	COMPRESSION_REFPACK,
 	COMPRESSION_NOXLZH,
-#ifdef RTS_HAS_ZLIB
 	COMPRESSION_ZLIB1,
 	COMPRESSION_ZLIB2,
 	COMPRESSION_ZLIB3,
@@ -43,7 +39,6 @@ enum CompressionType
 	COMPRESSION_ZLIB7,
 	COMPRESSION_ZLIB8,
 	COMPRESSION_ZLIB9,
-#endif
 	COMPRESSION_BTREE,
 	COMPRESSION_HUFF,
 	COMPRESSION_MAX = COMPRESSION_HUFF,
@@ -69,5 +64,3 @@ public:
 
 	static CompressionType getPreferredCompression( void );
 };
-
-#endif // __COMPRESSION_H__

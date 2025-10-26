@@ -27,14 +27,11 @@
 
 #pragma once
 
-#ifndef __NETCOMMANDWRAPPERLIST_H
-#define __NETCOMMANDWRAPPERLIST_H
-
 #include "GameNetwork/NetCommandList.h"
 
 class NetCommandWrapperListNode : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetCommandWrapperListNode, "NetCommandWrapperListNode")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetCommandWrapperListNode, "NetCommandWrapperListNode")
 public:
 	NetCommandWrapperListNode(NetWrapperCommandMsg *msg);
 	//virtual ~NetCommandWrapperListNode();
@@ -61,7 +58,7 @@ protected:
 
 class NetCommandWrapperList : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetCommandWrapperList, "NetCommandWrapperList")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetCommandWrapperList, "NetCommandWrapperList")
 public:
 	NetCommandWrapperList();
 	//virtual ~NetCommandWrapperList();
@@ -79,5 +76,3 @@ protected:
 
 	NetCommandWrapperListNode *m_list;
 };
-
-#endif

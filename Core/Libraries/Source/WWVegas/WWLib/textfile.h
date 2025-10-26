@@ -16,29 +16,23 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/textfile.h                             $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/textfile.h                             $*
+ *                                                                                             *
  *                      $Author:: Patrick                   $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 5/31/00 9:22a                                               $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
-
-#ifndef __TEXT_FILE_H
-#define __TEXT_FILE_H
-
 
 #include "RAWFILE.H"
 
@@ -64,7 +58,7 @@ public:
 	//	Public constructors/destructors
 	/////////////////////////////////////////////////////////////////
 	TextFileClass (void);
-	TextFileClass (char const *filename);	
+	TextFileClass (char const *filename);
 	TextFileClass (const TextFileClass &src);
 	virtual ~TextFileClass (void);
 
@@ -79,7 +73,3 @@ public:
 	bool			Read_Line (StringClass &string);
 	bool			Write_Line (const StringClass &string);
 };
-
-
-#endif //__TEXT_FILE_H
-

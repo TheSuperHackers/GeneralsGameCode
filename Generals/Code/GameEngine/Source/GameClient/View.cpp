@@ -43,15 +43,14 @@ View::View( void )
 {
 	//Added By Sadullah Nader
 	//Initialization(s) inserted
+	m_viewLockedUntilFrame = 0u;
 	m_currentHeightAboveGround = 0.0f;
 	m_defaultAngle = 0.0f;
 	m_defaultPitchAngle = 0.0f;
 	m_heightAboveGround = 0.0f;
 	m_lockDist = 0.0f;
 	m_maxHeightAboveGround = 0.0f;
-	m_maxZoom = 0.0f;
 	m_minHeightAboveGround = 0.0f;
-	m_minZoom = 0.0f;
 	m_next = NULL;
 	m_okToAdjustHeight = TRUE;
 	m_originX = 0;
@@ -75,9 +74,9 @@ View::View( void )
 
 	// default field of view
 	m_FOV = 50.0f * PI/180.0f;
-	
+
 	m_mouseLocked = FALSE;
-	
+
 	m_guardBandBias.x = 0.0f;
 	m_guardBandBias.y = 0.0f;
 }
@@ -98,10 +97,8 @@ void View::init( void )
 	m_cameraLock = INVALID_ID;
 	m_cameraLockDrawable = NULL;
 	m_zoomLimited = TRUE;
-	
-	m_maxZoom = 1.3f;
-	m_minZoom = 0.2f;
-	m_zoom = m_maxZoom;
+
+	m_zoom = 1.0f;
 	m_maxHeightAboveGround = TheGlobalData->m_maxCameraHeight;
 	m_minHeightAboveGround = TheGlobalData->m_minCameraHeight;
 	m_okToAdjustHeight = FALSE;
@@ -114,6 +111,8 @@ void View::reset( void )
 {
 	// Only fixing the reported bug.  Who knows what side effects resetting the rest could have.
 	m_zoomLimited = TRUE;
+
+	m_viewLockedUntilFrame = 0u;
 }
 
 /**
@@ -125,34 +124,34 @@ View *View::prependViewToList( View *list )
 	return this;
 }
 
-void View::zoomIn( void )
+void View::zoom( Real height )
 {
-	setHeightAboveGround(getHeightAboveGround() - 10.0f);
+	setHeightAboveGround(getHeightAboveGround() + height);
 }
 
-void View::zoomOut( void )
+void View::lockViewUntilFrame(UnsignedInt frame)
 {
-	setHeightAboveGround(getHeightAboveGround() + 10.0f);
+	m_viewLockedUntilFrame = frame;
 }
 
 /**
  * Center the view on the given coordinate.
  */
-void View::lookAt( const Coord3D *o ) 
-{ 
+void View::lookAt( const Coord3D *o )
+{
 
 	/// @todo this needs to be changed to be 3D, this is still old 2D stuff
 	Coord3D pos = *getPosition();
-	pos.x = o->x - m_width * 0.5f; 
-	pos.y = o->y - m_height * 0.5f; 
+	pos.x = o->x - m_width * 0.5f;
+	pos.y = o->y - m_height * 0.5f;
 	setPosition(&pos);
 }
 
 /**
  * Shift the view by the given delta.
  */
-void View::scrollBy( Coord2D *delta ) 
-{ 
+void View::scrollBy( Coord2D *delta )
+{
 	// update view's world position
 	m_pos.x += delta->x;
 	m_pos.y += delta->y;
@@ -163,7 +162,7 @@ void View::scrollBy( Coord2D *delta )
  */
 void View::setAngle( Real angle )
 {
-	m_angle = angle; 
+	m_angle = angle;
 }
 
 /**
@@ -171,23 +170,30 @@ void View::setAngle( Real angle )
  */
 void View::setPitch( Real angle )
 {
-	m_pitchAngle = angle;
-
-	Real limit = PI/5.0f;
-
-	if (m_pitchAngle < -limit)
-		m_pitchAngle = -limit;
-	else if (m_pitchAngle > limit)
-		m_pitchAngle = limit;
+	constexpr Real limit = PI/5.0f;
+	m_pitchAngle = clamp(-limit, angle, limit);
 }
 
 /**
  * Set the view angle back to default
  */
 void View::setAngleAndPitchToDefault( void )
-{ 
+{
 	m_angle = m_defaultAngle;
 	m_pitchAngle = m_defaultPitchAngle;
+}
+
+void View::setHeightAboveGround(Real z)
+{
+	// if our zoom is limited, we will stay within a predefined distance from the terrain
+	if( m_zoomLimited )
+	{
+		m_heightAboveGround = clamp(m_minHeightAboveGround, z, m_maxHeightAboveGround);
+	}
+	else
+	{
+		m_heightAboveGround = z;
+	}
 }
 
 /**
@@ -252,7 +258,7 @@ void View::getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
 	screenToWorldAtZ( &screenBottomLeft, bottomLeft, z );
 	screenToWorldAtZ( &screenBottomRight, bottomRight, z );
 
-}  // end getScreenCornerWorldPointsAtZ
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method for a view */
@@ -278,4 +284,4 @@ void View::xfer( Xfer *xfer )
 	xfer->xferReal( &viewPos.z );
 	lookAt( &viewPos );
 
-}  // end xfer
+}

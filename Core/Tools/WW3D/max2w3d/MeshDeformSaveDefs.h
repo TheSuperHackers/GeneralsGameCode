@@ -16,26 +16,25 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D engine                                       * 
- *                                                                                             * 
- *                    File Name : MeshDeformData.cpp                                           * 
- *                                                                                             * 
- *                   Programmer : Patrick Smith                                                * 
- *                                                                                             * 
- *                   Start Date : 06/07/99                                                     * 
- *                                                                                             * 
- *                  Last Update : 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D engine                                       *
+ *                                                                                             *
+ *                    File Name : MeshDeformData.cpp                                           *
+ *                                                                                             *
+ *                   Programmer : Patrick Smith                                                *
+ *                                                                                             *
+ *                   Start Date : 06/07/99                                                     *
+ *                                                                                             *
+ *                  Last Update :
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef __MESH_DEFORM_SAVE_DEFS_H
-#define __MESH_DEFORM_SAVE_DEFS_H
+#pragma once
 
 #include <max.h>
 
@@ -64,7 +63,7 @@ typedef enum
 //
 // Deform information.  Each mesh can have sets of keyframes of
 //	deform info associated with it.
-// 
+//
 struct DeformChunk
 {
 	uint32					SetCount;
@@ -74,9 +73,9 @@ struct DeformChunk
 //
 // Deform set information.  Each set is made up of a series
 // of keyframes.
-// 
+//
 struct DeformChunkSetInfo
-{	
+{
 	uint32					KeyframeCount;
 	uint32					flags;
 	uint32					NumVerticies;
@@ -89,7 +88,7 @@ struct DeformChunkSetInfo
 //
 // Deform keyframe information.  Each keyframe is made up of
 // a set of per-vert deform data.
-// 
+//
 struct DeformChunkKeyframeInfo
 {
 	float32					DeformPercent;
@@ -101,7 +100,7 @@ struct DeformChunkKeyframeInfo
 //
 // Deform data.  Contains deform information about a vertex
 // in the mesh.
-// 
+//
 struct DeformDataChunk
 {
 	uint32					VertexIndex;
@@ -109,6 +108,3 @@ struct DeformDataChunk
 	Point3					Value;
 	uint32					reserved[2];
 };
-
-
-#endif //__MESH_DEFORM_SAVE_DEFS_H

@@ -36,12 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef WWLIB_CPU_DETECT_H__
-#define WWLIB_CPU_DETECT_H__
 
 #include "always.h"
 #include "wwstring.h"
@@ -67,7 +62,9 @@ public:
 		MANUFACTURER_NEXTGEN,
 		MANUFACTURER_VIA,
 		MANUFACTURER_RISE,
-		MANUFACTURER_TRANSMETA
+		MANUFACTURER_TRANSMETA,
+
+		MANUFACTURER_COUNT
 	} ProcessorManufacturerType;
 
 	typedef enum
@@ -194,12 +191,12 @@ public:
 	static unsigned Get_L1_Instruction_Trace_Cache_Set_Associative() { return L1InstructionTraceCacheSetAssociative; }
 
 	// System memory
-	static unsigned Get_Total_Physical_Memory() { return TotalPhysicalMemory; }
-	static unsigned Get_Available_Physical_Memory() { return AvailablePhysicalMemory; }
-	static unsigned Get_Total_Page_File_Size() { return TotalPageMemory; }
-	static unsigned Get_Available_Page_File_Size() { return AvailablePageMemory; }
-	static unsigned Get_Total_Virtual_Memory() { return TotalVirtualMemory; }
-	static unsigned Get_Available_Virtual_Memory() { return AvailableVirtualMemory; }
+	static MemValueType Get_Total_Physical_Memory() { return TotalPhysicalMemory; }
+	static MemValueType Get_Available_Physical_Memory() { return AvailablePhysicalMemory; }
+	static MemValueType Get_Total_Page_File_Size() { return TotalPageMemory; }
+	static MemValueType Get_Available_Page_File_Size() { return AvailablePageMemory; }
+	static MemValueType Get_Total_Virtual_Memory() { return TotalVirtualMemory; }
+	static MemValueType Get_Available_Virtual_Memory() { return AvailableVirtualMemory; }
 
 	static unsigned Get_Processor_Type() { return ProcessorType; }
 
@@ -279,12 +276,12 @@ private:
 	static unsigned L1InstructionTraceCacheSize;
 	static unsigned L1InstructionTraceCacheSetAssociative;
 
-	static unsigned TotalPhysicalMemory;
-	static unsigned AvailablePhysicalMemory;
-	static unsigned TotalPageMemory;
-	static unsigned AvailablePageMemory;
-	static unsigned TotalVirtualMemory;
-	static unsigned AvailableVirtualMemory;
+	static MemValueType TotalPhysicalMemory;
+	static MemValueType AvailablePhysicalMemory;
+	static MemValueType TotalPageMemory;
+	static MemValueType AvailablePageMemory;
+	static MemValueType TotalVirtualMemory;
+	static MemValueType AvailableVirtualMemory;
 
 	static unsigned OSVersionNumberMajor;
 	static unsigned OSVersionNumberMinor;
@@ -320,6 +317,3 @@ struct CPUIDStruct
 		CPUDetectClass::CPUID(Eax,Ebx,Ecx,Edx,cpuid_type);
 	}
 };
-
-
-#endif // WWLIB_CPU_DETECT_H__

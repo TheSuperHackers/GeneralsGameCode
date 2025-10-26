@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __NAT_H
-#define __NAT_H
-
 #include "Lib/BaseType.h"
 #include "GameNetwork/NetworkInterface.h"
 #include "GameNetwork/FirewallHelper.h"
@@ -122,7 +119,7 @@ protected:
 	UnsignedShort m_previousSourcePort;
 
 	Bool m_beenProbed; ///< have I been notified that I've been probed this round?
-	
+
 	UnsignedInt m_manglerAddress;
 
 	time_t m_timeTillNextSend; ///< The number of milliseconds till we send to the other guy's port again.
@@ -158,5 +155,3 @@ protected:
 };
 
 extern NAT *TheNAT;
-
-#endif // #ifndef __NAT_H

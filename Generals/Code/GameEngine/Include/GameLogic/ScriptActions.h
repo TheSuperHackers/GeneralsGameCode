@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SCRIPTACTIONS_H_
-#define __SCRIPTACTIONS_H_
-
 class ScriptAction;
 class GameWindow;
 class	Team;
@@ -60,7 +57,7 @@ public:
 
 	// Called by the script engine in postProcessLoad()
 	virtual void doEnableOrDisableObjectDifficultyBonuses(Bool enableBonuses) = 0;
-};  // end class ScriptActionsInterface
+};
 extern ScriptActionsInterface *TheScriptActions;   ///< singleton definition
 
 
@@ -160,12 +157,12 @@ protected:
 	void doTeamHuntWithCommandButton(const AsciiString& teamName, const AsciiString& commandButton);
 	void doPlayerHunt(const AsciiString& playerName);
 	void doNamedDelete(const AsciiString& unitName);
-	
+
 	void doTeamGarrisonSpecificBuilding(const AsciiString& teamName, const AsciiString& buildingName);
 	void doTeamGarrisonNearestBuilding(const AsciiString& teamName);
 	void doTeamExitAllBuildings(const AsciiString& teamName);
 	void doExitSpecificBuilding(const AsciiString& buildingName);
-	
+
 	void doUnitGarrisonSpecificBuilding(const AsciiString& unitName, const AsciiString& buildingName);
 	void doUnitGarrisonNearestBuilding(const AsciiString& unitName);
 	void doUnitExitBuilding(const AsciiString& unitName);
@@ -175,10 +172,10 @@ protected:
 	void doLetterBoxMode(Bool startLetterbox);	// if true, start it. If false, end it.
 	void doBlackWhiteMode(Bool startBWMode, Int frames);	// if true, start it. If false, end it.
 	void doSkyBox(Bool showSkyBox);	// if true, start it. If false, end it.
-	
+
 	void doFreezeTime( void );
 	void doUnfreezeTime( void );
-	
+
 	void doMilitaryCaption(const AsciiString& briefing, Int duration);
 	void doCameraSetAudibleDistance(Real audibleDistance);
 
@@ -186,7 +183,7 @@ protected:
 
 	void doNamedSetStoppingDistance(const AsciiString& unit, Real stoppingDistance);
 	void doSetStoppingDistance(const AsciiString& team, Real stoppingDistance);
-	
+
 	void doDisableSpecialPowerDisplay( void );
 	void doEnableSpecialPowerDisplay( void );
 	void doNamedHideSpecialPowerDisplay( const AsciiString& unit );
@@ -215,9 +212,9 @@ protected:
 	void doHideCounter(const AsciiString& counterName);
 
 	void doAudioSetVolume(AudioAffect whichToAffect, Real newVolumeLevel);
-	
+
 	void doTransferTeamToPlayer(const AsciiString& teamName, const AsciiString& playerName);
-	
+
 	void doSetMoney(const AsciiString& playerName, Int money);		// Set a player's cash reserves to a specific value.
 	void doGiveMoney(const AsciiString& playerName, Int money);	// Add/subtract cash from a player's reserves.
 
@@ -366,7 +363,7 @@ protected:
 	void doGuardSupplyCenter(const AsciiString& teamName, Int supplies);
 	void doTeamGuardInTunnelNetwork(const AsciiString& teamName);
 	void doAffectPlayerSkillset(const AsciiString& playerName, Int skillset);
-	void doOverrideHulkLifetime( Real seconds );	
+	void doOverrideHulkLifetime( Real seconds );
 	void doNamedFaceNamed( const AsciiString &unitName, const AsciiString &faceUnitName );
 	void doNamedFaceWaypoint( const AsciiString &unitName, const AsciiString &faceWaypointName );
 	void doTeamFaceNamed( const AsciiString &teamName, const AsciiString &faceUnitName );
@@ -376,10 +373,5 @@ protected:
 	void doAffectSkillPointsModifier(const AsciiString& playerName, Real newModifier);
 	void doResizeViewGuardband(const Real gbx, const Real gby );
 	void deleteAllUnmanned();
-	
-};  // end class ScriptActions
 
-
-#endif  // end __SCRIPTACTIONS_H_
-
-
+};

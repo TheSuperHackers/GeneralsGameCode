@@ -20,8 +20,7 @@
 // expimp.h
 //
 
-#ifndef __EXPIMP_H
-#define __EXPIMP_H
+#pragma once
 
 #include "TransDB.h"
 #include "BabylonDlg.h"
@@ -38,7 +37,7 @@ typedef enum
 	TR_UNSENT
 } TrFilter;
 
-typedef struct 
+typedef struct
 {
 	TrFilter filter;
 	int include_comments;
@@ -58,14 +57,14 @@ typedef enum
 	GN_USEORIGINAL,
 } GnUntranslated;
 
-typedef struct 
+typedef struct
 {
 	GnFormat	format;								// what file format to generate
 	GnUntranslated untranslated;		// what to do with untranslated text
 
 } GNOPTIONS;
 
-typedef struct 
+typedef struct
 {
 	int translations;
 	int dialog;
@@ -86,7 +85,7 @@ typedef struct
 	int version;
 	int num_labels;
 	int num_strings;
-	int skip;	
+	int skip;
 
 } CSF_HEADER_V1;
 
@@ -96,7 +95,7 @@ typedef struct
 	int version;
 	int num_labels;
 	int num_strings;
-	int skip;	
+	int skip;
 	int langid;
 
 } CSF_HEADER;
@@ -107,4 +106,3 @@ int UpdateSentTranslations ( TransDB *db, const char *filename, CBabylonDlg *dlg
 int GenerateGameFiles ( TransDB *db, const char *filename, GNOPTIONS *option, LangID *languages, CBabylonDlg *dlg = NULL );
 int GenerateReport ( TransDB *db, const char *filename, RPOPTIONS *options, LangID *languages, CBabylonDlg *dlg = NULL );
 void ProcessWaves ( TransDB *db, const char *filename, CBabylonDlg *dlg );
-#endif

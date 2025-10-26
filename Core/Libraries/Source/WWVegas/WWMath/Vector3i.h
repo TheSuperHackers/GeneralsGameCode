@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef VECTOR3I_H
-#define VECTOR3I_H
 
 #include "always.h"
 
@@ -66,29 +60,29 @@ WWINLINE Vector3i::Vector3i(void)
 {
 }
 
-WWINLINE Vector3i::Vector3i(int i,int j,int k) 
-{ 
-	I = i; J = j; K = k; 
+WWINLINE Vector3i::Vector3i(int i,int j,int k)
+{
+	I = i; J = j; K = k;
 }
 
 WWINLINE bool Vector3i::operator == (const Vector3i & v) const
-{ 
-	return (I == v.I && J == v.J && K == v.K);	
+{
+	return (I == v.I && J == v.J && K == v.K);
 }
 
 WWINLINE bool Vector3i::operator !=	(const Vector3i& v) const
-{ 
-	return !(I == v.I && J == v.J && K == v.K);	
+{
+	return !(I == v.I && J == v.J && K == v.K);
 }
 
-WWINLINE const int& Vector3i::operator[] (int n) const				
-{ 
-	return ((int*)this)[n]; 
+WWINLINE const int& Vector3i::operator[] (int n) const
+{
+	return ((int*)this)[n];
 }
 
 WWINLINE int& Vector3i::operator[] (int n)
-{ 
-	return ((int*)this)[n]; 
+{
+	return ((int*)this)[n];
 }
 
 // ----------------------------------------------------------------------------
@@ -115,29 +109,27 @@ WWINLINE Vector3i16::Vector3i16(void)
 {
 }
 
-WWINLINE Vector3i16::Vector3i16(unsigned short i,unsigned short j,unsigned short k) 
-{ 
-	I = i; J = j; K = k; 
+WWINLINE Vector3i16::Vector3i16(unsigned short i,unsigned short j,unsigned short k)
+{
+	I = i; J = j; K = k;
 }
 
 WWINLINE bool Vector3i16::operator == (const Vector3i & v) const
-{ 
-	return (I == v.I && J == v.J && K == v.K);	
+{
+	return (I == v.I && J == v.J && K == v.K);
 }
 
 WWINLINE bool Vector3i16::operator !=	(const Vector3i& v) const
-{ 
-	return !(I == v.I && J == v.J && K == v.K);	
+{
+	return !(I == v.I && J == v.J && K == v.K);
 }
 
-WWINLINE const unsigned short & Vector3i16::operator[] (int n) const				
-{ 
-	return ((unsigned short *)this)[n]; 
+WWINLINE const unsigned short & Vector3i16::operator[] (int n) const
+{
+	return ((unsigned short *)this)[n];
 }
 
 WWINLINE unsigned short & Vector3i16::operator[] (int n)
-{ 
-	return ((unsigned short *)this)[n]; 
+{
+	return ((unsigned short *)this)[n];
 }
-
-#endif

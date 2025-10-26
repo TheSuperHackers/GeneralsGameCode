@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _MESSAGE_STREAM_H_
-#define _MESSAGE_STREAM_H_
-
 #include "Common/GameCommon.h"	// ensure we get DUMP_PERF_STATS, or not
 #include "Common/SubsystemInterface.h"
 #include "Lib/BaseType.h"
@@ -54,9 +51,9 @@ union GameMessageArgumentType														///< Union of possible data for given
 	Int							integer;
 	Real 						real;
 	Bool						boolean;
-	ObjectID				objectID;									
-	DrawableID			drawableID;									
-	UnsignedInt			teamID;	
+	ObjectID				objectID;
+	DrawableID			drawableID;
+	UnsignedInt			teamID;
 	UnsignedInt			squadID;
 	Coord3D					location;
 	ICoord2D				pixel;
@@ -65,7 +62,7 @@ union GameMessageArgumentType														///< Union of possible data for given
 	WideChar				wChar;
 };
 
-enum GameMessageArgumentDataType CPP_11(: Int) 
+enum GameMessageArgumentDataType CPP_11(: Int)
 {
 	ARGUMENTDATATYPE_INTEGER,
 	ARGUMENTDATATYPE_REAL,
@@ -83,7 +80,7 @@ enum GameMessageArgumentDataType CPP_11(: Int)
 
 class GameMessageArgument : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameMessageArgument, "GameMessageArgument")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameMessageArgument, "GameMessageArgument")
 public:
 	GameMessageArgument*				m_next;									///< The next argument
 	GameMessageArgumentType			m_data;									///< The data storage of an argument
@@ -100,13 +97,13 @@ EMPTY_DTOR(GameMessageArgument)
 class GameMessage : public MemoryPoolObject
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameMessage, "GameMessage")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameMessage, "GameMessage")
 
 public:
 
 	/// The various messages which can be sent in a MessageStream
 	/// @todo Replace this hardcoded enum with a generalized system that can be easily changed and updated
-	/** @todo Because the Client will run faster than Logic, we'll need "superceding" messages for events 
+	/** @todo Because the Client will run faster than Logic, we'll need "superceding" messages for events
 						such as mouse movements so we only send the latest one over the net */
 	/**	@todo Create two classes of message: raw input messages, and command messages. Raw input messages
 						will be destroyed when they reach the end of the stream, whereas command messages will be
@@ -141,7 +138,7 @@ public:
 		MSG_RAW_KEY_UP,															///< (KeyDefType) the given key was released
 
 		// Refined Mouse messages
-		// NOTE: All processing should attempt to use these refined mouse messages, rather than the 
+		// NOTE: All processing should attempt to use these refined mouse messages, rather than the
 		// RAW_* variants. (Please.) :-) jkmcd
 		MSG_MOUSE_LEFT_CLICK,												///< (pixelRegion, 0 sized means its a point), (Int, modifier keys)
 		MSG_MOUSE_LEFT_DOUBLE_CLICK,								///< (pixelRegion, 0 sized means its a point), (Int, modifier keys)
@@ -158,7 +155,7 @@ public:
 		// solely to provide an abstraction layer useful for keyboard/mouse remapping.
 		// they should NEVER be sent over the network.
 		MSG_BEGIN_META_MESSAGES,										///< Marker to delineate "meta" messages
-		
+
 		MSG_META_SAVE_VIEW1,												///< save current view as the given user-defined view
 		MSG_META_SAVE_VIEW2,												///< save current view as the given user-defined view
 		MSG_META_SAVE_VIEW3,												///< save current view as the given user-defined view
@@ -216,15 +213,17 @@ public:
 		MSG_META_VIEW_TEAM8,												///< center view on given user-defined team (but do not affect selection)
 		MSG_META_VIEW_TEAM9,												///< center view on given user-defined team (but do not affect selection)
 
-		MSG_META_SELECT_MATCHING_UNITS,              ///< selects mathcing units, used for both on screen and across map 
+		MSG_META_SELECT_MATCHING_UNITS,              ///< selects mathcing units, used for both on screen and across map
 		MSG_META_SELECT_NEXT_UNIT,									///< select 'next' unit
 		MSG_META_SELECT_PREV_UNIT,									///< select 'prev' unit
 		MSG_META_SELECT_NEXT_WORKER,                ///< select 'next' worker
 		MSG_META_SELECT_PREV_WORKER,                ///< select 'prev' worker
+		MSG_META_SELECT_NEXT_IDLE_WORKER,                        ///< TheSuperHackers @feature L3-M 03/08/2025 select next idle worker
 		MSG_META_VIEW_COMMAND_CENTER,								///< center view on command center
 		MSG_META_VIEW_LAST_RADAR_EVENT,							///< center view on last radar event
 		MSG_META_SELECT_HERO,                       ///< selects player's hero character, if exists...
 		MSG_META_SELECT_ALL,                        ///< selects all units across screen
+		MSG_META_SELECT_ALL_AIRCRAFT,								///< selects all air units just like select all
 		MSG_META_SCATTER,														///< selected units scatter
 		MSG_META_STOP,															///< selected units stop
 		MSG_META_DEPLOY,														///< selected units 'deploy'
@@ -235,12 +234,17 @@ public:
 		MSG_META_CHAT_EVERYONE,											///< send chat msg to everyone (incl. observers)
 		MSG_META_DIPLOMACY,													///< bring up diplomacy screen
 		MSG_META_OPTIONS,														///< bring up options screen
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 		MSG_META_HELP,															///< bring up help screen
 #endif
 
+		MSG_META_INCREASE_MAX_RENDER_FPS,						///< TheSuperHackers @feature Increase the max render fps
+		MSG_META_DECREASE_MAX_RENDER_FPS,						///< TheSuperHackers @feature Decrease the max render fps
+		MSG_META_INCREASE_LOGIC_TIME_SCALE,					///< TheSuperHackers @feature Increase the logic time scale
+		MSG_META_DECREASE_LOGIC_TIME_SCALE,					///< TheSuperHackers @feature Decrease the logic time scale
 		MSG_META_TOGGLE_LOWER_DETAILS,							///< toggles graphics options to crappy mode instantly
 		MSG_META_TOGGLE_CONTROL_BAR,								///< show/hide controlbar
+		MSG_META_TOGGLE_PLAYER_OBSERVER,						///< TheSuperHackers @feature Toggle the player observer view in game
 
 		MSG_META_BEGIN_PATH_BUILD,									///< enter path-building mode
 		MSG_META_END_PATH_BUILD,										///< exit path-building mode
@@ -256,7 +260,7 @@ public:
 		MSG_META_TAKE_SCREENSHOT,										///< take screenshot
 		MSG_META_ALL_CHEER,													///< Yay! :)
 		MSG_META_TOGGLE_ATTACKMOVE,									///< enter attack-move mode
-		
+
 		MSG_META_BEGIN_CAMERA_ROTATE_LEFT,
 		MSG_META_END_CAMERA_ROTATE_LEFT,
 		MSG_META_BEGIN_CAMERA_ROTATE_RIGHT,
@@ -266,10 +270,16 @@ public:
 		MSG_META_BEGIN_CAMERA_ZOOM_OUT,
 		MSG_META_END_CAMERA_ZOOM_OUT,
 		MSG_META_CAMERA_RESET,
+		MSG_META_TOGGLE_FAST_FORWARD_REPLAY,				///< Toggle the fast forward feature
+		MSG_META_TOGGLE_PAUSE,											///< TheSuperHackers @feature Toggle game pause
+		MSG_META_TOGGLE_PAUSE_ALT,									///< TheSuperHackers @feature Toggle game pause (alternative mapping)
+		MSG_META_STEP_FRAME,												///< TheSuperHackers @feature Step one frame
+		MSG_META_STEP_FRAME_ALT,										///< TheSuperHackers @feature Step one frame (alternative mapping)
+
 
 		// META items that are really for debug/demo/development use only...
 		// They do not get built into RELEASE builds.
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 		MSG_META_DEMO_TOGGLE_BEHIND_BUILDINGS,			///< Toggles showing units behind buildings or not
 		MSG_META_DEMO_TOGGLE_LETTERBOX,							///< enable/disable letterbox mode
 		MSG_META_DEMO_TOGGLE_MESSAGE_TEXT,					///< toggle the text from the UI messages
@@ -310,9 +320,9 @@ public:
 		MSG_META_DEMO_BEGIN_ADJUST_FOV,							///< enter adjust-FOV mode
 		MSG_META_DEMO_END_ADJUST_FOV,								///< exit adjust-FOV mode
 		MSG_META_DEMO_LOCK_CAMERA_TO_PLANES,				///< lock camera to airborne thingies
-		MSG_META_DEMO_REMOVE_PREREQ,								///< Turn of Prerequisite checks in building legality
-		MSG_META_DEMO_INSTANT_BUILD,								///< All building is with a timer of 1
-		MSG_META_DEMO_FREE_BUILD,										///< All building is for 0 money
+		MSG_META_DEMO_REMOVE_PREREQ,								///< Turn off Prerequisite checks in building legality, works in MULTIPLAYER for all humans
+		MSG_META_DEMO_INSTANT_BUILD,								///< All building is with a timer of 1, works in MULTIPLAYER for all humans
+		MSG_META_DEMO_FREE_BUILD,										///< All building is for 0 money, works in MULTIPLAYER for all humans
 		MSG_META_DEMO_RUNSCRIPT1,										///< run script named "KEY_F1"
 		MSG_META_DEMO_RUNSCRIPT2,										///< run script named "KEY_F2"
 		MSG_META_DEMO_RUNSCRIPT3,										///< run script named "KEY_F3"
@@ -363,7 +373,7 @@ public:
 		MSG_META_DEBUG_VTUNE_OFF,										///< turn on/off Vtune
 		MSG_META_DEBUG_TOGGLE_FEATHER_WATER, 			///< toggle lorenzen's feather water
 
-		MSG_META_DEBUG_DUMP_ASSETS,						///< dumps currently used map assets to a file. 
+		MSG_META_DEBUG_DUMP_ASSETS,						///< dumps currently used map assets to a file.
 
 		MSG_NO_DRAW,																///< show/hide all objects to test Drawing code
 		MSG_META_DEMO_TOGGLE_METRICS,								///< Toggle the metrics on/off
@@ -372,10 +382,10 @@ public:
 		MSG_META_DEMO_TOGGLE_THREATDEBUG,						///< Toggle the threat debugger on/off
 		MSG_META_DEMO_TOGGLE_CASHMAPDEBUG,					///< Toggle the cash map debugger on/off
 		MSG_META_DEMO_TOGGLE_GRAPHICALFRAMERATEBAR,	///< Toggle the graphical framerate bar on/off
-		MSG_META_DEMO_GIVE_ALL_SCIENCES,						///< grant all grantable sciences
-		MSG_META_DEMO_GIVE_RANKLEVEL,								///< up one RankLevel
-		MSG_META_DEMO_TAKE_RANKLEVEL,								///< up one RankLevel
-		MSG_META_DEMO_GIVE_SCIENCEPURCHASEPOINTS,		///< give yourself an SPP (but no rank change)
+		MSG_META_DEMO_GIVE_ALL_SCIENCES,						///< grant all available sciences, works in MULTIPLAYER for all humans
+		MSG_META_DEMO_GIVE_RANKLEVEL,								///< up one rank level
+		MSG_META_DEMO_TAKE_RANKLEVEL,								///< up one rank level
+		MSG_META_DEMO_GIVE_SCIENCEPURCHASEPOINTS,		///< give a science purchase point (but no rank change)
 		MSG_META_DEBUG_TOGGLE_NETWORK,							///< toggle between having and not having network traffic.
 		MSG_META_DEBUG_DUMP_PLAYER_OBJECTS,					///< Dump numbers of objects owned by each player to the script debug window
 		MSG_META_DEBUG_DUMP_ALL_PLAYER_OBJECTS,			///< Dump numbers of objects owned by each player to the script debug window, and additional object info
@@ -383,11 +393,11 @@ public:
 		MSG_META_DEBUG_WIN,													///< Instant Win
 		MSG_META_DEMO_TOGGLE_DEBUG_STATS,						///< show/hide the debug stats
 		/// @todo END section to REMOVE (not disable) for release
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG)
 
-#if defined(_INTERNAL) || defined(_DEBUG)
+#if defined(RTS_DEBUG)
 		MSG_META_DEMO_TOGGLE_AUDIODEBUG,						///< show/hide the audio debug info
-#endif//defined(_INTERNAL) || defined(_DEBUG)
+#endif//defined(RTS_DEBUG)
 #ifdef DUMP_PERF_STATS
 		MSG_META_DEMO_PERFORM_STATISTICAL_DUMP,			///< dump performance stats for this frame to StatisticsDump.txt
 #endif//DUMP_PERF_STATS
@@ -500,7 +510,7 @@ public:
 		MSG_DO_SPECIAL_POWER,												///< do special
 		MSG_DO_SPECIAL_POWER_AT_LOCATION,						///< do special with target location
 		MSG_DO_SPECIAL_POWER_AT_OBJECT,							///< do special at with target object
-		MSG_SET_RALLY_POINT,												///< (objectID, location) 
+		MSG_SET_RALLY_POINT,												///< (objectID, location)
 		MSG_PURCHASE_SCIENCE,												///< purchase a science
 		MSG_QUEUE_UPGRADE,													///< queue the "research" of an upgrade
 		MSG_CANCEL_UPGRADE,													///< cancel the "research" of an upgrade
@@ -508,10 +518,10 @@ public:
 		MSG_CANCEL_UNIT_CREATE,											///< clicked on UI button to cancel production of a unit
 		MSG_DOZER_CONSTRUCT,												/**< building things requires clicking on a dozer
 																										 selecting what to build, selecting where to
-																										 build it ... this construct message will 
+																										 build it ... this construct message will
 																										 start the actual build process */
 		MSG_DOZER_CONSTRUCT_LINE,										///< Like MSG_CONSTRUCT, but for build procesess that occur in a line (like walls)
-		MSG_DOZER_CANCEL_CONSTRUCT,									///< cancel construction of a building 
+		MSG_DOZER_CANCEL_CONSTRUCT,									///< cancel construction of a building
 		MSG_SELL,																		///< sell a structure
 		MSG_EXIT,																		///< WE want to exit from whatever WE are inside of
 		MSG_EVACUATE,																///< Dump out all of OUR contained objects
@@ -529,8 +539,8 @@ public:
 		MSG_ENTER,																	///< Enter object
 		MSG_DOCK,																		///< Dock with this object
 		MSG_DO_MOVETO,															///< location
-		MSG_DO_ATTACKMOVETO,												///< location 
-		MSG_DO_FORCEMOVETO,													///< location 
+		MSG_DO_ATTACKMOVETO,												///< location
+		MSG_DO_FORCEMOVETO,													///< location
 		MSG_ADD_WAYPOINT,														///< location
 		MSG_DO_GUARD_POSITION,											///< Guard with the currently selected group
 		MSG_DO_GUARD_OBJECT,												///< Guard with the currently selected group
@@ -560,7 +570,7 @@ public:
 
 		MSG_BEGIN_DEBUG_NETWORK_MESSAGES = 1900,		///< network messages that exist only in debug/internal builds. all grouped separately.
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 		// all debug/internal-only messages must go here.
 		MSG_DEBUG_KILL_SELECTION,
 		MSG_DEBUG_HURT_OBJECT,
@@ -592,8 +602,8 @@ public:
 	Type getType( void ) const { return m_type; }					///< Return the message type
 	UnsignedByte getArgumentCount( void ) const { return m_argCount; }	///< Return the number of arguments for this msg
 
-	AsciiString getCommandAsAsciiString( void ); ///< returns a string representation of the command type.
-	static AsciiString getCommandTypeAsAsciiString(GameMessage::Type t);
+	const char *getCommandAsString( void ) const; ///< returns a string representation of the command type.
+	static const char *getCommandTypeAsString(GameMessage::Type t);
 
 	Int getPlayerIndex( void ) const { return m_playerIndex; }		///< Return the originating player
 
@@ -661,7 +671,7 @@ public:
 	virtual void reset( void ) { };			///< Reset system
 	virtual void update( void ) { };		///< Update system
 
-	GameMessage *getFirstMessage( void ) { return m_firstMessage; }	///< Return the first message 
+	GameMessage *getFirstMessage( void ) { return m_firstMessage; }	///< Return the first message
 
 	virtual void appendMessage( GameMessage *msg );			///< Add message to end of the list
 	virtual void insertMessage( GameMessage *msg, GameMessage *messageToInsertAfter );	// Insert message after messageToInsertAfter.
@@ -675,7 +685,7 @@ protected:
 	GameMessage *m_lastMessage;									///< The last message on the list
 };
 
-/** 
+/**
 	What to do with a GameMessage after a translator has handled it.
 	Use a custom enum (rather than a Bool) to make the code more obvious.
 */
@@ -693,7 +703,7 @@ public:
 };
 
 /**
- * A MessageStream contains an ordered list of messages which can have one or more 
+ * A MessageStream contains an ordered list of messages which can have one or more
  * prioritized message handler functions ("translators") attached to it.
  */
 class MessageStream : public GameMessageList
@@ -715,7 +725,7 @@ public:
 	// Methods NOT Inherited ------------------------------------------------------------------------
 	void propagateMessages( void );													///< Propagate messages through attached translators
 
-	/** 
+	/**
 		Attach a translator function to the stream at a priority value. Lower priorities are executed first.
 		Note that MessageStream assumes ownership of the translator, and is responsible for freeing it!
 	*/
@@ -794,5 +804,3 @@ extern CommandList *TheCommandList;
  * construct a valid 2D bounding region.
  */
 extern void buildRegion( const ICoord2D *anchor, const ICoord2D *dest, IRegion2D *region );
-
-#endif // _MESSAGE_STREAM_H_

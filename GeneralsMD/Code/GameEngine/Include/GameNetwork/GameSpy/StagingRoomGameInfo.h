@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __STAGINGROOMGAMEINFO_H__
-#define __STAGINGROOMGAMEINFO_H__
-
 #include "GameNetwork/GameInfo.h"
 #include "GameNetwork/Transport.h"
 
@@ -135,7 +132,7 @@ public:
 	inline Int getPingAsInt( void ) const { return m_pingInt; }
 
 	virtual Bool amIHost( void ) const;															///< Convenience function - is the local player the game host?
-	
+
 	GameSpyGameSlot *getGameSpySlot( Int index );
 
 	AsciiString generateGameSpyGameResultsPacket( void );
@@ -153,9 +150,7 @@ public:
 	inline void setGameName( UnicodeString name ) { m_gameName = name; }
 	inline UnicodeString getGameName( void ) const { return m_gameName; }
 
-	inline void setLocalName( AsciiString name ) { m_localName = name; } 
+	inline void setLocalName( AsciiString name ) { m_localName = name; }
 };
 
 extern GameSpyStagingRoom *TheGameSpyGame;
-
-#endif // __STAGINGROOMGAMEINFO_H__

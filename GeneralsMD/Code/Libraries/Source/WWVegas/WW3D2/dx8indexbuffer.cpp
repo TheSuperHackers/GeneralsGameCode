@@ -50,12 +50,12 @@
 static bool _DynamicSortingIndexArrayInUse=false;
 static SortingIndexBufferClass* _DynamicSortingIndexArray;
 static unsigned short _DynamicSortingIndexArraySize=0;
-static unsigned short _DynamicSortingIndexArrayOffset=0;	
+static unsigned short _DynamicSortingIndexArrayOffset=0;
 
 static bool _DynamicDX8IndexBufferInUse=false;
 static DX8IndexBufferClass* _DynamicDX8IndexBuffer=NULL;
 static unsigned short _DynamicDX8IndexBufferSize=DEFAULT_IB_SIZE;
-static unsigned short _DynamicDX8IndexBufferOffset=0;	
+static unsigned short _DynamicDX8IndexBufferOffset=0;
 
 static int _IndexBufferCount;
 static int _IndexBufferTotalIndices;
@@ -80,8 +80,8 @@ IndexBufferClass::IndexBufferClass(unsigned type_, unsigned short index_count_)
 	_IndexBufferTotalIndices+=index_count;
 	_IndexBufferTotalSize+=index_count*sizeof(unsigned short);
 #ifdef VERTEX_BUFFER_LOG
-	WWDEBUG_SAY(("New IB, %d indices, size %d bytes\n",index_count,index_count*sizeof(unsigned short)));
-	WWDEBUG_SAY(("Total IB count: %d, total %d indices, total size %d bytes\n",
+	WWDEBUG_SAY(("New IB, %d indices, size %d bytes",index_count,index_count*sizeof(unsigned short)));
+	WWDEBUG_SAY(("Total IB count: %d, total %d indices, total size %d bytes",
 		_IndexBufferCount,
 		_IndexBufferTotalIndices,
 		_IndexBufferTotalSize));
@@ -94,8 +94,8 @@ IndexBufferClass::~IndexBufferClass()
 	_IndexBufferTotalIndices-=index_count;
 	_IndexBufferTotalSize-=index_count*sizeof(unsigned short);
 #ifdef VERTEX_BUFFER_LOG
-	WWDEBUG_SAY(("Delete IB, %d indices, size %d bytes\n",index_count,index_count*sizeof(unsigned short)));
-	WWDEBUG_SAY(("Total IB count: %d, total %d indices, total size %d bytes\n",
+	WWDEBUG_SAY(("Delete IB, %d indices, size %d bytes",index_count,index_count*sizeof(unsigned short)));
+	WWDEBUG_SAY(("Total IB count: %d, total %d indices, total size %d bytes",
 		_IndexBufferCount,
 		_IndexBufferTotalIndices,
 		_IndexBufferTotalSize));
@@ -119,7 +119,7 @@ unsigned IndexBufferClass::Get_Total_Allocated_Memory()
 
 void IndexBufferClass::Add_Engine_Ref() const
 {
-	engine_refs++; 
+	engine_refs++;
 }
 
 void IndexBufferClass::Release_Engine_Ref() const
@@ -142,14 +142,14 @@ void IndexBufferClass::Copy(unsigned int* indices,unsigned first_index,unsigned 
 		DX8IndexBufferClass::AppendLockClass l(this,first_index,count);
 		unsigned short* inds=l.Get_Index_Array();
 		for (unsigned v=0;v<count;++v) {
-			*inds++=unsigned short(*indices++);
+			*inds++=(unsigned short)(*indices++);
 		}
 	}
 	else {
 		DX8IndexBufferClass::WriteLockClass l(this);
 		unsigned short* inds=l.Get_Index_Array();
 		for (unsigned v=0;v<count;++v) {
-			*inds++=unsigned short(*indices++);
+			*inds++=(unsigned short)(*indices++);
 		}
 	}
 }
@@ -308,7 +308,7 @@ DX8IndexBufferClass::DX8IndexBufferClass(unsigned short index_count_,UsageType u
 		return;
 	}
 
-	WWDEBUG_SAY(("Index buffer creation failed, trying to release assets...\n"));
+	WWDEBUG_SAY(("Index buffer creation failed, trying to release assets..."));
 
 	// Vertex buffer creation failed, so try releasing least used textures and flushing the mesh cache.
 
@@ -327,7 +327,7 @@ DX8IndexBufferClass::DX8IndexBufferClass(unsigned short index_count_,UsageType u
 		&index_buffer);
 
 	if (SUCCEEDED(ret)) {
-		WWDEBUG_SAY(("...Index buffer creation succesful\n"));
+		WWDEBUG_SAY(("...Index buffer creation succesful"));
 	}
 
 	// If it still fails it is fatal
@@ -410,7 +410,7 @@ void DynamicIBAccessClass::_Deinit()
 	REF_PTR_RELEASE(_DynamicSortingIndexArray);
 	_DynamicSortingIndexArrayInUse=false;
 	_DynamicSortingIndexArraySize=0;
-	_DynamicSortingIndexArrayOffset=0;	
+	_DynamicSortingIndexArrayOffset=0;
 }
 
 // ----------------------------------------------------------------------------

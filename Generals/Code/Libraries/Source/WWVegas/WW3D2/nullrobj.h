@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef NULL_H
-#define NULL_H
 
 #ifndef RENDOBJ_H
 #include "rendobj.h"
@@ -55,7 +49,7 @@ public:
 	Null3DObjClass(const char * name = "NULL");
 	Null3DObjClass(const Null3DObjClass & src);
 	Null3DObjClass & operator = (const Null3DObjClass & that);
-			
+
 	virtual int						Class_ID(void) const;
 	virtual RenderObjClass *	Clone(void) const;
 	virtual const char *			Get_Name(void) const						{ return Name; }
@@ -99,7 +93,3 @@ public:
 ** automatically install at creation time
 */
 extern NullLoaderClass _NullLoader;
-
-
-#endif
-

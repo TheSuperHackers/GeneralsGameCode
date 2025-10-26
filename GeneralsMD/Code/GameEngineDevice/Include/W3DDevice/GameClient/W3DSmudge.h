@@ -20,9 +20,6 @@
 
 #pragma once
 
-#ifndef _W3DSMUDGE_H_
-#define _W3DSMUDGE_H_
-
 #include "GameClient/Smudge.h"
 #include "sharebuf.h"
 
@@ -65,5 +62,3 @@ private:
 	Int m_backBufferWidth;
 	Int m_backBufferHeight;
 };
-
-#endif	//_W3DSMUDGE_H_

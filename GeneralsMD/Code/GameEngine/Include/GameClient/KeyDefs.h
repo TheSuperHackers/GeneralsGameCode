@@ -24,12 +24,12 @@
 
 // FILE: KeyDefs.h ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -42,19 +42,16 @@
 // Desc:       Basic keyboard key definitions.
 //
 /** @todo NOTE: These key definitions are currently tied directly to the
-*		Direct Input key codes, therefore making these definitions device 
+*		Direct Input key codes, therefore making these definitions device
 *		dependent even though this code lives on the device INdependent side
-*		of the engine.  In the future to be truly device independent we 
-*		need to define our own key codes, and have a translation between 
+*		of the engine.  In the future to be truly device independent we
+*		need to define our own key codes, and have a translation between
 *		what we read from the device to our own system*/
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __KEYDEFS_H_
-#define __KEYDEFS_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
@@ -107,7 +104,7 @@
 
 enum KeyDefType CPP_11(: Int)
 {
-	// keypad keys ---------------------------------------------------------------- 
+	// keypad keys ----------------------------------------------------------------
 	KEY_KP0 								= DIK_NUMPAD0,
 	KEY_KP1 								= DIK_NUMPAD1,
 	KEY_KP2 								= DIK_NUMPAD2,
@@ -229,7 +226,7 @@ enum KeyDefType CPP_11(: Int)
 	KEY_NONE								= 0x00,		///< to report end of key stream
 	KEY_LOST								= 0xFF		///< to report lost keyboard focus
 
-};	// end KeyDefType
+};
 
 // state for keyboard IO ------------------------------------------------------
 enum
@@ -252,10 +249,8 @@ enum
 	KEY_STATE_SHIFT			= (KEY_STATE_LSHIFT | KEY_STATE_RSHIFT | KEY_STATE_SHIFT2 ),
 	KEY_STATE_ALT				= (KEY_STATE_LALT | KEY_STATE_RALT)
 
-};	// end KeyStateType
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __KEYDEFS_H_

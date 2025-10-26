@@ -66,14 +66,14 @@ BOOL BaseBuildProps::OnInitDialog()
 	// add health
 	CWnd* pHealth = GetDlgItem(IDC_MAPOBJECT_StartingHealthEdit);
 	static char buff[12];
-	sprintf(buff, "%d", m_health);
+	snprintf(buff, ARRAY_SIZE(buff), "%d", m_health);
 	pHealth->SetWindowText(buff);
 
 	CButton* pItem;
 	pItem = (CButton*) GetDlgItem(IDC_MAPOBJECT_Unsellable);
 	if (pItem) {
 		pItem->SetCheck(m_unsellable);
-	}	
+	}
 
 	return TRUE;
 }
@@ -94,7 +94,7 @@ void BaseBuildProps::setProps(AsciiString name, AsciiString script, Int health, 
 	m_unsellable = unsellable;
 }
 
-void BaseBuildProps::OnOK() 
+void BaseBuildProps::OnOK()
 {
 	CComboBox *combo;
 	CWnd* edit;
@@ -104,7 +104,7 @@ void BaseBuildProps::OnOK()
 	edit = (CComboBox*)GetDlgItem(IDC_MAPOBJECT_Name);
 	edit->GetWindowText(buf, sizeof(buf)-2);
 	m_name = AsciiString(buf);
-	
+
 	combo = (CComboBox*)GetDlgItem(IDC_MAPOBJECT_Script);
 	combo->GetWindowText(buf, sizeof(buf)-2);
 	m_script = AsciiString(buf);

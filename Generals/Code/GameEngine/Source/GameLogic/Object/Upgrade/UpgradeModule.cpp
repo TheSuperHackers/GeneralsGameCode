@@ -32,11 +32,6 @@
 #include "Common/Xfer.h"
 #include "GameLogic/Module/UpgradeModule.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -46,11 +41,11 @@ void UpgradeModule::crc( Xfer *xfer )
 
 	// extend base class
 	BehaviorModule::crc( xfer );
-	
+
 	// extned base class
 	UpgradeMux::upgradeMuxCRC( xfer );
-	
-}  // end crc
+
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -69,7 +64,7 @@ void UpgradeModule::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeMux::upgradeMuxXfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -83,7 +78,7 @@ void UpgradeModule::loadPostProcess( void )
 	// extend base class
 	UpgradeMux::upgradeMuxLoadPostProcess();
 
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -94,9 +89,9 @@ UpgradeMux::UpgradeMux() : m_upgradeExecuted(false)
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool UpgradeMux::isAlreadyUpgraded() const 
-{ 
-	return m_upgradeExecuted; 
+Bool UpgradeMux::isAlreadyUpgraded() const
+{
+	return m_upgradeExecuted;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -146,7 +141,7 @@ Bool UpgradeMux::wouldUpgrade( UpgradeMaskType keyMask ) const
 					return TRUE;
 				}
 			}
-			else 
+			else
 			{
 				//Check if ANY trigger requirements are met.
 				if( keyMask.testForAny( activation ) )

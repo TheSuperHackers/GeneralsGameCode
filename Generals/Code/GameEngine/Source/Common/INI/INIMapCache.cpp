@@ -38,6 +38,7 @@
 #include "Common/WellKnownKeys.h"
 #include "Common/QuotedPrintable.h"
 
+
 class MapMetaDataReader
 {
 public:
@@ -78,7 +79,7 @@ void parseTechPositionsCoord3D( INI* ini, void * instance, void * /*store*/, con
 
 }
 
-const FieldParse MapMetaDataReader::m_mapFieldParseTable[] = 
+const FieldParse MapMetaDataReader::m_mapFieldParseTable[] =
 {
 
 	{ "isOfficial",							INI::parseBool,			NULL,	offsetof( MapMetaDataReader, m_isOfficial ) },
@@ -106,7 +107,7 @@ const FieldParse MapMetaDataReader::m_mapFieldParseTable[] =
 
 	{ "InitialCameraPosition",	INI::parseCoord3D,	NULL,	offsetof( MapMetaDataReader, m_initialCameraPosition ) },
 
-	{ NULL,					NULL,						NULL,						0 }  // keep this last
+	{ NULL,					NULL,						NULL,						0 }
 
 };
 
@@ -163,7 +164,7 @@ void INI::parseMapCacheDefinition( INI* ini )
 		AsciiString lowerName = name;
 		lowerName.toLower();
 		md.m_fileName = lowerName;
-//		DEBUG_LOG(("INI::parseMapCacheDefinition - adding %s to map cache\n", lowerName.str()));
+//		DEBUG_LOG(("INI::parseMapCacheDefinition - adding %s to map cache", lowerName.str()));
 		(*TheMapCache)[lowerName] = md;
 	}
 }

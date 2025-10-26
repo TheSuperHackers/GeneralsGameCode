@@ -83,7 +83,7 @@ bool SaveLoadSystemClass::Load (ChunkLoadClass &cload,bool auto_post_load)
 		SaveLoadSubSystemClass *sys = Find_Sub_System(cload.Cur_Chunk_ID ());
 		WWLOG_INTERMEDIATE("Find_Sub_System");
 		if (sys != NULL) {
-//WWRELEASE_SAY(("			Name: %s\n",sys->Name()));
+//WWRELEASE_SAY(("			Name: %s",sys->Name()));
 			INIT_SUB_STATUS(sys->Name());
 			ok &= sys->Load(cload);
 			WWLOG_INTERMEDIATE(sys->Name());

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __REBUILD_HOLE_BEHAVIOR_H_
-#define __REBUILD_HOLE_BEHAVIOR_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -49,7 +46,7 @@ public:
 	static void buildFieldParse( MultiIniFieldParse &p );
 
 	Real m_workerRespawnDelay;							///< delay in frames from death of object till respawn of worker
-	Real m_holeHealthRegenPercentPerSecond; ///< the hole recovers this % of the max hit points per second 
+	Real m_holeHealthRegenPercentPerSecond; ///< the hole recovers this % of the max hit points per second
 	AsciiString m_workerTemplateName;				///< name of worker object
 
 private:
@@ -67,12 +64,12 @@ public:
 	virtual ObjectID getSpawnerID( void ) = 0;
 	virtual ObjectID getReconstructedBuildingID( void ) = 0;
 	virtual const ThingTemplate* getRebuildTemplate() const = 0;
-	
+
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class RebuildHoleBehavior : public UpdateModule, 
+class RebuildHoleBehavior : public UpdateModule,
 														public DieModuleInterface,
 														public RebuildHoleBehaviorInterface
 {
@@ -120,5 +117,3 @@ protected:
 	const ThingTemplate *m_rebuildTemplate;	///< what we are rebuilding
 
 };
-
-#endif  // end __REBUILD_HOLE_BEHAVIOR_H_

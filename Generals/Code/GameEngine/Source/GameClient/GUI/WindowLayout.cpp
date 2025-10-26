@@ -33,12 +33,6 @@
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Shell.h"
 #include "GameClient/GameWindowManager.h"
-#ifdef _INTERNAL
-
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
@@ -57,7 +51,7 @@ WindowLayout::WindowLayout( void )
 	m_update = NULL;
 	m_shutdown = NULL;
 
-}  // end WindowLayout
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -70,9 +64,9 @@ WindowLayout::~WindowLayout( void )
 	// use them in any you see fit, as long as they are clean when they go away
 	//
 	DEBUG_ASSERTCRASH( m_windowList == NULL, ("Window layout being destroyed still has window references") );
-	DEBUG_ASSERTCRASH( m_windowTail == NULL, ("Window layout being destroyed still has window references") );	
+	DEBUG_ASSERTCRASH( m_windowTail == NULL, ("Window layout being destroyed still has window references") );
 
-}  // end ~WindowLayout
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Set the hidden/visible status of all the windows in this layout */
@@ -87,12 +81,12 @@ void WindowLayout::hide( Bool hide )
 
 		window->winHide( hide );
 
-	}  // end for window
+	}
 
 	// save the new visible state of the system
 	m_hidden = hide;
 
-}  // end hide
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Add window to this layout */
@@ -101,7 +95,7 @@ void WindowLayout::addWindow( GameWindow *window )
 {
 	GameWindow *win = findWindow( window );
 
-	// only add window if window is not in this layout already	
+	// only add window if window is not in this layout already
 	if( win == NULL )
 	{
 
@@ -126,9 +120,9 @@ void WindowLayout::addWindow( GameWindow *window )
 		// we gots another window now
 		m_windowCount++;
 
-	}  // end if
+	}
 
-}  // end addWindow
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Remove window from this layout */
@@ -164,19 +158,15 @@ void WindowLayout::removeWindow( GameWindow *window )
 		// we lost one sir!
 		m_windowCount--;
 
-	}  // end if
+	}
 
-}  // end removeWindow
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Destroy all the windows in a layout */
 //-------------------------------------------------------------------------------------------------
 void WindowLayout::destroyWindows( void )
 {
-	if (this == NULL)
-	{
-		return;
-	}
 	GameWindow *window;
 
 	while( (window = getFirstWindow()) != 0 )
@@ -188,9 +178,9 @@ void WindowLayout::destroyWindows( void )
 		// destroy window in window system
 		TheWindowManager->winDestroy( window );
 
-	}  // end while
+	}
 
-}  // end destroyWindows
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Create the windows using the .wnd file script and load all windows into
@@ -218,10 +208,10 @@ Bool WindowLayout::load( AsciiString filename )
 	{
 
 		DEBUG_ASSERTCRASH( target, ("WindowLayout::load - Failed to load layout") );
-		DEBUG_LOG(( "WindowLayout::load - Unable to load layout file '%s'\n", filename.str() ));
+		DEBUG_LOG(( "WindowLayout::load - Unable to load layout file '%s'", filename.str() ));
 		return FALSE;
 
-	}  // end if
+	}
 
 	//
 	// add windows loaded from .wnd file to the layout, via info.windows.
@@ -246,7 +236,7 @@ Bool WindowLayout::load( AsciiString filename )
 		// add window to this layout
 		addWindow( window );
 
-	}  // end for window
+	}
 	*/
 
 	// copy filename
@@ -259,7 +249,7 @@ Bool WindowLayout::load( AsciiString filename )
 
 	return TRUE;  // success
 
-}  // end load
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Bring all windows in this layout forward */
@@ -286,9 +276,9 @@ void WindowLayout::bringForward( void )
 		window->winBringToTop();
 		countLeft--;
 
-	}  // end for window
+	}
 
-}  // end bringForward
+}
 
 
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
@@ -305,4 +295,4 @@ GameWindow *WindowLayout::findWindow( GameWindow *window )
 
 	return NULL;  // window not found
 
-}  // end findWindow
+}

@@ -17,22 +17,22 @@
 */
 
 /* $Header: /VSS_Sync/wwlib/hash.cpp 3     10/17/00 4:48p Vss_sync $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Library                                      * 
- *                                                                                             * 
- *                     $Archive:: /VSS_Sync/wwlib/hash.cpp                                    $* 
- *                                                                                             * 
- *                       Author:: Greg_h                                                       * 
- *                                                                                             * 
- *                     $Modtime:: 10/16/00 11:42a                                             $* 
- *                                                                                             * 
- *                    $Revision:: 3                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Library                                      *
+ *                                                                                             *
+ *                     $Archive:: /VSS_Sync/wwlib/hash.cpp                                    $*
+ *                                                                                             *
+ *                       Author:: Greg_h                                                       *
+ *                                                                                             *
+ *                     $Modtime:: 10/16/00 11:42a                                             $*
+ *                                                                                             *
+ *                    $Revision:: 3                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "hash.h"
@@ -58,10 +58,8 @@ HashTableClass::HashTableClass( int size ) :
 HashTableClass::~HashTableClass( void )
 {
 	// If we need to, free the hash table
-	if ( HashTable != NULL) {
-		delete [] HashTable;
-		HashTable = NULL;
-	}
+	delete [] HashTable;
+	HashTable = NULL;
 }
 
 void	HashTableClass::Reset( void )

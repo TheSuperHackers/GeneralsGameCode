@@ -24,15 +24,12 @@
 
 // FILE: UnpauseSpecialPowerUpgrade.h ///////////////////////////////////////////////////////////////////////////
 // Author: Graham Smallwood, August 2002
-// Desc:	 An upgrade that starts the timer on a Special Power module, so you can have them 
+// Desc:	 An upgrade that starts the timer on a Special Power module, so you can have them
 // dependent on upgrades on the logic side, like NEED_UPGRADE does on the client side by disabling
 // the button.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __UNPAUSE_SPECIAL_POWER_UPGRADE_H_
-#define __UNPAUSE_SPECIAL_POWER_UPGRADE_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
@@ -75,6 +72,3 @@ protected:
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 };
-
-#endif 
-

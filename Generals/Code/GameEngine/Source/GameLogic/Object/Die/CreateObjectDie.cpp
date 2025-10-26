@@ -37,6 +37,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ObjectCreationList.h"
 
+
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 CreateObjectDieModuleData::CreateObjectDieModuleData()
@@ -52,7 +53,7 @@ CreateObjectDieModuleData::CreateObjectDieModuleData()
 {
 	DieModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "CreationList",	INI::parseObjectCreationList,		NULL,											offsetof( CreateObjectDieModuleData, m_ocl ) },
 		{ 0, 0, 0, 0 }
@@ -89,7 +90,7 @@ void CreateObjectDie::onDie( const DamageInfo * damageInfo )
 	Object *damageDealer = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
 
 	ObjectCreationList::create(getCreateObjectDieModuleData()->m_ocl, getObject(), damageDealer);
-}  // end onDie
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -100,7 +101,7 @@ void CreateObjectDie::crc( Xfer *xfer )
 	// extend base class
 	DieModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -118,7 +119,7 @@ void CreateObjectDie::xfer( Xfer *xfer )
 	// extend base class
 	DieModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -129,4 +130,4 @@ void CreateObjectDie::loadPostProcess( void )
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

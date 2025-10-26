@@ -47,7 +47,7 @@ SpecialPowerCreate::SpecialPowerCreate( Thing *thing, const ModuleData* moduleDa
 SpecialPowerCreate::~SpecialPowerCreate( void )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 void SpecialPowerCreate::onCreate( void )
@@ -70,7 +70,7 @@ void SpecialPowerCreate::onBuildComplete( void )
 
 		sp->onSpecialPowerCreation();
 	}
-} 
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -81,7 +81,7 @@ void SpecialPowerCreate::crc( Xfer *xfer )
 	// extend base class
 	CreateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -99,7 +99,7 @@ void SpecialPowerCreate::xfer( Xfer *xfer )
 	// extend base class
 	CreateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -110,4 +110,4 @@ void SpecialPowerCreate::loadPostProcess( void )
 	// extend base class
 	CreateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

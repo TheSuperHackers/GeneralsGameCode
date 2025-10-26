@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DEMORALIZE_SPECIAL_POWER_H_
-#define __DEMORALIZE_SPECIAL_POWER_H_
-
 #ifdef ALLOW_DEMORALIZE
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -75,13 +72,10 @@ public:
 	// virtual destructor prototype provided by memory pool object
 
 	virtual void doSpecialPowerAtObject( const Object *obj, UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, UnsignedInt commandOptions );
+	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions );
 
 protected:
 
 };
 
 #endif // ALLOW_DEMORALIZE
-
-
-#endif  // end __DEMORALIZE_SPECIAL_POWER_H_

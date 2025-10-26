@@ -16,30 +16,25 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : G                                        * 
- *                                                                         * 
- *                     $Archive:: /G/ww3d/POT.H                           $* 
- *                                                                         * 
- *                      $Author:: Naty_h                                  $* 
- *                                                                         * 
- *                     $Modtime:: 12/23/98 7:51a                          $* 
- *                                                                         * 
- *                    $Revision:: 4                                       $* 
- *                                                                         * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : G                                        *
+ *                                                                         *
+ *                     $Archive:: /G/ww3d/POT.H                           $*
+ *                                                                         *
+ *                      $Author:: Naty_h                                  $*
+ *                                                                         *
+ *                     $Modtime:: 12/23/98 7:51a                          $*
+ *                                                                         *
+ *                    $Revision:: 4                                       $*
+ *                                                                         *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
-#ifndef __POT_H__
-#define __POT_H__
 int Find_POT(int val);
 unsigned int Find_POT_Log2(unsigned int val);
-#endif

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __MAX_HEALTH_UPGRADE_H_
-#define __MAX_HEALTH_UPGRADE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
 
@@ -74,7 +71,3 @@ protected:
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 };
-
-
-#endif // __DEFAULTDIE_H_
-

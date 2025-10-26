@@ -24,12 +24,12 @@
 
 // FILE: MissionStats.cpp /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -49,13 +49,13 @@
 #include "Common/Xfer.h"
 
 //-----------------------------------------------------------------------------
-MissionStats::MissionStats() 
+MissionStats::MissionStats()
 {
 	init();
 }
 
 //-----------------------------------------------------------------------------
-void MissionStats::init() 
+void MissionStats::init()
 {
 	Int i;
 
@@ -75,7 +75,7 @@ void MissionStats::init()
 void MissionStats::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -102,7 +102,7 @@ void MissionStats::xfer( Xfer *xfer )
 	// buildings lost
 	xfer->xferInt( &m_buildingsLost );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -110,4 +110,4 @@ void MissionStats::xfer( Xfer *xfer )
 void MissionStats::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

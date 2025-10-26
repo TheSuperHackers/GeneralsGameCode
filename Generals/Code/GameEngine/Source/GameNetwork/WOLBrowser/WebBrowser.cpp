@@ -46,11 +46,6 @@
 #include "GameClient/GameWindow.h"
 #include "GameClient/Display.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 /**
 	* OLEInitializer class - Init and shutdown OLE & COM as a global
@@ -66,7 +61,7 @@ public:
 	 }
 	~OLEInitializer()
 	{
-		OleUninitialize(); 
+		OleUninitialize();
 	}
 };
 OLEInitializer g_OLEInitializer;
@@ -94,7 +89,7 @@ CComObject<WebBrowser> * TheWebBrowser = NULL;
 WebBrowser::WebBrowser() :
 		mRefCount(1)
 {
-	DEBUG_LOG(("Instantiating embedded WebBrowser\n"));
+	DEBUG_LOG(("Instantiating embedded WebBrowser"));
 	m_urlList = NULL;
 }
 
@@ -117,16 +112,16 @@ WebBrowser::WebBrowser() :
 
 WebBrowser::~WebBrowser()
 {
-	DEBUG_LOG(("Destructing embedded WebBrowser\n"));
+	DEBUG_LOG(("Destructing embedded WebBrowser"));
 	if (this == TheWebBrowser) {
-		DEBUG_LOG(("WebBrowser::~WebBrowser - setting TheWebBrowser to NULL\n"));
+		DEBUG_LOG(("WebBrowser::~WebBrowser - setting TheWebBrowser to NULL"));
 		TheWebBrowser = NULL;
 	}
 	WebBrowserURL *url = m_urlList;
 	while (url != NULL) {
 		WebBrowserURL *temp = url;
 		url = url->m_next;
-		temp->deleteInstance();
+		deleteInstance(temp);
 		temp = NULL;
 	}
 }
@@ -134,7 +129,7 @@ WebBrowser::~WebBrowser()
 //-------------------------------------------------------------------------------------------------
 /** The INI data fields for Webpage URL's */
 //-------------------------------------------------------------------------------------------------
-const FieldParse WebBrowserURL::m_URLFieldParseTable[] = 
+const FieldParse WebBrowserURL::m_URLFieldParseTable[] =
 {
 
 	{ "URL",										INI::parseAsciiString,							NULL, offsetof( WebBrowserURL, m_url ) },
@@ -142,14 +137,14 @@ const FieldParse WebBrowserURL::m_URLFieldParseTable[] =
 
 };
 
-WebBrowserURL::WebBrowserURL() 
+WebBrowserURL::WebBrowserURL()
 {
 	m_next = NULL;
 	m_tag.clear();
 	m_url.clear();
 }
 
-WebBrowserURL::~WebBrowserURL() 
+WebBrowserURL::~WebBrowserURL()
 {
 }
 /******************************************************************************
@@ -168,11 +163,11 @@ WebBrowserURL::~WebBrowserURL()
 *
 ******************************************************************************/
 
-void WebBrowser::init() 
+void WebBrowser::init()
 {
 	m_urlList = NULL;
 	INI ini;
-	ini.load( AsciiString( "Data\\INI\\Webpages.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\Webpages" ), INI_LOAD_OVERWRITE, NULL );
 }
 
 /******************************************************************************
@@ -191,19 +186,19 @@ void WebBrowser::init()
 *
 ******************************************************************************/
 
-void WebBrowser::reset() 
+void WebBrowser::reset()
 {
 }
 
-void WebBrowser::update( void ) 
+void WebBrowser::update( void )
 {
 }
 
-WebBrowserURL * WebBrowser::findURL(AsciiString tag) 
+WebBrowserURL * WebBrowser::findURL(AsciiString tag)
 {
 	WebBrowserURL *retval = m_urlList;
 
-	while ((retval != NULL) && tag.compareNoCase(retval->m_tag.str())) 
+	while ((retval != NULL) && tag.compareNoCase(retval->m_tag.str()))
 	{
 		retval = retval->m_next;
 	}
@@ -211,7 +206,7 @@ WebBrowserURL * WebBrowser::findURL(AsciiString tag)
 	return retval;
 }
 
-WebBrowserURL * WebBrowser::makeNewURL(AsciiString tag) 
+WebBrowserURL * WebBrowser::makeNewURL(AsciiString tag)
 {
 	WebBrowserURL *newURL = newInstance(WebBrowserURL);
 
@@ -297,7 +292,7 @@ ULONG STDMETHODCALLTYPE WebBrowser::Release(void) IUNKNOWN_NOEXCEPT
 
 	if (mRefCount == 0)
 	{
-		DEBUG_LOG(("WebBrowser::Release - all references released, deleting the object.\n"));
+		DEBUG_LOG(("WebBrowser::Release - all references released, deleting the object."));
 		if (this == TheWebBrowser) {
 			TheWebBrowser = NULL;
 		}
@@ -308,8 +303,8 @@ ULONG STDMETHODCALLTYPE WebBrowser::Release(void) IUNKNOWN_NOEXCEPT
 	return mRefCount;
 }
 
-STDMETHODIMP WebBrowser::TestMethod(Int num1) 
+STDMETHODIMP WebBrowser::TestMethod(Int num1)
 {
-	DEBUG_LOG(("WebBrowser::TestMethod - num1 = %d\n", num1));
+	DEBUG_LOG(("WebBrowser::TestMethod - num1 = %d", num1));
 	return S_OK;
 }

@@ -24,12 +24,12 @@
 
 // FILE: ScoreKeeper.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Jun 2002
@@ -37,7 +37,7 @@
 //	Filename: 	ScoreKeeper.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	Score Keeper class will be an object attached to each player
 //						that will maintain accurate counts for the various stats we
 //						want to show on the score screen.  The information in here
@@ -104,7 +104,7 @@ void ScoreKeeper::reset( Int playerIdx )
 	m_totalBuildingsLost = m_totalBuildingsBuilt = 0;
 	//Added By Sadullah Nader
 	//Initializtion(s) inserted
-	m_totalFactionBuildingsCaptured = m_totalTechBuildingsCaptured = 0;	
+	m_totalFactionBuildingsCaptured = m_totalTechBuildingsCaptured = 0;
 	//
 	m_currentScore = 0;
 	m_objectsBuilt.clear();
@@ -117,7 +117,7 @@ void ScoreKeeper::reset( Int playerIdx )
 	}
 	m_myPlayerIdx	= playerIdx;
 }
-	
+
 void ScoreKeeper::addObjectBuilt( const Object *o)
 {
 	Bool addToCount = FALSE;
@@ -144,7 +144,7 @@ void ScoreKeeper::addObjectBuilt( const Object *o)
 			addToCount = TRUE;
 		}
 	}
-	
+
 	if(addToCount)
 	{
 		Int existingCount = 0;
@@ -174,7 +174,7 @@ Int ScoreKeeper::getTotalObjectsBuilt( const ThingTemplate *pTemplate )
 	for (ObjectCountMapIt it = m_objectsBuilt.begin(); it != m_objectsBuilt.end(); ++it)
 	{
 		const ThingTemplate *theTemplate = it->first;
-		if (theTemplate->isEquivalentTo(pTemplate))
+		if (theTemplate && theTemplate->isEquivalentTo(pTemplate))
 			++count;
 	}
 	return count;
@@ -236,7 +236,7 @@ void ScoreKeeper::addObjectCaptured( const Object *o )
 		}
 		addToCount = TRUE;
 	}
-	
+
 	if(addToCount)
 	{
 		Int existingCount = 0;
@@ -283,7 +283,7 @@ void ScoreKeeper::addObjectDestroyed( const Object *o)
 			}
 		}
 	}
-	
+
 	if(addToCount)
 	{
 		Int existingCount = 0;
@@ -325,7 +325,7 @@ void ScoreKeeper::addObjectLost( const Object *o )
 			}
 		}
 	}
-	
+
 	if(addToCount)
 	{
 		Int existingCount = 0;
@@ -333,7 +333,7 @@ void ScoreKeeper::addObjectLost( const Object *o )
 		if (it != m_objectsLost.end())
 			existingCount = it->second;
 		m_objectsLost[o->getTemplate()] = existingCount + 1;
-	}	
+	}
 }
 
 Int ScoreKeeper::calculateScore( void )
@@ -368,12 +368,12 @@ Int ScoreKeeper::getTotalBuildingsDestroyed( void )
 //		if(i == m_myPlayerIdx)
 //			continue;
 		count += m_totalBuildingsDestroyed[i];
-		//for (ObjectCountMapIt it = m_objectsDestroyed[i].begin(); it != m_objectsDestroyed[i].end(); ++it) 
+		//for (ObjectCountMapIt it = m_objectsDestroyed[i].begin(); it != m_objectsDestroyed[i].end(); ++it)
 		//		{
-		//			
+		//
 		//			count += it->second;
 		//		}
-		
+
 	}
 	return count;
 }
@@ -386,7 +386,7 @@ Int ScoreKeeper::getTotalUnitsDestroyed( void )
 //		if(i == m_myPlayerIdx)
 //			continue;
 		count += m_totalUnitsDestroyed[i];
-//		for (ObjectCountMapIt it = m_objectsDestroyed[i].begin(); it != m_objectsDestroyed[i].end(); ++it) 
+//		for (ObjectCountMapIt it = m_objectsDestroyed[i].begin(); it != m_objectsDestroyed[i].end(); ++it)
 //		{
 //		}
 	}
@@ -399,7 +399,7 @@ Int ScoreKeeper::getTotalUnitsDestroyed( void )
 void ScoreKeeper::crc( Xfer *xfer )
 {
 
-}  // end ScoreKeeper
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer of an object count map
@@ -413,10 +413,10 @@ void ScoreKeeper::xferObjectCountMap( Xfer *xfer, ObjectCountMap *map )
 	if( map == NULL )
 	{
 
-		DEBUG_CRASH(( "xferObjectCountMap - Invalid map parameter\n" ));
+		DEBUG_CRASH(( "xferObjectCountMap - Invalid map parameter" ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// version info
 	XferVersion currentVersion = 1;
@@ -434,7 +434,7 @@ void ScoreKeeper::xferObjectCountMap( Xfer *xfer, ObjectCountMap *map )
 	if( xfer->getXferMode() == XFER_SAVE )
 	{
 		ObjectCountMapIt it;
-		
+
 		// save all entries
 		for( it = map->begin(); it != map->end(); ++it )
 		{
@@ -448,9 +448,9 @@ void ScoreKeeper::xferObjectCountMap( Xfer *xfer, ObjectCountMap *map )
 			count = it->second;
 			xfer->xferInt( &count );
 
-		}  // end for, it
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -464,10 +464,10 @@ void ScoreKeeper::xferObjectCountMap( Xfer *xfer, ObjectCountMap *map )
 			if( thingTemplate == NULL )
 			{
 
-				DEBUG_CRASH(( "xferObjectCountMap - Unknown thing template '%s'\n", thingTemplateName.str() ));
+				DEBUG_CRASH(( "xferObjectCountMap - Unknown thing template '%s'", thingTemplateName.str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
 			// read count
 			xfer->xferInt( &count );
@@ -475,11 +475,11 @@ void ScoreKeeper::xferObjectCountMap( Xfer *xfer, ObjectCountMap *map )
 			// add to map
 			(*map)[ thingTemplate ] = count;
 
-		}  // end for, i
+		}
 
-	}  // end else
+	}
 
-}  // end xferObjectCountMap
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -489,7 +489,7 @@ void ScoreKeeper::xferObjectCountMap( Xfer *xfer, ObjectCountMap *map )
 void ScoreKeeper::xfer( Xfer *xfer )
 {
 
-	// version 
+	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
@@ -539,17 +539,17 @@ void ScoreKeeper::xfer( Xfer *xfer )
 	if( destroyedArraySize != MAX_PLAYER_COUNT )
 	{
 
-		DEBUG_CRASH(( "ScoreKeeper::xfer - size of objects destroyed array has changed\n" ));
+		DEBUG_CRASH(( "ScoreKeeper::xfer - size of objects destroyed array has changed" ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 	for( UnsignedShort i = 0; i < destroyedArraySize; ++i )
 	{
 
 		// xfer map data
 		xferObjectCountMap( xfer, &m_objectsDestroyed[ i ] );
 
-	}  // end for i
+	}
 
 	// objects lost
 	xferObjectCountMap( xfer, &m_objectsLost );
@@ -557,7 +557,7 @@ void ScoreKeeper::xfer( Xfer *xfer )
 	// objects captured
 	xferObjectCountMap( xfer, &m_objectsCaptured );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -565,4 +565,4 @@ void ScoreKeeper::xfer( Xfer *xfer )
 void ScoreKeeper::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

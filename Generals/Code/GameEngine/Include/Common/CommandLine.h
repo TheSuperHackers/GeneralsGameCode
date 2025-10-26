@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -28,9 +28,10 @@
 
 #pragma once
 
-#ifndef _COMMAND_LINE_H_
-#define _COMMAND_LINE_H_
+class CommandLine
+{
+public:
 
-void parseCommandLine(int argc, char *argv[]); ///< Parse command-line parameters
-
-#endif // _COMMAND_LINE_H_
+	static void parseCommandLineForStartup();
+	static void parseCommandLineForEngineInit();
+};

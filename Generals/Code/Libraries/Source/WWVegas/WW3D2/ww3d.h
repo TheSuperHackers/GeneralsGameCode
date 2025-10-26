@@ -22,25 +22,19 @@
  *                                                                                             *
  *                 Project Name : WW3D                                                         *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/ww3d2/ww3d.h                                      $*
+ *                     $Archive:: /Commando/Code/ww3d2/ww3d.h                                 $*
  *                                                                                             *
- *                      $Author:: Vss_sync                                                    $*
+ *                      $Author:: Steve_t                                                     $*
  *                                                                                             *
- *                     $Modtime:: 8/29/01 9:39p                                               $*
+ *                     $Modtime:: 1/02/02 4:17p                                               $*
  *                                                                                             *
- *                    $Revision:: 32                                                          $*
+ *                    $Revision:: 42                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef WW3D_H
-#define WW3D_H
 
 #include "always.h"
 #include "vector3.h"
@@ -64,6 +58,7 @@ class		LightEnvironmentClass;
 class		MaterialPassClass;
 class 	StaticSortListClass;
 
+#define MESH_RENDER_SNAPSHOT_ENABLED
 #define SNAPSHOT_SAY(x) if (WW3D::Is_Snapshot_Activated()) { WWDEBUG_SAY(x); }
 //#define SNAPSHOT_SAY(x)
 
@@ -99,18 +94,23 @@ public:
 		NPATCHES_GAP_FILLING_FORCE
 	};
 
+	enum ScreenShotFormatEnum {
+		TGA,
+		BMP
+	};
 
-	static WW3DErrorType		Init(void * hwnd, char *defaultpal = NULL);
+
+	static WW3DErrorType		Init(void * hwnd, char *defaultpal = NULL, bool lite = false);
 	static WW3DErrorType		Shutdown(void);
 	static bool					Is_Initted(void)								{ return IsInitted; }
 
-	static const int			Get_Render_Device_Count(void);
+	static int					Get_Render_Device_Count(void);
 	static const char *		Get_Render_Device_Name(int device_index);
 	static const RenderDeviceDescClass &								Get_Render_Device_Desc(int device = -1);
 
 	static int					Get_Render_Device(void);
 	static WW3DErrorType		Set_Render_Device( int dev=-1, int resx=-1, int resy=-1, int bits=-1, int windowed=-1, bool resize_window = false, bool reset_device=false, bool restore_assets=true);
-	static WW3DErrorType		Set_Render_Device( const char *dev_name, int resx=-1, int resy=-1, int bits=-1, int windowed=-1, bool resize_window = false  );	
+	static WW3DErrorType		Set_Render_Device( const char *dev_name, int resx=-1, int resy=-1, int bits=-1, int windowed=-1, bool resize_window = false  );
 	static WW3DErrorType		Set_Next_Render_Device(void);
 	static WW3DErrorType		Set_Any_Render_Device( void );
 
@@ -130,7 +130,11 @@ public:
 	static WW3DErrorType		Registry_Save_Render_Device( const char * sub_key );
 	static WW3DErrorType		Registry_Save_Render_Device( const char * sub_key, int device, int width, int height, int depth, bool windowed, int texture_depth );
 	static WW3DErrorType		Registry_Load_Render_Device( const char * sub_key, bool resize_window = false );
-	static bool					Registry_Load_Render_Device( const char * sub_key, char *device, int device_len, int &width, int &height, int &depth, int &windowed, int& texture_depth);		
+	static bool					Registry_Load_Render_Device( const char * sub_key, char *device, int device_len, int &width, int &height, int &depth, int &windowed, int& texture_depth);
+
+	// 0 = bilinear, 1 = trilinear, 2 = anisotropic
+	static void					Set_Texture_Filter(int filter);
+	static int					Get_Texture_Filter() { return TextureFilter; }
 
 	/*
 	** Rendering functions
@@ -139,8 +143,7 @@ public:
 	** special cases like generating a shadow texture for an object.  Basically this function will have the
 	** entire scene rendering overhead.
 	*/
-	static WW3DErrorType		Begin_Render(bool clear = false,bool clearz = true,const Vector3 & color = Vector3(0,0,0), float dest_alpha=0.0f);
-
+	static WW3DErrorType		Begin_Render(bool clear = false,bool clearz = true,const Vector3 & color = Vector3(0,0,0), float dest_alpha=0.0f, void(*network_callback)(void) = NULL);
 	static WW3DErrorType		Render(const LayerListClass & layerlist);
 	static WW3DErrorType		Render(const LayerClass & layer);
 	static WW3DErrorType		Render(SceneClass * scene,CameraClass * cam,bool clear = false,bool clearz = false,const Vector3 & color = Vector3(0,0,0));
@@ -149,18 +152,41 @@ public:
 
 	static WW3DErrorType		End_Render(bool flip_frame = true);
 
+	static bool					Is_Rendering( void ) { return( IsRendering ); }
+
 	static void Flip_To_Primary(void);
 
-
+	// TheSuperHackers @info Add amount of milliseconds that the simulation has advanced in this render frame.
+	// This can be a fraction of a logic step.
+	static void Update_Logic_Frame_Time(float milliseconds);
 	/*
 	** Timing
 	** By calling the Sync function, the application can move the ww3d library time forward.  This
 	** will control things like animated uv-offset mappers and render object animations.
 	*/
-	static void					Sync( unsigned int sync_time );
+	static void						Sync(bool step);
+
+	// Total sync time in milliseconds. Advances in full logic time steps only.
 	static unsigned int		Get_Sync_Time(void) { return SyncTime; }
-   static unsigned int     Get_Frame_Time(void) { return SyncTime - PreviousSyncTime; }
-   static unsigned int     Get_Frame_Count(void) { return FrameCount; }
+
+	// Current sync frame time in milliseconds. Can be zero when the logic has not stepped forward in the current render update.
+	static unsigned int		Get_Sync_Frame_Time(void) { return SyncTime - PreviousSyncTime; }
+
+	// Fractional sync frame time. Accumulates for as long as the sync frame is not stepped forward.
+	static unsigned int		Get_Fractional_Sync_Milliseconds() { return (unsigned int)FractionalSyncMs; }
+
+	// Total logic time in milliseconds. Can include fractions of a logic step. Is rounded to integer.
+	static unsigned int		Get_Logic_Time_Milliseconds() { return SyncTime + (unsigned int)FractionalSyncMs; }
+
+	// Logic time step in milliseconds. Can be a fraction of a logic step.
+	static float					Get_Logic_Frame_Time_Milliseconds() { return LogicFrameTimeMs; }
+
+	// Logic time step in seconds. Can be a fraction of a logic step.
+	static float					Get_Logic_Frame_Time_Seconds() { return LogicFrameTimeMs * 0.001f; }
+
+	// Returns the render frame count.
+	static unsigned int		Get_Frame_Count(void) { return FrameCount; }
+
 	static unsigned int		Get_Last_Frame_Poly_Count(void);
 	static unsigned int		Get_Last_Frame_Vertex_Count(void);
 
@@ -168,7 +194,7 @@ public:
 	** Screen/Movie capturing
 	** These functions allow you to create screenshots and movies.
 	*/
-	static void					Make_Screen_Shot( const char * filename = "ScreenShot");
+	static void					Make_Screen_Shot( const char * filename = "ScreenShot", const float gamma = 1.3f, const ScreenShotFormatEnum format = TGA);
 	static void					Start_Movie_Capture( const char * filename_base = "Movie", float frame_rate = 15);
 	static void					Stop_Movie_Capture( void);
 	static void					Toggle_Movie_Capture( const char * filename_base = "Movie", float frame_rate = 15);
@@ -178,8 +204,8 @@ public:
 	static float				Get_Movie_Capture_Frame_Rate( void);
 	static void					Pause_Movie(bool mode);
 	static bool					Is_Movie_Paused();
-	static bool					Is_Recording_Next_Frame(); 
-	static bool					Is_Movie_Ready(); 
+	static bool					Is_Recording_Next_Frame();
+	static bool					Is_Movie_Ready();
 
    /*
 	** Set_Ext_Swap_Interval - how many vertical retraces to wait before flipping frames
@@ -276,6 +302,14 @@ public:
 	static void					Override_Current_Static_Sort_Lists(StaticSortListClass * sort_list);
 	static void					Reset_Current_Static_Sort_Lists_To_Default(void);
 
+	/*
+	** Overbright modify on load - when this mode is set meshes will be
+	** modified at load time. All shaders which originally had the primary
+	** gradient set to MODULATE will be changed to MODULATE2X instead.
+	*/
+	static void					Enable_Overbright_Modify_On_Load(bool onoff)	{ OverbrightModifyOnLoad = onoff; }
+	static bool					Is_Overbright_Modify_On_Load_Enabled(void)	{ return OverbrightModifyOnLoad; }
+
 	static bool					Is_Snapshot_Activated()						{ return SnapshotActivated; }
 	static void					Activate_Snapshot(bool b)					{ SnapshotActivated=b; }
 
@@ -284,6 +318,9 @@ public:
    static long             UserStat0;
    static long             UserStat1;
    static long             UserStat2;
+
+	// Gamma control
+	static void					Set_Gamma(float gamma,float bright,float contrast,bool calibrate=true);
 
 private:
 
@@ -296,21 +333,26 @@ private:
 
 	static void					Read_Gerd_Render_Device_Description(RenderDeviceDescClass &desc);
 	static void					Update_Pixel_Center(void);
-	static void					Set_Polygon_Mode(int mode);
 	static void					Allocate_Debug_Resources(void);
 	static void					Release_Debug_Resources(void);
 
-	// Timing info:
-   // The absolute synchronized frame time (in milliseconds) supplied by the
-   // application at the start of every frame. Note that wraparound cases
-   // etc. need to be considered.
-	static unsigned int				SyncTime;
+	// Logic frame time, in milliseconds
+	static float LogicFrameTimeMs;
 
-   // The previously set absolute sync time - this is used to get the interval between
-   // the most recently set sync time and the previous one. Assuming the
-   // application sets sync time at the start of every frame, this represents
-   // the frame interval.
-   static unsigned int           PreviousSyncTime;
+	// Accumulated synchronized frame time in milliseconds
+	static float FractionalSyncMs;
+
+	// Timing info:
+	// The absolute synchronized frame time (in milliseconds) supplied by the
+	// application at the start of every frame. Note that wraparound cases
+	// etc. need to be considered.
+	static unsigned int SyncTime;
+
+	// The previously set absolute sync time - this is used to get the interval between
+	// the most recently set sync time and the previous one. Assuming the
+	// application sets sync time at the start of every frame, this represents
+	// the frame interval.
+	static unsigned int PreviousSyncTime;
 
 	static float						PixelCenterX;
 	static float						PixelCenterY;
@@ -328,6 +370,8 @@ private:
 	static bool							AreStaticSortListsEnabled;
 	static bool							MungeSortOnLoad;
 
+	static bool							OverbrightModifyOnLoad;
+
 	static FrameGrabClass *			Movie;
 	static bool							PauseRecord;
 	static bool							RecordNextFrame;
@@ -341,6 +385,8 @@ private:
 	static PrelitModeEnum			PrelitMode;
 	static bool							ExposePrelit;
 
+	static int							TextureFilter;
+
 	static bool							SnapshotActivated;
 	static bool							ThumbnailEnabled;
 
@@ -349,6 +395,8 @@ private:
 	static unsigned NPatchesLevel;
 	static bool							IsTexturingEnabled;
 	static bool							IsColoringEnabled;
+
+	static bool							Lite;
 
 	// This is the default native screen size which will be set for each
 	// RenderObject on construction. The native screen size is the screen size
@@ -420,7 +468,3 @@ struct RenderStatistics
       long     UserStat1;
       long     UserStat2;
 };
-
-
-
-#endif

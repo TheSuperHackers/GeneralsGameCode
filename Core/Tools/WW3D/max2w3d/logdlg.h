@@ -17,27 +17,25 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/logdlg.h 4     11/07/00 5:40p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - W3D export                                  * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/logdlg.h                       $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 11/07/00 3:15p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 4                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - W3D export                                  *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/logdlg.h                       $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 11/07/00 3:15p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 4                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef LOGDLG_H
-#define LOGDLG_H
+#pragma once
 
 #include <windows.h>
 
@@ -48,16 +46,16 @@ public:
 
 	LogDataDialogClass(HWND parent);
 	~LogDataDialogClass();
-	
+
    void	Wait_OK();	// wait for user to hit OK
-   
+
    void	printf(const char *, ...);
 	void	printf(const char * text, va_list args);
 	void  rprintf(const char *, ...);
 	void	rprintf(const char *text, va_list args);
-	
+
 	void	updatebar(float position, float total);
-   
+
 	bool	Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM);
 
 public:
@@ -78,10 +76,8 @@ private:
 	int	buffer_index;
 
 volatile int status;
-  
+
 };
 
-
-#endif
 
 // EOF - logdlg.h

@@ -23,15 +23,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: ConvertToHijackedVehicleCrateCollide.cpp 
+//
+// FILE: ConvertToHijackedVehicleCrateCollide.cpp
 // Author: Mark Lorenzen, July 2002
-// Desc:   A crate (actually a terrorist - mobile crate) that makes the target vehicle switch 
+// Desc:   A crate (actually a terrorist - mobile crate) that makes the target vehicle switch
 //				 sides, and kills its driver
 //	@todo	 Needs to set the science of that vehicle (dozer) so still can build same stuff as always
-//	
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
- 
+
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -56,23 +56,18 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/Module/DozerAIUpdate.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ConvertToHijackedVehicleCrateCollide::ConvertToHijackedVehicleCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ConvertToHijackedVehicleCrateCollide::~ConvertToHijackedVehicleCrateCollide( void )
 {
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -153,7 +148,7 @@ Bool ConvertToHijackedVehicleCrateCollide::executeCrateBehavior( Object *other )
 	{
 		TheEva->setShouldPlay( EVA_VehicleStolen );
 	}
-	
+
 	other->setTeam( obj->getControllingPlayer()->getDefaultTeam() );
 	other->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_HIJACKED ) );// I claim this car in the name of the GLA
 
@@ -199,12 +194,12 @@ Bool ConvertToHijackedVehicleCrateCollide::executeCrateBehavior( Object *other )
 			targetCanEject = TRUE;
 			break;
 		}
-	}  // end for dmi
+	}
 
 	if ( ! targetCanEject )
 	{
 		TheGameLogic->destroyObject( obj );
-		return TRUE; 
+		return TRUE;
 	}
 
 	// I we have made it this far, we are going to ride in this vehicle for a while
@@ -243,7 +238,7 @@ Bool ConvertToHijackedVehicleCrateCollide::executeCrateBehavior( Object *other )
 		obj->getDrawable()->setDrawableHidden( true );
 
 	// By returning FALSE, we will not remove the object (Hijacker)
-	return FALSE; 
+	return FALSE;
 //	return TRUE;
 }
 
@@ -256,7 +251,7 @@ void ConvertToHijackedVehicleCrateCollide::crc( Xfer *xfer )
 	// extend base class
 	CrateCollide::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -274,7 +269,7 @@ void ConvertToHijackedVehicleCrateCollide::xfer( Xfer *xfer )
 	// extend base class
 	CrateCollide::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -285,4 +280,4 @@ void ConvertToHijackedVehicleCrateCollide::loadPostProcess( void )
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+}

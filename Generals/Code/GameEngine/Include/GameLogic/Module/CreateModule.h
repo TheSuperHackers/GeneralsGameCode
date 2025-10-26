@@ -24,13 +24,10 @@
 
 // FILE: CreateModule.h /////////////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, September 2001
-// Desc:	 
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __CreateModule_H_
-#define __CreateModule_H_
 
 #include "Common/Module.h"
 #include "GameLogic/Module/BehaviorModule.h"
@@ -52,7 +49,7 @@ class CreateModuleData : public BehaviorModuleData
 {
 public:
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
 		BehaviorModuleData::buildFieldParse(p);
 	}
@@ -85,5 +82,3 @@ private:
 	Bool m_needToRunOnBuildComplete; ///< Prevent the multiple calling of onBuildComplete
 
 };
-
-#endif

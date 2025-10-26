@@ -69,18 +69,17 @@ m_riverStart(0)
 */
 PolygonTrigger::~PolygonTrigger(void)
 {
-	if (m_points) {
-		delete [] m_points;
-		m_points = NULL;
-	}
+	delete [] m_points;
+	m_points = NULL;
+
 	if (m_nextPolygonTrigger) {
 		PolygonTrigger *cur = m_nextPolygonTrigger;
 		PolygonTrigger *next;
 		while (cur) {
 			next = cur->getNext();
-			cur->setNextPoly(NULL); // prevents recursion. 
-			cur->deleteInstance();
-			cur = next; 
+			cur->setNextPoly(NULL); // prevents recursion.
+			deleteInstance(cur);
+			cur = next;
 		}
 	}
 }
@@ -92,9 +91,13 @@ PolygonTrigger::~PolygonTrigger(void)
  the poly triggers don't change.
 */
 void PolygonTrigger::reallocate(void)
-{	
+{
 	DEBUG_ASSERTCRASH(m_numPoints <= m_sizePoints, ("Invalid m_numPoints."));
 	if (m_numPoints == m_sizePoints) {
+		if (m_sizePoints > INT_MAX / 2) {
+			DEBUG_CRASH(("Too many points to allocate."));
+			return;
+		}
 		// Reallocate.
 		m_sizePoints += m_sizePoints;
 		ICoord3D *newPts = NEW ICoord3D[m_sizePoints];
@@ -127,8 +130,8 @@ PolygonTrigger *PolygonTrigger::getPolygonTriggerByID(Int triggerID)
 * PolygonTrigger::ParsePolygonTriggersDataChunk - read a polygon triggers chunk.
 * Format is the newer CHUNKY format.
 *	See PolygonTrigger::WritePolygonTriggersDataChunk for the writer.
-*	Input: DataChunkInput 
-*		
+*	Input: DataChunkInput
+*
 */
 Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
@@ -144,7 +147,7 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 	PolygonTrigger::deleteTriggers(); // just in case.
 	PolygonTrigger *pPrevTrig = NULL;
 	ICoord3D loc;
-	count = file.readInt(); 
+	count = file.readInt();
 	while (count>0) {
 		count--;
 		triggerName = file.readAsciiString();
@@ -160,8 +163,8 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 			riverStart = file.readInt();
 		}
 
-		numPoints = file.readInt(); 
-		PolygonTrigger *pTrig = newInstance(PolygonTrigger)(numPoints+1);	
+		numPoints = file.readInt();
+		PolygonTrigger *pTrig = newInstance(PolygonTrigger)(numPoints+1);
 		pTrig->setTriggerName(triggerName);
 		pTrig->setWaterArea(isWater);
 		pTrig->setRiver(isRiver);
@@ -184,12 +187,12 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 		}
 		pPrevTrig = pTrig;
 	}
-	if (info->version == K_TRIGGERS_VERSION_1) 
+	if (info->version == K_TRIGGERS_VERSION_1)
 	{
 		// before water areas existed, so create a default one.
 		PolygonTrigger *pTrig = newInstance(PolygonTrigger)(4);
 		pTrig->setWaterArea(true);
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		pTrig->setTriggerName("AutoAddedWaterAreaTrigger");
 #endif
 		pTrig->m_triggerID = maxTriggerId++;
@@ -219,26 +222,26 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 * PolygonTrigger::WritePolygonTriggersDataChunk - Writes a Polygon triggers chunk.
 * Format is the newer CHUNKY format.
 *	See PolygonTrigger::ParsePolygonTriggersDataChunk for the reader.
-*	Input: DataChunkInput 
-*		
+*	Input: DataChunkInput
+*
 */
 void PolygonTrigger::WritePolygonTriggersDataChunk(DataChunkOutput &chunkWriter)
 {
 	chunkWriter.openDataChunk("PolygonTriggers", 	K_TRIGGERS_VERSION_3);
-		
+
 		PolygonTrigger *pTrig;
 		Int count = 0;
 		for (pTrig=PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
 			count++;
 		}
-		chunkWriter.writeInt(count); 
+		chunkWriter.writeInt(count);
 		for (pTrig=PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
-			chunkWriter.writeAsciiString(pTrig->getTriggerName());	
-			chunkWriter.writeInt(pTrig->getID()); 
+			chunkWriter.writeAsciiString(pTrig->getTriggerName());
+			chunkWriter.writeInt(pTrig->getID());
 			chunkWriter.writeByte(pTrig->isWaterArea());
 			chunkWriter.writeByte(pTrig->isRiver());
 			chunkWriter.writeInt(pTrig->getRiverStart());
-			chunkWriter.writeInt(pTrig->getNumPoints()); 
+			chunkWriter.writeInt(pTrig->getNumPoints());
 			Int i;
 			for (i=0; i<pTrig->getNumPoints(); i++) {
 				ICoord3D loc = *pTrig->getPoint(i);
@@ -255,7 +258,7 @@ void PolygonTrigger::WritePolygonTriggersDataChunk(DataChunkOutput &chunkWriter)
  PolygonTrigger::updateBounds - Updates the bounds.
 */
 void PolygonTrigger::updateBounds(void)	const
-{	
+{
 	const Int BIG_INT=0x7ffff0;
 	m_bounds.lo.x = m_bounds.lo.y = BIG_INT;
 	m_bounds.hi.x = m_bounds.hi.y = -BIG_INT;
@@ -278,7 +281,7 @@ void PolygonTrigger::updateBounds(void)	const
  PolygonTrigger::addPolygonTrigger adds a trigger to the list of triggers.
 */
 void PolygonTrigger::addPolygonTrigger(PolygonTrigger *pTrigger)
-{	
+{
 	for (PolygonTrigger *pTrig=getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
 		DEBUG_ASSERTCRASH(pTrig != pTrigger, ("Attempting to add trigger already in list."));
 		if (pTrig==pTrigger) return;
@@ -288,11 +291,11 @@ void PolygonTrigger::addPolygonTrigger(PolygonTrigger *pTrigger)
 }
 
 /**
- PolygonTrigger::removePolygonTrigger removes a trigger to the list of 
+ PolygonTrigger::removePolygonTrigger removes a trigger to the list of
 	triggers.  note - does NOT delete pTrigger.
 */
 void PolygonTrigger::removePolygonTrigger(PolygonTrigger *pTrigger)
-{	
+{
 	PolygonTrigger *pPrev = NULL;
 	PolygonTrigger *pTrig=getFirstPolygonTrigger();
 	for (; pTrig; pTrig = pTrig->getNext()) {
@@ -317,10 +320,10 @@ void PolygonTrigger::removePolygonTrigger(PolygonTrigger *pTrigger)
 */
 void PolygonTrigger::deleteTriggers(void)
 {
-	PolygonTrigger *pList = ThePolygonTriggerListPtr;	
+	PolygonTrigger *pList = ThePolygonTriggerListPtr;
 	ThePolygonTriggerListPtr = NULL;
 	s_currentID = 1;
-	pList->deleteInstance();
+	deleteInstance(pList);
 }
 
 /**
@@ -329,7 +332,7 @@ void PolygonTrigger::deleteTriggers(void)
  the poly triggers don't change.
 */
 void PolygonTrigger::addPoint(const ICoord3D &point)
-{	
+{
 	DEBUG_ASSERTCRASH(m_numPoints <= m_sizePoints, ("Invalid m_numPoints."));
 	if (m_numPoints == m_sizePoints) {
 		reallocate();
@@ -345,7 +348,7 @@ void PolygonTrigger::addPoint(const ICoord3D &point)
  the poly triggers don't change.
 */
 void PolygonTrigger::setPoint(const ICoord3D &point, Int ndx)
-{	
+{
 	DEBUG_ASSERTCRASH(ndx>=0 && ndx <= m_numPoints, ("Invalid ndx."));
 	if (ndx<0) return;
 	if (ndx == m_numPoints) {	// we are setting first available unused point
@@ -365,7 +368,7 @@ void PolygonTrigger::setPoint(const ICoord3D &point, Int ndx)
  the poly triggers don't change.
 */
 void PolygonTrigger::insertPoint(const ICoord3D &point, Int ndx)
-{	
+{
 	DEBUG_ASSERTCRASH(ndx>=0 && ndx <= m_numPoints, ("Invalid ndx."));
 	if (ndx<0) return;
 	if (ndx == m_numPoints) {	// we are setting first available unused point
@@ -390,7 +393,7 @@ void PolygonTrigger::insertPoint(const ICoord3D &point, Int ndx)
  the poly triggers don't change.
 */
 void PolygonTrigger::deletePoint(Int ndx)
-{	
+{
 	DEBUG_ASSERTCRASH(ndx>=0 && ndx < m_numPoints, ("Invalid ndx."));
 	if (ndx<0 || ndx>=m_numPoints) return;
 	Int i;
@@ -430,7 +433,7 @@ Real PolygonTrigger::getRadius(void)	const
  PolygonTrigger - pointInTrigger.
 */
 Bool PolygonTrigger::pointInTrigger(ICoord3D &point) const
-{	
+{
 	if (m_boundsNeedsUpdate) {
 		updateBounds();
 	}
@@ -493,7 +496,7 @@ Bool PolygonTrigger::isValid(void) const
 void PolygonTrigger::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -522,7 +525,7 @@ void PolygonTrigger::xfer( Xfer *xfer )
 		// xfer point
 		xfer->xferICoord3D( point );
 
-	}  // end for, i
+	}
 
 	// bounds
 	xfer->xferIRegion2D( &m_bounds );
@@ -533,7 +536,7 @@ void PolygonTrigger::xfer( Xfer *xfer )
 	// bounds need update
 	xfer->xferBool( &m_boundsNeedsUpdate );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -541,4 +544,4 @@ void PolygonTrigger::xfer( Xfer *xfer )
 void PolygonTrigger::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

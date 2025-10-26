@@ -1,0 +1,210 @@
+name: Weekly Release
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_notes:
+        description: 'Build notes (optional)'
+        required: false
+        default: ''
+        type: string
+      known_issues:
+        description: 'Known issues (optional)'
+        required: false
+        default: ''
+        type: string
+      force_changed:
+        description: 'Force build'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+      pre-release:
+        description: 'Mark release as pre-release'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+  schedule:
+    - cron: '0 9 * * 5'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  get-date:
+    runs-on: ubuntu-latest
+    outputs:
+      date: ${{ steps.date.outputs.date }}
+    steps:
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+  detect-scm-changes:
+    needs: [get-date]
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.check.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - id: check
+        run: |
+          if [ "${{ github.event.inputs.force_changed }}" = "true" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo LAST TAG:
+          git describe --tags --abbrev=0 2>/dev/null || echo ""
+
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          CHANGED=$(git diff --name-only $LAST_TAG..HEAD | grep -v '.github/workflows/' | wc -l)
+          if [ "$CHANGED" -eq "0" ]; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+  build-generals:
+    needs: [detect-scm-changes, get-date]
+    if: needs.detect-scm-changes.outputs.changed == 'true'
+    name: Build Generals${{ matrix.preset && '' }}
+    strategy:
+      matrix:
+        include:
+          - preset: "vc6"
+            tools: true
+            extras: false
+            release: true
+      fail-fast: false
+    uses: ./.github/workflows/build-toolchain.yml
+    with:
+      game: "Generals"
+      preset: ${{ matrix.preset }}
+      tools: ${{ matrix.tools }}
+      extras: ${{ matrix.extras }}
+    secrets: inherit
+
+  build-generalsmd:
+    needs: [detect-scm-changes, get-date]
+    if: needs.detect-scm-changes.outputs.changed == 'true'
+    name: Build GeneralsMD${{ matrix.preset && '' }}
+    strategy:
+      matrix:
+        include:
+          - preset: "vc6"
+            tools: true
+            extras: false
+            release: true
+      fail-fast: false
+    uses: ./.github/workflows/build-toolchain.yml
+    with:
+      game: "GeneralsMD"
+      preset: ${{ matrix.preset }}
+      tools: ${{ matrix.tools }}
+      extras: ${{ matrix.extras }}
+    secrets: inherit
+
+  create-release:
+    name: Create Release
+    needs: [build-generals, build-generalsmd, get-date]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Collect commits since last release
+        id: changelog
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            CHANGELOG_COMMITS=$(git log --pretty="format:- %s" --no-merges HEAD | head -n 10 || true)
+          else
+            CHANGELOG_COMMITS=$(git log --pretty="format:- %s" --no-merges "$LAST_TAG"..HEAD || true)
+          fi
+          if [ -z "$CHANGELOG_COMMITS" ]; then
+            CHANGELOG_COMMITS="- No relevant changes detected since the last release."
+          fi
+          {
+            echo 'commits<<CHANGELOG_EOF'
+            echo "$CHANGELOG_COMMITS"
+            echo 'CHANGELOG_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      # Generals vc6
+      - name: Download Generals VC6 Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: Generals-vc6+t
+          path: generals-vc6-artifacts
+
+      - name: Prepare and Zip Generals VC6
+        run: |
+          zip -jr generals-weekly-${{ needs.get-date.outputs.date }}.zip generals-vc6-artifacts/*
+
+      # GeneralsMD vc6
+      - name: Download GeneralsMD VC6 Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: GeneralsMD-vc6+t
+          path: generalsmd-vc6-artifacts
+
+      - name: Prepare and Zip GeneralsMD VC6
+        run: |
+          zip -jr generalszh-weekly-${{ needs.get-date.outputs.date }}.zip generalsmd-vc6-artifacts/*
+
+      - name: Generate release notes
+        id: release_body
+        run: |
+          BODY=""
+          if [ "${{ github.event.inputs.build_notes }}" != "" ]; then
+            BODY="${BODY}### Build notes\n${{ github.event.inputs.build_notes }}\n"
+          fi
+          if [ "${{ github.event.inputs.known_issues }}" != "" ]; then
+            BODY="${BODY}### Known issues\n${{ github.event.inputs.known_issues }}\n"
+          fi
+          BODY="${BODY}### Changelog\n${{ steps.changelog.outputs.commits }}"
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: weekly-${{ needs.get-date.outputs.date }}
+          name: weekly-${{ needs.get-date.outputs.date }}
+          prerelease: ${{ github.event.inputs.pre-release == 'true' }}
+          body: ${{ steps.release_body.outputs.body }}
+          files: |
+            generals-weekly-${{ needs.get-date.outputs.date }}.zip
+            generalszh-weekly-${{ needs.get-date.outputs.date }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Clean up release folders
+        if: always()
+        run: |
+          rm -rf generals-vc6-artifacts generalsmd-vc6-artifacts
+          rm -f generals-weekly-${{ needs.get-date.outputs.date }}.zip
+          rm -f generalszh-weekly-${{ needs.get-date.outputs.date }}.zip

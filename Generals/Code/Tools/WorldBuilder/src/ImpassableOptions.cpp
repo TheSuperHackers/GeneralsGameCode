@@ -19,7 +19,7 @@
 // ImpassableOptions.cpp
 // Author: John McDonald, April 2001
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 #include "resource.h"
 
 #include "ImpassableOptions.h"
@@ -28,11 +28,11 @@
 #include "WorldBuilderDoc.h"
 
 //-------------------------------------------------------------------------------------------------
-ImpassableOptions::ImpassableOptions(CWnd* pParent, Real defaultSlope) : 
-	CDialog(ImpassableOptions::IDD, pParent), 
+ImpassableOptions::ImpassableOptions(CWnd* pParent, Real defaultSlope) :
+	CDialog(ImpassableOptions::IDD, pParent),
 	m_slopeToShow(defaultSlope),
 	m_defaultSlopeToShow(defaultSlope)
-{	
+{
 	// nada to do
 	m_showImpassableAreas = TheTerrainRenderObject->getShowImpassableAreas();
 	TheTerrainRenderObject->setShowImpassableAreas(TRUE);

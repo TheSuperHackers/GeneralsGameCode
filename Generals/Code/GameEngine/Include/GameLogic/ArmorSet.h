@@ -26,9 +26,6 @@
 
 #pragma once
 
-#ifndef _ArmorSet_H_
-#define _ArmorSet_H_
-
 #include "Lib/BaseType.h"
 #include "Common/GameType.h"
 #include "Common/SparseMatchFinder.h"
@@ -52,7 +49,7 @@ enum ArmorSetType CPP_11(: Int)
 	ARMORSET_PLAYER_UPGRADE = 3,
 	ARMORSET_WEAK_VERSUS_BASEDEFENSES = 4,
 
-	ARMORSET_COUNT			///< keep last, please
+	ARMORSET_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -79,12 +76,12 @@ public:
 		m_fx = NULL;
 	}
 
-	inline const ArmorTemplate* getArmorTemplate() const { return m_template; } 
-	inline const DamageFX* getDamageFX() const { return m_fx; } 
+	inline const ArmorTemplate* getArmorTemplate() const { return m_template; }
+	inline const DamageFX* getDamageFX() const { return m_fx; }
 
 	inline Int getConditionsYesCount() const { return 1; }
 	inline const ArmorSetFlags& getNthConditionsYes(Int i) const { return m_types; }
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	inline AsciiString getDescription() const { return AsciiString("ArmorTemplateSet"); }
 #endif
 
@@ -93,8 +90,3 @@ public:
 
 //-------------------------------------------------------------------------------------------------
 typedef std::vector<ArmorTemplateSet> ArmorTemplateSetVector;
-
-//-------------------------------------------------------------------------------------------------
-typedef SparseMatchFinder<ArmorTemplateSet, ArmorSetFlags> ArmorTemplateSetFinder;
-
-#endif	// _ArmorSet_H_

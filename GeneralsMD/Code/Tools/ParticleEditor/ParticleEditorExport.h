@@ -26,7 +26,7 @@ class ParticleSystemTemplate;
 extern "C" {
 	// Called to create the dialog
 	void __declspec(dllexport) CreateParticleSystemDialog( void );
-	
+
 	// Called to (not surprisingly) destroy the dialog (and free the resources)
 	void __declspec(dllexport) DestroyParticleSystemDialog( void );
 
@@ -47,9 +47,8 @@ extern "C" {
 #	define PARM_ParticleTypeName		0x00
 # define PARM_SlaveSystemName			0x01
 #	define PARM_AttachedSystemName	0x02
+# define PARM_NumParms						0x03
 
-// Keep this one last
-# define PARM_NumParms	0x03	
 	// parmNum can be exactly one of the above defines (PARM_*)
 	void __declspec(dllexport) GetSelectedParticleAsciiStringParm( int parmNum, char *bufferToCopyInto, ParticleSystemTemplate **whichTemplate );
 	void __declspec(dllexport) UpdateParticleAsciiStringParm( int parmNum, const char *bufferToCopyFrom, ParticleSystemTemplate **whichTemplate  );
@@ -76,8 +75,8 @@ extern "C" {
 #	define PEB_BusyWait								0xFE
 #	define PEB_Error									0xFF
 
-	
+
 	int __declspec(dllexport) NextParticleEditorBehavior( void );
 
-	
+
 }

@@ -24,12 +24,12 @@
 
 // FILE: GraphDraw.h //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Aug 2002
@@ -37,18 +37,16 @@
 //	Filename: 	GraphDraw.h
 //
 //	author:		John McDonald
-//	
-//	purpose:	Contains the functions to queue up and display a single graph for 
+//
+//	purpose:	Contains the functions to queue up and display a single graph for
 //						each frame. Note: This class is presently only intended for use by
-//						the Performance timers, all though it could be easily adapted for 
+//						the Performance timers, all though it could be easily adapted for
 //						other purposes.
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef __GRAPHDRAW_H__
-#define __GRAPHDRAW_H__
 
 #include "Common/PerfTimer.h"
 #include "Common/STLTypedefs.h"
@@ -85,6 +83,3 @@ extern GraphDraw *TheGraphDraw;
 
 
 #endif /* PERF_TIMERS */
-
-#endif /* __GRAPHDRAW_H__ */
-

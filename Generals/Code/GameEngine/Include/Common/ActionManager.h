@@ -24,18 +24,15 @@
 
 // FILE: ActionManager.h //////////////////////////////////////////////////////////////////////////
 // Author: Colin Day
-// Desc:   TheActionManager is a convenient place for us to wrap up all sorts of logical 
+// Desc:   TheActionManager is a convenient place for us to wrap up all sorts of logical
 //				 queries about what objects can do in the world and to other objects.  The purpose
 //				 of having a central place for this logic assists us in making these logical kind
 //				 of queries in the user interface and allows us to use the same code to validate
-//				 commands as they come in over the network interface in order to do the 
+//				 commands as they come in over the network interface in order to do the
 //				 real action.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __ACTIONMANAGER_H_
-#define __ACTIONMANAGER_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/SubsystemInterface.h"
@@ -110,5 +107,3 @@ protected:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern ActionManager *TheActionManager;
-
-#endif  // end __ACTIONMANAGER_H_

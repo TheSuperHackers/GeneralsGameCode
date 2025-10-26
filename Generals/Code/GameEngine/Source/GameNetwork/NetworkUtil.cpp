@@ -27,8 +27,11 @@
 
 #include "GameNetwork/networkutil.h"
 
+// TheSuperHackers @tweak Mauller 26/08/2025 reduce the minimum runahead from 10
+// This lets network games run at latencies down to 133ms when the network conditions allow
+Int MIN_LOGIC_FRAMES = 5;
 Int MAX_FRAMES_AHEAD = 128;
-Int MIN_RUNAHEAD = 10;
+Int MIN_RUNAHEAD = 4;
 Int FRAME_DATA_LENGTH = (MAX_FRAMES_AHEAD+1)*2;
 Int FRAMES_TO_KEEP = (MAX_FRAMES_AHEAD/2) + 1;
 
@@ -36,8 +39,8 @@ Int FRAMES_TO_KEEP = (MAX_FRAMES_AHEAD/2) + 1;
 
 void dumpBufferToLog(const void *vBuf, Int len, const char *fname, Int line)
 {
-	DEBUG_LOG(("======= dumpBufferToLog() %d bytes =======\n", len));
-	DEBUG_LOG(("Source: %s:%d\n", fname, line));
+	DEBUG_LOG(("======= dumpBufferToLog() %d bytes =======", len));
+	DEBUG_LOG(("Source: %s:%d", fname, line));
 	const char *buf = (const char *)vBuf;
 	Int numLines = len / 8;
 	if ((len % 8) != 0)
@@ -47,27 +50,27 @@ void dumpBufferToLog(const void *vBuf, Int len, const char *fname, Int line)
 	for (Int dumpindex = 0; dumpindex < numLines; ++dumpindex)
 	{
 		Int offset = dumpindex*8;
-		DEBUG_LOG(("\t%5.5d\t", offset));
+		DEBUG_LOG_RAW(("\t%5.5d\t", offset));
 		Int dumpindex2;
 		Int numBytesThisLine = min(8, len - offset);
 		for (dumpindex2 = 0; dumpindex2 < numBytesThisLine; ++dumpindex2)
 		{
 			Int c = (buf[offset + dumpindex2] & 0xff);
-			DEBUG_LOG(("%02X ", c));
+			DEBUG_LOG_RAW(("%02X ", c));
 		}
 		for (; dumpindex2 < 8; ++dumpindex2)
 		{
-			DEBUG_LOG(("   "));
+			DEBUG_LOG_RAW(("   "));
 		}
-		DEBUG_LOG((" | "));
+		DEBUG_LOG_RAW((" | "));
 		for (dumpindex2 = 0; dumpindex2 < numBytesThisLine; ++dumpindex2)
 		{
 			char c = buf[offset + dumpindex2];
-			DEBUG_LOG(("%c", (isprint(c)?c:'.')));
+			DEBUG_LOG_RAW(("%c", (isprint(c)?c:'.')));
 		}
-		DEBUG_LOG(("\n"));
+		DEBUG_LOG_RAW(("\n"));
 	}
-	DEBUG_LOG(("End of packet dump\n"));
+	DEBUG_LOG(("End of packet dump"));
 }
 
 #endif // DEBUG_LOGGING
@@ -83,7 +86,7 @@ UnsignedInt ResolveIP(AsciiString host)
 
   if (host.getLength() == 0)
   {
-	  DEBUG_LOG(("ResolveIP(): Can't resolve NULL\n"));
+	  DEBUG_LOG(("ResolveIP(): Can't resolve NULL"));
 	  return 0;
   }
 
@@ -97,7 +100,7 @@ UnsignedInt ResolveIP(AsciiString host)
   hostStruct = gethostbyname(host.str());
   if (hostStruct == NULL)
   {
-	  DEBUG_LOG(("ResolveIP(): Can't resolve %s\n", host.str()));
+	  DEBUG_LOG(("ResolveIP(): Can't resolve %s", host.str()));
 	  return 0;
   }
   hostNode = (struct in_addr *) hostStruct->h_addr;
@@ -203,70 +206,70 @@ Bool CommandRequiresDirectSend(NetCommandMsg *msg) {
 	return FALSE;
 }
 
-AsciiString GetAsciiNetCommandType(NetCommandType type) {
-	AsciiString s;
-	if (type == NETCOMMANDTYPE_FRAMEINFO) {
-		s.set("NETCOMMANDTYPE_FRAMEINFO");
-	} else if (type == NETCOMMANDTYPE_GAMECOMMAND) {
-		s.set("NETCOMMANDTYPE_GAMECOMMAND");
-	} else if (type == NETCOMMANDTYPE_PLAYERLEAVE) {
-		s.set("NETCOMMANDTYPE_PLAYERLEAVE");
-	} else if (type == NETCOMMANDTYPE_RUNAHEADMETRICS) {
-		s.set("NETCOMMANDTYPE_RUNAHEADMETRICS");
-	} else if (type == NETCOMMANDTYPE_RUNAHEAD) {
-		s.set("NETCOMMANDTYPE_RUNAHEAD");
-	} else if (type == NETCOMMANDTYPE_DESTROYPLAYER) {
-		s.set("NETCOMMANDTYPE_DESTROYPLAYER");
-	} else if (type == NETCOMMANDTYPE_ACKBOTH) {
-		s.set("NETCOMMANDTYPE_ACKBOTH");
-	} else if (type == NETCOMMANDTYPE_ACKSTAGE1) {
-		s.set("NETCOMMANDTYPE_ACKSTAGE1");
-	} else if (type == NETCOMMANDTYPE_ACKSTAGE2) {
-		s.set("NETCOMMANDTYPE_ACKSTAGE2");
-	} else if (type == NETCOMMANDTYPE_FRAMEINFO) {
-		s.set("NETCOMMANDTYPE_FRAMEINFO");
-	} else if (type == NETCOMMANDTYPE_KEEPALIVE) {
-		s.set("NETCOMMANDTYPE_KEEPALIVE");
-	} else if (type == NETCOMMANDTYPE_DISCONNECTCHAT) {
-		s.set("NETCOMMANDTYPE_DISCONNECTCHAT");
-	} else if (type == NETCOMMANDTYPE_CHAT) {
-		s.set("NETCOMMANDTYPE_CHAT");
-	} else if (type == NETCOMMANDTYPE_MANGLERQUERY) {
-		s.set("NETCOMMANDTYPE_MANGLERQUERY");
-	} else if (type == NETCOMMANDTYPE_MANGLERRESPONSE) {
-		s.set("NETCOMMANDTYPE_MANGLERRESPONSE");
-	} else if (type == NETCOMMANDTYPE_DISCONNECTKEEPALIVE) {
-		s.set("NETCOMMANDTYPE_DISCONNECTKEEPALIVE");
-	} else if (type == NETCOMMANDTYPE_DISCONNECTPLAYER) {
-		s.set("NETCOMMANDTYPE_DISCONNECTPLAYER");
-	} else if (type == NETCOMMANDTYPE_PACKETROUTERQUERY) {
-		s.set("NETCOMMANDTYPE_PACKETROUTERQUERY");
-	} else if (type == NETCOMMANDTYPE_PACKETROUTERACK) {
-		s.set("NETCOMMANDTYPE_PACKETROUTERACK");
-	} else if (type == NETCOMMANDTYPE_DISCONNECTVOTE) {
-		s.set("NETCOMMANDTYPE_DISCONNECTVOTE");
-	} else if (type == NETCOMMANDTYPE_PROGRESS) {
-		s.set("NETCOMMANDTYPE_PROGRESS");
-	} else if (type == NETCOMMANDTYPE_LOADCOMPLETE) {
-		s.set("NETCOMMANDTYPE_LOADCOMPLETE");
-	} else if (type == NETCOMMANDTYPE_TIMEOUTSTART) {
-		s.set("NETCOMMANDTYPE_TIMEOUTSTART");
-	} else if (type == NETCOMMANDTYPE_WRAPPER) {
-		s.set("NETCOMMANDTYPE_WRAPPER");
-	} else if (type == NETCOMMANDTYPE_FILE) {
-		s.set("NETCOMMANDTYPE_FILE");
-	} else if (type == NETCOMMANDTYPE_FILEANNOUNCE) {
-		s.set("NETCOMMANDTYPE_FILEANNOUNCE");
-	} else if (type == NETCOMMANDTYPE_FILEPROGRESS) {
-		s.set("NETCOMMANDTYPE_FILEPROGRESS");
-	} else if (type == NETCOMMANDTYPE_DISCONNECTFRAME) {
-		s.set("NETCOMMANDTYPE_DISCONNECTFRAME");
-	} else if (type == NETCOMMANDTYPE_DISCONNECTSCREENOFF) {
-		s.set("NETCOMMANDTYPE_DISCONNECTSCREENOFF");
-	} else if (type == NETCOMMANDTYPE_FRAMERESENDREQUEST) {
-		s.set("NETCOMMANDTYPE_FRAMERESENDREQUEST");
-	} else {
-		s.set("UNKNOWN");
+const char* GetNetCommandTypeAsString(NetCommandType type) {
+
+	switch (type) {
+	case NETCOMMANDTYPE_ACKBOTH:
+		return "NETCOMMANDTYPE_ACKBOTH";
+	case NETCOMMANDTYPE_ACKSTAGE1:
+		return "NETCOMMANDTYPE_ACKSTAGE1";
+	case NETCOMMANDTYPE_ACKSTAGE2:
+		return "NETCOMMANDTYPE_ACKSTAGE2";
+	case NETCOMMANDTYPE_FRAMEINFO:
+		return "NETCOMMANDTYPE_FRAMEINFO";
+	case NETCOMMANDTYPE_GAMECOMMAND:
+		return "NETCOMMANDTYPE_GAMECOMMAND";
+	case NETCOMMANDTYPE_PLAYERLEAVE:
+		return "NETCOMMANDTYPE_PLAYERLEAVE";
+	case NETCOMMANDTYPE_RUNAHEADMETRICS:
+		return "NETCOMMANDTYPE_RUNAHEADMETRICS";
+	case NETCOMMANDTYPE_RUNAHEAD:
+		return "NETCOMMANDTYPE_RUNAHEAD";
+	case NETCOMMANDTYPE_DESTROYPLAYER:
+		return "NETCOMMANDTYPE_DESTROYPLAYER";
+	case NETCOMMANDTYPE_KEEPALIVE:
+		return "NETCOMMANDTYPE_KEEPALIVE";
+	case NETCOMMANDTYPE_DISCONNECTCHAT:
+		return "NETCOMMANDTYPE_DISCONNECTCHAT";
+	case NETCOMMANDTYPE_CHAT:
+		return "NETCOMMANDTYPE_CHAT";
+	case NETCOMMANDTYPE_MANGLERQUERY:
+		return "NETCOMMANDTYPE_MANGLERQUERY";
+	case NETCOMMANDTYPE_MANGLERRESPONSE:
+		return "NETCOMMANDTYPE_MANGLERRESPONSE";
+	case NETCOMMANDTYPE_PROGRESS:
+		return "NETCOMMANDTYPE_PROGRESS";
+	case NETCOMMANDTYPE_LOADCOMPLETE:
+		return "NETCOMMANDTYPE_LOADCOMPLETE";
+	case NETCOMMANDTYPE_TIMEOUTSTART:
+		return "NETCOMMANDTYPE_TIMEOUTSTART";
+	case NETCOMMANDTYPE_WRAPPER:
+		return "NETCOMMANDTYPE_WRAPPER";
+	case NETCOMMANDTYPE_FILE:
+		return "NETCOMMANDTYPE_FILE";
+	case NETCOMMANDTYPE_FILEANNOUNCE:
+		return "NETCOMMANDTYPE_FILEANNOUNCE";
+	case NETCOMMANDTYPE_FILEPROGRESS:
+		return "NETCOMMANDTYPE_FILEPROGRESS";
+	case NETCOMMANDTYPE_DISCONNECTKEEPALIVE:
+		return "NETCOMMANDTYPE_DISCONNECTKEEPALIVE";
+	case NETCOMMANDTYPE_DISCONNECTPLAYER:
+		return "NETCOMMANDTYPE_DISCONNECTPLAYER";
+	case NETCOMMANDTYPE_PACKETROUTERQUERY:
+		return "NETCOMMANDTYPE_PACKETROUTERQUERY";
+	case NETCOMMANDTYPE_PACKETROUTERACK:
+		return "NETCOMMANDTYPE_PACKETROUTERACK";
+	case NETCOMMANDTYPE_DISCONNECTVOTE:
+		return "NETCOMMANDTYPE_DISCONNECTVOTE";
+	case NETCOMMANDTYPE_DISCONNECTFRAME:
+		return "NETCOMMANDTYPE_DISCONNECTFRAME";
+	case NETCOMMANDTYPE_DISCONNECTSCREENOFF:
+		return "NETCOMMANDTYPE_DISCONNECTSCREENOFF";
+	case NETCOMMANDTYPE_FRAMERESENDREQUEST:
+		return "NETCOMMANDTYPE_FRAMERESENDREQUEST";
+	default:
+		DEBUG_CRASH(("Unknown NetCommandType in GetNetCommandTypeAsString"));
+		return "UNKNOWN";
 	}
-	return s;
+
 }

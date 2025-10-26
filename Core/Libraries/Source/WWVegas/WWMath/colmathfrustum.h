@@ -37,12 +37,7 @@
  *   CollisionMath::Overlap_Test -- test a frustum and an AABox for overlap                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef COLMATHFRUSTUM_H
-#define COLMATHFRUSTUM_H
 
 #include "always.h"
 #include "aabox.h"
@@ -66,7 +61,7 @@
  * HISTORY:                                                                                    *
  *   3/29/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-inline 
+inline
 CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const FrustumClass & frustum,const AABoxClass & box,int & planes_passed)
 {
@@ -76,10 +71,10 @@ CollisionMath::Overlap_Test(const FrustumClass & frustum,const AABoxClass & box,
 	for (int i = 0; i < 6; i++) {
 
 		int plane_bit = (1<<i);
-	
-		// only check this plane if we have to	
+
+		// only check this plane if we have to
 		if ((planes_passed & plane_bit) == 0) {
-		
+
 			int result = CollisionMath::Overlap_Test(frustum.Planes[i],box);
 			if (result == OUTSIDE) {
 
@@ -88,11 +83,11 @@ CollisionMath::Overlap_Test(const FrustumClass & frustum,const AABoxClass & box,
 				planes_passed |= plane_bit;
 			}
 			mask |= result;
-		
+
 		} else {
-		
+
 			mask |= INSIDE;
-		
+
 		}
 	}
 
@@ -101,5 +96,3 @@ CollisionMath::Overlap_Test(const FrustumClass & frustum,const AABoxClass & box,
 	}
 	return OVERLAPPED;
 }
-
-#endif

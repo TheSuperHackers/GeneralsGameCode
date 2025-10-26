@@ -81,14 +81,14 @@ void ControlBar::populateBeacon( Object *beacon )
 		if (buttonWin)
 			buttonWin->winHide(TRUE);
 	}
-}  // end populateBeacon
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void ControlBar::updateContextBeacon( void )
 {
 
-}  // end updateContextBeacon
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -103,4 +103,4 @@ WindowMsgHandledType BeaconWindowInput( GameWindow *window, UnsignedInt msg,
 
 	return MSG_IGNORED;
 
-}  // end InGameChatInput
+}

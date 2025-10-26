@@ -20,7 +20,6 @@
 //
 
 #include "StdAfx.h"
-#include <eh.h>
 #include "WorldBuilder.h"
 #include "euladialog.h"
 #include "MainFrm.h"
@@ -34,6 +33,7 @@
 
 //#include <wsys/StdFileSystem.h>
 #include "W3DDevice/GameClient/W3DFileSystem.h"
+#include "Common/FramePacer.h"
 #include "Common/GlobalData.h"
 #include "WHeightMapEdit.h"
 //#include "Common/GameFileSystem.h"
@@ -83,19 +83,14 @@
 #include "Win32Device/Common/Win32LocalFileSystem.h"
 #include "Win32Device/Common/Win32BIGFileSystem.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 static SubsystemInterfaceList TheSubsystemListRecord;
 
 template<class SUBSYSTEM>
-void initSubsystem(SUBSYSTEM*& sysref, SUBSYSTEM* sys, const char* path1 = NULL, const char* path2 = NULL, const char* dirpath = NULL)
+void initSubsystem(SUBSYSTEM*& sysref, SUBSYSTEM* sys, const char* path1 = NULL, const char* path2 = NULL)
 {
 	sysref = sys;
-	TheSubsystemListRecord.initSubsystem(sys, path1, path2, dirpath, NULL);
+	TheSubsystemListRecord.initSubsystem(sys, path1, path2, NULL);
 }
 
 
@@ -108,7 +103,7 @@ const Char *g_strFile = "data\\Generals.str";
 const Char *g_csfFile = "data\\%s\\Generals.csf";
 
 /////////////////////////////////////////////////////////////////////////////
-// WBGameFileClass - extends the file system a bit so we can get at some 
+// WBGameFileClass - extends the file system a bit so we can get at some
 // wb only data.  jba.
 
 class WBGameFileClass : public GameFileClass
@@ -139,7 +134,7 @@ char const * WBGameFileClass::Set_Name( char const *filename )
 
 
 /////////////////////////////////////////////////////////////////////////////
-// WB_W3DFileSystem - extends the file system a bit so we can get at some 
+// WB_W3DFileSystem - extends the file system a bit so we can get at some
 // wb only data.  jba.
 
 class	WB_W3DFileSystem : public W3DFileSystem {
@@ -225,7 +220,7 @@ CWorldBuilderApp::CWorldBuilderApp() :
 	m_tools[10] = &m_pointerTool;
 	m_tools[11] = &m_blendEdgeTool;
 	m_tools[12] = &m_groveTool;
-	m_tools[13] = &m_meshMoldTool;	 
+	m_tools[13] = &m_meshMoldTool;
 	m_tools[14] = &m_roadTool;
 	m_tools[15] = &m_handScrollTool;
 	m_tools[16] = &m_waypointTool;
@@ -264,6 +259,14 @@ CWorldBuilderApp::~CWorldBuilderApp()
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////
+// Handler for unhandled win32 exceptions.
+
+static LONG WINAPI UnHandledExceptionFilter(struct _EXCEPTION_POINTERS* e_info)
+{
+	DumpExceptionInfo(e_info->ExceptionRecord->ExceptionCode, e_info);
+	return EXCEPTION_EXECUTE_HANDLER;
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // CWorldBuilderApp initialization
@@ -277,18 +280,15 @@ BOOL CWorldBuilderApp::InitInstance()
 	}
 
 	// initialization
-  _set_se_translator( DumpExceptionInfo ); // Hook that allows stack trace.
+	SetUnhandledExceptionFilter(UnHandledExceptionFilter);
 
-	// start the log
-	DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
-	DEBUG_LOG(("starting Worldbuilder.\n"));
-#ifdef _INTERNAL
-	DEBUG_LOG(("_INTERNAL defined.\n"));
-#endif
-#ifdef _DEBUG
-	DEBUG_LOG(("_DEBUG defined.\n"));
-#endif
+	// initialize the memory manager early
 	initMemoryManager();
+
+	DEBUG_LOG(("starting Worldbuilder."));
+#ifdef RTS_DEBUG
+	DEBUG_LOG(("RTS_DEBUG defined."));
+#endif
 #ifdef MEMORYPOOL_CHECKPOINTING
 	gFirstCP = TheMemoryPoolFactory->debugSetCheckpoint();
 #endif
@@ -298,7 +298,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	loadWindow.SetWindowText("Loading Worldbuilder");
 	loadWindow.ShowWindow(SW_SHOW);
 	loadWindow.UpdateWindow();
-	
+
 	CRect rect(15, 315, 230, 333);
 	loadWindow.setTextOutputLocation(rect);
 	loadWindow.outputText(IDS_SPLASH_LOADING);
@@ -337,10 +337,12 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	INI ini;
 
-	initSubsystem(TheWritableGlobalData, new GlobalData(), "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
-	
-#if defined(_DEBUG) || defined(_INTERNAL)
-	ini.load( AsciiString( "Data\\INI\\GameDataDebug.ini" ), INI_LOAD_MULTIFILE, NULL );
+	initSubsystem(TheWritableGlobalData, new GlobalData(), "Data\\INI\\Default\\GameData", "Data\\INI\\GameData");
+
+	TheFramePacer = new FramePacer();
+
+#if defined(RTS_DEBUG)
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\GameDataDebug" ), INI_LOAD_MULTIFILE, NULL );
 #endif
 
 #ifdef DEBUG_CRASHING
@@ -351,28 +353,28 @@ BOOL CWorldBuilderApp::InitInstance()
 	// srj sez: put INI into our user data folder, not the ap dir
 	free((void*)m_pszProfileName);
 	strcpy(buf, TheGlobalData->getPath_UserData().str());
-	strcat(buf, "WorldBuilder.ini");
+	strlcat(buf, "WorldBuilder.ini", ARRAY_SIZE(buf));
 #else
-	strcat(buf, "//");
-	strcat(buf, m_pszProfileName);
+	strlcat(buf, "//", ARRAY_SIZE(buf));
+	strlcat(buf, m_pszProfileName, ARRAY_SIZE(buf));
 	free((void*)m_pszProfileName);
 #endif
 	m_pszProfileName = (const char *)malloc(strlen(buf)+2);
 	strcpy((char*)m_pszProfileName, buf);
 
 	// ensure the user maps dir exists
-	sprintf(buf, "%sMaps\\", TheGlobalData->getPath_UserData().str());
+	snprintf(buf, ARRAY_SIZE(buf), "%sMaps\\", TheGlobalData->getPath_UserData().str());
 	CreateDirectory(buf, NULL);
 
 	// read the water settings from INI (must do prior to initing GameClient, apparently)
-	ini.load( AsciiString( "Data\\INI\\Default\\Water.ini" ), INI_LOAD_OVERWRITE, NULL );
-	ini.load( AsciiString( "Data\\INI\\Water.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\Default\\Water" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\Water" ), INI_LOAD_OVERWRITE, NULL );
 
 	initSubsystem(TheGameText, CreateGameTextInterface());
-	initSubsystem(TheScienceStore, new ScienceStore(), "Data\\INI\\Default\\Science.ini", "Data\\INI\\Science.ini");
-	initSubsystem(TheMultiplayerSettings, new MultiplayerSettings(), "Data\\INI\\Default\\Multiplayer.ini", "Data\\INI\\Multiplayer.ini");
-	initSubsystem(TheTerrainTypes, new TerrainTypeCollection(), "Data\\INI\\Default\\Terrain.ini", "Data\\INI\\Terrain.ini");
-	initSubsystem(TheTerrainRoads, new TerrainRoadCollection(), "Data\\INI\\Default\\Roads.ini", "Data\\INI\\Roads.ini");
+	initSubsystem(TheScienceStore, new ScienceStore(), "Data\\INI\\Default\\Science", "Data\\INI\\Science");
+	initSubsystem(TheMultiplayerSettings, new MultiplayerSettings(), "Data\\INI\\Default\\Multiplayer", "Data\\INI\\Multiplayer");
+	initSubsystem(TheTerrainTypes, new TerrainTypeCollection(), "Data\\INI\\Default\\Terrain", "Data\\INI\\Terrain");
+	initSubsystem(TheTerrainRoads, new TerrainRoadCollection(), "Data\\INI\\Default\\Roads", "Data\\INI\\Roads");
 
 	WorldHeightMapEdit::init();
 
@@ -388,19 +390,19 @@ BOOL CWorldBuilderApp::InitInstance()
 	initSubsystem(TheModuleFactory, (ModuleFactory*)(new W3DModuleFactory()));
 	initSubsystem(TheSidesList, new SidesList());
 	initSubsystem(TheCaveSystem, new CaveSystem());
-	initSubsystem(TheRankInfoStore, new RankInfoStore(), NULL, "Data\\INI\\Rank.ini");
-	initSubsystem(ThePlayerTemplateStore, new PlayerTemplateStore(), "Data\\INI\\Default\\PlayerTemplate.ini", "Data\\INI\\PlayerTemplate.ini");
-	initSubsystem(TheSpecialPowerStore, new SpecialPowerStore(), "Data\\INI\\Default\\SpecialPower.ini", "Data\\INI\\SpecialPower.ini" );
+	initSubsystem(TheRankInfoStore, new RankInfoStore(), NULL, "Data\\INI\\Rank");
+	initSubsystem(ThePlayerTemplateStore, new PlayerTemplateStore(), "Data\\INI\\Default\\PlayerTemplate", "Data\\INI\\PlayerTemplate");
+	initSubsystem(TheSpecialPowerStore, new SpecialPowerStore(), "Data\\INI\\Default\\SpecialPower", "Data\\INI\\SpecialPower" );
 	initSubsystem(TheParticleSystemManager, (ParticleSystemManager*)(new W3DParticleSystemManager()));
-	initSubsystem(TheFXListStore, new FXListStore(), "Data\\INI\\Default\\FXList.ini", "Data\\INI\\FXList.ini");
-	initSubsystem(TheWeaponStore, new WeaponStore(), NULL, "Data\\INI\\Weapon.ini");
-	initSubsystem(TheObjectCreationListStore, new ObjectCreationListStore(), "Data\\INI\\Default\\ObjectCreationList.ini", "Data\\INI\\ObjectCreationList.ini");
-	initSubsystem(TheLocomotorStore, new LocomotorStore(), NULL, "Data\\INI\\Locomotor.ini");
-	initSubsystem(TheDamageFXStore, new DamageFXStore(), NULL, "Data\\INI\\DamageFX.ini");
-	initSubsystem(TheArmorStore, new ArmorStore(), NULL, "Data\\INI\\Armor.ini");
-	initSubsystem(TheThingFactory, new ThingFactory(), "Data\\INI\\Default\\Object.ini", NULL, "Data\\INI\\Object");
-	initSubsystem(TheCrateSystem, new CrateSystem(), "Data\\INI\\Default\\Crate.ini", "Data\\INI\\Crate.ini");
-	initSubsystem(TheUpgradeCenter, new UpgradeCenter, "Data\\INI\\Default\\Upgrade.ini", "Data\\INI\\Upgrade.ini");
+	initSubsystem(TheFXListStore, new FXListStore(), "Data\\INI\\Default\\FXList", "Data\\INI\\FXList");
+	initSubsystem(TheWeaponStore, new WeaponStore(), NULL, "Data\\INI\\Weapon");
+	initSubsystem(TheObjectCreationListStore, new ObjectCreationListStore(), "Data\\INI\\Default\\ObjectCreationList", "Data\\INI\\ObjectCreationList");
+	initSubsystem(TheLocomotorStore, new LocomotorStore(), NULL, "Data\\INI\\Locomotor");
+	initSubsystem(TheDamageFXStore, new DamageFXStore(), NULL, "Data\\INI\\DamageFX");
+	initSubsystem(TheArmorStore, new ArmorStore(), NULL, "Data\\INI\\Armor");
+	initSubsystem(TheThingFactory, new ThingFactory(), "Data\\INI\\Default\\Object", "Data\\INI\\Object");
+	initSubsystem(TheCrateSystem, new CrateSystem(), "Data\\INI\\Default\\Crate", "Data\\INI\\Crate");
+	initSubsystem(TheUpgradeCenter, new UpgradeCenter, "Data\\INI\\Default\\Upgrade", "Data\\INI\\Upgrade");
 	initSubsystem(TheAnim2DCollection, new Anim2DCollection ); //Init's itself.
 
 	TheSubsystemListRecord.postProcessLoadAll();
@@ -411,8 +413,8 @@ BOOL CWorldBuilderApp::InitInstance()
 	DEBUG_ASSERTCRASH(!TheGlobalData->m_useHalfHeightMap, ("TheGlobalData->m_useHalfHeightMap : Don't use this setting in WB."));
 	TheWritableGlobalData->m_useHalfHeightMap = false;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
-	// WB never uses the shroud.
+#if ENABLE_CONFIGURABLE_SHROUD
+	// WB never uses the shroud. With shroud, terrain is black.
 	TheWritableGlobalData->m_shroudOn = FALSE;
 #endif
 
@@ -425,20 +427,20 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	// Register the application's document templates.  Document templates
 	//  serve as the connection between documents, frame windows and views.
- 
+
 	m_3dtemplate = new CSingleDocTemplate(
 		IDR_MAPDOC,
 		RUNTIME_CLASS(CWorldBuilderDoc),
-		RUNTIME_CLASS(CWB3dFrameWnd), 
+		RUNTIME_CLASS(CWB3dFrameWnd),
 		RUNTIME_CLASS(WbView3d));
 
 	AddDocTemplate(m_3dtemplate);
 
 #ifdef MDI
-	CMainFrame* pMainFrame = new CMainFrame; 
-	if (!pMainFrame->LoadFrame(IDR_MAPDOC)) 
-		return FALSE; 
-	m_pMainWnd = pMainFrame; 
+	CMainFrame* pMainFrame = new CMainFrame;
+	if (!pMainFrame->LoadFrame(IDR_MAPDOC))
+		return FALSE;
+	m_pMainWnd = pMainFrame;
 #endif
 
 	// Parse command line for standard shell commands, DDE, file open
@@ -461,7 +463,7 @@ BOOL CWorldBuilderApp::InitInstance()
 //	if (!ProcessShellCommand(cmdInfo))
 //		return FALSE;
 
-	selectPointerTool();   
+	selectPointerTool();
 
 	CString openDir = this->GetProfileString(APP_SECTION, OPEN_FILE_DIR);
 	m_currentDirectory = openDir;
@@ -491,7 +493,7 @@ BOOL CWorldBuilderApp::OnCmdMsg(UINT nID, int nCode, void* pExtra,
 				{
 					// Update UI element state
 					CCmdUI *pUI = (CCmdUI*)pExtra;
-					pUI->SetCheck(m_curTool == pTool?1:0);	
+					pUI->SetCheck(m_curTool == pTool?1:0);
 					pUI->Enable(true);
 				}
 				return TRUE;
@@ -509,7 +511,7 @@ BOOL CWorldBuilderApp::OnCmdMsg(UINT nID, int nCode, void* pExtra,
 //=============================================================================
 /** Sets the active tool to the pointer, and clears the selection. */
 //=============================================================================
-void CWorldBuilderApp::selectPointerTool(void) 
+void CWorldBuilderApp::selectPointerTool(void)
 {
 	setActiveTool(&m_pointerTool);
 	// Clear selection.
@@ -521,7 +523,7 @@ void CWorldBuilderApp::selectPointerTool(void)
 //=============================================================================
 /** Sets the active tool, and activates it after deactivating the current tool. */
 //=============================================================================
-void CWorldBuilderApp::setActiveTool(Tool *pNewTool) 
+void CWorldBuilderApp::setActiveTool(Tool *pNewTool)
 {
 	if (m_curTool == pNewTool) {
 		// same tool
@@ -540,7 +542,7 @@ void CWorldBuilderApp::setActiveTool(Tool *pNewTool)
 //=============================================================================
 // CWorldBuilderApp::updateCurTool
 //=============================================================================
-/** Checks to see if any key modifiers (ctrl or alt) are pressed.  If so, 
+/** Checks to see if any key modifiers (ctrl or alt) are pressed.  If so,
 selectes the appropriate tool, else uses the normal tool. */
 //=============================================================================
 void CWorldBuilderApp::updateCurTool(Bool forceHand)
@@ -623,7 +625,7 @@ void CWorldBuilderApp::OnAppAbout()
 /////////////////////////////////////////////////////////////////////////////
 // CWorldBuilderApp message handlers
 
-int CWorldBuilderApp::ExitInstance() 
+int CWorldBuilderApp::ExitInstance()
 {
 
 	WriteProfileString(APP_SECTION, OPEN_FILE_DIR, m_currentDirectory.str());
@@ -635,9 +637,12 @@ int CWorldBuilderApp::ExitInstance()
 
 	WorldHeightMapEdit::shutdown();
 
+	delete TheFramePacer;
+	TheFramePacer = NULL;
+
 	delete TheFileSystem;
 	TheFileSystem = NULL;
-	TextureLoadTaskClass::shutdown();  
+	TextureLoadTaskClass::shutdown();
 
 	delete TheW3DFileSystem;
 	TheW3DFileSystem = NULL;
@@ -652,20 +657,19 @@ int CWorldBuilderApp::ExitInstance()
 	TheMemoryPoolFactory->debugMemoryReport(REPORT_FACTORYINFO | REPORT_CP_LEAKS | REPORT_CP_STACKTRACE, gFirstCP, lastCP);
 #endif
 	shutdownMemoryManager();
-	DEBUG_SHUTDOWN();
 
 	return CWinApp::ExitInstance();
 }
 
-void CWorldBuilderApp::OnResetWindows() 
+void CWorldBuilderApp::OnResetWindows()
 {
 	if (CMainFrame::GetMainFrame()) {
 		CMainFrame::GetMainFrame()->ResetWindowPositions();
 	}
-	
+
 }
 
-void CWorldBuilderApp::OnFileOpen() 
+void CWorldBuilderApp::OnFileOpen()
 {
 #ifdef DO_MAPS_IN_DIRECTORIES
 	TOpenMapInfo info;
@@ -693,15 +697,15 @@ void CWorldBuilderApp::OnFileOpen()
 	CWinApp::OnFileOpen();
 }
 
-void CWorldBuilderApp::OnTexturesizingMapclifftextures() 
+void CWorldBuilderApp::OnTexturesizingMapclifftextures()
 {
 	setActiveTool(&m_floodFillTool);
 	m_floodFillTool.setAdjustCliffs(true);
-	
+
 }
 
-void CWorldBuilderApp::OnUpdateTexturesizingMapclifftextures(CCmdUI* pCmdUI) 
+void CWorldBuilderApp::OnUpdateTexturesizingMapclifftextures(CCmdUI* pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	
+
 }

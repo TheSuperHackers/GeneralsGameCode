@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Jani Penttinen                                               *
  *                                                                                             *
- *                       $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 32                                                          $*
@@ -303,7 +303,7 @@ const Vector2 DazzleINIClass::Get_Vector2(char const *section, char const *entry
 		INIEntry * entryptr = Find_Entry(section, entry);
 		if (entryptr && entryptr->Value != NULL) {
 			Vector2	ret;
-			if ( sscanf( entryptr->Value, "%f,%f", &ret[0], &ret[1], &ret[2] ) == 2 ) {
+			if ( sscanf( entryptr->Value, "%f,%f", &ret[0], &ret[1] ) == 2 ) {
 				return ret;
 			}
 		}
@@ -311,7 +311,7 @@ const Vector2 DazzleINIClass::Get_Vector2(char const *section, char const *entry
 	return defvalue;
 }
 
-const Vector3 DazzleINIClass::Get_Vector3(char const *section, char const * entry, const Vector3 & defvalue ) 
+const Vector3 DazzleINIClass::Get_Vector3(char const *section, char const * entry, const Vector3 & defvalue )
 {
 	if (section != NULL && entry != NULL) {
 		INIEntry * entryptr = Find_Entry(section, entry);
@@ -669,7 +669,8 @@ void DazzleRenderObjClass::Init_Type(const DazzleInitClass& i)
 		unsigned new_count=i.type+1;
 		DazzleTypeClass** new_types=W3DNEWARRAY DazzleTypeClass*[new_count];
 		unsigned a=0;
-		for (;a<type_count;++a) {
+		unsigned copy_count = min(type_count, new_count);
+		for (;a<copy_count;++a) {
 			new_types[a]=types[a];
 		}
 		for (;a<new_count;++a) {
@@ -693,7 +694,8 @@ void DazzleRenderObjClass::Init_Lensflare(const LensflareInitClass& i)
 		unsigned new_count=i.type+1;
 		LensflareTypeClass** new_lensflares=W3DNEWARRAY LensflareTypeClass*[new_count];
 		unsigned a=0;
-		for (;a<lensflare_count;++a) {
+		unsigned copy_count = min(lensflare_count, new_count);
+		for (;a<copy_count;++a) {
 			new_lensflares[a]=lensflares[a];
 		}
 		for (;a<new_count;++a) {
@@ -938,8 +940,7 @@ void DazzleRenderObjClass::Render(RenderInfoClass & rinfo)
 			const DazzleTypeClass* params=types[type];
 			params->Calculate_Intensities(dazzle_intensity,dazzle_size,current_halo_intensity,camera_dir,current_dir,current_distance);
 
-			unsigned time_ms=WW3D::Get_Frame_Time();
-			if (time_ms==0) time_ms=1;
+			float time_ms=WW3D::Get_Logic_Frame_Time_Milliseconds();
 			float weight=pow(params->ic.history_weight,time_ms);
 
 			if (dazzle_intensity>0.0f) {
@@ -1009,9 +1010,6 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 	else {
 		screen_x_scale=h/w;
 	}
-
-//	unsigned time_ms=WW3D::Get_Frame_Time();
-//	if (time_ms==0) time_ms=1;
 
 	float halo_scale_x=types[type]->ic.halo_scale_x;
 	float halo_scale_y=types[type]->ic.halo_scale_y;
@@ -1377,7 +1375,7 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 				break;
 
 			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d\r\n",__FILE__,__LINE__));
+				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
 				break;
 		};
 		cload.Close_Chunk();
@@ -1397,9 +1395,9 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 	*/
 	if (new_obj == NULL) {
 		static int count = 0;
-		if ( ++count < 10 ) {
-			WWDEBUG_SAY(("DazzlePersistFactory failed to create dazzle of type: %s!!\r\n",dazzle_type));
-			WWDEBUG_SAY(("Replacing it with a NULL render object!\r\n"));
+		if ( count++ < 10 ) {
+			WWDEBUG_SAY(("DazzlePersistFactory failed to create dazzle of type: %s!!",dazzle_type));
+			WWDEBUG_SAY(("Replacing it with a NULL render object!"));
 		}
 		new_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj("NULL");
 	}
@@ -1478,9 +1476,6 @@ void DazzleLayerClass::Render(CameraClass* camera)
 	if (!camera) return;
 
 	camera->Apply();
-
-	unsigned time_ms=WW3D::Get_Frame_Time();
-	if (time_ms==0) time_ms=1;
 
 	DX8Wrapper::Set_Material(NULL);
 

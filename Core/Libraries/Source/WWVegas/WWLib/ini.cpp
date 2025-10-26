@@ -94,7 +94,7 @@
 #include	"win.h"
 #include	"XPIPE.H"
 #include	"XSTRAW.H"
-#include	<stdio.h>
+#include	<Utility/stdio_adapter.h>
 #include <malloc.h>
 #ifdef _UNIX
 #include <ctype.h>
@@ -1150,8 +1150,7 @@ bool INIClass::Put_TextBlock(char const * section, char const * text)
 
 		char buffer[128];
 
-		strncpy(buffer, text, 75);
-		buffer[75] = '\0';
+		strlcpy(buffer, text, 76);
 
 		char b[32];
 		sprintf(b, "%d", index);
@@ -1560,7 +1559,7 @@ double INIClass::Get_Double(char const * section, char const * entry, double def
 
 	INIEntry * entryptr = Find_Entry(section, entry);
 	if (entryptr != NULL && entryptr->Value != NULL) {
-		float val = defvalue;
+		double val = defvalue;
 		sscanf(entryptr->Value, "%lf", &val);
 		defvalue = val;
 		if (strchr(entryptr->Value, '%') != NULL) {
@@ -1724,8 +1723,7 @@ int INIClass::Get_String(char const * section, char const * entry, char const * 
 		buffer[0] = '\0';
 		return(0);
 	} else {
-		strncpy(buffer, defvalue, size);
-		buffer[size-1] = '\0';
+		strlcpy(buffer, defvalue, size);
 		strtrim(buffer);
 		return(strlen(buffer));
 	}
@@ -2281,7 +2279,7 @@ int INIClass::CRC(const char *string)
 void INIClass::DuplicateCRCError(const char *message, const char *section, const char *entry)
 {
 	char buffer[512];
-	_snprintf(buffer, sizeof(buffer), "%s - Duplicate Entry \"%s\" in section \"%s\" (%s)\n", message,
+	snprintf(buffer, sizeof(buffer), "%s - Duplicate Entry \"%s\" in section \"%s\" (%s)\n", message,
 		entry, section, Filename);
 
 	OutputDebugString(buffer);

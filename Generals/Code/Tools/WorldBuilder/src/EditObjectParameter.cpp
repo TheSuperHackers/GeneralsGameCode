@@ -64,10 +64,10 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // EditObjectParameter message handlers
 
-BOOL EditObjectParameter::OnInitDialog() 
+BOOL EditObjectParameter::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 
 	CWnd *pWnd = GetDlgItem(IDC_OBJECT_TREEVIEW);
 	CRect rect;
@@ -87,7 +87,7 @@ BOOL EditObjectParameter::OnInitDialog()
 	{
 		addObject(tTemplate);
 
-	}  // end for tTemplate
+	}
 
 
 	addObjectLists();
@@ -106,7 +106,7 @@ void EditObjectParameter::addObject( const ThingTemplate *thingTemplate  )
 	//
 	// if we have an thing template in mapObject, we've read it from the new INI database,
 	// we will sort those items into the tree based on properties of the template that
-	// make it easier for us to browse when building levels 
+	// make it easier for us to browse when building levels
 	//
 	// Feel free to reorganize how this tree is constructed from the template
 	// data at will, whatever makes it easier for design
@@ -117,10 +117,10 @@ void EditObjectParameter::addObject( const ThingTemplate *thingTemplate  )
 		// first check for test sorted objects
 		if( thingTemplate->getEditorSorting() == ES_TEST )
 			parent = findOrAdd( parent, "TEST" );
-	
+
 		// first sort by Side, either create or find the tree item with matching side name
 		AsciiString side = thingTemplate->getDefaultOwningSide();
-		DEBUG_ASSERTCRASH(!side.isEmpty(), ("NULL default side in template\n") );
+		DEBUG_ASSERTCRASH(!side.isEmpty(), ("NULL default side in template") );
 		strcpy( buffer, side.str() );
 		parent = findOrAdd( parent, buffer );
 
@@ -137,9 +137,9 @@ void EditObjectParameter::addObject( const ThingTemplate *thingTemplate  )
 				parent = findOrAdd( parent, EditorSortingNames[ i ] );
 				break;  // exit for
 
-			}  // end if
+			}
 
-		}  // end for i
+		}
 
 		if( i == ES_NUM_SORTING_TYPES )
 			parent = findOrAdd( parent, "UNSORTED" );
@@ -147,7 +147,7 @@ void EditObjectParameter::addObject( const ThingTemplate *thingTemplate  )
 		// the leaf name is the name of the template
 		leafName = thingTemplate->getName().str();
 
-	}  // end if
+	}
 
 	// add to the tree view
 	if( leafName )
@@ -160,7 +160,7 @@ void EditObjectParameter::addObject( const ThingTemplate *thingTemplate  )
 		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 		ins.item.lParam = 0;
 		ins.item.pszText = (char*)leafName;
-		ins.item.cchTextMax = strlen(leafName)+2;				
+		ins.item.cchTextMax = strlen(leafName)+2;
 		m_objectTreeView.InsertItem(&ins);
 
 	}
@@ -179,7 +179,7 @@ void EditObjectParameter::addObjectLists( )
 
 	std::vector<AsciiString> strings;
 	EditParameter::loadObjectTypeList(NULL, &strings);
-	
+
 	Int numItems = strings.size();
 
 	for (Int i = 0; i < numItems; ++i) {
@@ -197,7 +197,7 @@ void EditObjectParameter::addObjectLists( )
 			ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 			ins.item.lParam = 0;
 			ins.item.pszText = (char*)leafName;
-			ins.item.cchTextMax = strlen(leafName)+2;				
+			ins.item.cchTextMax = strlen(leafName)+2;
 			m_objectTreeView.InsertItem(&ins);
 		}
 	}
@@ -215,7 +215,7 @@ HTREEITEM EditObjectParameter::findOrAdd(HTREEITEM parent, const char *pLabel)
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
-		ins.item.cchTextMax = sizeof(buffer)-2;				
+		ins.item.cchTextMax = sizeof(buffer)-2;
 		m_objectTreeView.GetItem(&ins.item);
 		if (strcmp(buffer, pLabel) == 0) {
 			return(child);
@@ -230,13 +230,13 @@ HTREEITEM EditObjectParameter::findOrAdd(HTREEITEM parent, const char *pLabel)
 	ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 	ins.item.lParam = -1;
 	ins.item.pszText = (char*)pLabel;
-	ins.item.cchTextMax = strlen(pLabel);				
+	ins.item.cchTextMax = strlen(pLabel);
 	child = m_objectTreeView.InsertItem(&ins);
 	return(child);
 }
 
 
-void EditObjectParameter::OnOK() 
+void EditObjectParameter::OnOK()
 {
 	char buffer[_MAX_PATH];
 	HTREEITEM hItem = m_objectTreeView.GetSelectedItem();
@@ -250,7 +250,7 @@ void EditObjectParameter::OnOK()
 	item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
 	item.hItem = hItem;
 	item.pszText = buffer;
-	item.cchTextMax = sizeof(buffer)-2;				
+	item.cchTextMax = sizeof(buffer)-2;
 	m_objectTreeView.GetItem(&item);
 	AsciiString objName = buffer;
 	// We used to try to find the TT here, but now we don't because we
@@ -259,7 +259,7 @@ void EditObjectParameter::OnOK()
 	CDialog::OnOK();
 }
 
-void EditObjectParameter::OnCancel() 
+void EditObjectParameter::OnCancel()
 {
 
 	CDialog::OnCancel();

@@ -17,7 +17,7 @@
 */
 
 //****************************************************************************
-//       C O N F I D E N T I A L -- W E S T W O O D   S T U D I O S       
+//       C O N F I D E N T I A L -- W E S T W O O D   S T U D I O S
 //****************************************************************************
 //
 //	Project name:		Blade Runner CD-ROM Windows 95
@@ -38,10 +38,8 @@
 //							James McNeill
 //
 //****************************************************************************
-#pragma once
 
-#ifndef WND_FILE_H
-#define WND_FILE_H
+#pragma once
 
 //------------------------------------------------------------------------------
 // include files...
@@ -65,7 +63,7 @@
 
 //
 // it's one or the other!
-//								 	
+//
 #define SUPPORT_STREAMS				TRUE		// Normally this!
 #define SUPPORT_HANDLES				FALSE		// This is a test!
 
@@ -94,7 +92,7 @@
 
 
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void __cdecl Msg( int line, const char *file, const char *fmt, ... );
 void __cdecl Msg( int line, const char *filename, const wchar_t *fmt, unsigned int codepage=1252, ... );
 void 	Delete_Msg_File( void );
@@ -108,10 +106,10 @@ void 	Delete_Msg_File( void );
 // file class definition
 //------------------------------------------------------------------------------
 
-class StandardFileClass 
+class StandardFileClass
 {
 	public:
-   
+
 		//
 		// public class functions...
 		//
@@ -128,7 +126,7 @@ class StandardFileClass
 		char *	Query_Name_String	( void );
      	int		End_Of_File			( void );
 		int		Flush	  	 		( void );
-		
+
 		#if( SUPPORT_STREAMS )
 		FILE *Query_File_Stream_Pointer( void );
 		#endif
@@ -153,10 +151,10 @@ class StandardFileClass
 			//		st_ctime  	Time of creation of file ( time_t ).
 			//		st_dev		Drive number of the disk containing the file (same as st_rdev).
 			//		st_rdev		Drive number of the disk containing the file (same as st_dev).
-			//		st_mode		Bit mask for file-mode information. 
-			//				  		_S_IFDIR bit is set if path specifies a directory; 
-			//				  		_S_IFREG bit is set if path specifies an ordinary file or a device. 
-			//				  	User read/write bits are set according to the file's permission 
+			//		st_mode		Bit mask for file-mode information.
+			//				  		_S_IFDIR bit is set if path specifies a directory;
+			//				  		_S_IFREG bit is set if path specifies an ordinary file or a device.
+			//				  	User read/write bits are set according to the file's permission
 			//				  	mode; user execute bits are set according to the filename extension.
 			//		st_mtime  	Time of last modification of file.
 			//		st_nlink  	Always 1 on non-NTFS file systems.
@@ -177,14 +175,14 @@ class StandardFileClass
 #if( SUPPORT_HANDLES )
 	HANDLE 	Open_File( char const *file_name, int mode );
 	bool   	Close_File( HANDLE handle );
-	int    	Read_File( HANDLE handle, 
-		   			void *buffer, 
+	int    	Read_File( HANDLE handle,
+		   			void *buffer,
 		   			unsigned long int bytes_to_read );
-	int    	Write_File( HANDLE handle, 
-		   		 	 void const *buffer, 
+	int    	Write_File( HANDLE handle,
+		   		 	 void const *buffer,
 		   		 	 unsigned long int bytes_to_write );
-	bool   	Seek_File( HANDLE handle, 
-		   		 	 int distance, 
+	bool   	Seek_File( HANDLE handle,
+		   		 	 int distance,
 		   		 	 int seek_file_location );
 	int    	Tell_File( HANDLE handle );
 	int    	File_Size( HANDLE handle );
@@ -212,5 +210,3 @@ class StandardFileClass
 	bool CD_File_Exists( char const *file_name );
 	// bool Find_File( char const *file_name );
 #endif
-
-#endif // WND_FILE_H

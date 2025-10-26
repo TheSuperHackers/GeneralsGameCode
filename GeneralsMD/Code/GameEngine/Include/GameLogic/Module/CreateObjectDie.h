@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _CREATE_OBJECT_DIE_H_
-#define _CREATE_OBJECT_DIE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "GameLogic/Module/DieModule.h"
@@ -48,6 +45,7 @@ public:
 
 	const ObjectCreationList* m_ocl;			///< object creaton list to make
 	Bool m_transferPreviousHealth; ///< Transfers previous health before death to the new object created.
+	Bool m_transferSelection;      ///< Transfers selection state before death to the new object created.
 
 	CreateObjectDieModuleData();
 
@@ -69,9 +67,6 @@ public:
 	CreateObjectDie( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDie( const DamageInfo *damageInfo ); 
+	virtual void onDie( const DamageInfo *damageInfo );
 
 };
-
-#endif // _CREATE_OBJECT_DIE_H_
-

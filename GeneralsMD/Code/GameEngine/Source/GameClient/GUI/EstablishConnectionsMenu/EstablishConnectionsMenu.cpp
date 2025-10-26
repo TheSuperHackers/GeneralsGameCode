@@ -36,7 +36,7 @@
 
 EstablishConnectionsMenu *TheEstablishConnectionsMenu = NULL;
 
-const char *EstablishConnectionsMenu::m_playerReadyControlNames[] = {
+const char *const EstablishConnectionsMenu::m_playerReadyControlNames[] = {
 	"EstablishConnectionsScreen.wnd:ButtonAccept1",
 	"EstablishConnectionsScreen.wnd:ButtonAccept2",
 	"EstablishConnectionsScreen.wnd:ButtonAccept3",
@@ -46,7 +46,7 @@ const char *EstablishConnectionsMenu::m_playerReadyControlNames[] = {
 	"EstablishConnectionsScreen.wnd:ButtonAccept7",
 	NULL};
 
-const char *EstablishConnectionsMenu::m_playerNameControlNames[] = {
+const char *const EstablishConnectionsMenu::m_playerNameControlNames[] = {
 	"EstablishConnectionsScreen.wnd:StaticPlayer1Name",
 	"EstablishConnectionsScreen.wnd:StaticPlayer2Name",
 	"EstablishConnectionsScreen.wnd:StaticPlayer3Name",
@@ -57,7 +57,7 @@ const char *EstablishConnectionsMenu::m_playerNameControlNames[] = {
 	NULL
 };
 
-const char *EstablishConnectionsMenu::m_playerStatusControlNames[] = {
+const char *const EstablishConnectionsMenu::m_playerStatusControlNames[] = {
 	"EstablishConnectionsScreen.wnd:StaticPlayer1Status",
 	"EstablishConnectionsScreen.wnd:StaticPlayer2Status",
 	"EstablishConnectionsScreen.wnd:StaticPlayer3Status",

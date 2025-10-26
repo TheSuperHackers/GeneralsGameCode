@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef RESOURCE_GATHER_MANAGER_H
-#define RESOURCE_GATHER_MANAGER_H
-
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
 
@@ -72,5 +69,3 @@ private:
 	objectIDList m_supplyCenters;
 
 };
-
-#endif

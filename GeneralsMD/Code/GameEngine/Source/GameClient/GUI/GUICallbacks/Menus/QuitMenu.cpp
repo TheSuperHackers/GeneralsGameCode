@@ -30,6 +30,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
+#include "Common/FramePacer.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
 #include "Common/MessageStream.h"
@@ -53,11 +54,6 @@
 #include "GameClient/DisconnectMenu.h"
 #include "GameLogic/ScriptEngine.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -90,7 +86,7 @@ static void initGadgetsFullQuit( void )
 	buttonReturn = TheNameKeyGenerator->nameToKey( AsciiString( "QuitMenu.wnd:ButtonReturn" ) );
 	buttonOptions = TheNameKeyGenerator->nameToKey( AsciiString( "QuitMenu.wnd:ButtonOptions" ) );
 	buttonSaveLoad = TheNameKeyGenerator->nameToKey( AsciiString( "QuitMenu.wnd:ButtonSaveLoad" ) );
-	
+
 	buttonRestartWin	= TheWindowManager->winGetWindowFromId( NULL, buttonRestart );
 	buttonSaveLoadWin = TheWindowManager->winGetWindowFromId( NULL, buttonSaveLoad );
 	buttonOptionsWin = TheWindowManager->winGetWindowFromId( NULL, buttonOptions );
@@ -104,7 +100,7 @@ static void initGadgetsNoSaveQuit( void )
 	buttonReturn = TheNameKeyGenerator->nameToKey( AsciiString( "QuitNoSave.wnd:ButtonReturn" ) );
 	buttonOptions = TheNameKeyGenerator->nameToKey( AsciiString( "QuitNoSave.wnd:ButtonOptions" ) );
 	buttonSaveLoad = NAMEKEY_INVALID;
-	
+
 	buttonRestartWin	= TheWindowManager->winGetWindowFromId( NULL, buttonRestart );
 	buttonOptionsWin = TheWindowManager->winGetWindowFromId( NULL, buttonOptions );
 	buttonSaveLoadWin = NULL;
@@ -121,17 +117,19 @@ void destroyQuitMenu()
 	if(fullQuitMenuLayout)
 	{
 		fullQuitMenuLayout->destroyWindows();
-		fullQuitMenuLayout->deleteInstance();
+		deleteInstance(fullQuitMenuLayout);
+		fullQuitMenuLayout = NULL;
 	}
-	fullQuitMenuLayout = NULL;
 	if(noSaveLoadQuitMenuLayout)
 	{
 		noSaveLoadQuitMenuLayout->destroyWindows();
-		noSaveLoadQuitMenuLayout->deleteInstance();
+		deleteInstance(noSaveLoadQuitMenuLayout);
+		noSaveLoadQuitMenuLayout = NULL;
 	}
-	noSaveLoadQuitMenuLayout = NULL;
 	quitMenuLayout = NULL;
 	isVisible = FALSE;
+
+	TheInGameUI->setQuitMenuVisible(FALSE);
 }
 
 /**
@@ -141,16 +139,14 @@ static void exitQuitMenu()
 {
   // destroy the quit menu
 	destroyQuitMenu();
-	
+
 	// clear out all the game data
 	if ( TheGameLogic->isInMultiplayerGame() && !TheGameLogic->isInSkirmishGame() && !TheGameInfo->isSandbox() )
 	{
 		GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_SELF_DESTRUCT);
 		msg->appendBooleanArgument(TRUE);
 	}
-	/*GameMessage *msg =*/ TheMessageStream->appendMessage( GameMessage::MSG_CLEAR_GAME_DATA );
-	if ( !TheGameLogic->isInMultiplayerGame() )
-		TheGameLogic->setGamePaused(FALSE);
+	TheGameLogic->exitGame();
 	// TheGameLogic->clearGameData();
 	// display the menu on top of the shell stack
   // TheShell->showShell();
@@ -217,10 +213,10 @@ static void restartMissionMenu()
 	{
 		TheRecorder->stopRecording();
 	}
-	
+
 	Int rankPointsStartedWith = TheGameLogic->getRankPointsToAddAtGameStart();// must write down before reset
 	GameDifficulty diff = TheScriptEngine->getGlobalDifficulty();
-	Int fps = TheGameEngine->getFramesPerSecondLimit();
+	Int fps = TheFramePacer->getFramesPerSecondLimit();
 
 	TheGameLogic->clearGameData(FALSE);
 	TheGameEngine->setQuitting(FALSE);
@@ -238,8 +234,8 @@ static void restartMissionMenu()
 		msg->appendIntegerArgument(diff);
 		msg->appendIntegerArgument(rankPointsStartedWith);
 		msg->appendIntegerArgument(fps);
-		DEBUG_LOG(("Restarting game mode %d, Diff=%d, RankPoints=%d\n", gameMode, 
-																																		TheScriptEngine->getGlobalDifficulty(), 
+		DEBUG_LOG(("Restarting game mode %d, Diff=%d, RankPoints=%d", gameMode,
+																																		TheScriptEngine->getGlobalDifficulty(),
 																																		rankPointsStartedWith)
 							);
 		//if (TheGlobalData->m_fixedSeed >= 0)
@@ -283,7 +279,7 @@ void HideQuitMenu( void )
 //-------------------------------------------------------------------------------------------------
 void ToggleQuitMenu()
 {
-	
+
 	//Added By Sadullah Nader
 	//Added a check to see if we're not in game yet
 	if (TheGameLogic->isIntroMoviePlaying() || TheGameLogic->isLoadingMap() ||TheScriptEngine->isGameEnding())
@@ -310,7 +306,7 @@ void ToggleQuitMenu()
 		TheWindowManager->winSendSystemMsg(optLayout->getFirstWindow(), GBM_SELECTED, (WindowMsgData)optionsBack, NULL);
 		return;
 	}
-	if ((saveLoadMenuLayout != NULL) && (saveLoadMenuLayout->isHidden() == FALSE)) 
+	if ((saveLoadMenuLayout != NULL) && (saveLoadMenuLayout->isHidden() == FALSE))
 	{
 		GameWindow *saveLoadParent = saveLoadMenuLayout->getFirstWindow();
 		DEBUG_ASSERTCRASH(saveLoadParent != NULL, ("Not able to get the save/load layout parent window"));
@@ -320,20 +316,20 @@ void ToggleQuitMenu()
 		saveLoadMenuLayout = NULL;
 		return;
 	}
-	
+
 	// if we're visable hide our quit menu
 	if(isVisible && quitMenuLayout)
 	{
-		
+
 		isVisible = FALSE;
-		
+
 		//Added By Sadullah Nader
 		//Bug: When Toggling the quit menu off, the quit confirmation should also go away
 		if (quitConfirmationWindow)
 			TheWindowManager->winDestroy(quitConfirmationWindow);
 		quitConfirmationWindow = NULL;
 		//
-		
+
 		if ( !TheGameLogic->isInMultiplayerGame() )
 			TheGameLogic->setGamePaused(FALSE);
 		if(quitMenuLayout && quitMenuLayout == noSaveLoadQuitMenuLayout)
@@ -358,7 +354,7 @@ void ToggleQuitMenu()
 	{
 		//Added By Sadullah Nader
 		//Added to compensate for the quit confirmation window pop-up
-		
+
 		TheMouse->setCursor( Mouse::ARROW );
 
 		TheControlBar->hidePurchaseScience();
@@ -390,7 +386,7 @@ void ToggleQuitMenu()
 			TheInGameUI->setQuitMenuVisible(FALSE);
 			return;
 		}
-		
+
 		//quitMenuLayout->hide(FALSE);
 
 		// if we are watching a cinematic, we need to disable the save/load button
@@ -412,9 +408,9 @@ void ToggleQuitMenu()
 			buttonRestartWin->winEnable(TRUE);
 			if (TheGameLogic->isInSkirmishGame() == FALSE) {
 				GadgetButtonSetText(buttonRestartWin, TheGameText->fetch("GUI:Surrender"));
-				
+
 			}
-	
+
 			if (TheGameLogic->isInSkirmishGame() == TRUE) {
 				TheGameLogic->setGamePaused(TRUE);
 			}
@@ -432,7 +428,7 @@ void ToggleQuitMenu()
 			{
 				GadgetButtonSetText(buttonRestartWin, TheGameText->fetch("GUI:RestartMission"));
 				GadgetButtonSetText(buttonExitWin, TheGameText->fetch("GUI:ExitMission"));
-				
+
 			}
 			//if we're not in a multiplayer game, pause the game
 			TheGameLogic->setGamePaused(TRUE);
@@ -447,18 +443,18 @@ void ToggleQuitMenu()
 		TheControlBar->hidePurchaseScience();
 		isVisible = TRUE;
 	}
-		
+
 	TheInGameUI->setQuitMenuVisible(isVisible);
-	
-}  // end ToggleQuitMenu
+
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Quit menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType QuitMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType QuitMenuSystem( GameWindow *window, UnsignedInt msg,
 																		 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -467,7 +463,7 @@ WindowMsgHandledType QuitMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end create
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
@@ -475,7 +471,7 @@ WindowMsgHandledType QuitMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end case
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -492,7 +488,7 @@ WindowMsgHandledType QuitMenuSystem( GameWindow *window, UnsignedInt msg,
         // now and just using the grey button for the whole save/load button for now
         // during a cinema
         //
-              	
+
 //				SaveLoadLayoutType layoutType = SLLT_SAVE_AND_LOAD;
 
 				//
@@ -507,21 +503,21 @@ WindowMsgHandledType QuitMenuSystem( GameWindow *window, UnsignedInt msg,
 
         saveLoadMenuLayout = TheShell->getSaveLoadMenuLayout();
 //				saveLoadMenuLayout->runInit( &layoutType );
-				saveLoadMenuLayout->runInit();				
+				saveLoadMenuLayout->runInit();
 				saveLoadMenuLayout->hide( FALSE );
 				saveLoadMenuLayout->bringForward();
       }
 			else if( controlID == buttonExit )
 			{
         quitConfirmationWindow = QuitMessageBoxYesNo(TheGameText->fetch("GUI:QuitPopupTitle"), TheGameText->fetch("GUI:QuitPopupMessage"),/*quitCallback*/exitQuitMenu,noExitQuitMenu);
-			}  // end if
+			}
 			else if( controlID == buttonReturn )
 			{
-			
+
 				// hide this menu
 				ToggleQuitMenu();
 
-			}  // end else if
+			}
 			else if( buttonOptions == controlID )
 			{
 				WindowLayout *optLayout = TheShell->getOptionsLayout(TRUE);
@@ -540,28 +536,28 @@ WindowMsgHandledType QuitMenuSystem( GameWindow *window, UnsignedInt msg,
 				if ( TheGameLogic->isInMultiplayerGame() )
 				{
 					// we really want to surrender
-					quitConfirmationWindow = MessageBoxYesNo(TheGameText->fetch("GUI:SurrenderConfirmationTitle"), 
+					quitConfirmationWindow = MessageBoxYesNo(TheGameText->fetch("GUI:SurrenderConfirmationTitle"),
 																			TheGameText->fetch("GUI:SurrenderConfirmation"),
 																			/*quitCallback*/surrenderQuitMenu,noExitQuitMenu);
 				}
 				else
 				{
 					//we really want to restart
-					quitConfirmationWindow = MessageBoxYesNo(TheGameText->fetch("GUI:RestartConfirmationTitle"), 
+					quitConfirmationWindow = MessageBoxYesNo(TheGameText->fetch("GUI:RestartConfirmationTitle"),
 																			TheGameText->fetch("GUI:RestartConfirmation"),
 																			/*quitCallback*/restartMissionMenu,noExitQuitMenu);
 				}
-			}  // end else if
+			}
 
 			break;
 
-		}  // end selected
+		}
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-}  // end QuitMenuSystem
+}

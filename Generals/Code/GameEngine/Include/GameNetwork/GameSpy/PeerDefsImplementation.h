@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __PEERDEFSIMPLEMENTATION_H__
-#define __PEERDEFSIMPLEMENTATION_H__
-
 #include "GameNetwork/GameSpy/PeerDefs.h"
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
 
@@ -121,14 +118,14 @@ public:
 	virtual SavedIgnoreMap returnSavedIgnoreList( void );
 	virtual void addToSavedIgnoreList( Int profileID, AsciiString nick);
 	virtual void removeFromSavedIgnoreList( Int profileID );
-	virtual Bool isSavedIgnored( Int profileID );	
+	virtual Bool isSavedIgnored( Int profileID );
 	virtual void setLocalIPs(UnsignedInt internalIP, UnsignedInt externalIP);
 	virtual UnsignedInt getInternalIP(void) { return m_internalIP; }
 	virtual UnsignedInt getExternalIP(void) { return m_externalIP; }
 
 	virtual Bool isDisconnectedAfterGameStart(Int *reason) const { if (reason) *reason = m_disconReason; return m_isDisconAfterGameStart; }
 	virtual void markAsDisconnectedAfterGameStart(Int reason) { m_isDisconAfterGameStart = TRUE; m_disconReason = reason; }
-	
+
 	virtual Bool didPlayerPreorder( Int profileID ) const;
 	virtual void markPlayerAsPreorder( Int profileID );
 
@@ -180,5 +177,3 @@ private:
 
 	Int m_additionalDisconnects;
 };
-
-#endif // __PEERDEFS_H__

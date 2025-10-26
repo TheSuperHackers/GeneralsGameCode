@@ -30,7 +30,7 @@
  *                                                                                             *
  *                  Last update : 10/12/1999                                                   *
  *                                                                                             *
- *                  Taken from GTH's GameMtlShaderDlg.cpp												  *	                                                                           
+ *                  Taken from GTH's GameMtlShaderDlg.cpp												  *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  *   PS2GameMtlShaderDlg -- Constructor.                                                       *
@@ -50,7 +50,7 @@
 
 #define NUM_PS2_SHADER_BLEND_PRESETS 7
 
-static char * _PS2ShaderBlendSettingPresetNames[NUM_PS2_SHADER_BLEND_PRESETS + 1] = 
+static char * _PS2ShaderBlendSettingPresetNames[NUM_PS2_SHADER_BLEND_PRESETS + 1] =
 {
 	"Opaque",
 	"Additive",
@@ -95,8 +95,8 @@ static const PS2ShaderBlendSettingPreset PS2ShaderBlendSettingPresets[NUM_PS2_SH
  *=============================================================================================*/
 PS2GameMtlShaderDlg::PS2GameMtlShaderDlg
 (
-	HWND				parent, 
-	IMtlParams *	imp, 
+	HWND				parent,
+	IMtlParams *	imp,
 	GameMtl *		mtl,
 	int				pass
 ) : GameMtlFormClass(imp,mtl,pass)
@@ -114,14 +114,14 @@ PS2GameMtlShaderDlg::PS2GameMtlShaderDlg
  * HISTORY:                                                                                    *
  *   10/12/1999MLL: Created.                                                                   *
  *=============================================================================================*/
-BOOL PS2GameMtlShaderDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam) 
-{ 
+BOOL PS2GameMtlShaderDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam)
+{
 	int cursel;
 	int i;
 	int id = LOWORD(wparam);
 	int code = HIWORD(wparam);
-	
-	switch (message) 
+
+	switch (message)
 	{
 
 		case WM_INITDIALOG:
@@ -142,8 +142,8 @@ BOOL PS2GameMtlShaderDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam
 		case WM_COMMAND:
 			{
 				if (code == CBN_SELCHANGE) {
-					
-					switch (id) 
+
+					switch (id)
 					{
 						// Shared by both shaders.
 						case IDC_DEPTHCOMPARE_COMBO:
@@ -203,9 +203,9 @@ BOOL PS2GameMtlShaderDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam
 					}
 
 				} else {
-				
+
 					switch(id) {
-						
+
 						case IDC_DEPTHMASK_CHECK:
 							if (SendDlgItemMessage(dlg_wnd,IDC_DEPTHMASK_CHECK,BM_GETCHECK,0,0)) {
 								TheMtl->Set_Depth_Mask(PassIndex,W3DSHADER_DEPTHMASK_WRITE_ENABLE);
@@ -258,7 +258,7 @@ void PS2GameMtlShaderDlg::ReloadDialog(void)
 	SendDlgItemMessage(m_hWnd, IDC_D_COMBO, CB_SETCURSEL, TheMtl->Get_PS2_Shader_Param_D(PassIndex), 0);
 
 	Set_Preset();
-	
+
 	SetCheckBox(m_hWnd,IDC_DEPTHMASK_CHECK, TheMtl->Get_Depth_Mask(PassIndex));
 	SetCheckBox(m_hWnd,IDC_ALPHATEST_CHECK, TheMtl->Get_Alpha_Test(PassIndex));
 }

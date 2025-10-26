@@ -24,12 +24,12 @@
 
 // FILE: ShellMenuScheme.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Jul 2002
@@ -37,8 +37,8 @@
 //	Filename: 	ShellMenuScheme.cpp
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -60,12 +60,12 @@
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-const FieldParse ShellMenuSchemeManager::m_shellMenuSchemeFieldParseTable[] = 
+const FieldParse ShellMenuSchemeManager::m_shellMenuSchemeFieldParseTable[] =
 {
 
 	{ "ImagePart",						ShellMenuSchemeManager::parseImagePart,			NULL, NULL },
 	{ "LinePart",							ShellMenuSchemeManager::parseLinePart,	NULL, NULL },
-	{ NULL,										NULL,													NULL, 0 }  // keep this last
+	{ NULL,										NULL,													NULL, 0 }
 
 };
 
@@ -80,25 +80,25 @@ void INI::parseShellMenuSchemeDefinition( INI *ini )
 
 	// read the name
 	const char* c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	// find existing item if present
 	SMSchemeManager = TheShell->getShellMenuSchemeManager();
-	DEBUG_ASSERTCRASH( SMSchemeManager, ("parseShellMenuSchemeDefinition: Unable to Get SMSchemeManager\n") );
+	DEBUG_ASSERTCRASH( SMSchemeManager, ("parseShellMenuSchemeDefinition: Unable to Get SMSchemeManager") );
 	if( !SMSchemeManager )
 		return;
 
 	// If we have a previously allocated control bar, this will return a cleared out pointer to it so we
-	// can overwrite it	
+	// can overwrite it
 	SMScheme = SMSchemeManager->newShellMenuScheme( name );
 
 	// sanity
-	DEBUG_ASSERTCRASH( SMScheme, ("parseControlBarSchemeDefinition: Unable to allocate Scheme '%s'\n", name.str()) );
+	DEBUG_ASSERTCRASH( SMScheme, ("parseControlBarSchemeDefinition: Unable to allocate Scheme '%s'", name.str()) );
 
 	// parse the ini definition
 	ini->initFromINI( SMScheme, SMSchemeManager->getFieldParse() );
 
-}  // end parseCommandButtonDefinition
+}
 
 ShellMenuSchemeLine::ShellMenuSchemeLine( void )
 {
@@ -126,7 +126,7 @@ ShellMenuSchemeImage::~ShellMenuSchemeImage( void )
 
 ShellMenuScheme::ShellMenuScheme( void )
 {
-	
+
 }
 
 ShellMenuScheme::~ShellMenuScheme( void )
@@ -136,8 +136,7 @@ ShellMenuScheme::~ShellMenuScheme( void )
 	{
 		ShellMenuSchemeImage *image = *it;
 		it = m_imageList.erase( it );
-		if(image)
-			delete image;
+		delete image;
 	}
 
 	ShellMenuSchemeLineListIt lineIt = m_lineList.begin();
@@ -145,11 +144,10 @@ ShellMenuScheme::~ShellMenuScheme( void )
 	{
 		ShellMenuSchemeLine *line = *lineIt;
 		lineIt = m_lineList.erase( lineIt );
-		if(line)
-			delete line;
+		delete line;
 	}
 
-	
+
 }
 
 void ShellMenuScheme::addLine( ShellMenuSchemeLine* schemeLine )
@@ -188,7 +186,7 @@ void ShellMenuScheme::draw( void )
 	while(it != m_lineList.end())
 	{
 		ShellMenuSchemeLine *line = *it;
-		
+
 		if(line)
 		{
 			TheDisplay->drawLine(line->m_startPos.x, line->m_startPos.y, line->m_endPos.x,
@@ -215,20 +213,19 @@ ShellMenuSchemeManager::~ShellMenuSchemeManager( void )
 	{
 		ShellMenuScheme *scheme = *it;
 		it = m_schemeList.erase( it );
-		if(scheme)
-			delete scheme;
+		delete scheme;
 	}
-	
+
 }
 
 void ShellMenuSchemeManager::parseImagePart(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 {
-	static const FieldParse myFieldParse[] = 
+	static const FieldParse myFieldParse[] =
 		{
 			{ "Position",				INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeImage, m_position ) },
 			{ "Size",						INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeImage, m_size ) },
       { "ImageName",			INI::parseMappedImage,		NULL, offsetof( ShellMenuSchemeImage, m_image ) },
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 
 	ShellMenuSchemeImage *schemeImage = NEW ShellMenuSchemeImage;
@@ -239,14 +236,14 @@ void ShellMenuSchemeManager::parseImagePart(INI *ini, void *instance, void* /*st
 
 void ShellMenuSchemeManager::parseLinePart(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 {
-	static const FieldParse myFieldParse[] = 
+	static const FieldParse myFieldParse[] =
 		{
 			{ "StartPosition",		INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeLine, m_startPos ) },
 			{ "EndPosition",			INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeLine, m_endPos ) },
       { "Color",						INI::parseColorInt,				NULL, offsetof( ShellMenuSchemeLine, m_color ) },
 			{ "Width",						INI::parseInt,						NULL, offsetof( ShellMenuSchemeLine, m_width ) },
-			
-			{ NULL,								NULL,											NULL, 0 }  // keep this last
+
+			{ NULL,								NULL,											NULL, 0 }
 		};
 
 	ShellMenuSchemeLine *schemeLine = NEW ShellMenuSchemeLine;
@@ -282,8 +279,8 @@ void ShellMenuSchemeManager::init( void )
 {
 	INI ini;
 	// Read from INI all the ControlBarSchemes
-	ini.load( AsciiString( "Data\\INI\\Default\\ShellMenuScheme.ini" ), INI_LOAD_OVERWRITE, NULL );
-	ini.load( AsciiString( "Data\\INI\\ShellMenuScheme.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\Default\\ShellMenuScheme" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\ShellMenuScheme" ), INI_LOAD_OVERWRITE, NULL );
 
 }
 

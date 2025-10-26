@@ -24,12 +24,12 @@
 
 // FILE: PlayerList.cpp /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -54,17 +54,12 @@
 #include "Common/Team.h"
 #include "Common/WellKnownKeys.h"
 #include "Common/Xfer.h"
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #include "GameLogic/Object.h"
 #endif
 #include "GameLogic/SidesList.h"
 #include "GameNetwork/NetworkDefs.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 /*extern*/ PlayerList *ThePlayerList = NULL;
@@ -81,28 +76,25 @@ PlayerList::PlayerList() :
 }
 
 //-----------------------------------------------------------------------------
-PlayerList::~PlayerList() 
+PlayerList::~PlayerList()
 {
-	try {
-		// the world is happier if we reinit things before destroying them,
-		// to avoid debug warnings
-		init();
-	} catch (...) {
-		// nothing
-	}
+	// the world is happier if we reinit things before destroying them,
+	// to avoid debug warnings
+	init();
+
 	for( Int i = 0; i < MAX_PLAYER_COUNT; ++i )
 		delete m_players[ i ];
 }
 
 //-----------------------------------------------------------------------------
-Player *PlayerList::getNthPlayer(Int i) 
-{ 
+Player *PlayerList::getNthPlayer(Int i)
+{
 	if( i < 0 || i >= MAX_PLAYER_COUNT )
 	{
-//		DEBUG_CRASH( ("Illegal player index\n") );
+//		DEBUG_CRASH( ("Illegal player index") );
 		return NULL;
 	}
-	return m_players[i]; 
+	return m_players[i];
 }
 
 //-----------------------------------------------------------------------------
@@ -155,7 +147,7 @@ void PlayerList::newGame()
 		Bool exists;	// throwaway, since we don't care if it exists
 		if (d->getBool(TheKey_multiplayerIsLocal, &exists))
 		{
-			DEBUG_LOG(("Player %s is multiplayer local\n", pname.str()));
+			DEBUG_LOG(("Player %s is multiplayer local", pname.str()));
 			setLocalPlayer(p);
 			setLocal = true;
 		}
@@ -174,7 +166,7 @@ void PlayerList::newGame()
 
 	if (!setLocal)
 	{
-		DEBUG_ASSERTCRASH(TheNetwork, ("*** Map has no human player... picking first nonneutral player for control\n"));
+		DEBUG_ASSERTCRASH(TheNetwork, ("*** Map has no human player... picking first nonneutral player for control"));
 		for( i = 0; i < TheSidesList->getNumSides(); i++)
 		{
 			Player* p = getNthPlayer(i);
@@ -208,7 +200,7 @@ void PlayerList::newGame()
 			}
 			else
 			{
-				DEBUG_LOG(("unknown enemy %s\n",tok.str()));
+				DEBUG_LOG(("unknown enemy %s",tok.str()));
 			}
 		}
 
@@ -222,7 +214,7 @@ void PlayerList::newGame()
 			}
 			else
 			{
-				DEBUG_LOG(("unknown ally %s\n",tok.str()));
+				DEBUG_LOG(("unknown ally %s",tok.str()));
 			}
 		}
 
@@ -257,7 +249,7 @@ void PlayerList::update()
 	for( Int i = 0; i < MAX_PLAYER_COUNT; i++ )
 	{
 		m_players[i]->update();
-	}  // end for i
+	}
 
 }
 
@@ -268,7 +260,7 @@ void PlayerList::newMap()
 	for( Int i = 0; i < MAX_PLAYER_COUNT; i++ )
 	{
 		m_players[i]->newMap();
-	}  // end for i
+	}
 
 }
 
@@ -282,13 +274,13 @@ void PlayerList::teamAboutToBeDeleted(Team* team)
 }
 
 //=============================================================================
-void PlayerList::updateTeamStates(void) 
+void PlayerList::updateTeamStates(void)
 {
 	// Clear team flags for all players.
 	for( Int i = 0; i < MAX_PLAYER_COUNT; i++ )
 	{
 		m_players[i]->updateTeamStates();
-	}  // end for i
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -298,11 +290,11 @@ Team *PlayerList::validateTeam( AsciiString owner )
 	Team *t = TheTeamFactory->findTeam(owner);
 	if (t)
 	{
-		//DEBUG_LOG(("assigned obj %08lx to team %s\n",obj,owner.str()));
-	}	
+		//DEBUG_LOG(("assigned obj %08lx to team %s",obj,owner.str()));
+	}
 	else
 	{
-		DEBUG_CRASH(("no team or player named %s could be found!\n", owner.str()));
+		DEBUG_CRASH(("no team or player named %s could be found!", owner.str()));
 		t = getNeutralPlayer()->getDefaultTeam();
 	}
 	return t;
@@ -330,22 +322,20 @@ void PlayerList::setLocalPlayer(Player *player)
 #ifdef INTENSE_DEBUG
 	if (player)
 	{
-		DEBUG_LOG(("\n----------\n"));
 		// did you know? you can use "%ls" to print a doublebyte string, even in a single-byte printf...
-		DEBUG_LOG(("Switching local players. The new player is named '%ls' (%s) and owns the following objects:\n",
+		DEBUG_LOG(("Switching local players. The new player is named '%ls' (%s) and owns the following objects:",
 			player->getPlayerDisplayName().str(),
 			TheNameKeyGenerator->keyToName(player->getPlayerNameKey()).str()
 		));
 		for (Object *obj = player->getFirstOwnedObject(); obj; obj = obj->getNextOwnedObject())
 		{
-			DEBUG_LOG(("Obj %08lx is of type %s",obj,obj->getTemplate()->getName().str()));
+			DEBUG_LOG_RAW(("Obj %08lx is of type %s",obj,obj->getTemplate()->getName().str()));
 			if (!player->canBuild(obj->getTemplate()))
 			{
-				DEBUG_LOG((" (NOT BUILDABLE)"));
+				DEBUG_LOG_RAW((" (NOT BUILDABLE)"));
 			}
-			DEBUG_LOG(("\n"));
+			DEBUG_LOG_RAW(("\n"));
 		}
-		DEBUG_LOG(("\n----------\n"));
 	}
 #endif
 
@@ -359,17 +349,17 @@ Player *PlayerList::getPlayerFromMask( PlayerMaskType mask )
 
 	for( i = 0; i < MAX_PLAYER_COUNT; i++ )
 	{
-		
+
 		player = getNthPlayer( i );
 		if( player && player->getPlayerMask() == mask )
 			return player;
 
-	}  // end for i
+	}
 
-	DEBUG_CRASH( ("Player does not exist for mask\n") );
+	DEBUG_CRASH( ("Player does not exist for mask") );
 	return NULL; // mask not found
 
-}  // end getPlayerFromMask
+}
 
 //-----------------------------------------------------------------------------
 Player *PlayerList::getEachPlayerFromMask( PlayerMaskType& maskToAdjust )
@@ -379,16 +369,16 @@ Player *PlayerList::getEachPlayerFromMask( PlayerMaskType& maskToAdjust )
 
 	for( i = 0; i < MAX_PLAYER_COUNT; i++ )
 	{
-		
+
 		player = getNthPlayer( i );
 		if ( player && BitIsSet(player->getPlayerMask(), maskToAdjust ))
 		{
 			maskToAdjust &= (~player->getPlayerMask());
 			return player;
 		}
-	}  // end for i
+	}
 
-	DEBUG_CRASH( ("No players found that contain any matching masks.\n") );
+	DEBUG_CRASH( ("No players found that contain any matching masks.") );
 	maskToAdjust = 0;
 	return NULL; // mask not found
 }
@@ -473,16 +463,16 @@ void PlayerList::xfer( Xfer *xfer )
 	if( playerCount != m_playerCount )
 	{
 
-		DEBUG_CRASH(( "Invalid player count '%d', should be '%d'\n", playerCount, m_playerCount ));
+		DEBUG_CRASH(( "Invalid player count '%d', should be '%d'", playerCount, m_playerCount ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// xfer each of the player data
 	for( Int i = 0; i < playerCount; ++i )
 		xfer->xferSnapshot( m_players[ i ] );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -490,5 +480,5 @@ void PlayerList::xfer( Xfer *xfer )
 void PlayerList::loadPostProcess( void )
 {
 
-}  // end postProcessLoad
+}
 

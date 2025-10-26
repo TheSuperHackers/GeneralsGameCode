@@ -18,12 +18,12 @@
 
 // FILE: PageErrorProc.cpp ////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -81,7 +81,7 @@ BOOL CALLBACK PageErrorProc( HWND hWndDialog, UINT message,
 			// load the listbox with pages that could not be processed
 			// and the reasons for it
 			//
-			
+
 			// sanity
 			if( TheImagePacker == NULL )
 				return TRUE;
@@ -100,7 +100,7 @@ BOOL CALLBACK PageErrorProc( HWND hWndDialog, UINT message,
 				// if image can't be processed find out why
 				if( BitIsSet( page->m_status, TexturePage::PAGE_ERROR ) )
 				{
-					
+
 					if( BitIsSet( page->m_status, TexturePage::CANT_ALLOCATE_PACKED_IMAGE ) )
 						sprintf( reason, "Can't allocate image memory" );
 					else if( BitIsSet( page->m_status, TexturePage::CANT_ADD_IMAGE_DATA ) )
@@ -118,16 +118,16 @@ BOOL CALLBACK PageErrorProc( HWND hWndDialog, UINT message,
 
 					SendMessage( list, LB_INSERTSTRING, -1, (LPARAM)buffer );
 
-				}  // end if
+				}
 
-			}  // end for i
+			}
 
 			// set the extents for the horizontal scroll bar in the listbox
 			SendMessage( list, LB_SETHORIZONTALEXTENT, 1280, 0 );
 
 			return TRUE;
 
-		}  // end init
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_COMMAND:
@@ -146,18 +146,18 @@ BOOL CALLBACK PageErrorProc( HWND hWndDialog, UINT message,
 					EndDialog( hWndDialog, TRUE );
 					break;
 
-				}  // end proceed
+				}
 
-			}  // end switch
+			}
 
 			break;
 
-		}  // end command
+		}
 
-	}  // end switch message
+	}
 
 	return 0;
 
-}  // end PageErrorProc
+}
 
 

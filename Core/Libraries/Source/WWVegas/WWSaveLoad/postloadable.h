@@ -36,9 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef POSTLOADABLE_H
-#define POSTLOADABLE_H
-
+#pragma once
 
 //////////////////////////////////////////////////////////////////////////////////
 //
@@ -64,8 +62,3 @@ private:
 
 	bool									IsPostLoadRegistered;
 };
-
-
-
-#endif
-

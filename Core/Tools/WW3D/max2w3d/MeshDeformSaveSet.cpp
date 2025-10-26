@@ -17,22 +17,22 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/MeshDeformSaveSet.cpp 2     6/16/99 6:56p Patrick $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D engine                                       * 
- *                                                                                             * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D engine                                       *
+ *                                                                                             *
  *                    File Name : MeshDeformSaveSet.CPP
- *                                                                                             * 
- *                   Programmer : Patrick Smith                                                * 
- *                                                                                             * 
- *                   Start Date : 05/28/99                                                     * 
- *                                                                                             * 
- *                  Last Update : 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *                                                                                             *
+ *                   Programmer : Patrick Smith                                                *
+ *                                                                                             *
+ *                   Start Date : 05/28/99                                                     *
+ *                                                                                             *
+ *                  Last Update :
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "MeshDeformSaveSet.h"
@@ -120,7 +120,7 @@ MeshDeformSaveSetClass::Add_Vert
 		data.vert_index	= vert_index;
 		data.position		= position;
 		data.color			= color;
-		
+
 		//
 		//	Add this vertex information to the keyframe list
 		//
@@ -145,7 +145,7 @@ MeshDeformSaveSetClass::Replace_Deform_Data
 {
 	KEYFRAME *key_frame = m_DeformData[keyframe_index];
 	if (key_frame != NULL) {
-		
+
 		//
 		//	Replace the vertex deformation list for the keyframe
 		//

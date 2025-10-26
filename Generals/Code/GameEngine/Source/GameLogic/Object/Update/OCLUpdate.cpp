@@ -49,11 +49,11 @@ OCLUpdateModuleData::OCLUpdateModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void OCLUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void OCLUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "OCL",					INI::parseObjectCreationList,		NULL, offsetof( OCLUpdateModuleData, m_ocl ) },
 		{ "MinDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( OCLUpdateModuleData, m_minDelay ) },
@@ -82,6 +82,17 @@ OCLUpdate::~OCLUpdate( void )
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime OCLUpdate::update( void )
 {
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix dizzyj/Caball009/Mauller 14/07/2025 prevent triggering supply drop when subdued while under construction
+	// When the construction is finished, we allow the timer to be initialized and then start shifting the timer while subdued
+	if ( m_timerStartedFrame > 0 && getObject()->isDisabled() )
+	{
+		m_nextCreationFrame++;
+		m_timerStartedFrame++;
+		return UPDATE_SLEEP_NONE;
+	}
+#endif
+
 /// @todo srj use SLEEPY_UPDATE here
 	if( shouldCreate() )
 	{
@@ -122,7 +133,7 @@ Bool OCLUpdate::shouldCreate()
 // ------------------------------------------------------------------------------------------------
 void OCLUpdate::setNextCreationFrame()
 {
-	UnsignedInt delay = GameLogicRandomValue( getOCLUpdateModuleData()->m_minDelay, 
+	UnsignedInt delay = GameLogicRandomValue( getOCLUpdateModuleData()->m_minDelay,
 																						getOCLUpdateModuleData()->m_maxDelay );
 	m_timerStartedFrame = TheGameLogic->getFrame();
 	m_nextCreationFrame = m_timerStartedFrame + delay;
@@ -156,7 +167,7 @@ void OCLUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -180,7 +191,7 @@ void OCLUpdate::xfer( Xfer *xfer )
 	// timer stated frame
 	xfer->xferUnsignedInt( &m_timerStartedFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -191,4 +202,4 @@ void OCLUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

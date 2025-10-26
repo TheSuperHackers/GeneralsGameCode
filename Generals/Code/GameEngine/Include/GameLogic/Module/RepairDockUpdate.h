@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __REPAIRDOCKUPDATE_H_
-#define __REPAIRDOCKUPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
 #include "GameLogic/Module/SupplyCenterDockUpdate.h"
@@ -74,7 +71,5 @@ protected:
 
   ObjectID m_lastRepair;			///< object we were repairing last
 	Real m_healthToAddPerFrame;	///< health to add per frame to current docked object
-	
-};
 
-#endif
+};

@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: ShaderTypePanels.h 
+// FILE: ShaderTypePanels.h
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -32,13 +32,8 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_SHADERTYPEPANELS_
-#define _H_SHADERTYPEPANELS_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 // DEFINES ////////////////////////////////////////////////////////////////////
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////
-
-
-#endif /* _H_SHADERTYPEPANELS_ */

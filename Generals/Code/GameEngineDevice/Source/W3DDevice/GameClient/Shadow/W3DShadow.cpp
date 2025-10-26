@@ -63,6 +63,12 @@ Vector3 LightPosWorld[ MAX_SHADOW_LIGHTS ] =
 	Vector3( 94.0161f, 50.499f, 200.0f)
 };
 
+void PrepareShadows()
+{
+	if (TheW3DProjectedShadowManager)
+		TheW3DProjectedShadowManager->prepareShadows();
+}
+
 //DECLARE_PERF_TIMER(shadowsRender)
 void DoShadows(RenderInfoClass & rinfo, Bool stencilPass)
 {
@@ -92,7 +98,7 @@ void DoShadows(RenderInfoClass & rinfo, Bool stencilPass)
 		TheW3DShadowManager->queueShadows(FALSE);
 
 }
-	
+
 W3DShadowManager::W3DShadowManager( void )
 {
 	DEBUG_ASSERTCRASH(TheW3DVolumetricShadowManager == NULL && TheW3DProjectedShadowManager == NULL,
@@ -192,7 +198,7 @@ Shadow *W3DShadowManager::addShadow( RenderObjClass *robj, Shadow::ShadowTypeInf
 		default:
 			return NULL;
 	}
-		
+
 	return NULL;
 }
 

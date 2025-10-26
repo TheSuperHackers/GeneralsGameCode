@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __MinefieldBEHAVIOR_H_
-#define __MinefieldBEHAVIOR_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/CollideModule.h"
@@ -52,7 +49,7 @@ public:
 
 	const WeaponTemplate*	m_detonationWeapon;								///< what happens when we detonate
 	Int										m_detonatedBy;										///< can we be triggered by allies, etc?
-	Bool									m_stopsRegenAfterCreatorDies;	
+	Bool									m_stopsRegenAfterCreatorDies;
 	Bool									m_regenerates;										///< if t, can't be killed normally
 	Bool									m_workersDetonate;								///< if f, workers don't detonate mines
 	UnsignedInt						m_creatorDeathCheckRate;					///< if above is true, how often to check
@@ -65,7 +62,7 @@ public:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class MinefieldBehavior : public UpdateModule, 
+class MinefieldBehavior : public UpdateModule,
 													public CollideModuleInterface,
 													public DamageModuleInterface,
 													public DieModuleInterface,
@@ -142,5 +139,3 @@ private:
 	UpdateSleepTime calcSleepTime();
 
 };
-
-#endif  // end __MinefieldBEHAVIOR_H_

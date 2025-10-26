@@ -16,12 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef THREAD_H
-#define THREAD_H
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #include "always.h"
 #include "Vector.H"
@@ -99,5 +94,3 @@ private:
 	volatile unsigned long handle;
 	int thread_priority;
 };
-
-#endif

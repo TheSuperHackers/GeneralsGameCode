@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __StructureToppleUpdate_H_
-#define __StructureToppleUpdate_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -46,7 +43,7 @@ class ObjectCreationList;
 typedef std::vector<const ObjectCreationList*> OCLVec;
 
 //-------------------------------------------------------------------------------------------------
-struct FXBoneInfo 
+struct FXBoneInfo
 {
 	AsciiString boneName;
 	const ParticleSystemTemplate* particleSystemTemplate;
@@ -70,10 +67,10 @@ enum StructureTopplePhaseType CPP_11(: Int)
 	STPHASE_DELAY,
 	STPHASE_FINAL,
 
-	ST_PHASE_COUNT	// keep last
+	ST_PHASE_COUNT
 };
 
-static const char *TheStructureTopplePhaseNames[] = 
+static const char *const TheStructureTopplePhaseNames[] =
 {
 	"INITIAL",
 	"DELAY",
@@ -81,6 +78,7 @@ static const char *TheStructureTopplePhaseNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheStructureTopplePhaseNames) == ST_PHASE_COUNT + 1, "Incorrect array size");
 
 //-------------------------------------------------------------------------------------------------
 class StructureToppleUpdateModuleData : public UpdateModuleData
@@ -182,7 +180,7 @@ protected:
 		TOPPLESTATE_WAITINGFORDONE,
 		TOPPLESTATE_DONE
 	};
-	
+
 	UnsignedInt m_toppleFrame;
 	Coord2D m_toppleDirection;
 	StructureToppleStateType m_toppleState;
@@ -195,6 +193,3 @@ protected:
 	Real m_buildingHeight;
 
 };
-
-#endif // __StructureToppleUpdate_H_
-

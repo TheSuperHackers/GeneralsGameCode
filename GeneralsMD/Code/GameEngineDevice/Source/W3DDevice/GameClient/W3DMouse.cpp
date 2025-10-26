@@ -47,11 +47,6 @@
 #include "mutex.h"
 #include "thread.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //Since there can't be more than 1 mouse, might as well keep these static.
 static CriticalSectionClass mutex;
@@ -77,7 +72,7 @@ void MouseThreadClass::Thread_Function()
 
 	//poll mouse and update position
 
-	while (running) 
+	while (running)
 	{
 		isThread=TRUE;
 		if (TheMouse)
@@ -109,7 +104,7 @@ W3DMouse::W3DMouse( void )
 	m_camera = NULL;
 	m_drawing = FALSE;
 
-}  // end Win32Mouse
+}
 
 W3DMouse::~W3DMouse( void )
 {
@@ -126,7 +121,7 @@ W3DMouse::~W3DMouse( void )
 
 	thread.Stop();
 
-}  // end Win32Mouse
+}
 
 void W3DMouse::initPolygonAssets(void)
 {
@@ -184,7 +179,7 @@ Bool W3DMouse::loadD3DCursorTextures(MouseCursor cursor)
 
 	if (!animFrames)
 		return FALSE;	//no animation frames defined.
-	
+
 	const char *baseName=m_cursorInfo[cursor].textureName.str();
 	char FrameName[64];
 
@@ -231,13 +226,15 @@ void W3DMouse::initD3DAssets(void)
 	if (m_currentRedrawMode == RM_DX8 && cursorTextures[1] == NULL && am)
 	{
 		for (Int i=0; i<NUM_MOUSE_CURSORS; i++)
-		{	
+		{
 			for (Int j=0; j < MAX_2D_CURSOR_ANIM_FRAMES; j++)
 			{
 				cursorTextures[i][j]=NULL;//am->Get_Texture(m_cursorInfo[i].textureName.str());
-				m_currentD3DSurface[i]=NULL;
 			}
 		}
+
+		for (Int x = 0; x < MAX_2D_CURSOR_ANIM_FRAMES; x++)
+			m_currentD3DSurface[x]=NULL;
 	}
 }
 
@@ -306,7 +303,7 @@ void W3DMouse::initW3DAssets(void)
 	m_camera->Set_Position( Vector3( 0, 1, 1 ) );
 	Vector2 min = Vector2( -1, -1 );
 	Vector2 max = Vector2( +1, +1 );
-	m_camera->Set_View_Plane( min, max );		
+	m_camera->Set_View_Plane( min, max );
 	m_camera->Set_Clip_Planes( 0.995f, 20.0f );
 	if (m_orthoCamera)
 		m_camera->Set_Projection_Type( CameraClass::ORTHO );
@@ -345,8 +342,8 @@ void W3DMouse::init( void )
 	if (m_currentRedrawMode == RM_DX8)
 		thread.Execute();
 	thread.Set_Priority(0);
-	
-}  // end int
+
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset */
@@ -357,7 +354,7 @@ void W3DMouse::reset( void )
 	// extend
 	Win32Mouse::reset();
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Super basic simplistic cursor */
@@ -380,7 +377,7 @@ void W3DMouse::setCursor( MouseCursor cursor )
 		return;
 	}
 
-	// extend 
+	// extend
 	Mouse::setCursor( cursor );
 
 	// if we're already on this cursor ignore the rest of code to stop cursor flickering.
@@ -404,7 +401,7 @@ void W3DMouse::setCursor( MouseCursor cursor )
 					//Since this type of cursor is updated from a non-D3D thread, we need
 					//to preallocate all surfaces in main thread.
 					loadD3DCursorTextures(cursor);
-				}	
+				}
 			}
 			if (m_currentD3DSurface[0])
 				doImageChange=TRUE;
@@ -471,7 +468,7 @@ void W3DMouse::setCursor( MouseCursor cursor )
 	// save current cursor
 	m_currentCursor = cursor;
 
-}  // end setCursor
+}
 
 extern HWND ApplicationHWnd;
 
@@ -517,7 +514,7 @@ void W3DMouse::draw(void)
 		}
 	}
 	else if (m_currentRedrawMode == RM_POLYGON)
-	{	
+	{
 		const Image *image=cursorImages[m_currentPolygonCursor];
 		if (image)
 		{

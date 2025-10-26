@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __STEALTH_UPDATE_H_
-#define __STEALTH_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -52,7 +49,7 @@ enum
 };
 
 #ifdef DEFINE_STEALTHLEVEL_NAMES
-static const char *TheStealthLevelNames[] = 
+static const char *const TheStealthLevelNames[] =
 {
 	"ATTACKING",
 	"MOVING",
@@ -155,7 +152,7 @@ private:
 	UnsignedInt						m_stealthAllowedFrame;
 	UnsignedInt						m_detectionExpiresFrame;
 	Bool									m_enabled;
-	
+
 	Real                  m_pulsePhaseRate;
 	Real                  m_pulsePhase;
 
@@ -171,7 +168,3 @@ private:
 	Bool									m_xferRestoreDisguise;			//Tells us we need to restore our disguise
 
 };
-
-
-#endif 
-

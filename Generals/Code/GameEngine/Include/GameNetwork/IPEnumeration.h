@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _IPENUMERATION_H_
-#define _IPENUMERATION_H_
-
 #include "GameNetwork/Transport.h"
 
 /**
@@ -38,7 +35,7 @@
  */
 class EnumeratedIP : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(EnumeratedIP, "EnumeratedIP")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(EnumeratedIP, "EnumeratedIP")
 public:
 	EnumeratedIP() { m_IPstring = ""; m_next = NULL; m_IP = 0; }
 
@@ -73,10 +70,8 @@ public:
 	AsciiString getMachineName( void );			///< Return the Network Neighborhood machine name
 
 protected:
+	void addNewIP( UnsignedByte a, UnsignedByte b, UnsignedByte c, UnsignedByte d );
 
 	EnumeratedIP *m_IPlist;
 	Bool m_isWinsockInitialized;
 };
-
-
-#endif // _IPENUMERATION_H_

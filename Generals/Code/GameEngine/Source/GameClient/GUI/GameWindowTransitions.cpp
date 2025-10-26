@@ -24,12 +24,12 @@
 
 // FILE: GameWindowTransitions.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Dec 2002
@@ -37,8 +37,8 @@
 //	Filename: 	GameWindowTransitions.cpp
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -47,11 +47,6 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -64,13 +59,13 @@
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 GameWindowTransitionsHandler *TheTransitionHandler = NULL;
-const FieldParse GameWindowTransitionsHandler::m_gameWindowTransitionsFieldParseTable[] = 
+const FieldParse GameWindowTransitionsHandler::m_gameWindowTransitionsFieldParseTable[] =
 {
 
 	{ "Window",		GameWindowTransitionsHandler::parseWindow,	NULL, NULL	},
 	{ "FireOnce",	INI::parseBool,															NULL, offsetof( TransitionGroup, m_fireOnce) 	},
-	
-	{ NULL,										NULL,													NULL, 0 }  // keep this last
+
+	{ NULL,										NULL,													NULL, 0 }
 
 };
 
@@ -81,20 +76,20 @@ void INI::parseWindowTransitions( INI* ini )
 
 	// read the name
 	const char* c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	// find existing item if present
-	
-	DEBUG_ASSERTCRASH( TheTransitionHandler, ("parseWindowTransitions: TheTransitionHandler doesn't exist yet\n") );
+
+	DEBUG_ASSERTCRASH( TheTransitionHandler, ("parseWindowTransitions: TheTransitionHandler doesn't exist yet") );
 	if( !TheTransitionHandler )
 		return;
 
 	// If we have a previously allocated control bar, this will return a cleared out pointer to it so we
-	// can overwrite it	
+	// can overwrite it
 	g = TheTransitionHandler->getNewGroup( name );
 
 	// sanity
-	DEBUG_ASSERTCRASH( g, ("parseWindowTransitions: Unable to allocate group '%s'\n", name.str()) );
+	DEBUG_ASSERTCRASH( g, ("parseWindowTransitions: Unable to allocate group '%s'", name.str()) );
 
 	// parse the ini definition
 	ini->initFromINI( g, TheTransitionHandler->getFieldParse() );
@@ -158,10 +153,12 @@ TransitionWindow::TransitionWindow( void )
 
 TransitionWindow::~TransitionWindow( void )
 {
-	m_win = NULL;
-	if(m_transition)
-		delete m_transition;
+	if (m_win)
+		m_win->unlinkTransitionWindow(this);
 
+	m_win = NULL;
+
+	delete m_transition;
 	m_transition = NULL;
 }
 
@@ -173,12 +170,14 @@ Bool TransitionWindow::init( void )
 //	DEBUG_ASSERTCRASH( m_win, ("TransitionWindow::init Failed to find window %s", m_winName.str()));
 //	if( !m_win )
 //		return FALSE;
-	
-	if(m_transition)
-		delete m_transition;
 
+	delete m_transition;
 	m_transition = getTransitionForStyle( m_style );
 	m_transition->init(m_win);
+
+	// TheSuperHackers @fix Mauller 15/05/2025 Link TransitionWindow to the GameWindow so the GameWindow can unlink itself when it is destroyed
+	if(m_win)
+		m_win->linkTransitionWindow(this);
 
 	return TRUE;
 }
@@ -187,7 +186,7 @@ void TransitionWindow::update( Int frame )
 {
 	if(frame < m_currentFrameDelay || frame > (m_currentFrameDelay + m_transition->getFrameLength()))
 		return;
-	
+
 	if(m_transition)
 		m_transition->update( frame - m_currentFrameDelay);
 }
@@ -218,6 +217,15 @@ void TransitionWindow::draw( void )
 		m_transition->draw();
 }
 
+void TransitionWindow::unlinkGameWindow(GameWindow* win)
+{
+	if (m_win != win)
+		return;
+
+	m_transition->unlinkGameWindow(win);
+	m_win = NULL;
+}
+
 Int TransitionWindow::getTotalFrames( void )
 {
 	if(m_transition)
@@ -242,7 +250,6 @@ TransitionGroup::~TransitionGroup( void )
 	{
 		TransitionWindow *tWin = *it;
 		delete tWin;
-		tWin = NULL;
 		it = m_transitionWindowList.erase(it);
 	}
 }
@@ -270,7 +277,7 @@ void TransitionGroup::update( void )
 		TransitionWindow *tWin = *it;
 		tWin->update(m_currentFrame);
 		it++;
-	}	
+	}
 }
 
 Bool TransitionGroup::isFinished( void )
@@ -291,7 +298,7 @@ void TransitionGroup::reverse( void )
 {
 	Int totalFrames =0;
 	m_directionMultiplier = -1;
-	
+
 	TransitionWindowList::iterator it = m_transitionWindowList.begin();
 	while (it != m_transitionWindowList.end())
 	{
@@ -387,7 +394,7 @@ void GameWindowTransitionsHandler::load(void )
 {
 	INI ini;
 	// Read from INI all the ControlBarSchemes
-	ini.load( AsciiString( "Data\\INI\\WindowTransitions.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\WindowTransitions" ), INI_LOAD_OVERWRITE, NULL );
 
 }
 
@@ -454,7 +461,7 @@ void GameWindowTransitionsHandler::setGroup(AsciiString groupName, Bool immidiat
 			m_currentGroup->init();
 		return;
 	}
-	
+
 	if(m_currentGroup)
 	{
 		if(!m_currentGroup->isFireOnce() && !m_currentGroup->isReversed())
@@ -469,8 +476,8 @@ void GameWindowTransitionsHandler::setGroup(AsciiString groupName, Bool immidiat
 	if(m_currentGroup)
 		m_currentGroup->init();
 
-	
-	
+
+
 }
 
 void GameWindowTransitionsHandler::reverse( AsciiString groupName )
@@ -562,12 +569,12 @@ TransitionGroup *GameWindowTransitionsHandler::findGroup( AsciiString groupName 
 
 void GameWindowTransitionsHandler::parseWindow( INI* ini, void *instance, void *store, const void *userData )
 {
-	static const FieldParse myFieldParse[] = 
+	static const FieldParse myFieldParse[] =
 		{
 			{ "WinName",				INI::parseAsciiString,		NULL,									offsetof( TransitionWindow, m_winName ) },
       { "Style",					INI::parseLookupList,			TransitionStyleNames,	offsetof( TransitionWindow, m_style ) },
 			{ "FrameDelay",			INI::parseInt,						NULL,									offsetof( TransitionWindow, m_frameDelay ) },
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 	TransitionWindow *transWin = NEW TransitionWindow;
 	ini->initFromINI(transWin, myFieldParse);

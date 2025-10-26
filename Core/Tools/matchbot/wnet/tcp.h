@@ -21,8 +21,7 @@ TCP                   Neal Kettler        neal@westwood.com
 
 \****************************************************************************/
 
-#ifndef TCP_HEADER
-#define TCP_HEADER
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -83,14 +82,14 @@ private:
 
 
   sint32      inputDelay;         // default delay for semi-blocking reads
-  sint32      outputDelay;        // default delay for semi-blocking writes 
+  sint32      outputDelay;        // default delay for semi-blocking writes
 
   enum ConnectionState
   {
      CLOSED,
      CONNECTING,
      CONNECTED
-  }           connectionState;     // What state is client FD in 
+  }           connectionState;     // What state is client FD in
 
 public:
 
@@ -195,5 +194,3 @@ public:
   bit8    SetOutputDelay(sint32 delay) { outputDelay=delay; return(TRUE); };
 
 };
-
-#endif

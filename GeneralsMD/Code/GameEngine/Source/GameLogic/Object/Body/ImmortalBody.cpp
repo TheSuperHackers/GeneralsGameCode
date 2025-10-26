@@ -38,7 +38,7 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ImmortalBody::ImmortalBody( Thing *thing, const ModuleData* moduleData ) 
+ImmortalBody::ImmortalBody( Thing *thing, const ModuleData* moduleData )
 						 : ActiveBody( thing, moduleData )
 {
 }
@@ -74,7 +74,7 @@ void ImmortalBody::crc( Xfer *xfer )
 	// extend base class
 	ActiveBody::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -92,7 +92,7 @@ void ImmortalBody::xfer( Xfer *xfer )
 	// extend base class
 	ActiveBody::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -103,4 +103,4 @@ void ImmortalBody::loadPostProcess( void )
 	// extend base class
 	ActiveBody::loadPostProcess();
 
-}  // end loadPostProcess
+}

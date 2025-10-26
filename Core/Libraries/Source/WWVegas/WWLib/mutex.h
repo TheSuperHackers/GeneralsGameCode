@@ -16,12 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef MUTEX_H
-#define MUTEX_H
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #include "always.h"
 #include "thread.h"
@@ -148,7 +143,7 @@ public:
 		{
 			unlock();
 		}
-    
+
 	private:
 
     void lock() {
@@ -164,7 +159,7 @@ public:
       // Had to remove the emits back to normal
       // ASM statements because sometimes the jump
       // would be 1 byte off....
-      
+
 		  __asm mov ebx, [nFlag]
 		  __asm ts_lock
 		  __asm bts dword ptr [ebx], 0
@@ -184,7 +179,7 @@ public:
       BitSet:
         ;
 #else
-        while (cs.Flag.test_and_set(std::memory_order_acquire)) {
+        while (cs.Flag.test_and_set(std::memory_order_acq_rel)) {
             cs.Flag.wait(true, std::memory_order_relaxed);
         }
 #endif
@@ -205,5 +200,3 @@ public:
 
   friend class LockClass;
 };
-
-#endif

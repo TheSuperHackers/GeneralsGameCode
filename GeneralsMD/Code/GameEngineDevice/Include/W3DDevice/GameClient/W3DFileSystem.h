@@ -24,22 +24,17 @@
 
 // FILE: W3DFileSystem.h ////////////////////////////////////////////////////////
 //
-// W3D implementation of a file factory.  Uses GDI assets, so that 
+// W3D implementation of a file factory.  Uses GDI assets, so that
 // W3D files and targa files are loaded using the GDI file interface.
 //
 // Author: John Ahlquist, Sept 2001
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
-
-#ifndef __W3DFILESYSTEM_H_
-#define __W3DFILESYSTEM_H_
 
 #include "WWLib/ffactory.h"
+#include "Common/ArchiveFileSystem.h"
 #include "Common/file.h"
 
 //-------------------------------------------------------------------------------------------------
@@ -93,7 +88,11 @@ public:
 
 	virtual FileClass * Get_File( char const *filename );
 	virtual void Return_File( FileClass *file );
+
+private:
+
+	static void reprioritizeTexturesBySize();
+	static void reprioritizeTexturesBySize(ArchivedDirectoryInfo& dirInfo);
 };
 
 extern W3DFileSystem *TheW3DFileSystem;
-#endif

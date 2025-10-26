@@ -24,12 +24,12 @@
 
 // FILE: Energy.h ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -43,9 +43,6 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
-
-#ifndef _ENERGY_H_
-#define _ENERGY_H_
 
 // INLCUDES /////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Snapshot.h"
@@ -65,7 +62,7 @@ class Energy : public Snapshot
 {
 
 public:
-	
+
 	Energy();
 
 	// reset energy information to base values.
@@ -73,6 +70,7 @@ public:
 	{
 		m_energyProduction = 0;
 		m_energyConsumption = 0;
+		m_powerSabotagedTillFrame = 0;
 		m_owner = owner;
 	}
 
@@ -83,7 +81,7 @@ public:
 	Int getConsumption() const { return m_energyConsumption; }
 
 	Bool hasSufficientPower(void) const;
-	
+
 	// If adding is false, we're supposed to be removing this.
 	void adjustPower(Int powerDelta, Bool adding);
 
@@ -122,6 +120,3 @@ private:
 	UnsignedInt m_powerSabotagedTillFrame; ///< If power is sabotaged, the frame will be greater than now.
 	Player *m_owner;						///< Tight pointer to the Player I am intrinsic to.
 };
-
-#endif // _ENERGY_H_
-

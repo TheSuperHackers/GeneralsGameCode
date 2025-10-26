@@ -17,27 +17,25 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/vchannel.h 8     10/30/00 6:56p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - W3D export                                  * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/vchannel.h                     $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 10/30/00 5:25p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 8                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - W3D export                                  *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/vchannel.h                     $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 10/30/00 5:25p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 8                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef VCHANNEL_H
-#define VCHANNEL_H
+#pragma once
 
 #ifndef ALWAYS_H
 #include "always.h"
@@ -134,7 +132,5 @@ private:
 	void		remove_packet(W3dTimeCodedAnimChannelStruct * c, uint32 packet_idx);
 	bool		SaveTimeCoded(ChunkSaveClass & csave, BitChannelClass *binmov);
 	bool		SaveAdaptiveDelta(ChunkSaveClass & csave, BitChannelClass *binmov);
-  
-};
 
-#endif /*VCHANNEL_H*/
+};

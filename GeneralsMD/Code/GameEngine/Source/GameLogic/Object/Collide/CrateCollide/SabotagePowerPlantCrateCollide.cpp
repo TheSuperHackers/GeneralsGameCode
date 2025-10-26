@@ -23,13 +23,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: SabotagePowerPlantCrateCollide.cpp 
+//
+// FILE: SabotagePowerPlantCrateCollide.cpp
 // Author: Kris Morness, June 2003
 // Desc:   A crate (actually a saboteur - mobile crate) that makes the target powerplant lose power
-//	
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
- 
+
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -57,23 +57,18 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/Module/DozerAIUpdate.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SabotagePowerPlantCrateCollide::SabotagePowerPlantCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SabotagePowerPlantCrateCollide::~SabotagePowerPlantCrateCollide( void )
 {
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -96,6 +91,14 @@ Bool SabotagePowerPlantCrateCollide::isValidToExecute( const Object *other ) con
 		//We can only sabotage power plants.
 		return FALSE;
 	}
+
+#if !RETAIL_COMPATIBLE_CRC
+	if (other->getStatusBits().testForAny(MAKE_OBJECT_STATUS_MASK2(OBJECT_STATUS_UNDER_CONSTRUCTION, OBJECT_STATUS_SOLD)))
+	{
+		// TheSuperHackers @bugfix Stubbjax 03/08/2025 Can't enter something being sold or under construction.
+		return FALSE;
+	}
+#endif
 
 	Relationship r = getObject()->getRelationship( other );
 	if( r != ENEMIES )
@@ -145,7 +148,7 @@ Bool SabotagePowerPlantCrateCollide::executeCrateBehavior( Object *other )
 
 		//Note: Player::update() will check to turn it back on again once the timer expires.
 	}
-	
+
 	return TRUE;
 }
 
@@ -158,7 +161,7 @@ void SabotagePowerPlantCrateCollide::crc( Xfer *xfer )
 	// extend base class
 	CrateCollide::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -176,7 +179,7 @@ void SabotagePowerPlantCrateCollide::xfer( Xfer *xfer )
 	// extend base class
 	CrateCollide::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -187,4 +190,4 @@ void SabotagePowerPlantCrateCollide::loadPostProcess( void )
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+}

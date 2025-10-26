@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __RADAR_H_
-#define __RADAR_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
 #include "Common/SubsystemInterface.h"
@@ -51,8 +48,8 @@ class TerrainLogic;
 // the radar is and also reflects directly the size of the image we build ... which with
 // WW3D must be a square power of two as well
 //
-enum 
-{ 
+enum
+{
 	RADAR_CELL_WIDTH  = 128,	// radar created at this horz resolution
 	RADAR_CELL_HEIGHT = 128   // radar created at this vert resolution
 };
@@ -73,11 +70,18 @@ enum RadarEventType CPP_11(: Int)
 	RADAR_EVENT_BATTLE_PLAN,
 	RADAR_EVENT_STEALTH_DISCOVERED,		// we discovered a stealth unit
 	RADAR_EVENT_STEALTH_NEUTRALIZED,	// our stealth unit has been revealed
-	RADAR_EVENT_FAKE,					//Internally creates a radar event, but doesn't notify the player (unit lost 
+	RADAR_EVENT_FAKE,					//Internally creates a radar event, but doesn't notify the player (unit lost
 														//for example, so we can use the spacebar to jump to the event).
- 
- 	RADAR_EVENT_NUM_EVENTS  // keep this last
- 	
+
+ 	RADAR_EVENT_NUM_EVENTS
+
+};
+
+enum RadarObjectType CPP_11(: Int)
+{
+	RadarObjectType_None = 0,
+	RadarObjectType_Regular,
+	RadarObjectType_Local,
 };
 
 // PROTOTYPES /////////////////////////////////////////////////////////////////////////////////////
@@ -92,7 +96,7 @@ class RadarObject : public MemoryPoolObject,
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( RadarObject, "RadarObject" )
 
 public:
-	
+
 	RadarObject( void );
 	// destructor prototype defined by memory pool glue
 
@@ -109,6 +113,7 @@ public:
 	inline const RadarObject *friend_getNext( void ) const { return m_next; }
 
 	Bool isTemporarilyHidden() const;
+	static Bool isTemporarilyHidden(const Object* obj);
 
 protected:
 
@@ -134,10 +139,10 @@ enum RadarPriorityType CPP_11(: Int)
 	RADAR_PRIORITY_UNIT,						// unit level drawing priority
 	RADAR_PRIORITY_LOCAL_UNIT_ONLY,	// unit priority, but only on the radar if controlled by the local player
 
-	RADAR_PRIORITY_NUM_PRIORITIES		// keep this last
+	RADAR_PRIORITY_NUM_PRIORITIES
 };
 #ifdef DEFINE_RADAR_PRIORITY_NAMES
-static const char *RadarPriorityNames[] = 
+static const char *const RadarPriorityNames[] =
 {
 	"INVALID",											// a priority that has not been set (in general it won't show up on the radar)
 	"NOT_ON_RADAR",									// object specifically forbidden from being on the radar
@@ -145,8 +150,9 @@ static const char *RadarPriorityNames[] =
 	"UNIT",													// unit level drawing priority
 	"LOCAL_UNIT_ONLY",							// unit priority, but only on the radar if controlled by the local player
 
-	NULL														// keep this last
+	NULL
 };
+static_assert(ARRAY_SIZE(RadarPriorityNames) == RADAR_PRIORITY_NUM_PRIORITIES + 1, "Incorrect array size");
 #endif  // DEFINE_RADAR_PRIOTITY_NAMES
 
 //-------------------------------------------------------------------------------------------------
@@ -157,7 +163,7 @@ class Radar : public Snapshot,
 {
 
 public:
-	
+
 	Radar( void );
 	virtual ~Radar( void );
 
@@ -171,14 +177,14 @@ public:
 	Bool radarToWorld( const ICoord2D *radar, Coord3D *world );		///< radar point to world point on terrain
 	Bool radarToWorld2D( const ICoord2D *radar, Coord3D *world );		///< radar point to world point (x,y only!)
 	Bool worldToRadar( const Coord3D *world, ICoord2D *radar );		///< translate world point to radar (x,y)
-	Bool localPixelToRadar( const ICoord2D *pixel, ICoord2D *radar );	///< translate pixel (with UL of radar being (0,0)) to logical radar coords
+	Bool localPixelToRadar( const ICoord2D *pixel, ICoord2D *radar );	///< translate pixel (with UL of radar being (0,0)) to logical radar coordinates
 	Bool screenPixelToWorld( const ICoord2D *pixel, Coord3D *world ); ///< translate pixel (with UL of the screen being (0,0)) to world position in the world
-	Object *objectUnderRadarPixel( const ICoord2D *pixel );				///< return the object (if any) represented by the pixel coords passed in
-	void findDrawPositions( Int startX, Int startY, Int width, Int height, 
+	Object *objectUnderRadarPixel( const ICoord2D *pixel );				///< return the object (if any) represented by the pixel coordinates passed in
+	void findDrawPositions( Int startX, Int startY, Int width, Int height,
 													ICoord2D *ul, ICoord2D *lr );					///< make translation for screen area of radar square to scaled aspect ratio preserving points inside the radar area
 
 	// priority inquiry
-	Bool isPriorityVisible( RadarPriorityType priority ) const;		///< is the priority passed in a "visible" one on the radar
+	static Bool isPriorityVisible( RadarPriorityType priority );		///< is the priority passed in a "visible" one on the radar
 
 	// radar events
 	void createEvent( const Coord3D *world, RadarEventType type, Real secondsToLive = 4.0f );	///< create radar event at location in world
@@ -190,24 +196,26 @@ public:
  	Bool tryEvent( RadarEventType event, const Coord3D *pos );	///< try to make a "stealth" event
 
 	// adding and removing objects from the radar
-	void addObject( Object *obj );													///< add object to radar
-	void removeObject( Object *obj );												///< remove object from radar
-	void examineObject( Object *obj );											///< re-examine object and resort if needed
+	virtual RadarObjectType addObject( Object *obj );									///< add object to radar
+	virtual RadarObjectType removeObject( Object *obj );								///< remove object from radar
 
 	// radar options
-	void hide( Bool hide ) { m_radarHidden = hide; }				///< hide/unhide the radar
-	Bool isRadarHidden( void ) { return m_radarHidden; }		///< is radar hidden
+	void hide( Int playerIndex, Bool hide ) { m_radarHidden[playerIndex] = hide; } ///< hide/show the radar
+	Bool isRadarHidden( Int playerIndex ) { return m_radarHidden[playerIndex]; } ///< is radar hidden
 	// other radar option methods here like the ability to show a certain
 	// team, show buildings, show units at all, etc
 
 	// forcing the radar on/off regardless of player situation
-	void forceOn( Bool force ) { m_radarForceOn = force; }				///< force the radar to be on
-	Bool isRadarForced( void ) { return m_radarForceOn; }		///< is radar forced on?
+	void forceOn( Int playerIndex, Bool force ) { m_radarForceOn[playerIndex] = force; } ///< force the radar to be on
+	Bool isRadarForced( Int playerIndex ) { return m_radarForceOn[playerIndex]; } ///< is radar forced on?
 
 	/// refresh the water values for the radar
 	virtual void refreshTerrain( TerrainLogic *terrain );
 
-	/// queue a refresh of the terran at the next available time
+	/// refresh the radar when the state of world objects changes drastically
+	virtual void refreshObjects() {};
+
+	/// queue a refresh of the terrain at the next available time
 	virtual void queueTerrainRefresh( void );
 
 	virtual void newMap( TerrainLogic *terrain );	///< reset radar for new map
@@ -241,11 +249,11 @@ protected:
 
 	void clearAllEvents( void );					///< remove all radar events in progress
 
-	// search the object list for an object that maps to the given logical radar coords
+	// search the object list for an object that maps to the given logical radar coordinates
 	Object *searchListForRadarLocationMatch( RadarObject *listHead, ICoord2D *radarMatch );
 
-	Bool m_radarHidden;										///< true when radar is not visible
-	Bool m_radarForceOn;									///< true when radar is forced to be on
+	Bool m_radarHidden[MAX_PLAYER_COUNT]; ///< true when radar is not visible
+	Bool m_radarForceOn[MAX_PLAYER_COUNT]; ///< true when radar is forced to be on
 	RadarObject *m_objectList;						///< list of objects in the radar
 	RadarObject *m_localObjectList;				/** list of objects for the local player, sorted
 																					* in exactly the same priority as the regular
@@ -261,8 +269,8 @@ protected:
 	// the whole map can be accounted for within our RADAR_CELL_WIDTH and
 	// RADAR_CELL_HEIGHT resolutions
 	//
-	Real m_xSample;												
-	Real m_ySample;												  
+	Real m_xSample;
+	Real m_ySample;
 
 	enum { MAX_RADAR_EVENTS = 64 };
 	struct RadarEvent
@@ -293,7 +301,12 @@ protected:
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern Radar *TheRadar;  ///< the radar singleton extern
 
-#endif  // __RADAR_H_
-
-
-
+// TheSuperHackers @feature helmutbuhler 10/04/2025
+// Radar that does nothing. Used for Headless Mode.
+class RadarDummy : public Radar
+{
+public:
+	virtual void draw(Int pixelX, Int pixelY, Int width, Int height) { }
+	virtual void clearShroud() { }
+	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting) { }
+};

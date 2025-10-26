@@ -24,13 +24,10 @@
 
 // FILE: KindOf.h //////////////////////////////////////////////////////////////////////////
 // Author: Steven Johnson, Dec 2001
-// Desc:	 
-///////////////////////////////////////////////////////////////////////////////////////////////////	
+// Desc:
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __KINDOF_H_
-#define __KINDOF_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
@@ -43,8 +40,8 @@
 enum KindOfType CPP_11(: Int)
 {
 	KINDOF_INVALID = -1,
-	KINDOF_FIRST = 0,
-	KINDOF_OBSTACLE = KINDOF_FIRST,	///< an obstacle to land-based pathfinders
+
+	KINDOF_OBSTACLE,								///< an obstacle to land-based pathfinders
 	KINDOF_SELECTABLE,							///< Selectable
 	KINDOF_IMMOBILE,								///< fixed in location
 	KINDOF_CAN_ATTACK,							///< can attack
@@ -79,7 +76,7 @@ enum KindOfType CPP_11(: Int)
 	KINDOF_NO_COLLIDE,							///< Never collide with or be collided with
 	KINDOF_REPAIR_PAD,							///< is a repair pad object that can repair other machines
 	KINDOF_HEAL_PAD,								///< is a heal pad object that can heal flesh and bone units
-	KINDOF_STEALTH_GARRISON,				/** enemy teams can't tell that unit is in building.. and if they 
+	KINDOF_STEALTH_GARRISON,				/** enemy teams can't tell that unit is in building.. and if they
 																		garrison that building, they stealth unit will eject. */
 	KINDOF_CASH_GENERATOR,					///< used to check if the unit generates cash... checked by cash hackers and whatever else comes up
 	KINDOF_AIRFIELD,								///< unit has a runway that planes can takeoff/land on
@@ -143,21 +140,21 @@ enum KindOfType CPP_11(: Int)
 	KINDOF_IGNORES_SELECT_ALL,			///< Too late to figure out intelligently if something should respond to a Select All command
 	KINDOF_DONT_AUTO_CRUSH_INFANTRY,					///< These units don't try to crush the infantry if ai.
 
-	KINDOF_COUNT										// total number of kindofs
-
+	KINDOF_COUNT,										// total number of kindofs
+	KINDOF_FIRST = 0,
 };
 
 typedef BitFlags<KINDOF_COUNT>	KindOfMaskType;
 
 #define MAKE_KINDOF_MASK(k) KindOfMaskType(KindOfMaskType::kInit, (k))
 
-inline Bool TEST_KINDOFMASK(const KindOfMaskType& m, KindOfType t) 
-{ 
-	return m.test(t); 
+inline Bool TEST_KINDOFMASK(const KindOfMaskType& m, KindOfType t)
+{
+	return m.test(t);
 }
 
-inline Bool TEST_KINDOFMASK_ANY(const KindOfMaskType& m, const KindOfMaskType& mask) 
-{ 
+inline Bool TEST_KINDOFMASK_ANY(const KindOfMaskType& m, const KindOfMaskType& mask)
+{
 	return m.anyIntersectionWith(mask);
 }
 
@@ -166,14 +163,14 @@ inline Bool TEST_KINDOFMASK_MULTI(const KindOfMaskType& m, const KindOfMaskType&
 	return m.testSetAndClear(mustBeSet, mustBeClear);
 }
 
-inline Bool KINDOFMASK_ANY_SET(const KindOfMaskType& m) 
-{ 
-	return m.any(); 
+inline Bool KINDOFMASK_ANY_SET(const KindOfMaskType& m)
+{
+	return m.any();
 }
 
-inline void CLEAR_KINDOFMASK(KindOfMaskType& m) 
-{ 
-	m.clear(); 
+inline void CLEAR_KINDOFMASK(KindOfMaskType& m)
+{
+	m.clear();
 }
 
 inline void SET_ALL_KINDOFMASK_BITS(KindOfMaskType& m)
@@ -189,6 +186,3 @@ inline void FLIP_KINDOFMASK(KindOfMaskType& m)
 
 // defined in Common/System/Kindof.cpp
 extern KindOfMaskType KINDOFMASK_NONE;	// inits to all zeroes
-
-#endif	// __KINDOF_H_
-

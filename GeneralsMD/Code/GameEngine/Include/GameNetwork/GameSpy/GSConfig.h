@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GSCONFIG_H__
-#define __GSCONFIG_H__
-
 #include "Common/AsciiString.h"
 #include "Common/STLTypedefs.h"
 
@@ -69,5 +66,3 @@ public:
 };
 
 extern GameSpyConfigInterface *TheGameSpyConfig;
-
-#endif // __GSCONFIG_H__

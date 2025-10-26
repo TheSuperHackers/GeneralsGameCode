@@ -17,26 +17,25 @@
 */
 
 /* $Header: /Commando/Code/Tools/pluglib/plane.h 8     4/22/98 6:36p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Voxel Technology                                             * 
- *                                                                                             * 
- *                    File Name : PLANE.H                                                      * 
- *                                                                                             * 
- *                   Programmer : Greg Hjelstrom                                               * 
- *                                                                                             * 
- *                   Start Date : 03/17/97                                                     * 
- *                                                                                             * 
- *                  Last Update : March 17, 1997 [GH]                                          * 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Voxel Technology                                             *
+ *                                                                                             *
+ *                    File Name : PLANE.H                                                      *
+ *                                                                                             *
+ *                   Programmer : Greg Hjelstrom                                               *
+ *                                                                                             *
+ *                   Start Date : 03/17/97                                                     *
+ *                                                                                             *
+ *                  Last Update : March 17, 1997 [GH]                                          *
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef PLANE_H
-#define PLANE_H
+#pragma once
 
 #ifndef VECTOR3_H
 #include "vector3.h"
@@ -58,7 +57,7 @@ public:
 	PlaneClass(void) : N(0.0f,0.0f,1.0f), D(0.0f) { }
 	PlaneClass(float a,float b,float c,float d) : N(a,b,c),D(d) { }
 	PlaneClass(const Vector3 & normal,float dist) : N(normal), D(dist) { }
-	
+
 	// Create a plane given the normal and a point on the plane
 	PlaneClass(const Vector3 & normal,const Vector3 & point);
 
@@ -74,7 +73,7 @@ inline PlaneClass::PlaneClass(const Vector3 & normal,const Vector3 & point)
 	D = Vector3::Dot_Product(normal , point);
 }
 
-inline PlaneClass::PlaneClass(const Vector3 & point1, const Vector3 & point2, const Vector3 & point3) 
+inline PlaneClass::PlaneClass(const Vector3 & point1, const Vector3 & point2, const Vector3 & point3)
 {
 	N = Vector3::Cross_Product((point2 - point1), (point3 - point1));
 	if (N != Vector3(0.0f, 0.0f, 0.0f)) {
@@ -93,7 +92,3 @@ inline bool In_Front(const Vector3 & point,const PlaneClass & plane)
 	double dist = point * plane.N;
 	return (dist > plane.D);
 }
-
-
-
-#endif /*PLANE_H*/

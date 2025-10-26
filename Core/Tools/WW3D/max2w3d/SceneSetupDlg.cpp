@@ -206,7 +206,7 @@ BOOL CALLBACK SceneSetupDlg::DialogProc (HWND hWnd, UINT uMsg, WPARAM wParam, LP
 /////////////////////////////////////////////////////////////////////////////
 // SceneSetupDlg message handlers
 
-void SceneSetupDlg::OnInitDialog() 
+void SceneSetupDlg::OnInitDialog()
 {
 	CenterWindow(m_hWnd, m_MaxInterface->GetMAXHWnd());
 	SetCursor(LoadCursor(NULL, IDC_ARROW));
@@ -244,7 +244,7 @@ void SceneSetupDlg::OnInitDialog()
 	SetEditFloat(IDC_DAMAGE_OFFSET, m_DamageOffset);
 }
 
-BOOL SceneSetupDlg::OnOK() 
+BOOL SceneSetupDlg::OnOK()
 {
 	if (!ValidateEditFloat(IDC_LOD_OFFSET))
 	{

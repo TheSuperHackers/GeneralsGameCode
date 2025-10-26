@@ -95,7 +95,7 @@ static unsigned FreeCount;
 ** Name for each memory category.  I'm padding the array with some "undefined" strings in case
 ** someone forgets to set the name when adding a new category.
 */
-static const char * _MemoryCategoryNames[] =
+static const char *const _MemoryCategoryNames[] =
 {
 	"UNKNOWN",
 	"Geometry",
@@ -159,7 +159,7 @@ public:
 		ThreadID(-1),
 		Count(0)
 	{ }
-	
+
 																				// If object was created but not Init'd, ThreadID will be -1 and Count == 0
 																				// If object was created and Init'd, ThreadID will not be -1.  We expect Count to return to 1 after all Pop's
 	~ActiveCategoryStackClass(void)									{ WWASSERT((ThreadID == -1 && Count == 0) || (ThreadID != -1 && Count == 1)); }
@@ -531,6 +531,7 @@ void WWMemoryLogClass::Register_Memory_Released(int category,int size)
 static void _MemLogCleanup(void)
 {
 	delete _TheMemLog;
+	_TheMemLog = NULL;
 }
 
 
@@ -578,10 +579,9 @@ MemLogClass * WWMemoryLogClass::Get_Log(void)
 void WWMemoryLogClass::Release_Log(void)
 {
 	MemLogMutexLockClass lock;
-	if (_TheMemLog) {
-		delete _TheMemLog;
-		_TheMemLog = NULL;
-	}
+
+	delete _TheMemLog;
+	_TheMemLog = NULL;
 }
 
 

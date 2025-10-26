@@ -32,14 +32,10 @@ for the data, but at least that wouldn't be repeating code, that would
 be specialized code.
 */
 
-
-
 #pragma once
 
-#ifndef __NETPACKET_H
-#define __NETPACKET_H
-
 #include "NetworkDefs.h"
+
 #include "GameNetwork/NetCommandList.h"
 #include "Common/MessageStream.h"
 #include "Common/GameMemory.h"
@@ -51,7 +47,7 @@ typedef std::list<NetPacket *>::iterator NetPacketListIter;
 
 class NetPacket : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetPacket, "NetPacket")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetPacket, "NetPacket")
 public:
 	NetPacket();
 	NetPacket(TransportMessage *msg);
@@ -236,5 +232,3 @@ protected:
 	UnsignedByte		m_lastCommandType;
 	UnsignedByte		m_lastRelay;
 };
-
-#endif // __NETPACKET_H

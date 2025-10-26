@@ -24,12 +24,12 @@
 
 // FILE: LoadScreen.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Mar 2002
@@ -37,7 +37,7 @@
 //	Filename: 	LoadScreen.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	Contains each of the different derived LoadClasses for each of the
 //						Different kind of games we can have.
 //
@@ -48,11 +48,6 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -94,11 +89,6 @@
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 // PRIVATE TYPES //////////////////////////////////////////////////////////////
@@ -131,12 +121,12 @@ enum{
 FRAME_FUDGE_ADD = 30,
 };
 //-----------------------------------------------------------------------------
-// LoadScreen Class 
+// LoadScreen Class
 //-----------------------------------------------------------------------------
 
 LoadScreen::LoadScreen( void )
 {
-	m_loadScreen = NULL;		
+	m_loadScreen = NULL;
 }
 
 LoadScreen::~LoadScreen( void )
@@ -180,7 +170,7 @@ SinglePlayerLoadScreen::SinglePlayerLoadScreen( void )
 		m_objectiveLines[i] = NULL;
 
 }
-	
+
 SinglePlayerLoadScreen::~SinglePlayerLoadScreen( void )
 {
 	m_progressBar = NULL;
@@ -188,17 +178,19 @@ SinglePlayerLoadScreen::~SinglePlayerLoadScreen( void )
 	m_objectiveWin = NULL;
 	for(Int i = 0; i < MAX_OBJECTIVE_LINES; ++i)
 		m_objectiveLines[i] = NULL;
-	if(m_videoBuffer)
-		delete m_videoBuffer;
+
+	delete m_videoBuffer;
 	m_videoBuffer = NULL;
 
 	if ( m_videoStream )
+	{
 		m_videoStream->close();
-	m_videoStream = NULL;
-	
+		m_videoStream = NULL;
+	}
+
 	TheAudio->removeAudioEvent( m_ambientLoopHandle );
 	m_ambientLoopHandle = NULL;
-	
+
 }
 
 void SinglePlayerLoadScreen::moveWindows( Int frame )
@@ -221,7 +213,7 @@ void SinglePlayerLoadScreen::moveWindows( Int frame )
 	};
 	if(frame < STATE_BEGIN || frame > STATE_END)
 		return;
-	
+
 	if( frame == STATE_BEGIN_BREIFING)
 	{
 		// add sound support here
@@ -233,7 +225,7 @@ void SinglePlayerLoadScreen::moveWindows( Int frame )
 		m_objectiveWin->winHide(FALSE);
 		// animate the text and stuff
 	}
-	
+
 	if( frame > STATE_BEGIN_ANIMATING_TEXT && frame <= STATE_END_ANIMATING_TEXT && !m_finishedObjectiveText)
 	{
 		if(m_currentObjectiveLineCharacter >= m_unicodeObjectiveLines[m_currentObjectiveLine].getLength() )
@@ -256,7 +248,7 @@ void SinglePlayerLoadScreen::moveWindows( Int frame )
 		m_currentObjectiveLineCharacter++;
 	}
 	switch (frame) {
-	
+
 	case STATE_SHOW_LOCATION:
 		m_location->winHide(FALSE);
 		break;
@@ -322,11 +314,11 @@ void SinglePlayerLoadScreen::moveWindows( Int frame )
 		m_cameoWindow2->winGetPosition(&endPos.x, &endPos.y);
 		endPos.x = endPos.x - xOffset;
 		endPos.y = startPos.y;
-	
+
 	}
 	else if( frame > STATE_ANIM_CAMEO1_TRASITION_CAMEO2 && frame < STATE_ANIM_CAMEO2)
 	{
-		
+
 		//extrapolate between start and end pos
 		Real percent = INT_TO_REAL((frame - STATE_ANIM_CAMEO1_TRASITION_CAMEO2)) / (STATE_ANIM_CAMEO2 - STATE_ANIM_CAMEO1_TRASITION_CAMEO2);
 		m_cameoFrame->winSetPosition(startPos.x + (endPos.x - startPos.x) * percent, endPos.y);
@@ -349,11 +341,11 @@ void SinglePlayerLoadScreen::moveWindows( Int frame )
 		m_cameoWindow3->winGetPosition(&endPos.x, &endPos.y);
 		endPos.x = endPos.x - xOffset;
 		endPos.y = startPos.y;
-	
+
 	}
 	else if( frame > STATE_ANIM_CAMEO2_TRASITION_CAMEO3 && frame < STATE_ANIM_CAMEO3)
 	{
-		
+
 		//extrapolate between start and end pos
 		Real percent = INT_TO_REAL((frame - STATE_ANIM_CAMEO2_TRASITION_CAMEO3)) / (STATE_ANIM_CAMEO3 - STATE_ANIM_CAMEO2_TRASITION_CAMEO3);
 		m_cameoFrame->winSetPosition(startPos.x + (endPos.x - startPos.x) * percent, endPos.y);
@@ -369,10 +361,10 @@ void SinglePlayerLoadScreen::moveWindows( Int frame )
 		m_cameoWindow3->winEnable(FALSE);
 		GadgetStaticTextSetText(m_cameoText, UnicodeString::TheEmptyString);
 		m_cameoFrame->winHide(TRUE);
-		
+
 	}
 }*/
- 
+
 void SinglePlayerLoadScreen::init( GameInfo *game )
 {
 	//No music in SinglePlayerLoadScreen
@@ -386,7 +378,7 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 	// Store the pointer to the progress bar on the loadscreen
 	m_progressBar = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( AsciiString( "SinglePlayerLoadScreen.wnd:ProgressLoad" ) ));
 	DEBUG_ASSERTCRASH(m_progressBar, ("Can't initialize the progressbar for the single player loadscreen"));
-	GadgetProgressBarSetProgress(m_progressBar, 0 );	
+	GadgetProgressBarSetProgress(m_progressBar, 0 );
 
 	m_percent = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( AsciiString( "SinglePlayerLoadScreen.wnd:Percent" ) ));
 	DEBUG_ASSERTCRASH(m_percent, ("Can't initialize the m_percent for the single player loadscreen"));
@@ -397,7 +389,7 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 	DEBUG_ASSERTCRASH(m_objectiveWin, ("Can't initialize the m_objectiveWin for the single player loadscreen"));
 	m_objectiveWin->winHide(TRUE);
 
-	
+
 	Mission *mission = TheCampaignManager->getCurrentMission();
 	AsciiString lineName;
 	Int i = 0;
@@ -425,9 +417,9 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 	DEBUG_ASSERTCRASH(m_location, ("Can't initialize the m_objectiveWin for the single player loadscreen"));
 	m_location->winHide(TRUE);
 	GadgetStaticTextSetText(m_location, TheGameText->fetch(mission->m_locationNameLabel));
-	
 
-	
+
+
 	m_currentObjectiveLine = 0;
 	m_currentObjectiveWidthOffset = 0;
 	m_currentObjectiveLineCharacter = 0;
@@ -475,8 +467,8 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 
 	// Create the new buffer
 	m_videoBuffer = TheDisplay->createVideoBuffer();
-	if (	m_videoBuffer == NULL || 
-				!m_videoBuffer->allocate(	m_videoStream->width(), 
+	if (	m_videoBuffer == NULL ||
+				!m_videoBuffer->allocate(	m_videoStream->width(),
 													m_videoStream->height())
 		)
 	{
@@ -484,12 +476,14 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 		m_videoBuffer = NULL;
 
 		if ( m_videoStream )
+		{
 			m_videoStream->close();
-		m_videoStream = NULL;
+			m_videoStream = NULL;
+		}
 
 		return;
 	}
-	
+
 	if(TheGameLODManager && TheGameLODManager->didMemPass())
 	{
 		Int progressUpdateCount = m_videoStream->frameCount() / FRAME_FUDGE_ADD;
@@ -500,7 +494,7 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 
 			if(!m_videoStream->isFrameReady())
 			{
-				Sleep(1);	
+				Sleep(1);
 				continue;
 			}
 
@@ -510,7 +504,7 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 				m_videoStream->frameDecompress();
 				continue;
 			}
-			
+
 			m_videoStream->frameDecompress();
 			m_videoStream->frameRender(m_videoBuffer);
 			moveWindows( m_videoStream->frameIndex());
@@ -529,7 +523,7 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 				TheMouse->setCursorTooltip(UnicodeString::TheEmptyString);
 				GadgetProgressBarSetProgress(m_progressBar, percent);
 				GadgetStaticTextSetText(m_percent, per);
-			
+
 			}
 			TheWindowManager->update();
 
@@ -557,18 +551,18 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 
 		// Audio was choppy so, I chopped it out!
 		TheAudio->friend_forcePlayAudioEventRTS(&TheCampaignManager->getCurrentMission()->m_briefingVoice);
-		
+
 		for(Int i = 0; i < MAX_OBJECTIVE_LINES; ++i)
 		{
 			GadgetStaticTextSetText(m_objectiveLines[i], m_unicodeObjectiveLines[i]);
 		}
-		
+
 		Int delay = mission->m_voiceLength * 1000;
 		Int begin = timeGetTime();
 		Int currTime = begin;
 		Int fudgeFactor = 0;
 		while(begin + delay > currTime )
-		{		
+		{
 			fudgeFactor = 30 * ((currTime - begin)/ INT_TO_REAL(delay ));
 			GadgetProgressBarSetProgress(m_progressBar, fudgeFactor);
 
@@ -577,7 +571,7 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 			Sleep(100);
 			currTime = timeGetTime();
 		}
-		
+
 
 		TheWindowManager->update();
 		TheDisplay->draw();
@@ -586,7 +580,7 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 	setFPMode();
 	m_percent->winHide(TRUE);
 	m_ambientLoopHandle = TheAudio->addAudioEvent(&m_ambientLoop);
-	
+
 }
 
 void SinglePlayerLoadScreen::reset( void )
@@ -603,7 +597,7 @@ void SinglePlayerLoadScreen::update( Int percent )
 	TheMouse->setCursorTooltip(UnicodeString::TheEmptyString);
 	GadgetProgressBarSetProgress(m_progressBar, percent);
 	GadgetStaticTextSetText(m_percent, per);
-	
+
 	// Do this last!
 	LoadScreen::update( percent );
 }
@@ -619,10 +613,10 @@ ShellGameLoadScreen::ShellGameLoadScreen( void )
 {
 	m_progressBar = NULL;
 }
-	
+
 ShellGameLoadScreen::~ShellGameLoadScreen( void )
 {
-	
+
 	m_progressBar = NULL;
 }
 
@@ -630,7 +624,7 @@ void ShellGameLoadScreen::init( GameInfo *game )
 {
 	static BOOL firstLoad = TRUE;
 
-	
+
 	// create the layout of the load screen
 	m_loadScreen = TheWindowManager->winCreateFromScript( AsciiString( "Menus/ShellGameLoadScreen.wnd" ) );
 	DEBUG_ASSERTCRASH(m_loadScreen, ("Can't initialize the ShellGame loadscreen"));
@@ -640,84 +634,20 @@ void ShellGameLoadScreen::init( GameInfo *game )
 	// Store the pointer to the progress bar on the loadscreen
 	m_progressBar = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( AsciiString( "ShellGameLoadScreen.wnd:ProgressLoad" ) ));
 	DEBUG_ASSERTCRASH(m_progressBar, ("Can't initialize the progressbar for the single player loadscreen"));
-	GadgetProgressBarSetProgress(m_progressBar, 0 );	
+	GadgetProgressBarSetProgress(m_progressBar, 0 );
 	m_progressBar->winHide(TRUE);
-	
+
 	if(m_loadScreen && firstLoad && TheGameLODManager && TheGameLODManager->didMemPass())
 	{
 		m_loadScreen->winSetEnabledImage(0, TheMappedImageCollection->findImageByName("TitleScreen"));
 		TheWritableGlobalData->m_breakTheMovie = FALSE;
 
-//		m_videoStream = TheVideoPlayer->open( "Sizzle" );
-//		if ( m_videoStream == NULL )
-//		{
-//			m_progressBar->winHide(FALSE);
-//			return;
-//		}
-//
-//		// Create the new buffer
-//		m_videoBuffer = TheDisplay->createVideoBuffer();
-//		if (	m_videoBuffer == NULL || 
-//					!m_videoBuffer->allocate(	m_videoStream->width(), 
-//														m_videoStream->height())
-//			)
-//		{
-//			delete m_videoBuffer;
-//			m_videoBuffer = NULL;
-//
-//			if ( m_videoStream )
-//				m_videoStream->close();
-//			m_videoStream = NULL;
-//
-//			return;
-//		}
-//		TheGlobalData->m_isBreakableMovie = TRUE;
-//		TheGlobalData->m_breakTheMovie = FALSE;
-//		while (m_videoStream->frameIndex() < m_videoStream->frameCount() - 1 )
-//		{
-//			if(TheGlobalData->m_breakTheMovie)
-//			{
-//				TheGlobalData->m_breakTheMovie = FALSE;
-//				m_videoStream->frameGoto(m_videoStream->frameCount() - 1);
-//			}
-//			if(m_videoStream->frameIndex() < m_videoStream->frameCount() - 1)
-//			{
-//				if(!m_videoStream->isFrameReady())
-//					continue;
-//
-//				m_videoStream->frameDecompress();
-//				m_videoStream->frameRender(m_videoBuffer);
-//				m_videoStream->frameNext();
-//				if(m_videoBuffer)
-//					m_loadScreen->winGetInstanceData()->setVideoBuffer(m_videoBuffer);
-//			}
-//
-//			TheWindowManager->update();
-//		//	TheShell->update();
-//			//TheDisplay->update();
-//			// redraw all views, update the GUI
-//			TheDisplay->draw();
-//		}
-//		TheGlobalData->m_isBreakableMovie = FALSE;
-//		TheGlobalData->m_breakTheMovie = FALSE;
-//		GameWindow *win = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( AsciiString( "ShellGameLoadScreen.wnd:EAGamesLogo" ) ));
-//		if(win)
-//			win->winHide(FALSE);
-
 		GameWindow *win = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( AsciiString( "ShellGameLoadScreen.wnd:StaticTextLegal" ) ));
 		if(win)
 			win->winHide(FALSE);
 		firstLoad = FALSE;
-
-		UnsignedInt showTime = timeGetTime();
-		while(showTime + 3000 > timeGetTime())
-		{	
-			LoadScreen::update(0);
-			Sleep(100);
-		}
-
 	}
-	m_progressBar->winHide(FALSE);	
+	m_progressBar->winHide(FALSE);
 }
 
 void ShellGameLoadScreen::reset( void )
@@ -756,9 +686,14 @@ MultiPlayerLoadScreen::MultiPlayerLoadScreen( void )
 		m_playerLookup[i] = -1;
 	}
 }
-	
+
 MultiPlayerLoadScreen::~MultiPlayerLoadScreen( void )
 {
+	if(m_mapPreview)
+	{
+		m_mapPreview->winSetUserData(NULL);
+	}
+
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
 		m_progressBars[i] = NULL;
@@ -796,7 +731,7 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 		event.setShouldFade( TRUE );
 
 		TheAudio->addAudioEvent( &event );
-		TheAudio->update();//Since GameEngine::update() is suspended until after I am gone... 
+		TheAudio->update();//Since GameEngine::update() is suspended until after I am gone...
 
 	}
 
@@ -804,7 +739,7 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 	if(loadScreenImage)
 		m_loadScreen->winSetEnabledImage(0, loadScreenImage);
 	//DEBUG_ASSERTCRASH(TheNetwork, ("Where the Heck is the Network!!!!"));
-	//DEBUG_LOG(("NumPlayers %d\n", TheNetwork->getNumPlayers()));
+	//DEBUG_LOG(("NumPlayers %d", TheNetwork->getNumPlayers()));
 
 	GameWindow *teamWin[MAX_SLOTS];
 	Int i = 0;
@@ -835,19 +770,19 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 		winName.format( "MultiplayerLoadScreen.wnd:StaticTextPlayer%d",i);
 		m_playerNames[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
 		DEBUG_ASSERTCRASH(m_playerNames[i], ("Can't initialize the Names for the Multiplayer loadscreen"));
-		
+
 		// Load the Player's Side
 		winName.format( "MultiplayerLoadScreen.wnd:StaticTextSide%d",i);
 		m_playerSide[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
 		DEBUG_ASSERTCRASH(m_playerSide[i], ("Can't initialize the Sides for the Multiplayer loadscreen"));
-		
+
 		winName.format( "MultiplayerLoadScreen.wnd:StaticTextTeam%d",i);
 		teamWin[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
 
 		// get the slot man!
 		GameSlot *slot = game->getSlot(i);
 		if (!slot || !slot->isOccupied())
-			continue;		
+			continue;
 		Color houseColor = TheMultiplayerSettings->getColor(slot->getApparentColor())->getColor();
 		GadgetProgressBarSetEnabledBarColor(m_progressBars[netSlot],houseColor );
 
@@ -873,7 +808,7 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 
 		netSlot++;
 	}
-	
+
 	for(i = netSlot; i < MAX_SLOTS; ++i)
 	{
 		m_progressBars[i]->winHide(TRUE);
@@ -887,7 +822,7 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 		const MapMetaData *mmd = TheMapCache->findMap(game->getMap());
 		Image *image = getMapPreviewImage(game->getMap());
 		m_mapPreview->winSetUserData((void *)mmd);
-		
+
 		positionStartSpots( game, m_buttonMapStartPosition, m_mapPreview);
 		updateMapStartSpots( game, m_buttonMapStartPosition, TRUE );
 		//positionAdditionalImages((MapMetaData *)mmd, m_mapPreview, TRUE);
@@ -902,7 +837,7 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 		}
 	}
 
-	
+
 	TheGameLogic->initTimeOutValues();
 }
 
@@ -931,7 +866,7 @@ void MultiPlayerLoadScreen::update( Int percent )
 			TheGameLogic->processProgress( TheGameInfo->getLocalSlotNum(), percent );
 	}
 
-	//GadgetProgressBarSetProgress(m_progressBars[TheNetwork->getLocalPlayerID()], percent );	
+	//GadgetProgressBarSetProgress(m_progressBars[TheNetwork->getLocalPlayerID()], percent );
 
 	TheMouse->setCursorTooltip(UnicodeString::TheEmptyString);
 
@@ -941,14 +876,15 @@ void MultiPlayerLoadScreen::update( Int percent )
 
 void MultiPlayerLoadScreen::processProgress(Int playerId, Int percentage)
 {
-	
+
 	if( percentage < 0 || percentage > 100 || playerId >= MAX_SLOTS || playerId < 0 || m_playerLookup[playerId] == -1)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("Percentage %d was passed in for Player %d\n", percentage, playerId));
+		DEBUG_ASSERTCRASH(FALSE, ("Percentage %d was passed in for Player %d", percentage, playerId));
+		return;
 	}
-	//DEBUG_LOG(("Percentage %d was passed in for Player %d (in loadscreen position %d)\n", percentage, playerId, m_playerLookup[playerId]));
+	//DEBUG_LOG(("Percentage %d was passed in for Player %d (in loadscreen position %d)", percentage, playerId, m_playerLookup[playerId]));
 	if(m_progressBars[m_playerLookup[playerId]])
-		GadgetProgressBarSetProgress(m_progressBars[m_playerLookup[playerId]], percentage );	
+		GadgetProgressBarSetProgress(m_progressBars[m_playerLookup[playerId]], percentage );
 }
 
 // GameSpyLoadScreen Class //////////////////////////////////////////////////
@@ -963,7 +899,7 @@ GameSpyLoadScreen::GameSpyLoadScreen( void )
 
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
-		
+
 		// Added By Sadullah Nader
 		// Initializations missing and needed
 		m_buttonMapStartPosition[i] = NULL;
@@ -978,12 +914,17 @@ GameSpyLoadScreen::GameSpyLoadScreen( void )
 		m_playerFavoriteFactions[i]= NULL;
 		m_playerTotalDisconnects[i]= NULL;
 		m_playerWin[i]= NULL;
-		m_playerWinLosses[i]= NULL;		
+		m_playerWinLosses[i]= NULL;
 	}
 }
-	
+
 GameSpyLoadScreen::~GameSpyLoadScreen( void )
 {
+	if(m_mapPreview)
+	{
+		m_mapPreview->winSetUserData(NULL);
+	}
+
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
 		m_progressBars[i] = NULL;
@@ -993,7 +934,7 @@ GameSpyLoadScreen::~GameSpyLoadScreen( void )
 		m_playerFavoriteFactions[i]= NULL;
 		m_playerTotalDisconnects[i]= NULL;
 		m_playerWin[i]= NULL;
-		m_playerWinLosses[i]= NULL;		
+		m_playerWinLosses[i]= NULL;
 	}
 }
 
@@ -1008,7 +949,7 @@ void GameSpyLoadScreen::init( GameInfo *game )
 	m_loadScreen->winBringToTop();
 	m_mapPreview = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( "GameSpyLoadScreen.wnd:WinMapPreview"));
 	DEBUG_ASSERTCRASH(TheNetwork, ("Where the Heck is the Network!!!!"));
-	DEBUG_LOG(("NumPlayers %d\n", TheNetwork->getNumPlayers()));
+	DEBUG_LOG(("NumPlayers %d", TheNetwork->getNumPlayers()));
 GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 	const PlayerTemplate* pt;
 	if (lSlot->getPlayerTemplate() >= 0)
@@ -1036,13 +977,13 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 		m_progressBars[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
 		DEBUG_ASSERTCRASH(m_progressBars[i], ("Can't initialize the progressbars for the GameSpyLoadScreen loadscreen"));
 		// set the progressbar to zero
-		GadgetProgressBarSetProgress(m_progressBars[i], 0 );	
+		GadgetProgressBarSetProgress(m_progressBars[i], 0 );
 
 		// Load the Player's name
 		winName.format( "GameSpyLoadScreen.wnd:StaticTextPlayer%d",i);
 		m_playerNames[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
 		DEBUG_ASSERTCRASH(m_playerNames[i], ("Can't initialize the Names for the GameSpyLoadScreen loadscreen"));
-		
+
 		// Load MapStart Positions
 		winName.format( "GameSpyLoadScreen.wnd:ButtonMapStartPosition%d",i);
 		m_buttonMapStartPosition[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
@@ -1053,12 +994,12 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 		winName.format( "GameSpyLoadScreen.wnd:StaticTextSide%d",i);
 		m_playerSide[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
 		DEBUG_ASSERTCRASH(m_playerSide[i], ("Can't initialize the Sides for the GameSpyLoadScreen loadscreen"));
-		
+
 		// Load the Player's window
 		winName.format( "GameSpyLoadScreen.wnd:WinPlayer%d",i);
 		m_playerWin[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
 		DEBUG_ASSERTCRASH(m_playerWin[i], ("Can't initialize the WinPlayer for the GameSpyLoadScreen loadscreen"));
-		
+
 		// Load the Player's m_playerTotalDisconnects
 		winName.format( "GameSpyLoadScreen.wnd:StaticTextTotalDisconnects%d",i);
 		m_playerTotalDisconnects[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
@@ -1100,7 +1041,7 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 
 		// Get the stats for the player
 		PSPlayerStats stats = TheGameSpyPSMessageQueue->findPlayerStatsByID(slot->getProfileID());
-		DEBUG_LOG(("LoadScreen - populating info for %ls(%d) - stats returned id %d\n",
+		DEBUG_LOG(("LoadScreen - populating info for %ls(%d) - stats returned id %d",
 			slot->getName().str(), slot->getProfileID(), stats.id));
 
 		Bool isPreorder = TheGameSpyInfo->didPlayerPreorder(stats.id);
@@ -1114,7 +1055,7 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 		m_playerRank[i]->winSetEnabledImage(0, rankImg);
 
 		UnicodeString formatString;
-	
+
 		// pop wins and losses
 		Int numLosses = 0;
 		PerGeneralMap::iterator it;
@@ -1142,17 +1083,17 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 			}
 		}
 //		if(numGames == 0)
-//			GadgetStaticTextSetText(m_playerFavoriteFactions[netSlot], TheGameText->fetch("GUI:None"));	
+//			GadgetStaticTextSetText(m_playerFavoriteFactions[netSlot], TheGameText->fetch("GUI:None"));
 //		else if( stats.gamesAsRandom > numGames )
-//			GadgetStaticTextSetText(m_playerFavoriteFactions[netSlot], TheGameText->fetch("GUI:Random"));	
+//			GadgetStaticTextSetText(m_playerFavoriteFactions[netSlot], TheGameText->fetch("GUI:Random"));
 //		else
-//		{		
+//		{
 //			const PlayerTemplate *fac = ThePlayerTemplateStore->getNthPlayerTemplate(favorite);
 //			if (fac)
 //			{
 //				AsciiString side;
 //				side.format("SIDE:%s", fac->getSide().str());
-//				
+//
 //				GadgetStaticTextSetText(m_playerFavoriteFactions[netSlot], TheGameText->fetch(side));
 //			}
 //		}
@@ -1205,7 +1146,7 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 
 		netSlot++;
 	}
-	
+
 	for(i = netSlot; i < MAX_SLOTS; ++i)
 	{
 		m_playerWin[i]->winHide(TRUE);
@@ -1218,7 +1159,7 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 		const MapMetaData *mmd = TheMapCache->findMap(game->getMap());
 		Image *image = getMapPreviewImage(game->getMap());
 		m_mapPreview->winSetUserData((void *)mmd);
-		
+
 		positionStartSpots( game, m_buttonMapStartPosition, m_mapPreview);
 		updateMapStartSpots( game, m_buttonMapStartPosition, TRUE );
 		//positionAdditionalImages((MapMetaData *)mmd, m_mapPreview, TRUE);
@@ -1253,7 +1194,7 @@ void GameSpyLoadScreen::update( Int percent )
 		TheNetwork->updateLoadProgress( percent );
 	TheNetwork->liteupdate();
 
-	//GadgetProgressBarSetProgress(m_progressBars[TheNetwork->getLocalPlayerID()], percent );	
+	//GadgetProgressBarSetProgress(m_progressBars[TheNetwork->getLocalPlayerID()], percent );
 
 	TheMouse->setCursorTooltip(UnicodeString::TheEmptyString);
 
@@ -1263,14 +1204,15 @@ void GameSpyLoadScreen::update( Int percent )
 
 void GameSpyLoadScreen::processProgress(Int playerId, Int percentage)
 {
-	
+
 	if( percentage < 0 || percentage > 100 || playerId >= MAX_SLOTS || playerId < 0 || m_playerLookup[playerId] == -1)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("Percentage %d was passed in for Player %d\n", percentage, playerId));
+		DEBUG_ASSERTCRASH(FALSE, ("Percentage %d was passed in for Player %d", percentage, playerId));
+		return;
 	}
-	//DEBUG_LOG(("Percentage %d was passed in for Player %d (in loadscreen position %d)\n", percentage, playerId, m_playerLookup[playerId]));
+	//DEBUG_LOG(("Percentage %d was passed in for Player %d (in loadscreen position %d)", percentage, playerId, m_playerLookup[playerId]));
 	if(m_progressBars[m_playerLookup[playerId]])
-		GadgetProgressBarSetProgress(m_progressBars[m_playerLookup[playerId]], percentage );	
+		GadgetProgressBarSetProgress(m_progressBars[m_playerLookup[playerId]], percentage );
 }
 
 // MapTransferLoadScreen Class //////////////////////////////////////////////////
@@ -1292,7 +1234,7 @@ MapTransferLoadScreen::MapTransferLoadScreen( void )
 	m_fileNameText = NULL;
 	m_timeoutText = NULL;
 }
-	
+
 MapTransferLoadScreen::~MapTransferLoadScreen( void )
 {
 	for(Int i = 0; i < MAX_SLOTS; ++i)
@@ -1319,7 +1261,7 @@ void MapTransferLoadScreen::init( GameInfo *game )
 	m_loadScreen->winBringToTop();
 
 	DEBUG_ASSERTCRASH(TheNetwork, ("Where the Heck is the Network?!!!!"));
-	DEBUG_LOG(("NumPlayers %d\n", TheNetwork->getNumPlayers()));
+	DEBUG_LOG(("NumPlayers %d", TheNetwork->getNumPlayers()));
 
 	AsciiString winName;
 	Int i;
@@ -1376,7 +1318,7 @@ void MapTransferLoadScreen::init( GameInfo *game )
 
 		netSlot++;
 	}
-	
+
 	for(i = netSlot; i < MAX_SLOTS; ++i)
 	{
 		m_progressBars[i]->winHide(TRUE);
@@ -1415,10 +1357,11 @@ void MapTransferLoadScreen::update( Int percent )
 
 void MapTransferLoadScreen::processProgress(Int playerId, Int percentage, AsciiString stateStr)
 {
-	
+
 	if( percentage < 0 || percentage > 100 || playerId >= MAX_SLOTS || playerId < 0 || m_playerLookup[playerId] == -1)
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("Percentage %d was passed in for Player %d\n", percentage, playerId));
+		DEBUG_ASSERTCRASH(FALSE, ("Percentage %d was passed in for Player %d", percentage, playerId));
+		return;
 	}
 
 	if (m_oldProgress[playerId] == percentage)
@@ -1427,7 +1370,7 @@ void MapTransferLoadScreen::processProgress(Int playerId, Int percentage, AsciiS
 
 	Int translatedSlot = m_playerLookup[playerId];
 	if(m_progressBars[translatedSlot])
-		GadgetProgressBarSetProgress(m_progressBars[translatedSlot], percentage );	
+		GadgetProgressBarSetProgress(m_progressBars[translatedSlot], percentage );
 	if (m_progressText[translatedSlot])
 		GadgetStaticTextSetText(m_progressText[translatedSlot], TheGameText->fetch(stateStr));
 }

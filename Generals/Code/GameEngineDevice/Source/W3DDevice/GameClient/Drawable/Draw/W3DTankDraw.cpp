@@ -47,11 +47,6 @@
 #include "W3DDevice/GameClient/Module/W3DTankDraw.h"
 #include "WW3D2/matinfo.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 class Matrix3D;
 
@@ -71,11 +66,11 @@ W3DTankDrawModuleData::~W3DTankDrawModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DTankDrawModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void W3DTankDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   W3DModelDrawModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "TreadDebrisLeft", INI::parseAsciiString, NULL, offsetof(W3DTankDrawModuleData, m_treadDebrisNameLeft) },
 		{ "TreadDebrisRight", INI::parseAsciiString, NULL, offsetof(W3DTankDrawModuleData, m_treadDebrisNameRight) },
@@ -163,6 +158,9 @@ void W3DTankDraw::createEmitters( void )
 //-------------------------------------------------------------------------------------------------
 W3DTankDraw::~W3DTankDraw()
 {
+	// TheSuperHackers @fix Mauller 16/04/2025 Delete particle systems
+	tossEmitters();
+
 	for (Int i=0; i<MAX_TREADS_PER_TANK; i++)
 		if (m_treads[i].m_robj)
 			REF_PTR_RELEASE(m_treads[i].m_robj);
@@ -231,7 +229,12 @@ void W3DTankDraw::updateTreadPositions(Real uvDelta)
 		else
 		if (pTread->m_type == TREAD_RIGHT)	//this tread needs to scroll backwards
 			offset_u = pTread->m_materialSettings.customUVOffset.X - uvDelta;
-				
+		else
+		{
+			DEBUG_CRASH(("Unhandled case in W3DTankDraw::updateTreadPositions"));
+			offset_u = 0.0f;
+		}
+
 		// ensure coordinates of offset are in [0, 1] range:
 		offset_u = offset_u - WWMath::Floor(offset_u);
 		pTread->m_materialSettings.customUVOffset.Set(offset_u,0);
@@ -239,7 +242,7 @@ void W3DTankDraw::updateTreadPositions(Real uvDelta)
 	}
 }
 
-/**Grab pointers to the sub-meshes for each tread*/ 
+/**Grab pointers to the sub-meshes for each tread*/
 void W3DTankDraw::updateTreadObjects(void)
 {
 	RenderObjClass *robj=getRenderObject();
@@ -251,7 +254,7 @@ void W3DTankDraw::updateTreadObjects(void)
 
 	//Make sure this object has defined a speed for tread scrolling.
 	if (getW3DTankDrawModuleData() && getW3DTankDrawModuleData()->m_treadAnimationRate && robj)
-	{	
+	{
 		for (Int i=0; i < robj->Get_Num_Sub_Objects() && m_treadCount < MAX_TREADS_PER_TANK; i++)
 		{
 			RenderObjClass *subObj=robj->Get_Sub_Object(i);
@@ -307,12 +310,15 @@ void W3DTankDraw::onRenderObjRecreated(void)
 //-------------------------------------------------------------------------------------------------
 void W3DTankDraw::doDrawModule(const Matrix3D* transformMtx)
 {
+	W3DModelDraw::doDrawModule(transformMtx);
+
+	// TheSuperHackers @tweak Update the draw on every WW Sync only.
+	// All calculations are originally catered to a 30 fps logic step.
+	if (WW3D::Get_Sync_Frame_Time() == 0)
+		return;
+
 	const Real DEBRIS_THRESHOLD = 0.00001f;
 
- 	Bool frozen = TheTacticalView->isTimeFrozen() && !TheTacticalView->isCameraMovementFinished();
- 	frozen = frozen || TheScriptEngine->isTimeFrozenDebug() || TheScriptEngine->isTimeFrozenScript();
-	if (frozen)
-		return;
 	if (getRenderObject()==NULL) return;
 	if (getRenderObject() != m_prevRenderObj) {
 		updateTreadObjects();
@@ -375,7 +381,7 @@ void W3DTankDraw::doDrawModule(const Matrix3D* transformMtx)
 				Coord3D dir;
 				obj->getUnitDirectionVector2D(dir);
 				Real angleToGoal = dir.x * m_lastDirection.x + dir.y * m_lastDirection.y;
-				
+
 				if (fabs(1.0f-angleToGoal) > 0.00001f)	//check if difference in angle cosines is greater than some cutoff.
 				{
 					if (turn == TURN_NEGATIVE)	//turning right
@@ -401,8 +407,6 @@ void W3DTankDraw::doDrawModule(const Matrix3D* transformMtx)
 			}
 		}
 	}
-
-	W3DModelDraw::doDrawModule(transformMtx);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -414,7 +418,7 @@ void W3DTankDraw::crc( Xfer *xfer )
 	// extend base class
 	W3DModelDraw::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -434,7 +438,7 @@ void W3DTankDraw::xfer( Xfer *xfer )
 
 	// John A and Mark W say there is no data to save here
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -449,4 +453,4 @@ void W3DTankDraw::loadPostProcess( void )
 	tossEmitters();
 	createEmitters();
 
-}  // end loadPostProcess
+}

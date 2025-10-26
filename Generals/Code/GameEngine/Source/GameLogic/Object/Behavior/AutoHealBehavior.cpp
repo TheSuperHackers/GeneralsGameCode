@@ -24,7 +24,7 @@
 
 // FILE: AutoHealBehavior.cpp ///////////////////////////////////////////////////////////////////////
 // Author:
-// Desc:  
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -44,13 +44,14 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
 
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 struct AutoHealPlayerScanHelper
 {
 	KindOfMaskType m_kindOfToTest;
 	Object *m_theHealer;
-	ObjectPointerList *m_objectList;	
+	ObjectPointerList *m_objectList;
 };
 
 static void checkForAutoHeal( Object *testObj, void *userData )
@@ -185,7 +186,7 @@ UpdateSleepTime AutoHealBehavior::update( void )
 		return UPDATE_SLEEP_FOREVER;
 	}
 
-//DEBUG_LOG(("doing auto heal %d\n",TheGameLogic->getFrame()));
+//DEBUG_LOG(("doing auto heal %d",TheGameLogic->getFrame()));
 
 	if( d->m_affectsWholePlayer )
 	{
@@ -229,7 +230,7 @@ UpdateSleepTime AutoHealBehavior::update( void )
 	}
 	else
 	{
-		//EXPANDED SYSTEM -- HEAL FRIENDLIES IN RADIUS 
+		//EXPANDED SYSTEM -- HEAL FRIENDLIES IN RADIUS
 		// setup scan filters
 		PartitionFilterRelationship relationship( obj, PartitionFilterRelationship::ALLOW_ALLIES );
 		PartitionFilterSameMapStatus filterMapStatus(obj);
@@ -256,8 +257,8 @@ UpdateSleepTime AutoHealBehavior::update( void )
 						if ( animTemplate )
 						{
 							Coord3D iconPosition;
-							iconPosition.set(obj->getPosition()->x, 
-															 obj->getPosition()->y, 
+							iconPosition.set(obj->getPosition()->x,
+															 obj->getPosition()->y,
 															 obj->getPosition()->z + obj->getGeometryInfo().getMaxHeightAbovePosition() );
 							TheInGameUI->addWorldAnimation( animTemplate,	&iconPosition, WORLD_ANIM_FADE_ON_EXPIRE,
 																							TheGlobalData->m_getHealedAnimationDisplayTimeInSeconds,
@@ -265,14 +266,14 @@ UpdateSleepTime AutoHealBehavior::update( void )
 						}
 					}
 				}
-			
+
 			}
-		}  // end for obj
+		}
 
 		return UPDATE_SLEEP( d->m_singleBurst ? UPDATE_SLEEP_FOREVER : d->m_healingDelay );
 	}
 }
- 
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void AutoHealBehavior::pulseHealObject( Object *obj )
@@ -282,7 +283,7 @@ void AutoHealBehavior::pulseHealObject( Object *obj )
 
 	const AutoHealBehaviorModuleData *data = getAutoHealBehaviorModuleData();
 
-	
+
 	if ( data->m_radius == 0.0f )
 		obj->attemptHealing(data->m_healingAmount, getObject());
 	else
@@ -297,7 +298,7 @@ void AutoHealBehavior::pulseHealObject( Object *obj )
 			system->setPosition( obj->getPosition() );
 		}
 	}
-	
+
 	m_soonestHealFrame = TheGameLogic->getFrame() + data->m_healingDelay;// In case onDamage tries to wake us up early
 }
 
@@ -313,7 +314,7 @@ void AutoHealBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpgradeMux::upgradeMuxCRC( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -343,7 +344,7 @@ void AutoHealBehavior::xfer( Xfer *xfer )
 	// stopped
 	xfer->xferBool( &m_stopped );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -357,4 +358,4 @@ void AutoHealBehavior::loadPostProcess( void )
 	// extend base class
 	UpgradeMux::upgradeMuxLoadPostProcess();
 
-}  // end loadPostProcess
+}

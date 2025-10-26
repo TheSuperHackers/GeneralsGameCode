@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __COUNTERMEASURES_BEHAVIOR_H
-#define __COUNTERMEASURES_BEHAVIOR_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameClient/ParticleSys.h"
 #include "GameLogic/Module/BehaviorModule.h"
@@ -75,9 +72,9 @@ public:
 		m_volleyVelocityFactor  = 1.0f;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "FlareTemplateName",			INI::parseAsciiString,					NULL, offsetof( CountermeasuresBehaviorModuleData, m_flareTemplateName ) },
 			{ "FlareBoneBaseName",			INI::parseAsciiString,					NULL, offsetof( CountermeasuresBehaviorModuleData, m_flareBoneBaseName ) },
@@ -146,12 +143,12 @@ public:
 	virtual ObjectID calculateCountermeasureToDivertTo( const Object& victim );
 	virtual void reloadCountermeasures();
 	virtual Bool isActive() const;
-	
+
 
 protected:
 
-	virtual void upgradeImplementation() 
-	{ 
+	virtual void upgradeImplementation()
+	{
 		setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 	}
 
@@ -177,7 +174,7 @@ protected:
 	}
 
 	inline Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
-	
+
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 	void launchVolley();
@@ -192,6 +189,3 @@ private:
 	UnsignedInt m_nextVolleyFrame;					//Frame the next volley is fired.
 	UnsignedInt m_reloadFrame;							//The frame countermeasures will be ready to use again.
 };
-
-#endif // __COUNTERMEASURES_BEHAVIOR_H
-

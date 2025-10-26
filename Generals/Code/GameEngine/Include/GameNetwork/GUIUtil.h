@@ -27,9 +27,6 @@
 
 #pragma once
 
-#ifndef __GUIUTIL_H__
-#define __GUIUTIL_H__
-
 class GameWindow;
 class GameInfo;
 
@@ -45,12 +42,10 @@ Bool AreSlotListUpdatesEnabled( void );
 
 void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 										GameWindow *comboColor[], GameWindow *comboPlayerTemplate[],
-										GameWindow *comboTeam[], GameWindow *buttonAccept[], 
+										GameWindow *comboTeam[], GameWindow *buttonAccept[],
 										GameWindow *buttonStart, GameWindow *buttonMapStartPosition[] );
 
 void EnableAcceptControls(Bool Enabled, GameInfo *myGame, GameWindow *comboPlayer[],
 										GameWindow *comboColor[], GameWindow *comboPlayerTemplate[],
 										GameWindow *comboTeam[], GameWindow *buttonAccept[], GameWindow *buttonStart,
 										GameWindow *buttonMapStartPosition[], Int slotNum = -1);
-
-#endif // __GUIUTIL_H__

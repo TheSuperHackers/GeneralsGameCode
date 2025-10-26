@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: RampTool.cpp 
+// FILE: RampTool.cpp
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -131,9 +131,9 @@ void RampTool::applyRamp(CWorldBuilderDoc* pDoc)
 	VecHeightMapIndexes indices;
 
 	WorldHeightMapEdit *worldHeightDup = pDoc->GetHeightMap()->duplicate();
-	
+
 	Real width = TheRampOptions->getRampWidth();
-	
+
 	BuildRectFromSegmentAndWidth(&mStartPoint, &mEndPoint, width,
 															 &bl, &tl, &br, &tr);
 
@@ -148,8 +148,8 @@ void RampTool::applyRamp(CWorldBuilderDoc* pDoc)
 	}
 
 	/*
-		This part is pretty straightforward. Determine the U value for the shortest segment from the 
-		index's actual location to the segments from mStartPoint to mEndPoint, and then apply a 
+		This part is pretty straightforward. Determine the U value for the shortest segment from the
+		index's actual location to the segments from mStartPoint to mEndPoint, and then apply a
 		linear gradient factor according to the height from the beginning to the end of mStartPoint
 		and mEndPoint.
 	*/
@@ -157,15 +157,15 @@ void RampTool::applyRamp(CWorldBuilderDoc* pDoc)
 	for (int i = 0; i < indiceCount; ++i) {
 		Coord3D pt;
 		pDoc->getCoordFromCellIndex(indices[i], &pt);
-		
+
 		Real uVal;
 		Coord2D start = { mStartPoint.x, mStartPoint.y };
 		Coord2D end = { mEndPoint.x, mEndPoint.y };
 		Coord2D pt2D = { pt.x, pt.y };
-		
+
 		ShortestDistancePointToSegment2D(&start, &end, &pt2D, NULL, NULL, &uVal);
 		Real height = mStartPoint.z + uVal * (mEndPoint.z - mStartPoint.z);
-		
+
 		worldHeightDup->setHeight(indices[i].x, indices[i].y, (UnsignedByte) (height / MAP_HEIGHT_SCALE));
 	}
 

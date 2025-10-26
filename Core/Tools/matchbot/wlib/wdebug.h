@@ -50,8 +50,7 @@ will you be ready to leave grasshopper.
 
 \*****************************************************************************/
 
-#ifndef WDEBUG_HEADER
-#define WDEBUG_HEADER
+#pragma once
 
 #define USE_DEBUG_SEM
 
@@ -145,7 +144,7 @@ extern CritSec DebugLibSemaphore;
   if (MsgManager::infoStream()) \
     (*(MsgManager::infoStream())) << X;\
   DEBUGUNLOCK; \
-}    
+}
 
 // Just get a stream to the warning device, no extra junk
 #define WRNSTREAM(X)\
@@ -154,7 +153,7 @@ extern CritSec DebugLibSemaphore;
   if (MsgManager::warnStream()) \
     (*(MsgManager::warnStream())) << X;\
   DEBUGUNLOCK; \
-}    
+}
 
 // Just get a stream to the error device, no extra junk
 #define ERRSTREAM(X)\
@@ -163,7 +162,7 @@ extern CritSec DebugLibSemaphore;
   if (MsgManager::errorStream()) \
     (*(MsgManager::errorStream())) << X;\
   DEBUGUNLOCK; \
-}    
+}
 
 #ifndef DEBUG
 
@@ -197,6 +196,7 @@ extern CritSec DebugLibSemaphore;
   __s << __FILE__ << "[" << __LINE__ << \
        "]: " << ##V << " = " << V << '\n' << '\0';\
   OutputDebugString(STRSTREAM_CSTR(__s));\
+  OutputDebugString("\n");\
   DEBUGUNLOCK; \
 }
 
@@ -211,6 +211,7 @@ extern CritSec DebugLibSemaphore;
   __s << "DBG [" << __FILE__ <<  \
     " " << __LINE__ << "] " << X << '\n' << '\0';\
   OutputDebugString(STRSTREAM_CSTR(__s));\
+  OutputDebugString("\n");\
   DEBUGUNLOCK; \
 }
 
@@ -223,8 +224,9 @@ extern CritSec DebugLibSemaphore;
   strstream __s;\
   __s << X << '\0';\
   OutputDebugString(STRSTREAM_CSTR(__s));\
+  OutputDebugString("\n");\
   DEBUGUNLOCK; \
-}    
+}
 
 // Verbosely execute a statement
 #define VERBOSE(X)\
@@ -237,6 +239,7 @@ extern CritSec DebugLibSemaphore;
   __s  << __FILE__ << "[" << __LINE__ << \
      "]: " << ##X << '\n' << '\0';\
   OutputDebugString(STRSTREAM_CSTR(__s));\
+  OutputDebugString("\n");\
   DEBUGUNLOCK; \
 }
 
@@ -269,7 +272,7 @@ extern CritSec DebugLibSemaphore;
   if (MsgManager::debugStream()) \
     (*(MsgManager::debugStream())) << X;\
   DEBUGUNLOCK; \
-}    
+}
 
 // Verbosely execute a statement
 #define VERBOSE(X)\
@@ -310,5 +313,3 @@ class MsgManager
    static ostream            *warnStream(void);
    static ostream            *errorStream(void);
 };
-
-#endif

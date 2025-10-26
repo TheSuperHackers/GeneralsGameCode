@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __TWIDDLER_H
-#define __TWIDDLER_H
 
 #include "definition.h"
 #include "definitionclassids.h"
@@ -68,7 +63,7 @@ public:
 	/////////////////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////////////////
-	
+
 	//
 	// Type identification
 	//
@@ -81,7 +76,7 @@ public:
 	bool									Save (ChunkSaveClass &csave);
 	bool									Load (ChunkLoadClass &cload);
 	const PersistFactoryClass &	Get_Factory (void) const;
-	
+
 	//
 	//	Twiddler specific
 	//
@@ -124,7 +119,3 @@ TwiddlerClass::Set_Indirect_Class_ID (uint32 class_id)
 	m_IndirectClassID = class_id;
 	return ;
 }
-
-
-#endif //__TWIDDLER_H
-

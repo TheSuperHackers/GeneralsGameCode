@@ -24,12 +24,12 @@
 
 // FILE: CashBountyPower.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Aug 2002
@@ -37,7 +37,7 @@
 //	Filename: 	CashBountyPower.cpp
 //
 //	author:		Steven Johnson
-//	
+//
 //	purpose:
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ CashBountyPowerModuleData::CashBountyPowerModuleData()
 	m_upgrades.clear();
 #endif
 	m_defaultBounty = 0.0;
-} 
+}
 
 #ifdef NOT_IN_USE
 //-------------------------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ static void parseBountyUpgradePair( INI* ini, void * /*instance*/, void *store, 
 
 	std::vector<CashBountyPowerModuleData::Upgrades>* s = (std::vector<CashBountyPowerModuleData::Upgrades>*)store;
 	s->push_back(up);
-} 
+}
 #endif
 
 //-------------------------------------------------------------------------------------------------
@@ -100,17 +100,17 @@ static void parseBountyUpgradePair( INI* ini, void * /*instance*/, void *store, 
 {
 	SpecialPowerModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 #ifdef NOT_IN_USE
 		{ "UpgradeBounty", parseBountyUpgradePair, NULL, offsetof( CashBountyPowerModuleData, m_upgrades ) },
 #endif
 		{ "Bounty",			INI::parsePercentToReal, NULL, offsetof( CashBountyPowerModuleData, m_defaultBounty ) },
-		{ 0, 0, 0, 0 } 
+		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,17 +118,17 @@ static void parseBountyUpgradePair( INI* ini, void * /*instance*/, void *store, 
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CashBountyPower::CashBountyPower( Thing *thing, const ModuleData* moduleData ) : 
+CashBountyPower::CashBountyPower( Thing *thing, const ModuleData* moduleData ) :
 							SpecialPowerModule( thing, moduleData )
 {
-}  // end CashBountyPower
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 CashBountyPower::~CashBountyPower()
 {
 
-}  // end ~CashBountyPower
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ Real CashBountyPower::findBounty() const
 	const Player* controller = getObject()->getControllingPlayer();
 	if (controller != NULL)
 	{
-		for (std::vector<CashBountyPowerModuleData::Upgrades>::const_iterator it = d->m_upgrades.begin(); 
+		for (std::vector<CashBountyPowerModuleData::Upgrades>::const_iterator it = d->m_upgrades.begin();
 					it != d->m_upgrades.end();
 					++it)
 		{
@@ -188,7 +188,7 @@ void CashBountyPower::crc( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -206,7 +206,7 @@ void CashBountyPower::xfer( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -217,4 +217,4 @@ void CashBountyPower::loadPostProcess( void )
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

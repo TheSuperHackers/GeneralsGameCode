@@ -11,7 +11,6 @@ set(WORLDBUILDER_SRC
     "src/BuildListTool.cpp"
     "src/CameraOptions.cpp"
     "src/CButtonShowColor.cpp"
-    "src/CButtonShowColor.h"
     "src/CellWidth.cpp"
     "src/CFixTeamOwnerDialog.cpp"
     "src/ContourOptions.cpp"
@@ -111,6 +110,7 @@ set(WORLDBUILDER_SRC
     "include/BuildList.h"
     "include/BuildListTool.h"
     "include/CameraOptions.h"
+    "include/CButtonShowColor.h"
     "include/CellWidth.h"
     "include/CFixTeamOwnerDialog.h"
     "include/ContourOptions.h"
@@ -204,24 +204,22 @@ add_executable(z_worldbuilder WIN32)
 target_sources(z_worldbuilder PRIVATE ${WORLDBUILDER_SRC})
 
 target_include_directories(z_worldbuilder PRIVATE
-    .
+    ${CMAKE_CURRENT_SOURCE_DIR}
     include
     res
 )
 
 target_link_libraries(z_worldbuilder PRIVATE
+    core_debug
+    core_profile
     d3d8lib
     dbghelplib
     imm32
     vfw32
     winmm
     core_browserdispatch
-    z_debug
     z_gameengine
     z_gameenginedevice
-    z_profile
-    zi_gameengine_include
-    zi_gameenginedevice_include
     zi_always
 )
 

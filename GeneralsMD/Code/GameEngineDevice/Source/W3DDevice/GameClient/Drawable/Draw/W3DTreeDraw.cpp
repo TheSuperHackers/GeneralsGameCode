@@ -24,7 +24,7 @@
 
 // FILE: W3DTreeDraw.cpp ////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, December 2001
-// Desc:   Tracer drawing
+// Desc:   Tree draw
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -38,11 +38,6 @@
 #include "W3DDevice/GameClient/Module/W3DTreeDraw.h"
 #include "W3DDevice/GameClient/BaseHeightMap.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 W3DTreeDrawModuleData::W3DTreeDrawModuleData() :
@@ -78,10 +73,10 @@ W3DTreeDrawModuleData::~W3DTreeDrawModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DTreeDrawModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void W3DTreeDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   ModuleData::buildFieldParse(p);
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "ModelName", INI::parseAsciiString, NULL, offsetof(W3DTreeDrawModuleData, m_modelName) },
 		{ "TextureName", INI::parseAsciiString, NULL, offsetof(W3DTreeDrawModuleData, m_textureName) },
@@ -90,7 +85,7 @@ void W3DTreeDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "MoveOutwardDistanceFactor", INI::parseReal, NULL, offsetof(W3DTreeDrawModuleData, m_maxOutwardMovement) },
 		{ "DarkeningFactor", INI::parseReal, NULL, offsetof(W3DTreeDrawModuleData, m_darkening) },
 
-// Topple parameters [7/7/2003]		
+// Topple parameters [7/7/2003]
 		{ "ToppleFX",	INI::parseFXList, NULL, offsetof( W3DTreeDrawModuleData, m_toppleFX ) },
 		{ "BounceFX",	INI::parseFXList, NULL, offsetof( W3DTreeDrawModuleData, m_bounceFX ) },
 		{ "StumpName",	INI::parseAsciiString, NULL, offsetof( W3DTreeDrawModuleData, m_stumpName ) },
@@ -114,51 +109,29 @@ void W3DTreeDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DTreeDraw::W3DTreeDraw( Thing *thing, const ModuleData* moduleData ) : DrawModule( thing, moduleData ),
-m_treeAdded(false)
+W3DTreeDraw::W3DTreeDraw( Thing *thing, const ModuleData* moduleData ) : DrawModule( thing, moduleData )
 {
-
-}  // end W3DTreeDraw
-
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 W3DTreeDraw::~W3DTreeDraw( void )
 {
+	addToTreeBuffer();
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DTreeDraw::reactToTransformChange( const Matrix3D *oldMtx, 
-																							 const Coord3D *oldPos, 
-																							 Real oldAngle )
+void W3DTreeDraw::addToTreeBuffer()
 {
-	Drawable *draw = getDrawable();
-	if (m_treeAdded) {
-		return;
-	}
-	if (draw->getPosition()->x==0.0f && draw->getPosition()->y == 0.0f) {
-		return;
-	}
-	m_treeAdded = true;
 	const W3DTreeDrawModuleData *moduleData = getW3DTreeDrawModuleData();
-	if (!moduleData) {
-		return;
-	}
+	const Drawable *draw = getDrawable();
+
+	DEBUG_ASSERTCRASH(draw->isPositioned(), ("W3DTreeDraw::addToTreeBuffer - This tree was not positioned!"));
+
 	Real scale = draw->getScale();
 	Real scaleRandomness = draw->getTemplate()->getInstanceScaleFuzziness();
 	scaleRandomness = 0.0f; // We use the scale fuzziness inside WB to generate random scales, so they don't change at load time. jba. [4/22/2003]
-	TheTerrainRenderObject->addTree(draw->getID(), *draw->getPosition(),
-		scale, draw->getOrientation(), scaleRandomness, moduleData);
-	
-}
-
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-void W3DTreeDraw::doDrawModule(const Matrix3D* transformMtx)
-{
-
-	return;
-
+	TheTerrainRenderObject->addTree(draw->getID(), *draw->getPosition(), scale, draw->getOrientation(), scaleRandomness, moduleData);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -170,7 +143,7 @@ void W3DTreeDraw::crc( Xfer *xfer )
 	// extend base class
 	DrawModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -190,7 +163,7 @@ void W3DTreeDraw::xfer( Xfer *xfer )
 
 	// no data to save here, nobody will ever notice
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -201,5 +174,5 @@ void W3DTreeDraw::loadPostProcess( void )
 	// extend base class
 	DrawModule::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

@@ -24,12 +24,12 @@
 
 // FILE: ProgressBarProperties.cpp ////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -80,7 +80,7 @@ static LRESULT CALLBACK progressBarPropertiesCallback( HWND hWndDialog,
 	// are designed to have controls doing the same functionality
 	// and names
 	//
-	if( HandleCommonDialogMessages( hWndDialog, message, 
+	if( HandleCommonDialogMessages( hWndDialog, message,
 																	wParam, lParam, &returnCode ) == TRUE )
 		return returnCode;
 
@@ -93,7 +93,7 @@ static LRESULT CALLBACK progressBarPropertiesCallback( HWND hWndDialog,
 //			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 //			HWND hWndControl = (HWND)lParam;  // control window handle
- 
+
       switch( controlID )
       {
 
@@ -181,12 +181,12 @@ static LRESULT CALLBACK progressBarPropertiesCallback( HWND hWndDialog,
 						info = GetStateInfo( PROGRESS_BAR_HILITE_BAR_SMALL_CENTER );
 						GadgetProgressBarSetHiliteBarImageSmallCenter( window, info->image );
 
-					}  // end if
+					}
 
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end OK
+				}
 
 				// --------------------------------------------------------------------
         case IDCANCEL:
@@ -195,13 +195,13 @@ static LRESULT CALLBACK progressBarPropertiesCallback( HWND hWndDialog,
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end cancel
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
     case WM_CLOSE:
@@ -210,15 +210,15 @@ static LRESULT CALLBACK progressBarPropertiesCallback( HWND hWndDialog,
       DestroyWindow( hWndDialog );
       return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end progressBarPropertiesCallback
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -327,7 +327,7 @@ HWND InitProgressBarPropertiesDialog( GameWindow *window )
 
 	return dialog;
 
-}  // end InitProgressBarPropertiesDialog
+}
 
 
 

@@ -33,7 +33,7 @@
  */
 FrameDataManager::FrameDataManager(Bool isLocal) {
 	m_isLocal = isLocal;
-	
+
 	m_frameData = NEW FrameData[FRAME_DATA_LENGTH];
 
 	m_isQuitting = FALSE;
@@ -47,12 +47,8 @@ FrameDataManager::~FrameDataManager() {
 	for (Int i = 0; i < FRAME_DATA_LENGTH; ++i) {
 		m_frameData[i].reset();
 	}
-
-	if (m_frameData)
-	{
-		delete[] m_frameData;
-		m_frameData = NULL;
-	}
+	delete[] m_frameData;
+	m_frameData = NULL;
 }
 
 /**
@@ -90,7 +86,7 @@ void FrameDataManager::update() {
 void FrameDataManager::addNetCommandMsg(NetCommandMsg *msg) {
 	UnsignedInt frame = msg->getExecutionFrame();
 	UnsignedInt frameindex = frame % FRAME_DATA_LENGTH;
-	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("FrameDataManager::addNetCommandMsg - about to add a command of type %s for frame %d, frame index %d\n", GetAsciiNetCommandType(msg->getNetCommandType()).str(), frame, frameindex));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("FrameDataManager::addNetCommandMsg - about to add a command of type %s for frame %d, frame index %d", GetNetCommandTypeAsString(msg->getNetCommandType()), frame, frameindex));
 	m_frameData[frameindex].addCommand(msg);
 
 	if (m_isLocal) {
@@ -168,7 +164,7 @@ UnsignedInt FrameDataManager::getFrameCommandCount(UnsignedInt frame) {
 void FrameDataManager::zeroFrames(UnsignedInt startingFrame, UnsignedInt numFrames) {
 	UnsignedInt frameIndex = startingFrame % FRAME_DATA_LENGTH;
 	for (UnsignedInt i = 0; i < numFrames; ++i) {
-		//DEBUG_LOG(("Calling zeroFrame for frame index %d\n", frameIndex));
+		//DEBUG_LOG(("Calling zeroFrame for frame index %d", frameIndex));
 		m_frameData[frameIndex].zeroFrame();
 		++frameIndex;
 		frameIndex = frameIndex % FRAME_DATA_LENGTH;

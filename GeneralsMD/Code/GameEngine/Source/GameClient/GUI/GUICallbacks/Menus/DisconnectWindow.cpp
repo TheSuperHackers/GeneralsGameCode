@@ -115,17 +115,17 @@ void ShowDisconnectWindow( void )
 
 		// init it
 		InitDisconnectWindow();
-	
+
 		// show it
 		disconnectMenuLayout->hide( FALSE );
 
-	}  // end if
+	}
 	else
 	{
 
 		disconnectMenuLayout->hide( FALSE );
 
-	}  // end else
+	}
 
 	buttonVotePlayer1Window->winEnable(TRUE);
 	buttonVotePlayer2Window->winEnable(TRUE);
@@ -141,7 +141,7 @@ void ShowDisconnectWindow( void )
 	GadgetListBoxAddEntryText(textDisplayWindow, TheGameText->fetch("GUI:InternetDisconnectionMenuBody1"),
 		GameMakeColor(255,255,255,255), -1);
 
-}  // end ToggleQuitMenu
+}
 
 //------------------------------------------------------
 /** Hide the Disconnect Screen */
@@ -158,19 +158,19 @@ void HideDisconnectWindow( void )
 
 		// init it
 		InitDisconnectWindow();
-	
+
 		// show it
 		disconnectMenuLayout->hide( TRUE );
 
-	}  // end if
+	}
 	else
 	{
 
 		disconnectMenuLayout->hide( TRUE );
 
-	}  // end else
+	}
 
-}  // end ToggleQuitMenu
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Input callback for the control bar parent */
@@ -181,15 +181,15 @@ WindowMsgHandledType DisconnectControlInput( GameWindow *window, UnsignedInt msg
 
 	return MSG_IGNORED;
 
-} // end DisconnectControlInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** System callback for the control bar parent */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType DisconnectControlSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType DisconnectControlSystem( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		//---------------------------------------------------------------------------------------------
@@ -227,11 +227,11 @@ WindowMsgHandledType DisconnectControlSystem( GameWindow *window, UnsignedInt ms
 
 			break;
 
-		}  // end button selected
+		}
 
 		case GEM_EDIT_DONE:
 		{
-//			DEBUG_LOG(("DisconnectControlSystem - got GEM_EDIT_DONE.\n"));
+//			DEBUG_LOG(("DisconnectControlSystem - got GEM_EDIT_DONE."));
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 
@@ -241,7 +241,7 @@ WindowMsgHandledType DisconnectControlSystem( GameWindow *window, UnsignedInt ms
 			{
 				UnicodeString txtInput;
 
-//				DEBUG_LOG(("DisconnectControlSystem - GEM_EDIT_DONE was from the text entry control.\n"));
+//				DEBUG_LOG(("DisconnectControlSystem - GEM_EDIT_DONE was from the text entry control."));
 
 				// read the user's input
 				txtInput.set(GadgetTextEntryGetText( textEntryWindow ));
@@ -251,11 +251,11 @@ WindowMsgHandledType DisconnectControlSystem( GameWindow *window, UnsignedInt ms
 				txtInput.trim();
 				// Echo the user's input to the chat window
 				if (!txtInput.isEmpty()) {
-//					DEBUG_LOG(("DisconnectControlSystem - sending string %ls\n", txtInput.str()));
+//					DEBUG_LOG(("DisconnectControlSystem - sending string %ls", txtInput.str()));
 					TheDisconnectMenu->sendChat(txtInput);
 				}
 
-			}// if ( controlID == textEntryChatID )
+			}
 			break;
 		}
 
@@ -263,9 +263,9 @@ WindowMsgHandledType DisconnectControlSystem( GameWindow *window, UnsignedInt ms
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end ControlBarSystem
+}
 

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __RAILROADGUIDE_AI_UPDATE_H_
-#define __RAILROADGUIDE_AI_UPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
@@ -53,7 +50,7 @@ public:
 	{
 		PhysicsBehaviorModuleData::buildFieldParse( p );
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "PathPrefixName",		INI::parseAsciiString, NULL,	offsetof( RailroadBehaviorModuleData, m_pathPrefixName ) },
 			{ "CrashFXTemplateName",		INI::parseAsciiString, NULL,	offsetof( RailroadBehaviorModuleData, m_CrashFXTemplateName ) },
@@ -77,7 +74,7 @@ public:
 
 		p.add( dataFieldParse );
 
-	}  // end buildFieldParse
+	}
 
 	TemplateNameList m_carriageTemplateNameData;
 	AsciiString m_pathPrefixName;		///< prefix to use for waypont start and end points we'll look for
@@ -93,13 +90,13 @@ public:
 	UnsignedInt m_waitAtStationTime;
 	AudioEventRTS			m_runningSound;
 	AudioEventRTS			m_clicketyClackSound;
-	AudioEventRTS				m_bigMetalImpactDefaultSound;		
-	AudioEventRTS				m_smallMetalImpactDefaultSound;	
-	AudioEventRTS				m_meatyImpactDefaultSound;			
-	AudioEventRTS				m_whistleSound;						
+	AudioEventRTS				m_bigMetalImpactDefaultSound;
+	AudioEventRTS				m_smallMetalImpactDefaultSound;
+	AudioEventRTS				m_meatyImpactDefaultSound;
+	AudioEventRTS				m_whistleSound;
 };
 //-------------------------------------------------------------------------------------------------
- 
+
 //-------------------------------------------------------------------------------------------------
 
 
@@ -129,7 +126,7 @@ struct TrackPoint
 	};
 
 
-	const Int getHandle( void )
+	Int getHandle( void )
 	{
 		return m_handle;
 	};
@@ -158,9 +155,9 @@ struct TrainTrack
 	};
 
 
-	void clear( void ) 
-	{ 
-		m_pointList.clear(); 
+	void clear( void )
+	{
+		m_pointList.clear();
 		m_isLooping = FALSE;
 		m_isValid = FALSE;
 		m_refCount = 0;
@@ -171,10 +168,10 @@ struct TrainTrack
 	Bool m_isValid;
 	Real m_length;
 
-	void incReference(); 
-	Bool releaseReference(); 
+	void incReference();
+	Bool releaseReference();
 
-	// To protect the track form ever going out of sync between cars on the same train... 
+	// To protect the track form ever going out of sync between cars on the same train...
 	// I restrict write access to the first referencer, before a second one is added (the locomotive)
 	TrackPointList* getWritablePointList( void ) { return m_refCount == 1 ? &m_pointList : NULL; };
 	const TrackPointList* getPointList( void ) { return &m_pointList; };
@@ -215,7 +212,7 @@ public:
 
 	typedef std::vector<AsciiString> TemplateNameVector;
 	typedef TemplateNameVector::const_iterator TemplateNameIterator;;
-	
+
 
 
 	//UpdateModule methods
@@ -271,10 +268,10 @@ protected:
 	AudioEventRTS			m_clicketyClackSound;
 	AudioEventRTS			m_runningSound;
 	AudioHandle				m_runningSoundHandle;
-	
+
 	TrainTrack *m_track;
 
-	Int m_currentPointHandle; 
+	Int m_currentPointHandle;
 	Int m_waitAtStationTimer;
 
 	//Flags
@@ -283,12 +280,12 @@ protected:
 	Bool m_trackDataLoaded; ///< have I TRIED to load track data, yet? I only try once!
 	Bool m_waitingInWings; /// I have not entered the real track yet, so leave me alone
 	Bool m_endOfLine;				/// I have reached the end of a non looping track
-	Bool m_isLocomotive; ///< Am I a locomotive, 
-	Bool m_isLeadCarraige; ///< Am the carraige in front,  
-	Int m_wantsToBeLeadCarraige; ///< Am the carraige in front,  
+	Bool m_isLocomotive; ///< Am I a locomotive,
+	Bool m_isLeadCarraige; ///< Am the carraige in front,
+	Int m_wantsToBeLeadCarraige; ///< Am the carraige in front,
 	Bool m_disembark; ///< If I wait at a station, I should also evacuate everybody when I get theres
-	Bool m_inTunnel; ///< Am I in a tunnel, so I wil not snap to ground height, until the next waypoint, 
-												//  i.e. do I provide the movement and scheduling AI for m_trailerID 
+	Bool m_inTunnel; ///< Am I in a tunnel, so I wil not snap to ground height, until the next waypoint,
+												//  i.e. do I provide the movement and scheduling AI for m_trailerID
 												//  And therefore for his and his and his..........
 
 	ConductorState m_conductorState;
@@ -297,7 +294,3 @@ protected:
 
 
 };
-
-
-#endif  // end __RAILROAD_GUIDE_AI_UPDATE_H_
-

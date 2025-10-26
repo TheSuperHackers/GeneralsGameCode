@@ -31,9 +31,6 @@
 
 #pragma once
 
-#ifndef __OVERCHARGE_BEHAVIOR_H_
-#define __OVERCHARGE_BEHAVIOR_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DamageModule.h"
@@ -70,7 +67,7 @@ public:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class OverchargeBehavior : public UpdateModule, 
+class OverchargeBehavior : public UpdateModule,
 													 public DamageModuleInterface,
 													 public OverchargeBehaviorInterface
 {
@@ -96,8 +93,8 @@ public:
 	// DamageModuleInterface
 	virtual void onDamage( DamageInfo *damageInfo );
 	virtual void onHealing( DamageInfo *damageInfo ) { }
-	virtual void onBodyDamageStateChange( const DamageInfo *damageInfo, 
-																				BodyDamageType oldState, 
+	virtual void onBodyDamageStateChange( const DamageInfo *damageInfo,
+																				BodyDamageType oldState,
 																				BodyDamageType newState ) { }
 
 
@@ -114,5 +111,3 @@ protected:
 	Bool m_overchargeActive;				///< Overcharge is currently on/off for this object
 
 };
-
-#endif  // end __OVERCHARGE_BEHAVIOR_H_

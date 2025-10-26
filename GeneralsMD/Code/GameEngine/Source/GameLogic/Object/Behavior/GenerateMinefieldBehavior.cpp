@@ -24,7 +24,7 @@
 
 // FILE: GenerateMinefieldBehavior.cpp ///////////////////////////////////////////////////////////////////////
 // Author:
-// Desc:  
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -54,11 +54,6 @@
 #include "GameLogic/Weapon.h"
 #include "GameClient/Drawable.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 GenerateMinefieldBehaviorModuleData::GenerateMinefieldBehaviorModuleData()
@@ -81,10 +76,10 @@ GenerateMinefieldBehaviorModuleData::GenerateMinefieldBehaviorModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void GenerateMinefieldBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void GenerateMinefieldBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "MineName", INI::parseAsciiString,	NULL, offsetof( GenerateMinefieldBehaviorModuleData, m_mineName ) },
 		{ "UpgradedMineName", INI::parseAsciiString,	NULL, offsetof( GenerateMinefieldBehaviorModuleData, m_mineNameUpgraded ) },
@@ -270,7 +265,7 @@ void GenerateMinefieldBehavior::placeMinesAlongLine(const Coord3D& posStart, con
 		pt.z = TheTerrainLogic->getGroundHeight( pt.x, pt.y );
 		offsetBySmallRandomAmount(pt, mineJitter);
 		placeMineAt(pt, mineTemplate, team, obj);
-	} 
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -331,7 +326,7 @@ void GenerateMinefieldBehavior::placeMinesAroundCircle(const Coord3D& pos, Real 
 		pt.z = TheTerrainLogic->getGroundHeight( pt.x, pt.y );
 		offsetBySmallRandomAmount(pt, mineJitter);
 		placeMineAt(pt, mineTemplate, team, obj);
-	} 
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -354,7 +349,7 @@ void GenerateMinefieldBehavior::placeMinesInFootprint(const GeometryInfo& geom, 
 	{
 		Coord3D pt;
 		Int maxRetry = 100;
-		do 
+		do
 		{
 			geom.makeRandomOffsetWithinFootprint(pt);
 			pt.x += target->x;
@@ -393,7 +388,7 @@ void GenerateMinefieldBehavior::placeMines()
 
 	if (!mineTemplate)
 	{
-		DEBUG_CRASH(("mine %s not found\n",d->m_mineName.str()));
+		DEBUG_CRASH(("mine %s not found",d->m_mineName.str()));
 		return;
 	}
 
@@ -461,7 +456,7 @@ void GenerateMinefieldBehavior::placeMines()
 UpdateSleepTime GenerateMinefieldBehavior::update()
 {
 	// Test to see if we need to replace the current mines with upgraded ones
-	if (!m_upgraded && getGenerateMinefieldBehaviorModuleData()->m_upgradable) 
+	if (!m_upgraded && getGenerateMinefieldBehaviorModuleData()->m_upgradable)
 	{
 		if (m_generated)
 		{
@@ -475,7 +470,7 @@ UpdateSleepTime GenerateMinefieldBehavior::update()
 				if (objMask.testForAny(upgradeMask))
 				{
 					m_upgraded = TRUE;
-					
+
 					// Remove all old mine objects if present
 					for (std::list<ObjectID>::iterator it = m_mineList.begin(); it != m_mineList.end(); ++it)
 					{
@@ -513,7 +508,7 @@ void GenerateMinefieldBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpgradeMux::upgradeMuxCRC( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -538,7 +533,7 @@ void GenerateMinefieldBehavior::xfer( Xfer *xfer )
 	xfer->xferBool( &m_generated );
 	xfer->xferBool( &m_hasTarget );
 	xfer->xferBool( &m_upgraded );
-	
+
 	xfer->xferCoord3D( &m_target );
 
 		// spaces info count and objectID data
@@ -552,9 +547,9 @@ void GenerateMinefieldBehavior::xfer( Xfer *xfer )
 		{
 			// object in this space
 			xfer->xferObjectID( &(*it) );
-		}  // end for, it
+		}
 
-	}  // end if, save
+	}
 	else if( xfer->getXferMode() == XFER_LOAD )
 	{
 		ObjectID objectID;
@@ -569,10 +564,10 @@ void GenerateMinefieldBehavior::xfer( Xfer *xfer )
 			xfer->xferObjectID( &objectID );
 
 			m_mineList.push_back(objectID);
-		}  // end for, i
-	}  // end else, load
-	
-}  // end xfer
+		}
+	}
+
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -586,4 +581,4 @@ void GenerateMinefieldBehavior::loadPostProcess( void )
 	// extend base class
 	UpgradeMux::upgradeMuxLoadPostProcess();
 
-}  // end loadPostProcess
+}

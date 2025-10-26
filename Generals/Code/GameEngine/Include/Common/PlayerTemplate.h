@@ -24,12 +24,12 @@
 
 // FILE: PlayerTemplate.h ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -43,9 +43,6 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
-
-#ifndef _PLAYERTEMPLATE_H_
-#define _PLAYERTEMPLATE_H_
 
 #include "Common/SubsystemInterface.h"
 #include "Common/GameMemory.h"
@@ -91,7 +88,7 @@ public:
 
 	/// return the money for the player.
 	inline const Money *getMoney() const { return &m_money; }
-	
+
 	inline const RGBColor* getPreferredColor() const { return &m_preferredColor; }
 
 	inline AsciiString getStartingBuilding( void ) const { return m_startingBuilding; }
@@ -106,7 +103,7 @@ public:
 	inline AsciiString getScoreScreen (void ) const { return m_scoreScreenImage;	}
 	inline AsciiString getLoadScreen (void ) const { return m_loadScreenImage;	}
 	inline AsciiString getBeaconTemplate( void ) const { return m_beaconTemplate; }
-	
+
 	const Image *getHeadWaterMarkImage( void ) const;
 	const Image *getFlagWaterMarkImage( void ) const;
 	const Image *getEnabledImage( void ) const;
@@ -114,7 +111,7 @@ public:
 	//const Image *getHiliteImage( void ) const;
 	//const Image *getPushedImage( void ) const;
 	const Image *getSideIconImage( void ) const;
-	
+
 	const ScienceVec& getIntrinsicSciences() const { return m_intrinsicSciences; }
 	Int getIntrinsicSciencePurchasePoints() const { return m_intrinsicSPP; }
 	AsciiString getPurchaseScienceCommandSetRank1( void ) const {return m_purchaseScienceCommandSetRank1;	}
@@ -124,9 +121,9 @@ public:
 	AsciiString getSpecialPowerShortcutCommandSet( void ) const {return m_specialPowerShortcutCommandSet;	}
 	AsciiString getSpecialPowerShortcutWinName( void ) const {return m_specialPowerShortcutWinName;	}
 	Int getSpecialPowerShortcutButtonCount( void ) const {return m_specialPowerShortcutButtonCount;	}
-	
+
 	AsciiString getLoadScreenMusic( void ) const {return m_loadScreenMusic;	}
-	
+
 
 	static const FieldParse* getFieldParse();
 
@@ -168,7 +165,7 @@ private:
 
 	AsciiString			m_scoreScreenImage;			///< Image that will be shown on the score screen
 	AsciiString			m_loadScreenImage;
-	
+
 	AsciiString			m_headWaterMark;				///< Image that will be the background on the observer control bar
 	AsciiString			m_flagWaterMark;				///< Imabe that will be the background on the observer control bar
 	AsciiString			m_enabledImage;					///< enable button image
@@ -201,9 +198,9 @@ public:
 	const PlayerTemplate* findPlayerTemplate(NameKeyType namekey) const;
 	inline Int getPlayerTemplateCount() const { return m_playerTemplates.size(); }
 
-	
+
 	// This function will fill outStringList with all the sides found in all the templates
-	void getAllSideStrings(AsciiStringList *outStringList);	
+	void getAllSideStrings(AsciiStringList *outStringList);
 
 private:
 
@@ -214,5 +211,3 @@ private:
 
 // ----------------------------------------------------------------------------------------------
 extern PlayerTemplateStore *ThePlayerTemplateStore;	///< singleton instance of PlayerTemplateStore
-
-#endif // _PLAYERTEMPLATE_H_

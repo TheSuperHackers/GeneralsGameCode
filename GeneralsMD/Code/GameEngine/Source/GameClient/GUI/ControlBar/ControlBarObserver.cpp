@@ -24,12 +24,12 @@
 
 // FILE: ControlBarObserver.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Aug 2002
@@ -37,7 +37,7 @@
 //	Filename: 	ControlBarObserver.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	All things related to the Observer Control bar, are in here.
 //
 //-----------------------------------------------------------------------------
@@ -52,6 +52,7 @@
 //-----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
+#include "Common/GameUtility.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
@@ -89,11 +90,15 @@ static NameKeyType buttonCancelID = NAMEKEY_INVALID;
 
 static GameWindow *winFlag = NULL;
 static GameWindow *winGeneralPortrait = NULL;
+// TheSuperHackers @tweak Allow idle worker selection for observers.
+static GameWindow *buttonIdleWorker = NULL;
 static GameWindow *staticTextNumberOfUnits = NULL;
 static GameWindow *staticTextNumberOfBuildings = NULL;
 static GameWindow *staticTextNumberOfUnitsKilled = NULL;
 static GameWindow *staticTextNumberOfUnitsLost = NULL;
 static GameWindow *staticTextPlayerName = NULL;
+
+static NameKeyType s_replayObserverNameKey = NAMEKEY_INVALID;
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -115,7 +120,7 @@ void ControlBar::initObserverControls( void )
 		staticTextPlayerID[i] = TheNameKeyGenerator->nameToKey( tmpString );
 		staticTextPlayer[i] = TheWindowManager->winGetWindowFromId( ObserverPlayerListWindow, staticTextPlayerID[i] );
 	}
-	
+
 	staticTextNumberOfUnits = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextNumberOfUnits"));
 	staticTextNumberOfBuildings = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextNumberOfBuildings"));
 	staticTextNumberOfUnitsKilled = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextNumberOfUnitsKilled"));
@@ -123,26 +128,57 @@ void ControlBar::initObserverControls( void )
 	staticTextPlayerName = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextPlayerName"));
 	winFlag = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:WinFlag"));
 	winGeneralPortrait = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:WinGeneralPortrait"));
-	
+	buttonIdleWorker = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonIdleWorker"));
+
 	buttonCancelID = TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonCancel");
+
+	s_replayObserverNameKey = TheNameKeyGenerator->nameToKey("ReplayObserver");
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControlBar::setObserverLookAtPlayer(Player *player)
+{
+	if (player != NULL && player == ThePlayerList->findPlayerWithNameKey(s_replayObserverNameKey))
+	{
+		// Looking at the observer. Treat as not looking at player.
+		m_observerLookAtPlayer = NULL;
+	}
+	else
+	{
+		m_observerLookAtPlayer = player;
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControlBar::setObservedPlayer(Player *player)
+{
+	if (player != NULL && player == ThePlayerList->findPlayerWithNameKey(s_replayObserverNameKey))
+	{
+		// Looking at the observer. Treat as not observing player.
+		m_observedPlayer = NULL;
+	}
+	else
+	{
+		m_observedPlayer = player;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
 /** System callback for the ControlBarObserverSystem */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	static NameKeyType buttonCommunicator = NAMEKEY_INVALID;
-	
-	switch( msg ) 
+
+	switch( msg )
 	{
 		// --------------------------------------------------------------------------------------------
 		case GWM_CREATE:
 		{
 				break;
 
-		}  // end create
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_MOUSE_ENTERING:
@@ -160,25 +196,31 @@ WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt m
 			Int controlID = control->winGetWindowId();
 			if( controlID == buttonCancelID)
 			{
-				TheControlBar->setObserverLookAtPlayer(NULL);
+				rts::changeObservedPlayer(NULL);
+
 				ObserverPlayerInfoWindow->winHide(TRUE);
 				ObserverPlayerListWindow->winHide(FALSE);
+				buttonIdleWorker->winHide(TRUE);
 				TheControlBar->populateObserverList();
-
 			}
+
 			for(Int i = 0; i <MAX_BUTTONS; ++i)
 			{
 				if( controlID == buttonPlayerID[i])
 				{
+					Player* player = static_cast<Player*>(GadgetButtonGetData(buttonPlayer[i]));
+					rts::changeObservedPlayer(player);
+
 					ObserverPlayerInfoWindow->winHide(FALSE);
 					ObserverPlayerListWindow->winHide(TRUE);
-					TheControlBar->setObserverLookAtPlayer((Player *) GadgetButtonGetData( buttonPlayer[i]));
+
 					if(TheControlBar->getObserverLookAtPlayer())
 						TheControlBar->populateObserverInfoWindow();
+
 					return MSG_HANDLED;
 				}
 			}
-			
+
 		//	if( controlID == buttonCommunicator && TheGameLogic->getGameMode() == GAME_INTERNET )
 	/*
 		{
@@ -191,17 +233,17 @@ WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt m
 
 			break;
 
-		}  // end button selected
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end ControlBarSystem
+}
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
@@ -212,7 +254,7 @@ void ControlBar::populateObserverList( void )
 	Int currentButton = 0, i;
 	if(TheRecorder->isMultiplayer())
 	{
-	
+
 		for (i = 0; i < MAX_SLOTS; ++i)
 		{
 			AsciiString name;
@@ -301,15 +343,16 @@ void ControlBar::populateObserverInfoWindow ( void )
 	{
 		ObserverPlayerInfoWindow->winHide(TRUE);
 		ObserverPlayerListWindow->winHide(FALSE);
+		buttonIdleWorker->winHide(TRUE);
 		populateObserverList();
 		return;
 	}
-							
+
 	UnicodeString uString;
 	KindOfMaskType mask,clearmask;
 	mask.set(KINDOF_SCORE);
 	clearmask.set(KINDOF_STRUCTURE);
-	
+
 	uString.format(L"%d",m_observerLookAtPlayer->countObjects(mask,clearmask));
 	GadgetStaticTextSetText(staticTextNumberOfUnits, uString);
 
@@ -338,4 +381,5 @@ void ControlBar::populateObserverInfoWindow ( void )
 	staticTextPlayerName->winSetEnabledTextColors(color, GameMakeColor(0,0,0,255));
 	winFlag->winSetEnabledImage(0, m_observerLookAtPlayer->getPlayerTemplate()->getFlagWaterMarkImage());
 	winGeneralPortrait->winHide(FALSE);
+	buttonIdleWorker->winHide(FALSE);
 }

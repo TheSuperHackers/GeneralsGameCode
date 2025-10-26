@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _SUPPLY_CENTER_CREATE_H_
-#define _SUPPLY_CENTER_CREATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/CreateModule.h"
 
@@ -57,5 +54,3 @@ public:
 protected:
 
 };
-
-#endif

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __EMPUPDATE_H_
-#define __EMPUPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -42,7 +39,7 @@
 class EMPUpdateModuleData : public UpdateModuleData
 {
 public:
-	UnsignedInt m_lifeFrames;	
+	UnsignedInt m_lifeFrames;
 	UnsignedInt m_startFadeFrame;
 	UnsignedInt m_disabledDuration;
 	Real				m_startScale; ///< how big I start drawing
@@ -64,7 +61,7 @@ public:
 	{
 		m_lifeFrames = 1;
 		m_startFadeFrame = 0;
-		m_startScale = 1.0f; 
+		m_startScale = 1.0f;
 		m_targetScaleMax = 1.0f;
 		m_targetScaleMin = 1.0f;
 		m_startColor.setFromInt(0xffffffff);
@@ -81,10 +78,10 @@ public:
     m_victimKindOfNot.clear();
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "Lifetime",	INI::parseDurationUnsignedInt,		NULL, offsetof( EMPUpdateModuleData, m_lifeFrames ) },
 			{ "StartFadeTime",	INI::parseDurationUnsignedInt,		NULL, offsetof( EMPUpdateModuleData, m_startFadeFrame ) },
@@ -103,7 +100,7 @@ public:
 
       { "VictimRequiredKindOf", KindOfMaskType::parseFromINI, NULL, offsetof( EMPUpdateModuleData, m_victimKindOf ) },
 		  { "VictimForbiddenKindOf", KindOfMaskType::parseFromINI, NULL, offsetof( EMPUpdateModuleData, m_victimKindOfNot ) },
-      
+
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -158,7 +155,7 @@ protected:
 class LeafletDropBehaviorModuleData : public UpdateModuleData
 {
 public:
-	UnsignedInt m_delayFrames;	
+	UnsignedInt m_delayFrames;
 	UnsignedInt m_disabledDuration;
   Real m_radius;
 	const ParticleSystemTemplate *m_leafletFXParticleSystem;
@@ -172,10 +169,10 @@ public:
     m_leafletFXParticleSystem = NULL;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "Delay",	        INI::parseDurationUnsignedInt,	NULL, offsetof( LeafletDropBehaviorModuleData, m_delayFrames ) },
 			{ "DisabledDuration",	INI::parseDurationUnsignedInt,	NULL, offsetof( LeafletDropBehaviorModuleData, m_disabledDuration ) },
@@ -221,22 +218,3 @@ protected:
 	UnsignedInt m_startFrame;			///< frame we die on
   Bool  m_fxFired; ///< have we done our fx yet
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#endif // __EMPUPDATE_H_
-
- 

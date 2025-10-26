@@ -46,7 +46,7 @@ void INI::parseMappedImageDefinition( INI* ini )
 
 	// read the name
 	const char* c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	//
 	// find existing item if present, note that we do not support overrides
@@ -69,12 +69,12 @@ void INI::parseMappedImageDefinition( INI* ini )
   	image = newInstance(Image);
 		image->setName( name );
 		TheMappedImageCollection->addImage(image);
-		DEBUG_ASSERTCRASH( image, ("parseMappedImage: unable to allocate image for '%s'\n",
+		DEBUG_ASSERTCRASH( image, ("parseMappedImage: unable to allocate image for '%s'",
 															name.str()) );
 
-	}  // end if
+	}
 
 	// parse the ini definition
 	ini->initFromINI( image, image->getFieldParse());
 
-}  // end parseMappedImage
+}

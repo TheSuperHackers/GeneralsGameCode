@@ -54,11 +54,6 @@
 #include "WWDownload/Registry.h"
 #include "WWDownload/urlBuilder.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -149,7 +144,7 @@ static void noPatchBeforeOnlineCallback( void )
 
 static Bool hasWriteAccess()
 {
-	const char* filename = "PatchAccessTest.txt";	
+	const char* filename = "PatchAccessTest.txt";
 
 	remove(filename);
 
@@ -161,7 +156,7 @@ static Bool hasWriteAccess()
 
 	_close(handle);
 	remove(filename);
-	
+
 	unsigned int val;
 	if (!GetUnsignedIntFromRegistry("", "Version", val))
 	{
@@ -225,16 +220,12 @@ static void startOnline( void )
 	DEBUG_ASSERTCRASH( !TheGameSpyPeerMessageQueue, ("TheGameSpyPeerMessageQueue exists!") );
 	DEBUG_ASSERTCRASH( !TheGameSpyInfo, ("TheGameSpyInfo exists!") );
 	SetUpGameSpy(MOTDBuffer, configBuffer);
-	if (MOTDBuffer)
-	{
-		delete[] MOTDBuffer;
-		MOTDBuffer = NULL;
-	}
-	if (configBuffer)
-	{
-		delete[] configBuffer;
-		configBuffer = NULL;
-	}
+
+	delete[] MOTDBuffer;
+	MOTDBuffer = NULL;
+
+	delete[] configBuffer;
+	configBuffer = NULL;
 
 #ifdef ALLOW_NON_PROFILED_LOGIN
 	UserPreferences pref;
@@ -287,7 +278,7 @@ static void queuePatch(Bool mandatory, AsciiString downloadURL)
 	AsciiString fileName = "patches\\";
 	fileName.concat(fileStr);
 
-	DEBUG_LOG(("download URL split: %d [%s] [%s] [%s] [%s] [%s] [%s]\n",
+	DEBUG_LOG(("download URL split: %d [%s] [%s] [%s] [%s] [%s] [%s]",
 		success, connectionType.str(), server.str(), user.str(), pass.str(),
 		filePath.str(), fileName.str()));
 
@@ -325,12 +316,7 @@ static GHTTPBool motdCallback( GHTTPRequest request, GHTTPResult result,
 		return GHTTPTrue;
 	}
 
-	if (MOTDBuffer)
-	{
-		delete[] MOTDBuffer;
-		MOTDBuffer = NULL;
-	}
-
+	delete[] MOTDBuffer;
 	MOTDBuffer = NEW char[bufferLen];
 	memcpy(MOTDBuffer, buffer, bufferLen);
 	MOTDBuffer[bufferLen-1] = 0;
@@ -343,9 +329,9 @@ static GHTTPBool motdCallback( GHTTPRequest request, GHTTPResult result,
 		onlineCancelWindow = NULL;
 	}
 
-	DEBUG_LOG(("------- Got MOTD before going online -------\n"));
-	DEBUG_LOG(("%s\n", (MOTDBuffer)?MOTDBuffer:""));
-	DEBUG_LOG(("--------------------------------------------\n"));
+	DEBUG_LOG(("------- Got MOTD before going online -------"));
+	DEBUG_LOG(("%s", (MOTDBuffer)?MOTDBuffer:""));
+	DEBUG_LOG(("--------------------------------------------"));
 
 	if (!checksLeftBeforeOnline)
 		startOnline();
@@ -365,11 +351,8 @@ static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
 		return GHTTPTrue;
 	}
 
-	if (configBuffer)
-	{
-		delete[] configBuffer;
-		configBuffer = NULL;
-	}
+	delete[] configBuffer;
+	configBuffer = NULL;
 
 	if (result != GHTTPSuccess || bufferLen < 100)
 	{
@@ -410,7 +393,7 @@ static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
 		onlineCancelWindow = NULL;
 	}
 
-	DEBUG_LOG(("Got Config before going online\n"));
+	DEBUG_LOG(("Got Config before going online"));
 
 	if (!checksLeftBeforeOnline)
 		startOnline();
@@ -430,11 +413,11 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 		return GHTTPTrue;
 	}
 
-	DEBUG_LOG(("HTTP head resp: res=%d, len=%d, buf=[%s]\n", result, bufferLen, buffer));
+	DEBUG_LOG(("HTTP head resp: res=%d, len=%d, buf=[%s]", result, bufferLen, buffer));
 
 	if (result == GHTTPSuccess)
 	{
-		DEBUG_LOG(("Headers are [%s]\n", ghttpGetHeaders( request )));
+		DEBUG_LOG(("Headers are [%s]", ghttpGetHeaders( request )));
 
 		AsciiString headers(ghttpGetHeaders( request ));
 		AsciiString line;
@@ -469,11 +452,8 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 						onlineCancelWindow = NULL;
 					}
 
-					if (configBuffer)
-					{
-						delete[] configBuffer;
-						configBuffer = NULL;
-					}
+					delete[] configBuffer;
+					configBuffer = NULL;
 
 					AsciiString fname;
 					fname.format("%sGeneralsOnline\\Config.txt", TheGlobalData->getPath_UserData().str());
@@ -485,7 +465,7 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 						configBuffer[fileLen-1] = 0;
 						fclose(fp);
 
-						DEBUG_LOG(("Got Config before going online\n"));
+						DEBUG_LOG(("Got Config before going online"));
 
 						if (!checksLeftBeforeOnline)
 							startOnline();
@@ -520,7 +500,7 @@ static GHTTPBool gamePatchCheckCallback( GHTTPRequest request, GHTTPResult resul
 	--checksLeftBeforeOnline;
 	DEBUG_ASSERTCRASH(checksLeftBeforeOnline>=0, ("Too many callbacks"));
 
-	DEBUG_LOG(("Result=%d, buffer=[%s], len=%d\n", result, buffer, bufferLen));
+	DEBUG_LOG(("Result=%d, buffer=[%s], len=%d", result, buffer, bufferLen));
 	if (result != GHTTPSuccess)
 	{
 		if (!checkingForPatchBeforeGameSpy)
@@ -544,7 +524,7 @@ static GHTTPBool gamePatchCheckCallback( GHTTPRequest request, GHTTPResult resul
 		ok &= line.nextToken(&url, " ");
 		if (ok && type == "patch")
 		{
-			DEBUG_LOG(("Saw a patch: %d/[%s]\n", atoi(req.str()), url.str()));
+			DEBUG_LOG(("Saw a patch: %d/[%s]", atoi(req.str()), url.str()));
 			queuePatch( atoi(req.str()), url );
 			if (atoi(req.str()))
 			{
@@ -584,23 +564,19 @@ void CancelPatchCheckCallback( void )
 		onlineCancelWindow = NULL;
 	}
 	queuedDownloads.clear();
-	if (MOTDBuffer)
-	{
-		delete[] MOTDBuffer;
-		MOTDBuffer = NULL;
-	}
-	if (configBuffer)
-	{
-		delete[] configBuffer;
-		configBuffer = NULL;
-	}
+
+	delete[] MOTDBuffer;
+	MOTDBuffer = NULL;
+
+	delete[] configBuffer;
+	configBuffer = NULL;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen, void * param )
 {
-	DEBUG_LOG(("overallStatsCallback() - Result=%d, len=%d\n", result, bufferLen));
+	DEBUG_LOG(("overallStatsCallback() - Result=%d, len=%d", result, bufferLen));
 	if (result != GHTTPSuccess)
 	{
 		return GHTTPTrue;
@@ -614,7 +590,7 @@ static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result,
 
 static GHTTPBool numPlayersOnlineCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen, void * param )
 {
-	DEBUG_LOG(("numPlayersOnlineCallback() - Result=%d, buffer=[%s], len=%d\n", result, buffer, bufferLen));
+	DEBUG_LOG(("numPlayersOnlineCallback() - Result=%d, buffer=[%s], len=%d", result, buffer, bufferLen));
 	if (result != GHTTPSuccess)
 	{
 		return GHTTPTrue;
@@ -631,7 +607,7 @@ static GHTTPBool numPlayersOnlineCallback( GHTTPRequest request, GHTTPResult res
 	if (*s == '\\')
 		++s;
 
-	DEBUG_LOG(("Message was '%s', trimmed to '%s'=%d\n", buffer, s, atoi(s)));
+	DEBUG_LOG(("Message was '%s', trimmed to '%s'=%d", buffer, s, atoi(s)));
 	HandleNumPlayersOnline(atoi(s));
 
 	return GHTTPTrue;
@@ -810,15 +786,15 @@ static void reallyStartPatchCheck( void )
 	}
 
 	// check for a patch first
-	DEBUG_LOG(("Game patch check: [%s]\n", gameURL.c_str()));
-	DEBUG_LOG(("Map patch check: [%s]\n", mapURL.c_str()));
-	DEBUG_LOG(("Config: [%s]\n", configURL.c_str()));
-	DEBUG_LOG(("MOTD: [%s]\n", motdURL.c_str()));
+	DEBUG_LOG(("Game patch check: [%s]", gameURL.c_str()));
+	DEBUG_LOG(("Map patch check: [%s]", mapURL.c_str()));
+	DEBUG_LOG(("Config: [%s]", configURL.c_str()));
+	DEBUG_LOG(("MOTD: [%s]", motdURL.c_str()));
 	ghttpGet(gameURL.c_str(), GHTTPFalse, gamePatchCheckCallback, (void *)timeThroughOnline);
 	ghttpGet(mapURL.c_str(), GHTTPFalse, gamePatchCheckCallback, (void *)timeThroughOnline);
 	ghttpHead(configURL.c_str(), GHTTPFalse, configHeadCallback, (void *)timeThroughOnline);
 	ghttpGet(motdURL.c_str(), GHTTPFalse, motdCallback, (void *)timeThroughOnline);
-	
+
 	// check total game stats
 	CheckOverallStats();
 

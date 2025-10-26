@@ -32,6 +32,7 @@
 #include "Common/GameAudio.h"
 #include "Common/GameCommon.h"
 #include "Common/GameEngine.h"
+#include "Common/GameUtility.h"
 #include "Common/KindOf.h"
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
@@ -52,11 +53,6 @@
 #include "GameNetwork/GameInfo.h"
 #include "GameNetwork/NetworkDefs.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 #define ISSET(x) (m_victoryConditions & VICTORY_##x)
@@ -67,7 +63,7 @@ VictoryConditionsInterface *TheVictoryConditions = NULL;
 //-------------------------------------------------------------------------------------------------
 inline static Bool areAllies(const Player *p1, const Player *p2)
 {
-	if (p1 != p2 && 
+	if (p1 != p2 &&
 		p1->getRelationship(p2->getDefaultTeam()) == ALLIES &&
 		p2->getRelationship(p1->getDefaultTeam()) == ALLIES)
 		return true;
@@ -80,7 +76,7 @@ class VictoryConditions : public VictoryConditionsInterface
 {
 public:
 	VictoryConditions();
-	
+
 	void init( void );
 	void reset( void );
 	void update( void );
@@ -118,7 +114,7 @@ VictoryConditions::VictoryConditions()
 {
 	reset();
 }
-	
+
 //-------------------------------------------------------------------------------------------------
 void VictoryConditions::init( void )
 {
@@ -146,7 +142,7 @@ void VictoryConditions::reset( void )
 //-------------------------------------------------------------------------------------------------
 void VictoryConditions::update( void )
 {
-	if (!TheRecorder->isMultiplayer() || (m_localSlotNum == -1 && !m_isObserver))
+	if (!TheRecorder->isMultiplayer() || (m_localSlotNum < 0 && !m_isObserver))
 		return;
 
 	// Check for a single winning alliance
@@ -194,7 +190,7 @@ void VictoryConditions::update( void )
 			{
 				ThePartitionManager->revealMapForPlayerPermanently( p->getPlayerIndex() );
 				TheGameClient->updateFakeDrawables();
-				
+
 				TheInGameUI->message("GUI:PlayerHasBeenDefeated", p->getPlayerDisplayName().str() );
 				// People are boneheads. Also play a sound
 				static AudioEventRTS leftGameSound("GUIMessageReceived");
@@ -210,7 +206,7 @@ void VictoryConditions::update( void )
 					GameSlot *slot = (TheGameInfo)?TheGameInfo->getSlot(idx):NULL;
 					if (slot && slot->isAI())
 					{
-						DEBUG_LOG(("Marking AI player %s as defeated\n", pName.str()));
+						DEBUG_LOG(("Marking AI player %s as defeated", pName.str()));
 						slot->setLastFrameInGame(TheGameLogic->getFrame());
 					}
 				}
@@ -233,7 +229,7 @@ void VictoryConditions::update( void )
 				//MessageBoxOk(TheGameText->fetch("GUI:Defeat"), TheGameText->fetch("GUI:LocalDefeat"), NULL);
 			}
 			m_localPlayerDefeated = true;	// don't check again
-			TheRadar->forceOn(TRUE);
+			TheRadar->forceOn(localPlayer->getPlayerIndex(), TRUE);
 			SetInGameChatType( INGAME_CHAT_EVERYONE ); // can't chat to allies after death.  Only to other observers.
 		}
 	}
@@ -315,10 +311,10 @@ void VictoryConditions::cachePlayerPtrs( void )
 	for (Int i=0; i<MAX_PLAYER_COUNT; ++i)
 	{
 		Player *player = ThePlayerList->getNthPlayer(i);
-		DEBUG_LOG(("Checking whether to cache player %d - [%ls], house [%ls]\n", i, player?player->getPlayerDisplayName().str():L"<NOBODY>", (player&&player->getPlayerTemplate())?player->getPlayerTemplate()->getDisplayName().str():L"<NONE>"));
+		DEBUG_LOG(("Checking whether to cache player %d - [%ls], house [%ls]", i, player?player->getPlayerDisplayName().str():L"<NOBODY>", (player&&player->getPlayerTemplate())?player->getPlayerTemplate()->getDisplayName().str():L"<NONE>"));
 		if (player && player != ThePlayerList->getNeutralPlayer() && player->getPlayerTemplate() && player->getPlayerTemplate() != civTemplate && !player->isPlayerObserver())
 		{
-			DEBUG_LOG(("Caching player\n"));
+			DEBUG_LOG(("Caching player"));
 			m_players[playerCount] = player;
 			if (m_players[playerCount]->isLocalPlayer())
 				m_localSlotNum = playerCount;
@@ -333,8 +329,6 @@ void VictoryConditions::cachePlayerPtrs( void )
 	if (m_localSlotNum < 0)
 	{
 		m_localPlayerDefeated = true;	// if we have no local player, don't check for defeat
-		DEBUG_ASSERTCRASH(TheRadar, ("No Radar!"));
-		TheRadar->forceOn(TRUE);
 		m_isObserver = true;
 	}
 }

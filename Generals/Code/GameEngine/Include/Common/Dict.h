@@ -22,14 +22,14 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: Dict.h 
+// FILE: Dict.h
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -45,17 +45,14 @@
 
 #pragma once
 
-#ifndef Dict_H
-#define Dict_H
-
 #include "Common/Errors.h"
 #include "Common/NameKeyGenerator.h"
 
 // -----------------------------------------------------
 /**
-	Dict provides a general utility class for maintaining 
+	Dict provides a general utility class for maintaining
 	a sorted key-value pair list. Keys are currently required
-	to be of type NameKeyType, and data may be Bool, int, real, 
+	to be of type NameKeyType, and data may be Bool, int, real,
 	or string.
 
 	Current implementation keeps the pairs sorted by key, and
@@ -66,8 +63,8 @@
 class Dict
 {
 public:
-	enum 
-	{ 
+	enum
+	{
 		MAX_LEN = 32767							///< max total len of any Dict, in Pairs
 	};
 
@@ -141,62 +138,62 @@ public:
 
 	/**
 		return the value for the pair with the given key.
-		if there is no pair with the given key, or the value is 
+		if there is no pair with the given key, or the value is
 		not of the correct type, 0 is returned.
 	*/
 	Bool getBool(NameKeyType key, Bool* exists = NULL) const;
 	/**
 		return the value for the pair with the given key.
-		if there is no pair with the given key, or the value is 
+		if there is no pair with the given key, or the value is
 		not of the correct type, 0 is returned.
 	*/
 	Int getInt(NameKeyType key, Bool* exists = NULL) const;
 	/**
 		return the value for the pair with the given key.
-		if there is no pair with the given key, or the value is 
+		if there is no pair with the given key, or the value is
 		not of the correct type, 0 is returned.
 	*/
 	Real getReal(NameKeyType key, Bool* exists = NULL) const;
 	/**
 		return the value for the pair with the given key.
-		if there is no pair with the given key, or the value is 
+		if there is no pair with the given key, or the value is
 		not of the correct type, "" is returned.
 	*/
 	AsciiString getAsciiString(NameKeyType key, Bool* exists = NULL) const;
 	/**
 		return the value for the pair with the given key.
-		if there is no pair with the given key, or the value is 
+		if there is no pair with the given key, or the value is
 		not of the correct type, "" is returned.
 	*/
 	UnicodeString getUnicodeString(NameKeyType key, Bool* exists = NULL) const;
 
 	/**
 		return the value for the pair with the given index.
-		if the index is out of range, or the value is 
+		if the index is out of range, or the value is
 		not of the correct type, 0 is returned.
 	*/
 	Bool getNthBool(Int n) const;
 	/**
 		return the value for the pair with the given index.
-		if the index is out of range, or the value is 
+		if the index is out of range, or the value is
 		not of the correct type, 0 is returned.
 	*/
 	Int getNthInt(Int n) const;
 	/**
 		return the value for the pair with the given index.
-		if the index is out of range, or the value is 
+		if the index is out of range, or the value is
 		not of the correct type, 0 is returned.
 	*/
 	Real getNthReal(Int n) const;
 	/**
 		return the value for the pair with the given index.
-		if the index is out of range, or the value is 
+		if the index is out of range, or the value is
 		not of the correct type, "" is returned.
 	*/
 	AsciiString getNthAsciiString(Int n) const;
 	/**
 		return the value for the pair with the given index.
-		if the index is out of range, or the value is 
+		if the index is out of range, or the value is
 		not of the correct type, "" is returned.
 	*/
 	UnicodeString getNthUnicodeString(Int n) const;
@@ -255,7 +252,7 @@ public:
 	void copyPairFrom(const Dict& that, NameKeyType key);
 
 private:
-	
+
 	struct DictPair;
 	struct DictPairData;
 
@@ -266,7 +263,7 @@ private:
 	DictPair* findPairByKey(NameKeyType key) const;
 	void releaseData();
 	DictPair *ensureUnique(int numPairsNeeded, Bool preserveData, DictPair *pairToTranslate);
-	
+
 	enum DictPairKeyType
 	{
 		DICTPAIRKEY_ILLEGAL = 0
@@ -320,7 +317,7 @@ private:
 		inline DictPair* peek() { return (DictPair*)(this+1); }
 	};
 
-	#ifdef _DEBUG
+	#ifdef RTS_DEBUG
 	void validate() const;
 	#else
 	inline void validate() const { }
@@ -362,7 +359,3 @@ inline Dict::DataType Dict::getNthType(Int n) const
 		return DICT_NONE;
 	return m_data->peek()[n].getType();
 }
-
-#endif // Dict_H
-
-

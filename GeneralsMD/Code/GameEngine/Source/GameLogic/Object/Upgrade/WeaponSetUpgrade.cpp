@@ -50,7 +50,7 @@ WeaponSetUpgrade::~WeaponSetUpgrade( void )
 //-------------------------------------------------------------------------------------------------
 void WeaponSetUpgrade::upgradeImplementation( )
 {
-	// Very simple; just need to flag the Object as having the player upgrade, and the WeaponSet chooser 
+	// Very simple; just need to flag the Object as having the player upgrade, and the WeaponSet chooser
 	// will do the work of picking the right one from ini.  This comment is as long as the code.
 	Object *obj = getObject();
 	obj->setWeaponSetFlag( WEAPONSET_PLAYER_UPGRADE );
@@ -65,7 +65,7 @@ void WeaponSetUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -83,7 +83,7 @@ void WeaponSetUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -94,4 +94,4 @@ void WeaponSetUpgrade::loadPostProcess( void )
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

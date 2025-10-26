@@ -22,11 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef __LANGUAGEFILTER_H
-#define __LANGUAGEFILTER_H
 
 #include "Common/STLTypedefs.h"
 #include "Common/AsciiString.h"
@@ -55,12 +51,7 @@ struct UnicodeStringsEqual
 	Bool operator()(UnicodeString a, UnicodeString b) const
 	{
 		Bool retval = (a.compareNoCase(b) == 0);
-		DEBUG_LOG(("Comparing %ls with %ls, return value is ", a.str(), b.str()));
-		if (retval) {
-			DEBUG_LOG(("true.\n"));
-		} else {
-			DEBUG_LOG(("false.\n"));
-		}
+		DEBUG_LOG(("Comparing %ls with %ls, return value is %s.", a.str(), b.str(), retval ? "true" : "false"));
 		return retval;
 	}
 };
@@ -90,5 +81,3 @@ protected:
 
 extern LanguageFilter *TheLanguageFilter;
 LanguageFilter * createLanguageFilter();
-
-#endif //#define __LANGUAGEFILTER_H

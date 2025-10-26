@@ -28,9 +28,10 @@
 
 #pragma once
 
-#ifndef _COMMAND_LINE_H_
-#define _COMMAND_LINE_H_
+class CommandLine
+{
+public:
 
-void parseCommandLine(int argc, char *argv[]); ///< Parse command-line parameters
-
-#endif // _COMMAND_LINE_H_
+	static void parseCommandLineForStartup();
+	static void parseCommandLineForEngineInit();
+};

@@ -23,13 +23,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: SabotageSupplyCenterCrateCollide.cpp 
+//
+// FILE: SabotageSupplyCenterCrateCollide.cpp
 // Author: Kris Morness, June 2003
 // Desc:   A crate (actually a saboteur - mobile crate) that steals cash from the target supply center.
-//	
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
- 
+
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -61,23 +61,18 @@
 #include "GameLogic/Module/SabotageSupplyCenterCrateCollide.h"
 
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SabotageSupplyCenterCrateCollide::SabotageSupplyCenterCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SabotageSupplyCenterCrateCollide::~SabotageSupplyCenterCrateCollide( void )
 {
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -100,6 +95,14 @@ Bool SabotageSupplyCenterCrateCollide::isValidToExecute( const Object *other ) c
 		//We can only sabotage supply dropzones.
 		return FALSE;
 	}
+
+#if !RETAIL_COMPATIBLE_CRC
+	if (other->getStatusBits().testForAny(MAKE_OBJECT_STATUS_MASK2(OBJECT_STATUS_UNDER_CONSTRUCTION, OBJECT_STATUS_SOLD)))
+	{
+		// TheSuperHackers @bugfix Stubbjax 03/08/2025 Can't enter something being sold or under construction.
+		return FALSE;
+	}
+#endif
 
 	Relationship r = getObject()->getRelationship( other );
 	if( r != ENEMIES )
@@ -149,7 +152,7 @@ Bool SabotageSupplyCenterCrateCollide::executeCrateBehavior( Object *other )
 				controller->getScoreKeeper()->addMoneyEarned( cash );
 
 			//Play the "cash stolen" EVA event if the local player is the victim!
-			if( other && other->isLocallyControlled() )
+			if( other->isLocallyControlled() )
 			{
 				TheEva->setShouldPlay( EVA_CashStolen );
 			}
@@ -161,7 +164,7 @@ Bool SabotageSupplyCenterCrateCollide::executeCrateBehavior( Object *other )
 			pos.set( obj->getPosition() );
 			pos.z += 20.0f; //add a little z to make it show up above the unit.
 			TheInGameUI->addFloatingText( moneyString, &pos, GameMakeColor( 0, 255, 0, 255 ) );
-		
+
 			//Display cash lost floating over the target
 			moneyString.format( TheGameText->fetch( "GUI:LoseCash" ), cash );
 			pos.set( other->getPosition() );
@@ -176,7 +179,7 @@ Bool SabotageSupplyCenterCrateCollide::executeCrateBehavior( Object *other )
 			}
 		}
 	}
-		
+
 	return TRUE;
 }
 
@@ -189,7 +192,7 @@ void SabotageSupplyCenterCrateCollide::crc( Xfer *xfer )
 	// extend base class
 	CrateCollide::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -207,7 +210,7 @@ void SabotageSupplyCenterCrateCollide::xfer( Xfer *xfer )
 	// extend base class
 	CrateCollide::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -218,4 +221,4 @@ void SabotageSupplyCenterCrateCollide::loadPostProcess( void )
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+}

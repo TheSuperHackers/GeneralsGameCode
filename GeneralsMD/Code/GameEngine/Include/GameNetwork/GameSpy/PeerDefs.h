@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __PEERDEFS_H__
-#define __PEERDEFS_H__
-
 #include "gamespy/peer/peer.h"
 #include "gamespy/gp/gp.h"
 
@@ -168,7 +165,6 @@ enum GameSpyBuddyStatus CPP_11(: Int) {
 	BUDDY_LOADING,
 	BUDDY_PLAYING,
 	BUDDY_MATCHING,
-	BUDDY_MAX
 };
 
 // ---------------------------------------------------
@@ -251,13 +247,13 @@ public:
 	virtual Int getPingValue( const AsciiString& otherPing ) = 0;
 
 	static GameSpyInfoInterface* createNewGameSpyInfoInterface( void );
-	
+
 	virtual void addToSavedIgnoreList( Int profileID, AsciiString nick ) = 0;
 	virtual void removeFromSavedIgnoreList( Int profileID ) = 0;
-	virtual Bool isSavedIgnored( Int profileID ) = 0;		
+	virtual Bool isSavedIgnored( Int profileID ) = 0;
 	virtual SavedIgnoreMap returnSavedIgnoreList( void ) = 0;
 	virtual void loadSavedIgnoreList( void ) = 0;
-	
+
 	virtual IgnoreList returnIgnoreList( void ) = 0;
 	virtual void addToIgnoreList( AsciiString nick ) = 0;
 	virtual void removeFromIgnoreList( AsciiString nick ) = 0;
@@ -299,5 +295,3 @@ extern Int GetAdditionalDisconnectsFromUserFile(Int playerID);
 
 void SetUpGameSpy( const char *motdBuffer, const char *configBuffer );
 void TearDownGameSpy( void );
-
-#endif // __PEERDEFS_H__

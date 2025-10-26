@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _MULTIPLAYERSETTINGS_H_
-#define _MULTIPLAYERSETTINGS_H_
-
 #include "GameClient/Color.h"
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
@@ -79,9 +76,9 @@ public:
 
 	MultiplayerSettings( void );
 
-	void init() { }
-	void update() { }
-	void reset() { }
+	virtual void init() { }
+	virtual void update() { }
+	virtual void reset() { }
 
 	//-----------------------------------------------------------------------------------------------
 	static const FieldParse m_multiplayerSettingsFieldParseTable[];		///< the parse table for INI definition
@@ -100,7 +97,7 @@ public:
 	inline Bool showRandomStartPos( void ) { return m_showRandomStartPos; }
 	inline Bool showRandomColor( void ) { return m_showRandomColor; }
 
-	inline Int getNumColors( void ) 
+	inline Int getNumColors( void )
 	{
 		if (m_numColors == 0) {
 			m_numColors = m_colorList.size();
@@ -127,5 +124,3 @@ private:
 
 // singleton
 extern MultiplayerSettings *TheMultiplayerSettings;
-
-#endif

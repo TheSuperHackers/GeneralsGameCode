@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __MOBNEXUSCONTAIN_H_
-#define __MOBNEXUSCONTAIN_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/OpenContain.h"
 
@@ -62,7 +59,7 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
-class MobNexusContain : public OpenContain, 
+class MobNexusContain : public OpenContain,
 												public TransportPassengerInterface // lorenzen add a MobMemberInterface
 {
 
@@ -99,10 +96,7 @@ public:
 protected:
 
 private:
-	
+
 	Int m_extraSlotsInUse;
 
 };
-
-#endif // __MOBNEXUSCONTAIN_H_
-

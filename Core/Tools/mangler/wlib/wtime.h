@@ -20,9 +20,8 @@
 wtime                      Neal Kettler
 
 \****************************************************************************/
-#ifndef WTIME_HEADER
-#define WTIME_HEADER
 
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,7 +58,7 @@ class Wtime
              ~Wtime();
 
     void      Update();   // Update members sec & usec to system time
-                          
+
 
     void      PrintTime(FILE *out) const;
     void      PrintTime(char *out) const;
@@ -90,7 +89,7 @@ class Wtime
     bit8      GetSign(void) const;  // 0 = pos   1 = neg
 
     int       Compare(const Wtime &other) const;
-    
+
     // comparisons
     bit8   operator == ( const Wtime &other ) const;
     bit8   operator != ( const Wtime &other ) const;
@@ -124,5 +123,3 @@ class Wtime
     uint32    usec;    // microseconds (millionths of a second)
     bit8      sign;    // for time differences 0 = pos 1 = neg
 };
-
-#endif

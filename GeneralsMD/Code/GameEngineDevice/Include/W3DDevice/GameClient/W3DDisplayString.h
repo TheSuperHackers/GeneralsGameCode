@@ -24,12 +24,12 @@
 
 // FILE: W3DDisplayString.h ///////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -46,9 +46,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DDISPLAYSTRING_H_
-#define __W3DDISPLAYSTRING_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -119,6 +116,3 @@ protected:
 inline void W3DDisplayString::usingResources( UnsignedInt frame ) { m_lastResourceFrame = frame; }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __W3DDISPLAYSTRING_H_
-

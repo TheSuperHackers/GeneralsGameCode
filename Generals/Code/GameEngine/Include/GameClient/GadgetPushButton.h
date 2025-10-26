@@ -24,12 +24,12 @@
 
 // FILE: GadgetPushButton.h ///////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -40,7 +40,7 @@
 //
 // Desc:       Helpful interface for PushButtons
 //
-// PushButton IMAGE/COLOR organization 
+// PushButton IMAGE/COLOR organization
 // When control is enabled:
 //   enabledDrawData[ 0 ] is the background image for the whole enabled control
 //   enabledDrawData[ 1 ] is the enabled, selected button graphic
@@ -57,9 +57,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __GADGETPUSHBUTTON_H_
-#define __GADGETPUSHBUTTON_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -172,6 +169,3 @@ inline void GadgetButtonSetLeftEnabledImage( GameWindow *g, const Image *image )
 inline void GadgetButtonSetMiddleEnabledImage( GameWindow *g, const Image *image )					{ g->winSetEnabledImage( 5, image ); }
 inline void GadgetButtonSetRightEnabledImage( GameWindow *g, const Image *image )					{ g->winSetEnabledImage( 6, image ); }
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GADGETPUSHBUTTON_H_
-

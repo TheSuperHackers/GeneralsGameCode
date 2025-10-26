@@ -81,7 +81,7 @@ const wchar_t *localeStringsMissing[ MISSING_STRING_HINTS_MAX ] =
 /****************************************************************************/
 
 //----------------------------------------------------------------------------
-// NOTE:	if USE_MULTI_FILE_FORMAT is "true", then a .lOC file must be in 
+// NOTE:	if USE_MULTI_FILE_FORMAT is "true", then a .lOC file must be in
 //			the same directory as this file.
 //----------------------------------------------------------------------------
 #define		USE_MULTI_FILE_FORMAT		FALSE
@@ -108,7 +108,7 @@ wchar_t *	Remove_Quotes_Around_String ( wchar_t *old_string );
 
 
 //=============================================================================
-// These are wrapper functions around the LOCALE_ functions.  I made these to 
+// These are wrapper functions around the LOCALE_ functions.  I made these to
 // make using the single vs. multi language files more transparent to the program.
 //=============================================================================
 
@@ -265,7 +265,7 @@ int Locale_Init	( int language, char *file )
 
 		LanguageID = 0;
 
-#if(_DEBUG)
+#if(RTS_DEBUG)
 		switch( LanguageID ) {
 			case 6:
 				CodePage = 932;
@@ -281,7 +281,7 @@ int Locale_Init	( int language, char *file )
 
 	#endif
 */
-	return result;	
+	return result;
 }
 
 /************************************************************************/
@@ -290,20 +290,15 @@ int Locale_Init	( int language, char *file )
 
 void Locale_Restore ( void )
 {
-	if (TheGameText)
-	{
-		delete TheGameText;
-		TheGameText = NULL;
-	}
+	delete TheGameText;
+	TheGameText = NULL;
 
 	#if( USE_MULTI_FILE_FORMAT )
 		LOCALE_freetable();
 		LOCALE_restore();
 	#else
-		if( LocaleFile ) {
-			free( LocaleFile );
-			LocaleFile = NULL;
-		}
+		free( LocaleFile );
+		LocaleFile = NULL;
 	#endif
 }
 
@@ -321,7 +316,7 @@ const char* Locale_GetString( int StringID, char *String )
 
 	#if( USE_MULTI_FILE_FORMAT )
 		wcscpy( wide_buffer, (wchar_t *)LOCALE_getstring( StringID ));
-	#else									  
+	#else
 		wcscpy( wide_buffer, (wchar_t *)LOCALE_getstr( LocaleFile, StringID ));
 	#endif
 
@@ -359,22 +354,22 @@ const wchar_t* Locale_GetString( int StringID, wchar_t *String )
 
 	#if( USE_MULTI_FILE_FORMAT )
 		wcscpy( wide_buffer, (wchar_t *)LOCALE_getstring( StringID ));
-	#else		
-		
+	#else
+
 		wchar_t *localeStr = NULL;
-		
+
 		if (TheGameText != NULL)
 			localeStr = (wchar_t *)TheGameText->fetch( s_stringLabels[StringID] );
-		
-		if (localeStr == NULL) 
+
+		if (localeStr == NULL)
 		{
 			return localeStringsMissing[ min( MISSING_STRING_HINTS_MAX - 1, StringID ) ];
-		} 
-		else 
+		}
+		else
 		{
 			wcscpy( wide_buffer, localeStr);
 		}
-	#endif 
+	#endif
 
 	Remove_Quotes_Around_String( wide_buffer );
 

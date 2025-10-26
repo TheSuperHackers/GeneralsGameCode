@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _GAME_TYPE_H_
-#define _GAME_TYPE_H_
-
 #include "Lib/BaseType.h"
 
 // the default size of the world map
@@ -58,6 +55,8 @@ enum FormationID CPP_11(: Int)
 	FORCE_FORMATIONID_TO_LONG_SIZE = 0x7ffffff
 };
 
+#define INVALID_ANGLE -100.0f
+
 class INI;
 
 //-------------------------------------------------------------------------------------------------
@@ -65,17 +64,18 @@ class INI;
 //-------------------------------------------------------------------------------------------------
 enum TimeOfDay CPP_11(: Int)
 {
-	TIME_OF_DAY_INVALID = 0,
-	TIME_OF_DAY_FIRST = 1,
-	TIME_OF_DAY_MORNING = TIME_OF_DAY_FIRST,
+	TIME_OF_DAY_INVALID,
+
+	TIME_OF_DAY_MORNING,
 	TIME_OF_DAY_AFTERNOON,
 	TIME_OF_DAY_EVENING,
 	TIME_OF_DAY_NIGHT,
 
-	TIME_OF_DAY_COUNT					// keep this last
+	TIME_OF_DAY_COUNT,
+	TIME_OF_DAY_FIRST = TIME_OF_DAY_MORNING,
 };
 
-extern const char *TimeOfDayNames[];
+extern const char *const TimeOfDayNames[];
 // defined in Common/GameType.cpp
 
 //-------------------------------------------------------------------------------------------------
@@ -84,21 +84,21 @@ enum Weather CPP_11(: Int)
 	WEATHER_NORMAL = 0,
 	WEATHER_SNOWY = 1,
 
-	WEATHER_COUNT					// keep this last
+	WEATHER_COUNT
 };
 
-extern const char *WeatherNames[];
+extern const char *const WeatherNames[];
 
 enum Scorches CPP_11(: Int)
 {
 	SCORCH_1 = 0,
 	SCORCH_2 = 1,
-	SCORCH_3 = 2, 
-	SCORCH_4 = 3, 
+	SCORCH_3 = 2,
+	SCORCH_4 = 3,
 	SHADOW_SCORCH = 4,
-/*	SCORCH_6 = 5, 
-	SCORCH_7 = 6, 
-	SCORCH_8 = 7, 
+/*	SCORCH_6 = 5,
+	SCORCH_7 = 6,
+	SCORCH_8 = 7,
 
 	CRATER_1 = 8,
 	CRATER_2 = 9,
@@ -109,7 +109,7 @@ enum Scorches CPP_11(: Int)
 	CRATER_7 = 14,
 	CRATER_8 = 15,
 
-	
+
 	MISC_DECAL_1 = 16,
 	MISC_DECAL_2 = 17,
 	MISC_DECAL_3 = 18,
@@ -174,14 +174,14 @@ enum WeaponSlotType CPP_11(: Int)
 	SECONDARY_WEAPON,
 	TERTIARY_WEAPON,
 
-	WEAPONSLOT_COUNT	// keep last
+	WEAPONSLOT_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------
 // Pathfind layers - ground is the first layer, each bridge is another. jba.
 // Layer 1 is the ground.
 // Layer 2 is the top layer - bridge if one is present, ground otherwise.
-// Layer 2 - LAYER_LAST -1 are bridges. 
+// Layer 2 - LAYER_LAST -1 are bridges.
 // Layer_WALL is a special "wall" layer for letting units run aroound on top of a wall
 // made of structures.
 // Note that the bridges just index in the pathfinder, so you don't actually
@@ -189,6 +189,3 @@ enum WeaponSlotType CPP_11(: Int)
 enum PathfindLayerEnum CPP_11(: Int) {LAYER_INVALID = 0, LAYER_GROUND = 1, LAYER_WALL = 15, LAYER_LAST=15};
 
 //-------------------------------------------------------------------------------------------------
-
-#endif // _GAME_TYPE_H_
-

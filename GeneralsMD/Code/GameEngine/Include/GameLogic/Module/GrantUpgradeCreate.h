@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GRANTUPGRADECREATE_H_
-#define __GRANTUPGRADECREATE_H_
-
 #define DEFINE_OBJECT_STATUS_NAMES
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -77,6 +74,3 @@ public:
 protected:
 
 };
-
-#endif // __GRANTUPGRADECREATE_H_
-

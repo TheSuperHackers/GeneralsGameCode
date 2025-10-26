@@ -27,11 +27,6 @@
 #include "WW3D2/assetmgr.h"
 
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #define D3DFVF_POINTVERTEX (D3DFVF_XYZ)
 #define SNOW_BUFFER_SIZE 4096	//size of vertex buffer holding particles.
@@ -93,9 +88,9 @@ Bool W3DSnowManager::ReAcquireResources(void)
 			if (FAILED(m_pDev->CreateVertexBuffer
 			(
 				SNOW_BUFFER_SIZE*sizeof(POINTVERTEX),
-				D3DUSAGE_WRITEONLY|D3DUSAGE_DYNAMIC|D3DUSAGE_POINTS, 
+				D3DUSAGE_WRITEONLY|D3DUSAGE_DYNAMIC|D3DUSAGE_POINTS,
 				D3DFVF_POINTVERTEX,
-				D3DPOOL_DEFAULT, 
+				D3DPOOL_DEFAULT,
 				&m_VertexBufferD3D
 			)))
 				return FALSE;
@@ -126,7 +121,7 @@ Bool W3DSnowManager::ReAcquireResources(void)
 				ib[3]=vbCount+2;
 				ib[4]=vbCount;
 				ib[5]=vbCount+1;
-		
+
 				vbCount += 4;
 				ib+=6;
 			}
@@ -148,7 +143,7 @@ void W3DSnowManager::updateIniSettings(void)
 	SnowManager::updateIniSettings();
 
 	if (m_snowTexture && stricmp(m_snowTexture->Get_Texture_Name(),TheWeatherSetting->m_snowTexture.str()) != 0)
-	{	
+	{
 		REF_PTR_RELEASE(m_snowTexture);
 		m_snowTexture = WW3DAssetManager::Get_Instance()->Get_Texture(TheWeatherSetting->m_snowTexture.str());
 	}
@@ -161,8 +156,8 @@ void W3DSnowManager::reset( void )
 
 void W3DSnowManager::update(void)
 {
-
-	m_time += WW3D::Get_Frame_Time() / 1000.0f;
+	// TheSuperHackers @tweak The snow render update is now decoupled from the logic step.
+	m_time += WW3D::Get_Logic_Frame_Time_Seconds();
 
 	//find current time offset, adjusting for overflow
 	m_time=fmod(m_time,m_fullTimePeriod);
@@ -300,8 +295,8 @@ void W3DSnowManager::renderSubBox(RenderInfoClass &rinfo, Int originX, Int origi
 				snowCenter.Set(x*m_emitterSpacing,y*m_emitterSpacing,h0);
 
 				//Adjust position so snow flakes don't fall straight down.
-				snowCenter.X += m_amplitude * WWMath::Fast_Sin( h0 * m_frequencyScaleX + (Real)x); 
-				snowCenter.Y += m_amplitude * WWMath::Fast_Sin( h0 * m_frequencyScaleY + (Real)y); 
+				snowCenter.X += m_amplitude * WWMath::Fast_Sin( h0 * m_frequencyScaleX + (Real)x);
+				snowCenter.Y += m_amplitude * WWMath::Fast_Sin( h0 * m_frequencyScaleY + (Real)y);
 
 				*(Vector3 *)verts=snowCenter;
 				verts++;
@@ -397,7 +392,7 @@ void W3DSnowManager::render(RenderInfoClass &rinfo)
 	m_heightTraveled=m_time*m_velocity+cameraOffset;	//height that snow flake traveled this frame.
 
 	Matrix4x4 identity(true);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);	
+	DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);
 
 	DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaShader);
 
@@ -415,7 +410,7 @@ void W3DSnowManager::render(RenderInfoClass &rinfo)
 	DX8Wrapper::Set_Texture(0,m_snowTexture);
 
 	if (!usePointSprites)
-	{	
+	{
 		renderAsQuads(rinfo,cubeOriginX,cubeOriginY,cubeDimX,cubeDimY);
 		return;
 	}
@@ -488,7 +483,7 @@ void W3DSnowManager::renderAsQuads(RenderInfoClass &rinfo, Int cubeOriginX, Int 
 	}
 
 	Matrix4x4 identity(true);
-	DX8Wrapper::Set_Transform(D3DTS_VIEW,identity);	
+	DX8Wrapper::Set_Transform(D3DTS_VIEW,identity);
 
 	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
 
@@ -569,7 +564,7 @@ flush_particles:
 		if (numberInBatch)
 		{
 			DX8Wrapper::Set_Vertex_Buffer(vb_access);
-			DX8Wrapper::Draw_Triangles(	0,numberInBatch*2, 0, numberInBatch*4);	
+			DX8Wrapper::Draw_Triangles(	0,numberInBatch*2, 0, numberInBatch*4);
 			totalPart -= numberInBatch;
 		}
 	}

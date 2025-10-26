@@ -24,12 +24,12 @@
 
 // FILE: DiscreteCircle.cpp ////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       EA Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       EA Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -81,11 +81,11 @@ void DiscreteCircle::generateEdgePairs(Int xCenter, Int yCenter, Int radius)
 		hl.xEnd		= xCenter + x;
 		hl.yPos		= yCenter + y;
 		m_edges.push_back(hl);
-		
+
 		if (d + y > 0) {
 			--y;
 			d -= ((y << 1) - 1);
-		} 
+		}
 
 		if (x > d) {
 			++x;
@@ -107,7 +107,7 @@ void DiscreteCircle::removeDuplicates()
 
 		if (it->yPos == nextIt->yPos) {
 			it = m_edges.erase(it);
-		} else { 
+		} else {
 			++it;
 		}
 	}

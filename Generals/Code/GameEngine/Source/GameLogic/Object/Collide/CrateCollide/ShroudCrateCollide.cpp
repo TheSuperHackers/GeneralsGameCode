@@ -41,14 +41,14 @@
 ShroudCrateCollide::ShroudCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ShroudCrateCollide::~ShroudCrateCollide( void )
 {
 
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 Bool ShroudCrateCollide::executeCrateBehavior( Object *other )
@@ -73,7 +73,7 @@ void ShroudCrateCollide::crc( Xfer *xfer )
 	// extend base class
 	CrateCollide::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -91,7 +91,7 @@ void ShroudCrateCollide::xfer( Xfer *xfer )
 	// extend base class
 	CrateCollide::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -102,4 +102,4 @@ void ShroudCrateCollide::loadPostProcess( void )
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+}

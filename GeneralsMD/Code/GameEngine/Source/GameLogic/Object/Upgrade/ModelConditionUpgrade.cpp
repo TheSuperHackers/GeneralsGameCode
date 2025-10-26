@@ -42,11 +42,11 @@ ModelConditionUpgradeModuleData::ModelConditionUpgradeModuleData()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void ModelConditionUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void ModelConditionUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpgradeModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "ConditionFlag",	ModelConditionFlags::parseSingleBitFromINI,	NULL, offsetof( ModelConditionUpgradeModuleData, m_conditionFlag ) },
 		{ 0, 0, 0, 0 }
@@ -72,7 +72,7 @@ void ModelConditionUpgrade::upgradeImplementation( )
 {
 	const ModelConditionUpgradeModuleData *data = getModelConditionUpgradeModuleData();
 
-	Object *me = getObject();	
+	Object *me = getObject();
 
 	if( data->m_conditionFlag != MODELCONDITION_INVALID )
 		me->setModelConditionState(data->m_conditionFlag);
@@ -87,7 +87,7 @@ void ModelConditionUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -105,7 +105,7 @@ void ModelConditionUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -116,4 +116,4 @@ void ModelConditionUpgrade::loadPostProcess( void )
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

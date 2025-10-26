@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _TRANSPORT_H_
-#define _TRANSPORT_H_
-
 #include "GameNetwork/udp.h"
 #include "GameNetwork/NetworkDefs.h"
 
@@ -42,7 +39,7 @@
 // it to be a MemoryPoolObject (srj)
 class Transport //: public MemoryPoolObject
 {
-	//MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Transport, "Transport")		
+	//MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Transport, "Transport")
 public:
 
 	Transport();
@@ -76,7 +73,7 @@ public:
 	TransportMessage m_outBuffer[MAX_MESSAGES];
 	TransportMessage m_inBuffer[MAX_MESSAGES];
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	DelayedTransportMessage m_delayedInBuffer[MAX_MESSAGES];
 #endif
 
@@ -101,5 +98,3 @@ private:
 
 	Bool isGeneralsPacket( TransportMessage *msg );
 };
-
-#endif // _TRANSPORT_H_

@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_MAPOBJECTPROPS_H__44517B9E_12AB_4E2C_B49B_D6BB65C59649__INCLUDED_)
-#define AFX_MAPOBJECTPROPS_H__44517B9E_12AB_4E2C_B49B_D6BB65C59649__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // mapobjectprops.h : header file
 //
 
@@ -68,8 +64,9 @@ public:
 // Implementation
 protected:
 	void getAllSelectedDicts(void);
+	Dict** getAllSelectedDictsData();
 
-	static MapObjectProps *TheMapObjectProps; 
+	static MapObjectProps *TheMapObjectProps;
 
 	// Data common to all property pages
 	Dict* m_dictToEdit;
@@ -199,7 +196,7 @@ protected:
 public:
 	static MapObject *getSingleSelectedMapObject(void);
 	static void update(void);
-  
+
 private:
   /// Disallow copying: Object is not set up to be copied
   MapObjectProps( const MapObjectProps & other ); // Deliberately undefined
@@ -210,5 +207,3 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_MAPOBJECTPROPS_H__44517B9E_12AB_4E2C_B49B_D6BB65C59649__INCLUDED_)

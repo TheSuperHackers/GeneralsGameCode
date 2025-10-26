@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Jani Penttinen                                               *
  *                                                                                             *
- *                       $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 32                                                          $*
@@ -305,7 +305,7 @@ const Vector2 DazzleINIClass::Get_Vector2(char const *section, char const *entry
 		INIEntry * entryptr = Find_Entry(section, entry);
 		if (entryptr && entryptr->Value != NULL) {
 			Vector2	ret;
-			if ( sscanf( entryptr->Value, "%f,%f", &ret[0], &ret[1], &ret[2] ) == 2 ) {
+			if ( sscanf( entryptr->Value, "%f,%f", &ret[0], &ret[1] ) == 2 ) {
 				return ret;
 			}
 		}
@@ -508,7 +508,7 @@ void DazzleTypeClass::Calculate_Intensities(
 	float distance) const
 {
 	float dot = -Vector3::Dot_Product(dir_to_dazzle,camera_dir);
-	dazzle_intensity = dot;	
+	dazzle_intensity = dot;
 
 	if (ic.use_camera_translation && distance>(fadeout_end_sqr)) {
 		dazzle_intensity=0.0f;
@@ -532,10 +532,10 @@ void DazzleTypeClass::Calculate_Intensities(
 	}
 	else {
 		dazzle_intensity=0.0f;
-	}	
+	}
 
-	if (ic.halo_intensity_pow > WWMATH_EPSILON) {		
-		if (dot > 0.0f) {			
+	if (ic.halo_intensity_pow > WWMATH_EPSILON) {
+		if (dot > 0.0f) {
 			float scale = powf(dot, ic.halo_intensity_pow);
 			halo_intensity *= scale;
 		} else {
@@ -685,7 +685,8 @@ void DazzleRenderObjClass::Init_Type(const DazzleInitClass& i)
 		unsigned new_count=i.type+1;
 		DazzleTypeClass** new_types=W3DNEWARRAY DazzleTypeClass*[new_count];
 		unsigned a=0;
-		for (;a<type_count;++a) {
+		unsigned copy_count = min(type_count, new_count);
+		for (;a<copy_count;++a) {
 			new_types[a]=types[a];
 		}
 		for (;a<new_count;++a) {
@@ -709,7 +710,8 @@ void DazzleRenderObjClass::Init_Lensflare(const LensflareInitClass& i)
 		unsigned new_count=i.type+1;
 		LensflareTypeClass** new_lensflares=W3DNEWARRAY LensflareTypeClass*[new_count];
 		unsigned a=0;
-		for (;a<lensflare_count;++a) {
+		unsigned copy_count = min(lensflare_count, new_count);
+		for (;a<copy_count;++a) {
 			new_lensflares[a]=lensflares[a];
 		}
 		for (;a<new_count;++a) {
@@ -973,8 +975,7 @@ void DazzleRenderObjClass::Render(RenderInfoClass & rinfo)
 			const DazzleTypeClass* params=types[type];
 			params->Calculate_Intensities(dazzle_intensity,dazzle_size,current_halo_intensity,camera_dir,current_dir,dir,current_distance);
 
-			unsigned time_ms=WW3D::Get_Frame_Time();
-			if (time_ms==0) time_ms=1;
+			float time_ms=WW3D::Get_Logic_Frame_Time_Milliseconds();
 			float weight=pow(params->ic.history_weight,time_ms);
 
 			if (dazzle_intensity>0.0f) {
@@ -1045,9 +1046,6 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 	else {
 		screen_x_scale=h/w;
 	}
-
-//	unsigned time_ms=WW3D::Get_Frame_Time();
-//	if (time_ms==0) time_ms=1;
 
 	// Do NOT scale halo by current scale
 	// because it uses screen parallel primitives
@@ -1149,7 +1147,7 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 
 			unsigned color=DX8Wrapper::Convert_Color(col,1.0f);
 
-			Vector3 offset;			
+			Vector3 offset;
 
 			offset = (halo_dxt - halo_dyt) * halo_size;
 			dl = current_vloc + offset;
@@ -1159,7 +1157,7 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 			vertex->diffuse=color;
 			vertex++;
 
-			offset = (halo_dxt + halo_dyt) * halo_size;  
+			offset = (halo_dxt + halo_dyt) * halo_size;
 			dl =current_vloc + offset;
 			reinterpret_cast<Vector3&>(vertex->x)=dl;
 			vertex->u1=1.0f;
@@ -1480,7 +1478,7 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 				break;
 
 			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d\r\n",__FILE__,__LINE__));
+				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
 				break;
 		};
 		cload.Close_Chunk();
@@ -1500,9 +1498,9 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 	*/
 	if (new_obj == NULL) {
 		static int count = 0;
-		if ( ++count < 10 ) {
-			WWDEBUG_SAY(("DazzlePersistFactory failed to create dazzle of type: %s!!\r\n",dazzle_type));
-			WWDEBUG_SAY(("Replacing it with a NULL render object!\r\n"));
+		if ( count++ < 10 ) {
+			WWDEBUG_SAY(("DazzlePersistFactory failed to create dazzle of type: %s!!",dazzle_type));
+			WWDEBUG_SAY(("Replacing it with a NULL render object!"));
 		}
 		new_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj("NULL");
 	}
@@ -1584,9 +1582,6 @@ void DazzleLayerClass::Render(CameraClass* camera)
 	if (!camera) return;
 
 	camera->Apply();
-
-	unsigned time_ms=WW3D::Get_Frame_Time();
-	if (time_ms==0) time_ms=1;
 
 	DX8Wrapper::Set_Material(NULL);
 

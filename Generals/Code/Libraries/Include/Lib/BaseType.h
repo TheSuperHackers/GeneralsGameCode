@@ -26,11 +26,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // tell the compiler to only load this file once
+
 #pragma once
-
-
-#ifndef _BASE_TYPE_H_
-#define _BASE_TYPE_H_
 
 #include "Lib/BaseTypeCore.h"
 #include "Lib/trig.h"
@@ -68,7 +65,7 @@ inline Real deg2rad(Real rad) { return rad * (PI/180); }
 //-----------------------------------------------------------------------------
 // For twiddling bits
 //-----------------------------------------------------------------------------
-// TheSuperHackers @compile xezon 22/03/2025 Renames BitTest to BitIsSet to prevent conflict with BitTest macro from winnt.h
+// TheSuperHackers @build xezon 22/03/2025 Renames BitTest to BitIsSet to prevent conflict with BitTest macro from winnt.h
 #define BitIsSet( x, i ) ( ( (x) & (i) ) != 0 )
 #define BitSet( x, i ) ( (x) |= (i) )
 #define BitClear( x, i ) ( (x ) &= ~(i) )
@@ -76,7 +73,7 @@ inline Real deg2rad(Real rad) { return rad * (PI/180); }
 
 //-------------------------------------------------------------------------------------------------
 
-// note, this function depends on the cpu rounding mode, which we set to CHOP every frame, 
+// note, this function depends on the cpu rounding mode, which we set to CHOP every frame,
 // but apparently tends to be left in unpredictable modes by various system bits of
 // code, so use this function with caution -- it might not round in the way you want.
 __forceinline long fast_float2long_round(float f)
@@ -119,7 +116,7 @@ __forceinline long fast_float2long_round(float f)
 // so they can be used within unions.
 
 // real-valued range defined by low and high values
-struct RealRange 
+struct RealRange
 {
 	Real lo, hi;							// low and high values of the range
 
@@ -132,7 +129,7 @@ struct RealRange
 	}
 };
 
-struct Coord2D 
+struct Coord2D
 {
 	Real x, y;
 
@@ -147,7 +144,7 @@ struct Coord2D
 			y /= len;
 		}
 	}
-	
+
 	Real toAngle( void );  ///< turn 2D vector into angle (where angle 0 is down the +x axis)
 
 };
@@ -196,9 +193,9 @@ inline Real Coord2D::toAngle( void )
 
 	return value;
 
-}  // end toAngle
+}
 
-struct ICoord2D 
+struct ICoord2D
 {
 	Int x, y;
 
@@ -222,7 +219,7 @@ struct IRegion2D
 };
 
 
-struct Coord3D 
+struct Coord3D
 {
 	Real x, y, z;
 
@@ -240,14 +237,14 @@ struct Coord3D
 			z /= len;
 		}
 	}
-	
+
 	static void crossProduct( const Coord3D *a, const Coord3D *b, Coord3D *r )
 	{
 		r->x = (a->y * b->z - a->z * b->y);
 		r->y = (a->z * b->x - a->x * b->z);
 		r->z = (a->x * b->y - a->y * b->x);
 	}
-	
+
 	void zero( void )
 	{
 		x = 0.0f;
@@ -261,21 +258,21 @@ struct Coord3D
 		y += a->y;
 		z += a->z;
 	}
-	
+
 	void sub( const Coord3D *a )
 	{
 		x -= a->x;
 		y -= a->y;
 		z -= a->z;
 	}
-	
+
 	void set( const Coord3D *a )
 	{
 		x = a->x;
 		y = a->y;
 		z = a->z;
 	}
-	
+
 	void set( Real ax, Real ay, Real az )
 	{
 		x = ax;
@@ -292,7 +289,7 @@ struct Coord3D
 
 	Bool equals( const Coord3D &r )
 	{
-		return (x == r.x && 
+		return (x == r.x &&
 						y == r.y &&
 						z == r.z);
 	}
@@ -305,7 +302,7 @@ struct Coord3D
 	}
 };
 
-struct ICoord3D 
+struct ICoord3D
 {
 	Int x, y, z;
 
@@ -330,12 +327,12 @@ struct Region3D
 	void zero() { lo.zero(); hi.zero(); }
 	Bool isInRegionNoZ( const Coord3D *query ) const
 	{
-		return (lo.x < query->x) && (query->x < hi.x) 
+		return (lo.x < query->x) && (query->x < hi.x)
 						&& (lo.y < query->y) && (query->y < hi.y);
 	}
 	Bool isInRegionWithZ( const Coord3D *query ) const
 	{
-		return (lo.x < query->x) && (query->x < hi.x) 
+		return (lo.x < query->x) && (query->x < hi.x)
 						&& (lo.y < query->y) && (query->y < hi.y)
 						&& (lo.z < query->z) && (query->z < hi.z);
 	}
@@ -385,5 +382,3 @@ struct RGBAColorInt
 	UnsignedInt red, green, blue, alpha;  // range between 0 and 255
 
 };
-
-#endif // _BASE_TYPE_H_

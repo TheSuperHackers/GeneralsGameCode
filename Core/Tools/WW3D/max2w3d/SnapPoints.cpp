@@ -56,17 +56,17 @@ public:
 		if (node == NULL) return FALSE;
 		Object * obj = node->EvalWorldState(time).obj;
 		if (obj == NULL) return FALSE;
-		
-		if 
+
+		if
 		(
 			obj->ClassID() == Class_ID(POINTHELP_CLASS_ID,0) &&
 			!node->IsHidden()
-		) 
+		)
 		{
 			return TRUE;
 		} else {
 			return FALSE;
-		} 
+		}
 	}
 };
 
@@ -74,7 +74,7 @@ public:
 void SnapPointsClass::Export_Points(INode * scene_root,TimeValue time,ChunkSaveClass & csave)
 {
 	if (scene_root == NULL) return;
-	
+
 	PointFilterClass pointfilter;
 	INodeListClass pointlist(scene_root,time,&pointfilter);
 

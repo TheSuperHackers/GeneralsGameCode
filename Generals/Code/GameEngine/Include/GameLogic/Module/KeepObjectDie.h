@@ -32,9 +32,6 @@
 
 #pragma once
 
-#ifndef __KEEP_OBJECT_DIE_H_
-#define __KEEP_OBJECT_DIE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/DieModule.h"
 #include "Common/INI.h"
@@ -53,9 +50,6 @@ public:
 	KeepObjectDie( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDie( const DamageInfo *damageInfo ); 
+	virtual void onDie( const DamageInfo *damageInfo );
 
 };
-
-#endif // __KEEP_OBJECT_DIE_H_
-

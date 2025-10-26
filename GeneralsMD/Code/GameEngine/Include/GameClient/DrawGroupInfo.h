@@ -27,8 +27,6 @@
 // Author: John K. McDonald, March 2002
 
 #pragma once
-#ifndef _H_DRAWGROUPINFO_
-#define _H_DRAWGROUPINFO_
 
 struct DrawGroupInfo
 {
@@ -43,14 +41,14 @@ struct DrawGroupInfo
 	Int m_dropShadowOffsetX;
 	Int m_dropShadowOffsetY;
 
-	union 
+	union
 	{
 		Int m_pixelOffsetX;
 		Real m_percentOffsetX;
 	};
 	Bool m_usingPixelOffsetX;
 
-	union 
+	union
 	{
 		Int m_pixelOffsetY;
 		Real m_percentOffsetY;
@@ -58,11 +56,9 @@ struct DrawGroupInfo
 	Bool m_usingPixelOffsetY;
 
 	DrawGroupInfo();
-	
+
 	static const FieldParse s_fieldParseTable[];		///< the parse table for INI definition
 	const FieldParse *getFieldParse( void ) const { return s_fieldParseTable; }
 };
 
 extern DrawGroupInfo *TheDrawGroupInfo;
-
-#endif /* _H_DRAWGROUPINFO */

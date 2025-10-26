@@ -24,12 +24,12 @@
 
 // FILE: LayoutScheme.h ///////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __LAYOUTSCHEME_H_
-#define __LAYOUTSCHEME_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <windows.h>
 
@@ -62,14 +59,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // LayoutScheme ---------------------------------------------------------------
-/** The layout scheme provides a place for default look of newly 
+/** The layout scheme provides a place for default look of newly
 	* created controls and windows */
 //-----------------------------------------------------------------------------
 class LayoutScheme
 {
 
 public:
-	
+
 	LayoutScheme();
 	~LayoutScheme();
 
@@ -121,7 +118,7 @@ protected:
 
 	GameFont *m_font;  ///< default font
 
-};  // end LayoutScheme
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 // INLINING ///////////////////////////////////////////////////////////////////
@@ -147,6 +144,3 @@ inline GameFont *LayoutScheme::getFont( void ) { return m_font; }
 // EXTERNALS //////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 extern LayoutScheme *TheDefaultScheme;
-
-#endif // end __LAYOUTSCHEME_H_
-

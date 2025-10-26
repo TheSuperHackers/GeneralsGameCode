@@ -23,18 +23,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: ConvertToHijackedVehicleCrateCollide.h 
+//
+// FILE: ConvertToHijackedVehicleCrateCollide.h
 // Author: Mark Lorenzen, July 2002
-// Desc:   A crate (actually a terrorist - mobile crate) that makes the target vehicle switch 
+// Desc:   A crate (actually a terrorist - mobile crate) that makes the target vehicle switch
 //				 sides, and kills its driver
-//	
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef CONVERT_TO_HIJACKED_VEHICLE_CRATE_COLLIDE_H_
-#define CONVERT_TO_HIJACKED_VEHICLE_CRATE_COLLIDE_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
@@ -54,7 +51,7 @@ public:
 		m_rangeOfEffect = 0;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     CrateCollideModuleData::buildFieldParse(p);
 	}
@@ -83,5 +80,3 @@ protected:
 
 	virtual Bool isHijackedVehicleCrateCollide() const { return TRUE; }
 };
-
-#endif

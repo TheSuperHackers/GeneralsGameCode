@@ -19,8 +19,6 @@
 // FILE: Snow.h /////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef _SNOW_H_
-#define _SNOW_H_
 
 #include "Lib/BaseType.h"
 #include "Common/SubsystemInterface.h"
@@ -115,6 +113,3 @@ class SnowManager : public SubsystemInterface
 };
 
 extern SnowManager *TheSnowManager;  ///< the ray effects singleton external
-
-#endif // _SNOW_H_
-

@@ -54,7 +54,7 @@ static void shutdownComplete( WindowLayout *layout )
 	// our shutdown is complete
 	TheShell->shutdownComplete( layout );
 
-}  // end if
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the single player menu */
@@ -89,7 +89,7 @@ void SinglePlayerMenuInit( WindowLayout *layout, void *userData )
 
 	//TheShell->registerWithAnimateManager(parent, WIN_ANIMATION_SLIDE_TOP, TRUE);
 
-}  // end SinglePlayerMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** single player menu shutdown method */
@@ -106,11 +106,11 @@ void SinglePlayerMenuShutdown( WindowLayout *layout, void *userData )
 		shutdownComplete( layout );
 		return;
 
-	}  //end if
+	}
 
 	TheShell->reverseAnimatewindow();
 
-}  // end SinglePlayerMenuShutdown
+}
 
 //-------------------------------------------------------------------------------------------------
 /** single player menu update method */
@@ -118,11 +118,11 @@ void SinglePlayerMenuShutdown( WindowLayout *layout, void *userData )
 void SinglePlayerMenuUpdate( WindowLayout *layout, void *userData )
 {
 
-	// We'll only be successful if we've requested to 
+	// We'll only be successful if we've requested to
 	if(isShuttingDown && TheShell->isAnimFinished())
 		shutdownComplete(layout);
 
-}  // end SinglePlayerMenuUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** SinglePlayer menu input callback */
@@ -131,7 +131,7 @@ WindowMsgHandledType SinglePlayerMenuInput( GameWindow *window, UnsignedInt msg,
 																						WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -148,7 +148,7 @@ WindowMsgHandledType SinglePlayerMenuInput( GameWindow *window, UnsignedInt msg,
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
@@ -159,37 +159,37 @@ WindowMsgHandledType SinglePlayerMenuInput( GameWindow *window, UnsignedInt msg,
 						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
 
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)button, buttonID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
 
-}  // end SinglePlayerMenuInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** single player menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	static NameKeyType buttonNew = NAMEKEY_INVALID;
 	static NameKeyType buttonLoad = NAMEKEY_INVALID;
 	static NameKeyType buttonBack = NAMEKEY_INVALID;
 
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -203,7 +203,7 @@ WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg
 
 			break;
 
-		}  // end create
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
@@ -211,7 +211,7 @@ WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg
 
 			break;
 
-		}  // end case
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -223,7 +223,7 @@ WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg
 
 			return MSG_HANDLED;
 
-		}  // end input
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -240,28 +240,28 @@ WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg
 				TheShell->push( AsciiString( "Menus/MapSelectMenu.wnd" ) );
 				buttonPushed = true;
 
-			}  // end if
+			}
 			else if( controlID == buttonLoad )
 			{
 
-			}  // end else if
+			}
 			else if( controlID == buttonBack )
 			{
 
 				// thou art directed to return to thy known solar system immediately!
 				TheShell->pop();
 				buttonPushed = true;
-				
-			}  // end else if
+
+			}
 
 			break;
 
-		}  // end selected
-		
+		}
+
 		default:
 			return MSG_IGNORED;
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
-}  // end SinglePlayerMenuSystem
+}
 

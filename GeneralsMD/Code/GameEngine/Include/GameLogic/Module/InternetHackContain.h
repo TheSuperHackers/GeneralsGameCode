@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __INTERNET_HACK_CONTAIN_H
-#define __INTERNET_HACK_CONTAIN_H
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/TransportContain.h"
 
@@ -39,7 +36,7 @@
 class InternetHackContainModuleData : public TransportContainModuleData
 {
 public:
-	
+
 
 	InternetHackContainModuleData();
 
@@ -64,10 +61,7 @@ public:
 
 protected:
 
-	
+
 private:
 
 };
-
-#endif // __RIDER_CHANGE_CONTAIN_H
-

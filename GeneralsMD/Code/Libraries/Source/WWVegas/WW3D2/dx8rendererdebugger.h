@@ -36,13 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DX8_RENDERER_DEBUGGER_H
-#define DX8_RENDERER_DEBUGGER_H
 
 #include "always.h"
 
@@ -71,5 +65,3 @@ public:
 	static void Disable_All();
 	static void Enable_All();
 };
-
-#endif

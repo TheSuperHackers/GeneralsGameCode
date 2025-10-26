@@ -159,11 +159,11 @@ bit8 Wtime::ParseDate(char *in)
 
   // The next part of the time is OPTIONAL (+minutes)
 
-  // first skip past the seconds 
+  // first skip past the seconds
   while ((isdigit(*ptr))&&(*ptr!=0)) ptr++;
   if (*ptr==0) return(TRUE);
 
-  // skip past any spaces 
+  // skip past any spaces
   while ((isspace(*ptr))&&(*ptr!=0)) ptr++;
   if (*ptr!='+')
   {
@@ -176,7 +176,7 @@ bit8 Wtime::ParseDate(char *in)
     //printf("\nPTR WAS 0\n");
     return(TRUE);
   }
- 
+
   minOffset=atol(ptr);
   //printf("\n\nAdding %d minutes!\n\n",minOffset);
   sec+=minOffset*60;  // add the minutes as seconds
@@ -210,7 +210,7 @@ bit8 Wtime::FormatTime(char *out, const char *format)
       if (lastWasH==1) lastWasH=2;
       sprintf(out+strlen(out),"%c",*ptr);
       ptr+=1;
-    } 
+    }
     else if (strncmp(ptr,"\"",1)==0)
     {
       break;
@@ -304,7 +304,7 @@ bit8 Wtime::FormatTime(char *out, const char *format)
     {
       sprintf(out+strlen(out),"%ld",((GetMonth()-1)/4)+1);  // GetQuarter
       ptr+=1;
-    } 
+    }
     else if (strncmp(ptr,"yyyy",4)==0)
     {
       sprintf(out+strlen(out),"%ld",GetYear());
@@ -314,7 +314,7 @@ bit8 Wtime::FormatTime(char *out, const char *format)
     {
       sprintf(out+strlen(out),"%02ld",GetYear()%100);
       ptr+=2;
-    } 
+    }
     else if (strncmp(ptr,"y",1)==0)
     {
       sprintf(out+strlen(out),"%ld",GetYDay());
@@ -504,7 +504,7 @@ uint32 Wtime::GetYWeek(void) const
   //phase holds the first weekday of the year.  If (Jan 1 = Sun) phase = 0
   sint32 phase=((wday-yday)%7);
   if (phase<0) phase+=7;
-  yweek=((yday+phase-1)/7)+1; 
+  yweek=((yday+phase-1)/7)+1;
   return(yweek);
 }
 uint32 Wtime::GetMonth(void) const
@@ -549,7 +549,7 @@ int   Wtime::Compare(const Wtime &other) const
   else
     return(-1);
 }
-  
+
 
 bit8 Wtime::operator == ( const Wtime &other ) const
 {
@@ -723,7 +723,7 @@ Wtime &Wtime::operator -= (const Wtime &other)
   sint32 temp;
   if (Compare(other)==-1)
   {
-    sec=0;                  // can't handle negative time 
+    sec=0;                  // can't handle negative time
     usec=0;
     return *this;
   }

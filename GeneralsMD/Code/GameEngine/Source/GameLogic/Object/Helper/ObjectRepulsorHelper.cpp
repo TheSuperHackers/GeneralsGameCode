@@ -48,7 +48,7 @@ UpdateSleepTime ObjectRepulsorHelper::update()
 	getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_REPULSOR ) );
 
 	// then go back to sleep until we are forcibly awakened.
-	return UPDATE_SLEEP_FOREVER; 
+	return UPDATE_SLEEP_FOREVER;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ void ObjectRepulsorHelper::crc( Xfer *xfer )
 	// object helper crc
 	ObjectHelper::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -78,7 +78,7 @@ void ObjectRepulsorHelper::xfer( Xfer *xfer )
 	// object helper base class
 	ObjectHelper::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -89,5 +89,5 @@ void ObjectRepulsorHelper::loadPostProcess( void )
 	// object helper base class
 	ObjectHelper::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

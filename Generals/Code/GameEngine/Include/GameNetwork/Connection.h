@@ -35,9 +35,6 @@
 
 #pragma once
 
-#ifndef __CONNECTION_H
-#define __CONNECTION_H
-
 #include "GameNetwork/NetCommandList.h"
 #include "GameNetwork/User.h"
 #include "GameNetwork/Transport.h"
@@ -47,7 +44,7 @@
 
 class Connection : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Connection, "Connection")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Connection, "Connection")
 public:
 	Connection();
 	//~Connection();
@@ -79,7 +76,7 @@ public:
 	void setQuitting( void );
 	Bool isQuitting( void ) { return m_isQuitting; }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	void debugPrintCommands();
 #endif
 
@@ -102,5 +99,3 @@ protected:
 	Int m_numRetries;							///< The number of retries for the last second.
 	time_t m_retryMetricsTime;		///< The start time of the current retry metrics thing.
 };
-
-#endif

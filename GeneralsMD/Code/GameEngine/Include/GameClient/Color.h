@@ -24,12 +24,12 @@
 
 // FILE: Color.h //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -44,9 +44,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __COLOR_H_
-#define __COLOR_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -68,7 +65,7 @@ typedef Int Color;
 
 inline Color GameMakeColor( UnsignedByte red, UnsignedByte green, UnsignedByte blue, UnsignedByte alpha )
 {
-	return (alpha << 24) | (red << 16) | (green << 8) | (blue); 
+	return (alpha << 24) | (red << 16) | (green << 8) | (blue);
 }
 
 extern void GameGetColorComponents( Color color,
@@ -88,6 +85,3 @@ extern void GameGetColorComponents( Color color,
 extern void GameGetColorComponentsReal( Color color, Real *red, Real *green, Real *blue, Real *alpha );
 
 extern Color GameDarkenColor( Color color, Int percent = 10 );
-
-#endif // __COLOR_H_
-

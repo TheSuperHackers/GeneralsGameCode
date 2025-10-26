@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_EULADIALOG_H__9F6A134E_C2A3_425E_8485_F90B1A5F9B58__INCLUDED_)
-#define AFX_EULADIALOG_H__9F6A134E_C2A3_425E_8485_F90B1A5F9B58__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // euladialog.h : header file
 //
 
@@ -60,5 +56,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_EULADIALOG_H__9F6A134E_C2A3_425E_8485_F90B1A5F9B58__INCLUDED_)

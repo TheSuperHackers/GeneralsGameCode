@@ -24,12 +24,12 @@
 
 // FILE: PopupReplay.cpp /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   Generals
@@ -59,11 +59,6 @@
 #include "GameClient/Shell.h"
 #include "GameLogic/GameLogic.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 static NameKeyType buttonBackKey					= NAMEKEY_INVALID;
@@ -107,7 +102,7 @@ static void closeSaveMenu( GameWindow *window )
 	if( layout )
 		layout->hide( TRUE );
 
-}  // end closeSaveMenu
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the SaveLoad menu */
@@ -140,7 +135,7 @@ void PopupReplayInit( WindowLayout *layout, void *userData )
 
 	// get the listbox that will have the save games in it
 	GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( NULL, listboxGamesKey );
-	DEBUG_ASSERTCRASH( listboxGames != NULL, ("PopupReplayInit - Unable to find games listbox\n") );
+	DEBUG_ASSERTCRASH( listboxGames != NULL, ("PopupReplayInit - Unable to find games listbox") );
 
 	// populate the listbox with the save games on disk
 	PopulateReplayFileListbox(listboxGames);
@@ -156,7 +151,7 @@ void PopupReplayInit( WindowLayout *layout, void *userData )
 		control->winEnable( FALSE );
 	}
 
-}  // end SaveLoadMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** SaveLoad menu shutdown method */
@@ -165,7 +160,7 @@ void PopupReplayShutdown( WindowLayout *layout, void *userData )
 {
 	parent = NULL;
 
-}  // end SaveLoadMenuShutdown
+}
 
 //-------------------------------------------------------------------------------------------------
 /** SaveLoad menu update method */
@@ -173,11 +168,11 @@ void PopupReplayShutdown( WindowLayout *layout, void *userData )
 void PopupReplayUpdate( WindowLayout *layout, void *userData )
 {
 
-	if (s_fileSavePopupStartTime != 0) 
+	if (s_fileSavePopupStartTime != 0)
 	{
 		// the replay save confirmation popup is up
 		// check to see if its time to take it down.
-		if ((timeGetTime() - s_fileSavePopupStartTime) >= s_fileSavePopupDuration) 
+		if ((timeGetTime() - s_fileSavePopupStartTime) >= s_fileSavePopupDuration)
 		{
 			ShowReplaySavedPopup(FALSE);
 
@@ -189,13 +184,13 @@ void PopupReplayUpdate( WindowLayout *layout, void *userData )
 			s_fileSavePopupStartTime = 0;
 		}
 	}
-}  // end SaveLoadMenuUpdate 
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 WindowMsgHandledType PopupReplayInput( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -210,7 +205,7 @@ WindowMsgHandledType PopupReplayInput( GameWindow *window, UnsignedInt msg, Wind
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
@@ -218,21 +213,21 @@ WindowMsgHandledType PopupReplayInput( GameWindow *window, UnsignedInt msg, Wind
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 						GameWindow *button = TheWindowManager->winGetWindowFromId( parent, buttonBackKey );
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)button, buttonBackKey );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
 }
@@ -264,7 +259,7 @@ static void saveReplay( UnicodeString filename )
 	messageBoxWin = NULL;
 	if (TheLocalFileSystem->doesFileExist(fullPath.str()))
 	{
-		messageBoxWin = MessageBoxOkCancel(TheGameText->fetch("GUI:OverwriteReplayTitle"), TheGameText->fetch("GUI:OverwriteReplay"), reallySaveReplay, NULL);		
+		messageBoxWin = MessageBoxOkCancel(TheGameText->fetch("GUI:OverwriteReplayTitle"), TheGameText->fetch("GUI:OverwriteReplay"), reallySaveReplay, NULL);
 	}
 	else
 	{
@@ -288,7 +283,7 @@ void reallySaveReplay(void)
 		if(DeleteFile(filename.str()) == 0)
 		{
 			wchar_t buffer[1024];
-			FormatMessageW ( FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, sizeof(buffer), NULL);
+			FormatMessageW ( FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, ARRAY_SIZE(buffer), NULL);
 			UnicodeString errorStr;
 			errorStr.set(buffer);
 			errorStr.trim();
@@ -301,7 +296,7 @@ void reallySaveReplay(void)
 
 			// get the listbox that will have the save games in it
 			GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( parent, listboxGamesKey );
-			DEBUG_ASSERTCRASH( listboxGames != NULL, ("reallySaveReplay - Unable to find games listbox\n") );
+			DEBUG_ASSERTCRASH( listboxGames != NULL, ("reallySaveReplay - Unable to find games listbox") );
 
 			// populate the listbox with the save games on disk
 			PopulateReplayFileListbox(listboxGames);
@@ -313,7 +308,7 @@ void reallySaveReplay(void)
 	if(CopyFile(oldFilename.str(),filename.str(), FALSE) == 0)
 	{
 		wchar_t buffer[1024];
-		FormatMessageW( FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, sizeof(buffer), NULL);
+		FormatMessageW( FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, ARRAY_SIZE(buffer), NULL);
 		UnicodeString errorStr;
 		errorStr.set(buffer);
 		errorStr.trim();
@@ -328,7 +323,7 @@ void reallySaveReplay(void)
 
 	// get the listbox that will have the save games in it
 	GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( parent, listboxGamesKey );
-	DEBUG_ASSERTCRASH( listboxGames != NULL, ("reallySaveReplay - Unable to find games listbox\n") );
+	DEBUG_ASSERTCRASH( listboxGames != NULL, ("reallySaveReplay - Unable to find games listbox") );
 
 	// populate the listbox with the save games on disk
 	PopulateReplayFileListbox(listboxGames);
@@ -340,11 +335,11 @@ void reallySaveReplay(void)
 //-------------------------------------------------------------------------------------------------
 /** SaveLoad menu system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 																				 WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-  switch( msg ) 
+  switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -353,14 +348,14 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end create
+		}
     //---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
 
 			break;
 
-		}  // end case
+		}
 
     //----------------------------------------------------------------------------------------------
     case GWM_INPUT_FOCUS:
@@ -372,7 +367,7 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end input
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GLM_SELECTED:
@@ -380,7 +375,7 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 			GameWindow *control = (GameWindow *)mData1;
 
 			GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( window, listboxGamesKey );
-			DEBUG_ASSERTCRASH( listboxGames != NULL, ("PopupReplaySystem - Unable to find games listbox\n") );
+			DEBUG_ASSERTCRASH( listboxGames != NULL, ("PopupReplaySystem - Unable to find games listbox") );
 
 			//
 			// handle games listbox, when certain items are selected in the listbox only some
@@ -394,14 +389,14 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 					UnicodeString filename;
 					filename = GadgetListBoxGetText(listboxGames, rowSelected);
 					GameWindow *textEntryReplayName = TheWindowManager->winGetWindowFromId( window, textEntryReplayNameKey );
-					DEBUG_ASSERTCRASH( textEntryReplayName != NULL, ("PopupReplaySystem - Unable to find text entry\n") );
+					DEBUG_ASSERTCRASH( textEntryReplayName != NULL, ("PopupReplaySystem - Unable to find text entry") );
 					GadgetTextEntrySetText(textEntryReplayName, filename);
 				}
 			}
 
 			break;
 
-		}  // end selected
+		}
 
     //---------------------------------------------------------------------------------------------
 		case GEM_EDIT_DONE:
@@ -418,10 +413,10 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 				saveReplay(filename);
 
       }
-	
+
 			break;
 
-		}  // end selected
+		}
     //---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
@@ -432,7 +427,7 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
       {
 				// get the filename, and see if we are overwriting
 				GameWindow *textEntryReplayName = TheWindowManager->winGetWindowFromId( window, textEntryReplayNameKey );
-				DEBUG_ASSERTCRASH( textEntryReplayName != NULL, ("PopupReplaySystem - Unable to find text entry\n") );
+				DEBUG_ASSERTCRASH( textEntryReplayName != NULL, ("PopupReplaySystem - Unable to find text entry") );
 
 				UnicodeString filename = GadgetTextEntryGetText( textEntryReplayName );
 				if (filename.isEmpty())
@@ -448,11 +443,11 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 				closeSaveMenu( window );
 				ScoreScreenEnableControls(TRUE);
 
-			}  // end if
-	
+			}
+
 			break;
 
-		}  // end selected
+		}
 
 		case GEM_UPDATE_TEXT:
 		{
@@ -476,12 +471,14 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 					}
 				}
 			}
+
+			break;
 		}
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 

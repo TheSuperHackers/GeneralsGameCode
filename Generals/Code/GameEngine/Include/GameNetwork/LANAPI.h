@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _LANAPI_H_
-#define _LANAPI_H_
-
 #include "GameNetwork/Transport.h"
 #include "GameNetwork/NetworkInterface.h"
 #include "GameNetwork/NetworkDefs.h"
@@ -54,7 +51,7 @@ static const Int g_maxSerialLength = 23; // including the trailing '\0'
 struct LANMessage;
 
 /**
- * The LANAPI class is used to instantiate a singleton which 
+ * The LANAPI class is used to instantiate a singleton which
  * implements the interface to all LAN broadcast communications.
  */
 class LANAPIInterface : public SubsystemInterface
@@ -75,7 +72,6 @@ public:
 		LANCHAT_NORMAL = 0,
 		LANCHAT_EMOTE,
 		LANCHAT_SYSTEM,
-		LANCHAT_MAX
 	};
 
 	// Request functions generate network traffic
@@ -110,7 +106,6 @@ public:
 		RET_GAME_GONE,			// OnGameJoin
 		RET_BUSY,						// OnGameCreate/Join/etc if another action is in progress
 		RET_UNKNOWN,				// Default message for oddity
-		RET_MAX
 	};
 	UnicodeString getErrorStringFromReturnType( ReturnType ret );
 
@@ -146,7 +141,7 @@ public:
 
 
 /**
- * The LANAPI class is used to instantiate a singleton which 
+ * The LANAPI class is used to instantiate a singleton which
  * implements the interface to all LAN broadcast communications.
  */
 class LANAPI : public LANAPIInterface
@@ -220,7 +215,6 @@ protected:
 		ACT_JOIN,
 		ACT_JOINDIRECTCONNECT,
 		ACT_LEAVE,
-		ACT_MAX
 	};
 
 	static const UnsignedInt s_resendDelta; // in ms
@@ -319,8 +313,6 @@ struct LANMessage
 		MSG_INACTIVE,						///< I've alt-tabbed out.  Unaccept me cause I'm a poo-flinging monkey.
 
 		MSG_REQUEST_GAME_INFO,	///< For direct connect, get the game info from a specific IP Address
-
-		MSG_MAX
 	} LANMessageType;
 
 	WideChar name[g_lanPlayerNameLength+1]; ///< My name, for convenience
@@ -418,6 +410,3 @@ struct LANMessage
 	};
 };
 #pragma pack(pop)
-
-
-#endif // _LANAPI_H_

@@ -22,14 +22,14 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: Errors.h 
+// FILE: Errors.h
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -44,9 +44,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __ERRORS_H_
-#define __ERRORS_H_
 
 /**
 	An ErrorCode is the repository for failure modes. In almost all situations,
@@ -64,9 +61,7 @@ enum ErrorCode CPP_11(: UnsignedInt)
 	ERROR_INVALID_FILE_VERSION	= (ERROR_BASE + 0x0003),		///< Unrecognized file version.
 	ERROR_CORRUPT_FILE_FORMAT		= (ERROR_BASE + 0x0004),		///< Invalid file format.
 	ERROR_BAD_INI								= (ERROR_BASE + 0x0005),		///< Bad INI data.
-	ERROR_INVALID_D3D						= (ERROR_BASE + 0x0006),    ///< Error initing D3D 
+	ERROR_INVALID_D3D						= (ERROR_BASE + 0x0006),    ///< Error initing D3D
 
 	ERROR_LAST
 };
-
-#endif // __ERRORS_H_

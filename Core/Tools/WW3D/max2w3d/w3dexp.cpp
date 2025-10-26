@@ -17,39 +17,39 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/w3dexp.cpp 78    1/03/01 11:06a Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - W3D export                                  * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/w3dexp.cpp                     $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 1/03/01 11:03a                                              $* 
- *                                                                                             * 
- *                    $Revision:: 78                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   W3dExportClass::W3dExportClass -- constructor                                             * 
- *   W3dExportClass::~W3dExportClass -- destructor                                             * 
- *   W3dExportClass::Export_Hierarchy -- Export the hierarchy tree                             * 
- *   W3dExportClass::Export_Animation -- Export animation data                                 * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - W3D export                                  *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/w3dexp.cpp                     $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 1/03/01 11:03a                                              $*
+ *                                                                                             *
+ *                    $Revision:: 78                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   W3dExportClass::W3dExportClass -- constructor                                             *
+ *   W3dExportClass::~W3dExportClass -- destructor                                             *
+ *   W3dExportClass::Export_Hierarchy -- Export the hierarchy tree                             *
+ *   W3dExportClass::Export_Animation -- Export animation data                                 *
  *   W3dExportClass::Export_Damage_Animations -- Exports damage animations for the model       *
- *   W3dExportClass::Export_Geometry -- Export the geometry data                               * 
- *   W3dExportClass::get_hierarchy_tree -- get a pointer to the hierarchy tree                 * 
- *   W3dExportClass::get_export_options -- get the export options                              * 
- *   W3dExportClass::Start_Progress_Bar -- start the MAX progress meter                        * 
- *   W3dExportClass::End_Progress_Bar -- end the progress meter                                * 
+ *   W3dExportClass::Export_Geometry -- Export the geometry data                               *
+ *   W3dExportClass::get_hierarchy_tree -- get a pointer to the hierarchy tree                 *
+ *   W3dExportClass::get_export_options -- get the export options                              *
+ *   W3dExportClass::Start_Progress_Bar -- start the MAX progress meter                        *
+ *   W3dExportClass::End_Progress_Bar -- end the progress meter                                *
  *   W3dExportClass::get_damage_root_list -- gets the list of damage root nodes                *
  *   W3dExportClass::Export_HLod -- Export an HLOD description                                 *
  *   W3dExportClass::Export_Collection -- exports a collection chunk                           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "rawfile.h"		
+#include "rawfile.h"
 #include "chunkio.h"
 #include "w3dexp.h"
 #include "w3dutil.h"
@@ -115,7 +115,7 @@ public:
 	{
 		Object * obj = node->EvalWorldState(time).obj;
 
-		if 
+		if
 		(
 			obj
 //			&& !Is_Proxy (*node)
@@ -195,31 +195,31 @@ protected:
 
 	int RegionId;
 };
-  
-	 
-/*********************************************************************************************** 
- * W3dExportClass::DoExport -- This method is called for the plug-in to perform it's file expo * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *  	name - filename to use																						  * 
- * 	export - A pointer the plug-in may use to call methods to enumerate the scene 			  * 
- * 	max - An interface pointer the plug-in may use to call methods of MAX.						  * 
- * 																														  * 
- * OUTPUT:                                                                                     * 
- *   Nonzero on successful export; otherwise 0.																  * 
- * 																														  * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/09/1997 GH  : Created.                                                                 * 
+
+
+/***********************************************************************************************
+ * W3dExportClass::DoExport -- This method is called for the plug-in to perform it's file expo *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *  	name - filename to use																						  *
+ * 	export - A pointer the plug-in may use to call methods to enumerate the scene 			  *
+ * 	max - An interface pointer the plug-in may use to call methods of MAX.						  *
+ * 																														  *
+ * OUTPUT:                                                                                     *
+ *   Nonzero on successful export; otherwise 0.																  *
+ * 																														  *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/09/1997 GH  : Created.                                                                 *
  *   10/17/2000 gth : Removed the old export code-path, everything goes through an origin now  *
  *=============================================================================================*/
 int W3dExportClass::DoExport
 (
 	const TCHAR *filename,
 	ExpInterface *do_export,
-	Interface *max, 
-	BOOL suppressPrompts, 
+	Interface *max,
+	BOOL suppressPrompts,
 	DWORD options
 )
 {
@@ -272,16 +272,16 @@ int W3dExportClass::DoExport
 		** Initialize the logging system
 		*/
 		ExportLog::Init(NULL);
-	
+
 		/*
 		** Create a chunk saver to write the w3d file with
 		*/
 		RawFileClass stream(filename);
-			
+
 		if (!stream.Open(FileClass::WRITE)) {
 			MessageBox(NULL,"Unable to open file.","Error",MB_OK | MB_SETFOREGROUND);
 			return 1;
-		} 
+		}
 
 		ChunkSaveClass csave(&stream);
 
@@ -300,7 +300,7 @@ int W3dExportClass::DoExport
 		** Done!
 		*/
 		stream.Close();
-		
+
 		if (HierarchyTree != NULL) {
 			delete HierarchyTree;
 			HierarchyTree = NULL;
@@ -357,13 +357,13 @@ void W3dExportClass::DoOriginBasedExport(char *rootname,ChunkSaveClass &csave)
 	*/
 	Start_Progress_Bar();
 	Progress_Meter_Class meter(MaxInterface,0.0f,100.0f);
-	
+
 	int steps = 0;
 	steps++;										// Base Pose
 	steps+= OriginList->Num_Nodes();		// n Origins
 	steps++;										// Basic Anim OR Damage Anims
 	steps++;										// HLOD OR Collection
-	
+
 	meter.Finish_In_Steps(steps);
 
 	/*
@@ -448,14 +448,14 @@ void W3dExportClass::DoOriginBasedExport(char *rootname,ChunkSaveClass &csave)
 	*/
 	int idx = strlen(rootname);
 	rootname[idx+1] = '\0';
-	
+
 	/*
 	** If we're not exporting a hierarchical model, only export the "origin.00"
 	*/
 	if (!ExportOptions.LoadHierarchy && !ExportOptions.ExportHierarchy) {
 		count = 1;
 	}
-	
+
 	for (i = 0; i < count; i++)
 	{
 		/*
@@ -528,17 +528,17 @@ void W3dExportClass::DoOriginBasedExport(char *rootname,ChunkSaveClass &csave)
 }
 
 
-/*********************************************************************************************** 
- * W3dExportClass::Export_Hierarchy -- Export the hierarchy tree                               * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/16/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * W3dExportClass::Export_Hierarchy -- Export the hierarchy tree                               *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/16/1997 GH  : Created.                                                                 *
  *   13/9/1999  AJA : Split into two calls, one that takes a node list and one that takes a    *
  *                    single root node.                                                        *
  *   10/17/2000 gth : Removed the old code-path, we always use an origin now                   *
@@ -563,17 +563,17 @@ bool W3dExportClass::Export_Hierarchy(char *name,ChunkSaveClass & csave,Progress
 	return true;
 }
 
-/*********************************************************************************************** 
- * W3dExportClass::Export_Animation -- Export animation data                                   * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/16/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * W3dExportClass::Export_Animation -- Export animation data                                   *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/16/1997 GH  : Created.                                                                 *
  *   13/9/1999  AJA : Split into two calls, one that takes a node list and one that takes a    *
  *                    single root node.                                                        *
  *   10/17/2000 gth : Removed the old code-path, we always use an origin now                   *
@@ -607,7 +607,7 @@ bool W3dExportClass::Export_Animation(char * name,ChunkSaveClass & csave,Progres
 	motion->Save(csave);
 
 	delete motion;
-	
+
 	return true;
 }
 
@@ -667,10 +667,10 @@ bool W3dExportClass::Export_Damage_Animations(char *name, ChunkSaveClass &csave,
 		MotionClass *motion = NULL;
 		try
 		{
-			motion = new MotionClass(	ExportInterface->theScene, 
-												&bone_list, 
+			motion = new MotionClass(	ExportInterface->theScene,
+												&bone_list,
 												htree,
-												ExportOptions, 
+												ExportOptions,
 												FrameRate,
 												&meter,
 												MaxInterface->GetMAXHWnd(),
@@ -702,21 +702,21 @@ bool W3dExportClass::Export_Damage_Animations(char *name, ChunkSaveClass &csave,
 unsigned int houseColorScale[TEAM_COLOR_PALETTE_SIZE]=
 {255,239,223,211,195,174,167,151,135,123,107,91,79,63,47,35};
 
-/*********************************************************************************************** 
- * W3dExportClass::Export_Geometry -- Export the geometry data                                 * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/16/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * W3dExportClass::Export_Geometry -- Export the geometry data                                 *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/16/1997 GH  : Created.                                                                 *
  *   13/9/1999  AJA : Added an optional "root" parameter to export geometry of the node's      *
  *                    descendants.                                                             *
  *   10/17/2000 gth : Made the "root" parameter a requirement, just pass in the scene root     *
- *                    if you want to export all geometry in the scene.                         * 
+ *                    if you want to export all geometry in the scene.                         *
  *   10/30/2000 gth : If exporting only geometry, only export the first mesh                   *
  *=============================================================================================*/
 bool W3dExportClass::Export_Geometry(char * name,ChunkSaveClass & csave,Progress_Meter_Class & meter,
@@ -740,7 +740,7 @@ bool W3dExportClass::Export_Geometry(char * name,ChunkSaveClass & csave,Progress
 
 	DynamicVectorClass<GeometryExportTaskClass *> export_tasks;
 	INodeListClass *geometry_list = NULL;
-	
+
 	/*
 	** Create the lists of nodes that we're going to work with
 	*/
@@ -759,7 +759,7 @@ bool W3dExportClass::Export_Geometry(char * name,ChunkSaveClass & csave,Progress
 	{	//preset the first 16 colors to predefined set of house colors
 		materialColors[i]=houseColorScale[i] << 16;
 	}
-	
+
 	/*
 	** Initialize the context object for exporting geometry
 	*/
@@ -812,7 +812,7 @@ bool W3dExportClass::Export_Geometry(char * name,ChunkSaveClass & csave,Progress
 		export_tasks[0]->Set_Name(name);
 		export_tasks[0]->Set_Container_Name("");
 	}
-	
+
 	/*
 	** Generate the mesh-connections object to return to the caller
 	*/
@@ -828,7 +828,7 @@ bool W3dExportClass::Export_Geometry(char * name,ChunkSaveClass & csave,Progress
 		*out_connection = meshcon;
 		meter.Add_Increment();
 	}
-	
+
 	/*
 	** Export each piece of geometry
 	*/
@@ -842,7 +842,7 @@ bool W3dExportClass::Export_Geometry(char * name,ChunkSaveClass & csave,Progress
 			MessageBox(MaxInterface->GetMAXHWnd(),err.error_message,"Error!",MB_OK | MB_SETFOREGROUND);
 			continue;
 		}
-		
+
 		meter.Add_Increment();
 	}
 
@@ -891,7 +891,7 @@ bool W3dExportClass::Export_Geometry(char * name,ChunkSaveClass & csave,Progress
 	for (i=0; i<export_tasks.Count(); i++) {
 		delete export_tasks[i];
 	}
-	
+
 	export_tasks.Delete_All();
 	delete geometry_list;
 
@@ -924,17 +924,17 @@ bool W3dExportClass::Export_HLod( char *name, const char *htree_name, ChunkSaveC
 }
 
 
-/*********************************************************************************************** 
- * W3dExportClass::get_hierarchy_tree -- get a pointer to the hierarchy tree                   * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/16/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * W3dExportClass::get_hierarchy_tree -- get a pointer to the hierarchy tree                   *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/16/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 HierarchySaveClass * W3dExportClass::get_hierarchy_tree(void)
 {
@@ -949,7 +949,7 @@ HierarchySaveClass * W3dExportClass::get_hierarchy_tree(void)
 	*/
 	if (!ExportOptions.ExportHierarchy) {
 		HierarchyTree = load_hierarchy_file(HierarchyFilename);
-		if (HierarchyTree) { 
+		if (HierarchyTree) {
 			return HierarchyTree;
 		} else {
 			char buf[256];
@@ -958,11 +958,11 @@ HierarchySaveClass * W3dExportClass::get_hierarchy_tree(void)
 			return NULL;
 		}
 	}
-	
+
 	/*
 	** Should never fall through to here...
 	** This would only happen if ExportHierarchy was true and the Export_Hierarchy
-	** function failed to create a hierarchy tree for us. 
+	** function failed to create a hierarchy tree for us.
 	*/
 	assert(0);
 	return NULL;
@@ -1030,17 +1030,17 @@ INodeListClass * W3dExportClass::get_origin_list(void)
 	return OriginList;
 }
 
-/*********************************************************************************************** 
- * W3dExportClass::get_export_options -- get the export options                                * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/16/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * W3dExportClass::get_export_options -- get the export options                                *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/16/1997 GH  : Created.                                                                 *
  *   9/30/1999  AJA : Added support for the MAX suppress_prompts flag.                         *
  *=============================================================================================*/
 bool W3dExportClass::get_export_options(BOOL suppress_prompts)
@@ -1050,7 +1050,7 @@ bool W3dExportClass::get_export_options(BOOL suppress_prompts)
 	// Get the last export settings from the AppDataChunk attached to the
 	// scene pointer. If there is no such AppDataChunk create one and set it
 	// to default values.
-	
+
 	W3dExportOptionsStruct *options = NULL;
 
 	AppDataChunk * appdata = MaxInterface->GetScenePointer()->GetAppDataChunk(W3D_EXPORTER_CLASS_ID,SCENE_EXPORT_CLASS_ID,0);
@@ -1071,7 +1071,7 @@ bool W3dExportClass::get_export_options(BOOL suppress_prompts)
 
 		options->ReduceAnimation 	= false;
 		options->ReduceAnimationPercent = 50;
-		
+
 		options->CompressAnimation							= false;
 		options->CompressAnimationFlavor					= ANIM_FLAVOR_TIMECODED;
 		options->CompressAnimationTranslationError	= 0.001f;	//DEFAULT_LOSSY_ERROR_TOLERANCE;
@@ -1098,7 +1098,7 @@ bool W3dExportClass::get_export_options(BOOL suppress_prompts)
 			appdata_struct);
 
 	}
-	
+
 	// (gth) disabling the 'optimize mesh data' feature due to problems with external tools
 	options->EnableOptimizeMeshData = false;
 
@@ -1141,38 +1141,38 @@ bool W3dExportClass::get_export_options(BOOL suppress_prompts)
 
 
 
-/*********************************************************************************************** 
- * W3dExportClass::Start_Progress_Bar -- start the MAX progress meter                          * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/16/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * W3dExportClass::Start_Progress_Bar -- start the MAX progress meter                          *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/16/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void W3dExportClass::Start_Progress_Bar(void)
 {
 	MaxInterface->ProgressStart(
-		"Processing Triangle Mesh", 
-		TRUE, 
-		progress_callback, 
+		"Processing Triangle Mesh",
+		TRUE,
+		progress_callback,
 		NULL);
 }
 
-/*********************************************************************************************** 
- * W3dExportClass::End_Progress_Bar -- end the progress meter                                  * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/16/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * W3dExportClass::End_Progress_Bar -- end the progress meter                                  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/16/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void W3dExportClass::End_Progress_Bar(void)
 {
@@ -1183,7 +1183,7 @@ void W3dExportClass::End_Progress_Bar(void)
 static bool dupe_check(const INodeListClass & list)
 {
 	for (unsigned i=0; i<list.Num_Nodes(); i++) {
-		
+
 		/*
 		** Don't check aggregate objects, they are allowed to have the same name
 		*/

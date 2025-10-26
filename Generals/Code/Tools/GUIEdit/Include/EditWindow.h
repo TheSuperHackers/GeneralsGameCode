@@ -24,12 +24,12 @@
 
 // FILE: EditWindow.h /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -44,9 +44,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __EDITWINDOW_H_
-#define __EDITWINDOW_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
@@ -78,9 +75,9 @@ public:
 	EditWindow( void );
 	~EditWindow( void );
 
-	/// initialize the edit window singleton 
+	/// initialize the edit window singleton
 	void init( UnsignedInt clientWidth, UnsignedInt clientHeight );
-	void shutdown( void );  ///< free all data 
+	void shutdown( void );  ///< free all data
 	void draw( void );  ///< draw the edit window
 
 	void updatePulse( void );  ///< pulse message from timer
@@ -108,7 +105,7 @@ public:
 	// **************************************************************************
 
 	/// draw a line on the display in screen coordinates
-	void drawLine( Int startX, Int startY, Int endX, Int endY, 
+	void drawLine( Int startX, Int startY, Int endX, Int endY,
 								 Real lineWidth, UnsignedInt lineColor );
 
 	/// draw a rect border on the display in pixel coordinates with the specified color
@@ -116,11 +113,11 @@ public:
 										 Real lineWidth, UnsignedInt lineColor );
 
 	/// draw a filled rect on the display in pixel coords with the specified color
-	void drawFillRect( Int startX, Int startY, Int width, Int height, 
+	void drawFillRect( Int startX, Int startY, Int width, Int height,
 										 UnsignedInt color );
 
 	/// draw an image fit within the screen coordinates
-	void drawImage( const Image *image, Int startX, Int startY, 
+	void drawImage( const Image *image, Int startX, Int startY,
 									Int endX, Int endY, Color color = 0xFFFFFFFF );
 
 	/// image clipping support
@@ -133,7 +130,7 @@ protected:
 	void registerEditWindowClass( void );  ///< register class with OS
 
 	/// callback from windows, NOTE that it's static and has no this pointer
-	static LRESULT CALLBACK editProc( HWND hWnd, UINT message, 
+	static LRESULT CALLBACK editProc( HWND hWnd, UINT message,
 																		WPARAM wParam, LPARAM lParam );
 
 	void drawGrid( void );  ///< draw the grid
@@ -157,7 +154,7 @@ protected:
 	static Bool m_classRegistered;  ///< TRUE when we've register with OS
 	static const char *m_className;  ///< name for windows class
 
-	ICoord2D m_size;  ///< width and height of edit window	
+	ICoord2D m_size;  ///< width and height of edit window
 	UnsignedByte m_bitDepth;  ///< bit depth for edit window
 	HWND m_editWindowHWnd;  ///< edit window handle
 
@@ -186,7 +183,7 @@ protected:
 	IRegion2D m_clipRegion;		///< the clipping region for images
 	Bool m_isClippedEnabled;	///<used by 2D drawing operations to define clip re
 
-};  // end EditWindow
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 // INLINING ///////////////////////////////////////////////////////////////////
@@ -203,6 +200,3 @@ inline ICoord2D EditWindow::getDragMoveOrigin( void ) { return m_dragMoveOrigin;
 // EXTERNALS //////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 extern EditWindow *TheEditWindow;  ///< edit window singleton extern
-
-#endif // __EDITWINDOW_H_
-

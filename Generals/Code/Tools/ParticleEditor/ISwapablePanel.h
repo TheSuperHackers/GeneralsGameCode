@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: ISwapablePanel.h 
+// FILE: ISwapablePanel.h
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -33,8 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_ISWAPABLEPANEL_
-#define _H_ISWAPABLEPANEL_
 
 #include "Lib/BaseType.h"
 
@@ -50,5 +48,3 @@ interface ISwapablePanel : public CDialog
 	virtual void performUpdate( IN Bool toUI ) = 0;
 	virtual void InitPanel( void ) = 0;
 };
-
-#endif /* _H_ISWAPABLEPANEL_ */

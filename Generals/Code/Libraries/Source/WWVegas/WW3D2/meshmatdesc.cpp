@@ -427,7 +427,7 @@ void MeshMatDescClass::Init_Alternate(MeshMatDescClass & default_materials,MeshM
 				Material[pass] = NEW_REF(VertexMaterialClass,(*(default_materials.Material[pass])));
 			} else {
 				if (default_materials.MaterialArray[pass]) {
-					WWDEBUG_SAY(("Unimplemented case: mesh has more than one default vertex material but no alternate vertex materials have been defined.\r\n"));
+					WWDEBUG_SAY(("Unimplemented case: mesh has more than one default vertex material but no alternate vertex materials have been defined."));
 				}
 				Material[pass] = NULL;
 			}
@@ -857,7 +857,7 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 			VertexMaterialClass * mtl = Peek_Material(0,pass);
 
 			for (int vidx=0; vidx<VertexCount; vidx++) {
-				
+
 				mtl = Peek_Material(vidx,pass);
 				if (mtl != prev_mtl) {
 					prev_mtl = mtl;
@@ -871,7 +871,7 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 				diffuse.Z *= mtl_diffuse.Z;
 				diffuse.W *= mtl_opacity;
 				diffuse_array[vidx]=DX8Wrapper::Convert_Color(diffuse);
-			
+
 			}
 		}
 */		/*
@@ -897,7 +897,7 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 				emissive.Y *= mtl_emissive.Y;
 				emissive.Z *= mtl_emissive.Z;
 				emissive_array[vidx]=DX8Wrapper::Convert_Color(emissive);
-			
+
 			}
 		}
 

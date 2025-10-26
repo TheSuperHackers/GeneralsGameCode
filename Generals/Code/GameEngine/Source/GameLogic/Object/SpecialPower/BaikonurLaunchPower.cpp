@@ -24,12 +24,12 @@
 
 // FILE: BaikonurLaunchPower.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	Created:	November 2002
@@ -61,15 +61,15 @@ BaikonurLaunchPowerModuleData::BaikonurLaunchPowerModuleData( void )
 /*static*/ void BaikonurLaunchPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 	SpecialPowerModuleData::buildFieldParse( p );
-	
-	static const FieldParse dataFieldParse[] = 
+
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "DetonationObject", INI::parseAsciiString, NULL, offsetof( BaikonurLaunchPowerModuleData, m_detonationObject ) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
-	
-}  // end buildFieldParse
+
+}
 
 
 // ------------------------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ BaikonurLaunchPower::BaikonurLaunchPower( Thing *thing, const ModuleData *module
 BaikonurLaunchPower::~BaikonurLaunchPower( void )
 {
 
-} 
+}
 
 // ------------------------------------------------------------------------------------------------
 void BaikonurLaunchPower::doSpecialPower( UnsignedInt commandOptions )
@@ -95,10 +95,10 @@ void BaikonurLaunchPower::doSpecialPower( UnsignedInt commandOptions )
 	SpecialPowerModule::doSpecialPower( commandOptions );
 
 	getObject()->setModelConditionState( MODELCONDITION_DOOR_1_OPENING );
-}  
+}
 
 // ------------------------------------------------------------------------------------------------
-void BaikonurLaunchPower::doSpecialPowerAtLocation( const Coord3D *loc, UnsignedInt commandOptions )
+void BaikonurLaunchPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
 {
 	if (getObject()->isDisabled())
 		return;
@@ -106,7 +106,7 @@ void BaikonurLaunchPower::doSpecialPowerAtLocation( const Coord3D *loc, Unsigned
 	const BaikonurLaunchPowerModuleData *data = getBaikonurLaunchPowerModuleData();
 
 	// call the base class action cause we are *EXTENDING* functionality
-	SpecialPowerModule::doSpecialPowerAtLocation( loc, commandOptions );
+	SpecialPowerModule::doSpecialPowerAtLocation( loc, angle, commandOptions );
 
 	//Create the detonation
 	const ThingTemplate *thing = TheThingFactory->findTemplate( data->m_detonationObject );
@@ -118,7 +118,7 @@ void BaikonurLaunchPower::doSpecialPowerAtLocation( const Coord3D *loc, Unsigned
 			detonation->setPosition( loc );
 		}
 	}
-}  
+}
 
 
 // ------------------------------------------------------------------------------------------------
@@ -130,7 +130,7 @@ void BaikonurLaunchPower::crc( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -148,7 +148,7 @@ void BaikonurLaunchPower::xfer( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -159,4 +159,4 @@ void BaikonurLaunchPower::loadPostProcess( void )
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

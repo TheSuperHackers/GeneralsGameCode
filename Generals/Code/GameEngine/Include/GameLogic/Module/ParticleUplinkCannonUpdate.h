@@ -29,12 +29,10 @@
 
 #pragma once
 
-#ifndef __PARTICLE_UPLINK_CANNON_UPDATE_H_
-#define __PARTICLE_UPLINK_CANNON_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
-#include "GameLogic/Module/UpdateModule.h"
+#include "GameLogic/Module/LaserUpdate.h"
+#include "GameLogic/Module/SpecialPowerUpdateModule.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class SpecialPowerModule;
@@ -73,7 +71,7 @@ public:
 	AsciiString			m_laserBaseLightFlareParticleSystemName;
 	AsciiString			m_laserBaseMediumFlareParticleSystemName;
 	AsciiString			m_laserBaseIntenseFlareParticleSystemName;
-	
+
 	AsciiString			m_fireBoneName;
 	AsciiString			m_particleBeamLaserName;
 
@@ -108,7 +106,7 @@ public:
 	ParticleUplinkCannonUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -156,7 +154,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// SpecialPowerUpdateInterface
-	virtual void initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, UnsignedInt commandOptions, Int locationCount );
+	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions );
 	virtual Bool isSpecialAbility() const { return false; }
 	virtual Bool isSpecialPower() const { return true; }
 	virtual Bool isActive() const {return m_status != STATUS_IDLE;}
@@ -180,7 +178,8 @@ public:
 	Bool calculateDefaultInformation();
 	Bool calculateUpBonePositions();
 
-	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const;
+	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const; //Is it active now?
+	virtual Bool doesSpecialPowerHaveOverridableDestination() const { return true; }	//Does it have it, even if it's not active?
 	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc );
 
 	// Disabled conditions to process (termination conditions!)
@@ -215,6 +214,7 @@ protected:
 	DrawableID				m_laserBeamIDs[ MAX_OUTER_NODES ];
 	DrawableID				m_groundToOrbitBeamID;
 	DrawableID				m_orbitToTargetBeamID;
+	LaserRadiusUpdate	m_orbitToTargetLaserRadius;
 	ParticleSystemID	m_connectorSystemID;
 	ParticleSystemID	m_laserBaseSystemID;
 
@@ -234,7 +234,3 @@ protected:
 	Bool						m_manualTargetMode;
 	Bool						m_clientShroudedLastFrame;
 };
-
-
-#endif
-

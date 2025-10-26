@@ -34,7 +34,7 @@
 ////// NetCommandWrapperListNode ///////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-NetCommandWrapperListNode::NetCommandWrapperListNode(NetWrapperCommandMsg *msg) 
+NetCommandWrapperListNode::NetCommandWrapperListNode(NetWrapperCommandMsg *msg)
 {
 	//Added By Sadullah Nader
 	//Initializations inserted
@@ -46,7 +46,7 @@ NetCommandWrapperListNode::NetCommandWrapperListNode(NetWrapperCommandMsg *msg)
 	m_chunksPresent = NEW Bool[m_numChunks];	// pool[]ify
 	m_numChunksPresent = 0;
 
-	for (Int i = 0; i < m_numChunks; ++i) {
+	for (UnsignedInt i = 0; i < m_numChunks; ++i) {
 		m_chunksPresent[i] = FALSE;
 	}
 
@@ -57,15 +57,11 @@ NetCommandWrapperListNode::NetCommandWrapperListNode(NetWrapperCommandMsg *msg)
 }
 
 NetCommandWrapperListNode::~NetCommandWrapperListNode() {
-	if (m_chunksPresent != NULL) {
-		delete[] m_chunksPresent;
-		m_chunksPresent = NULL;
-	}
+	delete[] m_chunksPresent;
+	m_chunksPresent = NULL;
 
-	if (m_data != NULL) {
-		delete[] m_data;
-		m_data = NULL;
-	}
+	delete[] m_data;
+	m_data = NULL;
 }
 
 Bool NetCommandWrapperListNode::isComplete() {
@@ -93,12 +89,12 @@ void NetCommandWrapperListNode::copyChunkData(NetWrapperCommandMsg *msg) {
 		return;
 	}
 
-	DEBUG_ASSERTCRASH(msg->getChunkNumber() < m_numChunks, ("MunkeeChunk %d of %d\n",
+	DEBUG_ASSERTCRASH(msg->getChunkNumber() < m_numChunks, ("MunkeeChunk %d of %d",
 		msg->getChunkNumber(), m_numChunks));
 	if (msg->getChunkNumber() >= m_numChunks)
 		return;
 
-	DEBUG_LOG(("NetCommandWrapperListNode::copyChunkData() - copying chunk %d\n",
+	DEBUG_LOG(("NetCommandWrapperListNode::copyChunkData() - copying chunk %d",
 		msg->getChunkNumber()));
 
 	if (m_chunksPresent[msg->getChunkNumber()] == TRUE) {
@@ -128,7 +124,7 @@ NetCommandWrapperList::~NetCommandWrapperList() {
 	NetCommandWrapperListNode *temp;
 	while (m_list != NULL) {
 		temp = m_list->m_next;
-		m_list->deleteInstance();
+		deleteInstance(m_list);
 		m_list = temp;
 	}
 }
@@ -141,7 +137,7 @@ void NetCommandWrapperList::reset() {
 	NetCommandWrapperListNode *temp;
 	while (m_list != NULL) {
 		temp = m_list->m_next;
-		m_list->deleteInstance();
+		deleteInstance(m_list);
 		m_list = temp;
 	}
 }
@@ -177,7 +173,7 @@ void NetCommandWrapperList::processWrapper(NetCommandRef *ref) {
 	temp->copyChunkData(msg);
 }
 
-NetCommandList * NetCommandWrapperList::getReadyCommands() 
+NetCommandList * NetCommandWrapperList::getReadyCommands()
 {
 	NetCommandList *retlist = newInstance(NetCommandList);
 	retlist->init();
@@ -192,7 +188,7 @@ NetCommandList * NetCommandWrapperList::getReadyCommands()
 			NetCommandRef *ret = retlist->addMessage(msg->getCommand());
 			ret->setRelay(msg->getRelay());
 
-			msg->deleteInstance();
+			deleteInstance(msg);
 			msg = NULL;
 
 			removeFromList(temp);
@@ -223,11 +219,11 @@ void NetCommandWrapperList::removeFromList(NetCommandWrapperListNode *node) {
 
 	if (prev == NULL) {
 		m_list = temp->m_next;
-		temp->deleteInstance();
+		deleteInstance(temp);
 		temp = NULL;
 	} else {
 		prev->m_next = temp->m_next;
-		temp->deleteInstance();
+		deleteInstance(temp);
 		temp = NULL;
 	}
 }

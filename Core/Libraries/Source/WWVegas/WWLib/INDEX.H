@@ -48,12 +48,8 @@
  *   IndexClass<T>::~IndexClass -- Destructor for index handler object.                        *
  *   compfunc -- Support function for bsearch and bsort.                                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef INDEX_H
-#define INDEX_H
+#pragma once
 
 #include	"BSEARCH.H"
 
@@ -547,9 +543,9 @@ void IndexClass<INDEX, T>::Set_Archive(NodeElement const * node) const
 template<class INDEX, class T>
 bool IndexClass<INDEX, T>::Add_Index(INDEX const & id, T const & data)
 {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	/*
-	**	Ensure that two elements with the same index are not added to the 
+	**	Ensure that two elements with the same index are not added to the
 	**	array.
 	*/
 	for (int index = 0; index < IndexCount; index++) {
@@ -723,8 +719,3 @@ typename IndexClass<INDEX, T>::NodeElement const * IndexClass<INDEX, T>::Search_
 	return(Binary_Search(IndexTable, IndexCount, node));
 //	return((NodeElement const *)bsearch(&node, &IndexTable[0], IndexCount, sizeof(IndexTable[0]), search_compfunc));
 }
-
-
-#endif
-
-

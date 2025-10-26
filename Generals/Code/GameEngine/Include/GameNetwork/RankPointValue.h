@@ -24,12 +24,12 @@
 
 // FILE: RankPointValue.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Sep 2002
@@ -37,16 +37,13 @@
 //	Filename: 	RankPointValue.h
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __RANK_POINT_VALUE_H_
-#define __RANK_POINT_VALUE_H_
 
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
@@ -77,7 +74,7 @@ enum
 	RANK_GENERAL,
 	RANK_COMMANDER_IN_CHIEF,
 
-	MAX_RANKS // keep last
+	MAX_RANKS
 };
 
 struct RankPoints
@@ -101,5 +98,3 @@ Int CalculateRank( const PSPlayerStats& stats );
 Int GetFavoriteSide( const PSPlayerStats& stats );
 const Image* LookupSmallRankImage(Int side, Int rankPoints);
 extern RankPoints *TheRankPointValues;
-
-#endif // __RANK_POINT_VALUE_H_

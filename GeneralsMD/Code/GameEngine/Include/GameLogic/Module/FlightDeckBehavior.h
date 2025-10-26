@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FLIGHT_DECK_BEHAVIOR_H
-#define __FLIGHT_DECK_BEHAVIOR_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -94,7 +91,7 @@ class FlightDeckBehavior : public AIUpdateInterface,
 													 public ParkingPlaceBehaviorInterface,
 													 public DieModuleInterface,
 													 public ExitInterface
-													 
+
 {
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( FlightDeckBehavior, "FlightDeckBehavior" )
@@ -120,7 +117,7 @@ public:
 	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) { return; }
 	virtual Bool getExitPosition( Coord3D& rallyPoint ) const { return FALSE; }
 	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) { return FALSE; }
-	virtual void setRallyPoint( const Coord3D *pos ) {}			
+	virtual void setRallyPoint( const Coord3D *pos ) {}
 	virtual const Coord3D *getRallyPoint( void ) const { return NULL;}
 
 	// UpdateModule
@@ -130,15 +127,16 @@ public:
 	virtual void onDie( const DamageInfo *damageInfo );
 
 	// ParkingPlaceBehaviorInterface
-	virtual Bool shouldReserveDoorWhenQueued(const ThingTemplate* thing) const; 
-	virtual Bool hasAvailableSpaceFor(const ThingTemplate* thing) const; 
-	virtual Bool hasReservedSpace(ObjectID id) const; 
+	virtual Bool shouldReserveDoorWhenQueued(const ThingTemplate* thing) const;
+	virtual Bool hasAvailableSpaceFor(const ThingTemplate* thing) const;
+	virtual Bool hasReservedSpace(ObjectID id) const;
 	virtual Int  getSpaceIndex( ObjectID id ) const;
 	virtual Bool reserveSpace(ObjectID id, Real parkingOffset, PPInfo* info);
-	virtual void releaseSpace(ObjectID id); 
+	virtual void releaseSpace(ObjectID id);
 	virtual Bool reserveRunway(ObjectID id, Bool forLanding);
-	virtual void releaseRunway(ObjectID id); 
+	virtual void releaseRunway(ObjectID id);
 	virtual void calcPPInfo( ObjectID id, PPInfo *info );
+	virtual Int getRunwayIndex(ObjectID id);
 	virtual Int getRunwayCount() const { return m_runways.size(); }
 	virtual ObjectID getRunwayReservation( Int r, RunwayReservationType type );
 	virtual void transferRunwayReservationToNextInLineForTakeoff(ObjectID id);
@@ -178,7 +176,7 @@ private:
 			m_orientation = 0;
 			m_runway = 0;
 			m_objectInSpace = INVALID_ID;
-		} 
+		}
 	};
 
 	struct RunwayInfo
@@ -209,7 +207,7 @@ private:
 
   const ThingTemplate *m_thingTemplate;
 
-  
+
 	std::vector<FlightDeckInfo>		m_spaces;
 	std::vector<RunwayInfo>				m_runways;
 	std::list<HealingInfo>				m_healing;	// note, this list can vary in size, and be larger than the parking space count
@@ -228,6 +226,3 @@ private:
 	Bool													m_rampUp[ MAX_RUNWAYS ];
 
 };
-
-#endif // __FLIGHT_DECK_BEHAVIOR_H
-

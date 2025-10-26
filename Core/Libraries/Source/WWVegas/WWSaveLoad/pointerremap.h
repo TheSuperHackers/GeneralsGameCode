@@ -34,14 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-
-#ifndef POINTERREMAP_H
-#define POINTERREMAP_H
 
 #ifdef _UNIX
 #include "osdep/osdep.h"
@@ -53,10 +46,10 @@
 class RefCountClass;
 
 
-class PointerRemapClass 
+class PointerRemapClass
 {
 	public:
-		
+
 		PointerRemapClass(void);
 		~PointerRemapClass(void);
 
@@ -79,19 +72,19 @@ class PointerRemapClass
 		{
 			PtrPairStruct(void) {}
 			PtrPairStruct(void * oldptr,void * newptr) : OldPointer(oldptr),NewPointer(newptr) {}
-			bool operator == (const PtrPairStruct & that) { return ((OldPointer == that.OldPointer) && (NewPointer == that.NewPointer)); } 
-			bool operator != (const PtrPairStruct & that) { return !(*this == that); } 
-			
+			bool operator == (const PtrPairStruct & that) { return ((OldPointer == that.OldPointer) && (NewPointer == that.NewPointer)); }
+			bool operator != (const PtrPairStruct & that) { return !(*this == that); }
+
 			void *		OldPointer;
 			void *		NewPointer;
 		};
-		
+
 		struct PtrRemapStruct
 		{
 			PtrRemapStruct(void) {}
-			bool operator == (const PtrRemapStruct & that) { return (PointerToRemap == that.PointerToRemap); } 
-			bool operator != (const PtrRemapStruct & that) { return !(*this == that); } 
-			
+			bool operator == (const PtrRemapStruct & that) { return (PointerToRemap == that.PointerToRemap); }
+			bool operator != (const PtrRemapStruct & that) { return !(*this == that); }
+
 			void **			PointerToRemap;
 #ifdef WWDEBUG
 			const char *	File;
@@ -110,6 +103,3 @@ class PointerRemapClass
 		DynamicVectorClass<PtrRemapStruct>	PointerRequestTable;
 		DynamicVectorClass<PtrRemapStruct>	RefCountRequestTable;
 };
-
-
-#endif

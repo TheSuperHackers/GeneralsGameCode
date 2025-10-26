@@ -24,12 +24,12 @@
 
 // FILE: BaikonurLaunchPower.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	Created:	November 2002
@@ -44,9 +44,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __BAIKONUR_LAUNCH_POWER_H_
-#define __BAIKONUR_LAUNCH_POWER_H_
 
 #include "GameLogic/Module/SpecialPowerModule.h"
 
@@ -64,7 +61,7 @@ public:
 
 	static void buildFieldParse( MultiIniFieldParse& p );
 
-	AsciiString m_detonationObject;		
+	AsciiString m_detonationObject;
 };
 
 
@@ -85,5 +82,3 @@ public:
 protected:
 
 };
-
-#endif // __BAIKONUR_LAUNCH_POWER_H_

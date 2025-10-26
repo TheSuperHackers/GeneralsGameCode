@@ -17,26 +17,26 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/EULER.CPP 5     12/02/97 10:14p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Engine                                       * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/EULER.CPP                      $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 11/13/97 7:16p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 5                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Engine                                       *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/EULER.CPP                      $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 11/13/97 7:16p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 5                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "EULER.H"	
+#include "EULER.H"
 #include <float.h>
 
 
@@ -113,7 +113,7 @@ EulerAnglesClass::EulerAnglesClass(const Matrix3 & M,int order)
 
 double EulerAnglesClass::Get_Angle(int i)
 {
-	return Angle[i];		
+	return Angle[i];
 }
 
 void EulerAnglesClass::From_Matrix(const Matrix3 & tm, int order)
@@ -169,7 +169,7 @@ void EulerAnglesClass::From_Matrix(const Matrix3 & tm, int order)
 		double x2 = PI + Angle[0];
 		double y2 = PI - Angle[1];
 		double z2 = PI + Angle[2];
-				
+
 		if (x2 > PI) {
 			x2 = x2 - 2*PI;
 		}
@@ -212,12 +212,12 @@ void EulerAnglesClass::To_Matrix(Matrix3 & tm)
 	a2 = Angle[2];
 
 	_euler_unpack_order(Order,i,j,k,h,n,s,f);
-	if (f == EULER_FRAME_ROTATING) { 
-		double t = a0; a0 = a2; a2 = t; 
+	if (f == EULER_FRAME_ROTATING) {
+		double t = a0; a0 = a2; a2 = t;
 	}
-	
-	if (n == EULER_PARITY_ODD) { 
-		a0 = -a0; a1 = -a1; a2 = -a2; 
+
+	if (n == EULER_PARITY_ODD) {
+		a0 = -a0; a1 = -a1; a2 = -a2;
 	}
 
 	ti = a0;				tj = a1;				th = a2;
@@ -285,7 +285,7 @@ int _euler_axis_h(int order)
 
 void _euler_unpack_order(int order,int &i,int &j,int &k,int &h,int &n,int &s,int &f)
 {
-	
+
 	f = order & 1;
 	order >>= 1;
 
@@ -323,12 +323,12 @@ void _array_to_mat(float M[3][4], Matrix3 & tm)
 	// translation
 	Point3 row(M[3][0],M[3][1],M[3][2]);
 	tm.SetRow(3, row);
-	
+
 	// rotation
 	for (int k=0; k<3; k++) {
 		row = Point3(M[0][k],M[1][k],M[2][k]);
 		tm.SetRow(k, row);
-	}		
+	}
 }
 
 

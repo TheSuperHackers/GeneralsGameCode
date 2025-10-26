@@ -25,12 +25,12 @@
 
 // FILE: W3DListBox.cpp ///////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -71,8 +71,8 @@
 // drawHiliteBar ==============================================================
 /** Draw image for the hilite bar */
 //=============================================================================
-static void drawHiliteBar( const Image *left, const Image *right, 
-													 const Image *center, const Image *smallCenter, 
+static void drawHiliteBar( const Image *left, const Image *right,
+													 const Image *center, const Image *smallCenter,
 													 Int startX, Int startY,
 													 Int endX, Int endY )
 {
@@ -127,12 +127,12 @@ static void drawHiliteBar( const Image *left, const Image *right,
 	{
 
 		end.x = start.x + center->getImageWidth();
-		TheWindowManager->winDrawImage( center, 
+		TheWindowManager->winDrawImage( center,
 																		start.x, start.y,
 																		end.x, end.y );
 		start.x += center->getImageWidth();
 
-	}  // end for i
+	}
 
 	//
 	// how many small repeating pieces will fit in the gap from where the
@@ -160,9 +160,9 @@ static void drawHiliteBar( const Image *left, const Image *right,
 																			end.x, end.y );
 			start.x += smallCenter->getImageWidth();
 
-		}  // end for i
+		}
 
-	}  // end if
+	}
 	TheDisplay->enableClipping(FALSE);
 	// draw left end
 	start.x = startX + xOffset;
@@ -176,7 +176,7 @@ static void drawHiliteBar( const Image *left, const Image *right,
 	end.y = start.y + barWindowSize.y;
 	TheWindowManager->winDrawImage(right, start.x, start.y, end.x, end.y);
 
-}  // end drawHiliteBar
+}
 
 // drawListBoxText ============================================================
 /** Draw the text for a listbox */
@@ -216,7 +216,7 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 	{
 
 		if( i > 0 )
-			if( list->listData[(i - 1)].listHeight > 
+			if( list->listData[(i - 1)].listHeight >
 					(list->displayPos + list->displayHeight) )
 				break;
 
@@ -257,7 +257,7 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 		// this item is selected, draw the selection color or image
 		if( selected )
 		{
-			
+
 			if( useImages )
 			{
 				const Image *left, *right, *center, *smallCenter;
@@ -270,7 +270,7 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 					center			= GadgetListBoxGetDisabledSelectedItemImageCenter( window );
 					smallCenter = GadgetListBoxGetDisabledSelectedItemImageSmallCenter( window );
 
-				}  // end if
+				}
 				else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 				{
 
@@ -278,8 +278,8 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 					right				= GadgetListBoxGetHiliteSelectedItemImageRight( window );
 					center			= GadgetListBoxGetHiliteSelectedItemImageCenter( window );
 					smallCenter = GadgetListBoxGetHiliteSelectedItemImageSmallCenter( window );
-				
-				}  // end else if
+
+				}
 				else
 				{
 
@@ -288,7 +288,7 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 					center			= GadgetListBoxGetEnabledSelectedItemImageCenter( window );
 					smallCenter = GadgetListBoxGetEnabledSelectedItemImageSmallCenter( window );
 
-				}  // end else
+				}
 
 				// draw select image across area
 
@@ -309,7 +309,7 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 				if( left && right && center && smallCenter )
 					drawHiliteBar( left, right, center, smallCenter, start.x + 1, start.y, end.x , end.y );
 
-			}  // end if, use images
+			}
 			else
 			{
 				Color selectColor = WIN_COLOR_UNDEFINED,
@@ -319,17 +319,17 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 				{
 					selectColor  = GadgetListBoxGetDisabledSelectedItemColor( window );
 					selectBorder = GadgetListBoxGetDisabledSelectedItemBorderColor( window );
-				}  // end if, disabled
+				}
 				else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 				{
 					selectColor  = GadgetListBoxGetHiliteSelectedItemColor( window );
 					selectBorder = GadgetListBoxGetHiliteSelectedItemBorderColor( window );
-				}  // end else if, hilited
+				}
 				else
 				{
 					selectColor  = GadgetListBoxGetEnabledSelectedItemColor( window );
 					selectBorder = GadgetListBoxGetEnabledSelectedItemBorderColor( window );
-				}  // end else, enabled
+				}
 
 				// draw border
 
@@ -348,7 +348,7 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 					start.y = clipRegion.lo.y;
 
 				if( selectBorder != WIN_COLOR_UNDEFINED )
-					TheWindowManager->winOpenRect( selectBorder,	
+					TheWindowManager->winOpenRect( selectBorder,
 																				 WIN_DRAW_LINE_WIDTH,
 																				 start.x, start.y,
 																				 end.x, end.y );
@@ -375,13 +375,13 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 																				 start.x, start.y,
 																				 end.x, end.y );
 
-			}  // end else, draw selection with colors
+			}
 
-		}  // end if
+		}
 
-		
 
-		
+
+
 		Color dropColor = TheWindowManager->winMakeColor( 0, 0, 0, 255 );
 		DisplayString *string;
 
@@ -406,7 +406,7 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 					columnRegion.lo.y = clipRegion.lo.y;
 				if( columnRegion.hi.y > clipRegion.hi.y )
 					columnRegion.hi.y = clipRegion.hi.y;
-				
+
 				// Display the Text Case;
 				if(cells[j].cellType == LISTBOX_TEXT)
 				{
@@ -425,11 +425,11 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 													drawY,
 													textColor,
 													dropColor );
-									
+
 					}
 					else
 					{
-					
+
 						// make sure the font of the text is the same as the windows
 						if( string->getFont() != window->winGetFont() )
 							string->setFont( window->winGetFont() );
@@ -440,8 +440,8 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 													drawY,
 													textColor,
 													dropColor );
-					}//else
-				}// if
+					}
+				}
 				else if(cells[j].cellType == LISTBOX_IMAGE && cells[j].data)
 				{
 					Int width, height;
@@ -468,16 +468,16 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 					offsetY++;
 					if(offsetX <x+1)
 						offsetX = x+1;
-					TheDisplay->setClipRegion( &columnRegion );					
-					TheWindowManager->winDrawImage( (const Image *)cells[j].data, 
+					TheDisplay->setClipRegion( &columnRegion );
+					TheWindowManager->winDrawImage( (const Image *)cells[j].data,
 																offsetX, offsetY,
 																offsetX + width, offsetY + height,cells[j].color );
 
-				}//else
+				}
 				columnX = columnX + list->columnWidth[j];
-			}// for
-		}//if
-		
+			}
+		}
+
 
 		drawY += listLineHeight;
 		TheDisplay->enableClipping(FALSE);
@@ -486,7 +486,7 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 //	TheWindowManager->winSetClipRegion( clipRegion.lo.x, clipRegion.lo.y,
 //																			clipRegion.hi.x, clipRegion.hi.y );
 
-}  // end drawListBoxText
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -521,37 +521,37 @@ void W3DGadgetListBoxDraw( GameWindow *window, WinInstanceData *instData )
 		border				= GadgetListBoxGetDisabledBorderColor( window );
 		titleColor		= window->winGetDisabledTextColor();
 		titleBorder		= window->winGetDisabledTextBorderColor();
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		background		= GadgetListBoxGetHiliteColor( window );
 		border				= GadgetListBoxGetHiliteBorderColor( window );
 		titleColor		= window->winGetHiliteTextColor();
 		titleBorder		= window->winGetHiliteTextBorderColor();
-	}  // end else if, hilited
+	}
 	else
 	{
 		background		= GadgetListBoxGetEnabledColor( window );
 		border				= GadgetListBoxGetEnabledBorderColor( window );
 		titleColor		= window->winGetEnabledTextColor();
 		titleBorder		= window->winGetEnabledTextBorderColor();
-	}  // end else, enabled
+	}
 
 	// Draw the title
 	if( title && title->getTextLength() )
 	{
-	
+
 		// set the font of this text to that of the window if not already
 		if( title->getFont() != window->winGetFont() )
 			title->setFont( window->winGetFont() );
-			
+
 		// draw the text
-		title->draw( x + 1, y, titleColor, titleBorder );		
+		title->draw( x + 1, y, titleColor, titleBorder );
 
 		y += fontHeight + 1;
 		height -= fontHeight + 1;
 
-	}  // end if
+	}
 
 	// draw the back border
 	if( border != WIN_COLOR_UNDEFINED )
@@ -561,7 +561,7 @@ void W3DGadgetListBoxDraw( GameWindow *window, WinInstanceData *instData )
 	// draw background
 	if( background != WIN_COLOR_UNDEFINED )
 		TheWindowManager->winFillRect( background, WIN_DRAW_LINE_WIDTH,
-																	 x + 1, y + 1, 
+																	 x + 1, y + 1,
 																	 x + width - 1, y + height - 1 );
 
 	// If ScrollBar was requested ... adjust width.
@@ -572,14 +572,14 @@ void W3DGadgetListBoxDraw( GameWindow *window, WinInstanceData *instData )
 		list->slider->winGetSize( &sliderSize.x, &sliderSize.y );
 		width -= (sliderSize.x +3);
 
-	}  // end if
+	}
 
 	// draw the text
 	drawListBoxText( window, instData, x, y + 4 , width, height-4, TRUE );
 
-	
 
-}  // end W3DGadgetListBoxDraw
+
+}
 
 // W3DGadgetListBoxImageDraw ==================================================
 /** Draw list box with user supplied images */
@@ -609,7 +609,7 @@ void W3DGadgetListBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 		list->slider->winGetSize( &sliderSize.x, &sliderSize.y );
 		width -= sliderSize.x;
 
-	}  // end if
+	}
 
 	// get the image
 	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
@@ -640,11 +640,11 @@ void W3DGadgetListBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 		start.y = y + instData->m_imageOffset.y;
 		end.x = start.x + width;
 		end.y = start.y + height;
-		TheWindowManager->winDrawImage( image, 
-																		start.x, start.y, 
+		TheWindowManager->winDrawImage( image,
+																		start.x, start.y,
 																		end.x, end.y );
 
-	}  // end if
+	}
 
 	// Draw the title
 	if( title && title->getTextLength() )
@@ -660,12 +660,12 @@ void W3DGadgetListBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 		y += TheWindowManager->winFontHeight( instData->getFont() );
 		height -= TheWindowManager->winFontHeight( instData->getFont() ) + 1;
 
-	}  // end if
+	}
 
 	// draw the listbox text
 	drawListBoxText( window, instData, x, y+4, width, height-4, TRUE );
 
-	
 
-}  // end W3DGadgetListBoxImageDraw
+
+}
 

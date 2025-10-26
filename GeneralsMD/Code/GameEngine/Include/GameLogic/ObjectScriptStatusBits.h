@@ -27,8 +27,6 @@
 // JKMCD Aug 2002
 
 #pragma once
-#ifndef __OBJECTSCRIPTSTATUSBITS_H__
-#define __OBJECTSCRIPTSTATUSBITS_H__
 
 //-------------------------------------------------------------------------------------------------
 /** Object status bits */
@@ -42,6 +40,3 @@ enum ObjectScriptStatusBit CPP_11(: Int)
 	OBJECT_STATUS_SCRIPT_TARGETABLE					= 0x10,  ///< This unit can be targeted by the player, but not autoacquired.
 	// NOTE: Object currently only uses a Byte for this, so if you add status bits, you may need to enlarge that field.
 };
-
-#endif /* __OBJECTSCRIPTSTATUSBITS_H__ */
-

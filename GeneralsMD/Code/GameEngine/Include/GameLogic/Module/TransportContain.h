@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __TransportContain_H_
-#define __TransportContain_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/OpenContain.h"
 
@@ -88,7 +85,7 @@ public:
 
 	virtual Bool isRiderChangeContain() const { return FALSE; }
   virtual Bool isSpecialOverlordStyleContainer() const {return FALSE;}
-	
+
 	virtual Int getContainMax( void ) const;
 
 	virtual Int getExtraSlotsInUse( void ) { return m_extraSlotsInUse; }///< Transports have the ability to carry guys how take up more than spot.
@@ -108,7 +105,7 @@ protected:
 	virtual void createPayload();
 	void letRidersUpgradeWeaponSet( void );
 
-	Bool m_payloadCreated;	
+	Bool m_payloadCreated;
 
 private:
 
@@ -116,6 +113,3 @@ private:
 	UnsignedInt m_frameExitNotBusy;
 
 };
-
-#endif // __TransportContain_H_
-

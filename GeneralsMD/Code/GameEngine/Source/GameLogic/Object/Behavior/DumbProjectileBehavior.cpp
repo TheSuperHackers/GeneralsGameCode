@@ -24,7 +24,7 @@
 
 // FILE: DumbProjectileBehavior.cpp
 // Author: Steven Johnson, July 2002
-// Desc:   
+// Desc:
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
@@ -46,11 +46,6 @@
 #include "GameLogic/Module/PhysicsUpdate.h"
 #include "GameLogic/Weapon.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -60,7 +55,7 @@
 const Int DEFAULT_MAX_LIFESPAN = 10 * LOGICFRAMES_PER_SECOND;
 
 //-----------------------------------------------------------------------------
-DumbProjectileBehaviorModuleData::DumbProjectileBehaviorModuleData() : 
+DumbProjectileBehaviorModuleData::DumbProjectileBehaviorModuleData() :
 	m_maxLifespan(DEFAULT_MAX_LIFESPAN),
 	m_detonateCallsKill(FALSE),
 	m_orientToFlightPath(TRUE),
@@ -68,7 +63,7 @@ DumbProjectileBehaviorModuleData::DumbProjectileBehaviorModuleData() :
 	m_firstHeight(0.0f),
 	m_secondHeight(0.0f),
 	m_firstPercentIndent(0.0f),
-	m_secondPercentIndent(0.0f),	
+	m_secondPercentIndent(0.0f),
 	m_garrisonHitKillCount(0),
 	m_garrisonHitKillFX(NULL),
 	m_flightPathAdjustDistPerFrame(0.0f)
@@ -80,7 +75,7 @@ void DumbProjectileBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "MaxLifespan", INI::parseDurationUnsignedInt, NULL, offsetof( DumbProjectileBehaviorModuleData, m_maxLifespan ) },
 		{ "TumbleRandomly", INI::parseBool, NULL, offsetof( DumbProjectileBehaviorModuleData, m_tumbleRandomly ) },
@@ -126,7 +121,7 @@ DumbProjectileBehavior::DumbProjectileBehavior( Thing *thing, const ModuleData* 
 	m_extraBonusFlags = 0;
 
   m_hasDetonated = FALSE;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 DumbProjectileBehavior::~DumbProjectileBehavior()
@@ -158,7 +153,7 @@ static Bool calcTrajectory(
 	Real maxPitch,					// in: max pitch (-PI/2)
 	Bool preferShortPitch,	// in: prefer the shorter or longer path?
 	Real& angle,						// out: the angle to aim
-	Real& pitch							// out: the pitch to aim for 
+	Real& pitch							// out: the pitch to aim for
 )
 {
 	Bool exactTarget = false;
@@ -209,7 +204,7 @@ static Bool calcTrajectory(
 	Real sineOfAngle = (gravity * horizDist) / sqr(velocity);
 	if (sineOfAngle > 1.0f)
 	{
-		return false;	
+		return false;
 	}
 	Real theta = ASin(sineOfAngle)*0.5f;
 */
@@ -226,16 +221,16 @@ static Bool calcTrajectory(
 //++numLoops;
 		pitches[0] = theta;	// shallower angle
 		pitches[1] = (theta >= 0.0) ? (PI/2 - theta) : (-PI/2 - theta);	// steeper angle
-		
-		DEBUG_ASSERTCRASH(pitches[0]<=PI/2&&pitches[0]>=-PI/2,("bad pitches[0] %f\n",rad2deg(pitches[0])));
-		DEBUG_ASSERTCRASH(pitches[1]<=PI/2&&pitches[1]>=-PI/2,("bad pitches[1] %f\n",rad2deg(pitches[1])));
+
+		DEBUG_ASSERTCRASH(pitches[0]<=PI/2&&pitches[0]>=-PI/2,("bad pitches[0] %f",rad2deg(pitches[0])));
+		DEBUG_ASSERTCRASH(pitches[1]<=PI/2&&pitches[1]>=-PI/2,("bad pitches[1] %f",rad2deg(pitches[1])));
 
 		// calc the horiz-speed & time for each.
 		// note that time can only be negative for 90<angle<270, and since we
 		// ruled those out above, we're gold.
 		sinPitches[0] = Sin(pitches[0]);
 		sinPitches[1] = Sin(pitches[1]);
-		cosPitches[0] = Cos(pitches[0]); 
+		cosPitches[0] = Cos(pitches[0]);
 		cosPitches[1] = Cos(pitches[1]);
 		Real t0 = (horizDist / (velocity * cosPitches[0]));
 		Real t1 = (horizDist / (velocity * cosPitches[1]));
@@ -245,7 +240,7 @@ static Bool calcTrajectory(
 
 
 		DEBUG_ASSERTCRASH(t0>=0&&t1>=0,("neg time"));
-		
+
 		Int preferred = ((t0 < t1) == (preferShortPitch)) ? 0 : 1;
 
 		// ok, NOW... since dz is virtually NEVER zero, do a little approximation
@@ -260,7 +255,7 @@ static Bool calcTrajectory(
 		if (root < 0.0f)
 		{
 			// oops, no solution for our preferred pitch. try the other one.
-			if (preferred == 0)	
+			if (preferred == 0)
 				tooClose = true;	// if this fails for the shallow case, it's 'cuz the result is too close
 			preferred = 1 - preferred;
 			vz = velocity*sinPitches[preferred];
@@ -313,7 +308,7 @@ static Bool calcTrajectory(
 		}
 	}
 
-//DEBUG_LOG(("took %d loops to find a match\n",numLoops));
+//DEBUG_LOG(("took %d loops to find a match",numLoops));
 	if (exactTarget)
 		return true;
 
@@ -326,11 +321,11 @@ static Bool calcTrajectory(
 // Prepares the missile for launch via proper weapon-system channels.
 //-------------------------------------------------------------------------------------------------
 void DumbProjectileBehavior::projectileLaunchAtObjectOrPosition(
-	const Object* victim, 
-	const Coord3D* victimPos, 
-	const Object* launcher, 
-	WeaponSlotType wslot, 
-	Int specificBarrelToUse, 
+	const Object* victim,
+	const Coord3D* victimPos,
+	const Object* launcher,
+	WeaponSlotType wslot,
+	Int specificBarrelToUse,
 	const WeaponTemplate* detWeap,
 	const ParticleSystemTemplate* exhaustSysOverride
 )
@@ -382,7 +377,7 @@ void DumbProjectileBehavior::projectileFireAtObjectOrPosition( const Object *vic
 	{
 		m_flightPathSpeed = weaponSpeed;
 	}
-	
+
  	PhysicsBehavior* physics = projectile->getPhysics();
  	if ( d->m_tumbleRandomly && physics)
 	{
@@ -454,7 +449,7 @@ Bool DumbProjectileBehavior::calcFlightPath(Bool recalcNumSegments)
 	flightCurve.getSegmentPoints( m_flightPathSegments, &m_flightPath );
 	DEBUG_ASSERTCRASH(m_flightPathSegments == m_flightPath.size(), ("m_flightPathSegments mismatch"));
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	if( TheGlobalData->m_debugProjectilePath )
 		displayFlightPath();
 #endif
@@ -475,7 +470,7 @@ Bool DumbProjectileBehavior::projectileHandleCollision( Object *other )
 			// if it's not the specific thing we were targeting, see if we should incidentally collide...
 		if (!m_detonationWeaponTmpl->shouldProjectileCollideWith(projectileLauncher, getObject(), other, m_victimID))
 		{
-			//DEBUG_LOG(("ignoring projectile collision with %s at frame %d\n",other->getTemplate()->getName().str(),TheGameLogic->getFrame()));
+			//DEBUG_LOG(("ignoring projectile collision with %s at frame %d",other->getTemplate()->getName().str(),TheGameLogic->getFrame()));
 			return true;
 		}
 
@@ -490,20 +485,20 @@ Bool DumbProjectileBehavior::projectileHandleCollision( Object *other )
 				const ContainedItemsList* items = contain->getContainedItemsList();
 				if (items)
 				{
-					for (ContainedItemsList::const_iterator it = items->begin(); *it != NULL && numKilled < d->m_garrisonHitKillCount; )
+					for (ContainedItemsList::const_iterator it = items->begin(); it != items->end() && numKilled < d->m_garrisonHitKillCount; )
 					{
 						Object* thingToKill = *it++;
 						if (!thingToKill->isEffectivelyDead() && thingToKill->isKindOfMulti(d->m_garrisonHitKillKindof, d->m_garrisonHitKillKindofNot))
 						{
-							//DEBUG_LOG(("Killed a garrisoned unit (%08lx %s) via Flash-Bang!\n",thingToKill,thingToKill->getTemplate()->getName().str()));
+							//DEBUG_LOG(("Killed a garrisoned unit (%08lx %s) via Flash-Bang!",thingToKill,thingToKill->getTemplate()->getName().str()));
 							if (projectileLauncher)
 								projectileLauncher->scoreTheKill( thingToKill );
 							thingToKill->kill();
 							++numKilled;
 						}
-					} // next contained item
-				} // if items
-				
+					}
+				}
+
 				if (numKilled > 0)
 				{
 					// note, fx is played at center of building, not at grenade's location
@@ -516,7 +511,7 @@ Bool DumbProjectileBehavior::projectileHandleCollision( Object *other )
 
 					return true;
 				}
-			}	// if a garrisonable thing
+			}
 		}
 
 	}
@@ -569,8 +564,8 @@ void DumbProjectileBehavior::detonate()
 
 	if (obj->getDrawable())
 		obj->getDrawable()->setDrawableHidden(true);
-  
-  m_hasDetonated = TRUE; 
+
+  m_hasDetonated = TRUE;
 
 }
 
@@ -636,7 +631,7 @@ UpdateSleepTime DumbProjectileBehavior::update()
   {
     if ( m_currentFlightPathStep > 0)
 	  {
-	  // this seems reasonable; however, if this object has a PhysicsBehavior on it, this calc will be wrong, 
+	  // this seems reasonable; however, if this object has a PhysicsBehavior on it, this calc will be wrong,
 	  // since Physics is applying gravity, which we duly ignore, but the prevPos won't be what we expect.
 	  // get it from the flight path instead. (srj)
 	  //Coord3D prevPos = *getObject()->getPosition();
@@ -701,14 +696,14 @@ UpdateSleepTime DumbProjectileBehavior::update()
 // ------------------------------------------------------------------------------------------------
 /** displayFlightPath for debugging */
 // ------------------------------------------------------------------------------------------------
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 void DumbProjectileBehavior::displayFlightPath()
 {
 	extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
-	for( Int pointIndex = 0; pointIndex < m_flightPath.size(); ++pointIndex )
+	for( size_t pointIndex = 0; pointIndex < m_flightPath.size(); ++pointIndex )
 	{
-		addIcon(&m_flightPath[pointIndex], TheGlobalData->m_debugProjectileTileWidth, 
-										TheGlobalData->m_debugProjectileTileDuration, 
+		addIcon(&m_flightPath[pointIndex], TheGlobalData->m_debugProjectileTileWidth,
+										TheGlobalData->m_debugProjectileTileDuration,
 										TheGlobalData->m_debugProjectileTileColor);
 	}
 }
@@ -723,7 +718,7 @@ void DumbProjectileBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -772,20 +767,20 @@ void DumbProjectileBehavior::xfer( Xfer *xfer )
 			if( m_detonationWeaponTmpl == NULL )
 			{
 
-				DEBUG_CRASH(( "DumbProjectileBehavior::xfer - Unknown weapon template '%s'\n",
+				DEBUG_CRASH(( "DumbProjectileBehavior::xfer - Unknown weapon template '%s'",
 											weaponTemplateName.str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
-		}  // end else
+		}
 
-	}  // end if
+	}
 
 	// lifespan frame
 	xfer->xferUnsignedInt( &m_lifespanFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -796,4 +791,4 @@ void DumbProjectileBehavior::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -63,15 +63,15 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // MapSettings message handlers
 
-void MapSettings::OnChangeMapTimeofday() 
+void MapSettings::OnChangeMapTimeofday()
 {
 }
 
-void MapSettings::OnChangeMapWeather() 
+void MapSettings::OnChangeMapWeather()
 {
 }
 
-BOOL MapSettings::OnInitDialog() 
+BOOL MapSettings::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -84,8 +84,8 @@ BOOL MapSettings::OnInitDialog()
 		timeofday->AddString(TimeOfDayNames[i]);
 	}
 	timeofday->SetCurSel(TheGlobalData->m_timeOfDay-TIME_OF_DAY_FIRST);
-	
-	
+
+
 	CComboBox *weather = (CComboBox*)GetDlgItem(IDC_MAP_WEATHER);
 	weather->ResetContent();
 	for (i = 0; i < WEATHER_COUNT; i++)
@@ -123,7 +123,7 @@ BOOL MapSettings::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void MapSettings::OnOK() 
+void MapSettings::OnOK()
 {
 	CComboBox *timeofday = (CComboBox*)GetDlgItem(IDC_MAP_TIMEOFDAY);
 	CComboBox *weather = (CComboBox*)GetDlgItem(IDC_MAP_WEATHER);
@@ -148,19 +148,19 @@ void MapSettings::OnOK()
 	CDialog::OnOK();
 }
 
-void MapSettings::OnChangeMapTitle() 
+void MapSettings::OnChangeMapTitle()
 {
 	// TODO: If this is a RICHEDIT control, the control will not
 	// send this notification unless you override the CDialog::OnInitDialog()
 	// function and call CRichEditCtrl().SetEventMask()
 	// with the ENM_CHANGE flag ORed into the mask.
-	
+
 	// TODO: Add your control notification handler code here
-	
+
 }
 
-void MapSettings::OnChangeMapCompression() 
+void MapSettings::OnChangeMapCompression()
 {
 	// TODO: Add your control notification handler code here
-	
+
 }

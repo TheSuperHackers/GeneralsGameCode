@@ -57,11 +57,11 @@ void ControlBar::parseCommandButtonDefinition( INI *ini )
 	{
 		// allocate a new item
 		button = TheControlBar->newCommandButton( name );
-		if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES) 
+		if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
 		{
 			button->markAsOverride();
 		}
-	}  // end if
+	}
 	else if( ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES )
 	{
 		DEBUG_CRASH(( "[LINE: %d in '%s'] Duplicate commandbutton %s found!", ini->getLineNum(), ini->getFilename().str(), name.str() ));
@@ -73,7 +73,7 @@ void ControlBar::parseCommandButtonDefinition( INI *ini )
 
 	// parse the ini definition
 	ini->initFromINI( button, button->getFieldParse() );
-	
+
 
 	//Make sure buttons with special power templates also have the appropriate option set.
 	const SpecialPowerTemplate *spTemplate = button->getSpecialPowerTemplate();
@@ -89,6 +89,6 @@ void ControlBar::parseCommandButtonDefinition( INI *ini )
 			ini->getLineNum(), ini->getFilename().str(), name.str() ) );
 	}
 
-}  // end parseCommandButtonDefinition
+}
 
 

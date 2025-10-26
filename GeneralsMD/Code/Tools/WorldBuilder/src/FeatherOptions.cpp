@@ -36,7 +36,7 @@ Int FeatherOptions::m_currentRadius = 1;
 
 FeatherOptions::FeatherOptions(CWnd* pParent /*=NULL*/)
 {
-	//{{AFX_DATA_INIT(FeatherOptions) 
+	//{{AFX_DATA_INIT(FeatherOptions)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
@@ -52,8 +52,8 @@ void FeatherOptions::DoDataExchange(CDataExchange* pDX)
 
 /// Sets the feather value in the dialog.
 /** Update the value in the edit control and the slider. */
-void FeatherOptions::setFeather(Int feather) 
-{ 
+void FeatherOptions::setFeather(Int feather)
+{
 	CString buf;
 	buf.Format("%d", feather);
 	m_currentFeather = feather;
@@ -66,8 +66,8 @@ void FeatherOptions::setFeather(Int feather)
 
 /// Sets the rate value in the dialog.
 /** Update the value in the edit control and the slider. */
-void FeatherOptions::setRate(Int rate) 
-{ 
+void FeatherOptions::setRate(Int rate)
+{
 	CString buf;
 	buf.Format("%d", rate);
 	m_currentRate = rate;
@@ -80,8 +80,8 @@ void FeatherOptions::setRate(Int rate)
 
 /// Sets the radius value in the dialog.
 /** Update the value in the edit control and the slider. */
-void FeatherOptions::setRadius(Int radius) 
-{ 
+void FeatherOptions::setRadius(Int radius)
+{
 	CString buf;
 	buf.Format("%d", radius);
 	m_currentRadius = radius;
@@ -97,12 +97,12 @@ void FeatherOptions::setRadius(Int radius)
 // FeatherOptions message handlers
 
 /// Dialog UI initialization.
-/** Creates the slider controls, and sets the initial values for 
+/** Creates the slider controls, and sets the initial values for
 width and feather in the ui controls. */
-BOOL FeatherOptions::OnInitDialog() 
+BOOL FeatherOptions::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	m_updating = true;
 	m_featherPopup.SetupPopSliderButton(this, IDC_SIZE_POPUP, this);
 	m_radiusPopup.SetupPopSliderButton(this, IDC_RADIUS_POPUP, this);
@@ -122,7 +122,7 @@ BOOL FeatherOptions::OnInitDialog()
 /// Handles width edit ui messages.
 /** Gets the new edit control text, converts it to an int, then updates
 		the slider and brush tool. */
-void FeatherOptions::OnChangeSizeEdit() 
+void FeatherOptions::OnChangeSizeEdit()
 {
 		if (m_updating) return;
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_SIZE_EDIT);
@@ -134,7 +134,7 @@ void FeatherOptions::OnChangeSizeEdit()
 			if (1==sscanf(buffer, "%d", &width)) {
 				m_currentFeather = width;
 				FeatherTool::setFeather(m_currentFeather);
-				sprintf(buffer, "%.1f FEET.", m_currentFeather*MAP_XY_FACTOR);
+				snprintf(buffer, ARRAY_SIZE(buffer), "%.1f FEET.", m_currentFeather*MAP_XY_FACTOR);
 				pEdit = m_staticThis->GetDlgItem(IDC_WIDTH_LABEL);
 				if (pEdit) pEdit->SetWindowText(buffer);
 			}
@@ -172,7 +172,7 @@ void FeatherOptions::GetPopSliderInfo(const long sliderID, long *pMin, long *pMa
 		default:
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 }
 
 void FeatherOptions::PopSliderChanged(const long sliderID, long theVal)
@@ -207,7 +207,7 @@ void FeatherOptions::PopSliderChanged(const long sliderID, long theVal)
 
 		default:
 			break;
-	}	// switch
+	}
 }
 
 void FeatherOptions::PopSliderFinished(const long sliderID, long theVal)
@@ -221,7 +221,7 @@ void FeatherOptions::PopSliderFinished(const long sliderID, long theVal)
 		default:
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 
 }
 

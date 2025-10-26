@@ -48,9 +48,6 @@
 
 #pragma once
 
-#ifndef __FIREWALLHELPER_H
-#define __FIREWALLHELPER_H
-
 class UDP;
 
 #define NUM_TEST_PORTS 4
@@ -187,7 +184,7 @@ class FirewallHelperClass {
 		void readFirewallBehavior(void);
 		void reset(void);
 		Bool behaviorDetectionUpdate(void);
-		
+
 		FirewallBehaviorType getFirewallBehavior(void);
 		void writeFirewallBehavior(void);
 
@@ -308,7 +305,3 @@ class FirewallHelperClass {
 
 extern FirewallHelperClass *TheFirewallHelper;
 FirewallHelperClass * createFirewallHelper();
-
-
-#endif	// __FIREWALLHELPER_H
-

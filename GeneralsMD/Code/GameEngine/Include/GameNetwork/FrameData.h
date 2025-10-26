@@ -22,11 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef __FRAMEDATA_H
-#define __FRAMEDATA_H
 
 #include "Lib/BaseType.h"
 #include "GameNetwork/NetCommandList.h"
@@ -65,5 +61,3 @@ protected:
 	UnsignedInt m_lastFailedCC;
 	UnsignedInt m_lastFailedFrameCC;
 };
-
-#endif

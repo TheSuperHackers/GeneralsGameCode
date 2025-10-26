@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __GAMERESULTSTHREAD_H__
-#define __GAMERESULTSTHREAD_H__
-
 #include "Common/SubsystemInterface.h"
 
 // this class encapsulates a request for the thread
@@ -76,6 +73,3 @@ public:
 };
 
 extern GameResultsInterface *TheGameResultsQueue;
-
-
-#endif // __GAMERESULTSTHREAD_H__

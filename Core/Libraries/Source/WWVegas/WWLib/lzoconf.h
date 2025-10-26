@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Library/lzoconf.h                                 $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Library/lzoconf.h                                 $*
+ *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 7/22/97 11:37a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 /* lzoconf.h -- configuration for the LZO real-time data compression library
@@ -59,9 +59,7 @@
    markus.oberhumer@jk.uni-linz.ac.at
  */
 
-
-#ifndef __LZOCONF_H
-#define __LZOCONF_H
+#pragma once
 
 #define LZO_VERSION             0x0200
 #define LZO_VERSION_STRING      "0.20"
@@ -227,8 +225,6 @@ LZO_EXTERN(int) _lzo_config_check(void);
 //#ifdef __cplusplus
 //} /* extern "C" */
 //#endif
-
-#endif /* already included */
 
 /*
 vi:ts=4

@@ -30,13 +30,13 @@
 
 #pragma once
 
-#ifndef __USERPREFERENCES_H__
-#define __USERPREFERENCES_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "Common/STLTypedefs.h"
+
+typedef UnsignedInt CursorCaptureMode;
+typedef UnsignedInt ScreenEdgeScrollMode;
 
 //-----------------------------------------------------------------------------
 // PUBLIC TYPES ///////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@
 typedef std::map<AsciiString, AsciiString> PreferenceMap;
 
 //-----------------------------------------------------------------------------
-// UserPreferences base class 
+// UserPreferences base class
 //-----------------------------------------------------------------------------
 class UserPreferences : public PreferenceMap
 {
@@ -53,9 +53,10 @@ public:
 	UserPreferences();
 	virtual ~UserPreferences();
 
+	// Loads or creates a file with the given name in the user data directory.
 	virtual Bool load(AsciiString fname);
 	virtual Bool write(void);
-	
+
 	Bool getBool(AsciiString key, Bool defaultValue) const;
 	Real getReal(AsciiString key, Real defaultValue) const;
 	Int getInt(AsciiString key, Int defaultValue) const;
@@ -71,13 +72,16 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-// OptionsPreferences options menu class 
+// OptionsPreferences options menu class
 //-----------------------------------------------------------------------------
 class OptionPreferences : public UserPreferences
 {
 public:
 	OptionPreferences(  );
 	virtual ~OptionPreferences();
+
+	Bool loadFromIniFile();
+
 	UnsignedInt getLANIPAddress(void);				// convenience function
 	UnsignedInt getOnlineIPAddress(void);			// convenience function
 	void setLANIPAddress(AsciiString IP);			// convenience function
@@ -86,6 +90,16 @@ public:
 	void setOnlineIPAddress(UnsignedInt IP);	// convenience function
 	Bool getAlternateMouseModeEnabled(void);	// convenience function
 	Real getScrollFactor(void);								// convenience function
+	Bool getDrawScrollAnchor(void);
+	Bool getMoveScrollAnchor(void);
+	Bool getCursorCaptureEnabledInWindowedGame() const;
+	Bool getCursorCaptureEnabledInWindowedMenu() const;
+	Bool getCursorCaptureEnabledInFullscreenGame() const;
+	Bool getCursorCaptureEnabledInFullscreenMenu() const;
+	CursorCaptureMode getCursorCaptureMode() const;
+	Bool getScreenEdgeScrollEnabledInWindowedApp() const;
+	Bool getScreenEdgeScrollEnabledInFullscreenApp() const;
+	ScreenEdgeScrollMode getScreenEdgeScrollMode() const;
 	Bool getSendDelay(void);									// convenience function
 	Int getFirewallBehavior(void);						// convenience function
 	Short getFirewallPortAllocationDelta(void);	// convenience function
@@ -98,8 +112,10 @@ public:
 	Real get3DSoundVolume(void);							// convenience function
 	Real getSpeechVolume(void);								// convenience function
 	Real getMusicVolume(void);								// convenience function
+	Real getMoneyTransactionVolume(void) const;
 	Bool saveCameraInReplays(void);
 	Bool useCameraInReplays(void);
+	Bool getPlayerObserverEnabled() const;
 	Int	 getStaticGameDetail(void);	// detail level selected by the user.
 	Int	 getIdealStaticGameDetail(void);	// detail level detected for user.
  	Real getGammaValue(void);
@@ -120,16 +136,26 @@ public:
 
 	Int	 getCampaignDifficulty(void);
 	void setCampaignDifficulty( Int diff );
+
+	Int getNetworkLatencyFontSize(void);
+	Int getRenderFpsFontSize(void);
+	Int getSystemTimeFontSize(void);
+	Int getGameTimeFontSize(void);
+
+	Real getResolutionFontAdjustment(void);
 };
 
 //-----------------------------------------------------------------------------
-// LANPreferences class 
+// LANPreferences class
 //-----------------------------------------------------------------------------
 class LANPreferences : public UserPreferences
 {
 public:
 	LANPreferences();
 	virtual ~LANPreferences();
+
+	Bool loadFromIniFile();
+
 	UnicodeString getUserName(void);		// convenience function
 	Int getPreferredFaction(void);			// convenience function
 	Int getPreferredColor(void);				// convenience function
@@ -138,5 +164,3 @@ public:
 	Int getNumRemoteIPs(void);					// convenience function
 	UnicodeString getRemoteIPEntry(Int i);	// convenience function
 };
-
-#endif // __USERPREFERENCES_H__

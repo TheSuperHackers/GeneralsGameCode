@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _PARTICLE_SYS_H_
-#define _PARTICLE_SYS_H_
-
 #include <stdio.h>
 #include "Common/AsciiString.h"
 #include "Common/GameMemory.h"
@@ -43,9 +40,9 @@
 #include "WWMath/matrix3d.h"		///< @todo Replace with our own matrix library
 #include "Common/STLTypedefs.h"
 
- 
+
 /// @todo Once the client framerate is decoupled, the frame counters within will have to become time-based
- 
+
 class Particle;
 class ParticleSystem;
 class ParticleSystemManager;
@@ -84,7 +81,7 @@ struct RGBColorKeyframe
 
 enum ParticlePriorityType CPP_11(: Int)
 {
-	INVALID_PRIORITY = 0, 
+	INVALID_PRIORITY = 0,
 	PARTICLE_PRIORITY_LOWEST = 1,
 //	FLUFF = PARTICLE_PRIORITY_LOWEST,		///< total and absolute fluff
 //	DEBRIS,		///< debris related particles
@@ -107,8 +104,8 @@ enum ParticlePriorityType CPP_11(: Int)
 	CRITICAL,				///< super special top priority like a superweapon
 	ALWAYS_RENDER,	///< used for logically important display (not just fluff), so must never be culled, regardless of particle cap, lod, etc
 	// !!! *Noting* goes here ... special is the top priority !!!
-	PARTICLE_PRIORITY_HIGHEST = ALWAYS_RENDER,
-	NUM_PARTICLE_PRIORITIES  ///< Keep this last
+	NUM_PARTICLE_PRIORITIES,
+	PARTICLE_PRIORITY_HIGHEST = NUM_PARTICLE_PRIORITIES - 1,
 };
 
 /**
@@ -164,11 +161,11 @@ protected:
  * An individual particle created by a ParticleSystem.
  * NOTE: Particles cannot exist without a parent particle system.
  */
-class Particle : public MemoryPoolObject, 
+class Particle : public MemoryPoolObject,
 								 public ParticleInfo
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( Particle, "ParticlePool" )		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( Particle, "ParticlePool" )
 
 public:
 
@@ -193,7 +190,7 @@ public:
 
 	void controlParticleSystem( ParticleSystem *sys ) { m_systemUnderControl = sys; }
 	void detachControlledParticleSystem( void ) { m_systemUnderControl = NULL; }
-	
+
 	// get priority of this particle ... which is the priority of the system it belongs to
 	ParticlePriorityType getPriority( void );
 
@@ -250,46 +247,6 @@ public:
 
 };
 
-
-//--------------------------------------------------------------------------------------------------------------
-
-#ifdef DEFINE_PARTICLE_SYSTEM_NAMES
-
-/**** NOTE: These MUST be kept in sync with the enumerations below *****/
-
-static const char *ParticleShaderTypeNames[] = 
-{
-	"NONE", "ADDITIVE", "ALPHA", "ALPHA_TEST", "MULTIPLY", NULL
-};
-
-static const char *ParticleTypeNames[] = 
-{
-	"NONE", "PARTICLE", "DRAWABLE", "STREAK", "VOLUME_PARTICLE", NULL
-};
-
-static const char *EmissionVelocityTypeNames[] =
-{
-	"NONE", "ORTHO", "SPHERICAL", "HEMISPHERICAL", "CYLINDRICAL", "OUTWARD", NULL
-};
-
-static const char *EmissionVolumeTypeNames[] =
-{
-	"NONE", "POINT", "LINE", "BOX", "SPHERE", "CYLINDER", NULL
-};
-
-//"NONE", "FLUFF", "DEBRIS", "NATURE", "WEAPON", "DAMAGE", "SPECIAL"
-static const char *ParticlePriorityNames[] = 
-{
-	"NONE", "WEAPON_EXPLOSION","SCORCHMARK","DUST_TRAIL","BUILDUP","DEBRIS_TRAIL","UNIT_DAMAGE_FX","DEATH_EXPLOSION","SEMI_CONSTANT","CONSTANT","WEAPON_TRAIL","AREA_EFFECT","CRITICAL", "ALWAYS_RENDER", NULL
-};
-
-static const char *WindMotionNames[] = 
-{
-	"NONE", "Unused", "PingPong", "Circular", NULL
-};
-
-#endif
-
 /**
  * All of the properties of a particle system, used by both ParticleSystemTemplates
  * and ParticleSystem classes.
@@ -310,13 +267,15 @@ public:
 
 	enum ParticleShaderType
 	{
-		INVALID_SHADER=0, ADDITIVE, ALPHA, ALPHA_TEST, MULTIPLY
-	} 
+		INVALID_SHADER=0, ADDITIVE, ALPHA, ALPHA_TEST, MULTIPLY,
+		PARTICLE_SHADER_TYPE_COUNT
+	}
 	m_shaderType;																///< how this particle is rendered
 
 	enum ParticleType
 	{
-		INVALID_TYPE=0, PARTICLE, DRAWABLE, STREAK, VOLUME_PARTICLE	 ///< is a particle a 2D-screen-facing particle, or a Drawable, or a Segment in a streak?
+		INVALID_TYPE=0, PARTICLE, DRAWABLE, STREAK, VOLUME_PARTICLE, ///< is a particle a 2D-screen-facing particle, or a Drawable, or a Segment in a streak?
+		PARTICLE_TYPE_COUNT
 	}
 	m_particleType;
 
@@ -356,7 +315,7 @@ public:
 	typedef Int Color;
 
 	void tintAllColors( Color tintColor );
-	
+
 	GameClientRandomVariable m_colorScale;								///< color coefficient
 
 	GameClientRandomVariable m_burstDelay;								///< time between particle emissions
@@ -376,7 +335,8 @@ public:
 	// The direction and speed at which particles are emitted
 	enum EmissionVelocityType
 	{
-		INVALID_VELOCITY=0, ORTHO, SPHERICAL, HEMISPHERICAL, CYLINDRICAL, OUTWARD
+		INVALID_VELOCITY=0, ORTHO, SPHERICAL, HEMISPHERICAL, CYLINDRICAL, OUTWARD,
+		EMISSION_VELOCITY_TYPE_COUNT
 	}
 	m_emissionVelocityType;
 
@@ -419,10 +379,11 @@ public:
 	// Note that the volume is relative to the system's position and orientation
 	enum EmissionVolumeType
 	{
-		INVALID_VOLUME=0, POINT, LINE, BOX, SPHERE, CYLINDER
+		INVALID_VOLUME=0, POINT, LINE, BOX, SPHERE, CYLINDER,
+		EMISSION_VOLUME_TYPE_COUNT
 	}
 	m_emissionVolumeType;												///< the type of volume where particles are created
-	
+
 	union emissionVolumeUnion
 	{
 		// point just uses system's position
@@ -459,7 +420,7 @@ public:
 	m_emissionVolume;														///< the dimensions of the emission volume
 
 	Bool m_isEmissionVolumeHollow;							///< if true, only create particles at boundary of volume
-	Bool m_isGroundAligned;											///< if true, align with the ground. if false, then do the normal billboarding. 
+	Bool m_isGroundAligned;											///< if true, align with the ground. if false, then do the normal billboarding.
 	Bool m_isEmitAboveGroundOnly;								///< if true, only emit particles when the system is above ground.
 	Bool m_isParticleUpTowardsEmitter;					///< if true, align the up direction to be towards the emitter.
 
@@ -468,7 +429,9 @@ public:
 		WIND_MOTION_INVALID = 0,
 		WIND_MOTION_NOT_USED,
 		WIND_MOTION_PING_PONG,
-		WIND_MOTION_CIRCULAR
+		WIND_MOTION_CIRCULAR,
+
+		WIND_MOTION_COUNT
 	};
 	WindMotion m_windMotion;				///< motion of the wind angle updating
 	Real m_windAngle;								///< angle of the "wind" associated with this system
@@ -485,13 +448,56 @@ public:
 
 };
 
+//--------------------------------------------------------------------------------------------------------------
+
+#ifdef DEFINE_PARTICLE_SYSTEM_NAMES
+
+/**** NOTE: These MUST be kept in sync with the enumerations above *****/
+
+static const char *const ParticleShaderTypeNames[] =
+{
+	"NONE", "ADDITIVE", "ALPHA", "ALPHA_TEST", "MULTIPLY", NULL
+};
+static_assert(ARRAY_SIZE(ParticleShaderTypeNames) == ParticleSystemInfo::PARTICLE_SHADER_TYPE_COUNT + 1, "Incorrect array size");
+
+static const char *const ParticleTypeNames[] =
+{
+	"NONE", "PARTICLE", "DRAWABLE", "STREAK", "VOLUME_PARTICLE", NULL
+};
+static_assert(ARRAY_SIZE(ParticleTypeNames) == ParticleSystemInfo::PARTICLE_TYPE_COUNT + 1, "Incorrect array size");
+
+static const char *const EmissionVelocityTypeNames[] =
+{
+	"NONE", "ORTHO", "SPHERICAL", "HEMISPHERICAL", "CYLINDRICAL", "OUTWARD", NULL
+};
+static_assert(ARRAY_SIZE(EmissionVelocityTypeNames) == ParticleSystemInfo::EMISSION_VELOCITY_TYPE_COUNT + 1, "Incorrect array size");
+
+static const char *const EmissionVolumeTypeNames[] =
+{
+	"NONE", "POINT", "LINE", "BOX", "SPHERE", "CYLINDER", NULL
+};
+static_assert(ARRAY_SIZE(EmissionVolumeTypeNames) == ParticleSystemInfo::EMISSION_VOLUME_TYPE_COUNT + 1, "Incorrect array size");
+
+static const char *const ParticlePriorityNames[] =
+{
+	"NONE", "WEAPON_EXPLOSION","SCORCHMARK","DUST_TRAIL","BUILDUP","DEBRIS_TRAIL","UNIT_DAMAGE_FX","DEATH_EXPLOSION","SEMI_CONSTANT","CONSTANT","WEAPON_TRAIL","AREA_EFFECT","CRITICAL", "ALWAYS_RENDER", NULL
+};
+static_assert(ARRAY_SIZE(ParticlePriorityNames) == NUM_PARTICLE_PRIORITIES + 1, "Incorrect array size");
+
+static const char *const WindMotionNames[] =
+{
+	"NONE", "Unused", "PingPong", "Circular", NULL
+};
+static_assert(ARRAY_SIZE(WindMotionNames) == ParticleSystemInfo::WIND_MOTION_COUNT + 1, "Incorrect array size");
+
+#endif
 
 /**
  * A ParticleSystemTemplate, used by the ParticleSystemManager to instantiate ParticleSystems.
  */
 class ParticleSystemTemplate : public MemoryPoolObject, protected ParticleSystemInfo
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ParticleSystemTemplate, "ParticleSystemTemplatePool" )		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ParticleSystemTemplate, "ParticleSystemTemplatePool" )
 
 public:
 	ParticleSystemTemplate( const AsciiString &name );
@@ -510,7 +516,7 @@ public:
 protected:
 	friend class ParticleSystemManager;					///< @todo remove this friendship
 	friend class ParticleSystem;								///< @todo remove this friendship
-	
+
 	// These friendships are naughty but necessary for particle editing.
 	friend class DebugWindowDialog;							///< @todo remove this friendship when no longer editing particles
 	friend void _updateAsciiStringParmsToSystem(ParticleSystemTemplate *particleTemplate);
@@ -534,15 +540,15 @@ protected:
  * before destroying itself in order to ensure everything can be cleaned up if the system
  * is reset.
  */
-class ParticleSystem : public MemoryPoolObject, 
+class ParticleSystem : public MemoryPoolObject,
 											 public ParticleSystemInfo
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ParticleSystem, "ParticleSystemPool" )		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ParticleSystem, "ParticleSystemPool" )
 
 public:
 
-	ParticleSystem( const ParticleSystemTemplate *sysTemplate, 
+	ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 									ParticleSystemID id,
 									Bool createSlaves );			///< create a particle system from a template and assign it this ID
 
@@ -554,7 +560,7 @@ public:
 	void rotateLocalTransformX( Real x );				///< rotate local transform matrix
 	void rotateLocalTransformY( Real y );				///< rotate local transform matrix
 	void rotateLocalTransformZ( Real z );				///< rotate local transform matrix
-		
+
 	const Coord3D *getDriftVelocity( void ) { return &m_driftVelocity; }	///< get the drift velocity of the system
 
 	void attachToDrawable( const Drawable *draw );							///< attach this particle system to a Drawable
@@ -600,7 +606,7 @@ public:
 	void setMaster( ParticleSystem *master );  ///< make this a slave with a master
 	ParticleSystem *getMaster( void ) { return m_masterSystem; }
 	const Coord3D *getSlavePositionOffset( void ) { return &m_slavePosOffset; }
-	
+
 	void setSystemLifetime( UnsignedInt frames ) { m_systemLifetimeLeft = frames; }; ///< not the particle life, the system!... Lorenzen
 	void setLifetimeRange( Real min, Real max );
 	Bool isSystemForever() const {return m_isForever;}
@@ -743,15 +749,15 @@ public:
 
 	/// given a template, instantiate a particle system
 	ParticleSystem *createParticleSystem( const ParticleSystemTemplate *sysTemplate,
-																				Bool createSlaves = TRUE );	
+																				Bool createSlaves = TRUE );
 
-	/** given a template, instantiate a particle system. 
+	/** given a template, instantiate a particle system.
 		if attachTo is not null, attach the particle system to the given object.
 		return the particle system's ID, NOT its pointer.
 	*/
 	ParticleSystemID createAttachedParticleSystemID( const ParticleSystemTemplate *sysTemplate,
 																				Object* attachTo,
-																				Bool createSlaves = TRUE );	
+																				Bool createSlaves = TRUE );
 
 	/// find a particle system given a unique system identifier
 	ParticleSystem *findParticleSystem( ParticleSystemID id );
@@ -764,7 +770,7 @@ public:
 	TemplateMap::iterator endParticleSystemTemplate() { return m_templateMap.end(); }
 	TemplateMap::const_iterator beginParticleSystemTemplate() const { return m_templateMap.begin(); }
 	TemplateMap::const_iterator endParticleSystemTemplate() const { return m_templateMap.end(); }
-	
+
 	/// destroy attached systems to object
 	void destroyAttachedSystems( Object *obj );
 
@@ -780,10 +786,10 @@ public:
 
 	// @todo const this jkmcd
 	ParticleSystemList &getAllParticleSystems( void ) { return m_allParticleSystemList; }
-	
+
 	virtual void doParticles(RenderInfoClass &rinfo) = 0;
 	virtual void queueParticleRender() = 0;
-	
+
 	virtual void preloadAssets( TimeOfDay timeOfDay );
 
 	// these are only for use by partcle systems to link and unlink themselves
@@ -820,6 +826,3 @@ extern ParticleSystemManager *TheParticleSystemManager;
 
 class DebugDisplayInterface;
 extern void ParticleSystemDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp = NULL );
-
-
-#endif // _PARTICLE_SYS_H_

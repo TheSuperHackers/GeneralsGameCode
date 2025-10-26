@@ -36,11 +36,6 @@
 #include "GameLogic/Module/ProjectileStreamUpdate.h"
 #include "WWMath/vector3.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -55,7 +50,7 @@ ProjectileStreamUpdate::ProjectileStreamUpdate( Thing *thing, const ModuleData* 
 	m_owningObject = INVALID_ID;
 	m_nextFreeIndex = 0;
 	m_firstValidIndex = 0;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -134,7 +129,7 @@ void ProjectileStreamUpdate::getAllPoints( Vector3 *points, Int *count )
 			points[pointCount].X = thisPoint.x;
 			points[pointCount].Y = thisPoint.y;
 			points[pointCount].Z = thisPoint.z;
-			
+
 
 			if ( obj && obj->isKindOf( KINDOF_VEHICLE ) )				// this makes the stream skim along my roof, if I have a roof
 			{
@@ -181,7 +176,7 @@ void ProjectileStreamUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -211,7 +206,7 @@ void ProjectileStreamUpdate::xfer( Xfer *xfer )
 	// owning object
 	xfer->xferObjectID( &m_owningObject );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -222,4 +217,4 @@ void ProjectileStreamUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -41,7 +41,7 @@ ActiveShroudUpgradeModuleData::ActiveShroudUpgradeModuleData( void )
 
 	m_newShroudRange = 0.0f;
 
-}  // end SpecialPowerModuleData
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -49,14 +49,14 @@ ActiveShroudUpgradeModuleData::ActiveShroudUpgradeModuleData( void )
 {
 	UpgradeModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "NewShroudRange", INI::parseReal, NULL, offsetof( ActiveShroudUpgradeModuleData, m_newShroudRange ) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,18 +64,18 @@ ActiveShroudUpgradeModuleData::ActiveShroudUpgradeModuleData( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ActiveShroudUpgrade::ActiveShroudUpgrade( Thing *thing, const ModuleData* moduleData ) : 
+ActiveShroudUpgrade::ActiveShroudUpgrade( Thing *thing, const ModuleData* moduleData ) :
 							UpgradeModule( thing, moduleData )
 {
 
-}  // end ActiveShroudUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ActiveShroudUpgrade::~ActiveShroudUpgrade( void )
 {
 
-}  // end ~ActiveShroudUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ void ActiveShroudUpgrade::upgradeImplementation( void )
 		getObject()->setShroudRange( getActiveShroudUpgradeModuleData()->m_newShroudRange );
 		getObject()->handlePartitionCellMaintenance();// To shroud where I am without waiting.
 	}
-}  // end upgradeImplementation
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -98,7 +98,7 @@ void ActiveShroudUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -116,7 +116,7 @@ void ActiveShroudUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -127,4 +127,4 @@ void ActiveShroudUpgrade::loadPostProcess( void )
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

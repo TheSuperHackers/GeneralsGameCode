@@ -23,7 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // HintSpy.cpp
-// The HintSpy sits on the message stream and watches for certain messages, 
+// The HintSpy sits on the message stream and watches for certain messages,
 // for which it then generates visual "hints".
 // Author: Michael S. Booth, March 2001
 
@@ -64,9 +64,6 @@ GameMessageDisposition HintSpyTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_DEFECTOR_HINT:
-
-			disp = DESTROY_MESSAGE; //hint no longer needed by anyone.  Eat it.
-
 		case GameMessage::MSG_DO_MOVETO_HINT:
 		case GameMessage::MSG_DO_ATTACKMOVETO_HINT:
 		case GameMessage::MSG_DO_ATTACK_OBJECT_HINT:
@@ -134,6 +131,6 @@ GameMessageDisposition HintSpyTranslator::translateGameMessage(const GameMessage
 			TheInGameUI->createGarrisonHint( msg );
 			break;
 
-	}	
+	}
 	return disp;
 }

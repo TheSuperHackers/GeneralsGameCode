@@ -24,7 +24,7 @@
 *
 * FILE
 *     targa.cpp
-* 
+*
 * DESCRIPTION
 *     Targa image file class.
 *
@@ -277,7 +277,7 @@ long Targa::Open(const char* name, long mode)
 			}
 			break;
 	}
- 
+
 	/* Close on any error! */
 	if (error) {
 		Close();
@@ -437,7 +437,7 @@ long Targa::Load(const char* name, char* palette, char* image,bool invert_image)
 					XFlip();
 					Header.ImageDescriptor &= ~TGAIDF_XORIGIN;
 				}
-				
+
 				// Mod (IML) : Locate the origin at the bottom-left corner instead. This
 				// will make ot consistent with .TGA's that have been generated with our
 				// existing software.
@@ -445,7 +445,7 @@ long Targa::Load(const char* name, char* palette, char* image,bool invert_image)
 				if ( Header.ImageDescriptor & TGAIDF_YORIGIN ) {
 					YFlip();
 					//	Bug fix (IML) : Clear this flag to indicate to the targa reader
-					// that the Y-origin is at the bottom of the image. 
+					// that the Y-origin is at the bottom of the image.
 					Header.ImageDescriptor &= ~TGAIDF_YORIGIN;
 				}
 			}
@@ -657,7 +657,7 @@ long Targa::Save(const char* name, long flags, bool addextension)
 					palette += depth;
 					}
 				#endif
-				
+
 				/* Write the palette. */
 				if (File_Write(temppal, size) != size)
 					error = TGAERR_WRITE;
@@ -674,7 +674,7 @@ long Targa::Save(const char* name, long flags, bool addextension)
 		 *---------------------------------------------------------------------*/
 		if (!error && (flags & TGAF_IMAGE) && (mImage != NULL))
 			{
-			
+
 			bool imageinverted;
 
 			/* Invert truecolor data. */
@@ -725,7 +725,7 @@ long Targa::Save(const char* name, long flags, bool addextension)
 		} else {
 			footer.Extension = 0;
 		}
-			
+
 		/*-----------------------------------------------------------------------
 		 * WRITE THE FOOTER DATA SECTION
 		 *---------------------------------------------------------------------*/
@@ -1374,23 +1374,23 @@ long Targa_Error_Handler(long load_err,const char* filename)
 	case 0:
 		return 0;
 	case TGAERR_OPEN:
-//		WWDEBUG_SAY(("Targa: Failed to open file \"%s\"\n", filename));
+//		WWDEBUG_SAY(("Targa: Failed to open file \"%s\"", filename));
 		break;
 
 	case TGAERR_READ:
-//		WWDEBUG_SAY(("Targa: Failed to read file \"%s\"\n", filename));
+//		WWDEBUG_SAY(("Targa: Failed to read file \"%s\"", filename));
 		break;
 
 	case TGAERR_NOTSUPPORTED:
-//		WWDEBUG_SAY(("Targa: File \"%s\" is an unsupported Targa type\n", filename));
+//		WWDEBUG_SAY(("Targa: File \"%s\" is an unsupported Targa type", filename));
 		break;
 
 	case TGAERR_NOMEM:
-//		WWDEBUG_SAY(("Targa: Failed to allocate memory for file \"%s\"\n", filename));
+//		WWDEBUG_SAY(("Targa: Failed to allocate memory for file \"%s\"", filename));
 		break;
 
 	default:
-//		WWDEBUG_SAY(("Targa: Unknown error when loading file \"%s\"\n", filename));
+//		WWDEBUG_SAY(("Targa: Unknown error when loading file \"%s\"", filename));
 		break;
 	}
 	return load_err;

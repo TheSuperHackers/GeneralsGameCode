@@ -84,7 +84,7 @@ void WOLCustomScoreScreenInit( WindowLayout *layout, void *userData )
 
 	// Set Keyboard to Main Parent
 	TheWindowManager->winSetFocus( parentWOLCustomScore );
-} // WOLCustomScoreScreenInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu shutdown method */
@@ -96,7 +96,7 @@ void WOLCustomScoreScreenShutdown( WindowLayout *layout, void *userData )
 
 	// our shutdown is complete
 	TheShell->shutdownComplete( layout );
-}  // WOLCustomScoreScreenShutdown
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ void WOLCustomScoreScreenUpdate( WindowLayout * layout, void *userData)
 	if (WOL::TheWOL)
 		WOL::TheWOL->update();
 	*/
-}// WOLCustomScoreScreenUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu input callback */
@@ -116,7 +116,7 @@ void WOLCustomScoreScreenUpdate( WindowLayout * layout, void *userData)
 WindowMsgHandledType WOLCustomScoreScreenInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -131,36 +131,36 @@ WindowMsgHandledType WOLCustomScoreScreenInput( GameWindow *window, UnsignedInt 
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonDisconnect, buttonDisconnectID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// WOLCustomScoreScreenInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLCustomScoreScreenSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType WOLCustomScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
@@ -170,23 +170,23 @@ WindowMsgHandledType WOLCustomScoreScreenSystem( GameWindow *window, UnsignedInt
 
 		case GWM_CREATE:
 			{
-				
+
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
-			{	
+			{
 				// if we're given the opportunity to take the keyboard focus we must say we want it
 				if( mData1 == TRUE )
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 
 		case GBM_SELECTED:
 			{
@@ -201,7 +201,7 @@ WindowMsgHandledType WOLCustomScoreScreenSystem( GameWindow *window, UnsignedInt
 						WOL::TheWOL->addCommand( WOL::WOLCOMMAND_RESET );  // don't display an error, log out, or anything
 					}
 
-				} //if ( controlID == buttonDisconnect )
+				}
 				else if ( controlID == buttonLobbyID )
 				{
 					if (WOL::TheWOL->getState() != WOL::WOLAPI_FATAL_ERROR)
@@ -214,11 +214,11 @@ WindowMsgHandledType WOLCustomScoreScreenSystem( GameWindow *window, UnsignedInt
 					else
 					{
 					}
-				} //if ( controlID == buttonDisconnect )
+				}
 				*/
 				break;
-			}// case GBM_SELECTED:
-	
+			}
+
 		case GEM_EDIT_DONE:
 			{
 				break;
@@ -226,7 +226,7 @@ WindowMsgHandledType WOLCustomScoreScreenSystem( GameWindow *window, UnsignedInt
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// WOLCustomScoreScreenSystem
+}

@@ -30,22 +30,22 @@
 
 #pragma once
 
-#ifndef __SKIRMISHPREFERENCES_H__
-#define __SKIRMISHPREFERENCES_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "Common/UserPreferences.h"
 
 //-----------------------------------------------------------------------------
-// SkirmishPreferences class 
+// SkirmishPreferences class
 //-----------------------------------------------------------------------------
 class SkirmishPreferences : public UserPreferences
 {
 public:
 	SkirmishPreferences();
 	virtual ~SkirmishPreferences();
+
+	Bool loadFromIniFile();
+
 	virtual Bool write(void);
 	AsciiString getSlotList(void);
 	void setSlotList(void);
@@ -55,5 +55,3 @@ public:
 	AsciiString getPreferredMap(void);	// convenience function
 	Bool usesSystemMapDir(void);		// convenience function
 };
-
-#endif // __SKIRMISHPREFERENCES_H__

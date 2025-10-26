@@ -1,6 +1,6 @@
 set(GAMEENGINEDEVICE_SRC
-    Include/MilesAudioDevice/MilesAudioManager.h
-    Include/VideoDevice/Bink/BinkVideoPlayer.h
+#    Include/MilesAudioDevice/MilesAudioManager.h
+#    Include/VideoDevice/Bink/BinkVideoPlayer.h
     Include/W3DDevice/Common/W3DConvert.h
     Include/W3DDevice/Common/W3DFunctionLexicon.h
     Include/W3DDevice/Common/W3DModuleFactory.h
@@ -70,7 +70,7 @@ set(GAMEENGINEDEVICE_SRC
     Include/W3DDevice/GameClient/W3DTerrainTracks.h
     Include/W3DDevice/GameClient/W3DTerrainVisual.h
     Include/W3DDevice/GameClient/W3DTreeBuffer.h
-    Include/W3DDevice/GameClient/W3DVideobuffer.h
+#    Include/W3DDevice/GameClient/W3DVideoBuffer.h
     Include/W3DDevice/GameClient/W3DView.h
     Include/W3DDevice/GameClient/W3DVolumetricShadow.h
     Include/W3DDevice/GameClient/W3DWater.h
@@ -81,17 +81,17 @@ set(GAMEENGINEDEVICE_SRC
     Include/W3DDevice/GameLogic/W3DGameLogic.h
     Include/W3DDevice/GameLogic/W3DGhostObject.h
     Include/W3DDevice/GameLogic/W3DTerrainLogic.h
-    Include/Win32Device/Common/Win32BIGFile.h
-    Include/Win32Device/Common/Win32BIGFileSystem.h
+#    Include/Win32Device/Common/Win32BIGFile.h
+#    Include/Win32Device/Common/Win32BIGFileSystem.h
     Include/Win32Device/Common/Win32CDManager.h
     Include/Win32Device/Common/Win32GameEngine.h
-    Include/Win32Device/Common/Win32LocalFile.h
-    Include/Win32Device/Common/Win32LocalFileSystem.h
+#    Include/Win32Device/Common/Win32LocalFile.h
+#    Include/Win32Device/Common/Win32LocalFileSystem.h
     Include/Win32Device/GameClient/Win32DIKeyboard.h
     Include/Win32Device/GameClient/Win32DIMouse.h
     Include/Win32Device/GameClient/Win32Mouse.h
-    Source/MilesAudioDevice/MilesAudioManager.cpp
-    Source/VideoDevice/Bink/BinkVideoPlayer.cpp
+#    Source/MilesAudioDevice/MilesAudioManager.cpp
+#    Source/VideoDevice/Bink/BinkVideoPlayer.cpp
     Source/W3DDevice/Common/System/W3DFunctionLexicon.cpp
     Source/W3DDevice/Common/System/W3DRadar.cpp
     Source/W3DDevice/Common/Thing/W3DModuleFactory.cpp
@@ -172,7 +172,7 @@ set(GAMEENGINEDEVICE_SRC
     Source/W3DDevice/GameClient/W3DTerrainTracks.cpp
     Source/W3DDevice/GameClient/W3DTerrainVisual.cpp
     Source/W3DDevice/GameClient/W3DTreeBuffer.cpp
-    Source/W3DDevice/GameClient/W3DVideoBuffer.cpp
+#    Source/W3DDevice/GameClient/W3DVideoBuffer.cpp
     Source/W3DDevice/GameClient/W3DView.cpp
     Source/W3DDevice/GameClient/W3dWaypointBuffer.cpp
     Source/W3DDevice/GameClient/W3DWebBrowser.cpp
@@ -182,31 +182,17 @@ set(GAMEENGINEDEVICE_SRC
     Source/W3DDevice/GameLogic/W3DGameLogic.cpp
     Source/W3DDevice/GameLogic/W3DGhostObject.cpp
     Source/W3DDevice/GameLogic/W3DTerrainLogic.cpp
-    Source/Win32Device/Common/Win32BIGFile.cpp
-    Source/Win32Device/Common/Win32BIGFileSystem.cpp
+#    Source/Win32Device/Common/Win32BIGFile.cpp
+#    Source/Win32Device/Common/Win32BIGFileSystem.cpp
     Source/Win32Device/Common/Win32CDManager.cpp
     Source/Win32Device/Common/Win32GameEngine.cpp
-    Source/Win32Device/Common/Win32LocalFile.cpp
-    Source/Win32Device/Common/Win32LocalFileSystem.cpp
+#    Source/Win32Device/Common/Win32LocalFile.cpp
+#    Source/Win32Device/Common/Win32LocalFileSystem.cpp
     Source/Win32Device/Common/Win32OSDisplay.cpp
     Source/Win32Device/GameClient/Win32DIKeyboard.cpp
     #Source/Win32Device/GameClient/Win32DIMouse.cpp
     Source/Win32Device/GameClient/Win32Mouse.cpp
 )
-
-# Add C++ 17 FileSystem implementation for non-VS6 builds
-if(NOT IS_VS6_BUILD)
-    list(APPEND GAMEENGINEDEVICE_SRC
-        Include/StdDevice/Common/StdBIGFile.h
-        Include/StdDevice/Common/StdBIGFileSystem.h
-        Include/StdDevice/Common/StdLocalFile.h
-        Include/StdDevice/Common/StdLocalFileSystem.h
-        Source/StdDevice/Common/StdBIGFile.cpp
-        Source/StdDevice/Common/StdBIGFileSystem.cpp
-        Source/StdDevice/Common/StdLocalFile.cpp
-        Source/StdDevice/Common/StdLocalFileSystem.cpp
-    )
-endif()
 
 add_library(z_gameenginedevice STATIC)
 
@@ -217,14 +203,12 @@ target_include_directories(z_gameenginedevice PUBLIC
 )
 
 target_link_libraries(z_gameenginedevice PRIVATE
+    corei_gameenginedevice_private
     zi_always
     zi_main
 )
 
 target_link_libraries(z_gameenginedevice PUBLIC
-    benchmark
-    binkstub
-    d3d8lib
-    milesstub
+    corei_gameenginedevice_public
     z_gameengine
 )

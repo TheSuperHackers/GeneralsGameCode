@@ -36,12 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef LIGHTGLARESAVE_H
-#define LIGHTGLARESAVE_H
 
 #include <max.h>
 #include "w3d_file.h"
@@ -52,7 +47,7 @@
 /*******************************************************************************************
 **
 ** LightGlareSaveClass - Create a Light Glare definition from a Max mesh.  In the initial
-** implementation, all I need to save is the point at the pivot of the mesh.  
+** implementation, all I need to save is the point at the pivot of the mesh.
 **
 *******************************************************************************************/
 class LightGlareSaveClass
@@ -64,7 +59,7 @@ public:
 		EX_CANCEL = 1
 	};
 
-	LightGlareSaveClass(		char *						mesh_name,	
+	LightGlareSaveClass(		char *						mesh_name,
 									char *						container_name,
 									INode *						inode,
 									Matrix3 &					exportspace,
@@ -74,11 +69,7 @@ public:
 	int Write_To_File(ChunkSaveClass & csave);
 
 private:
-	
-	W3dLightGlareStruct		GlareData;				
-	
+
+	W3dLightGlareStruct		GlareData;
+
 };
-
-
-
-#endif

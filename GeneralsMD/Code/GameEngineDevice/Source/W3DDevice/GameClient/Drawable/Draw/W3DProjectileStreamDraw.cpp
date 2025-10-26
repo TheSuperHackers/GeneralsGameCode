@@ -38,7 +38,7 @@
 #include "WWMath/vector3.h"
 
 //-------------------------------------------------------------------------------------------------
-W3DProjectileStreamDrawModuleData::W3DProjectileStreamDrawModuleData() 
+W3DProjectileStreamDrawModuleData::W3DProjectileStreamDrawModuleData()
 {
 	m_textureName = "";
 	m_width = 0.0f;
@@ -53,11 +53,11 @@ W3DProjectileStreamDrawModuleData::~W3DProjectileStreamDrawModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DProjectileStreamDrawModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void W3DProjectileStreamDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "Texture",			INI::parseAsciiString,	NULL, offsetof(W3DProjectileStreamDrawModuleData, m_textureName) },
 		{ "Width",				INI::parseReal,					NULL, offsetof(W3DProjectileStreamDrawModuleData, m_width) },
@@ -230,7 +230,7 @@ void W3DProjectileStreamDraw::crc( Xfer *xfer )
 	// extend base class
 	DrawModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -250,7 +250,7 @@ void W3DProjectileStreamDraw::xfer( Xfer *xfer )
 
 	// Graham says there is no data that needs saving here
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -261,4 +261,4 @@ void W3DProjectileStreamDraw::loadPostProcess( void )
 	// extend base class
 	DrawModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

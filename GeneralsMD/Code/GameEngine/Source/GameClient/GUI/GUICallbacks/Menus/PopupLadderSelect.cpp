@@ -24,12 +24,12 @@
 
 // FILE: PopupLadderSelect.cpp ////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	August 2002
@@ -37,7 +37,7 @@
 //	Filename: 	PopupLadderSelect.cpp
 //
 //	author:		Matthew D. Campbell
-//	
+//
 //	purpose:	Contains the Callbacks for the Ladder Select Popup
 //
 //-----------------------------------------------------------------------------
@@ -68,11 +68,6 @@
 //#include "GameNetwork/GameSpy/PeerThread.h"
 #include "GameNetwork/GameSpyOverlay.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -269,7 +264,7 @@ void PopupLadderSelectInit( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 WindowMsgHandledType PopupLadderSelectInput( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -286,7 +281,7 @@ WindowMsgHandledType PopupLadderSelectInput( GameWindow *window, UnsignedInt msg
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
@@ -306,18 +301,18 @@ WindowMsgHandledType PopupLadderSelectInput( GameWindow *window, UnsignedInt msg
 							break;
 						}
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
 
@@ -340,13 +335,13 @@ void ladderSelectedCallback(void)
 //-------------------------------------------------------------------------------------------------
 WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
 {
-  switch( msg ) 
+  switch( msg )
 	{
 		// --------------------------------------------------------------------------------------------
 		case GWM_CREATE:
 		{
 			break;
-		}  // end create
+		}
     //---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
@@ -355,7 +350,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 			listboxLadderDetails = NULL;
 			CustomMatchHideHostPopup(FALSE);
 			break;
-		}  // end case
+		}
 
     //----------------------------------------------------------------------------------------------
     case GWM_INPUT_FOCUS:
@@ -364,7 +359,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 			if( mData1 == TRUE )
 				*(Bool *)mData2 = TRUE;
 			break;
-		}  // end input
+		}
     //----------------------------------------------------------------------------------------------
     case GBM_SELECTED:
 		{
@@ -413,7 +408,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 				if ( pass.isNotEmpty() ) // password ok
 				{
 					AsciiString cryptPass = EncryptString(pass.str());
-					DEBUG_LOG(("pass is %s, crypted pass is %s, comparing to %s\n",
+					DEBUG_LOG(("pass is %s, crypted pass is %s, comparing to %s",
 						pass.str(), cryptPass.str(), li->cryptedPassword.str()));
 					if (cryptPass == li->cryptedPassword)
 						ladderSelectedCallback();
@@ -434,7 +429,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 				setPasswordMode(PASS_NONE);
 			}
 			break;
-		}  // end input
+		}
 
     //---------------------------------------------------------------------------------------------
 		case GLM_SELECTED:
@@ -450,7 +445,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 
 			updateLadderDetails(selID, staticTextLadderName, listboxLadderDetails);
 			break;
-		}  // end GLM_DOUBLE_CLICKED
+		}
 
     //---------------------------------------------------------------------------------------------
 		case GLM_DOUBLE_CLICKED:
@@ -462,7 +457,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 
       if( controlID == listboxLadderSelectID )
 			{
-				TheWindowManager->winSendSystemMsg( parent, GBM_SELECTED, 
+				TheWindowManager->winSendSystemMsg( parent, GBM_SELECTED,
 																					(WindowMsgData)buttonOk, buttonOk->winGetWindowId() );
 			}
 			break;
@@ -475,7 +470,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 			Int controlID = control->winGetWindowId();
 			if (controlID == textEntryPasswordID)
 			{
-				TheWindowManager->winSendSystemMsg( parent, GBM_SELECTED, 
+				TheWindowManager->winSendSystemMsg( parent, GBM_SELECTED,
 																					(WindowMsgData)(TheWindowManager->winGetWindowFromId(passwordParent, buttonPasswordOkID)), buttonPasswordOkID );
 			}
 			break;
@@ -484,7 +479,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
@@ -595,8 +590,8 @@ static void closeRightClickMenu(GameWindow *win)
 		WindowLayout *winLay = win->winGetLayout();
 		if(!winLay)
 			return;
-		winLay->destroyWindows();					
-		winLay->deleteInstance();
+		winLay->destroyWindows();
+		deleteInstance(winLay);
 		winLay = NULL;
 
 	}
@@ -612,13 +607,13 @@ WindowMsgHandledType RCGameDetailsMenuSystem( GameWindow *window, UnsignedInt ms
 	static NameKeyType buttonOkID = NAMEKEY_INVALID;
 	switch( msg )
 	{
-		
+
 		case GWM_CREATE:
 			{
 				ladderInfoID = NAMEKEY("RCGameDetailsMenu.wnd:ButtonLadderDetails");
 				buttonOkID = NAMEKEY("PopupLadderDetails.wnd:ButtonOk");
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GGM_CLOSE:
 			{
@@ -630,7 +625,7 @@ WindowMsgHandledType RCGameDetailsMenuSystem( GameWindow *window, UnsignedInt ms
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GBM_SELECTED:
 			{
@@ -653,7 +648,7 @@ WindowMsgHandledType RCGameDetailsMenuSystem( GameWindow *window, UnsignedInt ms
 						const LadderInfo *linfo = TheLadderList->findLadder(theRoom->getLadderIP(), theRoom->getLadderPort());
 						if (linfo)
 						{
-							WindowLayout *rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/PopupLadderDetails.wnd"));	
+							WindowLayout *rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/PopupLadderDetails.wnd"));
 							if (!rcLayout)
 								break;
 
@@ -661,7 +656,7 @@ WindowMsgHandledType RCGameDetailsMenuSystem( GameWindow *window, UnsignedInt ms
 							rcMenu->winGetLayout()->runInit();
 							rcMenu->winBringToTop();
 							rcMenu->winHide(FALSE);
-							
+
 							rcMenu->winSetUserData((void *)selectedID);
 							TheWindowManager->winSetLoneWindow(rcMenu);
 
@@ -677,7 +672,7 @@ WindowMsgHandledType RCGameDetailsMenuSystem( GameWindow *window, UnsignedInt ms
 			}
 		default:
 			return MSG_IGNORED;
-	
-	}//Switch		
+
+	}
 	return MSG_HANDLED;
 }

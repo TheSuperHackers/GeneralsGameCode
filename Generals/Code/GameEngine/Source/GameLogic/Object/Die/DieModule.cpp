@@ -24,7 +24,7 @@
 
 // FILE: DieModule.cpp ////////////////////////////////////////////////////////////////////////////
 // Author:
-// Desc:   
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
@@ -38,11 +38,6 @@
 #include "GameLogic/Object.h"
 
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 
@@ -54,9 +49,9 @@ DieMuxData::DieMuxData() :
 }
 
 //-------------------------------------------------------------------------------------------------
-const FieldParse* DieMuxData::getFieldParse() 
+const FieldParse* DieMuxData::getFieldParse()
 {
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "DeathTypes",				INI::parseDeathTypeFlags,						NULL, offsetof( DieMuxData, m_deathTypes ) },
 		{ "VeterancyLevels",	INI::parseVeterancyLevelFlags,			NULL, offsetof( DieMuxData, m_veterancyLevels ) },
@@ -99,7 +94,7 @@ void DieModule::crc( Xfer *xfer )
 	// extend base class
 	BehaviorModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -115,7 +110,7 @@ void DieModule::xfer( Xfer *xfer )
 	// call base class
 	BehaviorModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -126,4 +121,4 @@ void DieModule::loadPostProcess( void )
 	// call base class
 	BehaviorModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

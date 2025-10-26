@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _SUPPLY_WAREHOUSE_CREATE_H_
-#define _SUPPLY_WAREHOUSE_CREATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/CreateModule.h"
 
@@ -56,6 +53,3 @@ public:
 protected:
 
 };
-
-#endif
-

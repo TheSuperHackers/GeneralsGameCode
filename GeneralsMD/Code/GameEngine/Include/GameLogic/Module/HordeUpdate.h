@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __HordeUpdate_H_
-#define __HordeUpdate_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 #include "Common/KindOf.h"
@@ -52,11 +49,12 @@ enum HordeActionType CPP_11(: Int)
 };
 
 #ifdef DEFINE_HORDEACTION_NAMES
-static const char *TheHordeActionTypeNames[] =
+static const char *const TheHordeActionTypeNames[] =
 {
 	"HORDE",
 	NULL
 };
+static_assert(ARRAY_SIZE(TheHordeActionTypeNames) == HORDEACTION_COUNT + 1, "Incorrect array size");
 #endif
 
 //-------------------------------------------------------------------------------------------------
@@ -77,7 +75,7 @@ public:
 	HordeUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -87,7 +85,7 @@ class HordeUpdateInterface
 public:
 	virtual Bool isInHorde() const = 0;
 	virtual Bool hasFlag() const = 0;
-	virtual Bool isTrueHordeMember() const = 0; 
+	virtual Bool isTrueHordeMember() const = 0;
 	virtual Bool isAllowedNationalism() const = 0;
 
 };
@@ -107,7 +105,7 @@ public:
 
 	virtual void onDrawableBoundToObject();
 	virtual Bool isInHorde() const { return m_inHorde; }
-	virtual Bool isTrueHordeMember() const { return m_trueHordeMember && m_inHorde; } 
+	virtual Bool isTrueHordeMember() const { return m_trueHordeMember && m_inHorde; }
 	virtual Bool isAllowedNationalism() const;
 	virtual Bool hasFlag() const { return m_hasFlag; }
 	virtual UpdateSleepTime update();	///< update this object's AI
@@ -124,6 +122,3 @@ private:
 	Bool				m_hasFlag;
 
 };
-
-#endif // __HordeUpdate_H_
-

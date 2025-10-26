@@ -26,8 +26,8 @@
  *                                                                                             *
  *                  $Org Author:: Kenny Mitchell                                              $*
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 08/05/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 1                                                          $*
@@ -48,7 +48,7 @@ unsigned _MipMapFilters[TextureFilterClass::FILTER_TYPE_COUNT];
 /*************************************************************************
 **                             TextureFilterClass
 *************************************************************************/
-TextureFilterClass::TextureFilterClass(MipCountType mip_level_count=MIP_LEVELS_1)
+TextureFilterClass::TextureFilterClass(MipCountType mip_level_count)
 :	TextureMinFilter(FILTER_TYPE_DEFAULT),
 	TextureMagFilter(FILTER_TYPE_DEFAULT),
 	UAddressMode(TEXTURE_ADDRESS_REPEAT),
@@ -74,7 +74,7 @@ void TextureFilterClass::Apply(unsigned int stage)
 	DX8Wrapper::Set_DX8_Texture_Stage_State(stage,D3DTSS_MAGFILTER,_MagTextureFilters[TextureMagFilter]);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(stage,D3DTSS_MIPFILTER,_MipMapFilters[MipMapFilter]);
 
-	switch (Get_U_Addr_Mode()) 
+	switch (Get_U_Addr_Mode())
 	{
 	case TEXTURE_ADDRESS_REPEAT:
 		DX8Wrapper::Set_DX8_Texture_Stage_State(stage, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
@@ -85,7 +85,7 @@ void TextureFilterClass::Apply(unsigned int stage)
 		break;
 	}
 
-	switch (Get_V_Addr_Mode()) 
+	switch (Get_V_Addr_Mode())
 	{
 	case TEXTURE_ADDRESS_REPEAT:
 		DX8Wrapper::Set_DX8_Texture_Stage_State(stage, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
@@ -155,9 +155,9 @@ void TextureFilterClass::_Init_Filters(void)
 */
 void TextureFilterClass::Set_Mip_Mapping(FilterType mipmap)
 {
-//	if (mipmap != FILTER_TYPE_NONE && Get_Mip_Level_Count() <= 1 && Is_Initialized()) 
+//	if (mipmap != FILTER_TYPE_NONE && Get_Mip_Level_Count() <= 1 && Is_Initialized())
 //	{
-//		WWASSERT_PRINT(0, "Trying to enable MipMapping on texture w/o Mip levels!\n");
+//		WWASSERT_PRINT(0, "Trying to enable MipMapping on texture w/o Mip levels!");
 //		return;
 //	}
 	MipMapFilter=mipmap;

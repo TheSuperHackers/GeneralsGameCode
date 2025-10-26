@@ -55,11 +55,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 //-------------------------------------------------------------------------------------------------
@@ -99,15 +94,15 @@ HelicopterSlowDeathBehaviorModuleData::HelicopterSlowDeathBehaviorModuleData( vo
 	m_delayFromGroundToFinalDeath = 0;
 	m_maxBraking = 99999.0f;
 
-}  // end HelicopterSlowDeathBehaviorModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void HelicopterSlowDeathBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p ) 
+/*static*/ void HelicopterSlowDeathBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
   SlowDeathBehaviorModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "SpiralOrbitTurnRate",	INI::parseAngularVelocityReal, NULL, offsetof( HelicopterSlowDeathBehaviorModuleData, m_spiralOrbitTurnRate ) },
 		{ "SpiralOrbitForwardSpeed", INI::parseVelocityReal, NULL, offsetof( HelicopterSlowDeathBehaviorModuleData, m_spiralOrbitForwardSpeed ) },
@@ -142,7 +137,7 @@ HelicopterSlowDeathBehaviorModuleData::HelicopterSlowDeathBehaviorModuleData( vo
 
   p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Helicopter slow death update ///////////////////////////////////////////////////////////////////
@@ -170,14 +165,14 @@ HelicopterSlowDeathBehavior::HelicopterSlowDeathBehavior( Thing *thing, const Mo
 	m_bladeFlyOffFrame = 0;
 	m_hitGroundFrame = 0;
 
-}  // end HelicopterSlowDeathBehavior
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 HelicopterSlowDeathBehavior::~HelicopterSlowDeathBehavior( void )
 {
 
-}  // end ~HelicopterSlowDeathBehavior
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -188,7 +183,7 @@ void HelicopterSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 	SlowDeathBehavior::beginSlowDeath( damageInfo );
 
 	// stop the current movement sound
-	if (getObject()->getDrawable()) 
+	if (getObject()->getDrawable())
 	{
 		getObject()->getDrawable()->stopAmbientSound();
 	}
@@ -197,7 +192,7 @@ void HelicopterSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 	const HelicopterSlowDeathBehaviorModuleData *modData = getHelicopterSlowDeathBehaviorModuleData();
 
 	m_deathSound = modData->m_deathSound;
-	
+
 	if (m_deathSound.getEventName().isEmpty() == false)
 	{
 		m_deathSound.setObjectID(getObject()->getID());
@@ -223,7 +218,7 @@ void HelicopterSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 
 	// start our self spinning at the min self spin rate
 	m_selfSpin = modData->m_minSelfSpin;
-	
+
 	// we will start off changing the self spin towards the MaxSelfSpin
 	m_selfSpinTowardsMax = TRUE;
 
@@ -242,7 +237,7 @@ void HelicopterSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 		ParticleSystem *pSys = TheParticleSystemManager->createParticleSystem( modData->m_attachParticleSystem );
 		if( pSys )
 		{
-			
+
 			// where do the offset attachment to
 			if( modData->m_attachParticleBone.isEmpty() == FALSE )
 			{
@@ -255,27 +250,27 @@ void HelicopterSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 					if( draw->getPristineBonePositions( modData->m_attachParticleBone.str(), 0, &pos, NULL, 1 ) )
 						pSys->setPosition( &pos );
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 			else
 			{
 
 				// use location coord specified ... it will be zero if not given which is center of obj anyway
 				pSys->setPosition( &modData->m_attachParticleLoc );
 
-			}  // end else
+			}
 
 			// attach the particle system to the object
 			pSys->attachToObject( getObject() );
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 
 
-}  // end beginSlowDeath
+}
 
 
 
@@ -325,7 +320,7 @@ UpdateSleepTime HelicopterSlowDeathBehavior::update( void )
 			if( m_selfSpinTowardsMax == TRUE )
 			{
 
-				// we're going towards the max self spin, increase it		
+				// we're going towards the max self spin, increase it
 				m_selfSpin += modData->m_selfSpinUpdateAmount / LOGICFRAMES_PER_SECOND;
 				if( m_selfSpin > modData->m_maxSelfSpin )
 				{
@@ -333,12 +328,12 @@ UpdateSleepTime HelicopterSlowDeathBehavior::update( void )
 					m_selfSpin = modData->m_maxSelfSpin;  // cap at max
 					m_selfSpinTowardsMax = FALSE;					// now start changing spin towards min again
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 			else
 			{
-			
+
 				// we're going towards the min self spin, decrease it
 				m_selfSpin -= modData->m_selfSpinUpdateAmount / LOGICFRAMES_PER_SECOND;
 				if( m_selfSpin < modData->m_minSelfSpin )
@@ -347,18 +342,18 @@ UpdateSleepTime HelicopterSlowDeathBehavior::update( void )
 					m_selfSpin = modData->m_minSelfSpin;  // cap at min
 					m_selfSpinTowardsMax = TRUE;					// now start chaning spin towards max again
 
-				}  // end if
+				}
 
-			}  // end else
+			}
 
 			// we have made a change to the self spinning
 			m_lastSelfSpinUpdateFrame = TheGameLogic->getFrame();
 
-		}  // end if
+		}
 
 		// get the physics update module
 		PhysicsBehavior *physics = copter->getPhysics();
-		DEBUG_ASSERTCRASH( physics, ("HelicopterSlowDeathBehavior: object '%s' does not have a physics module\n", 
+		DEBUG_ASSERTCRASH( physics, ("HelicopterSlowDeathBehavior: object '%s' does not have a physics module",
 																 copter->getTemplate()->getName().str()) );
 
 		//
@@ -395,17 +390,17 @@ UpdateSleepTime HelicopterSlowDeathBehavior::update( void )
 					draw->getPristineBonePositions( modData->m_bladeBone.str(), 0, &bladePos, NULL, 1 );
 					draw->convertBonePosToWorldPos( &bladePos, NULL, &bladePos, NULL );
 
-				}  // end if
-		
+				}
+
 				// create the blades flying through the air
 	//			const ObjectCreationList *ocl = TheObjectCreationListStore->findObjectCreationList( "OCL_ComancheBlades" );
 	//			ObjectCreationList::create( ocl, &bladePos );
-		
+
 				// run the fx at the blade position
 				FXList::doFXPos( modData->m_fxBlade, &bladePos );
 				ObjectCreationList::create( modData->m_oclBlade, copter, &bladePos, NULL, INVALID_ANGLE );
 
-				//				
+				//
 				// if we have (potentially) a pilot ejection, do it here.
 				// note that we call EjectPilotDie::ejectPilot() rather than ObjectCreationList::create(),
 				// because the former makes the right sounds, and also constrains to veteran-or-better status.
@@ -413,11 +408,11 @@ UpdateSleepTime HelicopterSlowDeathBehavior::update( void )
 				if( modData->m_oclEjectPilot && copter->getVeterancyLevel() > LEVEL_REGULAR )
 					EjectPilotDie::ejectPilot( modData->m_oclEjectPilot, copter, NULL );
 
-			}  // end if
+			}
 
-		}  // endif
+		}
 
-	}  // end if, not on ground
+	}
 
 
 
@@ -451,7 +446,7 @@ UpdateSleepTime HelicopterSlowDeathBehavior::update( void )
 
 		if (pos->z <= ground + 1.0f || hitATree )
 		{
-			
+
 			// mark the frame we hit the ground on
 			m_hitGroundFrame = TheGameLogic->getFrame();
 
@@ -470,11 +465,11 @@ UpdateSleepTime HelicopterSlowDeathBehavior::update( void )
 			// Stop the sound from playing.
 			TheAudio->removeAudioEvent(m_deathSound.getPlayingHandle());
 
-		}  // end if
+		}
 	}
 
 	// if we're on the ground, see if it's time for our final boom
-	if( m_hitGroundFrame && 
+	if( m_hitGroundFrame &&
 			TheGameLogic->getFrame() - m_hitGroundFrame > modData->m_delayFromGroundToFinalDeath )
 	{
 
@@ -490,16 +485,16 @@ UpdateSleepTime HelicopterSlowDeathBehavior::update( void )
 
 			rubble->setTransformMatrix( copter->getTransformMatrix() );
 
-		}  // end if
+		}
 
 		// destroy the copter finally
 		TheGameLogic->destroyObject( copter );
 
-	}  // end if
+	}
 
 	return UPDATE_SLEEP_NONE;
 
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -510,7 +505,7 @@ void HelicopterSlowDeathBehavior::crc( Xfer *xfer )
 	// extend base class
 	SlowDeathBehavior::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -552,7 +547,7 @@ void HelicopterSlowDeathBehavior::xfer( Xfer *xfer )
 	// hit ground frame
 	xfer->xferUnsignedInt( &m_hitGroundFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -563,4 +558,4 @@ void HelicopterSlowDeathBehavior::loadPostProcess( void )
 	// extend base class
 	SlowDeathBehavior::loadPostProcess();
 
-}  // end loadPostProcess
+}

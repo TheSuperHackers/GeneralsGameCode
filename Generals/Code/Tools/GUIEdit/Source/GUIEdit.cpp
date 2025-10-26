@@ -24,12 +24,12 @@
 
 // FILE: GUIEdit.cpp //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -76,8 +76,6 @@
 #include "GameClient/HeaderTemplate.h"
 
 #include "W3DDevice/Common/W3DFunctionLexicon.h"
-#include "W3DDevice/GameClient/W3DGameWindowManager.h"
-#include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DGameWindowManager.h"
 #include "W3DDevice/GameClient/W3DGameFont.h"
 #include "W3DDevice/GameClient/W3DDisplayStringManager.h"
@@ -155,7 +153,7 @@ char *GUIEdit::saveAsDialog( void )
 	else
 		return NULL;
 
-}  // end saveAsDialog
+}
 
 // GUIEdit::openDialog ========================================================
 /** Bring up the standard windows browser open dialog and return
@@ -197,12 +195,12 @@ char *GUIEdit::openDialog( void )
 	else
 		return NULL;
 
-}  // end openDialog
+}
 
 // GUIEdit::setUnsaved ========================================================
 /** Set the current contents of the editor as either saved or unsaved,
 	* when we're entering an unsaved state we will put a marker in the title
-	* bar of the app, when leaving an unsaved state we will remove 
+	* bar of the app, when leaving an unsaved state we will remove
 	* that marker */
 //=============================================================================
 void GUIEdit::setUnsaved( Bool unsaved )
@@ -226,7 +224,7 @@ void GUIEdit::setUnsaved( Bool unsaved )
 		sprintf( title, "GUIEdit:  %s  *", filename );
 		SetWindowText( m_appHWnd, title );
 
-	}  // end if
+	}
 	//else if( m_unsaved == TRUE && unsaved == FALSE )
 	else
 	{
@@ -236,12 +234,12 @@ void GUIEdit::setUnsaved( Bool unsaved )
 		sprintf( title, "GUIEdit:  %s", filename );
 		SetWindowText( m_appHWnd, title );
 
-	}  // end else
+	}
 
 	// save the new state we're in
 	m_unsaved = unsaved;
 
-}  // end setUnsaved
+}
 
 // GUIEdit::setSaveFile =======================================================
 /** Set our member variables for the full path and filename passed in
@@ -262,7 +260,7 @@ void GUIEdit::setSaveFile( const char *fullPathAndFilename )
 	ptr = strrchr( fullPathAndFilename, '\\' ) + 1;
 	strcpy( m_saveFilename, ptr );
 
-}  // end setSaveFile
+}
 
 // GUIEdit::validateParentForCreate ===========================================
 /** This method is used when creating new windows and gadgets, if a
@@ -279,17 +277,17 @@ Bool GUIEdit::validateParentForCreate( GameWindow *parent )
 	//
 	if( parent && TheEditor->windowIsGadget( parent ) )
 	{
-		
+
 		MessageBox( TheEditor->getWindowHandle(),
 								"You cannot make a new window as a child to a GUI Gadget Control",
 								"Illegal Parent", MB_OK );
 		return FALSE;
 
-	}  // end if
+	}
 
 	return TRUE;  // ok
 
-}  // end validateParentForCreate
+}
 
 // GUIEdit::findSelectionEntry ================================================
 /** Find selection entry for this window */
@@ -313,11 +311,11 @@ WindowSelectionEntry *GUIEdit::findSelectionEntry( GameWindow *window )
 		// next entry
 		entry = entry->next;
 
-	}  // end while
+	}
 
 	return NULL;  // not found
 
-}  // end findSelectionEntry
+}
 
 // GUIEdit::normalizeRegion ===================================================
 /** Normalize the region so that lo and hi are actually lo and hi */
@@ -336,17 +334,17 @@ void GUIEdit::normalizeRegion( IRegion2D *region )
 			region->hi = region->lo;
 			region->lo = temp;
 
-		}  // end if
+		}
 		else
 		{
-			
+
 			temp = region->hi;
 			region->hi.x = region->lo.x;
 			region->lo.x = temp.x;
 
-		}  // end else
+		}
 
-	}  // end if
+	}
 	else if( region->hi.y < region->lo.y )
 	{
 
@@ -354,9 +352,9 @@ void GUIEdit::normalizeRegion( IRegion2D *region )
 		region->hi.y = region->lo.y;
 		region->lo.y = temp.y;
 
-	}  // end if
+	}
 
-}  // end normalizeRegion
+}
 
 // GUIEdit::selectWindowsInRegion =============================================
 /** Select all the windows that are fully in the region */
@@ -386,7 +384,7 @@ void GUIEdit::selectWindowsInRegion( IRegion2D *region )
 		window->winGetSize( &size.x, &size.y );
 
 		// compare window extents to selection region
-		if( origin.x >= region->lo.x && 
+		if( origin.x >= region->lo.x &&
 				origin.y >= region->lo.y &&
 				origin.x + size.x <= region->hi.x &&
 				origin.y + size.y <= region->hi.y )
@@ -395,14 +393,14 @@ void GUIEdit::selectWindowsInRegion( IRegion2D *region )
 			// add to selection list
 			selectWindow( window );
 
-		}  // end if
+		}
 
 		// go to next window
 		window = window->winGetNext();
 
-	}  // end while
+	}
 
-}  // end selectWindowsInRegion
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -440,37 +438,27 @@ GUIEdit::GUIEdit( void )
 	m_layoutInitString = GUIEDIT_NONE_STRING;
 	m_layoutUpdateString = GUIEDIT_NONE_STRING;
 	m_layoutShutdownString = GUIEDIT_NONE_STRING;
-}  // end GUIEdit
+}
 
 // GUIEdit::~GUIEdit ==========================================================
 /** */
 //=============================================================================
 GUIEdit::~GUIEdit( void )
 {
-	if (TheHeaderTemplateManager)
-	{
-		delete TheHeaderTemplateManager;
-		TheHeaderTemplateManager = NULL;
-	}
+	delete TheHeaderTemplateManager;
+	TheHeaderTemplateManager = NULL;
 
-	if (TheGameText)
-	{
-		delete TheGameText;
-		TheGameText = NULL;
-	}
-	
+	delete TheGameText;
+	TheGameText = NULL;
+
 	// delete the IME Manager
-//	if ( TheIMEManager )
-//	{
-//		delete TheIMEManager;
-//		TheIMEManager = NULL;
-//	}
-
+//	delete TheIMEManager;
+//	TheIMEManager = NULL;
 
 	// all the shutdown routine
 	shutdown();
 
-}  // end ~GUIEdit
+}
 
 // GUIEdit::init ==============================================================
 /** Initialize all the GUI edit data */
@@ -488,14 +476,16 @@ void GUIEdit::init( void )
 	// add status bar to the bottom
 	createStatusBar();
 
+	// create the name key generator
+	TheNameKeyGenerator = new NameKeyGenerator;
+	TheNameKeyGenerator->init();
+
 	// create file system
 	TheFileSystem = new FileSystem;
 	TheLocalFileSystem = new Win32LocalFileSystem;
 	TheArchiveFileSystem = new Win32BIGFileSystem;
 	TheFileSystem->init();
 
-	TheGlobalLanguageData = new GlobalLanguage;
-	TheGlobalLanguageData->init();
 	//---------------------------------------------------------------------------
 	// GUI tool specific initializations ----------------------------------------
 	//---------------------------------------------------------------------------
@@ -518,18 +508,18 @@ void GUIEdit::init( void )
 	// Game engine specific initializations -------------------------------------
 	//---------------------------------------------------------------------------
 
-	// create the name key generator
+	// create the global data
 	TheWritableGlobalData = new GlobalData;
 	TheWritableGlobalData->init();
 
-	// create the name key generator
-	TheNameKeyGenerator = new NameKeyGenerator;
-	TheNameKeyGenerator->init();
+	// TheSuperHackers @info global language relies on global data being initialized
+	TheGlobalLanguageData = new GlobalLanguage;
+	TheGlobalLanguageData->init();
 
 	// create the message stream
 	TheMessageStream = new MessageStream;
 	TheMessageStream->init();
-	TheMessageStream->attachTranslator( new WindowTranslator, 10 );	
+	TheMessageStream->attachTranslator( new WindowTranslator, 10 );
 
 	// create the command list
 	TheCommandList = new CommandList;
@@ -611,7 +601,7 @@ void GUIEdit::init( void )
 		TheGameText->init();
 	}
 
-	TheHeaderTemplateManager = new HeaderTemplateManager;	
+	TheHeaderTemplateManager = new HeaderTemplateManager;
 	if(TheHeaderTemplateManager)
 		TheHeaderTemplateManager->init();
 	// create the IME manager
@@ -620,7 +610,7 @@ void GUIEdit::init( void )
 //	{
 //		TheIMEManager->init();
 //	}
-}  // end init
+}
 
 // GUIEdit::shutdown ==========================================================
 /** Shutdown our GUI edit application */
@@ -685,7 +675,7 @@ void GUIEdit::shutdown( void )
 	// delete name key generator
 	delete TheNameKeyGenerator;
 	TheNameKeyGenerator = NULL;
-	
+
 	delete TheGlobalLanguageData;
 	TheGlobalLanguageData = NULL;
 
@@ -715,7 +705,7 @@ void GUIEdit::shutdown( void )
 	TheKeyboard = NULL;
 
 
-}  // end shutdown
+}
 
 // GUIEdit::update ============================================================
 /** Update method for our GUI edit application */
@@ -729,13 +719,13 @@ void GUIEdit::update( void )
 	// process the mouse if we're in test mode
 	if( TheEditor->getMode() == MODE_TEST_RUN )
 	{
-		
+
 		// send input through the window system and clear all messages after
 		TheMouse->createStreamMessages();
 		TheMessageStream->propagateMessages();
 		TheCommandList->reset();
 
-	}  // end if
+	}
 
 	// update the window manager itself
 	TheWindowManager->update();
@@ -743,7 +733,7 @@ void GUIEdit::update( void )
 	// draw the edit window
 	TheEditWindow->draw();
 
-}  // end update
+}
 
 // GUIEdit::writeConfigFile ===================================================
 /** Write the guiedit config file */
@@ -757,18 +747,18 @@ Bool GUIEdit::writeConfigFile( const char *filename )
 	if( fp == NULL )
 	{
 
-		DEBUG_LOG(( "writeConfigFile: Unable to open file '%s'\n", filename ));
+		DEBUG_LOG(( "writeConfigFile: Unable to open file '%s'", filename ));
 		assert( 0 );
 		return FALSE;
 
-	}  // end if
+	}
 
-	// version 
+	// version
 	fprintf( fp, "GUIEdit Config file version '%d'\n", GUIEDIT_CONFIG_VERSION );
 
 	// edit window background color
 	RGBColorReal backColor = TheEditWindow->getBackgroundColor();
-	fprintf( fp, "BACKGROUNDCOLOR = %f %f %f %f\n", 
+	fprintf( fp, "BACKGROUNDCOLOR = %f %f %f %f\n",
 					 backColor.red, backColor.green, backColor.blue, backColor.alpha );
 
 	// grid settings
@@ -798,7 +788,7 @@ Bool GUIEdit::writeConfigFile( const char *filename )
 
 	return TRUE;
 
-}  // end writeConfigFile
+}
 
 // GUIEdit::readConfigFile ====================================================
 /** Read the guiedit config file */
@@ -812,7 +802,7 @@ Bool GUIEdit::readConfigFile( const char *filename )
 	if( fp == NULL )
 		return TRUE;
 
-	// version 
+	// version
 	Int version;
 	fscanf( fp, "GUIEdit Config file version '%d'\n", &version );
 	if( version != GUIEDIT_CONFIG_VERSION )
@@ -820,7 +810,7 @@ Bool GUIEdit::readConfigFile( const char *filename )
 
 	// edit window background color
 	RGBColorReal backColor;
-	fscanf( fp, "BACKGROUNDCOLOR = %f %f %f %f\n", 
+	fscanf( fp, "BACKGROUNDCOLOR = %f %f %f %f\n",
 				  &backColor.red, &backColor.green, &backColor.blue, &backColor.alpha );
 	TheEditWindow->setBackgroundColor( backColor );
 
@@ -863,7 +853,7 @@ Bool GUIEdit::readConfigFile( const char *filename )
 
 	return TRUE;
 
-}  // end readConfigFile
+}
 
 // GUIEdit::readFontFile ======================================================
 /** Read the font file defintitions and load them */
@@ -906,7 +896,7 @@ void GUIEdit::readFontFile( const char *filename )
 			fontBuffer[ index++ ] = c;
 			c = fgetc( fp );
 
-		}  // end while
+		}
 		fontBuffer[ index ] = '\0';
 		c = fgetc( fp );  // the end quite itself
 
@@ -922,15 +912,15 @@ void GUIEdit::readFontFile( const char *filename )
 			sprintf( buffer, "Warning: The font '%s' Size: '%d' Bold: '%d', specified in the config file could not be loaded.  Does that font exist?",
 							 fontBuffer, size, bold );
 			MessageBox( m_appHWnd, buffer, "Cannot Load Font", MB_OK );
-			
-		}  // end if
 
-	}  // end for i
+		}
+
+	}
 
 	// close the file
 	fclose( fp );
 
-}  // end readFontFile
+}
 
 // GUIEdit::writeFontFile =====================================================
 /** If we can, write a file containing a definition of all the fonts
@@ -954,18 +944,18 @@ void GUIEdit::writeFontFile( const char *filename )
 	fprintf( fp, "AVAILABLE_FONT_COUNT = %d\n", count );
 
 	GameFont *font;
-	for( font = TheFontLibrary->firstFont(); 
-			 font; 
+	for( font = TheFontLibrary->firstFont();
+			 font;
 			 font = TheFontLibrary->nextFont( font ) )
 	{
 		fprintf( fp, "AVAILABLEFONT = \"%s\" Size: %d Bold: %d\n",
 						 font->nameString.str(), font->pointSize, font->bold );
-	}  // end for
+	}
 
 	// close the file
 	fclose( fp );
 
-}  // end writeFontFile
+}
 
 // GUIEdit::setMode ===========================================================
 /** Set a new mode for the editor */
@@ -985,14 +975,14 @@ void GUIEdit::setMode( EditMode mode )
 		TheMessageStream->removeTranslator( transID );
 		transID = 0;
 
-	}  // end if
+	}
 
 	// assign new mode
 	m_mode = mode;
 
 	// uncheck menu item for test mode by default
 	unCheckMenuItem( MENU_TEST_MODE );
-	
+
 	// update status message
 	switch( m_mode )
 	{
@@ -1074,9 +1064,9 @@ void GUIEdit::setMode( EditMode mode )
 			statusMessage( STATUS_MODE, "Drag right to resize" );
 			break;
 
-	}  // end switch
+	}
 
-}  // end setMode
+}
 
 // GUIEdit::setCursor =========================================================
 /** Set the cursor to the specified type */
@@ -1123,17 +1113,17 @@ void GUIEdit::setCursor( CursorType type )
 			identifier = IDC_WAIT;
 			break;
 
-	}  // end switchType
+	}
 
 	// set the new cursor
 	SetCursor( LoadCursor( NULL, identifier ) );
 
-}  // end setCursor
+}
 
 // pointInChild ===============================================================
-/** Given a mouse position, get the topmost window at that location. We needed 
+/** Given a mouse position, get the topmost window at that location. We needed
 		to pull this out into it's own special case function since the standard
-		winPointInAnyChild is used by the game and we needed a special case to 
+		winPointInAnyChild is used by the game and we needed a special case to
 		select a disabled control in GUIEdit																		*/
 //=============================================================================
 static GameWindow *pointInChild( Int x, Int y , GameWindow *win)
@@ -1143,38 +1133,38 @@ static GameWindow *pointInChild( Int x, Int y , GameWindow *win)
 	ICoord2D origin;
 	IRegion2D tempRegion;
 	Int tempX, tempY;
-	for( child = win->winGetChild(); child; child = child->winGetNext() ) 
+	for( child = win->winGetChild(); child; child = child->winGetNext() )
 	{
 
 		child->winGetRegion(&tempRegion);
 		origin = tempRegion.lo;
 		parent = child->winGetParent();
 
-		while( parent ) 
+		while( parent )
 		{
 			parent->winGetRegion(&tempRegion);
 			origin.x += tempRegion.lo.x;
 			origin.y += tempRegion.lo.y;
 			parent = parent->winGetParent();
 
-		}  // end while
+		}
 		child->winGetSize(&tempX,&tempY);
 		if( x >= origin.x && x <= origin.x + tempX &&
 				y >= origin.y && y <= origin.y + tempY &&
 				BitIsSet( child->winGetStatus(), WIN_STATUS_HIDDEN ) == FALSE)
 			return child->winPointInChild( x, y );
 
-	}  // end for child
+	}
 
 	// not in any children, must be in parent
 	return win;
 
-}  // end pointInChild
+}
 
 // pointInAnyChild ============================================================
-/** Given a mouse position, get the topmost window at that location. We needed 
+/** Given a mouse position, get the topmost window at that location. We needed
 		to pull this out into it's own special case function since the standard
-		winPointInAnyChild is used by the game and we needed a special case to 
+		winPointInAnyChild is used by the game and we needed a special case to
 		select a disabled control in GUIEdit																		*/
 //=============================================================================
 static GameWindow *pointInAnyChild( Int x, Int y, Bool ignoreHidden, GameWindow *win )
@@ -1184,13 +1174,13 @@ static GameWindow *pointInAnyChild( Int x, Int y, Bool ignoreHidden, GameWindow 
 	ICoord2D origin;
 	IRegion2D tempRegion;
 	Int tempX, tempY;
-	for( child = win->winGetChild(); child; child = child->winGetNext() ) 
+	for( child = win->winGetChild(); child; child = child->winGetNext() )
 	{
 		child->winGetRegion(&tempRegion);
 		origin = tempRegion.lo;
 		parent = child->winGetParent();
 
-		while( parent ) 
+		while( parent )
 		{
 
 			parent->winGetRegion(&tempRegion);
@@ -1198,7 +1188,7 @@ static GameWindow *pointInAnyChild( Int x, Int y, Bool ignoreHidden, GameWindow 
 			origin.y += tempRegion.lo.y;
 			parent = parent->winGetParent();
 
-		}  // end while
+		}
 		child->winGetSize(&tempX,&tempY);
 		if( x >= origin.x && x <= origin.x + tempX &&
 				y >= origin.y && y <= origin.y + tempY )
@@ -1207,14 +1197,14 @@ static GameWindow *pointInAnyChild( Int x, Int y, Bool ignoreHidden, GameWindow 
 			if( !(ignoreHidden == TRUE &&	BitIsSet( child->winGetStatus(), WIN_STATUS_HIDDEN )) )
 				return pointInChild( x, y , child);
 
-		}  // end if
+		}
 
-	}  // end for child
+	}
 
 	// not in any children, must be in parent
 	return win;
 
-}  // end pointInAnyChild
+}
 
 // GUIEdit::getWindowAtPos ====================================================
 /** Given a mouse position, get the topmost window at that location */
@@ -1229,7 +1219,7 @@ GameWindow *GUIEdit::getWindowAtPos( Int x, Int y )
 			 window;
 			 window = window->winGetNext() )
 	{
-	
+
 		// get window region
 		window->winGetRegion( &region );
 
@@ -1240,9 +1230,9 @@ GameWindow *GUIEdit::getWindowAtPos( Int x, Int y )
 			pick = pointInAnyChild( x, y, FALSE, window );
 			break;  // exit for
 
-		}  // end if
+		}
 
-	}  // end for 
+	}
 
 	//
 	// gadget controls are just composed of generic windows and buttons,
@@ -1257,11 +1247,11 @@ GameWindow *GUIEdit::getWindowAtPos( Int x, Int y )
 
 		//
 		// all gadget components are children of their parent, therefore they
-		// all have a parent 
+		// all have a parent
 		//
 		if( parent )
 		{
-		
+
 			if( BitIsSet( parent->winGetStyle(), GWS_VERT_SLIDER |
 																					GWS_HORZ_SLIDER |
 																					GWS_SCROLL_LISTBOX |
@@ -1270,17 +1260,17 @@ GameWindow *GUIEdit::getWindowAtPos( Int x, Int y )
 									)
 				)
 			{
-				
+
 				// the parent is what we care about
 				pick = parent;
-				
+
 				//
 				// the parent is the thing we want to return here, unless we clicked
 				// on the thumb of a scroll list box, that element is implemented as
 				// a slider, therefore in that situation only we want to return the
 				// parent of the slider
 				//
-				if( BitIsSet( parent->winGetStyle(), GWS_HORZ_SLIDER | 
+				if( BitIsSet( parent->winGetStyle(), GWS_HORZ_SLIDER |
 																						GWS_VERT_SLIDER ) )
 				{
 					GameWindow *grandParent = parent->winGetParent();
@@ -1289,7 +1279,7 @@ GameWindow *GUIEdit::getWindowAtPos( Int x, Int y )
 																			GWS_SCROLL_LISTBOX ) )
 						pick = grandParent;
 
-				}  // end if
+				}
 
 				//must check to see of the parent of a scroll box is a combo box
 				if(BitIsSet(pick->winGetStyle(), GWS_SCROLL_LISTBOX))
@@ -1297,24 +1287,24 @@ GameWindow *GUIEdit::getWindowAtPos( Int x, Int y )
 					GameWindow *grandParent = pick->winGetParent();
 					if( grandParent && BitIsSet( grandParent->winGetStyle(), GWS_COMBO_BOX))
 						pick = grandParent;
-				}					
-			}  // end if
+				}
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	return pick;
 
-}  // end getWindowAtPos
+}
 
 // GUIEdit::clipCreationParamsToParent ========================================
 /** when creating child windows we don't want them to exist outside the
-	* parent so we use this to clip them to the the parent size and 
+	* parent so we use this to clip them to the the parent size and
 	* locations */
 //=============================================================================
 void GUIEdit::clipCreationParamsToParent( GameWindow *parent,
-																					Int *x, Int *y, 
+																					Int *x, Int *y,
 																					Int *width, Int *height )
 {
 	IRegion2D parentScreenRegion;
@@ -1364,7 +1354,7 @@ void GUIEdit::clipCreationParamsToParent( GameWindow *parent,
 	*width = newWidth;
 	*height= newHeight;
 
-}  // end clipcreationParamsToParent
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -1385,13 +1375,13 @@ void GUIEdit::deleteAllWindows( void )
 		deleteWindow( window );
 		window = next;
 
-	}  // end while
+	}
 
-}  // end deleteAllWindows
+}
 
 // GUIEdit::removeWindowCleanup ===============================================
 /** This is called on each window before it is deleted or removed from
-	* the active windows in the editor to allow the system to 
+	* the active windows in the editor to allow the system to
 	* cleanup before the delete */
 //=============================================================================
 void GUIEdit::removeWindowCleanup( GameWindow *window )
@@ -1425,7 +1415,7 @@ void GUIEdit::removeWindowCleanup( GameWindow *window )
 	for( child = window->winGetChild(); child; child = child->winGetNext() )
 		removeWindowCleanup( child );
 
-}  // end removeWindowCleanup
+}
 
 // GUIEdit::deleteWindow ======================================================
 /** Delete the window from the editor */
@@ -1442,7 +1432,7 @@ void GUIEdit::deleteWindow( GameWindow *window )
 	// we've changed contents
 	setUnsaved( TRUE );
 
-}  // end deleteWindow
+}
 
 // GUIEdit::newWindow =========================================================
 /** Create a new window of the specified type.  This is the single creation
@@ -1458,7 +1448,7 @@ GameWindow *GUIEdit::newWindow( UnsignedInt windowStyle,
 	// create the appropriate window based on style bit passed in
 	switch( windowStyle )
 	{
-	
+
 		// ------------------------------------------------------------------------
 		case GWS_USER_WINDOW:
 			window = newUserWindow( parent, x, y, width, height );
@@ -1498,7 +1488,7 @@ GameWindow *GUIEdit::newWindow( UnsignedInt windowStyle,
 		case GWS_SCROLL_LISTBOX:
 			window = newListbox( parent, x, y, width, height );
 			break;
-		
+
 		// ------------------------------------------------------------------------
 		case GWS_COMBO_BOX:
 			window = newComboBox( parent, x, y, width, height );
@@ -1521,20 +1511,20 @@ GameWindow *GUIEdit::newWindow( UnsignedInt windowStyle,
 
 		// ------------------------------------------------------------------------
 		default:
-			MessageBox( m_appHWnd, "Unknown window type to newWindow()", "ERROR", 
+			MessageBox( m_appHWnd, "Unknown window type to newWindow()", "ERROR",
 									MB_OK | MB_ICONERROR );
 			break;
 
-	}  // end switch
+	}
 
 	return window;
 
-}  // end newWindow
+}
 
 // GUIEdit::newUserWindow =====================================================
 /** Create a new window at the given location */
 //=============================================================================
-GameWindow *GUIEdit::newUserWindow( GameWindow *parent, Int x, Int y, 
+GameWindow *GUIEdit::newUserWindow( GameWindow *parent, Int x, Int y,
 																		Int width, Int height )
 {
 	UnsignedInt status = WIN_STATUS_ENABLED;
@@ -1587,7 +1577,7 @@ GameWindow *GUIEdit::newUserWindow( GameWindow *parent, Int x, Int y,
 
 	return window;
 
-}  // end newUserWindow
+}
 
 // GUIEdit::newPushButton =====================================================
 /** Create a new push button */
@@ -1669,7 +1659,7 @@ GameWindow *GUIEdit::newPushButton( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -1679,7 +1669,7 @@ GameWindow *GUIEdit::newPushButton( GameWindow *parent,
 
 	return window;
 
-}  // end newPushButton
+}
 
 // GUIEdit::newCheckBox =======================================================
 /** Create a new check box */
@@ -1774,7 +1764,7 @@ GameWindow *GUIEdit::newCheckBox( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -1784,7 +1774,7 @@ GameWindow *GUIEdit::newCheckBox( GameWindow *parent,
 
 	return window;
 
-}  // end newCheckBox
+}
 
 // GUIEdit::newRadioButton ====================================================
 /** Create a new radio button */
@@ -1882,7 +1872,7 @@ GameWindow *GUIEdit::newRadioButton( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -1892,7 +1882,7 @@ GameWindow *GUIEdit::newRadioButton( GameWindow *parent,
 
 	return window;
 
-}  // end newRadioButton
+}
 
 // GUIEdit::newTabControl ====================================================
 /** Create a tab control gadget */
@@ -1986,7 +1976,7 @@ GameWindow *GUIEdit::newTabControl( GameWindow *parent,
 		GadgetTabControlSetEnabledBorderColorBackground( window, info->borderColor );
 
 
-	
+
 		info = TheDefaultScheme->getImageAndColor( TC_TAB_0_DISABLED );
 		GadgetTabControlSetDisabledImageTabZero( window, info->image );
 		GadgetTabControlSetDisabledColorTabZero( window, info->color );
@@ -2033,7 +2023,7 @@ GameWindow *GUIEdit::newTabControl( GameWindow *parent,
 		GadgetTabControlSetDisabledBorderColorBackground( window, info->borderColor );
 
 
-		
+
 
 		info = TheDefaultScheme->getImageAndColor( TC_TAB_0_HILITE );
 		GadgetTabControlSetHiliteImageTabZero( window, info->image );
@@ -2080,7 +2070,7 @@ GameWindow *GUIEdit::newTabControl( GameWindow *parent,
 		GadgetTabControlSetHiliteColorBackground( window, info->color );
 		GadgetTabControlSetHiliteBorderColorBackground( window, info->borderColor );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -2090,13 +2080,13 @@ GameWindow *GUIEdit::newTabControl( GameWindow *parent,
 
 	return window;
 
-}  // end newTabControl
+}
 
 // GUIEdit::newHorizontalSlider ===============================================
 /** Create a new horizontal slider*/
 //=============================================================================
 GameWindow *GUIEdit::newHorizontalSlider( GameWindow *parent,
-																					Int x, Int y, 
+																					Int x, Int y,
 																					Int width, Int height )
 {
 	GameWindow *window;
@@ -2201,7 +2191,7 @@ GameWindow *GUIEdit::newHorizontalSlider( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -2211,13 +2201,13 @@ GameWindow *GUIEdit::newHorizontalSlider( GameWindow *parent,
 
 	return window;
 
-}  // end newHorizontalSlider
+}
 
 // GUIEdit::newVerticlaSlider =================================================
 /** Create a new vertical slider */
 //=============================================================================
 GameWindow *GUIEdit::newVerticalSlider( GameWindow *parent,
-																				Int x, Int y, 
+																				Int x, Int y,
 																				Int width, Int height )
 {
 	GameWindow *window;
@@ -2322,7 +2312,7 @@ GameWindow *GUIEdit::newVerticalSlider( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -2332,13 +2322,13 @@ GameWindow *GUIEdit::newVerticalSlider( GameWindow *parent,
 
 	return window;
 
-}  // end newVerticalSlider
+}
 
 // GUIEdit::newProgressBar ====================================================
 /** Create a new progress bar */
 //=============================================================================
 GameWindow *GUIEdit::newProgressBar( GameWindow *parent,
-																		 Int x, Int y, 
+																		 Int x, Int y,
 																		 Int width, Int height )
 {
 	GameWindow *window;
@@ -2457,7 +2447,7 @@ GameWindow *GUIEdit::newProgressBar( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -2467,13 +2457,13 @@ GameWindow *GUIEdit::newProgressBar( GameWindow *parent,
 
 	return window;
 
-}  // end newProgressBar
+}
 
 // GUIEdit::newListbox ========================================================
 /** Create a new list box */
 //=============================================================================
 GameWindow *GUIEdit::newComboBox( GameWindow *parent,
-																 Int x, Int y, 
+																 Int x, Int y,
 																 Int width, Int height )
 {
 	GameWindow *window;
@@ -2496,12 +2486,12 @@ GameWindow *GUIEdit::newComboBox( GameWindow *parent,
 
 	ComboBoxData *comboData = new ComboBoxData;
 	memset ( comboData, 0, sizeof(comboData));
-	
+
 	comboData->entryData = new EntryData;
 	memset ( comboData->entryData, 0, sizeof(EntryData));
 	comboData->listboxData = new ListboxData;
 	memset ( comboData->listboxData, 0, sizeof(ListboxData));
-		
+
 
 	//initialize combo box data
 	comboData->isEditable = TRUE;
@@ -2511,14 +2501,14 @@ GameWindow *GUIEdit::newComboBox( GameWindow *parent,
 	comboData->dontHide = FALSE;
 	comboData->asciiOnly = FALSE;
 	comboData->lettersAndNumbersOnly = FALSE;
-		
+
 	//initialize entry data
 	comboData->entryData->maxTextLen = 16;
 	comboData->entryData->alphaNumericalOnly = FALSE;
 	comboData->entryData->aSCIIOnly = FALSE;
 	comboData->entryData->numericalOnly = FALSE;
 
-	
+
 	//initialize listbox data
 	comboData->listboxData->listLength = 10;
 	comboData->listboxData->autoScroll = 0;
@@ -2542,7 +2532,7 @@ GameWindow *GUIEdit::newComboBox( GameWindow *parent,
 																								TRUE );
 
 	// set default colors based on the default scheme
-	
+
 	if( window )
 	{
 		ImageAndColorInfo *info;
@@ -2711,7 +2701,7 @@ GameWindow *GUIEdit::newComboBox( GameWindow *parent,
 				GadgetButtonSetHiliteSelectedColor( upButton, info->color );
 				GadgetButtonSetHiliteSelectedBorderColor( upButton, info->borderColor );
 
-			}  // end if
+			}
 
 			GameWindow *downButton = GadgetListBoxGetDownButton( listBox );
 			if( downButton )
@@ -2744,7 +2734,7 @@ GameWindow *GUIEdit::newComboBox( GameWindow *parent,
 				GadgetButtonSetHiliteSelectedColor( downButton, info->color );
 				GadgetButtonSetHiliteSelectedBorderColor( downButton, info->borderColor );
 
-			}  // end if
+			}
 
 			GameWindow *slider = GadgetListBoxGetSlider( listBox );
 			if( slider )
@@ -2816,7 +2806,7 @@ GameWindow *GUIEdit::newComboBox( GameWindow *parent,
 				GadgetSliderSetHiliteSelectedThumbBorderColor( slider, info->borderColor );
 
 				}
-		} //end listbox if
+		}
 		GameWindow *dropDownButton = GadgetComboBoxGetDropDownButton( window );
 		if( dropDownButton )
 		{
@@ -2848,7 +2838,7 @@ GameWindow *GUIEdit::newComboBox( GameWindow *parent,
 			GadgetButtonSetHiliteSelectedColor( dropDownButton, info->color );
 			GadgetButtonSetHiliteSelectedBorderColor( dropDownButton, info->borderColor );
 
-		}  // end if
+		}
 
 		Color color, border;
 
@@ -2864,15 +2854,15 @@ GameWindow *GUIEdit::newComboBox( GameWindow *parent,
 		color = TheDefaultScheme->getHiliteTextColor();
 		border = TheDefaultScheme->getHiliteTextBorderColor();
 		window->winSetHiliteTextColors( color, border );
-		
+
 		/// @TODO: We still need to set the IME Composite Text colors in TheDefaultScheme
 		window->winSetIMECompositeTextColors( color, border );
 
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
-		
-	}// end if
-	
+
+	}
+
 	// contents have changed
 	setUnsaved( TRUE );
 
@@ -2882,13 +2872,13 @@ GameWindow *GUIEdit::newComboBox( GameWindow *parent,
 	return window;
 
 
-} // end newComboBox
+}
 
 // GUIEdit::newListbox ========================================================
 /** Create a new list box */
 //=============================================================================
 GameWindow *GUIEdit::newListbox( GameWindow *parent,
-																 Int x, Int y, 
+																 Int x, Int y,
 																 Int width, Int height )
 {
 	GameWindow *window;
@@ -3012,7 +3002,7 @@ GameWindow *GUIEdit::newListbox( GameWindow *parent,
 			GadgetButtonSetHiliteSelectedColor( upButton, info->color );
 			GadgetButtonSetHiliteSelectedBorderColor( upButton, info->borderColor );
 
-		}  // end if
+		}
 
 		GameWindow *downButton = GadgetListBoxGetDownButton( window );
 		if( downButton )
@@ -3045,7 +3035,7 @@ GameWindow *GUIEdit::newListbox( GameWindow *parent,
 			GadgetButtonSetHiliteSelectedColor( downButton, info->color );
 			GadgetButtonSetHiliteSelectedBorderColor( downButton, info->borderColor );
 
-		}  // end if
+		}
 
 		GameWindow *slider = GadgetListBoxGetSlider( window );
 		if( slider )
@@ -3116,7 +3106,7 @@ GameWindow *GUIEdit::newListbox( GameWindow *parent,
 			GadgetSliderSetHiliteSelectedThumbColor( slider, info->color );
 			GadgetSliderSetHiliteSelectedThumbBorderColor( slider, info->borderColor );
 
-		}  // end if, slider
+		}
 
 		Color color, border;
 
@@ -3135,7 +3125,7 @@ GameWindow *GUIEdit::newListbox( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -3145,13 +3135,13 @@ GameWindow *GUIEdit::newListbox( GameWindow *parent,
 
 	return window;
 
-}	 // end newListbox
+}
 
 // GUIEdit::newTextEntry ======================================================
 /** Create a new text entry */
 //=============================================================================
 GameWindow *GUIEdit::newTextEntry( GameWindow *parent,
-																	 Int x, Int y, 
+																	 Int x, Int y,
 																	 Int width, Int height )
 {
 	GameWindow *window;
@@ -3241,7 +3231,7 @@ GameWindow *GUIEdit::newTextEntry( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -3251,13 +3241,13 @@ GameWindow *GUIEdit::newTextEntry( GameWindow *parent,
 
 	return window;
 
-}  // end newTextEntry
+}
 
 // GUIEdit::newStaticText =====================================================
 /** Create a new static text*/
 //=============================================================================
 GameWindow *GUIEdit::newStaticText( GameWindow *parent,
-																		Int x, Int y, 
+																		Int x, Int y,
 																		Int width, Int height )
 {
 	GameWindow *window;
@@ -3329,7 +3319,7 @@ GameWindow *GUIEdit::newStaticText( GameWindow *parent,
 		// set default font
 		window->winSetFont( TheDefaultScheme->getFont() );
 
-	}  // end if
+	}
 
 	// contents have changed
 	setUnsaved( TRUE );
@@ -3339,7 +3329,7 @@ GameWindow *GUIEdit::newStaticText( GameWindow *parent,
 
 	return window;
 
-}  // end newStaticText
+}
 
 // GUIEdit::createStatusBar ===================================================
 /** Create a status bar at the bottom of the editor */
@@ -3352,14 +3342,14 @@ void GUIEdit::createStatusBar( void )
 
 	// create the bar
 	m_statusBarHWnd = CreateStatusWindow( WS_CHILD |
-																				WS_VISIBLE | 
-																				WS_CLIPSIBLINGS | 
-																				CCS_BOTTOM | 
+																				WS_VISIBLE |
+																				WS_CLIPSIBLINGS |
+																				CCS_BOTTOM |
 																				SBARS_SIZEGRIP,
 																				"Ready",
 																				m_appHWnd,
 																				STATUS_BAR_ID );
-	
+
 	// get size of status bar
 	GetWindowRect( m_statusBarHWnd, &rect );
 	width = rect.right - rect.left;
@@ -3373,11 +3363,11 @@ void GUIEdit::createStatusBar( void )
 
 		sizes[ i ] = (i + 1) * (width / STATUS_NUM_PARTS);
 
-	}  // end for i
+	}
 	sizes[ STATUS_NUM_PARTS - 1 ] = -1;  // right edge
   SendMessage( m_statusBarHWnd, SB_SETPARTS, STATUS_NUM_PARTS, (LPARAM)sizes );
 
-}  // end createStatusBar
+}
 
 // GUIEdit::statusMessage =====================================================
 /** Set a message in the status bar */
@@ -3388,17 +3378,17 @@ void GUIEdit::statusMessage( StatusPart part, const char *message )
 	// check for out of bounds part
 	if( part < 0 || part >= STATUS_NUM_PARTS )
 	{
-	
-		DEBUG_LOG(( "Status message part out of range '%d', '%s'\n", part, message ));
+
+		DEBUG_LOG(( "Status message part out of range '%d', '%s'", part, message ));
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	if( m_statusBarHWnd )
 		SendMessage( m_statusBarHWnd, SB_SETTEXT, part, (LPARAM)message );
 
-}  // end statusMessage
+}
 
 // GUIEdit::createToolbar =====================================================
 /** Create the toolbar for the editor */
@@ -3406,7 +3396,7 @@ void GUIEdit::statusMessage( StatusPart part, const char *message )
 void GUIEdit::createToolbar( void )
 {
 
-}  // end createToolbar
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -3431,7 +3421,7 @@ Bool GUIEdit::newLayout( void )
 
 	return TRUE;
 
-}  // end newLayout
+}
 
 // GUIEdit::menuExit ==========================================================
 /** The user clicked on exit in the menu and wishes to exit the editor */
@@ -3447,7 +3437,7 @@ Bool GUIEdit::menuExit( void )
 	if( m_unsaved )
 	{
 
-		result = MessageBox( m_appHWnd, "Save file before quitting?", 
+		result = MessageBox( m_appHWnd, "Save file before quitting?",
 												 "Save?", MB_YESNOCANCEL );
 		if( result == IDCANCEL )
 			return TRUE;  // no error
@@ -3463,13 +3453,13 @@ Bool GUIEdit::menuExit( void )
 			// quit and lose the data
 			//
 			if( success == FALSE )
-				MessageBox( m_appHWnd, 
-										"File not saved.  If you continue to exit all data will be LOST!", 
+				MessageBox( m_appHWnd,
+										"File not saved.  If you continue to exit all data will be LOST!",
 										"File Not Saved", MB_OK );
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// ask them if they really want to quit
 	result = MessageBox( m_appHWnd, "Exit GUIEdit?", "Really Quit?", MB_YESNO );
@@ -3478,14 +3468,14 @@ Bool GUIEdit::menuExit( void )
 
 	return TRUE;
 
-}  // end menuExit
+}
 
 // GUIEdit::menuNew ===========================================================
 /** file->new menu option */
 //=============================================================================
 Bool GUIEdit::menuNew( void )
 {
-	
+
 	//
 	// if the current data is unsaved ask the user if they want to save
 	// before proceeding with a new layout
@@ -3494,7 +3484,7 @@ Bool GUIEdit::menuNew( void )
 	{
 		Int result;
 
-		result = MessageBox( m_appHWnd, 
+		result = MessageBox( m_appHWnd,
 												 "Current data is not saved.  Save before proceeding?",
 												 "Save?",
 												 MB_YESNOCANCEL );
@@ -3518,11 +3508,11 @@ Bool GUIEdit::menuNew( void )
 				if( result == IDNO )
 					return TRUE;  // they chose to proceed anyway, no error
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// reset the layout in the editor
 	strcpy( m_savePathAndFilename, "" );
@@ -3532,7 +3522,7 @@ Bool GUIEdit::menuNew( void )
 
 	return TRUE;
 
-}  // end menuNew
+}
 
 // GUIEdit::stripNameDecorations ==============================================
 /** Strip name decorations of the entire tree of windows */
@@ -3566,9 +3556,9 @@ void GUIEdit::stripNameDecorations( GameWindow *root )
 			// put the name only in the decoration field
 			instData->m_decoratedNameString = nameOnly;
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// strip from children
 	GameWindow *child;
@@ -3578,7 +3568,7 @@ void GUIEdit::stripNameDecorations( GameWindow *root )
 	// onto the next
 	stripNameDecorations( root->winGetNext() );
 
-}  // end stripNameDecorations
+}
 
 //=============================================================================
 /** After a load, we will restore default callbacks to all user windows
@@ -3600,7 +3590,7 @@ void GUIEdit::revertDefaultCallbacks( GameWindow *root )
 		root->winSetTooltipFunc( TheWindowManager->getDefaultTooltip() );
 		root->winSetDrawFunc( TheWindowManager->getDefaultDraw() );
 
-	}  // end if
+	}
 
 	// do the children
 	revertDefaultCallbacks( root->winGetChild() );
@@ -3608,7 +3598,7 @@ void GUIEdit::revertDefaultCallbacks( GameWindow *root )
 	// do the next window
 	revertDefaultCallbacks( root->winGetNext() );
 
-}  // end revertDefaultCallbacks
+}
 
 // GUIEdit::menuOpen ==========================================================
 /** User has clicked on file->open */
@@ -3625,7 +3615,7 @@ Bool GUIEdit::menuOpen( void )
 	{
 		Int result;
 
-		result = MessageBox( m_appHWnd, 
+		result = MessageBox( m_appHWnd,
 												 "Current data is not saved.  Save before proceeding?",
 												 "Save?",
 												 MB_YESNOCANCEL );
@@ -3649,11 +3639,11 @@ Bool GUIEdit::menuOpen( void )
 				if( result == IDNO )
 					return TRUE;  // they chose to proceed anyway, no error
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// open the standard window file browser
 	filePath = openDialog();
@@ -3667,10 +3657,10 @@ Bool GUIEdit::menuOpen( void )
 	// just the filename in members of the editor
 	//
 	setSaveFile( filePath );
-	
+
 	// clear the contents of the editor
 	newLayout();
-	
+
 	// load the new layout file
 	WindowLayoutInfo info;
 	TheWindowManager->winCreateFromScript( AsciiString(filePath), &info );
@@ -3708,7 +3698,7 @@ Bool GUIEdit::menuOpen( void )
 
 	return TRUE;
 
-}  // end menuOpen
+}
 
 // GUIEdit::menuSave ==========================================================
 /** file->save menu option */
@@ -3729,17 +3719,17 @@ Bool GUIEdit::menuSave( void )
 		// our contents are now considered "unchanged"
 		setUnsaved( FALSE );
 
-	}  // end if
+	}
 	else
 	{
-		
+
 		MessageBox( m_appHWnd, "Layout not saved!", "Error", MB_OK );
 
-	}  // end else
+	}
 
 	return success;
 
-}  // end menuSave
+}
 
 // GUIEdit::menuSaveAs ========================================================
 /** file->saveAs menu option */
@@ -3767,17 +3757,17 @@ Bool GUIEdit::menuSaveAs( void )
 		// our contents are now considered "unchanged"
 		setUnsaved( FALSE );
 
-	}  // end if
+	}
 	else
 	{
-		
+
 		MessageBox( m_appHWnd, "Layout not saved!", "Error", MB_OK );
 
-	}  // end else
+	}
 
 	return success;
 
-}  // end menuSaveAs
+}
 
 // GUIEdit::menuCopy ==========================================================
 /** Copy selected windows into clipboard */
@@ -3791,21 +3781,21 @@ Bool GUIEdit::menuCopy( void )
 	if( select == NULL )
 	{
 
-		MessageBox( m_appHWnd, "You must have windows selected before you can copy them.", 
+		MessageBox( m_appHWnd, "You must have windows selected before you can copy them.",
 								"No Windows Selected", MB_OK );
 		return TRUE;
 
-	}  // end if
+	}
 
 	//
-	// cut the selected windows out of the current window system, and 
+	// cut the selected windows out of the current window system, and
 	// into the clipboard
 	//
 	TheGUIEditWindowManager->copySelectedToClipboard();
 
 	return TRUE;
 
-}  // end menuCopy
+}
 
 // GUIEdit::menuPaste =========================================================
 /** Paste contents of clipboard into current layout */
@@ -3816,7 +3806,7 @@ Bool GUIEdit::menuPaste( void )
 	TheGUIEditWindowManager->pasteClipboard();
 	return TRUE;
 
-}  // end menuPaste
+}
 
 // GUIEdit::menuCut ===========================================================
 /** Cut selected windows into the clipboard */
@@ -3830,21 +3820,21 @@ Bool GUIEdit::menuCut( void )
 	if( select == NULL )
 	{
 
-		MessageBox( m_appHWnd, "You must have windows selected before you can cut.", 
+		MessageBox( m_appHWnd, "You must have windows selected before you can cut.",
 								"No Windows Selected", MB_OK );
 		return TRUE;
 
-	}  // end if
+	}
 
 	//
-	// cut the selected windows out of the current window system, and 
+	// cut the selected windows out of the current window system, and
 	// into the clipboard
 	//
 	TheGUIEditWindowManager->cutSelectedToClipboard();
 
 	return TRUE;
 
-}  // end menuCut
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -3868,7 +3858,7 @@ Bool GUIEdit::isWindowSelected( GameWindow *window )
 	else
 		return FALSE;
 
-}  // end isWindowSelected
+}
 
 // GUIEdit::selectWindow ======================================================
 /** Add window to selection list */
@@ -3890,11 +3880,11 @@ void GUIEdit::selectWindow( GameWindow *window )
 	if( entry == NULL )
 	{
 
-		DEBUG_LOG(( "Unable to allocate selection entry for window\n" ));
+		DEBUG_LOG(( "Unable to allocate selection entry for window" ));
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	// fill out information and tie to head of list
 	entry->window = window;
@@ -3908,7 +3898,7 @@ void GUIEdit::selectWindow( GameWindow *window )
 	if( selectionCount() == 1 )
 		TheHierarchyView->selectWindow( window );
 
-}  // end selectWindow
+}
 
 // GUIEdit::unSelectWindow ====================================================
 /** Remove window from the selection list */
@@ -3937,9 +3927,9 @@ void GUIEdit::unSelectWindow( GameWindow *window )
 		// delete the entry
 		delete entry;
 
-	}  // end if
+	}
 
-}  // end unSelectWindow
+}
 
 // GUIEdit::clearSelections ===================================================
 /** Clear the entire selection list */
@@ -3950,7 +3940,7 @@ void GUIEdit::clearSelections( void )
 	while( m_selectList )
 		unSelectWindow( m_selectList->window );
 
-}  // end clearSelections
+}
 
 // GUIEdit::selectionCount ====================================================
 /** How many items are selected */
@@ -3967,11 +3957,11 @@ Int GUIEdit::selectionCount( void )
 		count++;
 		select = select->next;
 
-	}  // end while
+	}
 
 	return count;
 
-}  // end selectionCount
+}
 
 // GUIEdit::notifyNewWindow ===================================================
 /** The passed in window has just been added into the GUI layout.  It
@@ -4005,9 +3995,9 @@ void GUIEdit::notifyNewWindow( GameWindow *window )
 		for( child = window->winGetChild(); child; child = child->winGetNext() )
 			notifyNewWindow( child );
 
-	}  // end if
+	}
 
-}  // end notifyNewWindow
+}
 
 // GUIEdit::deleteSelected ====================================================
 /** Delete the windows in the selection list */
@@ -4028,12 +4018,12 @@ void GUIEdit::deleteSelected( void )
 	deleteList = new GameWindow *[ count ];
 	if( deleteList == NULL )
 	{
-	
-		DEBUG_LOG(( "Cannot allocate delete list!\n" ));
+
+		DEBUG_LOG(( "Cannot allocate delete list!" ));
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	// fill out the delete list
 	for( i = 0, select = m_selectList; i < count; i++, select = select->next )
@@ -4046,11 +4036,11 @@ void GUIEdit::deleteSelected( void )
 	// free memory for the delete list
 	delete [] deleteList;
 
-}  // end deleteSelected
+}
 
 // GUIEdit::bringSelectedToTop ================================================
 /** Bring the selected windows to the top so they draw on top of
-	* other windows.  For window with no parents this brings them to 
+	* other windows.  For window with no parents this brings them to
 	* the top of the window stack for all windows, for child windows it will
 	* bring them to the top of the child list for their parent */
 //=============================================================================
@@ -4072,11 +4062,11 @@ void GUIEdit::bringSelectedToTop( void )
 	if( snapshot == NULL )
 	{
 
-		DEBUG_LOG(( "bringSelectedToTop: Unabled to allocate selectList\n" ));
+		DEBUG_LOG(( "bringSelectedToTop: Unabled to allocate selectList" ));
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	// take the snapshot
 	Int i;
@@ -4094,19 +4084,19 @@ void GUIEdit::bringSelectedToTop( void )
 		// update the hierarchy to have the new window on the top
 		TheHierarchyView->bringWindowToTop( snapshot[ i ] );
 
-	}  // end for i
+	}
 
 	// delete the snapshot list
 	delete [] snapshot;
 
-}  // end bringSelectedToTop
+}
 
 // GUIEdit::dragMoveSelectedWindows ===========================================
 /** Move all the windows in the selection list from a drag move, note
-	* that we are keeping the positions within the screen and parent 
+	* that we are keeping the positions within the screen and parent
 	* windows */
 //=============================================================================
-void GUIEdit::dragMoveSelectedWindows( ICoord2D *dragOrigin, 
+void GUIEdit::dragMoveSelectedWindows( ICoord2D *dragOrigin,
 																			 ICoord2D *dragDest )
 {
 	WindowSelectionEntry *select;
@@ -4137,17 +4127,17 @@ void GUIEdit::dragMoveSelectedWindows( ICoord2D *dragOrigin,
 
 		// kee the location legal
 		computeSafeLocation( window, moveLoc.x, moveLoc.y, &safeLoc.x, &safeLoc.y );
-		
+
 		// move the window
 		moveWindowTo( window, safeLoc.x, safeLoc.y );
 
 		// goto next selected window
 		select = select->next;
 
-	}  // end while
+	}
 
 
-}  // end dragMoveSelectedWindows
+}
 
 // GUIEdit::getSelectList =====================================================
 /** Return the selection list */
@@ -4157,7 +4147,7 @@ WindowSelectionEntry *GUIEdit::getSelectList( void )
 
 	return m_selectList;
 
-}  // end getSelectList
+}
 
 // GUIEdit::getFirstSelected ==================================================
 /** Get the first GameWindow * from the selection list */
@@ -4170,7 +4160,7 @@ GameWindow *GUIEdit::getFirstSelected( void )
 
 	return NULL;
 
-}  // end getFirstSelected
+}
 
 // GUIEdit::computeSafeLocation ===============================================
 /** If we attempt to move the window to the given (x,y) it may result
@@ -4217,8 +4207,8 @@ void GUIEdit::computeSafeLocation( GameWindow *window,
 		else if( region.hi.y + dy > parentSize.y )
 			dy = parentSize.y - region.hi.y;
 
-	}  // end else if, parent
-			
+	}
+
 	// Move the window, but keep it completely visible within screen boundaries
 	IRegion2D newRegion;
 	ICoord2D grabSize;
@@ -4248,7 +4238,7 @@ void GUIEdit::computeSafeLocation( GameWindow *window,
 	*safeX = newRegion.lo.x;
 	*safeY = newRegion.lo.y;
 
-}  // end computeSafeLocation
+}
 
 // GUIEdit::computeSafeSizeLocation ===========================================
 /** Like the method computeSafeLocation, this method also takes into
@@ -4274,7 +4264,7 @@ void GUIEdit::computeSafeSizeLocation( GameWindow *window,
 	ICoord2D parentSize;
 	ICoord2D topLeftLimit;
 	ICoord2D bottomRightLimit;
-		
+
 	// get parent window and data is present
 	parent = window->winGetParent();
 	if( parent )
@@ -4283,7 +4273,7 @@ void GUIEdit::computeSafeSizeLocation( GameWindow *window,
 		parent->winGetScreenPosition( &parentLoc.x, &parentLoc.y );
 		parent->winGetSize( &parentSize.x, &parentSize.y );
 
-	}  // end if
+	}
 
 	// upper left corner must be in screen or in parent
 	topLeftLimit.x = 0;  // screen top left
@@ -4311,7 +4301,7 @@ void GUIEdit::computeSafeSizeLocation( GameWindow *window,
 		bottomRightLimit.x = parentLoc.x + parentSize.x;
 		bottomRightLimit.y = parentLoc.y + parentSize.y;
 
-	}  // end if
+	}
 	if( newX + newWidth > bottomRightLimit.x )
 		newWidth = bottomRightLimit.x - newX;
 	if( newY + newHeight > bottomRightLimit.y )
@@ -4328,7 +4318,7 @@ void GUIEdit::computeSafeSizeLocation( GameWindow *window,
 		*safeY = *safeY - parentLoc.y;
 	}
 
-}  // end computeSafeSizeLocation
+}
 
 // GUIEdit::computeResizeLocation =============================================
 /** Given the current resize drag mode, the selected window to resize,
@@ -4338,7 +4328,7 @@ void GUIEdit::computeSafeSizeLocation( GameWindow *window,
 //=============================================================================
 void GUIEdit::computeResizeLocation( EditMode resizeMode,
 																		 GameWindow *window,
-																		 ICoord2D *resizeOrigin, 
+																		 ICoord2D *resizeOrigin,
 																		 ICoord2D *resizeDest,
 																		 ICoord2D *resultLoc,
 																		 ICoord2D *resultSize )
@@ -4372,7 +4362,7 @@ void GUIEdit::computeResizeLocation( EditMode resizeMode,
 			// bottom right is the anchor
 			newX = origin.x + (resizeDest->x - resizeOrigin->x);
 			newY = origin.y + (resizeDest->y - resizeOrigin->y);
-	
+
 			// don't let it become too small or inverted
 			if( newX >= bottomRight.x - sizeLimit )
 				newX = bottomRight.x - sizeLimit;
@@ -4395,7 +4385,7 @@ void GUIEdit::computeResizeLocation( EditMode resizeMode,
 			// don't let it become too small or inverted
 			if( newY >= bottomRight.y - sizeLimit )
 				newY = bottomRight.y - sizeLimit;
-	
+
 			// compute new size
 			newSizeX = resizeDest->x - origin.x;
 			newSizeY = (origin.y + size.y) - resizeDest->y;
@@ -4440,7 +4430,7 @@ void GUIEdit::computeResizeLocation( EditMode resizeMode,
 			// compute new size
 			newSizeX = bottomRight.x - newX;
 			newSizeY = resizeDest->y - origin.y;
-			
+
 			// don't let it go inverted
 			if( newSizeY < sizeLimit )
 				newSizeY = sizeLimit;
@@ -4470,7 +4460,7 @@ void GUIEdit::computeResizeLocation( EditMode resizeMode,
 			// left SIDE is the anchor
 			newX = origin.x;
 			newY = origin.y;
-			
+
 			// compute new size
 			newSizeX = resizeDest->x - origin.x;
 			newSizeY = size.y;
@@ -4500,7 +4490,7 @@ void GUIEdit::computeResizeLocation( EditMode resizeMode,
 
 		// ------------------------------------------------------------------------
 		case MODE_RESIZE_LEFT:
-			
+
 			// right SIDE is the anchor
 			newX = resizeDest->x;
 			newY = origin.y;
@@ -4515,19 +4505,19 @@ void GUIEdit::computeResizeLocation( EditMode resizeMode,
 
 			break;
 
-	}  // end switch( resizeMode )
+	}
 
 	// to finalize the size we must now clip to any parent or the screen
-	computeSafeSizeLocation( window, 
-													 newX, newY, 
+	computeSafeSizeLocation( window,
+													 newX, newY,
 													 newSizeX, newSizeY,
-													 &resultLoc->x, &resultLoc->y, 
+													 &resultLoc->x, &resultLoc->y,
 													 &resultSize->x, &resultSize->y );
 
-}  // end computeResizeLocation
+}
 
 // GUIEdit::moveWindowTo ======================================================
-/** Move the window passed into the the absolute position (x,y), 
+/** Move the window passed into the the absolute position (x,y),
 	* note that there is NO SAFE checking done on that position */
 //=============================================================================
 void GUIEdit::moveWindowTo( GameWindow *window, Int x, Int y )
@@ -4539,7 +4529,7 @@ void GUIEdit::moveWindowTo( GameWindow *window, Int x, Int y )
 	// we've now made a change
 	TheEditor->setUnsaved( TRUE );
 
-}  // end moveWindowTo
+}
 
 // GUIEdit::windowIsGadget ====================================================
 /** Return TRUE if this window is one of our predefined gadtet types */
@@ -4553,7 +4543,7 @@ Bool GUIEdit::windowIsGadget( GameWindow *window )
 
 	return BitIsSet( window->winGetStyle(), GWS_GADGET_WINDOW );
 
-}  // end windowIsGadget
+}
 
 // GUIEdit::gridSnapLocation ==================================================
 /** Given the source input point, return in 'snapped' the closest grid
@@ -4569,7 +4559,7 @@ void GUIEdit::gridSnapLocation( ICoord2D *source, ICoord2D *snapped )
 	snapped->x = (source->x / m_gridResolution) * m_gridResolution;
 	snapped->y = (source->y / m_gridResolution) * m_gridResolution;
 
-}  // end gridSnapLocation
+}
 
 // GUIEdit::checkMenuItem =====================================================
 /** Check the menu item from the guiedit main menu */
@@ -4585,7 +4575,7 @@ void GUIEdit::checkMenuItem( Int item )
 	// check it
 	CheckMenuItem( menu, item, MF_CHECKED );
 
-}  // end checkMenuItem
+}
 
 // GUIEdit::unCheckMenuItem ===================================================
 /** Un-check the menu item from the guiedit main menu */
@@ -4601,7 +4591,7 @@ void GUIEdit::unCheckMenuItem( Int item )
 	// check it
 	CheckMenuItem( menu, item, MF_UNCHECKED );
 
-}  // end unCheckMenuItem
+}
 
 // GUIEdit::isNameDuplicate ===================================================
 /** Is the name passed in found as the name of any window in in the
@@ -4623,7 +4613,7 @@ Bool GUIEdit::isNameDuplicate( GameWindow *root, GameWindow *ignore, AsciiString
 	if( root != ignore )
 		if( instData->m_decoratedNameString == name )
 			return TRUE;  // no need to search anymore
-	
+
 	//You only call this on the first child since the call right after it will handle siblings (depth first)
 	GameWindow *child = root->winGetChild();
 	if( isNameDuplicate( child, ignore, name ) == TRUE )
@@ -4632,7 +4622,7 @@ Bool GUIEdit::isNameDuplicate( GameWindow *root, GameWindow *ignore, AsciiString
 	// check the next window in the list
 	return isNameDuplicate( root->winGetNext(), ignore, name );
 
-}  // end isNameDuplicate
+}
 
 // GUIEdit::loadGUIEditFontLibrary ============================================
 /** Load the set of fonts that we will make available to users in
@@ -4655,12 +4645,12 @@ void GUIEdit::loadGUIEditFontLibrary( FontLibrary *library )
 	library->getFont( times, 10, FALSE );
 	library->getFont( times, 10, TRUE );
 
-}  // end loadGUIEditFontLibrary
+}
 
 // GUIEdit::setShowHiddenOutlines =============================================
 //=============================================================================
 void GUIEdit::setShowHiddenOutlines( Bool show )
-{ 
+{
 
 	m_showHiddenOutlines = show;
 
@@ -4669,19 +4659,19 @@ void GUIEdit::setShowHiddenOutlines( Bool show )
 	else
 		CheckMenuItem( GetMenu( m_appHWnd ), MENU_SHOW_HIDDEN_OUTLINES, MF_UNCHECKED );
 
-}  // end setShowHiddenOutlines
+}
 
 // GUIEdit::setShowSeeThruOutlines ============================================
 //=============================================================================
 void GUIEdit::setShowSeeThruOutlines( Bool show )
-{ 
+{
 
-	m_showSeeThruOutlines = show; 
+	m_showSeeThruOutlines = show;
 
 	if( m_showSeeThruOutlines )
 		CheckMenuItem( GetMenu( m_appHWnd ), MENU_SHOW_SEE_THRU_OUTLINES, MF_CHECKED );
 	else
 		CheckMenuItem( GetMenu( m_appHWnd ), MENU_SHOW_SEE_THRU_OUTLINES, MF_UNCHECKED );
 
-}  // end setShowSeeThruOutlines
+}
 

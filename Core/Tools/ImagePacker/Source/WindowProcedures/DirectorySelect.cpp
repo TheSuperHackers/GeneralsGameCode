@@ -18,12 +18,12 @@
 
 // FILE: DirectorySelect.cpp //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -40,6 +40,7 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <windows.h>
 #include <stdio.h>
+#include <WWCommon.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "ImagePacker.h"
@@ -85,12 +86,12 @@ static void selectDrive( HWND dialog )
 
 	// select the string in the combo
 	Int index;
-	index = SendDlgItemMessage( dialog, COMBO_DRIVE, 
+	index = SendDlgItemMessage( dialog, COMBO_DRIVE,
 															CB_FINDSTRINGEXACT, -1, (LPARAM)string );
 	if( index != CB_ERR )
 		SendDlgItemMessage( dialog, COMBO_DRIVE, CB_SETCURSEL, index, 0 );
 
-}  // end selectDrive
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -115,19 +116,19 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 			GetCurrentDirectory( _MAX_PATH, startDir );
 
 			// set the extents for the horizontal scroll bar in the listbox
-			SendDlgItemMessage( hWndDialog, LIST_DIR, 
+			SendDlgItemMessage( hWndDialog, LIST_DIR,
 													LB_SETHORIZONTALEXTENT, 1280, 0 );
 
 			// load the listbox with directory items
 			SendDlgItemMessage( hWndDialog, LIST_DIR,
-													LB_DIR, 
-													DDL_DIRECTORY | DDL_EXCLUSIVE, 
+													LB_DIR,
+													DDL_DIRECTORY | DDL_EXCLUSIVE,
 													(LPARAM)"*.*" );
 
 			// set the current directory in the top label
 			GetCurrentDirectory( _MAX_PATH, buffer );
 			if( buffer[ strlen( buffer ) - 1 ] != '\\' )
-				strcat( buffer, "\\" );
+				strlcat(buffer, "\\", ARRAY_SIZE(buffer));
 			SetDlgItemText( hWndDialog, STATIC_CURRENT_DIR, buffer );
 
 			// load the drive box
@@ -141,7 +142,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 
 			return TRUE;
 
-		}  // end init
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_COMMAND:
@@ -172,7 +173,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 						{
 
 							// get the text
-							SendDlgItemMessage( hWndDialog, LIST_DIR, LB_GETTEXT, 
+							SendDlgItemMessage( hWndDialog, LIST_DIR, LB_GETTEXT,
 																	i, (LPARAM)text );
 
 							// remove the brackets on the text
@@ -203,22 +204,22 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 														MB_OK | MB_ICONINFORMATION );
 								continue;
 
-							}  // end if
+							}
 
 							// add path to the listbox
-							SendDlgItemMessage( TheImagePacker->getWindowHandle(), 
-																	LIST_FOLDERS, 
+							SendDlgItemMessage( TheImagePacker->getWindowHandle(),
+																	LIST_FOLDERS,
 																	LB_INSERTSTRING, -1, (LPARAM)toAdd );
 
-						}  // end if
+						}
 
-					}  // end if
+					}
 
 					SetCurrentDirectory( startDir );
 					EndDialog( hWndDialog, TRUE );
 					break;
 
-				}  // end proceed
+				}
 
 				// --------------------------------------------------------------------
 				case BUTTON_CANCEL:
@@ -228,7 +229,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 					EndDialog( hWndDialog, FALSE );
 					break;
 
-				}  // end cancel
+				}
 
 				// --------------------------------------------------------------------
 				case COMBO_DRIVE:
@@ -239,10 +240,10 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 						Int selected;
 
 						// get selected index
-						selected = SendDlgItemMessage( hWndDialog, COMBO_DRIVE, 
+						selected = SendDlgItemMessage( hWndDialog, COMBO_DRIVE,
 																					 CB_GETCURSEL, 0, 0 );
 						if( selected != CB_ERR )
-						{	
+						{
 							char string[ 32 ];
 
 							SendDlgItemMessage( hWndDialog, COMBO_DRIVE,
@@ -262,7 +263,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 							// construct new direcotry name and update status text
 							GetCurrentDirectory( _MAX_PATH, buffer );
 							if( buffer[ strlen( buffer ) - 1 ] != '\\' )
-								strcat( buffer, "\\" );
+								strlcat(buffer, "\\", ARRAY_SIZE(buffer));
 							SetDlgItemText( hWndDialog, STATIC_CURRENT_DIR, buffer );
 							EnableWindow( GetDlgItem( hWndDialog, BUTTON_ADD ), FALSE );
 
@@ -270,18 +271,18 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 							SendDlgItemMessage( hWndDialog, LIST_DIR,
 																	LB_RESETCONTENT, 0, 0 );
 							SendDlgItemMessage( hWndDialog, LIST_DIR,
-																	LB_DIR, 
-																	DDL_DIRECTORY | DDL_EXCLUSIVE, 
+																	LB_DIR,
+																	DDL_DIRECTORY | DDL_EXCLUSIVE,
 																	(LPARAM)"*.*" );
 
 
-						}  // end if
+						}
 
-					}  // end if
+					}
 
 					break;
 
-				}  // end drive
+				}
 
 				// --------------------------------------------------------------------
 				case LIST_DIR:
@@ -293,9 +294,9 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 						Bool enable;
 
 						// get selected count
-						selCount = SendDlgItemMessage( hWndDialog, LIST_DIR, 
+						selCount = SendDlgItemMessage( hWndDialog, LIST_DIR,
 																					 LB_GETSELCOUNT, 0, 0 );
-	
+
 						// if we have selected items, enable the add button
 						if( selCount > 0 )
 						{
@@ -308,37 +309,37 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 							enable = TRUE;
 							Int index = 0;
 							if( selCount == 1 &&
-									SendDlgItemMessage( hWndDialog, LIST_DIR, 
+									SendDlgItemMessage( hWndDialog, LIST_DIR,
 																			LB_GETSEL, index, 0 ) > 0 )
 							{
 								char text[ _MAX_PATH ];
 
-								SendDlgItemMessage( hWndDialog, LIST_DIR, LB_GETTEXT, 
+								SendDlgItemMessage( hWndDialog, LIST_DIR, LB_GETTEXT,
 																		index, (LPARAM)text );
 								if( strcmp( text, "[..]" ) == 0 )
 									enable = FALSE;
 
-							}  // end if
+							}
 
-						}  // end if
+						}
 						else
 							enable = FALSE;
 
 						// do the enable
 						EnableWindow( GetDlgItem( hWndDialog, BUTTON_ADD ), enable );
 
-					}  // end if
+					}
 					if( notifyCode == LBN_DBLCLK )
 					{
 						Int selected;
 						char text[ _MAX_PATH ];
-										
+
 						// get currently selected item
-						selected = SendDlgItemMessage( hWndDialog, LIST_DIR, 
+						selected = SendDlgItemMessage( hWndDialog, LIST_DIR,
 																					 LB_GETCURSEL, 0, 0 );
 
 						// get text of selected item
-						SendDlgItemMessage( hWndDialog, LIST_DIR, LB_GETTEXT, 
+						SendDlgItemMessage( hWndDialog, LIST_DIR, LB_GETTEXT,
 																selected, (LPARAM)text );
 
 						// strip the backets off the directory listing
@@ -353,7 +354,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 						// construct new direcotry name and update status text
 						GetCurrentDirectory( _MAX_PATH, buffer );
 						if( buffer[ strlen( buffer ) - 1 ] != '\\' )
-							strcat( buffer, "\\" );
+							strlcat(buffer, "\\", ARRAY_SIZE(buffer));
 						SetDlgItemText( hWndDialog, STATIC_CURRENT_DIR, buffer );
 						EnableWindow( GetDlgItem( hWndDialog, BUTTON_ADD ), FALSE );
 
@@ -361,27 +362,27 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 						SendDlgItemMessage( hWndDialog, LIST_DIR,
 																LB_RESETCONTENT, 0, 0 );
 						SendDlgItemMessage( hWndDialog, LIST_DIR,
-																LB_DIR, 
-																DDL_DIRECTORY | DDL_EXCLUSIVE, 
+																LB_DIR,
+																DDL_DIRECTORY | DDL_EXCLUSIVE,
 																(LPARAM)"*.*" );
-												
-					}  // end if
+
+					}
 
 					break;
 
-				}  // end list command
+				}
 
-			}  // end switch
+			}
 
 			break;
 
-		}  // end command
+		}
 
-	}  // end switch message
+	}
 
 	return 0;
 
-}  // end DirectorySelectProc
+}
 
 
 

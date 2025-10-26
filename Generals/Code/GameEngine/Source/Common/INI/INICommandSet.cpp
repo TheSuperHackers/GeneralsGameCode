@@ -40,4 +40,4 @@
 void INI::parseCommandSetDefinition( INI *ini )
 {
 	ControlBar::parseCommandSetDefinition(ini);
-}  // end parseCommandSetDefinition
+}

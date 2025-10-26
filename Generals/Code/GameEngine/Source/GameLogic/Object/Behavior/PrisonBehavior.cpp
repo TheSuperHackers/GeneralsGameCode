@@ -74,14 +74,14 @@ PrisonVisual::PrisonVisual( void )
 	m_drawableID = INVALID_DRAWABLE_ID;
 	m_next = NULL;
 
-}  // end PrisonVisual
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 PrisonVisual::~PrisonVisual( void )
 {
 
-}  // end ~PrisonVisual
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ PrisonBehaviorModuleData::PrisonBehaviorModuleData( void )
 
 	m_showPrisoners = FALSE;
 
-}  // end PrisonBehaviorModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -102,10 +102,10 @@ PrisonBehaviorModuleData::PrisonBehaviorModuleData( void )
 {
   OpenContainModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 
-		{ "ShowPrisoners",	INI::parseBool,					NULL,		offsetof( PrisonBehaviorModuleData, m_showPrisoners ) },		
+		{ "ShowPrisoners",	INI::parseBool,					NULL,		offsetof( PrisonBehaviorModuleData, m_showPrisoners ) },
 		{ "YardBonePrefix",	INI::parseAsciiString,	NULL,		offsetof( PrisonBehaviorModuleData, m_prisonYardBonePrefix ) },
 		{ 0, 0, 0, 0 }
 
@@ -113,7 +113,7 @@ PrisonBehaviorModuleData::PrisonBehaviorModuleData( void )
 
   p.add( dataFieldParse );
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -127,14 +127,14 @@ PrisonBehavior::PrisonBehavior( Thing *thing, const ModuleData *moduleData )
 
 	m_visualList = NULL;
 
-}  // end PrisonBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 PrisonBehavior::~PrisonBehavior( void )
 {
 
-}  // end ~PrisonBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -157,12 +157,12 @@ void PrisonBehavior::onDelete( void )
 
 		// delete element and set next to head
 		visual = m_visualList->m_next;
-		m_visualList->deleteInstance();
+		deleteInstance(m_visualList);
 		m_visualList = visual;
 
-	}  // end while
+	}
 
-}  // end onDelete
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -180,7 +180,7 @@ void PrisonBehavior::onContaining( Object *obj )
 	if( modData->m_showPrisoners )
 		addVisual( obj );
 
-}  // end onContaining
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ void PrisonBehavior::onRemoving( Object *obj )
 	// extend functionality
 	OpenContain::onRemoving( obj );
 
-}  // end onRemoving
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE ////////////////////////////////////////////////////////////////////////////////////////
@@ -227,9 +227,9 @@ void PrisonBehavior::pickVisualLocation( Coord3D *pos )
 																									 MAX_YARD_BONES,
 																									 yardPositions,
 																									 NULL );
-	
+
 	//
-	// we must have at least 3 bone locations to make a yard polygon, otherwise we'll 
+	// we must have at least 3 bone locations to make a yard polygon, otherwise we'll
 	// default to the object position
 	//
 	if( yardBones >= 3 )
@@ -253,7 +253,7 @@ void PrisonBehavior::pickVisualLocation( Coord3D *pos )
 			if( yardPositions[ i ].y > yardRegion.hi.y )
 				yardRegion.hi.y = yardPositions[ i ].y;
 
-		}  // end for i
+		}
 
 		//
 		// now that we have a yard region, the default visual position will be in the middle
@@ -282,16 +282,16 @@ void PrisonBehavior::pickVisualLocation( Coord3D *pos )
 				pickedLocation = loc;
 				break;  // exit for i
 
-			}  // end if
+			}
 
-		}  // end for i
+		}
 
-	}  // end if
+	}
 
 	// return the location picked
 	*pos = pickedLocation;
 
-}  // end pickVisualLocation
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Add prisoner visual to the prison yard */
@@ -329,7 +329,7 @@ void PrisonBehavior::addVisual( Object *obj )
 	visual->m_next = m_visualList;
 	m_visualList = visual;
 
-}  // end addVisual
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Remove prisoner visual from the prison yard */
@@ -363,23 +363,23 @@ void PrisonBehavior::removeVisual( Object *obj )
 				m_visualList = visual->m_next;
 
 			// delete the element
-			visual->deleteInstance();
+			deleteInstance(visual);
 
 			break;  // exit for
 
-		}  // end if
+		}
 
 		// keep a pointer to the previous element
 		prevVisual = visual;
 
-	}  // end for
+	}
 
 	// find the drawable visual and destroy it
 	Drawable *draw = TheGameClient->findDrawableByID( drawableID );
 	if( draw )
 		TheGameClient->destroyDrawable( draw );
 
-}  // end removeVisual
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -390,7 +390,7 @@ void PrisonBehavior::crc( Xfer *xfer )
 	// extend base class
 	OpenContain::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -427,9 +427,9 @@ void PrisonBehavior::xfer( Xfer *xfer )
 			// drawable id
 			xfer->xferDrawableID( &visual->m_drawableID );
 
-		}  // end for, visual
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -437,10 +437,10 @@ void PrisonBehavior::xfer( Xfer *xfer )
 		if( m_visualList != NULL )
 		{
 
-			DEBUG_CRASH(( "PrisonBehavior::xfer - the visual list should be empty but is not\n" ));
+			DEBUG_CRASH(( "PrisonBehavior::xfer - the visual list should be empty but is not" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// read each item
 		for( UnsignedShort i = 0; i < visualCount; ++i )
@@ -457,11 +457,11 @@ void PrisonBehavior::xfer( Xfer *xfer )
 			// read drawable id
 			xfer->xferDrawableID( &visual->m_drawableID );
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -472,7 +472,7 @@ void PrisonBehavior::loadPostProcess( void )
 	// extend base class
 	OpenContain::loadPostProcess();
 
-}  // end loadPostProcess
+}
 
 #endif
 

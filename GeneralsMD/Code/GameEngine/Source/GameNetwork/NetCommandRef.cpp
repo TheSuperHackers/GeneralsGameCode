@@ -48,16 +48,16 @@ NetCommandRef::NetCommandRef(NetCommandMsg *msg)
 
 #ifdef DEBUG_NETCOMMANDREF
 	m_id = ++refNum;
-	DEBUG_LOG(("NetCommandRef %d allocated in file %s line %d\n", m_id, filename, line));
+	DEBUG_LOG(("NetCommandRef %d allocated in file %s line %d", m_id, filename, line));
 #endif
 }
 
 /**
  * Destructor. Detach from the network command.
  */
-NetCommandRef::~NetCommandRef() 
+NetCommandRef::~NetCommandRef()
 {
-	if (m_msg != NULL) 
+	if (m_msg != NULL)
 	{
 		m_msg->detach();
 	}
@@ -65,7 +65,7 @@ NetCommandRef::~NetCommandRef()
 	DEBUG_ASSERTCRASH(m_prev == NULL, ("NetCommandRef::~NetCommandRef - m_prev != NULL"));
 
 #ifdef DEBUG_NETCOMMANDREF
-	DEBUG_LOG(("NetCommandRef %d deleted\n", m_id));
+	DEBUG_LOG(("NetCommandRef %d deleted", m_id));
 #endif
 }
 

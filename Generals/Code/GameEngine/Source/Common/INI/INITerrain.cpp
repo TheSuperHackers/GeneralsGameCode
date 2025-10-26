@@ -43,7 +43,7 @@ void INI::parseTerrainDefinition( INI* ini )
 
 	// read the name
 	const char* c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	// find existing item if present
 	terrainType = TheTerrainTypes->findTerrain( name );
@@ -51,12 +51,12 @@ void INI::parseTerrainDefinition( INI* ini )
 		terrainType = TheTerrainTypes->newTerrain( name );
 
 	// sanity
-	DEBUG_ASSERTCRASH( terrainType, ("Unable to allocate terrain type '%s'\n", name.str()) );
+	DEBUG_ASSERTCRASH( terrainType, ("Unable to allocate terrain type '%s'", name.str()) );
 
 	// parse the ini definition
 	ini->initFromINI( terrainType, terrainType->getFieldParse() );
 
-}  // end parseTerrain
+}
 
 
 

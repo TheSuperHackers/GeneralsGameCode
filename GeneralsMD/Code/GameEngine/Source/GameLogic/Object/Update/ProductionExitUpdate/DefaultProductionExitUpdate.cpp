@@ -109,7 +109,7 @@ void DefaultProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDoorTyp
 		if (m_rallyPointExists)
 		{
 			tmp = m_rallyPoint;
-			if (ai && ai->isDoingGroundMovement()) 
+			if (ai && ai->isDoingGroundMovement())
 			{
 				if (TheAI->pathfinder()->adjustDestination(newObj, ai->getLocomotorSet(), &tmp))
 					exitPath.push_back(tmp);
@@ -142,7 +142,7 @@ Bool DefaultProductionExitUpdate::getExitPosition( Coord3D& exitPosition ) const
 	exitPosition.x = loc.X;
 	exitPosition.y = loc.Y;
 	exitPosition.z = loc.Z;
-	
+
 	return TRUE;
 
 }
@@ -186,7 +186,7 @@ void DefaultProductionExitUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -210,7 +210,7 @@ void DefaultProductionExitUpdate::xfer( Xfer *xfer )
 	// rally point exists
 	xfer->xferBool( &m_rallyPointExists );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -221,4 +221,4 @@ void DefaultProductionExitUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

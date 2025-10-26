@@ -58,11 +58,6 @@
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 /** @todo: We're going to have a pool of a couple rendertargets to use
 in rare cases when dynamic shadows need to be generated.  Maybe we can
@@ -93,19 +88,13 @@ extern int nShadowStartBatchIndex;
 extern int SHADOW_VERTEX_SIZE;
 extern int SHADOW_INDEX_SIZE;
 
-//Bounding rectangle around rendered portion of terrain.
-static Int drawEdgeX=0;
-static Int drawEdgeY=0;
-static Int drawStartX=0;
-static Int drawStartY=0;
-
 //Global streaming vertex buffer with x,y,z,u,v type.
 struct SHADOW_DECAL_VERTEX	//vertex structure passed to D3D
 {
 		float x,y,z;
 		DWORD diffuse;
 		float u,v;
-}; 
+};
 
 #define SHADOW_DECAL_FVF	D3DFVF_XYZ|D3DFVF_TEX1|D3DFVF_DIFFUSE
 
@@ -171,8 +160,8 @@ class W3DShadowTexture : public RefCountClass, public	HashableClass
 
 		const char *		Get_Name(void) const	{ return m_namebuf;}
 		void				Set_Name(const char *name)
-		{	memset(m_namebuf,0,sizeof(m_namebuf));	//pad with zero so always ends with null character.
-			strncpy(m_namebuf,name,sizeof(m_namebuf)-1);
+		{
+			strlcpy(m_namebuf,name,sizeof(m_namebuf));
 		}
 		TextureClass	*getTexture(void)	{ return m_texture;}
 		void					 setTexture(TextureClass *texture)	{m_texture = texture;}
@@ -220,6 +209,10 @@ W3DProjectedShadowManager::W3DProjectedShadowManager(void)
 	m_W3DShadowTextureManager = NULL;
 	m_shadowCamera = NULL;
 	m_shadowContext= NULL;
+	m_drawEdgeX = 0;
+	m_drawEdgeY = 0;
+	m_drawStartX = 0;
+	m_drawStartY = 0;
 }
 
 W3DProjectedShadowManager::~W3DProjectedShadowManager(void)
@@ -246,7 +239,7 @@ void W3DProjectedShadowManager::reset( void )
 
 	m_W3DShadowTextureManager->freeAllTextures();
 
-}  // end Reset
+}
 
 Bool W3DProjectedShadowManager::init( void )
 {
@@ -285,10 +278,10 @@ Bool W3DProjectedShadowManager::ReAcquireResources(void)
 
 	if (FAILED(m_pDev->CreateIndexBuffer
 	(
-		SHADOW_DECAL_INDEX_SIZE*sizeof(WORD), 
-		D3DUSAGE_WRITEONLY|D3DUSAGE_DYNAMIC, 
-		D3DFMT_INDEX16, 
-		D3DPOOL_DEFAULT, 
+		SHADOW_DECAL_INDEX_SIZE*sizeof(WORD),
+		D3DUSAGE_WRITEONLY|D3DUSAGE_DYNAMIC,
+		D3DFMT_INDEX16,
+		D3DPOOL_DEFAULT,
 		&shadowDecalIndexBufferD3D
 	)))
 		return FALSE;
@@ -299,9 +292,9 @@ Bool W3DProjectedShadowManager::ReAcquireResources(void)
 		if (FAILED(m_pDev->CreateVertexBuffer
 		(
 			SHADOW_DECAL_VERTEX_SIZE*sizeof(SHADOW_DECAL_VERTEX),
-			D3DUSAGE_WRITEONLY|D3DUSAGE_DYNAMIC, 
+			D3DUSAGE_WRITEONLY|D3DUSAGE_DYNAMIC,
 			0,
-			D3DPOOL_DEFAULT, 
+			D3DPOOL_DEFAULT,
 			&shadowDecalVertexBufferD3D
 		)))
 			return FALSE;
@@ -342,7 +335,7 @@ void W3DProjectedShadowManager::updateRenderTargetTextures(void)
 	for( shadow = m_shadowList; shadow; shadow = shadow->m_next )
 	{	//decals don't need any updates on a per-frame basis since
 		//the image never changes.
-		if (shadow->m_type != SHADOW_DECAL) 
+		if (shadow->m_type != SHADOW_DECAL)
 			shadow->update();
 	}
 }
@@ -354,7 +347,7 @@ Int W3DProjectedShadowManager::renderProjectedTerrainShadow(W3DProjectedShadow *
 	struct SHADOW_VOLUME_VERTEX	//vertex structure passed to D3D
 	{
 		float x,y,z;
-	}; 
+	};
 
 	Int i,j,k;
 	UnsignedByte alpha[4];
@@ -420,7 +413,7 @@ Int W3DProjectedShadowManager::renderProjectedTerrainShadow(W3DProjectedShadow *
 				float ycoord = (float)j * MAP_XY_FACTOR;
 
 				for (i=startX; i <= endX; i++)
-				{	
+				{
 					pvVertices->x=(float)i*MAP_XY_FACTOR;
 					pvVertices->y=ycoord;
 					pvVertices->z=(float)hmap->getHeight(i,j)*MAP_HEIGHT_SCALE;
@@ -492,7 +485,7 @@ Int W3DProjectedShadowManager::renderProjectedTerrainShadow(W3DProjectedShadow *
 		shadowIndexBufferD3D->Unlock();
 
 		m_pDev->SetIndices(shadowIndexBufferD3D,nShadowStartBatchVertex);
-			
+
 		m_pDev->SetTransform(D3DTS_WORLD,(_D3DMATRIX *)&mWorld);
 
 		m_pDev->SetStreamSource(0,shadowVertexBufferD3D,sizeof(SHADOW_VOLUME_VERTEX));
@@ -515,7 +508,7 @@ Int W3DProjectedShadowManager::renderProjectedTerrainShadow(W3DProjectedShadow *
 		m_pDev->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_DESTCOLOR);
 		m_pDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ZERO );
 
-		
+
 		if (DX8Wrapper::_Is_Triangle_Draw_Enabled())
 		{
 			Debug_Statistics::Record_DX8_Polys_And_Vertices(numPolys,numVerts,ShaderClass::_PresetOpaqueShader);
@@ -556,7 +549,7 @@ enum BlendDirection CPP_11(: Int)
 	B_B,	//visble on bottom
 	B_TL,	//visible on top/left
 	B_BR,	//visible on bottom/right
-	B_TR,	//visible on top/right 
+	B_TR,	//visible on top/right
 	B_BL	//visilbe on bottom/left
 };
 
@@ -587,7 +580,7 @@ static void RenderVBTile(TextureClass *text, Real ox, Real oy, Real ou, Real ov,
 
 	UnsignedShort *ib=lockib.Get_Index_Array();
 
-	vb->x=ox;	 
+	vb->x=ox;
 	vb->y=oy;
 	vb->z=TILE_HEIGHT;
 	vb->diffuse=TILE_DIFFUSE|BDToVA[bd][0];
@@ -595,7 +588,7 @@ static void RenderVBTile(TextureClass *text, Real ox, Real oy, Real ou, Real ov,
 	vb->v1=ov;
 	vb++;
 
-	vb->x=ox;	 
+	vb->x=ox;
 	vb->y=oy-10.0f;
 	vb->z=TILE_HEIGHT;
 	vb->diffuse=TILE_DIFFUSE|BDToVA[bd][1];
@@ -603,7 +596,7 @@ static void RenderVBTile(TextureClass *text, Real ox, Real oy, Real ou, Real ov,
 	vb->v1=ov+0.25f;
 	vb++;
 
-	vb->x=ox+10.0f;	 
+	vb->x=ox+10.0f;
 	vb->y=oy-10.0f;
 	vb->z=TILE_HEIGHT;
 	vb->diffuse=TILE_DIFFUSE|BDToVA[bd][2];
@@ -611,7 +604,7 @@ static void RenderVBTile(TextureClass *text, Real ox, Real oy, Real ou, Real ov,
 	vb->v1=ov+0.25f;
 	vb++;
 
-	vb->x=ox+10.0f;	 
+	vb->x=ox+10.0f;
 	vb->y=oy;
 	vb->z=TILE_HEIGHT;
 	vb->diffuse=TILE_DIFFUSE|BDToVA[bd][3];
@@ -731,7 +724,7 @@ void W3DProjectedShadowManager::flushDecals(W3DShadowTexture *texture, ShadowTyp
 	m_pDev->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 	m_pDev->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_TFACTOR);
 */
-	 
+
 
 	m_pDev->SetIndices(shadowDecalIndexBufferD3D,nShadowDecalStartBatchVertex);
 	m_pDev->SetTransform(D3DTS_WORLD,(_D3DMATRIX *)&mWorld);
@@ -839,7 +832,7 @@ void W3DProjectedShadowManager::queueDecal(W3DProjectedShadow *shadow)
 				Drawable *draw=((DrawableInfo *)robj->Get_User_Data())->m_drawable;
 				const Object *object=draw->getObject();
 				PathfindLayerEnum objectLayer;
-				if (object && (objectLayer=object->getLayer()) != LAYER_GROUND) 
+				if (object && (objectLayer=object->getLayer()) != LAYER_GROUND)
 				{	//check if object that this decal belongs to is not on the ground (bridge?)
 					layerHeight=BRIDGE_OFFSET_FACTOR+TheTerrainLogic->getLayerHeight(objPos.X,objPos.Y,objectLayer);
 				}
@@ -964,15 +957,15 @@ void W3DProjectedShadowManager::queueDecal(W3DProjectedShadow *shadow)
 		Int	startY=REAL_TO_INT_FLOOR(((objPos.Y+min_y)*mapScaleInv)) + borderSize;
 		Int endY=REAL_TO_INT_CEIL(((objPos.Y+max_y)*mapScaleInv)) + borderSize;
 
-		startX = __max(startX,drawStartX);
-		startX = __min(startX,drawEdgeX);
-		startY = __max(startY,drawStartY);
-		startY = __min(startY,drawEdgeY);
+		startX = __max(startX,m_drawStartX);
+		startX = __min(startX,m_drawEdgeX);
+		startY = __max(startY,m_drawStartY);
+		startY = __min(startY,m_drawEdgeY);
 
-		endX = __max(endX,drawStartX);
-		endX = __min(endX,drawEdgeX);
-		endY = __max(endY,drawStartY);
-		endY = __min(endY,drawEdgeY);
+		endX = __max(endX,m_drawStartX);
+		endX = __min(endX,m_drawEdgeX);
+		endY = __max(endY,m_drawStartY);
+		endY = __min(endY,m_drawEdgeY);
 
 		//Check if decal too large to fit inside 65536 index buffer.
 		//try clipping each direction to < 104 since that's more than
@@ -1044,7 +1037,7 @@ void W3DProjectedShadowManager::queueDecal(W3DProjectedShadow *shadow)
 					hmapVertex.Y=(float)(j-borderSize) * MAP_XY_FACTOR;
 
 					for (i=startX; i <= endX; i++)
-					{	
+					{
 						hmapVertex.X=(float)(i-borderSize)*MAP_XY_FACTOR;
 						hmapVertex.Z=__max((float)hmap->getHeight(i,j)*MAP_HEIGHT_SCALE,layerHeight);
 						pvVertices->x=hmapVertex.X;
@@ -1063,7 +1056,7 @@ void W3DProjectedShadowManager::queueDecal(W3DProjectedShadow *shadow)
 				hmapVertex.Y=(float)(j-borderSize) * MAP_XY_FACTOR;
 
 				for (i=startX; i <= endX; i++)
-				{	
+				{
 					hmapVertex.X=(float)(i-borderSize)*MAP_XY_FACTOR;
 					hmapVertex.Z=(float)hmap->getHeight(i,j)*MAP_HEIGHT_SCALE+0.01f * MAP_XY_FACTOR;
 					pvVertices->x=hmapVertex.X;
@@ -1102,7 +1095,7 @@ void W3DProjectedShadowManager::queueDecal(W3DProjectedShadow *shadow)
 			for (j=startY,rowStart=0; j<endY; j++,rowStart+=vertsPerRow)
 			{
 				for (i=rowStart,k=startX; k<endX; i++,k++)
-				{	
+				{
 					///@todo: fix the winding order in heightmap to be in strip order like above!
 					if (hmap->getFlipState(k,j))
 					{	pvIndices[0]=i+1+nShadowDecalVertsInBatch;
@@ -1281,33 +1274,40 @@ void W3DProjectedShadowManager::queueSimpleDecal(W3DProjectedShadow *shadow)
 
 }
 
+void W3DProjectedShadowManager::prepareShadows()
+{
+	if (!TheTerrainRenderObject)
+		return;
+
+	WorldHeightMap *hmap=TheTerrainRenderObject->getMap();
+
+	if (!hmap)
+		return;
+
+	//Find extents of visible terrain
+	m_drawEdgeY=hmap->getDrawOrgY()+hmap->getDrawHeight()-1;
+	m_drawEdgeX=hmap->getDrawOrgX()+hmap->getDrawWidth()-1;
+	if (m_drawEdgeX > (hmap->getXExtent()-1))
+		m_drawEdgeX = hmap->getXExtent()-1;
+	if (m_drawEdgeY > (hmap->getYExtent()-1))
+		m_drawEdgeY = hmap->getYExtent()-1;
+	m_drawStartX=hmap->getDrawOrgX();
+	m_drawStartY=hmap->getDrawOrgY();
+}
+
 Int W3DProjectedShadowManager::renderShadows(RenderInfoClass & rinfo)
 {
-	///@todo: implement this method.
-	W3DProjectedShadow *shadow;
-	static AABoxClass aaBox;
-	static SphereClass sphere;
 	Int projectionCount=0;
+
+	if (!TheTerrainRenderObject)
+		return projectionCount;
 
 	if (!m_shadowList && !m_decalList)
 		return	projectionCount;	//there are no shadows to render.
 
-	//Find extents of visible terrain
-	if (TheTerrainRenderObject)
-	{
-		WorldHeightMap *hmap=TheTerrainRenderObject->getMap();
-
-		drawEdgeY=hmap->getDrawOrgY()+hmap->getDrawHeight()-1;
-		drawEdgeX=hmap->getDrawOrgX()+hmap->getDrawWidth()-1;
-		if (drawEdgeX > (hmap->getXExtent()-1))
-			drawEdgeX = hmap->getXExtent()-1;
-		if (drawEdgeY > (hmap->getYExtent()-1))
-			drawEdgeY = hmap->getYExtent()-1;
-		drawStartX=hmap->getDrawOrgX();
-		drawStartY=hmap->getDrawOrgY();
-	}
-	else
-		return projectionCount;
+	W3DProjectedShadow *shadow;
+	static AABoxClass aaBox;
+	static SphereClass sphere;
 
 	//According to Nvidia there's a D3D bug that happens if you don't start with a
 	//new dynamic VB each frame - so we force a DISCARD by overflowing the counter.
@@ -1324,7 +1324,7 @@ Int W3DProjectedShadowManager::renderShadows(RenderInfoClass & rinfo)
 		ShadowType lastShadowType = SHADOW_NONE;
 
 		for( shadow = m_shadowList; shadow; shadow = shadow->m_next )
-		{		
+		{
 			if (shadow->m_isEnabled && !shadow->m_isInvisibleEnabled)
 			{
 				if (shadow->m_type & SHADOW_DECAL)
@@ -1420,17 +1420,17 @@ Int W3DProjectedShadowManager::renderShadows(RenderInfoClass & rinfo)
 												rinfo.Pop_Material_Pass();
 												projectionCount++;	//keep track of number of shadow projections
 											}
-									}//robj
-								}//di
-							}	// end for drawmodule 
-					}  // end for obj
+									}
+								}
+							}
+					}
 				}
-			}//shadow is enabled
+			}
 		}
 
 		flushDecals(lastShadowDecalTexture,lastShadowType);	//make sure there are not any unrendered decals left over.
 		TheDX8MeshRenderer.Flush();	//draw all the shadow receiving objects
-	}//rendering shadows
+	}
 	if (m_decalList)
 	{
 		//keep track of active decal texture so we can render all decals at once.
@@ -1438,7 +1438,7 @@ Int W3DProjectedShadowManager::renderShadows(RenderInfoClass & rinfo)
 		ShadowType lastShadowType = SHADOW_NONE;
 
 		for( shadow = m_decalList; shadow; shadow = shadow->m_next )
-		{		
+		{
 			if (shadow->m_isEnabled && !shadow->m_isInvisibleEnabled)
 			{
 				if (lastShadowDecalTexture == NULL)
@@ -1458,7 +1458,7 @@ Int W3DProjectedShadowManager::renderShadows(RenderInfoClass & rinfo)
 					queueDecal(shadow);	//only draw shadow if casting object is visible
 					projectionCount++;
 				}
-			}//shadow is enabled
+			}
 		}
 
 		flushDecals(lastShadowDecalTexture,lastShadowType);	//make sure there are not any unrendered decals left over.
@@ -1477,8 +1477,7 @@ Shadow* W3DProjectedShadowManager::addDecal(Shadow::ShadowTypeInfo *shadowInfo)
 	Real	decalSizeY=0.0f;
 
 	Bool	allowSunDirection=FALSE;
-	Char	texture_name[64];
-	Int nameLen;
+	Char texture_name[ARRAY_SIZE(shadowInfo->m_ShadowName)];
 
 	if (!shadowInfo)
 		return NULL;	//right now we require hardware render-to-texture support
@@ -1486,10 +1485,9 @@ Shadow* W3DProjectedShadowManager::addDecal(Shadow::ShadowTypeInfo *shadowInfo)
 	//simple decal using the premade texture specified.
 	//can be always perpendicular to model's z-axis or projected
 	//onto world geometry.
-	nameLen=strlen(shadowInfo->m_ShadowName);
-	strncpy(texture_name,shadowInfo->m_ShadowName,nameLen);
-	strcpy(texture_name+nameLen,".tga");	//append texture extension
-	
+	strlcpy(texture_name, shadowInfo->m_ShadowName, ARRAY_SIZE(texture_name));
+	strlcat(texture_name, ".tga", ARRAY_SIZE(texture_name));
+
 	//Check if we previously added a decal using this texture
 	st=m_W3DShadowTextureManager->getTexture(texture_name);
 	if (st == NULL)
@@ -1500,7 +1498,7 @@ Shadow* W3DProjectedShadowManager::addDecal(Shadow::ShadowTypeInfo *shadowInfo)
 		w3dTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		w3dTexture->Get_Filter().Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_NONE);
 
-		DEBUG_ASSERTCRASH(w3dTexture != NULL, ("Could not load decal texture: %s\n",texture_name));
+		DEBUG_ASSERTCRASH(w3dTexture != NULL, ("Could not load decal texture: %s",texture_name));
 
 		if (!w3dTexture)
 			return NULL;
@@ -1566,19 +1564,7 @@ Shadow* W3DProjectedShadowManager::addDecal(Shadow::ShadowTypeInfo *shadowInfo)
 		m_decalList = shadow;
 	}
 
-	switch (shadow->m_type)
-	{
-		case SHADOW_DECAL:
-		case SHADOW_ALPHA_DECAL:
-		case SHADOW_ADDITIVE_DECAL:
-			m_numDecalShadows++;
-			break;
-		case SHADOW_PROJECTION:
-			m_numProjectionShadows++;
-		default:
-			break;
-	}
-
+	updateShadowNumbers(shadow->m_type, +1);
 	return shadow;
 }
 
@@ -1595,8 +1581,7 @@ Shadow* W3DProjectedShadowManager::addDecal(RenderObjClass *robj, Shadow::Shadow
 	Real	decalOffsetY=0.0f;
 
 	Bool	allowSunDirection=FALSE;
-	Char	texture_name[64];
-	Int nameLen;
+	Char texture_name[ARRAY_SIZE(shadowInfo->m_ShadowName)];
 
 	if (!robj || !shadowInfo)
 		return NULL;	//right now we require hardware render-to-texture support
@@ -1604,10 +1589,9 @@ Shadow* W3DProjectedShadowManager::addDecal(RenderObjClass *robj, Shadow::Shadow
 	//simple decal using the premade texture specified.
 	//can be always perpendicular to model's z-axis or projected
 	//onto world geometry.
-	nameLen=strlen(shadowInfo->m_ShadowName);
-	strncpy(texture_name,shadowInfo->m_ShadowName,nameLen);
-	strcpy(texture_name+nameLen,".tga");	//append texture extension
-	
+	strlcpy(texture_name, shadowInfo->m_ShadowName, ARRAY_SIZE(texture_name));
+	strlcat(texture_name, ".tga", ARRAY_SIZE(texture_name));
+
 	//Check if we previously added a decal using this texture
 	st=m_W3DShadowTextureManager->getTexture(texture_name);
 	if (st == NULL)
@@ -1618,7 +1602,7 @@ Shadow* W3DProjectedShadowManager::addDecal(RenderObjClass *robj, Shadow::Shadow
 		w3dTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		w3dTexture->Get_Filter().Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_NONE);
 
-		DEBUG_ASSERTCRASH(w3dTexture != NULL, ("Could not load decal texture: %s\n",texture_name));
+		DEBUG_ASSERTCRASH(w3dTexture != NULL, ("Could not load decal texture: %s",texture_name));
 
 		if (!w3dTexture)
 			return NULL;
@@ -1702,19 +1686,7 @@ Shadow* W3DProjectedShadowManager::addDecal(RenderObjClass *robj, Shadow::Shadow
 		m_decalList = shadow;
 	}
 
-	switch (shadow->m_type)
-	{
-		case SHADOW_DECAL:
-		case SHADOW_ALPHA_DECAL:
-		case SHADOW_ADDITIVE_DECAL:
-			m_numDecalShadows++;
-			break;
-		case SHADOW_PROJECTION:
-			m_numProjectionShadows++;
-		default:
-			break;
-	}
-
+	updateShadowNumbers(shadow->m_type, +1);
 	return shadow;
 }
 
@@ -1730,8 +1702,7 @@ W3DProjectedShadow* W3DProjectedShadowManager::addShadow(RenderObjClass *robj, S
 	Real	decalOffsetY=0.0f;
 
 	Bool	allowSunDirection=FALSE;
-	Char	texture_name[64];
-	Int nameLen;
+	Char texture_name[ARRAY_SIZE(shadowInfo->m_ShadowName)];
 
 
 	if (!m_dynamicRenderTarget || !robj || !TheGlobalData->m_useShadowDecals)
@@ -1745,15 +1716,16 @@ W3DProjectedShadow* W3DProjectedShadowManager::addShadow(RenderObjClass *robj, S
 		{		//simple decal using the premade texture specified.
 				//can be always perpendicular to model's z-axis or projected
 				//onto world geometry.
-				nameLen=strlen(shadowInfo->m_ShadowName);
-				if (nameLen <= 1)	//no texture name given, use same as object
-				{	strcpy(texture_name,defaultDecalName);
+				if (strlen(shadowInfo->m_ShadowName) <= 1)	//no texture name given, use same as object
+				{
+					strcpy(texture_name, defaultDecalName);
 				}
 				else
-				{	strncpy(texture_name,shadowInfo->m_ShadowName,nameLen);
-					strcpy(texture_name+nameLen,".tga");	//append texture extension
+				{
+					strlcpy(texture_name, shadowInfo->m_ShadowName, ARRAY_SIZE(texture_name));
+					strlcat(texture_name, ".tga", ARRAY_SIZE(texture_name));
 				}
-					
+
 				st=m_W3DShadowTextureManager->getTexture(texture_name);
 				if (st == NULL)
 				{
@@ -1795,7 +1767,7 @@ W3DProjectedShadow* W3DProjectedShadowManager::addShadow(RenderObjClass *robj, S
 				}
 				else
 					strcpy(texture_name,robj->Get_Name());	//not texture name give, assume model name.
-					
+
 				st=m_W3DShadowTextureManager->getTexture(texture_name);
 				if (st == NULL)
 				{	//texture doesn't exist, use current render object to create it
@@ -1809,7 +1781,7 @@ W3DProjectedShadow* W3DProjectedShadowManager::addShadow(RenderObjClass *robj, S
 						return NULL;	//could not create the shadow texture
 				}
 				shadowType=SHADOW_PROJECTION;
-		}//SHADOW_PROJECTION
+		}
 	}
 	else
 	{	//no shadow info, assume user wants a projected shadow
@@ -1900,17 +1872,7 @@ W3DProjectedShadow* W3DProjectedShadowManager::addShadow(RenderObjClass *robj, S
 		m_shadowList = shadow;
 	}
 
-	switch (shadow->m_type)
-	{
-		case SHADOW_DECAL:
-			m_numDecalShadows++;
-			break;
-		case SHADOW_PROJECTION:
-			m_numProjectionShadows++;
-		default:
-			break;
-	}
-
+	updateShadowNumbers(shadow->m_type, +1);
 	return shadow;
 }
 
@@ -1925,22 +1887,21 @@ W3DProjectedShadow* W3DProjectedShadowManager::createDecalShadow(Shadow::ShadowT
 	Real	decalOffsetX=0.0f;
 	Real	decalOffsetY=0.0f;
 	const Real defaultWidth = 10.0f;
-
-	Char	texture_name[64];
-	Int nameLen;
+	Char texture_name[ARRAY_SIZE(shadowInfo->m_ShadowName)];
 
 	//simple decal using the premade texture specified.
 	//can be always perpendicular to model's z-axis or projected
 	//onto world geometry.
-	nameLen=strlen(shadowInfo->m_ShadowName);
-	if (nameLen <= 1)	//no texture name given, use same as object
-	{	strcpy(texture_name,defaultDecalName);
+	if (strlen(shadowInfo->m_ShadowName) <= 1)	//no texture name given, use same as object
+	{
+		strcpy(texture_name, defaultDecalName);
 	}
 	else
-	{	strncpy(texture_name,shadowInfo->m_ShadowName,nameLen);
-		strcpy(texture_name+nameLen,".tga");	//append texture extension
+	{
+		strlcpy(texture_name, shadowInfo->m_ShadowName, ARRAY_SIZE(texture_name));
+		strlcat(texture_name, ".tga", ARRAY_SIZE(texture_name));
 	}
-		
+
 	st=m_W3DShadowTextureManager->getTexture(texture_name);
 	if (st == NULL)
 	{
@@ -1973,7 +1934,7 @@ W3DProjectedShadow* W3DProjectedShadowManager::createDecalShadow(Shadow::ShadowT
 	if( shadow == NULL )
 		return NULL;
 
-	shadow->setTexture(0,st);	
+	shadow->setTexture(0,st);
 	shadow->m_type = shadowType;		/// type of projection
 	shadow->m_allowWorldAlign=allowWorldAlign;	/// wrap shadow around world geometry - else align perpendicular to local z-axis.
 
@@ -2030,22 +1991,14 @@ void W3DProjectedShadowManager::removeShadow (W3DProjectedShadow *shadow)
 					prev_shadow->m_next=shadow->m_next;
 				else
 					m_decalList=shadow->m_next;
-				switch (shadow->m_type)
-				{
-					case SHADOW_DECAL:
-						m_numDecalShadows--;
-						break;
-					case SHADOW_PROJECTION:
-						m_numProjectionShadows--;
-					default:
-						break;
-				}
+
+				updateShadowNumbers(shadow->m_type, -1);
 				delete shadow;
 				return;
 			}
-		}  // end for
+		}
 	}
-		
+
 	//search for this shadow
 	for( next_shadow = m_shadowList; next_shadow; prev_shadow=next_shadow, next_shadow = next_shadow->m_next )
 	{
@@ -2055,20 +2008,12 @@ void W3DProjectedShadowManager::removeShadow (W3DProjectedShadow *shadow)
 				prev_shadow->m_next=shadow->m_next;
 			else
 				m_shadowList=shadow->m_next;
-			switch (shadow->m_type)
-			{
-				case SHADOW_DECAL:
-					m_numDecalShadows--;
-					break;
-				case SHADOW_PROJECTION:
-					m_numProjectionShadows--;
-				default:
-					break;
-			}
+
+			updateShadowNumbers(shadow->m_type, -1);
 			delete shadow;
 			return;
 		}
-	}  // end for
+	}
 }
 
 void W3DProjectedShadowManager::removeAllShadows(void)
@@ -2086,7 +2031,7 @@ void W3DProjectedShadowManager::removeAllShadows(void)
 		next_shadow = cur_shadow->m_next;
 		cur_shadow->m_next = NULL;
 		delete cur_shadow;
-	}  // end for
+	}
 
 	next_shadow=m_decalList;
 	cur_shadow=NULL;
@@ -2096,10 +2041,27 @@ void W3DProjectedShadowManager::removeAllShadows(void)
 		next_shadow = cur_shadow->m_next;
 		cur_shadow->m_next = NULL;
 		delete cur_shadow;
-	}  // end for
+	}
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)	
+void W3DProjectedShadowManager::updateShadowNumbers(ShadowType shadowType, Int addNum)
+{
+	switch (shadowType)
+	{
+		case SHADOW_DECAL:
+		case SHADOW_ALPHA_DECAL:
+		case SHADOW_ADDITIVE_DECAL:
+			m_numDecalShadows += addNum;
+			break;
+		case SHADOW_PROJECTION:
+			m_numProjectionShadows += addNum;
+			break;
+		default:
+			break;
+	}
+}
+
+#if defined(RTS_DEBUG)
 void W3DProjectedShadow::getRenderCost(RenderCost & rc) const
 {
 	if (TheGlobalData->m_useShadowDecals && m_isEnabled && !m_isInvisibleEnabled)
@@ -2175,7 +2137,7 @@ void W3DProjectedShadow::updateTexture(Vector3 &lightPos)
 		//Need to copy generated texture into permanent texture.
 		SurfaceClass *oldSurface=m_shadowTexture[0]->getTexture()->Get_Surface_Level();
 		SurfaceClass *newSurface=TheW3DProjectedShadowManager->getRenderTarget()->Get_Surface_Level();
-		
+
 		//Copy shadow from temporary video-memory surface into a permanent texture
 		oldSurface->Copy(0,0,0,0,DEFAULT_RENDER_TARGET_WIDTH,DEFAULT_RENDER_TARGET_HEIGHT,newSurface);
 		REF_PTR_RELEASE(newSurface);
@@ -2271,7 +2233,7 @@ void W3DShadowTexture::updateBounds(Vector3 &lightPos, RenderObjClass *robj)
 		Vector3 lightRay;
 		Real floorZ;
 		Real vectorScale,vectorScaleTemp, vectorScaleMax,length;
-		
+
 		//calculate local bounding box of shadow projection
 		objPos=robj->Get_Position();
 		box=robj->Get_Bounding_Box();
@@ -2332,7 +2294,7 @@ void W3DShadowTexture::updateBounds(Vector3 &lightPos, RenderObjClass *robj)
 		box.Translate(-objPos);	//translate box to object space.
 }
 
-W3DShadowTextureManager::W3DShadowTextureManager(void) 
+W3DShadowTextureManager::W3DShadowTextureManager(void)
 {
 	// Create the hash tables
 	texturePtrTable = NEW HashTableClass( 2048 );
@@ -2372,7 +2334,7 @@ W3DShadowTexture * W3DShadowTextureManager::peekTexture(const char * name)
 
 /** Get texture from cache and increment its reference count */
 W3DShadowTexture * W3DShadowTextureManager::getTexture(const char * name)
-{	
+{
 	W3DShadowTexture * text = peekTexture( name );
 	if ( text != NULL ) {
 		text->Add_Ref();

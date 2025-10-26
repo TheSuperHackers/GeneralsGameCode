@@ -1,4 +1,3 @@
-# Set source files
 set(WWLIB_SRC
     always.h
     argv.cpp
@@ -107,8 +106,10 @@ set(WWLIB_SRC
     SLNODE.H
     stimer.cpp
     stimer.h
+    STLUtils.h
     straw.cpp
     STRAW.H
+    stringex.h
     strtok_r.cpp
     strtok_r.h
     #swap.h
@@ -132,6 +133,8 @@ set(WWLIB_SRC
     widestring.cpp
     widestring.h
     win.h
+    WWCommon.h
+    WWDefines.h
     wwfile.cpp
     WWFILE.H
     wwstring.cpp
@@ -157,14 +160,13 @@ if(WIN32)
     )
 endif()
 
-# Targets to build.
 add_library(core_wwlib STATIC)
 set_target_properties(core_wwlib PROPERTIES OUTPUT_NAME wwlib)
 
 target_sources(core_wwlib PRIVATE ${WWLIB_SRC})
 
 target_include_directories(core_wwlib PUBLIC
-    .
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_link_libraries(core_wwlib PRIVATE

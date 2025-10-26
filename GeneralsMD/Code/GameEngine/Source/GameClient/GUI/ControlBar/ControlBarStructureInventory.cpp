@@ -44,11 +44,6 @@
 #include "GameClient/GadgetPushButton.h"
 #include "GameClient/HotKey.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #define STOP_ID			10
 #define EVACUATE_ID	11
@@ -66,27 +61,27 @@ struct PopulateButtonInfo
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void ControlBar::populateButtonProc( Object *obj, void *userData )
-{	
+{
 	PopulateButtonInfo* info = (PopulateButtonInfo*)userData;
 
 	// sanity
-	DEBUG_ASSERTCRASH( info->buttonIndex < MAX_STRUCTURE_INVENTORY_BUTTONS, 
+	DEBUG_ASSERTCRASH( info->buttonIndex < MAX_STRUCTURE_INVENTORY_BUTTONS,
 										 ("Too many objects inside '%s' for the inventory buttons to hold",
 											info->source->getTemplate()->getName().str()) );
 
 	// put object in inventory data
 	info->self->m_containData[ info->buttonIndex ].control = info->inventoryButtons[ info->buttonIndex ];
 	info->self->m_containData[ info->buttonIndex ].objectID = obj->getID();
-	
+
 	// set the UI button that will allow us to press it and cause the object to exit the container
 	const Image *image;
 	image = obj->getTemplate()->getButtonImage();
 	GadgetButtonSetEnabledImage( info->inventoryButtons[ info->buttonIndex ], image );
-	
+
 	//Show the auto-contained object's veterancy symbol!
 	image = calculateVeterancyOverlayForObject( obj );
 	GadgetButtonDrawOverlayImage( info->inventoryButtons[ info->buttonIndex ], image );
-	
+
 	// Enable the button
 	info->inventoryButtons[ info->buttonIndex ]->winEnable( TRUE );
 
@@ -119,10 +114,10 @@ void ControlBar::populateStructureInventory( Object *building )
 			m_commandWindows[commandIndex]->winHide(TRUE);
 		}
 	}
-	
+
 	// get the contain module of the object
 	ContainModuleInterface *contain = building->getContain();
-	DEBUG_ASSERTCRASH( contain, ("Object in structure inventory does not contain a Contain Module\n") );
+	DEBUG_ASSERTCRASH( contain, ("Object in structure inventory does not contain a Contain Module") );
 	if (!contain)
 		return;
 
@@ -168,7 +163,7 @@ void ControlBar::populateStructureInventory( Object *building )
 			m_commandWindows[ i ]->winHide( TRUE );
 
 
-	}  // end for i
+	}
 
 	// show the window
 	m_commandWindows[ EVACUATE_ID ]->winHide( FALSE );
@@ -180,7 +175,7 @@ void ControlBar::populateStructureInventory( Object *building )
 		m_commandWindows[ EVACUATE_ID ]->winEnable( TRUE );
 		m_commandWindows[ STOP_ID ]->winEnable( TRUE );
 	}
-	
+
 	//
 	// iterate each of the objects inside the container and put them in a button, note
 	// we're iterating in reverse order here
@@ -198,7 +193,7 @@ void ControlBar::populateStructureInventory( Object *building )
 	//
 	m_lastRecordedInventoryCount = contain->getContainCount();
 
-}  // end populateStructureInventory
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -212,7 +207,7 @@ void ControlBar::updateContextStructureInventory( void )
 	// in that case we want to unselect the building so that we can't see the contents
 	//
 	Player *localPlayer = ThePlayerList->getLocalPlayer();
-	if( source->isLocallyControlled() == FALSE && 
+	if( source->isLocallyControlled() == FALSE &&
 			localPlayer->getRelationship( source->getTeam() ) != NEUTRAL )
 	{
 		Drawable *draw = source->getDrawable();
@@ -221,19 +216,19 @@ void ControlBar::updateContextStructureInventory( void )
 			TheInGameUI->deselectDrawable( draw );
 		return;
 
-	}  // end if
+	}
 
 	//
 	// if the object being displayed in the interface has a different count than we last knew
 	// about we need to repopulate the buttons of the interface
 	//
 	ContainModuleInterface *contain = source->getContain();
-	DEBUG_ASSERTCRASH( contain, ("No contain module defined for object in the iventory bar\n") );
+	DEBUG_ASSERTCRASH( contain, ("No contain module defined for object in the iventory bar") );
 	if (!contain)
 		return;
 
 	if( m_lastRecordedInventoryCount != contain->getContainCount() )
 		populateStructureInventory( source );
 
-}  // end updateContextStructureInventory
+}
 

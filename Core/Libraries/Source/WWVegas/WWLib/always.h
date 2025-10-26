@@ -33,17 +33,16 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef ALWAYS_H
-#define ALWAYS_H
+#pragma once
+
+#include "WWCommon.h"
+#include "WWDefines.h"
 
 #include <assert.h>
 #include <new>
 
-// TheSuperHackers @compile feliwir 17/04/2025 include utility macros for cross-platform compatibility
+// TheSuperHackers @build feliwir 17/04/2025 include utility macros for cross-platform compatibility
 #include <Utility/compat.h>
 #include <Utility/stdint_adapter.h>
 
@@ -55,7 +54,7 @@
 ** This helps find leaks.
 */
 //#define STEVES_NEW_CATCHER
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #ifdef _MSC_VER
 #ifdef STEVES_NEW_CATCHER
 
@@ -74,7 +73,7 @@
 
 #endif	//STEVES_NEW_CATCHER
 #endif	//_MSC_VER
-#endif	//_DEBUG
+#endif	//RTS_DEBUG
 
 #if !defined(DISABLE_GAMEMEMORY) // (gth) killing the Generals Memory Manager!
 
@@ -105,7 +104,7 @@
 
 #endif
 
-#if (defined(_DEBUG) || defined(_INTERNAL)) 
+#if defined(RTS_DEBUG)
 	#define MSGW3DNEW(MSG)					new( MSG, 0 )
 	#define MSGW3DNEWARRAY(MSG)			new( MSG, 0 )
 	#define W3DNEW									new("W3D_" __FILE__, 0)
@@ -250,17 +249,7 @@ template <class T> T max(T a,T b)
 	#define	NULL		0
 #endif
 
-/**********************************************************************
-**	This macro serves as a general way to determine the number of elements
-**	within an array.
-*/
-#ifndef ARRAY_SIZE
-#define	ARRAY_SIZE(x)		int(sizeof(x)/sizeof(x[0]))
-#endif
 
 #ifndef size_of
 #define size_of(typ,id) sizeof(((typ*)0)->id)
-#endif
-
-
 #endif

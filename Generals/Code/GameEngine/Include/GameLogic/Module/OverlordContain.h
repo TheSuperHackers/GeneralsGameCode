@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __OVERLORD_CONTAIN_H_
-#define __OVERLORD_CONTAIN_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/TransportContain.h"
 
@@ -52,14 +49,14 @@ class OverlordContain : public TransportContain
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( OverlordContain, "OverlordContain" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( OverlordContain, OverlordContainModuleData )
 
-	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo, 
-																				BodyDamageType oldState, 
+	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
+																				BodyDamageType oldState,
 																				BodyDamageType newState);  ///< state change callback
 public:
 
 	OverlordContain( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
-	
+
 	virtual OpenContain *asOpenContain() { return this; }  ///< treat as open container
 	virtual Bool isGarrisonable() const;	///< can this unit be Garrisoned? (ick)
 	virtual Bool isHealContain() const { return false; } ///< true when container only contains units while healing (not a transport!)
@@ -86,19 +83,19 @@ public:
 	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse );
 	virtual UnsignedInt getContainCount() const;
 	virtual Int getContainMax( void ) const;
-	virtual const ContainedItemsList* getContainedItemsList() const;	
+	virtual const ContainedItemsList* getContainedItemsList() const;
 
 	// Friend for our Draw module only.
 	virtual const Object *friend_getRider() const; ///< Damn.  The draw order dependency bug for riders means that our draw module needs to cheat to get around it.
-	
+
 	///< if my object gets selected, then my visible passengers should, too
 	///< this gets called from
-	virtual void clientVisibleContainedFlashAsSelected(); 
+	virtual void clientVisibleContainedFlashAsSelected();
 
 	virtual Bool getContainerPipsToShow(Int& numTotal, Int& numFull);
 
 private:
-	/**< An empty overlord is a conatiner, but a full one redirects calls to its passengers.  If this returns NULL, 
+	/**< An empty overlord is a conatiner, but a full one redirects calls to its passengers.  If this returns NULL,
 	we are either empty or carrying a non container.
 	*/
 	ContainModuleInterface *getRedirectedContain() const; ///< And this gets what are redirecting to.
@@ -108,6 +105,3 @@ private:
 	Bool m_redirectionActivated;
 
 };
-
-#endif
-

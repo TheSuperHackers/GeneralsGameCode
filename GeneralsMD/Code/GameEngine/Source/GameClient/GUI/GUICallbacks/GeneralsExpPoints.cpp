@@ -24,12 +24,12 @@
 
 // FILE: GeneralsExpPoints.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Oct 2002
@@ -37,7 +37,7 @@
 //	Filename: 	GeneralsExpPoints.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	File used to populate/update/show/hide the generals exp screen
 //
 //-----------------------------------------------------------------------------
@@ -67,7 +67,7 @@ WindowMsgHandledType GeneralsExpPointsInput( GameWindow *window, UnsignedInt msg
 																			WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ WindowMsgHandledType GeneralsExpPointsInput( GameWindow *window, UnsignedInt msg
 				TheInGameUI->placeBuildAvailable( NULL, NULL );
 			}
 			break;
-	
+
 		case GWM_CHAR:
 		{
 			UnsignedByte key = mData1;
@@ -93,30 +93,30 @@ WindowMsgHandledType GeneralsExpPointsInput( GameWindow *window, UnsignedInt msg
 					TheControlBar->hidePurchaseScience();
 					return MSG_HANDLED;
 					//return MSG_IGNORED;
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
 			return MSG_HANDLED;
 
-		}  // end char
+		}
 
 	}
 
 	return MSG_HANDLED;
 
-}  // end DiplomacyInput
+}
 
 
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-WindowMsgHandledType GeneralsExpPointsSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType GeneralsExpPointsSystem( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-	switch( msg ) 
+	switch( msg )
 	{
 		//---------------------------------------------------------------------------------------------
 		case GGM_FOCUS_CHANGE:
@@ -125,17 +125,17 @@ WindowMsgHandledType GeneralsExpPointsSystem( GameWindow *window, UnsignedInt ms
 			//if (focus)
 				//TheWindowManager->winSetGrabWindow( chatTextEntry );
 			break;
-		} // end focus change
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
-		{	
+		{
 			// if we're given the opportunity to take the keyboard focus we must say we don't want it
 			if( mData1 == TRUE )
 				*(Bool *)mData2 = FALSE;
 
 			return MSG_HANDLED;
-		}//case GWM_INPUT_FOCUS:
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -151,17 +151,17 @@ WindowMsgHandledType GeneralsExpPointsSystem( GameWindow *window, UnsignedInt ms
 				TheControlBar->processContextSensitiveButtonClick( control, (GadgetGameMessage)msg );
 			break;
 
-		}  // end button selected
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end GeneralsExpPointsSystem
+}
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////

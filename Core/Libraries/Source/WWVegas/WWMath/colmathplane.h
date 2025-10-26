@@ -39,9 +39,7 @@
  *   CollisionMath::Overlap_Test -- Tests overlap between a plane and an AABox                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef COLMATHPLANE_H
-#define COLMATHPLANE_H
+#pragma once
 
 #include "always.h"
 #include "plane.h"
@@ -99,14 +97,14 @@ inline void get_far_extent(const Vector3 & normal,const Vector3 & extent,Vector3
  * HISTORY:                                                                                    *
  *   3/29/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-inline 
+inline
 CollisionMath::OverlapType
 CollisionMath::Overlap_Test(const PlaneClass & plane,const Vector3 & point)
 {
 	float delta = Vector3::Dot_Product(point,plane.N) - plane.D;
 	if (delta > COINCIDENCE_EPSILON) {
 		return POS;
-	} 
+	}
 	if (delta < -COINCIDENCE_EPSILON) {
 		return NEG;
 	}
@@ -136,7 +134,7 @@ CollisionMath::Overlap_Test(const PlaneClass & plane,const AABoxClass & box)
 	Vector3 negfarpt;
 
 	get_far_extent(plane.N,box.Extent,&posfarpt);
-	
+
 	negfarpt = -posfarpt;
 	posfarpt += box.Center;
 	negfarpt += box.Center;
@@ -148,7 +146,3 @@ CollisionMath::Overlap_Test(const PlaneClass & plane,const AABoxClass & box)
 	}
 	return BOTH;
 }
-
-
-#endif
-

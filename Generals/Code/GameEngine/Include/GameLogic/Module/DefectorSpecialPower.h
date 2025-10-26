@@ -24,16 +24,13 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// FILE: DefectorSpecialPower.h 
+// FILE: DefectorSpecialPower.h
 // Author: Mark Lorenzen, JULY 2002
 // Desc:   General can click command cursor on any enemy, and it becomes his
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __DEFECTORSPECIALPOWER_H_
-#define __DEFECTORSPECIALPOWER_H_
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/SpecialPowerModule.h"
@@ -76,10 +73,8 @@ public:
 	// virtual destructor prototype provided by memory pool object
 
 	virtual void doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, UnsignedInt commandOptions );
+	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions );
 
 protected:
 
 };
-#endif  // end DefectorSpecialPower
-

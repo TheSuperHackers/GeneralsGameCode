@@ -42,9 +42,6 @@
 
 #pragma once
 
-#ifndef __WEBBROWSER_H__
-#define __WEBBROWSER_H__
-
 #include "Common/SubsystemInterface.h"
 #include <atlbase.h>
 #include <windows.h>
@@ -125,4 +122,3 @@ class WebBrowser :
 	};
 
 extern CComObject<WebBrowser> *TheWebBrowser;
-#endif // __WEBBROWSER_H__

@@ -24,12 +24,12 @@
 
 // FILE: FireWeaponPower.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	Created:	August 2003
@@ -43,9 +43,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __FIRE_WEAPON_POWER_H
-#define __FIRE_WEAPON_POWER_H
 
 #include "GameLogic/Module/SpecialPowerModule.h"
 
@@ -85,5 +82,3 @@ public:
 protected:
 
 };
-
-#endif // __FIRE_WEAPON_POWER_H

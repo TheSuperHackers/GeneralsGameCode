@@ -37,11 +37,6 @@
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "WinMain.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
 extern Win32Mouse *TheWin32Mouse;
@@ -53,7 +48,7 @@ HCURSOR cursorResources[Mouse::NUM_MOUSE_CURSORS][MAX_2D_CURSOR_DIRECTIONS];
 
 //-------------------------------------------------------------------------------------------------
 /** Get a mouse event from the buffer if available, we need to translate
-	* from the windows message meanings to our own internal mouse 
+	* from the windows message meanings to our own internal mouse
 	* structure */
 //-------------------------------------------------------------------------------------------------
 UnsignedByte Win32Mouse::getMouseEvent( MouseIO *result, Bool flush )
@@ -80,7 +75,7 @@ UnsignedByte Win32Mouse::getMouseEvent( MouseIO *result, Bool flush )
 	// got event OK and all done with this one
 	return MOUSE_OK;
 
-}  // end getMouseEvent
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Translate a win32 mouse event to our own event info */
@@ -109,21 +104,21 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 
 	// Time is the same for all events
 	result->time = m_eventBuffer[ eventIndex ].time;
-	
+
 	switch( msg )
 	{
 
 		// ------------------------------------------------------------------------
 		case WM_LBUTTONDOWN:
 		{
-			
+
 			result->leftState = MBS_Down;
 			result->leftFrame = frame;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;
 
-		}  // end left button down
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_LBUTTONUP:
@@ -135,7 +130,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 			result->pos.y = HIWORD( lParam );
 			break;
 
-		}  // end left button up
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_LBUTTONDBLCLK:
@@ -147,7 +142,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 			result->pos.y = HIWORD( lParam );
 			break;
 
-		}  // end left button double click
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_MBUTTONDOWN:
@@ -159,7 +154,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 			result->pos.y = HIWORD( lParam );
 			break;
 
-		}  // end middle button down
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_MBUTTONUP:
@@ -171,7 +166,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 			result->pos.y = HIWORD( lParam );
 			break;
 
-		}  // end middle button up
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_MBUTTONDBLCLK:
@@ -183,7 +178,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 			result->pos.y = HIWORD( lParam );
 			break;
 
-		}  // end middle button double click
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_RBUTTONDOWN:
@@ -195,7 +190,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 			result->pos.y = HIWORD( lParam );
 			break;
 
-		}  // end right button down
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_RBUTTONUP:
@@ -207,7 +202,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 			result->pos.y = HIWORD( lParam );
 			break;
 
-		}  // end right button up
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_RBUTTONDBLCLK:
@@ -219,7 +214,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 			result->pos.y = HIWORD( lParam );
 			break;
 
-		}  // end right button double click
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_MOUSEMOVE:
@@ -229,7 +224,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 			result->pos.y = HIWORD( lParam );
 			break;
 
-		}  // end mouse move
+		}
 
 		// ------------------------------------------------------------------------
 		case 0x020A:	// WM_MOUSEWHEEL
@@ -240,28 +235,28 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 			p.x = LOWORD( lParam );
 			p.y = HIWORD( lParam );
 			ScreenToClient( ApplicationHWnd, &p );
-	
+
 			// note the short cast here to keep signed information in tact
 			result->wheelPos = (Short)HIWORD( wParam );
 			result->pos.x = p.x;
 			result->pos.y = p.y;
 			break;
 
-		}  // end mouse wheel
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 		{
 
-			DEBUG_CRASH(( "translateEvent: Unknown Win32 mouse event [%d,%d,%d]\n",
+			DEBUG_CRASH(( "translateEvent: Unknown Win32 mouse event [%d,%d,%d]",
 							 msg, wParam, lParam ));
 			return;
 
-		}  // end default
+		}
 
-	}  // end switch on message at event index in buffer
+	}
 
-}  // end translateEvent
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
@@ -283,7 +278,7 @@ Win32Mouse::Win32Mouse( void )
 			cursorResources[i][j]=NULL;
 	m_directionFrame=0; //points up.
 	m_lostFocus = FALSE;
-}  // end Win32Mouse
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -293,7 +288,7 @@ Win32Mouse::~Win32Mouse( void )
 	// remove our global reference that was for the WndProc() only
 	TheWin32Mouse = NULL;
 
-}  // end ~Win32Mouse
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize our device */
@@ -311,7 +306,7 @@ void Win32Mouse::init( void )
 	//
 	m_inputMovesAbsolute = TRUE;
 
-}  // end int
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset */
@@ -322,7 +317,7 @@ void Win32Mouse::reset( void )
 	// extend
 	Mouse::reset();
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update, called once per frame */
@@ -330,10 +325,10 @@ void Win32Mouse::reset( void )
 void Win32Mouse::update( void )
 {
 
-	// extend 
+	// extend
 	Mouse::update();
 
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Add a window message event along with its WPARAM and LPARAM parameters
@@ -361,7 +356,7 @@ void Win32Mouse::addWin32Event( UINT msg, WPARAM wParam, LPARAM lParam, DWORD ti
 	if( m_nextFreeIndex >= Mouse::NUM_MOUSE_EVENTS )
 		m_nextFreeIndex = 0;
 
-}  // end addWin32Event
+}
 
 extern HINSTANCE ApplicationHInstance;
 
@@ -371,6 +366,20 @@ void Win32Mouse::setVisibility(Bool visible)
 	Mouse::setVisibility(visible);
 	//Maybe need to set cursor to force hiding of some cursors.
 	Win32Mouse::setCursor(getMouseCursor());
+}
+
+//-------------------------------------------------------------------------------------------------
+void Win32Mouse::loseFocus()
+{
+	Mouse::loseFocus();
+	m_lostFocus = true;
+}
+
+//-------------------------------------------------------------------------------------------------
+void Win32Mouse::regainFocus()
+{
+	Mouse::regainFocus();
+	m_lostFocus = false;
 }
 
 /**Preload all the cursors we may need during the game.  This must be done before the D3D device
@@ -388,7 +397,7 @@ void Win32Mouse::initCursorResources(void)
 					sprintf(resourcePath,"data\\cursors\\%s%d.ANI",m_cursorInfo[cursor].textureName.str(),direction);
 				else
 					sprintf(resourcePath,"data\\cursors\\%s.ANI",m_cursorInfo[cursor].textureName.str());
-				
+
 				// check for a MOD cursor.
 				Bool loaded = FALSE;
 				if (TheGlobalData->m_modDir.isNotEmpty())
@@ -408,7 +417,7 @@ void Win32Mouse::initCursorResources(void)
 
 				if (!loaded)
 					cursorResources[cursor][direction]=LoadCursorFromFile(resourcePath);
-				DEBUG_ASSERTCRASH(cursorResources[cursor][direction], ("MissingCursor %s\n",resourcePath));
+				DEBUG_ASSERTCRASH(cursorResources[cursor][direction], ("MissingCursor %s",resourcePath));
 			}
 		}
 //		SetCursor(cursorResources[cursor][m_directionFrame]);
@@ -431,12 +440,12 @@ void Win32Mouse::setCursor( MouseCursor cursor )
 	else
 	{
 		SetCursor(cursorResources[cursor][m_directionFrame]);
-	}  // end switch
+	}
 
 	// save current cursor
 	m_currentWin32Cursor=m_currentCursor = cursor;
-	
-}  // end setCursor
+
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Capture the mouse to our application */
@@ -444,9 +453,31 @@ void Win32Mouse::setCursor( MouseCursor cursor )
 void Win32Mouse::capture( void )
 {
 
-//	SetCapture( ApplicationHWnd );
+	RECT rect;
+	::GetClientRect(ApplicationHWnd, &rect);
 
-}  // end capture
+	POINT leftTop;
+	leftTop.x = rect.left;
+	leftTop.y = rect.top;
+
+	POINT rightBottom;
+	rightBottom.x = rect.right;
+	rightBottom.y = rect.bottom;
+
+	::ClientToScreen(ApplicationHWnd, &leftTop);
+	::ClientToScreen(ApplicationHWnd, &rightBottom);
+
+	rect.left = leftTop.x;
+	rect.top = leftTop.y;
+	rect.right = rightBottom.x;
+	rect.bottom = rightBottom.y;
+
+	if (::ClipCursor(&rect))
+	{
+		onCursorCaptured(true);
+	}
+
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Release the mouse capture for our app window */
@@ -454,14 +485,9 @@ void Win32Mouse::capture( void )
 void Win32Mouse::releaseCapture( void )
 {
 
-//	ReleaseCapture();
+	if (::ClipCursor(NULL))
+	{
+		onCursorCaptured(false);
+	}
 
-}  // end releaseCapture
-
-
-
-
-
-
-
-
+}

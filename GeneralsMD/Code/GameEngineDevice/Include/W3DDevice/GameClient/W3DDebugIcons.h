@@ -22,25 +22,21 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef __W3D_DEBUG_ICONS_H_
-#define __W3D_DEBUG_ICONS_H_
 
 #include "always.h"
 #include "rendobj.h"
 #include "vertmaterial.h"
 #include "Lib/BaseType.h"
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined(RTS_DEBUG)
 struct DebugIcon;
 //
 /// W3DDebugIcons: Draws huge numbers of debug icons for pathfinding quickly.
 //
 //
 class W3DDebugIcons : public RenderObjClass
-{	
+{
 
 public:
 
@@ -50,7 +46,7 @@ public:
 	~W3DDebugIcons(void);
 
 	/////////////////////////////////////////////////////////////////////////////
-	// Render Object Interface 
+	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
 	virtual RenderObjClass *	Clone(void) const;
 	virtual int						Class_ID(void) const;
@@ -64,7 +60,7 @@ public:
 protected:
 	VertexMaterialClass	  	*m_vertexMaterialClass;
 
-protected: 
+protected:
 	static DebugIcon				*m_debugIcons;
 	static Int							m_numDebugIcons;
 
@@ -76,6 +72,4 @@ protected:
 public:
 	static void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 };
-#endif // _DEBUG or _INTERNAL
-
-#endif  // end __W3D_DEBUG_ICONS_H_
+#endif // RTS_DEBUG

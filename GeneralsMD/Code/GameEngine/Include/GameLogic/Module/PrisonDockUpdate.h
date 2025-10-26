@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __PRISON_DOCK_UPDATE_H_
-#define __PRISON_DOCK_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
 #include "GameLogic/Module/DockUpdate.h"
@@ -55,9 +52,7 @@ public:
 	virtual Bool action( Object *docker, Object *drone = NULL );	///< for me this means do some Prison
 
 protected:
-	
+
 };
 
 #endif
-
-#endif  // end __PRISON_DOCK_UPDATE_H_

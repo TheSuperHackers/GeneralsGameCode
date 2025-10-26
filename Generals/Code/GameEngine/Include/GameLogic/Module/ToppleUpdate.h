@@ -23,14 +23,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // FILE: ToppleUpdate.h /////////////////////////////////////////////////////////////////////////////
-// Author: 
-// Desc:   
+// Author:
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __TOPPLEUPDATE_H_
-#define __TOPPLEUPDATE_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
@@ -95,8 +92,8 @@ public:
 	Bool isAbleToBeToppled() const;
 
 	// UpdateModuleInterface
-	virtual UpdateSleepTime update();	
-	
+	virtual UpdateSleepTime update();
+
 	// CollideModuleInterface
 	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal );
 	/// this is used for things like pilots, to determine if they can "enter" something
@@ -127,6 +124,3 @@ protected:
 	ObjectID			m_stumpID;								///< stump generated, if any
 
 };
-
-#endif // end __TOPPLEUPDATE_H_
-

@@ -108,7 +108,7 @@ void LookupTableMgrClass::Init(void)
 	// create a default table that the user can use in an emergency
 	LookupTableClass * default_table = NEW_REF(LookupTableClass,(2));
 	LinearCurve1DClass * default_curve = W3DNEW LinearCurve1DClass;
-	
+
 	default_curve->Add_Key(0.5f,0.0f);
 	default_curve->Add_Key(0.5f,1.0f);
 	default_table->Init("DefaultTable",default_curve);
@@ -156,7 +156,7 @@ LookupTableClass * LookupTableMgrClass::Get_Table(const char * name,bool try_to_
 
 		FileClass * file = _TheFileFactory->Get_File(name);
 		if (file && file->Open()) {
-			
+
 			ChunkLoadClass cload(file);
 
 			Curve1DClass * curve = NULL;
@@ -170,7 +170,7 @@ LookupTableClass * LookupTableMgrClass::Get_Table(const char * name,bool try_to_
 		}
 		_TheFileFactory->Return_File(file);
 	}
-	
+
 	return new_table;  // constructor ref is returned to user.
 }
 
@@ -232,7 +232,7 @@ void LookupTableMgrClass::Load_Table_Desc
 				break;
 
 			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d\r\n",__FILE__,__LINE__));
+				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
 				break;
 		}
 		cload.Close_Chunk();

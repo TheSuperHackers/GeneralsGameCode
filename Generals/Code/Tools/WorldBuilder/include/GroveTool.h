@@ -21,9 +21,6 @@
 
 #pragma once
 
-#ifndef GroveTool_H
-#define GroveTool_H
-
 #include "Lib/BaseType.h"
 #include "Tool.h"
 #include "Common/MapObject.h"
@@ -31,10 +28,10 @@ class WorldHeightMapEdit;
 
 /*************************************************************************/
 /**                             GroveTool
-	 Does the add a grove of trees tool operation. 
+	 Does the add a grove of trees tool operation.
 ***************************************************************************/
 ///  Add a grove of trees tool.
-class GroveTool : public Tool 
+class GroveTool : public Tool
 {
 protected:
 	enum {HYSTERESIS = 3};
@@ -61,6 +58,3 @@ public:
 	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
 	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
 };
-
-
-#endif //TOOL_H

@@ -37,7 +37,7 @@ void INI::parseMultiplayerSettingsDefinition( INI* ini )
 {
 	if( TheMultiplayerSettings )
 	{
-		// 
+		//
 		// if the type of loading we're doing creates override data, we need to
 		// be loading into a new override item
 		//
@@ -45,12 +45,12 @@ void INI::parseMultiplayerSettingsDefinition( INI* ini )
 		{
 			DEBUG_ASSERTCRASH(false, ("Creating an override of MultiplayerSettings!"));
 		}
-	}  // end if
+	}
 	else
 	{
 		// we don't have any multiplayer settings instance at all yet, create one
 		TheMultiplayerSettings = NEW MultiplayerSettings;
-	}  // end else
+	}
 
 	// parse the ini definition
 	ini->initFromINI( TheMultiplayerSettings, TheMultiplayerSettings->getFieldParse() );
@@ -64,9 +64,9 @@ void INI::parseMultiplayerColorDefinition( INI* ini )
 
 	// read the name
 	c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
-	// find existing item if present, but this type does not allow overrides, 
+	// find existing item if present, but this type does not allow overrides,
 	//so if it exists just overwrite it.
 	multiplayerColorDefinition = TheMultiplayerSettings->findMultiplayerColorDefinitionByName( name );
 	if( multiplayerColorDefinition == NULL )

@@ -36,16 +36,11 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef HRAWANIM_H
-#define HRAWANIM_H
 
 #include "always.h"
 #include "hanim.h"
- 
+
 class MotionChannelClass;
 class BitChannelClass;
 
@@ -64,7 +59,7 @@ struct NodeMotionStruct
 
 	BitChannelClass *			Vis;
 };
- 
+
 /**********************************************************************************
 
 	HRawAnimClass
@@ -79,13 +74,13 @@ class HRawAnimClass : public HAnimClass
 {
 
 public:
-	
+
 	enum
 	{
 		OK,
 		LOAD_ERROR
 	};
-	
+
 	HRawAnimClass(void);
 	~HRawAnimClass(void);
 
@@ -97,8 +92,6 @@ public:
 	float							Get_Frame_Rate() { return FrameRate; }
 	float							Get_Total_Time() { return (float)NumFrames / FrameRate; }
 
-//	Vector3						Get_Translation(int pividx,float frame);
-//	Quaternion					Get_Orientation(int pividx,float frame);
 	void							Get_Translation(Vector3& translation, int pividx,float frame) const;
 	void							Get_Orientation(Quaternion& orientation, int pividx,float frame) const;
 	void							Get_Transform(Matrix3D& transform, int pividx,float frame) const;
@@ -120,14 +113,14 @@ private:
 
 	char							Name[2*W3D_NAME_LEN];
 	char							HierarchyName[W3D_NAME_LEN];
-	
+
 	int							NumFrames;
 	int							NumNodes;
 	float							FrameRate;
 
 	NodeMotionStruct *		NodeMotion;
 
-	void Free(void);	
+	void Free(void);
 	bool read_channel(ChunkLoadClass & cload,MotionChannelClass * * newchan,bool pre30);
 	void add_channel(MotionChannelClass * newchan);
 
@@ -135,9 +128,3 @@ private:
 	void add_bit_channel(BitChannelClass * newchan);
 
 };
-
-
-
-
-#endif
-

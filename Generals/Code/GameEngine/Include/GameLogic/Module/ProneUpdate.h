@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __PRONE_UPDATE_H_
-#define __PRONE_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -49,7 +46,7 @@ public:
 	ProneUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -78,7 +75,3 @@ protected:
 
 	Int m_proneFrames;
 };
-
-
-#endif
-

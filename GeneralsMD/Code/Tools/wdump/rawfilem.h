@@ -16,30 +16,29 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /G/wdump/RAWFILEM.H                                         $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /G/wdump/RAWFILEM.H                                         $*
+ *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 7/28/97 3:36p                                               $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   RawFileMClass::File_Name -- Returns with the filename associate with the file object.      *
  *   RawFileMClass::RawFileMClass -- Default constructor for a file object.                      *
  *   RawFileMClass::~RawFileMClass -- Default deconstructor for a file object.                   *
  *   RawFileMClass::Is_Open -- Checks to see if the file is open or not.                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef RAWFILEM_Hx
-#define RAWFILEM_Hx
+#pragma once
 
 #include	<errno.h>
 #include	<limits.h>
@@ -51,7 +50,7 @@
 #define	NULL_HANDLE		INVALID_HANDLE_VALUE
 #define	HANDLE_TYPE		HANDLE
 
-#include	"wwfile.h"
+#include	"WWFILE.H"
 
 #ifdef NEVER
 	/*
@@ -320,5 +319,3 @@ inline bool RawFileMClass::Is_Open(void) const
 {
 	return(Handle != INVALID_HANDLE_VALUE);
 }
-
-#endif

@@ -16,8 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SEM4_HEADER
-#define SEM4_HEADER
+#pragma once
 
 #include <limits.h>
 #ifndef _WINDOWS
@@ -60,5 +59,3 @@ class Sem4
   sint32       GetValue(int *sval) const;
   sint32       Destroy(void);
 };
-
-#endif

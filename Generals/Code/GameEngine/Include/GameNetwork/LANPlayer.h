@@ -28,10 +28,6 @@
 
 #pragma once
 
-#ifndef _LANPLAYER_H_
-#define _LANPLAYER_H_
-
-
 /**
  * LAN player class.  This is for players sitting in the lobby.  Players are
  * uniquely identified by their IP addresses.
@@ -56,7 +52,7 @@ public:
 	inline void setNext( LANPlayer *next ) { m_next = next; }
 	inline UnsignedInt getIP( void ) { return m_IP; }
 	inline void setIP( UnsignedInt IP ) { m_IP = IP; }
-	
+
 protected:
 	UnicodeString m_name;			///< Player name
 	UnicodeString m_login;		///< login name
@@ -65,5 +61,3 @@ protected:
 	LANPlayer *m_next;				///< Linked list pointer
 	UnsignedInt m_IP;					///< Player's IP
 };
-
-#endif //_LANPLAYER_H_

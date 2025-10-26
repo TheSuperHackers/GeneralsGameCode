@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __HACK_INTERNET_AI_UPDATE_H
-#define __HACK_INTERNET_AI_UPDATE_H
-
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 
@@ -45,7 +42,7 @@ public:
 //-------------------------------------------------------------------------------------------------
 class HackInternetState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HackInternetState, "HackInternetState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HackInternetState, "HackInternetState")
 public:
 	HackInternetState( StateMachine *machine ) :State( machine, "HackInternetState" )
 	{
@@ -72,7 +69,7 @@ EMPTY_DTOR(HackInternetState)
 //-------------------------------------------------------------------------------------------------
 class PackingState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PackingState, "PackingState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PackingState, "PackingState")
 public:
 	PackingState( StateMachine *machine ) : State( machine, "PackingState" )
 	{
@@ -98,7 +95,7 @@ EMPTY_DTOR(PackingState)
 //-------------------------------------------------------------------------------------------------
 class UnpackingState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(UnpackingState, "UnpackingState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(UnpackingState, "UnpackingState")
 public:
 	UnpackingState( StateMachine *machine ) :State( machine, "UnpackingState" )
 	{
@@ -132,7 +129,7 @@ class HackInternetAIUpdateModuleData : public AIUpdateModuleData
 {
 public:
 	UnsignedInt		m_unpackTime;
-	UnsignedInt		m_packTime;				
+	UnsignedInt		m_packTime;
 	UnsignedInt		m_cashUpdateDelay;
 	UnsignedInt		m_regularCashAmount;
 	UnsignedInt		m_veteranCashAmount;
@@ -154,11 +151,11 @@ public:
 		m_packUnpackVariationFactor = 0.0f;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     AIUpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "UnpackTime",					INI::parseDurationUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_unpackTime ) },
 			{ "PackTime",						INI::parseDurationUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_packTime ) },
@@ -197,10 +194,10 @@ public:
 
  	virtual void aiDoCommand(const AICommandParms* parms);
 
-	UnsignedInt getUnpackTime()					const { return getHackInternetAIUpdateModuleData()->m_unpackTime; }
-	UnsignedInt getPackTime()						const { return getHackInternetAIUpdateModuleData()->m_packTime; }
 	Real getPackUnpackVariationFactor() const { return getHackInternetAIUpdateModuleData()->m_packUnpackVariationFactor; }
-	UnsignedInt getCashUpdateDelay()		const { return getHackInternetAIUpdateModuleData()->m_cashUpdateDelay; }
+	UnsignedInt getUnpackTime()					const;
+	UnsignedInt getPackTime()						const;
+	UnsignedInt getCashUpdateDelay()		const;
 	UnsignedInt getRegularCashAmount()	const { return getHackInternetAIUpdateModuleData()->m_regularCashAmount; }
 	UnsignedInt getVeteranCashAmount()	const { return getHackInternetAIUpdateModuleData()->m_veteranCashAmount; }
 	UnsignedInt getEliteCashAmount()		const { return getHackInternetAIUpdateModuleData()->m_eliteCashAmount; }
@@ -221,10 +218,7 @@ public:
 protected:
 
 	virtual AIStateMachine* makeStateMachine();
-	
+
 	AICommandParmsStorage		m_pendingCommand;
-	Bool m_hasPendingCommand;	
+	Bool m_hasPendingCommand;
 };
-
-#endif
-

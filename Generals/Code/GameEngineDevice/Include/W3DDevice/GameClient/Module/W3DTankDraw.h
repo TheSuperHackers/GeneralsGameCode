@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _W3D_TANK_DRAW_H_
-#define _W3D_TANK_DRAW_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DrawModule.h"
 #include "GameClient/ParticleSys.h"
@@ -62,7 +59,7 @@ class W3DTankDraw : public W3DModelDraw
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DTankDraw, "W3DTankDraw" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DTankDraw, W3DTankDrawModuleData )
-		
+
 public:
 
 	W3DTankDraw( Thing *thing, const ModuleData* moduleData );
@@ -105,6 +102,3 @@ protected:
 	void updateTreadObjects(void);												///< update pointers to sub-objects like treads.
 	void updateTreadPositions(Real uvDelta);									///< update uv coordinates on each tread
 };
-
-#endif // _W3D_TANK_DRAW_H_
-

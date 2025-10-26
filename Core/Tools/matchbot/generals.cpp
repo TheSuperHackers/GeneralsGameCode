@@ -506,7 +506,7 @@ double GeneralsMatcher::computeMatchFitness(const std::string& i1, const General
 	//DBGMSG("Match fitness: "<<matchFitness);
 
 	/*
-	DBGMSG(i1->first << " vs " << i2->first << " has fitness " << matchFitness << "\n"
+	DBGMSG(i1->first << " vs " << i2->first << " has fitness " << matchFitness
 			   "\tpointPercent: " << pointPercent << "\n"
 			   "\tpingDelta: " << pingDelta << "\n"
 			   "\twidened: " << u1->widened << u2->widened << "\n"
@@ -626,7 +626,7 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 									{
 
 										i5 = i4;
-										for (++i5; i5 != userMap.end(); ++i3)
+										for (++i5; i5 != userMap.end(); ++i5)
 										{
 											u5 = i5->second;
 											if (u5->status != STATUS_WORKING)
@@ -737,12 +737,12 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 					}
 				}
 			}
-		} // for i2
+		}
 
 		if (bestUser && numPlayers == 2)
 		{
 			// we had a match.  send the info.
-			DBGMSG("Matching " << i1->first << " with " << bestName << ":\n"
+			DBGMSG("Matching " << i1->first << " with " << bestName << ":"
 			       "\tmatch fitness: " << bestMatchFitness << "\n"
 			       "\tpoint percentage: " << (1-bestUser->points/(double)u1->points)*100 << "\n"
 			       "\tpoints: " << u1->points << ", " << u2->points << "\n"
@@ -752,7 +752,7 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 			              u1, bestUser, NULL, NULL, NULL, NULL, NULL, NULL, 2, ladderID);
 			break;
 		}
-	} // for i1
+	}
 
 	dumpUsers();
 }

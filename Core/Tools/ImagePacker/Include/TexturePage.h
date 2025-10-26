@@ -18,12 +18,12 @@
 
 // FILE: TexturePage.h ////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -39,9 +39,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __TEXTUREPAGE_H_
-#define __TEXTUREPAGE_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
@@ -114,9 +111,9 @@ protected:
 
 	/// build a region to try to fit given the position, size, and border options
 	UnsignedInt buildFitRegion( IRegion2D *region,
-															Int startX, Int startY, 
-															Int imageWidth, Int imageHeight, 
-															Int *xGutter, Int *yGutter, 
+															Int startX, Int startY,
+															Int imageWidth, Int imageHeight,
+															Int *xGutter, Int *yGutter,
 															Bool allSidesBorder );
 
 	void markRegionUsed( IRegion2D *region );  ///< mark this region as used
@@ -137,8 +134,8 @@ protected:
 												 Bool extendAlpha );
 
 	/// if the pixel at abolve/below row is open, extend pixel at src to its location
-	void extendToRowIfOpen( char *src, 
-													Int buffWidth, 
+	void extendToRowIfOpen( char *src,
+													Int buffWidth,
 													Int buffBPP,
 													Bool extendAlpha,
 													Int imageHeight,
@@ -167,6 +164,3 @@ inline Int TexturePage::getWidth( void ) { return m_size.x; }
 inline Int TexturePage::getHeight( void ) { return m_size.y; }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __TEXTUREPAGE_H_
-

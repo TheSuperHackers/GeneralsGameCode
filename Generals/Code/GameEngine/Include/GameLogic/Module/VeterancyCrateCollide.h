@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef VETERANCY_CRATE_COLLIDE_H_
-#define VETERANCY_CRATE_COLLIDE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
 #include "GameLogic/Module/CrateCollide.h"
@@ -54,11 +51,11 @@ public:
 		m_isPilot = false;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     CrateCollideModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "EffectRange",	INI::parseUnsignedInt,	NULL, offsetof( VeterancyCrateCollideModuleData, m_rangeOfEffect ) },
 			{ "AddsOwnerVeterancy",	INI::parseBool,	NULL, offsetof( VeterancyCrateCollideModuleData, m_addsOwnerVeterancy ) },
@@ -93,5 +90,3 @@ protected:
 	Int getLevelsToGain() const;
 
 };
-
-#endif

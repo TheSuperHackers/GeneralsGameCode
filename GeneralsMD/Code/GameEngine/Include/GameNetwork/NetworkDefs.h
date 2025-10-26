@@ -22,11 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef __NETWORKDEFS_H
-#define __NETWORKDEFS_H
 
 #include "Lib/BaseType.h"
 #include "Common/MessageStream.h"
@@ -36,6 +32,7 @@ static const Int WOL_NAME_LEN = 64;
 /// Max number of commands per frame
 static const Int MAX_COMMANDS = 256;
 
+extern Int MIN_LOGIC_FRAMES;
 extern Int MAX_FRAMES_AHEAD;
 extern Int MIN_RUNAHEAD;
 
@@ -99,7 +96,7 @@ struct TransportMessage
 };
 #pragma pack(pop)
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 #pragma pack(push, 1)
 struct DelayedTransportMessage
 {
@@ -155,8 +152,6 @@ enum NetCommandType CPP_11(: Int) {
 	NETCOMMANDTYPE_DISCONNECTFRAME,
 	NETCOMMANDTYPE_DISCONNECTSCREENOFF,
 	NETCOMMANDTYPE_DISCONNECTEND,
-
-	NETCOMMANDTYPE_MAX
 };
 
 enum NetLocalStatus CPP_11(: Int) {
@@ -212,5 +207,4 @@ static const Int NETWORK_BASE_PORT_NUMBER = 8088;
 class NetworkInterface;
 extern NetworkInterface *TheNetwork;
 
-
-#endif
+#define PRINTF_IP_AS_4_INTS(ip) ((ip) >> 24) & 0xff, ((ip) >> 16) & 0xff, ((ip) >> 8 ) & 0xff, (ip) & 0xff

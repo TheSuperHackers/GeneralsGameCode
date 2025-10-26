@@ -50,12 +50,8 @@
  *   DynamicVectorClass<T>::Uninitialized_Add -- Add an empty place to the vector.             *
  *   DynamicVectorClass<T>::Insert -- insert an object at the desired index                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef VECTOR_H
-#define VECTOR_H
+#pragma once
 
 #include "always.h"
 #include	<assert.h>
@@ -93,9 +89,9 @@ class VectorClass
 		VectorClass(VectorClass<T> const &);		// Copy constructor.
 		virtual ~VectorClass(void);
 
-		WWINLINE T & operator[](int index) {  assert(unsigned(index) < unsigned(VectorMax));return(Vector[index]); } 
+		WWINLINE T & operator[](int index) {  assert(unsigned(index) < unsigned(VectorMax));return(Vector[index]); }
 		WWINLINE T const & operator[](int index) const { assert(unsigned(index) < unsigned(VectorMax));return(Vector[index]);  }
-	
+
 		VectorClass<T> & operator = (VectorClass<T> const &); // Assignment operator.
 
 		virtual bool operator == (VectorClass<T> const &) const;	// Equality operator.
@@ -370,7 +366,7 @@ int VectorClass<T>::ID(T const & object)
 template<class T>
 void VectorClass<T>::Clear(void)
 {
-	if (Vector && IsAllocated) {
+	if (IsAllocated) {
 		delete[] Vector;
 		Vector = 0;
 	}
@@ -896,7 +892,7 @@ bool DynamicVectorClass<T>::Delete_Index(int index)
 
 
 template<class T>
-void DynamicVectorClass<T>::Delete_All(void) 
+void DynamicVectorClass<T>::Delete_All(void)
 {
 	int len = VectorMax;
 	Clear();		// Forces destructor call on each object.
@@ -1119,6 +1115,4 @@ bool Pointer_Vector_Remove(T const * ptr, VectorClass<T *> & vec)
 
 #ifdef _MSC_VER
 #pragma warning (default : 4702) // unreachable code, happens with some uses of these templates
-#endif
-
 #endif

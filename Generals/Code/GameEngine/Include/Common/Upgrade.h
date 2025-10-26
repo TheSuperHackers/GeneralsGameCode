@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __UPGRADE_H_
-#define __UPGRADE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/INI.h"
@@ -53,7 +50,7 @@ enum UpgradeStatusType CPP_11(: Int)
 	UPGRADE_STATUS_COMPLETE
 };
 
-//The maximum number of upgrades. 
+//The maximum number of upgrades.
 #define UPGRADE_MAX_COUNT 64
 
 typedef BitFlags<UPGRADE_MAX_COUNT>	UpgradeMaskType;
@@ -64,13 +61,13 @@ typedef BitFlags<UPGRADE_MAX_COUNT>	UpgradeMaskType;
 #define MAKE_UPGRADE_MASK4(k,a,b,c) UpgradeMaskType(UpgradeMaskType::kInit, (k), (a), (b), (c))
 #define MAKE_UPGRADE_MASK5(k,a,b,c,d) UpgradeMaskType(UpgradeMaskType::kInit, (k), (a), (b), (c), (d))
 
-inline Bool TEST_UPGRADE_MASK( const UpgradeMaskType& m, Int index ) 
-{ 
-	return m.test( index ); 
+inline Bool TEST_UPGRADE_MASK( const UpgradeMaskType& m, Int index )
+{
+	return m.test( index );
 }
 
-inline Bool TEST_UPGRADE_MASK_ANY( const UpgradeMaskType& m, const UpgradeMaskType& mask ) 
-{ 
+inline Bool TEST_UPGRADE_MASK_ANY( const UpgradeMaskType& m, const UpgradeMaskType& mask )
+{
 	return m.anyIntersectionWith( mask );
 }
 
@@ -79,14 +76,14 @@ inline Bool TEST_UPGRADE_MASK_MULTI( const UpgradeMaskType& m, const UpgradeMask
 	return m.testSetAndClear( mustBeSet, mustBeClear );
 }
 
-inline Bool UPGRADE_MASK_ANY_SET( const UpgradeMaskType& m) 
-{ 
-	return m.any(); 
+inline Bool UPGRADE_MASK_ANY_SET( const UpgradeMaskType& m)
+{
+	return m.any();
 }
 
-inline void CLEAR_UPGRADE_MASK( UpgradeMaskType& m ) 
-{ 
-	m.clear(); 
+inline void CLEAR_UPGRADE_MASK( UpgradeMaskType& m )
+{
+	m.clear();
 }
 
 inline void SET_ALL_UPGRADE_MASK_BITS( UpgradeMaskType& m )
@@ -149,9 +146,9 @@ enum UpgradeType CPP_11(: Int)
 	UPGRADE_TYPE_PLAYER = 0,						// upgrade applies to a player as a whole
 	UPGRADE_TYPE_OBJECT,								// upgrade applies to an object instance only
 
-	NUM_UPGRADE_TYPES,		// keep this last
+	NUM_UPGRADE_TYPES
 };
-extern const char *TheUpgradeTypeNames[]; //Change above, change this!
+extern const char *const TheUpgradeTypeNames[]; //Change above, change this!
 
 //-------------------------------------------------------------------------------------------------
 /** A single upgrade template definition */
@@ -204,7 +201,7 @@ protected:
 	NameKeyType m_nameKey;							///< name key
 	AsciiString m_displayNameLabel;			///< String manager label for UI display name
 	Real m_buildTime;										///< database # for how long it takes to "build" this
-	Int m_cost;													///< cost for production 
+	Int m_cost;													///< cost for production
 	UpgradeMaskType m_upgradeMask;			///< Unique bitmask for this upgrade template
 	AudioEventRTS	m_researchSound;			///< Sound played when upgrade researched.
 	AudioEventRTS	m_unitSpecificSound;	///< Secondary sound played when upgrade researched.
@@ -263,5 +260,3 @@ protected:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern UpgradeCenter *TheUpgradeCenter;
-
-#endif  // end __UPGRADE_H_

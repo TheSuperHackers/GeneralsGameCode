@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __TERRAINTYPE_H_
-#define __TERRAINTYPE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
 #include "Common/SubsystemInterface.h"
@@ -70,11 +67,11 @@ typedef enum
 	TERRAIN_WOOD,
 	TERRAIN_BLEND_EDGES,
 
-	TERRAIN_NUM_CLASSES  // keep this last
+	TERRAIN_NUM_CLASSES
 
 } TerrainClass;
 #ifdef DEFINE_TERRAIN_TYPE_NAMES
-static const char *terrainTypeNames[] = 
+static const char *const terrainTypeNames[] =
 {
 	"NONE",
 	"DESERT_1",
@@ -100,10 +97,11 @@ static const char *terrainTypeNames[] =
 	"SAND",
 	"CLIFF",
 	"WOOD",
-	"BLEND_EDGE", 
+	"BLEND_EDGE",
 
 	NULL
 };
+static_assert(ARRAY_SIZE(terrainTypeNames) == TERRAIN_NUM_CLASSES + 1, "Incorrect array size");
 #endif  // end DEFINE_TERRAIN_TYPE_NAMES
 
 //-------------------------------------------------------------------------------------------------
@@ -188,7 +186,7 @@ public:
 	void update() { }
 
 	TerrainType *findTerrain( AsciiString name );		///< find terrain by name
-	TerrainType *newTerrain( AsciiString name );			///< allocate a new terrain 
+	TerrainType *newTerrain( AsciiString name );			///< allocate a new terrain
 
 	/// get first terrain in list
 	TerrainType *firstTerrain( void ) { return m_terrainList; }
@@ -204,6 +202,3 @@ protected:
 
 // EXTERNAL ///////////////////////////////////////////////////////////////////////////////////////
 extern TerrainTypeCollection *TheTerrainTypes;
-
-#endif // __TERRAINTYPE_H_
-

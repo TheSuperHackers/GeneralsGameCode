@@ -16,33 +16,28 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : G                                        * 
- *                                                                         * 
- *                     $Archive:: /Commando/Code/ww3d2/mapper.h           $* 
- *                                                                         * 
- *                     $Org Author:: Greg_h                                  $* 
- *                                                                         * 
- *                       $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : G                                        *
+ *                                                                         *
+ *                     $Archive:: /Commando/Code/ww3d2/mapper.h           $*
+ *                                                                         *
+ *                     $Org Author:: Greg_h                                  $*
+ *                                                                         *
+ *                       $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
- *                                                                         * 
- *                    $Revision:: 26                                      $* 
- *                                                                         * 
+ *                                                                         *
+ *                    $Revision:: 26                                      $*
+ *                                                                         *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef VERTEXMAPPER_H
-#define VERTEXMAPPER_H
 
 #include "refcount.h"
 #include "w3d_file.h"
@@ -113,7 +108,7 @@ class TextureMapperClass : public W3DMPO, public RefCountClass
 class ScaleTextureMapperClass : public TextureMapperClass
 {
 	W3DMPO_GLUE(ScaleTextureMapperClass)
-public:	
+public:
 	ScaleTextureMapperClass(unsigned int stage);
 	ScaleTextureMapperClass(const Vector2 &scale, unsigned int stage);
 	ScaleTextureMapperClass(const INIClass &ini, const char *section, unsigned int stage);
@@ -162,7 +157,7 @@ public:
 	}
 	void Set_LastUsedSyncTime(unsigned int time) { LastUsedSyncTime = time;}
 	unsigned int Get_LastUsedSyncTime() { return LastUsedSyncTime;}
-	
+
 protected:
 	Vector2			CurrentUVOffset;		// Current UV offset
 	Vector2			UVOffsetDeltaPerMS;	// Amount to increase offset each millisec
@@ -191,8 +186,8 @@ public:
 
 	void Set_Frame(unsigned int frame) { CurrentFrame=frame; }
 	void Set_Frame_Per_Second(float fps);
-	
-protected:	
+
+protected:
 	// Utility functions
 	void initialize(float fps, unsigned int gridwidth_log2);
 	void update_temporal_state(void);
@@ -314,7 +309,7 @@ public:
 
 private:
 	Vector2 Speed;								// Speed of zigzag
-	float Period;								// Time taken for a period	
+	float Period;								// Time taken for a period
 	unsigned int	LastUsedSyncTime;		// Sync time last used to update offset
 };
 
@@ -409,7 +404,7 @@ public:
 class GridEnvironmentMapperClass : public GridTextureMapperClass
 {
 	W3DMPO_GLUE(GridEnvironmentMapperClass)
-public:	
+public:
 	GridEnvironmentMapperClass(float fps,unsigned int gridwidth, unsigned int stage):GridTextureMapperClass(fps,gridwidth,stage) { }
 	GridEnvironmentMapperClass(const INIClass &ini, const char *section, unsigned int stage) : GridTextureMapperClass(ini,section,stage) { }
 	GridEnvironmentMapperClass(const GridTextureMapperClass & src) : GridTextureMapperClass(src) { }
@@ -497,5 +492,3 @@ protected:
 ** Utility functions
 */
 void Reset_All_Texture_Mappers(RenderObjClass *robj, bool make_unique);
-
-#endif

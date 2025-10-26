@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __OCLSPECIALPOWER_H_
-#define __OCLSPECIALPOWER_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/SpecialPowerModule.h"
 #include "Common/Science.h"
@@ -47,6 +44,8 @@ enum OCLCreateLocType CPP_11(: Int)
 	USE_OWNER_OBJECT,
 	CREATE_ABOVE_LOCATION,
 	CREATE_AT_EDGE_FARTHEST_FROM_TARGET,
+
+	OCL_CREATE_LOC_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -90,11 +89,9 @@ public:
 
 	virtual void doSpecialPower( UnsignedInt commandOptions );
 	virtual void doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, UnsignedInt commandOptions );
+	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions );
 
 protected:
 
 	const ObjectCreationList* findOCL() const;
 };
-
-#endif  // end __OCLSPECIALPOWER_H_

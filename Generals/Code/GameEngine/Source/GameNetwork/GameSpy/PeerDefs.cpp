@@ -46,11 +46,6 @@
 #include "GameNetwork/RankPointValue.h"
 #include "GameLogic/GameLogic.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 GameSpyInfoInterface *TheGameSpyInfo = NULL;
 GameSpyStagingRoom *TheGameSpyGame = NULL;
@@ -93,7 +88,7 @@ void GameSpyInfo::reset( void )
 	m_localName = "";
 	m_localProfileID = 0;
 	m_maxMessagesPerUpdate = 100;
-	
+
 	// Added By Sadullah Nader
 	// Initialization missing and needed
 	m_disallowAsainText = FALSE;
@@ -113,7 +108,7 @@ void GameSpyInfo::reset( void )
 	m_preorderPlayers.clear();
 
 	m_cachedLocalPlayerStats.reset();
-	
+
 	m_additionalDisconnects = -1;
 }
 
@@ -137,12 +132,12 @@ void GameSpyInfo::setLocalIPs(UnsignedInt internalIP, UnsignedInt externalIP)
 void GameSpyInfo::readAdditionalDisconnects( void )
 {
 	m_additionalDisconnects = GetAdditionalDisconnectsFromUserFile(m_localProfileID);
-	DEBUG_LOG(("GameSpyInfo::readAdditionalDisconnects() found %d disconnects.\n", m_additionalDisconnects));
+	DEBUG_LOG(("GameSpyInfo::readAdditionalDisconnects() found %d disconnects.", m_additionalDisconnects));
 }
 
 Int GameSpyInfo::getAdditionalDisconnects( void )
 {
-	DEBUG_LOG(("GameSpyInfo::getAdditionalDisconnects() would have returned %d.  Returning 0 instead.\n", m_additionalDisconnects));
+	DEBUG_LOG(("GameSpyInfo::getAdditionalDisconnects() would have returned %d.  Returning 0 instead.", m_additionalDisconnects));
 	return 0;
 }
 
@@ -352,14 +347,14 @@ void GameSpyInfo::addGroupRoom( GameSpyGroupRoom room )
 	}
 	else
 	{
-		DEBUG_LOG(("Adding group room %d (%s)\n", room.m_groupID, room.m_name.str()));
+		DEBUG_LOG(("Adding group room %d (%s)", room.m_groupID, room.m_name.str()));
 		AsciiString groupLabel;
 		groupLabel.format("GUI:%s", room.m_name.str());
 		room.m_translatedName = TheGameText->fetch(groupLabel);
 		m_groupRooms[room.m_groupID] = room;
 		if ( !stricmp("quickmatch", room.m_name.str()) )
 		{
-			DEBUG_LOG(("Group room %d (%s) is the QuickMatch room\n", room.m_groupID, room.m_name.str()));
+			DEBUG_LOG(("Group room %d (%s) is the QuickMatch room", room.m_groupID, room.m_name.str()));
 			TheGameSpyConfig->setQMChannel(room.m_groupID);
 		}
 	}
@@ -390,7 +385,7 @@ void GameSpyInfo::joinBestGroupRoom( void )
 {
 	if (m_currentGroupRoomID)
 	{
-		DEBUG_LOG(("Bailing from GameSpyInfo::joinBestGroupRoom() - we were already in a room\n"));
+		DEBUG_LOG(("Bailing from GameSpyInfo::joinBestGroupRoom() - we were already in a room"));
 		m_currentGroupRoomID = 0;
 		return;
 	}
@@ -403,7 +398,7 @@ void GameSpyInfo::joinBestGroupRoom( void )
 		while (iter != m_groupRooms.end())
 		{
 			GameSpyGroupRoom room = iter->second;
-			DEBUG_LOG(("Group room %d: %s (%d, %d, %d, %d)\n", room.m_groupID, room.m_name.str(), room.m_numWaiting, room.m_maxWaiting,
+			DEBUG_LOG(("Group room %d: %s (%d, %d, %d, %d)", room.m_groupID, room.m_name.str(), room.m_numWaiting, room.m_maxWaiting,
 				room.m_numGames, room.m_numPlaying));
 
 			if (TheGameSpyConfig->getQMChannel() != room.m_groupID && minPlayers > 25 && room.m_numWaiting < minPlayers)
@@ -459,7 +454,7 @@ void GameSpyInfo::clearStagingRoomList( void )
 	Int numRoomsRemoved = 0;
 	m_sawFullGameList = FALSE;
 	m_stagingRoomsDirty = FALSE;
-	
+
 	StagingRoomMap::iterator it = m_stagingRooms.begin();
 	while (it != m_stagingRooms.end())
 	{
@@ -536,7 +531,7 @@ void GameSpyInfo::markAsStagingRoomHost( void )
 	m_localStagingRoom.reset();
 	m_localStagingRoom.enterGame();
 	m_localStagingRoom.setSeed(GetTickCount());
-	
+
 	GameSlot newSlot;
 	UnicodeString uName;
 	uName.translate(m_localName);
@@ -577,7 +572,7 @@ void GameSpyInfo::markAsStagingRoomJoiner( Int game )
 		m_localStagingRoom.setAllowObservers(info->getAllowObservers());
 		m_localStagingRoom.setHasPassword(info->getHasPassword());
 		m_localStagingRoom.setGameName(info->getGameName());
-		DEBUG_LOG(("Joining game: host is %ls\n", m_localStagingRoom.getConstSlot(0)->getName().str()));
+		DEBUG_LOG(("Joining game: host is %ls", m_localStagingRoom.getConstSlot(0)->getName().str()));
 	}
 }
 
@@ -622,7 +617,7 @@ void SetUpGameSpy( const char *motdBuffer, const char *configBuffer )
 
 	TheGameSpyPeerMessageQueue = GameSpyPeerMessageQueueInterface::createNewMessageQueue();
 	TheGameSpyPeerMessageQueue->startThread();
-	
+
 	TheGameSpyPSMessageQueue = GameSpyPSMessageQueueInterface::createNewMessageQueue();
 	TheGameSpyPSMessageQueue->startThread();
 
@@ -637,7 +632,7 @@ void SetUpGameSpy( const char *motdBuffer, const char *configBuffer )
 	CustomMatchPreferences pref;
 	TheGameSpyInfo->setDisallowAsianText(pref.getDisallowAsianText());
 	TheGameSpyInfo->setDisallowNonAsianText( pref.getDisallowNonAsianText());
-	
+
 
 	TheGameSpyConfig = GameSpyConfigInterface::create(configBuffer);
 
@@ -676,28 +671,17 @@ void TearDownGameSpy( void )
 	if (ThePinger)
 		ThePinger->endThreads();
 
-	if(TheRankPointValues)
-	{
-		delete TheRankPointValues;
-		TheRankPointValues = NULL;
-	}
-	if (TheGameSpyPSMessageQueue)
-	{
-		delete TheGameSpyPSMessageQueue;
-		TheGameSpyPSMessageQueue = NULL;
-	}
+	delete TheRankPointValues;
+	TheRankPointValues = NULL;
 
-	if (TheGameSpyBuddyMessageQueue)
-	{
-		delete TheGameSpyBuddyMessageQueue;
-		TheGameSpyBuddyMessageQueue = NULL;
-	}
+	delete TheGameSpyPSMessageQueue;
+	TheGameSpyPSMessageQueue = NULL;
 
-	if (TheGameSpyPeerMessageQueue)
-	{
-		delete TheGameSpyPeerMessageQueue;
-		TheGameSpyPeerMessageQueue = NULL;
-	}
+	delete TheGameSpyBuddyMessageQueue;
+	TheGameSpyBuddyMessageQueue = NULL;
+
+	delete TheGameSpyPeerMessageQueue;
+	TheGameSpyPeerMessageQueue = NULL;
 
 	if (TheGameSpyInfo)
 	{
@@ -710,23 +694,14 @@ void TearDownGameSpy( void )
 		TheGameSpyInfo = NULL;
 	}
 
-	if (ThePinger)
-	{
-		delete ThePinger;
-		ThePinger = NULL;
-	}
+	delete ThePinger;
+	ThePinger = NULL;
 
-	if (TheLadderList)
-	{
-		delete TheLadderList;
-		TheLadderList = NULL;
-	}
+	delete TheLadderList;
+	TheLadderList = NULL;
 
-	if (TheGameSpyConfig)
-	{
-		delete TheGameSpyConfig;
-		TheGameSpyConfig = NULL;
-	}
+	delete TheGameSpyConfig;
+	TheGameSpyConfig = NULL;
 
 	// make sure the notification box doesn't exist
 	deleteNotificationBox();
@@ -826,7 +801,7 @@ void GameSpyInfo::loadSavedIgnoreList( void )
 {
 	m_savedIgnoreMap.clear();
 	IgnorePreferences prefs;
-	m_savedIgnoreMap = prefs.getIgnores();	
+	m_savedIgnoreMap = prefs.getIgnores();
 }
 
 void GameSpyInfo::setDisallowAsianText( Bool val )
@@ -867,19 +842,19 @@ before we can detect/log disconnections.*/
 void GameSpyInfo::updateAdditionalGameSpyDisconnections(Int count)
 {
 	if (TheRecorder->isMultiplayer() && TheGameLogic->isInInternetGame())
-	{	
+	{
 		Int localID = TheGameSpyInfo->getLocalProfileID();
 		PSPlayerStats stats = TheGameSpyPSMessageQueue->findPlayerStatsByID(localID);
-		
+
 		Player *player=ThePlayerList->getLocalPlayer();
 
 		Int ptIdx;
 		const PlayerTemplate *myTemplate = player->getPlayerTemplate();
-		DEBUG_LOG(("myTemplate = %X(%s)\n", myTemplate, myTemplate->getName().str()));
+		DEBUG_LOG(("myTemplate = %X(%s)", myTemplate, myTemplate->getName().str()));
 		for (ptIdx = 0; ptIdx < ThePlayerTemplateStore->getPlayerTemplateCount(); ++ptIdx)
 		{
 			const PlayerTemplate *nthTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(ptIdx);
-			DEBUG_LOG(("nthTemplate = %X(%s)\n", nthTemplate, nthTemplate->getName().str()));
+			DEBUG_LOG(("nthTemplate = %X(%s)", nthTemplate, nthTemplate->getName().str()));
 			if (nthTemplate == myTemplate)
 			{
 					break;
@@ -904,7 +879,7 @@ void GameSpyInfo::updateAdditionalGameSpyDisconnections(Int count)
 		Int disCons=stats.discons[ptIdx];
 		disCons += count;
 		if (disCons < 0)
-		{	DEBUG_LOG(("updateAdditionalGameSpyDisconnections() - disconnection count below zero\n"));
+		{	DEBUG_LOG(("updateAdditionalGameSpyDisconnections() - disconnection count below zero"));
 			return;	//something is wrong here
 		}
 		stats.discons[ptIdx] = disCons;	//add an additional disconnection to their stats.

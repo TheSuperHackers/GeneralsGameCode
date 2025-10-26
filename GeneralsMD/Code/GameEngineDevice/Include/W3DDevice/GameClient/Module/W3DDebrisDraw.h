@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __W3D_DEBRIS_DRAW_H_
-#define __W3D_DEBRIS_DRAW_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameType.h"
 #include "Common/DrawModule.h"
@@ -60,7 +57,7 @@ public:
 	virtual void doDrawModule(const Matrix3D* transformMtx);
 
 	virtual void setShadowsEnabled(Bool enable);
-	virtual void releaseShadows(void) {};	///< we don't care about preserving temporary shadows.	
+	virtual void releaseShadows(void) {};	///< we don't care about preserving temporary shadows.
 	virtual void allocateShadows(void) {};	///< we don't care about preserving temporary shadows.
 
 	virtual void setFullyObscuredByShroud(Bool fullyObscured);
@@ -98,6 +95,3 @@ private:
 	Shadow*										m_shadow;													///< Updates/Renders shadows of this object
 
 };
-
-#endif // __W3D_DEBRIS_DRAW_H_
-

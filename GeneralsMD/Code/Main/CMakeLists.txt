@@ -10,6 +10,8 @@ endif()
 target_link_libraries(z_generals PRIVATE
     binkstub
     comctl32
+    core_debug
+    core_profile
     d3d8
     d3dx8
     dbghelplib
@@ -17,13 +19,10 @@ target_link_libraries(z_generals PRIVATE
     dxguid
     imm32
     milesstub
-    safedisc
     vfw32
     winmm
-    z_debug
     z_gameengine
     z_gameenginedevice
-    z_profile
     zi_always
 )
 
@@ -32,8 +31,8 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/GeneratedVersion.h
 "#pragma once
 
 #define VERSION_LOCALBUILDNUM 0
-#define VERSION_BUILDUSER \"Someone\"
-#define VERSION_BUILDLOC \"Someplace\"
+#define VERSION_BUILDUSER \"\"
+#define VERSION_BUILDLOC \"\"
 "
 )
 
@@ -50,7 +49,7 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h
 target_link_options(z_generals PRIVATE "/NODEFAULTLIB:libci.lib")
 
 target_include_directories(z_generals PRIVATE
-    .
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 
@@ -60,6 +59,13 @@ target_sources(z_generals PRIVATE
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
+    # VS2005 and later adds default manifest, we need to turn it off to prevent conflict with custom manifest
+    if(NOT IS_VS6_BUILD)
+        target_link_options(z_generals PRIVATE
+            "/MANIFEST:NO"
+        )
+    endif()
+
     target_sources(z_generals PRIVATE
         RTS.RC
     )

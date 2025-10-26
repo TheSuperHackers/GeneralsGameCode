@@ -36,9 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef GEOMETRYEXPORTCONTEXT_H
-#define GEOMETRYEXPORTCONTEXT_H
+#pragma once
 
 #include <max.h>
 
@@ -49,11 +47,11 @@ class INodeListClass;
 class Progress_Meter_Class;
 struct W3dExportOptionsStruct;
 
- 
+
 /**
 ** ExportContextClass
 ** This class encapsulates a bunch of datastructures needed during the geometry export
-** process. 
+** process.
 ** NOTE: The user must plug in a valid ProgressMeter before each export operation.
 */
 class GeometryExportContextClass
@@ -86,7 +84,7 @@ public:
 		ModelName = strdup(model_name);
 		OriginTransform = Origin->GetNodeTM(CurTime);
 	}
-	
+
 	~GeometryExportContextClass(void)
 	{
 		delete[] ModelName;
@@ -108,8 +106,3 @@ public:
 	int								numHouseColors;		///MW: number of used house colors
 	char	*						materialColorTexture; //MW: texture to hold material colors
 };
-
-
-
-#endif //GEOMETRYEXPORTCONTEXT_H
-

@@ -48,7 +48,7 @@ HealContainModuleData::HealContainModuleData( void )
 
 	m_framesForFullHeal = 0;
 
-}  // end HealContainModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ HealContainModuleData::HealContainModuleData( void )
 
   OpenContainModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "TimeForFullHeal", INI::parseDurationUnsignedInt, NULL, offsetof( HealContainModuleData, m_framesForFullHeal ) },
 		{ 0, 0, 0, 0 }
@@ -65,7 +65,7 @@ HealContainModuleData::HealContainModuleData( void )
 
   p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,14 +77,14 @@ HealContain::HealContain( Thing *thing, const ModuleData *moduleData )
 					 : OpenContain( thing, moduleData )
 {
 
-}  // end HealContain
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 HealContain::~HealContain( void )
 {
 
-}  // end ~HealContain
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Per frame update */
@@ -123,13 +123,13 @@ UpdateSleepTime HealContain::update( void )
 			ExitDoorType exitDoor = reserveDoorForExit(obj->getTemplate(), obj);
 			if (exitDoor != DOOR_NONE_AVAILABLE)
 				exitObjectViaDoor( obj, exitDoor );
-		}  // end if
+		}
 
-	}  // end for, it
+	}
 
 	return UPDATE_SLEEP_NONE;
 
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Do the healing for a single object for a single frame. */
@@ -150,17 +150,17 @@ Bool HealContain::doHeal( Object *obj, UnsignedInt framesForFullHeal )
 	// if we've been in here long enough ... set our health to max
 	if( TheGameLogic->getFrame() - obj->getContainedByFrame() >= framesForFullHeal )
 	{
-	
+
 		// set the amount to max just to be sure we're at the top
 		healInfo.in.m_amount = body->getMaxHealth();
-		
+
 		// set max health
 		body->attemptHealing( &healInfo );
 
 		// we're done healing
 		doneHealing = TRUE;
 
-	}  // end if
+	}
 	else
 	{
 
@@ -174,12 +174,12 @@ Bool HealContain::doHeal( Object *obj, UnsignedInt framesForFullHeal )
 		// do the healing
 		body->attemptHealing( &healInfo );
 
-	}  // end else
+	}
 
 	// return if we're done healing
 	return doneHealing;
-				
-}  // end doHeal
+
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -190,7 +190,7 @@ void HealContain::crc( Xfer *xfer )
 	// extend base class
 	OpenContain::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -208,7 +208,7 @@ void HealContain::xfer( Xfer *xfer )
 	// extend base class
 	OpenContain::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -219,4 +219,4 @@ void HealContain::loadPostProcess( void )
 	// extend base class
 	OpenContain::loadPostProcess();
 
-}  // end loadPostProcess
+}

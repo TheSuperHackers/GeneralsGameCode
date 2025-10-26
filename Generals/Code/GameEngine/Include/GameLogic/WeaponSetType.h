@@ -27,15 +27,13 @@
 // JKMCD Aug 2002
 
 #pragma once
-#ifndef __WEAPONSETTYPE_H__
-#define __WEAPONSETTYPE_H__
 
 //-------------------------------------------------------------------------------------------------
 // IMPORTANT NOTE: you should endeavor to set up states such that the most "normal"
 // state is defined by the bit being off. That is, the typical "normal" condition
 // has all condition flags set to zero.
 //
-// IMPORTANT NOTE #2: if you add or modify this list, be sure to update TheWeaponSetNames, 
+// IMPORTANT NOTE #2: if you add or modify this list, be sure to update TheWeaponSetNames,
 // *and* TheWeaponSetTypeToModelConditionTypeMap!
 //
 enum WeaponSetType CPP_11(: Int)
@@ -51,7 +49,5 @@ enum WeaponSetType CPP_11(: Int)
 	WEAPONSET_CARBOMB,
 	WEAPONSET_MINE_CLEARING_DETAIL,
 
-	WEAPONSET_COUNT			///< keep last, please
+	WEAPONSET_COUNT
 };
-
-#endif /* __WEAPONSETTYPE_H__ */

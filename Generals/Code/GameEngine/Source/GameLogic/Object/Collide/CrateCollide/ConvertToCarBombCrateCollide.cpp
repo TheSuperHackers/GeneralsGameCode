@@ -46,14 +46,14 @@
 ConvertToCarBombCrateCollide::ConvertToCarBombCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ConvertToCarBombCrateCollide::~ConvertToCarBombCrateCollide( void )
 {
 
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ Bool ConvertToCarBombCrateCollide::isValidToExecute( const Object *other ) const
 	{
 		return FALSE;
 	}
-	
+
 	if( other->isKindOf( KINDOF_AIRCRAFT ) || other->isKindOf( KINDOF_BOAT ) )
 	{
 		//Can't make carbombs out of planes and boats!
@@ -95,7 +95,7 @@ Bool ConvertToCarBombCrateCollide::isValidToExecute( const Object *other ) const
 		//weaponset.
 		return FALSE;
 	}
-	
+
 	// Also make sure that the car isn't already a carbomb!
 	if( other->testWeaponSetFlag( WEAPONSET_CARBOMB ) )
 	{
@@ -159,7 +159,7 @@ void ConvertToCarBombCrateCollide::crc( Xfer *xfer )
 	// extend base class
 	CrateCollide::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -177,7 +177,7 @@ void ConvertToCarBombCrateCollide::xfer( Xfer *xfer )
 	// extend base class
 	CrateCollide::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -188,4 +188,4 @@ void ConvertToCarBombCrateCollide::loadPostProcess( void )
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+}

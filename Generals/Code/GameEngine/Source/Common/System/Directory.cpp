@@ -53,7 +53,7 @@ void FileInfo::set( const WIN32_FIND_DATA& info )
 	modTime = FileTimeToTimet(info.ftLastWriteTime);
 	attributes = info.dwFileAttributes;
 	filesize = info.nFileSizeLow;
-	//DEBUG_LOG(("FileInfo::set(): fname=%s, size=%d\n", filename.str(), filesize));
+	//DEBUG_LOG(("FileInfo::set(): fname=%s, size=%d", filename.str(), filesize));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ Directory::Directory( const AsciiString& dirPath ) : m_dirPath(dirPath)
 	// sanity
 	if( m_dirPath.isEmpty() )
 	{
-		DEBUG_LOG(( "Empty dirname\n"));
+		DEBUG_LOG(( "Empty dirname"));
 		return;
 	}
 
@@ -77,7 +77,7 @@ Directory::Directory( const AsciiString& dirPath ) : m_dirPath(dirPath)
 	// switch into the directory provided
 	if( SetCurrentDirectory( m_dirPath.str() ) == 0 )
 	{
-		DEBUG_LOG(( "Can't set directory '%s'\n", m_dirPath.str() ));
+		DEBUG_LOG(( "Can't set directory '%s'", m_dirPath.str() ));
 		return;
 	}
 
@@ -86,7 +86,7 @@ Directory::Directory( const AsciiString& dirPath ) : m_dirPath(dirPath)
 	hFile = FindFirstFile( "*", &item);
 	if( hFile == INVALID_HANDLE_VALUE )
 	{
-		DEBUG_LOG(( "Can't search directory '%s'\n", m_dirPath.str() ));
+		DEBUG_LOG(( "Can't search directory '%s'", m_dirPath.str() ));
 		done = true;
 	}
 

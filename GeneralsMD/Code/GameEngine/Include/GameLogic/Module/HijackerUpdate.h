@@ -27,15 +27,12 @@
 //
 // FILE: HijackerUpdate.h /////////////////////////////////////////////////////////////////////////
 // Author: Mark Lorenzen, July 2002
-// Desc:   Allows hijacker to keep with his hijacked vehicle (though hidden) until it dies, then 
+// Desc:   Allows hijacker to keep with his hijacked vehicle (though hidden) until it dies, then
 // to become a hijacker once more
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
- 
-#ifndef __HIJACKER_UPDATE_H
-#define __HIJACKER_UPDATE_H
 
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -48,10 +45,10 @@ public:
 
 	//StickBombUpdateModuleData();
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "AttachToTargetBone",	INI::parseAsciiString,		NULL, offsetof( HijackerUpdateModuleData, m_attachToBone ) },
 			{ "ParachuteName",	INI::parseAsciiString,		NULL, offsetof( HijackerUpdateModuleData, m_parachuteName ) },
@@ -77,8 +74,8 @@ public:
 
 	void setTargetObject( const Object *object );
 	Object* getTargetObject() const;
-	void setUpdate(Bool u ) {m_update = u;} 
-	void setIsInVehicle(Bool i ) {m_isInVehicle = i;} 
+	void setUpdate(Bool u ) {m_update = u;}
+	void setIsInVehicle(Bool i ) {m_isInVehicle = i;}
 
 private:
 
@@ -88,10 +85,7 @@ private:
 	Bool		 m_isInVehicle;
 	Bool		 m_wasTargetAirborne;
 
-//	DieModuleInterface *m_ejectPilotDMI; // point to ejectpilotdiemodule 
+//	DieModuleInterface *m_ejectPilotDMI; // point to ejectpilotdiemodule
 																			 // of target vehicle if it has one
 
 };
-
-#endif // __HIJACKER_UPDATE_H
-

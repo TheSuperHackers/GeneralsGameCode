@@ -70,7 +70,7 @@
 bool CollisionMath::Intersection_Test(const SphereClass & sphere,const AABoxClass & box)
 {
 	/*
-	** Simple but slightly inaccurate test, expand the box by the sphere's radius, then 
+	** Simple but slightly inaccurate test, expand the box by the sphere's radius, then
 	** test whether the sphere is contained in that new box.  This is actually testing
 	** against a cube which encloses the sphere...
 	*/
@@ -196,7 +196,7 @@ CollisionMath::Overlap_Test(const SphereClass & sphere,const SphereClass & spher
 
 	float radius	= sphere.Radius + sphere2.Radius;
 	float dist2		= (sphere2.Center - sphere.Center).Length2();
-	
+
 	if (dist2 == 0 && sphere.Radius == sphere2.Radius) {
 		retval = OVERLAPPED;
 	} else if (dist2 <= radius * radius - COINCIDENCE_EPSILON) {

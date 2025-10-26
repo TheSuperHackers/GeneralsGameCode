@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FireWeaponWhenDamagedBehavior_H_
-#define __FireWeaponWhenDamagedBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/UpgradeModule.h"
@@ -45,13 +42,13 @@ class FireWeaponWhenDamagedBehaviorModuleData : public UpdateModuleData
 public:
 	UpgradeMuxData				m_upgradeMuxData;
 	Bool									m_initiallyActive;
-	DamageTypeFlags				m_damageTypes;					
-	Real									m_damageAmount;	
-	const WeaponTemplate* m_reactionWeaponPristine;///< fire these weapons only when damage is received				
-	const WeaponTemplate* m_reactionWeaponDamaged;				
-	const WeaponTemplate* m_reactionWeaponReallyDamaged;	
-	const WeaponTemplate* m_reactionWeaponRubble;					
-	const WeaponTemplate*	m_continuousWeaponPristine;///< fire these weapons continuously, versus just onDamage 
+	DamageTypeFlags				m_damageTypes;
+	Real									m_damageAmount;
+	const WeaponTemplate* m_reactionWeaponPristine;///< fire these weapons only when damage is received
+	const WeaponTemplate* m_reactionWeaponDamaged;
+	const WeaponTemplate* m_reactionWeaponReallyDamaged;
+	const WeaponTemplate* m_reactionWeaponRubble;
+	const WeaponTemplate*	m_continuousWeaponPristine;///< fire these weapons continuously, versus just onDamage
 	const WeaponTemplate*	m_continuousWeaponDamaged;
 	const WeaponTemplate*	m_continuousWeaponReallyDamaged;
 	const WeaponTemplate*	m_continuousWeaponRubble;
@@ -63,18 +60,18 @@ public:
 		m_reactionWeaponDamaged = NULL;
 		m_reactionWeaponReallyDamaged = NULL;
 		m_reactionWeaponRubble = NULL;
-		m_continuousWeaponPristine = NULL; 
-		m_continuousWeaponDamaged = NULL;	
-		m_continuousWeaponReallyDamaged = NULL;	
-		m_continuousWeaponRubble = NULL;	
+		m_continuousWeaponPristine = NULL;
+		m_continuousWeaponDamaged = NULL;
+		m_continuousWeaponReallyDamaged = NULL;
+		m_continuousWeaponRubble = NULL;
 		m_damageTypes = DAMAGE_TYPE_FLAGS_ALL;
 		m_damageAmount = 0;
 	}
 
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "StartsActive",	INI::parseBool, NULL, offsetof( FireWeaponWhenDamagedBehaviorModuleData, m_initiallyActive ) },
 			{ "ReactionWeaponPristine", INI::parseWeaponTemplate, NULL, offsetof(FireWeaponWhenDamagedBehaviorModuleData,				m_reactionWeaponPristine) },
@@ -102,8 +99,8 @@ private:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class FireWeaponWhenDamagedBehavior : public UpdateModule, 
-																			public UpgradeMux, 
+class FireWeaponWhenDamagedBehavior : public UpdateModule,
+																			public UpgradeMux,
 																			public DamageModuleInterface
 {
 
@@ -132,8 +129,8 @@ public:
 
 protected:
 
-	virtual void upgradeImplementation() 
-	{ 
+	virtual void upgradeImplementation()
+	{
 		setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 	}
 
@@ -153,7 +150,7 @@ protected:
 	}
 
 	inline Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
-	
+
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 private:
@@ -167,6 +164,3 @@ private:
 	Weapon *m_continuousWeaponRubble;
 
 };
-
-#endif // __FireWeaponWhenDamagedBehavior_H_
-

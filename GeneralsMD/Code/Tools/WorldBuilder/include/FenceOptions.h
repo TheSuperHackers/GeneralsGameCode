@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_FenceOptions_H__D3FF66C5_7107_4DAC_8A29_5EBAB5C3A24E__INCLUDED_)
-#define AFX_FenceOptions_H__D3FF66C5_7107_4DAC_8A29_5EBAB5C3A24E__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // FenceOptions.h : header file
 //
 
@@ -81,7 +77,7 @@ protected:
 	Bool							m_customSpacing;
 
 protected:
-	void addObject( MapObject *mapObject, const char *pPath, const char *name, 
+	void addObject( MapObject *mapObject, const char *pPath, const char *name,
 									Int objectNdx, HTREEITEM parent );
 	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
 	Bool setObjectTreeViewSelection(HTREEITEM parent, Int selection);
@@ -92,9 +88,7 @@ public:
 	static Bool hasSelectedObject(void);
 	static Real getFenceSpacing(void) {return m_fenceSpacing;}
 	static Real getFenceOffset(void) {return m_fenceOffset;}
-}; 
+};
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_FenceOptions_H__D3FF66C5_711D_4DAC_8A29_5EAAB5C3A23E__INCLUDED_)

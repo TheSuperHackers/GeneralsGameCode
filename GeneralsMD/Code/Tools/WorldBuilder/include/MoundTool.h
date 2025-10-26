@@ -22,15 +22,12 @@
 
 #pragma once
 
-#ifndef MOUND_TOOL_H
-#define MOUND_TOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 /*************************************************************************
 **                             MoundTool
 ***************************************************************************/
-class MoundTool : public Tool 
+class MoundTool : public Tool
 {
 	enum {MIN_DELAY_TIME=60}; // 60 ms minimum delay between applications.
 protected:
@@ -66,10 +63,9 @@ public:
 /*************************************************************************
 **                             DigTool
 ***************************************************************************/
-class DigTool : public MoundTool 
+class DigTool : public MoundTool
 {
 public:
 	DigTool(void);
 
 };
-#endif //MoundTool_H

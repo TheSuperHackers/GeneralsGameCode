@@ -17,26 +17,25 @@
 */
 
 /* $Header: /Commando/Code/Tools/pluglib/errclass.h 5     6/25/99 10:46a Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - W3D export                                  * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/pluglib/errclass.h                     $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 6/24/99 3:38p                                               $* 
- *                                                                                             * 
- *                    $Revision:: 5                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - W3D export                                  *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/pluglib/errclass.h                     $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 6/24/99 3:38p                                               $*
+ *                                                                                             *
+ *                    $Revision:: 5                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef ERRCLASS_H
-#define ERRCLASS_H
+#pragma once
 
 #include <stdarg.h>
 
@@ -76,13 +75,10 @@ inline ErrorClass & ErrorClass::operator = (const ErrorClass & that)
 		free(error_message);
 		error_message = NULL;
 	}
-	
+
 	if (that.error_message != NULL) {
 		error_message = strdup(that.error_message);
 	}
 
 	return *this;
 }
-
-
-#endif //ERRCLASS_H

@@ -24,7 +24,7 @@
 
 // FILE: Geometry.cpp /////////////////////////////////////////////////////////////////////////////
 // Author: Steven Johnson, Aug 2002
-// Desc:   
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
@@ -36,11 +36,6 @@
 #include "Common/RandomValue.h"
 #include "Common/Xfer.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -151,7 +146,7 @@ static Real calcPointToLineDistSquared(const Coord3D& pt, const Coord3D& lineSta
 	}
 
   Real tmp = dot / lineLenSqr;
-	
+
 	closest.x = lineStart.x + tmp * line.x;
 	closest.y = lineStart.y + tmp * line.y;
 	closest.z = lineStart.z + tmp * line.z;
@@ -181,7 +176,7 @@ void GeometryInfo::calcPitches(const Coord3D& thisPos, const GeometryInfo& that,
 	Real dxy = sqrt(sqr(thatPos.x - thisCenter.x) + sqr(thatPos.y - thisCenter.y));
 
 	Real dz;
-	
+
 	/** @todo srj -- this could be better, by calcing it for all the corners, not just top-center
 		and bottom-center... oh well */
 	dz = (thatPos.z + that.getMaxHeightAbovePosition()) - thisCenter.z;
@@ -297,7 +292,7 @@ void GeometryInfo::get2DBounds(const Coord3D& geomCenter, Real angle, Region2D& 
 			bounds.lo.y = y;
 			bounds.hi.x = x;
 			bounds.hi.y = y;
-			
+
 			x = geomCenter.x + exc - eys;
 			y = geomCenter.y + eyc + exs;
 			if (bounds.lo.x > x) bounds.lo.x = x;
@@ -421,6 +416,53 @@ void GeometryInfo::makeRandomOffsetWithinFootprint(Coord3D& pt) const
 }
 
 //=============================================================================
+void GeometryInfo::makeRandomOffsetOnPerimeter(Coord3D& pt) const
+{
+	switch(m_type)
+	{
+		case GEOMETRY_SPHERE:
+		case GEOMETRY_CYLINDER:
+		{
+			DEBUG_CRASH( ("GeometryInfo::makeRandomOffsetOnPerimeter() not implemented for SPHERE or CYLINDER extents. Using position.") );
+
+			//Kris: Did not have time nor need to support non-box extents. I added this feature for script placement
+			//      of boobytraps.
+			pt.x = 0.0f;
+			pt.y = 0.0f;
+			break;
+		}
+
+		case GEOMETRY_BOX:
+		{
+			if( GameLogicRandomValueReal( 0.0f, 1.0f ) < 0.5f )
+			{
+				//Pick random point on x axis.
+				pt.x = GameLogicRandomValueReal(-m_majorRadius, m_majorRadius);
+
+				//Min or max the y axis value
+				if( GameLogicRandomValueReal( 0.0f, 1.0f ) < 0.5f )
+					pt.y = -m_minorRadius;
+				else
+					pt.y = m_minorRadius;
+			}
+			else
+			{
+				//Pick random point on y axis.
+				pt.y = GameLogicRandomValueReal(-m_minorRadius, m_minorRadius);
+
+				//Min or max the x axis value
+				if( GameLogicRandomValueReal( 0.0f, 1.0f ) < 0.5f )
+					pt.x = -m_majorRadius;
+				else
+					pt.x = m_majorRadius;
+			}
+			pt.z = 0.0f;
+			break;
+		}
+	};
+}
+
+//=============================================================================
 Real GeometryInfo::getFootprintArea() const
 {
 	switch(m_type)
@@ -471,7 +513,7 @@ void GeometryInfo::calcBoundingStuff()
 	};
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 //=============================================================================
 void GeometryInfo::tweakExtents(ExtentModType extentModType, Real extentModAmount)
 {
@@ -495,7 +537,7 @@ void GeometryInfo::tweakExtents(ExtentModType extentModType, Real extentModAmoun
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 //=============================================================================
 AsciiString GeometryInfo::getDescriptiveString() const
 {
@@ -511,7 +553,7 @@ AsciiString GeometryInfo::getDescriptiveString() const
 void GeometryInfo::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -547,7 +589,7 @@ void GeometryInfo::xfer( Xfer *xfer )
 	// bounding sphere radius
 	xfer->xferReal( &m_boundingSphereRadius );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -555,4 +597,4 @@ void GeometryInfo::xfer( Xfer *xfer )
 void GeometryInfo::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

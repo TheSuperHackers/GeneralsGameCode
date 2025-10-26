@@ -23,13 +23,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: SabotageFakeBuildingCrateCollide.cpp 
+//
+// FILE: SabotageFakeBuildingCrateCollide.cpp
 // Author: Kris Morness, July 2003
 // Desc:   A crate (actually a saboteur - mobile crate) that destroys a fake building.
-//	
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
- 
+
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -57,23 +57,18 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/Module/DozerAIUpdate.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SabotageFakeBuildingCrateCollide::SabotageFakeBuildingCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SabotageFakeBuildingCrateCollide::~SabotageFakeBuildingCrateCollide( void )
 {
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -96,6 +91,14 @@ Bool SabotageFakeBuildingCrateCollide::isValidToExecute( const Object *other ) c
 		//We can only sabotage fake structures.
 		return FALSE;
 	}
+
+#if !RETAIL_COMPATIBLE_CRC
+	if (other->getStatusBits().testForAny(MAKE_OBJECT_STATUS_MASK2(OBJECT_STATUS_UNDER_CONSTRUCTION, OBJECT_STATUS_SOLD)))
+	{
+		// TheSuperHackers @bugfix Stubbjax 03/08/2025 Can't enter something being sold or under construction.
+		return FALSE;
+	}
+#endif
 
 	Relationship r = getObject()->getRelationship( other );
 	if( r != ENEMIES )
@@ -143,7 +146,7 @@ Bool SabotageFakeBuildingCrateCollide::executeCrateBehavior( Object *other )
 		damageInfo.in.m_amount = other->getBodyModule()->getMaxHealth();
 		other->attemptDamage( &damageInfo );
 	}
-	
+
 	return TRUE;
 }
 
@@ -156,7 +159,7 @@ void SabotageFakeBuildingCrateCollide::crc( Xfer *xfer )
 	// extend base class
 	CrateCollide::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -174,7 +177,7 @@ void SabotageFakeBuildingCrateCollide::xfer( Xfer *xfer )
 	// extend base class
 	CrateCollide::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -185,4 +188,4 @@ void SabotageFakeBuildingCrateCollide::loadPostProcess( void )
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+}

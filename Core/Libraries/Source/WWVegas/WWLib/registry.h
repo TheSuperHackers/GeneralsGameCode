@@ -33,12 +33,7 @@
  *---------------------------------------------------------------------------------------------*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
-
-#ifndef REGISTRY_H
-#define REGISTRY_H
 
 #ifndef ALWAYS_H
 #include "always.h"
@@ -123,5 +118,3 @@ private:
 	//
 	static bool IsLocked;
 };
-
-#endif // REGISTRY_H

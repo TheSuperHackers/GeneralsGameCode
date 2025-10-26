@@ -51,11 +51,6 @@
 #include "GameClient/ChallengeGenerals.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -108,7 +103,7 @@ static AsciiString realAsStr(Real val)
 
 
 //-----------------------------------------------------------------------------
-// UserPreferences Class 
+// UserPreferences Class
 //-----------------------------------------------------------------------------
 
 UserPreferences::UserPreferences( void )
@@ -148,7 +143,7 @@ Bool UserPreferences::load(AsciiString fname)
 				continue;
 
 			(*this)[key] = val;
-		}  // end while
+		}
 		fclose(fp);
 		return true;
 	}
@@ -241,7 +236,7 @@ void UserPreferences::setAsciiString(AsciiString key, AsciiString val)
 }
 
 //-----------------------------------------------------------------------------
-// QuickMatchPreferences base class 
+// QuickMatchPreferences base class
 //-----------------------------------------------------------------------------
 
 QuickMatchPreferences::QuickMatchPreferences()
@@ -426,7 +421,7 @@ Int QuickMatchPreferences::getSide( void )
 }
 
 //-----------------------------------------------------------------------------
-// CustomMatchPreferences base class 
+// CustomMatchPreferences base class
 //-----------------------------------------------------------------------------
 
 CustomMatchPreferences::CustomMatchPreferences()
@@ -680,7 +675,7 @@ AsciiString CustomMatchPreferences::getPreferredMap(void)
 		ret = getDefaultOfficialMap();
 		return ret;
 	}
-	
+
 	//can only use official maps if recording stats
 	if( getUseStats() && !isOfficialMap(ret) )
 		ret = getDefaultOfficialMap();
@@ -702,7 +697,7 @@ Bool CustomMatchPreferences::getSuperweaponRestricted(void) const
   {
     return false;
   }
-  
+
   return ( it->second.compareNoCase( "yes" ) == 0 );
 }
 
@@ -719,19 +714,19 @@ Money CustomMatchPreferences::getStartingCash(void) const
   {
     return TheMultiplayerSettings->getDefaultStartingMoney();
   }
-  
+
   Money money;
   money.deposit( strtoul( it->second.str(), NULL, 10 ), FALSE  );
-  
+
   return money;
 }
 
 void CustomMatchPreferences::setStartingCash( const Money & startingCash )
 {
   AsciiString option;
-  
+
   option.format( "%d", startingCash.countMoney() );
-  
+
   (*this)[startingCashKey] = option;
 }
 
@@ -746,7 +741,7 @@ Bool CustomMatchPreferences::getFactionsLimited(void) const
   {
     return false; // The default
   }
-  
+
   return ( it->second.compareNoCase( "yes" ) == 0 );
 }
 
@@ -765,7 +760,7 @@ Bool CustomMatchPreferences::getUseStats(void) const
   {
     return true; // The default
   }
-  
+
   return ( it->second.compareNoCase( "yes" ) == 0 );
 }
 
@@ -775,7 +770,7 @@ void CustomMatchPreferences::setUseStats( Bool useStats )
 }
 
 //-----------------------------------------------------------------------------
-// GameSpyMiscPreferences base class 
+// GameSpyMiscPreferences base class
 //-----------------------------------------------------------------------------
 
 GameSpyMiscPreferences::GameSpyMiscPreferences()
@@ -820,7 +815,7 @@ Int GameSpyMiscPreferences::getMaxMessagesPerUpdate( void )
 	return getInt("MaxMessagesPerUpdate", 100);
 }
 //-----------------------------------------------------------------------------
-// IgnorePreferences base class 
+// IgnorePreferences base class
 //-----------------------------------------------------------------------------
 
 IgnorePreferences::IgnorePreferences()
@@ -853,7 +848,7 @@ void IgnorePreferences::setIgnore(const AsciiString& userName, Int profileID, Bo
 IgnorePrefMap IgnorePreferences::getIgnores(void)
 {
 	IgnorePrefMap ignores;
-	
+
 	IgnorePreferences::iterator it;
 	for (it = begin(); it != end(); ++it)
 	{
@@ -868,7 +863,7 @@ IgnorePrefMap IgnorePreferences::getIgnores(void)
 }
 
 //-----------------------------------------------------------------------------
-// LadderPreferences base class 
+// LadderPreferences base class
 //-----------------------------------------------------------------------------
 
 LadderPreferences::LadderPreferences()
@@ -896,7 +891,7 @@ Bool LadderPreferences::loadProfile( Int profileID )
 		AsciiString ladName = it->first;
 		AsciiString ladData = it->second;
 
-		DEBUG_LOG(("Looking at [%s] = [%s]\n", ladName.str(), ladData.str()));
+		DEBUG_LOG(("Looking at [%s] = [%s]", ladName.str(), ladData.str()));
 
 		const char *ptr = ladName.reverseFind(':');
 		DEBUG_ASSERTCRASH(ptr, ("Did not find ':' in ladder name - skipping"));
@@ -904,11 +899,7 @@ Bool LadderPreferences::loadProfile( Int profileID )
 			continue;
 
 		p.port = atoi( ptr + 1 );
-		Int i=0;
-		for (; i<strlen(ptr); ++i)
-		{
-			ladName.removeLastChar();
-		}
+		ladName.truncateBy(strlen(ptr));
 		p.address = QuotedPrintableToAsciiString(ladName);
 
 		ptr = ladData.reverseFind(':');
@@ -917,10 +908,7 @@ Bool LadderPreferences::loadProfile( Int profileID )
 			continue;
 
 		p.lastPlayDate = atoi( ptr + 1 );
-		for (i=0; i<strlen(ptr); ++i)
-		{
-			ladData.removeLastChar();
-		}
+		ladData.truncateBy(strlen(ptr));
 		p.name = QuotedPrintableToUnicodeString(ladData);
 
 		m_ladders[p.lastPlayDate] = p;

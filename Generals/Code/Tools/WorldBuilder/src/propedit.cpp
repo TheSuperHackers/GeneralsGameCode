@@ -124,43 +124,43 @@ void PropEdit::validate()
 /////////////////////////////////////////////////////////////////////////////
 // PropEdit message handlers
 
-void PropEdit::OnChangeKeyname() 
+void PropEdit::OnChangeKeyname()
 {
 	validate();
 }
 
-void PropEdit::OnEditchangeKeytype() 
+void PropEdit::OnEditchangeKeytype()
 {
 	validate();
 }
 
-void PropEdit::OnCloseupKeytype() 
+void PropEdit::OnCloseupKeytype()
 {
 	validate();
 }
 
-void PropEdit::OnSelchangeKeytype() 
+void PropEdit::OnSelchangeKeytype()
 {
 	validate();
 }
 
-void PropEdit::OnChangeValue() 
+void PropEdit::OnChangeValue()
 {
 	validate();
 }
 
 
-BOOL PropEdit::OnInitDialog() 
+BOOL PropEdit::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	CWnd *keyname = GetDlgItem(IDC_KEYNAME);
 	CWnd *valuename = GetDlgItem(IDC_VALUE);
 	CComboBox *keytype = (CComboBox*)GetDlgItem(IDC_KEYTYPE);
 	CButton *valuebool = (CButton*)GetDlgItem(IDC_PROPBOOL);
 
 	++m_updating;
-	keytype->SetCurSel((Int)*m_type);	
+	keytype->SetCurSel((Int)*m_type);
 	keyname->SetWindowText(m_key->str());
 	valuename->SetWindowText(m_value->str());
 	valuebool->SetCheck(strcmp(m_value->str(), "true")==0 ? 1 : 0);
@@ -170,7 +170,7 @@ BOOL PropEdit::OnInitDialog()
 	return TRUE;  // return TRUE unless you set the focus to a control
 }
 
-void PropEdit::OnPropbool() 
+void PropEdit::OnPropbool()
 {
-	validate();	
+	validate();
 }

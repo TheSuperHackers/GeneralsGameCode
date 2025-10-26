@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef TRI_H
-#define TRI_H
 
 #include "always.h"
 #include "vector4.h"
@@ -53,8 +47,8 @@
 ** TriClass
 ** When the math library needs to deal with triangles, this will be the form used.
 ** The initial reason for this class is for Commando's collision detection code.  Initially
-** I wrote custom code inside the render object for the terrain to perform collision 
-** detection. Moving the low-level geometrical collision code into the math library makes it 
+** I wrote custom code inside the render object for the terrain to perform collision
+** detection. Moving the low-level geometrical collision code into the math library makes it
 ** more re-useable and independent from changes in the rendering code.
 */
 class TriClass
@@ -153,7 +147,7 @@ inline bool Point_In_Triangle_2D(const Vector3 &tri_point0, const Vector3 &tri_p
 
 		// The triangle is degenerate. This should be a rare case, so it does not matter much if it
 		// is a little slower than the non-colinear case.
-		
+
 		// Find the two outer points along the triangle's line ('start' and 'end' points)
 		float p0p1dist2 = p0p1.Length2();
 		float p1p2dist2 = p1p2.Length2();
@@ -296,11 +290,9 @@ inline bool Cast_Semi_Infinite_Axis_Aligned_Ray_To_Triangle(const Vector3 &tri_p
 						flags |= TRI_RAYCAST_FLAG_START_IN_TRI;
 					}
 				}
-			}	// if (result == 0.0f)
-		}	// else (result < 0.0f)
-	}	// if Point_In_Triangle_2D()
+			}
+		}
+	}
 
 	return retval;
 }
-
-#endif

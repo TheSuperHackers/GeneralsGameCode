@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __ObjectRepulsorHelper_H_
-#define __ObjectRepulsorHelper_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/ObjectHelper.h"
 
@@ -48,7 +45,7 @@ class ObjectRepulsorHelper : public ObjectHelper
 {
 
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ObjectRepulsorHelper, ObjectRepulsorHelperModuleData )
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectRepulsorHelper, "ObjectRepulsorHelper" )	
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectRepulsorHelper, "ObjectRepulsorHelper" )
 
 public:
 
@@ -58,6 +55,3 @@ public:
 	virtual UpdateSleepTime update();
 
 };
-
-
-#endif  // end __ObjectRepulsorHelper_H_
