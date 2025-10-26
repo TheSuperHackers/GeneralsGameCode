@@ -49,7 +49,11 @@
 #include "GameClient/GameText.h"
 #include "GameClient/GameWindowTransitions.h"
 
-static std::map<UnicodeString, UnicodeString> replayInfoCache;
+typedef UnicodeString ReplayName;
+typedef UnicodeString TooltipString;
+typedef std::map<ReplayName, TooltipString> ReplayTooltipMap;
+
+static ReplayTooltipMap replayTooltipCache;
 
 // window ids -------------------------------------------------------------------------------------
 static NameKeyType parentReplayMenuID = NAMEKEY_INVALID;
@@ -187,8 +191,8 @@ static void showReplayTooltip(GameWindow* window, WinInstanceData* instData, Uns
 
 	UnicodeString replayFileName = GetReplayFilenameFromListbox(window, row);
 
-	std::map<UnicodeString, UnicodeString>::const_iterator it = replayInfoCache.find(replayFileName);
-	if (it != replayInfoCache.end())
+	ReplayTooltipMap::const_iterator it = replayTooltipCache.find(replayFileName);
+	if (it != replayTooltipCache.end())
 		TheMouse->setCursorTooltip(it->second, -1, NULL, 1.5f);
 	else
 		TheMouse->setCursorTooltip(UnicodeString::TheEmptyString);
@@ -196,7 +200,7 @@ static void showReplayTooltip(GameWindow* window, WinInstanceData* instData, Uns
 
 static UnicodeString buildReplayTooltip(RecorderClass::ReplayHeader header, ReplayGameInfo info)
 {
-	UnicodeString extraStr;
+	UnicodeString tooltipStr;
 
 	if (header.endTime < header.startTime)
 		header.startTime = header.endTime;
@@ -206,7 +210,7 @@ static UnicodeString buildReplayTooltip(RecorderClass::ReplayHeader header, Repl
 	UnsignedInt mins = (totalSeconds % 3600) / 60;
 	UnsignedInt secs = totalSeconds % 60;
 	Real fps = totalSeconds > 0 ? header.frameCount / totalSeconds : 0;
-	extraStr.format(L"%02u:%02u:%02u (%g fps)", hours, mins, secs, fps);
+	tooltipStr.format(L"%02u:%02u:%02u (%g fps)", hours, mins, secs, fps);
 
 	if (header.localPlayerIndex >= 0)
 	{
@@ -216,13 +220,13 @@ static UnicodeString buildReplayTooltip(RecorderClass::ReplayHeader header, Repl
 			const GameSlot* slot = info.getConstSlot(i);
 			if (slot && slot->isHuman())
 			{
-				extraStr.concat(L"\n");
-				extraStr.concat(info.getConstSlot(i)->getName());
+				tooltipStr.concat(L"\n");
+				tooltipStr.concat(info.getConstSlot(i)->getName());
 			}
 		}
 	}
 
-	return extraStr;
+	return tooltipStr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -230,7 +234,7 @@ static UnicodeString buildReplayTooltip(RecorderClass::ReplayHeader header, Repl
 //-------------------------------------------------------------------------------------------------
 void PopulateReplayFileListbox(GameWindow *listbox)
 {
-	replayInfoCache.clear();
+	replayTooltipCache.clear();
 
 	if (!TheMapCache)
 		return;
@@ -300,7 +304,7 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 
 			UnicodeString key;
 			key.translate(asciistr);
-			replayInfoCache[key] = extraStr;
+			replayTooltipCache[key] = extraStr;
 
 			// pick a color
 			Color color;
