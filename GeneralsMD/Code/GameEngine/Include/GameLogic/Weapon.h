@@ -334,9 +334,8 @@ struct HistoricWeaponDamageInfo
 	Bool									triggered;
 
 	HistoricWeaponDamageInfo(UnsignedInt f, const Coord3D& l) :
-		frame(f), location(l)
+		frame(f), location(l), triggered(false)
 	{
-		triggered = false;
 	}
 };
 
