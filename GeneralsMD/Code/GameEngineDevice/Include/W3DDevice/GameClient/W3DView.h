@@ -226,7 +226,7 @@ public:
 	virtual void set3DWireFrameMode(Bool enable);	///<enables custom wireframe rendering of 3D viewport
 
 	Bool updateCameraMovements(void);
-	virtual void forceCameraAreaConstraintRecalc(void) { calcCameraAreaConstraints(); }
+	virtual void forceCameraAreaConstraintRecalc(void) { m_cameraAreaConstraintsValid = false; }
 
 	virtual void setGuardBandBias( const Coord2D *gb ) { m_guardBandBias.x = gb->x; m_guardBandBias.y = gb->y; }
 
@@ -278,10 +278,17 @@ private:
 
 	Region2D m_cameraAreaConstraints; ///< Camera should be constrained to be within this area
 	Bool m_cameraAreaConstraintsValid; ///< If false, recalculates the camera area constraints in the next render update
+	Bool m_clipIntoCameraConstraintsNow; ///< If true, clips the camera into the camera area constraints in the next render update
+	Bool m_recalcCameraConstraintsAfterScrolling; ///< Recalculates the camera area constraints after the user has moved the camera
+	Bool m_recalcCamera; ///< Recalculates the camera transform in the next render update
 
 	void setCameraTransform( void );								///< set the transform matrix of m_3DCamera, based on m_pos & m_angle
 	void buildCameraTransform( Matrix3D *transform );			///< calculate (but do not set) the transform matrix of m_3DCamera, based on m_pos & m_angle
+	void updateCameraAreaConstraints();
 	void calcCameraAreaConstraints();			///< Recalculates the camera area constraints
+	void moveCameraIntoAreaConstraints();
+	void clipCameraIntoAreaConstraints();
+	Bool isWithinCameraAreaConstraints() const;
 	Bool isWithinCameraHeightConstraints() const;
 	void moveAlongWaypointPath(Real milliseconds); ///< Move camera along path.
 	void getPickRay(const ICoord2D *screen, Vector3 *rayStart, Vector3 *rayEnd);	///<returns a line segment (ray) originating at the given screen position

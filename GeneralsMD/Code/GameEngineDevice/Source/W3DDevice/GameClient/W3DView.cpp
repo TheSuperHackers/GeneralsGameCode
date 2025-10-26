@@ -197,6 +197,10 @@ void W3DView::setHeight(Int height)
  	m_3DCamera->Get_Viewport(vMin,vMax);
  	vMax.Y=(Real)(m_originY+height)/(Real)TheDisplay->getHeight();
  	m_3DCamera->Set_Viewport(vMin,vMax);
+
+	// TheSuperHackers @bugfix Now recalculates the camera constraints because
+	// showing or hiding the control bar will change the viewable area.
+	m_cameraAreaConstraintsValid = false;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -216,6 +220,8 @@ void W3DView::setWidth(Int width)
 	//we want to maintain the same scale, so we'll need to adjust the fov.
 	//default W3D fov for full-screen is 50 degrees.
 	m_3DCamera->Set_View_Plane((Real)width/(Real)TheDisplay->getWidth()*DEG_TO_RADF(50.0f),-1);
+
+	m_cameraAreaConstraintsValid = false;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -256,14 +262,6 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 	// add in the camera shake, if any
 	pos.x += m_shakeOffset.x;
 	pos.y += m_shakeOffset.y;
-
-	if (m_cameraAreaConstraintsValid)
-	{
-		pos.x = maxf(m_cameraAreaConstraints.lo.x, pos.x);
-		pos.x = minf(m_cameraAreaConstraints.hi.x, pos.x);
-		pos.y = maxf(m_cameraAreaConstraints.lo.y, pos.y);
-		pos.y = minf(m_cameraAreaConstraints.hi.y, pos.y);
-	}
 
 	// set position of camera itself
 	if (m_useRealZoomCam) //WST 10/10/2002 Real Zoom using FOV
@@ -400,6 +398,7 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 
 	//WST 11/12/2002 New camera shaker system
 	// TheSuperHackers @tweak The camera shaker is now decoupled from the render update.
+	// TheSuperHackers @todo Move Update_Camera_Shaker to the W3DView::update function.
 	CameraShakerSystem.Timestep(TheFramePacer->getLogicTimeStepMilliseconds());
 	CameraShakerSystem.Update_Camera_Shaker(sourcePos, &m_shakerAngles);
 	transform->Rotate_X(m_shakerAngles.X);
@@ -452,6 +451,35 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 }
 
 //-------------------------------------------------------------------------------------------------
+void W3DView::updateCameraAreaConstraints()
+{
+#if defined(RTS_DEBUG)
+	if (!TheGlobalData->m_useCameraConstraints)
+		return;
+#endif
+
+	if (!m_cameraAreaConstraintsValid)
+	{
+		calcCameraAreaConstraints();
+	}
+
+	if (m_cameraAreaConstraintsValid && !isWithinCameraAreaConstraints())
+	{
+		if (m_clipIntoCameraConstraintsNow)
+		{
+			clipCameraIntoAreaConstraints();
+		}
+		else
+		{
+			moveCameraIntoAreaConstraints();
+		}
+
+		m_recalcCamera = true;
+	}
+
+	m_clipIntoCameraConstraintsNow = false;
+}
+
 //-------------------------------------------------------------------------------------------------
 void W3DView::calcCameraAreaConstraints()
 {
@@ -482,9 +510,15 @@ void W3DView::calcCameraAreaConstraints()
 					since we currently plan the game to be restricted to this,
 					it shouldn't be an issue.
 			*/
+
+			// Update the 3D camera before using its transform to calculate the constraints with.
+			Matrix3D cameraTransform;
+			buildCameraTransform(&cameraTransform);
+			m_3DCamera->Set_Transform(cameraTransform);
+
 			Real maxEdgeZ = m_groundLevel;
 	//		const Real BORDER_FUDGE = MAP_XY_FACTOR * 1.414f;
-			Coord3D center;
+			Coord2D center;
 			ICoord2D screen;
 
 			//Pick at the center
@@ -498,7 +532,6 @@ void W3DView::calcCameraAreaConstraints()
 
 			center.x = Vector3::Find_X_At_Z(maxEdgeZ, rayStart, rayEnd);
 			center.y = Vector3::Find_Y_At_Z(maxEdgeZ, rayStart, rayEnd);
-			center.z = maxEdgeZ;
 
 			screen.y = 0.95f*getHeight()+m_originY;
 			getPickRay(&screen, &rayStart, &rayEnd);
@@ -519,6 +552,67 @@ void W3DView::calcCameraAreaConstraints()
 
 		m_cameraAreaConstraintsValid = true;
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void W3DView::moveCameraIntoAreaConstraints()
+{
+	constexpr const Real ConstraintsCushion = 0.0001f;
+	const Real fpsRatio = (Real)BaseFps / TheFramePacer->getUpdateFps();
+	const Real adjustSpeed = TheGlobalData->m_cameraAdjustSpeed * fpsRatio;
+	Coord3D pos = *getPosition();
+
+	Region2D constraintsWithCushion = m_cameraAreaConstraints;
+	constraintsWithCushion.lo.x += ConstraintsCushion;
+	constraintsWithCushion.lo.y += ConstraintsCushion;
+	constraintsWithCushion.hi.x -= ConstraintsCushion;
+	constraintsWithCushion.hi.y -= ConstraintsCushion;
+
+	Real adjustX = constraintsWithCushion.lo.x - pos.x;
+	if (adjustX > 0.0f)
+	{
+		pos.x += adjustX * adjustSpeed;
+	}
+	else
+	{
+		adjustX = constraintsWithCushion.hi.x - pos.x;
+		if (adjustX < 0.0f)
+		{
+			pos.x += adjustX * adjustSpeed;
+		}
+	}
+
+	Real adjustY = constraintsWithCushion.lo.y - pos.y;
+	if (adjustY > 0.0f)
+	{
+		pos.y += adjustY * adjustSpeed;
+	}
+	else
+	{
+		adjustY = constraintsWithCushion.hi.y - pos.y;
+		if (adjustY < 0.0f)
+		{
+			pos.y += adjustY * adjustSpeed;
+		}
+	}
+
+	setPosition(&pos);
+}
+
+//-------------------------------------------------------------------------------------------------
+void W3DView::clipCameraIntoAreaConstraints()
+{
+	Coord3D pos = *getPosition();
+	pos.x = clamp(m_cameraAreaConstraints.lo.x, pos.x, m_cameraAreaConstraints.hi.x);
+	pos.y = clamp(m_cameraAreaConstraints.lo.y, pos.y, m_cameraAreaConstraints.hi.y);
+	setPosition(&pos);
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool W3DView::isWithinCameraAreaConstraints() const
+{
+	const Coord3D* pos = getPosition();
+	return m_cameraAreaConstraints.isInRegion(pos->x, pos->y);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -561,7 +655,6 @@ void W3DView::setCameraTransform( void )
 		return;
 
 	m_cameraHasMovedSinceRequest = true;
-	Matrix3D cameraTransform;
 
 	Real nearZ, farZ;
 	// m_3DCamera->Get_Clip_Planes(nearZ, farZ);
@@ -587,35 +680,12 @@ void W3DView::setCameraTransform( void )
 	m_3DCamera->Set_Clip_Planes(nearZ, farZ);
 
 #if defined(RTS_DEBUG)
-	if (TheGlobalData->m_useCameraConstraints)
-#endif
-	{
-		if (!m_cameraAreaConstraintsValid)
-		{
-			buildCameraTransform(&cameraTransform);
-			m_3DCamera->Set_Transform( cameraTransform );
-			calcCameraAreaConstraints();
-		}
-		DEBUG_ASSERTLOG(m_cameraAreaConstraintsValid,("*** cam constraints are not valid!!!"));
-
-		if (m_cameraAreaConstraintsValid)
-		{
-			Coord3D pos = *getPosition();
-			pos.x = maxf(m_cameraAreaConstraints.lo.x, pos.x);
-			pos.x = minf(m_cameraAreaConstraints.hi.x, pos.x);
-			pos.y = maxf(m_cameraAreaConstraints.lo.y, pos.y);
-			pos.y = minf(m_cameraAreaConstraints.hi.y, pos.y);
-			setPosition(&pos);
-		}
-	}
-
-#if defined(RTS_DEBUG)
 	m_3DCamera->Set_View_Plane( m_FOV, -1 );
 #endif
 
-	// rebuild it (even if we just did it due to camera constraints)
-	buildCameraTransform( &cameraTransform );
-	m_3DCamera->Set_Transform( cameraTransform );
+	Matrix3D cameraTransform;
+	buildCameraTransform(&cameraTransform);
+	m_3DCamera->Set_Transform(cameraTransform);
 
 	if (TheTerrainRenderObject)
 	{
@@ -650,9 +720,6 @@ void W3DView::init( void )
 	// create our 3D camera
 	m_3DCamera = NEW_REF( CameraClass, () );
 
-
-	setCameraTransform();
-
 	// create our 2D camera for the GUI overlay
 	m_2DCamera = NEW_REF( CameraClass, () );
 	m_2DCamera->Set_Position( Vector3( 0, 0, 1 ) );
@@ -661,10 +728,12 @@ void W3DView::init( void )
 	m_2DCamera->Set_View_Plane( min, max );
 	m_2DCamera->Set_Clip_Planes( 0.995f, 2.0f );
 
-	m_cameraAreaConstraintsValid = false;
-
 	m_scrollAmountCutoff = TheGlobalData->m_scrollAmountCutoff;
 
+	m_cameraAreaConstraintsValid = false;
+	m_clipIntoCameraConstraintsNow = true;
+	m_recalcCameraConstraintsAfterScrolling = false;
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -694,6 +763,8 @@ void W3DView::reset( void )
 
 	Coord2D gb = { 0,0 };
 	setGuardBandBias( &gb );
+
+	m_recalcCameraConstraintsAfterScrolling = false;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1116,7 +1187,6 @@ void W3DView::stepView()
 void W3DView::update(void)
 {
 	//USE_PERF_TIMER(W3DView_updateView)
-	Bool recalcCamera = false;
 	Bool didScriptedMovement = false;
 #ifdef LOG_FRAME_TIMES
 	__int64 curTime64,freq64;
@@ -1223,8 +1293,6 @@ void W3DView::update(void)
 						Matrix3D camXForm;
 						camXForm.Look_At(camtran,objPos,0);
 						m_3DCamera->Set_Transform(camXForm);
-
-						recalcCamera = false;	//we already did it
 					}
 				}
 			}
@@ -1306,7 +1374,7 @@ void W3DView::update(void)
 
 				m_groundLevel = objpos.z;
 				didScriptedMovement = true;
-				recalcCamera = true;
+				m_recalcCamera = true;
 			}
 		}
 	}
@@ -1315,7 +1383,7 @@ void W3DView::update(void)
 		// If we aren't frozen for debug, allow the camera to follow scripted movements.
 		if (updateCameraMovements()) {
 			didScriptedMovement = true;
-			recalcCamera = true;
+			m_recalcCamera = true;
 		}
 	} else {
 		if (m_doingRotateCamera || m_doingMoveCameraOnWaypointPath || m_doingPitchCamera || m_doingZoomCamera || m_doingScriptedCameraLock) {
@@ -1327,13 +1395,13 @@ void W3DView::update(void)
 	//
 	if (m_shakeIntensity > 0.01f)
 	{
-		recalcCamera = true;
+		m_recalcCamera = true;
 	}
 
 	//Process New C3 Camera Shaker system
 	if (CameraShakerSystem.IsCameraShaking())
 	{
-		recalcCamera = true;
+		m_recalcCamera = true;
 	}
 
 	/*
@@ -1346,6 +1414,11 @@ void W3DView::update(void)
 	// TheSuperHackers @tweak Can now also zoom when the game is paused.
 	// TheSuperHackers @tweak The camera zoom speed is now decoupled from the render update.
 	// TheSuperHackers @bugfix The camera terrain height adjustment now also works in replay playback.
+	// TheSuperHackers @bugfix xezon 26/10/2025 The camera area constraints are now recalculated when
+	// the camera zoom changes, for example because of terrain elevation changes in the camera's view.
+	// Additionally, the camera can be smoothly pushed away from the constraints, but not while the user
+	// is scrolling, to make the scrolling along the map border a pleasant experience. This behavior
+	// ensures that the view can reach and see all areas of the map, and especially the bottom map border.
 
 	m_terrainHeightUnderCamera = getHeightAroundPos(m_pos.x, m_pos.y);
 	m_currentHeightAboveGround = m_cameraOffset.z * m_zoom - m_terrainHeightUnderCamera;
@@ -1375,13 +1448,34 @@ void W3DView::update(void)
 
 		if (adjustZoomWhenScrolling || adjustZoomWhenNotScrolling)
 		{
-			const Real fpsRatio = (Real)BaseFps / TheFramePacer->getUpdateFps();
-			const Real zoomAdj = (desiredZoom - m_zoom) * TheGlobalData->m_cameraAdjustSpeed * fpsRatio;
-			if (fabs(zoomAdj) >= 0.0001f)
+			Real adjustZoom = desiredZoom - m_zoom;
+
+			if (fabs(adjustZoom) >= 0.0001f)
 			{
-				m_zoom += zoomAdj;
-				recalcCamera = true;
+				const Real fpsRatio = (Real)BaseFps / TheFramePacer->getUpdateFps();
+				adjustZoom *= TheGlobalData->m_cameraAdjustSpeed * fpsRatio;
+
+				if (isScrolling)
+				{
+					m_recalcCameraConstraintsAfterScrolling = true;
+				}
+				else
+				{
+					if (!m_recalcCameraConstraintsAfterScrolling)
+					{
+						m_cameraAreaConstraintsValid = false;
+					}
+				}
+
+				m_zoom += adjustZoom;
+				m_recalcCamera = true;
 			}
+		}
+
+		if (m_recalcCameraConstraintsAfterScrolling && !isScrolling && !m_clipIntoCameraConstraintsNow)
+		{
+			m_recalcCameraConstraintsAfterScrolling = false;
+			m_cameraAreaConstraintsValid = false;
 		}
 	}
 
@@ -1389,10 +1483,13 @@ void W3DView::update(void)
 		return; // don't draw - makes it faster :) jba.
 	}
 
+	updateCameraAreaConstraints();
+
 	// (gth) C&C3 if m_isCameraSlaved then force the camera to update each frame
-	if (recalcCamera || m_isCameraSlaved)
+	if (m_recalcCamera || m_isCameraSlaved)
 	{
 		setCameraTransform();
+		m_recalcCamera = false;
 	}
 
 #ifdef DO_SEISMIC_SIMULATIONS
@@ -1859,9 +1956,10 @@ void W3DView::scrollBy( Coord2D *delta )
 		//m_cameraConstraintValid = false;	// pos change does NOT invalidate cam constraints
 
 		m_doingRotateCamera = false;
-		// set new camera position
-		setCameraTransform();
-
+		// TheSuperHackers @info Clips camera into constraints right away because we do not
+		// want to scroll out of the constraints and be pushed back.
+		m_clipIntoCameraConstraintsNow = true;
+		m_recalcCamera = true;
 	}
 
 }
@@ -1870,8 +1968,9 @@ void W3DView::scrollBy( Coord2D *delta )
 //-------------------------------------------------------------------------------------------------
 void W3DView::forceRedraw()
 {
-	// set the camera
-	setCameraTransform();
+	m_cameraAreaConstraintsValid = false;
+	m_clipIntoCameraConstraintsNow = true;
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1891,8 +1990,7 @@ void W3DView::setAngle( Real angle )
 	m_doingPitchCamera = false;
 	m_doingZoomCamera = false;
 	m_doingScriptedCameraLock = false;
-	// set the camera
-	setCameraTransform();
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1908,8 +2006,10 @@ void W3DView::setPitch( Real angle )
 	m_doingPitchCamera = false;
 	m_doingZoomCamera = false;
 	m_doingScriptedCameraLock = false;
-	// set the camera
-	setCameraTransform();
+	// TheSuperHackers @tweak Now recalculates the camera constraints because
+	// the camera pitch can change the camera distance towards the map border.
+	m_cameraAreaConstraintsValid = false;
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1922,8 +2022,10 @@ void W3DView::setAngleAndPitchToDefault( void )
 
 	m_FXPitch = 1.0;
 
-	// set the camera
-	setCameraTransform();
+	// TheSuperHackers @tweak Now recalculates the camera constraints because
+	// the camera pitch can change the camera distance towards the map border.
+	m_cameraAreaConstraintsValid = false;
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1951,7 +2053,7 @@ void W3DView::setHeightAboveGround(Real z)
 	m_doingZoomCamera = false;
 	m_doingScriptedCameraLock = false;
 	m_cameraAreaConstraintsValid = false;
-	setCameraTransform();
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1971,7 +2073,7 @@ void W3DView::setZoom(Real z)
 	m_doingZoomCamera = false;
 	m_doingScriptedCameraLock = false;
 	m_cameraAreaConstraintsValid = false;
-	setCameraTransform();
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1999,7 +2101,10 @@ void W3DView::setZoomToDefault( void )
 	m_doingZoomCamera = false;
 	m_doingScriptedCameraLock = false;
 	m_cameraAreaConstraintsValid = false;
-	setCameraTransform();
+	// TheSuperHackers @info Clips camera into constraints right away because it looks
+	// better than slowly moving it into constraints on a camera reset.
+	m_clipIntoCameraConstraintsNow = true;
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2012,7 +2117,8 @@ void W3DView::setFieldOfView( Real angle )
 #if defined(RTS_DEBUG)
 	// this is only for testing, and recalculating the
 	// camera every frame is wasteful
-	setCameraTransform();
+	m_cameraAreaConstraintsValid = false;
+	m_recalcCamera = true;
 #endif
 }
 
@@ -2371,8 +2477,10 @@ void W3DView::lookAt( const Coord3D *o )
 	m_doingMoveCameraOnWaypointPath = false;
 	m_CameraArrivedAtWaypointOnPathFlag = false;
 	m_doingScriptedCameraLock = false;
-
-	setCameraTransform();
+	// TheSuperHackers @info Clips camera into constraints right away because it looks
+	// better than slowly moving it into constraints on a new camera placement.
+	m_clipIntoCameraConstraintsNow = true;
+	m_recalcCamera = true;
 
 }
 
@@ -2389,9 +2497,10 @@ void W3DView::initHeightForMap( void )
 	m_cameraOffset.z = m_groundLevel+TheGlobalData->m_cameraHeight;
 	m_cameraOffset.y = -(m_cameraOffset.z / tan(TheGlobalData->m_cameraPitch * (PI / 180.0)));
 	m_cameraOffset.x = -(m_cameraOffset.y * tan(TheGlobalData->m_cameraYaw * (PI / 180.0)));
-	m_cameraAreaConstraintsValid = false; // possible ground level change invalidates camera constraints
-	setCameraTransform();
 
+	m_cameraAreaConstraintsValid = false; // possible ground level change invalidates camera constraints
+	m_clipIntoCameraConstraintsNow = true;
+	m_recalcCamera = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3348,7 +3457,7 @@ void W3DView::cameraDisableRealZoomMode(void) //WST added 10/18/2002
 	m_FXPitch = 1.0f;	//Reset to default
 	//m_zoom = 1.0f;
 	m_FOV = 50.0f * PI/180.0f;
-	setCameraTransform();
+	m_recalcCamera = true;
 	updateView();
 }
 
