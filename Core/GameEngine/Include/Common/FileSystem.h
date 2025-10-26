@@ -53,6 +53,8 @@
 
 #include <Utility/hash_map_adapter.h>
 
+#include "mutex.h"
+
 //----------------------------------------------------------------------------
 //           Forward References
 //----------------------------------------------------------------------------
@@ -168,7 +170,9 @@ protected:
 		rts::string_key<AsciiString>, FileExistData,
 		rts::string_key_hash<AsciiString>,
 		rts::string_key_equal<AsciiString> > FileExistMap;
+
 	mutable FileExistMap m_fileExist;
+	mutable FastCriticalSectionClass m_fileExistMutex;
 #endif
 };
 
