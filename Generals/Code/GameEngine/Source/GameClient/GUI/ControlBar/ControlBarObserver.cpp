@@ -274,7 +274,7 @@ void ControlBar::populateObserverList( void )
 				buttonPlayer[currentButton]->winHide(FALSE);
 				buttonPlayer[currentButton]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
 
-				const GameSlot *slot = TheGameInfo->getConstSlot(currentButton);
+				const GameSlot *slot = TheGameInfo->getConstSlot(i);
 				Color playerColor = p->getPlayerColor();
 				Color backColor = GameMakeColor(0, 0, 0, 255);
 				staticTextPlayer[currentButton]->winSetEnabledTextColors( playerColor, backColor );
