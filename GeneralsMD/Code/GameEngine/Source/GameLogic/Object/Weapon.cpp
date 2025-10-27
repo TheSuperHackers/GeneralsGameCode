@@ -1276,27 +1276,32 @@ void WeaponTemplate::processHistoricDamage(const Object* source, const Coord3D* 
 	{
 		trimOldHistoricDamage();
 
-		Real radSqr = m_historicBonusRadius * m_historicBonusRadius;
-		Int count = 0;
-		for (HistoricWeaponDamageList::iterator it = m_historicDamage.begin(); it != m_historicDamage.end(); ++it)
+		const Int requiredCount = m_historicBonusCount - 1; // minus 1 since we include ourselves implicitly
+		if (m_historicDamage.size() >= requiredCount)
 		{
-			if (is2DDistSquaredLessThan(*pos, it->location, radSqr))
-			{
-				// This one is close enough in time and distance, so count it. This is tracked by template since it applies
-				// across units, so don't try to clear historicDamage on success in here.
-				(*it).triggered = true;
-				++count;
+			const Real radSqr = m_historicBonusRadius * m_historicBonusRadius;
+			Int count = 0;
 
-				if (count >= m_historicBonusCount - 1)	// minus 1 since we include ourselves implicitly
+			for (HistoricWeaponDamageList::iterator it = m_historicDamage.begin(); it != m_historicDamage.end(); ++it)
+			{
+				if (is2DDistSquaredLessThan(*pos, it->location, radSqr))
 				{
-					TheWeaponStore->createAndFireTempWeapon(m_historicBonusWeapon, source, pos);
-					return;
+					// This one is close enough in time and distance, so count it. This is tracked by template since it applies
+					// across units, so don't try to clear historicDamage on success in here.
+					(*it).triggered = true;
+					++count;
+
+					if (count >= requiredCount)
+					{
+						TheWeaponStore->createAndFireTempWeapon(m_historicBonusWeapon, source, pos);
+						return;
+					}
 				}
 			}
-		}
 
-		for (HistoricWeaponDamageList::iterator it = m_historicDamage.begin(); it != m_historicDamage.end(); ++it)
-			(*it).triggered = false;
+			for (HistoricWeaponDamageList::iterator it = m_historicDamage.begin(); it != m_historicDamage.end(); ++it)
+				(*it).triggered = false;
+		}
 
 		// add AFTER checking for historic stuff
 		m_historicDamage.push_back(HistoricWeaponDamageInfo(TheGameLogic->getFrame(), *pos));
