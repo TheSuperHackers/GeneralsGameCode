@@ -320,7 +320,7 @@ struct HistoricWeaponDamageInfo
 	// The time and location this weapon was fired
 	UnsignedInt						frame;
 	Coord3D								location;
-	Int										triggerId;
+	UnsignedInt						triggerId;
 
 	HistoricWeaponDamageInfo(UnsignedInt f, const Coord3D& l) :
 		frame(f), location(l), triggerId(0)
