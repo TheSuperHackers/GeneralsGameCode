@@ -1197,10 +1197,7 @@ void WeaponTemplate::trimOldHistoricDamage() const
 void WeaponTemplate::trimOldHistoricDamage() const
 {
 	if (m_historicDamage.empty())
-	{
-		m_historicDamageInstanceCount = 0;
 		return;
-	}
 
 	const UnsignedInt currentFrame = TheGameLogic->getFrame();
 	const UnsignedInt expirationFrame = currentFrame - m_historicBonusTime;
