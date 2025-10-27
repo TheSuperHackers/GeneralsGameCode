@@ -1231,7 +1231,7 @@ void WeaponTemplate::processHistoricDamage(const Object* source, const Coord3D* 
 				{
 					// This one is close enough in time and distance, so count it. This is tracked by template since it applies
 					// across units, so don't try to clear historicDamage on success in here.
-					(*it).triggerIndex = m_historicDamageInstanceCount;
+					it->triggerIndex = m_historicDamageInstanceCount;
 
 					if (++count == requiredCount)
 					{
