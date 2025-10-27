@@ -1116,12 +1116,17 @@ void WeaponTemplate::trimOldHistoricDamage() const
 #else
 void WeaponTemplate::trimOldHistoricDamage() const
 {
+	if (m_historicDamage.empty())
+		return;
+
+	const UnsignedInt currentFrame = TheGameLogic->getFrame();
+	const UnsignedInt expirationFrame = currentFrame - m_historicBonusTime;
+
 	HistoricWeaponDamageList::iterator it = m_historicDamage.begin();
 
 	while (it != m_historicDamage.end())
 	{
-		UnsignedInt expirationFrame = it->frame + m_historicBonusTime;
-		if (TheGameLogic->getFrame() > expirationFrame || it->triggered)
+		if (it->frame <= expirationFrame || it->triggered)
 			it = m_historicDamage.erase(it);
 		else
 			++it;
