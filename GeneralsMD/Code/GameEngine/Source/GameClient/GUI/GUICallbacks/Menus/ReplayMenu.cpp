@@ -299,12 +299,12 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 			// map
 			UnicodeString mapStr = createMapName(asciistr, info, mapData);
 
-			// extra
-			UnicodeString extraStr = buildReplayTooltip(header, info);
+			// tooltip
+			UnicodeString tooltipStr = buildReplayTooltip(header, info);
 
 			UnicodeString key;
 			key.translate(asciistr);
-			replayTooltipCache[key] = extraStr;
+			replayTooltipCache[key] = tooltipStr;
 
 			// pick a color
 			Color color;
@@ -359,7 +359,6 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 			GadgetListBoxAddEntryText(listbox, displayTimeBuffer, color, insertionIndex, 1);
 			GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 2);
 			GadgetListBoxAddEntryText(listbox, mapStr, mapColor, insertionIndex, 3);
-			//GadgetListBoxAddEntryText(listbox, extraStr, color, insertionIndex, 4);
 		}
 	}
 	GadgetListBoxSetSelected(listbox, 0);
