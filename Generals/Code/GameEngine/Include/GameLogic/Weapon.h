@@ -320,10 +320,10 @@ struct HistoricWeaponDamageInfo
 	// The time and location this weapon was fired
 	UnsignedInt						frame;
 	Coord3D								location;
-	Bool									triggered;
+	Int										triggerIndex;
 
 	HistoricWeaponDamageInfo(UnsignedInt f, const Coord3D& l) :
-		frame(f), location(l), triggered(false)
+		frame(f), location(l), triggerIndex(0)
 	{
 	}
 };
@@ -539,6 +539,7 @@ private:
 	Real m_infantryInaccuracyDist;					///< When this weapon is used against infantry, it can randomly miss by as much as this distance.
 	UnsignedInt m_suspendFXDelay;						///< The fx can be suspended for any delay, in frames, then they will execute as normal
 	mutable HistoricWeaponDamageList m_historicDamage;
+	mutable UnsignedInt m_historicDamageInstanceCount;
 };
 
 // ---------------------------------------------------------

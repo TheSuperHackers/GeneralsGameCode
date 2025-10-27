@@ -309,6 +309,8 @@ WeaponTemplate::WeaponTemplate() : m_nextTemplate(NULL)
 	m_continueAttackRange						= 0.0f;
 	m_infantryInaccuracyDist				= 0.0f;
 	m_suspendFXDelay								= 0;
+
+	m_historicDamageInstanceCount = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1117,7 +1119,10 @@ void WeaponTemplate::trimOldHistoricDamage() const
 void WeaponTemplate::trimOldHistoricDamage() const
 {
 	if (m_historicDamage.empty())
+	{
+		m_historicDamageInstanceCount = 0;
 		return;
+	}
 
 	const UnsignedInt currentFrame = TheGameLogic->getFrame();
 	const UnsignedInt expirationFrame = currentFrame - m_historicBonusTime;
@@ -1141,7 +1146,7 @@ void WeaponTemplate::trimTriggeredHistoricDamage() const
 
 	while (it != m_historicDamage.end())
 	{
-		if (it->triggered)
+		if (it->triggerIndex == m_historicDamageInstanceCount)
 			it = m_historicDamage.erase(it);
 		else
 			++it;
@@ -1212,6 +1217,8 @@ void WeaponTemplate::processHistoricDamage(const Object* source, const Coord3D* 
 	{
 		trimOldHistoricDamage();
 
+		++m_historicDamageInstanceCount;
+
 		const Int requiredCount = m_historicBonusCount - 1; // minus 1 since we include ourselves implicitly
 		if (m_historicDamage.size() >= requiredCount)
 		{
@@ -1224,7 +1231,7 @@ void WeaponTemplate::processHistoricDamage(const Object* source, const Coord3D* 
 				{
 					// This one is close enough in time and distance, so count it. This is tracked by template since it applies
 					// across units, so don't try to clear historicDamage on success in here.
-					(*it).triggered = true;
+					(*it).triggerIndex = m_historicDamageInstanceCount;
 					++count;
 
 					if (count >= requiredCount)
@@ -1235,9 +1242,6 @@ void WeaponTemplate::processHistoricDamage(const Object* source, const Coord3D* 
 					}
 				}
 			}
-
-			for (HistoricWeaponDamageList::iterator it = m_historicDamage.begin(); it != m_historicDamage.end(); ++it)
-				(*it).triggered = false;
 		}
 
 		// add AFTER checking for historic stuff

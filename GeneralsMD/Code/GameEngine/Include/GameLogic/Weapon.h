@@ -331,10 +331,10 @@ struct HistoricWeaponDamageInfo
 	// The time and location this weapon was fired
 	UnsignedInt						frame;
 	Coord3D								location;
-	Bool									triggered;
+	Int										triggerIndex;
 
 	HistoricWeaponDamageInfo(UnsignedInt f, const Coord3D& l) :
-		frame(f), location(l), triggered(false)
+		frame(f), location(l), triggerIndex(0)
 	{
 	}
 };
@@ -567,6 +567,7 @@ private:
 	Bool m_dieOnDetonate;
 
 	mutable HistoricWeaponDamageList m_historicDamage;
+	mutable UnsignedInt m_historicDamageInstanceCount;
 };
 
 // ---------------------------------------------------------
