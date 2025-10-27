@@ -130,6 +130,10 @@ struct FileInfo {
 // TheSuperHackers @feature xezon 23/08/2025 Implements file instance access.
 // Can be used to access different versions of files in different archives under the same name.
 // Instance 0 refers to the top file that shadows all other files under the same name.
+// 
+// TheSuperHackers @bugfix xezon 26/10/2025 Adds a mutex to the file exist map to try prevent
+// application hangs during level load after the file exist map was corrupted because of writes
+// from multiple threads.
 //===============================
 class FileSystem : public SubsystemInterface
 {
