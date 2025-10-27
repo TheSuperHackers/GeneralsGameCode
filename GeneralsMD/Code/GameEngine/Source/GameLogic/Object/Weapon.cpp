@@ -1310,9 +1310,8 @@ void WeaponTemplate::processHistoricDamage(const Object* source, const Coord3D* 
 					// This one is close enough in time and distance, so count it. This is tracked by template since it applies
 					// across units, so don't try to clear historicDamage on success in here.
 					(*it).triggerIndex = m_historicDamageInstanceCount;
-					++count;
 
-					if (count >= requiredCount)
+					if (++count == requiredCount)
 					{
 						TheWeaponStore->createAndFireTempWeapon(m_historicBonusWeapon, source, pos);
 						trimTriggeredHistoricDamage();
