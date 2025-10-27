@@ -1126,13 +1126,27 @@ void WeaponTemplate::trimOldHistoricDamage() const
 
 	while (it != m_historicDamage.end())
 	{
-		if (it->frame <= expirationFrame || it->triggered)
+		if (it->frame <= expirationFrame)
+			it = m_historicDamage.erase(it);
+		else
+			break;
+	}
+}
+#endif
+
+//-------------------------------------------------------------------------------------------------
+void WeaponTemplate::trimTriggeredHistoricDamage() const
+{
+	HistoricWeaponDamageList::iterator it = m_historicDamage.begin();
+
+	while (it != m_historicDamage.end())
+	{
+		if (it->triggered)
 			it = m_historicDamage.erase(it);
 		else
 			++it;
 	}
 }
-#endif
 
 //-------------------------------------------------------------------------------------------------
 static Bool is2DDistSquaredLessThan(const Coord3D& a, const Coord3D& b, Real distSqr)
@@ -1216,6 +1230,7 @@ void WeaponTemplate::processHistoricDamage(const Object* source, const Coord3D* 
 					if (count >= requiredCount)
 					{
 						TheWeaponStore->createAndFireTempWeapon(m_historicBonusWeapon, source, pos);
+						trimTriggeredHistoricDamage();
 						return;
 					}
 				}
