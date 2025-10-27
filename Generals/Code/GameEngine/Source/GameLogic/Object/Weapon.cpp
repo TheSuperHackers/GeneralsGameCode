@@ -310,7 +310,7 @@ WeaponTemplate::WeaponTemplate() : m_nextTemplate(NULL)
 	m_infantryInaccuracyDist				= 0.0f;
 	m_suspendFXDelay								= 0;
 
-	m_historicDamageInstanceCount = 0;
+	m_historicDamageTriggerId = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1143,7 +1143,7 @@ void WeaponTemplate::trimTriggeredHistoricDamage() const
 
 	while (it != m_historicDamage.end())
 	{
-		if (it->triggerIndex == m_historicDamageInstanceCount)
+		if (it->triggerId == m_historicDamageTriggerId)
 			it = m_historicDamage.erase(it);
 		else
 			++it;
@@ -1214,7 +1214,7 @@ void WeaponTemplate::processHistoricDamage(const Object* source, const Coord3D* 
 	{
 		trimOldHistoricDamage();
 
-		++m_historicDamageInstanceCount;
+		++m_historicDamageTriggerId;
 
 		const Int requiredCount = m_historicBonusCount - 1; // minus 1 since we include ourselves implicitly
 		if (m_historicDamage.size() >= requiredCount)
@@ -1228,7 +1228,7 @@ void WeaponTemplate::processHistoricDamage(const Object* source, const Coord3D* 
 				{
 					// This one is close enough in time and distance, so count it. This is tracked by template since it applies
 					// across units, so don't try to clear historicDamage on success in here.
-					it->triggerIndex = m_historicDamageInstanceCount;
+					it->triggerId = m_historicDamageTriggerId;
 
 					if (++count == requiredCount)
 					{
