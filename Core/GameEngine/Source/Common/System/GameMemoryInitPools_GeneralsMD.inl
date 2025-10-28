@@ -553,6 +553,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "BuffTemplate", 32, 32 },
 	{ "ValueModifierBuffEffectNugget", 64, 32 },
 	{ "ColorTintBuffEffectNugget", 32, 32 },
+	{ "ParticleSystemBuffEffectNugget", 32, 32 },
 	{ "ObjectTypes", 32, 32 },
 	{ "NetCommandList", 512, 32 },
 	{ "TurretAIData", 256, 32 },

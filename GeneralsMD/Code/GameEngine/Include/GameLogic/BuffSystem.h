@@ -41,6 +41,8 @@ class BuffEffectNugget;
 class BuffTemplate;
 class BuffTemplateStore;
 
+struct BuffEffectTracker;
+
 //class Object;
 
 
@@ -53,9 +55,9 @@ public:
 	BuffEffectNugget() { }
 	//virtual ~BuffEffectNugget() { }
 
-	virtual void apply(Object* targetObj, const Object* sourceObj) const = 0;
+	virtual void apply(Object* targetObj, const Object* sourceObj, BuffEffectTracker* buffTracker) const = 0;
 
-	virtual void remove(Object* targetObj) const = 0;
+	virtual void remove(Object* targetObj, BuffEffectTracker* buffTracker) const = 0;
 
 
 };
@@ -82,8 +84,8 @@ public:
 
 	UnsignedInt getNextTickFrame(UnsignedInt startFrame, UnsignedInt endFrame) const;
 
-	void applyEffects(Object* targetObj, Object* sourceObj) const;
-	void removeEffects(Object* targetObj) const;
+	void applyEffects(Object* targetObj, Object* sourceObj, BuffEffectTracker* buffTracker) const;
+	void removeEffects(Object* targetObj, BuffEffectTracker* buffTracker) const;
 
 
 protected:

@@ -78,7 +78,7 @@ UpdateSleepTime BuffEffectHelper::update()
 		if (bet.m_frameToRemove <= now) {
 			// remove buff effect
 			// TODO: Handle dynamic "unstacking"
-			bet.m_template->removeEffects(getObject());
+			bet.m_template->removeEffects(getObject(), &bet);
 
 			it = m_buffEffects.erase(it);
 		}
@@ -93,7 +93,7 @@ UpdateSleepTime BuffEffectHelper::update()
 		}
 	}
 
-	return UpdateSleepTime(closestNextTickFrame);
+	return frameToSleepTime(closestNextTickFrame);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -107,13 +107,7 @@ void BuffEffectHelper::applyBuff(const BuffTemplate* buffTemplate, Object* sourc
 
 	UnsignedInt now = TheGameLogic->getFrame();
 
-
-	// Apply the actual buff:
-  // ---
-	buffTemplate->applyEffects(getObject(), sourceObj);
-	// ---
-
-	// Setup BuffEffectTracker entry and add it to the list
+	// Setup BuffEffectTracker entry and add it to the list; TODO: Make this a proper class with memoryPool?
 	// --------------------------------
 	BuffEffectTracker bet;
 	bet.m_template = buffTemplate;
@@ -126,6 +120,12 @@ void BuffEffectHelper::applyBuff(const BuffTemplate* buffTemplate, Object* sourc
 
 	m_buffEffects.push_back(bet);
 
+	// Apply the actual buff:
+	// ---
+	// TODO: Improve this Code!!!
+	buffTemplate->applyEffects(getObject(), sourceObj, &m_buffEffects.back());  //the vector has a copy, use that one.
+	// ---
+
 	// -------------------------------
 
 	// Calculate our next wake frame
@@ -134,7 +134,7 @@ void BuffEffectHelper::applyBuff(const BuffTemplate* buffTemplate, Object* sourc
 	if (nextTick < m_nextTickFrame) {
 		m_nextTickFrame = nextTick;
 		DEBUG_LOG(("BuffEffectHelper::applyBuff 1 -- m_nextTickFrame = %d", m_nextTickFrame));
-		setWakeFrame(getObject(), UPDATE_SLEEP(m_nextTickFrame));
+		setWakeFrame(getObject(), frameToSleepTime(m_nextTickFrame));
 	}
 	// -------------------------------
 
@@ -245,6 +245,17 @@ void BuffEffectHelper::xfer(Xfer* xfer)
 			xfer->xferObjectID(&bet.m_sourceID);
 			xfer->xferBool(&bet.m_isActive);
 
+			// particle system vector count and data
+			UnsignedShort particleSystemCount = bet.m_particleSystemIDs.size();
+			xfer->xferUnsignedShort(&particleSystemCount);
+			ParticleSystemID systemID;
+
+			std::vector<ParticleSystemID>::const_iterator it2;
+			for (it2 = bet.m_particleSystemIDs.begin(); it2 != bet.m_particleSystemIDs.end(); ++it2)
+			{
+				systemID = *it2;
+				xfer->xferUser(&systemID, sizeof(ParticleSystemID));
+			}
 		}
 	}
 	else if (xfer->getXferMode() == XFER_LOAD)
@@ -275,6 +286,17 @@ void BuffEffectHelper::xfer(Xfer* xfer)
 			xfer->xferUnsignedInt(&bet.m_numStacks);
 			xfer->xferObjectID(&bet.m_sourceID);
 			xfer->xferBool(&bet.m_isActive);
+
+			// particle system vector count and data
+			UnsignedShort particleSystemCount;
+			xfer->xferUnsignedShort(&particleSystemCount);
+
+			for (UnsignedShort i = 0; i < particleSystemCount; ++i)
+			{
+				ParticleSystemID systemID;
+				xfer->xferUser(&systemID, sizeof(ParticleSystemID));
+				bet.m_particleSystemIDs.push_back(systemID);
+			}
 
 			m_buffEffects.push_back(bet);
 		}

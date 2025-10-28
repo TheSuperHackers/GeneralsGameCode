@@ -35,6 +35,10 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/ObjectHelper.h"
 #include "GameLogic/BuffSystem.h"
+#include "GameClient/ParticleSys.h"
+
+
+//enum ParticleSystemID CPP_11(: Int);
 
 
 struct BuffEffectTracker
@@ -45,6 +49,7 @@ struct BuffEffectTracker
 	UnsignedInt m_numStacks;
 	ObjectID m_sourceID;
 	Bool m_isActive;
+	std::vector<ParticleSystemID> m_particleSystemIDs;
 
 	BuffEffectTracker() {
 		m_template = NULL;
@@ -53,6 +58,27 @@ struct BuffEffectTracker
 		m_numStacks = 0;
 		m_sourceID = INVALID_ID;
 		m_isActive = FALSE;
+		m_particleSystemIDs.clear();
+	}
+
+	void addParticleSystem(ParticleSystemID id) {
+		m_particleSystemIDs.push_back(id);
+	}
+
+	void clearParticleSystems() {
+		DEBUG_LOG(("BuffEffectTracker::clearParticleSystems - count = %d", m_particleSystemIDs.size()));
+		for (ParticleSystemID id : m_particleSystemIDs) {
+			DEBUG_LOG(("BuffEffectTracker::clearParticleSystems - try to remove system %d", id));
+			ParticleSystem* particleSystem = TheParticleSystemManager->findParticleSystem(id);
+			if (particleSystem) {
+				particleSystem->stop();
+				particleSystem->destroy();
+			}
+			else {
+				DEBUG_LOG(("BuffEffectTracker::clearParticleSystems - sys not found!"));
+			}
+		}
+		m_particleSystemIDs.clear();
 	}
 };
 

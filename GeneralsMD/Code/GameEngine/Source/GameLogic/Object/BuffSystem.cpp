@@ -37,6 +37,8 @@
 #include "GameLogic/Module/BodyModule.h"
 #include "GameClient/TintStatus.h"
 #include "GameClient/Drawable.h"
+#include "GameClient/ParticleSys.h"
+#include "GameLogic/Module/BuffEffectHelper.h"
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,7 +74,7 @@ public:
 		m_moveSpeedScalar = 1.0f;
 	}
 
-	virtual void apply(Object* targetObj, const Object* sourceObj) const
+	virtual void apply(Object* targetObj, const Object* sourceObj, BuffEffectTracker* buffTracker) const
 	{
 		DEBUG_LOG(("ValueModifierBuffEffectNugget::apply 0"));
 
@@ -89,7 +91,7 @@ public:
 		}
 	}
 
-	virtual void remove(Object* targetObj) const
+	virtual void remove(Object* targetObj, BuffEffectTracker* buffTracker) const
 	{
 		DEBUG_LOG(("ValueModifierBuffEffectNugget::remove 0"));
 
@@ -154,7 +156,7 @@ public:
 		m_tintStatus = TINT_STATUS_INVALID;
 	}
 
-	virtual void apply(Object* targetObj, const Object* sourceObj) const
+	virtual void apply(Object* targetObj, const Object* sourceObj, BuffEffectTracker* buffTracker) const
 	{
 		Drawable* draw = targetObj->getDrawable();
 		if (draw)
@@ -165,7 +167,7 @@ public:
 		}
 	}
 
-	virtual void remove(Object* targetObj) const
+	virtual void remove(Object* targetObj, BuffEffectTracker* buffTracker) const
 	{
 		Drawable* draw = targetObj->getDrawable();
 		if (draw)
@@ -181,7 +183,6 @@ public:
 		static const FieldParse myFieldParse[] =
 		{
 			{ "TintStatusType", TintStatusFlags::parseSingleBitFromINI,	NULL, offsetof(ColorTintBuffEffectNugget, m_tintStatus) },
-		
 			{ 0, 0, 0, 0 }
 		};
 
@@ -201,6 +202,63 @@ private:
 };
 EMPTY_DTOR(ColorTintBuffEffectNugget)
 
+
+//-------------------------------------------------------------------------------------------------
+class ParticleSystemBuffEffectNugget : public BuffEffectNugget
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ParticleSystemBuffEffectNugget, "ParticleSystemBuffEffectNugget")
+public:
+
+	ParticleSystemBuffEffectNugget()
+	{
+		m_particleSysTemplate = NULL;
+	}
+
+	virtual void apply(Object* targetObj, const Object* sourceObj, BuffEffectTracker* buffTracker) const
+	{
+		ParticleSystem* sys = TheParticleSystemManager->createParticleSystem(m_particleSysTemplate);
+
+		if (sys) {
+			sys->attachToObject(targetObj);
+			if (buffTracker) {
+				DEBUG_LOG(("ParticleSystemBuffEffectNugget::apply - add system %d to buffTracker", sys->getSystemID()));
+				buffTracker->addParticleSystem(sys->getSystemID());
+			}
+			//sys->setSystemLifetime(data->m_bonusDuration);
+		}
+	}
+
+	virtual void remove(Object* targetObj, BuffEffectTracker* buffTracker) const
+	{
+		// ParticleSystems are cleared for the whole Buff, not per nugget.
+	}
+
+	static void parse(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
+	{
+		static const FieldParse myFieldParse[] =
+		{
+			{ "ParticleSystem", INI::parseParticleSystemTemplate,	NULL, offsetof(ParticleSystemBuffEffectNugget, m_particleSysTemplate) },
+			{ 0, 0, 0, 0 }
+		};
+
+		MultiIniFieldParse p;
+		p.add(myFieldParse);
+
+		ParticleSystemBuffEffectNugget* nugget = newInstance(ParticleSystemBuffEffectNugget);
+
+		ini->initFromINIMulti(nugget, p);
+
+		((BuffTemplate*)instance)->addBuffEffectNugget(nugget);
+	}
+
+private:
+	const ParticleSystemTemplate* m_particleSysTemplate;
+
+};
+EMPTY_DTOR(ParticleSystemBuffEffectNugget)
+
+//-------------------------------------------------------------------------------------------------
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 // END BUFF EFFECT NUGGETS
@@ -210,7 +268,7 @@ static const FieldParse TheBuffTemplateFieldParse[] =
 {
 	{ "ValueModifier",			ValueModifierBuffEffectNugget::parseValueModifier, 0, 0},
 	{ "ColorTintEffect",		ColorTintBuffEffectNugget::parseColorTintEffect, 0, 0},
-	//{ "CreateDebris",			GenericObjectCreationNugget::parseDebris, 0, 0},
+	{ "ParticleSystemEffect",		ParticleSystemBuffEffectNugget::parse, 0, 0},
 	//{ "ApplyRandomForce",	ApplyRandomForceNugget::parse, 0, 0},
 	//{ "DeliverPayload",		DeliverPayloadNugget::parse, 0, 0},
 	//{ "FireWeapon",				FireWeaponNugget::parse, 0, 0},
@@ -235,20 +293,22 @@ void BuffTemplate::addBuffEffectNugget(BuffEffectNugget* nugget)
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
-void BuffTemplate::applyEffects(Object* targetObj, Object* sourceObj) const
+void BuffTemplate::applyEffects(Object* targetObj, Object* sourceObj, BuffEffectTracker* buffTracker) const
 {
 	for (BuffEffectNugget* buffEffectNugget : m_nuggets) {
-		buffEffectNugget->apply(targetObj, sourceObj);
+		buffEffectNugget->apply(targetObj, sourceObj, buffTracker);
 	}
 }
 //-------------------------------------------------------------------------------------------------
 
 
-void BuffTemplate::removeEffects(Object* targetObj) const
+void BuffTemplate::removeEffects(Object* targetObj, BuffEffectTracker* buffTracker) const
 {
 	for (BuffEffectNugget* buffEffectNugget : m_nuggets) {
-		buffEffectNugget->remove(targetObj);
+		buffEffectNugget->remove(targetObj, buffTracker);
 	}
+
+	buffTracker->clearParticleSystems();
 }
 
 //-------------------------------------------------------------------------------------------------
