@@ -2569,20 +2569,7 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 		return;
 	}
 
-	switch (parms->m_cmd)
-	{
-		case AICMD_GUARD_POSITION:
-		case AICMD_GUARD_OBJECT:
-		case AICMD_GUARD_AREA:
-		case AICMD_HUNT:
-		case AICMD_GUARD_RETALIATE:
-			setFlag(ALLOW_INTERRUPT_AND_RESUME_OF_CUR_STATE_FOR_RELOAD, true);
-			break;
-		default:
-			setFlag(ALLOW_INTERRUPT_AND_RESUME_OF_CUR_STATE_FOR_RELOAD, false);
-			break;
-	}
-
+	setFlag(ALLOW_INTERRUPT_AND_RESUME_OF_CUR_STATE_FOR_RELOAD, isGuardCommand(parms->m_cmd));
 	setFlag(HAS_PENDING_COMMAND, false);
 	AIUpdateInterface::aiDoCommand(parms);
 }
@@ -2622,6 +2609,21 @@ Bool JetAIUpdate::commandRequiresTakeoff(const AICommandParms* parms) const
 
 		default:
 			return true;
+	}
+}
+
+Bool JetAIUpdate::isGuardCommand(const AICommandType commandType) const
+{
+	switch (commandType)
+	{
+		case AICMD_GUARD_AREA:
+		case AICMD_GUARD_OBJECT:
+		case AICMD_GUARD_POSITION:
+		case AICMD_GUARD_RETALIATE:
+		case AICMD_HUNT:
+			return true;
+		default:
+			return false;
 	}
 }
 

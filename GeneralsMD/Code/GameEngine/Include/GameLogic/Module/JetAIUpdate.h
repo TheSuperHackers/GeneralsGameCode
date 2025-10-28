@@ -142,6 +142,7 @@ protected:
 	virtual Bool getTreatAsAircraftForLocoDistToGoal() const;
 	virtual Bool shouldDeferCommand(const AICommandType commandType) const; ///< returns whether the specified command type should be deferred
 	virtual Bool commandRequiresTakeoff(const AICommandParms* parms) const; ///< returns whether the specified command requires takeoff
+	virtual Bool isGuardCommand(const AICommandType commandType) const; ///< returns whether the specified command type is a guard command
 	Bool isParkedAt(const Object* obj) const;
 
 private:
