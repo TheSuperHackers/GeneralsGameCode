@@ -55,6 +55,7 @@
 #include "GameClient/Image.h"
 #include "GameClient/ParticleSys.h"
 #include "GameLogic/Armor.h"
+#include "GameLogic/BuffSystem.h"
 #include "GameLogic/ExperienceTracker.h"
 #include "GameLogic/FPUControl.h"
 #include "GameLogic/ObjectCreationList.h"
@@ -87,6 +88,7 @@ static const BlockParse theTypeTable[] =
 	{ "AudioEvent",					INI::parseAudioEventDefinition },
 	{ "AudioSettings",			INI::parseAudioSettingsDefinition },
 	{ "Bridge",							INI::parseTerrainBridgeDefinition },
+	{ "BuffTemplate",					INI::parseBuffTemplateDefinition },
 	{ "Campaign",						INI::parseCampaignDefinition },
  	{ "ChallengeGenerals",				INI::parseChallengeModeDefinition },
 	{ "CommandButton",			INI::parseCommandButtonDefinition },
@@ -261,7 +263,7 @@ void INI::loadDirectory( AsciiString dirName, Bool subdirs, INILoadType loadType
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void INI::prepFile( AsciiString filename, INILoadType loadType )
+void INI::prepFile( AsciiString filename, INILoadType loadType, Bool optional /*=FALSE*/)
 {
 	// if we have a file open already -- we can't do another one
 	if( m_file != NULL )
@@ -276,7 +278,10 @@ void INI::prepFile( AsciiString filename, INILoadType loadType )
 	m_file = TheFileSystem->openFile(filename.str(), File::READ);
 	if( m_file == NULL )
 	{
-
+		if (optional) {
+			DEBUG_LOG(("INI::load, cannot open file '%s'", filename.str()));
+			return;
+		}
 		DEBUG_CRASH(( "INI::load, cannot open file '%s'", filename.str() ));
 		throw INI_CANT_OPEN_FILE;
 
@@ -348,12 +353,17 @@ static INIFieldParseProc findFieldParse(const FieldParse* parseTable, const char
 //-------------------------------------------------------------------------------------------------
 /** Load and parse an INI file */
 //-------------------------------------------------------------------------------------------------
-void INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
+void INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer, Bool optional /*=FALSE*/)
 {
 	setFPMode(); // so we have consistent Real values for GameLogic -MDC
 
 	s_xfer = pXfer;
-	prepFile(filename, loadType);
+	prepFile(filename, loadType, optional);
+
+	if (optional && m_file == NULL) {
+		// unPrepFile();
+		return;
+	}
 
 	try
 	{
@@ -405,9 +415,7 @@ void INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 	catch (...)
 	{
 		unPrepFile();
-
-		// propagate the exception.
-		throw;
+    throw;
 	}
 
 	unPrepFile();

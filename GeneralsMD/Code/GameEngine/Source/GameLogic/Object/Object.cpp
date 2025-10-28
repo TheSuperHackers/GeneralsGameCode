@@ -96,6 +96,7 @@
 #include "GameLogic/Module/SubdualDamageHelper.h"
 #include "GameLogic/Module/ChronoDamageHelper.h"
 #include "GameLogic/Module/TempWeaponBonusHelper.h"
+#include "GameLogic/Module/BuffEffectHelper.h"
 #include "GameLogic/Module/ToppleUpdate.h"
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/UpgradeModule.h"
@@ -237,6 +238,7 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	m_repulsorHelper(NULL),
 	m_statusDamageHelper(NULL),
 	m_tempWeaponBonusHelper(NULL),
+	m_buffEffectHelper(NULL),
 	m_subdualDamageHelper(NULL),
 	m_chronoDamageHelper(NULL),
 	m_smcHelper(NULL),
@@ -445,6 +447,16 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 		m_tempWeaponBonusHelper = newInstance(TempWeaponBonusHelper)(this, &tempWeaponBonusModuleData);
 		*curB++ = m_tempWeaponBonusHelper;
 	}
+
+	// TODO: Are there any kinds of objects that cannot get buffs at all?
+	{
+		static const NameKeyType buffEffectHelperModuleDataTagNameKey = NAMEKEY( "ModuleTag_BuffEffectHelper" );
+		static BuffEffectHelperModuleData tempBuffEffectHelperModuleData;
+		tempBuffEffectHelperModuleData.setModuleTagNameKey( buffEffectHelperModuleDataTagNameKey );
+		m_buffEffectHelper = newInstance(BuffEffectHelper)(this, &tempBuffEffectHelperModuleData);
+		*curB++ = m_buffEffectHelper;
+	}
+
 
 	// behaviors are always done first, so they get into the publicModule arrays
 	// before anything else.
@@ -716,6 +728,7 @@ Object::~Object()
 	m_tempWeaponBonusHelper = NULL;
 	m_subdualDamageHelper = NULL;
 	m_chronoDamageHelper = NULL;
+	m_buffEffectHelper = NULL;
 	m_smcHelper = NULL;
 	m_wsHelper = NULL;
 	m_defectionHelper = NULL;
@@ -5480,6 +5493,14 @@ void Object::notifyChronoDamage(Real amount)
 	}
 }
 
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void Object::applyBuff(const BuffTemplate* buffTemp, UnsignedInt duration, Object* sourceObj)
+{
+	DEBUG_LOG(("Object::applyBuff '%s' to obj '%s'", buffTemp->getName().str(), getTemplate()->getName().str()));
+	if (m_buffEffectHelper)
+		m_buffEffectHelper->applyBuff(buffTemp, sourceObj, duration);
+}
 //-------------------------------------------------------------------------------------------------
 /** Given a special power template, find the module in the object that can implement it.
 	* There can be at most one */

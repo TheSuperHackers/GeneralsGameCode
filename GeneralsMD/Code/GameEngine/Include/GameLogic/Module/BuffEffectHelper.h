@@ -22,54 +22,77 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: TempWeaponBonusHelper.h ////////////////////////////////////////////////////////////////////////
-// Author: Graham Smallwood, June 2003
-// Desc:   Object helper - Clears Temporary weapon bonus effects
+// FILE: BuffEffectHelper.h ////////////////////////////////////////////////////////////////////////
+// Author: Andi W, Oct 25
+// Desc:   Buff Effect Helper - Tracks active buffs
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
-#ifndef __TempWeaponBonusHelper_H_
-#define __TempWeaponBonusHelper_H_
+#ifndef __BuffEffectHelper_H_
+#define __BuffEffectHelper_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/ObjectHelper.h"
-#include "GameClient/TintStatus.h"
+#include "GameLogic/BuffSystem.h"
 
-enum WeaponBonusConditionType CPP_11(: Int);
-// enum TintStatus CPP_11(: Int);
+
+struct BuffEffectTracker
+{
+	const BuffTemplate* m_template;
+	UnsignedInt m_frameCreated;
+	UnsignedInt m_frameToRemove;
+	UnsignedInt m_numStacks;
+	ObjectID m_sourceID;
+	Bool m_isActive;
+
+	BuffEffectTracker() {
+		m_template = NULL;
+		m_frameCreated = 0;
+		m_frameToRemove = 0;
+		m_numStacks = 0;
+		m_sourceID = INVALID_ID;
+		m_isActive = FALSE;
+	}
+};
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-class TempWeaponBonusHelperModuleData : public ModuleData
+class BuffEffectHelperModuleData : public ModuleData
 {
 
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-class TempWeaponBonusHelper : public ObjectHelper
+class BuffEffectHelper : public ObjectHelper
 {
 
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( TempWeaponBonusHelper, TempWeaponBonusHelperModuleData )
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TempWeaponBonusHelper, "TempWeaponBonusHelper" )
+	  MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(BuffEffectHelper, BuffEffectHelperModuleData)
+		MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BuffEffectHelper, "BuffEffectHelper")
 
 public:
 
-	TempWeaponBonusHelper( Thing *thing, const ModuleData *modData );
+	BuffEffectHelper(Thing* thing, const ModuleData* modData);
 	// virtual destructor prototype provided by memory pool object
 
 	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
 	virtual UpdateSleepTime update();
 
-	void doTempWeaponBonus( WeaponBonusConditionType status, UnsignedInt duration, TintStatus tintStatus = TINT_STATUS_INVALID);
+	//void doTempWeaponBonus(WeaponBonusConditionType status, UnsignedInt duration, TintStatus tintStatus = TINT_STATUS_INVALID);
+
+	void applyBuff(const BuffTemplate* buffTemplate, Object* sourceObj, UnsignedInt duration);
 
 protected:
-	WeaponBonusConditionType m_currentBonus;
-	TintStatus m_currentTint;
-	UnsignedInt m_frameToRemove;
-	void clearTempWeaponBonus();
+	//WeaponBonusConditionType m_currentBonus;
+	//TintStatus m_currentTint;
+	//UnsignedInt m_frameToRemove;
+	//void clearTempWeaponBonus();
+
+	std::vector<BuffEffectTracker> m_buffEffects;
+	UnsignedInt m_nextTickFrame;
+
 };
 
 
-#endif  // end __TempWeaponBonusHelper_H_
+#endif  // end __BuffEffectHelper_H_

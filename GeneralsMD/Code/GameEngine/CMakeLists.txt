@@ -473,6 +473,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/SupplyWarehouseDockUpdate.h
     Include/GameLogic/Module/TechBuildingBehavior.h
     Include/GameLogic/Module/TempWeaponBonusHelper.h
+    Include/GameLogic/Module/BuffEffectHelper.h
     Include/GameLogic/Module/TensileFormationUpdate.h
     Include/GameLogic/Module/ToppleUpdate.h
     Include/GameLogic/Module/TransitionDamageFX.h
@@ -491,6 +492,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/TeleporterAIUpdate.h
     Include/GameLogic/Module/WaveGuideUpdate.h
     Include/GameLogic/Module/WeaponBonusUpdate.h
+    Include/GameLogic/Module/BuffUpdate.h
     Include/GameLogic/Module/ArmorDamageScalarUpdate.h
     Include/GameLogic/Module/WeaponBonusUpgrade.h
     Include/GameLogic/Module/WeaponSetUpgrade.h
@@ -499,6 +501,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/KodiakUpdate.h
     Include/GameLogic/Object.h
     Include/GameLogic/ObjectCreationList.h
+    Include/GameLogic/BuffSystem.h
     Include/GameLogic/ObjectIter.h
     Include/GameLogic/ObjectScriptStatusBits.h
     Include/GameLogic/ObjectTypes.h
@@ -982,9 +985,11 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Helper/SubdualDamageHelper.cpp
     Source/GameLogic/Object/Helper/ChronoDamageHelper.cpp
     Source/GameLogic/Object/Helper/TempWeaponBonusHelper.cpp
+    Source/GameLogic/Object/Helper/BuffEffectHelper.cpp
     Source/GameLogic/Object/Locomotor.cpp
     Source/GameLogic/Object/Object.cpp
     Source/GameLogic/Object/ObjectCreationList.cpp
+    Source/GameLogic/Object/BuffSystem.cpp
     Source/GameLogic/Object/ObjectTypes.cpp
     Source/GameLogic/Object/PartitionManager.cpp
     Source/GameLogic/Object/SimpleObjectIterator.cpp
@@ -1091,6 +1096,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Update/UpdateModule.cpp
     Source/GameLogic/Object/Update/WaveGuideUpdate.cpp
     Source/GameLogic/Object/Update/WeaponBonusUpdate.cpp
+    Source/GameLogic/Object/Update/BuffUpdate.cpp
     Source/GameLogic/Object/Update/ArmorDamageScalarUpdate.cpp
     Source/GameLogic/Object/Update/KodiakDeploymentUpdate.cpp
     Source/GameLogic/Object/Update/KodiakUpdate.cpp
