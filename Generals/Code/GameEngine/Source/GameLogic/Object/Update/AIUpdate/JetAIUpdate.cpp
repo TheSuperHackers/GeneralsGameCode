@@ -2354,6 +2354,11 @@ Bool JetAIUpdate::shouldDeferCommand(const AICommandType commandType) const
 	if (commandType == AICMD_IDLE && currentState == RELOAD_AMMO)
 		return true;
 
+#if !RETAIL_COMPATIBLE_CRC
+	if (isGuardCommand(commandType) && currentState == RELOAD_AMMO)
+		return true;
+#endif
+
 	return false;
 }
 
