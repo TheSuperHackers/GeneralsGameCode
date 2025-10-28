@@ -2557,38 +2557,16 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 		return;
 	}
 
-	if (!getFlag(ALLOW_AIR_LOCO))
+	if (!getFlag(ALLOW_AIR_LOCO) && commandRequiresTakeoff(parms))
 	{
-		switch (parms->m_cmd)
-		{
-			case AICMD_IDLE:
-			case AICMD_BUSY:
-			case AICMD_FOLLOW_EXITPRODUCTION_PATH:
-				// don't need (or want) to take off for these
-				break;
+		// nuke any existing pending cmd
+		m_mostRecentCommand.store(*parms);
+		setFlag(HAS_PENDING_COMMAND, true);
 
-			case AICMD_ENTER:
-			case AICMD_GET_REPAIRED:
-
-				// if we're already parked at the airfield in question, just ignore.
-				if (isParkedAt(parms->m_obj))
-					return;
-
-				FALLTHROUGH; // else fall thru to the default case!
-
-			default:
-			{
-				// nuke any existing pending cmd
-				m_mostRecentCommand.store(*parms);
-				setFlag(HAS_PENDING_COMMAND, true);
-
-				getStateMachine()->clear();
-				setLastCommandSource( CMD_FROM_AI );
-				getStateMachine()->setState( TAKING_OFF_AWAIT_CLEARANCE );
-
-				return;
-			}
-		}
+		getStateMachine()->clear();
+		setLastCommandSource(CMD_FROM_AI);
+		getStateMachine()->setState(TAKING_OFF_AWAIT_CLEARANCE);
+		return;
 	}
 
 	switch (parms->m_cmd)
@@ -2625,6 +2603,26 @@ Bool JetAIUpdate::shouldDeferCommand(const AICommandType commandType) const
 		return true;
 
 	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool JetAIUpdate::commandRequiresTakeoff(const AICommandParms* parms) const
+{
+	switch (parms->m_cmd)
+	{
+		case AICMD_IDLE:
+		case AICMD_BUSY:
+		case AICMD_FOLLOW_EXITPRODUCTION_PATH:
+			return false;
+
+		case AICMD_ENTER:
+		case AICMD_GET_REPAIRED:
+			// if we're already parked at the airfield in question, just ignore.
+			return !isParkedAt(parms->m_obj);
+
+		default:
+			return true;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
