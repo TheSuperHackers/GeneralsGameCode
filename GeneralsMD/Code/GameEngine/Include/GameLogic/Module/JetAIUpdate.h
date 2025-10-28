@@ -140,6 +140,7 @@ protected:
 	void positionLockon();
 
 	virtual Bool getTreatAsAircraftForLocoDistToGoal() const;
+	virtual Bool shouldDeferCommand(const AICommandType commandType) const; ///< returns whether the specified command type should be deferred
 	Bool isParkedAt(const Object* obj) const;
 
 private:

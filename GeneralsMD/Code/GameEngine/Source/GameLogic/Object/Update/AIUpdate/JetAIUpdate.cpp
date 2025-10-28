@@ -2543,18 +2543,8 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 	// note that we always store this, even if nothing will be "pending".
 	m_mostRecentCommand.store(*parms);
 
-	if (getFlag(TAKEOFF_IN_PROGRESS) || getFlag(LANDING_IN_PROGRESS))
+	if (shouldDeferCommand(parms->m_cmd))
 	{
-		// have to wait for takeoff or landing to complete, just store the sucker
-		setFlag(HAS_PENDING_COMMAND, true);
-		return;
-	}
-
-	if (parms->m_cmd == AICMD_IDLE && getStateMachine()->getCurrentStateID() == RELOAD_AMMO)
-	{
-		// uber-special-case... if we are told to idle, but are reloading ammo, ignore it for now,
-		// since we're already doing "nothing" and responding to this will cease our reload...
-		// don't just return, tho, in case we were (say) reloading during a guard stint.
 		setFlag(HAS_PENDING_COMMAND, true);
 		return;
 	}
@@ -2617,6 +2607,24 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 
 	setFlag(HAS_PENDING_COMMAND, false);
 	AIUpdateInterface::aiDoCommand(parms);
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool JetAIUpdate::shouldDeferCommand(const AICommandType commandType) const
+{
+	// Always defer commands received during takeoff or landing
+	if (getFlag(TAKEOFF_IN_PROGRESS) || getFlag(LANDING_IN_PROGRESS))
+		return true;
+
+	const StateID currentState = getStateMachine()->getCurrentStateID();
+
+	// uber-special-case... if we are told to idle, but are reloading ammo, ignore it for now,
+	// since we're already doing "nothing" and responding to this will cease our reload...
+	// don't just return, tho, in case we were (say) reloading during a guard stint.
+	if (commandType == AICMD_IDLE && currentState == RELOAD_AMMO)
+		return true;
+
+	return false;
 }
 
 //-------------------------------------------------------------------------------------------------
