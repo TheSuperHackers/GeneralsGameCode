@@ -2322,7 +2322,8 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 		setFlag(HAS_PENDING_COMMAND, true);
 		return;
 	}
-	else if (parms->m_cmd == AICMD_IDLE && getStateMachine()->getCurrentStateID() == RELOAD_AMMO)
+
+	if (parms->m_cmd == AICMD_IDLE && getStateMachine()->getCurrentStateID() == RELOAD_AMMO)
 	{
 		// uber-special-case... if we are told to idle, but are reloading ammo, ignore it for now,
 		// since we're already doing "nothing" and responding to this will cease our reload...
@@ -2330,7 +2331,8 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 		setFlag(HAS_PENDING_COMMAND, true);
 		return;
 	}
-	else if (!getFlag(ALLOW_AIR_LOCO))
+
+	if (!getFlag(ALLOW_AIR_LOCO))
 	{
 		switch (parms->m_cmd)
 		{
