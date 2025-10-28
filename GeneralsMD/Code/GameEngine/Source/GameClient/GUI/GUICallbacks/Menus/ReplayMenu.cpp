@@ -240,6 +240,7 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 		return;
 
 	GadgetListBoxReset(listbox);
+	const Int listboxLength = GadgetListBoxGetListLength(listbox);
 
 	// TheSuperHackers @tweak xezon 08/06/2025 Now shows missing maps in red color.
 	enum {
@@ -272,7 +273,6 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 	TheFileSystem->getFileListInDirectory(TheRecorder->getReplayDir(), asciisearch, replayFilenames, FALSE);
 
 	TheMapCache->updateCache();
-
 
 	for (it = replayFilenames.begin(); it != replayFilenames.end(); ++it)
 	{
@@ -355,10 +355,15 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 					mapColor = colors[COLOR_MISSING_MAP_CRC_MISMATCH];
 			}
 
-			Int insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
+			const Int insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
+			DEBUG_ASSERTCRASH(insertionIndex >= 0, ("Expects valid index"));
 			GadgetListBoxAddEntryText(listbox, displayTimeBuffer, color, insertionIndex, 1);
 			GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 2);
 			GadgetListBoxAddEntryText(listbox, mapStr, mapColor, insertionIndex, 3);
+
+			// TheSuperHackers @performance Now stops processing when the list is full.
+			if (insertionIndex == listboxLength - 1)
+				break;
 		}
 	}
 	GadgetListBoxSetSelected(listbox, 0);

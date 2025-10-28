@@ -754,7 +754,8 @@ Int populateMapListboxNoReset( GameWindow *listbox, Bool useSystemMaps, Bool isM
 	// reset the listbox content
 	//GadgetListBoxReset( listbox );
 
-	Int numColumns = GadgetListBoxGetNumColumns( listbox );
+	const Int listboxLength = GadgetListBoxGetListLength( listbox );
+	const Int numColumns = GadgetListBoxGetNumColumns( listbox );
 	const Image *easyImage = NULL;
 	const Image *mediumImage = NULL;
 	const Image *brutalImage = NULL;
@@ -889,7 +890,9 @@ typedef MapDisplayToFileNameList::iterator MapDisplayToFileNameListIter;
 						index = GadgetListBoxAddEntryImage( listbox, NULL, index, 0, w, h, TRUE);
 					}
 				}
+
 				index = GadgetListBoxAddEntryText( listbox, mapDisplayName, color, index, numColumns-1 );
+				DEBUG_ASSERTCRASH(index >= 0, ("Expects valid index"));
 
 				if (it->first == mapToSelect)
 				{
@@ -904,6 +907,12 @@ typedef MapDisplayToFileNameList::iterator MapDisplayToFileNameListIter;
 				{
 					GadgetListBoxSetItemData( listbox, (void *)imageItemData, index, 1 );
 				}
+
+				// TheSuperHackers @performance Now stops processing when the list is full.
+				if (index == listboxLength - 1)
+				{
+					goto Done;
+				}
 			}
 			++tempit;
 		}
@@ -913,6 +922,7 @@ typedef MapDisplayToFileNameList::iterator MapDisplayToFileNameListIter;
 		++curNumPlayersInMap;
 	}
 
+Done:
 	delete battleHonors;
 	battleHonors = NULL;
 

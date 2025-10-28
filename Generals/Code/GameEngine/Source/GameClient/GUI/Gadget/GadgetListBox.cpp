@@ -2576,21 +2576,24 @@ void GadgetListBoxSetListLength( GameWindow *listbox, Int newLength )
 
 }
 
-// GadgetListBoxGetListLength =================================================
-/** Get the list length data contained in the listboxData
-	* parameter. */
 //=============================================================================
 Int GadgetListBoxGetListLength( GameWindow *listbox )
 {
 	ListboxData *listboxData = (ListboxData *)listbox->winGetUserData();
-	if (listboxData->multiSelect)
-	{
+	if (listboxData)
 		return listboxData->listLength;
-	}
-	else
-	{
-		return 1;
-	}
+
+	return 0;
+}
+
+//=============================================================================
+Int GadgetListBoxGetMaxSelectedLength( GameWindow *listbox )
+{
+	ListboxData *listboxData = (ListboxData *)listbox->winGetUserData();
+	if (listboxData)
+		return listboxData->multiSelect ? listboxData->listLength : 1;
+
+	return 0;
 }
 
 // GadgetListBoxGetNumEntries =================================================

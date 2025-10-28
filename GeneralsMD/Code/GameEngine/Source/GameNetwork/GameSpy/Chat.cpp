@@ -148,7 +148,7 @@ Bool GameSpyInfo::sendChat( UnicodeString message, Bool isAction, GameWindow *pl
 		}
 
 		// Get the selections (is this a private message?)
-		Int maxSel = GadgetListBoxGetListLength(playerListbox);
+		Int maxSel = GadgetListBoxGetMaxSelectedLength(playerListbox);
 		Int *selections;
 		GadgetListBoxGetSelected(playerListbox, (Int *)&selections);
 
