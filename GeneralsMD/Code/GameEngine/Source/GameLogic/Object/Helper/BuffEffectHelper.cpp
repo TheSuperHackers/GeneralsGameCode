@@ -67,13 +67,15 @@ UpdateSleepTime BuffEffectHelper::update()
 
 	UnsignedInt now = TheGameLogic->getFrame();
 
+	DEBUG_LOG(("BuffEffectHelper::update 0 - (frame = %d)", now));
+
 	// Loop over all active BuffEffectTrackers and check if they expired or need to do something
 
 	UnsignedInt closestNextTickFrame = UnsignedInt(UPDATE_SLEEP_FOREVER);
 
 	for (auto it = m_buffEffects.begin(); it != m_buffEffects.end(); ) {
 		BuffEffectTracker& bet = *it;
-		if (bet.m_frameToRemove >= now) {
+		if (bet.m_frameToRemove <= now) {
 			// remove buff effect
 			// TODO: Handle dynamic "unstacking"
 			bet.m_template->removeEffects(getObject());
@@ -98,10 +100,18 @@ UpdateSleepTime BuffEffectHelper::update()
 // ------------------------------------------------------------------------------------------------
 void BuffEffectHelper::applyBuff(const BuffTemplate* buffTemplate, Object* sourceObj, UnsignedInt duration)
 {
+	DEBUG_LOG(("BuffEffectHelper::applyBuff 0"));
+
 	// Note: Should we check if the buff is allowed to be applied here? Or should that happen
 	// before, wherever this method is called?
 
 	UnsignedInt now = TheGameLogic->getFrame();
+
+
+	// Apply the actual buff:
+  // ---
+	buffTemplate->applyEffects(getObject(), sourceObj);
+	// ---
 
 	// Setup BuffEffectTracker entry and add it to the list
 	// --------------------------------
@@ -115,6 +125,7 @@ void BuffEffectHelper::applyBuff(const BuffTemplate* buffTemplate, Object* sourc
 		bet.m_sourceID = sourceObj->getID();
 
 	m_buffEffects.push_back(bet);
+
 	// -------------------------------
 
 	// Calculate our next wake frame
@@ -122,6 +133,7 @@ void BuffEffectHelper::applyBuff(const BuffTemplate* buffTemplate, Object* sourc
 	UnsignedInt nextTick = buffTemplate->getNextTickFrame(now, now + duration);
 	if (nextTick < m_nextTickFrame) {
 		m_nextTickFrame = nextTick;
+		DEBUG_LOG(("BuffEffectHelper::applyBuff 1 -- m_nextTickFrame = %d", m_nextTickFrame));
 		setWakeFrame(getObject(), UPDATE_SLEEP(m_nextTickFrame));
 	}
 	// -------------------------------

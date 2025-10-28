@@ -35,11 +35,22 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/BuffSystem.h"
 #include "GameLogic/Module/BodyModule.h"
+#include "GameClient/TintStatus.h"
+#include "GameClient/Drawable.h"
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// BUFF EFFECT NUGGETS AND ALL THEIR PARSE FUNCTIONS GO HERE:
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// GAMEPLAY EFFECTS / MODIFIER NUGGETS GO HERE:
+// ------------------------------------------------------------------------------------------------
+
 
 // Limit multipliers to [0.01, 100.0] to avoid numerical instability
 static void parseMultiplier(INI* ini, void* /*instance*/, void* store, const void* /*userData*/)
@@ -63,6 +74,8 @@ public:
 
 	virtual void apply(Object* targetObj, const Object* sourceObj) const
 	{
+		DEBUG_LOG(("ValueModifierBuffEffectNugget::apply 0"));
+
 		if (m_armorDamageScalar != 1.0) {
 			BodyModuleInterface* body = targetObj->getBodyModule();
 			if (body) {
@@ -78,6 +91,8 @@ public:
 
 	virtual void remove(Object* targetObj) const
 	{
+		DEBUG_LOG(("ValueModifierBuffEffectNugget::remove 0"));
+
 		if (m_armorDamageScalar != 1.0) {
 			BodyModuleInterface* body = targetObj->getBodyModule();
 			if (body) {
@@ -121,11 +136,80 @@ private:
 };
 EMPTY_DTOR(ValueModifierBuffEffectNugget)
 
+
+
+
+//-------------------------------------------------------------------------------------------------
+// VISUAL / AUDIO EFFECT NUGGETS GO HERE:
+//-------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------
+class ColorTintBuffEffectNugget : public BuffEffectNugget
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ColorTintBuffEffectNugget, "ColorTintBuffEffectNugget")
+public:
+
+	ColorTintBuffEffectNugget()
+	{
+		m_tintStatus = TINT_STATUS_INVALID;
+	}
+
+	virtual void apply(Object* targetObj, const Object* sourceObj) const
+	{
+		Drawable* draw = targetObj->getDrawable();
+		if (draw)
+		{
+			if (m_tintStatus > TINT_STATUS_INVALID && m_tintStatus < TINT_STATUS_COUNT) {
+				draw->setTintStatus(m_tintStatus);
+			}
+		}
+	}
+
+	virtual void remove(Object* targetObj) const
+	{
+		Drawable* draw = targetObj->getDrawable();
+		if (draw)
+		{
+			if (m_tintStatus > TINT_STATUS_INVALID && m_tintStatus < TINT_STATUS_COUNT) {
+				draw->clearTintStatus(m_tintStatus);
+			}
+		}
+	}
+
+	static void parseColorTintEffect(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
+	{
+		static const FieldParse myFieldParse[] =
+		{
+			{ "TintStatusType", TintStatusFlags::parseSingleBitFromINI,	NULL, offsetof(ColorTintBuffEffectNugget, m_tintStatus) },
+		
+			{ 0, 0, 0, 0 }
+		};
+
+		MultiIniFieldParse p;
+		p.add(myFieldParse);
+
+		ColorTintBuffEffectNugget* nugget = newInstance(ColorTintBuffEffectNugget);
+
+		ini->initFromINIMulti(nugget, p);
+
+		((BuffTemplate*)instance)->addBuffEffectNugget(nugget);
+	}
+
+private:
+	TintStatus m_tintStatus;
+
+};
+EMPTY_DTOR(ColorTintBuffEffectNugget)
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+// END BUFF EFFECT NUGGETS
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 static const FieldParse TheBuffTemplateFieldParse[] =
 {
 	{ "ValueModifier",			ValueModifierBuffEffectNugget::parseValueModifier, 0, 0},
+	{ "ColorTintEffect",		ColorTintBuffEffectNugget::parseColorTintEffect, 0, 0},
 	//{ "CreateDebris",			GenericObjectCreationNugget::parseDebris, 0, 0},
 	//{ "ApplyRandomForce",	ApplyRandomForceNugget::parse, 0, 0},
 	//{ "DeliverPayload",		DeliverPayloadNugget::parse, 0, 0},

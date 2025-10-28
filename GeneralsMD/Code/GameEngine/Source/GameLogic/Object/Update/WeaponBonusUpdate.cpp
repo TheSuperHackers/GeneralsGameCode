@@ -68,7 +68,7 @@ WeaponBonusUpdateModuleData::WeaponBonusUpdateModuleData()
 {
 	m_requiredAffectKindOf.clear();
 	m_forbiddenAffectKindOf.clear();
-	m_targetsMask = 0;
+	m_targetsMask = WEAPON_AFFECTS_ALLIES;
 	m_isAffectAirborne = true;
 	m_bonusDuration = 0;
 	m_bonusDelay = 0;
