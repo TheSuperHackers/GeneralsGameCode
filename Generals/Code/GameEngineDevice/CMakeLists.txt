@@ -193,8 +193,8 @@ target_precompile_headers(g_gameenginedevice PRIVATE
     [["Common/STLTypedefs.h"]]
     [["Common/SubsystemInterface.h"]]
     [["INI.h"]]
-    <windows.h>
     [["WWCommon.h"]]
+    <windows.h>
 )
 
 target_link_libraries(g_gameenginedevice PRIVATE

@@ -238,13 +238,13 @@ target_compile_definitions(g_ww3d2 PRIVATE
 )
 
 target_precompile_headers(g_ww3d2 PRIVATE
-    [["always.h"]]
     dx8wrapper.h
+    [["always.h"]]
     [["STLUtils.h"]]
     [["win.h"]]
-    <windows.h>
     [["WWCommon.h"]]
     [["wwstring.h"]]
+    <windows.h>
 )
 
 target_link_libraries(g_ww3d2 PRIVATE

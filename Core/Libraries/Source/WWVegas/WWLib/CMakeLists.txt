@@ -173,9 +173,9 @@ target_precompile_headers(core_wwlib PRIVATE
     always.h
     STLUtils.h
     win.h
-    <windows.h>
     WWCommon.h
     wwstring.h
+    <windows.h>
 )
 
 target_link_libraries(core_wwlib PRIVATE
