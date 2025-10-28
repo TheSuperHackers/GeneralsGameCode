@@ -2355,7 +2355,7 @@ Bool JetAIUpdate::shouldDeferCommand(const AICommandType commandType) const
 		return true;
 
 #if !RETAIL_COMPATIBLE_CRC
-	if (isGuardCommand(commandType) && currentState == RELOAD_AMMO)
+	if (commandRequiresAmmo(commandType) && currentState == RELOAD_AMMO)
 		return true;
 #endif
 
@@ -2379,6 +2379,22 @@ Bool JetAIUpdate::commandRequiresTakeoff(const AICommandParms* parms) const
 
 		default:
 			return true;
+	}
+}
+
+Bool JetAIUpdate::commandRequiresAmmo(const AICommandType commandType) const
+{
+	switch (commandType)
+	{
+		case AICMD_ATTACKMOVE_TO_POSITION:
+		case AICMD_ATTACK_AREA:
+		case AICMD_ATTACK_OBJECT:
+		case AICMD_ATTACK_POSITION:
+		case AICMD_ATTACK_TEAM:
+		case AICMD_FORCE_ATTACK_OBJECT:
+			return true;
+		default:
+			return isGuardCommand(commandType);
 	}
 }
 
