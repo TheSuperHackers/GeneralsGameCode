@@ -71,9 +71,13 @@ class BuffTemplate : public MemoryPoolObject
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BuffTemplate, "BuffTemplate")
 
 public:
-
+	// for lookup
 	AsciiString getName(void) const { return m_name; }
 	void friend_setName(const AsciiString& n) { m_name = n; }
+
+	inline UnsignedInt getMaxStackSize() const { return m_maxStackSize; }
+	inline Bool isStackPerSource() const { return m_stackPerSource; }
+	inline std::vector<AsciiString> getPriorityTemplates() const { return m_priorityTemplates; }
 
 	/**
 		Toss the contents.
@@ -87,9 +91,18 @@ public:
 	void applyEffects(Object* targetObj, Object* sourceObj, BuffEffectTracker* buffTracker) const;
 	void removeEffects(Object* targetObj, BuffEffectTracker* buffTracker) const;
 
+	Bool hasPriorityOver(AsciiString templateName) const;
+
+	const FieldParse* getFieldParse(void) const { return TheBuffTemplateFieldParse; }
 
 protected:
 	AsciiString			m_name;
+	UnsignedInt     m_maxStackSize;
+	Bool						m_stackPerSource;   ///< Each sourceObj has its own stack of buffs on the target.
+
+	std::vector<AsciiString>  m_priorityTemplates;   ///< list of buffTemplates this template has priority over.
+
+	static const FieldParse TheBuffTemplateFieldParse[];
 
 private:
 

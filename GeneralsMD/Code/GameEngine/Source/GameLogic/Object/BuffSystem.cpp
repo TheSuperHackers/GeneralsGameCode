@@ -30,15 +30,20 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "Common/GlobalData.h"
+#include "GameLogic/Module/BuffEffectHelper.h"
 
+#define DEFINE_WEAPONBONUSCONDITION_NAMES
+
+#include "Common/GlobalData.h"
+#include "GameLogic/Weapon.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/BuffSystem.h"
+#include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/BodyModule.h"
 #include "GameClient/TintStatus.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/ParticleSys.h"
-#include "GameLogic/Module/BuffEffectHelper.h"
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,6 +94,13 @@ public:
 			targetObj->setVisionRange(targetObj->getVisionRange() * m_sightRangeScalar);
 			targetObj->setShroudClearingRange(targetObj->getShroudClearingRange() * m_sightRangeScalar);
 		}
+
+		if (m_moveSpeedScalar != 1.0) {
+			AIUpdateInterface* ai = targetObj->getAI();
+			if (ai) {
+				ai->applySpeedMultiplier(m_moveSpeedScalar);
+			}
+		}
 	}
 
 	virtual void remove(Object* targetObj, BuffEffectTracker* buffTracker) const
@@ -108,9 +120,16 @@ public:
 			targetObj->setShroudClearingRange(targetObj->getShroudClearingRange() * scalar);
 		}
 
+		if (m_moveSpeedScalar != 1.0) {
+			AIUpdateInterface* ai = targetObj->getAI();
+			if (ai) {
+				ai->applySpeedMultiplier(1.0f / m_moveSpeedScalar);
+			}
+		}
+
 	}
 
-	static void parseValueModifier(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
+	static void parse(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
 	{
 		static const FieldParse myFieldParse[] =
 		{
@@ -137,6 +156,111 @@ private:
 
 };
 EMPTY_DTOR(ValueModifierBuffEffectNugget)
+
+
+//-------------------------------------------------------------------------------------------------
+class FlagModifierBuffEffectNugget : public BuffEffectNugget
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FlagModifierBuffEffectNugget, "FlagModifierBuffEffectNugget")
+public:
+
+	FlagModifierBuffEffectNugget()
+	{
+		m_bonusType = WEAPONBONUSCONDITION_INVALID;
+		m_bonusTypeAgainst = WEAPONBONUSCONDITION_INVALID;
+		m_weaponSetFlag = WEAPONSET_NONE;
+		m_armorSetFlag = ARMORSET_NONE;
+
+		m_statusToSet.clear();
+		m_statusToClear.clear();
+	}
+
+	virtual void apply(Object* targetObj, const Object* sourceObj, BuffEffectTracker* buffTracker) const
+	{
+		DEBUG_LOG(("FlagModifierBuffEffectNugget::apply 0"));
+
+		if (m_bonusType != WEAPONBONUSCONDITION_INVALID) {
+			targetObj->setWeaponBonusCondition(m_bonusType);
+		}
+
+		if (m_bonusTypeAgainst != WEAPONBONUSCONDITION_INVALID) {
+			targetObj->setWeaponBonusConditionAgainst(m_bonusTypeAgainst);
+		}
+
+		if (m_weaponSetFlag != WEAPONSET_NONE) {
+			targetObj->setWeaponSetFlag(m_weaponSetFlag);
+		}
+
+		if (m_armorSetFlag != ARMORSET_NONE) {
+			targetObj->setArmorSetFlag(m_armorSetFlag);
+		}
+
+		// Any check needed, or just run it anyways?
+		targetObj->setStatus(m_statusToSet);
+		targetObj->clearStatus(m_statusToClear);
+
+	}
+
+	virtual void remove(Object* targetObj, BuffEffectTracker* buffTracker) const
+	{
+		DEBUG_LOG(("FlagModifierBuffEffectNugget::remove 0"));
+
+		if (m_bonusType != WEAPONBONUSCONDITION_INVALID) {
+			targetObj->clearWeaponBonusCondition(m_bonusType);
+		}
+
+		if (m_bonusTypeAgainst != WEAPONBONUSCONDITION_INVALID) {
+			targetObj->clearWeaponBonusConditionAgainst(m_bonusTypeAgainst);
+		}
+
+		if (m_weaponSetFlag != WEAPONSET_NONE) {
+			targetObj->clearWeaponSetFlag(m_weaponSetFlag);
+		}
+
+		if (m_armorSetFlag != ARMORSET_NONE) {
+			targetObj->clearArmorSetFlag(m_armorSetFlag);
+		}
+
+		// Any check needed, or just run it anyways?
+		targetObj->clearStatus(m_statusToSet);
+		targetObj->setStatus(m_statusToClear);
+
+	}
+
+	static void parse(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
+	{
+		static const FieldParse myFieldParse[] =
+		{
+			{ "WeaponBonus", INI::parseIndexList,	TheWeaponBonusNames, offsetof(FlagModifierBuffEffectNugget, m_bonusType) },
+			{ "WeaponBonusAgainst", INI::parseIndexList,	TheWeaponBonusNames, offsetof(FlagModifierBuffEffectNugget, m_bonusTypeAgainst) },
+			{ "WeaponSetFlag", INI::parseIndexList, WeaponSetFlags::getBitNames(), offsetof(FlagModifierBuffEffectNugget, m_weaponSetFlag) },
+			{ "ArmorSetFlag", INI::parseIndexList,	ArmorSetFlags::getBitNames(), offsetof(FlagModifierBuffEffectNugget, m_weaponSetFlag) },
+			{ "StatusToSet", ObjectStatusMaskType::parseFromINI,	NULL, offsetof(FlagModifierBuffEffectNugget, m_statusToSet) },
+			{ "StatusToClear", ObjectStatusMaskType::parseFromINI,	NULL, offsetof(FlagModifierBuffEffectNugget, m_statusToClear) },
+			{ 0, 0, 0, 0 }
+		};
+
+		MultiIniFieldParse p;
+		p.add(myFieldParse);
+
+		FlagModifierBuffEffectNugget* nugget = newInstance(FlagModifierBuffEffectNugget);
+
+		ini->initFromINIMulti(nugget, p);
+
+		((BuffTemplate*)instance)->addBuffEffectNugget(nugget);
+	}
+
+private:
+	WeaponBonusConditionType	m_bonusType;         ///< weapon bonus granted to the object
+	WeaponBonusConditionType	m_bonusTypeAgainst;  ///< weapon bonus granted when attacking the object
+	WeaponSetType m_weaponSetFlag;                 ///< the weaponset flag to set
+	ArmorSetType m_armorSetFlag;                   ///< the armorset flag to set
+
+	ObjectStatusMaskType m_statusToSet;
+	ObjectStatusMaskType m_statusToClear;
+
+};
+EMPTY_DTOR(FlagModifierBuffEffectNugget)
 
 
 
@@ -178,7 +302,7 @@ public:
 		}
 	}
 
-	static void parseColorTintEffect(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
+	static void parse(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
 	{
 		static const FieldParse myFieldParse[] =
 		{
@@ -264,15 +388,16 @@ EMPTY_DTOR(ParticleSystemBuffEffectNugget)
 // END BUFF EFFECT NUGGETS
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-static const FieldParse TheBuffTemplateFieldParse[] =
+const FieldParse BuffTemplate::TheBuffTemplateFieldParse[] =
 {
-	{ "ValueModifier",			ValueModifierBuffEffectNugget::parseValueModifier, 0, 0},
-	{ "ColorTintEffect",		ColorTintBuffEffectNugget::parseColorTintEffect, 0, 0},
+	// Effect Nuggets:
+	{ "ValueModifier",			ValueModifierBuffEffectNugget::parse, 0, 0},
+	{ "FlagModifier",			FlagModifierBuffEffectNugget::parse, 0, 0},
+	{ "ColorTintEffect",		ColorTintBuffEffectNugget::parse, 0, 0},
 	{ "ParticleSystemEffect",		ParticleSystemBuffEffectNugget::parse, 0, 0},
-	//{ "ApplyRandomForce",	ApplyRandomForceNugget::parse, 0, 0},
-	//{ "DeliverPayload",		DeliverPayloadNugget::parse, 0, 0},
-	//{ "FireWeapon",				FireWeaponNugget::parse, 0, 0},
-	//{ "Attack",						AttackNugget::parse, 0, 0},
+	// Generic params:
+	{ "MaxStacksSize",		INI::parseUnsignedInt, NULL,  offsetof(BuffTemplate, m_maxStackSize)},
+	
 	{ NULL, NULL, 0, 0 }  // keep this last
 };
 
@@ -319,6 +444,15 @@ UnsignedInt BuffTemplate::getNextTickFrame(UnsignedInt startFrame, UnsignedInt e
 	return endFrame;
 }
 
+//-------------------------------------------------------------------------------------------------
+Bool BuffTemplate::hasPriorityOver(AsciiString templateName) const
+{
+	for (AsciiString str : m_priorityTemplates) {
+		if (str == templateName)
+			return TRUE;
+	}
+	return FALSE;
+}
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
@@ -452,7 +586,7 @@ void BuffTemplateStore::addBuffEffectNugget(BuffEffectNugget* nugget)
 
 	buffTmp->clear();
 	buffTmp->friend_setName(name);
-	ini->initFromINI(buffTmp, TheBuffTemplateFieldParse);
+	ini->initFromINI(buffTmp, buffTmp->getFieldParse());
 
 	TheBuffTemplateStore->m_buffTemplates[key] = buffTmp;
 

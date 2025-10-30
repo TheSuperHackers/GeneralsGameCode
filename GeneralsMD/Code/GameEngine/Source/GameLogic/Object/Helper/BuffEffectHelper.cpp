@@ -38,6 +38,8 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Weapon.h"
 
+// #include <unordered_set>
+
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 BuffEffectHelper::BuffEffectHelper(Thing* thing, const ModuleData* modData) : ObjectHelper(thing, modData)
@@ -71,6 +73,7 @@ UpdateSleepTime BuffEffectHelper::update()
 
 	// Loop over all active BuffEffectTrackers and check if they expired or need to do something
 
+	Bool removed = FALSE;
 	UnsignedInt closestNextTickFrame = UnsignedInt(UPDATE_SLEEP_FOREVER);
 
 	for (auto it = m_buffEffects.begin(); it != m_buffEffects.end(); ) {
@@ -79,8 +82,8 @@ UpdateSleepTime BuffEffectHelper::update()
 			// remove buff effect
 			// TODO: Handle dynamic "unstacking"
 			bet.m_template->removeEffects(getObject(), &bet);
-
 			it = m_buffEffects.erase(it);
+			removed = TRUE;
 		}
 		else {
 			// TODO: Handle Continuous effects (DOTS)
@@ -91,6 +94,25 @@ UpdateSleepTime BuffEffectHelper::update()
 
 			++it;
 		}
+	}
+
+	// If we removed a buff, we need to re-evaluate all priorities
+	if (removed) {
+		std::set<AsciiString> tmplSet;  // Template names that any current buff has priority over
+		for (BuffEffectTracker& bet : m_buffEffects) {
+			tmplSet.insert(bet.m_template->getPriorityTemplates().begin(), bet.m_template->getPriorityTemplates().end());
+		}
+
+		// Now check active/inactive status
+		for (BuffEffectTracker& bet : m_buffEffects) {
+			bool isLowerPriority = tmplSet.count(bet.m_template->getName());
+
+			if (isLowerPriority && bet.m_isActive) {
+				bet.m_isActive = FALSE;
+				bet.m_template->removeEffects(getObject(), &bet);
+			}
+		}
+
 	}
 
 	return frameToSleepTime(closestNextTickFrame);
@@ -107,37 +129,93 @@ void BuffEffectHelper::applyBuff(const BuffTemplate* buffTemplate, Object* sourc
 
 	UnsignedInt now = TheGameLogic->getFrame();
 
-	// Setup BuffEffectTracker entry and add it to the list; TODO: Make this a proper class with memoryPool?
-	// --------------------------------
-	BuffEffectTracker bet;
-	bet.m_template = buffTemplate;
-	bet.m_frameCreated = now;
-	bet.m_frameToRemove = now + duration;
-	bet.m_numStacks = 1;  //todo
-	bet.m_isActive = TRUE; //todo
-	if (sourceObj)
-		bet.m_sourceID = sourceObj->getID();
+	Bool addBuff = TRUE;
+	Bool setActive = TRUE;
+	//TODO: also keep track of next tick frame here
 
-	m_buffEffects.push_back(bet);
+	// Check if we have existing buffs with the same template
 
-	// Apply the actual buff:
-	// ---
-	// TODO: Improve this Code!!!
-	buffTemplate->applyEffects(getObject(), sourceObj, &m_buffEffects.back());  //the vector has a copy, use that one.
-	// ---
+	for (BuffEffectTracker& buff : m_buffEffects) {
 
-	// -------------------------------
+		if (buff.m_template == buffTemplate)
+		{ // Check if buff with same template exists
 
-	// Calculate our next wake frame
-	// -------------------------------
-	UnsignedInt nextTick = buffTemplate->getNextTickFrame(now, now + duration);
-	if (nextTick < m_nextTickFrame) {
-		m_nextTickFrame = nextTick;
-		DEBUG_LOG(("BuffEffectHelper::applyBuff 1 -- m_nextTickFrame = %d", m_nextTickFrame));
-		setWakeFrame(getObject(), frameToSleepTime(m_nextTickFrame));
+			if (!buffTemplate->isStackPerSource() || // And if we stack with the same source only
+				((sourceObj->getID() == buff.m_sourceID) && (buff.m_sourceID != INVALID_ID)))
+			{
+
+				// buff exists -> refresh duration; don't add a new buff
+				buff.m_frameToRemove = now + duration;
+				if (sourceObj)  // always use the last sourceID
+					buff.m_sourceID = sourceObj->getID();
+				addBuff = FALSE;
+
+				// If more stacks are allowed, apply effects again
+				if (buffTemplate->getMaxStackSize() > buff.m_numStacks) {
+					buff.m_numStacks += 1;
+					buffTemplate->applyEffects(getObject(), sourceObj, &buff);
+				}
+			}
+
+		}
+		else  // check other buffs
+		{
+			// An existing buff has priority over the one we are adding.
+			// This case should never occur if we are already active and increase the stackSize.
+			if (buff.m_template->hasPriorityOver(buffTemplate->getName())) {
+				setActive = FALSE;
+			}
+
+			// Our new buff has priority over an existing one.
+			// This case should not matter if we are just refreshing.
+			if (buffTemplate->hasPriorityOver(buff.m_template->getName())) {
+				// Only disable it if it was previously active.
+				// At this point we do not know yet if our new buff will be active or not.
+				// But we should never have cyclic priorities so this is ok.
+				if (buff.m_isActive) {
+					// TODO: disable buff
+					buff.m_template->removeEffects(getObject(), &buff);
+
+					buff.m_isActive = FALSE;
+				}
+			}
+		}
+
+		// We are looping through all buff effects, so we might as well get our next tickFrame
+		UnsignedInt nextTick = buff.m_template->getNextTickFrame(buff.m_frameCreated, buff.m_frameToRemove);
+		if (nextTick < m_nextTickFrame)
+			m_nextTickFrame = nextTick;
+
 	}
-	// -------------------------------
 
+	// We add a new buff to our list
+	if (addBuff) {
+		// Setup BuffEffectTracker entry and add it to the list; TODO: Make this a proper class with memoryPool?
+		BuffEffectTracker bet;
+		bet.m_template = buffTemplate;
+		bet.m_frameCreated = now;
+		bet.m_frameToRemove = now + duration;
+		bet.m_numStacks = 1;  //todo
+		bet.m_isActive = setActive; //todo
+		if (sourceObj)
+			bet.m_sourceID = sourceObj->getID();
+
+		m_buffEffects.push_back(bet);
+
+		// Apply the actual buff:
+		if (setActive)
+			buffTemplate->applyEffects(getObject(), sourceObj, &m_buffEffects.back());  //the vector has a copy, use that one.
+
+		// Calculate our next wake frame
+		UnsignedInt nextTick = buffTemplate->getNextTickFrame(now, now + duration);
+		if (nextTick < m_nextTickFrame) {
+			m_nextTickFrame = nextTick;
+		}
+		// -------------------------------
+	}
+
+	DEBUG_LOG(("BuffEffectHelper::applyBuff 1 -- m_nextTickFrame = %d", m_nextTickFrame));
+	setWakeFrame(getObject(), frameToSleepTime(m_nextTickFrame));
 }
 
 // ------------------------------------------------------------------------------------------------

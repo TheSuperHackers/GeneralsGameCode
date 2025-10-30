@@ -578,6 +578,17 @@ public:
 	inline WeaponBonusConditionFlags getWeaponBonusCondition() const { return m_weaponBonusCondition; }
 	inline void setWeaponBonusConditionFlags(WeaponBonusConditionFlags flags) { m_weaponBonusCondition = flags; }
 
+	void applyWeaponBonusConditionFlags(WeaponBonusConditionFlags flags);
+	void removeWeaponBonusConditionFlags(WeaponBonusConditionFlags flags);
+
+	// Weapon Bonus Against,  i.e. like Target Designator logic
+	inline void setWeaponBonusConditionAgainst(WeaponBonusConditionType wst) { m_weaponBonusConditionAgainst |= (1 << wst); };
+	inline void clearWeaponBonusConditionAgainst(WeaponBonusConditionType wst) { m_weaponBonusConditionAgainst &= ~(1 << wst); };
+	Bool testWeaponBonusConditionAgainst(WeaponBonusConditionType wst) const { return (m_weaponBonusConditionAgainst & (1 << wst)) != 0; }
+	inline WeaponBonusConditionFlags getWeaponBonusConditionAgainst() const { return m_weaponBonusConditionAgainst; }
+	inline void setWeaponBonusConditionFlagsAgainst(WeaponBonusConditionFlags flags) { m_weaponBonusConditionAgainst = flags; }
+
+
 	Bool getSingleLogicalBonePosition(const char* boneName, Coord3D* position, Matrix3D* transform) const;
 	Bool getSingleLogicalBonePositionOnTurret(WhichTurretType whichTurret, const char* boneName, Coord3D* position, Matrix3D* transform) const;
 	Int getMultiLogicalBonePosition(const char* boneNamePrefix, Int maxBones, Coord3D* positions, Matrix3D* transforms, Bool convertToWorld = TRUE ) const;
@@ -792,6 +803,8 @@ private:
 	WeaponSetFlags								m_curWeaponSetFlags;
 	WeaponBonusConditionFlags			m_weaponBonusCondition;
 	Byte													m_lastWeaponCondition[WEAPONSLOT_COUNT];
+
+	WeaponBonusConditionFlags			m_weaponBonusConditionAgainst;  ///< Weapon bonus granted when attacking this target;
 
 	SpecialPowerMaskType					m_specialPowerBits; ///< bits determining what kind of special abilities this object has access to.
 

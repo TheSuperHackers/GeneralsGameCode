@@ -552,6 +552,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "Anim2DTemplate", 32, 32 },
 	{ "BuffTemplate", 32, 32 },
 	{ "ValueModifierBuffEffectNugget", 64, 32 },
+	{ "FlagModifierBuffEffectNugget", 64, 32 },
 	{ "ColorTintBuffEffectNugget", 32, 32 },
 	{ "ParticleSystemBuffEffectNugget", 32, 32 },
 	{ "ObjectTypes", 32, 32 },

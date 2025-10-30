@@ -289,6 +289,7 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	}
 
 	m_weaponBonusCondition = 0;
+	m_weaponBonusConditionAgainst = 0;
 	m_curWeaponSetFlags.clear();
 
 	// sanity
@@ -4133,6 +4134,15 @@ void Object::crc( Xfer *xfer )
 	}
 #endif // DEBUG_CRC
 
+	xfer->xferUnsignedInt(&m_weaponBonusConditionAgainst);
+#ifdef DEBUG_CRC
+	if (doLogging)
+	{
+		tmp.format("m_weaponBonusConditionAgainst: %8.8X, ", m_weaponBonusConditionAgainst);
+		logString.concat(tmp);
+	}
+#endif // DEBUG_CRC
+
 	Real scalar = getBodyModule()->getDamageScalar();
 	xfer->xferUser(&scalar,														sizeof(scalar));
 #ifdef DEBUG_CRC
@@ -4577,6 +4587,8 @@ void Object::xfer( Xfer *xfer )
 	else
 		m_isReceivingDifficultyBonus = FALSE;
 
+	xfer->xferUnsignedInt(&m_weaponBonusConditionAgainst);
+
 }  // end xfer
 
 //-------------------------------------------------------------------------------------------------
@@ -4836,6 +4848,34 @@ void Object::clearWeaponBonusCondition(WeaponBonusConditionType wst)
 		m_weaponSet.weaponSetOnWeaponBonusChange(this);
 	}
 }
+
+//-------------------------------------------------------------------------------------------------
+// Apply/Remove multiple flags at once
+//-------------------------------------------------------------------------------------------------
+void Object::applyWeaponBonusConditionFlags(WeaponBonusConditionFlags flags)
+{
+	WeaponBonusConditionFlags oldCondition = m_weaponBonusCondition;
+	m_weaponBonusCondition |= flags;
+
+	if (oldCondition != m_weaponBonusCondition)
+	{
+		// Our weapon bonus just changed, so we need to immediately update our weapons
+		m_weaponSet.weaponSetOnWeaponBonusChange(this);
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void Object::removeWeaponBonusConditionFlags(WeaponBonusConditionFlags flags)
+	{
+		WeaponBonusConditionFlags oldCondition = m_weaponBonusCondition;
+		m_weaponBonusCondition &= ~flags;
+
+		if (oldCondition != m_weaponBonusCondition)
+		{
+			// Our weapon bonus just changed, so we need to immediately update our weapons
+			m_weaponSet.weaponSetOnWeaponBonusChange(this);
+		}
+	}
 
 //-------------------------------------------------------------------------------------------------
 /**
