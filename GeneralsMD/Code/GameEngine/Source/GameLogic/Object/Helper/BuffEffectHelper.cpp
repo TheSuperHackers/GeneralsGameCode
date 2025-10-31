@@ -54,7 +54,22 @@ BuffEffectHelper::BuffEffectHelper(Thing* thing, const ModuleData* modData) : Ob
 // ------------------------------------------------------------------------------------------------
 BuffEffectHelper::~BuffEffectHelper(void)
 {
+	clearAllBuffs();
+	// Do we need to actually delete items from m_buffEffects?
+}
 
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void BuffEffectHelper::clearAllBuffs()
+{
+	for (BuffEffectTracker& buff : m_buffEffects) {
+		if (buff.m_isActive) {
+			buff.m_template->removeEffects(getObject(), &buff);
+		}
+	}
+
+	m_buffEffects.clear();
+	m_nextTickFrame = UnsignedInt(UPDATE_SLEEP_FOREVER);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -64,6 +79,7 @@ UpdateSleepTime BuffEffectHelper::update()
 	// TODO: Are there any cases were buffs work on dead objects?
 	// Also, should we even get here on a dead object?
 	if (getObject()->isEffectivelyDead()) {
+		clearAllBuffs();
 		return UPDATE_SLEEP_FOREVER;
 	}
 
@@ -74,6 +90,7 @@ UpdateSleepTime BuffEffectHelper::update()
 	// Loop over all active BuffEffectTrackers and check if they expired or need to do something
 
 	Bool removed = FALSE;
+	std::set<const BuffTemplate*> templatesToRemove;
 	UnsignedInt closestNextTickFrame = UnsignedInt(UPDATE_SLEEP_FOREVER);
 
 	for (auto it = m_buffEffects.begin(); it != m_buffEffects.end(); ) {
@@ -81,9 +98,15 @@ UpdateSleepTime BuffEffectHelper::update()
 		if (bet.m_frameToRemove <= now) {
 			// remove buff effect
 			// TODO: Handle dynamic "unstacking"
-			bet.m_template->removeEffects(getObject(), &bet);
+
+			// Only remove effects if we were active
+			if (bet.m_isActive) {
+				bet.m_template->removeEffects(getObject(), &bet);
+				templatesToRemove.insert(bet.m_template);
+				removed = TRUE;
+			}
+
 			it = m_buffEffects.erase(it);
-			removed = TRUE;
 		}
 		else {
 			// TODO: Handle Continuous effects (DOTS)
@@ -100,17 +123,35 @@ UpdateSleepTime BuffEffectHelper::update()
 	if (removed) {
 		std::set<AsciiString> tmplSet;  // Template names that any current buff has priority over
 		for (BuffEffectTracker& bet : m_buffEffects) {
-			tmplSet.insert(bet.m_template->getPriorityTemplates().begin(), bet.m_template->getPriorityTemplates().end());
+			if (bet.m_template->getPriorityTemplates().size() > 0)
+				tmplSet.insert(bet.m_template->getPriorityTemplates().begin(), bet.m_template->getPriorityTemplates().end());
 		}
 
-		// Now check active/inactive status
+		// Now loop again to check active/inactive status
 		for (BuffEffectTracker& bet : m_buffEffects) {
+
+			// Any flag that was removed, but is still set by an active status needs to be reapplied
+			if (bet.m_isActive) {
+				for (const BuffTemplate* tmplToRemove : templatesToRemove) {
+					bet.m_template->reApplyFlags(getObject(), tmplToRemove);
+				}
+			}
+
 			bool isLowerPriority = tmplSet.count(bet.m_template->getName());
 
-			if (isLowerPriority && bet.m_isActive) {
-				bet.m_isActive = FALSE;
-				bet.m_template->removeEffects(getObject(), &bet);
+			// Note: after removal, we can only activate, never deactivate existing buffs!
+			//if (isLowerPriority && bet.m_isActive) {
+			//	bet.m_isActive = FALSE;
+			//	bet.m_template->removeEffects(getObject(), &bet);
+			//}
+
+			// Set inactive buffs to active
+			if (!isLowerPriority && !bet.m_isActive) {
+				bet.m_isActive = TRUE;
+				Object* sourceObj = TheGameLogic->findObjectByID(bet.m_sourceID);
+				bet.m_template->applyEffects(getObject(), sourceObj, &bet);
 			}
+
 		}
 
 	}
@@ -134,6 +175,8 @@ void BuffEffectHelper::applyBuff(const BuffTemplate* buffTemplate, Object* sourc
 	//TODO: also keep track of next tick frame here
 
 	// Check if we have existing buffs with the same template
+
+	std::set<const BuffTemplate*> templatesToRemove;
 
 	for (BuffEffectTracker& buff : m_buffEffects) {
 
@@ -173,10 +216,11 @@ void BuffEffectHelper::applyBuff(const BuffTemplate* buffTemplate, Object* sourc
 				// At this point we do not know yet if our new buff will be active or not.
 				// But we should never have cyclic priorities so this is ok.
 				if (buff.m_isActive) {
-					// TODO: disable buff
 					buff.m_template->removeEffects(getObject(), &buff);
-
 					buff.m_isActive = FALSE;
+
+					// When we remove an effect, we need to re-evaluate all flags.
+					templatesToRemove.insert(buff.m_template);
 				}
 			}
 		}
@@ -185,7 +229,16 @@ void BuffEffectHelper::applyBuff(const BuffTemplate* buffTemplate, Object* sourc
 		UnsignedInt nextTick = buff.m_template->getNextTickFrame(buff.m_frameCreated, buff.m_frameToRemove);
 		if (nextTick < m_nextTickFrame)
 			m_nextTickFrame = nextTick;
+	}
 
+	// Looping again to evaluate flags
+	for (BuffEffectTracker& bet : m_buffEffects) {
+		// Any flag that was removed, but is still set by an active status needs to be reapplied
+		if (bet.m_isActive) {
+			for (const BuffTemplate* tmplToRemove : templatesToRemove) {
+				bet.m_template->reApplyFlags(getObject(), tmplToRemove);
+			}
+		}
 	}
 
 	// We add a new buff to our list

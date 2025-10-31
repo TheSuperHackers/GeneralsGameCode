@@ -102,7 +102,7 @@ void FiringTracker::shotFired(const Weapon* weaponFired, ObjectID victimID)
 
 	// New Buff based 'WeaponBonusAgainst' Logic
 	{
-		WeaponBonusConditionFlags targetBonusFlags;  // if we attack the ground, this stays empty
+		WeaponBonusConditionFlags targetBonusFlags = 0;  // if we attack the ground, this stays empty
 		if (victim)
 			targetBonusFlags = victim->getWeaponBonusConditionAgainst();
 

@@ -77,7 +77,15 @@ public:
 
 	inline UnsignedInt getMaxStackSize() const { return m_maxStackSize; }
 	inline Bool isStackPerSource() const { return m_stackPerSource; }
-	inline std::vector<AsciiString> getPriorityTemplates() const { return m_priorityTemplates; }
+	inline const std::vector<AsciiString>& getPriorityTemplates() const { return m_priorityTemplates; }
+
+	//inline WeaponBonusConditionType getWeaponBonusType() const { return m_bonusType; }
+	//inline WeaponBonusConditionType getWeaponBonusTypeAgainst() const { return m_bonusTypeAgainst; }
+	//inline WeaponSetType getWeaponSetFlag() const { return m_weaponSetFlag; }
+	//inline ArmorSetType getArmorSetFlag() const { return m_armorSetFlag; }
+	//inline ObjectStatusMaskType getStatusToSet() const { return m_statusToSet; }
+
+	BuffTemplate();
 
 	/**
 		Toss the contents.
@@ -89,11 +97,14 @@ public:
 	UnsignedInt getNextTickFrame(UnsignedInt startFrame, UnsignedInt endFrame) const;
 
 	void applyEffects(Object* targetObj, Object* sourceObj, BuffEffectTracker* buffTracker) const;
-	void removeEffects(Object* targetObj, BuffEffectTracker* buffTracker) const;
+	void removeEffects(Object* targetObj, BuffEffectTracker* buffTracker, Bool ignoreFlags = FALSE) const;
 
 	Bool hasPriorityOver(AsciiString templateName) const;
 
+	void reApplyFlags(Object* targetObj, const BuffTemplate* other) const;
+
 	const FieldParse* getFieldParse(void) const { return TheBuffTemplateFieldParse; }
+
 
 protected:
 	AsciiString			m_name;
@@ -102,13 +113,25 @@ protected:
 
 	std::vector<AsciiString>  m_priorityTemplates;   ///< list of buffTemplates this template has priority over.
 
+	// Flags are stored directly in BuffTemplate
+	WeaponBonusConditionType	m_bonusType;         ///< weapon bonus granted to the object
+	WeaponBonusConditionType	m_bonusTypeAgainst;  ///< weapon bonus granted when attacking the object
+	WeaponSetType m_weaponSetFlag;                 ///< the weaponset flag to set
+	ArmorSetType m_armorSetFlag;                   ///< the armorset flag to set
+	ObjectStatusMaskType m_statusToSet;           ///< the status to set (allows multiple)
+
+	// --
 	static const FieldParse TheBuffTemplateFieldParse[];
+	//static const FieldParse flagModifierFieldParse[];
+
+	static void parseFlagModifier(INI* ini, void* instance, void* store, const void* userData);
 
 private:
 
 	// note, this list doesn't own the nuggets; all nuggets are owned by the Store.
 	typedef std::vector<BuffEffectNugget*> BuffEffectNuggetVector;
 	BuffEffectNuggetVector m_nuggets;
+
 };
 EMPTY_DTOR(BuffTemplate)
 

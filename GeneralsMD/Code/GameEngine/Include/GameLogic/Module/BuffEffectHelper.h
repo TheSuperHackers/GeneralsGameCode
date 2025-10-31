@@ -118,6 +118,7 @@ protected:
 	std::vector<BuffEffectTracker> m_buffEffects;
 	UnsignedInt m_nextTickFrame;
 
+	void clearAllBuffs();
 };
 
 
