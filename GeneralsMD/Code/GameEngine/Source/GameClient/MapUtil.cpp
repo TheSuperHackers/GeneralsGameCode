@@ -359,7 +359,7 @@ void MapCache::writeCacheINI( Bool userDir )
 
 	MapCache::iterator it = begin();
 	MapMetaData md;
-	while (it != end())
+	for (; it != end(); ++it)
 	{
 		if (it->first.startsWithNoCase(mapDir.str()))
 		{
@@ -386,26 +386,23 @@ void MapCache::writeCacheINI( Bool userDir )
 
 			Coord3D pos;
 			WaypointMap::iterator itw = md.m_waypoints.begin();
-			while (itw != md.m_waypoints.end())
+			for (; itw != md.m_waypoints.end(); ++itw)
 			{
 				pos = itw->second;
 				fprintf(fp, "  %s = X:%2.2f Y:%2.2f Z:%2.2f\n", itw->first.str(), pos.x, pos.y, pos.z);
-				++itw;
 			}
 			Coord3DList::iterator itc3d = md.m_techPositions.begin();
-			while (itc3d != md.m_techPositions.end())
+			for (; itc3d != md.m_techPositions.end(); ++itc3d)
 			{
 				pos = *itc3d;
 				fprintf(fp, "  techPosition = X:%2.2f Y:%2.2f Z:%2.2f\n", pos.x, pos.y, pos.z);
-				itc3d++;
 			}
 
 			itc3d = md.m_supplyPositions.begin();
-			while (itc3d != md.m_supplyPositions.end())
+			for (; itc3d != md.m_supplyPositions.end(); ++itc3d)
 			{
 				pos = *itc3d;
 				fprintf(fp, "  supplyPosition = X:%2.2f Y:%2.2f Z:%2.2f\n", pos.x, pos.y, pos.z);
-				itc3d++;
 			}
 			fprintf(fp, "END\n\n");
 		}
@@ -413,7 +410,6 @@ void MapCache::writeCacheINI( Bool userDir )
 		{
 			//DEBUG_LOG(("%s does not start %s", mapDir.str(), it->first.str()));
 		}
-		++it;
 	}
 
 	fclose(fp);
@@ -450,7 +446,7 @@ Bool MapCache::clearUnseenMaps( AsciiString dirName )
 
 	std::map<AsciiString, Bool>::iterator it = m_seen.begin();
 
-	while (it != m_seen.end())
+	for (; it != m_seen.end(); ++it)
 	{
 		AsciiString mapName = it->first;
 		if (it->second == FALSE && mapName.startsWithNoCase(dirName.str()))
@@ -459,7 +455,6 @@ Bool MapCache::clearUnseenMaps( AsciiString dirName )
 			erase(mapName);
 			erasedSomething = TRUE;
 		}
-		++it;
 	}
 	return erasedSomething;
 }
@@ -509,10 +504,9 @@ Bool MapCache::loadUserMaps()
 	// mark all as unseen
 	m_seen.clear();
 	MapCache::iterator it = begin();
-	while (it != end())
+	for (; it != end(); ++it)
 	{
 		m_seen[it->first] = FALSE;
-		++it;
 	}
 
 	FilenameList filenameList;
@@ -527,7 +521,7 @@ Bool MapCache::loadUserMaps()
 
 	iter = filenameList.begin();
 
-	while (iter != filenameList.end()) {
+	for (; iter != filenameList.end(); ++iter) {
 		FileInfo fileInfo;
 		AsciiString tempfilename;
 		tempfilename = (*iter);
@@ -578,7 +572,6 @@ Bool MapCache::loadUserMaps()
 				}
 			}
 		}
-		iter++;
 	}
 
 	// clean out unseen maps
@@ -719,11 +712,10 @@ Bool MapCache::addMap( AsciiString dirName, AsciiString fname, FileInfo *fileInf
 
 	Coord3D pos;
 	WaypointMap::iterator itw = md.m_waypoints.begin();
-	while (itw != md.m_waypoints.end())
+	for (; itw != md.m_waypoints.end(); ++itw)
 	{
 		pos = itw->second;
 		DEBUG_LOG(("    waypoint %s: (%2.2f,%2.2f)", itw->first.str(), pos.x, pos.y));
-		++itw;
 	}
 
 	resetMap();
@@ -741,6 +733,191 @@ Bool WouldMapTransfer( const AsciiString& mapName )
 }
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @refactor Massively refactors the map list population function by breaking it into smaller pieces.
+
+typedef std::set<UnicodeString, rts::less_than_nocase<UnicodeString> > MapNameList;
+typedef std::map<UnicodeString, AsciiString> MapDisplayToFileNameList;
+
+static void buildMapListForNumPlayers(MapNameList &outMapNames, MapDisplayToFileNameList &outFileNames, Int numPlayers)
+{
+	DEBUG_LOG(("Adding maps with %d players", numPlayers));
+	MapCache::iterator it = TheMapCache->begin();
+
+	for (; it != TheMapCache->end(); ++it)
+	{
+		const MapMetaData &md = it->second;
+		if (md.m_numPlayers == numPlayers)
+		{
+			outMapNames.insert(it->second.m_displayName);
+			outFileNames[it->second.m_displayName] = it->first;
+			DEBUG_LOG(("Adding map '%s' to temp cache.", it->first.str()));
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+struct MapListBoxData
+{
+	MapListBoxData()
+		: listbox(NULL)
+		, numLength(0)
+		, numColumns(0)
+		, w(10)
+		, h(10)
+		, color(GameMakeColor(255, 255, 255, 255))
+		, battleHonors(NULL)
+		, easyImage(NULL)
+		, mediumImage(NULL)
+		, brutalImage(NULL)
+		, maxBrutalImage(NULL)
+		, mapToSelect()
+		, selectionIndex(0) // always select *something*
+		, isMultiplayer(false)
+	{
+	}
+
+	GameWindow *listbox;
+	Int numLength;
+	Int numColumns;
+	Int w;
+	Int h;
+	Color color;
+	const SkirmishBattleHonors *battleHonors;
+	const Image *easyImage;
+	const Image *mediumImage;
+	const Image *brutalImage;
+	const Image *maxBrutalImage;
+	AsciiString mapToSelect;
+	Int selectionIndex;
+	Bool isMultiplayer;
+};
+
+//-------------------------------------------------------------------------------------------------
+static Bool addMapToMapListbox(
+	MapListBoxData& lbData,
+	const AsciiString& mapDir,
+	const AsciiString& mapName,
+	const MapMetaData& mapMetaData)
+{
+	const Bool mapOk = mapName.startsWithNoCase(mapDir.str()) && lbData.isMultiplayer == mapMetaData.m_isMultiplayer && !mapMetaData.m_displayName.isEmpty();
+
+	if (mapOk)
+	{
+		UnicodeString mapDisplayName;
+		/// @todo: mapDisplayName = TheGameText->fetch(mapMetaData.m_displayName.str());
+		mapDisplayName = mapMetaData.m_displayName;
+
+		Int index = -1;
+		Int imageItemData = -1;
+		if (lbData.numColumns > 1 && mapMetaData.m_isMultiplayer)
+		{
+			const Int numEasy = lbData.battleHonors->getEnduranceMedal(mapName.str(), SLOT_EASY_AI);
+			const Int numMedium = lbData.battleHonors->getEnduranceMedal(mapName.str(), SLOT_MED_AI);
+			const Int numBrutal = lbData.battleHonors->getEnduranceMedal(mapName.str(), SLOT_BRUTAL_AI);
+			if (numBrutal)
+			{
+				const Int maxBrutalSlots = mapMetaData.m_numPlayers - 1;
+				if (lbData.maxBrutalImage != NULL && numBrutal == maxBrutalSlots)
+				{
+					index = GadgetListBoxAddEntryImage( lbData.listbox, lbData.maxBrutalImage, index, 0, lbData.w, lbData.h, TRUE);
+					imageItemData = 4;
+				}
+				else
+				{
+					index = GadgetListBoxAddEntryImage( lbData.listbox, lbData.brutalImage, index, 0, lbData.w, lbData.h, TRUE);
+					imageItemData = 3;
+				}
+			}
+			else if (numMedium)
+			{
+				imageItemData = 2;
+				index = GadgetListBoxAddEntryImage( lbData.listbox, lbData.mediumImage, index, 0, lbData.w, lbData.h, TRUE);
+			}
+			else if (numEasy)
+			{
+				imageItemData = 1;
+				index = GadgetListBoxAddEntryImage( lbData.listbox, lbData.easyImage, index, 0, lbData.w, lbData.h, TRUE);
+			}
+			else
+			{
+				imageItemData = 0;
+				index = GadgetListBoxAddEntryImage( lbData.listbox, NULL, index, 0, lbData.w, lbData.h, TRUE);
+			}
+		}
+
+		index = GadgetListBoxAddEntryText( lbData.listbox, mapDisplayName, lbData.color, index, lbData.numColumns-1 );
+		DEBUG_ASSERTCRASH(index >= 0, ("Expects valid index"));
+
+		if (mapName == lbData.mapToSelect)
+		{
+			lbData.selectionIndex = index;
+		}
+
+		// now set the char* as the item data.  this works because the map cache isn't being
+		// modified while a map listbox is up.
+		GadgetListBoxSetItemData( lbData.listbox, (void *)(mapName.str()), index );
+
+		if (lbData.numColumns > 1)
+		{
+			GadgetListBoxSetItemData( lbData.listbox, (void *)imageItemData, index, 1 );
+		}
+
+		// TheSuperHackers @performance Now stops processing when the list is full.
+		if (index == lbData.numLength - 1)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+//-------------------------------------------------------------------------------------------------
+static Bool addMapCollectionToMapListbox(
+	MapListBoxData& lbData,
+	const AsciiString& mapDir,
+	const MapNameList& mapNames,
+	const MapDisplayToFileNameList& fileNames)
+{
+	MapNameList::const_iterator mapNameIt = mapNames.begin();
+
+	for (; mapNameIt != mapNames.end(); ++mapNameIt)
+	{
+		MapDisplayToFileNameList::const_iterator fileNameIt = fileNames.find(*mapNameIt);
+		DEBUG_ASSERTCRASH(fileNameIt != fileNames.end(), ("Map '%s' not found in file names map", mapNameIt->str()));
+
+		const AsciiString& asciiMapName = fileNameIt->second;
+
+#if RTS_ZEROHOUR
+		//Patch 1.03 -- Purposely filter out these broken maps that exist in Generals.
+		if( !asciiMapName.compare( "maps\\armored fury\\armored fury.map" ) ||
+			!asciiMapName.compare( "maps\\scorched earth\\scorched earth.map" ) )
+		{
+			continue;
+		}
+#endif
+
+		MapCache::iterator mapCacheIt = TheMapCache->find(asciiMapName);
+		DEBUG_ASSERTCRASH(mapCacheIt != TheMapCache->end(), ("Map '%s' not found in map cache.", mapNameIt->str()));
+		/*
+		if (it != TheMapCache->end())
+		{
+			DEBUG_LOG(("populateMapListbox(): looking at %s (displayName = %ls), mp = %d (== %d?) mapDir=%s (ok=%d)",
+				it->first.str(), it->second.m_displayName.str(), it->second.m_isMultiplayer, isMultiplayer,
+				mapDir.str(), it->first.startsWith(mapDir.str())));
+		}
+		*/
+
+		const Bool ok = addMapToMapListbox(lbData, mapDir, mapCacheIt->first, mapCacheIt->second);
+
+		if (!ok)
+			return false;
+	}
+
+	return true;
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Load the listbox with all the map files available to play */
 //-------------------------------------------------------------------------------------------------
 Int populateMapListboxNoReset( GameWindow *listbox, Bool useSystemMaps, Bool isMultiplayer, AsciiString mapToSelect )
@@ -751,36 +928,26 @@ Int populateMapListboxNoReset( GameWindow *listbox, Bool useSystemMaps, Bool isM
 	if (!listbox)
 		return -1;
 
-	// reset the listbox content
-	//GadgetListBoxReset( listbox );
+	MapListBoxData lbData;
+	lbData.listbox = listbox;
+	lbData.numLength = GadgetListBoxGetListLength( listbox );
+	lbData.numColumns = GadgetListBoxGetNumColumns( listbox );
+	lbData.mapToSelect = mapToSelect;
+	lbData.isMultiplayer = isMultiplayer;
 
-	const Int listboxLength = GadgetListBoxGetListLength( listbox );
-	const Int numColumns = GadgetListBoxGetNumColumns( listbox );
-	const Image *easyImage = NULL;
-	const Image *mediumImage = NULL;
-	const Image *brutalImage = NULL;
-	const Image *maxBrutalImage = NULL;
-	SkirmishBattleHonors *battleHonors = NULL;
-	Int w = 10, h = 10;
-	if (numColumns > 1)
+	if (lbData.numColumns > 1)
 	{
-		easyImage = TheMappedImageCollection->findImageByName("Star-Bronze");
-		mediumImage = TheMappedImageCollection->findImageByName("Star-Silver");
-		brutalImage = TheMappedImageCollection->findImageByName("Star-Gold");
-		maxBrutalImage = TheMappedImageCollection->findImageByName("RedYell_Star");
-		battleHonors = new SkirmishBattleHonors;
+		lbData.easyImage = TheMappedImageCollection->findImageByName("Star-Bronze");
+		lbData.mediumImage = TheMappedImageCollection->findImageByName("Star-Silver");
+		lbData.brutalImage = TheMappedImageCollection->findImageByName("Star-Gold");
+		lbData.maxBrutalImage = TheMappedImageCollection->findImageByName("RedYell_Star");
+		lbData.battleHonors = new SkirmishBattleHonors;
 
-		w = (brutalImage)?brutalImage->getImageWidth():10;
-		w = min(GadgetListBoxGetColumnWidth(listbox, 0), w);
-		h = w;
+		lbData.w = lbData.brutalImage ? lbData.brutalImage->getImageWidth() : 10;
+		lbData.w = min(GadgetListBoxGetColumnWidth(listbox, 0), lbData.w);
+		lbData.h = lbData.w;
 	}
 
-	Color color = GameMakeColor( 255, 255, 255, 255 );
-	UnicodeString mapDisplayName;
-
-	Int selectionIndex = 0; // always select *something*
-
-	MapCache::iterator it = TheMapCache->begin();
 	AsciiString mapDir;
 	if (useSystemMaps)
 	{
@@ -793,155 +960,43 @@ Int populateMapListboxNoReset( GameWindow *listbox, Bool useSystemMaps, Bool isM
 	}
 	mapDir.toLower();
 
-typedef std::set<UnicodeString, rts::less_than_nocase<UnicodeString> > MapNameList;
-typedef MapNameList::iterator MapNameListIter;
+	MapNameList mapNames;
+	MapDisplayToFileNameList fileNames;
+	Int curNumPlayersInMap = 1;
 
-typedef std::map<UnicodeString, AsciiString> MapDisplayToFileNameList;
-typedef MapDisplayToFileNameList::iterator MapDisplayToFileNameListIter;
+	for (; curNumPlayersInMap <= MAX_SLOTS; ++curNumPlayersInMap)
+	{
+		buildMapListForNumPlayers(mapNames, fileNames, curNumPlayersInMap);
 
-	MapNameList tempCache;
-	MapDisplayToFileNameList filenameMap;
-	UnsignedInt numMapsListed = 0;
-	UnsignedInt curNumPlayersInMap = 0;
+		const Bool ok = addMapCollectionToMapListbox(lbData, mapDir, mapNames, fileNames);
 
-	while (numMapsListed < TheMapCache->size()) {
+		mapNames.clear();
+		fileNames.clear();
 
-		DEBUG_LOG(("Adding maps with %d players", curNumPlayersInMap));
-		it = TheMapCache->begin();
-		while (it != TheMapCache->end()) {
-			const MapMetaData *md = &(it->second);
-			if (md != NULL) {
-				if (md->m_numPlayers == curNumPlayersInMap) {
-					tempCache.insert(it->second.m_displayName);
-					filenameMap[it->second.m_displayName] = it->first;
-					DEBUG_LOG(("Adding map %s to temp cache.", it->first.str()));
-					++numMapsListed;
-				}
-			}
-			++it;
-		}
-
-		MapNameListIter tempit = tempCache.begin();
-
-		while (tempit != tempCache.end())
-		{
-
-			AsciiString asciiMapName;
-			asciiMapName = filenameMap[*tempit];
-			it = TheMapCache->find(asciiMapName);
-			/*
-			if (it != TheMapCache->end())
-			{
-				DEBUG_LOG(("populateMapListbox(): looking at %s (displayName = %ls), mp = %d (== %d?) mapDir=%s (ok=%d)",
-					it->first.str(), it->second.m_displayName.str(), it->second.m_isMultiplayer, isMultiplayer,
-					mapDir.str(), it->first.startsWith(mapDir.str())));
-			}
-			*/
-
-#if RTS_ZEROHOUR
-			//Patch 1.03 -- Purposely filter out these broken maps that exist in Generals.
-			if( !asciiMapName.compare( "maps\\armored fury\\armored fury.map" ) ||
-				!asciiMapName.compare( "maps\\scorched earth\\scorched earth.map" ) )
-			{
-				++tempit;
-				continue;
-			}
-#endif
-
-			DEBUG_ASSERTCRASH(it != TheMapCache->end(), ("Map %s not found in map cache.", tempit->str()));
-			if (it->first.startsWithNoCase(mapDir.str()) && isMultiplayer == it->second.m_isMultiplayer && !it->second.m_displayName.isEmpty())
-			{
-				/// @todo: mapDisplayName = TheGameText->fetch(it->second.m_displayName.str());
-				mapDisplayName = it->second.m_displayName;
-				Int index = -1;
-				Int imageItemData = -1;
-				if (numColumns > 1 && it->second.m_isMultiplayer)
-				{
-					Int numEasy = battleHonors->getEnduranceMedal(it->first.str(), SLOT_EASY_AI);
-					Int numMedium = battleHonors->getEnduranceMedal(it->first.str(), SLOT_MED_AI);
-					Int numBrutal = battleHonors->getEnduranceMedal(it->first.str(), SLOT_BRUTAL_AI);
-					if (numBrutal)
-					{
-						int maxBrutalSlots = it->second.m_numPlayers - 1;
-						if (maxBrutalImage != NULL && numBrutal == maxBrutalSlots)
-						{
-							index = GadgetListBoxAddEntryImage( listbox, maxBrutalImage, index, 0, w, h, TRUE);
-							imageItemData = 4;
-						}
-						else
-						{
-							index = GadgetListBoxAddEntryImage( listbox, brutalImage, index, 0, w, h, TRUE);
-							imageItemData = 3;
-						}
-					}
-					else if (numMedium)
-					{
-						imageItemData = 2;
-						index = GadgetListBoxAddEntryImage( listbox, mediumImage, index, 0, w, h, TRUE);
-					}
-					else if (numEasy)
-					{
-						imageItemData = 1;
-						index = GadgetListBoxAddEntryImage( listbox, easyImage, index, 0, w, h, TRUE);
-					}
-					else
-					{
-						imageItemData = 0;
-						index = GadgetListBoxAddEntryImage( listbox, NULL, index, 0, w, h, TRUE);
-					}
-				}
-
-				index = GadgetListBoxAddEntryText( listbox, mapDisplayName, color, index, numColumns-1 );
-				DEBUG_ASSERTCRASH(index >= 0, ("Expects valid index"));
-
-				if (it->first == mapToSelect)
-				{
-					selectionIndex = index;
-				}
-
-				// now set the char* as the item data.  this works because the map cache isn't being
-				// modified while a map listbox is up.
-				GadgetListBoxSetItemData( listbox, (void *)(it->first.str()), index );
-
-				if (numColumns > 1)
-				{
-					GadgetListBoxSetItemData( listbox, (void *)imageItemData, index, 1 );
-				}
-
-				// TheSuperHackers @performance Now stops processing when the list is full.
-				if (index == listboxLength - 1)
-				{
-					goto Done;
-				}
-			}
-			++tempit;
-		}
-
-		tempCache.clear();
-		filenameMap.clear();
-		++curNumPlayersInMap;
+		if (!ok)
+			break;
 	}
 
-Done:
-	delete battleHonors;
-	battleHonors = NULL;
+	delete lbData.battleHonors;
+	lbData.battleHonors = NULL;
 
-	GadgetListBoxSetSelected(listbox, &selectionIndex, 1);
-	if (selectionIndex >= 0)
+	GadgetListBoxSetSelected(listbox, &lbData.selectionIndex, 1);
+
+	if (lbData.selectionIndex >= 0)
 	{
 		Int topIndex = GadgetListBoxGetTopVisibleEntry(listbox);
 		Int bottomIndex = GadgetListBoxGetBottomVisibleEntry(listbox);
 		Int rowsOnScreen = bottomIndex - topIndex;
 
-		if (selectionIndex >= bottomIndex)
+		if (lbData.selectionIndex >= bottomIndex)
 		{
-			Int newTop = max( 0, selectionIndex - max( 1, rowsOnScreen / 2 ) );
-		//The trouble is that rowsonscreen/2 can be zero if bottom is 1 and top is zero
+			Int newTop = max( 0, lbData.selectionIndex - max( 1, rowsOnScreen / 2 ) );
+			//The trouble is that rowsOnScreen/2 can be zero if bottom is 1 and top is zero
 			GadgetListBoxSetTopVisibleEntry( listbox, newTop );
 		}
 	}
-	return selectionIndex;
 
+	return lbData.selectionIndex;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -995,13 +1050,12 @@ AsciiString getDefaultMap( Bool isMultiplayer )
 	TheMapCache->updateCache();
 
 	MapCache::iterator it = TheMapCache->begin();
-	while (it != TheMapCache->end())
+	for (; it != TheMapCache->end(); ++it)
 	{
 		if (isMultiplayer == it->second.m_isMultiplayer)
 		{
 			return it->first;
 		}
-		++it;
 	}
 
 	return AsciiString::TheEmptyString;
@@ -1015,13 +1069,12 @@ AsciiString getDefaultOfficialMap()
 	TheMapCache->updateCache();
 
 	MapCache::iterator it = TheMapCache->begin();
-	while (it != TheMapCache->end())
+	for (; it != TheMapCache->end(); ++it)
 	{
 		if (it->second.m_isMultiplayer && it->second.m_isOfficial)
 		{
 			return it->first;
 		}
-		++it;
 	}
 	return AsciiString::TheEmptyString;
 }
