@@ -619,20 +619,71 @@ void ConnectionManager::processChat(NetChatCommandMsg *msg)
 		name = m_connections[playerID]->getUser()->GetName();
 		//DEBUG_LOG(("connection is non-NULL, using %ls", name.str()));
 	}
-	unitext.format(L"[%ls] %ls", name.str(), msg->getText().str());
-//	DEBUG_LOG(("ConnectionManager::processChat - got message from player %d (mask %8.8X), message is %ls", playerID, msg->getPlayerMask(), unitext.str()));
 
 	AsciiString playerName;
 	playerName.format("player%d", msg->getPlayerID());
 	const Player *player = ThePlayerList->findPlayerWithNameKey( TheNameKeyGenerator->nameToKey( playerName ) );
 	if (!player)
 	{
+		unitext.format(L"[%ls] %ls", name.str(), msg->getText().str());
 		TheInGameUI->message(UnicodeString(L"%ls"), unitext.str());
 		return;
 	}
 
+	// TheSuperHackers @feature TheSuperHackers 31/10/2025 Add chat prefix to distinguish between All/Observers
+	// Allies chat has no prefix, only All and Observers are marked
+	UnicodeString chatPrefix;
 	Bool fromObserver = !player->isPlayerActive();
-	Bool amIObserver = !ThePlayerList->getLocalPlayer()->isPlayerActive();
+	const Player *localPlayer = ThePlayerList->getLocalPlayer();
+	
+	if (fromObserver)
+	{
+		// Message from an observer
+		chatPrefix = L"[Observers] ";
+	}
+	else
+	{
+		// Count how many active (non-observer) players receive this message
+		Int activePlayers = 0;
+		Int alliesCount = 0;
+		
+		for (Int i = 0; i < MAX_SLOTS; ++i)
+		{
+			if ((1 << i) & msg->getPlayerMask())
+			{
+				AsciiString checkPlayerName;
+				checkPlayerName.format("player%d", i);
+				const Player *checkPlayer = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(checkPlayerName));
+				
+				if (checkPlayer && checkPlayer->isPlayerActive())
+				{
+					activePlayers++;
+					
+					// Check if this recipient is an ally of the sender
+					if (player->getRelationship(checkPlayer->getDefaultTeam()) == ALLIES &&
+						checkPlayer->getRelationship(player->getDefaultTeam()) == ALLIES)
+					{
+						alliesCount++;
+					}
+				}
+			}
+		}
+		
+		// Only mark "All" chat, allies chat has no prefix
+		if (activePlayers > alliesCount)
+		{
+			chatPrefix = L"[All] ";
+		}
+		else
+		{
+			chatPrefix = L"";
+		}
+	}
+
+	unitext.format(L"%ls[%ls] %ls", chatPrefix.str(), name.str(), msg->getText().str());
+//	DEBUG_LOG(("ConnectionManager::processChat - got message from player %d (mask %8.8X), message is %ls", playerID, msg->getPlayerMask(), unitext.str()));
+
+	Bool amIObserver = !localPlayer->isPlayerActive();
 	Bool canSeeChat = (amIObserver || !fromObserver) && !TheGameInfo->getConstSlot(playerID)->isMuted();
 
 	if ( ((1<<m_localSlot) & msg->getPlayerMask() ) && canSeeChat  )
