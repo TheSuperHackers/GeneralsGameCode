@@ -50,12 +50,14 @@ Null3DObjClass::Null3DObjClass(const char * name)
 
 Null3DObjClass::Null3DObjClass(const Null3DObjClass & src)
 {
-	strlcpy(Name, src.Name, ARRAY_SIZE(Name));
+	static_assert(ARRAY_SIZE(Name) >= ARRAY_SIZE(src.Name), "Name array size mismatch");
+	strcpy(Name, src.Name);
 }
 
 Null3DObjClass & Null3DObjClass::operator = (const Null3DObjClass & that)
 {
-	strlcpy(Name, that.Name, ARRAY_SIZE(Name));
+	static_assert(ARRAY_SIZE(Name) >= ARRAY_SIZE(that.Name), "Name array size mismatch");
+	strcpy(Name, that.Name);
 
 	RenderObjClass::operator = (that); return *this;
 }

@@ -504,7 +504,8 @@ void BuddyThreadClass::errorCallback( GPConnection *con, GPErrorArg *arg )
 static void getNickForMessage( GPConnection *con, GPGetInfoResponseArg *arg, void *param )
 {
 	BuddyResponse *resp = (BuddyResponse *)param;
-	strlcpy(resp->arg.message.nick, arg->nick, ARRAY_SIZE(resp->arg.message.nick));
+	static_assert(ARRAY_SIZE(arg->nick) <= ARRAY_SIZE(resp->arg.message.nick), "Incorrect array size");
+	strcpy(resp->arg.message.nick, arg->nick);
 }
 
 void BuddyThreadClass::messageCallback( GPConnection *con, GPRecvBuddyMessageArg *arg )
@@ -557,9 +558,12 @@ void BuddyThreadClass::connectCallback( GPConnection *con, GPConnectResponseArg 
 				DEBUG_LOG(("User Error: Create Account instead of Login.  Fixing them..."));
 				BuddyRequest req;
 				req.buddyRequestType = BuddyRequest::BUDDYREQUEST_LOGIN;
-				strlcpy(req.arg.login.nick, m_nick.c_str(), ARRAY_SIZE(req.arg.login.nick));
-				strlcpy(req.arg.login.email, m_email.c_str(), ARRAY_SIZE(req.arg.login.email));
-				strlcpy(req.arg.login.password, m_pass.c_str(), ARRAY_SIZE(req.arg.login.password));
+				static_assert(ARRAY_SIZE(req.arg.login.nick) > 0, "Array size too small");
+				strcpy(req.arg.login.nick, m_nick.c_str());
+				static_assert(ARRAY_SIZE(req.arg.login.email) > 0, "Array size too small");
+				strcpy(req.arg.login.email, m_email.c_str());
+				static_assert(ARRAY_SIZE(req.arg.login.password) > 0, "Array size too small");
+				strcpy(req.arg.login.password, m_pass.c_str());
 				req.arg.login.hasFirewall = true;
 				TheGameSpyBuddyMessageQueue->addRequest( req );
 				return;
@@ -618,9 +622,12 @@ static void getInfoResponseForRequest( GPConnection *con, GPGetInfoResponseArg *
 {
 	BuddyResponse *resp = (BuddyResponse *)param;
 	resp->profile = arg->profile;
-	strlcpy(resp->arg.request.nick, arg->nick, ARRAY_SIZE(resp->arg.request.nick));
-	strlcpy(resp->arg.request.email, arg->email, ARRAY_SIZE(resp->arg.request.email));
-	strlcpy(resp->arg.request.countrycode, arg->countrycode, ARRAY_SIZE(resp->arg.request.countrycode));
+	static_assert(ARRAY_SIZE(arg->nick) <= ARRAY_SIZE(resp->arg.request.nick), "Incorrect array size");
+	strcpy(resp->arg.request.nick, arg->nick);
+	static_assert(ARRAY_SIZE(arg->email) <= ARRAY_SIZE(resp->arg.request.email), "Incorrect array size");
+	strcpy(resp->arg.request.email, arg->email);
+	static_assert(ARRAY_SIZE(arg->countrycode) <= ARRAY_SIZE(resp->arg.request.countrycode), "Incorrect array size");
+	strcpy(resp->arg.request.countrycode, arg->countrycode);
 }
 
 void BuddyThreadClass::requestCallback( GPConnection *con, GPRecvBuddyRequestArg *arg )
@@ -644,9 +651,12 @@ static void getInfoResponseForStatus(GPConnection * connection, GPGetInfoRespons
 {
 	BuddyResponse *resp = (BuddyResponse *)param;
 	resp->profile = arg->profile;
-	strlcpy(resp->arg.status.nick, arg->nick, ARRAY_SIZE(resp->arg.status.nick));
-	strlcpy(resp->arg.status.email, arg->email, ARRAY_SIZE(resp->arg.status.email));
-	strlcpy(resp->arg.status.countrycode, arg->countrycode, ARRAY_SIZE(resp->arg.status.countrycode));
+	static_assert(ARRAY_SIZE(arg->nick) <= ARRAY_SIZE(resp->arg.status.nick), "Incorrect array size");
+	strcpy(resp->arg.status.nick, arg->nick);
+	static_assert(ARRAY_SIZE(arg->email) <= ARRAY_SIZE(resp->arg.status.email), "Incorrect array size");
+	strcpy(resp->arg.status.email, arg->email);
+	static_assert(ARRAY_SIZE(arg->countrycode) <= ARRAY_SIZE(resp->arg.status.countrycode), "Incorrect array size");
+	strcpy(resp->arg.status.countrycode, arg->countrycode);
 }
 
 void BuddyThreadClass::statusCallback( GPConnection *con, GPRecvBuddyStatusArg *arg )
@@ -660,8 +670,10 @@ void BuddyThreadClass::statusCallback( GPConnection *con, GPRecvBuddyStatusArg *
 	// get user's status
 	GPBuddyStatus status;
 	gpGetBuddyStatus( con, arg->index, &status );
-	strlcpy(response.arg.status.location, status.locationString, ARRAY_SIZE(response.arg.status.location));
-	strlcpy(response.arg.status.statusString, status.statusString, ARRAY_SIZE(response.arg.status.statusString));
+	static_assert(ARRAY_SIZE(status.locationString) <= ARRAY_SIZE(response.arg.status.location), "Incorrect array size");
+	strcpy(response.arg.status.location, status.locationString);
+	static_assert(ARRAY_SIZE(status.statusString) <= ARRAY_SIZE(response.arg.status.statusString), "Incorrect array size");
+	strcpy(response.arg.status.statusString, status.statusString);
 	response.arg.status.status = status.status;
 	DEBUG_LOG(("Got buddy status for %d(%s) - status %d", status.profile, response.arg.status.nick, status.status));
 

@@ -2751,9 +2751,9 @@ void W3DModelDraw::setTerrainDecal(TerrainDecalType type)
 	//decalInfo.m_type = SHADOW_ADDITIVE_DECAL;//temporary kluge to test graphics
 
 	if (type == TERRAIN_DECAL_SHADOW_TEXTURE)
-		strlcpy(decalInfo.m_ShadowName,tmplate->getShadowTextureName().str(), ARRAY_SIZE(decalInfo.m_ShadowName));
+		strlcpy(decalInfo.m_ShadowName, tmplate->getShadowTextureName().str(), ARRAY_SIZE(decalInfo.m_ShadowName));
 	else
-		strlcpy(decalInfo.m_ShadowName,TerrainDecalTextureName[type], ARRAY_SIZE(decalInfo.m_ShadowName));
+		strlcpy(decalInfo.m_ShadowName, TerrainDecalTextureName[type], ARRAY_SIZE(decalInfo.m_ShadowName));
 	decalInfo.m_sizeX = tmplate->getShadowSizeX();
 	decalInfo.m_sizeY = tmplate->getShadowSizeY();
 	decalInfo.m_offsetX = tmplate->getShadowOffsetX();

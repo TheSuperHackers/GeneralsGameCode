@@ -437,6 +437,7 @@ AsciiString ConvertToNonGCName(AsciiString name, Bool checkTemplate=true)
 	char oldName[256];
 	char newName[256];
 	strlcpy(oldName, name.str(), ARRAY_SIZE(oldName));
+	static_assert(ARRAY_SIZE(oldName) >= ARRAY_SIZE("GC_"), "Buffer too small");
 	strlcpy(newName, oldName+strlen("GC_"), ARRAY_SIZE(newName));
 	AsciiString swapName;
 	swapName.set(newName);
@@ -457,6 +458,7 @@ AsciiString ConvertName(AsciiString name)
 	char newName[256];
 	strlcpy(oldName, name.str(), ARRAY_SIZE(oldName));
 	strlcpy(newName, "GLA", ARRAY_SIZE(newName));
+	static_assert(ARRAY_SIZE(oldName) >= ARRAY_SIZE("Fundamentalist"), "Buffer too small");
 	strlcat(newName, oldName+strlen("Fundamentalist"), ARRAY_SIZE(newName));
 	AsciiString swapName;
 	swapName.set(newName);
@@ -473,6 +475,7 @@ AsciiString ConvertFaction(AsciiString name)
 	char newName[256];
 	strlcpy(oldName, name.str(), ARRAY_SIZE(oldName));
 	strcpy(newName, "FactionGLA");
+	static_assert(ARRAY_SIZE(oldName) >= ARRAY_SIZE("FactionFundamentalist"), "Buffer too small");
 	strlcat(newName, oldName+strlen("FactionFundamentalist"), ARRAY_SIZE(newName));
 	AsciiString swapName;
 	swapName.set(newName);

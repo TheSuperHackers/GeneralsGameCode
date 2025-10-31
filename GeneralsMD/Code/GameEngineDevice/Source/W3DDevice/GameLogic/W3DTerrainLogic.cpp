@@ -117,22 +117,6 @@ Bool W3DTerrainLogic::loadMap( AsciiString filename , Bool query )
 
 	WorldHeightMap *terrainHeightMap;				///< holds raw heightmap data samples
 
-	char	tempBuf[_MAX_PATH];
-	char	filenameBuf[_MAX_PATH];
-	int length = 0;
-
-	strlcpy(tempBuf, filename.str(), ARRAY_SIZE(tempBuf));
-
-	length = strlen( tempBuf );
-	if( length >= 4 )
-	{
-		strlcpy(filenameBuf, tempBuf, length - 4 + 1);
-	}
-
-//	const char *fname = filename.reverseFind('\\');
-//	if (fname)
-//		filename = fname+1;
-
 	CachedFileInputStream fileStrm;
 	if ( !fileStrm.open(filename) )
 	{

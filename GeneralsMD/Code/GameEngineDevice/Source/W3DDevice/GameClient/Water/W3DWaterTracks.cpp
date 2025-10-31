@@ -961,9 +961,7 @@ void WaterTracksRenderSystem::saveTracks(void)
 	char path[256];
 
 	strlcpy(path, fileName.str(), ARRAY_SIZE(path));
-	Int len=strlen(path);
-
-	strcpy(path+len-4,".wak");
+	strlcat(path, ".wak", ARRAY_SIZE(path));
 
 	WaterTracksObj *umod;
 	Int trackCount=0;
@@ -999,9 +997,7 @@ void WaterTracksRenderSystem::loadTracks(void)
 	char path[256];
 
 	strlcpy(path, fileName.str(), ARRAY_SIZE(path));
-	Int len=strlen(path);
-
-	strcpy(path+len-4,".wak");
+	strlcat(path, ".wak", ARRAY_SIZE(path));
 
 	File *file = TheFileSystem->openFile(path, File::READ | File::BINARY);
 	WaterTracksObj *umod;

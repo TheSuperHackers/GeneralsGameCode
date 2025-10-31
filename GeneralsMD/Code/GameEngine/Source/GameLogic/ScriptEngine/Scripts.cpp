@@ -2138,6 +2138,7 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 			char newName[256];
 			strlcpy(oldName, pParm->m_string.str(), ARRAY_SIZE(oldName));
 			strcpy(newName, "GLA");
+			static_assert(ARRAY_SIZE(oldName) >= ARRAY_SIZE("GLA"), "oldname buffer too small");
 			strlcat(newName, oldName+strlen("Fundamentalist"), ARRAY_SIZE(newName));
 			pParm->m_string.set(newName);
 			DEBUG_LOG(("Changing Script Ref from %s to %s", oldName, newName));

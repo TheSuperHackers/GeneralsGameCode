@@ -19,7 +19,6 @@
 // RoadOptions.cpp : implementation file
 //
 
-
 #include "StdAfx.h"
 #include "resource.h"
 #include "Lib/BaseType.h"
@@ -246,7 +245,8 @@ BOOL RoadOptions::OnInitDialog()
 		char				findBuf[_MAX_PATH];
 		char				fileBuf[_MAX_PATH];
 
-		strlcpy(dirBuf, ROAD_DIRECTORY, ARRAY_SIZE(dirBuf));
+		static_assert(ARRAY_SIZE(ROAD_DIRECTORY) <= ARRAY_SIZE(dirBuf), "Buffer size too small");
+		strcpy(dirBuf, ROAD_DIRECTORY);
 		int len = strlen(dirBuf);
 
 		strlcpy(findBuf, dirBuf, ARRAY_SIZE(dirBuf));
@@ -273,7 +273,8 @@ BOOL RoadOptions::OnInitDialog()
 					++it;
 					continue;
 				}
-				strlcpy(fileBuf, TEST_STRING, ARRAY_SIZE(fileBuf));
+				static_assert(ARRAY_SIZE(TEST_STRING) <= ARRAY_SIZE(fileBuf), "Buffer size too small");
+				strcpy(fileBuf, TEST_STRING);
 				strlcat(fileBuf, "\\", ARRAY_SIZE(fileBuf));
 				strlcat(fileBuf, filename.str(), ARRAY_SIZE(fileBuf));
 				addRoad(fileBuf, index, TVI_ROOT);

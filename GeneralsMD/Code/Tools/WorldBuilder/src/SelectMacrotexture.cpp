@@ -73,16 +73,10 @@ BOOL SelectMacrotexture::OnInitDialog()
 	m_textureTreeView.ShowWindow(SW_SHOW);
 
 	{
-		char				dirBuf[_MAX_PATH];
-		char				findBuf[_MAX_PATH];
 		char				fileBuf[_MAX_PATH];
 
-		strlcpy(dirBuf, "..\\TestArt\\", ARRAY_SIZE(dirBuf));
-		
-		strlcpy(findBuf, dirBuf, ARRAY_SIZE(findBuf));
-
 		FilenameList filenameList;
-		TheFileSystem->getFileListInDirectory(AsciiString(findBuf), AsciiString("*.tga"), filenameList, FALSE);
+		TheFileSystem->getFileListInDirectory("..\\TestArt\\", "*.tga", filenameList, FALSE);
 
 		if (filenameList.size() > 0) {
 			TVINSERTSTRUCT ins;

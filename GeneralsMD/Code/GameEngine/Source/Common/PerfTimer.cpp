@@ -349,7 +349,7 @@ void PerfGather::reset()
 {
 	PerfGather::termPerfDump();
 
-	strlcpy(s_buf, fname, ARRAY_SIZE(s_buf));
+	strlcpy(s_buf, fname, _MAX_PATH);
 
 	char tmp[256];
 	strlcpy(tmp, s_buf, ARRAY_SIZE(tmp));

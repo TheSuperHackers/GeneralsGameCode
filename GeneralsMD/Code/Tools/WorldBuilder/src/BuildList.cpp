@@ -737,10 +737,10 @@ void BuildList::OnExport()
 	static FILE *theLogFile = NULL;
 	Bool open = false;
 	try {
-		char dirbuf[ _MAX_PATH ];
-		::GetModuleFileName( NULL, dirbuf, sizeof( dirbuf ) );
-		char *pEnd = dirbuf + strlen( dirbuf );
-		while( pEnd != dirbuf )
+		char buffer[ _MAX_PATH ];
+		::GetModuleFileName( NULL, buffer, sizeof( buffer ) );
+		char *pEnd = buffer + strlen( buffer );
+		while( pEnd != buffer )
 		{
 			if( *pEnd == '\\' )
 			{
@@ -750,17 +750,14 @@ void BuildList::OnExport()
 			pEnd--;
 		}
 
-		char curbuf[ _MAX_PATH ];
-
-		strlcpy(curbuf, dirbuf, ARRAY_SIZE(curbuf));
 		SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide);
 		Dict *d = TheSidesList->getSideInfo(m_curSide)->getDict();
 		AsciiString name = d->getAsciiString(TheKey_playerName);
-		strlcat(curbuf, name.str(), ARRAY_SIZE(curbuf));
-		strlcat(curbuf, "_BuildList", ARRAY_SIZE(curbuf));
-		strlcat(curbuf, ".ini", ARRAY_SIZE(curbuf));
+		strlcat(buffer, name.str(), ARRAY_SIZE(buffer));
+		strlcat(buffer, "_BuildList", ARRAY_SIZE(buffer));
+		strlcat(buffer, ".ini", ARRAY_SIZE(buffer));
 
-		theLogFile = fopen(curbuf, "w");
+		theLogFile = fopen(buffer, "w");
 		if (theLogFile == NULL)
 			throw;
 

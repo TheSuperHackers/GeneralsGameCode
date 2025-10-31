@@ -403,7 +403,7 @@ void RegistryClass::Save_Registry_Values(HKEY key, char *path, INIClass *ini)
 				** Handle binary values.
 				*/
 				case REG_BINARY:
-					strlcpy(save_name, "BIN_", ARRAY_SIZE(save_name));
+					strcpy(save_name, "BIN_");
 					strlcat(save_name, value_name, ARRAY_SIZE(save_name));
 					ini->Put_UUBlock(path, save_name, (char*)data, data_size);
 					break;

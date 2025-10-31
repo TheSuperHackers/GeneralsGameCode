@@ -847,14 +847,15 @@ static AsciiString getMapLeafAndDirName(const AsciiString& in)
 // ------------------------------------------------------------------------------------------------
 static AsciiString removeExtension(const AsciiString& in)
 {
-	char buf[1024];
-	strlcpy(buf, in.str(), ARRAY_SIZE(buf));
-	char* p = strrchr(buf, '.');
-	if (p)
+	if (const char* end = in.reverseFind('.'))
 	{
-		*p = 0;
+		const char* begin = in.str();
+		return AsciiString(begin, end - begin);
 	}
-	return AsciiString(buf);
+	else
+	{
+		return in;
+	}
 }
 
 // ------------------------------------------------------------------------------------------------

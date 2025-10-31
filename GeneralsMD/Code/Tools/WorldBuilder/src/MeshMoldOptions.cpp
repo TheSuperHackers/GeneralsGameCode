@@ -80,17 +80,11 @@ BOOL MeshMoldOptions::OnInitDialog()
 	m_moldTreeView.ShowWindow(SW_SHOW);
 
 	{
-		char				dirBuf[_MAX_PATH];
-		char				findBuf[_MAX_PATH];
 		char				fileBuf[_MAX_PATH];
 		Int					i;
 
-		strlcpy(dirBuf, ".\\data\\Editor\\Molds\\", ARRAY_SIZE(dirBuf));
-		strlcpy(findBuf, dirBuf, ARRAY_SIZE(findBuf));
-		strlcat(findBuf, "*.w3d", ARRAY_SIZE(findBuf));
-
 		FilenameList filenameList;
-		TheFileSystem->getFileListInDirectory(AsciiString(dirBuf), AsciiString("*.w3d"), filenameList, FALSE);
+		TheFileSystem->getFileListInDirectory(AsciiString(".\\data\\Editor\\Molds\\"), AsciiString("*.w3d"), filenameList, FALSE);
 
 		if (filenameList.size() > 0) {
 			HTREEITEM child = NULL;
