@@ -630,59 +630,78 @@ void ConnectionManager::processChat(NetChatCommandMsg *msg)
 		return;
 	}
 
-	// TheSuperHackers @feature TheSuperHackers 31/10/2025 Add team chat prefix to distinguish from global messages
-	// Global chat has no prefix (default), team messages are prefixed with (TEAM)
-	Bool isTeamMessage = FALSE;
-	Bool fromObserver = !player->isPlayerActive();
-	const Player *localPlayer = ThePlayerList->getLocalPlayer();
-	
-	if (player->isPlayerActive())
-	{
-		// Count how many active (non-observer) players receive this message
-		Int activePlayers = 0;
-		Int alliesCount = 0;
-		
-		for (Int i = 0; i < MAX_SLOTS; ++i)
-		{
-			if ((1 << i) & msg->getPlayerMask())
-			{
-				AsciiString checkPlayerName;
-				checkPlayerName.format("player%d", i);
-				const Player *checkPlayer = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(checkPlayerName));
-				
-				if (checkPlayer && checkPlayer->isPlayerActive())
-				{
-					activePlayers++;
-					
-					// Check if this recipient is an ally of the sender
-					if (player->getRelationship(checkPlayer->getDefaultTeam()) == ALLIES &&
-						checkPlayer->getRelationship(player->getDefaultTeam()) == ALLIES)
-					{
-						alliesCount++;
-					}
-				}
-			}
-		}
-		
-		// Team message: sent to allies only (not to all active players)
-		isTeamMessage = (activePlayers == alliesCount && alliesCount > 0);
-	}
+	// =============================================================
+// ConnectionManager::processChat()
+// Refactored by TheSuperHackers @feature - 31/10/2025
+// Simplified team chat detection, clean formatting logic.
+// =============================================================
 
-	if (isTeamMessage)
-	{
-		// Format: (TEAM) [Player Name] Message
-		UnicodeString teamPrefix = TheGameText->FETCH_OR_SUBSTITUTE("GUI:Team", L"TEAM");
-		unitext.format(L"(%ls) [%ls] %ls", teamPrefix.str(), name.str(), msg->getText().str());
-	}
-	else
-	{
-		// Format: [Player Name] Message (no prefix for global/observer chat)
-		unitext.format(L"[%ls] %ls", name.str(), msg->getText().str());
-	}
-//	DEBUG_LOG(("ConnectionManager::processChat - got message from player %d (mask %8.8X), message is %ls", playerID, msg->getPlayerMask(), unitext.str()));
+static Bool isTeamChat(const Player* sender, UInt32 mask)
+{
+    Int allies = 0;
+    Int recipients = 0;
 
-	Bool amIObserver = !localPlayer->isPlayerActive();
-	Bool canSeeChat = (amIObserver || !fromObserver) && !TheGameInfo->getConstSlot(playerID)->isMuted();
+    for (Int i = 0; i < MAX_SLOTS; ++i)
+    {
+        if ((1 << i) & mask)
+        {
+            const Player* receiver = ThePlayerList->getConstSlot(i);
+            if (receiver && receiver->isPlayerActive())
+            {
+                recipients++;
+                if (sender->getRelationship(receiver->getDefaultTeam()) == ALLIES)
+                    allies++;
+            }
+        }
+    }
+
+    // Team message if all recipients are allies and at least one exists
+    return (recipients > 0 && recipients == allies);
+}
+
+void ConnectionManager::processChat(Int playerID, ChatMessage* msg)
+{
+    const Player* player = ThePlayerList->getConstSlot(playerID);
+    if (!player) return;
+
+    const Player* localPlayer = ThePlayerList->getLocalPlayer();
+    Bool fromObserver = !player->isPlayerActive();
+
+    UnicodeString name(player->getDisplayName());
+    UnicodeString unitext;
+
+    // Determine whether this is a team message
+    Bool isTeamMessage = FALSE;
+    if (player->isPlayerActive())
+    {
+        isTeamMessage = isTeamChat(player, msg->getPlayerMask());
+    }
+
+    // Format the message string
+    if (isTeamMessage)
+    {
+        // Format: (TEAM) [Player Name] Message
+        UnicodeString teamPrefix = TheGameText->FETCH_OR_SUBSTITUTE("GUI:Team", L"TEAM");
+        unitext.format(L"(%ls) [%ls] %ls", teamPrefix.str(), name.str(), msg->getText().str());
+    }
+    else
+    {
+        // Format: [Player Name] Message (no prefix for global/observer chat)
+        unitext.format(L"[%ls] %ls", name.str(), msg->getText().str());
+    }
+
+    // DEBUG_LOG(("ConnectionManager::processChat - got message from player %d (mask %8.8X), message is %ls",
+    //     playerID, msg->getPlayerMask(), unitext.str()));
+
+    Bool amIObserver = !localPlayer->isPlayerActive();
+    Bool canSeeChat = (amIObserver || !fromObserver) && !TheGameInfo->getConstSlot(playerID)->isMuted();
+
+    if (((1 << m_localSlot) & msg->getPlayerMask()) && canSeeChat)
+    {
+        TheInGameUI->message(UnicodeString(L"%ls"), unitext.str());
+    }
+}
+;
 
 	if ( ((1<<m_localSlot) & msg->getPlayerMask() ) && canSeeChat  )
 	{
