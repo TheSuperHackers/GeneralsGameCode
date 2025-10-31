@@ -630,18 +630,13 @@ void ConnectionManager::processChat(NetChatCommandMsg *msg)
 		return;
 	}
 
-	// TheSuperHackers @feature TheSuperHackers 31/10/2025 Add chat prefix to distinguish between All/Observers
-	// Allies chat has no prefix, only All and Observers are marked
-	UnicodeString chatPrefix;
+	// TheSuperHackers @feature TheSuperHackers 31/10/2025 Add team chat prefix to distinguish from global messages
+	// Global chat has no prefix (default), team messages are prefixed with (TEAM)
+	Bool isTeamMessage = FALSE;
 	Bool fromObserver = !player->isPlayerActive();
 	const Player *localPlayer = ThePlayerList->getLocalPlayer();
 	
-	if (fromObserver)
-	{
-		// Message from an observer
-		chatPrefix = L"[Observers] ";
-	}
-	else
+	if (player->isPlayerActive())
 	{
 		// Count how many active (non-observer) players receive this message
 		Int activePlayers = 0;
@@ -669,18 +664,21 @@ void ConnectionManager::processChat(NetChatCommandMsg *msg)
 			}
 		}
 		
-		// Only mark "All" chat, allies chat has no prefix
-		if (activePlayers > alliesCount)
-		{
-			chatPrefix = L"[All] ";
-		}
-		else
-		{
-			chatPrefix = L"";
-		}
+		// Team message: sent to allies only (not to all active players)
+		isTeamMessage = (activePlayers == alliesCount && alliesCount > 0);
 	}
 
-	unitext.format(L"%ls[%ls] %ls", chatPrefix.str(), name.str(), msg->getText().str());
+	if (isTeamMessage)
+	{
+		// Format: (TEAM) [Player Name] Message
+		UnicodeString teamPrefix = TheGameText->FETCH_OR_SUBSTITUTE("GUI:Team", L"TEAM");
+		unitext.format(L"(%ls) [%ls] %ls", teamPrefix.str(), name.str(), msg->getText().str());
+	}
+	else
+	{
+		// Format: [Player Name] Message (no prefix for global/observer chat)
+		unitext.format(L"[%ls] %ls", name.str(), msg->getText().str());
+	}
 //	DEBUG_LOG(("ConnectionManager::processChat - got message from player %d (mask %8.8X), message is %ls", playerID, msg->getPlayerMask(), unitext.str()));
 
 	Bool amIObserver = !localPlayer->isPlayerActive();
