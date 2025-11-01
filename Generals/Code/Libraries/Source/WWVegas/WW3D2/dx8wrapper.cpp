@@ -565,22 +565,19 @@ bool DX8Wrapper::Create_Device(void)
 	Vertex_Processing_Behavior|=D3DCREATE_FPU_PRESERVE;
 #endif
 
-	HRESULT hr;
-	{
-		// TheSuperHackers @bugfix xezon 13/06/2025 Front load the system dbghelp.dll to prevent
-		// the graphics driver from potentially loading the old game dbghelp.dll and then crashing the game process.
-		DbgHelpGuard dbgHelpGuard;
+	// TheSuperHackers @bugfix xezon 13/06/2025 Front load the system dbghelp.dll to prevent
+	// the graphics driver from potentially loading the old game dbghelp.dll and then crashing the game process.
+	DbgHelpGuard dbgHelpGuard;
 
-		hr=D3DInterface->CreateDevice
-		(
-			CurRenderDevice,
-			WW3D_DEVTYPE,
-			_Hwnd,
-			Vertex_Processing_Behavior,
-			&_PresentParameters,
-			&D3DDevice
-		);
-	}
+	HRESULT hr=D3DInterface->CreateDevice
+	(
+		CurRenderDevice,
+		WW3D_DEVTYPE,
+		_Hwnd,
+		Vertex_Processing_Behavior,
+		&_PresentParameters,
+		&D3DDevice
+	);
 
 	if (FAILED(hr))
 	{
