@@ -235,7 +235,9 @@
 #define IDC_REL_FAV                     1040
 #define IDC_FB_EDIT                     1041
 #define IDC_RATE_POPUP                  1041
+#define IDC_Z_EDIT                      1041
 #define IDC_FB_POPUP                    1042
+#define IDC_Z_POPUP                     1042
 #define IDC_RA_EDIT                     1043
 #define IDC_GA_EDIT                     1044
 #define IDC_BA_EDIT                     1045
@@ -291,8 +293,12 @@
 #define IDC_MAPOBJECT_BuildWithUpgrades 1100
 #define IDC_LIST2                       1101
 #define IDC_PLAYER_LIST                 1101
+#define IDC_HVGAP                       1102
 #define IDC_BUTTON2                     1103
+#define IDC_DGAP                        1103
 #define IDC_BUTTON3                     1104
+#define IDC_HVGAP2                      1104
+#define IDC_REVALIDATEBLENDS            1104
 #define IDC_BUTTON4                     1105
 #define IDC_BUTTON5                     1106
 #define IDC_OR                          1107
@@ -392,9 +398,11 @@
 #define IDC_TEAM_STARTS_FULL            1168
 #define IDC_WAYPOINT_BIDIRECTIONAL      1168
 #define IDC_NEWICONS                    1168
+#define IDC_COPY_MODE2                  1168
 #define IDC_GROUP_ACTIVE                1169
 #define IDC_MAPOBJECT_Selectable2       1169
 #define IDC_DEEPSCAN                    1169
+#define IDC_COPY_MODE2_1                1169
 #define IDC_PLAYERDISPLAYNAME           1170
 #define IDC_CHECK4                      1170
 #define IDC_TRANSPORTS_RETURN           1170
@@ -402,6 +410,7 @@
 #define IDC_PLAYER_ATTITUDE_OUT         1171
 #define IDC_CHECK5                      1171
 #define IDC_AVOID_THREATS               1171
+#define IDC_CLEANSCRIPTNAME             1171
 #define IDC_WARNINGS_CAPTION            1172
 #define IDC_CHECK6                      1172
 #define IDC_WARNINGS                    1173
@@ -635,6 +644,7 @@
 #define ID_FILE_GENERATE_MAPSTRNINI     1390
 #define ID_FILE_JUMPTOGAME_WM           1391
 #define ID_DISABLEMAPPREVGENERATE       1392
+#define ID_FILE_AUTOSAVEFOLDER          1393
 #define ID_BRUSH_TOOL                   32771
 #define IDM_ShowGrid                    32772
 #define ID_FEATHERTOOL                  32791
@@ -715,6 +725,7 @@
 #define ID_EDIT_SCRIPTS                 32977
 #define ID_EDIT_TEAMLIST                32978
 #define ID_FENCE_TOOL                   32979
+#define ID_VIEW_FIXEDCOLOREDWAYPOINTS   32980
 #define ID_VIEW_SHOWIMPASSABLEAREAS     32981
 #define ID_TEXTURESIZING_TILE4X4        32982
 #define ID_TEXTURESIZING_TILE6X6        32983
@@ -792,6 +803,7 @@
 #define ID_LOD_MODE_1                   33352
 #define ID_LOD_MODE_2                   33353
 #define ID_LOD_MODE_3                   33354
+#define ID_VIEW_LABELS_EXTRA            33355
 #define IDS_NEW                         61446
 #define IDS_RESIZE                      61447
 #define IDS_REMOVING_INUSE_TEAM         61448

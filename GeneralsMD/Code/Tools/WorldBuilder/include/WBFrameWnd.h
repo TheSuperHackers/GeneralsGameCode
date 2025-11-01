@@ -69,6 +69,7 @@ class CWB3dFrameWnd : public CMainFrame
 	DECLARE_DYNCREATE(CWB3dFrameWnd)
 protected:
 	CWB3dFrameWnd();           // protected constructor used by dynamic creation
+	BOOL m_isFullScreen;
 // Operations
 public:
 // Overrides
@@ -78,6 +79,7 @@ public:
 				CCreateContext* pContext = NULL);
 	
 	void ExitFullScreen();
+	void EnterFullScreen();
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWB3dFrameWnd)
 	public:

@@ -71,10 +71,14 @@ WbView::WbView() :
 	m_showObjectsSelected = (showObjSel!=0);
 	Int showNames = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowNames", 1);
 	m_showNames = (showNames!=0);
+	Int showNamesExtra = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowNamesExtra", 1);
+	m_showNamesExtra = (showNamesExtra!=0);
 	Int snapToGrid = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "SnapToGrid", 0);
 	m_snapToGrid = (snapToGrid!=0);
 	Int showTerrain = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowTerrain", 1);
 	m_showTerrain = (showTerrain!=0);
+	Int fixedColoredWaypoints = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "UseFixedColoredWaypoints", 0);
+	m_useFixedColoredWaypoints = (fixedColoredWaypoints!=0);
 }
 
 WbView::~WbView()
@@ -119,6 +123,8 @@ BEGIN_MESSAGE_MAP(WbView, CView)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWWAYPOINTS, OnUpdateViewShowwaypoints)
 	ON_COMMAND(ID_VIEW_SHOWWATER, OnViewShowWater)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWWATER, OnUpdateViewShowWater)
+	ON_COMMAND(ID_VIEW_FIXEDCOLOREDWAYPOINTS, OnViewUseFixedColorWaypoints)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_FIXEDCOLOREDWAYPOINTS, OnUpdateViewUseFixedColorWaypoints)
 	ON_COMMAND(ID_VIEW_SHOWROADS, OnViewShowRoads)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWROADS, OnUpdateViewShowRoads)
 	ON_COMMAND(ID_VIEW_SHOWPOLYGONTRIGGERS, OnViewShowpolygontriggers)
@@ -156,6 +162,8 @@ BEGIN_MESSAGE_MAP(WbView, CView)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_PICKSOUNDS, OnUpdatePickSounds)
 	ON_COMMAND(ID_VIEW_LABELS, OnShowNames)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_LABELS, OnUpdateShowNames)
+	ON_COMMAND(ID_VIEW_LABELS_EXTRA, OnShowNamesExtra)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_LABELS_EXTRA, OnUpdateShowNamesExtra)
 	ON_COMMAND(ID_VALIDATION_FIXTEAMS, OnValidationFixTeams)
 	ON_COMMAND(ID_VIEW_SHOW_TERRAIN, OnShowTerrain)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOW_TERRAIN, OnUpdateShowTerrain)
@@ -898,6 +906,17 @@ void WbView::OnUpdateViewShowWater(CCmdUI* pCmdUI)
 	pCmdUI->SetCheck(m_showWater?1:0);
 }
 
+void WbView::OnViewUseFixedColorWaypoints() 
+{
+	m_useFixedColoredWaypoints = !m_useFixedColoredWaypoints;
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "UseFixedColoredWaypoints", m_useFixedColoredWaypoints?1:0);
+}
+
+void WbView::OnUpdateViewUseFixedColorWaypoints(CCmdUI* pCmdUI) 
+{
+	pCmdUI->SetCheck(m_useFixedColoredWaypoints?1:0);
+}
+
 void WbView::OnViewShowRoads() 
 {
 	m_showRoads = !m_showRoads;
@@ -906,7 +925,7 @@ void WbView::OnViewShowRoads()
 		if(!m_showRoads){
 			TheTerrainRenderObject->removeAllRoads();
 		} else {
-			TheTerrainRenderObject->loadRoadsOnly();
+			TheTerrainRenderObject->loadRoadsAndBridges(NULL,FALSE);
 		}
 	}
 }
@@ -1076,6 +1095,24 @@ void WbView::OnShowNames()
 void WbView::OnUpdateShowNames(CCmdUI* pCmdUI) 
 {
 	pCmdUI->SetCheck(m_showNames ? 1 : 0);
+}
+
+
+void WbView::OnShowNamesExtra() 
+{
+	m_showNamesExtra = m_showNamesExtra ? false : true;
+	Invalidate(false);
+	WbView  *pView = (WbView *)WbDoc()->GetActive2DView();
+	if (pView != NULL && pView != this) {
+		pView->Invalidate(false);
+	}
+
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowNamesExtra", m_showNamesExtra?1:0);
+}
+
+void WbView::OnUpdateShowNamesExtra(CCmdUI* pCmdUI) 
+{
+	pCmdUI->SetCheck(m_showNamesExtra ? 1 : 0);
 }
 
 void WbView::OnValidationFixTeams()

@@ -44,6 +44,9 @@
 
 #include "Common/GlobalData.h"
 
+// This is used to allow sounds to be played via PlaySound
+#include <mmsystem.h>
+
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
@@ -59,7 +62,7 @@ static const Int K_LOCAL_TEAMS_VERSION_1 = 1;
 static const char* NEUTRAL_NAME_STR = "(neutral)";
 ScriptDialog *ScriptDialog::m_staticThis = NULL;
 
-static AsciiString formatScriptLabel(Script *pScr) {
+static AsciiString formatScriptLabel(Script *pScr, Bool cleanNames) {
 	int burstSeconds = pScr->getDelayEvalSeconds();
 	AsciiString fmt;
 	if (pScr->isSubroutine()) {
@@ -83,7 +86,8 @@ static AsciiString formatScriptLabel(Script *pScr) {
 	bool normal = pScr->isNormal();
 	bool hard   = pScr->isHard();
 
-	if (!(easy && normal && hard)) { 
+	// only show difficulty if not all 3 present OR if cleanNames == false
+	if (!cleanNames || !(easy && normal && hard)) {
 		// Build difficulty string dynamically without trailing spaces
 		AsciiString diff;
 		diff.concat("[");
@@ -123,7 +127,7 @@ static AsciiString formatScriptLabel(ScriptGroup *pScrGrp) {
 	}
 	else
 	{
-		fmt.concat("[ns "); 
+		fmt.concat("[   "); 
 	}
 	if (pScrGrp->isActive())
 	{
@@ -131,7 +135,7 @@ static AsciiString formatScriptLabel(ScriptGroup *pScrGrp) {
 	}
 	else
 	{
-		fmt.concat("na]"); 
+		fmt.concat("   ]"); 
 	}
 	fmt.concat(pScrGrp->getName().str());
 	return fmt;
@@ -190,6 +194,7 @@ ScriptDialog::ScriptDialog(CWnd* pParent /*=NULL*/)
 	m_autoUpdateWarnings = true;
 	m_pOldFont = NULL; 
 	m_bCompressed = false;
+	m_updating = true;
 	m_bNewIcons = false;
 	m_bSmartCopyEnabled = false;
 	//{{AFX_DATA_INIT(ScriptDialog)
@@ -228,6 +233,7 @@ BEGIN_MESSAGE_MAP(ScriptDialog, CDialog)
 	ON_BN_CLICKED(IDC_COMPRESS, OnCompress)
 	ON_BN_CLICKED(IDC_NEWICONS, OnNewIcons)
 	ON_BN_CLICKED(IDC_DEEPSCAN, OnDisableDeepScan)
+	ON_BN_CLICKED(IDC_CLEANSCRIPTNAME, OnCleanScriptName)
 	ON_BN_CLICKED(IDC_FIND_NEXT, OnFindNext)
 	ON_BN_CLICKED(IDC_SMART_COPY, OnSmartCopy)
 	ON_BN_CLICKED(IDC_SAVE, OnSave)
@@ -328,12 +334,10 @@ void ScriptDialog::OnSelchangedScriptTree(NMHDR* pNMHDR, LRESULT* pResult)
 		scriptComment = pScript->getComment();
 		scriptText = pScript->getUiText();
 
-		Int burstSeconds = pScript->getDelayEvalSeconds();  // seconds, not frames
+		Int burstSeconds = pScript->getDelayEvalSeconds();
 		scriptBurst.format("%d", burstSeconds);  
 
 		AsciiString usedByTag;
-		usedByTag.concat("[Referenced in] :");
-
 		AsciiString targetScriptName = pScript->getName();
 		Bool foundUse = false;
 
@@ -344,35 +348,18 @@ void ScriptDialog::OnSelchangedScriptTree(NMHDR* pNMHDR, LRESULT* pResult)
 			// --- Check non-grouped scripts
 			for (Script* s = pSL->getScript(); s; s = s->getNext()) {
 				if (s == pScript) continue;
-				bool referenced = false;
 
-				// Check conditions
-				for (OrCondition* pOr = s->getOrCondition(); pOr && !referenced; pOr = pOr->getNextOrCondition()) {
-					for (Condition* c = pOr->getFirstAndCondition(); c && !referenced; c = c->getNext()) {
-						for (int p = 0; p < c->getNumParameters(); ++p) {
-							Parameter* param = c->getParameter(p);
-							if (param && param->getParameterType() == Parameter::SCRIPT &&
-								param->getString() == targetScriptName) {
-								referenced = true;
-								break;
-							}
-						}
-					}
-				}
+				// Collect all readable text for this script
+				AsciiString allText;
+				allText.concat(s->getUiText());
+				allText.concat(s->getComment());
+				allText.concat(s->getActionComment());
+				allText.concat(s->getConditionComment());
 
-				// Check actions if not already found
-				for (ScriptAction* a = s->getAction(); a && !referenced; a = a->getNext()) {
-					for (int p = 0; p < a->getNumParameters(); ++p) {
-						Parameter* param = a->getParameter(p);
-						if (param && param->getParameterType() == Parameter::SCRIPT &&
-							param->getString() == targetScriptName) {
-							referenced = true;
-							break;
-						}
-					}
-				}
+				CString content = allText.str();
+				CString search = targetScriptName.str();
 
-				if (referenced && !alreadyListed(usedByTag, s->getName())) {
+				if (content.Find(search) != -1 && !alreadyListed(usedByTag, s->getName())) {
 					if (foundUse) {
 						usedByTag.concat(", ");
 					} else {
@@ -386,35 +373,17 @@ void ScriptDialog::OnSelchangedScriptTree(NMHDR* pNMHDR, LRESULT* pResult)
 			for (ScriptGroup* g = pSL->getScriptGroup(); g; g = g->getNext()) {
 				for (Script* s = g->getScript(); s; s = s->getNext()) {
 					if (s == pScript) continue;
-					bool referenced = false;
 
-					// Conditions
-					for (OrCondition* pOr = s->getOrCondition(); pOr && !referenced; pOr = pOr->getNextOrCondition()) {
-						for (Condition* c = pOr->getFirstAndCondition(); c && !referenced; c = c->getNext()) {
-							for (int p = 0; p < c->getNumParameters(); ++p) {
-								Parameter* param = c->getParameter(p);
-								if (param && param->getParameterType() == Parameter::SCRIPT &&
-									param->getString() == targetScriptName) {
-									referenced = true;
-									break;
-								}
-							}
-						}
-					}
+					AsciiString allText;
+					allText.concat(s->getUiText());
+					allText.concat(s->getComment());
+					allText.concat(s->getActionComment());
+					allText.concat(s->getConditionComment());
 
-					// Actions
-					for (ScriptAction* a = s->getAction(); a && !referenced; a = a->getNext()) {
-						for (int p = 0; p < a->getNumParameters(); ++p) {
-							Parameter* param = a->getParameter(p);
-							if (param && param->getParameterType() == Parameter::SCRIPT &&
-								param->getString() == targetScriptName) {
-								referenced = true;
-								break;
-							}
-						}
-					}
+					CString content = allText.str();
+					CString search = targetScriptName.str();
 
-					if (referenced && !alreadyListed(usedByTag, s->getName())) {
+					if (content.Find(search) != -1 && !alreadyListed(usedByTag, s->getName())) {
 						if (foundUse) {
 							usedByTag.concat(", ");
 						} else {
@@ -426,9 +395,14 @@ void ScriptDialog::OnSelchangedScriptTree(NMHDR* pNMHDR, LRESULT* pResult)
 			}
 		}
 
-		usedByTag.concat(foundUse ? "" : " --");
+		if (foundUse) {
+			AsciiString temp;
+			temp.concat("[Referenced in] : ");
+			temp.concat(usedByTag);
+			usedByTag = temp;
+		}
 
-		if(!scriptComment.isEmpty()){
+		if (!scriptComment.isEmpty()) {
 			scriptComment.concat("\n\n");
 		}
 
@@ -444,14 +418,7 @@ void ScriptDialog::OnSelchangedScriptTree(NMHDR* pNMHDR, LRESULT* pResult)
 			scriptComment.concat("\n\n");
 		}
 
-		if (burstSeconds > 0) {  // Only show if non-zero (optional)
-			scriptComment.concat("[Runs every ");
-			scriptComment.concat(scriptBurst);
-			scriptComment.concat(" second(s)]\n");
-		}
-
 		scriptComment.concat(usedByTag);
-
 		scriptComment = parseLineBreaks(scriptComment);
 	}
 
@@ -564,8 +531,20 @@ void ScriptDialog::updateScriptWarning(Script *pScript)
 
 void ScriptDialog::OnPatchGC()
 {
-	checkParametersForGC();
-	updateIcons(TVI_ROOT);
+	int result = AfxMessageBox(
+		"This will remove the 'GC_' prefix from object names "
+		"(for example, GC_Chem_GLAInfantryRebel to Chem_GLAInfantryRebel).\n\n"
+		"Use this if your scripts reference old GC_ objects and you want them "
+		"to automatically point to their normal counterparts.\n\n"
+		"Do you want to continue?",
+		MB_YESNO | MB_ICONQUESTION
+	);
+
+	if (result == IDYES)
+	{
+		checkParametersForGC();
+		updateIcons(TVI_ROOT);
+	}
 /*  //Put up a dialog asking for search/replace parameters instead of hard-coded GC_ prefix.
 	ReplaceParameter editDlg();
 	if (IDOK==editDlg.DoModal())
@@ -754,6 +733,42 @@ void ScriptDialog::OnNewIcons()
 
 		pTree->SetImageList(&m_imageList, TVSIL_STATE);
 	}
+}
+
+void ScriptDialog::OnCleanScriptName()
+{
+	CButton *pButton = (CButton*)GetDlgItem(IDC_CLEANSCRIPTNAME);
+	m_bCleanScriptName = (pButton->GetCheck() == 1);
+    ::AfxGetApp()->WriteProfileInt(SCRIPT_DIALOG_SECTION, "CleanStringName", m_bCleanScriptName ? 1 : 0);
+
+	if (m_bCleanScriptName && !m_updating)
+	{
+		AfxMessageBox(
+			"This feature will simplify script names to reduce clutter.\n\n"
+			"If a script exists in all three difficulties (Easy, Normal, and Hard), "
+			"the difficulty tags will be hidden since it's the same across all.\n\n"
+			"However, if a script only exists in one or two difficulties, "
+			"the difficulty tags will still be shown to make that clear.",
+			MB_OK | MB_ICONINFORMATION
+		);
+	}
+
+	// Rebuilds the tree
+	CTreeCtrl* pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
+    if (!pTree) return;
+
+    pTree->SetRedraw(FALSE); // avoid flicker
+
+    for (int i = 0; i < m_sides.getNumSides(); ++i)
+    {
+        ScriptList* pSL = m_sides.getSideInfo(i)->getScriptList();
+        if (pSL)
+            reloadPlayer(i, pSL);
+    }
+
+    pTree->SetRedraw(TRUE);
+    pTree->Invalidate();
+    pTree->UpdateWindow();
 }
 
 void ScriptDialog::OnDisableDeepScan()
@@ -1025,8 +1040,6 @@ void ScriptDialog::updateWarnings(Bool forceUpdate)
     if (m_staticThis && !m_staticThis->m_autoUpdateWarnings && !forceUpdate)
         return;
 
-	MessageBeep(MB_ICONEXCLAMATION); // let user know something is happening
-
 	SidesList *sidesListP = TheSidesList;
 	Int i;
 	if (m_staticThis) sidesListP = &m_staticThis->m_sides;
@@ -1053,6 +1066,8 @@ void ScriptDialog::updateWarnings(Bool forceUpdate)
 			}
 		}
 	}	
+
+    PlaySound("data\\editor\\audio\\finished.wav", NULL, SND_FILENAME | SND_ASYNC);
 }
 
 extern AsciiString ConvertToNonGCName(AsciiString name, Bool checkTemplate=true);
@@ -1184,6 +1199,13 @@ BOOL ScriptDialog::OnInitDialog()
 	pButton = (CButton*)GetDlgItem(IDC_DEEPSCAN);
 	pButton->SetCheck(m_bDisableDeepScan ? 1:0);
 	OnDisableDeepScan();
+
+	m_bCleanScriptName=::AfxGetApp()->GetProfileInt(SCRIPT_DIALOG_SECTION, "CleanStringName", 1);
+	pButton = (CButton*)GetDlgItem(IDC_CLEANSCRIPTNAME);
+	pButton->SetCheck(m_bCleanScriptName ? 1:0);
+	OnCleanScriptName();
+
+	m_updating = false;
 
 	CTreeCtrl *pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
 
@@ -1437,7 +1459,7 @@ void ScriptDialog::addScriptList(HTREEITEM hPlayer, Int playerIndex, ScriptList 
 				AsciiString fmt;
 				if (pScr->getName().isEmpty())
 					continue;
-				fmt = formatScriptLabel(pScr);
+				fmt = formatScriptLabel(pScr, m_bCleanScriptName);
 				::memset(&ins, 0, sizeof(ins));
 				ListType lt;
 				lt.m_objType=ListType::SCRIPT_IN_GROUP_TYPE;
@@ -1467,7 +1489,7 @@ void ScriptDialog::addScriptList(HTREEITEM hPlayer, Int playerIndex, ScriptList 
 			AsciiString fmt;
 			if (pScr->getName().isEmpty())
 				continue;
-			fmt = formatScriptLabel(pScr);
+			fmt = formatScriptLabel(pScr, m_bCleanScriptName);
 			::memset(&ins, 0, sizeof(ins));
 			ListType lt;
 			lt.m_objType=ListType::SCRIPT_IN_PLAYER_TYPE;
@@ -1783,7 +1805,7 @@ void ScriptDialog::OnEditScript()
 		CTreeCtrl *pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
 		HTREEITEM item = findItem(m_curSelection);
 		if (item) {
-			pTree->SetItemText(item, formatScriptLabel(pScript).str());
+			pTree->SetItemText(item, formatScriptLabel(pScript, m_bCleanScriptName).str());
 			pTree->SelectItem(NULL);
 			pScript->setDirty(true);
 			updateWarnings();
@@ -3008,7 +3030,7 @@ void ScriptDialog::OnScriptActivate()
 
 		// Update label
 		Script *pScript = getCurScript();
-		pTree->SetItemText(item, formatScriptLabel(pScript).str());
+		pTree->SetItemText(item, formatScriptLabel(pScript, m_bCleanScriptName).str());
 
 		// Set icon using centralized logic
 		setIconScript(item);

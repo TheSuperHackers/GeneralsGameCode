@@ -1,6 +1,7 @@
 #pragma once
 
 #include <afxwin.h>
+#include <vector>
 
 #define IDD_TOAST 242
 #define IDC_HINT_TEXT 256
@@ -29,4 +30,9 @@ private:
     int m_durationMs;
     UINT_PTR m_nTimerID;
     bool m_showButtons;
+
+    int m_offsetY; // used to track its vertical stacking offset
+
+    static std::vector<CToastDialog*> s_activeToasts;
+    static const int kToastSpacing; // space between toasts
 };

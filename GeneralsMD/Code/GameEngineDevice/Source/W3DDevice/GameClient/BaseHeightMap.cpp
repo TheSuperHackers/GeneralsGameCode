@@ -1311,6 +1311,10 @@ void BaseHeightMapRenderObjClass::removeAllRoads()
 	if (m_roadBuffer) {
 		m_roadBuffer->clearAllRoads(); 
 	}
+
+	if (m_bridgeBuffer) {
+		m_bridgeBuffer->clearAllBridges();
+	}
 };
 
 

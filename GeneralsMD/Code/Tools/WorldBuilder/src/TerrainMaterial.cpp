@@ -32,6 +32,7 @@
 #include "Common/TerrainTypes.h"
 #include "W3DDevice/GameClient/TerrainTex.h"	  
 #include "W3DDevice/GameClient/HeightMap.h"
+#include "DrawObject.h"
 
 TerrainMaterial *TerrainMaterial::m_staticThis = NULL;
 
@@ -48,12 +49,16 @@ Bool TerrainMaterial::m_paintingPassable;
 
 Bool TerrainMaterial::m_onCopyApplyMode(false);
 Bool TerrainMaterial::m_onCopySelectMode(false);
+Bool TerrainMaterial::m_copyTerrainMode(false);
+Bool TerrainMaterial::m_copyTextureMode(false);
+Bool TerrainMaterial::m_raiseOnly(false);
 Int TerrainMaterial::m_copyRotation(0);
 
 TerrainMaterial::TerrainMaterial(CWnd* pParent /*=NULL*/) :
 	m_updating(false),
 	m_lastTool(""),
-	m_currentWidth(BigTileTool::getTileToolWidth())
+	m_currentWidth(BigTileTool::getTileToolWidth()),
+	m_currentHeight(0)
 {
 	//{{AFX_DATA_INIT(TerrainMaterial)
 		// NOTE: the ClassWizard will add member initialization here
@@ -78,6 +83,8 @@ BEGIN_MESSAGE_MAP(TerrainMaterial, COptionsPanel)
 	ON_BN_CLICKED(IDC_PASSABLE_CHECK, OnPassableCheck)
 	ON_BN_CLICKED(IDC_PASSABLE, OnPassable)
 
+	ON_BN_CLICKED(IDC_COPY_MODE2, OnCopyModeTerrain)
+	ON_BN_CLICKED(IDC_COPY_MODE2_1, OnRaiseOnly)
 	ON_BN_CLICKED(IDC_COPY_MODE, OnCopyMode)
 	ON_BN_CLICKED(IDC_TERRAIN_COPY_SELECT, OnCopySelect)
 	ON_BN_CLICKED(IDC_TERRAIN_COPY_APPLY, OnCopyApply)
@@ -130,6 +137,17 @@ void TerrainMaterial::setWidth(Int width)
 	}
 }
 
+void TerrainMaterial::setHeight(Int height) 
+{ 
+	CString buf;
+	buf.Format("%d", height);
+	if (m_staticThis && !m_staticThis->m_updating) {
+		m_staticThis->m_currentHeight = height;
+		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_Z_EDIT);
+		if (pEdit) pEdit->SetWindowText(buf);
+	}
+}
+
 /// Sets the tool option - single & multi tile use this panel, 
 // and only multi tile uses the width.
 /** Update the ui for the tool. */
@@ -162,14 +180,20 @@ void TerrainMaterial::setToolOptions(Bool singleCell, Bool floodfill)
 		}
 
 		CButton* pCheckBox = (CButton*)m_staticThis->GetDlgItem(IDC_COPY_MODE);
-		Bool isChecked = (pCheckBox->GetCheck() != 0);
+		CButton* pCheckBox2 = (CButton*)m_staticThis->GetDlgItem(IDC_COPY_MODE2);
+		CButton* pCheckBox3 = (CButton*)m_staticThis->GetDlgItem(IDC_COPY_MODE2_1);
+		Bool isChecked = (pCheckBox->GetCheck() != 0 || pCheckBox2->GetCheck() != 0);
 		if(isChecked && singleCell){
 			pCheckBox->SetCheck(FALSE);
+			pCheckBox2->SetCheck(FALSE);
+			pCheckBox3->SetCheck(FALSE);
 			m_staticThis->m_terrainSwatches.EnableWindow(TRUE);
 			m_staticThis->m_terrainTreeView.EnableWindow(TRUE);
 		}
 		pCheckBox->EnableWindow(!singleCell);
-		
+		pCheckBox2->EnableWindow(!singleCell);
+		pCheckBox3->EnableWindow(!singleCell && (pCheckBox2->GetCheck() != 0));
+
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_SIZE_EDIT);
 		if (pEdit) {
 			pEdit->EnableWindow(!singleCell);
@@ -214,6 +238,9 @@ void TerrainMaterial::setToolOptions(Bool singleCell, Bool floodfill)
 		if(singleCell){
 			m_onCopySelectMode = false;
 			m_onCopyApplyMode = false;
+			m_copyTerrainMode = false;
+			m_copyTextureMode = false;
+			m_raiseOnly = false;
 		}
 
 		m_staticThis->m_updating = false;
@@ -492,6 +519,9 @@ BOOL TerrainMaterial::OnInitDialog()
 
 	m_onCopySelectMode = false;
 	m_onCopyApplyMode = false;
+	m_copyTerrainMode = false;
+	m_copyTextureMode = false;
+	m_raiseOnly = false;
 	m_copyRotation = 0;
 
 	CButton *button = (CButton *)GetDlgItem(IDC_PASSABLE_CHECK);
@@ -505,6 +535,13 @@ BOOL TerrainMaterial::OnInitDialog()
 
 	button = (CButton *)GetDlgItem(IDC_COPY_MODE);
 	button->SetCheck(false);
+	// button = (CButton *)GetDlgItem(IDC_COPY_MODE2);
+	// button->SetCheck(false);
+	// button->EnableWindow(false);
+
+	button = (CButton*)GetDlgItem(IDC_COPY_MODE2_1);
+	button->EnableWindow(false);
+
 	button = (CButton *)GetDlgItem(IDC_TERRAIN_COPY_SELECT);
 	button->SetCheck(false);
 	button->EnableWindow(false);
@@ -526,9 +563,11 @@ BOOL TerrainMaterial::OnInitDialog()
 	button->EnableWindow(false);
 
 	m_widthPopup.SetupPopSliderButton(this, IDC_SIZE_POPUP, this);
+	m_heightPopup.SetupPopSliderButton(this, IDC_Z_POPUP, this);
 	m_staticThis = this;
 	m_updating = false;
 	setWidth(m_currentWidth);
+	setHeight(m_currentHeight);
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -691,6 +730,7 @@ void TerrainMaterial::OnChangeSizeEdit()
 {
 		if (m_updating) return;
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_SIZE_EDIT);
+		CWnd *pZEdit = m_staticThis->GetDlgItem(IDC_Z_EDIT);
 		char buffer[_MAX_PATH];
 		if (pEdit) {
 			pEdit->GetWindowText(buffer, sizeof(buffer));
@@ -712,6 +752,20 @@ void TerrainMaterial::OnChangeSizeEdit()
 			}
 			m_updating = false;
 		}
+
+		if (pZEdit) {
+			pZEdit->GetWindowText(buffer, sizeof(buffer));
+			Int height;
+			m_updating = true;
+			if (1==sscanf(buffer, "%d", &height)) {
+				m_currentHeight = height;
+				BigTileTool::setHeight(m_currentHeight);
+				// sprintf(buffer, "%.1f FEET.", m_currentHeight*MAP_XY_FACTOR);
+				// pEdit = m_staticThis->GetDlgItem(IDC_HEIGHT_LABEL);
+				// if (pEdit) pEdit->SetWindowText(buffer);
+			}
+			m_updating = false;
+		}
 }
 
 void TerrainMaterial::GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial)
@@ -724,6 +778,14 @@ void TerrainMaterial::GetPopSliderInfo(const long sliderID, long *pMin, long *pM
 			*pInitial = m_currentWidth;
 			*pLineSize = 1;
 			break;
+
+		case IDC_Z_POPUP:
+			*pMin = MIN_Z_HEIGHT;
+			*pMax = MAX_Z_HEIGHT;
+			*pInitial = m_currentHeight;
+			*pLineSize = 1;
+			break;
+
 		default:
 			break;
 	}	// switch
@@ -744,7 +806,12 @@ void TerrainMaterial::PopSliderChanged(const long sliderID, long theVal)
 			BigTileTool::setWidth(m_currentWidth);
 			break;
 
-		default:
+		case IDC_Z_POPUP:
+			m_currentHeight = theVal;
+			str.Format("%d",m_currentHeight);
+			pEdit = m_staticThis->GetDlgItem(IDC_Z_EDIT);
+			if (pEdit) pEdit->SetWindowText(str);
+			BigTileTool::setHeight(m_currentHeight);
 			break;
 	}	// switch
 }
@@ -753,6 +820,9 @@ void TerrainMaterial::PopSliderFinished(const long sliderID, long theVal)
 {
 	switch (sliderID) {
 		case IDC_SIZE_POPUP:
+			break;
+
+		case IDC_Z_POPUP:
 			break;
 
 		default:
@@ -887,6 +957,9 @@ void TerrainMaterial::OnPassableCheck()
 	if(isChecked){
 		m_onCopyApplyMode = false;
 		m_onCopySelectMode = false;
+		m_copyTerrainMode = false;
+		m_copyTextureMode = false;
+		m_raiseOnly = false;
 	}
 }
 
@@ -897,16 +970,18 @@ void TerrainMaterial::OnPassable()
 	button->SetCheck(0);
 }
 
-
-void TerrainMaterial::OnCopyMode() 
+void TerrainMaterial::copyMode() 
 {
-	// DEBUG_LOG(("Copy Mode toggled\n"));
-
-	m_onCopyApplyMode = false;
-	m_onCopySelectMode = false;
+    m_onCopyApplyMode = false;
+    m_onCopySelectMode = false;
 
 	CButton *owner = (CButton*) GetDlgItem(IDC_COPY_MODE);
-	Bool isChecked = (owner->GetCheck() != 0);
+
+	CButton *owner2 = (CButton*) GetDlgItem(IDC_COPY_MODE2);
+	Bool isChecked = (owner->GetCheck() != 0 || owner2->GetCheck() != 0);
+
+	CButton *owner3 = (CButton*) GetDlgItem(IDC_COPY_MODE2_1);
+	owner3->EnableWindow(owner2->GetCheck() != 0);
 
 	CButton *button = (CButton *)GetDlgItem(IDC_TERRAIN_COPY_APPLY);
 	button->EnableWindow(isChecked);
@@ -949,6 +1024,24 @@ void TerrainMaterial::OnCopyMode()
 
 	button = (CButton *)GetDlgItem(IDC_TERRAIN_ROTATE4);
 	button->EnableWindow(isChecked);
+}
+
+void TerrainMaterial::OnRaiseOnly() 
+{
+	m_raiseOnly = !m_raiseOnly;
+}
+
+void TerrainMaterial::OnCopyMode() 
+{
+	m_copyTextureMode = !m_copyTextureMode;
+    copyMode();
+}
+
+void TerrainMaterial::OnCopyModeTerrain() 
+{
+	m_copyTerrainMode = !m_copyTerrainMode;
+	DrawObject::m_terrainPasteFeedback = false;
+    copyMode();
 }
 
 void TerrainMaterial::OnCopySelect() 

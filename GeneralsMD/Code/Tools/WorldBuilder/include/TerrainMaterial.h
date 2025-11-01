@@ -57,7 +57,7 @@ public:
 
 // Implementation
 protected:
-	enum {MIN_TILE_SIZE=2, MAX_TILE_SIZE = 100};
+	enum {MIN_TILE_SIZE=2, MAX_TILE_SIZE = 100, MIN_Z_HEIGHT=-50, MAX_Z_HEIGHT=100};
 	// Generated message map functions
 	//{{AFX_MSG(TerrainMaterial)
 	virtual BOOL OnInitDialog();
@@ -69,6 +69,8 @@ protected:
 	afx_msg void OnCopySelect();
 	afx_msg void OnCopyApply();
 	afx_msg void OnCopyMode();
+	afx_msg void OnCopyModeTerrain();
+	afx_msg void OnRaiseOnly();
 	
 	afx_msg void OnSetFavorite();
 	afx_msg void OnDeleteFavorite();
@@ -92,11 +94,16 @@ protected:
 	CTreeCtrl m_favTreeView;
 	TerrainSwatches					m_terrainSwatches;
 	WBPopupSliderButton			m_widthPopup;
+	WBPopupSliderButton			m_heightPopup;
 	Int											m_currentWidth;
+	Int											m_currentHeight;
 
 	static Bool m_paintingPathingInfo;	 // If true, we are painting passable/impassable.  If false, normal texture painting.
 	static Bool m_paintingPassable;
 
+	static Bool m_raiseOnly;
+	static Bool m_copyTextureMode;
+	static Bool m_copyTerrainMode;
 	static Bool m_onCopySelectMode;
 	static Bool m_onCopyApplyMode;
 	static Int m_copyRotation; 
@@ -107,7 +114,7 @@ protected:
 	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
 	void updateLabel(void);
 	void SaveFavoritesToMapFolder();
-
+	void copyMode();
 
 public:
 	static Int getFgTexClass(void) {return m_currentFgTexture;}
@@ -119,9 +126,14 @@ public:
 	static void updateTextureSelection(void);
 	static void setToolOptions(Bool singleCell, Bool floodfill = false);
 	static void setWidth(Int width);
+	static void setHeight(Int height);
 
 	static Bool isPaintingPathingInfo(void) {return m_paintingPathingInfo;}
 	static Bool isPaintingPassable(void) {return m_paintingPassable;}
+
+	static Bool isCopyTerrainMode(void) {return m_copyTerrainMode;}
+	static Bool isCopyTextureMode(void) {return m_copyTextureMode;}
+	static Bool isRaiseOnly(void) { return m_raiseOnly; }
 
 	static Bool isCopySelectMode(void) {return m_onCopySelectMode;}
 	static Bool isCopyApplyMode(void) {return m_onCopyApplyMode;}

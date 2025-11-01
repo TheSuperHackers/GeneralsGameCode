@@ -751,42 +751,39 @@ void BuildList::OnExport()
 	static FILE *theLogFile = NULL;
 	Bool open = false;
 	try {
-		char dirbuf[ _MAX_PATH ];
-		::GetModuleFileName( NULL, dirbuf, sizeof( dirbuf ) );
-		char *pEnd = dirbuf + strlen( dirbuf );
-		while( pEnd != dirbuf ) 
-		{
-			if( *pEnd == '\\' ) 
-			{
-				*(pEnd + 1) = 0;
-				break;
-			}
-			pEnd--;
-		}
+		CFileDialog dlg(FALSE, _T("ini"), _T("BuildList.ini"), OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+			_T("INI Files (*.ini)|*.ini|All Files (*.*)|*.*||"));
 
-		char curbuf[ _MAX_PATH ];
-
-		strcpy(curbuf, dirbuf);
+		// Default file name suggestion based on current side/player
 		SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide); 
-		Dict *d = TheSidesList->getSideInfo(m_curSide)->getDict();
-		AsciiString name = d->getAsciiString(TheKey_playerName);
-		strcat(curbuf, name.str());
-		strcat(curbuf, "_BuildList");
-		strcat(curbuf, ".ini");
+		if (!pSide) return;
+		Dict *d = pSide->getDict();
+		if (!d) return;
 
-		theLogFile = fopen(curbuf, "w");
+		AsciiString name = d->getAsciiString(TheKey_playerName);
+		CString suggested;
+		suggested.Format(_T("%s_BuildList.ini"), name.str());
+		dlg.m_ofn.lpstrFile = suggested.GetBuffer(MAX_PATH);
+
+		if (dlg.DoModal() != IDOK)
+			return; // User cancelled
+
+		suggested.ReleaseBuffer();
+
+		CString filePath = dlg.GetPathName();
+		theLogFile = fopen(filePath, "w");
 		if (theLogFile == NULL)
 			throw;
+
+		open = true;
 
 		AsciiString tmplname = d->getAsciiString(TheKey_playerFaction);
 		const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
 		DEBUG_ASSERTCRASH(pt != NULL, ("PlayerTemplate %s not found -- this is an obsolete map (please open and resave in WB)\n",tmplname.str()));
-		
+
 		fprintf(theLogFile, ";Skirmish AI Build List\n");
 		fprintf(theLogFile, "SkirmishBuildList %s\n", pt->getSide().str());
 
-		open = true;
-		
 		BuildListInfo *pBuildInfo = pSide->getBuildList();
 		while (pBuildInfo) {
 			fprintf(theLogFile, "  Structure %s\n", pBuildInfo->getTemplateName().str());
@@ -809,5 +806,4 @@ void BuildList::OnExport()
 			fclose(theLogFile);
 		}
 	}
-	
 }

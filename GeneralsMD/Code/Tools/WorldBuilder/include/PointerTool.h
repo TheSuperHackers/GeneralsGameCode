@@ -83,6 +83,7 @@ public:
 	static void clearSelection(void); ///< Clears the selected objects selected flags.
 	static Bool allowPick(MapObject* pMapObj, WbView* pView);
 	static CString getLastPointerInfoString(void) { return m_lastPointerInfo; }
+	static void setLastPointerInfoString(const CString& info) { m_lastPointerInfo = info; }
 	static Bool isMouseDown(void) { return m_isMouseDown; }
 	static Bool isDragSelecting(void) { return m_dragSelect; }
 	static Bool isActive(void) {return m_pointerIsActive; }

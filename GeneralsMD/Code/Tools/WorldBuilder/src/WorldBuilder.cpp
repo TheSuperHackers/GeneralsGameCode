@@ -512,10 +512,16 @@ BOOL CWorldBuilderApp::InitInstance()
 		"WARNING: This build of WorldBuilder is a work in progress.\n"
 		"Unauthorized use or distribution without notifying Adriane [Deathscythe] is discouraged.\n\n"
 		"This version is still in testing and may corrupt or break your map, so please make a backup before using it.\n\n"
-		"Build Version: b0c2e7d\n"
+		"Build Version: fdace71d\n"
 		"If you find a bug or do want to suggest a feature, please report it on our WorldBuilder Discord server:\nhttps://discord.gg/tJ6zyGb",
 		MB_ICONEXCLAMATION | MB_OK
 	);
+
+	CToastDialog* pToast = new CToastDialog(
+        _T("Press F11 to enter full screen"),
+        20000, true);
+    pToast->Create(CToastDialog::IDD);
+    pToast->ShowWindow(SW_SHOWNOACTIVATE);
 
 
 	// Load GameDirectory

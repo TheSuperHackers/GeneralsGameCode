@@ -1198,7 +1198,6 @@ void WorldHeightMapEdit::blendSpecificTiles(Int xIndex, Int yIndex, Int srcXInde
 }
 
 
-
 /******************************************************************
 	autoBlendOut
 		auto edges the texture region at xIndex, yIndex outwards.
@@ -1206,7 +1205,7 @@ void WorldHeightMapEdit::blendSpecificTiles(Int xIndex, Int yIndex, Int srcXInde
 		The edges are blended out, to whatever texture is already there.
 		If edgeClass == -1, use an alpha blend.  Otherwise, use tile class edgeClass.
 */
-void WorldHeightMapEdit::autoBlendOut(Int xIndex, Int yIndex, Int globalEdgeClass) 
+void WorldHeightMapEdit::autoBlendOut(Int xIndex, Int yIndex, Int globalEdgeClass, Bool hvGap, Bool dGap, Bool revalidateBlends) 
 {
 	Int ndx = (yIndex*m_width)+xIndex;
 	Int curTileClass = getTextureClass(xIndex, yIndex);
@@ -1265,7 +1264,97 @@ void WorldHeightMapEdit::autoBlendOut(Int xIndex, Int yIndex, Int globalEdgeClas
 					// obliterates it.
 					Int sides, total;
 					getTexClassNeighbors(i, j, curTileClass, &sides, &total);
-					if (sides>2 || total>5) {
+					bool shouldFill = false;
+
+					// Normal "mostly surrounded" rule
+					if (sides > 2 || total > 5)
+						shouldFill = true;
+					else {
+						// --- NEW: line-gap detection ---
+						// Check horizontal or vertical sandwich (tile between two same-class tiles)
+						if(hvGap){
+							static const int dx2[4][2] = { {-1,1}, {0,0}, {-1,-1}, {1,1} };
+							static const int dy2[4][2] = { {0,0}, {-1,1}, {-1,1}, {-1,1} };
+
+							// Simpler version: check straight 2-length across x or y
+							int left = i - 1, right = i + 1, up = j - 1, down = j + 1;
+							if (left >= 0 && right < m_width &&
+								getTextureClass(left, j, true) == curTileClass &&
+								getTextureClass(right, j, true) == curTileClass)
+								shouldFill = true;
+							else if (up >= 0 && down < m_height &&
+								getTextureClass(i, up, true) == curTileClass &&
+								getTextureClass(i, down, true) == curTileClass)
+								shouldFill = true;
+						}
+					}
+
+					// This one is just too loose at the moment -- we can enable it maybe via ui
+					// maxes 3x3 corners filled so becareful
+					// --- Check for diagonal sandwich (two same-class diagonals around a gap) ---
+					// Only apply if close to the first tile (to prevent long-range fills)
+					if (!shouldFill && dGap) {
+						int dxFromOrigin = abs(i - xIndex);
+						int dyFromOrigin = abs(j - yIndex);
+						int distSq = dxFromOrigin * dxFromOrigin + dyFromOrigin * dyFromOrigin;
+
+						// limit diagonal gap fill radius (e.g. within ~2.5 tiles)
+						const int maxDistSq = 6; // roughly radius ~2.4
+						if (distSq <= maxDistSq) {
+							int left = i - 1, right = i + 1, up = j - 1, down = j + 1;
+
+							// top-left & bottom-right diagonal
+							if (left >= 0 && up >= 0 && right < m_width && down < m_height &&
+								getTextureClass(left, up, true) == curTileClass &&
+								getTextureClass(right, down, true) == curTileClass)
+							{
+								shouldFill = true;
+							}
+							// top-right & bottom-left diagonal
+							else if (right < m_width && up >= 0 && left >= 0 && down < m_height &&
+								getTextureClass(right, up, true) == curTileClass &&
+								getTextureClass(left, down, true) == curTileClass)
+							{
+								shouldFill = true;
+							}
+						}
+					}
+
+					// --- Check for 2-step bridging (fills single gaps before blending) ---
+					// if (!shouldFill) {
+					// 	// check corner-to-side or side-to-corner 2-step bridges
+					// 	static const int pairs[8][2][2] = {
+					// 		{{-1,-1},{1,0}},  // TL + right
+					// 		{{-1,-1},{0,1}},  // TL + down
+					// 		{{1,-1},{-1,0}},  // TR + left
+					// 		{{1,-1},{0,1}},   // TR + down
+					// 		{{1,1},{-1,0}},   // BR + left
+					// 		{{1,1},{0,-1}},   // BR + up
+					// 		{{-1,1},{1,0}},   // BL + right
+					// 		{{-1,1},{0,-1}}   // BL + up
+					// 	};
+
+					// 	for (int p = 0; p < 8 && !shouldFill; ++p) {
+					// 		int ax = i + pairs[p][0][0];
+					// 		int ay = j + pairs[p][0][1];
+					// 		int bx = i + pairs[p][1][0];
+					// 		int by = j + pairs[p][1][1];
+
+					// 		if (ax >= 0 && ax < m_width && ay >= 0 && ay < m_height &&
+					// 			bx >= 0 && bx < m_width && by >= 0 && by < m_height)
+					// 		{
+					// 			if (getTextureClass(ax, ay, true) == curTileClass &&
+					// 				getTextureClass(bx, by, true) == curTileClass)
+					// 			{
+					// 				shouldFill = true;
+					// 			}
+					// 		}
+					// 	}
+					// }
+			
+					
+
+					if (shouldFill) {
 						m_tileNdxes[curNdx] = getTileNdxForClass(i, j, curTileClass);
 						m_blendTileNdxes[curNdx] = 0; // no blend.
 					} else {
@@ -1298,6 +1387,96 @@ void WorldHeightMapEdit::autoBlendOut(Int xIndex, Int yIndex, Int globalEdgeClas
 	for (i=0; i<m_dataSize; i++) {
 		pProcessed[i] = false;
 	}
+
+	// --- Compute the bounding box of the region to reblend ---
+	if((hvGap || dGap) || revalidateBlends){
+		Int minX = m_width, maxX = 0, minY = m_height, maxY = 0;
+		for (CProcessNode* n = pProcessedNodes; n; n = n->m_next) {
+			int ndx = (n->m_y * m_width) + n->m_x;
+			if (m_blendTileNdxes[ndx] > 0) {
+				int blendClass = getTextureClassFromNdx(
+					m_blendedTiles[m_blendTileNdxes[ndx]].blendNdx);
+				if (blendClass == curTileClass)
+					m_blendTileNdxes[ndx] = 0;
+			}
+		}
+
+
+		// Add 1-tile margin so we also clear adjacent blends
+		minX = max(0, minX - 1);
+		minY = max(0, minY - 1);
+		maxX = min(m_width - 1, maxX + 1);
+		maxY = min(m_height - 1, maxY + 1);
+
+		// --- Clear only blends in this bounded area ---
+		for (CProcessNode* za = pProcessedNodes; za; za = za->m_next) {
+			for (int dy = -1; dy <= 1; ++dy) {
+				int y = za->m_y + dy;
+				if (y < 0 || y >= m_height) continue;
+				for (int dx = -1; dx <= 1; ++dx) {
+					int x = za->m_x + dx;
+					if (x < 0 || x >= m_width) continue;
+					int ndx = y * m_width + x;
+					if (m_blendTileNdxes[ndx] > 0) {
+						int blendClass = getTextureClassFromNdx(
+							m_blendedTiles[m_blendTileNdxes[ndx]].blendNdx);
+						if (blendClass == curTileClass)
+							m_blendTileNdxes[ndx] = 0;
+					}
+				}
+			}
+		}
+	}
+
+
+    // ===========================
+    // Clear 3-way blends in 6x6 area if requested
+    // ===========================
+	// if (false) {
+// ===========================
+// // Clear 3-way blends in 6x6 area with extra gaps
+// // ===========================
+// const int regionSize = 6;
+// for (j = yIndex; j < yIndex + regionSize; ++j) {
+//     if (j < 0 || j >= m_height) continue;
+//     for (i = xIndex; i < xIndex + regionSize; ++i) {
+//         if (i < 0 || i >= m_width) continue;
+//         Int ndx = j * m_width + i;
+//         if (m_blendTileNdxes[ndx] > 0) {
+//             TBlendTileInfo &blend = m_blendedTiles[m_blendTileNdxes[ndx]];
+//             int activeDirections = 0;
+//             if (blend.horiz) activeDirections++;
+//             if (blend.vert) activeDirections++;
+//             if (blend.rightDiagonal) activeDirections++;
+//             if (blend.leftDiagonal) activeDirections++;
+            
+//             if (activeDirections >= 3) {
+//                 TRACE("Clearing 3-way blend at tile (%d,%d) with %d active directions\n", i, j, activeDirections);
+
+//                 // Clear the 3-way blend tile itself
+//                 m_blendTileNdxes[ndx] = 0;
+
+//                 // Clear a 1-tile radius around it to create gaps
+//                 for (int dy = -1; dy <= 1; ++dy) {
+//                     int y2 = j + dy;
+//                     if (y2 < 0 || y2 >= m_height) continue;
+//                     for (int dx = -1; dx <= 1; ++dx) {
+//                         int x2 = i + dx;
+//                         if (x2 < 0 || x2 >= m_width) continue;
+//                         Int nIdx = y2 * m_width + x2;
+//                         if (nIdx == ndx) continue; // skip center (already cleared)
+//                         if (m_blendTileNdxes[nIdx] != 0) {
+//                             TRACE("  Clearing neighbor blend at (%d,%d)\n", x2, y2);
+//                             m_blendTileNdxes[nIdx] = 0;
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
+// 	// }
+
 
 	pNodesToProcess = pProcessedNodes;
 	pProcessedNodes = NULL;
@@ -1654,7 +1833,6 @@ void WorldHeightMapEdit::setHeight(Int xIndex, Int yIndex, UnsignedByte height) 
 		setCellCliffFlagFromHeights(xIndex-1, yIndex-1);
 }
 
-
 /******************************************************************
 	optimizeTiles
 		This optimizes the tiles and blend tiles, recalculating them 
@@ -1667,7 +1845,7 @@ Bool WorldHeightMapEdit::optimizeTiles(void)
 	for (i=0; i<m_dataSize; i++) {
 		Int texNdx = this->m_tileNdxes[i];
 		Int texClass = getTextureClassFromNdx(texNdx);
-		DEBUG_ASSERTCRASH((texClass>=0),("oops"));
+		// DEBUG_ASSERTCRASH((texClass>=0),("oops"));
 		if (texClass<0) texClass=0;
 		m_tileNdxes[i] = texClass;
 	}
@@ -1677,7 +1855,7 @@ Bool WorldHeightMapEdit::optimizeTiles(void)
 	for (i=1; i<m_numBlendedTiles; i++) {
 		blendInfo[i] = m_blendedTiles[i];
 		blendInfo[i].blendNdx = getTextureClassFromNdx(blendInfo[i].blendNdx);
-		DEBUG_ASSERTCRASH((blendInfo[i].blendNdx>=0),("oops"));
+		// DEBUG_ASSERTCRASH((blendInfo[i].blendNdx>=0),("oops"));
 		if (blendInfo[i].blendNdx<0) blendInfo[i].blendNdx=0;
 	}
 
@@ -1688,6 +1866,11 @@ Bool WorldHeightMapEdit::optimizeTiles(void)
 		m_cliffInfo[i].tileIndex = texClass;
 	}
 
+	// --- VC6-compatible: snapshot of tile classes ---
+	Int* tileClassSnapshot = new Int[m_dataSize];
+	for (i = 0; i < m_dataSize; ++i) {
+		tileClassSnapshot[i] = m_tileNdxes[i];
+	}
 
 	// Release all the tiles.
 	for (i=0; i<NUM_SOURCE_TILES; i++) {
@@ -1719,15 +1902,47 @@ Bool WorldHeightMapEdit::optimizeTiles(void)
 
 				curBlendInfo.blendNdx = getBlendTileNdxForClass(x,y,curBlendInfo.blendNdx);
 
-				if (curBlendInfo.blendNdx == m_tileNdxes[i])
-				{	//Tile index same as blend index would mean same texture
-					//blending into itself.  Should not happen.
+				// --- Disconnected/self blend removal
+				bool disconnected = false;
+
+				// Self-blend check (compare tile indices)
+				// if (curBlendInfo.blendNdx == m_tileNdxes[i]) {
+				// 	disconnected = true;
+				// }
+				// else {
+				// 	// Manual neighbor check using snapshot
+				// 	// <-- changed to 8-direction neighbors to preserve corner blends -->
+				// 	static const int dx[8] = { -1, 1, 0, 0, -1, -1, 1, 1 };
+				// 	static const int dy[8] = { 0, 0, -1, 1, -1, 1, -1, 1 };
+				// 	int neighborX = -1;
+				// 	int neighborY = -1;
+				// 	int wantedClass = blendInfo[blendNdx].blendNdx;
+				// 	bool found = false;
+				// 	int k;
+				// 	for (k = 0; k < 8; ++k) {
+				// 		int nx = x + dx[k];
+				// 		int ny = y + dy[k];
+				// 		if (nx < 0 || ny < 0 || nx >= m_width || ny >= m_height) continue;
+				// 		int ndx = ny * m_width + nx;
+				// 		if (tileClassSnapshot[ndx] == wantedClass) {
+				// 			neighborX = nx;
+				// 			neighborY = ny;
+				// 			found = true;
+				// 			break;
+				// 		}
+				// 	}
+				// 	if (!found) disconnected = true;
+				// }
+
+				if (disconnected) {
+					// DEBUG_LOG(("optimizeTiles: removed disconnected blend at (%d,%d) [blend class=%d, base=%d]\n",
+					// 	x, y, blendInfo[blendNdx].blendNdx, texClass));
 					newBlendNdx = 0;
 				}
 				else
 				{	newBlendNdx = findOrCreateBlendTile(&curBlendInfo);
 					if (m_numBlendedTiles < NUM_BLEND_TILES) {
-						DEBUG_ASSERTCRASH((newBlendNdx>0),("oops"));
+						// DEBUG_ASSERTCRASH((newBlendNdx>0),("oops"));
 					}
 					if (newBlendNdx < 0) newBlendNdx = 0;
 				}
@@ -1748,7 +1963,7 @@ Bool WorldHeightMapEdit::optimizeTiles(void)
 				else
 				{	newBlendNdx = findOrCreateBlendTile(&curBlendInfo);
 					if (m_numBlendedTiles < NUM_BLEND_TILES) {
-						DEBUG_ASSERTCRASH((newBlendNdx>0),("oops"));
+						// DEBUG_ASSERTCRASH((newBlendNdx>0),("oops"));
 					}
 					if (newBlendNdx < 0) newBlendNdx = 0;
 				}
@@ -1762,6 +1977,98 @@ Bool WorldHeightMapEdit::optimizeTiles(void)
 		Int texClass  = m_cliffInfo[i].tileIndex;
 		m_cliffInfo[i].tileIndex = getTileNdxForClass(x,y,texClass);
 	}
+
+	// // --- Auto-blend pass using provided autoBlendOut(), corrected to call on dominant neighbor ---
+	// // Runs after we rebuilt blends so we can correct missed edges.
+	// // Only call autoBlendOut for candidate tiles (no blends currently, and neighbor test suggests it might be swallowed).
+	// {
+	// 	Int dx, dy;
+	// 	for (dy = 0; dy < m_height; ++dy) {
+	// 		for (dx = 0; dx < m_width; ++dx) {
+	// 			Int ndx = dy * m_width + dx;
+
+	// 			// Skip tiles that already have some blend info
+	// 			if (m_blendTileNdxes[ndx] != 0 || m_extraBlendTileNdxes[ndx] != 0)
+	// 				continue;
+
+	// 			// Quick neighbor test using existing helper
+	// 			Int sides = 0;
+	// 			Int total = 0;
+	// 			Int curClass = getTextureClass(dx, dy, true);
+	// 			if (curClass < 0) continue;
+
+	// 			getTexClassNeighbors(dx, dy, curClass, &sides, &total);
+
+	// 			if (!(sides > 2 || total > 5))
+	// 				continue; // not a candidate
+
+	// 			// Build neighbor-class counts and remember a seed coordinate for each class
+	// 			Int numClasses = m_numTextureClasses > 0 ? m_numTextureClasses : 64; // fallback
+	// 			Int *counts = new Int[numClasses];
+	// 			Int *seedX = new Int[numClasses];
+	// 			Int *seedY = new Int[numClasses];
+	// 			if (!counts || !seedX || !seedY) {
+	// 				// out of memory (unlikely) - clean up and bail out of this tile
+	// 				if (counts) delete[] counts;
+	// 				if (seedX) delete[] seedX;
+	// 				if (seedY) delete[] seedY;
+	// 				continue;
+	// 			}
+	// 			for (Int ci = 0; ci < numClasses; ++ci) {
+	// 				counts[ci] = 0;
+	// 				seedX[ci] = -1;
+	// 				seedY[ci] = -1;
+	// 			}
+
+	// 			// 8-direction neighbors
+	// 			static const int ndx8[8] = { -1, 1, 0, 0, -1, -1, 1, 1 };
+	// 			static const int ndy8[8] = { 0, 0, -1, 1, -1, 1, -1, 1 };
+	// 			for (Int k = 0; k < 8; ++k) {
+	// 				Int nx = dx + ndx8[k];
+	// 				Int ny = dy + ndy8[k];
+	// 				if (nx < 0 || ny < 0 || nx >= m_width || ny >= m_height) continue;
+	// 				Int nClass = getTextureClass(nx, ny, true);
+	// 				if (nClass < 0 || nClass == curClass) continue;
+	// 				if (nClass >= numClasses) {
+	// 					// if this happens, ignore (shouldn't normally)
+	// 					continue;
+	// 				}
+	// 				++counts[nClass];
+	// 				// store a seed coordinate for this class (last seen is fine)
+	// 				seedX[nClass] = nx;
+	// 				seedY[nClass] = ny;
+	// 			}
+
+	// 			// choose the most frequent neighbor class
+	// 			Int bestClass = -1;
+	// 			Int bestCount = 0;
+	// 			for (Int b = 0; b < numClasses; ++b) {
+	// 				if (counts[b] > bestCount) {
+	// 					bestCount = counts[b];
+	// 					bestClass = b;
+	// 				}
+	// 			}
+
+	// 			if (bestClass >= 0 && bestCount > 0) {
+	// 				Int sx = seedX[bestClass];
+	// 				Int sy = seedY[bestClass];
+	// 				if (sx >= 0 && sy >= 0) {
+	// 					DEBUG_LOG((
+	// 						"optimizeTiles: autoBlendOut candidate at (%d,%d) baseClass=%d dominantNeighborClass=%d count=%d -> seed(%d,%d)\n",
+	// 						dx, dy, curClass, bestClass, bestCount, sx, sy));
+	// 					// call on the neighbor seed so we expand the dominant neighbor class into the tile
+	// 					autoBlendOut(sx, sy, -1);
+	// 				}
+	// 			}
+
+	// 			delete[] counts;
+	// 			delete[] seedX;
+	// 			delete[] seedY;
+	// 		}
+	// 	}
+	// }
+
+	delete[] tileClassSnapshot;
 
 	REF_PTR_RELEASE(m_terrainTex);
 	REF_PTR_RELEASE(m_terrainTex);

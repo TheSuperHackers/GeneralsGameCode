@@ -275,6 +275,7 @@ BOOL CTeamsDialog::OnInitDialog()
 	m_updating = 0;
 	m_sides = *TheSidesList;
 	m_curTeam = thePrevCurTeam;
+	m_expanded = TRUE;
 
 	CListCtrl *pList = (CListCtrl *)GetDlgItem(IDC_TEAMS_LIST);
 	pList->InsertColumn(0, "Team Name", LVCFMT_LEFT, 200, 0);

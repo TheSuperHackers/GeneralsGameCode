@@ -34,14 +34,21 @@ class WorldHeightMapEdit;
 ///  Blend edges out tool.
 class AutoEdgeOutTool : public Tool 
 {
+protected:
+	static Bool m_autoEdgeToolActive;
+
 public:
 	AutoEdgeOutTool(void);
 	~AutoEdgeOutTool(void);
 
 public:
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
 	/// Perform tool on mouse down.
 	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
 	virtual void activate(); ///< Become the current tool.
+	virtual void deactivate();
+
+	static Bool isActive(void) {return m_autoEdgeToolActive; }
 };
 
 

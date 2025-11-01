@@ -95,6 +95,7 @@
 #include "GlobalLightOptions.h"
 #include "LayersList.h"
 #include "ImpassableOptions.h"
+#include "GameLogic/Module/SupplyWarehouseDockUpdate.h"
 
 
 #include <d3dx8.h>
@@ -1804,8 +1805,28 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 						break;
 					}
 				}
-				
-				scale = tTemplate->getAssetScale();
+
+			// 	const ModuleData* moduleData = NULL;
+			// 	const ModuleInfo& modInfo = tTemplate->getBehaviorModuleInfo();
+
+			// 	for (int i = 0; i < modInfo.getCount(); ++i) {
+			// 		if (modInfo.getNthName(i).compare("SupplyWarehouseDockUpdate") == 0) {
+			// 			moduleData = modInfo.getNthData(i);
+			// 			break;
+			// 		}
+			// 	}
+
+			// if (moduleData) {
+			// 	const SupplyWarehouseDockUpdateModuleData* dockData =
+			// 		static_cast<const SupplyWarehouseDockUpdateModuleData*>(moduleData);
+
+			// 	int startingBoxes = dockData->m_startingBoxesData;
+
+			// 	// Compute cash value
+			// 	int cashValue = static_cast<int>(startingBoxes * TheGlobalData->m_baseValuePerSupplyBox);
+
+			// 	DEBUG_LOG(("starting boxes: %d, cash value: %d\n", startingBoxes, cashValue));
+			// }
 
 				// Adriane [Deathscythe] The worldbuilder's scale change is very off for infantry -- adjust properly
 				if (scale > 1.0 && pMapObj->getThingTemplate()->isKindOf(KINDOF_INFANTRY)) {
@@ -1959,6 +1980,10 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 									// Attach submodels properly
 									if (!renderObj) {
 										renderObj = subRenderObj;  // First model is the main renderObj
+
+										if (m_lod == 1) {
+											break;  // Only use the first model
+										}
 									} else {
 										renderObj->Add_Sub_Object_To_Bone(subRenderObj, 0);  // Attach to root
 										subRenderObj->Release_Ref();  // Release ref after attaching
@@ -2649,7 +2674,8 @@ void WbView3d::redraw(void)
 			m_highlightTestArt, 
 			m_showLetterbox,
 			m_showWater,
-			m_showObjectsSelected
+			m_showObjectsSelected,
+			m_useFixedColoredWaypoints
 		);
 	}
 
@@ -3211,70 +3237,40 @@ void WbView3d::drawLabels(HDC hdc)
 	// 	::TextOut(hdc, x, y, text, len);
 	// }
 
-	//  BE WARNED -- DO NOT ENABLE THIS DUDE WHEN DRAGGING OR ELSE THE DRAG RECT WILL BE BROKEN UNDER POINTER TOOL
-	if (PointerTool::isMouseDown() && !PointerTool::isDragSelecting()) {
-		const CString text = _T(PointerTool::getLastPointerInfoString());
-		if (text.IsEmpty() || !m3DFont)
-			return;
-
-		// Get mouse position
-		CPoint pt;
-		GetCursorPos(&pt);
-		ScreenToClient(&pt);
-
-		const int offsetX = 16;
-		const int offsetY = 8;
-		const int width   = 300;
-		const int height  = 50;
-
-		// Base draw rect
-		RECT baseRect = {
-			pt.x + offsetX,
-			pt.y + offsetY,
-			pt.x + offsetX + width,
-			pt.y + offsetY + height
-		};
-
-		// Outline color (black)
-		const DWORD outlineColor = 0xFF000000;
-		// Main text color (white)
-		const DWORD mainColor = 0xFFFFFFFF;
-
-		// Offsets for outline (8 directions)
-		const int outlineOffsets[8][2] = {
-			{-1, -1}, { 1, -1}, {-1,  1}, { 1,  1},
-			{-1,  0}, { 1,  0}, { 0, -1}, { 0,  1}
-		};
-
-		// Draw outline
-		for (int i = 0; i < 8; ++i) {
-			RECT outlineRect = baseRect;
-			OffsetRect(&outlineRect, outlineOffsets[i][0], outlineOffsets[i][1]);
-			m3DFont->DrawText(
-				text,
-				text.GetLength(),
-				&outlineRect,
-				DT_LEFT | DT_TOP | DT_NOCLIP | DT_SINGLELINE,
-				outlineColor
-			);
-		}
-
-		// Draw main text
-		m3DFont->DrawText(
-			text,
-			text.GetLength(),
-			&baseRect,
-			DT_LEFT | DT_TOP | DT_NOCLIP | DT_SINGLELINE,
-			mainColor
-		);
-	}
+	// DEBUG_LOG(("AutoEdgeOutTool::isActive() = %d\n", AutoEdgeOutTool::isActive() ? 1 : 0));
+	// DEBUG_LOG(("PointerTool::isDragSelecting() = %d\n", PointerTool::isDragSelecting() ? 1 : 0));
+	// DEBUG_LOG(("PointerTool::isMouseDown() = %d\n", PointerTool::isMouseDown() ? 1 : 0));
 
 
+	int totalWorldCash = 0;
 	
 	// Draw labels.
 	MapObject *pMapObj;
-	if (isNamesVisible()) {
+	if (true) {
 		for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
+			const ThingTemplate *tmpl;
+			tmpl = pMapObj->getThingTemplate();
+			if (tmpl && tmpl->isKindOf(KINDOF_SUPPLY_SOURCE)) {
+				const ModuleInfo& modInfo = tmpl->getBehaviorModuleInfo();
+
+				for (int i = 0; i < modInfo.getCount(); ++i) {
+					if (modInfo.getNthName(i).compare("SupplyWarehouseDockUpdate") == 0) {
+						const ModuleData* moduleData = modInfo.getNthData(i);
+						if (!moduleData) continue;
+
+						const SupplyWarehouseDockUpdateModuleData* dockData =
+							static_cast<const SupplyWarehouseDockUpdateModuleData*>(moduleData);
+
+						int boxes = dockData->m_startingBoxesData;
+
+						// Add to running total (cash value)
+						totalWorldCash += static_cast<int>(boxes * TheGlobalData->m_baseValuePerSupplyBox);
+					}
+				}
+			}
+
+			if (!isNamesVisible()) continue;
+
 			if (pMapObj->getFlags() & FLAG_DONT_RENDER) continue;
 
 			Coord3D pos = *pMapObj->getLocation();
@@ -3411,37 +3407,39 @@ void WbView3d::drawLabels(HDC hdc)
 			}
 
 			int statusOffset = 1; // Start after the main 4 label lines
-			
-			// Indestructible
-			if (pMapObj->getProperties()->getBool(TheKey_objectIndestructible, &exists) && exists)
-				drawStatusLabels(pt, statusOffset++, "Indestructible", m3DFont, hdc);
 
-			// Unsellable
-			if (pMapObj->getProperties()->getBool(TheKey_objectUnsellable, &exists) && exists)
-				drawStatusLabels(pt, statusOffset++, "Unsellable", m3DFont, hdc);
+			if(m_showNamesExtra){
+				// Indestructible
+				if (pMapObj->getProperties()->getBool(TheKey_objectIndestructible, &exists) && exists)
+					drawStatusLabels(pt, statusOffset++, "Indestructible", m3DFont, hdc);
 
-			// Targetable
-			if (pMapObj->getProperties()->getBool(TheKey_objectTargetable, &exists) && exists)
-				drawStatusLabels(pt, statusOffset++, "Targetable", m3DFont, hdc);
+				// Unsellable
+				if (pMapObj->getProperties()->getBool(TheKey_objectUnsellable, &exists) && exists)
+					drawStatusLabels(pt, statusOffset++, "Unsellable", m3DFont, hdc);
 
-			// Powered (default true)
-			bool isPowered = pMapObj->getProperties()->getBool(TheKey_objectPowered, &exists);
-			if (exists && !isPowered)
-				drawStatusLabels(pt, statusOffset++, "Not Powered", m3DFont, hdc);
+				// Targetable
+				if (pMapObj->getProperties()->getBool(TheKey_objectTargetable, &exists) && exists)
+					drawStatusLabels(pt, statusOffset++, "Targetable", m3DFont, hdc);
 
-			// Enabled (default true)
-			bool isEnabled = pMapObj->getProperties()->getBool(TheKey_objectEnabled, &exists);
-			if (exists && !isEnabled)
-				drawStatusLabels(pt, statusOffset++, "Not Enabled", m3DFont, hdc);
+				// Powered (default true)
+				bool isPowered = pMapObj->getProperties()->getBool(TheKey_objectPowered, &exists);
+				if (exists && !isPowered)
+					drawStatusLabels(pt, statusOffset++, "Not Powered", m3DFont, hdc);
 
-			// AI Recruitable (default true)
-			bool isAIRecruitable = pMapObj->getProperties()->getBool(TheKey_objectRecruitableAI, &exists);
-			if (exists && !isAIRecruitable)
-				drawStatusLabels(pt, statusOffset++, "Not AI Recruitable", m3DFont, hdc);
+				// Enabled (default true)
+				bool isEnabled = pMapObj->getProperties()->getBool(TheKey_objectEnabled, &exists);
+				if (exists && !isEnabled)
+					drawStatusLabels(pt, statusOffset++, "Not Enabled", m3DFont, hdc);
 
-			bool isSelectable = pMapObj->getProperties()->getBool(TheKey_objectSelectable, &exists);
-			if (exists && !isSelectable)
-				drawStatusLabels(pt, statusOffset++, "Not Selectable", m3DFont, hdc);
+				// AI Recruitable (default true)
+				bool isAIRecruitable = pMapObj->getProperties()->getBool(TheKey_objectRecruitableAI, &exists);
+				if (exists && !isAIRecruitable)
+					drawStatusLabels(pt, statusOffset++, "Not AI Recruitable", m3DFont, hdc);
+
+				bool isSelectable = pMapObj->getProperties()->getBool(TheKey_objectSelectable, &exists);
+				if (exists && !isSelectable)
+					drawStatusLabels(pt, statusOffset++, "Not Selectable", m3DFont, hdc);
+			}
 		}
 
 		/**
@@ -3451,7 +3449,7 @@ void WbView3d::drawLabels(HDC hdc)
 		PolygonTrigger *pTrig;
 		for (pTrig = PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
 			AsciiString triggerName = pTrig->getTriggerName();
-			if (!triggerName.isEmpty() && pTrig->getNumPoints() > 0 && m_showPolygonTriggers) {
+			if (!triggerName.isEmpty() && pTrig->getNumPoints() > 0 && m_showPolygonTriggers && isNamesVisible()) {
 				// Loop through all points of the polygon
 				for (Int i = 0; i < pTrig->getNumPoints(); ++i) {
 					ICoord3D iLoc = *pTrig->getPoint(i); // Get each point
@@ -3500,8 +3498,90 @@ void WbView3d::drawLabels(HDC hdc)
 	if (hdc && m_doRectFeedback) {
 		CBrush brush;
 		// green brush for drawing the grid.
-		brush.CreateSolidBrush(RGB(0,255,0));
+		brush.CreateSolidBrush(RGB(255, 165, 0));
 		::FrameRect(hdc, &m_feedbackBox, (HBRUSH)brush.GetSafeHandle());
+	}
+
+	//  BE WARNED -- DO NOT ENABLE THIS DUDE WHEN DRAGGING OR ELSE THE DRAG RECT WILL BE BROKEN UNDER POINTER TOOL
+	if ((PointerTool::isMouseDown() || AutoEdgeOutTool::isActive()) 
+			&& !PointerTool::isDragSelecting()
+		) {
+		const CString text = _T(PointerTool::getLastPointerInfoString());
+		// DEBUG_LOG(("PointerTool::getLastPointerInfoString() returned: \"%s\"\n", (LPCTSTR)text));
+		if (text.IsEmpty() || !m3DFont)
+			return;
+
+		// Get mouse position
+		CPoint pt;
+		GetCursorPos(&pt);
+		ScreenToClient(&pt);
+
+		const int offsetX = 32;
+		const int offsetY = 8;
+		const int width   = 300;
+		const int height  = 50;
+
+		// Base draw rect
+		RECT baseRect = {
+			pt.x + offsetX,
+			pt.y + offsetY,
+			pt.x + offsetX + width,
+			pt.y + offsetY + height
+		};
+
+		// Outline color (black)
+		const DWORD outlineColor = 0xFF000000;
+		// Main text color (white)
+		const DWORD mainColor = 0xFFFFFFFF;
+
+		// Offsets for outline (8 directions)
+		const int outlineOffsets[8][2] = {
+			{-1, -1}, { 1, -1}, {-1,  1}, { 1,  1},
+			{-1,  0}, { 1,  0}, { 0, -1}, { 0,  1}
+		};
+
+		// Draw outline
+		for (int i = 0; i < 8; ++i) {
+			RECT outlineRect = baseRect;
+			OffsetRect(&outlineRect, outlineOffsets[i][0], outlineOffsets[i][1]);
+			m3DFont->DrawText(
+				text,
+				text.GetLength(),
+				&outlineRect,
+				DT_LEFT | DT_TOP | DT_NOCLIP | DT_WORDBREAK,
+				outlineColor
+			);
+		}
+
+		// Draw main text
+		m3DFont->DrawText(
+			text,
+			text.GetLength(),
+			&baseRect,
+			DT_LEFT | DT_TOP | DT_NOCLIP | DT_WORDBREAK,
+			mainColor
+		);
+	}
+
+	CString text;
+	text.Format(_T("Total world cash: %d"), totalWorldCash);
+
+	const int offsetX = 10;
+	const int offsetY = 10;
+
+	if (m3DFont) {
+		RECT rct = { offsetX, offsetY, offsetX + 400, offsetY + 30 };
+		m3DFont->DrawText(
+			text,
+			text.GetLength(),
+			&rct,
+			DT_LEFT | DT_TOP | DT_NOCLIP | DT_SINGLELINE,
+			0xFFFFFFFF
+		);
+	} else if (hdc) {
+		::SetBkMode(hdc, TRANSPARENT);
+		::SetTextColor(hdc, RGB(255, 255, 255));
+		::TextOut(hdc, offsetX, offsetY, text, text.GetLength());
 	}
 
 	if (hdc && m_doRulerFeedback) {
@@ -4296,6 +4376,11 @@ void WbView3d::OnWindowLODMode1()
     m_lod = 1;
 	m_showObjectsSelected = true;
 	m_showObjects = false;
+	TheWritableGlobalData->m_useLightMap = false;
+	TheWritableGlobalData->m_showSoftWaterEdge = false;
+	TheWritableGlobalData->m_useShadowDecals = false;
+	TheWritableGlobalData->m_useShadowVolumes = false;
+
 	// TheWritableGlobalData->m_textureReductionFactor = 4;
 	// if (WW3D::Get_Texture_Reduction() != TheWritableGlobalData->m_textureReductionFactor)
 	// {	WW3D::Set_Texture_Reduction(TheWritableGlobalData->m_textureReductionFactor,32);
@@ -4306,8 +4391,10 @@ void WbView3d::OnWindowLODMode1()
 	// ReleaseResources();       // Optional: free current resources first
 	// ReAcquireResources();     // Re-load all textures with the new reduction factor
 
-	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIconsSelected", m_showObjectsSelected?1:0);
-	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIcons", m_showObjects?1:0);
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowShadows", 0);
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowSoftWater", 0);
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIconsSelected", 1);
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIcons", 0);
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "LODMode", 1);
 	resetRenderObjects();
 	invalObjectInView(NULL);
@@ -4323,6 +4410,11 @@ void WbView3d::OnWindowLODMode2()
     m_lod = 2; 
 	m_showObjectsSelected = true;
 	m_showObjects = false;
+	TheWritableGlobalData->m_useLightMap = true;
+	TheWritableGlobalData->m_showSoftWaterEdge = true;
+	TheWritableGlobalData->m_useShadowDecals = true;
+	TheWritableGlobalData->m_useShadowVolumes = true;
+
 	// TheWritableGlobalData->m_textureReductionFactor = 1;
 	// if (WW3D::Get_Texture_Reduction() != TheWritableGlobalData->m_textureReductionFactor)
 	// {	WW3D::Set_Texture_Reduction(TheWritableGlobalData->m_textureReductionFactor,32);
@@ -4333,8 +4425,10 @@ void WbView3d::OnWindowLODMode2()
 	// ReleaseResources();       // Optional: free current resources first
 	// ReAcquireResources();     // Re-load all textures with the new reduction factor
 
-	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIconsSelected", m_showObjectsSelected?1:0);
-	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIcons", m_showObjects?1:0);
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowShadows", 1);
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowSoftWater", 1);
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIconsSelected", 1);
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIcons", 0);
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "LODMode", 2);
 	resetRenderObjects();
 	invalObjectInView(NULL);
@@ -4348,6 +4442,10 @@ void WbView3d::OnUpdateOnWindowLODMode2(CCmdUI* pCmdUI)
 void WbView3d::OnWindowLODMode3() 
 {
     m_lod = 3; 
+	TheWritableGlobalData->m_useLightMap = true;
+	TheWritableGlobalData->m_showSoftWaterEdge = true;
+	TheWritableGlobalData->m_useShadowDecals = true;
+	TheWritableGlobalData->m_useShadowVolumes = true;
 	// m_showObjectsSelected = false;
 	// m_showObjects = true;
 	// TheWritableGlobalData->m_textureReductionFactor = 0;
@@ -4360,6 +4458,10 @@ void WbView3d::OnWindowLODMode3()
 	// ReleaseResources();       // Optional: free current resources first
 	// ReAcquireResources();     // Re-load all textures with the new reduction factor
 	
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowShadows", 1);
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowSoftWater", 1);
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIconsSelected", 0);
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIcons",1);
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "LODMode", 3);
 	resetRenderObjects();
 	invalObjectInView(NULL);

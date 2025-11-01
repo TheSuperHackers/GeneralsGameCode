@@ -905,7 +905,7 @@ void ObjectOptions::reprocessObjectList()
 		Coord3D loc = { 0, 0, 0 };
 		MapObject *pMap;
 
-		DEBUG_LOG(("Adding Object to ObjectList: '%s'\n", tTemplate->getName().str()));
+		// DEBUG_LOG(("Adding Object to ObjectList: '%s'\n", tTemplate->getName().str()));
 
 		// create new map object
 		pMap = newInstance(MapObject)(loc, tTemplate->getName(), 0.0f, 0, NULL, tTemplate);

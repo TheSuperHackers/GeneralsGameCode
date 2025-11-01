@@ -117,6 +117,9 @@ public:
 	// We need to expose this for the blending of textures for copy mode
 	Short  *m_extraBlendTileNdxes;  ///< matches m_Data, indexes into m_extraBlendedTiles.  0 means no blend info.	
 	Short  *m_blendTileNdxes;  ///< matches m_Data, indexes into m_blendedTiles.  0 means no blend info.	
+	TBlendTileInfo	m_blendedTiles[NUM_BLEND_TILES];
+	TBlendTileInfo	m_extraBlendedTiles[NUM_BLEND_TILES];
+	Int m_numBlendedTiles;	// Number of blended tiles created from bitmap tiles.
 
 protected:
 	Int m_width;				///< Height map width.
@@ -141,13 +144,9 @@ protected:
 	
 	Int m_numBitmapTiles;	// Number of tiles initialized from bitmaps in m_SourceTiles.
 	Int m_numEdgeTiles;	// Number of tiles initialized from bitmaps in m_SourceTiles.
-	Int m_numBlendedTiles;	// Number of blended tiles created from bitmap tiles.
 
 	TileData			*m_sourceTiles[NUM_SOURCE_TILES];	///< Tiles for m_textureClasses
 	TileData			*m_edgeTiles[NUM_SOURCE_TILES];	///< Tiles for m_textureClasses
-
-	TBlendTileInfo	m_blendedTiles[NUM_BLEND_TILES];
-	TBlendTileInfo	m_extraBlendedTiles[NUM_BLEND_TILES];
 
 	TCliffInfo	m_cliffInfo[NUM_CLIFF_INFO];
 	Int m_numCliffInfo; ///< Number of cliffInfo's used in m_cliffInfo.

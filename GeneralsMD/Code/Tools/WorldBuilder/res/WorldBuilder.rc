@@ -192,6 +192,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Open Map folder",             ID_FILE_JUMPTOFOLDER
         MENUITEM "Open Worldbuilder Settings",  ID_FILE_WBSETTINGS
+        MENUITEM "Open AutoSave Folder",        ID_FILE_AUTOSAVEFOLDER
         MENUITEM SEPARATOR
         MENUITEM "Dump Map To File",            ID_FILE_DUMPTOFILE
         MENUITEM "Generate Map INI and STR Template", 
@@ -212,11 +213,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Delete\tDel",                 ID_EDIT_DELETE
         MENUITEM SEPARATOR
-        MENUITEM "Select Duplicates / Overlapping Objects", 
-                                                ID_EDIT_SELECTDUP
-        MENUITEM "Select Objects w/bad teams",  ID_EDIT_SELECTINVALIDTEAM
         MENUITEM "Select Si&milar\tCtrl+M",     ID_EDIT_SELECTSIMILAR
-        MENUITEM "Select Macrotexture...",      ID_EDIT_SELECTMACROTEXTURE
         MENUITEM "Replace Selected... \tCtrl+R", ID_EDIT_REPLACE
         POPUP "Pick Constraint"
         BEGIN
@@ -227,9 +224,9 @@ BEGIN
             MENUITEM "Shrubbery\tCtrl+4",           ID_EDIT_PICKSHRUBBERY
             MENUITEM "Props\tCtrl+5",               ID_EDIT_PICKMANMADE
             MENUITEM "Natural\tCtrl+6",             ID_EDIT_PICKNATURAL
-            MENUITEM "Debris\tCtrl+7",              ID_EDIT_PICKDEBRIS
+            MENUITEM "Debris && Scorches\tCtrl+7",  ID_EDIT_PICKDEBRIS
             MENUITEM "Waypoints && Areas\tCtrl+8",  ID_EDIT_PICKWAYPOINTS
-            MENUITEM "Roads\tCtrl+9",               ID_EDIT_PICKROADS
+            MENUITEM "Roads && Bridges\tCtrl+9",    ID_EDIT_PICKROADS
             MENUITEM "Sounds",                      ID_EDIT_PICKSOUNDS
         END
         POPUP "Pointer Rotation Options"
@@ -241,19 +238,23 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Scripts...",                  ID_EDIT_SCRIPTS
         MENUITEM SEPARATOR
+        MENUITEM "Change Time Of Day\tCtrl+D",  ID_VIEW_TIME_OF_DAY
         MENUITEM "Global Light Options...",     ID_EDIT_GLOBALLIGHTOPTIONS
         MENUITEM "Camera Options...",           ID_EDIT_CAMERAOPTIONS
         MENUITEM "Edit Shadows...",             ID_EDIT_SHADOWS
         MENUITEM "Edit Map Settings...",        ID_EDIT_MAPSETTINGS
+        MENUITEM "Impassable Area Options...",  ID_VIEW_IMPASSABLEAREAOPTIONS
+
         MENUITEM SEPARATOR
         MENUITEM "Edit Teams...",               ID_EDIT_TEAMLIST
         MENUITEM "Edit Player List...",         ID_EDIT_PLAYERLIST
         MENUITEM SEPARATOR
-        MENUITEM "Toggle Disable Map Preview Generation",  ID_DISABLEMAPPREVGENERATE
+        MENUITEM "Toggle Disable Map Preview Generation", 
+                                                ID_DISABLEMAPPREVGENERATE
     END
     POPUP "&View"
     BEGIN
-        MENUITEM "Show Roads",                  ID_VIEW_SHOWROADS
+        MENUITEM "Show Roads And Bridges",      ID_VIEW_SHOWROADS
         MENUITEM "Show Water Mesh",             ID_VIEW_SHOWWATER
         MENUITEM "Show Terrain",                ID_VIEW_SHOW_TERRAIN
         POPUP "Show Object Icons"
@@ -263,9 +264,11 @@ BEGIN
 
         END
         MENUITEM "Show Waypoints",              ID_VIEW_SHOWWAYPOINTS
+        MENUITEM "Use Fixed Colored Waypoints", ID_VIEW_FIXEDCOLOREDWAYPOINTS
         MENUITEM "Show Trigger Areas",          ID_VIEW_SHOWPOLYGONTRIGGERS
         MENUITEM "Show Shadows",                ID_VIEW_SHOWSHADOWS
         MENUITEM "Show Labels",                 ID_VIEW_LABELS
+        MENUITEM "Show Labels Extra",           ID_VIEW_LABELS_EXTRA
         MENUITEM "Show Objects",                ID_VIEW_SHOWMODELS
         MENUITEM "Show Bounding Boxes",         ID_VIEW_BOUNDINGBOXES
         MENUITEM "Show Sight Ranges",           ID_VIEW_SIGHTRANGES
@@ -282,8 +285,29 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Show Impassable Areas\tCtrl+I", 
                                                 ID_VIEW_SHOWIMPASSABLEAREAS
-        MENUITEM "Impassable Area Options...",  ID_VIEW_IMPASSABLEAREAOPTIONS
-
+        MENUITEM SEPARATOR
+        MENUITEM "Show Wireframe 3D View\tCtrl+W", ID_VIEW_SHOWWIREFRAME
+        MENUITEM "Show From Top Down View\tCtrl+F", ID_VIEW_SHOWTOPDOWNVIEW
+        MENUITEM "Show 3-Way Blends in White",  ID_VIEW_SHOWEXTRABLENDS
+        MENUITEM "Show Clouds\tCtrl+U",         ID_VIEW_SHOWCLOUDS
+        MENUITEM "Show Soft Water",             ID_VIEW_SHOWSOFTWATER
+        MENUITEM "Show Macrotexture",           ID_VIEW_SHOWMACROTEXTURE
+        MENUITEM SEPARATOR
+        MENUITEM "Snap To Grid\tCtrl+Shft+G",   ID_VIEW_SNAPTOGRID
+        MENUITEM SEPARATOR
+        MENUITEM "Show Brush Feedback",         ID_VIEW_BRUSHFEEDBACK
+        MENUITEM SEPARATOR
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+        MENUITEM "Layers List",                 ID_VIEW_LAYERS_LIST
+        MENUITEM SEPARATOR
+    END
+    POPUP "&Level Of Detail"
+    BEGIN
+        MENUITEM "Save My Potato!",             ID_LOD_MODE_1
+        MENUITEM "My shit is average",          ID_LOD_MODE_2
+        MENUITEM "Lets lag the whole worldbuilder | NASA PC Required!", 
+                                                ID_LOD_MODE_3
         MENUITEM SEPARATOR
         MENUITEM "Show All of 3d Map\tCtrl+A",  ID_VIEW_SHOWENTIRE3DMAP
         POPUP "Partial Map Size"
@@ -297,32 +321,6 @@ BEGIN
             MENUITEM "192x192",                     ID_VIEW_PARTIALMAPSIZE_192X192
 
         END
-        MENUITEM SEPARATOR
-        MENUITEM "Show Wireframe 3D View\tCtrl+W", ID_VIEW_SHOWWIREFRAME
-        MENUITEM "Show From Top Down View\tCtrl+F", ID_VIEW_SHOWTOPDOWNVIEW
-        MENUITEM "Show 3-Way Blends in White",  ID_VIEW_SHOWEXTRABLENDS
-        MENUITEM "Show Clouds\tCtrl+U",         ID_VIEW_SHOWCLOUDS
-        MENUITEM "Show Soft Water",             ID_VIEW_SHOWSOFTWATER
-        MENUITEM "Show Macrotexture",           ID_VIEW_SHOWMACROTEXTURE
-        MENUITEM SEPARATOR
-        MENUITEM "Change Time Of Day\tCtrl+D",  ID_VIEW_TIME_OF_DAY
-        MENUITEM SEPARATOR
-        MENUITEM "Snap To Grid\tCtrl+Shft+G",   ID_VIEW_SNAPTOGRID
-        MENUITEM SEPARATOR
-        MENUITEM "Show Brush Feedback",         ID_VIEW_BRUSHFEEDBACK
-        MENUITEM SEPARATOR
-        MENUITEM "Reload Textures",             ID_VIEW_RELOADTEXTURES
-        MENUITEM SEPARATOR
-        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
-        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
-        MENUITEM "Layers List",                 ID_VIEW_LAYERS_LIST
-        MENUITEM SEPARATOR
-    END
-    POPUP "&Level Of Detail"
-    BEGIN
-        MENUITEM "Save My Potato!",                     ID_LOD_MODE_1
-        MENUITEM "My shit is average",                     ID_LOD_MODE_2
-        MENUITEM "Lets lag the whole worldbuilder | NASA PC Required!",                    ID_LOD_MODE_3
     END
     POPUP "&Window"
     BEGIN
@@ -335,19 +333,29 @@ BEGIN
     END
     POPUP "Texture Sizing"
     BEGIN
+        MENUITEM "Map Cliff Textures",          ID_TEXTURESIZING_MAPCLIFFTEXTURES
+
+        MENUITEM "Remove Cliff Tex Mapping",    ID_TEXTURESIZING_REMOVECLIFFTEXMAPPING
+
+        MENUITEM SEPARATOR
         MENUITEM "Optimize tiles and blend tiles.", ID_TS_CANONICAL
         MENUITEM SEPARATOR
         MENUITEM "Remap Textures...",           ID_TS_REMAP
         MENUITEM SEPARATOR
         MENUITEM "Texture Sizing Info...",      ID_TS_INFO
+        MENUITEM SEPARATOR
+        MENUITEM "Reload Textures",             ID_VIEW_RELOADTEXTURES
     END
-    POPUP "Validation"
+    POPUP "Troubleshooting"
     BEGIN
+        MENUITEM "Select Duplicates / Overlapping Objects", 
+                                                ID_EDIT_SELECTDUP
+        MENUITEM "Select Objects w/bad teams",  ID_EDIT_SELECTINVALIDTEAM
         MENUITEM "Fix Teams",                   ID_VALIDATION_FIXTEAMS
     END
-    POPUP "Help"
+    POPUP "Help / Entity finder"
     BEGIN
-        MENUITEM "&About World Builder...",     ID_APP_ABOUT
+        MENUITEM "Entity finder...",            ID_APP_ABOUT
     END
     POPUP "Tools"
     BEGIN
@@ -518,7 +526,7 @@ END
 
 IDD_ABOUTBOX DIALOGEX 0, 0, 456, 192
 STYLE WS_MINIMIZEBOX | WS_CAPTION | WS_SYSMENU
-CAPTION "About Generals World Builder"
+CAPTION "Help / Entity Finder / Shortcut Finder"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "Adriane [ Deathscythe ] Community Worldbuilder V3.0",
@@ -642,27 +650,26 @@ FONT 8, "MS Sans Serif"
 BEGIN
     CONTROL         "",IDC_TERRAIN_TREEVIEW,"Static",SS_BLACKFRAME | 
                     SS_SUNKEN,5,5,190,175
-    PUSHBUTTON      "Swap",IDC_SWAP_TEXTURES,95,267,25,16
+    PUSHBUTTON      "Swap",IDC_SWAP_TEXTURES,96,265,25,16
     CONTROL         "",IDC_TERRAIN_SWATCHES,"Static",SS_BLACKFRAME | 
                     SS_SUNKEN,130,244,65,55
-    LTEXT           "Gravel",IDC_TERRAIN_NAME,5,247,123,9
-    EDITTEXT        IDC_SIZE_EDIT,53,267,17,12,ES_AUTOHSCROLL
-    RTEXT           "Size in cells:",IDC_STATIC,11,268,40,8
-    PUSHBUTTON      "1",IDC_SIZE_POPUP,72,267,8,12,BS_BITMAP
-    GROUPBOX        "Brush Width",IDC_STATIC,5,258,83,34
-    LTEXT           "35 FT.",IDC_WIDTH_LABEL,41,281,43,8
+    LTEXT           "Gravel",IDC_TERRAIN_NAME,5,246,123,9
+    EDITTEXT        IDC_SIZE_EDIT,22,262,17,12,ES_AUTOHSCROLL
+    RTEXT           "Cell",IDC_STATIC,5,263,12,8
+    PUSHBUTTON      "1",IDC_SIZE_POPUP,41,262,8,12,BS_BITMAP
+    LTEXT           "35 FT.",IDC_WIDTH_LABEL,5,276,43,8
     CONTROL         "Paint passable/impassable terrain",IDC_PASSABLE_CHECK,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,292,122,12
     CONTROL         "Passable",IDC_PASSABLE,"Button",BS_AUTORADIOBUTTON,29,
                     306,55,10
     CONTROL         "Impassable",IDC_IMPASSABLE,"Button",BS_AUTORADIOBUTTON,
                     115,306,61,10
-    CONTROL         "Copy Texture",IDC_TERRAIN_COPY_SELECT,"Button",
+    CONTROL         "Copy",IDC_TERRAIN_COPY_SELECT,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP,27,335,58,10
-    CONTROL         "Paste Texture",IDC_TERRAIN_COPY_APPLY,"Button",
+    CONTROL         "Paste",IDC_TERRAIN_COPY_APPLY,"Button",
                     BS_AUTORADIOBUTTON,27,346,57,10
-    CONTROL         "Toggle Texture Copy",IDC_COPY_MODE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,5,325,89,8
+    CONTROL         "Texture Copy",IDC_COPY_MODE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,323,61,8
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,5,319,
                     188,1
     CONTROL         "0",IDC_TERRAIN_ROTATE1,"Button",BS_AUTORADIOBUTTON | 
@@ -682,6 +689,13 @@ BEGIN
     PUSHBUTTON      "Set as favorite",IDC_SET_FAV,54,181,52,10
     PUSHBUTTON      "Delete favorite",IDC_DEL_FAV,110,181,52,10
     PUSHBUTTON      "Import",IDC_REL_FAV,165,181,30,10
+    CONTROL         "Terrain Copy",IDC_COPY_MODE2,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,82,323,55,8
+    EDITTEXT        IDC_Z_EDIT,59,262,17,12,ES_AUTOHSCROLL
+    RTEXT           "Z",IDC_STATIC,49,264,8,8
+    PUSHBUTTON      "1",IDC_Z_POPUP,78,262,8,12,BS_BITMAP
+    CONTROL         "Raise Only",IDC_COPY_MODE2_1,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,139,323,48,8
 END
 
 IDD_MOUND_OPTIONS DIALOG DISCARDABLE  0, 0, 200, 146
@@ -1132,19 +1146,21 @@ BEGIN
                     WS_TABSTOP,597,7,51,14
     PUSHBUTTON      "&Verify",IDC_VERIFY,598,44,50,14,NOT WS_VISIBLE
     PUSHBUTTON      "&Patch ""GC_""",IDC_PATCH_GC,598,204,50,14
-    EDITTEXT        IDC_SCRIPT_SEARCH,43,7,127,14
-    PUSHBUTTON      "Find Next",IDC_FIND_NEXT,173,7,60,14
-    LTEXT           "Search:",IDC_STATIC,7,7,32,13,SS_CENTERIMAGE
+    EDITTEXT        IDC_SCRIPT_SEARCH,34,7,127,14
+    PUSHBUTTON      "Find Next",IDC_FIND_NEXT,165,7,41,14
+    LTEXT           "Search:",IDC_STATIC,7,7,26,13,SS_CENTERIMAGE
     CONTROL         "Compress Script",IDC_COMPRESS,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,239,7,72,14
+                    WS_TABSTOP,212,7,68,14
     CONTROL         "New Icons",IDC_NEWICONS,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,321,7,48,14
+                    WS_TABSTOP,280,7,48,14
     CONTROL         "Disable Script Deep Scan On Load  | Fast Load",
-                    IDC_DEEPSCAN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,420,7,
+                    IDC_DEEPSCAN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,429,7,
                     162,14
     PUSHBUTTON      "Re- Verify All",IDC_VERIFYALL,598,24,50,14
     CONTROL         "Smart Copy",IDC_SMART_COPY,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,600,155,48,14
+    CONTROL         "Clean Script Name",IDC_CLEANSCRIPTNAME,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,333,7,75,14
 END
 
 IDD_ScriptTabWindow DIALOG DISCARDABLE  0, 0, 391, 255
@@ -1653,16 +1669,25 @@ BEGIN
                     271,119,21
 END
 
-IDD_BLEND_MATERIAL DIALOG DISCARDABLE  0, 0, 200, 147
+IDD_BLEND_MATERIAL DIALOG DISCARDABLE  0, 0, 200, 268
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
 CAPTION "Blend Material Options"
 FONT 8, "MS Sans Serif"
 BEGIN
     CONTROL         "",IDC_TERRAIN_TREEVIEW,"Static",SS_BLACKFRAME | 
-                    SS_SUNKEN,5,5,190,60
+                    SS_SUNKEN | WS_DISABLED,5,203,190,60
     CONTROL         "",IDC_TERRAIN_SWATCHES,"Static",SS_BLACKFRAME | 
-                    SS_SUNKEN,65,72,65,55
-    LTEXT           "Gravel",IDC_TERRAIN_NAME,55,130,86,9
+                    SS_SUNKEN | NOT WS_VISIBLE,130,114,65,55
+    LTEXT           "Gravel",IDC_TERRAIN_NAME,5,114,121,9,NOT WS_VISIBLE
+    CONTROL         "Add one tile between horizontal and vertical gaps",
+                    IDC_HVGAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,17,
+                    170,8
+    CONTROL         "Add one tile between diagonal gaps",IDC_DGAP,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,11,29,178,8
+    GROUPBOX        "Advanced Blend Options",IDC_STATIC,5,46,190,25
+    CONTROL         "Revalidate Blends",IDC_REVALIDATEBLENDS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,12,57,154,8
+    GROUPBOX        "Tile Gap Options",IDC_STATIC,5,5,190,36
 END
 
 IDD_ADDPLAYER DIALOG DISCARDABLE  0, 0, 157, 97
@@ -2528,7 +2553,7 @@ BEGIN
         LEFTMARGIN, 5
         RIGHTMARGIN, 195
         TOPMARGIN, 5
-        BOTTOMMARGIN, 143
+        BOTTOMMARGIN, 263
     END
 
     IDD_ADDPLAYER, DIALOG

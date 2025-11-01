@@ -52,6 +52,7 @@
 #include "WHeightMapEdit.h"
 #include "MeshMoldOptions.h"
 #include "WaterTool.h"
+#include "TileTool.h"
 #include "BuildListTool.h"
 #include "LayersList.h"
 #include "Common/WellKnownKeys.h"
@@ -70,6 +71,8 @@ const Real LINE_THICKNESS = 2.0f;
 const Real HANDLE_SIZE = (2.0f) * LINE_THICKNESS;
 const Real LINE_THICKNESS_GRID = 1.5f;
 #define ADJUST_FROM_INDEX_TO_REAL(k) ((k-pMap->getBorderSize())*MAP_XY_FACTOR)
+
+#define MAX_LINE_RENDER_SAFE_LIMIT 20000 // If we hit this dont do render at all
 
 
 // Texturing, no zbuffer, disabled zbuffer write, primary gradient, alpha blending
@@ -106,6 +109,7 @@ int DrawObject::m_roadIconColor = 0xFFFF00;
 Bool DrawObject::m_squareFeedback = false;
 Int	DrawObject::m_brushWidth = 3;
 Int	DrawObject::m_brushFeatherWidth = 3;
+Int DrawObject::m_brushHeight = 0;
 Bool	DrawObject::m_toolWantsFeedback = true;
 Bool	DrawObject::m_disableFeedback = false;
 Bool	DrawObject::m_meshFeedback = false;
@@ -125,6 +129,10 @@ Real DrawObject::m_rampWidth = 0.0f;
 Bool DrawObject::m_dragWaypointFeedback = false; 
 Coord3D DrawObject::m_dragWayStart;
 Coord3D DrawObject::m_dragWayEnd;
+
+Bool DrawObject::m_terrainPasteFeedback = false;
+Coord3D DrawObject::m_terrainPasteCenter;
+Int DrawObject::m_terrainPasteFeedbackRotation = 0;
 
 static Int curHighlight = 0;
 static const Int NUM_HIGHLIGHT = 3;
@@ -764,6 +772,77 @@ void DrawObject::updateGridVB(void)
 
 	int i;
 
+	// --- Draw Concentric Circles (auto-scaled to map size) ---
+	const int NUM_CIRCLES = 3;
+	const int SEGMENTS_PER_CIRCLE = 96; // smooth circles
+
+	// use smaller dimension to fit within map bounds
+	float baseRadius = min(mapWidth, mapHeight) * 0.5f * 0.8f; // 80% of half-size
+	float circleRadii[NUM_CIRCLES];
+
+	// distribute evenly: inner = 1/3, mid = 2/3, outer = full
+	for (int ca = 0; ca < NUM_CIRCLES; ++ca)
+		circleRadii[ca] = baseRadius * ((ca + 1) / (float)NUM_CIRCLES);
+
+	for (int c = 0; c < NUM_CIRCLES; ++c)
+	{
+		float radius = circleRadii[c];
+		DWORD color;
+		if (c == 0) color = 0xFF00FFFF;    // inner - cyan
+		else if (c == 1) color = 0xFFFFFF00; // middle - yellow
+		else color = 0xFFFF00FF;             // outer - magenta
+
+		for (int s = 0; s < SEGMENTS_PER_CIRCLE; ++s)
+		{
+			float angle1 = (s / (float)SEGMENTS_PER_CIRCLE) * 2.0f * PI;
+			float angle2 = ((s + 1) / (float)SEGMENTS_PER_CIRCLE) * 2.0f * PI;
+
+			float x1 = centerX + cosf(angle1) * radius;
+			float y1 = centerY + sinf(angle1) * radius;
+			float x2 = centerX + cosf(angle2) * radius;
+			float y2 = centerY + sinf(angle2) * radius;
+
+			Real z1 = TheTerrainRenderObject->getHeightMapHeight(x1, y1, NULL);
+			Real z2 = TheTerrainRenderObject->getHeightMapHeight(x2, y2, NULL);
+			Real waterZ1 = getWaterHeightIfUnderwater(x1, y1);
+			Real waterZ2 = getWaterHeightIfUnderwater(x2, y2);
+
+			if (waterZ1 != -FLT_MAX && waterZ1 + 4.5f > z1 + Z_OFFSET)
+				z1 = waterZ1 + 4.5f;
+			else
+				z1 += Z_OFFSET;
+
+			if (waterZ2 != -FLT_MAX && waterZ2 + 4.5f > z2 + Z_OFFSET)
+				z2 = waterZ2 + 4.5f;
+			else
+				z2 += Z_OFFSET;
+
+			Coord3D a = { x1, y1, z1 };
+			Coord3D b = { x2, y2, z2 };
+
+			Vector3 dir(b.x - a.x, b.y - a.y, b.z - a.z);
+			dir.Normalize();
+			dir *= LINE_THICKNESS_GRID;
+			dir.Rotate_Z(PI / 2);
+
+			if (m_feedbackVertexCount + 4 > NUM_FEEDBACK_VERTEX || m_feedbackIndexCount + 6 > NUM_FEEDBACK_INDEX)
+				return;
+
+			ADD_GRID_VERT(a.x + dir.X, a.y + dir.Y, a.z, color);
+			ADD_GRID_VERT(a.x - dir.X, a.y - dir.Y, a.z, color);
+			ADD_GRID_VERT(b.x + dir.X, b.y + dir.Y, b.z, color);
+			ADD_GRID_VERT(b.x - dir.X, b.y - dir.Y, b.z, color);
+
+			*curIb++ = m_feedbackVertexCount - 4; // v0
+			*curIb++ = m_feedbackVertexCount - 3; // v1
+			*curIb++ = m_feedbackVertexCount - 2; // v2
+			*curIb++ = m_feedbackVertexCount - 2; // v2
+			*curIb++ = m_feedbackVertexCount - 3; // v1
+			*curIb++ = m_feedbackVertexCount - 1; // v3
+			m_feedbackIndexCount += 6;
+		}
+	}
+
 	// Vertical lines
 	for (i = 0;; ++i) {
 		bool didDraw = false;
@@ -1160,27 +1239,27 @@ void DrawObject::updateWaypointVB(RenderInfoClass & rinfo)
 				}
 			}
 
-			if (gotLocation) {
+			// if (gotLocation) {
 				//
                 // ✅ Cull the waypoint segment before adding vertices
                 //
-                Vector3 center(
-                    (loc1.x + loc2.x) * 0.5f,
-                    (loc1.y + loc2.y) * 0.5f,
-                    (loc1.z + loc2.z) * 0.5f
-                );
-                float radius = sqrtf(
-                    (loc2.x - loc1.x) * (loc2.x - loc1.x) +
-                    (loc2.y - loc1.y) * (loc2.y - loc1.y) +
-                    (loc2.z - loc1.z) * (loc2.z - loc1.z)
-                ) * 0.5f;
+                // Vector3 center(
+                //     (loc1.x + loc2.x) * 0.5f,
+                //     (loc1.y + loc2.y) * 0.5f,
+                //     (loc1.z + loc2.z) * 0.5f
+                // );
+                // float radius = sqrtf(
+                //     (loc2.x - loc1.x) * (loc2.x - loc1.x) +
+                //     (loc2.y - loc1.y) * (loc2.y - loc1.y) +
+                //     (loc2.z - loc1.z) * (loc2.z - loc1.z)
+                // ) * 0.5f;
 
-                SphereClass bounds(center, radius);
-                if (rinfo.Camera.Cull_Sphere(bounds)) {
-                    continue; // completely outside view, skip this segment
-                }
-
-				// Get group label and assign color
+                // SphereClass bounds(center, radius);
+                // if (rinfo.Camera.Cull_Sphere(bounds)) {
+                //     continue; // completely outside view, skip this segment
+                // }
+			if (gotLocation) {
+				// === GROUP COLOR SECTION ===
 				AsciiString groupLabel = "default";
 				MapObject* pWay1 = pDoc->getWaypointByID(waypointID1);
 				if (pWay1) {
@@ -1188,40 +1267,56 @@ void DrawObject::updateWaypointVB(RenderInfoClass & rinfo)
 					if (!exists) groupLabel = "default";
 				}
 
-				uint32 groupColor;
-				if (groupLabel == "default") {
-					// Force "default" group to be green
-					groupColor = 0xFF00FF00; // ARGB: opaque green
-					groupColorMap[groupLabel] = groupColor;
-				} else if (groupColorMap.find(groupLabel) == groupColorMap.end()) {
-					// Use colorSeed to generate spaced hues
-					uint32 hue = (colorSeed * 137) % 360; // 137 is a good prime for spreading values
-					float s = 0.6f; // Saturation
-					float v = 0.95f; // Brightness
+				uint32 groupColor = 0xFF00FF00; // default green
 
-					// Convert HSV to RGB
-					float c = v * s;
-					float x = c * (1 - fabs(fmod(hue / 60.0f, 2) - 1));
-					float m = v - c;
+				if (m_useFixedColoredWaypoints) {
+					AsciiString labelLower = groupLabel;
+					labelLower.toLower(); // assuming AsciiString has toLower(), else write helper
 
-					float rf, gf, bf;
-					if (hue < 60) { rf = c; gf = x; bf = 0; }
-					else if (hue < 120) { rf = x; gf = c; bf = 0; }
-					else if (hue < 180) { rf = 0; gf = c; bf = x; }
-					else if (hue < 240) { rf = 0; gf = x; bf = c; }
-					else if (hue < 300) { rf = x; gf = 0; bf = c; }
-					else { rf = c; gf = 0; bf = x; }
-
-					uint32 r = static_cast<uint32>((rf + m) * 255);
-					uint32 g = static_cast<uint32>((gf + m) * 255);
-					uint32 b = static_cast<uint32>((bf + m) * 255);
-
-					groupColor = (0xFF << 24) | (r << 16) | (g << 8) | b;
-					groupColorMap[groupLabel] = groupColor;
-					colorSeed++;
-				} else {
-					groupColor = groupColorMap[groupLabel];
+					if (labelLower.startsWith("flank"))
+						groupColor = 0xFFFFFF00; // yellow
+					else if (labelLower.startsWith("center"))
+						groupColor = 0xFFFF6666; // red
+					else if (labelLower.startsWith("backdoor"))
+						groupColor = 0xFF00FFFF; // cyan
+					else if (labelLower.startsWith("special"))
+						groupColor = 0xFFCC66FF; // softer violet
+					else
+						groupColor = 0xFF00FF00; // fallback green
 				}
+				else {
+					if (groupLabel == "default") {
+						groupColor = 0xFF00FF00;
+						groupColorMap[groupLabel] = groupColor;
+					} else if (groupColorMap.find(groupLabel) == groupColorMap.end()) {
+						uint32 hue = (colorSeed * 137) % 360;
+						float s = 0.6f;
+						float v = 0.95f;
+
+						float c = v * s;
+						float x = c * (1 - fabs(fmod(hue / 60.0f, 2) - 1));
+						float m = v - c;
+
+						float rf, gf, bf;
+						if (hue < 60) { rf = c; gf = x; bf = 0; }
+						else if (hue < 120) { rf = x; gf = c; bf = 0; }
+						else if (hue < 180) { rf = 0; gf = c; bf = x; }
+						else if (hue < 240) { rf = 0; gf = x; bf = c; }
+						else if (hue < 300) { rf = x; gf = 0; bf = c; }
+						else { rf = c; gf = 0; bf = x; }
+
+						uint32 r = static_cast<uint32>((rf + m) * 255);
+						uint32 g = static_cast<uint32>((gf + m) * 255);
+						uint32 b = static_cast<uint32>((bf + m) * 255);
+
+						groupColor = (0xFF << 24) | (r << 16) | (g << 8) | b;
+						groupColorMap[groupLabel] = groupColor;
+						colorSeed++;
+					} else {
+						groupColor = groupColorMap[groupLabel];
+					}
+				}
+				// === END GROUP COLOR SECTION ===
 								
 
 				Vector3 normal(loc2.x - loc1.x, loc2.y - loc1.y, loc2.z - loc1.z);
@@ -1306,100 +1401,120 @@ void DrawObject::updateWaypointVB(RenderInfoClass & rinfo)
 
 /** updateMeshVB puts polygon trigger triangles into m_vertexFeedback. */
 
+/** updateMeshVB puts polygon trigger triangles into m_vertexFeedback. */
 void DrawObject::updatePolygonVB(PolygonTrigger *pTrig, Bool selected, Bool isOpen)
 {
-//	const Int theAlpha = 64;
-
 	Int green = 0;
 	if (selected) {
-		green = (255*curHighlight) / (NUM_HIGHLIGHT-1);
+		green = (255 * curHighlight) / (NUM_HIGHLIGHT - 1);
 	}
-	green = green<<8;
+	green = green << 8;
 	m_feedbackVertexCount = 0;
 	m_feedbackIndexCount = 0;
+
 	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexFeedback, D3DLOCK_DISCARD);
-	UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
+	UnsignedShort *ib = lockIdxBuffer.Get_Index_Array();
 	UnsignedShort *curIb = ib;
 
 	DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexFeedback, D3DLOCK_DISCARD);
 	VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
 	VertexFormatXYZDUV1 *curVb = vb;
 
-	Int i;
-	for (i=0; i<pTrig->getNumPoints(); i++) {
+	AsciiString triggerName = pTrig->getTriggerName();
+	// DEBUG_LOG(("triggername %s\n", triggerName.str()));
+
+	// Determine base color depending on trigger name
+	unsigned int baseColor = 0xFFFF0000; // default red
+	const char *tstr = triggerName.str();
+	if (_strnicmp(tstr, "inner", 5) == 0) {
+		// e.g. InnerPerimeter*
+		baseColor = 0xFFFF0000; // red
+	}
+	else if (_strnicmp(tstr, "outer", 5) == 0) {
+		// e.g. OuterPerimeter*
+		baseColor = 0xFF00FF00; // green
+	}
+	else if (_strnicmp(tstr, "combat", 6) == 0) {
+		// e.g. CombatZone*
+		baseColor = 0xFFFFFF00; // yellow (A=FF,R=FF,G=FF,B=00)
+	}
+	else if (pTrig->isWaterArea()) {
+		baseColor = 0xFF0000FF; // blue for water
+	}
+	
+	for (Int i = 0; i < pTrig->getNumPoints(); i++) {
 		Coord3D loc1;
 		Coord3D loc2;
 		ICoord3D iLoc = *pTrig->getPoint(i);
 		loc1.x = iLoc.x;
 		loc1.y = iLoc.y;
 		loc1.z = TheTerrainRenderObject->getHeightMapHeight(loc1.x, loc1.y, NULL);
-		if (i<pTrig->getNumPoints()-1) {
-			iLoc = *pTrig->getPoint(i+1);
+
+		if (i < pTrig->getNumPoints() - 1) {
+			iLoc = *pTrig->getPoint(i + 1);
 		} else {
 			if (isOpen) break;
 			iLoc = *pTrig->getPoint(0);
 		}
+
 		loc2.x = iLoc.x;
 		loc2.y = iLoc.y;
 		loc2.z = TheTerrainRenderObject->getHeightMapHeight(loc2.x, loc2.y, NULL);
-		Vector3 normal(loc2.x-loc1.x, loc2.y-loc1.y, loc2.z-loc1.z);
+
+		Vector3 normal(loc2.x - loc1.x, loc2.y - loc1.y, loc2.z - loc1.z);
 		normal.Normalize();
 		normal *= 0.5f;
-		// Rotate the normal 90 degrees.
-		normal.Rotate_Z(PI/2);
-		// Put in the "center anchor"
+		normal.Rotate_Z(PI / 2);
 
-		if (m_feedbackVertexCount+9>= NUM_FEEDBACK_VERTEX) {
+		if (m_feedbackVertexCount + 9 >= NUM_FEEDBACK_VERTEX) {
 			return;
 		}
-		Int diffuse = 0xFFFF0000+green;
-		if (pTrig->isWaterArea()) {
-			diffuse = 0xFF0000FF+green;
-		}
-		curVb->u1 = 0;
-		curVb->v1 = 0;
-		curVb->x = loc1.x+normal.X;
-		curVb->y = loc1.y+normal.Y;
+
+		Int diffuse = baseColor + green;
+
+		// First vertex
+		curVb->u1 = 0; curVb->v1 = 0;
+		curVb->x = loc1.x + normal.X;
+		curVb->y = loc1.y + normal.Y;
 		curVb->z = loc1.z;
-		curVb->diffuse = diffuse;  
-		curVb++;
-		m_feedbackVertexCount++;
-		curVb->u1 = 0;
-		curVb->v1 = 0;
-		curVb->x = loc1.x-normal.X;
-		curVb->y = loc1.y-normal.Y;
+		curVb->diffuse = diffuse;
+		curVb++; m_feedbackVertexCount++;
+
+		// Second vertex
+		curVb->u1 = 0; curVb->v1 = 0;
+		curVb->x = loc1.x - normal.X;
+		curVb->y = loc1.y - normal.Y;
 		curVb->z = loc1.z;
-		curVb->diffuse = diffuse;  
-		curVb++;
-		m_feedbackVertexCount++;
-		curVb->u1 = 0;
-		curVb->v1 = 0;
-		curVb->x = loc2.x+normal.X;
-		curVb->y = loc2.y+normal.Y;
-		curVb->z = loc2.z;
-		curVb->diffuse = diffuse; 
-		curVb++;
-		m_feedbackVertexCount++;
-		curVb->u1 = 0;
-		curVb->v1 = 0;
-		curVb->x = loc2.x-normal.X;
-		curVb->y = loc2.y-normal.Y;
+		curVb->diffuse = diffuse;
+		curVb++; m_feedbackVertexCount++;
+
+		// Third vertex
+		curVb->u1 = 0; curVb->v1 = 0;
+		curVb->x = loc2.x + normal.X;
+		curVb->y = loc2.y + normal.Y;
 		curVb->z = loc2.z;
 		curVb->diffuse = diffuse;
-		curVb++;
-		m_feedbackVertexCount++;
+		curVb++; m_feedbackVertexCount++;
 
-		if (m_feedbackIndexCount+12 >= NUM_FEEDBACK_INDEX) {
+		// Fourth vertex
+		curVb->u1 = 0; curVb->v1 = 0;
+		curVb->x = loc2.x - normal.X;
+		curVb->y = loc2.y - normal.Y;
+		curVb->z = loc2.z;
+		curVb->diffuse = diffuse;
+		curVb++; m_feedbackVertexCount++;
+
+		if (m_feedbackIndexCount + 12 >= NUM_FEEDBACK_INDEX) {
 			return;
 		}
-		*curIb++ = m_feedbackVertexCount-3;
-		*curIb++ = m_feedbackVertexCount-1;
-		*curIb++ = m_feedbackVertexCount-2;
-		*curIb++ = m_feedbackVertexCount-4;
-		*curIb++ = m_feedbackVertexCount-3;
-		*curIb++ = m_feedbackVertexCount-2;
-		m_feedbackIndexCount+=6;
 
+		*curIb++ = m_feedbackVertexCount - 3;
+		*curIb++ = m_feedbackVertexCount - 1;
+		*curIb++ = m_feedbackVertexCount - 2;
+		*curIb++ = m_feedbackVertexCount - 4;
+		*curIb++ = m_feedbackVertexCount - 3;
+		*curIb++ = m_feedbackVertexCount - 2;
+		m_feedbackIndexCount += 6;
 	}
 }
 
@@ -2450,6 +2565,124 @@ void DrawObject::setFeedbackPos(Coord3D pos)
 	}
 }
 
+void DrawObject::updateTerrainPasteVB(void)
+{
+    TileTool::TerrainCopyBuffer &buf = TileTool::s_copyBuffer;
+
+    m_feedbackVertexCount = 0;
+    m_feedbackIndexCount = 0;
+
+    DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexFeedback, D3DLOCK_DISCARD);
+    UnsignedShort *ib = lockIdxBuffer.Get_Index_Array();
+    UnsignedShort *curIb = ib;
+
+    DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexFeedback, D3DLOCK_DISCARD);
+    VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
+    VertexFormatXYZDUV1 *curVb = vb;
+
+    int w = buf.width;
+    int h = buf.height;
+    if (w <= 0 || h <= 0) return;
+
+    const int PAD_VERT = 9;   // match mesh code's small padding
+    const int PAD_IDX  = 12;  // some extra indices like mesh code
+    const int MAX_VERTS = NUM_FEEDBACK_VERTEX;
+    const int MAX_IDX   = NUM_FEEDBACK_INDEX;
+    const int MAX_16BIT = 65535;
+
+    int expectedVerts = w * h;
+    int expectedIdx = (w - 1) * (h - 1) * 6;
+
+    // Defensive caps:
+    if (expectedVerts + PAD_VERT >= MAX_VERTS) {
+        DEBUG_LOG(("Paste preview too many vertices (%d) — skipping preview", expectedVerts));
+        return;
+    }
+    if (expectedIdx + PAD_IDX >= MAX_IDX) {
+        DEBUG_LOG(("Paste preview too many indices (%d) — skipping preview", expectedIdx));
+        return;
+    }
+    if (expectedVerts > MAX_16BIT) {
+        DEBUG_LOG(("Paste preview exceeds 16-bit index limit (%d verts) — skipping preview", expectedVerts));
+        return;
+    }
+
+    DWORD color = 0x80FFFFFF;  /* semi-transparent white */
+
+    /* Convert rotation to radians */
+    float angle = 0.0f;
+    switch (m_terrainPasteFeedbackRotation)
+    {
+        case 90:  angle = 3.1415926f * 0.5f; break;
+        case 180: angle = 3.1415926f; break;
+        case 270: angle = 3.1415926f * 1.5f; break;
+        default: angle = 0.0f; break;
+    }
+
+    float cosA = cosf(angle);
+    float sinA = sinf(angle);
+
+    /* Center offset for rotation pivot */
+    float cx = (float)(w - 1) * 0.5f;
+    float cy = (float)(h - 1) * 0.5f;
+
+    /* Fill vertex buffer with rotated positions */
+    for (int y = 0; y < h; ++y)
+    {
+        for (int x = 0; x < w; ++x)
+        {
+            /* Local coordinates centered at pivot */
+            float localX = (x - cx) * MAP_XY_FACTOR;
+            float localY = (y - cy) * MAP_XY_FACTOR;
+
+            /* Apply rotation */
+            float rotX = localX * cosA - localY * sinA;
+            float rotY = localX * sinA + localY * cosA;
+
+			/* Compute world position */
+			Coord3D tmp;
+			tmp.x = m_terrainPasteCenter.x + rotX;
+			tmp.y = m_terrainPasteCenter.y + rotY;
+			// tmp.z = (float)buf.heightData[y][x] * MAP_HEIGHT_SCALE;
+
+			float baseZ = (float)buf.heightData[y][x] * MAP_HEIGHT_SCALE;
+			tmp.z = baseZ + m_brushHeight;  
+
+			// Snap to grid if enabled
+			CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
+			WbView3d *pView = pDoc->Get3DView(); 
+			pView->snapPoint(&tmp);
+
+			curVb->x = tmp.x;
+			curVb->y = tmp.y;
+			curVb->z = tmp.z;
+
+            curVb->u1 = 0.0f;
+            curVb->v1 = 0.0f;
+            curVb->diffuse = color;
+
+            ++curVb;
+            ++m_feedbackVertexCount;
+        }
+    }
+
+    /* Build index buffer (unchanged) */
+    for (int b = 0; b < h - 1; ++b)
+    {
+        for (int x = 0; x < w - 1; ++x)
+        {
+            int idx = b * w + x;
+            *curIb++ = (UnsignedShort)idx;
+            *curIb++ = (UnsignedShort)(idx + 1);
+            *curIb++ = (UnsignedShort)(idx + w);
+            *curIb++ = (UnsignedShort)(idx + 1);
+            *curIb++ = (UnsignedShort)(idx + w + 1);
+            *curIb++ = (UnsignedShort)(idx + w);
+            m_feedbackIndexCount += 6;
+        }
+    }
+}
+
 void DrawObject::setRampFeedbackParms(const Coord3D *start, const Coord3D *end, Real rampWidth)
 {
 	DEBUG_ASSERTCRASH(start && end, ("Parameter passed into setRampFeedbackParms was NULL. Not allowed"));
@@ -2789,29 +3022,6 @@ if (_skip_drawobject_render) {
 		}
 	}
 
-
-
-#if 1
-	if (m_meshFeedback) {
-		updateMeshVB();
-		if (m_feedbackIndexCount>0) {
- 			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
-			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
-			DX8Wrapper::Set_Shader(SC_OPAQUE_Z);
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
-			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
-		}
-	} else if (m_toolWantsFeedback && !m_disableFeedback) {
-		updateFeedbackVB();
-		if (m_feedbackIndexCount>0) {
- 			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
-			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
-			DX8Wrapper::Set_Shader(ShaderClass::_PresetAlpha2DShader);
-			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
-		}
-	}
-#endif
-
 #if 1
 	if (m_rampFeedback) {
 		updateRampVB();
@@ -2860,6 +3070,36 @@ if (_skip_drawobject_render) {
 			DX8Wrapper::Draw_Triangles(0, m_feedbackIndexCount / 3, 0, m_feedbackVertexCount);
 		}
 	}
+
+#if 1
+	if (m_terrainPasteFeedback && !m_disableFeedback) {
+		updateTerrainPasteVB();
+		if (m_feedbackIndexCount > 0) {
+			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
+			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
+			DX8Wrapper::Set_Shader(SC_OPAQUE_Z);
+			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
+			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
+		}
+	} else if (m_meshFeedback) {
+		updateMeshVB();
+		if (m_feedbackIndexCount>0) {
+ 			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
+			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
+			DX8Wrapper::Set_Shader(SC_OPAQUE_Z);
+			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
+			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
+		}
+	} else if (m_toolWantsFeedback && !m_disableFeedback) {
+		updateFeedbackVB();
+		if (m_feedbackIndexCount>0) {
+ 			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
+			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
+			DX8Wrapper::Set_Shader(ShaderClass::_PresetAlpha2DShader);
+			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
+		}
+	}
+#endif
 
 	if (m_showTracingOverlay) {
 		CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
@@ -2969,11 +3209,19 @@ if (_skip_drawobject_render) {
 	}
 
 	// Render any lines that have been added, like bounding boxes.
-	// MLL C&C3
-	if (linesToRender && m_lineRenderer) {
-		m_lineRenderer->Render();
-		// Clear the old lines.
-		m_lineRenderer->Reset();
+	// MLL C&C3 - guarded to prevent Render2D overflow crash
+	if (m_lineRenderer) {
+		int vCount = m_lineRenderer->Get_Color_Array().Count();
+		if (linesToRender && vCount > 0) {
+			// 20k base its working -- 30k is working
+			if (vCount > MAX_LINE_RENDER_SAFE_LIMIT) {
+				// DEBUG_LOG(("m_lineRenderer overflow detected (%d colors) — resetting\n", vCount));
+				m_lineRenderer->Reset();
+			} else {
+				m_lineRenderer->Render();
+				m_lineRenderer->Reset();
+			}
+		}
 	}
 }
 #pragma optimize("", on)

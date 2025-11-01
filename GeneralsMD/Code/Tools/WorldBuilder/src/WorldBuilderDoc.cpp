@@ -112,7 +112,8 @@ BEGIN_MESSAGE_MAP(CWorldBuilderDoc, CDocument)
 	
 	ON_COMMAND(ID_FILE_GENERATE_MAPSTRNINI, OnGenerateMapStrAndIni)
 	ON_COMMAND(ID_FILE_WBSETTINGS, OnOpenWorldbuilderSettings)
-	ON_COMMAND(ID_FILE_JUMPTOFOLDER, OnJumpToFolder)
+	ON_COMMAND(ID_FILE_AUTOSAVEFOLDER, OnJumpToAutoSaveFolder)
+	ON_COMMAND(ID_FILE_JUMPTOFOLDER, OnJumpToMapFolder)
 	
 	ON_COMMAND(ID_DISABLEMAPPREVGENERATE, OnViewDisableMapPrevGen)
 	// ON_UPDATE_COMMAND_UI(ID_DISABLEMAPPREVGENERATE, OnUpdateDisableMapPrevGen)
@@ -318,6 +319,13 @@ public:
 void CWorldBuilderDoc::OnViewDisableMapPrevGen() 
 {
 	m_disableMapPrevGeneration = !m_disableMapPrevGeneration;
+
+	if (m_strPathName.IsEmpty()) {
+		AfxMessageBox(
+			_T("Mate you still havent save the map, please do that first thank you."),
+		MB_OK | MB_ICONWARNING);
+		return;
+	}
 
 	if(m_disableMapPrevGeneration){
 		AfxMessageBox(
@@ -794,7 +802,7 @@ void CWorldBuilderDoc::validate(void)
 	}
 }
 
-void CWorldBuilderDoc::OnJumpToFolder()
+void CWorldBuilderDoc::OnJumpToMapFolder()
 {
 	try {
 		// DoFileSave();
@@ -817,6 +825,25 @@ void CWorldBuilderDoc::OnJumpToFolder()
 		}
 
 	} catch (...) {
+	}
+}
+
+void CWorldBuilderDoc::OnJumpToAutoSaveFolder()
+{
+	try {
+		CString folderPath;
+		folderPath.Format("%s\\AutoSaves", TheGlobalData->getPath_UserData().str());
+
+		// Ensure the folder exists before trying to open it
+		DWORD attr = GetFileAttributes(folderPath);
+		if (attr != (DWORD)-1 && (attr & FILE_ATTRIBUTE_DIRECTORY)) {
+			ShellExecute(NULL, "open", folderPath, NULL, NULL, SW_SHOWNORMAL);
+		} else {
+			AfxMessageBox("How the fuck the autosave folder does not exist on your data yet? call adriane.", MB_ICONEXCLAMATION | MB_OK);
+		}
+
+	} catch (...) {
+		// Optional: handle unexpected errors
 	}
 }
 
@@ -904,7 +931,7 @@ void CWorldBuilderDoc::OnGenerateMapStrAndIni()
 			AfxMessageBox("Both map.str and map.ini already exist. No new files were created.", MB_OK | MB_ICONINFORMATION);
 		}
 
-		OnJumpToFolder();
+		OnJumpToMapFolder();
 	} catch (...) {
 		AfxMessageBox("An error occurred while generating the template files.", MB_ICONERROR | MB_OK);
 	}
@@ -1001,13 +1028,13 @@ void CWorldBuilderDoc::OnJumpToGame(Bool withDebug, Bool waveEdit)
 			AfxMessageBox(
 				"You are about to run the game with wave edit mode ON. Please take note:\n\n"
 				"Hotkeys:\n"
-				" 1           : Toggle Wave Edit Mode\n"
-				" Ctrl + S    : Save\n"
-				" Ctrl + R    : Reload/Clear\n"
-				" Ctrl + Z    : Undo (max of 15)\n"
-				" LMB         : Start placing waves\n"
-				" 2nd LMB     : Add end of wave point\n"
-				" Space       : Cycle Wave Type",
+				" 1              : Enable/Disable Wave Edit Mode\n"
+				" Ctrl + S       : Save\n"
+				" Ctrl + R       : Reload/Clear\n"
+				" Ctrl + Z       : Undo (max of 15)\n"
+				" Left Click     : Start placing waves\n"
+				" 2nd Left Click : Add end of wave point\n"
+				" Space          : Cycle Wave Type",
 				MB_ICONEXCLAMATION | MB_OK
 			);
 		} else {
@@ -1439,6 +1466,29 @@ void CWorldBuilderDoc::OptimizeTiles()
 		}
 		REF_PTR_RELEASE(htMapEditCopy);
 	}	
+}
+
+// Adriane[Deathscythe] Hacky cursed code just to refresh the terrain tiles without adding an undo step.
+void CWorldBuilderDoc::RefreshAndOptimizeHeightMap()
+{
+    if (m_heightMap)
+    {
+        WorldHeightMapEdit* htMapEditCopy = GetHeightMap()->duplicate();
+        if (htMapEditCopy == NULL)
+            return;
+
+        if (htMapEditCopy->optimizeTiles())  // does all the blend recalculation
+        {
+            IRegion2D partialRange = {0, 0, 0, 0};
+            updateHeightMap(htMapEditCopy, false, partialRange);
+        }
+        else
+        {
+            ::Beep(1000, 500);
+        }
+
+        REF_PTR_RELEASE(htMapEditCopy);
+    }
 }
 
 void CWorldBuilderDoc::OnUpdateTsCanonical(CCmdUI* pCmdUI) 

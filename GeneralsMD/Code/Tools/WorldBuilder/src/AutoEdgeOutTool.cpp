@@ -29,6 +29,10 @@
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
 #include "WorldBuilderView.h"
+#include "PointerTool.h"
+
+
+Bool AutoEdgeOutTool::m_autoEdgeToolActive = false;
 //
 // AutoEdgeOutTool class.
 //
@@ -48,8 +52,25 @@ void AutoEdgeOutTool::activate()
 {
 	Tool::activate();
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_BLEND_MATERIAL);
+	m_autoEdgeToolActive = true;
+	BlendMaterial::updateBlendPointerToolTip();
 }
 
+void AutoEdgeOutTool::deactivate() 
+{
+	m_autoEdgeToolActive = false;
+	PointerTool::setLastPointerInfoString("");
+	Tool::deactivate();
+}
+
+void AutoEdgeOutTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) {
+	// Call this ridiculously expensive redraw function every time the mouse moves
+	// Greatly smooths the framerate when just moving the mouse around, with or without any selection
+	// At the cost of your GPU usage 
+	pView->Invalidate();
+	pDoc->updateAllViews();
+	return;
+}
 
 /** Execute the tool on mouse down - Create a copy of the height map
 * to edit, blend the edges, and give the undoable command to the doc. */
@@ -67,7 +88,14 @@ void AutoEdgeOutTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, C
 
 //	WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
 	WorldHeightMapEdit *htMapEditCopy = pDoc->GetHeightMap()->duplicate();
-	htMapEditCopy->autoBlendOut(ndx.x, ndx.y, BlendMaterial::getBlendTexClass());
+	htMapEditCopy->autoBlendOut(
+		ndx.x, 
+		ndx.y, 
+		BlendMaterial::getBlendTexClass(), 
+		BlendMaterial::isHorizVertGap(), 
+		BlendMaterial::isDiagGap(),
+		BlendMaterial::isRevalBlends()
+	);
 	IRegion2D partialRange = {0,0,0,0};
 	pDoc->updateHeightMap(htMapEditCopy, false, partialRange);
 	WBDocUndoable *pUndo = new WBDocUndoable(pDoc, htMapEditCopy);

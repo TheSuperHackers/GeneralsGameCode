@@ -35,12 +35,15 @@
 #include "GameLogic/PolygonTrigger.h"
 #include "wbview3d.h"
 #include "ObjectTool.h"
+#include "ToastDialog.h"
 
 
 CString PointerTool::m_lastPointerInfo = _T("");
 Bool PointerTool::m_isMouseDown = false;
 Bool PointerTool::m_dragSelect = false;
 Bool PointerTool::m_pointerIsActive = false;
+
+static Bool g_PointerToolTip = false;
 
 //
 // Static helper functions
@@ -233,6 +236,7 @@ Bool PointerTool::allowPick(MapObject* pMapObj, WbView* pView)
 	if (!pMapObj) {
 		return false;
 	} 
+
 	const ThingTemplate *tt = pMapObj->getThingTemplate();
 	if (tt && tt->getEditorSorting() == ES_AUDIO) {
 		if (pView->GetPickConstraint() == ES_NONE || pView->GetPickConstraint() == ES_AUDIO) {
@@ -240,18 +244,31 @@ Bool PointerTool::allowPick(MapObject* pMapObj, WbView* pView)
 		}
 	}
 	
-	// if (pView->getShowObjects()) {
-    //     return true;
-    // }
-
 	// Early reject roads if showRoads = false
-    if (pMapObj->getFlag(FLAG_ROAD_FLAGS) && !pView->getShowRoads()) {
-        return false;
-    }
+	if (pMapObj->getFlag(FLAG_ROAD_FLAGS) && !pView->getShowRoads()) {
+		return false;
+	}
 
+	// Early reject if models are hidden or object is invisible
 	if ((tt && !pView->getShowModels()) || (pMapObj->getFlags() & FLAG_DONT_RENDER)) {
 		return false;
 	}
+
+	// === Adriane [ Deathscythe ] NEW LOGIC: reject bridge points depending on constraint ===
+	if (pView->GetPickConstraint() != ES_NONE && pView->GetPickConstraint() != ES_ROAD) {
+		if (pMapObj->getFlag(FLAG_BRIDGE_POINT1) || pMapObj->getFlag(FLAG_BRIDGE_POINT2)) {
+			return false;
+		}
+	}
+
+	// === Adriane [ Deathscythe ] NEW LOGIC: reject Scorchmarks ===
+	if (pView->GetPickConstraint() != ES_NONE && pView->GetPickConstraint() != ES_DEBRIS) {
+		if (pMapObj->isScorch()) {
+			return false;
+		}
+	}
+
+	// Apply pick constraint type checks
 	if (pView->GetPickConstraint() != ES_NONE) {
 		if (tt) {
 			if (!pView->getShowModels()) {
@@ -273,7 +290,8 @@ Bool PointerTool::allowPick(MapObject* pMapObj, WbView* pView)
 		if (sort != ES_NONE && sort != pView->GetPickConstraint()) {
 			return false;
 		}
-	} 
+	}
+
 	return true;
 }
 
@@ -397,6 +415,15 @@ void PointerTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 			// See if we are picking on the arrow. 
 			if (pView->picked(m_curObject, cpt) == PICK_ARROW) {
 				m_rotating = true;
+
+				if(!g_PointerToolTip){
+					CToastDialog* pToast = new CToastDialog(
+					_T("Hold Ctrl to rotate as a group.\nSee Edit tab for rotation options."),
+					20000, true);
+					pToast->Create(CToastDialog::IDD);
+					pToast->ShowWindow(SW_SHOWNOACTIVATE);
+					g_PointerToolTip = true;
+				}
 			}
 		}	else {
 			pObj = MapObject::getFirstMapObject();
@@ -550,13 +577,13 @@ void PointerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
     }
     if (!m_moving || !m_modifyUndoable) return;
 
-    // MapObject *curMapObj = MapObject::getFirstMapObject();
-    // while (curMapObj) {
-    //     if (curMapObj->isSelected()) {
-    //         pView->invalObjectInView(curMapObj);
-    //     }
-    //     curMapObj = curMapObj->getNext();
-    // }
+    MapObject *curMapObj = MapObject::getFirstMapObject();
+    while (curMapObj) {
+        if (curMapObj->isSelected()) {
+            pView->invalObjectInView(curMapObj);
+        }
+        curMapObj = curMapObj->getNext();
+    }
 
     CString text;
     if (m_rotating) {
@@ -657,13 +684,13 @@ void PointerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
         m_lastPointerInfo = text;
     }
 
-    // curMapObj = MapObject::getFirstMapObject();
-    // while (curMapObj) {
-    //     if (curMapObj->isSelected()) {
-    //         pView->invalObjectInView(curMapObj);
-    //     }
-    //     curMapObj = curMapObj->getNext();
-    // }
+    curMapObj = MapObject::getFirstMapObject();
+    while (curMapObj) {
+        if (curMapObj->isSelected()) {
+            pView->invalObjectInView(curMapObj);
+        }
+        curMapObj = curMapObj->getNext();
+    }
 
 
 	pView->Invalidate();  

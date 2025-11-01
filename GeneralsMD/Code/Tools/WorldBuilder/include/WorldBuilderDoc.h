@@ -109,6 +109,7 @@ public: // overridden
 // Attributes
 public:
 	void OptimizeTiles();
+	void RefreshAndOptimizeHeightMap();
 
 	WorldHeightMapEdit *GetHeightMap() {return m_heightMap;}
 	void SetHeightMap(WorldHeightMapEdit *pMap, Bool doUpdate);
@@ -191,7 +192,8 @@ protected:
 	afx_msg void OnUpdateTsCanonical(CCmdUI* pCmdUI);
 	afx_msg void OnFileResize();
 	afx_msg void OnGenerateMapStrAndIni();
-	afx_msg void OnJumpToFolder();
+	afx_msg void OnJumpToMapFolder();
+	afx_msg void OnJumpToAutoSaveFolder();
 	afx_msg void OnOpenWorldbuilderSettings();
 
 	void OnJumpToGame(Bool withDebug, Bool waveEdit);

@@ -70,15 +70,26 @@ protected:
 	Bool										m_updating;
 	static Int							m_currentBlendTexture;
 	CTreeCtrl								m_terrainTreeView;
+	static Bool  m_hvgap; //horizontal+vertical gap
+	static Bool  m_dgap;  //diagonal gap
+	static Bool  m_revalblends;
 
 protected:
 	void updateTextures(void);
 	void addTerrain(const char *pPath, Int terrainNdx, HTREEITEM parent);
 	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
 
-public:
-	static Int getBlendTexClass(void) {return m_currentBlendTexture;}
+	afx_msg void OnReevaluateBlends();
+	afx_msg void OnHorizontalAndVerticalGap();
+	afx_msg void OnDiagonalGap();
 
+public:
+	static void updateBlendPointerToolTip();
+	static Bool isHorizVertGap(void) {return m_hvgap;}
+	static Bool isDiagGap(void) {return m_dgap;}
+	static Bool isRevalBlends(void) {return m_revalblends;}
+
+	static Int getBlendTexClass(void) {return m_currentBlendTexture;}
 	static void setBlendTexClass(Int texClass);
 
 public:

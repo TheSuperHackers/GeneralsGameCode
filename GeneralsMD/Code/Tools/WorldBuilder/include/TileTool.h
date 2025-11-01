@@ -36,6 +36,17 @@ class TileTool : public Tool
 {
 protected:
 
+	// struct TerrainPreviewBuffer {
+	// 	int startX, startY;
+	// 	int width, height;
+	// 	std::vector<std::vector<float>> heightData;
+	// 	std::vector<std::vector<int>> textureData;
+	// 	bool visible;
+	// 	bool hasTexture;
+	// };
+
+	// static TerrainPreviewBuffer s_previewBuffer;
+
 	struct TileTextureData {
 		int xOffset;
 		int yOffset;
@@ -55,13 +66,30 @@ public:
 	~TileTool(void);
 
 public:
+	// struct TBlendTileInfo;   // forward declare the blend tile info struct
+	struct TerrainCopyBuffer {
+		std::vector<std::vector<UnsignedByte> > heightData;   // Note the space before '>' for VC6
+		// std::vector<std::vector<Int> > textureData;           // Same here
+		Int width;
+		Int height;
+		// Bool hasTexture;
+	};
+	
+	static TerrainCopyBuffer s_copyBuffer;
+
 	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
 	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
 	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
 	virtual WorldHeightMapEdit *getHeightMap(void) {return m_htMapEditCopy;};
 	virtual void activate(); ///< Become the current tool.
+	virtual void deactivate();
 	virtual Int getWidth(void) {return 1;};
-	static void clearCopiedTiles(); ///< Called under open new document 
+	static void clearCopiedTiles(); ///< Called under open new document
+	
+	static void copyTerrainArea(WorldHeightMapEdit* pMap, Int startX, Int startY, Int size);
+	static void applyTerrainArea(WorldHeightMapEdit* pMap, Int destX, Int destY);
+
+	// ::TBlendTileInfo rotateBlendInfo(const ::TBlendTileInfo &info, int rotation);
 };
 
 /*************************************************************************
@@ -72,6 +100,7 @@ class BigTileTool : public TileTool
 
 protected:
 	static Int m_currentWidth;
+	static Int m_currentHeight;
 	static Int m_copyModeWidth; 
 
 public:
@@ -82,6 +111,11 @@ public:
 
 	static void setWidth(Int width) ;
 	virtual Int getWidth(void) {return m_currentWidth;};
+	static void setHeight(Int height) ;
+	virtual Int getHeight(void) {return m_currentHeight;};
+
+	// Used by TerrainMaterial dialog to get/set current width.
+	static Int getCurrentHeight(void) {return m_currentHeight;};
 
 	static Int getCopyModeWidth(void) {
 		return ::AfxGetApp()->GetProfileInt(TILE_OPTION_PANEL, "CopyModeWidth", 20);

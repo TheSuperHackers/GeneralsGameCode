@@ -127,8 +127,10 @@ protected:
 	CFont* m_pOldFont;
 	BOOL m_bCompressed;
 	BOOL m_bNewIcons;
+	BOOL m_updating;
 
 	BOOL m_bDisableDeepScan;
+	BOOL m_bCleanScriptName;
 
 protected:
 	HTREEITEM addPlayer(Int playerIndx);
@@ -177,6 +179,7 @@ protected:
 	afx_msg void OnSmartCopy();
 	afx_msg void OnCompress();
 	afx_msg void OnDisableDeepScan();
+	afx_msg void OnCleanScriptName();
 	afx_msg void OnNewIcons();
 	afx_msg void OnSave();
 	afx_msg void OnLoad();

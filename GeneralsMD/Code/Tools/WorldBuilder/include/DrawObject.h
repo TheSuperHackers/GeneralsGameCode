@@ -83,7 +83,7 @@ public:
 	Int freeMapResources(void);
 	int initData(void);
 
-    void setDrawObjects(Bool val, Bool waypoints, Bool poly, Bool bounding, Bool sight, Bool weapon, Bool sound, Bool testart, Bool letterbox, Bool water, Bool iconssel) { 
+    void setDrawObjects(Bool val, Bool waypoints, Bool poly, Bool bounding, Bool sight, Bool weapon, Bool sound, Bool testart, Bool letterbox, Bool water, Bool iconssel, Bool fixedColorsW) { 
 		m_drawObjects = val; 
 		m_drawWaypoints=waypoints; 
 		m_drawPolygonAreas = poly; 
@@ -95,6 +95,7 @@ public:
 		m_drawLetterbox = letterbox;
 		m_showWater = water;
 		m_drawObjectsSelected = iconssel;
+		m_useFixedColoredWaypoints = fixedColorsW;
 	}
 
 	static void setDoBrushFeedback(Bool val) { m_toolWantsFeedback = val; m_meshFeedback=false;}	
@@ -106,9 +107,9 @@ public:
 
 	static void setDoAmbientSoundFeedback(Bool val) { m_ambientSoundFeedback = val; }
 	
-	static void setBrushFeedbackParms(Bool square, Int width, Int featherWidth) 
+	static void setBrushFeedbackParms(Bool square, Int width, Int featherWidth, Int height = 0) 
 														{ m_squareFeedback = square; m_brushWidth=width;
-															m_meshFeedback = false; m_brushFeatherWidth = featherWidth;}
+															m_meshFeedback = false; m_brushFeatherWidth = featherWidth; m_brushHeight = height;}
 	static void disableFeedback(void) {m_disableFeedback = true;};
 	static void enableFeedback(void) {m_disableFeedback = false;};
 	static Bool isFeedbackEnabled(void) { return !m_disableFeedback;};
@@ -126,6 +127,10 @@ public:
 
 	MeshClass *peekMesh(void) {return m_moldMesh;};
 	void getMeshBounds(SphereClass *pSphere) {*pSphere = m_moldMeshBounds;};
+
+	static Bool m_terrainPasteFeedback;
+	static Coord3D m_terrainPasteCenter;
+	static Int m_terrainPasteFeedbackRotation;	
 
 protected:
 	enum {MAX_RADIUS = 50, NUM_FEEDBACK_VERTEX = 201*201, NUM_FEEDBACK_INDEX = 101*101*6};
@@ -150,6 +155,7 @@ protected:
 	Bool											m_drawBoundingBoxes;
 	Bool											m_drawSightRanges;
 	Bool											m_drawWeaponRanges;
+	Bool											m_useFixedColoredWaypoints;
   Bool                      m_drawSoundRanges;
 	Bool											m_drawTestArtHighlight;
 	Bool											m_drawLetterbox;
@@ -170,6 +176,7 @@ protected:
 protected: // static state vars.
 	static Bool								m_squareFeedback;	///< True for square brush feedback, false for round.
 	static Int								m_brushWidth;	///< Width of brush feedback.
+	static Int								m_brushHeight;	///< Height of brush feedback.
 	static Int								m_brushFeatherWidth;	///< Width of brush feathered feedback.
 	static Bool								m_toolWantsFeedback; ///< True to display brush feedback.
 	static Bool								m_disableFeedback; ///< True to disable feedback.
@@ -206,6 +213,7 @@ protected:
 	void updateWaypointVB(RenderInfoClass & rinfo);
 	void updateForWater(void);
 	void updateBoundaryVB(void);
+	void updateTerrainPasteVB(void);
 	void updateGridVB(void);
 	void updateAmbientSoundVB(void);
 	void updateVBWithBoundingBox(MapObject *pMapObj, CameraClass* camera);

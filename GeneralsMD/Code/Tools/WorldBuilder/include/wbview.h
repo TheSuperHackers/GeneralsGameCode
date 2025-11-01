@@ -72,12 +72,14 @@ protected:
  	Bool					m_showObjects;			  ///< Flag whether object icons are drawn in the 2d and 3d view.
  	Bool					m_showModels;					///< Flag whether models are drawn in the 2d and 3d view.
  	Bool					m_showNames;					///< Flag whether names are drawn in the 2d and 3d view.
+	Bool					m_showNamesExtra; /// extra deets like object properties	
 	Bool					m_showGarrisoned;
 	Bool					m_showWaypoints;
 	Bool                    m_togglePivotFarthest;
 	Bool					m_toggleObjectRotationWithGroup;
 	Bool					m_showObjectProperties;
 	Bool					m_showWater;
+	Bool                    m_useFixedColoredWaypoints;
 	Bool					m_showRoads;
 	Bool					m_showPolygonTriggers;
  	Bool					m_showTerrain;			  ///< Flag whether terrain is rendered or not. (Useful for debugging)
@@ -230,6 +232,8 @@ protected:
 	afx_msg void OnUpdateViewShowwaypoints(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowWater();
 	afx_msg void OnUpdateViewShowWater(CCmdUI* pCmdUI);
+	afx_msg void OnViewUseFixedColorWaypoints();
+	afx_msg void OnUpdateViewUseFixedColorWaypoints(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowRoads();
 	afx_msg void OnUpdateViewShowRoads(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowpolygontriggers();
@@ -262,6 +266,8 @@ protected:
 	afx_msg void OnUpdatePickSounds(CCmdUI* pCmdUI);
 	afx_msg void OnShowNames();
 	afx_msg void OnUpdateShowNames(CCmdUI* pCmdUI);
+	afx_msg void OnShowNamesExtra();
+	afx_msg void OnUpdateShowNamesExtra(CCmdUI* pCmdUI);
 	afx_msg void OnValidationFixTeams();
 	afx_msg void OnShowTerrain();
 	afx_msg void OnUpdateShowTerrain(CCmdUI* pCmdUI);

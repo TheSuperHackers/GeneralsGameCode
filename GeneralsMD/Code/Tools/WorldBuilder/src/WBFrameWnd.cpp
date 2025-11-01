@@ -94,7 +94,8 @@ END_MESSAGE_MAP()
 
 IMPLEMENT_DYNCREATE(CWB3dFrameWnd, CMainFrame)
 
-CWB3dFrameWnd::CWB3dFrameWnd()
+CWB3dFrameWnd::CWB3dFrameWnd() : 
+	m_isFullScreen(false)
 {
 }
 
@@ -117,6 +118,8 @@ BEGIN_MESSAGE_MAP(CWB3dFrameWnd, CMainFrame)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_PREVIEW800X600, OnUpdateWindowPreview800x600)
 	ON_COMMAND(ID_WINDOW_PREVIEW1280X768, OnWindowPreview1280x768)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_PREVIEW1280X768, OnUpdateWindowPreview1280x768)
+
+	ON_WM_KEYDOWN()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -148,15 +151,55 @@ void CWB3dFrameWnd::OnMove(int x, int y)
 
 BOOL CWB3dFrameWnd::PreTranslateMessage(MSG* pMsg)
 {
+	// DEBUG_LOG(("Clicked\n"));
     if (pMsg->message == WM_KEYDOWN)
     {
-        if (pMsg->wParam == VK_ESCAPE)
+		// DEBUG_LOG(("clicked \n"));
+        if (pMsg->wParam == VK_ESCAPE && m_isFullScreen)
         {
             ExitFullScreen();
-            return TRUE; // handled
+            return TRUE;
+        }
+        else if (pMsg->wParam == VK_F11)
+        {
+			// DEBUG_LOG(("F10 clicked \n"));
+            if (!m_isFullScreen)
+                EnterFullScreen();
+            else
+                ExitFullScreen();
+            return TRUE;
         }
     }
     return CFrameWnd::PreTranslateMessage(pMsg);
+}
+
+void CWB3dFrameWnd::EnterFullScreen()
+{
+	// DEBUG_LOG(("m_isFullScreen %d\n", m_isFullScreen ? 1 : 0));
+
+    if (m_isFullScreen)
+        return;
+
+    m_isFullScreen = true;
+	::MessageBeep(MB_ICONEXCLAMATION);
+
+	int screenWidth = ::GetSystemMetrics(SM_CXSCREEN);
+	int screenHeight = ::GetSystemMetrics(SM_CYSCREEN);
+
+	// Remove overlapped window styles that may prevent full coverage
+	LONG style = ::GetWindowLong(m_hWnd, GWL_STYLE);
+	style &= ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU);
+	::SetWindowLong(m_hWnd, GWL_STYLE, style);
+
+    // Move and resize to fill screen
+    ::SetWindowPos(m_hWnd, HWND_TOP, 0, 0, screenWidth, screenHeight,
+                   SWP_SHOWWINDOW | SWP_FRAMECHANGED);
+
+    CToastDialog* pToast = new CToastDialog(
+        _T("Press F11 or Escape to exit full screen"),
+        20000, true);
+    pToast->Create(CToastDialog::IDD);
+    pToast->ShowWindow(SW_SHOWNOACTIVATE);
 }
 
 void CWB3dFrameWnd::ExitFullScreen()
@@ -189,6 +232,8 @@ void CWB3dFrameWnd::ExitFullScreen()
 
     ::SetWindowPos(m_hWnd, HWND_TOP, left, top, width, height,
                    SWP_SHOWWINDOW | SWP_FRAMECHANGED);
+
+	m_isFullScreen = false;
 }
 
 /**
@@ -202,24 +247,7 @@ void CWB3dFrameWnd::OnSize(UINT nType, int cx, int cy)
 	{
 		case SIZE_MAXIMIZED:
 		{
-			::MessageBeep(MB_OK);
-
-			CToastDialog* pToast = new CToastDialog(_T("Click Escape to exit full screen"), 10000, false);
-			pToast->Create(CToastDialog::IDD);
-			pToast->ShowWindow(SW_SHOWNOACTIVATE);
-
-			// Get the full screen size, including taskbar
-			int screenWidth = ::GetSystemMetrics(SM_CXSCREEN);
-			int screenHeight = ::GetSystemMetrics(SM_CYSCREEN);
-
-			// Remove overlapped window styles that may prevent full coverage
-			LONG style = ::GetWindowLong(m_hWnd, GWL_STYLE);
-			style &= ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU);
-			::SetWindowLong(m_hWnd, GWL_STYLE, style);
-
-			::SetWindowPos(m_hWnd, HWND_TOP, 0, 0, screenWidth, screenHeight,
-						SWP_SHOWWINDOW | SWP_FRAMECHANGED);
-			break;
+//
 		}
 		case SIZE_RESTORED:
 		{
