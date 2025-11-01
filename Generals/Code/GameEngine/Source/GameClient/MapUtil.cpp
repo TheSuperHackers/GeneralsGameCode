@@ -1104,7 +1104,7 @@ Image *getMapPreviewImage( AsciiString mapName )
 
 		if (success)
 		{
-			image = TheMappedImageCollection->newImage();
+    	image = newInstance(Image);
 			image->setName(tempName);
 			//image->setFullPath("mission.tga");
 			image->setFilename(name);
@@ -1117,6 +1117,7 @@ Image *getMapPreviewImage( AsciiString mapName )
 			image->setUV(&uv);
 			image->setTextureHeight(128);
 			image->setTextureWidth(128);
+			TheMappedImageCollection->addImage(image);
 		}
 		else
 		{
