@@ -171,7 +171,7 @@ AsciiString PlayerTemplate::getStartingUnit( Int i ) const
 	// assign the money into the 'Money' (m_money) pointed to at 'store'
 	Money *theMoney = (Money *)store;
 	theMoney->init();
-	theMoney->deposit( money );
+	theMoney->setStartingCash(money);
 
 }
 

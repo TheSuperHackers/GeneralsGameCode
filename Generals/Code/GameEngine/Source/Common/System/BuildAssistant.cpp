@@ -250,7 +250,7 @@ void BuildAssistant::update( void )
 					sellValue = REAL_TO_UNSIGNEDINT( obj->getTemplate()->calcCostToBuild( player ) *
 																										 TheGlobalData->m_sellPercentage );
 
-				player->getMoney()->deposit( sellValue );
+				player->getMoney()->deposit( sellValue, TRUE, FALSE );
 				// this money shouldn't be scored since it wasn't really "earned."
 //				player->getScoreKeeper()->addMoneyEarned( sellValue );
 

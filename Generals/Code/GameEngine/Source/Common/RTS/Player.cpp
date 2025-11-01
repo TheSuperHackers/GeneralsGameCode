@@ -434,11 +434,11 @@ void Player::init(const PlayerTemplate* pt)
 			// Note that copying the entire Money class instead would also copy the player index inside of it.
 			if ( TheGameInfo )
 			{
-				m_money.deposit( TheGameInfo->getStartingCash().countMoney(), FALSE );
+				m_money.deposit( TheGameInfo->getStartingCash().countMoney(), FALSE, FALSE );
 			}
 			else
 			{
-				m_money.deposit( TheGlobalData->m_defaultStartingCash.countMoney(), FALSE );
+				m_money.deposit( TheGlobalData->m_defaultStartingCash.countMoney(), FALSE, FALSE );
 			}
 		}
 
@@ -1771,7 +1771,7 @@ void Player::transferAssetsFromThat(Player *that)
 	// transfer all his money
 	UnsignedInt allMoney = that->getMoney()->countMoney();
 	that->getMoney()->withdraw(allMoney);
-	getMoney()->deposit(allMoney);
+	getMoney()->deposit(allMoney, TRUE, FALSE);
 }
 
 //=============================================================================

@@ -408,6 +408,9 @@ public:
 	Int m_systemTimeFontSize;
 	Int m_gameTimeFontSize;
 
+	// TheSuperHackers @feature L3-M 21/08/2025 toggle the money per minute display, false shows only the original current money
+	Bool m_showMoneyPerMinute;
+
 	Real m_shakeSubtleIntensity;			///< Intensity for shaking a camera with SHAKE_SUBTLE
 	Real m_shakeNormalIntensity;			///< Intensity for shaking a camera with SHAKE_NORMAL
 	Real m_shakeStrongIntensity;			///< Intensity for shaking a camera with SHAKE_STRONG

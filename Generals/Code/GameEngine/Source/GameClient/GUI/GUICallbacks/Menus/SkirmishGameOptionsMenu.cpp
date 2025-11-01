@@ -322,7 +322,7 @@ Money SkirmishPreferences::getStartingCash(void) const
   }
 
   Money money;
-  money.deposit( strtoul( it->second.str(), NULL, 10 ), FALSE  );
+  money.deposit( strtoul( it->second.str(), NULL, 10 ), FALSE, FALSE );
 
   return money;
 }
