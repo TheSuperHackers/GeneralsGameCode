@@ -684,6 +684,8 @@ void Player::update()
 	if (tunnelSystem)
 		tunnelSystem->healObjects();
 #endif
+
+	m_money.updateIncomeBucket();
 }
 
 //=============================================================================

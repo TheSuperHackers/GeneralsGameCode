@@ -1898,7 +1898,6 @@ void InGameUI::update( void )
 		else
 		{
 			// TheSuperHackers @feature L3-M 21/08/2025 player money per minute
-			money->updateIncomeBucket();
 			UnsignedInt currentMoney = money->countMoney();
 			UnsignedInt cashPerMin = money->getCashPerMinute();
 			if ( lastMoney != currentMoney || lastIncome != cashPerMin )
