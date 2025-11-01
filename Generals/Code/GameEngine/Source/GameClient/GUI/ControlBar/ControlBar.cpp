@@ -1432,7 +1432,7 @@ void ControlBar::update( void )
 	if( m_isObserverCommandBar)
 	{
 		if((TheGameLogic->getFrame() % (LOGICFRAMES_PER_SECOND/2)) == 0)
-			populateObserverInfoWindow();
+			refreshObserverUI();
 
 		Drawable *drawToEvaluateFor = NULL;
 		if( TheInGameUI->getSelectCount() > 1 )

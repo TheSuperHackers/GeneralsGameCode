@@ -100,6 +100,155 @@ static GameWindow *staticTextPlayerName = NULL;
 
 static NameKeyType s_replayObserverNameKey = NAMEKEY_INVALID;
 
+static AsciiString formatCompactCash(UnsignedInt cash)
+{
+	AsciiString cashText;
+
+	if (cash >= 1000000)
+	{
+		if ((cash % 1000000) == 0)
+		{
+			cashText.format("$%uM", cash / 1000000);
+		}
+		else
+		{
+			const float millions = static_cast<float>(cash) / 1000000.0f;
+			cashText.format("$%.1fM", millions);
+		}
+	}
+	else if (cash >= 1000)
+	{
+		if ((cash % 1000) == 0)
+		{
+			cashText.format("$%uK", cash / 1000);
+		}
+		else
+		{
+			const float thousands = static_cast<float>(cash) / 1000.0f;
+			cashText.format("$%.1fK", thousands);
+		}
+	}
+	else
+	{
+		cashText.format("$%u", cash);
+	}
+
+	return cashText;
+}
+
+// TheSuperHackers @feature GitHubCopilot 01/11/2025 Surface cash/rank/xp summary for observer overlays.
+static UnicodeString formatObserverPlayerSummary(const Player *player)
+{
+	UnicodeString summary;
+
+	if (!player)
+	{
+		return summary;
+	}
+
+	UnsignedInt cash = 0;
+	if (player->getMoney())
+	{
+		cash = player->getMoney()->countMoney();
+	}
+
+	const Int rankLevel = player->getRankLevel();
+	const Int totalSkillPoints = player->getSkillPoints();
+	const Int levelFloor = player->getSkillPointsLevelDown();
+	const Int levelCeiling = player->getSkillPointsLevelUp();
+
+	Int xpProgress = totalSkillPoints - levelFloor;
+	if (xpProgress < 0)
+	{
+		xpProgress = 0;
+	}
+
+	Int xpSpan = levelCeiling - levelFloor;
+	if (xpSpan < 0)
+	{
+		xpSpan = 0;
+	}
+
+	Int xpPercent = 100;
+	if (xpSpan > 0)
+	{
+		xpPercent = (xpProgress * 100) / xpSpan;
+		if (xpPercent > 100)
+		{
+			xpPercent = 100;
+		}
+	}
+
+	AsciiString asciiSummary = formatCompactCash(cash);
+
+	AsciiString rankToken;
+	rankToken.format("  R%d", rankLevel);
+	asciiSummary.concat(rankToken);
+
+	AsciiString xpToken;
+	if (xpSpan > 0)
+	{
+		xpToken.format("  XP %d%%", xpPercent);
+	}
+	else
+	{
+		xpToken.format("  XP %d", totalSkillPoints);
+	}
+	asciiSummary.concat(xpToken);
+
+	summary.translate(asciiSummary);
+	return summary;
+}
+
+static void appendSummaryToSecondLine(UnicodeString &text, const UnicodeString &summary)
+{
+	if (summary.isEmpty())
+	{
+		return;
+	}
+
+	UnicodeString firstLine;
+	UnicodeString secondLine;
+	Bool onSecondLine = FALSE;
+
+	const Int length = text.getLength();
+	for (Int index = 0; index < length; ++index)
+	{
+		const WideChar ch = text.getCharAt(index);
+		if (!onSecondLine)
+		{
+			firstLine.concat(ch);
+			if (ch == L'\n')
+			{
+				onSecondLine = TRUE;
+			}
+		}
+		else
+		{
+			secondLine.concat(ch);
+		}
+	}
+
+	if (onSecondLine)
+	{
+		if (!secondLine.isEmpty())
+		{
+			secondLine.concat(L"  ");
+		}
+		secondLine.concat(summary);
+		text = firstLine;
+		text.concat(secondLine);
+	}
+	else
+	{
+		if (!text.isEmpty())
+		{
+			text.concat(L"\n");
+		}
+		text.concat(summary);
+	}
+}
+
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -270,7 +419,14 @@ void ControlBar::populateObserverList( void )
 				//GadgetButtonSetHiliteImage( buttonPlayer[currentButton], p->getPlayerTemplate()->getHiliteImage() );
 				//GadgetButtonSetHiliteSelectedImage( buttonPlayer[currentButton], p->getPlayerTemplate()->getPushedImage() );
 				//GadgetButtonSetDisabledImage( buttonPlayer[currentButton], p->getPlayerTemplate()->getDisabledImage() );
-				buttonPlayer[currentButton]->winSetTooltip(p->getPlayerDisplayName());
+				const UnicodeString summary = formatObserverPlayerSummary(p);
+				UnicodeString tooltip = p->getPlayerDisplayName();
+				if (!summary.isEmpty())
+				{
+					tooltip.concat(L"\n");
+					tooltip.concat(summary);
+				}
+				buttonPlayer[currentButton]->winSetTooltip(tooltip);
 				buttonPlayer[currentButton]->winHide(FALSE);
 				buttonPlayer[currentButton]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
 
@@ -283,10 +439,10 @@ void ControlBar::populateObserverList( void )
 				teamStr.format("Team:%d", slot->getTeamNumber() + 1);
 				if (slot->isAI() && slot->getTeamNumber() == -1)
 					teamStr = "Team:AI";
-
 				UnicodeString text;
 				text.format(TheGameText->fetch("CONTROLBAR:ObsPlayerLabel"), p->getPlayerDisplayName().str(),
 					TheGameText->fetch(teamStr).str());
+				appendSummaryToSecondLine(text, summary);
 
 				GadgetStaticTextSetText(staticTextPlayer[currentButton], text );
 
@@ -312,7 +468,14 @@ void ControlBar::populateObserverList( void )
 				//GadgetButtonSetHiliteImage( buttonPlayer[currentButton], p->getPlayerTemplate()->getHiliteImage() );
 				//GadgetButtonSetHiliteSelectedImage( buttonPlayer[currentButton], p->getPlayerTemplate()->getPushedImage() );
 				//GadgetButtonSetDisabledImage( buttonPlayer[currentButton], p->getPlayerTemplate()->getDisabledImage() );
-				buttonPlayer[currentButton]->winSetTooltip(p->getPlayerDisplayName());
+				const UnicodeString summary = formatObserverPlayerSummary(p);
+				UnicodeString tooltip = p->getPlayerDisplayName();
+				if (!summary.isEmpty())
+				{
+					tooltip.concat(L"\n");
+					tooltip.concat(summary);
+				}
+				buttonPlayer[currentButton]->winSetTooltip(tooltip);
 				buttonPlayer[currentButton]->winHide(FALSE);
 				buttonPlayer[currentButton]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
 
@@ -320,7 +483,9 @@ void ControlBar::populateObserverList( void )
 				Color backColor = GameMakeColor(0, 0, 0, 255);
 				staticTextPlayer[currentButton]->winSetEnabledTextColors( playerColor, backColor );
 				staticTextPlayer[currentButton]->winHide(FALSE);
-				GadgetStaticTextSetText(staticTextPlayer[currentButton], p->getPlayerDisplayName());
+				UnicodeString text = p->getPlayerDisplayName();
+				appendSummaryToSecondLine(text, summary);
+				GadgetStaticTextSetText(staticTextPlayer[currentButton], text);
 
 				++currentButton;
 				break;
@@ -376,10 +541,31 @@ void ControlBar::populateObserverInfoWindow ( void )
 	GadgetStaticTextSetText(staticTextNumberOfUnitsKilled, uString);
 	uString.format(L"%d",m_observerLookAtPlayer->getScoreKeeper()->getTotalUnitsLost());
 	GadgetStaticTextSetText(staticTextNumberOfUnitsLost, uString);
-	GadgetStaticTextSetText(staticTextPlayerName, m_observerLookAtPlayer->getPlayerDisplayName());
+	UnicodeString playerName = m_observerLookAtPlayer->getPlayerDisplayName();
+	const UnicodeString infoSummary = formatObserverPlayerSummary(m_observerLookAtPlayer);
+	appendSummaryToSecondLine(playerName, infoSummary);
+	GadgetStaticTextSetText(staticTextPlayerName, playerName);
 	Color color = m_observerLookAtPlayer->getPlayerColor();
 	staticTextPlayerName->winSetEnabledTextColors(color, GameMakeColor(0,0,0,255));
 	winFlag->winSetEnabledImage(0, m_observerLookAtPlayer->getPlayerTemplate()->getFlagWaterMarkImage());
 	winGeneralPortrait->winHide(FALSE);
 	buttonIdleWorker->winHide(FALSE);
+}
+
+void ControlBar::refreshObserverUI()
+{
+	if (!m_isObserverCommandBar)
+	{
+		return;
+	}
+
+	if (ObserverPlayerInfoWindow && !ObserverPlayerInfoWindow->winIsHidden())
+	{
+		populateObserverInfoWindow();
+	}
+
+	if (ObserverPlayerListWindow && !ObserverPlayerListWindow->winIsHidden())
+	{
+		populateObserverList();
+	}
 }
