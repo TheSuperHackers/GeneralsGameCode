@@ -72,6 +72,7 @@ class MapMetaData
 {
 public:
 	UnicodeString m_displayName;
+	AsciiString m_nameLookupTag;
 	Region3D m_extent;
 	Int m_numPlayers;
 	Bool m_isMultiplayer;
@@ -125,6 +126,8 @@ Int populateMapListboxNoReset( GameWindow *listbox, Bool useSystemMaps, Bool isM
 Bool isValidMap( AsciiString mapName, Bool isMultiplayer );						/// Validate a map
 Image *getMapPreviewImage( AsciiString mapName );
 AsciiString getDefaultMap( Bool isMultiplayer );											/// Find a valid map
+AsciiString getDefaultOfficialMap();
+Bool isOfficialMap( AsciiString mapName );
 Bool parseMapPreviewChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
 void findDrawPositions( Int startX, Int startY, Int width, Int height, Region3D extent,
 															 ICoord2D *ul, ICoord2D *lr );

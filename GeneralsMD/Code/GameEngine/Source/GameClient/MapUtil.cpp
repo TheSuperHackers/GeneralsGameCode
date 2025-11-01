@@ -406,8 +406,11 @@ void MapCache::writeCacheINI( Bool userDir )
 			fprintf(fp, "  extentMax = X:%2.2f Y:%2.2f Z:%2.2f\n", md.m_extent.hi.x, md.m_extent.hi.y, md.m_extent.hi.z);
 
 // BAD AND NOW UNUSED:  the mapcache.ini should not contain localized data... using the lookup tag instead
-//			fprintf(fp, "  displayName = %s\n", UnicodeStringToQuotedPrintable(md.m_displayName).str());
+#if RTS_GENERALS
+			fprintf(fp, "  displayName = %s\n", UnicodeStringToQuotedPrintable(md.m_displayName).str());
+#else
 			fprintf(fp, "  nameLookupTag = %s\n", md.m_nameLookupTag.str());
+#endif
 
 			Coord3D pos;
 			WaypointMap::iterator itw = md.m_waypoints.begin();
@@ -873,6 +876,7 @@ typedef MapDisplayToFileNameList::iterator MapDisplayToFileNameListIter;
 			}
 			*/
 
+#if RTS_ZEROHOUR
 			//Patch 1.03 -- Purposely filter out these broken maps that exist in Generals.
 			if( !asciiMapName.compare( "maps\\armored fury\\armored fury.map" ) ||
 				!asciiMapName.compare( "maps\\scorched earth\\scorched earth.map" ) )
@@ -880,6 +884,7 @@ typedef MapDisplayToFileNameList::iterator MapDisplayToFileNameListIter;
 				++tempit;
 				continue;
 			}
+#endif
 
 			DEBUG_ASSERTCRASH(it != TheMapCache->end(), ("Map %s not found in map cache.", tempit->str()));
 			if (it->first.startsWithNoCase(mapDir.str()) && isMultiplayer == it->second.m_isMultiplayer && !it->second.m_displayName.isEmpty())
@@ -896,7 +901,7 @@ typedef MapDisplayToFileNameList::iterator MapDisplayToFileNameListIter;
 					if (numBrutal)
 					{
 						int maxBrutalSlots = it->second.m_numPlayers - 1;
-						if (numBrutal == maxBrutalSlots)
+						if (maxBrutalImage != NULL && numBrutal == maxBrutalSlots)
 						{
 							index = GadgetListBoxAddEntryImage( listbox, maxBrutalImage, index, 0, w, h, TRUE);
 							imageItemData = 4;
@@ -1223,7 +1228,7 @@ Image *getMapPreviewImage( AsciiString mapName )
 	mapPreviewImage->setStatus(IMAGE_STATUS_RAW_TEXTURE);
 // allocate our terrain texture
 	TextureClass * texture = new TextureClass( size.x, size.y,
-																			 WW3D_FORMAT_X8R8G8B8, TextureClass::MIP_LEVELS_1 );
+																			 WW3D_FORMAT_X8R8G8B8, MIP_LEVELS_1 );
 	uv.lo.x = 0.0f;
 	uv.lo.y = 1.0f;
 	uv.hi.x = 1.0f;

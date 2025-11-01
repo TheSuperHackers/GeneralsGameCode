@@ -405,7 +405,12 @@ void MapCache::writeCacheINI( Bool userDir )
 			fprintf(fp, "  extentMin = X:%2.2f Y:%2.2f Z:%2.2f\n", md.m_extent.lo.x, md.m_extent.lo.y, md.m_extent.lo.z);
 			fprintf(fp, "  extentMax = X:%2.2f Y:%2.2f Z:%2.2f\n", md.m_extent.hi.x, md.m_extent.hi.y, md.m_extent.hi.z);
 
+// BAD AND NOW UNUSED:  the mapcache.ini should not contain localized data... using the lookup tag instead
+#if RTS_GENERALS
 			fprintf(fp, "  displayName = %s\n", UnicodeStringToQuotedPrintable(md.m_displayName).str());
+#else
+			fprintf(fp, "  nameLookupTag = %s\n", md.m_nameLookupTag.str());
+#endif
 
 			Coord3D pos;
 			WaypointMap::iterator itw = md.m_waypoints.begin();
@@ -645,6 +650,31 @@ Bool MapCache::addMap( AsciiString dirName, AsciiString fname, FileInfo *fileInf
 		if ((md.m_filesize == filesize) &&
 				(md.m_CRC != 0))
 		{
+			// Force a lookup so that we don't display the English localization in all builds.
+			if (md.m_nameLookupTag.isEmpty())
+			{
+				// unofficial maps or maps without names
+				AsciiString tempdisplayname;
+				tempdisplayname = fname.reverseFind('\\') + 1;
+				(*this)[lowerFname].m_displayName.translate(tempdisplayname);
+				if (md.m_numPlayers >= 2)
+				{
+					UnicodeString extension;
+					extension.format(L" (%d)", md.m_numPlayers);
+					(*this)[lowerFname].m_displayName.concat(extension);
+				}
+			}
+			else
+			{
+				// official maps with name tags
+				(*this)[lowerFname].m_displayName = TheGameText->fetch(md.m_nameLookupTag);
+				if (md.m_numPlayers >= 2)
+				{
+					UnicodeString extension;
+					extension.format(L" (%d)", md.m_numPlayers);
+					(*this)[lowerFname].m_displayName.concat(extension);
+				}
+			}
 //			DEBUG_LOG(("MapCache::addMap - found match for map %s", lowerFname.str()));
 			return FALSE;	// OK, it checks out.
 		}
@@ -676,6 +706,7 @@ Bool MapCache::addMap( AsciiString dirName, AsciiString fname, FileInfo *fileInf
 
 	Bool exists = false;
 	AsciiString munkee = worldDict.getAsciiString(TheKey_mapName, &exists);
+	md.m_nameLookupTag = munkee;
 	if (!exists || munkee.isEmpty())
 	{
 		DEBUG_LOG(("Missing TheKey_mapName!"));
@@ -766,6 +797,7 @@ Int populateMapListboxNoReset( GameWindow *listbox, Bool useSystemMaps, Bool isM
 	const Image *easyImage = NULL;
 	const Image *mediumImage = NULL;
 	const Image *brutalImage = NULL;
+	const Image *maxBrutalImage = NULL;
 	SkirmishBattleHonors *battleHonors = NULL;
 	Int w = 10, h = 10;
 	if (numColumns > 1)
@@ -773,6 +805,7 @@ Int populateMapListboxNoReset( GameWindow *listbox, Bool useSystemMaps, Bool isM
 		easyImage = TheMappedImageCollection->findImageByName("Star-Bronze");
 		mediumImage = TheMappedImageCollection->findImageByName("Star-Silver");
 		brutalImage = TheMappedImageCollection->findImageByName("Star-Gold");
+		maxBrutalImage = TheMappedImageCollection->findImageByName("RedYell_Star");
 		battleHonors = new SkirmishBattleHonors;
 
 		w = (brutalImage)?brutalImage->getImageWidth():10;
@@ -843,6 +876,16 @@ typedef MapDisplayToFileNameList::iterator MapDisplayToFileNameListIter;
 			}
 			*/
 
+#if RTS_ZEROHOUR
+			//Patch 1.03 -- Purposely filter out these broken maps that exist in Generals.
+			if( !asciiMapName.compare( "maps\\armored fury\\armored fury.map" ) ||
+				!asciiMapName.compare( "maps\\scorched earth\\scorched earth.map" ) )
+			{
+				++tempit;
+				continue;
+			}
+#endif
+
 			DEBUG_ASSERTCRASH(it != TheMapCache->end(), ("Map %s not found in map cache.", tempit->str()));
 			if (it->first.startsWithNoCase(mapDir.str()) && isMultiplayer == it->second.m_isMultiplayer && !it->second.m_displayName.isEmpty())
 			{
@@ -857,8 +900,17 @@ typedef MapDisplayToFileNameList::iterator MapDisplayToFileNameListIter;
 					Int numBrutal = battleHonors->getEnduranceMedal(it->first.str(), SLOT_BRUTAL_AI);
 					if (numBrutal)
 					{
-						imageItemData = 3;
-						index = GadgetListBoxAddEntryImage( listbox, brutalImage, index, 0, w, h, TRUE);
+						int maxBrutalSlots = it->second.m_numPlayers - 1;
+						if (maxBrutalImage != NULL && numBrutal == maxBrutalSlots)
+						{
+							index = GadgetListBoxAddEntryImage( listbox, maxBrutalImage, index, 0, w, h, TRUE);
+							imageItemData = 4;
+						}
+						else
+						{
+							index = GadgetListBoxAddEntryImage( listbox, brutalImage, index, 0, w, h, TRUE);
+							imageItemData = 3;
+						}
 					}
 					else if (numMedium)
 					{
@@ -983,6 +1035,39 @@ AsciiString getDefaultMap( Bool isMultiplayer )
 
 	return AsciiString::TheEmptyString;
 }
+
+
+AsciiString getDefaultOfficialMap()
+{
+	if(!TheMapCache)
+		return AsciiString::TheEmptyString;
+	TheMapCache->updateCache();
+
+	MapCache::iterator it = TheMapCache->begin();
+	while (it != TheMapCache->end())
+	{
+		if (it->second.m_isMultiplayer && it->second.m_isOfficial)
+		{
+			return it->first;
+		}
+		++it;
+	}
+	return AsciiString::TheEmptyString;
+}
+
+
+Bool isOfficialMap( AsciiString mapName )
+{
+	if(!TheMapCache || mapName.isEmpty())
+		return FALSE;
+	TheMapCache->updateCache();
+	mapName.toLower();
+	MapCache::iterator it = TheMapCache->find(mapName);
+	if (it != TheMapCache->end())
+		return it->second.m_isOfficial;
+	return FALSE;
+}
+
 
 const MapMetaData *MapCache::findMap(AsciiString mapName)
 {

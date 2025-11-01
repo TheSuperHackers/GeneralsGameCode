@@ -33,6 +33,7 @@
 #include "Lib/BaseType.h"
 #include "Common/INI.h"
 #include "GameClient/MapUtil.h"
+#include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/WellKnownKeys.h"
@@ -46,6 +47,7 @@ public:
 	Int m_numPlayers;
 	Bool m_isMultiplayer;
 	AsciiString m_asciiDisplayName;
+	AsciiString m_asciiNameLookupTag;
 
 	Bool m_isOfficial;
 	WinTimeStamp m_timestamp;
@@ -92,6 +94,7 @@ const FieldParse MapMetaDataReader::m_mapFieldParseTable[] =
 	{ "timestampLo",						INI::parseInt,			NULL,	offsetof( MapMetaDataReader, m_timestamp.m_lowTimeStamp ) },
 	{ "timestampHi",						INI::parseInt,			NULL,	offsetof( MapMetaDataReader, m_timestamp.m_highTimeStamp ) },
 	{ "displayName",						INI::parseAsciiString,	NULL,	offsetof( MapMetaDataReader, m_asciiDisplayName ) },
+	{ "nameLookupTag",					INI::parseAsciiString,	NULL,	offsetof( MapMetaDataReader, m_asciiNameLookupTag ) },
 
 	{ "supplyPosition",					parseSupplyPositionCoord3D,	NULL, NULL },
 	{ "techPosition",						parseTechPositionsCoord3D,	NULL, NULL },
@@ -136,7 +139,36 @@ void INI::parseMapCacheDefinition( INI* ini )
 
 	md.m_waypoints[TheNameKeyGenerator->keyToName(TheKey_InitialCameraPosition)] = mdr.m_initialCameraPosition;
 
+#if RTS_GENERALS
 	md.m_displayName = QuotedPrintableToUnicodeString(mdr.m_asciiDisplayName);
+#else
+	md.m_nameLookupTag = QuotedPrintableToAsciiString(mdr.m_asciiNameLookupTag);
+
+	if (md.m_nameLookupTag.isEmpty())
+	{
+		// maps without localized name tags
+		AsciiString tempdisplayname;
+		tempdisplayname = name.reverseFind('\\') + 1;
+		md.m_displayName.translate(tempdisplayname);
+		if (md.m_numPlayers >= 2)
+		{
+			UnicodeString extension;
+			extension.format(L" (%d)", md.m_numPlayers);
+			md.m_displayName.concat(extension);
+		}
+	}
+	else
+	{
+		// official maps with name tags
+		md.m_displayName = TheGameText->fetch(md.m_nameLookupTag);
+		if (md.m_numPlayers >= 2)
+		{
+			UnicodeString extension;
+			extension.format(L" (%d)", md.m_numPlayers);
+			md.m_displayName.concat(extension);
+		}
+	}
+#endif
 
 	AsciiString startingCamName;
 	for (Int i=0; i<md.m_numPlayers; ++i)
