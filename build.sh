@@ -8,7 +8,7 @@ usage() {
 Usage:
   $(basename "$0") [OPTIONS] [TARGET]
 
-TARGET is passed to NMAKE.exe 
+TARGET is passed to ninja.exe
 
 Options:
   -h, --help            Show this help and exit
