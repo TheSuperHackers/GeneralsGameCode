@@ -627,6 +627,11 @@ bool DX8Wrapper::Create_Device(void)
 			_PresentParameters.AutoDepthStencilFormat==D3DFMT_D24X8))
 		{
 			_PresentParameters.AutoDepthStencilFormat=D3DFMT_D16;
+
+			// TheSuperHackers @bugfix xezon 13/06/2025 Front load the system dbghelp.dll to prevent
+			// the graphics driver from potentially loading the old game dbghelp.dll and then crashing the game process.
+			DbgHelpGuard dbgHelpGuard;
+
 			hr = D3DInterface->CreateDevice
 			(
 				CurRenderDevice,
