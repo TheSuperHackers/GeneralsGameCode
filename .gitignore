@@ -9,6 +9,7 @@
 *.user
 *.ncb
 /build*
+!/build.sh
 nbproject/
 project/
 doxygen/
