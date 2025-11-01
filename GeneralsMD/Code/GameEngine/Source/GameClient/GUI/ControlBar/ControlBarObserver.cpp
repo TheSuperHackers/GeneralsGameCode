@@ -99,6 +99,38 @@ static GameWindow *staticTextNumberOfUnitsLost = NULL;
 static GameWindow *staticTextPlayerName = NULL;
 
 static NameKeyType s_replayObserverNameKey = NAMEKEY_INVALID;
+static Int s_playerNameOriginalWidth = 0;
+static Int s_playerNameOriginalHeight = 0;
+static Bool s_playerNameSizeCaptured = FALSE;
+
+static void ensurePlayerNameLabelHeight(Bool needsTwoLines)
+{
+	if (!staticTextPlayerName)
+	{
+		return;
+	}
+
+	if (!s_playerNameSizeCaptured)
+	{
+		staticTextPlayerName->winGetSize(&s_playerNameOriginalWidth, &s_playerNameOriginalHeight);
+		s_playerNameSizeCaptured = TRUE;
+	}
+
+	if (s_playerNameOriginalHeight <= 0)
+	{
+		return;
+	}
+
+	Int currentWidth = 0;
+	Int currentHeight = 0;
+	staticTextPlayerName->winGetSize(&currentWidth, &currentHeight);
+
+	const Int targetHeight = needsTwoLines ? s_playerNameOriginalHeight * 2 : s_playerNameOriginalHeight;
+	if (currentHeight != targetHeight)
+	{
+		staticTextPlayerName->winSetSize(currentWidth, targetHeight);
+	}
+}
 
 static AsciiString formatCompactCash(UnsignedInt cash)
 {
@@ -275,6 +307,11 @@ void ControlBar::initObserverControls( void )
 	staticTextNumberOfUnitsKilled = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextNumberOfUnitsKilled"));
 	staticTextNumberOfUnitsLost = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextNumberOfUnitsLost"));
 	staticTextPlayerName = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextPlayerName"));
+	if (staticTextPlayerName)
+	{
+		staticTextPlayerName->winGetSize(&s_playerNameOriginalWidth, &s_playerNameOriginalHeight);
+		s_playerNameSizeCaptured = TRUE;
+	}
 	winFlag = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:WinFlag"));
 	winGeneralPortrait = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:WinGeneralPortrait"));
 	buttonIdleWorker = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonIdleWorker"));
@@ -543,9 +580,8 @@ void ControlBar::populateObserverInfoWindow ( void )
 	uString.format(L"%d",m_observerLookAtPlayer->getScoreKeeper()->getTotalUnitsLost());
 	GadgetStaticTextSetText(staticTextNumberOfUnitsLost, uString);
 	UnicodeString nameLine = m_observerLookAtPlayer->getPlayerDisplayName();
-	const UnicodeString summary = formatObserverPlayerSummary(m_observerLookAtPlayer);
-	appendSummaryToSecondLine(nameLine, summary);
 	GadgetStaticTextSetText(staticTextPlayerName, nameLine);
+	ensurePlayerNameLabelHeight(FALSE);
 	Color color = m_observerLookAtPlayer->getPlayerColor();
 	staticTextPlayerName->winSetEnabledTextColors(color, GameMakeColor(0,0,0,255));
 	winFlag->winSetEnabledImage(0, m_observerLookAtPlayer->getPlayerTemplate()->getFlagWaterMarkImage());
