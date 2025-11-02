@@ -795,8 +795,6 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 		}
 	}
 	{
-		// TheSuperHackers @bobtista 02/11/2025 Compressed screenshot (JPG/PNG) without stalling
-		// Bind F11 to the new compressed screenshot function
 		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_TAKE_SCREENSHOT_COMPRESSED);
 		if (map->m_key == MK_NONE)
 		{

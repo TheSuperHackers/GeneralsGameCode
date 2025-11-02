@@ -39,6 +39,12 @@ static void drawFramerateBar(void);
 #include <windows.h>
 #include <io.h>
 #include <time.h>
+#include <thread>
+#include <memory>
+
+// TheSuperHackers @bobtista 02/11/2025 STB for image encoding
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image_write.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/FramePacer.h"
@@ -3013,6 +3019,103 @@ void W3DDisplay::takeScreenShot(void)
 
 	UnicodeString ufileName;
 	ufileName.translate(leafname);
+	TheInGameUI->message(TheGameText->fetch("GUI:ScreenCapture"), ufileName.str());
+}
+
+/// TheSuperHackers @bobtista 02/11/2025 Save compressed screenshot (JPEG/PNG) to file without stalling the game
+/// This implementation captures the frame buffer on the main thread, then spawns a background thread
+/// to compress and save the image, allowing the game to continue running smoothly.
+void W3DDisplay::takeScreenShotCompressed(void)
+{
+	// TheSuperHackers @bobtista 02/11/2025 Find next available filename
+	char leafname[256];
+	char pathname[1024];
+	static int frame_number = 1;
+
+	Bool done = false;
+	while (!done) {
+		sprintf(leafname, "sshot%.3d.jpg", frame_number++);
+		strcpy(pathname, TheGlobalData->getPath_UserData().str());
+		strlcat(pathname, leafname, ARRAY_SIZE(pathname));
+		if (_access(pathname, 0) == -1)
+			done = true;
+	}
+
+	// TheSuperHackers @bobtista 02/11/2025 Get the back buffer and create a copy
+	SurfaceClass* surface = DX8Wrapper::_Get_DX8_Back_Buffer();
+	SurfaceClass::SurfaceDescription surfaceDesc;
+	surface->Get_Description(surfaceDesc);
+
+	SurfaceClass* surfaceCopy = NEW_REF(SurfaceClass, (DX8Wrapper::_Create_DX8_Surface(surfaceDesc.Width, surfaceDesc.Height, surfaceDesc.Format)));
+	DX8Wrapper::_Copy_DX8_Rects(surface->Peek_D3D_Surface(), NULL, 0, surfaceCopy->Peek_D3D_Surface(), NULL);
+
+	surface->Release_Ref();
+	surface = NULL;
+
+	struct Rect
+	{
+		int Pitch;
+		void* pBits;
+	} lrect;
+
+	lrect.pBits = surfaceCopy->Lock(&lrect.Pitch);
+	if (lrect.pBits == NULL)
+	{
+		surfaceCopy->Release_Ref();
+		return;
+	}
+
+	unsigned int x, y, index, index2;
+	unsigned int width = surfaceDesc.Width;
+	unsigned int height = surfaceDesc.Height;
+
+	// TheSuperHackers @bobtista 02/11/2025 Allocate buffer for RGB image data
+	// Using shared_ptr for automatic cleanup in the background thread
+	std::shared_ptr<unsigned char> imageData(new unsigned char[3 * width * height], 
+		std::default_delete<unsigned char[]>());
+	unsigned char* image = imageData.get();
+
+	// TheSuperHackers @bobtista 02/11/2025 Copy and convert BGRA to RGB
+	for (y = 0; y < height; y++)
+	{
+		for (x = 0; x < width; x++)
+		{
+			index = 3 * (x + y * width);
+			index2 = y * lrect.Pitch + 4 * x;
+
+			image[index]     = *((unsigned char*)lrect.pBits + index2 + 2);  // R
+			image[index + 1] = *((unsigned char*)lrect.pBits + index2 + 1);  // G
+			image[index + 2] = *((unsigned char*)lrect.pBits + index2 + 0);  // B
+		}
+	}
+
+	surfaceCopy->Unlock();
+	surfaceCopy->Release_Ref();
+	surfaceCopy = NULL;
+
+	// TheSuperHackers @bobtista 02/11/2025 Make a copy of the pathname for the background thread
+	std::string pathnameCopy(pathname);
+	std::string leafnameCopy(leafname);
+
+	// TheSuperHackers @bobtista 02/11/2025 Spawn background thread to compress and save the image
+	// This allows the game to continue running without freezing
+	std::thread([imageData, width, height, pathnameCopy, leafnameCopy]() {
+		// TheSuperHackers @bobtista 02/11/2025 Write JPEG with quality 90 (range: 1-100)
+		// stbi_write_jpg expects image data with Y-axis going down, which matches our data
+		int result = stbi_write_jpg(pathnameCopy.c_str(), width, height, 3, imageData.get(), 90);
+		
+		if (!result) {
+			// TheSuperHackers @bobtista 02/11/2025 Log error if write failed
+			// Note: Can't show UI message from background thread
+			OutputDebugStringA("Failed to write screenshot JPEG\n");
+		}
+		
+		// TheSuperHackers @bobtista 02/11/2025 imageData will be automatically cleaned up when shared_ptr goes out of scope
+	}).detach();  // TheSuperHackers @bobtista 02/11/2025 Detach thread to run independently
+
+	// TheSuperHackers @bobtista 02/11/2025 Show message to user immediately (file is being saved in background)
+	UnicodeString ufileName;
+	ufileName.translate(leafnameCopy.c_str());
 	TheInGameUI->message(TheGameText->fetch("GUI:ScreenCapture"), ufileName.str());
 }
 

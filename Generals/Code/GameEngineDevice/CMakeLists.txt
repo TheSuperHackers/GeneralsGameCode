@@ -200,7 +200,8 @@ target_precompile_headers(g_gameenginedevice PRIVATE
 target_link_libraries(g_gameenginedevice PRIVATE
     corei_gameenginedevice_private
     gi_always    
-    gi_main  
+    gi_main
+    stb
 )
 
 target_link_libraries(g_gameenginedevice PUBLIC
