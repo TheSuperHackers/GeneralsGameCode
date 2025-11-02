@@ -213,6 +213,7 @@ target_link_libraries(z_gameenginedevice PRIVATE
     corei_gameenginedevice_private
     zi_always
     zi_main
+    stb
 )
 
 target_link_libraries(z_gameenginedevice PUBLIC

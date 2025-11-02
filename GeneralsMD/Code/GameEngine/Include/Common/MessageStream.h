@@ -258,7 +258,7 @@ public:
 		MSG_META_END_PREFER_SELECTION,							///< The Shift key has been released.
 
 		MSG_META_TAKE_SCREENSHOT,										///< take screenshot
-		MSG_META_TAKE_SCREENSHOT_COMPRESSED,				///< TheSuperHackers @bobtista take compressed screenshot (JPG/PNG) without stalling
+		MSG_META_TAKE_SCREENSHOT_COMPRESSED,				///< take compressed screenshot without stalling
 		MSG_META_ALL_CHEER,													///< Yay! :)
 		MSG_META_TOGGLE_ATTACKMOVE,									///< enter attack-move mode
 
