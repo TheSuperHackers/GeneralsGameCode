@@ -3755,7 +3755,6 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			break;
 		}
 
-		// TheSuperHackers @bobtista 02/11/2025 Compressed screenshot (JPG/PNG) without stalling
 		case GameMessage::MSG_META_TAKE_SCREENSHOT_COMPRESSED:
 		{
 			if (TheDisplay)
