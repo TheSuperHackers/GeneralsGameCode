@@ -1512,6 +1512,17 @@ static void saveOptions( void )
 		{	TheWritableGlobalData->m_displayGamma = gammaval;
 			TheDisplay->setGamma(TheGlobalData->m_displayGamma,0.0f, 1.0f, FALSE);
 		}
+
+		// TheSuperHackers @feature bobtista 11/02/2025 Map slider value to GenTool brightness range (-128 to +256)
+		// Slider: 0=darkest, 50=neutral, 100=brightest
+		// Formula: brightness = (val - 50) * 7.68, clamped to [-128, 256]
+		Int brightness = static_cast<Int>((val - 50) * 7.68f);
+		if (brightness < -128) brightness = -128;
+		if (brightness > 256) brightness = 256;
+		
+		// Apply brightness to post-processing filter
+		extern void setBrightnessFilterValue(Int value);  // Forward declaration
+		setBrightnessFilterValue(brightness);
  	}
 
 	//-------------------------------------------------------------------------------------------------
