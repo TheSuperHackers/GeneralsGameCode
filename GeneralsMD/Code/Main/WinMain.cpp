@@ -798,20 +798,25 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// initialize the memory manager early
 		initMemoryManager();
 
-		/// @todo remove this force set of working directory later
-		Char buffer[ _MAX_PATH ];
-		GetModuleFileName( NULL, buffer, sizeof( buffer ) );
-		Char *pEnd = buffer + strlen( buffer );
-		while( pEnd != buffer )
+		CommandLine::parseCommandLineForStartup();
+
+		if (TheGlobalData->m_changeCurrentWorkingDirectoryToExecutablePath)
 		{
-			if( *pEnd == '\\' )
+			/// @todo remove this force set of working directory later
+			Char buffer[ _MAX_PATH ];
+			GetModuleFileName( NULL, buffer, sizeof( buffer ) );
+			Char *pEnd = buffer + strlen( buffer );
+			while( pEnd != buffer )
 			{
-				*pEnd = 0;
-				break;
+				if( *pEnd == '\\' )
+				{
+					*pEnd = 0;
+					break;
+				}
+				pEnd--;
 			}
-			pEnd--;
+			::SetCurrentDirectory(buffer);
 		}
-		::SetCurrentDirectory(buffer);
 
 
 		#ifdef RTS_DEBUG
@@ -851,8 +856,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// in release, the file only ever lives in the root dir
 		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, "Install_Final.bmp", IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
 #endif
-
-		CommandLine::parseCommandLineForStartup();
 
 		// register windows class and create application window
 		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
