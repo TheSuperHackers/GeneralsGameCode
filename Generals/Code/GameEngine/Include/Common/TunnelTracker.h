@@ -59,7 +59,7 @@ public:
 	static void destroyObject( Object *obj, void *userData ); ///< Callback for Iterate Contained system
 	static void healObject( Object *obj, void *frames ); ///< Callback for Iterate Contained system
 
-#if RETAIL_COMPATIBLE_CRC
+#if RETAIL_COMPATIBLE_BUG
 	void healObjects(Real frames);	///< heal all objects within the tunnel
 #else
 	void healObjects();	///< heal all objects within the tunnel

@@ -403,7 +403,7 @@ UpdateSleepTime TunnelContain::update( void )
 	if (controllingPlayer)
 	{
 		TunnelTracker *tunnelSystem = controllingPlayer->getTunnelSystem();
-#if RETAIL_COMPATIBLE_CRC
+#if RETAIL_COMPATIBLE_BUG
 		if (tunnelSystem)
 		{
 			const TunnelContainModuleData* modData = getTunnelContainModuleData();
