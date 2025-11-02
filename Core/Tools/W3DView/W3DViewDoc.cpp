@@ -727,12 +727,12 @@ CW3DViewDoc::DisplayObject
             m_pCRenderObj->Set_Transform (Matrix3D (1));
 
             // Add this object to the scene
-			if (m_pCRenderObj->Class_ID () == RenderObjClass::CLASSID_BITMAP2D) {
-				m_pC2DScene->Add_Render_Object (m_pCRenderObj);
-			} else {
-				m_pCScene->Clear_Lineup();
-				m_pCScene->Add_Render_Object (m_pCRenderObj);
-			}
+				if (m_pCRenderObj->Class_ID () == RenderObjClass::CLASSID_BITMAP2D) {
+					m_pC2DScene->Add_Render_Object (m_pCRenderObj);
+				} else {
+					m_pCScene->Clear_Lineup();
+					m_pCScene->Add_Render_Object (m_pCRenderObj);
+				}
 
 				// Reset the current lod to be the lowest possible LOD...
 				if ((m_pCScene->Are_LODs_Switching ()) &&
