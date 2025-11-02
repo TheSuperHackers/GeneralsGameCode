@@ -167,6 +167,7 @@ public:
 	virtual void preloadTextureAssets( AsciiString texture ) = 0;	///< preload texture asset
 
 	virtual void takeScreenShot() = 0;										///< saves screenshot to a file
+	virtual void takeScreenShotCompressed() = 0;					///< TheSuperHackers @bobtista saves compressed screenshot (JPG/PNG) without stalling
 	virtual void toggleMovieCapture() = 0;							///< starts saving frames to an avi or frame sequence
 	virtual void toggleLetterBox() = 0;										///< enabled letter-boxed display
 	virtual void enableLetterBox(Bool enable) = 0;						///< forces letter-boxed display on/off
