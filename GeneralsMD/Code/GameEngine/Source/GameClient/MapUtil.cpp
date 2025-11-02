@@ -310,7 +310,7 @@ void WaypointMap::update( void )
 	m_numStartSpots = max(1, m_numStartSpots);
 }
 
-const char * MapCache::m_mapCacheName = "MapCache.ini";
+const char *const MapCache::m_mapCacheName = "MapCache.ini";
 
 AsciiString MapCache::getMapDir() const
 {

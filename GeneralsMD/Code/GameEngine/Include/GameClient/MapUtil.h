@@ -123,7 +123,7 @@ private:
 	Bool addMap(const AsciiString &mapDir, const AsciiString &fname, const AsciiString &lowerFname, FileInfo &fileInfo, Bool isOfficial); ///< returns true if it had to (re)parse the map
 	void writeCacheINI(const AsciiString &mapDir);
 
-	static const char *m_mapCacheName;
+	static const char *const m_mapCacheName;
 
 	MapNameSet m_allowedMaps;
 	Bool m_hasTriedCreatingStandardMapCacheINI;
