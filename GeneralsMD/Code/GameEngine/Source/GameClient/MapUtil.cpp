@@ -423,13 +423,13 @@ void MapCache::updateCache( void )
 #endif
 		if (buildMapCache)
 		{
-				const Bool isOfficial = TRUE;
-				const Bool filterByAllowedMaps = !m_allowedMaps.empty();
+			const Bool isOfficial = TRUE;
+			const Bool filterByAllowedMaps = !m_allowedMaps.empty();
 
-				if (loadMapsFromDisk(mapDir, isOfficial, filterByAllowedMaps))
-				{
-					writeCacheINI(mapDir);
-				}
+			if (loadMapsFromDisk(mapDir, isOfficial, filterByAllowedMaps))
+			{
+				writeCacheINI(mapDir);
+			}
 		}
 		m_hasTriedCreatingStandardMapCacheINI = TRUE;
 	}
