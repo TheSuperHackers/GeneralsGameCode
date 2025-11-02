@@ -2466,16 +2466,17 @@ void GameLogic::loadMapINI( AsciiString mapName )
 	char filename[_MAX_PATH];
 	char fullFledgeFilename[_MAX_PATH];
 
-	strlcpy(filename, mapName.str(), ARRAY_SIZE(filename));
-
 	//
 	// if map name begins with a "SAVE_DIRECTORY\", then the map refers to a map
 	// that has been extracted from a save game file ... in that case we need to get
 	// the pristine map name string in order to manipulate and load the right map.ini
 	// for that map from it's original location
 	//
-	if (TheGameState->isInSaveDirectory(filename))
-		strlcpy(filename, TheGameState->getSaveGameInfo()->pristineMapName.str(), ARRAY_SIZE(filename));
+	const char* pristineMapName = TheGameState->isInSaveDirectory(filename)
+		? TheGameState->getSaveGameInfo()->pristineMapName.str()
+		: mapName.str();
+
+	strlcpy(filename, pristineMapName, ARRAY_SIZE(filename));
 
 	// sanity
 	int length = strlen(filename);
