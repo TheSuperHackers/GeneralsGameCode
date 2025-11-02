@@ -478,18 +478,19 @@ Bool MapCache::clearUnseenMaps( const AsciiString &mapDir )
 	MapCache::iterator it = begin();
 	while (it != end())
 	{
+		MapCache::iterator next = it;
+		++next;
+
 		const AsciiString &mapName = it->first;
 		const MapMetaData &mapData = it->second;
 
 		if (mapName.startsWithNoCase(mapDir.str()) && !mapData.m_doesExist)
 		{
-			it = erase(it);
+			erase(it);
 			erasedSomething = TRUE;
 		}
-		else
-		{
-			++it;
-		}
+
+		it = next;
 	}
 
 	return erasedSomething;
