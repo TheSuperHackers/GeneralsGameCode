@@ -560,15 +560,7 @@ Bool MapCache::loadMapsFromDisk( const AsciiString &mapDir, Bool isOfficial, Boo
 			continue;
 		}
 
-		MapCache::iterator it = find(filepathLower);
-		if (it != end())
-		{
-			it->second.m_doesExist = TRUE;
-		}
-		else
-		{
-			mapListChanged |= addMap(mapDir, *filepathIt, filepathLower, fileInfo, isOfficial);
-		}
+		mapListChanged |= addMap(mapDir, *filepathIt, filepathLower, fileInfo, isOfficial);
 	}
 
 	if (clearUnseenMaps(mapDir))
@@ -619,6 +611,9 @@ Bool MapCache::addMap(
 					(*this)[lowerFname].m_displayName.concat(extension);
 				}
 			}
+
+			it->second.m_doesExist = TRUE;
+
 //			DEBUG_LOG(("MapCache::addMap - found match for map %s", lowerFname.str()));
 			return FALSE;	// OK, it checks out.
 		}
