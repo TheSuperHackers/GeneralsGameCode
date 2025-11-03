@@ -1,42 +1,12 @@
-/*
-**	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 Electronic Arts Inc.
-**
-**	This program is free software: you can redistribute it and/or modify
-**	it under the terms of the GNU General Public License as published by
-**	the Free Software Foundation, either version 3 of the License, or
-**	(at your option) any later version.
-**
-**	This program is distributed in the hope that it will be useful,
-**	but WITHOUT ANY WARRANTY; without even the implied warranty of
-**	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-**	GNU General Public License for more details.
-**
-**	You should have received a copy of the GNU General Public License
-**	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-#include <stdlib.h>
-#include <windows.h>
-#include <io.h>
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
-
-#include "W3DDevice/GameClient/W3DScreenshot.h"
-#include "Common/GlobalData.h"
-#include "GameClient/InGameUI.h"
-#include "GameClient/GameText.h"
-#include "WW3D2/dx8wrapper.h"
-#include "WW3D2/surface.h"
 
 struct ScreenshotThreadData
 {
 	unsigned char* imageData;
 	unsigned int width;
 	unsigned int height;
-	char pathname[1024];
-	char leafname[256];
+	char pathname[_MAX_PATH];
+	char leafname[_MAX_FNAME];
 	int quality;
 	ScreenshotFormat format;
 };
@@ -46,13 +16,14 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 	ScreenshotThreadData* data = (ScreenshotThreadData*)param;
 	
 	int result = 0;
-	if (data->format == SCREENSHOT_JPEG)
+	switch (data->format)
 	{
-		result = stbi_write_jpg(data->pathname, data->width, data->height, 3, data->imageData, data->quality);
-	}
-	else if (data->format == SCREENSHOT_PNG)
-	{
-		result = stbi_write_png(data->pathname, data->width, data->height, 3, data->imageData, data->width * 3);
+		case SCREENSHOT_JPEG:
+			result = stbi_write_jpg(data->pathname, data->width, data->height, 3, data->imageData, data->quality);
+			break;
+		case SCREENSHOT_PNG:
+			result = stbi_write_png(data->pathname, data->width, data->height, 3, data->imageData, data->width * 3);
+			break;
 	}
 	
 	if (!result) {
@@ -67,8 +38,8 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 
 void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
 {
-	char leafname[256];
-	char pathname[1024];
+	char leafname[_MAX_FNAME];
+	char pathname[_MAX_PATH];
 	static int jpegFrameNumber = 1;
 	static int pngFrameNumber = 1;
 	
@@ -130,6 +101,9 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
 	surfaceCopy->Release_Ref();
 	surfaceCopy = NULL;
 
+	if (quality <= 0 && format == SCREENSHOT_JPEG)
+		quality = TheGlobalData->m_jpegQuality;
+
 	ScreenshotThreadData* threadData = new ScreenshotThreadData();
 	threadData->imageData = image;
 	threadData->width = width;
@@ -150,3 +124,7 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
 	TheInGameUI->message(TheGameText->fetch("GUI:ScreenCapture"), ufileName.str());
 }
 
+void W3DDisplay::takeScreenShot(ScreenshotFormat format)
+{
+	W3D_TakeCompressedScreenshot(format);
+}
