@@ -62,15 +62,15 @@ class HordeUpdateModuleData : public ModuleData
 {
 public:
   UnsignedInt								m_updateRate;   ///< how often to recheck our horde status
-	KindOfMaskType						m_kindof;				///< the kind(s) of units that count towards horde-ness
+	KindOfMaskType						m_kindof;				///< the kind(s) of units that count towards hordeness
 	Int												m_minCount;		  ///< min count to get "horde" status
-  Real											m_minDist;      ///< min dist to contribute to horde-ness
+  Real											m_minDist;      ///< min dist to contribute to hordeness
 	Bool											m_alliesOnly;		///< if true, only allied units count towards hordeness
 	Bool											m_exactMatch;		///< if true, only exact same type of units count towards hordeness
 	Real											m_rubOffRadius;///< If I am this close to another guy who is a true hordesman, it'll rub off on me
-	HordeActionType						m_action;				///< what to do if we get horde-ness
-	Bool											m_allowedNationalism; ///< Nationalism is hard ocded.  Yeah!  Add to the goodness with this flag instead of rewriting after Alpha.
-	std::vector<AsciiString>	m_flagSubObjNames;		///< name(s) of the flag subobj
+	HordeActionType						m_action;				///< what to do if we get hordeness
+	Bool											m_allowedNationalism; ///< Nationalism is hard coded.  Yeah!  Add to the goodness with this flag instead of rewriting after Alpha.
+	std::vector<AsciiString>	m_flagSubObjNames;		///< name(s) of the flag sub obj
 
 	HordeUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
@@ -87,7 +87,7 @@ public:
 	virtual Bool hasFlag() const = 0;
 	virtual Bool isTrueHordeMember() const = 0;
 	virtual Bool isAllowedNationalism() const = 0;
-
+	virtual HordeActionType getHordeActionType() const = 0;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -104,11 +104,13 @@ public:
 	HordeUpdateInterface *getHordeUpdateInterface() { return this; }
 
 	virtual void onDrawableBoundToObject();
+	virtual UpdateSleepTime update();	///< update this object's AI
+
 	virtual Bool isInHorde() const { return m_inHorde; }
+	virtual Bool hasFlag() const { return m_hasFlag; }
 	virtual Bool isTrueHordeMember() const { return m_trueHordeMember && m_inHorde; }
 	virtual Bool isAllowedNationalism() const;
-	virtual Bool hasFlag() const { return m_hasFlag; }
-	virtual UpdateSleepTime update();	///< update this object's AI
+	virtual HordeActionType getHordeActionType() const { return getHordeUpdateModuleData()->m_action; };
 
 protected:
 
@@ -117,8 +119,8 @@ protected:
 
 private:
 	UnsignedInt m_lastHordeRefreshFrame; //Just like it sounds
-	Bool				m_inHorde;				 //I amy be a trueMember, or I may merely inherit hordehood from a neighbor who is
-	Bool				m_trueHordeMember; //meaning, I have enough hordesman near me to qualify
+	Bool				m_inHorde;				 //I may be a true member, or I may merely inherit hordehood from a neighbor who is
+	Bool				m_trueHordeMember; //meaning, I have enough hordesmen near me to qualify
 	Bool				m_hasFlag;
 
 };
