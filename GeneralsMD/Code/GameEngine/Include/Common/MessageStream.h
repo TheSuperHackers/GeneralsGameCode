@@ -257,8 +257,8 @@ public:
 		MSG_META_BEGIN_PREFER_SELECTION,						///< The Shift key has been depressed alone
 		MSG_META_END_PREFER_SELECTION,							///< The Shift key has been released.
 
-		MSG_META_TAKE_SCREENSHOT,										///< take screenshot (JPEG)
-		MSG_META_TAKE_SCREENSHOT_PNG,								///< take PNG screenshot
+		MSG_META_TAKE_SCREENSHOT,										///< take JPEG screenshot (F12)
+		MSG_META_TAKE_SCREENSHOT_JPEG,							///< take PNG screenshot (CTRL+F12, lossless)
 		MSG_META_ALL_CHEER,													///< Yay! :)
 		MSG_META_TOGGLE_ATTACKMOVE,									///< enter attack-move mode
 

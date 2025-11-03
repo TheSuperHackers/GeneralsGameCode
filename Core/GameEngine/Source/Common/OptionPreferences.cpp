@@ -192,6 +192,18 @@ Bool OptionPreferences::getDoubleClickAttackMoveEnabled()
 	return FALSE;
 }
 
+Int OptionPreferences::getJPEGQuality()
+{
+	OptionPreferences::const_iterator it = find("JPEGQuality");
+	if (it == end())
+		return 80;
+
+	Int quality = atoi(it->second.str());
+	if (quality < 1) quality = 1;
+	if (quality > 100) quality = 100;
+	return quality;
+}
+
 Real OptionPreferences::getScrollFactor()
 {
 	OptionPreferences::const_iterator it = find("ScrollFactor");
