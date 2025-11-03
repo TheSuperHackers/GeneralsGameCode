@@ -1136,6 +1136,7 @@ Bool RecorderClass::replayMatchesGameVersion(AsciiString filename)
 
 Bool RecorderClass::replayMatchesGameVersion(const ReplayHeader& header)
 {
+	// TheSuperHackers @fix No longer checks the build time here to prevent incorrect Replay playback incompatibility messages when the Replay playback would actually be technically compatible.
 	if (header.versionString != TheVersion->getUnicodeVersion())
 		return false;
 	if (header.versionNumber != TheVersion->getVersionNumber())
