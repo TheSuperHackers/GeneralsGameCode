@@ -1133,18 +1133,16 @@ Bool RecorderClass::replayMatchesGameVersion(AsciiString filename)
 
 Bool RecorderClass::replayMatchesGameVersion(const ReplayHeader& header)
 {
-	Bool versionStringDiff = header.versionString != TheVersion->getUnicodeVersion();
-	Bool versionTimeStringDiff = header.versionTimeString != TheVersion->getUnicodeBuildTime();
-	Bool versionNumberDiff = header.versionNumber != TheVersion->getVersionNumber();
-	Bool exeCRCDiff = header.exeCRC != TheGlobalData->m_exeCRC;
-	Bool exeDifferent = versionStringDiff || versionTimeStringDiff || versionNumberDiff || exeCRCDiff;
-	Bool iniDifferent = header.iniCRC != TheGlobalData->m_iniCRC;
-
-	if(exeDifferent || iniDifferent)
-	{
-		return FALSE;
-	}
-	return TRUE;
+	// TheSuperHackers @fix No longer checks the build time here to prevent incorrect Replay playback incompatibility messages when the Replay playback would actually be technically compatible.
+	if (header.versionString != TheVersion->getUnicodeVersion())
+		return false;
+	if (header.versionNumber != TheVersion->getVersionNumber())
+		return false;
+	if (header.exeCRC != TheGlobalData->m_exeCRC)
+		return false;
+	if (header.iniCRC != TheGlobalData->m_iniCRC)
+		return false;
+	return true;
 }
 
 /**
