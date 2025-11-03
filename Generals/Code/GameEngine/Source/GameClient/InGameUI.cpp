@@ -5759,7 +5759,6 @@ void InGameUI::refreshRenderFpsResources(void)
 		m_renderFpsString = TheDisplayStringManager->newDisplayString();
 		m_lastRenderFps = ~0u;
 		m_lastRenderFpsUpdateMs = 0u;
-		updateRenderFpsString();
 	}
 
 	if (!m_renderFpsLimitString)
@@ -5773,6 +5772,11 @@ void InGameUI::refreshRenderFpsResources(void)
 	GameFont *fpsFont = TheWindowManager->winFindFont(m_renderFpsFont, adjustedRenderFpsFontSize, m_renderFpsBold);
 	m_renderFpsString->setFont(fpsFont);
 	m_renderFpsLimitString->setFont(fpsFont);
+
+	if (m_renderFpsPointSize > 0)
+	{
+		updateRenderFpsString();
+	}
 }
 
 void InGameUI::refreshSystemTimeResources(void)
