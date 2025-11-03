@@ -59,7 +59,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g)  docker-build -t zerohour-build
+docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g)  dockerbuild -t zerohour-build
 if [[ "$INTERACTIVE" == "true" ]]; then
     FLAGS="  -it --entrypoint bash"
 else
