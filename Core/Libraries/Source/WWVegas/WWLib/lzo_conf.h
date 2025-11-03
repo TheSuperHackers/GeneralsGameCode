@@ -200,7 +200,7 @@
 /* Help the optimizer with register allocation.
  * Don't activate this macro for a fair comparision with other algorithms.
  */
-#if 1 && defined(NDEBUG) && !defined(__BOUNDS_CHECKING_ON)
+#if 1 && defined(RTS_RELEASE) && !defined(__BOUNDS_CHECKING_ON)
 #  if defined(__GNUC__) && defined(__i386__)
 #    if !defined(LZO_OPTIMIZE_GNUC_i386_IS_BUGGY)
 #      define LZO_OPTIMIZE_GNUC_i386

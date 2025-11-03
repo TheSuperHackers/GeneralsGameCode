@@ -662,7 +662,7 @@ int TTFontClass::Set_YSpacing( int y )
  *	  06/20/1887 BNA : Modified to handle new fonts.														  *
  *=============================================================================================*/
 
-#if(NDEBUG)
+#ifdef RTS_RELEASE
 
 Point2D TTFontClass::Print(
 	HDC hdc,
@@ -772,7 +772,7 @@ Point2D TTFontClass::Print(
 	return( point );
 }
 
-#endif
+#endif // RTS_RELEASE
 
 /***********************************************************************************************
  * TTFontClass::Print -- Print text to the surface specified.  CHAR version.                   *

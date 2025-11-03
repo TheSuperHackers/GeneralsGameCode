@@ -64,7 +64,7 @@ static void logStuff(const char *fmt, ...)
 	::MessageBox(NULL, buffer, "textureCompress", MB_OK);
 }
 
-#ifndef NDEBUG
+#ifdef RTS_DEBUG
 
 class DebugMunkee
 {
@@ -96,7 +96,7 @@ static void debugLog(const char *fmt, ...)
 
 #define DEBUG_LOG(x) {}
 
-#endif // NDEBUG
+#endif // RTS_DEBUG
 
 
 static void usage(const char *progname)
@@ -619,7 +619,7 @@ int main(int argc, const char **argv)
 		const char *targetDir = argv[2];
 		const char *cacheDir  = argv[3];
 
-#ifndef NDEBUG
+#ifdef RTS_DEBUG
 		theDebugMunkee = new DebugMunkee(argv[4]);
 #endif
 
@@ -631,7 +631,7 @@ int main(int argc, const char **argv)
 		//printSet( hasAlpha, "Using Alpha Channel" );
 		//tearDownLoadWindow();
 
-#ifndef NDEBUG
+#ifdef RTS_DEBUG
 		delete theDebugMunkee;
 		theDebugMunkee = NULL;
 #endif
