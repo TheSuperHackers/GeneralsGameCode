@@ -4501,6 +4501,12 @@ void AIUpdateInterface::evaluateMoraleBonus( Bool inHorde, Bool allowNationalism
 	case HORDEACTION_HORDE:
 		evaluateNationalismBonusClassic(inHorde, allowNationalism);
 		break;
+
+#if !RETAIL_COMPATIBLE_CRC
+	case HORDEACTION_HORDE_FIXED:
+		evaluateNationalismBonus(inHorde, allowNationalism);
+		break;
+#endif
 	}
 }
 
@@ -4537,6 +4543,37 @@ void AIUpdateInterface::evaluateNationalismBonusClassic( Bool inHorde, Bool allo
 	else
 	{
 		us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+// TheSuperHackers @bugfix The fixed Nationalism Bonus implementation.
+// Nationalism and Fanaticism are now tied to the horde status.
+// And Fanaticism is no longer dependent on Nationalism.
+// ------------------------------------------------------------------------------------------------
+void AIUpdateInterface::evaluateNationalismBonus( Bool inHorde, Bool allowNationalism )
+{
+	Object *us = getObject();
+
+	if( inHorde )
+	{
+		us->setWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
+
+		if( allowNationalism && hasNationalism() )
+		{
+			us->setWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
+		}
+
+		if( allowNationalism && hasFanaticism() )
+		{
+			us->setWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
+		}
+	}
+	else
+	{
+		us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
+		us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
+		us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
 	}
 }
 

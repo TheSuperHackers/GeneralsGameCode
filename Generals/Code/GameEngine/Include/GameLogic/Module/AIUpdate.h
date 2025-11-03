@@ -552,6 +552,7 @@ public:
 	Bool hasFanaticism() const;
 	void evaluateMoraleBonus( Bool inHorde, Bool allowNationalism, HordeActionType type );
 	void evaluateNationalismBonusClassic( Bool inHorde, Bool allowNationalism );
+	void evaluateNationalismBonus( Bool inHorde, Bool allowNationalism );
 
 #ifdef ALLOW_DEMORALIZE
 	// demoralization ... what a nifty word to write.

@@ -41,17 +41,38 @@ class UpgradeTemplate;
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
+// TheSuperHackers @bugfix xezon 15/09/2025 Adds a new horde action to select a fixed implementation.
+//
+// TheSuperHackers @todo If we want more control over the horde setup, then we need to implement
+// filters for separate weapon bonuses and required upgrades. But adding more behavior modules will
+// be a performance concern. Example INI setup:
+//
+// Behavior = HordeUpdate ModuleTag
+//   Action = NATIONALISM
+//   ;ApplyWeaponBonus = NATIONALISM
+//   UpgradeRequired = Upgrade_Nationalism
+// End
+//
 enum HordeActionType CPP_11(: Int)
 {
-	HORDEACTION_HORDE = 0,
+	HORDEACTION_HORDE, ///< Classic action, applies the Horde bonus correctly, but Nationalism and Fanaticism bonuses are not removed after leaving horde.
+	HORDEACTION_HORDE_FIXED, ///< Applies the Horde, Nationalism and Fanaticism bonuses correctly.
 
-	HORDEACTION_COUNT
+	HORDEACTION_COUNT,
+
+#if RETAIL_COMPATIBLE_CRC
+	HORDEACTION_DEFAULT = HORDEACTION_HORDE,
+#else
+	HORDEACTION_DEFAULT = HORDEACTION_HORDE_FIXED, ///< Does not change unmodified retail game behavior, because all its horde update modules explicitly set Action = HORDE.
+#endif
 };
 
 #ifdef DEFINE_HORDEACTION_NAMES
 static const char *const TheHordeActionTypeNames[] =
 {
 	"HORDE",
+	"HORDE_FIXED",
+
 	NULL
 };
 static_assert(ARRAY_SIZE(TheHordeActionTypeNames) == HORDEACTION_COUNT + 1, "Incorrect array size");

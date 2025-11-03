@@ -121,7 +121,7 @@ HordeUpdateModuleData::HordeUpdateModuleData()
 	, m_alliesOnly(true)
 	, m_exactMatch(false)
 	, m_allowedNationalism(TRUE)
-	, m_action(HORDEACTION_HORDE)
+	, m_action(HORDEACTION_DEFAULT)
 {
 }
 
