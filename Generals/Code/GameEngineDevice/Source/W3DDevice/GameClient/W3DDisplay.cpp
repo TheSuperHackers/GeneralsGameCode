@@ -3022,6 +3022,11 @@ void W3DDisplay::takeScreenShotCompressed(void)
 	W3D_TakeCompressedScreenshot(SCREENSHOT_JPEG, 80);
 }
 
+void W3DDisplay::takeScreenShotPNG(void)
+{
+	W3D_TakeCompressedScreenshot(SCREENSHOT_PNG, 0);
+}
+
 /** Start/Stop capturing an AVI movie*/
 void W3DDisplay::toggleMovieCapture(void)
 {

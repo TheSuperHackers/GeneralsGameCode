@@ -166,8 +166,8 @@ public:
 	virtual void preloadModelAssets( AsciiString model ) = 0;	///< preload model asset
 	virtual void preloadTextureAssets( AsciiString texture ) = 0;	///< preload texture asset
 
-	virtual void takeScreenShot(void) = 0;										///< saves screenshot to a file
-	virtual void takeScreenShotCompressed(void) = 0;					///< saves compressed screenshot without stalling
+	virtual void takeScreenShotCompressed(void) = 0;					///< saves JPEG screenshot
+	virtual void takeScreenShotPNG(void) = 0;									///< saves PNG screenshot
 	virtual void toggleMovieCapture(void) = 0;							///< starts saving frames to an avi or frame sequence
 	virtual void toggleLetterBox(void) = 0;										///< enabled letter-boxed display
 	virtual void enableLetterBox(Bool enable) = 0;						///< forces letter-boxed display on/off
