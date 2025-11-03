@@ -171,7 +171,7 @@ enum PlayerLeaveCode CPP_11(: Int) {
 
 // Magic number for identifying a Generals packet.
 #if defined(_MSC_VER) && _MSC_VER < 1300
-// Original retail value is used for builds with VC6 (should be compatible)
+// Original retail value is used for builds with VC6
 static const UnsignedShort GENERALS_MAGIC_NUMBER = 0xF00D;
 #else
 static const UnsignedShort GENERALS_MAGIC_NUMBER = 0xF00D+1;
