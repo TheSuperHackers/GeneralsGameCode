@@ -2991,11 +2991,6 @@ static void CreateBMPFile(LPTSTR pszFile, char *image, Int width, Int height)
 	LocalFree( (HLOCAL) pbmi);
 }
 
-///Save Screen Capture to a file
-void W3DDisplay::takeScreenShot()
-{
-	char leafname[256];
-	char pathname[1024];
 
 	static int frame_number = 1;
 
@@ -3128,7 +3123,6 @@ void W3DDisplay::takeScreenShot()
 	ufileName.translate(leafname);
 	TheInGameUI->message(TheGameText->fetch("GUI:ScreenCapture"), ufileName.str());
 }
-
 void W3DDisplay::takeScreenShotCompressed(void)
 {
 	W3D_TakeCompressedScreenshot(SCREENSHOT_JPEG, 80);
