@@ -35,6 +35,12 @@
 
 class View;
 
+enum ScreenshotFormat
+{
+	SCREENSHOT_JPEG,
+	SCREENSHOT_PNG
+};
+
 struct ShroudLevel
 {
 	Short m_currentShroud;		///< A Value of 1 means shrouded.  0 is not.  Negative is the count of people looking.
@@ -168,8 +174,7 @@ public:
 	virtual void preloadModelAssets( AsciiString model ) = 0;	///< preload model asset
 	virtual void preloadTextureAssets( AsciiString texture ) = 0;	///< preload texture asset
 
-	virtual void takeScreenShotCompressed(void) = 0;					///< saves JPEG screenshot
-	virtual void takeScreenShotPNG(void) = 0;									///< saves PNG screenshot
+	virtual void takeScreenShot(ScreenshotFormat format) = 0;			///< saves screenshot in specified format
 	virtual void toggleMovieCapture(void) = 0;							///< starts saving frames to an avi or frame sequence
 	virtual void toggleLetterBox(void) = 0;										///< enabled letter-boxed display
 	virtual void enableLetterBox(Bool enable) = 0;						///< forces letter-boxed display on/off
