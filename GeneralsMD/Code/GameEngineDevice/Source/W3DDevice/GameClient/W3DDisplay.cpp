@@ -2991,15 +2991,8 @@ static void CreateBMPFile(LPTSTR pszFile, char *image, Int width, Int height)
 	LocalFree( (HLOCAL) pbmi);
 }
 
-void W3DDisplay::takeScreenShotCompressed(void)
-{
-	W3D_TakeCompressedScreenshot(SCREENSHOT_JPEG, 80);
-}
-
-void W3DDisplay::takeScreenShotPNG(void)
-{
-	W3D_TakeCompressedScreenshot(SCREENSHOT_PNG, 0);
-}
+///Save Screen Capture to a file
+#include "W3DScreenshot.cpp"
 
 /** Start/Stop capturing an AVI movie*/
 void W3DDisplay::toggleMovieCapture(void)
