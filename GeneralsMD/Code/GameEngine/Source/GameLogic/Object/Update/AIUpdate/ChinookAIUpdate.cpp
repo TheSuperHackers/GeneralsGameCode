@@ -589,6 +589,7 @@ public:
 				if (rappeller != NULL)
 				{
 #if !RETAIL_COMPATIBLE_CRC
+					// ChinookAIUpdate::getAiFreeToExit is dependent on this status.
 					rappeller->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_IS_USING_ABILITY));
 #endif
 
