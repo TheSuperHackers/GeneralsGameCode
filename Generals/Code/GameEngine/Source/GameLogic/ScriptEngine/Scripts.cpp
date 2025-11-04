@@ -2059,13 +2059,13 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 		// quick hack to make loading models with "Fundamentalist" switch to "GLA"
 		if (pParm->m_string.startsWith("Fundamentalist"))
 		{
-			char oldName[256];
+			const char* replacePrefix = "Fundamentalist";
+			const size_t offset = pParm->m_string.startsWith(replacePrefix) ? strlen(replacePrefix) : 0u;
 			char newName[256];
-			strcpy(oldName, pParm->m_string.str());
 			strcpy(newName, "GLA");
-			strlcat(newName, oldName+strlen("Fundamentalist"), ARRAY_SIZE(newName));
+			strlcat(newName, pParm->m_string.str() + offset, ARRAY_SIZE(newName));
 			pParm->m_string.set(newName);
-			DEBUG_LOG(("Changing Script Ref from %s to %s", oldName, newName));
+			DEBUG_LOG(("Changing Script Ref from %s to %s", pParm->m_string, newName));
 		}
 	}
 
