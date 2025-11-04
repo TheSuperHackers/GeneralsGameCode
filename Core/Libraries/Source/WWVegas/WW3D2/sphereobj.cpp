@@ -437,8 +437,8 @@ const char * SphereRenderObjClass::Get_Name(void) const
 void SphereRenderObjClass::Set_Name(const char * name)
 {
 	WWASSERT(name != NULL);
-	WWASSERT(strlen(name) < 2*W3D_NAME_LEN);
-	strcpy(Name,name);
+	const size_t nameLen = strlcpy(Name, name, ARRAY_SIZE(Name));
+	(void)nameLen; WWASSERT(nameLen < ARRAY_SIZE(Name));
 }
 
 
