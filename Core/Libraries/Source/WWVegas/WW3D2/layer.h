@@ -44,7 +44,7 @@ class SceneClass;
 class CameraClass;
 
 class LayerClass;
-typedef Node<LayerClass *> LayerNodeClass;
+typedef ww::Node<LayerClass *> LayerNodeClass;
 
 class LayerClass : public LayerNodeClass
 {
@@ -86,4 +86,4 @@ public:
 
 };
 
-typedef List<LayerClass *> LayerListClass;
+typedef ww::List<LayerClass *> LayerListClass;

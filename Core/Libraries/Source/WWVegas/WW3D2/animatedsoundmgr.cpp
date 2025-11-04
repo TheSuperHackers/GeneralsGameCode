@@ -270,7 +270,7 @@ AnimatedSoundMgrClass::Initialize (const char *ini_filename)
 		//
 		//	Loop over all the sections in the INI
 		//
-		List<INISection *> &section_list = ini_file->Get_Section_List ();
+		ww::List<INISection *> &section_list = ini_file->Get_Section_List ();
 		for (	INISection *section = section_list.First ();
 				section != NULL && section->Is_Valid ();
 				section = section->Next_Valid ())

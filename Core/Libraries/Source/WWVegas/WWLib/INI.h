@@ -185,7 +185,7 @@ class INIClass {
 		/*
 		**	Access to the list of all sections within this INI file.
 		*/
-		List<INISection *> & Get_Section_List() { return * SectionList; }
+		ww::List<INISection *> & Get_Section_List() { return * SectionList; }
 
 		IndexClass<int, INISection *> & Get_Section_Index() { return * SectionIndex; }
 
@@ -217,7 +217,7 @@ class INIClass {
 		/*
 		**	This is the list of all sections within this INI file.
 		*/
-		List<INISection *> * SectionList;
+		ww::List<INISection *> * SectionList;
 
 		IndexClass<int, INISection *> * SectionIndex;
 

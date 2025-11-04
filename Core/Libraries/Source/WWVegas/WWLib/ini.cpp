@@ -143,7 +143,7 @@ bool INIClass::Is_Loaded(void) const
 
 void INIClass::Initialize(void)
 {
-	SectionList = W3DNEW List<INISection *> ();
+	SectionList = W3DNEW ww::List<INISection *> ();
 	SectionIndex = W3DNEW IndexClass<int, INISection *> ();
 	Filename = nstrdup("<unknown>");
 }

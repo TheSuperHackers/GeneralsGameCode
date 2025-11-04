@@ -556,7 +556,7 @@ void RegistryClass::Load_Registry(const char *filename, char *old_path, char *ne
 		unsigned char buffer[8192];
 
 
-		List<INISection *> &section_list = ini.Get_Section_List();
+		ww::List<INISection *> &section_list = ini.Get_Section_List();
 
 		for (INISection *section = section_list.First() ; section != NULL ; section = section->Next_Valid()) {
 
