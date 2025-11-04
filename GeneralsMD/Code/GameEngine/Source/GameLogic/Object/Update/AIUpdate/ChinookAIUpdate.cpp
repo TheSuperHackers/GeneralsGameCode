@@ -588,7 +588,9 @@ public:
 				Object* rappeller = getPotentialRappeller(obj);
 				if (rappeller != NULL)
 				{
+#if !RETAIL_COMPATIBLE_CRC
 					rappeller->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_IS_USING_ABILITY));
+#endif
 
 					ExitInterface *exitInterface = obj->getObjectExitInterface();
 					ExitDoorType exitDoor = exitInterface ? exitInterface->reserveDoorForExit(rappeller->getTemplate(), rappeller) : DOOR_NONE_AVAILABLE;
@@ -601,7 +603,9 @@ public:
 						DEBUG_CRASH(("rappeller is not free to exit... what?"));
 					}
 
+#if !RETAIL_COMPATIBLE_CRC
 					rappeller->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_IS_USING_ABILITY));
+#endif
 					rappeller->setTransformMatrix(&it->dropStartMtx);
 
 					AIUpdateInterface* rappellerAI = rappeller ? rappeller->getAIUpdateInterface() : NULL;
