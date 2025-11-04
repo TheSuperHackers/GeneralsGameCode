@@ -368,9 +368,6 @@ private:
 				if (rappeller == NULL || rappeller->isEffectivelyDead() || !rappeller->isAboveTerrain() || rappeller->isContained())
 #endif
 				{
-					if (rappeller)
-						rappeller->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_IS_USING_ABILITY));
-
 					oit = it->rappellerIDs.erase(oit);
 				}
 				else
@@ -604,6 +601,7 @@ public:
 						DEBUG_CRASH(("rappeller is not free to exit... what?"));
 					}
 
+					rappeller->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_IS_USING_ABILITY));
 					rappeller->setTransformMatrix(&it->dropStartMtx);
 
 					AIUpdateInterface* rappellerAI = rappeller ? rappeller->getAIUpdateInterface() : NULL;
