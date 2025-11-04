@@ -28,7 +28,7 @@
 //         troops, order them to attack, then return. Can do extra things like ordering
 //         injured troops to return to the transport for healing purposes.
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"

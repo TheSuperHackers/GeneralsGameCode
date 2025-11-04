@@ -27,7 +27,7 @@
 // Desc:   Update module to handle weapon firing of the SpectreGunship Generals special power.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_DEATH_NAMES
 

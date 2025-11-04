@@ -25,7 +25,7 @@
 // FILE: PlaceEventTranslator.cpp ///////////////////////////////////////////////////////////
 // Author: Steven Johnson, Dec 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/BuildAssistant.h"
 #include "Common/GameAudio.h"

@@ -29,7 +29,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #define DEFINE_GUI_COMMMAND_NAMES
 #define DEFINE_COMMAND_OPTION_NAMES
 #define DEFINE_WEAPONSLOTTYPE_NAMES

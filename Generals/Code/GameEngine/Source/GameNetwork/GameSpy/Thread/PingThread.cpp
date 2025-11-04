@@ -26,7 +26,7 @@
 // Ping thread
 // Author: Matthew D. Campbell, August 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include <winsock.h>	// This one has to be here. Prevents collisions with windsock2.h
 

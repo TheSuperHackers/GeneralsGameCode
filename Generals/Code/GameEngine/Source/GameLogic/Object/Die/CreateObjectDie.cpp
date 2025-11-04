@@ -27,7 +27,7 @@
 // Desc:   Create an object upon this object's death
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_OBJECT_STATUS_NAMES
 #include "Common/ThingFactory.h"

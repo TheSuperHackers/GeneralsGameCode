@@ -26,7 +26,7 @@
 // GameSpy callbacks, etc
 // Author: Matthew D. Campbell, February 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "gamespy/gp/gp.h"
 #include "gamespy/gstats/gpersist.h"

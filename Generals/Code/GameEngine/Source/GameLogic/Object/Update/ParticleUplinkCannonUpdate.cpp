@@ -27,7 +27,7 @@
 // Desc:   Update module to handle building states and weapon firing of the particle uplink cannon.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_DAMAGE_NAMES
 #define DEFINE_DEATH_NAMES

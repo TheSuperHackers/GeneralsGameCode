@@ -26,7 +26,7 @@
 // Author: Graham Smallwood, July 2003
 // Desc:	 UpgradeModule that sets a modelcondition flag
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameLogic/Module/ModelConditionUpgrade.h"
 

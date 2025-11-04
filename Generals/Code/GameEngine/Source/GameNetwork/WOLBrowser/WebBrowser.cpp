@@ -39,7 +39,7 @@
 *
 ******************************************************************************/
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 //#include "WinMain.h"
 #include "GameNetwork/WOLBrowser/WebBrowser.h"

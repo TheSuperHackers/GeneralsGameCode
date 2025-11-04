@@ -26,7 +26,7 @@
 // A "view", or window, into the World
 // Author: Michael S. Booth, February 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "Common/Xfer.h"

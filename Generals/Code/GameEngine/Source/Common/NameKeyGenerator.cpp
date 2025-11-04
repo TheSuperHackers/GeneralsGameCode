@@ -28,7 +28,7 @@
 // Desc:      Name key system to translate between names and unique key ids
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // Public Data ////////////////////////////////////////////////////////////////////////////////////
 NameKeyGenerator *TheNameKeyGenerator = NULL;  ///< name key gen. singleton

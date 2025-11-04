@@ -27,7 +27,7 @@
 // for which it then generates visual "hints".
 // Author: Michael S. Booth, March 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/MessageStream.h"
 #include "GameClient/HintSpy.h"

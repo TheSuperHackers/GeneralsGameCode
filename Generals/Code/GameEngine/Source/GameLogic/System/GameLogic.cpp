@@ -27,7 +27,7 @@
 // Author: Michael S. Booth, October 2000
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/AudioAffect.h"
 #include "Common/AudioHandleSpecialValues.h"

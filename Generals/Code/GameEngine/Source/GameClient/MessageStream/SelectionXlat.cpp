@@ -26,7 +26,7 @@
 // Message stream translator
 // Author: Michael S. Booth, January 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ActionManager.h"
 #include "Common/GameAudio.h"

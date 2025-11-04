@@ -27,7 +27,7 @@
 // Desc:   Keeps track of experience points so Veterance levels can be gained
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "Common/ThingTemplate.h"

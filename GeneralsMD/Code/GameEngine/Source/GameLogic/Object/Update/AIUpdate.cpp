@@ -27,7 +27,7 @@
 // Author: Michael S. Booth, 2001-2002
 // Subsequently : John Ahlquist 2002 and a cast of thousands.
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_LOCOMOTORSET_NAMES					// for TheLocomotorSetNames[]
 #define DEFINE_AUTOACQUIRE_NAMES

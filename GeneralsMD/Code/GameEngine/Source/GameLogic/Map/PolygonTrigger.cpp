@@ -26,7 +26,7 @@
 // Class to encapsulate polygon trigger areas.
 // Author: John Ahlquist, November 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/DataChunk.h"
 #include "Common/MapObject.h"

@@ -27,7 +27,7 @@
 // Desc:   A chance to create a crate on death according to certain condition checks
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/PlayerList.h"
 #include "Common/Player.h"

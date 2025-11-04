@@ -26,7 +26,7 @@
 // Needs to check legality of evacuate, and may move to a place that is better to evacuate at
 // Author: Graham Smallwood, July 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/RandomValue.h"
 #include "GameLogic/Module/TransportAIUpdate.h"

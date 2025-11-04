@@ -29,7 +29,7 @@
 // Desc:   Resolves NAT'd IPs and port numbers for the other players in a game.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameNetwork/NAT.h"
 #include "GameNetwork/Transport.h"

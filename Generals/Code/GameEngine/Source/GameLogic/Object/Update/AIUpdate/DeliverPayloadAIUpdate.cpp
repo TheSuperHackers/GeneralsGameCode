@@ -25,7 +25,7 @@
 // DeliverPayloadAIUpdate.cpp ////////////
 // Author: Graham Smallwood, March 2002
 // Desc:   State machine that controls the approach and deployment of airborne cargo
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 
