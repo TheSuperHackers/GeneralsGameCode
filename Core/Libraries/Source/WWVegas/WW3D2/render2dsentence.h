@@ -36,8 +36,8 @@
 
 #pragma once
 
+#include "always.h"
 #include "render2d.h"
-#include "refcount.h"
 #include "Vector.h"
 #include "vector2i.h"
 #include "wwstring.h"

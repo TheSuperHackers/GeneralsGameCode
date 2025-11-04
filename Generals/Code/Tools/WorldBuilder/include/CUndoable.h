@@ -26,7 +26,6 @@
 #include "../../GameEngine/Include/Common/MapObject.h"
 #include "../../GameEngine/Include/Common/GameCommon.h"
 #include "../../GameEngine/Include/GameLogic/SidesList.h"
-#include "refcount.h"
 #include <vector>
 
 class PolygonTrigger;

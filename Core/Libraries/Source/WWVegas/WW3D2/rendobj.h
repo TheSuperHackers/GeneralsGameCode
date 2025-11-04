@@ -41,7 +41,6 @@
 #pragma once
 
 #include "always.h"
-#include "refcount.h"
 #include "sphere.h"
 #include "coltype.h"
 #include "aabox.h"

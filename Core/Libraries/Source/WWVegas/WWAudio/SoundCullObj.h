@@ -36,9 +36,9 @@
 
 #pragma once
 
+#include "always.h"
 #include "SoundSceneObj.h"
 #include "cullsys.h"
-#include "refcount.h"
 #include "mempool.h"
 #include "multilist.h"
 

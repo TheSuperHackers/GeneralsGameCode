@@ -39,10 +39,9 @@
 
 #pragma once
 
-#include "refcount.h"
+#include "always.h"
 #include "w3d_file.h"
 #include "w3derr.h"
-#include "wwdebug.h"
 #include "vector2.h"
 #include "vector3.h"
 #include "ww3d.h"

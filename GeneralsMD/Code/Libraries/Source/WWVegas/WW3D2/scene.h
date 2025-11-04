@@ -37,7 +37,6 @@
 #pragma once
 
 #include "always.h"
-#include "refcount.h"
 #include "vector3.h"
 #include "robjlist.h"
 #include "wwdebug.h"

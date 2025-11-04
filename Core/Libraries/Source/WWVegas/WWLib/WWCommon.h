@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "refcount.h"
 #include "STLUtils.h"
 #include "stringex.h"
 #include <Utility/stdio_adapter.h>

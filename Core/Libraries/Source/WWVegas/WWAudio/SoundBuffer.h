@@ -40,7 +40,7 @@
 #include "mss.h"
 #pragma warning (pop)
 
-#include "refcount.h"
+#include "always.h"
 
 
 // Forward declarations

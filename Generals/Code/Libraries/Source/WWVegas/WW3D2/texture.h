@@ -37,7 +37,6 @@
 #pragma once
 
 #include "always.h"
-#include "refcount.h"
 #include "chunkio.h"
 #include "surfaceclass.h"
 #include "ww3dformat.h"
