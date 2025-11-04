@@ -190,7 +190,7 @@ class AsciiString;
 				if (!ignoreCrash) { \
 					TheCurrentIgnoreCrashPtr = &ignoreCrash; \
 					DebugCrash m ; \
-					TheCurrentIgnoreCrashPtr = NULL; \
+					TheCurrentIgnoreCrashPtr = 0; \
 				} \
 			} \
 		} while (0)
