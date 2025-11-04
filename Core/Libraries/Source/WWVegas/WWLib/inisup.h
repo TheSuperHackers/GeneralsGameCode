@@ -51,7 +51,7 @@
 **	The value entries for the INI file are stored as objects of this type.
 **	The entry identifier and value string are combined into this object.
 */
-struct INIEntry : public ww::Node<INIEntry *> {
+struct INIEntry : public Node<INIEntry *> {
 	INIEntry(char * entry = NULL, char * value = NULL) : Entry(entry), Value(value) {}
 	~INIEntry(void);
 //	~INIEntry(void) {free(Entry);Entry = NULL;free(Value);Value = NULL;}
@@ -66,7 +66,7 @@ struct INIEntry : public ww::Node<INIEntry *> {
 **	Each section (bracketed) is represented by an object of this type. All entries
 **	subordinate to this section are attached.
 */
-struct INISection : public ww::Node<INISection *> {
+struct INISection : public Node<INISection *> {
 		INISection(char * section) : Section(section) {}
 		~INISection(void);
 //		~INISection(void) {free(Section);Section = 0;EntryList.Delete();}
@@ -75,7 +75,7 @@ struct INISection : public ww::Node<INISection *> {
 		int Index_ID(void) const { return CRC::String(Section); };
 
 		char * Section;
-		ww::List<INIEntry *> EntryList;
+		List<INIEntry *> EntryList;
 		IndexClass<int, INIEntry *> EntryIndex;
 
 	private:

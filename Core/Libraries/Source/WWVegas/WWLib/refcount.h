@@ -81,8 +81,8 @@ struct ActiveRefStruct
 **
 */
 
-typedef ww::DataNode<RefCountClass *>	RefCountNodeClass;
-typedef ww::List<RefCountNodeClass *>	RefCountListClass;
+typedef DataNode<RefCountClass *>	RefCountNodeClass;
+typedef List<RefCountNodeClass *>	RefCountListClass;
 
 /*
 ** Note that Add_Ref and Release_Ref are always const, because copying, destroying and reference

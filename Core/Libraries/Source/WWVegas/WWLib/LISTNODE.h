@@ -46,8 +46,6 @@
 #pragma warn -inl
 #endif
 
-namespace ww
-{
 
 /*
 **	This is a doubly linked list node. Typical use of this node is to derive
@@ -318,5 +316,3 @@ public:
 	SECONDARY Get_Secondary() { return SecondaryValue; };
 	void Unlink() { Primary.Unlink(); Secondary.Unlink(); };
 };
-
-} // namespace ww
