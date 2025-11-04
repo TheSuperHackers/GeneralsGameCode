@@ -60,7 +60,7 @@ struct ActiveRefStruct
 ** point it at the new object, and add-ref the new object (if its not null...)
 */
 #define REF_PTR_SET(dst,src)	{ if (src) (src)->Add_Ref(); if (dst) (dst)->Release_Ref(); (dst) = (src); }
-#define REF_PTR_RELEASE(x)		{ if (x) x->Release_Ref(); x = NULL; }
+#define REF_PTR_RELEASE(x)		{ if (x) x->Release_Ref(); x = 0; }
 
 
 /*
