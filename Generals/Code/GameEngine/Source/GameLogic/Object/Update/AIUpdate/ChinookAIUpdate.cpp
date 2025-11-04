@@ -1166,7 +1166,11 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 				setMyState(TAKING_OFF, NULL, NULL, CMD_FROM_AI);
 				passItThru = false;
 			}
+#if RETAIL_COMPATIBLE_CRC
 			else
+#else
+			else if (getObject()->getContain() && getObject()->getContain()->hasObjectsWantingToEnterOrExit())
+#endif
 			{
 				// do this INSTEAD of the standard stuff
 				setMyState(
