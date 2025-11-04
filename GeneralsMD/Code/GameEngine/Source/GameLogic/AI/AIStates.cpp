@@ -6357,7 +6357,12 @@ StateReturnType AIEnterState::update()
 	StateReturnType code = AIInternalMoveToState::update();
 
 	// if it's airborne, wait for it to land
+#if RETAIL_COMPATIBLE_CRC
 	if (code == STATE_SUCCESS && goal->isAboveTerrain() && !obj->isAboveTerrain())
+#else
+	if (code == STATE_SUCCESS && (goal->getPosition()->z + goal->getGeometryInfo().getMaxHeightAbovePosition() < obj->getPosition()->z ||
+		goal->getPosition()->z > obj->getPosition()->z + obj->getGeometryInfo().getMaxHeightAbovePosition()))
+#endif
 	{
 		code = STATE_CONTINUE;
 	}
