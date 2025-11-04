@@ -45,6 +45,8 @@
 
 #pragma once
 
+#include <Utility/CppMacros.h>
+
 class AsciiString;
 
 #define NO_RELEASE_DEBUG_LOGGING

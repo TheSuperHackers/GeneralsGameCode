@@ -36,8 +36,6 @@
 
 #pragma once
 
-#include <Utility/CppMacros.h>
-
 #include "LISTNODE.h"
 #include "WWDebug/wwdebug.h"
 
