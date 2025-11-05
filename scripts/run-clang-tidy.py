@@ -11,6 +11,7 @@ for the MinGW-w64 cross-compilation environment and legacy C++ code.
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -56,11 +57,33 @@ def find_compile_commands(build_dir: Optional[Path] = None) -> Path:
     )
 
 
+def sanitize_compile_command(entry: dict) -> dict:
+    """Remove PCH and other incompatible flags for clang-tidy."""
+    cmd = entry.get('command', '')
+    
+    # Remove MSVC precompiled header flags that clang-tidy can't handle
+    flags_to_remove = [
+        r'/Yu[^\s]*',  # MSVC: Use precompiled header
+        r'/Yc[^\s]*',  # MSVC: Create precompiled header
+        r'/Fp[^\s]*',  # MSVC: Precompiled header file path
+        r'-Xclang -include-pch [^\s]+',  # Clang PCH
+        r'-include-pch [^\s]+',
+    ]
+    
+    for flag_pattern in flags_to_remove:
+        cmd = re.sub(flag_pattern, '', cmd)
+    
+    entry['command'] = cmd
+    return entry
+
+
 def load_compile_commands(compile_commands_path: Path) -> List[dict]:
     """Load and parse the compile_commands.json file."""
     try:
         with open(compile_commands_path, 'r') as f:
-            return json.load(f)
+            commands = json.load(f)
+        # Sanitize commands to remove PCH flags
+        return [sanitize_compile_command(cmd) for cmd in commands]
     except (json.JSONDecodeError, IOError) as e:
         raise RuntimeError(f"Failed to load compile_commands.json: {e}")
 
