@@ -246,6 +246,7 @@ BOOL RoadOptions::OnInitDialog()
 		char				findBuf[_MAX_PATH];
 		char				fileBuf[_MAX_PATH];
 
+		static_assert(ARRAY_SIZE(ROAD_DIRECTORY) <= ARRAY_SIZE(dirBuf), "Buffer size too small");
 		strcpy(dirBuf, ROAD_DIRECTORY);
 		int len = strlen(dirBuf);
 
@@ -273,6 +274,7 @@ BOOL RoadOptions::OnInitDialog()
 					++it;
 					continue;
 				}
+				static_assert(ARRAY_SIZE(TEST_STRING) <= ARRAY_SIZE(fileBuf), "Buffer size too small");
 				strcpy(fileBuf, TEST_STRING);
 				strlcat(fileBuf, "\\", ARRAY_SIZE(fileBuf));
 				strlcat(fileBuf, filename.str(), ARRAY_SIZE(fileBuf));

@@ -504,6 +504,7 @@ void BuddyThreadClass::errorCallback( GPConnection *con, GPErrorArg *arg )
 static void getNickForMessage( GPConnection *con, GPGetInfoResponseArg *arg, void *param )
 {
 	BuddyResponse *resp = (BuddyResponse *)param;
+	static_assert(ARRAY_SIZE(resp->arg.message.nick) >= ARRAY_SIZE(arg->nick), "Incorrect array size");
 	strcpy(resp->arg.message.nick, arg->nick);
 }
 
@@ -618,6 +619,9 @@ static void getInfoResponseForRequest( GPConnection *con, GPGetInfoResponseArg *
 {
 	BuddyResponse *resp = (BuddyResponse *)param;
 	resp->profile = arg->profile;
+	static_assert(ARRAY_SIZE(resp->arg.request.nick) >= ARRAY_SIZE(arg->nick), "Incorrect array size");
+	static_assert(ARRAY_SIZE(resp->arg.request.email) >= ARRAY_SIZE(arg->email), "Incorrect array size");
+	static_assert(ARRAY_SIZE(resp->arg.request.countrycode) >= ARRAY_SIZE(arg->countrycode), "Incorrect array size");
 	strcpy(resp->arg.request.nick, arg->nick);
 	strcpy(resp->arg.request.email, arg->email);
 	strcpy(resp->arg.request.countrycode, arg->countrycode);
@@ -644,6 +648,9 @@ static void getInfoResponseForStatus(GPConnection * connection, GPGetInfoRespons
 {
 	BuddyResponse *resp = (BuddyResponse *)param;
 	resp->profile = arg->profile;
+	static_assert(ARRAY_SIZE(resp->arg.status.nick) >= ARRAY_SIZE(arg->nick), "Incorrect array size");
+	static_assert(ARRAY_SIZE(resp->arg.status.email) >= ARRAY_SIZE(arg->email), "Incorrect array size");
+	static_assert(ARRAY_SIZE(resp->arg.status.countrycode) >= ARRAY_SIZE(arg->countrycode), "Incorrect array size");
 	strcpy(resp->arg.status.nick, arg->nick);
 	strcpy(resp->arg.status.email, arg->email);
 	strcpy(resp->arg.status.countrycode, arg->countrycode);
@@ -660,6 +667,8 @@ void BuddyThreadClass::statusCallback( GPConnection *con, GPRecvBuddyStatusArg *
 	// get user's status
 	GPBuddyStatus status;
 	gpGetBuddyStatus( con, arg->index, &status );
+	static_assert(ARRAY_SIZE(response.arg.status.location) >= ARRAY_SIZE(status.locationString), "Incorrect array size");
+	static_assert(ARRAY_SIZE(response.arg.status.statusString) >= ARRAY_SIZE(status.statusString), "Incorrect array size");
 	strcpy(response.arg.status.location, status.locationString);
 	strcpy(response.arg.status.statusString, status.statusString);
 	response.arg.status.status = status.status;
