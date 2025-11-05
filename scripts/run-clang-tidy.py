@@ -66,6 +66,7 @@ def sanitize_compile_command(entry: dict) -> dict:
         r'/Yu[^\s]*',  # MSVC: Use precompiled header
         r'/Yc[^\s]*',  # MSVC: Create precompiled header
         r'/Fp[^\s]*',  # MSVC: Precompiled header file path
+        r'/FI[^\s]*',  # MSVC: Force include file (used for PCH)
         r'-Xclang -include-pch [^\s]+',  # Clang PCH
         r'-include-pch [^\s]+',
     ]
