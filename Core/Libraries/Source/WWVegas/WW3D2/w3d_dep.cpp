@@ -32,7 +32,6 @@
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
- *   Get_W3D_Dependencies -- Scans a W3D file to determine which other files it depends on.    *
  *   Scan_Chunk -- Chooses the correct chunk loader for this chunk.                            *
  *   Scan_Mesh -- Scans a mesh for references to other files.                                  *
  *   Scan_Mesh_Header -- Scans a mesh's header for file references.                            *
@@ -44,7 +43,6 @@
  *   Scan_Emitter -- Scans an emitter for references to other files.                           *
  *   Scan_Aggregate -- Scans an aggregate for references to other files.                       *
  *   Scan_HLOD -- Scans an HLOD for references to other files.                                 *
- *   Get_W3D_Name -- Gets a W3D object name from a W3D filename.                               *
  *   Make_W3D_Filename -- Converts a W3D object name into a W3D filename.                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
@@ -83,62 +81,7 @@ static void Scan_Emitter (ChunkLoadClass &cload, StringList &files, const char *
 static void Scan_Aggregate (ChunkLoadClass &cload, StringList &files, const char *w3d_name);
 static void Scan_HLOD (ChunkLoadClass &cload, StringList &files, const char *w3d_name);
 
-static void Get_W3D_Name (const char *filename, char *w3d_name);
 static const char * Make_W3D_Filename (const char *w3d_name);
-
-
-/***********************************************************************************************
- * Get_W3D_Dependencies -- Scans a W3D file to determine which other files it depends on.      *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/3/00     AJA : Created.                                                                 *
- *=============================================================================================*/
-bool Get_W3D_Dependencies (const char *w3d_filename, StringList &files)
-{
-	assert(w3d_filename);
-
-	// Open the W3D file.
-	FileClass *file=_TheFileFactory->Get_File(w3d_filename);
-	if ( file ) {
-		file->Open();
-		if ( ! file->Is_Open()) {
-			_TheFileFactory->Return_File(file);
-			file=NULL;
-			return false;
-		}
-	} else {
-		return false;
-	}
-
-	// Get the W3D name from the filename.
-	char w3d_name[W3D_NAME_LEN];
-	Get_W3D_Name(w3d_filename, w3d_name);
-
-	// Create a chunk loader for this file, and scan the file.
-	ChunkLoadClass cload(file);
-	while (cload.Open_Chunk())
-	{
-		Scan_Chunk(cload, files, w3d_name);
-		cload.Close_Chunk();
-	}
-
-	// Close the file.
-	file->Close();
-	_TheFileFactory->Return_File(file);
-	file=NULL;
-
-	// Sort the set of filenames, and remove any duplicates.
-	files.sort();
-	files.unique();
-
-	return true;
-}
 
 
 /***********************************************************************************************
@@ -496,46 +439,6 @@ static void Scan_HLOD (ChunkLoadClass &cload, StringList &files, const char *w3d
 		}
 		cload.Close_Chunk();
 	}
-}
-
-
-/***********************************************************************************************
- * Get_W3D_Name -- Gets a W3D object name from a W3D filename.                                 *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/3/00     AJA : Created.                                                                 *
- *=============================================================================================*/
-static void Get_W3D_Name (const char *filename, char *w3d_name)
-{
-	assert(filename);
-	assert(w3d_name);
-
-	// Figure out the first character of the name of the file
-	// (bypass the path if it was given).
-	const char *start = strrchr(filename, '\\');
-	if (start)
-		++start;					// point to first character after the last backslash
-	else
-		start = filename;		// point to the start of the filename
-
-	// We don't want to copy the .w3d extension. Find where
-	// it occurs.
-	const char *end = strrchr(start, '.');
-	if (!end)
-		end = start + strlen(start);	// point to the null character
-
-	// Copy all characters from start to end (excluding 'end')
-	// into the w3d_name buffer. Then capitalize the string.
-	int num_chars = end - start;
-	WWASSERT(num_chars <= W3D_NAME_LEN);
-	strlcpy(w3d_name, start, min(W3D_NAME_LEN, num_chars));
-	strupr(w3d_name);
 }
 
 
