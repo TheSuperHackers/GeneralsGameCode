@@ -2064,8 +2064,8 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 			char newName[256];
 			strcpy(newName, "GLA");
 			strlcat(newName, pParm->m_string.str() + offset, ARRAY_SIZE(newName));
+			DEBUG_LOG(("Changing Script Ref from %s to %s", pParm->m_string.str(), newName));
 			pParm->m_string.set(newName);
-			DEBUG_LOG(("Changing Script Ref from %s to %s", pParm->m_string, newName));
 		}
 	}
 

@@ -459,7 +459,6 @@ AsciiString ConvertName(AsciiString name)
 	strcpy(newName, "GLA");
 	strlcat(newName, name.str() + offset, ARRAY_SIZE(newName));
 	AsciiString swapName;
-	AsciiString swapName;
 	swapName.set(newName);
 	const ThingTemplate *tt = TheThingFactory->findTemplate(swapName);
 	if (tt) {
