@@ -277,14 +277,12 @@ char const * GameFileClass::Set_Name( char const *filename )
 		if( fileType == FILE_TYPE_W3D )
 		{
 			sprintf(m_filePath,USER_W3D_DIR_PATH, TheGlobalData->getPath_UserData().str());
-			//strcpy( m_filePath, USER_W3D_DIR_PATH );
 			strlcat(m_filePath, filename, ARRAY_SIZE(m_filePath));
 
 		}
 		else if( isImageFileType(fileType) )
 		{
 			sprintf(m_filePath,USER_TGA_DIR_PATH, TheGlobalData->getPath_UserData().str());
-			//strcpy( m_filePath, USER_TGA_DIR_PATH );
 			strlcat(m_filePath, filename, ARRAY_SIZE(m_filePath));
 
 		}
@@ -301,7 +299,6 @@ char const * GameFileClass::Set_Name( char const *filename )
 		if( fileType == FILE_TYPE_TGA ) // just TGA, since we don't do dds previews
 		{
 			sprintf(m_filePath,MAP_PREVIEW_DIR_PATH, TheGlobalData->getPath_UserData().str());
-			//strcpy( m_filePath, USER_TGA_DIR_PATH );
 			strlcat(m_filePath, filename, ARRAY_SIZE(m_filePath));
 
 		}

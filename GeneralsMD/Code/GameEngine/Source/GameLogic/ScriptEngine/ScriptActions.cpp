@@ -2627,11 +2627,10 @@ void ScriptActions::doDisplayCinematicText(const AsciiString& displayText, const
 
 	// get the font name
 	AsciiString fontName = AsciiString::TheEmptyString;
-	char buf[256];
-	char *c;
-	strcpy(buf, fontType.str());
+
 	// TheSuperHackers @fix xezon 16/03/2025 Fixes potential buffer overrun via prior c!='\0' test.
-	for( c = buf; *c != '\0'; c++ )
+	const char* c = fontType.str();
+	for (; *c != '\0'; c++)
 	{
 		if( *c != ' ' && *c++ != '-' )
 			fontName.concat(c);

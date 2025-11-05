@@ -219,11 +219,9 @@ void JoinDirectConnectGame()
 	AsciiString ipstring;
 	asciientry.nextToken(&ipstring, "(");
 
-	char ipstr[16];
-	strcpy(ipstr, ipstring.str());
-
 	Int ip1, ip2, ip3, ip4;
-	sscanf(ipstr, "%d.%d.%d.%d", &ip1, &ip2, &ip3, &ip4);
+	Int numFields = sscanf(ipstring.str(), "%d.%d.%d.%d", &ip1, &ip2, &ip3, &ip4);
+	(void)numFields; DEBUG_ASSERTCRASH(numFields == 4, ("JoinDirectConnectGame - invalid IP address format: %s", ipstring.str()));
 
 	DEBUG_LOG(("JoinDirectConnectGame - joining at %d.%d.%d.%d", ip1, ip2, ip3, ip4));
 

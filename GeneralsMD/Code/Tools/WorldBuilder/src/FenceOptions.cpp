@@ -236,7 +236,6 @@ HTREEITEM FenceOptions::findOrAdd(HTREEITEM parent, const char *pLabel)
 void FenceOptions::addObject( MapObject *mapObject, const char *pPath, const char *name,
 															 Int terrainNdx, HTREEITEM parent )
 {
-	char buffer[ _MAX_PATH ];
 	const char *leafName = NULL;
 
 	// sanity
@@ -262,8 +261,7 @@ void FenceOptions::addObject( MapObject *mapObject, const char *pPath, const cha
 		// first sort by side, either create or find the tree item with matching side name
 		AsciiString side = thingTemplate->getDefaultOwningSide();
 		DEBUG_ASSERTCRASH( !side.isEmpty(), ("NULL default side in template") );
-		strcpy( buffer, side.str() );
-		parent = findOrAdd( parent, buffer );
+		parent = findOrAdd( parent, side.str());
 
 		// next tier uses the editor sorting that design can specify in the INI
 		EditorSortingType i = ES_FIRST;

@@ -127,14 +127,11 @@ UDP::~UDP()
 
 Int UDP::Bind(const char *Host,UnsignedShort port)
 {
-  char hostName[100];
   struct hostent *hostStruct;
   struct in_addr *hostNode;
 
   if (isdigit(Host[0]))
     return ( Bind( ntohl(inet_addr(Host)), port) );
-
-  strcpy(hostName, Host);
 
   hostStruct = gethostbyname(Host);
   if (hostStruct == NULL)
