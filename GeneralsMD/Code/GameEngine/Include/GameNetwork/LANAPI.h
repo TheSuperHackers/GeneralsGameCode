@@ -285,37 +285,35 @@ protected:
  * LAN message class
  */
 #pragma pack(push, 1)
-enum LANMessageType				///< What kind of message are we?
-{
-	// Locating everybody
-	MSG_REQUEST_LOCATIONS,	///< Hey, where is everybody?
-	MSG_GAME_ANNOUNCE,			///< Here I am, and here's my game info!
-	MSG_LOBBY_ANNOUNCE,			///< Hey, I'm in the lobby!
-
-	// Joining games
-	MSG_REQUEST_JOIN,				///< Let me in!  Let me in!
-	MSG_JOIN_ACCEPT,				///< Okay, you can join.
-	MSG_JOIN_DENY,					///< Go away!  We don't want any!
-
-	// Leaving games
-	MSG_REQUEST_GAME_LEAVE,	///< I want to leave the game
-	MSG_REQUEST_LOBBY_LEAVE,///< I'm leaving the lobby
-
-	// Game options, chat, etc
-	MSG_SET_ACCEPT,					///< I'm cool with everything as is.
-	MSG_MAP_AVAILABILITY,		///< I do (not) have the map.
-	MSG_CHAT,								///< Just spouting my mouth off.
-	MSG_GAME_START,					///< Hold on; we're starting!
-	MSG_GAME_START_TIMER,		///< The game will start in N seconds
-	MSG_GAME_OPTIONS,				///< Here's some info about the game.
-	MSG_INACTIVE,						///< I've alt-tabbed out.  Unaccept me cause I'm a poo-flinging monkey.
-
-	MSG_REQUEST_GAME_INFO,	///< For direct connect, get the game info from a specific IP Address
-};
-
 struct LANMessage
 {
-	LANMessageType messageType;
+	enum LANMessageType				///< What kind of message are we?
+	{
+		// Locating everybody
+		MSG_REQUEST_LOCATIONS,	///< Hey, where is everybody?
+		MSG_GAME_ANNOUNCE,			///< Here I am, and here's my game info!
+		MSG_LOBBY_ANNOUNCE,			///< Hey, I'm in the lobby!
+
+		// Joining games
+		MSG_REQUEST_JOIN,				///< Let me in!  Let me in!
+		MSG_JOIN_ACCEPT,				///< Okay, you can join.
+		MSG_JOIN_DENY,					///< Go away!  We don't want any!
+
+		// Leaving games
+		MSG_REQUEST_GAME_LEAVE,	///< I want to leave the game
+		MSG_REQUEST_LOBBY_LEAVE,///< I'm leaving the lobby
+
+		// Game options, chat, etc
+		MSG_SET_ACCEPT,					///< I'm cool with everything as is.
+		MSG_MAP_AVAILABILITY,		///< I do (not) have the map.
+		MSG_CHAT,								///< Just spouting my mouth off.
+		MSG_GAME_START,					///< Hold on; we're starting!
+		MSG_GAME_START_TIMER,		///< The game will start in N seconds
+		MSG_GAME_OPTIONS,				///< Here's some info about the game.
+		MSG_INACTIVE,						///< I've alt-tabbed out.  Unaccept me cause I'm a poo-flinging monkey.
+
+		MSG_REQUEST_GAME_INFO,	///< For direct connect, get the game info from a specific IP Address
+	} messageType;
 
 	WideChar name[g_lanPlayerNameLength+1]; ///< My name, for convenience
 	char userName[g_lanLoginNameLength+1];	///< login name, for convenience
