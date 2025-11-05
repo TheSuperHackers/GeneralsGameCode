@@ -12,6 +12,7 @@ import argparse
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -129,25 +130,27 @@ def create_sanitized_compile_commands(compile_commands: List[dict],
                                      original_path: Path) -> Path:
     """Create a temporary sanitized compile_commands.json file.
     
-    Returns the path to the temporary file that should be used with clang-tidy.
+    Returns the path to the directory containing the sanitized compile_commands.json.
     """
-    # Create temp file in the same directory as the original for consistency
-    temp_dir = original_path.parent
-    temp_fd, temp_path = tempfile.mkstemp(
-        suffix='_sanitized.json',
-        prefix='compile_commands_',
-        dir=temp_dir,
-        text=True
-    )
+    # Create a temporary directory for the sanitized compile commands
+    # We need the file to be named exactly "compile_commands.json" for clang-tidy -p
+    temp_dir = Path(tempfile.mkdtemp(
+        suffix='_clang_tidy',
+        prefix='sanitized_',
+        dir=original_path.parent
+    ))
+    
+    temp_file = temp_dir / 'compile_commands.json'
     
     try:
-        with os.fdopen(temp_fd, 'w') as f:
+        with open(temp_file, 'w') as f:
             json.dump(compile_commands, f, indent=2)
-        return Path(temp_path)
+        return temp_dir
     except Exception as e:
         # Clean up on error
         try:
-            os.unlink(temp_path)
+            import shutil
+            shutil.rmtree(temp_dir)
         except:
             pass
         raise RuntimeError(f"Failed to create sanitized compile commands: {e}")
@@ -186,7 +189,7 @@ def run_clang_tidy(source_files: List[str],
         for batch_num, batch in enumerate(batches, 1):
             cmd = [
                 'clang-tidy',
-                f'-p={temp_compile_commands.parent}',
+                f'-p={temp_compile_commands}',
             ]
             
             if fix:
@@ -214,12 +217,12 @@ def run_clang_tidy(source_files: List[str],
         return overall_returncode
     
     finally:
-        # Clean up the temporary file
+        # Clean up the temporary directory
         try:
-            temp_compile_commands.unlink()
-            print(f"Cleaned up temporary file: {temp_compile_commands.name}")
+            shutil.rmtree(temp_compile_commands)
+            print(f"Cleaned up temporary directory: {temp_compile_commands.name}")
         except Exception as e:
-            print(f"Warning: Could not remove temporary file {temp_compile_commands}: {e}")
+            print(f"Warning: Could not remove temporary directory {temp_compile_commands}: {e}")
 
 
 def main():
