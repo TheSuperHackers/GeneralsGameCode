@@ -46,8 +46,11 @@ public:
 	// Returns whether dbghelp.dll is loaded from the system directory
 	static bool isLoadedFromSystem();
 
+	// Returns whether dbghelp.dll was attempted to be loaded but failed
+	static bool isFailed();
+
+	// Every call to load needs a paired call to unload, no matter if the load was successful.
 	static bool load();
-	static bool reload();
 	static void unload();
 
 	static BOOL WINAPI symInitialize(
@@ -105,6 +108,8 @@ public:
 		PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
 
 private:
+
+	static void freeResources();
 
 	typedef BOOL (WINAPI *SymInitialize_t) (
 		HANDLE hProcess,
@@ -175,6 +180,7 @@ private:
 
 	Processes m_initializedProcesses;
 	HMODULE m_dllModule;
+	int m_referenceCount;
 	bool m_failed;
 	bool m_loadedFromSystem;
 };

@@ -33,6 +33,7 @@ DbgHelpLoader::DbgHelpLoader()
 	, m_symFunctionTableAccess(NULL)
 	, m_stackWalk(NULL)
 	, m_dllModule(HMODULE(0))
+	, m_referenceCount(0)
 	, m_failed(false)
 	, m_loadedFromSystem(false)
 {
@@ -49,7 +50,12 @@ bool DbgHelpLoader::isLoaded()
 
 bool DbgHelpLoader::isLoadedFromSystem()
 {
-	return Inst != NULL && Inst->m_loadedFromSystem;
+	return isLoaded() && Inst->m_loadedFromSystem;
+}
+
+bool DbgHelpLoader::isFailed()
+{
+	return Inst != NULL && Inst->m_failed;
 }
 
 bool DbgHelpLoader::load()
@@ -61,9 +67,15 @@ bool DbgHelpLoader::load()
 		Inst = new (p) DbgHelpLoader();
 	}
 
+	++Inst->m_referenceCount;
+
 	// Optimization: return early if it failed before.
 	if (Inst->m_failed)
 		return false;
+
+	// Return early if someone else already loaded it.
+	if (Inst->m_referenceCount > 1)
+		return true;
 
 	// Try load dbghelp.dll from the system directory first.
 	char dllFilename[MAX_PATH];
@@ -99,7 +111,7 @@ bool DbgHelpLoader::load()
 
 	if (Inst->m_symInitialize == NULL || Inst->m_symCleanup == NULL)
 	{
-		unload();
+		freeResources();
 		Inst->m_failed = true;
 		return false;
 	}
@@ -107,21 +119,28 @@ bool DbgHelpLoader::load()
 	return true;
 }
 
-bool DbgHelpLoader::reload()
-{
-	unload();
-	return load();
-}
-
 void DbgHelpLoader::unload()
 {
 	if (Inst == NULL)
 		return;
 
+	if (--Inst->m_referenceCount != 0)
+		return;
+
+	freeResources();
+
+	Inst->~DbgHelpLoader();
+	GlobalFree(Inst);
+	Inst = NULL;
+}
+
+void DbgHelpLoader::freeResources()
+{
 	while (!Inst->m_initializedProcesses.empty())
 	{
 		symCleanup(*Inst->m_initializedProcesses.begin());
 	}
+	Inst->m_initializedProcesses.clear();
 
 	if (Inst->m_dllModule != HMODULE(0))
 	{
@@ -129,9 +148,18 @@ void DbgHelpLoader::unload()
 		Inst->m_dllModule = HMODULE(0);
 	}
 
-	Inst->~DbgHelpLoader();
-	GlobalFree(Inst);
-	Inst = NULL;
+	Inst->m_symInitialize = NULL;
+	Inst->m_symCleanup = NULL;
+	Inst->m_symLoadModule = NULL;
+	Inst->m_symUnloadModule = NULL;
+	Inst->m_symGetModuleBase = NULL;
+	Inst->m_symGetSymFromAddr = NULL;
+	Inst->m_symGetLineFromAddr = NULL;
+	Inst->m_symSetOptions = NULL;
+	Inst->m_symFunctionTableAccess = NULL;
+	Inst->m_stackWalk = NULL;
+
+	Inst->m_loadedFromSystem = false;
 }
 
 BOOL DbgHelpLoader::symInitialize(
