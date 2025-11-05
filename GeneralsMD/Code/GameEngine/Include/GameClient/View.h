@@ -231,7 +231,7 @@ public:
 	virtual void shake( const Coord3D *epicenter, CameraShakeType shakeType ) { };
 
 	virtual Real getFXPitch( void ) const { return 1.0f; }					///< returns the FX pitch angle
-	virtual void forceCameraConstraintRecalc(void) {}
+	virtual void forceCameraAreaConstraintRecalc(void) {}
 	virtual void setGuardBandBias( const Coord2D *gb ) = 0;
 
 protected:

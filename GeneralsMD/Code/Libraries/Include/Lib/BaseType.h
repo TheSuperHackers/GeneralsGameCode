@@ -228,6 +228,7 @@ struct Region2D
 
 	Real width( void ) const { return hi.x - lo.x; }
 	Real height( void ) const { return hi.y - lo.y; }
+	Bool isInRegion( Real x, Real y ) const { return (lo.x < x) && (x < hi.x) && (lo.y < y) && (y < hi.y); }
 };
 
 struct IRegion2D
@@ -236,6 +237,7 @@ struct IRegion2D
 
 	Int width( void ) const { return hi.x - lo.x; }
 	Int height( void ) const { return hi.y - lo.y; }
+	Bool isInRegion( Int x, Int y ) const { return (lo.x < x) && (x < hi.x) && (lo.y < y) && (y < hi.y); }
 };
 
 
