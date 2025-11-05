@@ -90,9 +90,6 @@ WarningsAsErrors: false
 # Header filter to include project headers
 HeaderFilterRegex: '(Core|Generals|GeneralsMD|Dependencies)/.*\.(h|hpp)$'
 
-# Analysis options
-AnalyzeTemporaryDtors: false
-
 # Check options for specific rules
 CheckOptions:
   # Naming conventions - adapted for the existing codebase style
