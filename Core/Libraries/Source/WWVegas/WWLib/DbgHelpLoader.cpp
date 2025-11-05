@@ -140,7 +140,6 @@ void DbgHelpLoader::freeResources()
 	{
 		symCleanup(*Inst->m_initializedProcesses.begin());
 	}
-	Inst->m_initializedProcesses.clear();
 
 	if (Inst->m_dllModule != HMODULE(0))
 	{
