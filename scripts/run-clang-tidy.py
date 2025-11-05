@@ -14,6 +14,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from typing import List, Optional, Set
 
@@ -124,7 +125,36 @@ def filter_source_files(compile_commands: List[dict],
     return sorted(source_files)
 
 
+def create_sanitized_compile_commands(compile_commands: List[dict], 
+                                     original_path: Path) -> Path:
+    """Create a temporary sanitized compile_commands.json file.
+    
+    Returns the path to the temporary file that should be used with clang-tidy.
+    """
+    # Create temp file in the same directory as the original for consistency
+    temp_dir = original_path.parent
+    temp_fd, temp_path = tempfile.mkstemp(
+        suffix='_sanitized.json',
+        prefix='compile_commands_',
+        dir=temp_dir,
+        text=True
+    )
+    
+    try:
+        with os.fdopen(temp_fd, 'w') as f:
+            json.dump(compile_commands, f, indent=2)
+        return Path(temp_path)
+    except Exception as e:
+        # Clean up on error
+        try:
+            os.unlink(temp_path)
+        except:
+            pass
+        raise RuntimeError(f"Failed to create sanitized compile commands: {e}")
+
+
 def run_clang_tidy(source_files: List[str], 
+                  compile_commands: List[dict],
                   compile_commands_path: Path,
                   extra_args: List[str],
                   fix: bool = False,
@@ -134,46 +164,62 @@ def run_clang_tidy(source_files: List[str],
         print("No source files to analyze.")
         return 0
     
-    # Process files in batches to avoid command line length limits on Windows
-    # Windows cmd.exe has a limit of ~8191 characters
-    BATCH_SIZE = 50  # Conservative batch size for Windows compatibility
-    total_files = len(source_files)
-    batches = [source_files[i:i + BATCH_SIZE] for i in range(0, total_files, BATCH_SIZE)]
+    # Create a temporary sanitized compile_commands.json
+    print("Creating sanitized compile commands...")
+    temp_compile_commands = create_sanitized_compile_commands(
+        compile_commands, 
+        compile_commands_path
+    )
     
-    print(f"Running clang-tidy on {total_files} files in {len(batches)} batch(es)...")
-    if jobs > 1:
-        print(f"Note: Parallel execution with {jobs} jobs not implemented yet.")
+    try:
+        # Process files in batches to avoid command line length limits on Windows
+        # Windows cmd.exe has a limit of ~8191 characters
+        BATCH_SIZE = 50  # Conservative batch size for Windows compatibility
+        total_files = len(source_files)
+        batches = [source_files[i:i + BATCH_SIZE] for i in range(0, total_files, BATCH_SIZE)]
+        
+        print(f"Running clang-tidy on {total_files} files in {len(batches)} batch(es)...")
+        if jobs > 1:
+            print(f"Note: Parallel execution with {jobs} jobs not implemented yet.")
+        
+        overall_returncode = 0
+        for batch_num, batch in enumerate(batches, 1):
+            cmd = [
+                'clang-tidy',
+                f'-p={temp_compile_commands.parent}',
+            ]
+            
+            if fix:
+                cmd.append('--fix')
+            
+            if extra_args:
+                cmd.extend(extra_args)
+            
+            # Add source files for this batch
+            cmd.extend(batch)
+            
+            print(f"\nBatch {batch_num}/{len(batches)}: Analyzing {len(batch)} file(s)...")
+            
+            try:
+                result = subprocess.run(cmd, cwd=find_project_root())
+                if result.returncode != 0:
+                    overall_returncode = result.returncode
+            except FileNotFoundError:
+                print("Error: clang-tidy not found. Please install clang-tidy.")
+                return 1
+            except KeyboardInterrupt:
+                print("\nInterrupted by user.")
+                return 130
+        
+        return overall_returncode
     
-    overall_returncode = 0
-    for batch_num, batch in enumerate(batches, 1):
-        cmd = [
-            'clang-tidy',
-            f'-p={compile_commands_path.parent}',
-        ]
-        
-        if fix:
-            cmd.append('--fix')
-        
-        if extra_args:
-            cmd.extend(extra_args)
-        
-        # Add source files for this batch
-        cmd.extend(batch)
-        
-        print(f"\nBatch {batch_num}/{len(batches)}: Analyzing {len(batch)} file(s)...")
-        
+    finally:
+        # Clean up the temporary file
         try:
-            result = subprocess.run(cmd, cwd=find_project_root())
-            if result.returncode != 0:
-                overall_returncode = result.returncode
-        except FileNotFoundError:
-            print("Error: clang-tidy not found. Please install clang-tidy.")
-            return 1
-        except KeyboardInterrupt:
-            print("\nInterrupted by user.")
-            return 130
-    
-    return overall_returncode
+            temp_compile_commands.unlink()
+            print(f"Cleaned up temporary file: {temp_compile_commands.name}")
+        except Exception as e:
+            print(f"Warning: Could not remove temporary file {temp_compile_commands}: {e}")
 
 
 def main():
@@ -276,6 +322,7 @@ Examples:
         # Run clang-tidy
         return run_clang_tidy(
             source_files,
+            compile_commands,
             compile_commands_path,
             args.clang_tidy_args,
             args.fix,
