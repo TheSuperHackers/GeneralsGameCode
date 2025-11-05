@@ -533,8 +533,9 @@ static void Get_W3D_Name (const char *filename, char *w3d_name)
 	// Copy all characters from start to end (excluding 'end')
 	// into the w3d_name buffer. Then capitalize the string.
 	size_t num_chars = end - start;
-	const size_t nameLen = strlcpy(w3d_name, start, W3D_NAME_LEN);
-	(void)nameLen; WWASSERT(nameLen < num_chars);
+	const size_t strLen = end - start;
+	WWASSERT(strLen < W3D_NAME_LEN);
+	strlcpy(w3d_name, start, W3D_NAME_LEN);
 	strupr(w3d_name);
 }
 

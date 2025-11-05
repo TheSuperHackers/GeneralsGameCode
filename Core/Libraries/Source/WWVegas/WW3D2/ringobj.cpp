@@ -503,7 +503,7 @@ void RingRenderObjClass::Set_Name(const char * name)
 {
 	WWASSERT(name != NULL);
 	const size_t nameLen = strlcpy(Name, name, ARRAY_SIZE(Name));
-	(void)nameLen; WWASSERT(nameLen < 2 * W3D_NAME_LEN);
+	(void)nameLen; WWASSERT(nameLen < ARRAY_SIZE(Name));
 }
 
 /***********************************************************************************************
