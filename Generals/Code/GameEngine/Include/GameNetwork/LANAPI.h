@@ -287,7 +287,7 @@ protected:
 #pragma pack(push, 1)
 struct LANMessage
 {
-	enum LANMessageType				///< What kind of message are we?
+	enum Type				          ///< What kind of message are we?
 	{
 		// Locating everybody
 		MSG_REQUEST_LOCATIONS,	///< Hey, where is everybody?
