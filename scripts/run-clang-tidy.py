@@ -19,7 +19,7 @@ from typing import List, Optional, Set
 
 def find_project_root() -> Path:
     """Find the project root directory by looking for CMakeLists.txt."""
-    current = Path(__file__).parent
+    current = Path(__file__).parent.resolve()
     while current != current.parent:
         if (current / "CMakeLists.txt").exists():
             return current
