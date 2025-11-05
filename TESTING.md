@@ -110,11 +110,20 @@ The clang-tidy configuration is designed to work with the MinGW-w64 cross-compil
 
 ### Troubleshooting
 
-**Issue**: `compile_commands.json not found`
+**Issue**: `compile_commands.json not found`  
 **Solution**: Run cmake configuration first: `cmake --preset <preset-name>`
 
-**Issue**: clang-tidy reports errors in system headers
+**Issue**: PCH file not found errors (e.g., `cmake_pch.cxx.pch' not found`)  
+**Solution**: The script now automatically strips precompiled header flags that are incompatible with clang-tidy. If you still encounter issues, ensure you're using the Python helper script which handles this automatically.
+
+**Issue**: Command line too long on Windows  
+**Solution**: The script now processes files in batches of 50 to avoid Windows command line length limits. This happens automatically.
+
+**Issue**: clang-tidy reports errors in system headers  
 **Solution**: The configuration should filter these out, but you can also use `--system-headers=false`
 
-**Issue**: Too many warnings for legacy code
+**Issue**: Too many warnings for legacy code  
 **Solution**: Use the `--include` flag to focus on specific directories or files you're working on
+
+**Issue**: Script fails with relative paths  
+**Solution**: This has been fixed - the script now properly resolves relative paths. Make sure you're using the latest version.
