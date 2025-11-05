@@ -558,9 +558,9 @@ void BuddyThreadClass::connectCallback( GPConnection *con, GPConnectResponseArg 
 				DEBUG_LOG(("User Error: Create Account instead of Login.  Fixing them..."));
 				BuddyRequest req;
 				req.buddyRequestType = BuddyRequest::BUDDYREQUEST_LOGIN;
-				strcpy(req.arg.login.nick, m_nick.c_str());
-				strcpy(req.arg.login.email, m_email.c_str());
-				strcpy(req.arg.login.password, m_pass.c_str());
+				strlcpy(req.arg.login.nick, m_nick.c_str(), ARRAY_SIZE(req.arg.login.nick));
+				strlcpy(req.arg.login.email, m_email.c_str(), ARRAY_SIZE(req.arg.login.email));
+				strlcpy(req.arg.login.password, m_pass.c_str(), ARRAY_SIZE(req.arg.login.password));
 				req.arg.login.hasFirewall = true;
 				TheGameSpyBuddyMessageQueue->addRequest( req );
 				return;

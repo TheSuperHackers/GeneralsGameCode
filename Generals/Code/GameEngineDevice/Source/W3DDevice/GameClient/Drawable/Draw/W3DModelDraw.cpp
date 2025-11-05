@@ -1824,7 +1824,7 @@ void W3DModelDraw::allocateShadows(void)
 	if (m_shadow == NULL && m_renderObject && TheW3DShadowManager && tmplate->getShadowType() != SHADOW_NONE)
 	{
 		Shadow::ShadowTypeInfo shadowInfo;
-		strcpy(shadowInfo.m_ShadowName, tmplate->getShadowTextureName().str());
+		strlcpy(shadowInfo.m_ShadowName, tmplate->getShadowTextureName().str(), ARRAY_SIZE(shadowInfo.m_ShadowName));
 		DEBUG_ASSERTCRASH(shadowInfo.m_ShadowName[0] != '\0', ("this should be validated in ThingTemplate now"));
 		shadowInfo.allowUpdates			= FALSE;		//shadow image will never update
 		shadowInfo.allowWorldAlign	= TRUE;	//shadow image will wrap around world objects
@@ -2698,7 +2698,7 @@ void W3DModelDraw::setTerrainDecal(TerrainDecalType type)
 
 	//decalInfo.m_type = SHADOW_ADDITIVE_DECAL;//temporary kluge to test graphics
 
-	strcpy(decalInfo.m_ShadowName,TerrainDecalTextureName[type]);
+	strlcpy(decalInfo.m_ShadowName, TerrainDecalTextureName[type], ARRAY_SIZE(decalInfo.m_ShadowName));
 	decalInfo.m_sizeX = tmplate->getShadowSizeX();
 	decalInfo.m_sizeY = tmplate->getShadowSizeY();
 	decalInfo.m_offsetX = tmplate->getShadowOffsetX();
@@ -3014,7 +3014,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 		if (m_renderObject && TheW3DShadowManager && tmplate->getShadowType() != SHADOW_NONE)
 		{
 			Shadow::ShadowTypeInfo shadowInfo;
-			strcpy(shadowInfo.m_ShadowName, tmplate->getShadowTextureName().str());
+			strlcpy(shadowInfo.m_ShadowName, tmplate->getShadowTextureName().str(), ARRAY_SIZE(shadowInfo.m_ShadowName));
 			DEBUG_ASSERTCRASH(shadowInfo.m_ShadowName[0] != '\0', ("this should be validated in ThingTemplate now"));
 			shadowInfo.allowUpdates			= FALSE;		//shadow image will never update
 			shadowInfo.allowWorldAlign	= TRUE;	//shadow image will wrap around world objects
@@ -3400,7 +3400,7 @@ Int W3DModelDraw::getPristineBonePositionsForConditionState(
 	for (; i <= endIndex; ++i)
 	{
 		if (i == 0)
-			strcpy(buffer, boneNamePrefix);
+			strlcpy(buffer, boneNamePrefix, ARRAY_SIZE(buffer));
 		else
 			sprintf(buffer, "%s%02d", boneNamePrefix, i);
 
@@ -3515,7 +3515,7 @@ Int W3DModelDraw::getCurrentBonePositions(
 	for (; i <= endIndex; ++i)
 	{
 		if (i == 0)
-			strcpy(buffer, boneNamePrefix);
+			strlcpy(buffer, boneNamePrefix, ARRAY_SIZE(buffer));
 		else
 			sprintf(buffer, "%s%02d", boneNamePrefix, i);
 
