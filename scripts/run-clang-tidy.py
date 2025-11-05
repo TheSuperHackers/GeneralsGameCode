@@ -133,37 +133,46 @@ def run_clang_tidy(source_files: List[str],
         print("No source files to analyze.")
         return 0
     
-    cmd = [
-        'clang-tidy',
-        f'-p={compile_commands_path.parent}',
-    ]
+    # Process files in batches to avoid command line length limits on Windows
+    # Windows cmd.exe has a limit of ~8191 characters
+    BATCH_SIZE = 50  # Conservative batch size for Windows compatibility
+    total_files = len(source_files)
+    batches = [source_files[i:i + BATCH_SIZE] for i in range(0, total_files, BATCH_SIZE)]
     
-    if fix:
-        cmd.append('--fix')
+    print(f"Running clang-tidy on {total_files} files in {len(batches)} batch(es)...")
+    if jobs > 1:
+        print(f"Note: Parallel execution with {jobs} jobs not implemented yet.")
     
-    if extra_args:
-        cmd.extend(extra_args)
-    
-    # Add source files
-    cmd.extend(source_files)
-    
-    print(f"Running clang-tidy on {len(source_files)} files...")
-    print(f"Command: {' '.join(cmd[:5])} ... {len(source_files)} files")
-    
-    try:
-        if jobs > 1:
-            # For parallel execution, we'd need to use run-clang-tidy.py from LLVM
-            # For now, run sequentially
-            print(f"Note: Parallel execution with {jobs} jobs not implemented yet.")
+    overall_returncode = 0
+    for batch_num, batch in enumerate(batches, 1):
+        cmd = [
+            'clang-tidy',
+            f'-p={compile_commands_path.parent}',
+        ]
         
-        result = subprocess.run(cmd, cwd=find_project_root())
-        return result.returncode
-    except FileNotFoundError:
-        print("Error: clang-tidy not found. Please install clang-tidy.")
-        return 1
-    except KeyboardInterrupt:
-        print("\nInterrupted by user.")
-        return 130
+        if fix:
+            cmd.append('--fix')
+        
+        if extra_args:
+            cmd.extend(extra_args)
+        
+        # Add source files for this batch
+        cmd.extend(batch)
+        
+        print(f"\nBatch {batch_num}/{len(batches)}: Analyzing {len(batch)} file(s)...")
+        
+        try:
+            result = subprocess.run(cmd, cwd=find_project_root())
+            if result.returncode != 0:
+                overall_returncode = result.returncode
+        except FileNotFoundError:
+            print("Error: clang-tidy not found. Please install clang-tidy.")
+            return 1
+        except KeyboardInterrupt:
+            print("\nInterrupted by user.")
+            return 130
+    
+    return overall_returncode
 
 
 def main():
