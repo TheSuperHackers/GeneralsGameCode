@@ -388,9 +388,9 @@ CW3DViewDoc::InitScene (void)
 		m_pC2DScene = new SimpleSceneClass;
 		ASSERT (m_pC2DScene);
 
-		// Instantiate a new 2D cursor scene
-		m_pCursorScene = RefCountPtr<SceneClass>::Create_NoAddRef(new SimpleSceneClass);
-		ASSERT (m_pCursorScene);
+	// Instantiate a new 2D cursor scene
+	m_pCursorScene = RefCountPtr<SceneClass>::Create_NoAddRef(new SimpleSceneClass);
+	ASSERT (m_pCursorScene.Peek());
 
 		Create_Cursor ();
 		m_pCursorScene->Add_Render_Object (m_pCursor.Peek());
@@ -862,7 +862,7 @@ CW3DViewDoc::PlayAnimation
         // Get an instance of the animation object
 		  SAFE_DELETE (m_pCAnimCombo);
         m_pCAnimation = RefCountPtr<HAnimClass>::Create_NoAddRef(WW3DAssetManager::Get_Instance()->Get_HAnim (pszAnimationName));
-        ASSERT (m_pCAnimation);
+        ASSERT (m_pCAnimation.Peek());
 
         // Reset the frame counter
         m_CurrentFrame = 0;
@@ -954,7 +954,7 @@ CW3DViewDoc::PlayAnimation
 		  SAFE_DELETE (m_pCAnimCombo);
 		  m_pCAnimCombo = pCAnimCombo;
 		  m_pCAnimation = RefCountPtr<HAnimClass>::Create_NoAddRef(m_pCAnimCombo->Get_Motion(0));	// ref added by get_motion
-        ASSERT (m_pCAnimation);
+        ASSERT (m_pCAnimation.Peek());
 
 		  // It will be assumed that every animation in the m_pCAnimCombo
 		  // has the same number of frames and has the same framerate as
