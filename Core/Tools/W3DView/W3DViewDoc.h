@@ -113,7 +113,7 @@ public:
 	CameraClass *			Get2DCamera (void) const				{ return m_pC2DCamera; }
 	CameraClass *			GetBackObjectCamera (void) const		{ return m_pCBackObjectCamera; }
 	SceneClass *			Get2DScene (void) const					{ return m_pC2DScene; }
-	SceneClass *			GetCursorScene (void) const			{ return m_pCursorScene; }
+	SceneClass *			GetCursorScene (void) const			{ return m_pCursorScene.Peek(); }
 	ViewerSceneClass *	GetScene (void) const					{ return m_pCScene; }
 	SceneClass *			GetBackObjectScene (void) const		{ return m_pCBackObjectScene; }
 	LightClass *			GetSceneLight (void) const				{ return m_pCSceneLight; }
