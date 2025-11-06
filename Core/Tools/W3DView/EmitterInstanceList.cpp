@@ -34,6 +34,7 @@
 #include "StdAfx.h"
 #include "EmitterInstanceList.h"
 #include "refcount.h"
+#include "Utils.h"
 
 /////////////////////////////////////////////////////////////////////
 //

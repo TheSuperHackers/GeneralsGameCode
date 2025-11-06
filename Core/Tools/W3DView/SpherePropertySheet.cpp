@@ -245,9 +245,9 @@ SpherePropertySheetClass::Initialize (void)
 	//
 	// Pass the object along to the pages
 	//
-	m_GeneralPage.Set_Sphere (m_RenderObj);
-	m_ColorPage.Set_Sphere (m_RenderObj);
-	m_ScalePage.Set_Sphere (m_RenderObj);
+	m_GeneralPage.Set_Sphere (m_RenderObj.Peek());
+	m_ColorPage.Set_Sphere (m_RenderObj.Peek());
+	m_ScalePage.Set_Sphere (m_RenderObj.Peek());
 
 	//
 	// Add the pages to the sheet
@@ -274,13 +274,13 @@ SpherePropertySheetClass::Initialize (void)
 void
 SpherePropertySheetClass::Create_New_Object (void)
 {
-	m_RenderObj = new SphereRenderObjClass;
+	m_RenderObj = RefCountPtr<SphereRenderObjClass>::Create_NoAddRef(new SphereRenderObjClass);
 	m_RenderObj->Set_Name ("Sphere");
 
 	//
 	//	Display the new object
 	//
-	::GetCurrentDocument ()->DisplayObject (m_RenderObj);
+	::GetCurrentDocument ()->DisplayObject (m_RenderObj.Peek());
 	return ;
 }
 

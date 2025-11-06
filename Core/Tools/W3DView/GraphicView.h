@@ -201,7 +201,7 @@ protected:
 			//
 			//	Misc
 			//
-			RenderObjClass *	Get_Light_Mesh (void) const					{ return m_pLightMesh; }
+			RenderObjClass *	Get_Light_Mesh (void) const					{ return m_pLightMesh.Peek(); }
 			Vector3 &			Get_Object_Center (void)						{ return m_ObjectCenter; }
 
 			//

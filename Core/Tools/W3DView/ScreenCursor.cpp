@@ -98,8 +98,6 @@ ScreenCursorClass::~ScreenCursorClass (void)
 void
 ScreenCursorClass::Initialize (void)
 {
-	m_pVertMaterial = NULL;
-
 	// Create default vertex material
 	m_pVertMaterial = RefCountPtr<VertexMaterialClass>::Create_NoAddRef(NEW_REF( VertexMaterialClass, ()));
 	m_pVertMaterial->Set_Diffuse (1.0F, 1.0F, 1.0F);
@@ -297,9 +295,9 @@ ScreenCursorClass::Render (RenderInfoClass &rinfo)
 	/*
 	** Apply the shader and material
 	*/
-	DX8Wrapper::Set_Material(m_pVertMaterial);
+	DX8Wrapper::Set_Material(m_pVertMaterial.Peek());
 	DX8Wrapper::Set_Shader(ShaderClass::_PresetATestBlend2DShader);
-	DX8Wrapper::Set_Texture(0,m_pTexture);
+	DX8Wrapper::Set_Texture(0,m_pTexture.Peek());
 
 	DX8Wrapper::Set_Vertex_Buffer(vbaccess);
 	DX8Wrapper::Set_Index_Buffer(ibaccess,0);
