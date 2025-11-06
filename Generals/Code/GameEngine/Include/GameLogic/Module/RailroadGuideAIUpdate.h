@@ -211,7 +211,7 @@ public:
 	};
 
 	typedef std::vector<AsciiString> TemplateNameVector;
-	typedef TemplateNameVector::const_iterator TemplateNameIterator;;
+	typedef TemplateNameVector::const_iterator TemplateNameIterator;
 
 
 

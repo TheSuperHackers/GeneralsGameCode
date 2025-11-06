@@ -289,7 +289,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 					// get the directory listbox
 					folderList = GetDlgItem( hWndDialog, LIST_FOLDERS );
 					if( folderList == NULL )
-						break;;
+						break;
 
 					// get the selected item in the folder listbox
 					Int selCount;

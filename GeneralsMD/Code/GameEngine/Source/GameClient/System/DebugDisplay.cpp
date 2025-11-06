@@ -214,7 +214,7 @@ void	DebugDisplay::printf( const Char *format, ...)
 	DEBUG_ASSERTCRASH( result < sizeof(text), ("text overflow in DebugDisplay::printf() - string too long"));
 
 	// find every line and print it
-	Char *ptr = text;;
+	Char *ptr = text;
 	Char *lineStart = ptr;
 	Int lineLen = 0;
 	Char ch;

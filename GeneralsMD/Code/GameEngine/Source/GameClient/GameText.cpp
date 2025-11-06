@@ -485,7 +485,7 @@ void GameTextManager::removeLeadingAndTrailing ( Char *buffer )
 
 	while ( (*ptr++ = *first++) != 0 );
 
-	ptr -= 2;;
+	ptr -= 2;
 
 	while ( (ptr > buffer) && (ch = *ptr) != 0 && iswspace ( ch ) )
 	{

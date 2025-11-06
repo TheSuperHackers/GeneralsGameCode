@@ -365,7 +365,7 @@ void BridgeBehavior::resolveFX( void )
 				DEBUG_CRASH(( "OCL list '%s' not found", name.str() ));
 
 			name = bridgeTemplate->getRepairedToFXString( (BodyDamageType)bodyState, i );
-			m_repairToFX[ bodyState ][ i ] = TheFXListStore->findFXList( name.str() );;
+			m_repairToFX[ bodyState ][ i ] = TheFXListStore->findFXList( name.str() );
 			if( name.isEmpty() == FALSE && m_repairToFX[ bodyState ][ i ] == NULL )
 				DEBUG_CRASH(( "FX list '%s' not found", name.str() ));
 

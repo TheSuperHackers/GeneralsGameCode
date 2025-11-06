@@ -395,7 +395,7 @@ void W3DRadar::drawSingleBeaconEvent( Int pixelX, Int pixelY, Int width, Int hei
 	frameDiff = currentFrame - event->createFrame;
 
 	// compute the size of the event marker, it is largest when it starts and smallest at the end
-	eventSize = REAL_TO_INT( maxEventSize * ( 1.0f - frameDiff / TIME_FROM_FULL_SIZE_TO_SMALL_SIZE) );;
+	eventSize = REAL_TO_INT( maxEventSize * ( 1.0f - frameDiff / TIME_FROM_FULL_SIZE_TO_SMALL_SIZE) );
 
 	// we never let the event size get too small
 	if( eventSize < minEventSize )
@@ -494,7 +494,7 @@ void W3DRadar::drawSingleGenericEvent( Int pixelX, Int pixelY, Int width, Int he
 	frameDiff = currentFrame - event->createFrame;
 
 	// compute the size of the event marker, it is largest when it starts and smallest at the end
-	eventSize = REAL_TO_INT( maxEventSize * ( 1.0f - frameDiff / TIME_FROM_FULL_SIZE_TO_SMALL_SIZE) );;
+	eventSize = REAL_TO_INT( maxEventSize * ( 1.0f - frameDiff / TIME_FROM_FULL_SIZE_TO_SMALL_SIZE) );
 
 	// we never let the event size get too small
 	if( eventSize < minEventSize )

@@ -383,7 +383,7 @@ void AIPlayer::queueSupplyTruck( void )
 			m_player->setCanBuildUnits(true);
 			const ThingTemplate *tTemplate = TheThingFactory->firstTemplate();
 			while (tTemplate) {
-				Bool isSupplyTruck = tTemplate->isKindOf(KINDOF_HARVESTER);;
+				Bool isSupplyTruck = tTemplate->isKindOf(KINDOF_HARVESTER);
 				if (isSupplyTruck) {
 					Object *factory = findFactory(tTemplate, false);
 					if (factory) {
@@ -3617,7 +3617,7 @@ void TeamInQueue::xfer( Xfer *xfer )
 
 	// version
 	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;;
+	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
 	// xfer work order count
