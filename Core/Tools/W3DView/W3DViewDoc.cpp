@@ -170,11 +170,9 @@ CW3DViewDoc::CleanupResources (void)
 
 	if (m_pCursor != nullptr) {
 		m_pCursor->Remove ();
-		m_pCursor = NULL;
 	}
-	if (m_pCursorScene) {
-		m_pCursorScene = NULL;
-	}
+	m_pCursor.Clear();
+	m_pCursorScene.Clear();
 
     if (m_pCScene)
     {
@@ -240,14 +238,10 @@ CW3DViewDoc::CleanupResources (void)
         m_pCSceneLight = nullptr;
     }
 
-    // Was there a valid display object?
-    if (m_pCRenderObj)
-    {
-        // Free the currently displayed object
-			SAFE_DELETE (m_pCAnimCombo);
-			m_pCAnimation = NULL;
-			m_pCRenderObj = NULL;
-    }
+    // Free the currently displayed object
+	SAFE_DELETE (m_pCAnimCombo);
+	m_pCAnimation.Clear();
+	m_pCRenderObj.Clear();
 
     return ;
 }
@@ -282,13 +276,10 @@ CW3DViewDoc::OnNewDocument (void)
 		 m_pCScene->Set_Fog_Color(m_backgroundColor);
 	 }
 
-    if (m_pCRenderObj)
-    {
-			// Free the currently displayed object
-			SAFE_DELETE (m_pCAnimCombo);
-			m_pCAnimation = NULL;
-			m_pCRenderObj = NULL;
-    }
+	// Free the currently displayed object
+	SAFE_DELETE (m_pCAnimCombo);
+	m_pCAnimation.Clear();
+	m_pCRenderObj.Clear();
 
     CDataTreeView *pCDataTreeView = GetDataTreeView ();
     if (pCDataTreeView)
@@ -610,15 +601,15 @@ CW3DViewDoc::Display_Emitter
 	// Data OK?
 	if (m_pCScene != nullptr) {
 
-	// Lose the animation
-	SAFE_DELETE (m_pCAnimCombo);
+		// Lose the animation
+		SAFE_DELETE (m_pCAnimCombo);
+		m_pCAnimation.Clear();
 
 		if (m_pCRenderObj != nullptr) {
-
 			// Remove this object from the scene
 			Remove_Object_From_Scene (m_pCRenderObj.Peek());
-			m_pCRenderObj = nullptr;
 		}
+		m_pCRenderObj.Clear();
 		m_pCScene->Clear_Lineup();
 
 	// Do we have a new emitter to display?
@@ -672,12 +663,11 @@ CW3DViewDoc::DisplayObject
 
         // Do we have an old object to remove from the scene?
 		  if (add_ghost == false) {
-			  if (m_pCRenderObj)
-			  {
+			  if (m_pCRenderObj) {
 					// Remove this object from the scene
 					Remove_Object_From_Scene (m_pCRenderObj.Peek());
-					m_pCRenderObj = nullptr;
 			  }
+			  m_pCRenderObj.Clear();
 		  }
 		  m_pCScene->Clear_Lineup();
 
