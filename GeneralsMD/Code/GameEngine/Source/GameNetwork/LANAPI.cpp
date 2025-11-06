@@ -425,6 +425,26 @@ void LANAPI::update( void )
 				handleInActive( msg, senderIP );
 				break;
 
+				// TheSuperHackers @feature Caball009 06/11/2025 Exchange patch information with other players.
+			case LANMessage::MSG_GAME_REQUEST_PATCH_INFO:
+				handleGameRequestPatchInfo(msg, senderIP);
+				break;
+			case LANMessage::MSG_GAME_ACKNOWLEDGE_PATCH_INFO:
+				handleGameAcknowledgePatchInfo(msg, senderIP);
+				break;
+			case LANMessage::MSG_LOBBY_REQUEST_PATCH_INFO:
+				handleLobbyRequestPatchInfo(msg, senderIP);
+				break;
+			case LANMessage::MSG_LOBBY_ACKNOWLEDGE_PATCH_INFO:
+				handleLobbyAcknowledgePatchInfo(msg, senderIP);
+				break;
+			case LANMessage::MSG_MATCH_REQUEST_PATCH_INFO:
+				handleMatchRequestPatchInfo(msg, senderIP);
+				break;
+			case LANMessage::MSG_MATCH_ACKNOWLEDGE_PATCH_INFO:
+				handleMatchAcknowledgePatchInfo(msg, senderIP);
+				break;
+
 			default:
 				DEBUG_LOG(("Unknown LAN message type %d", msg->messageType));
 			}

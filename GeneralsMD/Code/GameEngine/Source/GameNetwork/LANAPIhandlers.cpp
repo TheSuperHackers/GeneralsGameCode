@@ -36,9 +36,106 @@
 #include "Common/GlobalData.h"
 #include "Common/QuotedPrintable.h"
 #include "Common/UserPreferences.h"
+#include "Common/version.h"
 #include "GameNetwork/LANAPI.h"
 #include "GameNetwork/LANAPICallbacks.h"
 #include "GameClient/MapUtil.h"
+
+void LANAPI::handlePatchInfo(Int messageType, UnsignedInt senderIP, UnicodeString gameName)
+{
+	LANMessage msg;
+	fillInLANMessage(&msg);
+	msg.messageType = (LANMessage::Type)messageType;
+	wcslcpy(msg.PatchInfo.gameName, gameName.str(), ARRAY_SIZE(msg.PatchInfo.gameName));
+	msg.PatchInfo.patchVersion = TheVersion->getVersionNumber();
+
+	sendMessage(&msg, senderIP);
+}
+
+void LANAPI::handleGameRequestPatchInfo(LANMessage *msg, UnsignedInt senderIP)
+{
+	if (!AmIHost())
+		return;
+
+	// acknowledge as game host a request for patch information by a player in the lobby
+	handlePatchInfo(LANMessage::MSG_GAME_ACKNOWLEDGE_PATCH_INFO, senderIP, m_currentGame->getName());
+}
+
+void LANAPI::handleGameAcknowledgePatchInfo(LANMessage *msg, UnsignedInt senderIP)
+{
+	if (!m_inLobby)
+		return;
+
+	LANGameInfo *game = LookupGame(UnicodeString(msg->GameInfo.gameName));
+	if (!game)
+		return;
+
+	if (game->getIP(0) != senderIP)
+		return;
+
+	// a game host has acknowledged our request for patch information
+	game->getSlot(0)->setPatchVersion(msg->PatchInfo.patchVersion);
+
+	// update game list with colored names
+	OnGameList(m_games);
+}
+
+void LANAPI::handleLobbyRequestPatchInfo(LANMessage *msg, UnsignedInt senderIP)
+{
+	if (!m_inLobby)
+		return;
+
+	// acknowledge a request for patch information by a fellow player in the lobby
+	handlePatchInfo(LANMessage::MSG_LOBBY_ACKNOWLEDGE_PATCH_INFO, senderIP, UnicodeString());
+}
+
+void LANAPI::handleLobbyAcknowledgePatchInfo(LANMessage *msg, UnsignedInt senderIP)
+{
+	if (!m_inLobby)
+		return;
+
+	LANPlayer *player = LookupPlayer(senderIP);
+	if (!player)
+		return;
+
+	// a fellow player in the lobby has acknowledged our request for patch information
+	player->setPatchVersion(msg->PatchInfo.patchVersion);
+
+	// update player list with colored names
+	OnPlayerList(m_lobbyPlayers);
+}
+
+void LANAPI::handleMatchRequestPatchInfo(LANMessage *msg, UnsignedInt senderIP)
+{
+	if (!m_currentGame)
+		return;
+
+	// acknowledge a request for patch information by a fellow player in the game
+	handlePatchInfo(LANMessage::MSG_MATCH_ACKNOWLEDGE_PATCH_INFO, senderIP, m_currentGame->getName());
+
+	// treat request for patch information as acknowledgement
+	handleMatchAcknowledgePatchInfo(msg, senderIP);
+}
+
+void LANAPI::handleMatchAcknowledgePatchInfo(LANMessage *msg, UnsignedInt senderIP)
+{
+	if (!m_currentGame)
+		return;
+
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		if (!m_currentGame->getLANSlot(i)->isHuman() || m_currentGame->getIP(i) != senderIP)
+			continue;
+
+		// a fellow player in the game has acknowledged our request for patch information
+		m_currentGame->getSlot(i)->setPatchVersion(msg->PatchInfo.patchVersion);
+
+		// update player list with colored names
+		lanUpdateSlotList();
+
+		break;
+	}
+}
 
 void LANAPI::handleRequestLocations( LANMessage *msg, UnsignedInt senderIP )
 {
@@ -139,6 +236,9 @@ void LANAPI::handleGameAnnounce( LANMessage *msg, UnsignedInt senderIP )
 			game = NEW LANGameInfo;
 			game->setName(UnicodeString(msg->GameInfo.gameName));
 			addGame(game);
+
+			// TheSuperHackers @feature Caball009 06/11/2025 Request a game host to send patch information.
+			handlePatchInfo(LANMessage::MSG_GAME_REQUEST_PATCH_INFO, senderIP, game->getName());
 		}
 		Bool success = ParseGameOptionsString(game,AsciiString(msg->GameInfo.options));
 		game->setGameInProgress(msg->GameInfo.inProgress);
@@ -165,6 +265,9 @@ void LANAPI::handleLobbyAnnounce( LANMessage *msg, UnsignedInt senderIP )
 	{
 		player = NEW LANPlayer;
 		player->setIP(senderIP);
+
+		// TheSuperHackers @feature Caball009 06/11/2025 Request a player in the lobby to send patch information.
+		handlePatchInfo(LANMessage::MSG_LOBBY_REQUEST_PATCH_INFO, senderIP, UnicodeString());
 	}
 	else
 	{
@@ -401,6 +504,9 @@ void LANAPI::handleJoinAccept( LANMessage *msg, UnsignedInt senderIP )
 				OnGameJoin(RET_OK, m_currentGame);
 				//DEBUG_ASSERTCRASH(false, ("setting host to %ls@%ls", m_currentGame->getLANSlot(0)->getUser()->getLogin().str(),
 				//	m_currentGame->getLANSlot(0)->getUser()->getHost().str()));
+
+				// TheSuperHackers @feature Caball009 06/11/2025 Request players in the match to send patch information.
+				handlePatchInfo(LANMessage::MSG_MATCH_REQUEST_PATCH_INFO, 0, m_currentGame->getName());
 			}
 			m_pendingAction = ACT_NONE;
 			m_expiration = 0;

@@ -277,6 +277,13 @@ protected:
 	void handleGameOptions( LANMessage *msg, UnsignedInt senderIP );
 	void handleInActive( LANMessage *msg, UnsignedInt senderIP );
 
+	void handlePatchInfo(Int messageType, UnsignedInt senderIP, UnicodeString gameName);
+	void handleGameRequestPatchInfo(LANMessage *msg, UnsignedInt senderIP);
+	void handleGameAcknowledgePatchInfo(LANMessage *msg, UnsignedInt senderIP);
+	void handleLobbyRequestPatchInfo(LANMessage *msg, UnsignedInt senderIP);
+	void handleLobbyAcknowledgePatchInfo(LANMessage *msg, UnsignedInt senderIP);
+	void handleMatchRequestPatchInfo(LANMessage *msg, UnsignedInt senderIP);
+	void handleMatchAcknowledgePatchInfo(LANMessage *msg, UnsignedInt senderIP);
 };
 
 
@@ -313,6 +320,14 @@ struct LANMessage
 		MSG_INACTIVE,						///< I've alt-tabbed out.  Unaccept me cause I'm a poo-flinging monkey.
 
 		MSG_REQUEST_GAME_INFO,	///< For direct connect, get the game info from a specific IP Address
+
+		// Community patch
+		MSG_GAME_REQUEST_PATCH_INFO = 1000,
+		MSG_GAME_ACKNOWLEDGE_PATCH_INFO,
+		MSG_LOBBY_REQUEST_PATCH_INFO,
+		MSG_LOBBY_ACKNOWLEDGE_PATCH_INFO,
+		MSG_MATCH_REQUEST_PATCH_INFO,
+		MSG_MATCH_ACKNOWLEDGE_PATCH_INFO,
 	} messageType;
 
 	WideChar name[g_lanPlayerNameLength+1]; ///< My name, for convenience
@@ -407,6 +422,11 @@ struct LANMessage
 			char options[m_lanMaxOptionsLength+1];
 		} GameOptions;
 
+		struct
+		{
+			WideChar gameName[g_lanGameNameLength + 1];
+			UnsignedInt patchVersion;
+		} PatchInfo;
 	};
 };
 #pragma pack(pop)
