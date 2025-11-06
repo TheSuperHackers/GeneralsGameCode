@@ -118,7 +118,7 @@ bool Get_W3D_Dependencies (const char *w3d_filename, StringList &files)
 
 	// Get the W3D name from the filename.
 	char w3d_name[W3D_NAME_LEN];
-	Get_W3D_Name(w3d_filename, w3d_name, W3D_NAME_LEN);
+	Get_W3D_Name(w3d_filename, w3d_name, ARRAY_SIZE(w3d_name));
 
 	// Create a chunk loader for this file, and scan the file.
 	ChunkLoadClass cload(file);
