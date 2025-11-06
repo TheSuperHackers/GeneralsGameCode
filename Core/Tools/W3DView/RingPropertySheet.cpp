@@ -245,9 +245,9 @@ RingPropertySheetClass::Initialize (void)
 	//
 	// Pass the object along to the pages
 	//
-	m_GeneralPage.Set_Ring (m_RenderObj);
-	m_ColorPage.Set_Ring (m_RenderObj);
-	m_ScalePage.Set_Ring (m_RenderObj);
+	m_GeneralPage.Set_Ring (m_RenderObj.Peek());
+	m_ColorPage.Set_Ring (m_RenderObj.Peek());
+	m_ScalePage.Set_Ring (m_RenderObj.Peek());
 
 	//
 	// Add the pages to the sheet
@@ -274,13 +274,13 @@ RingPropertySheetClass::Initialize (void)
 void
 RingPropertySheetClass::Create_New_Object (void)
 {
-	m_RenderObj = new RingRenderObjClass;
+	m_RenderObj = RefCountPtr<RingRenderObjClass>::Create_NoAddRef(new RingRenderObjClass);
 	m_RenderObj->Set_Name ("Ring");
 
 	//
 	//	Display the new object
 	//
-	::GetCurrentDocument ()->DisplayObject (m_RenderObj);
+	::GetCurrentDocument ()->DisplayObject (m_RenderObj.Peek());
 	return ;
 }
 
