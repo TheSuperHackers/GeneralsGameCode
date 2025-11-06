@@ -33,7 +33,7 @@
 
 #include "StdAfx.h"
 #include "EmitterInstanceList.h"
-#include "Utils.h"
+#include "refcount.h"
 
 /////////////////////////////////////////////////////////////////////
 //
@@ -90,12 +90,11 @@ EmitterInstanceListClass::Add_Emitter (ParticleEmitterClass *emitter)
 			}
 		}
 
-		//
-		//	Add this emitter to the list and put a hold on its reference
-		//
-		if (emitter)
-			emitter->Add_Ref();
-		m_List.Add (emitter);
+	//
+	//	Add this emitter to the list and put a hold on its reference
+	//
+	if (emitter) emitter->Add_Ref();
+	m_List.Add (emitter);
 	}
 
 	return ;

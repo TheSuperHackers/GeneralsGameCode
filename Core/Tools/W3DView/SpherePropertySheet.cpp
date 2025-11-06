@@ -48,10 +48,9 @@ SpherePropertySheetClass::SpherePropertySheetClass
 	CWnd *						pParentWnd,
 	UINT							iSelectPage
 )
-	:	m_RenderObj (nullptr),
-		CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
+	:	CPropertySheet(nIDCaption, pParentWnd, iSelectPage),
+		m_RenderObj (RefCountPtr<SphereRenderObjClass>::Create_AddRef(sphere))
 {
-	REF_PTR_SET (m_RenderObj, sphere);
 	Initialize ();
 	return ;
 }
@@ -69,10 +68,9 @@ SpherePropertySheetClass::SpherePropertySheetClass
 	CWnd *							pParentWnd,
 	UINT								iSelectPage
 )
-	:	m_RenderObj (nullptr),
-		CPropertySheet(pszCaption, pParentWnd, iSelectPage)
+	:	CPropertySheet(pszCaption, pParentWnd, iSelectPage),
+		m_RenderObj (RefCountPtr<SphereRenderObjClass>::Create_AddRef(sphere))
 {
-	REF_PTR_SET (m_RenderObj, sphere);
 	Initialize ();
 	return ;
 }
@@ -85,7 +83,6 @@ SpherePropertySheetClass::SpherePropertySheetClass
 /////////////////////////////////////////////////////////////////////////////
 SpherePropertySheetClass::~SpherePropertySheetClass (void)
 {
-	REF_PTR_RELEASE (m_RenderObj);
 	return ;
 }
 
@@ -183,7 +180,7 @@ SpherePropertySheetClass::Add_Object_To_Viewer (void)
 		//
 		// Create a new prototype for this object
 		//
-		SpherePrototypeClass *prototype	= new SpherePrototypeClass (m_RenderObj);
+		SpherePrototypeClass *prototype	= new SpherePrototypeClass (m_RenderObj.Peek());
 
 		//
 		// Update the asset manager with the new prototype
@@ -201,17 +198,17 @@ SpherePropertySheetClass::Add_Object_To_Viewer (void)
 
 		//
 		// Display the object
-		//
-		doc->Reload_Displayed_Object ();
-		m_LastSavedName = m_RenderObj->Get_Name ();
-		REF_PTR_SET (m_RenderObj, (SphereRenderObjClass *)doc->GetDisplayedObject ());
+	//
+	doc->Reload_Displayed_Object ();
+	m_LastSavedName = m_RenderObj->Get_Name ();
+	m_RenderObj = RefCountPtr<SphereRenderObjClass>::Create_AddRef((SphereRenderObjClass *)doc->GetDisplayedObject ());
 
-		//
+	//
 		// Pass the object along to the pages
 		//
-		m_GeneralPage.Set_Sphere (m_RenderObj);
-		m_ColorPage.Set_Sphere (m_RenderObj);
-		m_ScalePage.Set_Sphere (m_RenderObj);
+		m_GeneralPage.Set_Sphere (m_RenderObj.Peek());
+		m_ColorPage.Set_Sphere (m_RenderObj.Peek());
+		m_ScalePage.Set_Sphere (m_RenderObj.Peek());
 	}
 
 	return ;
