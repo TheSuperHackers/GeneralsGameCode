@@ -269,10 +269,10 @@ bool BitChannelClass::Load_W3D(ChunkLoadClass & cload)
 	uint32 numbytes = (numbits + 7) / 8;
 	uint32 bytesleft = numbytes - 1;
 
-	assert((sizeof(W3dBitChannelStruct) + bytesleft) == (unsigned)chunk_size);
+	WWASSERT((sizeof(W3dBitChannelStruct) + bytesleft) == (unsigned)chunk_size);
 
 	Bits = MSGW3DNEWARRAY("BitChannelClass::Bits") uint8[numbytes];
-	assert(Bits);
+	WWASSERT(Bits);
 
 	Bits[0] = chan.Data[0];
 
@@ -458,7 +458,7 @@ void	TimeCodedMotionChannelClass::Get_Vector(float32 frame,float * setvec)
 Quaternion TimeCodedMotionChannelClass::Get_QuatVector(float32 frame)
 {
 
-	assert(VectorLen == 4);
+	WWASSERT(VectorLen == 4);
 
 	Quaternion q(1);
 
@@ -579,7 +579,7 @@ uint32 TimeCodedMotionChannelClass::binary_search_index(uint32 timecode)
 
 	}
 
-	assert(0);
+	WWASSERT(0);
 	return(0);
 
 }
@@ -599,7 +599,7 @@ uint32 TimeCodedMotionChannelClass::binary_search_index(uint32 timecode)
  *=============================================================================================*/
 uint32 TimeCodedMotionChannelClass::get_index(uint32 timecode)
 {
-	assert(CachedIdx <= LastTimeCodeIdx);
+	WWASSERT(CachedIdx <= LastTimeCodeIdx);
 
 	uint32	time;
 
@@ -744,10 +744,10 @@ bool TimeCodedBitChannelClass::Load_W3D(ChunkLoadClass & cload)
 
 	uint32 bytesleft = (NumTimeCodes - 1) * sizeof(uint32);
 
-	assert((sizeof(W3dTimeCodedBitChannelStruct) + bytesleft) == (unsigned)chunk_size);
+	WWASSERT((sizeof(W3dTimeCodedBitChannelStruct) + bytesleft) == (unsigned)chunk_size);
 
 	Bits = MSGW3DNEWARRAY("TimeCodedBitChannelClass::Bits") uint32[NumTimeCodes];
-	assert(Bits);
+	WWASSERT(Bits);
 
 	Bits[0] = chan.Data[0];
 
@@ -776,8 +776,8 @@ bool TimeCodedBitChannelClass::Load_W3D(ChunkLoadClass & cload)
  *=============================================================================================*/
 int TimeCodedBitChannelClass::Get_Bit(int frame)
 {
-	assert(frame >= 0);
-	assert(CachedIdx < NumTimeCodes);
+	WWASSERT(frame >= 0);
+	WWASSERT(CachedIdx < NumTimeCodes);
 
 	int time;
 	int idx=0;
@@ -1026,7 +1026,7 @@ void AdaptiveDeltaMotionChannelClass::decompress(uint32 src_idx, float *srcdata,
 {
 	// Contine decompressing from src_idx, up to frame_idx
 
-   assert(src_idx < frame_idx);
+   WWASSERT(src_idx < frame_idx);
    src_idx++;
 
 	float *base	= (float *) &Data[0];	// pointer to our true know beginning values
@@ -1163,7 +1163,7 @@ float AdaptiveDeltaMotionChannelClass::getframe(uint32 frame_idx, uint32 vector_
 
    // Else just use last known frame to decompress forwards
 
-   assert(VectorLen <= 4);
+   WWASSERT(VectorLen <= 4);
 
    float temp[4];
 

@@ -118,7 +118,7 @@ void TimeCodedMorphKeysClass::Get_Morph_Info(float morph_frame,int * pose_frame0
 
 uint32 TimeCodedMorphKeysClass::get_index(float frame)
 {
-	assert(CachedIdx <= (uint32)Keys.Count ()-1);
+	WWASSERT(CachedIdx <= (uint32)Keys.Count ()-1);
 
 	float	cached_frame = Keys[CachedIdx].MorphFrame;
 
@@ -179,7 +179,7 @@ uint32 TimeCodedMorphKeysClass::binary_search_index(float req_frame)
 		}
 	}
 
-	assert(0);
+	WWASSERT(0);
 	return(0);
 }
 
@@ -717,7 +717,7 @@ void HMorphAnimClass::Get_Transform(Matrix3D& mtx,int pividx,float frame) const
 
 void HMorphAnimClass::Insert_Morph_Key(const int channel, uint32 morph_frame, uint32 pose_frame)
 {
-	assert(channel<ChannelCount);
+	WWASSERT(channel<ChannelCount);
 	MorphKeyData[channel].Add_Key(morph_frame,pose_frame);
 
 	// update the framecount to reflect the newly added key

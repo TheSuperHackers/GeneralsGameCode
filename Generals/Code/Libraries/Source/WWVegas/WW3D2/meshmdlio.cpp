@@ -888,7 +888,7 @@ WW3DErrorType MeshModelClass::read_vertex_colors(ChunkLoadClass & cload,MeshLoad
 	if (CurMatDesc->Has_Color_Array(0) == NULL) {
 		W3dRGBStruct color;
 		unsigned * dcg = Get_Color_Array(0,true);
-		assert(dcg != NULL);
+		WWASSERT(dcg != NULL);
 
 		for (int i=0; i<Get_Vertex_Count(); i++) {
 
@@ -2281,7 +2281,7 @@ WW3DErrorType MeshModelClass::write_header(ChunkSaveClass & csave,MeshSaveContex
 			hierarchy_name_len = (int)mesh_name - (int)name;
 			mesh_name++;
 		}
-		assert( hierarchy_name_len < W3D_NAME_LEN);
+		WWASSERT( hierarchy_name_len < W3D_NAME_LEN);
 		strlcpy( header.MeshName, mesh_name, W3D_NAME_LEN);
 		strlcpy( header.ContainerName, name, hierarchy_name_len + 1);
 	} else {

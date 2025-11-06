@@ -578,10 +578,10 @@ ParticleBufferClass::ParticleBufferClass(const ParticleBufferClass & src) :
 
 	// if the source object has a line renderer, set up a copy.
 	if (src.LineRenderer) {
-		assert(RenderMode == W3D_EMITTER_RENDER_MODE_LINE);
+		WWASSERT(RenderMode == W3D_EMITTER_RENDER_MODE_LINE);
 		LineRenderer = W3DNEW SegLineRendererClass(*src.LineRenderer);
 	} else {
-		assert(RenderMode != W3D_EMITTER_RENDER_MODE_LINE);
+		WWASSERT(RenderMode != W3D_EMITTER_RENDER_MODE_LINE);
 	}
 }
 
@@ -591,7 +591,7 @@ ParticleBufferClass & ParticleBufferClass::operator = (const ParticleBufferClass
 	RenderObjClass::operator = (that);
 
 	if (this != &that) {
-		assert(0);	// TODO: if you hit this assert, please implement me !!!;-)
+		WWASSERT(0);	// TODO: if you hit this WWASSERT, please implement me !!!;-)
 	}
 
 	return * this;
@@ -647,7 +647,7 @@ ParticleBufferClass::~ParticleBufferClass(void)
 		// We should not have an emitter at this point, since the emitter
 		// should still have a live ref to us if it still exists which would
 		// prevent us from getting killed.
-		assert(0);
+		WWASSERT(0);
 		// We do not release-ref the emitter pointer because we did not add a
 		// ref for it to begin with; the ref is not needed (if the emitter gets
 		// deleted it will tell us to clear our emitter pointer) and actually

@@ -270,7 +270,7 @@ void WW3D::Set_Thumbnail_Enabled (bool b)
  *=============================================================================================*/
 WW3DErrorType WW3D::Init(void *hwnd, char *defaultpal, bool lite)
 {
-	assert(IsInitted == false);
+	WWASSERT(IsInitted == false);
 	WWDEBUG_SAY(("WW3D::Init hwnd = %p",hwnd));
 	_Hwnd = (HWND)hwnd;
 	Lite = lite;
@@ -334,7 +334,7 @@ WW3DErrorType WW3D::Init(void *hwnd, char *defaultpal, bool lite)
  *=============================================================================================*/
 WW3DErrorType WW3D::Shutdown(void)
 {
-	assert(Lite || IsInitted == true);
+	WWASSERT(Lite || IsInitted == true);
 //	WWDEBUG_SAY(("WW3D::Shutdown"));
 
 #ifdef WW3D_DX8

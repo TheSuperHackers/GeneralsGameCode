@@ -61,7 +61,6 @@
 #include "meshbuild.h"
 #include "uarray.h"
 #include <stdlib.h>
-#include <assert.h>
 
 
 const float EPSILON = 0.0001f;
@@ -161,9 +160,9 @@ public:
 	VertexArrayClass(int maxsize,int match_normals = 0)
 	{
 		Verts = NULL;
-		assert(maxsize > 0);
+		WWASSERT(maxsize > 0);
 		Verts = W3DNEWARRAY MeshBuilderClass::VertClass[maxsize];
-		assert(Verts);
+		WWASSERT(Verts);
 		VertCount = 0;
 		UVSplits = 0;
 
@@ -658,8 +657,8 @@ void MeshBuilderClass::Reset(int passcount,int face_count_guess,int face_count_g
  *=============================================================================================*/
 int MeshBuilderClass::Add_Face(const FaceClass & face)
 {
-	assert(State == STATE_ACCEPTING_INPUT);
-	assert(CurFace <= AllocFaceCount);
+	WWASSERT(State == STATE_ACCEPTING_INPUT);
+	WWASSERT(CurFace <= AllocFaceCount);
 	if (CurFace == AllocFaceCount) {
 		Grow_Face_Array();
 	}
@@ -705,7 +704,7 @@ void MeshBuilderClass::Build_Mesh(bool compute_normals)
 	/*
 	** Check the state, set state to "mesh processed"
 	*/
-	assert(State == STATE_ACCEPTING_INPUT);
+	WWASSERT(State == STATE_ACCEPTING_INPUT);
 	State = STATE_MESH_PROCESSED;
 
 	/*
@@ -1010,8 +1009,8 @@ void MeshBuilderClass::Compute_Bounding_Box(Vector3 * set_min,Vector3 * set_max)
 {
 	int i;
 
-	assert(set_min != NULL);
-	assert(set_max != NULL);
+	WWASSERT(set_min != NULL);
+	WWASSERT(set_max != NULL);
 
 	// Bounding Box
 	// straightforward, axis-aligned bounding box.
@@ -1499,7 +1498,7 @@ void MeshBuilderClass::Strip_Optimize_Mesh(void)
 								break;
 						}
 					}
-					assert(first_vert != -1);
+					WWASSERT(first_vert != -1);
 
 					// rotate the vertex indices until first_vert is the index of VertIdx[0]
 					while (newpoly->VertIdx[0] != first_vert) {
@@ -1584,7 +1583,7 @@ void MeshBuilderClass::Strip_Optimize_Mesh(void)
 					break;
 				}
 			}
-			assert(nw != -1);
+			WWASSERT(nw != -1);
 
 			int new_vindex = Faces[nextpoly].VertIdx[nw];
 
@@ -1643,7 +1642,7 @@ void MeshBuilderClass::Strip_Optimize_Mesh(void)
 		newpolys[new_idx].SurfaceType =	Faces[old_idx].SurfaceType;
 
 		// just checking
-		assert(newmat[new_idx] == Faces[old_idx].TextureIndex[PolyOrderPass][PolyOrderStage]);
+		WWASSERT(newmat[new_idx] == Faces[old_idx].TextureIndex[PolyOrderPass][PolyOrderStage]);
 	}
 
 	// then install the pointer to the new face table.

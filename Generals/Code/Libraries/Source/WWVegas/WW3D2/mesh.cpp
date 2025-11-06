@@ -87,7 +87,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "mesh.h"
-#include <assert.h>
 #include "w3d_file.h"
 #include "assetmgr.h"
 #include "w3derr.h"

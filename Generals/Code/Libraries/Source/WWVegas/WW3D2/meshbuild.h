@@ -45,8 +45,6 @@
 #include "vector3.h"
 #include "bittype.h"
 
-#include <assert.h>
-
 /*
 ** WorldInfoClass
 **	Abstract base class that defines an interface for 'world information'.
@@ -314,10 +312,10 @@ private:
 
 inline void	MeshBuilderClass::Set_Polygon_Ordering_Channel(int pass,int texstage)
 {
-	assert(pass >= 0);
-	assert(pass < MAX_PASSES);
-	assert(texstage >= 0);
-	assert(texstage < MAX_STAGES);
+	WWASSERT(pass >= 0);
+	WWASSERT(pass < MAX_PASSES);
+	WWASSERT(texstage >= 0);
+	WWASSERT(texstage < MAX_STAGES);
 
 	PolyOrderPass = pass;
 	PolyOrderStage = texstage;
@@ -330,50 +328,50 @@ inline int MeshBuilderClass::Get_Pass_Count(void) const
 
 inline int MeshBuilderClass::Get_Vertex_Count(void) const
 {
-	assert(State == STATE_MESH_PROCESSED);
+	WWASSERT(State == STATE_MESH_PROCESSED);
 	return VertCount;
 }
 
 inline int MeshBuilderClass::Get_Face_Count(void) const
 {
-	assert(State == STATE_MESH_PROCESSED);
+	WWASSERT(State == STATE_MESH_PROCESSED);
 	return FaceCount;
 }
 
 inline const MeshBuilderClass::VertClass & MeshBuilderClass::Get_Vertex(int index) const
 {
-	assert(State == STATE_MESH_PROCESSED);
-	assert(index >= 0);
-	assert(index < VertCount);
+	WWASSERT(State == STATE_MESH_PROCESSED);
+	WWASSERT(index >= 0);
+	WWASSERT(index < VertCount);
 	return Verts[index];
 }
 
 inline const MeshBuilderClass::FaceClass & MeshBuilderClass::Get_Face(int index) const
 {
-	assert(State == STATE_MESH_PROCESSED);
-	assert(index >= 0);
-	assert(index < FaceCount);
+	WWASSERT(State == STATE_MESH_PROCESSED);
+	WWASSERT(index >= 0);
+	WWASSERT(index < FaceCount);
 	return Faces[index];
 }
 
 inline MeshBuilderClass::VertClass & MeshBuilderClass::Get_Vertex(int index)
 {
-	assert(State == STATE_MESH_PROCESSED);
-	assert(index >= 0);
-	assert(index < VertCount);
+	WWASSERT(State == STATE_MESH_PROCESSED);
+	WWASSERT(index >= 0);
+	WWASSERT(index < VertCount);
 	return Verts[index];
 }
 
 inline MeshBuilderClass::FaceClass & MeshBuilderClass::Get_Face(int index)
 {
-	assert(State == STATE_MESH_PROCESSED);
-	assert(index >= 0);
-	assert(index < FaceCount);
+	WWASSERT(State == STATE_MESH_PROCESSED);
+	WWASSERT(index >= 0);
+	WWASSERT(index < FaceCount);
 	return Faces[index];
 }
 
 inline const MeshBuilderClass::MeshStatsStruct & MeshBuilderClass::Get_Mesh_Stats(void) const
 {
-	assert(State == STATE_MESH_PROCESSED);
+	WWASSERT(State == STATE_MESH_PROCESSED);
 	return Stats;
 }

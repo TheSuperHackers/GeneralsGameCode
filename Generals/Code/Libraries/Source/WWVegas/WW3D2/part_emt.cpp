@@ -167,7 +167,7 @@ ParticleEmitterClass & ParticleEmitterClass::operator = (const ParticleEmitterCl
 	RenderObjClass::operator = (that);
 
 	if (this != &that) {
-		assert(0);	// TODO: if you hit this assert, please implement me !!!;-)
+		WWASSERT(0);	// TODO: if you hit this WWASSERT, please implement me !!!;-)
 	}
 
 	return * this;

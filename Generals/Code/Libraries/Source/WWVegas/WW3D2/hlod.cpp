@@ -1652,7 +1652,7 @@ int HLodClass::Get_Lod_Count(void) const
  *=============================================================================================*/
 void HLodClass::Set_LOD_Bias(float bias)
 {
-	assert(bias > 0.0f);
+	WWASSERT(bias > 0.0f);
 	bias = MAX(bias, 0.0f);
 	LODBias = bias;
 

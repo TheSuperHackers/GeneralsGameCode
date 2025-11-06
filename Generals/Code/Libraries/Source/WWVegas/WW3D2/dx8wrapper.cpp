@@ -1060,7 +1060,7 @@ bool DX8Wrapper::Toggle_Windowed(void)
 {
 #ifdef WW3D_DX8
 	// State OK?
-	assert (IsInitted);
+	WWASSERT (IsInitted);
 	if (IsInitted) {
 
 		// Get information about the current render device's resolutions
@@ -1136,7 +1136,7 @@ int DX8Wrapper::Get_Render_Device_Count(void)
 }
 int DX8Wrapper::Get_Render_Device(void)
 {
-	assert(IsInitted);
+	WWASSERT(IsInitted);
 	return CurRenderDevice;
 }
 

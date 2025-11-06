@@ -229,7 +229,7 @@ unsigned long VertexMaterialClass::Compute_CRC(void) const
 
 void VertexMaterialClass::Get_Ambient(Vector3 * set) const
 {
-	assert(set);
+	WWASSERT(set);
 	*set=Vector3(Material->Ambient.r,Material->Ambient.g,Material->Ambient.b);
 }
 
@@ -253,7 +253,7 @@ void VertexMaterialClass::Set_Ambient(float r,float g,float b)
 
 void VertexMaterialClass::Get_Diffuse(Vector3 * set) const
 {
-	assert(set);
+	WWASSERT(set);
 	*set=Vector3(Material->Diffuse.r,Material->Diffuse.g,Material->Diffuse.b);
 }
 
@@ -277,7 +277,7 @@ void VertexMaterialClass::Set_Diffuse(float r,float g,float b)
 
 void VertexMaterialClass::Get_Specular(Vector3 * set) const
 {
-	assert(set);
+	WWASSERT(set);
 	*set=Vector3(Material->Specular.r,Material->Specular.g,Material->Specular.b);
 }
 
@@ -301,7 +301,7 @@ void VertexMaterialClass::Set_Specular(float r,float g,float b)
 
 void VertexMaterialClass::Get_Emissive(Vector3 * set) const
 {
-	assert(set);
+	WWASSERT(set);
 	*set=Vector3(Material->Emissive.r,Material->Emissive.g,Material->Emissive.b);
 }
 

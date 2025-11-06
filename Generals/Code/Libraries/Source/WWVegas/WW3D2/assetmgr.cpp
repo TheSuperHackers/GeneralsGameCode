@@ -73,7 +73,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "assetmgr.h"
-#include <assert.h>
 
 #include "bittype.h"
 #include "chunkio.h"
@@ -204,7 +203,7 @@ WW3DAssetManager::WW3DAssetManager(void) :
 	Activate_Fog_On_Load		(false),
 	MetalManager(0)
 {
-	assert(TheInstance == NULL);
+	WWASSERT(TheInstance == NULL);
 	TheInstance = this;
 
 	// set the growth rates

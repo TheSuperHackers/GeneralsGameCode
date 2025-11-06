@@ -1776,7 +1776,7 @@ WW3DErrorType MeshGeometryClass::read_vertices(ChunkLoadClass & cload)
 {
 	W3dVectorStruct vert;
 	Vector3 * loc = Vertex->Get_Array();
-	assert(loc);
+	WWASSERT(loc);
 
 	for (int i=0; i<Get_Vertex_Count(); i++) {
 
