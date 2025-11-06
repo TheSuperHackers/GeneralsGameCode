@@ -329,8 +329,6 @@ CGraphicView::OnDestroy (void)
 	//
 	// Free the camera object
 	//
-	REF_PTR_RELEASE (m_pCamera);
-	REF_PTR_RELEASE (m_pLightMesh);
 
 	// Is there an update thread running?
 	if (m_TimerID == 0) {
