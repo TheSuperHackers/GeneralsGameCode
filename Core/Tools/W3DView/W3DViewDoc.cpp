@@ -170,8 +170,8 @@ CW3DViewDoc::CleanupResources (void)
 
 	if (m_pCursor != nullptr) {
 		m_pCursor->Remove ();
+		m_pCursor.Clear();
 	}
-	m_pCursor.Clear();
 	m_pCursorScene.Clear();
 
     if (m_pCScene)
@@ -601,16 +601,16 @@ CW3DViewDoc::Display_Emitter
 	// Data OK?
 	if (m_pCScene != nullptr) {
 
-		// Lose the animation
-		SAFE_DELETE (m_pCAnimCombo);
-		m_pCAnimation.Clear();
+	// Lose the animation
+	SAFE_DELETE (m_pCAnimCombo);
+	m_pCAnimation.Clear();
 
-		if (m_pCRenderObj != nullptr) {
-			// Remove this object from the scene
-			Remove_Object_From_Scene (m_pCRenderObj.Peek());
-		}
+	if (m_pCRenderObj != nullptr) {
+		// Remove this object from the scene
+		Remove_Object_From_Scene (m_pCRenderObj.Peek());
 		m_pCRenderObj.Clear();
-		m_pCScene->Clear_Lineup();
+	}
+	m_pCScene->Clear_Lineup();
 
 	// Do we have a new emitter to display?
 	if (pemitter != nullptr) {
@@ -666,8 +666,8 @@ CW3DViewDoc::DisplayObject
 			  if (m_pCRenderObj) {
 					// Remove this object from the scene
 					Remove_Object_From_Scene (m_pCRenderObj.Peek());
+					m_pCRenderObj.Clear();
 			  }
-			  m_pCRenderObj.Clear();
 		  }
 		  m_pCScene->Clear_Lineup();
 
