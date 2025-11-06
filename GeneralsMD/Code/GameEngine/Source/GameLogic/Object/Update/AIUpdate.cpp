@@ -4688,20 +4688,25 @@ void AIUpdateInterface::evaluateMoraleBonus( void )
 	Bool nationalism = FALSE;
 	Bool fanaticism = FALSE;
 
+	Player *player = us->getControllingPlayer();
+
 	// do we have nationalism
 	///@todo Find a better way to represent nationalism without hardcoding here (CBD)
 	static const UpgradeTemplate *nationalismTemplate = TheUpgradeCenter->findUpgrade( "Upgrade_Nationalism" );
-	DEBUG_ASSERTCRASH( nationalismTemplate != NULL, ("AIUpdateInterface::evaluateMoraleBonus - Nationalism upgrade not found") );
-	Player *player = us->getControllingPlayer();
-	if( player && player->hasUpgradeComplete( nationalismTemplate ) )
-		nationalism = TRUE;
+	if (nationalismTemplate != NULL)
+	{
+		if( player && player->hasUpgradeComplete( nationalismTemplate ) )
+			nationalism = TRUE;
+	}
 
 	// do we have fanaticism
 	///@todo Find a better way to represent fanaticism without hardcoding here (MAL)
 	static const UpgradeTemplate *fanaticismTemplate = TheUpgradeCenter->findUpgrade( "Upgrade_Fanaticism" );
-	DEBUG_ASSERTCRASH( fanaticismTemplate != NULL, ("AIUpdateInterface::evaluateMoraleBonus - Fanaticism upgrade not found") );
-	if( player && player->hasUpgradeComplete( fanaticismTemplate ) )
-		fanaticism = TRUE;
+	if (fanaticismTemplate != NULL)
+	{
+		if( player && player->hasUpgradeComplete( fanaticismTemplate ) )
+			fanaticism = TRUE;
+	}
 
 	// are we in a horde
 	HordeUpdateInterface *hui;

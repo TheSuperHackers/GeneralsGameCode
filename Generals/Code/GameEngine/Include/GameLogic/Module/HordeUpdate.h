@@ -69,6 +69,7 @@ public:
 	Bool											m_exactMatch;		///< if true, only exact same type of units count towards hordeness
 	Real											m_rubOffRadius;///< If I am this close to another guy who is a true hordesman, it'll rub off on me
 	HordeActionType						m_action;				///< what to do if we get horde-ness
+	Bool											m_allowedNationalism; ///< Nationalism is hard ocded.  Yeah!  Add to the goodness with this flag instead of rewriting after Alpha.
 	std::vector<AsciiString>	m_flagSubObjNames;		///< name(s) of the flag subobj
 
 	HordeUpdateModuleData();
@@ -85,6 +86,7 @@ public:
 	virtual Bool isInHorde() const = 0;
 	virtual Bool hasFlag() const = 0;
 	virtual Bool isTrueHordeMember() const = 0;
+	virtual Bool isAllowedNationalism() const = 0;
 
 };
 
@@ -104,6 +106,7 @@ public:
 	virtual void onDrawableBoundToObject();
 	virtual Bool isInHorde() const { return m_inHorde; }
 	virtual Bool isTrueHordeMember() const { return m_trueHordeMember && m_inHorde; }
+	virtual Bool isAllowedNationalism() const;
 	virtual Bool hasFlag() const { return m_hasFlag; }
 	virtual UpdateSleepTime update();	///< update this object's AI
 

@@ -4434,6 +4434,27 @@ void AIUpdateInterface::evaluateMoraleBonus( void )
 #endif
 	Bool horde = FALSE;
 	Bool nationalism = FALSE;
+	Bool fanaticism = FALSE;
+
+	Player *player = us->getControllingPlayer();
+
+	// do we have nationalism
+	///@todo Find a better way to represent nationalism without hardcoding here (CBD)
+	static const UpgradeTemplate *nationalismTemplate = TheUpgradeCenter->findUpgrade( "Upgrade_Nationalism" );
+	if (nationalismTemplate != NULL)
+	{
+		if( player && player->hasUpgradeComplete( nationalismTemplate ) )
+			nationalism = TRUE;
+	}
+
+	// do we have fanaticism
+	///@todo Find a better way to represent fanaticism without hardcoding here (MAL)
+	static const UpgradeTemplate *fanaticismTemplate = TheUpgradeCenter->findUpgrade( "Upgrade_Fanaticism" );
+	if (fanaticismTemplate != NULL)
+	{
+		if( player && player->hasUpgradeComplete( fanaticismTemplate ) )
+			fanaticism = TRUE;
+	}
 
 	// are we in a horde
 	HordeUpdateInterface *hui;
@@ -4442,17 +4463,18 @@ void AIUpdateInterface::evaluateMoraleBonus( void )
 
 		hui = (*u)->getHordeUpdateInterface();
 		if( hui && hui->isInHorde() )
+		{
 			horde = TRUE;
 
-	}
+			if( !hui->isAllowedNationalism() )
+			{
+				// Sorry CBD and MAL, but the cancer has spread to the lymph nodes.  After Alpha, just pump full of painkillers.
+				nationalism = FALSE;
+				fanaticism = FALSE;
+			}
+		}
 
-	// do we have nationalism
-	///@todo Find a better way to represent nationalism without hardcoding here (CBD)
-	static const UpgradeTemplate *nationalismTemplate = TheUpgradeCenter->findUpgrade( "Upgrade_Nationalism" );
-	DEBUG_ASSERTCRASH( nationalismTemplate != NULL, ("AIUpdateInterface::evaluateMoraleBonus - Nationalism upgrade not found") );
-	Player *player = us->getControllingPlayer();
-	if( player && player->hasUpgradeComplete( nationalismTemplate ) )
-		nationalism = TRUE;
+	}
 
 #ifdef ALLOW_DEMORALIZE
 	// if we are are not demoralized we can have horde and nationalism effects
@@ -4481,9 +4503,18 @@ void AIUpdateInterface::evaluateMoraleBonus( void )
 
 		// nationalism
 		if( nationalism )
+    {
 			us->setWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
+      // fanaticism
+      if ( fanaticism )
+        us->setWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );// FOR THE NEW GC INFANTRY GENERAL
+      else
+        us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
+    }
 		else
 			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
+
+
 
 	}
 #ifdef ALLOW_DEMORALIZE
@@ -4503,6 +4534,7 @@ void AIUpdateInterface::evaluateMoraleBonus( void )
 
 		// we cannot have nationalism bonus condition
 		us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
+    us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
 
 	}
 #endif
