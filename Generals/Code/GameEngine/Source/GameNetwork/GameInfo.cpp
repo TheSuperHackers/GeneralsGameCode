@@ -1023,8 +1023,15 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
   Money startingCash = TheGlobalData->m_defaultStartingCash;
   UnsignedShort restriction = 0; // Always the default
 
-	Bool sawMap, sawMapCRC, sawMapSize, sawSeed, sawSlotlist, sawUseStats, sawSuperweaponRestriction, sawStartingCash, sawOldFactions;
-	sawMap = sawMapCRC = sawMapSize = sawSeed = sawSlotlist = sawUseStats = sawSuperweaponRestriction = sawStartingCash = sawOldFactions = FALSE;
+	Bool sawMap = FALSE;
+	Bool sawMapCRC = FALSE;
+	Bool sawMapSize = FALSE;
+	Bool sawSeed = FALSE;
+	Bool sawSlotlist = FALSE;
+	Bool sawUseStats = FALSE;
+	Bool sawSuperweaponRestriction = FALSE;
+	Bool sawStartingCash = FALSE;
+	Bool sawOldFactions = FALSE;
 
 	//DEBUG_LOG(("Saw options of %s", options.str()));
 	DEBUG_LOG(("ParseAsciiStringToGameInfo - parsing [%s]", options.str()));
@@ -1472,8 +1479,14 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 
 	free(buf);
 
-	//DEBUG_LOG(("Options were ok == %d", optionsOk));
-	if (optionsOk && sawMap && sawMapCRC && sawMapSize && sawSeed && sawSlotlist && sawCRC && sawUseStats && sawSuperweaponRestriction && sawStartingCash && sawOldFactions )
+	// TheSuperHackers @tweak The following settings are no longer
+	// a strict requirement in the Zero Hour Replay file:
+	//  * UseStats
+	//  * SuperweaponRestriction
+	//  * StartingCash
+	//  * OldFactionsOnly
+	// In Generals they never were.
+	if (optionsOk && sawMap && sawMapCRC && sawMapSize && sawSeed && sawSlotlist && sawCRC)
 	{
 		// We were setting the Global Data directly here, but Instead, I'm now
 		// first setting the data in game.  We'll set the global data when
@@ -1493,9 +1506,9 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 		game->setSeed(seed);
 		game->setCRCInterval(crc);
 		game->setUseStats(useStats);
-    game->setSuperweaponRestriction(restriction);
-    game->setStartingCash( startingCash );
-    game->setOldFactionsOnly( oldFactionsOnly );
+		game->setSuperweaponRestriction(restriction);
+		game->setStartingCash(startingCash);
+		game->setOldFactionsOnly(oldFactionsOnly);
 
 		return true;
 	}
