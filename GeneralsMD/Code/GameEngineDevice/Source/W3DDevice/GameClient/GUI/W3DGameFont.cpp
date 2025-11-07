@@ -73,20 +73,13 @@
 //=============================================================================
 Bool W3DFontLibrary::loadFontData( GameFont *font )
 {
-	FontCharsClass *fontChar;
-
 	// sanity
 	if( font == NULL )
 		return FALSE;
 
-	if ((UnsignedInt)font->pointSize > 100)	//sanity check the size - anything over 100 is probably wrong. -MW
-		fontChar = NULL;
-	else
-	{	// get the font data from the asset manager
-		fontChar = WW3DAssetManager::
-									Get_Instance()->Get_FontChars( font->nameString.str(), font->pointSize,
-																								 font->bold ? true : false );
-	}
+	// get the font data from the asset manager
+	FontCharsClass *fontChar = WW3DAssetManager::Get_Instance()->Get_FontChars(
+		font->nameString.str(), font->pointSize, font->bold ? true : false );
 
 	if( fontChar == NULL )
 	{

@@ -1507,6 +1507,8 @@ FontCharsClass::Update_Current_Buffer (int char_width)
 void
 FontCharsClass::Create_GDI_Font (const char *font_name)
 {
+	WWASSERT(PointSize > 0);
+
 	HDC screen_dc = ::GetDC ((HWND)WW3D::Get_Window());
 
 	const char *fontToUseForGenerals = "Arial";
