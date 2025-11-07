@@ -180,7 +180,7 @@ private:
 
 	Processes m_initializedProcesses;
 	HMODULE m_dllModule;
-	int m_referenceCount;
+	Interlocked32 m_referenceCount;
 	bool m_failed;
 	bool m_loadedFromSystem;
 };

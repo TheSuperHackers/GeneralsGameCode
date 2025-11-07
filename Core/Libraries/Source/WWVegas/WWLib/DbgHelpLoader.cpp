@@ -67,14 +67,15 @@ bool DbgHelpLoader::load()
 		Inst = new (p) DbgHelpLoader();
 	}
 
-	++Inst->m_referenceCount;
+	// Always increment the reference count.
+	const long referenceCount = InterlockedIncrement(&Inst->m_referenceCount);
 
 	// Optimization: return early if it failed before.
 	if (Inst->m_failed)
 		return false;
 
 	// Return early if someone else already loaded it.
-	if (Inst->m_referenceCount > 1)
+	if (referenceCount > 1)
 		return true;
 
 	// Try load dbghelp.dll from the system directory first.
@@ -124,7 +125,7 @@ void DbgHelpLoader::unload()
 	if (Inst == NULL)
 		return;
 
-	if (--Inst->m_referenceCount != 0)
+	if (InterlockedDecrement(&Inst->m_referenceCount) != 0)
 		return;
 
 	freeResources();
