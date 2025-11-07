@@ -93,6 +93,18 @@ UnicodeString LANAPIInterface::getErrorStringFromReturnType( ReturnType ret )
 	}
 }
 
+// TheSuperHackers @feature arcticdolphin 08/08/2026 Adds /me emotes to LAN player chat, consistent with WOL
+void LANAPI::RequestPlayerChat( UnicodeString message )
+{
+	if (message.startsWithNoCase(L"/me "))
+	{
+		RequestChat(UnicodeString(message.str() + 4), LANCHAT_EMOTE);
+		return;
+	}
+
+	RequestChat(message, LANCHAT_NORMAL);
+}
+
 // On functions are (generally) the result of network traffic
 
 void LANAPI::OnAccept( UnsignedInt playerIP, Bool status )

@@ -295,7 +295,7 @@ static NameKeyType buttonClearID = NAMEKEY_INVALID;
 static NameKeyType buttonHostID = NAMEKEY_INVALID;
 static NameKeyType buttonJoinID = NAMEKEY_INVALID;
 static NameKeyType buttonDirectConnectID = NAMEKEY_INVALID;
-static NameKeyType buttonEmoteID = NAMEKEY_INVALID;
+static NameKeyType buttonChatID = NAMEKEY_INVALID;
 static NameKeyType staticToolTipID = NAMEKEY_INVALID;
 static NameKeyType textEntryPlayerNameID = NAMEKEY_INVALID;
 static NameKeyType textEntryChatID = NAMEKEY_INVALID;
@@ -310,7 +310,7 @@ static GameWindow *buttonClear = nullptr;
 static GameWindow *buttonHost = nullptr;
 static GameWindow *buttonJoin = nullptr;
 static GameWindow *buttonDirectConnect = nullptr;
-static GameWindow *buttonEmote = nullptr;
+static GameWindow *buttonChat = nullptr;
 static GameWindow *staticToolTip = nullptr;
 static GameWindow *textEntryPlayerName = nullptr;
 static GameWindow *textEntryChat = nullptr;
@@ -373,7 +373,7 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 	buttonHostID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:ButtonHost" );
 	buttonJoinID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:ButtonJoin" );
 	buttonDirectConnectID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:ButtonDirectConnect" );
-	buttonEmoteID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:ButtonEmote" );
+	buttonChatID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:ButtonEmote" ); // TODO Rename ButtonEmote to ButtonChat in .wnd file
 	staticToolTipID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:StaticToolTip" );
 	textEntryPlayerNameID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:TextEntryPlayerName" );
 	textEntryChatID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:TextEntryChat" );
@@ -390,7 +390,7 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 	buttonHost = TheWindowManager->winGetWindowFromId( nullptr, buttonHostID );
 	buttonJoin = TheWindowManager->winGetWindowFromId( nullptr, buttonJoinID );
 	buttonDirectConnect = TheWindowManager->winGetWindowFromId( nullptr, buttonDirectConnectID );
-	buttonEmote = TheWindowManager->winGetWindowFromId( nullptr,buttonEmoteID  );
+	buttonChat = TheWindowManager->winGetWindowFromId( nullptr,buttonChatID  );
 	staticToolTip = TheWindowManager->winGetWindowFromId( nullptr, staticToolTipID );
 	textEntryPlayerName = TheWindowManager->winGetWindowFromId( nullptr, textEntryPlayerNameID );
 	textEntryChat = TheWindowManager->winGetWindowFromId( nullptr, textEntryChatID );
@@ -805,7 +805,7 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					}
 
 				}
-				else if ( controlID == buttonEmoteID )
+				else if ( controlID == buttonChatID )
 				{
 					// read the user's input
 					txtInput.set(GadgetTextEntryGetText( textEntryChat ));
@@ -815,8 +815,7 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					txtInput.trim();
 					// Echo the user's input to the chat window
 					if (!txtInput.isEmpty()) {
-//						TheLAN->RequestChat(txtInput, LANAPIInterface::LANCHAT_EMOTE);
-						TheLAN->RequestChat(txtInput, LANAPIInterface::LANCHAT_NORMAL);
+						TheLAN->RequestPlayerChat(txtInput);
 					}
 				}
 				else if (controlID == buttonDirectConnectID)
@@ -897,7 +896,9 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 
 					// Echo the user's input to the chat window
 					if (!txtInput.isEmpty())
-						TheLAN->RequestChat(txtInput, LANAPIInterface::LANCHAT_NORMAL);
+					{
+						TheLAN->RequestPlayerChat(txtInput);
+					}
 
 				}
 				/*

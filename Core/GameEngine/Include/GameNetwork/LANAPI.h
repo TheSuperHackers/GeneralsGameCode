@@ -78,6 +78,7 @@ public:
 	virtual void RequestAccept() = 0;																						///< Indicate we're OK with the game options
 	virtual void RequestHasMap() = 0;																						///< Send our map status
 	virtual void RequestChat( UnicodeString message, ChatType format ) = 0;						///< Send a chat message
+	virtual void RequestPlayerChat( UnicodeString message ) = 0;
 	virtual void RequestGameStart() = 0;																				///< Tell everyone the game is starting
 	virtual void RequestGameStartTimer( Int seconds ) = 0;
 	virtual void RequestGameOptions( AsciiString gameOptions, Bool isPublic, UnsignedInt ip = 0 ) = 0;		///< Change the game options
@@ -295,6 +296,7 @@ public:
 	virtual void RequestAccept() override;																						///< Indicate we're OK with the game options
 	virtual void RequestHasMap() override;																						///< Send our map status
 	virtual void RequestChat( UnicodeString message, ChatType format ) override;						///< Send a chat message
+	virtual void RequestPlayerChat( UnicodeString message ) override;
 	virtual void RequestGameStart() override;																				///< Tell everyone the game is starting
 	virtual void RequestGameStartTimer( Int seconds ) override;
 	virtual void RequestGameOptions( AsciiString gameOptions, Bool isPublic, UnsignedInt ip = 0 ) override;		///< Change the game options
