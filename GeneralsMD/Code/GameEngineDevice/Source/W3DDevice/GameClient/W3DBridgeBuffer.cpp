@@ -234,7 +234,7 @@ Bool W3DBridge::load(BodyDamageType curDamageState)
 	char section[_MAX_PATH];
 	char right[_MAX_PATH];
 
-	static_assert(ARRAY_SIZE(left) >= ARRAY_SIZE(section), "Incorrect array size");
+	static_assert(ARRAY_SIZE(left) >= ARRAY_SIZE(modelName), "Incorrect array size");
 	static_assert(ARRAY_SIZE(section) >= ARRAY_SIZE(modelName), "Incorrect array size");
 	static_assert(ARRAY_SIZE(right) >= ARRAY_SIZE(modelName), "Incorrect array size");
 	strcpy(left, modelName);

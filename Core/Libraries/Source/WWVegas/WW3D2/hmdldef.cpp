@@ -151,8 +151,8 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 	static_assert(ARRAY_SIZE(ModelName) >= ARRAY_SIZE(header.Name), "Incorrect array size");
 	static_assert(ARRAY_SIZE(BasePoseName) >= ARRAY_SIZE(header.HierarchyName), "Incorrect array size");
 	static_assert(ARRAY_SIZE(Name) >= ARRAY_SIZE(ModelName), "Incorrect array size");
-	strcpy(ModelName,header.Name);
-	strcpy(BasePoseName,header.HierarchyName);
+	strcpy(ModelName, header.Name);
+	strcpy(BasePoseName, header.HierarchyName);
 	strcpy(Name, ModelName);
 
 	/*

@@ -242,18 +242,10 @@ BOOL RoadOptions::OnInitDialog()
 	// load roads from test assets
 #ifdef LOAD_TEST_ASSETS
 	{
-		char				dirBuf[_MAX_PATH];
-		char				findBuf[_MAX_PATH];
 		char				fileBuf[_MAX_PATH];
 
-		static_assert(ARRAY_SIZE(dirBuf) >= ARRAY_SIZE(ROAD_DIRECTORY), "Incorrect array size");
-		strcpy(dirBuf, ROAD_DIRECTORY);
-		int len = strlen(dirBuf);
-
-		strlcpy(findBuf, dirBuf, ARRAY_SIZE(dirBuf));
-
 		FilenameList filenameList;
-		TheFileSystem->getFileListInDirectory(AsciiString(findBuf), AsciiString("*.tga"), filenameList, FALSE);
+		TheFileSystem->getFileListInDirectory(ROAD_DIRECTORY, "*.tga", filenameList, FALSE);
 
 		if (filenameList.size() > 0) {
 			FilenameList::iterator it = filenameList.begin();
@@ -264,7 +256,7 @@ BOOL RoadOptions::OnInitDialog()
 					++it;
 					continue;
 				}
-				len = filename.getLength();
+				int len = filename.getLength();
 				if (len<5) {
 					++it;
 					continue;

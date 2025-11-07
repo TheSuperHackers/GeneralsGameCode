@@ -264,7 +264,8 @@ int HCompressedAnimClass::Load_W3D(ChunkLoadClass & cload)
    WWASSERT(HierarchyName != NULL);
    WWASSERT(aheader.HierarchyName != NULL);
    WWASSERT(sizeof(HierarchyName) >= W3D_NAME_LEN);
-   strcpy(HierarchyName,aheader.HierarchyName);
+	 static_assert(ARRAY_SIZE(HierarchyName) >= ARRAY_SIZE(aheader.HierarchyName), "Incorrect array size");
+	 strcpy(HierarchyName, aheader.HierarchyName);
 
 	HTreeClass * base_pose = WW3DAssetManager::Get_Instance()->Get_HTree(HierarchyName);
 	if (base_pose == NULL) {
