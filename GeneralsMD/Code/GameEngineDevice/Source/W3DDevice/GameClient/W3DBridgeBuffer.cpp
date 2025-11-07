@@ -234,11 +234,14 @@ Bool W3DBridge::load(BodyDamageType curDamageState)
 	char section[_MAX_PATH];
 	char right[_MAX_PATH];
 
-	strlcpy(left, modelName, ARRAY_SIZE(left));
+	static_assert(ARRAY_SIZE(left) >= ARRAY_SIZE(section), "Incorrect array size");
+	static_assert(ARRAY_SIZE(section) >= ARRAY_SIZE(modelName), "Incorrect array size");
+	static_assert(ARRAY_SIZE(right) >= ARRAY_SIZE(modelName), "Incorrect array size");
+	strcpy(left, modelName);
 	strlcat(left, ".BRIDGE_LEFT", ARRAY_SIZE(left));
-	strlcpy(section, modelName, ARRAY_SIZE(section));
+	strcpy(section, modelName);
 	strlcat(section, ".BRIDGE_SPAN", ARRAY_SIZE(section));
-	strlcpy(right, modelName, ARRAY_SIZE(right));
+	strcpy(right, modelName);
 	strlcat(right, ".BRIDGE_RIGHT", ARRAY_SIZE(right));
 
 	m_bridgeTexture = pMgr->Get_Texture(textureFile,  MIP_LEVELS_3);

@@ -548,9 +548,12 @@ int HMorphAnimClass::Load_W3D(ChunkLoadClass & cload)
 	cload.Read(&header,sizeof(header));
 	cload.Close_Chunk();
 
-	strlcpy(AnimName, header.Name, ARRAY_SIZE(AnimName));
-	strlcpy(HierarchyName, header.HierarchyName, ARRAY_SIZE(HierarchyName));
-	strlcpy(Name, HierarchyName, ARRAY_SIZE(Name));
+	static_assert(ARRAY_SIZE(AnimName) >= ARRAY_SIZE(header.Name), "Incorrect array size");
+	static_assert(ARRAY_SIZE(HierarchyName) >= ARRAY_SIZE(header.HierarchyName), "Incorrect array size");
+	static_assert(ARRAY_SIZE(Name) >= ARRAY_SIZE(HierarchyName), "Incorrect array size");
+	strcpy(AnimName, header.Name);
+	strcpy(HierarchyName, header.HierarchyName);
+	strcpy(Name, HierarchyName);
 	strlcat(Name, ".", ARRAY_SIZE(Name));
 	strlcat(Name, AnimName, ARRAY_SIZE(Name));
 

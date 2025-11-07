@@ -265,7 +265,8 @@ BOOL PickUnitDialog::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			m_objectTreeView.GetItem(&item);
 			if (item.lParam >= 0) {
 				m_currentObjectIndex = item.lParam;
-				strlcpy(m_currentObjectName, buffer, ARRAY_SIZE(m_currentObjectName));
+				static_assert(ARRAY_SIZE(m_currentObjectName) >= NAME_MAX_LEN, "Incorrect array size");
+				strcpy(m_currentObjectName, buffer);
 			}	else if (m_objectTreeView.ItemHasChildren(item.hItem)) {
 				strcpy(m_currentObjectName, "");
 				m_currentObjectIndex = -1;

@@ -381,7 +381,8 @@ void DebugInit(int flags)
 			*(pEnd + 1) = 0;
 		}
 
-		strlcpy(theLogFileNamePrev, dirbuf, ARRAY_SIZE(theLogFileNamePrev));
+		static_assert(ARRAY_SIZE(theLogFileNamePrev) >= ARRAY_SIZE(dirbuf), "Incorrect array size");
+		strcpy(theLogFileNamePrev, dirbuf);
 		strlcat(theLogFileNamePrev, gAppPrefix, ARRAY_SIZE(theLogFileNamePrev));
 		strlcat(theLogFileNamePrev, DEBUG_FILE_NAME_PREV, ARRAY_SIZE(theLogFileNamePrev));
 		if (rts::ClientInstance::getInstanceId() > 1u)
@@ -391,7 +392,7 @@ void DebugInit(int flags)
 		}
 		strlcat(theLogFileNamePrev, ".txt", ARRAY_SIZE(theLogFileNamePrev));
 
-		strlcpy(theLogFileName, dirbuf, ARRAY_SIZE(theLogFileNamePrev));
+		strcpy(theLogFileName, dirbuf);
 		strlcat(theLogFileName, gAppPrefix, ARRAY_SIZE(theLogFileNamePrev));
 		strlcat(theLogFileName, DEBUG_FILE_NAME, ARRAY_SIZE(theLogFileNamePrev));
 		if (rts::ClientInstance::getInstanceId() > 1u)
