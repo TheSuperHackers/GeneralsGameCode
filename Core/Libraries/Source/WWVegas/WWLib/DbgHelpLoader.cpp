@@ -20,6 +20,7 @@
 
 
 DbgHelpLoader* DbgHelpLoader::Inst = NULL;
+CriticalSectionClass DbgHelpLoader::CriticalSection;
 
 DbgHelpLoader::DbgHelpLoader()
 	: m_symInitialize(NULL)
@@ -45,21 +46,29 @@ DbgHelpLoader::~DbgHelpLoader()
 
 bool DbgHelpLoader::isLoaded()
 {
+	CriticalSectionClass::LockClass lock(CriticalSection);
+
 	return Inst != NULL && Inst->m_dllModule != HMODULE(0);
 }
 
 bool DbgHelpLoader::isLoadedFromSystem()
 {
+	CriticalSectionClass::LockClass lock(CriticalSection);
+
 	return isLoaded() && Inst->m_loadedFromSystem;
 }
 
 bool DbgHelpLoader::isFailed()
 {
+	CriticalSectionClass::LockClass lock(CriticalSection);
+
 	return Inst != NULL && Inst->m_failed;
 }
 
 bool DbgHelpLoader::load()
 {
+	CriticalSectionClass::LockClass lock(CriticalSection);
+
 	if (Inst == NULL)
 	{
 		// Cannot use new/delete here when this is loaded during game memory initialization.
@@ -68,14 +77,14 @@ bool DbgHelpLoader::load()
 	}
 
 	// Always increment the reference count.
-	const long referenceCount = InterlockedIncrement(&Inst->m_referenceCount);
+	++Inst->m_referenceCount;
 
 	// Optimization: return early if it failed before.
 	if (Inst->m_failed)
 		return false;
 
 	// Return early if someone else already loaded it.
-	if (referenceCount > 1)
+	if (Inst->m_referenceCount > 1)
 		return true;
 
 	// Try load dbghelp.dll from the system directory first.
@@ -122,10 +131,12 @@ bool DbgHelpLoader::load()
 
 void DbgHelpLoader::unload()
 {
+	CriticalSectionClass::LockClass lock(CriticalSection);
+
 	if (Inst == NULL)
 		return;
 
-	if (InterlockedDecrement(&Inst->m_referenceCount) != 0)
+	if (--Inst->m_referenceCount != 0)
 		return;
 
 	freeResources();
@@ -137,6 +148,8 @@ void DbgHelpLoader::unload()
 
 void DbgHelpLoader::freeResources()
 {
+	// Is private. Needs no locking.
+
 	while (!Inst->m_initializedProcesses.empty())
 	{
 		symCleanup(*Inst->m_initializedProcesses.begin());
@@ -167,6 +180,8 @@ BOOL DbgHelpLoader::symInitialize(
 	LPSTR UserSearchPath,
 	BOOL fInvadeProcess)
 {
+	CriticalSectionClass::LockClass lock(CriticalSection);
+
 	if (Inst == NULL)
 		return FALSE;
 
@@ -192,6 +207,8 @@ BOOL DbgHelpLoader::symInitialize(
 BOOL DbgHelpLoader::symCleanup(
 	HANDLE hProcess)
 {
+	CriticalSectionClass::LockClass lock(CriticalSection);
+
 	if (Inst == NULL)
 		return FALSE;
 
@@ -214,6 +231,8 @@ BOOL DbgHelpLoader::symLoadModule(
 	DWORD BaseOfDll,
 	DWORD SizeOfDll)
 {
+	CriticalSectionClass::LockClass lock(CriticalSection);
+
 	if (Inst != NULL && Inst->m_symLoadModule)
 		return Inst->m_symLoadModule(hProcess, hFile, ImageName, ModuleName, BaseOfDll, SizeOfDll);
 
@@ -224,6 +243,8 @@ DWORD DbgHelpLoader::symGetModuleBase(
 	HANDLE hProcess,
 	DWORD dwAddr)
 {
+	CriticalSectionClass::LockClass lock(CriticalSection);
+
 	if (Inst != NULL && Inst->m_symGetModuleBase)
 		return Inst->m_symGetModuleBase(hProcess, dwAddr);
 
@@ -234,6 +255,8 @@ BOOL DbgHelpLoader::symUnloadModule(
 	HANDLE hProcess,
 	DWORD BaseOfDll)
 {
+	CriticalSectionClass::LockClass lock(CriticalSection);
+
 	if (Inst != NULL && Inst->m_symUnloadModule)
 		return Inst->m_symUnloadModule(hProcess, BaseOfDll);
 
@@ -246,6 +269,8 @@ BOOL DbgHelpLoader::symGetSymFromAddr(
 	LPDWORD Displacement,
 	PIMAGEHLP_SYMBOL Symbol)
 {
+	CriticalSectionClass::LockClass lock(CriticalSection);
+
 	if (Inst != NULL && Inst->m_symGetSymFromAddr)
 		return Inst->m_symGetSymFromAddr(hProcess, Address, Displacement, Symbol);
 
@@ -258,6 +283,8 @@ BOOL DbgHelpLoader::symGetLineFromAddr(
 	PDWORD pdwDisplacement,
 	PIMAGEHLP_LINE Line)
 {
+	CriticalSectionClass::LockClass lock(CriticalSection);
+
 	if (Inst != NULL && Inst->m_symGetLineFromAddr)
 		return Inst->m_symGetLineFromAddr(hProcess, dwAddr, pdwDisplacement, Line);
 
@@ -267,6 +294,8 @@ BOOL DbgHelpLoader::symGetLineFromAddr(
 DWORD DbgHelpLoader::symSetOptions(
 	DWORD SymOptions)
 {
+	CriticalSectionClass::LockClass lock(CriticalSection);
+
 	if (Inst != NULL && Inst->m_symSetOptions)
 		return Inst->m_symSetOptions(SymOptions);
 
@@ -277,6 +306,8 @@ LPVOID DbgHelpLoader::symFunctionTableAccess(
 	HANDLE hProcess,
 	DWORD AddrBase)
 {
+	CriticalSectionClass::LockClass lock(CriticalSection);
+
 	if (Inst != NULL && Inst->m_symFunctionTableAccess)
 		return Inst->m_symFunctionTableAccess(hProcess, AddrBase);
 
@@ -294,6 +325,8 @@ BOOL DbgHelpLoader::stackWalk(
 	PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
 	PTRANSLATE_ADDRESS_ROUTINE TranslateAddress)
 {
+	CriticalSectionClass::LockClass lock(CriticalSection);
+
 	if (Inst != NULL && Inst->m_stackWalk)
 		return Inst->m_stackWalk(MachineType, hProcess, hThread, StackFrame, ContextRecord, ReadMemoryRoutine, FunctionTableAccessRoutine, GetModuleBaseRoutine, TranslateAddress);
 
