@@ -94,7 +94,7 @@ Bool TerrainVisual::load( AsciiString filename )
 
 	m_filenameString = filename;
 
-	return TRUE;;  // success
+	return TRUE;  // success
 
 }
 
