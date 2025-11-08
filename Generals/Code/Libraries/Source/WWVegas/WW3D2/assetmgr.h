@@ -174,8 +174,8 @@ public:
 
 	-------------------------------------------------------------------------------------
 	TheSuperHackers @fix xezon 08/11/2025
-	The Asset Manager will now return null when it cannot create a valid font with the
-	given inputs. This way the user knows that the requested font is unusable.
+	The Asset Manager will now return null when it cannot find or create a valid font
+	with the given inputs. This way the user knows that the requested font is unusable.
 */
 
 
