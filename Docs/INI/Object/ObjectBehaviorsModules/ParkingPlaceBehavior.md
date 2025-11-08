@@ -32,7 +32,7 @@ Available in: *(v1.04)* (Generals, Zero Hour)
 
 ## Usage
 
-Place under `Update = ParkingPlaceBehavior ModuleTag_XX` inside [Object](../Object.md) entries. ParkingPlaceBehavior can only be added to [Object](../Object.md) entries in Retail (ObjectExtend does not exist in Retail). See [Template](#template) for correct syntax.
+Place under `Update = ParkingPlaceBehavior ModuleTag_XX` inside [Object](../Object.md) entries. ParkingPlaceBehavior can only be added to [Object](../Object.md) entries in Retail . See [Template](#template) for correct syntax.
 
 Multiple ParkingPlaceBehavior modules can exist independently on the same object, each managing different parking systems. Each instance operates independently with its own parking layout, runways, and healing settings.
 

@@ -20,6 +20,7 @@ Available in: *(v1.04)* (Generals, Zero Hour)
 - [Examples](#examples)
 - [Template](#template)
 - [Notes](#notes)
+- [Modder Recommended Use Scenarios](#modder-recommended-use-scenarios)
 - [Source Files](#source-files)
 - [Changes History](#changes-history)
 - [Document Log](#document-log)
@@ -28,24 +29,28 @@ Available in: *(v1.04)* (Generals, Zero Hour)
 
 ## Usage
 
-Place under `Body = HiveStructureBody ModuleTag_XX` inside [Object](../Object.md) entries. HiveStructureBody can only be added to [Object](../Object.md) entries in Retail (ObjectExtend does not exist in Retail). See [Template](#template) for correct syntax.
+Place under `Body = HiveStructureBody ModuleTag_XX` inside [Object](../Object.md) entries. HiveStructureBody can only be added to [Object](../Object.md) entries in Retail. See [Template](#template) for correct syntax.
+
+**Placement**:
+- **Retail**: HiveStructureBody can only be added to `Object` entries.
 
 Only one body module (ActiveBody, InactiveBody, StructureBody, ImmortalBody, HiveStructureBody, etc.) can exist per object. If multiple body modules are added to the same object, the game will crash with a "Duplicate bodies" assertion error during object creation. This restriction applies regardless of `ModuleTag` names - the object can only have one body module total.
 
 **Limitations**:
-- Requires [SpawnBehavior](../ObjectBehaviorsModules/SpawnBehavior.md) or [ContainModule](../ObjectModules/ContainModule.md) to redirect damage.
-- Only redirects or swallows the damage types listed; other types behave normally.
+- HiveStructureBody automatically manages damage states ([BodyDamageType Values](#bodydamagetype-values)) based on health percentage thresholds defined in [GameData](../GameData.md). HiveStructureBody uses the same damage state system as StructureBody and ActiveBody (see [ActiveBody documentation](ActiveBody.md#bodydamagetype-values) for complete damage state enum values). Damage states affect visual appearance and particle systems.
+- If [InitialHealth](#initialhealth) exceeds [MaxHealth](#maxhealth), the health will be clamped to [MaxHealth](#maxhealth) during health operations. Health cannot go below `0.0` or above [MaxHealth](#maxhealth).
+- Only redirects or swallows the damage types listed in [PropagateDamageTypesToSlavesWhenExisting](#propagatedamagetypestoslaveswhenexisting) and [SwallowDamageTypesIfSlavesNotExisting](#swallowdamagetypesifslavesnotexisting); other types behave normally.
 
 **Conditions**:
-- Always active once added to an object.
-- Damage redirection requires at least one slave/contained object; otherwise, swallow rules may apply.
-- Objects with HiveStructureBody can be targeted by [Weapon](../Weapon.md); armor (see [Armor](../Armor.md)) applies before redirection/swallowing.
-- **ObjectReskin (Retail)**: Adding a body module with the same `ModuleTag` name causes a duplicate-module error (no automatic replacement).
+- Objects with HiveStructureBody can be targeted by [Weapon](../Weapon.md) attacks; [Armor](../Armor.md) applies before redirection/swallowing.
+- When [SpawnBehavior](../ObjectBehaviorsModules/SpawnBehavior.md) or [ContainModule](../ObjectModules/ContainModule.md) supplies slave/contained objects, damage types listed in [PropagateDamageTypesToSlavesWhenExisting](#propagatedamagetypestoslaveswhenexisting) are redirected to the closest slave/contained object. When no slaves/contained objects exist, damage types listed in [SwallowDamageTypesIfSlavesNotExisting](#swallowdamagetypesifslavesnotexisting) are completely absorbed (no effect on the structure). Without SpawnBehavior or ContainModule, no damage redirection or swallowing occurs.
+- **ObjectReskin (Retail)**: ObjectReskin uses the same module system as [Object](../Object.md). Adding HiveStructureBody to an ObjectReskin entry with the same `ModuleTag` name as the base object will cause a duplicate module tag error, as ObjectReskin does not support automatic module replacement.
 
 **Dependencies**:
 - [SpawnBehavior](../ObjectBehaviorsModules/SpawnBehavior.md) and/or [ContainModule](../ObjectModules/ContainModule.md) to supply slaves/contained objects.
-- Valid damage type names (see [DamageType](../DamageType.md)).
-- Inherits health/visual-state behavior from [StructureBody](./StructureBody.md) / [ActiveBody](./ActiveBody.md).
+- Valid [DamageType](../DamageType.md) names.
+- Has all the same health and visual-state properties as [StructureBody](./StructureBody.md) and [ActiveBody](./ActiveBody.md).
+- Objects with HiveStructureBody can be healed by [AutoHealBehavior](../ObjectBehaviorsModules/AutoHealBehavior.md). AutoHealBehavior heals main health of objects with HiveStructureBody.
 
 ## Properties
 
@@ -54,7 +59,7 @@ Only one body module (ActiveBody, InactiveBody, StructureBody, ImmortalBody, Hiv
 #### `PropagateDamageTypesToSlavesWhenExisting`
 Available in: *(v1.04)* (Generals, Zero Hour)
 
-- **Type**: `DamageTypeFlags` (see [DamageType](../DamageType.md))
+- **Type**: `DamageTypeFlags` (see [DamageType](../DamageType.md) documentation)
 - **Description**: Redirect these damage types to the closest slave/contained object when present. Empty means no redirection. Use valid damage type names; invalid names will fail to parse.
 - **Default**: `0` (none)
 - **Example**: `PropagateDamageTypesToSlavesWhenExisting = EXPLOSION BALLISTIC`
@@ -62,7 +67,7 @@ Available in: *(v1.04)* (Generals, Zero Hour)
 #### `SwallowDamageTypesIfSlavesNotExisting`
 Available in: *(v1.04)* (Generals, Zero Hour)
 
-- **Type**: `DamageTypeFlags` (see [DamageType](../DamageType.md))
+- **Type**: `DamageTypeFlags` (see [DamageType](../DamageType.md) documentation)
 - **Description**: When no slaves/contained objects exist, completely absorb these damage types (no effect on the structure). Empty means damage is taken normally. Use valid damage type names; invalid names will fail to parse.
 - **Default**: `0` (none)
 - **Example**: `SwallowDamageTypesIfSlavesNotExisting = EXPLOSION`
@@ -103,12 +108,14 @@ End
 
 ## Notes
 
-- Redirection chooses the closest eligible slave/contained object for the listed damage types.
-- Swallowing applies only when there are no available slave/contained objects.
-- Armor and resistances apply before redirection/swallowing.
-- Use valid [DamageType](../DamageType.md) names; invalid names will abort parsing.
-- Only one body module is allowed per object; multiple bodies cause a startup assertion.
-- Recommended for hive-like structures protected by spawned drones or garrisoned units.
+- Damage states ([BodyDamageType Values](#bodydamagetype-values)) are updated automatically when [MaxHealth](#maxhealth) changes. HiveStructureBody uses the same damage state system as StructureBody and ActiveBody (see [ActiveBody documentation](ActiveBody.md#bodydamagetype-values) for complete damage state enum values).
+- HiveStructureBody requires either [SpawnBehavior](../ObjectBehaviorsModules/SpawnBehavior.md) or [ContainModule](../ObjectModules/ContainModule.md) to redirect or swallow damage. Without these modules, no damage redirection or swallowing occurs.
+- The closest slave/contained object to the damage source receives the redirected damage. Damage absorption (swallowing) only occurs when no slaves exist and the damage type matches the swallow criteria.
+- If no slaves exist and the damage type doesn't match swallow criteria, damage is taken normally by the structure.
+
+## Modder Recommended Use Scenarios
+
+- HiveStructureBody is used by objects like StingerSite which has slaved objects.
 
 ## Source Files
 

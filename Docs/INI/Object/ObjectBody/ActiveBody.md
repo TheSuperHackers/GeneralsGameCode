@@ -36,7 +36,7 @@ Available in: *(v1.04)* (Generals, Zero Hour)
 Available in: *(v1.04)* (Generals, Zero Hour)
 
 - **Type**: `Real`
-- **Description**: Maximum health points the object can have. Higher values make objects more durable and resistant to damage. This determines the total damage capacity before destruction. If [InitialHealth](#initialhealth) exceeds [MaxHealth](#maxhealth), the current health will be clamped to [MaxHealth](#maxhealth) when the first health change occurs. Health is automatically clamped to [MaxHealth](#maxhealth) as the upper limit and `0.0` as the lower limit during damage and healing operations.
+- **Description**: Maximum health points the object can have. Higher values make objects more durable and resistant to damage. This determines the total damage capacity before destruction. If [InitialHealth](#initialhealth) exceeds [MaxHealth](#maxhealth), the current health will be clamped to [MaxHealth](#maxhealth) during health operations. Health is automatically clamped to [MaxHealth](#maxhealth) as the upper limit and `0.0` as the lower limit during damage and healing operations.
 - **Default**: `0.0`
 - **Example**: `MaxHealth = 500.0`
 
@@ -44,7 +44,7 @@ Available in: *(v1.04)* (Generals, Zero Hour)
 Available in: *(v1.04)* (Generals, Zero Hour)
 
 - **Type**: `Real`
-- **Description**: Starting health points when the object is created. Higher values allow objects to spawn with more health than their maximum, providing temporary damage buffer. Lower values spawn objects at reduced health. The initial health value is set directly during object creation; if it exceeds [MaxHealth](#maxhealth), it will be clamped to [MaxHealth](#maxhealth) when the first health change occurs. Health cannot go below `0.0`.
+- **Description**: Starting health points when the object is created. Lower values spawn objects at reduced health. If [InitialHealth](#initialhealth) exceeds [MaxHealth](#maxhealth), the health will be clamped to [MaxHealth](#maxhealth) during health operations. Health cannot go below `0.0` during normal operations.
 - **Default**: `0.0`
 - **Example**: `InitialHealth = 500.0`
 
@@ -56,7 +56,7 @@ Available only in: *(v1.04, Zero Hour only)*
 Available only in: *(v1.04, Zero Hour only)*
 
 - **Type**: `Real`
-- **Description**: Maximum subdual damage that can accumulate before the object is subdued (disabled). Higher values allow objects to absorb more subdual damage before becoming incapacitated. At 0 (default), objects cannot be subdued (disabled). Subdual damage accumulates separately from normal health damage and can disable objects without destroying them. When subdual damage equals or exceeds [MaxHealth](#maxhealth), the object becomes subdued (disabled).
+- **Description**: Maximum subdual damage that can accumulate before the object is subdued (disabled). Higher values allow objects to absorb more subdual damage before becoming incapacitated. At 0 (default), objects cannot be subdued (disabled). Subdual damage accumulates separately from normal health damage and can disable objects without destroying them. When subdual damage equals or exceeds [MaxHealth](#maxhealth), the object becomes subdued (disabled). Only subdual damage types affect this cap: `SUBDUAL_MISSILE`, `SUBDUAL_VEHICLE`, `SUBDUAL_BUILDING`, and `SUBDUAL_UNRESISTABLE` (see [DamageType documentation](../DamageType.md)).
 - **Default**: `0.0`
 - **Example**: `SubdualDamageCap = 350.0`
 
@@ -83,10 +83,12 @@ Available in: *(v1.04)* (Generals, Zero Hour)
 
 **Source:** `BodyModule.h` - `BodyDamageType` enum definition
 
-- **`PRISTINE`** *(v1.04)* - Unit should appear in pristine condition
-- **`DAMAGED`** *(v1.04)* - Unit has been damaged
-- **`REALLYDAMAGED`** *(v1.04)* - Unit is extremely damaged / nearly destroyed
-- **`RUBBLE`** *(v1.04)* - Unit has been reduced to rubble/corpse/exploded-hulk, etc
+Damage states are calculated based on health percentage thresholds defined in [GameData](../GameData.md) (typically `UnitDamagedThreshold` = 50-70% and `UnitReallyDamagedThreshold` = 10-35%):
+
+- **`PRISTINE`** *(v1.04)* - Unit appears in pristine condition (health > `UnitDamagedThreshold`, typically > 50-70%)
+- **`DAMAGED`** *(v1.04)* - Unit has been damaged (health between `UnitReallyDamagedThreshold` and `UnitDamagedThreshold`, typically 10-35% to 50-70%)
+- **`REALLYDAMAGED`** *(v1.04)* - Unit is extremely damaged / nearly destroyed (health between 0% and `UnitReallyDamagedThreshold`, typically 0% to 10-35%)
+- **`RUBBLE`** *(v1.04)* - Unit has been reduced to rubble/corpse/exploded-hulk (health = 0%)
 
 ## Examples
 
@@ -129,25 +131,27 @@ End
 
 ## Usage
 
-Place under `Body = ActiveBody ModuleTag_XX` inside [Object](../Object.md) entries. ActiveBody can only be added to [Object](../Object.md) entries in Retail (ObjectExtend does not exist in Retail). See [Template](#template) for correct syntax.
+Place under `Body = ActiveBody ModuleTag_XX` inside [Object](../Object.md) entries. ActiveBody can only be added to [Object](../Object.md) entries in Retail. See [Template](#template) for correct syntax.
+
+**Placement**:
+- **Retail**: ActiveBody can only be added to `Object` entries.
 
 Only one body module (ActiveBody, InactiveBody, StructureBody, etc.) can exist per object. If multiple body modules are added to the same object, the game will crash with a "Duplicate bodies" assertion error during object creation. This restriction applies regardless of `ModuleTag` names - the object can only have one body module total.
 
 **Limitations**:
-- ActiveBody automatically manages damage states ([BodyDamageType Values](#bodydamagetype-values) such as PRISTINE, DAMAGED, REALLYDAMAGED, RUBBLE) based on health percentage thresholds defined in game data. Damage states affect visual appearance and particle systems.
-- If [InitialHealth](#initialhealth) exceeds [MaxHealth](#maxhealth), the current health will be clamped to [MaxHealth](#maxhealth) when the first health change occurs. Health cannot go below `0.0` or above [MaxHealth](#maxhealth).
+- ActiveBody automatically manages damage states ([BodyDamageType Values](#bodydamagetype-values)) based on health percentage thresholds defined in [GameData](../GameData.md). Damage states affect visual appearance and particle systems.
+- If [InitialHealth](#initialhealth) exceeds [MaxHealth](#maxhealth), the health will be clamped to [MaxHealth](#maxhealth) during health operations. Health cannot go below `0.0` or above [MaxHealth](#maxhealth).
 - [SubdualDamageCap](#subdualdamagecap) can disable objects without destroying them when subdual damage equals or exceeds [MaxHealth](#maxhealth). Subdual damage properties are available only in Zero Hour.
-- Objects automatically heal subdual damage over time if [SubdualDamageHealRate](#subdualdamagehealrate) and [SubdualDamageHealAmount](#subdualdamagehealamount) are set. The healing is handled by helper systems that run at the specified intervals.
+- Objects automatically heal subdual damage over time if healing properties are set. The healing is handled by helper systems that run at the specified intervals.
 
 **Conditions**:
-- Objects with [ActiveBody](#overview) can be targeted by [Weapon](../Weapon.md) attacks and affected by [DamageType](../DamageType.md). Health is reduced when weapons deal damage, and damage states are updated based on health percentage.
-- Veterancy levels can modify maximum health and healing rates through upgrade systems.
-- ActiveBody integrates with [Armor](../Armor.md) systems and damage effects. Armor modifies incoming damage before it is applied to health.
-- Damage states are calculated based on global thresholds defined in [GameData](../GameData.md) and affect visual appearance and particle systems.
-- **ObjectReskin**: [ObjectReskin](../ObjectReskin.md) uses the same module system as [Object](../Object.md). Adding ActiveBody to an ObjectReskin entry with the same `ModuleTag` name as the base object will cause a duplicate module tag error, as ObjectReskin does not support automatic module replacement.
+- Objects with ActiveBody can be targeted by [Weapon](../Weapon.md) attacks and affected by [DamageType](../DamageType.md). Health is reduced when weapons deal damage.
+- Veterancy levels can modify maximum health and healing rates through the veterancy bonus system (see [GameData](../GameData.md) for veterancy health bonuses).
+- **ObjectReskin (Retail)**: ObjectReskin uses the same module system as [Object](../Object.md). Adding ActiveBody to an ObjectReskin entry with the same `ModuleTag` name as the base object will cause a duplicate module tag error, as ObjectReskin does not support automatic module replacement.
 
 **Dependencies**:
 - Requires proper [Armor](../Armor.md) and [DamageType](../DamageType.md) definitions to function correctly. ActiveBody relies on armor systems to modify incoming damage before it is applied to health.
+- Objects with ActiveBody can be healed by [AutoHealBehavior](../ObjectBehaviorsModules/AutoHealBehavior.md). AutoHealBehavior heals main health of objects with ActiveBody.
 
 ## Template
 
@@ -164,21 +168,16 @@ End
 
 ## Notes
 
-- ActiveBody automatically manages damage states ([BodyDamageType Values](#bodydamagetype-values) such as PRISTINE, DAMAGED, REALLYDAMAGED, RUBBLE) based on health percentage thresholds defined in game data. Damage states affect visual appearance and particle systems.
-- Damage states are calculated based on global thresholds and updated automatically when [MaxHealth](#maxhealth) changes.
-- Subdual damage can disable objects without destroying them (Zero Hour only). Subdual damage accumulates separately from normal health damage and is limited by [SubdualDamageCap](#subdualdamagecap).
-- Objects automatically heal subdual damage over time if [SubdualDamageHealRate](#subdualdamagehealrate) and [SubdualDamageHealAmount](#subdualdamagehealamount) are set. The healing is handled by helper systems that run at the specified intervals.
-- Objects with [ActiveBody](#overview) can be targeted by weapons and affected by damage types. Armor modifies incoming damage before it is applied to health.
-- Veterancy levels can modify maximum health and healing rates through upgrade systems.
-- ActiveBody integrates with armor systems and damage effects.
+- Damage states ([BodyDamageType Values](#bodydamagetype-values)) are updated automatically when [MaxHealth](#maxhealth) changes.
+- Subdual damage types that affect this system: `SUBDUAL_MISSILE`, `SUBDUAL_VEHICLE`, `SUBDUAL_BUILDING`, and `SUBDUAL_UNRESISTABLE` (see [DamageType documentation](../DamageType.md)).
 
 ## Modder Recommended Use Scenarios
 
-(pending modder review)
+- ActiveBody is the most common body type, used by most units such as vehicles, infantry, and aircraft. It provides the standard health and damage management system that most objects in the game rely on.
 
 ## Source Files
 
-**Base Class:** `BodyModule`
+**Base Class:** [BodyModule](../../GeneralsMD/Code/GameEngine/Include/GameLogic/Module/BodyModule.h) (Retail Zero Hour), [BodyModule](../../Generals/Code/GameEngine/Include/GameLogic/Module/BodyModule.h) (Retail Generals)
 
 - Header (Retail Zero Hour): [ActiveBody.h](../../GeneralsMD/Code/GameEngine/Include/GameLogic/Module/ActiveBody.h)
 - Source (Retail Zero Hour): [ActiveBody.cpp](../../GeneralsMD/Code/GameEngine/Source/GameLogic/Object/Body/ActiveBody.cpp)

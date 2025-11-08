@@ -19,6 +19,7 @@ Available in: *(v1.04)* (Generals, Zero Hour)
 - [Examples](#examples)
 - [Template](#template)
 - [Notes](#notes)
+- [Modder Recommended Use Scenarios](#modder-recommended-use-scenarios)
 - [Source Files](#source-files)
 - [Changes History](#changes-history)
 - [Document Log](#document-log)
@@ -27,10 +28,10 @@ Available in: *(v1.04)* (Generals, Zero Hour)
 
 ## Usage
 
-Used by objects that should be indestructible and unaffected by damage, such as decorative objects, terrain features, or special objects that should not interact with the damage system. This is a **body module** that must be embedded within object definitions. Use the [Template](#template) below by copying it into your object definition. Then, customize it as needed, making sure to review any limitations, conditions, or dependencies related to its usage.
+Place under `Body = InactiveBody ModuleTag_XX` inside [Object](../Object.md) entries. InactiveBody can only be added to [Object](../Object.md) entries in Retail. See [Template](#template) for correct syntax.
 
 **Placement**:
-- **Retail**: InactiveBody can only be added to `Object` entries (ObjectExtend does not exist in Retail).
+- **Retail**: InactiveBody can only be added to `Object` entries.
 
 Only one body module (ActiveBody, InactiveBody, StructureBody, etc.) can exist per object. If multiple body modules are added to the same object, the game will crash with a "Duplicate bodies" assertion error during object creation. This restriction applies regardless of `ModuleTag` names - the object can only have one body module total.
 
@@ -38,37 +39,24 @@ Only one body module (ActiveBody, InactiveBody, StructureBody, etc.) can exist p
 - InactiveBody objects have no health system and cannot be damaged or healed through normal means.
 - All damage and healing attempts are ignored except unresistable damage type.
 - Objects are automatically marked as "effectively dead" on construction, which affects targeting, weapon attacks, and UI interactions.
-- Health queries always return `0.0`.
-- Damage state is always `BODY_PRISTINE` and cannot be changed.
 - Cannot be used on prerequisite objects (`IsPrerequisite = Yes`); the game will crash with an assertion if attempted.
 - No veterancy interactions - veterancy level changes are ignored.
 - No armor interactions - armor set flags cannot be modified or tested.
 - Health modifications from upgrades, veterancy, or difficulty scaling have no effect.
 
 **Conditions**:
-- Objects with InactiveBody are automatically marked as "effectively dead" on construction, which affects:
-  - **Weapon targeting**: Weapons will not attack effectively dead objects.
-  - **UI interactions**: UI systems may exclude effectively dead objects from selection and display.
-  - **Player systems**: Player systems (resource gathering, unit selection, etc.) exclude effectively dead objects from normal gameplay interactions.
-  - **Contain systems**: Contain systems (garrisons, transports, etc.) check effectively dead status when processing contained objects.
-  - **Script systems**: Script actions check effectively dead status when processing objects.
-- All damage attempts are ignored except unresistable damage type. When unresistable damage is applied, DieModules are processed (object can be removed via death modules), but health is not modified and damage FX are not applied.
+- Objects with InactiveBody are automatically marked as "effectively dead" on construction, which affects weapon targeting (weapons will not attack), UI interactions (may be excluded from selection), player systems (excluded from gameplay interactions), and contain systems (status checked when processing contained objects).
+- All damage attempts are ignored except unresistable damage type. When unresistable damage is applied, death modules are processed (object can be removed), but health is not modified.
 - All healing attempts are ignored and have no effect.
-- Damage estimation returns `0.0` for all damage types except unresistable damage, allowing AI and weapon systems to recognize that InactiveBody objects cannot be damaged normally.
-- Health queries always return `0.0`.
-- Health modifications from upgrades, veterancy, difficulty scaling, or object properties have no effect.
-- Damage state is always `BODY_PRISTINE` and cannot be changed.
-- Veterancy bonuses and upgrades that modify health do not affect InactiveBody objects.
-- Armor set flags cannot be modified or tested (no armor interactions).
-- Script actions can remove InactiveBody objects using unresistable damage type. Scripts that check health will receive `0.0`.
-- Objects can be removed via selling if DieModules are present.
-- Contain systems (garrisons, transports) can remove contained InactiveBody objects with unresistable damage when containers are destroyed, if DieModules are present.
-- **Prerequisite restriction**: Objects with `IsPrerequisite = Yes` cannot use InactiveBody. The game will crash with an assertion if this combination is attempted.
-- **ObjectReskin (Retail)**: ObjectReskin uses the same module system as Object. Adding InactiveBody to an ObjectReskin entry with the same `ModuleTag` name as the base object will cause a duplicate module tag error, as ObjectReskin does not support automatic module replacement like ObjectExtend.
+- Script actions can remove InactiveBody objects using unresistable damage type.
+- Objects can be removed via selling if death modules are present.
+- Contain systems (garrisons, transports) can remove contained InactiveBody objects with unresistable damage when containers are destroyed, if death modules are present.
+- **ObjectReskin (Retail)**: ObjectReskin uses the same module system as [Object](../Object.md). Adding InactiveBody to an ObjectReskin entry with the same `ModuleTag` name as the base object will cause a duplicate module tag error, as ObjectReskin does not support automatic module replacement.
 
 **Dependencies**:
 - Requires the object system to function correctly.
-- Compatible with DieModules - unresistable damage can trigger death modules for object removal.
+- Compatible with death modules - unresistable damage can trigger death modules for object removal.
+- Objects with InactiveBody cannot be healed by [AutoHealBehavior](../ObjectBehaviorsModules/AutoHealBehavior.md). InactiveBody has no health system and all healing attempts are ignored.
 
 ## Properties
 
@@ -105,17 +93,20 @@ End
 ## Notes
 
 - InactiveBody objects have no health system and cannot be damaged or healed through normal means.
-- Objects are automatically marked as "effectively dead" on construction, which affects targeting, weapon attacks, UI interactions, and player systems.
-- All damage and healing attempts are ignored except unresistable damage type, which can trigger DieModules for object removal.
-- Health queries always return `0.0`.
-- Damage state is always `BODY_PRISTINE` and cannot be changed.
+- Objects are automatically marked as "effectively dead" on construction, which affects targeting, weapon attacks, UI interactions, player systems, and contain systems.
+- All damage and healing attempts are ignored except unresistable damage type, which can trigger death modules for object removal.
 - Cannot be used on prerequisite objects (`IsPrerequisite = Yes`); the game will crash with an assertion if attempted.
 - No veterancy, armor, or component interactions.
 - Health modifications from upgrades, veterancy, or difficulty scaling have no effect.
-- Damage estimation returns `0.0` for all damage types except unresistable damage, allowing AI and weapon systems to recognize that InactiveBody objects cannot be damaged normally.
 - Commonly used for decorative objects, terrain features, and objects that should not interact with the damage system.
-- Objects can still be removed through other means (like special powers, script commands using unresistable damage, or DieModules triggered by unresistable damage).
+- Objects can still be removed through other means (like special powers, script commands using unresistable damage, or death modules triggered by unresistable damage).
 - Only one body module is allowed per object; multiple bodies cause a startup assertion.
+
+## Modder Recommended Use Scenarios
+
+- InactiveBody is used by objects that are not damageable like FireFieldSmall and MultiplayerBeacon which should not be killed.
+
+(pending modder review)
 
 ## Source Files
 
