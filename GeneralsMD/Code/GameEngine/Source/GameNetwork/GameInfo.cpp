@@ -73,7 +73,7 @@ void GameSlot::reset()
 	m_origPlayerTemplate = -1;
 	m_origStartPos = -1;
 	m_origColor = -1;
-	m_patchVersion = 0;
+	m_productVersion = 0;
 }
 
 void GameSlot::saveOffOriginalInfo( void )
@@ -1488,7 +1488,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 		{
 			// retain the patch version if a slot is still occupied by the same player
 			if (game->getConstSlot(i)->getState() == SLOT_PLAYER && newSlot[i].getState() == SLOT_PLAYER)
-				newSlot[i].setPatchVersion(game->getConstSlot(i)->getPatchVersion());
+				newSlot[i].setProductVersion(game->getConstSlot(i)->getProductVersion());
 
 			game->setSlot(i,newSlot[i]);
 		}

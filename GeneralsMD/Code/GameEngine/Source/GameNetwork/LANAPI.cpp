@@ -425,24 +425,24 @@ void LANAPI::update( void )
 				handleInActive( msg, senderIP );
 				break;
 
-				// TheSuperHackers @feature Caball009 06/11/2025 Exchange patch information with other players.
-			case LANMessage::MSG_GAME_REQUEST_PATCH_INFO:
-				handleGameRequestPatchInfo(msg, senderIP);
+				// TheSuperHackers @feature Caball009 06/11/2025 Exchange product information with other players.
+			case LANMessage::MSG_GAME_REQUEST_PRODUCT_INFO:
+				handleGameProductInfoRequest(msg, senderIP);
 				break;
-			case LANMessage::MSG_GAME_ACKNOWLEDGE_PATCH_INFO:
-				handleGameAcknowledgePatchInfo(msg, senderIP);
+			case LANMessage::MSG_GAME_RESPONSE_PRODUCT_INFO:
+				handleGameProductInfoResponse(msg, senderIP);
 				break;
-			case LANMessage::MSG_LOBBY_REQUEST_PATCH_INFO:
-				handleLobbyRequestPatchInfo(msg, senderIP);
+			case LANMessage::MSG_LOBBY_REQUEST_PRODUCT_INFO:
+				handleLobbyProductInfoRequest(msg, senderIP);
 				break;
-			case LANMessage::MSG_LOBBY_ACKNOWLEDGE_PATCH_INFO:
-				handleLobbyAcknowledgePatchInfo(msg, senderIP);
+			case LANMessage::MSG_LOBBY_RESPONSE_PRODUCT_INFO:
+				handleLobbyProductInfoResponse(msg, senderIP);
 				break;
-			case LANMessage::MSG_MATCH_REQUEST_PATCH_INFO:
-				handleMatchRequestPatchInfo(msg, senderIP);
+			case LANMessage::MSG_MATCH_REQUEST_PRODUCT_INFO:
+				handleMatchProductInfoRequest(msg, senderIP);
 				break;
-			case LANMessage::MSG_MATCH_ACKNOWLEDGE_PATCH_INFO:
-				handleMatchAcknowledgePatchInfo(msg, senderIP);
+			case LANMessage::MSG_MATCH_RESPONSE_PRODUCT_INFO:
+				handleMatchProductInfoResponse(msg, senderIP);
 				break;
 
 			default:
@@ -1125,6 +1125,18 @@ LANGameInfo * LANAPI::LookupGameByListOffset( Int offset )
 		return NULL;
 
 	while (offset-- && theGame)
+	{
+		theGame = theGame->getNext();
+	}
+
+	return theGame; // NULL means we didn't find anything.
+}
+
+LANGameInfo * LANAPI::LookupGameByHost( UnsignedInt hostIP )
+{
+	LANGameInfo* theGame = m_games;
+
+	while (theGame && theGame->getHostIP() != hostIP)
 	{
 		theGame = theGame->getNext();
 	}

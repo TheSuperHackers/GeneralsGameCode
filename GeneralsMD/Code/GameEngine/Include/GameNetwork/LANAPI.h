@@ -198,6 +198,7 @@ public:
 	// Misc utility functions
 	virtual LANGameInfo * LookupGame( UnicodeString gameName );														///< return a pointer to a game we know about
 	virtual LANGameInfo * LookupGameByListOffset( Int offset );														///< return a pointer to a game we know about
+	virtual LANGameInfo * LookupGameByHost( UnsignedInt hostIP );                     ///< return a pointer to a game we know about
 	virtual LANPlayer * LookupPlayer( UnsignedInt playerIP );													///< return a pointer to a player we know about
 	virtual Bool SetLocalIP( UnsignedInt localIP );																		///< For multiple NIC machines
 	virtual void SetLocalIP( AsciiString localIP );																		///< For multiple NIC machines
@@ -277,13 +278,13 @@ protected:
 	void handleGameOptions( LANMessage *msg, UnsignedInt senderIP );
 	void handleInActive( LANMessage *msg, UnsignedInt senderIP );
 
-	void handlePatchInfo(Int messageType, UnsignedInt senderIP, UnicodeString gameName);
-	void handleGameRequestPatchInfo(LANMessage *msg, UnsignedInt senderIP);
-	void handleGameAcknowledgePatchInfo(LANMessage *msg, UnsignedInt senderIP);
-	void handleLobbyRequestPatchInfo(LANMessage *msg, UnsignedInt senderIP);
-	void handleLobbyAcknowledgePatchInfo(LANMessage *msg, UnsignedInt senderIP);
-	void handleMatchRequestPatchInfo(LANMessage *msg, UnsignedInt senderIP);
-	void handleMatchAcknowledgePatchInfo(LANMessage *msg, UnsignedInt senderIP);
+	void sendProductInfoMessage(Int messageType, UnsignedInt senderIP);
+	void handleGameProductInfoRequest(LANMessage *msg, UnsignedInt senderIP);
+	void handleGameProductInfoResponse(LANMessage *msg, UnsignedInt senderIP);
+	void handleLobbyProductInfoRequest(LANMessage *msg, UnsignedInt senderIP);
+	void handleLobbyProductInfoResponse(LANMessage *msg, UnsignedInt senderIP);
+	void handleMatchProductInfoRequest(LANMessage *msg, UnsignedInt senderIP);
+	void handleMatchProductInfoResponse(LANMessage *msg, UnsignedInt senderIP);
 };
 
 
@@ -321,13 +322,13 @@ struct LANMessage
 
 		MSG_REQUEST_GAME_INFO,	///< For direct connect, get the game info from a specific IP Address
 
-		// Community patch
-		MSG_GAME_REQUEST_PATCH_INFO = 1000,
-		MSG_GAME_ACKNOWLEDGE_PATCH_INFO,
-		MSG_LOBBY_REQUEST_PATCH_INFO,
-		MSG_LOBBY_ACKNOWLEDGE_PATCH_INFO,
-		MSG_MATCH_REQUEST_PATCH_INFO,
-		MSG_MATCH_ACKNOWLEDGE_PATCH_INFO,
+		// Community Product
+		MSG_GAME_REQUEST_PRODUCT_INFO = 1000,
+		MSG_GAME_RESPONSE_PRODUCT_INFO,
+		MSG_LOBBY_REQUEST_PRODUCT_INFO,
+		MSG_LOBBY_RESPONSE_PRODUCT_INFO,
+		MSG_MATCH_REQUEST_PRODUCT_INFO,
+		MSG_MATCH_RESPONSE_PRODUCT_INFO,
 	} messageType;
 
 	WideChar name[g_lanPlayerNameLength+1]; ///< My name, for convenience
@@ -424,9 +425,12 @@ struct LANMessage
 
 		struct
 		{
-			WideChar gameName[g_lanGameNameLength + 1];
-			UnsignedInt patchVersion;
-		} PatchInfo;
+			UnsignedInt exeHash;
+			UnsignedInt iniHash;
+			UnsignedInt productVersion;
+			Char gitTagOrHash[33];
+			WideChar productName[129];
+		} ProductInfo;
 	};
 };
 #pragma pack(pop)

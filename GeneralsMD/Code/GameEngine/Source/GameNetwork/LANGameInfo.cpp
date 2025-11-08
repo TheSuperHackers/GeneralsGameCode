@@ -228,7 +228,7 @@ void LANDisplayGameList( GameWindow *gameListbox, LANGameInfo *gameList )
 			}
 
 			// TheSuperHackers @feature Caball009 06/11/2025 Set special color for games that are using a patched client version.
-			const Color color = (gameList->getSlot(0)->getPatchVersion() > 0)
+			const Color color = (gameList->getSlot(0)->getProductVersion() > 0)
 				? ((gameList->isGameInProgress()) ? gameInProgressColorPatchVersion : gameColorPatchVersion)
 				: ((gameList->isGameInProgress()) ? gameInProgressColor : gameColor);
 			const Int addedIndex = GadgetListBoxAddEntryText(gameListbox, txtGName, color, -1, -1);

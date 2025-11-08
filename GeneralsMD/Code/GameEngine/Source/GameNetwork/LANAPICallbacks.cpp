@@ -645,7 +645,7 @@ void LANAPI::OnPlayerList( LANPlayer *playerList )
 		while (player)
 		{
 			// TheSuperHackers @feature Caball009 06/11/2025 Set special color for players that are using a patched client version.
-			const Color color = (player->getPatchVersion() > 0 || m_localIP == player->getIP()) ? playerColorPatchVersion : playerColor;
+			const Color color = (player->getProductVersion() > 0 || m_localIP == player->getIP()) ? playerColorPatchVersion : playerColor;
 			const Int addedIndex = GadgetListBoxAddEntryText(listboxPlayers, player->getName(), color, -1, -1);
 			GadgetListBoxSetItemData(listboxPlayers, (void *)player->getIP(),addedIndex, 0 );
 

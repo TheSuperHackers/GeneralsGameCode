@@ -423,7 +423,7 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 			}
 			if(slot->isHuman())
 			{
-				if (i == myGame->getLocalSlotNum() || myGame->getSlot(i)->getPatchVersion() > 0)
+				if (i == myGame->getLocalSlotNum() || myGame->getSlot(i)->getProductVersion() > 0)
 				{
 					// TheSuperHackers @feature Caball009 06/11/2025 Set special color for players that are using a patched client version.
 					GadgetComboBoxSetEnabledTextColors(comboPlayer[i], playerColorPatchVersion, GameMakeColor(0, 0, 0, 255));
