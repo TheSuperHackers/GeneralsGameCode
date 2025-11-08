@@ -77,44 +77,28 @@ Bool W3DFontLibrary::loadFontData( GameFont *font )
 	if( font == NULL )
 		return FALSE;
 
+	const char* name = font->nameString.str();
+	const Int size = font->pointSize;
+	const Bool bold = font->bold;
+
 	// get the font data from the asset manager
-	FontCharsClass *fontChar = WW3DAssetManager::Get_Instance()->Get_FontChars(
-		font->nameString.str(), font->pointSize, font->bold ? true : false );
+	FontCharsClass *fontChar = WW3DAssetManager::Get_Instance()->Get_FontChars( name, size, bold );
 
 	if( fontChar == NULL )
 	{
-
-		DEBUG_LOG(( "W3D load font: unable to find font '%s' from asset manager",
-						 font->nameString.str() ));
-		DEBUG_ASSERTCRASH(fontChar, ("Missing or Corrupted Font.  Pleas see log for details"));
+		DEBUG_CRASH(( "Unable to find font '%s' in Asset Manager", name ));
 		return FALSE;
-
 	}
 
 	// assign font data
 	font->fontData = fontChar;
 	font->height = fontChar->Get_Char_Height();
 
-	FontCharsClass *unicodeFontChar = NULL;
+	// load Unicode of same point size
+	name = TheGlobalLanguageData ? TheGlobalLanguageData->m_unicodeFontName.str() : "Arial Unicode MS";
+	fontChar->AlternateUnicodeFont = WW3DAssetManager::Get_Instance()->Get_FontChars( name, size, bold );
 
-	// load unicode of same point size
-	if(TheGlobalLanguageData)
-		unicodeFontChar = WW3DAssetManager::
-									Get_Instance()->Get_FontChars( TheGlobalLanguageData->m_unicodeFontName.str(), font->pointSize,
-																								 font->bold ? true : false );
-	else
-		unicodeFontChar = WW3DAssetManager::
-									Get_Instance()->Get_FontChars( "Arial Unicode MS", font->pointSize,
-																								 font->bold ? true : false );
-
-	if ( unicodeFontChar )
-	{
-		fontChar->AlternateUnicodeFont = unicodeFontChar;
-	}
-
-	// all done and loaded
 	return TRUE;
-
 }
 
 // W3DFontLibrary::releaseFontData ============================================

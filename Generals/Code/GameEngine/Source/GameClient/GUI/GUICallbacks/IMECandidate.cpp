@@ -164,14 +164,14 @@ void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
 		return;
 	}
 
-	GameFont *font = window->winGetFont() ;
-	Int height;
+	GameFont *font = window->winGetFont();
 
 	// set the font
 	Dstring->setFont( font );
 
-	// cacl line height
-	height = font->height + IMECandidateWindowLineSpacing;
+	// calculate line height
+	Int fontHeight = font ? font->height : 0;
+	Int height = fontHeight + IMECandidateWindowLineSpacing;
 
 	// set the clip region
 	Dstring->setClipRegion( &textRegion );

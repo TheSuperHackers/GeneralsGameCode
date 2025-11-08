@@ -618,12 +618,9 @@ static Bool parseFont( const char *token, WinInstanceData *instData,
 
 	if( TheFontLibrary )
 	{
-		GameFont *font;
-
-		font = TheFontLibrary->getFont( AsciiString(fontName), fontSize, fontBold );
+		GameFont *font = TheFontLibrary->getFont( AsciiString(fontName), fontSize, fontBold );
 		if( font )
 			instData->m_font = font;
-
 	}
 
 	return TRUE;

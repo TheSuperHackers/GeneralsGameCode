@@ -520,10 +520,13 @@ void W3DGameWindow::winDrawBorder( void )
 }
 
 // W3DGameWindow::winSetFont ==================================================
-/** Set the font for a widow */
+/** Set the font for a window */
 //=============================================================================
 void W3DGameWindow::winSetFont( GameFont *font )
 {
+
+	if (font == NULL)
+		return;
 
 	// extending functionality
 	GameWindow::winSetFont( font );

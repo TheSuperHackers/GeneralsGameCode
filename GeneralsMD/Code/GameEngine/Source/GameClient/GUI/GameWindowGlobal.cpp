@@ -185,6 +185,9 @@ void GameWindowManager::winGetTextSize( GameFont *font, UnicodeString text,
 Int GameWindowManager::winFontHeight( GameFont *font )
 {
 
+	if (font == NULL)
+		return 0;
+
 	return font->height;
 
 }
