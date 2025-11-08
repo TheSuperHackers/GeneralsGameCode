@@ -22,7 +22,7 @@
 
 
 DbgHelpGuard::DbgHelpGuard()
-	: m_hasLoaded(false)
+	: m_needsUnload(false)
 {
 	activate();
 }
@@ -34,26 +34,16 @@ DbgHelpGuard::~DbgHelpGuard()
 
 void DbgHelpGuard::activate()
 {
-	if (DbgHelpLoader::isLoadedFromSystem())
-	{
-		// This is ok. Do nothing.
-	}
-	else if (DbgHelpLoader::isLoaded())
-	{
-		// This is maybe not ok. But do nothing until this becomes a user facing problem.
-	}
-	else
-	{
-		// Front load the DLL now to prevent other code from loading the potentially wrong DLL.
-		m_hasLoaded = DbgHelpLoader::load();
-	}
+	// Front load the DLL now to prevent other code from loading the potentially wrong DLL.
+	DbgHelpLoader::load();
+	m_needsUnload = true;
 }
 
 void DbgHelpGuard::deactivate()
 {
-	if (m_hasLoaded)
+	if (m_needsUnload)
 	{
 		DbgHelpLoader::unload();
-		m_hasLoaded = false;
+		m_needsUnload = false;
 	}
 }

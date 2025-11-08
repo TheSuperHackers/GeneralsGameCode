@@ -207,10 +207,6 @@ void BlendMaterial::addTerrain(const char *pPath, Int terrainNdx, HTREEITEM pare
 //	Int availableTiles = 4 * tilesPerRow * tilesPerRow;
 //	Int percent = (WorldHeightMapEdit::getTexClassNumTiles(terrainNdx)*100 + availableTiles/2) / availableTiles;
 
-	char label[_MAX_PATH];
-	snprintf(label, ARRAY_SIZE(label), "%s", buffer);
-
-
 	if( doAdd )
 	{
 		TVINSERTSTRUCT ins;
@@ -220,8 +216,8 @@ void BlendMaterial::addTerrain(const char *pPath, Int terrainNdx, HTREEITEM pare
 		ins.hInsertAfter = TVI_LAST;
 		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 		ins.item.lParam = terrainNdx;
-		ins.item.pszText = label;
-		ins.item.cchTextMax = strlen(label)+2;
+		ins.item.pszText = buffer;
+		ins.item.cchTextMax = strlen(buffer)+2;
 		m_terrainTreeView.InsertItem(&ins);
 	}
 

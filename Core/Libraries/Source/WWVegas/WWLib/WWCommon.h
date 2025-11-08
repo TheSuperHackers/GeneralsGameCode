@@ -39,6 +39,8 @@ enum
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
 typedef unsigned MemValueType;
+typedef long Interlocked32; // To use with Interlocked functions
 #else
 typedef unsigned long long MemValueType;
+typedef volatile long Interlocked32; // To use with Interlocked functions
 #endif

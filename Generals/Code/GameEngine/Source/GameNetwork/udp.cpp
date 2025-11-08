@@ -127,14 +127,11 @@ UDP::~UDP()
 
 Int UDP::Bind(const char *Host,UnsignedShort port)
 {
-  char hostName[100];
   struct hostent *hostStruct;
   struct in_addr *hostNode;
 
   if (isdigit(Host[0]))
     return ( Bind( ntohl(inet_addr(Host)), port) );
-
-  strcpy(hostName, Host);
 
   hostStruct = gethostbyname(Host);
   if (hostStruct == NULL)
@@ -327,33 +324,62 @@ UDP::sockStat UDP::GetStatus(void)
 	Int status = m_lastError;
  #ifdef _WINDOWS
   //int status=WSAGetLastError();
-  if (status==0) return(OK);
-  else if (status==WSAEINTR) return(INTR);
-  else if (status==WSAEINPROGRESS) return(INPROGRESS);
-  else if (status==WSAECONNREFUSED) return(CONNREFUSED);
-  else if (status==WSAEINVAL) return(INVAL);
-  else if (status==WSAEISCONN) return(ISCONN);
-  else if (status==WSAENOTSOCK) return(NOTSOCK);
-  else if (status==WSAETIMEDOUT) return(TIMEDOUT);
-  else if (status==WSAEALREADY) return(ALREADY);
-  else if (status==WSAEWOULDBLOCK) return(WOULDBLOCK);
-  else if (status==WSAEBADF) return(BADF);
-  else     return((UDP::sockStat)status);
+  switch (status) {
+    case NO_ERROR:
+      return OK;
+    case WSAEINTR:
+      return INTR;
+    case WSAEINPROGRESS:
+      return INPROGRESS;
+    case WSAECONNREFUSED:
+      return CONNREFUSED;
+    case WSAEINVAL:
+      return INVAL;
+    case WSAEISCONN:
+      return ISCONN;
+    case WSAENOTSOCK:
+      return NOTSOCK;
+    case WSAETIMEDOUT:
+      return TIMEDOUT;
+    case WSAEALREADY:
+      return ALREADY;
+    case WSAEWOULDBLOCK:
+      return WOULDBLOCK;
+    case WSAEBADF:
+      return BADF;
+    default:
+      return (UDP::sockStat)status;
+  }
  #else
   //int status=errno;
-  if (status==0) return(OK);
-  else if (status==EINTR) return(INTR);
-  else if (status==EINPROGRESS) return(INPROGRESS);
-  else if (status==ECONNREFUSED) return(CONNREFUSED);
-  else if (status==EINVAL) return(INVAL);
-  else if (status==EISCONN) return(ISCONN);
-  else if (status==ENOTSOCK) return(NOTSOCK);
-  else if (status==ETIMEDOUT) return(TIMEDOUT);
-  else if (status==EALREADY) return(ALREADY);
-  else if (status==EAGAIN) return(AGAIN);
-  else if (status==EWOULDBLOCK) return(WOULDBLOCK);
-  else if (status==EBADF) return(BADF);
-  else     return(UNKNOWN);
+  switch (status) {
+    case 0:
+      return OK;
+    case EINTR:
+      return INTR;
+    case EINPROGRESS:
+      return INPROGRESS;
+    case ECONNREFUSED:
+      return CONNREFUSED;
+    case EINVAL:
+      return INVAL;
+    case EISCONN:
+      return ISCONN;
+    case ENOTSOCK:
+      return NOTSOCK;
+    case ETIMEDOUT:
+      return TIMEDOUT;
+    case EALREADY:
+      return ALREADY;
+    case EAGAIN:
+      return AGAIN;
+    case EWOULDBLOCK:
+      return WOULDBLOCK;
+    case EBADF:
+      return BADF;
+    default:
+      return UNKNOWN;
+  }
  #endif
 }
 

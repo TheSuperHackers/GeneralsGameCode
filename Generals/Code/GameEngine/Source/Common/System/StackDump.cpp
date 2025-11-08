@@ -37,7 +37,6 @@
 //	Prototypes
 //*****************************************************************************
 BOOL InitSymbolInfo(void);
-void UninitSymbolInfo(void);
 void MakeStackTrace(DWORD myeip,DWORD myesp,DWORD myebp, int skipFrames, void (*callback)(const char*));
 void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* linenumber, unsigned int* address);
 void WriteStackLine(void*address, void (*callback)(const char*));
@@ -109,10 +108,14 @@ BOOL InitSymbolInfo()
 	if (DbgHelpLoader::isLoaded())
 		return TRUE;
 
-	if (!DbgHelpLoader::load())
+	if (DbgHelpLoader::isFailed())
 		return FALSE;
 
-	atexit(UninitSymbolInfo);
+	if (!DbgHelpLoader::load())
+	{
+		atexit(DbgHelpLoader::unload);
+		return FALSE;
+	}
 
 	char pathname[_MAX_PATH+1];
 	char drive[10];
@@ -140,22 +143,14 @@ BOOL InitSymbolInfo()
 		if(DbgHelpLoader::symLoadModule(process, NULL, pathname, NULL, 0, 0))
 		{
 				//Load any other relevant modules (ie dlls) here
+				atexit(DbgHelpLoader::unload);
 				return TRUE;
 		}
 	}
 
 	DbgHelpLoader::unload();
-	return(FALSE);
+	return FALSE;
 }
-
-
-//*****************************************************************************
-//*****************************************************************************
-void UninitSymbolInfo(void)
-{
-	DbgHelpLoader::unload();
-}
-
 
 
 //*****************************************************************************

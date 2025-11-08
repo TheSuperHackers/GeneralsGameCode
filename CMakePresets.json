@@ -54,6 +54,14 @@
             }
         },
         {
+            "name": "vc6-weekly",
+            "displayName": "Windows 32bit VC6 Weekly Release",
+            "inherits": "vc6",
+            "cacheVariables": {
+                "RTS_BUILD_OPTION_VC6_FULL_DEBUG": "ON"
+            }
+        },
+        {
             "name": "default",
             "displayName": "Default Config (don't use directly!)",
             "generator": "Ninja Multi-Config",
@@ -179,6 +187,12 @@
             "description": "Build Windows 32bit VC6 Release Logging"
         },
         {
+            "name": "vc6-weekly",
+            "configurePreset": "vc6-weekly",
+            "displayName": "Build Windows 32bit VC6 Weekly Release",
+            "description": "Build Windows 32bit VC6 Weekly Release"
+        },
+        {
             "name": "win32",
             "configurePreset": "win32",
             "displayName": "Build Windows 32bit Release",
@@ -278,6 +292,19 @@
                 {
                     "type": "build",
                     "name": "vc6-releaselog"
+                }
+            ]
+        },
+        {
+            "name": "vc6-weekly",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "vc6-weekly"
+                },
+                {
+                    "type": "build",
+                    "name": "vc6-weekly"
                 }
             ]
         },

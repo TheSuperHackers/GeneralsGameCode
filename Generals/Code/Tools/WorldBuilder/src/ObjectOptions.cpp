@@ -277,29 +277,17 @@ BOOL ObjectOptions::OnInitDialog()
 #endif
 #ifdef LOAD_TEST_ASSETS
 	{
-		char				dirBuf[_MAX_PATH];
-		char				findBuf[_MAX_PATH];
 		char				fileBuf[_MAX_PATH];
 		Int					i;
 
-		strcpy(dirBuf, TEST_W3D_DIR_PATH);
-		int len = strlen(dirBuf);
-
-		if (len > 0 && dirBuf[len - 1] != '\\' && dirBuf[len-1] != '/') {
-			dirBuf[len++] = '\\';
-			dirBuf[len] = 0;
-		}
-		strcpy(findBuf, dirBuf);
-		strlcat(findBuf, "*.*", ARRAY_SIZE(findBuf));
-
 		FilenameList filenameList;
-		TheFileSystem->getFileListInDirectory(AsciiString(dirBuf), AsciiString("*.w3d"), filenameList, FALSE);
+		TheFileSystem->getFileListInDirectory(TEST_W3D_DIR_PATH, "*.w3d", filenameList, FALSE);
 
 		if (filenameList.size() > 0) {
 			FilenameList::iterator it = filenameList.begin();
 			do {
 				AsciiString filename = *it;
-				len = filename.getLength();
+				int len = filename.getLength();
 				if (len<5) continue;
 				// only do .w3d files
 
@@ -310,8 +298,8 @@ BOOL ObjectOptions::OnInitDialog()
 				}
 
 				strcpy(fileBuf, TEST_STRING);
-				strlcat(fileBuf, "/", ARRAY_SIZE(findBuf));
-				strlcat(fileBuf, token.str(), ARRAY_SIZE(findBuf));
+				strlcat(fileBuf, "/", ARRAY_SIZE(fileBuf));
+				strlcat(fileBuf, token.str(), ARRAY_SIZE(fileBuf));
 				for (i=strlen(fileBuf)-1; i>0; i--) {
 					if (fileBuf[i] == '.') {
 						// strip off .w3d file extension.
@@ -480,8 +468,7 @@ void ObjectOptions::addObject( MapObject *mapObject, const char *pPath,
 		// first sort by side, either create or find the tree item with matching side name
 		AsciiString side = thingTemplate->getDefaultOwningSide();
 		DEBUG_ASSERTCRASH( !side.isEmpty(), ("NULL default side in template") );
-		strcpy( buffer, side.str() );
-		parent = findOrAdd( parent, buffer );
+		parent = findOrAdd( parent, side.str());
 
 		// next tier uses the editor sorting that design can specify in the INI
 		EditorSortingType i = ES_FIRST;
