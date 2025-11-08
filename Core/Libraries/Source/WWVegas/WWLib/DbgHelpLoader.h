@@ -24,9 +24,10 @@
 #include <imagehlp.h> // Must be included after Windows.h
 #include <set>
 
+#include "mutex.h"
 #include "SystemAllocator.h"
 
-// This static class can load and unload dbghelp.dll
+// This static class can load, unload and use dbghelp.dll. Is thread-safe.
 // Internally it must not use new and delete because it can be created during game memory initialization.
 
 class DbgHelpLoader
@@ -34,6 +35,7 @@ class DbgHelpLoader
 private:
 
 	static DbgHelpLoader* Inst; // Is singleton class
+	static CriticalSectionClass CriticalSection; // Required because dbg help is not thread safe for the most part
 
 	DbgHelpLoader();
 	~DbgHelpLoader();
@@ -46,8 +48,11 @@ public:
 	// Returns whether dbghelp.dll is loaded from the system directory
 	static bool isLoadedFromSystem();
 
+	// Returns whether dbghelp.dll was attempted to be loaded but failed
+	static bool isFailed();
+
+	// Every call to load needs a paired call to unload, no matter if the load was successful
 	static bool load();
-	static bool reload();
 	static void unload();
 
 	static BOOL WINAPI symInitialize(
@@ -105,6 +110,8 @@ public:
 		PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
 
 private:
+
+	static void freeResources();
 
 	typedef BOOL (WINAPI *SymInitialize_t) (
 		HANDLE hProcess,
@@ -175,6 +182,8 @@ private:
 
 	Processes m_initializedProcesses;
 	HMODULE m_dllModule;
+	int m_referenceCount;
+	CriticalSectionClass m_criticalSection;
 	bool m_failed;
 	bool m_loadedFromSystem;
 };

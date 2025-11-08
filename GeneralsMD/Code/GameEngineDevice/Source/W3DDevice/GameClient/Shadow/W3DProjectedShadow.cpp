@@ -1718,6 +1718,7 @@ W3DProjectedShadow* W3DProjectedShadowManager::addShadow(RenderObjClass *robj, S
 				//onto world geometry.
 				if (strlen(shadowInfo->m_ShadowName) <= 1)	//no texture name given, use same as object
 				{
+					static_assert(ARRAY_SIZE(texture_name) >= ARRAY_SIZE(defaultDecalName), "Incorrect array size");
 					strcpy(texture_name, defaultDecalName);
 				}
 				else
@@ -1894,6 +1895,7 @@ W3DProjectedShadow* W3DProjectedShadowManager::createDecalShadow(Shadow::ShadowT
 	//onto world geometry.
 	if (strlen(shadowInfo->m_ShadowName) <= 1)	//no texture name given, use same as object
 	{
+		static_assert(ARRAY_SIZE(texture_name) >= ARRAY_SIZE(defaultDecalName), "Incorrect array size");
 		strcpy(texture_name, defaultDecalName);
 	}
 	else

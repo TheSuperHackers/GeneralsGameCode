@@ -289,8 +289,8 @@ public:
 	/// return t iff the player has all sciences that are prereqs for knowing the given science
 	Bool hasPrereqsForScience(ScienceType t) const;
 
-	Bool hasUpgradeComplete( const UpgradeTemplate *upgradeTemplate );		///< does player have totally done and produced upgrade
-	Bool hasUpgradeComplete( UpgradeMaskType testMask );		///< does player have totally done and produced upgrade
+	Bool hasUpgradeComplete( const UpgradeTemplate *upgradeTemplate ) const;		///< does player have totally done and produced upgrade
+	Bool hasUpgradeComplete( UpgradeMaskType testMask ) const;		///< does player have totally done and produced upgrade
 	UpgradeMaskType getCompletedUpgradeMask() const { return m_upgradesCompleted; }	///< get list of upgrades that are completed
 	Bool hasUpgradeInProduction( const UpgradeTemplate *upgradeTemplate );		///< does player have this upgrade in progress right now
 	Upgrade *addUpgrade( const UpgradeTemplate *upgradeTemplate,

@@ -118,6 +118,13 @@ Real FramePacer::getUpdateFps()  const
 	return 1.0f / m_updateTime;
 }
 
+Real FramePacer::getBaseOverUpdateFpsRatio(Real minUpdateFps)
+{
+	// Update fps is floored to default 5 fps, 200 ms.
+	// Useful to prevent insane ratios on frame spikes/stalls.
+	return (Real)BaseFps / std::max(getUpdateFps(), minUpdateFps);
+}
+
 void FramePacer::setTimeFrozen(Bool frozen)
 {
 	m_isTimeFrozen = frozen;

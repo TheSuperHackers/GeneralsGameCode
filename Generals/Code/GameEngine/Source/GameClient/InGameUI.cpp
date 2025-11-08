@@ -23,7 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // InGameUI.cpp ///////////////////////////////////////////////////////////////////////////////////
-// Implementation of in-game user interface singleton inteface
+// Implementation of in-game user interface singleton
 // Author: Michael S. Booth, March 2001
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1939,7 +1939,7 @@ void InGameUI::update( void )
 	if (m_cameraRotatingLeft || m_cameraRotatingRight || m_cameraZoomingIn || m_cameraZoomingOut)
 	{
 		// TheSuperHackers @tweak The camera rotation and zoom are now decoupled from the render update.
-		const Real fpsRatio = (Real)BaseFps / TheFramePacer->getUpdateFps();
+		const Real fpsRatio = TheFramePacer->getBaseOverUpdateFpsRatio();
 		const Real rotateAngle = TheGlobalData->m_keyboardCameraRotateSpeed * fpsRatio;
 		const Real zoomHeight = (Real)View::ZoomHeightPerSecond * fpsRatio;
 
