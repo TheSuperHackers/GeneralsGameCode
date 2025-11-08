@@ -205,14 +205,14 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 //-------------------------------------------------------------------------------------------------
 Bool MissileLauncherBuildingUpdate::initiateIntentToDoSpecialPower( const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions )
 {
-	// TheSuperHackers @bugfix Mauller 29/06/2025 prevent a game crash when told to launch before ready to do so
-	if( getObject()->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) )
-	{
 #if RETAIL_COMPATIBLE_CRC
-		getObject()->getSpecialPowerModule(specialPowerTemplate)->setReadyFrame(~0u);
-#endif
+	// TheSuperHackers @bugfix Mauller 29/06/2025 prevent a game crash when told to launch before ready to do so
+	if (!m_specialPowerModule) {
+		Object* us = getObject();
+		us->getSpecialPowerModule(specialPowerTemplate)->setReadyFrame(0xFFFFFFFF);
 		return FALSE;
 	}
+#endif
 
 	if( m_specialPowerModule->getSpecialPowerTemplate() != specialPowerTemplate )
 	{
