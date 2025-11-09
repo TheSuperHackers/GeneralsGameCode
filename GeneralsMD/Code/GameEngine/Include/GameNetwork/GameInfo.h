@@ -57,6 +57,15 @@ enum
 class GameSlot
 {
 public:
+	struct ProductInfo
+	{
+		UnsignedInt exeCRC;
+		UnsignedInt iniCRC;
+		UnsignedInt productVersion;
+		AsciiString gitTagOrHash;
+		UnicodeString productName;
+	};
+
 	GameSlot();
 	virtual void reset();
 
@@ -126,8 +135,8 @@ public:
 	void mute( Bool isMuted ) { m_isMuted = isMuted; }
 	Bool isMuted( void ) const { return m_isMuted; }
 
-	void setProductVersion(UnsignedInt productVersion) { m_productVersion = productVersion; }
-	UnsignedInt getProductVersion() const { return m_productVersion; }
+	void setProductInfo(const ProductInfo& productInfo) { m_productInfo = productInfo; }
+	const ProductInfo& getProductInfo() const { return m_productInfo; }
 protected:
 	SlotState m_state;
 	Bool m_isAccepted;
@@ -146,7 +155,7 @@ protected:
 	FirewallHelperClass::FirewallBehaviorType m_NATBehavior;	///< The NAT behavior for this slot's player.
 	UnsignedInt m_lastFrameInGame;	// only valid for human players
 	Bool m_disconnected;						// only valid for human players
-	UnsignedInt m_productVersion;	///< Community made product version
+	ProductInfo m_productInfo; ///< Community made product information
 };
 
 /**

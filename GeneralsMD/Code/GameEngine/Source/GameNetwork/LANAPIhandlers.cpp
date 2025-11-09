@@ -149,7 +149,7 @@ void LANAPI::handleMatchProductInfoResponse(LANMessage *msg, UnsignedInt senderI
 
 	for (Int i = 0; i < MAX_SLOTS; ++i)
 	{
-		if (!m_currentGame->getLANSlot(i)->isHuman() || m_currentGame->getIP(i) != senderIP)
+		if (!m_currentGame->getConstSlot(i)->isHuman() || m_currentGame->getIP(i) != senderIP)
 			continue;
 
 		// a fellow player in the game has acknowledged our request for product information
