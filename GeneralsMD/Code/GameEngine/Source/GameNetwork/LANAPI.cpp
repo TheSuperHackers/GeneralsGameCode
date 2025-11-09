@@ -425,6 +425,26 @@ void LANAPI::update( void )
 				handleInActive( msg, senderIP );
 				break;
 
+				// TheSuperHackers @feature Caball009 06/11/2025 Exchange product information with other players.
+			case LANMessage::MSG_GAME_REQUEST_PRODUCT_INFO:
+				handleGameProductInfoRequest(msg, senderIP);
+				break;
+			case LANMessage::MSG_GAME_RESPONSE_PRODUCT_INFO:
+				handleGameProductInfoResponse(msg, senderIP);
+				break;
+			case LANMessage::MSG_LOBBY_REQUEST_PRODUCT_INFO:
+				handleLobbyProductInfoRequest(msg, senderIP);
+				break;
+			case LANMessage::MSG_LOBBY_RESPONSE_PRODUCT_INFO:
+				handleLobbyProductInfoResponse(msg, senderIP);
+				break;
+			case LANMessage::MSG_MATCH_REQUEST_PRODUCT_INFO:
+				handleMatchProductInfoRequest(msg, senderIP);
+				break;
+			case LANMessage::MSG_MATCH_RESPONSE_PRODUCT_INFO:
+				handleMatchProductInfoResponse(msg, senderIP);
+				break;
+
 			default:
 				DEBUG_LOG(("Unknown LAN message type %d", msg->messageType));
 			}
@@ -906,6 +926,9 @@ void LANAPI::RequestGameCreate( UnicodeString gameName, Bool isDirectConnect )
 	newSlot.setLogin(m_userName);
 	newSlot.setHost(m_hostName);
 
+	// set product information for local game slot
+	setProductInfoFromLocalData(&newSlot);
+
 	myGame->setSlot(0,newSlot);
 	myGame->setNext(NULL);
 	LANPreferences pref;
@@ -1105,6 +1128,18 @@ LANGameInfo * LANAPI::LookupGameByListOffset( Int offset )
 		return NULL;
 
 	while (offset-- && theGame)
+	{
+		theGame = theGame->getNext();
+	}
+
+	return theGame; // NULL means we didn't find anything.
+}
+
+LANGameInfo * LANAPI::LookupGameByHost( UnsignedInt hostIP )
+{
+	LANGameInfo* theGame = m_games;
+
+	while (theGame && theGame->getHostIP() != hostIP)
 	{
 		theGame = theGame->getNext();
 	}

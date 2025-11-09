@@ -36,6 +36,7 @@
 #include "Common/PlayerList.h"
 #include "Common/PlayerTemplate.h"
 #include "Common/Recorder.h"
+#include "Common/version.h"
 #include "GameClient/AnimateWindowManager.h"
 #include "GameClient/Diplomacy.h"
 #include "GameClient/DisconnectMenu.h"
@@ -532,24 +533,28 @@ void PopulateInGameDiplomacyPopup( void )
 			if (staticTextStatus[rowNum])
 			{
 				staticTextStatus[rowNum]->winHide(FALSE);
+
+				Color frontColor = 0;
+				UnicodeString text;
+
 				if (isInGame)
 				{
 					if (isAlive)
 					{
-						staticTextStatus[rowNum]->winSetEnabledTextColors( aliveColor, backColor );
-						GadgetStaticTextSetText(staticTextStatus[rowNum], TheGameText->fetch("GUI:PlayerAlive"));
+						frontColor = aliveColor;
+						text = TheGameText->fetch("GUI:PlayerAlive");
 					}
 					else
 					{
 						if (isObserver)
 						{
-							staticTextStatus[rowNum]->winSetEnabledTextColors( observerInGameColor, backColor );
-							GadgetStaticTextSetText(staticTextStatus[rowNum], TheGameText->fetch("GUI:PlayerObserver"));
+							frontColor = observerInGameColor;
+							text = TheGameText->fetch("GUI:PlayerObserver");
 						}
 						else
 						{
-							staticTextStatus[rowNum]->winSetEnabledTextColors( deadColor, backColor );
-							GadgetStaticTextSetText(staticTextStatus[rowNum], TheGameText->fetch("GUI:PlayerDead"));
+							frontColor = deadColor;
+							text = TheGameText->fetch("GUI:PlayerDead");
 						}
 					}
 				}
@@ -558,15 +563,27 @@ void PopulateInGameDiplomacyPopup( void )
 					// not in game
 					if (isObserver)
 					{
-						staticTextStatus[rowNum]->winSetEnabledTextColors( observerGoneColor, backColor );
-						GadgetStaticTextSetText(staticTextStatus[rowNum], TheGameText->fetch("GUI:PlayerObserverGone"));
+						frontColor = observerGoneColor;
+						text = TheGameText->fetch("GUI:PlayerObserverGone");
 					}
 					else
 					{
-						staticTextStatus[rowNum]->winSetEnabledTextColors( goneColor, backColor );
-						GadgetStaticTextSetText(staticTextStatus[rowNum], TheGameText->fetch("GUI:PlayerGone"));
+						frontColor = goneColor;
+						text = TheGameText->fetch("GUI:PlayerGone");
 					}
 				}
+
+				// TheSuperHackers @feature Caball009 06/11/2025 Set special status for players that are using a patched client version.
+				if (slot->isHuman() && slot->getProductInfo().productVersion > 0)
+				{
+					UnicodeString gitTagOrHash;
+					gitTagOrHash.translate(slot->getProductInfo().gitTagOrHash);
+
+					text.format(L"%s [%s]", text.str(), gitTagOrHash.str());
+				}
+
+				staticTextStatus[rowNum]->winSetEnabledTextColors(frontColor, backColor);
+				GadgetStaticTextSetText(staticTextStatus[rowNum], text);
 			}
 
 			slotNumInRow[rowNum++] = slotNum;
