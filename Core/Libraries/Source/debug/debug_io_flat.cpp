@@ -275,7 +275,7 @@ void DebugIOFlat::ExpandMagic(const char *src, const char *splitName, char *buf)
     unsigned len=strlen(help);
     if (dst-buf+len>250)
       break;
-    strlcpy(dst, help, ARRAY_SIZE(dst));
+    strcpy(dst, help);
     dst+=len;
   }
   strcpy(dst,".log");

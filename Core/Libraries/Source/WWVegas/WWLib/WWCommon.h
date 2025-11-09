@@ -26,8 +26,13 @@
 
 // This macro serves as a general way to determine the number of elements within an array.
 #ifndef ARRAY_SIZE
-#define ARRAY_SIZE(x) int(sizeof(x)/sizeof(x[0]))
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
+#else
+template <typename Type, size_t Size> char (*ArraySizeHelper(Type(&)[Size]))[Size];
+#define ARRAY_SIZE(arr) sizeof(*ArraySizeHelper(arr))
 #endif
+#endif // ARRAY_SIZE
 
 enum
 {
