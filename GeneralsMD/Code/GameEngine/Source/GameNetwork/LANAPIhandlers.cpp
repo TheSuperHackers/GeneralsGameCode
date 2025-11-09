@@ -47,8 +47,8 @@ void LANAPI::sendProductInfoMessage(Int messageType, UnsignedInt senderIP)
 	fillInLANMessage(&msg);
 	msg.messageType = (LANMessage::Type)messageType;
 
-	msg.ProductInfo.exeHash = TheGlobalData->m_exeCRC;
-	msg.ProductInfo.iniHash = TheGlobalData->m_iniCRC;
+	msg.ProductInfo.exeCRC = TheGlobalData->m_exeCRC;
+	msg.ProductInfo.iniCRC = TheGlobalData->m_iniCRC;
 	msg.ProductInfo.productVersion = TheVersion->getVersionNumber();
 	strlcpy(msg.ProductInfo.gitTagOrHash, TheVersion->getAsciiGitTagOrHash().str(), ARRAY_SIZE(msg.ProductInfo.gitTagOrHash));
 	wcslcpy(msg.ProductInfo.productName, TheVersion->getUnicodeProductString().str(), ARRAY_SIZE(msg.ProductInfo.productName));

@@ -425,8 +425,8 @@ struct LANMessage
 
 		struct
 		{
-			UnsignedInt exeHash;
-			UnsignedInt iniHash;
+			UnsignedInt exeCRC;
+			UnsignedInt iniCRC;
 			UnsignedInt productVersion;
 			Char gitTagOrHash[33];
 			WideChar productName[129];
