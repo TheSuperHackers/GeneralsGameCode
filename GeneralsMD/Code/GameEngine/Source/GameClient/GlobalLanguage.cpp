@@ -64,11 +64,12 @@
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-GlobalLanguage *TheGlobalLanguageData = NULL;				///< The global language singalton
+GlobalLanguage *TheGlobalLanguageData = NULL;				///< The global language singleton
 
 static const LookupListRec ResolutionFontSizeMethodNames[] =
 {
 	{ "CLASSIC", GlobalLanguage::ResolutionFontSizeMethod_Classic },
+	{ "CLASSIC_NO_CEILING", GlobalLanguage::ResolutionFontSizeMethod_ClassicNoCeiling },
 	{ "STRICT", GlobalLanguage::ResolutionFontSizeMethod_Strict },
 	{ "BALANCED", GlobalLanguage::ResolutionFontSizeMethod_Balanced },
 	{ NULL, 0 }
@@ -129,7 +130,7 @@ GlobalLanguage::GlobalLanguage()
 	m_militaryCaptionSpeed = 0;
 	m_useHardWrap = FALSE;
 	m_resolutionFontSizeAdjustment = 0.7f;
-	m_resolutionFontSizeMethod = ResolutionFontSizeMethod_Balanced;
+	m_resolutionFontSizeMethod = ResolutionFontSizeMethod_Default;
 	m_militaryCaptionDelayMS = 750;
 	//End Add
 
@@ -206,6 +207,8 @@ float GlobalLanguage::getResolutionFontSizeAdjustment( void ) const
 
 Int GlobalLanguage::adjustFontSize(Int theFontSize)
 {
+	// TheSuperHackers @todo This function is called very often.
+	// Therefore cache the adjustFactor on resolution change to not recompute it on every call.
 	Real adjustFactor;
 
 	switch (m_resolutionFontSizeMethod)
@@ -214,11 +217,19 @@ Int GlobalLanguage::adjustFontSize(Int theFontSize)
 	case ResolutionFontSizeMethod_Classic:
 	{
 		// TheSuperHackers @info The original font scaling for this game.
-		// Can be useful for not breaking legacy Addons and Mods but scales poorly.
+		// Useful for not breaking legacy Addons and Mods. Scales poorly with large resolutions.
 		adjustFactor = TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH;
 		adjustFactor = 1.0f + (adjustFactor - 1.0f) * getResolutionFontSizeAdjustment();
 		if (adjustFactor > 2.0f)
 			adjustFactor = 2.0f;
+		break;
+	}
+	case ResolutionFontSizeMethod_ClassicNoCeiling:
+	{
+		// TheSuperHackers @feature The original font scaling, but without ceiling.
+		// Useful for not changing the original look of the game. Scales alright with large resolutions.
+		adjustFactor = TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH;
+		adjustFactor = 1.0f + (adjustFactor - 1.0f) * getResolutionFontSizeAdjustment();
 		break;
 	}
 	case ResolutionFontSizeMethod_Strict:

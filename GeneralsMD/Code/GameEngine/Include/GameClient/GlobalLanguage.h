@@ -70,8 +70,11 @@ public:
 	enum ResolutionFontSizeMethod
 	{
 		ResolutionFontSizeMethod_Classic, // Uses the original scaling method. Scales poorly on wide screens and large resolutions.
+		ResolutionFontSizeMethod_ClassicNoCeiling, // Uses the original scaling method, but without ceiling. Works ok for the original Game UI and with large resolutions. Scales poorly on very wide screens.
 		ResolutionFontSizeMethod_Strict, // Uses a strict scaling method. Width and height are strictly bounded on upscales. Works well for accurate UI layouts and with large resolutions.
 		ResolutionFontSizeMethod_Balanced, // Uses a balanced scaling method. Width and height are evenly weighted for upscales. Works well for the original Game UI and with large resolutions.
+
+		ResolutionFontSizeMethod_Default = ResolutionFontSizeMethod_ClassicNoCeiling,
 	};
 
 public:
