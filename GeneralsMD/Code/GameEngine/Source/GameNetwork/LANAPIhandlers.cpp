@@ -41,6 +41,30 @@
 #include "GameNetwork/LANAPICallbacks.h"
 #include "GameClient/MapUtil.h"
 
+void LANAPI::setProductInfoFromLocalData(GameSlot *slot)
+{
+	GameSlot::ProductInfo productInfo;
+	productInfo.exeCRC = TheGlobalData->m_exeCRC;
+	productInfo.iniCRC = TheGlobalData->m_iniCRC;
+	productInfo.productVersion = TheVersion->getVersionNumber();
+	productInfo.gitTagOrHash = TheVersion->getAsciiGitTagOrHash();
+	productInfo.productName = TheVersion->getUnicodeProductString();
+
+	slot->setProductInfo(productInfo);
+}
+
+void LANAPI::setProductInfoFromMessage(LANMessage *msg, GameSlot *slot)
+{
+	GameSlot::ProductInfo productInfo;
+	productInfo.exeCRC = msg->ProductInfo.exeCRC;
+	productInfo.iniCRC = msg->ProductInfo.iniCRC;
+	productInfo.productVersion = msg->ProductInfo.productVersion;
+	productInfo.gitTagOrHash = msg->ProductInfo.gitTagOrHash;
+	productInfo.productName = msg->ProductInfo.productName;
+
+	slot->setProductInfo(productInfo);
+}
+
 void LANAPI::sendProductInfoMessage(Int messageType, UnsignedInt senderIP)
 {
 	LANMessage msg;

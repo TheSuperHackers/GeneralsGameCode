@@ -260,6 +260,9 @@ protected:
 	void addGame(LANGameInfo *game);
 	AsciiString createSlotString( void );
 
+	void setProductInfoFromLocalData(GameSlot *slot);
+	void setProductInfoFromMessage(LANMessage *msg, GameSlot *slot);
+
 	// Functions to handle incoming messages -----------------------------------
 	void handleRequestLocations( LANMessage *msg, UnsignedInt senderIP );
 	void handleGameAnnounce( LANMessage *msg, UnsignedInt senderIP );
