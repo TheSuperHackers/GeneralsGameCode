@@ -99,7 +99,7 @@ void LANAPI::handleGameProductInfoResponse(LANMessage *msg, UnsignedInt senderIP
 		return;
 
 	// a game host has acknowledged our request for product information
-	game->getSlot(0)->setProductVersion(msg->ProductInfo.productVersion);
+	setProductInfoFromMessage(msg, game->getSlot(0));
 
 	// update game list with colored names
 	OnGameList(m_games);
@@ -153,7 +153,7 @@ void LANAPI::handleMatchProductInfoResponse(LANMessage *msg, UnsignedInt senderI
 			continue;
 
 		// a fellow player in the game has acknowledged our request for product information
-		m_currentGame->getSlot(i)->setProductVersion(msg->ProductInfo.productVersion);
+		setProductInfoFromMessage(msg, m_currentGame->getSlot(i));
 
 		// update player list with colored names
 		lanUpdateSlotList();
@@ -515,6 +515,10 @@ void LANAPI::handleJoinAccept( LANMessage *msg, UnsignedInt senderIP )
 				slot.setLastHeard(0);
 				slot.setLogin(m_userName);
 				slot.setHost(m_hostName);
+
+				// set product information for local game slot
+				setProductInfoFromLocalData(&slot);
+
 				m_currentGame->setSlot(pos, slot);
 
 				m_currentGame->getLANSlot(0)->setHost(msg->hostName);

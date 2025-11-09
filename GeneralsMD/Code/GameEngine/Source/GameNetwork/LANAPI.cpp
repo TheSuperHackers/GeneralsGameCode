@@ -926,6 +926,9 @@ void LANAPI::RequestGameCreate( UnicodeString gameName, Bool isDirectConnect )
 	newSlot.setLogin(m_userName);
 	newSlot.setHost(m_hostName);
 
+	// set product information for local game slot
+	setProductInfoFromLocalData(&newSlot);
+
 	myGame->setSlot(0,newSlot);
 	myGame->setNext(NULL);
 	LANPreferences pref;
