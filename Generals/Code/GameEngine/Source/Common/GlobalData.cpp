@@ -32,12 +32,15 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "Common/GlobalData.h"
+
 #define DEFINE_TERRAIN_LOD_NAMES
 #define DEFINE_TIME_OF_DAY_NAMES
 #define DEFINE_WEATHER_NAMES
 #define DEFINE_BODYDAMAGETYPE_NAMES
 #define DEFINE_PANNING_NAMES
 
+#include "Common/AddonCompat.h"
 #include "Common/crc.h"
 #include "Common/file.h"
 #include "Common/FileSystem.h"
@@ -1218,18 +1221,10 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 
 void GlobalData::parseCustomDefinition()
 {
+	if (addon::HasFullviewportDat())
 	{
-		// TheSuperHackers @feature xezon 03/08/2025 Force full viewport for 'Control Bar Pro' Addons like GenTool did it.
-		File* file = TheFileSystem->openFile("GenTool/fullviewport.dat", File::READ | File::BINARY);
-		if (file != NULL)
-		{
-			Char value = '0';
-			file->read(&value, 1);
-			if (value != '0')
-			{
-				m_viewportHeightScale = 1.0f;
-			}
-		}
+		// TheSuperHackers @tweak xezon 03/08/2025 Force full viewport for 'Control Bar Pro' Addons like GenTool did it.
+		m_viewportHeightScale = 1.0f;
 	}
 }
 
