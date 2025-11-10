@@ -99,9 +99,9 @@ class MapCache : public std::map<AsciiString, MapMetaData>
 
 public:
 	MapCache()
-		: m_hasTriedCreatingStandardMapCacheINI(FALSE)
-		, m_hasLoadedStandardMapCacheINI(FALSE)
-		, m_hasLoadedUserMapCacheINI(FALSE)
+		: m_doCreateStandardMapCacheINI(TRUE)
+		, m_doLoadStandardMapCacheINI(TRUE)
+		, m_doLoadUserMapCacheINI(TRUE)
 	{}
 
 	void updateCache( void );
@@ -126,9 +126,9 @@ private:
 	static const char *const m_mapCacheName;
 
 	MapNameSet m_allowedMaps;
-	Bool m_hasTriedCreatingStandardMapCacheINI;
-	Bool m_hasLoadedStandardMapCacheINI;
-	Bool m_hasLoadedUserMapCacheINI;
+	Bool m_doCreateStandardMapCacheINI;
+	Bool m_doLoadStandardMapCacheINI;
+	Bool m_doLoadUserMapCacheINI;
 };
 
 extern MapCache *TheMapCache;

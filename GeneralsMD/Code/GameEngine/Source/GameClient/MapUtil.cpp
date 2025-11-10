@@ -413,7 +413,7 @@ void MapCache::updateCache( void )
 
 	// Create the standard map cache if required. Is only relevant for Mod developers.
 	// TheSuperHackers @tweak This step is done before loading any other map caches to not poison the cached state.
-	if (!m_hasTriedCreatingStandardMapCacheINI)
+	if (m_doCreateStandardMapCacheINI)
 	{
 #if defined(RTS_DEBUG)
 		// only create the map cache file if "Maps" folder exists
@@ -431,29 +431,29 @@ void MapCache::updateCache( void )
 				writeCacheINI(mapDir);
 			}
 		}
-		m_hasTriedCreatingStandardMapCacheINI = TRUE;
+		m_doCreateStandardMapCacheINI = FALSE;
 	}
 
 	// Load user map cache first.
-	if (!m_hasLoadedUserMapCacheINI)
+	if (m_doLoadUserMapCacheINI)
 	{
 		loadMapsFromMapCacheINI(userMapDir);
-		m_hasLoadedUserMapCacheINI = TRUE;
+		m_doLoadUserMapCacheINI = FALSE;
 	}
 
 	// Load user maps from disk and update any discrepancies from the map cache.
 	if (loadMapsFromDisk(userMapDir, FALSE))
 	{
 		writeCacheINI(userMapDir);
-		m_hasLoadedStandardMapCacheINI = FALSE;
+		m_doLoadStandardMapCacheINI = TRUE;
 	}
 
 	// Load standard maps from map cache last.
 	// This overwrites matching user maps to prevent munkees getting rowdy :)
-	if (!m_hasLoadedStandardMapCacheINI)
+	if (m_doLoadStandardMapCacheINI)
 	{
 		loadMapsFromMapCacheINI(mapDir);
-		m_hasLoadedStandardMapCacheINI = TRUE;
+		m_doLoadStandardMapCacheINI = FALSE;
 	}
 }
 
