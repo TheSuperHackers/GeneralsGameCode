@@ -647,10 +647,10 @@ Bool MapCache::addMap(
 	md.m_CRC = calcCRC(fname);
 
 	Bool exists = false;
-	AsciiString munkee = worldDict.getAsciiString(TheKey_mapName, &exists);
-	md.m_nameLookupTag = munkee;
+	AsciiString nameLookupTag = worldDict.getAsciiString(TheKey_mapName, &exists);
+	md.m_nameLookupTag = nameLookupTag;
 
-	if (!exists || munkee.isEmpty())
+	if (!exists || nameLookupTag.isEmpty())
 	{
 		DEBUG_LOG(("Missing TheKey_mapName!"));
 		AsciiString tempdisplayname;
@@ -671,7 +671,7 @@ Bool MapCache::addMap(
 		stringFileName.truncateBy(4);
 		stringFileName.concat("\\map.str");
 		TheGameText->initMapStringFile(stringFileName);
-		md.m_displayName = TheGameText->fetch(munkee);
+		md.m_displayName = TheGameText->fetch(nameLookupTag);
 		if (md.m_numPlayers >= 2)
 		{
 			UnicodeString extension;
