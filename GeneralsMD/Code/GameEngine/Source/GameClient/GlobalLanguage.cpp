@@ -245,24 +245,26 @@ Int GlobalLanguage::adjustFontSize(Int theFontSize)
 	case ResolutionFontSizeMethod_Balanced:
 	{
 		// TheSuperHackers @feature The balanced method evenly weighs the display width and height
-		// for a balanced rescale on non 4:3 resolutions. The aspect ratio scaling is clamped
-		// between 1 and 2 to avoid oversizing.
+		// for a balanced rescale on non 4:3 resolutions. The aspect ratio scaling is clamped to
+		// prevent oversizing.
+		constexpr const Real maxAspect = 1.8f;
+		constexpr const Real minAspect = 1.0f;
 		Real w = TheDisplay->getWidth();
 		Real h = TheDisplay->getHeight();
 		const Real aspect = w / h;
 		Real wScale = w / (Real)DEFAULT_DISPLAY_WIDTH;
 		Real hScale = h / (Real)DEFAULT_DISPLAY_HEIGHT;
 
-		if (aspect > 2.0f)
+		if (aspect > maxAspect)
 		{
-			// Recompute width at aspect=2
-			w = 2.0f * h;
+			// Recompute width at max aspect
+			w = maxAspect * h;
 			wScale = w / (Real)DEFAULT_DISPLAY_WIDTH;
 		}
-		else if (aspect < 1.0f)
+		else if (aspect < minAspect)
 		{
-			// Recompute height at aspect=1
-			h = 1.0f * w;
+			// Recompute height at min aspect
+			h = minAspect * w;
 			hScale = h / (Real)DEFAULT_DISPLAY_HEIGHT;
 		}
 		adjustFactor = (wScale + hScale) * 0.5f;
