@@ -3200,6 +3200,10 @@ Bool Object::isAbleToAttack() const
   if ( isDisabledByType( DISABLED_SUBDUED ) )
     return FALSE; // A Microwave Tank is cooking me
 
+	// TheSuperHackers @bugfix bobtista 31/10/2025 Fixes Gatling Cannon barrels rotating despite insufficient energy. (#1700)
+	if ( isKindOf( KINDOF_POWERED ) && isDisabledByType( DISABLED_UNDERPOWERED ) )
+		return false;
+
 	//We can't fire if we, as a portable structure, are aptly disabled
 	if ( isKindOf( KINDOF_PORTABLE_STRUCTURE ) || isKindOf( KINDOF_SPAWNS_ARE_THE_WEAPONS ))
 	{
