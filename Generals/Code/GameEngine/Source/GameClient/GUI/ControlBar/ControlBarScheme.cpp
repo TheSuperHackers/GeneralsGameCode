@@ -302,7 +302,6 @@ ControlBarScheme::ControlBarScheme(void)
 	m_optionsButtonPushed = NULL;
 	m_optionsButtonDisabled = NULL;
 
-	// Added By Sadullah Nader
 	// Initializations needed
 
 	m_commandBarBorderColor = 0;

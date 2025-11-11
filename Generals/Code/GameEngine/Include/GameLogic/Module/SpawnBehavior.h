@@ -64,7 +64,6 @@ public:
 	{
 		m_spawnNumberData = 0;
 		m_spawnReplaceDelayData = 0;
-		//Added By Sadullah Nader
 		//Initialization(s) inserted
 		m_spawnStartNumberData = 0;
 		//

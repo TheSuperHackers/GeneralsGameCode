@@ -265,7 +265,6 @@ NetworkInterface *NetworkInterface::createNetwork()
  */
 Network::Network()
 {
-	//Added By Sadullah Nader
 	//Initializations inserted
 	m_checkCRCsThisFrame = FALSE;
 	m_didSelfSlug = FALSE;

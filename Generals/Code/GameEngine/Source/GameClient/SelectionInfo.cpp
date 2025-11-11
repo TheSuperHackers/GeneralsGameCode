@@ -63,7 +63,6 @@ SelectionInfo::SelectionInfo() :
 //-------------------------------------------------------------------------------------------------
 PickDrawableStruct::PickDrawableStruct() : drawableListToFill(NULL)
 {
-	//Added By Sadullah Nader
 	//Initializations inserted
 	drawableListToFill = FALSE;
 	//

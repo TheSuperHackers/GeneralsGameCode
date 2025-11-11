@@ -314,7 +314,6 @@ private:
 	Bool m_shouldValidateCRCs;															///< Should we validate CRCs this frame?
 	//-----------------------------------------------------------------------------------------------
 
-	//Added By Sadullah Nader
 	//Used to for load scene
 	//Bool m_loadingScene;
 	Bool m_loadingMap;

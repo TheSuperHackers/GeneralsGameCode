@@ -265,7 +265,6 @@ SelectionTranslator::SelectionTranslator()
 	m_deselectFeedbackAnchor.x = 0;
 	m_deselectFeedbackAnchor.y = 0;
 	m_lastClick = 0;
-	//Added By Sadullah Nader
 	//Initializtion(s) inserted
 	m_deselectDownCameraPosition.zero();
 	m_displayedMaxWarning = FALSE;
@@ -1242,7 +1241,6 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 }
 
 
-//Added By Sadullah Nader
 
 //setDragSelecting(Bool dragSelect)
 //Added to fix the drag selection problem in control bar

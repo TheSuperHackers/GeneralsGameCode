@@ -131,7 +131,6 @@ const FieldParse UpgradeTemplate::m_upgradeFieldParseTable[] =
 //-------------------------------------------------------------------------------------------------
 UpgradeTemplate::UpgradeTemplate( void )
 {
-	//Added By Sadullah Nader
 	//Initialization(s) inserted
 	m_cost = 0;
 	//

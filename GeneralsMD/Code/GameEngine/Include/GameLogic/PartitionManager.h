@@ -1146,7 +1146,6 @@ private:
 public:
 	PartitionFilterGarrisonable( Bool match ) : m_match(match)
 	{
-		//Added By Sadullah Nader
 		//Initializations
 		m_player = NULL;
 		//

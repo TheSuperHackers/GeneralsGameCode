@@ -104,7 +104,6 @@ void ToppleUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 //-------------------------------------------------------------------------------------------------
 ToppleUpdate::ToppleUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
-	//Added By Sadullah Nader
 	//Initialization(s) inserted
 	m_angleDeltaX = 0.0f;
 	m_doBounceFX = FALSE;

@@ -37,7 +37,6 @@ FrameData::FrameData()
 	m_commandList = NULL;
 	m_commandCount = 0;
 	m_frameCommandCount = -1;
-	//Added By Sadullah Nader
 	//Initializations missing and needed
 	m_lastFailedCC = 0;
 	m_lastFailedFrameCC = 0;

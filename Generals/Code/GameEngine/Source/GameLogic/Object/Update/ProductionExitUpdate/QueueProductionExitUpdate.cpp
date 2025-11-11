@@ -46,7 +46,6 @@ QueueProductionExitUpdate::QueueProductionExitUpdate( Thing *thing, const Module
 {
 	m_currentDelay = 0;
 
-	//Added By Sadullah Nader
 	//Initializations inserted
 	m_creationClearDistance = 0;
 	m_rallyPoint.zero();

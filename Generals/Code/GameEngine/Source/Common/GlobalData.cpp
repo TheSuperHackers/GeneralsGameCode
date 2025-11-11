@@ -684,7 +684,6 @@ GlobalData::GlobalData()
 		m_vertexWaterAttenuationB[ i ] = 0.0f;
 		m_vertexWaterAttenuationC[ i ] = 0.0f;
 		m_vertexWaterAttenuationRange[ i ] = 0.0f;
-		//Added By Sadullah Nader
 		//Initializations missing and needed
 		m_vertexWaterAvailableMaps[i].clear();
 	}
@@ -797,7 +796,6 @@ GlobalData::GlobalData()
 	m_autoSmokeParticleLargeMax = 0;
 	m_autoAflameParticleMax = 0;
 
-	// Added By Sadullah Nader
 	// Initializations missing and needed
 	m_autoFireParticleSmallPrefix.clear();
 	m_autoFireParticleMediumPrefix.clear();

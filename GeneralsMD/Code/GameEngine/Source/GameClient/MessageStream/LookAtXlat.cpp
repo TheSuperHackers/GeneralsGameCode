@@ -142,7 +142,6 @@ LookAtTranslator::LookAtTranslator() :
 	m_lastMouseMoveFrame(0),
 	m_scrollType(SCROLL_NONE)
 {
-	//Added By Sadullah Nader
 	//Initializations missing and needed
 	m_anchor.x = m_anchor.y = 0;
 	m_currentPos.x = m_currentPos.y = 0;

@@ -98,7 +98,6 @@ GameClient::GameClient()
 	m_numTranslators = 0;
 	m_commandTranslator = NULL;
 
-	// Added By Sadullah Nader
 	// Initializations missing and needed
 	m_drawableTOC.clear();
 	//

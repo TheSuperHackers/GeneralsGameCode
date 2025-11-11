@@ -299,7 +299,6 @@ Anim2D::Anim2D( Anim2DTemplate *animTemplate, Anim2DCollection *collectionSystem
 	// sanity
 	DEBUG_ASSERTCRASH( animTemplate != NULL, ("Anim2D::Anim2D - NULL template") );
 
-	//Added By Sadullah Nader
 	//Initialization
 
 	m_currentFrame = 0;

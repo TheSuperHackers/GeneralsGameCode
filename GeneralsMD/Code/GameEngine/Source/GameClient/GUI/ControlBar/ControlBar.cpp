@@ -892,7 +892,6 @@ ControlBar::ControlBar( void )
 	m_buildToolTipLayout = NULL;
 	m_showBuildToolTipLayout = FALSE;
 
-	// Added By Sadullah Nader
 	// initializing vars to zero
 	m_animateDownWin1Pos.x = m_animateDownWin1Pos.y = 0;
 	m_animateDownWin1Size.x = m_animateDownWin1Size.y = 0;

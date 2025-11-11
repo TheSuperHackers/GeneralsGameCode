@@ -56,7 +56,6 @@ const Int MAX_IDX = 32;
 StructureToppleUpdate::StructureToppleUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
 
-	//Added By Sadullah Nader
 	//Initialization(s) inserted
 	m_delayBurstLocation.zero();
 	m_structuralIntegrity = 0.0f;

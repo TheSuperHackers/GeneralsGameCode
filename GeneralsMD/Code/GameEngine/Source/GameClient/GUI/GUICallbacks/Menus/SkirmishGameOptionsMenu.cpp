@@ -885,7 +885,6 @@ void updateMapStartSpots( GameInfo *myGame, GameWindow *buttonMapStartPositions[
 				AsciiString displayNumber;
 				displayNumber.format("NUMBER:%d",i + 1);
 				GadgetButtonSetText(buttonMapStartPositions[gs->getStartPos()], TheGameText->fetch(displayNumber));
-				//Added By Sadullah Nader
 				//Fix for no tooltips at start positions
 				//added start position tooltip
 				//Fixed again to show the right number , ie "i + 1"

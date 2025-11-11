@@ -218,7 +218,6 @@ void setFPMode( void )
 // ------------------------------------------------------------------------------------------------
 GameLogic::GameLogic( void )
 {
-	//Added By Sadullah Nader
 	//Initializations missing and necessary
 	m_background = NULL;
 	m_CRC = 0;
@@ -2396,7 +2395,6 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
     }
   }
 
-	//Added By Sadullah Nader
 	//Added to fix the quit menu
 	//ReAllows quit menu to work during loading scene
 	//setGameLoading(FALSE);

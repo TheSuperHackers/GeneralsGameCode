@@ -46,7 +46,6 @@ class HackInternetState :  public State
 public:
 	HackInternetState( StateMachine *machine ) :State( machine, "HackInternetState" )
 	{
-		//Added By Sadullah Nader
 		//Initializations missing and needed
 		m_framesRemaining = 0;
 		//
@@ -73,7 +72,6 @@ class PackingState :  public State
 public:
 	PackingState( StateMachine *machine ) : State( machine, "PackingState" )
 	{
-		//Added By Sadullah Nader
 		//Initializations inserted
 		m_framesRemaining = 0;
 		//

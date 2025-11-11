@@ -85,7 +85,6 @@ public:
 
 	StealthUpdateModuleData()
 	{
-		//Added By Sadullah Nader
 		//Initialization(s) inserted
 		m_disguiseFX = NULL;
 		m_disguiseRevealFX = NULL;

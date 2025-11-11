@@ -448,7 +448,6 @@ class SideSelectWindowData
 public:
 	SideSelectWindowData(void)
 	{
-		//Added By Sadullah Nader
 		//Initializations
 		generalSpeak = NULL;
 		m_currColor = 0;

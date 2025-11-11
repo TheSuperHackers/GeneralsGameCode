@@ -56,7 +56,6 @@ StickyBombUpdate::StickyBombUpdate( Thing *thing, const ModuleData *moduleData )
 {
 	m_targetID		= INVALID_ID;
 	m_dieFrame		= 0;
-	//Added By Sadullah Nader
 	//Initialization(s) inserted
 	m_nextPingFrame = 0;
 	//

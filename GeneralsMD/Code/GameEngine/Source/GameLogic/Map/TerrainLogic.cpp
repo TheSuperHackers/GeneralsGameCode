@@ -959,7 +959,6 @@ TerrainLogic::TerrainLogic()
 {
 	Int i;
 
-	//Added By Sadullah Nader
 	//Initialization(s) inserted
 	m_activeBoundary = 0;
 	m_waterGridEnabled = FALSE;

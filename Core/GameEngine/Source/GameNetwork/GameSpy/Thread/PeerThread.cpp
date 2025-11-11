@@ -179,7 +179,6 @@ class PeerThreadClass : public ThreadClass
 public:
 	PeerThreadClass() : ThreadClass()
 	{
-		//Added By Sadullah Nader
 		//Initializations inserted
 		m_roomJoined = m_allowObservers = m_hasPassword = FALSE;
     m_useStats = TRUE;

@@ -64,7 +64,6 @@
 
 StealthUpdateModuleData::StealthUpdateModuleData()
 {
-		//Added By Sadullah Nader
 		//Initialization(s) inserted
 		m_disguiseFX = NULL;
     m_disguiseRevealFX = NULL;
@@ -133,7 +132,6 @@ StealthUpdate::StealthUpdate( Thing *thing, const ModuleData* moduleData ) : Upd
 	//Must be enabled manually if using disguise system (bomb truck uses)
 	m_enabled = !data->m_teamDisguised;
 
-	//Added By Sadullah Nader
 	//Initialization(s) inserted
 	m_detectionExpiresFrame = 0;
 	//

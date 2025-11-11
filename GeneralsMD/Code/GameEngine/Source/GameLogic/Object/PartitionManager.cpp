@@ -1226,7 +1226,6 @@ void CellAndObjectIntersection::removeAllCoverage()
 //-----------------------------------------------------------------------------
 PartitionCell::PartitionCell()
 {
-	//Added By Sadullah Nader
 	//Initializations inserted
 	m_cellX = m_cellY = 0;
 	//

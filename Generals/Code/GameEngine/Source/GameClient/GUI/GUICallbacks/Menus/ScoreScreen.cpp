@@ -768,7 +768,6 @@ void finishSinglePlayerInit( void )
 
 	}
 
-	//Added By Sadullah Nader
 	//Fix for the black screen text that appears after loading sequence
 
 	TheInGameUI->freeMessageResources();

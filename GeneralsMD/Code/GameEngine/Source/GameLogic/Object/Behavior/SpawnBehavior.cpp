@@ -68,7 +68,6 @@ SpawnBehavior::SpawnBehavior( Thing *thing, const ModuleData* moduleData )
 	//looping back to the beginning
 
 	m_framesToWait = 0;
-	//Added By Sadullah Nader
 	//Initialization(s) inserted
 	m_firstBatchCount = 0;
 	//

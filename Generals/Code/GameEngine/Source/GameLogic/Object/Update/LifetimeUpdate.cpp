@@ -42,7 +42,6 @@
 LifetimeUpdate::LifetimeUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
 	const LifetimeUpdateModuleData* d = getLifetimeUpdateModuleData();
-	// Added By Sadullah Nader
 	// Initializations needed
 	m_dieFrame = 0;
 	//

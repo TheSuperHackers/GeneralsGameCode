@@ -769,7 +769,6 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 					buttonFrame->winEnable( TRUE );
 					updateMenuActions();
 
-					//Added By Sadullah Nader
 					//Fix for bug
 					// close save menuu
 					closeSaveMenu( window );

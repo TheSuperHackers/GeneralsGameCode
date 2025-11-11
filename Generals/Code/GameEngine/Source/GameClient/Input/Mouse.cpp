@@ -458,7 +458,6 @@ Mouse::Mouse( void )
 	m_numAxes = 0;
 	m_forceFeedback = FALSE;
 
-	//Added By Sadullah Nader
 	//Initializations missing and needed
 	m_dragTolerance = 0;
 	m_dragTolerance3D = 0;

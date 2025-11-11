@@ -69,7 +69,6 @@
 //-------------------------------------------------------------------------------------------------
 SpecialAbilityUpdate::SpecialAbilityUpdate( Thing *thing, const ModuleData* moduleData ) : SpecialPowerUpdateModule( thing, moduleData )
 {
-  //Added By Sadullah Nader
   //Initialization(s) inserted
   m_captureFlashPhase = 0.0f;
   //

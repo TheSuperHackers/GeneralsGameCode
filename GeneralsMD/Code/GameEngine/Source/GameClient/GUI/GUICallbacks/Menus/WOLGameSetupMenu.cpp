@@ -1173,7 +1173,6 @@ void InitWOLGameGadgets( void )
 		TheWindowManager->winGetWindowFromId(parentWOLGameSetup, labelID)->winEnable( FALSE );
 	}
 
-	//Added By Sadullah Nader
 	//Tooltip Function set
 	windowMap->winSetTooltipFunc(MapSelectorTooltip);
 	//

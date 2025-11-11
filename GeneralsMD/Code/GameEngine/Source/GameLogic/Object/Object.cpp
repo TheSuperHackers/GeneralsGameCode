@@ -231,7 +231,6 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	Int i, modIdx;
 	AsciiString modName;
 
-	//Added By Sadullah Nader
 	//Initializations inserted
 	m_formationOffset.x = m_formationOffset.y = 0.0f;
 	m_iPos.zero();

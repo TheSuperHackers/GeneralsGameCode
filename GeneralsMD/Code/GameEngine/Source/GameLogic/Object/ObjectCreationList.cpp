@@ -764,9 +764,9 @@ public:
 		m_fadeIn(false),
 		m_fadeOut(false),
 		m_fadeFrames(0),
-		m_fadeSoundName(AsciiString::TheEmptyString), // Added By Sadullah Nader
-		m_particleSysName(AsciiString::TheEmptyString), // Added By Sadullah Nader
-		m_putInContainer(AsciiString::TheEmptyString), // Added By Sadullah Nader
+		m_fadeSoundName(AsciiString::TheEmptyString),
+		m_particleSysName(AsciiString::TheEmptyString),
+		m_putInContainer(AsciiString::TheEmptyString),
 		m_minMag(0.0f),
 		m_maxMag(0.0f),
 		m_minPitch(0.0f),
@@ -776,7 +776,7 @@ public:
 		m_shadowType(SHADOW_NONE),
 		m_fxFinal(NULL),
 		m_preserveLayer(true),
-		m_objectCount(0) // Added By Sadullah Nader
+		m_objectCount(0)
 	{
 		// Change Made by Sadullah Nader
 		// for init purposes, easier to read

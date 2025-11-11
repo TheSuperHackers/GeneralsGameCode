@@ -144,7 +144,6 @@ NAT *TheNAT = NULL;
 
 NAT::NAT()
 {
-	//Added By Sadullah Nader
 	//Initializations inserted
 	m_beenProbed = FALSE;
 	m_connectionPairIndex = 0;

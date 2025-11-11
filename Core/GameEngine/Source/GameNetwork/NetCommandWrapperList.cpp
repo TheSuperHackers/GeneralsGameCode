@@ -36,7 +36,6 @@
 
 NetCommandWrapperListNode::NetCommandWrapperListNode(NetWrapperCommandMsg *msg)
 {
-	//Added By Sadullah Nader
 	//Initializations inserted
 	m_next = NULL;
 

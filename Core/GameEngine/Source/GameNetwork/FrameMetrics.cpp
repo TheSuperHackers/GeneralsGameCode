@@ -32,7 +32,6 @@
 
 FrameMetrics::FrameMetrics()
 {
-	//Added By Sadullah Nader
 	//Initializations missing and needed
 	m_averageFps = 0.0f;
 	m_averageLatency = 0.0f;

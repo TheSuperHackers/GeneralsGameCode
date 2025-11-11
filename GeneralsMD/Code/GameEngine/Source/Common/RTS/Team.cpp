@@ -1316,7 +1316,6 @@ Team::Team(TeamPrototype *proto, TeamID id ) :
 	m_curUnits(0),
 	m_wasIdle(false)
 {
-	//Added By Sadullah Nader
 	//Initialization(s) inserted
 	m_created = FALSE;
 

@@ -58,7 +58,6 @@
 // ------------------------------------------------------------------------------------------------
 WaveGuideUpdateModuleData::WaveGuideUpdateModuleData( void )
 {
-	//Added By Sadullah Nader
 	//Initialization(s) inserted
 	m_bridgeParticleAngleFudge = 0.0f;
 	m_randomSplashSoundFrequency = 0;

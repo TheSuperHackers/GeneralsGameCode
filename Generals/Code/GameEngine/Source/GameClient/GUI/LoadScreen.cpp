@@ -154,7 +154,6 @@ void LoadScreen::update( Int percent )
 //-----------------------------------------------------------------------------
 SinglePlayerLoadScreen::SinglePlayerLoadScreen( void )
 {
-	//Added By Sadullah Nader
 	//Initialization(s) inserted
 	m_currentObjectiveLine = 0;
 	m_currentObjectiveLineCharacter = 0;
@@ -669,14 +668,12 @@ void ShellGameLoadScreen::update( Int percent )
 //-----------------------------------------------------------------------------
 MultiPlayerLoadScreen::MultiPlayerLoadScreen( void )
 {
-	//Added By Sadullah Nader
 	//Initializations missing and needed
 	m_mapPreview = NULL;
 
 	//
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
-		//Added By Sadullah Nader
 		//Initializations missing and needed
 		m_buttonMapStartPosition[i] = NULL;
 		//
@@ -892,7 +889,6 @@ void MultiPlayerLoadScreen::processProgress(Int playerId, Int percentage)
 GameSpyLoadScreen::GameSpyLoadScreen( void )
 {
 
-	// Added By Sadullah Nader
 	// Initializations missing and needed
 	m_mapPreview = NULL;
 	//
@@ -900,7 +896,6 @@ GameSpyLoadScreen::GameSpyLoadScreen( void )
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
 
-		// Added By Sadullah Nader
 		// Initializations missing and needed
 		m_buttonMapStartPosition[i] = NULL;
 		m_playerRank[i] = NULL;
@@ -1219,7 +1214,6 @@ void GameSpyLoadScreen::processProgress(Int playerId, Int percentage)
 //-----------------------------------------------------------------------------
 MapTransferLoadScreen::MapTransferLoadScreen( void )
 {
-	//Added By Sadullah Nader
 	//Initializations missing and needed
 	m_oldTimeout = 0;
 	//

@@ -312,7 +312,6 @@ PerfGather::PerfGather(const char *identifier) :
 	m_next(0),
 	m_prev(0)
 {
-	//Added By Sadullah Nader
 	//Initializations inserted
 	m_ignore = FALSE;
 	//
@@ -560,7 +559,6 @@ PerfTimer::PerfTimer( const char *identifier, Bool crashWithInfo, Int startFrame
 	m_callCount(0),
 	m_runningTime(0),
 	m_outputInfo(true),
-	//Added By Sadullah Nader
 	//Intializations inserted
 	m_lastFrame(-1)
 {

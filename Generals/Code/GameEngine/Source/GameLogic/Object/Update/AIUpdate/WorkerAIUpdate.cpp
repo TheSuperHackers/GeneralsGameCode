@@ -89,7 +89,6 @@ WorkerAIUpdate::WorkerAIUpdate( Thing *thing, const ModuleData* moduleData ) :
 	// implementation because at this point we don't have the object all setup
 	//
 
-	//Added By Sadullah Nader
 	//Initialization(s) inserted
 	m_isRebuild = FALSE;
 	//

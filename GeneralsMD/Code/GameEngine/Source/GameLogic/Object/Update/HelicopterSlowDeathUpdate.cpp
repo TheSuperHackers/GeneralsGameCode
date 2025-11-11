@@ -61,7 +61,6 @@
 //-------------------------------------------------------------------------------------------------
 HelicopterSlowDeathBehaviorModuleData::HelicopterSlowDeathBehaviorModuleData( void )
 {
-	//Added By Sadullah Nader
 	//Initializations missing and needed
 	m_attachParticleBone.clear();
 	m_bladeBone.clear();

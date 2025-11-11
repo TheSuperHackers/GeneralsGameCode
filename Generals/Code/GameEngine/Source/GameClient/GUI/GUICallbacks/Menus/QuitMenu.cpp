@@ -280,7 +280,6 @@ void HideQuitMenu( void )
 void ToggleQuitMenu()
 {
 
-	//Added By Sadullah Nader
 	//Added a check to see if we're not in game yet
 	if (TheGameLogic->isIntroMoviePlaying() || TheGameLogic->isLoadingGame() ||TheScriptEngine->isGameEnding())
 		return;
@@ -323,7 +322,6 @@ void ToggleQuitMenu()
 
 		isVisible = FALSE;
 
-		//Added By Sadullah Nader
 		//Bug: When Toggling the quit menu off, the quit confirmation should also go away
 		if (quitConfirmationWindow)
 			TheWindowManager->winDestroy(quitConfirmationWindow);
@@ -352,7 +350,6 @@ void ToggleQuitMenu()
 	}
 	else
 	{
-		//Added By Sadullah Nader
 		//Added to compensate for the quit confirmation window pop-up
 
 		TheMouse->setCursor( Mouse::ARROW );

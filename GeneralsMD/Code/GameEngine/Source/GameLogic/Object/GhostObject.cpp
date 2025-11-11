@@ -39,7 +39,6 @@ GhostObjectManager *TheGhostObjectManager = NULL;
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 GhostObject::GhostObject(void):
-//Added By Sadullah Nader
 //Initializations missing and needed
 m_parentAngle(0.0f),
 // TheSuperHackers @bugfix tomsons26 26/04/2025 Change initialization of m_parentGeometryIsSmall from 0.0f.

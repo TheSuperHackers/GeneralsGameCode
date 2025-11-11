@@ -113,7 +113,6 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 HotKey::HotKey()
 {
 	m_win = NULL;
-	//Added By Sadullah Nader
 	//Initializations missing and needed
 	m_key.clear();
 	//

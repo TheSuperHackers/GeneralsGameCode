@@ -306,7 +306,6 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 // ------------------------------------------------------------------------------------------------
 void GameLogic::prepareNewGame( GameMode gameMode, GameDifficulty diff, Int rankPoints )
 {
-	//Added By Sadullah Nader
 	//Fix for loading game scene
 
 	//Kris: Commented this out, but leaving it around incase it bites us later. I cleaned up the

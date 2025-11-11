@@ -157,7 +157,6 @@ HordeUpdate::HordeUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateM
 	m_inHorde = FALSE;
 	m_hasFlag = FALSE;
 	m_lastHordeRefreshFrame = TheGameLogic->getFrame();
-	// Added By Sadullah Nader
 	// Initializations missing and needed
 	m_trueHordeMember = FALSE;
 	//

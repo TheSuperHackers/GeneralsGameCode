@@ -122,7 +122,6 @@ void INI::parseLanguageDefinition( INI *ini )
 GlobalLanguage::GlobalLanguage()
 {
 	m_unicodeFontName.clear();
-	//Added By Sadullah Nader
 	//Initializations missing and needed
 	m_unicodeFontFileName.clear();
 	m_unicodeFontName.clear();

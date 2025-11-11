@@ -63,7 +63,6 @@ PartitionSolver::PartitionSolver(const EntriesVec& elements, const SpacesVec& sp
 	m_data = elements;
 	m_spacesForData = spaces;
 	m_howToSolve = solveHow;
-	//Added By Sadullah Nader
 	//Initializations inserted
 	m_currentSolutionLeftovers = 0;
 	//

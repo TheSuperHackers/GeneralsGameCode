@@ -119,7 +119,6 @@ PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData( void )
 PropagandaTowerBehavior::PropagandaTowerBehavior( Thing *thing, const ModuleData *modData )
 											 : UpdateModule( thing, modData )
 {
-	//Added By Sadullah Nader
 	//Initializations inserted
 	m_lastScanFrame = 0;
 	//

@@ -48,7 +48,6 @@ m_numPoints(0),
 m_sizePoints(0),
 m_exportWithScripts(false),
 m_isWaterArea(false),
-//Added By Sadullah Nader
 //Initializations inserted
 m_isRiver(FALSE),
 m_riverStart(0)

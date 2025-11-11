@@ -941,7 +941,6 @@ m_infantryPathfindDiameter(6),
 m_vehiclePathfindDiameter(6),
 m_supplyCenterSafeRadius(250),
 m_rebuildDelaySeconds(10),
-//Added By Sadullah Nader
 //Initialization(s) inserted
 m_distanceRequiresGroup(0.0f),
 m_sideBuildLists(NULL),

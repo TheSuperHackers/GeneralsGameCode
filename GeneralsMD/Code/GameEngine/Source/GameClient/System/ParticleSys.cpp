@@ -68,7 +68,6 @@ ParticleSystemManager *TheParticleSystemManager = NULL;
 // ------------------------------------------------------------------------------------------------
 ParticleInfo::ParticleInfo( void )
 {
-	//Added By Sadullah Nader
 	//Initializations inserted
 	m_angleZ = 0.0f;
 	m_angularDamping = 0.0f;
@@ -262,7 +261,6 @@ Particle::Particle( ParticleSystem *system, const ParticleInfo *info )
 
 	m_angleZ = info->m_angleZ;
 
-	//Added By Sadullah Nader
 	//Initializations inserted
 	m_lastPos.zero();
 	//
@@ -728,7 +726,6 @@ ParticleSystemInfo::ParticleSystemInfo()
 	m_isEmitAboveGroundOnly = false;
 	m_isParticleUpTowardsEmitter = false;
 
-	//Added By Sadullah Nader
 	//Initializations inserted
 	m_driftVelocity.zero();
 	m_gravity = 0.0f;
@@ -1038,7 +1035,6 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 	m_template = sysTemplate;
 	m_systemID = id;
 
-	//Added By Sadullah Nader
 	//Initializations inserted
 	m_lastPos.zero();
 	m_pos.zero();
@@ -2783,7 +2779,6 @@ void ParticleSystemTemplate::parseRandomRGBColor( INI* ini, void *instance,
 ParticleSystemTemplate::ParticleSystemTemplate( const AsciiString &name ) :
 	m_name(name)
 {
-	//Added By Sadullah Nader
 	//Initializations inserted
 	m_slaveTemplate = NULL;
 	//
@@ -2827,7 +2822,6 @@ ParticleSystemManager::ParticleSystemManager( void )
 	m_onScreenParticleCount = 0;
 	m_localPlayerIndex = 0;
 
-	//Added By Sadullah Nader
 	//Initializations inserted
 	m_lastLogicFrameUpdate = 0;
 	m_particleCount = 0;
