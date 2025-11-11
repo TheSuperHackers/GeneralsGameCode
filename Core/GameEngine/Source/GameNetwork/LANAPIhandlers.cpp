@@ -65,6 +65,7 @@ void LANAPI::handleRequestLocations( LANMessage *msg, UnsignedInt senderIP )
 				strlcpy(reply.GameInfo.options, gameOpts.str(), ARRAY_SIZE(reply.GameInfo.options));
 				wcslcpy(reply.GameInfo.gameName, m_currentGame->getName().str(), ARRAY_SIZE(reply.GameInfo.gameName));
 				reply.GameInfo.inProgress = m_currentGame->isGameInProgress();
+				reply.GameInfo.isDirectConnect = m_currentGame->getIsDirectConnect();
 
 				sendMessage(&reply);
 			}
