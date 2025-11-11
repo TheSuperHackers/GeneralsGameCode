@@ -34,6 +34,7 @@
 #include "Common/Upgrade.h"
 #include "Common/Player.h"
 #include "Common/Xfer.h"
+#include "Common/XferCRC.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/Image.h"
 
@@ -236,23 +237,7 @@ UpgradeCenter::UpgradeCenter( void )
 //-------------------------------------------------------------------------------------------------
 UpgradeCenter::~UpgradeCenter( void )
 {
-
-	// delete all the upgrades loaded from the INI database
-	UpgradeTemplate *next;
-	while( m_upgradeList )
-	{
-
-		// get next
-		next = m_upgradeList->friend_getNext();
-
-		// delete head of list
-		deleteInstance(m_upgradeList);
-
-		// set head to next element
-		m_upgradeList = next;
-
-	}
-
+	deleteAllUpgrades();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -284,6 +269,17 @@ void UpgradeCenter::init( void )
 //-------------------------------------------------------------------------------------------------
 void UpgradeCenter::reset( void )
 {
+	// TheSuperHackers @bugfix helmutbuhler 26/10/2025
+	// When a custom map with a map.ini overrides some upgrades, we need to undo that here
+	// to avoid mismatches. For now we just reload the original ini files.
+	deleteAllUpgrades();
+	init();
+	XferCRC xferCRC;
+	xferCRC.open("lightCRC");
+	INI ini;
+	ini.loadFileDirectory("Data\\INI\\Default\\Upgrade", INI_LOAD_OVERWRITE, &xferCRC);
+	ini.loadFileDirectory("Data\\INI\\Upgrade", INI_LOAD_OVERWRITE, &xferCRC);
+
 	if( TheMappedImageCollection && !buttonImagesCached )
 	{
 		UpgradeTemplate *upgrade;
@@ -293,6 +289,26 @@ void UpgradeCenter::reset( void )
 		}
 		buttonImagesCached = TRUE;
 	}
+}
+
+void UpgradeCenter::deleteAllUpgrades()
+{
+	// delete all the upgrades loaded from the INI database
+	UpgradeTemplate *next;
+	while( m_upgradeList )
+	{
+		// get next
+		next = m_upgradeList->friend_getNext();
+
+		// delete head of list
+		deleteInstance(m_upgradeList);
+
+		// set head to next element
+		m_upgradeList = next;
+	}
+	m_upgradeList = NULL;
+	m_nextTemplateMaskBit = 0;
+	buttonImagesCached = FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
