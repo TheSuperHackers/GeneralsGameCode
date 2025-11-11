@@ -142,6 +142,12 @@ void Keyboard::updateKeys( void )
 		m_keyStatus[ m_keys[ index ].key ].status = m_keys[ index ].status;
 		m_keyStatus[ m_keys[ index ].key ].sequence = m_inputFrame;
 
+		// Update key down time for new key presses
+		if( BitIsSet( m_keys[ index ].state, KEY_STATE_DOWN ) )
+		{
+			m_keyStatus[ m_keys[ index ].key ].keyDownTimeMS = timeGetTime();
+		}
+
 		// prevent ALT-TAB from causing a TAB event
 		if( m_keys[ index ].key == KEY_TAB )
 		{
@@ -214,13 +220,14 @@ Bool Keyboard::checkKeyRepeat( void )
 
 	// Scan Keyboard status array for first key down
 	// long enough to repeat
+	UnsignedInt now = timeGetTime();
 	for( key = 0; key < ARRAY_SIZE(m_keyStatus); key++ )
 	{
 
 		if( BitIsSet( m_keyStatus[ key ].state, KEY_STATE_DOWN ) )
 		{
 
-			if( (m_inputFrame - m_keyStatus[ key ].sequence) > Keyboard::KEY_REPEAT_DELAY )
+			if( now - m_keyStatus[ key ].keyDownTimeMS > Keyboard::KEY_REPEAT_DELAY_MS )
 			{
 				// Add key to this frame
 				m_keys[ index ].key = (UnsignedByte)key;
@@ -234,8 +241,9 @@ Bool Keyboard::checkKeyRepeat( void )
 				for( index = 0; index< NUM_KEYS; index++ )
 					m_keyStatus[ index ].sequence = m_inputFrame;
 
-				// Set repeated key so it will repeat again in two frames
-				m_keyStatus[ key ].sequence = m_inputFrame - (Keyboard::KEY_REPEAT_DELAY + 2);
+				// Set repeated key so it will repeat again after a short interval
+				const UnsignedInt KEY_REPEAT_INTERVAL_MS = 67; // ~2 frames at 30 FPS
+				m_keyStatus[ key ].keyDownTimeMS = now - (Keyboard::KEY_REPEAT_DELAY_MS - KEY_REPEAT_INTERVAL_MS);
 
 				retVal = TRUE;
 				break;  // exit for key
