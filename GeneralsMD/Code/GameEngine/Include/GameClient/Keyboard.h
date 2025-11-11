@@ -77,6 +77,7 @@ struct KeyboardIO
 	UnsignedByte	status;									// StatusType, above
 	UnsignedShort	state;									// KEY_STATE_* in KeyDefs.h
 	UnsignedInt		sequence;								// sequence info from DirectX used for order
+	UnsignedInt		keyDownTimeMS;					// real-time in milliseconds when key went down
 
 };
 
@@ -86,7 +87,7 @@ struct KeyboardIO
 class Keyboard : public SubsystemInterface
 {
 
-	enum { KEY_REPEAT_DELAY = 10 };
+	enum { KEY_REPEAT_DELAY_MS = 333 };
 
 public:
 
