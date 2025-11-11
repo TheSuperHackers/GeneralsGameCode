@@ -2882,8 +2882,10 @@ Bool Object::isAbleToAttack() const
 		return false;
 
 	// TheSuperHackers @bugfix bobtista 31/10/2025 Fixes Gatling Cannon barrels rotating despite insufficient energy.
+#if !RETAIL_COMPATIBLE_CRC
 	if ( isKindOf( KINDOF_POWERED ) && isDisabledByType( DISABLED_UNDERPOWERED ) )
 		return false;
+#endif
 
 	//We can't fire if we, as a portable structure, are aptly disabled
 	if ( isKindOf( KINDOF_PORTABLE_STRUCTURE ) || isKindOf( KINDOF_SPAWNS_ARE_THE_WEAPONS ))
@@ -4155,10 +4157,12 @@ void Object::adjustModelConditionForWeaponStatus()
 			conditionToSet = WSF_NONE;
 		}
 		// TheSuperHackers @bugfix bobtista 11/11/2025 Prevent barrel animation when powered structures are underpowered.
+#if !RETAIL_COMPATIBLE_CRC
 		else if ( isKindOf( KINDOF_POWERED ) && isDisabledByType( DISABLED_UNDERPOWERED ) )
 		{
 			conditionToSet = WSF_NONE;
 		}
+#endif
 		else
 		{
 			WeaponStatus newStatus = w->getStatus();
