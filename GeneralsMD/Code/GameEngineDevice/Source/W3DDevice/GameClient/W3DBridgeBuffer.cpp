@@ -212,20 +212,20 @@ Bool W3DBridge::load(BodyDamageType curDamageState)
 		default: return false;
 
 		case 	BODY_PRISTINE:
-			strcpy( textureFile, bridge->getTexture().str() );
-			strcpy( modelName, bridge->getBridgeModel().str() );
+			strlcpy(textureFile, bridge->getTexture().str(), ARRAY_SIZE(textureFile));
+			strlcpy(modelName, bridge->getBridgeModel().str(), ARRAY_SIZE(modelName));
 			break;
 		case BODY_DAMAGED:
-			strcpy( textureFile, bridge->getTextureDamaged().str() );
-			strcpy( modelName, bridge->getBridgeModelNameDamaged().str() );
+			strlcpy(textureFile, bridge->getTextureDamaged().str(), ARRAY_SIZE(textureFile));
+			strlcpy(modelName, bridge->getBridgeModelNameDamaged().str(), ARRAY_SIZE(modelName));
 			break;
 		case BODY_REALLYDAMAGED:
-			strcpy( textureFile, bridge->getTextureReallyDamaged().str() );
-			strcpy( modelName, bridge->getBridgeModelNameReallyDamaged().str() );
+			strlcpy(textureFile, bridge->getTextureReallyDamaged().str(), ARRAY_SIZE(textureFile));
+			strlcpy(modelName, bridge->getBridgeModelNameReallyDamaged().str(), ARRAY_SIZE(modelName));
 			break;
 		case BODY_RUBBLE:
-			strcpy( textureFile, bridge->getTextureBroken().str() );
-			strcpy( modelName, bridge->getBridgeModelNameBroken().str() );
+			strlcpy(textureFile, bridge->getTextureBroken().str(), ARRAY_SIZE(textureFile));
+			strlcpy(modelName, bridge->getBridgeModelNameBroken().str(), ARRAY_SIZE(modelName));
 			break;
 	}
 
@@ -234,6 +234,9 @@ Bool W3DBridge::load(BodyDamageType curDamageState)
 	char section[_MAX_PATH];
 	char right[_MAX_PATH];
 
+	static_assert(ARRAY_SIZE(left) >= ARRAY_SIZE(modelName), "Incorrect array size");
+	static_assert(ARRAY_SIZE(section) >= ARRAY_SIZE(modelName), "Incorrect array size");
+	static_assert(ARRAY_SIZE(right) >= ARRAY_SIZE(modelName), "Incorrect array size");
 	strcpy(left, modelName);
 	strlcat(left, ".BRIDGE_LEFT", ARRAY_SIZE(left));
 	strcpy(section, modelName);
@@ -254,15 +257,15 @@ Bool W3DBridge::load(BodyDamageType curDamageState)
 		Matrix3D mtx = pSub->Get_Transform();
 		if (0==strnicmp(left, pSub->Get_Name(), strlen(left))) {
 			m_leftMtx = mtx;
-			strcpy(left, pSub->Get_Name());
+			strlcpy(left, pSub->Get_Name(), ARRAY_SIZE(left));
 		}
 		if (0==strnicmp(section, pSub->Get_Name(), strlen(section))) {
 			m_sectionMtx = mtx;
-			strcpy(section, pSub->Get_Name());
+			strlcpy(section, pSub->Get_Name(), ARRAY_SIZE(section));
 		}
 		if (0==strnicmp(right, pSub->Get_Name(), strlen(right))) {
 			m_rightMtx = mtx;
-			strcpy(right, pSub->Get_Name());
+			strlcpy(right, pSub->Get_Name(), ARRAY_SIZE(right));
 		}
 		REF_PTR_RELEASE(pSub);
 		//DEBUG_LOG(("Sub obj name %s", pSub->Get_Name()));

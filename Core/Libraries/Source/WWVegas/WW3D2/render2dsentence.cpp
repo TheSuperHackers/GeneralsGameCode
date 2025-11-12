@@ -1170,6 +1170,8 @@ Render2DSentenceClass::Build_Sentence (const WCHAR *text, int *hkX, int *hkY)
 		return ;
 	}
 
+	if (Font == NULL)
+		return;
 
 	if(Centered && (WrapWidth > 0 || wcschr(text,L'\n')))
 		Build_Sentence_Centered(text, hkX, hkY);
@@ -1504,7 +1506,7 @@ FontCharsClass::Update_Current_Buffer (int char_width)
 //	Create_GDI_Font
 //
 ////////////////////////////////////////////////////////////////////////////////////
-void
+bool
 FontCharsClass::Create_GDI_Font (const char *font_name)
 {
 	HDC screen_dc = ::GetDC ((HWND)WW3D::Get_Window());
@@ -1598,6 +1600,8 @@ FontCharsClass::Create_GDI_Font (const char *font_name)
 	if (doingGenerals) {
 		CharOverhang = 0;
 	}
+
+	return GDIFont != NULL && GDIBitmap != NULL;
 }
 
 
@@ -1646,7 +1650,7 @@ FontCharsClass::Free_GDI_Font (void)
 //	Initialize_GDI_Font
 //
 ////////////////////////////////////////////////////////////////////////////////////
-void
+bool
 FontCharsClass::Initialize_GDI_Font (const char *font_name, int point_size, bool is_bold)
 {
 	//
@@ -1664,8 +1668,7 @@ FontCharsClass::Initialize_GDI_Font (const char *font_name, int point_size, bool
 	//
 	//	Create the actual font object
 	//
-	Create_GDI_Font (font_name);
-	return ;
+	return Create_GDI_Font (font_name);
 }
 
 

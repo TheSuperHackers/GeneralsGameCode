@@ -1015,7 +1015,8 @@ WW3DErrorType CollectionDefClass::Load(ChunkLoadClass & cload)
 	if (cload.Read(&header,sizeof(header)) != sizeof(header)) goto Error;
 	if (!cload.Close_Chunk()) goto Error;
 
-	strlcpy(Name,header.Name,W3D_NAME_LEN);
+	static_assert(ARRAY_SIZE(Name) >= ARRAY_SIZE(header.Name), "Incorrect array size");
+	strcpy(Name,header.Name);
 	ObjectNames.Resize(header.RenderObjectCount);
 
 	while (cload.Open_Chunk()) {

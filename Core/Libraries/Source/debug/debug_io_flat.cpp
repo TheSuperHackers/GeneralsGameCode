@@ -83,17 +83,15 @@ void DebugIOFlat::OutputStream::Delete(const char *path)
       char help[512];
       if (path[0]&&(path[1]==':'||(path[0]=='\\'&&path[1]=='\\')))
       {
-        strcpy(help,path);
-        strcpy(help+pathLen,fileNameOnly);
-        help[ext-fileNameOnly+pathLen]=0;
+        strlcpy(help, path, ARRAY_SIZE(help));
+        strlcat(help, fileNameOnly, ARRAY_SIZE(help));
       }
       else
       {
         // no, relative path given
-        strcpy(help,m_fileName);
-        strcpy(help+(fileNameOnly-m_fileName),path);
-        strcpy(help+(fileNameOnly-m_fileName)+pathLen,fileNameOnly);
-        help[ext-fileNameOnly+pathLen+(fileNameOnly-m_fileName)]=0;
+        strlcpy(help, m_fileName, ARRAY_SIZE(help));
+        strlcat(help, path, ARRAY_SIZE(help));
+        strlcat(help, fileNameOnly, ARRAY_SIZE(help));
       }
       if (++run)
         wsprintf(help+strlen(help),"(%i)%s",run,ext);
@@ -268,7 +266,7 @@ void DebugIOFlat::ExpandMagic(const char *src, const char *splitName, char *buf)
       case 'n':
       case 'N':
         if (splitName&&strlen(splitName)<250)
-          strcpy(help,splitName);
+          strlcpy(help, splitName, ARRAY_SIZE(help));
         break;
       default:
         *dst++=src[-1];
@@ -277,7 +275,7 @@ void DebugIOFlat::ExpandMagic(const char *src, const char *splitName, char *buf)
     unsigned len=strlen(help);
     if (dst-buf+len>250)
       break;
-    strcpy(dst,help);
+    strcpy(dst, help);
     dst+=len;
   }
   strcpy(dst,".log");
@@ -418,7 +416,7 @@ void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
     // add [ <filename> [ <size in kb> ] ]
     __ASSERT(m_firstStream==NULL);
 
-    strcpy(m_baseFilename,argn?argv[0]:"*eMN");
+    strlcpy(m_baseFilename, argn?argv[0]:"*eMN", ARRAY_SIZE(m_baseFilename));
 
     char fn[256];
     ExpandMagic(m_baseFilename,NULL,fn);

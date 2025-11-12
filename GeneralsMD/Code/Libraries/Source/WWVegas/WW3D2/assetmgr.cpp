@@ -1462,12 +1462,17 @@ FontCharsClass *	WW3DAssetManager::Get_FontChars( const char * name, int point_s
 		}
 	}
 
-	// If one hasn't been found, create it
+	// If one hasn't been found, try create it
 	FontCharsClass * font = NEW_REF( FontCharsClass, () );
-	font->Initialize_GDI_Font( name, point_size, is_bold );
-	font->Add_Ref();
-	FontCharsList.Add( font );			// add it to the list
-	return font;							// return it
+	if (font->Initialize_GDI_Font( name, point_size, is_bold ))
+	{
+		font->Add_Ref();
+		FontCharsList.Add( font );
+		return font;
+	}
+
+	font->Release_Ref();
+	return NULL;
 }
 
 

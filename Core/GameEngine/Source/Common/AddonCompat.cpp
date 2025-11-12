@@ -1,6 +1,6 @@
 /*
-**	Command & Conquer Generals(tm)
-**	Copyright 2025 Electronic Arts Inc.
+**	Command & Conquer Generals Zero Hour(tm)
+**	Copyright 2025 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -16,17 +16,21 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-////////////////////////////////////////////////////////////////////////////////
-//																																						//
-//  (c) 2001-2003 Electronic Arts Inc.																				//
-//																																						//
-////////////////////////////////////////////////////////////////////////////////
+#include "PreRTS.h"
 
-// FILE: BuddyDefs.h //////////////////////////////////////////////////////
-// Generals GameSpy Buddy (GP) definitions
-// Author: Matthew D. Campbell, July 2002
+#include "Common/AddonCompat.h"
+#include "Common/FileSystem.h"
 
-#pragma once
+namespace addon
+{
+Bool HasFullviewportDat()
+{
+	Char value = '0';
+	if (File* file = TheFileSystem->openFile("GenTool/fullviewport.dat", File::READ | File::BINARY))
+	{
+		file->read(&value, 1);
+	}
+	return value != '0';
+}
 
-void HandleBuddyResponses(void);
-void PopulateOldBuddyMessages(void);
+} // namespace addon

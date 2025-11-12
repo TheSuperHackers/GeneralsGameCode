@@ -171,7 +171,7 @@ char const * GameFileClass::Set_Name( char const *filename )
 
 	}
 	else
-		strcpy( m_filePath, filename );
+		strlcpy(m_filePath, filename, ARRAY_SIZE(m_filePath));
 
 	// see if the file exists
 	m_fileExists = TheFileSystem->doesFileExist( m_filePath );

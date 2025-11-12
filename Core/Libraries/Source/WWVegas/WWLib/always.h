@@ -175,6 +175,9 @@ public:
 	#define W3DNEW									new
 	#define W3DNEWARRAY							new
 
+	#define NEW_REF( C, P )					( W3DNEW C P )
+	#define SET_REF_OWNER( P )			P
+
 	#define W3DMPO_GLUE(ARGCLASS)
 
 	class W3DMPO { };

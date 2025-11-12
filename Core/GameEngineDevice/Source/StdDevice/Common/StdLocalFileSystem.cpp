@@ -211,7 +211,6 @@ Bool StdLocalFileSystem::doesFileExist(const Char *filename) const
 void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList & filenameList, Bool searchSubdirectories) const
 {
 
-	char search[_MAX_PATH];
 	AsciiString asciisearch;
 	asciisearch = originalDirectory;
 	asciisearch.concat(currentDirectory);
@@ -227,17 +226,15 @@ void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirect
 	std::replace(fixedDirectory.begin(), fixedDirectory.end(), '\\', '/');
 #endif
 
-	strcpy(search, fixedDirectory.c_str());
-
 	Bool done = FALSE;
 	std::error_code ec;
 
-	auto iter = std::filesystem::directory_iterator(search, ec);
+	auto iter = std::filesystem::directory_iterator(fixedDirectory.c_str(), ec);
 	// The default iterator constructor creates an end iterator
 	done = iter == std::filesystem::directory_iterator();
 
 	if (ec) {
-		DEBUG_LOG(("StdLocalFileSystem::getFileListInDirectory - Error opening directory %s", search));
+		DEBUG_LOG(("StdLocalFileSystem::getFileListInDirectory - Error opening directory %s", fixedDirectory.c_str()));
 		return;
 	}
 

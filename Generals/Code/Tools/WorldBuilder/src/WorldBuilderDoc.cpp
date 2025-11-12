@@ -2098,16 +2098,13 @@ void CWorldBuilderDoc::OnDumpDocToText(void)
 	static FILE *theLogFile = NULL;
 	Bool open = false;
 	try {
-		char dirbuf[ _MAX_PATH ];
-		::GetModuleFileName( NULL, dirbuf, sizeof( dirbuf ) );
-		if (char *pEnd = strrchr(dirbuf, '\\'))
+		char curbuf[_MAX_PATH];
+		GetModuleFileName(NULL, curbuf, sizeof(curbuf));
+		if (char *pEnd = strrchr(curbuf, '\\'))
 		{
 			*(pEnd + 1) = 0;
 		}
 
-		char curbuf[ _MAX_PATH ];
-
-		strcpy(curbuf, dirbuf);
 		strlcat(curbuf, m_strTitle, ARRAY_SIZE(curbuf));
 		strlcat(curbuf, ".txt", ARRAY_SIZE(curbuf));
 

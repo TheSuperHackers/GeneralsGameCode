@@ -211,7 +211,7 @@ int HRawAnimClass::Load_W3D(ChunkLoadClass & cload)
 		pre30 = true;
 	}
 
-	strcpy(Name,aheader.HierarchyName);
+	strlcpy(Name, aheader.HierarchyName, ARRAY_SIZE(Name));
 	strlcat(Name, ".", ARRAY_SIZE(Name));
 	strlcat(Name, aheader.Name, ARRAY_SIZE(Name));
 

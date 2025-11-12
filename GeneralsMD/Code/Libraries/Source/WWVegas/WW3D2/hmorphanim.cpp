@@ -475,7 +475,7 @@ void HMorphAnimClass::Set_Name(const char * name)
 	//
 	// Copy the full name
 	//
-	::strcpy (Name, name);
+	strlcpy(Name, name, ARRAY_SIZE(Name));
 
 	//
 	// Try to find the separator (a period)
@@ -489,8 +489,8 @@ void HMorphAnimClass::Set_Name(const char * name)
 		// into our two buffers
 		//
 		separator[0] = 0;
-		::strcpy (AnimName, separator + 1);
-		::strcpy (HierarchyName, full_name);
+		strlcpy(AnimName, separator + 1, ARRAY_SIZE(AnimName));
+		strlcpy(HierarchyName, full_name, ARRAY_SIZE(HierarchyName));
 	}
 
 	return ;
@@ -548,9 +548,12 @@ int HMorphAnimClass::Load_W3D(ChunkLoadClass & cload)
 	cload.Read(&header,sizeof(header));
 	cload.Close_Chunk();
 
-	strlcpy(AnimName,header.Name,sizeof(AnimName));
-	strlcpy(HierarchyName,header.HierarchyName,sizeof(HierarchyName));
-	strcpy(Name,HierarchyName);
+	static_assert(ARRAY_SIZE(AnimName) >= ARRAY_SIZE(header.Name), "Incorrect array size");
+	static_assert(ARRAY_SIZE(HierarchyName) >= ARRAY_SIZE(header.HierarchyName), "Incorrect array size");
+	static_assert(ARRAY_SIZE(Name) >= ARRAY_SIZE(HierarchyName), "Incorrect array size");
+	strcpy(AnimName, header.Name);
+	strcpy(HierarchyName, header.HierarchyName);
+	strcpy(Name, HierarchyName);
 	strlcat(Name, ".", ARRAY_SIZE(Name));
 	strlcat(Name, AnimName, ARRAY_SIZE(Name));
 

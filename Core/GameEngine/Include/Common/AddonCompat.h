@@ -1,6 +1,6 @@
 /*
-**	Command & Conquer Generals(tm)
-**	Copyright 2025 Electronic Arts Inc.
+**	Command & Conquer Generals Zero Hour(tm)
+**	Copyright 2025 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -16,17 +16,10 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-////////////////////////////////////////////////////////////////////////////////
-//																																						//
-//  (c) 2001-2003 Electronic Arts Inc.																				//
-//																																						//
-////////////////////////////////////////////////////////////////////////////////
-
-// FILE: ThreadUtils.h //////////////////////////////////////////////////////
-// Generals GameSpy thread utils
-// Author: Matthew D. Campbell, July 2002
-
 #pragma once
 
-std::wstring MultiByteToWideCharSingleLine( const char *orig );
-std::string WideCharStringToMultiByte( const WideChar *orig );
+namespace addon
+{
+extern Bool HasFullviewportDat();
+
+} // namespace addon

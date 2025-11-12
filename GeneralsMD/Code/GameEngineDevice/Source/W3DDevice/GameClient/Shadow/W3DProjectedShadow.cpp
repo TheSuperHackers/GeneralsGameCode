@@ -1485,7 +1485,8 @@ Shadow* W3DProjectedShadowManager::addDecal(Shadow::ShadowTypeInfo *shadowInfo)
 	//simple decal using the premade texture specified.
 	//can be always perpendicular to model's z-axis or projected
 	//onto world geometry.
-	strlcpy(texture_name, shadowInfo->m_ShadowName, ARRAY_SIZE(texture_name));
+	static_assert(ARRAY_SIZE(texture_name) >= ARRAY_SIZE(shadowInfo->m_ShadowName), "Incorrect array size");
+	strcpy(texture_name, shadowInfo->m_ShadowName);
 	strlcat(texture_name, ".tga", ARRAY_SIZE(texture_name));
 
 	//Check if we previously added a decal using this texture
@@ -1589,7 +1590,8 @@ Shadow* W3DProjectedShadowManager::addDecal(RenderObjClass *robj, Shadow::Shadow
 	//simple decal using the premade texture specified.
 	//can be always perpendicular to model's z-axis or projected
 	//onto world geometry.
-	strlcpy(texture_name, shadowInfo->m_ShadowName, ARRAY_SIZE(texture_name));
+	static_assert(ARRAY_SIZE(texture_name) >= ARRAY_SIZE(shadowInfo->m_ShadowName), "Incorrect array size");
+	strcpy(texture_name, shadowInfo->m_ShadowName);
 	strlcat(texture_name, ".tga", ARRAY_SIZE(texture_name));
 
 	//Check if we previously added a decal using this texture
@@ -1723,7 +1725,8 @@ W3DProjectedShadow* W3DProjectedShadowManager::addShadow(RenderObjClass *robj, S
 				}
 				else
 				{
-					strlcpy(texture_name, shadowInfo->m_ShadowName, ARRAY_SIZE(texture_name));
+					static_assert(ARRAY_SIZE(texture_name) >= ARRAY_SIZE(shadowInfo->m_ShadowName), "Incorrect array size");
+					strcpy(texture_name, shadowInfo->m_ShadowName);
 					strlcat(texture_name, ".tga", ARRAY_SIZE(texture_name));
 				}
 
@@ -1764,10 +1767,11 @@ W3DProjectedShadow* W3DProjectedShadowManager::addShadow(RenderObjClass *robj, S
 					//to allow multiple models to share same shadow - for
 					//example, all trees could use same shadow even if slightly
 					//different color, etc.
-					strcpy(texture_name,shadowInfo->m_ShadowName);
+					static_assert(ARRAY_SIZE(texture_name) >= ARRAY_SIZE(shadowInfo->m_ShadowName), "Incorrect array size");
+					strcpy(texture_name, shadowInfo->m_ShadowName);
 				}
 				else
-					strcpy(texture_name,robj->Get_Name());	//not texture name give, assume model name.
+					strlcpy(texture_name, robj->Get_Name(), ARRAY_SIZE(texture_name));	//not texture name give, assume model name.
 
 				st=m_W3DShadowTextureManager->getTexture(texture_name);
 				if (st == NULL)
@@ -1786,7 +1790,7 @@ W3DProjectedShadow* W3DProjectedShadowManager::addShadow(RenderObjClass *robj, S
 	}
 	else
 	{	//no shadow info, assume user wants a projected shadow
-		strcpy(texture_name,robj->Get_Name());
+		strlcpy(texture_name, robj->Get_Name(), ARRAY_SIZE(texture_name));
 
 		st=m_W3DShadowTextureManager->getTexture(texture_name);
 
@@ -1900,7 +1904,8 @@ W3DProjectedShadow* W3DProjectedShadowManager::createDecalShadow(Shadow::ShadowT
 	}
 	else
 	{
-		strlcpy(texture_name, shadowInfo->m_ShadowName, ARRAY_SIZE(texture_name));
+		static_assert(ARRAY_SIZE(texture_name) >= ARRAY_SIZE(shadowInfo->m_ShadowName), "Incorrect array size");
+		strcpy(texture_name, shadowInfo->m_ShadowName);
 		strlcat(texture_name, ".tga", ARRAY_SIZE(texture_name));
 	}
 
