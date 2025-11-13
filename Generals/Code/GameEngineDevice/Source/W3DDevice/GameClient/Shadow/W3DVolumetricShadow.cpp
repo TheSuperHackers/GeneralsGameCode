@@ -1907,7 +1907,19 @@ void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const 
 		// system change, not the translations
 		//
 		Real det;
-		D3DXMatrixInverse((D3DXMATRIX*)&worldToObject, &det, (D3DXMATRIX*)&objectToWorld);
+		D3DXMATRIX d3dObjectToWorld(
+			objectToWorld[0][0], objectToWorld[0][1], objectToWorld[0][2], objectToWorld[0][3],
+			objectToWorld[1][0], objectToWorld[1][1], objectToWorld[1][2], objectToWorld[1][3],
+			objectToWorld[2][0], objectToWorld[2][1], objectToWorld[2][2], objectToWorld[2][3],
+			objectToWorld[3][0], objectToWorld[3][1], objectToWorld[3][2], objectToWorld[3][3]
+		);
+		D3DXMATRIX d3dWorldToObject;
+		D3DXMatrixInverse(&d3dWorldToObject, &det, &d3dObjectToWorld);
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				worldToObject[i][j] = d3dWorldToObject.m[i][j];
+			}
+		}
 
 		// find out light position in object space
 		Matrix4x4::Transform_Vector(worldToObject,lightPosWorld,&lightPosObject);
