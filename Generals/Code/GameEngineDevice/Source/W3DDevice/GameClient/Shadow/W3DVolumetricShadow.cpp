@@ -1491,7 +1491,7 @@ void W3DVolumetricShadow::RenderMeshVolumeBounds(Int meshIndex, Int lightIndex, 
 	if (nShadowIndicesInBuf > (SHADOW_INDEX_SIZE-numIndex))	//check if room for model verts
 	{	//flush the buffer by drawing the contents and re-locking again
 		if (shadowIndexBufferD3D->Lock(0,numIndex*sizeof(short),(unsigned char**)&pvIndices,D3DLOCK_DISCARD) != D3D_OK)
-			return;;
+			return;
 		nShadowIndicesInBuf=0;
 		nShadowStartBatchIndex=0;
 	}

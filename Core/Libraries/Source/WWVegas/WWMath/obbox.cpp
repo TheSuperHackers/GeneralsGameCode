@@ -79,7 +79,7 @@ OBBoxClass::OBBoxClass(const Vector3 * /*points*/, int /*n*/)
 	int i;
 
 	// compute mean and covariances of points
-	float xsum = 0.0f, ysum = 0.0f, zsum = 0.0f;;
+	float xsum = 0.0f, ysum = 0.0f, zsum = 0.0f;
 	float xxsum = 0.0f, xysum = 0.0f, xzsum = 0.0f;
 	float yysum = 0.0f, yzsum = 0.0f, zzsum = 0.0f;
 

@@ -789,7 +789,7 @@ void ParticleUplinkCannonUpdate::createConnectorLasers( IntensityTypes intensity
 		case IT_LIGHT:
 			break;
 		case IT_MEDIUM:
-			str = data->m_connectorMediumLaserNameName;;
+			str = data->m_connectorMediumLaserNameName;
 			break;
 		case IT_INTENSE:
 			str = data->m_connectorIntenseLaserNameName;

@@ -959,7 +959,7 @@ const Image* ControlBar::calculateVeterancyOverlayForThing( const ThingTemplate 
 		case LEVEL_HEROIC:
 			return m_rankHeroicIcon;
 	}
-	return NULL;;
+	return NULL;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -981,7 +981,7 @@ const Image* ControlBar::calculateVeterancyOverlayForObject( const Object *obj )
 		case LEVEL_HEROIC:
 			return m_rankHeroicIcon;
 	}
-	return NULL;;
+	return NULL;
 }
 
 //-------------------------------------------------------------------------------------------------

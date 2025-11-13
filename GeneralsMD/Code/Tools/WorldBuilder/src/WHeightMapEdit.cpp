@@ -979,7 +979,7 @@ Int WorldHeightMapEdit::getTileNdxForClass(Int xIndex, Int yIndex, Int textureCl
 		/* there are actually 4 subcells in a tile.  So be funky. :) */
 		tileNdx = tileNdx << 2;
 		Int ySubIndex = yIndex&0x01;
-		Int xSubIndex = xIndex&0x01;;
+		Int xSubIndex = xIndex&0x01;
 		tileNdx += 2*ySubIndex;
 		tileNdx += xSubIndex;
 	}

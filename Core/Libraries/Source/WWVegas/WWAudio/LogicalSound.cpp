@@ -171,7 +171,7 @@ LogicalSoundClass::On_Frame_Update (unsigned int milliseconds)
 	// Update the sound's position if its linked to a render object
 	//
 	Apply_Auto_Position ();
-	return SoundSceneObjClass::On_Frame_Update (milliseconds);;
+	return SoundSceneObjClass::On_Frame_Update (milliseconds);
 }
 
 
