@@ -46,11 +46,15 @@
 //-------------------------------------------------------------------------------------------------
 MissileLauncherBuildingUpdate::MissileLauncherBuildingUpdate( Thing *thing, const ModuleData* moduleData ) : SpecialPowerUpdateModule( thing, moduleData )
 {
+	const MissileLauncherBuildingUpdateModuleData* d = getMissileLauncherBuildingUpdateModuleData();
+
 	m_doorState = DOOR_CLOSED;
 	m_timeoutState = DOOR_CLOSED;
 	m_timeoutFrame = 0;
-	m_openIdleAudio = getMissileLauncherBuildingUpdateModuleData()->m_openIdleAudio;
+	m_openIdleAudio = d->m_openIdleAudio;
 	m_openIdleAudio.setObjectID(getObject()->getID());
+	m_specialPowerModule = getObject()->getSpecialPowerModule(d->m_specialPowerTemplate);
+	DEBUG_ASSERTCRASH(m_specialPowerModule, ("Missing special power"));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -236,23 +240,16 @@ Bool MissileLauncherBuildingUpdate::isPowerCurrentlyInUse( const CommandButton *
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime MissileLauncherBuildingUpdate::update( void )
 {
-	const MissileLauncherBuildingUpdateModuleData* d = getMissileLauncherBuildingUpdateModuleData();
-
-	UnsignedInt now = TheGameLogic->getFrame();
-
 	// If we are under construction, any decision we make about door status could be wrong.
 	// Our special power module is randomly going to be initialized or not (which would result
 	// in him reporting a 0 frame ready, which means we will start open).
 	if( getObject()->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) )
 		return UPDATE_SLEEP_NONE;
 
-	if (!m_specialPowerModule)
-	{
-		m_specialPowerModule = getObject()->getSpecialPowerModule(d->m_specialPowerTemplate);
-		DEBUG_ASSERTCRASH(m_specialPowerModule, ("Missing special power"));
-	}
+	const MissileLauncherBuildingUpdateModuleData* d = getMissileLauncherBuildingUpdateModuleData();
 
-	if (m_specialPowerModule)
+	UnsignedInt now = TheGameLogic->getFrame();
+
 	{
 		UnsignedInt readyFrame = m_specialPowerModule->getReadyFrame();
 		UnsignedInt whenToStartOpening = (readyFrame >= d->m_doorOpenTime) ? (readyFrame - d->m_doorOpenTime) : 0;
@@ -312,9 +309,6 @@ void MissileLauncherBuildingUpdate::xfer( Xfer *xfer )
 
 	// extend base class
 	UpdateModule::xfer( xfer );
-
-	// do not need to tie the m_specialPowerModule pointer cause it gets tied
-	// SpecialPowerModuleInterface *m_specialPowerModule;
 
 	// door state
 	xfer->xferUser( &m_doorState, sizeof( DoorStateType ) );
