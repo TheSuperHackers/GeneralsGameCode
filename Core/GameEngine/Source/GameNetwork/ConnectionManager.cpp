@@ -742,6 +742,20 @@ void ConnectionManager::processFile(NetFileCommandMsg *msg)
 		fp = NULL;
 		DEBUG_LOG(("Wrote %d bytes to file %s!", len, realFileName.str()));
 
+		// TheSuperHackers @security bobtista 06/11/2025 Validate file content after writing
+		if (!FileSystem::hasValidTransferFileContent(realFileName))
+		{
+			DEBUG_LOG(("File '%s' failed content validation, deleting.", realFileName.str()));
+			remove(realFileName.str());
+#ifdef COMPRESS_TARGAS
+			if (deleteBuf)
+			{
+				delete[] buf;
+				buf = NULL;
+			}
+#endif
+			return;
+		}
 	}
 	else
 	{
