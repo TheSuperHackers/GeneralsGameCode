@@ -2155,7 +2155,7 @@ void GameLogic::loadMapINI( AsciiString mapName )
 	// the pristine map name string in order to manipulate and load the right map.ini
 	// for that map from it's original location
 	//
-	const char* pristineMapName = TheGameState->isInSaveDirectory(filename)
+	const char* pristineMapName = TheGameState->isInSaveDirectory(mapName.str())
 		? TheGameState->getSaveGameInfo()->pristineMapName.str()
 		: mapName.str();
 
