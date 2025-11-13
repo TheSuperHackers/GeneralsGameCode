@@ -716,14 +716,20 @@ void LightMapTerrainTextureClass::Apply(unsigned int stage)
 
 	D3DXMATRIX inv;
 	float det;
-	D3DXMatrixInverse(&inv, &det, (D3DXMATRIX*)&curView);
+	D3DXMATRIX d3dCurView(
+		curView[0][0], curView[0][1], curView[0][2], curView[0][3],
+		curView[1][0], curView[1][1], curView[1][2], curView[1][3],
+		curView[2][0], curView[2][1], curView[2][2], curView[2][3],
+		curView[3][0], curView[3][1], curView[3][2], curView[3][3]
+	);
+	D3DXMatrixInverse(&inv, &det, &d3dCurView);
 	D3DXMATRIX scale;
 	D3DXMatrixScaling(&scale, STRETCH_FACTOR, STRETCH_FACTOR,1);
 	inv *=scale;
 	if (stage==0) {
-		DX8Wrapper::_Set_DX8_Transform(D3DTS_TEXTURE0, *((Matrix4x4*)&inv));
+		DX8Wrapper::_Set_DX8_Transform(D3DTS_TEXTURE0, inv);
 	}	if (stage==1) {
-		DX8Wrapper::_Set_DX8_Transform(D3DTS_TEXTURE1, *((Matrix4x4*)&inv));
+		DX8Wrapper::_Set_DX8_Transform(D3DTS_TEXTURE1, inv);
 	}
 
 
@@ -999,7 +1005,7 @@ void CloudMapTerrainTextureClass::Apply(unsigned int stage)
 		DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG1 );
 		DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ALPHAOP,   D3DTOP_DISABLE );
 
-		DX8Wrapper::_Set_DX8_Transform(D3DTS_TEXTURE0, *((Matrix4x4*)&inv));
+		DX8Wrapper::_Set_DX8_Transform(D3DTS_TEXTURE0, inv);
 
 		// Disable 3rd stage just in case.
 		DX8Wrapper::Set_DX8_Texture_Stage_State( 2, D3DTSS_COLOROP,   D3DTOP_DISABLE );
@@ -1018,7 +1024,7 @@ void CloudMapTerrainTextureClass::Apply(unsigned int stage)
 		DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_ALPHAARG1, D3DTA_CURRENT );
 		DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_ALPHAOP,   D3DTOP_SELECTARG1 );
 
-		DX8Wrapper::_Set_DX8_Transform(D3DTS_TEXTURE1, *((Matrix4x4*)&inv));
+		DX8Wrapper::_Set_DX8_Transform(D3DTS_TEXTURE1, inv);
 	}
 #endif
 }
