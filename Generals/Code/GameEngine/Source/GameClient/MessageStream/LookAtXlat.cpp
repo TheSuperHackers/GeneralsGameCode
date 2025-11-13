@@ -291,6 +291,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 
 			m_isRotating = true;
 			m_anchor = msg->getArgument( 0 )->pixel;
+			m_anchorAngle = TheTacticalView->getAngle();
 			m_originalAnchor = msg->getArgument( 0 )->pixel;
 			m_currentPos = msg->getArgument( 0 )->pixel;
 			m_timestamp = TheGameClient->getFrame();
@@ -360,10 +361,16 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			if (m_isRotating)
 			{
 				const Real FACTOR = 0.01f;
+				Real angle = FACTOR * (m_currentPos.x - m_originalAnchor.x);
+				Real targetAngle = m_anchorAngle + angle;
 
-				Real angle = FACTOR * (m_currentPos.x - m_anchor.x);
+				if (TheInGameUI->isInForceAttackMode())
+				{
+					const Real snapRadians = DEG_TO_RADF(45);
+					targetAngle = WWMath::Round(targetAngle / snapRadians) * snapRadians;
+				}
 
-				TheTacticalView->setAngle( TheTacticalView->getAngle() + angle );
+				TheTacticalView->setAngle(targetAngle);
 				m_anchor = msg->getArgument( 0 )->pixel;
 			}
 
