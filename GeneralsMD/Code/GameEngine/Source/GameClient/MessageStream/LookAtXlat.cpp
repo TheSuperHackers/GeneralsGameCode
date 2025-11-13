@@ -360,7 +360,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			if (m_isRotating)
 			{
 				const Real FACTOR = 0.01f;
-				Real angle = FACTOR * (m_currentPos.x - m_originalAnchor.x);
+				const Real angle = FACTOR * (m_currentPos.x - m_originalAnchor.x);
 				Real targetAngle = m_anchorAngle + angle;
 
 				if (TheInGameUI->isInForceAttackMode())
