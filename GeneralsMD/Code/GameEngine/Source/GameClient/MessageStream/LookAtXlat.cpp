@@ -363,6 +363,8 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 				const Real angle = FACTOR * (m_currentPos.x - m_originalAnchor.x);
 				Real targetAngle = m_anchorAngle + angle;
 
+				// TheSuperHackers @tweak Stubbjax 13/11/2025 Snap angle to nearest 45 degrees
+				// while using force attack mode for convenience.
 				if (TheInGameUI->isInForceAttackMode())
 				{
 					const Real snapRadians = DEG_TO_RADF(45);
