@@ -202,7 +202,7 @@ void LANAPI::handleRequestGameInfo( LANMessage *msg, UnsignedInt senderIP )
 	}
 }
 
-static const Bool IsInvalidCharForPlayerName(const WideChar c)
+static Bool IsInvalidCharForPlayerName(const WideChar c)
 {
 	return c < L' ' // C0 control chars
 		|| c == L',' || c == L':' || c == L';' // chars used for strtok in ParseAsciiStringToGameInfo
@@ -212,7 +212,7 @@ static const Bool IsInvalidCharForPlayerName(const WideChar c)
 		|| (c >= L'\xd800' && c <= L'\xdbff'); // high surrogate, for chars beyond the BMP
 }
 
-static const Bool IsSpaceCharacter(const WideChar c)
+static Bool IsSpaceCharacter(const WideChar c)
 {
 	return c == L' ' // space
 		|| c == L'\xA0' // no-break space
@@ -223,7 +223,7 @@ static const Bool IsSpaceCharacter(const WideChar c)
 		|| c == L'\x3000'; // ideographic space
 }
 
-static const Bool ContainsInvalidChars(const WideChar* playerName)
+static Bool ContainsInvalidChars(const WideChar* playerName)
 {
 	DEBUG_ASSERTCRASH(playerName != NULL, ("playerName is NULL"));
 	while (*playerName)
@@ -235,7 +235,7 @@ static const Bool ContainsInvalidChars(const WideChar* playerName)
 	return false;
 }
 
-static const Bool ContainsAnyReadableChars(const WideChar* playerName)
+static Bool ContainsAnyReadableChars(const WideChar* playerName)
 {
 	DEBUG_ASSERTCRASH(playerName != NULL, ("playerName is NULL"));
 	while (*playerName)
