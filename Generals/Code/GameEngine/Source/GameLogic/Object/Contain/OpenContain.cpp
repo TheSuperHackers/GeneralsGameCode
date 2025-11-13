@@ -125,7 +125,9 @@ OpenContain::OpenContain( Thing *thing, const ModuleData* moduleData ) : UpdateM
 	m_lastLoadSoundFrame = 0;
 	m_containListSize = 0;
 	m_stealthUnitsContained = 0;
+#if !RETAIL_COMPATIBLE_CRC
 	m_heroUnitsContained = 0;
+#endif
 	m_doorCloseCountdown = 0;
 
 	//Added By Sadullah Nader
@@ -635,10 +637,12 @@ void OpenContain::onContaining( Object *rider )
 	}
 
 	// TheSuperHackers @performance bobtista 13/11/2025 Cache hero count to avoid O(n) iteration in Object::isHero().
+#if !RETAIL_COMPATIBLE_CRC
 	if( rider && rider->isKindOf( KINDOF_HERO ) )
 	{
 		m_heroUnitsContained++;
 	}
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -655,10 +659,12 @@ void OpenContain::onRemoving( Object *rider)
 		fallingSound.setObjectID(rider->getID());
 		TheAudio->addAudioEvent(&fallingSound);
 
+#if !RETAIL_COMPATIBLE_CRC
 		if( rider->isKindOf( KINDOF_HERO ) && m_heroUnitsContained > 0 )
 		{
 			m_heroUnitsContained--;
 		}
+#endif
 	}
 }
 
