@@ -3,6 +3,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/ActionManager.h
     Include/Common/AddonCompat.h
     Include/Common/ArchiveFile.h
+    Include/GameNetwork/NetPacketStructs.h
     Include/Common/ArchiveFileSystem.h
     Include/Common/AsciiString.h
     Include/Common/AudioAffect.h
