@@ -35,6 +35,7 @@
 #include "resource.h"
 #include "rendobj.h"
 #include "Vector3i.h"
+#include "ref_ptr.h"
 
 // Forward declarations
 class VertexMaterialClass;
@@ -93,8 +94,8 @@ class ScreenCursorClass : public RenderObjClass
 		////////////////////////////////////////////////////////////////////////
 		HWND						m_hWnd;
 		Vector2					m_ScreenPos;
-		TextureClass *			m_pTexture;
-		VertexMaterialClass *m_pVertMaterial;
+		RefCountPtr<TextureClass>			m_pTexture;
+		RefCountPtr<VertexMaterialClass> m_pVertMaterial;
 
 		Vector3					m_Verticies[4];
 		Vector3					m_Normals[4];

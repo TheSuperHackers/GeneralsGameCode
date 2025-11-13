@@ -130,7 +130,6 @@ CW3DViewDoc::CW3DViewDoc (void)
 CW3DViewDoc::~CW3DViewDoc (void)
 {
     CleanupResources ();
-	 REF_PTR_RELEASE (m_pCursor);
     return ;
 }
 
@@ -171,15 +170,16 @@ CW3DViewDoc::CleanupResources (void)
 
 	if (m_pCursor != NULL) {
 		m_pCursor->Remove ();
+		m_pCursor.Clear();
 	}
-	REF_PTR_RELEASE (m_pCursorScene);
+	m_pCursorScene.Clear();
 
     if (m_pCScene)
     {
         if (m_pCRenderObj)
         {
             // Remove the currently displayed object from the scene
-				Remove_Object_From_Scene (m_pCRenderObj);
+				Remove_Object_From_Scene (m_pCRenderObj.Peek());
         }
 
         if (m_pCSceneLight)
@@ -238,14 +238,10 @@ CW3DViewDoc::CleanupResources (void)
         m_pCSceneLight = NULL;
     }
 
-    // Was there a valid display object?
-    if (m_pCRenderObj)
-    {
-        // Free the currently displayed object
-			SAFE_DELETE (m_pCAnimCombo);
-			REF_PTR_RELEASE (m_pCAnimation);
-			REF_PTR_RELEASE (m_pCRenderObj);
-    }
+    // Free the currently displayed object
+	SAFE_DELETE (m_pCAnimCombo);
+	m_pCAnimation.Clear();
+	m_pCRenderObj.Clear();
 
     return ;
 }
@@ -268,7 +264,7 @@ CW3DViewDoc::OnNewDocument (void)
     if (m_pCScene && m_pCRenderObj)
     {
         // Remove the currently displayed object from the scene
-		  Remove_Object_From_Scene (m_pCRenderObj);
+		  Remove_Object_From_Scene (m_pCRenderObj.Peek());
     }
 
 	 if (m_pCScene)
@@ -280,13 +276,10 @@ CW3DViewDoc::OnNewDocument (void)
 		 m_pCScene->Set_Fog_Color(m_backgroundColor);
 	 }
 
-    if (m_pCRenderObj)
-    {
-			// Free the currently displayed object
-			SAFE_DELETE (m_pCAnimCombo);
-			REF_PTR_RELEASE (m_pCAnimation);
-			REF_PTR_RELEASE (m_pCRenderObj);
-    }
+	// Free the currently displayed object
+	SAFE_DELETE (m_pCAnimCombo);
+	m_pCAnimation.Clear();
+	m_pCRenderObj.Clear();
 
     CDataTreeView *pCDataTreeView = GetDataTreeView ();
     if (pCDataTreeView)
@@ -395,12 +388,12 @@ CW3DViewDoc::InitScene (void)
 		m_pC2DScene = new SimpleSceneClass;
 		ASSERT (m_pC2DScene);
 
-		// Instantiate a new 2D cursor scene
-		m_pCursorScene = new SimpleSceneClass;
-		ASSERT (m_pCursorScene);
+	// Instantiate a new 2D cursor scene
+	m_pCursorScene = RefCountPtr<SceneClass>::Create_NoAddRef(new SimpleSceneClass);
+	ASSERT (m_pCursorScene.Peek());
 
 		Create_Cursor ();
-		m_pCursorScene->Add_Render_Object (m_pCursor);
+		m_pCursorScene->Add_Render_Object (m_pCursor.Peek());
 
 
 		m_pCBackObjectScene = new SimpleSceneClass;
@@ -608,26 +601,24 @@ CW3DViewDoc::Display_Emitter
 	// Data OK?
 	if (m_pCScene != NULL) {
 
-		// Lose the animation
-		SAFE_DELETE (m_pCAnimCombo);
-		REF_PTR_RELEASE (m_pCAnimation);
+	// Lose the animation
+	SAFE_DELETE (m_pCAnimCombo);
+	m_pCAnimation.Clear();
 
-			if (m_pCRenderObj != NULL) {
+	if (m_pCRenderObj != NULL) {
+		// Remove this object from the scene
+		Remove_Object_From_Scene (m_pCRenderObj.Peek());
+		m_pCRenderObj.Clear();
+	}
+	m_pCScene->Clear_Lineup();
 
-				// Remove this object from the scene
-				Remove_Object_From_Scene (m_pCRenderObj);
-				m_pCRenderObj->Release_Ref ();
-				m_pCRenderObj = NULL;
-			}
-			m_pCScene->Clear_Lineup();
+	// Do we have a new emitter to display?
+	if (pemitter != NULL) {
 
-		// Do we have a new emitter to display?
-		if (pemitter != NULL) {
-
-			// Add the emitter to the scene
-			pemitter->Set_Transform (Matrix3D (1));
-			REF_PTR_SET (m_pCRenderObj, pemitter);
-			m_pCScene->Add_Render_Object (m_pCRenderObj);
+		// Add the emitter to the scene
+		pemitter->Set_Transform (Matrix3D (1));
+		m_pCRenderObj = RefCountPtr<RenderObjClass>::Create_AddRef(pemitter);
+		m_pCScene->Add_Render_Object (m_pCRenderObj.Peek());
 			pemitter->Start ();
 
 			CGraphicView *pCGraphicView = GetGraphicView ();
@@ -669,16 +660,13 @@ CW3DViewDoc::DisplayObject
     {
         // Lose the animation
 		  SAFE_DELETE (m_pCAnimCombo);
-		  REF_PTR_RELEASE (m_pCAnimation);
 
         // Do we have an old object to remove from the scene?
 		  if (add_ghost == false) {
-			  if (m_pCRenderObj)
-			  {
+			  if (m_pCRenderObj) {
 					// Remove this object from the scene
-					Remove_Object_From_Scene (m_pCRenderObj);
-					m_pCRenderObj->Release_Ref ();
-					m_pCRenderObj = NULL;
+					Remove_Object_From_Scene (m_pCRenderObj.Peek());
+					m_pCRenderObj.Clear();
 			  }
 		  }
 		  m_pCScene->Clear_Lineup();
@@ -689,21 +677,20 @@ CW3DViewDoc::DisplayObject
             // Reset the animation for this object
             pCModel->Set_Animation ();
 
-            m_pCRenderObj = pCModel;
-            m_pCRenderObj->Add_Ref ();
+            m_pCRenderObj = RefCountPtr<RenderObjClass>::Create_AddRef(pCModel);
             m_pCRenderObj->Set_Transform (Matrix3D (1));
 
             // Add this object to the scene
 				if (m_pCRenderObj->Class_ID () == RenderObjClass::CLASSID_BITMAP2D) {
-					m_pC2DScene->Add_Render_Object (m_pCRenderObj);
+					m_pC2DScene->Add_Render_Object (m_pCRenderObj.Peek());
 				} else {
-					m_pCScene->Add_Render_Object (m_pCRenderObj);
+					m_pCScene->Add_Render_Object (m_pCRenderObj.Peek());
 				}
 
 				// Reset the current lod to be the lowest possible LOD...
 				if ((m_pCScene->Are_LODs_Switching ()) &&
 					 (m_pCRenderObj->Class_ID () == RenderObjClass::CLASSID_HLOD)) {
-					((HLodClass *)m_pCRenderObj)->Set_LOD_Level (0);
+					((HLodClass *)m_pCRenderObj.Peek())->Set_LOD_Level (0);
 				}
 
             CGraphicView *pCGraphicView = GetGraphicView ();
@@ -836,7 +823,7 @@ CW3DViewDoc::StepAnimation (int iFrameInc)
 
 			m_pCRenderObj->Set_Animation (m_pCAnimCombo);
 		} else {
-			m_pCRenderObj->Set_Animation (m_pCAnimation, m_CurrentFrame);
+			m_pCRenderObj->Set_Animation (m_pCAnimation.Peek(), m_CurrentFrame);
 		}
 
 		Update_Camera ();
@@ -874,9 +861,8 @@ CW3DViewDoc::PlayAnimation
 
         // Get an instance of the animation object
 		  SAFE_DELETE (m_pCAnimCombo);
-		  REF_PTR_RELEASE (m_pCAnimation);
-        m_pCAnimation = WW3DAssetManager::Get_Instance()->Get_HAnim (pszAnimationName);
-        ASSERT (m_pCAnimation);
+        m_pCAnimation = RefCountPtr<HAnimClass>::Create_NoAddRef(WW3DAssetManager::Get_Instance()->Get_HAnim (pszAnimationName));
+        ASSERT (m_pCAnimation.Peek());
 
         // Reset the frame counter
         m_CurrentFrame = 0;
@@ -885,7 +871,7 @@ CW3DViewDoc::PlayAnimation
         if (m_pCRenderObj)
         {
             // Update the animation frame
-            m_pCRenderObj->Set_Animation (m_pCAnimation, 0);
+            m_pCRenderObj->Set_Animation (m_pCAnimation.Peek(), 0);
 
             CGraphicView *pCGraphicView = GetGraphicView ();
             if (pCGraphicView)
@@ -966,10 +952,9 @@ CW3DViewDoc::PlayAnimation
 
         // Get an instance of the animation object
 		  SAFE_DELETE (m_pCAnimCombo);
-		  REF_PTR_RELEASE (m_pCAnimation);
 		  m_pCAnimCombo = pCAnimCombo;
-		  m_pCAnimation = m_pCAnimCombo->Get_Motion(0);	// ref added by get_motion
-        ASSERT (m_pCAnimation);
+		  m_pCAnimation = RefCountPtr<HAnimClass>::Create_NoAddRef(m_pCAnimCombo->Get_Motion(0));	// ref added by get_motion
+        ASSERT (m_pCAnimation.Peek());
 
 		  // It will be assumed that every animation in the m_pCAnimCombo
 		  // has the same number of frames and has the same framerate as
@@ -1053,8 +1038,8 @@ CW3DViewDoc::Update_Camera (void)
 	// Should we update the camera's position as well?
 	if (m_bAnimateCamera && m_pCRenderObj != NULL) {
 
-		Matrix3D transform (1);
-		if (Get_Camera_Transform (m_pCRenderObj, transform)) {
+	Matrix3D transform (1);
+	if (Get_Camera_Transform (m_pCRenderObj.Peek(), transform)) {
 
 			// Convert the bone's transform into a camera transform
 			//Matrix3D	transform = m_pCRenderObj->Get_Bone_Transform (index);
@@ -1118,9 +1103,9 @@ CW3DViewDoc::UpdateFrame (float relativeTimeSlice)
 
 			m_pCRenderObj->Set_Animation (m_pCAnimCombo);
 		} else if (m_bAnimBlend) {
-			m_pCRenderObj->Set_Animation (m_pCAnimation, m_CurrentFrame);
+			m_pCRenderObj->Set_Animation (m_pCAnimation.Peek(), m_CurrentFrame);
 		} else {
-			m_pCRenderObj->Set_Animation (m_pCAnimation, (int)m_CurrentFrame);
+			m_pCRenderObj->Set_Animation (m_pCAnimation.Peek(), (int)m_CurrentFrame);
 		}
 
 		Update_Camera ();
@@ -1879,7 +1864,7 @@ CW3DViewDoc::Remove_Object_From_Scene (RenderObjClass *prender_obj)
 {
 	// If the render object is NULL, then remove the current render object
 	if (prender_obj == NULL) {
-		prender_obj = m_pCRenderObj;
+		prender_obj = m_pCRenderObj.Peek();
 	}
 
 	// Recursively remove objects from the scene (to make sure we get all particle buffers)
@@ -2443,7 +2428,7 @@ CW3DViewDoc::Make_Movie (void)
 			m_pCRenderObj->Set_Animation (m_pCAnimCombo);
 		}
 		else
-			m_pCRenderObj->Set_Animation (m_pCAnimation, (int)0);
+			m_pCRenderObj->Set_Animation (m_pCAnimation.Peek(), (int)0);
 		graphic_view->RepaintView (FALSE);
 
 		// Begin our movie
@@ -2465,7 +2450,7 @@ CW3DViewDoc::Make_Movie (void)
 				m_pCRenderObj->Set_Animation (m_pCAnimCombo);
 			}
 			else
-				m_pCRenderObj->Set_Animation (m_pCAnimation, frame);
+				m_pCRenderObj->Set_Animation (m_pCAnimation.Peek(), frame);
 
 			// Should we be updating the camera?
 			if (m_bAnimateCamera) {
@@ -2525,7 +2510,7 @@ CW3DViewDoc::Build_Emitter_List
 	// If the render object is NULL, then start from the current render object
 	//
 	if (render_obj == NULL) {
-		render_obj = m_pCRenderObj;
+		render_obj = m_pCRenderObj.Peek();
 	}
 
 	//
@@ -2604,7 +2589,7 @@ void
 CW3DViewDoc::Create_Cursor (void)
 {
 	if (m_pCursor == NULL) {
-		m_pCursor = new ScreenCursorClass;
+		m_pCursor = RefCountPtr<ScreenCursorClass>::Create_NoAddRef(new ScreenCursorClass);
 		m_pCursor->Set_Window (GetGraphicView ()->m_hWnd);
 		m_pCursor->Set_Texture (::Load_RC_Texture ("cursor.tga"));
 	}
@@ -2627,7 +2612,7 @@ CW3DViewDoc::Count_Particles (RenderObjClass *render_obj)
 	// If the render object is NULL, then start from the current render object
 	//
 	if (render_obj == NULL) {
-		render_obj = m_pCRenderObj;
+		render_obj = m_pCRenderObj.Peek();
 	}
 
 	//
@@ -2687,7 +2672,7 @@ CW3DViewDoc::Switch_LOD (int increment, RenderObjClass *render_obj)
 	// If the render object is NULL, then start from the current render object
 	//
 	if (render_obj == NULL) {
-		render_obj = m_pCRenderObj;
+		render_obj = m_pCRenderObj.Peek();
 	}
 
 	//
@@ -2727,7 +2712,7 @@ CW3DViewDoc::Toggle_Alternate_Materials(RenderObjClass * render_obj)
 	// If the render object is NULL, start from the current render object
 	//
 	if (render_obj == NULL) {
-		render_obj = m_pCRenderObj;
+		render_obj = m_pCRenderObj.Peek();
 	}
 
 	if (render_obj != NULL) {
