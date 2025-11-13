@@ -716,12 +716,7 @@ void LightMapTerrainTextureClass::Apply(unsigned int stage)
 
 	D3DXMATRIX inv;
 	float det;
-	D3DXMATRIX d3dCurView(
-		curView[0][0], curView[0][1], curView[0][2], curView[0][3],
-		curView[1][0], curView[1][1], curView[1][2], curView[1][3],
-		curView[2][0], curView[2][1], curView[2][2], curView[2][3],
-		curView[3][0], curView[3][1], curView[3][2], curView[3][3]
-	);
+	D3DXMATRIX d3dCurView = Build_D3DXMATRIX(curView);
 	D3DXMatrixInverse(&inv, &det, &d3dCurView);
 	D3DXMATRIX scale;
 	D3DXMatrixScaling(&scale, STRETCH_FACTOR, STRETCH_FACTOR,1);

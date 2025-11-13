@@ -453,18 +453,8 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			memcpy(dest_verts, src_verts, sizeof(VertexFormatXYZNDUV2)*state->vertex_count);
 			dest_verts += state->vertex_count;
 
-			D3DXMATRIX worldMat2(
-				state->sorting_state.world[0][0], state->sorting_state.world[0][1], state->sorting_state.world[0][2], state->sorting_state.world[0][3],
-				state->sorting_state.world[1][0], state->sorting_state.world[1][1], state->sorting_state.world[1][2], state->sorting_state.world[1][3],
-				state->sorting_state.world[2][0], state->sorting_state.world[2][1], state->sorting_state.world[2][2], state->sorting_state.world[2][3],
-				state->sorting_state.world[3][0], state->sorting_state.world[3][1], state->sorting_state.world[3][2], state->sorting_state.world[3][3]
-			);
-			D3DXMATRIX viewMat2(
-				state->sorting_state.view[0][0], state->sorting_state.view[0][1], state->sorting_state.view[0][2], state->sorting_state.view[0][3],
-				state->sorting_state.view[1][0], state->sorting_state.view[1][1], state->sorting_state.view[1][2], state->sorting_state.view[1][3],
-				state->sorting_state.view[2][0], state->sorting_state.view[2][1], state->sorting_state.view[2][2], state->sorting_state.view[2][3],
-				state->sorting_state.view[3][0], state->sorting_state.view[3][1], state->sorting_state.view[3][2], state->sorting_state.view[3][3]
-			);
+			D3DXMATRIX worldMat2 = Build_D3DXMATRIX(state->sorting_state.world);
+			D3DXMATRIX viewMat2 = Build_D3DXMATRIX(state->sorting_state.view);
 			D3DXMATRIX d3d_mtx=worldMat2*viewMat2;
 			const Matrix4x4& mtx=(const Matrix4x4&)d3d_mtx;
 

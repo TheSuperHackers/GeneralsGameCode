@@ -1237,12 +1237,7 @@ Int ShroudTextureShader::set(Int stage)
 		Matrix4x4 curView;
 		DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, curView);
 
-		D3DXMATRIX d3dCurView(
-			curView[0][0], curView[0][1], curView[0][2], curView[0][3],
-			curView[1][0], curView[1][1], curView[1][2], curView[1][3],
-			curView[2][0], curView[2][1], curView[2][2], curView[2][3],
-			curView[3][0], curView[3][1], curView[3][2], curView[3][3]
-		);
+		D3DXMATRIX d3dCurView = Build_D3DXMATRIX(curView);
 		D3DXMatrixInverse(&inv, &det, &d3dCurView);
 
 		D3DXMATRIX scale,offset;
@@ -1336,12 +1331,7 @@ Int FlatShroudTextureShader::set(Int stage)
 		Matrix4x4 curView;
 		DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, curView);
 
-		D3DXMATRIX d3dCurView(
-			curView[0][0], curView[0][1], curView[0][2], curView[0][3],
-			curView[1][0], curView[1][1], curView[1][2], curView[1][3],
-			curView[2][0], curView[2][1], curView[2][2], curView[2][3],
-			curView[3][0], curView[3][1], curView[3][2], curView[3][3]
-		);
+		D3DXMATRIX d3dCurView = Build_D3DXMATRIX(curView);
 		D3DXMatrixInverse(&inv, &det, &d3dCurView);
 
 		D3DXMATRIX scale,offset;
@@ -1434,12 +1424,7 @@ Int MaskTextureShader::set(Int pass)
 	D3DXMATRIX inv;
 	float det;
 
-	D3DXMATRIX d3dCurView(
-		curView[0][0], curView[0][1], curView[0][2], curView[0][3],
-		curView[1][0], curView[1][1], curView[1][2], curView[1][3],
-		curView[2][0], curView[2][1], curView[2][2], curView[2][3],
-		curView[3][0], curView[3][1], curView[3][2], curView[3][3]
-	);
+	D3DXMATRIX d3dCurView = Build_D3DXMATRIX(curView);
 	D3DXMatrixInverse(&inv, &det, &d3dCurView);
 
 	D3DXMATRIX scale,offset,offsetTextureCenter;
@@ -1733,12 +1718,7 @@ Int TerrainShader2Stage::set(Int pass)
 			D3DXMATRIX inv;
 			float det;
 
-			D3DXMATRIX d3dCurView(
-				curView[0][0], curView[0][1], curView[0][2], curView[0][3],
-				curView[1][0], curView[1][1], curView[1][2], curView[1][3],
-				curView[2][0], curView[2][1], curView[2][2], curView[2][3],
-				curView[3][0], curView[3][1], curView[3][2], curView[3][3]
-			);
+			D3DXMATRIX d3dCurView = Build_D3DXMATRIX(curView);
 			D3DXMatrixInverse(&inv, &det, &d3dCurView);
 
 			if (W3DShaderManager::getCurrentShader() == W3DShaderManager::ST_TERRAIN_BASE_NOISE12)
@@ -2070,12 +2050,7 @@ Int TerrainShaderPixelShader::set(Int pass)
 
 		D3DXMATRIX inv;
 		float det;
-		D3DXMATRIX d3dCurView(
-			curView[0][0], curView[0][1], curView[0][2], curView[0][3],
-			curView[1][0], curView[1][1], curView[1][2], curView[1][3],
-			curView[2][0], curView[2][1], curView[2][2], curView[2][3],
-			curView[3][0], curView[3][1], curView[3][2], curView[3][3]
-		);
+		D3DXMATRIX d3dCurView = Build_D3DXMATRIX(curView);
 		D3DXMatrixInverse(&inv, &det, &d3dCurView);
 
 		DX8Wrapper::Set_DX8_Texture_Stage_State(2,  D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEPOSITION);
@@ -2200,12 +2175,7 @@ Int CloudTextureShader::set(Int stage)
 	D3DXMATRIX inv;
 	float det;
 
-	D3DXMATRIX d3dCurView(
-		curView[0][0], curView[0][1], curView[0][2], curView[0][3],
-		curView[1][0], curView[1][1], curView[1][2], curView[1][3],
-		curView[2][0], curView[2][1], curView[2][2], curView[2][3],
-		curView[3][0], curView[3][1], curView[3][2], curView[3][3]
-	);
+	D3DXMATRIX d3dCurView = Build_D3DXMATRIX(curView);
 	D3DXMatrixInverse(&inv, &det, &d3dCurView);
 
 	D3DXMATRIX texTransform;
@@ -2340,12 +2310,7 @@ Int RoadShaderPixelShader::set(Int pass)
 
 	D3DXMATRIX inv;
 	float det;
-	D3DXMATRIX d3dCurView(
-		curView[0][0], curView[0][1], curView[0][2], curView[0][3],
-		curView[1][0], curView[1][1], curView[1][2], curView[1][3],
-		curView[2][0], curView[2][1], curView[2][2], curView[2][3],
-		curView[3][0], curView[3][1], curView[3][2], curView[3][3]
-	);
+	D3DXMATRIX d3dCurView = Build_D3DXMATRIX(curView);
 	D3DXMatrixInverse(&inv, &det, &d3dCurView);
 
 	if (TheGlobalData && TheGlobalData->m_trilinearTerrainTex)
@@ -2463,12 +2428,7 @@ Int RoadShader2Stage::set(Int pass)
 
 			D3DXMATRIX inv;
 			float det;
-			D3DXMATRIX d3dCurView(
-				curView[0][0], curView[0][1], curView[0][2], curView[0][3],
-				curView[1][0], curView[1][1], curView[1][2], curView[1][3],
-				curView[2][0], curView[2][1], curView[2][2], curView[2][3],
-				curView[3][0], curView[3][1], curView[3][2], curView[3][3]
-			);
+			D3DXMATRIX d3dCurView = Build_D3DXMATRIX(curView);
 			D3DXMatrixInverse(&inv, &det, &d3dCurView);
 
 			if (TheGlobalData && TheGlobalData->m_trilinearTerrainTex)
@@ -2531,12 +2491,7 @@ Int RoadShader2Stage::set(Int pass)
 
 		D3DXMATRIX inv;
 		float det;
-		D3DXMATRIX d3dCurView(
-			curView[0][0], curView[0][1], curView[0][2], curView[0][3],
-			curView[1][0], curView[1][1], curView[1][2], curView[1][3],
-			curView[2][0], curView[2][1], curView[2][2], curView[2][3],
-			curView[3][0], curView[3][1], curView[3][2], curView[3][3]
-		);
+		D3DXMATRIX d3dCurView = Build_D3DXMATRIX(curView);
 		D3DXMatrixInverse(&inv, &det, &d3dCurView);
 
 		if (TheGlobalData && TheGlobalData->m_trilinearTerrainTex)

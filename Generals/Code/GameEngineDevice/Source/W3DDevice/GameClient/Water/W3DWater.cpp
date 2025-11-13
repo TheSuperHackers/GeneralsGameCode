@@ -235,12 +235,7 @@ void WaterRenderObjClass::setupJbaWaterShader(void)
 
 		Matrix4x4 curView;
 		DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, curView);
-		D3DXMATRIX d3dCurView(
-			curView[0][0], curView[0][1], curView[0][2], curView[0][3],
-			curView[1][0], curView[1][1], curView[1][2], curView[1][3],
-			curView[2][0], curView[2][1], curView[2][2], curView[2][3],
-			curView[3][0], curView[3][1], curView[3][2], curView[3][3]
-		);
+		D3DXMATRIX d3dCurView = Build_D3DXMATRIX(curView);
 		D3DXMatrixInverse(&inv, &det, &d3dCurView);
 		D3DXMATRIX scale;
 
@@ -1585,12 +1580,7 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 				DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, curView);
 
 				//get inverse of view matrix(= view to world matrix)
-				D3DXMATRIX d3dCurView(
-					curView[0][0], curView[0][1], curView[0][2], curView[0][3],
-					curView[1][0], curView[1][1], curView[1][2], curView[1][3],
-					curView[2][0], curView[2][1], curView[2][2], curView[2][3],
-					curView[3][0], curView[3][1], curView[3][2], curView[3][3]
-				);
+				D3DXMATRIX d3dCurView = Build_D3DXMATRIX(curView);
 				D3DXMatrixInverse(&inv, &det, &d3dCurView);
 
 				//create clipping matrix by inserting our plane equation into the 1st column
@@ -2976,12 +2966,7 @@ void WaterRenderObjClass::setupFlatWaterShader(void)
 
 		Matrix4x4 curView;
 		DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, curView);
-		D3DXMATRIX d3dCurView(
-			curView[0][0], curView[0][1], curView[0][2], curView[0][3],
-			curView[1][0], curView[1][1], curView[1][2], curView[1][3],
-			curView[2][0], curView[2][1], curView[2][2], curView[2][3],
-			curView[3][0], curView[3][1], curView[3][2], curView[3][3]
-		);
+		D3DXMATRIX d3dCurView = Build_D3DXMATRIX(curView);
 		D3DXMatrixInverse(&inv, &det, &d3dCurView);
 		D3DXMATRIX scale;
 
