@@ -72,6 +72,8 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+static const AsciiString s_noSoundString("NoSound");
+
 static const char* TheSpeakerTypes[] =
 {
 	"2 Speakers",
@@ -407,7 +409,7 @@ void AudioManager::getInfoForAudioEvent( const AudioEventRTS *eventToFindAndFill
 //-------------------------------------------------------------------------------------------------
 AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 {
-	if (eventToAdd->getEventName().isEmpty() || eventToAdd->getEventName() == AsciiString("NoSound")) {
+	if (eventToAdd->getEventName().isEmpty() || eventToAdd->getEventName() == s_noSoundString) {
 		return AHSV_NoSound;
 	}
 
@@ -443,6 +445,11 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 		return AHSV_NoSound;
 	}
 
+	if (!eventToAdd->getUninterruptable()) {
+		if (!shouldPlayLocally(eventToAdd)) {
+			return AHSV_NotForLocal;
+		}
+	}
 
 	AudioEventRTS *audioEvent = MSGNEW("AudioEventRTS") AudioEventRTS(*eventToAdd);		// poolify
 	audioEvent->setPlayingHandle( allocateNewHandle() );
@@ -455,13 +462,6 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 		if (it->first == audioEvent->getEventName()) {
 			audioEvent->setVolume(it->second);
 			break;
-		}
-	}
-
-	if (!audioEvent->getUninterruptable()) {
-		if (!shouldPlayLocally(audioEvent)) {
-			releaseAudioEventRTS(audioEvent);
-			return AHSV_NotForLocal;
 		}
 	}
 
