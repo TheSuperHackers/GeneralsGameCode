@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
+	<object class="wxFrame" name="DbgWinBaseFrame">
+		<style>wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL</style>
+		<size>420,600</size>
+		<title>Debug Window</title>
+		<centered>1</centered>
+		<object class="wxPanel" name="m_panel">
+			<style>wxTAB_TRAVERSAL</style>
+			<object class="wxBoxSizer">
+				<orient>wxVERTICAL</orient>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxEXPAND|wxALL</flag>
+					<border>5</border>
+					<object class="wxBoxSizer">
+						<orient>wxHORIZONTAL</orient>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxToggleButton" name="m_pauseBtn">
+								<label>Pause</label>
+								<size>80,30</size>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxButton" name="m_stepBtn">
+								<label>Step</label>
+								<size>80,30</size>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxButton" name="m_stepTenBtn">
+								<label>Step 10</label>
+								<size>80,30</size>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>1</option>
+							<flag>wxEXPAND</flag>
+							<border>5</border>
+							<object class="wxPanel">
+								<style>wxTAB_TRAVERSAL</style>
+							</object>
+						</object>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxEXPAND|wxALL</flag>
+					<border>5</border>
+					<object class="wxBoxSizer">
+						<orient>wxHORIZONTAL</orient>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="m_frameLabel">
+								<label>Frame</label>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="m_frameTxt">
+								<label>0</label>
+								<size>100,-1</size>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxToggleButton" name="m_runFastXTenBtn">
+								<label>Run Fast (10x)</label>
+								<size>100,30</size>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxButton" name="m_clearBtn">
+								<label>Clear</label>
+								<size>80,30</size>
+							</object>
+						</object>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxEXPAND|wxALL</flag>
+					<border>5</border>
+					<object class="wxStaticText" name="m_variablesLabel">
+						<label>Variables</label>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>1</option>
+					<flag>wxEXPAND|wxALL</flag>
+					<border>5</border>
+					<object class="wxListBox" name="m_variableList">
+						<style>wxLB_SINGLE|wxLB_HSCROLL</style>
+						<size>-1,150</size>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxEXPAND|wxALL</flag>
+					<border>5</border>
+					<object class="wxStaticText" name="m_messagesLabel">
+						<label>Messages</label>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>2</option>
+					<flag>wxEXPAND|wxALL</flag>
+					<border>5</border>
+					<object class="wxTextCtrl" name="m_msgTxt">
+						<style>wxTE_MULTILINE|wxTE_READONLY|wxTE_WORDWRAP</style>
+						<size>-1,200</size>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>
