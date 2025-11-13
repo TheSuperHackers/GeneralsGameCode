@@ -420,21 +420,24 @@ void ConnectionManager::doRelay() {
  */
 Bool ConnectionManager::processNetCommand(NetCommandRef *ref) {
 	NetCommandMsg *msg = ref->getCommand();
+	NetCommandType cmdType = msg->getNetCommandType();
 
-	if ((msg->getNetCommandType() == NETCOMMANDTYPE_ACKSTAGE1) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_ACKSTAGE2) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_ACKBOTH)) {
-
+	// Handle ACK commands first (before connection validation)
+	if ((cmdType == NETCOMMANDTYPE_ACKSTAGE1) ||
+			(cmdType == NETCOMMANDTYPE_ACKSTAGE2) ||
+			(cmdType == NETCOMMANDTYPE_ACKBOTH)) {
 		processAck(msg);
 		return FALSE;
 	}
 
+	// Early validation checks
 	if ((m_connections[msg->getPlayerID()] == NULL) && (msg->getPlayerID() != m_localSlot)) {
 		// if this is from a player that is no longer in the game, then ignore them.
 		return TRUE;
 	}
 
-	if (msg->getNetCommandType() == NETCOMMANDTYPE_WRAPPER) {
+	// Handle WRAPPER commands (before second connection validation)
+	if (cmdType == NETCOMMANDTYPE_WRAPPER) {
 		processWrapper(ref); // need to send the NetCommandRef since we have to construct the relay for the wrapped command.
 		return FALSE;
 	}
@@ -451,93 +454,84 @@ Bool ConnectionManager::processNetCommand(NetCommandRef *ref) {
 	// This was a fix for a command count bug where a command would be
 	// executed, then a command for that old frame would be added to the
 	// FrameData for that frame + 256, and would screw up the command count.
-
-	if (IsCommandSynchronized(msg->getNetCommandType())) {
+	if (IsCommandSynchronized(cmdType)) {
 		if (ref->getCommand()->getExecutionFrame() < TheGameLogic->getFrame()) {
 			return TRUE;
 		}
 	}
 
-	if (msg->getNetCommandType() == NETCOMMANDTYPE_FRAMEINFO) {
-		processFrameInfo((NetFrameCommandMsg *)msg);
-
-		// need to set the relay so we don't send it to ourselves.
-		UnsignedByte relay = ref->getRelay();
-		relay = relay & (0xff ^ (1 << m_localSlot));
-		ref->setRelay(relay);
-		return FALSE;
-	}
-
-	if (msg->getNetCommandType() == NETCOMMANDTYPE_PROGRESS)
-	{
-		//DEBUG_LOG(("ConnectionManager::processNetCommand - got a progress net command from player %d", msg->getPlayerID()));
-		processProgress((NetProgressCommandMsg *) msg);
-
-		// need to set the relay so we don't send it to ourselves.
-		UnsignedByte relay = ref->getRelay();
-		relay = relay & (0xff ^ (1 << m_localSlot));
-		ref->setRelay(relay);
-		return FALSE;
-	}
-
-	if (msg->getNetCommandType() == NETCOMMANDTYPE_TIMEOUTSTART)
-	{
-		DEBUG_LOG(("ConnectionManager::processNetCommand - got a TimeOut GameStart net command from player %d", msg->getPlayerID()));
-		processTimeOutGameStart(msg);
-		return FALSE;
-	}
-
-	if (msg->getNetCommandType() == NETCOMMANDTYPE_RUNAHEADMETRICS) {
-		processRunAheadMetrics((NetRunAheadMetricsCommandMsg *)msg);
-		return TRUE;
-	}
-
-	if (msg->getNetCommandType() == NETCOMMANDTYPE_KEEPALIVE) {
-		return TRUE;
-	}
-
-	if ((msg->getNetCommandType() > NETCOMMANDTYPE_DISCONNECTSTART) && (msg->getNetCommandType() < NETCOMMANDTYPE_DISCONNECTEND)) {
+	// Handle disconnect commands as a range
+	if ((cmdType > NETCOMMANDTYPE_DISCONNECTSTART) && (cmdType < NETCOMMANDTYPE_DISCONNECTEND)) {
 		m_disconnectManager->processDisconnectCommand(ref, this);
 		return TRUE;
 	}
 
-	if (msg->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTCHAT) {
-		processDisconnectChat((NetDisconnectChatCommandMsg *)msg);
-	}
+	// Process command by type
+	switch (cmdType) {
 
-	if (msg->getNetCommandType() == NETCOMMANDTYPE_LOADCOMPLETE)
-	{
-		DEBUG_LOG(("ConnectionManager::processNetCommand - got a Load Complete net command from player %d", msg->getPlayerID()));
-		processLoadComplete(msg);
-		return FALSE;
-	}
+		case NETCOMMANDTYPE_FRAMEINFO: {
+			processFrameInfo((NetFrameCommandMsg *)msg);
+			// need to set the relay so we don't send it to ourselves.
+			UnsignedByte relay = ref->getRelay();
+			relay = relay & (0xff ^ (1 << m_localSlot));
+			ref->setRelay(relay);
+			return FALSE;
+		}
 
-	if (msg->getNetCommandType() == NETCOMMANDTYPE_CHAT) {
-		processChat((NetChatCommandMsg *)msg);
-		return FALSE;
-	}
+		case NETCOMMANDTYPE_PROGRESS: {
+			//DEBUG_LOG(("ConnectionManager::processNetCommand - got a progress net command from player %d", msg->getPlayerID()));
+			processProgress((NetProgressCommandMsg *) msg);
+			// need to set the relay so we don't send it to ourselves.
+			UnsignedByte relay = ref->getRelay();
+			relay = relay & (0xff ^ (1 << m_localSlot));
+			ref->setRelay(relay);
+			return FALSE;
+		}
 
-	if (msg->getNetCommandType() == NETCOMMANDTYPE_FILE) {
-		processFile((NetFileCommandMsg *)msg);
-		return FALSE;
-	}
+		case NETCOMMANDTYPE_TIMEOUTSTART:
+			DEBUG_LOG(("ConnectionManager::processNetCommand - got a TimeOut GameStart net command from player %d", msg->getPlayerID()));
+			processTimeOutGameStart(msg);
+			return FALSE;
 
-	if (msg->getNetCommandType() == NETCOMMANDTYPE_FILEANNOUNCE) {
-		processFileAnnounce((NetFileAnnounceCommandMsg *)msg);
-		return FALSE;
-	}
+		case NETCOMMANDTYPE_RUNAHEADMETRICS:
+			processRunAheadMetrics((NetRunAheadMetricsCommandMsg *)msg);
+			return TRUE;
 
-	if (msg->getNetCommandType() == NETCOMMANDTYPE_FILEPROGRESS) {
-		processFileProgress((NetFileProgressCommandMsg *)msg);
-		return FALSE;
-	}
+		case NETCOMMANDTYPE_KEEPALIVE:
+			return TRUE;
 
-	if (msg->getNetCommandType() == NETCOMMANDTYPE_FRAMERESENDREQUEST) {
-		processFrameResendRequest((NetFrameResendRequestCommandMsg *)msg);
-		return TRUE;
-	}
+		case NETCOMMANDTYPE_DISCONNECTCHAT:
+			processDisconnectChat((NetDisconnectChatCommandMsg *)msg);
+			return FALSE;
 
-	return FALSE;
+		case NETCOMMANDTYPE_LOADCOMPLETE:
+			DEBUG_LOG(("ConnectionManager::processNetCommand - got a Load Complete net command from player %d", msg->getPlayerID()));
+			processLoadComplete(msg);
+			return FALSE;
+
+		case NETCOMMANDTYPE_CHAT:
+			processChat((NetChatCommandMsg *)msg);
+			return FALSE;
+
+		case NETCOMMANDTYPE_FILE:
+			processFile((NetFileCommandMsg *)msg);
+			return FALSE;
+
+		case NETCOMMANDTYPE_FILEANNOUNCE:
+			processFileAnnounce((NetFileAnnounceCommandMsg *)msg);
+			return FALSE;
+
+		case NETCOMMANDTYPE_FILEPROGRESS:
+			processFileProgress((NetFileProgressCommandMsg *)msg);
+			return FALSE;
+
+		case NETCOMMANDTYPE_FRAMERESENDREQUEST:
+			processFrameResendRequest((NetFrameResendRequestCommandMsg *)msg);
+			return TRUE;
+
+		default:
+			return FALSE;
+	}
 }
 
 void ConnectionManager::processFrameResendRequest(NetFrameResendRequestCommandMsg *msg) {
