@@ -34,6 +34,7 @@
 #include "GameLogic/Module/SupplyCenterDockUpdate.h"
 #include "GameLogic/Module/SupplyTruckAIUpdate.h"
 #include "GameClient/Color.h"
+#include "GameClient/Drawable.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/GameText.h"
 
@@ -129,14 +130,8 @@ Bool SupplyCenterDockUpdate::action( Object* docker, Object *drone )
 	}
 
 	Bool displayMoney = value > 0 ? TRUE : FALSE;
-	if( getObject()->testStatus(OBJECT_STATUS_STEALTHED) )
-	{
-		// OY LOOK!  I AM USING LOCAL PLAYER.  Do not put anything other than TheInGameUI->addFloatingText in the block this controls!!!
-		if( !getObject()->isLocallyControlled() && !getObject()->testStatus(OBJECT_STATUS_DETECTED) )
-		{
-			displayMoney = FALSE;
-		}
-	}
+	if (!getObject()->getDrawable()->isVisible())
+		displayMoney = FALSE;
 
 	if( displayMoney )
 	{
