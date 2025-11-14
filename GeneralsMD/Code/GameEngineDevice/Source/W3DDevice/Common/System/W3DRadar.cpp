@@ -652,12 +652,15 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 
 	for( const RadarObject *rObj = listHead; rObj; rObj = rObj->friend_getNext() )
 	{
+		// get object
+		const Object *obj = rObj->friend_getObject();
+
+		// TheSuperHackers @bugfix arcticdolphin 07/11/2025 Keep hero icon during hidden exit frames
+		if (calcHero && rObj->isTemporarilyHidden() && obj->isHero())
+			m_cachedHeroObjectList.push_back(obj);
 
 		if (rObj->isTemporarilyHidden())
 			continue;
-
-		// get object
-		const Object *obj = rObj->friend_getObject();
 
 		// check for shrouded status
 		if (obj->getShroudedStatus(playerIndex) > OBJECTSHROUD_PARTIAL_CLEAR)
