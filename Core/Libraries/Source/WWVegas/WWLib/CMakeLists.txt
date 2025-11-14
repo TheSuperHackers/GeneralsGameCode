@@ -36,6 +36,7 @@ set(WWLIB_SRC
     DbgHelpGuard.h
     DbgHelpLoader.cpp
     DbgHelpLoader.h
+    DbgHelpLoader_minidump.h
     Except.cpp
     Except.h
     FastAllocator.cpp
